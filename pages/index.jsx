@@ -4056,7 +4056,7 @@ function GlobalCases() {
 }
 
 function LiveWeatherPanel() {
-  const [mode, setMode] = useState("location");  // location | campaigns | map
+  const [mode, setMode] = useState("map");  // location | campaigns | map (지도 모드 기본 — 마케팅 임팩트 우선)
   return (
     <section style={{ background: T.canvas, paddingTop: 96, paddingBottom: 96 }}>
       <div className="max-w-[1280px] mx-auto px-6">
@@ -4318,7 +4318,7 @@ function PanelCampaigns() {
 function PanelMap() {
   const [hover, setHover] = useState(null);
 
-  // 위성 지도 (1200x896) 위 도시 좌표 — 한반도 실측 위치 기반
+  // 위성 지도 (1200x896) 위 도시 좌표
   const SATELLITE_CITIES = [
     { code: "11", name: "서울",  x: 500, y: 295, t: 17, pop: 65, kind: "rain" },
     { code: "28", name: "인천",  x: 458, y: 298, t: 16, pop: 80, kind: "rain" },
@@ -4332,12 +4332,20 @@ function PanelMap() {
     { code: "50", name: "제주",  x: 540, y: 800, t: 24, pop:  0, kind: "sun" },
   ];
 
-  // 3개 핵심 인사이트 — 마케팅 액션 + KPI 근거
+  // 지역 zone (광역 발광 영역) — 트리거 색상 매핑
+  const ZONES = [
+    { id: "metro",    cx: 490, cy: 320, r: 150, color: "#5560FF", intensity: 0.45, label: "수도권", trigger: "강수 D-1",       intensity_text: "강" },
+    { id: "youngnam", cx: 670, cy: 555, r: 145, color: "#4EB3A8", intensity: 0.40, label: "영남권", trigger: "맑음+야외 최적", intensity_text: "중" },
+    { id: "honam",    cx: 510, cy: 685, r: 130, color: "#F4A261", intensity: 0.36, label: "호남·제주", trigger: "주말 맑음 UV5+", intensity_text: "약" },
+  ];
+
+  // 인사이트 (AI 가상 페르소나 시뮬레이션 형식)
   const INSIGHTS = [
     {
       id: "metro",
       region: "수도권",
-      cities: "서울·인천·수원",
+      cities: "서울 인천 수원",
+      personaCount: "12,840",
       trigger: "강수 D-1 진입",
       triggerDetail: "강수확률 55-80% · 기온 16-18°C",
       action: "우산·배달·실내 카테고리 입찰 강화",
@@ -4346,28 +4354,32 @@ function PanelMap() {
       kpiValue: "+58%",
       basis: "장마 + 저녁 시간대 배달 객단가 +58% (한국 외식업 통계)",
       window: "비 시작 6시간 전 골든타임",
-      tint: "lavender",
-      icon: "rain",
+      confidence: 92,
+      color: "#5560FF",
+      bg: "rgba(85,96,255,0.08)",
     },
     {
       id: "youngnam",
       region: "영남권",
-      cities: "대구·부산·울산",
+      cities: "대구 부산 울산",
+      personaCount: "8,450",
       trigger: "맑음 + 야외 활동 최적",
       triggerDetail: "기온 22-23°C · 강수확률 5-10%",
-      action: "외식·아웃도어·디저트 카테고리 운영 강화",
+      action: "외식·아웃도어·디저트 카테고리 강화",
       bid: "+28%",
       kpiLabel: "매장 매출",
       kpiValue: "+42%",
       basis: "체감 22°C+ 주말 외식 검색 +180% (네이버)",
-      window: "주말 점심·오후 시간대 집중",
-      tint: "teal",
-      icon: "sun",
+      window: "주말 점심·오후 집중",
+      confidence: 88,
+      color: "#4EB3A8",
+      bg: "rgba(78,179,168,0.08)",
     },
     {
       id: "honam",
       region: "호남·제주",
-      cities: "광주·제주",
+      cities: "광주 제주",
+      personaCount: "3,612",
       trigger: "주말 맑음 + UV 5+",
       triggerDetail: "기온 21-24°C · 강수확률 0-15%",
       action: "여행·숙박·당일치기 광고 활성화",
@@ -4375,22 +4387,31 @@ function PanelMap() {
       kpiLabel: "예약 전환율",
       kpiValue: "+36%",
       basis: "주말 맑음 + UV 5+ 당일치기 예약 전환 +36%",
-      window: "금요일 저녁 ~ 토요일 새벽 광고 집중",
-      tint: "rose",
-      icon: "sun",
+      window: "금 저녁~토 새벽 집중",
+      confidence: 85,
+      color: "#F4A261",
+      bg: "rgba(244,162,97,0.08)",
     },
   ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-      {/* 위성 지도 — 3/5 */}
+      {/* 위성 지도 + AI HUD — 3/5 */}
       <div className="md:col-span-3">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <div>
-            <div style={{ color: T.steel, fontSize: 11, fontWeight: 600, letterSpacing: "0.08em" }}>
-              전국 17개 광역시도 · 실시간
+            <div className="flex items-center gap-1.5" style={{ color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em" }}>
+              <span style={{
+                background: T.tealLight, color: T.mossDark,
+                padding: "2px 7px", borderRadius: R.full,
+                fontSize: 9.5, fontWeight: 800, letterSpacing: "0.08em",
+                border: `1px solid ${T.brandTeal}`,
+              }}>
+                AI 시뮬레이션 가동 중
+              </span>
+              <span>전국 17개 광역시도</span>
             </div>
-            <div style={{ color: T.ink, fontSize: 18, fontWeight: 600, letterSpacing: "-0.015em", marginTop: 4 }}>
+            <div style={{ color: T.ink, fontSize: 18, fontWeight: 600, letterSpacing: "-0.015em", marginTop: 6 }}>
               지역별 광고 트리거 분포
             </div>
           </div>
@@ -4407,10 +4428,10 @@ function PanelMap() {
             borderRadius: R.xl,
             overflow: "hidden",
             border: `1px solid ${T.hairlineSoft}`,
-            background: "#0E2238",
-            boxShadow: "0 8px 32px rgba(5,0,56,0.18), 0 1px 3px rgba(5,0,56,0.08)",
+            background: "#0A1224",
+            boxShadow: "0 12px 40px rgba(5,0,56,0.22), 0 1px 3px rgba(5,0,56,0.08), inset 0 0 0 1px rgba(78,179,168,0.18)",
             aspectRatio: "1200 / 896",
-            minHeight: 360,
+            minHeight: 380,
           }}
         >
           <svg
@@ -4420,40 +4441,72 @@ function PanelMap() {
             style={{ position: "absolute", inset: 0 }}
           >
             <defs>
-              <radialGradient id="vignette" cx="50%" cy="50%" r="65%">
-                <stop offset="60%" stopColor="rgba(0,0,0,0)" />
-                <stop offset="100%" stopColor="rgba(5,0,56,0.45)" />
-              </radialGradient>
-              <filter id="dotGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="4" />
+              <filter id="zoneGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="14" />
               </filter>
-              <linearGradient id="topShade" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%"  stopColor="rgba(5,0,56,0.35)" />
-                <stop offset="35%" stopColor="rgba(5,0,56,0)" />
-              </linearGradient>
+              <filter id="dotGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
+              </filter>
+              {ZONES.map((z) => (
+                <radialGradient key={z.id} id={`zone-${z.id}`} cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor={z.color} stopOpacity={z.intensity} />
+                  <stop offset="60%" stopColor={z.color} stopOpacity={z.intensity * 0.4} />
+                  <stop offset="100%" stopColor={z.color} stopOpacity="0" />
+                </radialGradient>
+              ))}
+              <radialGradient id="globalVignette" cx="50%" cy="50%" r="70%">
+                <stop offset="65%" stopColor="rgba(0,0,0,0)" />
+                <stop offset="100%" stopColor="rgba(10,18,36,0.55)" />
+              </radialGradient>
             </defs>
 
-            {/* 위성 지도 이미지 */}
+            {/* 위성 지도 (높은 가시성 유지) */}
             <image
               href="/korea-satellite.png"
               x="0" y="0" width="1200" height="896"
               preserveAspectRatio="xMidYMid slice"
             />
 
-            {/* 상단 어두운 그라데이션 (라벨 가독성) */}
-            <rect width="1200" height="896" fill="url(#topShade)" />
-            <rect width="1200" height="896" fill="url(#vignette)" />
+            {/* 광역 zone 발광 */}
+            {ZONES.map((z) => (
+              <circle
+                key={z.id}
+                cx={z.cx} cy={z.cy} r={z.r}
+                fill={`url(#zone-${z.id})`}
+                filter="url(#zoneGlow)"
+              />
+            ))}
 
-            {/* 도시별 마커 + 라벨 */}
+            {/* 가장자리 비네팅 (가독성 살짝) */}
+            <rect width="1200" height="896" fill="url(#globalVignette)" />
+
+            {/* AI HUD: 코너 브래킷 4개 */}
+            {[
+              { x: 30, y: 30, dx: 1, dy: 1 },
+              { x: 1170, y: 30, dx: -1, dy: 1 },
+              { x: 30, y: 866, dx: 1, dy: -1 },
+              { x: 1170, y: 866, dx: -1, dy: -1 },
+            ].map((b, i) => (
+              <g key={i} stroke={T.brandTeal} strokeWidth="2.4" strokeLinecap="round" opacity="0.78">
+                <line x1={b.x} y1={b.y} x2={b.x + b.dx * 24} y2={b.y} />
+                <line x1={b.x} y1={b.y} x2={b.x} y2={b.y + b.dy * 24} />
+              </g>
+            ))}
+
+            {/* 스캔 가이드 라인 (가로 1개 — 데이터 그리드 느낌) */}
+            <line x1="50" y1="448" x2="1150" y2="448" stroke="rgba(78,179,168,0.16)" strokeWidth="0.8" strokeDasharray="2 6" />
+            <line x1="600" y1="60" x2="600" y2="836" stroke="rgba(78,179,168,0.16)" strokeWidth="0.8" strokeDasharray="2 6" />
+
+            {/* 도시 마커 + 라벨 (가벼운 pill) */}
             {SATELLITE_CITIES.map((city) => {
               const colorByKind = {
-                rain:  T.brandBlue,
-                cloud: T.steel,
-                sun:   T.brandTeal,
+                rain:  "#5560FF",
+                cloud: "#9CA3AF",
+                sun:   "#4EB3A8",
               };
-              const fill = colorByKind[city.kind] || T.brandTeal;
+              const fill = colorByKind[city.kind] || "#4EB3A8";
               const isHover = hover === city.code;
-              const r = isHover ? 18 : 13;
+              const r = isHover ? 11 : 8;
               return (
                 <g
                   key={city.code}
@@ -4462,103 +4515,140 @@ function PanelMap() {
                   style={{ cursor: "pointer" }}
                 >
                   {/* 글로우 */}
-                  <circle cx={city.x} cy={city.y} r={r * 1.8} fill={fill} opacity={isHover ? 0.35 : 0.22} filter="url(#dotGlow)" />
-                  {/* 외곽 링 */}
-                  <circle cx={city.x} cy={city.y} r={r} fill={fill} opacity={isHover ? 1 : 0.92} style={{ transition: "all 200ms" }} />
+                  <circle cx={city.x} cy={city.y} r={r * 2.2} fill={fill} opacity={isHover ? 0.5 : 0.35} filter="url(#dotGlow)" />
+                  {/* 외곽 ring */}
+                  <circle cx={city.x} cy={city.y} r={r} fill="none" stroke={fill} strokeWidth="2.4" />
                   {/* 흰 코어 */}
-                  <circle cx={city.x} cy={city.y} r="5" fill="#FFFFFF" />
+                  <circle cx={city.x} cy={city.y} r={r * 0.45} fill="#FFFFFF" />
 
-                  {/* 라벨 배경 (가독성) */}
+                  {/* 라벨 pill (clean) */}
                   <rect
-                    x={city.x - 38} y={city.y + 18}
-                    width="76" height="38"
-                    rx="6"
-                    fill="rgba(5,0,56,0.78)"
-                    stroke="rgba(255,255,255,0.18)"
-                    strokeWidth="0.8"
+                    x={city.x - 32} y={city.y + 14}
+                    width="64" height="22"
+                    rx="11"
+                    fill="rgba(10,18,36,0.88)"
+                    stroke={fill}
+                    strokeWidth="1"
+                    opacity={isHover ? 1 : 0.92}
                   />
                   <text
-                    x={city.x} y={city.y + 34}
-                    textAnchor="middle"
+                    x={city.x - 24} y={city.y + 29}
                     fill="#FFFFFF"
-                    style={{ fontSize: 14, fontWeight: 700, letterSpacing: "-0.01em" }}
+                    style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: "-0.005em" }}
                   >
                     {city.name}
                   </text>
                   <text
-                    x={city.x} y={city.y + 49}
-                    textAnchor="middle"
-                    fill="rgba(255,255,255,0.78)"
-                    style={{ fontSize: 11.5, fontWeight: 500 }}
+                    x={city.x + 6} y={city.y + 29}
+                    fill={fill}
+                    style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: "-0.005em" }}
                   >
-                    {city.t}°C · {city.pop}%
+                    {city.t}°
                   </text>
                 </g>
               );
             })}
           </svg>
 
-          {/* 좌상단 범례 (overlay) */}
+          {/* 좌상단: AI 분석 상태 (HUD) */}
           <div style={{
-            position: "absolute", top: 12, left: 12,
-            background: "rgba(255,255,255,0.92)",
-            backdropFilter: "blur(10px)",
-            WebkitBackdropFilter: "blur(10px)",
+            position: "absolute", top: 14, left: 14,
+            background: "rgba(10,18,36,0.85)",
+            backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
             borderRadius: R.md,
-            padding: "8px 10px",
-            display: "flex", flexDirection: "column", gap: 4,
+            padding: "9px 12px",
+            color: "#FFFFFF",
             fontSize: 10.5, fontWeight: 600, letterSpacing: "0.02em",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-            border: "1px solid rgba(255,255,255,0.6)",
-            color: T.ink,
+            display: "flex", flexDirection: "column", gap: 5,
+            border: `1px solid rgba(78,179,168,0.45)`,
+            minWidth: 168,
           }}>
-            <div className="flex items-center gap-1.5">
-              <span style={{ width: 8, height: 8, borderRadius: 99, background: T.brandBlue }} />
-              강수 ≥ 55%
+            <div className="flex items-center gap-1.5" style={{ color: T.brandTeal, fontSize: 9.5, fontWeight: 800, letterSpacing: "0.1em" }}>
+              <span style={{ width: 5, height: 5, borderRadius: 99, background: T.brandTeal, boxShadow: `0 0 8px ${T.brandTeal}` }} />
+              AI 시뮬레이션
             </div>
-            <div className="flex items-center gap-1.5">
-              <span style={{ width: 8, height: 8, borderRadius: 99, background: T.steel }} />
-              구름 30-55%
+            <div className="flex items-center justify-between gap-3">
+              <span style={{ opacity: 0.7 }}>가상 페르소나</span>
+              <span style={{ fontWeight: 700, fontFamily: "ui-monospace, 'SF Mono', monospace" }}>24,902</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <span style={{ width: 8, height: 8, borderRadius: 99, background: T.brandTeal }} />
-              맑음 &lt; 30%
+            <div className="flex items-center justify-between gap-3">
+              <span style={{ opacity: 0.7 }}>분석 시나리오</span>
+              <span style={{ fontWeight: 700, fontFamily: "ui-monospace, 'SF Mono', monospace" }}>51,388</span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span style={{ opacity: 0.7 }}>평균 신뢰도</span>
+              <span style={{ fontWeight: 700, fontFamily: "ui-monospace, 'SF Mono', monospace", color: T.brandTeal }}>88.3%</span>
             </div>
           </div>
 
-          {/* 우상단 갱신 시각 */}
+          {/* 우상단: 갱신 시각 */}
           <div style={{
-            position: "absolute", top: 12, right: 12,
-            background: "rgba(5,0,56,0.75)",
-            backdropFilter: "blur(10px)",
-            WebkitBackdropFilter: "blur(10px)",
+            position: "absolute", top: 14, right: 14,
+            background: "rgba(10,18,36,0.85)",
+            backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
             borderRadius: R.md,
-            padding: "6px 10px",
+            padding: "7px 11px",
             color: "#FFFFFF",
             fontSize: 10.5, fontWeight: 600, letterSpacing: "0.04em",
             display: "flex", alignItems: "center", gap: 6,
-            border: "1px solid rgba(255,255,255,0.15)",
+            border: `1px solid rgba(78,179,168,0.45)`,
           }}>
-            <span style={{ width: 6, height: 6, borderRadius: 99, background: T.brandTeal, boxShadow: `0 0 8px ${T.brandTeal}` }} />
-            5분 전 갱신
+            <span style={{ width: 6, height: 6, borderRadius: 99, background: T.brandTeal, boxShadow: `0 0 10px ${T.brandTeal}` }} />
+            <span style={{ fontFamily: "ui-monospace, 'SF Mono', monospace" }}>5분 전 갱신</span>
+          </div>
+
+          {/* 하단 라이브 데이터 띠 */}
+          <div style={{
+            position: "absolute", bottom: 0, left: 0, right: 0,
+            background: "linear-gradient(180deg, rgba(10,18,36,0) 0%, rgba(10,18,36,0.9) 100%)",
+            padding: "30px 14px 12px",
+            color: "#FFFFFF",
+            display: "flex", justifyContent: "space-around", alignItems: "center",
+            flexWrap: "wrap", gap: 12,
+            fontFamily: "ui-monospace, 'SF Mono', monospace",
+          }}>
+            {[
+              { label: "활성 사업장", value: "22,143", color: T.brandTeal },
+              { label: "오늘 매칭",   value: "8,604",  color: "#5560FF" },
+              { label: "평균 lift",   value: "+38.4%", color: T.brandTeal },
+              { label: "응답 시간",   value: "1.2s",   color: "#F4A261" },
+            ].map((m) => (
+              <div key={m.label} style={{ textAlign: "center", minWidth: 76 }}>
+                <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: "0.1em", opacity: 0.65 }}>
+                  {m.label}
+                </div>
+                <div style={{ color: m.color, fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", marginTop: 2 }}>
+                  {m.value}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* 지도 하단 짧은 캡션 */}
         <div className="mt-3 flex items-center justify-between flex-wrap gap-2" style={{ color: T.steel, fontSize: 11, fontWeight: 500 }}>
-          <span>케이웨더 30,000여 측정 센서 · 동단위 5분 갱신</span>
-          <span style={{ color: T.mossDark, fontWeight: 600 }}>17개 광역시도 → 226개 시군구 확장 진행 중</span>
+          <span>케이웨더 30,000+ 측정 센서 · 동단위 5분 갱신 · NVIDIA 기반 60일 예보</span>
+          <span style={{ color: T.mossDark, fontWeight: 600 }}>226개 시군구 확장 진행 중</span>
         </div>
       </div>
 
       {/* 인사이트 패널 — 2/5 */}
       <div className="md:col-span-2 flex flex-col gap-3">
-        <div style={{ color: T.steel, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-          ⚡ 오늘의 광고 시그널
+        <div className="flex items-center justify-between">
+          <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+            AI 가상 페르소나 시뮬레이션
+          </div>
+          <span style={{
+            background: T.tealLight, color: T.mossDark,
+            fontSize: 9.5, fontWeight: 800, letterSpacing: "0.06em",
+            padding: "2px 7px", borderRadius: R.full,
+            border: `1px solid ${T.brandTeal}`,
+          }}>
+            24,902명
+          </span>
         </div>
 
         {INSIGHTS.map((ins) => {
-          const t = TINT[ins.tint];
           return (
             <div
               key={ins.id}
@@ -4566,32 +4656,48 @@ function PanelMap() {
                 background: T.canvas,
                 border: `1px solid ${T.hairlineSoft}`,
                 borderRadius: R.xl,
-                padding: "14px 16px",
+                padding: "16px 18px",
                 position: "relative",
                 overflow: "hidden",
               }}
             >
-              {/* tint 좌측 막대 */}
+              {/* 좌측 색상 막대 + 발광 */}
               <div style={{
                 position: "absolute", left: 0, top: 0, bottom: 0,
-                width: 3, background: t.text,
+                width: 3, background: ins.color,
+                boxShadow: `2px 0 12px ${ins.color}88`,
               }} />
 
-              {/* 헤더 */}
-              <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+              {/* 헤더: 지역 + 페르소나 수 */}
+              <div className="flex items-center justify-between mb-2.5 flex-wrap gap-2">
                 <div>
-                  <div style={{ color: T.ink, fontSize: 14, fontWeight: 700, letterSpacing: "-0.01em" }}>
-                    {ins.region}
-                    <span style={{ color: T.muted, fontWeight: 500, fontSize: 11, marginLeft: 6 }}>
-                      {ins.cities}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span style={{ color: T.ink, fontSize: 15, fontWeight: 700, letterSpacing: "-0.015em" }}>
+                      {ins.region}
                     </span>
+                    <span style={{
+                      background: ins.bg,
+                      color: ins.color,
+                      fontSize: 9.5, fontWeight: 800,
+                      padding: "2px 7px", borderRadius: R.full,
+                      letterSpacing: "0.04em",
+                      border: `1px solid ${ins.color}33`,
+                      fontFamily: "ui-monospace, 'SF Mono', monospace",
+                    }}>
+                      {ins.personaCount}명 시뮬
+                    </span>
+                  </div>
+                  <div style={{ color: T.muted, fontSize: 10.5, fontWeight: 500, marginTop: 2, letterSpacing: "0.02em" }}>
+                    {ins.cities}
                   </div>
                 </div>
                 <span style={{
-                  background: t.bg, color: t.text,
-                  fontSize: 10.5, fontWeight: 700, letterSpacing: "0.04em",
-                  padding: "3px 9px", borderRadius: R.full,
+                  background: ins.bg, color: ins.color,
+                  fontSize: 11, fontWeight: 800, letterSpacing: "0.02em",
+                  padding: "4px 10px", borderRadius: R.full,
                   whiteSpace: "nowrap",
+                  border: `1px solid ${ins.color}44`,
+                  fontFamily: "ui-monospace, 'SF Mono', monospace",
                 }}>
                   입찰 {ins.bid}
                 </span>
@@ -4601,44 +4707,69 @@ function PanelMap() {
               <div style={{ color: T.charcoal, fontSize: 12.5, fontWeight: 600, marginBottom: 2, letterSpacing: "-0.005em" }}>
                 {ins.trigger}
               </div>
-              <div style={{ color: T.steel, fontSize: 11, fontWeight: 400, marginBottom: 8 }}>
+              <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 400, marginBottom: 10, letterSpacing: "-0.005em" }}>
                 {ins.triggerDetail}
               </div>
 
-              {/* 액션 */}
+              {/* 액션 — 광고 추천 */}
               <div style={{
-                background: T.surface,
+                background: ins.bg,
                 borderRadius: R.md,
-                padding: "8px 10px",
-                marginBottom: 8,
+                padding: "9px 11px",
+                marginBottom: 10,
                 fontSize: 12, color: T.ink, fontWeight: 500, lineHeight: 1.5,
                 wordBreak: "keep-all",
+                border: `1px solid ${ins.color}22`,
               }}>
+                <span style={{ color: ins.color, fontWeight: 700, fontSize: 10.5, letterSpacing: "0.06em", marginRight: 6 }}>
+                  ACTION
+                </span>
                 {ins.action}
               </div>
 
-              {/* KPI + 골든 윈도우 */}
-              <div className="flex items-end justify-between gap-3 flex-wrap">
+              {/* KPI + 신뢰도 막대 */}
+              <div className="flex items-end justify-between gap-3 mb-2">
                 <div>
-                  <div style={{ color: T.muted, fontSize: 9.5, fontWeight: 700, letterSpacing: "0.06em" }}>
+                  <div style={{ color: T.muted, fontSize: 9.5, fontWeight: 700, letterSpacing: "0.08em" }}>
                     예상 {ins.kpiLabel}
                   </div>
-                  <div style={{ color: t.text, fontSize: 19, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1 }}>
+                  <div style={{ color: ins.color, fontSize: 22, fontWeight: 800, letterSpacing: "-0.025em", lineHeight: 1, fontFamily: "ui-monospace, 'SF Mono', monospace" }}>
                     {ins.kpiValue}
                   </div>
                 </div>
-                <div style={{
-                  color: T.steel, fontSize: 10.5, fontWeight: 500,
-                  textAlign: "right", lineHeight: 1.4, maxWidth: 160,
-                  letterSpacing: "-0.005em", wordBreak: "keep-all",
-                }}>
-                  ⏱ {ins.window}
+                <div style={{ flex: 1, marginLeft: 14, maxWidth: 140 }}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span style={{ color: T.muted, fontSize: 9, fontWeight: 700, letterSpacing: "0.08em" }}>신뢰도</span>
+                    <span style={{ color: ins.color, fontSize: 11, fontWeight: 800, fontFamily: "ui-monospace, 'SF Mono', monospace" }}>{ins.confidence}%</span>
+                  </div>
+                  <div style={{ height: 4, background: T.hairlineSoft, borderRadius: 99, overflow: "hidden" }}>
+                    <div style={{
+                      width: `${ins.confidence}%`,
+                      height: "100%",
+                      background: `linear-gradient(90deg, ${ins.color}88 0%, ${ins.color} 100%)`,
+                      borderRadius: 99,
+                    }} />
+                  </div>
                 </div>
               </div>
 
+              {/* 골든 윈도우 */}
+              <div style={{
+                color: T.charcoal, fontSize: 11, fontWeight: 500,
+                background: T.surface,
+                borderRadius: R.sm,
+                padding: "5px 9px",
+                marginBottom: 8,
+                letterSpacing: "-0.005em",
+              }}>
+                <span style={{ marginRight: 4 }}>⏱</span>
+                <span style={{ fontWeight: 700 }}>골든 윈도우</span> · {ins.window}
+              </div>
+
               {/* 근거 */}
-              <div className="mt-2 pt-2" style={{ borderTop: `1px dashed ${T.hairlineSoft}`, color: T.muted, fontSize: 10.5, lineHeight: 1.5, fontWeight: 400, wordBreak: "keep-all" }}>
-                근거 · {ins.basis}
+              <div style={{ borderTop: `1px dashed ${T.hairlineSoft}`, paddingTop: 8, color: T.muted, fontSize: 10, lineHeight: 1.5, fontWeight: 400, wordBreak: "keep-all", letterSpacing: "-0.005em" }}>
+                <span style={{ color: ins.color, fontWeight: 700, marginRight: 4 }}>근거</span>
+                {ins.basis}
               </div>
             </div>
           );
@@ -4652,21 +4783,21 @@ function PanelMap() {
             display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8,
             background: `linear-gradient(135deg, ${T.mossDark} 0%, #1F6157 100%)`,
             color: "#FFFFFF",
-            padding: "12px 16px",
+            padding: "14px 18px",
             borderRadius: R.xl,
             textDecoration: "none",
-            boxShadow: "0 4px 14px rgba(20,68,59,0.22), inset 0 1px 0 rgba(255,255,255,0.15)",
+            boxShadow: "0 8px 24px rgba(20,68,59,0.28), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.2)",
           }}
         >
           <div>
-            <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: "0.08em", opacity: 0.85 }}>
-              우리 지역 맞춤 추천
+            <div style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: "0.12em", opacity: 0.85, marginBottom: 3 }}>
+              내 사업장 맞춤 시뮬레이션
             </div>
-            <div style={{ fontSize: 13, fontWeight: 600, marginTop: 2 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.005em" }}>
               Studio에서 한 줄로 받기 →
             </div>
           </div>
-          <span style={{ fontSize: 22 }}>✨</span>
+          <span style={{ fontSize: 24 }}>✨</span>
         </a>
       </div>
     </div>
