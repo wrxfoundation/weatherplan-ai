@@ -4296,13 +4296,78 @@ function PanelCampaigns() {
 
 function PanelMap() {
   const [hover, setHover] = useState(null);
+
+  // 위성 지도 (1200x896) 위 도시 좌표 — 한반도 실측 위치 기반
+  const SATELLITE_CITIES = [
+    { code: "11", name: "서울",  x: 500, y: 295, t: 17, pop: 65, kind: "rain" },
+    { code: "28", name: "인천",  x: 458, y: 298, t: 16, pop: 80, kind: "rain" },
+    { code: "41", name: "수원",  x: 495, y: 330, t: 18, pop: 55, kind: "rain" },
+    { code: "42", name: "강릉",  x: 622, y: 305, t: 14, pop: 60, kind: "rain" },
+    { code: "30", name: "대전",  x: 540, y: 412, t: 19, pop: 30, kind: "cloud" },
+    { code: "27", name: "대구",  x: 622, y: 520, t: 22, pop: 10, kind: "sun" },
+    { code: "29", name: "광주",  x: 510, y: 568, t: 21, pop: 15, kind: "sun" },
+    { code: "31", name: "울산",  x: 685, y: 545, t: 22, pop:  8, kind: "sun" },
+    { code: "26", name: "부산",  x: 718, y: 600, t: 23, pop:  5, kind: "sun" },
+    { code: "50", name: "제주",  x: 540, y: 800, t: 24, pop:  0, kind: "sun" },
+  ];
+
+  // 3개 핵심 인사이트 — 마케팅 액션 + KPI 근거
+  const INSIGHTS = [
+    {
+      id: "metro",
+      region: "수도권",
+      cities: "서울·인천·수원",
+      trigger: "강수 D-1 진입",
+      triggerDetail: "강수확률 55-80% · 기온 16-18°C",
+      action: "우산·배달·실내 카테고리 입찰 강화",
+      bid: "+35%",
+      kpiLabel: "배달 매출",
+      kpiValue: "+58%",
+      basis: "장마 + 저녁 시간대 배달 객단가 +58% (한국 외식업 통계)",
+      window: "비 시작 6시간 전 골든타임",
+      tint: "lavender",
+      icon: "rain",
+    },
+    {
+      id: "youngnam",
+      region: "영남권",
+      cities: "대구·부산·울산",
+      trigger: "맑음 + 야외 활동 최적",
+      triggerDetail: "기온 22-23°C · 강수확률 5-10%",
+      action: "외식·아웃도어·디저트 카테고리 운영 강화",
+      bid: "+28%",
+      kpiLabel: "매장 매출",
+      kpiValue: "+42%",
+      basis: "체감 22°C+ 주말 외식 검색 +180% (네이버)",
+      window: "주말 점심·오후 시간대 집중",
+      tint: "teal",
+      icon: "sun",
+    },
+    {
+      id: "honam",
+      region: "호남·제주",
+      cities: "광주·제주",
+      trigger: "주말 맑음 + UV 5+",
+      triggerDetail: "기온 21-24°C · 강수확률 0-15%",
+      action: "여행·숙박·당일치기 광고 활성화",
+      bid: "+24%",
+      kpiLabel: "예약 전환율",
+      kpiValue: "+36%",
+      basis: "주말 맑음 + UV 5+ 당일치기 예약 전환 +36%",
+      window: "금요일 저녁 ~ 토요일 새벽 광고 집중",
+      tint: "rose",
+      icon: "sun",
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="md:col-span-2">
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      {/* 위성 지도 — 3/5 */}
+      <div className="md:col-span-3">
         <div className="flex items-center justify-between mb-3">
           <div>
             <div style={{ color: T.steel, fontSize: 11, fontWeight: 600, letterSpacing: "0.08em" }}>
-              전국 17개 광역시도
+              전국 17개 광역시도 · 실시간
             </div>
             <div style={{ color: T.ink, fontSize: 18, fontWeight: 600, letterSpacing: "-0.015em", marginTop: 4 }}>
               지역별 광고 트리거 분포
@@ -4314,179 +4379,60 @@ function PanelMap() {
           </Tag>
         </div>
 
-        {/* 한국 지도 — 실제 지형도 이미지 + 데이터 오버레이 */}
+        {/* 위성 지도 컨테이너 */}
         <div
           style={{
-            background: `linear-gradient(180deg, #E8F4F8 0%, #F0F7F5 100%)`,
-            border: `1px solid ${T.hairlineSoft}`,
-            borderRadius: R.xl,
-            padding: 16,
-            height: 460,
             position: "relative",
+            borderRadius: R.xl,
             overflow: "hidden",
+            border: `1px solid ${T.hairlineSoft}`,
+            background: "#0E2238",
+            boxShadow: "0 8px 32px rgba(5,0,56,0.18), 0 1px 3px rgba(5,0,56,0.08)",
+            aspectRatio: "1200 / 896",
+            minHeight: 360,
           }}
         >
-          <svg viewBox="0 0 500 480" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+          <svg
+            viewBox="0 0 1200 896"
+            className="w-full h-full block"
+            preserveAspectRatio="xMidYMid meet"
+            style={{ position: "absolute", inset: 0 }}
+          >
             <defs>
-              {/* 바다 그라데이션 */}
-              <linearGradient id="seaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%"   stopColor="#DCEEF5" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#C8E4EE" stopOpacity="0.6" />
-              </linearGradient>
-              {/* 육지 그라데이션 (서쪽 평야 → 동쪽 산악) */}
-              <linearGradient id="landGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%"   stopColor="#F5EFE0" />
-                <stop offset="55%"  stopColor="#E8DFC8" />
-                <stop offset="100%" stopColor="#C4B795" />
-              </linearGradient>
-              {/* 산악 음영 */}
-              <linearGradient id="mountainShade" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%"   stopColor="#8A7B4F" stopOpacity="0.7" />
-                <stop offset="100%" stopColor="#6A5C38" stopOpacity="0.4" />
+              <radialGradient id="vignette" cx="50%" cy="50%" r="65%">
+                <stop offset="60%" stopColor="rgba(0,0,0,0)" />
+                <stop offset="100%" stopColor="rgba(5,0,56,0.45)" />
+              </radialGradient>
+              <filter id="dotGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="4" />
+              </filter>
+              <linearGradient id="topShade" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%"  stopColor="rgba(5,0,56,0.35)" />
+                <stop offset="35%" stopColor="rgba(5,0,56,0)" />
               </linearGradient>
             </defs>
 
-            {/* === 바다 배경 === */}
-            <rect width="500" height="480" fill="url(#seaGradient)" />
+            {/* 위성 지도 이미지 */}
+            <image
+              href="/korea-satellite.png"
+              x="0" y="0" width="1200" height="896"
+              preserveAspectRatio="xMidYMid slice"
+            />
 
-            {/* === 한국 본토 (좀 더 정밀한 outline) === */}
-            <g>
-              {/* 본토 outline */}
-              <path
-                d="M 215 60
-                   Q 235 50, 260 55
-                   Q 285 50, 305 60
-                   Q 325 55, 340 75
-                   Q 358 90, 360 115
-                   Q 365 135, 358 155
-                   Q 372 165, 380 185
-                   Q 385 210, 378 230
-                   Q 388 250, 380 270
-                   Q 390 290, 378 308
-                   Q 372 328, 355 340
-                   Q 340 358, 325 372
-                   Q 308 382, 290 380
-                   Q 268 385, 250 378
-                   Q 230 372, 218 358
-                   Q 205 342, 208 322
-                   Q 198 305, 195 285
-                   Q 185 268, 188 248
-                   Q 175 230, 178 210
-                   Q 170 190, 175 170
-                   Q 168 152, 175 132
-                   Q 178 110, 188 90
-                   Q 198 70, 215 60 Z"
-                fill="url(#landGradient)"
-                stroke="#9B8C66"
-                strokeWidth="1.2"
-              />
+            {/* 상단 어두운 그라데이션 (라벨 가독성) */}
+            <rect width="1200" height="896" fill="url(#topShade)" />
+            <rect width="1200" height="896" fill="url(#vignette)" />
 
-              {/* === 산맥 음영 (백두대간 — 동쪽 산악 라인) === */}
-              <path
-                d="M 305 75
-                   Q 325 100, 332 130
-                   Q 345 160, 348 195
-                   Q 358 225, 355 260
-                   Q 350 290, 340 315
-                   Q 332 340, 322 360"
-                fill="none"
-                stroke="url(#mountainShade)"
-                strokeWidth="22"
-                strokeLinecap="round"
-                opacity="0.55"
-              />
-
-              {/* === 산맥 음영 (소백산맥) === */}
-              <path
-                d="M 248 175
-                   Q 268 200, 285 230
-                   Q 298 260, 305 290"
-                fill="none"
-                stroke="url(#mountainShade)"
-                strokeWidth="16"
-                strokeLinecap="round"
-                opacity="0.4"
-              />
-
-              {/* === 한강 === */}
-              <path
-                d="M 215 145
-                   Q 235 152, 255 148
-                   Q 275 152, 295 158
-                   Q 315 160, 335 155"
-                fill="none"
-                stroke="#5A8FA8"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                opacity="0.75"
-              />
-
-              {/* === 금강 === */}
-              <path
-                d="M 230 230
-                   Q 248 240, 260 248
-                   Q 240 258, 220 268"
-                fill="none"
-                stroke="#5A8FA8"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                opacity="0.7"
-              />
-
-              {/* === 낙동강 === */}
-              <path
-                d="M 320 175
-                   Q 318 220, 320 260
-                   Q 325 295, 335 320"
-                fill="none"
-                stroke="#5A8FA8"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                opacity="0.7"
-              />
-
-              {/* === 영산강 === */}
-              <path
-                d="M 220 320
-                   Q 232 335, 245 348"
-                fill="none"
-                stroke="#5A8FA8"
-                strokeWidth="1.3"
-                strokeLinecap="round"
-                opacity="0.65"
-              />
-
-              {/* === 도(道) 경계선 (희미하게) === */}
-              {/* 강원 - 경기 */}
-              <path d="M 275 95 Q 290 120, 295 150" stroke="#9B8C66" strokeWidth="0.7" strokeDasharray="3,3" fill="none" opacity="0.45" />
-              {/* 충청 - 경상 */}
-              <path d="M 270 200 Q 282 230, 280 265" stroke="#9B8C66" strokeWidth="0.7" strokeDasharray="3,3" fill="none" opacity="0.45" />
-              {/* 충청 - 전라 */}
-              <path d="M 245 250 Q 232 275, 220 295" stroke="#9B8C66" strokeWidth="0.7" strokeDasharray="3,3" fill="none" opacity="0.45" />
-              {/* 전라 - 경상 */}
-              <path d="M 268 320 Q 290 335, 308 350" stroke="#9B8C66" strokeWidth="0.7" strokeDasharray="3,3" fill="none" opacity="0.45" />
-            </g>
-
-            {/* === 제주도 === */}
-            <ellipse cx="195" cy="425" rx="24" ry="13" fill="url(#landGradient)" stroke="#9B8C66" strokeWidth="1.2" />
-            <ellipse cx="195" cy="425" rx="10" ry="5" fill="url(#mountainShade)" opacity="0.6" />
-
-            {/* === 울릉도·독도 (작은 점) === */}
-            <circle cx="425" cy="170" r="3" fill="url(#landGradient)" stroke="#9B8C66" strokeWidth="0.8" />
-            <circle cx="450" cy="175" r="1.5" fill="url(#landGradient)" stroke="#9B8C66" strokeWidth="0.6" />
-
-            {/* === 바다 라벨 (옅게) === */}
-            <text x="430" y="240" fill="#7BA8B8" fontSize="11" fontWeight="500" opacity="0.7" letterSpacing="0.1em">동해</text>
-            <text x="130" y="220" fill="#7BA8B8" fontSize="11" fontWeight="500" opacity="0.7" letterSpacing="0.1em">서해</text>
-            <text x="275" y="420" fill="#7BA8B8" fontSize="11" fontWeight="500" opacity="0.7" letterSpacing="0.1em">남해</text>
-
-            {/* === 도시 데이터 점 (기존 유지) === */}
-            {MAP_CITIES.map((city) => {
-              const hot = city.t >= 28;
-              const cold = city.t <= 5;
-              const rain = city.pop >= 60;
-              const fill = rain ? T.brandBlue : hot ? T.brandCoral : cold ? T.brandBlue : T.brandTeal;
+            {/* 도시별 마커 + 라벨 */}
+            {SATELLITE_CITIES.map((city) => {
+              const colorByKind = {
+                rain:  T.brandBlue,
+                cloud: T.steel,
+                sun:   T.brandTeal,
+              };
+              const fill = colorByKind[city.kind] || T.brandTeal;
               const isHover = hover === city.code;
+              const r = isHover ? 18 : 13;
               return (
                 <g
                   key={city.code}
@@ -4494,73 +4440,213 @@ function PanelMap() {
                   onMouseLeave={() => setHover(null)}
                   style={{ cursor: "pointer" }}
                 >
-                  <circle cx={city.x} cy={city.y} r={isHover ? 14 : 10}
-                    fill={fill} opacity={isHover ? 1 : 0.85}
-                    style={{ transition: "all 200ms" }}
+                  {/* 글로우 */}
+                  <circle cx={city.x} cy={city.y} r={r * 1.8} fill={fill} opacity={isHover ? 0.35 : 0.22} filter="url(#dotGlow)" />
+                  {/* 외곽 링 */}
+                  <circle cx={city.x} cy={city.y} r={r} fill={fill} opacity={isHover ? 1 : 0.92} style={{ transition: "all 200ms" }} />
+                  {/* 흰 코어 */}
+                  <circle cx={city.x} cy={city.y} r="5" fill="#FFFFFF" />
+
+                  {/* 라벨 배경 (가독성) */}
+                  <rect
+                    x={city.x - 38} y={city.y + 18}
+                    width="76" height="38"
+                    rx="6"
+                    fill="rgba(5,0,56,0.78)"
+                    stroke="rgba(255,255,255,0.18)"
+                    strokeWidth="0.8"
                   />
-                  <circle cx={city.x} cy={city.y} r="4" fill={T.canvas} />
                   <text
-                    x={city.x} y={city.y + 26}
+                    x={city.x} y={city.y + 34}
                     textAnchor="middle"
-                    fill={T.ink}
-                    style={{ fontSize: 11, fontWeight: 600, letterSpacing: "-0.01em" }}
+                    fill="#FFFFFF"
+                    style={{ fontSize: 14, fontWeight: 700, letterSpacing: "-0.01em" }}
                   >
                     {city.name}
                   </text>
                   <text
-                    x={city.x} y={city.y + 39}
+                    x={city.x} y={city.y + 49}
                     textAnchor="middle"
-                    fill={T.slate}
-                    style={{ fontSize: 10, fontWeight: 500 }}
+                    fill="rgba(255,255,255,0.78)"
+                    style={{ fontSize: 11.5, fontWeight: 500 }}
                   >
-                    {city.t}℃
+                    {city.t}°C · {city.pop}%
                   </text>
                 </g>
               );
             })}
           </svg>
+
+          {/* 좌상단 범례 (overlay) */}
+          <div style={{
+            position: "absolute", top: 12, left: 12,
+            background: "rgba(255,255,255,0.92)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            borderRadius: R.md,
+            padding: "8px 10px",
+            display: "flex", flexDirection: "column", gap: 4,
+            fontSize: 10.5, fontWeight: 600, letterSpacing: "0.02em",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            border: "1px solid rgba(255,255,255,0.6)",
+            color: T.ink,
+          }}>
+            <div className="flex items-center gap-1.5">
+              <span style={{ width: 8, height: 8, borderRadius: 99, background: T.brandBlue }} />
+              강수 ≥ 55%
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span style={{ width: 8, height: 8, borderRadius: 99, background: T.steel }} />
+              구름 30-55%
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span style={{ width: 8, height: 8, borderRadius: 99, background: T.brandTeal }} />
+              맑음 &lt; 30%
+            </div>
+          </div>
+
+          {/* 우상단 갱신 시각 */}
+          <div style={{
+            position: "absolute", top: 12, right: 12,
+            background: "rgba(5,0,56,0.75)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            borderRadius: R.md,
+            padding: "6px 10px",
+            color: "#FFFFFF",
+            fontSize: 10.5, fontWeight: 600, letterSpacing: "0.04em",
+            display: "flex", alignItems: "center", gap: 6,
+            border: "1px solid rgba(255,255,255,0.15)",
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: 99, background: T.brandTeal, boxShadow: `0 0 8px ${T.brandTeal}` }} />
+            5분 전 갱신
+          </div>
+        </div>
+
+        {/* 지도 하단 짧은 캡션 */}
+        <div className="mt-3 flex items-center justify-between flex-wrap gap-2" style={{ color: T.steel, fontSize: 11, fontWeight: 500 }}>
+          <span>케이웨더 30,000여 측정 센서 · 동단위 5분 갱신</span>
+          <span style={{ color: T.mossDark, fontWeight: 600 }}>17개 광역시도 → 226개 시군구 확장 진행 중</span>
         </div>
       </div>
 
-      <div
-        style={{
-          background: T.canvas,
-          border: `1px solid ${T.hairlineSoft}`,
-          borderRadius: R.xl,
-          padding: 20,
-        }}
-      >
-        <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 600, letterSpacing: "0.08em", marginBottom: 12 }}>
-          오늘의 트리거 분포
+      {/* 인사이트 패널 — 2/5 */}
+      <div className="md:col-span-2 flex flex-col gap-3">
+        <div style={{ color: T.steel, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+          ⚡ 오늘의 광고 시그널
         </div>
-        <ul className="space-y-3 mb-5">
-          {[
-            { label: "강수 시작 지역",   value: "수도권 (서울·인천·수원)", tint: "lavender" },
-            { label: "맑음 + 평상시",    value: "영남권 (대구·부산·울산)",  tint: "teal" },
-            { label: "선선 + 외출 좋음", value: "호남·제주",               tint: "rose" },
-            { label: "기상특보",         value: "없음",                  tint: "teal" },
-          ].map((r) => {
-            const t = TINT[r.tint];
-            return (
-              <li key={r.label}>
-                <div style={{ color: T.steel, fontSize: 10, fontWeight: 600, letterSpacing: "0.08em" }}>
-                  {r.label}
+
+        {INSIGHTS.map((ins) => {
+          const t = TINT[ins.tint];
+          return (
+            <div
+              key={ins.id}
+              style={{
+                background: T.canvas,
+                border: `1px solid ${T.hairlineSoft}`,
+                borderRadius: R.xl,
+                padding: "14px 16px",
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              {/* tint 좌측 막대 */}
+              <div style={{
+                position: "absolute", left: 0, top: 0, bottom: 0,
+                width: 3, background: t.text,
+              }} />
+
+              {/* 헤더 */}
+              <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                <div>
+                  <div style={{ color: T.ink, fontSize: 14, fontWeight: 700, letterSpacing: "-0.01em" }}>
+                    {ins.region}
+                    <span style={{ color: T.muted, fontWeight: 500, fontSize: 11, marginLeft: 6 }}>
+                      {ins.cities}
+                    </span>
+                  </div>
                 </div>
-                <div style={{ color: t.text, fontSize: 13, fontWeight: 600, marginTop: 2 }}>
-                  {r.value}
+                <span style={{
+                  background: t.bg, color: t.text,
+                  fontSize: 10.5, fontWeight: 700, letterSpacing: "0.04em",
+                  padding: "3px 9px", borderRadius: R.full,
+                  whiteSpace: "nowrap",
+                }}>
+                  입찰 {ins.bid}
+                </span>
+              </div>
+
+              {/* 트리거 */}
+              <div style={{ color: T.charcoal, fontSize: 12.5, fontWeight: 600, marginBottom: 2, letterSpacing: "-0.005em" }}>
+                {ins.trigger}
+              </div>
+              <div style={{ color: T.steel, fontSize: 11, fontWeight: 400, marginBottom: 8 }}>
+                {ins.triggerDetail}
+              </div>
+
+              {/* 액션 */}
+              <div style={{
+                background: T.surface,
+                borderRadius: R.md,
+                padding: "8px 10px",
+                marginBottom: 8,
+                fontSize: 12, color: T.ink, fontWeight: 500, lineHeight: 1.5,
+                wordBreak: "keep-all",
+              }}>
+                {ins.action}
+              </div>
+
+              {/* KPI + 골든 윈도우 */}
+              <div className="flex items-end justify-between gap-3 flex-wrap">
+                <div>
+                  <div style={{ color: T.muted, fontSize: 9.5, fontWeight: 700, letterSpacing: "0.06em" }}>
+                    예상 {ins.kpiLabel}
+                  </div>
+                  <div style={{ color: t.text, fontSize: 19, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1 }}>
+                    {ins.kpiValue}
+                  </div>
                 </div>
-              </li>
-            );
-          })}
-        </ul>
-        <div
+                <div style={{
+                  color: T.steel, fontSize: 10.5, fontWeight: 500,
+                  textAlign: "right", lineHeight: 1.4, maxWidth: 160,
+                  letterSpacing: "-0.005em", wordBreak: "keep-all",
+                }}>
+                  ⏱ {ins.window}
+                </div>
+              </div>
+
+              {/* 근거 */}
+              <div className="mt-2 pt-2" style={{ borderTop: `1px dashed ${T.hairlineSoft}`, color: T.muted, fontSize: 10.5, lineHeight: 1.5, fontWeight: 400, wordBreak: "keep-all" }}>
+                근거 · {ins.basis}
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Studio CTA */}
+        <a
+          href="/studio"
+          className="transition active:translate-y-px"
           style={{
-            background: T.surface, borderRadius: R.lg, padding: "10px 12px",
-            fontSize: 12, color: T.charcoal, lineHeight: 1.55, fontWeight: 400,
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8,
+            background: `linear-gradient(135deg, ${T.mossDark} 0%, #1F6157 100%)`,
+            color: "#FFFFFF",
+            padding: "12px 16px",
+            borderRadius: R.xl,
+            textDecoration: "none",
+            boxShadow: "0 4px 14px rgba(20,68,59,0.22), inset 0 1px 0 rgba(255,255,255,0.15)",
           }}
         >
-          수도권 광고는 우산·배달·실내 카테고리로 자동 전환을 권장. 영남권은 외식·여가 평상시 운영 OK.
-        </div>
+          <div>
+            <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: "0.08em", opacity: 0.85 }}>
+              우리 지역 맞춤 추천
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 600, marginTop: 2 }}>
+              Studio에서 한 줄로 받기 →
+            </div>
+          </div>
+          <span style={{ fontSize: 22 }}>✨</span>
+        </a>
       </div>
     </div>
   );
