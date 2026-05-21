@@ -1016,9 +1016,9 @@ const TINT = {
 /* Miro 워드마크 (블록형) — KWeather 시그니처
    variant: "filled" (기본, GNB·다크 배경) | "inline" (챗봇 안, 배경 없음 + 1px 테두리) */
 function Logo({ size = 32, variant = "filled" }) {
-  // 새 브랜드 마크: sun rays + 원 + 우상단 화살표 + 좌측 액센트 dot
+  // 브랜드 마크: sun rays + 원 + 우상단 화살표 + 좌측 액센트 dot
   // 시맨틱: 날씨(태양) + 광고 의사결정(화살표·성장) + 데이터 시그널(액센트 dot)
-  void variant; // legacy prop — 두 변형 모두 동일한 SVG 사용
+  void variant;
   return (
     <svg
       width={size}
@@ -1030,25 +1030,25 @@ function Logo({ size = 32, variant = "filled" }) {
       className="select-none flex-shrink-0"
       style={{ display: "block" }}
     >
-      {/* 8 sun rays */}
-      <g stroke="#0080FF" strokeWidth="3" strokeLinecap="round">
-        <line x1="24" y1="3"  x2="24" y2="10" />
-        <line x1="36" y1="12" x2="40" y2="8"  />
-        <line x1="38" y1="24" x2="45" y2="24" />
-        <line x1="36" y1="36" x2="40" y2="40" />
-        <line x1="24" y1="38" x2="24" y2="45" />
-        <line x1="12" y1="36" x2="8"  y2="40" />
-        <line x1="10" y1="24" x2="14" y2="24" />
-        <line x1="12" y1="12" x2="8"  y2="8"  />
+      {/* 8 sun rays — 7개 균일(length 7~7.07) + W는 dot 시각 분리용 짧게 */}
+      <g stroke="#0091FF" strokeWidth="3.5" strokeLinecap="round">
+        <line x1="24" y1="5"  x2="24" y2="12" />
+        <line x1="32" y1="16" x2="37" y2="11" />
+        <line x1="36" y1="24" x2="43" y2="24" />
+        <line x1="32" y1="32" x2="37" y2="37" />
+        <line x1="24" y1="36" x2="24" y2="43" />
+        <line x1="16" y1="32" x2="11" y2="37" />
+        <line x1="13" y1="24" x2="9"  y2="24" />
+        <line x1="16" y1="16" x2="11" y2="11" />
       </g>
-      {/* 좌측 액센트 dot */}
-      <circle cx="2.5" cy="24" r="1.8" fill="#4EB3A8" />
+      {/* 좌측 액센트 dot — W ray 외부 */}
+      <circle cx="2.8" cy="24" r="2" fill="#4EB3A8" />
       {/* 중앙 원 */}
-      <circle cx="24" cy="24" r="8" stroke="#0080FF" strokeWidth="3" />
-      {/* 화살표 ↗ (원 안에서 우상단으로 빠져나감) */}
+      <circle cx="24" cy="24" r="8" stroke="#0091FF" strokeWidth="3" />
+      {/* 화살표 ↗ (원 내부, tip은 원 경계에 안착) */}
       <g stroke="#4EB3A8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none">
-        <line x1="19" y1="29" x2="30" y2="18" />
-        <polyline points="24,18 30,18 30,24" />
+        <line x1="19" y1="29" x2="29" y2="19" />
+        <polyline points="24,19 29,19 29,24" />
       </g>
     </svg>
   );
@@ -1508,8 +1508,8 @@ function Hero() {
                 transition: "box-shadow 200ms ease",
               }}
             >
-              <div className="flex gap-1.5 items-stretch">
-                <div className="flex-1 flex items-center gap-3 pl-3.5">
+              <div className="flex flex-col sm:flex-row gap-1.5 items-stretch">
+                <div className="flex-1 flex items-center gap-3 pl-3.5 min-w-0">
                   <Logo size={28} variant="inline" />
                   <input
                     ref={inputRef}
@@ -1517,7 +1517,7 @@ function Hero() {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && runDemo()}
                     placeholder="예: 강남 카페예요, 이번 주말 장마인데 어떻게 광고할까요?"
-                    className="flex-1 bg-transparent outline-none"
+                    className="flex-1 min-w-0 bg-transparent outline-none"
                     style={{ color: T.ink, fontSize: 15, fontWeight: 400, paddingTop: 12, paddingBottom: 12 }}
                     disabled={stage === "thinking"}
                   />

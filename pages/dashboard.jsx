@@ -74,21 +74,21 @@ const QUICK_ACTIONS = [
 function BrandMark({ size = 32 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="select-none flex-shrink-0" style={{ display: "block" }}>
-      <g stroke="#0080FF" strokeWidth="3" strokeLinecap="round">
-        <line x1="24" y1="3"  x2="24" y2="10" />
-        <line x1="36" y1="12" x2="40" y2="8"  />
-        <line x1="38" y1="24" x2="45" y2="24" />
-        <line x1="36" y1="36" x2="40" y2="40" />
-        <line x1="24" y1="38" x2="24" y2="45" />
-        <line x1="12" y1="36" x2="8"  y2="40" />
-        <line x1="10" y1="24" x2="14" y2="24" />
-        <line x1="12" y1="12" x2="8"  y2="8"  />
+      <g stroke="#0091FF" strokeWidth="3.5" strokeLinecap="round">
+        <line x1="24" y1="5"  x2="24" y2="12" />
+        <line x1="32" y1="16" x2="37" y2="11" />
+        <line x1="36" y1="24" x2="43" y2="24" />
+        <line x1="32" y1="32" x2="37" y2="37" />
+        <line x1="24" y1="36" x2="24" y2="43" />
+        <line x1="16" y1="32" x2="11" y2="37" />
+        <line x1="13" y1="24" x2="9"  y2="24" />
+        <line x1="16" y1="16" x2="11" y2="11" />
       </g>
-      <circle cx="2.5" cy="24" r="1.8" fill="#4EB3A8" />
-      <circle cx="24" cy="24" r="8" stroke="#0080FF" strokeWidth="3" />
+      <circle cx="2.8" cy="24" r="2" fill="#4EB3A8" />
+      <circle cx="24" cy="24" r="8" stroke="#0091FF" strokeWidth="3" />
       <g stroke="#4EB3A8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none">
-        <line x1="19" y1="29" x2="30" y2="18" />
-        <polyline points="24,18 30,18 30,24" />
+        <line x1="19" y1="29" x2="29" y2="19" />
+        <polyline points="24,19 29,19 29,24" />
       </g>
     </svg>
   );
