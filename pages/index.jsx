@@ -1016,36 +1016,41 @@ const TINT = {
 /* Miro 워드마크 (블록형) — KWeather 시그니처
    variant: "filled" (기본, GNB·다크 배경) | "inline" (챗봇 안, 배경 없음 + 1px 테두리) */
 function Logo({ size = 32, variant = "filled" }) {
-  const isInline = variant === "inline";
+  // 새 브랜드 마크: sun rays + 원 + 우상단 화살표 + 좌측 액센트 dot
+  // 시맨틱: 날씨(태양) + 광고 의사결정(화살표·성장) + 데이터 시그널(액센트 dot)
+  void variant; // legacy prop — 두 변형 모두 동일한 SVG 사용
   return (
-    <div
-      className="flex items-center justify-center select-none"
-      style={{
-        width: size, height: size,
-        background: isInline
-          ? "transparent"
-          : `linear-gradient(135deg, ${T.brandTeal} 0%, ${T.mossDark} 100%)`,
-        color: isInline ? T.mossDark : T.onPrimary,
-        border: isInline ? `1px solid ${T.mossDark}` : "none",
-        borderRadius: R.sm,
-        boxShadow: isInline
-          ? "none"
-          : "inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.15), 0 2px 6px rgba(20,68,59,0.22)",
-      }}
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      className="select-none flex-shrink-0"
+      style={{ display: "block" }}
     >
-      <svg
-        width={size * 0.62} height={size * 0.62}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M17.5 19a4.5 4.5 0 1 0-1.5-8.75 6 6 0 1 0-11.5 3.25 4 4 0 0 0 .5 7.5h12.5z" />
-      </svg>
-    </div>
+      {/* 8 sun rays */}
+      <g stroke="#0080FF" strokeWidth="3" strokeLinecap="round">
+        <line x1="24" y1="3"  x2="24" y2="10" />
+        <line x1="36" y1="12" x2="40" y2="8"  />
+        <line x1="38" y1="24" x2="45" y2="24" />
+        <line x1="36" y1="36" x2="40" y2="40" />
+        <line x1="24" y1="38" x2="24" y2="45" />
+        <line x1="12" y1="36" x2="8"  y2="40" />
+        <line x1="10" y1="24" x2="14" y2="24" />
+        <line x1="12" y1="12" x2="8"  y2="8"  />
+      </g>
+      {/* 좌측 액센트 dot */}
+      <circle cx="2.5" cy="24" r="1.8" fill="#4EB3A8" />
+      {/* 중앙 원 */}
+      <circle cx="24" cy="24" r="8" stroke="#0080FF" strokeWidth="3" />
+      {/* 화살표 ↗ (원 안에서 우상단으로 빠져나감) */}
+      <g stroke="#4EB3A8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none">
+        <line x1="19" y1="29" x2="30" y2="18" />
+        <polyline points="24,18 30,18 30,24" />
+      </g>
+    </svg>
   );
 }
 

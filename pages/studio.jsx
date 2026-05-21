@@ -367,6 +367,29 @@ const buildSystemPrompt = (industryLabel) => `당신은 wellbian AI입니다. �
 /* ============================================================
  *  Studio Component
  * ============================================================ */
+function BrandMark({ size = 32 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="select-none flex-shrink-0" style={{ display: "block" }}>
+      <g stroke="#0080FF" strokeWidth="3" strokeLinecap="round">
+        <line x1="24" y1="3"  x2="24" y2="10" />
+        <line x1="36" y1="12" x2="40" y2="8"  />
+        <line x1="38" y1="24" x2="45" y2="24" />
+        <line x1="36" y1="36" x2="40" y2="40" />
+        <line x1="24" y1="38" x2="24" y2="45" />
+        <line x1="12" y1="36" x2="8"  y2="40" />
+        <line x1="10" y1="24" x2="14" y2="24" />
+        <line x1="12" y1="12" x2="8"  y2="8"  />
+      </g>
+      <circle cx="2.5" cy="24" r="1.8" fill="#4EB3A8" />
+      <circle cx="24" cy="24" r="8" stroke="#0080FF" strokeWidth="3" />
+      <g stroke="#4EB3A8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none">
+        <line x1="19" y1="29" x2="30" y2="18" />
+        <polyline points="24,18 30,18 30,24" />
+      </g>
+    </svg>
+  );
+}
+
 export default function StudioPage() {
   const [industry, setIndustry] = useState(INDUSTRIES[0].id);
   const [messages, setMessages] = useState([]);  // [{role: "user"|"assistant", content: string}]
@@ -505,13 +528,7 @@ ${basis}
             <Icon name="menu" size={18} stroke={2} />
           </button>
           <a href="/" className="flex items-center gap-2.5">
-            <div style={{
-              width: 32, height: 32, borderRadius: R.md,
-              background: T.mossDark, color: "#FFFFFF",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <Icon name="cloud" size={18} stroke={2} />
-            </div>
+            <BrandMark size={32} />
             <div className="leading-none">
               <div style={{ color: T.ink, fontSize: 14, fontWeight: 600, letterSpacing: "-0.01em" }}>
                 Weather Plan AI
