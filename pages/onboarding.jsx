@@ -302,6 +302,16 @@ export default function OnboardingFlow() {
     if (newStep === 2 && channels.length === 0 && recommendedChannels.length > 0) {
       setChannels(recommendedChannels.slice(0, 3));
     }
+    // Step 3 도달 시 = 등록 완료 → localStorage 저장 (Dashboard에서 읽음)
+    if (newStep === 3 && typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem("wpa_profile", JSON.stringify({
+          persona, businessName, sido, sigungu, regionScope,
+          industries, industrySubs, budget, channels,
+          registeredAt: new Date().toISOString(),
+        }));
+      } catch (e) { /* localStorage 비활성 환경 무시 */ }
+    }
     setStep(newStep);
   };
 
