@@ -427,14 +427,14 @@ const TRIGGER_CATALOG = [
 const PRICING = [
   {
     tier: "스타터", price: "₩9,900", period: "/월",
-    quota: "광고 추천 결과 월 200건",
+    quota: "광고 추천 결과 월 100건",
     for: "자영업 · 1인 사장님",
     features: ["광고 채널 2개", "한국어 한 줄 입력", "일·월 광고비 한도", "정확도 점수 가드"],
     badge: "베타 무료",
   },
   {
     tier: "그로스", price: "₩29,000", period: "/월",
-    quota: "광고 추천 결과 월 1,000건",
+    quota: "광고 추천 결과 월 500건",
     for: "프랜차이즈 · 셀러",
     features: ["광고 채널 5개", "카테고리 자동 분류", "추천 결과 즉시 발행", "정확도 점수 공개"],
     highlight: true,
@@ -442,7 +442,7 @@ const PRICING = [
   },
   {
     tier: "프로", price: "₩99,000", period: "/월",
-    quota: "광고 추천 결과 월 5,000건",
+    quota: "광고 추천 결과 월 1,000건",
     for: "중견 광고주",
     features: ["광고 채널 무제한", "AI 의사결정 제안", "케이웨더 60일 예보", "성과 검증 리포트"],
     badge: "베타 무료",
@@ -1339,6 +1339,20 @@ function Hero() {
 
   return (
     <section id="top" style={{ background: T.canvas, position: "relative", overflow: "hidden" }}>
+      {/* Hero 배경 루프 영상 */}
+      <video
+        className="hero-video"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+      >
+        <source src="/hero-loop.mp4" type="video/mp4" />
+      </video>
+      <div className="hero-video-overlay" aria-hidden="true" />
+
       {/* Hero-wide subtle rainbow aurora (전역 은은한 무지개) */}
       <div className="hero-aurora" />
 
@@ -4885,6 +4899,31 @@ export default function WeatherPlanAI() {
             background-position: 0% 8%, 100% 8%, 50% 8%, 0% 8%;
             opacity: 1;
           }
+        }
+        .hero-video {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          z-index: 0;
+          pointer-events: none;
+        }
+        .hero-video-overlay {
+          position: absolute;
+          inset: 0;
+          background:
+            linear-gradient(180deg,
+              rgba(247,245,238,0.35) 0%,
+              rgba(247,245,238,0.55) 45%,
+              rgba(247,245,238,0.82) 80%,
+              rgba(247,245,238,0.96) 100%);
+          z-index: 0;
+          pointer-events: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-video { display: none; }
         }
         .hero-aurora {
           position: absolute;
