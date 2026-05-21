@@ -4460,9 +4460,9 @@ function PanelMap() {
               </radialGradient>
             </defs>
 
-            {/* 위성 지도 (높은 가시성 유지) */}
+            {/* 위성 지도 (WebP — 106KB, 95% 다이어트) */}
             <image
-              href="/korea-satellite.png"
+              href="/korea-satellite.webp"
               x="0" y="0" width="1200" height="896"
               preserveAspectRatio="xMidYMid slice"
             />
