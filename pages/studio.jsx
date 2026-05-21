@@ -477,7 +477,7 @@ ${basis}
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100dvh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", display: "flex", flexDirection: "column" }}>
 
       {/* ─── 상단 헤더 ─── */}
       <header
@@ -546,9 +546,9 @@ ${basis}
 
         {/* ─── 좌측 사이드바 (16업종 + 추천 질문) ─── */}
         <aside
-          className={sidebarOpen ? "fixed inset-0 z-40 md:relative" : "hidden md:block"}
+          className={sidebarOpen ? "fixed inset-0 z-40 md:relative md:w-[280px]" : "hidden md:block md:w-[280px]"}
           style={{
-            width: sidebarOpen ? "100vw" : 280,
+            width: sidebarOpen ? "100vw" : undefined,
             background: T.canvas,
             borderRight: `1px solid ${T.hairlineSoft}`,
             overflowY: "auto",
@@ -749,16 +749,15 @@ ${basis}
           <div style={{
             borderTop: `1px solid ${T.hairlineSoft}`,
             background: T.canvas,
-            padding: "14px 16px",
+            padding: "22px 16px calc(18px + env(safe-area-inset-bottom)) 16px",
           }}>
             <div className="max-w-3xl mx-auto">
               <div
-                className="flex items-center gap-2"
+                className="chat-shine flex items-center gap-2"
                 style={{
                   background: T.surface,
                   borderRadius: R.xxl,
                   padding: "6px 6px 6px 16px",
-                  border: `1px solid ${T.hairlineSoft}`,
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6), 0 2px 6px rgba(5,0,56,0.04)",
                 }}
               >

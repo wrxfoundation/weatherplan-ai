@@ -2921,7 +2921,7 @@ function AIAgentEra() {
                   border: "1px solid rgba(255,255,255,0.12)",
                 }}
               >
-                GOOGLE I/O 2026 · Anthropic Computer Use 대응
+                GOOGLE I/O 2026 · Anthropic Computer Use 대응 준비중.
               </span>
             </div>
 
