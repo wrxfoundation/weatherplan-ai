@@ -826,9 +826,13 @@ export default function OnboardingFlow() {
                     {result.lift}
                   </span>
                 </div>
-                <button style={{ background: `linear-gradient(180deg, #2D2862 0%, #050038 100%)`, color: T.onPrimary, fontSize: 13.5, fontWeight: 500, padding: "10px 18px", borderRadius: R.full, whiteSpace: "nowrap", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.4), 0 1px 2px rgba(5,0,56,0.14), 0 4px 14px rgba(5,0,56,0.28)" }}>
-                  광고 콘솔에서 적용하기 →
-                </button>
+                <a
+                  href="/studio"
+                  className="transition active:translate-y-px"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6, background: `linear-gradient(180deg, #2D2862 0%, #050038 100%)`, color: T.onPrimary, fontSize: 13.5, fontWeight: 500, padding: "10px 18px", borderRadius: R.full, whiteSpace: "nowrap", textDecoration: "none", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.4), 0 1px 2px rgba(5,0,56,0.14), 0 4px 14px rgba(5,0,56,0.28)" }}
+                >
+                  Studio에서 적용하기 →
+                </a>
               </div>
 
               {/* 예측 근거 */}
@@ -1045,7 +1049,7 @@ export default function OnboardingFlow() {
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: T.canvas, borderTop: `1px solid ${T.hairlineSoft}`, padding: "12px 16px", zIndex: 100, boxShadow: "0 -4px 14px rgba(5,0,56,0.04)" }}>
         <div className="max-w-[760px] mx-auto flex items-center justify-between gap-3">
           {step > 0 ? (
-            <button onClick={() => handleStepChange(step - 1)} className="flex items-center gap-1.5 transition hover:opacity-70" style={{ background: T.canvas, color: T.ink, fontSize: 13, fontWeight: 500, padding: "10px 16px", borderRadius: R.full, border: `1px solid ${T.hairline}`, cursor: "pointer" }}>
+            <button type="button" onClick={() => handleStepChange(step - 1)} className="flex items-center gap-1.5 transition hover:opacity-70" style={{ background: T.canvas, color: T.ink, fontSize: 13, fontWeight: 500, padding: "10px 16px", borderRadius: R.full, border: `1px solid ${T.hairline}`, cursor: "pointer" }}>
               <Icon name="arrow-left" size={14} stroke={2.2} />
               이전
             </button>
@@ -1117,7 +1121,7 @@ function FormCard({ label, children }) {
 
 function ChoiceCard({ active, onClick, label, desc }) {
   return (
-    <button onClick={onClick} className="text-left transition active:translate-y-px" style={{ background: active ? "rgba(78,179,168,0.10)" : T.canvas, border: `1.5px solid ${active ? T.brandTeal : T.hairlineSoft}`, borderRadius: R.lg, padding: "10px 13px", cursor: "pointer", boxShadow: active ? "0 2px 6px rgba(78,179,168,0.12)" : "none" }}>
+    <button type="button" onClick={onClick} className="text-left transition active:translate-y-px" style={{ background: active ? "rgba(78,179,168,0.10)" : T.canvas, border: `1.5px solid ${active ? T.brandTeal : T.hairlineSoft}`, borderRadius: R.lg, padding: "10px 13px", cursor: "pointer", boxShadow: active ? "0 2px 6px rgba(78,179,168,0.12)" : "none" }}>
       <div style={{ color: active ? T.mossDark : T.ink, fontSize: 13, fontWeight: active ? 700 : 500, letterSpacing: "-0.005em" }}>{label}</div>
       {desc && <div style={{ color: T.steel, fontSize: 11, fontWeight: 400, marginTop: 2 }}>{desc}</div>}
     </button>

@@ -3807,10 +3807,29 @@ function Footer() {
             </p>
           </div>
           {[
-            { title: "제품",      items: ["기능", "케이웨더 데이터", "정확도", "가격"] },
-            { title: "쓰는 사람",  items: ["대형광고주", "프랜차이즈", "이커머스", "자영업"] },
-            { title: "케이웨더",  items: ["회사 소개", "기술 문서", "AI 비서 연동", "영업팀"] },
-            { title: "법적 고지",  items: ["이용약관", "개인정보처리방침", "사업자 정보"] },
+            { title: "제품",      items: [
+              { label: "기능",          href: "#how" },
+              { label: "케이웨더 데이터", href: "#triggers" },
+              { label: "정확도",        href: "#trust" },
+              { label: "가격",          href: "#pricing" },
+            ]},
+            { title: "쓰는 사람",  items: [
+              { label: "대형광고주",   href: "#personas" },
+              { label: "프랜차이즈",   href: "#personas" },
+              { label: "이커머스",     href: "#personas" },
+              { label: "자영업",       href: "#personas" },
+            ]},
+            { title: "케이웨더",  items: [
+              { label: "회사 소개",       href: "https://www.kweather.co.kr", ext: true },
+              { label: "기술 문서",       href: "mailto:weatherplan@kweather.co.kr?subject=Weather%20Plan%20AI%20기술%20문서%20요청" },
+              { label: "AI 비서 연동",    href: "/studio" },
+              { label: "영업팀",          href: "mailto:weatherplan@kweather.co.kr?subject=Weather%20Plan%20AI%20영업팀%20문의" },
+            ]},
+            { title: "법적 고지",  items: [
+              { label: "이용약관",          href: "/legal#terms" },
+              { label: "개인정보처리방침",  href: "/legal#privacy" },
+              { label: "사업자 정보",       href: "/legal#business" },
+            ]},
           ].map((col) => (
             <div key={col.title}>
               <div
@@ -3820,12 +3839,14 @@ function Footer() {
               </div>
               {col.items.map((i) => (
                 <a
-                  key={i}
-                  href="#"
+                  key={i.label}
+                  href={i.href}
+                  target={i.ext ? "_blank" : undefined}
+                  rel={i.ext ? "noopener noreferrer" : undefined}
                   className="block transition hover:opacity-100"
                   style={{ color: T.onDarkMuted, fontSize: 13, fontWeight: 400, padding: "4px 0" }}
                 >
-                  {i}
+                  {i.label}
                 </a>
               ))}
             </div>

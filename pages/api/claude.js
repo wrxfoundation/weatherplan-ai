@@ -183,6 +183,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  // API 키 환경변수 가드 (Vercel 환경변수 미설정 시 사용자 친화 메시지)
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.error("[/api/claude] ANTHROPIC_API_KEY 환경변수 미설정");
+    return res.status(503).json({
+      error: "AI 서비스 준비 중 — 운영팀이 환경을 점검하고 있습니다 (5분 후 다시)",
+    });
+  }
+
   try {
     const {
       messages,
@@ -195,6 +203,12 @@ export default async function handler(req, res) {
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: "messages 필수" });
+    }
+
+    // 페이로드 크기 가드 (총 메시지 길이 50KB 초과 차단)
+    const totalLen = messages.reduce((sum, m) => sum + (m.content?.length || 0), 0);
+    if (totalLen > 50000) {
+      return res.status(413).json({ error: "메시지가 너무 깁니다 — 50,000자 이내로 줄여주세요" });
     }
 
     // 메시지 형식 검증 (role / content 필수)
