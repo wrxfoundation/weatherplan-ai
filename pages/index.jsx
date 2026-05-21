@@ -1508,7 +1508,7 @@ function Hero() {
                 transition: "box-shadow 200ms ease",
               }}
             >
-              <div className="flex flex-col sm:flex-row gap-1.5 items-stretch">
+              <div className="flex gap-1.5 items-stretch">
                 <div className="flex-1 flex items-center gap-3 pl-3.5 min-w-0">
                   <Logo size={28} variant="inline" />
                   <input
@@ -1525,46 +1525,50 @@ function Hero() {
                 {stage === "done" ? (
                   <button
                     onClick={reset}
-                    className="px-5 transition hover:bg-white active:translate-y-px"
+                    className="rounded-full flex items-center justify-center w-11 sm:w-auto sm:px-5 transition hover:bg-white active:translate-y-px"
                     style={{
                       background: "rgba(247,245,238,0.7)",
                       backdropFilter: "blur(12px)",
                       WebkitBackdropFilter: "blur(12px)",
                       color: T.slate,
-                      fontSize: 13, fontWeight: 500,
-                      borderRadius: R.full,
+                      flexShrink: 0,
                       boxShadow: "inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(5,0,56,0.04), 0 1px 2px rgba(5,0,56,0.04)",
                     }}
+                    aria-label="다시 시작"
                   >
-                    ↺ 다시
+                    <span className="hidden sm:inline" style={{ fontSize: 13, fontWeight: 500 }}>↺ 다시</span>
+                    <span className="sm:hidden" style={{ fontSize: 18, fontWeight: 500 }}>↺</span>
                   </button>
                 ) : (
                   <button
                     onClick={() => runDemo()}
                     disabled={!input.trim() || stage === "thinking"}
-                    className="btn-shine px-5 sm:px-6 transition disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-95 active:translate-y-px"
+                    className="btn-shine rounded-full flex items-center justify-center w-11 sm:w-auto sm:min-w-[104px] sm:px-6 transition disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-95 active:translate-y-px"
                     style={{
                       background: `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)`,
                       color: T.onPrimary,
-                      fontSize: 13, fontWeight: 500,
-                      borderRadius: R.full,
-                      whiteSpace: "nowrap",
                       flexShrink: 0,
-                      minWidth: 104,
                       boxShadow: [
                         "inset 0 1px 0 rgba(255,255,255,0.18)",
                         "inset 0 -1px 0 rgba(0,0,0,0.22)",
                         "0 1px 2px rgba(20,68,59,0.16)",
                       ].join(", "),
                     }}
+                    aria-label="광고 만들기"
                   >
                     {stage === "thinking" ? (
-                      <span className="inline-flex items-center gap-2 relative" style={{ zIndex: 2 }}>
-                        <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: T.onPrimary }}></span>
-                        분석 중
-                      </span>
+                      <>
+                        <span className="hidden sm:inline-flex items-center gap-2 relative" style={{ zIndex: 2, fontSize: 13, fontWeight: 500 }}>
+                          <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: T.onPrimary }}></span>
+                          분석 중
+                        </span>
+                        <span className="sm:hidden relative inline-block w-2 h-2 rounded-full animate-bounce" style={{ zIndex: 2, background: T.onPrimary }}></span>
+                      </>
                     ) : (
-                      <span className="relative" style={{ zIndex: 2 }}>광고 만들기 →</span>
+                      <>
+                        <span className="hidden sm:inline relative" style={{ zIndex: 2, fontSize: 13, fontWeight: 500 }}>광고 만들기 →</span>
+                        <span className="sm:hidden relative" style={{ zIndex: 2, fontSize: 20, fontWeight: 600, lineHeight: 1 }}>→</span>
+                      </>
                     )}
                   </button>
                 )}
