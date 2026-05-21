@@ -516,6 +516,16 @@ export default function StudioPage() {
      개발 환경: USE_MOCK=true → 미리 정의된 STUDIO_DEMO_BY_INDUSTRY 시뮬레이션 */
   const USE_MOCK = false;  // 실제 운영 시 false, API key 없으면 자동 fallback
 
+  // 온보딩 프로필 로드 (개인화된 시스템 프롬프트용)
+  const [profile, setProfile] = useState(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem("wpa_profile");
+      if (raw) setProfile(JSON.parse(raw));
+    } catch (e) { /* localStorage 비활성 무시 */ }
+  }, []);
+
   const sendMessage = useCallback(async (text) => {
     const messageText = (text ?? input).trim();
     if (!messageText || loading) return;
@@ -529,15 +539,16 @@ export default function StudioPage() {
       let reply = null;
 
       if (!USE_MOCK) {
-        /* 🚀 실제 Claude API 호출 */
+        /* 🚀 실제 Claude API 호출 (profile 컨텍스트 + 자동 모델 선택) */
         const response = await fetch("/api/claude", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             messages: newMessages,
             industry: selectedSub ? `${currentIndustry.label} · ${selectedSub}` : currentIndustry.label,
-            persona: "광고주",
-            model: "claude-opus-4-7",
+            persona: profile?.persona || "광고주",
+            profile,  // 온보딩에서 저장한 사업장 컨텍스트 (위치/업종/채널/예산)
+            // model 생략 → 서버에서 복잡도 기반 자동 선택 (Haiku/Opus)
             max_tokens: 1024,
             temperature: 0.7,
           }),
@@ -1172,6 +1183,113 @@ function inline(text) {
 }
 
 /* \u2500\u2500\u2500 \uBE14\uB85D \uD30C\uC11C: text \u2192 \uBE14\uB85D \uBC30\uC5F4 \u2500\u2500\u2500 */
+/* 인라인 미니 차트 (bar/line) — wellbian 엔진 흡수 */
+function InlineChart({ type, title, data, unit }) {
+  if (!data || data.length < 2) return null;
+  const W = 320, H = 130, PL = 28, PR = 10, PT = 22, PB = 26;
+  const cW = W - PL - PR, cH = H - PT - PB;
+  const vals = data.map((d) => d.v);
+  const vMax = Math.max(...vals, 1);
+  const vMin = Math.min(...vals, 0);
+  const range = Math.max(vMax - vMin, 1);
+  const yScale = (v) => PT + cH - ((v - vMin) / range) * cH;
+  const xStep = data.length > 1 ? cW / (data.length - 1) : cW;
+  const xBar = cW / data.length;
+  const accent = T.mossDark;
+  const accentLight = T.brandTeal;
+
+  return (
+    <div style={{
+      margin: "10px 0",
+      borderRadius: 12,
+      background: T.canvas,
+      border: `1px solid ${T.brandTeal}`,
+      padding: "10px 4px 4px",
+      boxShadow: "0 0 0 3px rgba(78,179,168,0.14), 0 6px 18px rgba(20,68,59,0.18)",
+      overflow: "hidden",
+    }}>
+      {title && (
+        <div style={{
+          color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em",
+          padding: "0 12px 6px",
+        }}>
+          {title}
+        </div>
+      )}
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: "block" }}>
+        {/* y-축 grid */}
+        {[0, 0.5, 1].map((p, i) => {
+          const y = PT + cH * p;
+          const v = vMin + range * (1 - p);
+          return (
+            <g key={i}>
+              <line x1={PL} y1={y} x2={W - PR} y2={y} stroke={T.hairlineSoft} strokeWidth="0.5" />
+              <text x={PL - 4} y={y + 3} textAnchor="end" fontSize="8.5" fill={T.muted}>
+                {Math.round(v)}{unit && unit.length <= 2 ? unit : ""}
+              </text>
+            </g>
+          );
+        })}
+        {/* 데이터 */}
+        {type === "bar" ? (
+          data.map((d, i) => {
+            const barW = Math.max(xBar * 0.62, 8);
+            const x = PL + i * xBar + (xBar - barW) / 2;
+            const y = yScale(d.v);
+            const h = (PT + cH) - y;
+            return (
+              <g key={i}>
+                <rect x={x} y={y} width={barW} height={h} rx="3"
+                  fill={`url(#chartGrad-${i % 2})`} />
+                <text x={x + barW / 2} y={y - 4} textAnchor="middle" fontSize="9" fontWeight="700" fill={accent}>
+                  {d.v}{unit && unit.length <= 2 ? unit : ""}
+                </text>
+                <text x={x + barW / 2} y={H - 8} textAnchor="middle" fontSize="9" fill={T.steel}>
+                  {d.l}
+                </text>
+              </g>
+            );
+          })
+        ) : (
+          <>
+            {/* line — 영역 + 점 */}
+            <path
+              d={`M${PL},${yScale(data[0].v)} ` + data.slice(1).map((d, i) =>
+                `L${PL + (i + 1) * xStep},${yScale(d.v)}`).join(" ")}
+              fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            />
+            {data.map((d, i) => {
+              const cx = PL + i * xStep;
+              const cy = yScale(d.v);
+              return (
+                <g key={i}>
+                  <circle cx={cx} cy={cy} r="3.5" fill={accent} stroke={T.canvas} strokeWidth="1.5" />
+                  <text x={cx} y={cy - 7} textAnchor="middle" fontSize="9" fontWeight="700" fill={accent}>
+                    {d.v}
+                  </text>
+                  <text x={cx} y={H - 8} textAnchor="middle" fontSize="9" fill={T.steel}>
+                    {d.l}
+                  </text>
+                </g>
+              );
+            })}
+          </>
+        )}
+        <defs>
+          <linearGradient id="chartGrad-0" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={accent} />
+            <stop offset="100%" stopColor={accentLight} />
+          </linearGradient>
+          <linearGradient id="chartGrad-1" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={accent} />
+            <stop offset="100%" stopColor={accentLight} />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  );
+}
+
 function parseBlocks(text) {
   const lines = text.split("\n");
   const blocks = [];
@@ -1186,6 +1304,20 @@ function parseBlocks(text) {
       flush();
       blocks.push({ type: "header", text: line.replace("## ", "") });
       continue;
+    }
+    // 인라인 차트: <<chart:타입|제목|라벨1:값1,...|단위>>
+    const chartMatch = line.match(/^<<chart:(bar|line)\|([^|]*)\|([^|]+)\|?([^>]*)>>$/);
+    if (chartMatch) {
+      flush();
+      const [, type, title, dataStr, unit] = chartMatch;
+      const data = dataStr.split(",").map((s) => {
+        const parts = s.trim().split(":");
+        return { l: (parts[0] || "").trim(), v: parseFloat(parts[1]) || 0 };
+      }).filter((d) => d.l);
+      if (data.length >= 2) {
+        blocks.push({ type: "chart", chartType: type, title, data, unit: (unit || "").trim() });
+        continue;
+      }
     }
     if (/^\*\*[^*]{1,30}\*\*$/.test(line)) {
       flush();
@@ -1295,6 +1427,8 @@ function formatMessageV2(text) {
             ))}
           </div>
         );
+      case "chart":
+        return <InlineChart key={k} type={b.chartType} title={b.title} data={b.data} unit={b.unit} />;
       case "callout":
         return (
           <div key={k} style={{

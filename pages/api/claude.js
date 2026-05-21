@@ -15,15 +15,135 @@
  * ============================================================ */
 
 import Anthropic from "@anthropic-ai/sdk";
+import { TOOL_SCHEMAS, executeTool } from "../../lib/tools.js";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-/* ─── 시스템 프롬프트 빌더 ─── */
-function buildSystemPrompt(industry, persona) {
+const MAX_TOOL_ROUNDS = 4;  // Tool use 최대 라운드 (무한 루프 방지)
+
+/* ─── 페르소나 라벨 매핑 ─── */
+const PERSONA_LABEL = {
+  soloprenuer: "1인 사장님·자영업",
+  seller: "이커머스 셀러",
+  enterprise: "대형광고주·본사",
+  agency: "광고대행사 AE",
+};
+
+/* ─── 업종 라벨 매핑 ─── */
+const INDUSTRY_LABEL = {
+  fashion: "패션·의류", beauty: "뷰티·H&B", beverage: "음료·주류", retail: "리테일·이커머스",
+  auto: "자동차", health: "헬스·OTC", home: "홈·인테리어", appliance: "가전",
+  sleep: "수면·침구", food: "식음·외식", travel: "여행·DOOH", outdoor: "아웃도어",
+  finance: "금융·보험", edu: "교육·구독", ent: "엔터·콘텐츠", telco: "통신·구독",
+  pet: "반려·펫", solo: "1인 가구·솔로",
+};
+
+const BUDGET_LABEL = {
+  small: "월 100만원 미만", medium: "월 100~500만원",
+  large: "월 500~3,000만원", xlarge: "월 3,000만원+",
+};
+
+/* ─── 계절 자동 산출 ─── */
+function getSeason() {
+  const m = new Date().getMonth();
+  if (m < 2 || m > 10) return "겨울";
+  if (m < 5) return "봄";
+  if (m < 8) return "여름";
+  return "가을";
+}
+
+/* ─── 한국 시간 날짜 컨텍스트 ─── */
+function getDateContext() {
+  const now = new Date();
+  const dayN = ["일", "월", "화", "수", "목", "금", "토"];
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  const d = now.getDate();
+  const dow = now.getDay();
+  const fmt = (dt) => `${dt.getMonth() + 1}/${dt.getDate()}(${dayN[dt.getDay()]})`;
+  const monOff = dow === 0 ? -6 : 1 - dow;
+  const mon = new Date(y, m, d + monOff);
+  const weekDates = Array.from({ length: 7 }, (_, i) => {
+    const dt = new Date(mon); dt.setDate(mon.getDate() + i); return fmt(dt);
+  }).join(" ");
+  const satOff = dow === 0 ? -1 : 6 - dow;
+  const sunOff = dow === 0 ? 0 : 7 - dow;
+  const sat = new Date(y, m, d + satOff);
+  const sun = new Date(y, m, d + sunOff);
+  const nsat = new Date(sat); nsat.setDate(sat.getDate() + 7);
+  const nsun = new Date(sun); nsun.setDate(sun.getDate() + 7);
+  const tmr = new Date(y, m, d + 1);
+  const dat = new Date(y, m, d + 2);
+  return `오늘: ${y}년 ${m + 1}월 ${d}일 ${dayN[dow]}요일
+내일: ${fmt(tmr)}, 모레: ${fmt(dat)}
+이번주: ${weekDates}
+이번 주말: ${fmt(sat)} ~ ${fmt(sun)}
+다음 주말: ${fmt(nsat)} ~ ${fmt(nsun)}`;
+}
+
+/* ─── 복잡도 라우터 (wellbian 엔진 기반, 광고 맥락에 맞춰 변경) ─── */
+function classifyComplexity(userInput) {
+  if (!userInput) return "haiku";
+  const lo = userInput.toLowerCase().replace(/\s+/g, " ").trim();
+
+  // ── 무조건 Opus (복잡 추론) ──
+  if (/비교|vs|보다.*(좋|나쁘|높|낮|효과적)|중에.*어떤|중에.*뭐/.test(lo)) return "opus";
+  if (/카피.*추천|카피.*만들|카피.*써|크리에이티브/.test(lo)) return "opus";  // 창작 작업
+  if (/매체.*조합|입찰.*전략|타깃.*분석|페르소나.*분석/.test(lo)) return "opus";
+  if (/순위|랭킹|top|최고|가장.*(좋|효과|매출|전환)/.test(lo)) return "opus";
+  if (/주말|다음주|이번주|월별.*계획|시즌.*기획|연간/.test(lo)) return "opus";
+  if (/(roas|cpa|cpc|ctr|kpi).*분석|예측|시뮬레이션/.test(lo)) return "opus";
+  if (/(글로벌|해외|일본|미국|중국|유럽).*사례|벤치마킹/.test(lo)) return "opus";
+  if (lo.length > 100) return "opus";
+
+  // ── 무조건 Haiku (단순 조회) ──
+  if (/^(안녕|반가|하이|ㅎㅇ|고마|감사|네|아니|뭐|그래|오케이|ok)$/i.test(lo.trim())) return "haiku";
+  if (/^.{0,18}(오늘|지금|현재).*(날씨|기온|비|미세).{0,15}$/.test(lo)) return "haiku";
+  if (/^.{0,15}(우산|마스크|선크림|반팔|긴팔|패딩).{0,10}$/.test(lo)) return "haiku";
+
+  // 기본: 대부분 Opus (광고 의사결정은 정확도 우선)
+  return "opus";
+}
+
+/* ─── 시스템 프롬프트 빌더 (v2 — wellbian 본진 흡수) ─── */
+function buildSystemPrompt(industry, persona, profile) {
   const industryLabel = industry || "전체 업종";
-  const personaLabel = persona || "광고주";
+  const personaLabel = PERSONA_LABEL[persona] || persona || "광고주";
+
+  // 사업장 컨텍스트 (온보딩에서 받은 wpa_profile)
+  const contextLines = [];
+  if (profile) {
+    if (profile.businessName) contextLines.push(`사업장명: ${profile.businessName}`);
+    if (profile.persona) {
+      const pl = PERSONA_LABEL[profile.persona];
+      if (pl) contextLines.push(`광고주 유형: ${pl}`);
+    }
+    if (profile.sido || profile.sigungu) {
+      contextLines.push(`위치: ${[profile.sido, profile.sigungu].filter(Boolean).join(" ")}`);
+    } else if (profile.regionScope === "national") {
+      contextLines.push(`운영 범위: 전국 캠페인`);
+    }
+    if (profile.industries?.length) {
+      const inds = profile.industries.map((id) => INDUSTRY_LABEL[id] || id);
+      contextLines.push(`업종(주력 → 보조): ${inds.join(" / ")}`);
+      // 첫 번째 업종의 sub 카테고리 노출
+      const primaryId = profile.industries[0];
+      const subs = profile.industrySubs?.[primaryId];
+      if (subs?.length) contextLines.push(`주력 세부 카테고리: ${subs.join(" · ")}`);
+    }
+    if (profile.budget) {
+      const bl = BUDGET_LABEL[profile.budget];
+      if (bl) contextLines.push(`광고 예산: ${bl}`);
+    }
+    if (profile.channels?.length) {
+      contextLines.push(`활용 채널: ${profile.channels.join(" · ")}`);
+    }
+  }
+  const profileBlock = contextLines.length
+    ? `\n[사용자 사업장 컨텍스트]\n${contextLines.join("\n")}\n위 정보를 모든 추천에 자연스럽게 반영하세요. 절대 "어느 지역이세요?" "어떤 업종이세요?" 같은 되묻기 금지.\n`
+    : "";
 
   return `당신은 wellbian AI입니다. 한국 광고주를 위한 날씨 기반 광고 의사결정 인텔리전스 AI입니다.
 
@@ -31,6 +151,10 @@ function buildSystemPrompt(industry, persona) {
 - ${industryLabel} 업종의 ${personaLabel}에게 광고 의사결정을 추천합니다
 - 카피·예산·타이밍·매체별 입찰 전략을 제안합니다
 - 자동 실행은 하지 않습니다 — 추천만 제공, 실행은 광고주가 콘솔에서 직접
+${profileBlock}
+[날짜 컨텍스트 — 반드시 그대로 사용. 직접 요일/날짜 계산 금지]
+${getDateContext()}
+계절: ${getSeason()}
 
 [데이터 소스]
 - 케이웨더 60일 AI 예보 (NVIDIA 기반 학습 + 전문 예보관 검수)
@@ -156,6 +280,58 @@ function buildSystemPrompt(industry, persona) {
 - 전문 용어(RMSE·POD·CSI·MCP·OAuth·Claude·Tool Use) X → 쉬운 한글
 - "책임" 어휘 X → "신뢰의 방점"
 
+[★★★ 응답 길이 절대 규칙 — 모든 답변에 강제 적용 ★★★]
+- 일반 질문: 4~8문장 (200자 이내)
+- 카피·매체·예산 추천: 최대 15문장 (600자 이내)
+- 복합 질문(다지역·다업종): 최대 20문장 (800자 이내)
+- 표(table): 최대 1개, 5행 이내. 같은 정보를 표·문장·리스트로 반복 금지
+- 채팅 버블에서 읽기 어려워지지 않게. 길게 늘어놓지 마세요.
+
+[★★★ 콘텐츠 first, 링크 last 절대 원칙 ★★★]
+- 절대 금지: "네이버에서 확인하세요" / "여기서 보세요" / "링크 바로가기" — 이걸 메인 답변으로 쓰면 사용자가 이탈합니다
+- 올바른 패턴: 알찬 콘텐츠를 먼저 제공 → 맨 끝에 "더 자세히 보려면 🔗" 한 줄
+- 광고 콘솔 가이드는 핵심 액션을 답변 안에서 완결한 뒤 보조 링크로
+
+[측정 지점 명시 (타 AI와의 결정적 차별점)]
+날씨/미세먼지 답변 시 케이웨더 측정 지점을 자연스럽게 인용:
+- "📍 강남구 역삼동 KWeather 센서 기준 PM2.5 23㎍/㎥"
+- "📍 안양시 만안구 측정망 기준 기온 16.2°C"
+일반 Claude는 "서울 날씨"라고만 말하지만, 우리는 동단위 5분 갱신. 이 정밀함이 신뢰의 핵심입니다.
+단, 매번 길게 쓰지 말고 첫 답변에 한 번만 자연스럽게.
+
+[시제 구분 — 매우 중요]
+- "지금 / 현재" 데이터 = "현재" "실시간" 표현
+- "오늘 18시 / 내일 / 모레" 데이터 = "예보" "예상" 표현 (단정 X)
+- 예: "현재 강남 강수확률 75%" vs "내일 오후 강수확률 80% 예상"
+
+[인라인 차트 문법 — KPI·예보 데이터 시각화]
+데이터를 시각적으로 보여줄 때 아래 문법을 본문에 직접 출력하세요. 클라이언트가 자동으로 미니 차트로 렌더링합니다.
+
+문법: <<chart:타입|제목|라벨1:값1,라벨2:값2,...|단위>>
+- 타입: bar (막대 — KPI·강수확률·노출·매출) / line (꺾은선 — 기온·CTR 추이)
+- 라벨: 시간(09시,12시) · 요일(월,화,수) · 날짜(5/22)
+- 값: 숫자만 (소수점 1자리)
+- 단위: %, °C, 만원, 건 등
+
+예시:
+"이번 주 추천 강도예요.
+<<chart:bar|이번 주 광고 강도|월:65,화:80,수:55,목:40,금:75,토:50,일:35|%>>
+화요일에 입찰 강화 권장합니다."
+
+⚠️ 규칙:
+- 데이터가 3개 이상일 때만 사용 (2개 이하는 텍스트로 충분)
+- 차트 앞뒤로 반드시 텍스트 해석 추가 (차트만 덩그러니 X)
+- 한 답변에 차트 최대 2개
+- 인사·잡담·짧은 답변에는 사용 금지
+
+[Tool 결과 활용 가이드 — 데이터 → 해석 → 비교 → 행동 제안]
+Tool이 데이터를 반환하면 단순 나열 금지. 다음 5단계로 풀어주세요:
+1) 핵심 데이터 1~2개 인용 (📍 측정 지점 포함)
+2) 해석 — 그래서 뭐가 좋다/나쁘다
+3) 어제·평년 대비 비교 (가능한 경우)
+4) 사업장 프로필 맞춤 (위 컨텍스트 활용)
+5) 다음 행동 1~2개 (입찰·카피·매체)
+
 한국어로만 답변하세요.`;
 }
 
@@ -196,7 +372,8 @@ export default async function handler(req, res) {
       messages,
       industry,
       persona,
-      model = "claude-opus-4-7",
+      profile,                  // 온보딩에서 받은 사업장 컨텍스트 (위치/업종/예산/채널)
+      model: modelOverride,     // 명시 override (없으면 자동 라우터)
       max_tokens = 1024,
       temperature = 0.7,
     } = req.body;
@@ -211,6 +388,12 @@ export default async function handler(req, res) {
       return res.status(413).json({ error: "메시지가 너무 깁니다 — 50,000자 이내로 줄여주세요" });
     }
 
+    // 복잡도 기반 모델 자동 라우팅 (단순 → Haiku, 복잡 → Opus)
+    const lastUserMsg = messages.filter((m) => m.role === "user").pop()?.content || "";
+    const complexity = classifyComplexity(lastUserMsg);
+    const model = modelOverride
+      || (complexity === "haiku" ? "claude-haiku-4-5-20251001" : "claude-opus-4-7");
+
     // 메시지 형식 검증 (role / content 필수)
     for (const msg of messages) {
       if (!msg.role || !msg.content) {
@@ -221,19 +404,57 @@ export default async function handler(req, res) {
       }
     }
 
-    const systemPrompt = buildSystemPrompt(industry, persona);
+    const systemPrompt = buildSystemPrompt(industry, persona, profile);
 
-    // Anthropic API 호출
-    const response = await anthropic.messages.create({
-      model,
-      max_tokens,
-      temperature,
-      system: systemPrompt,
-      messages,
-    });
+    // Tool Use 루프 — 모델이 tool을 요청하면 실행하고 결과를 다시 전달
+    let currentMessages = [...messages];
+    let response = null;
+    let toolRounds = 0;
+    let totalUsage = { input_tokens: 0, output_tokens: 0 };
+    const toolCallTrace = [];  // 디버깅·관측용
+
+    while (toolRounds < MAX_TOOL_ROUNDS) {
+      response = await anthropic.messages.create({
+        model,
+        max_tokens,
+        temperature,
+        system: systemPrompt,
+        tools: TOOL_SCHEMAS,
+        messages: currentMessages,
+      });
+
+      // 사용량 누적
+      if (response.usage) {
+        totalUsage.input_tokens += response.usage.input_tokens || 0;
+        totalUsage.output_tokens += response.usage.output_tokens || 0;
+      }
+
+      // Tool 요청 없으면 종료
+      if (response.stop_reason !== "tool_use") break;
+
+      // Tool 요청 블록들 실행
+      const toolUseBlocks = response.content.filter((b) => b.type === "tool_use");
+      const toolResults = toolUseBlocks.map((block) => {
+        const result = executeTool(block.name, block.input);
+        toolCallTrace.push({ name: block.name, input: block.input, result });
+        return {
+          type: "tool_result",
+          tool_use_id: block.id,
+          content: JSON.stringify(result),
+        };
+      });
+
+      // 다음 라운드 메시지 구성: assistant tool_use → user tool_result
+      currentMessages = [
+        ...currentMessages,
+        { role: "assistant", content: response.content },
+        { role: "user", content: toolResults },
+      ];
+      toolRounds++;
+    }
 
     // 응답 처리 — text block 추출
-    const textBlocks = response.content
+    const textBlocks = (response?.content || [])
       .filter((block) => block.type === "text")
       .map((block) => block.text);
 
@@ -241,9 +462,11 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       content: reply,
-      usage: response.usage,
-      model: response.model,
-      stop_reason: response.stop_reason,
+      usage: totalUsage,
+      tool_calls: toolCallTrace.length,
+      complexity,
+      model_used: model,
+      stop_reason: response?.stop_reason,
     });
 
   } catch (err) {
