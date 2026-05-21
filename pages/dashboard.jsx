@@ -94,8 +94,8 @@ export default function DashboardPage() {
               <div style={{ color: T.ink, fontSize: 14, fontWeight: 600, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>
                 Weather Plan AI
               </div>
-              <div className="hidden sm:block" style={{ color: T.steel, fontSize: 10.5, marginTop: 3, letterSpacing: "0.04em", fontWeight: 500 }}>
-                Dashboard · Beta
+              <div className="hidden sm:block" style={{ color: T.steel, fontSize: 11, marginTop: 4, letterSpacing: "0.04em", fontWeight: 500 }}>
+                by KWeather · wellbian AI
               </div>
             </div>
           </a>

@@ -1214,10 +1214,10 @@ function PromoBanner() {
     <div style={{ background: T.primary, color: T.onDark }}>
       <div className="max-w-[1280px] mx-auto px-6 py-2.5 flex items-center justify-center gap-3">
         <span className="hidden sm:inline" style={{ color: T.onDarkMuted, fontSize: 14, fontWeight: 500 }}>
-          베타 광고주 30개 한정 · <strong style={{ color: T.brandTeal, fontWeight: 600 }}>30일 무료 체험</strong> · 신용카드 없이 시작
+          베타 광고주 30개 한정 · <strong style={{ color: T.brandTeal, fontWeight: 600 }}>14일 무료 체험</strong> · 신용카드 없이 시작
         </span>
         <span className="sm:hidden" style={{ color: T.onDarkMuted, fontSize: 14, fontWeight: 500 }}>
-          30일 무료 체험
+          14일 무료 체험
         </span>
         <span
           style={{
@@ -1269,7 +1269,7 @@ function Nav() {
           {[
             { href: "#cases",      label: "글로벌 사례" },
             { href: "#how",        label: "작동 방식" },
-            { href: "#triggers",   label: "케이웨더 데이터" },
+            { href: "#triggers",   label: "날씨 데이터" },
             { href: "#trust",      label: "정확도" },
             { href: "#pricing",    label: "가격" },
           ].map((l) => (
@@ -1291,10 +1291,10 @@ function Nav() {
         </div>
 
         <div className="flex items-center gap-1">
-          <button className="hidden md:block px-3 py-2 mr-1 hover:opacity-70 transition"
-            style={{ color: T.ink, fontSize: 14, fontWeight: 500 }}>
+          <a href="mailto:psw1224@kweather.co.kr" className="hidden md:inline-block px-3 py-2 mr-1 hover:opacity-70 transition"
+            style={{ color: T.ink, fontSize: 14, fontWeight: 500, textDecoration: "none" }}>
             영업팀 문의
-          </button>
+          </a>
           <BtnPrimary compact href="/onboarding">
             <span className="hidden sm:inline">무료로 시작 →</span>
             <span className="sm:hidden">시작 →</span>
@@ -1630,8 +1630,8 @@ function Hero() {
 
             {/* 클릭 안내 카피 */}
             <div className="text-center" style={{ marginBottom: 12 }}>
-              <span style={{ fontSize: 11.5, color: T.steel, fontWeight: 500, fontStyle: "italic" }}>
-                ✨ 브랜드를 클릭하면 <strong style={{ color: T.mossDark, fontWeight: 600 }}>케이웨더 + wellbian AI를 적용했을 때 추가 효과</strong>를 확인하실 수 있습니다
+              <span style={{ fontSize: 11.5, color: T.mossDark, fontWeight: 500, fontStyle: "italic" }}>
+                ✨ 브랜드를 클릭하면 <strong style={{ color: T.mossDark, fontWeight: 700 }}>케이웨더 + wellbian AI를 적용했을 때 추가 효과</strong>를 확인하실 수 있습니다
               </span>
             </div>
 
@@ -2283,9 +2283,8 @@ function KWeatherAssets() {
   const assets = [
     { num: "29년",     label: "1997년부터 국내 최초·최대 민간 기상사업자", sub: "한국 날씨를 가장 오래 가장 정밀하게" },
     { num: "100+",     label: "케이웨더만의 독점 날씨 시그널",             sub: "기상 60+ · 대기 18+ · 13지수 · 시즌 12+" },
-    { num: "60일",     label: "유일하게 가능한 앞날 예보 (NVIDIA 학습)",   sub: "광고 캠페인 D-60부터 사전 결정" },
+    { num: "60일",     label: "유일하게 가능한 앞날 예보 (NVIDIA 학습)",   sub: "광고 캠페인 D-60부터 사전 준비(전문 예보관 트래킹)" },
     { num: "30,000여개", label: "전국 읍/면/동 단위 측정 센서(5분단위)",      sub: "지하철역 · 유명 관광지 · 지역명소까지" },
-    { num: "100+",     label: "Wellbian 사용자 카테고리 — 광고 inventory", sub: "MZ·시니어·가족·1인가구 · 반려·핫플·헬스 모수" },
   ];
   return (
     <section style={{ background: T.surface, paddingTop: 80, paddingBottom: 80 }}>
@@ -2311,7 +2310,6 @@ function KWeatherAssets() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {assets.map((a, i) => {
-            const longLabel = a.num.length > 3;  // "30,000개" "읍·면·동" 같은 4글자 이상은 폰트 축소
             return (
               <div
                 key={a.label}
@@ -2327,9 +2325,7 @@ function KWeatherAssets() {
               >
                 <div
                   style={{
-                    fontSize: longLabel
-                      ? "clamp(22px, 2.4vw, 32px)"
-                      : "clamp(34px, 3.8vw, 50px)",
+                    fontSize: "clamp(22px, 2.6vw, 34px)",
                     lineHeight: 1.1,
                     color: T.mossDark,
                     letterSpacing: "-0.025em",
@@ -2696,7 +2692,7 @@ function Triggers() {
         </div>
 
         <div className="mt-8 text-center" style={{ color: T.steel, fontSize: 12.5, fontWeight: 400 }}>
-          모든 시그널은 과거 · 현재 · 60일 앞 예보 3가지로 사용 가능 · 전체 카탈로그는 영업팀 문의
+          모든 시그널은 과거 · 현재 · 60일 앞 예보 3가지로 사용 가능 · 전체 카탈로그는 <a href="mailto:psw1224@kweather.co.kr" style={{ color: T.mossDark, fontWeight: 600, textDecoration: "underline" }}>영업팀 문의</a>
         </div>
       </div>
     </section>
@@ -3430,8 +3426,20 @@ function FinalCTA() {
             background: T.primary, color: T.onPrimary,
             borderRadius: R.feature,
             padding: "64px 32px",
+            position: "relative",
+            overflow: "hidden",
+            isolation: "isolate",
           }}
         >
+          {/* Hero 루프 영상 재활용 — 다크 오버레이로 텍스트 가독성 보장 */}
+          <video
+            className="hero-cta-video"
+            autoPlay muted loop playsInline preload="metadata"
+            aria-hidden="true"
+          >
+            <source src="/hero-loop.mp4" type="video/mp4" />
+          </video>
+          <div className="hero-cta-overlay" aria-hidden="true" />
           <h2
             className="mx-auto"
             style={{
@@ -3447,7 +3455,7 @@ function FinalCTA() {
           </h2>
           <p className="mx-auto"
             style={{ color: T.onDarkMuted, fontSize: 16, fontWeight: 400, lineHeight: 1.6, maxWidth: 540, marginBottom: 36 }}>
-            <strong style={{ color: T.brandTeal, fontWeight: 600 }}>30일 무료 체험</strong> · 신용카드 없이 시작 · 베타 광고주 30개 한정
+            <strong style={{ color: T.brandTeal, fontWeight: 600 }}>14일 무료 체험</strong> · 신용카드 없이 시작 · 베타 광고주 30개 한정
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <BtnOnDark href="/onboarding">지금 무료로 시작 →</BtnOnDark>

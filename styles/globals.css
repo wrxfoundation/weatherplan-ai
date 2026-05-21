@@ -38,6 +38,32 @@ svg {
   display: block;
 }
 
+/* ─── Final CTA 배경 영상 (Hero 영상 재활용 · 다크 오버레이) ─── */
+.hero-cta-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: -2;
+  pointer-events: none;
+}
+.hero-cta-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg,
+      rgba(5, 0, 56, 0.78) 0%,
+      rgba(5, 0, 56, 0.86) 60%,
+      rgba(5, 0, 56, 0.92) 100%);
+  z-index: -1;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta-video { display: none; }
+}
+
 /* ─── Studio 챗 입력창 — 채도 강화 무지개 보더 + 외부 글로우 ─── */
 @keyframes chatShineRotate {
   0%   { background-position: 0% 50%; }

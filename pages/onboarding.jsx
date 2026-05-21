@@ -232,8 +232,13 @@ export default function OnboardingFlow() {
             <div style={{ width: 32, height: 32, borderRadius: R.md, background: T.mossDark, color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Icon name="cloud" size={18} stroke={2} />
             </div>
-            <div style={{ color: T.ink, fontSize: 14, fontWeight: 600, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>
-              Weather Plan AI
+            <div className="leading-none min-w-0">
+              <div style={{ color: T.ink, fontSize: 14, fontWeight: 600, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>
+                Weather Plan AI
+              </div>
+              <div className="hidden sm:block" style={{ color: T.steel, fontSize: 11, marginTop: 4, letterSpacing: "0.04em", fontWeight: 500 }}>
+                by KWeather · wellbian AI
+              </div>
             </div>
           </a>
 
