@@ -67,6 +67,28 @@ const INDUSTRIES = [
   { id: "solo",      label: "1인 가구·솔로",   icon: "🏘️" },
 ];
 
+/* ─── 18 업종 × 9 서브카테고리 (studio와 동일) ─── */
+const SUBCATEGORIES_BY_INDUSTRY = {
+  fashion:   ["여성복", "남성복", "키즈·베이비", "액세서리", "가방·신발", "스포츠웨어", "언더웨어·라운지", "골프웨어", "명품·럭셔리"],
+  beauty:    ["스킨케어", "메이크업", "헤어케어", "향수", "건강기능식품", "바디·구강케어", "더모코스메틱", "클린·비건", "남성 그루밍"],
+  beverage:  ["커피·차", "맥주", "소주·증류주", "와인", "위스키·고급주", "막걸리·전통주", "음료수·주스", "에너지음료", "무알콜·웰빙"],
+  retail:    ["슈퍼·마트", "편의점", "백화점·아울렛", "종합몰", "카테고리몰", "라이브커머스", "해외직구", "중고거래", "친환경·로컬"],
+  auto:      ["신차·승용", "신차·SUV", "중고차", "전기·친환경차", "럭셔리·수입", "상용차·트럭", "튜닝·액세서리", "정비·중장비", "렌트·카쉐어"],
+  health:    ["종합비타민", "알러지·감기약", "소화·위장", "진통·해열", "다이어트·체중관리", "면역·홍삼", "피부·트러블", "두피·탈모", "영유아·임산부"],
+  home:      ["가구", "침구·홈텍스", "조명·인테리어", "DIY·공구", "리빙소품", "욕실·주방", "정원·식물", "수납·정리", "가습·공기청정"],
+  appliance: ["냉장고·세탁기", "에어컨·계절", "소형가전", "주방가전", "TV·AV·홈시어터", "청소·로봇", "미용·헤어가전", "공기청정·정수", "게이밍·노트북"],
+  sleep:     ["매트리스", "베개·이불", "침구세트", "잠옷·수면용품", "슬립테크·앱", "매트리스 토퍼", "키즈·유아 침구", "호텔식·럭셔리", "항균·기능성"],
+  food:      ["치킨·피자", "분식·스낵", "한식·전통", "양식·이태리", "일식·중식", "베이커리·디저트", "푸드코트·뷔페", "베지·헬시", "즉석식품·HMR"],
+  travel:    ["국내·당일", "국내·숙박", "해외·아시아", "해외·구미·기타", "호텔·리조트", "항공", "액티비티·체험", "캠핑·차박", "DOOH·옥외광고"],
+  outdoor:   ["등산·트레킹", "캠핑", "골프", "자전거·수상", "러닝·트레일런", "피트니스·홈트", "스키·보드", "낚시", "친환경·에코기어"],
+  finance:   ["손해보험", "생명보험", "자동차보험", "투자·증권", "펀드·ETF", "대출·신용", "카드·페이", "외환·해외송금", "부동산·리츠"],
+  edu:       ["초중고", "대입·재수", "어학·외국어", "자격증·실용", "성인·평생교육", "직장인·MBA", "IT·코딩", "아동·유아", "예체능"],
+  ent:       ["OTT·VOD", "게임", "음악·콘서트", "영화·도서", "웹툰·웹소설", "팬덤·굿즈", "공연·뮤지컬", "스포츠·중계", "키덜트·취미"],
+  telco:     ["무선요금제", "인터넷·IPTV", "알뜰폰·MVNO", "클라우드·SaaS", "구독박스", "B2B·기업통신", "IoT·스마트홈", "보안·CCTV", "5G·기술혁신"],
+  pet:       ["사료·간식", "펫용품·장난감", "펫헬스·약", "미용·호텔", "유기·입양", "펫보험·금융", "펫호텔·여행", "훈련·교육", "펫이동·운송"],
+  solo:      ["즉석식품·HMR", "1인 가전", "1인 가구 인테리어", "셀프케어·뷰티", "1인 여가·취미", "솔로 여행", "셀프 헬스", "솔로 라이프 콘텐츠", "1인 가구 보험"],
+};
+
 const AD_CHANNELS = [
   { id: "meta",      label: "메타 (인스타·페북)", desc: "릴스·스토리·피드" },
   { id: "google",    label: "구글 광고",          desc: "검색·디스플레이·유튜브" },
@@ -158,6 +180,7 @@ export default function OnboardingFlow() {
   const [sigungu, setSigungu] = useState("");
   const [regionScope, setRegionScope] = useState("national");
   const [industries, setIndustries] = useState([]);
+  const [industrySubs, setIndustrySubs] = useState({});  // { [industryId]: [sub, ...] }
   const [budget, setBudget] = useState(null);
   const [channels, setChannels] = useState([]);
 
@@ -170,11 +193,28 @@ export default function OnboardingFlow() {
     const max = personaCfg.industriesMax;
     if (industries.includes(id)) {
       setIndustries(industries.filter((x) => x !== id));
+      // 업종 해제 시 그 서브카테고리도 클리어
+      setIndustrySubs((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
     } else if (max === 1) {
       setIndustries([id]);
+      setIndustrySubs({});  // 단일 선택 — 다른 업종 sub 제거
     } else if (industries.length < max) {
       setIndustries([...industries, id]);
     }
+  };
+
+  const toggleSub = (industryId, sub) => {
+    setIndustrySubs((prev) => {
+      const current = prev[industryId] || [];
+      const next = current.includes(sub)
+        ? current.filter((x) => x !== sub)
+        : [...current, sub];
+      return { ...prev, [industryId]: next };
+    });
   };
 
   const canNext = useMemo(() => {
@@ -454,6 +494,62 @@ export default function OnboardingFlow() {
                   </div>
                 )}
               </FormCard>
+
+              {/* 세부 카테고리 — 선택한 업종이 있을 때만 노출 (선택 사항) */}
+              {industries.length > 0 && (
+                <FormCard label="세부 카테고리 (선택)">
+                  <div className="space-y-3">
+                    {industries.map((indId) => {
+                      const ind = INDUSTRIES.find((i) => i.id === indId);
+                      if (!ind) return null;
+                      const subs = SUBCATEGORIES_BY_INDUSTRY[indId] || [];
+                      const selected = industrySubs[indId] || [];
+                      return (
+                        <div key={indId}>
+                          <div className="flex items-center gap-1.5 mb-2">
+                            <span style={{ fontSize: 14 }}>{ind.icon}</span>
+                            <span style={{ color: T.ink, fontSize: 12.5, fontWeight: 600, letterSpacing: "-0.005em" }}>
+                              {ind.label}
+                            </span>
+                            {selected.length > 0 && (
+                              <span style={{ color: T.mossDark, fontSize: 10.5, fontWeight: 600 }}>
+                                · {selected.length}개 선택
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {subs.map((sub) => {
+                              const active = selected.includes(sub);
+                              return (
+                                <button
+                                  key={sub}
+                                  onClick={() => toggleSub(indId, sub)}
+                                  className="transition active:translate-y-px"
+                                  style={{
+                                    background: active ? T.mossDark : T.surface,
+                                    color: active ? "#FFFFFF" : T.charcoal,
+                                    border: `1px solid ${active ? T.mossDark : T.hairlineSoft}`,
+                                    fontSize: 11.5, fontWeight: active ? 600 : 500,
+                                    padding: "5px 10px",
+                                    borderRadius: R.full,
+                                    cursor: "pointer",
+                                    letterSpacing: "-0.005em",
+                                  }}
+                                >
+                                  {sub}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div style={{ color: T.muted, fontSize: 11, fontWeight: 400, marginTop: 10, letterSpacing: "-0.005em" }}>
+                    선택은 선택 사항입니다. 카테고리를 세분화하면 추천 정밀도가 올라갑니다.
+                  </div>
+                </FormCard>
+              )}
 
               <FormCard label="월 광고 예산">
                 <div className="grid grid-cols-2 gap-2">
