@@ -1104,7 +1104,7 @@ function MessageBubble({ message }) {
               </button>
             </div>
           )}
-          {formatMessage(message.content)}
+          {formatMessageV2(message.content)}
         </div>
       </div>
     </div>
@@ -1144,25 +1144,204 @@ function LoadingBubble() {
   );
 }
 
-/* ─── 마크다운 스타일 형식 (간단한 ## · ** 처리) ─── */
-function formatMessage(text) {
-  return text.split("\n").map((line, i) => {
-    // ## 헤더
+
+/* \u2500\u2500\u2500 \uC778\uB77C\uC778 **bold** \uD30C\uC11C \u2500\u2500\u2500 */
+function inline(text) {
+  if (typeof text !== "string") return text;
+  const parts = [];
+  let last = 0;
+  const re = /\*\*([^*\n]+)\*\*/g;
+  let m;
+  let key = 0;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    parts.push(<strong key={`b${key++}`} style={{ color: T.ink, fontWeight: 600 }}>{m[1]}</strong>);
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts.length > 1 ? parts : text;
+}
+
+/* \u2500\u2500\u2500 \uBE14\uB85D \uD30C\uC11C: text \u2192 \uBE14\uB85D \uBC30\uC5F4 \u2500\u2500\u2500 */
+function parseBlocks(text) {
+  const lines = text.split("\n");
+  const blocks = [];
+  let cur = null;
+  const flush = () => { if (cur) { blocks.push(cur); cur = null; } };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (line === "") { flush(); continue; }
+
     if (line.startsWith("## ")) {
-      return (
-        <div key={i} style={{ fontSize: 17, fontWeight: 700, color: T.mossDark, letterSpacing: "-0.01em", marginBottom: 8, marginTop: i > 0 ? 12 : 0 }}>
-          {line.replace("## ", "")}
-        </div>
-      );
+      flush();
+      blocks.push({ type: "header", text: line.replace("## ", "") });
+      continue;
     }
-    // **bold**
-    if (line.startsWith("**") && line.endsWith("**")) {
-      return (
-        <div key={i} style={{ fontSize: 12, fontWeight: 700, color: T.steel, letterSpacing: "0.06em", marginTop: i > 0 ? 10 : 0, marginBottom: 3 }}>
-          {line.replace(/\*\*/g, "")}
-        </div>
-      );
+    if (/^\*\*[^*]{1,30}\*\*$/.test(line)) {
+      flush();
+      blocks.push({ type: "subheader", text: line.replace(/\*\*/g, "") });
+      continue;
     }
-    return <div key={i} style={{ marginBottom: 2 }}>{line || "\u00A0"}</div>;
+    if (line.startsWith("|") && line.endsWith("|") && line.length > 2) {
+      if (/^\|[\s\-:|]+\|$/.test(line)) continue;
+      if (!cur || cur.type !== "table") { flush(); cur = { type: "table", rows: [] }; }
+      cur.rows.push(line.split("|").slice(1, -1).map((c) => c.trim()));
+      continue;
+    }
+    const chk = line.match(/^[-\u2022]?\s*\[([ xX])\]\s+(.+)$/);
+    if (chk) {
+      if (!cur || cur.type !== "checklist") { flush(); cur = { type: "checklist", items: [] }; }
+      cur.items.push({ checked: chk[1].toLowerCase() === "x", text: chk[2] });
+      continue;
+    }
+    if (/^\d+\.\s+/.test(line)) {
+      if (!cur || cur.type !== "numbered") { flush(); cur = { type: "numbered", items: [] }; }
+      cur.items.push(line.replace(/^\d+\.\s+/, ""));
+      continue;
+    }
+    if (/^[-\u2022\u00B7*]\s+/.test(line)) {
+      if (!cur || cur.type !== "bullet") { flush(); cur = { type: "bullet", items: [] }; }
+      cur.items.push(line.replace(/^[-\u2022\u00B7*]\s+/, ""));
+      continue;
+    }
+    if (line.startsWith(">")) {
+      if (!cur || cur.type !== "callout") { flush(); cur = { type: "callout", lines: [] }; }
+      cur.lines.push(line.replace(/^>\s?/, ""));
+      continue;
+    }
+    if (!cur || cur.type !== "paragraph") { flush(); cur = { type: "paragraph", lines: [] }; }
+    cur.lines.push(rawLine);
+  }
+  flush();
+  return blocks;
+}
+
+/* \u2500\u2500\u2500 \uBE14\uB85D \uB80C\uB354\uB7EC v2: text \u2192 JSX (header/subheader/table/bullet/numbered/checklist/callout/paragraph) \u2500\u2500\u2500 */
+function formatMessageV2(text) {
+  const blocks = parseBlocks(text);
+  return blocks.map((b, i) => {
+    const k = `blk-${i}`;
+    switch (b.type) {
+      case "header":
+        return (
+          <div key={k} style={{ fontSize: 17, fontWeight: 700, color: T.mossDark, letterSpacing: "-0.01em", marginBottom: 8, marginTop: i > 0 ? 14 : 0 }}>
+            {b.text}
+          </div>
+        );
+      case "subheader":
+        return (
+          <div key={k} style={{ fontSize: 11.5, fontWeight: 700, color: T.steel, letterSpacing: "0.08em", marginTop: i > 0 ? 12 : 0, marginBottom: 4 }}>
+            {b.text}
+          </div>
+        );
+      case "paragraph":
+        return (
+          <div key={k} style={{ marginBottom: 6 }}>
+            {b.lines.map((l, j) => <div key={j} style={{ marginBottom: 2 }}>{inline(l) || "\u00A0"}</div>)}
+          </div>
+        );
+      case "bullet":
+        return (
+          <ul key={k} style={{ marginBottom: 8, marginTop: 2, paddingLeft: 2 }}>
+            {b.items.map((it, j) => (
+              <li key={j} style={{ paddingLeft: 18, position: "relative", marginBottom: 3, listStyle: "none" }}>
+                <span style={{ position: "absolute", left: 4, top: 0, color: T.mossDark, fontWeight: 700 }}>{"\u00B7"}</span>
+                {inline(it)}
+              </li>
+            ))}
+          </ul>
+        );
+      case "numbered":
+        return (
+          <ol key={k} style={{ marginBottom: 8, marginTop: 2, paddingLeft: 2 }}>
+            {b.items.map((it, j) => (
+              <li key={j} style={{ paddingLeft: 24, position: "relative", marginBottom: 4, listStyle: "none" }}>
+                <span style={{ position: "absolute", left: 0, top: 0, fontWeight: 700, color: T.mossDark, fontSize: 12.5 }}>{j + 1}.</span>
+                {inline(it)}
+              </li>
+            ))}
+          </ol>
+        );
+      case "checklist":
+        return (
+          <div key={k} style={{ marginBottom: 8, marginTop: 2 }}>
+            {b.items.map((it, j) => (
+              <div key={j} className="flex items-start gap-2" style={{ marginBottom: 5 }}>
+                <span style={{
+                  width: 16, height: 16, borderRadius: 4,
+                  background: it.checked ? T.mossDark : "transparent",
+                  border: `1.5px solid ${it.checked ? T.mossDark : T.hairline}`,
+                  color: "#FFFFFF",
+                  fontSize: 10, fontWeight: 800,
+                  display: "inline-flex", alignItems: "center", justifyContent: "center",
+                  marginTop: 3, flexShrink: 0,
+                }}>
+                  {it.checked && "\u2713"}
+                </span>
+                <span style={{ flex: 1, color: it.checked ? T.steel : T.ink, textDecoration: it.checked ? "line-through" : "none" }}>
+                  {inline(it.text)}
+                </span>
+              </div>
+            ))}
+          </div>
+        );
+      case "callout":
+        return (
+          <div key={k} style={{
+            background: T.tealLight,
+            borderLeft: `3px solid ${T.mossDark}`,
+            borderRadius: 8,
+            padding: "9px 13px",
+            margin: "8px 0",
+            fontSize: 13,
+            color: T.charcoal,
+            lineHeight: 1.55,
+          }}>
+            {b.lines.map((l, j) => <div key={j}>{inline(l)}</div>)}
+          </div>
+        );
+      case "table": {
+        if (b.rows.length === 0) return null;
+        const [header, ...body] = b.rows;
+        return (
+          <div key={k} style={{ margin: "8px 0", overflowX: "auto", borderRadius: 10, border: `1px solid ${T.hairlineSoft}`, background: T.canvas }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+              <thead>
+                <tr style={{ background: T.surface }}>
+                  {header.map((h, ci) => (
+                    <th key={ci} style={{
+                      padding: "8px 11px",
+                      textAlign: "left",
+                      fontSize: 10.5,
+                      fontWeight: 700,
+                      color: T.mossDark,
+                      letterSpacing: "0.06em",
+                      borderBottom: `1px solid ${T.hairlineSoft}`,
+                      whiteSpace: "nowrap",
+                    }}>
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {body.map((row, ri) => (
+                  <tr key={ri} style={{ borderBottom: ri === body.length - 1 ? "none" : `1px solid ${T.hairlineSoft}` }}>
+                    {row.map((cell, ci) => (
+                      <td key={ci} style={{ padding: "7px 11px", color: T.ink, fontWeight: 500, letterSpacing: "-0.005em" }}>
+                        {inline(cell)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+      default:
+        return null;
+    }
   });
 }
