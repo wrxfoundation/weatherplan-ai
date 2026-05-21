@@ -4339,7 +4339,7 @@ function PanelMap() {
     { id: "honam",    cx: 510, cy: 685, r: 130, color: "#F4A261", intensity: 0.36, label: "호남·제주", trigger: "주말 맑음 UV5+", intensity_text: "약" },
   ];
 
-  // 인사이트 (AI 가상 페르소나 시뮬레이션 형식)
+  // 인사이트 (AI 광고 시뮬레이션 형식)
   const INSIGHTS = [
     {
       id: "metro",
@@ -4568,7 +4568,7 @@ function PanelMap() {
               AI 시뮬레이션
             </div>
             <div className="flex items-center justify-between gap-3">
-              <span style={{ opacity: 0.7 }}>가상 페르소나</span>
+              <span style={{ opacity: 0.7 }}>분석 사업장</span>
               <span style={{ fontWeight: 700, fontFamily: "ui-monospace, 'SF Mono', monospace" }}>24,902</span>
             </div>
             <div className="flex items-center justify-between gap-3">
@@ -4636,7 +4636,7 @@ function PanelMap() {
       <div className="md:col-span-2 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-            AI 가상 페르소나 시뮬레이션
+AI 광고 시뮬레이션
           </div>
           <span style={{
             background: T.tealLight, color: T.mossDark,
@@ -4684,7 +4684,7 @@ function PanelMap() {
                       border: `1px solid ${ins.color}33`,
                       fontFamily: "ui-monospace, 'SF Mono', monospace",
                     }}>
-                      {ins.personaCount}명 시뮬
+                      {ins.personaCount} 매장 매칭
                     </span>
                   </div>
                   <div style={{ color: T.muted, fontSize: 10.5, fontWeight: 500, marginTop: 2, letterSpacing: "0.02em" }}>
@@ -5319,7 +5319,55 @@ export default function WeatherPlanAI() {
         <Reveal><FinalCTA /></Reveal>
       </main>
       <Footer />
+      <ScrollToTop />
     </div>
     </>
+  );
+}
+
+function ScrollToTop() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 400);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={scrollTop}
+      aria-label="맨 위로"
+      style={{
+        position: "fixed",
+        right: "max(20px, env(safe-area-inset-right, 20px))",
+        bottom: "max(20px, env(safe-area-inset-bottom, 20px))",
+        width: 48, height: 48,
+        borderRadius: "50%",
+        background: `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)`,
+        border: "1px solid rgba(255,255,255,0.18)",
+        color: "#FFFFFF",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        cursor: "pointer",
+        boxShadow: "0 8px 24px rgba(20,68,59,0.36), 0 1px 2px rgba(5,0,56,0.18), inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.25)",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0) scale(1)" : "translateY(12px) scale(0.92)",
+        pointerEvents: visible ? "auto" : "none",
+        transition: "opacity 240ms cubic-bezier(0.2,0.6,0.2,1), transform 240ms cubic-bezier(0.2,0.6,0.2,1)",
+        zIndex: 200,
+      }}
+      className="hover:opacity-95 active:translate-y-px"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 19V5" />
+        <path d="m5 12 7-7 7 7" />
+      </svg>
+    </button>
   );
 }
