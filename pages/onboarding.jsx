@@ -135,29 +135,74 @@ function Icon({ name, size = 18, stroke = 2 }) {
   }
 }
 
-const STEP_NAMES = ["기본 정보", "사업 디테일", "광고 채널", "첫 추천 결과"];
+const STEP_NAMES = ["광고주 유형", "사업 정보", "광고 채널", "첫 추천 결과"];
+
+/* 페르소나별 입력 범위 — Option A 분기 */
+const PERSONA_FIELDS = {
+  soloprenuer: { region: "specific", industriesMax: 1, businessNameLabel: "사업장명",   businessNamePlaceholder: "예: 우리 카페 (강남구점)" },
+  seller:      { region: "scope",    industriesMax: 3, businessNameLabel: "셀러·상호",  businessNamePlaceholder: "예: 미니멈 셀렉트샵" },
+  enterprise:  { region: "national", industriesMax: 3, businessNameLabel: "광고주명",   businessNamePlaceholder: "예: 한국로지스마트 (본사)" },
+  agency:      { region: "none",     industriesMax: 0, businessNameLabel: "대행사명",   businessNamePlaceholder: "예: 옐로우 미디어그룹" },
+};
+
+const REGION_SCOPE_CHOICES = [
+  { id: "national", label: "전국",           desc: "전국 시·도 단위 통합 캠페인" },
+  { id: "specific", label: "특정 시·도 선택", desc: "특정 시·도 1곳 집중 운영" },
+];
 
 export default function OnboardingFlow() {
   const [step, setStep] = useState(0);
+  const [persona, setPersona] = useState(null);
   const [businessName, setBusinessName] = useState("");
   const [sido, setSido] = useState("");
   const [sigungu, setSigungu] = useState("");
-  const [persona, setPersona] = useState(null);
-  const [industry, setIndustry] = useState(null);
+  const [regionScope, setRegionScope] = useState("national");
+  const [industries, setIndustries] = useState([]);
   const [budget, setBudget] = useState(null);
   const [channels, setChannels] = useState([]);
 
+  const personaCfg = persona ? PERSONA_FIELDS[persona] : null;
+  const isLocal = persona === "soloprenuer";
+  const isAgency = persona === "agency";
+
+  const toggleIndustry = (id) => {
+    if (!personaCfg) return;
+    const max = personaCfg.industriesMax;
+    if (industries.includes(id)) {
+      setIndustries(industries.filter((x) => x !== id));
+    } else if (max === 1) {
+      setIndustries([id]);
+    } else if (industries.length < max) {
+      setIndustries([...industries, id]);
+    }
+  };
+
   const canNext = useMemo(() => {
-    if (step === 0) return businessName.trim().length >= 2 && sido && sigungu;
-    if (step === 1) return persona && industry && budget;
+    if (step === 0) return persona && !isAgency && businessName.trim().length >= 2;
+    if (step === 1) {
+      if (!industries.length || !budget) return false;
+      if (isLocal && (!sido || !sigungu)) return false;
+      if (persona === "seller" && regionScope === "specific" && !sido) return false;
+      return true;
+    }
     if (step === 2) return channels.length > 0;
     return true;
-  }, [step, businessName, sido, sigungu, persona, industry, budget, channels]);
+  }, [step, persona, isAgency, isLocal, businessName, sido, sigungu, regionScope, industries, budget, channels]);
 
   const result = useMemo(() => {
-    if (!industry) return null;
-    return SIMULATION_BY_INDUSTRY[industry] || SIMULATION_BY_INDUSTRY.retail;
-  }, [industry]);
+    if (!industries.length) return null;
+    return SIMULATION_BY_INDUSTRY[industries[0]] || SIMULATION_BY_INDUSTRY.retail;
+  }, [industries]);
+
+  const locationLabel = useMemo(() => {
+    if (isLocal) return `${sido} ${sigungu}`.trim();
+    if (persona === "seller") {
+      if (regionScope === "national") return "전국";
+      return sido || "전국";
+    }
+    if (persona === "enterprise") return "전국 캠페인";
+    return "";
+  }, [persona, isLocal, sido, sigungu, regionScope]);
 
   const toggleChannel = (id) => {
     setChannels((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
@@ -207,102 +252,189 @@ export default function OnboardingFlow() {
 
       {/* 메인 */}
       <main className="max-w-[760px] mx-auto px-6 py-10">
-        {/* STEP 0: 기본 정보 */}
+        {/* STEP 0: 광고주 유형 */}
         {step === 0 && (
           <div>
             <div className="text-center mb-10">
-              <div style={{ color: T.mossDark, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 10 }}>STEP 1 · 기본 정보</div>
+              <div style={{ color: T.mossDark, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 10 }}>STEP 1 · 광고주 유형</div>
               <h1 style={{ color: T.ink, fontSize: "clamp(24px, 3.6vw, 34px)", fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.25, marginBottom: 10, wordBreak: "keep-all" }}>
-                먼저 사업장이 어딘지 알려주세요.
+                어떤 광고주이신가요?
               </h1>
               <p style={{ color: T.slate, fontSize: 14, fontWeight: 400, lineHeight: 1.6 }}>
-                5분 안에 첫 추천 결과를 받아보실 수 있습니다.
+                유형에 따라 다음 단계 필요 정보가 달라집니다.
               </p>
             </div>
 
             <div className="space-y-4">
-              <FormCard label="사업장명">
-                <input
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
-                  placeholder="예: 우리 카페 (강남구점)"
-                  style={inputStyle}
-                />
-                {businessName.length > 0 && businessName.trim().length < 2 && (
-                  <div style={hintError}>최소 2글자 이상 입력해주세요</div>
-                )}
-              </FormCard>
-
-              <FormCard label="위치 · 시·도">
-                <select value={sido} onChange={(e) => { setSido(e.target.value); setSigungu(""); }} style={inputStyle}>
-                  <option value="">시·도를 선택하세요</option>
-                  {Object.keys(REGIONS).map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </FormCard>
-
-              <FormCard label="위치 · 시·군·구">
-                <select
-                  value={sigungu}
-                  onChange={(e) => setSigungu(e.target.value)}
-                  disabled={!sido}
-                  style={{ ...inputStyle, color: sido ? T.ink : T.muted, cursor: sido ? "pointer" : "not-allowed" }}
-                >
-                  <option value="">{sido ? "시·군·구를 선택하세요" : "먼저 시·도를 선택하세요"}</option>
-                  {sigunguList.map((g) => <option key={g} value={g}>{g}</option>)}
-                </select>
-              </FormCard>
-
-              <div style={{ background: T.canvas, borderRadius: R.lg, padding: "12px 14px", border: `1px solid ${T.hairlineSoft}` }} className="flex items-start gap-2">
-                <div style={{ color: T.mossDark, paddingTop: 2 }}>
-                  <Icon name="info" size={14} stroke={2.2} />
-                </div>
-                <p style={{ color: T.slate, fontSize: 12, fontWeight: 400, lineHeight: 1.55, margin: 0, wordBreak: "keep-all" }}>
-                  케이웨더는 시·군·구 단위로 5분 단위 측정. 다음 단계에서 업종을 알려주시면, 매장 반경 5km까지 정밀하게 추천합니다.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 1: 사업 디테일 */}
-        {step === 1 && (
-          <div>
-            <div className="text-center mb-10">
-              <div style={{ color: T.mossDark, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 10 }}>STEP 2 · 사업 디테일</div>
-              <h1 style={{ color: T.ink, fontSize: "clamp(24px, 3.6vw, 34px)", fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.25, marginBottom: 10, wordBreak: "keep-all" }}>
-                어떤 광고주인지 알려주세요.
-              </h1>
-              <p style={{ color: T.slate, fontSize: 14, fontWeight: 400, lineHeight: 1.6 }}>
-                광고주 유형 · 업종 · 예산 — wellbian AI가 페르소나에 맞춰 추천합니다.
-              </p>
-            </div>
-
-            <div className="space-y-5">
               <FormCard label="광고주 유형">
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {PERSONAS.map((p) => (
                     <ChoiceCard key={p.id} active={persona === p.id} onClick={() => setPersona(p.id)} label={p.label} desc={p.desc} />
                   ))}
                 </div>
               </FormCard>
 
-              <FormCard label="업종">
+              {isAgency ? (
+                <div style={{
+                  background: "linear-gradient(180deg, rgba(78,179,168,0.10) 0%, rgba(78,179,168,0.04) 100%)",
+                  border: `1px solid ${T.brandTeal}`,
+                  borderRadius: R.xxl,
+                  padding: "18px 20px",
+                }} className="flex items-start gap-3">
+                  <div style={{
+                    width: 36, height: 36, flexShrink: 0,
+                    background: T.mossDark, color: "#FFFFFF",
+                    borderRadius: R.md,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <Icon name="layers" size={18} stroke={2} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ color: T.ink, fontSize: 14.5, fontWeight: 700, letterSpacing: "-0.005em", marginBottom: 4 }}>
+                      광고대행사 AE 콘솔로 바로 이동
+                    </div>
+                    <p style={{ color: T.slate, fontSize: 12.5, fontWeight: 400, lineHeight: 1.6, margin: 0, marginBottom: 10, wordBreak: "keep-all" }}>
+                      AE는 자기 정보 대신 담당 광고주 매트릭스가 핵심입니다. 일간 보고·카톡 공유까지 한 화면에서 운영하세요.
+                    </p>
+                    <a href="/agency-board" className="inline-flex items-center gap-1.5 transition hover:opacity-80" style={{
+                      background: `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)`,
+                      color: T.onPrimary,
+                      fontSize: 13, fontWeight: 600,
+                      padding: "9px 16px",
+                      borderRadius: R.full,
+                      textDecoration: "none",
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.22), 0 1px 2px rgba(20,68,59,0.16)",
+                    }}>
+                      AE 대시보드로 이동
+                      <Icon name="arrow-right" size={13} stroke={2.2} />
+                    </a>
+                  </div>
+                </div>
+              ) : persona ? (
+                <FormCard label={personaCfg.businessNameLabel}>
+                  <input
+                    value={businessName}
+                    onChange={(e) => setBusinessName(e.target.value)}
+                    placeholder={personaCfg.businessNamePlaceholder}
+                    style={inputStyle}
+                  />
+                  {businessName.length > 0 && businessName.trim().length < 2 && (
+                    <div style={hintError}>최소 2글자 이상 입력해주세요</div>
+                  )}
+                </FormCard>
+              ) : null}
+            </div>
+          </div>
+        )}
+
+        {/* STEP 1: 사업 정보 (페르소나별 분기) */}
+        {step === 1 && personaCfg && (
+          <div>
+            <div className="text-center mb-10">
+              <div style={{ color: T.mossDark, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 10 }}>STEP 2 · 사업 정보</div>
+              <h1 style={{ color: T.ink, fontSize: "clamp(24px, 3.6vw, 34px)", fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.25, marginBottom: 10, wordBreak: "keep-all" }}>
+                {isLocal && "사업장 위치와 업종을 알려주세요."}
+                {persona === "seller" && "영업 지역과 카테고리를 알려주세요."}
+                {persona === "enterprise" && "광고 카테고리와 예산을 알려주세요."}
+              </h1>
+              <p style={{ color: T.slate, fontSize: 14, fontWeight: 400, lineHeight: 1.6, wordBreak: "keep-all" }}>
+                {isLocal && "케이웨더는 시·군·구 단위로 5분 단위 측정 — 매장 반경 5km까지 정밀하게 추천합니다."}
+                {persona === "seller" && `이커머스 셀러는 카테고리 최대 ${personaCfg.industriesMax}개까지 동시 운영하실 수 있습니다.`}
+                {persona === "enterprise" && `대형 광고주는 전국 캠페인 기준 · 카테고리 최대 ${personaCfg.industriesMax}개까지 매칭합니다.`}
+              </p>
+            </div>
+
+            <div className="space-y-5">
+              {/* ─ 지역 — 페르소나별 분기 ─ */}
+              {isLocal && (
+                <>
+                  <FormCard label="위치 · 시·도">
+                    <select value={sido} onChange={(e) => { setSido(e.target.value); setSigungu(""); }} style={inputStyle}>
+                      <option value="">시·도를 선택하세요</option>
+                      {Object.keys(REGIONS).map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </FormCard>
+                  <FormCard label="위치 · 시·군·구">
+                    <select
+                      value={sigungu}
+                      onChange={(e) => setSigungu(e.target.value)}
+                      disabled={!sido}
+                      style={{ ...inputStyle, color: sido ? T.ink : T.muted, cursor: sido ? "pointer" : "not-allowed" }}
+                    >
+                      <option value="">{sido ? "시·군·구를 선택하세요" : "먼저 시·도를 선택하세요"}</option>
+                      {sigunguList.map((g) => <option key={g} value={g}>{g}</option>)}
+                    </select>
+                  </FormCard>
+                </>
+              )}
+
+              {persona === "seller" && (
+                <FormCard label="영업 지역">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                    {REGION_SCOPE_CHOICES.map((rs) => (
+                      <ChoiceCard
+                        key={rs.id}
+                        active={regionScope === rs.id}
+                        onClick={() => { setRegionScope(rs.id); if (rs.id === "national") { setSido(""); setSigungu(""); } }}
+                        label={rs.label}
+                        desc={rs.desc}
+                      />
+                    ))}
+                  </div>
+                  {regionScope === "specific" && (
+                    <select value={sido} onChange={(e) => setSido(e.target.value)} style={{ ...inputStyle, padding: "10px 0 6px 0" }}>
+                      <option value="">시·도를 선택하세요</option>
+                      {Object.keys(REGIONS).map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  )}
+                </FormCard>
+              )}
+
+              {persona === "enterprise" && (
+                <div style={{
+                  background: T.canvas,
+                  border: `1px solid ${T.hairlineSoft}`,
+                  borderRadius: R.xxl,
+                  padding: "16px 18px",
+                }} className="flex items-center gap-3">
+                  <div style={{
+                    width: 32, height: 32, flexShrink: 0,
+                    background: T.tealLight, color: T.mossDark,
+                    borderRadius: R.md,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <Icon name="layers" size={16} stroke={2} />
+                  </div>
+                  <div>
+                    <div style={{ color: T.steel, fontSize: 11, fontWeight: 600, letterSpacing: "0.06em" }}>운영 범위</div>
+                    <div style={{ color: T.ink, fontSize: 14, fontWeight: 700, letterSpacing: "-0.005em", marginTop: 2 }}>
+                      전국 캠페인 · 권역·시즌별 의사결정
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ─ 업종 — 페르소나별 단일/복수 선택 ─ */}
+              <FormCard label={`업종 ${personaCfg.industriesMax > 1 ? `(${industries.length}/${personaCfg.industriesMax})` : ""}`.trim()}>
                 <div className="flex flex-wrap gap-2">
                   {INDUSTRIES.map((ind) => {
-                    const active = industry === ind.id;
+                    const active = industries.includes(ind.id);
+                    const reachedMax = !active && industries.length >= personaCfg.industriesMax && personaCfg.industriesMax > 1;
                     return (
                       <button
                         key={ind.id}
-                        onClick={() => setIndustry(ind.id)}
+                        onClick={() => toggleIndustry(ind.id)}
+                        disabled={reachedMax}
                         className="transition active:translate-y-px"
                         style={{
                           background: active ? T.mossDark : T.canvas,
-                          color: active ? "#FFFFFF" : T.ink,
+                          color: active ? "#FFFFFF" : (reachedMax ? T.muted : T.ink),
                           border: `1px solid ${active ? T.mossDark : T.hairline}`,
                           fontSize: 13, fontWeight: active ? 600 : 500,
                           padding: "8px 13px",
                           borderRadius: R.full,
-                          cursor: "pointer",
+                          cursor: reachedMax ? "not-allowed" : "pointer",
+                          opacity: reachedMax ? 0.45 : 1,
                           letterSpacing: "-0.005em",
                           boxShadow: active ? "inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 6px rgba(20,68,59,0.22)" : "0 1px 2px rgba(5,0,56,0.04)",
                         }}
@@ -313,6 +445,11 @@ export default function OnboardingFlow() {
                     );
                   })}
                 </div>
+                {personaCfg.industriesMax > 1 && (
+                  <div style={{ color: T.muted, fontSize: 11, fontWeight: 400, marginTop: 8, letterSpacing: "-0.005em" }}>
+                    최대 {personaCfg.industriesMax}개까지 선택 · 첫 번째 선택 항목 기준으로 결과 화면이 구성됩니다.
+                  </div>
+                )}
               </FormCard>
 
               <FormCard label="월 광고 예산">
@@ -401,8 +538,13 @@ export default function OnboardingFlow() {
                 <span style={{ color: T.mossDark }}>첫 광고 추천</span>입니다.
               </h1>
               <p style={{ color: T.slate, fontSize: 14, fontWeight: 400, lineHeight: 1.6 }}>
-                {sido} {sigungu} · 케이웨더 60일 예보 — {result.season} 시즌 진입 시점 권장
+                {locationLabel && <>{locationLabel} · </>}케이웨더 60일 예보 — {result.season} 시즌 진입 시점 권장
               </p>
+              {industries.length > 1 && (
+                <p style={{ color: T.muted, fontSize: 12, fontWeight: 400, marginTop: 6 }}>
+                  외 {industries.length - 1}개 카테고리 — {INDUSTRIES.find((i) => i.id === industries[0])?.label} 기준 표시
+                </p>
+              )}
             </div>
 
             <div style={{
