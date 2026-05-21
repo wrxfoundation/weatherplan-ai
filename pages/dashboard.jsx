@@ -11,6 +11,7 @@
  * ============================================================ */
 
 import React, { useEffect, useMemo, useState } from "react";
+import Head from "next/head";
 
 const T = {
   canvas:        "#FFFFFF",
@@ -168,7 +169,13 @@ export default function DashboardPage() {
   const businessName = profile?.businessName || null;
 
   return (
-    <div style={{ minHeight: "100vh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif" }}>
+    <>
+      <Head>
+        <title>대시보드 · Weather Plan AI</title>
+        <meta name="description" content="Weather Plan AI 베타 대시보드 — 이번 주 KPI 시뮬레이션·7일 추천 강도 캘린더·오늘의 추천·최근 활동 한 페이지로." />
+        <meta property="og:title" content="대시보드 · Weather Plan AI" />
+      </Head>
+      <div style={{ minHeight: "100vh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif" }}>
       <header style={{
         background: T.canvas,
         borderBottom: `1px solid ${T.hairlineSoft}`,
@@ -616,5 +623,6 @@ export default function DashboardPage() {
 
       </main>
     </div>
+    </>
   );
 }

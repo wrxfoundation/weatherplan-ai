@@ -18,6 +18,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import Head from "next/head";
 
 /* ═════════════════════════════════════════════════════════════
    0.  DESIGN TOKENS  (Miro DESIGN.md)
@@ -4766,7 +4767,14 @@ function ForecasterCouncil() {
 
 export default function WeatherPlanAI() {
   return (
-    <div className="min-h-screen antialiased"
+    <>
+      <Head>
+        <title>Weather Plan AI · 날씨로 광고하는 가장 똑똑한 방법</title>
+        <meta name="description" content="질문 한 줄로, 상품이 더 팔리는 광고. 케이웨더 60일 예보 × 100+ 시그널 × Claude Opus 4.7로 카피·예산·매체를 실시간 추천합니다. 18개 업종 × 162개 세부 카테고리 지원." />
+        <meta property="og:title" content="Weather Plan AI · 날씨로 광고하는 가장 똑똑한 방법" />
+        <meta property="og:description" content="질문 한 줄로, 상품이 더 팔리는 광고. 케이웨더 60일 예보 × Claude AI 광고 의사결정." />
+      </Head>
+      <div className="min-h-screen antialiased"
       style={{ background: T.canvas, color: T.ink, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css');
@@ -5136,5 +5144,6 @@ export default function WeatherPlanAI() {
       </main>
       <Footer />
     </div>
+    </>
   );
 }

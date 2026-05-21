@@ -13,6 +13,7 @@
  * ============================================================ */
 
 import React, { useState, useMemo } from "react";
+import Head from "next/head";
 
 /* ─── 디자인 토큰 ─── */
 const T = {
@@ -269,7 +270,13 @@ export default function AgencyBoardPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", display: "flex", flexDirection: "column" }}>
+    <>
+      <Head>
+        <title>광고대행사 콘솔 · Weather Plan AI</title>
+        <meta name="description" content="AE를 위한 다중 광고주 운영 콘솔 — 광고주별 날씨 캠페인·일간 보고·예보관 1:1 채팅 한 화면. KWeather × Claude AI." />
+        <meta property="og:title" content="광고대행사 콘솔 · Weather Plan AI" />
+      </Head>
+      <div style={{ minHeight: "100vh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", display: "flex", flexDirection: "column" }}>
 
       {/* ─── 상단 헤더 ─── */}
       <header style={{
@@ -955,5 +962,6 @@ export default function AgencyBoardPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

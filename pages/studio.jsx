@@ -15,6 +15,7 @@
  * ============================================================ */
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import Head from "next/head";
 
 /* ─── 디자인 토큰 ─── */
 const T = {
@@ -611,7 +612,14 @@ ${basis}
   };
 
   return (
-    <div style={{ minHeight: "100dvh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", display: "flex", flexDirection: "column" }}>
+    <>
+      <Head>
+        <title>Studio · Weather Plan AI</title>
+        <meta name="description" content="Claude Opus 4.7 기반 날씨 광고 의사결정 챗봇. 18개 업종 × 162개 세부 카테고리 실시간 추천. 카피·예산·매체 입찰을 한 줄 질문으로." />
+        <meta property="og:title" content="Studio · Weather Plan AI 챗봇" />
+        <meta property="og:description" content="질문 한 줄로 광고 의사결정. 케이웨더 60일 예보 × Claude AI." />
+      </Head>
+      <div style={{ minHeight: "100dvh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", display: "flex", flexDirection: "column" }}>
 
       {/* ─── 상단 헤더 ─── */}
       <header
@@ -1021,6 +1029,7 @@ ${basis}
         </main>
       </div>
     </div>
+    </>
   );
 }
 
