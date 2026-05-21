@@ -14,7 +14,7 @@
  * 라우팅: /studio
  * ============================================================ */
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 
 /* ─── 디자인 토큰 ─── */
 const T = {
@@ -223,6 +223,28 @@ const INDUSTRIES = [
   },
 ];
 
+/* ─── 서브카테고리 (18 × 5 = 90) ─── */
+const SUBCATEGORIES_BY_INDUSTRY = {
+  fashion:   ["여성복", "남성복", "키즈", "액세서리", "가방·신발"],
+  beauty:    ["스킨케어", "메이크업", "헤어케어", "향수", "건강기능식품"],
+  beverage:  ["커피·차", "맥주·소주", "와인·위스키", "음료수·주스", "전통주·프리미엄"],
+  retail:    ["슈퍼·마트", "편의점", "백화점·아울렛", "종합몰", "카테고리몰"],
+  auto:      ["신차", "중고차", "SUV·세단", "친환경차", "액세서리·정비"],
+  health:    ["종합비타민", "알러지·감기약", "소화·위장", "진통제", "다이어트"],
+  home:      ["가구", "침구·홈텍스", "조명·인테리어", "DIY·공구", "리빙소품"],
+  appliance: ["냉장고·세탁기", "에어컨·계절", "소형가전", "주방가전", "TV·AV"],
+  sleep:     ["매트리스", "베개·이불", "침구세트", "잠옷·수면용품", "슬립테크"],
+  food:      ["치킨·피자", "분식·스낵", "한식", "양식·이태리", "일식·중식"],
+  travel:    ["국내여행", "해외여행", "호텔·리조트", "항공", "액티비티·체험"],
+  outdoor:   ["등산·트레킹", "캠핑", "골프", "자전거·수상", "러닝·피트니스"],
+  finance:   ["손해보험", "생명보험", "투자·증권", "대출", "카드·페이"],
+  edu:       ["초중고", "대입·재수", "어학", "자격증", "성인·평생교육"],
+  ent:       ["OTT·VOD", "게임", "음악·콘서트", "영화·도서", "웹툰·웹소설"],
+  telco:     ["무선요금제", "인터넷·IPTV", "알뜰폰", "클라우드·SaaS", "구독박스"],
+  pet:       ["사료·간식", "펫용품", "펫헬스·약", "미용·호텔", "유기·입양"],
+  solo:      ["즉석식품", "1인 가전", "1인 가구 인테리어", "셀프케어", "1인 여가"],
+};
+
 /* ─── 미리 정의된 시뮬레이션 응답 (USE_MOCK 모드용) ─── */
 const STUDIO_DEMO_BY_INDUSTRY = {
   fashion: [
@@ -367,6 +389,51 @@ const buildSystemPrompt = (industryLabel) => `당신은 wellbian AI입니다. �
 /* ============================================================
  *  Studio Component
  * ============================================================ */
+/* ─── 사이드바 업종 row (이름 + 즐겨찾기 별) ─── */
+function IndustryRow({ ind, active, favorite, onSelect, onFavorite }) {
+  return (
+    <div
+      className="flex items-center w-full transition"
+      style={{
+        background: active ? "rgba(78,179,168,0.10)" : "transparent",
+        borderRadius: 10,
+        border: active ? `1px solid #4EB3A8` : "1px solid transparent",
+      }}
+    >
+      <button
+        onClick={onSelect}
+        className="flex-1 min-w-0 text-left transition active:translate-y-px"
+        style={{
+          color: active ? "#14443B" : "#050038",
+          fontSize: 13, fontWeight: active ? 700 : 500,
+          padding: "8px 4px 8px 11px",
+          background: "transparent", border: "none", cursor: "pointer",
+          letterSpacing: "-0.005em",
+          display: "flex", alignItems: "center", gap: 8,
+          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+        }}
+      >
+        <span style={{ fontSize: 15, flexShrink: 0 }}>{ind.icon}</span>
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{ind.label}</span>
+      </button>
+      <button
+        onClick={onFavorite}
+        aria-label={favorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+        className="transition hover:opacity-80 active:translate-y-px"
+        style={{
+          width: 28, height: 28, marginRight: 4, flexShrink: 0,
+          background: "transparent", border: "none", cursor: "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          color: favorite ? "#F5B433" : "#9CA3AF",
+          fontSize: 14,
+        }}
+      >
+        {favorite ? "★" : "☆"}
+      </button>
+    </div>
+  );
+}
+
 function BrandMark({ size = 32 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="select-none flex-shrink-0" style={{ display: "block" }}>
@@ -396,9 +463,48 @@ export default function StudioPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSub, setSelectedSub] = useState(null);
   const messagesEndRef = useRef(null);
 
   const currentIndustry = INDUSTRIES.find((i) => i.id === industry) || INDUSTRIES[0];
+  const currentSubs = SUBCATEGORIES_BY_INDUSTRY[industry] || [];
+
+  // localStorage 동기화 — favorites
+  useEffect(() => {
+    try {
+      const stored = typeof window !== "undefined" && window.localStorage.getItem("wpa_studio_favorites");
+      if (stored) setFavorites(JSON.parse(stored));
+    } catch (e) { /* ignore */ }
+  }, []);
+  useEffect(() => {
+    try {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("wpa_studio_favorites", JSON.stringify(favorites));
+      }
+    } catch (e) { /* ignore */ }
+  }, [favorites]);
+
+  const toggleFavorite = useCallback((id) => {
+    setFavorites((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+  }, []);
+
+  // 검색 필터링
+  const filteredIndustries = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return INDUSTRIES;
+    return INDUSTRIES.filter((ind) => {
+      if (ind.label.toLowerCase().includes(q)) return true;
+      const subs = SUBCATEGORIES_BY_INDUSTRY[ind.id] || [];
+      return subs.some((s) => s.toLowerCase().includes(q));
+    });
+  }, [searchQuery]);
+
+  const favoriteIndustries = useMemo(
+    () => INDUSTRIES.filter((ind) => favorites.includes(ind.id)),
+    [favorites]
+  );
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -428,7 +534,7 @@ export default function StudioPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             messages: newMessages,
-            industry: currentIndustry.label,
+            industry: selectedSub ? `${currentIndustry.label} · ${selectedSub}` : currentIndustry.label,
             persona: "광고주",
             model: "claude-opus-4-7",
             max_tokens: 1024,
@@ -486,7 +592,7 @@ ${basis}
     } finally {
       setLoading(false);
     }
-  }, [input, loading, industry, currentIndustry, messages]);
+  }, [input, loading, industry, currentIndustry, messages, selectedSub]);
 
   const handleNewChat = () => {
     setMessages([]);
@@ -495,8 +601,13 @@ ${basis}
 
   const handleIndustryChange = (id) => {
     setIndustry(id);
+    setSelectedSub(null);
     setMessages([]);
     setSidebarOpen(false);
+  };
+
+  const handleSubcategoryClick = (sub) => {
+    setSelectedSub((prev) => (prev === sub ? null : sub));
   };
 
   return (
@@ -592,32 +703,120 @@ ${basis}
           )}
 
           <div style={{ padding: "20px 18px" }} className={sidebarOpen ? "max-w-md mx-auto" : ""}>
-            <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 12 }}>
-              업종
+            {/* 검색 */}
+            <div style={{ position: "relative", marginBottom: 14 }}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="업종·세부 검색…"
+                style={{
+                  width: "100%",
+                  background: T.surface,
+                  color: T.ink,
+                  fontSize: 13,
+                  fontWeight: 400,
+                  padding: "9px 32px 9px 12px",
+                  borderRadius: R.md,
+                  border: `1px solid ${T.hairlineSoft}`,
+                  outline: "none",
+                  letterSpacing: "-0.005em",
+                }}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  style={{
+                    position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)",
+                    width: 20, height: 20, background: "transparent", color: T.steel,
+                    border: "none", cursor: "pointer", display: "flex",
+                    alignItems: "center", justifyContent: "center",
+                  }}
+                  aria-label="검색 지우기"
+                >
+                  <Icon name="x" size={14} stroke={2} />
+                </button>
+              )}
+            </div>
+
+            {/* 즐겨찾기 — 검색 비활성 + 항목 있을 때 */}
+            {!searchQuery && favoriteIndustries.length > 0 && (
+              <>
+                <div style={{ color: T.mossDark, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ fontSize: 12 }}>★</span> 즐겨찾기
+                </div>
+                <div className="space-y-1 mb-5">
+                  {favoriteIndustries.map((ind) => (
+                    <IndustryRow
+                      key={`fav-${ind.id}`}
+                      ind={ind}
+                      active={industry === ind.id}
+                      favorite={true}
+                      onSelect={() => handleIndustryChange(ind.id)}
+                      onFavorite={() => toggleFavorite(ind.id)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* 전체 업종 (필터링됨) */}
+            <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 8 }}>
+              {searchQuery ? `검색 결과 (${filteredIndustries.length})` : "전체 업종"}
             </div>
             <div className="space-y-1 mb-7">
-              {INDUSTRIES.map((ind) => {
+              {filteredIndustries.length === 0 && (
+                <div style={{ color: T.muted, fontSize: 12, padding: "12px 4px", textAlign: "center" }}>
+                  일치하는 업종이 없습니다.
+                </div>
+              )}
+              {filteredIndustries.map((ind) => {
                 const active = industry === ind.id;
+                const subs = SUBCATEGORIES_BY_INDUSTRY[ind.id] || [];
+                const q = searchQuery.trim().toLowerCase();
+                const matchedSubs = q
+                  ? subs.filter((s) => s.toLowerCase().includes(q))
+                  : subs;
                 return (
-                  <button
-                    key={ind.id}
-                    onClick={() => handleIndustryChange(ind.id)}
-                    className="w-full text-left transition active:translate-y-px"
-                    style={{
-                      background: active ? "rgba(78,179,168,0.10)" : "transparent",
-                      color: active ? T.mossDark : T.ink,
-                      fontSize: 13, fontWeight: active ? 700 : 500,
-                      padding: "8px 11px",
-                      borderRadius: R.md,
-                      cursor: "pointer",
-                      letterSpacing: "-0.005em",
-                      border: active ? `1px solid ${T.brandTeal}` : "1px solid transparent",
-                      display: "flex", alignItems: "center", gap: 8,
-                    }}
-                  >
-                    <span style={{ fontSize: 15 }}>{ind.icon}</span>
-                    {ind.label}
-                  </button>
+                  <div key={ind.id}>
+                    <IndustryRow
+                      ind={ind}
+                      active={active}
+                      favorite={favorites.includes(ind.id)}
+                      onSelect={() => handleIndustryChange(ind.id)}
+                      onFavorite={() => toggleFavorite(ind.id)}
+                    />
+                    {/* 서브카테고리 — 활성화 시 또는 검색 매칭 시 노출 */}
+                    {(active || (searchQuery && matchedSubs.length > 0)) && matchedSubs.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5" style={{ padding: "6px 11px 6px 32px" }}>
+                        {matchedSubs.map((sub) => {
+                          const subActive = active && selectedSub === sub;
+                          return (
+                            <button
+                              key={sub}
+                              onClick={() => {
+                                if (!active) handleIndustryChange(ind.id);
+                                handleSubcategoryClick(sub);
+                              }}
+                              className="transition active:translate-y-px"
+                              style={{
+                                background: subActive ? T.mossDark : T.surface,
+                                color: subActive ? "#FFFFFF" : T.charcoal,
+                                fontSize: 11, fontWeight: subActive ? 600 : 500,
+                                padding: "3px 9px",
+                                borderRadius: R.full,
+                                border: `1px solid ${subActive ? T.mossDark : T.hairlineSoft}`,
+                                cursor: "pointer",
+                                letterSpacing: "-0.005em",
+                              }}
+                            >
+                              {sub}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -783,7 +982,7 @@ ${basis}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
-                  placeholder={`${currentIndustry.label} 광고에 대해 물어보세요…`}
+                  placeholder={`${currentIndustry.label}${selectedSub ? " · " + selectedSub : ""} 광고에 대해 물어보세요…`}
                   disabled={loading}
                   className="flex-1 bg-transparent outline-none"
                   style={{
