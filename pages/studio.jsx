@@ -1314,7 +1314,7 @@ function formatMessageV2(text) {
         if (b.rows.length === 0) return null;
         const [header, ...body] = b.rows;
         return (
-          <div key={k} style={{ margin: "8px 0", overflowX: "auto", borderRadius: 10, border: `1px solid ${T.hairlineSoft}`, background: T.canvas }}>
+          <div key={k} style={{ margin: "8px 0", overflowX: "auto", borderRadius: 10, border: `1px solid ${T.brandTeal}`, background: T.canvas, boxShadow: "0 0 0 3px rgba(78,179,168,0.18), 0 6px 18px rgba(20,68,59,0.22), 0 2px 4px rgba(20,68,59,0.12)" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
               <thead>
                 <tr style={{ background: T.surface }}>
