@@ -1403,8 +1403,10 @@ function Hero() {
             <div
               className="text-left"
               style={{
-                background: "transparent",
-                border: `1px solid ${T.hairlineSoft}`,
+                background: "rgba(255,255,255,0.72)",
+                backdropFilter: "blur(14px) saturate(180%)",
+                WebkitBackdropFilter: "blur(14px) saturate(180%)",
+                border: `1px solid rgba(255,255,255,0.85)`,
                 borderRadius: R.xxxl,
                 padding: "22px 24px",
               }}
@@ -1440,8 +1442,10 @@ function Hero() {
             <div
               className="text-left"
               style={{
-                background: "transparent",
-                border: `1px solid ${T.hairlineSoft}`,
+                background: "rgba(255,255,255,0.72)",
+                backdropFilter: "blur(14px) saturate(180%)",
+                WebkitBackdropFilter: "blur(14px) saturate(180%)",
+                border: `1px solid rgba(255,255,255,0.85)`,
                 borderRadius: R.xxxl,
                 padding: "22px 24px",
               }}
@@ -2756,9 +2760,8 @@ function Trust() {
             <ul className="space-y-2.5">
               {[
                 "매일 자정 자동 검증 · 일별 결과 공개",
-                "1 · 7 · 30 · 60일 앞 모두 따로 표시",
+                "1 · 7 · 30 · 60일 표시",
                 "광고 추천 결과 1건마다 정확도 점수 미리 보기",
-                "weatherplan.ai/transparency 전체 공시",
               ].map((tx) => (
                 <li key={tx} className="flex items-start gap-2.5"
                   style={{ color: T.ink, fontSize: 14, fontWeight: 400 }}>
