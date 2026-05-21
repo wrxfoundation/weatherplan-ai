@@ -348,6 +348,20 @@ const PERSONAS = [
     pain: "60일 앞 시즌 MD와 광고가 어긋남. 매대·광고 동기화 불가",
     solution: "케이웨더 60일 예보로 시즌 MD·광고 한 곳에서. AI 의사결정 제안.",
     metric: "월 광고비 5천만원 이상",
+    scenario: {
+      context: "월요일 09:14 · 강남 본사 · 폭염 D-7 진입 시점",
+      question: "다음 주 폭염 예보인데, SUV 라인업 시승 광고 어떻게 잡을까요?",
+      copy: "에어컨 풀로 켜야 하는 날, 차박 시승 D-3 사전 예약.",
+      trigger: "폭염 7일 연속 + 주말 맑음 100% — SUV 4륜 검색 +180% 패턴 진입",
+      channels: [
+        { name: "네이버 GFA",  bid: "+35%", target: "30-44 남" },
+        { name: "인스타그램",  bid: "+28%", target: "전국 · 4륜 관심" },
+        { name: "카카오 모먼트", bid: "+22%", target: "강남 · 분당" },
+      ],
+      outcomeLabel: "시승 신청 전환율",
+      outcomeValue: "+47%",
+      outcomeBasis: "폭염 7일+ 4륜 검색 + 매장 5km 매칭 (BMW xDrive 글로벌 검증)",
+    },
   },
   {
     id: "franchise",
@@ -358,6 +372,20 @@ const PERSONAS = [
     pain: "매일 일기예보 보고 카카오·네이버 광고 손으로 조정",
     solution: "한 줄이면 4채널 동시 권장 결과. 카피·예산·타이밍 추천. 운영 시간 80% 감소.",
     metric: "월 광고비 500만 ~ 5천만원",
+    scenario: {
+      context: "수요일 14:22 · 본사 마케팅실 · 장마 D-3 진입 시점",
+      question: "이번 주 장마 예보, 치킨 배달 광고 어떻게 강화하나요?",
+      copy: "비 오는 저녁, 30분이면 따끈하게. 첫 배달 무료 쿠폰.",
+      trigger: "장마 D-3 진입 + 저녁 시간대 — 배달 검색 +220% (KOBACO)",
+      channels: [
+        { name: "카카오 모먼트", bid: "+40%", target: "전국 · 저녁 18-22시" },
+        { name: "인스타그램",   bid: "+32%", target: "20-39 통합" },
+        { name: "배달 앱 광고",  bid: "+25%", target: "비 예보 지역" },
+      ],
+      outcomeLabel: "배달 매출",
+      outcomeValue: "+58%",
+      outcomeBasis: "장마 + 저녁 시간대 배달 객단가 +58% (한국 외식업 통계)",
+    },
   },
   {
     id: "seller",
@@ -368,6 +396,20 @@ const PERSONAS = [
     pain: "카테고리 수십 개를 1~3명이 운영. 카테고리별 날씨 매칭 방치",
     solution: "카테고리 매칭 추천. 패션은 한파 패딩, 식품은 동시에 보양식.",
     metric: "월 광고비 100만 ~ 5천만원",
+    scenario: {
+      context: "화요일 11:00 · 송파 사무실 · 폭염 D-3 진입 시점",
+      question: "여름 매트리스 광고, 폭염 ROAS 어떻게 늘리나요?",
+      copy: "오늘 잠 못 든 분께 — 쿨링 매트리스 7일 체험.",
+      trigger: "열대야 5일 연속 + 수면 검색 폭증 — 쿨링 매트리스 +210%",
+      channels: [
+        { name: "쿠팡 광고",   bid: "+38%", target: "30-49 · 침실 키워드" },
+        { name: "네이버 스토어", bid: "+30%", target: "전국 · 수면" },
+        { name: "메타 광고",    bid: "+24%", target: "30-45 여성" },
+      ],
+      outcomeLabel: "쿠팡 매출",
+      outcomeValue: "+42%",
+      outcomeBasis: "열대야 5일+ 수면 검색 폭증 → 쿨링 매트리스 매출 +42%",
+    },
   },
   {
     id: "smb",
@@ -378,6 +420,20 @@ const PERSONAS = [
     pain: "광고 도구가 너무 복잡해서 거의 운영 못함",
     solution: "카톡 메시지처럼 한 줄. '비 올 때 광고 어떻게?' → 카피·예산·타이밍 답변.",
     metric: "월 광고비 10만 ~ 100만원",
+    scenario: {
+      context: "금요일 08:45 · 강남 매장 · 체감 33°C 진입",
+      question: "이번 주말 폭염인데 카페 광고 어떻게 잡으면 좋을까요?",
+      copy: "체감 33°C. 차가운 첫 잔, 가장 가까운 매장 5분.",
+      trigger: "체감온도 33°C+ 8일 연속 — 디저트·음료 검색 +180% (네이버)",
+      channels: [
+        { name: "인스타그램",   bid: "+30%", target: "강남 5km · 20-34" },
+        { name: "카카오 모먼트", bid: "+24%", target: "강남 · 점심·오후" },
+        { name: "네이버 GFA",   bid: "+20%", target: "강남 · 음식 관심" },
+      ],
+      outcomeLabel: "매장 매출",
+      outcomeValue: "+34%",
+      outcomeBasis: "체감 33°C+ 8일 디저트·음료 매출 +42% (소상공인진흥공단)",
+    },
   },
 ];
 
@@ -2364,6 +2420,21 @@ function KWeatherAssets() {
    ═════════════════════════════════════════════════════════════ */
 
 function Personas() {
+  const [scenarioPersona, setScenarioPersona] = useState(null);
+
+  // 모달 열림 시 ESC 닫기 + body scroll 잠금
+  useEffect(() => {
+    if (!scenarioPersona) return;
+    const onKey = (e) => { if (e.key === "Escape") setScenarioPersona(null); };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [scenarioPersona]);
+
   return (
     <section id="personas" style={{ background: T.canvas, paddingTop: 96, paddingBottom: 96 }}>
       <div className="max-w-[1280px] mx-auto px-6">
@@ -2374,15 +2445,228 @@ function Personas() {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {PERSONAS.map((p, i) => (
-            <PersonaCard key={p.id} p={p} index={i} />
+            <PersonaCard key={p.id} p={p} index={i} onScenarioClick={() => setScenarioPersona(p)} />
           ))}
         </div>
       </div>
+
+      {scenarioPersona && (
+        <ScenarioModal persona={scenarioPersona} onClose={() => setScenarioPersona(null)} />
+      )}
     </section>
   );
 }
 
-function PersonaCard({ p, index }) {
+function ScenarioModal({ persona, onClose }) {
+  const s = persona.scenario;
+  const t = TINT[persona.tint];
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0,
+        background: "rgba(5,0,56,0.55)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+        zIndex: 1000,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "16px",
+        animation: "fadeIn 200ms ease-out",
+      }}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${persona.title} 시나리오`}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: T.canvas,
+          borderRadius: 20,
+          width: "100%",
+          maxWidth: 680,
+          maxHeight: "92vh",
+          overflowY: "auto",
+          boxShadow: "0 20px 60px rgba(5,0,56,0.35), 0 1px 0 rgba(255,255,255,0.06) inset",
+          position: "relative",
+        }}
+      >
+        {/* Header */}
+        <div style={{
+          background: `linear-gradient(180deg, ${t.bg} 0%, ${t.bg}cc 100%)`,
+          padding: "22px 24px 18px",
+          borderBottom: `1px solid rgba(5,0,56,0.08)`,
+          position: "relative",
+        }}>
+          <button
+            onClick={onClose}
+            aria-label="닫기"
+            style={{
+              position: "absolute", top: 14, right: 14,
+              background: "rgba(255,255,255,0.75)",
+              border: "1px solid rgba(5,0,56,0.12)",
+              borderRadius: 9999,
+              width: 32, height: 32,
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer",
+              color: T.charcoal,
+              fontSize: 16, lineHeight: 1,
+            }}
+          >
+            ✕
+          </button>
+          <div style={{
+            display: "inline-block",
+            background: "rgba(255,255,255,0.6)",
+            color: T.charcoal,
+            fontSize: 11, fontWeight: 600, letterSpacing: "0.08em",
+            padding: "4px 10px", borderRadius: 9999,
+            marginBottom: 8,
+          }}>
+            {persona.badge}
+          </div>
+          <h2 style={{ color: T.primary, fontSize: 22, fontWeight: 600, letterSpacing: "-0.015em", lineHeight: 1.25 }}>
+            {persona.title} 시나리오
+          </h2>
+          <div style={{ color: T.charcoal, opacity: 0.7, fontSize: 12.5, fontWeight: 500, marginTop: 5 }}>
+            {s.context}
+          </div>
+        </div>
+
+        <div style={{ padding: "22px 24px 24px" }}>
+          {/* 사용자 질문 (말풍선 right) */}
+          <div className="flex justify-end mb-3">
+            <div style={{
+              background: "#14443B", color: "#FFFFFF",
+              padding: "11px 15px",
+              borderRadius: 16,
+              fontSize: 14, fontWeight: 400, lineHeight: 1.55,
+              maxWidth: "85%",
+              boxShadow: "0 2px 6px rgba(20,68,59,0.2)",
+              wordBreak: "keep-all",
+            }}>
+              {s.question}
+            </div>
+          </div>
+
+          {/* AI 응답 */}
+          <div style={{
+            background: "#FAF8F2",
+            border: "1px solid rgba(5,0,56,0.08)",
+            borderRadius: 16,
+            padding: "16px 18px",
+            marginBottom: 16,
+          }}>
+            <div className="flex items-center gap-1.5 mb-3" style={{ color: "#14443B" }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+              </svg>
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em" }}>wellbian AI</span>
+            </div>
+
+            {/* 추천 카피 */}
+            <div style={{ color: "#050038", fontSize: 16, fontStyle: "italic", fontWeight: 400, lineHeight: 1.5, marginBottom: 14, wordBreak: "keep-all" }}>
+              "{s.copy}"
+            </div>
+
+            {/* 트리거 callout */}
+            <div style={{
+              background: "#D7F2EE",
+              borderLeft: "3px solid #14443B",
+              borderRadius: 8,
+              padding: "9px 13px",
+              marginBottom: 14,
+              fontSize: 12.5, color: "#1A1A1A", lineHeight: 1.55, wordBreak: "keep-all",
+            }}>
+              <strong style={{ color: "#14443B", fontWeight: 700 }}>왜 지금? </strong>
+              {s.trigger}
+            </div>
+
+            {/* 매체별 권장 표 */}
+            <div style={{ color: "#7B7F8C", fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em", marginBottom: 6 }}>
+              매체별 권장
+            </div>
+            <div style={{ border: "1px solid rgba(5,0,56,0.08)", borderRadius: 10, overflow: "hidden", marginBottom: 14, background: "#FFFFFF" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+                <thead>
+                  <tr style={{ background: "#F7F5EE" }}>
+                    <th style={{ padding: "8px 11px", textAlign: "left", fontSize: 10.5, fontWeight: 700, color: "#14443B", letterSpacing: "0.06em" }}>매체</th>
+                    <th style={{ padding: "8px 11px", textAlign: "left", fontSize: 10.5, fontWeight: 700, color: "#14443B", letterSpacing: "0.06em" }}>입찰</th>
+                    <th style={{ padding: "8px 11px", textAlign: "left", fontSize: 10.5, fontWeight: 700, color: "#14443B", letterSpacing: "0.06em" }}>타겟</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {s.channels.map((c, i) => (
+                    <tr key={i} style={{ borderTop: "1px solid rgba(5,0,56,0.06)" }}>
+                      <td style={{ padding: "8px 11px", color: "#050038", fontWeight: 600 }}>{c.name}</td>
+                      <td style={{ padding: "8px 11px", color: "#14443B", fontWeight: 700 }}>{c.bid}</td>
+                      <td style={{ padding: "8px 11px", color: "#1A1A1A", fontWeight: 500 }}>{c.target}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* 예상 KPI */}
+            <div className="flex items-center justify-between flex-wrap gap-3 pt-3" style={{ borderTop: "1px solid rgba(5,0,56,0.08)" }}>
+              <div>
+                <div style={{ color: "#7B7F8C", fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em", marginBottom: 2 }}>
+                  예상 {s.outcomeLabel}
+                </div>
+                <div style={{ color: "#14443B", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1 }}>
+                  {s.outcomeValue}
+                </div>
+              </div>
+              <div style={{ color: "#7B7F8C", fontSize: 11, fontWeight: 400, lineHeight: 1.5, maxWidth: 320, textAlign: "right", wordBreak: "keep-all" }}>
+                {s.outcomeBasis}
+              </div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="flex flex-col sm:flex-row gap-2">
+            <a
+              href="/studio"
+              className="transition active:translate-y-px"
+              style={{
+                flex: 1,
+                display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
+                background: "linear-gradient(180deg, #1F6157 0%, #14443B 100%)",
+                color: "#FFFFFF",
+                padding: "12px 18px",
+                borderRadius: 9999,
+                fontSize: 13.5, fontWeight: 600,
+                textDecoration: "none",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.18), 0 4px 14px rgba(20,68,59,0.22)",
+              }}
+            >
+              Studio에서 직접 체험 →
+            </a>
+            <a
+              href="/onboarding"
+              className="transition active:translate-y-px hover:opacity-95"
+              style={{
+                flex: 1,
+                display: "inline-flex", alignItems: "center", justifyContent: "center",
+                background: "#FFFFFF",
+                color: "#050038",
+                padding: "12px 18px",
+                borderRadius: 9999,
+                fontSize: 13.5, fontWeight: 500,
+                textDecoration: "none",
+                border: "1px solid rgba(5,0,56,0.12)",
+              }}
+            >
+              등록 시작
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PersonaCard({ p, index, onScenarioClick }) {
   const t = TINT[p.tint];
   return (
     <div
@@ -2502,8 +2786,9 @@ function PersonaCard({ p, index }) {
           {p.metric}
         </div>
         <button
-          className="hover:opacity-70 transition"
-          style={{ color: T.primary, fontSize: 12.5, fontWeight: 600 }}
+          onClick={onScenarioClick}
+          className="hover:opacity-70 transition active:translate-y-px"
+          style={{ color: T.primary, fontSize: 12.5, fontWeight: 600, cursor: "pointer", background: "transparent", border: "none", padding: 0 }}
         >
           시나리오 보기 →
         </button>
