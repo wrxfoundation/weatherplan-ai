@@ -3188,11 +3188,24 @@ function AIAgentEra() {
         <div
           style={{
             background: T.primary, color: T.onPrimary,
-            borderRadius: R.feature,       // 32px
+            borderRadius: R.feature,
             padding: "56px 48px",
+            position: "relative",
+            overflow: "hidden",
+            isolation: "isolate",
           }}
         >
-          <div className="max-w-3xl">
+          {/* Hero 루프 영상 재활용 — 다크 오버레이로 텍스트 가독성 보장 */}
+          <video
+            className="hero-cta-video"
+            autoPlay muted loop playsInline preload="metadata"
+            aria-hidden="true"
+          >
+            <source src="/hero-loop.mp4" type="video/mp4" />
+          </video>
+          <div className="hero-cta-overlay" aria-hidden="true" />
+
+          <div className="max-w-3xl" style={{ position: "relative", zIndex: 1 }}>
             <div className="inline-flex mb-6 items-center gap-2 flex-wrap">
               <span
                 style={{
@@ -5138,10 +5151,21 @@ function ForecasterCouncil() {
                 padding: "36px 32px",
                 position: "relative", overflow: "hidden",
                 height: "100%",
+                isolation: "isolate",
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.4), 0 16px 48px rgba(5,0,56,0.18)",
               }}
             >
-              {/* 내부 ambient teal glow */}
+              {/* Hero 루프 영상 재활용 — 다크 오버레이로 텍스트 가독성 보장 */}
+              <video
+                className="hero-cta-video"
+                autoPlay muted loop playsInline preload="metadata"
+                aria-hidden="true"
+              >
+                <source src="/hero-loop.mp4" type="video/mp4" />
+              </video>
+              <div className="hero-cta-overlay" aria-hidden="true" />
+
+              {/* 내부 ambient teal glow (영상 위 살짝 더해 깊이감) */}
               <div
                 style={{
                   position: "absolute", right: -60, top: -60,
@@ -5149,10 +5173,11 @@ function ForecasterCouncil() {
                   background: "radial-gradient(circle, rgba(78,179,168,0.22), transparent 70%)",
                   filter: "blur(40px)",
                   pointerEvents: "none",
+                  zIndex: 0,
                 }}
               />
 
-              <div className="relative">
+              <div className="relative" style={{ zIndex: 1 }}>
                 <span
                   className="inline-flex items-center gap-1.5"
                   style={{
