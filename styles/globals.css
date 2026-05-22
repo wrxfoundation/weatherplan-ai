@@ -281,15 +281,16 @@ p, li, span    { word-break: keep-all; }
   inset: -1.5px;
   border-radius: inherit;
   padding: 1.5px;
+  /* 청록 + 모스 그린 조화 (mossDark → brandTeal → mint → brandTeal → mossDark loop) */
   background: linear-gradient(
     90deg,
-    rgba(78,179,168,0.75)   0%,
-    rgba(180,210,255,0.85)  18%,
-    rgba(231,227,255,0.85) 36%,
-    rgba(255,180,230,0.75) 54%,
-    rgba(255,165,135,0.75) 72%,
-    rgba(255,220,180,0.85) 88%,
-    rgba(78,179,168,0.75) 100%
+    rgba(20, 68, 59, 0.78)   0%,
+    rgba(31, 97, 87, 0.85)  15%,
+    rgba(45,126,112, 0.88) 30%,
+    rgba(78,179,168, 0.92) 50%,
+    rgba(141,219,208,0.88) 70%,
+    rgba(78,179,168, 0.92) 85%,
+    rgba(20, 68, 59, 0.78) 100%
   );
   background-size: 280% 100%;
   animation: nlBorderShine 7s linear infinite;
@@ -297,7 +298,7 @@ p, li, span    { word-break: keep-all; }
   -webkit-mask-composite: xor;
           mask-composite: exclude;
   z-index: -1;
-  opacity: 0.85;
+  opacity: 0.9;
   filter: blur(0.4px);
   pointer-events: none;
 }
@@ -313,19 +314,20 @@ p, li, span    { word-break: keep-all; }
   position: absolute;
   inset: -5px;
   border-radius: inherit;
+  /* 외부 글로우 — 청록/모스 톤 only */
   background: linear-gradient(
     90deg,
-    rgba(78,179,168,0.14)   0%,
-    rgba(180,210,255,0.18)  25%,
-    rgba(255,180,230,0.14) 50%,
-    rgba(255,165,135,0.14) 75%,
-    rgba(78,179,168,0.14) 100%
+    rgba(20, 68, 59, 0.16)   0%,
+    rgba(78,179,168, 0.26)  30%,
+    rgba(141,219,208,0.22) 60%,
+    rgba(78,179,168, 0.26)  90%,
+    rgba(20, 68, 59, 0.16) 100%
   );
   background-size: 280% 100%;
   animation: nlBorderShine 7s linear infinite;
   filter: blur(10px);
   z-index: -2;
-  opacity: 0.5;
+  opacity: 0.55;
   pointer-events: none;
 }
 

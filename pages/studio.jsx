@@ -988,7 +988,7 @@ ${basis}
           }}>
             <div className="max-w-3xl mx-auto">
               <div
-                className="flex items-center gap-2"
+                className={`nl-shine flex items-center gap-2 ${loading || input.trim() ? "nl-shine-active" : ""}`}
                 style={{
                   background: T.canvas,
                   borderRadius: R.xxl,
