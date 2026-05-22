@@ -83,11 +83,11 @@ const R = {
    ═════════════════════════════════════════════════════════════ */
 
 const SAMPLE_QUERIES = [
-  "강남 카페예요, 이번 주말 장마인데 어떻게 광고할까요?",
-  "에어컨 제조사 본사예요. 열대야 일주일이면 전국 광고 어떻게?",
-  "장마 다가오는데 우산 광고 미리 어떻게 준비할까요?",
-  "광고대행사 AE인데요, 빙수 광고주 폭염 시즌 한 번에 정리해주세요",
-  "공기청정기 셀러입니다. 미세먼지 심한 날 광고 추천해주세요",
+  "강남 카페, 주말 장마 광고 어떻게?",
+  "에어컨 본사, 열대야 7일 전국 광고",
+  "장마 전 우산 광고 준비",
+  "대행사 AE, 빙수 광고주 폭염 정리",
+  "공기청정기 셀러, 미세먼지 광고 추천",
 ];
 
 /* 글로벌 광고주 9개 — 케이웨더 + AI 붙였다면 추가 효과 가상 시뮬레이션
@@ -231,7 +231,7 @@ const BRAND_BOOST_SIMULATION = {
 };
 
 const RULE_MATRIX = {
-  "강남 카페예요, 이번 주말 장마인데 어떻게 광고할까요?": {
+  "강남 카페, 주말 장마 광고 어떻게?": {
     persona: "자영업",
     confidence: 0.92,
     workspace: "우리 카페 (강남구)",
@@ -251,7 +251,7 @@ const RULE_MATRIX = {
     ],
     lift: "+38%", liftMetric: "매장 매출", liftBasis: "장마 시즌 카페 방문 +22% (KOBACO) × 위치 5km 반경 매칭 +16%p",
   },
-  "에어컨 제조사 본사예요. 열대야 일주일이면 전국 광고 어떻게?": {
+  "에어컨 본사, 열대야 7일 전국 광고": {
     persona: "대형광고주",
     confidence: 0.94,
     workspace: "쿨링·생활가전 본부",
@@ -273,7 +273,7 @@ const RULE_MATRIX = {
     ],
     lift: "+54%", liftMetric: "전국 매출", liftBasis: "폭염 7일+ 객단가 +24% (소상공인진흥공단) × 4채널 동시 운영 도달 +30%p",
   },
-  "장마 다가오는데 우산 광고 미리 어떻게 준비할까요?": {
+  "장마 전 우산 광고 준비": {
     persona: "이커머스 셀러",
     confidence: 0.91,
     workspace: "Rainy SKUs",
@@ -294,7 +294,7 @@ const RULE_MATRIX = {
     ],
     lift: "+44%", liftMetric: "구매 전환율", liftBasis: "장마 D-7 우산·레인부츠 검색 +280% (네이버) → 검색→구매 전환율 +44%",
   },
-  "광고대행사 AE인데요, 빙수 광고주 폭염 시즌 한 번에 정리해주세요": {
+  "대행사 AE, 빙수 광고주 폭염 정리": {
     persona: "광고대행사 AE",
     confidence: 0.95,
     workspace: "디저트 카테고리 (3개 광고주)",
@@ -315,7 +315,7 @@ const RULE_MATRIX = {
     ],
     lift: "+58%", liftMetric: "매장 매출 (3 광고주 합산)", liftBasis: "체감 33℃+ 8일 디저트 매출 +42% × 광고주 3개 동시 트리거 +16%p",
   },
-  "공기청정기 셀러입니다. 미세먼지 심한 날 광고 추천해주세요": {
+  "공기청정기 셀러, 미세먼지 광고 추천": {
     persona: "이커머스 셀러",
     confidence: 0.93,
     workspace: "공기·생활가전",
@@ -1573,7 +1573,7 @@ function Hero() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && runDemo()}
-                    placeholder="예: 강남 카페예요, 이번 주말 장마인데 어떻게 광고할까요?"
+                    placeholder="예: 강남 카페, 주말 장마 광고 어떻게?"
                     className="flex-1 min-w-0 bg-transparent outline-none"
                     style={{ color: T.ink, fontSize: 15, fontWeight: 400, paddingTop: 12, paddingBottom: 12 }}
                     disabled={stage === "thinking"}
