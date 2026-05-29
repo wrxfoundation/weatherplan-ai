@@ -626,7 +626,6 @@ export default function StudioPage() {
             } : undefined,
             // model 생략 → 서버에서 복잡도 기반 자동 선택 (Haiku/Opus)
             max_tokens: 1024,
-            temperature: 0.7,
           }),
         });
 
