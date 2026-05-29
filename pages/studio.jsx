@@ -467,6 +467,7 @@ export default function StudioPage() {
   const [favorites, setFavorites] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSub, setSelectedSub] = useState(null);
+  const [geoWeather, setGeoWeather] = useState(null);  // { place, temp, pop, wind, humidity, desc, status }
   const messagesEndRef = useRef(null);
 
   const currentIndustry = INDUSTRIES.find((i) => i.id === industry) || INDUSTRIES[0];
@@ -489,6 +490,72 @@ export default function StudioPage() {
 
   const toggleFavorite = useCallback((id) => {
     setFavorites((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+  }, []);
+
+  // 실제 내 위치 실시간 날씨 (geolocation → 무료 기상 API). 베타: 정식 시 케이웨더 API로 교체
+  useEffect(() => {
+    if (typeof window === "undefined" || !navigator.geolocation) {
+      setGeoWeather({ status: "unsupported" });
+      return;
+    }
+    let cancelled = false;
+    setGeoWeather({ status: "loading" });
+
+    const wmoDesc = (code) => {
+      if (code === 0) return "맑음";
+      if ([1, 2].includes(code)) return "대체로 맑음";
+      if (code === 3) return "흐림";
+      if ([45, 48].includes(code)) return "안개";
+      if ([51, 53, 55, 56, 57].includes(code)) return "이슬비";
+      if ([61, 63, 65, 80, 81, 82].includes(code)) return "비";
+      if ([66, 67].includes(code)) return "진눈깨비";
+      if ([71, 73, 75, 77, 85, 86].includes(code)) return "눈";
+      if ([95, 96, 99].includes(code)) return "뇌우";
+      return "—";
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude: lat, longitude: lon } = pos.coords;
+        try {
+          // 실시간 날씨 + 강수확률 (무료, 키 불필요)
+          const wxUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=precipitation_probability&timezone=auto&forecast_days=1`;
+          const wxRes = await fetch(wxUrl);
+          const wx = await wxRes.json();
+          // 역지오코딩 — 동/시군구명 (무료, 키 불필요)
+          let place = "내 위치";
+          try {
+            const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`);
+            const geo = await geoRes.json();
+            place = [geo.city || geo.locality, geo.locality && geo.city !== geo.locality ? geo.locality : null]
+              .filter(Boolean).join(" ") || geo.principalSubdivision || "내 위치";
+          } catch (e) { /* 지역명 실패해도 날씨는 표시 */ }
+
+          if (cancelled) return;
+          const cur = wx.current || {};
+          // 현재 시각 강수확률
+          let pop = null;
+          if (wx.hourly?.precipitation_probability?.length) {
+            const nowH = new Date().getHours();
+            pop = wx.hourly.precipitation_probability[nowH] ?? wx.hourly.precipitation_probability[0];
+          }
+          setGeoWeather({
+            status: "ok",
+            place,
+            temp: cur.temperature_2m != null ? Math.round(cur.temperature_2m * 10) / 10 : null,
+            humidity: cur.relative_humidity_2m ?? null,
+            wind: cur.wind_speed_10m != null ? Math.round(cur.wind_speed_10m / 3.6 * 10) / 10 : null, // km/h → m/s
+            pop,
+            desc: wmoDesc(cur.weather_code),
+          });
+        } catch (e) {
+          if (!cancelled) setGeoWeather({ status: "error" });
+        }
+      },
+      () => { if (!cancelled) setGeoWeather({ status: "denied" }); },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
+    );
+    return () => { cancelled = true; };
   }, []);
 
   // 검색 필터링
@@ -548,6 +615,15 @@ export default function StudioPage() {
             industry: selectedSub ? `${currentIndustry.label} · ${selectedSub}` : currentIndustry.label,
             persona: profile?.persona || "광고주",
             profile,  // 온보딩에서 저장한 사업장 컨텍스트 (위치/업종/채널/예산)
+            // 실제 내 위치 실시간 날씨 (geolocation) → AI가 현재 날씨 인지
+            weatherContext: geoWeather?.status === "ok" ? {
+              place: geoWeather.place,
+              temp: geoWeather.temp,
+              pop: geoWeather.pop,
+              wind: geoWeather.wind,
+              humidity: geoWeather.humidity,
+              desc: geoWeather.desc,
+            } : undefined,
             // model 생략 → 서버에서 복잡도 기반 자동 선택 (Haiku/Opus)
             max_tokens: 1024,
             temperature: 0.7,
@@ -630,7 +706,7 @@ ${basis}
         <meta property="og:title" content="Studio · Weather Plan AI 챗봇" />
         <meta property="og:description" content="질문 한 줄로 광고 의사결정. 케이웨더 60일 예보 × Claude AI." />
       </Head>
-      <div style={{ minHeight: "100dvh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", display: "flex", flexDirection: "column" }}>
+      <div style={{ height: "100dvh", overflow: "hidden", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", display: "flex", flexDirection: "column" }}>
 
       {/* ─── 상단 헤더 ─── */}
       <header
@@ -689,7 +765,7 @@ ${basis}
         </button>
       </header>
 
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+      <div style={{ display: "flex", flex: 1, overflow: "hidden", minHeight: 0 }}>
 
         {/* ─── 좌측 사이드바 (16업종 + 추천 질문) ─── */}
         <aside
@@ -869,7 +945,7 @@ ${basis}
               ))}
             </div>
 
-            {/* 케이웨더 mock 패널 */}
+            {/* 내 위치 실시간 날씨 패널 */}
             <div className="mt-7" style={{
               background: T.surface,
               border: `1px solid ${T.hairlineSoft}`,
@@ -878,25 +954,42 @@ ${basis}
             }}>
               <div className="flex items-center justify-between mb-3">
                 <span style={{ color: T.mossDark, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.08em" }}>
-                  지금 케이웨더
+                  📍 {geoWeather?.status === "ok" ? geoWeather.place : "내 위치"}
                 </span>
-                <span style={{ color: T.steel, fontSize: 10, fontWeight: 500 }}>5분 전</span>
+                <span style={{ color: T.steel, fontSize: 10, fontWeight: 500 }}>
+                  {geoWeather?.status === "ok" ? "실시간" : geoWeather?.status === "loading" ? "확인 중…" : "권한 필요"}
+                </span>
               </div>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                {[
-                  { icon: "thermometer", label: "기온",  value: "18.4℃" },
-                  { icon: "droplets",    label: "강수",  value: "35%"   },
-                  { icon: "wind",        label: "풍속",  value: "2.1"   },
-                ].map((s) => (
-                  <div key={s.label} style={{ background: T.canvas, borderRadius: R.md, padding: "8px 6px" }}>
-                    <div style={{ color: T.mossDark, marginBottom: 4, display: "flex", justifyContent: "center" }}>
-                      <Icon name={s.icon} size={14} stroke={2} />
-                    </div>
-                    <div style={{ color: T.ink, fontSize: 12, fontWeight: 700 }}>{s.value}</div>
-                    <div style={{ color: T.steel, fontSize: 9.5, fontWeight: 500, marginTop: 1 }}>{s.label}</div>
+              {geoWeather?.status === "ok" ? (
+                <>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    {[
+                      { icon: "thermometer", label: "기온",  value: geoWeather.temp != null ? `${geoWeather.temp}℃` : "—" },
+                      { icon: "droplets",    label: "강수",  value: geoWeather.pop != null ? `${geoWeather.pop}%` : "—" },
+                      { icon: "wind",        label: "풍속",  value: geoWeather.wind != null ? `${geoWeather.wind}` : "—" },
+                    ].map((s) => (
+                      <div key={s.label} style={{ background: T.canvas, borderRadius: R.md, padding: "8px 6px" }}>
+                        <div style={{ color: T.mossDark, marginBottom: 4, display: "flex", justifyContent: "center" }}>
+                          <Icon name={s.icon} size={14} stroke={2} />
+                        </div>
+                        <div style={{ color: T.ink, fontSize: 12, fontWeight: 700 }}>{s.value}</div>
+                        <div style={{ color: T.steel, fontSize: 9.5, fontWeight: 500, marginTop: 1 }}>{s.label}</div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  {geoWeather.desc && geoWeather.desc !== "—" && (
+                    <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 500, textAlign: "center", marginTop: 8 }}>
+                      {geoWeather.desc} · 습도 {geoWeather.humidity}%
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div style={{ color: T.muted, fontSize: 11, fontWeight: 400, lineHeight: 1.55, textAlign: "center", padding: "6px 4px" }}>
+                  {geoWeather?.status === "loading"
+                    ? "위치 확인 중입니다…"
+                    : "브라우저 위치 권한을 허용하면 내 위치의 실시간 날씨가 표시됩니다."}
+                </div>
+              )}
             </div>
 
             <div className="mt-5 text-center">
@@ -909,7 +1002,7 @@ ${basis}
         </aside>
 
         {/* ─── 중앙 대화창 ─── */}
-        <main style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <main style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0, minHeight: 0 }}>
 
           {/* 대화 영역 */}
           <div style={{ flex: 1, overflowY: "auto", padding: "20px 16px" }}>
@@ -987,6 +1080,44 @@ ${basis}
             padding: "22px 16px calc(18px + env(safe-area-inset-bottom)) 16px",
           }}>
             <div className="max-w-3xl mx-auto">
+              {/* 내 위치 실시간 날씨 바 — geolocation 기반 */}
+              {geoWeather?.status === "ok" && (
+                <div
+                  className="flex items-center gap-2.5 mb-2.5 flex-wrap"
+                  style={{
+                    background: T.surface,
+                    border: `1px solid ${T.hairlineSoft}`,
+                    borderRadius: R.full,
+                    padding: "6px 14px",
+                    fontSize: 12, fontWeight: 500, color: T.charcoal,
+                    width: "fit-content",
+                  }}
+                >
+                  <span style={{ color: T.mossDark, fontWeight: 700, letterSpacing: "-0.005em" }}>
+                    📍 {geoWeather.place}
+                  </span>
+                  <span style={{ width: 1, height: 11, background: T.hairline }} />
+                  {geoWeather.temp != null && (
+                    <span className="flex items-center gap-1">
+                      <Icon name="thermometer" size={12} stroke={2} /> {geoWeather.temp}℃
+                    </span>
+                  )}
+                  {geoWeather.pop != null && (
+                    <span className="flex items-center gap-1">
+                      <Icon name="droplets" size={12} stroke={2} /> {geoWeather.pop}%
+                    </span>
+                  )}
+                  {geoWeather.wind != null && (
+                    <span className="flex items-center gap-1">
+                      <Icon name="wind" size={12} stroke={2} /> {geoWeather.wind}m/s
+                    </span>
+                  )}
+                  {geoWeather.desc && geoWeather.desc !== "—" && (
+                    <span style={{ color: T.steel }}>· {geoWeather.desc}</span>
+                  )}
+                  <span style={{ color: T.muted, fontSize: 10, fontWeight: 500 }}>실시간</span>
+                </div>
+              )}
               <div
                 className={`nl-shine flex items-center gap-2 ${loading || input.trim() ? "nl-shine-active" : ""}`}
                 style={{

@@ -108,7 +108,7 @@ function classifyComplexity(userInput) {
 }
 
 /* ─── 시스템 프롬프트 빌더 (v2 — wellbian 본진 흡수) ─── */
-function buildSystemPrompt(industry, persona, profile) {
+function buildSystemPrompt(industry, persona, profile, weatherContext) {
   const industryLabel = industry || "전체 업종";
   const personaLabel = PERSONA_LABEL[persona] || persona || "광고주";
 
@@ -145,13 +145,21 @@ function buildSystemPrompt(industry, persona, profile) {
     ? `\n[사용자 사업장 컨텍스트]\n${contextLines.join("\n")}\n위 정보를 모든 추천에 자연스럽게 반영하세요. 절대 "어느 지역이세요?" "어떤 업종이세요?" 같은 되묻기 금지.\n`
     : "";
 
+  // 사용자 현재 위치 실시간 날씨 (geolocation 기반)
+  const w = weatherContext;
+  const weatherBlock = (w && w.temp != null)
+    ? `\n[사용자 현재 위치 실시간 날씨 — 📍 ${w.place || "내 위치"}]\n` +
+      `기온 ${w.temp}℃${w.desc ? ` · ${w.desc}` : ""}${w.pop != null ? ` · 강수확률 ${w.pop}%` : ""}${w.humidity != null ? ` · 습도 ${w.humidity}%` : ""}${w.wind != null ? ` · 풍속 ${w.wind}m/s` : ""}\n` +
+      `이 위치의 실제 현재 날씨입니다. 광고주가 위치를 따로 말하지 않으면 이 위치·날씨를 기준으로 추천하세요. "📍 ${w.place || "내 위치"}" 형태로 한 번 자연스럽게 인용하면 신뢰도가 올라갑니다.\n`
+    : "";
+
   return `당신은 wellbian AI입니다. 한국 광고주를 위한 날씨 기반 광고 의사결정 인텔리전스 AI입니다.
 
 [당신의 역할]
 - ${industryLabel} 업종의 ${personaLabel}에게 광고 의사결정을 추천합니다
 - 카피·예산·타이밍·매체별 입찰 전략을 제안합니다
 - 자동 실행은 하지 않습니다 — 추천만 제공, 실행은 광고주가 콘솔에서 직접
-${profileBlock}
+${profileBlock}${weatherBlock}
 [날짜 컨텍스트 — 반드시 그대로 사용. 직접 요일/날짜 계산 금지]
 ${getDateContext()}
 계절: ${getSeason()}
@@ -416,6 +424,7 @@ export default async function handler(req, res) {
       industry,
       persona,
       profile,                  // 온보딩에서 받은 사업장 컨텍스트 (위치/업종/예산/채널)
+      weatherContext,           // 사용자 현재 위치 실시간 날씨 (geolocation)
       model: modelOverride,     // 명시 override (없으면 자동 라우터)
       max_tokens = 1024,
       temperature = 0.7,
@@ -447,7 +456,7 @@ export default async function handler(req, res) {
       }
     }
 
-    const systemPrompt = buildSystemPrompt(industry, persona, profile);
+    const systemPrompt = buildSystemPrompt(industry, persona, profile, weatherContext);
 
     // Tool Use 루프 — 모델이 tool을 요청하면 실행하고 결과를 다시 전달
     let currentMessages = [...messages];
