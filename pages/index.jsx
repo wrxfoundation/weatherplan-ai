@@ -3374,6 +3374,26 @@ const TREND_MATRIX_2026 = [
     ourDetail: "wellbian AI는 표현이 화려한 순이 아니라, 날씨 × 자체 학습 데이터로 더 팔릴 순서대로 카피를 추천합니다.",
     tint: "rose",
   },
+  {
+    icon: "sparkles",
+    trendKey: "AI 프로듀싱 — 전략·기획 중심",
+    trendDesc: "제작 공정보다 \"왜 이 카피인지\" 기획·검수가 핵심.",
+    trendCite: "2026 광고·미디어 트렌드 보고서",
+    example: "업계 84% \"AI 도입해도 인력 감축 없다\"",
+    ourAnswer: "카피 대량생산 X, 근거 있는 추천",
+    ourDetail: "카피만 찍어내지 않습니다. \"장마 D-7 검색 +180%\" 같은 날씨 근거를 함께 줘서, 기획자가 바로 검수·결정할 수 있게 합니다.",
+    tint: "lavender",
+  },
+  {
+    icon: "layers",
+    trendKey: "구매 여정(CDJ) 단계 전략",
+    trendDesc: "노출 한 방이 아니라 인지→탐색→전환 단계별 설계.",
+    trendCite: "2026 광고·미디어 트렌드 보고서",
+    example: "노출·도달 → 주목도 → CDJ 전반 단계 전략",
+    ourAnswer: "날씨 타이밍으로 전환 단계 정조준",
+    ourDetail: "장마 D-7은 인지·탐색, 비 오는 당일은 전환. 케이웨더 60일 예보로 구매 여정 단계마다 다른 타이밍을 추천합니다.",
+    tint: "yellow",
+  },
 ];
 
 function TrendMatrix2026() {
@@ -3383,7 +3403,7 @@ function TrendMatrix2026() {
         <SectionHeader
           eyebrow="2026 마케팅 트렌드의 정중앙"
           title={<>2026 트렌드가 말하는 것 ·<br /><span style={{ color: T.mossDark }}>Weather Plan AI가 이미 하고 있는 것.</span></>}
-          sub="2026 광고·미디어 트렌드 보고서 · 트렌드 코리아 2026 · 버즈빌 ACTIVE 2026이 공통으로 짚는 7가지 흐름 — 우리는 정중앙에 있습니다."
+          sub="2026 광고·미디어 트렌드 보고서 · 트렌드 코리아 2026 · 버즈빌 ACTIVE 2026이 공통으로 짚는 9가지 흐름 — 우리는 정중앙에 있습니다."
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" style={{ marginBottom: 24 }}>
