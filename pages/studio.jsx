@@ -702,7 +702,7 @@ ${basis}
     <>
       <Head>
         <title>Studio · Weather Plan AI</title>
-        <meta name="description" content="Claude Opus 4.7 기반 날씨 광고 의사결정 챗봇. 18개 업종 × 162개 세부 카테고리 실시간 추천. 카피·예산·매체 입찰을 한 줄 질문으로." />
+        <meta name="description" content="Claude 기반 날씨 광고 의사결정 챗봇. 18개 업종 × 162개 세부 카테고리 실시간 추천. 카피·예산·매체 입찰을 한 줄 질문으로." />
         <meta property="og:title" content="Studio · Weather Plan AI 챗봇" />
         <meta property="og:description" content="질문 한 줄로 광고 의사결정. 케이웨더 60일 예보 × Claude AI." />
       </Head>

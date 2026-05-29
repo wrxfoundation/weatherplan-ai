@@ -444,7 +444,7 @@ export default async function handler(req, res) {
     const lastUserMsg = messages.filter((m) => m.role === "user").pop()?.content || "";
     const complexity = classifyComplexity(lastUserMsg);
     const model = modelOverride
-      || (complexity === "haiku" ? "claude-haiku-4-5-20251001" : "claude-opus-4-7");
+      || (complexity === "haiku" ? "claude-haiku-4-5-20251001" : "claude-opus-4-8");
 
     // 메시지 형식 검증 (role / content 필수)
     for (const msg of messages) {
@@ -522,22 +522,31 @@ export default async function handler(req, res) {
     });
 
   } catch (err) {
-    console.error("[/api/claude] Error:", err.message);
+    console.error("[/api/claude] Error:", err.status, err.message);
 
     // Anthropic SDK 에러 처리
     if (err.status === 401) {
-      return res.status(500).json({ error: "API 인증 오류 (서버 설정 확인 필요)" });
+      return res.status(500).json({ error: "API 인증 오류 (서버 설정 확인 필요)", code: "auth" });
+    }
+    if (err.status === 400) {
+      // 잘못된 요청 (모델 ID·파라미터 등) — 진단 위해 메시지 노출
+      return res.status(400).json({ error: `요청 오류: ${err.message || "invalid_request"}`, code: "bad_request" });
+    }
+    if (err.status === 404) {
+      return res.status(502).json({ error: `모델 또는 엔드포인트를 찾을 수 없습니다: ${err.message || ""}`, code: "not_found" });
     }
     if (err.status === 429) {
-      return res.status(429).json({ error: "요청 한도 초과 — 잠시 후 다시 시도해주세요" });
+      return res.status(429).json({ error: "요청 한도 초과 — 잠시 후 다시 시도해주세요", code: "rate_limit" });
     }
     if (err.status === 529) {
-      return res.status(503).json({ error: "AI 서버 일시적 과부하 — 30초 후 다시" });
+      return res.status(503).json({ error: "AI 서버 일시적 과부하 — 30초 후 다시", code: "overloaded" });
     }
 
+    // 그 외 — 실제 에러 메시지·상태를 함께 노출해 진단 가능하게
     return res.status(500).json({
-      error: "일시적인 오류가 발생했습니다",
-      detail: process.env.NODE_ENV === "development" ? err.message : undefined,
+      error: `일시적인 오류가 발생했습니다${err.message ? ` (${err.message})` : ""}`,
+      code: "unknown",
+      status: err.status || null,
     });
   }
 }
