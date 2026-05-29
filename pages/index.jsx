@@ -3305,6 +3305,26 @@ function AIAgentEra() {
 
 const TREND_MATRIX_2026 = [
   {
+    icon: "search",
+    trendKey: "GEO — 생성형 엔진 최적화",
+    trendDesc: "검색이 AI 답변으로. 정보가 곧 광고가 된다.",
+    trendCite: "2026 광고·미디어 트렌드 보고서",
+    example: "AI 검색 활용 50% · ChatGPT·제미나이 쇼핑 도입",
+    ourAnswer: "AI가 한국 날씨를 물으면, 답하는 건 wellbian",
+    ourDetail: "Claude·Gemini·ChatGPT가 \"한국 비 오는 날 광고 어떻게\"를 물을 때, 케이웨더 데이터로 답하는 GEO 원천 소스. 다른 광고 도구는 흉내낼 수 없습니다.",
+    tint: "amber",
+  },
+  {
+    icon: "trending-up",
+    trendKey: "주목도 기반 성과",
+    trendDesc: "노출·도달이 아니라 \"얼마나 주목했는가\"로 이동.",
+    trendCite: "2026 광고·미디어 트렌드 보고서",
+    example: "인터넷 사용자 86% 배너 블라인드 경험",
+    ourAnswer: "\"지금 필요한 순간\"에만 노출",
+    ourDetail: "비 올 때 우산을, 폭염에 빙수를. 무관한 노출이 아니라 날씨 맥락이 맞는 순간에만 노출 — 주목도가 자연히 올라갑니다.",
+    tint: "lime",
+  },
+  {
     icon: "award",
     trendKey: "시즌 대표자 전략",
     trendDesc: "유행 다 쫓지 말고, 한 시즌의 대표가 되라.",
@@ -3363,7 +3383,7 @@ function TrendMatrix2026() {
         <SectionHeader
           eyebrow="2026 마케팅 트렌드의 정중앙"
           title={<>2026 트렌드가 말하는 것 ·<br /><span style={{ color: T.mossDark }}>Weather Plan AI가 이미 하고 있는 것.</span></>}
-          sub="트렌드 코리아 2026 · 버즈빌 ACTIVE 2026 · 한국 마케팅 뉴스레터에서 공통으로 짚는 5가지 흐름 — 우리는 정중앙에 있습니다."
+          sub="2026 광고·미디어 트렌드 보고서 · 트렌드 코리아 2026 · 버즈빌 ACTIVE 2026이 공통으로 짚는 7가지 흐름 — 우리는 정중앙에 있습니다."
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" style={{ marginBottom: 24 }}>
