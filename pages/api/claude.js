@@ -427,7 +427,6 @@ export default async function handler(req, res) {
       weatherContext,           // 사용자 현재 위치 실시간 날씨 (geolocation)
       model: modelOverride,     // 명시 override (없으면 자동 라우터)
       max_tokens = 1024,
-      temperature = 0.7,
     } = req.body;
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
@@ -469,7 +468,6 @@ export default async function handler(req, res) {
       response = await anthropic.messages.create({
         model,
         max_tokens,
-        temperature,
         system: systemPrompt,
         tools: TOOL_SCHEMAS,
         messages: currentMessages,
