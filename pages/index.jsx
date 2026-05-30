@@ -220,7 +220,7 @@ const BRAND_BOOST_SIMULATION = {
       label: "매출 추가",
       value: "+33%",
       newValue: "+57%",
-      reason: "한국 장마 + 미세먼지 동시 발생 시 헤어 손상 검색 +220% 폭증 패턴 학습. 올리브영·CJ올리브영 매칭",
+      reason: "한국 장마 + 미세먼지 동시 발생 시 헤어 손상 검색 +220% 폭증 패턴 학습. 올리브영 매칭",
     },
     levers: [
       "습도 90% + 미세먼지 75㎍ 동시 발생 트리거",
@@ -3256,7 +3256,7 @@ function AIAgentEra() {
               {[
                 { step: "A", title: "사장님이 카톡에",
                   body: '"비 오는 날 우산 광고 더 띄워줘"',
-                  result: "Claude · Gemini · ChatGPT AI가 wellbian AI에게 물어봄" },
+                  result: "생성형 AI가 wellbian AI에게 물어봄" },
                 { step: "B", title: "마케터가 ChatGPT에게",
                   body: '"이번 주말 패딩 광고 어떻게 할까?"',
                   result: "wellbian AI(Kweather) 60일 예보 + 정확도 91점 답변 자동" },
@@ -3311,7 +3311,7 @@ const TREND_MATRIX_2026 = [
     trendCite: "2026 광고·미디어 트렌드 보고서",
     example: "AI 검색 활용 50% · ChatGPT·제미나이 쇼핑 도입",
     ourAnswer: "AI가 한국 날씨를 물으면, 답하는 건 wellbian",
-    ourDetail: "Claude·Gemini·ChatGPT가 \"한국 비 오는 날 광고 어떻게\"를 물을 때, 케이웨더 데이터로 답하는 GEO 원천 소스. 다른 광고 도구는 흉내낼 수 없습니다.",
+    ourDetail: "생성형 AI가 \"한국 비 오는 날 광고 어떻게\"를 물을 때, 케이웨더 데이터로 답하는 GEO 원천 소스. 다른 광고 도구는 흉내낼 수 없습니다.",
     tint: "amber",
   },
   {
@@ -5358,9 +5358,9 @@ export default function WeatherPlanAI() {
     <>
       <Head>
         <title>Weather Plan AI · 날씨로 광고하는 가장 똑똑한 방법</title>
-        <meta name="description" content="질문 한 줄로, 상품이 더 팔리는 광고. 케이웨더 60일 예보 × 100+ 시그널 × Claude Opus 4.7로 카피·예산·매체를 실시간 추천합니다. 18개 업종 × 162개 세부 카테고리 지원." />
+        <meta name="description" content="질문 한 줄로, 상품이 더 팔리는 광고. 케이웨더 60일 예보 × 100+ 시그널 × AI로 카피·예산·매체를 실시간 추천합니다. 18개 업종 × 162개 세부 카테고리 지원." />
         <meta property="og:title" content="Weather Plan AI · 날씨로 광고하는 가장 똑똑한 방법" />
-        <meta property="og:description" content="질문 한 줄로, 상품이 더 팔리는 광고. 케이웨더 60일 예보 × Claude AI 광고 의사결정." />
+        <meta property="og:description" content="질문 한 줄로, 상품이 더 팔리는 광고. 케이웨더 60일 예보 × AI 광고 의사결정." />
       </Head>
       <div className="min-h-screen antialiased"
       style={{ background: T.canvas, color: T.ink, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif" }}>

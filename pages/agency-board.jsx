@@ -196,6 +196,67 @@ export default function AgencyBoardPage() {
   }, []);
 
   const [shareStatus, setShareStatus] = useState(null);  // null | "shared" | "copied" | "error"
+  const [cardToast, setCardToast] = useState(null);      // 카드 액션 토스트 ({type, text} | null)
+  const showCardToast = (type, text) => {
+    setCardToast({ type, text });
+    setTimeout(() => setCardToast(null), 2000);
+  };
+
+  /* 카드 단위 액션 — 광고 콘솔 적용·카피 복사·카톡 공유 */
+  const buildCardCopy = (c) =>
+    `[${c.name} · ${c.industry}]\n오늘 추천: ${c.todayRec}\n예측 근거: ${c.liftBasis}\n예상 ${c.liftMetric}: ${c.lift}`;
+
+  const handleApplyToConsole = () => {
+    showCardToast("info", "광고 콘솔 연동은 곧 제공됩니다 — 현재는 카피 복사 또는 카톡 공유를 사용하세요.");
+  };
+
+  const handleCopyCardCopy = async () => {
+    const text = buildCardCopy(active);
+    try {
+      await navigator.clipboard.writeText(text);
+      showCardToast("ok", "추천 카피를 복사했습니다 — 광고 콘솔에 붙여넣으세요.");
+    } catch (e) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); showCardToast("ok", "추천 카피를 복사했습니다."); }
+      catch (e2) { showCardToast("err", "복사에 실패했습니다 — 직접 선택해 복사해주세요."); }
+      document.body.removeChild(ta);
+    }
+  };
+
+  const handleShareCardToKakao = async () => {
+    const text = buildCardCopy(active);
+    const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ title: `${active.name} 오늘의 추천`, text, url: shareUrl });
+        showCardToast("ok", "공유 시트에서 카카오톡을 선택하세요.");
+        return;
+      } catch (err) {
+        if (err.name === "AbortError") return;
+      }
+    }
+    if (typeof window !== "undefined" && window.Kakao && window.Kakao.Share) {
+      try {
+        window.Kakao.Share.sendDefault({
+          objectType: "text",
+          text: text.length > 200 ? text.slice(0, 200) + "..." : text,
+          link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
+        });
+        showCardToast("ok", "카카오톡 공유 창을 열었습니다.");
+        return;
+      } catch (err) {}
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      showCardToast("ok", "공유 기능을 지원하지 않아 클립보드에 복사했습니다.");
+    } catch (err) {
+      showCardToast("err", "공유에 실패했습니다 — 다시 시도해주세요.");
+    }
+  };
 
   const handleCopyReport = async () => {
     try {
@@ -273,7 +334,7 @@ export default function AgencyBoardPage() {
     <>
       <Head>
         <title>광고대행사 콘솔 · Weather Plan AI</title>
-        <meta name="description" content="AE를 위한 다중 광고주 운영 콘솔 — 광고주별 날씨 캠페인·일간 보고·예보관 1:1 채팅 한 화면. KWeather × Claude AI." />
+        <meta name="description" content="AE를 위한 다중 광고주 운영 콘솔 — 광고주별 날씨 캠페인·일간 보고·예보관 1:1 채팅 한 화면. KWeather × wellbian AI." />
         <meta property="og:title" content="광고대행사 콘솔 · Weather Plan AI" />
       </Head>
       <div style={{ minHeight: "100vh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", display: "flex", flexDirection: "column" }}>
@@ -714,6 +775,7 @@ export default function AgencyBoardPage() {
 
               <div className="flex items-center gap-2 flex-wrap">
                 <button
+                  onClick={handleApplyToConsole}
                   className="flex items-center gap-1.5 transition active:translate-y-px"
                   style={{
                     background: `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)`,
@@ -728,6 +790,7 @@ export default function AgencyBoardPage() {
                   광고 콘솔에서 적용 <Icon name="arrow-right" size={12} stroke={2.2} />
                 </button>
                 <button
+                  onClick={handleCopyCardCopy}
                   className="flex items-center gap-1.5 transition hover:opacity-70"
                   style={{
                     background: T.surface,
@@ -743,6 +806,7 @@ export default function AgencyBoardPage() {
                   카피 복사
                 </button>
                 <button
+                  onClick={handleShareCardToKakao}
                   className="flex items-center gap-1.5 transition hover:opacity-70"
                   style={{
                     background: T.surface,
@@ -837,6 +901,32 @@ export default function AgencyBoardPage() {
       </div>
 
       {/* ─── 일간 보고 모달 ─── */}
+      {/* 카드 액션 토스트 (우하단 floating) */}
+      {cardToast && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            position: "fixed",
+            right: 20,
+            bottom: 20,
+            zIndex: 100,
+            maxWidth: 360,
+            padding: "12px 16px",
+            borderRadius: R.lg,
+            background: cardToast.type === "err" ? "#FEF2F2" : cardToast.type === "ok" ? T.mossDark : T.charcoal,
+            color: cardToast.type === "err" ? "#B91C1C" : T.onPrimary,
+            fontSize: 12.5,
+            fontWeight: 500,
+            lineHeight: 1.5,
+            boxShadow: "0 10px 30px rgba(0,0,0,0.18)",
+            border: cardToast.type === "err" ? "1px solid #FCA5A5" : "none",
+          }}
+        >
+          {cardToast.text}
+        </div>
+      )}
+
       {reportOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"

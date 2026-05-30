@@ -275,7 +275,7 @@ const STUDIO_DEMO_BY_INDUSTRY = {
     {
       title: "장마철 안 들뜨는 베이스",
       copy: "습도 85% 잡는 베이스, 출근 7시간 그대로.",
-      rationale: "장마 시즌 헤어·메이크업 들뜸 검색 +220% 폭증. 올리브영·CJ올리브영 매장 + 자사몰 동시 매칭.",
+      rationale: "장마 시즌 헤어·메이크업 들뜸 검색 +220% 폭증. 올리브영 매장 + 자사몰 동시 매칭.",
       channels: ["올리브영", "인스타그램", "쿠팡"],
       lift: "+38%", liftMetric: "매출", liftBasis: "습도·UV 시그널 + 카테고리 매대 동기화",
     },
@@ -701,9 +701,9 @@ ${basis}
     <>
       <Head>
         <title>Studio · Weather Plan AI</title>
-        <meta name="description" content="Claude 기반 날씨 광고 의사결정 챗봇. 18개 업종 × 162개 세부 카테고리 실시간 추천. 카피·예산·매체 입찰을 한 줄 질문으로." />
+        <meta name="description" content="AI 기반 날씨 광고 의사결정 챗봇. 18개 업종 × 162개 세부 카테고리 실시간 추천. 카피·예산·매체 입찰을 한 줄 질문으로." />
         <meta property="og:title" content="Studio · Weather Plan AI 챗봇" />
-        <meta property="og:description" content="질문 한 줄로 광고 의사결정. 케이웨더 60일 예보 × Claude AI." />
+        <meta property="og:description" content="질문 한 줄로 광고 의사결정. 케이웨더 60일 예보 × wellbian AI." />
       </Head>
       <div style={{ height: "100dvh", overflow: "hidden", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", display: "flex", flexDirection: "column" }}>
 
@@ -713,6 +713,7 @@ ${basis}
           background: T.canvas,
           borderBottom: `1px solid ${T.hairlineSoft}`,
           padding: "12px 16px",
+          paddingTop: "calc(12px + env(safe-area-inset-top))",
           position: "sticky", top: 0, zIndex: 50,
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}
@@ -993,7 +994,7 @@ ${basis}
 
             <div className="mt-5 text-center">
               <p style={{ color: T.muted, fontSize: 10.5, fontWeight: 400, lineHeight: 1.55 }}>
-                wellbian AI · powered by Claude<br />
+                wellbian AI<br />
                 케이웨더 60일 예보 기준
               </p>
             </div>
