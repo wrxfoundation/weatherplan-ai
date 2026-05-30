@@ -231,7 +231,7 @@ export default function DashboardPage() {
 
           <div className="inline-flex items-center gap-1.5 mb-4" style={{
             background: T.tealLight, color: T.mossDark,
-            fontSize: 10.5, fontWeight: 700, letterSpacing: "0.08em",
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.08em",
             padding: "4px 11px", borderRadius: R.full,
             border: `1px solid ${T.brandTeal}`,
           }}>
@@ -240,7 +240,7 @@ export default function DashboardPage() {
           </div>
 
           <h1 style={{
-            color: T.ink, fontSize: "clamp(24px, 3.6vw, 36px)",
+            color: T.ink, fontSize: "clamp(24px, 3.6vw, 34px)",
             fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.25,
             marginBottom: 12,
           }}>
@@ -249,7 +249,7 @@ export default function DashboardPage() {
               {profile ? "오늘의 광고 추천이 도착" : "광고 추천 시스템이 학습 중"}
             </span>입니다.
           </h1>
-          <p style={{ color: T.slate, fontSize: 14.5, fontWeight: 400, lineHeight: 1.65, maxWidth: 620, wordBreak: "keep-all" }}>
+          <p style={{ color: T.slate, fontSize: 15, fontWeight: 400, lineHeight: 1.65, maxWidth: 620, wordBreak: "keep-all" }}>
             {profile ? (
               <>
                 케이웨더 60일 예보 × {primaryIndustryLabel || "선택 업종"} 시그널 매칭 기준 — 이번 주 추천 강도를 자동 산출하고 있습니다.
@@ -335,13 +335,13 @@ export default function DashboardPage() {
                   padding: "13px 14px",
                 }}
               >
-                <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em", marginBottom: 4 }}>
+                <div style={{ color: T.steel, fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", marginBottom: 4 }}>
                   {kpi.label}
                 </div>
                 <div style={{ color: T.ink, fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.05 }}>
                   {kpi.value}
                 </div>
-                <div style={{ color: kpi.color, fontSize: 10.5, fontWeight: 700, marginTop: 4 }}>
+                <div style={{ color: kpi.color, fontSize: 11, fontWeight: 700, marginTop: 4 }}>
                   {kpi.delta} vs 평균
                 </div>
               </div>
@@ -383,13 +383,13 @@ export default function DashboardPage() {
                     padding: "9px 4px",
                   }}
                 >
-                  <div style={{ color: day.isToday ? T.mossDark : T.steel, fontSize: 9.5, fontWeight: 700, letterSpacing: "0.05em", marginBottom: 2 }}>
+                  <div style={{ color: day.isToday ? T.mossDark : T.steel, fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", marginBottom: 2 }}>
                     {day.isToday ? "오늘" : day.weekday}
                   </div>
                   <div style={{ fontSize: 18, lineHeight: 1, marginBottom: 4 }}>{day.e}</div>
                   <div style={{
                     color: isStrong ? T.mossDark : T.charcoal,
-                    fontSize: 9.5,
+                    fontSize: 10,
                     fontWeight: 700,
                     letterSpacing: "-0.005em",
                   }}>
@@ -423,20 +423,20 @@ export default function DashboardPage() {
                 오늘의 추천 · {new Date().toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" })}
               </span>
             </div>
-            <span style={{ background: "rgba(255,255,255,0.15)", fontSize: 10.5, fontWeight: 700, padding: "3px 9px", borderRadius: R.full, letterSpacing: "0.06em" }}>
+            <span style={{ background: "rgba(255,255,255,0.15)", fontSize: 11, fontWeight: 700, padding: "3px 9px", borderRadius: R.full, letterSpacing: "0.06em" }}>
               D-3 진입
             </span>
           </div>
-          <div style={{ fontSize: 19, fontWeight: 600, letterSpacing: "-0.015em", lineHeight: 1.35, marginBottom: 10, wordBreak: "keep-all" }}>
+          <div style={{ fontSize: 18, fontWeight: 600, letterSpacing: "-0.015em", lineHeight: 1.35, marginBottom: 10, wordBreak: "keep-all" }}>
             "장마 진입 D-3 · 입찰 +35%로 강화 권장"
           </div>
-          <div style={{ fontSize: 12.5, fontWeight: 400, lineHeight: 1.55, opacity: 0.85, marginBottom: 14, wordBreak: "keep-all" }}>
+          <div style={{ fontSize: 13, fontWeight: 400, lineHeight: 1.55, opacity: 0.85, marginBottom: 14, wordBreak: "keep-all" }}>
             {primaryIndustryLabel ? `${primaryIndustryLabel} 업종 ` : ""}장마 D-7 검색 패턴 +180% · 인스타 입찰 강화 시 매출 +42% 기대 (글로벌 검증)
           </div>
           <div className="inline-flex items-center gap-1.5" style={{
             background: "rgba(255,255,255,0.95)",
             color: T.mossDark,
-            fontSize: 12.5, fontWeight: 600,
+            fontSize: 13, fontWeight: 600,
             padding: "8px 14px",
             borderRadius: R.full,
             letterSpacing: "-0.005em",
@@ -478,7 +478,7 @@ export default function DashboardPage() {
                     <span style={{ color: T.ink, fontSize: 13, fontWeight: 600, letterSpacing: "-0.005em" }}>
                       {evt.title}
                     </span>
-                    <span style={{ color: T.muted, fontSize: 10.5, fontWeight: 500, whiteSpace: "nowrap" }}>
+                    <span style={{ color: T.muted, fontSize: 11, fontWeight: 500, whiteSpace: "nowrap" }}>
                       {evt.time}
                     </span>
                   </div>
@@ -544,7 +544,7 @@ export default function DashboardPage() {
               <Icon name="calendar" size={11} stroke={2} style={{ display: "inline", verticalAlign: "middle", marginRight: 5 }} />
               출시 로드맵
             </div>
-            <span style={{ color: T.muted, fontSize: 11.5, fontWeight: 500 }}>
+            <span style={{ color: T.muted, fontSize: 11, fontWeight: 500 }}>
               베타 종료 시점은 별도 공지 · 1.0이 안정화될 때까지 무료
             </span>
           </div>
@@ -600,7 +600,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
                     {r.items.map((item) => (
-                      <div key={item} className="flex items-start gap-2" style={{ color: T.charcoal, fontSize: 12.5, fontWeight: 400, lineHeight: 1.55, wordBreak: "keep-all" }}>
+                      <div key={item} className="flex items-start gap-2" style={{ color: T.charcoal, fontSize: 13, fontWeight: 400, lineHeight: 1.55, wordBreak: "keep-all" }}>
                         <span style={{ color: isLive ? T.mossDark : T.muted, marginTop: 3, flexShrink: 0 }}>
                           {isLive ? <Icon name="check" size={11} stroke={2.5} /> : <Icon name="clock" size={11} stroke={2} />}
                         </span>
@@ -615,7 +615,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="mt-10 text-center">
-          <p style={{ color: T.muted, fontSize: 11.5, fontWeight: 400, lineHeight: 1.65, wordBreak: "keep-all" }}>
+          <p style={{ color: T.muted, fontSize: 11, fontWeight: 400, lineHeight: 1.65, wordBreak: "keep-all" }}>
             의견·문의는 <a href="mailto:weatherplan@kweather.co.kr" style={{ color: T.mossDark, fontWeight: 600 }}>weatherplan@kweather.co.kr</a> 로 보내주세요.<br />
             여러분의 피드백이 다음 버전을 만듭니다.
           </p>

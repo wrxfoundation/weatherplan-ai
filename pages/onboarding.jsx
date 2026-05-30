@@ -252,6 +252,29 @@ export default function OnboardingFlow() {
     return true;
   }, [step, persona, isAgency, isLocal, businessName, sido, sigungu, regionScope, industries, budget, channels]);
 
+  /* 다음 단계로 못 넘어갈 때 무엇이 빠졌는지 알려주는 안내 — UX 막힘 해소 */
+  const nextBlockReason = useMemo(() => {
+    if (canNext) return null;
+    if (step === 0) {
+      if (!persona) return "광고주 유형을 먼저 선택해주세요";
+      if (isAgency) return "광고대행사는 별도 콘솔(/agency-board)을 이용해주세요";
+      if (businessName.trim().length < 2) return "사업장명을 2글자 이상 입력해주세요";
+      return null;
+    }
+    if (step === 1) {
+      if (!industries.length) return "주력 업종을 1개 이상 선택해주세요";
+      if (!budget) return "월 광고 예산을 선택해주세요";
+      if (isLocal && (!sido || !sigungu)) return "사업장 위치(시·도/시·군·구)를 선택해주세요";
+      if (persona === "seller" && regionScope === "specific" && !sido) return "주력 판매 지역을 선택해주세요";
+      return null;
+    }
+    if (step === 2) {
+      if (channels.length === 0) return "활용 채널을 1개 이상 선택해주세요";
+      return null;
+    }
+    return null;
+  }, [canNext, step, persona, isAgency, businessName, industries, budget, isLocal, sido, sigungu, regionScope, channels]);
+
   const result = useMemo(() => {
     if (!industries.length) return null;
     return SIMULATION_BY_INDUSTRY[industries[0]] || SIMULATION_BY_INDUSTRY.retail;
@@ -347,7 +370,7 @@ export default function OnboardingFlow() {
                 <div key={i} style={{ width: i === step ? 24 : 8, height: 8, borderRadius: R.full, background: i <= step ? T.mossDark : T.hairlineSoft, transition: "all 200ms ease" }} />
               ))}
             </div>
-            <span style={{ color: T.steel, fontSize: 11.5, fontWeight: 500, whiteSpace: "nowrap" }}>
+            <span style={{ color: T.steel, fontSize: 11, fontWeight: 500, whiteSpace: "nowrap" }}>
               {step + 1}/4 · <span style={{ color: T.mossDark, fontWeight: 600 }}>{STEP_NAMES[step]}</span>
             </span>
           </div>
@@ -394,10 +417,10 @@ export default function OnboardingFlow() {
                     <Icon name="layers" size={18} stroke={2} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ color: T.ink, fontSize: 14.5, fontWeight: 700, letterSpacing: "-0.005em", marginBottom: 4 }}>
+                    <div style={{ color: T.ink, fontSize: 15, fontWeight: 700, letterSpacing: "-0.005em", marginBottom: 4 }}>
                       광고대행사 AE 콘솔로 바로 이동
                     </div>
-                    <p style={{ color: T.slate, fontSize: 12.5, fontWeight: 400, lineHeight: 1.6, margin: 0, marginBottom: 10, wordBreak: "keep-all" }}>
+                    <p style={{ color: T.slate, fontSize: 13, fontWeight: 400, lineHeight: 1.6, margin: 0, marginBottom: 10, wordBreak: "keep-all" }}>
                       AE는 자기 정보 대신 담당 광고주 매트릭스가 핵심입니다. 일간 보고·카톡 공유까지 한 화면에서 운영하세요.
                     </p>
                     <a href="/agency-board" className="inline-flex items-center gap-1.5 transition hover:opacity-80" style={{
@@ -569,11 +592,11 @@ export default function OnboardingFlow() {
                         <div key={indId}>
                           <div className="flex items-center gap-1.5 mb-2">
                             <span style={{ fontSize: 14 }}>{ind.icon}</span>
-                            <span style={{ color: T.ink, fontSize: 12.5, fontWeight: 600, letterSpacing: "-0.005em" }}>
+                            <span style={{ color: T.ink, fontSize: 13, fontWeight: 600, letterSpacing: "-0.005em" }}>
                               {ind.label}
                             </span>
                             {selected.length > 0 && (
-                              <span style={{ color: T.mossDark, fontSize: 10.5, fontWeight: 600 }}>
+                              <span style={{ color: T.mossDark, fontSize: 11, fontWeight: 600 }}>
                                 · {selected.length}개 선택
                               </span>
                             )}
@@ -590,7 +613,7 @@ export default function OnboardingFlow() {
                                     background: active ? T.mossDark : T.surface,
                                     color: active ? "#FFFFFF" : T.charcoal,
                                     border: `1px solid ${active ? T.mossDark : T.hairlineSoft}`,
-                                    fontSize: 11.5, fontWeight: active ? 600 : 500,
+                                    fontSize: 11, fontWeight: active ? 600 : 500,
                                     padding: "5px 10px",
                                     borderRadius: R.full,
                                     cursor: "pointer",
@@ -655,7 +678,7 @@ export default function OnboardingFlow() {
                     }}
                   >
                     {recommended && !active && (
-                      <span style={{ position: "absolute", top: 10, right: 12, background: T.tealLight, color: T.mossDark, fontSize: 9, fontWeight: 700, letterSpacing: "0.06em", padding: "2px 7px", borderRadius: R.full, border: `1px solid ${T.brandTeal}` }}>
+                      <span style={{ position: "absolute", top: 10, right: 12, background: T.tealLight, color: T.mossDark, fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", padding: "2px 7px", borderRadius: R.full, border: `1px solid ${T.brandTeal}` }}>
                         추천
                       </span>
                     )}
@@ -664,7 +687,7 @@ export default function OnboardingFlow() {
                         {active && <Icon name="check" size={14} stroke={2.5} />}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ color: T.ink, fontSize: 14.5, fontWeight: 600, letterSpacing: "-0.01em", marginBottom: 3 }}>
+                        <div style={{ color: T.ink, fontSize: 15, fontWeight: 600, letterSpacing: "-0.01em", marginBottom: 3 }}>
                           {ch.label}
                         </div>
                         <div style={{ color: T.steel, fontSize: 12, fontWeight: 400 }}>
@@ -710,12 +733,12 @@ export default function OnboardingFlow() {
             {/* 선택 정보 요약 칩 — 사용자 입력 personalised 시각화 */}
             <div className="flex flex-wrap items-center justify-center gap-1.5 mb-7 px-2">
               {persona && (
-                <span style={{ background: T.tealLight, color: T.mossDark, fontSize: 11.5, fontWeight: 600, padding: "5px 11px", borderRadius: R.full, border: `1px solid ${T.brandTeal}`, letterSpacing: "-0.005em" }}>
+                <span style={{ background: T.tealLight, color: T.mossDark, fontSize: 11, fontWeight: 600, padding: "5px 11px", borderRadius: R.full, border: `1px solid ${T.brandTeal}`, letterSpacing: "-0.005em" }}>
                   {PERSONAS.find((p) => p.id === persona)?.label || persona}
                 </span>
               )}
               {locationLabel && (
-                <span style={{ background: T.surface, color: T.charcoal, fontSize: 11.5, fontWeight: 500, padding: "5px 11px", borderRadius: R.full, border: `1px solid ${T.hairlineSoft}`, letterSpacing: "-0.005em" }}>
+                <span style={{ background: T.surface, color: T.charcoal, fontSize: 11, fontWeight: 500, padding: "5px 11px", borderRadius: R.full, border: `1px solid ${T.hairlineSoft}`, letterSpacing: "-0.005em" }}>
                   📍 {locationLabel}
                 </span>
               )}
@@ -730,7 +753,7 @@ export default function OnboardingFlow() {
                     style={{
                       background: isPrimary ? T.mossDark : T.surface,
                       color: isPrimary ? "#FFFFFF" : T.charcoal,
-                      fontSize: 11.5,
+                      fontSize: 11,
                       fontWeight: isPrimary ? 600 : 500,
                       padding: "5px 11px",
                       borderRadius: R.full,
@@ -749,7 +772,7 @@ export default function OnboardingFlow() {
                 );
               })}
               {budget && (
-                <span style={{ background: T.surface, color: T.charcoal, fontSize: 11.5, fontWeight: 500, padding: "5px 11px", borderRadius: R.full, border: `1px solid ${T.hairlineSoft}`, letterSpacing: "-0.005em" }}>
+                <span style={{ background: T.surface, color: T.charcoal, fontSize: 11, fontWeight: 500, padding: "5px 11px", borderRadius: R.full, border: `1px solid ${T.hairlineSoft}`, letterSpacing: "-0.005em" }}>
                   💰 {BUDGET_RANGES.find((b) => b.id === budget)?.label}
                 </span>
               )}
@@ -779,7 +802,7 @@ export default function OnboardingFlow() {
 
               <div className="mb-5" style={{ paddingBottom: 20, borderBottom: `1px solid ${T.hairlineSoft}` }}>
                 <div style={{ color: T.steel, fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", marginBottom: 6 }}>추천 카피</div>
-                <div style={{ color: T.ink, fontSize: 17, fontStyle: "italic", fontWeight: 400, lineHeight: 1.5, wordBreak: "keep-all" }}>
+                <div style={{ color: T.ink, fontSize: 18, fontStyle: "italic", fontWeight: 400, lineHeight: 1.5, wordBreak: "keep-all" }}>
                   "{result.creative}"
                 </div>
               </div>
@@ -793,7 +816,7 @@ export default function OnboardingFlow() {
                 </div>
                 <div className="space-y-2">
                   {channels.length === 0 ? (
-                    <div style={{ color: T.muted, fontSize: 12.5, fontWeight: 400 }}>
+                    <div style={{ color: T.muted, fontSize: 13, fontWeight: 400 }}>
                       선택한 채널이 없습니다. 이전 단계로 돌아가 채널을 선택하세요.
                     </div>
                   ) : (
@@ -807,7 +830,7 @@ export default function OnboardingFlow() {
                             <span style={{ background: T.mossDark, color: "#FFFFFF", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: R.full }}>
                               {ch.label}
                             </span>
-                            <span style={{ color: T.steel, fontSize: 11.5, fontWeight: 400 }}>{ch.desc}</span>
+                            <span style={{ color: T.steel, fontSize: 11, fontWeight: 400 }}>{ch.desc}</span>
                           </div>
                           <span style={{ background: T.tealLight, color: T.mossDark, fontSize: 11, fontWeight: 700, padding: "3px 9px", borderRadius: R.full, border: `1px solid ${T.brandTeal}` }}>
                             입찰 {bidUp}
@@ -829,7 +852,7 @@ export default function OnboardingFlow() {
                 <a
                   href="/studio"
                   className="transition active:translate-y-px"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 6, background: `linear-gradient(180deg, #2D2862 0%, #050038 100%)`, color: T.onPrimary, fontSize: 13.5, fontWeight: 500, padding: "10px 18px", borderRadius: R.full, whiteSpace: "nowrap", textDecoration: "none", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.4), 0 1px 2px rgba(5,0,56,0.14), 0 4px 14px rgba(5,0,56,0.28)" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6, background: `linear-gradient(180deg, #2D2862 0%, #050038 100%)`, color: T.onPrimary, fontSize: 14, fontWeight: 500, padding: "10px 18px", borderRadius: R.full, whiteSpace: "nowrap", textDecoration: "none", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.4), 0 1px 2px rgba(5,0,56,0.14), 0 4px 14px rgba(5,0,56,0.28)" }}
                 >
                   Studio에서 적용하기 →
                 </a>
@@ -847,7 +870,7 @@ export default function OnboardingFlow() {
                     <Icon name="sparkles" size={11} stroke={2} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 2 }}>
+                    <div style={{ color: T.steel, fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 2 }}>
                       예측 근거
                     </div>
                     <div style={{ color: T.charcoal, fontSize: 12, fontWeight: 400, lineHeight: 1.55, wordBreak: "keep-all" }}>
@@ -894,13 +917,13 @@ export default function OnboardingFlow() {
                         padding: "8px 4px",
                       }}
                     >
-                      <div style={{ color: day.isToday ? T.mossDark : T.steel, fontSize: 9.5, fontWeight: 700, letterSpacing: "0.05em", marginBottom: 2 }}>
+                      <div style={{ color: day.isToday ? T.mossDark : T.steel, fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", marginBottom: 2 }}>
                         {day.isToday ? "오늘" : day.weekday}
                       </div>
                       <div style={{ fontSize: 18, lineHeight: 1, marginBottom: 4 }}>{day.e}</div>
                       <div style={{
                         color: isStrong ? T.mossDark : (isMid ? T.charcoal : T.muted),
-                        fontSize: 9.5,
+                        fontSize: 10,
                         fontWeight: 700,
                         letterSpacing: "-0.005em",
                       }}>
@@ -953,13 +976,13 @@ export default function OnboardingFlow() {
                         padding: "12px 13px",
                       }}
                     >
-                      <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 4 }}>
+                      <div style={{ color: T.steel, fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 4 }}>
                         {kpi.label}
                       </div>
                       <div style={{ color: T.ink, fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.1 }}>
                         {kpi.value}
                       </div>
-                      <div style={{ color: T.mossDark, fontSize: 10.5, fontWeight: 600, marginTop: 3 }}>
+                      <div style={{ color: T.mossDark, fontSize: 11, fontWeight: 600, marginTop: 3 }}>
                         {kpi.delta} vs 평균
                       </div>
                     </div>
@@ -988,7 +1011,7 @@ export default function OnboardingFlow() {
                   style={{
                     background: `linear-gradient(180deg, #2D2862 0%, #050038 100%)`,
                     color: T.onPrimary,
-                    fontSize: 13.5,
+                    fontSize: 14,
                     fontWeight: 600,
                     padding: "14px 18px",
                     borderRadius: R.xl,
@@ -1005,7 +1028,7 @@ export default function OnboardingFlow() {
                   style={{
                     background: "rgba(255,255,255,0.7)",
                     color: T.ink,
-                    fontSize: 13.5,
+                    fontSize: 14,
                     fontWeight: 500,
                     padding: "14px 18px",
                     borderRadius: R.xl,
@@ -1027,7 +1050,7 @@ export default function OnboardingFlow() {
                   style={{
                     background: "rgba(255,255,255,0.7)",
                     color: T.ink,
-                    fontSize: 13.5,
+                    fontSize: 14,
                     fontWeight: 500,
                     padding: "14px 18px",
                     borderRadius: R.xl,
@@ -1046,7 +1069,15 @@ export default function OnboardingFlow() {
       </main>
 
       {/* C3: Sticky Bottom Navigation */}
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: T.canvas, borderTop: `1px solid ${T.hairlineSoft}`, padding: "12px 16px", zIndex: 100, boxShadow: "0 -4px 14px rgba(5,0,56,0.04)" }}>
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: T.canvas, borderTop: `1px solid ${T.hairlineSoft}`, padding: "12px 16px calc(12px + env(safe-area-inset-bottom)) 16px", zIndex: 100, boxShadow: "0 -4px 14px rgba(5,0,56,0.04)" }}>
+        {nextBlockReason && step < 3 && (
+          <div className="max-w-[760px] mx-auto" style={{ marginBottom: 8 }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#FFF7ED", color: "#9A3412", fontSize: 12, fontWeight: 500, padding: "6px 11px", borderRadius: R.full, border: "1px solid #FED7AA" }}>
+              <span aria-hidden="true">⚠️</span>
+              {nextBlockReason}
+            </div>
+          </div>
+        )}
         <div className="max-w-[760px] mx-auto flex items-center justify-between gap-3">
           {step > 0 ? (
             <button type="button" onClick={() => handleStepChange(step - 1)} className="flex items-center gap-1.5 transition hover:opacity-70" style={{ background: T.canvas, color: T.ink, fontSize: 13, fontWeight: 500, padding: "10px 16px", borderRadius: R.full, border: `1px solid ${T.hairline}`, cursor: "pointer" }}>
@@ -1065,7 +1096,7 @@ export default function OnboardingFlow() {
               style={{
                 background: canNext ? `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)` : T.hairlineSoft,
                 color: canNext ? T.onPrimary : T.muted,
-                fontSize: 13.5, fontWeight: 600,
+                fontSize: 14, fontWeight: 600,
                 padding: "10px 22px",
                 borderRadius: R.full,
                 cursor: canNext ? "pointer" : "not-allowed",
@@ -1076,7 +1107,7 @@ export default function OnboardingFlow() {
               <Icon name="arrow-right" size={14} stroke={2.2} />
             </button>
           ) : (
-            <a href="/dashboard" className="flex items-center gap-1.5 transition active:translate-y-px" style={{ background: `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)`, color: T.onPrimary, fontSize: 13.5, fontWeight: 600, padding: "10px 22px", borderRadius: R.full, textDecoration: "none", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.22), 0 1px 2px rgba(20,68,59,0.16)" }}>
+            <a href="/dashboard" className="flex items-center gap-1.5 transition active:translate-y-px" style={{ background: `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)`, color: T.onPrimary, fontSize: 14, fontWeight: 600, padding: "10px 22px", borderRadius: R.full, textDecoration: "none", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.22), 0 1px 2px rgba(20,68,59,0.16)" }}>
               대시보드로 →
             </a>
           )}
@@ -1132,7 +1163,7 @@ const inputStyle = {
   width: "100%",
   background: "transparent",
   color: T.ink,
-  fontSize: 14.5,
+  fontSize: 15,
   fontWeight: 400,
   border: "none",
   outline: "none",

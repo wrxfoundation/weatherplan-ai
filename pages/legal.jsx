@@ -84,7 +84,7 @@ export default function LegalPage() {
             <a href="/" style={{ color: T.ink, fontSize: 14, fontWeight: 600, letterSpacing: "-0.01em", textDecoration: "none" }}>
               ← Weather Plan AI
             </a>
-            <span style={{ color: T.steel, fontSize: 11.5, fontWeight: 500 }}>법적 고지</span>
+            <span style={{ color: T.steel, fontSize: 11, fontWeight: 500 }}>법적 고지</span>
           </div>
         </header>
 
@@ -92,7 +92,7 @@ export default function LegalPage() {
           <h1 style={{ color: T.ink, fontSize: 28, fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.25, marginBottom: 8 }}>
             법적 고지
           </h1>
-          <p style={{ color: T.slate, fontSize: 13.5, fontWeight: 400, lineHeight: 1.65, marginBottom: 28 }}>
+          <p style={{ color: T.slate, fontSize: 14, fontWeight: 400, lineHeight: 1.65, marginBottom: 28 }}>
             이용약관, 개인정보처리방침, 사업자 정보를 모아 보실 수 있습니다.
           </p>
 
@@ -126,7 +126,7 @@ export default function LegalPage() {
                 <h2 style={{ color: T.ink, fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em" }}>
                   {s.title}
                 </h2>
-                <span style={{ color: T.muted, fontSize: 11.5, fontWeight: 500 }}>
+                <span style={{ color: T.muted, fontSize: 11, fontWeight: 500 }}>
                   최종 갱신 {s.updated}
                 </span>
               </div>
@@ -149,7 +149,7 @@ export default function LegalPage() {
             </section>
           ))}
 
-          <div className="mt-8 text-center" style={{ color: T.muted, fontSize: 11.5, fontWeight: 400, lineHeight: 1.65 }}>
+          <div className="mt-8 text-center" style={{ color: T.muted, fontSize: 11, fontWeight: 400, lineHeight: 1.65 }}>
             추가 문의는 <a href="mailto:weatherplan@kweather.co.kr" style={{ color: T.mossDark, fontWeight: 600 }}>weatherplan@kweather.co.kr</a> 로 주세요.
           </div>
         </main>

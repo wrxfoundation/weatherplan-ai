@@ -739,7 +739,7 @@ ${basis}
               <div style={{ color: T.ink, fontSize: 14, fontWeight: 600, letterSpacing: "-0.01em" }}>
                 Weather Plan AI
               </div>
-              <div style={{ color: T.steel, fontSize: 10.5, marginTop: 3, letterSpacing: "0.04em", fontWeight: 500 }}>
+              <div style={{ color: T.steel, fontSize: 11, marginTop: 3, letterSpacing: "0.04em", fontWeight: 500 }}>
                 Studio · {currentIndustry.label}
               </div>
             </div>
@@ -752,7 +752,7 @@ ${basis}
           style={{
             background: T.canvas,
             color: T.ink,
-            fontSize: 12.5, fontWeight: 500,
+            fontSize: 13, fontWeight: 500,
             padding: "7px 12px",
             borderRadius: R.full,
             border: `1px solid ${T.hairline}`,
@@ -837,7 +837,7 @@ ${basis}
             {/* 즐겨찾기 — 검색 비활성 + 항목 있을 때 */}
             {!searchQuery && favoriteIndustries.length > 0 && (
               <>
-                <div style={{ color: T.mossDark, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ color: T.mossDark, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
                   <span style={{ fontSize: 12 }}>★</span> 즐겨찾기
                 </div>
                 <div className="space-y-1 mb-5">
@@ -856,7 +856,7 @@ ${basis}
             )}
 
             {/* 전체 업종 (필터링됨) */}
-            <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 8 }}>
+            <div style={{ color: T.steel, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 8 }}>
               {searchQuery ? `검색 결과 (${filteredIndustries.length})` : "전체 업종"}
             </div>
             <div className="space-y-1 mb-7">
@@ -917,7 +917,7 @@ ${basis}
             </div>
 
             {/* 추천 질문 5개 */}
-            <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 8 }}>
+            <div style={{ color: T.steel, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", marginBottom: 8 }}>
               추천 질문
             </div>
             <div className="space-y-1.5">
@@ -932,7 +932,7 @@ ${basis}
                   style={{
                     background: T.surface,
                     color: T.charcoal,
-                    fontSize: 12.5, fontWeight: 400, lineHeight: 1.5,
+                    fontSize: 13, fontWeight: 400, lineHeight: 1.5,
                     padding: "9px 12px",
                     borderRadius: R.lg,
                     border: `1px solid ${T.hairlineSoft}`,
@@ -953,7 +953,7 @@ ${basis}
               padding: "14px 16px",
             }}>
               <div className="flex items-center justify-between mb-3">
-                <span style={{ color: T.mossDark, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.08em" }}>
+                <span style={{ color: T.mossDark, fontSize: 11, fontWeight: 700, letterSpacing: "0.08em" }}>
                   📍 {geoWeather?.status === "ok" ? geoWeather.place : "내 위치"}
                 </span>
                 <span style={{ color: T.steel, fontSize: 10, fontWeight: 500 }}>
@@ -973,12 +973,12 @@ ${basis}
                           <Icon name={s.icon} size={14} stroke={2} />
                         </div>
                         <div style={{ color: T.ink, fontSize: 12, fontWeight: 700 }}>{s.value}</div>
-                        <div style={{ color: T.steel, fontSize: 9.5, fontWeight: 500, marginTop: 1 }}>{s.label}</div>
+                        <div style={{ color: T.steel, fontSize: 10, fontWeight: 500, marginTop: 1 }}>{s.label}</div>
                       </div>
                     ))}
                   </div>
                   {geoWeather.desc && geoWeather.desc !== "—" && (
-                    <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 500, textAlign: "center", marginTop: 8 }}>
+                    <div style={{ color: T.steel, fontSize: 11, fontWeight: 500, textAlign: "center", marginTop: 8 }}>
                       {geoWeather.desc} · 습도 {geoWeather.humidity}%
                     </div>
                   )}
@@ -993,7 +993,7 @@ ${basis}
             </div>
 
             <div className="mt-5 text-center">
-              <p style={{ color: T.muted, fontSize: 10.5, fontWeight: 400, lineHeight: 1.55 }}>
+              <p style={{ color: T.muted, fontSize: 11, fontWeight: 400, lineHeight: 1.55 }}>
                 wellbian AI<br />
                 케이웨더 60일 예보 기준
               </p>
@@ -1056,7 +1056,7 @@ ${basis}
                     ))}
                   </div>
 
-                  <p className="mt-5" style={{ color: T.muted, fontSize: 11.5, fontWeight: 400, lineHeight: 1.55 }}>
+                  <p className="mt-5" style={{ color: T.muted, fontSize: 11, fontWeight: 400, lineHeight: 1.55 }}>
                     더 많은 질문은 <span className="md:hidden">왼쪽 ≡ 메뉴</span><span className="hidden md:inline">좌측 사이드바</span>에서 보실 수 있습니다.
                   </p>
                 </div>
@@ -1163,7 +1163,7 @@ ${basis}
                   보내기
                 </button>
               </div>
-              <p style={{ color: T.muted, fontSize: 10.5, fontWeight: 400, lineHeight: 1.6, marginTop: 8, textAlign: "center" }}>
+              <p style={{ color: T.muted, fontSize: 11, fontWeight: 400, lineHeight: 1.6, marginTop: 8, textAlign: "center" }}>
                 wellbian AI는 광고 의사결정을 추천합니다. 실행은 광고주가 광고 콘솔에서 직접 진행하세요.
               </p>
             </div>
@@ -1231,7 +1231,7 @@ function MessageBubble({ message }) {
                 style={{
                   background: copied ? T.tealLight : T.surface,
                   color: copied ? T.mossDark : T.steel,
-                  fontSize: 10.5, fontWeight: 600,
+                  fontSize: 11, fontWeight: 600,
                   padding: "3px 9px",
                   borderRadius: R.full,
                   border: `1px solid ${copied ? T.brandTeal : T.hairlineSoft}`,
@@ -1341,7 +1341,7 @@ function InlineChart({ type, title, data, unit }) {
     }}>
       {title && (
         <div style={{
-          color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em",
+          color: T.steel, fontSize: 11, fontWeight: 700, letterSpacing: "0.06em",
           padding: "0 12px 6px",
         }}>
           {title}
@@ -1497,13 +1497,13 @@ function formatMessageV2(text) {
     switch (b.type) {
       case "header":
         return (
-          <div key={k} style={{ fontSize: 17, fontWeight: 700, color: T.mossDark, letterSpacing: "-0.01em", marginBottom: 8, marginTop: i > 0 ? 14 : 0 }}>
+          <div key={k} style={{ fontSize: 18, fontWeight: 700, color: T.mossDark, letterSpacing: "-0.01em", marginBottom: 8, marginTop: i > 0 ? 14 : 0 }}>
             {b.text}
           </div>
         );
       case "subheader":
         return (
-          <div key={k} style={{ fontSize: 11.5, fontWeight: 700, color: T.steel, letterSpacing: "0.08em", marginTop: i > 0 ? 12 : 0, marginBottom: 4 }}>
+          <div key={k} style={{ fontSize: 11, fontWeight: 700, color: T.steel, letterSpacing: "0.08em", marginTop: i > 0 ? 12 : 0, marginBottom: 4 }}>
             {b.text}
           </div>
         );
@@ -1529,7 +1529,7 @@ function formatMessageV2(text) {
           <ol key={k} style={{ marginBottom: 8, marginTop: 2, paddingLeft: 2 }}>
             {b.items.map((it, j) => (
               <li key={j} style={{ paddingLeft: 24, position: "relative", marginBottom: 4, listStyle: "none" }}>
-                <span style={{ position: "absolute", left: 0, top: 0, fontWeight: 700, color: T.mossDark, fontSize: 12.5 }}>{j + 1}.</span>
+                <span style={{ position: "absolute", left: 0, top: 0, fontWeight: 700, color: T.mossDark, fontSize: 13 }}>{j + 1}.</span>
                 {inline(it)}
               </li>
             ))}
@@ -1580,14 +1580,14 @@ function formatMessageV2(text) {
         const [header, ...body] = b.rows;
         return (
           <div key={k} style={{ margin: "8px 0", overflowX: "auto", borderRadius: 10, border: `1px solid ${T.brandTeal}`, background: T.canvas, boxShadow: "0 0 0 3px rgba(78,179,168,0.18), 0 6px 18px rgba(20,68,59,0.22), 0 2px 4px rgba(20,68,59,0.12)" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
                 <tr style={{ background: T.surface }}>
                   {header.map((h, ci) => (
                     <th key={ci} style={{
                       padding: "8px 11px",
                       textAlign: "left",
-                      fontSize: 10.5,
+                      fontSize: 11,
                       fontWeight: 700,
                       color: T.mossDark,
                       letterSpacing: "0.06em",

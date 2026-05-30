@@ -1128,7 +1128,7 @@ function BtnPrimary({ children, onClick, fullWidth, compact, href }) {
           ? `linear-gradient(180deg, #1F1A48 0%, #050038 100%)`
           : `linear-gradient(180deg, #2D2862 0%, #050038 100%)`,
         color: T.onPrimary,
-        fontSize: compact ? 12.5 : 14,
+        fontSize: compact ? 13 : 14,
         fontWeight: 500,
         padding: compact ? "8px 13px" : "14px 26px",
         borderRadius: R.full,
@@ -1284,7 +1284,7 @@ function PromoBanner() {
         <span
           style={{
             background: T.brandTeal, color: T.mossDark,
-            fontSize: 12.5, fontWeight: 600, letterSpacing: "0.04em",
+            fontSize: 13, fontWeight: 600, letterSpacing: "0.04em",
             padding: "3px 10px", borderRadius: R.full,
             boxShadow: "inset 0 1px 0 rgba(255,255,255,0.32), inset 0 -1px 0 rgba(0,0,0,0.12)",
           }}
@@ -1487,12 +1487,12 @@ function Hero() {
                   <div style={{ color: T.steel, fontSize: 10, fontWeight: 600, letterSpacing: "0.08em" }}>
                     NVIDIA 기반 학습 AI
                   </div>
-                  <div style={{ color: T.mossDark, fontSize: 13.5, fontWeight: 700, letterSpacing: "-0.005em", marginTop: 1 }}>
+                  <div style={{ color: T.mossDark, fontSize: 14, fontWeight: 700, letterSpacing: "-0.005em", marginTop: 1 }}>
                     국내 유일 60일 예보 가능
                   </div>
                 </div>
               </div>
-              <div className="flex items-start gap-2" style={{ color: T.charcoal, fontSize: 12.5, fontWeight: 400, lineHeight: 1.55 }}>
+              <div className="flex items-start gap-2" style={{ color: T.charcoal, fontSize: 13, fontWeight: 400, lineHeight: 1.55 }}>
                 <div style={{ color: T.mossDark, paddingTop: 2 }}>
                   <Icon name="check" size={14} stroke={2.2} />
                 </div>
@@ -1526,12 +1526,12 @@ function Hero() {
                   <div style={{ color: T.steel, fontSize: 10, fontWeight: 600, letterSpacing: "0.08em" }}>
                     국내 NO.1 케이웨더
                   </div>
-                  <div style={{ color: T.mossDark, fontSize: 13.5, fontWeight: 700, letterSpacing: "-0.005em", marginTop: 1 }}>
+                  <div style={{ color: T.mossDark, fontSize: 14, fontWeight: 700, letterSpacing: "-0.005em", marginTop: 1 }}>
                     상황 시그널 100+ · 측정망 30,000여개
                   </div>
                 </div>
               </div>
-              <div className="flex items-start gap-2" style={{ color: T.charcoal, fontSize: 12.5, fontWeight: 400, lineHeight: 1.55 }}>
+              <div className="flex items-start gap-2" style={{ color: T.charcoal, fontSize: 13, fontWeight: 400, lineHeight: 1.55 }}>
                 <div style={{ color: T.mossDark, paddingTop: 2 }}>
                   <Icon name="check" size={14} stroke={2.2} />
                 </div>
@@ -1646,7 +1646,7 @@ function Hero() {
                       style={{
                         background: T.surface, color: T.slate,
                         border: `1px solid ${T.hairlineSoft}`,
-                        fontSize: 12.5, fontWeight: 400,
+                        fontSize: 13, fontWeight: 400,
                         padding: "6px 12px", borderRadius: R.full,
                       }}
                     >
@@ -1667,7 +1667,7 @@ function Hero() {
               className="inline-flex items-center gap-1.5 transition hover:opacity-70"
               style={{
                 color: T.mossDark,
-                fontSize: 12.5,
+                fontSize: 13,
                 fontWeight: 600,
                 letterSpacing: "-0.005em",
                 textDecoration: "none",
@@ -1696,7 +1696,7 @@ function Hero() {
 
             {/* 클릭 안내 카피 */}
             <div className="text-center" style={{ marginBottom: 12 }}>
-              <span style={{ fontSize: 11.5, color: T.mossDark, fontWeight: 500, fontStyle: "italic" }}>
+              <span style={{ fontSize: 11, color: T.mossDark, fontWeight: 500, fontStyle: "italic" }}>
                 ✨ 브랜드를 클릭하면 <strong style={{ color: T.mossDark, fontWeight: 700 }}>케이웨더 + wellbian AI를 적용했을 때 추가 효과</strong>를 확인하실 수 있습니다
               </span>
             </div>
@@ -1716,7 +1716,7 @@ function Hero() {
                     style={{
                       background: isActive ? T.mossDark : "rgba(255,255,255,0.9)",
                       color: isActive ? "#FFFFFF" : T.mossDark,
-                      fontSize: 12.5, fontWeight: isActive ? 700 : 600,
+                      fontSize: 13, fontWeight: isActive ? 700 : 600,
                       padding: "5px 12px", borderRadius: R.full,
                       border: `1px solid ${T.brandTeal}`,
                       letterSpacing: "-0.005em",
@@ -1738,7 +1738,7 @@ function Hero() {
               className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5"
               style={{
                 marginTop: 12, marginBottom: 12,
-                fontSize: 13.5, color: T.ink, fontWeight: 500, lineHeight: 1.5,
+                fontSize: 14, color: T.ink, fontWeight: 500, lineHeight: 1.5,
               }}
             >
               <span>광고 효율<sup style={{ fontSize: 10, color: T.steel, marginLeft: 1, fontWeight: 500 }}>*</sup> <strong style={{ color: T.mossDark, fontWeight: 700 }}>CTR 최대 3배</strong></span>
@@ -1773,13 +1773,13 @@ function Hero() {
                     <div className="flex items-center gap-2">
                       <span style={{
                         background: T.mossDark, color: "#FFFFFF",
-                        fontSize: 12.5, fontWeight: 700,
+                        fontSize: 13, fontWeight: 700,
                         padding: "4px 11px", borderRadius: R.full,
                         letterSpacing: "-0.005em",
                       }}>
                         {selectedBrand}
                       </span>
-                      <span style={{ color: T.steel, fontSize: 11.5, fontWeight: 500 }}>
+                      <span style={{ color: T.steel, fontSize: 11, fontWeight: 500 }}>
                         {b.industry}
                       </span>
                     </div>
@@ -1788,7 +1788,7 @@ function Hero() {
                       className="transition hover:opacity-70"
                       style={{
                         background: "transparent", color: T.steel,
-                        fontSize: 11.5, fontWeight: 500,
+                        fontSize: 11, fontWeight: 500,
                         padding: "3px 9px", borderRadius: R.full,
                         border: `1px solid ${T.hairlineSoft}`,
                         cursor: "pointer",
@@ -1811,7 +1811,7 @@ function Hero() {
                         기존 글로벌 사례
                       </div>
                       <div className="flex items-baseline gap-1.5" style={{ marginBottom: 4 }}>
-                        <span style={{ color: T.charcoal, fontSize: 11.5, fontWeight: 500 }}>{b.original.label}</span>
+                        <span style={{ color: T.charcoal, fontSize: 11, fontWeight: 500 }}>{b.original.label}</span>
                         <span style={{ color: T.ink, fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em" }}>
                           {b.original.value}
                         </span>
@@ -1836,7 +1836,7 @@ function Hero() {
                         </span>
                       </div>
                       <div className="flex items-baseline gap-1.5" style={{ marginBottom: 4 }}>
-                        <span style={{ color: T.mossDark, fontSize: 11.5, fontWeight: 600 }}>{b.boost.label}</span>
+                        <span style={{ color: T.mossDark, fontSize: 11, fontWeight: 600 }}>{b.boost.label}</span>
                         <span style={{ color: T.mossDark, fontSize: 22, fontWeight: 800, letterSpacing: "-0.025em" }}>
                           {b.boost.value}
                         </span>
@@ -1859,7 +1859,7 @@ function Hero() {
                     </div>
                     <div className="space-y-1">
                       {b.levers.map((lv, i) => (
-                        <div key={i} className="flex items-start gap-1.5" style={{ color: T.charcoal, fontSize: 11.5, fontWeight: 400, lineHeight: 1.55 }}>
+                        <div key={i} className="flex items-start gap-1.5" style={{ color: T.charcoal, fontSize: 11, fontWeight: 400, lineHeight: 1.55 }}>
                           <Icon name="check" size={11} stroke={2.4} style={{ color: T.brandTeal, marginTop: 3, flexShrink: 0 }} />
                           <span>{lv}</span>
                         </div>
@@ -1880,7 +1880,7 @@ function Hero() {
             {/* 주석 라인 (작게) — 면책 포함 */}
             <div
               style={{
-                fontSize: 10.5, color: T.slate, fontWeight: 400, lineHeight: 1.6,
+                fontSize: 11, color: T.slate, fontWeight: 400, lineHeight: 1.6,
                 textAlign: "center", maxWidth: 720, marginLeft: "auto", marginRight: "auto",
                 paddingTop: 8, borderTop: "1px dashed rgba(5,0,56,0.08)",
               }}
@@ -1934,7 +1934,7 @@ function Hero() {
                       background: "rgba(78,179,168,0.10)",
                       color: T.mossDark,
                       border: `1px solid rgba(78,179,168,0.35)`,
-                      fontSize: 11.5, fontWeight: 600, letterSpacing: "-0.005em",
+                      fontSize: 11, fontWeight: 600, letterSpacing: "-0.005em",
                       padding: "3px 9px", borderRadius: R.full,
                       whiteSpace: "nowrap",
                     }}
@@ -1977,11 +1977,11 @@ function Hero() {
               >
                 <div className="flex items-center justify-center gap-2 flex-wrap mb-2">
                   <Icon name="sparkles" size={14} stroke={2} style={{ color: T.mossDark }} />
-                  <span style={{ color: T.mossDark, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em" }}>
+                  <span style={{ color: T.mossDark, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em" }}>
                     데모는 여기까지 — 실제 운영은 5분이면 시작
                   </span>
                 </div>
-                <p style={{ color: T.ink, fontSize: 14.5, fontWeight: 500, lineHeight: 1.6, marginBottom: 14, letterSpacing: "-0.005em" }}>
+                <p style={{ color: T.ink, fontSize: 15, fontWeight: 500, lineHeight: 1.6, marginBottom: 14, letterSpacing: "-0.005em" }}>
                   <strong style={{ color: T.mossDark, fontWeight: 700 }}>매일 새로운 추천</strong>을 받으려면 사업장 한 번만 등록하세요.<br />
                   베타 기간 무료 · 카드 등록 없이 시작.
                 </p>
@@ -1991,7 +1991,7 @@ function Hero() {
                     style={{
                       background: `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)`,
                       color: T.onPrimary,
-                      fontSize: 13.5, fontWeight: 600,
+                      fontSize: 14, fontWeight: 600,
                       padding: "10px 18px",
                       borderRadius: R.full,
                       textDecoration: "none",
@@ -2112,7 +2112,7 @@ function ResultCard({ result }) {
           <div style={{ color: T.mossDark, fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", marginBottom: 6 }}>
             요약
           </div>
-          <div style={{ color: T.ink, fontSize: 14.5, lineHeight: 1.6, fontWeight: 400 }}>
+          <div style={{ color: T.ink, fontSize: 15, lineHeight: 1.6, fontWeight: 400 }}>
             {result.summary}
           </div>
         </div>
@@ -2137,7 +2137,7 @@ function ResultCard({ result }) {
                 <div style={{ color: T.ink, fontSize: 15, fontWeight: 600, lineHeight: 1.3, marginBottom: 6 }}>
                   {rule.title}
                 </div>
-                <div style={{ color: T.charcoal, fontSize: 12.5, lineHeight: 1.55, fontWeight: 400 }}>
+                <div style={{ color: T.charcoal, fontSize: 13, lineHeight: 1.55, fontWeight: 400 }}>
                   {rule.trigger}
                 </div>
               </div>
@@ -2175,7 +2175,7 @@ function ResultCard({ result }) {
                     : `▼ ${result.channelStrategy.length}개 채널 모두 보기`}
                 </button>
               ) : (
-                <span style={{ color: T.muted, fontSize: 10.5, fontWeight: 500 }}>
+                <span style={{ color: T.muted, fontSize: 11, fontWeight: 500 }}>
                   {result.channelStrategy.length}개 채널 권장
                 </span>
               )}
@@ -2206,7 +2206,7 @@ function ResultCard({ result }) {
                       </span>
                       <span style={{
                         background: T.tealLight, color: T.mossDark,
-                        fontSize: 10.5, fontWeight: 700, letterSpacing: "0.02em",
+                        fontSize: 11, fontWeight: 700, letterSpacing: "0.02em",
                         padding: "3px 8px", borderRadius: R.full,
                         border: `1px solid ${T.brandTeal}`,
                       }}>
@@ -2215,7 +2215,7 @@ function ResultCard({ result }) {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-3 gap-y-1.5" style={{ fontSize: 11.5, lineHeight: 1.55 }}>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-3 gap-y-1.5" style={{ fontSize: 11, lineHeight: 1.55 }}>
                     <div>
                       <span style={{ color: T.steel, fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", marginRight: 4 }}>
                         타겟
@@ -2285,7 +2285,7 @@ function ResultCard({ result }) {
                 <Icon name="sparkles" size={11} stroke={2} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 2 }}>
+                <div style={{ color: T.steel, fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 2 }}>
                   예측 근거
                 </div>
                 <div style={{ color: T.charcoal, fontSize: 12, fontWeight: 400, lineHeight: 1.55, wordBreak: "keep-all" }}>
@@ -2400,7 +2400,7 @@ function KWeatherAssets() {
                 >
                   {a.num}
                 </div>
-                <div style={{ color: T.ink, fontSize: 12.5, fontWeight: 600, marginTop: 10, lineHeight: 1.45, letterSpacing: "-0.005em" }}>
+                <div style={{ color: T.ink, fontSize: 13, fontWeight: 600, marginTop: 10, lineHeight: 1.45, letterSpacing: "-0.005em" }}>
                   {a.label}
                 </div>
                 <div style={{ color: T.slate, fontSize: 11, fontWeight: 400, marginTop: 4, lineHeight: 1.4 }}>
@@ -2528,7 +2528,7 @@ function ScenarioModal({ persona, onClose }) {
           <h2 style={{ color: T.primary, fontSize: 22, fontWeight: 600, letterSpacing: "-0.015em", lineHeight: 1.25 }}>
             {persona.title} 시나리오
           </h2>
-          <div style={{ color: T.charcoal, opacity: 0.7, fontSize: 12.5, fontWeight: 500, marginTop: 5 }}>
+          <div style={{ color: T.charcoal, opacity: 0.7, fontSize: 13, fontWeight: 500, marginTop: 5 }}>
             {s.context}
           </div>
         </div>
@@ -2576,23 +2576,23 @@ function ScenarioModal({ persona, onClose }) {
               borderRadius: 8,
               padding: "9px 13px",
               marginBottom: 14,
-              fontSize: 12.5, color: "#1A1A1A", lineHeight: 1.55, wordBreak: "keep-all",
+              fontSize: 13, color: "#1A1A1A", lineHeight: 1.55, wordBreak: "keep-all",
             }}>
               <strong style={{ color: "#14443B", fontWeight: 700 }}>왜 지금? </strong>
               {s.trigger}
             </div>
 
             {/* 매체별 권장 표 */}
-            <div style={{ color: "#7B7F8C", fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em", marginBottom: 6 }}>
+            <div style={{ color: "#7B7F8C", fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", marginBottom: 6 }}>
               매체별 권장
             </div>
             <div style={{ border: "1px solid rgba(5,0,56,0.08)", borderRadius: 10, overflow: "hidden", marginBottom: 14, background: "#FFFFFF" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
                   <tr style={{ background: "#F7F5EE" }}>
-                    <th style={{ padding: "8px 11px", textAlign: "left", fontSize: 10.5, fontWeight: 700, color: "#14443B", letterSpacing: "0.06em" }}>매체</th>
-                    <th style={{ padding: "8px 11px", textAlign: "left", fontSize: 10.5, fontWeight: 700, color: "#14443B", letterSpacing: "0.06em" }}>입찰</th>
-                    <th style={{ padding: "8px 11px", textAlign: "left", fontSize: 10.5, fontWeight: 700, color: "#14443B", letterSpacing: "0.06em" }}>타겟</th>
+                    <th style={{ padding: "8px 11px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#14443B", letterSpacing: "0.06em" }}>매체</th>
+                    <th style={{ padding: "8px 11px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#14443B", letterSpacing: "0.06em" }}>입찰</th>
+                    <th style={{ padding: "8px 11px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#14443B", letterSpacing: "0.06em" }}>타겟</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -2610,7 +2610,7 @@ function ScenarioModal({ persona, onClose }) {
             {/* 예상 KPI */}
             <div className="flex items-center justify-between flex-wrap gap-3 pt-3" style={{ borderTop: "1px solid rgba(5,0,56,0.08)" }}>
               <div>
-                <div style={{ color: "#7B7F8C", fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em", marginBottom: 2 }}>
+                <div style={{ color: "#7B7F8C", fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", marginBottom: 2 }}>
                   예상 {s.outcomeLabel}
                 </div>
                 <div style={{ color: "#14443B", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1 }}>
@@ -2635,7 +2635,7 @@ function ScenarioModal({ persona, onClose }) {
                 color: "#FFFFFF",
                 padding: "12px 18px",
                 borderRadius: 9999,
-                fontSize: 13.5, fontWeight: 600,
+                fontSize: 14, fontWeight: 600,
                 textDecoration: "none",
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.18), 0 4px 14px rgba(20,68,59,0.22)",
               }}
@@ -2652,7 +2652,7 @@ function ScenarioModal({ persona, onClose }) {
                 color: "#050038",
                 padding: "12px 18px",
                 borderRadius: 9999,
-                fontSize: 13.5, fontWeight: 500,
+                fontSize: 14, fontWeight: 500,
                 textDecoration: "none",
                 border: "1px solid rgba(5,0,56,0.12)",
               }}
@@ -2754,7 +2754,7 @@ function PersonaCard({ p, index, onScenarioClick }) {
         >
           {p.title}
         </h3>
-        <div style={{ color: T.charcoal, opacity: 0.65, fontSize: 12.5, fontWeight: 400, marginBottom: 20 }}>
+        <div style={{ color: T.charcoal, opacity: 0.65, fontSize: 13, fontWeight: 400, marginBottom: 20 }}>
           예: {p.examples}
         </div>
 
@@ -2763,7 +2763,7 @@ function PersonaCard({ p, index, onScenarioClick }) {
             <div style={{ color: T.charcoal, opacity: 0.55, fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", marginBottom: 4 }}>
               지금 고통
             </div>
-            <div style={{ color: T.charcoal, fontSize: 13.5, lineHeight: 1.55, fontWeight: 400 }}>
+            <div style={{ color: T.charcoal, fontSize: 14, lineHeight: 1.55, fontWeight: 400 }}>
               {p.pain}
             </div>
           </div>
@@ -2788,7 +2788,7 @@ function PersonaCard({ p, index, onScenarioClick }) {
         <button
           onClick={onScenarioClick}
           className="hover:opacity-70 transition active:translate-y-px"
-          style={{ color: T.primary, fontSize: 12.5, fontWeight: 600, cursor: "pointer", background: "transparent", border: "none", padding: 0 }}
+          style={{ color: T.primary, fontSize: 13, fontWeight: 600, cursor: "pointer", background: "transparent", border: "none", padding: 0 }}
         >
           시나리오 보기 →
         </button>
@@ -2921,7 +2921,7 @@ function Triggers() {
                 </div>
                 <h3
                   style={{
-                    fontSize: 19, lineHeight: 1.3,
+                    fontSize: 18, lineHeight: 1.3,
                     color: T.ink, letterSpacing: "-0.01em",
                     fontWeight: 600, marginBottom: 16,
                   }}
@@ -2986,7 +2986,7 @@ function Triggers() {
           </div>
         </div>
 
-        <div className="mt-8 text-center" style={{ color: T.steel, fontSize: 12.5, fontWeight: 400 }}>
+        <div className="mt-8 text-center" style={{ color: T.steel, fontSize: 13, fontWeight: 400 }}>
           모든 시그널은 과거 · 현재 · 60일 앞 예보 3가지로 사용 가능 · 전체 카탈로그는 <a href="mailto:psw1224@kweather.co.kr" style={{ color: T.mossDark, fontWeight: 600, textDecoration: "underline" }}>영업팀 문의</a>
         </div>
       </div>
@@ -3042,7 +3042,7 @@ function Trust() {
               60일 앞 예측,<br />
               <span style={{ color: T.mossDark }}>전문 예보관이 매일 검수합니다.</span>
             </h2>
-            <p style={{ color: T.slate, fontSize: 15.5, fontWeight: 400, lineHeight: 1.7, marginBottom: 24 }}>
+            <p style={{ color: T.slate, fontSize: 16, fontWeight: 400, lineHeight: 1.7, marginBottom: 24 }}>
               케이웨더 면허 예보관이 검수한 정확도를 매일 공시합니다.<br />
               1·7·30·60일 앞 평균 오차 · 적중률 · 신뢰도 — 누구나 확인 가능.
               <br />
@@ -3096,7 +3096,7 @@ function AccuracyChart() {
           <div style={{ color: T.steel, fontSize: 11, fontWeight: 600, letterSpacing: "0.1em" }}>
             2026년 5월 · 60일 앞
           </div>
-          <div style={{ color: T.ink, fontSize: 17, fontWeight: 600, letterSpacing: "-0.01em", marginTop: 4 }}>
+          <div style={{ color: T.ink, fontSize: 18, fontWeight: 600, letterSpacing: "-0.01em", marginTop: 4 }}>
             기온 예측 정확도
           </div>
         </div>
@@ -3279,13 +3279,13 @@ function AIAgentEra() {
                   <div style={{ color: T.brandTeal, fontSize: 11, fontWeight: 600, letterSpacing: "0.15em", marginBottom: 10 }}>
                     시나리오 {s.step}
                   </div>
-                  <div style={{ color: T.onDark, fontSize: 14.5, fontWeight: 600, marginBottom: 8 }}>
+                  <div style={{ color: T.onDark, fontSize: 15, fontWeight: 600, marginBottom: 8 }}>
                     {s.title}
                   </div>
                   <div style={{ color: T.onDarkMuted, fontSize: 13, fontStyle: "italic", fontWeight: 400, lineHeight: 1.55, marginBottom: 14 }}>
                     {s.body}
                   </div>
-                  <div style={{ color: T.brandTeal, fontSize: 11.5, fontWeight: 500 }}>
+                  <div style={{ color: T.brandTeal, fontSize: 11, fontWeight: 500 }}>
                     → {s.result}
                   </div>
                 </div>
@@ -3437,13 +3437,13 @@ function TrendMatrix2026() {
                       시장 트렌드
                     </span>
                   </div>
-                  <h3 style={{ color: T.ink, fontSize: 17, fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.35, marginBottom: 6, wordBreak: "keep-all" }}>
+                  <h3 style={{ color: T.ink, fontSize: 18, fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.35, marginBottom: 6, wordBreak: "keep-all" }}>
                     {t.trendKey}
                   </h3>
                   <p style={{ color: T.charcoal, fontSize: 13, fontWeight: 400, lineHeight: 1.55, wordBreak: "keep-all" }}>
                     {t.trendDesc}
                   </p>
-                  <div style={{ color: T.muted, fontSize: 10.5, fontWeight: 500, marginTop: 6, letterSpacing: "-0.005em" }}>
+                  <div style={{ color: T.muted, fontSize: 11, fontWeight: 500, marginTop: 6, letterSpacing: "-0.005em" }}>
                     예: {t.example} <span style={{ color: T.steel }}>· {t.trendCite}</span>
                   </div>
                 </div>
@@ -3460,10 +3460,10 @@ function TrendMatrix2026() {
                       Weather Plan AI
                     </span>
                   </div>
-                  <div style={{ color: T.mossDark, fontSize: 14.5, fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.4, marginBottom: 7, wordBreak: "keep-all" }}>
+                  <div style={{ color: T.mossDark, fontSize: 15, fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.4, marginBottom: 7, wordBreak: "keep-all" }}>
                     {t.ourAnswer}
                   </div>
-                  <p style={{ color: T.slate, fontSize: 12.5, fontWeight: 400, lineHeight: 1.6, wordBreak: "keep-all" }}>
+                  <p style={{ color: T.slate, fontSize: 13, fontWeight: 400, lineHeight: 1.6, wordBreak: "keep-all" }}>
                     {t.ourDetail}
                   </p>
                 </div>
@@ -3505,7 +3505,7 @@ function PricingSection() {
           ))}
         </div>
 
-        <div className="mt-10 text-center" style={{ color: T.steel, fontSize: 12.5, fontWeight: 400 }}>
+        <div className="mt-10 text-center" style={{ color: T.steel, fontSize: 13, fontWeight: 400 }}>
           광고 추천 결과 1건 = 날씨 조건이 맞아서 광고 채널 1개에 1번 변경하는 것 · <span style={{ color: T.mossDark, fontWeight: 600 }}>현재 베타 기간 무료</span> · 카드 등록 없이 시작
         </div>
       </div>
@@ -3530,7 +3530,7 @@ function PricingCard({ p, index }) {
         <div className="flex items-baseline gap-1" style={{ marginBottom: 6 }}>
           <span style={{ fontSize: 30, fontWeight: 500, letterSpacing: "-0.02em" }}>{p.price}</span>
         </div>
-        <div style={{ color: T.brandTeal, fontSize: 12.5, fontWeight: 600, marginBottom: 16 }}>
+        <div style={{ color: T.brandTeal, fontSize: 13, fontWeight: 600, marginBottom: 16 }}>
           {p.quota}
         </div>
         <div style={{ color: T.onDarkMuted, fontSize: 12, fontWeight: 400, lineHeight: 1.55, marginBottom: 20, height: 36 }}>
@@ -3555,7 +3555,7 @@ function PricingCard({ p, index }) {
         <ul className="space-y-2.5">
           {p.features.map((f) => (
             <li key={f} className="flex items-start gap-2"
-              style={{ color: T.onDarkMuted, fontSize: 12.5, fontWeight: 400 }}>
+              style={{ color: T.onDarkMuted, fontSize: 13, fontWeight: 400 }}>
               <span
                 className="flex items-center justify-center flex-shrink-0 mt-0.5"
                 style={{
@@ -3608,7 +3608,7 @@ function PricingCard({ p, index }) {
         {p.badge && (
           <div className="inline-flex items-center gap-1 self-start mb-2" style={{
             background: "rgba(78,179,168,0.15)", color: T.mossDark,
-            fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em",
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.06em",
             padding: "3px 9px", borderRadius: R.full,
             border: "1px solid rgba(78,179,168,0.4)",
           }}>
@@ -3627,7 +3627,7 @@ function PricingCard({ p, index }) {
           <span style={{ color: T.mossDark, fontSize: 24, fontWeight: 600, letterSpacing: "-0.02em" }}>무료</span>
           <span style={{ color: T.slate, fontSize: 12, fontWeight: 400 }}>{p.period}</span>
         </div>
-        <div style={{ color: accentDark, fontSize: 12.5, fontWeight: 600, marginBottom: 16 }}>
+        <div style={{ color: accentDark, fontSize: 13, fontWeight: 600, marginBottom: 16 }}>
           {p.quota}
         </div>
         <div style={{ color: T.slate, fontSize: 12, fontWeight: 400, lineHeight: 1.55, marginBottom: 20, height: 36 }}>
@@ -3657,7 +3657,7 @@ function PricingCard({ p, index }) {
         <ul className="space-y-2.5">
           {p.features.map((f) => (
             <li key={f} className="flex items-start gap-2"
-              style={{ color: T.charcoal, fontSize: 12.5, fontWeight: 400 }}>
+              style={{ color: T.charcoal, fontSize: 13, fontWeight: 400 }}>
               <span
                 className="flex items-center justify-center flex-shrink-0 mt-0.5"
                 style={{
@@ -3692,7 +3692,7 @@ function PricingCard({ p, index }) {
       {p.badge && (
         <div className="inline-flex items-center gap-1 self-start mb-2" style={{
           background: "rgba(78,179,168,0.15)", color: T.mossDark,
-          fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em",
+          fontSize: 11, fontWeight: 700, letterSpacing: "0.06em",
           padding: "3px 9px", borderRadius: R.full,
           border: "1px solid rgba(78,179,168,0.4)",
         }}>
@@ -3711,7 +3711,7 @@ function PricingCard({ p, index }) {
         <span style={{ color: T.mossDark, fontSize: 24, fontWeight: 600, letterSpacing: "-0.02em" }}>무료</span>
         <span style={{ color: T.slate, fontSize: 12, fontWeight: 400 }}>{p.period}</span>
       </div>
-      <div style={{ color: T.mossDark, fontSize: 12.5, fontWeight: 600, marginBottom: 16 }}>
+      <div style={{ color: T.mossDark, fontSize: 13, fontWeight: 600, marginBottom: 16 }}>
         {p.quota}
       </div>
       <div style={{ color: T.slate, fontSize: 12, fontWeight: 400, lineHeight: 1.55, marginBottom: 20, height: 36 }}>
@@ -3741,7 +3741,7 @@ function PricingCard({ p, index }) {
       <ul className="space-y-2.5">
         {p.features.map((f) => (
           <li key={f} className="flex items-start gap-2"
-            style={{ color: T.charcoal, fontSize: 12.5, fontWeight: 400 }}>
+            style={{ color: T.charcoal, fontSize: 13, fontWeight: 400 }}>
             <span
               className="flex items-center justify-center flex-shrink-0 mt-0.5"
               style={{
@@ -3854,7 +3854,7 @@ function Footer() {
                 </div>
               </div>
             </div>
-            <p style={{ color: T.onDarkMuted, fontSize: 12.5, fontWeight: 400, lineHeight: 1.65, maxWidth: 280 }}>
+            <p style={{ color: T.onDarkMuted, fontSize: 13, fontWeight: 400, lineHeight: 1.65, maxWidth: 280 }}>
               국내 최초·최대 날씨 기반 광고 AI.<br />
               코스닥 상장 케이웨더 디지털사업본부.
             </p>
@@ -3909,7 +3909,7 @@ function Footer() {
           className="mt-10 pt-6 flex flex-wrap items-center justify-between gap-3"
           style={{ borderTop: `1px solid rgba(255,255,255,0.1)` }}
         >
-          <div style={{ color: T.onDarkMuted, fontSize: 11.5, fontWeight: 400 }}>
+          <div style={{ color: T.onDarkMuted, fontSize: 11, fontWeight: 400 }}>
             © 2026 KWeather Corp. All rights reserved.
           </div>
         </div>
@@ -3997,7 +3997,7 @@ function GlobalCases() {
                 <Icon name={cat.icon} size={15} stroke={1.6} style={{ color: active ? T.brandTeal : T.steel }} />
                 {cat.label}
                 <span style={{
-                  fontSize: 10.5, fontWeight: 600,
+                  fontSize: 11, fontWeight: 600,
                   color: active ? T.brandTeal : T.ink4,
                   marginLeft: 2,
                 }}>
@@ -4040,7 +4040,7 @@ function GlobalCases() {
               </div>
 
               {/* 중앙 — 액션 본문 (트리거 룰을 실행으로 풀어낸 설명) */}
-              <div style={{ color: T.charcoal, fontSize: 13.5, fontWeight: 400, lineHeight: 1.55, wordBreak: "keep-all", minWidth: 0 }}>
+              <div style={{ color: T.charcoal, fontSize: 14, fontWeight: 400, lineHeight: 1.55, wordBreak: "keep-all", minWidth: 0 }}>
                 <span style={{ color: T.brandBlue, fontWeight: 600, marginRight: 8 }}>→</span>
                 {c.trigger}
               </div>
@@ -4138,7 +4138,7 @@ function LiveWeatherPanel() {
                   WebkitBackdropFilter: "blur(12px)",
                   color: active ? T.onPrimary : T.ink,
                   border: `1px solid ${active ? "transparent" : T.hairlineSoft}`,
-                  fontSize: 13.5, fontWeight: 500,
+                  fontSize: 14, fontWeight: 500,
                   padding: "10px 18px", borderRadius: R.full,
                   boxShadow: active
                     ? "inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.25), 0 4px 12px rgba(5,0,56,0.18)"
@@ -4187,7 +4187,7 @@ function PanelLocation() {
             <div className="flex items-center gap-2 mb-1.5">
               <span style={{
                 background: T.tealLight, color: T.mossDark,
-                fontSize: 9.5, fontWeight: 700, letterSpacing: "0.08em",
+                fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
                 padding: "2px 7px", borderRadius: R.full,
               }}>
                 광고관리 예시
@@ -4265,7 +4265,7 @@ function PanelLocation() {
             wellbian AI 인사이트
           </span>
         </div>
-        <p style={{ color: T.charcoal, fontSize: 13.5, lineHeight: 1.65, fontWeight: 400 }}>
+        <p style={{ color: T.charcoal, fontSize: 14, lineHeight: 1.65, fontWeight: 400 }}>
           {insight}
         </p>
       </div>
@@ -4311,7 +4311,7 @@ function PanelCampaigns() {
                 <div style={{ color: T.ink, fontSize: 14, fontWeight: 600, lineHeight: 1.3 }}>
                   {c.name}
                 </div>
-                <div className="flex items-center gap-1.5" style={{ color: T.slate, fontSize: 11.5, fontWeight: 400, marginTop: 3 }}>
+                <div className="flex items-center gap-1.5" style={{ color: T.slate, fontSize: 11, fontWeight: 400, marginTop: 3 }}>
                   <span style={{ display: "inline-block", width: 4, height: 4, borderRadius: "50%", background: T.steel }} />
                   {c.region}
                 </div>
@@ -4333,7 +4333,7 @@ function PanelCampaigns() {
                   style={{
                     background: isOn ? T.tealLight : T.surface,
                     color:      isOn ? T.mossDark  : T.slate,
-                    fontSize: 10.5, fontWeight: 600, letterSpacing: "0.08em",
+                    fontSize: 11, fontWeight: 600, letterSpacing: "0.08em",
                     padding: "3px 10px", borderRadius: R.full,
                     border: isOn ? "none" : `1px solid ${T.hairline}`,
                   }}
@@ -4353,7 +4353,7 @@ function PanelCampaigns() {
                   >
                     {c.lift}
                     {c.liftMetric && c.liftMetric !== "—" && (
-                      <span style={{ color: T.mossDark, opacity: 0.7, fontSize: 9.5, fontWeight: 500 }}>
+                      <span style={{ color: T.mossDark, opacity: 0.7, fontSize: 10, fontWeight: 500 }}>
                         {c.liftMetric}
                       </span>
                     )}
@@ -4453,11 +4453,11 @@ function PanelMap() {
       <div className="md:col-span-3">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <div>
-            <div className="flex items-center gap-1.5" style={{ color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em" }}>
+            <div className="flex items-center gap-1.5" style={{ color: T.steel, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em" }}>
               <span style={{
                 background: T.tealLight, color: T.mossDark,
                 padding: "2px 7px", borderRadius: R.full,
-                fontSize: 9.5, fontWeight: 800, letterSpacing: "0.08em",
+                fontSize: 10, fontWeight: 800, letterSpacing: "0.08em",
                 border: `1px solid ${T.brandTeal}`,
               }}>
                 AI 시뮬레이션 가동 중
@@ -4587,14 +4587,14 @@ function PanelMap() {
                   <text
                     x={city.x - 24} y={city.y + 29}
                     fill="#FFFFFF"
-                    style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: "-0.005em" }}
+                    style={{ fontSize: 11, fontWeight: 700, letterSpacing: "-0.005em" }}
                   >
                     {city.name}
                   </text>
                   <text
                     x={city.x + 6} y={city.y + 29}
                     fill={fill}
-                    style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: "-0.005em" }}
+                    style={{ fontSize: 11, fontWeight: 700, letterSpacing: "-0.005em" }}
                   >
                     {city.t}°
                   </text>
@@ -4611,12 +4611,12 @@ function PanelMap() {
             borderRadius: R.md,
             padding: "9px 12px",
             color: "#FFFFFF",
-            fontSize: 10.5, fontWeight: 600, letterSpacing: "0.02em",
+            fontSize: 11, fontWeight: 600, letterSpacing: "0.02em",
             display: "flex", flexDirection: "column", gap: 5,
             border: `1px solid rgba(78,179,168,0.45)`,
             minWidth: 168,
           }}>
-            <div className="flex items-center gap-1.5" style={{ color: T.brandTeal, fontSize: 9.5, fontWeight: 800, letterSpacing: "0.1em" }}>
+            <div className="flex items-center gap-1.5" style={{ color: T.brandTeal, fontSize: 10, fontWeight: 800, letterSpacing: "0.1em" }}>
               <span style={{ width: 5, height: 5, borderRadius: 99, background: T.brandTeal, boxShadow: `0 0 8px ${T.brandTeal}` }} />
               AI 시뮬레이션
             </div>
@@ -4642,7 +4642,7 @@ function PanelMap() {
             borderRadius: R.md,
             padding: "7px 11px",
             color: "#FFFFFF",
-            fontSize: 10.5, fontWeight: 600, letterSpacing: "0.04em",
+            fontSize: 11, fontWeight: 600, letterSpacing: "0.04em",
             display: "flex", alignItems: "center", gap: 6,
             border: `1px solid rgba(78,179,168,0.45)`,
           }}>
@@ -4667,7 +4667,7 @@ function PanelMap() {
               { label: "응답 시간",   value: "1.2s",   color: "#F4A261" },
             ].map((m) => (
               <div key={m.label} style={{ textAlign: "center", minWidth: 76 }}>
-                <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: "0.1em", opacity: 0.65 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", opacity: 0.65 }}>
                   {m.label}
                 </div>
                 <div style={{ color: m.color, fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", marginTop: 2 }}>
@@ -4688,12 +4688,12 @@ function PanelMap() {
       {/* 인사이트 패널 — 2/5 */}
       <div className="md:col-span-2 flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+          <div style={{ color: T.steel, fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
 AI 광고 시뮬레이션
           </div>
           <span style={{
             background: T.tealLight, color: T.mossDark,
-            fontSize: 9.5, fontWeight: 800, letterSpacing: "0.06em",
+            fontSize: 10, fontWeight: 800, letterSpacing: "0.06em",
             padding: "2px 7px", borderRadius: R.full,
             border: `1px solid ${T.brandTeal}`,
           }}>
@@ -4731,7 +4731,7 @@ AI 광고 시뮬레이션
                     <span style={{
                       background: ins.bg,
                       color: ins.color,
-                      fontSize: 9.5, fontWeight: 800,
+                      fontSize: 10, fontWeight: 800,
                       padding: "2px 7px", borderRadius: R.full,
                       letterSpacing: "0.04em",
                       border: `1px solid ${ins.color}33`,
@@ -4740,7 +4740,7 @@ AI 광고 시뮬레이션
                       {ins.personaCount} 매장 매칭
                     </span>
                   </div>
-                  <div style={{ color: T.muted, fontSize: 10.5, fontWeight: 500, marginTop: 2, letterSpacing: "0.02em" }}>
+                  <div style={{ color: T.muted, fontSize: 11, fontWeight: 500, marginTop: 2, letterSpacing: "0.02em" }}>
                     {ins.cities}
                   </div>
                 </div>
@@ -4757,10 +4757,10 @@ AI 광고 시뮬레이션
               </div>
 
               {/* 트리거 */}
-              <div style={{ color: T.charcoal, fontSize: 12.5, fontWeight: 600, marginBottom: 2, letterSpacing: "-0.005em" }}>
+              <div style={{ color: T.charcoal, fontSize: 13, fontWeight: 600, marginBottom: 2, letterSpacing: "-0.005em" }}>
                 {ins.trigger}
               </div>
-              <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 400, marginBottom: 10, letterSpacing: "-0.005em" }}>
+              <div style={{ color: T.steel, fontSize: 11, fontWeight: 400, marginBottom: 10, letterSpacing: "-0.005em" }}>
                 {ins.triggerDetail}
               </div>
 
@@ -4774,7 +4774,7 @@ AI 광고 시뮬레이션
                 wordBreak: "keep-all",
                 border: `1px solid ${ins.color}22`,
               }}>
-                <span style={{ color: ins.color, fontWeight: 700, fontSize: 10.5, letterSpacing: "0.06em", marginRight: 6 }}>
+                <span style={{ color: ins.color, fontWeight: 700, fontSize: 11, letterSpacing: "0.06em", marginRight: 6 }}>
                   ACTION
                 </span>
                 {ins.action}
@@ -4783,7 +4783,7 @@ AI 광고 시뮬레이션
               {/* KPI + 신뢰도 막대 */}
               <div className="flex items-end justify-between gap-3 mb-2">
                 <div>
-                  <div style={{ color: T.muted, fontSize: 9.5, fontWeight: 700, letterSpacing: "0.08em" }}>
+                  <div style={{ color: T.muted, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em" }}>
                     예상 {ins.kpiLabel}
                   </div>
                   <div style={{ color: ins.color, fontSize: 22, fontWeight: 800, letterSpacing: "-0.025em", lineHeight: 1, fontFamily: "ui-monospace, 'SF Mono', monospace" }}>
@@ -4792,7 +4792,7 @@ AI 광고 시뮬레이션
                 </div>
                 <div style={{ flex: 1, marginLeft: 14, maxWidth: 140 }}>
                   <div className="flex items-center justify-between mb-1">
-                    <span style={{ color: T.muted, fontSize: 9, fontWeight: 700, letterSpacing: "0.08em" }}>신뢰도</span>
+                    <span style={{ color: T.muted, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em" }}>신뢰도</span>
                     <span style={{ color: ins.color, fontSize: 11, fontWeight: 800, fontFamily: "ui-monospace, 'SF Mono', monospace" }}>{ins.confidence}%</span>
                   </div>
                   <div style={{ height: 4, background: T.hairlineSoft, borderRadius: 99, overflow: "hidden" }}>
@@ -4843,7 +4843,7 @@ AI 광고 시뮬레이션
           }}
         >
           <div>
-            <div style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: "0.12em", opacity: 0.85, marginBottom: 3 }}>
+            <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.12em", opacity: 0.85, marginBottom: 3 }}>
               내 사업장 맞춤 시뮬레이션
             </div>
             <div style={{ fontSize: 14, fontWeight: 600, letterSpacing: "-0.005em" }}>
@@ -4898,7 +4898,7 @@ function ContentStudio() {
               <Icon name="pen-line" size={28} stroke={1.6} />
             </div>
             <div>
-              <p style={{ color: T.ink, fontSize: 17, fontWeight: 500, lineHeight: 1.55, letterSpacing: "-0.01em", marginBottom: 10 }}>
+              <p style={{ color: T.ink, fontSize: 18, fontWeight: 500, lineHeight: 1.55, letterSpacing: "-0.01em", marginBottom: 10 }}>
                 광고는 잘 만드는 게 본업이 아니라 잘 팔리는 게 본업입니다.
               </p>
               <p style={{ color: T.slate, fontSize: 14, fontWeight: 400, lineHeight: 1.7 }}>
@@ -4979,7 +4979,7 @@ function ContentStudio() {
                   style={{
                     background: T.surfacePricing,
                     color: T.ink,
-                    fontSize: 13.5, fontWeight: 400, lineHeight: 1.55,
+                    fontSize: 14, fontWeight: 400, lineHeight: 1.55,
                     padding: "10px 14px",
                     borderRadius: "4px 16px 16px 16px",
                   }}
@@ -5053,14 +5053,14 @@ function ContentStudio() {
                         <span style={{
                           background: isTop ? T.tealLight : T.surface,
                           color: isTop ? T.mossDark : T.steel,
-                          fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em",
+                          fontSize: 11, fontWeight: 700, letterSpacing: "0.06em",
                           padding: "4px 11px", borderRadius: R.full,
                           border: isTop ? `1px solid ${T.brandTeal}` : `1px solid ${T.hairlineSoft}`,
                           whiteSpace: "nowrap",
                         }}>
                           {isTop ? "★ 최우선 추천" : `안 ${i + 1}`}
                         </span>
-                        <span style={{ color: T.charcoal, fontSize: 11.5, fontWeight: 500, opacity: 0.7 }}>
+                        <span style={{ color: T.charcoal, fontSize: 11, fontWeight: 500, opacity: 0.7 }}>
                           {c.channels.join(" · ")}
                         </span>
                       </div>
@@ -5080,7 +5080,7 @@ function ContentStudio() {
                       paddingLeft: 14,
                       marginBottom: 14,
                     }}>
-                      <p style={{ color: T.ink, fontSize: 15.5, fontWeight: 500, lineHeight: 1.55, letterSpacing: "-0.01em" }}>
+                      <p style={{ color: T.ink, fontSize: 16, fontWeight: 500, lineHeight: 1.55, letterSpacing: "-0.01em" }}>
                         {c.copy}
                       </p>
                     </div>
@@ -5091,7 +5091,7 @@ function ContentStudio() {
                         background: isTop ? "rgba(78,179,168,0.06)" : T.surface,
                         borderRadius: R.md,
                         padding: "10px 14px",
-                        fontSize: 12.5, color: T.charcoal, fontWeight: 400, lineHeight: 1.6,
+                        fontSize: 13, color: T.charcoal, fontWeight: 400, lineHeight: 1.6,
                       }}
                     >
                       <span style={{ color: T.mossDark, fontWeight: 700, marginRight: 4 }}>왜 이게 팔리나</span>
@@ -5105,7 +5105,7 @@ function ContentStudio() {
         </div>
 
         <div className="mt-10 text-center" style={{ maxWidth: 580, marginLeft: "auto", marginRight: "auto" }}>
-          <p style={{ color: T.slate, fontSize: 13.5, fontWeight: 400, lineHeight: 1.65 }}>
+          <p style={{ color: T.slate, fontSize: 14, fontWeight: 400, lineHeight: 1.65 }}>
             <span style={{ color: T.ink, fontWeight: 500 }}>제작 편의 기능</span>(빠른 생성·다중 변형·채널별 자동 매핑)은 모두 기본 제공.
             <span style={{ color: T.mossDark, fontWeight: 600 }}> 본업은 케이웨더 데이터로 "왜 이 카피가 팔리는지" 답변하는 일입니다.</span>
           </p>
@@ -5244,7 +5244,7 @@ function ForecasterCouncil() {
                   AI 위에,<br />사람의 사인.
                 </div>
 
-                <p style={{ color: T.onDarkMuted, fontSize: 14.5, lineHeight: 1.7, marginTop: 20, fontWeight: 400 }}>
+                <p style={{ color: T.onDarkMuted, fontSize: 15, lineHeight: 1.7, marginTop: 20, fontWeight: 400 }}>
                   AI 예측 결과 위에 케이웨더 예보관이 신뢰의 방점을 더합니다.
                   <span style={{ color: T.onDark, fontWeight: 500 }}> 광고 의사결정의 마지막 신뢰 레이어입니다.</span>
                 </p>
@@ -5311,7 +5311,7 @@ function ForecasterCouncil() {
                       <h3
                         style={{
                           color: T.ink,
-                          fontSize: 15.5, fontWeight: 600,
+                          fontSize: 16, fontWeight: 600,
                           lineHeight: 1.35, letterSpacing: "-0.015em",
                           paddingTop: 6,
                         }}

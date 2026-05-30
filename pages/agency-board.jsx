@@ -376,7 +376,7 @@ export default function AgencyBoardPage() {
                 <div style={{ color: T.ink, fontSize: 14, fontWeight: 600, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>
                   Weather Plan AI
                 </div>
-                <div className="hidden sm:block" style={{ color: T.steel, fontSize: 10.5, marginTop: 3, letterSpacing: "0.04em", fontWeight: 500, whiteSpace: "nowrap" }}>
+                <div className="hidden sm:block" style={{ color: T.steel, fontSize: 11, marginTop: 3, letterSpacing: "0.04em", fontWeight: 500, whiteSpace: "nowrap" }}>
                   Agency Board · {MOCK_CLIENTS.length}개 광고주
                 </div>
               </div>
@@ -386,7 +386,7 @@ export default function AgencyBoardPage() {
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1.5" style={{
               background: T.tealLight, color: T.mossDark,
-              fontSize: 10.5, fontWeight: 700, letterSpacing: "0.06em",
+              fontSize: 11, fontWeight: 700, letterSpacing: "0.06em",
               padding: "5px 11px", borderRadius: R.full,
               border: `1px solid ${T.brandTeal}`,
               whiteSpace: "nowrap",
@@ -400,7 +400,7 @@ export default function AgencyBoardPage() {
               style={{
                 background: `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)`,
                 color: T.onPrimary,
-                fontSize: 12.5, fontWeight: 600,
+                fontSize: 13, fontWeight: 600,
                 padding: "8px 14px",
                 borderRadius: R.full,
                 cursor: "pointer",
@@ -420,7 +420,7 @@ export default function AgencyBoardPage() {
                     position: "absolute",
                     top: -4, right: -4,
                     background: T.coralDark, color: "#FFFFFF",
-                    fontSize: 9.5, fontWeight: 800,
+                    fontSize: 10, fontWeight: 800,
                     minWidth: 18, height: 18,
                     padding: "0 5px",
                     borderRadius: R.full,
@@ -471,7 +471,7 @@ export default function AgencyBoardPage() {
 
           <div style={{ padding: "20px 18px" }} className={sidebarOpen ? "max-w-md mx-auto" : ""}>
             <div className="flex items-center justify-between mb-3">
-              <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em" }}>
+              <div style={{ color: T.steel, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em" }}>
                 광고주 ({MOCK_CLIENTS.length})
               </div>
               <a
@@ -480,7 +480,7 @@ export default function AgencyBoardPage() {
                 style={{
                   background: T.canvas,
                   color: T.mossDark,
-                  fontSize: 11.5, fontWeight: 600,
+                  fontSize: 11, fontWeight: 600,
                   padding: "5px 10px",
                   borderRadius: R.full,
                   border: `1px solid ${T.brandTeal}`,
@@ -506,7 +506,7 @@ export default function AgencyBoardPage() {
                 placeholder="광고주 검색"
                 style={{
                   background: "transparent",
-                  color: T.ink, fontSize: 12.5, fontWeight: 400,
+                  color: T.ink, fontSize: 13, fontWeight: 400,
                   border: "none", outline: "none",
                   flex: 1, minWidth: 0,
                 }}
@@ -573,7 +573,7 @@ export default function AgencyBoardPage() {
                       </div>
                       <span style={{
                         background: statusColor, color: "#FFFFFF",
-                        fontSize: 9.5, fontWeight: 700, letterSpacing: "0.06em",
+                        fontSize: 10, fontWeight: 700, letterSpacing: "0.06em",
                         padding: "2px 6px", borderRadius: R.full,
                         flexShrink: 0,
                         marginRight: needsAttention && !isActive ? 10 : 0,
@@ -593,13 +593,13 @@ export default function AgencyBoardPage() {
                         </span>
                         {c.lift && c.lift.startsWith("+") && (
                           <span style={{
-                            color: T.mossDark, fontSize: 10.5, fontWeight: 700,
+                            color: T.mossDark, fontSize: 11, fontWeight: 700,
                             letterSpacing: "-0.005em",
                             display: "inline-flex", alignItems: "baseline", gap: 3,
                           }}>
                             {c.lift}
                             {c.liftMetric && c.liftMetric !== "—" && (
-                              <span style={{ color: T.steel, fontSize: 9.5, fontWeight: 500, letterSpacing: "0" }}>
+                              <span style={{ color: T.steel, fontSize: 10, fontWeight: 500, letterSpacing: "0" }}>
                                 {c.liftMetric}
                               </span>
                             )}
@@ -631,7 +631,7 @@ export default function AgencyBoardPage() {
                 style={{
                   background: T.canvas,
                   color: T.mossDark,
-                  fontSize: 12.5, fontWeight: 600,
+                  fontSize: 13, fontWeight: 600,
                   padding: "9px 14px",
                   borderRadius: R.full,
                   border: `1.5px solid ${T.brandTeal}`,
@@ -642,7 +642,7 @@ export default function AgencyBoardPage() {
                 <Icon name="plus" size={11} stroke={2.2} style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }} />
                 새 광고주 등록
               </a>
-              <p className="mt-3 text-center" style={{ color: T.muted, fontSize: 10.5, fontWeight: 400, lineHeight: 1.55 }}>
+              <p className="mt-3 text-center" style={{ color: T.muted, fontSize: 11, fontWeight: 400, lineHeight: 1.55 }}>
                 광고대행사 AE 전용<br />
                 광고대행사 베타 · 광고주 무제한
               </p>
@@ -681,7 +681,7 @@ export default function AgencyBoardPage() {
                   style={{
                     background: T.canvas,
                     color: T.mossDark,
-                    fontSize: 11.5, fontWeight: 600,
+                    fontSize: 11, fontWeight: 600,
                     padding: "6px 12px",
                     borderRadius: R.full,
                     border: `1px solid ${T.brandTeal}`,
@@ -763,10 +763,10 @@ export default function AgencyBoardPage() {
                     <Icon name="sparkles" size={11} stroke={2} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ color: T.steel, fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 2 }}>
+                    <div style={{ color: T.steel, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", marginBottom: 4, textTransform: "uppercase" }}>
                       예측 근거
                     </div>
-                    <div style={{ color: T.charcoal, fontSize: 12, fontWeight: 400, lineHeight: 1.55, wordBreak: "keep-all" }}>
+                    <div style={{ color: T.charcoal, fontSize: 13, fontWeight: 400, lineHeight: 1.55, wordBreak: "keep-all" }}>
                       {active.liftBasis}
                     </div>
                   </div>
@@ -780,7 +780,7 @@ export default function AgencyBoardPage() {
                   style={{
                     background: `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)`,
                     color: T.onPrimary,
-                    fontSize: 12.5, fontWeight: 600,
+                    fontSize: 13, fontWeight: 600,
                     padding: "8px 14px",
                     borderRadius: R.full,
                     cursor: "pointer",
@@ -875,7 +875,7 @@ export default function AgencyBoardPage() {
             }}>
               <div className="flex items-center gap-2 mb-3">
                 <Icon name="sparkles" size={14} stroke={2} />
-                <span style={{ color: T.mossDark, fontSize: 11.5, fontWeight: 700, letterSpacing: "0.08em" }}>
+                <span style={{ color: T.mossDark, fontSize: 11, fontWeight: 700, letterSpacing: "0.08em" }}>
                   AE 워크플로우 (베타)
                 </span>
               </div>
@@ -886,7 +886,7 @@ export default function AgencyBoardPage() {
                   "③ 상단 \"일간 보고\" 버튼 → 광고주 전체 요약 자동 생성",
                   "④ 광고주별 챗봇 대화는 다음 업데이트에서 분리 저장 예정",
                 ].map((step, i) => (
-                  <div key={i} className="flex items-start gap-2" style={{ color: T.charcoal, fontSize: 12.5, fontWeight: 400, lineHeight: 1.55, wordBreak: "keep-all" }}>
+                  <div key={i} className="flex items-start gap-2" style={{ color: T.charcoal, fontSize: 13, fontWeight: 400, lineHeight: 1.55, wordBreak: "keep-all" }}>
                     <span style={{ color: T.mossDark, marginTop: 2, flexShrink: 0 }}>
                       <Icon name="check" size={11} stroke={2.5} />
                     </span>
@@ -916,7 +916,7 @@ export default function AgencyBoardPage() {
             borderRadius: R.lg,
             background: cardToast.type === "err" ? "#FEF2F2" : cardToast.type === "ok" ? T.mossDark : T.charcoal,
             color: cardToast.type === "err" ? "#B91C1C" : T.onPrimary,
-            fontSize: 12.5,
+            fontSize: 13,
             fontWeight: 500,
             lineHeight: 1.5,
             boxShadow: "0 10px 30px rgba(0,0,0,0.18)",
@@ -995,7 +995,7 @@ export default function AgencyBoardPage() {
                 style={{
                   background: reportCopied ? T.brandTeal : T.canvas,
                   color: reportCopied ? T.mossDark : T.ink,
-                  fontSize: 12.5, fontWeight: 600,
+                  fontSize: 13, fontWeight: 600,
                   padding: "9px 14px",
                   borderRadius: R.full,
                   border: `1.5px solid ${reportCopied ? T.brandTeal : T.hairline}`,
@@ -1013,7 +1013,7 @@ export default function AgencyBoardPage() {
                     ? `linear-gradient(180deg, ${T.brandTeal} 0%, #2E8A7E 100%)`
                     : `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)`,
                   color: T.onPrimary,
-                  fontSize: 12.5, fontWeight: 600,
+                  fontSize: 13, fontWeight: 600,
                   padding: "9px 14px",
                   borderRadius: R.full,
                   cursor: "pointer",
