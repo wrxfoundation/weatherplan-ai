@@ -539,6 +539,7 @@ export default function StudioPage() {
             const nowH = new Date().getHours();
             pop = wx.hourly.precipitation_probability[nowH] ?? wx.hourly.precipitation_probability[0];
           }
+          if (cancelled) return;
           setGeoWeather({
             status: "ok",
             place,
@@ -606,28 +607,42 @@ export default function StudioPage() {
       let reply = null;
 
       if (!USE_MOCK) {
-        /* 🚀 실제 Claude API 호출 (profile 컨텍스트 + 자동 모델 선택) */
-        const response = await fetch("/api/claude", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            messages: newMessages,
-            industry: selectedSub ? `${currentIndustry.label} · ${selectedSub}` : currentIndustry.label,
-            persona: profile?.persona || "광고주",
-            profile,  // 온보딩에서 저장한 사업장 컨텍스트 (위치/업종/채널/예산)
-            // 실제 내 위치 실시간 날씨 (geolocation) → AI가 현재 날씨 인지
-            weatherContext: geoWeather?.status === "ok" ? {
-              place: geoWeather.place,
-              temp: geoWeather.temp,
-              pop: geoWeather.pop,
-              wind: geoWeather.wind,
-              humidity: geoWeather.humidity,
-              desc: geoWeather.desc,
-            } : undefined,
-            // model 생략 → 서버에서 복잡도 기반 자동 선택 (Haiku/Opus)
-            max_tokens: 1024,
-          }),
-        });
+        /* 🚀 실제 Claude API 호출 (profile 컨텍스트 + 자동 모델 선택)
+         * AbortController로 35s 타임아웃 — 서버 30s + 네트워크 여유 */
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 35000);
+        let response;
+        try {
+          response = await fetch("/api/claude", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            signal: controller.signal,
+            body: JSON.stringify({
+              messages: newMessages,
+              industry: selectedSub ? `${currentIndustry.label} · ${selectedSub}` : currentIndustry.label,
+              persona: profile?.persona || "광고주",
+              profile,  // 온보딩에서 저장한 사업장 컨텍스트 (위치/업종/채널/예산)
+              // 실제 내 위치 실시간 날씨 (geolocation) → AI가 현재 날씨 인지
+              weatherContext: geoWeather?.status === "ok" ? {
+                place: geoWeather.place,
+                temp: geoWeather.temp,
+                pop: geoWeather.pop,
+                wind: geoWeather.wind,
+                humidity: geoWeather.humidity,
+                desc: geoWeather.desc,
+              } : undefined,
+              // model 생략 → 서버에서 복잡도 기반 자동 선택 (Haiku/Opus)
+              max_tokens: 1024,
+            }),
+          });
+        } catch (fetchErr) {
+          if (fetchErr.name === "AbortError") {
+            throw new Error("응답 시간이 너무 길어 중단했습니다 — 잠시 후 다시 시도해주세요");
+          }
+          throw fetchErr;
+        } finally {
+          clearTimeout(timeoutId);
+        }
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));

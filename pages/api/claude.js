@@ -56,12 +56,20 @@ function getSeason() {
 
 /* ─── 한국 시간 날짜 컨텍스트 ─── */
 function getDateContext() {
-  const now = new Date();
+  // Vercel 서버 시간(UTC 가능성)과 무관하게 항상 Asia/Seoul 기준으로 계산
+  const kstParts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric", month: "2-digit", day: "2-digit",
+    weekday: "short",
+  }).formatToParts(new Date());
+  const partMap = Object.fromEntries(kstParts.map((p) => [p.type, p.value]));
+  const y = Number(partMap.year);
+  const m = Number(partMap.month) - 1;  // JS month는 0-indexed
+  const d = Number(partMap.day);
+  const dowName = partMap.weekday;  // "Mon", "Tue" 등
+  const dowMap = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+  const dow = dowMap[dowName] ?? new Date().getDay();
   const dayN = ["일", "월", "화", "수", "목", "금", "토"];
-  const y = now.getFullYear();
-  const m = now.getMonth();
-  const d = now.getDate();
-  const dow = now.getDay();
   const fmt = (dt) => `${dt.getMonth() + 1}/${dt.getDate()}(${dayN[dt.getDay()]})`;
   const monOff = dow === 0 ? -6 : 1 - dow;
   const mon = new Date(y, m, d + monOff);
@@ -485,7 +493,14 @@ export default async function handler(req, res) {
       // Tool 요청 블록들 실행
       const toolUseBlocks = response.content.filter((b) => b.type === "tool_use");
       const toolResults = toolUseBlocks.map((block) => {
-        const result = executeTool(block.name, block.input);
+        let result;
+        try {
+          result = executeTool(block.name, block.input);
+        } catch (toolErr) {
+          // tool 실행 실패 — 모델에게 오류를 그대로 전달해 복구 기회 제공
+          console.error(`[/api/claude] tool ${block.name} 실행 실패:`, toolErr.message);
+          result = { error: `도구 실행 실패: ${toolErr.message}` };
+        }
         toolCallTrace.push({ name: block.name, input: block.input, result });
         return {
           type: "tool_result",

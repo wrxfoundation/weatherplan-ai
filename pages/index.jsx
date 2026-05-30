@@ -2374,7 +2374,7 @@ function KWeatherAssets() {
             <span style={{ color: T.mossDark, fontWeight: 500 }}>지하철역·지역명소·관광지·동단위까지</span> 한국 지리에 가장 강합니다.
           </p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
           {assets.map((a, i) => {
             return (
               <div
@@ -3499,7 +3499,7 @@ function PricingSection() {
           sub="자영업 1인 사장님부터 대기업·대행사까지 — 예측 가능하고 안전합니다."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {PRICING.map((p, i) => (
             <PricingCard key={p.tier} p={p} index={i} />
           ))}
@@ -3841,7 +3841,7 @@ function Footer() {
   return (
     <footer style={{ background: T.footerBg, color: T.onDarkMuted }}>
       <div className="max-w-[1280px] mx-auto px-6" style={{ paddingTop: 64, paddingBottom: 48 }}>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 md:gap-8">
           <div className="col-span-2">
             <div className="flex items-center gap-3 mb-5">
               <Logo size={32} />
@@ -4476,6 +4476,7 @@ function PanelMap() {
 
         {/* 위성 지도 컨테이너 */}
         <div
+          className="map-container"
           style={{
             position: "relative",
             borderRadius: R.xl,
@@ -4484,7 +4485,8 @@ function PanelMap() {
             background: "#0A1224",
             boxShadow: "0 12px 40px rgba(5,0,56,0.22), 0 1px 3px rgba(5,0,56,0.08), inset 0 0 0 1px rgba(78,179,168,0.18)",
             aspectRatio: "1200 / 896",
-            minHeight: 380,
+            width: "100%",
+            maxWidth: "100%",
           }}
         >
           <svg
@@ -4517,7 +4519,7 @@ function PanelMap() {
             <image
               href="/korea-satellite.webp"
               x="0" y="0" width="1200" height="896"
-              preserveAspectRatio="xMidYMid slice"
+              preserveAspectRatio="xMidYMid meet"
             />
 
             {/* 광역 zone 발광 */}
@@ -4603,61 +4605,62 @@ function PanelMap() {
             })}
           </svg>
 
-          {/* 좌상단: AI 분석 상태 (HUD) */}
-          <div style={{
-            position: "absolute", top: 14, left: 14,
+          {/* 좌상단: AI 분석 상태 (HUD) — 모바일에선 크기·간격 축소 */}
+          <div className="map-hud-left" style={{
+            position: "absolute", top: 10, left: 10,
             background: "rgba(10,18,36,0.85)",
             backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
             borderRadius: R.md,
-            padding: "9px 12px",
+            padding: "7px 9px",
             color: "#FFFFFF",
-            fontSize: 11, fontWeight: 600, letterSpacing: "0.02em",
-            display: "flex", flexDirection: "column", gap: 5,
+            fontWeight: 600, letterSpacing: "0.02em",
+            display: "flex", flexDirection: "column", gap: 3,
             border: `1px solid rgba(78,179,168,0.45)`,
-            minWidth: 168,
+            maxWidth: "calc(100% - 90px)",
           }}>
-            <div className="flex items-center gap-1.5" style={{ color: T.brandTeal, fontSize: 10, fontWeight: 800, letterSpacing: "0.1em" }}>
-              <span style={{ width: 5, height: 5, borderRadius: 99, background: T.brandTeal, boxShadow: `0 0 8px ${T.brandTeal}` }} />
+            <div className="flex items-center gap-1.5" style={{ color: T.brandTeal, fontSize: 9, fontWeight: 800, letterSpacing: "0.08em" }}>
+              <span style={{ width: 4, height: 4, borderRadius: 99, background: T.brandTeal, boxShadow: `0 0 6px ${T.brandTeal}` }} />
               AI 시뮬레이션
             </div>
-            <div className="flex items-center justify-between gap-3">
-              <span style={{ opacity: 0.7 }}>분석 사업장</span>
+            <div className="flex items-center justify-between gap-2" style={{ fontSize: 10 }}>
+              <span style={{ opacity: 0.7 }}>사업장</span>
               <span style={{ fontWeight: 700, fontFamily: "ui-monospace, 'SF Mono', monospace" }}>24,902</span>
             </div>
-            <div className="flex items-center justify-between gap-3">
-              <span style={{ opacity: 0.7 }}>분석 시나리오</span>
+            <div className="flex items-center justify-between gap-2" style={{ fontSize: 10 }}>
+              <span style={{ opacity: 0.7 }}>시나리오</span>
               <span style={{ fontWeight: 700, fontFamily: "ui-monospace, 'SF Mono', monospace" }}>51,388</span>
             </div>
-            <div className="flex items-center justify-between gap-3">
-              <span style={{ opacity: 0.7 }}>평균 신뢰도</span>
+            <div className="flex items-center justify-between gap-2" style={{ fontSize: 10 }}>
+              <span style={{ opacity: 0.7 }}>신뢰도</span>
               <span style={{ fontWeight: 700, fontFamily: "ui-monospace, 'SF Mono', monospace", color: T.brandTeal }}>88.3%</span>
             </div>
           </div>
 
           {/* 우상단: 갱신 시각 */}
           <div style={{
-            position: "absolute", top: 14, right: 14,
+            position: "absolute", top: 10, right: 10,
             background: "rgba(10,18,36,0.85)",
             backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
             borderRadius: R.md,
-            padding: "7px 11px",
+            padding: "5px 9px",
             color: "#FFFFFF",
-            fontSize: 11, fontWeight: 600, letterSpacing: "0.04em",
-            display: "flex", alignItems: "center", gap: 6,
+            fontSize: 10, fontWeight: 600, letterSpacing: "0.04em",
+            display: "flex", alignItems: "center", gap: 5,
             border: `1px solid rgba(78,179,168,0.45)`,
+            whiteSpace: "nowrap",
           }}>
-            <span style={{ width: 6, height: 6, borderRadius: 99, background: T.brandTeal, boxShadow: `0 0 10px ${T.brandTeal}` }} />
-            <span style={{ fontFamily: "ui-monospace, 'SF Mono', monospace" }}>5분 전 갱신</span>
+            <span style={{ width: 5, height: 5, borderRadius: 99, background: T.brandTeal, boxShadow: `0 0 8px ${T.brandTeal}` }} />
+            <span style={{ fontFamily: "ui-monospace, 'SF Mono', monospace" }}>5분 전</span>
           </div>
 
           {/* 하단 라이브 데이터 띠 */}
           <div style={{
             position: "absolute", bottom: 0, left: 0, right: 0,
             background: "linear-gradient(180deg, rgba(10,18,36,0) 0%, rgba(10,18,36,0.9) 100%)",
-            padding: "30px 14px 12px",
+            padding: "26px 10px 10px",
             color: "#FFFFFF",
-            display: "flex", justifyContent: "space-around", alignItems: "center",
-            flexWrap: "wrap", gap: 12,
+            display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+            alignItems: "center", gap: 6,
             fontFamily: "ui-monospace, 'SF Mono', monospace",
           }}>
             {[
@@ -4666,11 +4669,11 @@ function PanelMap() {
               { label: "평균 lift",   value: "+38.4%", color: T.brandTeal },
               { label: "응답 시간",   value: "1.2s",   color: "#F4A261" },
             ].map((m) => (
-              <div key={m.label} style={{ textAlign: "center", minWidth: 76 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", opacity: 0.65 }}>
+              <div key={m.label} style={{ textAlign: "center", minWidth: 0 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.04em", opacity: 0.65, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                   {m.label}
                 </div>
-                <div style={{ color: m.color, fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", marginTop: 2 }}>
+                <div style={{ color: m.color, fontSize: 14, fontWeight: 700, letterSpacing: "-0.01em", marginTop: 2, whiteSpace: "nowrap" }}>
                   {m.value}
                 </div>
               </div>
