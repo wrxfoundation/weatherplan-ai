@@ -1,0 +1,53 @@
+# Public GEO page (answer-engine-crawlable) on GitHub Pages.
+#
+# Builds report.html from LIVE data (pull runs on GitHub's open-network runner) and deploys
+# it to GitHub Pages — a free, public, JSON-LD-bearing URL that Perplexity / ChatGPT / Google
+# AI Overviews can crawl and cite. This is the GEO substrate's public surface.
+#
+# ONE-TIME ENABLE: repo Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+# Then: Actions -> "pages" -> Run workflow (manual now; the daily schedule activates once this
+# file is on the default branch). Live URL appears in the run summary + Settings -> Pages.
+name: pages
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "37 1 * * *" # daily, after the collect job
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv (Python env)
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build the public GEO page from live data
+        working-directory: koreaapi
+        env:
+          PYTHONPATH: src
+          KOREAAPI_DB: ${{ runner.temp }}/koreaapi.db
+        run: |
+          uv sync
+          uv run python -m koreaapi.admin pull
+          uv run python -m koreaapi.admin report
+          mkdir -p ../_site
+          cp report.html ../_site/index.html
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3 # publishes ./_site by default
+      - id: deploy
+        uses: actions/deploy-pages@v4
