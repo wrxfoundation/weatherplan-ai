@@ -7,6 +7,11 @@
 # ONE-TIME ENABLE: repo Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
 # Then: Actions -> "pages" -> Run workflow (manual now; the daily schedule activates once this
 # file is on the default branch). Live URL appears in the run summary + Settings -> Pages.
+#
+# NON-DEFAULT BRANCH: deploying from a feature branch also needs it allowed in the github-pages
+# environment, else the deploy is blocked at the environment gate (instant ~2s failure, no logs):
+#   Settings -> Environments -> github-pages -> Deployment branches and tags -> No restriction
+#   (or add this branch). Once merged to the default branch this is unnecessary.
 name: pages
 
 on:
