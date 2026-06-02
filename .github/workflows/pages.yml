@@ -11,6 +11,11 @@ name: pages
 
 on:
   workflow_dispatch: {}
+  push:
+    branches: [claude/eager-knuth-Vnzca]
+    paths:
+      - "koreaapi/**"
+      - ".github/workflows/pages.yml"
   schedule:
     - cron: "37 1 * * *" # daily, after the collect job
 
