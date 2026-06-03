@@ -60,8 +60,10 @@ jobs:
           uv run python -m koreaapi.admin youtube
           uv run python -m koreaapi.admin report
           uv run python -m koreaapi.admin digest
+          uv run python -m koreaapi.admin monitor
           mkdir -p ../_site
           cp report.html ../_site/index.html
+          cp monitor.html ../_site/monitor.html   # human data-quality cockpit at /monitor.html
           cp llms.txt ../_site/llms.txt   # agent-discoverable at /llms.txt (AEO/GEO)
           cp data/korea-rising.md ../_site/korea-rising.md   # shareable verified digest at /korea-rising.md
 
