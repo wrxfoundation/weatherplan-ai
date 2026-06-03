@@ -50,6 +50,7 @@ jobs:
         env:
           PYTHONPATH: src
           KOREAAPI_DB: ${{ runner.temp }}/koreaapi.db
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }} # romanization (best-effort; skipped if unset)
         run: |
           uv sync
           uv run python -m koreaapi.admin pull

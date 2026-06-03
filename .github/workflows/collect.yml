@@ -37,6 +37,7 @@ jobs:
         env:
           PYTHONPATH: src
           KOREAAPI_DB: ${{ runner.temp }}/koreaapi.db # fresh per run; history lives in data/
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }} # romanization (best-effort; skipped if unset)
         run: |
           uv run python -m koreaapi.admin pull
           uv run python -m koreaapi.admin export
