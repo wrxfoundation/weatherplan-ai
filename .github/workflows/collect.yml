@@ -45,6 +45,7 @@ jobs:
           uv run python -m koreaapi.admin chart
           uv run python -m koreaapi.admin youtube
           uv run python -m koreaapi.admin export
+          uv run python -m koreaapi.admin digest
           uv run python -m koreaapi.admin stats
 
       - name: Commit accumulated data

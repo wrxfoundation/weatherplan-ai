@@ -59,9 +59,11 @@ jobs:
           uv run python -m koreaapi.admin chart
           uv run python -m koreaapi.admin youtube
           uv run python -m koreaapi.admin report
+          uv run python -m koreaapi.admin digest
           mkdir -p ../_site
           cp report.html ../_site/index.html
           cp llms.txt ../_site/llms.txt   # agent-discoverable at /llms.txt (AEO/GEO)
+          cp data/korea-rising.md ../_site/korea-rising.md   # shareable verified digest at /korea-rising.md
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3 # publishes ./_site by default
