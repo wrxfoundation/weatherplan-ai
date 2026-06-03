@@ -41,6 +41,7 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }} # official-channel release snapshots (best-effort; skipped if unset)
         run: |
           uv run python -m koreaapi.admin pull
+          uv run python -m koreaapi.admin sweep
           uv run python -m koreaapi.admin chart
           uv run python -m koreaapi.admin youtube
           uv run python -m koreaapi.admin export
