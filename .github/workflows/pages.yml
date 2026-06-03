@@ -61,6 +61,7 @@ jobs:
           uv run python -m koreaapi.admin report
           mkdir -p ../_site
           cp report.html ../_site/index.html
+          cp llms.txt ../_site/llms.txt   # agent-discoverable at /llms.txt (AEO/GEO)
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3 # publishes ./_site by default
