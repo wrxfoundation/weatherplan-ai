@@ -50,10 +50,13 @@ jobs:
         env:
           PYTHONPATH: src
           KOREAAPI_DB: ${{ runner.temp }}/koreaapi.db
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }} # romanization (best-effort; skipped if unset)
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }} # romanization + Circle Chart extract (best-effort; skipped if unset)
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }} # official-channel release snapshots (best-effort; skipped if unset)
         run: |
           uv sync
           uv run python -m koreaapi.admin pull
+          uv run python -m koreaapi.admin chart
+          uv run python -m koreaapi.admin youtube
           uv run python -m koreaapi.admin report
           mkdir -p ../_site
           cp report.html ../_site/index.html
