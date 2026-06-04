@@ -1,0 +1,126 @@
+"""Offline tests for the agent-face service (no fastmcp, no network).
+
+Proves the agent face serves verified, bilingual, provenance-bearing data from the
+append-only store - the same store the human console reads.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import os
+import tempfile
+from datetime import datetime, timezone
+
+from koreaapi import service
+from koreaapi.admin import seed
+from koreaapi.models import Name, Provenance, Record
+from koreaapi.pipeline import store
+
+
+def _seeded_db() -> str:
+    fd, path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+    os.unlink(path)
+    asyncio.run(seed(db_path=path))
+    return path
+
+
+def _agency_db() -> str:
+    fd, path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+    os.unlink(path)
+    now = datetime.now(timezone.utc)
+    rows = [
+        ("artist:straykids", "스트레이키즈", "Stray Kids", "JYP Entertainment"),
+        ("artist:2pm", "투피엠", "2PM", "JYP Entertainment"),
+        ("artist:aespa", "에스파", "aespa", "SM Entertainment"),
+        # "Cosmic Music" normalizes to "cosmicmusic" which *contains* "sm" - a substring match would
+        # wrongly attribute this act to a query of "SM". A prefix match must not.
+        ("artist:bandx", "밴드엑스", "BandX", "Cosmic Music"),
+    ]
+    for eid, ko, en, agency in rows:
+        rec = Record(
+            entity_id=eid, kind="facts", name=Name(ko=ko, en_official=en),
+            snapshot_at=now, summary_en=f"{en} - facts.", data={"agency_en": agency},
+            provenance=Provenance(sources=["Wikidata Q1"], fetched_at=now, skill_score=0.9, confidence="high"),
+        )
+        asyncio.run(store.append_record(rec, db_path=path))
+    return path
+
+
+def test_artist_status_is_verified_and_bilingual():
+    db = _seeded_db()
+    out = asyncio.run(service.artist_status("artist:bts", db_path=db))
+
+    assert out["found"] is True
+    assert out["name"]["en_official"] == "BTS"
+    assert out["name"]["ko"] == "방탄소년단"
+    assert out["status"], "should have at least one status item"
+    item = out["status"][0]
+    assert item["provenance"]["skill_score"] >= 0.8
+    assert item["provenance"]["sources"]
+
+
+def test_korea_rising_ranks_high_skill_first():
+    db = _seeded_db()
+    out = asyncio.run(service.korea_rising(limit=10, db_path=db))
+
+    scores = [i["provenance"]["skill_score"] for i in out["items"]]
+    assert scores == sorted(scores, reverse=True)
+    # BTS/NewJeans (1.0) outrank aespa (0.7, single-source)
+    assert scores[0] >= scores[-1]
+
+
+def test_agency_lists_only_that_agencys_verified_members():
+    db = _agency_db()
+    out = asyncio.run(service.agency("JYP", db_path=db))  # prefix match on the label
+    names = {m["name"]["en_official"] for m in out["members"]}
+    assert names == {"Stray Kids", "2PM"} and out["count"] == 2  # SM/Cosmic excluded
+    assert out["members"][0]["provenance"]["sources"]  # provenance carried
+    # the full label name resolves the same; an unknown agency returns nobody
+    assert asyncio.run(service.agency("JYP Entertainment", db_path=db))["count"] == 2
+    assert asyncio.run(service.agency("YG", db_path=db))["count"] == 0
+
+
+def test_agency_prefix_match_excludes_substring_false_positives():
+    db = _agency_db()
+    out = asyncio.run(service.agency("SM", db_path=db))  # must match "SM Entertainment" only
+    names = {m["name"]["en_official"] for m in out["members"]}
+    assert names == {"aespa"}  # NOT BandX ("Cosmic Music" merely *contains* "sm")
+
+
+def test_artist_status_name_comes_from_best_verified_record():
+    fd, db = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+    os.unlink(db)
+    now = datetime.now(timezone.utc)
+    # a 'release' record (single-source 0.7, English placeholder in the ko field) ...
+    asyncio.run(store.append_record(Record(
+        entity_id="artist:bts", kind="release", name=Name(ko="BTS", en_official="BTS"),
+        snapshot_at=now, summary_en="release", data={},
+        provenance=Provenance(sources=["YouTube"], fetched_at=now, skill_score=0.7, confidence="medium"),
+    ), db_path=db))
+    # ... and the cross-verified 'facts' record (1.0, canonical Korean name).
+    asyncio.run(store.append_record(Record(
+        entity_id="artist:bts", kind="facts",
+        name=Name(ko="방탄소년단", en_official="BTS", romanized="Bangtan Sonyeondan"),
+        snapshot_at=now, summary_en="facts", data={},
+        provenance=Provenance(sources=["Wikidata", "Wikipedia"], fetched_at=now, skill_score=1.0, confidence="high"),
+    ), db_path=db))
+    out = asyncio.run(service.artist_status("artist:bts", db_path=db))
+    assert out["name"] == {"ko": "방탄소년단", "en_official": "BTS", "romanized": "Bangtan Sonyeondan"}
+
+
+def test_buy_options_phase1_stub_is_honest():
+    db = _seeded_db()
+    out = asyncio.run(service.buy_options("BTS album", db_path=db))
+
+    assert out["options"] == []
+    assert "buy-intent" in out["note"]
+
+
+if __name__ == "__main__":
+    test_artist_status_is_verified_and_bilingual()
+    test_korea_rising_ranks_high_skill_first()
+    test_buy_options_phase1_stub_is_honest()
+    print("all service tests passed")
