@@ -17,7 +17,8 @@ name: pages
 on:
   workflow_dispatch: {}
   push:
-    branches: [claude/eager-knuth-Vnzca]
+    # feature branch (now) + the default branch (so the page still rebuilds on push after PR #1 merges)
+    branches: [claude/eager-knuth-Vnzca, claude/deploy-vercel-DwbJL]
     paths:
       - "koreaapi/**"
       - ".github/workflows/pages.yml"
