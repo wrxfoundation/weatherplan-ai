@@ -5,31 +5,31 @@
     "name": {
       "ko": "스트레이 키즈",
       "en_official": "Stray Kids",
-      "romanized": "Seuteurai Kijeu",
+      "romanized": "seuteuraei kijeu",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:31:05.327312Z",
-    "summary_en": "Stray Kids — YouTube official channel: 24,000,000 subscribers, 11,649,154,410 views; latest: '૮¯ᴥ¯აvV #StrayKids #스트레이키즈 #방찬 #BangChan #YouMakeStrayKidsStay' (2026-06-05).",
-    "summary_ko": "스트레이 키즈 — 유튜브 공식 채널: 구독자 24,000,000명, 조회수 11,649,154,410회; 최신: '૮¯ᴥ¯აvV #StrayKids #스트레이키즈 #방찬 #BangChan #YouMakeStrayKidsStay' (2026-06-05).",
+    "snapshot_at": "2026-06-07T04:59:59.836212Z",
+    "summary_en": "Stray Kids — YouTube official channel: 24,000,000 subscribers, 11,659,348,020 views; latest: 'Gov Ball with STAY💗 #StrayKids #스트레이키즈 #governorsball2026#YouMakeStrayKidsStay' (2026-06-07).",
+    "summary_ko": "스트레이 키즈 — 유튜브 공식 채널: 구독자 24,000,000명, 조회수 11,659,348,020회; 최신: 'Gov Ball with STAY💗 #StrayKids #스트레이키즈 #governorsball2026#YouMakeStrayKidsStay' (2026-06-07).",
     "data": {
       "channel_id": "UC9rMiEjNaCSsebs31MRDCRA",
       "channel_title": "Stray Kids",
       "subscribers": 24000000,
-      "views": 11649154410,
-      "videos": 2078,
+      "views": 11659348020,
+      "videos": 2084,
       "latest": {
-        "video_id": "j6PC9qI0bzM",
-        "title": "૮¯ᴥ¯აvV #StrayKids #스트레이키즈 #방찬 #BangChan #YouMakeStrayKidsStay",
-        "published_at": "2026-06-05T10:59:56Z"
+        "video_id": "-7AhmSqJ_zc",
+        "title": "Gov Ball with STAY💗 #StrayKids #스트레이키즈 #governorsball2026#YouMakeStrayKidsStay",
+        "published_at": "2026-06-07T03:29:42Z"
       },
       "source_url": "https://www.youtube.com/channel/UC9rMiEjNaCSsebs31MRDCRA"
     },
     "provenance": {
       "sources": [
-        "YouTube Stray Kids 2026-06-06 04:31 UTC"
+        "YouTube Stray Kids 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:31:05.327312Z",
+      "fetched_at": "2026-06-07T04:59:59.836212Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -45,31 +45,31 @@
     "name": {
       "ko": "르세라핌",
       "en_official": "LE SSERAFIM",
-      "romanized": "Le Sserafim",
+      "romanized": "Leseraphim",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:31:04.752940Z",
-    "summary_en": "LE SSERAFIM — YouTube official channel: 7,510,000 subscribers, 6,111,813,724 views; latest: 'oh oh oh ohhhh 🎶' (2026-06-05).",
-    "summary_ko": "르세라핌 — 유튜브 공식 채널: 구독자 7,510,000명, 조회수 6,111,813,724회; 최신: 'oh oh oh ohhhh 🎶' (2026-06-05).",
+    "snapshot_at": "2026-06-07T04:59:59.349225Z",
+    "summary_en": "LE SSERAFIM — YouTube official channel: 7,520,000 subscribers, 6,122,379,662 views; latest: 'feat. GURU RANDHAWA 🕺 #BOOMPALA' (2026-06-07).",
+    "summary_ko": "르세라핌 — 유튜브 공식 채널: 구독자 7,520,000명, 조회수 6,122,379,662회; 최신: 'feat. GURU RANDHAWA 🕺 #BOOMPALA' (2026-06-07).",
     "data": {
       "channel_id": "UCs-QBT4qkj_YiQw1ZntDO3g",
       "channel_title": "LE SSERAFIM",
-      "subscribers": 7510000,
-      "views": 6111813724,
-      "videos": 3016,
+      "subscribers": 7520000,
+      "views": 6122379662,
+      "videos": 3019,
       "latest": {
-        "video_id": "pOU5rTssnv0",
-        "title": "oh oh oh ohhhh 🎶",
-        "published_at": "2026-06-05T13:30:05Z"
+        "video_id": "0g4WKO_2jps",
+        "title": "feat. GURU RANDHAWA 🕺 #BOOMPALA",
+        "published_at": "2026-06-07T04:30:14Z"
       },
       "source_url": "https://www.youtube.com/channel/UCs-QBT4qkj_YiQw1ZntDO3g"
     },
     "provenance": {
       "sources": [
-        "YouTube LE SSERAFIM 2026-06-06 04:31 UTC"
+        "YouTube LE SSERAFIM 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:31:04.752940Z",
+      "fetched_at": "2026-06-07T04:59:59.349225Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -85,11 +85,11 @@
     "name": {
       "ko": "블랙핑크",
       "en_official": "BLACKPINK",
-      "romanized": "Black Pink",
+      "romanized": "Blackpink",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:31:04.024296Z",
+    "snapshot_at": "2026-06-07T04:59:58.749618Z",
     "summary_en": "BLACKPINK — YouTube official channel: 101,000,000 subscribers, 42,179,904,251 views; latest: 'BLACKPINK - DEADLINE JACKET MAKING FILM' (2026-03-13).",
     "summary_ko": "블랙핑크 — 유튜브 공식 채널: 구독자 101,000,000명, 조회수 42,179,904,251회; 최신: 'BLACKPINK - DEADLINE JACKET MAKING FILM' (2026-03-13).",
     "data": {
@@ -107,9 +107,9 @@
     },
     "provenance": {
       "sources": [
-        "YouTube BLACKPINK 2026-06-06 04:31 UTC"
+        "YouTube BLACKPINK 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:31:04.024296Z",
+      "fetched_at": "2026-06-07T04:59:58.749618Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -129,27 +129,27 @@
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:31:03.519632Z",
-    "summary_en": "aespa — YouTube official channel: 8,470,000 subscribers, 6,077,884,671 views; latest: 'IDC #aespa #æspa #에스파 #WINTER #윈터 #LEMONADE #aespaLEMONADE' (2026-06-06).",
-    "summary_ko": "aespa — 유튜브 공식 채널: 구독자 8,470,000명, 조회수 6,077,884,671회; 최신: 'IDC #aespa #æspa #에스파 #WINTER #윈터 #LEMONADE #aespaLEMONADE' (2026-06-06).",
+    "snapshot_at": "2026-06-07T04:59:58.136152Z",
+    "summary_en": "aespa — YouTube official channel: 8,480,000 subscribers, 6,089,996,044 views; latest: 'muchasgraciasmiamorholic #aespa  #æspa #에스파 #NINGNING #닝닝#LEMONADE #aespaLEMONADE' (2026-06-07).",
+    "summary_ko": "aespa — 유튜브 공식 채널: 구독자 8,480,000명, 조회수 6,089,996,044회; 최신: 'muchasgraciasmiamorholic #aespa  #æspa #에스파 #NINGNING #닝닝#LEMONADE #aespaLEMONADE' (2026-06-07).",
     "data": {
       "channel_id": "UC9GtSLeksfK4yuJ_g1lgQbg",
       "channel_title": "aespa",
-      "subscribers": 8470000,
-      "views": 6077884671,
-      "videos": 1712,
+      "subscribers": 8480000,
+      "views": 6089996044,
+      "videos": 1718,
       "latest": {
-        "video_id": "8E40r4E88nI",
-        "title": "IDC #aespa #æspa #에스파 #WINTER #윈터 #LEMONADE #aespaLEMONADE",
-        "published_at": "2026-06-06T04:30:45Z"
+        "video_id": "MhtUDpX4Yfg",
+        "title": "muchasgraciasmiamorholic #aespa  #æspa #에스파 #NINGNING #닝닝#LEMONADE #aespaLEMONADE",
+        "published_at": "2026-06-07T04:30:02Z"
       },
       "source_url": "https://www.youtube.com/channel/UC9GtSLeksfK4yuJ_g1lgQbg"
     },
     "provenance": {
       "sources": [
-        "YouTube aespa 2026-06-06 04:31 UTC"
+        "YouTube aespa 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:31:03.519632Z",
+      "fetched_at": "2026-06-07T04:59:58.136152Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -165,11 +165,11 @@
     "name": {
       "ko": "NewJeans",
       "en_official": "NewJeans",
-      "romanized": "Neujinz",
+      "romanized": "Newjins",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:31:02.873643Z",
+    "snapshot_at": "2026-06-07T04:59:57.353292Z",
     "summary_en": "NewJeans — YouTube official channel: 8,400,000 subscribers, 5,141,188,457 views; latest: '[Jeans' ZINE+] 연말 파티🏘.ZIP | NewJeans' (2025-12-25).",
     "summary_ko": "NewJeans — 유튜브 공식 채널: 구독자 8,400,000명, 조회수 5,141,188,457회; 최신: '[Jeans' ZINE+] 연말 파티🏘.ZIP | NewJeans' (2025-12-25).",
     "data": {
@@ -187,9 +187,9 @@
     },
     "provenance": {
       "sources": [
-        "YouTube NewJeans 2026-06-06 04:31 UTC"
+        "YouTube NewJeans 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:31:02.873643Z",
+      "fetched_at": "2026-06-07T04:59:57.353292Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -205,31 +205,31 @@
     "name": {
       "ko": "방탄소년단",
       "en_official": "BTS",
-      "romanized": "bangtanSonyeondan",
+      "romanized": "bangtangsonyeondan",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:31:02.472614Z",
-    "summary_en": "BTS — YouTube official channel: 84,600,000 subscribers, 28,218,395,065 views; latest: 'BTS Family Photo Short Clip #2026BTSFESTA #BTS13thAnniversary #Shorts' (2026-06-03).",
-    "summary_ko": "방탄소년단 — 유튜브 공식 채널: 구독자 84,600,000명, 조회수 28,218,395,065회; 최신: 'BTS Family Photo Short Clip #2026BTSFESTA #BTS13thAnniversary #Shorts' (2026-06-03).",
+    "snapshot_at": "2026-06-07T04:59:56.744000Z",
+    "summary_en": "BTS — YouTube official channel: 84,600,000 subscribers, 28,218,395,065 views; latest: 'j-hope's NORMAL LOG #2026BTSFESTA' (2026-06-07).",
+    "summary_ko": "방탄소년단 — 유튜브 공식 채널: 구독자 84,600,000명, 조회수 28,218,395,065회; 최신: 'j-hope's NORMAL LOG #2026BTSFESTA' (2026-06-07).",
     "data": {
       "channel_id": "UCLkAepWjdylmXSltofFvsYQ",
       "channel_title": "BANGTANTV",
       "subscribers": 84600000,
       "views": 28218395065,
-      "videos": 3050,
+      "videos": 3052,
       "latest": {
-        "video_id": "JAgpBCePHuU",
-        "title": "BTS Family Photo Short Clip #2026BTSFESTA #BTS13thAnniversary #Shorts",
-        "published_at": "2026-06-03T15:09:58Z"
+        "video_id": "LnU8U6qx6h0",
+        "title": "j-hope's NORMAL LOG #2026BTSFESTA",
+        "published_at": "2026-06-07T03:59:59Z"
       },
       "source_url": "https://www.youtube.com/channel/UCLkAepWjdylmXSltofFvsYQ"
     },
     "provenance": {
       "sources": [
-        "YouTube BANGTANTV 2026-06-06 04:31 UTC"
+        "YouTube BANGTANTV 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:31:02.472614Z",
+      "fetched_at": "2026-06-07T04:59:56.744000Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -249,16 +249,11 @@
       "en_source": "llm",
       "en_confidence": "medium"
     },
-    "snapshot_at": "2026-06-06T04:31:01.732631Z",
-    "summary_en": "Circle Digital Chart - 9 weekly #1s (current #1: AKMU - Joy, Sorrow, a Beautiful Heart).",
-    "summary_ko": "써클 디지털 차트 - 주간 1위 9건 (현재 1위: AKMU).",
+    "snapshot_at": "2026-06-07T04:59:55.847124Z",
+    "summary_en": "Circle Digital Chart - 7 weekly #1s (current #1: Cortis - RedRed).",
+    "summary_ko": "써클 디지털 차트 - 주간 1위 7건 (현재 1위: Cortis).",
     "data": {
       "entries": [
-        {
-          "rank": 1,
-          "artist": "AKMU",
-          "title": "Joy, Sorrow, a Beautiful Heart"
-        },
         {
           "rank": 1,
           "artist": "Cortis",
@@ -281,11 +276,6 @@
         },
         {
           "rank": 1,
-          "artist": "Hearts2Hearts",
-          "title": "Rude!"
-        },
-        {
-          "rank": 1,
           "artist": "KiiiKiii",
           "title": "404 (New Era)"
         },
@@ -304,9 +294,9 @@
     },
     "provenance": {
       "sources": [
-        "Circle Digital Chart #1 (via Wikipedia) 2026-06-06 04:31 UTC"
+        "Circle Digital Chart #1 (via Wikipedia) 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:31:01.732631Z",
+      "fetched_at": "2026-06-07T04:59:55.847124Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -317,22 +307,425 @@
     }
   },
   {
+    "entity_id": "artist:minhyorin",
+    "kind": "facts",
+    "name": {
+      "ko": "민효린",
+      "en_official": "Min Hyo-rin",
+      "romanized": "Min Hyo-rin",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-06-07T04:59:53.051840Z",
+    "summary_en": "Min Hyo-rin (민효린) — verified Korean artist. Agency: JYP Entertainment.",
+    "summary_ko": "민효린 — 검증된 K-아티스트. 소속사: JYP Entertainment.",
+    "data": {
+      "name_ko": "민효린",
+      "name_en_official": "Min Hyo-rin",
+      "name_romanized": "Min Hyo-rin",
+      "name_en_source": "official",
+      "name_en_confidence": "high",
+      "debut": null,
+      "active": "active",
+      "agency_en": "JYP Entertainment",
+      "agency_ko": "JYP 엔터테인먼트",
+      "agency_source": "Wikidata Q483238"
+    },
+    "provenance": {
+      "sources": [
+        "Wikidata Q484366 2026-06-07 04:59 UTC",
+        "Wikipedia Min Hyo-rin 2026-06-07 04:59 UTC"
+      ],
+      "fetched_at": "2026-06-07T04:59:53.051840Z",
+      "skill_score": 1.0,
+      "confidence": "high",
+      "translation": {
+        "source": "official",
+        "confidence": "high"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
+    "entity_id": "artist:parkyeeun",
+    "kind": "facts",
+    "name": {
+      "ko": "Park Ye-eun",
+      "en_official": "Park Ye-eun",
+      "romanized": "Bak Ye-eun",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-06-07T04:59:51.743151Z",
+    "summary_en": "Park Ye-eun — verified Korean artist.",
+    "summary_ko": "Park Ye-eun — 검증된 K-아티스트.",
+    "data": {
+      "name_ko": "Park Ye-eun",
+      "name_en_official": "Park Ye-eun",
+      "name_romanized": "Bak Ye-eun",
+      "name_en_source": "official",
+      "name_en_confidence": "high",
+      "debut": null,
+      "active": "active"
+    },
+    "provenance": {
+      "sources": [
+        "Wikidata Q138017202 2026-06-07 04:59 UTC",
+        "Wikipedia Park Ye-eun 2026-06-07 04:59 UTC"
+      ],
+      "fetched_at": "2026-06-07T04:59:51.743151Z",
+      "skill_score": 0.85,
+      "confidence": "high",
+      "translation": {
+        "source": "official",
+        "confidence": "high"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
+    "entity_id": "artist:sohee",
+    "kind": "facts",
+    "name": {
+      "ko": "안소희",
+      "en_official": "Sohee",
+      "romanized": "An Sohui",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-06-07T04:59:34.678403Z",
+    "summary_en": "Sohee (안소희) — verified Korean artist. Agency: JYP Entertainment.",
+    "summary_ko": "안소희 — 검증된 K-아티스트. 소속사: JYP Entertainment.",
+    "data": {
+      "name_ko": "안소희",
+      "name_en_official": "Sohee",
+      "name_romanized": "An Sohui",
+      "name_en_source": "official",
+      "name_en_confidence": "high",
+      "debut": null,
+      "active": "active",
+      "agency_en": "JYP Entertainment",
+      "agency_ko": "JYP 엔터테인먼트",
+      "agency_source": "Wikidata Q483238"
+    },
+    "provenance": {
+      "sources": [
+        "Wikidata Q483633 2026-06-07 04:59 UTC",
+        "Wikipedia So-hee 2026-06-07 04:59 UTC"
+      ],
+      "fetched_at": "2026-06-07T04:59:34.678403Z",
+      "skill_score": 0.85,
+      "confidence": "high",
+      "translation": {
+        "source": "official",
+        "confidence": "high"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
+    "entity_id": "artist:nichkhun",
+    "kind": "facts",
+    "name": {
+      "ko": "닉쿤",
+      "en_official": "Nichkhun",
+      "romanized": "Nikun",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-06-07T04:59:33.118081Z",
+    "summary_en": "Nichkhun (닉쿤) — verified Korean artist. Agency: JYP Entertainment.",
+    "summary_ko": "닉쿤 — 검증된 K-아티스트. 소속사: JYP Entertainment.",
+    "data": {
+      "name_ko": "닉쿤",
+      "name_en_official": "Nichkhun",
+      "name_romanized": "Nikun",
+      "name_en_source": "official",
+      "name_en_confidence": "high",
+      "debut": null,
+      "active": "active",
+      "agency_en": "JYP Entertainment",
+      "agency_ko": "JYP 엔터테인먼트",
+      "agency_source": "Wikidata Q483238"
+    },
+    "provenance": {
+      "sources": [
+        "Wikidata Q483288 2026-06-07 04:59 UTC",
+        "Wikipedia Nichkhun 2026-06-07 04:59 UTC"
+      ],
+      "fetched_at": "2026-06-07T04:59:33.118081Z",
+      "skill_score": 1.0,
+      "confidence": "high",
+      "translation": {
+        "source": "official",
+        "confidence": "high"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
+    "entity_id": "artist:jypark",
+    "kind": "facts",
+    "name": {
+      "ko": "박진영",
+      "en_official": "J.Y. Park",
+      "romanized": "Bak Jinyeong",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-06-07T04:59:31.763044Z",
+    "summary_en": "J.Y. Park (박진영) — verified Korean artist. Agency: JYP Entertainment.",
+    "summary_ko": "박진영 — 검증된 K-아티스트. 소속사: JYP Entertainment.",
+    "data": {
+      "name_ko": "박진영",
+      "name_en_official": "J.Y. Park",
+      "name_romanized": "Bak Jinyeong",
+      "name_en_source": "official",
+      "name_en_confidence": "high",
+      "debut": null,
+      "active": "active",
+      "agency_en": "JYP Entertainment",
+      "agency_ko": "JYP 엔터테인먼트",
+      "agency_source": "Wikidata Q483238"
+    },
+    "provenance": {
+      "sources": [
+        "Wikidata Q483283 2026-06-07 04:59 UTC",
+        "Wikipedia J.Y. Park 2026-06-07 04:59 UTC"
+      ],
+      "fetched_at": "2026-06-07T04:59:31.763044Z",
+      "skill_score": 1.0,
+      "confidence": "high",
+      "translation": {
+        "source": "official",
+        "confidence": "high"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
+    "entity_id": "artist:baesuzy",
+    "kind": "facts",
+    "name": {
+      "ko": "수지",
+      "en_official": "Bae Suzy",
+      "romanized": "Suji",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-06-07T04:59:30.233025Z",
+    "summary_en": "Bae Suzy (수지) — verified Korean artist. Agency: JYP Entertainment.",
+    "summary_ko": "수지 — 검증된 K-아티스트. 소속사: JYP Entertainment.",
+    "data": {
+      "name_ko": "수지",
+      "name_en_official": "Bae Suzy",
+      "name_romanized": "Suji",
+      "name_en_source": "official",
+      "name_en_confidence": "high",
+      "debut": null,
+      "active": "active",
+      "agency_en": "JYP Entertainment",
+      "agency_ko": "JYP 엔터테인먼트",
+      "agency_source": "Wikidata Q483238"
+    },
+    "provenance": {
+      "sources": [
+        "Wikidata Q464645 2026-06-07 04:59 UTC",
+        "Wikipedia Bae Suzy 2026-06-07 04:59 UTC"
+      ],
+      "fetched_at": "2026-06-07T04:59:30.233025Z",
+      "skill_score": 0.85,
+      "confidence": "high",
+      "translation": {
+        "source": "official",
+        "confidence": "high"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
+    "entity_id": "artist:jaypark",
+    "kind": "facts",
+    "name": {
+      "ko": "박재범",
+      "en_official": "Jay Park",
+      "romanized": "Park Jae-beom",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-06-07T04:59:27.556665Z",
+    "summary_en": "Jay Park (박재범) — verified Korean artist. Agency: H1ghr Music.",
+    "summary_ko": "박재범 — 검증된 K-아티스트. 소속사: H1ghr Music.",
+    "data": {
+      "name_ko": "박재범",
+      "name_en_official": "Jay Park",
+      "name_romanized": "Park Jae-beom",
+      "name_en_source": "official",
+      "name_en_confidence": "high",
+      "debut": null,
+      "active": "active",
+      "agency_en": "H1ghr Music",
+      "agency_ko": "H1GHR MUSIC",
+      "agency_source": "Wikidata Q55506796"
+    },
+    "provenance": {
+      "sources": [
+        "Wikidata Q429046 2026-06-07 04:59 UTC",
+        "Wikipedia Jay Park 2026-06-07 04:59 UTC"
+      ],
+      "fetched_at": "2026-06-07T04:59:27.556665Z",
+      "skill_score": 1.0,
+      "confidence": "high",
+      "translation": {
+        "source": "official",
+        "confidence": "high"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
+    "entity_id": "artist:rain",
+    "kind": "facts",
+    "name": {
+      "ko": "Rain",
+      "en_official": "Rain",
+      "romanized": "Bi",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-06-07T04:59:26.091549Z",
+    "summary_en": "Rain — verified Korean artist.",
+    "summary_ko": "Rain — 검증된 K-아티스트.",
+    "data": {
+      "name_ko": "Rain",
+      "name_en_official": "Rain",
+      "name_romanized": "Bi",
+      "name_en_source": "official",
+      "name_en_confidence": "high",
+      "debut": null,
+      "active": "active"
+    },
+    "provenance": {
+      "sources": [
+        "Wikidata Q503737 2026-06-07 04:59 UTC",
+        "Wikipedia Rain 2026-06-07 04:59 UTC"
+      ],
+      "fetched_at": "2026-06-07T04:59:26.091549Z",
+      "skill_score": 0.85,
+      "confidence": "high",
+      "translation": {
+        "source": "official",
+        "confidence": "high"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
+    "entity_id": "artist:hyuna",
+    "kind": "facts",
+    "name": {
+      "ko": "현아",
+      "en_official": "Hyuna",
+      "romanized": "Hyun-a",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-06-07T04:59:24.857148Z",
+    "summary_en": "Hyuna (현아) — verified Korean artist. Agency: Cube Entertainment.",
+    "summary_ko": "현아 — 검증된 K-아티스트. 소속사: Cube Entertainment.",
+    "data": {
+      "name_ko": "현아",
+      "name_en_official": "Hyuna",
+      "name_romanized": "Hyun-a",
+      "name_en_source": "official",
+      "name_en_confidence": "high",
+      "debut": null,
+      "active": "active",
+      "agency_en": "Cube Entertainment",
+      "agency_ko": "큐브엔터테인먼트",
+      "agency_source": "Wikidata Q484449"
+    },
+    "provenance": {
+      "sources": [
+        "Wikidata Q234066 2026-06-07 04:59 UTC",
+        "Wikipedia Hyuna 2026-06-07 04:59 UTC"
+      ],
+      "fetched_at": "2026-06-07T04:59:24.857148Z",
+      "skill_score": 1.0,
+      "confidence": "high",
+      "translation": {
+        "source": "official",
+        "confidence": "high"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
+    "entity_id": "artist:2pm",
+    "kind": "facts",
+    "name": {
+      "ko": "2PM",
+      "en_official": "2PM",
+      "romanized": "2 PM",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-06-07T04:59:23.426940Z",
+    "summary_en": "2PM — verified Korean artist. Debut 2008. Agency: JYP Entertainment. 7 members.",
+    "summary_ko": "2PM — 검증된 K-아티스트. 데뷔 2008. 소속사: JYP Entertainment. 멤버 7명.",
+    "data": {
+      "name_ko": "2PM",
+      "name_en_official": "2PM",
+      "name_romanized": "2 PM",
+      "name_en_source": "official",
+      "name_en_confidence": "high",
+      "debut": "2008",
+      "active": "active",
+      "agency_en": "JYP Entertainment",
+      "agency_ko": "JYP 엔터테인먼트",
+      "agency_source": "Wikidata Q483238",
+      "members": [
+        "Nichkhun",
+        "Jun. K",
+        "Ok Taec-yeon",
+        "Jang Wooyoung",
+        "Lee Jun-ho",
+        "Hwang Chansung",
+        "Jay Park"
+      ]
+    },
+    "provenance": {
+      "sources": [
+        "Wikidata Q222760 2026-06-07 04:59 UTC",
+        "Wikipedia 2PM 2026-06-07 04:59 UTC"
+      ],
+      "fetched_at": "2026-06-07T04:59:23.426940Z",
+      "skill_score": 1.0,
+      "confidence": "high",
+      "translation": {
+        "source": "official",
+        "confidence": "high"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
     "entity_id": "artist:straykids",
     "kind": "facts",
     "name": {
       "ko": "스트레이 키즈",
       "en_official": "Stray Kids",
-      "romanized": "Seuteurai Kijeu",
+      "romanized": "seuteuraei kijeu",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:30:57.534476Z",
+    "snapshot_at": "2026-06-07T04:59:20.279096Z",
     "summary_en": "Stray Kids (스트레이 키즈) — verified Korean artist. Debut 2017. Agency: JYP Entertainment. 9 members.",
     "summary_ko": "스트레이 키즈 — 검증된 K-아티스트. 데뷔 2017. 소속사: JYP Entertainment. 멤버 9명.",
     "data": {
       "name_ko": "스트레이 키즈",
       "name_en_official": "Stray Kids",
-      "name_romanized": "Seuteurai Kijeu",
+      "name_romanized": "seuteuraei kijeu",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2017",
@@ -354,10 +747,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q46134670 2026-06-06 04:30 UTC",
-        "Wikipedia Stray Kids 2026-06-06 04:30 UTC"
+        "Wikidata Q46134670 2026-06-07 04:59 UTC",
+        "Wikipedia Stray Kids 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:30:57.534476Z",
+      "fetched_at": "2026-06-07T04:59:20.279096Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -373,17 +766,17 @@
     "name": {
       "ko": "르세라핌",
       "en_official": "Le Sserafim",
-      "romanized": "Le Sserafim",
+      "romanized": "Leseraphim",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:30:56.275004Z",
+    "snapshot_at": "2026-06-07T04:59:18.132975Z",
     "summary_en": "Le Sserafim (르세라핌) — verified Korean artist. Debut 2022-03-28. Agency: Source Music. 6 members.",
     "summary_ko": "르세라핌 — 검증된 K-아티스트. 데뷔 2022-03-28. 소속사: Source Music. 멤버 6명.",
     "data": {
       "name_ko": "르세라핌",
       "name_en_official": "Le Sserafim",
-      "name_romanized": "Le Sserafim",
+      "name_romanized": "Leseraphim",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2022-03-28",
@@ -402,10 +795,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q111381707 2026-06-06 04:30 UTC",
-        "Wikipedia Le Sserafim 2026-06-06 04:30 UTC"
+        "Wikidata Q111381707 2026-06-07 04:59 UTC",
+        "Wikipedia Le Sserafim 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:30:56.275004Z",
+      "fetched_at": "2026-06-07T04:59:18.132975Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -421,17 +814,17 @@
     "name": {
       "ko": "블랙핑크",
       "en_official": "Blackpink",
-      "romanized": "Black Pink",
+      "romanized": "Blackpink",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:30:52.795280Z",
+    "snapshot_at": "2026-06-07T04:59:16.532750Z",
     "summary_en": "Blackpink (블랙핑크) — verified Korean artist. Debut 2016. Agency: YG Entertainment. 4 members.",
     "summary_ko": "블랙핑크 — 검증된 K-아티스트. 데뷔 2016. 소속사: YG Entertainment. 멤버 4명.",
     "data": {
       "name_ko": "블랙핑크",
       "name_en_official": "Blackpink",
-      "name_romanized": "Black Pink",
+      "name_romanized": "Blackpink",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2016",
@@ -448,10 +841,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q25056945 2026-06-06 04:30 UTC",
-        "Wikipedia Blackpink 2026-06-06 04:30 UTC"
+        "Wikidata Q25056945 2026-06-07 04:59 UTC",
+        "Wikipedia Blackpink 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:30:52.795280Z",
+      "fetched_at": "2026-06-07T04:59:16.532750Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -471,7 +864,7 @@
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:30:51.480775Z",
+    "snapshot_at": "2026-06-07T04:59:14.701907Z",
     "summary_en": "Aespa (aespa) — verified Korean artist. Debut 2020-10-26. Agency: SM Entertainment. 4 members.",
     "summary_ko": "aespa — 검증된 K-아티스트. 데뷔 2020-10-26. 소속사: SM Entertainment. 멤버 4명.",
     "data": {
@@ -494,10 +887,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q100877982 2026-06-06 04:30 UTC",
-        "Wikipedia Aespa 2026-06-06 04:30 UTC"
+        "Wikidata Q100877982 2026-06-07 04:59 UTC",
+        "Wikipedia Aespa 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:30:51.480775Z",
+      "fetched_at": "2026-06-07T04:59:14.701907Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
@@ -513,17 +906,17 @@
     "name": {
       "ko": "NewJeans",
       "en_official": "New Jeans",
-      "romanized": "Neujinz",
+      "romanized": "Newjins",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:30:50.321182Z",
+    "snapshot_at": "2026-06-07T04:59:13.328694Z",
     "summary_en": "New Jeans (NewJeans) — verified Korean artist. Debut 2022-07-22. Agency: ADOR. 5 members.",
     "summary_ko": "NewJeans — 검증된 K-아티스트. 데뷔 2022-07-22. 소속사: ADOR. 멤버 5명.",
     "data": {
       "name_ko": "NewJeans",
       "name_en_official": "New Jeans",
-      "name_romanized": "Neujinz",
+      "name_romanized": "Newjins",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2022-07-22",
@@ -541,10 +934,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q113189277 2026-06-06 04:30 UTC",
-        "Wikipedia NewJeans 2026-06-06 04:30 UTC"
+        "Wikidata Q113189277 2026-06-07 04:59 UTC",
+        "Wikipedia NewJeans 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:30:50.321182Z",
+      "fetched_at": "2026-06-07T04:59:13.328694Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
@@ -560,17 +953,17 @@
     "name": {
       "ko": "방탄소년단",
       "en_official": "BTS",
-      "romanized": "bangtanSonyeondan",
+      "romanized": "bangtangsonyeondan",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-06T04:30:49.226251Z",
+    "snapshot_at": "2026-06-07T04:59:11.957618Z",
     "summary_en": "BTS (방탄소년단) — verified Korean artist. Debut 2013-06-13. Agency: Avex Trax. 7 members.",
     "summary_ko": "방탄소년단 — 검증된 K-아티스트. 데뷔 2013-06-13. 소속사: Avex Trax. 멤버 7명.",
     "data": {
       "name_ko": "방탄소년단",
       "name_en_official": "BTS",
-      "name_romanized": "bangtanSonyeondan",
+      "name_romanized": "bangtangsonyeondan",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2013-06-13",
@@ -590,10 +983,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q13580495 2026-06-06 04:30 UTC",
-        "Wikipedia BTS 2026-06-06 04:30 UTC"
+        "Wikidata Q13580495 2026-06-07 04:59 UTC",
+        "Wikipedia BTS 2026-06-07 04:59 UTC"
       ],
-      "fetched_at": "2026-06-06T04:30:49.226251Z",
+      "fetched_at": "2026-06-07T04:59:11.957618Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
