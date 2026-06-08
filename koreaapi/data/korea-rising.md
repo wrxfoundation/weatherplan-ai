@@ -1,25 +1,25 @@
-# Korea Rising — verified K-pop snapshot (2026-06-07)
+# Korea Rising — verified K-pop snapshot (2026-06-08)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://wrxfoundation.github.io/weatherplan-ai/> · via KoreaAPI (MCP).
 
 ## 🏆 Circle Digital Chart — current #1
 **Cortis** — RedRed  
-_Circle Digital Chart #1 (via Wikipedia) 2026-06-07 04:59 UTC · Skill Score 0.70_
+_Circle Digital Chart #1 (via Wikipedia) 2026-06-08 05:04 UTC · Skill Score 0.70_
 
 ## 🎬 Latest official releases (YouTube)
 - **Stray Kids** — Gov Ball with STAY💗 #StrayKids #스트레이키즈 #governorsball2026#YouMakeStrayKidsStay
-- **LE SSERAFIM** — feat. GURU RANDHAWA 🕺 #BOOMPALA
+- **LE SSERAFIM** — #BOOMPALA Mutiverse - 불가마
 - **BLACKPINK** — BLACKPINK - DEADLINE JACKET MAKING FILM
-- **aespa** — muchasgraciasmiamorholic #aespa  #æspa #에스파 #NINGNING #닝닝#LEMONADE #aespaLEMONADE
+- **aespa** — arm day #aespa #æspa #에스파#LEMONADE #aespaLEMONADE
 - **NewJeans** — [Jeans' ZINE+] 연말 파티🏘.ZIP | NewJeans
-- **BTS** — j-hope's NORMAL LOG #2026BTSFESTA
+- **BTS** — Jung Kook's NORMAL LOG #2026BTSFESTA
 
 ## 🎤 Verified roster (16 acts)
 - **ADOR**: New Jeans
 - **Avex Trax**: BTS
 - **Cube Entertainment**: Hyuna
 - **H1ghr Music**: Jay Park
-- **JYP Entertainment**: 2PM, Bae Suzy, J.Y. Park, Min Hyo-rin, Nichkhun, Sohee, Stray Kids
+- **JYP Entertainment**: 2PM, Bae Suzy, J.Y. Park, Nichkhun, Sohee, Stray Kids, Sunye
 - **SM Entertainment**: Aespa
 - **Source Music**: Le Sserafim
 - **YG Entertainment**: Blackpink
