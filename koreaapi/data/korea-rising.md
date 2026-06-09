@@ -1,16 +1,16 @@
-# Korea Rising — verified K-pop snapshot (2026-06-08)
+# Korea Rising — verified K-pop snapshot (2026-06-09)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://wrxfoundation.github.io/weatherplan-ai/> · via KoreaAPI (MCP).
 
 ## 🏆 Circle Digital Chart — current #1
 **Cortis** — RedRed  
-_Circle Digital Chart #1 (via Wikipedia) 2026-06-08 05:04 UTC · Skill Score 0.70_
+_Circle Digital Chart #1 (via Wikipedia) 2026-06-09 04:39 UTC · Skill Score 0.70_
 
 ## 🎬 Latest official releases (YouTube)
-- **Stray Kids** — Gov Ball with STAY💗 #StrayKids #스트레이키즈 #governorsball2026#YouMakeStrayKidsStay
-- **LE SSERAFIM** — #BOOMPALA Mutiverse - 불가마
+- **Stray Kids** — ૮ • ﻌ - ა♥ #StrayKids #스트레이키즈 #승민 #Seungmin #YouMakeStrayKidsStay
+- **LE SSERAFIM** — #TWS #JIHOON #KYUNGMIN 🪼🐹🙏 𝐁𝐎𝐎𝐌𝐏𝐀𝐋𝐀 #LE_SSERAFIM #SAKURA #KAZUHA #BOOMPALA
 - **BLACKPINK** — BLACKPINK - DEADLINE JACKET MAKING FILM
-- **aespa** — arm day #aespa #æspa #에스파#LEMONADE #aespaLEMONADE
+- **aespa** — [R(ae)cord] 'LEMONADE' 많관부🍋🫶 | aespa 에스파 'LEMONADE' Dance Practice Behind The Scenes
 - **NewJeans** — [Jeans' ZINE+] 연말 파티🏘.ZIP | NewJeans
 - **BTS** — Jung Kook's NORMAL LOG #2026BTSFESTA
 
