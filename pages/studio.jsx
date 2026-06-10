@@ -631,8 +631,7 @@ export default function StudioPage() {
                 humidity: geoWeather.humidity,
                 desc: geoWeather.desc,
               } : undefined,
-              // model 생략 → 서버에서 복잡도 기반 자동 선택 (Haiku/Opus)
-              max_tokens: 1024,
+              // model·max_tokens 생략 → 서버에서 복잡도 기반 자동 선택
             }),
           });
         } catch (fetchErr) {
@@ -1163,7 +1162,7 @@ ${basis}
                     background: `linear-gradient(180deg, #1F6157 0%, ${T.mossDark} 100%)`,
                     color: T.onPrimary,
                     fontSize: 13, fontWeight: 500,
-                    padding: "8px 14px",
+                    padding: "10px 16px",
                     borderRadius: R.full,
                     flexShrink: 0,
                     cursor: input.trim() && !loading ? "pointer" : "not-allowed",

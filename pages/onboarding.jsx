@@ -348,7 +348,7 @@ export default function OnboardingFlow() {
         <meta name="description" content="3단계 등록으로 시작하는 날씨 광고 AI — 광고주 유형 선택 → 사업 정보 → 채널 → 첫 추천 결과 도착. 18개 업종 × 162개 세부 카테고리 지원." />
         <meta property="og:title" content="광고주 등록 · Weather Plan AI" />
       </Head>
-      <div style={{ minHeight: "100vh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", paddingBottom: 100 }}>
+      <div style={{ minHeight: "100vh", background: T.surface, fontFamily: "'Pretendard Variable', Pretendard, 'Noto Sans KR', system-ui, sans-serif", paddingBottom: 148 }}>
       {/* 헤더 */}
       <header style={{ background: T.canvas, borderBottom: `1px solid ${T.hairlineSoft}`, padding: "14px 20px", position: "sticky", top: 0, zIndex: 50 }}>
         <div className="max-w-[960px] mx-auto flex items-center justify-between gap-3">
@@ -558,7 +558,7 @@ export default function OnboardingFlow() {
                           color: active ? "#FFFFFF" : (reachedMax ? T.muted : T.ink),
                           border: `1px solid ${active ? T.mossDark : T.hairline}`,
                           fontSize: 13, fontWeight: active ? 600 : 500,
-                          padding: "8px 13px",
+                          padding: "10px 14px",
                           borderRadius: R.full,
                           cursor: reachedMax ? "not-allowed" : "pointer",
                           opacity: reachedMax ? 0.45 : 1,

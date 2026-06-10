@@ -24,12 +24,16 @@ pages/
 ├── studio.jsx          # Claude 챗봇
 ├── dashboard.jsx       # MVP placeholder
 ├── agency-board.jsx    # 광고대행사 콘솔
-└── api/claude.js       # Anthropic SDK proxy (Claude Opus 4.7 호출)
+└── api/claude.js       # Anthropic SDK proxy (복잡도 라우터 + 프롬프트 캐싱)
 ```
 
 ## Claude API 호출 규약
-- 모델: `claude-opus-4-7` (기본값)
-- 시스템 프롬프트: `pages/api/claude.js`의 `buildSystemPrompt()`에 정의
+- 모델 라우터: 복잡 질의 `claude-opus-4-8` / 단순 질의 `claude-haiku-4-5-20251001`
+- 최신 모델은 `temperature` 등 샘플링 파라미터를 받지 않음 (전송 시 400)
+- 시스템 프롬프트: `pages/api/claude.js`
+  - `STATIC_SYSTEM_PROMPT` — 정적 규칙. **프롬프트 캐시 대상이므로 동적 값(날짜·프로필·날씨) 인터폴레이션 절대 금지** (1바이트만 바뀌어도 캐시 전체 무효)
+  - `buildDynamicContext()` — 동적 컨텍스트는 캐시 prefix 뒤 별도 블록으로
+- 캐시 검증: 응답 `usage.cache_read_input_tokens`가 반복 요청에서 0이면 정적 블록 오염 의심
 - AI 캐릭터: "wellbian AI" (Wellbian 자산 70% 재사용)
 - CORS 화이트리스트: weatherplan.kweather.co.kr, weatherplan-ai.vercel.app, localhost:3000
 

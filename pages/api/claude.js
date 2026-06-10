@@ -60,15 +60,13 @@ function getDateContext() {
   const kstParts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Seoul",
     year: "numeric", month: "2-digit", day: "2-digit",
-    weekday: "short",
   }).formatToParts(new Date());
   const partMap = Object.fromEntries(kstParts.map((p) => [p.type, p.value]));
   const y = Number(partMap.year);
   const m = Number(partMap.month) - 1;  // JS month는 0-indexed
   const d = Number(partMap.day);
-  const dowName = partMap.weekday;  // "Mon", "Tue" 등
-  const dowMap = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
-  const dow = dowMap[dowName] ?? new Date().getDay();
+  // 캘린더 날짜(y,m,d)에서 직접 요일 계산 — locale 이름 파싱 불필요, 타임존 무관
+  const dow = new Date(y, m, d).getDay();
   const dayN = ["일", "월", "화", "수", "목", "금", "토"];
   const fmt = (dt) => `${dt.getMonth() + 1}/${dt.getDate()}(${dayN[dt.getDay()]})`;
   const monOff = dow === 0 ? -6 : 1 - dow;
@@ -115,8 +113,8 @@ function classifyComplexity(userInput) {
   return "opus";
 }
 
-/* ─── 시스템 프롬프트 빌더 (v2 — wellbian 본진 흡수) ─── */
-function buildSystemPrompt(industry, persona, profile, weatherContext) {
+/* ─── 동적 컨텍스트 빌더 (요청마다 변하는 부분 — 캐시 prefix 뒤 별도 블록) ─── */
+function buildDynamicContext(industry, persona, profile, weatherContext) {
   const industryLabel = industry || "전체 업종";
   const personaLabel = PERSONA_LABEL[persona] || persona || "광고주";
 
@@ -161,16 +159,22 @@ function buildSystemPrompt(industry, persona, profile, weatherContext) {
       `이 위치의 실제 현재 날씨입니다. 광고주가 위치를 따로 말하지 않으면 이 위치·날씨를 기준으로 추천하세요. "📍 ${w.place || "내 위치"}" 형태로 한 번 자연스럽게 인용하면 신뢰도가 올라갑니다.\n`
     : "";
 
-  return `당신은 wellbian AI입니다. 한국 광고주를 위한 날씨 기반 광고 의사결정 인텔리전스 AI입니다.
-
-[당신의 역할]
+  return `[당신의 역할]
 - ${industryLabel} 업종의 ${personaLabel}에게 광고 의사결정을 추천합니다
 - 카피·예산·타이밍·매체별 입찰 전략을 제안합니다
 - 자동 실행은 하지 않습니다 — 추천만 제공, 실행은 광고주가 콘솔에서 직접
 ${profileBlock}${weatherBlock}
 [날짜 컨텍스트 — 반드시 그대로 사용. 직접 요일/날짜 계산 금지]
 ${getDateContext()}
-계절: ${getSeason()}
+계절: ${getSeason()}`;
+}
+
+/* ─── 정적 시스템 프롬프트 (프롬프트 캐시 대상) ───
+ * ⚠️ 이 상수에 동적 값(날짜·프로필·날씨·업종) 인터폴레이션 절대 금지.
+ * 캐싱은 바이트 단위 prefix 매칭 — 여기 1바이트만 바뀌어도
+ * tools + 시스템 프롬프트 캐시 전체가 무효화됩니다.
+ * 동적 컨텍스트는 buildDynamicContext()가 별도 블록으로 뒤에 추가. */
+const STATIC_SYSTEM_PROMPT = `당신은 wellbian AI입니다. 한국 광고주를 위한 날씨 기반 광고 의사결정 인텔리전스 AI입니다.
 
 [데이터 소스]
 - 케이웨더 60일 AI 예보 (NVIDIA 기반 학습 + 전문 예보관 검수)
@@ -392,7 +396,6 @@ outdoor_venue_lookup으로 골프장(163)·캠핑(97)·서핑(23)·등산(16)·�
 ※ 트렌드 용어를 나열하지 말고, 광고주의 실제 질문에 자연스럽게 적용된 형태로만 사용.
 
 한국어로만 답변하세요.`;
-}
 
 /* ─── API 핸들러 ─── */
 export default async function handler(req, res) {
@@ -434,7 +437,7 @@ export default async function handler(req, res) {
       profile,                  // 온보딩에서 받은 사업장 컨텍스트 (위치/업종/예산/채널)
       weatherContext,           // 사용자 현재 위치 실시간 날씨 (geolocation)
       model: modelOverride,     // 명시 override (없으면 자동 라우터)
-      max_tokens = 1024,
+      max_tokens,               // 명시 override (없으면 복잡도별 기본값)
     } = req.body;
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
@@ -452,6 +455,9 @@ export default async function handler(req, res) {
     const complexity = classifyComplexity(lastUserMsg);
     const model = modelOverride
       || (complexity === "haiku" ? "claude-haiku-4-5-20251001" : "claude-opus-4-8");
+    // 출력 상한 — 시스템 프롬프트가 응답 길이를 200~800자로 제한하므로
+    // 토큰 비용 폭주 위험 없이 표·차트 잘림만 방지하는 여유분
+    const maxTokens = max_tokens || (complexity === "haiku" ? 1024 : 2048);
 
     // 메시지 형식 검증 (role / content 필수)
     for (const msg of messages) {
@@ -463,28 +469,38 @@ export default async function handler(req, res) {
       }
     }
 
-    const systemPrompt = buildSystemPrompt(industry, persona, profile, weatherContext);
+    /* 프롬프트 캐싱 — 렌더 순서는 tools → system → messages.
+     * 정적 블록 끝의 cache_control 1개가 TOOL_SCHEMAS + 정적 프롬프트(~10K 토큰)를
+     * 함께 캐시. 동적 컨텍스트(날짜·프로필·날씨)는 그 뒤 블록이라 캐시를 깨지 않음.
+     * 효과: 같은 모델로 5분 내 재요청 시 입력 90% 할인 + 지연 단축
+     * (tool 루프 2~4라운드는 같은 요청 안에서도 즉시 캐시 히트) */
+    const systemBlocks = [
+      { type: "text", text: STATIC_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
+      { type: "text", text: buildDynamicContext(industry, persona, profile, weatherContext) },
+    ];
 
     // Tool Use 루프 — 모델이 tool을 요청하면 실행하고 결과를 다시 전달
     let currentMessages = [...messages];
     let response = null;
     let toolRounds = 0;
-    let totalUsage = { input_tokens: 0, output_tokens: 0 };
+    let totalUsage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
     const toolCallTrace = [];  // 디버깅·관측용
 
     while (toolRounds < MAX_TOOL_ROUNDS) {
       response = await anthropic.messages.create({
         model,
-        max_tokens,
-        system: systemPrompt,
+        max_tokens: maxTokens,
+        system: systemBlocks,
         tools: TOOL_SCHEMAS,
         messages: currentMessages,
       });
 
-      // 사용량 누적
+      // 사용량 누적 (cache_read가 0이면 캐시 미적중 — 정적 블록에 동적 값 섞였는지 점검)
       if (response.usage) {
         totalUsage.input_tokens += response.usage.input_tokens || 0;
         totalUsage.output_tokens += response.usage.output_tokens || 0;
+        totalUsage.cache_read_input_tokens += response.usage.cache_read_input_tokens || 0;
+        totalUsage.cache_creation_input_tokens += response.usage.cache_creation_input_tokens || 0;
       }
 
       // Tool 요청 없으면 종료
