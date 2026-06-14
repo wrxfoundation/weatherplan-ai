@@ -5,18 +5,18 @@
     "name": {
       "ko": "스트레이 키즈",
       "en_official": "Stray Kids",
-      "romanized": "seuteuraei kijeu",
+      "romanized": "seuteureiyi kijeu",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:56.885641Z",
-    "summary_en": "Stray Kids — YouTube official channel: 24,000,000 subscribers, 11,713,946,950 views; latest: '[kNOw맘대로(The kNOw Way)] Ep.02' (2026-06-13).",
-    "summary_ko": "스트레이 키즈 — 유튜브 공식 채널: 구독자 24,000,000명, 조회수 11,713,946,950회; 최신: '[kNOw맘대로(The kNOw Way)] Ep.02' (2026-06-13).",
+    "snapshot_at": "2026-06-14T05:11:46.162727Z",
+    "summary_en": "Stray Kids — YouTube official channel: 24,000,000 subscribers, 11,722,780,884 views; latest: '[kNOw맘대로(The kNOw Way)] Ep.02' (2026-06-13).",
+    "summary_ko": "스트레이 키즈 — 유튜브 공식 채널: 구독자 24,000,000명, 조회수 11,722,780,884회; 최신: '[kNOw맘대로(The kNOw Way)] Ep.02' (2026-06-13).",
     "data": {
       "channel_id": "UC9rMiEjNaCSsebs31MRDCRA",
       "channel_title": "Stray Kids",
       "subscribers": 24000000,
-      "views": 11713946950,
+      "views": 11722780884,
       "videos": 2087,
       "latest": {
         "video_id": "JWh7gr-e84k",
@@ -27,9 +27,9 @@
     },
     "provenance": {
       "sources": [
-        "YouTube Stray Kids 2026-06-13 04:54 UTC"
+        "YouTube Stray Kids 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:56.885641Z",
+      "fetched_at": "2026-06-14T05:11:46.162727Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -45,31 +45,31 @@
     "name": {
       "ko": "르세라핌",
       "en_official": "LE SSERAFIM",
-      "romanized": "leseraphim",
+      "romanized": "Le Seraphim",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:56.365074Z",
-    "summary_en": "LE SSERAFIM — YouTube official channel: 7,730,000 subscribers, 6,189,313,991 views; latest: '𝓘𝓒𝓞𝓝𝓘𝓒 𝓑𝓨 𝓜𝓘𝓢𝓣𝓐𝓚𝓔🌸 #SAKURA #ICONICBYMISTAKE' (2026-06-12).",
-    "summary_ko": "르세라핌 — 유튜브 공식 채널: 구독자 7,730,000명, 조회수 6,189,313,991회; 최신: '𝓘𝓒𝓞𝓝𝓘𝓒 𝓑𝓨 𝓜𝓘𝓢𝓣𝓐𝓚𝓔🌸 #SAKURA #ICONICBYMISTAKE' (2026-06-12).",
+    "snapshot_at": "2026-06-14T05:11:45.699217Z",
+    "summary_en": "LE SSERAFIM — YouTube official channel: 7,770,000 subscribers, 6,203,991,613 views; latest: '𝓘𝓒𝓞𝓝𝓘𝓒 𝓑𝓨 𝓜𝓘𝓢𝓣𝓐𝓚𝓔🐥 #HONGEUNCHAE #ICONICBYMISTAKE' (2026-06-13).",
+    "summary_ko": "르세라핌 — 유튜브 공식 채널: 구독자 7,770,000명, 조회수 6,203,991,613회; 최신: '𝓘𝓒𝓞𝓝𝓘𝓒 𝓑𝓨 𝓜𝓘𝓢𝓣𝓐𝓚𝓔🐥 #HONGEUNCHAE #ICONICBYMISTAKE' (2026-06-13).",
     "data": {
       "channel_id": "UCs-QBT4qkj_YiQw1ZntDO3g",
       "channel_title": "LE SSERAFIM",
-      "subscribers": 7730000,
-      "views": 6189313991,
-      "videos": 3043,
+      "subscribers": 7770000,
+      "views": 6203991613,
+      "videos": 3047,
       "latest": {
-        "video_id": "KTPXnQmIGFU",
-        "title": "𝓘𝓒𝓞𝓝𝓘𝓒 𝓑𝓨 𝓜𝓘𝓢𝓣𝓐𝓚𝓔🌸 #SAKURA #ICONICBYMISTAKE",
-        "published_at": "2026-06-12T12:01:07Z"
+        "video_id": "XKWN5A8eShk",
+        "title": "𝓘𝓒𝓞𝓝𝓘𝓒 𝓑𝓨 𝓜𝓘𝓢𝓣𝓐𝓚𝓔🐥 #HONGEUNCHAE #ICONICBYMISTAKE",
+        "published_at": "2026-06-13T12:00:10Z"
       },
       "source_url": "https://www.youtube.com/channel/UCs-QBT4qkj_YiQw1ZntDO3g"
     },
     "provenance": {
       "sources": [
-        "YouTube LE SSERAFIM 2026-06-13 04:54 UTC"
+        "YouTube LE SSERAFIM 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:56.365074Z",
+      "fetched_at": "2026-06-14T05:11:45.699217Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -85,11 +85,11 @@
     "name": {
       "ko": "블랙핑크",
       "en_official": "BLACKPINK",
-      "romanized": "Beullaekpingkeu",
+      "romanized": "Blackpink",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:55.944159Z",
+    "snapshot_at": "2026-06-14T05:11:45.236785Z",
     "summary_en": "BLACKPINK — YouTube official channel: 101,000,000 subscribers, 42,179,904,251 views; latest: 'BLACKPINK - DEADLINE JACKET MAKING FILM' (2026-03-13).",
     "summary_ko": "블랙핑크 — 유튜브 공식 채널: 구독자 101,000,000명, 조회수 42,179,904,251회; 최신: 'BLACKPINK - DEADLINE JACKET MAKING FILM' (2026-03-13).",
     "data": {
@@ -107,9 +107,9 @@
     },
     "provenance": {
       "sources": [
-        "YouTube BLACKPINK 2026-06-13 04:54 UTC"
+        "YouTube BLACKPINK 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:55.944159Z",
+      "fetched_at": "2026-06-14T05:11:45.236785Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -129,27 +129,27 @@
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:55.379083Z",
-    "summary_en": "aespa — YouTube official channel: 8,520,000 subscribers, 6,152,764,389 views; latest: 'brb, we are busy watching the World Cup🏟️⚽️ #aespa #æspa #에스파#KARINA #카리나 #WINTER #윈터' (2026-06-12).",
-    "summary_ko": "aespa — 유튜브 공식 채널: 구독자 8,520,000명, 조회수 6,152,764,389회; 최신: 'brb, we are busy watching the World Cup🏟️⚽️ #aespa #æspa #에스파#KARINA #카리나 #WINTER #윈터' (2026-06-12).",
+    "snapshot_at": "2026-06-14T05:11:44.530504Z",
+    "summary_en": "aespa — YouTube official channel: 8,530,000 subscribers, 6,164,217,527 views; latest: '[ae:scenes] 환호가 쏟아지는 촬영 현장✨🫢 | 에스파 닝닝 마리끌레르 차이나 비하인드 (aespa NINGNING Marie Claire China Behind)' (2026-06-13).",
+    "summary_ko": "aespa — 유튜브 공식 채널: 구독자 8,530,000명, 조회수 6,164,217,527회; 최신: '[ae:scenes] 환호가 쏟아지는 촬영 현장✨🫢 | 에스파 닝닝 마리끌레르 차이나 비하인드 (aespa NINGNING Marie Claire China Behind)' (2026-06-13).",
     "data": {
       "channel_id": "UC9GtSLeksfK4yuJ_g1lgQbg",
       "channel_title": "aespa",
-      "subscribers": 8520000,
-      "views": 6152764389,
-      "videos": 1744,
+      "subscribers": 8530000,
+      "views": 6164217527,
+      "videos": 1749,
       "latest": {
-        "video_id": "sCUwd7ctcdg",
-        "title": "brb, we are busy watching the World Cup🏟️⚽️ #aespa #æspa #에스파#KARINA #카리나 #WINTER #윈터",
-        "published_at": "2026-06-12T17:06:46Z"
+        "video_id": "uadVAPn2SnA",
+        "title": "[ae:scenes] 환호가 쏟아지는 촬영 현장✨🫢 | 에스파 닝닝 마리끌레르 차이나 비하인드 (aespa NINGNING Marie Claire China Behind)",
+        "published_at": "2026-06-13T13:00:19Z"
       },
       "source_url": "https://www.youtube.com/channel/UC9GtSLeksfK4yuJ_g1lgQbg"
     },
     "provenance": {
       "sources": [
-        "YouTube aespa 2026-06-13 04:54 UTC"
+        "YouTube aespa 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:55.379083Z",
+      "fetched_at": "2026-06-14T05:11:44.530504Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -165,17 +165,17 @@
     "name": {
       "ko": "NewJeans",
       "en_official": "NewJeans",
-      "romanized": "Newjins",
+      "romanized": "Nyu Jin",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:54.938849Z",
-    "summary_en": "NewJeans — YouTube official channel: 8,400,000 subscribers, 5,193,910,077 views; latest: '[Jeans' ZINE+] 연말 파티🏘.ZIP | NewJeans' (2025-12-25).",
-    "summary_ko": "NewJeans — 유튜브 공식 채널: 구독자 8,400,000명, 조회수 5,193,910,077회; 최신: '[Jeans' ZINE+] 연말 파티🏘.ZIP | NewJeans' (2025-12-25).",
+    "snapshot_at": "2026-06-14T05:11:43.944901Z",
+    "summary_en": "NewJeans — YouTube official channel: 8,410,000 subscribers, 5,193,910,077 views; latest: '[Jeans' ZINE+] 연말 파티🏘.ZIP | NewJeans' (2025-12-25).",
+    "summary_ko": "NewJeans — 유튜브 공식 채널: 구독자 8,410,000명, 조회수 5,193,910,077회; 최신: '[Jeans' ZINE+] 연말 파티🏘.ZIP | NewJeans' (2025-12-25).",
     "data": {
       "channel_id": "UCMki_UkHb4qSc0qyEcOHHJw",
       "channel_title": "NewJeans",
-      "subscribers": 8400000,
+      "subscribers": 8410000,
       "views": 5193910077,
       "videos": 752,
       "latest": {
@@ -187,9 +187,9 @@
     },
     "provenance": {
       "sources": [
-        "YouTube NewJeans 2026-06-13 04:54 UTC"
+        "YouTube NewJeans 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:54.938849Z",
+      "fetched_at": "2026-06-14T05:11:43.944901Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -205,31 +205,31 @@
     "name": {
       "ko": "방탄소년단",
       "en_official": "BTS",
-      "romanized": "bangtan sonyeondan",
+      "romanized": "Bangtan Sonyeondan",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:54.317465Z",
-    "summary_en": "BTS — YouTube official channel: 84,800,000 subscribers, 28,315,640,443 views; latest: 'BTS (방탄소년단) 'Come Over' Lyric Video' (2026-06-12).",
-    "summary_ko": "방탄소년단 — 유튜브 공식 채널: 구독자 84,800,000명, 조회수 28,315,640,443회; 최신: 'BTS (방탄소년단) 'Come Over' Lyric Video' (2026-06-12).",
+    "snapshot_at": "2026-06-14T05:11:43.440718Z",
+    "summary_en": "BTS — YouTube official channel: 84,800,000 subscribers, 28,315,640,443 views; latest: '#KEEPSWIMMING with BTS. To everyone who keeps swimming no matter what, we send our love and support.' (2026-06-13).",
+    "summary_ko": "방탄소년단 — 유튜브 공식 채널: 구독자 84,800,000명, 조회수 28,315,640,443회; 최신: '#KEEPSWIMMING with BTS. To everyone who keeps swimming no matter what, we send our love and support.' (2026-06-13).",
     "data": {
       "channel_id": "UCLkAepWjdylmXSltofFvsYQ",
       "channel_title": "BANGTANTV",
       "subscribers": 84800000,
       "views": 28315640443,
-      "videos": 3064,
+      "videos": 3065,
       "latest": {
-        "video_id": "MEoxtFRfPoc",
-        "title": "BTS (방탄소년단) 'Come Over' Lyric Video",
-        "published_at": "2026-06-12T04:00:02Z"
+        "video_id": "3ZOFQ33sLBE",
+        "title": "#KEEPSWIMMING with BTS. To everyone who keeps swimming no matter what, we send our love and support.",
+        "published_at": "2026-06-13T13:00:02Z"
       },
       "source_url": "https://www.youtube.com/channel/UCLkAepWjdylmXSltofFvsYQ"
     },
     "provenance": {
       "sources": [
-        "YouTube BANGTANTV 2026-06-13 04:54 UTC"
+        "YouTube BANGTANTV 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:54.317465Z",
+      "fetched_at": "2026-06-14T05:11:43.440718Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -249,7 +249,7 @@
       "en_source": "llm",
       "en_confidence": "medium"
     },
-    "snapshot_at": "2026-06-13T04:54:53.518067Z",
+    "snapshot_at": "2026-06-14T05:11:42.546397Z",
     "summary_en": "Circle Digital Chart - 10 weekly #1s (current #1: I.O.I - Suddenly).",
     "summary_ko": "써클 디지털 차트 - 주간 1위 10건 (현재 1위: I.O.I).",
     "data": {
@@ -309,9 +309,9 @@
     },
     "provenance": {
       "sources": [
-        "Circle Digital Chart #1 (via Wikipedia) 2026-06-13 04:54 UTC"
+        "Circle Digital Chart #1 (via Wikipedia) 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:53.518067Z",
+      "fetched_at": "2026-06-14T05:11:42.546397Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -327,17 +327,17 @@
     "name": {
       "ko": "스트레이 키즈",
       "en_official": "Stray Kids",
-      "romanized": "seuteuraei kijeu",
+      "romanized": "seuteureiyi kijeu",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:50.435654Z",
+    "snapshot_at": "2026-06-14T05:11:38.848777Z",
     "summary_en": "Stray Kids (스트레이 키즈) — verified Korean artist. Debut 2017. Agency: JYP Entertainment. 9 members.",
     "summary_ko": "스트레이 키즈 — 검증된 K-아티스트. 데뷔 2017. 소속사: JYP Entertainment. 멤버 9명.",
     "data": {
       "name_ko": "스트레이 키즈",
       "name_en_official": "Stray Kids",
-      "name_romanized": "seuteuraei kijeu",
+      "name_romanized": "seuteureiyi kijeu",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2017",
@@ -359,10 +359,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q46134670 2026-06-13 04:54 UTC",
-        "Wikipedia Stray Kids 2026-06-13 04:54 UTC"
+        "Wikidata Q46134670 2026-06-14 05:11 UTC",
+        "Wikipedia Stray Kids 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:50.435654Z",
+      "fetched_at": "2026-06-14T05:11:38.848777Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -378,17 +378,17 @@
     "name": {
       "ko": "르세라핌",
       "en_official": "Le Sserafim",
-      "romanized": "leseraphim",
+      "romanized": "Le Seraphim",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:49.169503Z",
+    "snapshot_at": "2026-06-14T05:11:37.367508Z",
     "summary_en": "Le Sserafim (르세라핌) — verified Korean artist. Debut 2022-03-28. Agency: Source Music. 6 members.",
     "summary_ko": "르세라핌 — 검증된 K-아티스트. 데뷔 2022-03-28. 소속사: Source Music. 멤버 6명.",
     "data": {
       "name_ko": "르세라핌",
       "name_en_official": "Le Sserafim",
-      "name_romanized": "leseraphim",
+      "name_romanized": "Le Seraphim",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2022-03-28",
@@ -407,10 +407,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q111381707 2026-06-13 04:54 UTC",
-        "Wikipedia Le Sserafim 2026-06-13 04:54 UTC"
+        "Wikidata Q111381707 2026-06-14 05:11 UTC",
+        "Wikipedia Le Sserafim 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:49.169503Z",
+      "fetched_at": "2026-06-14T05:11:37.367508Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -426,17 +426,17 @@
     "name": {
       "ko": "블랙핑크",
       "en_official": "Blackpink",
-      "romanized": "Beullaekpingkeu",
+      "romanized": "Blackpink",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:48.210804Z",
+    "snapshot_at": "2026-06-14T05:11:36.151534Z",
     "summary_en": "Blackpink (블랙핑크) — verified Korean artist. Debut 2016. Agency: YG Entertainment. 4 members.",
     "summary_ko": "블랙핑크 — 검증된 K-아티스트. 데뷔 2016. 소속사: YG Entertainment. 멤버 4명.",
     "data": {
       "name_ko": "블랙핑크",
       "name_en_official": "Blackpink",
-      "name_romanized": "Beullaekpingkeu",
+      "name_romanized": "Blackpink",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2016",
@@ -453,10 +453,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q25056945 2026-06-13 04:54 UTC",
-        "Wikipedia Blackpink 2026-06-13 04:54 UTC"
+        "Wikidata Q25056945 2026-06-14 05:11 UTC",
+        "Wikipedia Blackpink 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:48.210804Z",
+      "fetched_at": "2026-06-14T05:11:36.151534Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -476,7 +476,7 @@
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:47.247936Z",
+    "snapshot_at": "2026-06-14T05:11:35.112437Z",
     "summary_en": "Aespa (aespa) — verified Korean artist. Debut 2020-10-26. Agency: SM Entertainment. 4 members.",
     "summary_ko": "aespa — 검증된 K-아티스트. 데뷔 2020-10-26. 소속사: SM Entertainment. 멤버 4명.",
     "data": {
@@ -499,10 +499,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q100877982 2026-06-13 04:54 UTC",
-        "Wikipedia Aespa 2026-06-13 04:54 UTC"
+        "Wikidata Q100877982 2026-06-14 05:11 UTC",
+        "Wikipedia Aespa 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:47.247936Z",
+      "fetched_at": "2026-06-14T05:11:35.112437Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
@@ -518,17 +518,17 @@
     "name": {
       "ko": "NewJeans",
       "en_official": "New Jeans",
-      "romanized": "Newjins",
+      "romanized": "Nyu Jin",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:46.475497Z",
+    "snapshot_at": "2026-06-14T05:11:34.105649Z",
     "summary_en": "New Jeans (NewJeans) — verified Korean artist. Debut 2022-07-22. Agency: ADOR. 5 members.",
     "summary_ko": "NewJeans — 검증된 K-아티스트. 데뷔 2022-07-22. 소속사: ADOR. 멤버 5명.",
     "data": {
       "name_ko": "NewJeans",
       "name_en_official": "New Jeans",
-      "name_romanized": "Newjins",
+      "name_romanized": "Nyu Jin",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2022-07-22",
@@ -546,10 +546,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q113189277 2026-06-13 04:54 UTC",
-        "Wikipedia NewJeans 2026-06-13 04:54 UTC"
+        "Wikidata Q113189277 2026-06-14 05:11 UTC",
+        "Wikipedia NewJeans 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:46.475497Z",
+      "fetched_at": "2026-06-14T05:11:34.105649Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
@@ -565,17 +565,17 @@
     "name": {
       "ko": "방탄소년단",
       "en_official": "BTS",
-      "romanized": "bangtan sonyeondan",
+      "romanized": "Bangtan Sonyeondan",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-06-13T04:54:45.590071Z",
+    "snapshot_at": "2026-06-14T05:11:33.208949Z",
     "summary_en": "BTS (방탄소년단) — verified Korean artist. Debut 2013-06-13. Agency: Avex Trax. 7 members.",
     "summary_ko": "방탄소년단 — 검증된 K-아티스트. 데뷔 2013-06-13. 소속사: Avex Trax. 멤버 7명.",
     "data": {
       "name_ko": "방탄소년단",
       "name_en_official": "BTS",
-      "name_romanized": "bangtan sonyeondan",
+      "name_romanized": "Bangtan Sonyeondan",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2013-06-13",
@@ -595,10 +595,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q13580495 2026-06-13 04:54 UTC",
-        "Wikipedia BTS 2026-06-13 04:54 UTC"
+        "Wikidata Q13580495 2026-06-14 05:11 UTC",
+        "Wikipedia BTS 2026-06-14 05:11 UTC"
       ],
-      "fetched_at": "2026-06-13T04:54:45.590071Z",
+      "fetched_at": "2026-06-14T05:11:33.208949Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
