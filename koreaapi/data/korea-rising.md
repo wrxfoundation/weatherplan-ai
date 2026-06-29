@@ -1,18 +1,21 @@
-# Korea Rising — verified K-pop snapshot (2026-06-28)
+# Korea Rising — verified K-pop snapshot (2026-06-29)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://wrxfoundation.github.io/weatherplan-ai/> · via KoreaAPI (MCP).
 
 ## 🏆 Circle Digital Chart — current #1
-**Cortis** — RedRed  
-_Circle Digital Chart #1 (via Wikipedia) 2026-06-28 04:55 UTC · Skill Score 0.70_
+**I.O.I** — Suddenly  
+_Circle Digital Chart #1 (via Wikipedia) 2026-06-29 05:02 UTC · Skill Score 0.70_
 
-## 🎤 Verified roster (6 acts)
+## 🎤 Verified roster (16 acts)
 - **ADOR**: New Jeans
 - **Avex Trax**: BTS
-- **JYP Entertainment**: Stray Kids
+- **Cube Entertainment**: Hyuna
+- **H1ghr Music**: Jay Park
+- **JYP Entertainment**: 2PM, Nichkhun, Sohee, Stray Kids, Sunye
 - **SM Entertainment**: Aespa
 - **Source Music**: Le Sserafim
 - **YG Entertainment**: Blackpink
+- **—**: Joo, Kim Tae-woo, Park Ye-eun, Rain
 
 ---
 Cite as: `Name — kind, as of <date> · source · Skill Score · via KoreaAPI`. MCP tools: get_artist_status, get_agency, get_kculture_calendar, get_korea_rising, get_buy_options.
