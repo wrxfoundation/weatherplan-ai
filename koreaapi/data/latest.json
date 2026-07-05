@@ -1,35 +1,35 @@
 [
   {
-    "entity_id": "artist:bts",
+    "entity_id": "artist:lesserafim",
     "kind": "release",
     "name": {
-      "ko": "방탄소년단",
-      "en_official": "BTS",
-      "romanized": "bangtansonnyeondan",
+      "ko": "르세라핌",
+      "en_official": "LE SSERAFIM",
+      "romanized": "Leseraphim",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-04T04:05:36.470149Z",
-    "summary_en": "BTS — YouTube official channel: 85,000,000 subscribers, 28,467,118,241 views; latest: 'BTS WORLD TOUR ‘ARIRANG’ IN TOKYO Sketch' (2026-06-23).",
-    "summary_ko": "방탄소년단 — 유튜브 공식 채널: 구독자 85,000,000명, 조회수 28,467,118,241회; 최신: 'BTS WORLD TOUR ‘ARIRANG’ IN TOKYO Sketch' (2026-06-23).",
+    "snapshot_at": "2026-07-05T04:33:43.252638Z",
+    "summary_en": "LE SSERAFIM — YouTube official channel: 8,120,000 subscribers, 6,393,480,300 views; latest: '르세라핌 팀워크의 비결' (2026-07-03).",
+    "summary_ko": "르세라핌 — 유튜브 공식 채널: 구독자 8,120,000명, 조회수 6,393,480,300회; 최신: '르세라핌 팀워크의 비결' (2026-07-03).",
     "data": {
-      "channel_id": "UCLkAepWjdylmXSltofFvsYQ",
-      "channel_title": "BANGTANTV",
-      "subscribers": 85000000,
-      "views": 28467118241,
-      "videos": 3070,
+      "channel_id": "UCs-QBT4qkj_YiQw1ZntDO3g",
+      "channel_title": "LE SSERAFIM",
+      "subscribers": 8120000,
+      "views": 6393480300,
+      "videos": 3116,
       "latest": {
-        "video_id": "HD9TQigBMxk",
-        "title": "BTS WORLD TOUR ‘ARIRANG’ IN TOKYO Sketch",
-        "published_at": "2026-06-23T11:00:00Z"
+        "video_id": "BXVNwVI004Y",
+        "title": "르세라핌 팀워크의 비결",
+        "published_at": "2026-07-03T11:00:21Z"
       },
-      "source_url": "https://www.youtube.com/channel/UCLkAepWjdylmXSltofFvsYQ"
+      "source_url": "https://www.youtube.com/channel/UCs-QBT4qkj_YiQw1ZntDO3g"
     },
     "provenance": {
       "sources": [
-        "YouTube BANGTANTV 2026-07-04 04:05 UTC"
+        "YouTube LE SSERAFIM 2026-07-05 04:33 UTC"
       ],
-      "fetched_at": "2026-07-04T04:05:36.470149Z",
+      "fetched_at": "2026-07-05T04:33:43.252638Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -49,9 +49,9 @@
       "en_source": "llm",
       "en_confidence": "medium"
     },
-    "snapshot_at": "2026-07-04T04:05:35.563543Z",
-    "summary_en": "Circle Digital Chart - 19 weekly #1s (current #1: Cortis - RedRed).",
-    "summary_ko": "써클 디지털 차트 - 주간 1위 19건 (현재 1위: Cortis).",
+    "snapshot_at": "2026-07-05T04:33:42.127851Z",
+    "summary_en": "Circle Digital Chart - 20 weekly #1s (current #1: Cortis - RedRed).",
+    "summary_ko": "써클 디지털 차트 - 주간 1위 20건 (현재 1위: Cortis).",
     "data": {
       "entries": [
         {
@@ -73,6 +73,26 @@
           "rank": 1,
           "artist": "AKMU",
           "title": "Paradise of Rumors"
+        },
+        {
+          "rank": 1,
+          "artist": "AKMU",
+          "title": "Paradise of Rumors"
+        },
+        {
+          "rank": 1,
+          "artist": "AKMU",
+          "title": "Paradise of Rumors"
+        },
+        {
+          "rank": 1,
+          "artist": "AKMU",
+          "title": "Paradise of Rumors"
+        },
+        {
+          "rank": 1,
+          "artist": "AKMU",
+          "title": "Joy, Sorrow, a Beautiful Heart"
         },
         {
           "rank": 1,
@@ -101,6 +121,11 @@
         },
         {
           "rank": 1,
+          "artist": "Hearts2Hearts",
+          "title": "Rude!"
+        },
+        {
+          "rank": 1,
           "artist": "KiiiKiii",
           "title": "404 (New Era)"
         },
@@ -128,35 +153,15 @@
           "rank": 1,
           "artist": "Car, the Garden",
           "title": "My Whole World"
-        },
-        {
-          "rank": 1,
-          "artist": "Hwasa",
-          "title": "Good Goodbye"
-        },
-        {
-          "rank": 1,
-          "artist": "Hwasa",
-          "title": "Good Goodbye"
-        },
-        {
-          "rank": 1,
-          "artist": "Hwasa",
-          "title": "Good Goodbye"
-        },
-        {
-          "rank": 1,
-          "artist": "Hwasa",
-          "title": "Good Goodbye"
         }
       ],
       "source_url": "https://en.wikipedia.org/wiki/List_of_Circle_Digital_Chart_number_ones_of_2026"
     },
     "provenance": {
       "sources": [
-        "Circle Digital Chart #1 (via Wikipedia) 2026-07-04 04:05 UTC"
+        "Circle Digital Chart #1 (via Wikipedia) 2026-07-05 04:33 UTC"
       ],
-      "fetched_at": "2026-07-04T04:05:35.563543Z",
+      "fetched_at": "2026-07-05T04:33:42.127851Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -176,7 +181,7 @@
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-04T04:05:31.288452Z",
+    "snapshot_at": "2026-07-05T04:33:36.387549Z",
     "summary_en": "Stray Kids (스트레이 키즈) — verified Korean artist. Debut 2017. Agency: JYP Entertainment. 9 members.",
     "summary_ko": "스트레이 키즈 — 검증된 K-아티스트. 데뷔 2017. 소속사: JYP Entertainment. 멤버 9명.",
     "data": {
@@ -204,10 +209,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q46134670 2026-07-04 04:05 UTC",
-        "Wikipedia Stray Kids 2026-07-04 04:05 UTC"
+        "Wikidata Q46134670 2026-07-05 04:33 UTC",
+        "Wikipedia Stray Kids 2026-07-05 04:33 UTC"
       ],
-      "fetched_at": "2026-07-04T04:05:31.288452Z",
+      "fetched_at": "2026-07-05T04:33:36.387549Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -223,17 +228,17 @@
     "name": {
       "ko": "르세라핌",
       "en_official": "Le Sserafim",
-      "romanized": "leserapim",
+      "romanized": "Leseraphim",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-04T04:05:29.918285Z",
+    "snapshot_at": "2026-07-05T04:33:34.193214Z",
     "summary_en": "Le Sserafim (르세라핌) — verified Korean artist. Debut 2022-03-28. Agency: Source Music. 6 members.",
     "summary_ko": "르세라핌 — 검증된 K-아티스트. 데뷔 2022-03-28. 소속사: Source Music. 멤버 6명.",
     "data": {
       "name_ko": "르세라핌",
       "name_en_official": "Le Sserafim",
-      "name_romanized": "leserapim",
+      "name_romanized": "Leseraphim",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2022-03-28",
@@ -252,10 +257,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q111381707 2026-07-04 04:05 UTC",
-        "Wikipedia Le Sserafim 2026-07-04 04:05 UTC"
+        "Wikidata Q111381707 2026-07-05 04:33 UTC",
+        "Wikipedia Le Sserafim 2026-07-05 04:33 UTC"
       ],
-      "fetched_at": "2026-07-04T04:05:29.918285Z",
+      "fetched_at": "2026-07-05T04:33:34.193214Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -271,17 +276,17 @@
     "name": {
       "ko": "블랙핑크",
       "en_official": "Blackpink",
-      "romanized": "Beullaekkeu Pingkeu",
+      "romanized": "BLACKPINK",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-04T04:05:28.845176Z",
+    "snapshot_at": "2026-07-05T04:33:32.550031Z",
     "summary_en": "Blackpink (블랙핑크) — verified Korean artist. Debut 2016. Agency: YG Entertainment. 4 members.",
     "summary_ko": "블랙핑크 — 검증된 K-아티스트. 데뷔 2016. 소속사: YG Entertainment. 멤버 4명.",
     "data": {
       "name_ko": "블랙핑크",
       "name_en_official": "Blackpink",
-      "name_romanized": "Beullaekkeu Pingkeu",
+      "name_romanized": "BLACKPINK",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2016",
@@ -298,10 +303,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q25056945 2026-07-04 04:05 UTC",
-        "Wikipedia Blackpink 2026-07-04 04:05 UTC"
+        "Wikidata Q25056945 2026-07-05 04:33 UTC",
+        "Wikipedia Blackpink 2026-07-05 04:33 UTC"
       ],
-      "fetched_at": "2026-07-04T04:05:28.845176Z",
+      "fetched_at": "2026-07-05T04:33:32.550031Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -321,7 +326,7 @@
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-04T04:05:27.263889Z",
+    "snapshot_at": "2026-07-05T04:33:30.224188Z",
     "summary_en": "Aespa (aespa) — verified Korean artist. Debut 2020-10-26. Agency: SM Entertainment. 4 members.",
     "summary_ko": "aespa — 검증된 K-아티스트. 데뷔 2020-10-26. 소속사: SM Entertainment. 멤버 4명.",
     "data": {
@@ -344,10 +349,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q100877982 2026-07-04 04:05 UTC",
-        "Wikipedia Aespa 2026-07-04 04:05 UTC"
+        "Wikidata Q100877982 2026-07-05 04:33 UTC",
+        "Wikipedia Aespa 2026-07-05 04:33 UTC"
       ],
-      "fetched_at": "2026-07-04T04:05:27.263889Z",
+      "fetched_at": "2026-07-05T04:33:30.224188Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
@@ -363,17 +368,17 @@
     "name": {
       "ko": "NewJeans",
       "en_official": "New Jeans",
-      "romanized": "Nujan",
+      "romanized": "Nyu Jinjeu",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-04T04:05:26.108920Z",
+    "snapshot_at": "2026-07-05T04:33:28.470210Z",
     "summary_en": "New Jeans (NewJeans) — verified Korean artist. Debut 2022-07-22. Agency: ADOR. 5 members.",
     "summary_ko": "NewJeans — 검증된 K-아티스트. 데뷔 2022-07-22. 소속사: ADOR. 멤버 5명.",
     "data": {
       "name_ko": "NewJeans",
       "name_en_official": "New Jeans",
-      "name_romanized": "Nujan",
+      "name_romanized": "Nyu Jinjeu",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2022-07-22",
@@ -391,10 +396,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q113189277 2026-07-04 04:05 UTC",
-        "Wikipedia NewJeans 2026-07-04 04:05 UTC"
+        "Wikidata Q113189277 2026-07-05 04:33 UTC",
+        "Wikipedia NewJeans 2026-07-05 04:33 UTC"
       ],
-      "fetched_at": "2026-07-04T04:05:26.108920Z",
+      "fetched_at": "2026-07-05T04:33:28.470210Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
@@ -410,17 +415,17 @@
     "name": {
       "ko": "방탄소년단",
       "en_official": "BTS",
-      "romanized": "bangtansonnyeondan",
+      "romanized": "Bangtan Sonyeondan",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-04T04:05:24.940655Z",
+    "snapshot_at": "2026-07-05T04:33:26.209049Z",
     "summary_en": "BTS (방탄소년단) — verified Korean artist. Debut 2013-06-13. Agency: Avex Trax. 7 members.",
     "summary_ko": "방탄소년단 — 검증된 K-아티스트. 데뷔 2013-06-13. 소속사: Avex Trax. 멤버 7명.",
     "data": {
       "name_ko": "방탄소년단",
       "name_en_official": "BTS",
-      "name_romanized": "bangtansonnyeondan",
+      "name_romanized": "Bangtan Sonyeondan",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2013-06-13",
@@ -440,10 +445,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q13580495 2026-07-04 04:05 UTC",
-        "Wikipedia BTS 2026-07-04 04:05 UTC"
+        "Wikidata Q13580495 2026-07-05 04:33 UTC",
+        "Wikipedia BTS 2026-07-05 04:33 UTC"
       ],
-      "fetched_at": "2026-07-04T04:05:24.940655Z",
+      "fetched_at": "2026-07-05T04:33:26.209049Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
