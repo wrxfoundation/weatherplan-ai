@@ -1,22 +1,62 @@
 [
   {
+    "entity_id": "artist:straykids",
+    "kind": "release",
+    "name": {
+      "ko": "스트레이 키즈",
+      "en_official": "Stray Kids",
+      "romanized": "Seuteuri Kijeu",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-07-06T04:44:50.881291Z",
+    "summary_en": "Stray Kids — YouTube official channel: 24,300,000 subscribers, 11,957,384,311 views; latest: '𝔐𝔦 ℭ𝔥𝔦𝔠𝔬 #StrayKids #스트레이키즈 #현진 #Hyunjin #YouMakeStrayKidsStay' (2026-07-05).",
+    "summary_ko": "스트레이 키즈 — 유튜브 공식 채널: 구독자 24,300,000명, 조회수 11,957,384,311회; 최신: '𝔐𝔦 ℭ𝔥𝔦𝔠𝔬 #StrayKids #스트레이키즈 #현진 #Hyunjin #YouMakeStrayKidsStay' (2026-07-05).",
+    "data": {
+      "channel_id": "UC9rMiEjNaCSsebs31MRDCRA",
+      "channel_title": "Stray Kids",
+      "subscribers": 24300000,
+      "views": 11957384311,
+      "videos": 2128,
+      "latest": {
+        "video_id": "vV6LW9_VA2Y",
+        "title": "𝔐𝔦 ℭ𝔥𝔦𝔠𝔬 #StrayKids #스트레이키즈 #현진 #Hyunjin #YouMakeStrayKidsStay",
+        "published_at": "2026-07-05T10:59:55Z"
+      },
+      "source_url": "https://www.youtube.com/channel/UC9rMiEjNaCSsebs31MRDCRA"
+    },
+    "provenance": {
+      "sources": [
+        "YouTube Stray Kids 2026-07-06 04:44 UTC"
+      ],
+      "fetched_at": "2026-07-06T04:44:50.881291Z",
+      "skill_score": 0.7,
+      "confidence": "medium",
+      "translation": {
+        "source": "llm",
+        "confidence": "medium"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
     "entity_id": "artist:lesserafim",
     "kind": "release",
     "name": {
       "ko": "르세라핌",
       "en_official": "LE SSERAFIM",
-      "romanized": "Leseraphim",
+      "romanized": "leseuraping",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-05T04:33:43.252638Z",
-    "summary_en": "LE SSERAFIM — YouTube official channel: 8,120,000 subscribers, 6,393,480,300 views; latest: '르세라핌 팀워크의 비결' (2026-07-03).",
-    "summary_ko": "르세라핌 — 유튜브 공식 채널: 구독자 8,120,000명, 조회수 6,393,480,300회; 최신: '르세라핌 팀워크의 비결' (2026-07-03).",
+    "snapshot_at": "2026-07-06T04:44:50.350638Z",
+    "summary_en": "LE SSERAFIM — YouTube official channel: 8,130,000 subscribers, 6,415,955,838 views; latest: '르세라핌 팀워크의 비결' (2026-07-03).",
+    "summary_ko": "르세라핌 — 유튜브 공식 채널: 구독자 8,130,000명, 조회수 6,415,955,838회; 최신: '르세라핌 팀워크의 비결' (2026-07-03).",
     "data": {
       "channel_id": "UCs-QBT4qkj_YiQw1ZntDO3g",
       "channel_title": "LE SSERAFIM",
-      "subscribers": 8120000,
-      "views": 6393480300,
+      "subscribers": 8130000,
+      "views": 6415955838,
       "videos": 3116,
       "latest": {
         "video_id": "BXVNwVI004Y",
@@ -27,9 +67,89 @@
     },
     "provenance": {
       "sources": [
-        "YouTube LE SSERAFIM 2026-07-05 04:33 UTC"
+        "YouTube LE SSERAFIM 2026-07-06 04:44 UTC"
       ],
-      "fetched_at": "2026-07-05T04:33:43.252638Z",
+      "fetched_at": "2026-07-06T04:44:50.350638Z",
+      "skill_score": 0.7,
+      "confidence": "medium",
+      "translation": {
+        "source": "llm",
+        "confidence": "medium"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
+    "entity_id": "artist:aespa",
+    "kind": "release",
+    "name": {
+      "ko": "aespa",
+      "en_official": "aespa",
+      "romanized": "aespa",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-07-06T04:44:49.791915Z",
+    "summary_en": "aespa — YouTube official channel: 8,630,000 subscribers, 6,319,757,208 views; latest: '[ae:scenes] -ˋˏ 빛나는 사랑니 🦷 ˎˊ- | 에스파 지젤 로에베 데이즈드 비하인드 (aespa GISELLE LOEWE DAZED Photoshoot Behind)' (2026-07-04).",
+    "summary_ko": "aespa — 유튜브 공식 채널: 구독자 8,630,000명, 조회수 6,319,757,208회; 최신: '[ae:scenes] -ˋˏ 빛나는 사랑니 🦷 ˎˊ- | 에스파 지젤 로에베 데이즈드 비하인드 (aespa GISELLE LOEWE DAZED Photoshoot Behind)' (2026-07-04).",
+    "data": {
+      "channel_id": "UC9GtSLeksfK4yuJ_g1lgQbg",
+      "channel_title": "aespa",
+      "subscribers": 8630000,
+      "views": 6319757208,
+      "videos": 1801,
+      "latest": {
+        "video_id": "mO1FUkqwXyQ",
+        "title": "[ae:scenes] -ˋˏ 빛나는 사랑니 🦷 ˎˊ- | 에스파 지젤 로에베 데이즈드 비하인드 (aespa GISELLE LOEWE DAZED Photoshoot Behind)",
+        "published_at": "2026-07-04T13:00:01Z"
+      },
+      "source_url": "https://www.youtube.com/channel/UC9GtSLeksfK4yuJ_g1lgQbg"
+    },
+    "provenance": {
+      "sources": [
+        "YouTube aespa 2026-07-06 04:44 UTC"
+      ],
+      "fetched_at": "2026-07-06T04:44:49.791915Z",
+      "skill_score": 0.7,
+      "confidence": "medium",
+      "translation": {
+        "source": "llm",
+        "confidence": "medium"
+      },
+      "cache_age_seconds": 0
+    }
+  },
+  {
+    "entity_id": "artist:newjeans",
+    "kind": "release",
+    "name": {
+      "ko": "NewJeans",
+      "en_official": "NewJeans",
+      "romanized": "Niu Jins",
+      "en_source": "official",
+      "en_confidence": "high"
+    },
+    "snapshot_at": "2026-07-06T04:44:49.280359Z",
+    "summary_en": "NewJeans — YouTube official channel: 8,450,000 subscribers, 5,193,910,077 views; latest: '[Jeans' ZINE+] 연말 파티🏘.ZIP | NewJeans' (2025-12-25).",
+    "summary_ko": "NewJeans — 유튜브 공식 채널: 구독자 8,450,000명, 조회수 5,193,910,077회; 최신: '[Jeans' ZINE+] 연말 파티🏘.ZIP | NewJeans' (2025-12-25).",
+    "data": {
+      "channel_id": "UCMki_UkHb4qSc0qyEcOHHJw",
+      "channel_title": "NewJeans",
+      "subscribers": 8450000,
+      "views": 5193910077,
+      "videos": 752,
+      "latest": {
+        "video_id": "OMVoxddjWmM",
+        "title": "[Jeans' ZINE+] 연말 파티🏘.ZIP | NewJeans",
+        "published_at": "2025-12-25T10:00:03Z"
+      },
+      "source_url": "https://www.youtube.com/channel/UCMki_UkHb4qSc0qyEcOHHJw"
+    },
+    "provenance": {
+      "sources": [
+        "YouTube NewJeans 2026-07-06 04:44 UTC"
+      ],
+      "fetched_at": "2026-07-06T04:44:49.280359Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -49,7 +169,7 @@
       "en_source": "llm",
       "en_confidence": "medium"
     },
-    "snapshot_at": "2026-07-05T04:33:42.127851Z",
+    "snapshot_at": "2026-07-06T04:44:48.277726Z",
     "summary_en": "Circle Digital Chart - 20 weekly #1s (current #1: Cortis - RedRed).",
     "summary_ko": "써클 디지털 차트 - 주간 1위 20건 (현재 1위: Cortis).",
     "data": {
@@ -159,9 +279,9 @@
     },
     "provenance": {
       "sources": [
-        "Circle Digital Chart #1 (via Wikipedia) 2026-07-05 04:33 UTC"
+        "Circle Digital Chart #1 (via Wikipedia) 2026-07-06 04:44 UTC"
       ],
-      "fetched_at": "2026-07-05T04:33:42.127851Z",
+      "fetched_at": "2026-07-06T04:44:48.277726Z",
       "skill_score": 0.7,
       "confidence": "medium",
       "translation": {
@@ -177,17 +297,17 @@
     "name": {
       "ko": "스트레이 키즈",
       "en_official": "Stray Kids",
-      "romanized": "Seuteuraei Kideu",
+      "romanized": "Seuteuri Kijeu",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-05T04:33:36.387549Z",
+    "snapshot_at": "2026-07-06T04:44:43.505884Z",
     "summary_en": "Stray Kids (스트레이 키즈) — verified Korean artist. Debut 2017. Agency: JYP Entertainment. 9 members.",
     "summary_ko": "스트레이 키즈 — 검증된 K-아티스트. 데뷔 2017. 소속사: JYP Entertainment. 멤버 9명.",
     "data": {
       "name_ko": "스트레이 키즈",
       "name_en_official": "Stray Kids",
-      "name_romanized": "Seuteuraei Kideu",
+      "name_romanized": "Seuteuri Kijeu",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2017",
@@ -209,10 +329,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q46134670 2026-07-05 04:33 UTC",
-        "Wikipedia Stray Kids 2026-07-05 04:33 UTC"
+        "Wikidata Q46134670 2026-07-06 04:44 UTC",
+        "Wikipedia Stray Kids 2026-07-06 04:44 UTC"
       ],
-      "fetched_at": "2026-07-05T04:33:36.387549Z",
+      "fetched_at": "2026-07-06T04:44:43.505884Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -228,17 +348,17 @@
     "name": {
       "ko": "르세라핌",
       "en_official": "Le Sserafim",
-      "romanized": "Leseraphim",
+      "romanized": "leseuraping",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-05T04:33:34.193214Z",
+    "snapshot_at": "2026-07-06T04:44:42.077574Z",
     "summary_en": "Le Sserafim (르세라핌) — verified Korean artist. Debut 2022-03-28. Agency: Source Music. 6 members.",
     "summary_ko": "르세라핌 — 검증된 K-아티스트. 데뷔 2022-03-28. 소속사: Source Music. 멤버 6명.",
     "data": {
       "name_ko": "르세라핌",
       "name_en_official": "Le Sserafim",
-      "name_romanized": "Leseraphim",
+      "name_romanized": "leseuraping",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2022-03-28",
@@ -257,10 +377,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q111381707 2026-07-05 04:33 UTC",
-        "Wikipedia Le Sserafim 2026-07-05 04:33 UTC"
+        "Wikidata Q111381707 2026-07-06 04:44 UTC",
+        "Wikipedia Le Sserafim 2026-07-06 04:44 UTC"
       ],
-      "fetched_at": "2026-07-05T04:33:34.193214Z",
+      "fetched_at": "2026-07-06T04:44:42.077574Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -276,17 +396,17 @@
     "name": {
       "ko": "블랙핑크",
       "en_official": "Blackpink",
-      "romanized": "BLACKPINK",
+      "romanized": "Blackpink",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-05T04:33:32.550031Z",
+    "snapshot_at": "2026-07-06T04:44:41.052823Z",
     "summary_en": "Blackpink (블랙핑크) — verified Korean artist. Debut 2016. Agency: YG Entertainment. 4 members.",
     "summary_ko": "블랙핑크 — 검증된 K-아티스트. 데뷔 2016. 소속사: YG Entertainment. 멤버 4명.",
     "data": {
       "name_ko": "블랙핑크",
       "name_en_official": "Blackpink",
-      "name_romanized": "BLACKPINK",
+      "name_romanized": "Blackpink",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2016",
@@ -303,10 +423,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q25056945 2026-07-05 04:33 UTC",
-        "Wikipedia Blackpink 2026-07-05 04:33 UTC"
+        "Wikidata Q25056945 2026-07-06 04:44 UTC",
+        "Wikipedia Blackpink 2026-07-06 04:44 UTC"
       ],
-      "fetched_at": "2026-07-05T04:33:32.550031Z",
+      "fetched_at": "2026-07-06T04:44:41.052823Z",
       "skill_score": 0.85,
       "confidence": "high",
       "translation": {
@@ -326,7 +446,7 @@
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-05T04:33:30.224188Z",
+    "snapshot_at": "2026-07-06T04:44:39.945063Z",
     "summary_en": "Aespa (aespa) — verified Korean artist. Debut 2020-10-26. Agency: SM Entertainment. 4 members.",
     "summary_ko": "aespa — 검증된 K-아티스트. 데뷔 2020-10-26. 소속사: SM Entertainment. 멤버 4명.",
     "data": {
@@ -349,10 +469,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q100877982 2026-07-05 04:33 UTC",
-        "Wikipedia Aespa 2026-07-05 04:33 UTC"
+        "Wikidata Q100877982 2026-07-06 04:44 UTC",
+        "Wikipedia Aespa 2026-07-06 04:44 UTC"
       ],
-      "fetched_at": "2026-07-05T04:33:30.224188Z",
+      "fetched_at": "2026-07-06T04:44:39.945063Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
@@ -368,17 +488,17 @@
     "name": {
       "ko": "NewJeans",
       "en_official": "New Jeans",
-      "romanized": "Nyu Jinjeu",
+      "romanized": "Niu Jins",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-05T04:33:28.470210Z",
+    "snapshot_at": "2026-07-06T04:44:38.764880Z",
     "summary_en": "New Jeans (NewJeans) — verified Korean artist. Debut 2022-07-22. Agency: ADOR. 5 members.",
     "summary_ko": "NewJeans — 검증된 K-아티스트. 데뷔 2022-07-22. 소속사: ADOR. 멤버 5명.",
     "data": {
       "name_ko": "NewJeans",
       "name_en_official": "New Jeans",
-      "name_romanized": "Nyu Jinjeu",
+      "name_romanized": "Niu Jins",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2022-07-22",
@@ -396,10 +516,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q113189277 2026-07-05 04:33 UTC",
-        "Wikipedia NewJeans 2026-07-05 04:33 UTC"
+        "Wikidata Q113189277 2026-07-06 04:44 UTC",
+        "Wikipedia NewJeans 2026-07-06 04:44 UTC"
       ],
-      "fetched_at": "2026-07-05T04:33:28.470210Z",
+      "fetched_at": "2026-07-06T04:44:38.764880Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
@@ -415,17 +535,17 @@
     "name": {
       "ko": "방탄소년단",
       "en_official": "BTS",
-      "romanized": "Bangtan Sonyeondan",
+      "romanized": "bangtaninyeongdan",
       "en_source": "official",
       "en_confidence": "high"
     },
-    "snapshot_at": "2026-07-05T04:33:26.209049Z",
+    "snapshot_at": "2026-07-06T04:44:37.845183Z",
     "summary_en": "BTS (방탄소년단) — verified Korean artist. Debut 2013-06-13. Agency: Avex Trax. 7 members.",
     "summary_ko": "방탄소년단 — 검증된 K-아티스트. 데뷔 2013-06-13. 소속사: Avex Trax. 멤버 7명.",
     "data": {
       "name_ko": "방탄소년단",
       "name_en_official": "BTS",
-      "name_romanized": "Bangtan Sonyeondan",
+      "name_romanized": "bangtaninyeongdan",
       "name_en_source": "official",
       "name_en_confidence": "high",
       "debut": "2013-06-13",
@@ -445,10 +565,10 @@
     },
     "provenance": {
       "sources": [
-        "Wikidata Q13580495 2026-07-05 04:33 UTC",
-        "Wikipedia BTS 2026-07-05 04:33 UTC"
+        "Wikidata Q13580495 2026-07-06 04:44 UTC",
+        "Wikipedia BTS 2026-07-06 04:44 UTC"
       ],
-      "fetched_at": "2026-07-05T04:33:26.209049Z",
+      "fetched_at": "2026-07-06T04:44:37.845183Z",
       "skill_score": 1.0,
       "confidence": "high",
       "translation": {
