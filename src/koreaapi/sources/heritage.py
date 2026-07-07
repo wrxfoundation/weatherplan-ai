@@ -4,18 +4,18 @@ contestable badge in the whole roster: the state itself has vouched for the item
 Wikidata/Wikipedia. So this stamps a heritage record with a government source + an "official national
 designation" badge — the authority-first priority the case-study appendix calls for (docs/PHASE2.md).
 
-Key-gated on HERITAGE_API_KEY; INERT until set (ships dormant, self-activates once the key lands in
-repo secrets — the KOSIS/KTO pattern). Self-filters to `heritage:`. The KHS SearchKindOpenapi list
-endpoint searches by the KOREAN designation name and returns XML, so — like KOSIS regions — each
-entity carries a curated Korean search term + an accepted-name guard: a designation only counts if it
-NAMES itself as the expected item. A drifted/ambiguous search resolves to a miss, never a wrong badge.
-Parse + guard are pure/offline-tested (XML fixture); the live call only runs where the key is set.
+KEYLESS (개방형 Open API, no serviceKey) — ALWAYS-ON like Wikipedia/MusicBrainz, self-scoped to
+`heritage:`. Server-side only (the endpoint is CORS-blocked for browsers; our ingest runs on GitHub
+runners). The KHS list endpoint searches by the KOREAN designation name and returns XML (CDATA-wrapped,
+whitespace-padded), so — like KOSIS regions — each entity carries a curated Korean search term + an
+accepted-name guard: a designation counts only if it NAMES itself as the expected item. A drifted/
+ambiguous search resolves to a miss, never a wrong badge. Parse + guard are pure/offline-tested (real-
+shape XML fixture); the live call needs network egress.
 """
 
 from __future__ import annotations
 
 import asyncio
-import os
 import urllib.parse
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -23,8 +23,8 @@ from datetime import datetime, timezone
 from ..roster import NAMES
 from .wikidata import _http_get_text, _norm
 
-# KHS 국가유산 지정정보 조회 (국문). Returns XML <result><item>…</item></result>.
-KHS_LIST = "https://www.khs.go.kr/cha/SearchKindOpenapiList.do"
+# KHS 국가유산검색 목록 (국문). Open/keyless; returns XML <result><item>…</item></result>.
+KHS_LIST = "http://www.khs.go.kr/cha/SearchKindOpenapiList.do"  # legacy gov host: http (guard defends integrity)
 _UA = {"User-Agent": "KoreaAPI/0.1 (https://github.com/kwangdol-star/koreaapi)"}
 
 # heritage entity -> (Korean search term, accepted-name tokens). The tokens are the guard: whatever
@@ -49,10 +49,20 @@ HERITAGE_KO: dict[str, tuple[str, tuple[str, ...]]] = {
     "heritage:najeonchilgi": ("나전장", ("나전",)),
     "heritage:dancheong": ("단청장", ("단청",)),
     "heritage:buncheong": ("분청사기", ("분청",)),
+    # seed expansion — UNESCO / 국가무형유산 (distinctive names; guard = the Korean designation).
+    "heritage:arirang": ("아리랑", ("아리랑",)),
+    "heritage:ssireum": ("씨름", ("씨름",)),
+    "heritage:nongak": ("농악", ("농악",)),
+    "heritage:ganggangsullae": ("강강술래", ("강강술래",)),
+    "heritage:jultagi": ("줄타기", ("줄타기",)),
+    "heritage:haenyeo": ("해녀", ("해녀",)),
+    "heritage:taekkyeon": ("택견", ("택견",)),
+    "heritage:yeondeunghoe": ("연등회", ("연등회",)),
 }
 
 
 def _text(item: ET.Element, tag: str) -> str:
+    """An item's child text, CDATA- and whitespace-safe (KHS wraps values as `<![CDATA[ 국보 ]]>`)."""
     el = item.find(tag)
     return (el.text or "").strip() if el is not None and el.text else ""
 
@@ -62,16 +72,23 @@ def parse_heritage(xml_text: str, entity_id: str, accept: tuple[str, ...]) -> di
     Korean name. Raises when nothing safely matches (miss, never a wrong government badge)."""
     root = ET.fromstring(xml_text)  # raises on malformed XML -> graceful drop upstream
     for item in root.iter("item"):
+        if _text(item, "ccbaCncl") == "Y":
+            continue  # designation cancelled (지정해제) -> skip
         ko = _text(item, "ccbaMnm1")  # 국문 지정명칭
         nn = _norm(ko)
         if not ko or not any(_norm(tok) in nn for tok in accept):
             continue  # an ambiguous/other designation -> refuse it
         designation = _text(item, "ccmaName")  # 국보 / 보물 / 국가무형유산 / 사적 …
-        location = _text(item, "ccsiName") or _text(item, "ccbaCtcdNm")
-        hid = f"{_text(item, 'ccbaKdcd')}-{_text(item, 'ccbaAsno')}".strip("-")
+        location = " ".join(p for p in (_text(item, "ccbaCtcdNm"), _text(item, "ccsiName")) if p)
+        # composite designation key (종목·시도·관리번호) = the SearchKindOpenapiDt.do detail pointer
+        kdcd, ctcd, asno = _text(item, "ccbaKdcd"), _text(item, "ccbaCtcd"), _text(item, "ccbaAsno")
+        hid = "-".join(p for p in (kdcd, ctcd, asno) if p)
         en = NAMES.get(entity_id) or entity_id.split(":", 1)[-1]
         attrs = {k: v for k, v in (("Designation", designation),
                                    ("Designated location", location)) if v}
+        lat, lon = _text(item, "latitude"), _text(item, "longitude")
+        if lat and lon:
+            attrs["Coordinates"] = f"{lat},{lon}"  # KHS WGS84 (lat,lon)
         out = {
             "name_ko": ko,  # the official designation name (folds; adds a gov source + badge)
             "name_en_official": en,
@@ -96,13 +113,12 @@ class HeritageSource:
     def __init__(self, aliases: dict[str, str] | None = None) -> None:
         self._aliases = aliases or {}
 
-    def _url(self, term: str, key: str) -> str:
+    def _url(self, term: str) -> str:
         params = urllib.parse.urlencode({
             "ccbaCncl": "N",  # exclude cancelled designations
             "pageUnit": 10, "pageIndex": 1, "ccbaMnm1": term,
         })
-        # serviceKey appended RAW — data.go.kr keys are already URL-encoded (urlencode would double it).
-        return f"{KHS_LIST}?serviceKey={key}&{params}"
+        return f"{KHS_LIST}?{params}"
 
     def _http_get(self, url: str) -> str:
         return _http_get_text(url, _UA)
@@ -110,13 +126,10 @@ class HeritageSource:
     async def fetch(self, entity_id: str, kind: str) -> dict:
         if not entity_id.startswith("heritage:"):
             raise ValueError("KHS covers heritage only")  # graceful drop for other verticals
-        key = os.environ.get("HERITAGE_API_KEY")
-        if not key:
-            raise ValueError("HERITAGE_API_KEY not set")  # inert until a data.go.kr key is added
         term, accept = HERITAGE_KO.get(entity_id, (None, ()))
         if not term:
-            raise ValueError(f"no KHS search term for {entity_id}")
-        raw = await asyncio.to_thread(self._http_get, self._url(term, key))
+            raise ValueError(f"no KHS search term for {entity_id}")  # heritage entity not yet mapped
+        raw = await asyncio.to_thread(self._http_get, self._url(term))
         payload = parse_heritage(raw, entity_id, accept)
         ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         return {"payload": payload,

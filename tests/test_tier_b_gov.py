@@ -14,23 +14,29 @@ from koreaapi.sources.dart import CORP_CODES, DARTSource, parse_dart
 from koreaapi.sources.heritage import HERITAGE_KO, HeritageSource, parse_heritage
 from koreaapi.sources.medical import HOSPITALS, MedicalSource, parse_medical
 
-# ---------------------------------------------------------------- heritage (국가유산청 / KHS)
+# ---------------------------------------------------------------- heritage (국가유산청 / KHS, keyless)
 
-def _khs_xml(name="종묘제례", ccma="국가무형유산", kdcd="17", asno="0056", loc="서울특별시") -> str:
+def _khs_xml(name="종묘제례", ccma="국가무형유산", kdcd="17", ctcd="11", asno="0000560000000",
+             ctcdnm="서울", ssi="종로구", cncl="N", lat="37.57", lon="126.99") -> str:
+    # real KHS shape: CDATA-wrapped + whitespace-padded values (e.g. `<![CDATA[ 국보 ]]>`)
     return (
-        "<result><totalCnt>1</totalCnt><item>"
-        f"<ccmaName>{ccma}</ccmaName><ccbaMnm1>{name}</ccbaMnm1>"
-        f"<ccbaKdcd>{kdcd}</ccbaKdcd><ccbaAsno>{asno}</ccbaAsno><ccsiName>{loc}</ccsiName>"
+        "<result><totalCnt>1</totalCnt><pageUnit>10</pageUnit><item>"
+        f"<ccmaName><![CDATA[ {ccma} ]]></ccmaName>"
+        f"<ccbaMnm1><![CDATA[ {name} ]]></ccbaMnm1>"
+        f"<ccbaCtcdNm><![CDATA[ {ctcdnm} ]]></ccbaCtcdNm><ccsiName><![CDATA[ {ssi} ]]></ccsiName>"
+        f"<ccbaKdcd>{kdcd}</ccbaKdcd><ccbaCtcd>{ctcd}</ccbaCtcd><ccbaAsno>{asno}</ccbaAsno>"
+        f"<ccbaCncl>{cncl}</ccbaCncl><longitude>{lon}</longitude><latitude>{lat}</latitude>"
         "</item></result>"
     )
 
 
 def test_heritage_parse_attaches_designation_badge():
     out = parse_heritage(_khs_xml(), "heritage:jongmyojerye", ("종묘제례",))
-    assert out["name_ko"] == "종묘제례"
+    assert out["name_ko"] == "종묘제례"  # CDATA whitespace padding stripped
     assert out["official_designation"] == "국가무형유산"
-    assert out["heritage_id"] == "17-0056"
-    assert out["attrs"]["Designation"] == "국가무형유산"
+    assert out["heritage_id"] == "17-11-0000560000000"  # composite detail key 종목-시도-관리번호
+    assert out["attrs"]["Designated location"] == "서울 종로구"
+    assert out["attrs"]["Coordinates"] == "37.57,126.99"
     assert "국가유산청" in out["summary_ko"]
 
 
@@ -46,18 +52,23 @@ def test_heritage_guard_rejects_unrelated_designation():
         parse_heritage(_khs_xml(name="서울 숭례문"), "heritage:pansori", ("판소리",))
 
 
-def test_heritage_inert_without_key_and_scoped(monkeypatch):
-    monkeypatch.delenv("HERITAGE_API_KEY", raising=False)
+def test_heritage_skips_cancelled_designation():
+    with pytest.raises(ValueError):  # 지정해제(ccbaCncl=Y) -> not a live designation
+        parse_heritage(_khs_xml(cncl="Y"), "heritage:jongmyojerye", ("종묘제례",))
+
+
+def test_heritage_keyless_and_scoped():
+    # keyless (개방형) — no key gate; only self-scoping + an unmapped-entity guard run offline
     src = HeritageSource()
-    with pytest.raises(ValueError, match="HERITAGE_API_KEY"):
-        asyncio.run(src.fetch("heritage:pansori", "facts"))
     with pytest.raises(ValueError, match="heritage only"):
         asyncio.run(src.fetch("artist:bts", "facts"))
+    with pytest.raises(ValueError, match="no KHS search term"):
+        asyncio.run(src.fetch("heritage:notmapped", "facts"))
 
 
 def test_heritage_every_mapped_entity_is_in_roster():
     from koreaapi.roster import HERITAGE
-    assert set(HERITAGE_KO) <= set(HERITAGE)  # no dangling map entry
+    assert set(HERITAGE_KO) == set(HERITAGE)  # every heritage entity is fetchable (and none dangles)
 
 
 # ---------------------------------------------------------------- medical (심평원 / HIRA)

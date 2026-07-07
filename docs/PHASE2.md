@@ -14,12 +14,13 @@
 3. **MusicBrainz → song: 확장** — recording 검색, 무키 → 곡 제3소스.
 4. **Open Library → book: 신규** — openlibrary.org, 무키 → 도서 제3소스(ISBN/서지).
 
-**Tier B — 공공데이터포털 무료키 (형 발급 1회, KOSIS와 같은 dormant 패턴): ✅ 어댑터 3종 빌드 완료(휴면).**
-어댑터·파스·이름가드·오프라인 테스트 완료 — **키만 발급하면 자동 활성**(collect에서 다음 pull 때 부착).
-발급 안내는 docs/API_KEYS.md의 "Phase-2 Tier B" 블록. 코드: `sources/{heritage,medical,dart}.py`.
-5. **국가유산청 API → heritage:** ✅ — `HERITAGE_API_KEY`. 국가지정(국보·보물·무형유산) 배지. 신뢰 서사 최상급.
-6. **심평원 병원정보 → medical:** ✅ — `MEDICAL_API_KEY`. 종별·개설일·소재지 등록정보(exact 이름가드).
-7. **DART 공시 → company:** ✅ — `DART_API_KEY`. 설립일·대표자·종목코드. corp_code 시드맵(이름가드 보호, 확장식).
+**Tier B — 정부 출처: ✅ 어댑터 3종 빌드 완료.** 파스·이름가드·오프라인 테스트 완료.
+코드: `sources/{heritage,medical,dart}.py`. 발급 안내는 docs/API_KEYS.md.
+5. **국가유산청 → heritage:** ✅ **키 불필요(개방형) → always-on**. `www.khs.go.kr/.../SearchKindOpenapiList.do`
+   (서버측만·CORS 차단). 국가지정(국보·보물·무형유산) 배지 + 좌표. 신뢰 서사 최상급. 시드 25종(유네스코 무형유산 +8).
+6. **심평원 병원정보 → medical:** ✅ — `MEDICAL_API_KEY`(dormant). 종별·개설일·소재지 등록정보(exact 이름가드).
+7. **DART 공시 → company:** ✅ — `DART_API_KEY`(dormant). 설립일·대표자·종목코드. corp_code 시드맵(이름가드 보호;
+   확장은 opendart corpCode.xml로 — 추측 코드는 무의미하므로 검증분만 추가).
 
 **Tier C — 그다음: ✅ 소스 4종 빌드 완료.** 코드: `sources/{rawg,sportsdb,anilist,wiktionary}.py`.
 8. RAWG(game) ✅ — `RAWG_API_KEY` dormant(무료키). / TheSportsDB(sports) ✅ 무키 always-on(공개 테스트키

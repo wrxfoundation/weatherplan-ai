@@ -65,15 +65,13 @@ Set any of these → drop in `.env` + GitHub Actions secrets → ping me; I wire
 
 ---
 
+## ✅ 국가유산청 → heritage — **키 불필요 (개방형 Open API)**
+- 무엇: `heritage:` 엔티티에 국가지정(국보·보물·국가무형유산 등) + 좌표를 정부 출처로 부착 = 최강 신뢰 배지.
+- 키: **없음.** `www.khs.go.kr/cha/SearchKindOpenapiList.do` 는 개방형 — 서버측 호출만 가능(브라우저 CORS 차단),
+  우리 수집은 러너에서 돌므로 OK. Wikipedia처럼 **always-on**, 다음 pull에서 자동 부착. (형 조치 불필요.)
+
 ## 🔵 Phase-2 Tier B — 정부 출처 (공공데이터포털/오픈다트 무료키, dormant 패턴)
 KOSIS와 동일: **키 발급 1회 → GitHub Actions secret 등록 → 자동 활성**. 미설정 시 완전 휴면(수집 정상).
-권위(정부 배지)가 볼륨보다 값을 만든다 — 순서는 국가유산청(간판·논란0) → 나머지. (docs/PHASE2.md)
-
-### HERITAGE_API_KEY — 국가유산청 (문화유산 정부 지정정보) — 1순위
-- 무엇: `heritage:` 엔티티에 국가지정(국보·보물·국가무형유산 등) 정보를 정부 출처로 부착 = 최강 신뢰 배지.
-- 발급(무료): https://www.data.go.kr → "국가유산청 국가유산 검색" 활용신청 → 일반 인증키(serviceKey).
-  (국가유산청 직접 오픈API `www.khs.go.kr/cha/SearchKindOpenapiList.do` 사용 시에도 이 키를 활성 스위치로 사용.)
-- 등록: `HERITAGE_API_KEY`.
 
 ### MEDICAL_API_KEY — 건강보험심사평가원 (병원 정부 등록정보)
 - 무엇: `medical:` 엔티티에 종별(상급종합 등)·개설일·소재지를 심평원 등록정보로 부착 (병원정보서비스 getHospBasisList).
