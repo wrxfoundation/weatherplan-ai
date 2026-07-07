@@ -559,6 +559,15 @@ HERITAGE = {
     "heritage:najeonchilgi": "Najeonchilgi",
     "heritage:dancheong": "Dancheong",
     "heritage:buncheong": "Buncheong",
+    # seed expansion — UNESCO ICH / 국가무형유산 (distinctive names; 국가유산청 keyless badge applies).
+    "heritage:arirang": "Arirang",
+    "heritage:ssireum": "Ssireum",
+    "heritage:nongak": "Nongak",
+    "heritage:ganggangsullae": "Ganggangsullae",
+    "heritage:jultagi": "Jultagi",
+    "heritage:haenyeo": "Haenyeo",
+    "heritage:taekkyeon": "Taekkyeon",
+    "heritage:yeondeunghoe": "Yeondeunghoe",
 }
 
 # Folklore vertical: Korean legends / myths / shamanism / ghosts (설화·민담·신화·무속·귀신). `folklore:`
@@ -839,11 +848,39 @@ CONCEPTS = {
     "concept:jesa": "Jesa",
 }
 
+# Proverb vertical: Korean proverbs / idioms (속담·관용구). Individual sayings have NO independent
+# ground truth, so they are NOT cross-verified like the other verticals — the anchor is *lexical
+# existence*: a saying is ingested ONLY if it is a LISTED entry in Korean Wiktionary (등재 항목만),
+# with its dictionary gloss cited. The canonical name IS the Korean proverb (the Wiktionary headword,
+# used as both the search term and the identity guard). Seeded with widely-listed proverbs; a term
+# with no Wiktionary entry simply misses (never a wrong/unsourced saying). See sources/wiktionary.py.
+PROVERBS = {
+    "proverb:ganeunmal": "가는 말이 고와야 오는 말이 곱다",
+    "proverb:tikkeul": "티끌 모아 태산",
+    "proverb:gosaeng": "고생 끝에 낙이 온다",
+    "proverb:baleomneun": "발 없는 말이 천 리 간다",
+    "proverb:umulan": "우물 안 개구리",
+    "proverb:soilko": "소 잃고 외양간 고친다",
+    # seed expansion — widely-listed 속담 (unlisted ones simply miss via the Wiktionary guard).
+    "proverb:natmal": "낮말은 새가 듣고 밤말은 쥐가 듣는다",
+    "proverb:horangi": "호랑이도 제 말 하면 온다",
+    "proverb:wonsungi": "원숭이도 나무에서 떨어진다",
+    "proverb:baekjijang": "백지장도 맞들면 낫다",
+    "proverb:gajae": "가재는 게 편",
+    "proverb:deungjan": "등잔 밑이 어둡다",
+    "proverb:pinggye": "핑계 없는 무덤 없다",
+    "proverb:binsure": "빈 수레가 요란하다",
+    "proverb:malhanmadi": "말 한마디에 천 냥 빚도 갚는다",
+    "proverb:cheollikil": "천 리 길도 한 걸음부터",
+    "proverb:witmul": "윗물이 맑아야 아랫물이 맑다",
+    "proverb:natnoko": "낫 놓고 기역 자도 모른다",
+}
+
 # Every verified entity across all verticals: id -> canonical name (search + identity term).
 NAMES = {**ARTISTS, **DRAMAS, **FILMS, **WEBTOONS, **PLACES, **FOODS, **COMPANIES, **BRANDS,
          **BOOKS, **HISTORY, **HERITAGE, **FOLKLORE, **MEDICAL, **REGION, **GAMES,
          **SHOWS, **ANIMATIONS, **UNIVERSITIES, **CLASSICS, **FASHION, **FESTIVALS,
-         **SPORTS, **ACTORS, **SONGS, **CONCEPTS}
+         **SPORTS, **ACTORS, **SONGS, **CONCEPTS, **PROVERBS}
 
 # Institutional certification — the strongest, NON-REPLICABLE moat. An organization (agency / brand /
 # museum / studio) officially vouches for an entity's data; that record then ranks ABOVE "triple

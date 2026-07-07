@@ -49,9 +49,16 @@ from .reconcile import external_ids, name_keys
 from .pipeline.ingest import ingest_chart, ingest_one, ingest_youtube
 from .pipeline.scheduler import CADENCE
 from .roster import ARTISTS, CERTIFIED, NAMES
+from .sources.anilist import AniListSource
 from .sources.circlechart import CircleChartSource
+from .sources.dart import DARTSource
+from .sources.heritage import HeritageSource
 from .sources.kosis import KOSISSource
+from .sources.medical import MedicalSource
 from .sources.openlibrary import OpenLibrarySource
+from .sources.rawg import RAWGSource
+from .sources.sportsdb import SportsDBSource
+from .sources.wiktionary import WiktionarySource
 from .sources.mock import MockSource
 from .sources.musicbrainz import MusicBrainzSource
 from .sources.nominatim import NominatimSource
@@ -108,7 +115,9 @@ async def pull(entity_ids: list[str] | None = None, *, db_path: str | None = Non
     #   MusicBrainz -> artists · OpenStreetMap -> places · TMDB -> drama/film/animation (key-gated).
     # Wikidata+Wikipedia are correlated; these come from separate DBs -> genuine triple-verification.
     sources = [WikidataSource(), WikipediaSource(), MusicBrainzSource(),
-               NominatimSource(), TMDBSource(), TourAPISource(), KOSISSource(), OpenLibrarySource()]
+               NominatimSource(), TMDBSource(), TourAPISource(), KOSISSource(), OpenLibrarySource(),
+               HeritageSource(), MedicalSource(), DARTSource(),
+               RAWGSource(), SportsDBSource(), AniListSource(), WiktionarySource()]
     ingested: list[str] = []
     failed: list[str] = []
     for i, entity_id in enumerate(ids):
@@ -190,7 +199,10 @@ async def sweep(*, db_path: str | None = None, max_new: int = 10) -> dict:
     aliases = dict(todo)
     sources = [WikidataSource(aliases=aliases), WikipediaSource(aliases=aliases),
                MusicBrainzSource(aliases=aliases), NominatimSource(aliases=aliases),
-               TMDBSource(aliases=aliases), TourAPISource(aliases=aliases), OpenLibrarySource(aliases=aliases)]
+               TMDBSource(aliases=aliases), TourAPISource(aliases=aliases), OpenLibrarySource(aliases=aliases),
+               HeritageSource(aliases=aliases), MedicalSource(aliases=aliases), DARTSource(aliases=aliases),
+               RAWGSource(aliases=aliases), SportsDBSource(aliases=aliases), AniListSource(aliases=aliases),
+               WiktionarySource(aliases=aliases)]
     ingested: list[str] = []
     for eid, _name in todo:
         rec = await ingest_one("facts", eid, sources, db_path=db_path)
@@ -240,7 +252,10 @@ async def discover(verticals: list[str] | None = None, *, db_path: str | None = 
         qids = {eid: q for eid, _en, q in todo}
         sources = [WikidataSource(aliases=aliases, qids=qids), WikipediaSource(aliases=aliases),
                    MusicBrainzSource(aliases=aliases), NominatimSource(aliases=aliases),
-                   TMDBSource(aliases=aliases), TourAPISource(aliases=aliases), OpenLibrarySource(aliases=aliases)]
+                   TMDBSource(aliases=aliases), TourAPISource(aliases=aliases), OpenLibrarySource(aliases=aliases),
+                   HeritageSource(aliases=aliases), MedicalSource(aliases=aliases), DARTSource(aliases=aliases),
+                   RAWGSource(aliases=aliases), SportsDBSource(aliases=aliases), AniListSource(aliases=aliases),
+                   WiktionarySource(aliases=aliases)]
         ingested: list[str] = []
         for eid, _en, _q in todo:
             rec = await ingest_one("facts", eid, sources, db_path=db_path)
@@ -1092,6 +1107,9 @@ _ICON = {
     # sparkle (culture concepts)
     "concept": _icon('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>'
                      '<path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/>'),
+    # speech bubble (proverbs / idioms — sayings)
+    "proverb": _icon('<path d="M21 12a8 8 0 0 1-8 8H7l-4 3v-6a8 8 0 0 1 8-13h2a8 8 0 0 1 8 8z"/>'
+                     '<line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="14" x2="13" y2="14"/>'),
     # tag (labels / agencies / networks)
     "label": _icon('<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0l-7-7A2 2 0 0 1 3 12.2V5a2 2 0 0 1 '
                    '2-2h7.2a2 2 0 0 1 1.4.6l7 7a2 2 0 0 1 0 2.8z"/><circle cx="7.6" cy="7.6" r="1.3"/>'),
@@ -1793,6 +1811,7 @@ _VERTICALS = {
     "actor": ("Korean actors", "actors.html", _ICON["actor"], "Works"),
     "song": ("K-pop songs", "songs.html", _ICON["song"], "Performer"),
     "concept": ("K-culture concepts", "concepts.html", _ICON["concept"], "Type"),
+    "proverb": ("Proverbs & idioms", "proverbs.html", _ICON["proverb"], "Meaning (뜻)"),
 }
 
 _HUB_STYLE = "<style>" + _AURORA + """

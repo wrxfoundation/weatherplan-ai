@@ -131,9 +131,11 @@ def test_roster_agency_hint_applies_to_noncurated(monkeypatch):
 def test_every_name_has_a_wikipedia_title():
     # The Wikipedia title is what makes cross-verification reliable (the second independent source).
     # An entity in NAMES without a _TITLES entry would silently degrade to single-source — block that.
-    from koreaapi.roster import NAMES
+    # EXCEPTION: `proverb:` is deliberately single-source (Wiktionary listing = the verification anchor;
+    # individual sayings have no Wikipedia article / no cross-source ground truth — see PROVERBS).
+    from koreaapi.roster import NAMES, PROVERBS
     from koreaapi.sources.wikipedia import _TITLES
-    assert set(NAMES) <= set(_TITLES)
+    assert set(NAMES) - set(PROVERBS) <= set(_TITLES)
 
 
 def test_curated_anchors_are_bilingual():
@@ -147,7 +149,7 @@ def test_roster_breadth():
     # Guard the asset's breadth (25 verticals, 400+ entities) so a bad edit that drops rows is caught.
     from koreaapi.roster import (ACTORS, ANIMATIONS, ARTISTS, BOOKS, BRANDS, CLASSICS, COMPANIES, CONCEPTS,
                                  DRAMAS, FASHION, FESTIVALS, FILMS, FOLKLORE, FOODS, GAMES, HERITAGE,
-                                 HISTORY, MEDICAL, NAMES, PLACES, REGION, SHOWS, SONGS, SPORTS,
+                                 HISTORY, MEDICAL, NAMES, PLACES, PROVERBS, REGION, SHOWS, SONGS, SPORTS,
                                  UNIVERSITIES, WEBTOONS)
     assert len(ARTISTS) >= 50 and len(DRAMAS) >= 18 and len(FILMS) >= 15
     assert len(WEBTOONS) >= 5 and len(PLACES) >= 10 and len(FOODS) >= 12
@@ -157,11 +159,12 @@ def test_roster_breadth():
     assert len(SHOWS) >= 8 and len(ANIMATIONS) >= 6 and len(UNIVERSITIES) >= 8 and len(CLASSICS) >= 10
     assert len(FASHION) >= 6 and len(FESTIVALS) >= 6
     assert len(SPORTS) >= 12 and len(ACTORS) >= 15 and len(SONGS) >= 8 and len(CONCEPTS) >= 12
+    assert len(PROVERBS) >= 5
     assert len(NAMES) >= 400
     assert len(NAMES) == sum(map(len, (ARTISTS, DRAMAS, FILMS, WEBTOONS, PLACES, FOODS, COMPANIES,
                                        BRANDS, BOOKS, HISTORY, HERITAGE, FOLKLORE, MEDICAL, REGION,
                                        GAMES, SHOWS, ANIMATIONS, UNIVERSITIES, CLASSICS, FASHION,
-                                       FESTIVALS, SPORTS, ACTORS, SONGS, CONCEPTS)))
+                                       FESTIVALS, SPORTS, ACTORS, SONGS, CONCEPTS, PROVERBS)))
 
 
 def test_food_editorial_tags_cover_every_dish():

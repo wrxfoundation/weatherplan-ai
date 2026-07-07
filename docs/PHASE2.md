@@ -14,14 +14,23 @@
 3. **MusicBrainz → song: 확장** — recording 검색, 무키 → 곡 제3소스.
 4. **Open Library → book: 신규** — openlibrary.org, 무키 → 도서 제3소스(ISBN/서지).
 
-**Tier B — 공공데이터포털 무료키 (형 발급 1회, KOSIS와 같은 dormant 패턴):**
-5. **국가유산청 API → heritage:** — 문화유산에 정부 공식 지정정보. 신뢰 서사 최상급.
-6. **심평원 병원정보 → medical:** — 병원 정부 등록정보.
-7. **DART 공시 → company:** — 국내 기업 공식 공시 = 기업 버티컬의 정부 티어.
+**Tier B — 정부 출처: ✅ 어댑터 3종 빌드 완료.** 파스·이름가드·오프라인 테스트 완료.
+코드: `sources/{heritage,medical,dart}.py`. 발급 안내는 docs/API_KEYS.md.
+5. **국가유산청 → heritage:** ✅ **키 불필요(개방형) → always-on**. `www.khs.go.kr/.../SearchKindOpenapiList.do`
+   (서버측만·CORS 차단). 국가지정(국보·보물·무형유산) 배지 + 좌표. 신뢰 서사 최상급. 시드 25종(유네스코 무형유산 +8).
+6. **심평원 병원정보 → medical:** ✅ — `MEDICAL_API_KEY`(dormant). 종별·개설일·소재지 등록정보(exact 이름가드).
+7. **DART 공시 → company:** ✅ — `DART_API_KEY`(dormant). 설립일·대표자·종목코드. corp_code 시드맵(이름가드 보호;
+   확장은 opendart corpCode.xml로 — 추측 코드는 무의미하므로 검증분만 추가).
 
-**Tier C — 그다음:**
-8. RAWG(game, 무료키) · TheSportsDB(sports, 무키) · AniList(webtoon/만화, 무키 GraphQL)
-9. **Wiktionary → proverb:/slang: 신규 버티컬** — 속담·관용구·은어 (등재 항목만, 검증 원칙 유지)
+**Tier C — 그다음: ✅ 소스 4종 빌드 완료.** 코드: `sources/{rawg,sportsdb,anilist,wiktionary}.py`.
+8. RAWG(game) ✅ — `RAWG_API_KEY` dormant(무료키). / TheSportsDB(sports) ✅ 무키 always-on(공개 테스트키
+   `3`, `SPORTSDB_API_KEY`로 교체) · 국적 가드. / AniList(webtoon) ✅ 무키 GraphQL always-on — native
+   한글 제목을 실어 유일하게 **양국어 합의 카운트를 올림**(KR origin 가드).
+9. **Wiktionary → proverb: 신규 버티컬** ✅ — 무키 always-on. 개별 속담은 독립 정답이 없어 교차검증에서
+   빠지되(**bar 안 굽힘**), *등재(lexical existence)*는 검증 가능 → **위키낱말사전 등재 항목만** 뜻풀이와
+   함께 인제스트. **의도적 단일소스 버티컬**(roster `PROVERBS` 6종 시드). API/데이터셋 + **사이트 정식
+   노출**(`_VERTICALS` 등록 → 홈 섹션 "Proverbs & idioms" + `proverbs.html` 허브, 전 제너레이터 렌더 검증).
+   남은 것: 시드 확장(등재 확인분 추가) — 각 항목은 위키낱말사전 등재 가드로 보호(미등재 → miss).
 10. 온체인 앵커링 (보류분)
 
 ## 언제 (게이트 조건)
