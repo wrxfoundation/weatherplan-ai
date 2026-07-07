@@ -49,12 +49,16 @@ from .reconcile import external_ids, name_keys
 from .pipeline.ingest import ingest_chart, ingest_one, ingest_youtube
 from .pipeline.scheduler import CADENCE
 from .roster import ARTISTS, CERTIFIED, NAMES
+from .sources.anilist import AniListSource
 from .sources.circlechart import CircleChartSource
 from .sources.dart import DARTSource
 from .sources.heritage import HeritageSource
 from .sources.kosis import KOSISSource
 from .sources.medical import MedicalSource
 from .sources.openlibrary import OpenLibrarySource
+from .sources.rawg import RAWGSource
+from .sources.sportsdb import SportsDBSource
+from .sources.wiktionary import WiktionarySource
 from .sources.mock import MockSource
 from .sources.musicbrainz import MusicBrainzSource
 from .sources.nominatim import NominatimSource
@@ -112,7 +116,8 @@ async def pull(entity_ids: list[str] | None = None, *, db_path: str | None = Non
     # Wikidata+Wikipedia are correlated; these come from separate DBs -> genuine triple-verification.
     sources = [WikidataSource(), WikipediaSource(), MusicBrainzSource(),
                NominatimSource(), TMDBSource(), TourAPISource(), KOSISSource(), OpenLibrarySource(),
-               HeritageSource(), MedicalSource(), DARTSource()]
+               HeritageSource(), MedicalSource(), DARTSource(),
+               RAWGSource(), SportsDBSource(), AniListSource(), WiktionarySource()]
     ingested: list[str] = []
     failed: list[str] = []
     for i, entity_id in enumerate(ids):
@@ -195,7 +200,9 @@ async def sweep(*, db_path: str | None = None, max_new: int = 10) -> dict:
     sources = [WikidataSource(aliases=aliases), WikipediaSource(aliases=aliases),
                MusicBrainzSource(aliases=aliases), NominatimSource(aliases=aliases),
                TMDBSource(aliases=aliases), TourAPISource(aliases=aliases), OpenLibrarySource(aliases=aliases),
-               HeritageSource(aliases=aliases), MedicalSource(aliases=aliases), DARTSource(aliases=aliases)]
+               HeritageSource(aliases=aliases), MedicalSource(aliases=aliases), DARTSource(aliases=aliases),
+               RAWGSource(aliases=aliases), SportsDBSource(aliases=aliases), AniListSource(aliases=aliases),
+               WiktionarySource(aliases=aliases)]
     ingested: list[str] = []
     for eid, _name in todo:
         rec = await ingest_one("facts", eid, sources, db_path=db_path)
@@ -246,7 +253,9 @@ async def discover(verticals: list[str] | None = None, *, db_path: str | None = 
         sources = [WikidataSource(aliases=aliases, qids=qids), WikipediaSource(aliases=aliases),
                    MusicBrainzSource(aliases=aliases), NominatimSource(aliases=aliases),
                    TMDBSource(aliases=aliases), TourAPISource(aliases=aliases), OpenLibrarySource(aliases=aliases),
-                   HeritageSource(aliases=aliases), MedicalSource(aliases=aliases), DARTSource(aliases=aliases)]
+                   HeritageSource(aliases=aliases), MedicalSource(aliases=aliases), DARTSource(aliases=aliases),
+                   RAWGSource(aliases=aliases), SportsDBSource(aliases=aliases), AniListSource(aliases=aliases),
+                   WiktionarySource(aliases=aliases)]
         ingested: list[str] = []
         for eid, _en, _q in todo:
             rec = await ingest_one("facts", eid, sources, db_path=db_path)

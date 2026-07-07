@@ -839,11 +839,26 @@ CONCEPTS = {
     "concept:jesa": "Jesa",
 }
 
+# Proverb vertical: Korean proverbs / idioms (속담·관용구). Individual sayings have NO independent
+# ground truth, so they are NOT cross-verified like the other verticals — the anchor is *lexical
+# existence*: a saying is ingested ONLY if it is a LISTED entry in Korean Wiktionary (등재 항목만),
+# with its dictionary gloss cited. The canonical name IS the Korean proverb (the Wiktionary headword,
+# used as both the search term and the identity guard). Seeded with widely-listed proverbs; a term
+# with no Wiktionary entry simply misses (never a wrong/unsourced saying). See sources/wiktionary.py.
+PROVERBS = {
+    "proverb:ganeunmal": "가는 말이 고와야 오는 말이 곱다",
+    "proverb:tikkeul": "티끌 모아 태산",
+    "proverb:gosaeng": "고생 끝에 낙이 온다",
+    "proverb:baleomneun": "발 없는 말이 천 리 간다",
+    "proverb:umulan": "우물 안 개구리",
+    "proverb:soilko": "소 잃고 외양간 고친다",
+}
+
 # Every verified entity across all verticals: id -> canonical name (search + identity term).
 NAMES = {**ARTISTS, **DRAMAS, **FILMS, **WEBTOONS, **PLACES, **FOODS, **COMPANIES, **BRANDS,
          **BOOKS, **HISTORY, **HERITAGE, **FOLKLORE, **MEDICAL, **REGION, **GAMES,
          **SHOWS, **ANIMATIONS, **UNIVERSITIES, **CLASSICS, **FASHION, **FESTIVALS,
-         **SPORTS, **ACTORS, **SONGS, **CONCEPTS}
+         **SPORTS, **ACTORS, **SONGS, **CONCEPTS, **PROVERBS}
 
 # Institutional certification — the strongest, NON-REPLICABLE moat. An organization (agency / brand /
 # museum / studio) officially vouches for an entity's data; that record then ranks ABOVE "triple
