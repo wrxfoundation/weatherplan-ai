@@ -14,10 +14,12 @@
 3. **MusicBrainz → song: 확장** — recording 검색, 무키 → 곡 제3소스.
 4. **Open Library → book: 신규** — openlibrary.org, 무키 → 도서 제3소스(ISBN/서지).
 
-**Tier B — 공공데이터포털 무료키 (형 발급 1회, KOSIS와 같은 dormant 패턴):**
-5. **국가유산청 API → heritage:** — 문화유산에 정부 공식 지정정보. 신뢰 서사 최상급.
-6. **심평원 병원정보 → medical:** — 병원 정부 등록정보.
-7. **DART 공시 → company:** — 국내 기업 공식 공시 = 기업 버티컬의 정부 티어.
+**Tier B — 공공데이터포털 무료키 (형 발급 1회, KOSIS와 같은 dormant 패턴): ✅ 어댑터 3종 빌드 완료(휴면).**
+어댑터·파스·이름가드·오프라인 테스트 완료 — **키만 발급하면 자동 활성**(collect에서 다음 pull 때 부착).
+발급 안내는 docs/API_KEYS.md의 "Phase-2 Tier B" 블록. 코드: `sources/{heritage,medical,dart}.py`.
+5. **국가유산청 API → heritage:** ✅ — `HERITAGE_API_KEY`. 국가지정(국보·보물·무형유산) 배지. 신뢰 서사 최상급.
+6. **심평원 병원정보 → medical:** ✅ — `MEDICAL_API_KEY`. 종별·개설일·소재지 등록정보(exact 이름가드).
+7. **DART 공시 → company:** ✅ — `DART_API_KEY`. 설립일·대표자·종목코드. corp_code 시드맵(이름가드 보호, 확장식).
 
 **Tier C — 그다음:**
 8. RAWG(game, 무료키) · TheSportsDB(sports, 무키) · AniList(webtoon/만화, 무키 GraphQL)

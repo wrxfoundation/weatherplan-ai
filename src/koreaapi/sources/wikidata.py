@@ -55,6 +55,32 @@ def _http_get_json(url: str, headers: dict, *, attempts: int = 4, timeout: int =
                 continue
             raise
 
+
+def _http_get_text(url: str, headers: dict, *, attempts: int = 4, timeout: int = 20,
+                   net_attempts: int = 2) -> str:
+    """GET a text/XML body, with the same throttle/back-off policy as `_http_get_json`.
+
+    data.go.kr government APIs (KTO EngService excepted) return XML only — 국가유산청 (heritage),
+    HIRA 심평원 (medical). The caller parses the returned string (ElementTree) in its pure parse
+    function, so the identity guard stays fixture-testable offline exactly like the JSON sources."""
+    for i in range(attempts):
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read().decode("utf-8", "replace")
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 503) and i < attempts - 1:
+                ra = e.headers.get("Retry-After") if e.headers else None
+                time.sleep(min(float(ra) if (ra and ra.isdigit()) else 2 ** i, 10))
+                continue
+            raise
+        except (urllib.error.URLError, TimeoutError):
+            if i < net_attempts - 1:
+                time.sleep(1)
+                continue
+            raise
+
+
 WIKIDATA_API = "https://www.wikidata.org/w/api.php"
 WIKIDATA_SPARQL = "https://query.wikidata.org/sparql"  # agency-hub roster discovery (sweep)
 # Wikimedia User-Agent policy: descriptive client/version + a contact URL + library.
