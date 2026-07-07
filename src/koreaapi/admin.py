@@ -1107,6 +1107,9 @@ _ICON = {
     # sparkle (culture concepts)
     "concept": _icon('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>'
                      '<path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/>'),
+    # speech bubble (proverbs / idioms — sayings)
+    "proverb": _icon('<path d="M21 12a8 8 0 0 1-8 8H7l-4 3v-6a8 8 0 0 1 8-13h2a8 8 0 0 1 8 8z"/>'
+                     '<line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="14" x2="13" y2="14"/>'),
     # tag (labels / agencies / networks)
     "label": _icon('<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0l-7-7A2 2 0 0 1 3 12.2V5a2 2 0 0 1 '
                    '2-2h7.2a2 2 0 0 1 1.4.6l7 7a2 2 0 0 1 0 2.8z"/><circle cx="7.6" cy="7.6" r="1.3"/>'),
@@ -1808,6 +1811,7 @@ _VERTICALS = {
     "actor": ("Korean actors", "actors.html", _ICON["actor"], "Works"),
     "song": ("K-pop songs", "songs.html", _ICON["song"], "Performer"),
     "concept": ("K-culture concepts", "concepts.html", _ICON["concept"], "Type"),
+    "proverb": ("Proverbs & idioms", "proverbs.html", _ICON["proverb"], "Meaning (뜻)"),
 }
 
 _HUB_STYLE = "<style>" + _AURORA + """
