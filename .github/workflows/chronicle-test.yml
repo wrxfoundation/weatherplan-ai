@@ -1,0 +1,32 @@
+# Chronicle CI — 타입체크 + 테스트 (네트워크 없이 에뮬레이터로 파이프라인 전체를 굴린다).
+name: chronicle-test
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - "chronicle/**"
+      - ".github/workflows/chronicle-test.yml"
+  pull_request:
+    paths:
+      - "chronicle/**"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: chronicle
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: chronicle/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test

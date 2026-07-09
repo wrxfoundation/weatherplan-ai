@@ -1,0 +1,24 @@
+{
+  "name": "chronicle",
+  "version": "0.1.0",
+  "private": true,
+  "description": "시간해자 크로니클 — 1 엔진 + N 어댑터, 해시체인 공증 아카이브 (스펙: PLAN.md)",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "collect": "tsx engine/run.ts",
+    "verify": "tsx engine/verify.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.23.0",
+    "typescript": "^5.7.0"
+  }
+}
