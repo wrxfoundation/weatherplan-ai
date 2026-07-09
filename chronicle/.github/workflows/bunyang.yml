@@ -1,0 +1,62 @@
+# Chronicle #4 청약·분양가 박제 (bunyang-capsule) — standalone 리포용.
+#
+# 이 파일은 모노리포(weatherplan-ai) 안에서는 chronicle/.github/ 아래라 실행되지
+# 않는다(GitHub은 리포 루트의 .github/workflows/만 실행). split-chronicle.sh로
+# 자체 리포로 분리하면 리포 루트에 놓여 즉시 활성화된다.
+#
+# 일 1회 청약홈 분양정보를 수집해 diff를 해시체인에 봉인하고, 변경이 있을 때만
+# data/를 커밋한다. 요구 Secret: DATA_GO_KR_KEY (data.go.kr 디코딩 키).
+# Manual: Actions tab -> "bunyang" -> Run workflow.
+name: bunyang
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "47 21 * * *" # daily ~06:47 KST — 전일 갱신분 수집
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chronicle-bunyang
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Collect + seal (변경 없으면 아무것도 쓰지 않음)
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: npm run collect -- bunyang-capsule
+
+      - name: Verify hash chain
+        run: npm run verify -- bunyang-capsule
+
+      - name: Commit accumulated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "no data change"
+          else
+            git commit -m "data(bunyang-capsule): daily capsule [skip ci]"
+            n=0
+            until git push; do
+              n=$((n+1))
+              if [ "$n" -ge 3 ]; then echo "push failed after $n attempts" >&2; exit 1; fi
+              git pull --rebase origin "$GITHUB_REF_NAME"
+            done
+          fi

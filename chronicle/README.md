@@ -143,17 +143,20 @@ npm run verify  -- bunyang-capsule
 
 ## Standalone 분리
 
-koreaapi와 같은 패턴 — 히스토리를 보존한 채 자체 리포로 떼어낸다:
+koreaapi와 같은 패턴 — 히스토리를 보존한 채 자체 리포로 떼어낸다.
+standalone용 워크플로우는 `chronicle/.github/workflows/`에 이미 포함되어
+있어(모노리포 안에서는 비활성) 분리 즉시 새 리포 루트에서 활성화된다.
 
 ```bash
-# 모노리포 루트에서
+# 1) GitHub에서 빈 리포 생성 (예: kwangdol-star/chronicle, Public, README 없이)
+# 2) 모노리포 루트에서:
 bash chronicle/scripts/split-chronicle.sh
-git push https://github.com/<owner>/chronicle.git chronicle-standalone:main
+git push https://github.com/kwangdol-star/chronicle.git chronicle-standalone:main
 ```
 
-분리 후 체크리스트: 워크플로우를 `.github/workflows/`로 옮기고
-`working-directory: chronicle`·`chronicle/` 경로 접두를 제거, 새 리포
-Secrets에 `DATA_GO_KR_KEY` 재등록, Actions에서 수동 1회 실행으로 확인.
+분리 후 체크리스트: 새 리포 Settings → Secrets에 `DATA_GO_KR_KEY` 등록 →
+Actions 탭에서 "bunyang" 수동 1회 실행(workflow_dispatch)으로 첫 캡슐 확인.
+이후 크론이 매일 자동으로 돈다.
 
 ## 원칙 (PLAN.md §0)
 

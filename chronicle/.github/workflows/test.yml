@@ -1,0 +1,24 @@
+# Chronicle CI — standalone 리포용 (모노리포 안에서는 비활성; 분리 후 자동 활성화).
+# 타입체크 + 테스트 — 네트워크 없이 에뮬레이터로 파이프라인 전체를 굴린다.
+name: test
+
+on:
+  workflow_dispatch: {}
+  push: {}
+  pull_request: {}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test

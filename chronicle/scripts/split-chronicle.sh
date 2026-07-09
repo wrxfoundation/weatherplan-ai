@@ -3,14 +3,15 @@
 #
 # Run from the weatherplan-ai repo ROOT, on the branch with the latest Chronicle work:
 #     bash chronicle/scripts/split-chronicle.sh
-# Then create an empty repo and:
-#     git push https://github.com/<owner>/chronicle.git chronicle-standalone:main
+# Then create an empty repo (e.g. kwangdol-star/chronicle, Public, no README) and:
+#     git push https://github.com/kwangdol-star/chronicle.git chronicle-standalone:main
+#
+# Workflows are already included: chronicle/.github/workflows/ (inert in the monorepo)
+# lands at the new repo's root .github/workflows/ and activates immediately.
 #
 # Post-split checklist (see chronicle/README.md "Standalone 분리"):
-#   - move .github/workflows/bunyang.yml (and chronicle-test.yml) into the new repo's
-#     .github/workflows/, drop `working-directory: chronicle` and chronicle/ path prefixes
 #   - register the DATA_GO_KR_KEY secret on the new repo
-#   - run the workflow once manually (workflow_dispatch) to confirm green
+#   - run the "bunyang" workflow once manually (workflow_dispatch) to confirm green
 set -euo pipefail
 
 PREFIX="chronicle"
@@ -28,11 +29,12 @@ git subtree split --prefix="$PREFIX" -b "$BRANCH"
 
 cat <<EOF
 
-✓ Done. Branch '$BRANCH' now has chronicle/ at its root, with full history.
+✓ Done. Branch '$BRANCH' now has chronicle/ at its root, with full history
+  (including .github/workflows/ — cron activates as soon as it lands on main).
 
 Next:
-  1) Create an empty repo on GitHub (no README).
-  2) git push https://github.com/<owner>/chronicle.git $BRANCH:main
-  3) Follow the post-split checklist in chronicle/README.md, then 'npm ci && npm test'
-     in the new repo to confirm green.
+  1) Create an empty repo on GitHub (e.g. kwangdol-star/chronicle, Public, no README).
+  2) git push https://github.com/kwangdol-star/chronicle.git $BRANCH:main
+  3) New repo Settings -> Secrets and variables -> Actions -> add DATA_GO_KR_KEY.
+  4) Actions tab -> "bunyang" -> Run workflow (first capsule), confirm green.
 EOF
