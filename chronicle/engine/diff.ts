@@ -24,7 +24,7 @@ export function toRecordMap(records: NormalizedRecord[]): Map<string, Normalized
     // JSON 왕복으로 정규화: undefined 필드 제거, Date 등 toJSON 적용.
     // 저장(JSON)과 메모리 표현이 어긋나면 같은 이벤트가 매 실행 다시 봉인된다.
     const fields = JSON.parse(JSON.stringify(record.fields)) as Record<string, unknown>;
-    if (RECORD_FIELD in fields) {
+    if (Object.hasOwn(fields, RECORD_FIELD)) {
       throw new Error(
         `예약 필드명 충돌: ${record.entityId} 의 필드에 ${RECORD_FIELD} 가 있습니다 — 어댑터에서 이름을 바꿔 주세요.`,
       );
@@ -56,8 +56,10 @@ export function diffRecords(
     }
     const fieldNames = [...new Set([...Object.keys(prev.fields), ...Object.keys(next.fields)])].sort();
     for (const field of fieldNames) {
-      const before = field in prev.fields ? prev.fields[field] : null;
-      const after = field in next.fields ? next.fields[field] : null;
+      // Object.hasOwn — `in`은 프로토타입 체인까지 봐서 "constructor"/"toString" 같은
+      // 필드명에서 상속 값을 읽어 유령 이벤트를 만든다
+      const before = Object.hasOwn(prev.fields, field) ? prev.fields[field] : null;
+      const after = Object.hasOwn(next.fields, field) ? next.fields[field] : null;
       if (canonicalJson(before) !== canonicalJson(after)) {
         changes.push({ entity_id: entityId, field, before, after, source_url: next.sourceUrl });
       }

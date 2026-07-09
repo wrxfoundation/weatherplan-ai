@@ -1,5 +1,5 @@
 /**
- * CLI: npm run verify -- <source-id> [--data-dir <path>]
+ * CLI: npm run verify -- <source-id> [--data-dir <path>] [--root <path>]
  *
  * changes.jsonl 전체를 제네시스부터 재계산해 integrity.json과 대조한다.
  * 체인이 온전하면 0, 훼손이 발견되면 1로 종료한다.
@@ -10,19 +10,20 @@ import { parseArgs } from "node:util";
 import { genesisHash, verifyChainLines } from "./integrity.js";
 import { loadIntegrity, readChangeLines, sourcePaths } from "./store.js";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const defaultRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 function main(): void {
   const { values, positionals } = parseArgs({
     allowPositionals: true,
-    options: { "data-dir": { type: "string" } },
+    options: { "data-dir": { type: "string" }, root: { type: "string" } },
   });
   const sourceId = positionals[0];
   if (!sourceId) {
-    console.error("사용법: npm run verify -- <source-id> [--data-dir <path>]");
+    console.error("사용법: npm run verify -- <source-id> [--data-dir <path>] [--root <path>]");
     process.exit(2);
   }
 
+  const root = values.root ? resolve(values.root) : defaultRoot;
   const dataDir = values["data-dir"] ? resolve(values["data-dir"]) : join(root, "data");
   const paths = sourcePaths(dataDir, sourceId);
   const integrity = loadIntegrity(paths);

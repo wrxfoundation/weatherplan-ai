@@ -37,13 +37,13 @@ export abstract class FileProbeAdapter extends BaseAdapter {
   async collect(ctx: CollectContext): Promise<CollectResult> {
     const targets = await this.targets(ctx);
     const records: NormalizedRecord[] = [];
-    const raw: Record<string, unknown> = {};
+    const rawEntries: Array<[string, unknown]> = [];
     const failed = new Set<string>();
 
     for (const target of targets) {
       try {
         const fields = await this.probe(ctx, target);
-        raw[target.entityId] = { url: target.url, ...fields };
+        rawEntries.push([target.entityId, { url: target.url, ...fields }]);
         records.push({ entityId: target.entityId, sourceUrl: target.url, fields });
       } catch (error) {
         failed.add(target.entityId);
@@ -52,7 +52,7 @@ export abstract class FileProbeAdapter extends BaseAdapter {
     }
 
     return {
-      raw,
+      raw: Object.fromEntries(rawEntries),
       records,
       removalScope: (stored) => !failed.has(stored.entityId),
     };

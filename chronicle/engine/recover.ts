@@ -44,7 +44,8 @@ export function replayRecords(events: ChangeEvent[]): Map<string, NormalizedReco
     }
     const record = map.get(event.entity_id);
     if (!record) continue; // 유효한 원장에서는 도달 불가 (필드 이벤트는 생성 이후에만)
-    record.fields[event.field] = event.after;
+    // 스프레드+계산된 키 = CreateDataProperty — 필드명이 "__proto__"여도 소실되지 않는다
+    record.fields = { ...record.fields, [event.field]: event.after };
     record.sourceUrl = event.source_url;
   }
   return map;
@@ -107,6 +108,11 @@ export function recoverState(
     integrity.length === events.length;
   const latestOk = loadLatestUpdatedAt(paths) === lastObservedAt;
   if (integrityOk && latestOk) {
+    // feed.xml만 유실된 마지막 크래시 창 — 파생물이라 조용히 재생성한다.
+    if (opts.heal && !existsSync(paths.feedPath)) {
+      writeFeed(paths, buildFeed(sourceId, opts.title, events.slice(-FEED_ENTRY_LIMIT)));
+      opts.log(`[${sourceId}] feed.xml 유실 감지 — 원장에서 재생성`);
+    }
     return { stored: loadLatest(paths), integrity, healed: false };
   }
 

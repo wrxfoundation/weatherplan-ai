@@ -38,13 +38,13 @@ export abstract class PageTextAdapter extends BaseAdapter {
   async collect(ctx: CollectContext): Promise<CollectResult> {
     const targets = await this.targets(ctx);
     const records: NormalizedRecord[] = [];
-    const raw: Record<string, { url: string; body: string }> = {};
+    const rawEntries: Array<[string, { url: string; body: string }]> = [];
     const failed = new Set<string>();
 
     for (const target of targets) {
       try {
         const body = await ctx.http.text(target.url);
-        raw[target.entityId] = { url: target.url, body };
+        rawEntries.push([target.entityId, { url: target.url, body }]);
         const text = this.extract(body);
         records.push({
           entityId: target.entityId,
@@ -58,7 +58,7 @@ export abstract class PageTextAdapter extends BaseAdapter {
     }
 
     return {
-      raw,
+      raw: Object.fromEntries(rawEntries),
       records,
       // 페치에 실패한 대상은 이번 회차 삭제 판정에서 제외한다.
       removalScope: (stored) => !failed.has(stored.entityId),

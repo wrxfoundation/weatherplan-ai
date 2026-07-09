@@ -63,11 +63,17 @@ export function writeLatest(
   updatedAt: string,
 ): void {
   mkdirSync(paths.dir, { recursive: true });
-  const out: LatestFile = { source_id: sourceId, updated_at: updatedAt, record_count: records.size, records: {} };
-  for (const entityId of [...records.keys()].sort()) {
+  // Object.fromEntries = CreateDataProperty — entity_id가 "__proto__"여도 소실되지 않는다
+  const entries = [...records.keys()].sort().map((entityId) => {
     const record = records.get(entityId)!;
-    out.records[entityId] = { source_url: record.sourceUrl, fields: record.fields };
-  }
+    return [entityId, { source_url: record.sourceUrl, fields: record.fields }] as const;
+  });
+  const out: LatestFile = {
+    source_id: sourceId,
+    updated_at: updatedAt,
+    record_count: records.size,
+    records: Object.fromEntries(entries),
+  };
   writeFileSync(paths.latestPath, stablePrettyJson(out));
 }
 
