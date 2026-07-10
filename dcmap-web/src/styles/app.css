@@ -532,9 +532,10 @@ a {
   font-family: var(--font-sans);
 }
 
-/* 전술맵 네이비 틴트: 중립 그레이(dark_matter) 타일을 딥 네이비 톤으로 (hero-v2 준거) */
+/* 전술맵 네이비 틴트: 중립 그레이(dark_matter) 타일을 딥 네이비 톤으로 (hero-v2 준거)
+ * sepia로 채도를 만든 뒤 hue-rotate로 청색 계열로 돌린다 — 실배포 확인 후 강도 조정 */
 .leaflet-tile {
-  filter: brightness(0.88) saturate(1.25) sepia(0.18) hue-rotate(175deg);
+  filter: brightness(0.82) sepia(0.55) saturate(1.9) hue-rotate(175deg);
 }
 
 .leaflet-container .leaflet-control,

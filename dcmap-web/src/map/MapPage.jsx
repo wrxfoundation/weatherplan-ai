@@ -12,7 +12,11 @@ import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } f
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 const TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-const KR_CENTER = [36.4, 127.7]
+// 남한 bbox — 초기 뷰를 여기에 맞춰 북한·일본으로 화면이 낭비되지 않게 한다
+const KR_BOUNDS = [
+  [33.0, 124.6],
+  [38.65, 130.95],
+]
 
 function markerIcon(f) {
   const key = f.status === 'delayed' ? 'planned' : f.status
@@ -56,14 +60,21 @@ export default function MapPage() {
 
   useEffect(() => {
     // 시안(hero-v1) 준거: 줌 컨트롤 우하단, 축척 좌하단
-    const map = L.map(mapRef.current, { center: KR_CENTER, zoom: 7, zoomControl: false })
+    const map = L.map(mapRef.current, { zoomControl: false, minZoom: 6 })
+    map.fitBounds(KR_BOUNDS, { padding: [8, 8] })
+    map.setMaxBounds([
+      [30.5, 119.5],
+      [41.5, 136.5],
+    ])
     L.control.zoom({ position: 'bottomright' }).addTo(map)
     L.control.scale({ position: 'bottomleft', imperial: false }).addTo(map)
     L.tileLayer(DARK_TILES, { attribution: TILE_ATTRIBUTION, maxZoom: 19 }).addTo(map)
     const cluster = L.markerClusterGroup({
-      maxClusterRadius: 44,
+      maxClusterRadius: 30, // 밀도감: 촘촘히 붙은 것만 묶고 개별 마커를 최대한 노출
+      disableClusteringAtZoom: 10,
+      spiderfyOnMaxZoom: false,
       iconCreateFunction: (c) =>
-        L.divIcon({ className: 'dc-cluster', html: `${c.getChildCount()}`, iconSize: [34, 34] }),
+        L.divIcon({ className: 'dc-cluster', html: `${c.getChildCount()}`, iconSize: [30, 30] }),
     })
     map.addLayer(cluster)
     mapObj.current = map
