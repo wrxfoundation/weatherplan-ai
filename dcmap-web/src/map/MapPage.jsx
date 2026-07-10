@@ -7,16 +7,17 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import TopBar from '../TopBar.jsx'
 import FilterBar from './FilterBar.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
-import { FACILITIES, STATUS_LABEL, applyFilters } from '../data/facilities.js'
+import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, applyFilters } from '../data/facilities.js'
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 const TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
 const KR_CENTER = [36.4, 127.7]
 
-function markerIcon(status) {
-  const key = status === 'delayed' ? 'planned' : status
-  return L.divIcon({ className: `dc-marker ${key}`, iconSize: [14, 14] })
+function markerIcon(f) {
+  const key = f.status === 'delayed' ? 'planned' : f.status
+  const xl = f.power_mw_public >= HYPERSCALE_MW
+  return L.divIcon({ className: `dc-marker ${key}${xl ? ' xl' : ''}`, iconSize: xl ? [20, 20] : [14, 14] })
 }
 
 export default function MapPage() {
@@ -39,6 +40,7 @@ export default function MapPage() {
     () => applyFilters(FACILITIES, { statuses, type, sido, minMw, q }),
     [statuses, type, sido, minMw, q],
   )
+  const totalMw = useMemo(() => filtered.reduce((s, f) => s + (f.power_mw_public ?? 0), 0), [filtered])
 
   useEffect(() => {
     // 시안(hero-v1) 준거: 줌 컨트롤 우하단, 축척 좌하단
@@ -62,7 +64,7 @@ export default function MapPage() {
     if (!cluster) return
     cluster.clearLayers()
     for (const f of filtered) {
-      const m = L.marker([f.lat, f.lng], { icon: markerIcon(f.status) })
+      const m = L.marker([f.lat, f.lng], { icon: markerIcon(f) })
       m.bindTooltip(`${f.name} · ${STATUS_LABEL[f.status] ?? f.status}`, { direction: 'top' })
       m.on('click', () => setSelected(f))
       cluster.addLayer(m)
@@ -114,7 +116,13 @@ export default function MapPage() {
               <div className="panel-title">사이트 인텔리전스</div>
               <h2>
                 시설 <strong>{filtered.length}</strong>곳
-                {minMw != null && ` · 공개 전력 ≥ ${minMw} MW`}
+                {totalMw > 0 && (
+                  <>
+                    {' · 공개 전력 합계 '}
+                    <strong>{totalMw.toLocaleString()}</strong> MW
+                  </>
+                )}
+                {minMw != null && ` · 필터 ≥ ${minMw} MW`}
                 {q && ` · “${q}”`}
               </h2>
               <div className="facility-list">

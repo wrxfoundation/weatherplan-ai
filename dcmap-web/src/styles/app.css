@@ -488,6 +488,21 @@ a {
   border-color: var(--status-planned);
 }
 
+/* 하이퍼스케일(공개 용량 100MW+): 확대 마커 + 강한 글로우 */
+.dc-marker.xl.operating {
+  box-shadow: 0 0 18px 5px color-mix(in srgb, var(--status-operating) 75%, transparent);
+}
+
+.dc-marker.xl.construction {
+  box-shadow: 0 0 18px 5px color-mix(in srgb, var(--status-construction) 65%, transparent);
+}
+
+.dc-marker.xl.planned,
+.dc-marker.xl.delayed {
+  border-width: 3px;
+  box-shadow: 0 0 14px 3px color-mix(in srgb, var(--status-planned) 45%, transparent);
+}
+
 .dc-cluster {
   background: color-mix(in srgb, var(--surface) 85%, var(--accent));
   border: 1px solid var(--accent);

@@ -15,6 +15,9 @@ export const GEOCODE_LABEL = {
   sido: '시도 중심점',
 }
 
+// 하이퍼스케일 분류 기준: 공개 용량 100MW 이상 (aidatacentermap 등 업계 통용 기준)
+export const HYPERSCALE_MW = 100
+
 export const slugOf = (f) => f.id.replace(/^kr-/, '')
 
 export const findBySlug = (slug) => FACILITIES.find((f) => slugOf(f) === slug)
