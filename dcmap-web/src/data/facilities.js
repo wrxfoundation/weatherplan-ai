@@ -2,6 +2,8 @@ import centers from '../../data/dc_centers.json'
 
 export const FACILITIES = centers.facilities
 
+export const DATA_VERSION = { version: centers.version, date: centers.generated_at }
+
 export const STATUS_LABEL = {
   operating: '운영',
   construction: '건설',

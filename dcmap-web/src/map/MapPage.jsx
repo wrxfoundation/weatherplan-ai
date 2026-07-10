@@ -7,7 +7,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import TopBar from '../TopBar.jsx'
 import FilterBar from './FilterBar.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
-import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, applyFilters } from '../data/facilities.js'
+import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 const TILE_ATTRIBUTION =
@@ -48,6 +48,11 @@ export default function MapPage() {
     [statuses, type, sido, minMw, q],
   )
   const totalMw = useMemo(() => filtered.reduce((s, f) => s + (f.power_mw_public ?? 0), 0), [filtered])
+  const statusCounts = useMemo(() => {
+    const c = { operating: 0, construction: 0, planned: 0 }
+    for (const f of filtered) c[f.status === 'delayed' ? 'planned' : f.status] += 1
+    return c
+  }, [filtered])
 
   useEffect(() => {
     // 시안(hero-v1) 준거: 줌 컨트롤 우하단, 축척 좌하단
@@ -120,7 +125,12 @@ export default function MapPage() {
             </>
           ) : (
             <>
-              <div className="panel-title">사이트 인텔리전스</div>
+              <div className="panel-title">
+                사이트 인텔리전스
+                <span className="ver-chip" title="시드 데이터 버전 · 기준일">
+                  v{DATA_VERSION.version} · {DATA_VERSION.date}
+                </span>
+              </div>
               <h2>
                 시설 <strong>{filtered.length}</strong>곳
                 {totalMw > 0 && (
@@ -132,6 +142,32 @@ export default function MapPage() {
                 {minMw != null && ` · 필터 ≥ ${minMw} MW`}
                 {q && ` · “${q}”`}
               </h2>
+              {filtered.length > 0 && (
+                <div className="status-summary">
+                  <div
+                    className="status-bar"
+                    role="img"
+                    aria-label={`운영 ${statusCounts.operating}, 건설 ${statusCounts.construction}, 계획 ${statusCounts.planned}`}
+                  >
+                    {statusCounts.operating > 0 && <span className="seg op" style={{ flexGrow: statusCounts.operating }} />}
+                    {statusCounts.construction > 0 && (
+                      <span className="seg co" style={{ flexGrow: statusCounts.construction }} />
+                    )}
+                    {statusCounts.planned > 0 && <span className="seg pl" style={{ flexGrow: statusCounts.planned }} />}
+                  </div>
+                  <div className="status-chips">
+                    <span>
+                      <i className="dot operating" /> 운영 <strong>{statusCounts.operating}</strong>
+                    </span>
+                    <span>
+                      <i className="dot construction" /> 건설 <strong>{statusCounts.construction}</strong>
+                    </span>
+                    <span>
+                      <i className="dot planned" /> 계획 <strong>{statusCounts.planned}</strong>
+                    </span>
+                  </div>
+                </div>
+              )}
               <div className="facility-list">
                 {filtered.map((f) => (
                   <button key={f.id} type="button" className="facility-row" onClick={() => focusFacility(f)}>

@@ -263,6 +263,70 @@ a {
   font-weight: var(--weight-bold);
   line-height: var(--lh-tight);
   margin: 4px 2px 2px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ver-chip {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-regular);
+  color: var(--grey);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 8px;
+  white-space: nowrap;
+}
+
+/* 상태 요약: 3-세그먼트 비율 바 + 카운트 칩 (레퍼런스 'DATA CENTER STATUS' 위젯 흡수) */
+.status-summary {
+  margin: 0 2px 12px;
+}
+
+.status-bar {
+  display: flex;
+  gap: 2px;
+  height: 8px;
+  margin-bottom: 6px;
+}
+
+.status-bar .seg {
+  border-radius: 4px;
+  min-width: 6px;
+}
+
+.status-bar .seg.op {
+  background: var(--status-operating);
+}
+
+.status-bar .seg.co {
+  background: var(--status-construction);
+}
+
+.status-bar .seg.pl {
+  background: color-mix(in srgb, var(--status-planned) 45%, var(--surface));
+}
+
+.status-chips {
+  display: flex;
+  gap: 14px;
+  font-size: var(--text-sm);
+  color: var(--grey);
+}
+
+.status-chips strong {
+  color: var(--text);
+  font-weight: var(--weight-bold);
+}
+
+.status-chips .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: -1px;
+  margin-right: 2px;
 }
 
 .side-panel h2 {

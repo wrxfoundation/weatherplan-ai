@@ -85,6 +85,16 @@ export default function StatsPage() {
     return { total, capital, pct: Math.round((capital / total) * 100) }
   }, [])
 
+  const regionMw = useMemo(() => {
+    const by = new Map()
+    for (const f of FACILITIES) {
+      if (f.power_mw_public != null) by.set(f.sido, (by.get(f.sido) ?? 0) + f.power_mw_public)
+    }
+    return [...by.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([label, value]) => ({ label, value }))
+  }, [])
+
   useEffect(() => {
     document.title = TITLE
     setMeta('name', 'description', DESC)
@@ -136,6 +146,12 @@ export default function StatsPage() {
         </div>
 
         <div className="calc-card">
+          <HBars
+            title={`명당 시드 기준 지역별 공개 전력 분포 (계획 포함, 총 ${regionMw.reduce((s, b) => s + b.value, 0).toLocaleString()}MW)`}
+            bars={regionMw}
+            unit="MW"
+            note="공개 전력 규모(power_mw_public)가 확인된 시설만 집계. 전남(솔라시도 1GW 구상)·경기(파주 AIDC)·울산 등 계획·건설 단계의 비수도권 대형 프로젝트가 분포를 주도한다."
+          />
           <div className="chart-title">명당 AI 맵 데이터와 교차 확인</div>
           <p className="chart-note">
             명당 시드 v0.1이 추적 중인 시설 {myeongdang.total}곳(운영·건설·계획 포함) 중 수도권(서울·경기·인천)은{' '}
