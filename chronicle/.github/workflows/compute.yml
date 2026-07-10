@@ -1,0 +1,65 @@
+# Chronicle #15 컴퓨트 가격 지수 (compute-price-index) — standalone 리포용.
+#
+# 일 1회 AWS Spot Advisor에서 GPU 스팟 절감률·중단위험을 관측해 봉인한다.
+# AWS는 현재값만 제공하고 이력을 남기지 않는다 — 곡선은 아카이버 소유.
+# Secret 불필요 (공개 JSON).
+# Manual: Actions tab -> "compute" -> Run workflow.
+name: compute
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "31 20 * * *" # daily ~05:31 KST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chronicle-compute
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Collect + seal (변경 없으면 아무것도 쓰지 않음)
+        run: npm run collect -- compute-price-index
+
+      - name: Verify hash chain
+        run: npm run verify -- compute-price-index
+
+      - name: Anchor chain head to RFC 3161 TSA (best-effort)
+        run: npm run anchor -- compute-price-index
+
+      - name: Publish site (docs/)
+        run: |
+          npm run site
+          test -f docs/index.html && test -f docs/.nojekyll  # 산출물 없으면 여기서 실패
+
+      - name: Commit accumulated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data docs
+          if git diff --cached --quiet; then
+            echo "no data change"
+          else
+            git commit -m "data(compute-price-index): daily compute index [skip ci]"
+            n=0
+            until git push; do
+              n=$((n+1))
+              if [ "$n" -ge 3 ]; then echo "push failed after $n attempts" >&2; exit 1; fi
+              git pull --rebase origin "$GITHUB_REF_NAME"
+            done
+          fi

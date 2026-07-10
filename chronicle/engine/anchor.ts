@@ -132,6 +132,17 @@ export async function anchorSource(options: AnchorOptions): Promise<AnchorResult
   return "anchored";
 }
 
+/** GitHub Actions 실행 요약(run 페이지 첫 화면)에 결과를 노출 — 로그를 파헤치지 않아도 보인다. */
+function stepSummary(line: string): void {
+  const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+  if (!summaryPath) return;
+  try {
+    appendFileSync(summaryPath, `${line}\n\n`);
+  } catch {
+    /* 요약 실패는 무시 */
+  }
+}
+
 const isCliEntry = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 
 if (isCliEntry) {
@@ -148,9 +159,13 @@ if (isCliEntry) {
   const root = values.root ? resolve(values.root) : defaultRoot;
   const dataDir = values["data-dir"] ? resolve(values["data-dir"]) : join(root, "data");
   try {
-    await anchorSource({ sourceId, dataDir });
+    const result = await anchorSource({ sourceId, dataDir });
+    if (result === "anchored") stepSummary(`⚓ **${sourceId}**: 체인 머리 TSA 앵커 완료`);
+    if (result === "already-anchored") stepSummary(`⚓ ${sourceId}: 현재 머리 이미 앵커됨`);
   } catch (error) {
     // best-effort: 앵커 실패가 수집 파이프라인을 막으면 안 된다.
-    console.error(`앵커 실패(생략, 다음 실행에서 재시도): ${error instanceof Error ? error.message : error}`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`앵커 실패(생략, 다음 실행에서 재시도): ${message}`);
+    stepSummary(`⚠️ **${sourceId} 앵커 실패** (수집은 정상): ${message}`);
   }
 }
