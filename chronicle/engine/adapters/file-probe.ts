@@ -51,6 +51,10 @@ export abstract class FileProbeAdapter extends BaseAdapter {
       }
     }
 
+    if (targets.length > 0 && records.length === 0) {
+      throw new Error(`[${this.id}] 대상 ${targets.length}곳 전부 프로브 실패 — 소스/네트워크 장애 의심.`);
+    }
+
     return {
       raw: Object.fromEntries(rawEntries),
       records,

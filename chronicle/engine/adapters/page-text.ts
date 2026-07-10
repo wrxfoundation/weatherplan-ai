@@ -19,6 +19,12 @@ export abstract class PageTextAdapter extends BaseAdapter {
 
   protected abstract targets(ctx: CollectContext): Promise<PageTarget[]> | PageTarget[];
 
+  /** 요청 옵션(UA 헤더 등) — 봇 차단이 있는 기관 사이트용. 필요 시 재정의. */
+  protected requestInit(ctx: CollectContext): RequestInit | undefined {
+    void ctx;
+    return undefined;
+  }
+
   /** HTML → 비교 대상 텍스트. 기본은 태그 제거 + 공백 정규화 (필요 시 재정의). */
   protected extract(html: string): string {
     return html
@@ -41,9 +47,10 @@ export abstract class PageTextAdapter extends BaseAdapter {
     const rawEntries: Array<[string, { url: string; body: string }]> = [];
     const failed = new Set<string>();
 
+    const init = this.requestInit(ctx);
     for (const target of targets) {
       try {
-        const body = await ctx.http.text(target.url);
+        const body = await ctx.http.text(target.url, init);
         rawEntries.push([target.entityId, { url: target.url, body }]);
         const text = this.extract(body);
         records.push({
@@ -55,6 +62,11 @@ export abstract class PageTextAdapter extends BaseAdapter {
         failed.add(target.entityId);
         ctx.log(`[${this.id}] 페치 실패 — 건너뜀: ${target.url} (${error instanceof Error ? error.message : error})`);
       }
+    }
+
+    // 개별 실패는 허용하지만 전원 실패는 소스 장애다 — "변경 없음"으로 위장되지 않게 중단.
+    if (targets.length > 0 && records.length === 0) {
+      throw new Error(`[${this.id}] 대상 ${targets.length}곳 전부 페치 실패 — 소스/네트워크 장애 의심.`);
     }
 
     return {

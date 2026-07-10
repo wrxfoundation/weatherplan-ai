@@ -1,0 +1,59 @@
+# Chronicle #11 기관 전망 박제 (forecast-graders) — standalone 리포용.
+#
+# 주 2회(월·목 06:17 KST) 기관 전망 페이지를 박제해 diff를 해시체인에 봉인하고,
+# 변경이 있을 때만 data/를 커밋한다. 별도 Secret 불필요 (공개 페이지).
+# Manual: Actions tab -> "forecast" -> Run workflow.
+name: forecast
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "17 21 * * 0,3" # 월·목 ~06:17 KST (UTC 일·수 21:17)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chronicle-forecast
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Collect + seal (변경 없으면 아무것도 쓰지 않음)
+        run: npm run collect -- forecast-graders
+
+      - name: Verify hash chain
+        run: npm run verify -- forecast-graders
+
+      - name: Anchor chain head to RFC 3161 TSA (best-effort)
+        run: npm run anchor -- forecast-graders
+
+      - name: Commit accumulated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "no data change"
+          else
+            git commit -m "data(forecast-graders): forecast capsule [skip ci]"
+            n=0
+            until git push; do
+              n=$((n+1))
+              if [ "$n" -ge 3 ]; then echo "push failed after $n attempts" >&2; exit 1; fi
+              git pull --rebase origin "$GITHUB_REF_NAME"
+            done
+          fi

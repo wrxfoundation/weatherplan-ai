@@ -1,0 +1,30 @@
+# 기관 전망 채점 — 스펙 v4 #11 (forecast-graders), 페이지 텍스트형 계열 첫 소스.
+#
+# MVP = 전망 발표 페이지의 텍스트 박제(발표 시점·내용의 공증). 사후 채점은
+# 축적이 쌓인 뒤의 단계다 (PLAN.md: KB·건산연·주산연·한은, 기관 공식 자료만).
+# 7월 = 하반기 전망 발표 시즌 — 지금 박제하지 않으면 1년을 기다린다.
+#
+# 대상은 운영 중 이 파일에서 조정 가능하다. 페치 실패한 대상은 그 회차만
+# 건너뛰며(삭제 오탐 없음), 전원 실패 시에는 소스 장애로 중단한다.
+# 일부 기관 사이트는 봇 차단이 있어 UA 헤더를 쓴다 — 그래도 막히는 대상은
+# 첫 Actions 실행 로그에서 확인해 보도자료 미러 등으로 교체한다.
+id: forecast-graders
+family: page-text
+title: 기관 전망 박제 — 한은·KB·건산연·주산연
+
+user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36 chronicle-archive/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
+rate_limit_ms: 1000 # 기관 사이트 예의 — 대상당 1초 간격
+
+targets:
+  - id: bok-outlook
+    url: https://www.bok.or.kr/portal/bbs/B0000245/list.do?menuNo=200761 # 한국은행 경제전망보고서
+  - id: cerik-press
+    url: https://www.cerik.re.kr/board/press # 건설산업연구원 보도자료
+  - id: cerik-seminar
+    url: https://www.cerik.re.kr/report/seminar # 건산연 세미나 (경기전망 발표장)
+  - id: khi-outlook
+    url: https://www.khi.re.kr/info/info3.php # 주택산업연구원 주택경기전망
+  - id: khi-press
+    url: https://www.khi.re.kr/notice/notice3.php # 주산연 보도자료
+  - id: kb-research
+    url: https://www.kbfg.com/kbresearch/report/reportList.do # KB경영연구소 보고서 목록
