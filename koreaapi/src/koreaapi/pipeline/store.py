@@ -147,6 +147,31 @@ async def latest(entity_id: str, kind: str, *, db_path: str | None = None) -> Re
     return Record.model_validate_json(raw) if raw else None
 
 
+async def history(entity_id: str, kind: str, *, limit: int = 5000,
+                  db_path: str | None = None) -> list[Record]:
+    """Every snapshot for an entity+kind, oldest → newest — the append-only timeline (the time moat).
+    A latecomer can copy today's row but cannot reconstruct these timestamped past states."""
+
+    def _do() -> list[str]:
+        conn = _connect(db_path)
+        try:
+            # Fetch the NEWEST `limit` snapshots (DESC), then reverse to oldest→newest below. If an
+            # entity ever exceeds the cap, we keep the recent timeline (correct current/last_verified)
+            # rather than freezing at the oldest rows an ASC LIMIT would return.
+            rows = conn.execute(
+                "SELECT record_json FROM snapshots WHERE entity_id = ? AND kind = ? "
+                "ORDER BY snapshot_at DESC, id DESC LIMIT ?",
+                (entity_id, kind, limit),
+            ).fetchall()
+            return [r[0] for r in rows]
+        finally:
+            conn.close()
+
+    raws = await asyncio.to_thread(_do)
+    raws.reverse()  # DESC fetch -> oldest→newest for the append-only timeline contract
+    return [Record.model_validate_json(r) for r in raws]
+
+
 async def count(entity_id: str, kind: str, *, db_path: str | None = None) -> int:
     """Count snapshots for an entity+kind. Used to prove append-only accumulation."""
 
@@ -204,3 +229,21 @@ async def recent(limit: int = 200, *, db_path: str | None = None) -> list[Record
 
     raws = await asyncio.to_thread(_do)
     return [Record.model_validate_json(r) for r in raws]
+
+
+async def delete_entity(entity_id: str, *, db_path: str | None = None) -> int:
+    """Maintenance ONLY: remove all snapshots for an entity_id (e.g. a mis-discovered wrong item — a
+    bad discovery class once matched K-pop singles as 'webtoon'). The store is otherwise APPEND-ONLY;
+    this is the single narrow exception, used by admin.prune to clean bad ingests. Returns rows deleted.
+    """
+
+    def _do() -> int:
+        conn = _connect(db_path)
+        try:
+            cur = conn.execute("DELETE FROM snapshots WHERE entity_id = ?", (entity_id,))
+            conn.commit()
+            return cur.rowcount
+        finally:
+            conn.close()
+
+    return await asyncio.to_thread(_do)

@@ -111,16 +111,223 @@ def test_artist_status_name_comes_from_best_verified_record():
     assert out["name"] == {"ko": "방탄소년단", "en_official": "BTS", "romanized": "Bangtan Sonyeondan"}
 
 
-def test_buy_options_phase1_stub_is_honest():
-    db = _seeded_db()
-    out = asyncio.run(service.buy_options("BTS album", db_path=db))
+def _graph_db() -> str:
+    fd, path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+    os.unlink(path)
+    now = datetime.now(timezone.utc)
+    rows = [
+        ("film:parasite", "기생충", "Parasite", {"directors": ["Bong Joon-ho"], "members": ["Song Kang-ho"]}),
+        ("film:memoriesofmurder", "살인의 추억", "Memories of Murder",
+         {"directors": ["Bong Joon-ho"], "members": ["Song Kang-ho"]}),
+        ("drama:squidgame", "오징어 게임", "Squid Game", {"agency_en": "Netflix"}),
+        ("drama:allofusaredead", "지금 우리 학교는", "All of Us Are Dead", {"agency_en": "Netflix"}),
+        ("artist:straykids", "스트레이키즈", "Stray Kids", {"agency_en": "JYP Entertainment"}),
+        ("artist:itzy", "있지", "ITZY", {"agency_en": "JYP Entertainment"}),
+        ("artist:aespa", "에스파", "aespa", {"agency_en": "SM Entertainment"}),
+    ]
+    for eid, ko, en, data in rows:
+        asyncio.run(store.append_record(Record(
+            entity_id=eid, kind="facts", name=Name(ko=ko, en_official=en), snapshot_at=now,
+            summary_en=f"{en} - facts.", data=data,
+            provenance=Provenance(sources=["Wikidata Q1", "Wikipedia"], fetched_at=now,
+                                  skill_score=1.0, confidence="high"),
+        ), db_path=path))
+    return path
 
-    assert out["options"] == []
-    assert "buy-intent" in out["note"]
+
+def test_person_aggregates_credits_across_works():
+    db = _graph_db()
+    out = asyncio.run(service.person("Bong Joon-ho", db_path=db))
+    assert out["found"] is True and out["count"] == 2          # a cross-work director hub
+    assert {c["work"]["entity_id"] for c in out["credits"]} == {"film:parasite", "film:memoriesofmurder"}
+    assert all(c["role"] == "director" for c in out["credits"])
+    assert out["provenance"]["sources"] and "via KoreaAPI" in out["citation"]
+    # a slug-form query resolves to the same person (name == slug); cast role aggregates too
+    slug_form = asyncio.run(service.person("bong-joon-ho", db_path=db))
+    assert slug_form["found"] is True and slug_form["name"] == "Bong Joon-ho" and slug_form["count"] == 2
+    assert asyncio.run(service.person("song-kang-ho", db_path=db))["count"] == 2  # cast credits
+
+
+def test_person_unknown_is_honest_miss():
+    db = _graph_db()
+    out = asyncio.run(service.person("Nobody At All", db_path=db))
+    assert out["found"] is False
+
+
+def test_related_by_agency_and_network_within_family():
+    db = _graph_db()
+    sk = asyncio.run(service.related("artist:straykids", db_path=db))
+    assert sk["related_by"] == "agency" and sk["key"] == "JYP Entertainment"
+    names = {m["name"]["en_official"] for m in sk["related"]}
+    assert names == {"ITZY"}                                   # same 소속사; aespa (SM) + dramas excluded
+    sg = asyncio.run(service.related("drama:squidgame", db_path=db))
+    assert sg["related_by"] == "network" and sg["key"] == "Netflix"
+    assert {m["name"]["en_official"] for m in sg["related"]} == {"All of Us Are Dead"}
+
+
+def test_related_without_edge_is_empty_not_error():
+    db = _graph_db()
+    out = asyncio.run(service.related("film:parasite", db_path=db))  # theatrical film, no network edge
+    assert out["found"] is True and out["count"] == 0
+
+
+def test_related_stays_within_non_artist_family():
+    # A place sharing the region slot (agency_en) with a university must NOT be returned as related to
+    # the place — different verticals reuse the same hub slot; only the SAME family should match.
+    import tempfile
+    from datetime import datetime, timezone
+
+    from koreaapi import admin
+    from koreaapi.models import Name, Provenance, Record
+    db = tempfile.mktemp(suffix=".db")
+    now = datetime(2026, 5, 1, tzinfo=timezone.utc)
+
+    def seed(eid: str, ko: str, en: str) -> None:
+        asyncio.run(admin.store.append_record(Record(
+            entity_id=eid, kind="facts", name=Name(ko=ko, en_official=en), snapshot_at=now,
+            summary_en=en, data={"agency_en": "Seoul"},
+            provenance=Provenance(sources=["Wikidata Q1", "Wikipedia x"], fetched_at=now,
+                                  skill_score=1.0, confidence="high", agreeing_sources=2)), db_path=db))
+
+    seed("place:gyeongbokgung", "경복궁", "Gyeongbokgung")
+    seed("place:namsan", "남산", "Namsan")
+    seed("university:snu", "서울대학교", "Seoul National University")
+    out = asyncio.run(service.related("place:gyeongbokgung", db_path=db))
+    assert {m["name"]["en_official"] for m in out["related"]} == {"Namsan"}  # NOT the university
+    assert out["related_by"] == "hub"
+
+
+def test_buy_options_verifies_official_and_returns_safe_channels():
+    db = tempfile.mktemp(suffix=".db")
+    now = datetime(2026, 5, 1, tzinfo=timezone.utc)
+    asyncio.run(store.append_record(Record(
+        entity_id="artist:bts", kind="facts", name=Name(ko="방탄소년단", en_official="BTS"),
+        snapshot_at=now, summary_en="BTS",
+        data={"agency_en": "HYBE", "official_url": "https://ibighit.com"},
+        provenance=Provenance(sources=["Wikidata Q1", "Wikipedia BTS"], fetched_at=now,
+                              skill_score=1.0, confidence="high", agreeing_sources=2)), db_path=db))
+    # a VERIFIED entity -> official website (P856) + official representative + a canonical anti-scam key
+    out = asyncio.run(service.buy_options("artist:bts", db_path=db))
+    assert out["verified_official"] is True
+    assert out["canonical"]["id"] == "artist:bts" and out["canonical"]["cross_verified"] is True
+    assert any(o["type"] == "official-website" and o["url"] == "https://ibighit.com" and o["verified"]
+               for o in out["options"])
+    assert any(o["type"] == "official-representative" and o["name"] == "HYBE" and o["verified"]
+               for o in out["options"])
+    assert out["caution"] and "counterfeit" in out["caution"]
+    assert out["commission"]["status"] == "dormant"          # money rail stays dormant
+    # the GATEWAY: the ONE green-lit route an agent acts on — the domain-verified first-party site
+    g = out["gateway"]
+    assert g["status"] == "verified-official" and g["route_to"] == "https://ibighit.com"
+    assert g["official_domain"] == "ibighit.com" and g["canonical"]["id"] == "artist:bts"
+    # an UNVERIFIED item -> safe-fail: no channels, no purchase routed, but buy-intent still logged
+    bad = asyncio.run(service.buy_options("Totally Fake Nonexistent Thing 12345", db_path=db))
+    assert bad["verified_official"] is False and bad["options"] == [] and bad["canonical"] is None
+    assert bad["gateway"]["status"] == "unverified" and bad["gateway"]["route_to"] is None  # safe-fail route
+    assert "buy-intent" in bad["note"]
+
+
+def test_buy_options_safe_fails_when_not_cross_verified():
+    # Commerce routes money, so the bar is CROSS-VERIFICATION, not mere existence: a single-source entity
+    # (agreeing_sources=1) — even WITH an official_url — must not be green-lit as verified-official.
+    db = tempfile.mktemp(suffix=".db")
+    now = datetime(2026, 5, 1, tzinfo=timezone.utc)
+    asyncio.run(store.append_record(Record(
+        entity_id="brand:solo", kind="facts", name=Name(ko="솔로브랜드", en_official="SoloBrand"),
+        snapshot_at=now, summary_en="SoloBrand", data={"official_url": "https://solobrand.example"},
+        provenance=Provenance(sources=["Wikidata Q1"], fetched_at=now,
+                              skill_score=0.7, confidence="low", agreeing_sources=1)), db_path=db))
+    out = asyncio.run(service.buy_options("brand:solo", db_path=db))
+    assert out["verified_official"] is False                      # single-source is below the anti-fake bar
+    assert out["options"] == [] and out["gateway"]["status"] == "unverified"
+    assert out["gateway"]["route_to"] is None                     # never route to an uncorroborated entity
+
+
+def test_person_returns_recurring_collaborators():
+    # The person graph on the AGENT surface: a director's RECURRING collaborators (people who share a
+    # verified work AND are themselves credited on >=2 works), ranked by shared-work count.
+    db = tempfile.mktemp(suffix=".db")
+    now = datetime(2026, 5, 1, tzinfo=timezone.utc)
+
+    def film(eid, ko, en, directors, cast):
+        asyncio.run(store.append_record(Record(
+            entity_id=eid, kind="facts", name=Name(ko=ko, en_official=en), snapshot_at=now,
+            summary_en=en, data={"directors": directors, "members": cast},
+            provenance=Provenance(sources=["Wikidata Q1", "Wikipedia x"], fetched_at=now,
+                                  skill_score=1.0, confidence="high", agreeing_sources=2)), db_path=db))
+
+    film("film:parasite", "기생충", "Parasite", ["Bong Joon-ho"], ["Song Kang-ho"])
+    film("film:memoriesofmurder", "살인의 추억", "Memories of Murder", ["Bong Joon-ho"], ["Song Kang-ho"])
+    film("film:okja", "옥자", "Okja", ["Bong Joon-ho"], ["One Timer"])          # co-star with a single credit
+    film("film:thewailing", "곡성", "The Wailing", ["Na Hong-jin"], ["Kwak Do-won"])  # unrelated (no shared work)
+    out = asyncio.run(service.person("Bong Joon-ho", db_path=db))
+    assert out["found"] and out["count"] == 3
+    collabs = {c["name"]: c for c in out["collaborators"]}
+    assert collabs["Song Kang-ho"]["shared_count"] == 2                       # recurring co-worker
+    assert set(collabs["Song Kang-ho"]["shared_works"]) == {"Parasite", "Memories of Murder"}
+    assert "One Timer" not in collabs                                         # one credit -> not recurring
+    assert "Na Hong-jin" not in collabs and "Kwak Do-won" not in collabs      # never shared a work with Bong
+
+
+def test_korea_rising_category_filter_and_buy_intent_weight():
+    db = _agency_db()  # seeds 4 artists
+    asyncio.run(store.log_signal("query", "artist:aespa", db_path=db))
+    asyncio.run(store.log_signal("buy_intent", "artist:straykids", db_path=db))
+    out = asyncio.run(service.korea_rising(category="artist", db_path=db))
+    assert out["count"] >= 2
+    # buy-intent (×3) outranks a single query -> Stray Kids tops aespa
+    assert out["items"][0]["name"]["en_official"] == "Stray Kids" and out["items"][0]["buy_intent"] == 1
+    # category drill-down actually filters (was previously ignored): no dramas seeded -> empty
+    assert asyncio.run(service.korea_rising(category="drama", db_path=db))["count"] == 0
+
+
+def test_verified_reports_cross_verification_status():
+    fd, path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+    os.unlink(path)
+    now = datetime.now(timezone.utc)
+    rec = Record(entity_id="artist:bts", kind="facts", name=Name(ko="방탄소년단", en_official="BTS"),
+                 snapshot_at=now, summary_en="BTS — verified.", data={},
+                 provenance=Provenance(sources=["Wikidata Q1", "Wikipedia BTS", "MusicBrainz mbid"],
+                                       fetched_at=now, skill_score=1.0, confidence="high",
+                                       agreeing_sources=3))
+    asyncio.run(store.append_record(rec, db_path=path))
+    out = asyncio.run(service.verified("artist:bts", db_path=path))
+    assert out["found"] and out["triple_verified"] and out["cross_verified"]
+    assert out["agreeing_sources"] == 3 and len(out["sources"]) == 3 and "triple" in out["note"]
+    miss = asyncio.run(service.verified("artist:nope", db_path=path))
+    assert miss["found"] is False
+
+
+def test_certification_is_top_tier_in_verified_and_on_page(tmp_path):
+    from koreaapi import admin
+    from koreaapi.roster import CERTIFIED
+    fd, path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+    os.unlink(path)
+    now = datetime.now(timezone.utc)
+    rec = Record(entity_id="artist:bts", kind="facts", name=Name(ko="방탄소년단", en_official="BTS"),
+                 snapshot_at=now, summary_en="BTS — verified.", data={},
+                 provenance=Provenance(sources=["Wikidata Q1", "Wikipedia BTS"], fetched_at=now,
+                                       skill_score=1.0, confidence="high", agreeing_sources=2))
+    asyncio.run(store.append_record(rec, db_path=path))
+    CERTIFIED["artist:bts"] = {"by": "HYBE", "date": "2026-06-01"}  # seed a certification for the test
+    try:
+        out = asyncio.run(service.verified("artist:bts", db_path=path))
+        assert out["officially_certified"] and out["certified_by"] == "HYBE"
+        assert "officially certified by HYBE" in out["note"]  # ranks above cross-verified
+        d = str(tmp_path / "site")
+        asyncio.run(admin.entity_pages(db_path=path, out_dir=d))
+        page = open(os.path.join(d, "artist", "bts.html"), encoding="utf-8").read()
+        assert "Official certification" in page and "Certified by <b>HYBE</b>" in page
+        assert "officially certified by HYBE" in page  # the header badge
+    finally:
+        CERTIFIED.pop("artist:bts", None)
 
 
 if __name__ == "__main__":
     test_artist_status_is_verified_and_bilingual()
     test_korea_rising_ranks_high_skill_first()
-    test_buy_options_phase1_stub_is_honest()
+    test_buy_options_verifies_official_and_returns_safe_channels()
     print("all service tests passed")

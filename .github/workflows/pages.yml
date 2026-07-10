@@ -1,29 +1,19 @@
-# Public GEO page (answer-engine-crawlable) on GitHub Pages.
-#
-# Builds report.html from LIVE data (pull runs on GitHub's open-network runner) and deploys
-# it to GitHub Pages — a free, public, JSON-LD-bearing URL that Perplexity / ChatGPT / Google
-# AI Overviews can crawl and cite. This is the GEO substrate's public surface.
+# Public GEO site (answer-engine-crawlable) on GitHub Pages — builds the FULL koreaapi surface
+# (report homepage + per-entity answer pages + vertical hubs + /ko + agents.json + feeds + sitemap)
+# from LIVE data, in working-directory koreaapi. Deploys to GitHub Pages (aiagentlabs.co.kr).
 #
 # ONE-TIME ENABLE: repo Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
-# Then: Actions -> "pages" -> Run workflow (manual now; the daily schedule activates once this
-# file is on the default branch). Live URL appears in the run summary + Settings -> Pages.
-#
-# NON-DEFAULT BRANCH: deploying from a feature branch also needs it allowed in the github-pages
-# environment, else the deploy is blocked at the environment gate (instant ~2s failure, no logs):
-#   Settings -> Environments -> github-pages -> Deployment branches and tags -> No restriction
-#   (or add this branch). Once merged to the default branch this is unnecessary.
 name: pages
 
 on:
   workflow_dispatch: {}
   push:
-    # feature branch (now) + the default branch (so the page still rebuilds on push after PR #1 merges)
     branches: [claude/eager-knuth-Vnzca, claude/deploy-vercel-DwbJL]
     paths:
       - "koreaapi/**"
       - ".github/workflows/pages.yml"
   schedule:
-    - cron: "37 1 * * *" # daily, after the collect job
+    - cron: "37 1 * * *" # daily
 
 permissions:
   contents: read
@@ -46,29 +36,61 @@ jobs:
       - name: Set up uv (Python env)
         uses: astral-sh/setup-uv@v5
 
-      - name: Build the public GEO page from live data
+      - name: Build the public GEO site from live data
         working-directory: koreaapi
         env:
           PYTHONPATH: src
           KOREAAPI_DB: ${{ runner.temp }}/koreaapi.db
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }} # romanization + Circle Chart extract (best-effort; skipped if unset)
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }} # official-channel release snapshots (best-effort; skipped if unset)
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }} # 3rd-source cross-check for drama/film/animation (skipped if unset)
+          TOURAPI_KEY: ${{ secrets.TOURAPI_KEY }} # KTO official place-authority source + badge (skipped if unset)
         run: |
           uv sync
+          uv pip install opentimestamps-client || echo "ots install skipped — Bitcoin anchoring stays dormant"
           uv run python -m koreaapi.admin pull
           uv run python -m koreaapi.admin sweep
           uv run python -m koreaapi.admin chart
           uv run python -m koreaapi.admin youtube
           uv run python -m koreaapi.admin report
+          uv run python -m koreaapi.admin entitypages
           uv run python -m koreaapi.admin digest
+          uv run python -m koreaapi.admin llms
+          uv run python -m koreaapi.admin llmsfull
+          uv run python -m koreaapi.admin feed
+          uv run python -m koreaapi.admin reconcile
+          uv run python -m koreaapi.admin status
           uv run python -m koreaapi.admin monitor
           uv run python -m koreaapi.admin export
           mkdir -p ../_site
           cp report.html ../_site/index.html
           cp monitor.html ../_site/monitor.html   # human data-quality cockpit at /monitor.html
           cp llms.txt ../_site/llms.txt   # agent-discoverable at /llms.txt (AEO/GEO)
-          cp data/korea-rising.md ../_site/korea-rising.md   # shareable verified digest at /korea-rising.md
-          cp data/latest.json ../_site/latest.json   # open machine-readable verified data at /latest.json
+          cp llms-full.txt ../_site/llms-full.txt   # full LLM-ingestible corpus
+          cp reconcile.json ../_site/reconcile.json   # reconciliation index (name/external-ID -> canonical entity)
+          cp status.json ../_site/status.json   # health/freshness snapshot
+          cp feed.xml ../_site/feed.xml   # RSS freshness feed
+          cp feed.json ../_site/feed.json   # JSON Feed
+          cp data/korea-rising.md ../_site/korea-rising.md   # shareable verified digest
+          cp data/latest.json ../_site/latest.json   # open machine-readable verified data
+          cp data/openapi.json ../_site/openapi.json   # OpenAPI 3.1 spec
+          cp data/changes.json ../_site/changes.json   # verified change feed (freshness)
+          cp data/certified.json ../_site/certified.json   # official rights-holder certification registry
+          cp data/integrity.json ../_site/integrity.json   # tamper-evident dataset hash + history chain head
+          cp data/integrity-log.jsonl ../_site/integrity-log.jsonl   # public append-only attestation log
+          cp data/integrity-head.txt* ../_site/ 2>/dev/null || true   # OpenTimestamps proof (only when anchoring enabled)
+          cp robots.txt ../_site/robots.txt   # welcome answer-engine crawlers (AEO)
+          cp CNAME ../_site/CNAME   # bind the custom domain (aiagentlabs.co.kr)
+          cp googleb476fa8c4c3cccf0.html ../_site/   # Google Search Console verification
+          cp -r site/artist ../_site/artist   # per-entity citable answer pages (/artist/<slug>.html)
+          cp -r site/badge ../_site/badge   # embeddable "Verified by KoreaAPI" SVG badges
+          cp -r site/ko ../_site/ko   # Korean-led answer pages + /ko/ home (hreflang)
+          cp site/methodology.html site/for-agents.html site/agents.json site/pricing.html site/certify.html ../_site/   # trust + quickstart + manifest + pricing + certify
+          cp -r site/person ../_site/person   # per-person credit pages
+          cp -r site/label ../_site/label   # per-label/agency/network hub pages
+          cp site/artists.html site/dramas.html site/films.html site/webtoons.html site/places.html site/food.html site/companies.html site/brands.html site/books.html site/history.html site/heritage.html site/folklore.html site/medical.html site/regions.html site/games.html site/shows.html site/animation.html site/universities.html site/classics.html site/fashion.html site/festivals.html site/awards.html site/holidays.html site/liquors.html site/parks.html site/museums.html site/temples.html site/venues.html site/airports.html site/theaters.html site/themeparks.html site/skiresorts.html site/islands.html site/hotsprings.html site/sports.html site/actors.html site/songs.html site/concepts.html site/people.html ../_site/   # vertical hub pages (ItemList)
+          uv run python -m koreaapi.admin sitemap   # sitemap.xml incl. every entity + person page
+          cp sitemap.xml ../_site/sitemap.xml
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3 # publishes ./_site by default

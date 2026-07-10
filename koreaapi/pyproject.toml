@@ -1,8 +1,20 @@
 [project]
 name = "koreaapi"
-version = "0.1.0"
-description = "The verifiable data layer for Korean culture & commerce, for AI agents."
+version = "0.2.0"
+description = "The verifiable data layer for Korean culture & commerce, callable by any AI agent (MCP)."
+readme = "README.md"
 requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "kwangdol-star" }]
+keywords = ["mcp", "model-context-protocol", "ai-agents", "korea", "kpop", "kculture", "aeo", "geo", "wikidata", "verifiable-data"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = [
     "fastmcp",
     "httpx",
@@ -11,11 +23,20 @@ dependencies = [
     "anthropic",
 ]
 
+[project.urls]
+Homepage = "https://aiagentlabs.co.kr/"
+Repository = "https://github.com/kwangdol-star/koreaapi"
+"Open data (JSON)" = "https://aiagentlabs.co.kr/latest.json"
+
 [project.optional-dependencies]
 dev = ["pytest", "pytest-asyncio", "ruff"]
+# The paid HTTP API (x402 monetization). starlette+uvicorn ship transitively via fastmcp;
+# pinned here so an API-only deploy installs them explicitly. (httpx is already a core dep.)
+web = ["starlette", "uvicorn"]
 
 [project.scripts]
 koreaapi-mcp = "koreaapi.server:main"
+koreaapi-api = "koreaapi.api:main"
 
 [build-system]
 requires = ["hatchling"]
