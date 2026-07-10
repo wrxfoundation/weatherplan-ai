@@ -634,6 +634,142 @@ a {
   min-width: 220px;
 }
 
+/* stats — 스탯 타일 + 수평 비중 바 (그레이는 비강조 트랙 전용, 값 라벨 상시 노출) */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.stat-tile {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+}
+
+.stat-value {
+  font-size: var(--text-display);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-tight);
+}
+
+.stat-value small {
+  font-size: var(--text-md);
+  font-weight: var(--weight-regular);
+  color: var(--grey);
+  margin-left: 4px;
+}
+
+.stat-label {
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  margin-top: 4px;
+}
+
+.stat-sub {
+  font-size: var(--text-sm);
+  color: var(--grey);
+  margin-top: 2px;
+}
+
+.chart-block {
+  margin: 18px 0;
+}
+
+.chart-title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  margin-bottom: 10px;
+}
+
+.chart-note {
+  color: var(--grey);
+  font-size: var(--text-sm);
+  margin: 8px 0 0;
+}
+
+.split-bar {
+  display: flex;
+  gap: 2px; /* 세그먼트 간 2px 서피스 갭 */
+  height: 12px;
+}
+
+.split-bar .seg {
+  border-radius: 4px;
+}
+
+.split-bar .fill,
+.swatch.fill {
+  background: var(--accent);
+}
+
+.split-bar .track,
+.swatch.track {
+  background: color-mix(in srgb, var(--grey) 38%, var(--surface));
+}
+
+.split-legend {
+  display: flex;
+  gap: 18px;
+  margin-top: 8px;
+  font-size: var(--text-sm);
+  color: var(--grey);
+}
+
+.split-legend strong {
+  color: var(--text);
+  font-weight: var(--weight-bold);
+}
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  vertical-align: -1px;
+  margin-right: 4px;
+}
+
+.hbar-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 64px;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+}
+
+.hbar-label {
+  font-size: var(--text-sm);
+  color: var(--grey);
+}
+
+.hbar-track {
+  height: 10px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--grey) 14%, var(--surface));
+  overflow: hidden;
+  display: block;
+}
+
+.hbar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+}
+
+.hbar-value {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  text-align: right;
+}
+
+.stat-grid.three {
+  margin: 16px 0 4px;
+}
+
 /* glossary */
 .glossary-section {
   margin-top: 24px;

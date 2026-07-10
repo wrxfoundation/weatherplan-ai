@@ -90,6 +90,21 @@ prerender('/glossary', '데이터센터 전력 인허가 용어집 — 명당 AI
   })),
 })
 
+const STATS_DESC =
+  '국내 데이터센터 165개소(2024) 중 60%가 수도권에 집중. 전체 수전용량 약 1,913MW, 민간 평균 17.7MW — KEEI·KDCC 공개 통계로 보는 한국 데이터센터 현황.'
+prerender('/stats', '국내 데이터센터 통계 — 수도권 집중과 전력 수요 · 명당 AI', STATS_DESC, {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: '국내 데이터센터 현황 통계 (2023~2024)',
+  description: STATS_DESC,
+  creator: { '@type': 'Organization', name: '명당 AI' },
+  isBasedOn: [
+    '김철현·김성균(2025), 「AI 시대 데이터센터 증가의 국내 에너지 소비 시사점」, KEEI 기본연구보고서',
+    'KDCC(한국데이터센터연합회), Korea Data Center Market Report 2024~2027 (2024) · 2025~2028 (2025)',
+  ],
+  citation: '에너지경제연구원(KEEI) 에너지통계 월호 제82호 (2026.4.30)',
+})
+
 // 지역 랜딩 프리렌더 — 시설이 있는 시도만
 const regionSlugs = []
 for (const [sido, slug] of Object.entries(SIDO_SLUGS)) {
@@ -122,6 +137,7 @@ const urls = [
   '/',
   '/calc',
   '/glossary',
+  '/stats',
   ...regionSlugs.map((s) => `/region/${s}`),
   ...facilities.map((f) => `/dc/${slugOf(f)}`),
 ]
