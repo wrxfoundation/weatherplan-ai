@@ -92,6 +92,23 @@ test("llms.txt: 소스·원장 URL·계약이 담긴다", async () => {
   assert.ok(llms.includes("observed_at, entity_id, field, before, after"));
 });
 
+test("디자인 불변식(DESIGN.md): 유리 재질·시그니처·정적 글로우·시스템 한글 폴백", async () => {
+  const dataDir = await setupData();
+  const html = renderHtml(gatherSources(root, dataDir), REPO);
+  // 유리엔 backdrop-filter + -webkit- 쌍 필수
+  assert.ok(html.includes("backdrop-filter:var(--blur)"));
+  assert.ok(html.includes("-webkit-backdrop-filter:var(--blur)"));
+  // 시그니처 블루-틸 토큰
+  assert.ok(html.includes("--accent:#3bcfe4"));
+  // 정적 글로우 (배경 애니메이션 금지)
+  assert.ok(html.includes("background-attachment:fixed"));
+  assert.ok(!/@keyframes/.test(html), "배경 애니메이션 금지 — 정적 글로우가 확정");
+  // Montserrat + 시스템 한글 폴백 (무거운 한글 웹폰트 금지)
+  assert.ok(html.includes("family=Montserrat"));
+  assert.ok(html.includes("'Apple SD Gothic Neo','Noto Sans KR'"));
+  assert.ok(!html.includes("family=Noto+Sans+KR"), "한글 웹폰트를 싣지 않는다");
+});
+
 test("writeSite: docs/에 파일을 쓰고, 빈 데이터에서도 동작한다", async () => {
   const emptyData = mkdtempSync(join(tmpdir(), "chronicle-site-empty-"));
   const siteRoot = mkdtempSync(join(tmpdir(), "chronicle-site-root-"));

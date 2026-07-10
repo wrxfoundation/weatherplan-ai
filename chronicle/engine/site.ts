@@ -1,9 +1,10 @@
 /**
  * 공개 프론트뷰 생성 — docs/index.html + docs/llms.txt (GitHub Pages용).
  *
- * KoreaAPI 헤리티지(다크 그라운드 · 필드 도시어 · 검증 언어 · llms.txt ·
- * JSON-LD)를 잇되, 액센트는 블루·청록. 사람에게는 현황판을, 에이전트에게는
- * llms.txt와 Schema.org Dataset을 준다.
+ * 디자인은 KoreaAPI 헤리티지의 형제 계보(DESIGN.md): 리퀴드 글래스 재질 ·
+ * 정적 글로우 · Montserrat+시스템 한글 · "색은 공증 상태의 인코딩" 원칙을
+ * 계승하고, 시그니처는 블루 기운 청록(#3bcfe4). 사람에게는 현황판을,
+ * 에이전트에게는 llms.txt와 Schema.org Dataset을 준다.
  *
  * 결정성 계약: 출력은 data/ 내용만으로 결정된다 — 생성 시각 같은 휘발 값을
  * 넣지 않으므로 데이터가 안 변하면 바이트가 안 변하고, 크론의 "변경 시에만
@@ -87,6 +88,9 @@ function truncate(text: string, max: number): string {
   return text.length > max ? `${text.slice(0, max - 1)}…` : text;
 }
 
+/** 라인 스트로크 체인링크 마크 — 해시체인의 사슬 (DESIGN.md). */
+const MARK_SVG = `<svg class="mark" viewBox="0 0 24 24" fill="none" stroke="#3bcfe4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>`;
+
 function renderEvents(events: ChangeEvent[]): string {
   if (events.length === 0) return '<p class="muted">아직 이벤트가 없습니다.</p>';
   const rows = events
@@ -165,55 +169,79 @@ export function renderHtml(sources: SiteSource[], repo: string): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Chronicle — 시간해자 크로니클</title>
 <meta name="description" content="오늘 기록하지 않으면 영원히 없는 것들의 공증 원장 — SHA-256 해시체인·커밋 히스토리·RFC 3161 외부 앵커의 3중 공증으로 '먼저·진짜로 기록했다'를 증명한다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400..800&display=swap" rel="stylesheet">
 <style>
+/* Chronicle Design Heritage (DESIGN.md) — KoreaAPI 계보 · 시그니처 블루-틸 */
 :root{
-  --bg:#071019; --panel:#0c1a29; --panel-2:#0a1622; --line:rgba(96,165,250,.16);
-  --ink:#e6edf3; --sub:#8ba3b8; --teal:#2dd4bf; --blue:#60a5fa; --deep:#0e7490;
-  --ok:#34d399; --warn:#fbbf24; --del:#f87171; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --bg:#06141b; --glow:#0a2e3d; --line:#1e3a47;
+  --ink:#eaf4f7; --mut:#9fb8c4; --dim:#6e8794;
+  --accent:#3bcfe4; --accent2:#1899c2; --blue:#5fa8f5;
+  --ok:#10b981; --warn:#f59e0b; --bad:#ef4444;
+  --glass:linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+  --gbord:rgba(255,255,255,.14);
+  --blur:saturate(170%) blur(18px);
+  --gshadow:0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.65 "Pretendard Variable",Pretendard,-apple-system,"Noto Sans KR",system-ui,sans-serif;
-  background-image:radial-gradient(1200px 500px at 70% -10%,rgba(14,116,144,.22),transparent 60%),radial-gradient(900px 400px at 10% 0,rgba(96,165,250,.10),transparent 55%)}
-main{max-width:980px;margin:0 auto;padding:56px 20px 80px}
-a{color:var(--teal);text-decoration:none}a:hover{text-decoration:underline}
-code{font-family:var(--mono);font-size:.86em;background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.18);border-radius:6px;padding:1px 6px;word-break:break-all}
-.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.brand h1{font-size:30px;letter-spacing:.12em;background:linear-gradient(90deg,var(--blue),var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent}
-.brand .beta{color:var(--sub);font-size:13px;letter-spacing:.2em}
-.tagline{margin-top:10px;color:var(--sub);max-width:640px}
+body{background-color:var(--bg);color:var(--ink);
+  font:16px/1.65 'Montserrat','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',system-ui,-apple-system,sans-serif;
+  background-image:radial-gradient(1100px 520px at 50% -160px, var(--glow) 0%, transparent 58%);
+  background-attachment:fixed}
+main{max-width:980px;margin:0 auto;padding:44px 20px 72px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.86em;background:rgba(59,207,228,.08);border:1px solid rgba(59,207,228,.2);border-radius:6px;padding:1px 6px;word-break:break-all}
+.brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.mark-tile{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  background:var(--glass);border:1px solid var(--gbord);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--gshadow)}
+.mark{width:26px;height:26px}
+.brand h1{font-size:30px;font-weight:800;letter-spacing:-.02em;
+  background:linear-gradient(90deg,var(--accent),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand .sub{color:var(--dim);font-size:12.5px;letter-spacing:.2em}
+.tagline{margin-top:14px;color:var(--mut);max-width:660px}
 .tagline b{color:var(--ink)}
 .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
-.pill{display:inline-block;font-size:12.5px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);color:var(--sub);background:rgba(12,26,41,.6)}
-.pill-ok{color:var(--ok);border-color:rgba(52,211,153,.35)}
-.pill-wait{color:var(--warn);border-color:rgba(251,191,36,.3)}
-.pill-key{color:var(--teal);border-color:rgba(45,212,191,.35)}
-.totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:32px 0 8px}
-.totals .stat{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:12px;padding:16px 18px}
-.stat b{display:block;font-size:26px;font-variant-numeric:tabular-nums;color:var(--ink)}
-.stat span{color:var(--sub);font-size:13px}
-h2{margin:44px 0 14px;font-size:20px;color:var(--ink)}
-h2 .en{color:var(--sub);font-weight:400;font-size:13px;letter-spacing:.15em;margin-left:10px}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:12px;padding:20px 22px;margin:14px 0}
+.pill{display:inline-block;font-size:12.5px;padding:4px 12px;border-radius:999px;color:var(--mut);
+  background:var(--glass);border:1px solid var(--gbord);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+.pill-key{color:var(--accent);border-color:rgba(59,207,228,.35)}
+.pill-ok{color:var(--ok);border-color:rgba(16,185,129,.4)}
+.pill-wait{color:var(--warn);border-color:rgba(245,158,11,.35)}
+.totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:34px 0 6px}
+.totals .stat{background:var(--glass);border:1px solid var(--gbord);border-radius:18px;padding:16px 18px;
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--gshadow)}
+.stat b{display:block;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink)}
+.stat span{color:var(--mut);font-size:13px}
+.section{margin:46px 0 14px}
+.section .en{display:block;color:var(--dim);font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.section h2{font-size:20px;font-weight:800;letter-spacing:-.01em;color:var(--ink)}
+.card{background:var(--glass);border:1px solid var(--gbord);border-left:3px solid var(--accent);border-radius:18px;
+  padding:20px 22px;margin:14px 0;backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--gshadow)}
 .card-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.card-head h3{font-size:17px}
-.src-id{font-family:var(--mono);font-size:12.5px;color:var(--blue)}
+.card-head h3{font-size:17px;font-weight:700}
+.src-id{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
 .stat-row{display:flex;gap:26px;margin:14px 0 10px;flex-wrap:wrap}
-.stat-row b{font-size:22px;font-variant-numeric:tabular-nums}
-.stat-row span{display:block;color:var(--sub);font-size:12.5px}
-.hash-line{margin:8px 0 2px;color:var(--sub);font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.muted{color:var(--sub);font-size:13.5px}
+.stat-row b{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.stat-row span{display:block;color:var(--mut);font-size:12.5px}
+.hash-line{margin:8px 0 2px;color:var(--mut);font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.muted{color:var(--dim);font-size:13.5px}
 .events{list-style:none;margin:12px 0 4px;border-top:1px dashed var(--line)}
 .events li{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:14px;flex-wrap:wrap}
 .ev{font-size:11.5px;padding:2px 8px;border-radius:999px;letter-spacing:.06em;flex-shrink:0}
-.ev-new{color:var(--teal);border:1px solid rgba(45,212,191,.35)}
-.ev-chg{color:var(--blue);border:1px solid rgba(96,165,250,.35)}
-.ev-del{color:var(--del);border:1px solid rgba(248,113,113,.35)}
-.field{color:var(--sub);font-family:var(--mono);font-size:12.5px}
-.when{margin-left:auto;color:var(--sub);font-size:12.5px;font-variant-numeric:tabular-nums}
+.ev-new{color:var(--accent);border:1px solid rgba(59,207,228,.4)}
+.ev-chg{color:var(--blue);border:1px solid rgba(95,168,245,.4)}
+.ev-del{color:var(--bad);border:1px solid rgba(239,68,68,.4)}
+.field{color:var(--dim);font-family:var(--mono);font-size:12.5px}
+.when{margin-left:auto;color:var(--dim);font-size:12.5px;font-variant-numeric:tabular-nums}
 .links{display:flex;gap:14px;margin-top:12px;font-size:13.5px;flex-wrap:wrap}
-pre{background:#050b12;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;color:#bcd3e6}
-.verify p{color:var(--sub);font-size:14.5px;margin:8px 0}
-footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:var(--sub);font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
+.note{background:var(--glass);border:1px solid var(--gbord);border-left:3px solid var(--accent);border-radius:12px;
+  padding:12px 16px;color:var(--mut);font-size:14.5px;margin:10px 0 14px;
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+pre{background:rgba(3,12,17,.7);border:1px solid var(--gbord);border-radius:12px;padding:14px 16px;overflow-x:auto;
+  font-family:var(--mono);font-size:13px;line-height:1.7;color:#bfe3ee;margin:10px 0;
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
 </style>
 <script type="application/ld+json">
 ${renderJsonLd(sources, repo)}
@@ -222,7 +250,11 @@ ${renderJsonLd(sources, repo)}
 <body>
 <main>
 <header>
-  <div class="brand"><h1>CHRONICLE</h1><span class="beta">시간해자 크로니클</span></div>
+  <div class="brand">
+    <span class="mark-tile">${MARK_SVG}</span>
+    <h1>CHRONICLE</h1>
+    <span class="sub">시간해자 크로니클</span>
+  </div>
   <p class="tagline"><b>오늘 기록하지 않으면 영원히 살 수 없는 것</b>에 크론을 걸고,
   해시체인으로 <b>"먼저·진짜로 기록했다"</b>를 증명한다. 원장은 append-only —
   기관이 조용히 고치거나 내려도, 여기엔 남는다.</p>
@@ -242,23 +274,22 @@ ${renderJsonLd(sources, repo)}
   <div class="stat"><b>${escapeHtml(lastUpdated.slice(0, 10))}</b><span>최신 관측</span></div>
 </div>
 
-<h2>가동 소스<span class="en">LIVE SOURCES</span></h2>
+<div class="section"><span class="en">Live Sources</span><h2>가동 소스</h2></div>
 ${cards}
 
-<h2>직접 검증하기<span class="en">VERIFY</span></h2>
-<section class="verify">
-<p>이 원장은 신뢰를 요구하지 않는다 — 아래 두 단계로 누구나 재계산할 수 있다.</p>
+<div class="section"><span class="en">Verify</span><h2>직접 검증하기</h2></div>
+<p class="note">이 원장은 신뢰를 요구하지 않는다 — 아래 두 단계로 누구나 재계산할 수 있다.</p>
 <pre>git clone https://github.com/${escapeHtml(repo)}.git &amp;&amp; cd ${escapeHtml(repo.split("/")[1] ?? "repo")}
 npm ci &amp;&amp; npm run verify -- --all     # 전 소스 해시체인을 제네시스부터 전수 재계산</pre>
-<p>외부 앵커(제3자 공증)는 openssl만으로 검증된다 — 리포 소유자도 위조할 수 없는 층:</p>
+<p class="note">외부 앵커(제3자 공증)는 openssl만으로 검증된다 — 리포 소유자도 위조할 수 없는 층.</p>
 <pre>openssl ts -reply -in data/&lt;source&gt;/anchors/&lt;ts&gt;.tsr -text   # 서명 시각·다이제스트 확인
 openssl ts -verify -digest &lt;chain_hash&gt; -in &lt;ts&gt;.tsr -CAfile cacert.pem</pre>
-</section>
 
 <footer>
   <a href="https://github.com/${escapeHtml(repo)}">GitHub</a>
   <a href="https://github.com/${escapeHtml(repo)}/blob/main/PLAN.md">스펙 (PLAN.md)</a>
   <a href="https://github.com/${escapeHtml(repo)}/blob/main/README.md">산출물 계약</a>
+  <a href="https://github.com/${escapeHtml(repo)}/blob/main/DESIGN.md">디자인 헤리티지</a>
   <a href="./llms.txt">llms.txt</a>
   <span>1 엔진 + 19 어댑터 · a kwangdol-star project</span>
 </footer>
