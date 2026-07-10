@@ -3,10 +3,30 @@
   "purpose": "스코어링 엔진 전력축(SPEC §5.2) 정량 룰. docs/power-licensing-rulebook-v0.md와 쌍.",
   "valid_basis": {
     "law": "분산에너지 활성화 특별법 (2024-06 시행)",
+    "aidc_special_law": "인공지능 데이터센터 산업 진흥에 관한 특별법 (2026-05-07 국회 통과, 2027-02 시행 예정 — 정책브리핑 korea.kr 2026-05-08)",
     "notice": "기후에너지환경부공고 제2025-139호 (2025-11-28, 전력계통영향평가 시범운영)",
     "tariff": "한전 기본공급약관 제23조 및 시행세칙",
-    "caveat": "시범운영 기준 — 고시 정식 제정·약관 개정 시 갱신 필요"
+    "caveat": "시범운영 기준 — 고시 정식 제정·약관 개정·AIDC 특별법 하위법령 제정 시 갱신 필요"
   },
+  "exemptions": {
+    "non_capital_small_aidc": {
+      "psia_exempt": true,
+      "scope": "비수도권 일정 규모 이하 AIDC 신축·증축 또는 기존 DC의 AIDC 전환",
+      "threshold": "대통령령 위임 (미제정)",
+      "effective": "2027-02",
+      "source": "AIDC 특별법"
+    },
+    "permit_timeout": {
+      "description": "과기정통부 통합 창구 일괄 처리 + 기한 경과 시 인허가 처리 간주(타임아웃제)",
+      "effective": "2027-02",
+      "source": "AIDC 특별법"
+    }
+  },
+  "policy_signals": [
+    { "signal": "345kV 계통 여유 변전소 정보 공개 예정", "source": "산업부 3대 메가프로젝트 발표 (2026-06-29)", "use": "substations.json·D3 공식 소스" },
+    { "signal": "지역별 전기요금제 + AI 데이터센터 전용 요금제 도입 계획", "source": "산업부 3대 메가프로젝트 발표 (2026-06-29)", "use": "스코어링 전력축 비용 프록시" },
+    { "signal": "AIDC 1단계 8.4GW(SK 5·GS 2.4·네이버 1)→2035년 18.4GW, 약 550조", "source": "산업부 3대 메가프로젝트 발표 (2026-06-29)", "use": "입지 확정 이벤트 D2 추적" }
+  ],
   "voltage_tracks": [
     { "track": "22.9kV-1", "voltage_kv": 22.9, "min_mw": 0, "max_mw": 20, "circuits": 1, "own_substation_required": false },
     { "track": "22.9kV-2", "voltage_kv": 22.9, "min_mw": 20, "max_mw": 40, "circuits": 2, "own_substation_required": false, "note": "40MW = 22.9kV 옵션 상한(협의 구간 경계값)" },

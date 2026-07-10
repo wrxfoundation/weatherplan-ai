@@ -3,8 +3,19 @@ import { Link, useParams } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { INSIGHTS } from '../content/insights_meta.js'
 import DcLocalImpact from './articles/DcLocalImpact.jsx'
+import MegaProjectAidc from './articles/MegaProjectAidc.jsx'
 
 const ARTICLES = {
+  'mega-project-aidc': {
+    component: MegaProjectAidc,
+    sources: [
+      '산업통상부 참고자료, 「대한민국 대도약 3대 메가프로젝트 국민보고회」 개최 (2026.6.29)',
+      '대한민국 정책브리핑(korea.kr), AI데이터센터 규제 확 푼다…인허가 절차 대폭 단축 (2026.5.8, 과학기술정보통신부)',
+      '헤럴드경제, SK·삼성·앰코, 서남권 반도체·데이터센터에 896조원 투자 (2026.6.30)',
+      '연합뉴스, 산업부, 산단 지원사업 10개 선정 (2026.7.10) · 뉴시스/KITA, 초광역산업협력과 신설 (2026.7.9)',
+      '실행 리스크 프레임 재인용: 커넥트 기고(2026.6.30) — 콘텐츠 등급 ④참고·인사이트',
+    ],
+  },
   'dc-local-impact': {
     component: DcLocalImpact,
     sources: [

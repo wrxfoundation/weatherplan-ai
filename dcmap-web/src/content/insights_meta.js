@@ -2,6 +2,13 @@
 // 콘텐츠 등급: 데이터 아키텍처 4계층 중 ④참고·인사이트. 시설 데이터(dc_centers)와 분리 관리.
 export const INSIGHTS = [
   {
+    slug: 'mega-project-aidc',
+    title: '3대 메가프로젝트와 AI 데이터센터 — 8.4GW의 지도',
+    description:
+      'SK 5GW·GS 2.4GW·네이버 1GW, 550조 원 — 정부 3대 메가프로젝트의 AI 데이터센터 트랙과 AIDC 특별법(비수도권 계통영향평가 면제)이 바꾸는 한국 데이터센터 입지 지형. 1차 출처: 산업부 참고자료(2026.6.29).',
+    date: '2026-07-10',
+  },
+  {
     slug: 'dc-local-impact',
     title: '데이터센터는 지역에 무엇을 남기나 — 미국 사례 팩트 시트',
     description:
