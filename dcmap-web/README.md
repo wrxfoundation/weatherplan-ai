@@ -34,6 +34,11 @@ npm run geocode    # 시드 변경 시 dc_centers.json 재생성
 진실원천은 `src/styles/tokens.css`. 컴포넌트는 CSS 변수만 사용하고 hex 하드코딩을 금지한다.
 BG `#111111` · Surface `#1A1D23` · Line `#2A2F38` · Text `#E5E7EB` · Grey `#6B7280` · Accent `#1D4ED8` · 건설 amber `#B7791F` · 폰트 Noto Sans KR.
 
+## 전력 인허가 룰북 (M2 스코어링 선행 산출물)
+
+- [`docs/power-licensing-rulebook-v0.md`](./docs/power-licensing-rulebook-v0.md) — 수전 트랙·비용·리드타임·D1 상태 머신 (공개 규정 기반: 기후부공고 제2025-139호 · 한전 기본공급약관 제23조)
+- [`data/power_rules_v0.json`](./data/power_rules_v0.json) — 스코어링 엔진이 직접 읽는 정량 룰 (전압 트랙 결정·관문·수수료·기한)
+
 ## 이후 확장 (SPEC §3 로드맵)
 
 전력 레이어(`substations.json`) → chronicle 어댑터 D1(psia-tracker)·D3(kepco-headroom) → 스코어링 엔진(§5.2) → MCP 서버(dc.koreaapi.dev). `dc_centers.json`은 chronicle 산출물(latest.json) 소비 구조를 가정한 독립 파일이므로 어댑터 전환은 파일 교체로 완결된다.
