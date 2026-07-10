@@ -1,0 +1,576 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* ---------- TopBar ---------- */
+.topbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--topbar-height);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  z-index: 1100;
+}
+
+.topbar .logo {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.topbar .logo em {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.topbar .logo small {
+  margin-left: 8px;
+  color: var(--grey);
+  font-weight: 400;
+  font-size: 11px;
+}
+
+.topbar nav {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+}
+
+.topbar nav a {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--grey);
+  font-weight: 500;
+}
+
+.topbar nav a:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.topbar nav a.active {
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+/* ---------- Layout ---------- */
+.map-layout {
+  position: fixed;
+  inset: var(--topbar-height) 0 0 0;
+  display: flex;
+}
+
+.map-canvas {
+  flex: 1;
+  height: 100%;
+  background: var(--bg);
+}
+
+/* ---------- FilterBar ---------- */
+.filterbar {
+  position: absolute;
+  top: calc(var(--topbar-height) + 12px);
+  left: 12px;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  max-width: calc(100% - var(--panel-width) - 48px);
+}
+
+.filterbar .group {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.filterbar button.chip {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--grey);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filterbar button.chip:hover {
+  color: var(--text);
+}
+
+.filterbar button.chip.on {
+  color: var(--text);
+  background: var(--bg);
+  border-color: var(--line);
+}
+
+.filterbar .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.operating {
+  background: var(--status-operating);
+}
+
+.dot.construction {
+  background: var(--status-construction);
+}
+
+.dot.planned {
+  background: transparent;
+  border: 2px solid var(--status-planned);
+  width: 6px;
+  height: 6px;
+}
+
+.filterbar select {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  font-size: 12.5px;
+  font-family: inherit;
+}
+
+.filterbar .mw-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+  font-size: 12.5px;
+}
+
+.filterbar .mw-chip button {
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
+}
+
+/* ---------- Right panel ---------- */
+.side-panel {
+  width: var(--panel-width);
+  height: 100%;
+  overflow-y: auto;
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+  padding: 14px;
+}
+
+.side-panel h2 {
+  font-size: 13px;
+  color: var(--grey);
+  font-weight: 500;
+  margin: 4px 2px 10px;
+}
+
+.side-panel h2 strong {
+  color: var(--text);
+}
+
+.facility-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.facility-row {
+  text-align: left;
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.facility-row:hover {
+  border-color: var(--grey);
+}
+
+.facility-row .meta {
+  color: var(--grey);
+  font-size: 12px;
+  display: block;
+}
+
+.facility-row .name {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* ---------- FacilityCard ---------- */
+.facility-card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+
+.facility-card .status-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.facility-card h3 {
+  margin: 0 0 2px;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.facility-card .name-en {
+  color: var(--grey);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--grey);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.badge.status-operating {
+  color: var(--text);
+  border-color: var(--status-operating);
+  background: color-mix(in srgb, var(--status-operating) 22%, transparent);
+}
+
+.badge.status-construction {
+  color: var(--text);
+  border-color: var(--status-construction);
+  background: color-mix(in srgb, var(--status-construction) 22%, transparent);
+}
+
+.badge.status-planned,
+.badge.status-delayed {
+  color: var(--grey);
+  border-color: var(--status-planned);
+  background: transparent;
+}
+
+.badge.verify {
+  color: var(--amber);
+  border-color: var(--amber);
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.spec-cell {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+}
+
+.spec-cell .k {
+  color: var(--grey);
+  font-size: 11px;
+}
+
+.spec-cell .v {
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.facility-card .note {
+  color: var(--grey);
+  font-size: 12.5px;
+  margin: 10px 0;
+}
+
+.facility-card .source {
+  font-size: 12px;
+  color: var(--grey);
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.facility-card .source a {
+  color: var(--accent);
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.btn:hover {
+  border-color: var(--grey);
+}
+
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn.primary:hover {
+  filter: brightness(1.12);
+}
+
+/* ---------- Leaflet dark theme ---------- */
+/* leaflet.css가 번들에서 뒤에 올 수 있어 기본 #ddd 배경을 확실히 덮는다 */
+.leaflet-container {
+  background: var(--bg) !important;
+  font-family: var(--font-sans);
+}
+
+.dc-marker {
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.dc-marker.operating {
+  background: var(--status-operating);
+  box-shadow: 0 0 10px 2px color-mix(in srgb, var(--status-operating) 65%, transparent);
+}
+
+.dc-marker.construction {
+  background: var(--status-construction);
+  box-shadow: 0 0 10px 2px color-mix(in srgb, var(--status-construction) 55%, transparent);
+}
+
+.dc-marker.planned,
+.dc-marker.delayed {
+  background: transparent;
+  border-color: var(--status-planned);
+}
+
+.dc-cluster {
+  background: color-mix(in srgb, var(--surface) 85%, var(--accent));
+  border: 1px solid var(--accent);
+  color: var(--text);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.leaflet-control-zoom a {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.leaflet-control-attribution {
+  background: color-mix(in srgb, var(--bg) 75%, transparent) !important;
+  color: var(--grey) !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--grey) !important;
+}
+
+/* ---------- Detail / Calc pages ---------- */
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: calc(var(--topbar-height) + 24px) 20px 60px;
+}
+
+.page h1 {
+  font-size: 24px;
+  margin: 8px 0 4px;
+}
+
+.page .sub {
+  color: var(--grey);
+  margin-bottom: 20px;
+}
+
+.back-link {
+  color: var(--grey);
+  font-size: 13px;
+}
+
+.back-link:hover {
+  color: var(--text);
+}
+
+.detail-map {
+  height: 320px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.geo-note {
+  font-size: 12px;
+  color: var(--grey);
+}
+
+/* calc */
+.calc-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-top: 16px;
+}
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.calc-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--grey);
+}
+
+.calc-grid input,
+.calc-grid select {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: var(--radius-md);
+  padding: 9px 10px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.calc-result {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.calc-result .mw {
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.calc-result .mw small {
+  font-size: 14px;
+  color: var(--grey);
+  font-weight: 400;
+}
+
+.calc-result .steps {
+  color: var(--grey);
+  font-size: 12.5px;
+  flex: 1;
+  min-width: 220px;
+}
+
+.footer-note {
+  margin-top: 28px;
+  color: var(--grey);
+  font-size: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+@media (max-width: 760px) {
+  .side-panel {
+    display: none;
+  }
+
+  .filterbar {
+    max-width: calc(100% - 24px);
+  }
+}

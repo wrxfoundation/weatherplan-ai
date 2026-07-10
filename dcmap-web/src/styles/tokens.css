@@ -1,0 +1,24 @@
+/* 명당 AI 디자인 토큰 — SPEC §6 (힉스필드 프론트뷰 준거)
+ * 진실원천은 이 파일. 컴포넌트는 CSS 변수만 사용하고 hex 하드코딩을 금지한다. */
+:root {
+  --bg: #111111;
+  --surface: #1a1d23;
+  --line: #2a2f38;
+  --text: #e5e7eb;
+  --grey: #6b7280;
+  --accent: #1d4ed8;
+  --amber: #b7791f;
+
+  /* 상태색: 운영 blue / 건설 amber / 계획 grey outline */
+  --status-operating: var(--accent);
+  --status-construction: var(--amber);
+  --status-planned: var(--grey);
+
+  --font-sans: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --panel-width: 360px;
+  --topbar-height: 56px;
+}

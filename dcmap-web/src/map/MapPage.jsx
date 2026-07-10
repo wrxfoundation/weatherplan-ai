@@ -1,0 +1,134 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import TopBar from '../TopBar.jsx'
+import FilterBar from './FilterBar.jsx'
+import FacilityCard from '../dc/FacilityCard.jsx'
+import { FACILITIES, STATUS_LABEL, applyFilters } from '../data/facilities.js'
+
+const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+const TILE_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+const KR_CENTER = [36.4, 127.7]
+
+function markerIcon(status) {
+  const key = status === 'delayed' ? 'planned' : status
+  return L.divIcon({ className: `dc-marker ${key}`, iconSize: [14, 14] })
+}
+
+export default function MapPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const rawMw = Number.parseFloat(searchParams.get('min_mw'))
+  const minMw = Number.isFinite(rawMw) && rawMw > 0 ? rawMw : null
+
+  const [statuses, setStatuses] = useState(() => new Set())
+  const [type, setType] = useState('')
+  const [sido, setSido] = useState('')
+  const [selected, setSelected] = useState(null)
+
+  const mapRef = useRef(null)
+  const mapObj = useRef(null)
+  const clusterRef = useRef(null)
+
+  const filtered = useMemo(
+    () => applyFilters(FACILITIES, { statuses, type, sido, minMw }),
+    [statuses, type, sido, minMw],
+  )
+
+  useEffect(() => {
+    const map = L.map(mapRef.current, { center: KR_CENTER, zoom: 7, zoomControl: true })
+    L.tileLayer(DARK_TILES, { attribution: TILE_ATTRIBUTION, maxZoom: 19 }).addTo(map)
+    const cluster = L.markerClusterGroup({
+      maxClusterRadius: 44,
+      iconCreateFunction: (c) =>
+        L.divIcon({ className: 'dc-cluster', html: `${c.getChildCount()}`, iconSize: [34, 34] }),
+    })
+    map.addLayer(cluster)
+    mapObj.current = map
+    clusterRef.current = cluster
+    return () => map.remove()
+  }, [])
+
+  useEffect(() => {
+    const cluster = clusterRef.current
+    if (!cluster) return
+    cluster.clearLayers()
+    for (const f of filtered) {
+      const m = L.marker([f.lat, f.lng], { icon: markerIcon(f.status) })
+      m.bindTooltip(`${f.name} · ${STATUS_LABEL[f.status] ?? f.status}`, { direction: 'top' })
+      m.on('click', () => setSelected(f))
+      cluster.addLayer(m)
+    }
+  }, [filtered])
+
+  const toggleStatus = (key) =>
+    setStatuses((prev) => {
+      const next = new Set(prev)
+      next.has(key) ? next.delete(key) : next.add(key)
+      return next
+    })
+
+  const focusFacility = (f) => {
+    setSelected(f)
+    mapObj.current?.setView([f.lat, f.lng], Math.max(mapObj.current.getZoom(), 11))
+  }
+
+  return (
+    <>
+      <TopBar />
+      <FilterBar
+        statuses={statuses}
+        onToggleStatus={toggleStatus}
+        type={type}
+        onType={setType}
+        sido={sido}
+        onSido={setSido}
+        minMw={minMw}
+        onClearMw={() => {
+          searchParams.delete('min_mw')
+          setSearchParams(searchParams, { replace: true })
+        }}
+      />
+      <div className="map-layout">
+        <div ref={mapRef} className="map-canvas" />
+        <aside className="side-panel">
+          {selected ? (
+            <>
+              <h2>
+                <button type="button" className="chip btn" onClick={() => setSelected(null)}>
+                  ← 목록으로
+                </button>
+              </h2>
+              <FacilityCard facility={selected} />
+            </>
+          ) : (
+            <>
+              <h2>
+                시설 <strong>{filtered.length}</strong>곳
+                {minMw != null && ` · 공개 전력 ≥ ${minMw} MW`}
+              </h2>
+              <div className="facility-list">
+                {filtered.map((f) => (
+                  <button key={f.id} type="button" className="facility-row" onClick={() => focusFacility(f)}>
+                    <span className={`dot ${f.status === 'delayed' ? 'planned' : f.status}`} />
+                    <span>
+                      <span className="name">{f.name}</span>
+                      <span className="meta">
+                        {f.sido}
+                        {f.sigungu ? ` ${f.sigungu}` : ''} · {STATUS_LABEL[f.status] ?? f.status}
+                        {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </aside>
+      </div>
+    </>
+  )
+}

@@ -1,0 +1,27 @@
+{
+  "name": "dcmap-web",
+  "version": "0.1.0",
+  "description": "명당(MyeongDang) AI — 한국 AI 데이터센터 부지 인텔리전스 맵 (M1 v0)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/postbuild.mjs",
+    "preview": "vite preview",
+    "geocode": "node scripts/geocode.mjs"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  }
+}
