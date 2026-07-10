@@ -18,7 +18,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: chronicle-bunyang
+  group: chronicle-cron # 전 수집 크론 직렬화 — docs 동시 재생성 경합 방지
   cancel-in-progress: false
 
 jobs:

@@ -21,7 +21,8 @@
  * CLI: npm run anchor -- <source-id> [--data-dir <path>] [--root <path>]
  */
 import { execFileSync } from "node:child_process";
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
@@ -54,13 +55,28 @@ export function buildTimestampQuery(sha256Hex: string): Buffer {
   return execFileSync("openssl", ["ts", "-query", "-sha256", "-digest", sha256Hex, "-cert"]);
 }
 
-/** TSA 응답이 파싱 가능한 TimeStampResp인지 openssl로 확인한다. */
-function isParseableReply(tsr: Buffer): boolean {
+/**
+ * TSA 응답 검증 — 파싱 가능한 TimeStampResp이면서 상태가 Granted여야 한다.
+ * (임시파일 경유 — /dev/stdin은 일부 실행 환경에서 신뢰할 수 없다)
+ */
+function validateReply(tsr: Buffer): { ok: boolean; reason?: string } {
+  const dir = mkdtempSync(join(tmpdir(), "chronicle-tsa-"));
+  const file = join(dir, "reply.tsr");
   try {
-    execFileSync("openssl", ["ts", "-reply", "-in", "/dev/stdin", "-text"], { input: tsr, stdio: ["pipe", "pipe", "pipe"] });
-    return true;
+    writeFileSync(file, tsr);
+    const out = execFileSync("openssl", ["ts", "-reply", "-in", file, "-text"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    if (!/Status: Granted/i.test(out)) {
+      const status = out.match(/Status: [^\n]+/)?.[0]?.trim() ?? "상태 불명";
+      return { ok: false, reason: `TSA가 거절함 (${status})` };
+    }
+    return { ok: true };
   } catch {
-    return false;
+    return { ok: false, reason: "TimeStampResp 파싱 실패" };
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
   }
 }
 
@@ -101,7 +117,13 @@ export async function anchorSource(options: AnchorOptions): Promise<AnchorResult
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const body = Buffer.from(await response.arrayBuffer());
-      if (!isParseableReply(body)) throw new Error("응답이 유효한 TimeStampResp가 아님");
+      const verdict = validateReply(body);
+      if (!verdict.ok) {
+        // 원인 규명용 응답 메타 — 다음 실행 로그가 스스로 자백하게 한다
+        const contentType = response.headers.get("content-type") ?? "?";
+        const head = body.subarray(0, 8).toString("hex");
+        throw new Error(`${verdict.reason} [HTTP ${response.status}, ${contentType}, ${body.length}B, head=${head}]`);
+      }
       tsr = body;
       tsaUrl = candidate;
       break;
