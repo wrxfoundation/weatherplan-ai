@@ -1,0 +1,131 @@
+/**
+ * RFC 3161 외부 타임스탬프 앵커 — 해시체인 머리를 제3자 TSA에 공증한다.
+ *
+ * 왜: 커밋 히스토리 공증은 리포 소유자가 force-push로 재작성할 수 있다는
+ * 반론이 가능하다. 독립 TSA(공인 타임스탬프 기관)의 서명은 "이 체인 머리가
+ * 이 시각에 존재했다"를 소유자와 무관하게 증명한다 — 시간해자의 외부 닻.
+ *
+ * 산출물 (data/<id>/):
+ *   anchors/<ts>.tsr   TSA 응답 원본 (DER TimeStampResp)
+ *   anchors.jsonl      {anchored_at, chain_length, chain_hash, tsa, proof} — append-only
+ *
+ * 검증 (오프라인, 제3자 도구만으로):
+ *   openssl ts -reply -in data/<id>/anchors/<ts>.tsr -text
+ *     → genTime과 messageImprint가 integrity.json의 chain_hash와 일치하는지
+ *   openssl ts -verify -digest <chain_hash> -in <ts>.tsr -CAfile <TSA CA>
+ *
+ * best-effort 계약: TSA 장애가 수집을 막으면 안 된다 — CLI는 어떤 실패에도
+ * 종료코드 0으로 끝나고, 다음 실행에서 자연 재시도된다(멱등: 같은 체인
+ * 머리는 두 번 앵커하지 않음).
+ *
+ * CLI: npm run anchor -- <source-id> [--data-dir <path>] [--root <path>]
+ */
+import { execFileSync } from "node:child_process";
+import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
+import { canonicalJson } from "./integrity.js";
+import { loadIntegrity, sourcePaths } from "./store.js";
+
+const DEFAULT_TSA_URL = "https://freetsa.org/tsr";
+
+export interface AnchorOptions {
+  sourceId: string;
+  dataDir: string;
+  tsaUrl?: string;
+  log?: (message: string) => void;
+  /** 테스트 주입 지점 — 생략 시 전역 fetch. */
+  fetchImpl?: typeof fetch;
+  now?: () => Date;
+}
+
+export type AnchorResult = "anchored" | "already-anchored" | "no-chain" | "skipped";
+
+/** openssl로 RFC 3161 TimeStampReq(DER)를 만든다 — 논스·인증서 요청 포함. */
+export function buildTimestampQuery(sha256Hex: string): Buffer {
+  if (!/^[0-9a-f]{64}$/i.test(sha256Hex)) throw new Error(`SHA-256 hex가 아닙니다: ${sha256Hex}`);
+  return execFileSync("openssl", ["ts", "-query", "-sha256", "-digest", sha256Hex, "-cert"]);
+}
+
+/** TSA 응답이 파싱 가능한 TimeStampResp인지 openssl로 확인한다. */
+function isParseableReply(tsr: Buffer): boolean {
+  try {
+    execFileSync("openssl", ["ts", "-reply", "-in", "/dev/stdin", "-text"], { input: tsr, stdio: ["pipe", "pipe", "pipe"] });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function anchorSource(options: AnchorOptions): Promise<AnchorResult> {
+  const log = options.log ?? ((message: string) => console.error(message));
+  const tsaUrl = options.tsaUrl ?? process.env.CHRONICLE_TSA_URL ?? DEFAULT_TSA_URL;
+  const fetchImpl = options.fetchImpl ?? fetch;
+  const now = options.now ?? (() => new Date());
+
+  const paths = sourcePaths(options.dataDir, options.sourceId);
+  const integrity = loadIntegrity(paths);
+  if (!integrity || integrity.length === 0) {
+    log(`[${options.sourceId}] 아직 체인이 없음 — 앵커 생략`);
+    return "no-chain";
+  }
+
+  const anchorsPath = join(paths.dir, "anchors.jsonl");
+  if (existsSync(anchorsPath) && readFileSync(anchorsPath, "utf8").includes(`"chain_hash":"${integrity.chain_hash}"`)) {
+    log(`[${options.sourceId}] 현재 체인 머리는 이미 앵커됨 (${integrity.chain_hash.slice(0, 16)}…)`);
+    return "already-anchored";
+  }
+
+  const tsq = buildTimestampQuery(integrity.chain_hash);
+  const response = await fetchImpl(tsaUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/timestamp-query" },
+    body: new Uint8Array(tsq),
+    signal: AbortSignal.timeout(30_000),
+  });
+  if (!response.ok) throw new Error(`TSA HTTP ${response.status} — ${tsaUrl}`);
+  const tsr = Buffer.from(await response.arrayBuffer());
+  if (!isParseableReply(tsr)) throw new Error("TSA 응답이 유효한 TimeStampResp가 아님 — 저장하지 않음");
+
+  const anchoredAt = now().toISOString();
+  const compact = anchoredAt.replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  const proofRel = join("anchors", `${compact}.tsr`);
+  mkdirSync(join(paths.dir, "anchors"), { recursive: true });
+  writeFileSync(join(paths.dir, proofRel), tsr);
+  appendFileSync(
+    anchorsPath,
+    `${canonicalJson({
+      anchored_at: anchoredAt,
+      chain_length: integrity.length,
+      chain_hash: integrity.chain_hash,
+      tsa: tsaUrl,
+      proof: proofRel,
+    })}\n`,
+  );
+  log(`[${options.sourceId}] 체인 머리 앵커 완료: ${integrity.chain_hash.slice(0, 16)}… → ${proofRel}`);
+  return "anchored";
+}
+
+const isCliEntry = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isCliEntry) {
+  const defaultRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+  const { values, positionals } = parseArgs({
+    allowPositionals: true,
+    options: { "data-dir": { type: "string" }, root: { type: "string" } },
+  });
+  const sourceId = positionals[0];
+  if (!sourceId) {
+    console.error("사용법: npm run anchor -- <source-id> [--data-dir <path>] [--root <path>]");
+    process.exit(2);
+  }
+  const root = values.root ? resolve(values.root) : defaultRoot;
+  const dataDir = values["data-dir"] ? resolve(values["data-dir"]) : join(root, "data");
+  try {
+    await anchorSource({ sourceId, dataDir });
+  } catch (error) {
+    // best-effort: 앵커 실패가 수집 파이프라인을 막으면 안 된다.
+    console.error(`앵커 실패(생략, 다음 실행에서 재시도): ${error instanceof Error ? error.message : error}`);
+  }
+}

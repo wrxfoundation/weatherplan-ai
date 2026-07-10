@@ -71,8 +71,9 @@ chain_hash   = SHA256(직전 chain_hash + content_hash)      # 첫 줄의 직전
 ### 검증 방법
 
 ```bash
-npm run verify -- bunyang-capsule
-# ✓ bunyang-capsule: 이벤트 N건, 체인 온전 (head …)
+npm run verify -- bunyang-capsule   # 소스 하나
+npm run verify -- --all             # 전 소스 일괄 (CI가 매 푸시마다 수행)
+npm run status                      # 소스별 체인 길이·최신 관측·앵커 현황
 ```
 
 외부인이 직접 재계산해도 같다 (Node 한 줄 요지):
@@ -86,6 +87,31 @@ npm run verify -- bunyang-capsule
 
 특정 시점의 존재 증명은 `git log -- data/<id>/integrity.json`으로 그 시점
 커밋의 체인 머리를 확인하면 된다.
+
+### 신뢰 모델 — 3중 공증
+
+커밋 히스토리만으로는 "리포 소유자가 force-push로 통째로 재작성했다"는
+반론이 가능하다. 그래서 세 겹으로 쌓는다:
+
+1. **해시체인** (자체) — 원장 한 줄이라도 바꾸면 이후 전체가 어긋난다.
+2. **커밋 히스토리** (플랫폼) — 각 시점의 체인 머리가 커밋에 봉인된다.
+3. **RFC 3161 외부 앵커** (제3자) — 크론이 매 실행 체인 머리를 공인
+   타임스탬프 기관(TSA)에 서명받아 `data/<id>/anchors/<ts>.tsr`(원본 증서)와
+   `anchors.jsonl`(append-only 목록)로 보존한다. **이 서명은 우리가 위조할
+   수 없다** — 소유자가 히스토리를 재작성해도 "그 시각에 그 체인 머리가
+   존재했다"는 외부 증거가 남는다. 멱등(같은 머리는 1회만)·best-effort(TSA
+   장애가 수집을 막지 않음, 다음 실행에서 재시도).
+
+앵커 검증 (제3자 도구만으로):
+```bash
+openssl ts -reply -in data/<id>/anchors/<ts>.tsr -text   # genTime·다이제스트 확인
+openssl ts -verify -digest <chain_hash> -in data/<id>/anchors/<ts>.tsr -CAfile cacert.pem
+# TSA CA: https://freetsa.org/files/cacert.pem
+```
+
+**운영 체크리스트**: 리포 Settings → Branches → `main` 브랜치 보호
+(force push 금지 + 삭제 금지)를 켜두면 2번 층의 재작성 반론까지
+플랫폼 수준에서 차단된다.
 
 ## 실행
 

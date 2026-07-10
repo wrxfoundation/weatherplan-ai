@@ -4,6 +4,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import adapter from "../sources/bunyang-capsule/adapter.js";
+import { assertAdapterConformance } from "../engine/conformance.js";
 import type { CollectContext, SourceConfig } from "../engine/types.js";
 import { odcloudEmulator, type OdcloudDatasets } from "./helpers.js";
 
@@ -90,6 +91,11 @@ test("페이지네이션 요청 수: 짧은 페이지·matchCount 충족 시 즉
   assert.equal(result.records.length, 7);
   // totalCount(전체 데이터셋)를 종료 기준으로 쓰면 단지마다 빈 페이지를 한 번 더 부른다.
   assert.equal(requests, 4); // 공고 상세 1 + 단지별 주택형 3
+});
+
+test("어댑터 적합성 킷을 통과한다 (모든 어댑터 공통 계약)", async () => {
+  process.env.DATA_GO_KR_KEY = "test-key";
+  await assertAdapterConformance(adapter, ctxWith());
 });
 
 test("DATA_GO_KR_KEY가 없으면 명확한 오류로 실패한다", async () => {

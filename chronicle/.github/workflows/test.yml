@@ -22,3 +22,5 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      # 커밋된 데이터의 체인도 매 푸시마다 전수 검증 — 저장소 내 변조·손상 조기 발견
+      - run: npm run verify -- --all

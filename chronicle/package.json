@@ -10,6 +10,8 @@
   "scripts": {
     "collect": "tsx engine/run.ts",
     "verify": "tsx engine/verify.ts",
+    "anchor": "tsx engine/anchor.ts",
+    "status": "tsx engine/status.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test tests/*.test.ts"
   },
