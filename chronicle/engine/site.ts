@@ -344,6 +344,8 @@ export function writeSite(root: string, dataDir: string, repo: string): { htmlPa
   const llmsPath = join(docsDir, "llms.txt");
   writeFileSync(htmlPath, renderHtml(sources, repo));
   writeFileSync(llmsPath, renderLlms(sources, repo));
+  // GitHub Pages의 Jekyll 처리를 통째로 우회 — 우리는 완성된 정적 파일만 서빙한다
+  writeFileSync(join(docsDir, ".nojekyll"), "");
   return { htmlPath, llmsPath };
 }
 

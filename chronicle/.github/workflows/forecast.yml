@@ -42,7 +42,9 @@ jobs:
         run: npm run anchor -- forecast-graders
 
       - name: Publish site (docs/)
-        run: npm run site
+        run: |
+          npm run site
+          test -f docs/index.html && test -f docs/.nojekyll  # 산출물 없으면 여기서 실패
 
       - name: Commit accumulated data
         run: |
