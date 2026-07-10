@@ -16,6 +16,23 @@
 
   --font-sans: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
+  /* 타이포그래피 스케일 — 모든 컴포넌트는 이 변수만 사용 (임의 px 금지)
+   * 위계: display(숫자 강조) > h1 > title(섹션/카드 제목) > body(본문 UI) > sm(메타·보조) > xs(캡션·배지) */
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-body: 13px;
+  --text-md: 14px;
+  --text-title: 16px;
+  --text-h1: 24px;
+  --text-display: 34px;
+
+  --weight-regular: 400; /* 본문·설명 */
+  --weight-medium: 500;  /* 라벨·버튼·리스트 항목명 */
+  --weight-bold: 700;    /* 제목·로고·숫자 강조 */
+
+  --lh-tight: 1.35;
+  --lh-base: 1.55;
+
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
