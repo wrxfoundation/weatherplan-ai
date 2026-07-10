@@ -614,6 +614,29 @@ a {
   box-shadow: 0 0 14px 3px color-mix(in srgb, var(--status-planned) 45%, transparent);
 }
 
+/* 지점 분석 마커: accent 링 + 중심점 */
+.site-point {
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+.site-point::after {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.score-axes {
+  margin: 12px 0 4px;
+}
+
 .dc-cluster {
   background: color-mix(in srgb, var(--surface) 85%, var(--accent));
   border: 1px solid var(--accent);
