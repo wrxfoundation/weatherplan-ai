@@ -28,12 +28,18 @@ import { parseArgs } from "node:util";
 import { canonicalJson } from "./integrity.js";
 import { loadIntegrity, sourcePaths } from "./store.js";
 
-const DEFAULT_TSA_URL = "https://freetsa.org/tsr";
+/** 폴백 순서대로 시도 — 하나만 살아있으면 앵커가 붙는다. */
+const DEFAULT_TSA_URLS = [
+  "http://timestamp.digicert.com",
+  "https://freetsa.org/tsr",
+  "http://timestamp.sectigo.com",
+];
 
 export interface AnchorOptions {
   sourceId: string;
   dataDir: string;
-  tsaUrl?: string;
+  /** 시도할 TSA 목록 (순차 폴백). 생략 시 기본 3곳, 환경변수 CHRONICLE_TSA_URL(쉼표 구분)로 재정의. */
+  tsaUrls?: string[];
   log?: (message: string) => void;
   /** 테스트 주입 지점 — 생략 시 전역 fetch. */
   fetchImpl?: typeof fetch;
@@ -60,7 +66,11 @@ function isParseableReply(tsr: Buffer): boolean {
 
 export async function anchorSource(options: AnchorOptions): Promise<AnchorResult> {
   const log = options.log ?? ((message: string) => console.error(message));
-  const tsaUrl = options.tsaUrl ?? process.env.CHRONICLE_TSA_URL ?? DEFAULT_TSA_URL;
+  const tsaUrls =
+    options.tsaUrls ??
+    (process.env.CHRONICLE_TSA_URL
+      ? process.env.CHRONICLE_TSA_URL.split(",").map((url) => url.trim()).filter(Boolean)
+      : DEFAULT_TSA_URLS);
   const fetchImpl = options.fetchImpl ?? fetch;
   const now = options.now ?? (() => new Date());
 
@@ -78,15 +88,30 @@ export async function anchorSource(options: AnchorOptions): Promise<AnchorResult
   }
 
   const tsq = buildTimestampQuery(integrity.chain_hash);
-  const response = await fetchImpl(tsaUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/timestamp-query" },
-    body: new Uint8Array(tsq),
-    signal: AbortSignal.timeout(30_000),
-  });
-  if (!response.ok) throw new Error(`TSA HTTP ${response.status} — ${tsaUrl}`);
-  const tsr = Buffer.from(await response.arrayBuffer());
-  if (!isParseableReply(tsr)) throw new Error("TSA 응답이 유효한 TimeStampResp가 아님 — 저장하지 않음");
+  let tsr: Buffer | null = null;
+  let tsaUrl = "";
+  const failures: string[] = [];
+  for (const candidate of tsaUrls) {
+    try {
+      const response = await fetchImpl(candidate, {
+        method: "POST",
+        headers: { "Content-Type": "application/timestamp-query" },
+        body: new Uint8Array(tsq),
+        signal: AbortSignal.timeout(30_000),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const body = Buffer.from(await response.arrayBuffer());
+      if (!isParseableReply(body)) throw new Error("응답이 유효한 TimeStampResp가 아님");
+      tsr = body;
+      tsaUrl = candidate;
+      break;
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      failures.push(`${candidate}: ${reason}`);
+      log(`[${options.sourceId}] TSA 실패 — ${candidate}: ${reason}`);
+    }
+  }
+  if (!tsr) throw new Error(`모든 TSA(${tsaUrls.length}곳) 실패 — ${failures.join(" | ")}`);
 
   const anchoredAt = now().toISOString();
   const compact = anchoredAt.replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
