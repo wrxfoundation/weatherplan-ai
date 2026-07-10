@@ -39,6 +39,7 @@ export default function MapPage() {
 
   const [statuses, setStatuses] = useState(() => new Set())
   const [type, setType] = useState('')
+  const [sort, setSort] = useState('status') // status | mw | name
   // 지역 랜딩(/region/[slug]) "맵에서 보기" 진입점: ?sido= 초기값
   const [sido, setSido] = useState(() => searchParams.get('sido') ?? '')
   const [selected, setSelected] = useState(null)
@@ -57,6 +58,22 @@ export default function MapPage() {
     for (const f of filtered) c[f.status === 'delayed' ? 'planned' : f.status] += 1
     return c
   }, [filtered])
+
+  const STATUS_ORDER = { operating: 0, construction: 1, planned: 2, delayed: 3 }
+  const sorted = useMemo(() => {
+    const list = [...filtered]
+    if (sort === 'mw') {
+      list.sort((a, b) => (b.power_mw_public ?? -1) - (a.power_mw_public ?? -1))
+    } else if (sort === 'name') {
+      list.sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+    } else {
+      list.sort(
+        (a, b) =>
+          STATUS_ORDER[a.status] - STATUS_ORDER[b.status] || (b.power_mw_public ?? -1) - (a.power_mw_public ?? -1),
+      )
+    }
+    return list
+  }, [filtered, sort])
 
   useEffect(() => {
     // 시안(hero-v1) 준거: 줌 컨트롤 우하단, 축척 좌하단
@@ -88,7 +105,10 @@ export default function MapPage() {
     cluster.clearLayers()
     for (const f of filtered) {
       const m = L.marker([f.lat, f.lng], { icon: markerIcon(f) })
-      m.bindTooltip(`${f.name} · ${STATUS_LABEL[f.status] ?? f.status}`, { direction: 'top' })
+      m.bindTooltip(
+        `${f.name} · ${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`,
+        { direction: 'top' },
+      )
       m.on('click', () => setSelected(f))
       cluster.addLayer(m)
     }
@@ -179,8 +199,15 @@ export default function MapPage() {
                   </div>
                 </div>
               )}
+              <div className="list-toolbar">
+                <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="정렬">
+                  <option value="status">상태순 (운영→계획)</option>
+                  <option value="mw">공개 용량순</option>
+                  <option value="name">이름순</option>
+                </select>
+              </div>
               <div className="facility-list">
-                {filtered.map((f) => (
+                {sorted.map((f) => (
                   <button key={f.id} type="button" className="facility-row" onClick={() => focusFacility(f)}>
                     <span className={`dot ${f.status === 'delayed' ? 'planned' : f.status}`} />
                     <span>

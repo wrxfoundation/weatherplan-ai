@@ -33,7 +33,7 @@ npm run geocode    # 시드 변경 시 dc_centers.json 재생성
 
 진실원천은 `src/styles/tokens.css`. 컴포넌트는 CSS 변수만 사용하고 hex 하드코딩을 금지한다. 타이포는 토큰 스케일(xs11~display34, 굵기 400/700/800)만 사용.
 BG `#111111` · Surface `#1A1D23` · Line `#2A2F38` · Text `#E5E7EB` · Grey `#6B7280` · Accent `#1D4ED8` · 건설 amber `#B7791F`.
-폰트: **나눔스퀘어라운드** (1순위, jsdelivr CDN) → Noto Sans KR(폴백, 구글 폰트) → 시스템. ※ SPEC §6 원문은 Noto Sans KR — '26.07.10 나눔스퀘어라운드로 변경 결정(M2 회고 시 SPEC 반영).
+폰트: **Pretendard Variable** (jsdelivr dynamic-subset) → 시스템 폴백. ※ SPEC §6 원문은 Noto Sans KR — '26.07.10 Pretendard로 최종 결정(루트 Weather Plan AI 하우스 스타일과 정렬, M2 회고 시 SPEC 반영). 웨이트 위계 400/600/700.
 
 ## 전력 인허가 룰북 (M2 스코어링 선행 산출물)
 
