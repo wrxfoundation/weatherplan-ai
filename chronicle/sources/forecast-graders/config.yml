@@ -17,7 +17,9 @@ rate_limit_ms: 1000 # 기관 사이트 예의 — 대상당 1초 간격
 
 targets:
   - id: bok-outlook
-    url: https://www.bok.or.kr/portal/bbs/B0000245/list.do?menuNo=200761 # 한국은행 경제전망보고서
+    # 첫 수집에서 이전 URL(B0000245/200761)이 "금통위 의사록(콘텐츠 준비중)" 페이지로
+    # 확인되어 경제전망보고서 게시판으로 교체 (2026-07-10)
+    url: https://www.bok.or.kr/portal/bbs/P0002359/list.do?menuNo=200443 # 한국은행 경제전망보고서(목록)
   - id: cerik-press
     url: https://www.cerik.re.kr/board/press # 건설산업연구원 보도자료
   - id: cerik-seminar
