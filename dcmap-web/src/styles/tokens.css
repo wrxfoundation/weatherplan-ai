@@ -39,4 +39,12 @@
   --radius-lg: 14px;
   --panel-width: 360px;
   --topbar-height: 56px;
+
+  /* 글라스 인포그래픽 HUD (hero-v2 방향: 아이언맨/아바타 글라스 + 다크 네이비 전술맵) */
+  --glass-surface: color-mix(in srgb, var(--surface) 58%, transparent);
+  --glass-surface-strong: color-mix(in srgb, var(--surface) 82%, transparent);
+  --glass-border: color-mix(in srgb, var(--accent) 30%, var(--line));
+  --glass-blur: 14px;
+  --glow-accent-soft: 0 0 22px color-mix(in srgb, var(--accent) 22%, transparent);
+  --navy-deep: #0b1220; /* 전술맵 배경 그라데이션 하단 톤 */
 }

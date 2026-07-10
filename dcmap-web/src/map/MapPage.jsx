@@ -16,8 +16,15 @@ const KR_CENTER = [36.4, 127.7]
 
 function markerIcon(f) {
   const key = f.status === 'delayed' ? 'planned' : f.status
-  const xl = f.power_mw_public >= HYPERSCALE_MW
-  return L.divIcon({ className: `dc-marker ${key}${xl ? ' xl' : ''}`, iconSize: xl ? [20, 20] : [14, 14] })
+  if (f.power_mw_public >= HYPERSCALE_MW) {
+    // 다이아몬드 회전은 내부 span에 — Leaflet의 루트 inline transform과 충돌 방지
+    return L.divIcon({
+      className: 'dc-marker-xl-wrap',
+      html: `<span class="dc-marker ${key} xl"></span>`,
+      iconSize: [18, 18],
+    })
+  }
+  return L.divIcon({ className: `dc-marker ${key}`, iconSize: [14, 14] })
 }
 
 export default function MapPage() {

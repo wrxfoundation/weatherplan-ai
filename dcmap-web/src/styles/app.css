@@ -10,7 +10,7 @@ body,
 }
 
 body {
-  background: var(--bg);
+  background: linear-gradient(180deg, var(--bg) 0%, var(--navy-deep) 100%) fixed;
   color: var(--text);
   font-family: var(--font-sans);
   font-size: var(--text-md);
@@ -40,9 +40,10 @@ a {
   align-items: center;
   gap: 16px;
   padding: 0 16px;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--line);
+  background: var(--glass-surface);
+  backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--glow-accent-soft);
   z-index: 1100;
 }
 
@@ -160,8 +161,9 @@ a {
   display: flex;
   gap: 4px;
   padding: 4px;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  border: 1px solid var(--line);
+  background: var(--glass-surface);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
 }
 
@@ -212,9 +214,10 @@ a {
 }
 
 .filterbar select {
-  background: var(--surface);
+  background: var(--glass-surface-strong);
+  backdrop-filter: blur(var(--glass-blur));
   color: var(--text);
-  border: 1px solid var(--line);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   padding: 8px 10px;
   font-size: var(--text-body);
@@ -248,8 +251,10 @@ a {
   width: var(--panel-width);
   height: 100%;
   overflow-y: auto;
-  background: var(--surface);
-  border-left: 1px solid var(--line);
+  background: var(--glass-surface-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  border-left: 1px solid var(--glass-border);
+  box-shadow: inset var(--glow-accent-soft);
   padding: 14px;
 }
 
@@ -311,9 +316,11 @@ a {
 
 /* ---------- FacilityCard ---------- */
 .facility-card {
-  background: var(--bg);
-  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 65%, transparent);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
+  box-shadow: var(--glow-accent-soft);
   padding: 16px;
 }
 
@@ -457,8 +464,13 @@ a {
 /* ---------- Leaflet dark theme ---------- */
 /* leaflet.css가 번들에서 뒤에 올 수 있어 기본 #ddd 배경을 확실히 덮는다 */
 .leaflet-container {
-  background: var(--bg) !important;
+  background: var(--navy-deep) !important;
   font-family: var(--font-sans);
+}
+
+/* 전술맵 네이비 틴트: 중립 그레이(dark_matter) 타일을 딥 네이비 톤으로 (hero-v2 준거) */
+.leaflet-tile {
+  filter: brightness(0.88) saturate(1.25) sepia(0.18) hue-rotate(175deg);
 }
 
 .leaflet-container .leaflet-control,
@@ -488,18 +500,37 @@ a {
   border-color: var(--status-planned);
 }
 
-/* 하이퍼스케일(공개 용량 100MW+): 확대 마커 + 강한 글로우 */
-.dc-marker.xl.operating {
-  box-shadow: 0 0 18px 5px color-mix(in srgb, var(--status-operating) 75%, transparent);
+/* 하이퍼스케일(공개 용량 100MW+): 다이아몬드(45° 회전) 아웃라인 마커 + 강한 글로우
+ * 형태 = 규모, 색 = 상태 (레퍼런스의 오렌지 다이아몬드 문법 차용, 상태색 의미는 유지)
+ * Leaflet이 아이콘 루트에 inline transform을 쓰므로 래퍼 안의 내부 span을 회전한다 */
+.dc-marker-xl-wrap {
+  background: transparent;
 }
 
-.dc-marker.xl.construction {
-  box-shadow: 0 0 18px 5px color-mix(in srgb, var(--status-construction) 65%, transparent);
-}
-
-.dc-marker.xl.planned,
-.dc-marker.xl.delayed {
+.dc-marker-xl-wrap .dc-marker.xl {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(45deg);
+  border-radius: 3px;
+  background: transparent;
   border-width: 3px;
+  border-style: solid;
+}
+
+.dc-marker-xl-wrap .dc-marker.xl.operating {
+  border-color: var(--status-operating);
+  box-shadow: 0 0 18px 4px color-mix(in srgb, var(--status-operating) 75%, transparent);
+}
+
+.dc-marker-xl-wrap .dc-marker.xl.construction {
+  border-color: var(--status-construction);
+  box-shadow: 0 0 18px 4px color-mix(in srgb, var(--status-construction) 70%, transparent);
+}
+
+.dc-marker-xl-wrap .dc-marker.xl.planned,
+.dc-marker-xl-wrap .dc-marker.xl.delayed {
+  border-color: var(--status-planned);
   box-shadow: 0 0 14px 3px color-mix(in srgb, var(--status-planned) 45%, transparent);
 }
 
@@ -585,9 +616,11 @@ a {
 
 /* calc */
 .calc-card {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--glass-surface-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
+  box-shadow: var(--glow-accent-soft);
   padding: 20px;
   margin-top: 16px;
 }
@@ -686,10 +719,16 @@ a {
 }
 
 .stat-tile {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--glass-surface-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   padding: 14px 16px;
+  transition: box-shadow 0.2s;
+}
+
+.stat-tile:hover {
+  box-shadow: var(--glow-accent-soft);
 }
 
 .stat-value {
