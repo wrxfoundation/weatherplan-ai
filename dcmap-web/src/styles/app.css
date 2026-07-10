@@ -46,6 +46,9 @@ button {
   font-weight: 700;
   letter-spacing: -0.01em;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .topbar .logo em {
@@ -53,17 +56,54 @@ button {
   font-style: normal;
 }
 
-.topbar .logo small {
-  margin-left: 8px;
+.logo-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 700;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.topbar-search {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.topbar-search input {
+  width: 100%;
+  max-width: 520px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.topbar-search input::placeholder {
   color: var(--grey);
-  font-weight: 400;
-  font-size: 11px;
+}
+
+.topbar-search input:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .topbar nav {
-  margin-left: auto;
   display: flex;
   gap: 4px;
+}
+
+.report-btn {
+  white-space: nowrap;
 }
 
 .topbar nav a {
@@ -204,6 +244,12 @@ button {
   background: var(--surface);
   border-left: 1px solid var(--line);
   padding: 14px;
+}
+
+.panel-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 4px 2px 2px;
 }
 
 .side-panel h2 {

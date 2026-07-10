@@ -23,12 +23,17 @@ export const SIDOS = [...new Set(FACILITIES.map((f) => f.sido))].sort((a, b) => 
 
 export const TYPES = [...new Set(FACILITIES.map((f) => f.type))].sort((a, b) => a.localeCompare(b, 'ko'))
 
-export function applyFilters(list, { statuses, type, sido, minMw }) {
+export function applyFilters(list, { statuses, type, sido, minMw, q }) {
+  const needle = q?.toLowerCase() ?? ''
   return list.filter((f) => {
     if (statuses.size && !statuses.has(f.status === 'delayed' ? 'planned' : f.status)) return false
     if (type && f.type !== type) return false
     if (sido && f.sido !== sido) return false
     if (minMw != null && !(f.power_mw_public >= minMw)) return false
+    if (needle) {
+      const haystack = [f.name, f.name_en, f.operator, f.sido, f.sigungu].filter(Boolean).join(' ').toLowerCase()
+      if (!haystack.includes(needle)) return false
+    }
     return true
   })
 }

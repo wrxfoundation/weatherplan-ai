@@ -23,6 +23,7 @@ export default function MapPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const rawMw = Number.parseFloat(searchParams.get('min_mw'))
   const minMw = Number.isFinite(rawMw) && rawMw > 0 ? rawMw : null
+  const q = searchParams.get('q') ?? ''
 
   const [statuses, setStatuses] = useState(() => new Set())
   const [type, setType] = useState('')
@@ -34,12 +35,15 @@ export default function MapPage() {
   const clusterRef = useRef(null)
 
   const filtered = useMemo(
-    () => applyFilters(FACILITIES, { statuses, type, sido, minMw }),
-    [statuses, type, sido, minMw],
+    () => applyFilters(FACILITIES, { statuses, type, sido, minMw, q }),
+    [statuses, type, sido, minMw, q],
   )
 
   useEffect(() => {
-    const map = L.map(mapRef.current, { center: KR_CENTER, zoom: 7, zoomControl: true })
+    // 시안(hero-v1) 준거: 줌 컨트롤 우하단, 축척 좌하단
+    const map = L.map(mapRef.current, { center: KR_CENTER, zoom: 7, zoomControl: false })
+    L.control.zoom({ position: 'bottomright' }).addTo(map)
+    L.control.scale({ position: 'bottomleft', imperial: false }).addTo(map)
     L.tileLayer(DARK_TILES, { attribution: TILE_ATTRIBUTION, maxZoom: 19 }).addTo(map)
     const cluster = L.markerClusterGroup({
       maxClusterRadius: 44,
@@ -106,9 +110,11 @@ export default function MapPage() {
             </>
           ) : (
             <>
+              <div className="panel-title">사이트 인텔리전스</div>
               <h2>
                 시설 <strong>{filtered.length}</strong>곳
                 {minMw != null && ` · 공개 전력 ≥ ${minMw} MW`}
+                {q && ` · “${q}”`}
               </h2>
               <div className="facility-list">
                 {filtered.map((f) => (
