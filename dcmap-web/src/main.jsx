@@ -1,0 +1,31 @@
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import './styles/tokens.css'
+import './styles/app.css'
+import MapPage from './map/MapPage.jsx'
+import FacilityPage from './dc/FacilityPage.jsx'
+import CalcPage from './calc/CalcPage.jsx'
+import GlossaryPage from './glossary/GlossaryPage.jsx'
+import RegionPage from './region/RegionPage.jsx'
+import StatsPage from './stats/StatsPage.jsx'
+import InsightsIndexPage from './insights/InsightsIndexPage.jsx'
+import InsightPage from './insights/InsightPage.jsx'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MapPage />} />
+        <Route path="/dc/:slug" element={<FacilityPage />} />
+        <Route path="/calc" element={<CalcPage />} />
+        <Route path="/glossary" element={<GlossaryPage />} />
+        <Route path="/region/:slug" element={<RegionPage />} />
+        <Route path="/stats" element={<StatsPage />} />
+        <Route path="/insights" element={<InsightsIndexPage />} />
+        <Route path="/insights/:slug" element={<InsightPage />} />
+        <Route path="*" element={<MapPage />} />
+      </Routes>
+    </BrowserRouter>
+  </React.StrictMode>,
+)
