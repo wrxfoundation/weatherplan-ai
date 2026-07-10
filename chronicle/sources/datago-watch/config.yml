@@ -12,8 +12,13 @@ title: 공공데이터포털 감시탑 — 의존 데이터셋 변경 감지
 user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36 chronicle-archive/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
 rate_limit_ms: 1000
 
+# 주의: www.data.go.kr 포털 페이지는 해외 IP(GitHub 러너)를 네트워크 레벨에서
+# 차단한다(첫 가동에서 확인). 대신 차단 없는 기계 표면을 감시한다 — 더 직접적이다:
+#   - 청약홈: odcloud 스웨거 스펙 JSON — API 스펙 개정·오퍼레이션 변경이 그대로 diff
+#   - RTMS: 엔드포인트 무키 프로브 — 서비스 존재·게이트웨이 오류 형식의 변화 감지
+#     (키 없이 호출하면 안정적인 오류 XML이 오고, 서비스 폐기 시 그 형태가 바뀐다)
 targets:
   - id: bunyang-capsule-api
-    url: https://www.data.go.kr/data/15098547/openapi.do # 청약홈 분양정보 (bunyang-capsule 의존)
+    url: https://infuser.odcloud.kr/api/stages/37000/api-docs # 청약홈 API 스웨거 스펙 (bunyang-capsule 의존)
   - id: apt-trade-api
-    url: https://www.data.go.kr/data/15126468/openapi.do # 아파트 매매 실거래 상세 (deal-audit-ledger 의존)
+    url: http://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev # RTMS 무키 프로브 (deal-audit-ledger 의존)

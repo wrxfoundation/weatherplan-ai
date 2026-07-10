@@ -25,6 +25,17 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/** undici의 "fetch failed"는 원인을 cause에 숨긴다 — 진단 가능하게 풀어쓴다. */
+function describeError(error: unknown): string {
+  if (error instanceof Error) {
+    const cause = (error as { cause?: unknown }).cause;
+    if (cause instanceof Error) return `${error.message} (원인: ${cause.message})`;
+    if (cause) return `${error.message} (원인: ${String(cause)})`;
+    return error.message;
+  }
+  return String(error);
+}
+
 export function createHttpClient(
   options: HttpClientOptions = {},
   transport: Transport = (url, init) => fetch(url, init),
@@ -77,9 +88,7 @@ export function createHttpClient(
         if (attempt === retries) break;
       }
     }
-    throw lastError instanceof Error
-      ? lastError
-      : new Error(`요청 실패 (${retries + 1}회 시도): ${url} — ${String(lastError)}`);
+    throw new Error(`요청 실패 (${retries + 1}회 시도): ${url} — ${describeError(lastError)}`);
   }
 
   return {
