@@ -634,6 +634,34 @@ a {
   min-width: 220px;
 }
 
+/* insights — 아티클 본문 */
+.prose {
+  max-width: 720px;
+}
+
+.prose p {
+  font-size: var(--text-md);
+  font-weight: var(--weight-regular);
+  line-height: 1.8;
+  color: var(--text);
+  margin: 0 0 18px;
+}
+
+.prose h2 {
+  font-size: var(--text-title);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-tight);
+  margin: 28px 0 10px;
+}
+
+.prose strong {
+  font-weight: var(--weight-bold);
+}
+
+.prose a {
+  color: var(--accent);
+}
+
 /* stats — 스탯 타일 + 수평 비중 바 (그레이는 비강조 트랙 전용, 값 라벨 상시 노출) */
 .stat-grid {
   display: grid;

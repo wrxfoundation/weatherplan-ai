@@ -15,6 +15,7 @@ const ORIGIN = (process.env.VITE_SITE_ORIGIN || 'https://dc.koreaapi.dev').repla
 const { facilities } = JSON.parse(readFileSync(join(ROOT, 'data/dc_centers.json'), 'utf8'))
 const { GLOSSARY } = await import(join(ROOT, 'src/content/glossary.js'))
 const { SIDO_SLUGS } = await import(join(ROOT, 'src/content/sido_slugs.js'))
+const { INSIGHTS } = await import(join(ROOT, 'src/content/insights_meta.js'))
 const shell = readFileSync(join(DIST, 'index.html'), 'utf8')
 
 const STATUS_LABEL = { operating: '운영', construction: '건설', planned: '계획', delayed: '지연' }
@@ -105,6 +106,24 @@ prerender('/stats', '국내 데이터센터 통계 — 수도권 집중과 전�
   citation: '에너지경제연구원(KEEI) 에너지통계 월호 제82호 (2026.4.30)',
 })
 
+// 인사이트 프리렌더
+prerender('/insights', '인사이트 — 명당 AI', '데이터센터 입지·전력·민원·기상을 둘러싼 논쟁을 공개 데이터로 정리하는 명당 AI 인사이트.', {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: '명당 AI 인사이트',
+})
+for (const a of INSIGHTS) {
+  prerender(`/insights/${a.slug}`, `${a.title} — 명당 AI 인사이트`, a.description, {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: a.title,
+    description: a.description,
+    datePublished: a.date,
+    author: { '@type': 'Organization', name: '명당 AI' },
+    url: `${ORIGIN}/insights/${a.slug}`,
+  })
+}
+
 // 지역 랜딩 프리렌더 — 시설이 있는 시도만
 const regionSlugs = []
 for (const [sido, slug] of Object.entries(SIDO_SLUGS)) {
@@ -138,6 +157,8 @@ const urls = [
   '/calc',
   '/glossary',
   '/stats',
+  '/insights',
+  ...INSIGHTS.map((a) => `/insights/${a.slug}`),
   ...regionSlugs.map((s) => `/region/${s}`),
   ...facilities.map((f) => `/dc/${slugOf(f)}`),
 ]

@@ -4,6 +4,7 @@
 export const GLOSSARY_CATEGORIES = [
   { key: 'power', label: '전력 인허가' },
   { key: 'dc', label: '데이터센터 기본' },
+  { key: 'cooling', label: '냉각 기술' }, // 출처: OCP 교육 웨비나 "Compact Thermal Management Solutions for High-Density AI Data Centers" (2025.6.26) 등 공개 기술 자료
 ]
 
 export const GLOSSARY = [
@@ -188,5 +189,40 @@ export const GLOSSARY = [
     term: '계통 여유용량 (헤드룸)',
     en: 'Grid Headroom',
     def: '변전소·선로가 추가로 받아줄 수 있는 남은 용량. 한전은 스냅샷만 제공하고 이력을 보존하지 않으므로, 시점별로 축적한 여유용량 시계열은 소급 복원이 불가능한 데이터 자산이 된다.',
+  },
+  {
+    id: 'tdp',
+    category: 'cooling',
+    term: 'TDP (열설계전력)',
+    en: 'Thermal Design Power',
+    def: '칩이 최대로 뿜어내는 열량의 설계 기준값. GPU 세대가 바뀔 때마다 상승해 왔고, 이 값이 공랭이냐 액체냉각이냐 — 냉각 방식 선택의 출발점이 된다.',
+  },
+  {
+    id: 'd2c',
+    category: 'cooling',
+    term: 'D2C 액체냉각 (단상)',
+    en: 'Single-phase Direct-to-Chip',
+    def: '칩 위에 콜드플레이트를 붙이고 냉각액(예: 물 80%+글리콜 20%)을 직접 순환시키는 방식. 공랭 대비 열 처리 능력이 크지만 유량이 많고(1kW당 약 1.5L/분) 누수 시 IT 장비 손상 위험이 있어 유지보수 부담이 있다.',
+  },
+  {
+    id: 'two-phase',
+    category: 'cooling',
+    term: '2상 냉각',
+    en: 'Two-phase Cooling',
+    def: '냉매가 끓으며 기화할 때의 잠열로 열을 빼앗는 방식. 전기가 통하지 않는 유전냉매를 써서 누설돼도 장비 손상이 없고, 같은 열량 기준 유량이 단상의 1/5 수준(1kW당 약 0.3L/분). GPU TDP가 1,500~2,000W에 이르는 구간이 단상 D2C의 한계로 거론된다.',
+  },
+  {
+    id: 'immersion',
+    category: 'cooling',
+    term: '침지(액침)냉각',
+    en: 'Immersion Cooling',
+    def: '서버를 절연 유체(탄화수소 오일 등)에 통째로 담가 식히는 방식. 열밀도 대응력이 가장 높지만 기존 시설 개조·유체 호환성 검증·냉매 처분 등 표준화 과제가 남아 있다.',
+  },
+  {
+    id: 'cdu',
+    category: 'cooling',
+    term: 'CDU (냉각수 분배 장치)',
+    en: 'Coolant Distribution Unit',
+    def: '시설 냉각수 루프와 서버(IT) 냉각 루프 사이에서 열교환과 유량·온도 제어를 담당하는 장비. 액체냉각 데이터센터의 심장 역할로, D2C·침지 모두에 쓰인다.',
   },
 ]

@@ -9,6 +9,8 @@ import CalcPage from './calc/CalcPage.jsx'
 import GlossaryPage from './glossary/GlossaryPage.jsx'
 import RegionPage from './region/RegionPage.jsx'
 import StatsPage from './stats/StatsPage.jsx'
+import InsightsIndexPage from './insights/InsightsIndexPage.jsx'
+import InsightPage from './insights/InsightPage.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -20,6 +22,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/glossary" element={<GlossaryPage />} />
         <Route path="/region/:slug" element={<RegionPage />} />
         <Route path="/stats" element={<StatsPage />} />
+        <Route path="/insights" element={<InsightsIndexPage />} />
+        <Route path="/insights/:slug" element={<InsightPage />} />
         <Route path="*" element={<MapPage />} />
       </Routes>
     </BrowserRouter>

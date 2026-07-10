@@ -44,6 +44,9 @@ export default function TopBar() {
         <NavLink to="/stats" className={({ isActive }) => (isActive ? 'active' : '')}>
           통계
         </NavLink>
+        <NavLink to="/insights" className={({ isActive }) => (isActive ? 'active' : '')}>
+          인사이트
+        </NavLink>
         <NavLink to="/glossary" className={({ isActive }) => (isActive ? 'active' : '')}>
           용어집
         </NavLink>
