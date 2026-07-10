@@ -341,6 +341,21 @@ a {
   font-weight: var(--weight-bold);
 }
 
+.list-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.list-toolbar select {
+  background: var(--glass-surface-strong);
+  color: var(--grey);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: var(--text-sm);
+}
+
 .facility-list {
   display: flex;
   flex-direction: column;
