@@ -18,6 +18,7 @@ export default function TopBar() {
   }
 
   return (
+    <>
     <header className="topbar">
       <NavLink to="/" className="logo">
         <span className="logo-mark">M</span>
@@ -60,6 +61,27 @@ export default function TopBar() {
       >
         Generate Report
       </button>
+
     </header>
+
+    {/* header 밖 형제로 — topbar의 backdrop-filter가 fixed 기준점이 되는 것 방지 */}
+    <nav className="mobile-nav">
+      <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
+        맵
+      </NavLink>
+      <NavLink to="/calc" className={({ isActive }) => (isActive ? 'active' : '')}>
+        계산기
+      </NavLink>
+      <NavLink to="/stats" className={({ isActive }) => (isActive ? 'active' : '')}>
+        통계
+      </NavLink>
+      <NavLink to="/insights" className={({ isActive }) => (isActive ? 'active' : '')}>
+        인사이트
+      </NavLink>
+      <NavLink to="/glossary" className={({ isActive }) => (isActive ? 'active' : '')}>
+        용어집
+      </NavLink>
+    </nav>
+    </>
   )
 }
