@@ -1,0 +1,19 @@
+# 공공데이터포털 diff — 스펙 v4 #12 (datago-watch), 페이지 텍스트형. 감시탑 역할 MVP.
+#
+# 이중 역할 중 "감시탑"부터: 우리 소스들이 의존하는 데이터셋의 포털 페이지를
+# 일간 박제해 변경·중단·폐기 공지를 조기 감지한다 (우리 크론이 죽기 전에 안다).
+# "상품"(포털 전체 메타 diff·삭제 원장)은 목록 API 검증 후 확장.
+#
+# 새 소스를 추가할 때마다 그 소스가 의존하는 데이터셋 페이지를 여기에도 추가할 것.
+id: datago-watch
+family: page-text
+title: 공공데이터포털 감시탑 — 의존 데이터셋 변경 감지
+
+user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36 chronicle-archive/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
+rate_limit_ms: 1000
+
+targets:
+  - id: bunyang-capsule-api
+    url: https://www.data.go.kr/data/15098547/openapi.do # 청약홈 분양정보 (bunyang-capsule 의존)
+  - id: apt-trade-api
+    url: https://www.data.go.kr/data/15126468/openapi.do # 아파트 매매 실거래 상세 (deal-audit-ledger 의존)
