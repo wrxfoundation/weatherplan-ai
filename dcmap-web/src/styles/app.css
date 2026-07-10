@@ -634,6 +634,52 @@ a {
   min-width: 220px;
 }
 
+/* glossary */
+.glossary-section {
+  margin-top: 24px;
+}
+
+.glossary-cat {
+  font-size: var(--text-title);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-tight);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+  margin: 0 0 4px;
+}
+
+.glossary-list {
+  margin: 0;
+}
+
+.glossary-item {
+  padding: 14px 2px;
+  border-bottom: 1px solid var(--line);
+}
+
+.glossary-item dt {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.glossary-en {
+  color: var(--grey);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+}
+
+.glossary-item dd {
+  margin: 0;
+  color: var(--grey);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+}
+
 .footer-note {
   margin-top: 28px;
   color: var(--grey);

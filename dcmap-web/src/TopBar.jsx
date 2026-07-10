@@ -41,6 +41,9 @@ export default function TopBar() {
         <NavLink to="/calc" className={({ isActive }) => (isActive ? 'active' : '')}>
           GPU 계산기
         </NavLink>
+        <NavLink to="/glossary" className={({ isActive }) => (isActive ? 'active' : '')}>
+          용어집
+        </NavLink>
       </nav>
 
       <button

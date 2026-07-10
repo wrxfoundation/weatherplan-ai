@@ -13,6 +13,7 @@ const DIST = join(ROOT, 'dist')
 const ORIGIN = (process.env.VITE_SITE_ORIGIN || 'https://dc.koreaapi.dev').replace(/\/$/, '')
 
 const { facilities } = JSON.parse(readFileSync(join(ROOT, 'data/dc_centers.json'), 'utf8'))
+const { GLOSSARY } = await import(join(ROOT, 'src/content/glossary.js'))
 const shell = readFileSync(join(DIST, 'index.html'), 'utf8')
 
 const STATUS_LABEL = { operating: '운영', construction: '건설', planned: '계획', delayed: '지연' }
@@ -49,28 +50,46 @@ function placeJsonLd(f) {
   }
 }
 
-for (const f of facilities) {
-  const slug = slugOf(f)
-  const title = `${f.name} — 명당 AI 데이터센터 맵`
-  const desc = describe(f)
+function prerender(relPath, title, desc, jsonLd) {
   const head = [
-    `<link rel="canonical" href="${ORIGIN}/dc/${slug}" />`,
-    `<script type="application/ld+json">${JSON.stringify(placeJsonLd(f))}</script>`,
+    `<link rel="canonical" href="${ORIGIN}${relPath === '/' ? '' : relPath.replace(/\/index$/, '')}" />`,
+    `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>`,
   ].join('\n    ')
 
-  let html = shell
+  const html = shell
     .replace(/<title>.*?<\/title>/, `<title>${esc(title)}</title>`)
     .replace(/(<meta name="description" content=")[^"]*(")/, `$1${esc(desc)}$2`)
     .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
     .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(desc)}$2`)
     .replace('</head>', `  ${head}\n  </head>`)
 
-  const dir = join(DIST, 'dc', slug)
+  const dir = join(DIST, ...relPath.split('/').filter(Boolean))
   mkdirSync(dir, { recursive: true })
   writeFileSync(join(dir, 'index.html'), html)
 }
 
-const urls = ['/', '/calc', ...facilities.map((f) => `/dc/${slugOf(f)}`)]
+for (const f of facilities) {
+  prerender(`/dc/${slugOf(f)}`, `${f.name} — 명당 AI 데이터센터 맵`, describe(f), placeJsonLd(f))
+}
+
+const GLOSSARY_DESC =
+  '계약전력·수전전압·전력계통영향평가·과부하율·PUE·프리쿨링 — 데이터센터 부지와 전력 인허가를 이해하는 데 필요한 용어를 공개 규정 기준으로 쉽게 풀었습니다.'
+prerender('/glossary', '데이터센터 전력 인허가 용어집 — 명당 AI', GLOSSARY_DESC, {
+  '@context': 'https://schema.org',
+  '@type': 'DefinedTermSet',
+  name: '데이터센터 전력 인허가 용어집',
+  description: GLOSSARY_DESC,
+  url: `${ORIGIN}/glossary`,
+  hasDefinedTerm: GLOSSARY.map((g) => ({
+    '@type': 'DefinedTerm',
+    '@id': `${ORIGIN}/glossary#${g.id}`,
+    name: g.term,
+    alternateName: g.en ?? undefined,
+    description: g.def,
+  })),
+})
+
+const urls = ['/', '/calc', '/glossary', ...facilities.map((f) => `/dc/${slugOf(f)}`)]
 const today = facilities[0]?.updated_at ?? ''
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
