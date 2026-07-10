@@ -7,6 +7,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import TopBar from '../TopBar.jsx'
 import FilterBar from './FilterBar.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
+import SitePanel from '../score/SitePanel.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
@@ -43,10 +44,12 @@ export default function MapPage() {
   // 지역 랜딩(/region/[slug]) "맵에서 보기" 진입점: ?sido= 초기값
   const [sido, setSido] = useState(() => searchParams.get('sido') ?? '')
   const [selected, setSelected] = useState(null)
+  const [sitePoint, setSitePoint] = useState(null) // 맵 빈 곳 클릭 → 지점 분석
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
   const clusterRef = useRef(null)
+  const pointMarkerRef = useRef(null)
 
   const filtered = useMemo(
     () => applyFilters(FACILITIES, { statuses, type, sido, minMw, q }),
@@ -94,22 +97,46 @@ export default function MapPage() {
         L.divIcon({ className: 'dc-cluster', html: `${c.getChildCount()}`, iconSize: [30, 30] }),
     })
     map.addLayer(cluster)
+    map.on('click', (e) => {
+      setSelected(null)
+      setSitePoint({ lat: e.latlng.lat, lng: e.latlng.lng })
+    })
     mapObj.current = map
     clusterRef.current = cluster
     return () => map.remove()
   }, [])
+
+  // 지점 분석 마커 (십자 링)
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (pointMarkerRef.current) {
+      map.removeLayer(pointMarkerRef.current)
+      pointMarkerRef.current = null
+    }
+    if (sitePoint) {
+      pointMarkerRef.current = L.marker([sitePoint.lat, sitePoint.lng], {
+        icon: L.divIcon({ className: 'site-point', iconSize: [26, 26] }),
+        interactive: false,
+      }).addTo(map)
+    }
+  }, [sitePoint])
 
   useEffect(() => {
     const cluster = clusterRef.current
     if (!cluster) return
     cluster.clearLayers()
     for (const f of filtered) {
-      const m = L.marker([f.lat, f.lng], { icon: markerIcon(f) })
+      // bubblingMouseEvents:false — 마커 클릭이 맵 클릭(지점 분석)으로 전파되는 것 방지
+      const m = L.marker([f.lat, f.lng], { icon: markerIcon(f), bubblingMouseEvents: false })
       m.bindTooltip(
         `${f.name} · ${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`,
         { direction: 'top' },
       )
-      m.on('click', () => setSelected(f))
+      m.on('click', () => {
+        setSitePoint(null)
+        setSelected(f)
+      })
       cluster.addLayer(m)
     }
   }, [filtered])
@@ -154,6 +181,15 @@ export default function MapPage() {
               </h2>
               <FacilityCard facility={selected} />
             </>
+          ) : sitePoint ? (
+            <SitePanel
+              point={sitePoint}
+              onClose={() => setSitePoint(null)}
+              onSelectFacility={(f) => {
+                setSitePoint(null)
+                focusFacility(f)
+              }}
+            />
           ) : (
             <>
               <div className="panel-title">
