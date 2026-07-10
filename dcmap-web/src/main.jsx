@@ -7,6 +7,7 @@ import MapPage from './map/MapPage.jsx'
 import FacilityPage from './dc/FacilityPage.jsx'
 import CalcPage from './calc/CalcPage.jsx'
 import GlossaryPage from './glossary/GlossaryPage.jsx'
+import RegionPage from './region/RegionPage.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -16,6 +17,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/dc/:slug" element={<FacilityPage />} />
         <Route path="/calc" element={<CalcPage />} />
         <Route path="/glossary" element={<GlossaryPage />} />
+        <Route path="/region/:slug" element={<RegionPage />} />
         <Route path="*" element={<MapPage />} />
       </Routes>
     </BrowserRouter>

@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import TopBar from '../TopBar.jsx'
 import FacilityCard from './FacilityCard.jsx'
 import { findBySlug, STATUS_LABEL } from '../data/facilities.js'
+import { SIDO_SLUGS } from '../content/sido_slugs.js'
 import { buildDescription, buildPlaceJsonLd } from './seo.js'
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
@@ -92,6 +93,13 @@ export default function FacilityPage() {
         </p>
         <div ref={mapRef} className="detail-map" />
         <FacilityCard facility={facility} compact />
+        {SIDO_SLUGS[facility.sido] && (
+          <div className="card-actions">
+            <Link className="btn" to={`/region/${SIDO_SLUGS[facility.sido]}`}>
+              {facility.sido} 지역 시설 전체 보기
+            </Link>
+          </div>
+        )}
         <p className="footer-note">
           본 페이지의 정보는 사업자 공식 발표·언론 보도·정부 공고 등 공개 소스만을 기반으로 하며, 시군구/시도 수준
           좌표는 해당 행정구역 중심점입니다. ‘검증 필요’ 표시 항목은 확인 중인 정보입니다.

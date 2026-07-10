@@ -27,7 +27,8 @@ export default function MapPage() {
 
   const [statuses, setStatuses] = useState(() => new Set())
   const [type, setType] = useState('')
-  const [sido, setSido] = useState('')
+  // 지역 랜딩(/region/[slug]) "맵에서 보기" 진입점: ?sido= 초기값
+  const [sido, setSido] = useState(() => searchParams.get('sido') ?? '')
   const [selected, setSelected] = useState(null)
 
   const mapRef = useRef(null)

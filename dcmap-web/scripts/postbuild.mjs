@@ -14,6 +14,7 @@ const ORIGIN = (process.env.VITE_SITE_ORIGIN || 'https://dc.koreaapi.dev').repla
 
 const { facilities } = JSON.parse(readFileSync(join(ROOT, 'data/dc_centers.json'), 'utf8'))
 const { GLOSSARY } = await import(join(ROOT, 'src/content/glossary.js'))
+const { SIDO_SLUGS } = await import(join(ROOT, 'src/content/sido_slugs.js'))
 const shell = readFileSync(join(DIST, 'index.html'), 'utf8')
 
 const STATUS_LABEL = { operating: '운영', construction: '건설', planned: '계획', delayed: '지연' }
@@ -89,7 +90,41 @@ prerender('/glossary', '데이터센터 전력 인허가 용어집 — 명당 AI
   })),
 })
 
-const urls = ['/', '/calc', '/glossary', ...facilities.map((f) => `/dc/${slugOf(f)}`)]
+// 지역 랜딩 프리렌더 — 시설이 있는 시도만
+const regionSlugs = []
+for (const [sido, slug] of Object.entries(SIDO_SLUGS)) {
+  const list = facilities.filter((f) => f.sido === sido)
+  if (!list.length) continue
+  regionSlugs.push(slug)
+  const by = { operating: 0, construction: 0, planned: 0 }
+  let mw = 0
+  for (const f of list) {
+    by[f.status === 'delayed' ? 'planned' : f.status] += 1
+    if (f.power_mw_public != null) mw += f.power_mw_public
+  }
+  const desc = `${sido} 데이터센터 ${list.length}곳 — 운영 ${by.operating} · 건설 ${by.construction} · 계획 ${by.planned}${mw > 0 ? ` · 공개 전력 합계 ${mw}MW` : ''}. 공개 소스 기반 현황, 명당 AI.`
+  prerender(`/region/${slug}`, `${sido} 데이터센터 현황 — 명당 AI`, desc, {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${sido} 데이터센터 목록`,
+    description: desc,
+    numberOfItems: list.length,
+    itemListElement: list.map((f, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${ORIGIN}/dc/${slugOf(f)}`,
+      name: f.name,
+    })),
+  })
+}
+
+const urls = [
+  '/',
+  '/calc',
+  '/glossary',
+  ...regionSlugs.map((s) => `/region/${s}`),
+  ...facilities.map((f) => `/dc/${slugOf(f)}`),
+]
 const today = facilities[0]?.updated_at ?? ''
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
