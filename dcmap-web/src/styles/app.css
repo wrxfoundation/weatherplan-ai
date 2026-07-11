@@ -1075,6 +1075,61 @@ a {
   color: var(--accent, #35d5ee);
 }
 
+/* API 연동 현황 그리드 */
+.api-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2px 18px;
+  margin: 6px 0 8px;
+}
+.api-status-row {
+  display: grid;
+  grid-template-columns: 14px 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(120, 160, 200, 0.08);
+}
+.api-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--grey);
+}
+.api-dot.live {
+  background: var(--status-operating, #45d483);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--status-operating, #45d483) 70%, transparent);
+}
+.api-dot.set {
+  background: var(--status-construction, #f59a3c);
+}
+.api-dot.wait {
+  background: color-mix(in srgb, var(--grey) 60%, transparent);
+}
+.api-name {
+  color: var(--text);
+}
+.api-axis {
+  color: var(--text-dim, #9fb4cc);
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(120, 160, 200, 0.1);
+}
+.api-state {
+  color: var(--text-dim, #9fb4cc);
+  font-size: 11.5px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.api-state.live {
+  color: var(--status-operating, #45d483);
+}
+.api-state.set {
+  color: var(--status-construction, #f59a3c);
+}
+
 /* 세그먼트 탭 — 콘텐츠 페이지 분류 필터(글라스 톤). 맵 필터칩과 별개 */
 .seg-tabs {
   display: inline-flex;

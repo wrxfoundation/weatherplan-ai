@@ -51,3 +51,9 @@ export const populationFor = (lat, lng) => fetchJson(`/api/sgis?${q(lat, lng)}`)
 
 /** 재난안전 시군구 재해 이력 — { events, topType, recentYear } | null (리스크축 재해) */
 export const disasterFor = (lat, lng) => fetchJson(`/api/disaster?${q(lat, lng)}`)
+
+/** API 연동 현황 — { sources:[{key,label,axis,configured,available?,reason?}], probed } | null */
+export const apiStatus = (probe = true) =>
+  fetch(`/api/status${probe ? '?probe=1' : ''}`)
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null)

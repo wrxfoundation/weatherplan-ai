@@ -14,8 +14,9 @@
  * 응답: { available, byFuel?: [{fuel, mw}], facilities?: [{name, fuel, mw, region}], totalMw?, asOf? }
  *       | { available:false, reason }
  */
+// 한국전력거래소_전력시장 발전설비 정보 (data.go.kr 15099767) — 소재지·지역·발전사·발전기명·연료원·설비용량(MW)
 const DEFAULT_URL =
-  'https://apis.data.go.kr/B552115/GnrtElecGenInfoInqireSvc/getRegionGenInfo?serviceKey={key}&pageNo=1&numOfRows=1000&dataType=JSON'
+  'https://apis.data.go.kr/B552115/PowerMarketGenInfo/getPowerMarketGenInfo?serviceKey={key}&pageNo=1&numOfRows=1000&dataType=JSON'
 
 const num = (v) => {
   if (v == null) return undefined
