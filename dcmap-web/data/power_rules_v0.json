@@ -23,27 +23,104 @@
     }
   },
   "policy_signals": [
-    { "signal": "345kV 계통 여유 변전소 정보 공개 예정", "source": "산업부 3대 메가프로젝트 발표 (2026-06-29)", "use": "substations.json·D3 공식 소스" },
-    { "signal": "지역별 전기요금제 + AI 데이터센터 전용 요금제 도입 계획", "source": "산업부 3대 메가프로젝트 발표 (2026-06-29)", "use": "스코어링 전력축 비용 프록시" },
-    { "signal": "AIDC 1단계 8.4GW(SK 5·GS 2.4·네이버 1)→2035년 18.4GW, 약 550조", "source": "산업부 3대 메가프로젝트 발표 (2026-06-29)", "use": "입지 확정 이벤트 D2 추적" }
+    {
+      "signal": "345kV 계통 여유 변전소 정보 공개 예정",
+      "source": "산업부 3대 메가프로젝트 발표 (2026-06-29)",
+      "use": "substations.json·D3 공식 소스"
+    },
+    {
+      "signal": "지역별 전기요금제 + AI 데이터센터 전용 요금제 도입 계획",
+      "source": "산업부 3대 메가프로젝트 발표 (2026-06-29)",
+      "use": "스코어링 전력축 비용 프록시"
+    },
+    {
+      "signal": "AIDC 1단계 8.4GW(SK 5·GS 2.4·네이버 1)→2035년 18.4GW, 약 550조",
+      "source": "산업부 3대 메가프로젝트 발표 (2026-06-29)",
+      "use": "입지 확정 이벤트 D2 추적"
+    },
+    {
+      "id": "psia-operating-rule-2026",
+      "signal": "「전력계통영향평가 제도 운영에 관한 규정」 제정안 행정예고 — 대규모 전력수요 시설(AIDC·반도체) 입지 적정성 사전 검증, 수도권 완화·비수도권 분산 기준, 종합정보지원시스템 구축 명시",
+      "implication": "종합정보지원시스템 구축 시 평가 프로세스 자체가 조회 창구화 — D1 psia-tracker의 공식 소스로 흡수 예정",
+      "authority": "기후에너지환경부 (주의: '25.10 조직개편으로 산업통상부 아님)",
+      "status": "행정예고",
+      "recorded": "2026-07-11"
+    }
   ],
   "voltage_tracks": [
-    { "track": "22.9kV-1", "voltage_kv": 22.9, "min_mw": 0, "max_mw": 20, "circuits": 1, "own_substation_required": false },
-    { "track": "22.9kV-2", "voltage_kv": 22.9, "min_mw": 20, "max_mw": 40, "circuits": 2, "own_substation_required": false, "note": "40MW = 22.9kV 옵션 상한(협의 구간 경계값)" },
-    { "track": "154kV", "voltage_kv": 154, "min_mw": 40, "max_mw": null, "circuits": null, "own_substation_required": true, "note": "40MW 초과 시 의무" },
-    { "track": "345kV", "voltage_kv": 345, "min_mw": null, "max_mw": null, "circuits": null, "own_substation_required": true, "note": "초대형 협의 구간" }
+    {
+      "track": "22.9kV-1",
+      "voltage_kv": 22.9,
+      "min_mw": 0,
+      "max_mw": 20,
+      "circuits": 1,
+      "own_substation_required": false
+    },
+    {
+      "track": "22.9kV-2",
+      "voltage_kv": 22.9,
+      "min_mw": 20,
+      "max_mw": 40,
+      "circuits": 2,
+      "own_substation_required": false,
+      "note": "40MW = 22.9kV 옵션 상한(협의 구간 경계값)"
+    },
+    {
+      "track": "154kV",
+      "voltage_kv": 154,
+      "min_mw": 40,
+      "max_mw": null,
+      "circuits": null,
+      "own_substation_required": true,
+      "note": "40MW 초과 시 의무"
+    },
+    {
+      "track": "345kV",
+      "voltage_kv": 345,
+      "min_mw": null,
+      "max_mw": null,
+      "circuits": null,
+      "own_substation_required": true,
+      "note": "초대형 협의 구간"
+    }
   ],
   "thresholds": {
     "pre_notice_required_kw": 5000,
     "psia_required_mw": 10,
     "overload_reject_pct": 100,
-    "trial_gate": ["공급 가능", "적정전압 유지"]
+    "trial_gate": [
+      "공급 가능",
+      "적정전압 유지"
+    ]
   },
   "fees_krw": {
-    "pre_review": { "22.9kV": 350000, "154kV": 670000 },
-    "technical_review": { "22.9kV": 1000000, "154kV": 6590000, "345kV": 9880000, "vat_excluded": true, "refundable": false, "payment_due_business_days": 20 },
-    "assessment_certification": { "range": "수백만 원대", "items": ["회계법인(사업 안정성)", "세무 확인(지방세)"] },
-    "contract_stage": { "items": ["시설부담금(표준+거리 가산)", "인입공사비(고객부담, 거리 비례)", "예비전력 요금"], "distance_dependent": true }
+    "pre_review": {
+      "22.9kV": 350000,
+      "154kV": 670000
+    },
+    "technical_review": {
+      "22.9kV": 1000000,
+      "154kV": 6590000,
+      "345kV": 9880000,
+      "vat_excluded": true,
+      "refundable": false,
+      "payment_due_business_days": 20
+    },
+    "assessment_certification": {
+      "range": "수백만 원대",
+      "items": [
+        "회계법인(사업 안정성)",
+        "세무 확인(지방세)"
+      ]
+    },
+    "contract_stage": {
+      "items": [
+        "시설부담금(표준+거리 가산)",
+        "인입공사비(고객부담, 거리 비례)",
+        "예비전력 요금"
+      ],
+      "distance_dependent": true
+    }
   },
   "lead_times": {
     "technical_review_days_max": 90,
@@ -53,20 +130,62 @@
     "contract_deadline_after_approval_months": 12
   },
   "assessment_requirements": [
-    { "key": "kepco_review", "label": "한전 기술검토 결과 인용(공급가능·과부하율·적정전압)", "mandatory": true },
-    { "key": "financial_stability", "label": "사업 안정성(자기자본비율 등) — 회계법인 확인", "mandatory": true },
-    { "key": "local_tax", "label": "지방 재정 기여도(예상 지방세) — 세무 확인", "mandatory": true },
-    { "key": "industry_effect", "label": "산업 활성화 효과 = 총사업비 × 산업연관표 계수", "mandatory": true },
-    { "key": "ess_xems", "label": "자가발전·ESS·xEMS 설치계획 + 이행확인서(별표15)", "mandatory": false, "bonus": true }
+    {
+      "key": "kepco_review",
+      "label": "한전 기술검토 결과 인용(공급가능·과부하율·적정전압)",
+      "mandatory": true
+    },
+    {
+      "key": "financial_stability",
+      "label": "사업 안정성(자기자본비율 등) — 회계법인 확인",
+      "mandatory": true
+    },
+    {
+      "key": "local_tax",
+      "label": "지방 재정 기여도(예상 지방세) — 세무 확인",
+      "mandatory": true
+    },
+    {
+      "key": "industry_effect",
+      "label": "산업 활성화 효과 = 총사업비 × 산업연관표 계수",
+      "mandatory": true
+    },
+    {
+      "key": "ess_xems",
+      "label": "자가발전·ESS·xEMS 설치계획 + 이행확인서(별표15)",
+      "mandatory": false,
+      "bonus": true
+    }
   ],
   "d1_state_machine": {
-    "states": ["S0_예정통지접수", "S1_평가신청", "S2_기술검토중", "S3_기술검토회신", "S4_평가서제출", "S5_심의회의결", "S6_전기사용신청", "S7_계약체결"],
+    "states": [
+      "S0_예정통지접수",
+      "S1_평가신청",
+      "S2_기술검토중",
+      "S3_기술검토회신",
+      "S4_평가서제출",
+      "S5_심의회의결",
+      "S6_전기사용신청",
+      "S7_계약체결"
+    ],
     "failure_transitions": [
-      { "from": "S2", "reason": "기술검토비 20영업일 내 미납" },
-      { "from": "S3", "reason": "공급 불가 회신(과부하율 초과 등)" },
-      { "from": "S7", "reason": "공급 승인 후 1년 내 계약 미체결" }
+      {
+        "from": "S2",
+        "reason": "기술검토비 20영업일 내 미납"
+      },
+      {
+        "from": "S3",
+        "reason": "공급 불가 회신(과부하율 초과 등)"
+      },
+      {
+        "from": "S7",
+        "reason": "공급 승인 후 1년 내 계약 미체결"
+      }
     ],
     "snapshot_policy": "append-only 주 1회 — 공고 게시판 이력 미보존, 소급 불가"
   },
-  "backup_power_types": { "갑": "상용과 동일 변전소 수전", "을": "타 변전소 수전" }
+  "backup_power_types": {
+    "갑": "상용과 동일 변전소 수전",
+    "을": "타 변전소 수전"
+  }
 }

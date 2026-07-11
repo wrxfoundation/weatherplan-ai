@@ -1235,6 +1235,20 @@ a {
   margin: 12px 0 4px;
 }
 
+/* 실무 조회 바로가기 — 지점 분석의 공식 시스템 브릿지 */
+.quick-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.quick-links .btn {
+  font-size: var(--text-sm);
+  height: 32px;
+  padding: 0 10px;
+  justify-content: flex-start;
+}
+
 /* 초단기예보 스트립 — H+1~6 미니 타임라인 (기상 셀 내부) */
 .wx-strip {
   display: flex;
