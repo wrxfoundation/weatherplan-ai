@@ -2420,13 +2420,45 @@ a {
 }
 
 @media (max-width: 760px) {
-  /* 필터바(가로 스크롤) 아래로 내려 전폭 배치 */
+  /* 필터바(가로 스크롤) 아래로 내려 전폭 배치 + 맵을 최대한 덜 가리게 컴팩트 */
   .map-top {
-    top: calc(var(--topbar-height) + 54px);
-    left: 12px;
-    right: 12px;
+    top: calc(var(--topbar-height) + 50px);
+    left: 10px;
+    right: 10px;
     width: auto;
     max-width: none;
+    gap: 6px;
+  }
+
+  .addr-search {
+    padding: 4px;
+  }
+
+  .addr-search input,
+  .addr-search button {
+    height: 28px;
+  }
+
+  /* 기후 바: 헤더+배지+실황+한 줄 이유까지만 — 근거는 지점 패널에서 (맵 가림 최소화) */
+  .climate-bar {
+    padding: 8px 10px;
+  }
+
+  .cb-head {
+    margin-bottom: 6px;
+  }
+
+  .cb-why {
+    margin-top: 6px;
+    font-size: 11px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .cb-basis {
+    display: none; /* 상세 근거는 지점 분석 패널에서 */
   }
 }
 

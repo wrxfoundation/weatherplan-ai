@@ -131,21 +131,30 @@ async function rawGetText(urlStr, ms = 8000) {
   })
 }
 
-/** EPSIS 발전설비: totalCount 기준으로 전체 페이지를 병렬 수집(안전 상한 20페이지·2만행) */
+/**
+ * EPSIS 발전설비 수집. 1페이지는 반드시 확보하고, 추가 페이지는 '있으면 좋은' 보강으로
+ * 전체 마감시한(DEADLINE) 안에서만 병렬 수집한다. 상태 프로브(16s)·함수예산(30s) 안에
+ * 반드시 반환되게 시간을 엄격히 제한 — 지난 라운드의 upstream_AbortError 회귀 방지.
+ */
 async function fetchEpsisItems(url) {
+  const start = Date.now()
+  const DEADLINE = 14000 // 프로브 abort(16s)보다 확실히 짧게
   const hasPage = /[?&]pageNo=\d+/.test(url)
   const pageUrl = (n) => url.replace(/([?&]pageNo=)\d+/, `$1${n}`)
-  const first = await fetchJson(hasPage ? pageUrl(1) : url)
+  // 1페이지는 원래 단일요청과 비슷한 여유(12s) — 느린 정상응답이 새로 abort되지 않게
+  const first = await fetchJson(hasPage ? pageUrl(1) : url, 12000)
   if (first?._status) return { _status: first._status }
   let items = findItems(first) || []
   const total = num(first?.response?.body?.totalCount)
   const perPage = num(first?.response?.body?.numOfRows) || items.length || 1000
-  if (hasPage && total && total > items.length && perPage > 0) {
-    const pages = Math.min(20, Math.ceil(total / perPage))
+  const remaining = DEADLINE - (Date.now() - start)
+  if (hasPage && total && total > items.length && perPage > 0 && remaining > 2500) {
+    const pages = Math.min(6, Math.ceil(total / perPage)) // 보강 상한(레이트리밋·지연 방지)
+    const budget = Math.min(4500, remaining - 500) // 남은 예산 안에서만 보강
     const rest = await Promise.all(
       Array.from({ length: pages - 1 }, (_, i) =>
-        fetchJson(pageUrl(i + 2))
-          .then((b) => findItems(b))
+        fetchJson(pageUrl(i + 2), budget)
+          .then((b) => (b?._status ? null : findItems(b)))
           .catch(() => null),
       ),
     )
@@ -244,7 +253,13 @@ function handleTrading(items) {
   }
   const fuels = new Set([...capAgg.keys(), ...tradeAgg.keys()])
   const byFuel = [...fuels]
-    .map((fuel) => ({ fuel, capacityMw: capAgg.has(fuel) ? Math.round(capAgg.get(fuel)) : undefined, tradedMwh: tradeAgg.has(fuel) ? Math.round(tradeAgg.get(fuel)) : undefined }))
+    .map((fuel) => {
+      const cap = capAgg.has(fuel) ? Math.round(capAgg.get(fuel)) : undefined
+      const trd = tradeAgg.has(fuel) ? Math.round(tradeAgg.get(fuel)) : undefined
+      // 0/미기재는 undefined로 — '거래 0MWh'가 측정값 0으로 오해되는 것을 방지(EPSIS와 동일 원칙)
+      return { fuel, capacityMw: cap > 0 ? cap : undefined, tradedMwh: trd > 0 ? trd : undefined }
+    })
+    .filter((f) => f.capacityMw != null || f.tradedMwh != null)
     .sort((a, b) => (b.tradedMwh ?? b.capacityMw ?? 0) - (a.tradedMwh ?? a.capacityMw ?? 0))
   if (!byFuel.length) return { available: false, reason: 'no_fuel_fields' }
   const totalMwh = byFuel.reduce((s, f) => s + (f.tradedMwh ?? 0), 0)
