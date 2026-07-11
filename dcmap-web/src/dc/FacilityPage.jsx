@@ -136,11 +136,8 @@ export default function FacilityPage() {
                   <span className="hbar-label">{row.label}</span>
                   <span className="hbar-track">
                     <span
-                      className="hbar-fill"
-                      style={{
-                        width: `${(Math.abs(row.rate) / maxAbs) * 100}%`,
-                        background: row.rate >= 0 ? 'var(--accent)' : 'var(--amber)',
-                      }}
+                      className={`hbar-fill${row.rate < 0 ? ' neg' : ''}`}
+                      style={{ width: `${(Math.abs(row.rate) / maxAbs) * 100}%` }}
                     />
                   </span>
                   <span className="hbar-value">{fmtRate(row.rate)}</span>
