@@ -1790,6 +1790,63 @@ a {
 }
 
 /* calc */
+/* ---------- 통계 서브섹션 내비 ---------- */
+.stats-subnav {
+  position: sticky;
+  top: calc(var(--topbar-height) + 8px);
+  z-index: 40;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 14px 0 4px;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  background: var(--glass-surface);
+  backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-specular-soft);
+}
+
+.stats-subnav a {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--grey);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  letter-spacing: -0.01em;
+  border: 1px solid transparent;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.stats-subnav a:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+
+.stats-section {
+  scroll-margin-top: calc(var(--topbar-height) + 56px);
+}
+
+.stats-section-h {
+  margin: 26px 0 2px;
+  font-size: var(--text-h3, 1.15rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stats-section-h::before {
+  content: '';
+  width: 3px;
+  height: 1.05em;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
 .calc-card {
   background:
     var(--corner-wash),

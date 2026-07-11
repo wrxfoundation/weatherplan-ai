@@ -132,11 +132,20 @@ export default function StatsPage() {
         <h1>국내 데이터센터 통계</h1>
         <p className="sub">수도권 집중과 전력 수요 — {STATS_SOURCE.publication} 기준</p>
 
-        <div className="stat-grid">
-          {KPI.map((k) => (
-            <StatTile key={k.key} {...k} />
-          ))}
-        </div>
+        <nav className="stats-subnav" aria-label="통계 섹션 바로가기">
+          <a href="#overview">시장 개요</a>
+          <a href="#facilities">시설 구성·설비</a>
+          <a href="#power">전력·계통 공급측</a>
+          <a href="#cross">맵 교차확인</a>
+        </nav>
+
+        <section id="overview" className="stats-section">
+          <h2 className="stats-section-h">시장 개요</h2>
+          <div className="stat-grid">
+            {KPI.map((k) => (
+              <StatTile key={k.key} {...k} />
+            ))}
+          </div>
 
         <div className="calc-card">
           <div className="chart-title">수도권 시장 최신 단면 — {MARKET_2025H2.asOf} (Cushman &amp; Wakefield/KDCC)</div>
@@ -154,6 +163,10 @@ export default function StatsPage() {
           </p>
         </div>
 
+        </section>
+
+        <section id="facilities" className="stats-section">
+          <h2 className="stats-section-h">시설 구성·설비</h2>
         <div className="calc-card">
           {COMPOSITION.map((c) => (
             <SplitBar key={c.key} {...c} />
@@ -171,6 +184,10 @@ export default function StatsPage() {
           <HBars {...CUSTOMERS} unit="개" />
         </div>
 
+        </section>
+
+        <section id="power" className="stats-section">
+          <h2 className="stats-section-h">전력·계통 공급측</h2>
         <div className="calc-card">
           <HBars {...KEPCO_REGION} unit="MW" />
         </div>
@@ -238,6 +255,10 @@ export default function StatsPage() {
           />
         </div>
 
+        </section>
+
+        <section id="cross" className="stats-section">
+          <h2 className="stats-section-h">맵 교차확인</h2>
         <div className="calc-card">
           <HBars
             title={`AI InfraMap 시드 기준 지역별 공개 전력 분포 (계획 포함, 총 ${regionMw.reduce((s, b) => s + b.value, 0).toLocaleString()}MW)`}
@@ -263,6 +284,7 @@ export default function StatsPage() {
             </Link>
           </div>
         </div>
+        </section>
 
         <p className="footer-note">
           출처: {STATS_SOURCE.publication} · {STATS_SOURCE.base.join(' · ')} ({STATS_SOURCE.url})
