@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor, populationFor } from '../data/liveApi.js'
+import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
@@ -18,6 +18,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
   const [headroom, setHeadroom] = useState(null)
   const [flood, setFlood] = useState(null)
   const [pop, setPop] = useState(null)
+  const [disaster, setDisaster] = useState(null)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     setHeadroom(null)
     setFlood(null)
     setPop(null)
+    setDisaster(null)
     revgeoFor(point.lat, point.lng).then((v) => alive && setAddr(v))
     weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
     landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v))
@@ -36,6 +38,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     headroomFor(point.lat, point.lng).then((v) => alive && setHeadroom(v))
     floodRiskFor(point.lat, point.lng).then((v) => alive && setFlood(v))
     populationFor(point.lat, point.lng).then((v) => alive && setPop(v))
+    disasterFor(point.lat, point.lng).then((v) => alive && setDisaster(v))
     return () => {
       alive = false
     }
@@ -249,6 +252,20 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 </>
               ) : (
                 <span className="badge verify">연동 대기 — 리스크축 인구격자(SGIS)</span>
+              )}
+            </div>
+          </div>
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">재해 이력 (재난안전 — 리스크축)</div>
+            <div className="v">
+              {disaster?.available ? (
+                <>
+                  {disaster.events != null && <strong>재해 {disaster.events.toLocaleString()}건</strong>}
+                  {disaster.topType && ` · 주 유형 ${disaster.topType}`}
+                  {disaster.recentYear && ` · 최근 ${disaster.recentYear}`}
+                </>
+              ) : (
+                <span className="badge verify">연동 대기 — 리스크축 재해(재난안전)</span>
               )}
             </div>
           </div>

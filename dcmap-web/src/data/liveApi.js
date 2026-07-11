@@ -48,3 +48,6 @@ export const floodRiskFor = (lat, lng) => fetchJson(`/api/floodmap?${q(lat, lng)
 
 /** SGIS 반경 인구/가구 — { population, households, radiusKm } | null (리스크축 민원 프록시) */
 export const populationFor = (lat, lng) => fetchJson(`/api/sgis?${q(lat, lng)}`)
+
+/** 재난안전 시군구 재해 이력 — { events, topType, recentYear } | null (리스크축 재해) */
+export const disasterFor = (lat, lng) => fetchJson(`/api/disaster?${q(lat, lng)}`)

@@ -149,6 +149,7 @@ export default function MapPage({ power = false }) {
   const [showHeadroom, setShowHeadroom] = useState(false) // 계통 여유용량 시도 버블 (한전 분산전원)
   const headroomLayerRef = useRef(null)
   const [headrooms, setHeadrooms] = useState(null) // {sido: availableMw|null}
+  const [region, setRegion] = useState(null) // 전력지도: 클릭한 시도 (지역 요약 카드)
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
@@ -208,6 +209,7 @@ export default function MapPage({ power = false }) {
     map.addLayer(cluster)
     map.on('click', (e) => {
       setSelected(null)
+      setRegion(null)
       setSitePoint({ lat: e.latlng.lat, lng: e.latlng.lng })
     })
     // 딥링크 복원 시 해당 지점으로 카메라
@@ -302,6 +304,11 @@ export default function MapPage({ power = false }) {
             `<div class="dc-hovercard"><strong>${b.sido}</strong> · 발전 허가 <b>${b.count}건</b> (2024+)<br/>신재생 ${renewPct}% · 최다 ${b.topFuel || '—'}</div>`,
             { direction: 'top', offset: [0, -r], className: 'dc-hovercard', opacity: 1 },
           )
+          .on('click', () => {
+            setSelected(null)
+            setSitePoint(null)
+            setRegion(b.sido)
+          })
           .addTo(g)
         L.marker([b.lat, b.lng], {
           icon: L.divIcon({ className: 'gen-bubble-label', html: `${b.count}`, iconSize: [40, 16], iconAnchor: [20, 8] }),
@@ -356,6 +363,11 @@ export default function MapPage({ power = false }) {
         })
           .bindTooltip(`<div class="dc-hovercard"><strong>${s.sido}</strong> · 계통 여유용량<br/>${has ? `<b>${mw.toLocaleString()}MW</b>` : '연동 대기 (KEPCO env)'}</div>`, {
             direction: 'top', offset: [0, -r], className: 'dc-hovercard', opacity: 1,
+          })
+          .on('click', () => {
+            setSelected(null)
+            setSitePoint(null)
+            setRegion(s.sido)
           })
           .addTo(g)
         if (has) L.marker([s.lat, s.lng], { icon: L.divIcon({ className: 'gen-bubble-label', html: `${Math.round(mw)}`, iconSize: [46, 16], iconAnchor: [23, 8] }), interactive: false }).addTo(g)
@@ -451,6 +463,7 @@ export default function MapPage({ power = false }) {
         )
         m.on('click', () => {
           setSitePoint(null)
+          setRegion(null)
           setSelected(f)
         })
         cluster.addLayer(m)
@@ -468,8 +481,24 @@ export default function MapPage({ power = false }) {
 
   const focusFacility = (f) => {
     setSelected(f)
+    setRegion(null)
     mapObj.current?.setView([f.lat, f.lng], Math.max(mapObj.current.getZoom(), 11))
   }
+
+  // 전력지도 지역 클릭 요약 데이터
+  const regionInfo = useMemo(() => {
+    if (!region) return null
+    const bubble = GEN_PERMIT_BUBBLES.find((x) => x.sido === region)
+    const dcs = FACILITIES.filter((f) => f.sido === region)
+    const dcMw = dcs.reduce((s, f) => s + (f.power_mw_public ?? 0), 0)
+    return {
+      sido: region,
+      gen: bubble || null,
+      headroomMw: headrooms?.[region] ?? null,
+      dcCount: dcs.length,
+      dcMw,
+    }
+  }, [region, headrooms])
 
   return (
     <>
@@ -509,6 +538,67 @@ export default function MapPage({ power = false }) {
                 </button>
               </h2>
               <FacilityCard facility={selected} />
+            </>
+          ) : region && regionInfo ? (
+            <>
+              <h2>
+                <button type="button" className="chip btn" onClick={() => setRegion(null)}>
+                  ← 목록으로
+                </button>
+              </h2>
+              <article className="facility-card">
+                <div className="status-line">
+                  <span className="badge status-operating">전력 · 지역 요약</span>
+                  <span className="badge">{regionInfo.sido}</span>
+                </div>
+                <h3>{regionInfo.sido} — 전력 공급 · 계통 · 데이터센터</h3>
+                <div className="spec-grid">
+                  <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                    <div className="k">발전 공급 파이프라인 (2024+ 허가)</div>
+                    <div className="v">
+                      {regionInfo.gen ? (
+                        <>
+                          <strong>{regionInfo.gen.count}건</strong>
+                          {regionInfo.gen.mw > 0 && ` · 용량 ${regionInfo.gen.mw.toLocaleString()}MW(참고)`}
+                          {' · 신재생 '}
+                          {Math.round((regionInfo.gen.renew / regionInfo.gen.count) * 100)}%
+                          {regionInfo.gen.topFuel && ` · 최다 ${regionInfo.gen.topFuel}`}
+                        </>
+                      ) : (
+                        <span className="muted">허가 없음</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                    <div className="k">계통 여유용량 (한전 분산전원)</div>
+                    <div className="v">
+                      {regionInfo.headroomMw != null ? (
+                        <strong>{regionInfo.headroomMw.toLocaleString()} MW</strong>
+                      ) : (
+                        <span className="badge verify">연동 대기 — ⚡여유용량 토글 · KEPCO env</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="spec-cell">
+                    <div className="k">데이터센터 시설</div>
+                    <div className="v">
+                      <strong>{regionInfo.dcCount}</strong>곳
+                    </div>
+                  </div>
+                  <div className="spec-cell">
+                    <div className="k">DC 공개 전력</div>
+                    <div className="v">{regionInfo.dcMw > 0 ? `${regionInfo.dcMw.toLocaleString()} MW` : '비공개'}</div>
+                  </div>
+                </div>
+                <p className="note">
+                  발전 공급은 3MW 초과 허가대장(2024+ 건수·용량 참고치), 계통 여유는 한전 분산전원 기준. 공급-여유-DC를 한 지역에서 대비.
+                </p>
+                <div className="card-actions">
+                  <button type="button" className="btn primary" onClick={() => { setSido(regionInfo.sido); setRegion(null) }}>
+                    이 지역 시설만 보기
+                  </button>
+                </div>
+              </article>
             </>
           ) : sitePoint ? (
             <SitePanel

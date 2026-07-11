@@ -59,14 +59,15 @@ export const GEN_PERMIT_BUBBLES = (() => {
   for (const r of GEN_RECENT) {
     const c = SIDO_CENTROIDS[r.sido]
     if (!c) continue
-    if (!agg.has(r.sido)) agg.set(r.sido, { sido: r.sido, lat: c[0], lng: c[1], count: 0, renew: 0, fuels: new Map() })
+    if (!agg.has(r.sido)) agg.set(r.sido, { sido: r.sido, lat: c[0], lng: c[1], count: 0, renew: 0, mw: 0, fuels: new Map() })
     const a = agg.get(r.sido)
     a.count += 1
     if (RENEW_SET.has(r.fuel)) a.renew += 1
+    if (typeof r.mw === 'number') a.mw += r.mw
     if (r.fuel) a.fuels.set(r.fuel, (a.fuels.get(r.fuel) || 0) + 1)
   }
   return [...agg.values()].map((a) => ({
-    sido: a.sido, lat: a.lat, lng: a.lng, count: a.count, renew: a.renew,
+    sido: a.sido, lat: a.lat, lng: a.lng, count: a.count, renew: a.renew, mw: Math.round(a.mw),
     topFuel: [...a.fuels.entries()].sort((x, y) => y[1] - x[1])[0]?.[0] || null,
   })).sort((a, b) => b.count - a.count)
 })()
