@@ -106,6 +106,12 @@ prerender('/stats', '국내 데이터센터 통계 — 수도권 집중과 전�
   citation: '에너지경제연구원(KEEI) 에너지통계 월호 제82호 (2026.4.30)',
 })
 
+prerender('/dashboard', '대시보드 — 명당 AI 한국 데이터센터 인텔리전스', '한국 데이터센터 현황 대시보드: 상태별 시설 수, 지역별 공개 전력 분포, 건설 파이프라인, 입지 시군구 지가 펄스 — 전부 공개 데이터 기준.', {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: '명당 AI 대시보드',
+})
+
 // 인사이트 프리렌더
 prerender('/insights', '인사이트 — 명당 AI', '데이터센터 입지·전력·민원·기상을 둘러싼 논쟁을 공개 데이터로 정리하는 명당 AI 인사이트.', {
   '@context': 'https://schema.org',
@@ -157,6 +163,7 @@ const urls = [
   '/calc',
   '/glossary',
   '/stats',
+  '/dashboard',
   '/insights',
   ...INSIGHTS.map((a) => `/insights/${a.slug}`),
   ...regionSlugs.map((s) => `/region/${s}`),

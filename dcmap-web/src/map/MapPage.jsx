@@ -93,8 +93,13 @@ export default function MapPage() {
       maxClusterRadius: 30, // 밀도감: 촘촘히 붙은 것만 묶고 개별 마커를 최대한 노출
       disableClusteringAtZoom: 10,
       spiderfyOnMaxZoom: false,
+      // 내부 span 절대배치로 센터링 — 외부 CSS(leaflet) 로드 순서와 무관하게 숫자를 원 중앙에 고정
       iconCreateFunction: (c) =>
-        L.divIcon({ className: 'dc-cluster', html: `${c.getChildCount()}`, iconSize: [30, 30] }),
+        L.divIcon({
+          className: 'dc-cluster',
+          html: `<span class="dc-cluster-n">${c.getChildCount()}</span>`,
+          iconSize: [30, 30],
+        }),
     })
     map.addLayer(cluster)
     map.on('click', (e) => {
