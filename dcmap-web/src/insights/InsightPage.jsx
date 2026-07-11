@@ -6,8 +6,42 @@ import DcLocalImpact from './articles/DcLocalImpact.jsx'
 import MegaProjectAidc from './articles/MegaProjectAidc.jsx'
 import LiquidCoolingBrief from './articles/LiquidCoolingBrief.jsx'
 import LandPulseMethod from './articles/LandPulseMethod.jsx'
+import PowerTrack40mw from './articles/PowerTrack40mw.jsx'
+import PsiaExemption from './articles/PsiaExemption.jsx'
+import GpuToMw from './articles/GpuToMw.jsx'
+import SeoulConcentration from './articles/SeoulConcentration.jsx'
 
 const ARTICLES = {
+  'power-track-40mw': {
+    component: PowerTrack40mw,
+    sources: [
+      '한국전력공사 기본공급약관 제23조 (공급방식·전압) — 20MW/40MW 경계와 22.9kV·154kV 트랙',
+      '수수료: 전력계통영향평가 시범운영 공고(기후에너지환경부 공고 제2025-139호) 기준 사전검토·기술검토 수수료 합산',
+      '정량 룰 파일: data/power_rules_v0.json · docs/power-licensing-rulebook-v0.md — 콘텐츠 등급 ①법령·고시',
+    ],
+  },
+  'psia-exemption-2027': {
+    component: PsiaExemption,
+    sources: [
+      '전력계통영향평가 시범운영: 기후에너지환경부 공고 제2025-139호 (10MW 기준·지역 배점·절차)',
+      'AI데이터센터 특별법: 비수도권 일정 규모 이하 계통영향평가 면제, 2027.2 시행 — 규모 기준은 대통령령 위임(미정, 추적 중)',
+      '345kV 여유 변전소 정보 공개 예고: 산업통상부 참고자료(2026.6.29) — 콘텐츠 등급 ①법령·고시',
+    ],
+  },
+  'gpu-to-mw': {
+    component: GpuToMw,
+    sources: [
+      'GPU 보드 전력: NVIDIA 공개 스펙 (H100/H200 ~0.7kW · B200 ~1.0kW · GB200 슈퍼칩 ~1.2kW)',
+      '오버헤드 계수 1.2·PUE 산식: 명당 GPU 계산기 구현(src/calc) — 콘텐츠 등급 ③민간 가공(공개 스펙 기반)',
+    ],
+  },
+  'seoul-concentration': {
+    component: SeoulConcentration,
+    sources: [
+      'KEEI 김철현·김성균(2025), 「AI 시대 데이터센터 증가의 국내 에너지 소비 시사점」 — 165개소(2024)·수도권 60%·민간 평균 17.7MW',
+      '명당 시드 v0.1 (dc_centers.json, 공개 소스 집계 80곳) — 상태·지역 분포는 맵과 동일 데이터',
+    ],
+  },
   'land-pulse-methodology': {
     component: LandPulseMethod,
     sources: [

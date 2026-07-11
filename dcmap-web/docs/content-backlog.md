@@ -13,6 +13,10 @@
 | 4 | `/insights/mega-project-aidc` 3대 메가프로젝트 AIDC 트랙 | ①산업부 참고자료(2026.6.29)·korea.kr(5.8) + ②③보도 | 구 백로그 A — 1차 출처 확보로 발행(2026.7.10). 8.4GW·550조·특별법·345kV 정보 공개 |
 | 5 | `/insights/liquid-cooling-brief` 액체냉각 전환 브리프 | ④OCP 공개 웨비나(Parker Hannifin) | 구 백로그 B — 발행(2026.7.11). TDP 한계선·유량 5분의 1·PFAS |
 | 6 | `/insights/land-pulse-methodology` LAND PULSE 방법론 | ②KOSIS·부동산원(직접 집계) | 자체 데이터 1차 출처 — 발행(2026.7.11). 정직성 규칙 3조 명문화 |
+| 7 | `/insights/power-track-40mw` 40MW의 벽(수전 트랙) | ①약관·공고 | 발행(2026.7.11). 룰북·power_rules 재사용 |
+| 8 | `/insights/psia-exemption-2027` 계통영향평가·특별법 독법 | ①공고·법령 | 발행(2026.7.11). 시행령 기준선 추적 항목 연결 |
+| 9 | `/insights/gpu-to-mw` GPU→MW 산식 공개 | ③공개 스펙 | 발행(2026.7.11). 계산기 구현과 동일 산식 |
+| 10 | `/insights/seoul-concentration` 수도권 60%와 균열 | ②KEEI + 자체 시드 | 발행(2026.7.11). **M1 콘텐츠 10편 달성** |
 
 ## 대기 (검증 필요)
 
