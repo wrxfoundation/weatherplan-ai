@@ -16,6 +16,12 @@ const hav = (a, b) => {
   return 2 * R * Math.asin(Math.sqrt(s))
 }
 
+/** 공공 DC 레이어 — 행안부 「행정·공공기관 정보시스템 운영시설 현황」 (공공누리, ②공공 정형) */
+import pub from '../../data/public_dc_v0.json'
+
+export const PUBLIC_DCS = pub.facilities
+export const PUBLIC_DCS_META = { version: pub.version, date: pub.date, source: pub.source }
+
 /** 지점에서 가장 가까운 발전단지 — { plant, km } */
 export function nearestPlant(point) {
   let best = null
