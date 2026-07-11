@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor } from '../data/liveApi.js'
+import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
@@ -16,6 +16,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
   const [landUse, setLandUse] = useState(null)
   const [fc, setFc] = useState(null)
   const [headroom, setHeadroom] = useState(null)
+  const [flood, setFlood] = useState(null)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -25,11 +26,13 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     setLandUse(null)
     setFc(null)
     setHeadroom(null)
+    setFlood(null)
     revgeoFor(point.lat, point.lng).then((v) => alive && setAddr(v))
     weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
     landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v))
     forecastFor(point.lat, point.lng).then((v) => alive && setFc(v))
     headroomFor(point.lat, point.lng).then((v) => alive && setHeadroom(v))
+    floodRiskFor(point.lat, point.lng).then((v) => alive && setFlood(v))
     return () => {
       alive = false
     }
@@ -206,6 +209,25 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 </>
               ) : (
                 <span className="badge verify">연동 대기 — 전력축 D3 데이터 소스</span>
+              )}
+            </div>
+          </div>
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">침수 위험 (홍수위험지도 — 리스크축)</div>
+            <div className="v">
+              {flood?.available ? (
+                flood.grade === '해당없음' || flood.depthM === 0 ? (
+                  <span className="badge status-operating">침수구역 외 · 위험 낮음</span>
+                ) : (
+                  <>
+                    <span className="badge verify">침수 위험 {flood.grade}</span>
+                    {flood.depthM != null && ` · 침수심 ${flood.depthM}m`}
+                    {flood.floodType && ` · ${flood.floodType}`}
+                    {flood.scenario && ` · ${flood.scenario}`}
+                  </>
+                )
+              ) : (
+                <span className="badge verify">연동 대기 — 리스크축 침수(홍수위험지도)</span>
               )}
             </div>
           </div>
