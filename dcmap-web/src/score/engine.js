@@ -47,7 +47,14 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true }) {
       key: 'land',
       label: '토지',
       max: 25,
-      items: [{ label: '용도지역·인센티브·면적·지가', max: 25, points: null, pending: 'vworld 지적·공시지가 연동(M2 후반)' }],
+      items: [
+        {
+          label: '용도지역·인센티브·면적·지가',
+          max: 25,
+          points: null,
+          pending: '지가변동률(KOSIS 월간) 확보 — 용도지역·면적(vworld) 연동 후 점수화',
+        },
+      ],
     },
     {
       key: 'risk',

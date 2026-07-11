@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { STATUS_LABEL, GEOCODE_LABEL, slugOf } from '../data/facilities.js'
+import { landPriceFor, fmtRate } from '../data/landPrice.js'
 
 export default function FacilityCard({ facility: f, compact = false }) {
   return (
@@ -36,6 +37,17 @@ export default function FacilityCard({ facility: f, compact = false }) {
             {f.sigungu ? ` ${f.sigungu}` : ''}
           </div>
         </div>
+        {(() => {
+          const lp = landPriceFor(f)
+          return lp ? (
+            <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+              <div className="k">
+                지가변동률 · {lp.scope} ({lp.period} 월간, KOSIS)
+              </div>
+              <div className="v">{fmtRate(lp.value)}</div>
+            </div>
+          ) : null
+        })()}
       </div>
 
       {f.note && <p className="note">{f.note}</p>}
