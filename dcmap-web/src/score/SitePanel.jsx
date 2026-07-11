@@ -110,14 +110,15 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">현재 기상 (케이웨더)</div>
+            <div className="k">현재 기상 (케이웨더{wx?.scope ? ` · ${wx.scope}` : ''})</div>
             <div className="v">
               {wx ? (
                 <>
                   {wx.temp != null && `${wx.temp}°C`}
                   {wx.sky && ` · ${wx.sky}`}
+                  {wx.senseTemp != null && ` · 체감 ${wx.senseTemp}°C`}
                   {wx.humidity != null && ` · 습도 ${wx.humidity}%`}
-                  {wx.pm10 != null && ` · PM10 ${wx.pm10}`}
+                  {wx.rain1h != null && wx.rain1h > 0 && ` · 강수 ${wx.rain1h}mm/h`}
                 </>
               ) : (
                 <span className="badge verify">연동 대기 — 기상축(M3) 데이터 소스</span>
