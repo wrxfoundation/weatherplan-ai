@@ -10,6 +10,7 @@ import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
+import { GEN_PERMIT_BUBBLES } from '../data/genLicenses.js'
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 const TILE_ATTRIBUTION =
@@ -140,6 +141,8 @@ export default function MapPage() {
   const plantsLayerRef = useRef(null)
   const [showPublic, setShowPublic] = useState(false) // 공공 DC 레이어 (행안부 운영시설 61곳)
   const publicLayerRef = useRef(null)
+  const [showGenPermits, setShowGenPermits] = useState(false) // 발전 허가 2024+ 시도 버블 (전력 공급 파이프라인)
+  const genLayerRef = useRef(null)
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
@@ -266,6 +269,44 @@ export default function MapPage() {
       publicLayerRef.current = g
     }
   }, [showPublic])
+
+  // 발전 허가 2024+ 시도 버블 — 개별 지번좌표 부재 → 시도 중심점에 건수 버블(정직: 건수 기준)
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (genLayerRef.current) {
+      map.removeLayer(genLayerRef.current)
+      genLayerRef.current = null
+    }
+    if (showGenPermits) {
+      const g = L.layerGroup()
+      const maxCount = Math.max(...GEN_PERMIT_BUBBLES.map((b) => b.count))
+      for (const b of GEN_PERMIT_BUBBLES) {
+        const r = 10 + 26 * Math.sqrt(b.count / maxCount) // sqrt 스케일 — 면적 비례
+        const renewPct = Math.round((b.renew / b.count) * 100)
+        L.circleMarker([b.lat, b.lng], {
+          radius: r,
+          color: 'rgba(53,213,238,0.9)',
+          weight: 1.5,
+          fillColor: 'rgba(69,212,131,0.28)',
+          fillOpacity: 0.5,
+          bubblingMouseEvents: false,
+        })
+          .bindTooltip(
+            `<div class="dc-hovercard"><strong>${b.sido}</strong> · 발전 허가 <b>${b.count}건</b> (2024+)<br/>신재생 ${renewPct}% · 최다 ${b.topFuel || '—'}</div>`,
+            { direction: 'top', offset: [0, -r], className: 'dc-hovercard', opacity: 1 },
+          )
+          .bindPopup(`${b.sido} · 2024년 이후 발전사업 허가 ${b.count}건 (신재생 ${renewPct}%, 최다 ${b.topFuel || '—'})`)
+          .addTo(g)
+        L.marker([b.lat, b.lng], {
+          icon: L.divIcon({ className: 'gen-bubble-label', html: `${b.count}`, iconSize: [40, 16], iconAnchor: [20, 8] }),
+          interactive: false,
+        }).addTo(g)
+      }
+      g.addTo(map)
+      genLayerRef.current = g
+    }
+  }, [showGenPermits])
 
   // 지점 분석 마커 (십자 링) + ?site= URL 동기화 (공유 링크)
   useEffect(() => {
@@ -394,6 +435,8 @@ export default function MapPage() {
         onTogglePlants={() => setShowPlants((v) => !v)}
         showPublic={showPublic}
         onTogglePublic={() => setShowPublic((v) => !v)}
+        showGenPermits={showGenPermits}
+        onToggleGenPermits={() => setShowGenPermits((v) => !v)}
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />
