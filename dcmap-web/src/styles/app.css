@@ -1060,6 +1060,20 @@ a {
   }
 }
 
+/* 인사이트 카테고리 태그 */
+.insight-tag {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: middle;
+  color: var(--accent, #35d5ee);
+  background: color-mix(in srgb, var(--accent, #35d5ee) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, #35d5ee) 32%, transparent);
+}
+
 /* 데이터 탐색기 */
 .explorer-bar {
   display: flex;

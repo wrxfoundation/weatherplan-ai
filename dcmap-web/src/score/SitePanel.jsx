@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor } from '../data/liveApi.js'
+import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor, populationFor } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
@@ -17,6 +17,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
   const [fc, setFc] = useState(null)
   const [headroom, setHeadroom] = useState(null)
   const [flood, setFlood] = useState(null)
+  const [pop, setPop] = useState(null)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -27,12 +28,14 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     setFc(null)
     setHeadroom(null)
     setFlood(null)
+    setPop(null)
     revgeoFor(point.lat, point.lng).then((v) => alive && setAddr(v))
     weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
     landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v))
     forecastFor(point.lat, point.lng).then((v) => alive && setFc(v))
     headroomFor(point.lat, point.lng).then((v) => alive && setHeadroom(v))
     floodRiskFor(point.lat, point.lng).then((v) => alive && setFlood(v))
+    populationFor(point.lat, point.lng).then((v) => alive && setPop(v))
     return () => {
       alive = false
     }
@@ -228,6 +231,24 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 )
               ) : (
                 <span className="badge verify">연동 대기 — 리스크축 침수(홍수위험지도)</span>
+              )}
+            </div>
+          </div>
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">반경 인구·가구 (SGIS — 민원 프록시)</div>
+            <div className="v">
+              {pop?.available ? (
+                <>
+                  반경 {pop.radiusKm}km 인구 <strong>{pop.population != null ? pop.population.toLocaleString() : '—'}명</strong>
+                  {pop.households != null && ` · ${pop.households.toLocaleString()}가구`}
+                  {pop.population != null && (
+                    <span className={`badge ${pop.population < 5000 ? 'status-operating' : 'verify'}`} style={{ marginLeft: 8 }}>
+                      {pop.population < 5000 ? '저밀도 · 민원 리스크 낮음' : '주거 밀집 · 민원 유의'}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span className="badge verify">연동 대기 — 리스크축 인구격자(SGIS)</span>
               )}
             </div>
           </div>
