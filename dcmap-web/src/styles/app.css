@@ -1351,19 +1351,25 @@ a {
   box-shadow: var(--glass-specular), var(--glow-accent-soft);
 }
 
+/* 텍스트 컬럼(860px)보다 넓게 브레이크아웃 — 스윔레인이 잘리지 않게 */
 .frame-wrap {
   margin-top: 6px;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1360px, calc(100vw - 40px));
 }
 .frame-scroll {
   overflow-x: auto;
   border-radius: var(--radius-lg);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-specular-soft), var(--elev-1);
-  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
 }
 .swimlane {
   display: grid;
-  min-width: 900px;
+  width: 100%;
+  min-width: 1040px; /* 라벨 + 6게이트 최소폭 — 좁으면 프레임 안에서 가로 스크롤 */
   gap: 1px;
   background: var(--line);
 }
@@ -1740,11 +1746,11 @@ a {
 }
 .explorer-search:focus {
   outline: none;
-  border-color: var(--accent, #35d5ee);
+  border-color: var(--accent);
 }
 .explorer-count {
-  color: var(--text-dim, #9fb4cc);
-  font-size: 13px;
+  color: var(--grey);
+  font-size: var(--text-body);
   white-space: nowrap;
 }
 .explorer-table-wrap {
