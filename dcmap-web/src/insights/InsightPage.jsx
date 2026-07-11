@@ -15,6 +15,7 @@ import OrbitalBottleneck from './articles/OrbitalBottleneck.jsx'
 import CoolingPlatformMA from './articles/CoolingPlatformMA.jsx'
 import NationalInfrastructure from './articles/NationalInfrastructure.jsx'
 import UtilityAcquisition from './articles/UtilityAcquisition.jsx'
+import OceanDatacenter from './articles/OceanDatacenter.jsx'
 
 const ARTICLES = {
   'power-track-40mw': {
@@ -83,6 +84,14 @@ const ARTICLES = {
       'KDDC Issue Focus, 「발전소가 필요 없는 데이터센터…SpaceX가 2조 달러로 산 ‘AI 병목 통행권’」 (2026.6.16, STRABASE) — SpaceX 상장(시총 2조 달러 초과)·AI1 궤도 데이터센터 구상',
       '수치 인용: 미국 DC 전력 41GW(≈전체 원전)·IEA 2030 945TWh·미국 전기요금 2019년 대비 +42%·자본 12~24개월 vs 전력망 4~10년·MS 스리마일 835MW/Amazon X-energy 5GW SMR/Google Kairos 500MW — 원문 기준',
       '콘텐츠 등급 ④참고·인사이트 — 해외 시장 분석 재인용. 국내 함의(재생E 86.5%·비수도권 86%)는 AI InfraMap 발전 허가대장 집계',
+    ],
+  },
+  'ocean-datacenter': {
+    component: OceanDatacenter,
+    sources: [
+      'KDCC/STRABASE Issue Focus, 「데이터센터는 왜 바다로 이동하는가」 (2026.6.23)',
+      '사례: 상하이 앞바다 수중 DC ~2,000서버(해상풍력 직결·해수 냉각, 2026.5) · 피터 틸 부유식 DC 스타트업 1.4억 달러 투자(평가 10억 달러 근접) · Microsoft Project Natick — 원문 기준',
+      '콘텐츠 등급 ④참고·인사이트 — 국내 함의(해상풍력·연안 입지)는 AI InfraMap 해석',
     ],
   },
   'cooling-platform-ma': {
