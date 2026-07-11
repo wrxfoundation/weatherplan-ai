@@ -119,6 +119,7 @@ export default function StatsPage() {
     <>
       <TopBar />
       <main className="page">
+        <div className="eyebrow">MARKET DATA</div>
         <h1>국내 데이터센터 통계</h1>
         <p className="sub">수도권 집중과 전력 수요 — {STATS_SOURCE.publication} 기준</p>
 

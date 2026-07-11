@@ -69,7 +69,7 @@ export default function FacilityCard({ facility: f, compact = false }) {
       {!compact && (
         <div className="card-actions">
           <Link className="btn primary" to={`/dc/${slugOf(f)}`}>
-            시설 상세
+            시설 상세 <span className="btn-arrow">↗</span>
           </Link>
         </div>
       )}

@@ -89,6 +89,7 @@ export default function RegionPage() {
         <Link className="back-link" to="/">
           ← 맵으로 돌아가기
         </Link>
+        <div className="eyebrow">REGION</div>
         <h1>{sido} 데이터센터 현황</h1>
         <p className="sub">
           총 {list.length}곳 — 운영 {by.operating} · 건설 {by.construction} · 계획 {by.planned}

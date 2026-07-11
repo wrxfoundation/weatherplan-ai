@@ -50,6 +50,7 @@ export default function GlossaryPage() {
     <>
       <TopBar />
       <main className="page">
+        <div className="eyebrow">GLOSSARY</div>
         <h1>전력 인허가 · 데이터센터 용어집</h1>
         <p className="sub">
           공개 규정(한전 기본공급약관 · 기후에너지환경부공고 제2025-139호) 기준으로 풀어 쓴 {GLOSSARY.length}개
