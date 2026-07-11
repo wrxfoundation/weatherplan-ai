@@ -4,7 +4,7 @@ import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf } from '../data/facilities.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
-import { filingsRecent } from '../data/liveApi.js'
+import { filingsRecent, epsisCapacity } from '../data/liveApi.js'
 
 const TITLE = '대시보드 — 명당 AI 한국 데이터센터 인텔리전스'
 const DESC =
@@ -38,6 +38,7 @@ function Gauge({ pct, label, sub }) {
 export default function DashboardPage() {
   const [now, setNow] = useState(() => new Date())
   const [filings, setFilings] = useState(null)
+  const [epsis, setEpsis] = useState(null)
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(t)
@@ -46,6 +47,7 @@ export default function DashboardPage() {
   useEffect(() => {
     let alive = true
     filingsRecent().then((v) => alive && setFilings(v))
+    epsisCapacity().then((v) => alive && setEpsis(v))
     return () => {
       alive = false
     }
@@ -212,6 +214,35 @@ export default function DashboardPage() {
               <p className="chart-note">
                 사업자 공시(투자·착공·설비 신설)는 언론보다 선행하는 1차 출처 — DART API 연동 시 실시간 표시.
                 현재 <span className="badge verify">연동 대기</span> (env 설정 후 활성).
+              </p>
+            )}
+          </section>
+
+          <section className="calc-card">
+            <div className="chart-title">발전설비 현황 — EPSIS/KPX (발전소 용량)</div>
+            {epsis?.available ? (
+              <>
+                {(epsis.byFuel || []).slice(0, 8).map((f) => {
+                  const max = Math.max(...epsis.byFuel.map((x) => x.mw))
+                  return (
+                    <div key={f.fuel} className="hbar-row">
+                      <span className="hbar-label">{f.fuel}</span>
+                      <span className="hbar-track">
+                        <span className="hbar-fill" style={{ width: `${(f.mw / max) * 100}%` }} />
+                      </span>
+                      <span className="hbar-value">{f.mw.toLocaleString()}MW</span>
+                    </div>
+                  )
+                })}
+                <p className="chart-note">
+                  연료원별 설비용량 — {epsis.count?.toLocaleString?.() || 0}개 설비{' '}
+                  {epsis.totalMw ? `· 합계 ${epsis.totalMw.toLocaleString()}MW` : ''}. 발전소 레이어 capacity 정합 소스(D3).
+                </p>
+              </>
+            ) : (
+              <p className="chart-note">
+                발전소별·연료원별 공식 설비용량(MW) — 발전소 레이어의 용량 공백과 집단에너지 좌표 공백을 메우는 소스.
+                data.go.kr 인증키(무인증 EPSIS 열람 별개) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
               </p>
             )}
           </section>

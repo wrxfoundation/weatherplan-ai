@@ -39,3 +39,6 @@ export const headroomFor = (lat, lng) => fetchJson(`/api/headroom?${q(lat, lng)}
 
 /** DART 최근 DC 관련 공시 (D2 이벤트) — { filings: [{corp,title,date,url}] } | null */
 export const filingsRecent = () => fetchJson('/api/filings')
+
+/** EPSIS/KPX 발전설비현황 — { byFuel:[{fuel,mw}], facilities, totalMw } | null (연동 대기 시 null) */
+export const epsisCapacity = () => fetchJson('/api/epsis')
