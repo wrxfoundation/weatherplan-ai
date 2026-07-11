@@ -179,13 +179,13 @@ export default function StatsPage() {
           <p className="chart-note">{GEN_PIPELINE.detail}</p>
           <HBars
             title={`허가 2024+ 신규 파이프라인 연료 구성 (${GEN_RECENT.length}건)`}
-            bars={GEN_RECENT_BY_FUEL.slice(0, 6).map((f) => ({ label: f.fuel, value: f.count, unit: '건' }))}
+            bars={GEN_RECENT_BY_FUEL.map((f) => ({ label: f.fuel, value: f.count, unit: '건' }))}
             unit="건"
             note="연료전지·풍력·태양광·해상풍력이 신규 허가를 주도 — AIDC RE100 조달의 공급측 파이프라인. 개별 용량은 참고치."
           />
           <HBars
             title={`허가 2024+ 지역 분포 — 비수도권 ${GEN_RECENT_NONCAPITAL_PCT}%`}
-            bars={GEN_RECENT_BY_SIDO.slice(0, 7).map((s) => ({ label: s.sido, value: s.count, unit: '건' }))}
+            bars={GEN_RECENT_BY_SIDO.map((s) => ({ label: s.sido, value: s.count, unit: '건' }))}
             unit="건"
             note="전남·경북·강원의 재생E 벨트에 집중 — AIDC 특별법 비수도권 유인과 계통영향평가 지역 배점이 지리적으로 정합한다. AI InfraMap 전력축이 읽는 공급측 신호."
           />
@@ -208,12 +208,12 @@ export default function StatsPage() {
           </p>
           <HBars
             title="발전사별 발전용량 상위 (MW)"
-            bars={CHP_BY_OP.slice(0, 7).map((o) => ({ label: o.op, value: o.mw }))}
+            bars={CHP_BY_OP.slice(0, 15).map((o) => ({ label: o.op, value: o.mw }))}
             unit="MW"
           />
           <HBars
             title="단일 발전소 발전용량 상위 (MW)"
-            bars={CHP_TOP_PLANTS.slice(0, 6).map((p) => ({ label: `${p.plant} (${p.loc})`, value: Math.round(p.mw) }))}
+            bars={CHP_TOP_PLANTS.map((p) => ({ label: `${p.plant} (${p.loc})`, value: Math.round(p.mw) }))}
             unit="MW"
             note={`${CHP_META.source} · 관리소는 비공식 지명이라 개별 좌표 미부여(맵 미배치).`}
           />
