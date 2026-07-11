@@ -47,9 +47,22 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
       <article className="facility-card">
         <div className="status-line">
           <span className="badge status-operating">지점 분석 v0</span>
-          <span className="badge">
-            {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
-          </span>
+          <button
+            type="button"
+            className="badge badge-btn"
+            title="이 지점 분석의 공유 링크 복사"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(window.location.href)
+                setCopied('link')
+                setTimeout(() => setCopied(false), 2000)
+              } catch {
+                /* noop */
+              }
+            }}
+          >
+            {copied === 'link' ? '링크 복사됨 ✓' : `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)} 🔗`}
+          </button>
         </div>
         <h3>부지 적합도 프리뷰</h3>
         <div className="name-en">근거 확보 {r.knownScore}/{r.knownMax}점 · 스코어 커버리지 {r.coverage}/100</div>
@@ -235,7 +248,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
           const onCopy = async () => {
             try {
               await navigator.clipboard.writeText(makeReport())
-              setCopied(true)
+              setCopied('report')
               setTimeout(() => setCopied(false), 2000)
             } catch {
               /* 클립보드 미지원 — 다운로드 버튼 사용 */
@@ -252,7 +265,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
           return (
             <div className="card-actions">
               <button type="button" className="btn primary" onClick={onCopy}>
-                {copied ? '복사됨 ✓' : '간이 리포트 복사'}
+                {copied === 'report' ? '복사됨 ✓' : '간이 리포트 복사'}
               </button>
               <button type="button" className="btn" onClick={onDownload}>
                 .md 다운로드
