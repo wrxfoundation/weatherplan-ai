@@ -64,6 +64,26 @@ export const BACKUP = [
   { value: '91.3', unit: '%', label: '민간 DC 코로케이션 제공 비중', sub: '2023년 · 복수응답' },
 ]
 
+/* 한국전력 데이터센터 고객 현황 — 지역본부 단위 (사용자 제공 공공데이터 CSV, 2023.12.31 기준)
+ * '고객호수' = 한전에 데이터센터 용도로 계약된 수용가 수, '계약전력' = 합산 MW */
+export const KEPCO_REGION = {
+  title: '지역별 DC 고객호수·계약전력 (한전, 2023.12)',
+  bars: [
+    { label: '경기 (34호)', value: 681 },
+    { label: '서울 (48호)', value: 653 },
+    { label: '부산울산경남 (15호)', value: 179 },
+    { label: '대전충남 (17호)', value: 162 },
+    { label: '강원 (7호)', value: 85 },
+    { label: '인천 (8호)', value: 69 },
+    { label: '대구경북 (7호)', value: 63 },
+    { label: '광주전남 (9호)', value: 62 },
+    { label: '충북 (4호)', value: 30 },
+    { label: '전북 (1호)', value: 2 },
+    { label: '제주 (0호)', value: 0 },
+  ],
+  note: '전국 합계 150호 · 계약전력 1,986MW — 수도권(서울·인천·경기) 90호 1,403MW = 계약전력 기준 71%. 한전 지역본부 구분(대전충남·광주전남 등 묶음), KEEI 추정 1,913MW와 정합하는 계약전력 기준 공식 단면.',
+}
+
 export const CUSTOMERS = {
   title: '상업용 DC 평균 입주 고객 수 (2023)',
   bars: [

@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES } from '../data/facilities.js'
-import { KPI, COMPOSITION, POWER_AVG, COOLING, BACKUP, CUSTOMERS, STATS_SOURCE } from '../content/stats.js'
+import { KPI, COMPOSITION, POWER_AVG, COOLING, BACKUP, CUSTOMERS, KEPCO_REGION, STATS_SOURCE } from '../content/stats.js'
 
 const TITLE = '국내 데이터센터 통계 — 수도권 집중과 전력 수요 · 명당 AI'
 const DESC =
@@ -144,6 +144,10 @@ export default function StatsPage() {
             ))}
           </div>
           <HBars {...CUSTOMERS} unit="개" />
+        </div>
+
+        <div className="calc-card">
+          <HBars {...KEPCO_REGION} unit="MW" />
         </div>
 
         <div className="calc-card">
