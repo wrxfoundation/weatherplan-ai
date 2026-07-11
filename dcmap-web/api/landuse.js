@@ -37,14 +37,22 @@ export default async function handler(req, res) {
     return
   }
 
+  const vwDomain = process.env.VWORLD_DOMAIN || 'aidatacenter-red.vercel.app'
   const url =
     'https://api.vworld.kr/req/data?service=data&version=2.0&request=GetFeature&format=json' +
-    `&size=5&page=1&data=LT_C_UQ111&geomFilter=POINT(${lng} ${lat})&key=${key}&domain=${encodeURIComponent(process.env.VWORLD_DOMAIN || 'aidatacenter-red.vercel.app')}`
+    `&size=5&page=1&data=LT_C_UQ111&geomFilter=POINT(${lng} ${lat})&key=${key}&domain=${encodeURIComponent(vwDomain)}`
 
   try {
     const ctrl = new AbortController()
     const t = setTimeout(() => ctrl.abort(), 8000)
-    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AI-InfraMap/1.0; +https://aidatacenter.vercel.app)' } })
+    const r = await fetch(url, {
+      signal: ctrl.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        Referer: `https://${vwDomain}/`,
+        Accept: 'application/json',
+      },
+    })
     clearTimeout(t)
     if (!r.ok) {
       res.status(200).json({ available: false, reason: `upstream_${r.status}` })

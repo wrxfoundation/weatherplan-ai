@@ -32,7 +32,7 @@ async function fetchJson(url, ms = 7000) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
   try {
-    const r = await fetch(url, { signal: ctrl.signal, headers: { Accept: 'application/json', 'User-Agent': 'Mozilla/5.0 (compatible; AI-InfraMap/1.0; +https://aidatacenter.vercel.app)' } })
+    const r = await fetch(url, { signal: ctrl.signal, headers: { Accept: 'application/json', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36' } })
     if (!r.ok) return { _status: r.status }
     const text = await r.text()
     try {
@@ -64,11 +64,11 @@ const pick = (o, names) => {
 }
 
 /** 단순 평면 XML(<item>…</item>) → 객체 배열. 태그명은 요청 목록만 추출 */
-async function fetchXmlItems(url, tags, ms = 8000) {
+async function fetchXmlItems(url, tags, ms = 14000) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
   try {
-    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AI-InfraMap/1.0; +https://aidatacenter.vercel.app)' } })
+    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36' } })
     if (!r.ok) return { _status: r.status }
     const xml = await r.text()
     const blocks = xml.match(/<item[\s>][\s\S]*?<\/item>/gi) || []

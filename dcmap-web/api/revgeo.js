@@ -28,15 +28,29 @@ export default async function handler(req, res) {
     return
   }
 
+  const vwDomain = process.env.VWORLD_DOMAIN || 'aidatacenter-red.vercel.app'
   const url =
     'https://api.vworld.kr/req/address?service=address&request=getAddress&version=2.0' +
-    `&crs=epsg:4326&point=${lng},${lat}&format=json&type=both&zipcode=false&simple=false&key=${key}&domain=${encodeURIComponent(process.env.VWORLD_DOMAIN || 'aidatacenter-red.vercel.app')}`
+    `&crs=epsg:4326&point=${lng},${lat}&format=json&type=both&zipcode=false&simple=false&key=${key}&domain=${encodeURIComponent(vwDomain)}`
 
   try {
     const ctrl = new AbortController()
     const t = setTimeout(() => ctrl.abort(), 8000)
-    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AI-InfraMap/1.0; +https://aidatacenter.vercel.app)' } })
+    const r = await fetch(url, {
+      signal: ctrl.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        Referer: `https://${vwDomain}/`,
+        Accept: 'application/json',
+      },
+    })
     clearTimeout(t)
+    // ?debug=1 → vworld 원응답 상태·본문 앞부분(주소 정보뿐, 시크릿 아님) — 502 원인 진단
+    if (req.query.debug) {
+      const text = await r.text().catch(() => '')
+      res.status(200).json({ available: true, debug: true, upstreamStatus: r.status, bodyHead: text.slice(0, 300) })
+      return
+    }
     if (!r.ok) {
       res.status(200).json({ available: false, reason: `upstream_${r.status}` })
       return
