@@ -92,10 +92,10 @@ export default function DataExplorerPage() {
           (KDCC 시설 수 165는 2024 조사가 현재 공표된 최신치입니다.)
         </p>
 
-        <div className="power-modes" style={{ marginBottom: 10 }}>
+        <div className="seg-tabs" role="tablist" aria-label="데이터셋 분류">
           {DATASETS.map((d) => (
-            <button key={d.key} type="button" className={`chip ${tab === d.key ? 'on' : ''}`} onClick={() => { setTab(d.key); setQ('') }} aria-pressed={tab === d.key}>
-              {d.label} ({d.rows.length.toLocaleString()})
+            <button key={d.key} type="button" role="tab" className={`seg-tab ${tab === d.key ? 'on' : ''}`} onClick={() => { setTab(d.key); setQ('') }} aria-selected={tab === d.key}>
+              {d.label} <span className="n">{d.rows.length.toLocaleString()}</span>
             </button>
           ))}
         </div>
