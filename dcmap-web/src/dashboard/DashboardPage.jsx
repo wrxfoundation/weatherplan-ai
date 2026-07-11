@@ -4,7 +4,7 @@ import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf } from '../data/facilities.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
-import { filingsRecent, epsisCapacity, apiStatus } from '../data/liveApi.js'
+import { filingsRecent, epsisCapacity, apiStatus, supplyForecast } from '../data/liveApi.js'
 
 const TITLE = '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스'
 const DESC =
@@ -39,6 +39,7 @@ export default function DashboardPage() {
   const [now, setNow] = useState(() => new Date())
   const [filings, setFilings] = useState(null)
   const [epsis, setEpsis] = useState(null)
+  const [supply, setSupply] = useState(null)
   const [status, setStatus] = useState(null)
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
@@ -49,6 +50,7 @@ export default function DashboardPage() {
     let alive = true
     filingsRecent().then((v) => alive && setFilings(v))
     epsisCapacity().then((v) => alive && setEpsis(v))
+    supplyForecast().then((v) => alive && setSupply(v))
     apiStatus(true).then((v) => alive && setStatus(v))
     return () => {
       alive = false
@@ -245,6 +247,45 @@ export default function DashboardPage() {
               <p className="chart-note">
                 발전소별·연료원별 공식 설비용량(MW) — 발전소 레이어의 용량 공백과 집단에너지 좌표 공백을 메우는 소스.
                 data.go.kr 인증키(무인증 EPSIS 열람 별개) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
+              </p>
+            )}
+          </section>
+
+          <section className="calc-card">
+            <div className="chart-title">전력 계통 현황 — KPX 전력수급예보 (라이브)</div>
+            {supply?.available && supply.reservePct != null ? (
+              <>
+                <div className="dash-status">
+                  <div className="status-rows">
+                    {supply.supplyMw != null && (
+                      <div className="dash-row">
+                        공급능력 <strong>{supply.supplyMw.toLocaleString()}</strong> MW
+                      </div>
+                    )}
+                    {supply.peakMw != null && (
+                      <div className="dash-row">
+                        최대전력 <strong>{supply.peakMw.toLocaleString()}</strong> MW
+                      </div>
+                    )}
+                    {supply.reserveMw != null && (
+                      <div className="dash-row">
+                        공급예비력 <strong>{supply.reserveMw.toLocaleString()}</strong> MW
+                      </div>
+                    )}
+                    {supply.asOf && <div className="dash-row total">기준 {supply.asOf}</div>}
+                  </div>
+                  <Gauge pct={Math.max(0, Math.min(100, Math.round(supply.reservePct)))} label="공급예비율" />
+                </div>
+                <p className="chart-note">
+                  공급예비율이 낮을수록 신규 대형 수요(AIDC)의 계통 진입 여력이 준다 — 전력계통영향평가 ±15점·비수도권
+                  유인의 배경.{' '}
+                  <Link to="/insights/market-2025h2">±15점 시대 →</Link>
+                </p>
+              </>
+            ) : (
+              <p className="chart-note">
+                공급능력·최대전력·공급예비율 실시간 — AIDC 수요가 계통 예비력을 잠식하는 구도를 실측으로 보여주는 공급측
+                지표. KPX 전력수급예보(data.go.kr) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
               </p>
             )}
           </section>
