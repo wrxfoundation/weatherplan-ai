@@ -14,9 +14,11 @@
       "lat": 35.330556,
       "lng": 129.282648,
       "geocode": "site",
-      "capacity_mw": null,
+      "capacity_mw": 4550,
       "needs_verify": false,
-      "verified_by": "전기위 3MW 초과 발전사업 허가대장 등재 확인 (용량은 EPSIS 대기)"
+      "verified_by": "원안위/한수원 호기별 현황 (2025-06-12) — 상업운전 호기 설비용량 합계",
+      "units_operating": 5,
+      "source_ref": "nuclear_units_v0"
     },
     {
       "id": "pp-saeul",
@@ -28,8 +30,13 @@
       "lat": 35.357146,
       "lng": 129.328577,
       "geocode": "vicinity",
-      "capacity_mw": null,
-      "needs_verify": true
+      "capacity_mw": 2800,
+      "needs_verify": false,
+      "units_operating": 2,
+      "capacity_building_mw": 2800,
+      "units_building": 2,
+      "verified_by": "원안위/한수원 호기별 현황 (2025-06-12) — 상업운전 호기 설비용량 합계",
+      "source_ref": "nuclear_units_v0"
     },
     {
       "id": "pp-wolsong",
@@ -41,9 +48,11 @@
       "lat": 35.693057,
       "lng": 129.468007,
       "geocode": "site",
-      "capacity_mw": null,
+      "capacity_mw": 4100,
       "needs_verify": false,
-      "verified_by": "전기위 3MW 초과 발전사업 허가대장 등재 확인 (용량은 EPSIS 대기)"
+      "verified_by": "원안위/한수원 호기별 현황 (2025-06-12) — 상업운전 호기 설비용량 합계",
+      "units_operating": 5,
+      "source_ref": "nuclear_units_v0"
     },
     {
       "id": "pp-hanbit",
@@ -55,9 +64,11 @@
       "lat": 35.421038,
       "lng": 126.428644,
       "geocode": "site",
-      "capacity_mw": null,
+      "capacity_mw": 5900,
       "needs_verify": false,
-      "verified_by": "전기위 3MW 초과 발전사업 허가대장 등재 확인 (용량은 EPSIS 대기)"
+      "verified_by": "원안위/한수원 호기별 현황 (2025-06-12) — 상업운전 호기 설비용량 합계",
+      "units_operating": 6,
+      "source_ref": "nuclear_units_v0"
     },
     {
       "id": "pp-hanul",
@@ -69,8 +80,13 @@
       "lat": 37.096786,
       "lng": 129.371916,
       "geocode": "vicinity",
-      "capacity_mw": null,
-      "needs_verify": true
+      "capacity_mw": 8700,
+      "needs_verify": false,
+      "units_operating": 8,
+      "capacity_building_mw": 2800,
+      "units_building": 2,
+      "verified_by": "원안위/한수원 호기별 현황 (2025-06-12) — 상업운전 호기 설비용량 합계",
+      "source_ref": "nuclear_units_v0"
     },
     {
       "id": "pp-dangjin",
@@ -143,5 +159,5 @@
       "verified_by": "전기위 3MW 초과 발전사업 허가대장 등재 확인 (용량은 EPSIS 대기)"
     }
   ],
-  "note_ledger": "한울(구 울진)·새울(신고리)은 허가대장에서 현 명칭 미검색 — needs_verify 유지. 좌표는 vworld 확인분."
+  "note_ledger": "한울(구 울진)·새울(신고리)은 허가대장에서 현 명칭 미검색 — needs_verify 유지. 좌표는 vworld 확인분. 원전 5본부 설비용량은 호기별 현황(2025-06-12)으로 확정: 고리 4,550 · 새울 2,800(+건설 2,800) · 월성 4,100 · 한빛 5,900 · 한울 8,700 MW = 26,050 MW."
 }

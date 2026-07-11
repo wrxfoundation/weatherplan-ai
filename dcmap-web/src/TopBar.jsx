@@ -81,8 +81,12 @@ export default function TopBar() {
     <>
     <header className="topbar">
       <NavLink to="/" className="logo">
-        <span className="logo-mark">M</span>
-        AI <em>Infra</em>Map
+        <span className="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M13.5 2 4 13.5h6L9 22l10-12h-6.5L13.5 2z" />
+          </svg>
+        </span>
+        <span className="logo-word">AI <em>Infra</em>Map</span>
       </NavLink>
 
       <div className="topbar-search">
