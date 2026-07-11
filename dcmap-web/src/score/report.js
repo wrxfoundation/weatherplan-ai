@@ -77,7 +77,12 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   }
   L.push(``)
   L.push(`## 인프라 근접성 (맥락 — 전원 매칭 아님)`)
-  if (plantCtx) L.push(`- 최근접 대형 발전단지: ${plantCtx.plant.name} (${plantCtx.plant.type}) · ${plantCtx.km.toFixed(0)}km`)
+  if (plantCtx)
+    L.push(
+      `- 최근접 대형 발전단지: ${plantCtx.plant.name} (${plantCtx.plant.type})${
+        plantCtx.plant.capacity_mw != null ? ` · ${plantCtx.plant.capacity_mw.toLocaleString()}MW` : ''
+      } · ${plantCtx.km.toFixed(0)}km`,
+    )
   if (windCtx?.nearest)
     L.push(`- 풍력: 반경 ${windCtx.radiusKm}km 내 ${windCtx.count}지점 · 최근접 ${windCtx.nearest.km.toFixed(1)}km`)
   L.push(`- 계통연계 여유 직접 조회: RE클라우드 https://recloud.energy.or.kr/`)

@@ -195,7 +195,8 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
                 <div className="k">발전 인프라 근접성 (맥락 — 전원 매칭 아님)</div>
                 <div className="v">
-                  {np.plant.name} · {np.plant.type} · {np.km.toFixed(0)}km
+                  {np.plant.name} · {np.plant.type}
+                  {np.plant.capacity_mw != null && ` · ${np.plant.capacity_mw.toLocaleString()}MW`} · {np.km.toFixed(0)}km
                   {wc.nearest && (
                     <span className="meta">
                       {' '}
