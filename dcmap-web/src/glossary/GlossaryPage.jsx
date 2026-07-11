@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import TopBar from '../TopBar.jsx'
 import { GLOSSARY, GLOSSARY_CATEGORIES } from '../content/glossary.js'
 
@@ -34,6 +34,13 @@ export function buildGlossaryJsonLd(origin = '') {
 }
 
 export default function GlossaryPage() {
+  const [cat, setCat] = useState('전체')
+  const countOf = useMemo(() => {
+    const m = new Map()
+    for (const g of GLOSSARY) m.set(g.category, (m.get(g.category) || 0) + 1)
+    return m
+  }, [])
+  const shownCats = cat === '전체' ? GLOSSARY_CATEGORIES : GLOSSARY_CATEGORIES.filter((c) => c.key === cat)
   useEffect(() => {
     document.title = TITLE
     setMeta('name', 'description', DESC)
@@ -57,11 +64,22 @@ export default function GlossaryPage() {
           용어입니다.
         </p>
 
-        {GLOSSARY_CATEGORIES.map((cat) => (
-          <section key={cat.key} className="glossary-section">
-            <h2 className="glossary-cat">{cat.label}</h2>
+        <div className="seg-tabs" role="tablist" aria-label="용어 분류">
+          <button type="button" role="tab" className={`seg-tab ${cat === '전체' ? 'on' : ''}`} onClick={() => setCat('전체')} aria-selected={cat === '전체'}>
+            전체 <span className="n">{GLOSSARY.length}</span>
+          </button>
+          {GLOSSARY_CATEGORIES.map((c) => (
+            <button key={c.key} type="button" role="tab" className={`seg-tab ${cat === c.key ? 'on' : ''}`} onClick={() => setCat(c.key)} aria-selected={cat === c.key}>
+              {c.label} <span className="n">{countOf.get(c.key) || 0}</span>
+            </button>
+          ))}
+        </div>
+
+        {shownCats.map((sec) => (
+          <section key={sec.key} className="glossary-section">
+            <h2 className="glossary-cat">{sec.label}</h2>
             <dl className="glossary-list">
-              {GLOSSARY.filter((g) => g.category === cat.key).map((g) => (
+              {GLOSSARY.filter((g) => g.category === sec.key).map((g) => (
                 <div key={g.id} id={g.id} className="glossary-item">
                   <dt>
                     {g.term}

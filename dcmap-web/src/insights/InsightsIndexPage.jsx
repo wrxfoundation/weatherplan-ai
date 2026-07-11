@@ -36,13 +36,13 @@ export default function InsightsIndexPage() {
         <h1>인사이트</h1>
         <p className="sub">{DESC}</p>
 
-        <div className="power-modes" style={{ marginBottom: 14, flexWrap: 'wrap' }}>
-          <button type="button" className={`chip ${cat === '전체' ? 'on' : ''}`} onClick={() => setCat('전체')} aria-pressed={cat === '전체'}>
-            전체 ({INSIGHTS.length})
+        <div className="seg-tabs" role="tablist" aria-label="인사이트 주제 분류">
+          <button type="button" role="tab" className={`seg-tab ${cat === '전체' ? 'on' : ''}`} onClick={() => setCat('전체')} aria-selected={cat === '전체'}>
+            전체 <span className="n">{INSIGHTS.length}</span>
           </button>
           {cats.map((c) => (
-            <button key={c} type="button" className={`chip ${cat === c ? 'on' : ''}`} onClick={() => setCat(c)} aria-pressed={cat === c}>
-              {c} ({counts.get(c)})
+            <button key={c} type="button" role="tab" className={`seg-tab ${cat === c ? 'on' : ''}`} onClick={() => setCat(c)} aria-selected={cat === c}>
+              {c} <span className="n">{counts.get(c)}</span>
             </button>
           ))}
         </div>

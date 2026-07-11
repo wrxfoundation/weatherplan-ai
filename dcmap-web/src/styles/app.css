@@ -1075,6 +1075,53 @@ a {
   color: var(--accent, #35d5ee);
 }
 
+/* 세그먼트 탭 — 콘텐츠 페이지 분류 필터(글라스 톤). 맵 필터칩과 별개 */
+.seg-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 13px;
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  backdrop-filter: var(--glass-backdrop);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
+  margin: 4px 0 18px;
+  max-width: 100%;
+}
+.seg-tab {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--grey);
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: color 0.18s var(--ease-premium), background 0.18s var(--ease-premium), box-shadow 0.18s var(--ease-premium);
+}
+.seg-tab:hover {
+  color: var(--text);
+}
+.seg-tab.on {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  box-shadow: var(--glass-specular), var(--glow-accent-soft);
+}
+.seg-tab .n {
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9em;
+}
+
 /* 인사이트 카테고리 태그 */
 .insight-tag {
   display: inline-block;
