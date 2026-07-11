@@ -2,6 +2,20 @@
 // 콘텐츠 등급: 데이터 아키텍처 4계층 중 ④참고·인사이트. 시설 데이터(dc_centers)와 분리 관리.
 export const INSIGHTS = [
   {
+    slug: 'national-infrastructure',
+    title: '데이터센터는 언제 국가 핵심 인프라가 되었나 — 안보·복원력·지정학',
+    description:
+      '2026년 3월 이란 드론 공격이 AWS 바레인·UAE를 때리며 클라우드 장애가 전쟁·지정학의 문제가 됐다. 데이터센터가 전력망·항만급 국가 전략 자산으로 재분류되고, 입지 평가는 전력 경쟁→입지→복원력→국가 신뢰도 경쟁으로 이동한다 — 해저 케이블·다중 리전·재해복구가 새 입지 축이 되는 이유. 1차 소스: KDCC/STRABASE.',
+    date: '2026-07-11',
+  },
+  {
+    slug: 'utility-acquisition',
+    title: '데이터센터 기업은 왜 전력회사를 사들이는가 — 수직 통합',
+    description:
+      '글로벌 DC 전력 수요가 2025년 31GW에서 2027년 66GW로 2년 만에 두 배. DigitalBridge·Blackstone·KKR·Brookfield가 발전소·전력개발사·ESS까지 사들이며 데이터센터와 에너지 산업의 경계를 허문다. 경쟁의 중심이 컴퓨팅에서 전력 공급 능력으로 이동한 자본시장의 응답, 그리고 국내 수직 통합의 좌표. 1차 소스: KDCC/STRABASE(2026.7.7).',
+    date: '2026-07-11',
+  },
+  {
     slug: 'orbital-bottleneck',
     title: '발전소가 필요 없는 데이터센터 — SpaceX가 산 ‘AI 병목 통행권’',
     description:
