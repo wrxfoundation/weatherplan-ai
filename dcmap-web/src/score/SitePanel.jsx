@@ -8,6 +8,7 @@ import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
+import Term from '../components/Term.jsx'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
 export default function SitePanel({ point, onClose, onSelectFacility }) {
@@ -221,7 +222,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">용도지역 (vworld 도시계획 — 토지축 근거)</div>
+            <div className="k"><Term k="용도지역">용도지역</Term> (vworld 도시계획 — 토지축 근거)</div>
             <div className="v">
               {landUse?.uses?.length ? (
                 landUse.uses.join(' · ')
@@ -263,7 +264,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             const wc = windContext(point)
             return np ? (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">발전 인프라 근접성 (맥락 — 전원 매칭 아님)</div>
+                <div className="k"><Term k="발전단지">발전 인프라</Term> 근접성 (맥락 — 전원 매칭 아님)</div>
                 <div className="v">
                   {np.plant.name} · {np.plant.type}
                   {np.plant.capacity_mw != null && ` · ${np.plant.capacity_mw.toLocaleString()}MW`} · {np.km.toFixed(0)}km
@@ -278,7 +279,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             ) : null
           })()}
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">계통 여유용량 (한전 분산전원 22.9kV · 배전)</div>
+            <div className="k"><Term k="계통여유">계통 여유용량</Term> (한전 분산전원 22.9kV · 배전)</div>
             <div className="v">
               {headroom?.available ? (
                 <>
@@ -291,7 +292,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">침수 위험 (홍수위험지도 — 리스크축)</div>
+            <div className="k"><Term k="침수심">침수 위험</Term> (홍수위험지도 — 리스크축)</div>
             <div className="v">
               {flood?.available ? (
                 flood.grade === '해당없음' || flood.depthM === 0 ? (
@@ -310,7 +311,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">반경 인구·가구 (SGIS — 민원 프록시)</div>
+            <div className="k">반경 <Term k="인구격자">인구·가구</Term> (SGIS — 민원 프록시)</div>
             <div className="v">
               {pop?.available ? (
                 <>
@@ -346,7 +347,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             const net = networkContext(point)
             return (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">네트워크 인프라 근접성 (백본·해저케이블 — 참고)</div>
+                <div className="k">네트워크 근접성 (<Term k="백본">백본</Term>·<Term k="육양국">해저케이블</Term> — 참고)</div>
                 <div className="v">
                   {net.backbone && `백본/IX ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
                   {net.cls && ` · 해저케이블 육양국 ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
@@ -370,11 +371,11 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
           </div>
           <div className="spec-cell">
-            <div className="k">수전전압 트랙</div>
+            <div className="k"><Term k="수전전압">수전전압</Term> 트랙</div>
             <div className="v">{r.track.track.voltage}</div>
           </div>
           <div className="spec-cell">
-            <div className="k">계통영향평가</div>
+            <div className="k"><Term k="전력계통영향평가">계통영향평가</Term></div>
             <div className="v">
               {r.track.psiaRequired ? '대상' : '비대상'}
               {r.track.exemption && ` · ${r.track.exemption.effective}~ 면제 가능성`}
@@ -386,7 +387,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             return lp ? (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
                 <div className="k">
-                  인근 지가변동률 · {lp.scope} ({lp.period} 월간, KOSIS — 최근접 시설 시군구 기준)
+                  인근 <Term k="지가변동률">지가변동률</Term> · {lp.scope} ({lp.period} 월간, KOSIS — 최근접 시설 시군구 기준)
                 </div>
                 <div className="v">
                   {fmtRate(lp.value)}
