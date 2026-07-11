@@ -30,7 +30,7 @@ function describe(f) {
     f.power_mw_public != null ? `공개 전력 ${f.power_mw_public}MW` : null,
     f.year ? `${f.year}년` : null,
   ].filter(Boolean)
-  return `${parts.join(' · ')} — 한국 데이터센터 현황 맵, 명당 AI`
+  return `${parts.join(' · ')} — 한국 데이터센터 현황 맵, AI InfraMap`
 }
 
 function placeJsonLd(f) {
@@ -71,12 +71,12 @@ function prerender(relPath, title, desc, jsonLd) {
 }
 
 for (const f of facilities) {
-  prerender(`/dc/${slugOf(f)}`, `${f.name} — 명당 AI 데이터센터 맵`, describe(f), placeJsonLd(f))
+  prerender(`/dc/${slugOf(f)}`, `${f.name} — AI InfraMap 데이터센터 맵`, describe(f), placeJsonLd(f))
 }
 
 const GLOSSARY_DESC =
   '계약전력·수전전압·전력계통영향평가·과부하율·PUE·프리쿨링 — 데이터센터 부지와 전력 인허가를 이해하는 데 필요한 용어를 공개 규정 기준으로 쉽게 풀었습니다.'
-prerender('/glossary', '데이터센터 전력 인허가 용어집 — 명당 AI', GLOSSARY_DESC, {
+prerender('/glossary', '데이터센터 전력 인허가 용어집 — AI InfraMap', GLOSSARY_DESC, {
   '@context': 'https://schema.org',
   '@type': 'DefinedTermSet',
   name: '데이터센터 전력 인허가 용어집',
@@ -93,12 +93,12 @@ prerender('/glossary', '데이터센터 전력 인허가 용어집 — 명당 AI
 
 const STATS_DESC =
   '국내 데이터센터 165개소(2024) 중 60%가 수도권에 집중. 전체 수전용량 약 1,913MW, 민간 평균 17.7MW — KEEI·KDCC 공개 통계로 보는 한국 데이터센터 현황.'
-prerender('/stats', '국내 데이터센터 통계 — 수도권 집중과 전력 수요 · 명당 AI', STATS_DESC, {
+prerender('/stats', '국내 데이터센터 통계 — 수도권 집중과 전력 수요 · AI InfraMap', STATS_DESC, {
   '@context': 'https://schema.org',
   '@type': 'Dataset',
   name: '국내 데이터센터 현황 통계 (2023~2024)',
   description: STATS_DESC,
-  creator: { '@type': 'Organization', name: '명당 AI' },
+  creator: { '@type': 'Organization', name: 'AI InfraMap' },
   isBasedOn: [
     '김철현·김성균(2025), 「AI 시대 데이터센터 증가의 국내 에너지 소비 시사점」, KEEI 기본연구보고서',
     'KDCC(한국데이터센터연합회), Korea Data Center Market Report 2024~2027 (2024) · 2025~2028 (2025)',
@@ -106,46 +106,46 @@ prerender('/stats', '국내 데이터센터 통계 — 수도권 집중과 전�
   citation: '에너지경제연구원(KEEI) 에너지통계 월호 제82호 (2026.4.30)',
 })
 
-prerender('/dashboard', '대시보드 — 명당 AI 한국 데이터센터 인텔리전스', '한국 데이터센터 현황 대시보드: 상태별 시설 수, 지역별 공개 전력 분포, 건설 파이프라인, 입지 시군구 지가 펄스 — 전부 공개 데이터 기준.', {
+prerender('/dashboard', '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스', '한국 데이터센터 현황 대시보드: 상태별 시설 수, 지역별 공개 전력 분포, 건설 파이프라인, 입지 시군구 지가 펄스 — 전부 공개 데이터 기준.', {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
-  name: '명당 AI 대시보드',
+  name: 'AI InfraMap 대시보드',
 })
 
 prerender(
   '/compare',
-  '시설 비교 — 명당 AI',
+  '시설 비교 — AI InfraMap',
   '데이터센터 2~3곳을 나란히 — 상태·전력·연도·지가·인허가 트랙·발전 인프라 근접성을 공개 데이터로 비교.',
-  { '@context': 'https://schema.org', '@type': 'WebPage', name: '명당 AI 시설 비교' },
+  { '@context': 'https://schema.org', '@type': 'WebPage', name: 'AI InfraMap 시설 비교' },
 )
 
-prerender('/map3d', '3D 맵 (베타) — 명당 AI', '한국 데이터센터 현황을 기울인 3D 시점에서 — MapLibre GL 전환 1단계 베타.', {
+prerender('/map3d', '3D 맵 (베타) — AI InfraMap', '한국 데이터센터 현황을 기울인 3D 시점에서 — MapLibre GL 전환 1단계 베타.', {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
-  name: '명당 AI 3D 맵 베타',
+  name: 'AI InfraMap 3D 맵 베타',
 })
 
 prerender(
   '/land',
-  'LAND PULSE — 입지 지가변동률 시·군·구·동 리스트 · 명당 AI',
+  'LAND PULSE — 입지 지가변동률 시·군·구·동 리스트 · AI InfraMap',
   '데이터센터 입지 시군구 35곳과 읍면동 조사구역 539개의 월간 지가변동률 — 시도 필터·정렬·동 단위 드릴다운. KOSIS·한국부동산원 공개 통계.',
-  { '@context': 'https://schema.org', '@type': 'Dataset', name: '명당 AI LAND PULSE — DC 입지 지가변동률' },
+  { '@context': 'https://schema.org', '@type': 'Dataset', name: 'AI InfraMap LAND PULSE — DC 입지 지가변동률' },
 )
 
 // 인사이트 프리렌더
-prerender('/insights', '인사이트 — 명당 AI', '데이터센터 입지·전력·민원·기상을 둘러싼 논쟁을 공개 데이터로 정리하는 명당 AI 인사이트.', {
+prerender('/insights', '인사이트 — AI InfraMap', '데이터센터 입지·전력·민원·기상을 둘러싼 논쟁을 공개 데이터로 정리하는 AI InfraMap 인사이트.', {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
-  name: '명당 AI 인사이트',
+  name: 'AI InfraMap 인사이트',
 })
 for (const a of INSIGHTS) {
-  prerender(`/insights/${a.slug}`, `${a.title} — 명당 AI 인사이트`, a.description, {
+  prerender(`/insights/${a.slug}`, `${a.title} — AI InfraMap 인사이트`, a.description, {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: a.title,
     description: a.description,
     datePublished: a.date,
-    author: { '@type': 'Organization', name: '명당 AI' },
+    author: { '@type': 'Organization', name: 'AI InfraMap' },
     url: `${ORIGIN}/insights/${a.slug}`,
   })
 }
@@ -162,8 +162,8 @@ for (const [sido, slug] of Object.entries(SIDO_SLUGS)) {
     by[f.status === 'delayed' ? 'planned' : f.status] += 1
     if (f.power_mw_public != null) mw += f.power_mw_public
   }
-  const desc = `${sido} 데이터센터 ${list.length}곳 — 운영 ${by.operating} · 건설 ${by.construction} · 계획 ${by.planned}${mw > 0 ? ` · 공개 전력 합계 ${mw}MW` : ''}. 공개 소스 기반 현황, 명당 AI.`
-  prerender(`/region/${slug}`, `${sido} 데이터센터 현황 — 명당 AI`, desc, {
+  const desc = `${sido} 데이터센터 ${list.length}곳 — 운영 ${by.operating} · 건설 ${by.construction} · 계획 ${by.planned}${mw > 0 ? ` · 공개 전력 합계 ${mw}MW` : ''}. 공개 소스 기반 현황, AI InfraMap.`
+  prerender(`/region/${slug}`, `${sido} 데이터센터 현황 — AI InfraMap`, desc, {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: `${sido} 데이터센터 목록`,

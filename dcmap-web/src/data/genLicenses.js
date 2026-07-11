@@ -1,4 +1,4 @@
-// 3MW 초과 발전사업 허가 명단 v2 — 파생 집계 (명당 D1 발전 트랙 시드)
+// 3MW 초과 발전사업 허가 명단 v2 — 파생 집계 (AI InfraMap D1 발전 트랙 시드)
 // 원문: 발전사업 허가대장(2026-04-17 기준) PDF, ToUnicode 임베드본 → 파싱 신뢰.
 // 정직성(SPEC §0-1): 건수 기준 집계·연료원·허가일은 신뢰. 개별 MW는 참고치(needs_verify)로만 표기.
 import raw from '../../data/gen_licenses_v2.json'

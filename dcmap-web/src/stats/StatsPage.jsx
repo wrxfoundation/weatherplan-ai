@@ -12,7 +12,7 @@ import {
 } from '../data/genLicenses.js'
 import { CHP_STATS, CHP_BY_OP, CHP_TOP_PLANTS, CHP_META } from '../data/chpPlants.js'
 
-const TITLE = '국내 데이터센터 통계 — 수도권 집중과 전력 수요 · 명당 AI'
+const TITLE = '국내 데이터센터 통계 — 수도권 집중과 전력 수요 · AI InfraMap'
 const DESC =
   '국내 데이터센터 165개소(2024) 중 60%가 수도권에 집중. 전체 수전용량 약 1,913MW, 민간 평균 17.7MW — KEEI·KDCC 공개 통계로 보는 한국 데이터센터 현황.'
 
@@ -115,7 +115,7 @@ export default function StatsPage() {
       '@type': 'Dataset',
       name: '국내 데이터센터 현황 통계 (2023~2024)',
       description: DESC,
-      creator: { '@type': 'Organization', name: '명당 AI' },
+      creator: { '@type': 'Organization', name: 'AI InfraMap' },
       isBasedOn: STATS_SOURCE.base,
       citation: STATS_SOURCE.publication,
     })
@@ -171,7 +171,7 @@ export default function StatsPage() {
             title={`허가 2024+ 지역 분포 — 비수도권 ${GEN_RECENT_NONCAPITAL_PCT}%`}
             bars={GEN_RECENT_BY_SIDO.slice(0, 7).map((s) => ({ label: s.sido, value: s.count, unit: '건' }))}
             unit="건"
-            note="전남·경북·강원의 재생E 벨트에 집중 — AIDC 특별법 비수도권 유인과 계통영향평가 지역 배점이 지리적으로 정합한다. 명당 전력축이 읽는 공급측 신호."
+            note="전남·경북·강원의 재생E 벨트에 집중 — AIDC 특별법 비수도권 유인과 계통영향평가 지역 배점이 지리적으로 정합한다. AI InfraMap 전력축이 읽는 공급측 신호."
           />
           <p className="chart-note" style={{ opacity: 0.7 }}>
             {GEN_PIPELINE.source} · 누적 {GEN_LICENSE_META.total.toLocaleString()}건
@@ -205,14 +205,14 @@ export default function StatsPage() {
 
         <div className="calc-card">
           <HBars
-            title={`명당 시드 기준 지역별 공개 전력 분포 (계획 포함, 총 ${regionMw.reduce((s, b) => s + b.value, 0).toLocaleString()}MW)`}
+            title={`AI InfraMap 시드 기준 지역별 공개 전력 분포 (계획 포함, 총 ${regionMw.reduce((s, b) => s + b.value, 0).toLocaleString()}MW)`}
             bars={regionMw}
             unit="MW"
             note="공개 전력 규모(power_mw_public)가 확인된 시설만 집계. 전남(솔라시도 1GW 구상)·경기(파주 AIDC)·울산 등 계획·건설 단계의 비수도권 대형 프로젝트가 분포를 주도한다."
           />
-          <div className="chart-title">명당 AI 맵 데이터와 교차 확인</div>
+          <div className="chart-title">AI InfraMap 맵 데이터와 교차 확인</div>
           <p className="chart-note">
-            명당 시드 v0.1이 추적 중인 시설 {myeongdang.total}곳(운영·건설·계획 포함) 중 수도권(서울·경기·인천)은{' '}
+            AI InfraMap 시드 v0.1이 추적 중인 시설 {myeongdang.total}곳(운영·건설·계획 포함) 중 수도권(서울·경기·인천)은{' '}
             <strong>
               {myeongdang.capital}곳({myeongdang.pct}%)
             </strong>{' '}

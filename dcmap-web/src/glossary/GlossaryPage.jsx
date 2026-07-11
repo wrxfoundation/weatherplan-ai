@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import TopBar from '../TopBar.jsx'
 import { GLOSSARY, GLOSSARY_CATEGORIES } from '../content/glossary.js'
 
-const TITLE = '데이터센터 전력 인허가 용어집 — 명당 AI'
+const TITLE = '데이터센터 전력 인허가 용어집 — AI InfraMap'
 const DESC =
   '계약전력·수전전압·전력계통영향평가·과부하율·PUE·프리쿨링 — 데이터센터 부지와 전력 인허가를 이해하는 데 필요한 용어를 공개 규정 기준으로 쉽게 풀었습니다.'
 

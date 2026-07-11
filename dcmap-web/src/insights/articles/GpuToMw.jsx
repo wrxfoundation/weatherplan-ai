@@ -6,7 +6,7 @@ export default function GpuToMw() {
     <>
       <p>
         “GPU 1만 장이면 데이터센터가 얼마나 커야 하나요?” — 이 질문을 숫자로 바꾸는 것이{' '}
-        <Link to="/calc">명당 GPU 계산기</Link>의 일이다. 산식은 숨길 이유가 없어서, 이 글에서 그대로 공개한다.
+        <Link to="/calc">AI InfraMap GPU 계산기</Link>의 일이다. 산식은 숨길 이유가 없어서, 이 글에서 그대로 공개한다.
         입력은 세 개다: <strong>GPU 기종과 수량, PUE</strong>.
       </p>
 

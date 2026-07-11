@@ -22,7 +22,7 @@ export default function PowerMapPage() {
   const layerRef = useRef(null)
 
   useEffect(() => {
-    document.title = '전국 전력 지도 — 발전 공급 · 계통 여유용량 · 명당 AI'
+    document.title = '전국 전력 지도 — 발전 공급 · 계통 여유용량 · AI InfraMap'
   }, [])
 
   // 계통 여유용량: 17개 시도 중심점에서 headroom 조회 (KEPCO env 연동 시 실데이터)

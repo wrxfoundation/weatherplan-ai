@@ -54,7 +54,7 @@ export default function FacilityPage() {
 
   useEffect(() => {
     if (!facility) return
-    const title = `${facility.name} — 명당 AI 데이터센터 맵`
+    const title = `${facility.name} — AI InfraMap 데이터센터 맵`
     const desc = buildDescription(facility)
     document.title = title
     setMeta('name', 'description', desc)

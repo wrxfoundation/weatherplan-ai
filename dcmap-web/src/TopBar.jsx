@@ -82,7 +82,7 @@ export default function TopBar() {
     <header className="topbar">
       <NavLink to="/" className="logo">
         <span className="logo-mark">M</span>
-        MyeongDang <em>AI</em> 명당
+        AI <em>Infra</em>Map
       </NavLink>
 
       <div className="topbar-search">
@@ -145,6 +145,9 @@ export default function TopBar() {
         </NavLink>
         <NavLink to="/power" className={({ isActive }) => (isActive ? 'active' : '')}>
           전력지도
+        </NavLink>
+        <NavLink to="/data" className={({ isActive }) => (isActive ? 'active' : '')}>
+          데이터
         </NavLink>
         <NavLink to="/stats" className={({ isActive }) => (isActive ? 'active' : '')}>
           통계

@@ -17,7 +17,7 @@ const ISO_SVG = `<svg viewBox="0 0 24 26" xmlns="http://www.w3.org/2000/svg">
   <polygon class="f-right" points="12,14 22,8 22,18 12,24"/>
 </svg>`
 
-const TITLE = '3D 맵 (베타) — 명당 AI'
+const TITLE = '3D 맵 (베타) — AI InfraMap'
 const DESC = '한국 데이터센터 현황을 기울인 3D 시점에서 — MapLibre GL 전환 1단계 베타.'
 
 export default function Map3DPage() {

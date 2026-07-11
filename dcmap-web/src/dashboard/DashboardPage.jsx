@@ -6,7 +6,7 @@ import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
 import { filingsRecent, epsisCapacity } from '../data/liveApi.js'
 
-const TITLE = '대시보드 — 명당 AI 한국 데이터센터 인텔리전스'
+const TITLE = '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스'
 const DESC =
   '한국 데이터센터 현황 대시보드: 상태별 시설 수, 지역별 공개 전력 분포, 건설·계획 파이프라인, 입지 시군구 지가 펄스 — 전부 공개 데이터 기준.'
 

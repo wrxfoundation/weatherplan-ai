@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 
 /* 1차 소스: KDCC/STRABASE Issue Focus, 「AI 인프라의 재분류…」 인포그래픽.
- * 콘텐츠 등급 ④참고·인사이트. 사건·기준 변화는 원문 인용, 국내 함의는 명당 축으로 연결. */
+ * 콘텐츠 등급 ④참고·인사이트. 사건·기준 변화는 원문 인용, 국내 함의는 AI InfraMap 축으로 연결. */
 export default function NationalInfrastructure() {
   return (
     <>
@@ -32,12 +32,12 @@ export default function NationalInfrastructure() {
         입지가 곧 지정학임을 보여준다.
       </p>
 
-      <h2>명당의 관점 — 한국의 ‘국가 신뢰도’는 입지 자산이다</h2>
+      <h2>AI InfraMap의 관점 — 한국의 ‘국가 신뢰도’는 입지 자산이다</h2>
       <p>
-        이 재분류는 한국에 양면적이다. 분단·군사 시설 인접은 <strong>리스크 축</strong>에서 감점 요인이지만(명당이
+        이 재분류는 한국에 양면적이다. 분단·군사 시설 인접은 <strong>리스크 축</strong>에서 감점 요인이지만(AI InfraMap이
         군사·재해를 입지 리스크로 다루는 이유), 동시에 상대적 정책 안정성과 촘촘한 전력·통신 인프라는{' '}
         <strong>복원력·국가 신뢰도 경쟁에서 강점</strong>이 될 수 있다. 부산 해저 케이블 랜딩, 다중 리전 구성 가능성,
-        재해복구 체계는 앞으로 명당이 흡수할 새로운 입지 레이어다. 전력·허가 다음의 경쟁 기준이 ‘복원력’이라면,
+        재해복구 체계는 앞으로 AI InfraMap이 흡수할 새로운 입지 레이어다. 전력·허가 다음의 경쟁 기준이 ‘복원력’이라면,
         그것 역시 결국 지도 위 한 점의 문제다 — 전력·허가 축은{' '}
         <Link to="/insights/power-permit-battle">‘전력·허가가 승부를 가른다’</Link>에서, 병목의 이동은{' '}
         <Link to="/insights/orbital-bottleneck">‘AI 병목 통행권’</Link>에서 이어진다.

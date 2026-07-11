@@ -30,12 +30,12 @@ export default function UtilityAcquisition() {
         재편된다. AI 인프라 경쟁의 중심이 컴퓨팅 자원에서 <strong>전력 공급 능력</strong>으로 이동한 것이다.
       </p>
 
-      <h2>명당의 관점 — 국내 수직 통합의 좌표</h2>
+      <h2>AI InfraMap의 관점 — 국내 수직 통합의 좌표</h2>
       <p>
-        이 수직 통합의 국내판은 이미 데이터에 있다. 명당이 흡수한{' '}
+        이 수직 통합의 국내판은 이미 데이터에 있다. AI InfraMap이 흡수한{' '}
         <Link to="/stats">발전사업 허가대장</Link>에서 신규 허가의 86.5%가 신재생이고, 자가발전·PPA 직결형 프로젝트가
         늘어난다 — 데이터센터가 발전사업자와 한 몸이 되는 흐름의 공급측 증거다. 정부 3대 메가프로젝트(
-        <Link to="/insights/mega-project-aidc">8.4GW</Link>)도 SMR·재생E 조달을 함께 설계한다. 명당의 전력축이
+        <Link to="/insights/mega-project-aidc">8.4GW</Link>)도 SMR·재생E 조달을 함께 설계한다. AI InfraMap의 전력축이
         계통 여유용량과 발전 파이프라인을 같은 지도 위에 얹는 이유가 여기 있다 — 부지를 고를 때 이미{' '}
         <strong>전력을 어떻게 확보할지</strong>가 함께 결정되기 때문이다. 같은 이동의 기술·시장 서사는{' '}
         <Link to="/insights/orbital-bottleneck">‘AI 병목 통행권’</Link>에서 다뤘다.
