@@ -36,3 +36,6 @@ export const forecastFor = (lat, lng) => fetchJson(`/api/forecast?${q(lat, lng)}
 
 /** 한전 분산전원 계통 여유용량 — { availableMw, cumulativeMw, scope } | null */
 export const headroomFor = (lat, lng) => fetchJson(`/api/headroom?${q(lat, lng)}`)
+
+/** DART 최근 DC 관련 공시 (D2 이벤트) — { filings: [{corp,title,date,url}] } | null */
+export const filingsRecent = () => fetchJson('/api/filings')

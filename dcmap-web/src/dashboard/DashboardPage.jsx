@@ -4,6 +4,7 @@ import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf } from '../data/facilities.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
+import { filingsRecent } from '../data/liveApi.js'
 
 const TITLE = '대시보드 — 명당 AI 한국 데이터센터 인텔리전스'
 const DESC =
@@ -36,9 +37,18 @@ function Gauge({ pct, label, sub }) {
 
 export default function DashboardPage() {
   const [now, setNow] = useState(() => new Date())
+  const [filings, setFilings] = useState(null)
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(t)
+  }, [])
+
+  useEffect(() => {
+    let alive = true
+    filingsRecent().then((v) => alive && setFilings(v))
+    return () => {
+      alive = false
+    }
   }, [])
 
   useEffect(() => {
@@ -181,11 +191,35 @@ export default function DashboardPage() {
               </p>
             )}
           </section>
+
+          <section className="calc-card">
+            <div className="chart-title">최근 DC 공시 — DART 전자공시 (D2)</div>
+            {filings?.available ? (
+              <div className="facility-list">
+                {filings.filings.slice(0, 6).map((f, i) => (
+                  <a key={i} className="facility-row" href={f.url} target="_blank" rel="noreferrer">
+                    <span className="dot construction" />
+                    <span>
+                      <span className="name">{f.title}</span>
+                      <span className="meta">
+                        {f.corp} · {f.date}
+                      </span>
+                    </span>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="chart-note">
+                사업자 공시(투자·착공·설비 신설)는 언론보다 선행하는 1차 출처 — DART API 연동 시 실시간 표시.
+                현재 <span className="badge verify">연동 대기</span> (env 설정 후 활성).
+              </p>
+            )}
+          </section>
         </div>
 
         <p className="footer-note">
-          PUE 평균·전력망 연결률·실시간 알림은 사업자 미공개/어댑터(D2·D3) 대기 항목 — 가짜 수치로 채우지 않습니다.
-          데이터가 확보되는 즉시 이 대시보드에 추가됩니다.
+          PUE 평균·전력망 연결률은 사업자 미공개/어댑터 대기 항목 — 가짜 수치로 채우지 않습니다. 계통 여유용량(D3)·
+          공시 알림(D2)은 API 연동 시 즉시 활성화됩니다.
         </p>
       </main>
     </>
