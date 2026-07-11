@@ -37,7 +37,7 @@ async function fetchJson(url, ms = 6000) {
 async function regionCodes(lat, lng, vworldKey) {
   const url =
     'https://api.vworld.kr/req/address?service=address&request=getAddress&version=2.0' +
-    `&crs=epsg:4326&point=${lng},${lat}&format=json&type=parcel&zipcode=false&simple=false&key=${vworldKey}`
+    `&crs=epsg:4326&point=${lng},${lat}&format=json&type=parcel&zipcode=false&simple=false&key=${vworldKey}&domain=${encodeURIComponent(process.env.VWORLD_DOMAIN || 'aidatacenter-red.vercel.app')}`
   const body = await fetchJson(url)
   if (body?.response?.status !== 'OK') return null
   for (const item of body.response.result ?? []) {
@@ -110,6 +110,6 @@ export default async function handler(req, res) {
       unit: 'MW',
     })
   } catch (e) {
-    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
   }
 }

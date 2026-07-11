@@ -30,7 +30,7 @@ export default async function handler(req, res) {
 
   const url =
     'https://api.vworld.kr/req/address?service=address&request=getAddress&version=2.0' +
-    `&crs=epsg:4326&point=${lng},${lat}&format=json&type=both&zipcode=false&simple=false&key=${key}`
+    `&crs=epsg:4326&point=${lng},${lat}&format=json&type=both&zipcode=false&simple=false&key=${key}&domain=${encodeURIComponent(process.env.VWORLD_DOMAIN || 'aidatacenter-red.vercel.app')}`
 
   try {
     const ctrl = new AbortController()
@@ -71,6 +71,6 @@ export default async function handler(req, res) {
       : {}
     res.status(200).json({ available: true, parcel, road, ...codes })
   } catch (e) {
-    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
   }
 }

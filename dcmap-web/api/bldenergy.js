@@ -112,6 +112,6 @@ export default async function handler(req, res) {
       source: '국토부 건축HUB 건물에너지 (data.go.kr)',
     })
   } catch (e) {
-    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
   }
 }

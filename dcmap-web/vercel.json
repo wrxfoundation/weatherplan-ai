@@ -3,6 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "regions": ["icn1"],
+  "functions": { "api/*.js": { "maxDuration": 30 } },
   "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }],
   "git": {
     "deploymentEnabled": {

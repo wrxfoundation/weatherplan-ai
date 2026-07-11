@@ -210,6 +210,6 @@ export default async function handler(req, res) {
     }
     res.status(200).json(HANDLERS[src](items))
   } catch (e) {
-    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
   }
 }
