@@ -2,6 +2,20 @@
 // 콘텐츠 등급: 데이터 아키텍처 4계층 중 ④참고·인사이트. 시설 데이터(dc_centers)와 분리 관리.
 export const INSIGHTS = [
   {
+    slug: 'land-pulse-methodology',
+    title: '데이터센터가 들어서면 땅값이 움직일까 — LAND PULSE 방법론',
+    description:
+      '전국 DC 입지 시군구 35곳·읍면동 조사구역 539개의 월간 지가변동률 추적을 시작했다. 용산 +0.577%, 해남 북일면 -0.183% — 그러나 아직 인과를 주장하지 않는 이유와, 이벤트-지가 정렬 시계열이 해자가 되는 이유. 1차 출처: KOSIS·한국부동산원(2026.05).',
+    date: '2026-07-11',
+  },
+  {
+    slug: 'liquid-cooling-brief',
+    title: '액체냉각으로의 전환 — GPU 2kW 시대의 입지 방정식',
+    description:
+      'GPU TDP 1,500~2,000W는 단상 직접칩냉각의 한계선. 2상 전환은 1kW당 유량을 1.5→0.3L/min으로 바꾸고, 냉각 부품 시장은 2030년 149억 달러로 간다 — 냉각 세대교체가 용수·기상·계약전력의 입지 방정식을 다시 쓰는 방법. 출처: OCP 공개 웨비나(Parker Hannifin, 2025.6).',
+    date: '2026-07-11',
+  },
+  {
     slug: 'mega-project-aidc',
     title: '3대 메가프로젝트와 AI 데이터센터 — 8.4GW의 지도',
     description:

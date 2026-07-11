@@ -4,8 +4,24 @@ import TopBar from '../TopBar.jsx'
 import { INSIGHTS } from '../content/insights_meta.js'
 import DcLocalImpact from './articles/DcLocalImpact.jsx'
 import MegaProjectAidc from './articles/MegaProjectAidc.jsx'
+import LiquidCoolingBrief from './articles/LiquidCoolingBrief.jsx'
+import LandPulseMethod from './articles/LandPulseMethod.jsx'
 
 const ARTICLES = {
+  'land-pulse-methodology': {
+    component: LandPulseMethod,
+    sources: [
+      'KOSIS·한국부동산원, 「지가변동률」 시군구(DT_1YL20881E)·읍면동별(DT_31501N_010) 월간 통계 — 2026.05 시점, 명당 직접 집계 (data/land_price_v0.json · land_price_dong_v0.json)',
+      '방법론 문서: docs/land-price-tracking.md — 읍면동 승격 파이프라인(scripts/land_dong.mjs)과 정직성 규칙',
+    ],
+  },
+  'liquid-cooling-brief': {
+    component: LiquidCoolingBrief,
+    sources: [
+      'OCP Educational Webinar, Compact Thermal Management Solutions for High-Density AI Data Centers (Parker Hannifin, 2025.6.26) — 공개 기술 자료',
+      'GPU TDP 한계선·유량(1.5→0.3L/min per kW)·시장 전망(2030년 ~149억 달러)·PFAS 과제: 상기 웨비나 자료 기준 — 콘텐츠 등급 ④참고·인사이트',
+    ],
+  },
   'mega-project-aidc': {
     component: MegaProjectAidc,
     sources: [

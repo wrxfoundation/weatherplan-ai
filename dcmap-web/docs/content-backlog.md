@@ -11,6 +11,8 @@
 | 2 | `/stats` 국내 DC 통계 | ②KEEI·KDCC 공식 발간물 | 제82호(2026.4) |
 | 3 | `/insights/dc-local-impact` 미국 지역 임팩트 팩트 시트 | ④재인용(커넥트 칼럼) — 원 연구·보도 기반 | Bahar & Wright·라우던 카운티 |
 | 4 | `/insights/mega-project-aidc` 3대 메가프로젝트 AIDC 트랙 | ①산업부 참고자료(2026.6.29)·korea.kr(5.8) + ②③보도 | 구 백로그 A — 1차 출처 확보로 발행(2026.7.10). 8.4GW·550조·특별법·345kV 정보 공개 |
+| 5 | `/insights/liquid-cooling-brief` 액체냉각 전환 브리프 | ④OCP 공개 웨비나(Parker Hannifin) | 구 백로그 B — 발행(2026.7.11). TDP 한계선·유량 5분의 1·PFAS |
+| 6 | `/insights/land-pulse-methodology` LAND PULSE 방법론 | ②KOSIS·부동산원(직접 집계) | 자체 데이터 1차 출처 — 발행(2026.7.11). 정직성 규칙 3조 명문화 |
 
 ## 대기 (검증 필요)
 
@@ -23,7 +25,7 @@
 ### A″. "5개의 벽" 심층 기사 (RE100 조달률 12%, 그룹 합산 4,755조 등)
 - 커넥트 칼럼 고유 수치(기업 재생에너지 조달률 12%, 삼성 2,655조·SK 2,100조 합산 등)는 여전히 1차 출처 미확보 — 검증 전 발행 금지. 메가프로젝트 편에서는 프레임만 재인용 처리함.
 
-### B. 액체냉각 시장·기술 브리프
+### ~~B. 액체냉각 시장·기술 브리프~~ → 발행 완료(#5)
 - **소스**: OCP Educational Webinar "Compact Thermal Management Solutions for High-Density AI DC" (2025.6.26, Parker Hannifin) — 공개 기술 자료
 - **쓸 수 있는 팩트**: GPU TDP 1,500~2,000W = 단상 D2C 한계선 → 2상 냉각 전환 / 단상 1.5L/min·2상 0.3L/min(1kW당) / 냉각 부품 시장 2030년 ~149억 달러(10년 내 3배) / 침지냉각 표준화·PFAS 과제
 - **명당 연결**: 냉각 방식 전환 = 용수·전력 수요 구조 변화 → 입지 조건(기상 레이어 M3) 재평가 스토리
