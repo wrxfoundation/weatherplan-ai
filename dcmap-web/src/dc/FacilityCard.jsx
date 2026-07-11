@@ -1,8 +1,22 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { STATUS_LABEL, GEOCODE_LABEL, slugOf } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
+import { revgeoFor } from '../data/liveApi.js'
 
 export default function FacilityCard({ facility: f, compact = false }) {
+  // vworld 리버스 지오코딩 — 좌표 기준 지번(동단위) 주소. env 연동 시 표시(미연동 시 null → 공개주소/시군구 폴백)
+  const [addr, setAddr] = useState(null)
+  useEffect(() => {
+    setAddr(null)
+    if (compact || f.lat == null || f.lng == null) return
+    let alive = true
+    revgeoFor(f.lat, f.lng).then((v) => alive && setAddr(v))
+    return () => {
+      alive = false
+    }
+  }, [f.id, f.lat, f.lng, compact])
+  const dongAddr = addr?.parcel || addr?.road || null
   return (
     <article className="facility-card">
       <div className="status-line">
@@ -37,12 +51,20 @@ export default function FacilityCard({ facility: f, compact = false }) {
             {f.sigungu ? ` ${f.sigungu}` : ''}
           </div>
         </div>
-        {f.address_public && (
-          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">공개 주소</div>
-            <div className="v">{f.address_public}</div>
+        <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+          <div className="k">주소 (지번 · vworld 리버스 지오코딩)</div>
+          <div className="v">
+            {dongAddr ? (
+              dongAddr
+            ) : f.address_public ? (
+              f.address_public
+            ) : compact ? (
+              `${f.sido}${f.sigungu ? ' ' + f.sigungu : ''}`
+            ) : (
+              <span className="badge verify">동단위 주소 연동 대기 — vworld env 설정 시 자동 표시</span>
+            )}
           </div>
-        )}
+        </div>
         {(() => {
           const lp = landPriceFor(f)
           return lp ? (
