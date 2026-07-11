@@ -11,6 +11,7 @@ on:
     branches: [claude/eager-knuth-Vnzca, claude/deploy-vercel-DwbJL]
     paths:
       - "koreaapi/**"
+      - "dcmap-web/**"
       - ".github/workflows/pages.yml"
   schedule:
     - cron: "37 1 * * *" # daily
@@ -91,6 +92,26 @@ jobs:
           cp site/*.html ../_site/   # every generated top-level hub + standalone page (glob — no per-vertical list)
           uv run python -m koreaapi.admin sitemap   # sitemap.xml incl. every entity + person page
           cp sitemap.xml ../_site/sitemap.xml
+
+      # 명당 AI 데이터센터 맵 — 같은 Pages 사이트의 /map/ 하위경로에 얹는다 (임시 프리뷰).
+      # continue-on-error: 맵 빌드가 실패해도 koreaapi GEO 사이트 배포는 그대로 진행.
+      - name: Set up Node (dcmap-web)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+        continue-on-error: true
+      - name: Build dcmap-web → _site/map
+        continue-on-error: true
+        working-directory: dcmap-web
+        env:
+          VITE_BASE: /map/
+          VITE_SITE_ORIGIN: https://aiagentlabs.co.kr/map
+        run: |
+          npm ci || npm install
+          npm run build
+          mkdir -p ../_site/map
+          cp -r dist/* ../_site/map/
+          cp dist/index.html ../_site/map/404.html   # /map/ 하위 SPA 폴백(비프리렌더 클라이언트 라우트)
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3 # publishes ./_site by default
