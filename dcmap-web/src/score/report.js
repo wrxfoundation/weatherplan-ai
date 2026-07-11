@@ -3,7 +3,7 @@
 import { STATUS_LABEL } from '../data/facilities.js'
 import { fmtRate } from '../data/landPrice.js'
 
-export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom, flood, pop, disaster }) {
+export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom, flood, pop, disaster, energy }) {
   const L = []
   const now = new Date()
   L.push(`# AI InfraMap — 부지 적합도 간이 리포트 (v0)`)
@@ -22,6 +22,24 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
     `- 전력계통영향평가: ${r.track.psiaRequired ? '대상 (10MW 이상)' : '비대상'}${r.track.exemption ? ` — 비수도권 특례로 ${r.track.exemption.effective}부터 면제 가능성 (규모 기준 대통령령 미제정)` : ''}`,
   )
   L.push(`- 확정 수수료(심의회 상정까지): ${r.track.fees.total} · 리드타임 골자: ${r.track.leadTime.review}${r.track.leadTime.assessment ? ` + ${r.track.leadTime.assessment}` : ''}`)
+  L.push(``)
+  L.push(`## 프로세스 관문 전망 (용량·입지 기준 · 실제 판정은 한전·기후에너지환경부 심의)`)
+  {
+    const t = r.track
+    const p07 =
+      mw <= 20
+        ? '22.9kV 배전 수전 (수월) — 계통 여유가 지배 변수'
+        : mw <= 40
+          ? '22.9kV/154kV 협의 경계 — 증설 계획 시 154kV 전제가 안전'
+          : '154kV 의무 (핵심 관문) — 자체 수전설비 투자 + 변전소 거리'
+    const p08 = !t.psiaRequired
+      ? '10MW 미만 · 비대상'
+      : nonCapital
+        ? `대상 · 비수도권 유인 — 지역 배점 가점 여지${t.exemption ? ` + ${t.exemption.effective}~ AIDC 특별법 면제 가능성` : ''}`
+        : '대상 · 수도권 감점 (핵심 관문) — ±15점 억제 배점'
+    L.push(`- P07 한전 접속·수전전압: ${p07}`)
+    L.push(`- P08 전력계통영향평가(±15점): ${p08}`)
+  }
   L.push(``)
   L.push(`## 스코어 커버리지 — 근거 확보 ${r.knownScore}/${r.knownMax}점 · 커버리지 ${r.coverage}/100`)
   for (const axis of r.axes) {
@@ -74,6 +92,11 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
     L.push(`- 재해 이력: ${disaster.events != null ? `${disaster.events.toLocaleString()}건` : ''}${disaster.topType ? ` · 주 유형 ${disaster.topType}` : ''}${disaster.recentYear ? ` · 최근 ${disaster.recentYear}` : ''} (재난안전)`)
   } else {
     L.push(`- 재해 이력: 연동 대기 — 재난안전 공유플랫폼`)
+  }
+  if (energy?.available && energy.usage != null) {
+    L.push(`- 지번 실측 전기사용량: ${energy.useYm} ${energy.usage.toLocaleString()} ${energy.unit} (국토부 건축HUB — 단독·소규모·산업 용도 제외)`)
+  } else if (addr?.sigunguCd) {
+    L.push(`- 지번 실측 전기사용량: 해당 지번 데이터 없음 (대상 외일 수 있음 — 건축HUB)`)
   }
   L.push(``)
   L.push(`## 인프라 근접성 (맥락 — 전원 매칭 아님)`)
