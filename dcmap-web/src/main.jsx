@@ -1,37 +1,60 @@
-import React from 'react'
+import React, { Suspense, lazy, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import './styles/tokens.css'
 import './styles/app.css'
 import MapPage from './map/MapPage.jsx'
-import Map3DPage from './map3d/Map3DPage.jsx'
-import FacilityPage from './dc/FacilityPage.jsx'
-import CalcPage from './calc/CalcPage.jsx'
-import GlossaryPage from './glossary/GlossaryPage.jsx'
-import RegionPage from './region/RegionPage.jsx'
-import StatsPage from './stats/StatsPage.jsx'
-import InsightsIndexPage from './insights/InsightsIndexPage.jsx'
-import DashboardPage from './dashboard/DashboardPage.jsx'
-import InsightPage from './insights/InsightPage.jsx'
-import LandPulsePage from './land/LandPulsePage.jsx'
+
+/* 홈(맵)만 즉시 로드 — 나머지 라우트는 코드 스플릿.
+ * 특히 /map3d의 maplibre-gl(~800KB)이 홈 번들에 실리는 것을 차단한다 */
+const Map3DPage = lazy(() => import('./map3d/Map3DPage.jsx'))
+const FacilityPage = lazy(() => import('./dc/FacilityPage.jsx'))
+const CalcPage = lazy(() => import('./calc/CalcPage.jsx'))
+const GlossaryPage = lazy(() => import('./glossary/GlossaryPage.jsx'))
+const RegionPage = lazy(() => import('./region/RegionPage.jsx'))
+const StatsPage = lazy(() => import('./stats/StatsPage.jsx'))
+const InsightsIndexPage = lazy(() => import('./insights/InsightsIndexPage.jsx'))
+const DashboardPage = lazy(() => import('./dashboard/DashboardPage.jsx'))
+const InsightPage = lazy(() => import('./insights/InsightPage.jsx'))
+const LandPulsePage = lazy(() => import('./land/LandPulsePage.jsx'))
+
+/* SPA 라우트 전환 시 스크롤 최상단 — 긴 페이지에서 이전 스크롤 위치가 남는 UX 문제 방지 */
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
+}
+
+function PageLoader() {
+  return (
+    <div className="page-loader" role="status" aria-label="로딩 중">
+      <span className="loader-ring" />
+    </div>
+  )
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MapPage />} />
-        <Route path="/map3d" element={<Map3DPage />} />
-        <Route path="/dc/:slug" element={<FacilityPage />} />
-        <Route path="/calc" element={<CalcPage />} />
-        <Route path="/glossary" element={<GlossaryPage />} />
-        <Route path="/region/:slug" element={<RegionPage />} />
-        <Route path="/stats" element={<StatsPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/land" element={<LandPulsePage />} />
-        <Route path="/insights" element={<InsightsIndexPage />} />
-        <Route path="/insights/:slug" element={<InsightPage />} />
-        <Route path="*" element={<MapPage />} />
-      </Routes>
+      <ScrollToTop />
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<MapPage />} />
+          <Route path="/map3d" element={<Map3DPage />} />
+          <Route path="/dc/:slug" element={<FacilityPage />} />
+          <Route path="/calc" element={<CalcPage />} />
+          <Route path="/glossary" element={<GlossaryPage />} />
+          <Route path="/region/:slug" element={<RegionPage />} />
+          <Route path="/stats" element={<StatsPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/land" element={<LandPulsePage />} />
+          <Route path="/insights" element={<InsightsIndexPage />} />
+          <Route path="/insights/:slug" element={<InsightPage />} />
+          <Route path="*" element={<MapPage />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   </React.StrictMode>,
 )

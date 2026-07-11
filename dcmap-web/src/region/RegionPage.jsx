@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, slugOf } from '../data/facilities.js'
 import { SLUG_TO_SIDO } from '../content/sido_slugs.js'
+import { LAND_DONG, LAND_DONG_PERIOD } from '../data/landPriceDong.js'
+import { fmtRate } from '../data/landPrice.js'
 
 function setMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`)
@@ -96,11 +98,51 @@ export default function RegionPage() {
           {mw > 0 && ` · 공개 전력 합계 ${mw} MW`}
         </p>
 
+        {/* 상태 비율 바 — 맵 사이드패널의 요약 문법 재사용 */}
+        <div className="status-summary" style={{ maxWidth: 420 }}>
+          <div className="status-bar" role="img" aria-label={`운영 ${by.operating}, 건설 ${by.construction}, 계획 ${by.planned}`}>
+            {by.operating > 0 && <span className="seg op" style={{ flexGrow: by.operating }} />}
+            {by.construction > 0 && <span className="seg co" style={{ flexGrow: by.construction }} />}
+            {by.planned > 0 && <span className="seg pl" style={{ flexGrow: by.planned }} />}
+          </div>
+        </div>
+
         <div className="card-actions">
           <Link className="btn primary" to={`/?sido=${encodeURIComponent(sido)}`}>
             맵에서 보기
           </Link>
+          <Link className="btn" to="/land">
+            지가 전체 리스트
+          </Link>
         </div>
+
+        {(() => {
+          const rows = Object.entries(LAND_DONG.entries)
+            .filter(([k]) => k.startsWith(`${sido} `))
+            .map(([k, v]) => ({ label: k.slice(sido.length + 1), rate: v.rate }))
+            .sort((a, b) => b.rate - a.rate)
+          if (!rows.length) return null
+          const maxAbs = Math.max(...rows.map((r) => Math.abs(r.rate)), 0.01)
+          return (
+            <div className="calc-card">
+              <div className="chart-title">
+                {sido} 입지 시군구 지가변동률 ({LAND_DONG_PERIOD} 월간, KOSIS)
+              </div>
+              {rows.map((r) => (
+                <div key={r.label} className="hbar-row">
+                  <span className="hbar-label">{r.label}</span>
+                  <span className="hbar-track">
+                    <span
+                      className={`hbar-fill${r.rate < 0 ? ' neg' : ''}`}
+                      style={{ width: `${Math.max((Math.abs(r.rate) / maxAbs) * 100, 2)}%` }}
+                    />
+                  </span>
+                  <span className="hbar-value">{fmtRate(r.rate)}</span>
+                </div>
+              ))}
+            </div>
+          )
+        })()}
 
         <div className="facility-list" style={{ marginTop: 16 }}>
           {list.map((f) => (
