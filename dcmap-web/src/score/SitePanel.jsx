@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor } from '../data/liveApi.js'
+import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, dongLabel } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
-import { dcClimateIndex, CLIMATE_LEVELS } from './climateIndex.js'
+import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
 import Term from '../components/Term.jsx'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
@@ -73,16 +73,20 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     [point, mw, nonCapital],
   )
 
-  // 데이터센터 기후지수 — 연평균기온(과거기후) 우선, 없으면 현재기온 근사. 습도 보조.
+  // 데이터센터 기후지수 — 연평균기온 우선순위: 케이웨더 과거기후 → 기상청 평년값(최근접) → 현재기온.
+  const normal = useMemo(() => nearestNormal(point.lat, point.lng), [point])
   const climateIdx = useMemo(
     () =>
       dcClimateIndex({
         avgTemp: climate?.available ? climate.avgTemp : undefined,
+        normalTemp: normal?.t,
+        normalStation: normal?.name,
         humidity: wx?.humidity,
         currentTemp: wx?.temp,
       }),
-    [climate, wx],
+    [climate, wx, normal],
   )
+  const dong = dongLabel(addr) // 표출값 동단위 근거지
 
   return (
     <>
@@ -266,6 +270,12 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 <span className="badge verify">연동 대기 — 케이웨더 실황(기상축)</span>
               )}
             </div>
+            {(dong || wx?.scope) && (
+              <div className="cell-basis">
+                근거지 {dong ?? wx.scope}
+                {dong && wx?.scope ? ` · 케이웨더 실황 ${wx.scope}` : ''}
+              </div>
+            )}
             {fc?.days?.length > 0 && (
               <div className="wx-strip" aria-label="3일 일별예보">
                 {fc.days.map((h, i) => (
@@ -285,15 +295,19 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
             <div className="v">
               {climateIdx ? (
-                <span className={`ci-inline tone-${climateIdx.tone}`}>
-                  <span className="ci-scale" aria-label={`5단계 중 ${climateIdx.level}단계`}>
-                    {CLIMATE_LEVELS.map((l) => (
-                      <i key={l.level} className={l.level === climateIdx.level ? `on tone-${climateIdx.tone}` : ''} />
-                    ))}
+                <div className="ci-block">
+                  <span className={`ci-inline tone-${climateIdx.tone}`}>
+                    <span className="ci-scale" aria-label={`5단계 중 ${climateIdx.level}단계`}>
+                      {CLIMATE_LEVELS.map((l) => (
+                        <i key={l.level} className={l.level === climateIdx.level ? `on tone-${climateIdx.tone}` : ''} />
+                      ))}
+                    </span>
+                    <b className="ci-inline-label">{climateIdx.label}</b>
+                    <span className="ci-temp">연평균 {climateIdx.temp}°C</span>
                   </span>
-                  <b className="ci-inline-label">{climateIdx.label}</b>
-                  <span className="meta"> · {climateIdx.note}</span>
-                </span>
+                  <div className="ci-why">{climateIdx.why}</div>
+                  <div className="ci-basis">근거: {climateIdx.basis}</div>
+                </div>
               ) : (
                 <span className="badge verify">연동 대기 — 기온 확보 후 산출</span>
               )}
