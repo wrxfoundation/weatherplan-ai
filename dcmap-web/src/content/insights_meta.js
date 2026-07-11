@@ -3,6 +3,7 @@
 export const INSIGHTS = [
   {
     slug: 'national-infrastructure',
+    category: '안보·지정학',
     title: '데이터센터는 언제 국가 핵심 인프라가 되었나 — 안보·복원력·지정학',
     description:
       '2026년 3월 이란 드론 공격이 AWS 바레인·UAE를 때리며 클라우드 장애가 전쟁·지정학의 문제가 됐다. 데이터센터가 전력망·항만급 국가 전략 자산으로 재분류되고, 입지 평가는 전력 경쟁→입지→복원력→국가 신뢰도 경쟁으로 이동한다 — 해저 케이블·다중 리전·재해복구가 새 입지 축이 되는 이유. 1차 소스: KDCC/STRABASE.',
@@ -10,6 +11,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'utility-acquisition',
+    category: '전력·계통',
     title: '데이터센터 기업은 왜 전력회사를 사들이는가 — 수직 통합',
     description:
       '글로벌 DC 전력 수요가 2025년 31GW에서 2027년 66GW로 2년 만에 두 배. DigitalBridge·Blackstone·KKR·Brookfield가 발전소·전력개발사·ESS까지 사들이며 데이터센터와 에너지 산업의 경계를 허문다. 경쟁의 중심이 컴퓨팅에서 전력 공급 능력으로 이동한 자본시장의 응답, 그리고 국내 수직 통합의 좌표. 1차 소스: KDCC/STRABASE(2026.7.7).',
@@ -17,6 +19,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'orbital-bottleneck',
+    category: '전력·계통',
     title: '발전소가 필요 없는 데이터센터 — SpaceX가 산 ‘AI 병목 통행권’',
     description:
       'SpaceX가 상장 첫날 시총 2조 달러를 넘긴 베팅의 상당 부분은 아직 없는 궤도 데이터센터에 매겨졌다. AI 병목은 GPU→전력→전력망→입지·냉각으로 이동해왔다 — 미국 DC 41GW(≈전체 원전)·전력망 증설 4~10년의 속도 불일치가 빅테크를 발전사업자로 만든 이유, 그리고 그 통행권이 한반도에서 ‘입지’로 번역되는 방식. 1차 소스: KDDC Issue Focus(2026.6.16).',
@@ -24,6 +27,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'cooling-platform-ma',
+    category: '냉각·설비',
     title: '액체냉각 M&A — 냉각이 GPU·전력 다음 병목이 되기까지',
     description:
       '수처리 기업 Ecolab이 액체냉각 전문 CoolIT를 47.5억 달러에 인수했다. 냉각 경쟁축이 냉각판·CDU 하드웨어에서 물·화학·디지털 모니터링을 결합한 통합 운영 플랫폼으로 이동한다 — “칩을 얼마나 확보했나”에서 “그 칩을 얼마나 높은 밀도로 안정 운영하나”로. 냉각이 용수·기상·전력의 입지 문제인 이유. 1차 소스: KDDC Issue Focus(2026.7.7).',
@@ -31,6 +35,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'power-permit-battle',
+    category: '전력·계통',
     title: '전력·허가가 승부를 가른다 — 153조 프로젝트가 백지화된 이유',
     description:
       '블랙스톤 QTS의 1,000억 달러 버지니아 데이터센터가 절차 하자와 전력망 포화로 무산됐다. AI 인프라는 서버가 아니라 전력을 확보하는 산업 — 4대 투자 신호(청정E 확보율·송전망 유연성·임대료·LCOE)와, 한국 발전 허가대장이 보여주는 재생E 86.5%·비수도권 86% 파이프라인. 1차 소스: 글로벌이코노믹(2026.7.6)·발전사업 허가대장 v2.',
@@ -38,6 +43,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'power-track-40mw',
+    category: '전력·계통',
     title: '40MW의 벽 — 데이터센터 수전전압 트랙 완전 정리',
     description:
       '계약전력 20MW까지는 22.9kV, 20~40MW는 한전 협의, 40MW 초과는 154kV 의무 — 필요 용량 하나가 전압·수수료(135만 vs 726만 원)·리드타임을 전부 결정한다. 한전 기본공급약관 제23조 기준 실무 정리.',
@@ -45,6 +51,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'psia-exemption-2027',
+    category: '정책·인허가',
     title: '계통영향평가와 2027년 비수도권 면제 — AIDC 특별법 독법',
     description:
       '10MW 이상이면 전력계통영향평가 대상, 수도권은 지역 배점에서 구조적으로 불리 — 그리고 2027년 2월 비수도권 소형 AIDC 면제가 열린다. 기준선은 대통령령 위임(미정). 세 가지 실무 시나리오와 345kV 정보 공개 변수.',
@@ -52,6 +59,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'gpu-to-mw',
+    category: '전력·계통',
     title: 'GPU 1만 장은 몇 MW인가 — 계산기 산식 공개',
     description:
       'H100 0.7kW·GB200 1.2kW × 오버헤드 1.2 × PUE — GB200 1만 장이면 약 18.7MW. 기종 선택이 수전 트랙(10MW 계통영향평가·40MW 154kV)을 바꾼다. AI InfraMap GPU 계산기의 산식을 그대로 공개한다.',
@@ -59,6 +67,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'seoul-concentration',
+    category: '입지·토지',
     title: '수도권 60%와 균열의 시작 — 한국 데이터센터의 지리',
     description:
       '국내 데이터센터 165개소의 60%가 수도권(KEEI 2024). 그러나 계획 단계 대형 프로젝트는 해남·새만금·포항·춘천·울산으로 — AI InfraMap 시드 80곳이 보여주는 "계획의 지리"와 준공까지의 진짜 변수.',
@@ -66,6 +75,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'land-pulse-methodology',
+    category: '입지·토지',
     title: '데이터센터가 들어서면 땅값이 움직일까 — LAND PULSE 방법론',
     description:
       '전국 DC 입지 시군구 35곳·읍면동 조사구역 539개의 월간 지가변동률 추적을 시작했다. 용산 +0.577%, 해남 북일면 -0.183% — 그러나 아직 인과를 주장하지 않는 이유와, 이벤트-지가 정렬 시계열이 해자가 되는 이유. 1차 출처: KOSIS·한국부동산원(2026.05).',
@@ -73,6 +83,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'liquid-cooling-brief',
+    category: '냉각·설비',
     title: '액체냉각으로의 전환 — GPU 2kW 시대의 입지 방정식',
     description:
       'GPU TDP 1,500~2,000W는 단상 직접칩냉각의 한계선. 2상 전환은 1kW당 유량을 1.5→0.3L/min으로 바꾸고, 냉각 부품 시장은 2030년 149억 달러로 간다 — 냉각 세대교체가 용수·기상·계약전력의 입지 방정식을 다시 쓰는 방법. 출처: OCP 공개 웨비나(Parker Hannifin, 2025.6).',
@@ -80,6 +91,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'mega-project-aidc',
+    category: '정책·인허가',
     title: '3대 메가프로젝트와 AI 데이터센터 — 8.4GW의 지도',
     description:
       'SK 5GW·GS 2.4GW·네이버 1GW, 550조 원 — 정부 3대 메가프로젝트의 AI 데이터센터 트랙과 AIDC 특별법(비수도권 계통영향평가 면제)이 바꾸는 한국 데이터센터 입지 지형. 1차 출처: 산업부 참고자료(2026.6.29).',
@@ -87,6 +99,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'dc-local-impact',
+    category: '입지·토지',
     title: '데이터센터는 지역에 무엇을 남기나 — 미국 사례 팩트 시트',
     description:
       '고용 +4~5%, 정보산업 고용 +22%, 카운티 재산세의 절반 — 그리고 물·전력 부담의 진실. 미국 데이터로 보는 데이터센터 유치 논쟁의 팩트. 질문은 "지을 것인가"가 아니라 "어디에, 어떻게"다.',
