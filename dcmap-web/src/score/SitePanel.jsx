@@ -4,6 +4,7 @@ import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
 import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
+import { networkContext } from '../data/network.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
 
@@ -255,6 +256,19 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               )}
             </div>
           </div>
+          {(() => {
+            const net = networkContext(point)
+            return (
+              <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                <div className="k">네트워크 인프라 근접성 (백본·해저케이블 — 참고)</div>
+                <div className="v">
+                  {net.backbone && `백본/IX ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
+                  {net.cls && ` · 해저케이블 육양국 ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
+                  <span className="badge verify" style={{ marginLeft: 8 }}>공개 근사 · 검증 대기</span>
+                </div>
+              </div>
+            )
+          })()}
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k">재해 이력 (재난안전 — 리스크축)</div>
             <div className="v">

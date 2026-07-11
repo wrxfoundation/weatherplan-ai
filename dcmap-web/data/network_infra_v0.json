@@ -1,0 +1,16 @@
+{
+  "version": "0.1",
+  "generated_at": "2026-07-11",
+  "source": "공개 통신 인프라 정보 기반 근사 좌표 — 해저케이블 육양국·주요 IX/국사. 정밀 좌표·전체 목록은 검증 대기(needs_verify).",
+  "note": "네트워크축(백본·국사·해저케이블 육양국) 근접성 맥락용. 좌표는 공개 정보 기반 근사이며 개별 검증 전 참고치.",
+  "nodes": [
+    { "id": "cls-busan-songjeong", "name": "부산 송정 육양국", "type": "해저케이블 육양국", "sido": "부산", "lat": 35.1817, "lng": 129.2036, "note": "국내 최대 해저케이블 육양지(다수 국제 케이블)", "needs_verify": true },
+    { "id": "cls-geoje", "name": "거제 육양국", "type": "해저케이블 육양국", "sido": "경남", "lat": 34.8806, "lng": 128.6211, "note": "국제 해저케이블 육양", "needs_verify": true },
+    { "id": "cls-taean-sinduri", "name": "태안 신두리 육양국", "type": "해저케이블 육양국", "sido": "충남", "lat": 36.8206, "lng": 126.1836, "note": "서해 해저케이블 육양", "needs_verify": true },
+    { "id": "cls-jeju", "name": "제주 육양국", "type": "해저케이블 육양국", "sido": "제주", "lat": 33.4996, "lng": 126.5312, "note": "제주-육지 및 국제 케이블", "needs_verify": true },
+    { "id": "ix-kinx-dogok", "name": "KINX 도곡 IX", "type": "인터넷 익스체인지(IX)", "sido": "서울", "lat": 37.4901, "lng": 127.0553, "note": "중립 IX 노드", "needs_verify": true },
+    { "id": "ix-kt-mokdong", "name": "KT 목동 국사/IDC", "type": "백본 국사/IX", "sido": "서울", "lat": 37.5259, "lng": 126.8719, "note": "주요 백본 집중국", "needs_verify": true },
+    { "id": "ix-kt-bundang", "name": "KT 분당 국사", "type": "백본 국사", "sido": "경기", "lat": 37.3823, "lng": 127.1197, "note": "수도권 백본 노드", "needs_verify": true },
+    { "id": "ix-lgu-pyeongchon", "name": "LG U+ 평촌 메가센터", "type": "백본 국사/IDC", "sido": "경기", "lat": 37.3939, "lng": 126.9636, "note": "수도권 백본·IDC 집중", "needs_verify": true }
+  ]
+}

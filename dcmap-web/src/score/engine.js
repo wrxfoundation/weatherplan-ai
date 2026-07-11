@@ -66,7 +66,7 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true }) {
       key: 'network',
       label: '네트워크',
       max: 10,
-      items: [{ label: '백본·국사 거리·해저케이블', max: 10, points: null, pending: '공개 통신 인프라 데이터' }],
+      items: [{ label: '백본·국사 거리·해저케이블 육양국', max: 10, points: null, pending: '네트워크 노드 시드(공개 근사·검증 대기) — 근접성 표기, 점수화는 좌표 검증·가중치 캘리브레이션 후' }],
     },
     {
       key: 'weather',
