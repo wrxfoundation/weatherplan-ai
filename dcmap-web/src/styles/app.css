@@ -973,6 +973,93 @@ a {
   border: 2px solid transparent;
 }
 
+/* 전력 지도 페이지 */
+.power-page {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 18px 20px 40px;
+}
+.power-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.power-title {
+  font: 700 22px/1.25 'Avenir Next', Avenir, Pretendard, sans-serif;
+  margin: 2px 0 0;
+}
+.power-modes {
+  display: flex;
+  gap: 8px;
+}
+.power-note {
+  color: var(--text-dim, #9fb4cc);
+  font-size: 13px;
+  margin: 8px 0 14px;
+}
+.power-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+}
+.power-map {
+  height: 620px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--stroke, rgba(120, 160, 200, 0.18));
+  background: var(--navy-deep, #050d1a);
+}
+.power-panel {
+  background: var(--surface, #0d1e33);
+  border: 1px solid var(--stroke, rgba(120, 160, 200, 0.18));
+  border-radius: 14px;
+  padding: 14px 14px 16px;
+  max-height: 620px;
+  overflow-y: auto;
+}
+.power-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 8px 0 10px;
+}
+.power-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.power-row:nth-child(odd) {
+  background: rgba(120, 160, 200, 0.06);
+}
+.power-row .pr-sido {
+  font-weight: 600;
+}
+.power-row .pr-val {
+  color: var(--text-dim, #9fb4cc);
+}
+.power-row .pr-val b {
+  color: var(--text, #eafcff);
+}
+.power-row .muted {
+  opacity: 0.5;
+}
+@media (max-width: 860px) {
+  .power-layout {
+    grid-template-columns: 1fr;
+  }
+  .power-map {
+    height: 440px;
+  }
+  .power-panel {
+    max-height: none;
+  }
+}
+
 /* 발전 허가 시도 버블 라벨 — 버블 중앙 건수 숫자 */
 .gen-bubble-label {
   color: #eafcff;
