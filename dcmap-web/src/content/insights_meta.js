@@ -2,6 +2,20 @@
 // 콘텐츠 등급: 데이터 아키텍처 4계층 중 ④참고·인사이트. 시설 데이터(dc_centers)와 분리 관리.
 export const INSIGHTS = [
   {
+    slug: 'orbital-bottleneck',
+    title: '발전소가 필요 없는 데이터센터 — SpaceX가 산 ‘AI 병목 통행권’',
+    description:
+      'SpaceX가 상장 첫날 시총 2조 달러를 넘긴 베팅의 상당 부분은 아직 없는 궤도 데이터센터에 매겨졌다. AI 병목은 GPU→전력→전력망→입지·냉각으로 이동해왔다 — 미국 DC 41GW(≈전체 원전)·전력망 증설 4~10년의 속도 불일치가 빅테크를 발전사업자로 만든 이유, 그리고 그 통행권이 한반도에서 ‘입지’로 번역되는 방식. 1차 소스: KDDC Issue Focus(2026.6.16).',
+    date: '2026-07-11',
+  },
+  {
+    slug: 'cooling-platform-ma',
+    title: '액체냉각 M&A — 냉각이 GPU·전력 다음 병목이 되기까지',
+    description:
+      '수처리 기업 Ecolab이 액체냉각 전문 CoolIT를 47.5억 달러에 인수했다. 냉각 경쟁축이 냉각판·CDU 하드웨어에서 물·화학·디지털 모니터링을 결합한 통합 운영 플랫폼으로 이동한다 — “칩을 얼마나 확보했나”에서 “그 칩을 얼마나 높은 밀도로 안정 운영하나”로. 냉각이 용수·기상·전력의 입지 문제인 이유. 1차 소스: KDDC Issue Focus(2026.7.7).',
+    date: '2026-07-11',
+  },
+  {
     slug: 'power-permit-battle',
     title: '전력·허가가 승부를 가른다 — 153조 프로젝트가 백지화된 이유',
     description:
