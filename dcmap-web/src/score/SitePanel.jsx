@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
+import { dongPulseFor } from '../data/landPriceDong.js'
 import { scoreSite } from './engine.js'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
@@ -88,12 +89,21 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
           </div>
           {(() => {
             const lp = landPriceFor(r.nearest[0].facility)
+            const dp = dongPulseFor(r.nearest[0].facility)
             return lp ? (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
                 <div className="k">
                   인근 지가변동률 · {lp.scope} ({lp.period} 월간, KOSIS — 최근접 시설 시군구 기준)
                 </div>
-                <div className="v">{fmtRate(lp.value)}</div>
+                <div className="v">
+                  {fmtRate(lp.value)}
+                  {dp && (
+                    <span className="meta">
+                      {' '}
+                      · 동 단위 {fmtRate(dp.bottom.rate)} ~ {fmtRate(dp.top.rate)} ({dp.count}개 구역)
+                    </span>
+                  )}
+                </div>
               </div>
             ) : null
           })()}

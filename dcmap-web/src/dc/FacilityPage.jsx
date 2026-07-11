@@ -6,6 +6,8 @@ import TopBar from '../TopBar.jsx'
 import FacilityCard from './FacilityCard.jsx'
 import { findBySlug, STATUS_LABEL } from '../data/facilities.js'
 import { SIDO_SLUGS } from '../content/sido_slugs.js'
+import { dongPulseFor } from '../data/landPriceDong.js'
+import { fmtRate } from '../data/landPrice.js'
 import { buildDescription, buildPlaceJsonLd } from './seo.js'
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
@@ -94,6 +96,42 @@ export default function FacilityPage() {
         </p>
         <div ref={mapRef} className="detail-map" />
         <FacilityCard facility={facility} compact />
+        {(() => {
+          const p = dongPulseFor(facility)
+          if (!p) return null
+          const maxAbs = Math.max(Math.abs(p.top.rate), Math.abs(p.bottom.rate), 0.01)
+          const rows = [
+            { label: `${facility.sigungu} 평균`, rate: p.rate },
+            { label: `최고 · ${p.top.name}`, rate: p.top.rate },
+            { label: `최저 · ${p.bottom.name}`, rate: p.bottom.rate },
+          ]
+          return (
+            <article className="facility-card">
+              <div className="chart-title">
+                입지 지가 펄스 — {p.key} 읍면동 {p.count}개 구역 ({p.period} 월간, KOSIS·한국부동산원)
+              </div>
+              {rows.map((row) => (
+                <div key={row.label} className="hbar-row">
+                  <span className="hbar-label">{row.label}</span>
+                  <span className="hbar-track">
+                    <span
+                      className="hbar-fill"
+                      style={{
+                        width: `${(Math.abs(row.rate) / maxAbs) * 100}%`,
+                        background: row.rate >= 0 ? 'var(--accent)' : 'var(--amber)',
+                      }}
+                    />
+                  </span>
+                  <span className="hbar-value">{fmtRate(row.rate)}</span>
+                </div>
+              ))}
+              <p className="chart-note">
+                구역 명칭은 부동산원 조사구역 단위(복수 법정동 병기 가능). 본 시설의 좌표는 시군구 중심점일 수
+                있어 특정 동과의 결부는 하지 않습니다 — 필지 확인 시 해당 구역으로 정밀화됩니다.
+              </p>
+            </article>
+          )
+        })()}
         {SIDO_SLUGS[facility.sido] && (
           <div className="card-actions">
             <Link className="btn" to={`/region/${SIDO_SLUGS[facility.sido]}`}>
