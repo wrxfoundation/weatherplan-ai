@@ -564,6 +564,17 @@ a {
   flex-shrink: 0;
 }
 
+.badge-btn {
+  cursor: pointer;
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  transition: border-color var(--dur-fast) var(--ease-premium);
+}
+
+.badge-btn:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  color: var(--text);
+}
+
 .badge.status-operating {
   color: var(--text);
   border-color: var(--status-operating);
@@ -2144,6 +2155,20 @@ a {
     border-top: 1px solid var(--glass-border);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     z-index: 1050;
+    padding-top: 18px;
+  }
+
+  /* 바텀시트 그랩 핸들 — 시트임을 알리는 어포던스 */
+  .side-panel::before {
+    content: '';
+    position: absolute;
+    top: 7px;
+    left: 50%;
+    width: 40px;
+    height: 4px;
+    margin-left: -20px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--grey) 45%, transparent);
   }
 
   /* 필터바: 줄바꿈 대신 가로 스크롤 */

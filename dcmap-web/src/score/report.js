@@ -12,6 +12,8 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   if (addr?.parcel) L.push(`- 지번주소: ${addr.parcel}${addr.road ? ` (도로명: ${addr.road})` : ''}`)
   L.push(`- 입지 구분: ${nonCapital ? '비수도권' : '수도권'} (사용자 지정) · 필요 용량 ${mw}MW`)
   L.push(`- 생성: ${now.toLocaleString('ko-KR')} · myeongdang-ai`)
+  if (typeof window !== 'undefined')
+    L.push(`- 공유 링크: ${window.location.origin}/?site=${point.lat.toFixed(5)},${point.lng.toFixed(5)}`)
   L.push(``)
   L.push(`## 전력 인허가 트랙 판정 (규칙 기반)`)
   L.push(`- 수전전압: ${r.track.track.voltage} (${r.track.track.circuits})`)

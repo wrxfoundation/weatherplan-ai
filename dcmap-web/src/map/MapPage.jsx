@@ -124,7 +124,15 @@ export default function MapPage() {
   // 지역 랜딩(/region/[slug]) "맵에서 보기" 진입점: ?sido= 초기값
   const [sido, setSido] = useState(() => searchParams.get('sido') ?? '')
   const [selected, setSelected] = useState(null)
-  const [sitePoint, setSitePoint] = useState(null) // 맵 빈 곳 클릭 → 지점 분석
+  // 맵 빈 곳 클릭 → 지점 분석. ?site=lat,lng 딥링크로 공유 가능 (초기값 복원)
+  const [sitePoint, setSitePoint] = useState(() => {
+    const raw = searchParams.get('site')
+    if (!raw) return null
+    const [lat, lng] = raw.split(',').map(Number)
+    return Number.isFinite(lat) && Number.isFinite(lng) && lat > 32 && lat < 40 && lng > 124 && lng < 132
+      ? { lat, lng }
+      : null
+  })
   const [showLabels, setShowLabels] = useState(false) // 맵 정보 라벨 (시설명·용량) 상시 표시
   const [isoView, setIsoView] = useState(false) // 줌 ≥ ISO_ZOOM → 아이소메트릭 빌딩 마커
   const [denseLabels, setDenseLabels] = useState(false) // 줌 ≥ 13 → 그룹 개별 라벨 (미만은 대표 라벨)
@@ -193,6 +201,8 @@ export default function MapPage() {
       setSelected(null)
       setSitePoint({ lat: e.latlng.lat, lng: e.latlng.lng })
     })
+    // 딥링크 복원 시 해당 지점으로 카메라
+    if (sitePoint) map.setView([sitePoint.lat, sitePoint.lng], 11)
     map.on('zoomend', () => {
       setIsoView(map.getZoom() >= ISO_ZOOM)
       setDenseLabels(map.getZoom() >= 13)
@@ -257,7 +267,7 @@ export default function MapPage() {
     }
   }, [showPublic])
 
-  // 지점 분석 마커 (십자 링)
+  // 지점 분석 마커 (십자 링) + ?site= URL 동기화 (공유 링크)
   useEffect(() => {
     const map = mapObj.current
     if (!map) return
@@ -271,7 +281,11 @@ export default function MapPage() {
         interactive: false,
       }).addTo(map)
     }
-  }, [sitePoint])
+    const next = new URLSearchParams(searchParams)
+    if (sitePoint) next.set('site', `${sitePoint.lat.toFixed(5)},${sitePoint.lng.toFixed(5)}`)
+    else next.delete('site')
+    if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
+  }, [sitePoint]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const cluster = clusterRef.current
