@@ -143,6 +143,9 @@ export default function TopBar() {
         <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>
           대시보드
         </NavLink>
+        <NavLink to="/power" className={({ isActive }) => (isActive ? 'active' : '')}>
+          전력지도
+        </NavLink>
         <NavLink to="/stats" className={({ isActive }) => (isActive ? 'active' : '')}>
           통계
         </NavLink>
