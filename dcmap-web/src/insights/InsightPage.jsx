@@ -13,6 +13,8 @@ import SeoulConcentration from './articles/SeoulConcentration.jsx'
 import PowerPermitBattle from './articles/PowerPermitBattle.jsx'
 import OrbitalBottleneck from './articles/OrbitalBottleneck.jsx'
 import CoolingPlatformMA from './articles/CoolingPlatformMA.jsx'
+import NationalInfrastructure from './articles/NationalInfrastructure.jsx'
+import UtilityAcquisition from './articles/UtilityAcquisition.jsx'
 
 const ARTICLES = {
   'power-track-40mw': {
@@ -57,6 +59,22 @@ const ARTICLES = {
     sources: [
       'OCP Educational Webinar, Compact Thermal Management Solutions for High-Density AI Data Centers (Parker Hannifin, 2025.6.26) — 공개 기술 자료',
       'GPU TDP 한계선·유량(1.5→0.3L/min per kW)·시장 전망(2030년 ~149억 달러)·PFAS 과제: 상기 웨비나 자료 기준 — 콘텐츠 등급 ④참고·인사이트',
+    ],
+  },
+  'national-infrastructure': {
+    component: NationalInfrastructure,
+    sources: [
+      'KDCC/STRABASE Issue Focus, 「AI 인프라의 재분류, 데이터센터는 언제 국가 핵심 인프라가 되었나」 (인포그래픽)',
+      '사건: 2026년 3월 이란 드론 공격으로 AWS 바레인·UAE 운영 차질·31개 서비스 영향(4월 말 기준)·Pure Data Centres 아부다비 파편 피해 — 원문 기준',
+      '기준 변화(리스크 재인식·입지 평가 재정의·복원력/국가 신뢰도 경쟁): 원문 인용. 콘텐츠 등급 ④참고·인사이트 — 국내 함의는 명당 해석',
+    ],
+  },
+  'utility-acquisition': {
+    component: UtilityAcquisition,
+    sources: [
+      'KDCC/STRABASE 1Page Focus, 「데이터센터 기업은 왜 전력회사를 사들이는가」 (2026.7.7)',
+      '수치: 글로벌 DC 전력 수요 2025년 31GW→2027년 66GW(2년 2배)·투자자 발전자산 확보 전략(DigitalBridge·Blackstone·KKR·Brookfield) — 원문 기준',
+      '콘텐츠 등급 ④참고·인사이트 — 국내 수직 통합 함의는 명당 발전 허가대장 집계와 연결',
     ],
   },
   'orbital-bottleneck': {
