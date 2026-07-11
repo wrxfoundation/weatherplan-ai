@@ -46,6 +46,9 @@ export const epsisCapacity = () => fetchJson('/api/epsis')
 /** KPX 전력수급예보 — { asOf, supplyMw, peakMw, reserveMw, reservePct, rows } | null (연동 대기 시 null) */
 export const supplyForecast = () => fetchJson('/api/supply')
 
+/** KPX 전력거래실적 — { asOf, byFuel:[{fuel,capacityMw,tradedMwh}], totalMwh } | null (연동 대기 시 null) */
+export const tradingMix = () => fetchJson('/api/trading')
+
 /** 홍수위험지도 침수 위험 — { depthM, grade, floodType, scenario } | null (리스크축 침수) */
 export const floodRiskFor = (lat, lng) => fetchJson(`/api/floodmap?${q(lat, lng)}`)
 

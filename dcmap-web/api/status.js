@@ -11,6 +11,8 @@ const SOURCES = [
   { key: 'headroom', label: '한전 계통 여유용량', env: ['KEPCO_API_KEY', 'VWORLD_KEY'], path: '/api/headroom', point: true, axis: '전력' },
   { key: 'epsis', label: 'EPSIS/전력시장 발전설비', env: ['DATA_GO_KR_KEY'], path: '/api/epsis', point: false, axis: '전력' },
   { key: 'supply', label: 'KPX 전력수급예보', env: ['DATA_GO_KR_KEY'], path: '/api/supply', point: false, axis: '전력' },
+  { key: 'trading', label: 'KPX 전력거래실적', env: ['DATA_GO_KR_KEY'], path: '/api/trading', point: false, axis: '전력' },
+  { key: 'bldenergy', label: '건축HUB 건물에너지', env: ['DATA_GO_KR_KEY'], path: '/api/bldenergy', point: false, axis: '리스크' },
   { key: 'filings', label: 'DART 공시', env: ['DART_API_KEY'], path: '/api/filings', point: false, axis: '시장' },
   { key: 'floodmap', label: '홍수위험지도 침수', env: ['FLOODMAP_KEY'], path: '/api/floodmap', point: true, axis: '리스크' },
   { key: 'sgis', label: 'SGIS 인구격자', env: ['SGIS_KEY', 'SGIS_SECRET'], path: '/api/sgis', point: true, axis: '리스크' },

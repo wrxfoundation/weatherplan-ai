@@ -4,7 +4,7 @@ import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf } from '../data/facilities.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
-import { filingsRecent, epsisCapacity, apiStatus, supplyForecast } from '../data/liveApi.js'
+import { filingsRecent, epsisCapacity, apiStatus, supplyForecast, tradingMix } from '../data/liveApi.js'
 
 const TITLE = '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스'
 const DESC =
@@ -40,6 +40,7 @@ export default function DashboardPage() {
   const [filings, setFilings] = useState(null)
   const [epsis, setEpsis] = useState(null)
   const [supply, setSupply] = useState(null)
+  const [trading, setTrading] = useState(null)
   const [status, setStatus] = useState(null)
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
@@ -51,6 +52,7 @@ export default function DashboardPage() {
     filingsRecent().then((v) => alive && setFilings(v))
     epsisCapacity().then((v) => alive && setEpsis(v))
     supplyForecast().then((v) => alive && setSupply(v))
+    tradingMix().then((v) => alive && setTrading(v))
     apiStatus(true).then((v) => alive && setStatus(v))
     return () => {
       alive = false
@@ -286,6 +288,37 @@ export default function DashboardPage() {
               <p className="chart-note">
                 공급능력·최대전력·공급예비율 실시간 — AIDC 수요가 계통 예비력을 잠식하는 구도를 실측으로 보여주는 공급측
                 지표. KPX 전력수급예보(data.go.kr) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
+              </p>
+            )}
+          </section>
+
+          <section className="calc-card">
+            <div className="chart-title">발전 실적 — KPX 전력거래실적 (연료원별, 라이브)</div>
+            {trading?.available && trading.byFuel?.length ? (
+              <>
+                {(() => {
+                  const bars = trading.byFuel.filter((f) => f.tradedMwh != null).slice(0, 8)
+                  const max = Math.max(...bars.map((f) => f.tradedMwh), 1)
+                  return bars.map((f) => (
+                    <div key={f.fuel} className="hbar-row">
+                      <span className="hbar-label">{f.fuel}</span>
+                      <span className="hbar-track">
+                        <span className="hbar-fill" style={{ width: `${(f.tradedMwh / max) * 100}%` }} />
+                      </span>
+                      <span className="hbar-value">{f.tradedMwh.toLocaleString()}MWh</span>
+                    </div>
+                  ))
+                })()}
+                <p className="chart-note">
+                  연료원별 실제 전력거래량{trading.asOf ? ` · ${trading.asOf}` : ''}
+                  {trading.totalMwh ? ` · 합계 ${trading.totalMwh.toLocaleString()}MWh` : ''}. 설비용량(EPSIS)과 달리
+                  실제 발전 믹스 — 값은 수정정산 변동 가능.
+                </p>
+              </>
+            ) : (
+              <p className="chart-note">
+                일별 연료원별 실제 전력거래량(발전 실적) — 설비용량이 아니라 계통에서 실제 돌아간 발전 믹스.
+                KPX 전력거래실적(data.go.kr) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
               </p>
             )}
           </section>
