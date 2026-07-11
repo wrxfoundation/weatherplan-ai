@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 
 /* 1차 소스: KDDC Issue Focus(2026.6.16)·STRABASE — SpaceX 상장·AI1 궤도 데이터센터.
- * 콘텐츠 등급 ④참고·인사이트. 수치는 원문 인용, 국내 함의는 명당 데이터로 연결. */
+ * 콘텐츠 등급 ④참고·인사이트. 수치는 원문 인용, 국내 함의는 AI InfraMap 데이터로 연결. */
 export default function OrbitalBottleneck() {
   return (
     <>
@@ -39,10 +39,10 @@ export default function OrbitalBottleneck() {
         “왜 반드시 전력망에 연결돼야 하는가?”라며 질문 자체를 뒤집은, 이 흐름의 가장 극단적인 종착점이다.
       </p>
 
-      <h2>명당의 관점 — 통행권은 한반도에서 ‘입지’로 번역된다</h2>
+      <h2>AI InfraMap의 관점 — 통행권은 한반도에서 ‘입지’로 번역된다</h2>
       <p>
         궤도 데이터센터는 대부분의 사업자에게 현실 밖이다. 지상에 남은 이들에게 병목의 이동은 곧{' '}
-        <strong>‘어디에 짓느냐’</strong>로 번역된다. 명당은 그 통행권을 부지 위에서 읽는다 — 전력망 여유가 있는
+        <strong>‘어디에 짓느냐’</strong>로 번역된다. AI InfraMap은 그 통행권을 부지 위에서 읽는다 — 전력망 여유가 있는
         권역(전력축 <Link to="/insights/psia-exemption-2027">계통 여유용량·계통영향평가</Link>), 청정에너지 공급이
         몰린 벨트(<Link to="/stats">발전 허가 파이프라인</Link>에서 확인되는 재생E 86.5%·비수도권 86%), 그리고
         속도의 불일치를 줄여주는 인허가 트랙(AIDC 특별법 비수도권 면제)이다. 같은 논리의 국내판은{' '}

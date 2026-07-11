@@ -7,7 +7,7 @@ import { dongPulseFor } from '../data/landPriceDong.js'
 import { nearestPlant } from '../data/plants.js'
 import { checkPowerTrack } from '../calc/trackCheck.js'
 
-const TITLE = '시설 비교 — 명당 AI'
+const TITLE = '시설 비교 — AI InfraMap'
 const DESC = '데이터센터 2~3곳을 나란히 — 상태·전력·연도·지가·인허가 트랙·발전 인프라 근접성을 공개 데이터로 비교.'
 const CAPITAL = new Set(['서울', '경기', '인천'])
 

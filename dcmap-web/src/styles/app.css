@@ -1060,6 +1060,70 @@ a {
   }
 }
 
+/* 데이터 탐색기 */
+.explorer-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 6px 0 2px;
+}
+.explorer-search {
+  flex: 1 1 280px;
+  min-width: 220px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke, rgba(120, 160, 200, 0.22));
+  background: var(--navy-deep, #050d1a);
+  color: var(--text, #eafcff);
+  font-size: 14px;
+}
+.explorer-search:focus {
+  outline: none;
+  border-color: var(--accent, #35d5ee);
+}
+.explorer-count {
+  color: var(--text-dim, #9fb4cc);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.explorer-table-wrap {
+  margin-top: 10px;
+  border: 1px solid var(--stroke, rgba(120, 160, 200, 0.18));
+  border-radius: 12px;
+  overflow: auto;
+  max-height: 62vh;
+  background: var(--surface, #0d1e33);
+}
+.explorer-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.explorer-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--surface-strong, #10233b);
+  color: var(--text, #eafcff);
+  text-align: left;
+  padding: 10px 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--stroke, rgba(120, 160, 200, 0.25));
+}
+.explorer-table tbody td {
+  padding: 8px 12px;
+  color: var(--text-dim, #b8cbe0);
+  border-bottom: 1px solid rgba(120, 160, 200, 0.09);
+  white-space: nowrap;
+}
+.explorer-table tbody tr:nth-child(even) {
+  background: rgba(120, 160, 200, 0.045);
+}
+.explorer-table tbody tr:hover {
+  background: rgba(53, 213, 238, 0.08);
+}
+
 /* 발전 허가 시도 버블 라벨 — 버블 중앙 건수 숫자 */
 .gen-bubble-label {
   color: #eafcff;

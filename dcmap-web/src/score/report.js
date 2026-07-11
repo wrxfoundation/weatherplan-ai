@@ -6,7 +6,7 @@ import { fmtRate } from '../data/landPrice.js'
 export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom }) {
   const L = []
   const now = new Date()
-  L.push(`# 명당 AI — 부지 적합도 간이 리포트 (v0)`)
+  L.push(`# AI InfraMap — 부지 적합도 간이 리포트 (v0)`)
   L.push(``)
   L.push(`- 지점: ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}`)
   if (addr?.parcel) L.push(`- 지번주소: ${addr.parcel}${addr.road ? ` (도로명: ${addr.road})` : ''}`)

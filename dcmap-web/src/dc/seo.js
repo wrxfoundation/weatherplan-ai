@@ -8,7 +8,7 @@ export function buildDescription(f) {
     f.power_mw_public != null ? `공개 전력 ${f.power_mw_public}MW` : null,
     f.year ? `${f.year}년` : null,
   ].filter(Boolean)
-  return `${parts.join(' · ')} — 한국 데이터센터 현황 맵, 명당 AI`
+  return `${parts.join(' · ')} — 한국 데이터센터 현황 맵, AI InfraMap`
 }
 
 export function buildPlaceJsonLd(f) {

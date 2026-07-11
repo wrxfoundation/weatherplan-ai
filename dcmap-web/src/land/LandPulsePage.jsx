@@ -4,7 +4,7 @@ import TopBar from '../TopBar.jsx'
 import { LAND_DONG, LAND_DONG_PERIOD } from '../data/landPriceDong.js'
 import { fmtRate } from '../data/landPrice.js'
 
-const TITLE = 'LAND PULSE — 입지 지가변동률 시·군·구·동 리스트 · 명당 AI'
+const TITLE = 'LAND PULSE — 입지 지가변동률 시·군·구·동 리스트 · AI InfraMap'
 const DESC =
   '데이터센터 입지 시군구 35곳과 읍면동 조사구역 539개의 월간 지가변동률 — 시도 필터·정렬·동 단위 드릴다운. KOSIS·한국부동산원 공개 통계.'
 

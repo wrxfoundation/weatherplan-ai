@@ -37,20 +37,20 @@ const ARTICLES = {
     component: GpuToMw,
     sources: [
       'GPU 보드 전력: NVIDIA 공개 스펙 (H100/H200 ~0.7kW · B200 ~1.0kW · GB200 슈퍼칩 ~1.2kW)',
-      '오버헤드 계수 1.2·PUE 산식: 명당 GPU 계산기 구현(src/calc) — 콘텐츠 등급 ③민간 가공(공개 스펙 기반)',
+      '오버헤드 계수 1.2·PUE 산식: AI InfraMap GPU 계산기 구현(src/calc) — 콘텐츠 등급 ③민간 가공(공개 스펙 기반)',
     ],
   },
   'seoul-concentration': {
     component: SeoulConcentration,
     sources: [
       'KEEI 김철현·김성균(2025), 「AI 시대 데이터센터 증가의 국내 에너지 소비 시사점」 — 165개소(2024)·수도권 60%·민간 평균 17.7MW',
-      '명당 시드 v0.1 (dc_centers.json, 공개 소스 집계 80곳) — 상태·지역 분포는 맵과 동일 데이터',
+      'AI InfraMap 시드 v0.1 (dc_centers.json, 공개 소스 집계 80곳) — 상태·지역 분포는 맵과 동일 데이터',
     ],
   },
   'land-pulse-methodology': {
     component: LandPulseMethod,
     sources: [
-      'KOSIS·한국부동산원, 「지가변동률」 시군구(DT_1YL20881E)·읍면동별(DT_31501N_010) 월간 통계 — 2026.05 시점, 명당 직접 집계 (data/land_price_v0.json · land_price_dong_v0.json)',
+      'KOSIS·한국부동산원, 「지가변동률」 시군구(DT_1YL20881E)·읍면동별(DT_31501N_010) 월간 통계 — 2026.05 시점, AI InfraMap 직접 집계 (data/land_price_v0.json · land_price_dong_v0.json)',
       '방법론 문서: docs/land-price-tracking.md — 읍면동 승격 파이프라인(scripts/land_dong.mjs)과 정직성 규칙',
     ],
   },
@@ -66,7 +66,7 @@ const ARTICLES = {
     sources: [
       'KDCC/STRABASE Issue Focus, 「AI 인프라의 재분류, 데이터센터는 언제 국가 핵심 인프라가 되었나」 (인포그래픽)',
       '사건: 2026년 3월 이란 드론 공격으로 AWS 바레인·UAE 운영 차질·31개 서비스 영향(4월 말 기준)·Pure Data Centres 아부다비 파편 피해 — 원문 기준',
-      '기준 변화(리스크 재인식·입지 평가 재정의·복원력/국가 신뢰도 경쟁): 원문 인용. 콘텐츠 등급 ④참고·인사이트 — 국내 함의는 명당 해석',
+      '기준 변화(리스크 재인식·입지 평가 재정의·복원력/국가 신뢰도 경쟁): 원문 인용. 콘텐츠 등급 ④참고·인사이트 — 국내 함의는 AI InfraMap 해석',
     ],
   },
   'utility-acquisition': {
@@ -74,7 +74,7 @@ const ARTICLES = {
     sources: [
       'KDCC/STRABASE 1Page Focus, 「데이터센터 기업은 왜 전력회사를 사들이는가」 (2026.7.7)',
       '수치: 글로벌 DC 전력 수요 2025년 31GW→2027년 66GW(2년 2배)·투자자 발전자산 확보 전략(DigitalBridge·Blackstone·KKR·Brookfield) — 원문 기준',
-      '콘텐츠 등급 ④참고·인사이트 — 국내 수직 통합 함의는 명당 발전 허가대장 집계와 연결',
+      '콘텐츠 등급 ④참고·인사이트 — 국내 수직 통합 함의는 AI InfraMap 발전 허가대장 집계와 연결',
     ],
   },
   'orbital-bottleneck': {
@@ -82,7 +82,7 @@ const ARTICLES = {
     sources: [
       'KDDC Issue Focus, 「발전소가 필요 없는 데이터센터…SpaceX가 2조 달러로 산 ‘AI 병목 통행권’」 (2026.6.16, STRABASE) — SpaceX 상장(시총 2조 달러 초과)·AI1 궤도 데이터센터 구상',
       '수치 인용: 미국 DC 전력 41GW(≈전체 원전)·IEA 2030 945TWh·미국 전기요금 2019년 대비 +42%·자본 12~24개월 vs 전력망 4~10년·MS 스리마일 835MW/Amazon X-energy 5GW SMR/Google Kairos 500MW — 원문 기준',
-      '콘텐츠 등급 ④참고·인사이트 — 해외 시장 분석 재인용. 국내 함의(재생E 86.5%·비수도권 86%)는 명당 발전 허가대장 집계',
+      '콘텐츠 등급 ④참고·인사이트 — 해외 시장 분석 재인용. 국내 함의(재생E 86.5%·비수도권 86%)는 AI InfraMap 발전 허가대장 집계',
     ],
   },
   'cooling-platform-ma': {
@@ -97,7 +97,7 @@ const ARTICLES = {
     component: PowerPermitBattle,
     sources: [
       '글로벌이코노믹 김주원(2026.7.6), 「AI 데이터센터, 이제는 ‘전력·허가’가 승부 가른다」 — Oilprice(2026.7.4) 재인용, QTS 디지털 게이트웨이 백지화·4대 투자 신호(청정E 확보율·송전망 유연성·임대료 상승률·LCOE)',
-      '한국 근거: 3MW 초과 발전사업 허가대장 v2(2026-04-17 기준, 4,652건) — 명당 직접 파싱·집계(data/gen_licenses_v2.json). 재생E 86.5%·2024+ 허가 633건·비수도권 86%는 누적 등재 건수 기준(용량 아님), 개별 MW는 참고치',
+      '한국 근거: 3MW 초과 발전사업 허가대장 v2(2026-04-17 기준, 4,652건) — AI InfraMap 직접 파싱·집계(data/gen_licenses_v2.json). 재생E 86.5%·2024+ 허가 633건·비수도권 86%는 누적 등재 건수 기준(용량 아님), 개별 MW는 참고치',
       '콘텐츠 등급 ④참고·인사이트 — 해외 사례는 언론 재인용, 국내 수치는 1차 대장 집계',
     ],
   },
@@ -138,7 +138,7 @@ export default function InsightPage() {
 
   useEffect(() => {
     if (!meta) return
-    const title = `${meta.title} — 명당 AI 인사이트`
+    const title = `${meta.title} — AI InfraMap 인사이트`
     document.title = title
     setMeta('name', 'description', meta.description)
     setMeta('property', 'og:title', title)
@@ -151,7 +151,7 @@ export default function InsightPage() {
       headline: meta.title,
       description: meta.description,
       datePublished: meta.date,
-      author: { '@type': 'Organization', name: '명당 AI' },
+      author: { '@type': 'Organization', name: 'AI InfraMap' },
     })
     document.head.appendChild(script)
     return () => script.remove()

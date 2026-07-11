@@ -30,7 +30,7 @@ export function regionSummary(sido) {
 export function regionDescription(sido, { list, by, mw }) {
   return `${sido} 데이터센터 ${list.length}곳 — 운영 ${by.operating} · 건설 ${by.construction} · 계획 ${by.planned}${
     mw > 0 ? ` · 공개 전력 합계 ${mw}MW` : ''
-  }. 공개 소스 기반 현황, 명당 AI.`
+  }. 공개 소스 기반 현황, AI InfraMap.`
 }
 
 export default function RegionPage() {
@@ -40,7 +40,7 @@ export default function RegionPage() {
 
   useEffect(() => {
     if (!sido || !summary) return
-    const title = `${sido} 데이터센터 현황 — 명당 AI`
+    const title = `${sido} 데이터센터 현황 — AI InfraMap`
     const desc = regionDescription(sido, summary)
     document.title = title
     setMeta('name', 'description', desc)

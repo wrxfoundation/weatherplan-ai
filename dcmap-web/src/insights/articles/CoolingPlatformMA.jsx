@@ -30,14 +30,14 @@ export default function CoolingPlatformMA() {
         묶어, Global High-Tech 유효시장을 약 50억 → <strong>100억 달러</strong>로 넓힌다고 밝혔다.
       </p>
 
-      <h2>명당의 관점 — 냉각은 용수·기상·전력의 입지 문제다</h2>
+      <h2>AI InfraMap의 관점 — 냉각은 용수·기상·전력의 입지 문제다</h2>
       <p>
         액체냉각으로의 전환은 하드웨어 교체가 아니라 <strong>입지 방정식의 재작성</strong>이다. 통합 플랫폼이
-        관리하는 것은 결국 <strong>물(용수 확보·수질)·화학·열</strong> — 모두 부지에 종속된 변수다. 명당이 냉각을
+        관리하는 것은 결국 <strong>물(용수 확보·수질)·화학·열</strong> — 모두 부지에 종속된 변수다. AI InfraMap이 냉각을
         기상·용수·계약전력과 함께 입지 축으로 다루는 이유다. 냉각 세대교체가 왜 프리쿨링·습구온도·용수 가용성을
         입지 기준으로 끌어올리는지는 <Link to="/insights/liquid-cooling-brief">‘액체냉각으로의 전환’</Link>에서,
         전력·허가로 옮겨간 경쟁의 큰 그림은 <Link to="/insights/power-permit-battle">‘전력·허가가 승부를 가른다’</Link>에서
-        이어진다. 명당은 <Link to="/stats">통계</Link>에서 국내 DC의 공조 방식(외기도입 18.1%)을 이미 추적하고 있다.
+        이어진다. AI InfraMap은 <Link to="/stats">통계</Link>에서 국내 DC의 공조 방식(외기도입 18.1%)을 이미 추적하고 있다.
       </p>
     </>
   )
