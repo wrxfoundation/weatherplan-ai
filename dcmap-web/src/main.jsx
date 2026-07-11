@@ -18,7 +18,6 @@ const DashboardPage = lazy(() => import('./dashboard/DashboardPage.jsx'))
 const InsightPage = lazy(() => import('./insights/InsightPage.jsx'))
 const LandPulsePage = lazy(() => import('./land/LandPulsePage.jsx'))
 const ComparePage = lazy(() => import('./compare/ComparePage.jsx'))
-const PowerMapPage = lazy(() => import('./power/PowerMapPage.jsx'))
 const DataExplorerPage = lazy(() => import('./explorer/DataExplorerPage.jsx'))
 
 /* SPA 라우트 전환 시 스크롤 최상단 — 긴 페이지에서 이전 스크롤 위치가 남는 UX 문제 방지 */
@@ -44,7 +43,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/" element={<MapPage />} />
+          <Route path="/" element={<MapPage key="home" />} />
           <Route path="/map3d" element={<Map3DPage />} />
           <Route path="/dc/:slug" element={<FacilityPage />} />
           <Route path="/calc" element={<CalcPage />} />
@@ -53,7 +52,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/stats" element={<StatsPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/land" element={<LandPulsePage />} />
-          <Route path="/power" element={<PowerMapPage />} />
+          <Route path="/power" element={<MapPage key="power" defaultGenPermits />} />
           <Route path="/data" element={<DataExplorerPage />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/insights" element={<InsightsIndexPage />} />

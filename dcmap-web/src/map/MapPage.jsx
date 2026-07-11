@@ -10,7 +10,10 @@ import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
-import { GEN_PERMIT_BUBBLES } from '../data/genLicenses.js'
+import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS } from '../data/genLicenses.js'
+import { headroomFor } from '../data/liveApi.js'
+
+const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ sido, lat, lng }))
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 const TILE_ATTRIBUTION =
@@ -113,7 +116,7 @@ function publicCard(f) {
   </div>`
 }
 
-export default function MapPage() {
+export default function MapPage({ defaultGenPermits = false }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const rawMw = Number.parseFloat(searchParams.get('min_mw'))
   const minMw = Number.isFinite(rawMw) && rawMw > 0 ? rawMw : null
@@ -141,8 +144,11 @@ export default function MapPage() {
   const plantsLayerRef = useRef(null)
   const [showPublic, setShowPublic] = useState(false) // 공공 DC 레이어 (행안부 운영시설 61곳)
   const publicLayerRef = useRef(null)
-  const [showGenPermits, setShowGenPermits] = useState(false) // 발전 허가 2024+ 시도 버블 (전력 공급 파이프라인)
+  const [showGenPermits, setShowGenPermits] = useState(defaultGenPermits) // 발전 허가 2024+ 시도 버블 (전력 공급 파이프라인)
   const genLayerRef = useRef(null)
+  const [showHeadroom, setShowHeadroom] = useState(false) // 계통 여유용량 시도 버블 (한전 분산전원)
+  const headroomLayerRef = useRef(null)
+  const [headrooms, setHeadrooms] = useState(null) // {sido: availableMw|null}
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
@@ -308,6 +314,58 @@ export default function MapPage() {
     }
   }, [showGenPermits])
 
+  // 계통 여유용량: 토글 시 17개 시도 중심점에서 headroom 조회 (KEPCO env 연동 시 실데이터)
+  useEffect(() => {
+    if (!showHeadroom || headrooms) return
+    let alive = true
+    Promise.all(
+      SIDO_LIST.map((s) =>
+        headroomFor(s.lat, s.lng)
+          .then((v) => [s.sido, v?.available ? (v.availableMw ?? null) : null])
+          .catch(() => [s.sido, null]),
+      ),
+    ).then((pairs) => alive && setHeadrooms(Object.fromEntries(pairs)))
+    return () => {
+      alive = false
+    }
+  }, [showHeadroom, headrooms])
+
+  // 계통 여유용량 시도 버블 (cyan) — 값 있으면 크기, 없으면 회색 점선 '연동 대기'
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (headroomLayerRef.current) {
+      map.removeLayer(headroomLayerRef.current)
+      headroomLayerRef.current = null
+    }
+    if (showHeadroom) {
+      const g = L.layerGroup()
+      const vals = SIDO_LIST.map((s) => headrooms?.[s.sido]).filter((v) => v != null)
+      const max = vals.length ? Math.max(...vals) : 0
+      for (const s of SIDO_LIST) {
+        const mw = headrooms?.[s.sido]
+        const has = mw != null && max > 0
+        const r = has ? 10 + 26 * Math.sqrt(mw / max) : 9
+        L.circleMarker([s.lat, s.lng], {
+          radius: r,
+          color: has ? 'rgba(53,213,238,0.95)' : 'rgba(120,140,170,0.5)',
+          weight: 1.3,
+          fillColor: has ? 'rgba(53,213,238,0.24)' : 'rgba(120,140,170,0.12)',
+          fillOpacity: has ? 0.5 : 0.25,
+          dashArray: has ? undefined : '3 3',
+          bubblingMouseEvents: false,
+        })
+          .bindTooltip(`<div class="dc-hovercard"><strong>${s.sido}</strong> · 계통 여유용량<br/>${has ? `<b>${mw.toLocaleString()}MW</b>` : '연동 대기 (KEPCO env)'}</div>`, {
+            direction: 'top', offset: [0, -r], className: 'dc-hovercard', opacity: 1,
+          })
+          .addTo(g)
+        if (has) L.marker([s.lat, s.lng], { icon: L.divIcon({ className: 'gen-bubble-label', html: `${Math.round(mw)}`, iconSize: [46, 16], iconAnchor: [23, 8] }), interactive: false }).addTo(g)
+      }
+      g.addTo(map)
+      headroomLayerRef.current = g
+    }
+  }, [showHeadroom, headrooms])
+
   // 지점 분석 마커 (십자 링) + ?site= URL 동기화 (공유 링크)
   useEffect(() => {
     const map = mapObj.current
@@ -437,6 +495,8 @@ export default function MapPage() {
         onTogglePublic={() => setShowPublic((v) => !v)}
         showGenPermits={showGenPermits}
         onToggleGenPermits={() => setShowGenPermits((v) => !v)}
+        showHeadroom={showHeadroom}
+        onToggleHeadroom={() => setShowHeadroom((v) => !v)}
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />

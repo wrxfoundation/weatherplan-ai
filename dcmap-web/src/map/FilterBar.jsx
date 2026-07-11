@@ -23,6 +23,8 @@ export default function FilterBar({
   onTogglePublic,
   showGenPermits,
   onToggleGenPermits,
+  showHeadroom,
+  onToggleHeadroom,
 }) {
   return (
     <div className="filterbar">
@@ -76,6 +78,15 @@ export default function FilterBar({
           title="2024년 이후 발전사업 허가 파이프라인 — 시도별 건수 버블(3MW 초과 허가대장). 전력 공급측 신호, 건수 기준"
         >
           ◎ 발전허가
+        </button>
+        <button
+          type="button"
+          className={`chip ${showHeadroom ? 'on' : ''}`}
+          onClick={onToggleHeadroom}
+          aria-pressed={showHeadroom}
+          title="계통 여유용량 — 시도별 한전 분산전원 여유(KEPCO env 연동 시 실데이터, 미연동 시 연동 대기)"
+        >
+          ⚡ 여유용량
         </button>
       </div>
 
