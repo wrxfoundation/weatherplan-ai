@@ -439,6 +439,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               flood,
               pop,
               disaster,
+              energy,
             })
           const onCopy = async () => {
             try {
