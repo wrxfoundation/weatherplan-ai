@@ -19,9 +19,27 @@ const KR_BOUNDS = [
   [38.65, 130.95],
 ]
 
-function markerIcon(f) {
+/* 아이소메트릭 빌딩 SVG — 줌인 시 입체 마커 (레퍼런스 HUD의 건물 문법)
+ * 색은 CSS(.dc-iso .f-*)에서 상태 토큰으로 — SVG 안 hex 하드코딩 금지 */
+const ISO_SVG = `<svg viewBox="0 0 24 26" xmlns="http://www.w3.org/2000/svg">
+  <polygon class="f-top" points="12,2 22,8 12,14 2,8"/>
+  <polygon class="f-left" points="2,8 12,14 12,24 2,18"/>
+  <polygon class="f-right" points="12,14 22,8 22,18 12,24"/>
+</svg>`
+
+function markerIcon(f, iso) {
   const key = f.status === 'delayed' ? 'planned' : f.status
-  if (f.power_mw_public >= HYPERSCALE_MW) {
+  const xl = f.power_mw_public >= HYPERSCALE_MW
+  if (iso) {
+    const s = xl ? 30 : 22
+    return L.divIcon({
+      className: `dc-iso ${key}${xl ? ' xl' : ''}`,
+      html: ISO_SVG,
+      iconSize: [s, s + 2],
+      iconAnchor: [s / 2, s + 2], // 건물 바닥이 좌표에 닿게
+    })
+  }
+  if (xl) {
     // 다이아몬드 회전은 내부 span에 — Leaflet의 루트 inline transform과 충돌 방지
     return L.divIcon({
       className: 'dc-marker-xl-wrap',
@@ -31,6 +49,8 @@ function markerIcon(f) {
   }
   return L.divIcon({ className: `dc-marker ${key}`, iconSize: [14, 14] })
 }
+
+const ISO_ZOOM = 10 // 클러스터 해제 줌과 동일 — 개별 마커가 보이는 순간 입체로
 
 export default function MapPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -46,6 +66,7 @@ export default function MapPage() {
   const [selected, setSelected] = useState(null)
   const [sitePoint, setSitePoint] = useState(null) // 맵 빈 곳 클릭 → 지점 분석
   const [showLabels, setShowLabels] = useState(false) // 맵 정보 라벨 (시설명·용량) 상시 표시
+  const [isoView, setIsoView] = useState(false) // 줌 ≥ ISO_ZOOM → 아이소메트릭 빌딩 마커
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
@@ -107,6 +128,7 @@ export default function MapPage() {
       setSelected(null)
       setSitePoint({ lat: e.latlng.lat, lng: e.latlng.lng })
     })
+    map.on('zoomend', () => setIsoView(map.getZoom() >= ISO_ZOOM))
     mapObj.current = map
     clusterRef.current = cluster
     return () => map.remove()
@@ -134,7 +156,7 @@ export default function MapPage() {
     cluster.clearLayers()
     for (const f of filtered) {
       // bubblingMouseEvents:false — 마커 클릭이 맵 클릭(지점 분석)으로 전파되는 것 방지
-      const m = L.marker([f.lat, f.lng], { icon: markerIcon(f), bubblingMouseEvents: false })
+      const m = L.marker([f.lat, f.lng], { icon: markerIcon(f, isoView), bubblingMouseEvents: false })
       const info = `${f.name} · ${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`
       // 라벨 ON: 상시 글라스 칩 (클러스터로 묶인 마커는 자동 비표시) / OFF: 호버 툴팁
       m.bindTooltip(
@@ -149,7 +171,7 @@ export default function MapPage() {
       })
       cluster.addLayer(m)
     }
-  }, [filtered, showLabels])
+  }, [filtered, showLabels, isoView])
 
   const toggleStatus = (key) =>
     setStatuses((prev) => {

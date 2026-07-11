@@ -856,6 +856,62 @@ a {
   box-shadow: 0 0 14px 3px color-mix(in srgb, var(--status-planned) 45%, transparent);
 }
 
+/* 아이소메트릭 빌딩 마커 — 줌인(클러스터 해제) 시 입체 뷰. 3면 셰이딩: top 밝음 > right > left */
+.dc-iso svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.dc-iso.operating {
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--status-operating) 70%, transparent));
+}
+
+.dc-iso.operating .f-top {
+  fill: color-mix(in srgb, var(--status-operating) 80%, white);
+}
+
+.dc-iso.operating .f-right {
+  fill: var(--status-operating);
+}
+
+.dc-iso.operating .f-left {
+  fill: color-mix(in srgb, var(--status-operating) 55%, var(--navy-deep));
+}
+
+.dc-iso.construction {
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--status-construction) 65%, transparent));
+}
+
+.dc-iso.construction .f-top {
+  fill: color-mix(in srgb, var(--status-construction) 80%, white);
+}
+
+.dc-iso.construction .f-right {
+  fill: var(--status-construction);
+}
+
+.dc-iso.construction .f-left {
+  fill: color-mix(in srgb, var(--status-construction) 55%, var(--navy-deep));
+}
+
+/* 계획: 와이어프레임 건물 (채움 없이 윤곽 — 점선 아웃라인 문법 유지) */
+.dc-iso.planned polygon,
+.dc-iso.delayed polygon {
+  fill: color-mix(in srgb, var(--status-planned) 14%, transparent);
+  stroke: var(--status-planned);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+
+.dc-iso.xl {
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--status-operating) 80%, transparent));
+}
+
+.dc-iso.xl.construction {
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--status-construction) 75%, transparent));
+}
+
 /* 지점 분석 마커: accent 링 + 중심점 */
 .site-point {
   border: 2px solid var(--accent);
@@ -877,6 +933,46 @@ a {
 
 .score-axes {
   margin: 12px 0 4px;
+}
+
+/* 초단기예보 스트립 — H+1~6 미니 타임라인 (기상 셀 내부) */
+.wx-strip {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.wx-hour {
+  flex: 1;
+  min-width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 6px 4px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--navy-deep) 55%, transparent);
+  box-shadow: var(--glass-specular-soft);
+}
+
+.wx-hour em {
+  font-style: normal;
+  font-size: 10px;
+  color: var(--grey);
+}
+
+.wx-hour strong {
+  font-size: var(--text-body);
+  font-weight: var(--weight-bold);
+  line-height: 1.2;
+}
+
+.wx-hour span {
+  font-size: 10px;
+  color: var(--grey);
+  white-space: nowrap;
 }
 
 .dc-cluster {
