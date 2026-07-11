@@ -109,11 +109,11 @@ export default function FacilityPage() {
         <div ref={mapRef} className="detail-map" />
         {wx && (
           <p className="geo-note">
-            현재 기상 — 케이웨더 ({facility.geocode_level === 'parcel' ? '부지' : '행정구역 중심점'} 기준):{' '}
+            현재 기상 — 케이웨더 ({wx.scope || (facility.geocode_level === 'parcel' ? '부지' : '행정구역 중심점')} 기준):{' '}
             {wx.temp != null && `${wx.temp}°C`}
             {wx.sky && ` · ${wx.sky}`}
+            {wx.senseTemp != null && ` · 체감 ${wx.senseTemp}°C`}
             {wx.humidity != null && ` · 습도 ${wx.humidity}%`}
-            {wx.pm10 != null && ` · PM10 ${wx.pm10}`}
           </p>
         )}
         <FacilityCard facility={facility} compact />
