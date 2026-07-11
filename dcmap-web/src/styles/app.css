@@ -1075,6 +1075,28 @@ a {
   color: var(--accent, #35d5ee);
 }
 
+/* 페이지네이션 */
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 14px 0 4px;
+}
+.pager .btn[disabled] {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+.pager-info {
+  font-size: 13px;
+  color: var(--text-dim, #9fb4cc);
+  font-variant-numeric: tabular-nums;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+
 /* A–Z 로드맵 */
 .roadmap {
   list-style: none;

@@ -65,9 +65,12 @@ const DATASETS = [
   },
 ]
 
+const PER_PAGE = 50
+
 export default function DataExplorerPage() {
   const [tab, setTab] = useState('gen')
   const [q, setQ] = useState('')
+  const [page, setPage] = useState(0)
   useEffect(() => {
     document.title = '데이터 탐색기 — 축적 자료 검색·CSV 다운로드 · AI InfraMap'
     setQ('')
@@ -79,6 +82,10 @@ export default function DataExplorerPage() {
     if (!needle) return ds.rows
     return ds.rows.filter((r) => ds.columns.some((c) => String(r[c.k] ?? '').toLowerCase().includes(needle)))
   }, [ds, q])
+  useEffect(() => setPage(0), [tab, q])
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
+  const pageSafe = Math.min(page, pageCount - 1)
+  const pageRows = filtered.slice(pageSafe * PER_PAGE, pageSafe * PER_PAGE + PER_PAGE)
 
   return (
     <>
@@ -126,17 +133,21 @@ export default function DataExplorerPage() {
           )}
         </div>
         <p className="chart-note" style={{ marginTop: 6 }}>
-          기준일 <strong>{ds.asOf}</strong> · 출처: {ds.source}. 표는 상위 300건 표시(검색·CSV는 전체 대상). 용량(MW)은 참고치.
+          기준일 <strong>{ds.asOf}</strong> · 출처: {ds.source}. 페이지당 {PER_PAGE}건 · 전체 {filtered.length.toLocaleString()}건 브라우징(검색·CSV는 전체 대상). 용량(MW)은 참고치.
         </p>
 
         <div className="explorer-table-wrap">
           <table className="explorer-table">
             <thead>
-              <tr>{ds.columns.map((c) => <th key={c.k}>{c.label}</th>)}</tr>
+              <tr>
+                <th style={{ width: 44, textAlign: 'right' }}>#</th>
+                {ds.columns.map((c) => <th key={c.k}>{c.label}</th>)}
+              </tr>
             </thead>
             <tbody>
-              {filtered.slice(0, 300).map((r, i) => (
+              {pageRows.map((r, i) => (
                 <tr key={i}>
+                  <td style={{ textAlign: 'right', color: 'var(--grey)' }}>{pageSafe * PER_PAGE + i + 1}</td>
                   {ds.columns.map((c) => <td key={c.k}>{r[c.k] === '' || r[c.k] == null ? '—' : String(r[c.k])}</td>)}
                 </tr>
               ))}
@@ -144,6 +155,18 @@ export default function DataExplorerPage() {
           </table>
           {filtered.length === 0 && <p className="chart-note" style={{ padding: '12px' }}>검색 결과가 없습니다.</p>}
         </div>
+
+        {pageCount > 1 && (
+          <div className="pager">
+            <button type="button" className="btn" disabled={pageSafe === 0} onClick={() => setPage(0)}>« 처음</button>
+            <button type="button" className="btn" disabled={pageSafe === 0} onClick={() => setPage((p) => Math.max(0, p - 1))}>‹ 이전</button>
+            <span className="pager-info">
+              {pageSafe + 1} / {pageCount} 페이지 · {(pageSafe * PER_PAGE + 1).toLocaleString()}–{Math.min((pageSafe + 1) * PER_PAGE, filtered.length).toLocaleString()}
+            </span>
+            <button type="button" className="btn" disabled={pageSafe >= pageCount - 1} onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}>다음 ›</button>
+            <button type="button" className="btn" disabled={pageSafe >= pageCount - 1} onClick={() => setPage(pageCount - 1)}>마지막 »</button>
+          </div>
+        )}
       </div>
     </>
   )

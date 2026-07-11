@@ -27,4 +27,4 @@ export const CHP_BY_OP = (() => {
 export const CHP_TOP_PLANTS = [...CHP_PLANTS]
   .filter((p) => p.mw)
   .sort((a, b) => b.mw - a.mw)
-  .slice(0, 8)
+  .slice(0, 20)
