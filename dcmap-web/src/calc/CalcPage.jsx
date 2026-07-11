@@ -41,7 +41,7 @@ function TrackCard({ mw, nonCapital, onRegion }) {
       <div className="chart-title">이 용량의 전력 인허가 트랙 — {r.mw.toFixed(1)} MW 기준</div>
       <div className="calc-grid">
         <label>
-          입지
+          <span className="lbl-cap">입지</span>
           <select value={nonCapital ? 'non' : 'cap'} onChange={(e) => onRegion(e.target.value === 'non')}>
             <option value="non">비수도권</option>
             <option value="cap">수도권</option>
@@ -190,7 +190,7 @@ export default function CalcPage() {
         <div className="calc-card">
           <div className="calc-grid">
             <label>
-              GPU 모델
+              <span className="lbl-cap">GPU 모델</span>
               <select value={gpuKey} onChange={(e) => setGpuKey(e.target.value)}>
                 {GPU_PRESETS.map((g) => (
                   <option key={g.key} value={g.key}>
@@ -200,7 +200,7 @@ export default function CalcPage() {
               </select>
             </label>
             <label>
-              GPU 수량
+              <span className="lbl-cap">GPU 수량</span>
               <input
                 type="number"
                 min="1"
@@ -210,7 +210,7 @@ export default function CalcPage() {
               />
             </label>
             <label>
-              냉각 방식 (PUE·랙밀도 연동)
+              <span className="lbl-cap">냉각 방식 (PUE·랙밀도 연동)</span>
               <select value={coolKey} onChange={(e) => onCooling(e.target.value)}>
                 {COOLING_PRESETS.map((c) => (
                   <option key={c.key} value={c.key}>
@@ -220,7 +220,9 @@ export default function CalcPage() {
               </select>
             </label>
             <label>
-              <Term k="PUE">PUE</Term> (전력효율지수)
+              <span className="lbl-cap">
+                <Term k="PUE">PUE</Term> · 전력효율지수
+              </span>
               <input
                 type="number"
                 min="1"
@@ -231,7 +233,9 @@ export default function CalcPage() {
               />
             </label>
             <label>
-              수전 여유 (<Term k="이중화">이중화</Term>)
+              <span className="lbl-cap">
+                수전 여유 · <Term k="이중화">이중화</Term>
+              </span>
               <select value={redunKey} onChange={(e) => setRedunKey(e.target.value)}>
                 {REDUNDANCY.map((r) => (
                   <option key={r.key} value={r.key}>

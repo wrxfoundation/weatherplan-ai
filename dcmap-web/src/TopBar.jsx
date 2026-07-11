@@ -1,6 +1,17 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { FACILITIES, STATUS_LABEL, SIDOS, slugOf } from './data/facilities.js'
+
+// 라우트 → GNB 섹션(색상 톤). 페이지 전체 accent가 섹션 톤을 따른다.
+const SECTION_PREFIX = [
+  ['/calc', 'data'], ['/dashboard', 'data'], ['/data', 'data'], ['/stats', 'data'], ['/land', 'data'], ['/compare', 'data'],
+  ['/insights', 'knowledge'], ['/roadmap', 'knowledge'], ['/glossary', 'knowledge'],
+  ['/map3d', 'explore'], ['/power', 'explore'], ['/dc', 'explore'], ['/region', 'explore'],
+]
+function sectionForPath(pathname) {
+  for (const [p, s] of SECTION_PREFIX) if (pathname === p || pathname.startsWith(`${p}/`)) return s
+  return 'explore'
+}
 
 /* 자동완성 후보: 시설(이름·운영사 매칭) 상위 5 + 지역 상위 2 */
 function suggest(qv) {
@@ -43,6 +54,12 @@ export default function TopBar() {
   const blurTimer = useRef(null)
 
   const items = useMemo(() => suggest(term), [term])
+
+  // 현재 라우트의 섹션을 document root에 반영 → 페이지 전체 색상 톤 전환
+  useEffect(() => {
+    const section = sectionForPath(location.pathname)
+    document.documentElement.setAttribute('data-section', section)
+  }, [location.pathname])
 
   const onSearch = (value) => {
     if (location.pathname === '/') {

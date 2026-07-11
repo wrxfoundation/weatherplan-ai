@@ -27,8 +27,8 @@
   --amber: var(--orange); /* 하위호환 별칭 (음수 지가 등) */
   --violet: #a78bfa; /* 지식·가이드 GNB 섹션 톤 */
 
-  /* GNB 섹션 톤 — 탐색(맵)=accent / 도구·데이터=green / 지식·가이드=violet */
-  --nav-explore: var(--accent);
+  /* GNB 섹션 톤 — 탐색(맵)=cyan / 도구·데이터=green / 지식·가이드=violet */
+  --nav-explore: #35d5ee;
   --nav-data: var(--green);
   --nav-knowledge: var(--violet);
 
@@ -112,4 +112,17 @@
   --ease-premium: cubic-bezier(0.32, 0.72, 0, 1);
   --dur-fast: 0.35s;
   --dur-entry: 0.7s;
+}
+
+/* ---- 섹션별 페이지 톤 ----
+ * GNB 섹션(TopBar에서 data-section 설정)에 맞춰 페이지 전체 accent를 전환.
+ * 탐색=cyan(기본) / 도구·데이터=green / 지식·가이드=violet.
+ * accent 파생값(글로우·보더·게이지 등)은 color-mix로 자동 추종. */
+:root[data-section='data'] {
+  --accent: var(--green);
+  --accent-deep: color-mix(in srgb, var(--green) 55%, #062418);
+}
+:root[data-section='knowledge'] {
+  --accent: var(--violet);
+  --accent-deep: color-mix(in srgb, var(--violet) 55%, #171232);
 }
