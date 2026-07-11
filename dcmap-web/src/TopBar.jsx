@@ -155,6 +155,9 @@ export default function TopBar() {
         <NavLink to="/insights" className={({ isActive }) => (isActive ? 'active' : '')}>
           인사이트
         </NavLink>
+        <NavLink to="/roadmap" className={({ isActive }) => (isActive ? 'active' : '')}>
+          로드맵
+        </NavLink>
         <NavLink to="/glossary" className={({ isActive }) => (isActive ? 'active' : '')}>
           용어집
         </NavLink>
