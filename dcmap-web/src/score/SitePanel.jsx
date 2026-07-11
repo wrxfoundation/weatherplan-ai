@@ -1,13 +1,27 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
+import { revgeoFor, weatherFor } from '../data/liveApi.js'
 import { scoreSite } from './engine.js'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
 export default function SitePanel({ point, onClose, onSelectFacility }) {
   const [mw, setMw] = useState(40)
   const [nonCapital, setNonCapital] = useState(true)
+  const [addr, setAddr] = useState(null)
+  const [wx, setWx] = useState(null)
+
+  useEffect(() => {
+    let alive = true
+    setAddr(null)
+    setWx(null)
+    revgeoFor(point.lat, point.lng).then((v) => alive && setAddr(v))
+    weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
+    return () => {
+      alive = false
+    }
+  }, [point])
 
   const r = useMemo(
     () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital }),
@@ -76,6 +90,27 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
         </p>
 
         <div className="spec-grid">
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">지번주소 (vworld 리버스 지오코딩)</div>
+            <div className="v">
+              {addr?.parcel ?? addr?.road ?? <span className="badge verify">조회 대기 — 연동 후 자동 표시</span>}
+            </div>
+          </div>
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">현재 기상 (케이웨더)</div>
+            <div className="v">
+              {wx ? (
+                <>
+                  {wx.temp != null && `${wx.temp}°C`}
+                  {wx.sky && ` · ${wx.sky}`}
+                  {wx.humidity != null && ` · 습도 ${wx.humidity}%`}
+                  {wx.pm10 != null && ` · PM10 ${wx.pm10}`}
+                </>
+              ) : (
+                <span className="badge verify">연동 대기 — 기상축(M3) 데이터 소스</span>
+              )}
+            </div>
+          </div>
           <div className="spec-cell">
             <div className="k">수전전압 트랙</div>
             <div className="v">{r.track.track.voltage}</div>

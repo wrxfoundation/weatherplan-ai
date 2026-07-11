@@ -37,6 +37,12 @@ export default function FacilityCard({ facility: f, compact = false }) {
             {f.sigungu ? ` ${f.sigungu}` : ''}
           </div>
         </div>
+        {f.address_public && (
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">공개 주소</div>
+            <div className="v">{f.address_public}</div>
+          </div>
+        )}
         {(() => {
           const lp = landPriceFor(f)
           return lp ? (

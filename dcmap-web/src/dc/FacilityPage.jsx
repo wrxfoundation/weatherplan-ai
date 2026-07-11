@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -8,6 +8,7 @@ import { findBySlug, STATUS_LABEL } from '../data/facilities.js'
 import { SIDO_SLUGS } from '../content/sido_slugs.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
 import { fmtRate } from '../data/landPrice.js'
+import { weatherFor } from '../data/liveApi.js'
 import { buildDescription, buildPlaceJsonLd } from './seo.js'
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
@@ -26,6 +27,17 @@ export default function FacilityPage() {
   const { slug } = useParams()
   const facility = findBySlug(slug)
   const mapRef = useRef(null)
+  const [wx, setWx] = useState(null)
+
+  useEffect(() => {
+    if (!facility) return
+    let alive = true
+    setWx(null)
+    weatherFor(facility.lat, facility.lng).then((v) => alive && setWx(v))
+    return () => {
+      alive = false
+    }
+  }, [facility])
 
   useEffect(() => {
     if (!facility) return
@@ -95,6 +107,15 @@ export default function FacilityPage() {
           {facility.type}
         </p>
         <div ref={mapRef} className="detail-map" />
+        {wx && (
+          <p className="geo-note">
+            현재 기상 — 케이웨더 ({facility.geocode_level === 'parcel' ? '부지' : '행정구역 중심점'} 기준):{' '}
+            {wx.temp != null && `${wx.temp}°C`}
+            {wx.sky && ` · ${wx.sky}`}
+            {wx.humidity != null && ` · 습도 ${wx.humidity}%`}
+            {wx.pm10 != null && ` · PM10 ${wx.pm10}`}
+          </p>
+        )}
         <FacilityCard facility={facility} compact />
         {(() => {
           const p = dongPulseFor(facility)
