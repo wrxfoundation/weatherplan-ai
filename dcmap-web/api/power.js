@@ -170,7 +170,7 @@ export default async function handler(req, res) {
       return
     }
     res.status(200).json(HANDLERS[src](items))
-  } catch {
-    res.status(200).json({ available: false, reason: 'upstream_error' })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
   }
 }

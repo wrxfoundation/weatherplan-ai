@@ -112,7 +112,7 @@ export default async function handler(req, res) {
       recentYear: recentYear ? String(recentYear) : undefined,
       scope: `${sigungu} (시군구 재해 이력)`,
     })
-  } catch {
-    res.status(200).json({ available: false, reason: 'upstream_error' })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
   }
 }

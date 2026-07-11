@@ -99,7 +99,7 @@ export default async function handler(req, res) {
       scope: [d.state, d.city, d.city2].filter(Boolean).join(' '),
       timestamp: pickFrom[1]?.service?.timestamp,
     })
-  } catch {
-    res.status(200).json({ available: false, reason: 'upstream_error' })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
   }
 }

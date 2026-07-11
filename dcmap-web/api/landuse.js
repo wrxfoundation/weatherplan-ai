@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 
   try {
     const ctrl = new AbortController()
-    const t = setTimeout(() => ctrl.abort(), 5000)
+    const t = setTimeout(() => ctrl.abort(), 8000)
     const r = await fetch(url, { signal: ctrl.signal })
     clearTimeout(t)
     if (!r.ok) {
@@ -62,7 +62,7 @@ export default async function handler(req, res) {
       return
     }
     res.status(200).json({ available: true, uses: [...names] })
-  } catch {
-    res.status(200).json({ available: false, reason: 'upstream_error' })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
   }
 }

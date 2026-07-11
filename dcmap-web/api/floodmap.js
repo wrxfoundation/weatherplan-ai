@@ -120,7 +120,7 @@ export default async function handler(req, res) {
       scenario: scenario ? String(scenario) : undefined,
       scope: '홍수위험지도 침수심(포털 조회)',
     })
-  } catch {
-    res.status(200).json({ available: false, reason: 'upstream_error' })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
   }
 }

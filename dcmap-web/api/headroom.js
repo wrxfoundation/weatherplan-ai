@@ -109,7 +109,7 @@ export default async function handler(req, res) {
       scope: `${codes.sigungu} (배전 22.9kV 분산전원 기준)`,
       unit: 'MW',
     })
-  } catch {
-    res.status(200).json({ available: false, reason: 'upstream_error' })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
   }
 }

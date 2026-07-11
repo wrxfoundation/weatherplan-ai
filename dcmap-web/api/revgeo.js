@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
   try {
     const ctrl = new AbortController()
-    const t = setTimeout(() => ctrl.abort(), 5000)
+    const t = setTimeout(() => ctrl.abort(), 8000)
     const r = await fetch(url, { signal: ctrl.signal })
     clearTimeout(t)
     if (!r.ok) {
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
       ? { legalCode, sigunguCd: legalCode.slice(0, 5), bjdongCd: legalCode.slice(5), bun, ji }
       : {}
     res.status(200).json({ available: true, parcel, road, ...codes })
-  } catch {
-    res.status(200).json({ available: false, reason: 'upstream_error' })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
   }
 }
