@@ -54,12 +54,12 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
     if (dongPulse) L.push(`- 동 단위 범위: ${fmtRate(dongPulse.bottom.rate)} ~ ${fmtRate(dongPulse.top.rate)} (${dongPulse.count}개 조사구역)`)
   }
   L.push(``)
-  L.push(`## 기상 (케이웨더 예보)`)
+  L.push(`## 기상 (케이웨더)`)
   if (wx) {
-    L.push(`- 오늘: ${wx.temp != null ? `최고 ${wx.temp}°C` : ''}${wx.tempMin != null ? ` / 최저 ${wx.tempMin}°C` : ''}${wx.sky ? ` · ${wx.sky}` : ''}${wx.rainProb != null ? ` · 강수확률 ${wx.rainProb}%` : ''}${wx.scope ? ` (${wx.scope})` : ''}`)
+    L.push(`- 실황: ${wx.temp != null ? `${wx.temp}°C` : ''}${wx.sky ? ` · ${wx.sky}` : ''}${wx.humidity != null ? ` · 습도 ${wx.humidity}%` : ''}${wx.pm10 != null ? ` · PM10 ${wx.pm10}` : ''}${wx.scope ? ` (${wx.scope})` : ''}`)
     if (fc?.days?.length) L.push(`- 3일 예보: ${fc.days.map((h) => `${h.label} ${h.tmax ?? '–'}°/${h.tmin ?? '–'}° ${h.sky ?? ''}${h.rainProb != null ? ` ${h.rainProb}%` : ''}`).join(' · ')}`)
   } else {
-    L.push(`- 연동 대기 — 케이웨더 예보(기상축)`)
+    L.push(`- 연동 대기 — 케이웨더 실황(기상축)`)
   }
   L.push(``)
   L.push(`## 계통 여유용량 (한전 분산전원 22.9kV)`)

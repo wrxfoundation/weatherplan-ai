@@ -232,18 +232,19 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">오늘 날씨 (케이웨더 예보{wx?.scope ? ` · ${wx.scope}` : ''})</div>
+            <div className="k">현재 기상 (케이웨더 실황{wx?.scope ? ` · ${wx.scope}` : ''})</div>
             <div className="v">
               {wx ? (
                 <>
-                  {wx.temp != null && `최고 ${wx.temp}°C`}
-                  {wx.tempMin != null && ` / 최저 ${wx.tempMin}°C`}
+                  {wx.temp != null && `${wx.temp}°C`}
                   {wx.sky && ` · ${wx.sky}`}
-                  {wx.rainProb != null && ` · 강수확률 ${wx.rainProb}%`}
-                  {wx.snow != null && wx.snow > 0 && ` · 적설 ${wx.snow}cm`}
+                  {wx.senseTemp != null && ` · 체감 ${wx.senseTemp}°C`}
+                  {wx.humidity != null && ` · 습도 ${wx.humidity}%`}
+                  {wx.rain1h != null && wx.rain1h > 0 && ` · 강수 ${wx.rain1h}mm/h`}
+                  {wx.pm10 != null && ` · PM10 ${wx.pm10}`}
                 </>
               ) : (
-                <span className="badge verify">연동 대기 — 케이웨더 예보(기상축)</span>
+                <span className="badge verify">연동 대기 — 케이웨더 실황(기상축)</span>
               )}
             </div>
             {fc?.days?.length > 0 && (
