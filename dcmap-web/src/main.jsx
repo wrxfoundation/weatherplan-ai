@@ -52,7 +52,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/stats" element={<StatsPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/land" element={<LandPulsePage />} />
-          <Route path="/power" element={<MapPage key="power" defaultGenPermits />} />
+          <Route path="/power" element={<MapPage key="power" power />} />
           <Route path="/data" element={<DataExplorerPage />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/insights" element={<InsightsIndexPage />} />

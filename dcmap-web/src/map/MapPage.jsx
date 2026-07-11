@@ -116,7 +116,7 @@ function publicCard(f) {
   </div>`
 }
 
-export default function MapPage({ defaultGenPermits = false }) {
+export default function MapPage({ power = false }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const rawMw = Number.parseFloat(searchParams.get('min_mw'))
   const minMw = Number.isFinite(rawMw) && rawMw > 0 ? rawMw : null
@@ -144,7 +144,7 @@ export default function MapPage({ defaultGenPermits = false }) {
   const plantsLayerRef = useRef(null)
   const [showPublic, setShowPublic] = useState(false) // 공공 DC 레이어 (행안부 운영시설 61곳)
   const publicLayerRef = useRef(null)
-  const [showGenPermits, setShowGenPermits] = useState(defaultGenPermits) // 발전 허가 2024+ 시도 버블 (전력 공급 파이프라인)
+  const [showGenPermits, setShowGenPermits] = useState(power) // 발전 허가 2024+ 시도 버블 (전력 공급 파이프라인)
   const genLayerRef = useRef(null)
   const [showHeadroom, setShowHeadroom] = useState(false) // 계통 여유용량 시도 버블 (한전 분산전원)
   const headroomLayerRef = useRef(null)
@@ -302,7 +302,6 @@ export default function MapPage({ defaultGenPermits = false }) {
             `<div class="dc-hovercard"><strong>${b.sido}</strong> · 발전 허가 <b>${b.count}건</b> (2024+)<br/>신재생 ${renewPct}% · 최다 ${b.topFuel || '—'}</div>`,
             { direction: 'top', offset: [0, -r], className: 'dc-hovercard', opacity: 1 },
           )
-          .bindPopup(`${b.sido} · 2024년 이후 발전사업 허가 ${b.count}건 (신재생 ${renewPct}%, 최다 ${b.topFuel || '—'})`)
           .addTo(g)
         L.marker([b.lat, b.lng], {
           icon: L.divIcon({ className: 'gen-bubble-label', html: `${b.count}`, iconSize: [40, 16], iconAnchor: [20, 8] }),
@@ -493,6 +492,7 @@ export default function MapPage({ defaultGenPermits = false }) {
         onTogglePlants={() => setShowPlants((v) => !v)}
         showPublic={showPublic}
         onTogglePublic={() => setShowPublic((v) => !v)}
+        power={power}
         showGenPermits={showGenPermits}
         onToggleGenPermits={() => setShowGenPermits((v) => !v)}
         showHeadroom={showHeadroom}
@@ -521,8 +521,14 @@ export default function MapPage({ defaultGenPermits = false }) {
             />
           ) : (
             <>
+              {power && (
+                <div className="power-banner">
+                  <strong>⚡ 전력 지도</strong> — 발전 공급 파이프라인(◎발전허가)·계통 여유용량(⚡여유용량)을 DC 위치와 겹쳐
+                  본다. 상단 칩으로 레이어를 켜고, 시설 마커를 누르면 정보가, 빈 곳을 누르면 지점 분석이 나온다.
+                </div>
+              )}
               <div className="panel-title">
-                사이트 인텔리전스
+                {power ? '전력 · 시설 요약' : '사이트 인텔리전스'}
                 <span className="ver-chip" title="시드 데이터 버전 · 기준일">
                   v{DATA_VERSION.version} · {DATA_VERSION.date}
                 </span>

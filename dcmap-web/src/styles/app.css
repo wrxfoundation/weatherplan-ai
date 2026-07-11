@@ -977,7 +977,7 @@ a {
 .power-page {
   max-width: 1360px;
   margin: 0 auto;
-  padding: 18px 20px 40px;
+  padding: calc(var(--topbar-height) + 20px) 20px 40px;
 }
 .power-head {
   display: flex;
@@ -1058,6 +1058,21 @@ a {
   .power-panel {
     max-height: none;
   }
+}
+
+/* 전력지도 사이드패널 안내 배너 */
+.power-banner {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-dim, #b8cbe0);
+  background: color-mix(in srgb, var(--accent, #35d5ee) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, #35d5ee) 24%, transparent);
+}
+.power-banner strong {
+  color: var(--accent, #35d5ee);
 }
 
 /* 인사이트 카테고리 태그 */
