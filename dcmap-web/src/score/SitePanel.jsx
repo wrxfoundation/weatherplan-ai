@@ -3,6 +3,7 @@ import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
 import { forecastFor, landUseFor, revgeoFor, weatherFor } from '../data/liveApi.js'
+import { nearestPlant } from '../data/plants.js'
 import { scoreSite } from './engine.js'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
@@ -140,6 +141,17 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               </div>
             )}
           </div>
+          {(() => {
+            const np = nearestPlant(point)
+            return np ? (
+              <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                <div className="k">최근접 대형 발전단지 (근접성 맥락 — 전원 매칭 아님)</div>
+                <div className="v">
+                  {np.plant.name} · {np.plant.type} · {np.km.toFixed(0)}km
+                </div>
+              </div>
+            ) : null
+          })()}
           <div className="spec-cell">
             <div className="k">수전전압 트랙</div>
             <div className="v">{r.track.track.voltage}</div>

@@ -816,6 +816,112 @@ a {
   display: none;
 }
 
+/* 호버 카드 — 클릭 없이 보는 시설 요약 (글라스 미니 카드) */
+.leaflet-tooltip.dc-hovercard {
+  background: var(--glass-surface-strong);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-specular), var(--elev-2);
+  padding: 10px 12px;
+  white-space: normal;
+  width: max-content; /* min-content 수축 방지 — 좁은 리플렛 팬 안에서 세로 붕괴 */
+  max-width: 250px;
+}
+
+.leaflet-tooltip.dc-hovercard::before {
+  display: none;
+}
+
+.hc-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-body);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-tight);
+}
+
+.hc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hc-dot.operating {
+  background: var(--status-operating);
+}
+
+.hc-dot.construction {
+  background: var(--status-construction);
+}
+
+.hc-dot.planned {
+  background: transparent;
+  border: 2px solid var(--status-planned);
+  width: 6px;
+  height: 6px;
+}
+
+.hc-meta {
+  color: var(--grey);
+  font-size: var(--text-xs);
+  margin-top: 2px;
+}
+
+.hc-row {
+  font-size: var(--text-sm);
+  margin-top: 4px;
+}
+
+.hc-verify {
+  color: var(--orange);
+  font-size: var(--text-xs);
+  margin-top: 3px;
+}
+
+.hc-cta {
+  color: color-mix(in srgb, var(--accent) 80%, var(--grey));
+  font-size: var(--text-xs);
+  margin-top: 5px;
+  border-top: 1px solid var(--line);
+  padding-top: 5px;
+}
+
+/* 발전소 마커 — 육각 아웃라인 + ⚡ */
+.plant-marker svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.plant-marker polygon {
+  fill: color-mix(in srgb, var(--navy-deep) 80%, transparent);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.plant-marker text {
+  font-size: 11px;
+}
+
+.plant-marker.nuclear polygon {
+  stroke: var(--accent);
+}
+
+.plant-marker.nuclear {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 45%, transparent));
+}
+
+.plant-marker.coal polygon {
+  stroke: var(--grey);
+}
+
+.plant-marker.coal {
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--grey) 35%, transparent));
+}
+
 .dc-marker {
   border-radius: 50%;
   border: 2px solid transparent;
