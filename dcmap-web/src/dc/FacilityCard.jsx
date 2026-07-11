@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { STATUS_LABEL, GEOCODE_LABEL, slugOf } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { revgeoFor } from '../data/liveApi.js'
+import { blurbFor } from '../content/facilityBlurbs.js'
 
 export default function FacilityCard({ facility: f, compact = false }) {
   // vworld 리버스 지오코딩 — 좌표 기준 지번(동단위) 주소. env 연동 시 표시(미연동 시 null → 공개주소/시군구 폴백)
@@ -30,6 +31,16 @@ export default function FacilityCard({ facility: f, compact = false }) {
 
       <h3>{f.name}</h3>
       {f.name_en && <div className="name-en">{f.name_en}</div>}
+
+      {(() => {
+        const b = blurbFor(f)
+        return (
+          <div className={`fac-blurb${b.curated ? ' curated' : ''}`}>
+            <span className="fac-blurb-tag">{b.curated ? '코멘트' : '요약'}</span>
+            <p>{b.text}</p>
+          </div>
+        )
+      })()}
 
       <div className="spec-grid">
         <div className="spec-cell">
@@ -77,8 +88,6 @@ export default function FacilityCard({ facility: f, compact = false }) {
           ) : null
         })()}
       </div>
-
-      {f.note && <p className="note">{f.note}</p>}
 
       <div className="source">
         출처: {f.source_type}
