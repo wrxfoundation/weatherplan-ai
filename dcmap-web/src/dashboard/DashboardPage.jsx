@@ -163,8 +163,8 @@ export default function DashboardPage() {
                 <span className="hbar-label">{k}</span>
                 <span className="hbar-track">
                   <span
-                    className="hbar-fill"
-                    style={{ width: `${(Math.abs(v) / maxLand) * 100}%`, background: v >= 0 ? 'var(--accent)' : 'var(--amber)' }}
+                    className={`hbar-fill${v < 0 ? ' neg' : ''}`}
+                    style={{ width: `${(Math.abs(v) / maxLand) * 100}%` }}
                   />
                 </span>
                 <span className="hbar-value">{v >= 0 ? '+' : ''}{v}%</span>

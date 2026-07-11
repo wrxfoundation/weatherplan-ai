@@ -12,12 +12,8 @@ function SignedBar({ rate, maxAbs }) {
   return (
     <span className="hbar-track">
       <span
-        className="hbar-fill"
-        style={{
-          width: `${Math.max((Math.abs(rate) / maxAbs) * 100, 2)}%`,
-          background: rate >= 0 ? undefined : 'var(--amber)',
-          boxShadow: 'none',
-        }}
+        className={`hbar-fill${rate < 0 ? ' neg' : ''}`}
+        style={{ width: `${Math.max((Math.abs(rate) / maxAbs) * 100, 2)}%` }}
       />
     </span>
   )
