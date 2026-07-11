@@ -94,6 +94,23 @@ export const KEPCO_REGION = {
   note: '전국 합계 150호 · 계약전력 1,986MW — 수도권(서울·인천·경기) 90호 1,403MW = 계약전력 기준 71%. 한전 지역본부 구분(대전충남·광주전남 등 묶음), KEEI 추정 1,913MW와 정합하는 계약전력 기준 공식 단면.',
 }
 
+// 수도권 DC 시장 최신 단면 — Cushman & Wakefield / KDCC "Korea DC Market Report 2H 2025"
+// 스코프: 수도권 메이저 운영사(하이퍼스케일·코로·엣지·통신사), 캡티브·ICT 제외 — 165개소(전국 500㎡+)와 스코프 다름
+export const MARKET_2025H2 = {
+  asOf: '2025 하반기',
+  source: 'Cushman & Wakefield · KDCC, Korea Data Centre Market Report 2H 2025',
+  kpi: [
+    { value: '601', unit: 'MW', label: '수도권 운영 용량', sub: '2H 2025 · 전년比 +16%' },
+    { value: '921', unit: 'MW', label: '개발 파이프라인', sub: '전년比 +43% · UC 223 / 계획 698' },
+    { value: '25 / 55', unit: '', label: '운영사 / 데이터센터', sub: '수도권 메이저 기준' },
+    { value: '31', unit: '%', label: '기타권역 파이프라인 비중', sub: '탈중심화 가속' },
+  ],
+  note:
+    '수도권 전력 가용성 제한·높은 토지비로 개발 탈중심화 가속(기타권역 파이프라인 31%). 공실률 6.9%. 아시아 건설단가 한국 $9.0/W. OpenAI Stargate(삼성·SK하이닉스·SKT·삼성SDS)·AWS 50억달러·워버그핀커스 용인 등 대형 투자 유입.',
+  policy:
+    '2025.11 계통영향평가 개편 — 적정전압 필수·비기술(지역수용성·정책부합) 평가 강화·입지별 최대 ±15점 가감점(수도권 억제)·자가발전/에너지효율 의무 정량화·기술검토비 신설. 2025.9 국가기간 전력망 확충 특별법 시행(국무총리 산하 위원회·인허가 간소화·환경영향평가 특례) — 비수도권 개발 신속 지원.',
+}
+
 export const CUSTOMERS = {
   title: '상업용 DC 평균 입주 고객 수 (2023)',
   bars: [
