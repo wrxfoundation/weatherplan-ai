@@ -129,6 +129,7 @@ export default function MapPage({ power = false }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const rawMw = Number.parseFloat(searchParams.get('min_mw'))
   const minMw = Number.isFinite(rawMw) && rawMw > 0 ? rawMw : null
+  const nonCap = searchParams.get('noncap') === '1' // 관문 유리(비수도권·±15점 가점 권역)
   const q = searchParams.get('q') ?? ''
 
   const [statuses, setStatuses] = useState(() => new Set())
@@ -166,8 +167,8 @@ export default function MapPage({ power = false }) {
   const pointMarkerRef = useRef(null)
 
   const filtered = useMemo(
-    () => applyFilters(FACILITIES, { statuses, type, sido, minMw, q }),
-    [statuses, type, sido, minMw, q],
+    () => applyFilters(FACILITIES, { statuses, type, sido, minMw, q, nonCap }),
+    [statuses, type, sido, minMw, q, nonCap],
   )
   const totalMw = useMemo(() => filtered.reduce((s, f) => s + (f.power_mw_public ?? 0), 0), [filtered])
   const statusCounts = useMemo(() => {
@@ -522,6 +523,11 @@ export default function MapPage({ power = false }) {
         minMw={minMw}
         onClearMw={() => {
           searchParams.delete('min_mw')
+          setSearchParams(searchParams, { replace: true })
+        }}
+        nonCap={nonCap}
+        onClearNonCap={() => {
+          searchParams.delete('noncap')
           setSearchParams(searchParams, { replace: true })
         }}
         showLabels={showLabels}

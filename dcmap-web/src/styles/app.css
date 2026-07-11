@@ -338,6 +338,14 @@ a {
   box-shadow: var(--glass-specular-soft), 0 0 11px color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
+/* 관문 유리(비수도권) 칩 — 도구·데이터 톤(green)으로 용량 칩과 구분 */
+.filterbar .mw-chip.gate-chip {
+  border-color: color-mix(in srgb, var(--green) 55%, var(--line));
+  background: color-mix(in srgb, var(--green) 15%, var(--glass-surface-strong));
+  color: var(--text);
+  box-shadow: var(--glass-specular-soft), 0 0 11px color-mix(in srgb, var(--green) 12%, transparent);
+}
+
 /* 해제 ×는 자체 원형 아일랜드 (btn-arrow 문법과 통일) */
 .filterbar .mw-chip button {
   display: inline-flex;

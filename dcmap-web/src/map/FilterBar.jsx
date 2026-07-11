@@ -15,6 +15,8 @@ export default function FilterBar({
   onSido,
   minMw,
   onClearMw,
+  nonCap,
+  onClearNonCap,
   showLabels,
   onToggleLabels,
   showPlants,
@@ -117,6 +119,14 @@ export default function FilterBar({
         <span className="mw-chip">
           필요 용량 ≥ {minMw} MW
           <button type="button" onClick={onClearMw} aria-label="용량 필터 해제">
+            ×
+          </button>
+        </span>
+      )}
+      {nonCap && (
+        <span className="mw-chip gate-chip" title="계통영향평가 ±15점 가점·AIDC 특별법 면제 권역(비수도권)">
+          관문 유리 · 비수도권
+          <button type="button" onClick={onClearNonCap} aria-label="비수도권 필터 해제">
             ×
           </button>
         </span>
