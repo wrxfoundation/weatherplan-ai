@@ -17,8 +17,17 @@ import NationalInfrastructure from './articles/NationalInfrastructure.jsx'
 import UtilityAcquisition from './articles/UtilityAcquisition.jsx'
 import OceanDatacenter from './articles/OceanDatacenter.jsx'
 import Market2025H2 from './articles/Market2025H2.jsx'
+import LandingEdge from './articles/LandingEdge.jsx'
 
 const ARTICLES = {
+  'landing-edge': {
+    component: LandingEdge,
+    sources: [
+      '수도권 계통 포화·신규 송변전 리드타임(7년+): 한전 송변전 건설 정보공개 플랫폼·전력계통 공개 보도 종합 — AI InfraMap 자체 정리',
+      '해저케이블 육양국(부산 송정·거제 등)·글로벌 랜딩에지 사례(마르세유·버지니아 비치): 공개 해저케이블 지도·산업 공개 자료 기반 자체 분석 — 콘텐츠 등급 ④참고·인사이트',
+      '±15점·비수도권 면제: 기후에너지환경부 공고 제2025-139호·AIDC 특별법 / 2025 신규 발전 설치 비수도권 86.5%: data/new_plants_2025_v0.json',
+    ],
+  },
   'power-track-40mw': {
     component: PowerTrack40mw,
     sources: [
