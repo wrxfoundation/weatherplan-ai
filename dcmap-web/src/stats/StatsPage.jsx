@@ -10,6 +10,7 @@ import {
   GEN_RECENT_BY_SIDO,
   GEN_RECENT_NONCAPITAL_PCT,
 } from '../data/genLicenses.js'
+import { CHP_STATS, CHP_BY_OP, CHP_TOP_PLANTS, CHP_META } from '../data/chpPlants.js'
 
 const TITLE = '국내 데이터센터 통계 — 수도권 집중과 전력 수요 · 명당 AI'
 const DESC =
@@ -175,6 +176,31 @@ export default function StatsPage() {
           <p className="chart-note" style={{ opacity: 0.7 }}>
             {GEN_PIPELINE.source} · 누적 {GEN_LICENSE_META.total.toLocaleString()}건
           </p>
+        </div>
+
+        <div className="calc-card">
+          <div className="chart-title">
+            집단에너지(열병합) 발전 설비 — {CHP_STATS.count}곳 · {CHP_STATS.totalMw.toLocaleString()}MW
+          </div>
+          <p className="chart-note">
+            열병합·복합화력 {CHP_STATS.count}곳의 발전용량 합계 {CHP_STATS.totalMw.toLocaleString()}MW 중{' '}
+            <strong>
+              {CHP_STATS.new2025Count}곳({CHP_STATS.new2025Mw.toLocaleString()}MW)이 2025년 공급 개시
+            </strong>{' '}
+            — 신도시·산단 열수요와 붙은 LNG-열병합 신설 붐이 뚜렷하다. 데이터센터 전원·계통 맥락의 공급측 단면(집단에너지는
+            도심·산단 근접 분산전원).
+          </p>
+          <HBars
+            title="발전사별 발전용량 상위 (MW)"
+            bars={CHP_BY_OP.slice(0, 7).map((o) => ({ label: o.op, value: o.mw }))}
+            unit="MW"
+          />
+          <HBars
+            title="단일 발전소 발전용량 상위 (MW)"
+            bars={CHP_TOP_PLANTS.slice(0, 6).map((p) => ({ label: `${p.plant} (${p.loc})`, value: Math.round(p.mw) }))}
+            unit="MW"
+            note={`${CHP_META.source} · 관리소는 비공식 지명이라 개별 좌표 미부여(맵 미배치).`}
+          />
         </div>
 
         <div className="calc-card">
