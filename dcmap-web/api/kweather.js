@@ -14,7 +14,8 @@
  */
 const DEFAULT_BASE = 'https://gateway.kweather.co.kr:8443'
 const SENSORS = '/weather/w3/v2/kw-sensors'
-const DAY_LABEL = ['오늘', '내일', '모레', '+3일']
+const DAY_LABEL = ['오늘', '내일', '모레', '+3일', '+4일', '+5일', '+6일']
+const MAX_DAYS = 7
 const WICON_TEXT = { 1: '맑음', 2: '구름조금', 3: '구름많음', 4: '흐림', 5: '비', 6: '비/눈', 7: '눈' }
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 
@@ -113,7 +114,7 @@ function daysFromHourly(d) {
     const iv = Array.isArray(icons) ? num(icons[i]) : undefined
     if (iv != null) g.ic.push(iv)
   }
-  const days = [...byDay.entries()].slice(0, 4).map(([, g], i) => ({
+  const days = [...byDay.entries()].slice(0, MAX_DAYS).map(([, g], i) => ({
     label: DAY_LABEL[i] ?? `+${i}일`,
     tmax: g.t.length ? Math.max(...g.t) : undefined,
     tmin: g.t.length ? Math.min(...g.t) : undefined,
@@ -143,11 +144,21 @@ export default async function handler(req, res) {
     const base = (process.env.KWEATHER_API_BASE || DEFAULT_BASE).replace(/\/$/, '')
     const auth = `api_key=${encodeURIComponent(key)}`
     const gpsQ = `lat=${lat}&lon=${lng}&${auth}`
-    const sensor = kind === 'current' ? 'kw-odam1' : 'kw-3d24h1'
+    // 예보는 7일(kw-7d24h1) 우선, 실패 시 3일(kw-3d24h1) — Wellbian 센서 카탈로그
+    const candidates = kind === 'current' ? ['kw-odam1'] : ['kw-7d24h1', 'kw-3d24h1']
 
     // ① 센서에 GPS 직접 질의 (kw-gis-gps가 GPS 직접 응답인 것으로 확인된 게이트웨이 문법)
-    let raw = await getJson(`${base}${SENSORS}/${sensor}?${gpsQ}`)
-    let block = raw?._status ? null : dataBlock(raw)
+    let raw = null
+    let block = null
+    let sensor = candidates[0]
+    for (const s of candidates) {
+      raw = await getJson(`${base}${SENSORS}/${s}?${gpsQ}`)
+      block = raw?._status ? null : dataBlock(raw)
+      if (block) {
+        sensor = s
+        break
+      }
+    }
 
     // ② GPS 시계열(kw-gis-gps) — 코드 해석·최후 폴백 재료
     let gps = null
@@ -189,7 +200,7 @@ export default async function handler(req, res) {
         const maxT = d.maxTemp ?? []
         if (maxT.length || rainP.length) {
           const days = []
-          for (let i = 0; i < Math.min(4, Math.max(rainP.length, maxT.length)); i++) {
+          for (let i = 0; i < Math.min(MAX_DAYS, Math.max(rainP.length, maxT.length)); i++) {
             days.push({ label: DAY_LABEL[i] ?? `+${i}일`, tmax: num(maxT[i]), tmin: num((d.minTemp ?? [])[i]), rainProb: num(rainP[i]), sky: WICON_TEXT[num((d.wIcon ?? [])[i])] })
           }
           res.status(200).json({ available: true, days, rain: days.some((x) => (x.rainProb ?? 0) >= 60), timestamp: block.timestamp })

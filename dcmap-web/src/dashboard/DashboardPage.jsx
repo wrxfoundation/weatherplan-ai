@@ -15,6 +15,22 @@ const DESC =
 const ARC = 'M 12 66 A 50 50 0 0 1 112 66'
 const ARC_LEN = Math.PI * 50
 
+/* 대시보드 리스트 공통 — 기본 N행 + "전체 보기" 확장 토글 (풀리스트는 카드 안에서 펼침) */
+function ExpandableList({ items, initial = 6, render, unit = '건' }) {
+  const [open, setOpen] = useState(false)
+  const shown = open ? items : items.slice(0, initial)
+  return (
+    <>
+      {shown.map(render)}
+      {items.length > initial && (
+        <button type="button" className="btn list-expand" onClick={() => setOpen((v) => !v)}>
+          {open ? '접기 ▲' : `전체 ${items.length.toLocaleString()}${unit} 상세보기 ▼`}
+        </button>
+      )}
+    </>
+  )
+}
+
 function Gauge({ pct, label, sub }) {
   const on = (ARC_LEN * pct) / 100
   return (
@@ -76,7 +92,7 @@ export default function DashboardPage() {
         regionMw.set(f.sido, (regionMw.get(f.sido) ?? 0) + f.power_mw_public)
       }
     }
-    const regions = [...regionMw.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6)
+    const regions = [...regionMw.entries()].sort((a, b) => b[1] - a[1])
     const pipeline = FACILITIES.filter((f) => f.status === 'construction').sort(
       (a, b) => (b.power_mw_public ?? -1) - (a.power_mw_public ?? -1),
     )
@@ -143,33 +159,43 @@ export default function DashboardPage() {
 
           <section className="calc-card">
             <div className="chart-title">CAPACITY DISTRIBUTION — 지역별 공개 전력</div>
-            {d.regions.map(([sido, mw]) => (
-              <div key={sido} className="hbar-row">
-                <span className="hbar-label">{sido}</span>
-                <span className="hbar-track">
-                  <span className="hbar-fill" style={{ width: `${(mw / maxRegion) * 100}%` }} />
-                </span>
-                <span className="hbar-value">{mw.toLocaleString()}MW</span>
-              </div>
-            ))}
+            <ExpandableList
+              items={d.regions}
+              initial={6}
+              unit="개 지역"
+              render={([sido, mw]) => (
+                <div key={sido} className="hbar-row">
+                  <span className="hbar-label">{sido}</span>
+                  <span className="hbar-track">
+                    <span className="hbar-fill" style={{ width: `${(mw / maxRegion) * 100}%` }} />
+                  </span>
+                  <span className="hbar-value">{mw.toLocaleString()}MW</span>
+                </div>
+              )}
+            />
             <p className="chart-note">공개 용량(power_mw_public) 확인 시설만 집계 — 계획·건설 포함.</p>
           </section>
 
           <section className="calc-card">
             <div className="chart-title">CONSTRUCTION PIPELINE — 건설 중 {d.pipeline.length}곳</div>
             <div className="facility-list">
-              {d.pipeline.slice(0, 6).map((f) => (
-                <Link key={f.id} className="facility-row" to={`/dc/${slugOf(f)}`}>
-                  <span className="dot construction" />
-                  <span>
-                    <span className="name">{f.name}</span>
-                    <span className="meta">
-                      {f.sigungu ?? f.sido} · 목표 {f.year ?? '미상'}
-                      {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
+              <ExpandableList
+                items={d.pipeline}
+                initial={6}
+                unit="곳"
+                render={(f) => (
+                  <Link key={f.id} className="facility-row" to={`/dc/${slugOf(f)}`}>
+                    <span className="dot construction" />
+                    <span>
+                      <span className="name">{f.name}</span>
+                      <span className="meta">
+                        {f.sigungu ?? f.sido} · 목표 {f.year ?? '미상'}
+                        {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
+                      </span>
                     </span>
-                  </span>
-                </Link>
-              ))}
+                  </Link>
+                )}
+              />
             </div>
             <p className="chart-note">공정률은 사업자 미공개 — 목표 연도 기준. 이벤트 타임라인은 D2 어댑터 가동 후.</p>
           </section>
@@ -204,17 +230,21 @@ export default function DashboardPage() {
             <div className="chart-title">최근 DC 공시 — DART 전자공시 (D2)</div>
             {filings?.available ? (
               <div className="facility-list">
-                {filings.filings.slice(0, 6).map((f, i) => (
-                  <a key={i} className="facility-row" href={f.url} target="_blank" rel="noreferrer">
-                    <span className="dot construction" />
-                    <span>
-                      <span className="name">{f.title}</span>
-                      <span className="meta">
-                        {f.corp} · {f.date}
+                <ExpandableList
+                  items={filings.filings}
+                  initial={6}
+                  render={(f, i) => (
+                    <a key={i} className="facility-row" href={f.url} target="_blank" rel="noreferrer">
+                      <span className="dot construction" />
+                      <span>
+                        <span className="name">{f.title}</span>
+                        <span className="meta">
+                          {f.corp} · {f.date}
+                        </span>
                       </span>
-                    </span>
-                  </a>
-                ))}
+                    </a>
+                  )}
+                />
               </div>
             ) : (
               <p className="chart-note">
@@ -228,18 +258,23 @@ export default function DashboardPage() {
             <div className="chart-title">발전설비 현황 — EPSIS/KPX (발전소 용량)</div>
             {epsis?.available ? (
               <>
-                {(epsis.byFuel || []).slice(0, 8).map((f) => {
-                  const max = Math.max(...epsis.byFuel.map((x) => x.mw))
-                  return (
-                    <div key={f.fuel} className="hbar-row">
-                      <span className="hbar-label">{f.fuel}</span>
-                      <span className="hbar-track">
-                        <span className="hbar-fill" style={{ width: `${(f.mw / max) * 100}%` }} />
-                      </span>
-                      <span className="hbar-value">{f.mw.toLocaleString()}MW</span>
-                    </div>
-                  )
-                })}
+                <ExpandableList
+                  items={epsis.byFuel || []}
+                  initial={8}
+                  unit="개 연료원"
+                  render={(f) => {
+                    const max = Math.max(...epsis.byFuel.map((x) => x.mw))
+                    return (
+                      <div key={f.fuel} className="hbar-row">
+                        <span className="hbar-label">{f.fuel}</span>
+                        <span className="hbar-track">
+                          <span className="hbar-fill" style={{ width: `${(f.mw / max) * 100}%` }} />
+                        </span>
+                        <span className="hbar-value">{f.mw.toLocaleString()}MW</span>
+                      </div>
+                    )
+                  }}
+                />
                 <p className="chart-note">
                   연료원별 설비용량 — {epsis.count?.toLocaleString?.() || 0}개 설비{' '}
                   {epsis.totalMw ? `· 합계 ${epsis.totalMw.toLocaleString()}MW` : ''}. 발전소 레이어 capacity 정합 소스(D3).
@@ -297,17 +332,24 @@ export default function DashboardPage() {
             {trading?.available && trading.byFuel?.length ? (
               <>
                 {(() => {
-                  const bars = trading.byFuel.filter((f) => f.tradedMwh != null).slice(0, 8)
+                  const bars = trading.byFuel.filter((f) => f.tradedMwh != null)
                   const max = Math.max(...bars.map((f) => f.tradedMwh), 1)
-                  return bars.map((f) => (
-                    <div key={f.fuel} className="hbar-row">
-                      <span className="hbar-label">{f.fuel}</span>
-                      <span className="hbar-track">
-                        <span className="hbar-fill" style={{ width: `${(f.tradedMwh / max) * 100}%` }} />
-                      </span>
-                      <span className="hbar-value">{f.tradedMwh.toLocaleString()}MWh</span>
-                    </div>
-                  ))
+                  return (
+                    <ExpandableList
+                      items={bars}
+                      initial={8}
+                      unit="개 연료원"
+                      render={(f) => (
+                        <div key={f.fuel} className="hbar-row">
+                          <span className="hbar-label">{f.fuel}</span>
+                          <span className="hbar-track">
+                            <span className="hbar-fill" style={{ width: `${(f.tradedMwh / max) * 100}%` }} />
+                          </span>
+                          <span className="hbar-value">{f.tradedMwh.toLocaleString()}MWh</span>
+                        </div>
+                      )}
+                    />
+                  )
                 })()}
                 <p className="chart-note">
                   연료원별 실제 전력거래량{trading.asOf ? ` · ${trading.asOf}` : ''}
