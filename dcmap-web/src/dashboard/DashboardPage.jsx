@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf } from '../data/facilities.js'
-import { LAND_PRICE } from '../data/landPrice.js'
+import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
+import { LAND_DONG } from '../data/landPriceDong.js'
 
 const TITLE = '대시보드 — 명당 AI 한국 데이터센터 인텔리전스'
 const DESC =
@@ -58,6 +59,10 @@ export default function DashboardPage() {
     const landRanked = Object.entries(LAND_PRICE.entries)
       .filter(([k]) => k.includes(' ')) // 시군구만
       .sort((a, b) => b[1] - a[1])
+    const dongAll = Object.entries(LAND_DONG.entries).flatMap(([k, v]) =>
+      v.dongs.map((d) => ({ sigungu: k, ...d })),
+    )
+    dongAll.sort((a, b) => b.rate - a.rate)
     return {
       by,
       total: FACILITIES.length,
@@ -67,6 +72,9 @@ export default function DashboardPage() {
       pipeline,
       landTop: landRanked.slice(0, 4),
       landBottom: landRanked.slice(-4).reverse(),
+      dongHot: dongAll[0],
+      dongCold: dongAll[dongAll.length - 1],
+      dongCount: dongAll.length,
     }
   }, [])
 
@@ -157,6 +165,12 @@ export default function DashboardPage() {
               </div>
             ))}
             <p className="chart-note">상위 4 · 하위 4 — DC 입지 시군구만. 음수는 amber. 이벤트-지가 정렬 시계열은 축적 중.</p>
+            {d.dongHot && (
+              <p className="chart-note">
+                동 단위({d.dongCount}개 구역) 최고 <strong>{d.dongHot.sigungu} {d.dongHot.name} {fmtRate(d.dongHot.rate)}</strong> ·
+                최저 <strong>{d.dongCold.sigungu} {d.dongCold.name} {fmtRate(d.dongCold.rate)}</strong> — 시설 상세에서 구역별 확인.
+              </p>
+            )}
           </section>
         </div>
 
