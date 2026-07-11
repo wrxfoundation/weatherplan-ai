@@ -1906,6 +1906,68 @@ a {
   flex-shrink: 0;
 }
 
+/* ---------- 시설 비교 (/compare) ---------- */
+.cmp-scroll {
+  overflow-x: auto;
+}
+
+.cmp-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: var(--text-body);
+}
+
+.cmp-table th,
+.cmp-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.cmp-table thead th {
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+}
+
+.cmp-table tbody th {
+  color: var(--grey);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  width: 160px;
+}
+
+.cmp-table select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  background-color: color-mix(in srgb, var(--navy-deep) 68%, transparent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%237e90ac' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  height: 34px;
+  padding: 0 28px 0 10px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  box-shadow: var(--glass-specular-soft);
+}
+
+.cmp-detail {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--accent);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+}
+
+.cmp-empty {
+  color: var(--grey);
+}
+
 /* ---------- LAND PULSE 리스트 (/land) ---------- */
 .filterbar-inline {
   display: flex;

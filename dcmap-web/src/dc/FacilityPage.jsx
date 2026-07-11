@@ -220,13 +220,16 @@ export default function FacilityPage() {
             </article>
           )
         })()}
-        {SIDO_SLUGS[facility.sido] && (
-          <div className="card-actions">
+        <div className="card-actions">
+          {SIDO_SLUGS[facility.sido] && (
             <Link className="btn" to={`/region/${SIDO_SLUGS[facility.sido]}`}>
-              {facility.sido} 지역 시설 전체 보기
+              {facility.sido} 지역 전체
             </Link>
-          </div>
-        )}
+          )}
+          <Link className="btn" to={`/compare?ids=${slugOf(facility)}`}>
+            다른 시설과 비교
+          </Link>
+        </div>
         <p className="footer-note">
           본 페이지의 정보는 사업자 공식 발표·언론 보도·정부 공고 등 공개 소스만을 기반으로 하며, 시군구/시도 수준
           좌표는 해당 행정구역 중심점입니다. ‘검증 필요’ 표시 항목은 확인 중인 정보입니다.

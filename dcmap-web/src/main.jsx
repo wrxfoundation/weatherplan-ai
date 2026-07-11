@@ -17,6 +17,7 @@ const InsightsIndexPage = lazy(() => import('./insights/InsightsIndexPage.jsx'))
 const DashboardPage = lazy(() => import('./dashboard/DashboardPage.jsx'))
 const InsightPage = lazy(() => import('./insights/InsightPage.jsx'))
 const LandPulsePage = lazy(() => import('./land/LandPulsePage.jsx'))
+const ComparePage = lazy(() => import('./compare/ComparePage.jsx'))
 
 /* SPA 라우트 전환 시 스크롤 최상단 — 긴 페이지에서 이전 스크롤 위치가 남는 UX 문제 방지 */
 function ScrollToTop() {
@@ -50,6 +51,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/stats" element={<StatsPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/land" element={<LandPulsePage />} />
+          <Route path="/compare" element={<ComparePage />} />
           <Route path="/insights" element={<InsightsIndexPage />} />
           <Route path="/insights/:slug" element={<InsightPage />} />
           <Route path="*" element={<MapPage />} />
