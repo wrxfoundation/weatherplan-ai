@@ -4,6 +4,12 @@
   "buildCommand": "next build",
   "devCommand": "next dev",
   "installCommand": "npm install",
+  "git": {
+    "deploymentEnabled": {
+      "claude/upbeat-thompson-ke0gz2": false,
+      "koreaapi-standalone": false
+    }
+  },
   "regions": ["icn1"],
   "functions": {
     "pages/api/claude.js": {
