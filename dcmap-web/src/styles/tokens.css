@@ -31,7 +31,10 @@
   --status-construction: var(--orange);
   --status-planned: #64748b;
 
-  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+  /* 영문·숫자는 Avenir 우선 (라틴 글리프만 커버 → 한글은 Pretendard로 폴스루)
+   * Avenir는 상용 폰트 — 시스템 설치분(macOS/iOS) 사용, 미설치 환경은 Nunito Sans 웹폰트 폴백 */
+  --font-latin: 'Avenir Next', Avenir, 'Nunito Sans';
+  --font-sans: var(--font-latin), 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
 
   /* 타이포그래피 스케일 — 모든 컴포넌트는 이 변수만 사용 (임의 px 금지)
    * 위계: display(숫자 강조) > h1 > title(섹션/카드 제목) > body(본문 UI) > sm(메타·보조) > xs(캡션·배지) */

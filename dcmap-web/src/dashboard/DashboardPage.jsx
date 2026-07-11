@@ -164,7 +164,10 @@ export default function DashboardPage() {
                 <span className="hbar-value">{v >= 0 ? '+' : ''}{v}%</span>
               </div>
             ))}
-            <p className="chart-note">상위 4 · 하위 4 — DC 입지 시군구만. 음수는 amber. 이벤트-지가 정렬 시계열은 축적 중.</p>
+            <p className="chart-note">
+              상위 4 · 하위 4 — DC 입지 시군구만. 음수는 amber.{' '}
+              <Link to="/land">시·군·구·동 전체 리스트 →</Link>
+            </p>
             {d.dongHot && (
               <p className="chart-note">
                 동 단위({d.dongCount}개 구역) 최고 <strong>{d.dongHot.sigungu} {d.dongHot.name} {fmtRate(d.dongHot.rate)}</strong> ·
