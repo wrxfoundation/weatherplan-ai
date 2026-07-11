@@ -116,7 +116,7 @@ export default async function handler(req, res) {
       radiusKm: 2,
       scope: 'SGIS 반경 2km 인구/가구(추정 통계)',
     })
-  } catch {
-    res.status(200).json({ available: false, reason: 'upstream_error' })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
   }
 }

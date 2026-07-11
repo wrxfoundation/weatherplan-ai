@@ -83,7 +83,7 @@ export default async function handler(req, res) {
       return
     }
     res.status(200).json({ available: true, filings: filings.slice(0, 20), window_days: days })
-  } catch {
-    res.status(200).json({ available: false, reason: 'upstream_error' })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
   }
 }

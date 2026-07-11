@@ -111,7 +111,7 @@ export default async function handler(req, res) {
       unit: kind === 'gas' ? 'MJ' : 'kWh',
       source: '국토부 건축HUB 건물에너지 (data.go.kr)',
     })
-  } catch {
-    res.status(200).json({ available: false, reason: 'upstream_error' })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
   }
 }
