@@ -22,8 +22,8 @@ async function fetchJson(url) {
 
 const q = (lat, lng) => `lat=${lat.toFixed(5)}&lng=${lng.toFixed(5)}`
 
-/** 케이웨더 현재 기상 — { temp, sky, humidity, pm10 } | null */
-export const weatherFor = (lat, lng) => fetchJson(`/api/weather?${q(lat, lng)}`)
+/** 케이웨더 오늘 예보 요약 — { temp(최고), tempMin, sky, rainProb, snow } | null */
+export const weatherFor = (lat, lng) => fetchJson(`/api/kweather?kind=current&${q(lat, lng)}`)
 
 /** vworld 리버스 지오코딩 — { parcel, road } | null */
 export const revgeoFor = (lat, lng) => fetchJson(`/api/revgeo?${q(lat, lng)}`)
@@ -31,8 +31,8 @@ export const revgeoFor = (lat, lng) => fetchJson(`/api/revgeo?${q(lat, lng)}`)
 /** vworld 용도지역 (토지축 v1 근거) — { uses: string[] } | null */
 export const landUseFor = (lat, lng) => fetchJson(`/api/landuse?${q(lat, lng)}`)
 
-/** 케이웨더 초단기예보 H+1~6 — { hours:[{temp,sky}], rain } | null */
-export const forecastFor = (lat, lng) => fetchJson(`/api/forecast?${q(lat, lng)}`)
+/** 케이웨더 3일 일별예보 — { days:[{label,tmax,tmin,rainProb,sky}], rain } | null */
+export const forecastFor = (lat, lng) => fetchJson(`/api/kweather?kind=forecast&${q(lat, lng)}`)
 
 /** 한전 분산전원 계통 여유용량 — { availableMw, cumulativeMw, scope } | null */
 export const headroomFor = (lat, lng) => fetchJson(`/api/headroom?${q(lat, lng)}`)
