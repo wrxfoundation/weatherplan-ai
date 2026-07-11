@@ -922,6 +922,29 @@ a {
   filter: drop-shadow(0 0 5px color-mix(in srgb, var(--grey) 35%, transparent));
 }
 
+/* 공공 DC 마커 — 사각 아웃라인 + 公 (그린 계열과 구분되는 화이트-시안) */
+.pub-marker svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.pub-marker rect {
+  fill: color-mix(in srgb, var(--navy-deep) 80%, transparent);
+  stroke: color-mix(in srgb, var(--text) 55%, var(--accent));
+  stroke-width: 1.4;
+}
+
+.pub-marker text {
+  font-size: 10px;
+  font-weight: 700;
+  fill: color-mix(in srgb, var(--text) 75%, var(--accent));
+}
+
+.pub-marker {
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 30%, transparent));
+}
+
 .dc-marker {
   border-radius: 50%;
   border: 2px solid transparent;

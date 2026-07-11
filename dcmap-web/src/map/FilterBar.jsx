@@ -19,6 +19,8 @@ export default function FilterBar({
   onToggleLabels,
   showPlants,
   onTogglePlants,
+  showPublic,
+  onTogglePublic,
 }) {
   return (
     <div className="filterbar">
@@ -54,6 +56,15 @@ export default function FilterBar({
           title="대형 발전단지(원전·석탄) 레이어 — 발전 인프라 근접성 맥락 (DC 전원 매칭 아님)"
         >
           ⚡ 발전소
+        </button>
+        <button
+          type="button"
+          className={`chip ${showPublic ? 'on' : ''}`}
+          onClick={onTogglePublic}
+          aria-pressed={showPublic}
+          title="행정·공공기관 데이터센터 61곳 — 행안부 공공데이터(연면적 500㎡+), 좌표는 시군구 중심점"
+        >
+          公 공공
         </button>
       </div>
 

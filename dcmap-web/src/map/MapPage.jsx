@@ -9,7 +9,7 @@ import FilterBar from './FilterBar.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
-import { PLANTS } from '../data/plants.js'
+import { PLANTS, PUBLIC_DCS } from '../data/plants.js'
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 const TILE_ATTRIBUTION =
@@ -84,6 +84,23 @@ function plantCard(p) {
   </div>`
 }
 
+/* 공공 DC 마커 — 사각 아웃라인 + 公 (행안부 공공데이터, 시군구청 중심점) */
+const publicIcon = () =>
+  L.divIcon({
+    className: 'pub-marker',
+    html: `<svg viewBox="0 0 18 18"><rect x="1.5" y="1.5" width="15" height="15" rx="3.5"/><text x="9" y="13" text-anchor="middle">公</text></svg>`,
+    iconSize: [18, 18],
+  })
+
+function publicCard(f) {
+  return `<div class="hc">
+    <div class="hc-head"><strong>${esc(f.name)}</strong></div>
+    <div class="hc-meta">${esc(f.org)}${f.parent && f.parent !== f.org ? ` (${esc(f.parent)})` : ''}</div>
+    <div class="hc-row">${esc(f.category)} · ${esc(f.sido)}${f.sigungu ? ' ' + esc(f.sigungu) : ''}</div>
+    <div class="hc-verify">행안부 공공데이터 · 좌표는 시군구 중심점</div>
+  </div>`
+}
+
 export default function MapPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const rawMw = Number.parseFloat(searchParams.get('min_mw'))
@@ -102,6 +119,8 @@ export default function MapPage() {
   const [denseLabels, setDenseLabels] = useState(false) // 줌 ≥ 13 → 그룹 개별 라벨 (미만은 대표 라벨)
   const [showPlants, setShowPlants] = useState(false) // 발전 인프라 레이어 (원전·석탄 대형 단지)
   const plantsLayerRef = useRef(null)
+  const [showPublic, setShowPublic] = useState(false) // 공공 DC 레이어 (행안부 운영시설 61곳)
+  const publicLayerRef = useRef(null)
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
@@ -191,6 +210,41 @@ export default function MapPage() {
       plantsLayerRef.current = g
     }
   }, [showPlants])
+
+  // 공공 DC 레이어 토글 — 같은 시군구 중심점 공유 다수라 동일 분산 규칙 적용
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (publicLayerRef.current) {
+      map.removeLayer(publicLayerRef.current)
+      publicLayerRef.current = null
+    }
+    if (showPublic) {
+      const g = L.layerGroup()
+      const groups = new Map()
+      for (const f of PUBLIC_DCS) {
+        const k = `${f.lat},${f.lng}`
+        if (!groups.has(k)) groups.set(k, [])
+        groups.get(k).push(f)
+      }
+      const SPREAD = 0.006
+      for (const group of groups.values()) {
+        group.forEach((f, gi) => {
+          let { lat, lng } = f
+          if (group.length > 1) {
+            const a = (2 * Math.PI * gi) / group.length
+            lat += SPREAD * Math.cos(a)
+            lng += (SPREAD * Math.sin(a)) / Math.cos((f.lat * Math.PI) / 180)
+          }
+          L.marker([lat, lng], { icon: publicIcon(), bubblingMouseEvents: false })
+            .bindTooltip(publicCard(f), { direction: 'top', offset: [0, -10], className: 'dc-hovercard', opacity: 1 })
+            .addTo(g)
+        })
+      }
+      g.addTo(map)
+      publicLayerRef.current = g
+    }
+  }, [showPublic])
 
   // 지점 분석 마커 (십자 링)
   useEffect(() => {
@@ -313,6 +367,8 @@ export default function MapPage() {
         onToggleLabels={() => setShowLabels((v) => !v)}
         showPlants={showPlants}
         onTogglePlants={() => setShowPlants((v) => !v)}
+        showPublic={showPublic}
+        onTogglePublic={() => setShowPublic((v) => !v)}
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />
