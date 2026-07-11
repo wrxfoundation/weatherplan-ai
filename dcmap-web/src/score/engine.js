@@ -60,7 +60,7 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true }) {
       key: 'risk',
       label: '리스크',
       max: 15,
-      items: [{ label: '군사·문화재·상수원·민원 프록시·재해', max: 15, points: null, pending: 'vworld·인구격자·재해연보' }],
+      items: [{ label: '군사·문화재·상수원·민원 프록시·침수/재해', max: 15, points: null, pending: '홍수위험지도(침수)·SGIS 인구격자·재난안전 재해연보 — 프록시 구현, env 연동 시 실점수화' }],
     },
     {
       key: 'network',

@@ -42,3 +42,6 @@ export const filingsRecent = () => fetchJson('/api/filings')
 
 /** EPSIS/KPX 발전설비현황 — { byFuel:[{fuel,mw}], facilities, totalMw } | null (연동 대기 시 null) */
 export const epsisCapacity = () => fetchJson('/api/epsis')
+
+/** 홍수위험지도 침수 위험 — { depthM, grade, floodType, scenario } | null (리스크축 침수) */
+export const floodRiskFor = (lat, lng) => fetchJson(`/api/floodmap?${q(lat, lng)}`)
