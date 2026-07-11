@@ -41,13 +41,13 @@ export const headroomFor = (lat, lng) => fetchJson(`/api/headroom?${q(lat, lng)}
 export const filingsRecent = () => fetchJson('/api/filings')
 
 /** EPSIS/KPX 발전설비현황 — { byFuel:[{fuel,mw}], facilities, totalMw } | null (연동 대기 시 null) */
-export const epsisCapacity = () => fetchJson('/api/epsis')
+export const epsisCapacity = () => fetchJson('/api/power?src=epsis')
 
 /** KPX 전력수급예보 — { asOf, supplyMw, peakMw, reserveMw, reservePct, rows } | null (연동 대기 시 null) */
-export const supplyForecast = () => fetchJson('/api/supply')
+export const supplyForecast = () => fetchJson('/api/power?src=supply')
 
 /** KPX 전력거래실적 — { asOf, byFuel:[{fuel,capacityMw,tradedMwh}], totalMwh } | null (연동 대기 시 null) */
-export const tradingMix = () => fetchJson('/api/trading')
+export const tradingMix = () => fetchJson('/api/power?src=trading')
 
 /** 건축HUB 지번별 전기사용량 — { usage, unit, useYm } | null. 법정동코드+번지+사용년월 필요 */
 export const bldEnergyFor = ({ sigunguCd, bjdongCd, bun, ji, useYm }) =>
