@@ -46,14 +46,19 @@ export default async function handler(req, res) {
     const proto = (req.headers['x-forwarded-proto'] || 'https').split(',')[0]
     const host = req.headers['x-forwarded-host'] || req.headers.host
     const base = `${proto}://${host}`
-    const probed = await Promise.all(
-      list.map(async (s) => {
-        if (!s.configured) return { ...s, available: false, reason: 'not_configured' }
-        const src = SOURCES.find((x) => x.key === s.key)
-        const p = await probeOne(base, src)
-        return { ...s, ...p }
-      }),
-    )
+    // 13개 동시 발사는 업스트림(data.go.kr 등) 과부하로 AbortError 오탐 유발 — 4개씩 배치
+    const probed = []
+    for (let i = 0; i < list.length; i += 4) {
+      const batch = await Promise.all(
+        list.slice(i, i + 4).map(async (s) => {
+          if (!s.configured) return { ...s, available: false, reason: 'not_configured' }
+          const src = SOURCES.find((x) => x.key === s.key)
+          const p = await probeOne(base, src)
+          return { ...s, ...p }
+        }),
+      )
+      probed.push(...batch)
+    }
     res.status(200).json({ sources: probed, probed: true })
     return
   }

@@ -33,18 +33,31 @@ export default async function handler(req, res) {
     'https://api.vworld.kr/req/address?service=address&request=getAddress&version=2.0' +
     `&crs=epsg:4326&point=${lng},${lat}&format=json&type=both&zipcode=false&simple=false&key=${key}&domain=${encodeURIComponent(vwDomain)}`
 
-  try {
+  // vworld는 간헐 소켓 리셋(UND_ERR_SOCKET)이 있어 1회 재시도
+  const doFetch = async () => {
     const ctrl = new AbortController()
     const t = setTimeout(() => ctrl.abort(), 8000)
-    const r = await fetch(url, {
-      signal: ctrl.signal,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-        Referer: `https://${vwDomain}/`,
-        Accept: 'application/json',
-      },
-    })
-    clearTimeout(t)
+    try {
+      return await fetch(url, {
+        signal: ctrl.signal,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+          Referer: `https://${vwDomain}/`,
+          Accept: 'application/json',
+        },
+      })
+    } finally {
+      clearTimeout(t)
+    }
+  }
+  try {
+    let r
+    try {
+      r = await doFetch()
+    } catch {
+      await new Promise((ok) => setTimeout(ok, 400))
+      r = await doFetch()
+    }
     // ?debug=1 → vworld 원응답 상태·본문 앞부분(주소 정보뿐, 시크릿 아님) — 502 원인 진단
     if (req.query.debug) {
       const text = await r.text().catch(() => '')

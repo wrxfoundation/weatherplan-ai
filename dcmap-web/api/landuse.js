@@ -42,18 +42,31 @@ export default async function handler(req, res) {
     'https://api.vworld.kr/req/data?service=data&version=2.0&request=GetFeature&format=json' +
     `&size=5&page=1&data=LT_C_UQ111&geomFilter=POINT(${lng} ${lat})&key=${key}&domain=${encodeURIComponent(vwDomain)}`
 
-  try {
+  // vworld는 간헐 소켓 리셋(UND_ERR_SOCKET)이 있어 1회 재시도
+  const doFetch = async () => {
     const ctrl = new AbortController()
     const t = setTimeout(() => ctrl.abort(), 8000)
-    const r = await fetch(url, {
-      signal: ctrl.signal,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-        Referer: `https://${vwDomain}/`,
-        Accept: 'application/json',
-      },
-    })
-    clearTimeout(t)
+    try {
+      return await fetch(url, {
+        signal: ctrl.signal,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+          Referer: `https://${vwDomain}/`,
+          Accept: 'application/json',
+        },
+      })
+    } finally {
+      clearTimeout(t)
+    }
+  }
+  try {
+    let r
+    try {
+      r = await doFetch()
+    } catch {
+      await new Promise((ok) => setTimeout(ok, 400))
+      r = await doFetch()
+    }
     if (!r.ok) {
       res.status(200).json({ available: false, reason: `upstream_${r.status}` })
       return

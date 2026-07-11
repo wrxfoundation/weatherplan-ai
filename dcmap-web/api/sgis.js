@@ -61,13 +61,14 @@ function pick(obj, names, depth = 0) {
 let tokenCache = { token: null, exp: 0 }
 async function getToken(key, secret) {
   const nowMs = Date.now()
-  if (tokenCache.token && tokenCache.exp > nowMs + 30000) return tokenCache.token
+  if (tokenCache.token && tokenCache.exp > nowMs + 30000) return { token: tokenCache.token }
   const body = await fetchJson(`${AUTH_URL}?consumer_key=${encodeURIComponent(key)}&consumer_secret=${encodeURIComponent(secret)}`)
-  const token = pick(body, ['accessToken', 'access_token'])
-  if (!token) return null
+  // SGIS 인증 응답: { errCd:0, errMsg:'Success', result:{ accessToken, accessTimeout } } — 토큰은 result 아래 중첩!
+  const token = body?.result?.accessToken ?? pick(body, ['accessToken', 'access_token'])
+  if (!token) return { token: null, errCd: body?.errCd, errMsg: body?.errMsg }
   // SGIS 토큰 기본 만료 4시간 — 보수적으로 3시간 캐시
   tokenCache = { token: String(token), exp: nowMs + 3 * 3600 * 1000 }
-  return tokenCache.token
+  return { token: tokenCache.token }
 }
 
 export default async function handler(req, res) {
@@ -88,9 +89,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const token = await getToken(key, secret)
+    const { token, errCd } = await getToken(key, secret)
     if (!token) {
-      res.status(200).json({ available: false, reason: 'auth_failed' })
+      // errCd 노출로 원인 구분: -100 인증정보 오류(키 값 확인) / -401 만료 등
+      res.status(200).json({ available: false, reason: `auth_failed${errCd != null ? `_${errCd}` : ''}` })
       return
     }
     const url = (process.env.SGIS_STATS_URL || DEFAULT_STATS_URL)
