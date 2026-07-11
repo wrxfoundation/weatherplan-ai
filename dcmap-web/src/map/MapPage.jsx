@@ -11,6 +11,7 @@ import SitePanel from '../score/SitePanel.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS } from '../data/genLicenses.js'
+import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor } from '../data/liveApi.js'
 
 const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ sido, lat, lng }))
@@ -501,9 +502,11 @@ export default function MapPage({ power = false }) {
     const bubble = GEN_PERMIT_BUBBLES.find((x) => x.sido === region)
     const dcs = FACILITIES.filter((f) => f.sido === region)
     const dcMw = dcs.reduce((s, f) => s + (f.power_mw_public ?? 0), 0)
+    const np2025 = NEW_PLANTS_2025.find((x) => x.sido === region) || null
     return {
       sido: region,
       gen: bubble || null,
+      new2025: np2025,
       headroomMw: headrooms?.[region] ?? null,
       dcCount: dcs.length,
       dcMw,
@@ -581,6 +584,19 @@ export default function MapPage({ power = false }) {
                         </>
                       ) : (
                         <span className="muted">허가 없음</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                    <div className="k">2025 신규 발전 설치 (설비용량·개수)</div>
+                    <div className="v">
+                      {regionInfo.new2025 ? (
+                        <>
+                          <strong>{Math.round(regionInfo.new2025.capacityKw / 1000).toLocaleString()} MW</strong>
+                          {` · ${regionInfo.new2025.count.toLocaleString()}개소`}
+                        </>
+                      ) : (
+                        <span className="muted">데이터 없음</span>
                       )}
                     </div>
                   </div>
