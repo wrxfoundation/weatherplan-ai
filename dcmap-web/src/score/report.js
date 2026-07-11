@@ -3,7 +3,7 @@
 import { STATUS_LABEL } from '../data/facilities.js'
 import { fmtRate } from '../data/landPrice.js'
 
-export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom }) {
+export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom, flood, pop, disaster }) {
   const L = []
   const now = new Date()
   L.push(`# AI InfraMap — 부지 적합도 간이 리포트 (v0)`)
@@ -11,7 +11,7 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   L.push(`- 지점: ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}`)
   if (addr?.parcel) L.push(`- 지번주소: ${addr.parcel}${addr.road ? ` (도로명: ${addr.road})` : ''}`)
   L.push(`- 입지 구분: ${nonCapital ? '비수도권' : '수도권'} (사용자 지정) · 필요 용량 ${mw}MW`)
-  L.push(`- 생성: ${now.toLocaleString('ko-KR')} · myeongdang-ai`)
+  L.push(`- 생성: ${now.toLocaleString('ko-KR')} · AI InfraMap`)
   if (typeof window !== 'undefined')
     L.push(`- 공유 링크: ${window.location.origin}/?site=${point.lat.toFixed(5)},${point.lng.toFixed(5)}`)
   L.push(``)
@@ -51,6 +51,29 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
     )
   } else {
     L.push(`- 연동 대기 — 한전 전력데이터 개방포털 분산전원연계 API (전력축 D3)`)
+  }
+  L.push(``)
+  L.push(`## 리스크 (침수·인구·재해)`)
+  if (flood?.available) {
+    L.push(
+      flood.grade === '해당없음' || flood.depthM === 0
+        ? `- 침수: 침수구역 외 · 위험 낮음 (홍수위험지도)`
+        : `- 침수: 위험 ${flood.grade}${flood.depthM != null ? ` · 침수심 ${flood.depthM}m` : ''}${flood.floodType ? ` · ${flood.floodType}` : ''} (홍수위험지도)`,
+    )
+  } else {
+    L.push(`- 침수: 연동 대기 — 홍수위험지도(리스크축)`)
+  }
+  if (pop?.available) {
+    L.push(
+      `- 반경 ${pop.radiusKm}km 인구: ${pop.population != null ? `${pop.population.toLocaleString()}명` : '–'}${pop.households != null ? ` · ${pop.households.toLocaleString()}가구` : ''} — ${pop.population != null && pop.population < 5000 ? '저밀도(민원 리스크 낮음)' : '주거 밀집(민원 유의)'} (SGIS)`,
+    )
+  } else {
+    L.push(`- 인구격자(민원 프록시): 연동 대기 — SGIS`)
+  }
+  if (disaster?.available) {
+    L.push(`- 재해 이력: ${disaster.events != null ? `${disaster.events.toLocaleString()}건` : ''}${disaster.topType ? ` · 주 유형 ${disaster.topType}` : ''}${disaster.recentYear ? ` · 최근 ${disaster.recentYear}` : ''} (재난안전)`)
+  } else {
+    L.push(`- 재해 이력: 연동 대기 — 재난안전 공유플랫폼`)
   }
   L.push(``)
   L.push(`## 인프라 근접성 (맥락 — 전원 매칭 아님)`)

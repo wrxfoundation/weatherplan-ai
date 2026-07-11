@@ -336,6 +336,9 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               plantCtx: nearestPlant(point),
               windCtx: windContext(point),
               headroom,
+              flood,
+              pop,
+              disaster,
             })
           const onCopy = async () => {
             try {
@@ -350,7 +353,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             const blob = new Blob([makeReport()], { type: 'text/markdown;charset=utf-8' })
             const a = document.createElement('a')
             a.href = URL.createObjectURL(blob)
-            a.download = `myeongdang-site-${point.lat.toFixed(4)}_${point.lng.toFixed(4)}.md`
+            a.download = `aiinframap-site-${point.lat.toFixed(4)}_${point.lng.toFixed(4)}.md`
             a.click()
             URL.revokeObjectURL(a.href)
           }
