@@ -4,8 +4,8 @@
  * ?probe=1 이면 configured 소스에 한해 대표 지점으로 가벼운 실호출을 시도해 available/reason 보고.
  */
 const SOURCES = [
-  { key: 'weather', label: '케이웨더 기상', env: ['KWEATHER_API_KEY'], path: '/api/weather', point: true, axis: '기상' },
-  { key: 'forecast', label: '케이웨더 초단기예보', env: ['KWEATHER_API_KEY'], path: '/api/forecast', point: true, axis: '기상' },
+  { key: 'weather', label: '케이웨더 오늘예보', env: ['KWEATHER_API_KEY'], path: '/api/kweather?kind=current', point: true, axis: '기상' },
+  { key: 'forecast', label: '케이웨더 3일예보', env: ['KWEATHER_API_KEY'], path: '/api/kweather?kind=forecast', point: true, axis: '기상' },
   { key: 'revgeo', label: 'vworld 지번주소', env: ['VWORLD_KEY'], path: '/api/revgeo', point: true, axis: '토지' },
   { key: 'landuse', label: 'vworld 용도지역', env: ['VWORLD_KEY'], path: '/api/landuse', point: true, axis: '토지' },
   { key: 'headroom', label: '한전 계통 여유용량', env: ['KEPCO_API_KEY', 'VWORLD_KEY'], path: '/api/headroom', point: true, axis: '전력' },
@@ -23,7 +23,8 @@ const PROBE = 'lat=37.5665&lng=126.9780'
 
 async function probeOne(base, src) {
   try {
-    const url = `${base}${src.path}${src.point ? `?${PROBE}` : ''}`
+    const sep = src.path.includes('?') ? '&' : '?'
+    const url = `${base}${src.path}${src.point ? `${sep}${PROBE}` : ''}`
     const ctrl = new AbortController()
     const t = setTimeout(() => ctrl.abort(), 6000)
     const r = await fetch(url, { signal: ctrl.signal })

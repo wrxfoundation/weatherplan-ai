@@ -232,30 +232,30 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">현재 기상 (케이웨더{wx?.scope ? ` · ${wx.scope}` : ''})</div>
+            <div className="k">오늘 날씨 (케이웨더 예보{wx?.scope ? ` · ${wx.scope}` : ''})</div>
             <div className="v">
               {wx ? (
                 <>
-                  {wx.temp != null && `${wx.temp}°C`}
+                  {wx.temp != null && `최고 ${wx.temp}°C`}
+                  {wx.tempMin != null && ` / 최저 ${wx.tempMin}°C`}
                   {wx.sky && ` · ${wx.sky}`}
-                  {wx.senseTemp != null && ` · 체감 ${wx.senseTemp}°C`}
-                  {wx.humidity != null && ` · 습도 ${wx.humidity}%`}
-                  {wx.rain1h != null && wx.rain1h > 0 && ` · 강수 ${wx.rain1h}mm/h`}
+                  {wx.rainProb != null && ` · 강수확률 ${wx.rainProb}%`}
+                  {wx.snow != null && wx.snow > 0 && ` · 적설 ${wx.snow}cm`}
                 </>
               ) : (
-                <span className="badge verify">연동 대기 — 기상축(M3) 데이터 소스</span>
+                <span className="badge verify">연동 대기 — 케이웨더 예보(기상축)</span>
               )}
             </div>
-            {fc?.hours?.length > 0 && (
-              <div className="wx-strip" aria-label="초단기예보 6시간">
-                {fc.hours.map((h, i) => (
+            {fc?.days?.length > 0 && (
+              <div className="wx-strip" aria-label="3일 일별예보">
+                {fc.days.map((h, i) => (
                   <span key={i} className="wx-hour">
-                    <em>+{i + 1}h</em>
-                    <strong>{h.temp != null ? `${h.temp}°` : '–'}</strong>
-                    <span>{h.sky ?? ''}</span>
+                    <em>{h.label}</em>
+                    <strong>{h.tmax != null ? `${h.tmax}°` : '–'}</strong>
+                    <span>{h.sky ?? ''}{h.rainProb != null ? ` ${h.rainProb}%` : ''}</span>
                   </span>
                 ))}
-                {fc.rain && <span className="badge verify">강수 감지</span>}
+                {fc.rain && <span className="badge verify">강수 유의</span>}
               </div>
             )}
           </div>

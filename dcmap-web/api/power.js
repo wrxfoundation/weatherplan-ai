@@ -169,6 +169,11 @@ export default async function handler(req, res) {
       res.status(200).json({ available: false, reason: 'schema_unknown' })
       return
     }
+    // 진단: ?debug=1 → 응답 필드명만 노출(값 아님) — no_*_fields 원인 파악용
+    if (req.query.debug) {
+      res.status(200).json({ available: true, debug: true, src, fieldKeys: Object.keys(items[0] || {}), itemCount: items.length })
+      return
+    }
     res.status(200).json(HANDLERS[src](items))
   } catch (e) {
     res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
