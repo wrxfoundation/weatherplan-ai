@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES } from '../data/facilities.js'
-import { KPI, COMPOSITION, POWER_AVG, COOLING, BACKUP, CUSTOMERS, KEPCO_REGION, GEN_PIPELINE, STATS_SOURCE } from '../content/stats.js'
+import { KPI, COMPOSITION, POWER_AVG, COOLING, BACKUP, CUSTOMERS, KEPCO_REGION, GEN_PIPELINE, STATS_SOURCE, MARKET_2025H2 } from '../content/stats.js'
 import {
   GEN_LICENSE_META,
   GEN_RECENT,
@@ -135,6 +135,22 @@ export default function StatsPage() {
           {KPI.map((k) => (
             <StatTile key={k.key} {...k} />
           ))}
+        </div>
+
+        <div className="calc-card">
+          <div className="chart-title">수도권 시장 최신 단면 — {MARKET_2025H2.asOf} (Cushman &amp; Wakefield/KDCC)</div>
+          <div className="stat-grid" style={{ marginTop: 6 }}>
+            {MARKET_2025H2.kpi.map((k) => (
+              <StatTile key={k.label} {...k} />
+            ))}
+          </div>
+          <p className="chart-note">{MARKET_2025H2.note}</p>
+          <p className="chart-note">
+            <strong>정책(2H 2025):</strong> {MARKET_2025H2.policy}
+          </p>
+          <p className="chart-note" style={{ opacity: 0.7 }}>
+            출처: {MARKET_2025H2.source} · 스코프: 수도권 메이저 운영사(캡티브·ICT 제외) — 전국 165개소(500㎡+) 지표와 스코프 다름.
+          </p>
         </div>
 
         <div className="calc-card">

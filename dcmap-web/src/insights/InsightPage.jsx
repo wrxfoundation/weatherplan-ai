@@ -16,6 +16,7 @@ import CoolingPlatformMA from './articles/CoolingPlatformMA.jsx'
 import NationalInfrastructure from './articles/NationalInfrastructure.jsx'
 import UtilityAcquisition from './articles/UtilityAcquisition.jsx'
 import OceanDatacenter from './articles/OceanDatacenter.jsx'
+import Market2025H2 from './articles/Market2025H2.jsx'
 
 const ARTICLES = {
   'power-track-40mw': {
@@ -84,6 +85,14 @@ const ARTICLES = {
       'KDDC Issue Focus, 「발전소가 필요 없는 데이터센터…SpaceX가 2조 달러로 산 ‘AI 병목 통행권’」 (2026.6.16, STRABASE) — SpaceX 상장(시총 2조 달러 초과)·AI1 궤도 데이터센터 구상',
       '수치 인용: 미국 DC 전력 41GW(≈전체 원전)·IEA 2030 945TWh·미국 전기요금 2019년 대비 +42%·자본 12~24개월 vs 전력망 4~10년·MS 스리마일 835MW/Amazon X-energy 5GW SMR/Google Kairos 500MW — 원문 기준',
       '콘텐츠 등급 ④참고·인사이트 — 해외 시장 분석 재인용. 국내 함의(재생E 86.5%·비수도권 86%)는 AI InfraMap 발전 허가대장 집계',
+    ],
+  },
+  'market-2025h2': {
+    component: Market2025H2,
+    sources: [
+      'Cushman & Wakefield · KDCC, Korea Data Centre Market Report 2H 2025 — 수도권 운영 601MW(+16%)·파이프라인 921MW(+43%)·운영사 25/DC 55·기타권역 31%·공실 6.9%',
+      '정책: 2025.11 전력계통영향평가 개편(적정전압 필수·비기술평가 강화·입지별 ±15점·자가발전/에너지효율 의무 정량화·기술검토비 신설) · 2025.9 국가기간 전력망 확충 특별법 시행 — 원문 기준',
+      '콘텐츠 등급 ②공식 발간물 — 시장 수치·정책은 원문 인용, 국내 함의는 AI InfraMap 해석',
     ],
   },
   'ocean-datacenter': {
