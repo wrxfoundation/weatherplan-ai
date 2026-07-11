@@ -8,6 +8,32 @@ export const WIND_PLANTS = windRaw.plants
 export const PLANTS_VERSION = { version: raw.version, date: raw.date }
 export const PLANTS_HONESTY = raw.honesty_note
 
+/** 원전 호기별 현황 — 원안위/한수원 (2025-06-12). 상업운전 호기 설비용량 기준 */
+import nuclearRaw from '../../data/nuclear_units_v0.json'
+
+export const NUCLEAR_UNITS = nuclearRaw.units
+export const NUCLEAR_META = { version: nuclearRaw.version, date: nuclearRaw.date, source: nuclearRaw.source }
+export const NUCLEAR_FLEET = (() => {
+  const bases = nuclearRaw.bases
+  const nameOf = { 'pp-kori': '고리', 'pp-saeul': '새울', 'pp-wolsong': '월성', 'pp-hanbit': '한빛', 'pp-hanul': '한울' }
+  const rows = Object.entries(bases).map(([id, b]) => ({
+    id,
+    base: nameOf[id] ?? id,
+    operatingMw: b.operating_mw,
+    operatingUnits: b.operating_units,
+    buildingMw: b.building_mw,
+    buildingUnits: b.building_units,
+  }))
+  rows.sort((a, b) => b.operatingMw - a.operatingMw)
+  return {
+    rows,
+    operatingMw: rows.reduce((s, r) => s + r.operatingMw, 0),
+    operatingUnits: rows.reduce((s, r) => s + r.operatingUnits, 0),
+    buildingMw: rows.reduce((s, r) => s + r.buildingMw, 0),
+    buildingUnits: rows.reduce((s, r) => s + r.buildingUnits, 0),
+  }
+})()
+
 const R = 6371
 const hav = (a, b) => {
   const dLat = ((b.lat - a.lat) * Math.PI) / 180

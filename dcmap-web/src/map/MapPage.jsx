@@ -91,11 +91,20 @@ function plantCard(p) {
       <div class="hc-verify">신재생 근접성 맥락 — DC 전원 매칭 아님</div>
     </div>`
   }
+  let cap
+  if (p.capacity_mw != null) {
+    const bld = p.capacity_building_mw ? ` (+건설 ${p.capacity_building_mw.toLocaleString()}MW)` : ''
+    const units = p.units_operating ? ` · ${p.units_operating}호기 운영` : ''
+    cap = `${esc(p.type)} · 설비용량 ${p.capacity_mw.toLocaleString()}MW${bld}${units}`
+  } else {
+    cap = `${esc(p.type)} · 설비용량 EPSIS 검증 대기`
+  }
+  const src = p.capacity_mw != null ? '원안위/한수원 호기별 현황(2025-06) · DC 전원 매칭 아님' : '발전 인프라 맥락 — DC 전원 매칭 아님'
   return `<div class="hc">
     <div class="hc-head"><strong>${esc(p.name)}</strong></div>
     <div class="hc-meta">${esc(p.operator)} · ${esc(p.sido)} ${esc(p.sigungu)}</div>
-    <div class="hc-row">${esc(p.type)} · 설비용량 EPSIS 검증 대기</div>
-    <div class="hc-verify">발전 인프라 맥락 — DC 전원 매칭 아님</div>
+    <div class="hc-row">${cap}</div>
+    <div class="hc-verify">${src}</div>
   </div>`
 }
 

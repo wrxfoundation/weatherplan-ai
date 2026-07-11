@@ -11,6 +11,7 @@ import {
   GEN_RECENT_NONCAPITAL_PCT,
 } from '../data/genLicenses.js'
 import { CHP_STATS, CHP_BY_OP, CHP_TOP_PLANTS, CHP_META } from '../data/chpPlants.js'
+import { NUCLEAR_FLEET, NUCLEAR_META } from '../data/plants.js'
 
 const TITLE = '국내 데이터센터 통계 — 수도권 집중과 전력 수요 · AI InfraMap'
 const DESC =
@@ -216,6 +217,24 @@ export default function StatsPage() {
             bars={CHP_TOP_PLANTS.map((p) => ({ label: `${p.plant} (${p.loc})`, value: Math.round(p.mw) }))}
             unit="MW"
             note={`${CHP_META.source} · 관리소는 비공식 지명이라 개별 좌표 미부여(맵 미배치).`}
+          />
+        </div>
+
+        <div className="calc-card">
+          <div className="chart-title">
+            원전 설비용량 — 5본부 {NUCLEAR_FLEET.operatingUnits}호기 운영 · {NUCLEAR_FLEET.operatingMw.toLocaleString()}MW
+          </div>
+          <p className="chart-note">
+            상업운전 중인 원전 {NUCLEAR_FLEET.operatingUnits}호기 합계{' '}
+            <strong>{(NUCLEAR_FLEET.operatingMw / 1000).toFixed(1)}GW</strong>. 건설 중{' '}
+            {NUCLEAR_FLEET.buildingUnits}호기({NUCLEAR_FLEET.buildingMw.toLocaleString()}MW, 새울 3·4/신한울 3·4)가 더해진다 —
+            24/7 무탄소 기저부하로 AIDC 입지의 계통 근접성 맥락. 원전은 특정 DC와 전원 매칭되지 않는 풀 계통 공급.
+          </p>
+          <HBars
+            title="원자력본부별 운영 설비용량 (MW)"
+            bars={NUCLEAR_FLEET.rows.map((r) => ({ label: `${r.base} (${r.operatingUnits}호기)`, value: r.operatingMw }))}
+            unit="MW"
+            note={`${NUCLEAR_META.source}`}
           />
         </div>
 

@@ -83,11 +83,16 @@ a {
 .topbar .logo {
   font-size: var(--text-title);
   font-weight: var(--weight-bold);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+}
+
+.topbar .logo .logo-word {
+  letter-spacing: -0.03em;
+  word-spacing: -0.06em;
 }
 
 .topbar .logo em {
@@ -104,9 +109,12 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--text-title);
-  font-weight: var(--weight-bold);
+  flex: none;
   box-shadow: var(--glass-specular), 0 0 14px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.logo-mark svg {
+  display: block;
 }
 
 .topbar-search {
