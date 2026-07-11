@@ -13,6 +13,7 @@ import StatsPage from './stats/StatsPage.jsx'
 import InsightsIndexPage from './insights/InsightsIndexPage.jsx'
 import DashboardPage from './dashboard/DashboardPage.jsx'
 import InsightPage from './insights/InsightPage.jsx'
+import LandPulsePage from './land/LandPulsePage.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -26,6 +27,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/region/:slug" element={<RegionPage />} />
         <Route path="/stats" element={<StatsPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/land" element={<LandPulsePage />} />
         <Route path="/insights" element={<InsightsIndexPage />} />
         <Route path="/insights/:slug" element={<InsightPage />} />
         <Route path="*" element={<MapPage />} />
