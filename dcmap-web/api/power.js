@@ -13,11 +13,12 @@
 const DEFAULTS = {
   epsis:
     'https://apis.data.go.kr/B552115/PowerMarketGenInfo/getPowerMarketGenInfo?serviceKey={key}&pageNo=1&numOfRows=1000&dataType=JSON',
-  supply:
-    'https://apis.data.go.kr/B552115/PwrDmndInfo/getPwrDmndInfo?serviceKey={key}&pageNo=1&numOfRows=48&dataType=JSON',
+  // 전력수급예보: KPX openapi(XML) — 최대예측수요(fcMaxload)·예측예비력(fcReservePwr)
+  supply: 'https://openapi.kpx.or.kr/openapi/forecast1dMaxBaseDate/getForecast1dMaxBaseDate?serviceKey={key}',
   trading:
     'https://apis.data.go.kr/B552115/PowerTradingResultInfo1/getPowerTradingResultInfo1?serviceKey={key}&pageNo=1&numOfRows=100&dataType=JSON',
 }
+const IS_XML = { supply: true } // supply만 XML 응답
 const ENV_KEY = { epsis: 'EPSIS_URL', supply: 'SUPPLY_URL', trading: 'TRADING_URL' }
 const CACHE = { epsis: 's-maxage=86400, stale-while-revalidate=604800', supply: 's-maxage=300, stale-while-revalidate=3600', trading: 's-maxage=3600, stale-while-revalidate=86400' }
 
@@ -62,6 +63,26 @@ const pick = (o, names) => {
   return undefined
 }
 
+/** 단순 평면 XML(<item>…</item>) → 객체 배열. 태그명은 요청 목록만 추출 */
+async function fetchXmlItems(url, tags, ms = 8000) {
+  const ctrl = new AbortController()
+  const t = setTimeout(() => ctrl.abort(), ms)
+  try {
+    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AI-InfraMap/1.0; +https://aidatacenter.vercel.app)' } })
+    if (!r.ok) return { _status: r.status }
+    const xml = await r.text()
+    const blocks = xml.match(/<item[\s>][\s\S]*?<\/item>/gi) || []
+    const tagVal = (b, tag) => {
+      const m = b.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, 'i'))
+      return m ? m[1].trim() : undefined
+    }
+    const items = blocks.map((b) => Object.fromEntries(tags.map((tg) => [tg, tagVal(b, tg)])))
+    return { items, _resultCode: (xml.match(/<resultCode>([\s\S]*?)<\/resultCode>/i) || [])[1] }
+  } finally {
+    clearTimeout(t)
+  }
+}
+
 function normFuel(s) {
   const t = String(s || '')
   if (/원자력|원전/.test(t)) return '원자력'
@@ -100,23 +121,22 @@ function handleEpsis(items) {
   return { available: true, byFuel, facilities: facilities.slice(0, 500), totalMw: totalMw || undefined, count: facilities.length, source: 'EPSIS/KPX 발전설비현황 (data.go.kr)' }
 }
 
-// ---- supply: 전력수급예보(공급능력·예비율) ----
+// ---- supply: 전력수급예보(KPX XML) — fcMaxload 최대예측수요·fcReservePwr 예측예비력 ----
+const SUPPLY_TAGS = ['fcDate', 'fcStime', 'fcEtime', 'fcMaxload', 'fcReservePwr', 'fcLevel']
 function handleSupply(items) {
   const rows = []
   for (const it of items) {
-    const at = pick(it, ['예보일자', '기준일시', 'baseDatetime', 'tm', 'fcstDate', 'aplyYmd', 'dateTime'])
-    const supplyMw = num(pick(it, ['공급능력', 'supplyCapacity', 'suplAbility', 'supplyPower', '공급능력_MW']))
-    const peakMw = num(pick(it, ['최대전력', 'maxPower', 'peakLoad', 'currPwrTot', '수요전력', 'demand']))
-    let reserveMw = num(pick(it, ['공급예비력', 'reservePower', 'suplResvPwr', 'reserveMw']))
-    let reservePct = num(pick(it, ['공급예비율', 'reserveRate', 'suplResvRate', 'reservePct']))
-    if (reserveMw == null && supplyMw != null && peakMw != null) reserveMw = Math.round(supplyMw - peakMw)
-    if (reservePct == null && reserveMw != null && peakMw) reservePct = Math.round((reserveMw / peakMw) * 1000) / 10
-    if (at == null && supplyMw == null && peakMw == null) continue
-    rows.push({ at: at != null ? String(at) : undefined, supplyMw, peakMw, reserveMw, reservePct })
+    const peakMw = num(it.fcMaxload) // 최대예측수요
+    const reserveMw = num(it.fcReservePwr) // 예측예비력
+    if (peakMw == null && reserveMw == null) continue
+    const supplyMw = peakMw != null && reserveMw != null ? peakMw + reserveMw : undefined
+    const reservePct = reserveMw != null && peakMw ? Math.round((reserveMw / peakMw) * 1000) / 10 : undefined
+    const at = [it.fcDate, it.fcStime ? `${it.fcStime}시` : ''].filter(Boolean).join(' ')
+    rows.push({ at: at || undefined, supplyMw, peakMw, reserveMw, reservePct, level: num(it.fcLevel) })
   }
   if (!rows.length) return { available: false, reason: 'no_supply_fields' }
   const latest = rows[rows.length - 1]
-  return { available: true, asOf: latest.at, supplyMw: latest.supplyMw, peakMw: latest.peakMw, reserveMw: latest.reserveMw, reservePct: latest.reservePct, rows: rows.slice(-48), source: 'KPX 전력수급예보조회 (data.go.kr)' }
+  return { available: true, asOf: latest.at, supplyMw: latest.supplyMw, peakMw: latest.peakMw, reserveMw: latest.reserveMw, reservePct: latest.reservePct, level: latest.level, rows: rows.slice(-48), source: 'KPX 전력수급예보조회' }
 }
 
 // ---- trading: 전력거래실적(연료원별 거래량) ----
@@ -161,12 +181,24 @@ export default async function handler(req, res) {
   try {
     const tmpl = process.env[ENV_KEY[src]] || DEFAULTS[src]
     const url = tmpl.replaceAll('{key}', encodeURIComponent(key))
-    const body = await fetchJson(url)
-    if (body?._status) {
-      res.status(200).json({ available: false, reason: `upstream_${body._status}` })
-      return
+
+    // supply는 KPX openapi XML — 별도 파서
+    let items
+    if (IS_XML[src]) {
+      const xr = await fetchXmlItems(url, SUPPLY_TAGS)
+      if (xr?._status) {
+        res.status(200).json({ available: false, reason: `upstream_${xr._status}` })
+        return
+      }
+      items = xr.items
+    } else {
+      const body = await fetchJson(url)
+      if (body?._status) {
+        res.status(200).json({ available: false, reason: `upstream_${body._status}` })
+        return
+      }
+      items = findItems(body)
     }
-    const items = findItems(body)
     if (!items || !items.length) {
       res.status(200).json({ available: false, reason: 'schema_unknown' })
       return
