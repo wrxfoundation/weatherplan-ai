@@ -35,7 +35,7 @@ export default async function handler(req, res) {
   try {
     const ctrl = new AbortController()
     const t = setTimeout(() => ctrl.abort(), 8000)
-    const r = await fetch(url, { signal: ctrl.signal })
+    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AI-InfraMap/1.0; +https://aidatacenter.vercel.app)' } })
     clearTimeout(t)
     if (!r.ok) {
       res.status(200).json({ available: false, reason: `upstream_${r.status}` })
