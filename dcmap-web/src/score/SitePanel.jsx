@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor } from '../data/liveApi.js'
+import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
 import { scoreSite } from './engine.js'
@@ -23,6 +23,8 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
   const [pop, setPop] = useState(null)
   const [disaster, setDisaster] = useState(null)
   const [energy, setEnergy] = useState(null)
+  const [warning, setWarning] = useState(null)
+  const [climate, setClimate] = useState(null)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -36,6 +38,10 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     setPop(null)
     setDisaster(null)
     setEnergy(null)
+    setWarning(null)
+    setClimate(null)
+    warningFor(point.lat, point.lng).then((v) => alive && setWarning(v))
+    climateFor(point.lat, point.lng).then((v) => alive && setClimate(v))
     revgeoFor(point.lat, point.lng).then((v) => {
       if (!alive) return
       setAddr(v)
@@ -241,6 +247,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                   {wx.senseTemp != null && ` · 체감 ${wx.senseTemp}°C`}
                   {wx.humidity != null && ` · 습도 ${wx.humidity}%`}
                   {wx.rain1h != null && wx.rain1h > 0 && ` · 강수 ${wx.rain1h}mm/h`}
+                  {wx.windSpeed != null && ` · 풍속 ${wx.windSpeed}m/s`}
                   {wx.pm10 != null && ` · PM10 ${wx.pm10}`}
                 </>
               ) : (
@@ -259,6 +266,39 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 {fc.rain && <span className="badge verify">강수 유의</span>}
               </div>
             )}
+          </div>
+          <div className="spec-cell">
+            <div className="k">기상특보 (리스크 — 태풍·강풍·호우)</div>
+            <div className="v">
+              {warning?.available ? (
+                warning.count > 0 ? (
+                  warning.warnings.map((w) => (
+                    <span key={w} className="badge verify" style={{ marginRight: 6 }}>
+                      {w}
+                    </span>
+                  ))
+                ) : (
+                  <span className="badge status-operating">발효 중인 특보 없음</span>
+                )
+              ) : (
+                <span className="badge verify">연동 대기 — 케이웨더 특보</span>
+              )}
+            </div>
+          </div>
+          <div className="spec-cell">
+            <div className="k"><Term k="프리쿨링">기후</Term> (과거 연별 — 프리쿨링 잠재력)</div>
+            <div className="v">
+              {climate?.available ? (
+                <>
+                  {climate.avgTemp != null && `연평균 ${climate.avgTemp}°C`}
+                  {climate.maxTemp != null && ` · 최고 ${climate.maxTemp}°C`}
+                  {climate.minTemp != null && ` · 최저 ${climate.minTemp}°C`}
+                  {climate.rainSum != null && ` · 강수 ${climate.rainSum}mm`}
+                </>
+              ) : (
+                <span className="badge verify">연동 대기 — 케이웨더 과거 기후</span>
+              )}
+            </div>
           </div>
           {(() => {
             const np = nearestPlant(point)
@@ -442,6 +482,8 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               pop,
               disaster,
               energy,
+              warning,
+              climate,
             })
           const onCopy = async () => {
             try {

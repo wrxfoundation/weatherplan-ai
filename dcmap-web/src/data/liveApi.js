@@ -31,8 +31,14 @@ export const revgeoFor = (lat, lng) => fetchJson(`/api/revgeo?${q(lat, lng)}`)
 /** vworld 용도지역 (토지축 v1 근거) — { uses: string[] } | null */
 export const landUseFor = (lat, lng) => fetchJson(`/api/landuse?${q(lat, lng)}`)
 
-/** 케이웨더 3일 일별예보 — { days:[{label,tmax,tmin,rainProb,sky}], rain } | null */
+/** 케이웨더 일별예보(최대 7일) — { days:[{label,tmax,tmin,rainProb,sky}], rain } | null */
 export const forecastFor = (lat, lng) => fetchJson(`/api/kweather?kind=forecast&${q(lat, lng)}`)
+
+/** 케이웨더 기상특보 — { warnings:[], count } | null (count 0 = 발효 특보 없음) */
+export const warningFor = (lat, lng) => fetchJson(`/api/kweather?kind=warning&${q(lat, lng)}`)
+
+/** 케이웨더 과거 연별 기후 — { avgTemp, maxTemp, minTemp, rainSum } | null (프리쿨링 잠재력) */
+export const climateFor = (lat, lng) => fetchJson(`/api/kweather?kind=climate&${q(lat, lng)}`)
 
 /** 한전 분산전원 계통 여유용량 — { availableMw, cumulativeMw, scope } | null */
 export const headroomFor = (lat, lng) => fetchJson(`/api/headroom?${q(lat, lng)}`)
