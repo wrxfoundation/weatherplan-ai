@@ -21,6 +21,8 @@ export default function FilterBar({
   onTogglePlants,
   showPublic,
   onTogglePublic,
+  showGenPermits,
+  onToggleGenPermits,
 }) {
   return (
     <div className="filterbar">
@@ -65,6 +67,15 @@ export default function FilterBar({
           title="행정·공공기관 데이터센터 61곳 — 행안부 공공데이터(연면적 500㎡+), 좌표는 시군구 중심점"
         >
           公 공공
+        </button>
+        <button
+          type="button"
+          className={`chip ${showGenPermits ? 'on' : ''}`}
+          onClick={onToggleGenPermits}
+          aria-pressed={showGenPermits}
+          title="2024년 이후 발전사업 허가 파이프라인 — 시도별 건수 버블(3MW 초과 허가대장). 전력 공급측 신호, 건수 기준"
+        >
+          ◎ 발전허가
         </button>
       </div>
 
