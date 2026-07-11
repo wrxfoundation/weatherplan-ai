@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
@@ -123,6 +124,58 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
           미산출 축 데이터 소스: 변전소 거리(345kV 정보 공개 대기) · 배전 여유(D3) · 토지(vworld) · 리스크(인구격자) ·
           네트워크 · 기상(M3). 공개되는 즉시 같은 자리에서 점수화됩니다.
         </p>
+
+        {/* 프로세스 관문 전망 — 용량·입지로 본 두 핵심 게이트(P07 접속·P08 계통영향평가) 통과 난이도 */}
+        {(() => {
+          const t = r.track
+          let p07
+          if (mw <= 20)
+            p07 = { sev: 'ok', verdict: '22.9kV 배전 수전', note: '계통 여유(헤드룸)가 지배 변수 — 한전 분산전원 조회로 확인' }
+          else if (mw <= 40)
+            p07 = { sev: 'talk', verdict: '22.9kV/154kV 협의', note: '40MW는 22.9kV 상한 경계 — 증설 계획 시 154kV 전제가 안전' }
+          else p07 = { sev: 'gate', verdict: '154kV 의무', note: '자체 수전설비 투자 + 154kV 변전소 거리가 지배 변수' }
+
+          let p08
+          if (!t.psiaRequired) p08 = { sev: 'ok', verdict: '10MW 미만 · 비대상', note: '전력계통영향평가 대상 아님' }
+          else if (nonCapital)
+            p08 = {
+              sev: 'talk',
+              verdict: '대상 · 비수도권 유인',
+              note: t.exemption
+                ? `지역 배점 가점 여지 + ${t.exemption.effective}~ AIDC 특별법 면제 가능성`
+                : '지역 배점 가점 여지 — 계통영향평가 대상',
+            }
+          else p08 = { sev: 'gate', verdict: '대상 · 수도권 감점', note: '±15점 중 수도권 억제 배점 — 핵심 관문' }
+
+          const chip = (s) => (s === 'ok' ? 'status-operating' : 'verify')
+          const rows = [
+            { id: 'P07', title: '한전 접속·수전전압', ...p07 },
+            { id: 'P08', title: '전력계통영향평가 ±15점', ...p08 },
+          ]
+          return (
+            <>
+              <div className="chart-title" style={{ marginTop: 14 }}>
+                프로세스 관문 전망 — 이 지점 {mw}MW · {nonCapital ? '비수도권' : '수도권'}
+              </div>
+              <div className="gate-outlook">
+                {rows.map((g) => (
+                  <div key={g.id} className={`gate-row sev-${g.sev}`}>
+                    <span className="gate-id">{g.id}</span>
+                    <span className="gate-body">
+                      <span className="gate-title">{g.title}</span>
+                      <span className="gate-note">{g.note}</span>
+                    </span>
+                    <span className={`badge ${chip(g.sev)}`}>{g.verdict}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="chart-note">
+                용량·입지로 본 두 핵심 관문의 통과 난이도 추정 — 실제 판정은 한전·기후에너지환경부 심의.{' '}
+                <Link to="/roadmap?view=frame">전체 프로세스 프레임 →</Link>
+              </p>
+            </>
+          )
+        })()}
 
         {/* 실무 조회 채널 — 이 지점을 공식 시스템에서 직접 확인 (자동화는 각 기관 약관 확인 후) */}
         <div className="chart-title" style={{ marginTop: 14 }}>
