@@ -9,7 +9,7 @@ import FilterBar from './FilterBar.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
-import { PLANTS, PUBLIC_DCS } from '../data/plants.js'
+import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 const TILE_ATTRIBUTION =
@@ -53,13 +53,16 @@ function markerIcon(f, iso) {
 
 const ISO_ZOOM = 10 // 클러스터 해제 줌과 동일 — 개별 마커가 보이는 순간 입체로
 
-/* 발전소 마커 — 육각 아웃라인 + ⚡ (원자력 cyan / 석탄 grey) */
-const plantIcon = (p) =>
-  L.divIcon({
-    className: `plant-marker ${p.type === '원자력' ? 'nuclear' : 'coal'}`,
+/* 발전소 마커 — 육각 아웃라인 + ⚡ (원자력 cyan / 석탄 grey / 풍력 green·소형) */
+const plantIcon = (p) => {
+  const kind = p.type === '원자력' ? 'nuclear' : p.type === '풍력' ? 'wind' : 'coal'
+  const s = kind === 'wind' ? [14, 15] : [22, 24]
+  return L.divIcon({
+    className: `plant-marker ${kind}`,
     html: `<svg viewBox="0 0 22 24"><polygon points="11,1 20.5,6.5 20.5,17.5 11,23 1.5,17.5 1.5,6.5"/><text x="11" y="16" text-anchor="middle">⚡</text></svg>`,
-    iconSize: [22, 24],
+    iconSize: s,
   })
+}
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
 
@@ -76,6 +79,14 @@ function hoverCard(f) {
 }
 
 function plantCard(p) {
+  if (p.type === '풍력') {
+    return `<div class="hc">
+      <div class="hc-head"><strong>${esc(p.name)}</strong></div>
+      <div class="hc-meta">${esc(p.address)}</div>
+      <div class="hc-row">풍력 발전 지점 · 필지 좌표 (2023 현황)</div>
+      <div class="hc-verify">신재생 근접성 맥락 — DC 전원 매칭 아님</div>
+    </div>`
+  }
   return `<div class="hc">
     <div class="hc-head"><strong>${esc(p.name)}</strong></div>
     <div class="hc-meta">${esc(p.operator)} · ${esc(p.sido)} ${esc(p.sigungu)}</div>
@@ -201,7 +212,7 @@ export default function MapPage() {
     }
     if (showPlants) {
       const g = L.layerGroup()
-      for (const p of PLANTS) {
+      for (const p of [...PLANTS, ...WIND_PLANTS]) {
         L.marker([p.lat, p.lng], { icon: plantIcon(p), bubblingMouseEvents: false })
           .bindTooltip(plantCard(p), { direction: 'top', offset: [0, -10], className: 'dc-hovercard', opacity: 1 })
           .addTo(g)

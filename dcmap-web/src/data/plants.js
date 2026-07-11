@@ -1,8 +1,10 @@
 // 발전 인프라 레이어 v0 — 대형 발전단지(원전·석탄) 근접성 맥락
 // 정직성: 특정 DC↔발전소 전원 매칭은 존재하지 않음(풀 계통·계약 비공개) — '주변 발전 인프라'로만 표기
 import raw from '../../data/power_plants_v0.json'
+import windRaw from '../../data/wind_plants_v0.json'
 
 export const PLANTS = raw.plants
+export const WIND_PLANTS = windRaw.plants
 export const PLANTS_VERSION = { version: raw.version, date: raw.date }
 export const PLANTS_HONESTY = raw.honesty_note
 
@@ -30,4 +32,16 @@ export function nearestPlant(point) {
     if (!best || d < best.km) best = { plant: p, km: d }
   }
   return best
+}
+
+/** 반경 km 내 풍력 지점 수 + 최근접 거리 — RE100·신재생 근접성 맥락 */
+export function windContext(point, radiusKm = 20) {
+  let count = 0
+  let nearest = null
+  for (const w of WIND_PLANTS) {
+    const d = hav(point, w)
+    if (d <= radiusKm) count++
+    if (!nearest || d < nearest.km) nearest = { plant: w, km: d }
+  }
+  return { count, radiusKm, nearest }
 }

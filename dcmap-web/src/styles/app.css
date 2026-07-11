@@ -922,6 +922,18 @@ a {
   filter: drop-shadow(0 0 5px color-mix(in srgb, var(--grey) 35%, transparent));
 }
 
+.plant-marker.wind polygon {
+  stroke: var(--green);
+}
+
+.plant-marker.wind text {
+  font-size: 9px;
+}
+
+.plant-marker.wind {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--green) 40%, transparent));
+}
+
 /* 공공 DC 마커 — 사각 아웃라인 + 公 (그린 계열과 구분되는 화이트-시안) */
 .pub-marker svg {
   width: 100%;
