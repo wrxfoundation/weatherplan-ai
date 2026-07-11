@@ -112,6 +112,13 @@ prerender('/dashboard', '대시보드 — 명당 AI 한국 데이터센터 인�
   name: '명당 AI 대시보드',
 })
 
+prerender(
+  '/compare',
+  '시설 비교 — 명당 AI',
+  '데이터센터 2~3곳을 나란히 — 상태·전력·연도·지가·인허가 트랙·발전 인프라 근접성을 공개 데이터로 비교.',
+  { '@context': 'https://schema.org', '@type': 'WebPage', name: '명당 AI 시설 비교' },
+)
+
 prerender('/map3d', '3D 맵 (베타) — 명당 AI', '한국 데이터센터 현황을 기울인 3D 시점에서 — MapLibre GL 전환 1단계 베타.', {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
@@ -175,6 +182,7 @@ const urls = [
   '/',
   '/map3d',
   '/land',
+  '/compare',
   '/calc',
   '/glossary',
   '/stats',
