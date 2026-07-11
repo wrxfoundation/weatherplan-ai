@@ -872,6 +872,69 @@ a {
   width: 100%;
   height: 100%;
   overflow: visible;
+  position: relative;
+  z-index: 1; /* 발산 링 위에 건물 */
+}
+
+/* 에너지 발산 — 건물 바닥에서 천천히 퍼지며 사라지는 링.
+ * 성능 가드레일: transform/opacity만 애니메이트 (filter/box-shadow 프레임 애니메이션 금지).
+ * Leaflet/MapLibre가 마커 루트에 inline transform을 쓰므로 ::after 자체만 변형한다.
+ * 계획(wireframe) 시설은 발산 없음 — 아직 에너지가 없다는 시각 언어 */
+.dc-iso::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  width: 30px;
+  height: 12px;
+  margin-left: -15px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  animation: iso-pulse 3.4s ease-out infinite;
+}
+
+.dc-iso.operating::after {
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--status-operating) 55%, transparent), transparent 72%);
+}
+
+.dc-iso.construction::after {
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--status-construction) 50%, transparent), transparent 72%);
+  animation-duration: 4.2s; /* 건설은 더 느린 맥동 */
+}
+
+.dc-iso.planned::after,
+.dc-iso.delayed::after {
+  content: none;
+}
+
+.dc-iso.xl::after {
+  width: 44px;
+  height: 16px;
+  margin-left: -22px;
+  animation-duration: 2.8s; /* 하이퍼스케일은 빠르고 강한 맥동 */
+}
+
+@keyframes iso-pulse {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 0.12;
+  }
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dc-iso::after {
+    animation: none;
+    opacity: 0.3;
+    transform: scale(1);
+  }
 }
 
 .dc-iso.operating {
