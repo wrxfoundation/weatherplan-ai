@@ -86,6 +86,7 @@ export default function InsightPage() {
         <Link className="back-link" to="/insights">
           ← 인사이트
         </Link>
+        <div className="eyebrow">INSIGHT</div>
         <h1>{meta.title}</h1>
         <p className="sub">{meta.date}</p>
         <div className="prose">

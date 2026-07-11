@@ -85,6 +85,7 @@ export default function FacilityPage() {
         <Link className="back-link" to="/">
           ← 맵으로 돌아가기
         </Link>
+        <div className="eyebrow">FACILITY</div>
         <h1>{facility.name}</h1>
         <p className="sub">
           {facility.sido}

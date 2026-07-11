@@ -47,4 +47,9 @@
   --glass-blur: 14px;
   --glow-accent-soft: 0 0 22px color-mix(in srgb, var(--accent) 22%, transparent);
   --navy-deep: #0b1220; /* 전술맵 배경 그라데이션 하단 톤 */
+
+  /* 모션 시스템 — 스프링 질감 커브, transform/opacity만 애니메이트 */
+  --ease-premium: cubic-bezier(0.32, 0.72, 0, 1);
+  --dur-fast: 0.35s;
+  --dur-entry: 0.7s;
 }

@@ -59,7 +59,7 @@ export default function TopBar() {
         title="부지 적합도 리포트는 M2(스코어링 엔진)에서 열립니다 — 지금은 필요 용량 산정(GPU 계산기)부터 시작하세요"
         onClick={() => navigate('/calc')}
       >
-        Generate Report
+        Generate Report <span className="btn-arrow">↗</span>
       </button>
 
     </header>

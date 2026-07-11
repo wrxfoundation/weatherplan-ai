@@ -17,6 +17,7 @@ export default function InsightsIndexPage() {
     <>
       <TopBar />
       <main className="page">
+        <div className="eyebrow">INSIGHTS</div>
         <h1>인사이트</h1>
         <p className="sub">{DESC}</p>
         <div className="facility-list">

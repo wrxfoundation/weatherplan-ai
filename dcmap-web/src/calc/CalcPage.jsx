@@ -97,6 +97,7 @@ export default function CalcPage() {
     <>
       <TopBar />
       <main className="page">
+        <div className="eyebrow">CAPACITY PLANNER</div>
         <h1>GPU → 전력(MW) 계산기</h1>
         <p className="sub">필요 GPU 수량을 데이터센터 전력 수요로 환산하고, 그 용량이 가능한 부지를 맵에서 찾습니다.</p>
 
@@ -148,7 +149,7 @@ export default function CalcPage() {
               레이어, M3 예정).
             </div>
             <Link className="btn primary" to={`/?min_mw=${ctaMw}`}>
-              이 용량 가능한 부지 보기 ({candidates}곳)
+              이 용량 가능한 부지 보기 ({candidates}곳) <span className="btn-arrow">↗</span>
             </Link>
           </div>
         </div>
