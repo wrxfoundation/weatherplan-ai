@@ -5,6 +5,7 @@ import { dongPulseFor } from '../data/landPriceDong.js'
 import { forecastFor, landUseFor, revgeoFor, weatherFor } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { scoreSite } from './engine.js'
+import { buildSiteReport } from './report.js'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
 export default function SitePanel({ point, onClose, onSelectFacility }) {
@@ -14,6 +15,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
   const [wx, setWx] = useState(null)
   const [landUse, setLandUse] = useState(null)
   const [fc, setFc] = useState(null)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     let alive = true
@@ -214,9 +216,53 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
           ))}
         </div>
 
-        <div className="card-actions">
-          <span className="badge verify">정밀 스코어링 리포트 — M2 오픈 예정</span>
-        </div>
+        {(() => {
+          const makeReport = () =>
+            buildSiteReport({
+              point,
+              r,
+              nonCapital,
+              mw,
+              addr,
+              landUse,
+              wx,
+              fc,
+              landPrice: landPriceFor(r.nearest[0].facility),
+              dongPulse: dongPulseFor(r.nearest[0].facility),
+              plantCtx: nearestPlant(point),
+              windCtx: windContext(point),
+            })
+          const onCopy = async () => {
+            try {
+              await navigator.clipboard.writeText(makeReport())
+              setCopied(true)
+              setTimeout(() => setCopied(false), 2000)
+            } catch {
+              /* 클립보드 미지원 — 다운로드 버튼 사용 */
+            }
+          }
+          const onDownload = () => {
+            const blob = new Blob([makeReport()], { type: 'text/markdown;charset=utf-8' })
+            const a = document.createElement('a')
+            a.href = URL.createObjectURL(blob)
+            a.download = `myeongdang-site-${point.lat.toFixed(4)}_${point.lng.toFixed(4)}.md`
+            a.click()
+            URL.revokeObjectURL(a.href)
+          }
+          return (
+            <div className="card-actions">
+              <button type="button" className="btn primary" onClick={onCopy}>
+                {copied ? '복사됨 ✓' : '간이 리포트 복사'}
+              </button>
+              <button type="button" className="btn" onClick={onDownload}>
+                .md 다운로드
+              </button>
+            </div>
+          )
+        })()}
+        <p className="geo-note">
+          간이 리포트 v0 — 산출된 근거만 수치로, 대기 축은 명시. 정밀 스코어링 리포트는 M2에서.
+        </p>
       </article>
     </>
   )
