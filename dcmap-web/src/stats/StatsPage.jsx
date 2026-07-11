@@ -12,6 +12,7 @@ import {
 } from '../data/genLicenses.js'
 import { CHP_STATS, CHP_BY_OP, CHP_TOP_PLANTS, CHP_META } from '../data/chpPlants.js'
 import { NUCLEAR_FLEET, NUCLEAR_META } from '../data/plants.js'
+import { NEW_PLANTS_2025, NEW_PLANTS_2025_TOTALS, NEW_PLANTS_2025_META } from '../data/newPlants2025.js'
 
 const TITLE = '국내 데이터센터 통계 — 수도권 집중과 전력 수요 · AI InfraMap'
 const DESC =
@@ -234,6 +235,25 @@ export default function StatsPage() {
             bars={CHP_TOP_PLANTS.map((p) => ({ label: `${p.plant} (${p.loc})`, value: Math.round(p.mw) }))}
             unit="MW"
             note={`${CHP_META.source} · 관리소는 비공식 지명이라 개별 좌표 미부여(맵 미배치).`}
+          />
+        </div>
+
+        <div className="calc-card">
+          <div className="chart-title">
+            2025년 신규 발전소 설치 — {NEW_PLANTS_2025_TOTALS.totalMw.toLocaleString()}MW ·{' '}
+            {NEW_PLANTS_2025_TOTALS.totalCount.toLocaleString()}개소 · 비수도권 {NEW_PLANTS_2025_TOTALS.nonCapitalPct}%
+          </div>
+          <p className="chart-note">
+            2025년 한 해 신규 설치된 발전소 <strong>{NEW_PLANTS_2025_TOTALS.totalCount.toLocaleString()}개소</strong>,
+            설비용량 합계 <strong>{NEW_PLANTS_2025_TOTALS.totalMw.toLocaleString()}MW</strong> 중{' '}
+            <strong>{NEW_PLANTS_2025_TOTALS.nonCapitalPct}%(용량 기준)가 비수도권</strong> — 경북·충남·전남·경남·전북의
+            재생E 벨트가 신규 공급을 주도한다. 허가 파이프라인 비수도권 86.5%와 정확히 정합하는 실제 설치 실적.
+          </p>
+          <HBars
+            title="시도별 2025 신규 설비용량 상위 (MW)"
+            bars={NEW_PLANTS_2025.slice(0, 12).map((r) => ({ label: r.sido, value: Math.round(r.capacityKw / 1000) }))}
+            unit="MW"
+            note={`${NEW_PLANTS_2025_META.source} · 개수 최다는 경북 ${NEW_PLANTS_2025.find((r) => r.sido === '경북')?.count.toLocaleString()}개소(소규모 태양광 다수).`}
           />
         </div>
 
