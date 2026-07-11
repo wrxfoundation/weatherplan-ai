@@ -39,6 +39,9 @@ export default function TopBar() {
         <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
           맵
         </NavLink>
+        <NavLink to="/map3d" className={({ isActive }) => (isActive ? 'active' : '')}>
+          3D <sup className="beta-sup">β</sup>
+        </NavLink>
         <NavLink to="/calc" className={({ isActive }) => (isActive ? 'active' : '')}>
           GPU 계산기
         </NavLink>

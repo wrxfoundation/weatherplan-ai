@@ -112,6 +112,12 @@ prerender('/dashboard', '대시보드 — 명당 AI 한국 데이터센터 인�
   name: '명당 AI 대시보드',
 })
 
+prerender('/map3d', '3D 맵 (베타) — 명당 AI', '한국 데이터센터 현황을 기울인 3D 시점에서 — MapLibre GL 전환 1단계 베타.', {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: '명당 AI 3D 맵 베타',
+})
+
 // 인사이트 프리렌더
 prerender('/insights', '인사이트 — 명당 AI', '데이터센터 입지·전력·민원·기상을 둘러싼 논쟁을 공개 데이터로 정리하는 명당 AI 인사이트.', {
   '@context': 'https://schema.org',
@@ -160,6 +166,7 @@ for (const [sido, slug] of Object.entries(SIDO_SLUGS)) {
 
 const urls = [
   '/',
+  '/map3d',
   '/calc',
   '/glossary',
   '/stats',

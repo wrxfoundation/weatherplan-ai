@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './styles/tokens.css'
 import './styles/app.css'
 import MapPage from './map/MapPage.jsx'
+import Map3DPage from './map3d/Map3DPage.jsx'
 import FacilityPage from './dc/FacilityPage.jsx'
 import CalcPage from './calc/CalcPage.jsx'
 import GlossaryPage from './glossary/GlossaryPage.jsx'
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MapPage />} />
+        <Route path="/map3d" element={<Map3DPage />} />
         <Route path="/dc/:slug" element={<FacilityPage />} />
         <Route path="/calc" element={<CalcPage />} />
         <Route path="/glossary" element={<GlossaryPage />} />
