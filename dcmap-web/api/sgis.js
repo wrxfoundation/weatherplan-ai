@@ -13,10 +13,11 @@
  *
  * 응답: { available, population?, households?, radiusKm?, scope } | { available:false, reason }
  */
-const AUTH_URL = 'https://sgisapi.kostat.go.kr/OpenAPI3/auth/authentication.json'
-// 기본: 인구 통계 지점조회 추정 경로(프로덕션 확정 후 SGIS_STATS_URL로 보정)
+const AUTH_URL = 'https://sgisapi.mods.go.kr/OpenAPI3/auth/authentication.json'
+// 기본: 인구 통계(population.json)는 adm_cd(행정동코드)+year 기준. 좌표→adm_cd 변환이 필요하면
+// SGIS_STATS_URL로 실경로/파라미터 보정(프로덕션). {lat}{lng}{token} 플레이스홀더 유지.
 const DEFAULT_STATS_URL =
-  'https://sgisapi.kostat.go.kr/OpenAPI3/stats/population.json?accessToken={token}&lat={lat}&lng={lng}&radius=2000'
+  'https://sgisapi.mods.go.kr/OpenAPI3/stats/population.json?accessToken={token}&lat={lat}&lng={lng}&radius=2000'
 
 const num = (v) => {
   if (v == null) return undefined

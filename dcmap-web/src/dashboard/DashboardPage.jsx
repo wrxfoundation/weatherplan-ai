@@ -4,7 +4,7 @@ import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf } from '../data/facilities.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
-import { filingsRecent, epsisCapacity } from '../data/liveApi.js'
+import { filingsRecent, epsisCapacity, apiStatus } from '../data/liveApi.js'
 
 const TITLE = '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스'
 const DESC =
@@ -39,6 +39,7 @@ export default function DashboardPage() {
   const [now, setNow] = useState(() => new Date())
   const [filings, setFilings] = useState(null)
   const [epsis, setEpsis] = useState(null)
+  const [status, setStatus] = useState(null)
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(t)
@@ -48,6 +49,7 @@ export default function DashboardPage() {
     let alive = true
     filingsRecent().then((v) => alive && setFilings(v))
     epsisCapacity().then((v) => alive && setEpsis(v))
+    apiStatus(true).then((v) => alive && setStatus(v))
     return () => {
       alive = false
     }
@@ -243,6 +245,39 @@ export default function DashboardPage() {
               <p className="chart-note">
                 발전소별·연료원별 공식 설비용량(MW) — 발전소 레이어의 용량 공백과 집단에너지 좌표 공백을 메우는 소스.
                 data.go.kr 인증키(무인증 EPSIS 열람 별개) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
+              </p>
+            )}
+          </section>
+
+          <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
+            <div className="chart-title">API 연동 현황 — 서버 env 진단</div>
+            {status?.sources ? (
+              <>
+                <div className="api-status-grid">
+                  {status.sources.map((s) => {
+                    const state = s.available ? 'live' : s.configured ? 'set' : 'wait'
+                    const label = s.available ? '연동' : s.configured ? '설정됨' : 'env 대기'
+                    return (
+                      <div key={s.key} className="api-status-row">
+                        <span className={`api-dot ${state}`} />
+                        <span className="api-name">{s.label}</span>
+                        <span className="api-axis">{s.axis}</span>
+                        <span className={`api-state ${state}`}>
+                          {label}
+                          {!s.available && s.configured && s.reason ? ` · ${s.reason}` : ''}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+                <p className="chart-note">
+                  ● 연동(실응답) · ◐ 설정됨(env 있음, 업스트림 응답 대기/스키마 확인) · ○ env 대기. 값은 노출되지 않습니다.
+                  {status.probed ? '' : ' (probe 미실행 — 설정 여부만)'} 스키마 보정은 각 프록시의 `*_URL` env로 재배포 없이 가능.
+                </p>
+              </>
+            ) : (
+              <p className="chart-note">
+                연동 현황은 서버리스(Vercel) 환경에서 표시됩니다. 정적 프리뷰에서는 <span className="badge verify">진단 대기</span>.
               </p>
             )}
           </section>
