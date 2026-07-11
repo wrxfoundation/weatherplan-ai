@@ -1,27 +1,20 @@
 /**
  * 케이웨더(KWeather) Air365 프록시 — 키를 브라우저에 노출하지 않기 위한 서버리스 함수.
- * 스펙 출처: Wellbian API 통합 가이드 v2.6(케이웨더 실사용 문서) + todayindex 참조 구현.
+ * 스펙 출처: Wellbian API 통합 가이드 v2.6 + 프로덕션 debug=gis 실응답 확인:
+ *   kw-gis-gps?lat=&lon= 은 행정동코드가 아니라 { data:{ timeZone, tm:[시간…], …기상 배열 } }
+ *   형태의 GPS 직접 시계열을 반환한다(error:"0"). → 코드 변환 없이 GPS로 바로 조회하는 구조.
  *
  * 호출: /api/kweather?kind=current|forecast&lat=&lng=
- * 흐름(Wellbian 문법):
- *   1) GPS→행정동코드: {BASE}/kw-gis-gps?lat=&lon=&api_key=   (실패 시 레거시 /weather/map/v1/l015 폴백)
- *   2) kind=current  → {BASE}/kw-odam1/{code}   읍면동 실황(10분 갱신) — 온도·습도·날씨·강수·미세먼지
- *      kind=forecast → {BASE}/kw-3d24h1/{code}  3일 일별예보
- * 공통 봉투: { error:"0", data: { "<code>": { service:{timestamp}, data:{...} } } } — 센서마다 필드 상이(방어적 픽)
+ * 전략(순차 폴백):
+ *   current  → ① kw-odam1?lat&lon(GPS 직접) ② 코드 해석되면 kw-odam1/{code} ③ kw-gis-gps 시계열 현재시점
+ *   forecast → ① kw-3d24h1?lat&lon ② kw-3d24h1/{code} ③ kw-gis-gps 시계열 일별 집계
  *
- * 환경변수 (Vercel — 키 커밋 금지):
- *  - KWEATHER_API_KEY (필수)
- *  - KWEATHER_API_BASE (선택, 기본 https://gateway.kweather.co.kr:8443) ← 포트 8443 필수
- *
- * 응답:
- *  current  → { available, temp, sky, humidity, senseTemp, rain1h, pm10, pm25, scope, timestamp }
- *  forecast → { available, days:[{label,tmax,tmin,rainProb,sky}], rain, timestamp }
- *  실패/미설정 시 { available:false, reason } — 가짜 수치 금지
+ * 환경변수: KWEATHER_API_KEY(필수) · KWEATHER_API_BASE(선택, 기본 :8443 게이트웨이)
+ * 실패/미설정 시 { available:false, reason } — 가짜 수치 금지
  */
 const DEFAULT_BASE = 'https://gateway.kweather.co.kr:8443'
 const SENSORS = '/weather/w3/v2/kw-sensors'
 const DAY_LABEL = ['오늘', '내일', '모레', '+3일']
-// wIcon: 1맑음 2구름조금 3구름많음 4흐림 5비 6눈/비 7눈
 const WICON_TEXT = { 1: '맑음', 2: '구름조금', 3: '구름많음', 4: '흐림', 5: '비', 6: '비/눈', 7: '눈' }
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 
@@ -29,13 +22,16 @@ const num = (v) => {
   const n = Number.parseFloat(v)
   return Number.isFinite(n) ? n : undefined
 }
-
 const pick = (o, names) => {
   for (const n of names) if (o?.[n] != null && o[n] !== '') return o[n]
   return undefined
 }
+/** 배열 필드면 i번째, 스칼라면 그대로 */
+const at = (o, names, i = 0) => {
+  const v = pick(o, names)
+  return Array.isArray(v) ? v[i] : v
+}
 
-// Wellbian 가이드 권장 타임아웃 15초
 async function getJson(url, ms = 15000) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
@@ -48,20 +44,23 @@ async function getJson(url, ms = 15000) {
   }
 }
 
-/** 케이웨더 공통 봉투에서 첫 행정동의 data 블록 추출 */
-function firstData(json) {
-  if (!json || (json.error != null && String(json.error) !== '0') || !json.data) return null
-  const first = Object.values(json.data)[0]
-  if (!first?.data) return null
-  return { data: first.data, timestamp: first.service?.timestamp }
+/** 봉투 정규화 — 형태A: data가 곧 페이로드(tm/기상 배열) · 형태B: data:{ "<code>": {service,data} } */
+function dataBlock(json) {
+  if (!json || (json.error != null && String(json.error) !== '0')) return null
+  const d = json.data
+  if (!d || typeof d !== 'object') return null
+  if (d.tm || d.t1h || d.temp || d.maxTemp || d.rainP) return { data: d, timestamp: undefined }
+  const first = Object.values(d)[0]
+  if (first?.data) return { data: first.data, timestamp: first.service?.timestamp }
+  return null
 }
 
-/** 응답 어디에 있든 행정동 코드 탐색 — 센서마다 구조가 달라 방어적으로.
- * 1순위: 알려진 키 이름(code/hcode/admCd…) 2순위: 키 무관 10자리 숫자값(행정동코드는 정확히 10자리) */
+/** 행정동코드 탐색 — 시도코드(11~50)로 시작하는 10자리만 유효. 타임스탬프(20YYMMDDHH) 오인 방지 */
+const isDongCode = (v) => /^\d{10}$/.test(String(v)) && !/^20\d{8}$/.test(String(v))
 function findCode(obj, depth = 0) {
   if (!obj || typeof obj !== 'object' || depth > 5) return undefined
   for (const [k, v] of Object.entries(obj)) {
-    if (/^(code|hcode|admcd|adm_cd|dongcode|dong_cd|areacode)$/i.test(k) && /^\d{8,10}$/.test(String(v))) return String(v)
+    if (/^(code|hcode|admcd|adm_cd|dongcode|dong_cd|areacode)$/i.test(k) && isDongCode(v)) return String(v)
   }
   for (const v of Object.values(obj)) {
     if (v && typeof v === 'object') {
@@ -71,23 +70,61 @@ function findCode(obj, depth = 0) {
   }
   return undefined
 }
-function findAnyDongCode(obj, depth = 0) {
-  if (!obj || typeof obj !== 'object' || depth > 5) return undefined
-  for (const v of Object.values(obj)) {
-    if ((typeof v === 'string' || typeof v === 'number') && /^\d{10}$/.test(String(v))) return String(v)
+
+const T_NAMES = ['t1h', 'temp', 'ta', 't3h']
+const SKY_NAMES = ['wText', 'condition', 'sky']
+const ICON_NAMES = ['wIcon', 'icon']
+
+function currentFrom(d, scopeFallback) {
+  const temp = num(at(d, T_NAMES))
+  const skyRaw = at(d, SKY_NAMES)
+  const sky = skyRaw != null ? String(skyRaw) : WICON_TEXT[num(at(d, ICON_NAMES))]
+  const humidity = num(at(d, ['reh', 'humidity']))
+  if (temp == null && sky == null && humidity == null) return null
+  return {
+    available: true,
+    temp,
+    sky,
+    humidity,
+    senseTemp: num(at(d, ['senseTemp', 'feelsLike'])),
+    rain1h: num(at(d, ['rn1', 'rain'])),
+    pm10: num(at(d, ['pm10'])),
+    pm25: num(at(d, ['pm25', 'pm2_5'])),
+    scope: [d.state, d.city, d.city2].filter(Boolean).join(' ') || scopeFallback,
   }
-  for (const v of Object.values(obj)) {
-    if (v && typeof v === 'object') {
-      const f = findAnyDongCode(v, depth + 1)
-      if (f) return f
-    }
+}
+
+/** kw-gis-gps 시간별 시계열 → 일별 집계(최고/최저/강수확률 최대) */
+function daysFromHourly(d) {
+  const tm = Array.isArray(d.tm) ? d.tm : []
+  const temps = pick(d, T_NAMES)
+  const rains = pick(d, ['rainP', 'pop', 'rnProb'])
+  const icons = pick(d, ICON_NAMES)
+  if (!tm.length || !Array.isArray(temps)) return null
+  const byDay = new Map()
+  for (let i = 0; i < tm.length; i++) {
+    const day = String(tm[i]).slice(0, 8)
+    if (!byDay.has(day)) byDay.set(day, { t: [], r: [], ic: [] })
+    const g = byDay.get(day)
+    const tv = num(temps[i])
+    if (tv != null) g.t.push(tv)
+    const rv = Array.isArray(rains) ? num(rains[i]) : undefined
+    if (rv != null) g.r.push(rv)
+    const iv = Array.isArray(icons) ? num(icons[i]) : undefined
+    if (iv != null) g.ic.push(iv)
   }
-  return undefined
+  const days = [...byDay.entries()].slice(0, 4).map(([, g], i) => ({
+    label: DAY_LABEL[i] ?? `+${i}일`,
+    tmax: g.t.length ? Math.max(...g.t) : undefined,
+    tmin: g.t.length ? Math.min(...g.t) : undefined,
+    rainProb: g.r.length ? Math.max(...g.r) : undefined,
+    sky: g.ic.length ? WICON_TEXT[g.ic[Math.floor(g.ic.length / 2)]] : undefined,
+  }))
+  return days.length ? days : null
 }
 
 export default async function handler(req, res) {
   const kind = req.query.kind === 'forecast' ? 'forecast' : 'current'
-  // 실황은 10분 갱신(Wellbian 캐시 정책: 실황 30초·예보 5분+) — 엣지 캐시는 보수적으로
   res.setHeader('Cache-Control', kind === 'current' ? 's-maxage=300, stale-while-revalidate=600' : 's-maxage=600, stale-while-revalidate=1200')
 
   const key = process.env.KWEATHER_API_KEY
@@ -105,89 +142,87 @@ export default async function handler(req, res) {
   try {
     const base = (process.env.KWEATHER_API_BASE || DEFAULT_BASE).replace(/\/$/, '')
     const auth = `api_key=${encodeURIComponent(key)}`
+    const gpsQ = `lat=${lat}&lon=${lng}&${auth}`
+    const sensor = kind === 'current' ? 'kw-odam1' : 'kw-3d24h1'
 
-    // 1) GPS → 행정동코드 (Wellbian: kw-gis-gps 센서) — 실패 시 레거시 l015 폴백
-    let gis = await getJson(`${base}${SENSORS}/kw-gis-gps?lat=${lat}&lon=${lng}&${auth}`)
-    let code = gis?._status ? undefined : (findCode(gis) ?? findAnyDongCode(gis))
-    if (!code) {
-      const legacy = await getJson(`${base}/weather/map/v1/l015?lat=${lat}&lon=${lng}&${auth}`)
-      if (!legacy?._status) {
-        const c = legacy?.data?.[0]?.hcode ?? findCode(legacy) ?? findAnyDongCode(legacy)
-        if (c != null) code = String(c)
-        gis = legacy
-      }
+    // ① 센서에 GPS 직접 질의 (kw-gis-gps가 GPS 직접 응답인 것으로 확인된 게이트웨이 문법)
+    let raw = await getJson(`${base}${SENSORS}/${sensor}?${gpsQ}`)
+    let block = raw?._status ? null : dataBlock(raw)
+
+    // ② GPS 시계열(kw-gis-gps) — 코드 해석·최후 폴백 재료
+    let gps = null
+    if (!block || req.query.debug === 'gis') {
+      gps = await getJson(`${base}${SENSORS}/kw-gis-gps?${gpsQ}`)
     }
-    // ?debug=gis → 코드 해석 원응답 구조(행정동코드뿐, 시크릿 아님)
     if (req.query.debug === 'gis') {
-      res.status(200).json({ available: true, debug: 'gis', resolvedCode: code ?? null, errorField: gis?.error, sample: JSON.stringify(gis).slice(0, 400) })
-      return
-    }
-    if (!code) {
-      const shape = gis?._status ? `http${gis._status}` : `e${gis?.error ?? 'null'}`
-      res.status(200).json({ available: false, reason: `no_region_code_${shape}` })
-      return
-    }
-
-    if (kind === 'current') {
-      // 2a) 읍면동 실황 kw-odam1 (Wellbian ★ 가장 많이 사용)
-      const raw = await getJson(`${base}${SENSORS}/kw-odam1/${code}?${auth}`)
-      if (raw?._status) {
-        res.status(200).json({ available: false, reason: `upstream_${raw._status}` })
-        return
-      }
-      const obs = firstData(raw)
-      if (!obs) {
-        res.status(200).json({ available: false, reason: 'schema_unknown_odam' })
-        return
-      }
-      const d = obs.data
-      const temp = num(pick(d, ['t1h', 'temp', 'ta']))
-      const sky = pick(d, ['wText', 'condition', 'sky'])
-      const humidity = num(pick(d, ['reh', 'humidity']))
-      if (temp == null && sky == null && humidity == null) {
-        res.status(200).json({ available: false, reason: 'no_weather_fields' })
-        return
-      }
+      const g = gps && !gps._status ? gps : raw
       res.status(200).json({
         available: true,
-        temp,
-        sky: sky != null ? String(sky) : WICON_TEXT[num(d.wIcon)] ,
-        humidity,
-        senseTemp: num(pick(d, ['senseTemp', 'feelsLike'])),
-        rain1h: num(pick(d, ['rn1', 'rain'])),
-        pm10: num(d.pm10),
-        pm25: num(pick(d, ['pm25', 'pm2_5'])),
-        scope: [d.state, d.city, d.city2].filter(Boolean).join(' ') || `행정동 ${code}`,
-        timestamp: obs.timestamp,
+        debug: 'gis',
+        resolvedCode: findCode(g) ?? null,
+        errorField: g?.error,
+        dataKeys: g?.data && typeof g.data === 'object' ? Object.keys(g.data).slice(0, 40) : null,
+        sample: JSON.stringify(g).slice(0, 1200),
       })
       return
     }
 
-    // 2b) 3일 일별예보 kw-3d24h1
-    const raw = await getJson(`${base}${SENSORS}/kw-3d24h1/${code}?${auth}`)
-    if (raw?._status) {
-      res.status(200).json({ available: false, reason: `upstream_${raw._status}` })
-      return
+    // ③ 코드가 해석되면 코드 경로 재시도
+    if (!block && gps && !gps._status) {
+      const code = findCode(gps)
+      if (code) {
+        raw = await getJson(`${base}${SENSORS}/${sensor}/${code}?${auth}`)
+        block = raw?._status ? null : dataBlock(raw)
+      }
     }
-    const fcst = firstData(raw)
-    if (!fcst) {
-      res.status(200).json({ available: false, reason: 'schema_unknown_3d' })
-      return
+
+    if (block) {
+      if (kind === 'current') {
+        const out = currentFrom(block.data, 'GPS 지점')
+        if (out) {
+          res.status(200).json({ ...out, timestamp: block.timestamp })
+          return
+        }
+      } else {
+        const d = block.data
+        const rainP = d.rainP ?? []
+        const maxT = d.maxTemp ?? []
+        if (maxT.length || rainP.length) {
+          const days = []
+          for (let i = 0; i < Math.min(4, Math.max(rainP.length, maxT.length)); i++) {
+            days.push({ label: DAY_LABEL[i] ?? `+${i}일`, tmax: num(maxT[i]), tmin: num((d.minTemp ?? [])[i]), rainProb: num(rainP[i]), sky: WICON_TEXT[num((d.wIcon ?? [])[i])] })
+          }
+          res.status(200).json({ available: true, days, rain: days.some((x) => (x.rainProb ?? 0) >= 60), timestamp: block.timestamp })
+          return
+        }
+        const days = daysFromHourly(d)
+        if (days) {
+          res.status(200).json({ available: true, days, rain: days.some((x) => (x.rainProb ?? 0) >= 60) })
+          return
+        }
+      }
     }
-    const d = fcst.data
-    const rainP = d.rainP ?? []
-    const maxT = d.maxTemp ?? []
-    const minT = d.minTemp ?? []
-    const wIcon = d.wIcon ?? []
-    const days = []
-    for (let i = 0; i < Math.min(4, Math.max(rainP.length, maxT.length)); i++) {
-      days.push({ label: DAY_LABEL[i] ?? `+${i}일`, tmax: num(maxT[i]), tmin: num(minT[i]), rainProb: num(rainP[i]), sky: WICON_TEXT[num(wIcon[i])] })
+
+    // ④ 최후: kw-gis-gps 시계열에서 직접 추출
+    const gpsBlock = gps && !gps._status ? dataBlock(gps) : null
+    if (gpsBlock) {
+      if (kind === 'current') {
+        const out = currentFrom(gpsBlock.data, 'GPS 지점')
+        if (out) {
+          res.status(200).json(out)
+          return
+        }
+      } else {
+        const days = daysFromHourly(gpsBlock.data)
+        if (days) {
+          res.status(200).json({ available: true, days, rain: days.some((x) => (x.rainProb ?? 0) >= 60) })
+          return
+        }
+      }
     }
-    if (!days.length) {
-      res.status(200).json({ available: false, reason: 'no_forecast_fields' })
-      return
-    }
-    res.status(200).json({ available: true, days, rain: days.some((x) => (x.rainProb ?? 0) >= 60), timestamp: fcst.timestamp })
+
+    const shape = raw?._status ? `http${raw._status}` : `e${raw?.error ?? 'null'}`
+    res.status(200).json({ available: false, reason: `no_weather_fields_${shape}` })
   } catch (e) {
     res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
   }
