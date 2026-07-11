@@ -27,11 +27,13 @@ const num = (v) => {
   return Number.isFinite(n) ? n : undefined
 }
 
+const UA = 'Mozilla/5.0 (compatible; AI-InfraMap/1.0; +https://aidatacenter.vercel.app)'
+
 async function getJson(url, ms = 8000) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
   try {
-    const r = await fetch(url, { signal: ctrl.signal })
+    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': UA, Accept: 'application/json' } })
     if (!r.ok) return { _status: r.status }
     return await r.json()
   } finally {
@@ -73,8 +75,16 @@ export default async function handler(req, res) {
       res.status(200).json({ available: false, reason: `upstream_${gis._status}` })
       return
     }
-    const hcode = gis?.data?.[0]?.hcode
-    if (gis?.error !== '0' || hcode == null) {
+    // ?debug=1 → l015 원응답 구조(행정동코드, 시크릿 아님) 노출로 파싱 진단
+    if (req.query.debug === 'gis') {
+      res.status(200).json({ available: true, debug: 'gis', errorField: gis?.error, topKeys: Object.keys(gis || {}), sample: JSON.stringify(gis).slice(0, 400) })
+      return
+    }
+    // 방어적 hcode 추출(error가 숫자 0/문자 "0" 혼재 대비, 구조 변형 대비)
+    const okError = gis?.error == null || String(gis.error) === '0'
+    const hcode =
+      gis?.data?.[0]?.hcode ?? gis?.data?.hcode ?? gis?.hcode ?? (Array.isArray(gis?.data) ? gis.data.find((x) => x?.hcode)?.hcode : undefined)
+    if (!okError || hcode == null) {
       res.status(200).json({ available: false, reason: 'no_region_code' })
       return
     }

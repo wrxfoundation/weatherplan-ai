@@ -27,7 +27,7 @@ async function probeOne(base, src) {
     const url = `${base}${src.path}${src.point ? `${sep}${PROBE}` : ''}`
     const ctrl = new AbortController()
     const t = setTimeout(() => ctrl.abort(), 6000)
-    const r = await fetch(url, { signal: ctrl.signal })
+    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AI-InfraMap/1.0; +https://aidatacenter.vercel.app)' } })
     clearTimeout(t)
     const body = await r.json().catch(() => ({}))
     return { available: body?.available === true, reason: body?.reason }
