@@ -12,7 +12,8 @@ const SOURCES = [
   { key: 'epsis', label: 'EPSIS/전력시장 발전설비', env: ['DATA_GO_KR_KEY'], path: '/api/power?src=epsis', point: false, axis: '전력' },
   { key: 'supply', label: 'KPX 전력수급예보', env: ['DATA_GO_KR_KEY'], path: '/api/power?src=supply', point: false, axis: '전력' },
   { key: 'trading', label: 'KPX 전력거래실적', env: ['DATA_GO_KR_KEY'], path: '/api/power?src=trading', point: false, axis: '전력' },
-  { key: 'bldenergy', label: '건축HUB 건물에너지', env: ['DATA_GO_KR_KEY'], path: '/api/bldenergy', point: false, axis: '리스크' },
+  // probe는 실지번(강남구 삼성동 159, 무역센터)으로 엔드투엔드 검사 — needs_params 오탐 방지
+  { key: 'bldenergy', label: '건축HUB 건물에너지', env: ['DATA_GO_KR_KEY'], path: '/api/bldenergy?kind=elec&sigunguCd=11680&bjdongCd=10500&bun=0159&ji=0000&useYm=202503', point: false, axis: '리스크' },
   { key: 'filings', label: 'DART 공시', env: ['DART_API_KEY'], path: '/api/filings', point: false, axis: '시장' },
   { key: 'floodmap', label: '홍수위험지도 침수', env: ['FLOODMAP_KEY'], path: '/api/floodmap', point: true, axis: '리스크' },
   { key: 'sgis', label: 'SGIS 인구격자', env: ['SGIS_KEY', 'SGIS_SECRET'], path: '/api/sgis', point: true, axis: '리스크' },
@@ -26,8 +27,8 @@ async function probeOne(base, src) {
     const sep = src.path.includes('?') ? '&' : '?'
     const url = `${base}${src.path}${src.point ? `${sep}${PROBE}` : ''}`
     const ctrl = new AbortController()
-    const t = setTimeout(() => ctrl.abort(), 9500) // 업스트림 fetch(8s)보다 길게 — 느린 API가 probe_error로 오탐되지 않게
-    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AI-InfraMap/1.0; +https://aidatacenter.vercel.app)' } })
+    const t = setTimeout(() => ctrl.abort(), 16000) // 업스트림 fetch(최대 14s)보다 길게 — 느린 API가 probe_error로 오탐되지 않게
+    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36' } })
     clearTimeout(t)
     const body = await r.json().catch(() => ({}))
     return { available: body?.available === true, reason: body?.reason }

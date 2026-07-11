@@ -27,7 +27,7 @@ const num = (v) => {
   return Number.isFinite(n) ? n : undefined
 }
 
-const UA = 'Mozilla/5.0 (compatible; AI-InfraMap/1.0; +https://aidatacenter.vercel.app)'
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 
 async function getJson(url, ms = 8000) {
   const ctrl = new AbortController()
@@ -85,7 +85,9 @@ export default async function handler(req, res) {
     const hcode =
       gis?.data?.[0]?.hcode ?? gis?.data?.hcode ?? gis?.hcode ?? (Array.isArray(gis?.data) ? gis.data.find((x) => x?.hcode)?.hcode : undefined)
     if (!okError || hcode == null) {
-      res.status(200).json({ available: false, reason: 'no_region_code' })
+      // 케이웨더의 error 코드·응답 형태를 reason에 노출 — 진단 위젯에서 원인 즉시 확인
+      const shape = gis?.data == null ? 'nodata' : Array.isArray(gis.data) ? `arr${gis.data.length}` : typeof gis.data
+      res.status(200).json({ available: false, reason: `no_region_code_e${gis?.error ?? 'null'}_${shape}` })
       return
     }
 
