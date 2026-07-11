@@ -9,19 +9,25 @@ const TITLE = '대시보드 — 명당 AI 한국 데이터센터 인텔리전스
 const DESC =
   '한국 데이터센터 현황 대시보드: 상태별 시설 수, 지역별 공개 전력 분포, 건설·계획 파이프라인, 입지 시군구 지가 펄스 — 전부 공개 데이터 기준.'
 
-/* 단일 비율 미터(도넛) — conic-gradient, 중앙 라벨 */
-function Donut({ pct, label, sub }) {
+/* 하프서클 게이지 — 밝은 겉테두리 아크 + 반투명 속 아크 (레퍼런스 게이지 문법)
+ * 아크 경로 반지름 50, 반원 길이 = π×50 ≈ 157.08 */
+const ARC = 'M 12 66 A 50 50 0 0 1 112 66'
+const ARC_LEN = Math.PI * 50
+
+function Gauge({ pct, label, sub }) {
+  const on = (ARC_LEN * pct) / 100
   return (
-    <div className="donut-wrap">
-      <div
-        className="donut"
-        style={{ background: `conic-gradient(var(--accent-deep) 0, var(--accent) ${pct}%, color-mix(in srgb, var(--grey) 14%, var(--surface)) ${pct}% 100%)` }}
-        role="img"
-        aria-label={`${label} ${pct}%`}
-      />
-      <div className="donut-center">
-        <strong>{pct}%</strong>
+    <div className="gauge-wrap" role="img" aria-label={`${label} ${pct}%`}>
+      <svg viewBox="0 0 124 72" className="gauge">
+        {/* 트랙 */}
+        <path d={ARC} className="gauge-track" />
+        {/* 값: 밝은 엣지(굵게) 위에 반투명 코어(가늘게) — 유리관에 빛이 든 표현 */}
+        <path d={ARC} className="gauge-edge" strokeDasharray={`${on} ${ARC_LEN}`} />
+        <path d={ARC} className="gauge-core" strokeDasharray={`${on} ${ARC_LEN}`} />
+      </svg>
+      <div className="gauge-center">
         <span>{label}</span>
+        <strong>{pct}%</strong>
         {sub && <em>{sub}</em>}
       </div>
     </div>
@@ -113,7 +119,7 @@ export default function DashboardPage() {
                   전체 <strong>{d.total}</strong>곳 · 공개 전력 <strong>{d.totalMw.toLocaleString()}</strong> MW
                 </div>
               </div>
-              <Donut pct={d.opPct} label="OPERATIONAL" />
+              <Gauge pct={d.opPct} label="OPERATIONAL" />
             </div>
           </section>
 

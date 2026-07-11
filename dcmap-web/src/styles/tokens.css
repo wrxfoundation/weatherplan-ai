@@ -77,13 +77,22 @@
   --glow-accent: 0 0 18px color-mix(in srgb, var(--accent) 45%, transparent);
   --glow-warm: 0 0 14px color-mix(in srgb, var(--orange) 28%, transparent); /* 경고·대기 (레퍼런스 웜 알럿) */
 
-  /* 그라데이션 스트로크 — 카드 테두리가 좌상단에서 빛을 받아 흘러내리는 표현 (v3.1) */
+  /* 코너-액센트 스트로크 — 좌상단 코너에서 발광해 테두리를 타고 흘러내리다 사라짐 (v3.2 레퍼런스)
+   * 반대 코너(우하단)에 아주 약한 재발광 — 유리 모서리에 빛이 맺히는 표현 */
   --stroke-gradient: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.22) 0%,
-    color-mix(in srgb, var(--accent) 30%, transparent) 30%,
-    transparent 62%,
-    color-mix(in srgb, var(--accent) 12%, transparent) 100%
+    135deg,
+    color-mix(in srgb, var(--accent) 60%, white) 0%,
+    color-mix(in srgb, var(--accent) 35%, transparent) 16%,
+    color-mix(in srgb, var(--accent) 10%, transparent) 38%,
+    transparent 60%,
+    color-mix(in srgb, var(--accent) 14%, transparent) 100%
+  );
+
+  /* 카드 내부 코너 워시 — 스트로크와 같은 코너에서 은은히 번지는 빛 */
+  --corner-wash: radial-gradient(
+    260px 170px at 0% 0%,
+    color-mix(in srgb, var(--accent) 8%, transparent),
+    transparent 62%
   );
 
   /* ---- 공간 위계 (elevation) ----
