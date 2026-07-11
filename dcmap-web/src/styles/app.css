@@ -379,6 +379,11 @@ a {
   padding: 14px;
 }
 
+/* 바텀시트 핸들 — 모바일 전용(데스크톱 사이드바에선 숨김) */
+.sheet-handle {
+  display: none;
+}
+
 .panel-title {
   font-size: var(--text-title);
   font-weight: var(--weight-bold);
@@ -3324,25 +3329,51 @@ a {
     bottom: 56px;
     width: 100%;
     height: auto;
-    max-height: 42vh;
+    max-height: 46vh;
     border-left: none;
     border-top: 1px solid var(--glass-border);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     z-index: 1050;
-    padding-top: 18px;
+    padding-top: 0; /* 스티키 핸들이 상단 차지 */
+    transition: transform var(--dur-med, 0.28s) var(--ease-premium, ease), max-height var(--dur-med, 0.28s) var(--ease-premium, ease);
   }
 
-  /* 바텀시트 그랩 핸들 — 시트임을 알리는 어포던스 */
-  .side-panel::before {
-    content: '';
-    position: absolute;
-    top: 7px;
-    left: 50%;
+  /* 접힘: 맵을 넓게 — 핸들(약 36px)만 남기고 시트를 아래로 밀어낸다 */
+  .side-panel.collapsed {
+    transform: translateY(calc(100% - 36px));
+  }
+
+  /* 인터랙티브 그랩 핸들 — 탭으로 접기/펼치기. 스크롤해도 시트 상단에 고정 */
+  .sheet-handle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    position: sticky;
+    top: 0;
+    height: 36px;
+    margin: 0 -14px 4px; /* 사이드 패딩 상쇄해 전폭 */
+    padding: 7px 0 0;
+    border: none;
+    background: var(--glass-surface-strong);
+    cursor: pointer;
+    z-index: 3;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .sheet-grip {
     width: 40px;
     height: 4px;
-    margin-left: -20px;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--grey) 45%, transparent);
+    background: color-mix(in srgb, var(--grey) 55%, transparent);
+  }
+
+  .sheet-hint {
+    font-size: 11px;
+    font-weight: var(--weight-medium);
+    color: var(--grey);
+    line-height: 1;
   }
 
   /* 필터바: 줄바꿈 대신 가로 스크롤 */

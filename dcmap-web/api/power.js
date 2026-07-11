@@ -4,12 +4,19 @@
  * 호출: /api/power?src=epsis | supply | trading
  *
  * 환경변수 (Vercel — 서버 env 전용, 리포 커밋 절대 금지):
- *  - DATA_GO_KR_KEY (필수) — data.go.kr 인증키(디코딩 키, 공용)
+ *  - DATA_GO_KR_KEY (필수) — data.go.kr 통합 인증키(디코딩 키, 공용).
+ *    전력수급예보(openapi.kpx.or.kr)도 data.go.kr 통합관리라 같은 키를 쓴다.
  *  - EPSIS_URL / SUPPLY_URL / TRADING_URL (선택) — 각 오퍼레이션 엔드포인트 템플릿({key} 치환)
  *
  * 응답: 소스별 스키마 | { available:false, reason }
  * 정직성: 스키마는 프로덕션 실응답 확인 후 필드 매핑 보정. 미확정 값 미표기.
  */
+import http from 'node:http'
+import https from 'node:https'
+import { promises as dnsp } from 'node:dns'
+
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+
 const DEFAULTS = {
   epsis:
     'https://apis.data.go.kr/B552115/PowerMarketGenInfo/getPowerMarketGenInfo?serviceKey={key}&pageNo=1&numOfRows=1000&dataType=JSON',
@@ -63,24 +70,88 @@ const pick = (o, names) => {
   return undefined
 }
 
-/** 단순 평면 XML(<item>…</item>) → 객체 배열. 태그명은 요청 목록만 추출 */
-async function fetchXmlItems(url, tags, ms = 14000) {
+/** 평면 XML(<item>…</item>) 텍스트 → { items, _resultCode } */
+function parseXmlItems(xml, tags) {
+  const blocks = xml.match(/<item[\s>][\s\S]*?<\/item>/gi) || []
+  const tagVal = (b, tag) => {
+    const m = b.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, 'i'))
+    return m ? m[1].trim() : undefined
+  }
+  const items = blocks.map((b) => Object.fromEntries(tags.map((tg) => [tg, tagVal(b, tg)])))
+  return { items, _resultCode: (xml.match(/<resultCode>([\s\S]*?)<\/resultCode>/i) || [])[1] }
+}
+
+async function fetchXmlItems(url, tags, ms = 7000) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
   try {
-    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36' } })
+    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': UA } })
     if (!r.ok) return { _status: r.status }
-    const xml = await r.text()
-    const blocks = xml.match(/<item[\s>][\s\S]*?<\/item>/gi) || []
-    const tagVal = (b, tag) => {
-      const m = b.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, 'i'))
-      return m ? m[1].trim() : undefined
-    }
-    const items = blocks.map((b) => Object.fromEntries(tags.map((tg) => [tg, tagVal(b, tg)])))
-    return { items, _resultCode: (xml.match(/<resultCode>([\s\S]*?)<\/resultCode>/i) || [])[1] }
+    return parseXmlItems(await r.text(), tags)
   } finally {
     clearTimeout(t)
   }
+}
+
+/**
+ * IPv4 A레코드로 직결하는 원시 GET. 일부 정부/공사 서버는 IPv6 AAAA가 블랙홀이라
+ * undici(전역 fetch)의 happy-eyeballs가 CONNECT_TIMEOUT을 내는데(openapi.kpx.or.kr 케이스),
+ * 해석한 IPv4로 직접 붙으면 우회된다. https는 SNI(servername)로 인증서 검증 유지.
+ */
+async function rawGetText(urlStr, ms = 8000) {
+  const u = new URL(urlStr)
+  const ips = await dnsp.resolve4(u.hostname)
+  if (!ips?.length) throw new Error('no_a_record')
+  const isHttps = u.protocol === 'https:'
+  const mod = isHttps ? https : http
+  const opts = {
+    host: ips[0],
+    port: u.port || (isHttps ? 443 : 80),
+    path: u.pathname + u.search,
+    method: 'GET',
+    timeout: ms,
+    headers: { Host: u.hostname, 'User-Agent': UA, Accept: '*/*', Connection: 'close' },
+  }
+  if (isHttps) opts.servername = u.hostname
+  return await new Promise((resolve, reject) => {
+    const req = mod.request(opts, (r) => {
+      if (r.statusCode && r.statusCode >= 400) {
+        r.resume()
+        reject(new Error(`status_${r.statusCode}`))
+        return
+      }
+      let data = ''
+      r.setEncoding('utf8')
+      r.on('data', (c) => (data += c))
+      r.on('end', () => resolve(data))
+    })
+    req.on('timeout', () => req.destroy(new Error('raw_timeout')))
+    req.on('error', reject)
+    req.end()
+  })
+}
+
+/** EPSIS 발전설비: totalCount 기준으로 전체 페이지를 병렬 수집(안전 상한 20페이지·2만행) */
+async function fetchEpsisItems(url) {
+  const hasPage = /[?&]pageNo=\d+/.test(url)
+  const pageUrl = (n) => url.replace(/([?&]pageNo=)\d+/, `$1${n}`)
+  const first = await fetchJson(hasPage ? pageUrl(1) : url)
+  if (first?._status) return { _status: first._status }
+  let items = findItems(first) || []
+  const total = num(first?.response?.body?.totalCount)
+  const perPage = num(first?.response?.body?.numOfRows) || items.length || 1000
+  if (hasPage && total && total > items.length && perPage > 0) {
+    const pages = Math.min(20, Math.ceil(total / perPage))
+    const rest = await Promise.all(
+      Array.from({ length: pages - 1 }, (_, i) =>
+        fetchJson(pageUrl(i + 2))
+          .then((b) => findItems(b))
+          .catch(() => null),
+      ),
+    )
+    for (const it of rest) if (it?.length) items = items.concat(it)
+  }
+  return { items, total: total ?? items.length }
 }
 
 function normFuel(s) {
@@ -100,25 +171,43 @@ function normFuel(s) {
   return t || '기타'
 }
 
-// ---- epsis: 발전설비현황(연료원별 설비용량) ----
-function handleEpsis(items) {
+// ---- epsis: 발전설비현황(연료원/구분별 설비용량) ----
+function handleEpsis(items, total) {
   const facilities = []
   const fuelAgg = new Map()
+  let capRows = 0 // 설비용량(pcap)이 실제로 기재된 행 수 — 커버리지 정직 표기용
   for (const it of items) {
-    // 실제 EPSIS 필드(확인): pcap 설비용량 · fuel 연료원 · genNm 발전기명 · area 지역 · company 발전사
+    // 실제 EPSIS 필드(확인): pcap 설비용량 · fuel 연료원/구분 · genNm 발전기명 · area 지역 · company 발전사
     const mw = num(pick(it, ['pcap', '설비용량', 'genCapa', 'capacity', 'facilityCapa', 'capa']))
     const name = pick(it, ['genNm', '발전소명', 'genName', 'powerNm', 'plantNm', 'name', '호기명'])
     const fuelRaw = pick(it, ['fuel', '연료원', 'fuelType', 'energySource', 'genSrc', '발전원', '전원'])
     const region = pick(it, ['area', '지역', 'region', '시도', 'sido', '소재지'])
     if (mw == null && !name) continue
     const fuel = normFuel(fuelRaw)
-    if (mw != null) fuelAgg.set(fuel, (fuelAgg.get(fuel) || 0) + mw)
+    if (mw != null) {
+      fuelAgg.set(fuel, (fuelAgg.get(fuel) || 0) + mw)
+      if (mw > 0) capRows += 1
+    }
     if (name) facilities.push({ name: String(name), fuel, mw, region: region ? String(region) : undefined })
   }
-  const byFuel = [...fuelAgg.entries()].map(([fuel, mw]) => ({ fuel, mw: Math.round(mw) })).sort((a, b) => b.mw - a.mw)
+  // 0MW·미기재 구분은 표기하지 않는다 — '신재생 0MW'처럼 '측정값 0'으로 오해되는 것을 방지
+  // (해당 구분은 이 데이터셋에 설비용량이 기재되지 않았을 뿐, 실제 용량이 0인 것이 아님)
+  const byFuel = [...fuelAgg.entries()]
+    .map(([fuel, mw]) => ({ fuel, mw: Math.round(mw) }))
+    .filter((f) => f.mw > 0)
+    .sort((a, b) => b.mw - a.mw)
   const totalMw = byFuel.reduce((s, f) => s + f.mw, 0)
   if (!byFuel.length && !facilities.length) return { available: false, reason: 'no_capacity_fields' }
-  return { available: true, byFuel, facilities: facilities.slice(0, 500), totalMw: totalMw || undefined, count: facilities.length, source: 'EPSIS/KPX 발전설비현황 (data.go.kr)' }
+  return {
+    available: true,
+    byFuel,
+    facilities: facilities.slice(0, 500),
+    totalMw: totalMw || undefined,
+    count: facilities.length, // 이번에 수집한 설비 수(이름 기준)
+    capRows, // 설비용량이 기재된 설비 수
+    total: total || undefined, // data.go.kr totalCount(전체 등록 설비 수)
+    source: 'EPSIS 전력시장 등록 발전설비 (data.go.kr)',
+  }
 }
 
 // ---- supply: 전력수급예보(KPX XML) — fcMaxload 최대예측수요·fcReservePwr 예측예비력 ----
@@ -182,26 +271,44 @@ export default async function handler(req, res) {
     const tmpl = process.env[ENV_KEY[src]] || DEFAULTS[src]
     const url = tmpl.replaceAll('{key}', encodeURIComponent(key))
 
-    // supply는 KPX openapi XML — 별도 파서. 레거시 서버라 https 연결 불가 시 http 폴백
     let items
+    let epsisTotal
     if (IS_XML[src]) {
-      const urls = url.startsWith('https://') && !process.env[ENV_KEY[src]] ? [url, url.replace('https://', 'http://')] : [url]
+      // supply는 KPX openapi(openapi.kpx.or.kr) XML. 이 레거시 서버는 Vercel에서
+      // 간헐 CONNECT_TIMEOUT(IPv6 블랙홀) — 3단 폴백: undici https → IPv4 직결 https → IPv4 직결 http
+      const httpUrl = url.startsWith('https://') ? url.replace('https://', 'http://') : url
       let xr = null
       let lastErr = null
-      for (const u of urls) {
-        try {
-          xr = await fetchXmlItems(u, SUPPLY_TAGS)
-          if (!xr?._status) break
-        } catch (e1) {
-          lastErr = e1
+      try {
+        xr = await fetchXmlItems(url, SUPPLY_TAGS)
+        if (xr?._status) xr = null
+      } catch (e1) {
+        lastErr = e1
+      }
+      if (!xr) {
+        for (const u of [url, httpUrl]) {
+          try {
+            xr = parseXmlItems(await rawGetText(u), SUPPLY_TAGS)
+            if (xr?.items?.length) break
+          } catch (e2) {
+            lastErr = e2
+            xr = null
+          }
         }
       }
-      if (!xr) throw lastErr || new Error('unreachable')
-      if (xr?._status) {
-        res.status(200).json({ available: false, reason: `upstream_${xr._status}` })
+      if (!xr) {
+        res.status(200).json({ available: false, reason: `upstream_${lastErr?.cause?.code || lastErr?.message || lastErr?.name || 'unreachable'}` })
         return
       }
       items = xr.items
+    } else if (src === 'epsis') {
+      const got = await fetchEpsisItems(url)
+      if (got?._status) {
+        res.status(200).json({ available: false, reason: `upstream_${got._status}` })
+        return
+      }
+      items = got.items
+      epsisTotal = got.total
     } else {
       const body = await fetchJson(url)
       if (body?._status) {
@@ -216,10 +323,10 @@ export default async function handler(req, res) {
     }
     // 진단: ?debug=1 → 응답 필드명만 노출(값 아님) — no_*_fields 원인 파악용
     if (req.query.debug) {
-      res.status(200).json({ available: true, debug: true, src, fieldKeys: Object.keys(items[0] || {}), itemCount: items.length })
+      res.status(200).json({ available: true, debug: true, src, fieldKeys: Object.keys(items[0] || {}), itemCount: items.length, total: epsisTotal })
       return
     }
-    res.status(200).json(HANDLERS[src](items))
+    res.status(200).json(src === 'epsis' ? handleEpsis(items, epsisTotal) : HANDLERS[src](items))
   } catch (e) {
     res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
   }

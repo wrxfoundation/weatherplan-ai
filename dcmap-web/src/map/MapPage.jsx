@@ -166,6 +166,7 @@ export default function MapPage({ power = false }) {
   const [addrQuery, setAddrQuery] = useState('') // 지번/도로명 주소 검색 입력
   const [geocoding, setGeocoding] = useState(false)
   const [geoErr, setGeoErr] = useState(null)
+  const [sheetCollapsed, setSheetCollapsed] = useState(false) // 모바일 바텀시트 접기/펼치기 (맵 가림 해소)
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
@@ -398,6 +399,11 @@ export default function MapPage({ power = false }) {
     }
   }, [showHeadroom, headrooms])
 
+  // 새 선택(시설·지점·지역)이 생기면 모바일 바텀시트를 자동으로 펼쳐 결과를 바로 보게 한다
+  useEffect(() => {
+    if (selected || sitePoint || region) setSheetCollapsed(false)
+  }, [selected, sitePoint, region])
+
   // 지점 분석 마커 (십자 링) + ?site= URL 동기화 (공유 링크)
   useEffect(() => {
     const map = mapObj.current
@@ -593,7 +599,17 @@ export default function MapPage({ power = false }) {
           {geoErr && <div className="addr-err">{geoErr}</div>}
           <ClimateBar point={sitePoint || mapCenter} committed={!!sitePoint} />
         </div>
-        <aside className="side-panel">
+        <aside className={`side-panel${sheetCollapsed ? ' collapsed' : ''}`}>
+          <button
+            type="button"
+            className="sheet-handle"
+            onClick={() => setSheetCollapsed((v) => !v)}
+            aria-expanded={!sheetCollapsed}
+            aria-label={sheetCollapsed ? '패널 펼치기' : '패널 접기'}
+          >
+            <span className="sheet-grip" />
+            <span className="sheet-hint">{sheetCollapsed ? '▲ 패널 펼치기' : '▼ 지도 넓게 보기'}</span>
+          </button>
           {selected ? (
             <>
               <h2>
