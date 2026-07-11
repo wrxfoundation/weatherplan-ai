@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
-import { FACILITIES } from '../data/facilities.js'
+import { FACILITIES, CAPITAL_SIDOS } from '../data/facilities.js'
 import { checkPowerTrack } from './trackCheck.js'
 import Term from '../components/Term.jsx'
 
@@ -169,8 +169,14 @@ export default function CalcPage() {
   }, [count, gpu, pue, cooling, redun])
 
   const candidates = useMemo(
-    () => FACILITIES.filter((f) => f.power_mw_public != null && f.power_mw_public >= ctaMw).length,
-    [ctaMw],
+    () =>
+      FACILITIES.filter(
+        (f) =>
+          f.power_mw_public != null &&
+          f.power_mw_public >= ctaMw &&
+          (!nonCapital || !CAPITAL_SIDOS.has(f.sido)),
+      ).length,
+    [ctaMw, nonCapital],
   )
 
   return (
@@ -251,8 +257,8 @@ export default function CalcPage() {
               <strong>계약전력 관점의 수전 수요</strong>입니다. 프리쿨링 조건이 좋은 입지는 PUE를 낮춰 같은 GPU를 더
               적은 전력으로 돌립니다(기상 레이어, M3 예정).
             </div>
-            <Link className="btn primary" to={`/?min_mw=${ctaMw}`}>
-              이 용량 가능한 부지 보기 ({candidates}곳) <span className="btn-arrow">↗</span>
+            <Link className="btn primary" to={`/?min_mw=${ctaMw}${nonCapital ? '&noncap=1' : ''}`}>
+              이 용량 가능한 부지 보기 ({candidates}곳){nonCapital ? ' · 비수도권' : ''} <span className="btn-arrow">↗</span>
             </Link>
           </div>
 

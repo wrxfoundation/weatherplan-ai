@@ -28,12 +28,16 @@ export const SIDOS = [...new Set(FACILITIES.map((f) => f.sido))].sort((a, b) => 
 
 export const TYPES = [...new Set(FACILITIES.map((f) => f.type))].sort((a, b) => a.localeCompare(b, 'ko'))
 
-export function applyFilters(list, { statuses, type, sido, minMw, q }) {
+// 수도권(서울·경기·인천) — 계통영향평가 ±15점 감점·억제 권역
+export const CAPITAL_SIDOS = new Set(['서울', '경기', '인천'])
+
+export function applyFilters(list, { statuses, type, sido, minMw, q, nonCap }) {
   const needle = q?.toLowerCase() ?? ''
   return list.filter((f) => {
     if (statuses.size && !statuses.has(f.status === 'delayed' ? 'planned' : f.status)) return false
     if (type && f.type !== type) return false
     if (sido && f.sido !== sido) return false
+    if (nonCap && CAPITAL_SIDOS.has(f.sido)) return false
     if (minMw != null && !(f.power_mw_public >= minMw)) return false
     if (needle) {
       const haystack = [f.name, f.name_en, f.operator, f.sido, f.sigungu].filter(Boolean).join(' ').toLowerCase()

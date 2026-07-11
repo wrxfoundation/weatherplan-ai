@@ -171,7 +171,10 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               </div>
               <p className="chart-note">
                 용량·입지로 본 두 핵심 관문의 통과 난이도 추정 — 실제 판정은 한전·기후에너지환경부 심의.{' '}
-                <Link to="/roadmap?view=frame">전체 프로세스 프레임 →</Link>
+                <Link to={`/?min_mw=${Math.max(1, Math.ceil(mw))}${nonCapital ? '&noncap=1' : ''}`}>
+                  이 조건 통과 후보 맵 →
+                </Link>{' '}
+                · <Link to="/roadmap?view=frame">전체 프로세스 프레임 →</Link>
               </p>
             </>
           )
