@@ -166,7 +166,10 @@ export default function MapPage({ power = false }) {
   const [addrQuery, setAddrQuery] = useState('') // 지번/도로명 주소 검색 입력
   const [geocoding, setGeocoding] = useState(false)
   const [geoErr, setGeoErr] = useState(null)
-  const [sheetCollapsed, setSheetCollapsed] = useState(false) // 모바일 바텀시트 접기/펼치기 (맵 가림 해소)
+  // 모바일 바텀시트: 기본 접힘 → 로드 시 맵이 보이게. 지점/시설 선택하면 자동 펼침.
+  const [sheetCollapsed, setSheetCollapsed] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia?.('(max-width: 760px)')?.matches === true,
+  )
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
