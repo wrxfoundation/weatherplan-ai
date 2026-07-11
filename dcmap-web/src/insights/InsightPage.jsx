@@ -10,6 +10,7 @@ import PowerTrack40mw from './articles/PowerTrack40mw.jsx'
 import PsiaExemption from './articles/PsiaExemption.jsx'
 import GpuToMw from './articles/GpuToMw.jsx'
 import SeoulConcentration from './articles/SeoulConcentration.jsx'
+import PowerPermitBattle from './articles/PowerPermitBattle.jsx'
 
 const ARTICLES = {
   'power-track-40mw': {
@@ -54,6 +55,14 @@ const ARTICLES = {
     sources: [
       'OCP Educational Webinar, Compact Thermal Management Solutions for High-Density AI Data Centers (Parker Hannifin, 2025.6.26) — 공개 기술 자료',
       'GPU TDP 한계선·유량(1.5→0.3L/min per kW)·시장 전망(2030년 ~149억 달러)·PFAS 과제: 상기 웨비나 자료 기준 — 콘텐츠 등급 ④참고·인사이트',
+    ],
+  },
+  'power-permit-battle': {
+    component: PowerPermitBattle,
+    sources: [
+      '글로벌이코노믹 김주원(2026.7.6), 「AI 데이터센터, 이제는 ‘전력·허가’가 승부 가른다」 — Oilprice(2026.7.4) 재인용, QTS 디지털 게이트웨이 백지화·4대 투자 신호(청정E 확보율·송전망 유연성·임대료 상승률·LCOE)',
+      '한국 근거: 3MW 초과 발전사업 허가대장 v2(2026-04-17 기준, 4,652건) — 명당 직접 파싱·집계(data/gen_licenses_v2.json). 재생E 86.5%·2024+ 허가 633건·비수도권 86%는 누적 등재 건수 기준(용량 아님), 개별 MW는 참고치',
+      '콘텐츠 등급 ④참고·인사이트 — 해외 사례는 언론 재인용, 국내 수치는 1차 대장 집계',
     ],
   },
   'mega-project-aidc': {
