@@ -255,13 +255,13 @@ export default function DashboardPage() {
           </section>
 
           <section className="calc-card">
-            <div className="chart-title">발전설비 현황 — EPSIS/KPX (발전소 용량)</div>
+            <div className="chart-title">발전설비 현황 — EPSIS 전력시장 등록설비 (연료원/구분별)</div>
             {epsis?.available ? (
               <>
                 <ExpandableList
                   items={epsis.byFuel || []}
                   initial={8}
-                  unit="개 연료원"
+                  unit="개 구분"
                   render={(f) => {
                     const max = Math.max(...epsis.byFuel.map((x) => x.mw))
                     return (
@@ -276,8 +276,10 @@ export default function DashboardPage() {
                   }}
                 />
                 <p className="chart-note">
-                  연료원별 설비용량 — {epsis.count?.toLocaleString?.() || 0}개 설비{' '}
-                  {epsis.totalMw ? `· 합계 ${epsis.totalMw.toLocaleString()}MW` : ''}. 발전소 레이어 capacity 정합 소스(D3).
+                  전력시장 등록 발전설비 연료원/구분별 설비용량 — 용량 기재 {epsis.capRows?.toLocaleString?.() ?? epsis.count?.toLocaleString?.() ?? 0}개
+                  {epsis.total ? ` / 전체 ${epsis.total.toLocaleString()}개 등록` : ''}
+                  {epsis.totalMw ? ` · 합계 ${epsis.totalMw.toLocaleString()}MW` : ''}. 설비용량 미기재 구분(DER·재생e공급 등)은 제외 —
+                  이 데이터셋에 용량이 없는 것이지 실제 0MW가 아님. 발전소 레이어 capacity 정합 소스(D3).
                 </p>
               </>
             ) : (
