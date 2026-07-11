@@ -1562,37 +1562,20 @@ a {
   outline: none;
 }
 .term-pop {
-  position: absolute;
-  left: 0;
-  top: calc(100% + 7px);
-  z-index: 60;
-  width: max-content;
-  max-width: 260px;
+  /* position/top/left/width는 컴포넌트가 viewport 기준 fixed로 인라인 지정 */
+  z-index: 2000;
+  max-width: calc(100vw - 16px);
   white-space: normal;
   padding: 9px 11px;
   border-radius: var(--radius-md);
-  background: var(--glass-surface-strong, color-mix(in srgb, var(--surface) 96%, var(--accent)));
+  background: color-mix(in srgb, var(--surface) 97%, var(--accent));
   border: 1px solid var(--glass-border);
-  -webkit-backdrop-filter: var(--glass-backdrop);
-  backdrop-filter: var(--glass-backdrop);
   box-shadow: var(--glass-specular), var(--elev-3);
   color: var(--text);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   line-height: 1.5;
   letter-spacing: -0.01em;
-}
-.term-pop::before {
-  content: '';
-  position: absolute;
-  left: 10px;
-  top: -5px;
-  width: 9px;
-  height: 9px;
-  background: inherit;
-  border-left: 1px solid var(--glass-border);
-  border-top: 1px solid var(--glass-border);
-  transform: rotate(45deg);
 }
 
 /* 용량 밴드 스케일 (전력 인허가 트랙 라이브 표시) */
