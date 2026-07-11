@@ -154,22 +154,54 @@ export default function MapPage() {
     const cluster = clusterRef.current
     if (!cluster) return
     cluster.clearLayers()
+    // 같은 시군구 중심점을 공유하는 시설은 표시 전용 원형 오프셋으로 분산
+    // (데이터 좌표는 불변 — 겹친 마커·라벨이 서로를 가리는 문제 해결)
+    const coordGroups = new Map()
     for (const f of filtered) {
-      // bubblingMouseEvents:false — 마커 클릭이 맵 클릭(지점 분석)으로 전파되는 것 방지
-      const m = L.marker([f.lat, f.lng], { icon: markerIcon(f, isoView), bubblingMouseEvents: false })
-      const info = `${f.name} · ${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`
-      // 라벨 ON: 상시 글라스 칩 (클러스터로 묶인 마커는 자동 비표시) / OFF: 호버 툴팁
-      m.bindTooltip(
-        info,
-        showLabels
-          ? { permanent: true, direction: 'right', offset: [10, 0], className: 'dc-label' }
-          : { direction: 'top' },
-      )
-      m.on('click', () => {
-        setSitePoint(null)
-        setSelected(f)
+      const k = `${f.lat},${f.lng}`
+      if (!coordGroups.has(k)) coordGroups.set(k, [])
+      coordGroups.get(k).push(f)
+    }
+    const SPREAD_DEG = 0.006 // ≈ 650m — 시군구 중심점 공유 그룹의 분산 반경
+    let idx = 0
+    for (const group of coordGroups.values()) {
+      group.forEach((f, gi) => {
+        let lat = f.lat
+        let lng = f.lng
+        let angle = null
+        if (group.length > 1) {
+          angle = (2 * Math.PI * gi) / group.length
+          lat += SPREAD_DEG * Math.cos(angle)
+          lng += (SPREAD_DEG * Math.sin(angle)) / Math.cos((f.lat * Math.PI) / 180)
+        }
+        // bubblingMouseEvents:false — 마커 클릭이 맵 클릭(지점 분석)으로 전파되는 것 방지
+        const m = L.marker([lat, lng], { icon: markerIcon(f, isoView), bubblingMouseEvents: false })
+        const info = `${f.name} · ${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`
+        // 라벨 ON 방향 규칙: 그룹 분산 마커는 분산 각도의 바깥쪽으로 방사(서로 반대 방향으로
+        // 벌어져 충돌 최소화), 단독 마커는 좌우 교차 — / OFF: 호버 툴팁
+        let dir
+        if (angle != null) {
+          const e = Math.sin(angle)
+          const n = Math.cos(angle)
+          if (Math.abs(e) < 0.4) dir = n > 0 ? 'top' : 'bottom'
+          else dir = e > 0 ? 'right' : 'left'
+        } else {
+          dir = idx % 2 === 0 ? 'right' : 'left'
+        }
+        const OFF = { right: [10, 0], left: [-10, 0], top: [0, -12], bottom: [0, 12] }
+        m.bindTooltip(
+          info,
+          showLabels
+            ? { permanent: true, direction: dir, offset: OFF[dir], className: 'dc-label' }
+            : { direction: 'top' },
+        )
+        m.on('click', () => {
+          setSitePoint(null)
+          setSelected(f)
+        })
+        cluster.addLayer(m)
+        idx += 1
       })
-      cluster.addLayer(m)
     }
   }, [filtered, showLabels, isoView])
 

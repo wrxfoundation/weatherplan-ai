@@ -293,7 +293,7 @@ a {
   font-size: var(--text-body);
   font-weight: var(--weight-medium);
   line-height: 1;
-  box-shadow: var(--glass-specular-soft), var(--glow-accent-soft);
+  box-shadow: var(--glass-specular-soft), 0 0 11px color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
 /* 해제 ×는 자체 원형 아일랜드 (btn-arrow 문법과 통일) */
@@ -639,8 +639,8 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 7px;
+  padding: 9px 14px;
   border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--line));
   background: color-mix(in srgb, var(--surface) 55%, transparent);
@@ -648,6 +648,7 @@ a {
   cursor: pointer;
   font-size: var(--text-body);
   font-weight: var(--weight-medium);
+  line-height: 1; /* 알약 안 텍스트 수직 센터 — 상속 1.55가 텍스트를 아래로 밀던 문제 */
   box-shadow: var(--glass-specular-soft), var(--elev-1);
   transition:
     transform var(--dur-fast) var(--ease-premium),
@@ -665,19 +666,20 @@ a {
   transform: scale(0.98);
 }
 
+/* 글로우는 이전 대비 50% 감쇠 (반경·강도 절반) — 텍스트가 번져 보이던 문제 */
 .btn.primary {
   background: linear-gradient(180deg, var(--accent) 0%, var(--accent-deep) 100%);
   border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
   border-radius: 999px;
-  padding: 8px 8px 8px 16px;
+  padding: 9px 9px 9px 14px;
   color: var(--navy-deep);
   font-weight: var(--weight-bold);
-  box-shadow: var(--glass-specular), var(--glow-accent), var(--elev-1);
+  box-shadow: var(--glass-specular), 0 0 9px color-mix(in srgb, var(--accent) 22%, transparent), var(--elev-1);
 }
 
 .btn.primary:hover {
-  filter: brightness(1.08);
-  box-shadow: var(--glass-specular), 0 0 26px color-mix(in srgb, var(--accent) 60%, transparent), var(--elev-2);
+  filter: brightness(1.06);
+  box-shadow: var(--glass-specular), 0 0 13px color-mix(in srgb, var(--accent) 30%, transparent), var(--elev-2);
 }
 
 /* 중첩 CTA — 트레일링 아이콘은 자체 원형 아일랜드 안에 (high-end-visual-design §4B) */
@@ -910,6 +912,76 @@ a {
 
 .dc-iso.xl.construction {
   filter: drop-shadow(0 0 12px color-mix(in srgb, var(--status-construction) 75%, transparent));
+}
+
+/* ---------- 3D 베타 (MapLibre) ---------- */
+.map-canvas.map3d {
+  position: relative;
+}
+
+.map3d .maplibregl-canvas-container {
+  background: var(--navy-deep);
+}
+
+/* DOM 마커로 재사용되는 iso 빌딩 — 3D 뷰에선 커서 강조 */
+.dc-iso-3d {
+  width: 24px;
+  height: 26px;
+  cursor: pointer;
+}
+
+.dc-iso-3d.xl {
+  width: 32px;
+  height: 34px;
+}
+
+.map3d-banner {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--glass-surface-strong);
+  backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-specular-soft), var(--elev-2);
+  font-size: var(--text-sm);
+  color: var(--grey);
+  z-index: 500;
+  white-space: nowrap;
+}
+
+.beta-sup {
+  color: var(--accent);
+  font-size: 9px;
+  margin-left: 1px;
+}
+
+@media (max-width: 760px) {
+  .map3d-banner {
+    white-space: normal;
+    width: calc(100% - 24px);
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+.maplibregl-ctrl-group {
+  background: var(--glass-surface-strong) !important;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-specular-soft), var(--elev-1) !important;
+}
+
+.maplibregl-ctrl-group button {
+  background: transparent !important;
+}
+
+.maplibregl-ctrl-group button span {
+  filter: invert(0.85);
 }
 
 /* 지점 분석 마커: accent 링 + 중심점 */
