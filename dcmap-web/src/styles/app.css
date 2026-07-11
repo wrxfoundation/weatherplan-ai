@@ -1485,6 +1485,61 @@ a {
   gap: 8px;
 }
 
+/* 지점 분석 → 프로세스 관문 전망 */
+.gate-outlook {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 6px 0 4px;
+}
+.gate-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+.gate-row.sev-ok {
+  border-left-color: var(--ok, #4ade80);
+}
+.gate-row.sev-talk {
+  border-left-color: var(--accent);
+}
+.gate-row.sev-gate {
+  border-left-color: var(--warn, #f5b74e);
+}
+.gate-id {
+  font-size: 0.72rem;
+  font-weight: var(--weight-bold);
+  color: var(--grey);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+.gate-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.gate-title {
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+}
+.gate-note {
+  font-size: var(--text-small, 0.8rem);
+  color: var(--grey);
+  line-height: 1.4;
+}
+.gate-row .badge {
+  flex: none;
+  white-space: nowrap;
+}
+
 /* 인사이트 카테고리 태그 */
 .insight-tag {
   display: inline-block;

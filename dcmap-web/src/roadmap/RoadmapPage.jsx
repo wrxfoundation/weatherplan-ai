@@ -203,7 +203,11 @@ function ProcessFrame() {
 }
 
 export default function RoadmapPage() {
-  const [mode, setMode] = useState('guide') // 'guide' | 'frame'
+  const [mode, setMode] = useState(() =>
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('view') === 'frame'
+      ? 'frame'
+      : 'guide',
+  ) // 'guide' | 'frame'
   useEffect(() => {
     document.title = TITLE
     setMeta('name', 'description', DESC)
