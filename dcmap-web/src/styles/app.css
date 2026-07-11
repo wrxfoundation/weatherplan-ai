@@ -1212,6 +1212,13 @@ a {
   margin: 16px 0;
 }
 
+/* 상세 페이지의 연속 카드 간 간격 (지가 펄스·트랙·최근접 등) */
+.page .facility-card + .facility-card,
+.page .geo-note + .facility-card,
+.page .facility-card + .card-actions {
+  margin-top: 16px;
+}
+
 .geo-note {
   font-size: var(--text-sm);
   font-weight: var(--weight-regular);

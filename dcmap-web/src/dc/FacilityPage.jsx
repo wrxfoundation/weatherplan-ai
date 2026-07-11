@@ -4,12 +4,25 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import TopBar from '../TopBar.jsx'
 import FacilityCard from './FacilityCard.jsx'
-import { findBySlug, STATUS_LABEL } from '../data/facilities.js'
+import { findBySlug, STATUS_LABEL, FACILITIES, slugOf } from '../data/facilities.js'
 import { SIDO_SLUGS } from '../content/sido_slugs.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
 import { fmtRate } from '../data/landPrice.js'
 import { weatherFor } from '../data/liveApi.js'
+import { checkPowerTrack } from '../calc/trackCheck.js'
 import { buildDescription, buildPlaceJsonLd } from './seo.js'
+
+const CAPITAL_SIDO = new Set(['서울', '경기', '인천'])
+
+const km = (a, b) => {
+  const R = 6371
+  const dLat = ((b.lat - a.lat) * Math.PI) / 180
+  const dLng = ((b.lng - a.lng) * Math.PI) / 180
+  const s =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((a.lat * Math.PI) / 180) * Math.cos((b.lat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2
+  return 2 * R * Math.asin(Math.sqrt(s))
+}
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 
@@ -60,9 +73,10 @@ export default function FacilityPage() {
     const map = L.map(mapRef.current, {
       center: [facility.lat, facility.lng],
       zoom: facility.geocode_level === 'parcel' ? 14 : 10,
-      zoomControl: false,
+      zoomControl: true, // 확대/축소 버튼 (스크롤 줌은 페이지 스크롤 보호를 위해 계속 끔)
       scrollWheelZoom: false,
     })
+    map.zoomControl.setPosition('bottomright')
     L.tileLayer(DARK_TILES, {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
@@ -107,6 +121,62 @@ export default function FacilityPage() {
           {facility.type}
         </p>
         <div ref={mapRef} className="detail-map" />
+        {facility.power_mw_public != null && (() => {
+          const tr = checkPowerTrack(facility.power_mw_public, { nonCapital: !CAPITAL_SIDO.has(facility.sido) })
+          const h100 = Math.floor((facility.power_mw_public * 1000) / 1.3 / (0.7 * 1.2))
+          return (
+            <article className="facility-card">
+              <div className="chart-title">전력 인허가 트랙 — 공개 용량 {facility.power_mw_public}MW 기준 판정</div>
+              <div className="spec-grid">
+                <div className="spec-cell">
+                  <div className="k">수전전압 트랙</div>
+                  <div className="v">{tr.track.voltage}</div>
+                </div>
+                <div className="spec-cell">
+                  <div className="k">전력계통영향평가</div>
+                  <div className="v">
+                    {tr.psiaRequired ? '대상 (10MW 이상)' : '비대상'}
+                    {tr.exemption && ` · ${tr.exemption.effective}~ 면제 가능성`}
+                  </div>
+                </div>
+                <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                  <div className="k">GPU 환산 참고 (H100 · PUE 1.3 기준 근사)</div>
+                  <div className="v">약 {h100.toLocaleString()}장 규모</div>
+                </div>
+              </div>
+              <p className="chart-note">
+                공개 용량을 현행 규정(<Link to="/insights/power-track-40mw">40MW의 벽</Link>·
+                <Link to="/insights/psia-exemption-2027">계통영향평가 독법</Link>)에 대입한 규칙 기반 판정 — 실제
+                수전 계약과 다를 수 있습니다. GPU 환산은 <Link to="/calc">계산기</Link> 산식의 역산 참고치.
+              </p>
+            </article>
+          )
+        })()}
+        {(() => {
+          const nearest = FACILITIES.filter((f) => f.id !== facility.id)
+            .map((f) => ({ f, d: km(facility, f) }))
+            .sort((a, b) => a.d - b.d)
+            .slice(0, 3)
+          return (
+            <article className="facility-card">
+              <div className="chart-title">최근접 시설 — 좌표 기준 (시군구 중심점 포함 근사)</div>
+              <div className="facility-list">
+                {nearest.map(({ f, d }) => (
+                  <Link key={f.id} className="facility-row" to={`/dc/${slugOf(f)}`}>
+                    <span className={`dot ${f.status === 'delayed' ? 'planned' : f.status}`} />
+                    <span>
+                      <span className="name">{f.name}</span>
+                      <span className="meta">
+                        {d.toFixed(1)} km · {STATUS_LABEL[f.status] ?? f.status}
+                        {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
+                      </span>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </article>
+          )
+        })()}
         {wx && (
           <p className="geo-note">
             현재 기상 — 케이웨더 ({wx.scope || (facility.geocode_level === 'parcel' ? '부지' : '행정구역 중심점')} 기준):{' '}
