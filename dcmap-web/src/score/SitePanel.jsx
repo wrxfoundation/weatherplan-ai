@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, landUseFor, revgeoFor, weatherFor } from '../data/liveApi.js'
+import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
@@ -15,6 +15,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
   const [wx, setWx] = useState(null)
   const [landUse, setLandUse] = useState(null)
   const [fc, setFc] = useState(null)
+  const [headroom, setHeadroom] = useState(null)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -23,10 +24,12 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     setWx(null)
     setLandUse(null)
     setFc(null)
+    setHeadroom(null)
     revgeoFor(point.lat, point.lng).then((v) => alive && setAddr(v))
     weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
     landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v))
     forecastFor(point.lat, point.lng).then((v) => alive && setFc(v))
+    headroomFor(point.lat, point.lng).then((v) => alive && setHeadroom(v))
     return () => {
       alive = false
     }
@@ -193,6 +196,19 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               </div>
             ) : null
           })()}
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">계통 여유용량 (한전 분산전원 22.9kV · 배전)</div>
+            <div className="v">
+              {headroom?.available ? (
+                <>
+                  {headroom.availableMw != null && `여유 ${headroom.availableMw.toLocaleString()}MW`}
+                  {headroom.cumulativeMw != null && ` · 누적연계 ${headroom.cumulativeMw.toLocaleString()}MW`}
+                </>
+              ) : (
+                <span className="badge verify">연동 대기 — 전력축 D3 데이터 소스</span>
+              )}
+            </div>
+          </div>
           <div className="spec-cell">
             <div className="k">수전전압 트랙</div>
             <div className="v">{r.track.track.voltage}</div>
@@ -259,6 +275,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               dongPulse: dongPulseFor(r.nearest[0].facility),
               plantCtx: nearestPlant(point),
               windCtx: windContext(point),
+              headroom,
             })
           const onCopy = async () => {
             try {
