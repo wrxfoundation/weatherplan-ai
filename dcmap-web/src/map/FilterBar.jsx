@@ -17,6 +17,8 @@ export default function FilterBar({
   onClearMw,
   showLabels,
   onToggleLabels,
+  showPlants,
+  onTogglePlants,
 }) {
   return (
     <div className="filterbar">
@@ -43,6 +45,15 @@ export default function FilterBar({
           title="맵 위 시설명·용량 라벨 켜기/끄기"
         >
           라벨 {showLabels ? 'ON' : 'OFF'}
+        </button>
+        <button
+          type="button"
+          className={`chip ${showPlants ? 'on' : ''}`}
+          onClick={onTogglePlants}
+          aria-pressed={showPlants}
+          title="대형 발전단지(원전·석탄) 레이어 — 발전 인프라 근접성 맥락 (DC 전원 매칭 아님)"
+        >
+          ⚡ 발전소
         </button>
       </div>
 

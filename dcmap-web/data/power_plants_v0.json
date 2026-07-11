@@ -1,0 +1,18 @@
+{
+  "version": "0.1",
+  "date": "2026-07-11",
+  "source": "vworld 사업장/시설 검색으로 좌표 확보 (2026-07-11). 설비용량은 전력거래소 EPSIS 검증(D3) 후 기재 — 기억 기반 수치 기재 금지 원칙.",
+  "honesty_note": "특정 데이터센터가 어느 발전소의 전기를 쓰는지는 매칭 정보가 존재하지 않는다(계통은 풀 방식, 공급 계약 비공개). 이 레이어는 '전원 매칭'이 아니라 발전 인프라 근접성 맥락이다.",
+  "plants": [
+    { "id": "pp-kori", "name": "고리원자력본부", "type": "원자력", "operator": "한국수력원자력", "sido": "부산", "sigungu": "기장군", "lat": 35.330556, "lng": 129.282648, "geocode": "site", "capacity_mw": null, "needs_verify": true },
+    { "id": "pp-saeul", "name": "새울원자력본부", "type": "원자력", "operator": "한국수력원자력", "sido": "울산", "sigungu": "울주군", "lat": 35.357146, "lng": 129.328577, "geocode": "vicinity", "capacity_mw": null, "needs_verify": true },
+    { "id": "pp-wolsong", "name": "월성원자력본부", "type": "원자력", "operator": "한국수력원자력", "sido": "경북", "sigungu": "경주시", "lat": 35.693057, "lng": 129.468007, "geocode": "site", "capacity_mw": null, "needs_verify": true },
+    { "id": "pp-hanbit", "name": "한빛원자력본부", "type": "원자력", "operator": "한국수력원자력", "sido": "전남", "sigungu": "영광군", "lat": 35.421038, "lng": 126.428644, "geocode": "site", "capacity_mw": null, "needs_verify": true },
+    { "id": "pp-hanul", "name": "한울원자력본부", "type": "원자력", "operator": "한국수력원자력", "sido": "경북", "sigungu": "울진군", "lat": 37.096786, "lng": 129.371916, "geocode": "vicinity", "capacity_mw": null, "needs_verify": true },
+    { "id": "pp-dangjin", "name": "당진화력본부", "type": "석탄화력", "operator": "한국동서발전", "sido": "충남", "sigungu": "당진시", "lat": 37.057087, "lng": 126.508043, "geocode": "site", "capacity_mw": null, "needs_verify": true },
+    { "id": "pp-taean", "name": "태안발전본부", "type": "석탄화력", "operator": "한국서부발전", "sido": "충남", "sigungu": "태안군", "lat": 36.901454, "lng": 126.237134, "geocode": "site", "capacity_mw": null, "needs_verify": true },
+    { "id": "pp-boryeong", "name": "신보령발전본부", "type": "석탄화력", "operator": "한국중부발전", "sido": "충남", "sigungu": "보령시", "lat": 36.385268, "lng": 126.490794, "geocode": "site", "capacity_mw": null, "needs_verify": true },
+    { "id": "pp-yeongheung", "name": "영흥발전본부", "type": "석탄화력", "operator": "한국남동발전", "sido": "인천", "sigungu": "옹진군", "lat": 37.244361, "lng": 126.448144, "geocode": "site", "capacity_mw": null, "needs_verify": true },
+    { "id": "pp-hadong", "name": "하동빛드림본부", "type": "석탄화력", "operator": "한국남부발전", "sido": "경남", "sigungu": "하동군", "lat": 34.951629, "lng": 127.820513, "geocode": "vicinity", "capacity_mw": null, "needs_verify": true }
+  ]
+}

@@ -9,6 +9,7 @@ import FilterBar from './FilterBar.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
+import { PLANTS } from '../data/plants.js'
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 const TILE_ATTRIBUTION =
@@ -52,6 +53,37 @@ function markerIcon(f, iso) {
 
 const ISO_ZOOM = 10 // 클러스터 해제 줌과 동일 — 개별 마커가 보이는 순간 입체로
 
+/* 발전소 마커 — 육각 아웃라인 + ⚡ (원자력 cyan / 석탄 grey) */
+const plantIcon = (p) =>
+  L.divIcon({
+    className: `plant-marker ${p.type === '원자력' ? 'nuclear' : 'coal'}`,
+    html: `<svg viewBox="0 0 22 24"><polygon points="11,1 20.5,6.5 20.5,17.5 11,23 1.5,17.5 1.5,6.5"/><text x="11" y="16" text-anchor="middle">⚡</text></svg>`,
+    iconSize: [22, 24],
+  })
+
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+
+/* 호버 카드 — 클릭 없이 보는 요약 (시설) */
+function hoverCard(f) {
+  const key = f.status === 'delayed' ? 'planned' : f.status
+  return `<div class="hc">
+    <div class="hc-head"><span class="hc-dot ${key}"></span><strong>${esc(f.name)}</strong></div>
+    <div class="hc-meta">${esc(f.operator ?? '운영사 미공개')} · ${esc(f.sido)}${f.sigungu ? ' ' + esc(f.sigungu) : ''}</div>
+    <div class="hc-row">${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ' · 용량 비공개'}${f.year ? ` · ${f.year}` : ''}</div>
+    ${f.needs_verify ? '<div class="hc-verify">검증 필요</div>' : ''}
+    <div class="hc-cta">클릭 → 상세 카드</div>
+  </div>`
+}
+
+function plantCard(p) {
+  return `<div class="hc">
+    <div class="hc-head"><strong>${esc(p.name)}</strong></div>
+    <div class="hc-meta">${esc(p.operator)} · ${esc(p.sido)} ${esc(p.sigungu)}</div>
+    <div class="hc-row">${esc(p.type)} · 설비용량 EPSIS 검증 대기</div>
+    <div class="hc-verify">발전 인프라 맥락 — DC 전원 매칭 아님</div>
+  </div>`
+}
+
 export default function MapPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const rawMw = Number.parseFloat(searchParams.get('min_mw'))
@@ -68,6 +100,8 @@ export default function MapPage() {
   const [showLabels, setShowLabels] = useState(false) // 맵 정보 라벨 (시설명·용량) 상시 표시
   const [isoView, setIsoView] = useState(false) // 줌 ≥ ISO_ZOOM → 아이소메트릭 빌딩 마커
   const [denseLabels, setDenseLabels] = useState(false) // 줌 ≥ 13 → 그룹 개별 라벨 (미만은 대표 라벨)
+  const [showPlants, setShowPlants] = useState(false) // 발전 인프라 레이어 (원전·석탄 대형 단지)
+  const plantsLayerRef = useRef(null)
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
@@ -137,6 +171,26 @@ export default function MapPage() {
     clusterRef.current = cluster
     return () => map.remove()
   }, [])
+
+  // 발전 인프라 레이어 토글
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (plantsLayerRef.current) {
+      map.removeLayer(plantsLayerRef.current)
+      plantsLayerRef.current = null
+    }
+    if (showPlants) {
+      const g = L.layerGroup()
+      for (const p of PLANTS) {
+        L.marker([p.lat, p.lng], { icon: plantIcon(p), bubblingMouseEvents: false })
+          .bindTooltip(plantCard(p), { direction: 'top', offset: [0, -10], className: 'dc-hovercard', opacity: 1 })
+          .addTo(g)
+      }
+      g.addTo(map)
+      plantsLayerRef.current = g
+    }
+  }, [showPlants])
 
   // 지점 분석 마커 (십자 링)
   useEffect(() => {
@@ -209,15 +263,15 @@ export default function MapPage() {
         const groupSummary = group.length > 1 && !denseLabels
         const labelText = groupSummary ? `${f.sido} ${f.sigungu ?? ''} · ${group.length}곳`.trim() : info
         const skipLabel = groupSummary && gi !== 0
+        // 라벨 OFF: 호버 시 요약 카드 (클릭 없이 대략 정보) / 라벨 ON: 상시 칩
         m.bindTooltip(
-          info,
+          showLabels && !skipLabel ? (groupSummary ? labelText : info) : hoverCard(f),
           showLabels && !skipLabel
             ? groupSummary
               ? { permanent: true, direction: 'top', offset: [0, -12], className: 'dc-label' }
               : { permanent: true, direction: dir, offset: OFF[dir], className: 'dc-label' }
-            : { direction: 'top' },
+            : { direction: 'top', offset: [0, -8], className: 'dc-hovercard', opacity: 1 },
         )
-        if (showLabels && !skipLabel && groupSummary) m.setTooltipContent(labelText)
         m.on('click', () => {
           setSitePoint(null)
           setSelected(f)
@@ -257,6 +311,8 @@ export default function MapPage() {
         }}
         showLabels={showLabels}
         onToggleLabels={() => setShowLabels((v) => !v)}
+        showPlants={showPlants}
+        onTogglePlants={() => setShowPlants((v) => !v)}
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />
