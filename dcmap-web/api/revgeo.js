@@ -3,7 +3,8 @@
  * 키를 브라우저에 노출하지 않기 위한 서버리스 함수.
  *
  * 환경변수: VWORLD_KEY (필수, vworld.kr 발급 — 커밋 금지)
- * 응답: { available, parcel?, road? } — 실패 시 available:false ('조회 대기' 표시용)
+ * 응답: { available, parcel?, road?, legalCode?, sigunguCd?, bjdongCd?, bun?, ji? }
+ *       legalCode(법정동코드 10자리)와 번/지는 건축HUB 건물에너지(/api/bldenergy) 질의에 사용.
  */
 const num = (v) => {
   const n = Number.parseFloat(v)
@@ -47,11 +48,28 @@ export default async function handler(req, res) {
     }
     let parcel
     let road
+    let legalCode
+    let bun
+    let ji
     for (const item of body.response.result ?? []) {
-      if (item.type === 'parcel') parcel = item.text
+      if (item.type === 'parcel') {
+        parcel = item.text
+        const s = item.structure
+        // level4LC = 법정동코드 10자리, level5 = 번지("31" 또는 "31-2")
+        if (s?.level4LC && /^\d{10}$/.test(s.level4LC)) legalCode = s.level4LC
+        const jibun = String(s?.level5 ?? '').trim()
+        const m = jibun.match(/^(\d+)(?:-(\d+))?/)
+        if (m) {
+          bun = m[1].padStart(4, '0')
+          ji = (m[2] ?? '0').padStart(4, '0')
+        }
+      }
       if (item.type === 'road') road = item.text
     }
-    res.status(200).json({ available: true, parcel, road })
+    const codes = legalCode
+      ? { legalCode, sigunguCd: legalCode.slice(0, 5), bjdongCd: legalCode.slice(5), bun, ji }
+      : {}
+    res.status(200).json({ available: true, parcel, road, ...codes })
   } catch {
     res.status(200).json({ available: false, reason: 'upstream_error' })
   }

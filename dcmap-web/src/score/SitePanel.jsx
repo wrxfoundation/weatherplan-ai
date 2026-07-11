@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor } from '../data/liveApi.js'
+import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
 import { scoreSite } from './engine.js'
@@ -21,6 +21,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
   const [flood, setFlood] = useState(null)
   const [pop, setPop] = useState(null)
   const [disaster, setDisaster] = useState(null)
+  const [energy, setEnergy] = useState(null)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -33,7 +34,20 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     setFlood(null)
     setPop(null)
     setDisaster(null)
-    revgeoFor(point.lat, point.lng).then((v) => alive && setAddr(v))
+    setEnergy(null)
+    revgeoFor(point.lat, point.lng).then((v) => {
+      if (!alive) return
+      setAddr(v)
+      // 지번 법정동코드가 확보되면 건축HUB 지번 전기사용량 조회(최근 데이터는 2~3개월 지연)
+      if (v?.sigunguCd && v?.bjdongCd) {
+        const d = new Date()
+        d.setMonth(d.getMonth() - 3)
+        const useYm = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`
+        bldEnergyFor({ sigunguCd: v.sigunguCd, bjdongCd: v.bjdongCd, bun: v.bun, ji: v.ji, useYm }).then(
+          (e) => alive && setEnergy(e),
+        )
+      }
+    })
     weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
     landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v))
     forecastFor(point.lat, point.lng).then((v) => alive && setFc(v))
@@ -310,6 +324,21 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 </>
               ) : (
                 <span className="badge verify">연동 대기 — 리스크축 인구격자(SGIS)</span>
+              )}
+            </div>
+          </div>
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">지번 실측 전기사용량 (국토부 건축HUB — 수요 맥락)</div>
+            <div className="v">
+              {energy?.available && energy.usage != null ? (
+                <>
+                  {energy.useYm} <strong>{energy.usage.toLocaleString()} {energy.unit}</strong>
+                  <span className="meta"> · 해당 지번 건물에너지 실측(단독·소규모·산업 용도 제외)</span>
+                </>
+              ) : addr?.sigunguCd ? (
+                <span className="badge verify">해당 지번 데이터 없음 — 대상 외(단독·200세대 미만·산업)일 수 있음</span>
+              ) : (
+                <span className="badge verify">연동 대기 — 법정동코드 확보(vworld) 후 자동 조회</span>
               )}
             </div>
           </div>
