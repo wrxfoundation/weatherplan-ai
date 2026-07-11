@@ -1,0 +1,84 @@
+import { useEffect, useState } from 'react'
+import { weatherFor, climateFor, revgeoFor } from '../data/liveApi.js'
+import { dcClimateIndex, CLIMATE_LEVELS } from '../score/climateIndex.js'
+
+/* 맵 상단 기후 바 — 현재 지점(클릭/검색) 또는 지도 중심의 실황 기상 + 데이터센터 기후지수.
+ * 데이터센터에 좋은 기후인지(아주좋음~아주나쁨) 지도 위에서 바로 판단하게 한다. */
+export default function ClimateBar({ point, committed }) {
+  const [wx, setWx] = useState(null)
+  const [climate, setClimate] = useState(null)
+  const [addr, setAddr] = useState(null)
+
+  useEffect(() => {
+    if (!point) return
+    let alive = true
+    setWx(null)
+    setClimate(null)
+    setAddr(null)
+    weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
+    climateFor(point.lat, point.lng).then((v) => alive && setClimate(v))
+    // 지번 라벨은 '확정 지점'(클릭·검색)일 때만 — 팬 중 지도 중심마다 호출하지 않는다
+    if (committed) revgeoFor(point.lat, point.lng).then((v) => alive && setAddr(v))
+    return () => {
+      alive = false
+    }
+  }, [point?.lat, point?.lng, committed])
+
+  const idx = dcClimateIndex({
+    avgTemp: climate?.available ? climate.avgTemp : undefined,
+    humidity: wx?.humidity,
+    currentTemp: wx?.temp,
+  })
+
+  const where = committed
+    ? addr?.parcel || addr?.road || `${point?.lat?.toFixed(4)}, ${point?.lng?.toFixed(4)}`
+    : '지도 중심'
+
+  return (
+    <div className="climate-bar">
+      <div className="cb-head">
+        <span className="cb-where" title={where}>
+          {committed ? '📍' : '🧭'} {where}
+        </span>
+        <span className="cb-src">케이웨더 실황</span>
+      </div>
+
+      <div className="cb-body">
+        {/* 데이터센터 기후지수 배지 (아주나쁨~아주좋음) */}
+        {idx ? (
+          <div className={`ci-badge tone-${idx.tone}`} title={idx.note}>
+            <span className="ci-cap">DC 기후지수</span>
+            <span className="ci-label">{idx.label}</span>
+            <span className="ci-scale" aria-label={`5단계 중 ${idx.level}단계`}>
+              {CLIMATE_LEVELS.map((l) => (
+                <i key={l.level} className={l.level === idx.level ? `on tone-${idx.tone}` : ''} />
+              ))}
+            </span>
+          </div>
+        ) : (
+          <div className="ci-badge tone-wait">
+            <span className="ci-cap">DC 기후지수</span>
+            <span className="ci-label">연동 대기</span>
+          </div>
+        )}
+
+        {/* 현재 실황 요약 */}
+        <div className="cb-wx">
+          {wx ? (
+            <>
+              {wx.temp != null && <b>{wx.temp}°C</b>}
+              {wx.sky && <span> {wx.sky}</span>}
+              {wx.humidity != null && <span> · 습도 {wx.humidity}%</span>}
+              {wx.windSpeed != null && <span> · 풍속 {wx.windSpeed}m/s</span>}
+              {wx.pm10 != null && <span> · PM10 {wx.pm10}</span>}
+            </>
+          ) : (
+            <span className="cb-wait">기상 실황 불러오는 중…</span>
+          )}
+        </div>
+      </div>
+
+      {idx && <div className="cb-note">{idx.note}</div>}
+    </div>
+  )
+}

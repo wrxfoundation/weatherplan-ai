@@ -28,6 +28,24 @@ export const weatherFor = (lat, lng) => fetchJson(`/api/kweather?kind=current&${
 /** vworld 리버스 지오코딩 — { parcel, road } | null */
 export const revgeoFor = (lat, lng) => fetchJson(`/api/revgeo?${q(lat, lng)}`)
 
+/** vworld 포워드 지오코딩 — 지번/도로명 주소 → { lat, lng, matched, matchType } | null.
+ *  vworld는 간헐 지연/재시도가 있어 클라이언트 타임아웃을 넉넉히(9s) 준다. */
+export async function geocodeAddr(query) {
+  const s = String(query || '').trim()
+  if (!s) return null
+  try {
+    const ctrl = new AbortController()
+    const t = setTimeout(() => ctrl.abort(), 9000)
+    const r = await fetch(`/api/revgeo?q=${encodeURIComponent(s)}`, { signal: ctrl.signal })
+    clearTimeout(t)
+    if (!r.ok) return null
+    const body = await r.json()
+    return body?.available ? body : null
+  } catch {
+    return null
+  }
+}
+
 /** vworld 용도지역 (토지축 v1 근거) — { uses: string[] } | null */
 export const landUseFor = (lat, lng) => fetchJson(`/api/landuse?${q(lat, lng)}`)
 

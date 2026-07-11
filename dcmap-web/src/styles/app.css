@@ -2152,6 +2152,229 @@ a {
   white-space: nowrap;
 }
 
+/* ---------- 맵 상단: 주소검색 + 기후 바 ---------- */
+.map-top {
+  position: absolute;
+  top: calc(var(--topbar-height) + 12px);
+  right: calc(var(--panel-width) + 16px);
+  z-index: 1000;
+  width: 320px;
+  max-width: calc(100% - var(--panel-width) - 28px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none; /* 바 사이 빈틈으로 맵 팬 허용 */
+}
+
+.map-top > * {
+  pointer-events: auto;
+}
+
+.addr-search {
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  background: var(--glass-surface-strong);
+  backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
+}
+
+.addr-search input {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  padding: 0 12px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: var(--text-body);
+}
+
+.addr-search input::placeholder {
+  color: var(--grey);
+}
+
+.addr-search input:focus {
+  outline: none;
+}
+
+.addr-search button {
+  flex-shrink: 0;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: var(--text-body);
+  white-space: nowrap;
+}
+
+.addr-err {
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, #ef4d4d 20%, var(--glass-surface-strong));
+  border: 1px solid color-mix(in srgb, #ef4d4d 45%, transparent);
+  color: var(--text);
+  font-size: var(--text-sm);
+  backdrop-filter: var(--glass-backdrop);
+}
+
+.climate-bar {
+  padding: 10px 12px;
+  background: var(--glass-surface-strong);
+  backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
+}
+
+.cb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.cb-where {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cb-src {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--grey);
+}
+
+.cb-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cb-wx {
+  font-size: var(--text-sm);
+  color: var(--grey);
+  line-height: 1.4;
+}
+
+.cb-wx b {
+  color: var(--text);
+  font-size: var(--text-title);
+  font-weight: var(--weight-bold);
+}
+
+.cb-wait,
+.cb-note {
+  font-size: 11px;
+  color: var(--grey);
+}
+
+.cb-note {
+  margin-top: 7px;
+  line-height: 1.4;
+}
+
+/* DC 기후지수 배지 (아주나쁨~아주좋음 · AQI식 녹→적 스케일) */
+.ci-badge {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 7px 11px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--ci-color, var(--grey)) 16%, var(--navy-deep));
+  border: 1px solid color-mix(in srgb, var(--ci-color, var(--grey)) 55%, transparent);
+  min-width: 96px;
+}
+
+.ci-cap {
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--grey);
+}
+
+.ci-label {
+  font-size: var(--text-title);
+  font-weight: var(--weight-bold);
+  line-height: 1.1;
+  color: color-mix(in srgb, var(--ci-color, var(--text)) 78%, white);
+}
+
+/* 5칸 스케일 — 현재 단계 칸만 톤색으로 채운다 */
+.ci-scale {
+  display: inline-flex;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.ci-scale i {
+  width: 12px;
+  height: 5px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--grey) 30%, transparent);
+}
+
+.ci-scale i.on {
+  background: var(--ci-color, var(--accent));
+  box-shadow: 0 0 7px color-mix(in srgb, var(--ci-color, var(--accent)) 65%, transparent);
+}
+
+/* SitePanel 인라인 표기 */
+.ci-inline {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ci-inline .ci-scale i {
+  width: 16px;
+  height: 6px;
+}
+
+.ci-inline-label {
+  color: color-mix(in srgb, var(--ci-color, var(--text)) 80%, white);
+  font-weight: var(--weight-bold);
+}
+
+/* 톤 5단계 — 녹(좋음) → 황 → 적(나쁨) */
+.tone-vgood {
+  --ci-color: #2fd48a;
+}
+.tone-good {
+  --ci-color: #8fd15a;
+}
+.tone-mid {
+  --ci-color: #f5c542;
+}
+.tone-bad {
+  --ci-color: #f5883c;
+}
+.tone-vbad {
+  --ci-color: #ef4d4d;
+}
+.tone-wait {
+  --ci-color: var(--grey);
+}
+
+@media (max-width: 760px) {
+  /* 필터바(가로 스크롤) 아래로 내려 전폭 배치 */
+  .map-top {
+    top: calc(var(--topbar-height) + 54px);
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+  }
+}
+
 .dc-cluster {
   background: color-mix(in srgb, var(--surface) 85%, var(--accent));
   border: 1px solid var(--accent);

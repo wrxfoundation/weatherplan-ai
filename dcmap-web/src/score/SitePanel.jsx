@@ -8,6 +8,7 @@ import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
+import { dcClimateIndex, CLIMATE_LEVELS } from './climateIndex.js'
 import Term from '../components/Term.jsx'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
@@ -70,6 +71,17 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
   const r = useMemo(
     () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital }),
     [point, mw, nonCapital],
+  )
+
+  // 데이터센터 기후지수 — 연평균기온(과거기후) 우선, 없으면 현재기온 근사. 습도 보조.
+  const climateIdx = useMemo(
+    () =>
+      dcClimateIndex({
+        avgTemp: climate?.available ? climate.avgTemp : undefined,
+        humidity: wx?.humidity,
+        currentTemp: wx?.temp,
+      }),
+    [climate, wx],
   )
 
   return (
@@ -266,6 +278,26 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 {fc.rain && <span className="badge verify">강수 유의</span>}
               </div>
             )}
+          </div>
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">
+              <Term k="프리쿨링">데이터센터 기후지수</Term> (냉각 적합도 · 아주나쁨~아주좋음)
+            </div>
+            <div className="v">
+              {climateIdx ? (
+                <span className={`ci-inline tone-${climateIdx.tone}`}>
+                  <span className="ci-scale" aria-label={`5단계 중 ${climateIdx.level}단계`}>
+                    {CLIMATE_LEVELS.map((l) => (
+                      <i key={l.level} className={l.level === climateIdx.level ? `on tone-${climateIdx.tone}` : ''} />
+                    ))}
+                  </span>
+                  <b className="ci-inline-label">{climateIdx.label}</b>
+                  <span className="meta"> · {climateIdx.note}</span>
+                </span>
+              ) : (
+                <span className="badge verify">연동 대기 — 기온 확보 후 산출</span>
+              )}
+            </div>
           </div>
           <div className="spec-cell">
             <div className="k">기상특보 (리스크 — 태풍·강풍·호우)</div>
