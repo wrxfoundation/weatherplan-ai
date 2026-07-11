@@ -11,6 +11,8 @@ import PsiaExemption from './articles/PsiaExemption.jsx'
 import GpuToMw from './articles/GpuToMw.jsx'
 import SeoulConcentration from './articles/SeoulConcentration.jsx'
 import PowerPermitBattle from './articles/PowerPermitBattle.jsx'
+import OrbitalBottleneck from './articles/OrbitalBottleneck.jsx'
+import CoolingPlatformMA from './articles/CoolingPlatformMA.jsx'
 
 const ARTICLES = {
   'power-track-40mw': {
@@ -55,6 +57,22 @@ const ARTICLES = {
     sources: [
       'OCP Educational Webinar, Compact Thermal Management Solutions for High-Density AI Data Centers (Parker Hannifin, 2025.6.26) — 공개 기술 자료',
       'GPU TDP 한계선·유량(1.5→0.3L/min per kW)·시장 전망(2030년 ~149억 달러)·PFAS 과제: 상기 웨비나 자료 기준 — 콘텐츠 등급 ④참고·인사이트',
+    ],
+  },
+  'orbital-bottleneck': {
+    component: OrbitalBottleneck,
+    sources: [
+      'KDDC Issue Focus, 「발전소가 필요 없는 데이터센터…SpaceX가 2조 달러로 산 ‘AI 병목 통행권’」 (2026.6.16, STRABASE) — SpaceX 상장(시총 2조 달러 초과)·AI1 궤도 데이터센터 구상',
+      '수치 인용: 미국 DC 전력 41GW(≈전체 원전)·IEA 2030 945TWh·미국 전기요금 2019년 대비 +42%·자본 12~24개월 vs 전력망 4~10년·MS 스리마일 835MW/Amazon X-energy 5GW SMR/Google Kairos 500MW — 원문 기준',
+      '콘텐츠 등급 ④참고·인사이트 — 해외 시장 분석 재인용. 국내 함의(재생E 86.5%·비수도권 86%)는 명당 발전 허가대장 집계',
+    ],
+  },
+  'cooling-platform-ma': {
+    component: CoolingPlatformMA,
+    sources: [
+      'KDDC Issue Focus, 「액체냉각 M&A가 촉발한 AI 데이터센터 냉각 플랫폼 경쟁…Ecolab의 CoolIT 인수 사례 분석」 (2026.7.7, STRABASE)',
+      '거래 내용: Ecolab(NYSE:ECL)의 CoolIT Systems 인수 47.5억 달러(2026.7.2 완료)·CoolIT 향후 12개월 매출 ~5.5억 달러·Ecolab Global High-Tech TAM 50억→100억 달러 — 원문 기준',
+      '콘텐츠 등급 ④참고·인사이트 — 해외 M&A 분석 재인용',
     ],
   },
   'power-permit-battle': {
