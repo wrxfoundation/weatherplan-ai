@@ -182,10 +182,21 @@ export default async function handler(req, res) {
     const tmpl = process.env[ENV_KEY[src]] || DEFAULTS[src]
     const url = tmpl.replaceAll('{key}', encodeURIComponent(key))
 
-    // supply는 KPX openapi XML — 별도 파서
+    // supply는 KPX openapi XML — 별도 파서. 레거시 서버라 https 연결 불가 시 http 폴백
     let items
     if (IS_XML[src]) {
-      const xr = await fetchXmlItems(url, SUPPLY_TAGS)
+      const urls = url.startsWith('https://') && !process.env[ENV_KEY[src]] ? [url, url.replace('https://', 'http://')] : [url]
+      let xr = null
+      let lastErr = null
+      for (const u of urls) {
+        try {
+          xr = await fetchXmlItems(u, SUPPLY_TAGS)
+          if (!xr?._status) break
+        } catch (e1) {
+          lastErr = e1
+        }
+      }
+      if (!xr) throw lastErr || new Error('unreachable')
       if (xr?._status) {
         res.status(200).json({ available: false, reason: `upstream_${xr._status}` })
         return

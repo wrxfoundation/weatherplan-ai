@@ -3,7 +3,7 @@
 import { STATUS_LABEL } from '../data/facilities.js'
 import { fmtRate } from '../data/landPrice.js'
 
-export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom, flood, pop, disaster, energy }) {
+export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom, flood, pop, disaster, energy, warning, climate }) {
   const L = []
   const now = new Date()
   L.push(`# AI InfraMap — 부지 적합도 간이 리포트 (v0)`)
@@ -61,6 +61,9 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   } else {
     L.push(`- 연동 대기 — 케이웨더 실황(기상축)`)
   }
+  if (warning?.available) L.push(`- 기상특보: ${warning.count > 0 ? warning.warnings.join(', ') : '발효 중인 특보 없음'}`)
+  if (climate?.available)
+    L.push(`- 과거 연별 기후: ${climate.avgTemp != null ? `연평균 ${climate.avgTemp}°C` : ''}${climate.maxTemp != null ? ` · 최고 ${climate.maxTemp}°C` : ''}${climate.minTemp != null ? ` · 최저 ${climate.minTemp}°C` : ''}${climate.rainSum != null ? ` · 강수 ${climate.rainSum}mm` : ''} — 프리쿨링 잠재력 맥락`)
   L.push(``)
   L.push(`## 계통 여유용량 (한전 분산전원 22.9kV)`)
   if (headroom?.available) {

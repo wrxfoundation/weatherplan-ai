@@ -89,6 +89,9 @@ function currentFrom(d, scopeFallback) {
     humidity,
     senseTemp: num(at(d, ['senseTemp', 'feelsLike'])),
     rain1h: num(at(d, ['rn1', 'rain'])),
+    windSpeed: num(at(d, ['wsd', 'windSpeed', 'ws'])),
+    windDir: at(d, ['vec', 'windDir', 'wd']),
+    pressure: num(at(d, ['pa', 'pressure'])),
     pm10: num(at(d, ['pm10'])),
     pm25: num(at(d, ['pm25', 'pm2_5'])),
     scope: [d.state, d.city, d.city2].filter(Boolean).join(' ') || scopeFallback,
@@ -125,8 +128,15 @@ function daysFromHourly(d) {
 }
 
 export default async function handler(req, res) {
-  const kind = req.query.kind === 'forecast' ? 'forecast' : 'current'
-  res.setHeader('Cache-Control', kind === 'current' ? 's-maxage=300, stale-while-revalidate=600' : 's-maxage=600, stale-while-revalidate=1200')
+  const KINDS = ['current', 'forecast', 'warning', 'climate']
+  const kind = KINDS.includes(req.query.kind) ? req.query.kind : 'current'
+  const CACHE = {
+    current: 's-maxage=300, stale-while-revalidate=600',
+    forecast: 's-maxage=600, stale-while-revalidate=1200',
+    warning: 's-maxage=60, stale-while-revalidate=300', // Wellbian 캐시 정책: 특보는 빠른 전파
+    climate: 's-maxage=86400, stale-while-revalidate=604800', // 과거 연별 — 사실상 불변
+  }
+  res.setHeader('Cache-Control', CACHE[kind])
 
   const key = process.env.KWEATHER_API_KEY
   if (!key) {
@@ -144,15 +154,23 @@ export default async function handler(req, res) {
     const base = (process.env.KWEATHER_API_BASE || DEFAULT_BASE).replace(/\/$/, '')
     const auth = `api_key=${encodeURIComponent(key)}`
     const gpsQ = `lat=${lat}&lon=${lng}&${auth}`
-    // 예보는 7일(kw-7d24h1) 우선, 실패 시 3일(kw-3d24h1) — Wellbian 센서 카탈로그
-    const candidates = kind === 'current' ? ['kw-odam1'] : ['kw-7d24h1', 'kw-3d24h1']
+    // Wellbian 센서 카탈로그 — 예보 7일 우선, 특보는 동별→전국, 기후는 과거 연별→일별
+    const CANDIDATES = {
+      current: ['kw-odam1'],
+      forecast: ['kw-7d24h1', 'kw-3d24h1'],
+      warning: ['kw-warning1', 'kw-ktko511', 'kw-wrn-now1'],
+      climate: ['kw-past-year1', 'kw-cbko1'],
+    }
+    const candidates = CANDIDATES[kind]
 
     // ① 센서에 GPS 직접 질의 (kw-gis-gps가 GPS 직접 응답인 것으로 확인된 게이트웨이 문법)
     let raw = null
     let block = null
+    let okRaw = null // error=0 원응답(블록이 비어도 유효 — 특보 없음 등)
     let sensor = candidates[0]
     for (const s of candidates) {
       raw = await getJson(`${base}${SENSORS}/${s}?${gpsQ}`)
+      if (!raw?._status && String(raw?.error ?? '') === '0' && !okRaw) okRaw = raw
       block = raw?._status ? null : dataBlock(raw)
       if (block) {
         sensor = s
@@ -175,6 +193,55 @@ export default async function handler(req, res) {
         dataKeys: g?.data && typeof g.data === 'object' ? Object.keys(g.data).slice(0, 40) : null,
         sample: JSON.stringify(g).slice(0, 1200),
       })
+      return
+    }
+
+    // 특보(warning): 문자열에서 주의보/경보 수집 — 빈 배열 = 발효 특보 없음(정상)
+    if (kind === 'warning') {
+      const srcObj = block?.data ?? okRaw
+      if (!srcObj) {
+        const shape = raw?._status ? `http${raw._status}` : `e${raw?.error ?? 'null'}`
+        res.status(200).json({ available: false, reason: `no_warning_source_${shape}` })
+        return
+      }
+      const warns = new Set()
+      ;(function scan(o, depth = 0) {
+        if (!o || typeof o !== 'object' || depth > 6) return
+        for (const v of Object.values(o)) {
+          if (typeof v === 'string' && /(주의보|경보)/.test(v) && v.length <= 40) warns.add(v)
+          else if (v && typeof v === 'object') scan(v, depth + 1)
+        }
+      })(srcObj)
+      res.status(200).json({ available: true, warnings: [...warns], count: warns.size, source: '케이웨더 기상특보' })
+      return
+    }
+
+    // 기후(climate): 과거 연별 — 연평균/최고/최저기온·연강수량 (배열이면 최근값)
+    if (kind === 'climate') {
+      const d = block?.data ?? okRaw?.data
+      if (d && typeof d === 'object') {
+        const lastOf = (names) => {
+          const v = pick(d, names)
+          if (Array.isArray(v)) {
+            for (let i = v.length - 1; i >= 0; i--) if (num(v[i]) != null) return num(v[i])
+            return undefined
+          }
+          return num(v)
+        }
+        const avgTemp = lastOf(['avgTa', 'avgTemp', 'taAvg', 'yearTa', 'annualTemp', 'ta'])
+        const maxTemp = lastOf(['maxTa', 'maxTemp'])
+        const minTemp = lastOf(['minTa', 'minTemp'])
+        const rainSum = lastOf(['sumRn', 'rnSum', 'rainSum', 'yearRn', 'rn'])
+        if (avgTemp != null || maxTemp != null || rainSum != null) {
+          res.status(200).json({ available: true, avgTemp, maxTemp, minTemp, rainSum, source: `케이웨더 과거 기후(${sensor})` })
+          return
+        }
+        // 필드 미확인 — 진단용 키 목록(값 아님)
+        res.status(200).json({ available: false, reason: 'no_climate_fields', dataKeys: Object.keys(d).slice(0, 30) })
+        return
+      }
+      const shape = raw?._status ? `http${raw._status}` : `e${raw?.error ?? 'null'}`
+      res.status(200).json({ available: false, reason: `no_climate_source_${shape}` })
       return
     }
 

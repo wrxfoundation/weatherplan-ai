@@ -86,7 +86,14 @@ export default async function handler(req, res) {
       .replaceAll('{lng}', String(lng))
       .replaceAll('{key}', encodeURIComponent(key))
 
-    const body = await fetchJson(url)
+    let body
+    try {
+      body = await fetchJson(url)
+    } catch (e1) {
+      // 일부 정부 포털은 443 미개방/차단 — http 폴백 (서버 간 호출)
+      if (url.startsWith('https://')) body = await fetchJson(url.replace('https://', 'http://'))
+      else throw e1
+    }
     if (body?._status) {
       res.status(200).json({ available: false, reason: `upstream_${body._status}` })
       return
