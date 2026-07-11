@@ -2,7 +2,8 @@
 // 정직성: 산출된 항목만 수치로, 대기 항목은 '데이터 대기'로 명시. 가짜 총점 없음.
 import { STATUS_LABEL } from '../data/facilities.js'
 import { fmtRate } from '../data/landPrice.js'
-import { dcClimateIndex } from './climateIndex.js'
+import { dcClimateIndex, nearestNormal } from './climateIndex.js'
+import { dongLabel } from '../data/liveApi.js'
 
 export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom, flood, pop, disaster, energy, warning, climate }) {
   const L = []
@@ -66,12 +67,20 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   if (climate?.available)
     L.push(`- 과거 연별 기후: ${climate.avgTemp != null ? `연평균 ${climate.avgTemp}°C` : ''}${climate.maxTemp != null ? ` · 최고 ${climate.maxTemp}°C` : ''}${climate.minTemp != null ? ` · 최저 ${climate.minTemp}°C` : ''}${climate.rainSum != null ? ` · 강수 ${climate.rainSum}mm` : ''} — 프리쿨링 잠재력 맥락`)
   {
+    const nrm = nearestNormal(point.lat, point.lng)
     const ci = dcClimateIndex({
       avgTemp: climate?.available ? climate.avgTemp : undefined,
+      normalTemp: nrm?.t,
+      normalStation: nrm?.name,
       humidity: wx?.humidity,
       currentTemp: wx?.temp,
     })
-    if (ci) L.push(`- 데이터센터 기후지수: **${ci.label}** (${ci.level}/5) — ${ci.note}`)
+    if (ci) {
+      L.push(`- 데이터센터 기후지수: **${ci.label}** (${ci.level}/5) — ${ci.why}`)
+      L.push(`  - 근거: ${ci.basis}`)
+    }
+    const dong = dongLabel(addr)
+    if (dong) L.push(`- 표출값 동단위 근거지: ${dong}${wx?.scope ? ` · 케이웨더 실황 ${wx.scope}` : ''}`)
   }
   L.push(``)
   L.push(`## 계통 여유용량 (한전 분산전원 22.9kV)`)

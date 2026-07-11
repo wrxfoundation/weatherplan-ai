@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { weatherFor, climateFor, revgeoFor } from '../data/liveApi.js'
-import { dcClimateIndex, CLIMATE_LEVELS } from '../score/climateIndex.js'
+import { weatherFor, climateFor, revgeoFor, dongLabel } from '../data/liveApi.js'
+import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from '../score/climateIndex.js'
 
 /* 맵 상단 기후 바 — 현재 지점(클릭/검색) 또는 지도 중심의 실황 기상 + 데이터센터 기후지수.
- * 데이터센터에 좋은 기후인지(아주좋음~아주나쁨) 지도 위에서 바로 판단하게 한다. */
+ * 데이터센터에 좋은/나쁜 기후인지(아주좋음~아주나쁨)와 그 이유를 지도 위에서 바로 보게 한다. */
 export default function ClimateBar({ point, committed }) {
   const [wx, setWx] = useState(null)
   const [climate, setClimate] = useState(null)
@@ -24,29 +24,33 @@ export default function ClimateBar({ point, committed }) {
     }
   }, [point?.lat, point?.lng, committed])
 
+  const normal = point ? nearestNormal(point.lat, point.lng) : null
   const idx = dcClimateIndex({
     avgTemp: climate?.available ? climate.avgTemp : undefined,
+    normalTemp: normal?.t,
+    normalStation: normal?.name,
     humidity: wx?.humidity,
     currentTemp: wx?.temp,
   })
 
+  const dong = dongLabel(addr)
   const where = committed
-    ? addr?.parcel || addr?.road || `${point?.lat?.toFixed(4)}, ${point?.lng?.toFixed(4)}`
+    ? dong || addr?.parcel || `${point?.lat?.toFixed(4)}, ${point?.lng?.toFixed(4)}`
     : '지도 중심'
 
   return (
     <div className="climate-bar">
       <div className="cb-head">
-        <span className="cb-where" title={where}>
+        <span className="cb-where" title={addr?.parcel || where}>
           {committed ? '📍' : '🧭'} {where}
         </span>
-        <span className="cb-src">케이웨더 실황</span>
+        <span className="cb-src">케이웨더 실황{wx?.scope ? ` · ${wx.scope}` : ''}</span>
       </div>
 
       <div className="cb-body">
         {/* 데이터센터 기후지수 배지 (아주나쁨~아주좋음) */}
         {idx ? (
-          <div className={`ci-badge tone-${idx.tone}`} title={idx.note}>
+          <div className={`ci-badge tone-${idx.tone}`} title={idx.why}>
             <span className="ci-cap">DC 기후지수</span>
             <span className="ci-label">{idx.label}</span>
             <span className="ci-scale" aria-label={`5단계 중 ${idx.level}단계`}>
@@ -78,7 +82,13 @@ export default function ClimateBar({ point, committed }) {
         </div>
       </div>
 
-      {idx && <div className="cb-note">{idx.note}</div>}
+      {/* 왜 좋고/나쁜지 + 표출값 근거 */}
+      {idx && (
+        <>
+          <div className="cb-why">{idx.why}</div>
+          <div className="cb-basis">근거: {idx.basis}</div>
+        </>
+      )}
     </div>
   )
 }

@@ -2285,6 +2285,21 @@ a {
   line-height: 1.4;
 }
 
+/* 기후 바: 왜 좋고/나쁜지(데이터센터 관점) + 표출값 근거 */
+.cb-why {
+  margin-top: 8px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.cb-basis {
+  margin-top: 3px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--grey);
+}
+
 /* DC 기후지수 배지 (아주나쁨~아주좋음 · AQI식 녹→적 스케일) */
 .ci-badge {
   flex-shrink: 0;
@@ -2347,6 +2362,41 @@ a {
 .ci-inline-label {
   color: color-mix(in srgb, var(--ci-color, var(--text)) 80%, white);
   font-weight: var(--weight-bold);
+}
+
+.ci-temp {
+  font-size: var(--text-sm);
+  color: var(--grey);
+}
+
+/* SitePanel 기후지수 블록: 배지 + 이유 + 근거 */
+.ci-block {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ci-why {
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.ci-basis {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--grey);
+}
+
+/* 셀 표출값의 동단위 근거지 */
+.cell-basis {
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--grey);
+}
+
+.cell-basis::before {
+  content: '📍 ';
 }
 
 /* 톤 5단계 — 녹(좋음) → 황 → 적(나쁨) */

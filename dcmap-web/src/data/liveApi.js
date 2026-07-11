@@ -28,6 +28,19 @@ export const weatherFor = (lat, lng) => fetchJson(`/api/kweather?kind=current&${
 /** vworld 리버스 지오코딩 — { parcel, road } | null */
 export const revgeoFor = (lat, lng) => fetchJson(`/api/revgeo?${q(lat, lng)}`)
 
+/** 지번주소에서 동단위 근거지 라벨 추출 — "○○동/읍/면" (없으면 시군구) | null.
+ *  표출값의 위치 근거를 동단위까지 보여주기 위한 포매터. */
+export function dongLabel(addr) {
+  const s = addr?.parcel || addr?.road || ''
+  if (!s) return null
+  // 시/군/구는 동에 가장 가까운(마지막) 토큰 사용 — "서울특별시 강남구 역삼동" → "강남구 역삼동"
+  const sggAll = s.match(/([가-힣]+(?:시|군|구))/g)
+  const sgg = sggAll ? sggAll[sggAll.length - 1] : null
+  const dong = s.match(/([가-힣A-Za-z0-9]+(?:동|읍|면))(?=\s|$|\d)/)
+  if (dong) return sgg && sgg !== dong[1] ? `${sgg} ${dong[1]}` : dong[1]
+  return sgg || null
+}
+
 /** vworld 포워드 지오코딩 — 지번/도로명 주소 → { lat, lng, matched, matchType } | null.
  *  vworld는 간헐 지연/재시도가 있어 클라이언트 타임아웃을 넉넉히(9s) 준다. */
 export async function geocodeAddr(query) {
