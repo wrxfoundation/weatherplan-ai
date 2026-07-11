@@ -3,7 +3,7 @@
 import { STATUS_LABEL } from '../data/facilities.js'
 import { fmtRate } from '../data/landPrice.js'
 
-export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx }) {
+export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom }) {
   const L = []
   const now = new Date()
   L.push(`# 명당 AI — 부지 적합도 간이 리포트 (v0)`)
@@ -42,6 +42,15 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
     if (fc?.hours?.length) L.push(`- 초단기예보(H+1~6): ${fc.hours.map((h, i) => `+${i + 1}h ${h.temp ?? '–'}°`).join(' / ')}${fc.rain ? ' · 강수 감지' : ''}`)
   } else {
     L.push(`- 연동 대기 — 기상축(M3) 데이터 소스`)
+  }
+  L.push(``)
+  L.push(`## 계통 여유용량 (한전 분산전원 22.9kV)`)
+  if (headroom?.available) {
+    L.push(
+      `- ${headroom.availableMw != null ? `여유 ${headroom.availableMw}MW` : ''}${headroom.cumulativeMw != null ? ` · 누적연계 ${headroom.cumulativeMw}MW` : ''} (${headroom.scope})`,
+    )
+  } else {
+    L.push(`- 연동 대기 — 한전 전력데이터 개방포털 분산전원연계 API (전력축 D3)`)
   }
   L.push(``)
   L.push(`## 인프라 근접성 (맥락 — 전원 매칭 아님)`)

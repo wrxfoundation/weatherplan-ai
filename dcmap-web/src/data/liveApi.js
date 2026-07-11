@@ -33,3 +33,6 @@ export const landUseFor = (lat, lng) => fetchJson(`/api/landuse?${q(lat, lng)}`)
 
 /** 케이웨더 초단기예보 H+1~6 — { hours:[{temp,sky}], rain } | null */
 export const forecastFor = (lat, lng) => fetchJson(`/api/forecast?${q(lat, lng)}`)
+
+/** 한전 분산전원 계통 여유용량 — { availableMw, cumulativeMw, scope } | null */
+export const headroomFor = (lat, lng) => fetchJson(`/api/headroom?${q(lat, lng)}`)
