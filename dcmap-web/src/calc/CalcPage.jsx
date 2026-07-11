@@ -5,12 +5,21 @@ import { FACILITIES, CAPITAL_SIDOS } from '../data/facilities.js'
 import { checkPowerTrack } from './trackCheck.js'
 import Term from '../components/Term.jsx'
 
-// GPU별 대표 TDP(kW). 공개 스펙 기준 근사치 — 상세 학습 계산은 gpu-training-calculator 연동 예정(M1 최소 버전).
+// GPU별 대표 TDP(kW). 공개 스펙 기준 근사치 — 가속기당 소비전력(부대 IT 부하는 별도 계수).
+// NVIDIA 데이터센터 GPU가 사실상 표준이나, 추론·레거시·AMD까지 포함해 시나리오 폭을 넓힘.
 const GPU_PRESETS = [
-  { key: 'h100', label: 'NVIDIA H100 SXM', kw: 0.7 },
-  { key: 'h200', label: 'NVIDIA H200', kw: 0.7 },
-  { key: 'b200', label: 'NVIDIA B200', kw: 1.0 },
+  { key: 'gb300', label: 'NVIDIA GB300 (칩당)', kw: 1.4 },
   { key: 'gb200', label: 'NVIDIA GB200 (칩당)', kw: 1.2 },
+  { key: 'b200', label: 'NVIDIA B200', kw: 1.0 },
+  { key: 'b100', label: 'NVIDIA B100', kw: 0.7 },
+  { key: 'h200', label: 'NVIDIA H200 SXM', kw: 0.7 },
+  { key: 'h100', label: 'NVIDIA H100 SXM', kw: 0.7 },
+  { key: 'h800', label: 'NVIDIA H800 (중국)', kw: 0.7 },
+  { key: 'a100', label: 'NVIDIA A100 80GB (레거시)', kw: 0.4 },
+  { key: 'l40s', label: 'NVIDIA L40S (추론)', kw: 0.35 },
+  { key: 'mi355x', label: 'AMD MI355X', kw: 1.4 },
+  { key: 'mi325x', label: 'AMD MI325X', kw: 1.0 },
+  { key: 'mi300x', label: 'AMD MI300X', kw: 0.75 },
 ]
 
 const OVERHEAD = 1.2 // 네트워킹·스토리지·CPU 등 부대 IT 부하 계수
