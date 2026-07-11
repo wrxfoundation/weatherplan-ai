@@ -59,7 +59,8 @@
 | 토지이음(eum.go.kr) | 토지이용계획 교차확인 | 🔗 지점 분석 딥링크 |
 | KOSIS·부동산원 지가변동률 | 시군구·읍면동 월간 | ✅ LAND PULSE (D5 월간 자동화 예약) |
 | 국토부 RTMS 실거래가 | 필지 거래 | 🔍 D4 |
-| **홍수위험지도**(data.floodmap.go.kr) | 하천·도시침수 침수심·위험등급 | ✅ **프록시 구현** `/api/floodmap` — SitePanel 침수 위험 셀(리스크축). 키 env(`FLOODMAP_KEY`) 연동 시 활성, 스키마 프로덕션 확정 |
+| **홍수위험지도**(data.floodmap.go.kr) | 하천·도시침수 침수심·위험등급 | ✅ **프록시 구현** `/api/floodmap` — SitePanel 침수 위험 셀(리스크축). 키 env(`FLOODMAP_KEY`) 연동 시 활성. 성공코드 확인 후에만 '침수구역 외' 판정(오안전 방지) |
+| **재난안전데이터 공유플랫폼**(safetydata.go.kr) | 시군구 재해 발생·피해 이력 | ✅ **프록시 구현** `/api/disaster` — vworld 시군구코드→재해 이력, SitePanel 재해 셀(리스크축). 키 env(`DISASTER_KEY`) 연동 시 활성 |
 
 ## 소관부처 주의 ('25.10.1 조직개편)
 

@@ -463,6 +463,7 @@ export default function MapPage({ power = false }) {
         )
         m.on('click', () => {
           setSitePoint(null)
+          setRegion(null)
           setSelected(f)
         })
         cluster.addLayer(m)

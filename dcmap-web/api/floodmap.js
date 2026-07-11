@@ -98,13 +98,17 @@ export default async function handler(req, res) {
     const scenario = pick(body, ['시나리오', 'scenario', 'freqency', 'frequency', 'returnPeriod']) // 재현빈도
 
     if (depthM == null && gradeRaw == null) {
-      // 조회 지점이 침수구역 밖이면 포털이 빈 결과를 줄 수 있음 → 위험 없음으로 간주(등급 해당없음)
-      const hasResult = pick(body, ['resultCode', 'result', 'header', 'body']) !== undefined
-      if (hasResult) {
+      // 침수구역 밖 판정은 '성공 응답 + 결과 없음'일 때만. 에러 응답(resultCode 99 등)을
+      // "안전"으로 오표기하면 침수 리스크를 놓치므로(치명적) 성공 코드 확인 필수.
+      const resultCode = pick(body, ['resultCode', 'result_code', 'returnReasonCode', 'code'])
+      const SUCCESS = ['00', '0', 'OK', 'SUCCESS', 'NORMAL_SERVICE', 'INFO-0', 'INFO-00']
+      const ok = resultCode != null && SUCCESS.includes(String(resultCode).toUpperCase())
+      if (ok) {
         res.status(200).json({ available: true, depthM: 0, grade: '해당없음', scope: '홍수위험지도 조회(침수구역 외)' })
         return
       }
-      res.status(200).json({ available: false, reason: 'schema_unknown' })
+      // 성공 코드가 확인되지 않으면 '안전'이라 단정하지 않고 연동 대기 처리
+      res.status(200).json({ available: false, reason: resultCode != null ? `result_${resultCode}` : 'schema_unknown' })
       return
     }
 
