@@ -45,6 +45,7 @@ export default function MapPage() {
   const [sido, setSido] = useState(() => searchParams.get('sido') ?? '')
   const [selected, setSelected] = useState(null)
   const [sitePoint, setSitePoint] = useState(null) // 맵 빈 곳 클릭 → 지점 분석
+  const [showLabels, setShowLabels] = useState(false) // 맵 정보 라벨 (시설명·용량) 상시 표시
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
@@ -134,9 +135,13 @@ export default function MapPage() {
     for (const f of filtered) {
       // bubblingMouseEvents:false — 마커 클릭이 맵 클릭(지점 분석)으로 전파되는 것 방지
       const m = L.marker([f.lat, f.lng], { icon: markerIcon(f), bubblingMouseEvents: false })
+      const info = `${f.name} · ${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`
+      // 라벨 ON: 상시 글라스 칩 (클러스터로 묶인 마커는 자동 비표시) / OFF: 호버 툴팁
       m.bindTooltip(
-        `${f.name} · ${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`,
-        { direction: 'top' },
+        info,
+        showLabels
+          ? { permanent: true, direction: 'right', offset: [10, 0], className: 'dc-label' }
+          : { direction: 'top' },
       )
       m.on('click', () => {
         setSitePoint(null)
@@ -144,7 +149,7 @@ export default function MapPage() {
       })
       cluster.addLayer(m)
     }
-  }, [filtered])
+  }, [filtered, showLabels])
 
   const toggleStatus = (key) =>
     setStatuses((prev) => {
@@ -173,6 +178,8 @@ export default function MapPage() {
           searchParams.delete('min_mw')
           setSearchParams(searchParams, { replace: true })
         }}
+        showLabels={showLabels}
+        onToggleLabels={() => setShowLabels((v) => !v)}
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />

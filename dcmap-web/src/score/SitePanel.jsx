@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { revgeoFor, weatherFor } from '../data/liveApi.js'
+import { landUseFor, revgeoFor, weatherFor } from '../data/liveApi.js'
 import { scoreSite } from './engine.js'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
@@ -11,13 +11,16 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
   const [nonCapital, setNonCapital] = useState(true)
   const [addr, setAddr] = useState(null)
   const [wx, setWx] = useState(null)
+  const [landUse, setLandUse] = useState(null)
 
   useEffect(() => {
     let alive = true
     setAddr(null)
     setWx(null)
+    setLandUse(null)
     revgeoFor(point.lat, point.lng).then((v) => alive && setAddr(v))
     weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
+    landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v))
     return () => {
       alive = false
     }
@@ -94,6 +97,16 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             <div className="k">지번주소 (vworld 리버스 지오코딩)</div>
             <div className="v">
               {addr?.parcel ?? addr?.road ?? <span className="badge verify">조회 대기 — 연동 후 자동 표시</span>}
+            </div>
+          </div>
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">용도지역 (vworld 도시계획 — 토지축 근거)</div>
+            <div className="v">
+              {landUse?.uses?.length ? (
+                landUse.uses.join(' · ')
+              ) : (
+                <span className="badge verify">조회 대기 — 점수화는 캘리브레이션 후</span>
+              )}
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>

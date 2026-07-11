@@ -29,6 +29,7 @@ npm run geocode    # 시드 변경 시 dc_centers.json 재생성
 Vercel이 정적 빌드와 함께 배포. SPA rewrite는 `/api/*` 제외.
 - `api/weather.js` — 케이웨더 현재기상 프록시. 엔드포인트는 `KWEATHER_API_URL` 템플릿(`{lat} {lng} {key}`)로 오버라이드 가능 — API 가이드 확정 시 env만 수정. 미설정/실패 시 `{available:false}` → UI '연동 대기' (가짜 수치 금지 원칙)
 - `api/revgeo.js` — vworld 리버스 지오코딩(클릭 지점 지번·도로명). 시설 카드에는 **공개 주소(`address_public`)만** 표기 — 시군구 중심점 좌표를 주소로 둔갑시키지 않는다
+- `api/landuse.js` — vworld 데이터 API(LT_C_UQ111)로 클릭 지점 **용도지역** 조회 (토지축 v1 근거). 명칭 표시·근거용 — 토지축 배점은 골든케이스 캘리브레이션 후
 
 ## 데이터 원칙 (SPEC §0-1, 불변)
 

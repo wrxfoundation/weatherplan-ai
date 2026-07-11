@@ -6,7 +6,18 @@ const STATUS_OPTIONS = [
   { key: 'planned', label: '계획' },
 ]
 
-export default function FilterBar({ statuses, onToggleStatus, type, onType, sido, onSido, minMw, onClearMw }) {
+export default function FilterBar({
+  statuses,
+  onToggleStatus,
+  type,
+  onType,
+  sido,
+  onSido,
+  minMw,
+  onClearMw,
+  showLabels,
+  onToggleLabels,
+}) {
   return (
     <div className="filterbar">
       <div className="group">
@@ -21,6 +32,18 @@ export default function FilterBar({ statuses, onToggleStatus, type, onType, sido
             {s.label}
           </button>
         ))}
+      </div>
+
+      <div className="group">
+        <button
+          type="button"
+          className={`chip ${showLabels ? 'on' : ''}`}
+          onClick={onToggleLabels}
+          aria-pressed={showLabels}
+          title="맵 위 시설명·용량 라벨 켜기/끄기"
+        >
+          라벨 {showLabels ? 'ON' : 'OFF'}
+        </button>
       </div>
 
       <select value={type} onChange={(e) => onType(e.target.value)} aria-label="유형 필터">
