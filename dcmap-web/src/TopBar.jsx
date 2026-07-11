@@ -1,10 +1,48 @@
+import { useMemo, useRef, useState } from 'react'
 import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { FACILITIES, STATUS_LABEL, SIDOS, slugOf } from './data/facilities.js'
+
+/* 자동완성 후보: 시설(이름·운영사 매칭) 상위 5 + 지역 상위 2 */
+function suggest(qv) {
+  const v = qv.trim().toLowerCase()
+  if (v.length < 1) return []
+  const out = []
+  for (const s of SIDOS) {
+    if (s.toLowerCase().includes(v)) {
+      const n = FACILITIES.filter((f) => f.sido === s).length
+      out.push({ kind: '지역', label: s, meta: `${n}곳`, to: `/?sido=${encodeURIComponent(s)}` })
+      if (out.length >= 2) break
+    }
+  }
+  for (const f of FACILITIES) {
+    if (
+      f.name.toLowerCase().includes(v) ||
+      (f.operator ?? '').toLowerCase().includes(v) ||
+      (f.sigungu ?? '').toLowerCase().includes(v)
+    ) {
+      out.push({
+        kind: STATUS_LABEL[f.status] ?? f.status,
+        label: f.name,
+        meta: `${f.sido}${f.sigungu ? ' ' + f.sigungu : ''}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`,
+        to: `/dc/${slugOf(f)}`,
+      })
+      if (out.length >= 7) break
+    }
+  }
+  return out
+}
 
 export default function TopBar() {
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
   const q = searchParams.get('q') ?? ''
+  const [term, setTerm] = useState(q)
+  const [open, setOpen] = useState(false)
+  const [active, setActive] = useState(-1)
+  const blurTimer = useRef(null)
+
+  const items = useMemo(() => suggest(term), [term])
 
   const onSearch = (value) => {
     if (location.pathname === '/') {
@@ -14,6 +52,28 @@ export default function TopBar() {
       setSearchParams(next, { replace: true })
     } else {
       navigate(value ? `/?q=${encodeURIComponent(value)}` : '/')
+    }
+  }
+
+  const choose = (item) => {
+    setOpen(false)
+    setActive(-1)
+    navigate(item.to)
+  }
+
+  const onKey = (e) => {
+    if (!open || !items.length) return
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActive((a) => (a + 1) % items.length)
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActive((a) => (a - 1 + items.length) % items.length)
+    } else if (e.key === 'Enter' && active >= 0) {
+      e.preventDefault()
+      choose(items[active])
+    } else if (e.key === 'Escape') {
+      setOpen(false)
     }
   }
 
@@ -29,10 +89,45 @@ export default function TopBar() {
         <input
           type="search"
           placeholder="지역, 시설명, 운영사 검색…"
-          defaultValue={q}
-          onChange={(e) => onSearch(e.target.value.trim())}
+          value={term}
+          onChange={(e) => {
+            const v = e.target.value
+            setTerm(v)
+            setOpen(true)
+            setActive(-1)
+            onSearch(v.trim())
+          }}
+          onFocus={() => term && setOpen(true)}
+          onBlur={() => {
+            blurTimer.current = setTimeout(() => setOpen(false), 150)
+          }}
+          onKeyDown={onKey}
           aria-label="시설 검색"
+          aria-expanded={open && items.length > 0}
+          role="combobox"
         />
+        {open && items.length > 0 && (
+          <div className="search-suggest" role="listbox">
+            {items.map((it, i) => (
+              <button
+                key={it.to + it.label}
+                type="button"
+                className={i === active ? 'active' : ''}
+                onMouseDown={(e) => {
+                  e.preventDefault()
+                  clearTimeout(blurTimer.current)
+                  choose(it)
+                }}
+                role="option"
+                aria-selected={i === active}
+              >
+                <span className="sg-kind">{it.kind}</span>
+                <span>{it.label}</span>
+                <span className="sg-meta">{it.meta}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <nav>
