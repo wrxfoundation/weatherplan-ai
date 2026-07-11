@@ -84,10 +84,11 @@ function handleEpsis(items) {
   const facilities = []
   const fuelAgg = new Map()
   for (const it of items) {
-    const mw = num(pick(it, ['설비용량', 'genCapa', 'capacity', 'facilityCapa', 'capa', '설비용량_MW']))
-    const name = pick(it, ['발전소명', 'genName', 'powerNm', 'plantNm', 'name', '호기명'])
-    const fuelRaw = pick(it, ['연료원', 'fuelType', 'fuel', 'energySource', '발전원', '전원'])
-    const region = pick(it, ['지역', 'region', 'area', '시도', 'sido', '소재지'])
+    // 실제 EPSIS 필드(확인): pcap 설비용량 · fuel 연료원 · genNm 발전기명 · area 지역 · company 발전사
+    const mw = num(pick(it, ['pcap', '설비용량', 'genCapa', 'capacity', 'facilityCapa', 'capa']))
+    const name = pick(it, ['genNm', '발전소명', 'genName', 'powerNm', 'plantNm', 'name', '호기명'])
+    const fuelRaw = pick(it, ['fuel', '연료원', 'fuelType', 'energySource', 'genSrc', '발전원', '전원'])
+    const region = pick(it, ['area', '지역', 'region', '시도', 'sido', '소재지'])
     if (mw == null && !name) continue
     const fuel = normFuel(fuelRaw)
     if (mw != null) fuelAgg.set(fuel, (fuelAgg.get(fuel) || 0) + mw)
@@ -124,10 +125,11 @@ function handleTrading(items) {
   const tradeAgg = new Map()
   let asOf
   for (const it of items) {
-    asOf = asOf ?? pick(it, ['거래일자', '기준일자', 'baseDate', 'tradeDate', 'aplyDate', 'ymd'])
-    const fuel = normFuel(pick(it, ['연료원', 'fuelType', 'fuel', 'energySource', '발전원', '전원구분']))
-    const cap = num(pick(it, ['설비용량', 'facilityCapa', 'genCapa', 'capacity']))
-    const traded = num(pick(it, ['전력거래량', 'tradeQuantity', 'tradeQty', 'trdQty', 'elecTradeQty', '거래량']))
+    // 실제 거래실적 필드(확인): pcap 설비용량 · mgo 거래량 · fuel 연료원 · tradeDay 거래일자 · rtotal 합계
+    asOf = asOf ?? pick(it, ['tradeDay', '거래일자', '기준일자', 'baseDate', 'tradeDate', 'time'])
+    const fuel = normFuel(pick(it, ['fuel', '연료원', 'fuelType', 'energySource', '발전원', '전원구분']))
+    const cap = num(pick(it, ['pcap', '설비용량', 'facilityCapa', 'genCapa', 'capacity']))
+    const traded = num(pick(it, ['mgo', 'rtotal', '전력거래량', 'tradeQuantity', 'tradeQty', 'trdQty', '거래량']))
     if (cap != null) capAgg.set(fuel, (capAgg.get(fuel) || 0) + cap)
     if (traded != null) tradeAgg.set(fuel, (tradeAgg.get(fuel) || 0) + traded)
   }
