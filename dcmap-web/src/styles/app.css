@@ -1284,6 +1284,207 @@ a {
   font-size: 0.9em;
 }
 
+/* ---------- 로드맵 모드 토글 + 프로세스 프레임(스윔레인) ---------- */
+.roadmap-modes {
+  margin: 6px 0 18px;
+}
+.roadmap-modes button {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--grey);
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  transition: color 0.18s, background 0.18s, box-shadow 0.18s;
+}
+.roadmap-modes button:hover {
+  color: var(--text);
+}
+.roadmap-modes button.active {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  box-shadow: var(--glass-specular), var(--glow-accent-soft);
+}
+
+.frame-wrap {
+  margin-top: 6px;
+}
+.frame-scroll {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
+.swimlane {
+  display: grid;
+  min-width: 900px;
+  gap: 1px;
+  background: var(--line);
+}
+.sl-corner,
+.sl-gate,
+.sl-lane {
+  background: color-mix(in srgb, var(--surface) 92%, var(--accent));
+  padding: 10px 12px;
+  font-size: var(--text-small, 0.82rem);
+  font-weight: var(--weight-medium);
+  color: var(--grey);
+}
+.sl-corner {
+  font-size: 0.76rem;
+  position: sticky;
+  left: 0;
+  z-index: 3;
+}
+.sl-slash {
+  opacity: 0.5;
+  margin: 0 2px;
+}
+.sl-gate {
+  color: var(--text);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.01em;
+}
+.sl-lane {
+  color: var(--text);
+  font-weight: var(--weight-medium);
+  display: flex;
+  align-items: center;
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+.sl-cell {
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 56px;
+}
+.sl-node {
+  text-align: left;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 94%, var(--accent)), var(--surface));
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+.sl-node:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  transform: translateY(-1px);
+}
+.sl-node.active {
+  border-color: var(--accent);
+  box-shadow: var(--glow-accent-soft), var(--glass-specular);
+}
+.sl-node.gate {
+  border-left: 3px solid var(--accent);
+}
+.sl-node-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.sl-node-id {
+  font-size: 0.72rem;
+  font-weight: var(--weight-bold);
+  color: var(--grey);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.sl-badge {
+  font-size: 0.66rem;
+  font-weight: var(--weight-bold);
+  color: var(--navy-deep);
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+  border-radius: 999px;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+.sl-node-title {
+  font-size: 0.82rem;
+  font-weight: var(--weight-medium);
+  color: var(--text);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.sl-node-axis {
+  font-size: 0.7rem;
+  color: var(--accent);
+  opacity: 0.85;
+}
+
+.frame-detail {
+  margin-top: 14px;
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background:
+    var(--corner-wash),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, var(--accent)) 0%, var(--surface) 60%);
+  box-shadow: var(--glass-specular), var(--elev-2);
+}
+.fd-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fd-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grey);
+}
+.fd-title {
+  margin: 6px 0 8px;
+  font-size: var(--text-h3, 1.15rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.fd-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.fd-path {
+  font-size: var(--text-small, 0.82rem);
+  color: var(--grey);
+}
+.fd-note {
+  font-size: var(--text-body);
+  color: var(--text);
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+.fd-basis {
+  font-size: var(--text-small, 0.82rem);
+  color: var(--grey);
+  margin-bottom: 12px;
+}
+.fd-basis strong {
+  color: var(--text);
+}
+.fd-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 /* 인사이트 카테고리 태그 */
 .insight-tag {
   display: inline-block;

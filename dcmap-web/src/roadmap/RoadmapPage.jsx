@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 
@@ -84,7 +84,126 @@ const STEPS = [
 
 const AXIS_ORDER = ['토지', '전력', '냉각', '리스크', '네트워크', '인허가', '운영']
 
+/* ---------- 프로세스 프레임(스윔레인) 모델 ---------- */
+// 레인 = 참여 주체, 게이트 = 단계. 공개 규정 기준 표준 흐름(사업별 상이).
+const LANES = [
+  { id: 'biz', label: '사업자(개발·운영)' },
+  { id: 'gov', label: '지자체(인허가권자)' },
+  { id: 'kepco', label: '한전(계통·송변전)' },
+  { id: 'psia', label: '전기위·기후에너지환경부' },
+  { id: 'gen', label: '발전사·투자자' },
+]
+const GATES = [
+  { id: 'g0', label: 'G0 입지검토' },
+  { id: 'g1', label: 'G1 부지·인허가' },
+  { id: 'g2', label: 'G2 전력계통' },
+  { id: 'g3', label: 'G3 조달·설계' },
+  { id: 'g4', label: 'G4 건설·준공' },
+  { id: 'g5', label: 'G5 운영' },
+]
+const st = (n) => STEPS[n - 1]
+// gatekeeper: 실제 사업을 멈추는 핵심 관문(계통 접속·계통영향평가)
+const NODES = [
+  { id: 'P01', lane: 'biz', gate: 'g0', axis: st(1).axis, title: '부지·용도지역 검토', note: st(1).what, basis: st(1).source, links: st(1).links },
+  { id: 'P02', lane: 'biz', gate: 'g0', axis: st(2).axis, title: '수전전압 트랙 산정(GPU→MW)', note: st(2).what, basis: st(2).source, links: st(2).links },
+  { id: 'P03', lane: 'biz', gate: 'g0', axis: st(8).axis, title: '네트워크·백본 경로 검토', note: st(8).what, basis: st(8).source, links: st(8).links },
+  { id: 'P04', lane: 'biz', gate: 'g1', axis: st(7).axis, title: '리스크 스크리닝(침수·민원·재해)', note: st(7).what, basis: st(7).source, links: st(7).links },
+  { id: 'P05', lane: 'gov', gate: 'g1', axis: '인허가', title: '부지 확보·건축 인허가 협의', note: '용도지역 적합·건축허가 사전협의. 절차 하자 하나가 사업을 멈춘다(버지니아 QTS 사례).', basis: '국토계획법·건축법·지자체 조례', links: [{ to: '/glossary', label: '인허가 용어집' }] },
+  { id: 'P06', lane: 'gov', gate: 'g1', axis: '인허가', title: '환경영향평가', note: '사업 규모별 환경영향평가/소규모 환경영향평가 대상 판단·협의.', basis: '환경영향평가법', links: [] },
+  { id: 'P07', lane: 'kepco', gate: 'g2', axis: '전력', title: '한전 접속 신청·기술검토', note: '수전전압 트랙(22.9/154kV)별 접속 신청과 기술검토. 40MW 초과는 154kV 의무.', basis: '한전 기본공급약관 제23조', links: [{ to: '/calc', label: 'GPU→MW 계산기' }], gatekeeper: true },
+  { id: 'P08', lane: 'psia', gate: 'g2', axis: '전력', title: '전력계통영향평가 심의(±15점)', note: st(3).what, basis: st(3).source, links: st(3).links, gatekeeper: true },
+  { id: 'P09', lane: 'kepco', gate: 'g2', axis: '전력', title: '송·변전 인프라 확인·확충', note: st(4).what, basis: st(4).source, links: st(4).links },
+  { id: 'P10', lane: 'gen', gate: 'g3', axis: '전력', title: '발전 조달(PPA·자가발전·재생E)', note: st(5).what, basis: st(5).source, links: st(5).links },
+  { id: 'P11', lane: 'gen', gate: 'g3', axis: '운영', title: '금융·투자 조달', note: '대규모 CAPEX 투자·금융 조달. DART 공시로 착공·투자 신호를 읽는다.', basis: '사업자 공시(DART)', links: [{ to: '/dashboard', label: '대시보드' }] },
+  { id: 'P12', lane: 'biz', gate: 'g3', axis: st(6).axis, title: '냉각·용수 설계', note: st(6).what, basis: st(6).source, links: st(6).links },
+  { id: 'P13', lane: 'biz', gate: 'g4', axis: '인허가', title: '착공·건설', note: '소방·정보통신공사 등 개별 인허가를 병렬 처리 후 착공.', basis: 'AIDC 특별법 통합창구·타임아웃제', links: [] },
+  { id: 'P14', lane: 'gov', gate: 'g4', axis: '인허가', title: '준공·사용승인', note: st(9).what, basis: st(9).source, links: st(9).links },
+  { id: 'P15', lane: 'biz', gate: 'g5', axis: st(10).axis, title: '운영(PUE·RE100·복원력)', note: st(10).what, basis: st(10).source, links: st(10).links },
+]
+
+function ProcessFrame() {
+  const [selId, setSelId] = useState('P08') // 기본 선택 = 핵심 관문(계통영향평가)
+  const sel = NODES.find((n) => n.id === selId) ?? NODES[0]
+  const selLane = LANES.find((l) => l.id === sel.lane)
+  const selGate = GATES.find((g) => g.id === sel.gate)
+  const cols = `minmax(120px, 0.9fr) repeat(${GATES.length}, minmax(150px, 1fr))`
+
+  return (
+    <div className="frame-wrap">
+      <div className="frame-scroll">
+        <div className="swimlane" style={{ gridTemplateColumns: cols }}>
+          <div className="sl-corner">
+            레인 <span className="sl-slash">╲</span> 게이트
+          </div>
+          {GATES.map((g) => (
+            <div key={g.id} className="sl-gate">
+              {g.label}
+            </div>
+          ))}
+
+          {LANES.map((lane) => (
+            <div key={lane.id} className="sl-row" style={{ display: 'contents' }}>
+              <div className="sl-lane">{lane.label}</div>
+              {GATES.map((gate) => {
+                const cell = NODES.filter((n) => n.lane === lane.id && n.gate === gate.id)
+                return (
+                  <div key={gate.id} className="sl-cell">
+                    {cell.map((n) => (
+                      <button
+                        key={n.id}
+                        type="button"
+                        className={`sl-node${n.id === selId ? ' active' : ''}${n.gatekeeper ? ' gate' : ''}`}
+                        onClick={() => setSelId(n.id)}
+                        aria-pressed={n.id === selId}
+                      >
+                        <span className="sl-node-head">
+                          <span className="sl-node-id">{n.id}</span>
+                          {n.gatekeeper && <span className="sl-badge">관문</span>}
+                        </span>
+                        <span className="sl-node-title">{n.title}</span>
+                        <span className="sl-node-axis">{n.axis}</span>
+                      </button>
+                    ))}
+                  </div>
+                )
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="frame-detail">
+        <div className="fd-head">
+          <span className="fd-eyebrow">노드 상세 · {sel.id}</span>
+          {sel.gatekeeper && <span className="sl-badge">핵심 관문</span>}
+        </div>
+        <h2 className="fd-title">{sel.title}</h2>
+        <div className="fd-meta">
+          <span className="insight-tag">{sel.axis}</span>
+          <span className="fd-path">
+            {selGate?.label} · {selLane?.label}
+          </span>
+        </div>
+        <p className="fd-note">{sel.note}</p>
+        <div className="fd-basis">
+          <strong>공개 근거:</strong> {sel.basis}
+        </div>
+        {sel.links.length > 0 && (
+          <div className="fd-links">
+            {sel.links.map((l) => (
+              <Link key={l.to + l.label} className="btn" to={l.to}>
+                {l.label}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function RoadmapPage() {
+  const [mode, setMode] = useState('guide') // 'guide' | 'frame'
   useEffect(() => {
     document.title = TITLE
     setMeta('name', 'description', DESC)
@@ -115,30 +234,55 @@ export default function RoadmapPage() {
           보여주듯, 전력을 확보해도 절차 하나에서 멈춘다 — 그래서 전 과정이 하나의 지도다.)
         </p>
 
-        <ol className="roadmap">
-          {STEPS.map((s) => (
-            <li key={s.n} className="roadmap-step">
-              <div className="rm-num">{s.n}</div>
-              <div className="rm-body">
-                <div className="rm-head">
-                  <span className="insight-tag">{s.axis}</span>
-                  <h2 className="rm-title">{s.title}</h2>
+        <div className="seg-tabs roadmap-modes" role="tablist" aria-label="로드맵 보기 모드">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === 'guide'}
+            className={mode === 'guide' ? 'active' : ''}
+            onClick={() => setMode('guide')}
+          >
+            가이드 (10단계)
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === 'frame'}
+            className={mode === 'frame' ? 'active' : ''}
+            onClick={() => setMode('frame')}
+          >
+            프로세스 프레임 (레인×게이트)
+          </button>
+        </div>
+
+        {mode === 'frame' ? (
+          <ProcessFrame />
+        ) : (
+          <ol className="roadmap">
+            {STEPS.map((s) => (
+              <li key={s.n} className="roadmap-step">
+                <div className="rm-num">{s.n}</div>
+                <div className="rm-body">
+                  <div className="rm-head">
+                    <span className="insight-tag">{s.axis}</span>
+                    <h2 className="rm-title">{s.title}</h2>
+                  </div>
+                  <p className="rm-what">{s.what}</p>
+                  <div className="rm-meta">
+                    <span className="rm-source">공개 소스: {s.source}</span>
+                    <span className="rm-links">
+                      {s.links.map((l) => (
+                        <Link key={l.to + l.label} className="btn" to={l.to}>
+                          {l.label}
+                        </Link>
+                      ))}
+                    </span>
+                  </div>
                 </div>
-                <p className="rm-what">{s.what}</p>
-                <div className="rm-meta">
-                  <span className="rm-source">공개 소스: {s.source}</span>
-                  <span className="rm-links">
-                    {s.links.map((l) => (
-                      <Link key={l.to + l.label} className="btn" to={l.to}>
-                        {l.label}
-                      </Link>
-                    ))}
-                  </span>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ol>
+              </li>
+            ))}
+          </ol>
+        )}
 
         <p className="footer-note">
           단계 구분은 한전 송변전 건설 4단계(계획확정·사업승인·공사착수·사업완료)와 AIDC 특별법·전력계통영향평가 시범운영 공고,
