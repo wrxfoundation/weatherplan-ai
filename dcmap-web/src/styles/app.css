@@ -9,13 +9,36 @@ body,
   margin: 0;
 }
 
+/* 앰비언트 배경 — 레퍼런스 HUD의 딥네이비 + 시안 블룸 (z0 바닥층) */
 body {
-  background: linear-gradient(180deg, var(--bg) 0%, var(--navy-deep) 100%) fixed;
+  background:
+    radial-gradient(1100px 700px at 85% -12%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 62%),
+    radial-gradient(900px 650px at -8% 108%, color-mix(in srgb, var(--accent-deep) 11%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--bg) 0%, var(--navy-deep) 100%);
+  background-attachment: fixed;
   color: var(--text);
   font-family: var(--font-sans);
   font-size: var(--text-md);
   font-weight: var(--weight-regular);
   line-height: var(--lh-base);
+}
+
+/* 엔지니어링 그리드 오버레이 — 문서형 페이지의 공간감 (맵 화면은 타일이 대신함) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    linear-gradient(color-mix(in srgb, var(--accent) 4%, transparent) 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 4%, transparent) 1px, transparent 1px) 0 0 / 56px 56px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 100%);
+}
+
+#root {
+  position: relative;
+  z-index: 1;
 }
 
 /* 폼 요소·leaflet까지 Noto Sans KR 강제 통일 */
@@ -41,9 +64,9 @@ a {
   gap: 16px;
   padding: 0 16px;
   background: var(--glass-surface);
-  backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: var(--glass-backdrop);
   border-bottom: 1px solid var(--glass-border);
-  box-shadow: var(--glow-accent-soft);
+  box-shadow: var(--glass-specular), var(--elev-2);
   z-index: 1100;
 }
 
@@ -66,14 +89,14 @@ a {
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: var(--accent);
-  color: var(--text);
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+  color: var(--navy-deep);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: var(--text-title);
   font-weight: var(--weight-bold);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: var(--glass-specular), 0 0 14px color-mix(in srgb, var(--accent) 55%, transparent);
 }
 
 .topbar-search {
@@ -85,13 +108,15 @@ a {
 .topbar-search input {
   width: 100%;
   max-width: 520px;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--navy-deep) 55%, transparent);
   border: 1px solid var(--line);
   color: var(--text);
-  border-radius: var(--radius-md);
-  padding: 8px 14px;
+  border-radius: 999px;
+  padding: 8px 16px;
   font-size: var(--text-body);
   font-weight: var(--weight-regular);
+  box-shadow: var(--glass-specular-soft);
+  transition: border-color var(--dur-fast) var(--ease-premium), box-shadow var(--dur-fast) var(--ease-premium);
 }
 
 .topbar-search input::placeholder {
@@ -101,6 +126,7 @@ a {
 .topbar-search input:focus {
   outline: none;
   border-color: var(--accent);
+  box-shadow: var(--glass-specular-soft), var(--glow-accent-soft);
 }
 
 .topbar nav {
@@ -118,13 +144,14 @@ a {
 
 .topbar nav a:hover {
   color: var(--text);
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
 }
 
 .topbar nav a.active {
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--line);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
+  box-shadow: var(--glass-specular-soft);
 }
 
 .report-btn {
@@ -162,23 +189,25 @@ a {
   gap: 4px;
   padding: 4px;
   background: var(--glass-surface);
-  backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: var(--glass-backdrop);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
+  border-radius: 999px;
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
 }
 
 .filterbar button.chip {
   border: 1px solid transparent;
   background: transparent;
   color: var(--grey);
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
+  padding: 4px 12px;
+  border-radius: 999px;
   cursor: pointer;
   font-size: var(--text-body);
   font-weight: var(--weight-medium);
   display: flex;
   align-items: center;
   gap: 6px;
+  transition: color var(--dur-fast) var(--ease-premium), background var(--dur-fast) var(--ease-premium);
 }
 
 .filterbar button.chip:hover {
@@ -187,8 +216,9 @@ a {
 
 .filterbar button.chip.on {
   color: var(--text);
-  background: var(--bg);
-  border-color: var(--line);
+  background: color-mix(in srgb, var(--navy-deep) 80%, var(--accent));
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+  box-shadow: var(--glass-specular-soft);
 }
 
 .filterbar .dot {
@@ -215,25 +245,27 @@ a {
 
 .filterbar select {
   background: var(--glass-surface-strong);
-  backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: var(--glass-backdrop);
   color: var(--text);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-  padding: 8px 10px;
+  border-radius: 999px;
+  padding: 8px 14px;
   font-size: var(--text-body);
   font-weight: var(--weight-regular);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
 }
 
 .filterbar .mw-chip {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
-  border: 1px solid var(--accent);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+  padding: 6px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 16%, var(--glass-surface-strong));
   font-size: var(--text-body);
   font-weight: var(--weight-medium);
+  box-shadow: var(--glass-specular-soft), var(--glow-accent-soft);
 }
 
 .filterbar .mw-chip button {
@@ -252,9 +284,9 @@ a {
   height: 100%;
   overflow-y: auto;
   background: var(--glass-surface-strong);
-  backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: var(--glass-backdrop);
   border-left: 1px solid var(--glass-border);
-  box-shadow: inset var(--glow-accent-soft);
+  box-shadow: var(--glass-specular), var(--elev-2);
   padding: 14px;
 }
 
@@ -362,10 +394,11 @@ a {
   gap: 8px;
 }
 
+/* 리스트 행 = z1 유리 조각: 반투명 표면 + 상단 하이라이트 (스크롤 컨테이너라 blur 없음) */
 .facility-row {
   text-align: left;
   width: 100%;
-  background: var(--bg);
+  background: color-mix(in srgb, var(--navy-deep) 62%, transparent);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   color: var(--text);
@@ -374,17 +407,20 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
+  box-shadow: var(--glass-specular-soft);
 }
 
 .facility-row {
   transition:
     transform var(--dur-fast) var(--ease-premium),
-    border-color var(--dur-fast) var(--ease-premium);
+    border-color var(--dur-fast) var(--ease-premium),
+    box-shadow var(--dur-fast) var(--ease-premium);
 }
 
 .facility-row:hover {
   border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
   transform: translateX(3px);
+  box-shadow: var(--glass-specular-soft), var(--glow-accent-soft);
 }
 
 .facility-row .name {
@@ -404,12 +440,14 @@ a {
 /* 성능 가드레일: 스크롤 컨테이너 내부 카드에는 backdrop-blur 금지(모바일 리페인트) —
  * 고정 요소(topbar·filterbar·side-panel·mobile-nav)에만 블러 유지 */
 .facility-card {
-  background: color-mix(in srgb, var(--surface) 88%, var(--bg));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface) 92%, var(--accent)) 0%,
+    color-mix(in srgb, var(--surface) 88%, var(--bg)) 24%
+  );
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.06),
-    var(--glow-accent-soft);
+  box-shadow: var(--glass-specular), var(--elev-2);
   padding: 16px;
 }
 
@@ -478,11 +516,13 @@ a {
   margin: 12px 0;
 }
 
+/* 표 셀 = 카드(z2) 위의 오목한 유리면: 카드보다 어둡게 눌러 깊이 대비 */
 .spec-cell {
-  background: var(--surface);
+  background: color-mix(in srgb, var(--navy-deep) 68%, transparent);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 8px 10px;
+  box-shadow: var(--glass-specular-soft);
 }
 
 .spec-cell .k {
@@ -522,6 +562,7 @@ a {
   margin-top: 12px;
 }
 
+/* 버튼 = z1 유리: 기본은 투명 유리, primary는 시안 발광 유리 (레퍼런스 하단 독 문법) */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -529,12 +570,13 @@ a {
   gap: 6px;
   padding: 8px 14px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--line));
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
   color: var(--text);
   cursor: pointer;
   font-size: var(--text-body);
   font-weight: var(--weight-medium);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
   transition:
     transform var(--dur-fast) var(--ease-premium),
     border-color var(--dur-fast) var(--ease-premium),
@@ -542,8 +584,9 @@ a {
 }
 
 .btn:hover {
-  border-color: var(--grey);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
   transform: translateY(-1px);
+  box-shadow: var(--glass-specular-soft), var(--glow-accent-soft);
 }
 
 .btn:active {
@@ -551,15 +594,18 @@ a {
 }
 
 .btn.primary {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-deep) 100%);
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
   border-radius: 999px;
   padding: 8px 8px 8px 16px;
+  color: var(--navy-deep);
+  font-weight: var(--weight-bold);
+  box-shadow: var(--glass-specular), var(--glow-accent), var(--elev-1);
 }
 
 .btn.primary:hover {
-  filter: brightness(1.12);
-  box-shadow: var(--glow-accent-soft);
+  filter: brightness(1.08);
+  box-shadow: var(--glass-specular), 0 0 26px color-mix(in srgb, var(--accent) 60%, transparent), var(--elev-2);
 }
 
 /* 중첩 CTA — 트레일링 아이콘은 자체 원형 아일랜드 안에 (high-end-visual-design §4B) */
@@ -570,7 +616,8 @@ a {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--bg) 35%, transparent);
+  background: color-mix(in srgb, var(--navy-deep) 45%, transparent);
+  color: var(--text);
   font-size: var(--text-sm);
   transition: transform var(--dur-fast) var(--ease-premium);
 }
@@ -654,7 +701,7 @@ a {
 /* 전술맵 네이비 틴트: 중립 그레이(dark_matter) 타일을 딥 네이비 톤으로 (hero-v2 준거)
  * sepia로 채도를 만든 뒤 hue-rotate로 청색 계열로 돌린다 — 실배포 확인 후 강도 조정 */
 .leaflet-tile {
-  filter: brightness(0.82) sepia(0.55) saturate(1.9) hue-rotate(175deg);
+  filter: brightness(0.76) sepia(0.6) saturate(2.1) hue-rotate(182deg);
 }
 
 .leaflet-container .leaflet-control,
@@ -769,15 +816,17 @@ a {
 
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 94%, var(--accent));
   color: var(--text);
-  border: 1px solid var(--line);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-specular), var(--elev-2);
 }
 
 .leaflet-control-zoom a {
-  background: var(--surface);
+  background: var(--glass-surface-strong);
   color: var(--text);
-  border-color: var(--line);
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-specular-soft);
 }
 
 .leaflet-control-attribution {
@@ -836,12 +885,14 @@ a {
 
 /* calc */
 .calc-card {
-  background: color-mix(in srgb, var(--surface) 88%, var(--bg));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface) 92%, var(--accent)) 0%,
+    color-mix(in srgb, var(--surface) 88%, var(--bg)) 24%
+  );
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.06),
-    var(--glow-accent-soft);
+  box-shadow: var(--glass-specular), var(--elev-2);
   padding: 20px;
   margin-top: 16px;
 }
@@ -863,13 +914,21 @@ a {
 
 .calc-grid input,
 .calc-grid select {
-  background: var(--bg);
+  background: color-mix(in srgb, var(--navy-deep) 68%, transparent);
   border: 1px solid var(--line);
   color: var(--text);
   border-radius: var(--radius-md);
   padding: 9px 10px;
   font-size: var(--text-md);
   font-weight: var(--weight-regular);
+  box-shadow: var(--glass-specular-soft);
+  transition: border-color var(--dur-fast) var(--ease-premium);
+}
+
+.calc-grid input:focus,
+.calc-grid select:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
 }
 
 .calc-result {
@@ -940,10 +999,14 @@ a {
 }
 
 .stat-tile {
-  background: color-mix(in srgb, var(--surface) 88%, var(--bg));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface) 93%, var(--accent)) 0%,
+    color-mix(in srgb, var(--surface) 88%, var(--bg)) 30%
+  );
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.06);
+  box-shadow: var(--glass-specular), var(--elev-1);
   padding: 14px 16px;
   transition: box-shadow var(--dur-fast) var(--ease-premium), transform var(--dur-fast) var(--ease-premium);
 }
@@ -985,10 +1048,16 @@ a {
   margin: 18px 0;
 }
 
+/* 섹션 헤더 — 레퍼런스 HUD의 'SYSTEM OVERVIEW' 문법: 스페이스드 캡 + 헤어라인 */
 .chart-title {
-  font-size: var(--text-md);
+  font-size: var(--text-sm);
   font-weight: var(--weight-bold);
-  margin-bottom: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 82%, var(--accent));
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+  padding-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .chart-note {
@@ -1064,7 +1133,8 @@ a {
   display: block;
   height: 100%;
   border-radius: 4px;
-  background: var(--accent);
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 .hbar-value {
@@ -1247,8 +1317,9 @@ a {
     inset: auto 0 0 0;
     height: 56px;
     background: var(--glass-surface-strong);
-    backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: var(--glass-backdrop);
     border-top: 1px solid var(--glass-border);
+    box-shadow: var(--glass-specular), var(--elev-3);
     z-index: 1200;
     padding-bottom: env(safe-area-inset-bottom);
   }
