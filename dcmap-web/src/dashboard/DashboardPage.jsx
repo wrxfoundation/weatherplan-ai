@@ -15,7 +15,7 @@ function Donut({ pct, label, sub }) {
     <div className="donut-wrap">
       <div
         className="donut"
-        style={{ background: `conic-gradient(var(--accent) 0 ${pct}%, color-mix(in srgb, var(--grey) 16%, var(--surface)) ${pct}% 100%)` }}
+        style={{ background: `conic-gradient(var(--accent-deep) 0, var(--accent) ${pct}%, color-mix(in srgb, var(--grey) 14%, var(--surface)) ${pct}% 100%)` }}
         role="img"
         aria-label={`${label} ${pct}%`}
       />
