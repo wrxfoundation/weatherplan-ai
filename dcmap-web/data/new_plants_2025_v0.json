@@ -1,0 +1,97 @@
+{
+  "version": "0.1",
+  "asOf": "2025",
+  "source": "2025년도 신규 발전소 설치 현황 (시도별 설비용량·개수, 공개 통계)",
+  "note": "2025년 신규 설치 발전소의 시도별 설비용량(KW)·개수 — 공급측 신규 파이프라인의 지리적 분포.",
+  "rows": [
+    {
+      "sido": "경북",
+      "capacityKw": 699712,
+      "count": 5316
+    },
+    {
+      "sido": "충남",
+      "capacityKw": 646254,
+      "count": 3297
+    },
+    {
+      "sido": "경기",
+      "capacityKw": 479792,
+      "count": 4550
+    },
+    {
+      "sido": "전남",
+      "capacityKw": 411416,
+      "count": 2560
+    },
+    {
+      "sido": "경남",
+      "capacityKw": 400519,
+      "count": 2942
+    },
+    {
+      "sido": "전북",
+      "capacityKw": 329488,
+      "count": 2821
+    },
+    {
+      "sido": "충북",
+      "capacityKw": 244254,
+      "count": 2178
+    },
+    {
+      "sido": "강원",
+      "capacityKw": 147413,
+      "count": 1152
+    },
+    {
+      "sido": "대구",
+      "capacityKw": 122535,
+      "count": 1088
+    },
+    {
+      "sido": "제주",
+      "capacityKw": 112821,
+      "count": 235
+    },
+    {
+      "sido": "광주",
+      "capacityKw": 79949,
+      "count": 454
+    },
+    {
+      "sido": "부산",
+      "capacityKw": 79716,
+      "count": 378
+    },
+    {
+      "sido": "울산",
+      "capacityKw": 50777,
+      "count": 288
+    },
+    {
+      "sido": "인천",
+      "capacityKw": 42026,
+      "count": 291
+    },
+    {
+      "sido": "세종",
+      "capacityKw": 15226,
+      "count": 149
+    },
+    {
+      "sido": "대전",
+      "capacityKw": 13909,
+      "count": 134
+    },
+    {
+      "sido": "서울",
+      "capacityKw": 1236,
+      "count": 14
+    }
+  ],
+  "totalKw": 3877043,
+  "totalMw": 3877,
+  "totalCount": 27847,
+  "nonCapitalPct": 86.5
+}

@@ -3,6 +3,7 @@ import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL } from '../data/facilities.js'
 import { GEN_RECENT, GEN_LICENSE_META } from '../data/genLicenses.js'
 import { CHP_PLANTS } from '../data/chpPlants.js'
+import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -41,6 +42,25 @@ const DATASETS = [
       { k: 'mw', label: '발전용량MW' },
     ],
     rows: CHP_PLANTS.map((p) => ({ op: p.op, plant: p.plant, loc: p.loc, commission: p.commission, mw: p.mw ?? '' })),
+  },
+  {
+    key: 'new2025',
+    label: '2025 신규 발전소(시도별)',
+    asOf: '2025',
+    source: '2025년도 신규 발전소 설치 현황',
+    fullCsv: null,
+    columns: [
+      { k: 'sido', label: '시도' },
+      { k: 'capacityKw', label: '신규 설비용량(KW)' },
+      { k: 'capacityMw', label: '≈MW' },
+      { k: 'count', label: '발전소 개수' },
+    ],
+    rows: NEW_PLANTS_2025.map((r) => ({
+      sido: r.sido,
+      capacityKw: r.capacityKw,
+      capacityMw: Math.round(r.capacityKw / 1000),
+      count: r.count,
+    })),
   },
   {
     key: 'dc',
