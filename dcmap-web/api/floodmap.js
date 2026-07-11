@@ -121,6 +121,6 @@ export default async function handler(req, res) {
       scope: '홍수위험지도 침수심(포털 조회)',
     })
   } catch (e) {
-    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
   }
 }

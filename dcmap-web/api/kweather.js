@@ -139,6 +139,6 @@ export default async function handler(req, res) {
       timestamp: fcst.timestamp,
     })
   } catch (e) {
-    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
   }
 }

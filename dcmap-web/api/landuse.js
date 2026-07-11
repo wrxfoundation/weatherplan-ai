@@ -39,7 +39,7 @@ export default async function handler(req, res) {
 
   const url =
     'https://api.vworld.kr/req/data?service=data&version=2.0&request=GetFeature&format=json' +
-    `&size=5&page=1&data=LT_C_UQ111&geomFilter=POINT(${lng} ${lat})&key=${key}`
+    `&size=5&page=1&data=LT_C_UQ111&geomFilter=POINT(${lng} ${lat})&key=${key}&domain=${encodeURIComponent(process.env.VWORLD_DOMAIN || 'aidatacenter-red.vercel.app')}`
 
   try {
     const ctrl = new AbortController()
@@ -63,6 +63,6 @@ export default async function handler(req, res) {
     }
     res.status(200).json({ available: true, uses: [...names] })
   } catch (e) {
-    res.status(200).json({ available: false, reason: `upstream_${e?.name || 'error'}` })
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
   }
 }
