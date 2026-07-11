@@ -6,13 +6,14 @@ import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import TopBar from '../TopBar.jsx'
 import FilterBar from './FilterBar.jsx'
+import ClimateBar from './ClimateBar.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
-import { headroomFor } from '../data/liveApi.js'
+import { headroomFor, geocodeAddr } from '../data/liveApi.js'
 
 const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ sido, lat, lng }))
 
@@ -161,6 +162,10 @@ export default function MapPage({ power = false }) {
   const headroomLayerRef = useRef(null)
   const [headrooms, setHeadrooms] = useState(null) // {sido: availableMw|null}
   const [region, setRegion] = useState(null) // 전력지도: 클릭한 시도 (지역 요약 카드)
+  const [mapCenter, setMapCenter] = useState(null) // 상단 기후 바: 확정 지점 없을 때 지도 중심 기후
+  const [addrQuery, setAddrQuery] = useState('') // 지번/도로명 주소 검색 입력
+  const [geocoding, setGeocoding] = useState(false)
+  const [geoErr, setGeoErr] = useState(null)
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
@@ -225,6 +230,11 @@ export default function MapPage({ power = false }) {
     })
     // 딥링크 복원 시 해당 지점으로 카메라
     if (sitePoint) map.setView([sitePoint.lat, sitePoint.lng], 11)
+    // 상단 기후 바: 확정 지점이 없을 땐 지도 중심 기후를 표시.
+    // 0.05°(~5km) 격자로 스냅해 팬 중 과도한 재조회를 막고 캐시를 재사용한다.
+    const snapCenter = (c) => ({ lat: Math.round(c.lat * 20) / 20, lng: Math.round(c.lng * 20) / 20 })
+    map.whenReady(() => setMapCenter(snapCenter(map.getCenter())))
+    map.on('moveend', () => setMapCenter(snapCenter(map.getCenter())))
     map.on('zoomend', () => {
       setIsoView(map.getZoom() >= ISO_ZOOM)
       setDenseLabels(map.getZoom() >= 13)
@@ -496,6 +506,25 @@ export default function MapPage({ power = false }) {
     mapObj.current?.setView([f.lat, f.lng], Math.max(mapObj.current.getZoom(), 11))
   }
 
+  // 지번/도로명 주소 검색 → vworld 지오코딩 → 해당 지점을 부지 분석으로 (맵 클릭과 동일)
+  const onSearchAddr = async (e) => {
+    e.preventDefault()
+    const query = addrQuery.trim()
+    if (!query || geocoding) return
+    setGeocoding(true)
+    setGeoErr(null)
+    const hit = await geocodeAddr(query)
+    setGeocoding(false)
+    if (hit?.lat != null && hit?.lng != null) {
+      setSelected(null)
+      setRegion(null)
+      setSitePoint({ lat: hit.lat, lng: hit.lng })
+      mapObj.current?.setView([hit.lat, hit.lng], 13)
+    } else {
+      setGeoErr('주소를 찾지 못했어요 — 시·군·구까지 포함해 다시 시도해 보세요')
+    }
+  }
+
   // 전력지도 지역 클릭 요약 데이터
   const regionInfo = useMemo(() => {
     if (!region) return null
@@ -547,6 +576,23 @@ export default function MapPage({ power = false }) {
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />
+        <div className="map-top">
+          <form className="addr-search" onSubmit={onSearchAddr} role="search">
+            <input
+              type="text"
+              value={addrQuery}
+              onChange={(e) => setAddrQuery(e.target.value)}
+              placeholder="지번·도로명 주소 검색 (예: 파주시 파주읍)"
+              aria-label="지번·도로명 주소 검색"
+              enterKeyHint="search"
+            />
+            <button type="submit" className="btn primary" disabled={geocoding}>
+              {geocoding ? '검색중…' : '검색'}
+            </button>
+          </form>
+          {geoErr && <div className="addr-err">{geoErr}</div>}
+          <ClimateBar point={sitePoint || mapCenter} committed={!!sitePoint} />
+        </div>
         <aside className="side-panel">
           {selected ? (
             <>
