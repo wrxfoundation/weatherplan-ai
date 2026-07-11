@@ -23,17 +23,27 @@ body {
   line-height: var(--lh-base);
 }
 
-/* 엔지니어링 그리드 오버레이 — 문서형 페이지의 공간감 (맵 화면은 타일이 대신함) */
+/* 도트 그리드 — 레퍼런스의 미세 점 격자 (선 격자보다 조용함) */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background:
-    linear-gradient(color-mix(in srgb, var(--accent) 4%, transparent) 1px, transparent 1px) 0 0 / 56px 56px,
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 4%, transparent) 1px, transparent 1px) 0 0 / 56px 56px;
+  background: radial-gradient(color-mix(in srgb, var(--accent) 9%, transparent) 1px, transparent 1.5px) 0 0 / 30px 30px;
   mask-image: radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 100%);
+}
+
+/* 모래질감 그레인 — 과하지 않게 (SVG 노이즈, 네트워크 요청 없음) */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
 }
 
 #root {
@@ -324,8 +334,9 @@ a {
 }
 
 .status-bar .seg {
-  border-radius: 4px;
+  border-radius: 999px;
   min-width: 6px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
 }
 
 .status-bar .seg.op {
@@ -445,10 +456,30 @@ a {
     color-mix(in srgb, var(--surface) 92%, var(--accent)) 0%,
     color-mix(in srgb, var(--surface) 88%, var(--bg)) 24%
   );
-  border: 1px solid var(--glass-border);
+  border: 1px solid transparent;
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-specular), var(--elev-2);
   padding: 16px;
+  position: relative;
+}
+
+/* 그라데이션 스트로크 — 좌상단 광원이 테두리를 타고 흐르는 표현 (레퍼런스 카드 문법)
+ * padding-box/border-box 이중 마스크로 1px 링만 남긴다 */
+.facility-card::before,
+.calc-card::before,
+.stat-tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--stroke-gradient);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .facility-card .status-line {
@@ -504,9 +535,12 @@ a {
   background: transparent;
 }
 
+/* 검증·대기 배지 — 레퍼런스의 웜 알럿 (다크 위 오렌지 글로우) */
 .badge.verify {
-  color: var(--amber);
-  border-color: var(--amber);
+  color: var(--orange);
+  border-color: color-mix(in srgb, var(--orange) 60%, var(--line));
+  background: color-mix(in srgb, var(--orange) 10%, transparent);
+  box-shadow: var(--glow-warm);
 }
 
 .spec-grid {
@@ -890,11 +924,12 @@ a {
     color-mix(in srgb, var(--surface) 92%, var(--accent)) 0%,
     color-mix(in srgb, var(--surface) 88%, var(--bg)) 24%
   );
-  border: 1px solid var(--glass-border);
+  border: 1px solid transparent;
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-specular), var(--elev-2);
   padding: 20px;
   margin-top: 16px;
+  position: relative;
 }
 
 .calc-grid {
@@ -1004,10 +1039,11 @@ a {
     color-mix(in srgb, var(--surface) 93%, var(--accent)) 0%,
     color-mix(in srgb, var(--surface) 88%, var(--bg)) 30%
   );
-  border: 1px solid var(--glass-border);
+  border: 1px solid transparent;
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-specular), var(--elev-1);
   padding: 14px 16px;
+  position: relative;
   transition: box-shadow var(--dur-fast) var(--ease-premium), transform var(--dur-fast) var(--ease-premium);
 }
 
@@ -1073,7 +1109,8 @@ a {
 }
 
 .split-bar .seg {
-  border-radius: 4px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
 }
 
 .split-bar .fill,
@@ -1121,10 +1158,12 @@ a {
   color: var(--grey);
 }
 
+/* 바 차트 — 레퍼런스 문법: 밝은 1px 스트로크 + 안쪽으로 잦아드는 그라데이션 필 + 풀라운드 캡 */
 .hbar-track {
   height: 10px;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--grey) 14%, var(--surface));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--grey) 12%, transparent);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   overflow: hidden;
   display: block;
 }
@@ -1132,9 +1171,11 @@ a {
 .hbar-fill {
   display: block;
   height: 100%;
-  border-radius: 4px;
-  background: linear-gradient(90deg, var(--accent-deep), var(--accent));
-  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, transparent), color-mix(in srgb, var(--accent-deep) 55%, transparent));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 75%, transparent),
+    0 0 10px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 .hbar-value {
@@ -1215,6 +1256,7 @@ a {
   border-radius: 50%;
   -webkit-mask: radial-gradient(farthest-side, transparent 62%, #000 63%);
   mask: radial-gradient(farthest-side, transparent 62%, #000 63%);
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 30%, transparent));
 }
 
 .donut-center {
