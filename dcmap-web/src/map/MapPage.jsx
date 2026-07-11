@@ -67,6 +67,7 @@ export default function MapPage() {
   const [sitePoint, setSitePoint] = useState(null) // 맵 빈 곳 클릭 → 지점 분석
   const [showLabels, setShowLabels] = useState(false) // 맵 정보 라벨 (시설명·용량) 상시 표시
   const [isoView, setIsoView] = useState(false) // 줌 ≥ ISO_ZOOM → 아이소메트릭 빌딩 마커
+  const [denseLabels, setDenseLabels] = useState(false) // 줌 ≥ 13 → 그룹 개별 라벨 (미만은 대표 라벨)
 
   const mapRef = useRef(null)
   const mapObj = useRef(null)
@@ -128,7 +129,10 @@ export default function MapPage() {
       setSelected(null)
       setSitePoint({ lat: e.latlng.lat, lng: e.latlng.lng })
     })
-    map.on('zoomend', () => setIsoView(map.getZoom() >= ISO_ZOOM))
+    map.on('zoomend', () => {
+      setIsoView(map.getZoom() >= ISO_ZOOM)
+      setDenseLabels(map.getZoom() >= 13)
+    })
     mapObj.current = map
     clusterRef.current = cluster
     return () => map.remove()
@@ -165,6 +169,9 @@ export default function MapPage() {
     const SPREAD_DEG = 0.006 // ≈ 650m — 시군구 중심점 공유 그룹의 분산 반경
     let idx = 0
     for (const group of coordGroups.values()) {
+      // 같은 방향으로 방사된 멤버 수 — 중간 줌에서 칩 폭(~200px)이 분산 간격보다
+      // 넓어 같은 줄에서 겹치므로, 방향별로 세로 스태거를 준다
+      const dirCount = {}
       group.forEach((f, gi) => {
         let lat = f.lat
         let lng = f.lng
@@ -188,13 +195,29 @@ export default function MapPage() {
         } else {
           dir = idx % 2 === 0 ? 'right' : 'left'
         }
-        const OFF = { right: [10, 0], left: [-10, 0], top: [0, -12], bottom: [0, 12] }
+        // 방향별 스태거: 같은 방향 2번째 멤버부터 18px씩 아래(top은 위)로 줄을 내린다
+        const nth = (dirCount[dir] = (dirCount[dir] ?? 0) + 1) - 1
+        const dy = nth * 18
+        const OFF = {
+          right: [10, dy],
+          left: [-10, dy],
+          top: [0, -12 - dy],
+          bottom: [0, 12 + dy],
+        }
+        // 줌 13 미만에서 그룹(중심점 공유)은 개별 칩이 물리적으로 못 벌어짐 —
+        // 대표 멤버 하나에만 "시군구 · N곳" 요약 라벨을 단다
+        const groupSummary = group.length > 1 && !denseLabels
+        const labelText = groupSummary ? `${f.sido} ${f.sigungu ?? ''} · ${group.length}곳`.trim() : info
+        const skipLabel = groupSummary && gi !== 0
         m.bindTooltip(
           info,
-          showLabels
-            ? { permanent: true, direction: dir, offset: OFF[dir], className: 'dc-label' }
+          showLabels && !skipLabel
+            ? groupSummary
+              ? { permanent: true, direction: 'top', offset: [0, -12], className: 'dc-label' }
+              : { permanent: true, direction: dir, offset: OFF[dir], className: 'dc-label' }
             : { direction: 'top' },
         )
+        if (showLabels && !skipLabel && groupSummary) m.setTooltipContent(labelText)
         m.on('click', () => {
           setSitePoint(null)
           setSelected(f)
@@ -203,7 +226,7 @@ export default function MapPage() {
         idx += 1
       })
     }
-  }, [filtered, showLabels, isoView])
+  }, [filtered, showLabels, isoView, denseLabels])
 
   const toggleStatus = (key) =>
     setStatuses((prev) => {
