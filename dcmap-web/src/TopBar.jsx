@@ -135,34 +135,34 @@ export default function TopBar() {
       </div>
 
       <nav>
-        <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
+        <NavLink to="/" end data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
           맵
         </NavLink>
-        <NavLink to="/map3d" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <NavLink to="/map3d" data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
           3D <sup className="beta-sup">β</sup>
         </NavLink>
-        <NavLink to="/calc" className={({ isActive }) => (isActive ? 'active' : '')}>
-          GPU 계산기
-        </NavLink>
-        <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>
-          대시보드
-        </NavLink>
-        <NavLink to="/power" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <NavLink to="/power" data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
           전력지도
         </NavLink>
-        <NavLink to="/data" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <NavLink to="/calc" data-nav="data" className={({ isActive }) => (isActive ? 'active' : '')}>
+          GPU 계산기
+        </NavLink>
+        <NavLink to="/dashboard" data-nav="data" className={({ isActive }) => (isActive ? 'active' : '')}>
+          대시보드
+        </NavLink>
+        <NavLink to="/data" data-nav="data" className={({ isActive }) => (isActive ? 'active' : '')}>
           데이터
         </NavLink>
-        <NavLink to="/stats" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <NavLink to="/stats" data-nav="data" className={({ isActive }) => (isActive ? 'active' : '')}>
           통계
         </NavLink>
-        <NavLink to="/insights" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <NavLink to="/insights" data-nav="knowledge" className={({ isActive }) => (isActive ? 'active' : '')}>
           인사이트
         </NavLink>
-        <NavLink to="/roadmap" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <NavLink to="/roadmap" data-nav="knowledge" className={({ isActive }) => (isActive ? 'active' : '')}>
           로드맵
         </NavLink>
-        <NavLink to="/glossary" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <NavLink to="/glossary" data-nav="knowledge" className={({ isActive }) => (isActive ? 'active' : '')}>
           용어집
         </NavLink>
       </nav>

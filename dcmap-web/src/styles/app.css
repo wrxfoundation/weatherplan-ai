@@ -153,23 +153,55 @@ a {
 }
 
 .topbar nav a {
-  padding: 6px 12px;
+  --nav-tone: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
   border-radius: var(--radius-sm);
   color: var(--grey);
   font-size: var(--text-body);
   font-weight: var(--weight-medium);
+  border: 1px solid transparent;
+}
+
+/* 섹션 톤 — 앞머리 점으로 그룹 구분 */
+.topbar nav a[data-nav='explore'] {
+  --nav-tone: var(--nav-explore);
+}
+.topbar nav a[data-nav='data'] {
+  --nav-tone: var(--nav-data);
+}
+.topbar nav a[data-nav='knowledge'] {
+  --nav-tone: var(--nav-knowledge);
+}
+.topbar nav a[data-nav]::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--nav-tone);
+  opacity: 0.55;
+  transition: opacity 0.15s, box-shadow 0.15s;
 }
 
 .topbar nav a:hover {
   color: var(--text);
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  background: color-mix(in srgb, var(--nav-tone) 10%, transparent);
+}
+.topbar nav a:hover::before {
+  opacity: 1;
 }
 
 .topbar nav a.active {
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
+  color: var(--nav-tone);
+  background: color-mix(in srgb, var(--nav-tone) 12%, transparent);
+  border-color: color-mix(in srgb, var(--nav-tone) 38%, var(--line));
   box-shadow: var(--glass-specular-soft);
+}
+.topbar nav a.active::before {
+  opacity: 1;
+  box-shadow: 0 0 8px var(--nav-tone);
 }
 
 .report-btn {
@@ -1485,6 +1517,132 @@ a {
   gap: 8px;
 }
 
+/* 전문용어 도움말 (?) 툴팁 */
+.term {
+  position: relative;
+  white-space: nowrap;
+}
+.term-q {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-left: 3px;
+  padding: 0;
+  vertical-align: middle;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  font-size: 9px;
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  cursor: help;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.term-q:hover,
+.term-q:focus-visible {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  box-shadow: var(--glow-accent-soft);
+  outline: none;
+}
+.term-pop {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 7px);
+  z-index: 60;
+  width: max-content;
+  max-width: 260px;
+  white-space: normal;
+  padding: 9px 11px;
+  border-radius: var(--radius-md);
+  background: var(--glass-surface-strong, color-mix(in srgb, var(--surface) 96%, var(--accent)));
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  backdrop-filter: var(--glass-backdrop);
+  box-shadow: var(--glass-specular), var(--elev-3);
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+.term-pop::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: -5px;
+  width: 9px;
+  height: 9px;
+  background: inherit;
+  border-left: 1px solid var(--glass-border);
+  border-top: 1px solid var(--glass-border);
+  transform: rotate(45deg);
+}
+
+/* 용량 밴드 스케일 (전력 인허가 트랙 라이브 표시) */
+.band-scale {
+  margin: 10px 0 2px;
+}
+.band-track {
+  display: flex;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  position: relative;
+}
+.band-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--grey);
+  border-right: 1px solid var(--line);
+  text-align: center;
+  padding: 0 4px;
+  transition: background 0.2s, color 0.2s;
+}
+.band-seg:last-child {
+  border-right: none;
+}
+.band-seg.on {
+  color: var(--navy-deep);
+  font-weight: var(--weight-bold);
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+}
+.band-marker {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background: var(--text);
+  box-shadow: 0 0 8px var(--accent);
+  transform: translateX(-1px);
+  transition: left 0.25s var(--ease-premium, ease);
+}
+.band-marker::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text);
+  box-shadow: 0 0 8px var(--accent);
+}
+.band-legend {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: var(--text-xs);
+  color: var(--grey);
+  font-variant-numeric: tabular-nums;
+}
+
 /* 지점 분석 → 프로세스 관문 전망 */
 .gate-outlook {
   display: flex;
@@ -1583,39 +1741,46 @@ a {
 }
 .explorer-table-wrap {
   margin-top: 10px;
-  border: 1px solid var(--stroke, rgba(120, 160, 200, 0.18));
-  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
   overflow: auto;
   max-height: 62vh;
-  background: var(--surface, #0d1e33);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
 }
 .explorer-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 .explorer-table thead th {
   position: sticky;
   top: 0;
-  background: var(--surface-strong, #10233b);
-  color: var(--text, #eafcff);
+  z-index: 1;
+  background: color-mix(in srgb, var(--surface) 92%, var(--accent));
+  color: var(--text);
   text-align: left;
-  padding: 10px 12px;
-  font-weight: 600;
+  padding: 11px 12px;
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.01em;
   white-space: nowrap;
-  border-bottom: 1px solid var(--stroke, rgba(120, 160, 200, 0.25));
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
 }
 .explorer-table tbody td {
-  padding: 8px 12px;
-  color: var(--text-dim, #b8cbe0);
-  border-bottom: 1px solid rgba(120, 160, 200, 0.09);
+  padding: 9px 12px;
+  color: var(--grey);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
   white-space: nowrap;
 }
-.explorer-table tbody tr:nth-child(even) {
-  background: rgba(120, 160, 200, 0.045);
+.explorer-table tbody td:first-child {
+  font-variant-numeric: tabular-nums;
 }
-.explorer-table tbody tr:hover {
-  background: rgba(53, 213, 238, 0.08);
+.explorer-table tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--surface) 40%, transparent);
+}
+.explorer-table tbody tr:hover td {
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  color: var(--text);
 }
 
 /* 발전 허가 시도 버블 라벨 — 버블 중앙 건수 숫자 */

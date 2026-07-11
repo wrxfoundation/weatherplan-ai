@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES } from '../data/facilities.js'
 import { checkPowerTrack } from './trackCheck.js'
+import Term from '../components/Term.jsx'
 
 // GPU별 대표 TDP(kW). 공개 스펙 기준 근사치 — 상세 학습 계산은 gpu-training-calculator 연동 예정(M1 최소 버전).
 const GPU_PRESETS = [
@@ -47,21 +48,63 @@ function TrackCard({ mw, nonCapital, onRegion }) {
           </select>
         </label>
       </div>
+      {/* 용량 밴드 스케일 — 마커가 현재 MW로 실시간 이동(트랙 판정이 살아있음을 시각화) */}
+      {(() => {
+        const CAP = 80
+        const pos = Math.min(100, (Math.min(r.mw, CAP) / CAP) * 100)
+        const band = r.mw <= 20 ? 0 : r.mw <= 40 ? 1 : 2
+        const nextMsg =
+          r.mw <= 20
+            ? `20MW까지 ${(20 - r.mw).toFixed(1)}MW 여유 — 초과 시 22.9kV/154kV 협의 구간`
+            : r.mw <= 40
+              ? `40MW까지 ${(40 - r.mw).toFixed(1)}MW — 초과 시 154kV 의무 구간`
+              : `154kV 의무 구간 (40MW 초과) — 자체 수전설비 투자 필요`
+        return (
+          <div className="band-scale">
+            <div className="band-track">
+              <div className={`band-seg${band === 0 ? ' on' : ''}`} style={{ flex: 20 }}>
+                22.9kV<br />≤20MW
+              </div>
+              <div className={`band-seg${band === 1 ? ' on' : ''}`} style={{ flex: 20 }}>
+                협의<br />20–40
+              </div>
+              <div className={`band-seg${band === 2 ? ' on' : ''}`} style={{ flex: 40 }}>
+                154kV 의무<br />40MW+
+              </div>
+              <div className="band-marker" style={{ left: `${pos}%` }} />
+            </div>
+            <div className="band-legend">
+              <span>0</span>
+              <span>현재 {r.mw.toFixed(1)}MW · {nextMsg}</span>
+              <span>{CAP}MW+</span>
+            </div>
+          </div>
+        )
+      })()}
+
       <div className="spec-grid" style={{ marginTop: 12 }}>
         <div className="spec-cell">
-          <div className="k">수전전압 트랙</div>
-          <div className="v">{r.track.voltage}</div>
+          <div className="k">
+            <Term k="수전전압">수전전압</Term> 트랙
+          </div>
+          <div className="v">
+            {r.mw > 40 ? <Term k="154kV">{r.track.voltage}</Term> : r.mw <= 20 ? <Term k="22.9kV">{r.track.voltage}</Term> : r.track.voltage}
+          </div>
         </div>
         <div className="spec-cell">
           <div className="k">회선 구성</div>
           <div className="v">{r.track.circuits}</div>
         </div>
         <div className="spec-cell">
-          <div className="k">전기사용예정통지</div>
+          <div className="k">
+            <Term k="전기사용예정통지">전기사용예정통지</Term>
+          </div>
           <div className="v">{r.preNoticeRequired ? '대상 (5,000kW 이상)' : '비대상'}</div>
         </div>
         <div className="spec-cell">
-          <div className="k">전력계통영향평가</div>
+          <div className="k">
+            <Term k="전력계통영향평가">전력계통영향평가</Term>
+          </div>
           <div className="v">
             {r.psiaRequired ? '대상 (10MW 이상)' : '비대상'}
             {r.exemption && ` · ${r.exemption.effective}부터 면제 가능성`}
@@ -171,7 +214,7 @@ export default function CalcPage() {
               </select>
             </label>
             <label>
-              PUE (전력효율지수)
+              <Term k="PUE">PUE</Term> (전력효율지수)
               <input
                 type="number"
                 min="1"
@@ -182,7 +225,7 @@ export default function CalcPage() {
               />
             </label>
             <label>
-              수전 여유 (이중화)
+              수전 여유 (<Term k="이중화">이중화</Term>)
               <select value={redunKey} onChange={(e) => setRedunKey(e.target.value)}>
                 {REDUNDANCY.map((r) => (
                   <option key={r.key} value={r.key}>
@@ -219,7 +262,7 @@ export default function CalcPage() {
               <div className="v">{racks.toLocaleString()}대</div>
             </div>
             <div className="spec-cell">
-              <div className="k">추정 화이트스페이스</div>
+              <div className="k">추정 <Term k="화이트스페이스">화이트스페이스</Term></div>
               <div className="v">약 {sqm.toLocaleString()}㎡</div>
             </div>
             <div className="spec-cell">
