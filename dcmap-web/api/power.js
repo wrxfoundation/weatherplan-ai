@@ -28,7 +28,7 @@ const num = (v) => {
   return Number.isFinite(n) ? n : undefined
 }
 
-async function fetchJson(url, ms = 7000) {
+async function fetchJson(url, ms = 14000) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
   try {

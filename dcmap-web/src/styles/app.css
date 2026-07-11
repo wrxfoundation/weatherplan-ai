@@ -1531,6 +1531,21 @@ a {
   gap: 8px;
 }
 
+/* 대시보드 리스트 확장 토글 */
+.list-expand {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--grey);
+  border-style: dashed;
+}
+.list-expand:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+}
+
 /* 시설 코멘트 — 상세카드 2줄 해설 (큐레이션=accent 보더, 자동요약=회색 보더) */
 .fac-blurb {
   position: relative;
