@@ -93,7 +93,11 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
         </p>
         <p className="geo-note">
           미산출 축 데이터 소스: 변전소 거리(345kV 정보 공개 대기) · 배전 여유(D3) · 토지(vworld) · 리스크(인구격자) ·
-          네트워크 · 기상(M3). 공개되는 즉시 같은 자리에서 점수화됩니다.
+          네트워크 · 기상(M3). 공개되는 즉시 같은 자리에서 점수화됩니다. 계통연계 여유는{' '}
+          <a href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">
+            RE클라우드(에너지공단)
+          </a>
+          에서 주소 기반 직접 조회 가능.
         </p>
 
         <div className="spec-grid">
