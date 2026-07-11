@@ -56,15 +56,29 @@ function firstData(json) {
   return { data: first.data, timestamp: first.service?.timestamp }
 }
 
-/** 응답 어디에 있든 행정동 코드(8~10자리 숫자) 탐색 — 센서마다 구조가 달라 방어적으로 */
+/** 응답 어디에 있든 행정동 코드 탐색 — 센서마다 구조가 달라 방어적으로.
+ * 1순위: 알려진 키 이름(code/hcode/admCd…) 2순위: 키 무관 10자리 숫자값(행정동코드는 정확히 10자리) */
 function findCode(obj, depth = 0) {
   if (!obj || typeof obj !== 'object' || depth > 5) return undefined
   for (const [k, v] of Object.entries(obj)) {
-    if (/^(code|hcode|admcd|adm_cd|dongcode|dong_cd)$/i.test(k) && /^\d{8,10}$/.test(String(v))) return String(v)
+    if (/^(code|hcode|admcd|adm_cd|dongcode|dong_cd|areacode)$/i.test(k) && /^\d{8,10}$/.test(String(v))) return String(v)
   }
   for (const v of Object.values(obj)) {
     if (v && typeof v === 'object') {
       const f = findCode(v, depth + 1)
+      if (f) return f
+    }
+  }
+  return undefined
+}
+function findAnyDongCode(obj, depth = 0) {
+  if (!obj || typeof obj !== 'object' || depth > 5) return undefined
+  for (const v of Object.values(obj)) {
+    if ((typeof v === 'string' || typeof v === 'number') && /^\d{10}$/.test(String(v))) return String(v)
+  }
+  for (const v of Object.values(obj)) {
+    if (v && typeof v === 'object') {
+      const f = findAnyDongCode(v, depth + 1)
       if (f) return f
     }
   }
@@ -94,11 +108,11 @@ export default async function handler(req, res) {
 
     // 1) GPS → 행정동코드 (Wellbian: kw-gis-gps 센서) — 실패 시 레거시 l015 폴백
     let gis = await getJson(`${base}${SENSORS}/kw-gis-gps?lat=${lat}&lon=${lng}&${auth}`)
-    let code = gis?._status ? undefined : findCode(gis)
+    let code = gis?._status ? undefined : (findCode(gis) ?? findAnyDongCode(gis))
     if (!code) {
       const legacy = await getJson(`${base}/weather/map/v1/l015?lat=${lat}&lon=${lng}&${auth}`)
       if (!legacy?._status) {
-        const c = legacy?.data?.[0]?.hcode ?? findCode(legacy)
+        const c = legacy?.data?.[0]?.hcode ?? findCode(legacy) ?? findAnyDongCode(legacy)
         if (c != null) code = String(c)
         gis = legacy
       }
