@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { STATUS_LABEL } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { landUseFor, revgeoFor, weatherFor } from '../data/liveApi.js'
+import { forecastFor, landUseFor, revgeoFor, weatherFor } from '../data/liveApi.js'
 import { scoreSite } from './engine.js'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
@@ -12,15 +12,18 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
   const [addr, setAddr] = useState(null)
   const [wx, setWx] = useState(null)
   const [landUse, setLandUse] = useState(null)
+  const [fc, setFc] = useState(null)
 
   useEffect(() => {
     let alive = true
     setAddr(null)
     setWx(null)
     setLandUse(null)
+    setFc(null)
     revgeoFor(point.lat, point.lng).then((v) => alive && setAddr(v))
     weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
     landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v))
+    forecastFor(point.lat, point.lng).then((v) => alive && setFc(v))
     return () => {
       alive = false
     }
@@ -124,6 +127,18 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 <span className="badge verify">연동 대기 — 기상축(M3) 데이터 소스</span>
               )}
             </div>
+            {fc?.hours?.length > 0 && (
+              <div className="wx-strip" aria-label="초단기예보 6시간">
+                {fc.hours.map((h, i) => (
+                  <span key={i} className="wx-hour">
+                    <em>+{i + 1}h</em>
+                    <strong>{h.temp != null ? `${h.temp}°` : '–'}</strong>
+                    <span>{h.sky ?? ''}</span>
+                  </span>
+                ))}
+                {fc.rain && <span className="badge verify">강수 감지</span>}
+              </div>
+            )}
           </div>
           <div className="spec-cell">
             <div className="k">수전전압 트랙</div>

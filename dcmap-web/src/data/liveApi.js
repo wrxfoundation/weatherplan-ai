@@ -30,3 +30,6 @@ export const revgeoFor = (lat, lng) => fetchJson(`/api/revgeo?${q(lat, lng)}`)
 
 /** vworld 용도지역 (토지축 v1 근거) — { uses: string[] } | null */
 export const landUseFor = (lat, lng) => fetchJson(`/api/landuse?${q(lat, lng)}`)
+
+/** 케이웨더 초단기예보 H+1~6 — { hours:[{temp,sky}], rain } | null */
+export const forecastFor = (lat, lng) => fetchJson(`/api/forecast?${q(lat, lng)}`)
