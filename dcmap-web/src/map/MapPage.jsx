@@ -260,7 +260,9 @@ export default function MapPage({ power = false }) {
 
   useEffect(() => {
     // 시안(hero-v1) 준거: 줌 컨트롤 우하단, 축척 좌하단
-    const map = L.map(mapRef.current, { zoomControl: false, minZoom: 6 })
+    // maxZoom을 맵에 직접 지정 — 베이스 타일이 [baseMap] 이펙트에서 지연 추가되므로,
+    // 그전에 markerCluster가 붙어도 'Map has no maxZoom specified' 크래시가 나지 않게.
+    const map = L.map(mapRef.current, { zoomControl: false, minZoom: 6, maxZoom: 19 })
     map.fitBounds(KR_BOUNDS, { padding: [8, 8] })
     map.setMaxBounds([
       [30.5, 119.5],
