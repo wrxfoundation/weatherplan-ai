@@ -93,8 +93,9 @@ export const landAreaFor = async (lat, lng) => {
 export const landPriceOfficialFor = (pnu) => (pnu ? fetchJson(`/api/landprice?pnu=${encodeURIComponent(pnu)}`) : Promise.resolve(null))
 
 /** WAMIS 공업용수 취수능력(시도 집계) — { available, bySido:{시도:{m3day,count}}, source } | null.
- *  전국 1회 집계(캐시). 시도 선택은 클라이언트에서. 냉각수(공업용수) 확보 여건의 지역 신호(100점 외). */
-export const waterCapacity = () => fetchJson('/api/water', 12000)
+ *  전국 1회 집계(캐시). 시도 선택은 클라이언트에서. 냉각수(공업용수) 확보 여건의 지역 신호(100점 외).
+ *  서버리스 함수 수(Hobby 12개 상한) 절약 위해 landprice 라우트에 kind=water로 다중화. */
+export const waterCapacity = () => fetchJson('/api/landprice?kind=water', 12000)
 
 /** 케이웨더 일별예보(최대 7일) — { days:[{label,tmax,tmin,rainProb,sky}], rain } | null */
 export const forecastFor = (lat, lng) => fetchJson(`/api/kweather?kind=forecast&${q(lat, lng)}`)
