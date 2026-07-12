@@ -788,16 +788,6 @@ export default function MapPage({ power = false }) {
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />
-        {/* 베이스맵 전환 — 다크/한글/위성 (vworld 키 있을 때만 한글·위성 노출) */}
-        {BASE_KEYS.length > 1 && (
-          <div className="basemap-switch" role="group" aria-label="지도 종류">
-            {BASE_KEYS.map((k) => (
-              <button key={k} type="button" className={`bm-btn ${baseMap === k ? 'on' : ''}`} onClick={() => setBaseMap(k)} aria-pressed={baseMap === k}>
-                {BASE_MAPS[k].label}
-              </button>
-            ))}
-          </div>
-        )}
         <div className="map-top">
           {/* 주소(지번·도로명) 검색은 상단 통합 검색창으로 이동 — 여기선 기후 바만 */}
           <ClimateBar point={sitePoint || mapCenter} committed={!!sitePoint} />
@@ -813,6 +803,19 @@ export default function MapPage({ power = false }) {
             <span className="sheet-grip" />
             <span className="sheet-hint">{sheetCollapsed ? '▲ 패널 펼치기' : '▼ 지도 넓게 보기'}</span>
           </button>
+          {/* 베이스맵 전환 — 목록으로 줄에 맞춘 패널 헤더(스크롤 안쪽). 다크/한글/위성 */}
+          {BASE_KEYS.length > 1 && (
+            <div className="panel-basemap" role="group" aria-label="지도 종류">
+              <span className="pb-label">지도</span>
+              <div className="basemap-switch">
+                {BASE_KEYS.map((k) => (
+                  <button key={k} type="button" className={`bm-btn ${baseMap === k ? 'on' : ''}`} onClick={() => setBaseMap(k)} aria-pressed={baseMap === k}>
+                    {BASE_MAPS[k].label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           {selected ? (
             <>
               <h2>
