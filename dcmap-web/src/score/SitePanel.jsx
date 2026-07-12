@@ -123,6 +123,32 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
         <h3>부지 적합도 프리뷰</h3>
         <div className="name-en">근거 확보 {r.knownScore}/{r.knownMax}점 · 스코어 커버리지 {r.coverage}/100</div>
 
+        {/* 한눈에 — 핵심 판단값을 색 칩으로. 값은 아래 상세와 동일 소스(로드되며 채워짐). */}
+        {(() => {
+          const climateTone = climateIdx ? (climateIdx.level <= 2 ? 'good' : climateIdx.level === 3 ? 'warn' : 'bad') : null
+          const expoTone = (o) => (o.exposurePct >= 30 ? 'bad' : o.exposurePct > 0 ? 'warn' : 'good')
+          return (
+            <div className="site-summary" aria-label="지점 한눈에 요약">
+              <span className={`sum-chip tone-${nonCapital ? 'good' : 'warn'}`}>{nonCapital ? '비수도권' : '수도권'}</span>
+              {headroom?.available && headroom.availableMw != null && (
+                <span className="sum-chip tone-good">여유 {headroom.availableMw.toLocaleString()}MW</span>
+              )}
+              {climateIdx && <span className={`sum-chip tone-${climateTone}`}>냉각 {climateIdx.label}</span>}
+              {flood?.available && flood.source === 'sgis' && (
+                <span className={`sum-chip tone-${expoTone(flood)}`}>침수 {flood.exposurePct <= 0 ? '낮음' : flood.grade}</span>
+              )}
+              {disaster?.available && disaster.source === 'sgis' && (
+                <span className={`sum-chip tone-${expoTone(disaster)}`}>산사태 {disaster.exposurePct <= 0 ? '낮음' : disaster.grade}</span>
+              )}
+              {pop?.available && pop.density != null && (
+                <span className={`sum-chip tone-${pop.density < 3000 ? 'good' : 'warn'}`}>
+                  밀도 {pop.density < 3000 ? '저' : '고'}
+                </span>
+              )}
+            </div>
+          )
+        })()}
+
         <div className="calc-grid">
           <label>
             입지 구분 (경계 자동판정은 추후)
@@ -162,12 +188,14 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             .flatMap((a) => a.items.filter((i) => i.points != null && i.basis).map((i) => `${i.label}: ${i.basis}`))
             .join(' · ')}
         </p>
-        <p className="geo-note">
-          점수화 로드맵 — <strong>이미 연동(아래 표에 실값)</strong>: 계통 여유용량(한전)·냉각 기후지수·인구밀도·지가.
-          <strong> 남은 대기</strong>: 변전소 거리(345kV 송전망 정보 공개 대기 — 한전 미공개라 시점 미정) · 배전 여유 정밀(D3) ·
-          용도지역 점수화(vworld 값은 연동됐고 배점 캘리브레이션 중) · 침수·재해(공개 API 도달 시). 값이 확보된 축부터
-          위 5축 막대에 순차 반영됩니다.
-        </p>
+        <details className="mini-details">
+          <summary>점수화 로드맵 — 연동된 축 / 남은 대기</summary>
+          <p className="geo-note">
+            <strong>이미 연동(아래 표에 실값)</strong>: 계통 여유용량(한전)·냉각 기후지수·인구밀도·침수·산사태·지가.
+            <strong> 남은 대기</strong>: 변전소 거리(345kV 송전망 정보 공개 대기 — 한전 미공개라 시점 미정) · 배전 여유 정밀(D3) ·
+            용도지역 점수화(vworld 값은 연동됐고 배점 캘리브레이션 중). 값이 확보된 축부터 위 5축 막대에 순차 반영됩니다.
+          </p>
+        </details>
 
         {/* 프로세스 관문 전망 — 용량·입지로 본 두 핵심 게이트(P07 접속·P08 계통영향평가) 통과 난이도 */}
         {(() => {
@@ -224,28 +252,9 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
           )
         })()}
 
-        {/* 실무 조회 채널 — 이 지점을 공식 시스템에서 직접 확인 (자동화는 각 기관 약관 확인 후) */}
-        <div className="chart-title" style={{ marginTop: 14 }}>
-          실무 조회 — 공식 시스템 바로가기
-        </div>
-        <div className="quick-links">
-          <a className="btn" href="https://cyber.kepco.co.kr/ckepco/mobile/resources/resources_search_pt_capa.jsp" target="_blank" rel="noreferrer">
-            한전 접속가능 용량 (154kV)
-          </a>
-          <a className="btn" href="https://cyber.kepco.co.kr/ckepco/mobile/resources/resources_search.jsp" target="_blank" rel="noreferrer">
-            한전 분산형전원 (22.9kV)
-          </a>
-          <a className="btn" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">
-            RE클라우드 계통·입지
-          </a>
-          <a className="btn" href="https://www.eum.go.kr/" target="_blank" rel="noreferrer">
-            토지이음 (토지이용계획)
-          </a>
-        </div>
-
         {/* 부지선정 핵심 — 전력·냉각·부지·리스크 순(항상 노출). 운영성 정보는 하단 접이식으로. */}
         <div className="spec-grid">
-          {/* ── 전력: DC 입지의 1순위 제약 ── */}
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}>⚡ 전력 <em>— DC 입지 1순위 제약</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k"><Term k="계통여유">계통 여유용량</Term> (한전 분산전원 22.9kV · 배전) — 전력 확보 1순위</div>
             <div className="v">
@@ -307,7 +316,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             ) : null
           })()}
 
-          {/* ── 냉각: 연평균기온 = 프리쿨링·PUE ── */}
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}>❄ 냉각 <em>— 연평균기온·프리쿨링·PUE</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k">
               <Term k="프리쿨링">데이터센터 기후지수</Term> (냉각 적합도 · 아주나쁨~아주좋음)
@@ -333,7 +342,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
           </div>
 
-          {/* ── 부지: 용도지역·주소 ── */}
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}>🏗 부지 <em>— 용도지역·주소</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k"><Term k="용도지역">용도지역</Term> (vworld 도시계획 — 부지 개발 가능성)</div>
             <div className="v">
@@ -351,7 +360,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
           </div>
 
-          {/* ── 리스크: 침수·네트워크·민원(인구밀도) ── */}
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}>⚠ 리스크 <em>— 침수·산사태·네트워크·민원</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k"><Term k="침수심">침수 위험</Term> (홍수위험지도 — DC에 치명적)</div>
             <div className="v">
@@ -557,6 +566,25 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 </div>
               ) : null
             })()}
+          </div>
+        </details>
+
+        {/* 실무 조회 — 공식 시스템 직접 확인(보조 액션이라 접이식) */}
+        <details className="mini-details">
+          <summary>실무 조회 — 공식 시스템 바로가기(한전·RE클라우드·토지이음)</summary>
+          <div className="quick-links">
+            <a className="btn" href="https://cyber.kepco.co.kr/ckepco/mobile/resources/resources_search_pt_capa.jsp" target="_blank" rel="noreferrer">
+              한전 접속가능 용량 (154kV)
+            </a>
+            <a className="btn" href="https://cyber.kepco.co.kr/ckepco/mobile/resources/resources_search.jsp" target="_blank" rel="noreferrer">
+              한전 분산형전원 (22.9kV)
+            </a>
+            <a className="btn" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">
+              RE클라우드 계통·입지
+            </a>
+            <a className="btn" href="https://www.eum.go.kr/" target="_blank" rel="noreferrer">
+              토지이음 (토지이용계획)
+            </a>
           </div>
         </details>
 
