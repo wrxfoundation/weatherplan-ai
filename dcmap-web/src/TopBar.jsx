@@ -14,6 +14,17 @@ function sectionForPath(pathname) {
   return 'explore'
 }
 
+/* 입력이 지번·도로명 주소로 보이는지 — 행정구역 접미사/번지 패턴 */
+function looksLikeAddress(q) {
+  const t = String(q || '').trim()
+  if (t.length < 2) return false
+  return (
+    /(읍|면|동|리|가|로|길)(\s|\d|$)/.test(t) || // 파주읍·부곡리·역삼동·세종로 …
+    /(특별시|광역시|특별자치도|도|시|군|구)\s/.test(t) || // 경기도 …시 …
+    /\d+(-\d+)?\s*$/.test(t) // 끝에 번지(4-1)
+  )
+}
+
 /* 자동완성 후보: 시설(이름·운영사 매칭) 상위 5 + 지역 상위 2 */
 function suggest(qv) {
   const v = qv.trim().toLowerCase()
@@ -41,10 +52,12 @@ function suggest(qv) {
       if (out.length >= 7) break
     }
   }
-  // 지번·도로명 주소 검색 통합 — 마지막에 지오코딩 이동 옵션(맵 상단 별도 검색창 대체)
+  // 지번·도로명 주소 검색 통합(맵 상단 별도 검색창 대체). 주소처럼 보이면 최상단에 노출.
   const t = qv.trim()
   if (t.length >= 2) {
-    out.push({ kind: '주소', label: `‘${t}’ 지번·도로명으로 이동`, meta: 'vworld 지오코딩', geo: true, query: t, to: '' })
+    const geoItem = { kind: '주소', label: `‘${t}’ 위치로 이동 · 부지 분석`, meta: 'vworld 지오코딩', geo: true, query: t, to: '' }
+    if (looksLikeAddress(t)) out.unshift(geoItem)
+    else out.push(geoItem)
   }
   return out
 }
@@ -94,6 +107,20 @@ export default function TopBar() {
   }
 
   const onKey = (e) => {
+    if (e.key === 'Enter') {
+      // 하이라이트된 후보가 있으면 그것 / 없으면 주소처럼 보이는 입력은 지오코딩(부지 분석)
+      if (open && items.length && active >= 0) {
+        e.preventDefault()
+        choose(items[active])
+        return
+      }
+      const t = term.trim()
+      if (looksLikeAddress(t)) {
+        e.preventDefault()
+        choose({ geo: true, query: t })
+      }
+      return
+    }
     if (!open || !items.length) return
     if (e.key === 'ArrowDown') {
       e.preventDefault()
@@ -101,9 +128,6 @@ export default function TopBar() {
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
       setActive((a) => (a - 1 + items.length) % items.length)
-    } else if (e.key === 'Enter' && active >= 0) {
-      e.preventDefault()
-      choose(items[active])
     } else if (e.key === 'Escape') {
       setOpen(false)
     }
