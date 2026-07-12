@@ -11,6 +11,8 @@
  *
  * 응답: { available, events?, recentYear?, topType?, scope } | { available:false, reason }
  */
+import { proxyConfigured, proxyGetText } from './_proxy.js'
+
 const DEFAULT_URL =
   'https://www.safetydata.go.kr/openapi/disasterStats?sigunguCd={sigungu}&serviceKey={key}&returnType=json'
 
@@ -93,7 +95,16 @@ export default async function handler(req, res) {
       .replaceAll('{sigungu}', sigungu)
       .replaceAll('{key}', encodeURIComponent(key))
 
-    const body = await fetchJson(url)
+    // 프록시(UPSTREAM_PROXY_BASE) 설정 시 KR-IP 경유 최우선 — safetydata.go.kr IP차단 근본 우회.
+    let body = null
+    if (proxyConfigured()) {
+      try {
+        body = JSON.parse(await proxyGetText(url, 8000))
+      } catch {
+        body = null
+      }
+    }
+    if (!body) body = await fetchJson(url)
     if (body?._status) {
       res.status(200).json({ available: false, reason: `upstream_${body._status}` })
       return

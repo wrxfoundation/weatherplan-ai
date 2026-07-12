@@ -15,6 +15,7 @@
 import http from 'node:http'
 import https from 'node:https'
 import { promises as dnsp } from 'node:dns'
+import { proxyConfigured, proxyGetText } from './_proxy.js'
 
 const DEFAULT_URL =
   'https://data.floodmap.go.kr/openapi/floodDepth?lon={lng}&lat={lat}&serviceKey={key}&dataType=JSON'
@@ -137,11 +138,17 @@ export default async function handler(req, res) {
     const start = Date.now()
     const DEADLINE = 10000
     const remain = () => DEADLINE - (Date.now() - start)
-    const tiers = [
+    // 프록시(UPSTREAM_PROXY_BASE) 설정 시 KR-IP 경유를 최우선 시도 — 클라우드 IP 차단 근본 우회.
+    // 미설정 시 이 티어는 없고 기존 undici→IPv4직결 폴백만 동작(동일).
+    const tiers = []
+    if (proxyConfigured()) {
+      tiers.push(async () => asJson(await proxyGetText(url, Math.min(7000, remain()))))
+    }
+    tiers.push(
       () => fetchJson(url, Math.min(3500, remain())),
       async () => asJson(await rawGetText(url, Math.min(4000, remain()))),
       async () => asJson(await rawGetText(httpUrl, Math.min(3000, remain()))),
-    ]
+    )
     let body = null
     let lastErr = null
     for (const tier of tiers) {

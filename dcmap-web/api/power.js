@@ -14,6 +14,7 @@
 import http from 'node:http'
 import https from 'node:https'
 import { promises as dnsp } from 'node:dns'
+import { proxyConfigured, proxyGetText } from './_proxy.js'
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 
@@ -292,9 +293,21 @@ export default async function handler(req, res) {
       const httpUrl = url.startsWith('https://') ? url.replace('https://', 'http://') : url
       let xr = null
       let lastErr = null
+      // 프록시(UPSTREAM_PROXY_BASE) 설정 시 KR-IP 경유를 최우선 — openapi.kpx.or.kr IP차단 근본 우회.
+      if (proxyConfigured()) {
+        try {
+          xr = parseXmlItems(await proxyGetText(url, Math.min(7000, remain())), SUPPLY_TAGS)
+          if (!xr?.items?.length) xr = null
+        } catch (e0) {
+          lastErr = e0
+          xr = null
+        }
+      }
       try {
-        xr = await fetchXmlItems(url, SUPPLY_TAGS, Math.min(6000, remain()))
-        if (xr?._status) xr = null
+        if (!xr) {
+          xr = await fetchXmlItems(url, SUPPLY_TAGS, Math.min(6000, remain()))
+          if (xr?._status) xr = null
+        }
       } catch (e1) {
         lastErr = e1
       }
