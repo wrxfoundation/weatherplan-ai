@@ -193,6 +193,40 @@ const firstPopRow = (b) => {
   return rs.find((r) => num(r.tot_ppltn) != null) || null
 }
 
+// SGIS 홍수위험지도 통계 — ndsm/floodRiskDataBoard.json(정의서). 막힌 홍수위험지도포털 대체.
+const FLOOD_URL = process.env.SGIS_FLOOD_URL || 'https://sgisapi.mods.go.kr/OpenAPI3/ndsm/floodRiskDataBoard.json'
+
+// 홍수영향구역 인구 노출 비율 = 영향구역내 인구(affc_zone) / 행정구역 인구(administ_zone). 높을수록 침수 리스크.
+async function sgisFloodExposure(admCd, token) {
+  const b = await fetchJson(`${FLOOD_URL}?accessToken=${encodeURIComponent(token)}&adm_cd=${admCd}`)
+  if (b?._status) return { _status: b._status }
+  const items = Array.isArray(b?.result) ? b.result : b?.result ? [b.result] : []
+  const popItem = items.find((it) => String(it.iem_nm || '').includes('인구'))
+  const list = popItem?.data_list
+  if (!Array.isArray(list)) return null
+  const total = list.find((d) => /총|합/.test(String(d.div_nm || '')))
+  if (!total) return null
+  const administ = num(total.administ_zone)
+  const affc = num(total.affc_zone)
+  if (administ == null || affc == null || administ === 0) return null
+  return {
+    totalPop: administ,
+    affectedPop: affc,
+    exposurePct: Math.round((affc / administ) * 1000) / 10,
+    baseYear: popItem.crtr_yr,
+  }
+}
+
+// 노출 비율 → 정성 등급(부지 리스크 판단용)
+function floodGrade(pct) {
+  if (pct == null) return undefined
+  if (pct <= 0) return '해당없음'
+  if (pct < 10) return '낮음'
+  if (pct < 30) return '보통'
+  if (pct < 50) return '높음'
+  return '매우높음'
+}
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=604800')
 
@@ -203,6 +237,7 @@ export default async function handler(req, res) {
     return
   }
 
+  const kind = String(req.query.kind || 'pop') // pop(기본) | flood(홍수위험지도 영향범위)
   const lat = num(req.query.lat)
   const lng = num(req.query.lng)
   // 폴백용(rgeocode 실패 시): 클라이언트가 넘긴 법정동 5자리 → SGIS 시도코드 + 시군구 이름 매칭.
@@ -222,13 +257,45 @@ export default async function handler(req, res) {
       return
     }
 
-    // ── 1순위: SGIS 리버스지오코딩 → 정확한 SGIS 행정동코드 → population 직접 조회(읍면동 정밀) ──
+    // 좌표 → SGIS 행정동코드(읍면동/시군구). pop·flood 공통 선행 단계.
+    const geo = lat != null && lng != null ? await sgisAdmCode(lat, lng, token) : null
+
+    // ── kind=flood: SGIS 홍수위험지도 영향범위(막힌 홍수위험지도포털 대체) ──
+    if (kind === 'flood') {
+      const codes = geo ? [geo.emdong8, geo.sgg5].filter(Boolean) : /^\d{5}$/.test(admCd5) ? [admCd5] : []
+      let fReason = geo ? 'no_flood_data' : 'no_region_code'
+      for (const adm of codes) {
+        const f = await sgisFloodExposure(adm, token)
+        if (f?._status) {
+          fReason = `upstream_${f._status}`
+          continue
+        }
+        if (f) {
+          const admNm = geo ? [geo.sggNm, adm === geo.emdong8 ? geo.emdongNm : null].filter(Boolean).join(' ') : undefined
+          res.status(200).json({
+            available: true,
+            source: 'sgis',
+            exposurePct: f.exposurePct,
+            affectedPop: f.affectedPop,
+            totalPop: f.totalPop,
+            grade: floodGrade(f.exposurePct),
+            admNm: admNm || undefined,
+            baseYear: f.baseYear || undefined,
+            scope: `SGIS 홍수위험지도 영향범위(${adm === geo?.emdong8 ? '읍면동' : '시군구'}${f.baseYear ? ` ${f.baseYear}` : ''})`,
+          })
+          return
+        }
+      }
+      res.status(200).json({ available: false, reason: fReason })
+      return
+    }
+
+    // ── kind=pop(기본): 리버스지오코딩 → SGIS 행정동코드 → population 직접 조회(읍면동 정밀) ──
     let row = null
     let usedYear = null
     let usedLevel = null
     let usedNm = null
     let lastReason = null
-    const geo = lat != null && lng != null ? await sgisAdmCode(lat, lng, token) : null
     if (geo) {
       const targets = [
         geo.emdong8 && { adm: geo.emdong8, level: '읍면동', nm: [geo.sggNm, geo.emdongNm].filter(Boolean).join(' ') },

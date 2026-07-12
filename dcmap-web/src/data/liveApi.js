@@ -123,7 +123,13 @@ export const bldEnergyFor = ({ sigunguCd, bjdongCd, bun, ji, useYm }) =>
 
 /** 홍수위험지도 침수 위험 — { depthM, grade, floodType, scenario } | null (리스크축 침수).
  *  포털 IPv4 폴백까지 서버가 ~10s 쓸 수 있어 클라이언트도 12s로 넉넉히 준다. */
-export const floodRiskFor = (lat, lng) => fetchJson(`/api/floodmap?${q(lat, lng)}`, 12000)
+export const floodRiskFor = async (lat, lng) => {
+  // 1순위: SGIS 홍수위험지도 영향범위(읍면동, 토큰 연동 시 도달) → 막힌 홍수위험지도포털 대체.
+  const s = await fetchJson(`/api/sgis?kind=flood&${q(lat, lng)}`, 12000)
+  if (s?.available) return s
+  // 2순위: 홍수위험지도포털 침수심(클라우드 IP 차단 시 대기)
+  return fetchJson(`/api/floodmap?${q(lat, lng)}`, 12000)
+}
 
 /** SGIS 인구/밀도 — { population, households, density, admNm, level } | null (리스크축 민원 프록시).
  *  서버가 SGIS 리버스지오코딩(좌표→행정동코드)으로 읍면동 정밀 조회. admCd/sgg는 폴백용(선택). */
