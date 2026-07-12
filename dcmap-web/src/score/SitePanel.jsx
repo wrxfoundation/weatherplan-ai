@@ -100,8 +100,8 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
   // 스코어링 — 라이브 SGIS 리스크(침수·산사태·인구)·기후지수·발전단지 근접을 실제 점수축에 반영(로드되며 갱신).
   const plantKm = useMemo(() => nearestPlant(point)?.km ?? null, [point])
   const r = useMemo(
-    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital, flood, landslide: disaster, pop, climate: climateIdx, plantKm }),
-    [point, mw, nonCapital, flood, disaster, pop, climateIdx, plantKm],
+    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital, flood, landslide: disaster, pop, climate: climateIdx, plantKm, landUse }),
+    [point, mw, nonCapital, flood, disaster, pop, climateIdx, plantKm, landUse],
   )
   const dong = dongLabel(addr) // 표출값 동단위 근거지
 

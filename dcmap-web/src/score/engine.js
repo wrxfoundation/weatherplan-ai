@@ -33,8 +33,27 @@ function exposureItem(label, max, o, pendingMsg) {
 // DC 기후지수 단계(1 아주좋음 ~ 5 아주나쁨) → 냉각 점수(10점 만점)
 const CLIMATE_POINTS = { 1: 10, 2: 8, 3: 6, 4: 3, 5: 0 }
 
-export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null } = {}) {
+// 용도지역 → DC 입지 적합성(국토계획법 기준 통용). vworld 도시계획 uses[] 문자열 분류. 12점 배점.
+function zoneAdmissibility(uses) {
+  const s = (uses || []).join(' ')
+  if (!s) return null
+  if (/(전용공업|일반공업|준공업|공업지역)/.test(s)) return { pts: 12, tier: '공업지역 — 적합(입지 유리)' }
+  if (/계획관리/.test(s)) return { pts: 9, tier: '계획관리지역 — 조건부 적합' }
+  if (/(자연녹지|생산관리)/.test(s)) return { pts: 6, tier: '녹지·관리지역 — 조건부(개별 확인)' }
+  if (/(상업지역|준주거)/.test(s)) return { pts: 5, tier: '상업·준주거 — 제한적' }
+  if (/주거지역/.test(s)) return { pts: 3, tier: '주거지역 — 부적합 경향' }
+  if (/(보전녹지|생산녹지|농림|자연환경보전|보전관리)/.test(s)) return { pts: 0, tier: '보전·농림 — 부적합' }
+  return { pts: 5, tier: '용도지역 확인 필요' }
+}
+
+export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null, landUse = null } = {}) {
   const track = checkPowerTrack(mw, { nonCapital })
+
+  // 토지축: 용도지역 적합성(12, vworld 라이브) + 면적·인센티브·지가(13, 파셀 데이터 대기)
+  const luAdm = landUse?.uses?.length ? zoneAdmissibility(landUse.uses) : null
+  const zoneItem = luAdm
+    ? { label: '용도지역 적합성 (vworld 도시계획)', max: 12, points: luAdm.pts, basis: `${luAdm.tier} · ${landUse.uses.join('·')}` }
+    : { label: '용도지역 적합성 (vworld 도시계획)', max: 12, points: null, pending: 'vworld 용도지역 조회 필요' }
 
   // 자가발전 인접(직접 PPA·자가발전 잠재) — 발전단지 최근접 거리 기반. 가까울수록 가점.
   const selfGenItem =
@@ -90,11 +109,12 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
       label: '토지',
       max: 25,
       items: [
+        zoneItem,
         {
-          label: '용도지역·인센티브·면적·지가',
-          max: 25,
+          label: '면적·인센티브·지가',
+          max: 13,
           points: null,
-          pending: '지가변동률(KOSIS 월간) 확보 — 용도지역·면적(vworld) 연동 후 점수화',
+          pending: '파셀 면적·산단 인센티브 확보 후 점수화(지가변동률은 참고표시 중)',
         },
       ],
     },
