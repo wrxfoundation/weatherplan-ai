@@ -16,7 +16,7 @@ const SOURCES = [
   { key: 'bldenergy', label: '건축HUB 건물에너지', env: ['DATA_GO_KR_KEY'], path: '/api/bldenergy?kind=elec&sigunguCd=11680&bjdongCd=10500&bun=0159&ji=0000&useYm=202503', point: false, axis: '리스크' },
   { key: 'filings', label: 'DART 공시', env: ['DART_API_KEY'], path: '/api/filings', point: false, axis: '시장' },
   { key: 'floodmap', label: '홍수위험지도 침수', env: ['FLOODMAP_KEY'], path: '/api/floodmap', point: true, axis: '리스크' },
-  { key: 'sgis', label: 'SGIS 인구', env: ['SGIS_KEY', 'SGIS_SECRET'], path: '/api/sgis?adm_cd=11680', point: false, axis: '리스크' },
+  { key: 'sgis', label: 'SGIS 인구', env: ['SGIS_KEY', 'SGIS_SECRET'], path: '/api/sgis?adm_cd=11680&sgg=강남구', point: false, axis: '리스크' },
   { key: 'disaster', label: '재난안전 재해', env: ['DISASTER_KEY', 'VWORLD_KEY'], path: '/api/disaster', point: true, axis: '리스크' },
 ]
 // 대표 지점(서울시청) — probe용
@@ -46,13 +46,13 @@ export default async function handler(req, res) {
     const proto = (req.headers['x-forwarded-proto'] || 'https').split(',')[0]
     const host = req.headers['x-forwarded-host'] || req.headers.host
     const base = `${proto}://${host}`
-    // 전부 병렬로 — 각 소스는 서로 다른 업스트림이라 동시성 문제 없음.
-    // 순차 배치(4개씩)는 배치마다 최장 프로브를 기다려 합계가 함수예산(30s)을 넘겨 504가 났다.
-    // 병렬이면 전체 소요 = 가장 느린 단일 프로브(≤15s) < 30s.
+    // 병렬 발사(전체 소요 = 가장 느린 단일 프로브 ≤15s < 30s)하되, 소스마다 조금씩 지연 발사(stagger).
+    // 동시에 다 쏘면 data.go.kr 계열(epsis/trading/bldenergy)이 순간 과부하로 429가 나므로.
     const PER_PROBE_MS = 15000
     const probed = await Promise.all(
-      list.map(async (s) => {
+      list.map(async (s, i) => {
         if (!s.configured) return { ...s, available: false, reason: 'not_configured' }
+        await new Promise((ok) => setTimeout(ok, i * 130)) // 계단식 발사로 순간 동시 호출 완화
         const src = SOURCES.find((x) => x.key === s.key)
         const p = await probeOne(base, src, PER_PROBE_MS)
         return { ...s, ...p }

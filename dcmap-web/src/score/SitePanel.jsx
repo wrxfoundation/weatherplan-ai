@@ -46,8 +46,12 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     revgeoFor(point.lat, point.lng).then((v) => {
       if (!alive) return
       setAddr(v)
-      // SGIS 인구/밀도는 좌표가 아니라 시군구코드 기준 → revgeo 확보 후 조회
-      if (v?.sigunguCd) populationFor(point.lat, point.lng, v.sigunguCd).then((e) => alive && setPop(e))
+      // SGIS 인구/밀도 — 시도코드로 질의 후 시군구 '이름'으로 매칭(코드 불일치 회피)
+      if (v?.sigunguCd) {
+        const sggAll = (v.parcel || '').match(/[가-힣]+(?:시|군|구)/g)
+        const sgg = sggAll ? sggAll[sggAll.length - 1] : undefined
+        populationFor(point.lat, point.lng, v.sigunguCd, sgg).then((e) => alive && setPop(e))
+      }
       // 지번 법정동코드가 확보되면 건축HUB 지번 전기사용량 조회(최근 데이터는 2~3개월 지연)
       if (v?.sigunguCd && v?.bjdongCd) {
         const d = new Date()
@@ -408,7 +412,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                       {pop.density < 3000 ? '저밀도 · 민원 리스크 낮음' : '고밀도 · 민원 유의'}
                     </span>
                   )}
-                  <span className="meta"> · 시군구 단위(정밀 반경은 격자 API 연동 시)</span>
+                  <span className="meta"> · {pop.level || '시군구'} 단위{pop.year ? ` · ${pop.year}` : ''}(정밀 반경은 격자 API 연동 시)</span>
                 </>
               ) : (
                 <span className="badge verify">연동 대기 — 리스크축 인구(SGIS 시군구)</span>

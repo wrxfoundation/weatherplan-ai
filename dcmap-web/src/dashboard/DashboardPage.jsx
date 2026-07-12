@@ -392,6 +392,10 @@ export default function DashboardPage() {
                   ● 연동(실응답) · ◐ 설정됨(env 있음, 업스트림 응답 대기/스키마 확인) · ○ env 대기. 값은 노출되지 않습니다.
                   {status.probed ? '' : ' (probe 미실행 — 설정 여부만)'} 스키마 보정은 각 프록시의 `*_URL` env로 재배포 없이 가능.
                 </p>
+                <p className="chart-note" style={{ marginTop: 6 }}>
+                  ※ vworld(지번주소·용도지역)는 <strong>브라우저 직접 호출</strong>로 전환됨(서버 프록시 502는 정상) — 실제 동작은
+                  상단 주소검색으로 확인. 활성 조건: Vercel env <code>VITE_VWORLD_KEY</code>(도메인 등록키).
+                </p>
               </>
             ) : (
               <p className="chart-note">
