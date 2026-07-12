@@ -17,6 +17,7 @@ import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { loadPowerLines, lineColor, POWER_LINES_AVAILABLE } from '../data/powerLines.js'
 import { NETWORK_NODES } from '../data/network.js'
 import { recommendSites } from '../score/recommend.js'
+import { RENEWABLE_PLANTS } from '../data/renewablePlants.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor } from '../data/liveApi.js'
@@ -180,6 +181,8 @@ export default function MapPage({ power = false }) {
   const complexLayerRef = useRef(null)
   const [showNet, setShowNet] = useState(false) // 통신망 레이어(국사·IDC·육양국)
   const netLayerRef = useRef(null)
+  const [showRe, setShowRe] = useState(false) // 재생발전단지 레이어(RE100)
+  const reLayerRef = useRef(null)
   const [showReco, setShowReco] = useState(false) // 추천 입지 TOP(정적 근거 랭킹)
   const recoLayerRef = useRef(null)
   const [recoMw, setRecoMw] = useState(40) // 시뮬레이터: 필요 용량(계통 공급여유 하한)
@@ -444,6 +447,38 @@ export default function MapPage({ power = false }) {
       recoLayerRef.current = g
     }
   }, [showReco, recoTop])
+
+  // 재생발전단지 레이어 토글 — 대형 태양광·풍력(RE100 조달 맥락).
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (reLayerRef.current) {
+      map.removeLayer(reLayerRef.current)
+      reLayerRef.current = null
+    }
+    if (showRe) {
+      const g = L.layerGroup()
+      for (const [lat, lng, type, name] of RENEWABLE_PLANTS) {
+        L.circleMarker([lat, lng], {
+          radius: type === 'W' ? 5 : 3.5,
+          color: type === 'W' ? '#4ade80' : '#fde047',
+          weight: 1.2,
+          fillColor: type === 'W' ? '#4ade80' : '#fde047',
+          fillOpacity: 0.55,
+          bubblingMouseEvents: false,
+        })
+          .bindTooltip(`<div class="dc-hovercard"><strong>${name || (type === 'W' ? '풍력단지' : '태양광단지')}</strong> · ${type === 'W' ? '풍력' : '태양광'}<br/><span class="muted">RE100/PPA 조달 맥락 · OSM</span></div>`, {
+            direction: 'top',
+            offset: [0, -6],
+            className: 'dc-hovercard',
+            opacity: 1,
+          })
+          .addTo(g)
+      }
+      g.addTo(map)
+      reLayerRef.current = g
+    }
+  }, [showRe])
 
   // 통신망 레이어 토글 — 백본 국사·IDC·해저케이블 육양국(네트워크축 근거).
   useEffect(() => {
@@ -820,6 +855,8 @@ export default function MapPage({ power = false }) {
         onToggleComplexes={() => setShowComplexes((v) => !v)}
         showNet={showNet}
         onToggleNet={() => setShowNet((v) => !v)}
+        showRe={showRe}
+        onToggleRe={() => setShowRe((v) => !v)}
         showReco={showReco}
         onToggleReco={() => setShowReco((v) => !v)}
         showPublic={showPublic}
