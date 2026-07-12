@@ -8,6 +8,7 @@ import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
 import { substationForSido } from '../data/substations.js'
 import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
+import { gridHeadroomForSido, headroomLabel } from '../data/gridHeadroom.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
@@ -99,22 +100,28 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     [climate, wx, normal],
   )
 
-  // 스코어링 — 라이브 SGIS 리스크(침수·산사태·인구)·기후지수·발전단지 근접을 실제 점수축에 반영(로드되며 갱신).
-  const plantKm = useMemo(() => nearestPlant(point)?.km ?? null, [point])
-  const r = useMemo(
-    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital, flood, landslide: disaster, pop, climate: climateIdx, plantKm, landUse }),
-    [point, mw, nonCapital, flood, disaster, pop, climateIdx, plantKm, landUse],
-  )
-  const dong = dongLabel(addr) // 표출값 동단위 근거지
-  // 지역 전력 여건(한전 변전소 현황 + 전력 자급률) — 주소 시도 기준. 참고 맥락(부지별 여유량 아님).
-  const regionPower = useMemo(() => {
+  // 주소 시도(정규화) — 지역 전력 여건·계통 공급여유 조회 키.
+  const sido = useMemo(() => {
     const s = addr?.parcel || addr?.road || ''
     const m = s.match(/^(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충청북도|충청남도|전라북도|전라남도|경상북도|경상남도|제주)/)
     const map = { 충청북도: '충북', 충청남도: '충남', 전라북도: '전북', 전라남도: '전남', 경상북도: '경북', 경상남도: '경남' }
-    const sido = m ? map[m[1]] || m[1] : null
-    if (!sido) return null
-    return { sido, sub: substationForSido(sido), bal: POWER_BALANCE[sido] || null }
+    return m ? map[m[1]] || m[1] : null
   }, [addr])
+  // 지역 계통 공급여유(한전 연계가능용량, 시도 총량) — 배전 여유 점수 근거.
+  const grid = useMemo(() => gridHeadroomForSido(sido), [sido])
+
+  // 스코어링 — 라이브 SGIS 리스크(침수·산사태·인구)·기후지수·발전단지 근접·계통 공급여유를 실제 점수축에 반영(로드되며 갱신).
+  const plantKm = useMemo(() => nearestPlant(point)?.km ?? null, [point])
+  const r = useMemo(
+    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital, flood, landslide: disaster, pop, climate: climateIdx, plantKm, landUse, gridMw: grid?.mw ?? null }),
+    [point, mw, nonCapital, flood, disaster, pop, climateIdx, plantKm, landUse, grid],
+  )
+  const dong = dongLabel(addr) // 표출값 동단위 근거지
+  // 지역 전력 여건(한전 변전소 현황 + 전력 자급률 + 계통 공급여유) — 주소 시도 기준. 참고 맥락(부지별 여유량 아님).
+  const regionPower = useMemo(
+    () => (sido ? { sido, sub: substationForSido(sido), bal: POWER_BALANCE[sido] || null, grid } : null),
+    [sido, grid],
+  )
 
   return (
     <>
@@ -344,17 +351,29 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               </div>
             ) : null
           })()}
-          {regionPower && (regionPower.sub || regionPower.bal) && (
+          {regionPower && (regionPower.sub || regionPower.bal || regionPower.grid) && (
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k">지역 전력 여건 (한전 변전소·자급률 · 참고 — 부지별 여유량 아님)</div>
+              <div className="k">지역 전력 여건 (한전 계통 공급여유·자급률·변전소 · 시도 기준)</div>
               <div className="v">
+                {regionPower.grid && (
+                  <div>
+                    <strong>계통 공급여유 {regionPower.grid.mw.toLocaleString()}MW</strong>
+                    <span
+                      className={`badge ${regionPower.grid.mw <= 500 ? 'verify' : 'status-operating'}`}
+                      style={regionPower.grid.mw <= 10 ? { marginLeft: 6, color: '#ef4444', borderColor: '#ef4444', background: 'color-mix(in srgb, #ef4444 12%, transparent)' } : { marginLeft: 6 }}
+                    >
+                      {headroomLabel(regionPower.grid.mw)}
+                    </span>
+                    <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>한전 연계가능용량 2027</span>
+                  </div>
+                )}
                 {regionPower.bal && (
-                  <>
-                    <strong>전력 자급률 {regionPower.bal.ratio}%</strong>
+                  <div style={{ marginTop: regionPower.grid ? 4 : 0 }}>
+                    전력 자급률 <strong>{regionPower.bal.ratio}%</strong>
                     <span className={`badge ${regionPower.bal.ratio >= 100 ? 'status-operating' : 'verify'}`} style={{ marginLeft: 6 }}>
                       {selfSufficiencyLabel(regionPower.bal.ratio)}
                     </span>
-                  </>
+                  </div>
                 )}
                 {regionPower.sub && (
                   <div style={{ marginTop: 4 }}>
@@ -363,7 +382,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   </div>
                 )}
                 <div className="cell-basis">
-                  발전-소비 균형·설비 밀도(지역) — 부지별 접속 여유는 <a className="mini-link" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드/한전 접속가능용량 →</a>
+                  {regionPower.grid?.note ? `${regionPower.grid.note} · ` : ''}
+                  시도 총량 신호(시군구 편차 큼) — 부지별 접속 여유는 <a className="mini-link" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드/한전 접속가능용량 →</a>
                 </div>
               </div>
             </div>
@@ -722,6 +742,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                       score: r.knownScore,
                       coverage: r.knownMax,
                       headroomMw: headroom?.available ? headroom.availableMw ?? null : null,
+                      gridMw: grid?.mw ?? null,
                       climate: climateIdx?.label ?? null,
                       climateLevel: climateIdx?.level ?? null,
                       floodPct: flood?.available && flood.source === 'sgis' ? flood.exposurePct : null,
