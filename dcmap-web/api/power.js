@@ -290,20 +290,25 @@ export default async function handler(req, res) {
     let epsisTotal
     if (IS_XML[src]) {
       // supply는 KPX openapi(openapi.kpx.or.kr) XML. 이 레거시 서버는 Vercel에서
-      // 간헐 CONNECT_TIMEOUT(IPv6 블랙홀) — 3단 폴백: undici https → IPv4 직결 https → IPv4 직결 http
+      // 간헐 CONNECT_TIMEOUT(IPv6 블랙홀) — 3단 폴백: undici https → IPv4 직결 https → IPv4 직결 http.
+      // 전체 마감시한(13s)으로 묶어 상태 프로브(15s)·함수예산(30s) 안에 반드시 반환 — 504 방지.
+      const start = Date.now()
+      const DEADLINE = 13000
+      const remain = () => DEADLINE - (Date.now() - start)
       const httpUrl = url.startsWith('https://') ? url.replace('https://', 'http://') : url
       let xr = null
       let lastErr = null
       try {
-        xr = await fetchXmlItems(url, SUPPLY_TAGS)
+        xr = await fetchXmlItems(url, SUPPLY_TAGS, Math.min(6000, remain()))
         if (xr?._status) xr = null
       } catch (e1) {
         lastErr = e1
       }
       if (!xr) {
         for (const u of [url, httpUrl]) {
+          if (remain() < 1500) break // 남은 예산 없으면 중단(마감시한 준수)
           try {
-            xr = parseXmlItems(await rawGetText(u), SUPPLY_TAGS)
+            xr = parseXmlItems(await rawGetText(u, Math.min(6000, remain() - 500)), SUPPLY_TAGS)
             if (xr?.items?.length) break
           } catch (e2) {
             lastErr = e2

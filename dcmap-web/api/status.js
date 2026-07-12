@@ -22,18 +22,18 @@ const SOURCES = [
 // 대표 지점(서울시청) — probe용
 const PROBE = 'lat=37.5665&lng=126.9780'
 
-async function probeOne(base, src) {
+async function probeOne(base, src, ms) {
   try {
     const sep = src.path.includes('?') ? '&' : '?'
     const url = `${base}${src.path}${src.point ? `${sep}${PROBE}` : ''}`
     const ctrl = new AbortController()
-    const t = setTimeout(() => ctrl.abort(), 16000) // 업스트림 fetch(최대 14s)보다 길게 — 느린 API가 probe_error로 오탐되지 않게
+    const t = setTimeout(() => ctrl.abort(), ms)
     const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36' } })
     clearTimeout(t)
     const body = await r.json().catch(() => ({}))
     return { available: body?.available === true, reason: body?.reason }
-  } catch {
-    return { available: false, reason: 'probe_error' }
+  } catch (e) {
+    return { available: false, reason: e?.name === 'AbortError' ? 'probe_timeout' : 'probe_error' }
   }
 }
 
@@ -46,19 +46,18 @@ export default async function handler(req, res) {
     const proto = (req.headers['x-forwarded-proto'] || 'https').split(',')[0]
     const host = req.headers['x-forwarded-host'] || req.headers.host
     const base = `${proto}://${host}`
-    // 13개 동시 발사는 업스트림(data.go.kr 등) 과부하로 AbortError 오탐 유발 — 4개씩 배치
-    const probed = []
-    for (let i = 0; i < list.length; i += 4) {
-      const batch = await Promise.all(
-        list.slice(i, i + 4).map(async (s) => {
-          if (!s.configured) return { ...s, available: false, reason: 'not_configured' }
-          const src = SOURCES.find((x) => x.key === s.key)
-          const p = await probeOne(base, src)
-          return { ...s, ...p }
-        }),
-      )
-      probed.push(...batch)
-    }
+    // 전부 병렬로 — 각 소스는 서로 다른 업스트림이라 동시성 문제 없음.
+    // 순차 배치(4개씩)는 배치마다 최장 프로브를 기다려 합계가 함수예산(30s)을 넘겨 504가 났다.
+    // 병렬이면 전체 소요 = 가장 느린 단일 프로브(≤15s) < 30s.
+    const PER_PROBE_MS = 15000
+    const probed = await Promise.all(
+      list.map(async (s) => {
+        if (!s.configured) return { ...s, available: false, reason: 'not_configured' }
+        const src = SOURCES.find((x) => x.key === s.key)
+        const p = await probeOne(base, src, PER_PROBE_MS)
+        return { ...s, ...p }
+      }),
+    )
     res.status(200).json({ sources: probed, probed: true })
     return
   }
