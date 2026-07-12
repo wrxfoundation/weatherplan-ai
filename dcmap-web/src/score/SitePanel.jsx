@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { STATUS_LABEL, isCapitalByAddr, isCapitalByPoint, FACILITIES } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, landUseFor, landAreaFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, dongLabel } from '../data/liveApi.js'
+import { forecastFor, headroomFor, landUseFor, landAreaFor, landPriceOfficialFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, dongLabel } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
 import { substationForSido } from '../data/substations.js'
@@ -25,6 +25,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const [wx, setWx] = useState(null)
   const [landUse, setLandUse] = useState(null)
   const [landArea, setLandArea] = useState(null)
+  const [officialPrice, setOfficialPrice] = useState(null)
   const [fc, setFc] = useState(null)
   const [headroom, setHeadroom] = useState(null)
   const [flood, setFlood] = useState(null)
@@ -43,6 +44,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     setAddr(null)
     setWx(null)
     setLandUse(null)
+    setLandArea(null)
+    setOfficialPrice(null)
     setFc(null)
     setHeadroom(null)
     setFlood(null)
@@ -82,7 +85,11 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
       })
     weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
     landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v))
-    landAreaFor(point.lat, point.lng).then((v) => alive && setLandArea(v))
+    landAreaFor(point.lat, point.lng).then((v) => {
+      if (!alive) return
+      setLandArea(v)
+      if (v?.pnu) landPriceOfficialFor(v.pnu).then((p) => alive && setOfficialPrice(p))
+    })
     forecastFor(point.lat, point.lng).then((v) => alive && setFc(v))
     floodRiskFor(point.lat, point.lng).then((v) => alive && setFlood(v))
     return () => {
@@ -139,8 +146,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   // 스코어링 — 라이브 SGIS 리스크(침수·산사태·인구)·기후지수·발전단지 근접·계통 공급여유·DC 승인율을 실제 점수축에 반영(로드되며 갱신).
   const plantKm = useMemo(() => nearestPlant(point)?.km ?? null, [point])
   const r = useMemo(
-    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital, flood, landslide: disaster, pop, climate: climateIdx, plantKm, landUse, gridMw: grid?.mw ?? null, gridApproval: approval?.ratePct ?? null, parcelArea: landArea }),
-    [point, mw, nonCapital, flood, disaster, pop, climateIdx, plantKm, landUse, grid, approval, landArea],
+    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital, flood, landslide: disaster, pop, climate: climateIdx, plantKm, landUse, gridMw: grid?.mw ?? null, gridApproval: approval?.ratePct ?? null, parcelArea: landArea, parcelPrice: officialPrice }),
+    [point, mw, nonCapital, flood, disaster, pop, climateIdx, plantKm, landUse, grid, approval, landArea, officialPrice],
   )
   const dong = dongLabel(addr) // 표출값 동단위 근거지
   // 지역 전력 여건(한전 변전소 현황 + 전력 자급률 + 계통 공급여유) — 주소 시도 기준. 참고 맥락(부지별 여유량 아님).
@@ -485,7 +492,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 <span className="badge pending">조회 대기 — 점수화는 캘리브레이션 후</span>
               )}
               {landArea?.areaM2 != null && (
-                <div className="cell-basis">필지 면적 <strong>{landArea.areaM2.toLocaleString()}㎡</strong> (vworld 연속지적){landArea.jibun ? ` · ${landArea.jibun}` : ''}</div>
+                <div className="cell-basis">
+                  필지 면적 <strong>{landArea.areaM2.toLocaleString()}㎡</strong> (vworld 연속지적)
+                  {officialPrice?.available && officialPrice.pricePerM2 != null && (
+                    <> · 공시지가 <strong>{officialPrice.pricePerM2.toLocaleString()}원/㎡</strong>{officialPrice.year ? ` (${officialPrice.year})` : ''}</>
+                  )}
+                </div>
               )}
             </div>
           </div>

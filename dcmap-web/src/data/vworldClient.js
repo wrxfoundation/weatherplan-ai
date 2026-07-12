@@ -184,5 +184,6 @@ export async function parcelAreaClient(lat, lng) {
   let area = Number(props.lndpcl_ar ?? props.area ?? props.AREA ?? props.ar)
   if (!Number.isFinite(area) || area <= 0) area = polygonAreaM2(feat.geometry)
   const jibun = props.addr || props.jibun || props.bon_bun || null
-  return Number.isFinite(area) && area > 0 ? { available: true, areaM2: Math.round(area), jibun } : null
+  const pnu = props.pnu || props.PNU || props.id || null // 개별공시지가 조회 키
+  return Number.isFinite(area) && area > 0 ? { available: true, areaM2: Math.round(area), jibun, pnu } : null
 }
