@@ -11,6 +11,7 @@ import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
 import { gridHeadroomForSido, headroomLabel } from '../data/gridHeadroom.js'
 import { dcApprovalForSido, approvalLabel } from '../data/gridAssessment.js'
 import { nearestIndustrialComplex } from '../data/industrialComplexes.js'
+import { nearestRenewable } from '../data/renewablePlants.js'
 import { scoreSite, haversineKm } from './engine.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
@@ -414,6 +415,21 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 </div>
               </div>
             ) : null
+          })()}
+          {(() => {
+            const re = nearestRenewable(point.lat, point.lng)
+            if (!re) return null
+            const label = re.km <= 10 ? '조달 유리' : re.km <= 30 ? '조달 가능' : '원거리'
+            return (
+              <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                <div className="k">RE100 조달 여건 (최근접 재생발전단지 · 참고)</div>
+                <div className="v">
+                  최근접 <strong>{re.name || (re.type === 'W' ? '풍력단지' : '태양광단지')}</strong> ({re.type === 'W' ? '풍력' : '태양광'}) {re.km.toFixed(1)}km
+                  <span className={`badge ${re.km <= 10 ? 'status-operating' : re.km <= 30 ? 'verify' : 'pending'}`} style={{ marginLeft: 6 }}>{label}</span>
+                  <div className="cell-basis">하이퍼스케일러 RE100/CFE 요건 — 대형 재생단지 근접 = 직접 PPA 잠재. OSM 대형 발전단지(소형 태양광 제외) 기준</div>
+                </div>
+              </div>
+            )
           })()}
           {regionPower && (regionPower.sub || regionPower.bal || regionPower.grid || regionPower.approval) && (
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>

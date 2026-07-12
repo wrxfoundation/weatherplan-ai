@@ -12,6 +12,7 @@ const ICON_PATHS = {
   substation: <path d="M8 1.5 4.5 8H8l-1 4.5L11.5 6H8l0-4.5Z" />, // 번개(변전소 접속점)
   line: <path d="M2 13 5.5 4 9 13 12.5 4 M2 8.5h8" />, // 송전 철탑
   plant: <path d="M2 13V8l3.2 1.8V8l3.2 1.8V4h3.6v9Z M2 13h9.9" />, // 발전소
+  renew: <path d="M8 4.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7 M8 1v2 M8 13v2 M1 8h2 M13 8h2" />, // 재생(태양)
   permit: <path d="M3.5 2h5l3 3v9h-8Z M8.2 2v3h3 M5.5 8.5l1.3 1.3 2.4-2.6" />, // 허가(문서+체크)
   headroom: <path d="M2.5 12a5.5 5.5 0 0 1 11 0 M8 12l2.7-3" />, // 게이지(여유)
   complex: <path d="M2.5 13V6l4-2v3l4-2v8Z M2.5 13h9 M5 8v.01 M8.5 8v.01" />, // 산단
@@ -51,6 +52,8 @@ export default function FilterBar({
   onToggleComplexes,
   showNet,
   onToggleNet,
+  showRe,
+  onToggleRe,
   showReco,
   onToggleReco,
   showPublic,
@@ -126,6 +129,15 @@ export default function FilterBar({
           title="대형 발전단지(원전·석탄) 레이어 — 발전 인프라 근접성 맥락 (DC 전원 매칭 아님)"
         >
           <Icon name="plant" /> 발전소
+        </button>
+        <button
+          type="button"
+          className={`chip ${showRe ? 'on' : ''}`}
+          onClick={onToggleRe}
+          aria-pressed={showRe}
+          title="재생발전단지 — 대형 태양광·풍력(OSM). RE100/PPA 조달 맥락. 초록=풍력/노랑=태양광"
+        >
+          <Icon name="renew" /> 재생
         </button>
         <button
           type="button"
