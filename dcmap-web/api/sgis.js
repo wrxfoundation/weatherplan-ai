@@ -193,12 +193,16 @@ const firstPopRow = (b) => {
   return rs.find((r) => num(r.tot_ppltn) != null) || null
 }
 
-// SGIS 홍수위험지도 통계 — ndsm/floodRiskDataBoard.json(정의서). 막힌 홍수위험지도포털 대체.
-const FLOOD_URL = process.env.SGIS_FLOOD_URL || 'https://sgisapi.mods.go.kr/OpenAPI3/ndsm/floodRiskDataBoard.json'
+// SGIS 자연재해 위험지도 통계(정의서 ndsm/*). 클라우드 IP 차단으로 막힌 포털들을 SGIS 토큰으로 대체.
+// 홍수·산사태 응답 스키마가 동일(iem_nm='인구' → data_list 총합의 affc_zone/administ_zone).
+const NDSM_URL = {
+  flood: process.env.SGIS_FLOOD_URL || 'https://sgisapi.mods.go.kr/OpenAPI3/ndsm/floodRiskDataBoard.json',
+  landslide: process.env.SGIS_LANDSLIDE_URL || 'https://sgisapi.mods.go.kr/OpenAPI3/ndsm/lndsldWarnDataBoard.json',
+}
 
-// 홍수영향구역 인구 노출 비율 = 영향구역내 인구(affc_zone) / 행정구역 인구(administ_zone). 높을수록 침수 리스크.
-async function sgisFloodExposure(admCd, token) {
-  const b = await fetchJson(`${FLOOD_URL}?accessToken=${encodeURIComponent(token)}&adm_cd=${admCd}`)
+// 위험영향구역 인구 노출 비율 = 영향구역내 인구(affc_zone) / 행정구역 인구(administ_zone). 높을수록 리스크.
+async function sgisExposure(baseUrl, admCd, token) {
+  const b = await fetchJson(`${baseUrl}?accessToken=${encodeURIComponent(token)}&adm_cd=${admCd}`)
   if (b?._status) return { _status: b._status }
   const items = Array.isArray(b?.result) ? b.result : b?.result ? [b.result] : []
   const popItem = items.find((it) => String(it.iem_nm || '').includes('인구'))
@@ -218,7 +222,7 @@ async function sgisFloodExposure(admCd, token) {
 }
 
 // 노출 비율 → 정성 등급(부지 리스크 판단용)
-function floodGrade(pct) {
+function exposureGrade(pct) {
   if (pct == null) return undefined
   if (pct <= 0) return '해당없음'
   if (pct < 10) return '낮음'
@@ -260,12 +264,14 @@ export default async function handler(req, res) {
     // 좌표 → SGIS 행정동코드(읍면동/시군구). pop·flood 공통 선행 단계.
     const geo = lat != null && lng != null ? await sgisAdmCode(lat, lng, token) : null
 
-    // ── kind=flood: SGIS 홍수위험지도 영향범위(막힌 홍수위험지도포털 대체) ──
-    if (kind === 'flood') {
+    // ── kind=flood|landslide: SGIS 자연재해 위험지도 영향범위(막힌 포털 대체) ──
+    if (kind === 'flood' || kind === 'landslide') {
+      const baseUrl = NDSM_URL[kind]
+      const kindNm = kind === 'flood' ? '홍수위험지도' : '산사태위험지도'
       const codes = geo ? [geo.emdong8, geo.sgg5].filter(Boolean) : /^\d{5}$/.test(admCd5) ? [admCd5] : []
-      let fReason = geo ? 'no_flood_data' : 'no_region_code'
+      let fReason = geo ? 'no_data' : 'no_region_code'
       for (const adm of codes) {
-        const f = await sgisFloodExposure(adm, token)
+        const f = await sgisExposure(baseUrl, adm, token)
         if (f?._status) {
           fReason = `upstream_${f._status}`
           continue
@@ -275,13 +281,14 @@ export default async function handler(req, res) {
           res.status(200).json({
             available: true,
             source: 'sgis',
+            kind,
             exposurePct: f.exposurePct,
             affectedPop: f.affectedPop,
             totalPop: f.totalPop,
-            grade: floodGrade(f.exposurePct),
+            grade: exposureGrade(f.exposurePct),
             admNm: admNm || undefined,
             baseYear: f.baseYear || undefined,
-            scope: `SGIS 홍수위험지도 영향범위(${adm === geo?.emdong8 ? '읍면동' : '시군구'}${f.baseYear ? ` ${f.baseYear}` : ''})`,
+            scope: `SGIS ${kindNm} 영향범위(${adm === geo?.emdong8 ? '읍면동' : '시군구'}${f.baseYear ? ` ${f.baseYear}` : ''})`,
           })
           return
         }

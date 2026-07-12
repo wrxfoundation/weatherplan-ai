@@ -507,16 +507,33 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               </div>
             </div>
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k">재해 이력 (재난안전 — 리스크축)</div>
+              <div className="k">산사태·재해 위험 (SGIS 산사태위험지도)</div>
               <div className="v">
                 {disaster?.available ? (
-                  <>
-                    {disaster.events != null && <strong>재해 {disaster.events.toLocaleString()}건</strong>}
-                    {disaster.topType && ` · 주 유형 ${disaster.topType}`}
-                    {disaster.recentYear && ` · 최근 ${disaster.recentYear}`}
-                  </>
+                  disaster.source === 'sgis' ? (
+                    disaster.exposurePct <= 0 ? (
+                      <>
+                        <span className="badge status-operating">산사태 영향구역 밖 · 위험 낮음</span>
+                        {disaster.admNm && <span className="meta"> · {disaster.admNm}</span>}
+                      </>
+                    ) : (
+                      <>
+                        <span className={`badge ${disaster.exposurePct >= 30 ? 'verify' : 'status-operating'}`}>산사태 노출 {disaster.grade}</span>
+                        {` · 영향구역 인구 ${disaster.exposurePct}%`}
+                        {disaster.affectedPop != null && disaster.totalPop != null && (
+                          <span className="meta"> ({disaster.affectedPop.toLocaleString()}/{disaster.totalPop.toLocaleString()}명{disaster.admNm ? ` · ${disaster.admNm}` : ''}{disaster.baseYear ? ` · ${disaster.baseYear}` : ''})</span>
+                        )}
+                      </>
+                    )
+                  ) : (
+                    <>
+                      {disaster.events != null && <strong>재해 {disaster.events.toLocaleString()}건</strong>}
+                      {disaster.topType && ` · 주 유형 ${disaster.topType}`}
+                      {disaster.recentYear && ` · 최근 ${disaster.recentYear}`}
+                    </>
+                  )
                 ) : (
-                  <span className="badge verify">연동 대기 — 리스크축 재해(재난안전)</span>
+                  <span className="badge verify">연동 대기 — 리스크축 재해</span>
                 )}
               </div>
             </div>
