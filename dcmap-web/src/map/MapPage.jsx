@@ -14,7 +14,7 @@ import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } f
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
-import { POWER_LINES, lineColor } from '../data/powerLines.js'
+import { loadPowerLines, lineColor, POWER_LINES_AVAILABLE } from '../data/powerLines.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor } from '../data/liveApi.js'
@@ -320,7 +320,7 @@ export default function MapPage({ power = false }) {
     }
   }, [showPlants])
 
-  // 송전선로 레이어 토글 — OSM power=line, 전압별 색 폴리라인(데이터 확보 시 활성).
+  // 송전선로 레이어 토글 — OSM power=line, 전압별 색 폴리라인(켤 때 JSON 지연 로드).
   useEffect(() => {
     const map = mapObj.current
     if (!map) return
@@ -328,13 +328,21 @@ export default function MapPage({ power = false }) {
       map.removeLayer(linesLayerRef.current)
       linesLayerRef.current = null
     }
-    if (showLines && POWER_LINES.length) {
-      const g = L.layerGroup()
-      for (const { path, kv } of POWER_LINES) {
-        L.polyline(path, { color: lineColor(kv), weight: kv >= 345 ? 2.2 : 1.4, opacity: 0.7 }).addTo(g)
-      }
-      g.addTo(map)
-      linesLayerRef.current = g
+    if (!showLines) return
+    let cancelled = false
+    loadPowerLines()
+      .then((lines) => {
+        if (cancelled || !mapObj.current) return
+        const g = L.layerGroup()
+        for (const { p, v } of lines) {
+          L.polyline(p, { color: lineColor(v), weight: v >= 345 ? 2.2 : 1.2, opacity: 0.65 }).addTo(g)
+        }
+        g.addTo(map)
+        linesLayerRef.current = g
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
     }
   }, [showLines])
 
@@ -730,7 +738,7 @@ export default function MapPage({ power = false }) {
         onToggleSubs={() => setShowSubs((v) => !v)}
         showLines={showLines}
         onToggleLines={() => setShowLines((v) => !v)}
-        hasLines={POWER_LINES.length > 0}
+        hasLines={POWER_LINES_AVAILABLE}
         showComplexes={showComplexes}
         onToggleComplexes={() => setShowComplexes((v) => !v)}
         showPublic={showPublic}

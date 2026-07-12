@@ -5,6 +5,7 @@ import { FACILITIES } from '../data/facilities.js'
 import { checkPowerTrack } from '../calc/trackCheck.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { nearestIndustrialComplex } from '../data/industrialComplexes.js'
+import { networkContext } from '../data/network.js'
 
 const EARTH_R = 6371
 
@@ -80,6 +81,14 @@ function headroomPoints(mw) {
   if (mw <= 1500) return 7.5
   if (mw <= 3000) return 9
   return 10
+}
+
+// 네트워크 근접성 → 점수(10점): 백본 국사/IDC/IX 거리 7점 + 해저케이블 육양국 거리 3점.
+function networkPoints(backboneKm, clsKm) {
+  let p = 0
+  if (backboneKm != null) p += backboneKm <= 2 ? 7 : backboneKm <= 5 ? 5.5 : backboneKm <= 15 ? 4 : backboneKm <= 40 ? 2 : 1
+  if (clsKm != null) p += clsKm <= 30 ? 3 : clsKm <= 80 ? 2 : clsKm <= 150 ? 1 : 0.3
+  return Math.round(Math.min(10, p) * 10) / 10
 }
 
 // DC 전력계통영향평가 공급 승인율(%) → 계통 공급 가능성 점수(10점 만점).
@@ -186,6 +195,17 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
       ? { label: '프리쿨링·냉각 적합도 (기후지수)', max: 10, points: CLIMATE_POINTS[climate.level], basis: `DC 기후지수 ${climate.label ?? `${climate.level}단계`} · 연평균 ${climate.temp ?? '—'}°C` }
       : { label: '프리쿨링·냉각 적합도 (기후지수)', max: 10, points: null, pending: '기온 확보 후 산출(기상청 평년값/케이웨더)' }
 
+  // 네트워크축 — 최근접 백본 국사/IDC/IX + 해저케이블 육양국(OSM telecom + 육양국 시드).
+  const net = networkContext({ lat, lng })
+  const netItem = net.backbone
+    ? {
+        label: '네트워크 근접성 (백본 국사·IDC·IX / 해저케이블)',
+        max: 10,
+        points: networkPoints(net.backbone.km, net.cls?.km),
+        basis: `최근접 ${net.backbone.node.name} ${net.backbone.km.toFixed(1)}km${net.cls ? ` · 해저케이블 육양국 ${net.cls.km.toFixed(0)}km` : ''}`,
+      }
+    : { label: '네트워크 근접성 (백본 국사·IDC·IX / 해저케이블)', max: 10, points: null, pending: 'OSM telecom 노드 로드 필요' }
+
   const axes = [
     {
       key: 'power',
@@ -214,7 +234,7 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
       key: 'network',
       label: '네트워크',
       max: 10,
-      items: [{ label: '백본·국사 거리·해저케이블 육양국', max: 10, points: null, pending: '네트워크 노드 시드(공개 근사·검증 대기) — 근접성 표기, 점수화는 좌표 검증·가중치 캘리브레이션 후' }],
+      items: [netItem],
     },
     {
       key: 'weather',
