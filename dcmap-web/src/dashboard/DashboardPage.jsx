@@ -4,6 +4,7 @@ import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf, CAPITAL_SIDOS } from '../data/facilities.js'
 import { GEN_PERMIT_BUBBLES } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
+import { SUBSTATIONS, SUBSTATION_META } from '../data/substations.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
 import { filingsRecent, epsisCapacity, apiStatus, tradingMix, riskFor } from '../data/liveApi.js'
@@ -599,6 +600,39 @@ export default function DashboardPage() {
                 KPX 전력거래실적(data.go.kr) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
               </p>
             )}
+          </section>
+
+          {/* 지역별 송변전 인프라 — 한전 변전소 현황(154kV+). 설비 밀도(여유량 아님) */}
+          <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
+            <div className="chart-title">지역별 송변전 인프라 — 154kV+ 변전소·변압기 용량 (한전 정보공개 2025)</div>
+            <div className="rollup-table" role="table">
+              <div className="rollup-head" role="row">
+                <span>지역(한전 본부)</span>
+                <span>154kV+ 변전소</span>
+                <span>변압기 용량</span>
+                <span>345kV</span>
+              </div>
+              {[...SUBSTATIONS].sort((a, b) => b.hv - a.hv).map((s) => {
+                const maxHv = Math.max(...SUBSTATIONS.map((x) => x.hv))
+                return (
+                  <div key={s.region} className="rollup-row" role="row">
+                    <span className="rollup-sido">{s.region}</span>
+                    <span>
+                      <b>{s.hv}</b>개
+                      <span className="rollup-bar">
+                        <i style={{ width: `${(s.hv / maxHv) * 100}%` }} />
+                      </span>
+                    </span>
+                    <span>{s.hvMva.toLocaleString()}MVA</span>
+                    <span>{s.n345}개</span>
+                  </div>
+                )
+              })}
+            </div>
+            <p className="chart-note">
+              한전 지역본부 단위 변전소 <strong>설비 밀도</strong>(154kV·345kV) — 인프라 규모 지표이며 <strong>부지별 접속 여유용량과는 다름</strong>.
+              여유는 <a href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드</a>/한전 접속가능용량 조회. 출처: <strong>{SUBSTATION_META.source}</strong>.
+            </p>
           </section>
 
           <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
