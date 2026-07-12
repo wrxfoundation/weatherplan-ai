@@ -16,10 +16,14 @@
  *
  * 응답: { available, availableMw?, cumulativeMw?, scope, unit, note? } | { available:false, reason }
  */
+import http from 'node:http'
+import https from 'node:https'
+import { promises as dnsp } from 'node:dns'
 import { proxyConfigured, proxyGetText } from './_proxy.js'
 
 const DEFAULT_URL =
   'https://bigdata.kepco.co.kr/openapi/v1/dispersedGeneration.do?metroCd={metro}&cityCd={city}&apiKey={key}&returnType=json'
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 
 const kwToMw = (kw) => (kw == null ? undefined : Math.round(kw / 100) / 10)
 
@@ -28,11 +32,19 @@ const num = (v) => {
   return Number.isFinite(n) ? n : undefined
 }
 
+const asJson = (text) => {
+  try {
+    return JSON.parse(text)
+  } catch {
+    return null
+  }
+}
+
 async function fetchJson(url, ms = 6000) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
   try {
-    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36' } })
+    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': UA } })
     if (!r.ok) return { _status: r.status }
     return await r.json()
   } finally {
@@ -40,12 +52,75 @@ async function fetchJson(url, ms = 6000) {
   }
 }
 
-/* 좌표 → {sido2, sigungu5} 행정코드 (vworld 법정동코드) */
+/**
+ * IPv4 A레코드 직결 GET — bigdata.kepco.co.kr 등 일부 공사 서버는 IPv6 AAAA가 블랙홀이라
+ * undici(전역 fetch)의 happy-eyeballs가 CONNECT_TIMEOUT/SOCKET을 낸다(openapi.kpx와 동일 증상).
+ * 해석한 IPv4로 직접 붙으면 프록시 없이도 뚫린다. https는 SNI(servername)로 인증서 검증 유지.
+ */
+async function rawGetText(urlStr, ms = 7000) {
+  const u = new URL(urlStr)
+  const ips = await dnsp.resolve4(u.hostname)
+  if (!ips?.length) throw new Error('no_a_record')
+  const isHttps = u.protocol === 'https:'
+  const mod = isHttps ? https : http
+  const opts = {
+    host: ips[0],
+    port: u.port || (isHttps ? 443 : 80),
+    path: u.pathname + u.search,
+    method: 'GET',
+    timeout: ms,
+    headers: { Host: u.hostname, 'User-Agent': UA, Accept: 'application/json', Connection: 'close' },
+  }
+  if (isHttps) opts.servername = u.hostname
+  return await new Promise((resolve, reject) => {
+    const req = mod.request(opts, (r) => {
+      if (r.statusCode && r.statusCode >= 400) {
+        r.resume()
+        reject(new Error(`status_${r.statusCode}`))
+        return
+      }
+      let data = ''
+      r.setEncoding('utf8')
+      r.on('data', (c) => (data += c))
+      r.on('end', () => resolve(data))
+    })
+    req.on('timeout', () => req.destroy(new Error('raw_timeout')))
+    req.on('error', reject)
+    req.end()
+  })
+}
+
+/* 좌표 → {metro(2), city(3)} 행정코드 (vworld 법정동코드). api.vworld.kr도 Vercel에서 막힐 수 있어
+   프록시 → undici → IPv4 직결 순으로 폴백(KEPCO 조회 전에 여기서 죽지 않도록). */
 async function regionCodes(lat, lng, vworldKey) {
   const url =
     'https://api.vworld.kr/req/address?service=address&request=getAddress&version=2.0' +
     `&crs=epsg:4326&point=${lng},${lat}&format=json&type=parcel&zipcode=false&simple=false&key=${vworldKey}&domain=${encodeURIComponent(process.env.VWORLD_DOMAIN || 'aidatacenter-red.vercel.app')}`
-  const body = await fetchJson(url)
+  let body = null
+  if (proxyConfigured()) {
+    try {
+      body = asJson(await proxyGetText(url, 6000))
+    } catch {
+      body = null
+    }
+  }
+  if (!body) {
+    const b = await fetchJson(url, 5000)
+    if (b && !b._status) body = b
+  }
+  if (!body) {
+    for (const u of [url, url.replace('https://', 'http://')]) {
+      try {
+        const b = asJson(await rawGetText(u, 4500))
+        if (b) {
+          body = b
+          break
+        }
+      } catch {
+        /* 다음 경로 시도 */
+      }
+    }
+  }
   if (body?.response?.status !== 'OK') return null
   for (const item of body.response.result ?? []) {
     const lc = item?.structure?.level4LC
@@ -94,18 +169,43 @@ export default async function handler(req, res) {
       .replaceAll('{sigungu}', codes.city)
       .replaceAll('{key}', key)
 
-    // 프록시(UPSTREAM_PROXY_BASE) 설정 시 KR-IP 경유 최우선 — bigdata.kepco.co.kr IP차단 근본 우회.
+    // 마감시한(11s) 안에서 순차 폴백. bigdata.kepco의 실패 원인을 단정하지 않고 여러 경로 시도:
+    //  1) 프록시(UPSTREAM_PROXY_BASE, 설정 시) → 2) undici 직접 → 3) IPv4 직결 https/http.
+    // KPX openapi와 동일한 IPv6 블랙홀이면 3)에서 프록시 없이 뚫린다.
+    const start = Date.now()
+    const DEADLINE = 11000
+    const remain = () => DEADLINE - (Date.now() - start)
+    const httpUrl = url.startsWith('https://') ? url.replace('https://', 'http://') : url
     let body = null
+    let lastErr = null
     if (proxyConfigured()) {
       try {
-        body = JSON.parse(await proxyGetText(url, 8000))
-      } catch {
-        body = null
+        body = asJson(await proxyGetText(url, Math.min(7000, remain())))
+      } catch (e) {
+        lastErr = e
       }
     }
-    if (!body) body = await fetchJson(url)
-    if (body?._status) {
-      res.status(200).json({ available: false, reason: `upstream_${body._status}` })
+    if (!body) {
+      const b = await fetchJson(url, Math.min(5000, remain()))
+      if (b && !b._status) body = b
+      else if (b?._status) lastErr = new Error(`status_${b._status}`)
+    }
+    if (!body) {
+      for (const u of [url, httpUrl]) {
+        if (remain() < 1200) break
+        try {
+          const b = asJson(await rawGetText(u, Math.min(5000, remain() - 500)))
+          if (b) {
+            body = b
+            break
+          }
+        } catch (e) {
+          lastErr = e
+        }
+      }
+    }
+    if (!body) {
+      res.status(200).json({ available: false, reason: `upstream_${lastErr?.cause?.code || lastErr?.message || lastErr?.name || 'unreachable'}` })
       return
     }
 

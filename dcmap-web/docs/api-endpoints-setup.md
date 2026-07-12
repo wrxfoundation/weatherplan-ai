@@ -42,9 +42,19 @@ env 키만으로 작동하지 않으면 아래 `*_URL` env를 함께 넣어 **�
 설정하면 `floodmap`·`headroom`·`disaster`·`supply` 프록시가 **KR-IP 경유를 최우선**으로 시도하고,
 미설정 시엔 기존 동작 그대로(무해). 프록시 스켈레톤(~30줄)은 `api/_proxy.js` 상단 주석 참고.
 
+**프록시 세우기 전에 — IPv4-직결로 이미 뚫릴 수 있음(인프라 0):**
+`floodmap`·`headroom`·`supply`에는 IPv4-직결 폴백이 들어있다(IPv6 블랙홀 우회). 상당수 실패는
+하드 차단이 아니라 happy-eyeballs CONNECT_TIMEOUT이라 이것만으로 프록시 없이 뚫린다.
+→ `KEPCO_API_KEY`만 넣고 `/api/headroom?lat=37.5&lng=127.0` 호출 후 `reason` 확인:
+`available:true`면 프록시 불필요, `upstream_raw_timeout/SOCKET`이면 그때 프록시.
+
+**케이웨더 서버 없이 무료 프록시:** `proxy/` 디렉터리 참고 — Cloudflare Workers(`cloudflare-worker.js`)
+또는 Deno Deploy(`deno-deploy.ts`), 둘 다 무료·서버 유지 불필요. 배포 절차는 `proxy/README.md`.
+
 **프록시로도 안 되는 것 (IP 무관 · 신청 필요):**
 - `disaster` — `DISASTER_KEY` 미발급. data.go.kr/safetydata.go.kr에서 **서비스 신청·승인**이 선행돼야 함.
 - `headroom` — KR-IP 우회로 연결은 되나 `KEPCO_API_KEY`(한전 빅데이터 개방포털 승인)가 유효해야 값이 나옴.
+- CF/Deno의 egress IP까지 gov가 막으면 클라우드 경로 전부 불가 → 이때만 KR 상용 IP(VPS) 필요.
 
 **프록시 둘 곳 (견고성 순):** ① 케이웨더 자체 서버(weatherplan.kweather.co.kr 백엔드) — 비용 0·키 내부 유지
 · ② KR VPS(Cafe24/Gabia/네이버클라우드, ~₩5천/월) · ③ Cloudflare Workers(서울 PoP, egress IP는 엔드포인트별 테스트 필요).
