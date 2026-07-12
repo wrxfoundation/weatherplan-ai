@@ -138,6 +138,9 @@ export const populationFor = (lat, lng, admCd, sgg) =>
     `/api/sgis?${q(lat, lng)}${admCd ? `&adm_cd=${admCd}` : ''}${sgg ? `&sgg=${encodeURIComponent(sgg)}` : ''}`,
   )
 
+/** SGIS 지역 리스크(홍수+산사태) 한 번에 — { flood, landslide, admNm } | null (대시보드 롤업용). */
+export const riskFor = (lat, lng) => fetchJson(`/api/sgis?kind=risk&${q(lat, lng)}`, 12000)
+
 /** 재해 위험 — SGIS 산사태위험지도 영향범위 1순위(읍면동), 재난안전(시군구 재해 이력) 폴백. */
 export const disasterFor = async (lat, lng, admCd) => {
   const s = await fetchJson(`/api/sgis?kind=landslide&${q(lat, lng)}`)

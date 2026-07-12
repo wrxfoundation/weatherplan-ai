@@ -261,39 +261,62 @@ export default async function handler(req, res) {
       return
     }
 
-    // 좌표 → SGIS 행정동코드(읍면동/시군구). pop·flood 공통 선행 단계.
+    // 좌표 → SGIS 행정동코드(읍면동/시군구). pop·flood·landslide 공통 선행 단계.
     const geo = lat != null && lng != null ? await sgisAdmCode(lat, lng, token) : null
+    const riskCodes = geo ? [geo.emdong8, geo.sgg5].filter(Boolean) : /^\d{5}$/.test(admCd5) ? [admCd5] : []
 
-    // ── kind=flood|landslide: SGIS 자연재해 위험지도 영향범위(막힌 포털 대체) ──
-    if (kind === 'flood' || kind === 'landslide') {
-      const baseUrl = NDSM_URL[kind]
-      const kindNm = kind === 'flood' ? '홍수위험지도' : '산사태위험지도'
-      const codes = geo ? [geo.emdong8, geo.sgg5].filter(Boolean) : /^\d{5}$/.test(admCd5) ? [admCd5] : []
-      let fReason = geo ? 'no_data' : 'no_region_code'
-      for (const adm of codes) {
-        const f = await sgisExposure(baseUrl, adm, token)
-        if (f?._status) {
-          fReason = `upstream_${f._status}`
-          continue
-        }
-        if (f) {
-          const admNm = geo ? [geo.sggNm, adm === geo.emdong8 ? geo.emdongNm : null].filter(Boolean).join(' ') : undefined
-          res.status(200).json({
-            available: true,
-            source: 'sgis',
-            kind,
-            exposurePct: f.exposurePct,
-            affectedPop: f.affectedPop,
-            totalPop: f.totalPop,
-            grade: exposureGrade(f.exposurePct),
-            admNm: admNm || undefined,
-            baseYear: f.baseYear || undefined,
-            scope: `SGIS ${kindNm} 영향범위(${adm === geo?.emdong8 ? '읍면동' : '시군구'}${f.baseYear ? ` ${f.baseYear}` : ''})`,
-          })
-          return
+    // 한 재해종(flood|landslide)의 노출 정보 산출(읍면동 우선, 시군구 폴백)
+    const oneRisk = async (rk) => {
+      for (const adm of riskCodes) {
+        const f = await sgisExposure(NDSM_URL[rk], adm, token)
+        if (f?._status || !f) continue
+        const admNm = geo ? [geo.sggNm, adm === geo.emdong8 ? geo.emdongNm : null].filter(Boolean).join(' ') : undefined
+        return {
+          exposurePct: f.exposurePct,
+          affectedPop: f.affectedPop,
+          totalPop: f.totalPop,
+          grade: exposureGrade(f.exposurePct),
+          admNm: admNm || undefined,
+          baseYear: f.baseYear || undefined,
+          level: adm === geo?.emdong8 ? '읍면동' : '시군구',
         }
       }
-      res.status(200).json({ available: false, reason: fReason })
+      return null
+    }
+
+    // ── kind=flood|landslide: 단일 재해종 영향범위(막힌 포털 대체) ──
+    if (kind === 'flood' || kind === 'landslide') {
+      const kindNm = kind === 'flood' ? '홍수위험지도' : '산사태위험지도'
+      const e = await oneRisk(kind)
+      if (e) {
+        res.status(200).json({
+          available: true,
+          source: 'sgis',
+          kind,
+          ...e,
+          scope: `SGIS ${kindNm} 영향범위(${e.level}${e.baseYear ? ` ${e.baseYear}` : ''})`,
+        })
+        return
+      }
+      res.status(200).json({ available: false, reason: geo ? 'no_data' : 'no_region_code' })
+      return
+    }
+
+    // ── kind=risk: 홍수+산사태를 한 번에(대시보드 지역 롤업용, rgeocode 1회 공유) ──
+    if (kind === 'risk') {
+      const [flood, landslide] = await Promise.all([oneRisk('flood'), oneRisk('landslide')])
+      if (flood || landslide) {
+        res.status(200).json({
+          available: true,
+          source: 'sgis',
+          kind: 'risk',
+          admNm: (flood || landslide).admNm,
+          flood: flood || null,
+          landslide: landslide || null,
+        })
+        return
+      }
+      res.status(200).json({ available: false, reason: geo ? 'no_data' : 'no_region_code' })
       return
     }
 
