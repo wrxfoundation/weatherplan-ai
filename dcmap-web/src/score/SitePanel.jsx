@@ -9,6 +9,7 @@ import { networkContext } from '../data/network.js'
 import { substationForSido } from '../data/substations.js'
 import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
 import { gridHeadroomForSido, headroomLabel } from '../data/gridHeadroom.js'
+import { dcApprovalForSido, approvalLabel } from '../data/gridAssessment.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
@@ -109,18 +110,20 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   }, [addr])
   // 지역 계통 공급여유(한전 연계가능용량, 시도 총량) — 배전 여유 점수 근거.
   const grid = useMemo(() => gridHeadroomForSido(sido), [sido])
+  // DC 전력계통영향평가 공급 승인율(시도) — 계통 공급 가능성 점수 근거(실데이터).
+  const approval = useMemo(() => dcApprovalForSido(sido), [sido])
 
-  // 스코어링 — 라이브 SGIS 리스크(침수·산사태·인구)·기후지수·발전단지 근접·계통 공급여유를 실제 점수축에 반영(로드되며 갱신).
+  // 스코어링 — 라이브 SGIS 리스크(침수·산사태·인구)·기후지수·발전단지 근접·계통 공급여유·DC 승인율을 실제 점수축에 반영(로드되며 갱신).
   const plantKm = useMemo(() => nearestPlant(point)?.km ?? null, [point])
   const r = useMemo(
-    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital, flood, landslide: disaster, pop, climate: climateIdx, plantKm, landUse, gridMw: grid?.mw ?? null }),
-    [point, mw, nonCapital, flood, disaster, pop, climateIdx, plantKm, landUse, grid],
+    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital, flood, landslide: disaster, pop, climate: climateIdx, plantKm, landUse, gridMw: grid?.mw ?? null, gridApproval: approval?.ratePct ?? null }),
+    [point, mw, nonCapital, flood, disaster, pop, climateIdx, plantKm, landUse, grid, approval],
   )
   const dong = dongLabel(addr) // 표출값 동단위 근거지
   // 지역 전력 여건(한전 변전소 현황 + 전력 자급률 + 계통 공급여유) — 주소 시도 기준. 참고 맥락(부지별 여유량 아님).
   const regionPower = useMemo(
-    () => (sido ? { sido, sub: substationForSido(sido), bal: POWER_BALANCE[sido] || null, grid } : null),
-    [sido, grid],
+    () => (sido ? { sido, sub: substationForSido(sido), bal: POWER_BALANCE[sido] || null, grid, approval } : null),
+    [sido, grid, approval],
   )
 
   return (
@@ -351,12 +354,24 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               </div>
             ) : null
           })()}
-          {regionPower && (regionPower.sub || regionPower.bal || regionPower.grid) && (
+          {regionPower && (regionPower.sub || regionPower.bal || regionPower.grid || regionPower.approval) && (
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k">지역 전력 여건 (한전 계통 공급여유·자급률·변전소 · 시도 기준)</div>
+              <div className="k">지역 전력 여건 (전력계통영향평가·공급여유·자급률 · 시도 기준)</div>
               <div className="v">
-                {regionPower.grid && (
+                {regionPower.approval && regionPower.approval.ratePct != null && (
                   <div>
+                    <strong>DC 계통 승인율 {regionPower.approval.ratePct}%</strong>
+                    <span
+                      className={`badge ${regionPower.approval.ratePct >= 70 ? 'status-operating' : 'verify'}`}
+                      style={regionPower.approval.ratePct < 30 ? { marginLeft: 6, color: '#ef4444', borderColor: '#ef4444', background: 'color-mix(in srgb, #ef4444 12%, transparent)' } : { marginLeft: 6 }}
+                    >
+                      {approvalLabel(regionPower.approval.ratePct)}
+                    </span>
+                    <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>전력계통영향평가 &apos;26.3</span>
+                  </div>
+                )}
+                {regionPower.grid && (
+                  <div style={{ marginTop: regionPower.approval?.ratePct != null ? 4 : 0 }}>
                     <strong>계통 공급여유 {regionPower.grid.mw.toLocaleString()}MW</strong>
                     <span
                       className={`badge ${regionPower.grid.mw <= 500 ? 'verify' : 'status-operating'}`}
@@ -368,7 +383,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   </div>
                 )}
                 {regionPower.bal && (
-                  <div style={{ marginTop: regionPower.grid ? 4 : 0 }}>
+                  <div style={{ marginTop: regionPower.grid || regionPower.approval?.ratePct != null ? 4 : 0 }}>
                     전력 자급률 <strong>{regionPower.bal.ratio}%</strong>
                     <span className={`badge ${regionPower.bal.ratio >= 100 ? 'status-operating' : 'verify'}`} style={{ marginLeft: 6 }}>
                       {selfSufficiencyLabel(regionPower.bal.ratio)}
