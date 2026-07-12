@@ -356,7 +356,22 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             <div className="k"><Term k="침수심">침수 위험</Term> (홍수위험지도 — DC에 치명적)</div>
             <div className="v">
               {flood?.available ? (
-                flood.grade === '해당없음' || flood.depthM === 0 ? (
+                flood.source === 'sgis' ? (
+                  flood.exposurePct <= 0 ? (
+                    <>
+                      <span className="badge status-operating">홍수영향구역 밖 · 위험 낮음</span>
+                      {flood.admNm && <span className="meta"> · {flood.admNm}</span>}
+                    </>
+                  ) : (
+                    <>
+                      <span className={`badge ${flood.exposurePct >= 30 ? 'verify' : 'status-operating'}`}>침수 노출 {flood.grade}</span>
+                      {` · 영향구역 인구 ${flood.exposurePct}%`}
+                      {flood.affectedPop != null && flood.totalPop != null && (
+                        <span className="meta"> ({flood.affectedPop.toLocaleString()}/{flood.totalPop.toLocaleString()}명{flood.admNm ? ` · ${flood.admNm}` : ''}{flood.baseYear ? ` · ${flood.baseYear}` : ''})</span>
+                      )}
+                    </>
+                  )
+                ) : flood.grade === '해당없음' || flood.depthM === 0 ? (
                   <span className="badge status-operating">침수구역 외 · 위험 낮음</span>
                 ) : (
                   <>
