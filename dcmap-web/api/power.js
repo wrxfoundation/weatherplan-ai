@@ -35,11 +35,11 @@ const num = (v) => {
   return Number.isFinite(n) ? n : undefined
 }
 
-async function fetchJson(url, ms = 14000) {
+async function fetchOnce(url, ms) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
   try {
-    const r = await fetch(url, { signal: ctrl.signal, headers: { Accept: 'application/json', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36' } })
+    const r = await fetch(url, { signal: ctrl.signal, headers: { Accept: 'application/json', 'User-Agent': UA } })
     if (!r.ok) return { _status: r.status }
     const text = await r.text()
     try {
@@ -50,6 +50,16 @@ async function fetchJson(url, ms = 14000) {
   } finally {
     clearTimeout(t)
   }
+}
+
+// data.go.kr 순간 과부하(429 Too Many Requests / 503)는 짧게 backoff 후 1회 재시도
+async function fetchJson(url, ms = 14000) {
+  let out = await fetchOnce(url, ms)
+  if (out?._status === 429 || out?._status === 503) {
+    await new Promise((ok) => setTimeout(ok, 800))
+    out = await fetchOnce(url, ms)
+  }
+  return out
 }
 
 function findItems(obj, depth = 0) {
@@ -147,18 +157,16 @@ async function fetchEpsisItems(url) {
   let items = findItems(first) || []
   const total = num(first?.response?.body?.totalCount)
   const perPage = num(first?.response?.body?.numOfRows) || items.length || 1000
-  const remaining = DEADLINE - (Date.now() - start)
-  if (hasPage && total && total > items.length && perPage > 0 && remaining > 2500) {
-    const pages = Math.min(6, Math.ceil(total / perPage)) // 보강 상한(레이트리밋·지연 방지)
-    const budget = Math.min(4500, remaining - 500) // 남은 예산 안에서만 보강
-    const rest = await Promise.all(
-      Array.from({ length: pages - 1 }, (_, i) =>
-        fetchJson(pageUrl(i + 2), budget)
-          .then((b) => (b?._status ? null : findItems(b)))
-          .catch(() => null),
-      ),
-    )
-    for (const it of rest) if (it?.length) items = items.concat(it)
+  if (hasPage && total && total > items.length && perPage > 0) {
+    // 순차 수집 — 동시 다발 요청이 data.go.kr 429(Too Many Requests)를 유발하므로 한 번에 하나씩.
+    // 상한 4페이지 + 마감시한으로 시간·부하 모두 제한. 429는 fetchJson이 backoff 재시도.
+    const pages = Math.min(4, Math.ceil(total / perPage))
+    for (let n = 2; n <= pages; n++) {
+      if (DEADLINE - (Date.now() - start) < 3000) break
+      const b = await fetchJson(pageUrl(n), 4500)
+      const it = b?._status ? null : findItems(b)
+      if (it?.length) items = items.concat(it)
+    }
   }
   return { items, total: total ?? items.length }
 }
