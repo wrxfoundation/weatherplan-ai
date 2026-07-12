@@ -92,6 +92,10 @@ export const landAreaFor = async (lat, lng) => {
 /** 개별공시지가(원/㎡) — PNU로 data.go.kr 조회. { available, pricePerM2, year } | null */
 export const landPriceOfficialFor = (pnu) => (pnu ? fetchJson(`/api/landprice?pnu=${encodeURIComponent(pnu)}`) : Promise.resolve(null))
 
+/** WAMIS 공업용수 취수능력(시도 집계) — { available, bySido:{시도:{m3day,count}}, source } | null.
+ *  전국 1회 집계(캐시). 시도 선택은 클라이언트에서. 냉각수(공업용수) 확보 여건의 지역 신호(100점 외). */
+export const waterCapacity = () => fetchJson('/api/water', 12000)
+
 /** 케이웨더 일별예보(최대 7일) — { days:[{label,tmax,tmin,rainProb,sky}], rain } | null */
 export const forecastFor = (lat, lng) => fetchJson(`/api/kweather?kind=forecast&${q(lat, lng)}`)
 

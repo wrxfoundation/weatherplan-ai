@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { STATUS_LABEL, isCapitalByAddr, isCapitalByPoint, FACILITIES } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, landUseFor, landAreaFor, landPriceOfficialFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, dongLabel } from '../data/liveApi.js'
+import { forecastFor, headroomFor, landUseFor, landAreaFor, landPriceOfficialFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, waterCapacity, dongLabel } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
 import { substationForSido } from '../data/substations.js'
@@ -35,6 +35,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const [energy, setEnergy] = useState(null)
   const [warning, setWarning] = useState(null)
   const [climate, setClimate] = useState(null)
+  const [water, setWater] = useState(null)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -97,6 +98,15 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
       alive = false
     }
   }, [point])
+
+  // WAMIS 공업용수 취수능력(전국 시도 집계) — 지점 무관, 1회 로드(캐시). 냉각수 확보 여건 지역 신호.
+  useEffect(() => {
+    let alive = true
+    waterCapacity().then((v) => alive && setWater(v))
+    return () => {
+      alive = false
+    }
+  }, [])
 
   // 데이터센터 기후지수 — 연평균기온 우선순위: 케이웨더 과거기후 → 기상청 평년값(최근접) → 현재기온.
   const normal = useMemo(() => nearestNormal(point.lat, point.lng), [point])
@@ -427,6 +437,26 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   최근접 <strong>{re.name || (re.type === 'W' ? '풍력단지' : '태양광단지')}</strong> ({re.type === 'W' ? '풍력' : '태양광'}) {re.km.toFixed(1)}km
                   <span className={`badge ${re.km <= 10 ? 'status-operating' : re.km <= 30 ? 'verify' : 'pending'}`} style={{ marginLeft: 6 }}>{label}</span>
                   <div className="cell-basis">하이퍼스케일러 RE100/CFE 요건 — 대형 재생단지 근접 = 직접 PPA 잠재. OSM 대형 발전단지(소형 태양광 제외) 기준</div>
+                </div>
+              </div>
+            )
+          })()}
+          {(() => {
+            // 냉각수(공업용수) 확보 여건 — 시도 취수 시설용량 집계(WAMIS). 100점 외 참고 신호.
+            if (!water?.available || !sido) return null
+            const w = water.bySido?.[sido]
+            if (!w || !w.m3day) return null
+            // 시설용량 기준 상대 여건(전국 시도 중 위치). 대략 20만 m³/day↑ 여유, 5만↓ 제한.
+            const label = w.m3day >= 200000 ? '용수 여유' : w.m3day >= 50000 ? '용수 보통' : '용수 확인要'
+            const badge = w.m3day >= 200000 ? 'status-operating' : w.m3day >= 50000 ? 'verify' : 'pending'
+            return (
+              <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                <div className="k">냉각수(공업용수) 확보 여건 ({sido} 시도 · 참고)</div>
+                <div className="v">
+                  {sido} 공업용수 취수 시설용량 <strong>{Math.round(w.m3day).toLocaleString()}㎥/일</strong>
+                  <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>취수장 {w.count}곳</span>
+                  <span className={`badge ${badge}`} style={{ marginLeft: 6 }}>{label}</span>
+                  <div className="cell-basis">{water.source} — 시도 총량 신호(부지 인입은 지방·산단 상수도사업소 별도 확인). 100점 외 참고</div>
                 </div>
               </div>
             )
