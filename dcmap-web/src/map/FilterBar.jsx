@@ -15,8 +15,8 @@ export default function FilterBar({
   onSido,
   minMw,
   onMinMw,
-  nonCap,
-  onToggleNonCap,
+  zone,
+  onZone,
   showLabels,
   onToggleLabels,
   showPlants,
@@ -127,15 +127,18 @@ export default function FilterBar({
         />
         MW
       </label>
-      <button
-        type="button"
-        className={`chip ${nonCap ? 'on' : ''}`}
-        onClick={onToggleNonCap}
-        aria-pressed={nonCap}
-        title="계통영향평가 ±15점 가점·AIDC 특별법 면제 권역(비수도권만 표시)"
-      >
-        관문 유리 · 비수도권
-      </button>
+      {/* 입지: 전체 / 수도권 / 비수도권 */}
+      <div className="group" title="수도권(서울·경기·인천)은 계통영향평가 ±15점 감점, 비수도권은 가점·AIDC 특별법 면제 유인">
+        <button type="button" className={`chip ${!zone ? 'on' : ''}`} onClick={() => onZone('')} aria-pressed={!zone}>
+          입지 전체
+        </button>
+        <button type="button" className={`chip ${zone === 'cap' ? 'on' : ''}`} onClick={() => onZone('cap')} aria-pressed={zone === 'cap'}>
+          수도권
+        </button>
+        <button type="button" className={`chip ${zone === 'non' ? 'on' : ''}`} onClick={() => onZone('non')} aria-pressed={zone === 'non'}>
+          비수도권
+        </button>
+      </div>
     </div>
   )
 }
