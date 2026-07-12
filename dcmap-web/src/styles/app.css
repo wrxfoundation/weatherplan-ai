@@ -346,6 +346,119 @@ a {
   opacity: 0.55;
 }
 
+/* 입지 시뮬레이터 카드 — 지도 좌하단 */
+.reco-sim {
+  position: absolute;
+  left: 12px;
+  bottom: 40px;
+  z-index: 600;
+  width: 244px;
+  max-width: calc(100vw - 24px);
+  padding: 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--navy-deep, #0a1120) 90%, transparent);
+  border: 1px solid color-mix(in srgb, #f4c14b 35%, var(--line));
+  backdrop-filter: blur(10px);
+  box-shadow: var(--elev-1);
+}
+.rs-head {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 8px;
+}
+.rs-head strong {
+  font-size: 13px;
+  color: #f4c14b;
+}
+.rs-head .muted {
+  font-size: 10.5px;
+}
+.rs-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.rs-controls label {
+  font-size: 11.5px;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.rs-controls input {
+  width: 58px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--navy-deep, #0a1120);
+  color: var(--ink);
+  padding: 0 6px;
+  font-size: 12px;
+}
+.rs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 232px;
+  overflow-y: auto;
+}
+.rs-list li button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 4px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+.rs-list li button:hover {
+  background: color-mix(in srgb, var(--accent, #35d5ee) 10%, transparent);
+}
+.rs-rank {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #fde68a, #f4c14b);
+  color: #1a1204;
+  font-size: 10.5px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rs-name {
+  flex: 1;
+  font-size: 11.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rs-score {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent, #35d5ee);
+}
+.rs-empty {
+  font-size: 11.5px;
+  color: var(--grey);
+  padding: 8px 2px;
+}
+@media (max-width: 640px) {
+  .reco-sim {
+    bottom: 12px;
+    width: 210px;
+  }
+}
+
 /* 추천 입지 마커 — 금색 순위 배지 */
 .reco-marker {
   background: transparent;

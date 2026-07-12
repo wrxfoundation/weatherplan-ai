@@ -29,6 +29,29 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
   // 근거 점수(비율) 최고 후보 = 추천
   const bestId = items.reduce((b, c) => ((c.pct ?? -1) > (b?.pct ?? -1) ? c : b), null)?.id
 
+  // 비교 결과 PDF — 인쇄 최적화 HTML 표 → 브라우저 PDF
+  const onPdf = () => {
+    const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    const thead = `<tr><th>지표</th>${items.map((c) => `<th${c.id === bestId ? ' class="best"' : ''}>${esc(c.label)}${c.id === bestId ? ' ★' : ''}</th>`).join('')}</tr>`
+    const body = ROWS.map((row) => `<tr><td class="rl">${esc(row.label)}</td>${items.map((c) => `<td>${esc(row.get(c))}</td>`).join('')}</tr>`).join('')
+    const w = window.open('', '_blank')
+    if (!w) return
+    w.document.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>AI InfraMap 후보지 비교</title><style>
+      @page{margin:14mm;size:landscape}
+      body{font-family:'Pretendard Variable',-apple-system,'Malgun Gothic',sans-serif;color:#111;padding:16px;font-size:12px}
+      h1{font-size:18px;border-bottom:2px solid #111;padding-bottom:6px}
+      table{border-collapse:collapse;width:100%;margin-top:10px}
+      th,td{border:1px solid #ccc;padding:6px 9px;text-align:center}
+      th{background:#f0f4f8}th.best{background:#fff3cf}
+      td.rl{text-align:left;font-weight:700;background:#fafafa}
+      .foot{margin-top:12px;color:#888;font-size:10px}
+    </style></head><body><h1>AI InfraMap — 후보지 비교 (${items.length}곳)</h1>
+    <table><thead>${thead}</thead><tbody>${body}</tbody></table>
+    <p class="foot">★ = 근거 점수 최고 후보 · 공개 데이터 기반 정적 근거 · ${new Date().toLocaleString('ko-KR')} · AI InfraMap</p>
+    <script>window.onload=function(){setTimeout(function(){window.print()},250)}<\/script></body></html>`)
+    w.document.close()
+  }
+
   // 각 행에서 최우수 후보 id 계산(값 있는 후보만)
   const rowBest = {}
   for (const row of ROWS) {
@@ -51,6 +74,9 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
       <div className="ct-head">
         <button type="button" className="ct-toggle" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
           ⚖ 후보지 비교 <strong>{items.length}</strong>곳 {open ? '▾' : '▸'}
+        </button>
+        <button type="button" className="chip" onClick={onPdf} title="후보지 비교표 PDF 저장">
+          PDF
         </button>
         <button type="button" className="chip" onClick={onClear}>
           전체 지우기
