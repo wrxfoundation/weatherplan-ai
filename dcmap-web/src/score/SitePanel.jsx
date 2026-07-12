@@ -10,6 +10,7 @@ import { substationForSido } from '../data/substations.js'
 import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
 import { gridHeadroomForSido, headroomLabel } from '../data/gridHeadroom.js'
 import { dcApprovalForSido, approvalLabel } from '../data/gridAssessment.js'
+import { nearestIndustrialComplex } from '../data/industrialComplexes.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
@@ -451,6 +452,22 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               )}
             </div>
           </div>
+          {(() => {
+            const ic = nearestIndustrialComplex(point.lat, point.lng)
+            return ic ? (
+              <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                <div className="k">산업단지 입지 (인센티브·전력/용수 기반시설)</div>
+                <div className="v">
+                  최근접 <strong>{ic.name}</strong>
+                  <span className="badge" style={{ marginLeft: 6 }}>{ic.type}산단</span>
+                  <span style={{ marginLeft: 6 }}>{ic.km.toFixed(1)}km</span>
+                  <div className="cell-basis">
+                    산단 내/근접은 세제·인센티브 + 전력·용수 사전확보 + 공업지역 인허가 수월. 주요 국가산단 대표점(부분 커버 — 전체 경계 GeoJSON 확장 예정)
+                  </div>
+                </div>
+              </div>
+            ) : null
+          })()}
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k">지번주소 (vworld 리버스 지오코딩)</div>
             <div className="v">
