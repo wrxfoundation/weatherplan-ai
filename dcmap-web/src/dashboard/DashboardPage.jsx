@@ -5,6 +5,7 @@ import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf, CAPITAL_SIDOS } from '.
 import { GEN_PERMIT_BUBBLES } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { SUBSTATIONS, SUBSTATION_META } from '../data/substations.js'
+import { POWER_MARKET_META, PURCHASE_PRICE_2024, PURCHASE_SUMMARY, PRICE_PEAK, PRICE_LOW } from '../data/powerMarket.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
 import { filingsRecent, epsisCapacity, apiStatus, tradingMix, riskFor } from '../data/liveApi.js'
@@ -600,6 +601,47 @@ export default function DashboardPage() {
                 KPX 전력거래실적(data.go.kr) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
               </p>
             )}
+          </section>
+
+          {/* 전력 원가 환경 — 한전 구입단가(2024). DC OPEX 맥락 */}
+          <section className="calc-card">
+            <div className="chart-title">전력 원가 환경 — 한전 구입단가 (2024, DC OPEX 지표)</div>
+            <div className="dash-status">
+              <div className="status-rows">
+                <div className="dash-row">
+                  평균 구입단가 <strong>{PURCHASE_SUMMARY.avgPrice}</strong>원/kWh
+                </div>
+                <div className="dash-row">
+                  여름 피크 <strong>{PRICE_PEAK.price}</strong>원 ({PRICE_PEAK.m}월) · 최저 <strong>{PRICE_LOW.price}</strong>원 ({PRICE_LOW.m}월)
+                </div>
+                <div className="dash-row">
+                  PPA(직접계약) 비중 <strong>{PURCHASE_SUMMARY.ppaSharePct}</strong>% · 단가 {PURCHASE_SUMMARY.ppaPrice}원
+                </div>
+                <div className="dash-row total">구입량 {Math.round(PURCHASE_SUMMARY.totalMwh / 1e6)}TWh (2024)</div>
+              </div>
+              <Gauge pct={Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)} label="여름 원가 상승폭" />
+            </div>
+            {/* 월별 구입단가 미니 바 */}
+            <div className="hbar-mini" role="img" aria-label="2024 월별 한전 구입단가" style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 48, marginTop: 8 }}>
+              {PURCHASE_PRICE_2024.map((p) => {
+                const max = PRICE_PEAK.price
+                const min = PRICE_LOW.price - 10
+                const h = Math.max(6, ((p.price - min) / (max - min)) * 100)
+                const hot = p.price >= 150
+                return (
+                  <span
+                    key={p.m}
+                    title={`${p.m}월 ${p.price}원/kWh`}
+                    style={{ flex: 1, height: `${h}%`, background: hot ? 'var(--warn, #e06d3b)' : 'var(--accent, #2f6bd6)', borderRadius: '2px 2px 0 0', opacity: hot ? 0.95 : 0.55 }}
+                  />
+                )
+              })}
+            </div>
+            <p className="chart-note">
+              DC 운영비의 큰 축이 전력비 — <strong>냉방 수요가 겹치는 7~8월 구입단가가 최저월 대비 {Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)}% 급등</strong>(열 관리 설계·PUE가 원가에 직결).
+              직접 재생조달(PPA)은 아직 {PURCHASE_SUMMARY.ppaSharePct}%로 RE100 조달 초기 단계. 전국 도매 구입단가(한전)로 개별 계약·지역 차등은 별개.
+              출처: <strong>{POWER_MARKET_META.source}</strong>.
+            </p>
           </section>
 
           {/* 지역별 송변전 인프라 — 한전 변전소 현황(154kV+). 설비 밀도(여유량 아님) */}
