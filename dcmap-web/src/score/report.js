@@ -12,7 +12,7 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   L.push(``)
   L.push(`- 지점: ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}`)
   if (addr?.parcel) L.push(`- 지번주소: ${addr.parcel}${addr.road ? ` (도로명: ${addr.road})` : ''}`)
-  L.push(`- 입지 구분: ${nonCapital ? '비수도권' : '수도권'} (사용자 지정) · 필요 용량 ${mw}MW`)
+  L.push(`- 입지 구분: ${nonCapital ? '비수도권' : '수도권'} (주소 기준 자동판정) · 필요 용량 ${mw}MW`)
   L.push(`- 생성: ${now.toLocaleString('ko-KR')} · AI InfraMap`)
   if (typeof window !== 'undefined')
     L.push(`- 공유 링크: ${window.location.origin}/?site=${point.lat.toFixed(5)},${point.lng.toFixed(5)}`)
@@ -44,9 +44,13 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   }
   L.push(``)
   L.push(`## 스코어 커버리지 — 근거 확보 ${r.knownScore}/${r.knownMax}점 · 커버리지 ${r.coverage}/100`)
+  L.push(`(공개 데이터로 산출된 항목만 점수화 · 미확보 항목은 '대기'로 명시 — 가짜 점수 없음)`)
   for (const axis of r.axes) {
-    const state = axis.knownMax > 0 ? `${axis.known}/${axis.max}점` : `데이터 대기 (${axis.items.map((i) => i.basis).filter(Boolean).join(', ') || '소스 예정'})`
-    L.push(`- ${axis.label}: ${state}`)
+    L.push(`- **${axis.label}** ${axis.knownMax > 0 ? `${axis.known}/${axis.max}점` : '데이터 대기'}`)
+    for (const it of axis.items) {
+      if (it.points != null) L.push(`  - ${it.label}: ${it.points}/${it.max}점${it.basis ? ` — ${it.basis}` : ''}`)
+      else L.push(`  - ${it.label}: 대기${it.pending ? ` (${it.pending})` : ''}`)
+    }
   }
   L.push(``)
   L.push(`## 토지·지가`)
@@ -92,12 +96,18 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
     L.push(`- 연동 대기 — 한전 전력데이터 개방포털 분산전원연계 API (전력축 D3)`)
   }
   L.push(``)
-  L.push(`## 리스크 (침수·인구·재해)`)
-  if (flood?.available) {
+  L.push(`## 리스크 (침수·산사태·인구)`)
+  if (flood?.available && flood.source === 'sgis') {
+    L.push(
+      flood.exposurePct <= 0
+        ? `- 침수: 홍수영향구역 밖 · 위험 낮음 (SGIS 홍수위험지도${flood.admNm ? ` · ${flood.admNm}` : ''})`
+        : `- 침수: 노출 ${flood.grade} · 영향구역 인구 ${flood.exposurePct}%${flood.affectedPop != null ? ` (${flood.affectedPop.toLocaleString()}/${flood.totalPop.toLocaleString()}명)` : ''} (SGIS 홍수위험지도${flood.baseYear ? ` ${flood.baseYear}` : ''})`,
+    )
+  } else if (flood?.available) {
     L.push(
       flood.grade === '해당없음' || flood.depthM === 0
         ? `- 침수: 침수구역 외 · 위험 낮음 (홍수위험지도)`
-        : `- 침수: 위험 ${flood.grade}${flood.depthM != null ? ` · 침수심 ${flood.depthM}m` : ''}${flood.floodType ? ` · ${flood.floodType}` : ''} (홍수위험지도)`,
+        : `- 침수: 위험 ${flood.grade}${flood.depthM != null ? ` · 침수심 ${flood.depthM}m` : ''} (홍수위험지도)`,
     )
   } else {
     L.push(`- 침수: 연동 대기 — 홍수위험지도(리스크축)`)
@@ -109,10 +119,16 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   } else {
     L.push(`- 인구(민원 프록시): 연동 대기 — SGIS(시군구코드 확보 후)`)
   }
-  if (disaster?.available) {
-    L.push(`- 재해 이력: ${disaster.events != null ? `${disaster.events.toLocaleString()}건` : ''}${disaster.topType ? ` · 주 유형 ${disaster.topType}` : ''}${disaster.recentYear ? ` · 최근 ${disaster.recentYear}` : ''} (재난안전)`)
+  if (disaster?.available && disaster.source === 'sgis') {
+    L.push(
+      disaster.exposurePct <= 0
+        ? `- 산사태: 영향구역 밖 · 위험 낮음 (SGIS 산사태위험지도${disaster.admNm ? ` · ${disaster.admNm}` : ''})`
+        : `- 산사태: 노출 ${disaster.grade} · 영향구역 인구 ${disaster.exposurePct}%${disaster.affectedPop != null ? ` (${disaster.affectedPop.toLocaleString()}/${disaster.totalPop.toLocaleString()}명)` : ''} (SGIS 산사태위험지도${disaster.baseYear ? ` ${disaster.baseYear}` : ''})`,
+    )
+  } else if (disaster?.available) {
+    L.push(`- 재해 이력: ${disaster.events != null ? `${disaster.events.toLocaleString()}건` : ''}${disaster.topType ? ` · ${disaster.topType}` : ''} (재난안전)`)
   } else {
-    L.push(`- 재해 이력: 연동 대기 — 재난안전 공유플랫폼`)
+    L.push(`- 산사태·재해: 연동 대기 — SGIS 산사태위험지도`)
   }
   if (energy?.available && energy.usage != null) {
     L.push(`- 지번 실측 전기사용량: ${energy.useYm} ${energy.usage.toLocaleString()} ${energy.unit} (국토부 건축HUB — 단독·소규모·산업 용도 제외)`)

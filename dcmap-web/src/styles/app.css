@@ -458,6 +458,109 @@ a {
   gap: 8px;
 }
 
+/* 후보지 비교 트레이 — 화면 하단 고정 오버레이 */
+.compare-tray {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 900;
+  max-width: min(560px, calc(100vw - 24px));
+  background: color-mix(in srgb, var(--navy-deep) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+.compare-tray .ct-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+}
+.compare-tray .ct-toggle {
+  background: none;
+  border: none;
+  color: var(--ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+.compare-tray .ct-toggle strong {
+  color: var(--accent);
+}
+.ct-table {
+  border-top: 1px solid var(--line);
+  padding: 8px 10px 10px;
+  overflow-x: auto;
+}
+.ct-row {
+  display: grid;
+  grid-template-columns: 84px repeat(var(--ct-cols, 3), minmax(88px, 1fr));
+  gap: 6px;
+  align-items: center;
+  padding: 3px 0;
+}
+.ct-row + .ct-row {
+  border-top: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+}
+.ct-rowlabel {
+  font-size: var(--text-xs);
+  color: var(--grey);
+}
+.ct-colhead {
+  padding-bottom: 4px;
+}
+.ct-col {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: space-between;
+}
+.ct-open {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ct-remove {
+  background: none;
+  border: none;
+  color: var(--grey);
+  cursor: pointer;
+  font-size: 11px;
+  flex: none;
+}
+.ct-cell {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--ink);
+}
+.ct-cell.tone-good {
+  color: #86efac;
+}
+.ct-cell.tone-warn {
+  color: #fcd34d;
+}
+.ct-cell.tone-bad {
+  color: #fca5a5;
+}
+@media (max-width: 760px) {
+  .compare-tray {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    max-width: none;
+  }
+}
+
 /* 첫 사용자 안내 — 핵심 액션(빈 곳 클릭 → 부지 분석)을 상시 노출 */
 .map-hint {
   margin: 6px 2px 10px;

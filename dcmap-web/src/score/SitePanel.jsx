@@ -12,7 +12,7 @@ import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js
 import Term from '../components/Term.jsx'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
-export default function SitePanel({ point, onClose, onSelectFacility }) {
+export default function SitePanel({ point, onClose, onSelectFacility, onAddCompare, inCompare }) {
   const [mw, setMw] = useState(40)
   const [nonCapital, setNonCapital] = useState(true)
   const zoneTouched = useRef(false) // 사용자가 입지 구분을 직접 바꿨으면 자동판정으로 덮어쓰지 않음
@@ -672,6 +672,34 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               <button type="button" className="btn" onClick={onDownload}>
                 .md 다운로드
               </button>
+              {onAddCompare && (
+                <button
+                  type="button"
+                  className="btn"
+                  disabled={inCompare}
+                  onClick={() =>
+                    onAddCompare({
+                      id: `${point.lat.toFixed(5)},${point.lng.toFixed(5)}`,
+                      lat: point.lat,
+                      lng: point.lng,
+                      label: dong || (addr?.parcel ? addr.parcel.split(' ').slice(-2).join(' ') : `${point.lat.toFixed(3)}, ${point.lng.toFixed(3)}`),
+                      nonCapital,
+                      score: r.knownScore,
+                      coverage: r.knownMax,
+                      headroomMw: headroom?.available ? headroom.availableMw ?? null : null,
+                      climate: climateIdx?.label ?? null,
+                      climateLevel: climateIdx?.level ?? null,
+                      floodPct: flood?.available && flood.source === 'sgis' ? flood.exposurePct : null,
+                      landslidePct: disaster?.available && disaster.source === 'sgis' ? disaster.exposurePct : null,
+                      density: pop?.available ? pop.density ?? null : null,
+                      zoneUse: landUse?.uses?.length ? landUse.uses[0] : null,
+                      plantKm,
+                    })
+                  }
+                >
+                  {inCompare ? '비교에 추가됨 ✓' : '⚖ 비교에 추가'}
+                </button>
+              )}
             </div>
           )
         })()}

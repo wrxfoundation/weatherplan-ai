@@ -9,6 +9,7 @@ import FilterBar from './FilterBar.jsx'
 import ClimateBar from './ClimateBar.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
+import CompareTray from '../score/CompareTray.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
@@ -165,6 +166,26 @@ export default function MapPage({ power = false }) {
   const [headrooms, setHeadrooms] = useState(null) // {sido: availableMw|null}
   const [region, setRegion] = useState(null) // 전력지도: 클릭한 시도 (지역 요약 카드)
   const [mapCenter, setMapCenter] = useState(null) // 상단 기후 바: 확정 지점 없을 때 지도 중심 기후
+  // 후보지 비교 — 부지 분석 스냅샷 최대 3곳(localStorage 유지)
+  const [compare, setCompare] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('dcmap.compare') || '[]').slice(0, 3)
+    } catch {
+      return []
+    }
+  })
+  const persistCompare = (next) => {
+    setCompare(next)
+    try {
+      localStorage.setItem('dcmap.compare', JSON.stringify(next))
+    } catch {
+      /* 저장 불가 무시 */
+    }
+  }
+  const addCompare = (snap) => {
+    persistCompare([...compare.filter((c) => c.id !== snap.id), snap].slice(-3))
+  }
+  const removeCompare = (id) => persistCompare(compare.filter((c) => c.id !== id))
   // 모바일 바텀시트: 기본 접힘 → 로드 시 맵이 보이게. 지점/시설 선택하면 자동 펼침.
   const [sheetCollapsed, setSheetCollapsed] = useState(
     () => typeof window !== 'undefined' && window.matchMedia?.('(max-width: 760px)')?.matches === true,
@@ -705,6 +726,8 @@ export default function MapPage({ power = false }) {
                 setSitePoint(null)
                 focusFacility(f)
               }}
+              onAddCompare={addCompare}
+              inCompare={compare.some((c) => c.id === `${sitePoint.lat.toFixed(5)},${sitePoint.lng.toFixed(5)}`)}
             />
           ) : (
             <>
@@ -786,6 +809,15 @@ export default function MapPage({ power = false }) {
           )}
         </aside>
       </div>
+      <CompareTray
+        items={compare}
+        onRemove={removeCompare}
+        onClear={() => persistCompare([])}
+        onOpen={(c) => {
+          setRegion(null)
+          setSitePoint({ lat: c.lat, lng: c.lng })
+        }}
+      />
     </>
   )
 }
