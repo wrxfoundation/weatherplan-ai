@@ -4,6 +4,10 @@ import { FACILITIES, STATUS_LABEL } from '../data/facilities.js'
 import { GEN_RECENT, GEN_LICENSE_META } from '../data/genLicenses.js'
 import { CHP_PLANTS } from '../data/chpPlants.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
+import { GRID_HEADROOM, headroomLabel } from '../data/gridHeadroom.js'
+import { DC_ASSESSMENT, approvalLabel } from '../data/gridAssessment.js'
+import { SUBSTATIONS } from '../data/substations.js'
+import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -61,6 +65,73 @@ const DATASETS = [
       capacityMw: Math.round(r.capacityKw / 1000),
       count: r.count,
     })),
+  },
+  {
+    key: 'headroom',
+    label: '계통 공급여유(시도)',
+    asOf: '2027 전망',
+    source: '한국전력공사 계통 공급여유(연계가능용량) — 시도 총량',
+    fullCsv: null,
+    columns: [
+      { k: 'sido', label: '시도' },
+      { k: 'mw', label: '공급여유MW' },
+      { k: 'label', label: '판정' },
+      { k: 'note', label: '비고' },
+    ],
+    rows: Object.values(GRID_HEADROOM)
+      .filter((g) => g.sido !== '광주')
+      .sort((a, b) => b.mw - a.mw)
+      .map((g) => ({ sido: g.sido, mw: g.mw, label: headroomLabel(g.mw), note: g.note || '' })),
+  },
+  {
+    key: 'assessment',
+    label: 'DC 전력계통영향평가(시도)',
+    asOf: '2026-03-27',
+    source: '한전 전력계통영향평가 1차 기술검토 — 데이터센터',
+    fullCsv: null,
+    columns: [
+      { k: 'sido', label: '시도' },
+      { k: 'able', label: '공급가능MW' },
+      { k: 'unable', label: '공급불가MW' },
+      { k: 'rate', label: '승인율%' },
+      { k: 'label', label: '판정' },
+    ],
+    rows: Object.values(DC_ASSESSMENT)
+      .filter((a) => a.ratePct != null)
+      .sort((a, b) => b.ratePct - a.ratePct)
+      .map((a) => ({ sido: a.sido, able: Math.round(a.able), unable: Math.round(a.unable), rate: a.ratePct, label: approvalLabel(a.ratePct) })),
+  },
+  {
+    key: 'substation',
+    label: '변전소 현황(한전 본부)',
+    asOf: '2026-07-13',
+    source: '한국전력공사 변전설비현황 — 지역본부별',
+    fullCsv: null,
+    columns: [
+      { k: 'region', label: '지역본부' },
+      { k: 'hv', label: '154kV+ 변전소' },
+      { k: 'n765', label: '765kV' },
+      { k: 'n345', label: '345kV' },
+      { k: 'n154', label: '154kV' },
+      { k: 'hvMva', label: '변압기MVA' },
+    ],
+    rows: [...SUBSTATIONS]
+      .sort((a, b) => b.hv - a.hv)
+      .map((s) => ({ region: s.region, hv: s.hv, n765: s.n765, n345: s.n345, n154: s.n154, hvMva: s.hvMva })),
+  },
+  {
+    key: 'complex',
+    label: '산업단지(전국)',
+    asOf: '2026-07',
+    source: 'OpenStreetMap landuse=industrial (지정단지 필터)',
+    fullCsv: null,
+    columns: [
+      { k: 'name', label: '단지명' },
+      { k: 'type', label: '유형' },
+      { k: 'lat', label: '위도' },
+      { k: 'lng', label: '경도' },
+    ],
+    rows: INDUSTRIAL_COMPLEXES.map(([name, lat, lng, type]) => ({ name, type, lat, lng })),
   },
   {
     key: 'dc',
