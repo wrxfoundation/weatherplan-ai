@@ -182,7 +182,12 @@ export default function MapPage({ power = false }) {
   const netLayerRef = useRef(null)
   const [showReco, setShowReco] = useState(false) // 추천 입지 TOP(정적 근거 랭킹)
   const recoLayerRef = useRef(null)
-  const recoTop = useMemo(() => (showReco ? recommendSites(20) : []), [showReco])
+  const [recoMw, setRecoMw] = useState(40) // 시뮬레이터: 필요 용량(계통 공급여유 하한)
+  const [recoNonCap, setRecoNonCap] = useState(false) // 비수도권만
+  const recoTop = useMemo(
+    () => (showReco ? recommendSites(20, { minMw: recoMw || null, nonCapitalOnly: recoNonCap }) : []),
+    [showReco, recoMw, recoNonCap],
+  )
   const [baseMap, setBaseMap] = useState(() => {
     try {
       const v = localStorage.getItem('dcmap.baseMap')
@@ -827,6 +832,44 @@ export default function MapPage({ power = false }) {
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />
+        {/* 입지 시뮬레이터 — 추천입지 레이어 켤 때 필요 MW·입지 조건으로 재랭킹 */}
+        {showReco && (
+          <div className="reco-sim" role="region" aria-label="입지 시뮬레이터">
+            <div className="rs-head">
+              <strong>🏆 AI 추천 입지</strong>
+              <span className="muted">정적 근거 랭킹 · 필터 재계산</span>
+            </div>
+            <div className="rs-controls">
+              <label>
+                필요 용량
+                <input type="number" min="0" step="10" value={recoMw} onChange={(e) => setRecoMw(Math.max(0, Number(e.target.value) || 0))} /> MW
+              </label>
+              <button type="button" className={`chip ${recoNonCap ? 'on' : ''}`} onClick={() => setRecoNonCap((v) => !v)} aria-pressed={recoNonCap}>
+                비수도권만
+              </button>
+            </div>
+            <ol className="rs-list">
+              {recoTop.slice(0, 10).map((s, i) => (
+                <li key={`${s.lat},${s.lng}`}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelected(null)
+                      setRegion(null)
+                      setSitePoint({ lat: s.lat, lng: s.lng })
+                      mapObj.current?.setView([s.lat, s.lng], 12)
+                    }}
+                  >
+                    <span className="rs-rank">{i + 1}</span>
+                    <span className="rs-name">{s.name}</span>
+                    <span className="rs-score">{s.score}/{s.max}</span>
+                  </button>
+                </li>
+              ))}
+              {recoTop.length === 0 && <li className="rs-empty">조건에 맞는 후보 없음 — 필요 MW를 낮춰보세요</li>}
+            </ol>
+          </div>
+        )}
         <div className="map-top">
           {/* 주소(지번·도로명) 검색은 상단 통합 검색창으로 이동 — 여기선 기후 바만 */}
           <ClimateBar point={sitePoint || mapCenter} committed={!!sitePoint} />

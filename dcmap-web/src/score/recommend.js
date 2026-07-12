@@ -11,8 +11,12 @@ import { nearestPlant } from '../data/plants.js'
 
 let _cache = null
 
-/** 산단 후보를 정적 근거 점수로 랭킹 → 상위 topN [{name,type,lat,lng,sido,score,max,pct,nearestSub,gridMw,gridApproval}] */
-export function recommendSites(topN = 20) {
+/**
+ * 산단 후보를 정적 근거 점수로 랭킹.
+ * @param topN 상위 N개
+ * @param opts {minMw:필요 MW(계통 공급여유 하한), nonCapitalOnly:비수도권만}
+ */
+export function recommendSites(topN = 20, opts = {}) {
   if (!_cache) {
     _cache = INDUSTRIAL_COMPLEXES.map(([name, lat, lng, type]) => {
       const sido = sidoOf(lat, lng)
@@ -37,5 +41,8 @@ export function recommendSites(topN = 20) {
       }
     }).sort((a, b) => b.score - a.score || b.pct - a.pct)
   }
-  return _cache.slice(0, topN)
+  let list = _cache
+  if (opts.nonCapitalOnly) list = list.filter((s) => s.nonCapital)
+  if (opts.minMw) list = list.filter((s) => (s.gridMw ?? 0) >= opts.minMw)
+  return list.slice(0, topN)
 }
