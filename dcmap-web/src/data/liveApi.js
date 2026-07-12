@@ -26,7 +26,7 @@ async function fetchJson(url, ms = 9000) {
 
 const q = (lat, lng) => `lat=${lat.toFixed(5)}&lng=${lng.toFixed(5)}`
 
-/** 케이웨더 오늘 예보 요약 — { temp(최고), tempMin, sky, rainProb, snow } | null */
+/** 케이웨더 현재 실황 — { temp, sky, humidity, senseTemp, rain1h, windSpeed, pm10 } | null */
 export const weatherFor = (lat, lng) => fetchJson(`/api/kweather?kind=current&${q(lat, lng)}`)
 
 /** vworld 리버스 지오코딩 — { parcel, road } | null.
@@ -107,8 +107,7 @@ const POWER_MS = 16000
 /** EPSIS/KPX 발전설비현황 — { byFuel:[{fuel,mw}], facilities, totalMw } | null (연동 대기 시 null) */
 export const epsisCapacity = () => fetchJson('/api/power?src=epsis', POWER_MS)
 
-/** KPX 전력수급예보 — { asOf, supplyMw, peakMw, reserveMw, reservePct, rows } | null (연동 대기 시 null) */
-export const supplyForecast = () => fetchJson('/api/power?src=supply', POWER_MS)
+// (KPX 전력수급예보 supplyForecast는 클라우드 IP 차단으로 미연동 — UI는 발전믹스(tradingMix)로 대체하므로 export 제거)
 
 /** KPX 전력거래실적 — { asOf, byFuel:[{fuel,capacityMw,tradedMwh}], totalMwh } | null (연동 대기 시 null) */
 export const tradingMix = () => fetchJson('/api/power?src=trading', POWER_MS)
