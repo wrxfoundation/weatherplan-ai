@@ -727,6 +727,9 @@ export default function MapPage({ power = false }) {
                 {minMw != null && ` · 필터 ≥ ${minMw} MW`}
                 {q && ` · “${q}”`}
               </h2>
+              <p className="map-hint">
+                🧭 <strong>지도 빈 곳을 클릭</strong> → 부지 분석(전력·냉각·리스크 점수) · <strong>시설 마커 클릭</strong> → 상세 정보
+              </p>
               {filtered.length > 0 && (
                 <div className="status-summary">
                   <div

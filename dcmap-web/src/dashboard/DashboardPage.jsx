@@ -218,7 +218,8 @@ export default function DashboardPage() {
   }, [rollup])
 
   const maxRegion = d.regions[0]?.[1] ?? 1
-  const maxLand = Math.max(...d.landTop.map(([, v]) => Math.abs(v)), 0.01)
+  // landTop+landBottom 모두 포함해야 최대 절대값 기준 — landBottom(최대 음수)이 더 크면 바가 100% 초과
+  const maxLand = Math.max(...[...d.landTop, ...d.landBottom].map(([, v]) => Math.abs(v)), 0.01)
 
   return (
     <>
