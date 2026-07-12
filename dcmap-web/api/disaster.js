@@ -73,7 +73,8 @@ export default async function handler(req, res) {
 
   const key = process.env.DISASTER_KEY
   const vworldKey = process.env.VWORLD_KEY
-  if (!key || !vworldKey) {
+  // DISASTER 키만 필수. 클라이언트가 admCd(법정동코드)를 넘기면 서버측 vworld 불필요.
+  if (!key) {
     res.status(200).json({ available: false, reason: 'not_configured' })
     return
   }
@@ -85,10 +86,14 @@ export default async function handler(req, res) {
     return
   }
 
+  // 클라이언트가 브라우저 vworld로 받은 법정동코드(10/5자리)를 넘기면 시군구(5)로 사용 → 서버 vworld 502 우회.
+  const admCd = String(req.query.admCd || '').replace(/\D/g, '')
+
   try {
-    const sigungu = await sigunguCode(lat, lng, vworldKey)
+    let sigungu = /^\d{10}$/.test(admCd) || /^\d{5}$/.test(admCd) ? admCd.slice(0, 5) : null
+    if (!sigungu && vworldKey) sigungu = await sigunguCode(lat, lng, vworldKey)
     if (!sigungu) {
-      res.status(200).json({ available: false, reason: 'no_region_code' })
+      res.status(200).json({ available: false, reason: admCd ? 'bad_region_code' : 'no_region_code' })
       return
     }
     const url = (process.env.DISASTER_URL || DEFAULT_URL)

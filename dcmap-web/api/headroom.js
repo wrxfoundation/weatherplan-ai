@@ -143,7 +143,8 @@ export default async function handler(req, res) {
 
   const key = process.env.KEPCO_API_KEY
   const vworldKey = process.env.VWORLD_KEY
-  if (!key || !vworldKey) {
+  // KEPCO 키만 필수. vworld는 서버 폴백(좌표→코드)용이라, 클라이언트가 admCd/metroCd를 넘기면 불필요.
+  if (!key) {
     res.status(200).json({ available: false, reason: 'not_configured' })
     return
   }
@@ -155,19 +156,29 @@ export default async function handler(req, res) {
     return
   }
 
+  // 좌표→코드: 클라이언트가 브라우저 vworld로 받은 법정동코드(admCd 10/5) 또는 시도코드(metroCd 2)를
+  // 넘기면 그대로 사용(서버측 vworld 502 우회). 없을 때만 서버 vworld 폴백.
+  const admCd = String(req.query.admCd || '').replace(/\D/g, '')
+  const metroCdQ = String(req.query.metroCd || '').replace(/\D/g, '')
+  let codes = null
+  if (/^\d{10}$/.test(admCd) || /^\d{5}$/.test(admCd)) codes = { metro: admCd.slice(0, 2), city: admCd.slice(2, 5) }
+  else if (/^\d{2}$/.test(metroCdQ)) codes = { metro: metroCdQ, city: '' }
+
   try {
-    const codes = await regionCodes(lat, lng, vworldKey)
+    if (!codes && vworldKey) codes = await regionCodes(lat, lng, vworldKey)
     if (!codes) {
-      res.status(200).json({ available: false, reason: 'no_region_code' })
+      res.status(200).json({ available: false, reason: admCd || metroCdQ ? 'bad_region_code' : 'no_region_code' })
       return
     }
-    const url = (process.env.KEPCO_HEADROOM_URL || DEFAULT_URL)
+    let url = (process.env.KEPCO_HEADROOM_URL || DEFAULT_URL)
       .replaceAll('{metro}', codes.metro)
       .replaceAll('{city}', codes.city)
       // 레거시 플레이스홀더 호환(과거 env가 {sido}/{sigungu}를 쓰는 경우)
       .replaceAll('{sido}', codes.metro)
       .replaceAll('{sigungu}', codes.city)
       .replaceAll('{key}', key)
+    // cityCd가 비면(시도만 조회) 빈 파라미터 제거 — KEPCO는 cityCd 미지정 시 시도 전체 반환.
+    if (!codes.city) url = url.replace(/([?&])cityCd=(&|$)/, (m, p1, p2) => (p2 === '&' ? p1 : '')).replace(/[?&]$/, '')
 
     // 마감시한(11s) 안에서 순차 폴백. bigdata.kepco의 실패 원인을 단정하지 않고 여러 경로 시도:
     //  1) 프록시(UPSTREAM_PROXY_BASE, 설정 시) → 2) undici 직접 → 3) IPv4 직결 https/http.
