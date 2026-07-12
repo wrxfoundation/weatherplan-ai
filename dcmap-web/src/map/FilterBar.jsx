@@ -21,6 +21,8 @@ export default function FilterBar({
   onToggleLabels,
   showPlants,
   onTogglePlants,
+  showSubs,
+  onToggleSubs,
   showPublic,
   onTogglePublic,
   power = false,
@@ -45,7 +47,9 @@ export default function FilterBar({
         ))}
       </div>
 
-      <div className="group">
+      {/* 지도 레이어 토글 — 시설/전력 정보를 지도 위에 겹쳐 표시(기본 OFF, 필요할 때만) */}
+      <div className="group layer-group" role="group" aria-label="지도 레이어">
+        <span className="group-label">레이어</span>
         <button
           type="button"
           className={`chip ${showLabels ? 'on' : ''}`}
@@ -53,7 +57,16 @@ export default function FilterBar({
           aria-pressed={showLabels}
           title="맵 위 시설명·용량 라벨 켜기/끄기"
         >
-          라벨 {showLabels ? 'ON' : 'OFF'}
+          🏷 라벨
+        </button>
+        <button
+          type="button"
+          className={`chip ${showSubs ? 'on' : ''}`}
+          onClick={onToggleSubs}
+          aria-pressed={showSubs}
+          title="154kV+ 변전소 841개 — DC가 전기를 받는 접속점(OSM 좌표). 전압별 색: 154kV 하늘 / 345kV 보라 / 765kV 분홍"
+        >
+          🔌 변전소
         </button>
         <button
           type="button"
@@ -64,16 +77,6 @@ export default function FilterBar({
         >
           ⚡ 발전소
         </button>
-        <button
-          type="button"
-          className={`chip ${showPublic ? 'on' : ''}`}
-          onClick={onTogglePublic}
-          aria-pressed={showPublic}
-          title="행정·공공기관 데이터센터 61곳 — 행안부 공공데이터(연면적 500㎡+), 좌표는 시군구 중심점"
-        >
-          公 공공
-        </button>
-        {/* 전력 레이어 — 맵/전력지도 통합 후 항상 노출(기본 OFF) */}
         <button
           type="button"
           className={`chip ${showGenPermits ? 'on' : ''}`}
@@ -91,6 +94,15 @@ export default function FilterBar({
           title="계통 여유용량 — 시도별 한전 분산전원 여유(KEPCO env 연동 시 실데이터, 미연동 시 연동 대기)"
         >
           ⚡ 여유용량
+        </button>
+        <button
+          type="button"
+          className={`chip ${showPublic ? 'on' : ''}`}
+          onClick={onTogglePublic}
+          aria-pressed={showPublic}
+          title="행정·공공기관 데이터센터 61곳 — 행안부 공공데이터(연면적 500㎡+), 좌표는 시군구 중심점"
+        >
+          公 공공DC
         </button>
       </div>
 

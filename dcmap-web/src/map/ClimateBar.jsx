@@ -8,6 +8,27 @@ export default function ClimateBar({ point, committed }) {
   const [wx, setWx] = useState(null)
   const [climate, setClimate] = useState(null)
   const [addr, setAddr] = useState(null)
+  // 접기/펴기 — 모바일 기본 접힘, 선택은 로컬 저장. 지도 공간 확보용.
+  const [collapsed, setCollapsed] = useState(() => {
+    try {
+      const v = localStorage.getItem('dcmap.cbCollapsed')
+      if (v != null) return v === '1'
+    } catch {
+      /* ignore */
+    }
+    return typeof window !== 'undefined' && window.matchMedia?.('(max-width: 640px)').matches
+  })
+  const toggle = () => {
+    setCollapsed((v) => {
+      const nv = !v
+      try {
+        localStorage.setItem('dcmap.cbCollapsed', nv ? '1' : '0')
+      } catch {
+        /* ignore */
+      }
+      return nv
+    })
+  }
 
   useEffect(() => {
     if (!point) return
@@ -40,7 +61,7 @@ export default function ClimateBar({ point, committed }) {
   const placeName = dong || (committed ? addr?.parcel : null) || region
 
   return (
-    <div className="climate-bar">
+    <div className={`climate-bar ${collapsed ? 'collapsed' : ''}`}>
       <div className="cb-head">
         <span className="cb-where" title={addr?.parcel || placeName || coordStr}>
           {committed ? '📍' : '🧭'}{' '}
@@ -53,9 +74,21 @@ export default function ClimateBar({ point, committed }) {
             <b className="cb-place">{coordStr}</b>
           )}
         </span>
+        {/* 접힘 시 헤더에 기후지수·기온만 압축 표시 */}
+        {collapsed && (
+          <span className="cb-mini">
+            {idx && <span className={`ci-dot tone-${idx.tone}`} title={idx.label}>{idx.label}</span>}
+            {wx?.temp != null && <b className="cb-mini-temp">{wx.temp}°C</b>}
+          </span>
+        )}
         <span className="cb-src">케이웨더 실황</span>
+        <button type="button" className="cb-toggle" onClick={toggle} aria-expanded={!collapsed} aria-label={collapsed ? '기후 패널 펴기' : '기후 패널 접기'}>
+          {collapsed ? '▾' : '▴'}
+        </button>
       </div>
 
+      {!collapsed && (
+      <>
       <div className="cb-body">
         {/* 데이터센터 기후지수 배지 (아주나쁨~아주좋음) */}
         {idx ? (
@@ -97,6 +130,8 @@ export default function ClimateBar({ point, committed }) {
           <div className="cb-why">{idx.why}</div>
           <div className="cb-basis">근거: {idx.basis}</div>
         </>
+      )}
+      </>
       )}
     </div>
   )
