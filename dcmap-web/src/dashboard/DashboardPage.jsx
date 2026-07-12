@@ -156,6 +156,21 @@ export default function DashboardPage() {
   }, [])
   const maxRollup = Math.max(...rollup.map((r) => Math.max(r.dcMw, r.newMw, 1)), 1)
 
+  // 해석 코멘트 — "어디 중심으로 준비되는가"의 답을 실데이터에서 도출(가짜 수치 없음).
+  const rollupInsight = useMemo(() => {
+    const sum = (arr, k) => arr.reduce((a, r) => a + (r[k] || 0), 0)
+    const cap = rollup.filter((r) => CAPITAL_SIDOS.has(r.sido))
+    const non = rollup.filter((r) => !CAPITAL_SIDOS.has(r.sido))
+    const totalDc = sum(rollup, 'dcCount') || 1
+    const capDc = sum(cap, 'dcCount')
+    const capPct = Math.round((capDc / totalDc) * 100)
+    const nonNew = sum(non, 'newMw')
+    const capNew = sum(cap, 'newMw')
+    const topDc = [...rollup].sort((a, b) => b.dcCount - a.dcCount)[0]
+    const topNew = [...rollup].filter((r) => r.newMw > 0).sort((a, b) => b.newMw - a.newMw)[0]
+    return { totalDc, capDc, capPct, nonNew, capNew, topDc, topNew }
+  }, [rollup])
+
   const maxRegion = d.regions[0]?.[1] ?? 1
   const maxLand = Math.max(...d.landTop.map(([, v]) => Math.abs(v)), 0.01)
 
@@ -174,6 +189,11 @@ export default function DashboardPage() {
         </p>
 
         <div className="dash-grid">
+          <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
+            <span className="dsh-num">01</span>
+            <span className="dsh-title">데이터센터 현황</span>
+            <span className="dsh-sub">어디에 얼마나 — 분포·상태·용량·파이프라인</span>
+          </div>
           {/* 지역별 전력·데이터센터 한눈에 — 어디 중심으로 준비가 진행되는지(공개 소스) */}
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
             <div className="chart-title">지역별 전력·데이터센터 한눈에 — 어디 중심으로 준비되는가</div>
@@ -210,6 +230,19 @@ export default function DashboardPage() {
                   </div>
                 )}
               />
+            </div>
+            <div className="rollup-insight">
+              <span className="ri-tag">해석</span>
+              <p>
+                데이터센터는 <strong>수도권에 {rollupInsight.capDc}곳({rollupInsight.capPct}%)</strong> 몰려 있는 반면,
+                2025년 신규 발전설비는 <strong>비수도권에 {rollupInsight.nonNew.toLocaleString()}MW</strong>
+                {rollupInsight.capNew > 0 ? `(수도권 ${rollupInsight.capNew.toLocaleString()}MW)` : ''} 신설 —
+                <strong> 수요는 수도권, 신규 공급은 비수도권</strong>으로 갈린다.
+                {rollupInsight.topDc && ` 최다 DC 밀집은 ${rollupInsight.topDc.sido}(${rollupInsight.topDc.dcCount}곳)`}
+                {rollupInsight.topNew && `, 신규 발전은 ${rollupInsight.topNew.sido}(${rollupInsight.topNew.newMw.toLocaleString()}MW)에 집중`}.
+                계통영향평가 ±15점(수도권 감점·비수도권 가점)까지 겹쳐, <strong>전력이 있는 비수도권으로 신규 AIDC가 내려갈 유인</strong>이
+                수치로 드러난다.
+              </p>
             </div>
             <p className="chart-note">
               데이터센터(공개 시드) · 2025 신규 발전 설비(설비현황) · 발전허가(3MW 초과 허가대장 2024+). 정렬: DC 공개용량 + 신규 발전
@@ -280,6 +313,11 @@ export default function DashboardPage() {
             <p className="chart-note">공정률은 사업자 미공개 — 목표 연도 기준. 이벤트 타임라인은 D2 어댑터 가동 후.</p>
           </section>
 
+          <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
+            <span className="dsh-num">02</span>
+            <span className="dsh-title">입지·시장 신호</span>
+            <span className="dsh-sub">지가 흐름·사업자 공시 — 준비의 선행 지표</span>
+          </div>
           <section className="calc-card">
             <div className="chart-title">LAND PULSE — 입지 시군구 지가변동률 (월간, KOSIS)</div>
             {[...d.landTop, ...d.landBottom].map(([k, v]) => (
@@ -334,6 +372,11 @@ export default function DashboardPage() {
             )}
           </section>
 
+          <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
+            <span className="dsh-num">03</span>
+            <span className="dsh-title">전력·계통</span>
+            <span className="dsh-sub">공급 여건 — 설비·발전 믹스·실적 (DC 입지의 핵심 제약)</span>
+          </div>
           <section className="calc-card">
             <div className="chart-title">발전설비 현황 — EPSIS 전력시장 등록설비 (연료원/구분별)</div>
             {epsis?.available ? (
@@ -447,6 +490,11 @@ export default function DashboardPage() {
             )}
           </section>
 
+          <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
+            <span className="dsh-num">04</span>
+            <span className="dsh-title">시스템 진단</span>
+            <span className="dsh-sub">공개 API 연동 상태 — 값은 노출되지 않음</span>
+          </div>
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
             <div className="chart-title">API 연동 현황 — 서버 env 진단</div>
             {status?.sources ? (

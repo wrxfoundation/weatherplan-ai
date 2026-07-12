@@ -3043,6 +3043,70 @@ a {
   margin-top: 0;
 }
 
+/* 대시보드 섹션 그룹 헤드 — 취지 중심 정돈(01 데이터센터 / 02 입지·시장 / 03 전력 / 04 진단) */
+.dash-section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 2px 4px;
+  border-top: 1px solid var(--line);
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.dash-grid > .dash-section-head:first-child {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 2px;
+}
+.dash-section-head .dsh-num {
+  font-family: var(--font-latin, inherit);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+.dash-section-head .dsh-title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--ink);
+}
+.dash-section-head .dsh-sub {
+  font-size: var(--text-xs);
+  color: var(--grey);
+}
+
+/* 한눈에 패널 해석 코멘트 — 데이터에서 도출한 분석 문장 */
+.rollup-insight {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 12px 0 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.rollup-insight .ri-tag {
+  flex: none;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  white-space: nowrap;
+}
+.rollup-insight p {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--ink);
+}
+.rollup-insight strong {
+  color: var(--accent-ink, var(--ink));
+  font-weight: var(--weight-bold);
+}
+
 /* 지역별 전력·DC 한눈에 테이블 */
 .rollup-table {
   margin-top: 6px;

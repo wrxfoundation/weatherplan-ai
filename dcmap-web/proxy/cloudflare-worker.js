@@ -34,6 +34,7 @@ const ALLOW = new Set([
   'bigdata.kepco.co.kr', // 한전 분산전원연계정보(여유용량)
   'www.safetydata.go.kr', // 재난안전
   'api.vworld.kr', // 좌표→법정동코드(headroom/disaster 선행 호출)
+  'sgisapi.mods.go.kr', // SGIS 인구·밀도(통계청)
 ])
 
 const UA =

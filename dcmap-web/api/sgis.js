@@ -13,8 +13,14 @@
  *
  * 응답: { available, population?, households?, radiusKm?, scope } | { available:false, reason }
  */
+import http from 'node:http'
+import https from 'node:https'
+import { promises as dnsp } from 'node:dns'
+import { proxyConfigured, proxyGetText } from './_proxy.js'
+
 // 인증 엔드포인트 — 계정이 통계청(kostat.go.kr)에 있으면 SGIS_AUTH_URL로 교체(재배포 불필요).
 const AUTH_URL = process.env.SGIS_AUTH_URL || 'https://sgisapi.mods.go.kr/OpenAPI3/auth/authentication.json'
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 // SGIS 인구(population.json)는 좌표가 아니라 year+adm_cd 기준인데, SGIS 시군구코드는 행정표준코드와
 // 다르다(강남구: 행정표준 11680 vs SGIS 11230). 그래서 **시도 2자리 코드(양 체계 동일)로 질의 +
 // low_search=1**로 하위 시군구를 모두 받은 뒤 **시군구 이름으로 매칭**한다(정적 코드표 불필요).
@@ -30,21 +36,74 @@ const num = (v) => {
   return Number.isFinite(n) ? n : undefined
 }
 
+const parseBody = (text, ok, status) => {
+  let json = null
+  try {
+    json = JSON.parse(text)
+  } catch {
+    json = null
+  }
+  // SGIS는 오류도 본문(errCd/errMsg)에 담아 주는 경우가 많다 — HTTP 상태와 함께 본문도 보존(진단)
+  if (!ok) return { _status: status, _body: json, _head: text.slice(0, 200) }
+  return json ?? { _status: 'not_json', _head: text.slice(0, 200) }
+}
+
+/** IPv4 A레코드 직결 GET(text) — sgisapi.mods.go.kr의 IPv6 블랙홀/클라우드IP 이슈 우회. */
+async function rawGetText(urlStr, ms = 6000) {
+  const u = new URL(urlStr)
+  const ips = await dnsp.resolve4(u.hostname)
+  if (!ips?.length) throw new Error('no_a_record')
+  const isHttps = u.protocol === 'https:'
+  const mod = isHttps ? https : http
+  const opts = {
+    host: ips[0],
+    port: u.port || (isHttps ? 443 : 80),
+    path: u.pathname + u.search,
+    method: 'GET',
+    timeout: ms,
+    headers: { Host: u.hostname, 'User-Agent': UA, Accept: 'application/json', Connection: 'close' },
+  }
+  if (isHttps) opts.servername = u.hostname
+  return await new Promise((resolve, reject) => {
+    const req = mod.request(opts, (r) => {
+      let data = ''
+      r.setEncoding('utf8')
+      r.on('data', (c) => (data += c))
+      r.on('end', () => resolve({ text: data, status: r.statusCode || 0 }))
+    })
+    req.on('timeout', () => req.destroy(new Error('raw_timeout')))
+    req.on('error', reject)
+    req.end()
+  })
+}
+
+// 프록시(설정 시) → undici → IPv4 직결 순으로 시도. SGIS도 Vercel 클라우드 IP에서 막힐 수 있어(vworld와 동일)
+// 정부포털 공통 우회 체인을 적용.
 async function fetchJson(url, ms = 7000) {
+  if (proxyConfigured()) {
+    try {
+      return parseBody(await proxyGetText(url, ms), true, 200)
+    } catch {
+      /* undici로 폴백 */
+    }
+  }
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
   try {
-    const r = await fetch(url, { signal: ctrl.signal, headers: { Accept: 'application/json', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36' } })
-    const text = await r.text()
-    let json
-    try {
-      json = JSON.parse(text)
-    } catch {
-      json = null
+    const r = await fetch(url, { signal: ctrl.signal, headers: { Accept: 'application/json', 'User-Agent': UA } })
+    return parseBody(await r.text(), r.ok, r.status)
+  } catch (undiciErr) {
+    // undici 실패(CONNECT_TIMEOUT/SOCKET) → IPv4 직결 https/http
+    const httpUrl = url.startsWith('https://') ? url.replace('https://', 'http://') : url
+    for (const u of [url, httpUrl]) {
+      try {
+        const { text, status } = await rawGetText(u, ms)
+        return parseBody(text, status >= 200 && status < 400, status)
+      } catch {
+        /* 다음 경로 */
+      }
     }
-    // SGIS는 오류도 본문(errCd/errMsg)에 담아 주는 경우가 많다 — HTTP 상태와 함께 본문도 보존(진단)
-    if (!r.ok) return { _status: r.status, _body: json, _head: text.slice(0, 200) }
-    return json ?? { _status: 'not_json', _head: text.slice(0, 200) }
+    return { _status: `net_${undiciErr?.cause?.code || undiciErr?.name || 'error'}` }
   } finally {
     clearTimeout(t)
   }
