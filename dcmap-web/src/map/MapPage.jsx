@@ -35,7 +35,8 @@ const ISO_SVG = `<svg viewBox="0 0 24 26" xmlns="http://www.w3.org/2000/svg">
 </svg>`
 
 function markerIcon(f, iso) {
-  const key = f.status === 'delayed' ? 'planned' : f.status
+  // cancelled(무산): 계획 마커 모양을 쓰되 'cancelled' 수식자로 흐리게 표시(지도에서 사라지지 않게)
+  const key = f.status === 'delayed' ? 'planned' : f.status === 'cancelled' ? 'planned cancelled' : f.status
   const xl = f.power_mw_public >= HYPERSCALE_MW
   if (iso) {
     const s = xl ? 30 : 22
@@ -181,7 +182,10 @@ export default function MapPage({ power = false }) {
   const totalMw = useMemo(() => filtered.reduce((s, f) => s + (f.power_mw_public ?? 0), 0), [filtered])
   const statusCounts = useMemo(() => {
     const c = { operating: 0, construction: 0, planned: 0 }
-    for (const f of filtered) c[f.status === 'delayed' ? 'planned' : f.status] += 1
+    for (const f of filtered) {
+      const k = f.status === 'delayed' ? 'planned' : f.status
+      if (c[k] != null) c[k] += 1 // cancelled(무산) 등은 운영/건설/계획 집계에서 제외
+    }
     return c
   }, [filtered])
 

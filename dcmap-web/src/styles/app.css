@@ -300,6 +300,25 @@ a {
   height: 6px;
 }
 
+/* 무산(cancelled) — 회색 점선, 흐리게 */
+.dot.cancelled {
+  background: transparent;
+  border: 2px dashed var(--grey);
+  width: 6px;
+  height: 6px;
+  opacity: 0.7;
+}
+.hc-dot.cancelled {
+  background: var(--grey);
+  opacity: 0.55;
+}
+/* 무산 마커 — 계획 모양 + 흐림/탈채도 (지도에서 사라지지 않되 눈에 덜 띄게) */
+.dc-marker.cancelled,
+.dc-iso.cancelled {
+  opacity: 0.45;
+  filter: grayscale(0.85);
+}
+
 /* 셀렉트 — 네이티브 화살표 제거 후 커스텀 츠브론: 텍스트/아이콘 간격을 직접 통제 */
 .filterbar select,
 .list-toolbar select {

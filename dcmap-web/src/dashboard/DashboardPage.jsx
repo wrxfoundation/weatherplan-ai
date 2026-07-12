@@ -147,7 +147,8 @@ export default function DashboardPage() {
     let totalMw = 0
     const regionMw = new Map()
     for (const f of FACILITIES) {
-      by[f.status === 'delayed' ? 'planned' : f.status] += 1
+      const sk = f.status === 'delayed' ? 'planned' : f.status
+      if (by[sk] != null) by[sk] += 1 // cancelled(무산)은 운영/건설/계획 집계 제외
       if (f.power_mw_public != null) {
         totalMw += f.power_mw_public
         regionMw.set(f.sido, (regionMw.get(f.sido) ?? 0) + f.power_mw_public)
