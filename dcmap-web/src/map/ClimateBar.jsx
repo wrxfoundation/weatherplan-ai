@@ -35,17 +35,23 @@ export default function ClimateBar({ point, committed }) {
 
   const dong = dongLabel(addr)
   const coordStr = point ? `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}` : ''
-  // 좌표 옆에 근접 동을 표기. 동 미확보(vworld 미연동) 시 최근접 관측지점으로 폴백.
+  // 구/동 단위를 앞에 크게, 좌표는 뒤에 작게 흐리게. 동 미확보(vworld 미연동) 시 최근접 관측지점 폴백.
   const region = normal ? `${normal.name} 인근` : null
-  const where = committed
-    ? dong || addr?.parcel || coordStr
-    : `${coordStr}${dong ? ` · ${dong}` : region ? ` · ${region}` : ''}`
+  const placeName = dong || (committed ? addr?.parcel : null) || region
 
   return (
     <div className="climate-bar">
       <div className="cb-head">
-        <span className="cb-where" title={addr?.parcel || where}>
-          {committed ? '📍' : '🧭'} {where}
+        <span className="cb-where" title={addr?.parcel || placeName || coordStr}>
+          {committed ? '📍' : '🧭'}{' '}
+          {placeName ? (
+            <>
+              <b className="cb-place">{placeName}</b>
+              {coordStr && <span className="cb-coord">{coordStr}</span>}
+            </>
+          ) : (
+            <b className="cb-place">{coordStr}</b>
+          )}
         </span>
         <span className="cb-src">케이웨더 실황</span>
       </div>

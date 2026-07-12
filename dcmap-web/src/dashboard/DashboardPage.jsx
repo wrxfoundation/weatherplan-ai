@@ -345,25 +345,36 @@ export default function DashboardPage() {
           </section>
 
           <section className="calc-card">
-            <div className="chart-title">최근 DC 공시 — DART 전자공시 (D2)</div>
+            <div className="chart-title">DC 운영사 투자·공급·DC 공시 — DART 전자공시 (D2)</div>
             {filings?.available ? (
-              <div className="facility-list">
-                <ExpandableList
-                  items={filings.filings}
-                  initial={6}
-                  render={(f, i) => (
-                    <a key={i} className="facility-row" href={f.url} target="_blank" rel="noreferrer">
-                      <span className="dot construction" />
-                      <span>
-                        <span className="name">{f.title}</span>
-                        <span className="meta">
-                          {f.corp} · {f.date}
+              <>
+                <div className="facility-list">
+                  <ExpandableList
+                    items={filings.filings}
+                    initial={6}
+                    render={(f, i) => (
+                      <a key={i} className="facility-row" href={f.url} target="_blank" rel="noreferrer">
+                        <span className={`dot ${f.type === '데이터센터' ? 'operating' : 'construction'}`} />
+                        <span>
+                          <span className="name">{f.title}</span>
+                          <span className="meta">
+                            {f.corp} · {f.date}
+                            {f.type && (
+                              <span className={`badge ${f.type === '데이터센터' ? 'status-operating' : 'verify'}`} style={{ marginLeft: 6 }}>
+                                {f.type}
+                              </span>
+                            )}
+                          </span>
                         </span>
-                      </span>
-                    </a>
-                  )}
-                />
-              </div>
+                      </a>
+                    )}
+                  />
+                </div>
+                <p className="chart-note">
+                  DC 운영·건설 상장사(삼성전자·SK·KT·LG U+·네이버·카카오·GS)의 최근 {filings.window_days ?? 90}일 공시.
+                  DART 공시 제목은 유형만 담겨 '<strong>투자·공급</strong>'은 데이터센터 여부를 본문에서 확인해야 함(제목에 DC 명시 시 '데이터센터' 태그).
+                </p>
+              </>
             ) : (
               <p className="chart-note">
                 사업자 공시(투자·착공·설비 신설)는 언론보다 선행하는 1차 출처 — DART API 연동 시 실시간 표시.
