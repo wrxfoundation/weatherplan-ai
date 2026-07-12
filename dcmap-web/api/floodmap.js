@@ -12,8 +12,13 @@
  *
  * 응답: { available, depthM?, grade?, scenario?, floodType?, scope } | { available:false, reason }
  */
+import http from 'node:http'
+import https from 'node:https'
+import { promises as dnsp } from 'node:dns'
+
 const DEFAULT_URL =
   'https://data.floodmap.go.kr/openapi/floodDepth?lon={lng}&lat={lat}&serviceKey={key}&dataType=JSON'
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 
 const num = (v) => {
   if (v == null) return undefined
@@ -21,21 +26,61 @@ const num = (v) => {
   return Number.isFinite(n) ? n : undefined
 }
 
-async function fetchJson(url, ms = 14000) {
+const asJson = (text) => {
+  try {
+    return JSON.parse(text)
+  } catch {
+    return { _status: 'not_json' }
+  }
+}
+
+async function fetchJson(url, ms = 8000) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
   try {
-    const r = await fetch(url, { signal: ctrl.signal, headers: { Accept: 'application/json', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36' } })
+    const r = await fetch(url, { signal: ctrl.signal, headers: { Accept: 'application/json', 'User-Agent': UA } })
     if (!r.ok) return { _status: r.status }
-    const text = await r.text()
-    try {
-      return JSON.parse(text)
-    } catch {
-      return { _status: 'not_json' }
-    }
+    return asJson(await r.text())
   } finally {
     clearTimeout(t)
   }
+}
+
+/**
+ * IPv4 A레코드 직결 GET — floodmap 포털의 UND_ERR_CONNECT_TIMEOUT(IPv6 블랙홀·happy-eyeballs)
+ * 우회. https는 SNI로 인증서 검증 유지. (supply 프록시와 동일 처방)
+ */
+async function rawGetText(urlStr, ms = 7000) {
+  const u = new URL(urlStr)
+  const ips = await dnsp.resolve4(u.hostname)
+  if (!ips?.length) throw new Error('no_a_record')
+  const isHttps = u.protocol === 'https:'
+  const mod = isHttps ? https : http
+  const opts = {
+    host: ips[0],
+    port: u.port || (isHttps ? 443 : 80),
+    path: u.pathname + u.search,
+    method: 'GET',
+    timeout: ms,
+    headers: { Host: u.hostname, 'User-Agent': UA, Accept: 'application/json', Connection: 'close' },
+  }
+  if (isHttps) opts.servername = u.hostname
+  return await new Promise((resolve, reject) => {
+    const req = mod.request(opts, (r) => {
+      if (r.statusCode && r.statusCode >= 400) {
+        r.resume()
+        reject(new Error(`status_${r.statusCode}`))
+        return
+      }
+      let data = ''
+      r.setEncoding('utf8')
+      r.on('data', (c) => (data += c))
+      r.on('end', () => resolve(data))
+    })
+    req.on('timeout', () => req.destroy(new Error('raw_timeout')))
+    req.on('error', reject)
+    req.end()
+  })
 }
 
 /* 응답 구조가 포털 버전마다 달라 방어적으로 필드 탐색 */
@@ -86,13 +131,35 @@ export default async function handler(req, res) {
       .replaceAll('{lng}', String(lng))
       .replaceAll('{key}', encodeURIComponent(key))
 
-    let body
-    try {
-      body = await fetchJson(url)
-    } catch (e1) {
-      // 일부 정부 포털은 443 미개방/차단 — http 폴백 (서버 간 호출)
-      if (url.startsWith('https://')) body = await fetchJson(url.replace('https://', 'http://'))
-      else throw e1
+    // 마감시한(10s) 안에서 순차 폴백. 각 단계를 짧게 잡아 IPv4 직결 단계까지 예산이 남게 한다.
+    // undici https(정상 빠른 경로) → IPv4직결 https(CONNECT_TIMEOUT 우회) → IPv4직결 http(최후).
+    const httpUrl = url.startsWith('https://') ? url.replace('https://', 'http://') : url
+    const start = Date.now()
+    const DEADLINE = 10000
+    const remain = () => DEADLINE - (Date.now() - start)
+    const tiers = [
+      () => fetchJson(url, Math.min(3500, remain())),
+      async () => asJson(await rawGetText(url, Math.min(4000, remain()))),
+      async () => asJson(await rawGetText(httpUrl, Math.min(3000, remain()))),
+    ]
+    let body = null
+    let lastErr = null
+    for (const tier of tiers) {
+      if (remain() < 800) break
+      try {
+        const b = await tier()
+        if (b && !b._status) {
+          body = b
+          break
+        }
+        body = b // _status면 기록만 하고 다음 단계 시도
+      } catch (e) {
+        lastErr = e
+      }
+    }
+    if (!body) {
+      res.status(200).json({ available: false, reason: `upstream_${lastErr?.cause?.code || lastErr?.name || 'unreachable'}` })
+      return
     }
     if (body?._status) {
       res.status(200).json({ available: false, reason: `upstream_${body._status}` })

@@ -3,11 +3,13 @@
 
 const cache = new Map()
 
-async function fetchJson(url) {
+// 기본 9s — vworld(재시도)·정부포털은 4.5s 안에 못 끝나 '연동 대기'로 오탐되던 것을 완화.
+// 집계형(EPSIS 페이지네이션 등)은 호출부에서 더 길게 지정한다(서버 예산 ~13s과 맞춤).
+async function fetchJson(url, ms = 9000) {
   if (cache.has(url)) return cache.get(url)
   try {
     const ctrl = new AbortController()
-    const t = setTimeout(() => ctrl.abort(), 4500)
+    const t = setTimeout(() => ctrl.abort(), ms)
     const r = await fetch(url, { signal: ctrl.signal })
     clearTimeout(t)
     if (!r.ok) return null
@@ -77,14 +79,17 @@ export const headroomFor = (lat, lng) => fetchJson(`/api/headroom?${q(lat, lng)}
 /** DART 최근 DC 관련 공시 (D2 이벤트) — { filings: [{corp,title,date,url}] } | null */
 export const filingsRecent = () => fetchJson('/api/filings')
 
+// 집계형 data.go.kr 프록시는 서버에서 최대 ~13s(EPSIS 페이지네이션·supply 폴백) 걸리므로
+// 클라이언트 타임아웃을 16s로 — 4.5s로는 정상 응답도 '연동 대기'로 오탐됐다.
+const POWER_MS = 16000
 /** EPSIS/KPX 발전설비현황 — { byFuel:[{fuel,mw}], facilities, totalMw } | null (연동 대기 시 null) */
-export const epsisCapacity = () => fetchJson('/api/power?src=epsis')
+export const epsisCapacity = () => fetchJson('/api/power?src=epsis', POWER_MS)
 
 /** KPX 전력수급예보 — { asOf, supplyMw, peakMw, reserveMw, reservePct, rows } | null (연동 대기 시 null) */
-export const supplyForecast = () => fetchJson('/api/power?src=supply')
+export const supplyForecast = () => fetchJson('/api/power?src=supply', POWER_MS)
 
 /** KPX 전력거래실적 — { asOf, byFuel:[{fuel,capacityMw,tradedMwh}], totalMwh } | null (연동 대기 시 null) */
-export const tradingMix = () => fetchJson('/api/power?src=trading')
+export const tradingMix = () => fetchJson('/api/power?src=trading', POWER_MS)
 
 /** 건축HUB 지번별 전기사용량 — { usage, unit, useYm } | null. 법정동코드+번지+사용년월 필요 */
 export const bldEnergyFor = ({ sigunguCd, bjdongCd, bun, ji, useYm }) =>
@@ -94,8 +99,9 @@ export const bldEnergyFor = ({ sigunguCd, bjdongCd, bun, ji, useYm }) =>
       )
     : Promise.resolve(null)
 
-/** 홍수위험지도 침수 위험 — { depthM, grade, floodType, scenario } | null (리스크축 침수) */
-export const floodRiskFor = (lat, lng) => fetchJson(`/api/floodmap?${q(lat, lng)}`)
+/** 홍수위험지도 침수 위험 — { depthM, grade, floodType, scenario } | null (리스크축 침수).
+ *  포털 IPv4 폴백까지 서버가 ~10s 쓸 수 있어 클라이언트도 12s로 넉넉히 준다. */
+export const floodRiskFor = (lat, lng) => fetchJson(`/api/floodmap?${q(lat, lng)}`, 12000)
 
 /** SGIS 반경 인구/가구 — { population, households, radiusKm } | null (리스크축 민원 프록시) */
 export const populationFor = (lat, lng) => fetchJson(`/api/sgis?${q(lat, lng)}`)
