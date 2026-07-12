@@ -7,6 +7,7 @@ import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { SUBSTATIONS, SUBSTATION_META } from '../data/substations.js'
 import { POWER_MARKET_META, PURCHASE_PRICE_2024, PURCHASE_SUMMARY, PRICE_PEAK, PRICE_LOW } from '../data/powerMarket.js'
 import { DC_ASSESSMENT, DC_ASSESSMENT_ROLLUP, GRID_ASSESSMENT_META, approvalLabel } from '../data/gridAssessment.js'
+import { GRID_HEADROOM, GRID_HEADROOM_META, headroomLabel } from '../data/gridHeadroom.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
 import { filingsRecent, epsisCapacity, apiStatus, tradingMix, riskFor } from '../data/liveApi.js'
@@ -536,6 +537,44 @@ export default function DashboardPage() {
               분산에너지 특별법 <strong>전력계통영향평가</strong> 1차 기술검토(한전) — DC 신·증설 신청 대비 기술적 <strong>전력공급 가능/불가 용량(MW)</strong>. 승인율=가능/(가능+불가).
               <strong>수도권 {DC_ASSESSMENT_ROLLUP.수도권.ratePct}% vs 비수도권 {DC_ASSESSMENT_ROLLUP.비수도권.ratePct}%</strong> — 수도권 계통 병목이 실측으로 드러남(경기·인천 신청의 절반 이상이 공급불가). 충북·경북·경남·대구·광주는 100% 가능.
               신청 시점 누적 심사치이며 부지별 확정은 개별 1차 기술검토(주소 기준). 출처: <strong>{GRID_ASSESSMENT_META.source}</strong>.
+            </p>
+          </section>
+          <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
+            <div className="chart-title">지역 계통 공급여유 — 한전 연계가능용량 (시도별, 2027 전망)</div>
+            {(() => {
+              const rows = Object.values(GRID_HEADROOM).filter((g) => g.sido !== '광주')
+              const maxMw = Math.max(...rows.map((g) => g.mw), 1)
+              return (
+                <div className="rollup-table" role="table">
+                  <div className="rollup-head" role="row">
+                    <span>시도</span>
+                    <span>계통 공급여유</span>
+                    <span>판정</span>
+                  </div>
+                  {[...rows]
+                    .sort((a, b) => b.mw - a.mw)
+                    .map((g) => (
+                      <div key={g.sido} className="rollup-row" role="row">
+                        <span className="rollup-sido">
+                          {g.sido === '전남' ? '전남(광주통합)' : g.sido}
+                          {CAPITAL_SIDOS.has(g.sido) && <span className="badge" style={{ marginLeft: 6 }}>수도권</span>}
+                        </span>
+                        <span>
+                          <b>{g.mw.toLocaleString()}</b>MW
+                          <span className="rollup-bar">
+                            <i style={{ width: `${(g.mw / maxMw) * 100}%`, background: g.mw <= 10 ? '#ef4444' : undefined }} />
+                          </span>
+                        </span>
+                        <span className="muted" style={{ fontSize: '0.9em' }}>{headroomLabel(g.mw)}</span>
+                      </div>
+                    ))}
+                </div>
+              )
+            })()}
+            <p className="chart-note">
+              한전 <strong>연계가능용량(공급여유)</strong> 시도 총량(2027 전망). DC 승인율(신청 대비)과 달리 <strong>잔여 연결 여력(MW)</strong>을 나타냄.
+              <strong>인천 5MW(계통 포화)</strong>는 자급률 165%(발전 잉여)와 정반대 — 발전 잉여 ≠ 수용 여유. 경북·충남·전남은 여유·승인율 모두 우수.
+              시도 총량이라 시군구 편차 크며 부지별 확정은 한전 주소검색. 출처: <strong>{GRID_HEADROOM_META.source}</strong> (제주 미공개).
             </p>
           </section>
           <section className="calc-card">
