@@ -769,7 +769,7 @@ export default function DashboardPage() {
 
           {/* 지역별 송변전 인프라 — 한전 변전소 현황(154kV+). 설비 밀도(여유량 아님) */}
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
-            <div className="chart-title">지역별 송변전 인프라 — 154kV+ 변전소·변압기 용량 (한전 정보공개 2025)</div>
+            <div className="chart-title">지역별 송변전 인프라 — 154kV+ 변전소·변압기 용량 (한전 변전설비현황 2026.7)</div>
             <div className="rollup-table" role="table">
               <div className="rollup-head" role="row">
                 <span>지역(한전 본부)</span>
