@@ -2358,6 +2358,21 @@ a {
   white-space: nowrap;
 }
 
+/* 구/동 단위 — 앞에 크고 또렷하게 */
+.cb-place {
+  font-weight: var(--weight-bold);
+  color: var(--ink);
+}
+
+/* 좌표 — 뒤에 작게 흐리게 */
+.cb-coord {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: var(--weight-regular);
+  color: color-mix(in srgb, var(--grey) 78%, transparent);
+  letter-spacing: 0.01em;
+}
+
 .cb-src {
   flex-shrink: 0;
   font-size: 10px;

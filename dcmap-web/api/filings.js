@@ -27,7 +27,11 @@ const DC_CORPS = {
   '00113058': 'GS',
 }
 
+// DART list.json은 report_nm(공시 '유형'명)만 준다 — '데이터센터'는 본문에 있고 제목엔 거의 없다.
+// 그래서 (a) 제목에 DC가 드러나는 드문 케이스 + (b) DC 투자 신호가 되는 공시유형(신규시설투자·공급계약·
+// 유형자산 양수·타법인 출자)을 함께 잡되, 유형을 태깅해 '내용 확인 필요'를 정직히 표기한다.
 const DC_KEYWORDS = /(데이터센터|데이터\s*센터|IDC|전산센터|AI\s*데이터|하이퍼스케일)/
+const CAPEX_KEYWORDS = /(신규\s*시설\s*투자|유형자산\s*(양수|취득)|타법인\s*주식.*출자|영업양수|단일판매.*공급계약|공급계약\s*체결|증설)/
 
 async function fetchJson(url, ms = 6000) {
   const ctrl = new AbortController()
@@ -67,19 +71,30 @@ export default async function handler(req, res) {
           `&corp_code=${corp}&bgn_de=${ymd(begin)}&end_de=${ymd(end)}&page_count=100`
         const body = await fetchJson(url)
         if (body?.status !== '000' || !Array.isArray(body.list)) return []
-        return body.list
-          .filter((it) => DC_KEYWORDS.test(it.report_nm ?? ''))
-          .map((it) => ({
+        const out = []
+        for (const it of body.list) {
+          const nm = it.report_nm ?? ''
+          const isDc = DC_KEYWORDS.test(nm)
+          const isCapex = CAPEX_KEYWORDS.test(nm)
+          if (!isDc && !isCapex) continue
+          out.push({
             corp: name,
-            title: it.report_nm,
+            title: nm,
             date: it.rcept_dt,
+            type: isDc ? '데이터센터' : '투자·공급',
             url: `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${it.rcept_no}`,
-          }))
+          })
+          if (out.length >= 5) break // 대형사 공시 폭주 방지 — 회사당 최근 5건까지
+        }
+        return out
       }),
     )
-    const filings = perCorp.flat().sort((a, b) => (a.date < b.date ? 1 : -1))
+    // DC 명시 공시를 상단으로, 그 외엔 최신순
+    const filings = perCorp
+      .flat()
+      .sort((a, b) => (a.type !== b.type ? (a.type === '데이터센터' ? -1 : 1) : a.date < b.date ? 1 : -1))
     if (!filings.length) {
-      res.status(200).json({ available: false, reason: 'no_recent_dc_filings' })
+      res.status(200).json({ available: false, reason: 'no_recent_filings' })
       return
     }
     res.status(200).json({ available: true, filings: filings.slice(0, 20), window_days: days })
