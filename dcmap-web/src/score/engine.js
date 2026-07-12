@@ -33,8 +33,19 @@ function exposureItem(label, max, o, pendingMsg) {
 // DC 기후지수 단계(1 아주좋음 ~ 5 아주나쁨) → 냉각 점수(10점 만점)
 const CLIMATE_POINTS = { 1: 10, 2: 8, 3: 6, 4: 3, 5: 0 }
 
-export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null } = {}) {
+export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null } = {}) {
   const track = checkPowerTrack(mw, { nonCapital })
+
+  // 자가발전 인접(직접 PPA·자가발전 잠재) — 발전단지 최근접 거리 기반. 가까울수록 가점.
+  const selfGenItem =
+    plantKm != null
+      ? {
+          label: '자가발전 인접 (발전단지 최근접)',
+          max: 5,
+          points: plantKm <= 10 ? 5 : plantKm <= 30 ? 3.5 : plantKm <= 60 ? 2 : plantKm <= 100 ? 1 : 0,
+          basis: `최근접 발전단지 ${Math.round(plantKm)}km`,
+        }
+      : { label: '자가발전 인접', max: 5, points: null, pending: '발전소 위치 데이터' }
 
   // 리스크축: 침수(SGIS 홍수위험) 6 + 산사태(SGIS) 5 + 민원(SGIS 인구밀도) 4 = 15
   const floodItem = exposureItem('침수 위험 (SGIS 홍수위험지도)', 6, flood, 'SGIS 홍수위험지도 조회 필요')
@@ -71,7 +82,7 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
             ? '비수도권: 신속 처리 + AIDC 특별법 면제 트랙(2027.2~)'
             : '수도권: 감점 — 계통영향평가 전면 적용',
         },
-        { label: '자가발전 인접', max: 5, points: null, pending: '발전소 위치 데이터' },
+        selfGenItem,
       ],
     },
     {

@@ -9,6 +9,7 @@ export const STATUS_LABEL = {
   construction: '건설',
   planned: '계획',
   delayed: '지연',
+  cancelled: '무산',
 }
 
 export const GEOCODE_LABEL = {
