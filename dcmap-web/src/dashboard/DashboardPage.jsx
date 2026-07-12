@@ -6,7 +6,7 @@ import { GEN_PERMIT_BUBBLES } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
-import { filingsRecent, epsisCapacity, apiStatus, tradingMix } from '../data/liveApi.js'
+import { filingsRecent, epsisCapacity, apiStatus, tradingMix, riskFor } from '../data/liveApi.js'
 
 const TITLE = '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스'
 const DESC =
@@ -59,6 +59,7 @@ export default function DashboardPage() {
   const [epsis, setEpsis] = useState(null)
   const [trading, setTrading] = useState(null)
   const [status, setStatus] = useState(null)
+  const [riskRows, setRiskRows] = useState({})
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(t)
@@ -74,6 +75,51 @@ export default function DashboardPage() {
       alive = false
     }
   }, [])
+
+  // 지역별 재해 리스크 — DC 입지 시군구별 SGIS 홍수·산사태 노출률(대표점=시군구 내 DC 좌표).
+  // 시군구당 1회(kind=risk로 홍수+산사태 통합), 동시 4개 스로틀 + 엣지 캐시로 부하 최소화.
+  const riskTargets = useMemo(() => {
+    const m = new Map()
+    for (const f of FACILITIES) {
+      if (!f.sigungu || f.lat == null || f.lng == null) continue
+      const key = `${f.sido} ${f.sigungu}`
+      if (!m.has(key)) m.set(key, { key, sido: f.sido, sigungu: f.sigungu, lat: f.lat, lng: f.lng, dcCount: 0 })
+      m.get(key).dcCount += 1
+    }
+    return [...m.values()]
+  }, [])
+
+  useEffect(() => {
+    let alive = true
+    let i = 0
+    const worker = async () => {
+      while (i < riskTargets.length && alive) {
+        const t = riskTargets[i++]
+        const r = await riskFor(t.lat, t.lng)
+        if (!alive) return
+        if (r?.available) {
+          setRiskRows((prev) => ({ ...prev, [t.key]: { ...t, flood: r.flood, landslide: r.landslide, admNm: r.admNm } }))
+        }
+      }
+    }
+    Promise.all(Array.from({ length: 4 }, worker))
+    return () => {
+      alive = false
+    }
+  }, [riskTargets])
+
+  const riskList = useMemo(
+    () =>
+      Object.values(riskRows)
+        .map((r) => ({
+          ...r,
+          floodPct: r.flood?.exposurePct ?? null,
+          lsPct: r.landslide?.exposurePct ?? null,
+          maxPct: Math.max(r.flood?.exposurePct ?? 0, r.landslide?.exposurePct ?? 0),
+        }))
+        .sort((a, b) => b.maxPct - a.maxPct),
+    [riskRows],
+  )
 
   // KPX 수급예보(openapi.kpx.or.kr)는 클라우드 IP 차단으로 미연동 → 되는 데이터(전력거래실적)로
   // 공급측 신호를 대체 구성: 실제 발전 믹스에서 재생/원자력/화석 비중.
@@ -380,6 +426,58 @@ export default function DashboardPage() {
                 사업자 공시(투자·착공·설비 신설)는 언론보다 선행하는 1차 출처 — DART API 연동 시 실시간 표시.
                 현재 <span className="badge verify">연동 대기</span> (env 설정 후 활성).
               </p>
+            )}
+          </section>
+
+          {/* 지역별 재해 리스크 — DC 입지 시군구별 SGIS 홍수·산사태 노출률(공개 소스) */}
+          <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
+            <div className="chart-title">지역별 재해 리스크 — DC 입지 시군구 (SGIS 홍수·산사태 영향구역 인구 노출률)</div>
+            {riskList.length === 0 ? (
+              <p className="chart-note">
+                SGIS 국가 자연재해 위험지도 조회 중… (DC 입지 {riskTargets.length}개 시군구 · 서버 연동 시 표시)
+              </p>
+            ) : (
+              <>
+                <div className="rollup-table" role="table">
+                  <div className="rollup-head" role="row">
+                    <span>지역</span>
+                    <span>홍수 노출</span>
+                    <span>산사태 노출</span>
+                    <span>DC</span>
+                  </div>
+                  <ExpandableList
+                    items={riskList}
+                    initial={10}
+                    unit="개 지역"
+                    render={(r) => (
+                      <div key={r.key} className="rollup-row" role="row">
+                        <span className="rollup-sido">
+                          {r.sido} {r.sigungu}
+                          {CAPITAL_SIDOS.has(r.sido) && <span className="badge" style={{ marginLeft: 6 }}>수도권</span>}
+                        </span>
+                        <span>
+                          {r.floodPct != null ? <b>{r.floodPct}%</b> : <span className="muted">–</span>}
+                          <span className="rollup-bar">
+                            <i style={{ width: `${Math.min(100, r.floodPct ?? 0)}%` }} />
+                          </span>
+                        </span>
+                        <span>
+                          {r.lsPct != null ? <b>{r.lsPct}%</b> : <span className="muted">–</span>}
+                          <span className="rollup-bar alt">
+                            <i style={{ width: `${Math.min(100, r.lsPct ?? 0)}%` }} />
+                          </span>
+                        </span>
+                        <span>{r.dcCount}곳</span>
+                      </div>
+                    )}
+                  />
+                </div>
+                <p className="chart-note">
+                  홍수·산사태 <strong>영향구역 인구 노출률</strong>(읍면동 기준, 값 클수록 리스크). 정렬: 최대 노출 내림차순.
+                  대표점 = 시군구 내 DC 좌표. 출처: <strong>SGIS 국가 자연재해 위험지도</strong>
+                  ({Object.keys(riskRows).length}/{riskTargets.length} 조회 완료).
+                </p>
+              </>
             )}
           </section>
 
