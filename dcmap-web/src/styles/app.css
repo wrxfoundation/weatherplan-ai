@@ -273,6 +273,79 @@ a {
   color: var(--ink);
 }
 
+/* 전력 확보 타임라인 — 관문 스테퍼 */
+.pwr-timeline {
+  display: flex;
+  gap: 4px;
+  margin: 10px 0 2px;
+  overflow-x: auto;
+}
+.pt-step {
+  flex: 1 1 0;
+  min-width: 78px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  position: relative;
+  padding-top: 4px;
+}
+.pt-step::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: -2px;
+  right: 50%;
+  height: 2px;
+  background: var(--line);
+}
+.pt-step:first-child::before {
+  display: none;
+}
+.pt-node {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  z-index: 1;
+  border: 1.5px solid var(--line);
+  background: var(--navy-deep, #0a1120);
+  color: var(--grey);
+}
+.pt-do .pt-node {
+  border-color: var(--accent, #35d5ee);
+  color: var(--accent, #35d5ee);
+}
+.pt-exempt .pt-node {
+  border-color: #86efac;
+  background: color-mix(in srgb, #22c55e 22%, transparent);
+  color: #86efac;
+}
+.pt-skip .pt-node {
+  opacity: 0.5;
+}
+.pt-k {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.2;
+}
+.pt-d {
+  font-size: 9.5px;
+  color: var(--grey);
+  text-align: center;
+  line-height: 1.15;
+}
+.pt-skip .pt-k,
+.pt-skip .pt-d {
+  opacity: 0.55;
+}
+
 /* 추천 입지 마커 — 금색 순위 배지 */
 .reco-marker {
   background: transparent;

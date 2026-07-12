@@ -312,6 +312,28 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   </div>
                 ))}
               </div>
+              {/* 전력 확보 타임라인 — 관문 스테퍼(대상/면제/비대상 색). 실제 리드타임은 심의·계약에 따라 변동 */}
+              {(() => {
+                const t = r.track
+                const steps = [
+                  { k: '수전 협의', s: 'do', d: '한전 접속·수전전압' },
+                  { k: '전기사용예정통지', s: t.preNoticeRequired ? 'do' : 'skip', d: t.preNoticeRequired ? '대상(5,000kW+)' : '비대상' },
+                  { k: '계통영향평가', s: t.psiaRequired ? (t.exemption && nonCapital ? 'exempt' : 'do') : 'skip', d: t.psiaRequired ? (t.exemption && nonCapital ? `${t.exemption.effective}~ 면제 가능` : '대상(10MW+)') : '비대상' },
+                  { k: '건축 인허가', s: 'do', d: '용도지역·건축허가' },
+                  { k: '착공→준공', s: 'do', d: '전기설비·수전 준공' },
+                ]
+                return (
+                  <div className="pwr-timeline" role="list" aria-label="전력 확보 관문 타임라인">
+                    {steps.map((st, i) => (
+                      <div key={st.k} className={`pt-step pt-${st.s}`} role="listitem" title={st.d}>
+                        <span className="pt-node">{st.s === 'skip' ? '–' : st.s === 'exempt' ? '✓' : i + 1}</span>
+                        <span className="pt-k">{st.k}</span>
+                        <span className="pt-d">{st.d}</span>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })()}
               <p className="chart-note">
                 용량·입지로 본 두 핵심 관문의 통과 난이도 추정 — 실제 판정은 한전·기후에너지환경부 심의.{' '}
                 <Link to={`/?min_mw=${Math.max(1, Math.ceil(mw))}${nonCapital ? '&noncap=1' : ''}`}>
