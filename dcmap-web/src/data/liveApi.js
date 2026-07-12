@@ -138,9 +138,12 @@ export const populationFor = (lat, lng, admCd, sgg) =>
     `/api/sgis?${q(lat, lng)}${admCd ? `&adm_cd=${admCd}` : ''}${sgg ? `&sgg=${encodeURIComponent(sgg)}` : ''}`,
   )
 
-/** 재난안전 시군구 재해 이력 — { events, topType, recentYear } | null (리스크축 재해) */
-export const disasterFor = (lat, lng, admCd) =>
-  fetchJson(`/api/disaster?${q(lat, lng)}${admCd ? `&admCd=${admCd}` : ''}`)
+/** 재해 위험 — SGIS 산사태위험지도 영향범위 1순위(읍면동), 재난안전(시군구 재해 이력) 폴백. */
+export const disasterFor = async (lat, lng, admCd) => {
+  const s = await fetchJson(`/api/sgis?kind=landslide&${q(lat, lng)}`)
+  if (s?.available) return s
+  return fetchJson(`/api/disaster?${q(lat, lng)}${admCd ? `&admCd=${admCd}` : ''}`)
+}
 
 /** API 연동 현황 — { sources:[{key,label,axis,configured,available?,reason?}], probed } | null */
 export const apiStatus = (probe = true) =>

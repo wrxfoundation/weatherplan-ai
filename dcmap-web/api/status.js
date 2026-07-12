@@ -17,7 +17,7 @@ const SOURCES = [
   { key: 'filings', label: 'DART 공시', env: ['DART_API_KEY'], path: '/api/filings', point: false, axis: '시장' },
   { key: 'floodmap', label: '침수 위험(SGIS 홍수위험지도)', env: ['SGIS_KEY', 'SGIS_SECRET'], path: '/api/sgis?kind=flood', point: true, axis: '리스크' },
   { key: 'sgis', label: 'SGIS 인구', env: ['SGIS_KEY', 'SGIS_SECRET'], path: '/api/sgis?adm_cd=11680&sgg=강남구', point: false, axis: '리스크' },
-  { key: 'disaster', label: '재난안전 재해', env: ['DISASTER_KEY'], path: '/api/disaster?admCd=11680', point: true, axis: '리스크' },
+  { key: 'disaster', label: '산사태 위험(SGIS 산사태위험지도)', env: ['SGIS_KEY', 'SGIS_SECRET'], path: '/api/sgis?kind=landslide', point: true, axis: '리스크' },
 ]
 // 대표 지점(서울시청) — probe용
 const PROBE = 'lat=37.5665&lng=126.9780'
