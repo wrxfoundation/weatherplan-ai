@@ -9,34 +9,74 @@
  *       legalCode(법정동코드 10자리)와 번/지는 건축HUB 건물에너지(/api/bldenergy) 질의에 사용.
  * 포워드 응답: { available, lat, lng, matched?, matchType? }
  */
+import http from 'node:http'
+import https from 'node:https'
+import { promises as dnsp } from 'node:dns'
+
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+
 const num = (v) => {
   const n = Number.parseFloat(v)
   return Number.isFinite(n) ? n : undefined
 }
 
-const UA_HEADERS = (vwDomain) => ({
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-  Referer: `https://${vwDomain}/`,
-  Accept: 'application/json',
-})
+// IPv4 A레코드 직결 GET — vworld의 UND_ERR_SOCKET(연결 리셋)·IPv6 블랙홀·happy-eyeballs를
+// 우회. https는 SNI(servername)로 인증서 검증 유지. { status, text } 반환.
+async function rawGetText(urlStr, headers, ms = 8000) {
+  const u = new URL(urlStr)
+  const ips = await dnsp.resolve4(u.hostname)
+  if (!ips?.length) throw new Error('no_a_record')
+  const isHttps = u.protocol === 'https:'
+  const mod = isHttps ? https : http
+  const opts = {
+    host: ips[0],
+    port: u.port || (isHttps ? 443 : 80),
+    path: u.pathname + u.search,
+    method: 'GET',
+    timeout: ms,
+    headers: { ...headers, Host: u.hostname, Connection: 'close' },
+  }
+  if (isHttps) opts.servername = u.hostname
+  return await new Promise((resolve, reject) => {
+    const rq = mod.request(opts, (r) => {
+      let data = ''
+      r.setEncoding('utf8')
+      r.on('data', (c) => (data += c))
+      r.on('end', () => resolve({ status: r.statusCode || 200, text: data }))
+    })
+    rq.on('timeout', () => rq.destroy(new Error('raw_timeout')))
+    rq.on('error', reject)
+    rq.end()
+  })
+}
 
-// vworld는 간헐 소켓 리셋(UND_ERR_SOCKET)이 있어 1회 재시도하는 공통 fetch
-async function vworldFetch(url, vwDomain) {
-  const once = async () => {
+// vworld 호출: undici(전역 fetch) → 실패 시 IPv4 직결 https → IPv4 직결 http.
+// vworld 서버가 클라우드에서 소켓을 리셋(UND_ERR_SOCKET)하는 케이스를 IPv4 직결로 우회한다.
+// { status, text } 반환, 모든 경로 실패 시 throw.
+async function vworldGet(url, vwDomain) {
+  const headers = { 'User-Agent': UA, Referer: `https://${vwDomain}/`, Accept: 'application/json' }
+  let lastErr = null
+  try {
     const ctrl = new AbortController()
-    const t = setTimeout(() => ctrl.abort(), 8000)
+    const t = setTimeout(() => ctrl.abort(), 6000)
     try {
-      return await fetch(url, { signal: ctrl.signal, headers: UA_HEADERS(vwDomain) })
+      const r = await fetch(url, { signal: ctrl.signal, headers })
+      return { status: r.status, text: await r.text() }
     } finally {
       clearTimeout(t)
     }
+  } catch (e) {
+    lastErr = e
   }
-  try {
-    return await once()
-  } catch {
-    await new Promise((ok) => setTimeout(ok, 400))
-    return await once()
+  const httpUrl = url.startsWith('https://') ? url.replace('https://', 'http://') : url
+  for (const u of [url, httpUrl]) {
+    try {
+      return await rawGetText(u, headers, 7000)
+    } catch (e) {
+      lastErr = e
+    }
   }
+  throw lastErr || new Error('unreachable')
 }
 
 export default async function handler(req, res) {
@@ -61,14 +101,18 @@ export default async function handler(req, res) {
           'https://api.vworld.kr/req/address?service=address&request=getcoord&version=2.0' +
           `&crs=epsg:4326&address=${encodeURIComponent(query)}&format=json&type=${type}` +
           `&key=${key}&domain=${encodeURIComponent(vwDomain)}`
-        const r = await vworldFetch(gurl, vwDomain)
+        const { status, text } = await vworldGet(gurl, vwDomain)
         if (req.query.debug) {
-          const text = await r.text().catch(() => '')
-          res.status(200).json({ available: true, debug: true, type, upstreamStatus: r.status, bodyHead: text.slice(0, 300) })
+          res.status(200).json({ available: true, debug: true, type, upstreamStatus: status, bodyHead: text.slice(0, 300) })
           return
         }
-        if (!r.ok) continue
-        const body = await r.json().catch(() => null)
+        if (status >= 400) continue
+        let body = null
+        try {
+          body = JSON.parse(text)
+        } catch {
+          continue
+        }
         if (body?.response?.status !== 'OK') continue
         const pt = body.response.result?.point
         const x = num(pt?.x) // 경도
@@ -102,18 +146,23 @@ export default async function handler(req, res) {
     `&crs=epsg:4326&point=${lng},${lat}&format=json&type=both&zipcode=false&simple=false&key=${key}&domain=${encodeURIComponent(vwDomain)}`
 
   try {
-    const r = await vworldFetch(url, vwDomain)
-    // ?debug=1 → vworld 원응답 상태·본문 앞부분(주소 정보뿐, 시크릿 아님) — 502 원인 진단
+    const { status, text } = await vworldGet(url, vwDomain)
+    // ?debug=1 → vworld 원응답 상태·본문 앞부분(주소 정보뿐, 시크릿 아님) — 원인 진단
     if (req.query.debug) {
-      const text = await r.text().catch(() => '')
-      res.status(200).json({ available: true, debug: true, upstreamStatus: r.status, bodyHead: text.slice(0, 300) })
+      res.status(200).json({ available: true, debug: true, upstreamStatus: status, bodyHead: text.slice(0, 300) })
       return
     }
-    if (!r.ok) {
-      res.status(200).json({ available: false, reason: `upstream_${r.status}` })
+    if (status >= 400) {
+      res.status(200).json({ available: false, reason: `upstream_${status}` })
       return
     }
-    const body = await r.json()
+    let body = null
+    try {
+      body = JSON.parse(text)
+    } catch {
+      res.status(200).json({ available: false, reason: 'not_json' })
+      return
+    }
     if (body?.response?.status !== 'OK') {
       res.status(200).json({ available: false, reason: 'no_result' })
       return
