@@ -390,6 +390,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                     </span>
                   </div>
                 )}
+                {r.nearestSub && (
+                  <div style={{ marginTop: 4 }}>
+                    최근접 154kV+ 변전소 <strong>{r.nearestSub.name || `${r.nearestSub.kv}kV`}</strong> {r.nearestSub.km.toFixed(1)}km
+                    <span className="muted" style={{ marginLeft: 4, fontSize: '0.85em' }}>({r.nearestSub.kv}kV · OSM)</span>
+                  </div>
+                )}
                 {regionPower.sub && (
                   <div style={{ marginTop: 4 }}>
                     {regionPower.sub.region} · 154kV+ 변전소 <strong>{regionPower.sub.hv.toLocaleString()}개</strong>
@@ -758,6 +764,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                       coverage: r.knownMax,
                       headroomMw: headroom?.available ? headroom.availableMw ?? null : null,
                       gridMw: grid?.mw ?? null,
+                      subKm: r.nearestSub?.km ?? null,
                       climate: climateIdx?.label ?? null,
                       climateLevel: climateIdx?.level ?? null,
                       floodPct: flood?.available && flood.source === 'sgis' ? flood.exposurePct : null,

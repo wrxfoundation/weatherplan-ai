@@ -3,6 +3,7 @@
 // 커버리지가 낮은 상태의 총점 표기는 "근거 확보분 기준"으로만 한다.
 import { FACILITIES } from '../data/facilities.js'
 import { checkPowerTrack } from '../calc/trackCheck.js'
+import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 
 const EARTH_R = 6371
 
@@ -19,6 +20,27 @@ export function nearestFacilities(lat, lng, n = 3) {
   return FACILITIES.map((f) => ({ facility: f, km: haversineKm(lat, lng, f.lat, f.lng) }))
     .sort((a, b) => a.km - b.km)
     .slice(0, n)
+}
+
+// 최근접 154kV+ 변전소(OSM). [lat, lng, kV, name] 배열에서 하버사인 최소거리.
+export function nearestSubstation(lat, lng) {
+  let best = null
+  for (const [sLat, sLng, kv, name] of SUBSTATION_POINTS) {
+    const km = haversineKm(lat, lng, sLat, sLng)
+    if (!best || km < best.km) best = { km, kv, name }
+  }
+  return best
+}
+
+// 최근접 154kV+ 변전소 거리(km) → 접속 근접성 점수(15점 만점). 가까울수록 인입선 비용·리드타임↓.
+function substationPoints(km) {
+  if (km == null) return null
+  if (km <= 1) return 15
+  if (km <= 3) return 13
+  if (km <= 6) return 10.5
+  if (km <= 12) return 7
+  if (km <= 25) return 4
+  return 1.5
 }
 
 // 노출률(%) → 점수: 0%면 만점, 50%+면 0점 선형. 값 없으면 pending.
@@ -109,6 +131,17 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
         }
       : { label: '배전 여유 (한전 계통 공급여유)', max: 10, points: null, pending: '한전 연계가능용량(공급여유) 조회 필요' }
 
+  // 154kV+ 변전소 거리 — OSM 변전소 좌표 기반 최근접 거리(실계산).
+  const subDist = nearestSubstation(lat, lng)
+  const subDistItem = subDist
+    ? {
+        label: '154kV+ 변전소 거리',
+        max: 15,
+        points: substationPoints(subDist.km),
+        basis: `최근접 ${subDist.name || `${subDist.kv}kV 변전소`} ${subDist.km.toFixed(1)}km (${subDist.kv}kV) · OSM`,
+      }
+    : { label: '154kV+ 변전소 거리', max: 15, points: null, pending: 'OSM 변전소 좌표 로드 필요' }
+
   const selfGenItem =
     plantKm != null
       ? {
@@ -144,7 +177,7 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
       label: '전력',
       max: 40,
       items: [
-        { label: '154kV+ 변전소 거리', max: 15, points: null, pending: '정부 345kV 여유 변전소 정보 공개 대기' },
+        subDistItem,
         gridItem,
         gridImpactItem,
         selfGenItem,
@@ -210,5 +243,6 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
     coverage: knownMax, // 100점 만점 대비 근거 확보 배점
     track,
     nearest: nearestFacilities(lat, lng, 3),
+    nearestSub: subDist,
   }
 }
