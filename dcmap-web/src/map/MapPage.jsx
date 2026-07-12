@@ -12,6 +12,7 @@ import SitePanel from '../score/SitePanel.jsx'
 import CompareTray from '../score/CompareTray.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
+import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor } from '../data/liveApi.js'
@@ -157,6 +158,8 @@ export default function MapPage({ power = false }) {
   const [denseLabels, setDenseLabels] = useState(false) // 줌 ≥ 13 → 그룹 개별 라벨 (미만은 대표 라벨)
   const [showPlants, setShowPlants] = useState(false) // 발전 인프라 레이어 (원전·석탄 대형 단지)
   const plantsLayerRef = useRef(null)
+  const [showSubs, setShowSubs] = useState(false) // 154kV+ 변전소 레이어 (OSM 841개)
+  const subsLayerRef = useRef(null)
   const [showPublic, setShowPublic] = useState(false) // 공공 DC 레이어 (행안부 운영시설 61곳)
   const publicLayerRef = useRef(null)
   const [showGenPermits, setShowGenPermits] = useState(power) // 발전 허가 2024+ 시도 버블 (전력 공급 파이프라인)
@@ -290,6 +293,38 @@ export default function MapPage({ power = false }) {
       plantsLayerRef.current = g
     }
   }, [showPlants])
+
+  // 154kV+ 변전소 레이어 토글 — OSM 841개. 전압별 색(765>345>154), 가벼운 원형 마커.
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (subsLayerRef.current) {
+      map.removeLayer(subsLayerRef.current)
+      subsLayerRef.current = null
+    }
+    if (showSubs) {
+      const g = L.layerGroup()
+      const color = (kv) => (kv >= 765 ? '#f0abfc' : kv >= 345 ? '#c084fc' : '#7dd3fc')
+      const rad = (kv) => (kv >= 765 ? 6 : kv >= 345 ? 5 : 3.5)
+      for (const [lat, lng, kv, name] of SUBSTATION_POINTS) {
+        L.circleMarker([lat, lng], {
+          radius: rad(kv),
+          color: color(kv),
+          weight: 1.2,
+          fillColor: color(kv),
+          fillOpacity: 0.55,
+          bubblingMouseEvents: false,
+        })
+          .bindTooltip(
+            `<div class="dc-hovercard"><strong>${name || `${kv}kV 변전소`}</strong> · ${kv}kV<br/><span class="muted">한전 변전소 · OSM 좌표(근사)</span></div>`,
+            { direction: 'top', offset: [0, -6], className: 'dc-hovercard', opacity: 1 },
+          )
+          .addTo(g)
+      }
+      g.addTo(map)
+      subsLayerRef.current = g
+    }
+  }, [showSubs])
 
   // 공공 DC 레이어 토글 — 같은 시군구 중심점 공유 다수라 동일 분산 규칙 적용
   useEffect(() => {
@@ -599,6 +634,8 @@ export default function MapPage({ power = false }) {
         onToggleLabels={() => setShowLabels((v) => !v)}
         showPlants={showPlants}
         onTogglePlants={() => setShowPlants((v) => !v)}
+        showSubs={showSubs}
+        onToggleSubs={() => setShowSubs((v) => !v)}
         showPublic={showPublic}
         onTogglePublic={() => setShowPublic((v) => !v)}
         power={power}

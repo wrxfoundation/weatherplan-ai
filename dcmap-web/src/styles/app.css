@@ -234,6 +234,19 @@ a {
   max-width: calc(100% - var(--panel-width) - 48px);
 }
 
+/* 레이어 그룹 라벨 — 토글 칩 묶음 앞 작은 표시(정돈용) */
+.filterbar .group-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--grey);
+  padding: 0 4px 0 2px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.filterbar .layer-group {
+  flex-wrap: wrap;
+}
+
 .filterbar .group {
   display: flex;
   align-items: center;
@@ -2632,6 +2645,46 @@ summary:focus-visible,
   font-size: 10px;
   color: var(--grey);
 }
+
+/* 접기/펴기 버튼 + 접힘 시 압축 표시 */
+.cb-toggle {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--glass-surface);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+.cb-toggle:hover {
+  border-color: var(--stroke-hi, var(--line));
+}
+.climate-bar.collapsed {
+  padding-bottom: 8px;
+}
+.climate-bar.collapsed .cb-head {
+  margin-bottom: 0;
+}
+.cb-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 12px;
+}
+.cb-mini .ci-dot {
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 11px;
+}
+.cb-mini .ci-dot.tone-good { color: #86efac; background: color-mix(in srgb, #22c55e 16%, transparent); }
+.cb-mini .ci-dot.tone-warn { color: var(--orange); background: color-mix(in srgb, var(--orange) 14%, transparent); }
+.cb-mini .ci-dot.tone-bad { color: #fca5a5; background: color-mix(in srgb, #ef4444 14%, transparent); }
+.cb-mini-temp { color: var(--ink); }
 
 .cb-body {
   display: flex;
