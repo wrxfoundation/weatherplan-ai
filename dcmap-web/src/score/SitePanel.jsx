@@ -766,10 +766,47 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             a.click()
             URL.revokeObjectURL(a.href)
           }
+          const onPdf = () => {
+            const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            // 간이 마크다운 → HTML (제목·리스트·굵게·구분선)
+            const html = makeReport()
+              .split('\n')
+              .map((ln) => {
+                if (/^# /.test(ln)) return `<h1>${esc(ln.slice(2))}</h1>`
+                if (/^## /.test(ln)) return `<h2>${esc(ln.slice(3))}</h2>`
+                if (/^---/.test(ln)) return '<hr/>'
+                if (/^\s*- /.test(ln)) {
+                  const indent = /^\s{2,}- /.test(ln)
+                  return `<div class="li${indent ? ' sub' : ''}">${esc(ln.replace(/^\s*- /, '')).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')}</div>`
+                }
+                if (!ln.trim()) return ''
+                return `<p>${esc(ln).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')}</p>`
+              })
+              .join('\n')
+            const w = window.open('', '_blank')
+            if (!w) return
+            w.document.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>AI InfraMap 부지 리포트</title><style>
+              @page{margin:16mm}
+              body{font-family:'Pretendard Variable',-apple-system,'Malgun Gothic',sans-serif;color:#111;line-height:1.55;max-width:760px;margin:0 auto;padding:20px;font-size:12.5px}
+              h1{font-size:20px;border-bottom:2px solid #111;padding-bottom:8px;margin:0 0 12px}
+              h2{font-size:14px;color:#0a4;margin:18px 0 6px;border-left:3px solid #0a4;padding-left:8px}
+              .li{margin:2px 0 2px 12px}.li.sub{margin-left:28px;color:#444;font-size:11.5px}
+              hr{border:0;border-top:1px solid #ccc;margin:16px 0}
+              b{color:#000}p{margin:4px 0;color:#333}
+              @media print{body{padding:0}}
+            </style></head><body>${html}
+            <p style="margin-top:24px;color:#888;font-size:10.5px">AI InfraMap · ${new Date().toLocaleString('ko-KR')} · 공개 데이터 기반 간이 판정(미산출 축은 '대기' 명시)</p>
+            <script>window.onload=function(){setTimeout(function(){window.print()},250)}<\/script>
+            </body></html>`)
+            w.document.close()
+          }
           return (
             <div className="card-actions">
               <button type="button" className="btn primary" onClick={onCopy}>
                 {copied === 'report' ? '복사됨 ✓' : '간이 리포트 복사'}
+              </button>
+              <button type="button" className="btn" onClick={onPdf}>
+                PDF 저장
               </button>
               <button type="button" className="btn" onClick={onDownload}>
                 .md 다운로드
@@ -788,9 +825,14 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                       nonCapital,
                       score: r.knownScore,
                       coverage: r.knownMax,
+                      pct: r.knownMax ? Math.round((r.knownScore / r.knownMax) * 100) : null,
                       headroomMw: headroom?.available ? headroom.availableMw ?? null : null,
                       gridMw: grid?.mw ?? null,
+                      approvalPct: approval?.ratePct ?? null,
                       subKm: r.nearestSub?.km ?? null,
+                      icKm: nearestIndustrialComplex(point.lat, point.lng)?.km ?? null,
+                      areaM2: landArea?.areaM2 ?? null,
+                      netScore: r.axes.find((a) => a.key === 'network')?.known ?? null,
                       climate: climateIdx?.label ?? null,
                       climateLevel: climateIdx?.level ?? null,
                       floodPct: flood?.available && flood.source === 'sgis' ? flood.exposurePct : null,

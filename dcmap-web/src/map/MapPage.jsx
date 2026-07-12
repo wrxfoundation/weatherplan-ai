@@ -16,6 +16,7 @@ import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { loadPowerLines, lineColor, POWER_LINES_AVAILABLE } from '../data/powerLines.js'
 import { NETWORK_NODES } from '../data/network.js'
+import { recommendSites } from '../score/recommend.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor } from '../data/liveApi.js'
@@ -179,6 +180,9 @@ export default function MapPage({ power = false }) {
   const complexLayerRef = useRef(null)
   const [showNet, setShowNet] = useState(false) // 통신망 레이어(국사·IDC·육양국)
   const netLayerRef = useRef(null)
+  const [showReco, setShowReco] = useState(false) // 추천 입지 TOP(정적 근거 랭킹)
+  const recoLayerRef = useRef(null)
+  const recoTop = useMemo(() => (showReco ? recommendSites(20) : []), [showReco])
   const [baseMap, setBaseMap] = useState(() => {
     try {
       const v = localStorage.getItem('dcmap.baseMap')
@@ -402,6 +406,39 @@ export default function MapPage({ power = false }) {
       /* ignore */
     }
   }, [baseMap])
+
+  // 추천 입지 레이어 — 정적 근거 점수 TOP20을 금색 순위 마커로. 클릭 시 전체 분석.
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (recoLayerRef.current) {
+      map.removeLayer(recoLayerRef.current)
+      recoLayerRef.current = null
+    }
+    if (showReco && recoTop.length) {
+      const g = L.layerGroup()
+      recoTop.forEach((s, i) => {
+        const m = L.marker([s.lat, s.lng], {
+          icon: L.divIcon({ className: 'reco-marker', html: `<span class="reco-dot">${i + 1}</span>`, iconSize: [24, 24] }),
+          zIndexOffset: 1000,
+          bubblingMouseEvents: false,
+        })
+          .bindTooltip(
+            `<div class="dc-hovercard"><strong>#${i + 1} ${s.name}</strong> · ${s.sido}<br/>정적 근거 <b>${s.score}/${s.max}</b> · 공급여유 ${s.gridMw?.toLocaleString?.() ?? '–'}MW · 승인율 ${s.gridApproval ?? '–'}%<br/><span class="muted">클릭 → 전체 분석</span></div>`,
+            { direction: 'top', offset: [0, -12], className: 'dc-hovercard', opacity: 1 },
+          )
+          .on('click', () => {
+            setSelected(null)
+            setRegion(null)
+            setSitePoint({ lat: s.lat, lng: s.lng })
+            map.setView([s.lat, s.lng], 12)
+          })
+        m.addTo(g)
+      })
+      g.addTo(map)
+      recoLayerRef.current = g
+    }
+  }, [showReco, recoTop])
 
   // 통신망 레이어 토글 — 백본 국사·IDC·해저케이블 육양국(네트워크축 근거).
   useEffect(() => {
@@ -778,6 +815,8 @@ export default function MapPage({ power = false }) {
         onToggleComplexes={() => setShowComplexes((v) => !v)}
         showNet={showNet}
         onToggleNet={() => setShowNet((v) => !v)}
+        showReco={showReco}
+        onToggleReco={() => setShowReco((v) => !v)}
         showPublic={showPublic}
         onTogglePublic={() => setShowPublic((v) => !v)}
         power={power}
