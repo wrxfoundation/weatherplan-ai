@@ -2161,6 +2161,55 @@ a {
   justify-content: flex-start;
 }
 
+/* 인라인 바로가기 링크 — 실데이터 미연동 셀의 정직한 대체(직접 조회 유도) */
+.mini-link {
+  color: var(--accent);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.mini-link:hover {
+  text-decoration: underline;
+}
+
+/* 접이식 상세 — 부지 패널 정돈: 리스크·부가 항목은 기본 닫힘 */
+.spec-more {
+  margin: 4px 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--navy-deep) 40%, transparent);
+}
+.spec-more > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 10px 12px;
+  font-size: var(--text-xs);
+  color: var(--grey);
+  font-weight: var(--weight-medium);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+.spec-more > summary::-webkit-details-marker {
+  display: none;
+}
+.spec-more > summary::before {
+  content: '▸';
+  color: var(--accent);
+  transition: transform 0.15s ease;
+}
+.spec-more[open] > summary::before {
+  transform: rotate(90deg);
+}
+.spec-more > summary:hover {
+  color: var(--ink);
+}
+.spec-more .spec-grid {
+  margin: 0 10px 10px;
+}
+
 /* 초단기예보 스트립 — H+1~6 미니 타임라인 (기상 셀 내부) */
 .wx-strip {
   display: flex;

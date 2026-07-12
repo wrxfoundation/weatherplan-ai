@@ -131,7 +131,8 @@ export default function MapPage({ power = false }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const rawMw = Number.parseFloat(searchParams.get('min_mw'))
   const minMw = Number.isFinite(rawMw) && rawMw > 0 ? rawMw : null
-  const nonCap = searchParams.get('noncap') === '1' // 관문 유리(비수도권·±15점 가점 권역)
+  // 입지 구분: zone = 'cap'(수도권만) | 'non'(비수도권만) | ''(전체). noncap=1은 하위호환.
+  const zone = searchParams.get('zone') || (searchParams.get('noncap') === '1' ? 'non' : '')
   const q = searchParams.get('q') ?? ''
 
   const [statuses, setStatuses] = useState(() => new Set())
@@ -174,8 +175,8 @@ export default function MapPage({ power = false }) {
   const pointMarkerRef = useRef(null)
 
   const filtered = useMemo(
-    () => applyFilters(FACILITIES, { statuses, type, sido, minMw, q, nonCap }),
-    [statuses, type, sido, minMw, q, nonCap],
+    () => applyFilters(FACILITIES, { statuses, type, sido, minMw, q, zone }),
+    [statuses, type, sido, minMw, q, zone],
   )
   const totalMw = useMemo(() => filtered.reduce((s, f) => s + (f.power_mw_public ?? 0), 0), [filtered])
   const statusCounts = useMemo(() => {
@@ -560,11 +561,12 @@ export default function MapPage({ power = false }) {
           else next.delete('min_mw')
           setSearchParams(next, { replace: true })
         }}
-        nonCap={nonCap}
-        onToggleNonCap={() => {
+        zone={zone}
+        onZone={(z) => {
           const next = new URLSearchParams(searchParams)
-          if (nonCap) next.delete('noncap')
-          else next.set('noncap', '1')
+          next.delete('noncap') // 레거시 파라미터 정리
+          if (z) next.set('zone', z)
+          else next.delete('zone')
           setSearchParams(next, { replace: true })
         }}
         showLabels={showLabels}
@@ -649,12 +651,23 @@ export default function MapPage({ power = false }) {
                     </div>
                   </div>
                   <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                    <div className="k">계통 여유용량 (한전 분산전원)</div>
+                    <div className="k">계통 여유용량 (한전 분산전원 22.9kV)</div>
                     <div className="v">
                       {regionInfo.headroomMw != null ? (
                         <strong>{regionInfo.headroomMw.toLocaleString()} MW</strong>
                       ) : (
-                        <span className="badge verify">연동 대기 — ⚡여유용량 토글 · KEPCO env</span>
+                        <>
+                          <span className="badge verify">실데이터 연동 대기 · 공개 API 미제공</span>
+                          <a
+                            className="mini-link"
+                            href="https://cyber.kepco.co.kr/ckepco/mobile/resources/resources_search.jsp"
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{ marginLeft: 8 }}
+                          >
+                            한전 여유용량 직접 조회 →
+                          </a>
+                        </>
                       )}
                     </div>
                   </div>

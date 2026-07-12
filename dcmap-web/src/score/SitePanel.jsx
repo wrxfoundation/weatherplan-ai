@@ -241,6 +241,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
           </a>
         </div>
 
+        {/* 핵심 근거 — 항상 노출 (지번·용도·기상·기후지수·발전근접·인구·트랙) */}
         <div className="spec-grid">
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k">지번주소 (vworld 리버스 지오코딩)</div>
@@ -315,39 +316,6 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               )}
             </div>
           </div>
-          <div className="spec-cell">
-            <div className="k">기상특보 (리스크 — 태풍·강풍·호우)</div>
-            <div className="v">
-              {warning?.available ? (
-                warning.count > 0 ? (
-                  warning.warnings.map((w) => (
-                    <span key={w} className="badge verify" style={{ marginRight: 6 }}>
-                      {w}
-                    </span>
-                  ))
-                ) : (
-                  <span className="badge status-operating">발효 중인 특보 없음</span>
-                )
-              ) : (
-                <span className="badge verify">연동 대기 — 케이웨더 특보</span>
-              )}
-            </div>
-          </div>
-          <div className="spec-cell">
-            <div className="k"><Term k="프리쿨링">기후</Term> (과거 연별 — 프리쿨링 잠재력)</div>
-            <div className="v">
-              {climate?.available ? (
-                <>
-                  {climate.avgTemp != null && `연평균 ${climate.avgTemp}°C`}
-                  {climate.maxTemp != null && ` · 최고 ${climate.maxTemp}°C`}
-                  {climate.minTemp != null && ` · 최저 ${climate.minTemp}°C`}
-                  {climate.rainSum != null && ` · 강수 ${climate.rainSum}mm`}
-                </>
-              ) : (
-                <span className="badge verify">연동 대기 — 케이웨더 과거 기후</span>
-              )}
-            </div>
-          </div>
           {(() => {
             const np = nearestPlant(point)
             const wc = windContext(point)
@@ -376,26 +344,18 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                   {headroom.cumulativeMw != null && ` · 누적연계 ${headroom.cumulativeMw.toLocaleString()}MW`}
                 </>
               ) : (
-                <span className="badge verify">연동 대기 — 전력축 D3 데이터 소스</span>
-              )}
-            </div>
-          </div>
-          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k"><Term k="침수심">침수 위험</Term> (홍수위험지도 — 리스크축)</div>
-            <div className="v">
-              {flood?.available ? (
-                flood.grade === '해당없음' || flood.depthM === 0 ? (
-                  <span className="badge status-operating">침수구역 외 · 위험 낮음</span>
-                ) : (
-                  <>
-                    <span className="badge verify">침수 위험 {flood.grade}</span>
-                    {flood.depthM != null && ` · 침수심 ${flood.depthM}m`}
-                    {flood.floodType && ` · ${flood.floodType}`}
-                    {flood.scenario && ` · ${flood.scenario}`}
-                  </>
-                )
-              ) : (
-                <span className="badge verify">연동 대기 — 리스크축 침수(홍수위험지도)</span>
+                <>
+                  <span className="badge verify">실데이터 연동 대기 · 공개 API 미제공</span>
+                  <a
+                    className="mini-link"
+                    href="https://cyber.kepco.co.kr/ckepco/mobile/resources/resources_search.jsp"
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ marginLeft: 8 }}
+                  >
+                    한전 여유용량 직접 조회 →
+                  </a>
+                </>
               )}
             </div>
           </div>
@@ -419,48 +379,6 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               )}
             </div>
           </div>
-          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">지번 실측 전기사용량 (국토부 건축HUB — 수요 맥락)</div>
-            <div className="v">
-              {energy?.available && energy.usage != null ? (
-                <>
-                  {energy.useYm} <strong>{energy.usage.toLocaleString()} {energy.unit}</strong>
-                  <span className="meta"> · 해당 지번 건물에너지 실측(단독·소규모·산업 용도 제외)</span>
-                </>
-              ) : addr?.sigunguCd ? (
-                <span className="badge verify">해당 지번 데이터 없음 — 대상 외(단독·200세대 미만·산업)일 수 있음</span>
-              ) : (
-                <span className="badge verify">연동 대기 — 법정동코드 확보(vworld) 후 자동 조회</span>
-              )}
-            </div>
-          </div>
-          {(() => {
-            const net = networkContext(point)
-            return (
-              <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">네트워크 근접성 (<Term k="백본">백본</Term>·<Term k="육양국">해저케이블</Term> — 참고)</div>
-                <div className="v">
-                  {net.backbone && `백본/IX ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
-                  {net.cls && ` · 해저케이블 육양국 ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
-                  <span className="badge verify" style={{ marginLeft: 8 }}>공개 근사 · 검증 대기</span>
-                </div>
-              </div>
-            )
-          })()}
-          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">재해 이력 (재난안전 — 리스크축)</div>
-            <div className="v">
-              {disaster?.available ? (
-                <>
-                  {disaster.events != null && <strong>재해 {disaster.events.toLocaleString()}건</strong>}
-                  {disaster.topType && ` · 주 유형 ${disaster.topType}`}
-                  {disaster.recentYear && ` · 최근 ${disaster.recentYear}`}
-                </>
-              ) : (
-                <span className="badge verify">연동 대기 — 리스크축 재해(재난안전)</span>
-              )}
-            </div>
-          </div>
           <div className="spec-cell">
             <div className="k"><Term k="수전전압">수전전압</Term> 트랙</div>
             <div className="v">{r.track.track.voltage}</div>
@@ -472,27 +390,128 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               {r.track.exemption && ` · ${r.track.exemption.effective}~ 면제 가능성`}
             </div>
           </div>
-          {(() => {
-            const lp = landPriceFor(r.nearest[0].facility)
-            const dp = dongPulseFor(r.nearest[0].facility)
-            return lp ? (
-              <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">
-                  인근 <Term k="지가변동률">지가변동률</Term> · {lp.scope} ({lp.period} 월간, KOSIS — 최근접 시설 시군구 기준)
-                </div>
-                <div className="v">
-                  {fmtRate(lp.value)}
-                  {dp && (
-                    <span className="meta">
-                      {' '}
-                      · 동 단위 {fmtRate(dp.bottom.rate)} ~ {fmtRate(dp.top.rate)} ({dp.count}개 구역)
-                    </span>
-                  )}
-                </div>
-              </div>
-            ) : null
-          })()}
         </div>
+
+        {/* 리스크·부가 상세 — 접이식(기본 닫힘)으로 패널 정돈. 특보·기후·침수·전기·네트워크·재해·지가 */}
+        <details className="spec-more">
+          <summary>리스크·부가 상세 — 기상특보 · 과거기후 · 침수 · 지번전기 · 네트워크 · 재해 · 지가</summary>
+          <div className="spec-grid">
+            <div className="spec-cell">
+              <div className="k">기상특보 (리스크 — 태풍·강풍·호우)</div>
+              <div className="v">
+                {warning?.available ? (
+                  warning.count > 0 ? (
+                    warning.warnings.map((w) => (
+                      <span key={w} className="badge verify" style={{ marginRight: 6 }}>
+                        {w}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="badge status-operating">발효 중인 특보 없음</span>
+                  )
+                ) : (
+                  <span className="badge verify">연동 대기 — 케이웨더 특보</span>
+                )}
+              </div>
+            </div>
+            <div className="spec-cell">
+              <div className="k"><Term k="프리쿨링">기후</Term> (과거 연별 — 프리쿨링 잠재력)</div>
+              <div className="v">
+                {climate?.available ? (
+                  <>
+                    {climate.avgTemp != null && `연평균 ${climate.avgTemp}°C`}
+                    {climate.maxTemp != null && ` · 최고 ${climate.maxTemp}°C`}
+                    {climate.minTemp != null && ` · 최저 ${climate.minTemp}°C`}
+                    {climate.rainSum != null && ` · 강수 ${climate.rainSum}mm`}
+                  </>
+                ) : (
+                  <span className="badge verify">연동 대기 — 케이웨더 과거 기후</span>
+                )}
+              </div>
+            </div>
+            <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+              <div className="k"><Term k="침수심">침수 위험</Term> (홍수위험지도 — 리스크축)</div>
+              <div className="v">
+                {flood?.available ? (
+                  flood.grade === '해당없음' || flood.depthM === 0 ? (
+                    <span className="badge status-operating">침수구역 외 · 위험 낮음</span>
+                  ) : (
+                    <>
+                      <span className="badge verify">침수 위험 {flood.grade}</span>
+                      {flood.depthM != null && ` · 침수심 ${flood.depthM}m`}
+                      {flood.floodType && ` · ${flood.floodType}`}
+                      {flood.scenario && ` · ${flood.scenario}`}
+                    </>
+                  )
+                ) : (
+                  <span className="badge verify">연동 대기 — 리스크축 침수(홍수위험지도)</span>
+                )}
+              </div>
+            </div>
+            <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+              <div className="k">지번 실측 전기사용량 (국토부 건축HUB — 수요 맥락)</div>
+              <div className="v">
+                {energy?.available && energy.usage != null ? (
+                  <>
+                    {energy.useYm} <strong>{energy.usage.toLocaleString()} {energy.unit}</strong>
+                    <span className="meta"> · 해당 지번 건물에너지 실측(단독·소규모·산업 용도 제외)</span>
+                  </>
+                ) : addr?.sigunguCd ? (
+                  <span className="badge verify">해당 지번 데이터 없음 — 대상 외(단독·200세대 미만·산업)일 수 있음</span>
+                ) : (
+                  <span className="badge verify">연동 대기 — 법정동코드 확보(vworld) 후 자동 조회</span>
+                )}
+              </div>
+            </div>
+            {(() => {
+              const net = networkContext(point)
+              return (
+                <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                  <div className="k">네트워크 근접성 (<Term k="백본">백본</Term>·<Term k="육양국">해저케이블</Term> — 참고)</div>
+                  <div className="v">
+                    {net.backbone && `백본/IX ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
+                    {net.cls && ` · 해저케이블 육양국 ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
+                    <span className="badge verify" style={{ marginLeft: 8 }}>공개 근사 · 검증 대기</span>
+                  </div>
+                </div>
+              )
+            })()}
+            <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+              <div className="k">재해 이력 (재난안전 — 리스크축)</div>
+              <div className="v">
+                {disaster?.available ? (
+                  <>
+                    {disaster.events != null && <strong>재해 {disaster.events.toLocaleString()}건</strong>}
+                    {disaster.topType && ` · 주 유형 ${disaster.topType}`}
+                    {disaster.recentYear && ` · 최근 ${disaster.recentYear}`}
+                  </>
+                ) : (
+                  <span className="badge verify">연동 대기 — 리스크축 재해(재난안전)</span>
+                )}
+              </div>
+            </div>
+            {(() => {
+              const lp = landPriceFor(r.nearest[0].facility)
+              const dp = dongPulseFor(r.nearest[0].facility)
+              return lp ? (
+                <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                  <div className="k">
+                    인근 <Term k="지가변동률">지가변동률</Term> · {lp.scope} ({lp.period} 월간, KOSIS — 최근접 시설 시군구 기준)
+                  </div>
+                  <div className="v">
+                    {fmtRate(lp.value)}
+                    {dp && (
+                      <span className="meta">
+                        {' '}
+                        · 동 단위 {fmtRate(dp.bottom.rate)} ~ {fmtRate(dp.top.rate)} ({dp.count}개 구역)
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ) : null
+            })()}
+          </div>
+        </details>
 
         <div className="chart-title" style={{ marginTop: 14 }}>
           최근접 시설
