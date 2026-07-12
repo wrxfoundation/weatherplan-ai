@@ -87,13 +87,14 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
     if (dong) L.push(`- 표출값 동단위 근거지: ${dong}${wx?.scope ? ` · 케이웨더 실황 ${wx.scope}` : ''}`)
   }
   L.push(``)
-  L.push(`## 계통 여유용량 (한전 분산전원 22.9kV)`)
+  L.push(`## 이 지점 배전 접속여유 (한전 분산전원 22.9kV · 참고)`)
+  L.push(`(위 스코어의 '배전 여유'는 시도 계통 공급여유(한전 연계가능용량, 수천MW 단위)로 산출 — 아래 22.9kV 값은 이 지점 배전선 라이브 조회로 규모가 다름)`)
   if (headroom?.available) {
     L.push(
       `- ${headroom.availableMw != null ? `여유 ${headroom.availableMw}MW` : ''}${headroom.cumulativeMw != null ? ` · 누적연계 ${headroom.cumulativeMw}MW` : ''} (${headroom.scope})`,
     )
   } else {
-    L.push(`- 연동 대기 — 한전 전력데이터 개방포털 분산전원연계 API (전력축 D3)`)
+    L.push(`- 연동 대기 — 한전 전력데이터 개방포털 분산전원연계 API`)
   }
   L.push(``)
   L.push(`## 리스크 (침수·산사태·인구)`)
@@ -101,7 +102,7 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
     L.push(
       flood.exposurePct <= 0
         ? `- 침수: 홍수영향구역 밖 · 위험 낮음 (SGIS 홍수위험지도${flood.admNm ? ` · ${flood.admNm}` : ''})`
-        : `- 침수: 노출 ${flood.grade} · 영향구역 인구 ${flood.exposurePct}%${flood.affectedPop != null ? ` (${flood.affectedPop.toLocaleString()}/${flood.totalPop.toLocaleString()}명)` : ''} (SGIS 홍수위험지도${flood.baseYear ? ` ${flood.baseYear}` : ''})`,
+        : `- 침수: 노출 ${flood.grade} · 영향구역 인구 ${flood.exposurePct}%${flood.affectedPop != null && flood.totalPop != null ? ` (${flood.affectedPop.toLocaleString()}/${flood.totalPop.toLocaleString()}명)` : ''} (SGIS 홍수위험지도${flood.baseYear ? ` ${flood.baseYear}` : ''})`,
     )
   } else if (flood?.available) {
     L.push(
@@ -123,7 +124,7 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
     L.push(
       disaster.exposurePct <= 0
         ? `- 산사태: 영향구역 밖 · 위험 낮음 (SGIS 산사태위험지도${disaster.admNm ? ` · ${disaster.admNm}` : ''})`
-        : `- 산사태: 노출 ${disaster.grade} · 영향구역 인구 ${disaster.exposurePct}%${disaster.affectedPop != null ? ` (${disaster.affectedPop.toLocaleString()}/${disaster.totalPop.toLocaleString()}명)` : ''} (SGIS 산사태위험지도${disaster.baseYear ? ` ${disaster.baseYear}` : ''})`,
+        : `- 산사태: 노출 ${disaster.grade} · 영향구역 인구 ${disaster.exposurePct}%${disaster.affectedPop != null && disaster.totalPop != null ? ` (${disaster.affectedPop.toLocaleString()}/${disaster.totalPop.toLocaleString()}명)` : ''} (SGIS 산사태위험지도${disaster.baseYear ? ` ${disaster.baseYear}` : ''})`,
     )
   } else if (disaster?.available) {
     L.push(`- 재해 이력: ${disaster.events != null ? `${disaster.events.toLocaleString()}건` : ''}${disaster.topType ? ` · ${disaster.topType}` : ''} (재난안전)`)
@@ -137,6 +138,10 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   }
   L.push(``)
   L.push(`## 인프라 근접성 (맥락 — 전원 매칭 아님)`)
+  if (r.nearestSub)
+    L.push(
+      `- 최근접 154kV+ 변전소: ${r.nearestSub.name || `${r.nearestSub.kv}kV 변전소`} · ${r.nearestSub.km.toFixed(1)}km (${r.nearestSub.kv}kV · OSM)`,
+    )
   if (plantCtx)
     L.push(
       `- 최근접 대형 발전단지: ${plantCtx.plant.name} (${plantCtx.plant.type})${

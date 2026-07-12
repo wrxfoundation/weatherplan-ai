@@ -104,8 +104,21 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   // 주소 시도(정규화) — 지역 전력 여건·계통 공급여유 조회 키.
   const sido = useMemo(() => {
     const s = addr?.parcel || addr?.road || ''
-    const m = s.match(/^(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충청북도|충청남도|전라북도|전라남도|경상북도|경상남도|제주)/)
-    const map = { 충청북도: '충북', 충청남도: '충남', 전라북도: '전북', 전라남도: '전남', 경상북도: '경북', 경상남도: '경남' }
+    // 특별자치도 신명칭·법정 장형·단형 모두 수용(전북특별자치도 등 미매칭 방지)
+    const m = s.match(
+      /^(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원특별자치도|강원|충청북도|충청남도|전북특별자치도|전라북도|전라남도|경상북도|경상남도|충북|충남|전북|전남|경북|경남|제주특별자치도|제주)/,
+    )
+    const map = {
+      강원특별자치도: '강원',
+      충청북도: '충북',
+      충청남도: '충남',
+      전북특별자치도: '전북',
+      전라북도: '전북',
+      전라남도: '전남',
+      경상북도: '경북',
+      경상남도: '경남',
+      제주특별자치도: '제주',
+    }
     return m ? map[m[1]] || m[1] : null
   }, [addr])
   // 지역 계통 공급여유(한전 연계가능용량, 시도 총량) — 배전 여유 점수 근거.
@@ -135,7 +148,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
       </h2>
       <article className="facility-card">
         <div className="status-line">
-          <span className="badge status-operating">지점 분석 v0</span>
+          <span className="badge status-operating">지점 분석</span>
           <button
             type="button"
             className="badge badge-btn"
@@ -163,8 +176,15 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           return (
             <div className="site-summary" aria-label="지점 한눈에 요약">
               <span className={`sum-chip tone-${nonCapital ? 'good' : 'warn'}`}>{nonCapital ? '비수도권' : '수도권'}</span>
-              {headroom?.available && headroom.availableMw != null && (
-                <span className="sum-chip tone-good">여유 {headroom.availableMw.toLocaleString()}MW</span>
+              {r.nearestSub && (
+                <span className={`sum-chip tone-${r.nearestSub.km <= 3 ? 'good' : r.nearestSub.km <= 12 ? 'warn' : 'bad'}`}>
+                  변전소 {r.nearestSub.km.toFixed(1)}km
+                </span>
+              )}
+              {approval?.ratePct != null && (
+                <span className={`sum-chip tone-${approval.ratePct >= 70 ? 'good' : approval.ratePct >= 45 ? 'warn' : 'bad'}`}>
+                  계통승인 {approval.ratePct}%
+                </span>
               )}
               {climateIdx && <span className={`sum-chip tone-${climateTone}`}>냉각 {climateIdx.label}</span>}
               {flood?.available && flood.source === 'sgis' && (
@@ -230,9 +250,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
         <details className="mini-details">
           <summary>점수화 로드맵 — 연동된 축 / 남은 대기</summary>
           <p className="geo-note">
-            <strong>이미 연동(아래 표에 실값)</strong>: 계통 여유용량(한전)·냉각 기후지수·인구밀도·침수·산사태·지가.
-            <strong> 남은 대기</strong>: 변전소 거리(345kV 송전망 정보 공개 대기 — 한전 미공개라 시점 미정) · 배전 여유 정밀(D3) ·
-            용도지역 점수화(vworld 값은 연동됐고 배점 캘리브레이션 중). 값이 확보된 축부터 위 5축 막대에 순차 반영됩니다.
+            <strong>이미 연동(막대에 실값)</strong>: 154kV+ 변전소 거리(OSM)·계통 공급여유(한전 17시도)·DC 전력공급 가능판정율(전력계통영향평가)·자가발전 인접·냉각 기후지수·인구밀도·침수·산사태.
+            <strong> 남은 대기</strong>: 부지 면적·산단 인센티브·지가 점수화(vworld 파셀) · 네트워크(백본·해저케이블 육양 시설 좌표 검증). 값이 확보된 축부터 위 5축 막대에 반영됩니다.
           </p>
         </details>
 
@@ -295,7 +314,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
         <div className="spec-grid">
           <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}>⚡ 전력 <em>— DC 입지 1순위 제약</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k"><Term k="계통여유">계통 여유용량</Term> (한전 분산전원 22.9kV · 배전) — 전력 확보 1순위</div>
+            <div className="k">이 지점 배전 접속여유 (<Term k="계통여유">한전 분산전원 22.9kV</Term> 라이브 조회 · 참고)</div>
             <div className="v">
               {headroom?.available ? (
                 <>
@@ -356,55 +375,40 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           })()}
           {regionPower && (regionPower.sub || regionPower.bal || regionPower.grid || regionPower.approval) && (
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k">지역 전력 여건 (전력계통영향평가·공급여유·자급률 · 시도 기준)</div>
+              <div className="k">지역 계통 수용력 (시도 기준 · 부지별은 한전 주소검색)</div>
               <div className="v">
-                {regionPower.approval && regionPower.approval.ratePct != null && (
+                {/* 1순위: 공급여유(하드 게이트) */}
+                {regionPower.grid && (
                   <div>
-                    <strong>DC 계통 승인율 {regionPower.approval.ratePct}%</strong>
-                    <span
-                      className={`badge ${regionPower.approval.ratePct >= 70 ? 'status-operating' : 'verify'}`}
-                      style={regionPower.approval.ratePct < 30 ? { marginLeft: 6, color: '#ef4444', borderColor: '#ef4444', background: 'color-mix(in srgb, #ef4444 12%, transparent)' } : { marginLeft: 6 }}
-                    >
+                    <strong>계통 공급여유 {regionPower.grid.mw.toLocaleString()}MW</strong>
+                    <span className={`badge ${regionPower.grid.mw <= 10 ? 'critical' : regionPower.grid.mw <= 500 ? 'verify' : 'status-operating'}`} style={{ marginLeft: 6 }}>
+                      {headroomLabel(regionPower.grid.mw)}
+                    </span>
+                    <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>
+                      한전 연계가능용량 2027{regionPower.grid.note ? ` · ${regionPower.grid.note}` : ''}
+                    </span>
+                  </div>
+                )}
+                {/* 2순위: 전력공급 가능판정율(전력계통영향평가) */}
+                {regionPower.approval && regionPower.approval.ratePct != null && (
+                  <div style={{ marginTop: regionPower.grid ? 4 : 0 }}>
+                    <strong>전력공급 가능판정율 {regionPower.approval.ratePct}%</strong>
+                    <span className={`badge ${regionPower.approval.ratePct >= 70 ? 'status-operating' : regionPower.approval.ratePct >= 45 ? 'verify' : 'critical'}`} style={{ marginLeft: 6 }}>
                       {approvalLabel(regionPower.approval.ratePct)}
                     </span>
                     <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>전력계통영향평가 &apos;26.3</span>
                   </div>
                 )}
-                {regionPower.grid && (
-                  <div style={{ marginTop: regionPower.approval?.ratePct != null ? 4 : 0 }}>
-                    <strong>계통 공급여유 {regionPower.grid.mw.toLocaleString()}MW</strong>
-                    <span
-                      className={`badge ${regionPower.grid.mw <= 500 ? 'verify' : 'status-operating'}`}
-                      style={regionPower.grid.mw <= 10 ? { marginLeft: 6, color: '#ef4444', borderColor: '#ef4444', background: 'color-mix(in srgb, #ef4444 12%, transparent)' } : { marginLeft: 6 }}
-                    >
-                      {headroomLabel(regionPower.grid.mw)}
-                    </span>
-                    <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>한전 연계가능용량 2027</span>
-                  </div>
-                )}
-                {regionPower.bal && (
-                  <div style={{ marginTop: regionPower.grid || regionPower.approval?.ratePct != null ? 4 : 0 }}>
-                    전력 자급률 <strong>{regionPower.bal.ratio}%</strong>
-                    <span className={`badge ${regionPower.bal.ratio >= 100 ? 'status-operating' : 'verify'}`} style={{ marginLeft: 6 }}>
-                      {selfSufficiencyLabel(regionPower.bal.ratio)}
-                    </span>
-                  </div>
-                )}
-                {r.nearestSub && (
-                  <div style={{ marginTop: 4 }}>
-                    최근접 154kV+ 변전소 <strong>{r.nearestSub.name || `${r.nearestSub.kv}kV`}</strong> {r.nearestSub.km.toFixed(1)}km
-                    <span className="muted" style={{ marginLeft: 4, fontSize: '0.85em' }}>({r.nearestSub.kv}kV · OSM)</span>
-                  </div>
-                )}
-                {regionPower.sub && (
-                  <div style={{ marginTop: 4 }}>
-                    {regionPower.sub.region} · 154kV+ 변전소 <strong>{regionPower.sub.hv.toLocaleString()}개</strong>
-                    {regionPower.sub.hvMva > 0 && ` · 변압기 ${regionPower.sub.hvMva.toLocaleString()}MVA`}
-                  </div>
-                )}
+                {/* 참고: 자급률·최근접 변전소·변전소 밀도를 한 줄로 압축 */}
+                <div className="cell-basis" style={{ marginTop: 5 }}>
+                  참고
+                  {regionPower.bal ? ` · 자급률 ${regionPower.bal.ratio}%` : ''}
+                  {r.nearestSub ? ` · 최근접 변전소 ${r.nearestSub.name || `${r.nearestSub.kv}kV`} ${r.nearestSub.km.toFixed(1)}km` : ''}
+                  {regionPower.sub ? ` · 시도 154kV+ ${regionPower.sub.hv.toLocaleString()}개` : ''}
+                </div>
                 <div className="cell-basis">
-                  {regionPower.grid?.note ? `${regionPower.grid.note} · ` : ''}
-                  시도 총량 신호(시군구 편차 큼) — 부지별 접속 여유는 <a className="mini-link" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드/한전 접속가능용량 →</a>
+                  시도 총량 신호(시군구 편차 큼) — 부지별 접속 여유는{' '}
+                  <a className="mini-link" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드/한전 접속가능용량 →</a>
                 </div>
               </div>
             </div>
@@ -496,7 +500,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 <div className="k">네트워크 근접성 (<Term k="백본">백본</Term>·<Term k="육양국">해저케이블</Term> — 지연·회선)</div>
                 <div className="v">
                   {net.backbone && `백본/IX ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
-                  {net.cls && ` · 해저케이블 육양국 ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
+                  {net.cls && ` · 해저케이블 육양 시설 ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
                   <span className="badge pending" style={{ marginLeft: 8 }}>공개 근사 · 검증 대기</span>
                 </div>
               </div>
@@ -782,7 +786,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           )
         })()}
         <p className="geo-note">
-          간이 리포트 v0 — 산출된 근거만 수치로, 대기 축은 명시. 정밀 스코어링 리포트는 M2에서.
+          간이 리포트 — 산출된 근거만 수치로, 대기 축은 명시. 정밀 스코어링 리포트는 추후 제공.
         </p>
       </article>
     </>
