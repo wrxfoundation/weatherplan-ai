@@ -8,6 +8,7 @@ import { SUBSTATIONS, SUBSTATION_META } from '../data/substations.js'
 import { POWER_MARKET_META, PURCHASE_PRICE_2024, PURCHASE_SUMMARY, PRICE_PEAK, PRICE_LOW } from '../data/powerMarket.js'
 import { DC_ASSESSMENT, DC_ASSESSMENT_ROLLUP, GRID_ASSESSMENT_META, approvalLabel } from '../data/gridAssessment.js'
 import { GRID_HEADROOM, GRID_HEADROOM_META, headroomLabel } from '../data/gridHeadroom.js'
+import { RESERVE_12M, RESERVE_MIN, RESERVE_MAX, POWER_RESERVE_META } from '../data/powerReserve.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
 import { filingsRecent, epsisCapacity, apiStatus, tradingMix, riskFor } from '../data/liveApi.js'
@@ -728,6 +729,41 @@ export default function DashboardPage() {
               DC 운영비의 큰 축이 전력비 — <strong>냉방 수요가 겹치는 7~8월 구입단가가 최저월 대비 {Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)}% 급등</strong>(열 관리 설계·PUE가 원가에 직결).
               직접 재생조달(PPA)은 아직 {PURCHASE_SUMMARY.ppaSharePct}%로 RE100 조달 초기 단계. 전국 도매 구입단가(한전)로 개별 계약·지역 차등은 별개.
               출처: <strong>{POWER_MARKET_META.source}</strong>.
+            </p>
+          </section>
+
+          {/* 전국 전력수급 — 월별 공급예비율. 여름 계통 여력 최소 */}
+          <section className="calc-card">
+            <div className="chart-title">전력수급 안정성 — 전국 공급예비율 (최근 12개월)</div>
+            <div className="dash-status" style={{ marginBottom: 8 }}>
+              <div className="status-rows">
+                <div className="dash-row">
+                  여름 최저 예비율 <strong>{RESERVE_MIN.pct}</strong>% (&apos;{RESERVE_MIN.ym})
+                </div>
+                <div className="dash-row">
+                  겨울 최고 <strong>{RESERVE_MAX.pct}</strong>% (&apos;{RESERVE_MAX.ym})
+                </div>
+                <div className="dash-row total">피크일 기준 공급예비율</div>
+              </div>
+              <Gauge pct={Math.round(RESERVE_MIN.pct)} label="여름 최저 예비율" sub={`겨울 ${RESERVE_MAX.pct}%`} />
+            </div>
+            <div className="hbar-mini" role="img" aria-label="월별 공급예비율" style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 48, marginTop: 8 }}>
+              {RESERVE_12M.map(([ym, pct]) => {
+                const h = Math.max(6, (pct / RESERVE_MAX.pct) * 100)
+                const tight = pct < 11
+                return (
+                  <span
+                    key={ym}
+                    title={`'${ym} · 예비율 ${pct}%`}
+                    style={{ flex: 1, height: `${h}%`, background: tight ? 'var(--warn, #e06d3b)' : 'var(--accent, #2f6bd6)', borderRadius: '2px 2px 0 0', opacity: tight ? 0.95 : 0.55 }}
+                  />
+                )
+              })}
+            </div>
+            <p className="chart-note">
+              공급예비율이 낮을수록 계통 여력이 얇다 — <strong>DC 냉방부하가 최대인 여름(&apos;{RESERVE_MIN.ym})에 예비율 {RESERVE_MIN.pct}%로 최저</strong>.
+              대형 신규부하 접속·수급 리스크가 여름에 집중된다는 신호(원가 급등과 같은 방향). 전국 지표로 지역 계통 제약과는 별개.
+              출처: <strong>{POWER_RESERVE_META.source}</strong>.
             </p>
           </section>
 
