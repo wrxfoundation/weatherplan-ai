@@ -31,6 +31,20 @@ export const TYPES = [...new Set(FACILITIES.map((f) => f.type))].sort((a, b) => 
 // 수도권(서울·경기·인천) — 계통영향평가 ±15점 감점·억제 권역
 export const CAPITAL_SIDOS = new Set(['서울', '경기', '인천'])
 
+// 주소 문자열(시도 접두)로 수도권 여부 판정 — vworld 지번주소 앞부분 기준(가장 정확).
+export function isCapitalByAddr(addr) {
+  const s = String(addr || '')
+  if (/^(서울|인천)/.test(s)) return true
+  if (/^경기/.test(s)) return true
+  if (/^(강원|충|전|경(북|남|상)|부산|대구|대전|광주|울산|세종|제주)/.test(s)) return false
+  return null // 판정 불가
+}
+
+// 좌표 대략 수도권 bbox — 주소 확보 전 잠정 기본값(경계 부정확, addr로 정정됨).
+export function isCapitalByPoint(lat, lng) {
+  return lat >= 36.9 && lat <= 38.35 && lng >= 126.0 && lng <= 127.55
+}
+
 export function applyFilters(list, { statuses, type, sido, minMw, q, zone }) {
   const needle = q?.toLowerCase() ?? ''
   return list.filter((f) => {

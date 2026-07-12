@@ -33,7 +33,7 @@ const at = (o, names, i = 0) => {
   return Array.isArray(v) ? v[i] : v
 }
 
-async function getJson(url, ms = 15000) {
+async function getJson(url, ms = 7000) {
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
   try {
@@ -150,6 +150,12 @@ export default async function handler(req, res) {
     return
   }
 
+  // 순차 다단 폴백이 Vercel 30s 함수 한도를 넘지 않게 전체 마감시한(13s) — 남은 예산만큼만 각 호출에 할당.
+  const start = Date.now()
+  const DEADLINE = 13000
+  const left = () => Math.max(600, DEADLINE - (Date.now() - start))
+  const budgeted = (url) => getJson(url, Math.min(6000, left()))
+
   try {
     const base = (process.env.KWEATHER_API_BASE || DEFAULT_BASE).replace(/\/$/, '')
     const auth = `api_key=${encodeURIComponent(key)}`
@@ -169,7 +175,7 @@ export default async function handler(req, res) {
     let okRaw = null // error=0 원응답(블록이 비어도 유효 — 특보 없음 등)
     let sensor = candidates[0]
     for (const s of candidates) {
-      raw = await getJson(`${base}${SENSORS}/${s}?${gpsQ}`)
+      raw = await budgeted(`${base}${SENSORS}/${s}?${gpsQ}`)
       if (!raw?._status && String(raw?.error ?? '') === '0' && !okRaw) okRaw = raw
       block = raw?._status ? null : dataBlock(raw)
       if (block) {
@@ -181,7 +187,7 @@ export default async function handler(req, res) {
     // ② GPS 시계열(kw-gis-gps) — 코드 해석·최후 폴백 재료
     let gps = null
     if (!block || req.query.debug === 'gis') {
-      gps = await getJson(`${base}${SENSORS}/kw-gis-gps?${gpsQ}`)
+      gps = await budgeted(`${base}${SENSORS}/kw-gis-gps?${gpsQ}`)
     }
     if (req.query.debug === 'gis') {
       const g = gps && !gps._status ? gps : raw
@@ -249,7 +255,7 @@ export default async function handler(req, res) {
     if (!block && gps && !gps._status) {
       const code = findCode(gps)
       if (code) {
-        raw = await getJson(`${base}${SENSORS}/${sensor}/${code}?${auth}`)
+        raw = await budgeted(`${base}${SENSORS}/${sensor}/${code}?${auth}`)
         block = raw?._status ? null : dataBlock(raw)
       }
     }

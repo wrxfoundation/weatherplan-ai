@@ -318,6 +318,9 @@ export default async function handler(req, res) {
     }
 
     // ── kind=pop(기본): 리버스지오코딩 → SGIS 행정동코드 → population 직접 조회(읍면동 정밀) ──
+    // 연도×타깃 순차 루프가 Vercel 30s 한도를 넘지 않게 마감시한(12s) — 예산 소진 시 중단.
+    const popStart = Date.now()
+    const popLeft = () => 12000 - (Date.now() - popStart)
     let row = null
     let usedYear = null
     let usedLevel = null
@@ -329,6 +332,7 @@ export default async function handler(req, res) {
         geo.sgg5 && { adm: geo.sgg5, level: '시군구', nm: geo.sggNm },
       ].filter(Boolean)
       for (const year of YEARS) {
+        if (popLeft() < 1500) break
         for (const t of targets) {
           const b = await fetchJson(popUrl(POP_BASE, token, year, t.adm, 0))
           if (b?._status) {
@@ -355,6 +359,7 @@ export default async function handler(req, res) {
     if (!row && /^\d{2}$/.test(legalSido)) {
       const rows = (b) => (Array.isArray(b?.result) ? b.result : b?.result ? [b.result] : [])
       for (const year of YEARS) {
+        if (popLeft() < 1500) break
         const b = await fetchJson(popUrl(POP_BASE, token, year, fbSido, 1))
         if (b?._status) {
           const em = b?._body?.errMsg || b?._body?.result?.errMsg

@@ -15,7 +15,7 @@
   --surface: #0d1e33;
   --line: #1b3050;
   --text: #e8f1fb;
-  --grey: #7e90ac;
+  --grey: #93a3bd; /* 소형 텍스트 WCAG AA(4.5:1) 충족 — 기존 #7e90ac는 미달 */
 
   /* HUD 액센트 (UI 크롬: 버튼·링크·포커스·데이터 라인) */
   --accent: #35d5ee;

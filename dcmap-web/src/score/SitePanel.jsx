@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { STATUS_LABEL } from '../data/facilities.js'
+import { STATUS_LABEL, isCapitalByAddr, isCapitalByPoint } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
 import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, dongLabel } from '../data/liveApi.js'
@@ -15,6 +15,7 @@ import Term from '../components/Term.jsx'
 export default function SitePanel({ point, onClose, onSelectFacility }) {
   const [mw, setMw] = useState(40)
   const [nonCapital, setNonCapital] = useState(true)
+  const zoneTouched = useRef(false) // 사용자가 입지 구분을 직접 바꿨으면 자동판정으로 덮어쓰지 않음
   const [addr, setAddr] = useState(null)
   const [wx, setWx] = useState(null)
   const [landUse, setLandUse] = useState(null)
@@ -30,6 +31,9 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
 
   useEffect(() => {
     let alive = true
+    // 새 지점: 좌표 bbox로 수도권 잠정 판정(주소 확보 시 정정). 사용자 수동선택 플래그 초기화.
+    zoneTouched.current = false
+    setNonCapital(!isCapitalByPoint(point.lat, point.lng))
     setAddr(null)
     setWx(null)
     setLandUse(null)
@@ -48,6 +52,9 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
       .then((v) => {
         if (!alive) return
         setAddr(v)
+        // 주소 확보되면 시도 접두로 수도권 여부 정정(bbox보다 정확). 사용자가 안 건드렸을 때만.
+        const capByAddr = isCapitalByAddr(v?.parcel || v?.road)
+        if (!zoneTouched.current && capByAddr != null) setNonCapital(!capByAddr)
         // SGIS 인구/밀도 — 서버가 SGIS 리버스지오코딩(좌표)으로 읍면동 정밀 조회(1순위). 그게 막히면
         // 브라우저가 받은 법정동코드/시군구명으로 폴백하도록 함께 전달(headroom·disaster와 동일 원칙).
         const sggAll = (v?.parcel || '').match(/[가-힣]+(?:시|군|구)/g)
@@ -76,11 +83,6 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     }
   }, [point])
 
-  const r = useMemo(
-    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital }),
-    [point, mw, nonCapital],
-  )
-
   // 데이터센터 기후지수 — 연평균기온 우선순위: 케이웨더 과거기후 → 기상청 평년값(최근접) → 현재기온.
   const normal = useMemo(() => nearestNormal(point.lat, point.lng), [point])
   const climateIdx = useMemo(
@@ -93,6 +95,12 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
         currentTemp: wx?.temp,
       }),
     [climate, wx, normal],
+  )
+
+  // 스코어링 — 라이브 SGIS 리스크(침수·산사태·인구)와 기후지수를 실제 점수축에 반영(로드되며 갱신).
+  const r = useMemo(
+    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital, flood, landslide: disaster, pop, climate: climateIdx }),
+    [point, mw, nonCapital, flood, disaster, pop, climateIdx],
   )
   const dong = dongLabel(addr) // 표출값 동단위 근거지
 
@@ -154,8 +162,14 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
 
         <div className="calc-grid">
           <label>
-            입지 구분 (경계 자동판정은 추후)
-            <select value={nonCapital ? 'non' : 'cap'} onChange={(e) => setNonCapital(e.target.value === 'non')}>
+            입지 구분 (주소 기준 자동판정 · 수정 가능)
+            <select
+              value={nonCapital ? 'non' : 'cap'}
+              onChange={(e) => {
+                zoneTouched.current = true
+                setNonCapital(e.target.value === 'non')
+              }}
+            >
               <option value="non">비수도권</option>
               <option value="cap">수도권</option>
             </select>
@@ -181,7 +195,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 )}
               </span>
               <span className="hbar-value">
-                {axis.knownMax > 0 ? `${axis.known}/${axis.max}` : <span className="badge verify">대기</span>}
+                {axis.knownMax > 0 ? `${axis.known}/${axis.max}` : <span className="badge pending">대기</span>}
               </span>
             </div>
           ))}
@@ -266,7 +280,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                   {headroom.availableMw != null ? (
                     <strong>여유 {headroom.availableMw.toLocaleString()}MW</strong>
                   ) : (
-                    <span className="badge verify">여유용량 미제공</span>
+                    <span className="badge pending">여유용량 미제공</span>
                   )}
                   {headroom.cumulativeMw != null && ` · 누적연계 ${headroom.cumulativeMw.toLocaleString()}MW`}
                   {headroom.capacityMw != null && ` · 용량 ${headroom.capacityMw.toLocaleString()}MW`}
@@ -274,7 +288,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 </>
               ) : (
                 <>
-                  <span className="badge verify">실데이터 연동 대기 · 공개 API 미제공</span>
+                  <span className="badge pending">실데이터 연동 대기 · 공개 API 미제공</span>
                   <a
                     className="mini-link"
                     href="https://cyber.kepco.co.kr/ckepco/mobile/resources/resources_search.jsp"
@@ -340,7 +354,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                   <div className="ci-basis">근거: {climateIdx.basis}</div>
                 </div>
               ) : (
-                <span className="badge verify">연동 대기 — 기온 확보 후 산출</span>
+                <span className="badge pending">연동 대기 — 기온 확보 후 산출</span>
               )}
             </div>
           </div>
@@ -352,14 +366,14 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               {landUse?.uses?.length ? (
                 landUse.uses.join(' · ')
               ) : (
-                <span className="badge verify">조회 대기 — 점수화는 캘리브레이션 후</span>
+                <span className="badge pending">조회 대기 — 점수화는 캘리브레이션 후</span>
               )}
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k">지번주소 (vworld 리버스 지오코딩)</div>
             <div className="v">
-              {addr?.parcel ?? addr?.road ?? <span className="badge verify">조회 대기 — 연동 후 자동 표시</span>}
+              {addr?.parcel ?? addr?.road ?? <span className="badge pending">조회 대기 — 연동 후 자동 표시</span>}
             </div>
           </div>
 
@@ -394,7 +408,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                   </>
                 )
               ) : (
-                <span className="badge verify">연동 대기 — 리스크축 침수(홍수위험지도)</span>
+                <span className="badge pending">연동 대기 — 리스크축 침수(홍수위험지도)</span>
               )}
             </div>
           </div>
@@ -406,7 +420,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 <div className="v">
                   {net.backbone && `백본/IX ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
                   {net.cls && ` · 해저케이블 육양국 ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
-                  <span className="badge verify" style={{ marginLeft: 8 }}>공개 근사 · 검증 대기</span>
+                  <span className="badge pending" style={{ marginLeft: 8 }}>공개 근사 · 검증 대기</span>
                 </div>
               </div>
             )
@@ -427,7 +441,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                   <span className="meta"> · {pop.level || '시군구'} 단위{pop.year ? ` · ${pop.year}` : ''}(정밀 반경은 격자 API 연동 시)</span>
                 </>
               ) : (
-                <span className="badge verify">연동 대기 — 리스크축 인구(SGIS 시군구)</span>
+                <span className="badge pending">연동 대기 — 리스크축 인구(SGIS 시군구)</span>
               )}
             </div>
           </div>
@@ -451,7 +465,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                     {wx.pm10 != null && ` · PM10 ${wx.pm10}`}
                   </>
                 ) : (
-                  <span className="badge verify">연동 대기 — 케이웨더 실황(기상축)</span>
+                  <span className="badge pending">연동 대기 — 케이웨더 실황(기상축)</span>
                 )}
               </div>
               {(dong || normal) && (
@@ -484,7 +498,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                     <span className="badge status-operating">발효 중인 특보 없음</span>
                   )
                 ) : (
-                  <span className="badge verify">연동 대기 — 케이웨더 특보</span>
+                  <span className="badge pending">연동 대기 — 케이웨더 특보</span>
                 )}
               </div>
             </div>
@@ -499,7 +513,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                     {climate.rainSum != null && ` · 강수 ${climate.rainSum}mm`}
                   </>
                 ) : (
-                  <span className="badge verify">연동 대기 — 케이웨더 과거 기후</span>
+                  <span className="badge pending">연동 대기 — 케이웨더 과거 기후</span>
                 )}
               </div>
             </div>
@@ -512,9 +526,9 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                     <span className="meta"> · 해당 지번 건물에너지 실측(단독·소규모·산업 용도 제외)</span>
                   </>
                 ) : addr?.sigunguCd ? (
-                  <span className="badge verify">해당 지번 데이터 없음 — 대상 외(단독·200세대 미만·산업)일 수 있음</span>
+                  <span className="badge pending">해당 지번 데이터 없음 — 대상 외(단독·200세대 미만·산업)일 수 있음</span>
                 ) : (
-                  <span className="badge verify">연동 대기 — 법정동코드 확보(vworld) 후 자동 조회</span>
+                  <span className="badge pending">연동 대기 — 법정동코드 확보(vworld) 후 자동 조회</span>
                 )}
               </div>
             </div>
@@ -545,7 +559,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                     </>
                   )
                 ) : (
-                  <span className="badge verify">연동 대기 — 리스크축 재해</span>
+                  <span className="badge pending">연동 대기 — 리스크축 재해</span>
                 )}
               </div>
             </div>

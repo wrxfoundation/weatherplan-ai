@@ -21,8 +21,39 @@ export function nearestFacilities(lat, lng, n = 3) {
     .slice(0, n)
 }
 
-export function scoreSite({ lat, lng, mw = 40, nonCapital = true }) {
+// 노출률(%) → 점수: 0%면 만점, 50%+면 0점 선형. 값 없으면 pending.
+function exposureItem(label, max, o, pendingMsg) {
+  if (o?.available && o.source === 'sgis' && o.exposurePct != null) {
+    const points = Math.round(max * (1 - Math.min(1, o.exposurePct / 50)) * 10) / 10
+    return { label, max, points, basis: `영향구역 인구 노출 ${o.exposurePct}%${o.grade ? ` (${o.grade})` : ''}` }
+  }
+  return { label, max, points: null, pending: pendingMsg }
+}
+
+// DC 기후지수 단계(1 아주좋음 ~ 5 아주나쁨) → 냉각 점수(10점 만점)
+const CLIMATE_POINTS = { 1: 10, 2: 8, 3: 6, 4: 3, 5: 0 }
+
+export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null } = {}) {
   const track = checkPowerTrack(mw, { nonCapital })
+
+  // 리스크축: 침수(SGIS 홍수위험) 6 + 산사태(SGIS) 5 + 민원(SGIS 인구밀도) 4 = 15
+  const floodItem = exposureItem('침수 위험 (SGIS 홍수위험지도)', 6, flood, 'SGIS 홍수위험지도 조회 필요')
+  const landslideItem = exposureItem('산사태 위험 (SGIS 산사태위험지도)', 5, landslide, 'SGIS 산사태위험지도 조회 필요')
+  const densityItem =
+    pop?.available && pop.density != null
+      ? {
+          label: '민원 프록시 (SGIS 인구밀도)',
+          max: 4,
+          points: pop.density < 2000 ? 4 : pop.density < 5000 ? 3 : pop.density < 10000 ? 1.5 : 0,
+          basis: `밀도 ${pop.density.toLocaleString()}명/km²`,
+        }
+      : { label: '민원 프록시 (SGIS 인구밀도)', max: 4, points: null, pending: 'SGIS 인구 조회 필요' }
+
+  // 기상(냉각)축: DC 기후지수 단계 → 10점
+  const climateItem =
+    climate?.level != null && CLIMATE_POINTS[climate.level] != null
+      ? { label: '프리쿨링·냉각 적합도 (기후지수)', max: 10, points: CLIMATE_POINTS[climate.level], basis: `DC 기후지수 ${climate.label ?? `${climate.level}단계`} · 연평균 ${climate.temp ?? '—'}°C` }
+      : { label: '프리쿨링·냉각 적합도 (기후지수)', max: 10, points: null, pending: '기온 확보 후 산출(기상청 평년값/케이웨더)' }
 
   const axes = [
     {
@@ -60,7 +91,7 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true }) {
       key: 'risk',
       label: '리스크',
       max: 15,
-      items: [{ label: '군사·문화재·상수원·민원 프록시·침수/재해', max: 15, points: null, pending: '홍수위험지도(침수)·SGIS 인구격자·재난안전 재해연보 — 프록시 구현, env 연동 시 실점수화' }],
+      items: [floodItem, landslideItem, densityItem],
     },
     {
       key: 'network',
@@ -72,7 +103,7 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true }) {
       key: 'weather',
       label: '기상',
       max: 10,
-      items: [{ label: '프리쿨링·습구온도·침수/태풍', max: 10, points: null, pending: '기상청 공공 데이터(M3)' }],
+      items: [climateItem],
     },
   ]
 
@@ -87,9 +118,11 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true }) {
         axis.knownMax += it.max
       }
     }
+    axis.known = Math.round(axis.known * 10) / 10
     knownScore += axis.known
     knownMax += axis.knownMax
   }
+  knownScore = Math.round(knownScore * 10) / 10
 
   return {
     lat,
