@@ -2994,6 +2994,76 @@ a {
   margin-top: 0;
 }
 
+/* 지역별 전력·DC 한눈에 테이블 */
+.rollup-table {
+  margin-top: 6px;
+  overflow-x: auto;
+}
+
+.rollup-head,
+.rollup-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1.2fr) minmax(140px, 1.6fr) minmax(120px, 1.4fr) minmax(90px, 0.9fr);
+  gap: 10px;
+  align-items: center;
+  min-width: 520px;
+}
+
+.rollup-head {
+  font-size: var(--text-xs);
+  color: var(--grey);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0 0 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.rollup-row {
+  padding: 8px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  font-size: var(--text-body);
+  color: var(--grey);
+}
+
+.rollup-row b {
+  color: var(--text);
+  font-weight: var(--weight-bold);
+}
+
+.rollup-sido a {
+  color: var(--text);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+}
+
+.rollup-sido a:hover {
+  color: var(--accent);
+}
+
+.rollup-bar {
+  display: block;
+  height: 4px;
+  margin-top: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--grey) 22%, transparent);
+  overflow: hidden;
+}
+
+.rollup-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--status-operating);
+}
+
+.rollup-bar.alt i {
+  background: var(--accent);
+}
+
+.rollup-row .muted {
+  color: color-mix(in srgb, var(--grey) 70%, transparent);
+}
+
 .dash-status {
   display: flex;
   align-items: center;

@@ -17,8 +17,8 @@ export default function ClimateBar({ point, committed }) {
     setAddr(null)
     weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
     climateFor(point.lat, point.lng).then((v) => alive && setClimate(v))
-    // 지번 라벨은 '확정 지점'(클릭·검색)일 때만 — 팬 중 지도 중심마다 호출하지 않는다
-    if (committed) revgeoFor(point.lat, point.lng).then((v) => alive && setAddr(v))
+    // 근접 동(행정동) 표기 — 지도 중심도 스냅(0.05°) 좌표라 호출은 셀당 1회. vworld 브라우저 직접(JSONP)이면 붙는다.
+    revgeoFor(point.lat, point.lng).then((v) => alive && setAddr(v))
     return () => {
       alive = false
     }
@@ -34,14 +34,12 @@ export default function ClimateBar({ point, committed }) {
   })
 
   const dong = dongLabel(addr)
-  // 근거지는 좌표 기반으로 일관되게 표기 — 케이웨더 scope(관측소 행정동)는 질의 지점과
-  // 어긋날 수 있어(먼 관측소로 회귀) 지점 라벨로 쓰지 않는다.
+  const coordStr = point ? `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}` : ''
+  // 좌표 옆에 근접 동을 표기. 동 미확보(vworld 미연동) 시 최근접 관측지점으로 폴백.
   const region = normal ? `${normal.name} 인근` : null
   const where = committed
-    ? dong || addr?.parcel || `${point?.lat?.toFixed(4)}, ${point?.lng?.toFixed(4)}`
-    : region
-      ? `지도 중심 · ${region}`
-      : '지도 중심'
+    ? dong || addr?.parcel || coordStr
+    : `${coordStr}${dong ? ` · ${dong}` : region ? ` · ${region}` : ''}`
 
   return (
     <div className="climate-bar">
