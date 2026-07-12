@@ -18,8 +18,17 @@ import UtilityAcquisition from './articles/UtilityAcquisition.jsx'
 import OceanDatacenter from './articles/OceanDatacenter.jsx'
 import Market2025H2 from './articles/Market2025H2.jsx'
 import LandingEdge from './articles/LandingEdge.jsx'
+import PowerSupplyChain from './articles/PowerSupplyChain.jsx'
 
 const ARTICLES = {
+  'power-supply-chain': {
+    component: PowerSupplyChain,
+    sources: [
+      '전력계통 구조(발전→송전 765/345kV→변전 154kV+→DC 수전)·DC 내부 가동(수전·UPS·냉각·컴퓨트·네트워크): 전력공학 통용 지식 — 콘텐츠 등급 ③민간 가공',
+      '변전소 788개(345kV 122·765kV 9): 한전 변전설비현황(2026.7) · 154kV+ 변전소 좌표 841개: OpenStreetMap/OpenInfraMap export',
+      '계통 공급여유(시도별)·DC 전력공급 가능판정율(수도권 46%/비수도권 84%): 한전 연계가능용량(2027)·전력계통영향평가 1차 기술검토(2026.3) — AI InfraMap 집계',
+    ],
+  },
   'landing-edge': {
     component: LandingEdge,
     sources: [
