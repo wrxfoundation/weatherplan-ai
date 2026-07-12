@@ -92,8 +92,11 @@ export const warningFor = (lat, lng) => fetchJson(`/api/kweather?kind=warning&${
 /** 케이웨더 과거 연별 기후 — { avgTemp, maxTemp, minTemp, rainSum } | null (프리쿨링 잠재력) */
 export const climateFor = (lat, lng) => fetchJson(`/api/kweather?kind=climate&${q(lat, lng)}`)
 
-/** 한전 분산전원 계통 여유용량 — { availableMw, cumulativeMw, scope } | null */
-export const headroomFor = (lat, lng) => fetchJson(`/api/headroom?${q(lat, lng)}`)
+/** 한전 분산전원 계통 여유용량 — { availableMw, cumulativeMw, scope } | null.
+ *  code: 브라우저 vworld가 받은 법정동코드(10/5자리) 또는 시도코드(2자리)를 서버로 전달 →
+ *  서버측 vworld(Vercel IP 502) 우회. code 없으면 서버가 vworld 폴백. */
+export const headroomFor = (lat, lng, code) =>
+  fetchJson(`/api/headroom?${q(lat, lng)}${code ? `&${String(code).length === 2 ? 'metroCd' : 'admCd'}=${code}` : ''}`)
 
 /** DART 최근 DC 관련 공시 (D2 이벤트) — { filings: [{corp,title,date,url}] } | null */
 export const filingsRecent = () => fetchJson('/api/filings')
@@ -130,7 +133,8 @@ export const populationFor = (lat, lng, admCd, sgg) =>
     : Promise.resolve(null)
 
 /** 재난안전 시군구 재해 이력 — { events, topType, recentYear } | null (리스크축 재해) */
-export const disasterFor = (lat, lng) => fetchJson(`/api/disaster?${q(lat, lng)}`)
+export const disasterFor = (lat, lng, admCd) =>
+  fetchJson(`/api/disaster?${q(lat, lng)}${admCd ? `&admCd=${admCd}` : ''}`)
 
 /** API 연동 현황 — { sources:[{key,label,axis,configured,available?,reason?}], probed } | null */
 export const apiStatus = (probe = true) =>

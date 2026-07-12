@@ -43,31 +43,35 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     setClimate(null)
     warningFor(point.lat, point.lng).then((v) => alive && setWarning(v))
     climateFor(point.lat, point.lng).then((v) => alive && setClimate(v))
-    revgeoFor(point.lat, point.lng).then((v) => {
-      if (!alive) return
-      setAddr(v)
-      // SGIS 인구/밀도 — 시도코드로 질의 후 시군구 '이름'으로 매칭(코드 불일치 회피)
-      if (v?.sigunguCd) {
-        const sggAll = (v.parcel || '').match(/[가-힣]+(?:시|군|구)/g)
-        const sgg = sggAll ? sggAll[sggAll.length - 1] : undefined
-        populationFor(point.lat, point.lng, v.sigunguCd, sgg).then((e) => alive && setPop(e))
-      }
-      // 지번 법정동코드가 확보되면 건축HUB 지번 전기사용량 조회(최근 데이터는 2~3개월 지연)
-      if (v?.sigunguCd && v?.bjdongCd) {
-        const d = new Date()
-        d.setMonth(d.getMonth() - 3)
-        const useYm = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`
-        bldEnergyFor({ sigunguCd: v.sigunguCd, bjdongCd: v.bjdongCd, bun: v.bun, ji: v.ji, useYm }).then(
-          (e) => alive && setEnergy(e),
-        )
-      }
-    })
+    revgeoFor(point.lat, point.lng)
+      .catch(() => null)
+      .then((v) => {
+        if (!alive) return
+        setAddr(v)
+        // SGIS 인구/밀도 — 시도코드로 질의 후 시군구 '이름'으로 매칭(코드 불일치 회피)
+        if (v?.sigunguCd) {
+          const sggAll = (v.parcel || '').match(/[가-힣]+(?:시|군|구)/g)
+          const sgg = sggAll ? sggAll[sggAll.length - 1] : undefined
+          populationFor(point.lat, point.lng, v.sigunguCd, sgg).then((e) => alive && setPop(e))
+        }
+        // 지번 법정동코드가 확보되면 건축HUB 지번 전기사용량 조회(최근 데이터는 2~3개월 지연)
+        if (v?.sigunguCd && v?.bjdongCd) {
+          const d = new Date()
+          d.setMonth(d.getMonth() - 3)
+          const useYm = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`
+          bldEnergyFor({ sigunguCd: v.sigunguCd, bjdongCd: v.bjdongCd, bun: v.bun, ji: v.ji, useYm }).then(
+            (e) => alive && setEnergy(e),
+          )
+        }
+        // 여유용량·재해: 브라우저가 받은 법정동코드를 서버로 넘겨 서버측 vworld(Vercel IP 502) 우회.
+        // 코드 없으면(브라우저 vworld 미활성) admCd 없이 호출 → 서버 vworld 폴백(막히면 정직히 대기).
+        headroomFor(point.lat, point.lng, v?.legalCode).then((e) => alive && setHeadroom(e))
+        disasterFor(point.lat, point.lng, v?.legalCode).then((e) => alive && setDisaster(e))
+      })
     weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
     landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v))
     forecastFor(point.lat, point.lng).then((v) => alive && setFc(v))
-    headroomFor(point.lat, point.lng).then((v) => alive && setHeadroom(v))
     floodRiskFor(point.lat, point.lng).then((v) => alive && setFlood(v))
-    disasterFor(point.lat, point.lng).then((v) => alive && setDisaster(v))
     return () => {
       alive = false
     }

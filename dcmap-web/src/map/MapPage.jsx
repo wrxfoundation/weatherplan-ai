@@ -11,7 +11,7 @@ import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
-import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS } from '../data/genLicenses.js'
+import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor } from '../data/liveApi.js'
 
@@ -349,7 +349,8 @@ export default function MapPage({ power = false }) {
     let alive = true
     Promise.all(
       SIDO_LIST.map((s) =>
-        headroomFor(s.lat, s.lng)
+        // 시도 버블: 서버측 vworld 없이 시도코드(metroCd)를 직접 넘겨 KEPCO 조회.
+        headroomFor(s.lat, s.lng, SIDO_METRO_CD[s.sido])
           .then((v) => [s.sido, v?.available ? (v.availableMw ?? null) : null])
           .catch(() => [s.sido, null]),
       ),
