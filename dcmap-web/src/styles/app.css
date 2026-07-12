@@ -1987,6 +1987,87 @@ summary:focus-visible,
 }
 
 /* 인사이트 카테고리 태그 */
+/* ── 전력공급 사슬 전개도 (PowerSupplyChain 아티클) ── */
+.psc-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 6px;
+  margin: 18px 0 10px;
+}
+.psc-stage {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  flex: 1 1 150px;
+  min-width: 140px;
+}
+.psc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  padding: 12px 12px 11px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--glass-surface, rgba(255, 255, 255, 0.03));
+  border-left: 3px solid var(--accent, #35d5ee);
+}
+.psc-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+.psc-name {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.psc-kv {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent, #35d5ee);
+  font-family: var(--mono, monospace);
+}
+.psc-note {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--grey);
+}
+.psc-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grey);
+  font-size: 16px;
+  transform: rotate(-90deg);
+  flex: 0 0 auto;
+}
+/* 전력 사슬 단계별 톤 */
+.psc-tone-gen { border-left-color: #f0824c; }
+.psc-tone-up { border-left-color: #f4c14b; }
+.psc-tone-line { border-left-color: #93a3bd; }
+.psc-tone-sub { border-left-color: #c084fc; }
+.psc-tone-dc { border-left-color: #35d5ee; }
+/* 지도 실데이터 강조 문단 */
+.psc-data {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent, #35d5ee) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, #35d5ee) 22%, var(--line));
+  font-size: 13.5px;
+}
+@media (max-width: 720px) {
+  .psc-stage {
+    flex-direction: column;
+    flex-basis: 100%;
+  }
+  .psc-arrow {
+    transform: none;
+    width: 100%;
+    height: 18px;
+  }
+}
+
 .insight-tag {
   display: inline-block;
   margin-right: 8px;
