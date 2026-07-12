@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { STATUS_LABEL, isCapitalByAddr, isCapitalByPoint } from '../data/facilities.js'
+import { STATUS_LABEL, isCapitalByAddr, isCapitalByPoint, FACILITIES } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
 import { forecastFor, headroomFor, landUseFor, landAreaFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, dongLabel } from '../data/liveApi.js'
@@ -11,7 +11,7 @@ import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
 import { gridHeadroomForSido, headroomLabel } from '../data/gridHeadroom.js'
 import { dcApprovalForSido, approvalLabel } from '../data/gridAssessment.js'
 import { nearestIndustrialComplex } from '../data/industrialComplexes.js'
-import { scoreSite } from './engine.js'
+import { scoreSite, haversineKm } from './engine.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
 import Term from '../components/Term.jsx'
@@ -129,6 +129,13 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   // DC 전력계통영향평가 공급 승인율(시도) — 계통 공급 가능성 점수 근거(실데이터).
   const approval = useMemo(() => dcApprovalForSido(sido), [sido])
 
+  // 경쟁·집적 밀도 — 반경 내 기존/계획 DC 수. 집적=인프라 성숙, 과밀=전력·부지 경쟁(양면).
+  const competition = useMemo(() => {
+    const within = (km) => FACILITIES.filter((f) => haversineKm(point.lat, point.lng, f.lat, f.lng) <= km)
+    const r10 = within(10)
+    return { n10: r10.length, op10: r10.filter((f) => f.status === 'operating').length, n30: within(30).length }
+  }, [point])
+
   // 스코어링 — 라이브 SGIS 리스크(침수·산사태·인구)·기후지수·발전단지 근접·계통 공급여유·DC 승인율을 실제 점수축에 반영(로드되며 갱신).
   const plantKm = useMemo(() => nearestPlant(point)?.km ?? null, [point])
   const r = useMemo(
@@ -200,6 +207,9 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 <span className={`sum-chip tone-${pop.density < 3000 ? 'good' : 'warn'}`}>
                   밀도 {pop.density < 3000 ? '저' : '고'}
                 </span>
+              )}
+              {competition.n10 > 0 && (
+                <span className={`sum-chip tone-${competition.n10 >= 5 ? 'warn' : 'good'}`}>DC 반경10km {competition.n10}곳</span>
               )}
             </div>
           )
@@ -521,13 +531,24 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
                 <div className="k">네트워크 근접성 (<Term k="백본">백본</Term>·<Term k="육양국">해저케이블</Term> — 지연·회선)</div>
                 <div className="v">
-                  {net.backbone && `백본/IX ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
+                  {net.backbone && `백본/국사 ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
                   {net.cls && ` · 해저케이블 육양 시설 ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
-                  <span className="badge pending" style={{ marginLeft: 8 }}>공개 근사 · 검증 대기</span>
+                  <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>OSM telecom·근사</span>
                 </div>
               </div>
             )
           })()}
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">경쟁·집적 밀도 (반경 내 데이터센터)</div>
+            <div className="v">
+              반경 10km <strong>{competition.n10}곳</strong>
+              {competition.op10 > 0 && ` (운영 ${competition.op10})`} · 반경 30km {competition.n30}곳
+              <span className={`badge ${competition.n10 >= 5 ? 'verify' : 'status-operating'}`} style={{ marginLeft: 6 }}>
+                {competition.n10 >= 5 ? '과밀 — 전력·부지 경쟁 유의' : competition.n10 >= 1 ? '집적 — 인프라 성숙' : '한산'}
+              </span>
+              <div className="cell-basis">기존/계획 DC 집적. 집적=광케이블·전력·인력 성숙(+), 과밀=전력·부지 경쟁(−). AI InfraMap 시설 시드 기준</div>
+            </div>
+          </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k"><Term k="인구격자">인구·밀도</Term> (SGIS 시군구 — 주민 수용성·민원)</div>
             <div className="v">
