@@ -7,6 +7,7 @@ import { forecastFor, headroomFor, landUseFor, revgeoFor, weatherFor, floodRiskF
 import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
 import { substationForSido } from '../data/substations.js'
+import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
 import { scoreSite } from './engine.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
@@ -105,13 +106,14 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     [point, mw, nonCapital, flood, disaster, pop, climateIdx, plantKm, landUse],
   )
   const dong = dongLabel(addr) // 표출값 동단위 근거지
-  // 지역 송변전 인프라(한전 변전소 현황) — 주소 시도 → 본부 집계. 참고 맥락(여유량 아님).
-  const subInfra = useMemo(() => {
+  // 지역 전력 여건(한전 변전소 현황 + 전력 자급률) — 주소 시도 기준. 참고 맥락(부지별 여유량 아님).
+  const regionPower = useMemo(() => {
     const s = addr?.parcel || addr?.road || ''
     const m = s.match(/^(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충청북도|충청남도|전라북도|전라남도|경상북도|경상남도|제주)/)
     const map = { 충청북도: '충북', 충청남도: '충남', 전라북도: '전북', 전라남도: '전남', 경상북도: '경북', 경상남도: '경남' }
     const sido = m ? map[m[1]] || m[1] : null
-    return sido ? substationForSido(sido) : null
+    if (!sido) return null
+    return { sido, sub: substationForSido(sido), bal: POWER_BALANCE[sido] || null }
   }, [addr])
 
   return (
@@ -342,15 +344,26 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               </div>
             ) : null
           })()}
-          {subInfra && (
+          {regionPower && (regionPower.sub || regionPower.bal) && (
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k">지역 송변전 인프라 (한전 변전소 현황 · 참고 — 여유량 아님)</div>
+              <div className="k">지역 전력 여건 (한전 변전소·자급률 · 참고 — 부지별 여유량 아님)</div>
               <div className="v">
-                {subInfra.region} · <strong>154kV+ 변전소 {subInfra.hv.toLocaleString()}개</strong>
-                {` (345kV ${subInfra.n345}·154kV ${subInfra.n154})`}
-                {subInfra.hvMva > 0 && ` · 변압기 ${subInfra.hvMva.toLocaleString()}MVA`}
+                {regionPower.bal && (
+                  <>
+                    <strong>전력 자급률 {regionPower.bal.ratio}%</strong>
+                    <span className={`badge ${regionPower.bal.ratio >= 100 ? 'status-operating' : 'verify'}`} style={{ marginLeft: 6 }}>
+                      {selfSufficiencyLabel(regionPower.bal.ratio)}
+                    </span>
+                  </>
+                )}
+                {regionPower.sub && (
+                  <div style={{ marginTop: 4 }}>
+                    {regionPower.sub.region} · 154kV+ 변전소 <strong>{regionPower.sub.hv.toLocaleString()}개</strong>
+                    {regionPower.sub.hvMva > 0 && ` · 변압기 ${regionPower.sub.hvMva.toLocaleString()}MVA`}
+                  </div>
+                )}
                 <div className="cell-basis">
-                  설비 밀도 지표 · 부지별 접속 여유는 <a className="mini-link" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드/한전 접속가능용량 →</a>
+                  발전-소비 균형·설비 밀도(지역) — 부지별 접속 여유는 <a className="mini-link" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드/한전 접속가능용량 →</a>
                 </div>
               </div>
             </div>
