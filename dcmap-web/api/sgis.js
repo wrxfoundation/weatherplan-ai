@@ -8,8 +8,8 @@
  * 환경변수 (Vercel — 서버 env 전용, 리포 커밋 절대 금지):
  *  - SGIS_KEY (필수) — consumer key
  *  - SGIS_SECRET (필수) — consumer secret
- *  - SGIS_STATS_URL (선택) — 인구 통계 엔드포인트 템플릿. {lat}{lng}{token} 플레이스홀더.
- *      경로·파라미터 확정 시 이 env만 수정(코드 재배포 불필요).
+ *  - SGIS_POP_URL / SGIS_RGEO_URL / SGIS_FLOOD_URL / SGIS_LANDSLIDE_URL (선택) — 엔드포인트 override
+ *  - UPSTREAM_PROXY_BASE (선택) — 클라우드 IP 차단 시 KR-IP 프록시 경유
  *
  * 응답: { available, population?, households?, radiusKm?, scope } | { available:false, reason }
  */
@@ -23,10 +23,7 @@ const AUTH_URL = process.env.SGIS_AUTH_URL || 'https://sgisapi.mods.go.kr/OpenAP
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 // SGIS 인구(population.json)는 좌표가 아니라 year+adm_cd 기준인데, SGIS 시군구코드는 행정표준코드와
 // 다르다(강남구: 행정표준 11680 vs SGIS 11230). 그래서 **시도 2자리 코드(양 체계 동일)로 질의 +
-// low_search=1**로 하위 시군구를 모두 받은 뒤 **시군구 이름으로 매칭**한다(정적 코드표 불필요).
-// {token}{sido}{year} 플레이스홀더. 경로/파라미터는 SGIS_STATS_URL env로 재배포 없이 보정 가능.
-const DEFAULT_STATS_URL =
-  'https://sgisapi.mods.go.kr/OpenAPI3/stats/population.json?accessToken={token}&year={year}&adm_cd={sido}&low_search=1'
+// low_search로 하위 시군구를 받은 뒤 이름 매칭하는 방식은 폴백에서만 사용(정적 코드표 불필요).
 // SGIS 리버스지오코딩(WGS84) — 좌표 → SGIS 행정동코드(정의서 확인 경로). 정밀 인구는 이 코드로 조회.
 const RGEO_URL = process.env.SGIS_RGEO_URL || 'https://sgisapi.mods.go.kr/OpenAPI3/addr/rgeocodewgs84.json'
 const POP_BASE = process.env.SGIS_POP_URL || 'https://sgisapi.mods.go.kr/OpenAPI3/stats/population.json'
