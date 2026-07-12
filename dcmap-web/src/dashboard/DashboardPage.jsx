@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
-import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf } from '../data/facilities.js'
+import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf, CAPITAL_SIDOS } from '../data/facilities.js'
+import { GEN_PERMIT_BUBBLES } from '../data/genLicenses.js'
+import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
-import { filingsRecent, epsisCapacity, apiStatus, supplyForecast, tradingMix } from '../data/liveApi.js'
+import { filingsRecent, epsisCapacity, apiStatus, tradingMix } from '../data/liveApi.js'
 
 const TITLE = '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스'
 const DESC =
@@ -55,7 +57,6 @@ export default function DashboardPage() {
   const [now, setNow] = useState(() => new Date())
   const [filings, setFilings] = useState(null)
   const [epsis, setEpsis] = useState(null)
-  const [supply, setSupply] = useState(null)
   const [trading, setTrading] = useState(null)
   const [status, setStatus] = useState(null)
   useEffect(() => {
@@ -67,13 +68,27 @@ export default function DashboardPage() {
     let alive = true
     filingsRecent().then((v) => alive && setFilings(v))
     epsisCapacity().then((v) => alive && setEpsis(v))
-    supplyForecast().then((v) => alive && setSupply(v))
     tradingMix().then((v) => alive && setTrading(v))
     apiStatus(true).then((v) => alive && setStatus(v))
     return () => {
       alive = false
     }
   }, [])
+
+  // KPX 수급예보(openapi.kpx.or.kr)는 클라우드 IP 차단으로 미연동 → 되는 데이터(전력거래실적)로
+  // 공급측 신호를 대체 구성: 실제 발전 믹스에서 재생/원자력/화석 비중.
+  const RENEW = new Set(['태양광', '풍력', '해상풍력', '수력', '바이오', '연료전지', '신재생·기타'])
+  const mix = useMemo(() => {
+    const bars = (trading?.available ? trading.byFuel : [])?.filter((f) => f.tradedMwh != null) || []
+    const total = bars.reduce((s, f) => s + f.tradedMwh, 0)
+    if (!total) return null
+    const sum = (pred) => bars.filter(pred).reduce((s, f) => s + f.tradedMwh, 0)
+    const renew = sum((f) => RENEW.has(f.fuel))
+    const nuclear = sum((f) => f.fuel === '원자력')
+    const fossil = Math.max(0, total - renew - nuclear)
+    const pct = (v) => Math.round((v / total) * 100)
+    return { total, renewPct: pct(renew), nuclearPct: pct(nuclear), fossilPct: pct(fossil), asOf: trading?.asOf }
+  }, [trading])
 
   useEffect(() => {
     document.title = TITLE
@@ -118,6 +133,29 @@ export default function DashboardPage() {
     }
   }, [])
 
+  // 지역별 '전력 + 데이터센터'를 한 눈에 — 어디 중심으로 준비가 진행되는지. 전부 공개 소스.
+  const rollup = useMemo(() => {
+    const m = new Map()
+    const get = (s) => {
+      if (!m.has(s)) m.set(s, { sido: s, dcCount: 0, dcMw: 0, genCount: 0, genMw: 0, newMw: 0 })
+      return m.get(s)
+    }
+    for (const f of FACILITIES) {
+      const r = get(f.sido)
+      r.dcCount += 1
+      r.dcMw += f.power_mw_public ?? 0
+    }
+    for (const b of GEN_PERMIT_BUBBLES) {
+      const r = get(b.sido)
+      r.genCount = b.count
+      r.genMw = b.mw ?? 0
+    }
+    for (const n of NEW_PLANTS_2025) get(n.sido).newMw = Math.round((n.capacityKw ?? 0) / 1000)
+    // 준비 집중도 = DC 공개용량 + 2025 신규 발전(MW) 기준 내림차순
+    return [...m.values()].sort((a, b) => b.dcMw + b.newMw - (a.dcMw + a.newMw))
+  }, [])
+  const maxRollup = Math.max(...rollup.map((r) => Math.max(r.dcMw, r.newMw, 1)), 1)
+
   const maxRegion = d.regions[0]?.[1] ?? 1
   const maxLand = Math.max(...d.landTop.map(([, v]) => Math.abs(v)), 0.01)
 
@@ -136,6 +174,48 @@ export default function DashboardPage() {
         </p>
 
         <div className="dash-grid">
+          {/* 지역별 전력·데이터센터 한눈에 — 어디 중심으로 준비가 진행되는지(공개 소스) */}
+          <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
+            <div className="chart-title">지역별 전력·데이터센터 한눈에 — 어디 중심으로 준비되는가</div>
+            <div className="rollup-table" role="table">
+              <div className="rollup-head" role="row">
+                <span>지역</span>
+                <span>데이터센터</span>
+                <span>2025 신규 발전</span>
+                <span>발전허가(2024+)</span>
+              </div>
+              <ExpandableList
+                items={rollup}
+                initial={8}
+                unit="개 지역"
+                render={(r) => (
+                  <div key={r.sido} className="rollup-row" role="row">
+                    <span className="rollup-sido">
+                      <Link to={`/?sido=${encodeURIComponent(r.sido)}`}>{r.sido}</Link>
+                      {CAPITAL_SIDOS.has(r.sido) && <span className="badge" style={{ marginLeft: 6 }}>수도권</span>}
+                    </span>
+                    <span>
+                      <b>{r.dcCount}</b>곳{r.dcMw > 0 ? ` · ${r.dcMw.toLocaleString()}MW` : ''}
+                      <span className="rollup-bar">
+                        <i style={{ width: `${(r.dcMw / maxRollup) * 100}%` }} />
+                      </span>
+                    </span>
+                    <span>
+                      {r.newMw > 0 ? <b>{r.newMw.toLocaleString()}MW</b> : <span className="muted">–</span>}
+                      <span className="rollup-bar alt">
+                        <i style={{ width: `${(r.newMw / maxRollup) * 100}%` }} />
+                      </span>
+                    </span>
+                    <span>{r.genCount > 0 ? `${r.genCount}건` : <span className="muted">–</span>}</span>
+                  </div>
+                )}
+              />
+            </div>
+            <p className="chart-note">
+              데이터센터(공개 시드) · 2025 신규 발전 설비(설비현황) · 발전허가(3MW 초과 허가대장 2024+). 정렬: DC 공개용량 + 신규 발전
+              합산 내림차순. 지역명 클릭 시 해당 지역 시설 맵으로. 출처: <strong>공개 데이터 기준</strong>(가짜 수치로 채우지 않음).
+            </p>
+          </section>
           <section className="calc-card">
             <div className="chart-title">DATA CENTER STATUS</div>
             <div className="dash-status">
@@ -291,40 +371,40 @@ export default function DashboardPage() {
           </section>
 
           <section className="calc-card">
-            <div className="chart-title">전력 계통 현황 — KPX 전력수급예보 (라이브)</div>
-            {supply?.available && supply.reservePct != null ? (
+            <div className="chart-title">발전 믹스 — 재생·원자력·화석 비중 (거래실적 기준)</div>
+            {mix ? (
               <>
                 <div className="dash-status">
                   <div className="status-rows">
-                    {supply.supplyMw != null && (
-                      <div className="dash-row">
-                        공급능력 <strong>{supply.supplyMw.toLocaleString()}</strong> MW
-                      </div>
-                    )}
-                    {supply.peakMw != null && (
-                      <div className="dash-row">
-                        최대전력 <strong>{supply.peakMw.toLocaleString()}</strong> MW
-                      </div>
-                    )}
-                    {supply.reserveMw != null && (
-                      <div className="dash-row">
-                        공급예비력 <strong>{supply.reserveMw.toLocaleString()}</strong> MW
-                      </div>
-                    )}
-                    {supply.asOf && <div className="dash-row total">기준 {supply.asOf}</div>}
+                    <div className="dash-row">
+                      재생에너지 <strong>{mix.renewPct}</strong>%
+                    </div>
+                    <div className="dash-row">
+                      원자력 <strong>{mix.nuclearPct}</strong>%
+                    </div>
+                    <div className="dash-row">
+                      화석·기타 <strong>{mix.fossilPct}</strong>%
+                    </div>
+                    {mix.asOf && <div className="dash-row total">기준 {mix.asOf}</div>}
                   </div>
-                  <Gauge pct={Math.max(0, Math.min(100, Math.round(supply.reservePct)))} label="공급예비율" />
+                  <Gauge pct={Math.max(0, Math.min(100, mix.renewPct))} label="재생 비중" />
+                </div>
+                {/* 재생-원자력-화석 스택 바 */}
+                <div className="status-bar" role="img" aria-label={`재생 ${mix.renewPct}%, 원자력 ${mix.nuclearPct}%, 화석 ${mix.fossilPct}%`} style={{ marginTop: 4 }}>
+                  {mix.renewPct > 0 && <span className="seg op" style={{ flexGrow: mix.renewPct }} />}
+                  {mix.nuclearPct > 0 && <span className="seg co" style={{ flexGrow: mix.nuclearPct }} />}
+                  {mix.fossilPct > 0 && <span className="seg pl" style={{ flexGrow: mix.fossilPct }} />}
                 </div>
                 <p className="chart-note">
-                  공급예비율이 낮을수록 신규 대형 수요(AIDC)의 계통 진입 여력이 준다 — 전력계통영향평가 ±15점·비수도권
-                  유인의 배경.{' '}
+                  KPX 수급예보(공급예비율)는 서버 제약으로 미연동 — 대신 <strong>실제 발전 믹스</strong>로 계통 특성을 표기.
+                  재생 비중이 높을수록 간헐성 대응(ESS·계통)이 관건. 출처: <strong>KPX 전력거래실적</strong>(data.go.kr, 연료원별 실거래).{' '}
                   <Link to="/insights/market-2025h2">±15점 시대 →</Link>
                 </p>
               </>
             ) : (
               <p className="chart-note">
-                공급능력·최대전력·공급예비율 실시간 — AIDC 수요가 계통 예비력을 잠식하는 구도를 실측으로 보여주는 공급측
-                지표. KPX 전력수급예보(data.go.kr) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
+                실제 발전 믹스의 재생·원자력·화석 비중 — 계통 특성 지표. KPX 전력거래실적(data.go.kr) 연동 시 활성. 현재{' '}
+                <span className="badge verify">연동 대기</span>.
               </p>
             )}
           </section>
