@@ -26,3 +26,25 @@ env 키만으로 작동하지 않으면 아래 `*_URL` env를 함께 넣어 **�
 2. `upstream_404` → 위 표의 실제 경로로 해당 `*_URL` env 설정(Vercel) → 자동 반영.
 3. `schema_unknown` → 응답 JSON의 실제 필드명을 알려주면 프록시 `pick()` 후보에 추가(코드 1줄).
 4. data.go.kr 키는 **디코딩 키**를 쓰고, serviceKey는 URL 인코딩되어 들어감(프록시가 처리).
+
+## 클라우드 IP 차단 근본 해결 — 상류 프록시 (`UPSTREAM_PROXY_BASE`)
+
+`floodmap`·`headroom`·`power?src=supply`(KPX 수급예보)는 `reason: upstream_raw_timeout`/`upstream_UND_ERR_SOCKET`
+처럼 **응답 자체가 안 온다**. 키·경로 문제가 아니라 Vercel 서버리스의 egress IP가 KR 상용망이 아니라서
+`data.floodmap.go.kr`·`openapi.kpx.or.kr`·`bigdata.kepco.co.kr`가 소켓을 끊는(차단) 것. 재배포·env 경로
+보정으로는 못 뚫는다. 근본 해결은 **한국 IP 경유**뿐.
+
+**활성화(코드 재배포 불필요 — Vercel env 2개만):**
+- `UPSTREAM_PROXY_BASE` — KR-IP 프록시 엔드포인트. 예) `https://proxy.kweather.co.kr/fetch`
+  프록시는 `?url=<대상URL(인코딩)>`를 받아 대상에 GET → 바디 그대로 반환.
+- `PROXY_TOKEN` (권장) — 공유 시크릿(`x-proxy-token` 헤더). 프록시는 이 토큰 + 대상 호스트 allowlist로 오픈프록시 악용 차단.
+
+설정하면 `floodmap`·`headroom`·`disaster`·`supply` 프록시가 **KR-IP 경유를 최우선**으로 시도하고,
+미설정 시엔 기존 동작 그대로(무해). 프록시 스켈레톤(~30줄)은 `api/_proxy.js` 상단 주석 참고.
+
+**프록시로도 안 되는 것 (IP 무관 · 신청 필요):**
+- `disaster` — `DISASTER_KEY` 미발급. data.go.kr/safetydata.go.kr에서 **서비스 신청·승인**이 선행돼야 함.
+- `headroom` — KR-IP 우회로 연결은 되나 `KEPCO_API_KEY`(한전 빅데이터 개방포털 승인)가 유효해야 값이 나옴.
+
+**프록시 둘 곳 (견고성 순):** ① 케이웨더 자체 서버(weatherplan.kweather.co.kr 백엔드) — 비용 0·키 내부 유지
+· ② KR VPS(Cafe24/Gabia/네이버클라우드, ~₩5천/월) · ③ Cloudflare Workers(서울 PoP, egress IP는 엔드포인트별 테스트 필요).

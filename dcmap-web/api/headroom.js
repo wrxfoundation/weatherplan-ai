@@ -13,6 +13,8 @@
  *
  * 응답: { available, availableMw?, cumulativeMw?, scope, unit } | { available:false, reason }
  */
+import { proxyConfigured, proxyGetText } from './_proxy.js'
+
 const DEFAULT_URL =
   'https://bigdata.kepco.co.kr/openapi/v1/DISTRIBUTED.do?metroCd={sido}&cityCd={sigungu}&apiKey={key}&returnType=json'
 
@@ -91,7 +93,16 @@ export default async function handler(req, res) {
       .replaceAll('{sigungu}', codes.sigungu)
       .replaceAll('{key}', key)
 
-    const body = await fetchJson(url)
+    // 프록시(UPSTREAM_PROXY_BASE) 설정 시 KR-IP 경유 최우선 — bigdata.kepco.co.kr IP차단 근본 우회.
+    let body = null
+    if (proxyConfigured()) {
+      try {
+        body = JSON.parse(await proxyGetText(url, 8000))
+      } catch {
+        body = null
+      }
+    }
+    if (!body) body = await fetchJson(url)
     if (body?._status) {
       res.status(200).json({ available: false, reason: `upstream_${body._status}` })
       return
