@@ -228,15 +228,6 @@ export default function TopBar() {
         </NavLink>
       </nav>
 
-      <button
-        type="button"
-        className="btn primary report-btn"
-        title="부지 적합도 리포트는 M2(스코어링 엔진)에서 열립니다 — 지금은 필요 용량 산정(GPU 계산기)부터 시작하세요"
-        onClick={() => navigate('/calc')}
-      >
-        Generate Report <span className="btn-arrow">↗</span>
-      </button>
-
     </header>
 
     {/* header 밖 형제로 — topbar의 backdrop-filter가 fixed 기준점이 되는 것 방지 */}

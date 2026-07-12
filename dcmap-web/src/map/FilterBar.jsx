@@ -14,9 +14,9 @@ export default function FilterBar({
   sido,
   onSido,
   minMw,
-  onClearMw,
+  onMinMw,
   nonCap,
-  onClearNonCap,
+  onToggleNonCap,
   showLabels,
   onToggleLabels,
   showPlants,
@@ -112,22 +112,30 @@ export default function FilterBar({
         ))}
       </select>
 
-      {minMw != null && (
-        <span className="mw-chip">
-          필요 용량 ≥ {minMw} MW
-          <button type="button" onClick={onClearMw} aria-label="용량 필터 해제">
-            ×
-          </button>
-        </span>
-      )}
-      {nonCap && (
-        <span className="mw-chip gate-chip" title="계통영향평가 ±15점 가점·AIDC 특별법 면제 권역(비수도권)">
-          관문 유리 · 비수도권
-          <button type="button" onClick={onClearNonCap} aria-label="비수도권 필터 해제">
-            ×
-          </button>
-        </span>
-      )}
+      {/* 세부 검색 조건 — 필요 용량·입지(관문 유리)를 검색조건으로 흡수 */}
+      <label className="mw-input" title="공개 전력 이 값 이상인 시설만">
+        용량 ≥
+        <input
+          type="number"
+          min="0"
+          step="10"
+          inputMode="numeric"
+          placeholder="MW"
+          value={minMw ?? ''}
+          onChange={(e) => onMinMw(e.target.value === '' ? null : Math.max(0, Number(e.target.value) || 0))}
+          aria-label="최소 필요 용량(MW)"
+        />
+        MW
+      </label>
+      <button
+        type="button"
+        className={`chip ${nonCap ? 'on' : ''}`}
+        onClick={onToggleNonCap}
+        aria-pressed={nonCap}
+        title="계통영향평가 ±15점 가점·AIDC 특별법 면제 권역(비수도권만 표시)"
+      >
+        관문 유리 · 비수도권
+      </button>
     </div>
   )
 }

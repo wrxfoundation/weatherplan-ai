@@ -123,12 +123,14 @@ export default async function handler(req, res) {
         lastReason = `upstream_${b._status}${em ? `_${String(em).replace(/\s+/g, '')}` : ''}`
         continue
       }
-      const pop = num(pick(b, ['tot_ppltn', 'population', 'ppltn', 'totalPopulation']))
+      const pop = num(pick(b, ['tot_ppltn', 'population', 'ppltn', 'totalPopulation', 't_ppltn']))
       if (pop != null) {
         body = b
         break
       }
-      lastReason = 'schema_unknown'
+      // 200이지만 인구 없음 — SGIS는 오류/빈결과도 body(errCd/errMsg)로 준다. 정확한 원인 노출(진단)
+      const em = b?.errMsg || b?.result?.errMsg
+      lastReason = em && !/success/i.test(String(em)) ? `sgis_${String(em).replace(/\s+/g, '').slice(0, 40)}` : 'schema_unknown'
     }
     if (!body) {
       res.status(200).json({ available: false, reason: lastReason || 'no_data' })

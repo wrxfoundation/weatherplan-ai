@@ -554,14 +554,18 @@ export default function MapPage({ power = false }) {
         sido={sido}
         onSido={setSido}
         minMw={minMw}
-        onClearMw={() => {
-          searchParams.delete('min_mw')
-          setSearchParams(searchParams, { replace: true })
+        onMinMw={(v) => {
+          const next = new URLSearchParams(searchParams)
+          if (v != null && v > 0) next.set('min_mw', String(v))
+          else next.delete('min_mw')
+          setSearchParams(next, { replace: true })
         }}
         nonCap={nonCap}
-        onClearNonCap={() => {
-          searchParams.delete('noncap')
-          setSearchParams(searchParams, { replace: true })
+        onToggleNonCap={() => {
+          const next = new URLSearchParams(searchParams)
+          if (nonCap) next.delete('noncap')
+          else next.set('noncap', '1')
+          setSearchParams(next, { replace: true })
         }}
         showLabels={showLabels}
         onToggleLabels={() => setShowLabels((v) => !v)}

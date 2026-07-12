@@ -346,6 +346,50 @@ a {
   box-shadow: var(--glass-specular-soft), 0 0 11px color-mix(in srgb, var(--green) 12%, transparent);
 }
 
+/* 세부 조건: 최소 용량 입력 */
+.filterbar .mw-input {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 13px;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: var(--glass-surface-strong);
+  backdrop-filter: var(--glass-backdrop);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  color: var(--grey);
+  white-space: nowrap;
+}
+
+.filterbar .mw-input input {
+  width: 52px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-weight: var(--weight-bold);
+  text-align: right;
+  -moz-appearance: textfield;
+}
+
+.filterbar .mw-input input::-webkit-outer-spin-button,
+.filterbar .mw-input input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.filterbar .mw-input input:focus {
+  outline: none;
+}
+
+.filterbar .mw-input:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+}
+
 /* 해제 ×는 자체 원형 아일랜드 (btn-arrow 문법과 통일) */
 .filterbar .mw-chip button {
   display: inline-flex;
