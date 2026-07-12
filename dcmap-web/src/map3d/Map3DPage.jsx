@@ -4,6 +4,8 @@ import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, slugOf } from '../data/facilities.js'
+import { SUBSTATION_POINTS } from '../data/substationPoints.js'
+import { recommendSites } from '../score/recommend.js'
 import { STYLE_3D, facilityLabelLayer } from './style3d.js'
 
 /* 3D 베타 — MapLibre GL 전환 (사용자 우선순위 배정)
@@ -87,6 +89,53 @@ export default function Map3DPage() {
     map.on('load', () => {
       map.addSource('dc', { type: 'geojson', data: { type: 'FeatureCollection', features: labelFeatures } })
       map.addLayer(facilityLabelLayer('dc'))
+
+      // 변전소(154kV+) — 전압별 색 서클(계통 접속점 맥락)
+      try {
+        map.addSource('subs', {
+          type: 'geojson',
+          data: { type: 'FeatureCollection', features: SUBSTATION_POINTS.map(([lat, lng, kv]) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [lng, lat] }, properties: { kv } })) },
+        })
+        map.addLayer({
+          id: 'subs',
+          type: 'circle',
+          source: 'subs',
+          paint: {
+            'circle-radius': ['interpolate', ['linear'], ['zoom'], 6, 1.4, 12, 4],
+            'circle-color': ['case', ['>=', ['get', 'kv'], 765], '#f0abfc', ['>=', ['get', 'kv'], 345], '#c084fc', '#7dd3fc'],
+            'circle-opacity': 0.5,
+          },
+        })
+      } catch {
+        /* 스타일 로드 타이밍 — 무시 */
+      }
+
+      // 추천 입지 TOP20 — 금색 서클, 클릭 시 2D 분석으로
+      try {
+        const reco = recommendSites(20)
+        map.addSource('reco', {
+          type: 'geojson',
+          data: { type: 'FeatureCollection', features: reco.map((s, i) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [s.lng, s.lat] }, properties: { rank: i + 1, name: s.name, score: `${s.score}/${s.max}`, lat: s.lat, lng: s.lng } })) },
+        })
+        map.addLayer({
+          id: 'reco-c',
+          type: 'circle',
+          source: 'reco',
+          paint: { 'circle-radius': 9, 'circle-color': '#f4c14b', 'circle-stroke-color': '#fff8e1', 'circle-stroke-width': 2, 'circle-opacity': 0.95 },
+        })
+        map.on('click', 'reco-c', (e) => {
+          const p = e.features?.[0]?.properties
+          if (p) navigate(`/?site=${Number(p.lat).toFixed(5)},${Number(p.lng).toFixed(5)}`)
+        })
+        map.on('mouseenter', 'reco-c', () => {
+          map.getCanvas().style.cursor = 'pointer'
+        })
+        map.on('mouseleave', 'reco-c', () => {
+          map.getCanvas().style.cursor = ''
+        })
+      } catch {
+        /* 무시 */
+      }
     })
 
     return () => {
@@ -101,8 +150,8 @@ export default function Map3DPage() {
       <div className="map-layout">
         <div ref={wrapRef} className="map-canvas map3d" />
         <div className="map3d-banner">
-          <span className="badge status-operating">3D 베타 v2</span>
-          우클릭 드래그로 회전·기울임 · 줌 13+에서 건물 입체 · 마커 클릭 → 시설 상세
+          <span className="badge status-operating">3D 베타 v3</span>
+          우클릭 드래그로 회전·기울임 · 줌 13+ 건물 입체 · 🟡 추천입지 클릭 → 분석 · 변전소(154kV+) 색: 154 하늘/345 보라/765 분홍
         </div>
       </div>
     </>
