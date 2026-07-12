@@ -76,11 +76,6 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     }
   }, [point])
 
-  const r = useMemo(
-    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital }),
-    [point, mw, nonCapital],
-  )
-
   // 데이터센터 기후지수 — 연평균기온 우선순위: 케이웨더 과거기후 → 기상청 평년값(최근접) → 현재기온.
   const normal = useMemo(() => nearestNormal(point.lat, point.lng), [point])
   const climateIdx = useMemo(
@@ -93,6 +88,12 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
         currentTemp: wx?.temp,
       }),
     [climate, wx, normal],
+  )
+
+  // 스코어링 — 라이브 SGIS 리스크(침수·산사태·인구)와 기후지수를 실제 점수축에 반영(로드되며 갱신).
+  const r = useMemo(
+    () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital, flood, landslide: disaster, pop, climate: climateIdx }),
+    [point, mw, nonCapital, flood, disaster, pop, climateIdx],
   )
   const dong = dongLabel(addr) // 표출값 동단위 근거지
 
