@@ -1,0 +1,22 @@
+{
+  "generated": "2026-07-12T04:25:39.820390+00:00",
+  "algorithm": "sha256",
+  "entities": 639,
+  "snapshots": 1227,
+  "dataset_hash": "649e5f0cf3c50ff676dfd5e8e39bc58928c046e669479967dfdb63eb447151ed",
+  "chain_head": "f202635542c94313aa91fbcbb23d88f02ba2f9f91aa02c8061d87d7cb1f17447",
+  "onchain_anchor": {
+    "method": "opentimestamps",
+    "chain": "bitcoin",
+    "keyless": true,
+    "cost": "free",
+    "note": "external, keyless timestamp of the append-only chain-head (no wallet/gas) — the time moat beyond self-attestation: a latecomer cannot forge this history's existence-time",
+    "status": "dormant",
+    "activate": "add `opentimestamps-client` to the build (provides the `ots` CLI); it then stamps the chain-head on every run"
+  },
+  "method": "Every record is cross-checked across independent sources (Wikidata, Wikipedia, MusicBrainz, OpenStreetMap, TMDB, KTO), identity- and hallucination-guarded, and Skill-scored. The history (snapshots.jsonl) is append-only and hash-chained; the chain_head is committed each build, so altered history is detectable.",
+  "verify": "Per record: content_hash = SHA-256 of the canonical-JSON verified core (entity_id, kind, name{ko,en_official,romanized}, summary_en, summary_ko, data, skill_score@4dp, agreeing_sources, sources with the trailing ' YYYY-MM-DD HH:MM UTC' removed; JSON sort_keys, separators (',',':')). dataset_hash = SHA-256 of the sorted content_hashes joined. Recompute from latest.json to verify.",
+  "note": "Tamper-evidence via a published, git-committed head; the head is ALSO anchorable to Bitcoin (external, keyless timestamp — see onchain_anchor).",
+  "log": "https://aiagentlabs.co.kr/integrity-log.jsonl",
+  "anchor": "each build appends this head to a public, append-only, git-committed log (GitHub-timestamped); altering a past head requires rewriting public git history. External notarization (e.g. OpenTimestamps) is an optional next step."
+}

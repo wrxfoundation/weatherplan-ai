@@ -1,0 +1,381 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "KoreaAPI",
+    "summary": "The verifiable data layer for Korean culture — callable by any AI agent.",
+    "description": "Verified, bilingual Korean-culture data. Every response carries provenance (which independent sources agreed), a Skill Score (0–1), and a machine-readable license. Free verified endpoints are open (crawl + cite them); the korea-rising demand signal is x402-metered (USDC on Base).",
+    "version": "1.0",
+    "license": {
+      "name": "CC-BY-4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "x-attribution": "via KoreaAPI (https://aiagentlabs.co.kr)",
+    "contact": {
+      "url": "https://aiagentlabs.co.kr/for-agents.html"
+    }
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "the live KoreaAPI HTTP host"
+    }
+  ],
+  "paths": {
+    "/v1/verified/{entity_id}": {
+      "get": {
+        "summary": "Cross-verification status of an entity",
+        "description": "How many INDEPENDENT sources agreed + Skill Score + cross/triple-verified flags — decide trust before citing.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "entity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "artist:bts"
+          }
+        ]
+      }
+    },
+    "/v1/resolve/{query}": {
+      "get": {
+        "summary": "Resolve a name / external ID to the canonical verified entity",
+        "description": "Map a fuzzy Korean name, a Wikidata Q-id, or an entity_id onto THE trusted entity (with sameAs) before citing.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "query",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "빈센조"
+          }
+        ]
+      }
+    },
+    "/v1/artist/{artist_id}": {
+      "get": {
+        "summary": "Latest verified artist status",
+        "description": "Comeback / chart / agency, with provenance.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "artist_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "artist:bts"
+          }
+        ]
+      }
+    },
+    "/v1/person/{name}": {
+      "get": {
+        "summary": "Verified credits for a person",
+        "description": "What a director / actor / idol member is credited on.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bong Joon-ho"
+          }
+        ]
+      }
+    },
+    "/v1/related/{entity_id}": {
+      "get": {
+        "summary": "Related entities via the same hub edge",
+        "description": "Same 소속사 (artists) or network (drama / film).",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "entity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "artist:bts"
+          }
+        ]
+      }
+    },
+    "/v1/agency/{name}": {
+      "get": {
+        "summary": "Artists under a Korean agency / label (소속사)",
+        "description": "The agency roster, cross-verified.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "HYBE"
+          }
+        ]
+      }
+    },
+    "/v1/calendar": {
+      "get": {
+        "summary": "Recent verified K-culture events",
+        "description": "Comebacks, releases, concerts.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "window_days",
+            "in": "query",
+            "required": false,
+            "description": "advisory window (Phase 1)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/history/{entity_id}": {
+      "get": {
+        "summary": "Append-only verified timeline + change events (the time moat)",
+        "description": "First / last verified, snapshot count, and the change events (소속사 A→B, renames) a latecomer cannot backfill.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "entity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "artist:bts"
+          }
+        ]
+      }
+    },
+    "/v1/changes": {
+      "get": {
+        "summary": "Recent verified changes across K-culture (the freshness feed)",
+        "description": "소속사 moves and renames, newest first — exactly what stale models get wrong. Pass ?since=YYYY-MM-DD for incremental sync (only the delta after that cursor).",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "max changes (default 50)",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "description": "cursor — ISO date or full timestamp; only changes after it (sub-day precise; pass back next_since)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "skip N (drain a delta bigger than limit: loop offset=next_offset until null)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/batch": {
+      "get": {
+        "summary": "Batch verify / resolve — the agent-throughput lane",
+        "description": "Verify or resolve MANY entities in ONE round-trip: ?ids=a,b,c (comma-separated ids or names, up to 100) → a result map keyed by input. op=verified (default) or resolve.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "description": "comma-separated entity_ids or names (up to 100)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "op",
+            "in": "query",
+            "required": false,
+            "description": "'verified' (default) or 'resolve'",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/certified": {
+      "get": {
+        "summary": "Officially certified entities (the tier above cross-verification)",
+        "description": "Entities an official rights-holder has vouched for — the strongest citation signal.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        }
+      }
+    },
+    "/v1/metrics": {
+      "get": {
+        "summary": "Agent-consumption metrics",
+        "description": "How much agents have pulled KoreaAPI — usage totals + the most-requested signals.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        }
+      }
+    },
+    "/v1/buy-options/{item}": {
+      "get": {
+        "summary": "Verify-official → purchase gateway",
+        "description": "Confirm the item is the REAL, cross-verified entity before a purchase; logs buy-intent.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "item",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "artist:bts"
+          }
+        ]
+      }
+    },
+    "/v1/answer": {
+      "get": {
+        "summary": "Answer Products — named, citable decisions over the verified store",
+        "description": "No params → the catalog; ?product=&q= runs one decision; ?q= runs all.",
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          }
+        },
+        "parameters": [
+          {
+            "name": "product",
+            "in": "query",
+            "required": false,
+            "description": "e.g. canonical-name, fact-check, identity-resolve",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "the query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/korea-rising": {
+      "get": {
+        "summary": "PREMIUM — Korea-rising verified demand signal (x402-metered)",
+        "description": "The proprietary demand signal (queries + buy-intent). Metered per call via x402 (USDC on Base): send the request, and on HTTP 402 pay per the challenge and retry with an X-PAYMENT header. Served free while the receiving wallet is unset (dormant).",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "a vertical or 'all'",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "top-N (default 10)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "verified JSON — carries provenance (which independent sources agreed), a Skill Score (0–1), a ready cite line, and the machine-readable license."
+          },
+          "402": {
+            "description": "Payment Required — x402 challenge (pay USDC on Base, retry with X-PAYMENT)"
+          }
+        }
+      }
+    }
+  }
+}

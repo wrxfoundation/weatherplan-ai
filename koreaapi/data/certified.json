@@ -1,0 +1,12 @@
+{
+  "count": 0,
+  "certified": [],
+  "license": {
+    "id": "CC-BY-4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "via KoreaAPI (https://aiagentlabs.co.kr)",
+    "note": "Verified compilation + provenance under CC-BY-4.0 — free to use and cite WITH attribution. Underlying facts keep their source licenses (see each record's `sources`)."
+  },
+  "how_to_certify": "https://aiagentlabs.co.kr/certify.html",
+  "note": "official rights-holder certifications — the tier above cross-verification; an institution vouched (a latecomer cannot forge or backdate it)"
+}

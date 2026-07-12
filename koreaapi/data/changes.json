@@ -1,0 +1,11 @@
+{
+  "count": 0,
+  "changes": [],
+  "license": {
+    "id": "CC-BY-4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "via KoreaAPI (https://aiagentlabs.co.kr)",
+    "note": "Verified compilation + provenance under CC-BY-4.0 — free to use and cite WITH attribution. Underlying facts keep their source licenses (see each record's `sources`)."
+  },
+  "note": "verified change events across KoreaAPI — timestamped, a latecomer cannot backfill"
+}
