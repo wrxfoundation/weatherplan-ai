@@ -10,6 +10,7 @@ const ROWS = [
   { key: 'zone', label: '입지', get: (c) => (c.nonCapital ? '비수도권' : '수도권'), tone: (c) => (c.nonCapital ? 'good' : 'warn') },
   { key: 'headroom', label: '계통 여유', get: (c) => (c.headroomMw != null ? `${c.headroomMw.toLocaleString()}MW` : '–'), tone: (c) => (c.headroomMw != null ? 'good' : null) },
   { key: 'gridMw', label: '공급여유(시도)', get: (c) => (c.gridMw != null ? `${c.gridMw.toLocaleString()}MW` : '–'), tone: (c) => (c.gridMw == null ? null : c.gridMw <= 10 ? 'bad' : c.gridMw <= 500 ? 'warn' : 'good') },
+  { key: 'subKm', label: '변전소 거리', get: (c) => (c.subKm != null ? `${c.subKm.toFixed(1)}km` : '–'), tone: (c) => (c.subKm == null ? null : c.subKm <= 3 ? 'good' : c.subKm <= 12 ? 'warn' : 'bad') },
   { key: 'climate', label: '냉각(기후)', get: (c) => c.climate || '–', tone: (c) => (c.climateLevel == null ? null : c.climateLevel <= 2 ? 'good' : c.climateLevel === 3 ? 'warn' : 'bad') },
   { key: 'flood', label: '침수 노출', get: (c) => (c.floodPct == null ? '–' : c.floodPct <= 0 ? '낮음' : `${c.floodPct}%`), tone: (c) => (c.floodPct == null ? null : c.floodPct >= 30 ? 'bad' : c.floodPct > 0 ? 'warn' : 'good') },
   { key: 'landslide', label: '산사태 노출', get: (c) => (c.landslidePct == null ? '–' : c.landslidePct <= 0 ? '낮음' : `${c.landslidePct}%`), tone: (c) => (c.landslidePct == null ? null : c.landslidePct >= 30 ? 'bad' : c.landslidePct > 0 ? 'warn' : 'good') },
