@@ -142,32 +142,18 @@ async function rawGetText(urlStr, ms = 8000) {
 }
 
 /**
- * EPSIS 발전설비 수집. 1페이지는 반드시 확보하고, 추가 페이지는 '있으면 좋은' 보강으로
- * 전체 마감시한(DEADLINE) 안에서만 병렬 수집한다. 상태 프로브(16s)·함수예산(30s) 안에
- * 반드시 반환되게 시간을 엄격히 제한 — 지난 라운드의 upstream_AbortError 회귀 방지.
+ * EPSIS 발전설비 수집 — 단일 페이지(1000행)만. 페이지네이션(다중 페이지)은 대시보드 카드와
+ * 상태 프로브가 동시에 EPSIS를 호출하면(둘 다 엣지캐시 미스) data.go.kr 429를 유발했다.
+ * 단일 요청으로 부하를 최소화하고, 전체 등록 수(totalCount)는 그대로 노출해 표본임을 정직 표기.
+ * (더 넓은 커버리지가 필요하면 EPSIS_URL env의 numOfRows를 키우거나 별도 온디맨드 로드로.)
  */
 async function fetchEpsisItems(url) {
-  const start = Date.now()
-  const DEADLINE = 14000 // 프로브 abort(16s)보다 확실히 짧게
   const hasPage = /[?&]pageNo=\d+/.test(url)
   const pageUrl = (n) => url.replace(/([?&]pageNo=)\d+/, `$1${n}`)
-  // 1페이지는 원래 단일요청과 비슷한 여유(12s) — 느린 정상응답이 새로 abort되지 않게
   const first = await fetchJson(hasPage ? pageUrl(1) : url, 12000)
   if (first?._status) return { _status: first._status }
-  let items = findItems(first) || []
+  const items = findItems(first) || []
   const total = num(first?.response?.body?.totalCount)
-  const perPage = num(first?.response?.body?.numOfRows) || items.length || 1000
-  if (hasPage && total && total > items.length && perPage > 0) {
-    // 순차 수집 — 동시 다발 요청이 data.go.kr 429(Too Many Requests)를 유발하므로 한 번에 하나씩.
-    // 상한 4페이지 + 마감시한으로 시간·부하 모두 제한. 429는 fetchJson이 backoff 재시도.
-    const pages = Math.min(4, Math.ceil(total / perPage))
-    for (let n = 2; n <= pages; n++) {
-      if (DEADLINE - (Date.now() - start) < 3000) break
-      const b = await fetchJson(pageUrl(n), 4500)
-      const it = b?._status ? null : findItems(b)
-      if (it?.length) items = items.concat(it)
-    }
-  }
   return { items, total: total ?? items.length }
 }
 
