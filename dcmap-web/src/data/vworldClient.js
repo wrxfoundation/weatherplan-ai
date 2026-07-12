@@ -139,3 +139,50 @@ export async function landUseClient(lat, lng) {
   walk(body.response.result)
   return names.size ? { available: true, uses: [...names] } : null
 }
+
+// 지오메트리(Polygon/MultiPolygon) → 근사 면적(㎡). 로컬 등거투영 후 신발끈 공식.
+function polygonAreaM2(geom) {
+  if (!geom) return 0
+  const rings =
+    geom.type === 'MultiPolygon' ? geom.coordinates.flat() : geom.type === 'Polygon' ? geom.coordinates : []
+  let total = 0
+  for (const ring of rings) {
+    if (!ring || ring.length < 4) continue
+    const lat0 = (ring[0][1] * Math.PI) / 180
+    const mLat = 111132
+    const mLng = 111320 * Math.cos(lat0)
+    let a = 0
+    for (let i = 0; i < ring.length - 1; i++) {
+      const x1 = ring[i][0] * mLng
+      const y1 = ring[i][1] * mLat
+      const x2 = ring[i + 1][0] * mLng
+      const y2 = ring[i + 1][1] * mLat
+      a += x1 * y2 - x2 * y1
+    }
+    total += Math.abs(a / 2)
+  }
+  return total
+}
+
+/** vworld 연속지적도(LP_PA_CBND_BUBUN) — 클릭 지점 파셀 면적(㎡). { available, areaM2, jibun } | null */
+export async function parcelAreaClient(lat, lng) {
+  const body = await vworldReq('data', {
+    service: 'data',
+    version: '2.0',
+    request: 'GetFeature',
+    data: 'LP_PA_CBND_BUBUN',
+    geomFilter: `POINT(${lng} ${lat})`,
+    geometry: 'true',
+    attribute: 'true',
+    size: '1',
+    page: '1',
+  })
+  if (body?.response?.status !== 'OK') return null
+  const feat = body.response.result?.featureCollection?.features?.[0]
+  if (!feat) return null
+  const props = feat.properties || {}
+  let area = Number(props.lndpcl_ar ?? props.area ?? props.AREA ?? props.ar)
+  if (!Number.isFinite(area) || area <= 0) area = polygonAreaM2(feat.geometry)
+  const jibun = props.addr || props.jibun || props.bon_bun || null
+  return Number.isFinite(area) && area > 0 ? { available: true, areaM2: Math.round(area), jibun } : null
+}

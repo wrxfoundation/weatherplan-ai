@@ -102,7 +102,17 @@ function approvalPoints(pct) {
   return 1
 }
 
-export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null, landUse = null, gridMw = null, gridApproval = null } = {}) {
+// 파셀 면적(㎡) → 부지 면적 점수(4점 만점). DC 캠퍼스는 대형 부지 유리.
+function areaPoints(m2) {
+  if (m2 == null) return null
+  if (m2 >= 50000) return 4
+  if (m2 >= 20000) return 3
+  if (m2 >= 10000) return 2
+  if (m2 >= 3000) return 1
+  return 0.5
+}
+
+export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null, landUse = null, gridMw = null, gridApproval = null, parcelArea = null } = {}) {
   const track = checkPowerTrack(mw, { nonCapital })
 
   // 계통 공급 가능성 — DC 전력계통영향평가 승인율(실데이터) 우선, 없으면 수도권/비수도권 트랙 이진 프록시.
@@ -140,7 +150,10 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
       }
     : { label: '산업단지 입지 (인센티브·기반시설)', max: 6, points: null, pending: '산업단지 경계·대표점 데이터 확보 후(공단/vworld)' }
 
-  const areaItem = { label: '부지 면적 확보', max: 4, points: null, pending: 'vworld 파셀 면적 조회 후 점수화' }
+  const areaItem =
+    parcelArea?.areaM2 != null
+      ? { label: '부지 면적 확보 (vworld 지적)', max: 4, points: areaPoints(parcelArea.areaM2), basis: `필지 면적 ${parcelArea.areaM2.toLocaleString()}㎡` }
+      : { label: '부지 면적 확보', max: 4, points: null, pending: 'vworld 파셀 면적 조회 후 점수화' }
   const priceItem = { label: '지가 부담', max: 3, points: null, pending: '공시지가(원/㎡) 확보 후 — 지가변동률은 참고 표시 중' }
 
   // 자가발전 인접(직접 PPA·자가발전 잠재) — 발전단지 최근접 거리 기반. 가까울수록 가점.

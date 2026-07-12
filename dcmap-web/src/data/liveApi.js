@@ -1,7 +1,7 @@
 // 라이브 API 클라이언트 — 서버리스 프록시(/api/*) 호출. 실패는 null (프런트는 '대기' 표시)
 // 키는 전부 서버 측 env — 브라우저에 노출되지 않는다.
 
-import { hasVworldClient, geocodeClient, revgeoClient, landUseClient } from './vworldClient.js'
+import { hasVworldClient, geocodeClient, revgeoClient, landUseClient, parcelAreaClient } from './vworldClient.js'
 
 const cache = new Map()
 
@@ -81,6 +81,12 @@ export const landUseFor = async (lat, lng) => {
     if (r) return r
   }
   return fetchJson(`/api/landuse?${q(lat, lng)}`)
+}
+
+/** vworld 연속지적도 파셀 면적 — { areaM2, jibun } | null. 브라우저 직접(키 있을 때만). */
+export const landAreaFor = async (lat, lng) => {
+  if (hasVworldClient()) return parcelAreaClient(lat, lng)
+  return null
 }
 
 /** 케이웨더 일별예보(최대 7일) — { days:[{label,tmax,tmin,rainProb,sky}], rain } | null */
