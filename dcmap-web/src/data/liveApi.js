@@ -125,12 +125,12 @@ export const bldEnergyFor = ({ sigunguCd, bjdongCd, bun, ji, useYm }) =>
  *  포털 IPv4 폴백까지 서버가 ~10s 쓸 수 있어 클라이언트도 12s로 넉넉히 준다. */
 export const floodRiskFor = (lat, lng) => fetchJson(`/api/floodmap?${q(lat, lng)}`, 12000)
 
-/** SGIS 시군구 인구/밀도 — { population, households, density, admNm, level } | null (리스크축 민원 프록시).
- *  시도 2자리 코드로 질의 후 시군구 '이름(sgg)'으로 매칭(SGIS·행정표준 코드 불일치 회피). */
+/** SGIS 인구/밀도 — { population, households, density, admNm, level } | null (리스크축 민원 프록시).
+ *  서버가 SGIS 리버스지오코딩(좌표→행정동코드)으로 읍면동 정밀 조회. admCd/sgg는 폴백용(선택). */
 export const populationFor = (lat, lng, admCd, sgg) =>
-  admCd
-    ? fetchJson(`/api/sgis?${q(lat, lng)}&adm_cd=${admCd}${sgg ? `&sgg=${encodeURIComponent(sgg)}` : ''}`)
-    : Promise.resolve(null)
+  fetchJson(
+    `/api/sgis?${q(lat, lng)}${admCd ? `&adm_cd=${admCd}` : ''}${sgg ? `&sgg=${encodeURIComponent(sgg)}` : ''}`,
+  )
 
 /** 재난안전 시군구 재해 이력 — { events, topType, recentYear } | null (리스크축 재해) */
 export const disasterFor = (lat, lng, admCd) =>

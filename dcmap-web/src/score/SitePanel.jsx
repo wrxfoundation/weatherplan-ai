@@ -43,17 +43,13 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     setClimate(null)
     warningFor(point.lat, point.lng).then((v) => alive && setWarning(v))
     climateFor(point.lat, point.lng).then((v) => alive && setClimate(v))
+    // SGIS 인구/밀도 — 서버가 SGIS 리버스지오코딩(좌표→행정동코드)으로 읍면동 정밀 조회. 좌표만으로 동작.
+    populationFor(point.lat, point.lng).then((e) => alive && setPop(e))
     revgeoFor(point.lat, point.lng)
       .catch(() => null)
       .then((v) => {
         if (!alive) return
         setAddr(v)
-        // SGIS 인구/밀도 — 시도코드로 질의 후 시군구 '이름'으로 매칭(코드 불일치 회피)
-        if (v?.sigunguCd) {
-          const sggAll = (v.parcel || '').match(/[가-힣]+(?:시|군|구)/g)
-          const sgg = sggAll ? sggAll[sggAll.length - 1] : undefined
-          populationFor(point.lat, point.lng, v.sigunguCd, sgg).then((e) => alive && setPop(e))
-        }
         // 지번 법정동코드가 확보되면 건축HUB 지번 전기사용량 조회(최근 데이터는 2~3개월 지연)
         if (v?.sigunguCd && v?.bjdongCd) {
           const d = new Date()

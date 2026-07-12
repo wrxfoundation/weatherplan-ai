@@ -27,8 +27,11 @@ const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 // {token}{sido}{year} 플레이스홀더. 경로/파라미터는 SGIS_STATS_URL env로 재배포 없이 보정 가능.
 const DEFAULT_STATS_URL =
   'https://sgisapi.mods.go.kr/OpenAPI3/stats/population.json?accessToken={token}&year={year}&adm_cd={sido}&low_search=1'
-// 최근 등록센서스 연도부터 시도(데이터 없는 연도는 건너뜀)
-const YEARS = ['2023', '2022', '2021', '2020']
+// SGIS 리버스지오코딩(WGS84) — 좌표 → SGIS 행정동코드(정의서 확인 경로). 정밀 인구는 이 코드로 조회.
+const RGEO_URL = process.env.SGIS_RGEO_URL || 'https://sgisapi.mods.go.kr/OpenAPI3/addr/rgeocodewgs84.json'
+const POP_BASE = process.env.SGIS_POP_URL || 'https://sgisapi.mods.go.kr/OpenAPI3/stats/population.json'
+// 인구/주택 데이터 유효연도 2015~2024(정의서). 최신부터 시도(데이터 없는 연도는 건너뜀).
+const YEARS = ['2024', '2023', '2022', '2021', '2020']
 
 // ⚠️ SGIS 시도코드는 법정동/행정표준코드와 다르다(통계청 구코드). 서울만 11=11로 우연히 같고
 // 나머지는 전부 다르다(경기 법정동 41 ≠ SGIS 31). 법정동 앞2자리 → SGIS 시도코드 변환 필수.
@@ -160,6 +163,36 @@ async function getToken(key, secret) {
   return { token: tokenCache.token }
 }
 
+/**
+ * SGIS 리버스지오코딩(WGS84) — 좌표 → SGIS 행정동코드. 정의서 addr/rgeocodewgs84.json.
+ * addr_type=20(행정동) → sido_cd(2)+sgg_cd(3)+emdong_cd(3) = 읍면동 8자리. 이 코드로 population을
+ * 직접 조회하면 시도+이름매칭 없이 읍면동 단위 정밀 인구를 얻는다(SGIS 자체 코드 체계라 정확).
+ */
+async function sgisAdmCode(lat, lng, token) {
+  const url = `${RGEO_URL}?accessToken=${encodeURIComponent(token)}&x_coor=${lng}&y_coor=${lat}&addr_type=20`
+  const b = await fetchJson(url)
+  const r = Array.isArray(b?.result) ? b.result[0] : b?.result
+  if (!r?.sido_cd || !r?.sgg_cd) return null
+  const sgg5 = `${r.sido_cd}${r.sgg_cd}`
+  const emdong8 = r.emdong_cd ? `${r.sido_cd}${r.sgg_cd}${r.emdong_cd}` : null
+  return {
+    sgg5,
+    emdong8,
+    sidoNm: r.sido_nm,
+    sggNm: r.sgg_nm,
+    emdongNm: r.emdong_nm,
+  }
+}
+
+const popUrl = (base, token, year, admCd, low = 0) =>
+  `${base}?accessToken=${encodeURIComponent(token)}&year=${year}&adm_cd=${admCd}&low_search=${low}`
+
+// 응답 배열 첫 행 중 인구값이 있는 행
+const firstPopRow = (b) => {
+  const rs = Array.isArray(b?.result) ? b.result : b?.result ? [b.result] : []
+  return rs.find((r) => num(r.tot_ppltn) != null) || null
+}
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=604800')
 
@@ -170,26 +203,16 @@ export default async function handler(req, res) {
     return
   }
 
-  // 클라이언트가 revgeo 법정동코드 앞 5자리를 넘김 → 앞 2자리(법정동 시도) → SGIS 시도코드로 변환.
+  const lat = num(req.query.lat)
+  const lng = num(req.query.lng)
+  // 폴백용(rgeocode 실패 시): 클라이언트가 넘긴 법정동 5자리 → SGIS 시도코드 + 시군구 이름 매칭.
   const admCd5 = String(req.query.adm_cd || req.query.admCd || '').replace(/[^0-9]/g, '').slice(0, 5)
   const legalSido = admCd5.slice(0, 2)
-  const sido = LEGAL_TO_SGIS_SIDO[Number(legalSido)] || legalSido // SGIS 시도코드(경기 41→31 등)
-  // 시군구 이름(예: '강남구') — SGIS 하위목록에서 이 이름으로 매칭(코드 체계 불일치 회피)
+  const fbSido = LEGAL_TO_SGIS_SIDO[Number(legalSido)] || legalSido
   const sggName = String(req.query.sgg || '').trim()
-  if (!/^\d{2}$/.test(legalSido)) {
-    res.status(200).json({ available: false, reason: 'needs_admcd' })
+  if ((lat == null || lng == null) && !/^\d{2}$/.test(legalSido)) {
+    res.status(200).json({ available: false, reason: 'needs_point' })
     return
-  }
-
-  // 결과 배열에서 대상 행 선택: 시군구 이름 매칭 우선, 없으면 시도(SGIS 2자리) 집계행
-  const rows = (b) => (Array.isArray(b?.result) ? b.result : b?.result ? [b.result] : [])
-  const pickRow = (b) => {
-    const rs = rows(b)
-    if (sggName) {
-      const hit = rs.find((r) => String(r.adm_nm || '').replace(/\s/g, '').includes(sggName.replace(/\s/g, '')))
-      if (hit) return hit
-    }
-    return rs.find((r) => String(r.adm_cd) === sido) || rs.find((r) => num(r.tot_ppltn) != null) || null
   }
 
   try {
@@ -198,67 +221,103 @@ export default async function handler(req, res) {
       res.status(200).json({ available: false, reason: `auth_failed${errCd != null ? `_${errCd}` : ''}` })
       return
     }
-    const tmpl = process.env.SGIS_STATS_URL || DEFAULT_STATS_URL
-    const yearList = /\{year\}/.test(tmpl) ? YEARS : ['']
+
+    // ── 1순위: SGIS 리버스지오코딩 → 정확한 SGIS 행정동코드 → population 직접 조회(읍면동 정밀) ──
     let row = null
     let usedYear = null
+    let usedLevel = null
+    let usedNm = null
     let lastReason = null
-    for (const year of yearList) {
-      const url = tmpl
-        .replaceAll('{token}', encodeURIComponent(token))
-        .replaceAll('{sido}', sido)
-        .replaceAll('{admCd}', admCd5) // env 호환(구 플레이스홀더)
-        .replaceAll('{year}', year)
-      const b = await fetchJson(url)
-      if (req.query.debug) {
-        res.status(200).json({
-          available: true,
-          debug: true,
-          year,
-          legalSido,
-          sido,
-          sggName,
-          httpStatus: b?._status ?? 200,
-          errCd: b?.errCd ?? b?.result?.errCd,
-          errMsg: b?.errMsg ?? b?.result?.errMsg,
-          rowCount: rows(b).length,
-          sampleNm: rows(b).slice(0, 3).map((r) => r.adm_nm),
-          keys: Object.keys(rows(b)[0] || b || {}),
-        })
-        return
+    const geo = lat != null && lng != null ? await sgisAdmCode(lat, lng, token) : null
+    if (geo) {
+      const targets = [
+        geo.emdong8 && { adm: geo.emdong8, level: '읍면동', nm: [geo.sggNm, geo.emdongNm].filter(Boolean).join(' ') },
+        geo.sgg5 && { adm: geo.sgg5, level: '시군구', nm: geo.sggNm },
+      ].filter(Boolean)
+      for (const year of YEARS) {
+        for (const t of targets) {
+          const b = await fetchJson(popUrl(POP_BASE, token, year, t.adm, 0))
+          if (b?._status) {
+            const em = b?._body?.errMsg || b?._body?.result?.errMsg
+            lastReason = `upstream_${b._status}${em ? `_${String(em).replace(/\s+/g, '')}` : ''}`
+            continue
+          }
+          const r = firstPopRow(b)
+          if (r) {
+            row = r
+            usedYear = year
+            usedLevel = t.level
+            usedNm = pick(r, ['adm_nm', 'admNm']) || t.nm
+            break
+          }
+          const em = b?.errMsg || b?.result?.errMsg
+          if (em && !/success/i.test(String(em))) lastReason = `sgis_${String(em).replace(/\s+/g, '').slice(0, 40)}`
+        }
+        if (row) break
       }
-      if (b?._status) {
-        const em = b?._body?.errMsg || b?._body?.result?.errMsg
-        lastReason = `upstream_${b._status}${em ? `_${String(em).replace(/\s+/g, '')}` : ''}`
-        continue
+    }
+
+    // ── 2순위(폴백): 기존 시도코드 + 시군구 이름 매칭 (rgeocode 실패 시) ──
+    if (!row && /^\d{2}$/.test(legalSido)) {
+      const rows = (b) => (Array.isArray(b?.result) ? b.result : b?.result ? [b.result] : [])
+      for (const year of YEARS) {
+        const b = await fetchJson(popUrl(POP_BASE, token, year, fbSido, 1))
+        if (b?._status) {
+          const em = b?._body?.errMsg || b?._body?.result?.errMsg
+          lastReason = `upstream_${b._status}${em ? `_${String(em).replace(/\s+/g, '')}` : ''}`
+          continue
+        }
+        const rs = rows(b)
+        const hit =
+          (sggName && rs.find((r) => String(r.adm_nm || '').replace(/\s/g, '').includes(sggName.replace(/\s/g, '')))) ||
+          rs.find((r) => String(r.adm_cd) === fbSido) ||
+          rs.find((r) => num(r.tot_ppltn) != null)
+        if (hit && num(hit.tot_ppltn) != null) {
+          row = hit
+          usedYear = year
+          usedLevel = sggName ? '시군구' : '시도'
+          usedNm = pick(hit, ['adm_nm', 'admNm'])
+          break
+        }
+        const em = b?.errMsg || b?.result?.errMsg
+        if (em && !/success/i.test(String(em))) lastReason = `sgis_${String(em).replace(/\s+/g, '').slice(0, 40)}`
       }
-      const r = pickRow(b)
-      if (r && num(pick(r, ['tot_ppltn', 'population', 'ppltn'])) != null) {
-        row = r
-        usedYear = year
-        break
-      }
-      const em = b?.errMsg || b?.result?.errMsg
-      lastReason = em && !/success/i.test(String(em)) ? `sgis_${String(em).replace(/\s+/g, '').slice(0, 40)}` : 'no_match'
+    }
+
+    if (req.query.debug) {
+      res.status(200).json({
+        available: !!row,
+        debug: true,
+        lat,
+        lng,
+        rgeo: geo || null,
+        legalSido,
+        fbSido,
+        usedYear,
+        usedLevel,
+        usedNm,
+        reason: row ? undefined : lastReason || 'no_data',
+      })
+      return
     }
     if (!row) {
       res.status(200).json({ available: false, reason: lastReason || 'no_data' })
       return
     }
     const population = num(pick(row, ['tot_ppltn', 'population', 'ppltn']))
-    const households = num(pick(row, ['tot_house', 'tot_family', 'household', 'hshld']))
+    // 세대(가구) = tot_family(총가구). tot_house는 총주택이라 세대와 다름 → tot_family 우선.
+    const households = num(pick(row, ['tot_family', 'household', 'hshld']))
     const density = num(pick(row, ['ppltn_dnsty', 'density']))
-    const admNm = pick(row, ['adm_nm', 'admNm'])
-    const matched = sggName && admNm && String(admNm).replace(/\s/g, '').includes(sggName.replace(/\s/g, ''))
+    const admNm = usedNm || pick(row, ['adm_nm', 'admNm'])
     res.status(200).json({
       available: true,
       population,
       households,
       density,
       admNm: admNm ? String(admNm) : undefined,
-      level: matched ? '시군구' : '시도',
+      level: usedLevel || '시군구',
       year: usedYear || undefined,
-      scope: `SGIS ${admNm || sido} 인구/밀도(등록센서스${usedYear ? ` ${usedYear}` : ''})`,
+      scope: `SGIS ${admNm || ''} 인구/밀도(${usedLevel || '시군구'} · 등록센서스${usedYear ? ` ${usedYear}` : ''})`,
     })
   } catch (e) {
     res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
