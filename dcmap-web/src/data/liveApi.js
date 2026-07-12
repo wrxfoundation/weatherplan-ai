@@ -83,11 +83,14 @@ export const landUseFor = async (lat, lng) => {
   return fetchJson(`/api/landuse?${q(lat, lng)}`)
 }
 
-/** vworld 연속지적도 파셀 면적 — { areaM2, jibun } | null. 브라우저 직접(키 있을 때만). */
+/** vworld 연속지적도 파셀 면적 — { areaM2, jibun, pnu } | null. 브라우저 직접(키 있을 때만). */
 export const landAreaFor = async (lat, lng) => {
   if (hasVworldClient()) return parcelAreaClient(lat, lng)
   return null
 }
+
+/** 개별공시지가(원/㎡) — PNU로 data.go.kr 조회. { available, pricePerM2, year } | null */
+export const landPriceOfficialFor = (pnu) => (pnu ? fetchJson(`/api/landprice?pnu=${encodeURIComponent(pnu)}`) : Promise.resolve(null))
 
 /** 케이웨더 일별예보(최대 7일) — { days:[{label,tmax,tmin,rainProb,sky}], rain } | null */
 export const forecastFor = (lat, lng) => fetchJson(`/api/kweather?kind=forecast&${q(lat, lng)}`)

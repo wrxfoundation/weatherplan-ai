@@ -112,7 +112,17 @@ function areaPoints(m2) {
   return 0.5
 }
 
-export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null, landUse = null, gridMw = null, gridApproval = null, parcelArea = null } = {}) {
+// 공시지가(원/㎡) → 지가 부담 점수(3점). DC는 대형 부지라 저지가 유리(원가↓).
+function pricePoints(won) {
+  if (won == null) return null
+  if (won <= 200000) return 3
+  if (won <= 500000) return 2.5
+  if (won <= 1000000) return 2
+  if (won <= 3000000) return 1
+  return 0.5
+}
+
+export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null, landUse = null, gridMw = null, gridApproval = null, parcelArea = null, parcelPrice = null } = {}) {
   const track = checkPowerTrack(mw, { nonCapital })
 
   // 계통 공급 가능성 — DC 전력계통영향평가 승인율(실데이터) 우선, 없으면 수도권/비수도권 트랙 이진 프록시.
@@ -154,7 +164,10 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
     parcelArea?.areaM2 != null
       ? { label: '부지 면적 확보 (vworld 지적)', max: 4, points: areaPoints(parcelArea.areaM2), basis: `필지 면적 ${parcelArea.areaM2.toLocaleString()}㎡` }
       : { label: '부지 면적 확보', max: 4, points: null, pending: 'vworld 파셀 면적 조회 후 점수화' }
-  const priceItem = { label: '지가 부담', max: 3, points: null, pending: '공시지가(원/㎡) 확보 후 — 지가변동률은 참고 표시 중' }
+  const priceItem =
+    parcelPrice?.available && parcelPrice.pricePerM2 != null
+      ? { label: '지가 부담 (개별공시지가)', max: 3, points: pricePoints(parcelPrice.pricePerM2), basis: `공시지가 ${parcelPrice.pricePerM2.toLocaleString()}원/㎡${parcelPrice.year ? ` (${parcelPrice.year})` : ''}` }
+      : { label: '지가 부담', max: 3, points: null, pending: '공시지가(원/㎡) 확보 후 — 지가변동률은 참고 표시 중' }
 
   // 자가발전 인접(직접 PPA·자가발전 잠재) — 발전단지 최근접 거리 기반. 가까울수록 가점.
   // 배전 여유 프록시 — 지역 계통 공급여유(한전 연계가능용량, 시도 총량). 값 있으면 점수화.
