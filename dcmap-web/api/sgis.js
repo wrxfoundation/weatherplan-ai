@@ -13,7 +13,8 @@
  *
  * 응답: { available, population?, households?, radiusKm?, scope } | { available:false, reason }
  */
-const AUTH_URL = 'https://sgisapi.mods.go.kr/OpenAPI3/auth/authentication.json'
+// 인증 엔드포인트 — 계정이 통계청(kostat.go.kr)에 있으면 SGIS_AUTH_URL로 교체(재배포 불필요).
+const AUTH_URL = process.env.SGIS_AUTH_URL || 'https://sgisapi.mods.go.kr/OpenAPI3/auth/authentication.json'
 // SGIS 인구 통계(population.json)는 좌표가 아니라 **year + adm_cd(행정동/시군구 코드)** 기준.
 // 좌표/반경(lat/lng/radius)을 넣으면 412(요청변수 미충족). 시군구코드(revgeo 법정동 앞 5자리)로 질의한다.
 // {token}{admCd}{year} 플레이스홀더. 경로/파라미터는 SGIS_STATS_URL env로 재배포 없이 보정 가능.
@@ -114,7 +115,17 @@ export default async function handler(req, res) {
         .replaceAll('{year}', year)
       const b = await fetchJson(url)
       if (req.query.debug) {
-        res.status(200).json({ available: true, debug: true, year, httpStatus: b?._status ?? 200, errCd: b?.result?.errCd ?? b?.errCd, keys: b?.result ? Object.keys(Array.isArray(b.result) ? b.result[0] || {} : b.result) : Object.keys(b || {}), head: b?._head })
+        res.status(200).json({
+          available: true,
+          debug: true,
+          year,
+          httpStatus: b?._status ?? 200,
+          errCd: b?.errCd ?? b?.result?.errCd,
+          errMsg: b?.errMsg ?? b?.result?.errMsg, // -100 등의 실제 사유
+          tokenLen: token ? String(token).length : 0, // 토큰 확보 여부(값 아님)
+          keys: b?.result ? Object.keys(Array.isArray(b.result) ? b.result[0] || {} : b.result) : Object.keys(b || {}),
+          head: b?._head,
+        })
         return
       }
       if (b?._status) {

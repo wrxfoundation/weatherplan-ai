@@ -1,6 +1,8 @@
 // 라이브 API 클라이언트 — 서버리스 프록시(/api/*) 호출. 실패는 null (프런트는 '대기' 표시)
 // 키는 전부 서버 측 env — 브라우저에 노출되지 않는다.
 
+import { hasVworldClient, geocodeClient, revgeoClient, landUseClient } from './vworldClient.js'
+
 const cache = new Map()
 
 // 기본 9s — vworld(재시도)·정부포털은 4.5s 안에 못 끝나 '연동 대기'로 오탐되던 것을 완화.
@@ -27,8 +29,15 @@ const q = (lat, lng) => `lat=${lat.toFixed(5)}&lng=${lng.toFixed(5)}`
 /** 케이웨더 오늘 예보 요약 — { temp(최고), tempMin, sky, rainProb, snow } | null */
 export const weatherFor = (lat, lng) => fetchJson(`/api/kweather?kind=current&${q(lat, lng)}`)
 
-/** vworld 리버스 지오코딩 — { parcel, road } | null */
-export const revgeoFor = (lat, lng) => fetchJson(`/api/revgeo?${q(lat, lng)}`)
+/** vworld 리버스 지오코딩 — { parcel, road } | null.
+ *  브라우저 직접 호출(VITE_VWORLD_KEY) 우선 — Vercel 서버IP는 vworld가 차단하므로. 실패 시 /api 프록시. */
+export const revgeoFor = async (lat, lng) => {
+  if (hasVworldClient()) {
+    const r = await revgeoClient(lat, lng)
+    if (r) return r
+  }
+  return fetchJson(`/api/revgeo?${q(lat, lng)}`)
+}
 
 /** 지번주소에서 동단위 근거지 라벨 추출 — "○○동/읍/면" (없으면 시군구) | null.
  *  표출값의 위치 근거를 동단위까지 보여주기 위한 포매터. */
@@ -48,6 +57,10 @@ export function dongLabel(addr) {
 export async function geocodeAddr(query) {
   const s = String(query || '').trim()
   if (!s) return null
+  if (hasVworldClient()) {
+    const r = await geocodeClient(s)
+    if (r) return r
+  }
   try {
     const ctrl = new AbortController()
     const t = setTimeout(() => ctrl.abort(), 9000)
@@ -61,8 +74,14 @@ export async function geocodeAddr(query) {
   }
 }
 
-/** vworld 용도지역 (토지축 v1 근거) — { uses: string[] } | null */
-export const landUseFor = (lat, lng) => fetchJson(`/api/landuse?${q(lat, lng)}`)
+/** vworld 용도지역 (토지축 v1 근거) — { uses: string[] } | null. 브라우저 직접 우선, 실패 시 프록시. */
+export const landUseFor = async (lat, lng) => {
+  if (hasVworldClient()) {
+    const r = await landUseClient(lat, lng)
+    if (r) return r
+  }
+  return fetchJson(`/api/landuse?${q(lat, lng)}`)
+}
 
 /** 케이웨더 일별예보(최대 7일) — { days:[{label,tmax,tmin,rainProb,sky}], rain } | null */
 export const forecastFor = (lat, lng) => fetchJson(`/api/kweather?kind=forecast&${q(lat, lng)}`)
