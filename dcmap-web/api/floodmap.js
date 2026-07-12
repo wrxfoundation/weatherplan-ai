@@ -158,7 +158,8 @@ export default async function handler(req, res) {
       }
     }
     if (!body) {
-      res.status(200).json({ available: false, reason: `upstream_${lastErr?.cause?.code || lastErr?.name || 'unreachable'}` })
+      // message 우선 노출 — no_a_record / status_500 / raw_timeout 등 실제 원인 구분(진단)
+      res.status(200).json({ available: false, reason: `upstream_${lastErr?.cause?.code || lastErr?.message || lastErr?.name || 'unreachable'}` })
       return
     }
     if (body?._status) {

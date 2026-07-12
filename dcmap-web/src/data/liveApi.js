@@ -103,8 +103,10 @@ export const bldEnergyFor = ({ sigunguCd, bjdongCd, bun, ji, useYm }) =>
  *  포털 IPv4 폴백까지 서버가 ~10s 쓸 수 있어 클라이언트도 12s로 넉넉히 준다. */
 export const floodRiskFor = (lat, lng) => fetchJson(`/api/floodmap?${q(lat, lng)}`, 12000)
 
-/** SGIS 반경 인구/가구 — { population, households, radiusKm } | null (리스크축 민원 프록시) */
-export const populationFor = (lat, lng) => fetchJson(`/api/sgis?${q(lat, lng)}`)
+/** SGIS 시군구 인구/밀도 — { population, households, density, admNm } | null (리스크축 민원 프록시).
+ *  SGIS는 좌표가 아니라 행정구역코드 기준 → revgeo 시군구코드(5자리)가 있어야 조회 가능. */
+export const populationFor = (lat, lng, admCd) =>
+  admCd ? fetchJson(`/api/sgis?${q(lat, lng)}&adm_cd=${admCd}`) : Promise.resolve(null)
 
 /** 재난안전 시군구 재해 이력 — { events, topType, recentYear } | null (리스크축 재해) */
 export const disasterFor = (lat, lng) => fetchJson(`/api/disaster?${q(lat, lng)}`)

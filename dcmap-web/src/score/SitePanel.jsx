@@ -46,6 +46,8 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     revgeoFor(point.lat, point.lng).then((v) => {
       if (!alive) return
       setAddr(v)
+      // SGIS 인구/밀도는 좌표가 아니라 시군구코드 기준 → revgeo 확보 후 조회
+      if (v?.sigunguCd) populationFor(point.lat, point.lng, v.sigunguCd).then((e) => alive && setPop(e))
       // 지번 법정동코드가 확보되면 건축HUB 지번 전기사용량 조회(최근 데이터는 2~3개월 지연)
       if (v?.sigunguCd && v?.bjdongCd) {
         const d = new Date()
@@ -61,7 +63,6 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
     forecastFor(point.lat, point.lng).then((v) => alive && setFc(v))
     headroomFor(point.lat, point.lng).then((v) => alive && setHeadroom(v))
     floodRiskFor(point.lat, point.lng).then((v) => alive && setFlood(v))
-    populationFor(point.lat, point.lng).then((v) => alive && setPop(v))
     disasterFor(point.lat, point.lng).then((v) => alive && setDisaster(v))
     return () => {
       alive = false
@@ -398,20 +399,22 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">반경 <Term k="인구격자">인구·가구</Term> (SGIS — 민원 프록시)</div>
+            <div className="k"><Term k="인구격자">인구·밀도</Term> (SGIS 시군구 — 민원 프록시)</div>
             <div className="v">
               {pop?.available ? (
                 <>
-                  반경 {pop.radiusKm}km 인구 <strong>{pop.population != null ? pop.population.toLocaleString() : '—'}명</strong>
-                  {pop.households != null && ` · ${pop.households.toLocaleString()}가구`}
-                  {pop.population != null && (
-                    <span className={`badge ${pop.population < 5000 ? 'status-operating' : 'verify'}`} style={{ marginLeft: 8 }}>
-                      {pop.population < 5000 ? '저밀도 · 민원 리스크 낮음' : '주거 밀집 · 민원 유의'}
+                  {pop.admNm && `${pop.admNm} `}인구 <strong>{pop.population != null ? pop.population.toLocaleString() : '—'}명</strong>
+                  {pop.density != null && ` · 밀도 ${pop.density.toLocaleString()}명/km²`}
+                  {pop.households != null && ` · ${pop.households.toLocaleString()}세대`}
+                  {pop.density != null && (
+                    <span className={`badge ${pop.density < 3000 ? 'status-operating' : 'verify'}`} style={{ marginLeft: 8 }}>
+                      {pop.density < 3000 ? '저밀도 · 민원 리스크 낮음' : '고밀도 · 민원 유의'}
                     </span>
                   )}
+                  <span className="meta"> · 시군구 단위(정밀 반경은 격자 API 연동 시)</span>
                 </>
               ) : (
-                <span className="badge verify">연동 대기 — 리스크축 인구격자(SGIS)</span>
+                <span className="badge verify">연동 대기 — 리스크축 인구(SGIS 시군구)</span>
               )}
             </div>
           </div>

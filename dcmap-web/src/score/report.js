@@ -104,10 +104,10 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   }
   if (pop?.available) {
     L.push(
-      `- 반경 ${pop.radiusKm}km 인구: ${pop.population != null ? `${pop.population.toLocaleString()}명` : '–'}${pop.households != null ? ` · ${pop.households.toLocaleString()}가구` : ''} — ${pop.population != null && pop.population < 5000 ? '저밀도(민원 리스크 낮음)' : '주거 밀집(민원 유의)'} (SGIS)`,
+      `- 인구·밀도(${pop.admNm || '시군구'}): ${pop.population != null ? `${pop.population.toLocaleString()}명` : '–'}${pop.density != null ? ` · ${pop.density.toLocaleString()}명/km²` : ''}${pop.households != null ? ` · ${pop.households.toLocaleString()}세대` : ''} — ${pop.density != null && pop.density < 3000 ? '저밀도(민원 리스크 낮음)' : '고밀도(민원 유의)'} (SGIS 시군구)`,
     )
   } else {
-    L.push(`- 인구격자(민원 프록시): 연동 대기 — SGIS`)
+    L.push(`- 인구(민원 프록시): 연동 대기 — SGIS(시군구코드 확보 후)`)
   }
   if (disaster?.available) {
     L.push(`- 재해 이력: ${disaster.events != null ? `${disaster.events.toLocaleString()}건` : ''}${disaster.topType ? ` · 주 유형 ${disaster.topType}` : ''}${disaster.recentYear ? ` · 최근 ${disaster.recentYear}` : ''} (재난안전)`)
