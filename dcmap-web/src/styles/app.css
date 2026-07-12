@@ -713,6 +713,15 @@ a {
   border-radius: var(--radius-md);
   padding: 8px 10px;
   box-shadow: var(--glass-specular-soft);
+  min-width: 0; /* 그리드 셀이 내용 때문에 넘치지 않게 */
+}
+
+/* 긴 값(네트워크 국사명·주소·용도지역)이 셀 밖으로 넘치지 않게 — 한글은 어절 유지, 긴 토큰은 강제 줄바꿈 */
+.spec-cell .k,
+.spec-cell .v,
+.spec-cell .cell-basis {
+  overflow-wrap: anywhere;
+  word-break: keep-all;
 }
 
 .spec-cell .k {
@@ -724,6 +733,12 @@ a {
 .spec-cell .v {
   font-size: var(--text-md);
   font-weight: var(--weight-medium);
+}
+
+/* 접이식 요약도 좁은 폭에서 셀 밖으로 넘치지 않게 */
+.spec-more > summary {
+  overflow-wrap: anywhere;
+  word-break: keep-all;
 }
 
 .facility-card .note {

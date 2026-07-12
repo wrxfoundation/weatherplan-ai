@@ -167,8 +167,10 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             .join(' · ')}
         </p>
         <p className="geo-note">
-          미산출 축 데이터 소스: 변전소 거리(345kV 정보 공개 대기) · 배전 여유(D3) · 토지(vworld) · 리스크(인구격자) ·
-          네트워크 · 기상(M3). 공개되는 즉시 같은 자리에서 점수화됩니다.
+          점수화 로드맵 — <strong>이미 연동(아래 표에 실값)</strong>: 계통 여유용량(한전)·냉각 기후지수·인구밀도·지가.
+          <strong> 남은 대기</strong>: 변전소 거리(345kV 송전망 정보 공개 대기 — 한전 미공개라 시점 미정) · 배전 여유 정밀(D3) ·
+          용도지역 점수화(vworld 값은 연동됐고 배점 캘리브레이션 중) · 침수·재해(공개 API 도달 시). 값이 확보된 축부터
+          위 5축 막대에 순차 반영됩니다.
         </p>
 
         {/* 프로세스 관문 전망 — 용량·입지로 본 두 핵심 게이트(P07 접속·P08 계통영향평가) 통과 난이도 */}
@@ -245,102 +247,11 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
           </a>
         </div>
 
-        {/* 핵심 근거 — 항상 노출 (지번·용도·기상·기후지수·발전근접·인구·트랙) */}
+        {/* 부지선정 핵심 — 전력·냉각·부지·리스크 순(항상 노출). 운영성 정보는 하단 접이식으로. */}
         <div className="spec-grid">
+          {/* ── 전력: DC 입지의 1순위 제약 ── */}
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">지번주소 (vworld 리버스 지오코딩)</div>
-            <div className="v">
-              {addr?.parcel ?? addr?.road ?? <span className="badge verify">조회 대기 — 연동 후 자동 표시</span>}
-            </div>
-          </div>
-          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k"><Term k="용도지역">용도지역</Term> (vworld 도시계획 — 토지축 근거)</div>
-            <div className="v">
-              {landUse?.uses?.length ? (
-                landUse.uses.join(' · ')
-              ) : (
-                <span className="badge verify">조회 대기 — 점수화는 캘리브레이션 후</span>
-              )}
-            </div>
-          </div>
-          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">현재 기상 (케이웨더 실황)</div>
-            <div className="v">
-              {wx ? (
-                <>
-                  {wx.temp != null && `${wx.temp}°C`}
-                  {wx.sky && ` · ${wx.sky}`}
-                  {wx.senseTemp != null && ` · 체감 ${wx.senseTemp}°C`}
-                  {wx.humidity != null && ` · 습도 ${wx.humidity}%`}
-                  {wx.rain1h != null && wx.rain1h > 0 && ` · 강수 ${wx.rain1h}mm/h`}
-                  {wx.windSpeed != null && ` · 풍속 ${wx.windSpeed}m/s`}
-                  {wx.pm10 != null && ` · PM10 ${wx.pm10}`}
-                </>
-              ) : (
-                <span className="badge verify">연동 대기 — 케이웨더 실황(기상축)</span>
-              )}
-            </div>
-            {(dong || normal) && (
-              <div className="cell-basis">근거지 {dong || (normal ? `${normal.name} 인근` : '좌표 기준')}</div>
-            )}
-            {fc?.days?.length > 0 && (
-              <div className="wx-strip" aria-label="3일 일별예보">
-                {fc.days.map((h, i) => (
-                  <span key={i} className="wx-hour">
-                    <em>{h.label}</em>
-                    <strong>{h.tmax != null ? `${h.tmax}°` : '–'}</strong>
-                    <span>{h.sky ?? ''}{h.rainProb != null ? ` ${h.rainProb}%` : ''}</span>
-                  </span>
-                ))}
-                {fc.rain && <span className="badge verify">강수 유의</span>}
-              </div>
-            )}
-          </div>
-          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">
-              <Term k="프리쿨링">데이터센터 기후지수</Term> (냉각 적합도 · 아주나쁨~아주좋음)
-            </div>
-            <div className="v">
-              {climateIdx ? (
-                <div className="ci-block">
-                  <span className={`ci-inline tone-${climateIdx.tone}`}>
-                    <span className="ci-scale" aria-label={`5단계 중 ${climateIdx.level}단계`}>
-                      {CLIMATE_LEVELS.map((l) => (
-                        <i key={l.level} className={l.level === climateIdx.level ? `on tone-${climateIdx.tone}` : ''} />
-                      ))}
-                    </span>
-                    <b className="ci-inline-label">{climateIdx.label}</b>
-                    <span className="ci-temp">연평균 {climateIdx.temp}°C</span>
-                  </span>
-                  <div className="ci-why">{climateIdx.why}</div>
-                  <div className="ci-basis">근거: {climateIdx.basis}</div>
-                </div>
-              ) : (
-                <span className="badge verify">연동 대기 — 기온 확보 후 산출</span>
-              )}
-            </div>
-          </div>
-          {(() => {
-            const np = nearestPlant(point)
-            const wc = windContext(point)
-            return np ? (
-              <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k"><Term k="발전단지">발전 인프라</Term> 근접성 (맥락 — 전원 매칭 아님)</div>
-                <div className="v">
-                  {np.plant.name} · {np.plant.type}
-                  {np.plant.capacity_mw != null && ` · ${np.plant.capacity_mw.toLocaleString()}MW`} · {np.km.toFixed(0)}km
-                  {wc.nearest && (
-                    <span className="meta">
-                      {' '}
-                      · 풍력 {wc.radiusKm}km 내 {wc.count}지점 (최근접 {wc.nearest.km.toFixed(1)}km)
-                    </span>
-                  )}
-                </div>
-              </div>
-            ) : null
-          })()}
-          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k"><Term k="계통여유">계통 여유용량</Term> (한전 분산전원 22.9kV · 배전)</div>
+            <div className="k"><Term k="계통여유">계통 여유용량</Term> (한전 분산전원 22.9kV · 배전) — 전력 확보 1순위</div>
             <div className="v">
               {headroom?.available ? (
                 <>
@@ -369,8 +280,116 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               )}
             </div>
           </div>
+          <div className="spec-cell">
+            <div className="k"><Term k="수전전압">수전전압</Term> 트랙</div>
+            <div className="v">{r.track.track.voltage}</div>
+          </div>
+          <div className="spec-cell">
+            <div className="k"><Term k="전력계통영향평가">계통영향평가</Term></div>
+            <div className="v">
+              {r.track.psiaRequired ? '대상' : '비대상'}
+              {r.track.exemption && ` · ${r.track.exemption.effective}~ 면제 가능성`}
+            </div>
+          </div>
+          {(() => {
+            const np = nearestPlant(point)
+            const wc = windContext(point)
+            return np ? (
+              <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                <div className="k"><Term k="발전단지">발전 인프라</Term> 근접성 (맥락 — 전원 매칭 아님)</div>
+                <div className="v">
+                  {np.plant.name} · {np.plant.type}
+                  {np.plant.capacity_mw != null && ` · ${np.plant.capacity_mw.toLocaleString()}MW`} · {np.km.toFixed(0)}km
+                  {wc.nearest && (
+                    <span className="meta">
+                      {' '}
+                      · 풍력 {wc.radiusKm}km 내 {wc.count}지점 (최근접 {wc.nearest.km.toFixed(1)}km)
+                    </span>
+                  )}
+                </div>
+              </div>
+            ) : null
+          })()}
+
+          {/* ── 냉각: 연평균기온 = 프리쿨링·PUE ── */}
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k"><Term k="인구격자">인구·밀도</Term> (SGIS 시군구 — 민원 프록시)</div>
+            <div className="k">
+              <Term k="프리쿨링">데이터센터 기후지수</Term> (냉각 적합도 · 아주나쁨~아주좋음)
+            </div>
+            <div className="v">
+              {climateIdx ? (
+                <div className="ci-block">
+                  <span className={`ci-inline tone-${climateIdx.tone}`}>
+                    <span className="ci-scale" aria-label={`5단계 중 ${climateIdx.level}단계`}>
+                      {CLIMATE_LEVELS.map((l) => (
+                        <i key={l.level} className={l.level === climateIdx.level ? `on tone-${climateIdx.tone}` : ''} />
+                      ))}
+                    </span>
+                    <b className="ci-inline-label">{climateIdx.label}</b>
+                    <span className="ci-temp">연평균 {climateIdx.temp}°C</span>
+                  </span>
+                  <div className="ci-why">{climateIdx.why}</div>
+                  <div className="ci-basis">근거: {climateIdx.basis}</div>
+                </div>
+              ) : (
+                <span className="badge verify">연동 대기 — 기온 확보 후 산출</span>
+              )}
+            </div>
+          </div>
+
+          {/* ── 부지: 용도지역·주소 ── */}
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k"><Term k="용도지역">용도지역</Term> (vworld 도시계획 — 부지 개발 가능성)</div>
+            <div className="v">
+              {landUse?.uses?.length ? (
+                landUse.uses.join(' · ')
+              ) : (
+                <span className="badge verify">조회 대기 — 점수화는 캘리브레이션 후</span>
+              )}
+            </div>
+          </div>
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k">지번주소 (vworld 리버스 지오코딩)</div>
+            <div className="v">
+              {addr?.parcel ?? addr?.road ?? <span className="badge verify">조회 대기 — 연동 후 자동 표시</span>}
+            </div>
+          </div>
+
+          {/* ── 리스크: 침수·네트워크·민원(인구밀도) ── */}
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k"><Term k="침수심">침수 위험</Term> (홍수위험지도 — DC에 치명적)</div>
+            <div className="v">
+              {flood?.available ? (
+                flood.grade === '해당없음' || flood.depthM === 0 ? (
+                  <span className="badge status-operating">침수구역 외 · 위험 낮음</span>
+                ) : (
+                  <>
+                    <span className="badge verify">침수 위험 {flood.grade}</span>
+                    {flood.depthM != null && ` · 침수심 ${flood.depthM}m`}
+                    {flood.floodType && ` · ${flood.floodType}`}
+                    {flood.scenario && ` · ${flood.scenario}`}
+                  </>
+                )
+              ) : (
+                <span className="badge verify">연동 대기 — 리스크축 침수(홍수위험지도)</span>
+              )}
+            </div>
+          </div>
+          {(() => {
+            const net = networkContext(point)
+            return (
+              <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                <div className="k">네트워크 근접성 (<Term k="백본">백본</Term>·<Term k="육양국">해저케이블</Term> — 지연·회선)</div>
+                <div className="v">
+                  {net.backbone && `백본/IX ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
+                  {net.cls && ` · 해저케이블 육양국 ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
+                  <span className="badge verify" style={{ marginLeft: 8 }}>공개 근사 · 검증 대기</span>
+                </div>
+              </div>
+            )
+          })()}
+          <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+            <div className="k"><Term k="인구격자">인구·밀도</Term> (SGIS 시군구 — 주민 수용성·민원)</div>
             <div className="v">
               {pop?.available ? (
                 <>
@@ -389,25 +408,47 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               )}
             </div>
           </div>
-          <div className="spec-cell">
-            <div className="k"><Term k="수전전압">수전전압</Term> 트랙</div>
-            <div className="v">{r.track.track.voltage}</div>
-          </div>
-          <div className="spec-cell">
-            <div className="k"><Term k="전력계통영향평가">계통영향평가</Term></div>
-            <div className="v">
-              {r.track.psiaRequired ? '대상' : '비대상'}
-              {r.track.exemption && ` · ${r.track.exemption.effective}~ 면제 가능성`}
-            </div>
-          </div>
         </div>
 
-        {/* 리스크·부가 상세 — 접이식(기본 닫힘)으로 패널 정돈. 특보·기후·침수·전기·네트워크·재해·지가 */}
+        {/* 운영·부가 참고 — 접이식(기본 닫힘). 부지선정 핵심은 위, 운영/보조 지표는 여기로 정돈. */}
         <details className="spec-more">
-          <summary>리스크·부가 상세 — 기상특보 · 과거기후 · 침수 · 지번전기 · 네트워크 · 재해 · 지가</summary>
+          <summary>운영·부가 참고 — 현재기상 · 3일예보 · 기상특보 · 과거기후 · 지번전기 · 재해 · 인근 지가</summary>
           <div className="spec-grid">
+            <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+              <div className="k">현재 기상 · 3일예보 (케이웨더 실황 — 운영 참고)</div>
+              <div className="v">
+                {wx ? (
+                  <>
+                    {wx.temp != null && `${wx.temp}°C`}
+                    {wx.sky && ` · ${wx.sky}`}
+                    {wx.senseTemp != null && ` · 체감 ${wx.senseTemp}°C`}
+                    {wx.humidity != null && ` · 습도 ${wx.humidity}%`}
+                    {wx.rain1h != null && wx.rain1h > 0 && ` · 강수 ${wx.rain1h}mm/h`}
+                    {wx.windSpeed != null && ` · 풍속 ${wx.windSpeed}m/s`}
+                    {wx.pm10 != null && ` · PM10 ${wx.pm10}`}
+                  </>
+                ) : (
+                  <span className="badge verify">연동 대기 — 케이웨더 실황(기상축)</span>
+                )}
+              </div>
+              {(dong || normal) && (
+                <div className="cell-basis">근거지 {dong || (normal ? `${normal.name} 인근` : '좌표 기준')}</div>
+              )}
+              {fc?.days?.length > 0 && (
+                <div className="wx-strip" aria-label="3일 일별예보">
+                  {fc.days.map((h, i) => (
+                    <span key={i} className="wx-hour">
+                      <em>{h.label}</em>
+                      <strong>{h.tmax != null ? `${h.tmax}°` : '–'}</strong>
+                      <span>{h.sky ?? ''}{h.rainProb != null ? ` ${h.rainProb}%` : ''}</span>
+                    </span>
+                  ))}
+                  {fc.rain && <span className="badge verify">강수 유의</span>}
+                </div>
+              )}
+            </div>
             <div className="spec-cell">
-              <div className="k">기상특보 (리스크 — 태풍·강풍·호우)</div>
+              <div className="k">기상특보 (운영 — 태풍·강풍·호우)</div>
               <div className="v">
                 {warning?.available ? (
                   warning.count > 0 ? (
@@ -425,7 +466,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
               </div>
             </div>
             <div className="spec-cell">
-              <div className="k"><Term k="프리쿨링">기후</Term> (과거 연별 — 프리쿨링 잠재력)</div>
+              <div className="k"><Term k="프리쿨링">기후</Term> (과거 연별 — 기후지수 근거)</div>
               <div className="v">
                 {climate?.available ? (
                   <>
@@ -436,25 +477,6 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                   </>
                 ) : (
                   <span className="badge verify">연동 대기 — 케이웨더 과거 기후</span>
-                )}
-              </div>
-            </div>
-            <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k"><Term k="침수심">침수 위험</Term> (홍수위험지도 — 리스크축)</div>
-              <div className="v">
-                {flood?.available ? (
-                  flood.grade === '해당없음' || flood.depthM === 0 ? (
-                    <span className="badge status-operating">침수구역 외 · 위험 낮음</span>
-                  ) : (
-                    <>
-                      <span className="badge verify">침수 위험 {flood.grade}</span>
-                      {flood.depthM != null && ` · 침수심 ${flood.depthM}m`}
-                      {flood.floodType && ` · ${flood.floodType}`}
-                      {flood.scenario && ` · ${flood.scenario}`}
-                    </>
-                  )
-                ) : (
-                  <span className="badge verify">연동 대기 — 리스크축 침수(홍수위험지도)</span>
                 )}
               </div>
             </div>
@@ -473,19 +495,6 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 )}
               </div>
             </div>
-            {(() => {
-              const net = networkContext(point)
-              return (
-                <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                  <div className="k">네트워크 근접성 (<Term k="백본">백본</Term>·<Term k="육양국">해저케이블</Term> — 참고)</div>
-                  <div className="v">
-                    {net.backbone && `백본/IX ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
-                    {net.cls && ` · 해저케이블 육양국 ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
-                    <span className="badge verify" style={{ marginLeft: 8 }}>공개 근사 · 검증 대기</span>
-                  </div>
-                </div>
-              )
-            })()}
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
               <div className="k">재해 이력 (재난안전 — 리스크축)</div>
               <div className="v">

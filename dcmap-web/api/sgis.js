@@ -30,6 +30,28 @@ const DEFAULT_STATS_URL =
 // 최근 등록센서스 연도부터 시도(데이터 없는 연도는 건너뜀)
 const YEARS = ['2023', '2022', '2021', '2020']
 
+// ⚠️ SGIS 시도코드는 법정동/행정표준코드와 다르다(통계청 구코드). 서울만 11=11로 우연히 같고
+// 나머지는 전부 다르다(경기 법정동 41 ≠ SGIS 31). 법정동 앞2자리 → SGIS 시도코드 변환 필수.
+const LEGAL_TO_SGIS_SIDO = {
+  11: '11', // 서울
+  26: '21', // 부산
+  27: '22', // 대구
+  28: '23', // 인천
+  29: '24', // 광주
+  30: '25', // 대전
+  31: '26', // 울산
+  36: '29', // 세종
+  41: '31', // 경기
+  42: '32', // 강원
+  43: '33', // 충북
+  44: '34', // 충남
+  45: '35', // 전북
+  46: '36', // 전남
+  47: '37', // 경북
+  48: '38', // 경남
+  50: '39', // 제주
+}
+
 const num = (v) => {
   if (v == null) return undefined
   const n = Number.parseFloat(String(v).replace(/,/g, ''))
@@ -148,17 +170,18 @@ export default async function handler(req, res) {
     return
   }
 
-  // 시도 2자리 코드(행정표준·SGIS 동일) — 클라이언트가 revgeo 법정동코드 앞 5자리를 넘기면 앞 2자리 사용.
+  // 클라이언트가 revgeo 법정동코드 앞 5자리를 넘김 → 앞 2자리(법정동 시도) → SGIS 시도코드로 변환.
   const admCd5 = String(req.query.adm_cd || req.query.admCd || '').replace(/[^0-9]/g, '').slice(0, 5)
-  const sido = admCd5.slice(0, 2)
+  const legalSido = admCd5.slice(0, 2)
+  const sido = LEGAL_TO_SGIS_SIDO[Number(legalSido)] || legalSido // SGIS 시도코드(경기 41→31 등)
   // 시군구 이름(예: '강남구') — SGIS 하위목록에서 이 이름으로 매칭(코드 체계 불일치 회피)
   const sggName = String(req.query.sgg || '').trim()
-  if (!/^\d{2}$/.test(sido)) {
+  if (!/^\d{2}$/.test(legalSido)) {
     res.status(200).json({ available: false, reason: 'needs_admcd' })
     return
   }
 
-  // 결과 배열에서 대상 행 선택: 시군구 이름 매칭 우선, 없으면 시도(2자리) 집계행
+  // 결과 배열에서 대상 행 선택: 시군구 이름 매칭 우선, 없으면 시도(SGIS 2자리) 집계행
   const rows = (b) => (Array.isArray(b?.result) ? b.result : b?.result ? [b.result] : [])
   const pickRow = (b) => {
     const rs = rows(b)
@@ -192,6 +215,7 @@ export default async function handler(req, res) {
           available: true,
           debug: true,
           year,
+          legalSido,
           sido,
           sggName,
           httpStatus: b?._status ?? 200,
