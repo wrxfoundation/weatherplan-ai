@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import './styles/tokens.css'
 import './styles/app.css'
 import MapPage from './map/MapPage.jsx'
@@ -53,7 +53,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/stats" element={<StatsPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/land" element={<LandPulsePage />} />
-          <Route path="/power" element={<MapPage key="power" power />} />
+          {/* 전력지도는 맵으로 통합 — 전력 레이어(◎발전허가·⚡여유용량)는 맵 필터바에 상시 노출. 기존 링크 보존 위해 리다이렉트 */}
+          <Route path="/power" element={<Navigate to="/" replace />} />
           <Route path="/data" element={<DataExplorerPage />} />
           <Route path="/roadmap" element={<RoadmapPage />} />
           <Route path="/compare" element={<ComparePage />} />

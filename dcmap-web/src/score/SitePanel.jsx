@@ -255,7 +255,7 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">현재 기상 (케이웨더 실황{wx?.scope ? ` · ${wx.scope}` : ''})</div>
+            <div className="k">현재 기상 (케이웨더 실황)</div>
             <div className="v">
               {wx ? (
                 <>
@@ -271,11 +271,8 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
                 <span className="badge verify">연동 대기 — 케이웨더 실황(기상축)</span>
               )}
             </div>
-            {(dong || wx?.scope) && (
-              <div className="cell-basis">
-                근거지 {dong ?? wx.scope}
-                {dong && wx?.scope ? ` · 케이웨더 실황 ${wx.scope}` : ''}
-              </div>
+            {(dong || normal) && (
+              <div className="cell-basis">근거지 {dong || (normal ? `${normal.name} 인근` : '좌표 기준')}</div>
             )}
             {fc?.days?.length > 0 && (
               <div className="wx-strip" aria-label="3일 일별예보">
