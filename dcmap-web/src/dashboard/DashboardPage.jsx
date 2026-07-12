@@ -526,7 +526,7 @@ export default function DashboardPage() {
                     <span>
                       <b>{a.ratePct}%</b> <span className="muted" style={{ fontSize: '0.85em' }}>{approvalLabel(a.ratePct)}</span>
                       <span className="rollup-bar">
-                        <i style={{ width: `${a.ratePct}%`, background: a.ratePct < 50 ? '#ef4444' : undefined }} />
+                        <i style={{ width: `${a.ratePct}%`, background: a.ratePct < 45 ? '#ef4444' : undefined }} />
                       </span>
                     </span>
                     <span>{Math.round(a.able).toLocaleString()}MW</span>
@@ -575,7 +575,40 @@ export default function DashboardPage() {
             <p className="chart-note">
               한전 <strong>연계가능용량(공급여유)</strong> 시도 총량(2027 전망). DC 승인율(신청 대비)과 달리 <strong>잔여 연결 여력(MW)</strong>을 나타냄.
               <strong>인천 5MW(계통 포화)</strong>는 자급률 165%(발전 잉여)와 정반대 — 발전 잉여 ≠ 수용 여유. 경북·충남·전남은 여유·승인율 모두 우수.
-              시도 총량이라 시군구 편차 크며 부지별 확정은 한전 주소검색. 출처: <strong>{GRID_HEADROOM_META.source}</strong> (제주 미공개).
+              시도 총량이라 시군구 편차 크며 부지별 확정은 한전 주소검색. 출처: <strong>{GRID_HEADROOM_META.source}</strong>.
+            </p>
+          </section>
+
+          {/* 지역별 송변전 인프라 — 한전 변전소 현황(154kV+). 설비 밀도(여유량 아님). 계통 수용력 그룹에 배치 */}
+          <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
+            <div className="chart-title">지역별 송변전 인프라 — 154kV+ 변전소·변압기 용량 (한전 변전설비현황 2026.7)</div>
+            <div className="rollup-table" role="table">
+              <div className="rollup-head" role="row">
+                <span>지역(한전 본부)</span>
+                <span>154kV+ 변전소</span>
+                <span>변압기 용량</span>
+                <span>345kV</span>
+              </div>
+              {[...SUBSTATIONS].sort((a, b) => b.hv - a.hv).map((s) => {
+                const maxHv = Math.max(...SUBSTATIONS.map((x) => x.hv))
+                return (
+                  <div key={s.region} className="rollup-row" role="row">
+                    <span className="rollup-sido">{s.region}</span>
+                    <span>
+                      <b>{s.hv}</b>개
+                      <span className="rollup-bar">
+                        <i style={{ width: `${(s.hv / maxHv) * 100}%` }} />
+                      </span>
+                    </span>
+                    <span>{s.hvMva.toLocaleString()}MVA</span>
+                    <span>{s.n345}개</span>
+                  </div>
+                )
+              })}
+            </div>
+            <p className="chart-note">
+              한전 지역본부 단위 변전소 <strong>설비 밀도</strong>(154kV·345kV) — 인프라 규모 지표이며 <strong>부지별 접속 여유용량과는 다름</strong>.
+              여유는 <a href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드</a>/한전 접속가능용량 조회. 출처: <strong>{SUBSTATION_META.source}</strong>.
             </p>
           </section>
           <section className="calc-card">
@@ -764,39 +797,6 @@ export default function DashboardPage() {
               공급예비율이 낮을수록 계통 여력이 얇다 — <strong>DC 냉방부하가 최대인 여름(&apos;{RESERVE_MIN.ym})에 예비율 {RESERVE_MIN.pct}%로 최저</strong>.
               대형 신규부하 접속·수급 리스크가 여름에 집중된다는 신호(원가 급등과 같은 방향). 전국 지표로 지역 계통 제약과는 별개.
               출처: <strong>{POWER_RESERVE_META.source}</strong>.
-            </p>
-          </section>
-
-          {/* 지역별 송변전 인프라 — 한전 변전소 현황(154kV+). 설비 밀도(여유량 아님) */}
-          <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
-            <div className="chart-title">지역별 송변전 인프라 — 154kV+ 변전소·변압기 용량 (한전 변전설비현황 2026.7)</div>
-            <div className="rollup-table" role="table">
-              <div className="rollup-head" role="row">
-                <span>지역(한전 본부)</span>
-                <span>154kV+ 변전소</span>
-                <span>변압기 용량</span>
-                <span>345kV</span>
-              </div>
-              {[...SUBSTATIONS].sort((a, b) => b.hv - a.hv).map((s) => {
-                const maxHv = Math.max(...SUBSTATIONS.map((x) => x.hv))
-                return (
-                  <div key={s.region} className="rollup-row" role="row">
-                    <span className="rollup-sido">{s.region}</span>
-                    <span>
-                      <b>{s.hv}</b>개
-                      <span className="rollup-bar">
-                        <i style={{ width: `${(s.hv / maxHv) * 100}%` }} />
-                      </span>
-                    </span>
-                    <span>{s.hvMva.toLocaleString()}MVA</span>
-                    <span>{s.n345}개</span>
-                  </div>
-                )
-              })}
-            </div>
-            <p className="chart-note">
-              한전 지역본부 단위 변전소 <strong>설비 밀도</strong>(154kV·345kV) — 인프라 규모 지표이며 <strong>부지별 접속 여유용량과는 다름</strong>.
-              여유는 <a href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드</a>/한전 접속가능용량 조회. 출처: <strong>{SUBSTATION_META.source}</strong>.
             </p>
           </section>
 

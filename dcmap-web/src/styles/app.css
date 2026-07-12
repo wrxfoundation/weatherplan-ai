@@ -836,6 +836,13 @@ a {
   box-shadow: var(--glow-warm);
 }
 
+/* 임계(계통 포화·심각 병목 등) — 인라인 red 대신 공용 클래스로 통일 */
+.badge.critical {
+  color: #fca5a5;
+  border-color: #ef4444;
+  background: color-mix(in srgb, #ef4444 14%, transparent);
+}
+
 /* 연동/조회 대기 = 로딩·미제공 상태(경보 아님). 중립 회색으로 — 오렌지 verify는 실제 리스크/검증에만. */
 .badge.pending {
   color: color-mix(in srgb, var(--ink) 62%, var(--grey));
