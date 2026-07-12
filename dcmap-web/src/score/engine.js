@@ -59,8 +59,37 @@ function headroomPoints(mw) {
   return 10
 }
 
-export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null, landUse = null, gridMw = null } = {}) {
+// DC 전력계통영향평가 공급 승인율(%) → 계통 공급 가능성 점수(10점 만점).
+function approvalPoints(pct) {
+  if (pct == null) return null
+  if (pct >= 95) return 10
+  if (pct >= 80) return 8.5
+  if (pct >= 60) return 6.5
+  if (pct >= 45) return 4.5
+  if (pct >= 30) return 3
+  return 1
+}
+
+export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null, landUse = null, gridMw = null, gridApproval = null } = {}) {
   const track = checkPowerTrack(mw, { nonCapital })
+
+  // 계통 공급 가능성 — DC 전력계통영향평가 승인율(실데이터) 우선, 없으면 수도권/비수도권 트랙 이진 프록시.
+  const gridImpactItem =
+    gridApproval != null
+      ? {
+          label: '계통 공급 가능성 (전력계통영향평가 DC 승인율)',
+          max: 10,
+          points: approvalPoints(gridApproval),
+          basis: `DC 공급가능율 ${gridApproval}% (한전 전력계통영향평가 '26.3) · ${nonCapital ? '비수도권' : '수도권'}`,
+        }
+      : {
+          label: '계통영향평가 지역 리스크',
+          max: 10,
+          points: nonCapital ? 10 : 0,
+          basis: nonCapital
+            ? '비수도권: 신속 처리 + AIDC 특별법 면제 트랙(2027.2~)'
+            : '수도권: 감점 — 계통영향평가 전면 적용',
+        }
 
   // 토지축: 용도지역 적합성(12, vworld 라이브) + 면적·인센티브·지가(13, 파셀 데이터 대기)
   const luAdm = landUse?.uses?.length ? zoneAdmissibility(landUse.uses) : null
@@ -117,14 +146,7 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
       items: [
         { label: '154kV+ 변전소 거리', max: 15, points: null, pending: '정부 345kV 여유 변전소 정보 공개 대기' },
         gridItem,
-        {
-          label: '계통영향평가 지역 리스크',
-          max: 10,
-          points: nonCapital ? 10 : 0,
-          basis: nonCapital
-            ? '비수도권: 신속 처리 + AIDC 특별법 면제 트랙(2027.2~)'
-            : '수도권: 감점 — 계통영향평가 전면 적용',
-        },
+        gridImpactItem,
         selfGenItem,
       ],
     },

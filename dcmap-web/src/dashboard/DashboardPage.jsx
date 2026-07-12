@@ -6,6 +6,7 @@ import { GEN_PERMIT_BUBBLES } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { SUBSTATIONS, SUBSTATION_META } from '../data/substations.js'
 import { POWER_MARKET_META, PURCHASE_PRICE_2024, PURCHASE_SUMMARY, PRICE_PEAK, PRICE_LOW } from '../data/powerMarket.js'
+import { DC_ASSESSMENT, DC_ASSESSMENT_ROLLUP, GRID_ASSESSMENT_META, approvalLabel } from '../data/gridAssessment.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
 import { filingsRecent, epsisCapacity, apiStatus, tradingMix, riskFor } from '../data/liveApi.js'
@@ -488,8 +489,55 @@ export default function DashboardPage() {
           <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
             <span className="dsh-num">03</span>
             <span className="dsh-title">전력·계통</span>
-            <span className="dsh-sub">공급 여건 — 설비·발전 믹스·실적 (DC 입지의 핵심 제약)</span>
+            <span className="dsh-sub">공급 여건 — 계통영향평가·설비·발전 믹스 (DC 입지의 핵심 제약)</span>
           </div>
+          <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
+            <div className="chart-title">전력계통영향평가 — 데이터센터 공급 가능/불가 (시도별, 한전 2026.3)</div>
+            <div className="dash-status" style={{ marginBottom: 8 }}>
+              <div className="status-rows">
+                <div className="dash-row">
+                  수도권 DC 승인율 <strong>{DC_ASSESSMENT_ROLLUP.수도권.ratePct}</strong>% (가능 {Math.round(DC_ASSESSMENT_ROLLUP.수도권.able).toLocaleString()}MW / 불가 {Math.round(DC_ASSESSMENT_ROLLUP.수도권.unable).toLocaleString()}MW)
+                </div>
+                <div className="dash-row">
+                  비수도권 DC 승인율 <strong>{DC_ASSESSMENT_ROLLUP.비수도권.ratePct}</strong>% (가능 {Math.round(DC_ASSESSMENT_ROLLUP.비수도권.able).toLocaleString()}MW / 불가 {Math.round(DC_ASSESSMENT_ROLLUP.비수도권.unable).toLocaleString()}MW)
+                </div>
+                <div className="dash-row total">전국 {DC_ASSESSMENT_ROLLUP.전국.ratePct}% · DC 신청 {Math.round(DC_ASSESSMENT_ROLLUP.전국.able + DC_ASSESSMENT_ROLLUP.전국.unable).toLocaleString()}MW</div>
+              </div>
+              <Gauge pct={Math.round(DC_ASSESSMENT_ROLLUP.비수도권.ratePct)} label="비수도권 승인율" sub={`수도권 ${DC_ASSESSMENT_ROLLUP.수도권.ratePct}%`} />
+            </div>
+            <div className="rollup-table" role="table">
+              <div className="rollup-head" role="row">
+                <span>시도</span>
+                <span>DC 공급 승인율</span>
+                <span>가능</span>
+                <span>불가</span>
+              </div>
+              {Object.values(DC_ASSESSMENT)
+                .filter((a) => a.ratePct != null)
+                .sort((a, b) => b.ratePct - a.ratePct)
+                .map((a) => (
+                  <div key={a.sido} className="rollup-row" role="row">
+                    <span className="rollup-sido">
+                      {a.sido}
+                      {CAPITAL_SIDOS.has(a.sido) && <span className="badge" style={{ marginLeft: 6 }}>수도권</span>}
+                    </span>
+                    <span>
+                      <b>{a.ratePct}%</b> <span className="muted" style={{ fontSize: '0.85em' }}>{approvalLabel(a.ratePct)}</span>
+                      <span className="rollup-bar">
+                        <i style={{ width: `${a.ratePct}%`, background: a.ratePct < 50 ? '#ef4444' : undefined }} />
+                      </span>
+                    </span>
+                    <span>{Math.round(a.able).toLocaleString()}MW</span>
+                    <span>{a.unable > 0 ? `${Math.round(a.unable).toLocaleString()}MW` : '–'}</span>
+                  </div>
+                ))}
+            </div>
+            <p className="chart-note">
+              분산에너지 특별법 <strong>전력계통영향평가</strong> 1차 기술검토(한전) — DC 신·증설 신청 대비 기술적 <strong>전력공급 가능/불가 용량(MW)</strong>. 승인율=가능/(가능+불가).
+              <strong>수도권 {DC_ASSESSMENT_ROLLUP.수도권.ratePct}% vs 비수도권 {DC_ASSESSMENT_ROLLUP.비수도권.ratePct}%</strong> — 수도권 계통 병목이 실측으로 드러남(경기·인천 신청의 절반 이상이 공급불가). 충북·경북·경남·대구·광주는 100% 가능.
+              신청 시점 누적 심사치이며 부지별 확정은 개별 1차 기술검토(주소 기준). 출처: <strong>{GRID_ASSESSMENT_META.source}</strong>.
+            </p>
+          </section>
           <section className="calc-card">
             <div className="chart-title">발전설비 현황 — EPSIS 전력시장 등록설비 (연료원/구분별)</div>
             {epsis?.available ? (
