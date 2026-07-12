@@ -1,26 +1,60 @@
 // 클라이언트(브라우저) 직접 vworld 호출 — Vercel 서버리스 IP는 vworld가 차단(502/소켓리셋)하지만
 // 브라우저는 사용자 IP + 도메인 등록키(Referer 검증)라 vworld가 허용한다(= vworld 본래 사용 방식).
 //
-// 활성 조건: VITE_VWORLD_KEY(브라우저 노출 env)가 설정된 경우에만. 이 키는 반드시 vworld 콘솔에서
-//   '도메인 등록'된 키여야 하며(등록 도메인 외에선 무효), 그래서 브라우저 노출이 안전하다.
-//   미설정 시 이 모듈은 비활성 → liveApi가 기존 /api 프록시로 폴백.
+// ⚠️ vworld REST API(api.vworld.kr/req/*)는 CORS 헤더를 주지 않아 브라우저 fetch가 차단된다.
+//    → **JSONP**(callback= 파라미터, <script> 주입)로 호출한다. vworld가 공식 지원하는 크로스도메인 방식.
+//
+// 활성 조건: VITE_VWORLD_KEY(브라우저 노출 env, 도메인 등록키)가 설정된 경우에만. 미설정 시 비활성.
 // 키는 리포에 커밋하지 않는다(Vercel 환경변수 VITE_VWORLD_KEY로만).
 
 const KEY = import.meta.env.VITE_VWORLD_KEY
 export const hasVworldClient = () => Boolean(KEY)
 
+let seq = 0
+// JSONP: <script>로 vworld를 호출해 CORS를 우회. callback으로 결과 수신.
+function jsonp(url, ms = 9000) {
+  return new Promise((resolve, reject) => {
+    if (typeof document === 'undefined') return reject(new Error('no_document'))
+    const cb = `__vw_${Date.now()}_${seq++}`
+    const script = document.createElement('script')
+    let done = false
+    const cleanup = () => {
+      done = true
+      clearTimeout(timer)
+      try {
+        delete window[cb]
+      } catch {
+        window[cb] = undefined
+      }
+      script.remove()
+    }
+    const timer = setTimeout(() => {
+      if (!done) {
+        cleanup()
+        reject(new Error('timeout'))
+      }
+    }, ms)
+    window[cb] = (data) => {
+      if (done) return
+      cleanup()
+      resolve(data)
+    }
+    script.onerror = () => {
+      if (done) return
+      cleanup()
+      reject(new Error('script_error'))
+    }
+    script.src = `${url}${url.includes('?') ? '&' : '?'}callback=${cb}`
+    document.head.appendChild(script)
+  })
+}
+
 async function vworldReq(path, params) {
   const qs = new URLSearchParams({ ...params, key: KEY, format: 'json' }).toString()
-  const ctrl = new AbortController()
-  const t = setTimeout(() => ctrl.abort(), 8000)
   try {
-    const r = await fetch(`https://api.vworld.kr/req/${path}?${qs}`, { signal: ctrl.signal })
-    if (!r.ok) return null
-    return await r.json()
+    return await jsonp(`https://api.vworld.kr/req/${path}?${qs}`)
   } catch {
     return null
-  } finally {
-    clearTimeout(t)
   }
 }
 
