@@ -23,6 +23,9 @@ export default function FilterBar({
   onTogglePlants,
   showSubs,
   onToggleSubs,
+  showLines,
+  onToggleLines,
+  hasLines = false,
   showComplexes,
   onToggleComplexes,
   showPublic,
@@ -70,6 +73,17 @@ export default function FilterBar({
         >
           🔌 변전소
         </button>
+        {hasLines && (
+          <button
+            type="button"
+            className={`chip ${showLines ? 'on' : ''}`}
+            onClick={onToggleLines}
+            aria-pressed={showLines}
+            title="송전선로 — OSM power=line, 전압별 색(OpenInfraMap 준거). 154kV+ 계통망"
+          >
+            〰 송전선
+          </button>
+        )}
         <button
           type="button"
           className={`chip ${showPlants ? 'on' : ''}`}
