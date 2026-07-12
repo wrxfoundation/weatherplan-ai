@@ -4,6 +4,7 @@
 import { FACILITIES } from '../data/facilities.js'
 import { checkPowerTrack } from '../calc/trackCheck.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
+import { nearestIndustrialComplex } from '../data/industrialComplexes.js'
 
 const EARTH_R = 6371
 
@@ -113,11 +114,25 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
             : '수도권: 감점 — 계통영향평가 전면 적용',
         }
 
-  // 토지축: 용도지역 적합성(12, vworld 라이브) + 면적·인센티브·지가(13, 파셀 데이터 대기)
+  // 토지축(25): 용도지역 적합성(12) + 산업단지 입지(6) + 부지 면적(4) + 지가 부담(3)
   const luAdm = landUse?.uses?.length ? zoneAdmissibility(landUse.uses) : null
   const zoneItem = luAdm
     ? { label: '용도지역 적합성 (vworld 도시계획)', max: 12, points: luAdm.pts, basis: `${luAdm.tier} · ${landUse.uses.join('·')}` }
     : { label: '용도지역 적합성 (vworld 도시계획)', max: 12, points: null, pending: 'vworld 용도지역 조회 필요' }
+
+  // 산업단지 입지 — 인센티브·전력/용수 기반시설 사전확보. 최근접 산단 거리 기반(데이터 확보 시 활성).
+  const ic = nearestIndustrialComplex(lat, lng)
+  const icItem = ic
+    ? {
+        label: '산업단지 입지 (인센티브·기반시설)',
+        max: 6,
+        points: ic.km <= 1 ? 6 : ic.km <= 3 ? 5 : ic.km <= 7 ? 3.5 : ic.km <= 15 ? 2 : 0.5,
+        basis: `최근접 산단 ${ic.name}${ic.type ? `(${ic.type})` : ''} ${ic.km.toFixed(1)}km`,
+      }
+    : { label: '산업단지 입지 (인센티브·기반시설)', max: 6, points: null, pending: '산업단지 경계·대표점 데이터 확보 후(공단/vworld)' }
+
+  const areaItem = { label: '부지 면적 확보', max: 4, points: null, pending: 'vworld 파셀 면적 조회 후 점수화' }
+  const priceItem = { label: '지가 부담', max: 3, points: null, pending: '공시지가(원/㎡) 확보 후 — 지가변동률은 참고 표시 중' }
 
   // 자가발전 인접(직접 PPA·자가발전 잠재) — 발전단지 최근접 거리 기반. 가까울수록 가점.
   // 배전 여유 프록시 — 지역 계통 공급여유(한전 연계가능용량, 시도 총량). 값 있으면 점수화.
@@ -187,15 +202,7 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
       key: 'land',
       label: '토지',
       max: 25,
-      items: [
-        zoneItem,
-        {
-          label: '면적·인센티브·지가',
-          max: 13,
-          points: null,
-          pending: '파셀 면적·산단 인센티브 확보 후 점수화(지가변동률은 참고표시 중)',
-        },
-      ],
+      items: [zoneItem, icItem, areaItem, priceItem],
     },
     {
       key: 'risk',
