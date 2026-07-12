@@ -340,8 +340,14 @@ export default function SitePanel({ point, onClose, onSelectFacility }) {
             <div className="v">
               {headroom?.available ? (
                 <>
-                  {headroom.availableMw != null && `여유 ${headroom.availableMw.toLocaleString()}MW`}
+                  {headroom.availableMw != null ? (
+                    <strong>여유 {headroom.availableMw.toLocaleString()}MW</strong>
+                  ) : (
+                    <span className="badge verify">여유용량 미제공</span>
+                  )}
                   {headroom.cumulativeMw != null && ` · 누적연계 ${headroom.cumulativeMw.toLocaleString()}MW`}
+                  {headroom.capacityMw != null && ` · 용량 ${headroom.capacityMw.toLocaleString()}MW`}
+                  {headroom.note && <div className="cell-basis">{headroom.note}</div>}
                 </>
               ) : (
                 <>
