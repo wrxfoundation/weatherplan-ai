@@ -234,6 +234,28 @@ a {
   max-width: calc(100% - var(--panel-width) - 48px);
 }
 
+/* 주요 국가산단 마커 */
+.complex-marker {
+  background: transparent;
+  border: 0;
+}
+.complex-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-size: 13px;
+  border-radius: 6px;
+  background: color-mix(in srgb, #22c55e 22%, rgba(6, 12, 22, 0.85));
+  border: 1.5px solid #4ade80;
+  box-shadow: 0 0 8px -2px #22c55e;
+}
+.complex-dot.urb {
+  border-color: #67e8f9;
+  background: color-mix(in srgb, #22d3ee 20%, rgba(6, 12, 22, 0.85));
+}
+
 /* 레이어 그룹 라벨 — 토글 칩 묶음 앞 작은 표시(정돈용) */
 .filterbar .group-label {
   font-size: 11px;

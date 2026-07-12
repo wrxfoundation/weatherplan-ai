@@ -13,6 +13,7 @@ import CompareTray from '../score/CompareTray.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
+import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor } from '../data/liveApi.js'
@@ -160,6 +161,8 @@ export default function MapPage({ power = false }) {
   const plantsLayerRef = useRef(null)
   const [showSubs, setShowSubs] = useState(false) // 154kV+ 변전소 레이어 (OSM 841개)
   const subsLayerRef = useRef(null)
+  const [showComplexes, setShowComplexes] = useState(false) // 주요 국가산단 레이어
+  const complexLayerRef = useRef(null)
   const [showPublic, setShowPublic] = useState(false) // 공공 DC 레이어 (행안부 운영시설 61곳)
   const publicLayerRef = useRef(null)
   const [showGenPermits, setShowGenPermits] = useState(power) // 발전 허가 2024+ 시도 버블 (전력 공급 파이프라인)
@@ -325,6 +328,34 @@ export default function MapPage({ power = false }) {
       subsLayerRef.current = g
     }
   }, [showSubs])
+
+  // 주요 국가산단 레이어 토글 — 인센티브·기반시설 사전확보 입지(초록 사각 마커).
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (complexLayerRef.current) {
+      map.removeLayer(complexLayerRef.current)
+      complexLayerRef.current = null
+    }
+    if (showComplexes) {
+      const g = L.layerGroup()
+      for (const [name, lat, lng, type] of INDUSTRIAL_COMPLEXES) {
+        L.marker([lat, lng], {
+          icon: L.divIcon({ className: 'complex-marker', html: `<span class="complex-dot ${type === '국가' ? 'nat' : 'urb'}">🏭</span>`, iconSize: [22, 22] }),
+          bubblingMouseEvents: false,
+        })
+          .bindTooltip(`<div class="dc-hovercard"><strong>${name}</strong> · ${type}산단<br/><span class="muted">인센티브·전력/용수 기반시설 사전확보</span></div>`, {
+            direction: 'top',
+            offset: [0, -10],
+            className: 'dc-hovercard',
+            opacity: 1,
+          })
+          .addTo(g)
+      }
+      g.addTo(map)
+      complexLayerRef.current = g
+    }
+  }, [showComplexes])
 
   // 공공 DC 레이어 토글 — 같은 시군구 중심점 공유 다수라 동일 분산 규칙 적용
   useEffect(() => {
@@ -636,6 +667,8 @@ export default function MapPage({ power = false }) {
         onTogglePlants={() => setShowPlants((v) => !v)}
         showSubs={showSubs}
         onToggleSubs={() => setShowSubs((v) => !v)}
+        showComplexes={showComplexes}
+        onToggleComplexes={() => setShowComplexes((v) => !v)}
         showPublic={showPublic}
         onTogglePublic={() => setShowPublic((v) => !v)}
         power={power}

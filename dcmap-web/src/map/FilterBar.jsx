@@ -23,6 +23,8 @@ export default function FilterBar({
   onTogglePlants,
   showSubs,
   onToggleSubs,
+  showComplexes,
+  onToggleComplexes,
   showPublic,
   onTogglePublic,
   power = false,
@@ -76,6 +78,15 @@ export default function FilterBar({
           title="대형 발전단지(원전·석탄) 레이어 — 발전 인프라 근접성 맥락 (DC 전원 매칭 아님)"
         >
           ⚡ 발전소
+        </button>
+        <button
+          type="button"
+          className={`chip ${showComplexes ? 'on' : ''}`}
+          onClick={onToggleComplexes}
+          aria-pressed={showComplexes}
+          title="주요 국가산업단지 — 인센티브·전력/용수 기반시설 사전확보 입지(공단 2026 1분기, 대표점)"
+        >
+          🏭 산단
         </button>
         <button
           type="button"
