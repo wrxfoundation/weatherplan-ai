@@ -14,10 +14,13 @@
  * 응답: { available, population?, households?, radiusKm?, scope } | { available:false, reason }
  */
 const AUTH_URL = 'https://sgisapi.mods.go.kr/OpenAPI3/auth/authentication.json'
-// 기본: 인구 통계(population.json)는 adm_cd(행정동코드)+year 기준. 좌표→adm_cd 변환이 필요하면
-// SGIS_STATS_URL로 실경로/파라미터 보정(프로덕션). {lat}{lng}{token} 플레이스홀더 유지.
+// SGIS 인구 통계(population.json)는 좌표가 아니라 **year + adm_cd(행정동/시군구 코드)** 기준.
+// 좌표/반경(lat/lng/radius)을 넣으면 412(요청변수 미충족). 시군구코드(revgeo 법정동 앞 5자리)로 질의한다.
+// {token}{admCd}{year} 플레이스홀더. 경로/파라미터는 SGIS_STATS_URL env로 재배포 없이 보정 가능.
 const DEFAULT_STATS_URL =
-  'https://sgisapi.mods.go.kr/OpenAPI3/stats/population.json?accessToken={token}&lat={lat}&lng={lng}&radius=2000'
+  'https://sgisapi.mods.go.kr/OpenAPI3/stats/population.json?accessToken={token}&year={year}&adm_cd={admCd}&low_search=0'
+// 최근 등록센서스 연도부터 시도(데이터 없는 연도는 건너뜀)
+const YEARS = ['2023', '2022', '2021', '2020']
 
 const num = (v) => {
   if (v == null) return undefined
@@ -30,13 +33,16 @@ async function fetchJson(url, ms = 7000) {
   const t = setTimeout(() => ctrl.abort(), ms)
   try {
     const r = await fetch(url, { signal: ctrl.signal, headers: { Accept: 'application/json', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36' } })
-    if (!r.ok) return { _status: r.status }
     const text = await r.text()
+    let json
     try {
-      return JSON.parse(text)
+      json = JSON.parse(text)
     } catch {
-      return { _status: 'not_json' }
+      json = null
     }
+    // SGIS는 오류도 본문(errCd/errMsg)에 담아 주는 경우가 많다 — HTTP 상태와 함께 본문도 보존(진단)
+    if (!r.ok) return { _status: r.status, _body: json, _head: text.slice(0, 200) }
+    return json ?? { _status: 'not_json', _head: text.slice(0, 200) }
   } finally {
     clearTimeout(t)
   }
@@ -81,10 +87,11 @@ export default async function handler(req, res) {
     return
   }
 
-  const lat = num(req.query.lat)
-  const lng = num(req.query.lng)
-  if (lat == null || lng == null || lat < 32 || lat > 40 || lng < 123 || lng > 132) {
-    res.status(400).json({ available: false, reason: 'bad_point' })
+  // 시군구 코드(5자리) — 클라이언트가 revgeo 법정동코드 앞 5자리를 adm_cd로 전달.
+  // SGIS는 좌표가 아니라 행정구역코드 기준이라 이 값이 필수.
+  const admCd = String(req.query.adm_cd || req.query.admCd || '').replace(/[^0-9]/g, '').slice(0, 5)
+  if (!/^\d{5}$/.test(admCd)) {
+    res.status(200).json({ available: false, reason: 'needs_admcd' })
     return
   }
 
@@ -95,28 +102,49 @@ export default async function handler(req, res) {
       res.status(200).json({ available: false, reason: `auth_failed${errCd != null ? `_${errCd}` : ''}` })
       return
     }
-    const url = (process.env.SGIS_STATS_URL || DEFAULT_STATS_URL)
-      .replaceAll('{token}', encodeURIComponent(token))
-      .replaceAll('{lat}', String(lat))
-      .replaceAll('{lng}', String(lng))
-
-    const body = await fetchJson(url)
-    if (body?._status) {
-      res.status(200).json({ available: false, reason: `upstream_${body._status}` })
+    const tmpl = process.env.SGIS_STATS_URL || DEFAULT_STATS_URL
+    // year는 데이터 있는 연도를 최근순으로 탐색(빈 응답이면 다음 연도). env로 year를 고정했다면 그대로.
+    const yearList = /\{year\}/.test(tmpl) ? YEARS : ['']
+    let body = null
+    let lastReason = null
+    for (const year of yearList) {
+      const url = tmpl
+        .replaceAll('{token}', encodeURIComponent(token))
+        .replaceAll('{admCd}', admCd)
+        .replaceAll('{year}', year)
+      const b = await fetchJson(url)
+      if (req.query.debug) {
+        res.status(200).json({ available: true, debug: true, year, httpStatus: b?._status ?? 200, errCd: b?.result?.errCd ?? b?.errCd, keys: b?.result ? Object.keys(Array.isArray(b.result) ? b.result[0] || {} : b.result) : Object.keys(b || {}), head: b?._head })
+        return
+      }
+      if (b?._status) {
+        // SGIS 본문 errMsg를 reason에 실어 정확한 원인 노출(진단)
+        const em = b?._body?.errMsg || b?._body?.result?.errMsg
+        lastReason = `upstream_${b._status}${em ? `_${String(em).replace(/\s+/g, '')}` : ''}`
+        continue
+      }
+      const pop = num(pick(b, ['tot_ppltn', 'population', 'ppltn', 'totalPopulation']))
+      if (pop != null) {
+        body = b
+        break
+      }
+      lastReason = 'schema_unknown'
+    }
+    if (!body) {
+      res.status(200).json({ available: false, reason: lastReason || 'no_data' })
       return
     }
-    const population = num(pick(body, ['population', 'ppltn', 'tot_ppltn', 'totalPopulation', '인구']))
-    const households = num(pick(body, ['household', 'hshld', 'tot_hshld', 'households', '가구']))
-    if (population == null && households == null) {
-      res.status(200).json({ available: false, reason: 'schema_unknown' })
-      return
-    }
+    const population = num(pick(body, ['tot_ppltn', 'population', 'ppltn', 'totalPopulation']))
+    const households = num(pick(body, ['tot_house', 'tot_family', 'household', 'hshld', 'households']))
+    const density = num(pick(body, ['ppltn_dnsty', 'density']))
+    const admNm = pick(body, ['adm_nm', 'admNm'])
     res.status(200).json({
       available: true,
       population,
       households,
-      radiusKm: 2,
-      scope: 'SGIS 반경 2km 인구/가구(추정 통계)',
+      density, // 인구밀도(명/km²) — 민원 리스크 프록시로 더 적합
+      admNm: admNm ? String(admNm) : undefined,
+      scope: `SGIS 시군구 인구/밀도${admNm ? ` · ${admNm}` : ''}(등록센서스)`,
     })
   } catch (e) {
     res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
