@@ -13,7 +13,7 @@ import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } f
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
-import { headroomFor, geocodeAddr } from '../data/liveApi.js'
+import { headroomFor } from '../data/liveApi.js'
 
 const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ sido, lat, lng }))
 
@@ -163,9 +163,6 @@ export default function MapPage({ power = false }) {
   const [headrooms, setHeadrooms] = useState(null) // {sido: availableMw|null}
   const [region, setRegion] = useState(null) // 전력지도: 클릭한 시도 (지역 요약 카드)
   const [mapCenter, setMapCenter] = useState(null) // 상단 기후 바: 확정 지점 없을 때 지도 중심 기후
-  const [addrQuery, setAddrQuery] = useState('') // 지번/도로명 주소 검색 입력
-  const [geocoding, setGeocoding] = useState(false)
-  const [geoErr, setGeoErr] = useState(null)
   // 모바일 바텀시트: 기본 접힘 → 로드 시 맵이 보이게. 지점/시설 선택하면 자동 펼침.
   const [sheetCollapsed, setSheetCollapsed] = useState(
     () => typeof window !== 'undefined' && window.matchMedia?.('(max-width: 760px)')?.matches === true,
@@ -407,6 +404,20 @@ export default function MapPage({ power = false }) {
     if (selected || sitePoint || region) setSheetCollapsed(false)
   }, [selected, sitePoint, region])
 
+  // URL ?site= → sitePoint 동기화. 상단 통합검색(주소 지오코딩)이 /?site=로 이동하면
+  // 이미 맵에 있어도 해당 지점으로 부지 분석 + 카메라 이동되게 한다.
+  useEffect(() => {
+    const raw = searchParams.get('site')
+    if (!raw) return
+    const [lat, lng] = raw.split(',').map(Number)
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < 32 || lat > 40 || lng < 124 || lng > 132) return
+    if (sitePoint && Math.abs(sitePoint.lat - lat) < 1e-4 && Math.abs(sitePoint.lng - lng) < 1e-4) return
+    setSelected(null)
+    setRegion(null)
+    setSitePoint({ lat, lng })
+    mapObj.current?.setView([lat, lng], Math.max(mapObj.current.getZoom?.() ?? 11, 12))
+  }, [searchParams]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // 지점 분석 마커 (십자 링) + ?site= URL 동기화 (공유 링크)
   useEffect(() => {
     const map = mapObj.current
@@ -515,25 +526,6 @@ export default function MapPage({ power = false }) {
     mapObj.current?.setView([f.lat, f.lng], Math.max(mapObj.current.getZoom(), 11))
   }
 
-  // 지번/도로명 주소 검색 → vworld 지오코딩 → 해당 지점을 부지 분석으로 (맵 클릭과 동일)
-  const onSearchAddr = async (e) => {
-    e.preventDefault()
-    const query = addrQuery.trim()
-    if (!query || geocoding) return
-    setGeocoding(true)
-    setGeoErr(null)
-    const hit = await geocodeAddr(query)
-    setGeocoding(false)
-    if (hit?.lat != null && hit?.lng != null) {
-      setSelected(null)
-      setRegion(null)
-      setSitePoint({ lat: hit.lat, lng: hit.lng })
-      mapObj.current?.setView([hit.lat, hit.lng], 13)
-    } else {
-      setGeoErr('주소를 찾지 못했어요 — 시·군·구까지 포함해 다시 시도해 보세요')
-    }
-  }
-
   // 전력지도 지역 클릭 요약 데이터
   const regionInfo = useMemo(() => {
     if (!region) return null
@@ -586,20 +578,7 @@ export default function MapPage({ power = false }) {
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />
         <div className="map-top">
-          <form className="addr-search" onSubmit={onSearchAddr} role="search">
-            <input
-              type="text"
-              value={addrQuery}
-              onChange={(e) => setAddrQuery(e.target.value)}
-              placeholder="지번·도로명 주소 검색 (예: 파주시 파주읍)"
-              aria-label="지번·도로명 주소 검색"
-              enterKeyHint="search"
-            />
-            <button type="submit" className="btn primary" disabled={geocoding}>
-              {geocoding ? '검색중…' : '검색'}
-            </button>
-          </form>
-          {geoErr && <div className="addr-err">{geoErr}</div>}
+          {/* 주소(지번·도로명) 검색은 상단 통합 검색창으로 이동 — 여기선 기후 바만 */}
           <ClimateBar point={sitePoint || mapCenter} committed={!!sitePoint} />
         </div>
         <aside className={`side-panel${sheetCollapsed ? ' collapsed' : ''}`}>

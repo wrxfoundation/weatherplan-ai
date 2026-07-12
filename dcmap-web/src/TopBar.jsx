@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { FACILITIES, STATUS_LABEL, SIDOS, slugOf } from './data/facilities.js'
+import { geocodeAddr } from './data/liveApi.js'
 
 // 라우트 → GNB 섹션(색상 톤). 페이지 전체 accent가 섹션 톤을 따른다.
 const SECTION_PREFIX = [
@@ -40,6 +41,11 @@ function suggest(qv) {
       if (out.length >= 7) break
     }
   }
+  // 지번·도로명 주소 검색 통합 — 마지막에 지오코딩 이동 옵션(맵 상단 별도 검색창 대체)
+  const t = qv.trim()
+  if (t.length >= 2) {
+    out.push({ kind: '주소', label: `‘${t}’ 지번·도로명으로 이동`, meta: 'vworld 지오코딩', geo: true, query: t, to: '' })
+  }
   return out
 }
 
@@ -51,6 +57,7 @@ export default function TopBar() {
   const [term, setTerm] = useState(q)
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(-1)
+  const [geocoding, setGeocoding] = useState(false)
   const blurTimer = useRef(null)
 
   const items = useMemo(() => suggest(term), [term])
@@ -72,9 +79,17 @@ export default function TopBar() {
     }
   }
 
-  const choose = (item) => {
+  const choose = async (item) => {
     setOpen(false)
     setActive(-1)
+    if (item.geo) {
+      // 주소 → 좌표 지오코딩 후 맵의 해당 지점으로(부지 분석). 실패 시 일반 검색으로 폴백.
+      setGeocoding(true)
+      const hit = await geocodeAddr(item.query).catch(() => null)
+      setGeocoding(false)
+      navigate(hit?.lat != null ? `/?site=${hit.lat.toFixed(5)},${hit.lng.toFixed(5)}` : `/?q=${encodeURIComponent(item.query)}`)
+      return
+    }
     navigate(item.to)
   }
 
@@ -127,7 +142,15 @@ export default function TopBar() {
           aria-expanded={open && items.length > 0}
           role="combobox"
         />
-        {open && items.length > 0 && (
+        {geocoding && (
+          <div className="search-suggest" role="status">
+            <button type="button" className="searching" disabled>
+              <span className="sg-kind">주소</span>
+              <span>위치 찾는 중…</span>
+            </button>
+          </div>
+        )}
+        {!geocoding && open && items.length > 0 && (
           <div className="search-suggest" role="listbox">
             {items.map((it, i) => (
               <button
@@ -157,9 +180,6 @@ export default function TopBar() {
         </NavLink>
         <NavLink to="/map3d" data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
           3D <sup className="beta-sup">β</sup>
-        </NavLink>
-        <NavLink to="/power" data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
-          전력지도
         </NavLink>
         <NavLink to="/calc" data-nav="data" className={({ isActive }) => (isActive ? 'active' : '')}>
           GPU 계산기

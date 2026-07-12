@@ -34,9 +34,14 @@ export default function ClimateBar({ point, committed }) {
   })
 
   const dong = dongLabel(addr)
+  // 근거지는 좌표 기반으로 일관되게 표기 — 케이웨더 scope(관측소 행정동)는 질의 지점과
+  // 어긋날 수 있어(먼 관측소로 회귀) 지점 라벨로 쓰지 않는다.
+  const region = normal ? `${normal.name} 인근` : null
   const where = committed
     ? dong || addr?.parcel || `${point?.lat?.toFixed(4)}, ${point?.lng?.toFixed(4)}`
-    : '지도 중심'
+    : region
+      ? `지도 중심 · ${region}`
+      : '지도 중심'
 
   return (
     <div className="climate-bar">
@@ -44,7 +49,7 @@ export default function ClimateBar({ point, committed }) {
         <span className="cb-where" title={addr?.parcel || where}>
           {committed ? '📍' : '🧭'} {where}
         </span>
-        <span className="cb-src">케이웨더 실황{wx?.scope ? ` · ${wx.scope}` : ''}</span>
+        <span className="cb-src">케이웨더 실황</span>
       </div>
 
       <div className="cb-body">
