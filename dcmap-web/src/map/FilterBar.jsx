@@ -84,7 +84,7 @@ export default function FilterBar({
           className={`chip ${showComplexes ? 'on' : ''}`}
           onClick={onToggleComplexes}
           aria-pressed={showComplexes}
-          title="주요 국가산업단지 — 인센티브·전력/용수 기반시설 사전확보 입지(공단 2026 1분기, 대표점)"
+          title="전국 산업단지 511개 — 인센티브·전력/용수 기반시설 사전확보 입지(OSM 지정단지, 대표점 근사)"
         >
           🏭 산단
         </button>

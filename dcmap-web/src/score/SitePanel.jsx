@@ -462,7 +462,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   <span className="badge" style={{ marginLeft: 6 }}>{ic.type}산단</span>
                   <span style={{ marginLeft: 6 }}>{ic.km.toFixed(1)}km</span>
                   <div className="cell-basis">
-                    산단 내/근접은 세제·인센티브 + 전력·용수 사전확보 + 공업지역 인허가 수월. 주요 국가산단 대표점(부분 커버 — 전체 경계 GeoJSON 확장 예정)
+                    산단 내/근접은 세제·인센티브 + 전력·용수 사전확보 + 공업지역 인허가 수월. 전국 지정단지 511개(OSM landuse=industrial · 대표점 근사)
                   </div>
                 </div>
               </div>
