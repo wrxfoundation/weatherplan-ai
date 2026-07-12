@@ -46,7 +46,20 @@ function zoneAdmissibility(uses) {
   return { pts: 5, tier: '용도지역 확인 필요' }
 }
 
-export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null, landUse = null } = {}) {
+// 지역 계통 공급여유(MW, 한전 연계가능용량 시도 총량) → 배전 여유 점수(10점 만점).
+// 시도 총량 신호이므로 시군구 편차는 basis에 명시(포화(≤10)는 신규 대형부하 불가 → 0점).
+function headroomPoints(mw) {
+  if (mw == null) return null
+  if (mw <= 10) return 0
+  if (mw <= 100) return 2
+  if (mw <= 300) return 4
+  if (mw <= 700) return 6
+  if (mw <= 1500) return 7.5
+  if (mw <= 3000) return 9
+  return 10
+}
+
+export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null, landUse = null, gridMw = null } = {}) {
   const track = checkPowerTrack(mw, { nonCapital })
 
   // 토지축: 용도지역 적합성(12, vworld 라이브) + 면적·인센티브·지가(13, 파셀 데이터 대기)
@@ -56,6 +69,17 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
     : { label: '용도지역 적합성 (vworld 도시계획)', max: 12, points: null, pending: 'vworld 용도지역 조회 필요' }
 
   // 자가발전 인접(직접 PPA·자가발전 잠재) — 발전단지 최근접 거리 기반. 가까울수록 가점.
+  // 배전 여유 프록시 — 지역 계통 공급여유(한전 연계가능용량, 시도 총량). 값 있으면 점수화.
+  const gridItem =
+    gridMw != null
+      ? {
+          label: '배전 여유 (한전 계통 공급여유)',
+          max: 10,
+          points: headroomPoints(gridMw),
+          basis: `시도 총 공급여유 ${gridMw.toLocaleString()}MW (2027 전망) · 시군구별 편차 있음`,
+        }
+      : { label: '배전 여유 (한전 계통 공급여유)', max: 10, points: null, pending: '한전 연계가능용량(공급여유) 조회 필요' }
+
   const selfGenItem =
     plantKm != null
       ? {
@@ -92,7 +116,7 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
       max: 40,
       items: [
         { label: '154kV+ 변전소 거리', max: 15, points: null, pending: '정부 345kV 여유 변전소 정보 공개 대기' },
-        { label: '배전 여유 프록시', max: 10, points: null, pending: 'D3(kepco-headroom) 어댑터 가동 후' },
+        gridItem,
         {
           label: '계통영향평가 지역 리스크',
           max: 10,
