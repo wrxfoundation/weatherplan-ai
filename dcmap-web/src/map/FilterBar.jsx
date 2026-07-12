@@ -17,6 +17,7 @@ const ICON_PATHS = {
   complex: <path d="M2.5 13V6l4-2v3l4-2v8Z M2.5 13h9 M5 8v.01 M8.5 8v.01" />, // 산단
   telecom: <path d="M8 13V7 M4.2 4.2a5.4 5.4 0 0 1 7.6 0 M6 6a2.8 2.8 0 0 1 4 0" />, // 통신 안테나
   public: <path d="M2.5 13h11 M3.5 13V6.5l4.5-3 4.5 3V13 M6.5 13V9h3v4" />, // 공공 건물
+  reco: <path d="M8 1.8l1.8 3.9 4.2.5-3.1 2.9.8 4.2L8 11.9 4.3 13.2l.8-4.2L2 6.1l4.2-.5Z" />, // 추천(별)
 }
 function Icon({ name }) {
   return (
@@ -86,7 +87,7 @@ export default function FilterBar({
           aria-pressed={showReco}
           title="AI 추천 입지 TOP20 — 산업단지 후보를 정적 근거(변전소·공급여유·승인율·네트워크·자가발전)로 랭킹. 클릭 시 전체 분석"
         >
-          🏆 추천입지
+          <Icon name="reco" /> 추천입지
         </button>
         <button
           type="button"
