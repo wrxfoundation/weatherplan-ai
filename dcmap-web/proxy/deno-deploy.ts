@@ -17,6 +17,7 @@ const ALLOW = new Set<string>([
   'bigdata.kepco.co.kr',
   'www.safetydata.go.kr',
   'api.vworld.kr',
+  'sgisapi.mods.go.kr',
 ])
 
 const UA =
