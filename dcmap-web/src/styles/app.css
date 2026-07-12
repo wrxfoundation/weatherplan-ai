@@ -292,9 +292,13 @@ a {
   border: 2px solid #fff8e1;
   box-shadow: 0 0 10px -1px #f4c14b, 0 2px 6px rgba(0, 0, 0, 0.5);
 }
-.chip.chip-reco.on {
-  background: color-mix(in srgb, #f4c14b 22%, transparent);
-  border-color: #f4c14b;
+/* 추천입지 칩 on — 다른 on 칩과 동일 톤·강도, 골드 액센트만 다르게(통일감 유지) */
+.filterbar button.chip.chip-reco.on {
+  background: color-mix(in srgb, var(--navy-deep) 80%, #f4c14b);
+  border-color: color-mix(in srgb, #f4c14b 40%, var(--line));
+  color: var(--text);
+}
+.chip.chip-reco.on .chip-ico {
   color: #f4c14b;
 }
 
@@ -365,7 +369,7 @@ a {
 }
 .chip-ico {
   flex-shrink: 0;
-  opacity: 0.9;
+  opacity: 1;
 }
 
 .filterbar .group {
