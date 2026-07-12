@@ -234,19 +234,25 @@ a {
   max-width: calc(100% - var(--panel-width) - 48px);
 }
 
-/* 베이스맵 전환 스위처 — 지도 우상단 */
-.basemap-switch {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 500;
+/* 베이스맵 전환 — 사이드패널 헤더(목록으로 줄에 맞춤, 스크롤 안쪽) */
+.panel-basemap {
   display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 2px 8px;
+}
+.panel-basemap .pb-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--grey);
+}
+.basemap-switch {
+  display: inline-flex;
   gap: 2px;
   padding: 3px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--navy-deep, #0a1120) 82%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--navy-deep, #0a1120) 55%, transparent);
   border: 1px solid var(--line);
-  backdrop-filter: blur(8px);
 }
 .bm-btn {
   border: 0;
@@ -254,9 +260,10 @@ a {
   color: var(--grey);
   font-size: 12px;
   font-weight: 700;
-  padding: 5px 11px;
+  padding: 4px 12px;
   border-radius: 7px;
   cursor: pointer;
+  white-space: nowrap;
 }
 .bm-btn.on {
   background: var(--accent, #35d5ee);
@@ -264,16 +271,6 @@ a {
 }
 .bm-btn:not(.on):hover {
   color: var(--ink);
-}
-@media (max-width: 640px) {
-  .basemap-switch {
-    top: 8px;
-    right: 8px;
-  }
-  .bm-btn {
-    padding: 4px 9px;
-    font-size: 11px;
-  }
 }
 
 /* 통신망 마커 (국사·IDC·육양국) */
@@ -333,6 +330,17 @@ a {
 }
 .filterbar .layer-group {
   flex-wrap: wrap;
+}
+/* 레이어 칩 — 아이콘(SVG 라인)과 라벨 정렬, 텍스트 넘침 방지 */
+.filterbar .layer-group .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.chip-ico {
+  flex-shrink: 0;
+  opacity: 0.9;
 }
 
 .filterbar .group {
@@ -2770,8 +2778,9 @@ summary:focus-visible,
 
 .climate-bar {
   padding: 10px 12px;
-  background: var(--glass-surface-strong);
-  backdrop-filter: var(--glass-backdrop);
+  /* 위성 등 밝은 배경에서도 읽히게 불투명 다크로 통일(플로팅 알약 공통 톤) */
+  background: color-mix(in srgb, var(--navy-deep, #0a1120) 86%, transparent);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   box-shadow: var(--glass-specular-soft), var(--elev-1);
