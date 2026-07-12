@@ -273,6 +273,31 @@ a {
   color: var(--ink);
 }
 
+/* 추천 입지 마커 — 금색 순위 배지 */
+.reco-marker {
+  background: transparent;
+  border: 0;
+}
+.reco-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #1a1204;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #fde68a, #f4c14b);
+  border: 2px solid #fff8e1;
+  box-shadow: 0 0 10px -1px #f4c14b, 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.chip.chip-reco.on {
+  background: color-mix(in srgb, #f4c14b 22%, transparent);
+  border-color: #f4c14b;
+  color: #f4c14b;
+}
+
 /* 통신망 마커 (국사·IDC·육양국) */
 .net-marker {
   background: transparent;

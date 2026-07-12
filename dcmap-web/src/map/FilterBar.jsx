@@ -50,6 +50,8 @@ export default function FilterBar({
   onToggleComplexes,
   showNet,
   onToggleNet,
+  showReco,
+  onToggleReco,
   showPublic,
   onTogglePublic,
   power = false,
@@ -77,6 +79,15 @@ export default function FilterBar({
       {/* 지도 레이어 토글 — 시설/전력 정보를 지도 위에 겹쳐 표시(기본 OFF, 필요할 때만) */}
       <div className="group layer-group" role="group" aria-label="지도 레이어">
         <span className="group-label">레이어</span>
+        <button
+          type="button"
+          className={`chip chip-reco ${showReco ? 'on' : ''}`}
+          onClick={onToggleReco}
+          aria-pressed={showReco}
+          title="AI 추천 입지 TOP20 — 산업단지 후보를 정적 근거(변전소·공급여유·승인율·네트워크·자가발전)로 랭킹. 클릭 시 전체 분석"
+        >
+          🏆 추천입지
+        </button>
         <button
           type="button"
           className={`chip ${showLabels ? 'on' : ''}`}
