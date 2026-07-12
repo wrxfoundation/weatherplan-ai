@@ -23,6 +23,16 @@ const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 const TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+// vworld 한글 기본도·위성 — 브라우저 직접 로드(도메인 등록키). 미설정 시 다크만 노출.
+const VW_KEY = import.meta.env.VITE_VWORLD_KEY
+const vwUrl = (layer, ext) => `https://api.vworld.kr/req/wmts/1.0.0/${VW_KEY}/${layer}/{z}/{y}/{x}.${ext}`
+const VW_ATTR = '&copy; <a href="https://www.vworld.kr">국토교통부 브이월드</a>'
+const BASE_MAPS = {
+  dark: { label: '다크', needsKey: false, tiles: [{ url: DARK_TILES, attr: TILE_ATTRIBUTION }] },
+  vbase: { label: '한글', needsKey: true, tiles: [{ url: vwUrl('Base', 'png'), attr: VW_ATTR }] },
+  sat: { label: '위성', needsKey: true, tiles: [{ url: vwUrl('Satellite', 'jpeg'), attr: VW_ATTR }, { url: vwUrl('Hybrid', 'png'), attr: VW_ATTR }] },
+}
+const BASE_KEYS = Object.keys(BASE_MAPS).filter((k) => !BASE_MAPS[k].needsKey || VW_KEY)
 // 남한 bbox — 초기 뷰를 여기에 맞춰 북한·일본으로 화면이 낭비되지 않게 한다
 const KR_BOUNDS = [
   [33.0, 124.6],
@@ -163,6 +173,16 @@ export default function MapPage({ power = false }) {
   const subsLayerRef = useRef(null)
   const [showComplexes, setShowComplexes] = useState(false) // 주요 국가산단 레이어
   const complexLayerRef = useRef(null)
+  const [baseMap, setBaseMap] = useState(() => {
+    try {
+      const v = localStorage.getItem('dcmap.baseMap')
+      if (v && BASE_KEYS.includes(v)) return v
+    } catch {
+      /* ignore */
+    }
+    return 'dark'
+  })
+  const baseTileRef = useRef([])
   const [showPublic, setShowPublic] = useState(false) // 공공 DC 레이어 (행안부 운영시설 61곳)
   const publicLayerRef = useRef(null)
   const [showGenPermits, setShowGenPermits] = useState(power) // 발전 허가 2024+ 시도 버블 (전력 공급 파이프라인)
@@ -242,7 +262,7 @@ export default function MapPage({ power = false }) {
     ])
     L.control.zoom({ position: 'bottomright' }).addTo(map)
     L.control.scale({ position: 'bottomleft', imperial: false }).addTo(map)
-    L.tileLayer(DARK_TILES, { attribution: TILE_ATTRIBUTION, maxZoom: 19 }).addTo(map)
+    // 베이스맵은 아래 [baseMap] 이펙트가 적용(마운트 직후 실행)
     const cluster = L.markerClusterGroup({
       maxClusterRadius: 30, // 밀도감: 촘촘히 붙은 것만 묶고 개별 마커를 최대한 노출
       disableClusteringAtZoom: 10,
@@ -328,6 +348,26 @@ export default function MapPage({ power = false }) {
       subsLayerRef.current = g
     }
   }, [showSubs])
+
+  // 베이스맵 전환 — 다크(CartoDB) / 한글 일반(vworld) / 위성(vworld). 타일은 최하단.
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    baseTileRef.current.forEach((l) => map.removeLayer(l))
+    baseTileRef.current = []
+    const conf = BASE_MAPS[baseMap] || BASE_MAPS.dark
+    for (const t of conf.tiles) {
+      const layer = L.tileLayer(t.url, { attribution: t.attr, maxZoom: 19, minZoom: 6 })
+      layer.addTo(map)
+      layer.bringToBack()
+      baseTileRef.current.push(layer)
+    }
+    try {
+      localStorage.setItem('dcmap.baseMap', baseMap)
+    } catch {
+      /* ignore */
+    }
+  }, [baseMap])
 
   // 주요 국가산단 레이어 토글 — 인센티브·기반시설 사전확보 입지(초록 사각 마커).
   useEffect(() => {
@@ -679,6 +719,16 @@ export default function MapPage({ power = false }) {
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />
+        {/* 베이스맵 전환 — 다크/한글/위성 (vworld 키 있을 때만 한글·위성 노출) */}
+        {BASE_KEYS.length > 1 && (
+          <div className="basemap-switch" role="group" aria-label="지도 종류">
+            {BASE_KEYS.map((k) => (
+              <button key={k} type="button" className={`bm-btn ${baseMap === k ? 'on' : ''}`} onClick={() => setBaseMap(k)} aria-pressed={baseMap === k}>
+                {BASE_MAPS[k].label}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="map-top">
           {/* 주소(지번·도로명) 검색은 상단 통합 검색창으로 이동 — 여기선 기후 바만 */}
           <ClimateBar point={sitePoint || mapCenter} committed={!!sitePoint} />

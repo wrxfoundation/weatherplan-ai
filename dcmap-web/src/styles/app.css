@@ -234,6 +234,48 @@ a {
   max-width: calc(100% - var(--panel-width) - 48px);
 }
 
+/* 베이스맵 전환 스위처 — 지도 우상단 */
+.basemap-switch {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 500;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--navy-deep, #0a1120) 82%, transparent);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+}
+.bm-btn {
+  border: 0;
+  background: transparent;
+  color: var(--grey);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.bm-btn.on {
+  background: var(--accent, #35d5ee);
+  color: #05121c;
+}
+.bm-btn:not(.on):hover {
+  color: var(--ink);
+}
+@media (max-width: 640px) {
+  .basemap-switch {
+    top: 8px;
+    right: 8px;
+  }
+  .bm-btn {
+    padding: 4px 9px;
+    font-size: 11px;
+  }
+}
+
 /* 주요 국가산단 마커 */
 .complex-marker {
   background: transparent;
