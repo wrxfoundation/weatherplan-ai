@@ -15,6 +15,7 @@ import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { loadPowerLines, lineColor, POWER_LINES_AVAILABLE } from '../data/powerLines.js'
+import { NETWORK_NODES } from '../data/network.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor } from '../data/liveApi.js'
@@ -176,6 +177,8 @@ export default function MapPage({ power = false }) {
   const linesLayerRef = useRef(null)
   const [showComplexes, setShowComplexes] = useState(false) // 주요 국가산단 레이어
   const complexLayerRef = useRef(null)
+  const [showNet, setShowNet] = useState(false) // 통신망 레이어(국사·IDC·육양국)
+  const netLayerRef = useRef(null)
   const [baseMap, setBaseMap] = useState(() => {
     try {
       const v = localStorage.getItem('dcmap.baseMap')
@@ -397,6 +400,36 @@ export default function MapPage({ power = false }) {
       /* ignore */
     }
   }, [baseMap])
+
+  // 통신망 레이어 토글 — 백본 국사·IDC·해저케이블 육양국(네트워크축 근거).
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (netLayerRef.current) {
+      map.removeLayer(netLayerRef.current)
+      netLayerRef.current = null
+    }
+    if (showNet) {
+      const g = L.layerGroup()
+      for (const n of NETWORK_NODES) {
+        const cls = n.type === '해저케이블 육양국' ? 'cls' : n.type === 'DC' ? 'idc' : 'gs'
+        const ico = n.type === '해저케이블 육양국' ? '🌊' : n.type === 'DC' ? '🖥️' : '📡'
+        L.marker([n.lat, n.lng], {
+          icon: L.divIcon({ className: 'net-marker', html: `<span class="net-dot ${cls}">${ico}</span>`, iconSize: [20, 20] }),
+          bubblingMouseEvents: false,
+        })
+          .bindTooltip(`<div class="dc-hovercard"><strong>${n.name}</strong> · ${n.type}<br/><span class="muted">네트워크 인프라(백본 근접)</span></div>`, {
+            direction: 'top',
+            offset: [0, -9],
+            className: 'dc-hovercard',
+            opacity: 1,
+          })
+          .addTo(g)
+      }
+      g.addTo(map)
+      netLayerRef.current = g
+    }
+  }, [showNet])
 
   // 주요 국가산단 레이어 토글 — 인센티브·기반시설 사전확보 입지(초록 사각 마커).
   useEffect(() => {
@@ -741,6 +774,8 @@ export default function MapPage({ power = false }) {
         hasLines={POWER_LINES_AVAILABLE}
         showComplexes={showComplexes}
         onToggleComplexes={() => setShowComplexes((v) => !v)}
+        showNet={showNet}
+        onToggleNet={() => setShowNet((v) => !v)}
         showPublic={showPublic}
         onTogglePublic={() => setShowPublic((v) => !v)}
         power={power}

@@ -28,6 +28,8 @@ export default function FilterBar({
   hasLines = false,
   showComplexes,
   onToggleComplexes,
+  showNet,
+  onToggleNet,
   showPublic,
   onTogglePublic,
   power = false,
@@ -101,6 +103,15 @@ export default function FilterBar({
           title="전국 산업단지 511개 — 인센티브·전력/용수 기반시설 사전확보 입지(OSM 지정단지, 대표점 근사)"
         >
           🏭 산단
+        </button>
+        <button
+          type="button"
+          className={`chip ${showNet ? 'on' : ''}`}
+          onClick={onToggleNet}
+          aria-pressed={showNet}
+          title="통신망 — 백본 국사·IDC·해저케이블 육양국(OSM telecom + 시드). 네트워크축 근거"
+        >
+          📡 통신망
         </button>
         <button
           type="button"
