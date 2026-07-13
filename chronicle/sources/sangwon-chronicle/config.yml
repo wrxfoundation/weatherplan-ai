@@ -1,0 +1,38 @@
+# 상권 생멸 — 스펙 v4 #7 (sangwon-chronicle), API 레코드형. 한국.
+#
+# 소상공인시장진흥공단 상가(상권)정보 API(data.go.kr 15012005)로 주요 상권의 상가를
+# 박제 — 상호·업종·좌표. 상가는 폐업 즉시 목록에서 소멸하니 지금 찍은 자만 "이 상권에
+# 언제 무엇이 생기고 사라졌나"를 소유한다(젠트리피케이션·상권 흥망의 원장). #4·#5
+# (부동산)와 한국 로컬 클러스터. apis.data.go.kr 게이트웨이는 러너 도달 확인됨.
+#
+# ── 활성화 ─────────────────────────────────────────────────────────────────
+#   기존 DATA_GO_KR_KEY 재사용 — data.go.kr에서 이 API "활용신청"만 하면 된다.
+#   키 없으면 휴면(0건, 정상). 새 시크릿 불필요.
+# ★ 미지(첫 키드 실행이 자백 → 핫에디트): 정확한 operation 경로(sdsc/sdsc2)·응답
+#   필드명·serviceKey 인코딩. 랜드마크 좌표는 확실(행정동 코드보다 입력 안정적).
+# ──────────────────────────────────────────────────────────────────────────
+id: sangwon-chronicle
+family: api-records
+title: 상권 생멸 — 주요 상권 상가 생멸 (일간)
+
+endpoint: http://apis.data.go.kr/B553077/api/open/sdsc2/storeListInRadius
+key_env: DATA_GO_KR_KEY
+key_param: serviceKey
+user_agent: "chronicle-sangwon-chronicle/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
+rate_limit_ms: 400
+
+page_size: 100 # numOfRows
+max_pages: 30 # 반경당 상한(≈3,000건). 폭주 방지.
+# 폐업 물결(다수 소멸)이 정상 신호 — 부분수집은 삭제판정 보류로 오탐 방지. 여유값.
+max_removal_ratio: 0.6
+
+# 핫에디트 가능한 고정 쿼리 (serviceKey·pageNo·numOfRows·cx·cy는 어댑터가 주입)
+query:
+  type: json
+  radius: 500 # m
+
+# 주요 상권 랜드마크 (cx=경도, cy=위도). 반경 내 상가를 박제. 자유 확장.
+targets:
+  - { id: gangnam, cx: 127.0276, cy: 37.4979 } # 강남역
+  - { id: hongdae, cx: 126.9240, cy: 37.5563 } # 홍대입구역
+  - { id: pangyo, cx: 127.1119, cy: 37.3948 } # 판교역
