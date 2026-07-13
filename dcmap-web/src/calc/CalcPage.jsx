@@ -61,21 +61,21 @@ function TrackCard({ mw, nonCapital, onRegion }) {
       {(() => {
         const CAP = 80
         const pos = Math.min(100, (Math.min(r.mw, CAP) / CAP) * 100)
-        const band = r.mw <= 20 ? 0 : r.mw <= 40 ? 1 : 2
+        const band = r.mw <= 10 ? 0 : r.mw <= 40 ? 1 : 2
         const nextMsg =
-          r.mw <= 20
-            ? `20MW까지 ${(20 - r.mw).toFixed(1)}MW 여유 — 초과 시 22.9kV/154kV 협의 구간`
+          r.mw <= 10
+            ? `10MW까지 ${(10 - r.mw).toFixed(1)}MW 여유 — 초과 시 154kV 원칙(22.9kV는 변전소 여유 시 조건부) 구간`
             : r.mw <= 40
               ? `40MW까지 ${(40 - r.mw).toFixed(1)}MW — 초과 시 154kV 의무 구간`
               : `154kV 의무 구간 (40MW 초과) — 자체 수전설비 투자 필요`
         return (
           <div className="band-scale">
             <div className="band-track">
-              <div className={`band-seg${band === 0 ? ' on' : ''}`} style={{ flex: 20 }}>
-                22.9kV<br />≤20MW
+              <div className={`band-seg${band === 0 ? ' on' : ''}`} style={{ flex: 10 }}>
+                22.9kV<br />≤10MW
               </div>
-              <div className={`band-seg${band === 1 ? ' on' : ''}`} style={{ flex: 20 }}>
-                협의<br />20–40
+              <div className={`band-seg${band === 1 ? ' on' : ''}`} style={{ flex: 30 }}>
+154kV 원칙<br />10–40
               </div>
               <div className={`band-seg${band === 2 ? ' on' : ''}`} style={{ flex: 40 }}>
                 154kV 의무<br />40MW+
@@ -97,7 +97,7 @@ function TrackCard({ mw, nonCapital, onRegion }) {
             <Term k="수전전압">수전전압</Term> 트랙
           </div>
           <div className="v">
-            {r.mw > 40 ? <Term k="154kV">{r.track.voltage}</Term> : r.mw <= 20 ? <Term k="22.9kV">{r.track.voltage}</Term> : r.track.voltage}
+            {r.mw > 40 ? <Term k="154kV">{r.track.voltage}</Term> : r.mw <= 10 ? <Term k="22.9kV">{r.track.voltage}</Term> : r.track.voltage}
           </div>
         </div>
         <div className="spec-cell">

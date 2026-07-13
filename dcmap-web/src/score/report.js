@@ -29,10 +29,10 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   {
     const t = r.track
     const p07 =
-      mw <= 20
-        ? '22.9kV 배전 수전 (수월) — 계통 여유가 지배 변수'
+      mw <= 10
+        ? '22.9kV 배전 일반공급 (수월) — 계통 여유가 지배 변수'
         : mw <= 40
-          ? '22.9kV/154kV 협의 경계 — 증설 계획 시 154kV 전제가 안전'
+          ? '154kV 원칙 · 22.9kV 조건부(변전소 여유 시) — 증설 계획 시 154kV 전제가 안전'
           : '154kV 의무 (핵심 관문) — 자체 수전설비 투자 + 변전소 거리'
     const p08 = !t.psiaRequired
       ? '10MW 미만 · 비대상'

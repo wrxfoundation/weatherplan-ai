@@ -42,7 +42,7 @@ const STEPS = [
   },
   {
     n: 2, axis: '전력', title: '수전전압 트랙 결정 — 계약전력→전압',
-    what: '필요 용량이 전압 트랙을 결정한다: 20MW까지 22.9kV, 20~40MW 한전 협의, 40MW 초과 154kV 의무. GPU 대수→MW 환산으로 트랙을 먼저 가늠.',
+    what: '필요 용량이 전압 트랙을 결정한다(약관 제23조): 1만kW(10MW)까지 22.9kV 일반공급, 10~40MW는 154kV 원칙이나 한전 변전소 여유 시 22.9kV 조건부 가능, 40MW 초과 154kV 의무(400MW 초과 345kV). GPU 대수→MW 환산으로 트랙을 먼저 가늠.',
     source: '한전 기본공급약관 제23조',
     links: [{ to: '/calc', label: 'GPU→MW 계산기' }, { to: '/insights/power-track-40mw', label: '40MW의 벽' }],
   },
