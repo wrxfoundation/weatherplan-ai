@@ -1,6 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
+import Term from '../components/Term.jsx'
+
+// 각 단계의 어려운 용어 — 이름 옆 (?)로 그 자리에서 쉬운 설명(용어집과 별개, 인라인 도움말).
+const STEP_TERMS = {
+  1: ['용도지역', '지가변동률'],
+  2: ['계약전력', '수전전압', '154kV', '22.9kV'],
+  3: ['전력계통영향평가', '±15점', '계통여유'],
+  4: ['헤드룸'],
+  5: ['PPA', 'RE100'],
+  6: ['프리쿨링', 'PUE'],
+  7: ['침수심', '인구격자'],
+  8: ['육양국', '백본'],
+  10: ['PUE', 'RE100'],
+}
 
 const TITLE = 'AI 데이터센터 구축 A–Z 로드맵 — AI InfraMap'
 const DESC =
@@ -382,6 +396,16 @@ export default function RoadmapPage() {
                     <h2 className="rm-title">{s.title}</h2>
                   </div>
                   <p className="rm-what">{s.what}</p>
+                  {STEP_TERMS[s.n]?.length > 0 && (
+                    <div className="rm-terms" aria-label="핵심 용어">
+                      <span className="rm-terms-cap">핵심 용어</span>
+                      {STEP_TERMS[s.n].map((t) => (
+                        <span className="rm-term-chip" key={t}>
+                          <Term k={t}>{t}</Term>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <div className="rm-meta">
                     <span className="rm-source">공개 소스: {s.source}</span>
                     <span className="rm-links">

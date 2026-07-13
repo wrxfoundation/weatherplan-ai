@@ -4,6 +4,8 @@ import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from '../score/climateI
 
 /* 맵 상단 기후 바 — 현재 지점(클릭/검색) 또는 지도 중심의 실황 기상 + 데이터센터 기후지수.
  * 데이터센터에 좋은/나쁜 기후인지(아주좋음~아주나쁨)와 그 이유를 지도 위에서 바로 보게 한다. */
+const CLIMATE_HELP =
+  'DC 기후지수 — 데이터센터 냉각 효율 관점의 기후 평가. 연평균기온이 낮을수록(서늘할수록) 외기 프리쿨링 시간이 길어 냉방 전력·PUE가 유리 → 높은 등급. 케이웨더 실황·평년값 기반 5단계(아주좋음·좋음·보통·나쁨·아주나쁨). 냉각 방식·습도 조건에 따라 실제 설계는 달라질 수 있는 참고 지표.'
 export default function ClimateBar({ point, committed }) {
   const [wx, setWx] = useState(null)
   const [climate, setClimate] = useState(null)
@@ -93,7 +95,10 @@ export default function ClimateBar({ point, committed }) {
         {/* 데이터센터 기후지수 배지 (아주나쁨~아주좋음) */}
         {idx ? (
           <div className={`ci-badge tone-${idx.tone}`} title={idx.why}>
-            <span className="ci-cap">DC 기후지수</span>
+            <span className="ci-cap">
+              DC 기후지수
+              <span className="ci-help" tabIndex={0} role="button" aria-label="DC 기후지수 설명" title={CLIMATE_HELP}>?</span>
+            </span>
             <span className="ci-label">{idx.label}</span>
             <span className="ci-scale" aria-label={`5단계 중 ${idx.level}단계`}>
               {CLIMATE_LEVELS.map((l) => (
@@ -103,7 +108,10 @@ export default function ClimateBar({ point, committed }) {
           </div>
         ) : (
           <div className="ci-badge tone-wait">
-            <span className="ci-cap">DC 기후지수</span>
+            <span className="ci-cap">
+              DC 기후지수
+              <span className="ci-help" tabIndex={0} role="button" aria-label="DC 기후지수 설명" title={CLIMATE_HELP}>?</span>
+            </span>
             <span className="ci-label">연동 대기</span>
           </div>
         )}
