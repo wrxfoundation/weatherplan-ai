@@ -18,7 +18,7 @@ import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { loadPowerLines, lineColor, POWER_LINES_AVAILABLE } from '../data/powerLines.js'
 import { NETWORK_NODES } from '../data/network.js'
-import { recommendSites } from '../score/recommend.js'
+import { recommendSites, recoReasons } from '../score/recommend.js'
 import { RENEWABLE_PLANTS } from '../data/renewablePlants.js'
 import { WATER_SOURCES } from '../data/waterSources.js'
 import { SEMI_CLUSTERS } from '../data/semiClusters.js'
@@ -442,7 +442,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>#${i + 1} ${s.name}</strong> · ${s.sido}<br/>정적 근거 <b>${s.score}/${s.max}</b> · 공급여유 ${s.gridMw?.toLocaleString?.() ?? '–'}MW · 승인율 ${s.gridApproval ?? '–'}%<br/><span class="muted">클릭 → 전체 분석</span></div>`,
+            `<div class="dc-hovercard"><strong>#${i + 1} ${s.name}</strong> · ${s.sido}<br/>정적 근거 <b>${s.score}/${s.max}</b><br/><span class="muted">${recoReasons(s).join(' · ')}</span><br/><span class="muted">클릭 → 전체 분석</span></div>`,
             { direction: 'top', offset: [0, -12], className: 'dc-hovercard', opacity: 1 },
           )
           .on('click', () => {
@@ -989,7 +989,10 @@ export default function MapPage({ power = false }) {
                     }}
                   >
                     <span className="rs-rank">{i + 1}</span>
-                    <span className="rs-name">{s.name}</span>
+                    <span className="rs-main">
+                      <span className="rs-name">{s.name}</span>
+                      <span className="rs-why">{recoReasons(s).slice(0, 3).join(' · ')}</span>
+                    </span>
                     <span className="rs-score">{s.score}/{s.max}</span>
                   </button>
                 </li>

@@ -8,6 +8,7 @@ import { CAPITAL_SIDOS } from '../data/facilities.js'
 import { gridHeadroomForSido } from '../data/gridHeadroom.js'
 import { dcApprovalForSido } from '../data/gridAssessment.js'
 import { nearestPlant } from '../data/plants.js'
+import { nearestNormal, dcClimateIndex } from './climateIndex.js'
 
 let _cache = null
 
@@ -24,7 +25,10 @@ export function recommendSites(topN = 20, opts = {}) {
       const gridMw = gridHeadroomForSido(sido)?.mw ?? null
       const gridApproval = dcApprovalForSido(sido)?.ratePct ?? null
       const plantKm = nearestPlant({ lat, lng })?.km ?? null
-      const r = scoreSite({ lat, lng, nonCapital, gridMw, gridApproval, plantKm })
+      // 냉각(기후)축은 평년값(오프라인)으로 산출 가능 — 이걸 빼면 511곳 전부 기상축이 대기로 랭킹이 왜곡됨
+      const nrm = nearestNormal(lat, lng)
+      const climate = dcClimateIndex({ normalTemp: nrm?.t, normalStation: nrm?.name })
+      const r = scoreSite({ lat, lng, nonCapital, gridMw, gridApproval, plantKm, climate })
       return {
         name,
         type,
@@ -36,8 +40,11 @@ export function recommendSites(topN = 20, opts = {}) {
         max: r.knownMax,
         pct: r.knownMax ? Math.round((r.knownScore / r.knownMax) * 100) : 0,
         nearestSub: r.nearestSub,
+        subKm: r.nearestSub?.km ?? null,
         gridMw,
         gridApproval,
+        climateLevel: climate?.level ?? null,
+        climateLabel: climate?.label ?? null,
       }
     }).sort((a, b) => b.score - a.score || b.pct - a.pct)
   }
@@ -45,4 +52,15 @@ export function recommendSites(topN = 20, opts = {}) {
   if (opts.nonCapitalOnly) list = list.filter((s) => s.nonCapital)
   if (opts.minMw) list = list.filter((s) => (s.gridMw ?? 0) >= opts.minMw)
   return list.slice(0, topN)
+}
+
+/** 추천 근거 요약 — 왜 이 후보가 상위인지 핵심 드라이버 3~4개. (정적 근거 기준) */
+export function recoReasons(s) {
+  const out = []
+  if (s.subKm != null) out.push(`변전소 ${s.subKm.toFixed(1)}km`)
+  if (s.gridApproval != null) out.push(`승인율 ${s.gridApproval}%`)
+  if (s.gridMw != null) out.push(`공급여유 ${s.gridMw.toLocaleString()}MW`)
+  if (s.climateLabel) out.push(`냉각 ${s.climateLabel}`)
+  if (s.nonCapital) out.push('비수도권 유인')
+  return out
 }
