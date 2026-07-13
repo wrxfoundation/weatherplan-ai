@@ -5914,3 +5914,147 @@ summary:focus-visible,
     animation: none;
   }
 }
+
+/* ── Copy Button (kinetics) — 복사 아이콘 → 체크 스프링 모핑 ── */
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.copy-ic {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  display: inline-block;
+}
+.copy-ic .ic {
+  position: absolute;
+  inset: 0;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: opacity 0.2s ease, transform 0.3s var(--spring);
+}
+.copy-ic .ic-check {
+  opacity: 0;
+  transform: scale(0.5);
+  stroke: #34d399;
+}
+.copy-btn.copied .ic-copy {
+  opacity: 0;
+  transform: scale(0.5);
+}
+.copy-btn.copied .ic-check {
+  opacity: 1;
+  transform: scale(1);
+}
+.copy-btn.copied {
+  animation: copy-pop 0.34s var(--spring);
+}
+@keyframes copy-pop {
+  0% {
+    transform: scale(0.96);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ── Magnetic (kinetics) — 포인터 추종은 JS, 여기선 빠른 추종 transition ── */
+.ai-fab-btn.magnetic {
+  transition: transform 0.15s ease-out, background-color 0.18s ease, box-shadow 0.2s ease;
+  will-change: transform;
+}
+
+/* ── Border Beam (kinetics) — 스트리밍 중인 AI 카드(.ai-cursor 존재) 테두리 광선 ── */
+@property --beam-a {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.ai-card:has(.ai-cursor) {
+  position: relative;
+}
+.ai-card:has(.ai-cursor)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: conic-gradient(from var(--beam-a), transparent 0 64%, #a78bfa 80%, #35d5ee 90%, transparent 98%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: beam-spin 2.6s linear infinite;
+  pointer-events: none;
+}
+@keyframes beam-spin {
+  to {
+    --beam-a: 360deg;
+  }
+}
+
+/* ── Shine Sweep (kinetics) — 주요 CTA hover 시 광택 스윕 ── */
+.btn.primary {
+  position: relative;
+  overflow: hidden;
+}
+.btn.primary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 55%;
+  height: 100%;
+  transform: skewX(-20deg);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, #fff 26%, transparent), transparent);
+  pointer-events: none;
+}
+.btn.primary:hover::after {
+  left: 130%;
+  transition: left 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ── Stagger Entrance (kinetics) — 리스트 항목 순차 상승 ── */
+.stagger-in > * {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: stagger-rise 0.5s var(--spring-soft) forwards;
+}
+.stagger-in > *:nth-child(1) { animation-delay: 0.02s; }
+.stagger-in > *:nth-child(2) { animation-delay: 0.06s; }
+.stagger-in > *:nth-child(3) { animation-delay: 0.1s; }
+.stagger-in > *:nth-child(4) { animation-delay: 0.14s; }
+.stagger-in > *:nth-child(5) { animation-delay: 0.18s; }
+.stagger-in > *:nth-child(6) { animation-delay: 0.22s; }
+.stagger-in > *:nth-child(7) { animation-delay: 0.26s; }
+.stagger-in > *:nth-child(8) { animation-delay: 0.3s; }
+.stagger-in > *:nth-child(n + 9) { animation-delay: 0.34s; }
+@keyframes stagger-rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-btn.copied,
+  .ai-card:has(.ai-cursor)::after,
+  .btn.primary::after {
+    animation: none;
+  }
+  .btn.primary:hover::after {
+    transition: none;
+  }
+  .stagger-in > * {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}

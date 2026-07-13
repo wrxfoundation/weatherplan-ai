@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
 import { recommendSites, recoReasons } from '../score/recommend.js'
+import { useMagnetic } from '../ui/useMagnetic.js'
 import AiText from './AiText.jsx'
 
 /* 플로팅 AI 어시스턴트 — 자연어 입지 검색(search) + 인프라 Q&A(qa) 통합.
@@ -17,6 +18,8 @@ export default function AiAssistant() {
   const [busy, setBusy] = useState(false)
   const [thread, setThread] = useState([]) // {role:'user'|'ai', text} | {role:'ai', error}
   const bodyRef = useRef(null)
+  const fabRef = useRef(null)
+  useMagnetic(fabRef, 0.22)
 
   const scrollDown = () =>
     requestAnimationFrame(() => {
@@ -153,7 +156,7 @@ export default function AiAssistant() {
           <div className="ai-asst-foot">공개 데이터 기반 · 없는 값은 만들지 않음</div>
         </div>
       )}
-      <button type="button" className="ai-fab-btn" onClick={() => setOpen((v) => !v)} aria-expanded={open} title="AI 어시스턴트">
+      <button ref={fabRef} type="button" className="ai-fab-btn magnetic" onClick={() => setOpen((v) => !v)} aria-expanded={open} title="AI 어시스턴트">
         {open ? '✕' : '✨ AI'}
       </button>
     </div>
