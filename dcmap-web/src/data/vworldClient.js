@@ -140,6 +140,34 @@ export async function landUseClient(lat, lng) {
   return names.size ? { available: true, uses: [...names] } : null
 }
 
+/** 규제·제약 지구 — 좌표의 용도지구(LT_C_UQ121)·지구단위계획구역(LT_C_UD801) 조회.
+ *  DC 부지 개발 제약(토지거래허가·성장관리·지구단위 등) 참고 신호. { available, regs:string[] } | null.
+ *  vworld 레이어별로 반환 여부가 달라 결과가 없으면 null(가짜 표기 금지). */
+export async function landRegClient(lat, lng) {
+  const LAYERS = ['LT_C_UQ121', 'LT_C_UD801'] // 용도지구 · 지구단위계획구역
+  const regs = new Set()
+  const walk = (o) => {
+    if (!o || typeof o !== 'object') return
+    for (const v of Object.values(o)) {
+      if (typeof v === 'string' && /(지역|지구|구역|허가|관리방안)$/.test(v) && v.length <= 30) regs.add(v)
+      else if (v && typeof v === 'object') walk(v)
+    }
+  }
+  for (const layer of LAYERS) {
+    const body = await vworldReq('data', {
+      service: 'data',
+      version: '2.0',
+      request: 'GetFeature',
+      data: layer,
+      geomFilter: `POINT(${lng} ${lat})`,
+      size: '5',
+      page: '1',
+    })
+    if (body?.response?.status === 'OK') walk(body.response.result)
+  }
+  return regs.size ? { available: true, regs: [...regs] } : null
+}
+
 // 지오메트리(Polygon/MultiPolygon) → 근사 면적(㎡). 로컬 등거투영 후 신발끈 공식.
 function polygonAreaM2(geom) {
   if (!geom) return 0
