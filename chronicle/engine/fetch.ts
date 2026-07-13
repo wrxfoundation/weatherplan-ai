@@ -91,8 +91,37 @@ export function createHttpClient(
     throw new Error(`요청 실패 (${retries + 1}회 시도): ${url} — ${describeError(lastError)}`);
   }
 
+  /**
+   * probe: 파일/프로브형 계열용 — 4xx도 던지지 않고 최종 Response를 돌려준다.
+   * 부재(404)·차단(403) 자체가 관측이기 때문. 네트워크 오류·5xx는 여전히 재시도.
+   */
+  async function probe(url: string, init?: RequestInit): Promise<Response> {
+    let lastError: unknown;
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      if (attempt > 0) {
+        const backoff = baseDelayMs * 2 ** (attempt - 1);
+        const jitter = backoff * 0.25 * (Math.random() * 2 - 1);
+        await sleep(Math.max(0, Math.round(backoff + jitter)));
+      }
+      await rateGate();
+      try {
+        const response = await transport(url, { ...init, signal: init?.signal ?? AbortSignal.timeout(timeoutMs) });
+        if (RETRYABLE_STATUS.has(response.status) && attempt < retries) {
+          lastError = new Error(`HTTP ${response.status} — ${url}`);
+          continue;
+        }
+        return response; // 2xx·3xx·4xx 모두 최종 관측으로 반환
+      } catch (error) {
+        lastError = error;
+        if (attempt === retries) break;
+      }
+    }
+    throw new Error(`프로브 실패 (${retries + 1}회 시도): ${url} — ${describeError(lastError)}`);
+  }
+
   return {
     raw: request,
+    probe,
     async json(url, init) {
       const response = await request(url, init);
       return response.json();

@@ -20,17 +20,29 @@ export abstract class FileProbeAdapter extends BaseAdapter {
 
   protected abstract targets(ctx: CollectContext): Promise<ProbeTarget[]> | ProbeTarget[];
 
-  /** 대상 1건 프로브. 기본: GET 후 상태·타입·해시(+작으면 본문 원문). 필요 시 재정의. */
+  /** 요청 옵션(UA 헤더 등). 필요 시 재정의. */
+  protected requestInit(ctx: CollectContext): RequestInit | undefined {
+    void ctx;
+    return undefined;
+  }
+
+  /**
+   * 대상 1건 프로브. 4xx(부재·차단)도 던지지 않는 probe로 관측한다 —
+   * 파일의 부재(404)·차단(403) 자체가 신호다. 본문은 2xx일 때만 해시·수록해
+   * 서버 오류 페이지가 diff churn을 만들지 않게 한다. 필요 시 재정의.
+   */
   protected async probe(ctx: CollectContext, target: ProbeTarget): Promise<Record<string, unknown>> {
-    const response = await ctx.http.raw(target.url);
-    const body = await response.text();
-    const fields: Record<string, unknown> = {
-      status: response.status,
-      content_type: response.headers.get("content-type"),
-      body_bytes: Buffer.byteLength(body),
-      body_sha256: sha256Hex(body),
-    };
-    if (Buffer.byteLength(body) <= this.maxInlineBytes) fields.body = body;
+    const fetchFn = ctx.http.probe ?? ctx.http.raw;
+    const response = await fetchFn(target.url, this.requestInit(ctx));
+    // 비정상 응답은 status만 — 404 오류 페이지의 타입·본문이 diff churn을 만들지 않게.
+    const fields: Record<string, unknown> = { status: response.status };
+    if (response.ok) {
+      const body = await response.text();
+      fields.content_type = response.headers.get("content-type");
+      fields.body_bytes = Buffer.byteLength(body);
+      fields.body_sha256 = sha256Hex(body);
+      if (Buffer.byteLength(body) <= this.maxInlineBytes) fields.body = body;
+    }
     return fields;
   }
 

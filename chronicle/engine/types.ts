@@ -59,6 +59,8 @@ export interface HttpClient {
   json(url: string, init?: RequestInit): Promise<unknown>;
   text(url: string, init?: RequestInit): Promise<string>;
   raw(url: string, init?: RequestInit): Promise<Response>;
+  /** 파일/프로브형용 — 4xx도 던지지 않고 최종 Response 반환 (부재·차단도 관측). 미구현 시 raw로 폴백. */
+  probe?(url: string, init?: RequestInit): Promise<Response>;
 }
 
 export interface CollectContext {
