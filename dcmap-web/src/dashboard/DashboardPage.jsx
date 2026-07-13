@@ -58,6 +58,25 @@ function Gauge({ pct, label, sub }) {
   )
 }
 
+/* 월별 미니 막대 — 상단 글라스 테두리 + 하단 페이드(마스크) + 월(月) 축 라벨.
+ * bars: [{ key, mon(월 숫자), h(0~100), hot(강조), title }] */
+function MiniBars({ bars, ariaLabel }) {
+  return (
+    <div className="hbar-mini-wrap">
+      <div className="hbar-mini" role="img" aria-label={ariaLabel}>
+        {bars.map((b) => (
+          <span key={b.key} className={`hbar-mini-bar${b.hot ? ' hot' : ''}`} title={b.title} style={{ height: `${b.h}%` }} />
+        ))}
+      </div>
+      <div className="hbar-mini-x" aria-hidden>
+        {bars.map((b) => (
+          <span key={b.key}>{b.mon}</span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function DashboardPage() {
   const [now, setNow] = useState(() => new Date())
   const [filings, setFilings] = useState(null)
@@ -759,21 +778,14 @@ export default function DashboardPage() {
               <Gauge pct={Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)} label="여름 원가 상승폭" />
             </div>
             {/* 월별 구입단가 미니 바 */}
-            <div className="hbar-mini" role="img" aria-label="2024 월별 한전 구입단가" style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 48, marginTop: 8 }}>
-              {PURCHASE_PRICE_2024.map((p) => {
+            <MiniBars
+              ariaLabel="2024 월별 한전 구입단가"
+              bars={PURCHASE_PRICE_2024.map((p) => {
                 const max = PRICE_PEAK.price
                 const min = PRICE_LOW.price - 10
-                const h = Math.max(6, ((p.price - min) / (max - min)) * 100)
-                const hot = p.price >= 150
-                return (
-                  <span
-                    key={p.m}
-                    title={`${p.m}월 ${p.price}원/kWh`}
-                    style={{ flex: 1, height: `${h}%`, background: hot ? 'var(--warn, #e06d3b)' : 'var(--accent, #2f6bd6)', borderRadius: '2px 2px 0 0', opacity: hot ? 0.95 : 0.55 }}
-                  />
-                )
+                return { key: p.m, mon: p.m, h: Math.max(6, ((p.price - min) / (max - min)) * 100), hot: p.price >= 150, title: `${p.m}월 ${p.price}원/kWh` }
               })}
-            </div>
+            />
             <div className="note-stack">
               <p className="chart-note key">
                 DC 운영비의 큰 축이 전력비 — <strong>냉방 수요가 겹치는 7~8월 구입단가가 최저월 대비 {Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)}% 급등</strong>(열 관리 설계·PUE가 원가에 직결).
@@ -800,19 +812,16 @@ export default function DashboardPage() {
               </div>
               <Gauge pct={Math.round(RESERVE_MIN.pct)} label="여름 최저 예비율" sub={`겨울 ${RESERVE_MAX.pct}%`} />
             </div>
-            <div className="hbar-mini" role="img" aria-label="월별 공급예비율" style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 48, marginTop: 8 }}>
-              {RESERVE_12M.map(([ym, pct]) => {
-                const h = Math.max(6, (pct / RESERVE_MAX.pct) * 100)
-                const tight = pct < 11
-                return (
-                  <span
-                    key={ym}
-                    title={`'${ym} · 예비율 ${pct}%`}
-                    style={{ flex: 1, height: `${h}%`, background: tight ? 'var(--warn, #e06d3b)' : 'var(--accent, #2f6bd6)', borderRadius: '2px 2px 0 0', opacity: tight ? 0.95 : 0.55 }}
-                  />
-                )
-              })}
-            </div>
+            <MiniBars
+              ariaLabel="월별 공급예비율"
+              bars={RESERVE_12M.map(([ym, pct]) => ({
+                key: ym,
+                mon: parseInt(ym.split('.')[1], 10),
+                h: Math.max(6, (pct / RESERVE_MAX.pct) * 100),
+                hot: pct < 11,
+                title: `'${ym} · 예비율 ${pct}%`,
+              }))}
+            />
             <div className="note-stack">
               <p className="chart-note key">
                 공급예비율이 낮을수록 계통 여력이 얇다 — <strong>DC 냉방부하가 최대인 여름(&apos;{RESERVE_MIN.ym})에 예비율 {RESERVE_MIN.pct}%로 최저</strong>.

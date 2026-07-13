@@ -65,9 +65,12 @@ function SplitBar({ title, a, b, note }) {
   )
 }
 
-/* 단일색 수평 바 — 크기 비교, 값 라벨 상시 노출 */
-function HBars({ title, bars, note, unit = '%' }) {
+/* 단일색 수평 바 — 크기 비교, 값 라벨 상시 노출.
+ * total(또는 share) 지정 시 각 행에 전체 대비 비중 (n%)을 병기 — 라벨은 1줄 고정. */
+function HBars({ title, bars, note, unit = '%', total, share = false }) {
   const max = Math.max(...bars.map((b) => b.value))
+  const denom = total ?? (share ? bars.reduce((s, b) => s + b.value, 0) : 0)
+  const showShare = (share || total != null) && denom > 0
   return (
     <div className="chart-block">
       <div className="chart-title">{title}</div>
@@ -80,6 +83,7 @@ function HBars({ title, bars, note, unit = '%' }) {
           <span className="hbar-value">
             {b.value}
             {b.unit ?? unit}
+            {showShare && <em className="hbar-share"> ({Math.round((b.value / denom) * 100)}%)</em>}
           </span>
         </div>
       ))}
@@ -190,7 +194,7 @@ export default function StatsPage() {
         <section id="power" className="stats-section">
           <h2 className="stats-section-h">전력·계통 공급측</h2>
         <div className="calc-card">
-          <HBars {...KEPCO_REGION} unit="MW" />
+          <HBars {...KEPCO_REGION} unit="MW" share />
         </div>
 
         <div className="calc-card">
@@ -200,12 +204,14 @@ export default function StatsPage() {
             title={`허가 2024+ 신규 파이프라인 연료 구성 (${GEN_RECENT.length}건)`}
             bars={GEN_RECENT_BY_FUEL.map((f) => ({ label: f.fuel, value: f.count, unit: '건' }))}
             unit="건"
+            share
             note="연료전지·풍력·태양광·해상풍력이 신규 허가를 주도 — AIDC RE100 조달의 공급측 파이프라인. 개별 용량은 참고치."
           />
           <HBars
             title={`허가 2024+ 지역 분포 — 비수도권 ${GEN_RECENT_NONCAPITAL_PCT}%`}
             bars={GEN_RECENT_BY_SIDO.map((s) => ({ label: s.sido, value: s.count, unit: '건' }))}
             unit="건"
+            share
             note="전남·경북·강원의 재생E 벨트에 집중 — AIDC 특별법 비수도권 유인과 계통영향평가 지역 배점이 지리적으로 정합한다. AI InfraMap 전력축이 읽는 공급측 신호."
           />
           <p className="chart-note" style={{ opacity: 0.7 }}>
@@ -233,12 +239,14 @@ export default function StatsPage() {
             title="발전사별 발전용량 상위 (MW)"
             bars={CHP_BY_OP.slice(0, 15).map((o) => ({ label: o.op, value: o.mw }))}
             unit="MW"
+            total={CHP_STATS.totalMw}
           />
           <HBars
             title="단일 발전소 발전용량 상위 (MW)"
             bars={CHP_TOP_PLANTS.map((p) => ({ label: `${p.plant} (${p.loc})`, value: Math.round(p.mw) }))}
             unit="MW"
-            note={`${CHP_META.source} · 관리소는 비공식 지명이라 개별 좌표 미부여(맵 미배치).`}
+            total={CHP_STATS.totalMw}
+            note={`${CHP_META.source} · 비중은 집단에너지 총 ${CHP_STATS.totalMw.toLocaleString()}MW 대비 · 관리소는 비공식 지명이라 개별 좌표 미부여(맵 미배치).`}
           />
         </div>
 
@@ -262,7 +270,8 @@ export default function StatsPage() {
             title="시도별 2025 신규 설비용량 상위 (MW)"
             bars={NEW_PLANTS_2025.slice(0, 12).map((r) => ({ label: r.sido, value: Math.round(r.capacityKw / 1000) }))}
             unit="MW"
-            note={`${NEW_PLANTS_2025_META.source} · 개수 최다는 경북 ${NEW_PLANTS_2025.find((r) => r.sido === '경북')?.count.toLocaleString()}개소(소규모 태양광 다수).`}
+            total={NEW_PLANTS_2025_TOTALS.totalMw}
+            note={`${NEW_PLANTS_2025_META.source} · 비중은 2025 신규 총 ${NEW_PLANTS_2025_TOTALS.totalMw.toLocaleString()}MW 대비 · 개수 최다는 경북 ${NEW_PLANTS_2025.find((r) => r.sido === '경북')?.count.toLocaleString()}개소(소규모 태양광 다수).`}
           />
         </div>
 
@@ -284,6 +293,7 @@ export default function StatsPage() {
             title="원자력본부별 운영 설비용량 (MW)"
             bars={NUCLEAR_FLEET.rows.map((r) => ({ label: `${r.base} (${r.operatingUnits}호기)`, value: r.operatingMw }))}
             unit="MW"
+            total={NUCLEAR_FLEET.operatingMw}
             note={`${NUCLEAR_META.source}`}
           />
         </div>

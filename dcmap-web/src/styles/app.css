@@ -613,7 +613,7 @@ a {
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: stretch; /* 공유·범례 버튼 좌우 폭 통일 */
   gap: 8px;
 }
 @media (max-width: 760px) {
@@ -627,7 +627,9 @@ a {
 .map-share {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start; /* 아이콘·라벨 좌측 정렬(범례 버튼과 통일) */
   gap: 6px;
+  width: 100%;
   height: 30px;
   padding: 0 13px;
   border-radius: 999px;
@@ -649,13 +651,15 @@ a {
 .map-legend {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: stretch; /* 토글이 클러스터 폭에 맞춰 공유 버튼과 좌우폭 통일 */
   gap: 6px;
 }
 .legend-toggle {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start; /* 아이콘·라벨 좌측 정렬 */
   gap: 6px;
+  width: 100%;
   height: 30px;
   padding: 0 12px;
   border-radius: 999px;
@@ -674,6 +678,7 @@ a {
 .legend-caret {
   font-size: 9px;
   opacity: 0.8;
+  margin-left: auto; /* 캐럿은 우측 끝으로(좌측 정렬 라벨과 균형) */
 }
 .legend-body {
   background: var(--map-control-bg);
@@ -745,7 +750,7 @@ a {
   color: color-mix(in srgb, var(--grey) 88%, transparent);
   letter-spacing: 0.02em;
   white-space: nowrap;
-  padding: 0 2px 0 3px;
+  padding: 0 4px 0 10px; /* 알약 좌측 곡면에서 라벨을 안쪽으로 더 밀어 넣음 */
 }
 /* 레이어 칩 — 아이콘(SVG 라인)과 라벨 정렬, 텍스트 넘침 방지 */
 .filterbar .layer-group .chip {
@@ -1563,8 +1568,15 @@ summary:focus-visible,
 
 .card-actions {
   display: flex;
+  flex-wrap: wrap; /* 좁은 사이드패널에서 알약 자체가 통째로 다음 줄로 */
   gap: 8px;
   margin-top: 12px;
+}
+/* 알약 라벨은 항상 1줄 — 폭이 모자라면 글자가 세로로 깨지지 않고 알약이 줄바꿈된다 */
+.card-actions .btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding: 0 12px;
 }
 
 /* 버튼 = z1 유리: 기본은 투명 유리, primary는 시안 발광 유리 (레퍼런스 하단 독 문법) */
@@ -2070,6 +2082,32 @@ summary:focus-visible,
   font-size: 13.5px;
   line-height: 1.6;
   margin: 8px 0 10px;
+}
+/* 단계별 핵심 용어 — 인라인 (?) 도움말 칩 (Term 컴포넌트 래핑) */
+.rm-terms {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin: 0 0 12px;
+}
+.rm-terms-cap {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--grey);
+  letter-spacing: 0.02em;
+}
+.rm-term-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+  color: color-mix(in srgb, var(--text) 90%, transparent);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
 }
 .rm-meta {
   display: flex;
@@ -3633,6 +3671,33 @@ summary:focus-visible,
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--grey);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+/* DC 기후지수 도움말 (?) — 호버/포커스 시 title 툴팁 */
+.ci-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--grey);
+  border: 1px solid color-mix(in srgb, var(--grey) 55%, transparent);
+  cursor: help;
+  flex: none;
+  text-transform: none;
+}
+.ci-help:hover,
+.ci-help:focus-visible {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--grey));
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  outline: none;
 }
 
 .ci-label {
@@ -4279,7 +4344,7 @@ summary:focus-visible,
 
 .hbar-row {
   display: grid;
-  grid-template-columns: 140px 1fr 64px;
+  grid-template-columns: 140px 1fr 96px;
   align-items: center;
   gap: 10px;
   margin: 6px 0;
@@ -4289,6 +4354,9 @@ summary:focus-visible,
   font-size: var(--text-body);
   font-weight: var(--weight-medium);
   color: color-mix(in srgb, var(--text) 88%, transparent);
+  white-space: nowrap; /* 라벨 1줄 고정 */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 바 차트 — 레퍼런스 문법: 밝은 1px 스트로크 + 안쪽으로 잦아드는 그라데이션 필 + 풀라운드 캡 */
@@ -4324,6 +4392,14 @@ summary:focus-visible,
   font-size: var(--text-sm);
   font-weight: var(--weight-bold);
   text-align: right;
+  white-space: nowrap;
+}
+/* 전체 대비 비중 (n%) — 값 옆 보조 표기 */
+.hbar-share {
+  font-size: 0.82em;
+  font-weight: var(--weight-regular);
+  font-style: normal;
+  color: var(--grey);
 }
 
 .stat-grid.three {
@@ -4338,7 +4414,8 @@ summary:focus-visible,
 .dash-clock {
   float: right;
   font-variant-numeric: tabular-nums;
-  color: var(--grey);
+  font-weight: var(--weight-medium);
+  color: #fbbf24; /* 실시간 시각 강조(노란색) */
 }
 
 .dash-grid {
@@ -4556,24 +4633,76 @@ summary:focus-visible,
 
 .gauge-center {
   position: absolute;
-  inset: auto 0 0;
+  left: 50%;
+  right: auto;
+  bottom: 6px; /* 텍스트 블록을 반원(돔) 안쪽으로 끌어올림 */
+  transform: translateX(-50%);
+  width: 132px; /* 아크 폭 안으로 라벨 가둠 */
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1px;
-  padding-bottom: 2px;
 }
 
 .gauge-center strong {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: var(--weight-bold);
   line-height: 1;
 }
 
 .gauge-center span {
-  font-size: 9px;
-  letter-spacing: 0.14em;
+  font-size: 8.5px;
+  letter-spacing: 0.03em; /* 자간 축소 — 긴 라벨도 반원 안에 1줄로 */
   color: var(--grey);
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gauge-center em {
+  font-size: 10px;
+  font-style: italic;
+  color: color-mix(in srgb, var(--grey) 90%, transparent);
+}
+
+/* 월별 미니 막대 — 글라스 상단 엣지 + 하단 페이드(마스크) + 월(月) 축 라벨 */
+.hbar-mini-wrap {
+  margin-top: 8px;
+}
+.hbar-mini {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 48px;
+  padding-top: 6px;
+  border-top: 1px solid color-mix(in srgb, white 16%, transparent); /* 글라스 상단 테두리 */
+  background: linear-gradient(180deg, color-mix(in srgb, white 5%, transparent), transparent 42%);
+}
+.hbar-mini-bar {
+  flex: 1;
+  border-radius: 2px 2px 0 0;
+  background: var(--accent, #2f6bd6);
+  opacity: 0.55;
+  /* 하단으로 갈수록 색이 점점 반투명 */
+  -webkit-mask-image: linear-gradient(180deg, #000 52%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 52%, transparent 100%);
+}
+.hbar-mini-bar.hot {
+  background: var(--warn, #e06d3b);
+  opacity: 0.95;
+}
+.hbar-mini-x {
+  display: flex;
+  gap: 3px;
+  margin-top: 3px;
+}
+.hbar-mini-x span {
+  flex: 1;
+  text-align: center;
+  font-size: 8px;
+  line-height: 1;
+  color: color-mix(in srgb, var(--grey) 80%, transparent);
+  font-variant-numeric: tabular-nums;
 }
 
 /* glossary */
@@ -5020,7 +5149,7 @@ summary:focus-visible,
   }
 
   .hbar-row {
-    grid-template-columns: 88px 1fr 56px;
+    grid-template-columns: 84px 1fr 84px;
   }
 
   .calc-result {
