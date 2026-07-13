@@ -12,7 +12,7 @@ import ShareButton from './ShareButton.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import CompareTray from '../score/CompareTray.jsx'
-import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters } from '../data/facilities.js'
+import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters, isCoarseGeocode } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
@@ -59,10 +59,12 @@ function markerIcon(f, iso) {
   // cancelled(무산): 계획 마커 모양을 쓰되 'cancelled' 수식자로 흐리게 표시(지도에서 사라지지 않게)
   const key = f.status === 'delayed' ? 'planned' : f.status === 'cancelled' ? 'planned cancelled' : f.status
   const xl = f.power_mw_public >= HYPERSCALE_MW
+  // 근사 좌표(시군구/시도 중심점)는 'approx' 수식자로 점선 링 — 실제 부지가 아님을 정직하게 표시
+  const approx = isCoarseGeocode(f.geocode_level) ? ' approx' : ''
   if (iso) {
     const s = xl ? 30 : 22
     return L.divIcon({
-      className: `dc-iso ${key}${xl ? ' xl' : ''}`,
+      className: `dc-iso ${key}${xl ? ' xl' : ''}${approx}`,
       html: ISO_SVG,
       iconSize: [s, s + 2],
       iconAnchor: [s / 2, s + 2], // 건물 바닥이 좌표에 닿게
@@ -71,12 +73,12 @@ function markerIcon(f, iso) {
   if (xl) {
     // 다이아몬드 회전은 내부 span에 — Leaflet의 루트 inline transform과 충돌 방지
     return L.divIcon({
-      className: 'dc-marker-xl-wrap',
+      className: `dc-marker-xl-wrap${approx}`,
       html: `<span class="dc-marker ${key} xl"></span>`,
       iconSize: [18, 18],
     })
   }
-  return L.divIcon({ className: `dc-marker ${key}`, iconSize: [14, 14] })
+  return L.divIcon({ className: `dc-marker ${key}${approx}`, iconSize: [14, 14] })
 }
 
 const ISO_ZOOM = 10 // 클러스터 해제 줌과 동일 — 개별 마커가 보이는 순간 입체로
@@ -101,6 +103,7 @@ function hoverCard(f) {
     <div class="hc-head"><span class="hc-dot ${key}"></span><strong>${esc(f.name)}</strong></div>
     <div class="hc-meta">${esc(f.operator ?? '운영사 미공개')} · ${esc(f.sido)}${f.sigungu ? ' ' + esc(f.sigungu) : ''}</div>
     <div class="hc-row">${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ' · 용량 비공개'}${f.year ? ` · ${f.year}` : ''}</div>
+    ${isCoarseGeocode(f.geocode_level) ? '<div class="hc-approx">📍 위치 근사 — 시군구 중심점(실제 부지 아님)</div>' : ''}
     ${f.needs_verify ? '<div class="hc-verify">검증 필요</div>' : ''}
     <div class="hc-cta">클릭 → 상세 카드</div>
   </div>`
@@ -1205,6 +1208,7 @@ export default function MapPage({ power = false }) {
                         {f.sido}
                         {f.sigungu ? ` ${f.sigungu}` : ''} · {STATUS_LABEL[f.status] ?? f.status}
                         {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
+                        {isCoarseGeocode(f.geocode_level) && <span className="approx-tag" title="좌표가 시군구 중심점 — 실제 부지 아님">위치 근사</span>}
                       </span>
                     </span>
                   </button>

@@ -1940,6 +1940,33 @@ summary:focus-visible,
   border-radius: 50%;
   border: 2px solid transparent;
 }
+/* 근사 좌표(시군구/시도 중심점) — 점선 링으로 '실제 부지 아님' 표시 */
+.dc-marker.approx,
+.dc-marker-xl-wrap.approx .dc-marker {
+  border-style: dashed;
+}
+.dc-iso.approx {
+  opacity: 0.78;
+}
+/* 호버 카드 위치 근사 고지 */
+.hc-approx {
+  color: var(--grey);
+  font-size: var(--text-xs);
+  margin-top: 3px;
+}
+/* 사이드 목록 '위치 근사' 태그 */
+.approx-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--grey) 92%, white);
+  background: color-mix(in srgb, var(--grey) 16%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--grey) 45%, transparent);
+  vertical-align: 1px;
+}
 
 /* 전력 지도 페이지 */
 .power-page {
@@ -4335,6 +4362,52 @@ summary:focus-visible,
   font-size: var(--text-sm);
   font-weight: var(--weight-regular);
   color: var(--grey);
+}
+
+/* 로딩 vs 미제공 구분 고지 */
+.sp-loading,
+.sp-loaded {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 4px;
+  padding: 7px 11px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+.sp-loading {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.sp-loaded {
+  color: var(--grey);
+  background: color-mix(in srgb, var(--navy-deep) 45%, transparent);
+  border: 1px solid var(--line);
+}
+.sp-loading-sub {
+  color: var(--grey);
+  font-size: var(--text-xs);
+}
+.sp-spinner {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-top-color: var(--accent);
+  animation: sp-spin 0.7s linear infinite;
+}
+@keyframes sp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sp-spinner {
+    animation-duration: 2s;
+  }
 }
 
 .split-bar {

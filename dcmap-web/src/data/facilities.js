@@ -13,10 +13,15 @@ export const STATUS_LABEL = {
 }
 
 export const GEOCODE_LABEL = {
+  road: '도로명주소(검증)',
   parcel: '필지(사업자 공개주소)',
   sigungu: '시군구 중심점',
   sido: '시도 중심점',
 }
+
+// 정밀 좌표(실제 부지) vs 근사 좌표(행정구역 중심점) 구분 — 정직한 위치 표기용.
+export const PRECISE_GEOCODE = new Set(['road', 'parcel'])
+export const isCoarseGeocode = (level) => !PRECISE_GEOCODE.has(level)
 
 // 하이퍼스케일 분류 기준: 공개 용량 100MW 이상 (aidatacentermap 등 업계 통용 기준)
 export const HYPERSCALE_MW = 100

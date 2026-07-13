@@ -41,11 +41,14 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const [water, setWater] = useState(null)
   const [kwater, setKwater] = useState(null)
   const [copied, setCopied] = useState(false)
+  // 로딩 상태 — 값 null이 '불러오는 중'인지 '데이터 없음'인지 구분(스피너 vs 미제공).
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let alive = true
     // 새 지점: 좌표 bbox로 수도권 잠정 판정(주소 확보 시 정정). 사용자 수동선택 플래그 초기화.
     zoneTouched.current = false
+    setLoading(true)
     setNonCapital(!isCapitalByPoint(point.lat, point.lng))
     setAddr(null)
     setWx(null)
@@ -61,45 +64,56 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     setEnergy(null)
     setWarning(null)
     setClimate(null)
-    warningFor(point.lat, point.lng).then((v) => alive && setWarning(v))
-    climateFor(point.lat, point.lng).then((v) => alive && setClimate(v))
-    revgeoFor(point.lat, point.lng)
-      .catch(() => null)
-      .then((v) => {
+    // 발사한 모든 공개데이터 요청을 추적 → 전부 settle되면 loading=false(그 후의 null은 '데이터 없음').
+    const jobs = []
+    jobs.push(warningFor(point.lat, point.lng).then((v) => alive && setWarning(v)))
+    jobs.push(climateFor(point.lat, point.lng).then((v) => alive && setClimate(v)))
+    jobs.push(
+      revgeoFor(point.lat, point.lng)
+        .catch(() => null)
+        .then((v) => {
+          if (!alive) return
+          setAddr(v)
+          // 주소 확보되면 시도 접두로 수도권 여부 정정(bbox보다 정확). 사용자가 안 건드렸을 때만.
+          const capByAddr = isCapitalByAddr(v?.parcel || v?.road)
+          if (!zoneTouched.current && capByAddr != null) setNonCapital(!capByAddr)
+          // SGIS 인구/밀도 — 서버가 SGIS 리버스지오코딩(좌표)으로 읍면동 정밀 조회(1순위). 그게 막히면
+          // 브라우저가 받은 법정동코드/시군구명으로 폴백하도록 함께 전달(headroom·disaster와 동일 원칙).
+          const sggAll = (v?.parcel || '').match(/[가-힣]+(?:시|군|구)/g)
+          const sgg = sggAll ? sggAll[sggAll.length - 1] : undefined
+          const nested = []
+          nested.push(populationFor(point.lat, point.lng, v?.sigunguCd, sgg).then((e) => alive && setPop(e)))
+          // 지번 법정동코드가 확보되면 건축HUB 지번 전기사용량 조회(최근 데이터는 2~3개월 지연)
+          if (v?.sigunguCd && v?.bjdongCd) {
+            const d = new Date()
+            d.setMonth(d.getMonth() - 3)
+            const useYm = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`
+            nested.push(
+              bldEnergyFor({ sigunguCd: v.sigunguCd, bjdongCd: v.bjdongCd, bun: v.bun, ji: v.ji, useYm }).then(
+                (e) => alive && setEnergy(e),
+              ),
+            )
+          }
+          // 여유용량·재해: 브라우저가 받은 법정동코드를 서버로 넘겨 서버측 vworld(Vercel IP 502) 우회.
+          // 코드 없으면(브라우저 vworld 미활성) admCd 없이 호출 → 서버 vworld 폴백(막히면 정직히 대기).
+          nested.push(headroomFor(point.lat, point.lng, v?.legalCode).then((e) => alive && setHeadroom(e)))
+          nested.push(disasterFor(point.lat, point.lng, v?.legalCode).then((e) => alive && setDisaster(e)))
+          return Promise.allSettled(nested)
+        }),
+    )
+    jobs.push(weatherFor(point.lat, point.lng).then((v) => alive && setWx(v)))
+    jobs.push(landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v)))
+    jobs.push(landRegFor(point.lat, point.lng).then((v) => alive && setLandReg(v)))
+    jobs.push(
+      landAreaFor(point.lat, point.lng).then((v) => {
         if (!alive) return
-        setAddr(v)
-        // 주소 확보되면 시도 접두로 수도권 여부 정정(bbox보다 정확). 사용자가 안 건드렸을 때만.
-        const capByAddr = isCapitalByAddr(v?.parcel || v?.road)
-        if (!zoneTouched.current && capByAddr != null) setNonCapital(!capByAddr)
-        // SGIS 인구/밀도 — 서버가 SGIS 리버스지오코딩(좌표)으로 읍면동 정밀 조회(1순위). 그게 막히면
-        // 브라우저가 받은 법정동코드/시군구명으로 폴백하도록 함께 전달(headroom·disaster와 동일 원칙).
-        const sggAll = (v?.parcel || '').match(/[가-힣]+(?:시|군|구)/g)
-        const sgg = sggAll ? sggAll[sggAll.length - 1] : undefined
-        populationFor(point.lat, point.lng, v?.sigunguCd, sgg).then((e) => alive && setPop(e))
-        // 지번 법정동코드가 확보되면 건축HUB 지번 전기사용량 조회(최근 데이터는 2~3개월 지연)
-        if (v?.sigunguCd && v?.bjdongCd) {
-          const d = new Date()
-          d.setMonth(d.getMonth() - 3)
-          const useYm = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`
-          bldEnergyFor({ sigunguCd: v.sigunguCd, bjdongCd: v.bjdongCd, bun: v.bun, ji: v.ji, useYm }).then(
-            (e) => alive && setEnergy(e),
-          )
-        }
-        // 여유용량·재해: 브라우저가 받은 법정동코드를 서버로 넘겨 서버측 vworld(Vercel IP 502) 우회.
-        // 코드 없으면(브라우저 vworld 미활성) admCd 없이 호출 → 서버 vworld 폴백(막히면 정직히 대기).
-        headroomFor(point.lat, point.lng, v?.legalCode).then((e) => alive && setHeadroom(e))
-        disasterFor(point.lat, point.lng, v?.legalCode).then((e) => alive && setDisaster(e))
-      })
-    weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
-    landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v))
-    landRegFor(point.lat, point.lng).then((v) => alive && setLandReg(v))
-    landAreaFor(point.lat, point.lng).then((v) => {
-      if (!alive) return
-      setLandArea(v)
-      if (v?.pnu) landPriceOfficialFor(v.pnu).then((p) => alive && setOfficialPrice(p))
-    })
-    forecastFor(point.lat, point.lng).then((v) => alive && setFc(v))
-    floodRiskFor(point.lat, point.lng).then((v) => alive && setFlood(v))
+        setLandArea(v)
+        if (v?.pnu) return landPriceOfficialFor(v.pnu).then((p) => alive && setOfficialPrice(p))
+      }),
+    )
+    jobs.push(forecastFor(point.lat, point.lng).then((v) => alive && setFc(v)))
+    jobs.push(floodRiskFor(point.lat, point.lng).then((v) => alive && setFlood(v)))
+    Promise.allSettled(jobs).then(() => alive && setLoading(false))
     return () => {
       alive = false
     }
@@ -207,6 +221,16 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           <span className="score-headline-val">{r.knownScore}<span className="score-headline-max">/{r.knownMax}점</span></span>
           <span className="score-headline-cov">근거 확보 · 스코어 커버리지 {r.coverage}/100</span>
         </div>
+
+        {/* 로딩 고지 — 공개 데이터 조회 중임을 명시(끝나면 사라짐 → 이후의 '대기'는 데이터 없음). */}
+        {loading ? (
+          <div className="sp-loading" role="status" aria-live="polite">
+            <span className="sp-spinner" aria-hidden />
+            공개 데이터 불러오는 중… <span className="sp-loading-sub">응답 없는 축은 완료 후 ‘데이터 없음’으로 표시</span>
+          </div>
+        ) : (
+          <div className="sp-loaded" role="status">✓ 공개 데이터 조회 완료 — 빈 항목은 해당 소스 미제공/연동 대기</div>
+        )}
 
         {/* 한눈에 — 핵심 판단값을 색 칩으로. 값은 아래 상세와 동일 소스(로드되며 채워짐). */}
         {(() => {
