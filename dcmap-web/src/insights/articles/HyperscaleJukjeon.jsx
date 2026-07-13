@@ -6,9 +6,9 @@ export default function HyperscaleJukjeon() {
   return (
     <>
       <p>
-        경기도 용인시 수지구 죽전에 오는 2025년 준공하는 <strong>퍼시픽써니 데이터센터</strong>는 수전용량{' '}
-        <strong>100MW</strong>, IT 부하 <strong>64MW</strong>, 연면적 약 <strong>10만㎡</strong>(지상 5·지하 3)의
-        국내 최대급 하이퍼스케일 코로케이션이다(현대건설 시공, 43개월). 이 한 채의 건물을 뜯어보면 AI InfraMap이 5축으로
+        경기도 용인시 수지구 죽전에 <strong>2025년 10월 준공한</strong> <strong>퍼시픽써니 데이터센터</strong>는 수전용량{' '}
+        <strong>100MW</strong>, IT 부하 <strong>64MW</strong>, 연면적 약 <strong>10만㎡</strong>(2개 동, 지상 5·지하 3)의
+        국내 최대급 하이퍼스케일 코로케이션이다(현대건설 시공, 43개월). 이 시설을 뜯어보면 AI InfraMap이 5축으로
         재는 것들 — <strong>전력 수전·냉각 효율·운영 안정성·입지</strong> — 이 실제로 어떻게 구현되는지가 보인다. 이 글은
         그 해부다.
       </p>

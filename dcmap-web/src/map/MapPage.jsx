@@ -258,6 +258,18 @@ export default function MapPage({ power = false }) {
     [statuses, type, sido, minMw, q, zone],
   )
   const totalMw = useMemo(() => filtered.reduce((s, f) => s + (f.power_mw_public ?? 0), 0), [filtered])
+  // 전력 공개 시설 수 — '공개 전력 합계'가 전체가 아닌 공개분 집계임을 명시(정직성)
+  const mwDisclosed = useMemo(() => filtered.filter((f) => f.power_mw_public != null).length, [filtered])
+  // 공개 전력을 상태별로 분해 — 합계의 상당수가 계획(미준공)임을 드러냄(운영 용량 과대해석 방지)
+  const mwByStatus = useMemo(() => {
+    const m = { operating: 0, construction: 0, planned: 0 }
+    for (const f of filtered) {
+      if (f.power_mw_public == null) continue
+      const k = f.status === 'delayed' ? 'planned' : f.status
+      if (m[k] != null) m[k] += f.power_mw_public // 무산(cancelled)은 합산 제외
+    }
+    return m
+  }, [filtered])
   const statusCounts = useMemo(() => {
     const c = { operating: 0, construction: 0, planned: 0 }
     for (const f of filtered) {
@@ -1155,8 +1167,13 @@ export default function MapPage({ power = false }) {
                 시설 <strong>{filtered.length}</strong>곳
                 {totalMw > 0 && (
                   <>
-                    {' · 공개 전력 합계 '}
+                    {' · 공개 전력 '}
                     <strong>{totalMw.toLocaleString()}</strong> MW
+                    <span className="mw-disclosed" title="전력 규모를 공개한 시설만 합산 · 상당수가 계획(미준공) 용량이라 상태별로 분해 표기">
+                      {' '}({mwDisclosed}/{filtered.length}곳 공개 · 운영 {mwByStatus.operating.toLocaleString()}
+                      {mwByStatus.construction > 0 && ` · 건설 ${mwByStatus.construction.toLocaleString()}`}
+                      {mwByStatus.planned > 0 && ` · 계획 ${mwByStatus.planned.toLocaleString()}`} MW)
+                    </span>
                   </>
                 )}
                 {minMw != null && ` · 필터 ≥ ${minMw} MW`}

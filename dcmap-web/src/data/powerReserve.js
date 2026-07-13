@@ -7,16 +7,20 @@ export const POWER_RESERVE_META = {
 }
 
 // 최근 12개월 [YYYY.MM, 공급예비율 %] — 피크일 기준(2025.08~2026.07)
+// 주의: 마지막 항목(당월·진행중)은 월 피크일 미확정 → 잠정치.
 export const RESERVE_12M = [
   ['25.08', 9.4], ['25.09', 12.7], ['25.10', 18.2], ['25.11', 25.6],
   ['25.12', 24.0], ['26.01', 17.7], ['26.02', 12.5], ['26.03', 12.3],
   ['26.04', 9.7], ['26.05', 10.0], ['26.06', 13.1], ['26.07', 16.9],
 ]
+// 진행중(잠정) 월 인덱스 — 대시보드에서 '잠정' 표기용(마지막 항목=당월)
+export const RESERVE_PROVISIONAL_YM = '26.07'
 
 const _min = RESERVE_12M.reduce((a, b) => (b[1] < a[1] ? b : a))
 const _max = RESERVE_12M.reduce((a, b) => (b[1] > a[1] ? b : a))
 export const RESERVE_MIN = { ym: _min[0], pct: _min[1] } // 25.08 9.4%
 export const RESERVE_MAX = { ym: _max[0], pct: _max[1] } // 25.11 25.6%
 
-// 참고 피크수요(2025, MW) — 여름 최대(8월) 기준
-export const PEAK_2025 = { summerMw: 85492, month: '8월' }
+// 참고 피크수요(MW) — 여름 최대(8월). 최근 여름 최대전력 실적은 약 97GW대(2024-08 기록 97.1GW).
+// (이전 값 85,492MW는 근년 피크를 과소 반영해 교정)
+export const PEAK_2025 = { summerMw: 97100, month: '8월', note: '2024-08 여름 최대전력 실적 97.1GW 기준(전력거래소) — 2025 피크도 유사 수준' }

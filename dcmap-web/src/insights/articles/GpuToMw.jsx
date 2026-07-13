@@ -12,8 +12,8 @@ export default function GpuToMw() {
 
       <h2>1단계 — 칩의 밥값</h2>
       <p>
-        공개 스펙 기준 GPU 1장의 보드 전력(TDP)은 <strong>H100·H200 약 0.7kW, B200 약 1.0kW, GB200(그레이스
-        포함 슈퍼칩) 약 1.2kW</strong>다. 1만 장이면 기종에 따라 7~12MW — 칩만의 숫자다.
+        공개 스펙 기준 GPU 1장의 보드 전력(TDP)은 <strong>H100·H200 약 0.7kW, B200 약 1.0kW, GB200의 블랙웰
+        GPU 1장 약 1.2kW</strong>다(GB200 슈퍼칩은 GPU 2장+Grace로 약 2.7kW — 아래 계산은 GPU 장 수 기준). 1만 장이면 기종에 따라 7~12MW — 칩만의 숫자다.
       </p>
 
       <h2>2단계 — 서버와 네트워크의 세금</h2>
