@@ -110,6 +110,7 @@ export class JobsObservatoryAdapter extends BaseAdapter {
     const rawPages: unknown[] = [];
     const seen = new Set<string>();
     let complete = true;
+    let reachedEnd = false;
     let format = "";
 
     for (let page = 1; page <= maxPages; page++) {
@@ -138,7 +139,10 @@ export class JobsObservatoryAdapter extends BaseAdapter {
       const parsed = extractRecords(text);
       format = parsed.format;
       rawPages.push({ page, count: parsed.records.length });
-      if (parsed.records.length === 0) break; // 마지막 페이지
+      if (parsed.records.length === 0) {
+        reachedEnd = true; // 빈 페이지 = 데이터 끝(완전 수집)
+        break;
+      }
 
       for (const r of parsed.records) {
         const id = pickField(r, "wantedAuthNo", "wantedauthno", "authNo");
@@ -161,7 +165,12 @@ export class JobsObservatoryAdapter extends BaseAdapter {
           },
         });
       }
-      if (parsed.records.length < pageSize) break; // 마지막 페이지
+      // "< pageSize"를 종료 신호로 쓰지 않는다(서버 캡 시 조기종료+거짓 마감). 빈 페이지/상한으로만 종료.
+    }
+    // 빈 페이지를 못 만나고 max_pages 소진 = 부분 수집(더 있는데 잘림) → 삭제판정 보류.
+    if (!reachedEnd) {
+      complete = false;
+      ctx.log(`[${this.id}] max_pages(${maxPages}) 소진 — 부분수집, 삭제판정 보류.`);
     }
 
     ctx.log(`[${this.id}] 공고 ${records.length}건 수신 (형식 ${format || "?"}${complete ? "" : ", 부분수집"})`);

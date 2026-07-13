@@ -172,6 +172,11 @@ export class LlmKoreaCapsuleAdapter extends BaseAdapter {
         dormant.push(`${model.id}(${model.key_env})`);
         continue; // 휴면: 호출 안 함, removalScope에서도 제외됨
       }
+      // 미지원 vendor(config 오타 등)는 그 모델만 스킵 — buildRequest undefined로 전 소스가 죽지 않게.
+      if (model.vendor !== "anthropic" && model.vendor !== "openai" && model.vendor !== "google") {
+        ctx.log(`[${this.id}] 미지원 vendor 스킵: ${model.id} (vendor=${model.vendor})`);
+        continue;
+      }
 
       let authFailed = false;
       for (const question of questions) {
@@ -225,11 +230,16 @@ export class LlmKoreaCapsuleAdapter extends BaseAdapter {
       records,
       // 삭제 판정은 "이번에 성공한 모델 & 전송 실패하지 않은 질문"으로 좁힌다.
       // 휴면/인증실패 모델과 일시 실패 질문은 제외 → 삭제 오탐 방지.
+      // 모델 id에 콜론이 있어도 안전하도록 활성 모델 prefix로 매칭한다(parts[1] split 취약성 회피).
       removalScope: (stored) => {
-        const parts = stored.entityId.split(":");
-        const modelId = parts[1];
-        const questionId = parts.slice(2).join(":");
-        return activeModels.has(modelId) && !failedPairs.has(`${modelId}:${questionId}`);
+        for (const modelId of activeModels) {
+          const prefix = `capsule:${modelId}:`;
+          if (stored.entityId.startsWith(prefix)) {
+            const questionId = stored.entityId.slice(prefix.length);
+            return !failedPairs.has(`${modelId}:${questionId}`);
+          }
+        }
+        return false; // 활성 모델에 속하지 않음(휴면·인증실패·미지원) → 삭제 판정 제외
       },
     };
   }

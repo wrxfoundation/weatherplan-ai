@@ -25,6 +25,28 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * 에러 메시지에 넣기 전 URL의 민감 쿼리 파라미터를 마스킹한다.
+ * 쿼리파라미터 인증 API(serviceKey·authKey·key·KEY 등)의 키가 CI 로그나
+ * (어댑터가 raw에 담을 경우) 공개 스냅샷으로 새는 것을 원천 차단한다.
+ */
+const SECRET_PARAM = /^(service_?key|auth_?key|key|api[_-]?key|access[_-]?key|token|secret|password|auth)$/i;
+export function safeUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    let redacted = false;
+    for (const k of [...u.searchParams.keys()]) {
+      if (SECRET_PARAM.test(k)) {
+        u.searchParams.set(k, "REDACTED");
+        redacted = true;
+      }
+    }
+    return redacted ? u.toString() : url;
+  } catch {
+    return url.replace(/([?&](?:service_?key|auth_?key|key|api[_-]?key|access[_-]?key|token|secret|password|auth)=)[^&#\s]*/gi, "$1REDACTED");
+  }
+}
+
 /** undici의 "fetch failed"는 원인을 cause에 숨긴다 — 진단 가능하게 풀어쓴다. */
 function describeError(error: unknown): string {
   if (error instanceof Error) {
@@ -75,11 +97,11 @@ export function createHttpClient(
           if (Number.isFinite(retryAfter) && retryAfter > 0) {
             await sleep(Math.min(retryAfter * 1000, maxRetryAfterMs));
           }
-          lastError = new Error(`HTTP ${response.status} ${response.statusText} — ${url}`);
+          lastError = new Error(`HTTP ${response.status} ${response.statusText} — ${safeUrl(url)}`);
           continue;
         }
         const excerpt = (await response.text().catch(() => "")).slice(0, 300);
-        throw new Error(`HTTP ${response.status} ${response.statusText} — ${url}\n${excerpt}`);
+        throw new Error(`HTTP ${response.status} ${response.statusText} — ${safeUrl(url)}\n${excerpt}`);
       } catch (error) {
         if (error instanceof Error && error.message.startsWith("HTTP ") && !RETRYABLE_STATUS.has(Number(error.message.slice(5, 8)))) {
           throw error; // 4xx 등 비재시도 오류는 그대로 전파
@@ -88,7 +110,7 @@ export function createHttpClient(
         if (attempt === retries) break;
       }
     }
-    throw new Error(`요청 실패 (${retries + 1}회 시도): ${url} — ${describeError(lastError)}`);
+    throw new Error(`요청 실패 (${retries + 1}회 시도): ${safeUrl(url)} — ${describeError(lastError)}`);
   }
 
   /**
@@ -107,7 +129,7 @@ export function createHttpClient(
       try {
         const response = await transport(url, { ...init, signal: init?.signal ?? AbortSignal.timeout(timeoutMs) });
         if (RETRYABLE_STATUS.has(response.status) && attempt < retries) {
-          lastError = new Error(`HTTP ${response.status} — ${url}`);
+          lastError = new Error(`HTTP ${response.status} — ${safeUrl(url)}`);
           continue;
         }
         return response; // 2xx·3xx·4xx 모두 최종 관측으로 반환
@@ -116,7 +138,7 @@ export function createHttpClient(
         if (attempt === retries) break;
       }
     }
-    throw new Error(`프로브 실패 (${retries + 1}회 시도): ${url} — ${describeError(lastError)}`);
+    throw new Error(`프로브 실패 (${retries + 1}회 시도): ${safeUrl(url)} — ${describeError(lastError)}`);
   }
 
   return {

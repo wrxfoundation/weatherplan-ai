@@ -181,3 +181,20 @@ test(
     assert.equal(flip.after, false);
   }),
 );
+
+test(
+  "미지원 vendor(config 오타)는 그 모델만 스킵 — 전 소스가 죽지 않는다",
+  withKeys({ TEST_ANTHROPIC_KEY: "sk-a" }, async () => {
+    const badConfig: SourceConfig = {
+      ...config,
+      models: [
+        { id: "claude", vendor: "anthropic", model: "claude-x", key_env: "TEST_ANTHROPIC_KEY" },
+        { id: "typo", vendor: "gpt", model: "x", key_env: "TEST_ANTHROPIC_KEY" }, // 잘못된 vendor 문자열
+      ],
+    };
+    const badCtx: CollectContext = { config: badConfig, http: fakeHttp(correctAll), log: () => {}, now: () => new Date("2026-07-13T00:00:00Z") };
+    const result = await adapter.collect(badCtx); // buildRequest undefined로 죽지 않아야 한다
+    assert.ok(result.records.some((r) => r.entityId.startsWith("capsule:claude:")), "정상 모델은 수집");
+    assert.ok(!result.records.some((r) => r.entityId.startsWith("capsule:typo:")), "오타 vendor 모델은 스킵");
+  }),
+);

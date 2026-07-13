@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { createHttpClient } from "../engine/fetch.js";
+import { createHttpClient, safeUrl } from "../engine/fetch.js";
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -62,4 +62,38 @@ test("네트워크 오류도 재시도한다", async () => {
   });
   assert.deepEqual(await http.json("https://example.com/x"), { ok: 1 });
   assert.equal(calls, 2);
+});
+
+test("safeUrl: 민감 쿼리 파라미터를 마스킹한다", () => {
+  assert.match(safeUrl("https://api.example.com/x?serviceKey=SECRET123&pageNo=1"), /serviceKey=REDACTED/);
+  assert.ok(!safeUrl("https://api.example.com/x?serviceKey=SECRET123&pageNo=1").includes("SECRET123"));
+  assert.ok(!safeUrl("https://api.example.com/x?authKey=ABC%2BDEF&a=1").includes("ABC"), "authKey 값 노출 안 됨");
+  assert.match(safeUrl("https://generativelanguage.googleapis.com/v1beta/models/x:gen?key=AIzaSECRET"), /key=REDACTED/);
+  assert.ok(!safeUrl("https://o/x?KEY=zzz").includes("zzz"), "대문자 KEY도 마스킹");
+  assert.equal(safeUrl("https://example.com/x?pageNo=1"), "https://example.com/x?pageNo=1"); // 비밀 없으면 원본 유지
+});
+
+test("에러 메시지에 API 키가 새지 않는다 (4xx·재시도소진·네트워크)", async () => {
+  const url = "https://apis.data.go.kr/svc?serviceKey=TOPSECRETKEY&pageNo=1";
+  const noKey = (e: Error) => {
+    assert.ok(!e.message.includes("TOPSECRETKEY"), `키 노출: ${e.message}`);
+    return true;
+  };
+  // 4xx 즉시 실패 (fetch.ts L82 경로)
+  await assert.rejects(
+    () => createHttpClient({ retries: 0, baseDelayMs: 1 }, async () => new Response("no", { status: 401, statusText: "Unauthorized" })).json(url),
+    noKey,
+  );
+  // 5xx 재시도 소진
+  await assert.rejects(
+    () => createHttpClient({ retries: 1, baseDelayMs: 1 }, async () => new Response("x", { status: 503 })).json(url),
+    noKey,
+  );
+  // 네트워크 오류 (fetch.ts "요청 실패" 경로)
+  await assert.rejects(
+    () => createHttpClient({ retries: 0, baseDelayMs: 1 }, async () => {
+      throw new Error("ECONNREFUSED");
+    }).text(url),
+    noKey,
+  );
 });

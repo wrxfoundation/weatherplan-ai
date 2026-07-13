@@ -77,7 +77,12 @@ export function summarize(value: unknown, max = 140): string {
     for (const key of ["title", "text", "name", "question", "lab", "model", "version"]) {
       if (typeof obj[key] === "string" && obj[key]) return summarize(obj[key], max);
     }
-    const json = JSON.stringify(value);
+    let json: string;
+    try {
+      json = JSON.stringify(value) ?? "[값]";
+    } catch {
+      return "[직렬화 불가]"; // 순환/비직렬화 객체 방어(원장 데이터에선 도달 불가하나 안전판)
+    }
     return json.length > max ? `${json.slice(0, max)}…` : json;
   }
   return String(value);

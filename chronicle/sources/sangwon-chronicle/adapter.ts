@@ -37,32 +37,32 @@ function pick(obj: Json, ...keys: string[]): string | null {
   return null;
 }
 
-/** JSON 봉투에서 상가 레코드 배열을 방어적으로 찾는다(bizesId 보유 객체 배열). */
+/** JSON 봉투에서 상가 레코드를 방어적으로 찾는다 — 배열이든 단일 객체든 bizesId 보유 객체 전부. */
 function findItems(body: unknown): Json[] {
   const hasBizId = (o: unknown): o is Json =>
-    !!o && typeof o === "object" && Object.keys(o as Json).some((k) => /bizesId|bizesid/i.test(k));
-  let best: Json[] = [];
+    !!o && typeof o === "object" && !Array.isArray(o) && Object.keys(o as Json).some((k) => /^bizes_?id$/i.test(k));
+  const found: Json[] = [];
   const walk = (node: unknown): void => {
-    if (Array.isArray(node)) {
-      if (node.some(hasBizId)) best = node.filter(hasBizId) as Json[];
-      else for (const el of node) walk(el);
-    } else if (node && typeof node === "object") {
-      for (const v of Object.values(node as Json)) walk(v);
+    if (hasBizId(node)) {
+      found.push(node); // 단일 결과(객체)·배열 원소 모두 수용 (data.go.kr은 1건이면 객체로 준다)
+      return; // 매치 객체 내부는 더 내려가지 않는다
     }
+    if (Array.isArray(node)) for (const el of node) walk(el);
+    else if (node && typeof node === "object") for (const v of Object.values(node as Json)) walk(v);
   };
   walk(body);
-  return best;
+  return found;
 }
 
-/** 응답이 명백한 오류(인증·차단·서비스오류)인지 — 자가진단용. */
+/** 결과코드 분류: 정상(전부 0)·데이터없음(03)은 오류 아님, 그 외 코드만 오류(자가진단). */
 function errorMessage(body: unknown): string | null {
   const b = body as Json;
   const header = (b?.header as Json) ?? ((b?.response as Json)?.header as Json) ?? {};
   const code = str(header.resultCode) ?? str((b?.result as Json)?.code);
   const msg = str(header.resultMsg) ?? str((b?.result as Json)?.message);
-  // 정상 코드(00/0000)가 아니면 오류로 본다
-  if (code && !/^0+$/.test(code)) return `${code} ${msg ?? ""}`.trim();
-  return null;
+  if (!code) return null; // 코드 없으면 findItems 결과에 맡긴다
+  if (/^0+$/.test(code) || code === "03") return null; // 00/0000=정상, 03=데이터없음(NODATA)
+  return `${code} ${msg ?? ""}`.trim();
 }
 
 export class SangwonChronicleAdapter extends BaseAdapter {
@@ -104,6 +104,7 @@ export class SangwonChronicleAdapter extends BaseAdapter {
 
     for (const target of this.targets(ctx)) {
       let targetCount = 0;
+      let reachedEnd = false;
       try {
         for (let page = 1; page <= maxPages; page++) {
           const params = new URLSearchParams();
@@ -118,7 +119,10 @@ export class SangwonChronicleAdapter extends BaseAdapter {
           const err = errorMessage(body);
           if (err) throw new Error(`API 오류: ${err}`);
           const items = findItems(body);
-          if (items.length === 0) break; // 마지막 페이지
+          if (items.length === 0) {
+            reachedEnd = true; // 빈 페이지 = 데이터 끝(완전 수집)
+            break;
+          }
 
           for (const it of items) {
             const id = pick(it, "bizesId", "bizesid");
@@ -143,15 +147,21 @@ export class SangwonChronicleAdapter extends BaseAdapter {
               },
             });
           }
-          if (items.length < pageSize) break; // 마지막 페이지
+          // 주의: "items.length < pageSize"를 종료 신호로 쓰지 않는다 — 서버가 요청 크기보다
+          // 적게 주면(캡) 조기 종료+거짓 폐업이 된다. 빈 페이지 또는 max_pages로만 종료한다.
         }
         anySuccess = true;
-        rawSummary[target.id] = { count: targetCount };
+        // max_pages를 다 쓰도록 빈 페이지를 못 만났다 = 부분 수집(더 있는데 잘림) → 삭제판정 보류.
+        if (!reachedEnd) {
+          complete = false;
+          ctx.log(`[${this.id}] ${target.id}: max_pages(${maxPages}) 소진 — 부분수집, 삭제판정 보류.`);
+        }
+        rawSummary[target.id] = { count: targetCount, complete: reachedEnd };
       } catch (error) {
         const msg = error instanceof Error ? error.message : String(error);
         firstError ??= msg;
         complete = false;
-        rawSummary[target.id] = { error: msg };
+        rawSummary[target.id] = { failed: true }; // 에러 문자열을 raw(공개 스냅샷)에 담지 않는다
         ctx.log(`[${this.id}] 상권 실패 — 건너뜀: ${target.id} (${msg})`);
       }
     }

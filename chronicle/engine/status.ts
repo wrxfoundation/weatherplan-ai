@@ -23,21 +23,26 @@ interface SourceStatus {
 
 export function collectStatus(dataDir: string): SourceStatus[] {
   return listSourceDirs(dataDir).map((sourceId) => {
-    const paths = sourcePaths(dataDir, sourceId);
-    const integrity = loadIntegrity(paths);
-    const anchorsPath = join(paths.dir, "anchors.jsonl");
-    const anchorLines = existsSync(anchorsPath)
-      ? readFileSync(anchorsPath, "utf8").split("\n").filter((line) => line.trim() !== "")
-      : [];
-    return {
-      source_id: sourceId,
-      records: loadLatest(paths).size,
-      chain_length: integrity?.length ?? 0,
-      chain_head: integrity?.chain_hash ?? "-",
-      updated_at: integrity?.updated_at ?? "-",
-      anchors: anchorLines.length,
-      head_anchored: integrity ? anchorLines.some((line) => line.includes(`"chain_hash":"${integrity.chain_hash}"`)) : false,
-    };
+    try {
+      const paths = sourcePaths(dataDir, sourceId);
+      const integrity = loadIntegrity(paths);
+      const anchorsPath = join(paths.dir, "anchors.jsonl");
+      const anchorLines = existsSync(anchorsPath)
+        ? readFileSync(anchorsPath, "utf8").split("\n").filter((line) => line.trim() !== "")
+        : [];
+      return {
+        source_id: sourceId,
+        records: loadLatest(paths).size,
+        chain_length: integrity?.length ?? 0,
+        chain_head: integrity?.chain_hash ?? "-",
+        updated_at: integrity?.updated_at ?? "-",
+        anchors: anchorLines.length,
+        head_anchored: integrity ? anchorLines.some((line) => line.includes(`"chain_hash":"${integrity.chain_hash}"`)) : false,
+      };
+    } catch {
+      // 손상된 latest/integrity 파일(크래시 중 잘림 등)이 전체 집계를 무너뜨리지 않게 강등한다.
+      return { source_id: sourceId, records: 0, chain_length: 0, chain_head: "-", updated_at: "-", anchors: 0, head_anchored: false };
+    }
   });
 }
 

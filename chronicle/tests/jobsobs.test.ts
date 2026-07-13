@@ -148,3 +148,22 @@ test(
     assert.equal(removal.entity_id, "wanted:K2");
   }),
 );
+
+test(
+  "max_pages 소진(항상 꽉 찬 페이지)=부분수집 → 삭제판정 보류(거짓 마감 방지)",
+  withKey(async () => {
+    const full = Array.from({ length: 100 }, (_, i) => ({ ...K1, wantedAuthNo: `F${i}` })); // = page_size 100
+    const http: HttpClient = {
+      text: async () => wantedXml(full), // 모든 페이지가 꽉 참 → 빈 페이지 없음
+      json: async () => {
+        throw new Error("n/a");
+      },
+      raw: async () => {
+        throw new Error("n/a");
+      },
+    };
+    const result = await adapter.collect(ctx(http));
+    assert.equal(result.records.length, 100);
+    assert.equal(result.removalScope!({ entityId: "wanted:F0", sourceUrl: "u", fields: {} }), false, "부분수집 = 삭제 보류");
+  }),
+);

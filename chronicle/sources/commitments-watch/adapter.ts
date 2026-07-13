@@ -17,8 +17,11 @@ export class CommitmentsWatchAdapter extends PageTextAdapter {
   protected targets(ctx: CollectContext): PageTarget[] {
     const raw = ctx.config.targets as Array<{ id?: string; url?: string }> | undefined;
     if (!Array.isArray(raw) || raw.length === 0) throw new Error("config.yml에 targets가 없습니다.");
+    const seenIds = new Set<string>();
     return raw.map((t) => {
       if (!t.id || !t.url) throw new Error(`targets 항목에 id/url이 없습니다: ${JSON.stringify(t)}`);
+      if (seenIds.has(t.id)) throw new Error(`중복 target id: ${t.id} — entityId 충돌로 한 항목의 추적이 소실됩니다.`);
+      seenIds.add(t.id);
       return { entityId: t.id, url: t.url }; // config의 id → PageTarget.entityId
     });
   }

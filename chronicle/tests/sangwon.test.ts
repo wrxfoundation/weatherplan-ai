@@ -151,3 +151,44 @@ test(
     assert.equal(removal.entity_id, "store:S2");
   }),
 );
+
+/** pageNo 인지 단일 페이크. */
+function pageHttp(bodyFor: (page: number) => Json): HttpClient {
+  return {
+    json: async (url) => bodyFor(Number(new URL(url).searchParams.get("pageNo") ?? "1")),
+    text: async () => {
+      throw new Error("n/a");
+    },
+    raw: async () => {
+      throw new Error("n/a");
+    },
+  };
+}
+
+test(
+  "findItems: 단일 결과가 배열이 아니라 객체로 와도 수집한다(data.go.kr 1건 케이스)",
+  withKey(async () => {
+    const http = pageHttp((p) => (p === 1 ? { header: { resultCode: "00" }, body: { items: { item: S1 } } } : { header: { resultCode: "00" }, body: { items: [] } }));
+    const result = await adapter.collect(ctx(http));
+    assert.ok(result.records.some((r) => r.entityId === "store:S1"), "단일 객체 파싱");
+  }),
+);
+
+test(
+  "NODATA 코드(03)는 오류가 아니라 빈 결과 — throw 없음",
+  withKey(async () => {
+    const http = pageHttp(() => ({ header: { resultCode: "03", resultMsg: "NODATA_ERROR" }, body: {} }));
+    const result = await adapter.collect(ctx(http)); // rejects 아님
+    assert.equal(result.records.length, 0);
+  }),
+);
+
+test(
+  "max_pages 소진(항상 꽉 찬 페이지)=부분수집 → 삭제판정 보류",
+  withKey(async () => {
+    const full = Array.from({ length: 100 }, (_, i) => ({ ...S1, bizesId: `F${i}` })); // = page_size
+    const http = pageHttp(() => ({ header: { resultCode: "00" }, body: { items: full } }));
+    const result = await adapter.collect(ctx(http));
+    assert.equal(result.removalScope!({ entityId: "store:F0", sourceUrl: "u", fields: {} }), false, "부분수집이면 삭제 보류");
+  }),
+);

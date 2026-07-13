@@ -60,7 +60,7 @@ export class McpCensusAdapter extends ApiRecordsAdapter {
     const userAgent = ctx.config.user_agent;
     const init: RequestInit | undefined =
       typeof userAgent === "string" && userAgent ? { headers: { "User-Agent": userAgent, Accept: "application/json" } } : undefined;
-    const pageSize = Number(ctx.config.page_size ?? 100);
+    const pageSize = Number(ctx.config.page_size ?? 100) || 100; // 0/NaN 방어(limit=0 → 거짓 삭제)
     // 목록 필터 파라미터(핫에디트) — 기본은 최신 버전만. API가 또 바뀌면 config에서 교체.
     const extraQuery = (ctx.config.extra_query as Record<string, unknown> | undefined) ?? { version: "latest" };
 

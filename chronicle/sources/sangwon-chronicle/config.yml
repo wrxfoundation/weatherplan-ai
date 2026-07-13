@@ -23,6 +23,7 @@ rate_limit_ms: 400
 
 page_size: 100 # numOfRows
 max_pages: 30 # 반경당 상한(≈3,000건). 폭주 방지.
+allow_empty: true # 휴면(무키)·저밀도 반경의 0건을 장애로 오판하지 않는다
 # 폐업 물결(다수 소멸)이 정상 신호 — 부분수집은 삭제판정 보류로 오탐 방지. 여유값.
 max_removal_ratio: 0.6
 
