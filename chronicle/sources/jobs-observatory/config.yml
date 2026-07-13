@@ -1,0 +1,39 @@
+# 워크넷 채용 관측소 — 스펙 v4 #13 (jobs-observatory), API 레코드형. 한국.
+#
+# 한국고용정보원 워크넷 채용정보 API(data.go.kr 3038225)로 공고를 일간 박제 —
+# 채용제목·회사·근무지역·급여·마감일자. 공고는 마감 즉시 소멸(마감일자 지나면
+# 목록에서 사라짐)하니 지금 찍은 자만 "언제 어떤 AI·데이터 일자리가 열렸나"를
+# 소유한다. LinkUp·Revelio 검증 모델. #18(글로벌 랩 채용)과 노동시장 관측소 쌍.
+#
+# ── 활성화 ─────────────────────────────────────────────────────────────────
+#   기존 DATA_GO_KR_KEY 시크릿 재사용(새 시크릿 불필요) — data.go.kr에서 이 API를
+#   "활용신청"만 하면 된다. 키 없으면 휴면(0건, 정상). 키 넣으면 다음 실행부터 라이브.
+#
+# ★ 세 가지 미지(첫 키드 실행이 자백 → config 핫에디트로 교정):
+#   1) openapi.work.go.kr의 해외(러너) IP 지오블록 여부 — 막히면 endpoint를
+#      apis.data.go.kr 프록시로 교체(datago가 www→apis로 피벗한 것과 동일).
+#   2) 응답 형태(XML/JSON) — 어댑터가 양쪽 관용, returnType로 조정.
+#   3) 정확한 파라미터명·필드명 — 아래 query와 어댑터 매핑을 로그 보고 교정.
+# ──────────────────────────────────────────────────────────────────────────
+id: jobs-observatory
+family: api-records
+title: 워크넷 채용 관측소 — 한국 AI·데이터 채용 (일간)
+
+endpoint: http://openapi.work.go.kr/opi/opi/opia/wantedApi.do
+key_env: DATA_GO_KR_KEY
+key_param: authKey
+user_agent: "chronicle-jobs-observatory/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
+rate_limit_ms: 400
+
+# 한국 전체 대신 AI·데이터 직종으로 한정 — 추적가능한 집합 + #18과 테마 정렬.
+page_size: 100 # display
+max_pages: 20 # 키워드 한정 상한(≈2,000건). 폭주 방지.
+# 채용중 공고가 다수 소멸(마감)하는 게 정상 신호 — 단, 완전 수집 실패는 collect가
+# 중단하므로 부분응답 오탐은 막힌다. 여유값으로 정당한 마감 물결을 통과시킨다.
+max_removal_ratio: 0.6
+
+# 핫에디트 가능한 고정 쿼리 파라미터 (authKey·startPage·display는 어댑터가 주입)
+query:
+  callTp: L # L=목록, D=상세
+  returnType: XML # 한국 정부 API 기본. JSON 지원 확인 시 교체
+  keyword: 인공지능 # 직종/키워드 한정. 예: 데이터, 머신러닝 등으로 확장·교체
