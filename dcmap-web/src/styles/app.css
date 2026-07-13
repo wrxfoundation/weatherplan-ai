@@ -5715,3 +5715,202 @@ summary:focus-visible,
   outline: none;
   border-color: color-mix(in srgb, #35d5ee 50%, var(--line));
 }
+
+/* RE100 / PPA 재생조달 패널 */
+.re-panel {
+  border: 1px solid color-mix(in srgb, #34d399 24%, var(--line));
+  border-radius: 12px;
+  padding: 12px 13px;
+  background: linear-gradient(180deg, color-mix(in srgb, #34d399 6%, transparent), transparent 70%);
+}
+.re-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.re-pct {
+  color: #34d399;
+  font-size: var(--text-body);
+  margin-left: 4px;
+}
+.re-slider {
+  flex: 1 1 200px;
+  min-width: 140px;
+  accent-color: #34d399;
+  height: 4px;
+  cursor: pointer;
+}
+.re-quick {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.re-quick .chip.on {
+  border-color: color-mix(in srgb, #34d399 55%, var(--line));
+  color: #6ee7b7;
+  background: color-mix(in srgb, #34d399 14%, transparent);
+}
+.delta-up {
+  color: #f5b544;
+}
+.delta-down {
+  color: #34d399;
+}
+
+/* 시나리오 비교 표 — 저장 구성 최대 3 나란히 */
+.scen-card .scen-table {
+  overflow-x: auto;
+}
+.scen-row {
+  display: grid;
+  grid-template-columns: minmax(88px, 1.1fr) repeat(var(--scen-cols, 1), minmax(90px, 1fr));
+  border-bottom: 1px solid var(--line);
+}
+.scen-row:last-child {
+  border-bottom: 0;
+}
+.scen-colhead {
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 20%, var(--line));
+}
+.scen-rl {
+  padding: 8px 10px;
+  font-size: var(--text-xs);
+  color: var(--grey);
+  font-weight: 600;
+}
+.scen-col {
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.scen-name {
+  font-size: var(--text-xs);
+  font-weight: 800;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.scen-x {
+  background: none;
+  border: 0;
+  color: var(--grey);
+  cursor: pointer;
+  font-size: 11px;
+  flex: 0 0 auto;
+}
+.scen-x:hover {
+  color: var(--ink);
+}
+.scen-cell {
+  padding: 7px 10px;
+  font-size: var(--text-sm);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+}
+.scen-cell.scen-best {
+  color: #6ee7b7;
+  font-weight: 800;
+  background: color-mix(in srgb, #34d399 9%, transparent);
+}
+
+/* ────────────────────────────────────────────────────────────
+ * kinetics 스프링 모션 흡수 — 우리 톤(violet/cyan)으로.
+ * duration 기반이지만 임계감쇠 스프링에 가까운 오버슈트 bezier로 '탄성 안착' 느낌.
+ * 데이터 집약 화면이라 과하지 않게: press·hover·카드 등장에만 절제 적용.
+ * ──────────────────────────────────────────────────────────── */
+:root {
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* 살짝 오버슈트(스프링) */
+  --spring-soft: cubic-bezier(0.22, 1, 0.36, 1); /* 오버슈트 없는 감쇠 안착 */
+}
+
+/* 버튼·칩 press — 스프링 반동 */
+.btn,
+.chip,
+.ai-fab-btn,
+.ai-sug,
+.scen-x {
+  transition: transform 0.34s var(--spring), background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.2s ease;
+}
+.btn:active,
+.chip:active,
+.ai-fab-btn:active,
+.ai-sug:active {
+  transform: scale(0.94);
+}
+.ai-fab-btn:hover {
+  transform: translateY(-1px) scale(1.03);
+}
+
+/* 최근접 시설 행 — 스프링 hover 리프트 */
+.facility-row {
+  transition: transform 0.34s var(--spring), background-color 0.16s ease, border-color 0.16s ease;
+}
+.facility-row:hover {
+  transform: translateX(2px);
+}
+.facility-row:active {
+  transform: translateX(2px) scale(0.99);
+}
+
+/* AI 카드 등장 — 스프링 상승+페이드(스트리밍 응답이 '튀어나오는' 느낌) */
+.ai-card {
+  animation: ai-spring-in 0.44s var(--spring-soft) both;
+}
+@keyframes ai-spring-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 시나리오 저장 시 새 열 등장 */
+.scen-col,
+.scen-cell {
+  animation: scen-pop 0.4s var(--spring) both;
+}
+@keyframes scen-pop {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .chip,
+  .ai-fab-btn,
+  .ai-sug,
+  .facility-row,
+  .scen-x {
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  }
+  .btn:active,
+  .chip:active,
+  .ai-fab-btn:active,
+  .ai-fab-btn:hover,
+  .ai-sug:active,
+  .facility-row:hover,
+  .facility-row:active {
+    transform: none;
+  }
+  .ai-card,
+  .scen-col,
+  .scen-cell {
+    animation: none;
+  }
+}

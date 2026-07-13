@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES, CAPITAL_SIDOS } from '../data/facilities.js'
 import { checkPowerTrack } from './trackCheck.js'
 import Term from '../components/Term.jsx'
 import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
 import AiText from '../ai/AiText.jsx'
+import SpringNumber from '../ui/SpringNumber.jsx'
 
 // GPU별 대표 TDP(kW). 공개 스펙 기준 근사치 — 가속기당 소비전력(부대 IT 부하는 별도 계수).
 // NVIDIA 데이터센터 GPU가 사실상 표준이나, 추론·레거시·AMD까지 포함해 시나리오 폭을 넓힘.
@@ -52,9 +53,13 @@ const SQM_PER_RACK = 2.8 // 랙 1대당 점유 상면(통로·CRAH 포함 화이
 
 /* 경제성 대표값 — 모두 편집 가능한 공개 대표치(확정 단가 아님). 정직성: '대표·추정'으로 명시.
  *  · 전기요금: 한전 산업용(을) 고압 대표 단가대(계절·시간대·계약종별로 상이 → 실제는 한전 계약 확인)
- *  · 배출계수: 국가 전력 온실가스 배출계수(공개, 연도별 갱신) */
+ *  · 배출계수: 국가 전력 온실가스 배출계수(공개, 연도별 갱신)
+ *  · PPA: 재생에너지 기업PPA 대표 단가대(계약·발전원별 상이) */
 const DEFAULT_WON_PER_KWH = 160 // 원/kWh (산업용 대표 단가 · 편집)
 const DEFAULT_KGCO2_PER_KWH = 0.459 // kgCO₂/kWh (국가 전력배출계수 대표 · 편집)
+const DEFAULT_PPA_WON_PER_KWH = 170 // 원/kWh (재생 기업PPA 대표 · 편집)
+
+const SCENARIO_KEY = 'aiim_calc_scenarios_v1'
 
 /* M2 스코어링 전력축 v0 — 규칙 기반 인허가 트랙 판정 (근거: 룰북 §1·§2) */
 function TrackCard({ mw, nonCapital, onRegion }) {
@@ -158,19 +163,39 @@ function TrackCard({ mw, nonCapital, onRegion }) {
   )
 }
 
+const num = (v, d) => {
+  if (v == null || v === '') return d // 파라미터 부재 시 기본값(Number(null)=0 오수렴 방지)
+  const n = Number(v)
+  return Number.isFinite(n) ? n : d
+}
+
 export default function CalcPage() {
-  const [gpuKey, setGpuKey] = useState('h100')
-  const [count, setCount] = useState(1024)
-  const [workKey, setWorkKey] = useState('training')
-  const [coolKey, setCoolKey] = useState('d2c')
-  const [pue, setPue] = useState(COOLING_PRESETS.find((c) => c.key === 'd2c').pue)
-  const [redunKey, setRedunKey] = useState('n1')
-  const [nonCapital, setNonCapital] = useState(true)
-  const [wonPerKwh, setWonPerKwh] = useState(DEFAULT_WON_PER_KWH)
-  const [kgco2PerKwh, setKgco2PerKwh] = useState(DEFAULT_KGCO2_PER_KWH)
+  const [sp, setSp] = useSearchParams()
+
+  // URL 파라미터로 초기화(딥링크·공유·부지 연동). 없으면 기본값.
+  const [gpuKey, setGpuKey] = useState(() => (GPU_PRESETS.some((g) => g.key === sp.get('g')) ? sp.get('g') : 'h100'))
+  const [count, setCount] = useState(() => Math.max(1, Math.round(num(sp.get('n'), 1024))))
+  const [workKey, setWorkKey] = useState(() => (WORKLOADS.some((w) => w.key === sp.get('w')) ? sp.get('w') : 'training'))
+  const [coolKey, setCoolKey] = useState(() => (COOLING_PRESETS.some((c) => c.key === sp.get('c')) ? sp.get('c') : 'd2c'))
+  const [pue, setPue] = useState(() => Math.min(2.5, Math.max(1, num(sp.get('p'), COOLING_PRESETS.find((c) => c.key === (sp.get('c') || 'd2c'))?.pue ?? 1.25))))
+  const [redunKey, setRedunKey] = useState(() => (REDUNDANCY.some((r) => r.key === sp.get('r')) ? sp.get('r') : 'n1'))
+  const [nonCapital, setNonCapital] = useState(() => sp.get('z') !== '0')
+  const [wonPerKwh, setWonPerKwh] = useState(() => Math.min(500, Math.max(50, num(sp.get('u'), DEFAULT_WON_PER_KWH))))
+  const [kgco2PerKwh, setKgco2PerKwh] = useState(() => Math.min(1, Math.max(0, num(sp.get('e'), DEFAULT_KGCO2_PER_KWH))))
+  const [rePct, setRePct] = useState(() => Math.min(100, Math.max(0, Math.round(num(sp.get('re'), 0)))))
+  const [ppaWonPerKwh, setPpaWonPerKwh] = useState(() => Math.min(500, Math.max(50, num(sp.get('ppa'), DEFAULT_PPA_WON_PER_KWH))))
   const [copied, setCopied] = useState(false)
-  // AI 계산 해설: null | 'loading' | { text, usage, streaming } | { error }
-  const [ai, setAi] = useState(null)
+  const [ai, setAi] = useState(null) // null | 'loading' | { text, usage, streaming } | { error }
+
+  const [scenarios, setScenarios] = useState(() => {
+    try {
+      const raw = typeof localStorage !== 'undefined' && localStorage.getItem(SCENARIO_KEY)
+      return raw ? JSON.parse(raw) : []
+    } catch {
+      return []
+    }
+  })
+  const [savedFlash, setSavedFlash] = useState(false)
 
   const gpu = GPU_PRESETS.find((g) => g.key === gpuKey)
   const work = WORKLOADS.find((w) => w.key === workKey)
@@ -183,6 +208,24 @@ export default function CalcPage() {
     setPue(COOLING_PRESETS.find((c) => c.key === key).pue)
   }
 
+  // URL 동기화 — 상태 변화 시 쿼리스트링 갱신(공유·부지 연동 딥링크). replace로 히스토리 오염 방지.
+  useEffect(() => {
+    const p = new URLSearchParams()
+    p.set('g', gpuKey)
+    p.set('n', String(count))
+    p.set('w', workKey)
+    p.set('c', coolKey)
+    p.set('p', String(pue))
+    p.set('r', redunKey)
+    p.set('z', nonCapital ? '1' : '0')
+    if (wonPerKwh !== DEFAULT_WON_PER_KWH) p.set('u', String(wonPerKwh))
+    if (kgco2PerKwh !== DEFAULT_KGCO2_PER_KWH) p.set('e', String(kgco2PerKwh))
+    if (rePct) p.set('re', String(rePct))
+    if (ppaWonPerKwh !== DEFAULT_PPA_WON_PER_KWH) p.set('ppa', String(ppaWonPerKwh))
+    setSp(p, { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gpuKey, count, workKey, coolKey, pue, redunKey, nonCapital, wonPerKwh, kgco2PerKwh, rePct, ppaWonPerKwh])
+
   const m = useMemo(() => {
     const it = (count * gpu.kw * work.overhead) / 1000 // 첨두 IT 부하(MW)
     const total = it * pue
@@ -190,9 +233,15 @@ export default function CalcPage() {
     const racks = Math.ceil((it * 1000) / cooling.rackKw)
     const gwhYear = (total * 8760 * work.loadFactor) / 1000
     const kwhYear = gwhYear * 1e6
-    const wonYear = kwhYear * wonPerKwh
-    const tco2Year = (kwhYear * kgco2PerKwh) / 1000
-    // NVL72 파드 환산(72 GPU/랙) — GB200/GB300 참고 표기용
+    // RE100/PPA 조달 — 재생비율만큼 배출계수 0·PPA 단가, 나머지는 계통 단가·배출계수
+    const reFrac = rePct / 100
+    const reKwh = kwhYear * reFrac
+    const gridKwh = kwhYear - reKwh
+    const wonYear = gridKwh * wonPerKwh + reKwh * ppaWonPerKwh
+    const wonYearGridOnly = kwhYear * wonPerKwh // 재생 0% 기준(델타용)
+    const tco2Year = (gridKwh * kgco2PerKwh) / 1000 // 재생분 배출 0
+    const tco2Full = (kwhYear * kgco2PerKwh) / 1000
+    const tco2Offset = tco2Full - tco2Year
     const pods = gpu.nvl72 ? count / 72 : null
     return {
       itMw: it,
@@ -202,11 +251,16 @@ export default function CalcPage() {
       racks,
       sqm: Math.ceil(racks * SQM_PER_RACK),
       gwhYear,
+      kwhYear,
       wonYear,
+      wonYearGridOnly,
+      wonDelta: wonYear - wonYearGridOnly,
       tco2Year,
+      tco2Full,
+      tco2Offset,
       pods,
     }
-  }, [count, gpu, work, pue, cooling, redun, wonPerKwh, kgco2PerKwh])
+  }, [count, gpu, work, pue, cooling, redun, wonPerKwh, kgco2PerKwh, rePct, ppaWonPerKwh])
 
   const candidates = useMemo(
     () =>
@@ -220,12 +274,15 @@ export default function CalcPage() {
   )
 
   // 억원 표기 — 10억 미만은 소수1, 이상은 정수
-  const eok = (won) => {
-    const e = won / 1e8
-    return e >= 10 ? `${Math.round(e).toLocaleString()}억원` : `${e.toFixed(1)}억원`
+  const eokVal = (won) => won / 1e8
+  const eokFmt = (e) => (e >= 10 ? `${Math.round(e).toLocaleString()}억원` : `${e.toFixed(1)}억원`)
+
+  const shortLabel = () => {
+    const g = gpu.label.replace('NVIDIA ', '').replace('AMD ', '').split(' ')[0]
+    return `${g}×${count >= 1000 ? `${(count / 1000).toFixed(count % 1000 ? 1 : 0)}K` : count} · ${work.label}`
   }
 
-  // 계산 요약(복사·AI 공통) — 계산된 값만(창작 없음)
+  // 계산 요약(복사·AI·시나리오 공통) — 계산된 값만(창작 없음)
   const buildSnapshot = () => ({
     GPU모델: gpu.label,
     GPU수량: count,
@@ -244,11 +301,14 @@ export default function CalcPage() {
     필요랙수: m.racks,
     화이트스페이스m2: m.sqm,
     연간전력량GWh: Math.round(m.gwhYear * 10) / 10,
+    재생조달비율pct: rePct,
     연간전력비_억원: Math.round(m.wonYear / 1e8),
     전기단가_원per_kWh: wonPerKwh,
+    PPA단가_원per_kWh: ppaWonPerKwh,
     연간탄소_tCO2: Math.round(m.tco2Year),
+    탄소상쇄_tCO2: Math.round(m.tco2Offset),
     배출계수_kgCO2per_kWh: kgco2PerKwh,
-    경제성_주의: '전력비·탄소는 편집 가능한 공개 대표 단가/계수 기반 추정(확정 단가 아님)',
+    경제성_주의: '전력비·탄소·PPA는 편집 가능한 공개 대표 단가/계수 기반 추정(확정 단가 아님)',
   })
 
   const summaryText = () => {
@@ -264,12 +324,12 @@ export default function CalcPage() {
       `- IT 부하 ${s.IT부하MW} MW → 총부하 ${s.총부하MW} MW → 계약전력 ${s.계약전력MW} MW`,
       `- 필요 랙 ${s.필요랙수.toLocaleString()}대 · 화이트스페이스 약 ${s.화이트스페이스m2.toLocaleString()}㎡`,
       ``,
-      `## 경제성 (대표값 기반 추정 · 편집 가능)`,
-      `- 연간 전력량 약 ${s.연간전력량GWh.toLocaleString()} GWh`,
-      `- 연간 전력비 약 ${s.연간전력비_억원.toLocaleString()}억원 (@${s.전기단가_원per_kWh}원/kWh)`,
-      `- 연간 탄소 약 ${s.연간탄소_tCO2.toLocaleString()} tCO₂ (@${s.배출계수_kgCO2per_kWh}kgCO₂/kWh)`,
+      `## 경제성·조달 (대표값 기반 추정 · 편집 가능)`,
+      `- 연간 전력량 약 ${s.연간전력량GWh.toLocaleString()} GWh · 재생조달 ${s.재생조달비율pct}%`,
+      `- 연간 전력비 약 ${s.연간전력비_억원.toLocaleString()}억원 (계통 @${s.전기단가_원per_kWh} · PPA @${s.PPA단가_원per_kWh}원/kWh)`,
+      `- 연간 탄소 약 ${s.연간탄소_tCO2.toLocaleString()} tCO₂ (재생으로 ${s.탄소상쇄_tCO2.toLocaleString()} tCO₂ 상쇄)`,
       ``,
-      `※ 전력비·탄소는 한전 산업용 대표 단가·국가 전력배출계수 기반 추정으로, 계절·시간대·계약종별로 상이합니다.`,
+      `※ 전력비·탄소·PPA는 대표 단가·국가 전력배출계수 기반 추정으로 계절·시간대·계약별로 상이합니다.`,
     ].join('\n')
   }
 
@@ -293,9 +353,70 @@ export default function CalcPage() {
       계통영향평가면제: track.exemption ? `${track.exemption.effective}~ 가능성` : null,
       이_용량_가능_공개시설수: candidates,
     }
-    const res = await callAiStream('calc', { query: `${gpu.label} ${count.toLocaleString()}대 ${work.label} 클러스터 계산 결과 해설`, data: snap }, (partial) => setAi({ text: partial, streaming: true }))
+    const res = await callAiStream(
+      'calc',
+      { query: `${gpu.label} ${count.toLocaleString()}대 ${work.label} 클러스터 계산 결과 해설`, data: snap },
+      (partial) => setAi({ text: partial, streaming: true }),
+    )
     if (res?.available && res.text) setAi({ text: res.text, usage: res.usage })
     else setAi({ error: res?.reason || 'error' })
+  }
+
+  // 시나리오 저장/삭제 — localStorage 지속(최대 3개). 학습 vs 추론 TCO 비교 등.
+  const persist = (next) => {
+    setScenarios(next)
+    try {
+      localStorage.setItem(SCENARIO_KEY, JSON.stringify(next))
+    } catch {
+      /* 저장 불가 무시 */
+    }
+  }
+  const saveScenario = () => {
+    const snap = {
+      id: `${gpuKey}-${count}-${workKey}-${coolKey}-${redunKey}-${rePct}`,
+      label: shortLabel(),
+      cap: Math.round(m.contractMw * 10) / 10,
+      racks: m.racks,
+      sqm: m.sqm,
+      gwh: Math.round(m.gwhYear * 10) / 10,
+      won: Math.round(m.wonYear / 1e8),
+      tco2: Math.round(m.tco2Year),
+      re: rePct,
+      zone: nonCapital ? '비수도권' : '수도권',
+      cool: cooling.label.split(' ')[0],
+    }
+    const without = scenarios.filter((s) => s.id !== snap.id)
+    const next = [...without, snap].slice(-3) // 최신 3개
+    persist(next)
+    setSavedFlash(true)
+    setTimeout(() => setSavedFlash(false), 1600)
+  }
+  const removeScenario = (id) => persist(scenarios.filter((s) => s.id !== id))
+
+  const SCEN_ROWS = [
+    { k: 'zone', label: '입지', get: (s) => s.zone },
+    { k: 'cool', label: '냉각', get: (s) => s.cool },
+    { k: 'cap', label: '계약전력', get: (s) => `${s.cap.toLocaleString()}MW`, best: (s) => s.cap, dir: -1 },
+    { k: 'racks', label: '필요 랙', get: (s) => `${s.racks.toLocaleString()}대`, best: (s) => s.racks, dir: -1 },
+    { k: 'gwh', label: '연간 전력량', get: (s) => `${s.gwh.toLocaleString()} GWh`, best: (s) => s.gwh, dir: -1 },
+    { k: 're', label: '재생조달', get: (s) => `${s.re}%`, best: (s) => s.re, dir: 1 },
+    { k: 'won', label: '연간 전력비', get: (s) => `${s.won.toLocaleString()}억원`, best: (s) => s.won, dir: -1 },
+    { k: 'tco2', label: '연간 탄소', get: (s) => `${s.tco2.toLocaleString()} tCO₂`, best: (s) => s.tco2, dir: -1 },
+  ]
+  const scenBest = {}
+  for (const row of SCEN_ROWS) {
+    if (!row.best || scenarios.length < 2) continue
+    let bId = null
+    let bVal = null
+    for (const s of scenarios) {
+      const v = row.best(s)
+      if (v == null) continue
+      if (bVal == null || (row.dir > 0 ? v > bVal : v < bVal)) {
+        bVal = v
+        bId = s.id
+      }
+    }
+    scenBest[row.k] = bId
   }
 
   return (
@@ -383,7 +504,7 @@ export default function CalcPage() {
           <div className="calc-result">
             <div>
               <div className="mw">
-                {m.contractMw.toFixed(1)} <small>MW</small>
+                <SpringNumber value={m.contractMw} format={(n) => n.toFixed(1)} /> <small>MW</small>
               </div>
               <div className="geo-note">
                 IT {m.itMw.toFixed(1)} × PUE {pue} = {m.totalMw.toFixed(1)} MW × 여유 {redun.factor}
@@ -403,15 +524,15 @@ export default function CalcPage() {
           <div className="spec-grid" style={{ marginTop: 4 }}>
             <div className="spec-cell">
               <div className="k">필요 랙 (@{cooling.rackKw}kW/랙)</div>
-              <div className="v">{m.racks.toLocaleString()}대</div>
+              <div className="v"><SpringNumber value={m.racks} format={(n) => Math.round(n).toLocaleString()} />대</div>
             </div>
             <div className="spec-cell">
               <div className="k">추정 <Term k="화이트스페이스">화이트스페이스</Term></div>
-              <div className="v">약 {m.sqm.toLocaleString()}㎡</div>
+              <div className="v">약 <SpringNumber value={m.sqm} format={(n) => Math.round(n).toLocaleString()} />㎡</div>
             </div>
             <div className="spec-cell">
               <div className="k">연간 전력 사용량 (부하율 {work.loadFactor})</div>
-              <div className="v">약 {m.gwhYear.toFixed(1)} GWh/년</div>
+              <div className="v">약 <SpringNumber value={m.gwhYear} format={(n) => n.toFixed(1)} /> GWh/년</div>
             </div>
             <div className="spec-cell">
               <div className="k">냉각 유량 관점</div>
@@ -419,18 +540,18 @@ export default function CalcPage() {
             </div>
           </div>
 
-          {/* 경제성 — 연간 전력비·탄소(편집 가능한 공개 대표 단가/계수 기반 추정) */}
+          {/* 경제성·환경 — 연간 전력비·탄소(편집 가능한 공개 대표 단가/계수 기반 추정) */}
           <div className="econ-head">
             <span className="chart-title" style={{ margin: 0 }}>경제성·환경 (연간)</span>
             <span className="econ-flag">대표값 기반 추정 · 편집 가능</span>
           </div>
           <div className="spec-grid">
             <div className="spec-cell econ-cell">
-              <div className="k">연간 전력비</div>
-              <div className="v econ-big">약 {eok(m.wonYear)}</div>
+              <div className="k">연간 전력비{rePct > 0 ? ` · 재생 ${rePct}% 반영` : ''}</div>
+              <div className="v econ-big"><SpringNumber value={eokVal(m.wonYear)} format={eokFmt} /></div>
               <div className="cell-basis">
                 <label className="econ-inline">
-                  단가
+                  계통단가
                   <input
                     type="number"
                     min="50"
@@ -445,8 +566,8 @@ export default function CalcPage() {
               </div>
             </div>
             <div className="spec-cell econ-cell">
-              <div className="k">연간 탄소배출</div>
-              <div className="v econ-big">약 {Math.round(m.tco2Year).toLocaleString()} tCO₂</div>
+              <div className="k">연간 탄소배출{rePct > 0 ? ` · 상쇄 후` : ''}</div>
+              <div className="v econ-big"><SpringNumber value={m.tco2Year} format={(n) => `${Math.round(n).toLocaleString()} tCO₂`} /></div>
               <div className="cell-basis">
                 <label className="econ-inline">
                   배출계수
@@ -460,14 +581,77 @@ export default function CalcPage() {
                   />
                   kgCO₂/kWh
                 </label>
-                <span> · 국가 전력 온실가스 배출계수 대표치(연도별 갱신) — RE100/PPA로 상쇄 가능</span>
+                <span> · 국가 전력 온실가스 배출계수 대표치(연도별 갱신)</span>
               </div>
             </div>
+          </div>
+
+          {/* PPA / RE100 재생조달 시나리오 — 재생비율만큼 배출 0·PPA 단가 적용 */}
+          <div className="econ-head">
+            <span className="chart-title" style={{ margin: 0 }}>재생에너지 조달 (RE100 / 기업PPA)</span>
+            <span className="econ-flag">시나리오 · 편집 가능</span>
+          </div>
+          <div className="re-panel">
+            <div className="re-slider-row">
+              <label className="lbl-cap" htmlFor="re-slider">재생 조달 비율 <b className="re-pct">{rePct}%</b></label>
+              <input
+                id="re-slider"
+                className="re-slider"
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                value={rePct}
+                onChange={(e) => setRePct(Number(e.target.value))}
+              />
+              <div className="re-quick">
+                {[0, 25, 50, 100].map((v) => (
+                  <button key={v} type="button" className={`chip ${rePct === v ? 'on' : ''}`} onClick={() => setRePct(v)}>
+                    {v === 100 ? 'RE100' : `${v}%`}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="spec-grid">
+              <div className="spec-cell">
+                <div className="k">재생으로 상쇄되는 탄소</div>
+                <div className="v"><SpringNumber value={m.tco2Offset} format={(n) => `${Math.round(n).toLocaleString()} tCO₂`} />/년</div>
+                <div className="cell-basis">잔여 배출 {Math.round(m.tco2Year).toLocaleString()} tCO₂ · 재생분 배출 0 가정</div>
+              </div>
+              <div className="spec-cell">
+                <div className="k">전력비 변화 (vs 재생 0%)</div>
+                <div className={`v ${m.wonDelta > 0 ? 'delta-up' : m.wonDelta < 0 ? 'delta-down' : ''}`}>
+                  {m.wonDelta === 0 ? '±0' : `${m.wonDelta > 0 ? '+' : '−'}${eokFmt(Math.abs(eokVal(m.wonDelta)))}`}
+                </div>
+                <div className="cell-basis">
+                  <label className="econ-inline">
+                    PPA 단가
+                    <input
+                      type="number"
+                      min="50"
+                      max="500"
+                      step="5"
+                      value={ppaWonPerKwh}
+                      onChange={(e) => setPpaWonPerKwh(Math.min(500, Math.max(50, Number(e.target.value) || DEFAULT_PPA_WON_PER_KWH)))}
+                    />
+                    원/kWh
+                  </label>
+                  <span> · 재생 기업PPA 대표대(발전원·계약별 상이)</span>
+                </div>
+              </div>
+            </div>
+            <p className="chart-note" style={{ marginTop: 2 }}>
+              하이퍼스케일러 RE100/CFE 요건 검토용 — 재생비율만큼 계통 배출계수를 0으로, 단가를 PPA로 치환한 <b>단순 혼합 추정</b>입니다.
+              시간대별 매칭(24/7 CFE)·REC·계약 구조는 반영하지 않습니다.
+            </p>
           </div>
 
           <div className="card-actions" style={{ marginTop: 12 }}>
             <button type="button" className="btn ai" onClick={genAi} disabled={ai === 'loading'}>
               {ai === 'loading' ? 'AI 해설 작성 중…' : '✨ AI 계산 해설'}
+            </button>
+            <button type="button" className="btn" onClick={saveScenario}>
+              {savedFlash ? '시나리오 저장됨 ✓' : '＋ 시나리오로 저장'}
             </button>
             <button type="button" className="btn primary" onClick={onCopy}>
               {copied ? '복사됨 ✓' : '요약 복사'}
@@ -510,6 +694,40 @@ export default function CalcPage() {
             냉각 방식별 유량·시장 맥락: <Link to="/insights/liquid-cooling-brief">액체냉각 브리프</Link>.
           </p>
         </div>
+
+        {/* 시나리오 비교 — 저장된 구성(최대 3) 나란히. 학습 vs 추론 TCO 등 트레이드오프 한눈에. */}
+        {scenarios.length > 0 && (
+          <div className="calc-card scen-card">
+            <div className="econ-head" style={{ marginTop: 0 }}>
+              <span className="chart-title" style={{ margin: 0 }}>시나리오 비교 <b>{scenarios.length}</b></span>
+              <button type="button" className="chip" onClick={() => persist([])}>전체 지우기</button>
+            </div>
+            <div className="scen-table" style={{ '--scen-cols': scenarios.length }}>
+              <div className="scen-row scen-colhead">
+                <span className="scen-rl" />
+                {scenarios.map((s) => (
+                  <span key={s.id} className="scen-col">
+                    <span className="scen-name" title={s.label}>{s.label}</span>
+                    <button type="button" className="scen-x" onClick={() => removeScenario(s.id)} aria-label="시나리오 제거">✕</button>
+                  </span>
+                ))}
+              </div>
+              {SCEN_ROWS.map((row) => (
+                <div key={row.k} className="scen-row">
+                  <span className="scen-rl">{row.label}</span>
+                  {scenarios.map((s) => (
+                    <span key={s.id} className={`scen-cell ${scenBest[row.k] === s.id ? 'scen-best' : ''}`}>
+                      {row.get(s)}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <p className="chart-note">
+              현재 계산 구성을 “시나리오로 저장”하면 여기에 누적됩니다(최대 3, 브라우저 저장). 굵게=열 최우수(전력비·탄소·용량은 낮을수록, 재생조달은 높을수록).
+            </p>
+          </div>
+        )}
 
         <TrackCard mw={m.contractMw} nonCapital={nonCapital} onRegion={setNonCapital} />
 
