@@ -72,8 +72,8 @@
    * 성능 가드레일 유지: backdrop-filter는 fixed 요소 전용 */
   --glass-surface: color-mix(in srgb, var(--surface) 52%, transparent);
   --glass-surface-strong: color-mix(in srgb, var(--surface) 78%, transparent);
-  /* 맵 위 플로팅 컨트롤(필터바 칩/셀렉트/입력) 통일 배경 — 위성 등 밝은 배경에서도 시인성 확보용 짙은 네이비. */
-  --map-control-bg: color-mix(in srgb, var(--navy-deep) 86%, transparent);
+  /* 맵 위 플로팅 컨트롤(필터바 칩/셀렉트/입력) 통일 배경 — 짙은 네이비 71%(요청: 투명도 15%p 증대, 유리감 강화). */
+  --map-control-bg: color-mix(in srgb, var(--navy-deep) 71%, transparent);
   --glass-border: color-mix(in srgb, var(--accent) 26%, var(--line));
   --glass-blur: 18px;
   --glass-backdrop: blur(var(--glass-blur)) saturate(160%);
