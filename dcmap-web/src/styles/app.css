@@ -3669,6 +3669,72 @@ summary:focus-visible,
   margin: 8px 0 0;
 }
 
+/* 산출 근거 — 예전엔 모든 항목 basis를 ' · '로 이어붙인 회색 벽글이었다.
+ * 항목별 한 줄(라벨=강조 / 근거=회색)로 분리해 라벨→값 위계를 세운다. 좁은 패널에서도 안전하게 줄바꿈. */
+.score-basis {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.score-basis li {
+  position: relative;
+  padding-left: 12px;
+  font-size: var(--text-sm);
+  line-height: var(--lh-base);
+  color: var(--grey);
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+.score-basis li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 58%, transparent);
+}
+.score-basis li b {
+  color: var(--text);
+  font-weight: var(--weight-medium);
+}
+.score-basis li b::after {
+  content: '·';
+  margin: 0 5px 0 4px;
+  color: color-mix(in srgb, var(--grey) 60%, transparent);
+  font-weight: var(--weight-regular);
+}
+
+/* 점수 헤드라인 — 근거 확보 점수를 패널 최상단 핵심 지표로. 숫자는 크고 굵게, 커버리지는 보조. */
+.score-headline {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-bottom: 12px;
+}
+.score-headline-val {
+  font-size: var(--text-h1);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.score-headline-max {
+  font-size: var(--text-title);
+  font-weight: var(--weight-medium);
+  color: var(--grey);
+}
+.score-headline-cov {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  color: var(--grey);
+}
+
 .split-bar {
   display: flex;
   gap: 2px; /* 세그먼트 간 2px 서피스 갭 */
@@ -3727,8 +3793,9 @@ summary:focus-visible,
 }
 
 .hbar-label {
-  font-size: var(--text-sm);
-  color: var(--grey);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  color: color-mix(in srgb, var(--text) 88%, transparent);
 }
 
 /* 바 차트 — 레퍼런스 문법: 밝은 1px 스트로크 + 안쪽으로 잦아드는 그라데이션 필 + 풀라운드 캡 */

@@ -195,7 +195,10 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           </button>
         </div>
         <h3>부지 적합도 프리뷰</h3>
-        <div className="name-en">근거 확보 {r.knownScore}/{r.knownMax}점 · 스코어 커버리지 {r.coverage}/100</div>
+        <div className="score-headline">
+          <span className="score-headline-val">{r.knownScore}<span className="score-headline-max">/{r.knownMax}점</span></span>
+          <span className="score-headline-cov">근거 확보 · 스코어 커버리지 {r.coverage}/100</span>
+        </div>
 
         {/* 한눈에 — 핵심 판단값을 색 칩으로. 값은 아래 상세와 동일 소스(로드되며 채워짐). */}
         {(() => {
@@ -273,11 +276,20 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             </div>
           ))}
         </div>
-        <p className="chart-note">
-          {r.axes
-            .flatMap((a) => a.items.filter((i) => i.points != null && i.basis).map((i) => `${i.label}: ${i.basis}`))
-            .join(' · ')}
-        </p>
+        {(() => {
+          const scored = r.axes.flatMap((a) => a.items.filter((i) => i.points != null && i.basis))
+          if (!scored.length) return null
+          return (
+            <ul className="score-basis" aria-label="산출 근거">
+              {scored.map((i) => (
+                <li key={i.label}>
+                  <b>{i.label}</b>
+                  <span>{i.basis}</span>
+                </li>
+              ))}
+            </ul>
+          )
+        })()}
         <details className="mini-details">
           <summary>점수화 로드맵 — 연동된 축 / 남은 대기</summary>
           <p className="geo-note">
