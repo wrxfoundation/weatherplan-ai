@@ -1110,6 +1110,70 @@ a {
 .ct-cell.tone-bad {
   color: #fca5a5;
 }
+/* 후보 색상 스와치(레이더 범례와 매칭) */
+.ct-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex: none;
+}
+/* 비교 레이더(5축 스파이더) */
+.ct-radar {
+  border-top: 1px solid var(--line);
+  padding: 6px 10px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ct-radar-svg {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  overflow: visible;
+}
+.ctr-grid {
+  fill: none;
+  stroke: color-mix(in srgb, var(--line) 70%, transparent);
+  stroke-width: 1;
+}
+.ctr-axis {
+  stroke: color-mix(in srgb, var(--line) 85%, transparent);
+  stroke-width: 1;
+}
+.ctr-label {
+  fill: var(--grey);
+  font-size: 10px;
+  font-weight: 600;
+}
+.ctr-shape {
+  fill: color-mix(in srgb, var(--c) 18%, transparent);
+  stroke: var(--c);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.ctr-dot {
+  fill: var(--c);
+}
+.ct-radar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  justify-content: center;
+  margin-top: 2px;
+}
+.ctr-leg {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-xs);
+  color: var(--ink);
+}
+.ctr-leg i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+}
 @media (max-width: 760px) {
   .compare-tray {
     left: 8px;
