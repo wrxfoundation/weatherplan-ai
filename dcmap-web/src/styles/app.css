@@ -592,8 +592,8 @@ a {
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
-/* 맵 범례 — 우하단(사이드패널 왼쪽), 기본 접힘(알약). 좌하단 비교트레이와 겹치지 않게. 펼치면 색 의미 표시 */
-.map-legend {
+/* 맵 우하단 클러스터 — 공유 버튼 + 범례(사이드패널 왼쪽). 좌하단 비교트레이와 겹치지 않게. */
+.map-br-cluster {
   position: absolute;
   right: calc(var(--panel-width) + 14px);
   bottom: 14px;
@@ -601,15 +601,43 @@ a {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
+  gap: 8px;
 }
 @media (max-width: 760px) {
-  /* 모바일: 사이드패널이 바텀시트라 범례는 좌하단(비교트레이는 조건부라 대개 비어있음) */
-  .map-legend {
+  /* 모바일: 사이드패널이 바텀시트라 좌하단으로 */
+  .map-br-cluster {
     right: auto;
     left: 10px;
     bottom: 74px;
   }
+}
+.map-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 13px;
+  border-radius: 999px;
+  background: var(--map-control-bg);
+  backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
+  color: var(--grey);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+.map-share:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+}
+
+/* 맵 범례 — 기본 접힘(알약), 펼치면 색 의미. 위치는 상위 클러스터가 담당. */
+.map-legend {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
 }
 .legend-toggle {
   display: inline-flex;

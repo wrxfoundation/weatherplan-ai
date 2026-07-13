@@ -8,6 +8,7 @@ import TopBar from '../TopBar.jsx'
 import FilterBar from './FilterBar.jsx'
 import ClimateBar from './ClimateBar.jsx'
 import Legend from './Legend.jsx'
+import ShareButton from './ShareButton.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import CompareTray from '../score/CompareTray.jsx'
@@ -155,6 +156,8 @@ export default function MapPage({ power = false }) {
   // 입지 구분: zone = 'cap'(수도권만) | 'non'(비수도권만) | ''(전체). noncap=1은 하위호환.
   const zone = searchParams.get('zone') || (searchParams.get('noncap') === '1' ? 'non' : '')
   const q = searchParams.get('q') ?? ''
+  // 활성 레이어 딥링크(?layers=subs,semi,...) — 초기 복원 + 공유용
+  const _initLayers = new Set((searchParams.get('layers') || '').split(',').filter(Boolean))
 
   const [statuses, setStatuses] = useState(() => new Set())
   const [type, setType] = useState('')
@@ -171,26 +174,26 @@ export default function MapPage({ power = false }) {
       ? { lat, lng }
       : null
   })
-  const [showLabels, setShowLabels] = useState(false) // 맵 정보 라벨 (시설명·용량) 상시 표시
+  const [showLabels, setShowLabels] = useState(() => _initLayers.has('labels')) // 맵 정보 라벨 (시설명·용량) 상시 표시
   const [isoView, setIsoView] = useState(false) // 줌 ≥ ISO_ZOOM → 아이소메트릭 빌딩 마커
   const [denseLabels, setDenseLabels] = useState(false) // 줌 ≥ 13 → 그룹 개별 라벨 (미만은 대표 라벨)
-  const [showPlants, setShowPlants] = useState(false) // 발전 인프라 레이어 (원전·석탄 대형 단지)
+  const [showPlants, setShowPlants] = useState(() => _initLayers.has('plants')) // 발전 인프라 레이어 (원전·석탄 대형 단지)
   const plantsLayerRef = useRef(null)
-  const [showSubs, setShowSubs] = useState(false) // 154kV+ 변전소 레이어 (OSM 841개)
+  const [showSubs, setShowSubs] = useState(() => _initLayers.has('subs')) // 154kV+ 변전소 레이어 (OSM 841개)
   const subsLayerRef = useRef(null)
-  const [showLines, setShowLines] = useState(false) // 송전선로 레이어 (OSM power=line, 데이터 확보 시)
+  const [showLines, setShowLines] = useState(() => _initLayers.has('lines')) // 송전선로 레이어 (OSM power=line, 데이터 확보 시)
   const linesLayerRef = useRef(null)
-  const [showComplexes, setShowComplexes] = useState(false) // 주요 국가산단 레이어
+  const [showComplexes, setShowComplexes] = useState(() => _initLayers.has('complex')) // 주요 국가산단 레이어
   const complexLayerRef = useRef(null)
-  const [showNet, setShowNet] = useState(false) // 통신망 레이어(국사·IDC·육양국)
+  const [showNet, setShowNet] = useState(() => _initLayers.has('net')) // 통신망 레이어(국사·IDC·육양국)
   const netLayerRef = useRef(null)
-  const [showRe, setShowRe] = useState(false) // 재생발전단지 레이어(RE100)
+  const [showRe, setShowRe] = useState(() => _initLayers.has('re')) // 재생발전단지 레이어(RE100)
   const reLayerRef = useRef(null)
-  const [showWater, setShowWater] = useState(false) // 주요 수원(다목적·용수댐) 레이어
+  const [showWater, setShowWater] = useState(() => _initLayers.has('water')) // 주요 수원(다목적·용수댐) 레이어
   const waterLayerRef = useRef(null)
-  const [showSemi, setShowSemi] = useState(false) // 반도체·AI 메가클러스터 레이어
+  const [showSemi, setShowSemi] = useState(() => _initLayers.has('semi')) // 반도체·AI 메가클러스터 레이어
   const semiLayerRef = useRef(null)
-  const [showReco, setShowReco] = useState(false) // 추천 입지 TOP(정적 근거 랭킹)
+  const [showReco, setShowReco] = useState(() => _initLayers.has('reco')) // 추천 입지 TOP(정적 근거 랭킹)
   const recoLayerRef = useRef(null)
   const [recoMw, setRecoMw] = useState(40) // 시뮬레이터: 필요 용량(계통 공급여유 하한)
   const [recoNonCap, setRecoNonCap] = useState(false) // 비수도권만
@@ -208,11 +211,11 @@ export default function MapPage({ power = false }) {
     return 'dark'
   })
   const baseTileRef = useRef([])
-  const [showPublic, setShowPublic] = useState(false) // 공공 DC 레이어 (행안부 운영시설 61곳)
+  const [showPublic, setShowPublic] = useState(() => _initLayers.has('public')) // 공공 DC 레이어 (행안부 운영시설 61곳)
   const publicLayerRef = useRef(null)
-  const [showGenPermits, setShowGenPermits] = useState(power) // 발전 허가 2024+ 시도 버블 (전력 공급 파이프라인)
+  const [showGenPermits, setShowGenPermits] = useState(() => power || _initLayers.has('permit')) // 발전 허가 2024+ 시도 버블 (전력 공급 파이프라인)
   const genLayerRef = useRef(null)
-  const [showHeadroom, setShowHeadroom] = useState(false) // 계통 여유용량 시도 버블 (한전 분산전원)
+  const [showHeadroom, setShowHeadroom] = useState(() => _initLayers.has('headroom')) // 계통 여유용량 시도 버블 (한전 분산전원)
   const headroomLayerRef = useRef(null)
   const [headrooms, setHeadrooms] = useState(null) // {sido: availableMw|null}
   const [region, setRegion] = useState(null) // 전력지도: 클릭한 시도 (지역 요약 카드)
@@ -782,6 +785,20 @@ export default function MapPage({ power = false }) {
     if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
   }, [sitePoint]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // 활성 레이어 → URL(?layers=) 동기화 (공유 링크로 켠 레이어 그대로 복원)
+  useEffect(() => {
+    const active = [
+      showReco && 'reco', showLabels && 'labels', showSubs && 'subs', showLines && 'lines',
+      showPlants && 'plants', showRe && 're', showWater && 'water', showSemi && 'semi',
+      showComplexes && 'complex', showNet && 'net', !power && showGenPermits && 'permit',
+      showHeadroom && 'headroom', showPublic && 'public',
+    ].filter(Boolean)
+    const next = new URLSearchParams(searchParams)
+    if (active.length) next.set('layers', active.join(','))
+    else next.delete('layers')
+    if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
+  }, [showReco, showLabels, showSubs, showLines, showPlants, showRe, showWater, showSemi, showComplexes, showNet, showGenPermits, showHeadroom, showPublic]) // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const cluster = clusterRef.current
     if (!cluster) return
@@ -1193,7 +1210,10 @@ export default function MapPage({ power = false }) {
             </>
           )}
         </aside>
-        <Legend />
+        <div className="map-br-cluster">
+          <ShareButton />
+          <Legend />
+        </div>
       </div>
       <CompareTray
         items={compare}
