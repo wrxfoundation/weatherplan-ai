@@ -1,0 +1,33 @@
+# 기업 약속 diff — 스펙 v4 #17 (commitments-watch), 페이지 텍스트형. 글로벌.
+#
+# AI 기업들이 공개한 "약속" 문서(사용정책·수용가능이용·AI 원칙·안전 프레임워크)를
+# 주간 박제한다. 기업은 이 문서를 조용히 고친다 — The Intercept가 잡은 OpenAI
+# 사용정책의 '군사(military)' 조항 삭제가 가치 증명. 체계적 원장은 부재. 문서가
+# 바뀌면 그 diff를, 문서가 내려가면 그 소멸을 우리가 소유한다(원본 HTML은 스냅샷 보존).
+# #14 벤더원장의 Phase 2(벤더 페이지 diff)를 겸한다.
+#
+# ★ URL은 최선 추정 — 개별 페치 실패는 그 페이지만 건너뛰고(삭제 오탐 방지),
+#   첫 실행 로그가 어떤 URL이 살아있는지 자백한다(config 핫에디트로 교정·확장).
+#   봇차단이 강한 사이트(예: anthropic.com은 데이터센터 IP를 하드 403)는 제외.
+#   기록 자체가 목적이라 봇차단 우회는 하지 않는다 — 열린 문서만 박제.
+id: commitments-watch
+family: page-text
+title: 기업 약속 diff — AI 사용정책·원칙·안전 프레임워크
+
+# 봇차단 완화용 실브라우저 UA (스크래핑 아님 — 공개 문서 1일~주간 1회 열람).
+user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36 chronicle-archive/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
+rate_limit_ms: 1500
+
+# 엔티티: commitment:<회사>:<문서슬러그>. 정적 문서 위주(마케팅 홈보다 저잡음·고신호).
+targets:
+  - { id: "commitment:openai:usage-policies",    url: "https://openai.com/policies/usage-policies/" }
+  - { id: "commitment:google:ai-principles",     url: "https://ai.google/responsibility/principles/" }
+  - { id: "commitment:microsoft:responsible-ai", url: "https://www.microsoft.com/en-us/ai/principles-and-approach" }
+  - { id: "commitment:meta:llama-use-policy",    url: "https://www.llama.com/llama4/use-policy/" }
+  - { id: "commitment:mistral:terms",            url: "https://mistral.ai/terms" }
+  - { id: "commitment:cohere:responsibility",    url: "https://cohere.com/responsibility" }
+  - { id: "commitment:aws:responsible-ai",       url: "https://aws.amazon.com/machine-learning/responsible-ai/" }
+  - { id: "commitment:nvidia:trustworthy-ai",    url: "https://www.nvidia.com/en-us/ai-data-science/trustworthy-ai/" }
+  - { id: "commitment:stabilityai:use-policy",   url: "https://stability.ai/use-policy" }
+  - { id: "commitment:huggingface:content-policy", url: "https://huggingface.co/content-guidelines" }
+  - { id: "commitment:xai:acceptable-use",       url: "https://x.ai/legal/acceptable-use-policy" }
