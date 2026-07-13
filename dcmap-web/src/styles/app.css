@@ -3841,6 +3841,24 @@ summary:focus-visible,
   margin: 8px 0 0;
 }
 
+/* 분석 노트 스택 — 여러 문장을 한 회색 문단으로 뭉치던 벽글을 줄 단위(정의→핵심→단서)로 분리.
+ * 핵심 발견 줄은 accent 좌측 보더로 스캔 지점을 만든다. */
+.note-stack {
+  margin: 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.note-stack .chart-note {
+  margin: 0;
+  line-height: var(--lh-base);
+}
+.note-stack .chart-note.key {
+  border-left: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  padding-left: 10px;
+  color: color-mix(in srgb, var(--text) 80%, var(--grey));
+}
+
 /* 산출 근거 — 예전엔 모든 항목 basis를 ' · '로 이어붙인 회색 벽글이었다.
  * 항목별 한 줄(라벨=강조 / 근거=회색)로 분리해 라벨→값 위계를 세운다. 좁은 패널에서도 안전하게 줄바꿈. */
 .score-basis {
