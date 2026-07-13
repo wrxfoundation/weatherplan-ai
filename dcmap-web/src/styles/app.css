@@ -561,7 +561,7 @@ a {
   font-size: 11px;
   font-weight: 700;
   color: var(--grey);
-  padding: 0 4px 0 2px;
+  padding: 0 8px 0 10px; /* 둥근 알약 좌측 곡면에 딱 붙지 않게 좌측 여백 확보 */
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
@@ -583,7 +583,7 @@ a {
 .filterbar .group {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 5px; /* 칩 사이 구분자(|)가 앉을 여백 — 방대해진 필터 스캔성 */
   padding: 3px;
   background: var(--map-control-bg);
   backdrop-filter: var(--glass-backdrop);
@@ -592,7 +592,21 @@ a {
   box-shadow: var(--glass-specular-soft), var(--elev-1);
 }
 
+/* 칩 사이 세로 구분자 — 필터가 방대해져 그룹 내 각 칩을 | 로 나눈다(첫 칩·라벨 뒤 첫 칩 제외) */
+.filterbar .group .chip + .chip::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 13px;
+  background: color-mix(in srgb, var(--grey) 34%, transparent);
+  pointer-events: none;
+}
+
 .filterbar button.chip {
+  position: relative;
   border: 1px solid transparent;
   background: transparent;
   color: var(--grey);
