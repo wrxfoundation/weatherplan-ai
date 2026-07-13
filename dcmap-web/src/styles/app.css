@@ -249,9 +249,9 @@ a {
   top: calc(var(--topbar-height) + 12px);
   left: 12px;
   z-index: 1000;
-  display: block; /* 2줄(검색컨트롤 / 레이어) 블록 스택 — 각 줄이 예약폭을 채우고 넘치면 그 줄만 스크롤 */
-  /* 우측 상단 기후 바(width 320 + right offset panel+16)와 겹치지 않게 예약: panel + 16 + 320 + 12(좌여백) + 16(간격) */
-  max-width: calc(100% - var(--panel-width) - 364px);
+  display: block; /* 2줄(검색컨트롤 / 레이어) 블록 스택 — 각 줄이 폭을 채우고 넘치면 그 줄만 스크롤 */
+  /* 기후 바를 필터바 아래로 내렸으므로(겹침 없음) 필터바는 사이드패널만 피하고 전폭 사용 → 내용 잘림 최소화 */
+  max-width: calc(100% - var(--panel-width) - 24px);
 }
 
 /* 각 줄 — 한 줄 유지, 넘치면 그 줄만 가로 스크롤(줄 수는 항상 2로 고정) */
@@ -3341,7 +3341,8 @@ summary:focus-visible,
 /* ---------- 맵 상단: 주소검색 + 기후 바 ---------- */
 .map-top {
   position: absolute;
-  top: calc(var(--topbar-height) + 12px);
+  /* 필터바(2줄) 아래로 내림 — 필터바가 전폭을 써도 겹치지 않게(내용 잘림 방지) */
+  top: calc(var(--topbar-height) + 108px);
   right: calc(var(--panel-width) + 16px);
   z-index: 1000;
   width: 320px;
@@ -3657,9 +3658,9 @@ summary:focus-visible,
 }
 
 @media (max-width: 760px) {
-  /* 필터바(가로 스크롤) 아래로 내려 전폭 배치 + 맵을 최대한 덜 가리게 컴팩트 */
+  /* 필터바(2줄 가로스크롤) 아래로 내려 전폭 배치 + 맵을 최대한 덜 가리게 컴팩트 */
   .map-top {
-    top: calc(var(--topbar-height) + 50px);
+    top: calc(var(--topbar-height) + 100px);
     left: 10px;
     right: 10px;
     width: auto;
