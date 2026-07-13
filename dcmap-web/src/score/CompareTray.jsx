@@ -1,7 +1,9 @@
 /* 후보지 비교 트레이 — 부지 분석 스냅샷 2~3곳을 나란히 비교(부지선정 핵심 UX).
  * 스냅샷은 SitePanel에서 데이터 로드 후 '비교에 추가' 시점의 값으로 고정된다.
  * 근거점수 최고 후보에 '추천' 배지, 각 행에서 우수값을 강조. */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { callAi, aiReasonLabel } from '../data/aiApi.js'
+import AiText from '../ai/AiText.jsx'
 
 const TONE = { good: 'tone-good', warn: 'tone-warn', bad: 'tone-bad' }
 
@@ -193,10 +195,44 @@ const ROWS = [
 
 export default function CompareTray({ items, onRemove, onClear, onOpen }) {
   const [open, setOpen] = useState(false)
+  // AI 비교평: null | 'loading' | { text } | { error }
+  const [ai, setAi] = useState(null)
+  // 후보 구성이 바뀌면 이전 비교평 무효화(오판 방지)
+  const idsKey = (items || []).map((c) => c.id).join('|')
+  useEffect(() => {
+    setAi(null)
+  }, [idsKey])
+
   if (!items?.length) return null
 
   // 근거 점수(비율) 최고 후보 = 추천
   const bestId = items.reduce((b, c) => ((c.pct ?? -1) > (b?.pct ?? -1) ? c : b), null)?.id
+
+  // AI 비교평 — 스냅샷의 확보된 값만 넘긴다(없으면 프롬프트가 '미확보' 처리)
+  const genCompare = async () => {
+    setAi('loading')
+    const data = items.map((c) => ({
+      후보: c.label,
+      입지: c.nonCapital ? '비수도권' : '수도권',
+      근거점수: c.score != null ? `${c.score}/${c.coverage}` : null,
+      비율pct: c.pct ?? null,
+      계통공급여유MW: c.gridMw ?? null,
+      DC승인율pct: c.approvalPct ?? null,
+      변전소km: c.subKm ?? null,
+      네트워크점수10: c.netScore ?? null,
+      산단km: c.icKm ?? null,
+      부지면적m2: c.areaM2 ?? null,
+      기후: c.climate ?? null,
+      기후등급: c.climateLevel ?? null,
+      침수노출pct: c.floodPct ?? null,
+      산사태노출pct: c.landslidePct ?? null,
+      인구밀도: c.density ?? null,
+      용도지역: c.zoneUse ?? null,
+    }))
+    const res = await callAi('compare', { data })
+    if (res?.available && res.text) setAi({ text: res.text })
+    else setAi({ error: res?.reason || 'error' })
+  }
 
   // 비교 결과 PDF — 인쇄 최적화 HTML 표 → 브라우저 PDF
   const onPdf = () => {
@@ -244,6 +280,11 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
         <button type="button" className="ct-toggle" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
           ⚖ 후보지 비교 <strong>{items.length}</strong>곳 {open ? '▾' : '▸'}
         </button>
+        {items.length > 1 && (
+          <button type="button" className="chip ai" onClick={genCompare} disabled={ai === 'loading'} title="후보 AI 비교평">
+            {ai === 'loading' ? 'AI…' : '✨ AI 비교평'}
+          </button>
+        )}
         <button type="button" className="chip" onClick={onPdf} title="후보지 비교표 PDF 저장">
           PDF
         </button>
@@ -251,6 +292,25 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
           전체 지우기
         </button>
       </div>
+      {open && ai && ai !== 'loading' && ai.text && (
+        <div className="ai-card ct-ai" role="region" aria-label="AI 비교평">
+          <div className="ai-card-head">
+            <span className="ai-badge">✨ AI 비교평</span>
+            <span className="ai-src">스냅샷 확보값 기반 · 없는 값은 미확보</span>
+          </div>
+          <AiText text={ai.text} />
+        </div>
+      )}
+      {open && ai && ai !== 'loading' && ai.error && (
+        <div className="ai-card err ct-ai" role="alert">
+          {aiReasonLabel(ai.error)}
+        </div>
+      )}
+      {open && ai === 'loading' && (
+        <div className="ai-card loading ct-ai" role="status">
+          <span className="sp-spinner" aria-hidden /> 후보 비교 분석 중…
+        </div>
+      )}
       {open && items.length > 1 && <CompareRadar items={items} />}
       {open && (
         <div className="ct-table" role="table" style={{ '--ct-cols': items.length }}>

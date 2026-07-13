@@ -43,12 +43,14 @@ const TASK_SYSTEM = {
   qa: '작업: 데이터센터 인프라·전력 인허가·입지 관련 질문에 쉽게 답한다(용어집 수준 설명). 특정 부지의 수치는 컨텍스트 데이터에 있을 때만 인용한다. 모르면 "확인이 어렵다"고 답한다. 3~6문장 내외.',
   brief:
     '작업: 지역(시도) 집계 데이터(JSON)를 받아 인프라 브리핑을 작성한다: 전력·수요·리스크·기상 관점 요약과 입지 시사점. 제공된 집계값만 사용. 300~450자.',
+  compare:
+    '작업: 후보지 2~3곳의 스냅샷 배열(JSON)을 받아 비교 평가한다. 구성: ① **후보별 한줄 강·약점**(제공된 축값 근거; 대기 항목은 "데이터 미확보"로 명시) ② **용도별 추천**(예: 대용량 즉시 착공형 / 장기 확장형 / 냉각 우선형 중 각 후보가 어디에 맞는지) ③ **최종 추천 1곳 + 핵심 근거 2~3개**. 없는 수치·순위 창작 금지. 400~600자.',
 }
 
-const MODEL_FOR = { report: MODEL_OPUS, brief: MODEL_OPUS, search: MODEL_HAIKU, qa: MODEL_HAIKU }
-const MAXTOK_FOR = { report: 1500, brief: 1200, search: 1200, qa: 900 }
+const MODEL_FOR = { report: MODEL_OPUS, brief: MODEL_OPUS, compare: MODEL_OPUS, search: MODEL_HAIKU, qa: MODEL_HAIKU }
+const MAXTOK_FOR = { report: 1500, brief: 1200, compare: 1500, search: 1200, qa: 900 }
 
-const ALLOWED = new Set(['report', 'search', 'qa', 'brief'])
+const ALLOWED = new Set(['report', 'search', 'qa', 'brief', 'compare'])
 
 // 본문을 사람 프롬프트로 — 데이터는 JSON 코드블록으로 명확히 구분
 function buildUserContent(task, body) {
