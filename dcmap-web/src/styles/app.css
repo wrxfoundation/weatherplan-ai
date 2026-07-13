@@ -1796,6 +1796,167 @@ summary:focus-visible,
   flex-wrap: wrap;
 }
 
+/* ---------- 완공 후 운영관리 섹션 ---------- */
+.ops-frame {
+  margin-top: 8px;
+}
+.ops-intro {
+  color: var(--text-dim, #b8cbe0);
+  font-size: var(--text-md);
+  line-height: 1.65;
+  margin: 0 0 18px;
+}
+.ops-h2 {
+  font: var(--weight-bold) var(--text-title) / 1.3 var(--font-sans);
+  margin: 26px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+  color: color-mix(in srgb, var(--text) 82%, var(--accent));
+}
+.ops-h2:first-of-type {
+  margin-top: 6px;
+}
+
+/* 운영 프로세스 — 번호가 매겨진 순환 활동 */
+.ops-phases {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+.ops-phase {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 10px;
+  align-items: start;
+  background: color-mix(in srgb, var(--navy-deep) 55%, transparent);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  box-shadow: var(--glass-specular-soft);
+}
+.ops-phase-n {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font: var(--weight-bold) var(--text-body) var(--font-latin);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.ops-phase-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.ops-phase-body b {
+  color: var(--text);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-md);
+}
+.ops-phase-body span {
+  color: var(--grey);
+  font-size: var(--text-sm);
+  line-height: var(--lh-base);
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+/* 중점 관리 도메인 카드 */
+.ops-domains,
+.ops-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+.ops-domain {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ops-domain-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ops-domain-title {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-tight);
+}
+.ops-domain-points {
+  margin-top: 2px;
+}
+/* 도메인 불릿은 라벨 없이 근거만 — score-basis 규칙 위에서 여백만 조정 */
+.ops-domain-points li {
+  color: color-mix(in srgb, var(--text) 80%, var(--grey));
+}
+.ops-domain-kpi {
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  font-size: var(--text-sm);
+  color: var(--text);
+  font-weight: var(--weight-medium);
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+.ops-kpi-label {
+  color: var(--grey);
+  font-weight: var(--weight-regular);
+  margin-right: 4px;
+}
+
+/* 핵심 관리지표(KPI) 카드 */
+.ops-kpi-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ops-kpi-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.ops-kpi-k {
+  font: var(--weight-bold) var(--text-title) var(--font-latin);
+  color: var(--text);
+}
+.ops-kpi-target {
+  white-space: normal;
+  height: auto;
+  padding: 3px 8px;
+  line-height: 1.25;
+  text-align: right;
+}
+.ops-kpi-full {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: color-mix(in srgb, var(--text) 82%, var(--grey));
+}
+.ops-kpi-note {
+  font-size: var(--text-sm);
+  color: var(--grey);
+  line-height: var(--lh-base);
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+.ops-cta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
 /* API 연동 현황 그리드 */
 .api-status-grid {
   display: grid;
