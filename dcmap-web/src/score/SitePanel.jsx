@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { STATUS_LABEL, isCapitalByAddr, isCapitalByPoint, FACILITIES } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, landUseFor, landAreaFor, landPriceOfficialFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, waterCapacity, dongLabel } from '../data/liveApi.js'
+import { forecastFor, headroomFor, landUseFor, landRegFor, landAreaFor, landPriceOfficialFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, waterCapacity, kwaterInfra, dongLabel } from '../data/liveApi.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
 import { substationForSido } from '../data/substations.js'
@@ -25,6 +25,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const [addr, setAddr] = useState(null)
   const [wx, setWx] = useState(null)
   const [landUse, setLandUse] = useState(null)
+  const [landReg, setLandReg] = useState(null)
   const [landArea, setLandArea] = useState(null)
   const [officialPrice, setOfficialPrice] = useState(null)
   const [fc, setFc] = useState(null)
@@ -36,6 +37,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const [warning, setWarning] = useState(null)
   const [climate, setClimate] = useState(null)
   const [water, setWater] = useState(null)
+  const [kwater, setKwater] = useState(null)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -46,6 +48,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     setAddr(null)
     setWx(null)
     setLandUse(null)
+    setLandReg(null)
     setLandArea(null)
     setOfficialPrice(null)
     setFc(null)
@@ -87,6 +90,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
       })
     weatherFor(point.lat, point.lng).then((v) => alive && setWx(v))
     landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v))
+    landRegFor(point.lat, point.lng).then((v) => alive && setLandReg(v))
     landAreaFor(point.lat, point.lng).then((v) => {
       if (!alive) return
       setLandArea(v)
@@ -99,10 +103,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     }
   }, [point])
 
-  // WAMIS 공업용수 취수능력(전국 시도 집계) — 지점 무관, 1회 로드(캐시). 냉각수 확보 여건 지역 신호.
+  // 용수 지역 신호(전국 시도 집계) — 지점 무관, 1회 로드(캐시). 냉각수 확보 여건.
+  //  · WAMIS 공업용수 취수 시설용량(㎥/일) · K-water 실시간 수도시설(정수장·취수장·가압장) 밀도.
   useEffect(() => {
     let alive = true
     waterCapacity().then((v) => alive && setWater(v))
+    kwaterInfra().then((v) => alive && setKwater(v))
     return () => {
       alive = false
     }
@@ -460,21 +466,37 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             )
           })()}
           {(() => {
-            // 냉각수(공업용수) 확보 여건 — 시도 취수 시설용량 집계(WAMIS). 100점 외 참고 신호.
-            if (!water?.available || !sido) return null
-            const w = water.bySido?.[sido]
-            if (!w || !w.m3day) return null
-            // 시설용량 기준 상대 여건(전국 시도 중 위치). 대략 20만 m³/day↑ 여유, 5만↓ 제한.
-            const label = w.m3day >= 200000 ? '용수 여유' : w.m3day >= 50000 ? '용수 보통' : '용수 확인要'
-            const badge = w.m3day >= 200000 ? 'status-operating' : w.m3day >= 50000 ? 'verify' : 'pending'
+            // 냉각수(용수) 확보 여건 — WAMIS 공업용수 취수 시설용량 + K-water 실시간 수도시설 밀도. 100점 외 참고.
+            if (!sido) return null
+            const w = water?.available ? water.bySido?.[sido] : null
+            const hasWamis = w && w.m3day
+            const kw = kwater?.available ? kwater.bySido?.[sido] : null
+            const hasKwater = kw && kw.count
+            if (!hasWamis && !hasKwater) return null
+            const label = hasWamis ? (w.m3day >= 200000 ? '용수 여유' : w.m3day >= 50000 ? '용수 보통' : '용수 확인要') : null
+            const badge = hasWamis ? (w.m3day >= 200000 ? 'status-operating' : w.m3day >= 50000 ? 'verify' : 'pending') : null
             return (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">냉각수(공업용수) 확보 여건 ({sido} 시도 · 참고)</div>
+                <div className="k">냉각수(용수) 확보 여건 ({sido} 시도 · 참고)</div>
                 <div className="v">
-                  {sido} 공업용수 취수 시설용량 <strong>{Math.round(w.m3day).toLocaleString()}㎥/일</strong>
-                  <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>취수장 {w.count}곳</span>
-                  <span className={`badge ${badge}`} style={{ marginLeft: 6 }}>{label}</span>
-                  <div className="cell-basis">{water.source} — 시도 총량 신호(부지 인입은 지방·산단 상수도사업소 별도 확인). 100점 외 참고</div>
+                  {hasWamis && (
+                    <div>
+                      공업용수 취수 시설용량 <strong>{Math.round(w.m3day).toLocaleString()}㎥/일</strong>
+                      <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>취수장 {w.count}곳</span>
+                      <span className={`badge ${badge}`} style={{ marginLeft: 6 }}>{label}</span>
+                    </div>
+                  )}
+                  {hasKwater && (
+                    <div style={{ marginTop: hasWamis ? 4 : 0 }}>
+                      실시간 수도시설 <strong>{kw.count}곳</strong>
+                      <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>
+                        {[kw.정수장 ? `정수장 ${kw.정수장}` : null, kw.취수장 ? `취수장 ${kw.취수장}` : null, kw.가압장 ? `가압장 ${kw.가압장}` : null].filter(Boolean).join(' · ') || 'K-water 모니터링 대상'}
+                      </span>
+                    </div>
+                  )}
+                  <div className="cell-basis">
+                    {hasWamis ? `${water.source} · ` : ''}{hasKwater ? `${kwater.source} · ` : ''}시도 총량 신호(부지 인입은 지방·산단 상수도사업소 별도 확인). 100점 외 참고
+                  </div>
                 </div>
               </div>
             )
@@ -565,6 +587,17 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               )}
             </div>
           </div>
+          {landReg?.regs?.length ? (
+            <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+              <div className="k">규제·제약 지구 (vworld 용도지구·지구단위계획 · 참고)</div>
+              <div className="v">
+                {landReg.regs.map((rg) => (
+                  <span key={rg} className="badge verify" style={{ marginRight: 6, marginBottom: 4 }}>{rg}</span>
+                ))}
+                <div className="cell-basis">토지거래허가·성장관리방안·지구단위계획 등 개발 제약/절차 신호(부지 매입·인허가 난이도). 100점 외 참고</div>
+              </div>
+            </div>
+          ) : null}
           {(() => {
             const ic = nearestIndustrialComplex(point.lat, point.lng)
             return ic ? (

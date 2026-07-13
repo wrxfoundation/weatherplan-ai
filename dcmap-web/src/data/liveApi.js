@@ -1,7 +1,7 @@
 // 라이브 API 클라이언트 — 서버리스 프록시(/api/*) 호출. 실패는 null (프런트는 '대기' 표시)
 // 키는 전부 서버 측 env — 브라우저에 노출되지 않는다.
 
-import { hasVworldClient, geocodeClient, revgeoClient, landUseClient, parcelAreaClient } from './vworldClient.js'
+import { hasVworldClient, geocodeClient, revgeoClient, landUseClient, landRegClient, parcelAreaClient } from './vworldClient.js'
 
 const cache = new Map()
 
@@ -89,6 +89,13 @@ export const landAreaFor = async (lat, lng) => {
   return null
 }
 
+/** vworld 규제·제약 지구(용도지구·지구단위계획) — { regs:string[] } | null. 브라우저 직접(키 있을 때만).
+ *  DC 부지 개발 제약(토지거래허가·성장관리방안·지구단위 등) 참고 신호. */
+export const landRegFor = async (lat, lng) => {
+  if (hasVworldClient()) return landRegClient(lat, lng)
+  return null
+}
+
 /** 개별공시지가(원/㎡) — PNU로 data.go.kr 조회. { available, pricePerM2, year } | null */
 export const landPriceOfficialFor = (pnu) => (pnu ? fetchJson(`/api/landprice?pnu=${encodeURIComponent(pnu)}`) : Promise.resolve(null))
 
@@ -96,6 +103,10 @@ export const landPriceOfficialFor = (pnu) => (pnu ? fetchJson(`/api/landprice?pn
  *  전국 1회 집계(캐시). 시도 선택은 클라이언트에서. 냉각수(공업용수) 확보 여건의 지역 신호(100점 외).
  *  서버리스 함수 수(Hobby 12개 상한) 절약 위해 landprice 라우트에 kind=water로 다중화. */
 export const waterCapacity = () => fetchJson('/api/landprice?kind=water', 12000)
+
+/** K-water 실시간 수도정보 시설목록(시도 집계) — { available, bySido:{시도:{count,정수장,취수장,가압장}}, total, source } | null.
+ *  지역 수도 인프라(정수장·취수장·가압장) 밀도 — 냉각수 취수 여건 참고(100점 외). KWATER_KEY env 필요. */
+export const kwaterInfra = () => fetchJson('/api/landprice?kind=kwater', 12000)
 
 /** 케이웨더 일별예보(최대 7일) — { days:[{label,tmax,tmin,rainProb,sky}], rain } | null */
 export const forecastFor = (lat, lng) => fetchJson(`/api/kweather?kind=forecast&${q(lat, lng)}`)

@@ -2,11 +2,12 @@
  * 토지/자원 부지속성 프록시 — 두 종류를 kind로 다중화(서버리스 함수 수 절약, Hobby 12개 상한).
  *  1) 기본: 개별공시지가 (국토교통부 NSDI, data.go.kr) — 필지(PNU)별 공시지가(원/㎡). 토지축 '지가 부담' 실데이터.
  *  2) kind=water: WAMIS 공업용수 취수능력(시도 집계) — DC 냉각수 확보 여건의 지역 신호(100점 외 참고).
+ *  3) kind=kwater: K-water 실시간 수도정보 시설목록(정수장·취수장·가압장) 시도 집계 — 지역 수도 인프라 밀도 신호.
  *
  * 환경변수 (Vercel — 서버 env 전용, 리포 커밋 절대 금지):
  *  - DATA_GO_KR_KEY (공시지가 필수) — data.go.kr 인증키(디코딩 키, 공용)
- *  - LANDPRICE_URL (선택) — 공시지가 엔드포인트 베이스 오버라이드
- *  - WATER_URL (선택) — WAMIS 엔드포인트 베이스 오버라이드
+ *  - KWATER_KEY (kind=kwater) — K-water 실시간 수도정보 인증키(data.go.kr). 미설정 시 DATA_GO_KR_KEY 폴백
+ *  - LANDPRICE_URL / WATER_URL / KWATER_URL (선택) — 각 엔드포인트 베이스 오버라이드
  *
  * 공시지가 쿼리: pnu (19자리 필지고유번호, 필수) · year (선택, 미지정 시 최신)
  *  응답: { available, pricePerM2, year, pnu } | { available:false, reason }
@@ -17,6 +18,8 @@
 const BASE = 'https://apis.data.go.kr/1611000/nsdi/IndvdLandPriceService/attr/getIndvdLandPriceAttr'
 // WAMIS 광역·공업용수도 취수장 시설현황(한강홍수통제소). HTTP(8080)라 서버 프록시 필수(mixed-content).
 const WATER_BASE = 'http://www.wamis.go.kr:8080/wamis/openapi/wks/wks_wiplsaa_lst'
+// K-water 실시간 수도정보 — 취수장·정수장·가압장 코드(시설목록). 실시간 유량/수질의 기준 카탈로그.
+const KWATER_CODELIST = 'https://apis.data.go.kr/B500001/rwis/waterFlux/fcltylist/codelist'
 
 const num = (v) => {
   if (v == null) return undefined
@@ -119,6 +122,51 @@ async function waterHandler(_req, res) {
   }
 }
 
+// K-water 실시간 수도정보 — 시설목록(정수장·취수장·가압장)을 시도별로 집계.
+// 지역 수도 인프라 밀도 신호(냉각수 취수 여건 참고). 실데이터·서버 env 키.
+// 스키마 미확정(배포 검증): 시설명/구분/주소 필드명 변형을 방어적으로 픽.
+async function kwaterHandler(_req, res) {
+  const key = process.env.KWATER_KEY || process.env.DATA_GO_KR_KEY
+  if (!key) {
+    res.status(200).json({ available: false, reason: 'not_configured' })
+    return
+  }
+  try {
+    const base = (process.env.KWATER_URL || KWATER_CODELIST).replace(/\/$/, '')
+    const params = new URLSearchParams({ serviceKey: key, numOfRows: '3000', pageNo: '1', returnType: 'json' })
+    const body = await fetchJson(`${base}?${params.toString()}`, 9000)
+    if (body?._status) {
+      res.status(200).json({ available: false, reason: `upstream_${body._status}` })
+      return
+    }
+    const items = findItems(body)
+    if (!items || !items.length) {
+      res.status(200).json({ available: false, reason: 'no_data' })
+      return
+    }
+    const TYPE_RE = { 정수장: /정수/, 취수장: /취수/, 가압장: /가압/ }
+    const bySido = {}
+    for (const it of items) {
+      const sido = sidoOf(pick(it, ['addr', 'ADDR', 'locplc', 'locate', '위치', '주소', 'sido', '시도']))
+      if (!sido) continue
+      const gubun = String(pick(it, ['fac_gubun', 'facGubun', 'gubun', '구분', 'fclty_gbn', 'kind']) ?? '')
+      let type = null
+      for (const [t, re] of Object.entries(TYPE_RE)) if (re.test(gubun)) type = t
+      if (!bySido[sido]) bySido[sido] = { count: 0, 정수장: 0, 취수장: 0, 가압장: 0 }
+      bySido[sido].count += 1
+      if (type) bySido[sido][type] += 1
+    }
+    if (!Object.keys(bySido).length) {
+      // 지역 필드 미확인 시 전체 시설 수만이라도 정직하게 반환
+      res.status(200).json({ available: true, total: items.length, bySido: null, source: 'K-water 실시간 수도정보 시설목록(data.go.kr)' })
+      return
+    }
+    res.status(200).json({ available: true, bySido, total: items.length, source: 'K-water 실시간 수도정보(정수장·취수장·가압장) 시설목록' })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
+  }
+}
+
 // 개별공시지가(원/㎡) — PNU 기준
 async function landpriceHandler(req, res) {
   const key = process.env.DATA_GO_KR_KEY
@@ -177,6 +225,8 @@ async function landpriceHandler(req, res) {
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=604800, stale-while-revalidate=2592000')
-  if (String(req.query?.kind || '') === 'water') return waterHandler(req, res)
+  const kind = String(req.query?.kind || '')
+  if (kind === 'kwater') return kwaterHandler(req, res)
+  if (kind === 'water') return waterHandler(req, res)
   return landpriceHandler(req, res)
 }
