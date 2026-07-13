@@ -9,6 +9,7 @@ import FilterBar from './FilterBar.jsx'
 import ClimateBar from './ClimateBar.jsx'
 import Legend from './Legend.jsx'
 import ShareButton from './ShareButton.jsx'
+import AiAssistant from '../ai/AiAssistant.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import CompareTray from '../score/CompareTray.jsx'
@@ -1238,6 +1239,7 @@ export default function MapPage({ power = false }) {
           <ShareButton />
           <Legend />
         </div>
+        <AiAssistant />
       </div>
       <CompareTray
         items={compare}

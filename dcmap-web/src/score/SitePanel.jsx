@@ -18,6 +18,8 @@ import { scoreSite, haversineKm } from './engine.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
 import Term from '../components/Term.jsx'
+import { callAi, aiReasonLabel } from '../data/aiApi.js'
+import AiText from '../ai/AiText.jsx'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
 export default function SitePanel({ point, onClose, onSelectFacility, onAddCompare, inCompare }) {
@@ -43,12 +45,15 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const [copied, setCopied] = useState(false)
   // 로딩 상태 — 값 null이 '불러오는 중'인지 '데이터 없음'인지 구분(스피너 vs 미제공).
   const [loading, setLoading] = useState(true)
+  // AI 부지 브리프: null(미생성) | 'loading' | { text, model } | { error }
+  const [ai, setAi] = useState(null)
 
   useEffect(() => {
     let alive = true
     // 새 지점: 좌표 bbox로 수도권 잠정 판정(주소 확보 시 정정). 사용자 수동선택 플래그 초기화.
     zoneTouched.current = false
     setLoading(true)
+    setAi(null)
     setNonCapital(!isCapitalByPoint(point.lat, point.lng))
     setAddr(null)
     setWx(null)
@@ -183,6 +188,39 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     [point, mw, nonCapital, flood, disaster, pop, climateIdx, plantKm, landUse, grid, approval, landArea, officialPrice],
   )
   const dong = dongLabel(addr) // 표출값 동단위 근거지
+
+  // AI 부지 브리프 — 실제 확보된 값만 스냅샷으로 넘긴다(없으면 null → 프롬프트가 '미확보'로 처리).
+  const genAiReport = async () => {
+    setAi('loading')
+    const snap = {
+      좌표: `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}`,
+      주소: addr?.parcel || addr?.road || null,
+      시도: sido,
+      입지: nonCapital ? '비수도권' : '수도권',
+      필요용량MW: mw,
+      근거점수: `${r.knownScore}/${r.knownMax}`,
+      커버리지pct: r.knownMax ? Math.round((r.knownScore / r.knownMax) * 100) : null,
+      전력: {
+        계통공급여유MW: grid?.mw ?? null,
+        DC공급승인율pct: approval?.ratePct ?? null,
+        최근접변전소km: r.nearestSub?.km ?? null,
+        배전여유MW: headroom?.available ? (headroom.availableMw ?? null) : null,
+      },
+      토지: { 필지면적m2: landArea?.areaM2 ?? null, 용도지역: landUse?.uses?.[0] ?? null, 공시지가원per_m2: officialPrice?.pricePerM2 ?? null },
+      리스크: {
+        침수노출pct: flood?.available && flood.source === 'sgis' ? flood.exposurePct : null,
+        산사태노출pct: disaster?.available && disaster.source === 'sgis' ? disaster.exposurePct : null,
+        인구밀도per_km2: pop?.available ? (pop.density ?? null) : null,
+      },
+      네트워크점수10: r.axes.find((a) => a.key === 'network')?.known ?? null,
+      기상: { 기후등급: climateIdx?.level ?? null, 기후라벨: climateIdx?.label ?? null },
+      발전단지거리km: plantKm ?? null,
+      축상태: r.axes.map((a) => ({ 축: a.label, 확보: a.knownMax > 0 ? `${a.known}/${a.max}` : '대기' })),
+    }
+    const res = await callAi('report', { data: snap })
+    if (res?.available && res.text) setAi({ text: res.text, model: res.model })
+    else setAi({ error: res?.reason || 'error' })
+  }
   // 지역 전력 여건(한전 변전소 현황 + 전력 자급률 + 계통 공급여유) — 주소 시도 기준. 참고 맥락(부지별 여유량 아님).
   const regionPower = useMemo(
     () => (sido ? { sido, sub: substationForSido(sido), bal: POWER_BALANCE[sido] || null, grid, approval } : null),
@@ -1014,6 +1052,9 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           }
           return (
             <div className="card-actions">
+              <button type="button" className="btn ai" onClick={genAiReport} disabled={ai === 'loading'}>
+                {ai === 'loading' ? 'AI 분석 중…' : '✨ AI 부지 브리프'}
+              </button>
               <button type="button" className="btn primary" onClick={onCopy}>
                 {copied === 'report' ? '복사됨 ✓' : '간이 리포트 복사'}
               </button>
@@ -1061,8 +1102,34 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             </div>
           )
         })()}
+
+        {/* AI 부지 브리프 결과 — 실데이터 스냅샷 기반, 없는 값은 '미확보'로 명시(정직) */}
+        {ai === 'loading' && (
+          <div className="ai-card loading" role="status">
+            <span className="sp-spinner" aria-hidden /> AI가 확보된 근거만으로 브리프를 작성 중…
+          </div>
+        )}
+        {ai && ai !== 'loading' && ai.text && (
+          <div className="ai-card" role="region" aria-label="AI 부지 브리프">
+            <div className="ai-card-head">
+              <span className="ai-badge">✨ AI 브리프</span>
+              <span className="ai-src">공개 데이터 스냅샷 기반 · 없는 값은 미확보 표기</span>
+            </div>
+            <AiText text={ai.text} />
+            <button type="button" className="ai-regen" onClick={genAiReport}>다시 생성</button>
+          </div>
+        )}
+        {ai && ai !== 'loading' && ai.error && (
+          <div className="ai-card err" role="alert">
+            {aiReasonLabel(ai.error)}
+            {ai.error !== 'not_configured' && (
+              <button type="button" className="ai-regen" onClick={genAiReport}>다시 시도</button>
+            )}
+          </div>
+        )}
+
         <p className="geo-note">
-          간이 리포트 — 산출된 근거만 수치로, 대기 축은 명시. 정밀 스코어링 리포트는 추후 제공.
+          간이 리포트 — 산출된 근거만 수치로, 대기 축은 명시. AI 브리프는 확보된 스냅샷만 사용(없는 값 생성 안 함).
         </p>
       </article>
     </>
