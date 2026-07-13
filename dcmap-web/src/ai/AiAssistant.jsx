@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { callAi, aiReasonLabel } from '../data/aiApi.js'
+import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
 import { recommendSites, recoReasons } from '../score/recommend.js'
 import AiText from './AiText.jsx'
 
@@ -18,12 +18,29 @@ export default function AiAssistant() {
   const [thread, setThread] = useState([]) // {role:'user'|'ai', text} | {role:'ai', error}
   const bodyRef = useRef(null)
 
+  const scrollDown = () =>
+    requestAnimationFrame(() => {
+      if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight
+    })
+
   const ask = async (q) => {
     const query = (q ?? input).trim()
     if (!query || busy) return
     setInput('')
     setThread((t) => [...t, { role: 'user', text: query }])
     setBusy(true)
+    // 스트리밍 델타 → 항상 마지막(진행 중) AI 메시지를 갱신(busy 가드로 동시 요청 없음)
+    const onDelta = (partial) => {
+      setThread((t) => {
+        const nt = t.slice()
+        const last = nt[nt.length - 1]
+        const msg = { role: 'ai', text: partial, streaming: true }
+        if (last && last.role === 'ai' && last.streaming) nt[nt.length - 1] = msg
+        else nt.push(msg)
+        return nt
+      })
+      scrollDown()
+    }
     let res
     if (mode === 'search') {
       // 실제 추천 후보 풀만 전달(창작 방지). 토큰 절약 위해 핵심 필드만.
@@ -38,15 +55,23 @@ export default function AiAssistant() {
         기후: s.climateLabel,
         근거: recoReasons(s).slice(0, 3).join(' · '),
       }))
-      res = await callAi('search', { query, data: cands })
+      res = await callAiStream('search', { query, data: cands }, onDelta)
     } else {
-      res = await callAi('qa', { query })
+      res = await callAiStream('qa', { query }, onDelta)
     }
     setBusy(false)
-    setThread((t) => [...t, res?.available && res.text ? { role: 'ai', text: res.text } : { role: 'ai', error: res?.reason || 'error' }])
-    requestAnimationFrame(() => {
-      if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight
+    setThread((t) => {
+      const nt = t.slice()
+      const final =
+        res?.available && res.text
+          ? { role: 'ai', text: res.text, usage: res.usage }
+          : { role: 'ai', error: res?.reason || 'error' }
+      const last = nt[nt.length - 1]
+      if (last && last.role === 'ai' && last.streaming) nt[nt.length - 1] = final
+      else nt.push(final)
+      return nt
     })
+    scrollDown()
   }
 
   const switchMode = (m) => {
@@ -96,10 +121,12 @@ export default function AiAssistant() {
               ) : (
                 <div className="ai-msg ai" key={i}>
                   <AiText text={m.text} />
+                  {m.streaming && <span className="ai-cursor" aria-hidden />}
+                  {!m.streaming && m.usage && <div className="ai-usage">{usageLabel(m.usage)}</div>}
                 </div>
               ),
             )}
-            {busy && (
+            {busy && !(thread[thread.length - 1]?.role === 'ai' && thread[thread.length - 1]?.streaming) && (
               <div className="ai-msg ai">
                 <span className="sp-spinner" aria-hidden /> 생각 중…
               </div>

@@ -5355,6 +5355,39 @@ summary:focus-visible,
   border-color: color-mix(in srgb, #a78bfa 45%, var(--line));
 }
 
+/* 사용량·비용 푸터 — 응답 완료 시 토큰/추정비용 표기(투명성) */
+.ai-usage {
+  margin-top: 8px;
+  font-size: 10px;
+  color: var(--grey);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  opacity: 0.85;
+}
+
+/* 스트리밍 커서 — 델타 수신 중 깜박이는 블록 */
+.ai-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: #c4b5fd;
+  border-radius: 1px;
+  animation: ai-blink 1s steps(2, start) infinite;
+}
+@keyframes ai-blink {
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-cursor {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
 /* AI 텍스트 렌더 */
 .ai-text {
   font-size: var(--text-sm);
@@ -5577,4 +5610,65 @@ summary:focus-visible,
   border-color: color-mix(in srgb, #a78bfa 45%, var(--line));
   color: #c4b5fd;
   font-weight: 700;
+}
+
+/* AI 인사이트 자동초안 도구 — 인사이트 인덱스 상단(운영자용) */
+.ai-draft {
+  margin: 6px 0 22px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, #a78bfa 28%, var(--line));
+  border-radius: 14px;
+  background: linear-gradient(180deg, color-mix(in srgb, #a78bfa 7%, transparent), transparent 60%);
+}
+.ai-draft-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ai-draft-desc {
+  margin: 8px 0 12px;
+  font-size: var(--text-sm);
+  color: var(--grey);
+  line-height: 1.55;
+}
+.ai-draft-desc b {
+  color: color-mix(in srgb, var(--ink) 85%, #c4b5fd);
+}
+.ai-draft-input {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ai-draft-input input {
+  flex: 1 1 260px;
+  min-width: 0;
+  height: 38px;
+  padding: 0 13px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--navy-deep);
+  color: var(--ink);
+  font-size: var(--text-sm);
+}
+.ai-draft-input input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, #a78bfa 55%, var(--line));
+}
+.ai-draft-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.ai-draft-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.ai-draft-foot .ai-usage {
+  margin-top: 0;
+  margin-left: auto;
 }

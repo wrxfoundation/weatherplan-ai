@@ -16,8 +16,23 @@
 
 const API_URL = 'https://api.anthropic.com/v1/messages'
 const ANTHROPIC_VERSION = '2023-06-01'
-const MODEL_OPUS = 'claude-opus-4-8'
+// 브리핑·리포트·비교·초안은 Sonnet(충분·경제적), 단순 검색·Q&A는 Haiku.
+const MODEL_SONNET = 'claude-sonnet-5'
 const MODEL_HAIKU = 'claude-haiku-4-5-20251001'
+
+// 추정 비용용 단가(USD/1M 토큰). 캐시 읽기는 입력가의 ~0.1x. 참고치.
+const PRICE = {
+  'claude-sonnet-5': { in: 3, out: 15 },
+  'claude-haiku-4-5-20251001': { in: 1, out: 5 },
+}
+function estimateUsd(model, u) {
+  const p = PRICE[model]
+  if (!p || !u) return null
+  const cacheRead = u.cache_read_input_tokens || 0
+  const inFull = Math.max(0, (u.input_tokens || 0) - cacheRead)
+  const usd = (inFull * p.in + cacheRead * p.in * 0.1 + (u.output_tokens || 0) * p.out) / 1e6
+  return Math.round(usd * 1e5) / 1e5 // 5자리
+}
 
 // 반복되는 정적 규칙 — 프롬프트 캐시 대상(동적 값 절대 인터폴레이션 금지)
 const STATIC_SYSTEM = `당신은 'AI InfraMap'의 데이터센터 입지 인텔리전스 어시스턴트입니다. 한국 AI 데이터센터 부지 선정을 돕는 B2B 도구입니다.
@@ -45,12 +60,14 @@ const TASK_SYSTEM = {
     '작업: 지역(시도) 집계 데이터(JSON)를 받아 인프라 브리핑을 작성한다: 전력·수요·리스크·기상 관점 요약과 입지 시사점. 제공된 집계값만 사용. 300~450자.',
   compare:
     '작업: 후보지 2~3곳의 스냅샷 배열(JSON)을 받아 비교 평가한다. 구성: ① **후보별 한줄 강·약점**(제공된 축값 근거; 대기 항목은 "데이터 미확보"로 명시) ② **용도별 추천**(예: 대용량 즉시 착공형 / 장기 확장형 / 냉각 우선형 중 각 후보가 어디에 맞는지) ③ **최종 추천 1곳 + 핵심 근거 2~3개**. 없는 수치·순위 창작 금지. 400~600자.',
+  draft:
+    '작업: 운영자를 위한 인사이트 기사 **초안**을 작성한다(발행 전 검토용). 주제와 참고 데이터(JSON)를 받아 마크다운 초안을 쓴다: ### 소제목 2~4개, 데이터에 있는 수치만 인용(없으면 "확인 필요"로 표시), 마지막에 "출처·확인 필요 항목" 목록. 과장·미확인 단정 금지. 이것은 초안이며 사실 확인 후 발행해야 함을 전제로.',
 }
 
-const MODEL_FOR = { report: MODEL_OPUS, brief: MODEL_OPUS, compare: MODEL_OPUS, search: MODEL_HAIKU, qa: MODEL_HAIKU }
-const MAXTOK_FOR = { report: 1500, brief: 1200, compare: 1500, search: 1200, qa: 900 }
+const MODEL_FOR = { report: MODEL_SONNET, brief: MODEL_SONNET, compare: MODEL_SONNET, draft: MODEL_SONNET, search: MODEL_HAIKU, qa: MODEL_HAIKU }
+const MAXTOK_FOR = { report: 1500, brief: 1200, compare: 1500, draft: 2200, search: 1200, qa: 900 }
 
-const ALLOWED = new Set(['report', 'search', 'qa', 'brief', 'compare'])
+const ALLOWED = new Set(['report', 'search', 'qa', 'brief', 'compare', 'draft'])
 
 // 본문을 사람 프롬프트로 — 데이터는 JSON 코드블록으로 명확히 구분
 function buildUserContent(task, body) {
@@ -104,6 +121,11 @@ export async function aiHandler(req, res) {
     messages: [{ role: 'user', content: buildUserContent(task, body) }],
   }
 
+  // 스트리밍 요청(긴 리포트/브리핑/비교/초안 UX) — SSE로 델타 전송
+  if (body.stream === true) {
+    return streamAnswer(res, key, payload)
+  }
+
   try {
     const ctrl = new AbortController()
     const t = setTimeout(() => ctrl.abort(), 27000) // vercel maxDuration 30s 이내
@@ -139,16 +161,94 @@ export async function aiHandler(req, res) {
           .join('')
           .trim()
       : ''
+    const model = json?.model || MODEL_FOR[task]
     res.setHeader('Cache-Control', 'no-store')
     res.status(200).json({
       available: true,
       task,
-      model: json?.model || MODEL_FOR[task],
+      model,
       text: text || '(응답이 비어 있습니다)',
-      usage: json?.usage ? { in: json.usage.input_tokens, out: json.usage.output_tokens, cacheRead: json.usage.cache_read_input_tokens } : null,
+      usage: json?.usage ? { in: json.usage.input_tokens, out: json.usage.output_tokens, cacheRead: json.usage.cache_read_input_tokens, usd: estimateUsd(model, json.usage) } : null,
     })
   } catch (e) {
     const reason = e?.name === 'AbortError' ? 'timeout' : 'proxy_error'
     res.status(200).json({ available: false, reason })
+  }
+}
+
+// 스트리밍 — Anthropic SSE를 읽어 우리 SSE(data: {delta|done|error})로 재전송
+async function streamAnswer(res, key, payload) {
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8')
+  res.setHeader('Cache-Control', 'no-store')
+  res.setHeader('Connection', 'keep-alive')
+  if (typeof res.flushHeaders === 'function') res.flushHeaders()
+  const send = (obj) => {
+    try {
+      res.write(`data: ${JSON.stringify(obj)}\n\n`)
+    } catch {
+      /* client gone */
+    }
+  }
+  try {
+    const ctrl = new AbortController()
+    const t = setTimeout(() => ctrl.abort(), 28000)
+    const r = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': ANTHROPIC_VERSION },
+      body: JSON.stringify({ ...payload, stream: true }),
+      signal: ctrl.signal,
+    })
+    if (!r.ok || !r.body) {
+      clearTimeout(t)
+      send({ error: `upstream_${r.status}` })
+      res.end()
+      return
+    }
+    const reader = r.body.getReader()
+    const dec = new TextDecoder()
+    let buf = ''
+    let usage = null
+    let model = payload.model
+    let refusal = false
+    for (;;) {
+      const { value, done } = await reader.read()
+      if (done) break
+      buf += dec.decode(value, { stream: true })
+      let idx
+      while ((idx = buf.indexOf('\n\n')) >= 0) {
+        const block = buf.slice(0, idx)
+        buf = buf.slice(idx + 2)
+        const dataLine = block.split('\n').find((l) => l.startsWith('data:'))
+        if (!dataLine) continue
+        const raw = dataLine.slice(5).trim()
+        if (!raw || raw === '[DONE]') continue
+        let ev
+        try {
+          ev = JSON.parse(raw)
+        } catch {
+          continue
+        }
+        if (ev.type === 'message_start') {
+          model = ev.message?.model || model
+          usage = ev.message?.usage || usage
+        } else if (ev.type === 'content_block_delta' && ev.delta?.type === 'text_delta') {
+          send({ delta: ev.delta.text })
+        } else if (ev.type === 'message_delta') {
+          if (ev.delta?.stop_reason === 'refusal') refusal = true
+          if (ev.usage) usage = { ...(usage || {}), ...ev.usage }
+        }
+      }
+    }
+    clearTimeout(t)
+    send({
+      done: true,
+      refusal,
+      model,
+      usage: usage ? { in: usage.input_tokens, out: usage.output_tokens, cacheRead: usage.cache_read_input_tokens, usd: estimateUsd(model, usage) } : null,
+    })
+    res.end()
+  } catch (e) {
+    send({ error: e?.name === 'AbortError' ? 'timeout' : 'proxy_error' })
+    res.end()
   }
 }

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { INSIGHTS } from '../content/insights_meta.js'
+import AiDraftTool from '../ai/AiDraftTool.jsx'
 
 const TITLE = '인사이트 — AI InfraMap'
 const DESC = '데이터센터 입지·전력·민원·기상을 둘러싼 논쟁을 공개 데이터로 정리하는 AI InfraMap 인사이트.'
@@ -35,6 +36,8 @@ export default function InsightsIndexPage() {
         <div className="eyebrow">INSIGHTS</div>
         <h1>인사이트</h1>
         <p className="sub">{DESC}</p>
+
+        <AiDraftTool />
 
         <div className="seg-tabs" role="tablist" aria-label="인사이트 주제 분류">
           <button type="button" role="tab" className={`seg-tab ${cat === '전체' ? 'on' : ''}`} onClick={() => setCat('전체')} aria-selected={cat === '전체'}>

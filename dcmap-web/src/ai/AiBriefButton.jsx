@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { callAi, aiReasonLabel } from '../data/aiApi.js'
+import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
 import AiText from './AiText.jsx'
 
 /* 재사용 AI 브리핑 버튼 — data(집계 실데이터)만 넘겨 서술형 브리핑 생성. 없는 값은 프롬프트가 '미확보' 처리. */
@@ -7,8 +7,8 @@ export default function AiBriefButton({ data, query, label = '✨ AI 지역 브�
   const [ai, setAi] = useState(null)
   const gen = async () => {
     setAi('loading')
-    const res = await callAi('brief', { data, query })
-    if (res?.available && res.text) setAi({ text: res.text })
+    const res = await callAiStream('brief', { data, query }, (partial) => setAi({ text: partial, streaming: true }))
+    if (res?.available && res.text) setAi({ text: res.text, usage: res.usage })
     else setAi({ error: res?.reason || 'error' })
   }
   return (
@@ -28,7 +28,13 @@ export default function AiBriefButton({ data, query, label = '✨ AI 지역 브�
             <span className="ai-src">공개 집계 데이터 기반 · 없는 값은 미확보 표기</span>
           </div>
           <AiText text={ai.text} />
-          <button type="button" className="ai-regen" onClick={gen}>다시 생성</button>
+          {ai.streaming && <span className="ai-cursor" aria-hidden />}
+          {!ai.streaming && (
+            <>
+              {ai.usage && <div className="ai-usage">{usageLabel(ai.usage)}</div>}
+              <button type="button" className="ai-regen" onClick={gen}>다시 생성</button>
+            </>
+          )}
         </div>
       )}
       {ai && ai !== 'loading' && ai.error && (
