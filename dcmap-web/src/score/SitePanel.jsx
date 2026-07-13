@@ -13,6 +13,7 @@ import { dcApprovalForSido, approvalLabel } from '../data/gridAssessment.js'
 import { nearestIndustrialComplex } from '../data/industrialComplexes.js'
 import { nearestRenewable } from '../data/renewablePlants.js'
 import { nearestWaterSource } from '../data/waterSources.js'
+import { nearestCluster } from '../data/semiClusters.js'
 import { scoreSite, haversineKm } from './engine.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
@@ -691,6 +692,20 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 {competition.n10 >= 5 ? '과밀 — 전력·부지 경쟁 유의' : competition.n10 >= 1 ? '집적 — 인프라 성숙' : '한산'}
               </span>
               <div className="cell-basis">기존/계획 DC 집적. 집적=광케이블·전력·인력 성숙(+), 과밀=전력·부지 경쟁(−). AI InfraMap 시설 시드 기준</div>
+              {(() => {
+                const c = nearestCluster(point.lat, point.lng)
+                if (!c || c.km > 40) return null // 40km 이내만 경쟁 신호
+                const heavy = (c.powerGw || 0) >= 5
+                return (
+                  <div className="cell-basis" style={{ marginTop: 5 }}>
+                    최근접 반도체 클러스터 <strong>{c.name}</strong>({c.operator}·{c.status}) {c.km.toFixed(0)}km
+                    {c.powerGw ? ` · 전력 ${c.powerGw}GW` : ''}{c.waterKtd ? ` · 용수 ${c.waterKtd.toLocaleString()}천t/일` : ''}
+                    <span className={`badge ${heavy && c.km <= 25 ? 'critical' : 'verify'}`} style={{ marginLeft: 6 }}>
+                      {heavy && c.km <= 25 ? '전력·용수 경쟁 유의' : '대수요처 인접'}
+                    </span>
+                  </div>
+                )
+              })()}
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
