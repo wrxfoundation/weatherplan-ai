@@ -250,8 +250,8 @@ a {
   left: 12px;
   z-index: 1000;
   display: block; /* 2줄(검색컨트롤 / 레이어) 블록 스택 — 각 줄이 예약폭을 채우고 넘치면 그 줄만 스크롤 */
-  /* 우측 상단 기후 바(320px)와 겹치지 않게 그 영역을 예약 */
-  max-width: calc(100% - var(--panel-width) - 344px);
+  /* 우측 상단 기후 바(width 320 + right offset panel+16)와 겹치지 않게 예약: panel + 16 + 320 + 12(좌여백) + 16(간격) */
+  max-width: calc(100% - var(--panel-width) - 364px);
 }
 
 /* 각 줄 — 한 줄 유지, 넘치면 그 줄만 가로 스크롤(줄 수는 항상 2로 고정) */
