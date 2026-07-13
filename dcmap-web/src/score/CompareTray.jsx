@@ -2,7 +2,7 @@
  * 스냅샷은 SitePanel에서 데이터 로드 후 '비교에 추가' 시점의 값으로 고정된다.
  * 근거점수 최고 후보에 '추천' 배지, 각 행에서 우수값을 강조. */
 import { useEffect, useState } from 'react'
-import { callAi, aiReasonLabel } from '../data/aiApi.js'
+import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
 import AiText from '../ai/AiText.jsx'
 
 const TONE = { good: 'tone-good', warn: 'tone-warn', bad: 'tone-bad' }
@@ -229,8 +229,8 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
       인구밀도: c.density ?? null,
       용도지역: c.zoneUse ?? null,
     }))
-    const res = await callAi('compare', { data })
-    if (res?.available && res.text) setAi({ text: res.text })
+    const res = await callAiStream('compare', { data }, (partial) => setAi({ text: partial, streaming: true }))
+    if (res?.available && res.text) setAi({ text: res.text, usage: res.usage })
     else setAi({ error: res?.reason || 'error' })
   }
 
@@ -299,6 +299,8 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
             <span className="ai-src">스냅샷 확보값 기반 · 없는 값은 미확보</span>
           </div>
           <AiText text={ai.text} />
+          {ai.streaming && <span className="ai-cursor" aria-hidden />}
+          {!ai.streaming && ai.usage && <div className="ai-usage">{usageLabel(ai.usage)}</div>}
         </div>
       )}
       {open && ai && ai !== 'loading' && ai.error && (

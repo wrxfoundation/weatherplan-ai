@@ -18,7 +18,7 @@ import { scoreSite, haversineKm } from './engine.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
 import Term from '../components/Term.jsx'
-import { callAi, aiReasonLabel } from '../data/aiApi.js'
+import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
 import AiText from '../ai/AiText.jsx'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
@@ -217,8 +217,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
       발전단지거리km: plantKm ?? null,
       축상태: r.axes.map((a) => ({ 축: a.label, 확보: a.knownMax > 0 ? `${a.known}/${a.max}` : '대기' })),
     }
-    const res = await callAi('report', { data: snap })
-    if (res?.available && res.text) setAi({ text: res.text, model: res.model })
+    const res = await callAiStream('report', { data: snap }, (partial) => setAi({ text: partial, streaming: true }))
+    if (res?.available && res.text) setAi({ text: res.text, usage: res.usage })
     else setAi({ error: res?.reason || 'error' })
   }
   // 지역 전력 여건(한전 변전소 현황 + 전력 자급률 + 계통 공급여유) — 주소 시도 기준. 참고 맥락(부지별 여유량 아님).
@@ -1116,7 +1116,13 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               <span className="ai-src">공개 데이터 스냅샷 기반 · 없는 값은 미확보 표기</span>
             </div>
             <AiText text={ai.text} />
-            <button type="button" className="ai-regen" onClick={genAiReport}>다시 생성</button>
+            {ai.streaming && <span className="ai-cursor" aria-hidden />}
+            {!ai.streaming && (
+              <>
+                {ai.usage && <div className="ai-usage">{usageLabel(ai.usage)}</div>}
+                <button type="button" className="ai-regen" onClick={genAiReport}>다시 생성</button>
+              </>
+            )}
           </div>
         )}
         {ai && ai !== 'loading' && ai.error && (
