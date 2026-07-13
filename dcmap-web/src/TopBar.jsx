@@ -226,6 +226,17 @@ export default function TopBar() {
         <NavLink to="/glossary" data-nav="knowledge" className={({ isActive }) => (isActive ? 'active' : '')}>
           용어집
         </NavLink>
+        <a
+          href="mailto:kwangdol@gmail.com?subject=AI%20InfraMap%20문의"
+          className="nav-contact"
+          title="문의사항 접수: kwangdol@gmail.com"
+        >
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M2 4h12v8H2z M2 4.5l6 4 6-4" />
+          </svg>
+          <span className="contact-full">kwangdol@gmail.com</span>
+          <span className="contact-short">문의</span>
+        </a>
       </nav>
 
     </header>

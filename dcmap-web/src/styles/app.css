@@ -204,6 +204,28 @@ a {
   box-shadow: 0 0 8px var(--nav-tone);
 }
 
+/* 문의 접수 메일 — 모든 페이지 상단에 상시 노출. 넓은 화면은 주소 전체, 좁으면 '문의'로 축약. */
+.topbar nav a.nav-contact {
+  --nav-tone: var(--accent);
+  color: var(--grey);
+  white-space: nowrap;
+}
+.topbar nav a.nav-contact:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.nav-contact .contact-short {
+  display: none;
+}
+@media (max-width: 1180px) {
+  .nav-contact .contact-full {
+    display: none;
+  }
+  .nav-contact .contact-short {
+    display: inline;
+  }
+}
+
 .report-btn {
   white-space: nowrap;
 }
@@ -563,7 +585,7 @@ a {
   align-items: center;
   gap: 2px;
   padding: 3px;
-  background: var(--glass-surface);
+  background: var(--map-control-bg);
   backdrop-filter: var(--glass-backdrop);
   border: 1px solid var(--glass-border);
   border-radius: 999px;
@@ -654,7 +676,7 @@ a {
 }
 
 .filterbar select {
-  background-color: var(--glass-surface-strong);
+  background-color: var(--map-control-bg);
   backdrop-filter: var(--glass-backdrop);
   color: var(--text);
   border: 1px solid var(--glass-border);
@@ -698,7 +720,7 @@ a {
   padding: 0 13px;
   border: 1px solid var(--glass-border);
   border-radius: 999px;
-  background: var(--glass-surface-strong);
+  background: var(--map-control-bg);
   backdrop-filter: var(--glass-backdrop);
   box-shadow: var(--glass-specular-soft), var(--elev-1);
   font-size: var(--text-body);
