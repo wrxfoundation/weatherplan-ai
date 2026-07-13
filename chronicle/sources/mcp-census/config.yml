@@ -1,0 +1,20 @@
+# MCP 생태계 센서스 — 스펙 v4 #10 (mcp-census), API 레코드형. "에이전트 웹 관측소" 3부작.
+#
+# 공개 MCP 레지스트리에서 등록된 MCP 서버 목록을 주간 관측한다. 새 서버 등록 =
+# 생성, 버전 변경 = 필드 이벤트, 서버 소멸(목록에서 사라짐) = 삭제. 에이전트
+# 도구 생태계가 언제 어떻게 자랐나를 우리가 소유한다 — 레지스트리 자신은
+# 이 이력을 남기지 않는다. #16(동의)·#19(커머스)와 같은 관측소 축.
+#
+# 응답 형태가 아직 유동적이라 방어적으로 파싱(첫 실행이 형태를 자백). 봇차단·
+# 형태 변경 시 endpoint를 config에서 교체.
+id: mcp-census
+family: api-records
+title: MCP 생태계 센서스 — 등록 서버·버전
+
+endpoint: https://registry.modelcontextprotocol.io/v0/servers
+user_agent: "chronicle-mcp-census/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
+page_size: 100
+rate_limit_ms: 200
+
+# 로드맵(Phase 2): 주요 MCP 서버 리포의 스키마(tools/inputSchema) 해시 diff —
+#   GitHub raw로 스키마 파일 추적, 조용한 스키마 변경 포착.
