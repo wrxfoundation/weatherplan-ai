@@ -217,14 +217,18 @@ export default function StatsPage() {
           <div className="chart-title">
             집단에너지(열병합) 발전 설비 — {CHP_STATS.count}곳 · {CHP_STATS.totalMw.toLocaleString()}MW
           </div>
-          <p className="chart-note">
-            열병합·복합화력 {CHP_STATS.count}곳의 발전용량 합계 {CHP_STATS.totalMw.toLocaleString()}MW 중{' '}
-            <strong>
-              {CHP_STATS.new2025Count}곳({CHP_STATS.new2025Mw.toLocaleString()}MW)이 2025년 공급 개시
-            </strong>{' '}
-            — 신도시·산단 열수요와 붙은 LNG-열병합 신설 붐이 뚜렷하다. 데이터센터 전원·계통 맥락의 공급측 단면(집단에너지는
-            도심·산단 근접 분산전원).
-          </p>
+          <div className="note-stack">
+            <p className="chart-note key">
+              열병합·복합화력 {CHP_STATS.count}곳의 발전용량 합계 {CHP_STATS.totalMw.toLocaleString()}MW 중{' '}
+              <strong>
+                {CHP_STATS.new2025Count}곳({CHP_STATS.new2025Mw.toLocaleString()}MW)이 2025년 공급 개시
+              </strong>{' '}
+              — 신도시·산단 열수요와 붙은 LNG-열병합 신설 붐이 뚜렷하다.
+            </p>
+            <p className="chart-note">
+              데이터센터 전원·계통 맥락의 공급측 단면(집단에너지는 도심·산단 근접 분산전원).
+            </p>
+          </div>
           <HBars
             title="발전사별 발전용량 상위 (MW)"
             bars={CHP_BY_OP.slice(0, 15).map((o) => ({ label: o.op, value: o.mw }))}
@@ -243,12 +247,17 @@ export default function StatsPage() {
             2025년 신규 발전소 설치 — {NEW_PLANTS_2025_TOTALS.totalMw.toLocaleString()}MW ·{' '}
             {NEW_PLANTS_2025_TOTALS.totalCount.toLocaleString()}개소 · 비수도권 {NEW_PLANTS_2025_TOTALS.nonCapitalPct}%
           </div>
-          <p className="chart-note">
-            2025년 한 해 신규 설치된 발전소 <strong>{NEW_PLANTS_2025_TOTALS.totalCount.toLocaleString()}개소</strong>,
-            설비용량 합계 <strong>{NEW_PLANTS_2025_TOTALS.totalMw.toLocaleString()}MW</strong> 중{' '}
-            <strong>{NEW_PLANTS_2025_TOTALS.nonCapitalPct}%(용량 기준)가 비수도권</strong> — 경북·충남·전남·경남·전북의
-            재생E 벨트가 신규 공급을 주도한다. 허가 파이프라인 비수도권 86.5%와 정확히 정합하는 실제 설치 실적.
-          </p>
+          <div className="note-stack">
+            <p className="chart-note key">
+              2025년 한 해 신규 설치된 발전소 <strong>{NEW_PLANTS_2025_TOTALS.totalCount.toLocaleString()}개소</strong>,
+              설비용량 합계 <strong>{NEW_PLANTS_2025_TOTALS.totalMw.toLocaleString()}MW</strong> 중{' '}
+              <strong>{NEW_PLANTS_2025_TOTALS.nonCapitalPct}%(용량 기준)가 비수도권</strong> — 경북·충남·전남·경남·전북의
+              재생E 벨트가 신규 공급을 주도한다.
+            </p>
+            <p className="chart-note">
+              허가 파이프라인 비수도권 86.5%와 정확히 정합하는 실제 설치 실적.
+            </p>
+          </div>
           <HBars
             title="시도별 2025 신규 설비용량 상위 (MW)"
             bars={NEW_PLANTS_2025.slice(0, 12).map((r) => ({ label: r.sido, value: Math.round(r.capacityKw / 1000) }))}
@@ -261,12 +270,16 @@ export default function StatsPage() {
           <div className="chart-title">
             원전 설비용량 — 5본부 {NUCLEAR_FLEET.operatingUnits}호기 운영 · {NUCLEAR_FLEET.operatingMw.toLocaleString()}MW
           </div>
-          <p className="chart-note">
-            상업운전 중인 원전 {NUCLEAR_FLEET.operatingUnits}호기 합계{' '}
-            <strong>{(NUCLEAR_FLEET.operatingMw / 1000).toFixed(1)}GW</strong>. 건설 중{' '}
-            {NUCLEAR_FLEET.buildingUnits}호기({NUCLEAR_FLEET.buildingMw.toLocaleString()}MW, 새울 3·4/신한울 3·4)가 더해진다 —
-            24/7 무탄소 기저부하로 AIDC 입지의 계통 근접성 맥락. 원전은 특정 DC와 전원 매칭되지 않는 풀 계통 공급.
-          </p>
+          <div className="note-stack">
+            <p className="chart-note key">
+              상업운전 중인 원전 {NUCLEAR_FLEET.operatingUnits}호기 합계{' '}
+              <strong>{(NUCLEAR_FLEET.operatingMw / 1000).toFixed(1)}GW</strong>. 건설 중{' '}
+              {NUCLEAR_FLEET.buildingUnits}호기({NUCLEAR_FLEET.buildingMw.toLocaleString()}MW, 새울 3·4/신한울 3·4)가 더해진다.
+            </p>
+            <p className="chart-note">
+              24/7 무탄소 기저부하로 AIDC 입지의 계통 근접성 맥락. 원전은 특정 DC와 전원 매칭되지 않는 풀 계통 공급.
+            </p>
+          </div>
           <HBars
             title="원자력본부별 운영 설비용량 (MW)"
             bars={NUCLEAR_FLEET.rows.map((r) => ({ label: `${r.base} (${r.operatingUnits}호기)`, value: r.operatingMw }))}

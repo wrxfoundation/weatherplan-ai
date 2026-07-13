@@ -25,12 +25,14 @@
   --green: #45d483; /* 운영 */
   --orange: #f59a3c; /* 건설 */
   --amber: var(--orange); /* 하위호환 별칭 (음수 지가 등) */
-  --violet: #a78bfa; /* 지식·가이드 GNB 섹션 톤 */
+  --violet: #a78bfa; /* (구)지식·가이드 톤 — 현재 knowledge는 골드로 전환, 별칭 보존 */
+  --gold: #e3b23c; /* 지식·가이드(인사이트·로드맵·용어집) 골드 톤앤매너 */
+  --gold-deep: #9c7418; /* 골드 그라데이션 하단·보더 톤 */
 
   /* GNB 섹션 톤 — 탐색(맵)=cyan / 도구·데이터=green / 지식·가이드=violet */
   --nav-explore: #35d5ee;
   --nav-data: var(--green);
-  --nav-knowledge: var(--violet);
+  --nav-knowledge: var(--gold);
 
   /* 상태색: 운영 green / 건설 orange / 계획 slate outline */
   --status-operating: var(--green);
@@ -123,6 +125,6 @@
   --accent-deep: color-mix(in srgb, var(--green) 55%, #062418);
 }
 :root[data-section='knowledge'] {
-  --accent: var(--violet);
-  --accent-deep: color-mix(in srgb, var(--violet) 55%, #171232);
+  --accent: var(--gold);
+  --accent-deep: color-mix(in srgb, var(--gold-deep) 82%, #2a1d04);
 }

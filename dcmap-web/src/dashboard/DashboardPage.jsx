@@ -534,11 +534,17 @@ export default function DashboardPage() {
                   </div>
                 ))}
             </div>
-            <p className="chart-note">
-              분산에너지 특별법 <strong>전력계통영향평가</strong> 1차 기술검토(한전) — DC 신·증설 신청 대비 기술적 <strong>전력공급 가능/불가 용량(MW)</strong>. 승인율=가능/(가능+불가).
-              <strong>수도권 {DC_ASSESSMENT_ROLLUP.수도권.ratePct}% vs 비수도권 {DC_ASSESSMENT_ROLLUP.비수도권.ratePct}%</strong> — 수도권 계통 병목이 실측으로 드러남(경기·인천 신청의 절반 이상이 공급불가). 충북·경북·경남·대구·광주는 100% 가능.
-              신청 시점 누적 심사치이며 부지별 확정은 개별 1차 기술검토(주소 기준). 출처: <strong>{GRID_ASSESSMENT_META.source}</strong>.
-            </p>
+            <div className="note-stack">
+              <p className="chart-note">
+                분산에너지 특별법 <strong>전력계통영향평가</strong> 1차 기술검토(한전) — DC 신·증설 신청 대비 기술적 <strong>전력공급 가능/불가 용량(MW)</strong>. 승인율=가능/(가능+불가).
+              </p>
+              <p className="chart-note key">
+                <strong>수도권 {DC_ASSESSMENT_ROLLUP.수도권.ratePct}% vs 비수도권 {DC_ASSESSMENT_ROLLUP.비수도권.ratePct}%</strong> — 수도권 계통 병목이 실측으로 드러남(경기·인천 신청의 절반 이상이 공급불가). 충북·경북·경남·대구·광주는 100% 가능.
+              </p>
+              <p className="chart-note">
+                신청 시점 누적 심사치이며 부지별 확정은 개별 1차 기술검토(주소 기준). 출처: <strong>{GRID_ASSESSMENT_META.source}</strong>.
+              </p>
+            </div>
           </section>
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
             <div className="chart-title">지역 계통 공급여유 — 한전 연계가능용량 (시도별, 2027 전망)</div>
@@ -572,11 +578,17 @@ export default function DashboardPage() {
                 </div>
               )
             })()}
-            <p className="chart-note">
-              한전 <strong>연계가능용량(공급여유)</strong> 시도 총량(2027 전망). DC 승인율(신청 대비)과 달리 <strong>잔여 연결 여력(MW)</strong>을 나타냄.
-              <strong>인천 5MW(계통 포화)</strong>는 자급률 165%(발전 잉여)와 정반대 — 발전 잉여 ≠ 수용 여유. 경북·충남·전남은 여유·승인율 모두 우수.
-              시도 총량이라 시군구 편차 크며 부지별 확정은 한전 주소검색. 출처: <strong>{GRID_HEADROOM_META.source}</strong>.
-            </p>
+            <div className="note-stack">
+              <p className="chart-note">
+                한전 <strong>연계가능용량(공급여유)</strong> 시도 총량(2027 전망). DC 승인율(신청 대비)과 달리 <strong>잔여 연결 여력(MW)</strong>을 나타냄.
+              </p>
+              <p className="chart-note key">
+                <strong>인천 5MW(계통 포화)</strong>는 자급률 165%(발전 잉여)와 정반대 — 발전 잉여 ≠ 수용 여유. 경북·충남·전남은 여유·승인율 모두 우수.
+              </p>
+              <p className="chart-note">
+                시도 총량이라 시군구 편차 크며 부지별 확정은 한전 주소검색. 출처: <strong>{GRID_HEADROOM_META.source}</strong>.
+              </p>
+            </div>
           </section>
 
           {/* 지역별 송변전 인프라 — 한전 변전소 현황(154kV+). 설비 밀도(여유량 아님). 계통 수용력 그룹에 배치 */}
@@ -606,10 +618,14 @@ export default function DashboardPage() {
                 )
               })}
             </div>
-            <p className="chart-note">
-              한전 지역본부 단위 변전소 <strong>설비 밀도</strong>(154kV·345kV) — 인프라 규모 지표이며 <strong>부지별 접속 여유용량과는 다름</strong>.
-              여유는 <a href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드</a>/한전 접속가능용량 조회. 출처: <strong>{SUBSTATION_META.source}</strong>.
-            </p>
+            <div className="note-stack">
+              <p className="chart-note key">
+                한전 지역본부 단위 변전소 <strong>설비 밀도</strong>(154kV·345kV) — 인프라 규모 지표이며 <strong>부지별 접속 여유용량과는 다름</strong>.
+              </p>
+              <p className="chart-note">
+                여유는 <a href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드</a>/한전 접속가능용량 조회. 출처: <strong>{SUBSTATION_META.source}</strong>.
+              </p>
+            </div>
           </section>
           <section className="calc-card">
             <div className="chart-title">발전설비 현황 — EPSIS 전력시장 등록설비 (연료원/구분별)</div>
@@ -758,11 +774,15 @@ export default function DashboardPage() {
                 )
               })}
             </div>
-            <p className="chart-note">
-              DC 운영비의 큰 축이 전력비 — <strong>냉방 수요가 겹치는 7~8월 구입단가가 최저월 대비 {Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)}% 급등</strong>(열 관리 설계·PUE가 원가에 직결).
-              직접 재생조달(PPA)은 아직 {PURCHASE_SUMMARY.ppaSharePct}%로 RE100 조달 초기 단계. 전국 도매 구입단가(한전)로 개별 계약·지역 차등은 별개.
-              출처: <strong>{POWER_MARKET_META.source}</strong>.
-            </p>
+            <div className="note-stack">
+              <p className="chart-note key">
+                DC 운영비의 큰 축이 전력비 — <strong>냉방 수요가 겹치는 7~8월 구입단가가 최저월 대비 {Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)}% 급등</strong>(열 관리 설계·PUE가 원가에 직결).
+              </p>
+              <p className="chart-note">
+                직접 재생조달(PPA)은 아직 {PURCHASE_SUMMARY.ppaSharePct}%로 RE100 조달 초기 단계. 전국 도매 구입단가(한전)로 개별 계약·지역 차등은 별개.
+              </p>
+              <p className="chart-note">출처: <strong>{POWER_MARKET_META.source}</strong>.</p>
+            </div>
           </section>
 
           {/* 전국 전력수급 — 월별 공급예비율. 여름 계통 여력 최소 */}
@@ -793,11 +813,15 @@ export default function DashboardPage() {
                 )
               })}
             </div>
-            <p className="chart-note">
-              공급예비율이 낮을수록 계통 여력이 얇다 — <strong>DC 냉방부하가 최대인 여름(&apos;{RESERVE_MIN.ym})에 예비율 {RESERVE_MIN.pct}%로 최저</strong>.
-              대형 신규부하 접속·수급 리스크가 여름에 집중된다는 신호(원가 급등과 같은 방향). 전국 지표로 지역 계통 제약과는 별개.
-              출처: <strong>{POWER_RESERVE_META.source}</strong>.
-            </p>
+            <div className="note-stack">
+              <p className="chart-note key">
+                공급예비율이 낮을수록 계통 여력이 얇다 — <strong>DC 냉방부하가 최대인 여름(&apos;{RESERVE_MIN.ym})에 예비율 {RESERVE_MIN.pct}%로 최저</strong>.
+              </p>
+              <p className="chart-note">
+                대형 신규부하 접속·수급 리스크가 여름에 집중된다는 신호(원가 급등과 같은 방향). 전국 지표로 지역 계통 제약과는 별개.
+              </p>
+              <p className="chart-note">출처: <strong>{POWER_RESERVE_META.source}</strong>.</p>
+            </div>
           </section>
 
           <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
