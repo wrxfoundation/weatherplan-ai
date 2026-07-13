@@ -6,6 +6,7 @@ export const LAND_PRICE = lp
 export const LAND_PRICE_PERIOD = `${lp.period.slice(0, 4)}.${lp.period.slice(4)}`
 
 export function landPriceFor(facility) {
+  if (!facility) return null
   const key = facility.sigungu ? `${facility.sido} ${facility.sigungu}` : facility.sido
   if (lp.entries[key] != null) return { value: lp.entries[key], scope: key, period: LAND_PRICE_PERIOD }
   if (lp.entries[facility.sido] != null)

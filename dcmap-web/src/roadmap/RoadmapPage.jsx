@@ -202,12 +202,111 @@ function ProcessFrame() {
   )
 }
 
+/* ---------- 완공 후 운영관리 모델 ---------- */
+// 준공(P14) 이후 상시 운영 단계(P15)를 표준 운영 프레임워크로 전개.
+// 근거: Uptime Institute Tier·TIA-942 · ASHRAE TC9.9 · The Green Grid(PUE/WUE) · RE100 — 공개 산업표준.
+
+// 운영 프로세스 — 상시 순환하는 6개 활동(NOC/DCIM 중심)
+const OPS_PHASES = [
+  { k: '상시 감시', d: 'NOC·DCIM 24/7 실시간 통합 감시 — 전력·온습도·트래픽·경보를 단일 대시보드로. 이상 징후를 임계 전에 포착.' },
+  { k: '예방정비(PM)', d: 'UPS·배터리·비상발전기·냉각기 정기 점검·교체 주기 관리. 고장을 사후가 아닌 선제로 차단.' },
+  { k: '인시던트 대응', d: '정전·과열·누수·침입·화재를 등급별 대응 절차(runbook)와 에스컬레이션으로. 복구시간(MTTR) 단축이 목표.' },
+  { k: '용량·에너지 최적화', d: '부하율·랙 전력밀도·PUE 추이 분석 → 냉각·전력 배분 튜닝. 증설 시점을 데이터로 판단.' },
+  { k: '지속가능성 관리', d: 'RE100/CFE 조달·폐열 재활용·용수 재이용·탄소 지표 관리. 규제·고객 요건 충족.' },
+  { k: '감사·규정준수', d: 'SLA 정산·정보보호(ISMS)·안전점검·이해관계자 보고. 신뢰도를 문서로 입증.' },
+]
+
+// 중점 관리 도메인 — 완공 후 무엇을 지켜보는가(축·관리 포인트·핵심지표)
+const OPS_DOMAINS = [
+  { axis: '전력', title: '전력 안정성·이중화', points: ['무정전 이중화(N+1·2N)·UPS·비상발전', '수전 안정도·전력품질(역률·THD)', 'EMS 실시간 부하 관리'], kpi: '가동률(Uptime) · 정전 0' },
+  { axis: '냉각', title: '냉각·열 관리', points: ['액체냉각 순환·칠러·항온항습', '핫/콜드 아일 격리·열 재순환 차단', '프리쿨링(외기) 활용률 극대화'], kpi: 'PUE · 온습도(ASHRAE 18~27℃)' },
+  { axis: '용수', title: '용수·수자원', points: ['냉각수 순환·수처리·재이용', '수질·스케일·레지오넬라 관리'], kpi: 'WUE(용수사용효율)' },
+  { axis: '네트워크', title: '네트워크·연결성', points: ['백본 이중 경로·다중 리전 DR', '지연시간·대역폭 SLA 관리'], kpi: '네트워크 가용성 · 이중화율' },
+  { axis: '보안·안전', title: '물리보안·소방·사이버', points: ['출입통제·CCTV·경계 보안', '가스소화·VESDA 조기 화재감지', '사이버(망분리·접근통제)'], kpi: '무단침입 0 · 화재 0' },
+  { axis: '지속가능', title: '에너지·지속가능성', points: ['RE100/CFE 조달·PPA 계약', '폐열 재활용·탄소 저감'], kpi: 'RE100 조달률 · 탄소집약도' },
+  { axis: '운영', title: '운영·인력·규정준수', points: ['NOC/DCIM 24/7·교대 운영', '변경·구성 관리(CMDB)', 'ISMS·개인정보·안전규정 준수'], kpi: 'MTTR · SLA 준수율' },
+]
+
+// 핵심 관리지표(KPI) — 완공 후 성과를 재는 표준 척도
+const OPS_KPI = [
+  { k: 'PUE', full: '전력사용효율', target: '≤ 1.3 (선도 ~1.1)', note: '총 전력 ÷ IT 전력. 냉각·손실이 낮을수록 1.0에 근접.' },
+  { k: 'WUE', full: '용수사용효율', target: '낮을수록 우수', note: 'IT kWh당 냉각 용수(L). 공랭↔수랭 트레이드오프.' },
+  { k: '가동률', full: 'Uptime / 가용성', target: 'Tier III 99.982% · Tier IV 99.995%', note: '연간 허용 정지 ≈ III 1.6시간 · IV 26분.' },
+  { k: 'MTBF/MTTR', full: '평균고장간격 / 평균복구시간', target: 'MTBF↑ · MTTR↓', note: '신뢰성(고장 빈도)과 회복력(복구 속도) 지표.' },
+  { k: 'RE100', full: '재생에너지 조달률', target: '100% 지향', note: '하이퍼스케일러 계약 요건. PPA·REC·자가발전.' },
+  { k: '랙 전력밀도', full: '랙당 전력', target: 'AI 랙 30~130kW+', note: 'GPU 고밀도가 액체냉각·전력설계를 강제.' },
+]
+
+function OpsFrame() {
+  return (
+    <div className="ops-frame">
+      <p className="ops-intro">
+        준공·사용승인(G4) 이후 데이터센터의 가치는 <strong>얼마나 안 멈추고, 얼마나 효율적으로 도는가</strong>로 결정된다.
+        아래는 완공 후 상시 운영 프로세스와 중점 관리요소를 공개 산업표준(Uptime Institute Tier·ASHRAE·The Green Grid PUE/WUE·RE100)에 맞춰 정리한 것이다.
+      </p>
+
+      <h2 className="ops-h2">운영 프로세스 — 상시 순환</h2>
+      <ol className="ops-phases">
+        {OPS_PHASES.map((p, i) => (
+          <li key={p.k} className="ops-phase">
+            <span className="ops-phase-n">{i + 1}</span>
+            <span className="ops-phase-body">
+              <b>{p.k}</b>
+              <span>{p.d}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+
+      <h2 className="ops-h2">중점 관리 도메인</h2>
+      <div className="ops-domains">
+        {OPS_DOMAINS.map((d) => (
+          <div key={d.title} className="spec-cell ops-domain">
+            <div className="ops-domain-head">
+              <span className="insight-tag">{d.axis}</span>
+              <h3 className="ops-domain-title">{d.title}</h3>
+            </div>
+            <ul className="score-basis ops-domain-points">
+              {d.points.map((pt) => (
+                <li key={pt}>
+                  <span>{pt}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="ops-domain-kpi">
+              <span className="ops-kpi-label">핵심지표</span> {d.kpi}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <h2 className="ops-h2">핵심 관리지표(KPI)</h2>
+      <div className="ops-kpi-grid">
+        {OPS_KPI.map((m) => (
+          <div key={m.k} className="spec-cell ops-kpi-cell">
+            <div className="ops-kpi-top">
+              <span className="ops-kpi-k">{m.k}</span>
+              <span className="badge verify ops-kpi-target">{m.target}</span>
+            </div>
+            <div className="ops-kpi-full">{m.full}</div>
+            <div className="ops-kpi-note">{m.note}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="ops-cta">
+        <Link className="btn" to="/dashboard">운영 대시보드</Link>
+        <Link className="btn" to="/insights/national-infrastructure">복원력·지정학 인사이트</Link>
+      </div>
+    </div>
+  )
+}
+
 export default function RoadmapPage() {
-  const [mode, setMode] = useState(() =>
-    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('view') === 'frame'
-      ? 'frame'
-      : 'guide',
-  ) // 'guide' | 'frame'
+  const [mode, setMode] = useState(() => {
+    const v = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('view') : null
+    return v === 'frame' || v === 'ops' ? v : 'guide'
+  }) // 'guide' | 'frame' | 'ops'
   useEffect(() => {
     document.title = TITLE
     setMeta('name', 'description', DESC)
@@ -257,10 +356,21 @@ export default function RoadmapPage() {
           >
             프로세스 프레임 (레인×게이트)
           </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === 'ops'}
+            className={mode === 'ops' ? 'active' : ''}
+            onClick={() => setMode('ops')}
+          >
+            완공 후 운영관리
+          </button>
         </div>
 
         {mode === 'frame' ? (
           <ProcessFrame />
+        ) : mode === 'ops' ? (
+          <OpsFrame />
         ) : (
           <ol className="roadmap">
             {STEPS.map((s) => (

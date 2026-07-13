@@ -21,7 +21,8 @@ export function regionSummary(sido) {
   const by = { operating: 0, construction: 0, planned: 0 }
   let mw = 0
   for (const f of list) {
-    by[f.status === 'delayed' ? 'planned' : f.status] += 1
+    const sk = f.status === 'delayed' ? 'planned' : f.status
+    if (by[sk] != null) by[sk] += 1 // cancelled(무산)은 운영/건설/계획 집계 제외 (대시보드와 동일 가드)
     if (f.power_mw_public != null) mw += f.power_mw_public
   }
   return { list, by, mw }
