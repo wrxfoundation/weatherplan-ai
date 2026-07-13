@@ -5,6 +5,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, slugOf } from '../data/facilities.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
+import { loadPowerLines } from '../data/powerLines.js'
 import { recommendSites } from '../score/recommend.js'
 import { STYLE_3D, facilityLabelLayer } from './style3d.js'
 
@@ -33,6 +34,7 @@ export default function Map3DPage() {
   }, [])
 
   useEffect(() => {
+    let cancelled = false
     const map = new maplibregl.Map({
       container: wrapRef.current,
       style: STYLE_3D,
@@ -90,6 +92,44 @@ export default function Map3DPage() {
       map.addSource('dc', { type: 'geojson', data: { type: 'FeatureCollection', features: labelFeatures } })
       map.addLayer(facilityLabelLayer('dc'))
 
+      // 송전선(154kV+) — 전압별 색 라인(계통 백본). 2D 대비 빈약하던 3D에 송전망 추가. 동적 로드(2,500여 선로).
+      loadPowerLines()
+        .then((lines) => {
+          if (cancelled) return
+          const feats = lines.map((ln) => ({
+            type: 'Feature',
+            geometry: { type: 'LineString', coordinates: ln.p.map(([la, lo]) => [lo, la]) },
+            properties: { v: ln.v ?? 0 },
+          }))
+          try {
+            map.addSource('lines', { type: 'geojson', data: { type: 'FeatureCollection', features: feats } })
+            map.addLayer(
+              {
+                id: 'lines',
+                type: 'line',
+                source: 'lines',
+                paint: {
+                  'line-color': [
+                    'case',
+                    ['>=', ['get', 'v'], 550], '#22d3ee',
+                    ['>=', ['get', 'v'], 310], '#c026d3',
+                    ['>=', ['get', 'v'], 220], '#ef4444',
+                    ['>=', ['get', 'v'], 132], '#b45309',
+                    ['>=', ['get', 'v'], 52], '#eab308',
+                    '#7dd3fc',
+                  ],
+                  'line-width': ['interpolate', ['linear'], ['zoom'], 6, 0.5, 12, 2.2],
+                  'line-opacity': 0.5,
+                },
+              },
+              map.getLayer('subs') ? 'subs' : 'dc', // 변전소·라벨 아래로
+            )
+          } catch {
+            /* 스타일/타이밍 — 무시 */
+          }
+        })
+        .catch(() => {})
+
       // 변전소(154kV+) — 전압별 색 서클(계통 접속점 맥락)
       try {
         map.addSource('subs', {
@@ -139,6 +179,7 @@ export default function Map3DPage() {
     })
 
     return () => {
+      cancelled = true
       markers.forEach((m) => m.remove())
       map.remove()
     }
@@ -150,8 +191,8 @@ export default function Map3DPage() {
       <div className="map-layout">
         <div ref={wrapRef} className="map-canvas map3d" />
         <div className="map3d-banner">
-          <span className="badge status-operating">3D 베타 v3</span>
-          우클릭 드래그로 회전·기울임 · 줌 13+ 건물 입체 · 🟡 추천입지 클릭 → 분석 · 변전소(154kV+) 색: 154 하늘/345 보라/765 분홍
+          <span className="badge status-operating">3D 베타 v4</span>
+          우클릭 드래그로 회전·기울임 · 줌 13+ 건물 입체 · 🟡 추천입지 클릭 → 분석 · 송전선·변전소(154kV+) 전압별 색: 154 갈/345 보라/765 분홍
         </div>
       </div>
     </>

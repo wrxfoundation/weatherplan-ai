@@ -74,13 +74,6 @@ export default function FilterBar({
   // cond:false 인 항목(예: 송전선 데이터 없음)은 렌더 제외.
   const LAYER_GROUPS = [
     {
-      label: '표시',
-      chips: [
-        { key: 'reco', icon: 'reco', text: '추천입지', on: showReco, toggle: onToggleReco, cls: 'chip-reco', title: 'AI 추천 입지 TOP20 — 산업단지 후보를 정적 근거(변전소·공급여유·승인율·네트워크·자가발전)로 랭킹. 클릭 시 전체 분석' },
-        { key: 'label', icon: 'label', text: '라벨', on: showLabels, toggle: onToggleLabels, title: '맵 위 시설명·용량 라벨 켜기/끄기' },
-      ],
-    },
-    {
       label: '전력',
       chips: [
         { key: 'subs', icon: 'substation', text: '변전소', on: showSubs, toggle: onToggleSubs, title: '154kV+ 변전소 841개 — DC가 전기를 받는 접속점(OSM 좌표). 전압별 색: 154kV 하늘 / 345kV 보라 / 765kV 분홍' },
@@ -171,6 +164,29 @@ export default function FilterBar({
         </button>
         <button type="button" className={`chip ${zone === 'non' ? 'on' : ''}`} onClick={() => onZone('non')} aria-pressed={zone === 'non'}>
           비수도권
+        </button>
+      </div>
+
+      {/* 표시·추천 — 데이터 레이어와 성격이 달라 윗줄(검색컨트롤 옆)로. 방대한 레이어 줄을 덜고 윗줄 여백을 채움 */}
+      <div className="group" role="group" aria-label="표시">
+        <span className="group-sublabel">표시</span>
+        <button
+          type="button"
+          className={`chip chip-reco ${showReco ? 'on' : ''}`}
+          onClick={onToggleReco}
+          aria-pressed={showReco}
+          title="AI 추천 입지 TOP20 — 산업단지 후보를 정적 근거(변전소·공급여유·승인율·네트워크·자가발전)로 랭킹. 클릭 시 전체 분석"
+        >
+          <Icon name="reco" /> 추천입지
+        </button>
+        <button
+          type="button"
+          className={`chip ${showLabels ? 'on' : ''}`}
+          onClick={onToggleLabels}
+          aria-pressed={showLabels}
+          title="맵 위 시설명·용량 라벨 켜기/끄기"
+        >
+          <Icon name="label" /> 라벨
         </button>
       </div>
 

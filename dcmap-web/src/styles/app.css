@@ -253,7 +253,8 @@ a {
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
-  max-width: calc(100% - var(--panel-width) - 48px);
+  /* 우측 상단 기후 바(320px)와 겹치지 않게 그 영역을 예약 — 레이어(2줄)가 기후 바 밑으로 파고들던 것 방지 */
+  max-width: calc(100% - var(--panel-width) - 344px);
 }
 
 /* 베이스맵 전환 — 사이드패널 헤더(목록으로 줄에 맞춤, 스크롤 안쪽) */
