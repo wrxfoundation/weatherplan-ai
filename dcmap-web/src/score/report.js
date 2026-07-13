@@ -5,7 +5,7 @@ import { fmtRate } from '../data/landPrice.js'
 import { dcClimateIndex, nearestNormal } from './climateIndex.js'
 import { dongLabel } from '../data/liveApi.js'
 
-export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom, flood, pop, disaster, energy, warning, climate }) {
+export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom, flood, pop, disaster, energy, warning, climate, officialPrice, landReg, sido, water, kwater, re, waterSource, cluster }) {
   const L = []
   const now = new Date()
   L.push(`# AI InfraMap — 부지 적합도 간이 리포트 (v0)`)
@@ -55,10 +55,26 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
   L.push(``)
   L.push(`## 토지·지가`)
   L.push(`- 용도지역: ${landUse?.uses?.length ? landUse.uses.join(' · ') : '조회 대기 (vworld)'}`)
+  if (officialPrice?.available && officialPrice.pricePerM2 != null)
+    L.push(`- 개별공시지가: ${officialPrice.pricePerM2.toLocaleString()}원/㎡${officialPrice.year ? ` (${officialPrice.year})` : ''} (국토부 data.go.kr)`)
+  if (landReg?.regs?.length)
+    L.push(`- 규제·제약 지구: ${landReg.regs.join(' · ')} (vworld 용도지구·지구단위계획 — 개발 제약/절차 신호)`)
   if (landPrice) {
     L.push(`- 지가변동률: ${fmtRate(landPrice.value)} (${landPrice.scope}, ${landPrice.period} 월간, KOSIS)`)
     if (dongPulse) L.push(`- 동 단위 범위: ${fmtRate(dongPulse.bottom.rate)} ~ ${fmtRate(dongPulse.top.rate)} (${dongPulse.count}개 조사구역)`)
   }
+  L.push(``)
+  L.push(`## 냉각수·용수 (참고 — 100점 외 신호)`)
+  if (waterSource)
+    L.push(`- 최근접 주요 수원: ${waterSource.name}댐 (${waterSource.type}댐 · 총저수 ${waterSource.capMcm.toLocaleString()}백만㎥) · ${waterSource.km.toFixed(0)}km (K-water)`)
+  {
+    const kw = kwater?.available && sido ? kwater.bySido?.[sido] : null
+    if (kw && (kw.취수용량 > 0 || kw.정수용량 > 0))
+      L.push(`- ${sido} 상수도 시설용량: ${kw.정수용량 > 0 ? `정수 ${Math.round(kw.정수용량).toLocaleString()}㎥/일` : ''}${kw.취수용량 > 0 ? `${kw.정수용량 > 0 ? ' · ' : ''}취수 ${Math.round(kw.취수용량).toLocaleString()}㎥/일` : ''} (K-water 국가상수도정보)`)
+    const w = water?.available && sido ? water.bySido?.[sido] : null
+    if (w?.m3day) L.push(`- ${sido} 공업용수 취수 시설용량: ${Math.round(w.m3day).toLocaleString()}㎥/일 (취수장 ${w.count}곳 · WAMIS)`)
+  }
+  if (re) L.push(`- RE100 조달 여건: 최근접 재생발전단지 ${re.name || (re.type === 'W' ? '풍력' : '태양광')} (${re.type === 'W' ? '풍력' : '태양광'}) ${re.km.toFixed(1)}km${re.km <= 10 ? ' — 조달 유리' : re.km <= 30 ? ' — 조달 가능' : ' — 원거리'} (OSM)`)
   L.push(``)
   L.push(`## 기상 (케이웨더)`)
   if (wx) {
@@ -150,6 +166,10 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
     )
   if (windCtx?.nearest)
     L.push(`- 풍력: 반경 ${windCtx.radiusKm}km 내 ${windCtx.count}지점 · 최근접 ${windCtx.nearest.km.toFixed(1)}km`)
+  if (cluster && cluster.km <= 60)
+    L.push(
+      `- 최근접 반도체·AI 메가클러스터: ${cluster.name} (${cluster.operator}·${cluster.status})${cluster.powerGw ? ` · 전력 ${cluster.powerGw}GW` : ''}${cluster.waterKtd ? ` · 용수 ${cluster.waterKtd.toLocaleString()}천t/일` : ''} · ${cluster.km.toFixed(0)}km — 전력·용수 경쟁/공존 대수요처`,
+    )
   L.push(`- 계통연계 여유 직접 조회: RE클라우드 https://recloud.energy.or.kr/`)
   L.push(``)
   L.push(`## 최근접 데이터센터`)

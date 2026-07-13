@@ -928,6 +928,14 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               energy,
               warning,
               climate,
+              officialPrice,
+              landReg,
+              sido,
+              water,
+              kwater,
+              re: nearestRenewable(point.lat, point.lng),
+              waterSource: nearestWaterSource(point.lat, point.lng),
+              cluster: nearestCluster(point.lat, point.lng),
             })
           const onCopy = async () => {
             try {
