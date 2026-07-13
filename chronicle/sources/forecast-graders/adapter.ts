@@ -43,6 +43,15 @@ export class ForecastGradersAdapter extends PageTextAdapter {
       .replace(/\s+/g, " ")
       .trim();
   }
+
+  /**
+   * tracked 필드를 "날짜 앵커 헤드라인 목록"으로 삼는다 — 기관 게시판의 실제
+   * 신호는 "언제 무슨 전망/보고서가 올라왔나"이고, 조회수·번호 잡음은 배제된다.
+   * (전문 텍스트는 tracked에서 뺀다 — 원본 HTML은 스냅샷에 무가공 보존됨.)
+   */
+  protected fieldsFor(html: string): Record<string, unknown> {
+    return { items: this.datedItems(this.extract(html)) };
+  }
 }
 
 export default new ForecastGradersAdapter();
