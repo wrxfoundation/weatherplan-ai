@@ -258,6 +258,8 @@ export default function MapPage({ power = false }) {
     [statuses, type, sido, minMw, q, zone],
   )
   const totalMw = useMemo(() => filtered.reduce((s, f) => s + (f.power_mw_public ?? 0), 0), [filtered])
+  // 전력 공개 시설 수 — '공개 전력 합계'가 전체가 아닌 공개분 집계임을 명시(정직성)
+  const mwDisclosed = useMemo(() => filtered.filter((f) => f.power_mw_public != null).length, [filtered])
   const statusCounts = useMemo(() => {
     const c = { operating: 0, construction: 0, planned: 0 }
     for (const f of filtered) {
@@ -1157,6 +1159,9 @@ export default function MapPage({ power = false }) {
                   <>
                     {' · 공개 전력 합계 '}
                     <strong>{totalMw.toLocaleString()}</strong> MW
+                    <span className="mw-disclosed" title="전체가 아닌 전력 규모를 공개한 시설만 합산">
+                      {' '}({mwDisclosed}/{filtered.length}곳 공개)
+                    </span>
                   </>
                 )}
                 {minMw != null && ` · 필터 ≥ ${minMw} MW`}
