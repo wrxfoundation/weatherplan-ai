@@ -12,6 +12,7 @@ import { gridHeadroomForSido, headroomLabel } from '../data/gridHeadroom.js'
 import { dcApprovalForSido, approvalLabel } from '../data/gridAssessment.js'
 import { nearestIndustrialComplex } from '../data/industrialComplexes.js'
 import { nearestRenewable } from '../data/renewablePlants.js'
+import { nearestWaterSource } from '../data/waterSources.js'
 import { scoreSite, haversineKm } from './engine.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
@@ -466,21 +467,31 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             )
           })()}
           {(() => {
-            // 냉각수(용수) 확보 여건 — WAMIS 공업용수 취수 시설용량 + K-water 실시간 수도시설 밀도. 100점 외 참고.
-            if (!sido) return null
-            const w = water?.available ? water.bySido?.[sido] : null
+            // 냉각수(용수) 확보 여건 — 최근접 주요 수원(댐) + WAMIS 공업용수 취수 시설용량 + K-water 실시간 수도시설. 100점 외 참고.
+            const w = sido && water?.available ? water.bySido?.[sido] : null
             const hasWamis = w && w.m3day
-            const kw = kwater?.available ? kwater.bySido?.[sido] : null
+            const kw = sido && kwater?.available ? kwater.bySido?.[sido] : null
             const hasKwater = kw && kw.count
-            if (!hasWamis && !hasKwater) return null
+            const ws = nearestWaterSource(point.lat, point.lng) // 최근접 댐(상시)
+            const wsBadge = ws ? (ws.km <= 20 ? '수원 인접' : ws.km <= 50 ? '수원 근접' : '원거리') : null
+            const wsTone = ws ? (ws.km <= 20 ? 'status-operating' : ws.km <= 50 ? 'verify' : 'pending') : null
+            if (!hasWamis && !hasKwater && !ws) return null
             const label = hasWamis ? (w.m3day >= 200000 ? '용수 여유' : w.m3day >= 50000 ? '용수 보통' : '용수 확인要') : null
             const badge = hasWamis ? (w.m3day >= 200000 ? 'status-operating' : w.m3day >= 50000 ? 'verify' : 'pending') : null
             return (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">냉각수(용수) 확보 여건 ({sido} 시도 · 참고)</div>
+                <div className="k">냉각수(용수) 확보 여건 ({sido ? `${sido} 시도 · ` : ''}참고)</div>
                 <div className="v">
-                  {hasWamis && (
+                  {ws && (
                     <div>
+                      최근접 주요 수원 <strong>{ws.name}댐</strong>
+                      <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>{ws.type}댐 · 저수 {ws.capMcm.toLocaleString()}백만㎥</span>
+                      <span style={{ marginLeft: 6 }}>{ws.km.toFixed(0)}km</span>
+                      <span className={`badge ${wsTone}`} style={{ marginLeft: 6 }}>{wsBadge}</span>
+                    </div>
+                  )}
+                  {hasWamis && (
+                    <div style={{ marginTop: ws ? 4 : 0 }}>
                       공업용수 취수 시설용량 <strong>{Math.round(w.m3day).toLocaleString()}㎥/일</strong>
                       <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>취수장 {w.count}곳</span>
                       <span className={`badge ${badge}`} style={{ marginLeft: 6 }}>{label}</span>
@@ -495,7 +506,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                     </div>
                   )}
                   <div className="cell-basis">
-                    {hasWamis ? `${water.source} · ` : ''}{hasKwater ? `${kwater.source} · ` : ''}시도 총량 신호(부지 인입은 지방·산단 상수도사업소 별도 확인). 100점 외 참고
+                    {ws ? '한국수자원공사 다목적·용수댐(좌표 근사) · ' : ''}{hasWamis ? `${water.source} · ` : ''}{hasKwater ? `${kwater.source} · ` : ''}지역/근접 신호(부지 인입은 지방·산단 상수도사업소 별도 확인). 100점 외 참고
                   </div>
                 </div>
               </div>
