@@ -445,6 +445,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 <Link to={`/?min_mw=${Math.max(1, Math.ceil(mw))}${nonCapital ? '&noncap=1' : ''}`}>
                   이 조건 통과 후보 맵 →
                 </Link>{' '}
+                · <Link to={`/calc?z=${nonCapital ? '1' : '0'}`}>이 입지로 GPU 계산 →</Link>{' '}
                 · <Link to="/roadmap?view=frame">전체 프로세스 프레임 →</Link>
               </p>
             </>
