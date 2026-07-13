@@ -5567,3 +5567,14 @@ summary:focus-visible,
     width: calc(100vw - 24px);
   }
 }
+/* 비교 트레이 내 AI 비교평 카드 — 트레이가 과하게 커지지 않게 스크롤 */
+.compare-tray .ct-ai {
+  margin: 8px 10px 2px;
+  max-height: 42vh;
+  overflow-y: auto;
+}
+.chip.ai {
+  border-color: color-mix(in srgb, #a78bfa 45%, var(--line));
+  color: #c4b5fd;
+  font-weight: 700;
+}
