@@ -19,8 +19,17 @@ import OceanDatacenter from './articles/OceanDatacenter.jsx'
 import Market2025H2 from './articles/Market2025H2.jsx'
 import LandingEdge from './articles/LandingEdge.jsx'
 import PowerSupplyChain from './articles/PowerSupplyChain.jsx'
+import PowerWaterMega from './articles/PowerWaterMega.jsx'
 
 const ARTICLES = {
+  'power-water-mega-2026': {
+    component: PowerWaterMega,
+    sources: [
+      '3대 메가프로젝트 국민보고회(2026.6.29): 광주·전남 반도체 800조·팹 4기·6.3GW·하루 65만t 공업용수 / 전국 AI DC 1000조·2035 — 주간조선 2915호',
+      '용인 반도체 국가산단 현황(토지보상 45%·조속재결 35%·LH 공백 / 9.3GW·1단계 3GW LNG 자체조달·북천안 송전 40km·한강수계 복선화 관로): 주간조선 2916호(2026.7.5) 현장 취재',
+      '제11차 전력수급기본계획 실무안(용인 전력공급 확정)·제12차 전력수급기본계획(하반기)·지역별/DC 전용 전기요금제 — 콘텐츠 등급 ④참고·인사이트(보도 종합)',
+    ],
+  },
   'power-supply-chain': {
     component: PowerSupplyChain,
     sources: [
