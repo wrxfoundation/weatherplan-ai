@@ -13,6 +13,7 @@
     "anchor": "tsx engine/anchor.ts",
     "status": "tsx engine/status.ts",
     "site": "tsx engine/site.ts",
+    "mcp": "tsx mcp/server.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test tests/*.test.ts"
   },

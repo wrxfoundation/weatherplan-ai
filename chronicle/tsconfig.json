@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["engine/**/*.ts", "sources/**/*.ts", "tests/**/*.ts"]
+  "include": ["engine/**/*.ts", "sources/**/*.ts", "mcp/**/*.ts", "tests/**/*.ts"]
 }

@@ -132,6 +132,36 @@ npm run verify  -- bunyang-capsule
 - GitHub Actions에는 리포 **Secrets**에 `DATA_GO_KR_KEY`로 등록한다.
   **키를 코드·로그·커밋에 절대 노출하지 않는다.**
 
+## MCP 질의 표면 (chronicle-mcp)
+
+원장을 통째로 떠가는 대신 **호출**하게 만드는 표면 — 에이전트가 "떠가는 대상"이
+아니라 "고객"이 되는 지점. 공개 raw 원장을 읽는 무상태 stdio MCP 서버다.
+
+```bash
+npm run mcp                                  # 기본: kwangdol-star/aiagentlabs 공개 원장 질의
+CHRONICLE_REPO=owner/repo npm run mcp        # 다른 Chronicle 리포 대상
+CHRONICLE_DATA_DIR=./data npm run mcp        # 로컬 원장 대상
+```
+
+도구:
+| 도구 | 용도 |
+|---|---|
+| `list_sources` | 추적 중인 소스·현황 |
+| `get_record(source, entity_id)` | 엔티티 현재 상태 |
+| `get_history(source, entity_id)` | **엔티티가 언제 어떻게 바뀌었나** — 시간해자를 질의로 (예: 이 실거래 취소·정정된 적 있나) |
+| `get_changes(source, since?, until?, field?, limit?)` | 최근 변경 이벤트 스트림 |
+| `verify_source(source)` | 체인을 제네시스부터 재계산 — 신뢰를 호출로 |
+
+Claude Code / Claude Desktop 연동 (MCP 설정에 추가):
+```json
+{
+  "mcpServers": {
+    "chronicle": { "command": "npx", "args": ["-y", "tsx", "mcp/server.ts"], "cwd": "<이 리포 경로>" }
+  }
+}
+```
+`docs/status.json`은 원격 원장의 소스 목록 소스이자 공개 상태 API로도 쓰인다.
+
 ## 크론 운영
 
 `.github/workflows/bunyang.yml`(모노리포 루트)이 일 1회 수집한다:

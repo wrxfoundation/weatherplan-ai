@@ -344,6 +344,25 @@ export function writeSite(root: string, dataDir: string, repo: string): { htmlPa
   const llmsPath = join(docsDir, "llms.txt");
   writeFileSync(htmlPath, renderHtml(sources, repo));
   writeFileSync(llmsPath, renderLlms(sources, repo));
+  // 기계 판독 현황 매니페스트 — chronicle-mcp의 원격 원장이 소스 목록을 읽는 곳,
+  // 겸 공개 상태 API. 결정적(data/만으로 생성).
+  writeFileSync(
+    join(docsDir, "status.json"),
+    `${JSON.stringify(
+      sources.map((source) => ({
+        source_id: source.id,
+        title: source.title,
+        records: source.records,
+        events: source.chainLength,
+        chain_head: source.chainHead,
+        updated_at: source.updatedAt,
+        anchors: source.anchors,
+        head_anchored: source.headAnchored,
+      })),
+      null,
+      2,
+    )}\n`,
+  );
   // GitHub Pages의 Jekyll 처리를 통째로 우회 — 우리는 완성된 정적 파일만 서빙한다
   writeFileSync(join(docsDir, ".nojekyll"), "");
   return { htmlPath, llmsPath };
