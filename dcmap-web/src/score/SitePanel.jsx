@@ -340,10 +340,10 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
         {(() => {
           const t = r.track
           let p07
-          if (mw <= 20)
-            p07 = { sev: 'ok', verdict: '22.9kV 배전 수전', note: '계통 여유(헤드룸)가 지배 변수 — 한전 분산전원 조회로 확인' }
+          if (mw <= 10)
+            p07 = { sev: 'ok', verdict: '22.9kV 배전 일반공급', note: '계약전력 1만kW 이하 원칙 — 계통 여유(헤드룸)가 지배 변수' }
           else if (mw <= 40)
-            p07 = { sev: 'talk', verdict: '22.9kV/154kV 협의', note: '40MW는 22.9kV 상한 경계 — 증설 계획 시 154kV 전제가 안전' }
+            p07 = { sev: 'talk', verdict: '154kV 원칙 · 22.9kV 조건부', note: '제23조 ③-1: 변전소 여유 시 40MW까지 22.9kV 가능 · 40MW가 상한' }
           else p07 = { sev: 'gate', verdict: '154kV 의무', note: '자체 수전설비 투자 + 154kV 변전소 거리가 지배 변수' }
 
           let p08

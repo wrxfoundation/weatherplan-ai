@@ -58,7 +58,7 @@ const ARTICLES = {
   'power-track-40mw': {
     component: PowerTrack40mw,
     sources: [
-      '한국전력공사 기본공급약관 제23조 (공급방식·전압) — 20MW/40MW 경계와 22.9kV·154kV 트랙',
+      '한국전력공사 기본공급약관 제23조 (공급방식·전압) — 10MW/40MW 경계와 22.9kV·154kV 트랙',
       '수수료: 전력계통영향평가 시범운영 공고(기후에너지환경부 공고 제2025-139호) 기준 사전검토·기술검토 수수료 합산',
       '정량 룰 파일: data/power_rules_v0.json · docs/power-licensing-rulebook-v0.md — 콘텐츠 등급 ①법령·고시',
     ],
