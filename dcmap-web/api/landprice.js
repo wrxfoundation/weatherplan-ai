@@ -2,7 +2,7 @@
  * 토지/자원 부지속성 프록시 — 두 종류를 kind로 다중화(서버리스 함수 수 절약, Hobby 12개 상한).
  *  1) 기본: 개별공시지가 (국토교통부 NSDI, data.go.kr) — 필지(PNU)별 공시지가(원/㎡). 토지축 '지가 부담' 실데이터.
  *  2) kind=water: WAMIS 공업용수 취수능력(시도 집계) — DC 냉각수 확보 여건의 지역 신호(100점 외 참고).
- *  3) kind=kwater: K-water 실시간 수도정보 시설목록(정수장·취수장·가압장) 시도 집계 — 지역 수도 인프라 밀도 신호.
+ *  3) kind=kwater: K-water 국가상수도정보 취수·정수 시설용량(㎥/일) 시도 집계 — 냉각수 확보 여건 지역 신호(위치는 시군구까지).
  *
  * 환경변수 (Vercel — 서버 env 전용, 리포 커밋 절대 금지):
  *  - DATA_GO_KR_KEY (공시지가 필수) — data.go.kr 인증키(디코딩 키, 공용)
@@ -18,8 +18,8 @@
 const BASE = 'https://apis.data.go.kr/1611000/nsdi/IndvdLandPriceService/attr/getIndvdLandPriceAttr'
 // WAMIS 광역·공업용수도 취수장 시설현황(한강홍수통제소). HTTP(8080)라 서버 프록시 필수(mixed-content).
 const WATER_BASE = 'http://www.wamis.go.kr:8080/wamis/openapi/wks/wks_wiplsaa_lst'
-// K-water 실시간 수도정보 — 취수장·정수장·가압장 코드(시설목록). 실시간 유량/수질의 기준 카탈로그.
-const KWATER_CODELIST = 'https://apis.data.go.kr/B500001/rwis/waterFlux/fcltylist/codelist'
+// K-water 국가상수도정보 시설정보(취수/정수/가압) — 시설용량 등 기본정보. 위치는 시군구까지(국가보안).
+const KWATER_FCLTY = 'https://apis.data.go.kr/B500001/fcltySvc'
 
 const num = (v) => {
   if (v == null) return undefined
@@ -122,9 +122,50 @@ async function waterHandler(_req, res) {
   }
 }
 
-// K-water 실시간 수도정보 — 시설목록(정수장·취수장·가압장)을 시도별로 집계.
-// 지역 수도 인프라 밀도 신호(냉각수 취수 여건 참고). 실데이터·서버 env 키.
-// 스키마 미확정(배포 검증): 시설명/구분/주소 필드명 변형을 방어적으로 픽.
+// 시도명(전체/약칭) → 약칭 정규화(응답이 '충청북도'·'경상남도' 등 장형일 수 있음)
+const SIDO_FULL = [
+  [/서울/, '서울'], [/부산/, '부산'], [/대구/, '대구'], [/인천/, '인천'], [/광주/, '광주'],
+  [/대전/, '대전'], [/울산/, '울산'], [/세종/, '세종'], [/경기/, '경기'], [/강원/, '강원'],
+  [/충청?북|충북/, '충북'], [/충청?남|충남/, '충남'], [/전라?북|전북/, '전북'], [/전라?남|전남/, '전남'],
+  [/경상?북|경북/, '경북'], [/경상?남|경남/, '경남'], [/제주/, '제주'],
+]
+const sidoNorm = (s) => {
+  const t = String(s || '').trim()
+  for (const [re, nm] of SIDO_FULL) if (re.test(t)) return nm
+  return null
+}
+
+const totalCountOf = (body) => {
+  let n
+  const walk = (o, d = 0) => {
+    if (!o || typeof o !== 'object' || d > 6 || n != null) return
+    for (const [k, v] of Object.entries(o)) {
+      if (/totalcount/i.test(k)) { n = num(v); return }
+      if (v && typeof v === 'object') walk(v, d + 1)
+    }
+  }
+  walk(body)
+  return n
+}
+
+// data.go.kr 페이지네이션 수집(최대 cap 페이지)
+async function fetchAllItems(url, key, cap = 4) {
+  const rows = 1000
+  let all = []
+  for (let page = 1; page <= cap; page++) {
+    const p = new URLSearchParams({ serviceKey: key, _type: 'json', numOfRows: String(rows), pageNo: String(page) })
+    const body = await fetchJson(`${url}?${p.toString()}`, 9000)
+    if (body?._status) return { error: body._status, items: all }
+    const items = findItems(body) || []
+    all = all.concat(items)
+    const total = totalCountOf(body)
+    if (items.length < rows || (total && all.length >= total)) break
+  }
+  return { items: all }
+}
+
+// K-water 국가상수도정보 — 취수·정수 시설용량을 시도별 집계. 위치는 시군구까지(국가보안시설).
+// 냉각수 확보 여건의 실데이터 지역 신호(㎥/일). 서버 env 키. 필드명 변형 방어적 픽.
 async function kwaterHandler(_req, res) {
   const key = process.env.KWATER_KEY || process.env.DATA_GO_KR_KEY
   if (!key) {
@@ -132,36 +173,42 @@ async function kwaterHandler(_req, res) {
     return
   }
   try {
-    const base = (process.env.KWATER_URL || KWATER_CODELIST).replace(/\/$/, '')
-    const params = new URLSearchParams({ serviceKey: key, numOfRows: '3000', pageNo: '1', returnType: 'json' })
-    const body = await fetchJson(`${base}?${params.toString()}`, 9000)
-    if (body?._status) {
-      res.status(200).json({ available: false, reason: `upstream_${body._status}` })
+    const base = (process.env.KWATER_URL || KWATER_FCLTY).replace(/\/$/, '')
+    // 취수(원수 확보량)·정수(공급 정수량) 시설용량 — DC 냉각수 여건에 직결
+    const [itk, cwp] = await Promise.all([
+      fetchAllItems(`${base}/getItkFclty`, key), // 취수시설
+      fetchAllItems(`${base}/getCwpFclty`, key), // 정수시설
+    ])
+    if (itk.error && cwp.error) {
+      res.status(200).json({ available: false, reason: `upstream_${itk.error}` })
       return
     }
-    const items = findItems(body)
-    if (!items || !items.length) {
-      res.status(200).json({ available: false, reason: 'no_data' })
-      return
-    }
-    const TYPE_RE = { 정수장: /정수/, 취수장: /취수/, 가압장: /가압/ }
+    const CAPA_KEYS = ['fcltyCapa', 'fcltyScale', 'dsnCapa', 'capa', '시설용량', 'facilityCapacity', 'wtrCapa', 'prductCapa']
+    const SIDO_KEYS = ['ctpvNm', 'ctprvnNm', 'sidoNm', 'sido', '시도', 'signguCtpv']
+    const SGG_KEYS = ['signguNm', 'sigunguNm', 'sggNm', '시군구', 'signgu']
     const bySido = {}
-    for (const it of items) {
-      const sido = sidoOf(pick(it, ['addr', 'ADDR', 'locplc', 'locate', '위치', '주소', 'sido', '시도']))
-      if (!sido) continue
-      const gubun = String(pick(it, ['fac_gubun', 'facGubun', 'gubun', '구분', 'fclty_gbn', 'kind']) ?? '')
-      let type = null
-      for (const [t, re] of Object.entries(TYPE_RE)) if (re.test(gubun)) type = t
-      if (!bySido[sido]) bySido[sido] = { count: 0, 정수장: 0, 취수장: 0, 가압장: 0 }
-      bySido[sido].count += 1
-      if (type) bySido[sido][type] += 1
+    const add = (items, capField, cntField) => {
+      for (const it of items) {
+        const sido = sidoNorm(pick(it, SIDO_KEYS)) || sidoOf(pick(it, SGG_KEYS))
+        if (!sido) continue
+        const cap = num(pick(it, CAPA_KEYS))
+        if (!bySido[sido]) bySido[sido] = { 취수용량: 0, 정수용량: 0, 취수N: 0, 정수N: 0 }
+        bySido[sido][cntField] += 1
+        if (cap != null) bySido[sido][capField] += cap
+      }
     }
+    add(itk.items, '취수용량', '취수N')
+    add(cwp.items, '정수용량', '정수N')
     if (!Object.keys(bySido).length) {
-      // 지역 필드 미확인 시 전체 시설 수만이라도 정직하게 반환
-      res.status(200).json({ available: true, total: items.length, bySido: null, source: 'K-water 실시간 수도정보 시설목록(data.go.kr)' })
+      res.status(200).json({ available: false, reason: 'no_region' })
       return
     }
-    res.status(200).json({ available: true, bySido, total: items.length, source: 'K-water 실시간 수도정보(정수장·취수장·가압장) 시설목록' })
+    res.status(200).json({
+      available: true,
+      bySido,
+      counts: { 취수: itk.items.length, 정수: cwp.items.length },
+      source: 'K-water 국가상수도정보 취수·정수시설(data.go.kr)',
+    })
   } catch (e) {
     res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
   }

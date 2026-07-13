@@ -471,7 +471,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             const w = sido && water?.available ? water.bySido?.[sido] : null
             const hasWamis = w && w.m3day
             const kw = sido && kwater?.available ? kwater.bySido?.[sido] : null
-            const hasKwater = kw && kw.count
+            const hasKwater = kw && (kw.취수용량 > 0 || kw.정수용량 > 0)
             const ws = nearestWaterSource(point.lat, point.lng) // 최근접 댐(상시)
             const wsBadge = ws ? (ws.km <= 20 ? '수원 인접' : ws.km <= 50 ? '수원 근접' : '원거리') : null
             const wsTone = ws ? (ws.km <= 20 ? 'status-operating' : ws.km <= 50 ? 'verify' : 'pending') : null
@@ -498,10 +498,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                     </div>
                   )}
                   {hasKwater && (
-                    <div style={{ marginTop: hasWamis ? 4 : 0 }}>
-                      실시간 수도시설 <strong>{kw.count}곳</strong>
+                    <div style={{ marginTop: hasWamis || ws ? 4 : 0 }}>
+                      상수도 시설용량{' '}
+                      {kw.정수용량 > 0 && <>정수 <strong>{Math.round(kw.정수용량).toLocaleString()}㎥/일</strong></>}
+                      {kw.취수용량 > 0 && <>{kw.정수용량 > 0 ? ' · ' : ''}취수 <strong>{Math.round(kw.취수용량).toLocaleString()}㎥/일</strong></>}
                       <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>
-                        {[kw.정수장 ? `정수장 ${kw.정수장}` : null, kw.취수장 ? `취수장 ${kw.취수장}` : null, kw.가압장 ? `가압장 ${kw.가압장}` : null].filter(Boolean).join(' · ') || 'K-water 모니터링 대상'}
+                        {[kw.정수N ? `정수장 ${kw.정수N}` : null, kw.취수N ? `취수장 ${kw.취수N}` : null].filter(Boolean).join(' · ')}
                       </span>
                     </div>
                   )}

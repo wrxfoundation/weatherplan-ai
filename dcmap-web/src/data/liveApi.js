@@ -104,9 +104,9 @@ export const landPriceOfficialFor = (pnu) => (pnu ? fetchJson(`/api/landprice?pn
  *  서버리스 함수 수(Hobby 12개 상한) 절약 위해 landprice 라우트에 kind=water로 다중화. */
 export const waterCapacity = () => fetchJson('/api/landprice?kind=water', 12000)
 
-/** K-water 실시간 수도정보 시설목록(시도 집계) — { available, bySido:{시도:{count,정수장,취수장,가압장}}, total, source } | null.
- *  지역 수도 인프라(정수장·취수장·가압장) 밀도 — 냉각수 취수 여건 참고(100점 외). KWATER_KEY env 필요. */
-export const kwaterInfra = () => fetchJson('/api/landprice?kind=kwater', 12000)
+/** K-water 국가상수도정보 취수·정수 시설용량(시도 집계) — { available, bySido:{시도:{취수용량,정수용량,취수N,정수N}}, source } | null.
+ *  냉각수 확보 여건 지역 신호(㎥/일, 위치는 시군구까지 · 100점 외). KWATER_KEY env 필요. */
+export const kwaterInfra = () => fetchJson('/api/landprice?kind=kwater', 14000)
 
 /** 케이웨더 일별예보(최대 7일) — { days:[{label,tmax,tmin,rainProb,sky}], rain } | null */
 export const forecastFor = (lat, lng) => fetchJson(`/api/kweather?kind=forecast&${q(lat, lng)}`)
