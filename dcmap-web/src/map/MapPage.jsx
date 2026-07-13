@@ -19,6 +19,7 @@ import { NETWORK_NODES } from '../data/network.js'
 import { recommendSites } from '../score/recommend.js'
 import { RENEWABLE_PLANTS } from '../data/renewablePlants.js'
 import { WATER_SOURCES } from '../data/waterSources.js'
+import { SEMI_CLUSTERS } from '../data/semiClusters.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor } from '../data/liveApi.js'
@@ -186,6 +187,8 @@ export default function MapPage({ power = false }) {
   const reLayerRef = useRef(null)
   const [showWater, setShowWater] = useState(false) // 주요 수원(다목적·용수댐) 레이어
   const waterLayerRef = useRef(null)
+  const [showSemi, setShowSemi] = useState(false) // 반도체·AI 메가클러스터 레이어
+  const semiLayerRef = useRef(null)
   const [showReco, setShowReco] = useState(false) // 추천 입지 TOP(정적 근거 랭킹)
   const recoLayerRef = useRef(null)
   const [recoMw, setRecoMw] = useState(40) // 시뮬레이터: 필요 용량(계통 공급여유 하한)
@@ -513,6 +516,38 @@ export default function MapPage({ power = false }) {
       waterLayerRef.current = g
     }
   }, [showWater])
+
+  // 반도체·AI 메가클러스터 레이어 — 전력·용수 대수요처(DC와 계통·용수 경쟁/공존 앵커).
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (semiLayerRef.current) {
+      map.removeLayer(semiLayerRef.current)
+      semiLayerRef.current = null
+    }
+    if (showSemi) {
+      const g = L.layerGroup()
+      for (const [name, lat, lng, operator, status, powerGw, waterKtd, note] of SEMI_CLUSTERS) {
+        const planned = status === '예정'
+        L.circleMarker([lat, lng], {
+          radius: powerGw ? Math.max(7, Math.min(15, 5 + powerGw)) : 7,
+          color: '#f59a3c',
+          weight: 1.6,
+          fillColor: planned ? '#7c5b2e' : '#f59a3c',
+          fillOpacity: planned ? 0.4 : 0.55,
+          dashArray: planned ? '3 3' : null,
+          bubblingMouseEvents: false,
+        })
+          .bindTooltip(
+            `<div class="dc-hovercard"><strong>${name}</strong> · ${operator}<br/><span class="muted">${status}${powerGw ? ` · 전력 ${powerGw}GW` : ''}${waterKtd ? ` · 용수 ${waterKtd.toLocaleString()}천t/일` : ''}</span>${note ? `<br/><span class="muted">${note}</span>` : ''}</div>`,
+            { direction: 'top', offset: [0, -6], className: 'dc-hovercard', opacity: 1 },
+          )
+          .addTo(g)
+      }
+      g.addTo(map)
+      semiLayerRef.current = g
+    }
+  }, [showSemi])
 
   // 통신망 레이어 토글 — 백본 국사·IDC·해저케이블 육양국(네트워크축 근거).
   useEffect(() => {
@@ -893,6 +928,8 @@ export default function MapPage({ power = false }) {
         onToggleRe={() => setShowRe((v) => !v)}
         showWater={showWater}
         onToggleWater={() => setShowWater((v) => !v)}
+        showSemi={showSemi}
+        onToggleSemi={() => setShowSemi((v) => !v)}
         showReco={showReco}
         onToggleReco={() => setShowReco((v) => !v)}
         showPublic={showPublic}
