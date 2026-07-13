@@ -85,7 +85,15 @@ export default function AiAssistant() {
   return (
     <div className={`ai-fab ${open ? 'open' : ''}`}>
       {open && (
-        <div className="ai-asst" role="dialog" aria-label="AI 어시스턴트">
+        <div
+          className="ai-asst"
+          role="dialog"
+          aria-modal="true"
+          aria-label="AI 어시스턴트"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setOpen(false)
+          }}
+        >
           <div className="ai-asst-head">
             <div className="ai-asst-tabs">
               <button type="button" className={mode === 'search' ? 'on' : ''} onClick={() => switchMode('search')}>
@@ -149,7 +157,7 @@ export default function AiAssistant() {
               placeholder={mode === 'search' ? '예: 비수도권 40MW 후보' : '예: 계통영향평가가 뭐야?'}
               aria-label="AI에게 묻기"
             />
-            <button type="submit" disabled={busy || !input.trim()}>
+            <button type="submit" disabled={busy || !input.trim()} aria-label="보내기">
               ↑
             </button>
           </form>

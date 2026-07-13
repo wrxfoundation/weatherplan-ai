@@ -190,7 +190,8 @@ export default function CalcPage() {
   const [scenarios, setScenarios] = useState(() => {
     try {
       const raw = typeof localStorage !== 'undefined' && localStorage.getItem(SCENARIO_KEY)
-      return raw ? JSON.parse(raw) : []
+      const p = raw ? JSON.parse(raw) : []
+      return Array.isArray(p) ? p : [] // 구스키마/변조로 배열이 아니면 무시(이후 .filter 크래시 방지)
     } catch {
       return []
     }
@@ -302,7 +303,7 @@ export default function CalcPage() {
     화이트스페이스m2: m.sqm,
     연간전력량GWh: Math.round(m.gwhYear * 10) / 10,
     재생조달비율pct: rePct,
-    연간전력비_억원: Math.round(m.wonYear / 1e8),
+    연간전력비_억원: Math.round(m.wonYear / 1e7) / 10,
     전기단가_원per_kWh: wonPerKwh,
     PPA단가_원per_kWh: ppaWonPerKwh,
     연간탄소_tCO2: Math.round(m.tco2Year),
@@ -363,13 +364,14 @@ export default function CalcPage() {
   }
   const saveScenario = () => {
     const snap = {
-      id: `${gpuKey}-${count}-${workKey}-${coolKey}-${redunKey}-${rePct}`,
+      // id에 PUE·단가·입지까지 포함 — 이 값만 바꾼 시나리오가 dedupe로 사라지지 않게(PUE 민감도·수도권 비교 등)
+      id: `${gpuKey}-${count}-${workKey}-${coolKey}-${redunKey}-${pue}-${rePct}-${wonPerKwh}-${ppaWonPerKwh}-${nonCapital ? 'n' : 'c'}`,
       label: shortLabel(),
       cap: Math.round(m.contractMw * 10) / 10,
       racks: m.racks,
       sqm: m.sqm,
       gwh: Math.round(m.gwhYear * 10) / 10,
-      won: Math.round(m.wonYear / 1e8),
+      won: eokVal(m.wonYear), // 억원(소수 유지) — 소규모 클러스터가 '0억원'으로 오표기되지 않게
       tco2: Math.round(m.tco2Year),
       re: rePct,
       zone: nonCapital ? '비수도권' : '수도권',
@@ -390,7 +392,7 @@ export default function CalcPage() {
     { k: 'racks', label: '필요 랙', get: (s) => `${s.racks.toLocaleString()}대`, best: (s) => s.racks, dir: -1 },
     { k: 'gwh', label: '연간 전력량', get: (s) => `${s.gwh.toLocaleString()} GWh`, best: (s) => s.gwh, dir: -1 },
     { k: 're', label: '재생조달', get: (s) => `${s.re}%`, best: (s) => s.re, dir: 1 },
-    { k: 'won', label: '연간 전력비', get: (s) => `${s.won.toLocaleString()}억원`, best: (s) => s.won, dir: -1 },
+    { k: 'won', label: '연간 전력비', get: (s) => eokFmt(s.won), best: (s) => s.won, dir: -1 },
     { k: 'tco2', label: '연간 탄소', get: (s) => `${s.tco2.toLocaleString()} tCO₂`, best: (s) => s.tco2, dir: -1 },
   ]
   const scenBest = {}
@@ -567,7 +569,11 @@ export default function CalcPage() {
                     max="1"
                     step="0.001"
                     value={kgco2PerKwh}
-                    onChange={(e) => setKgco2PerKwh(Math.min(1, Math.max(0, Number(e.target.value) || DEFAULT_KGCO2_PER_KWH)))}
+                    onChange={(e) => {
+                      // 0(무탄소 계통) 입력을 허용 — `|| DEFAULT` 관용구는 유효값 0을 되돌려버림
+                      const v = e.target.value === '' ? DEFAULT_KGCO2_PER_KWH : Number(e.target.value)
+                      setKgco2PerKwh(Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : DEFAULT_KGCO2_PER_KWH)
+                    }}
                   />
                   kgCO₂/kWh
                 </label>
@@ -637,8 +643,8 @@ export default function CalcPage() {
           </div>
 
           <div className="card-actions" style={{ marginTop: 12 }}>
-            <button type="button" className="btn ai" onClick={genAi} disabled={ai === 'loading'}>
-              {ai === 'loading' ? 'AI 해설 작성 중…' : '✨ AI 계산 해설'}
+            <button type="button" className="btn ai" onClick={genAi} disabled={ai === 'loading' || ai?.streaming}>
+              {ai === 'loading' || ai?.streaming ? 'AI 해설 작성 중…' : '✨ AI 계산 해설'}
             </button>
             <button type="button" className="btn" onClick={saveScenario}>
               {savedFlash ? '시나리오 저장됨 ✓' : '＋ 시나리오로 저장'}
@@ -713,6 +719,7 @@ export default function CalcPage() {
             </div>
             <p className="chart-note">
               현재 계산 구성을 “시나리오로 저장”하면 여기에 누적됩니다(최대 3, 브라우저 저장). 굵게=열 최우수(전력비·탄소·용량은 낮을수록, 재생조달은 높을수록).
+              <br />전력비·탄소는 편집 가능한 공개 대표 단가/계수 기반 <b>추정</b>입니다(확정 단가 아님).
             </p>
           </div>
         )}

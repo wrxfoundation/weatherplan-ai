@@ -210,6 +210,7 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
 
   // AI 비교평 — 스냅샷의 확보된 값만 넘긴다(없으면 프롬프트가 '미확보' 처리)
   const genCompare = async () => {
+    setOpen(true) // 접힌 상태에서 눌러도 로딩/결과가 보이도록 자동 펼침(무피드백 데드 상태 방지)
     setAi('loading')
     const data = items.map((c) => ({
       후보: c.label,
@@ -281,8 +282,8 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
           ⚖ 후보지 비교 <strong>{items.length}</strong>곳 {open ? '▾' : '▸'}
         </button>
         {items.length > 1 && (
-          <button type="button" className="chip ai" onClick={genCompare} disabled={ai === 'loading'} title="후보 AI 비교평">
-            {ai === 'loading' ? 'AI…' : '✨ AI 비교평'}
+          <button type="button" className="chip ai" onClick={genCompare} disabled={ai === 'loading' || ai?.streaming} title="후보 AI 비교평">
+            {ai === 'loading' || ai?.streaming ? 'AI…' : '✨ AI 비교평'}
           </button>
         )}
         <button type="button" className="chip" onClick={onPdf} title="후보지 비교표 PDF 저장">

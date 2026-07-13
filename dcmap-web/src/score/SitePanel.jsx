@@ -366,11 +366,11 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           <ul className="score-basis roadmap-basis">
             <li>
               <b>이미 연동 (막대에 실값)</b>
-              <span>154kV+ 변전소 거리(OSM) · 계통 공급여유(한전 17시도) · DC 전력공급 가능판정율(전력계통영향평가) · 자가발전 인접 · 냉각 기후지수 · 인구밀도 · 침수 · 산사태</span>
+              <span>154kV+ 변전소 거리(OSM) · 계통 공급여유(한전 17시도) · DC 전력공급 가능판정율(전력계통영향평가) · 자가발전 인접 · 냉각 기후지수 · 인구밀도 · 침수 · 산사태 · 네트워크(백본·해저케이블 육양 시설 근접, OSM)</span>
             </li>
             <li>
               <b>남은 대기</b>
-              <span>부지 면적 · 산단 인센티브 · 지가 점수화(vworld 파셀) · 네트워크(백본·해저케이블 육양 시설 좌표 검증) — 값이 확보된 축부터 위 5축 막대에 반영됩니다</span>
+              <span>부지 면적 · 산단 인센티브 · 지가 점수화(vworld 파셀) — 값이 확보된 축부터 위 5축 막대에 반영됩니다</span>
             </li>
           </ul>
         </details>
@@ -1045,8 +1045,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           }
           return (
             <div className="card-actions">
-              <button type="button" className="btn ai" onClick={genAiReport} disabled={ai === 'loading'}>
-                {ai === 'loading' ? 'AI 분석 중…' : '✨ AI 부지 브리프'}
+              <button type="button" className="btn ai" onClick={genAiReport} disabled={ai === 'loading' || ai?.streaming}>
+                {ai === 'loading' || ai?.streaming ? 'AI 분석 중…' : '✨ AI 부지 브리프'}
               </button>
               <CopyButton getText={makeReport} label="간이 리포트 복사" copiedLabel="복사됨" />
               <button type="button" className="btn" onClick={onPdf}>

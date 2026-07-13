@@ -85,9 +85,26 @@ function buildUserContent(task, body) {
   return `${q ? `요청: ${q}\n\n` : ''}데이터(JSON):\n\`\`\`json\n${data}\n\`\`\``
 }
 
+// 브라우저 교차출처 남용으로 ANTHROPIC 키 예산이 소진되지 않게 Origin 화이트리스트.
+// 자기출처(배포 도메인·프리뷰·로컬)만 허용. Origin 부재(서버-서버·curl 자가점검)는 통과.
+function originAllowed(origin) {
+  if (!origin) return true
+  let host = ''
+  try {
+    host = new URL(origin).host
+  } catch {
+    return false
+  }
+  return host === 'localhost' || host.startsWith('localhost:') || host.endsWith('.vercel.app') || host.endsWith('koreaapi.dev')
+}
+
 export async function aiHandler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ available: false, reason: 'method_not_allowed' })
+    return
+  }
+  if (!originAllowed(req.headers.origin)) {
+    res.status(403).json({ available: false, reason: 'forbidden_origin' })
     return
   }
   const key = process.env.ANTHROPIC_API_KEY
@@ -140,8 +157,6 @@ export async function aiHandler(req, res) {
       },
       body: JSON.stringify(payload),
       signal: ctrl.signal,
-    }).catch((e) => {
-      throw e
     })
     clearTimeout(t)
 

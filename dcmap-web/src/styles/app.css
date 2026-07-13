@@ -564,7 +564,7 @@ a {
   font-size: 11px;
   border-radius: 50%;
   background: rgba(6, 12, 22, 0.85);
-  border: 1.5px solid #a78bfa;
+  border: 1.5px solid var(--violet);
 }
 .net-dot.idc {
   border-color: #35d5ee;
@@ -1227,7 +1227,9 @@ a {
   .compare-tray {
     left: 8px;
     right: 8px;
-    bottom: 8px;
+    /* 하단 모바일 네비(z 1200·높이 56px) 위로 띄우고 그보다 앞에 둔다(가려지던 문제 수정) */
+    bottom: calc(56px + env(safe-area-inset-bottom) + 8px);
+    z-index: 1250;
     max-width: none;
   }
 }
@@ -5282,14 +5284,14 @@ summary:focus-visible,
 /* ============ AI 인텔리전스 레이어 (Claude) ============ */
 /* AI 강조 — 시안+바이올렛 그라데이션으로 'AI 레이어'임을 신호 */
 .btn.ai {
-  border: 1px solid color-mix(in srgb, #a78bfa 40%, var(--line));
-  background: linear-gradient(180deg, color-mix(in srgb, #a78bfa 16%, transparent), color-mix(in srgb, var(--accent) 12%, transparent));
+  border: 1px solid color-mix(in srgb, var(--violet) 40%, var(--line));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--violet) 16%, transparent), color-mix(in srgb, var(--accent) 12%, transparent));
   color: var(--ink);
   font-weight: var(--weight-bold);
 }
 .btn.ai:hover:not(:disabled) {
-  border-color: color-mix(in srgb, #a78bfa 60%, var(--accent));
-  box-shadow: 0 0 0 1px color-mix(in srgb, #a78bfa 30%, transparent), var(--glow-accent-soft, 0 0 14px -4px var(--accent));
+  border-color: color-mix(in srgb, var(--violet) 60%, var(--accent));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--violet) 30%, transparent), var(--glow-accent-soft, 0 0 14px -4px var(--accent));
 }
 .btn.ai:disabled {
   opacity: 0.6;
@@ -5301,9 +5303,9 @@ summary:focus-visible,
   margin: 10px 0 2px;
   padding: 12px 13px;
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, #a78bfa 6%, var(--navy-deep));
-  border: 1px solid color-mix(in srgb, #a78bfa 24%, var(--line));
-  border-left: 3px solid color-mix(in srgb, #a78bfa 70%, var(--accent));
+  background: color-mix(in srgb, var(--violet) 6%, var(--navy-deep));
+  border: 1px solid color-mix(in srgb, var(--violet) 24%, var(--line));
+  border-left: 3px solid color-mix(in srgb, var(--violet) 70%, var(--accent));
 }
 .ai-card.loading {
   display: flex;
@@ -5331,8 +5333,8 @@ summary:focus-visible,
 .ai-badge {
   font-size: 11px;
   font-weight: 800;
-  color: #c4b5fd;
-  background: color-mix(in srgb, #a78bfa 18%, transparent);
+  color: var(--violet-ink);
+  background: color-mix(in srgb, var(--violet) 18%, transparent);
   border-radius: 999px;
   padding: 2px 9px;
 }
@@ -5352,7 +5354,7 @@ summary:focus-visible,
 }
 .ai-regen:hover {
   color: var(--ink);
-  border-color: color-mix(in srgb, #a78bfa 45%, var(--line));
+  border-color: color-mix(in srgb, var(--violet) 45%, var(--line));
 }
 
 /* 사용량·비용 푸터 — 응답 완료 시 토큰/추정비용 표기(투명성) */
@@ -5372,7 +5374,7 @@ summary:focus-visible,
   height: 1.05em;
   margin-left: 2px;
   vertical-align: text-bottom;
-  background: #c4b5fd;
+  background: var(--violet-ink);
   border-radius: 1px;
   animation: ai-blink 1s steps(2, start) infinite;
 }
@@ -5397,7 +5399,7 @@ summary:focus-visible,
 .ai-text .ai-h {
   font-size: var(--text-body);
   font-weight: var(--weight-bold);
-  color: color-mix(in srgb, var(--ink) 92%, #c4b5fd);
+  color: color-mix(in srgb, var(--ink) 92%, var(--violet-ink));
   margin: 10px 0 4px;
 }
 .ai-text .ai-p {
@@ -5433,13 +5435,13 @@ summary:focus-visible,
   height: 36px;
   padding: 0 15px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, #a78bfa 45%, var(--line));
-  background: linear-gradient(180deg, color-mix(in srgb, #a78bfa 30%, var(--navy-deep)), color-mix(in srgb, var(--accent) 22%, var(--navy-deep)));
+  border: 1px solid color-mix(in srgb, var(--violet) 45%, var(--line));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--violet) 30%, var(--navy-deep)), color-mix(in srgb, var(--accent) 22%, var(--navy-deep)));
   color: white;
   font-weight: 800;
   font-size: var(--text-body);
   cursor: pointer;
-  box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.5), 0 0 0 1px color-mix(in srgb, #a78bfa 25%, transparent);
+  box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.5), 0 0 0 1px color-mix(in srgb, var(--violet) 25%, transparent);
 }
 .ai-fab-btn:hover {
   filter: brightness(1.08);
@@ -5452,7 +5454,7 @@ summary:focus-visible,
   flex-direction: column;
   background: color-mix(in srgb, var(--navy-deep) 94%, transparent);
   backdrop-filter: var(--glass-backdrop, blur(8px));
-  border: 1px solid color-mix(in srgb, #a78bfa 26%, var(--line));
+  border: 1px solid color-mix(in srgb, var(--violet) 26%, var(--line));
   border-radius: var(--radius-md);
   box-shadow: 0 14px 40px -8px rgba(0, 0, 0, 0.55);
   overflow: hidden;
@@ -5482,7 +5484,7 @@ summary:focus-visible,
   cursor: pointer;
 }
 .ai-asst-tabs button.on {
-  background: color-mix(in srgb, #a78bfa 24%, transparent);
+  background: color-mix(in srgb, var(--violet) 24%, transparent);
   color: var(--ink);
   font-weight: 800;
 }
@@ -5514,8 +5516,8 @@ summary:focus-visible,
 }
 .ai-sug {
   text-align: left;
-  background: color-mix(in srgb, #a78bfa 8%, transparent);
-  border: 1px solid color-mix(in srgb, #a78bfa 22%, var(--line));
+  background: color-mix(in srgb, var(--violet) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--violet) 22%, var(--line));
   color: var(--ink);
   border-radius: 8px;
   padding: 7px 10px;
@@ -5523,7 +5525,7 @@ summary:focus-visible,
   cursor: pointer;
 }
 .ai-sug:hover {
-  border-color: color-mix(in srgb, #a78bfa 50%, var(--line));
+  border-color: color-mix(in srgb, var(--violet) 50%, var(--line));
 }
 .ai-msg {
   font-size: var(--text-sm);
@@ -5539,8 +5541,8 @@ summary:focus-visible,
 }
 .ai-msg.ai {
   align-self: flex-start;
-  background: color-mix(in srgb, #a78bfa 9%, var(--navy-deep));
-  border: 1px solid color-mix(in srgb, #a78bfa 20%, var(--line));
+  background: color-mix(in srgb, var(--violet) 9%, var(--navy-deep));
+  border: 1px solid color-mix(in srgb, var(--violet) 20%, var(--line));
   color: var(--ink);
 }
 .ai-msg.ai.err {
@@ -5566,14 +5568,14 @@ summary:focus-visible,
 }
 .ai-asst-input input:focus {
   outline: none;
-  border-color: color-mix(in srgb, #a78bfa 55%, var(--line));
+  border-color: color-mix(in srgb, var(--violet) 55%, var(--line));
 }
 .ai-asst-input button {
   width: 34px;
   height: 34px;
   border-radius: 8px;
   border: none;
-  background: linear-gradient(180deg, #a78bfa, var(--accent));
+  background: linear-gradient(180deg, var(--violet), var(--accent));
   color: white;
   font-weight: 800;
   cursor: pointer;
@@ -5607,8 +5609,8 @@ summary:focus-visible,
   overflow-y: auto;
 }
 .chip.ai {
-  border-color: color-mix(in srgb, #a78bfa 45%, var(--line));
-  color: #c4b5fd;
+  border-color: color-mix(in srgb, var(--violet) 45%, var(--line));
+  color: var(--violet-ink);
   font-weight: 700;
 }
 
@@ -5616,9 +5618,9 @@ summary:focus-visible,
 .ai-draft {
   margin: 6px 0 22px;
   padding: 14px 16px;
-  border: 1px solid color-mix(in srgb, #a78bfa 28%, var(--line));
+  border: 1px solid color-mix(in srgb, var(--violet) 28%, var(--line));
   border-radius: 14px;
-  background: linear-gradient(180deg, color-mix(in srgb, #a78bfa 7%, transparent), transparent 60%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--violet) 7%, transparent), transparent 60%);
 }
 .ai-draft-head {
   display: flex;
@@ -5633,7 +5635,7 @@ summary:focus-visible,
   line-height: 1.55;
 }
 .ai-draft-desc b {
-  color: color-mix(in srgb, var(--ink) 85%, #c4b5fd);
+  color: color-mix(in srgb, var(--ink) 85%, var(--violet-ink));
 }
 .ai-draft-input {
   display: flex;
@@ -5653,7 +5655,7 @@ summary:focus-visible,
 }
 .ai-draft-input input:focus {
   outline: none;
-  border-color: color-mix(in srgb, #a78bfa 55%, var(--line));
+  border-color: color-mix(in srgb, var(--violet) 55%, var(--line));
 }
 .ai-draft-presets {
   display: flex;
@@ -5718,10 +5720,10 @@ summary:focus-visible,
 
 /* RE100 / PPA 재생조달 패널 */
 .re-panel {
-  border: 1px solid color-mix(in srgb, #34d399 24%, var(--line));
+  border: 1px solid color-mix(in srgb, var(--mint) 24%, var(--line));
   border-radius: 12px;
   padding: 12px 13px;
-  background: linear-gradient(180deg, color-mix(in srgb, #34d399 6%, transparent), transparent 70%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--mint) 6%, transparent), transparent 70%);
 }
 .re-slider-row {
   display: flex;
@@ -5731,14 +5733,14 @@ summary:focus-visible,
   margin-bottom: 10px;
 }
 .re-pct {
-  color: #34d399;
+  color: var(--mint);
   font-size: var(--text-body);
   margin-left: 4px;
 }
 .re-slider {
   flex: 1 1 200px;
   min-width: 140px;
-  accent-color: #34d399;
+  accent-color: var(--mint);
   height: 4px;
   cursor: pointer;
 }
@@ -5748,15 +5750,15 @@ summary:focus-visible,
   flex-wrap: wrap;
 }
 .re-quick .chip.on {
-  border-color: color-mix(in srgb, #34d399 55%, var(--line));
+  border-color: color-mix(in srgb, var(--mint) 55%, var(--line));
   color: #6ee7b7;
-  background: color-mix(in srgb, #34d399 14%, transparent);
+  background: color-mix(in srgb, var(--mint) 14%, transparent);
 }
 .delta-up {
   color: #f5b544;
 }
 .delta-down {
-  color: #34d399;
+  color: var(--mint);
 }
 
 /* 시나리오 비교 표 — 저장 구성 최대 3 나란히 */
@@ -5817,7 +5819,7 @@ summary:focus-visible,
 .scen-cell.scen-best {
   color: #6ee7b7;
   font-weight: 800;
-  background: color-mix(in srgb, #34d399 9%, transparent);
+  background: color-mix(in srgb, var(--mint) 9%, transparent);
 }
 
 /* ────────────────────────────────────────────────────────────
@@ -5943,7 +5945,7 @@ summary:focus-visible,
 .copy-ic .ic-check {
   opacity: 0;
   transform: scale(0.5);
-  stroke: #34d399;
+  stroke: var(--mint);
 }
 .copy-btn.copied .ic-copy {
   opacity: 0;
@@ -5986,7 +5988,7 @@ summary:focus-visible,
   inset: 0;
   border-radius: inherit;
   padding: 1.4px;
-  background: conic-gradient(from var(--beam-a), transparent 0 64%, #a78bfa 80%, #35d5ee 90%, transparent 98%);
+  background: conic-gradient(from var(--beam-a), transparent 0 64%, var(--violet) 80%, #35d5ee 90%, transparent 98%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
