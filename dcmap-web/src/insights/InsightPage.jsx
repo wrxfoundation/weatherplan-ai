@@ -20,8 +20,17 @@ import Market2025H2 from './articles/Market2025H2.jsx'
 import LandingEdge from './articles/LandingEdge.jsx'
 import PowerSupplyChain from './articles/PowerSupplyChain.jsx'
 import PowerWaterMega from './articles/PowerWaterMega.jsx'
+import HyperscaleJukjeon from './articles/HyperscaleJukjeon.jsx'
 
 const ARTICLES = {
+  'hyperscale-jukjeon': {
+    component: HyperscaleJukjeon,
+    sources: [
+      '용인 죽전 퍼시픽써니 데이터센터 사양(수전 100MW·IT 64MW·연면적 99,125㎡·154kV 지중인입·PUE 1.3·TIER 3·이중화 시운전·포스트텐션·2톤/㎡·글로벌 CSP 5개층 추가·43개월): 현대건설 뉴스룸(hdec.kr) — 시공사 공식',
+      'PUE·TIER 정의: The Green Grid(PUE)·Uptime Institute Tier 국제표준 — 콘텐츠 등급 ④참고·인사이트(사례 해부)',
+      '입지·5축 연결: AI InfraMap 자체 프레임(전력계통영향평가 ±15점·154kV 트랙·냉각 기후지수)',
+    ],
+  },
   'power-water-mega-2026': {
     component: PowerWaterMega,
     sources: [
