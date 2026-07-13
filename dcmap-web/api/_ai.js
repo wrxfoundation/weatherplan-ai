@@ -62,12 +62,14 @@ const TASK_SYSTEM = {
     '작업: 후보지 2~3곳의 스냅샷 배열(JSON)을 받아 비교 평가한다. 구성: ① **후보별 한줄 강·약점**(제공된 축값 근거; 대기 항목은 "데이터 미확보"로 명시) ② **용도별 추천**(예: 대용량 즉시 착공형 / 장기 확장형 / 냉각 우선형 중 각 후보가 어디에 맞는지) ③ **최종 추천 1곳 + 핵심 근거 2~3개**. 없는 수치·순위 창작 금지. 400~600자.',
   draft:
     '작업: 운영자를 위한 인사이트 기사 **초안**을 작성한다(발행 전 검토용). 주제와 참고 데이터(JSON)를 받아 마크다운 초안을 쓴다: ### 소제목 2~4개, 데이터에 있는 수치만 인용(없으면 "확인 필요"로 표시), 마지막에 "출처·확인 필요 항목" 목록. 과장·미확인 단정 금지. 이것은 초안이며 사실 확인 후 발행해야 함을 전제로.',
+  calc:
+    '작업: GPU 용량 계산 결과(JSON: GPU모델·수량·워크로드·PUE·냉각·이중화·IT부하·계약전력·랙수·상면·연간전력량·연간전력비·연간탄소·인허가 트랙 등)를 받아 부지·전력 검토자를 위한 해설을 작성한다. 구성: ① **규모 성격 한줄**(예: 중형 학습 클러스터) ② **전력·계약 시사점**(수전전압 트랙·계통영향평가·계약전력) ③ **냉각·상면·경제성 코멘트** ④ **유의점 1~2개**. 제공된 계산값만 인용하고 없는 값은 언급하지 않는다. 전력비·탄소는 편집 가능한 대표 단가/계수 기반 추정임을 전제로 명시. 300~450자.',
 }
 
-const MODEL_FOR = { report: MODEL_SONNET, brief: MODEL_SONNET, compare: MODEL_SONNET, draft: MODEL_SONNET, search: MODEL_HAIKU, qa: MODEL_HAIKU }
-const MAXTOK_FOR = { report: 1500, brief: 1200, compare: 1500, draft: 2200, search: 1200, qa: 900 }
+const MODEL_FOR = { report: MODEL_SONNET, brief: MODEL_SONNET, compare: MODEL_SONNET, draft: MODEL_SONNET, calc: MODEL_SONNET, search: MODEL_HAIKU, qa: MODEL_HAIKU }
+const MAXTOK_FOR = { report: 1500, brief: 1200, compare: 1500, draft: 2200, calc: 1100, search: 1200, qa: 900 }
 
-const ALLOWED = new Set(['report', 'search', 'qa', 'brief', 'compare', 'draft'])
+const ALLOWED = new Set(['report', 'search', 'qa', 'brief', 'compare', 'draft', 'calc'])
 
 // 본문을 사람 프롬프트로 — 데이터는 JSON 코드블록으로 명확히 구분
 function buildUserContent(task, body) {
