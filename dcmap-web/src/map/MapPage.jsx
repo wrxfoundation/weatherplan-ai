@@ -7,6 +7,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import TopBar from '../TopBar.jsx'
 import FilterBar from './FilterBar.jsx'
 import ClimateBar from './ClimateBar.jsx'
+import Legend from './Legend.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import CompareTray from '../score/CompareTray.jsx'
@@ -1192,6 +1193,7 @@ export default function MapPage({ power = false }) {
             </>
           )}
         </aside>
+        <Legend />
       </div>
       <CompareTray
         items={compare}
