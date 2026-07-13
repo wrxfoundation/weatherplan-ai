@@ -55,9 +55,8 @@ export default function InsightsIndexPage() {
                   {a.category && <span className="insight-tag">{a.category}</span>}
                   {a.title}
                 </span>
-                <span className="meta">
-                  {a.date} · {a.description}
-                </span>
+                <span className="meta">{a.date}</span>
+                {a.description && <span className="row-desc">{a.description}</span>}
               </span>
             </Link>
           ))}

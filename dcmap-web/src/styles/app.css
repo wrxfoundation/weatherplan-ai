@@ -1063,6 +1063,17 @@ a {
   display: block;
 }
 
+/* 인사이트 목록: 설명은 날짜(meta)와 분리해 자체 줄로 — 회색 벽글 방지, 제목→설명 위계 */
+.facility-row .row-desc {
+  display: block;
+  margin-top: 3px;
+  color: color-mix(in srgb, var(--text) 72%, var(--grey));
+  font-size: var(--text-sm);
+  line-height: var(--lh-base);
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
 /* ---------- FacilityCard ---------- */
 /* 성능 가드레일: 스크롤 컨테이너 내부 카드에는 backdrop-blur 금지(모바일 리페인트) —
  * 고정 요소(topbar·filterbar·side-panel·mobile-nav)에만 블러 유지 */

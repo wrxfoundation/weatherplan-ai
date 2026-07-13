@@ -292,10 +292,16 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
         })()}
         <details className="mini-details">
           <summary>점수화 로드맵 — 연동된 축 / 남은 대기</summary>
-          <p className="geo-note">
-            <strong>이미 연동(막대에 실값)</strong>: 154kV+ 변전소 거리(OSM)·계통 공급여유(한전 17시도)·DC 전력공급 가능판정율(전력계통영향평가)·자가발전 인접·냉각 기후지수·인구밀도·침수·산사태.
-            <strong> 남은 대기</strong>: 부지 면적·산단 인센티브·지가 점수화(vworld 파셀) · 네트워크(백본·해저케이블 육양 시설 좌표 검증). 값이 확보된 축부터 위 5축 막대에 반영됩니다.
-          </p>
+          <ul className="score-basis roadmap-basis">
+            <li>
+              <b>이미 연동 (막대에 실값)</b>
+              <span>154kV+ 변전소 거리(OSM) · 계통 공급여유(한전 17시도) · DC 전력공급 가능판정율(전력계통영향평가) · 자가발전 인접 · 냉각 기후지수 · 인구밀도 · 침수 · 산사태</span>
+            </li>
+            <li>
+              <b>남은 대기</b>
+              <span>부지 면적 · 산단 인센티브 · 지가 점수화(vworld 파셀) · 네트워크(백본·해저케이블 육양 시설 좌표 검증) — 값이 확보된 축부터 위 5축 막대에 반영됩니다</span>
+            </li>
+          </ul>
         </details>
 
         {/* 프로세스 관문 전망 — 용량·입지로 본 두 핵심 게이트(P07 접속·P08 계통영향평가) 통과 난이도 */}
@@ -780,8 +786,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               </div>
             </div>
             {(() => {
-              const lp = landPriceFor(r.nearest[0].facility)
-              const dp = dongPulseFor(r.nearest[0].facility)
+              const lp = landPriceFor(r.nearest[0]?.facility)
+              const dp = dongPulseFor(r.nearest[0]?.facility)
               return lp ? (
                 <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
                   <div className="k">
@@ -850,8 +856,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               landUse,
               wx,
               fc,
-              landPrice: landPriceFor(r.nearest[0].facility),
-              dongPulse: dongPulseFor(r.nearest[0].facility),
+              landPrice: landPriceFor(r.nearest[0]?.facility),
+              dongPulse: dongPulseFor(r.nearest[0]?.facility),
               plantCtx: nearestPlant(point),
               windCtx: windContext(point),
               headroom,
