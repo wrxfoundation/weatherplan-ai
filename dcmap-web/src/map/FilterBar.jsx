@@ -13,6 +13,7 @@ const ICON_PATHS = {
   line: <path d="M2 13 5.5 4 9 13 12.5 4 M2 8.5h8" />, // 송전 철탑
   plant: <path d="M2 13V8l3.2 1.8V8l3.2 1.8V4h3.6v9Z M2 13h9.9" />, // 발전소
   renew: <path d="M8 4.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7 M8 1v2 M8 13v2 M1 8h2 M13 8h2" />, // 재생(태양)
+  water: <path d="M8 1.5S3.5 6.5 3.5 9.8a4.5 4.5 0 0 0 9 0C12.5 6.5 8 1.5 8 1.5Z" />, // 수원(물방울)
   permit: <path d="M3.5 2h5l3 3v9h-8Z M8.2 2v3h3 M5.5 8.5l1.3 1.3 2.4-2.6" />, // 허가(문서+체크)
   headroom: <path d="M2.5 12a5.5 5.5 0 0 1 11 0 M8 12l2.7-3" />, // 게이지(여유)
   complex: <path d="M2.5 13V6l4-2v3l4-2v8Z M2.5 13h9 M5 8v.01 M8.5 8v.01" />, // 산단
@@ -54,6 +55,8 @@ export default function FilterBar({
   onToggleNet,
   showRe,
   onToggleRe,
+  showWater,
+  onToggleWater,
   showReco,
   onToggleReco,
   showPublic,
@@ -138,6 +141,15 @@ export default function FilterBar({
           title="재생발전단지 — 대형 태양광·풍력(OSM). RE100/PPA 조달 맥락. 초록=풍력/노랑=태양광"
         >
           <Icon name="renew" /> 재생
+        </button>
+        <button
+          type="button"
+          className={`chip ${showWater ? 'on' : ''}`}
+          onClick={onToggleWater}
+          aria-pressed={showWater}
+          title="주요 수원 — 한국수자원공사 다목적댐 20·용수댐 14. DC 냉각수 공급원 근접 맥락. 크기=총저수용량(좌표는 행정주소 근사)"
+        >
+          <Icon name="water" /> 수원
         </button>
         <button
           type="button"
