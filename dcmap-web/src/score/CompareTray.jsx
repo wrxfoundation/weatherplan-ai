@@ -5,6 +5,129 @@ import { useState } from 'react'
 
 const TONE = { good: 'tone-good', warn: 'tone-warn', bad: 'tone-bad' }
 
+// 후보별 색상(레이더·표 헤더 공통) — 최대 3곳
+const SERIES = ['#35d5ee', '#34d399', '#f5b544']
+
+/* 레이더 5축 — 스코어링 엔진의 5축(전력40/토지25/리스크15/네트워크10/기상10)과 동일한 축.
+ * 각 축은 스냅샷의 원시 지표에서 0~1로 정규화한다. 근거가 없으면 null(중심점 처리·정직).
+ * n(v,max)=0~1 선형, 역방향(작을수록 좋음)은 1-비율. 여러 지표는 값 있는 것만 평균. */
+const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v)
+const avg = (arr) => {
+  const xs = arr.filter((v) => v != null)
+  return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null
+}
+const AXES = [
+  {
+    key: 'power',
+    label: '전력',
+    norm: (c) =>
+      avg([
+        c.approvalPct != null ? clamp01(c.approvalPct / 100) : null,
+        c.gridMw != null ? clamp01(c.gridMw / 1000) : null,
+        c.subKm != null ? clamp01(1 - c.subKm / 20) : null,
+      ]),
+  },
+  {
+    key: 'land',
+    label: '토지',
+    norm: (c) => (c.areaM2 != null ? clamp01(c.areaM2 / 200000) : null),
+  },
+  {
+    key: 'risk',
+    label: '리스크',
+    // 안전할수록 높음 = 1 - 위험요소 평균(침수·산사태·인구밀도)
+    norm: (c) => {
+      const hazard = avg([
+        c.floodPct != null ? clamp01(c.floodPct / 100) : null,
+        c.landslidePct != null ? clamp01(c.landslidePct / 100) : null,
+        c.density != null ? clamp01(c.density / 10000) : null,
+      ])
+      return hazard == null ? null : clamp01(1 - hazard)
+    },
+  },
+  {
+    key: 'net',
+    label: '네트워크',
+    norm: (c) => (c.netScore != null ? clamp01(c.netScore / 10) : null),
+  },
+  {
+    key: 'climate',
+    label: '기상',
+    norm: (c) => (c.climateLevel != null ? clamp01((c.climateLevel - 1) / 4) : null),
+  },
+]
+
+/* 5축 스파이더 차트 — 후보 2~3곳을 겹쳐 그린다(부지 숏리스트 한눈 비교). */
+function CompareRadar({ items }) {
+  const size = 230
+  const cx = size / 2
+  const cy = size / 2 + 4
+  const R = 78
+  const n = AXES.length
+  const ang = (i) => -Math.PI / 2 + (i * 2 * Math.PI) / n // 12시 방향 시작
+  const pt = (i, r) => [cx + Math.cos(ang(i)) * R * r, cy + Math.sin(ang(i)) * R * r]
+
+  // 후보별 정규화 축값(레이더 그리기 + 요약 배지)
+  const series = items.map((c, si) => ({
+    id: c.id,
+    label: c.label,
+    color: SERIES[si % SERIES.length],
+    vals: AXES.map((a) => a.norm(c)),
+  }))
+
+  const gridLevels = [0.25, 0.5, 0.75, 1]
+
+  return (
+    <div className="ct-radar">
+      <svg viewBox={`0 0 ${size} ${size}`} className="ct-radar-svg" role="img" aria-label="후보지 5축 비교 레이더">
+        {/* 배경 그리드(동심 오각형) */}
+        {gridLevels.map((g) => (
+          <polygon
+            key={g}
+            points={AXES.map((_, i) => pt(i, g).join(',')).join(' ')}
+            className="ctr-grid"
+          />
+        ))}
+        {/* 축선 + 라벨 */}
+        {AXES.map((a, i) => {
+          const [x, y] = pt(i, 1)
+          const [lx, ly] = pt(i, 1.22)
+          return (
+            <g key={a.key}>
+              <line x1={cx} y1={cy} x2={x} y2={y} className="ctr-axis" />
+              <text x={lx} y={ly} className="ctr-label" textAnchor="middle" dominantBaseline="middle">
+                {a.label}
+              </text>
+            </g>
+          )
+        })}
+        {/* 후보 폴리곤 — 근거 없는 축은 중심(0) 처리 */}
+        {series.map((s) => {
+          const poly = s.vals.map((v, i) => pt(i, v ?? 0).join(',')).join(' ')
+          return (
+            <g key={s.id}>
+              <polygon points={poly} className="ctr-shape" style={{ '--c': s.color }} />
+              {s.vals.map((v, i) =>
+                v == null ? null : (
+                  <circle key={i} cx={pt(i, v)[0]} cy={pt(i, v)[1]} r="2.4" className="ctr-dot" style={{ '--c': s.color }} />
+                ),
+              )}
+            </g>
+          )
+        })}
+      </svg>
+      <div className="ct-radar-legend">
+        {series.map((s) => (
+          <span key={s.id} className="ctr-leg">
+            <i style={{ background: s.color }} />
+            {s.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // 행 정의: get=표시값, tone=색, best=열 비교 시 '큰 값이 좋음(1)/작을수록 좋음(-1)/없음(0)'
 const ROWS = [
   { key: 'score', label: '근거 점수', get: (c) => (c.score != null ? `${c.score}/${c.coverage}` : '–'), best: (c) => c.pct ?? null, dir: 1 },
@@ -82,12 +205,14 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
           전체 지우기
         </button>
       </div>
+      {open && items.length > 1 && <CompareRadar items={items} />}
       {open && (
         <div className="ct-table" role="table" style={{ '--ct-cols': items.length }}>
           <div className="ct-row ct-colhead" role="row">
             <span className="ct-rowlabel" />
-            {items.map((c) => (
+            {items.map((c, ci) => (
               <span key={c.id} className="ct-col" role="columnheader">
+                <i className="ct-swatch" style={{ background: SERIES[ci % SERIES.length] }} />
                 {c.id === bestId && <span className="ct-badge">추천</span>}
                 <button type="button" className="ct-open" onClick={() => onOpen(c)} title="이 지점 다시 분석">
                   {c.label}
