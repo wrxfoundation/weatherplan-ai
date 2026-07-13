@@ -5672,3 +5672,46 @@ summary:focus-visible,
   margin-top: 0;
   margin-left: auto;
 }
+
+/* GPU 계산기 — 경제성·환경 블록 */
+.econ-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0 8px;
+}
+.econ-flag {
+  font-size: 10px;
+  color: var(--grey);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+.econ-cell .econ-big {
+  font-size: var(--text-h3, 1.25rem);
+  font-weight: 800;
+  color: color-mix(in srgb, var(--ink) 85%, #35d5ee);
+  letter-spacing: -0.01em;
+}
+.econ-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--grey);
+}
+.econ-inline input {
+  width: 66px;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: var(--navy-deep);
+  color: var(--ink);
+  font-size: var(--text-xs);
+  text-align: right;
+}
+.econ-inline input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, #35d5ee 50%, var(--line));
+}
