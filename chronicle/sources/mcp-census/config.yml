@@ -15,6 +15,9 @@ endpoint: https://registry.modelcontextprotocol.io/v0/servers
 user_agent: "chronicle-mcp-census/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
 page_size: 100 # 레지스트리 limit 상한(100 초과는 빈 응답)
 rate_limit_ms: 200
+# 페이지네이션이 "완전 수신 아니면 중단"(커서 순환 감지)이라 부분응답 오탐이 불가능하다.
+# 스키마 이행·레지스트리 급변으로 정당한 churn이 커질 수 있어 차단기를 완화(0.3→0.5).
+max_removal_ratio: 0.5
 
 # 2026 스키마 변경: 서버당 "모든 버전"을 반환 → 행 폭증(페이지네이션 폭주)·최신 아닌
 # 버전 박제 위험. version=latest로 서버당 최신 1건만 받는다. API가 또 바뀌면 여기서 교체.
