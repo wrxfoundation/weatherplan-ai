@@ -18,6 +18,7 @@ import { loadPowerLines, lineColor, POWER_LINES_AVAILABLE } from '../data/powerL
 import { NETWORK_NODES } from '../data/network.js'
 import { recommendSites } from '../score/recommend.js'
 import { RENEWABLE_PLANTS } from '../data/renewablePlants.js'
+import { WATER_SOURCES } from '../data/waterSources.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor } from '../data/liveApi.js'
@@ -183,6 +184,8 @@ export default function MapPage({ power = false }) {
   const netLayerRef = useRef(null)
   const [showRe, setShowRe] = useState(false) // 재생발전단지 레이어(RE100)
   const reLayerRef = useRef(null)
+  const [showWater, setShowWater] = useState(false) // 주요 수원(다목적·용수댐) 레이어
+  const waterLayerRef = useRef(null)
   const [showReco, setShowReco] = useState(false) // 추천 입지 TOP(정적 근거 랭킹)
   const recoLayerRef = useRef(null)
   const [recoMw, setRecoMw] = useState(40) // 시뮬레이터: 필요 용량(계통 공급여유 하한)
@@ -479,6 +482,37 @@ export default function MapPage({ power = false }) {
       reLayerRef.current = g
     }
   }, [showRe])
+
+  // 주요 수원(다목적·용수댐) 레이어 — 냉각수 공급원 근접 맥락. 크기는 저수용량 로그 스케일.
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (waterLayerRef.current) {
+      map.removeLayer(waterLayerRef.current)
+      waterLayerRef.current = null
+    }
+    if (showWater) {
+      const g = L.layerGroup()
+      for (const [name, lat, lng, type, cap] of WATER_SOURCES) {
+        const r = Math.max(4, Math.min(11, 3 + Math.log10(cap + 1) * 2.2)) // 저수용량 스케일
+        L.circleMarker([lat, lng], {
+          radius: r,
+          color: '#38bdf8',
+          weight: 1.3,
+          fillColor: type === 'M' ? '#0ea5e9' : '#7dd3fc',
+          fillOpacity: 0.5,
+          bubblingMouseEvents: false,
+        })
+          .bindTooltip(
+            `<div class="dc-hovercard"><strong>${name}댐</strong> · ${type === 'M' ? '다목적' : '용수'}댐<br/><span class="muted">총저수 ${cap.toLocaleString()}백만㎥ · K-water(좌표 근사)</span></div>`,
+            { direction: 'top', offset: [0, -6], className: 'dc-hovercard', opacity: 1 },
+          )
+          .addTo(g)
+      }
+      g.addTo(map)
+      waterLayerRef.current = g
+    }
+  }, [showWater])
 
   // 통신망 레이어 토글 — 백본 국사·IDC·해저케이블 육양국(네트워크축 근거).
   useEffect(() => {
@@ -857,6 +891,8 @@ export default function MapPage({ power = false }) {
         onToggleNet={() => setShowNet((v) => !v)}
         showRe={showRe}
         onToggleRe={() => setShowRe((v) => !v)}
+        showWater={showWater}
+        onToggleWater={() => setShowWater((v) => !v)}
         showReco={showReco}
         onToggleReco={() => setShowReco((v) => !v)}
         showPublic={showPublic}
