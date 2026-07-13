@@ -249,12 +249,38 @@ a {
   top: calc(var(--topbar-height) + 12px);
   left: 12px;
   z-index: 1000;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  /* 우측 상단 기후 바(320px)와 겹치지 않게 그 영역을 예약 — 레이어(2줄)가 기후 바 밑으로 파고들던 것 방지 */
+  display: block; /* 2줄(검색컨트롤 / 레이어) 블록 스택 — 각 줄이 예약폭을 채우고 넘치면 그 줄만 스크롤 */
+  /* 우측 상단 기후 바(320px)와 겹치지 않게 그 영역을 예약 */
   max-width: calc(100% - var(--panel-width) - 344px);
+}
+
+/* 각 줄 — 한 줄 유지, 넘치면 그 줄만 가로 스크롤(줄 수는 항상 2로 고정) */
+.filterbar .fb-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: visible;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.filterbar .fb-row + .fb-row {
+  margin-top: 8px;
+}
+/* 줄이 넘쳐도 알약이 쪼그라들지 않게(칩 텍스트 세로 깨짐 방지) — 대신 그 줄이 가로 스크롤 */
+.filterbar .fb-row > * {
+  flex: none;
+}
+.filterbar .fb-row::-webkit-scrollbar {
+  display: none;
+}
+.filterbar .fb-row-layers {
+  gap: 7px;
+}
+.filterbar .fb-row-layers > .group-label {
+  align-self: center;
+  flex: none;
 }
 
 /* 베이스맵 전환 — 사이드패널 헤더(목록으로 줄에 맞춤, 스크롤 안쪽) */
@@ -2720,11 +2746,32 @@ summary:focus-visible,
 .dc-marker.operating {
   background: var(--status-operating);
   box-shadow: 0 0 10px 2px color-mix(in srgb, var(--status-operating) 65%, transparent);
+  --pc: var(--status-operating);
+  animation: marker-breathe 3.4s ease-in-out infinite;
 }
 
 .dc-marker.construction {
   background: var(--status-construction);
   box-shadow: 0 0 10px 2px color-mix(in srgb, var(--status-construction) 55%, transparent);
+  --pc: var(--status-construction);
+  animation: marker-breathe 3.4s ease-in-out infinite;
+  animation-delay: -1.1s; /* 상태별 위상차로 동시 맥동 방지(자연스럽게) */
+}
+
+/* 시설 마커 은은한 맥동 — 글로우가 부드럽게 확장·수축(과하지 않게). 상태색은 --pc로 주입. */
+@keyframes marker-breathe {
+  0%, 100% {
+    box-shadow: 0 0 7px 1px color-mix(in srgb, var(--pc) 62%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 16px 5px color-mix(in srgb, var(--pc) 34%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dc-marker.operating,
+  .dc-marker.construction {
+    animation: none;
+  }
 }
 
 .dc-marker.planned,
@@ -4752,17 +4799,9 @@ summary:focus-visible,
     line-height: 1;
   }
 
-  /* 필터바: 줄바꿈 대신 가로 스크롤 */
+  /* 필터바: 모바일에서도 2줄 유지, 각 줄 가로 스크롤(fb-row가 처리) */
   .filterbar {
-    max-width: calc(100% - 24px);
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-  }
-
-  .filterbar::-webkit-scrollbar {
-    display: none;
+    max-width: calc(100% - 20px);
   }
 
   .filterbar .group,
