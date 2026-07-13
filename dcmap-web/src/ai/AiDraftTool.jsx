@@ -4,6 +4,7 @@ import { FACILITIES } from '../data/facilities.js'
 import { POWER_BALANCE } from '../data/powerBalance.js'
 import { recommendSites, recoReasons } from '../score/recommend.js'
 import AiText from './AiText.jsx'
+import CopyButton from '../ui/CopyButton.jsx'
 
 /* AI 인사이트 자동초안 — 운영자용. 주제 + 실제 집계 데이터 스냅샷만 넘겨 마크다운 기사 '초안'을 생성.
  * 정직성: 스냅샷의 실값만 전달하고, 결과는 '초안(검토 전)'임을 명시. 없는 값은 프롬프트가 '확인 필요'로 처리. */
@@ -68,7 +69,6 @@ function buildSnapshot() {
 export default function AiDraftTool() {
   const [topic, setTopic] = useState('')
   const [ai, setAi] = useState(null)
-  const [copied, setCopied] = useState(false)
   const snapshot = useMemo(() => buildSnapshot(), [])
 
   const gen = async (t) => {
@@ -76,21 +76,9 @@ export default function AiDraftTool() {
     if (!query || ai === 'loading') return
     setTopic(query)
     setAi('loading')
-    setCopied(false)
     const res = await callAiStream('draft', { query, data: snapshot }, (partial) => setAi({ text: partial, streaming: true }))
     if (res?.available && res.text) setAi({ text: res.text, usage: res.usage })
     else setAi({ error: res?.reason || 'error' })
-  }
-
-  const onCopy = async () => {
-    if (!ai?.text) return
-    try {
-      await navigator.clipboard.writeText(ai.text)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      /* 클립보드 미지원 */
-    }
   }
 
   return (
@@ -144,9 +132,7 @@ export default function AiDraftTool() {
           {ai.streaming && <span className="ai-cursor" aria-hidden />}
           {!ai.streaming && (
             <div className="ai-draft-foot">
-              <button type="button" className="btn primary" onClick={onCopy}>
-                {copied ? '복사됨 ✓' : '초안 복사'}
-              </button>
+              <CopyButton getText={() => ai.text} label="초안 복사" copiedLabel="복사됨" />
               <button type="button" className="ai-regen" onClick={() => gen()}>
                 다시 생성
               </button>

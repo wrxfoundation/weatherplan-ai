@@ -20,6 +20,7 @@ import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js
 import Term from '../components/Term.jsx'
 import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
 import AiText from '../ai/AiText.jsx'
+import CopyButton from '../ui/CopyButton.jsx'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
 export default function SitePanel({ point, onClose, onSelectFacility, onAddCompare, inCompare }) {
@@ -954,7 +955,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
         <div className="chart-title" style={{ marginTop: 14 }}>
           최근접 시설
         </div>
-        <div className="facility-list">
+        <div className="facility-list stagger-in">
           {r.nearest.map(({ facility: f, km }) => (
             <button key={f.id} type="button" className="facility-row" onClick={() => onSelectFacility(f)}>
               <span className={`dot ${f.status === 'delayed' ? 'planned' : f.status}`} />
@@ -1000,15 +1001,6 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               waterSource: nearestWaterSource(point.lat, point.lng),
               cluster: nearestCluster(point.lat, point.lng),
             })
-          const onCopy = async () => {
-            try {
-              await navigator.clipboard.writeText(makeReport())
-              setCopied('report')
-              setTimeout(() => setCopied(false), 2000)
-            } catch {
-              /* 클립보드 미지원 — 다운로드 버튼 사용 */
-            }
-          }
           const onDownload = () => {
             const blob = new Blob([makeReport()], { type: 'text/markdown;charset=utf-8' })
             const a = document.createElement('a')
@@ -1056,9 +1048,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               <button type="button" className="btn ai" onClick={genAiReport} disabled={ai === 'loading'}>
                 {ai === 'loading' ? 'AI 분석 중…' : '✨ AI 부지 브리프'}
               </button>
-              <button type="button" className="btn primary" onClick={onCopy}>
-                {copied === 'report' ? '복사됨 ✓' : '간이 리포트 복사'}
-              </button>
+              <CopyButton getText={makeReport} label="간이 리포트 복사" copiedLabel="복사됨" />
               <button type="button" className="btn" onClick={onPdf}>
                 PDF 저장
               </button>

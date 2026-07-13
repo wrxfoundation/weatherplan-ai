@@ -7,6 +7,7 @@ import Term from '../components/Term.jsx'
 import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
 import AiText from '../ai/AiText.jsx'
 import SpringNumber from '../ui/SpringNumber.jsx'
+import CopyButton from '../ui/CopyButton.jsx'
 
 // GPU별 대표 TDP(kW). 공개 스펙 기준 근사치 — 가속기당 소비전력(부대 IT 부하는 별도 계수).
 // NVIDIA 데이터센터 GPU가 사실상 표준이나, 추론·레거시·AMD까지 포함해 시나리오 폭을 넓힘.
@@ -184,7 +185,6 @@ export default function CalcPage() {
   const [kgco2PerKwh, setKgco2PerKwh] = useState(() => Math.min(1, Math.max(0, num(sp.get('e'), DEFAULT_KGCO2_PER_KWH))))
   const [rePct, setRePct] = useState(() => Math.min(100, Math.max(0, Math.round(num(sp.get('re'), 0)))))
   const [ppaWonPerKwh, setPpaWonPerKwh] = useState(() => Math.min(500, Math.max(50, num(sp.get('ppa'), DEFAULT_PPA_WON_PER_KWH))))
-  const [copied, setCopied] = useState(false)
   const [ai, setAi] = useState(null) // null | 'loading' | { text, usage, streaming } | { error }
 
   const [scenarios, setScenarios] = useState(() => {
@@ -331,16 +331,6 @@ export default function CalcPage() {
       ``,
       `※ 전력비·탄소·PPA는 대표 단가·국가 전력배출계수 기반 추정으로 계절·시간대·계약별로 상이합니다.`,
     ].join('\n')
-  }
-
-  const onCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(summaryText())
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      /* 클립보드 미지원 */
-    }
   }
 
   const genAi = async () => {
@@ -653,9 +643,7 @@ export default function CalcPage() {
             <button type="button" className="btn" onClick={saveScenario}>
               {savedFlash ? '시나리오 저장됨 ✓' : '＋ 시나리오로 저장'}
             </button>
-            <button type="button" className="btn primary" onClick={onCopy}>
-              {copied ? '복사됨 ✓' : '요약 복사'}
-            </button>
+            <CopyButton getText={summaryText} label="요약 복사" copiedLabel="복사됨" />
           </div>
 
           {/* AI 계산 해설 — 계산된 값만 스냅샷으로 전달(창작 없음) */}

@@ -50,7 +50,7 @@ export default function InsightsIndexPage() {
           ))}
         </div>
 
-        <div className="facility-list">
+        <div className="facility-list stagger-in" key={cat}>
           {list.map((a) => (
             <Link key={a.slug} className="facility-row" to={`/insights/${a.slug}`}>
               <span>
