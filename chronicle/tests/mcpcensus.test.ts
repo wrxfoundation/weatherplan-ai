@@ -122,3 +122,61 @@ test("파이프라인: 신규 서버=생성, 버전=필드 이벤트, 소멸=삭
   const removal = second.events.find((e) => e.field === RECORD_FIELD && e.after === null)!;
   assert.equal(removal.entity_id, "server:io.github.mod/filesystem");
 });
+
+/** 2026 스키마: 각 항목이 {server:{...}, _meta:{...}}로 중첩, version이 server 직속. */
+function serverV2(s: Server, opts?: { status?: string }) {
+  return {
+    server: {
+      name: s.name,
+      description: `${s.name} 설명`,
+      version: s.version, // ← 새 스키마: version_detail이 아니라 server.version
+      repository: { url: s.repo, source: "github" },
+    },
+    _meta: {
+      "io.modelcontextprotocol.registry/official": { status: opts?.status ?? "active", isLatest: true },
+    },
+  };
+}
+
+function registryV2(all: () => Server[], seenVersionParam?: string[]): HttpClient {
+  return {
+    json: async (url) => {
+      const parsed = new URL(url);
+      if (seenVersionParam) seenVersionParam.push(parsed.searchParams.get("version") ?? "");
+      const limit = Number(parsed.searchParams.get("limit") ?? 100);
+      const cursor = Number(parsed.searchParams.get("cursor") ?? 0);
+      const servers = all();
+      const page = servers.slice(cursor, cursor + limit);
+      const nextIndex = cursor + limit;
+      return {
+        servers: page.map((s) => serverV2(s)),
+        metadata: nextIndex < servers.length ? { nextCursor: String(nextIndex), count: page.length } : { count: page.length },
+      };
+    },
+    text: async () => {
+      throw new Error("n/a");
+    },
+    raw: async () => {
+      throw new Error("n/a");
+    },
+  };
+}
+
+test("2026 중첩 스키마: server.version·status 추출 + version=latest 전송", async () => {
+  const seenVersionParam: string[] = [];
+  const result = await adapter.collect(ctx(registryV2(() => [fs, git], seenVersionParam)));
+  const filesystem = result.records.find((r) => r.entityId.endsWith("filesystem"))!;
+  assert.equal(filesystem.fields.version, "1.2.0", "server.version에서 추출");
+  assert.equal(filesystem.fields.status, "active", "_meta 공식 상태 추출");
+  assert.equal(filesystem.fields.repository_url, "https://github.com/mod/filesystem");
+  assert.ok(seenVersionParam.length > 0 && seenVersionParam.every((v) => v === "latest"), "version=latest 파라미터 전송");
+});
+
+test("커서 순환 감지: 같은 커서 반복이면 중단(무한루프 방지)", async () => {
+  const stuck: HttpClient = {
+    json: async () => ({ servers: [serverV2(fs)], metadata: { nextCursor: "STUCK" } }), // 항상 같은 커서
+    text: async () => "",
+    raw: async () => new Response(),
+  };
+  await assert.rejects(() => adapter.collect(ctx(stuck)), /커서 순환/);
+});

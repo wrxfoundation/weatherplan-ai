@@ -46,7 +46,10 @@ function nextCursor(body: unknown): string | null {
   return typeof cursor === "string" && cursor !== "" ? cursor : null;
 }
 
-const MAX_PAGES = 200;
+// 레지스트리는 limit을 100으로 상한하고 서버당 "모든 버전"을 반환하도록 바뀌어(2026)
+// 행 수가 서버 수의 수 배가 됐다 — version=latest로 최신만 받아 규모를 서버 수로 되돌린다.
+// 상한은 커서 순환 감지(진짜 무한루프)로 지키고, 페이지 상한은 성장 대비 넉넉한 백스톱.
+const MAX_PAGES = 1000;
 
 export class McpCensusAdapter extends ApiRecordsAdapter {
   readonly id = "mcp-census";
@@ -58,13 +61,17 @@ export class McpCensusAdapter extends ApiRecordsAdapter {
     const init: RequestInit | undefined =
       typeof userAgent === "string" && userAgent ? { headers: { "User-Agent": userAgent, Accept: "application/json" } } : undefined;
     const pageSize = Number(ctx.config.page_size ?? 100);
+    // 목록 필터 파라미터(핫에디트) — 기본은 최신 버전만. API가 또 바뀌면 config에서 교체.
+    const extraQuery = (ctx.config.extra_query as Record<string, unknown> | undefined) ?? { version: "latest" };
 
     const servers: Json[] = [];
+    const seenCursors = new Set<string>();
     let cursor: string | null = null;
     for (let page = 1; ; page++) {
-      if (page > MAX_PAGES) throw new Error(`페이지네이션 폭주(>${MAX_PAGES}p): ${endpoint}`);
+      if (page > MAX_PAGES) throw new Error(`페이지네이션 상한 초과(>${MAX_PAGES}p) — 레지스트리 급성장 또는 커서 미종료: ${endpoint}`);
       const url = new URL(endpoint);
       url.searchParams.set("limit", String(pageSize));
+      for (const [key, value] of Object.entries(extraQuery)) url.searchParams.set(key, String(value));
       if (cursor) url.searchParams.set("cursor", cursor);
       const body = (await ctx.http.json(url.toString(), init)) as unknown;
       const list = asArray(body);
@@ -73,7 +80,9 @@ export class McpCensusAdapter extends ApiRecordsAdapter {
       }
       servers.push(...list);
       const next = nextCursor(body);
-      if (!next || next === cursor || list.length === 0) break;
+      if (!next || list.length === 0) break;
+      if (next === cursor || seenCursors.has(next)) throw new Error(`커서 순환 감지(p${page}) — ${next}`);
+      seenCursors.add(next);
       cursor = next;
     }
     ctx.log(`[${this.id}] 등록 서버 ${servers.length}건 수신`);
@@ -86,18 +95,22 @@ export class McpCensusAdapter extends ApiRecordsAdapter {
     const records: NormalizedRecord[] = [];
     const seen = new Set<string>();
     for (const entry of servers) {
-      const name = pick(entry, ["name"], ["server", "name"]);
+      const name = pick(entry, ["server", "name"], ["name"]);
       if (typeof name !== "string" || !name || seen.has(name)) continue;
       seen.add(name);
-      const version = pick(entry, ["version_detail", "version"], ["server", "version_detail", "version"], ["version"]);
-      const repo = pick(entry, ["repository", "url"], ["server", "repository", "url"]);
-      const description = pick(entry, ["description"], ["server", "description"]);
+      // 2026 스키마는 서버 데이터를 entry.server 아래로 중첩하고 version을 거기 직접 둔다.
+      const version = pick(entry, ["server", "version"], ["server", "version_detail", "version"], ["version_detail", "version"], ["version"]);
+      const repo = pick(entry, ["server", "repository", "url"], ["repository", "url"]);
+      const description = pick(entry, ["server", "description"], ["description"]);
+      // 레지스트리 공식 상태(active·deprecated·deleted) — 조용한 폐기의 직접 신호.
+      const status = pick(entry, ["_meta", "io.modelcontextprotocol.registry/official", "status"], ["status"]);
       records.push({
         entityId: `server:${name}`,
         sourceUrl: endpoint,
         fields: {
           version: typeof version === "string" ? version : null,
           repository_url: typeof repo === "string" ? repo : null,
+          status: typeof status === "string" ? status : null,
           // 설명은 마케팅 문구라 원문 대신 해시만 tracked (변경은 감지, churn·용량은 억제)
           description_sha256: typeof description === "string" ? createHash("sha256").update(description).digest("hex") : null,
         },
