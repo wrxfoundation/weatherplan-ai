@@ -483,9 +483,22 @@ a {
   align-items: center;
   justify-content: center;
 }
-.rs-name {
+.rs-main {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.rs-name {
   font-size: 11.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rs-why {
+  font-size: 10px;
+  color: var(--grey);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

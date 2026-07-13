@@ -210,7 +210,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
 
         {/* 한눈에 — 핵심 판단값을 색 칩으로. 값은 아래 상세와 동일 소스(로드되며 채워짐). */}
         {(() => {
-          const climateTone = climateIdx ? (climateIdx.level <= 2 ? 'good' : climateIdx.level === 3 ? 'warn' : 'bad') : null
+          const climateTone = climateIdx ? (climateIdx.level >= 4 ? 'good' : climateIdx.level === 3 ? 'warn' : 'bad') : null
           const expoTone = (o) => (o.exposurePct >= 30 ? 'bad' : o.exposurePct > 0 ? 'warn' : 'good')
           return (
             <div className="site-summary" aria-label="지점 한눈에 요약">

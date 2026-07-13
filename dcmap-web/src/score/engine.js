@@ -55,7 +55,8 @@ function exposureItem(label, max, o, pendingMsg) {
 }
 
 // DC 기후지수 단계(1 아주좋음 ~ 5 아주나쁨) → 냉각 점수(10점 만점)
-const CLIMATE_POINTS = { 1: 10, 2: 8, 3: 6, 4: 3, 5: 0 }
+// 기후지수 단계→점수. LEVELS는 5=아주좋음(한랭·프리쿨링 최적)~1=아주나쁨(온난). 좋은 냉각일수록 高점(이전 역전 버그 수정).
+const CLIMATE_POINTS = { 5: 10, 4: 8, 3: 6, 2: 3, 1: 0 }
 
 // 용도지역 → DC 입지 적합성(국토계획법 기준 통용). vworld 도시계획 uses[] 문자열 분류. 12점 배점.
 function zoneAdmissibility(uses) {

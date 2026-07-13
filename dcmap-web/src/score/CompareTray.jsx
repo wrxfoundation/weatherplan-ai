@@ -15,7 +15,7 @@ const ROWS = [
   { key: 'net', label: '네트워크', get: (c) => (c.netScore != null ? `${c.netScore}/10` : '–'), best: (c) => c.netScore, dir: 1 },
   { key: 'complex', label: '산단 거리', get: (c) => (c.icKm != null ? `${c.icKm.toFixed(1)}km` : '–'), tone: (c) => (c.icKm == null ? null : c.icKm <= 3 ? 'good' : c.icKm <= 15 ? 'warn' : 'bad'), best: (c) => c.icKm, dir: -1 },
   { key: 'area', label: '부지 면적', get: (c) => (c.areaM2 != null ? `${c.areaM2.toLocaleString()}㎡` : '–'), best: (c) => c.areaM2, dir: 1 },
-  { key: 'climate', label: '냉각(기후)', get: (c) => c.climate || '–', tone: (c) => (c.climateLevel == null ? null : c.climateLevel <= 2 ? 'good' : c.climateLevel === 3 ? 'warn' : 'bad'), best: (c) => (c.climateLevel == null ? null : 6 - c.climateLevel), dir: 1 },
+  { key: 'climate', label: '냉각(기후)', get: (c) => c.climate || '–', tone: (c) => (c.climateLevel == null ? null : c.climateLevel >= 4 ? 'good' : c.climateLevel === 3 ? 'warn' : 'bad'), best: (c) => c.climateLevel, dir: 1 },
   { key: 'flood', label: '침수 노출', get: (c) => (c.floodPct == null ? '–' : c.floodPct <= 0 ? '낮음' : `${c.floodPct}%`), tone: (c) => (c.floodPct == null ? null : c.floodPct >= 30 ? 'bad' : c.floodPct > 0 ? 'warn' : 'good'), best: (c) => c.floodPct, dir: -1 },
   { key: 'landslide', label: '산사태 노출', get: (c) => (c.landslidePct == null ? '–' : c.landslidePct <= 0 ? '낮음' : `${c.landslidePct}%`), tone: (c) => (c.landslidePct == null ? null : c.landslidePct >= 30 ? 'bad' : c.landslidePct > 0 ? 'warn' : 'good'), best: (c) => c.landslidePct, dir: -1 },
   { key: 'density', label: '인구밀도', get: (c) => (c.density != null ? `${c.density.toLocaleString()}/km²` : '–'), tone: (c) => (c.density == null ? null : c.density < 3000 ? 'good' : 'warn'), best: (c) => c.density, dir: -1 },
