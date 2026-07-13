@@ -132,6 +132,22 @@ npm run verify  -- bunyang-capsule
 - GitHub Actions에는 리포 **Secrets**에 `DATA_GO_KR_KEY`로 등록한다.
   **키를 코드·로그·커밋에 절대 노출하지 않는다.**
 
+## 투자-가독 다이제스트 (npm run digest)
+
+원장(changes.jsonl)은 무가공 사실만 담는다. 그 위에서 **12개 소스를 가로질러
+"무엇이 사라지고·바뀌고·태어났나 + 3중 공증"을 한 장으로** 뽑는 읽기 전용 집계
+레이어 — 축적물의 "so what"을 언론·투자자에게 증명하는 표면.
+
+```bash
+npm run digest -- --since 30            # docs/digest.md 생성(최근 30일)
+npm run digest -- --since 30 --json     # 기계용 JSON
+```
+
+- **소멸(지금 찍은 자만 소유)**과 **조용한 수정**을 전면에 세운다 — 시간해자의
+  가치가 가장 선명한 두 신호. 신규는 규모 지표로 집계.
+- 원장을 읽기만 하므로 공증 무결성에 무해(수정 금지). 주간 크론(`digest.yml`)이
+  `docs/digest.md`를 갱신 → GitHub에서 바로 렌더되는 공유 아티팩트.
+
 ## MCP 질의 표면 (chronicle-mcp)
 
 원장을 통째로 떠가는 대신 **호출**하게 만드는 표면 — 에이전트가 "떠가는 대상"이

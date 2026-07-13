@@ -1,0 +1,54 @@
+# Chronicle 투자-가독 다이제스트 — standalone 리포용.
+#
+# 주 1회 12개 원장을 가로질러 "무엇이 사라지고·바뀌고·태어났나 + 3중 공증"을
+# docs/digest.md 로 뽑는다. 원장을 읽기만 하는 집계라 공증 무결성에 무해.
+# 축적물의 "so what"을 언론·투자자에게 증명하는 표면(GitHub에서 바로 렌더).
+# Manual: Actions tab -> "digest" -> Run workflow.
+name: digest
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "23 21 * * 0" # 매주 일요일 ~06:23 KST (주간 소스 수집 이후)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chronicle-cron # docs 커밋 경합을 다른 크론과 직렬화
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Generate digest (최근 30일)
+        run: npm run digest -- --since 30
+
+      - name: Commit digest (변경 없으면 생략)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/digest.md
+          if git diff --cached --quiet; then
+            echo "no digest change"
+          else
+            git commit -m "docs(digest): weekly cross-source digest [skip ci]"
+            n=0
+            until git push; do
+              n=$((n+1))
+              if [ "$n" -ge 3 ]; then echo "push failed after $n attempts" >&2; exit 1; fi
+              git pull --rebase origin "$GITHUB_REF_NAME"
+            done
+          fi
