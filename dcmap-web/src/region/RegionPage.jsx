@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, slugOf } from '../data/facilities.js'
+import AiBriefButton from '../ai/AiBriefButton.jsx'
 import { SLUG_TO_SIDO } from '../content/sido_slugs.js'
 import { LAND_DONG, LAND_DONG_PERIOD } from '../data/landPriceDong.js'
 import { fmtRate } from '../data/landPrice.js'
@@ -116,6 +117,24 @@ export default function RegionPage() {
             지가 전체 리스트
           </Link>
         </div>
+
+        <AiBriefButton
+          label={`✨ ${sido} AI 인프라 브리핑`}
+          query={`${sido}의 데이터센터·전력 인프라 브리핑`}
+          data={{
+            시도: sido,
+            시설수: list.length,
+            상태별: by,
+            공개전력합MW: mw,
+            시설: list.slice(0, 24).map((f) => ({
+              name: f.name,
+              시군구: f.sigungu ?? null,
+              상태: STATUS_LABEL[f.status] ?? f.status,
+              유형: f.type,
+              MW: f.power_mw_public ?? null,
+            })),
+          }}
+        />
 
         {(() => {
           const rows = Object.entries(LAND_DONG.entries)

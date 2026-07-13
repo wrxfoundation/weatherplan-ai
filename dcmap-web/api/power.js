@@ -15,6 +15,7 @@ import http from 'node:http'
 import https from 'node:https'
 import { promises as dnsp } from 'node:dns'
 import { proxyConfigured, proxyGetText } from './_proxy.js'
+import { aiHandler } from './_ai.js'
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 
@@ -265,6 +266,11 @@ const HANDLERS = { epsis: handleEpsis, supply: handleSupply, trading: handleTrad
 
 export default async function handler(req, res) {
   const src = String(req.query.src || 'epsis')
+  // AI 인텔리전스 프록시 위임 — Hobby 12함수 제한 유지 위해 별도 함수 대신 여기로 멀티플렉싱.
+  // (_ai.js는 '_' 접두라 함수 카운트 제외 · POST /api/power?src=ai)
+  if (src === 'ai') {
+    return aiHandler(req, res)
+  }
   if (!HANDLERS[src]) {
     res.status(400).json({ available: false, reason: 'unknown_src' })
     return
