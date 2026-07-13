@@ -16,9 +16,13 @@ async function fetchJson(url, ms = 9000) {
     clearTimeout(t)
     if (!r.ok) return null
     const body = await r.json()
-    const value = body?.available ? body : null
-    cache.set(url, value)
-    return value
+    // 성공(available)만 캐시 — 일시적 upstream_429/timeout(200 + available:false)을 캐시하면
+    // 세션 내내 '연동 대기'로 고착되어 서버측 백오프를 무력화하므로 캐시하지 않는다.
+    if (body?.available) {
+      cache.set(url, body)
+      return body
+    }
+    return null
   } catch {
     return null
   }

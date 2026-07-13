@@ -105,13 +105,13 @@ export default function AiDraftTool() {
           placeholder="예: 비수도권 계통 여유와 데이터센터 입지 유인"
           aria-label="초안 주제"
         />
-        <button type="submit" className="btn ai" disabled={ai === 'loading' || !topic.trim()}>
-          {ai === 'loading' ? '초안 작성 중…' : '초안 생성'}
+        <button type="submit" className="btn ai" disabled={ai === 'loading' || ai?.streaming || !topic.trim()}>
+          {ai === 'loading' || ai?.streaming ? '초안 작성 중…' : '초안 생성'}
         </button>
       </form>
       <div className="ai-draft-presets">
         {PRESETS.map((p) => (
-          <button key={p} type="button" className="ai-sug" onClick={() => gen(p)} disabled={ai === 'loading'}>
+          <button key={p} type="button" className="ai-sug" onClick={() => gen(p)} disabled={ai === 'loading' || ai?.streaming}>
             {p}
           </button>
         ))}

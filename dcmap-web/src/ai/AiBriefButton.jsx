@@ -13,8 +13,8 @@ export default function AiBriefButton({ data, query, label = '✨ AI 지역 브�
   }
   return (
     <div className="ai-brief">
-      <button type="button" className="btn ai" onClick={gen} disabled={ai === 'loading'}>
-        {ai === 'loading' ? 'AI 브리핑 작성 중…' : label}
+      <button type="button" className="btn ai" onClick={gen} disabled={ai === 'loading' || ai?.streaming}>
+        {ai === 'loading' || ai?.streaming ? 'AI 브리핑 작성 중…' : label}
       </button>
       {ai === 'loading' && (
         <div className="ai-card loading" role="status">
