@@ -70,6 +70,48 @@ export default function FilterBar({
   showHeadroom,
   onToggleHeadroom,
 }) {
+  // 레이어 토글을 의미 단위로 그루핑(방대해진 레이어 정돈): 표시·전력·자원·수요·망.
+  // cond:false 인 항목(예: 송전선 데이터 없음)은 렌더 제외.
+  const LAYER_GROUPS = [
+    {
+      label: '표시',
+      chips: [
+        { key: 'reco', icon: 'reco', text: '추천입지', on: showReco, toggle: onToggleReco, cls: 'chip-reco', title: 'AI 추천 입지 TOP20 — 산업단지 후보를 정적 근거(변전소·공급여유·승인율·네트워크·자가발전)로 랭킹. 클릭 시 전체 분석' },
+        { key: 'label', icon: 'label', text: '라벨', on: showLabels, toggle: onToggleLabels, title: '맵 위 시설명·용량 라벨 켜기/끄기' },
+      ],
+    },
+    {
+      label: '전력',
+      chips: [
+        { key: 'subs', icon: 'substation', text: '변전소', on: showSubs, toggle: onToggleSubs, title: '154kV+ 변전소 841개 — DC가 전기를 받는 접속점(OSM 좌표). 전압별 색: 154kV 하늘 / 345kV 보라 / 765kV 분홍' },
+        { key: 'lines', icon: 'line', text: '송전선', on: showLines, toggle: onToggleLines, cond: hasLines, title: '송전선로 — OSM power=line, 전압별 색(OpenInfraMap 준거). 154kV+ 계통망' },
+        { key: 'plants', icon: 'plant', text: '발전소', on: showPlants, toggle: onTogglePlants, title: '대형 발전단지(원전·석탄) 레이어 — 발전 인프라 근접성 맥락 (DC 전원 매칭 아님)' },
+        { key: 'permit', icon: 'permit', text: '발전허가', on: showGenPermits, toggle: onToggleGenPermits, title: '2024년 이후 발전사업 허가 파이프라인 — 시도별 건수 버블(3MW 초과 허가대장). 전력 공급측 신호, 건수 기준' },
+        { key: 'headroom', icon: 'headroom', text: '여유용량', on: showHeadroom, toggle: onToggleHeadroom, title: '계통 여유용량 — 시도별 한전 분산전원 여유(KEPCO env 연동 시 실데이터, 미연동 시 연동 대기)' },
+      ],
+    },
+    {
+      label: '자원',
+      chips: [
+        { key: 're', icon: 'renew', text: '재생', on: showRe, toggle: onToggleRe, title: '재생발전단지 — 대형 태양광·풍력(OSM). RE100/PPA 조달 맥락. 초록=풍력/노랑=태양광' },
+        { key: 'water', icon: 'water', text: '수원', on: showWater, toggle: onToggleWater, title: '주요 수원 — 한국수자원공사 다목적댐 20·용수댐 14. DC 냉각수 공급원 근접 맥락. 크기=총저수용량(좌표는 행정주소 근사)' },
+      ],
+    },
+    {
+      label: '수요',
+      chips: [
+        { key: 'semi', icon: 'semi', text: '반도체', on: showSemi, toggle: onToggleSemi, title: '반도체·AI 메가클러스터 — 용인 국가산단(9.3GW)·평택·이천·청주·광주전남(6.3GW·65만t/일). AI DC와 전력·용수를 두고 경쟁/공존하는 대수요처. 점선=예정. 출처: 3대 메가프로젝트 국민보고회' },
+        { key: 'complex', icon: 'complex', text: '산단', on: showComplexes, toggle: onToggleComplexes, title: '전국 산업단지 511개 — 인센티브·전력/용수 기반시설 사전확보 입지(OSM 지정단지, 대표점 근사)' },
+        { key: 'public', icon: 'public', text: '공공DC', on: showPublic, toggle: onTogglePublic, title: '행정·공공기관 데이터센터 61곳 — 행안부 공공데이터(연면적 500㎡+), 좌표는 시군구 중심점' },
+      ],
+    },
+    {
+      label: '망',
+      chips: [
+        { key: 'net', icon: 'telecom', text: '통신망', on: showNet, toggle: onToggleNet, title: '통신망 — 백본 국사·IDC·해저케이블 육양국(OSM telecom + 시드). 네트워크축 근거' },
+      ],
+    },
+  ]
   return (
     <div className="filterbar">
       <div className="group">
@@ -86,128 +128,30 @@ export default function FilterBar({
         ))}
       </div>
 
-      {/* 지도 레이어 토글 — 시설/전력 정보를 지도 위에 겹쳐 표시(기본 OFF, 필요할 때만) */}
+      {/* 지도 레이어 토글 — 의미 단위(표시·전력·자원·수요·망)로 그루핑해 방대한 레이어 정돈 */}
       <div className="group layer-group" role="group" aria-label="지도 레이어">
         <span className="group-label">레이어</span>
-        <button
-          type="button"
-          className={`chip chip-reco ${showReco ? 'on' : ''}`}
-          onClick={onToggleReco}
-          aria-pressed={showReco}
-          title="AI 추천 입지 TOP20 — 산업단지 후보를 정적 근거(변전소·공급여유·승인율·네트워크·자가발전)로 랭킹. 클릭 시 전체 분석"
-        >
-          <Icon name="reco" /> 추천입지
-        </button>
-        <button
-          type="button"
-          className={`chip ${showLabels ? 'on' : ''}`}
-          onClick={onToggleLabels}
-          aria-pressed={showLabels}
-          title="맵 위 시설명·용량 라벨 켜기/끄기"
-        >
-          <Icon name="label" /> 라벨
-        </button>
-        <button
-          type="button"
-          className={`chip ${showSubs ? 'on' : ''}`}
-          onClick={onToggleSubs}
-          aria-pressed={showSubs}
-          title="154kV+ 변전소 841개 — DC가 전기를 받는 접속점(OSM 좌표). 전압별 색: 154kV 하늘 / 345kV 보라 / 765kV 분홍"
-        >
-          <Icon name="substation" /> 변전소
-        </button>
-        {hasLines && (
-          <button
-            type="button"
-            className={`chip ${showLines ? 'on' : ''}`}
-            onClick={onToggleLines}
-            aria-pressed={showLines}
-            title="송전선로 — OSM power=line, 전압별 색(OpenInfraMap 준거). 154kV+ 계통망"
-          >
-            <Icon name="line" /> 송전선
-          </button>
-        )}
-        <button
-          type="button"
-          className={`chip ${showPlants ? 'on' : ''}`}
-          onClick={onTogglePlants}
-          aria-pressed={showPlants}
-          title="대형 발전단지(원전·석탄) 레이어 — 발전 인프라 근접성 맥락 (DC 전원 매칭 아님)"
-        >
-          <Icon name="plant" /> 발전소
-        </button>
-        <button
-          type="button"
-          className={`chip ${showRe ? 'on' : ''}`}
-          onClick={onToggleRe}
-          aria-pressed={showRe}
-          title="재생발전단지 — 대형 태양광·풍력(OSM). RE100/PPA 조달 맥락. 초록=풍력/노랑=태양광"
-        >
-          <Icon name="renew" /> 재생
-        </button>
-        <button
-          type="button"
-          className={`chip ${showWater ? 'on' : ''}`}
-          onClick={onToggleWater}
-          aria-pressed={showWater}
-          title="주요 수원 — 한국수자원공사 다목적댐 20·용수댐 14. DC 냉각수 공급원 근접 맥락. 크기=총저수용량(좌표는 행정주소 근사)"
-        >
-          <Icon name="water" /> 수원
-        </button>
-        <button
-          type="button"
-          className={`chip ${showSemi ? 'on' : ''}`}
-          onClick={onToggleSemi}
-          aria-pressed={showSemi}
-          title="반도체·AI 메가클러스터 — 용인 국가산단(9.3GW)·평택·이천·청주·광주전남(6.3GW·65만t/일). AI DC와 전력·용수를 두고 경쟁/공존하는 대수요처. 점선=예정. 출처: 3대 메가프로젝트 국민보고회"
-        >
-          <Icon name="semi" /> 반도체
-        </button>
-        <button
-          type="button"
-          className={`chip ${showComplexes ? 'on' : ''}`}
-          onClick={onToggleComplexes}
-          aria-pressed={showComplexes}
-          title="전국 산업단지 511개 — 인센티브·전력/용수 기반시설 사전확보 입지(OSM 지정단지, 대표점 근사)"
-        >
-          <Icon name="complex" /> 산단
-        </button>
-        <button
-          type="button"
-          className={`chip ${showNet ? 'on' : ''}`}
-          onClick={onToggleNet}
-          aria-pressed={showNet}
-          title="통신망 — 백본 국사·IDC·해저케이블 육양국(OSM telecom + 시드). 네트워크축 근거"
-        >
-          <Icon name="telecom" /> 통신망
-        </button>
-        <button
-          type="button"
-          className={`chip ${showGenPermits ? 'on' : ''}`}
-          onClick={onToggleGenPermits}
-          aria-pressed={showGenPermits}
-          title="2024년 이후 발전사업 허가 파이프라인 — 시도별 건수 버블(3MW 초과 허가대장). 전력 공급측 신호, 건수 기준"
-        >
-          <Icon name="permit" /> 발전허가
-        </button>
-        <button
-          type="button"
-          className={`chip ${showHeadroom ? 'on' : ''}`}
-          onClick={onToggleHeadroom}
-          aria-pressed={showHeadroom}
-          title="계통 여유용량 — 시도별 한전 분산전원 여유(KEPCO env 연동 시 실데이터, 미연동 시 연동 대기)"
-        >
-          <Icon name="headroom" /> 여유용량
-        </button>
-        <button
-          type="button"
-          className={`chip ${showPublic ? 'on' : ''}`}
-          onClick={onTogglePublic}
-          aria-pressed={showPublic}
-          title="행정·공공기관 데이터센터 61곳 — 행안부 공공데이터(연면적 500㎡+), 좌표는 시군구 중심점"
-        >
-          <Icon name="public" /> 공공DC
-        </button>
+        {LAYER_GROUPS.map((sg) => {
+          const chips = sg.chips.filter((c) => c.cond !== false)
+          if (!chips.length) return null
+          return (
+            <div className="layer-sub" key={sg.label} role="group" aria-label={`레이어 ${sg.label}`}>
+              <span className="group-sublabel">{sg.label}</span>
+              {chips.map((c) => (
+                <button
+                  key={c.key}
+                  type="button"
+                  className={`chip ${c.cls ? `${c.cls} ` : ''}${c.on ? 'on' : ''}`}
+                  onClick={c.toggle}
+                  aria-pressed={c.on}
+                  title={c.title}
+                >
+                  <Icon name={c.icon} /> {c.text}
+                </button>
+              ))}
+            </div>
+          )
+        })}
       </div>
 
       <select value={type} onChange={(e) => onType(e.target.value)} aria-label="유형 필터">
