@@ -574,15 +574,9 @@ a {
   padding: 0;
 }
 
-.filterbar .layer-group {
-  flex-wrap: wrap;
-  gap: 7px; /* 서브그룹(표시·전력·자원·수요·망) 사이 간격 */
-}
-/* 레이어 서브그룹 — 의미 단위 묶음. 안쪽은 칩 구분자(|), 바깥은 서브그룹 구분자(굵은 |) */
-.filterbar .layer-sub {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+/* 레이어 서브그룹 알약(전력·자원·수요·망) — 각자 독립 알약이라 좁아지면 알약 단위로 깔끔히 줄바꿈 */
+.filterbar .layer-pill {
+  flex-wrap: nowrap; /* 한 알약 안 칩은 줄바꿈 금지(알약 자체가 통째로 다음 줄로) */
 }
 .filterbar .group-sublabel {
   font-size: 10px;
@@ -590,16 +584,7 @@ a {
   color: color-mix(in srgb, var(--grey) 88%, transparent);
   letter-spacing: 0.02em;
   white-space: nowrap;
-  padding: 0 1px;
-}
-/* 서브그룹 사이 세로 구분자(첫 서브그룹 제외) */
-.filterbar .layer-sub + .layer-sub::before {
-  content: '';
-  width: 1px;
-  height: 16px;
-  background: color-mix(in srgb, var(--grey) 42%, transparent);
-  margin-right: 2px;
-  flex: none;
+  padding: 0 2px 0 3px;
 }
 /* 레이어 칩 — 아이콘(SVG 라인)과 라벨 정렬, 텍스트 넘침 방지 */
 .filterbar .layer-group .chip {

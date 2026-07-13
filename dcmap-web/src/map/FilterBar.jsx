@@ -192,31 +192,28 @@ export default function FilterBar({
 
       {/* 줄바꿈 — status·검색컨트롤과 레이어를 분리(레이어가 방대해 항상 다음 줄) */}
       <div className="fb-break" aria-hidden />
-      {/* 지도 레이어 토글 — 맨 아래로(방대한 그룹이라 status·검색컨트롤을 윗줄에 모으고 레이어만 아래 줄로) */}
-      <div className="group layer-group" role="group" aria-label="지도 레이어">
-        <span className="group-label">레이어</span>
-        {LAYER_GROUPS.map((sg) => {
-          const chips = sg.chips.filter((c) => c.cond !== false)
-          if (!chips.length) return null
-          return (
-            <div className="layer-sub" key={sg.label} role="group" aria-label={`레이어 ${sg.label}`}>
-              <span className="group-sublabel">{sg.label}</span>
-              {chips.map((c) => (
-                <button
-                  key={c.key}
-                  type="button"
-                  className={`chip ${c.cls ? `${c.cls} ` : ''}${c.on ? 'on' : ''}`}
-                  onClick={c.toggle}
-                  aria-pressed={c.on}
-                  title={c.title}
-                >
-                  <Icon name={c.icon} /> {c.text}
-                </button>
-              ))}
-            </div>
-          )
-        })}
-      </div>
+      {/* 지도 레이어 토글 — 서브그룹별 독립 알약(전력·자원·수요·망). 좁아지면 알약 단위로 깔끔히 줄바꿈 */}
+      {LAYER_GROUPS.map((sg) => {
+        const chips = sg.chips.filter((c) => c.cond !== false)
+        if (!chips.length) return null
+        return (
+          <div className="group layer-pill" key={sg.label} role="group" aria-label={`레이어 ${sg.label}`}>
+            <span className="group-sublabel">{sg.label}</span>
+            {chips.map((c) => (
+              <button
+                key={c.key}
+                type="button"
+                className={`chip ${c.cls ? `${c.cls} ` : ''}${c.on ? 'on' : ''}`}
+                onClick={c.toggle}
+                aria-pressed={c.on}
+                title={c.title}
+              >
+                <Icon name={c.icon} /> {c.text}
+              </button>
+            ))}
+          </div>
+        )
+      })}
     </div>
   )
 }
