@@ -3707,6 +3707,8 @@ summary:focus-visible,
 
 .calc-card {
   background:
+    /* 하단 accent 글로우 — 카드 아래에서 위로 은은히 페이드(섹션 톤 추종: 데이터·대시보드 초록/인사이트 보라) */
+    radial-gradient(135% 78% at 66% 122%, color-mix(in srgb, var(--accent) 20%, transparent) 0%, transparent 58%),
     var(--corner-wash),
     linear-gradient(
       180deg,
