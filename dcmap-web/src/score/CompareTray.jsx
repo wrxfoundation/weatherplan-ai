@@ -57,8 +57,30 @@ const AXES = [
   },
 ]
 
+/* 축 가중치 프로파일 — 우선순위에 따라 5축 배점을 달리해 가중 적합도를 재계산.
+ * 균형=스코어링 엔진 기본 배점(전력40/토지25/리스크15/네트워크10/기상10). */
+const PROFILES = [
+  { key: 'balanced', label: '균형', w: { power: 40, land: 25, risk: 15, net: 10, climate: 10 } },
+  { key: 'power', label: '전력 중시', w: { power: 55, land: 18, risk: 10, net: 10, climate: 7 } },
+  { key: 'climate', label: '냉각 중시', w: { power: 30, land: 18, risk: 15, net: 10, climate: 27 } },
+]
+
+// 가중 적합도(0~100) — 근거 없는 축(null)은 0점 처리(폴리곤과 동일·정직).
+function weightedScore(vals, w) {
+  let sum = 0
+  let wsum = 0
+  AXES.forEach((a, i) => {
+    const wt = w[a.key] ?? 0
+    wsum += wt
+    sum += (vals[i] ?? 0) * wt
+  })
+  return wsum ? Math.round((sum / wsum) * 100) : 0
+}
+
 /* 5축 스파이더 차트 — 후보 2~3곳을 겹쳐 그린다(부지 숏리스트 한눈 비교). */
 function CompareRadar({ items }) {
+  const [profileKey, setProfileKey] = useState('balanced')
+  const profile = PROFILES.find((p) => p.key === profileKey) ?? PROFILES[0]
   const size = 230
   const cx = size / 2
   const cy = size / 2 + 4
@@ -67,18 +89,39 @@ function CompareRadar({ items }) {
   const ang = (i) => -Math.PI / 2 + (i * 2 * Math.PI) / n // 12시 방향 시작
   const pt = (i, r) => [cx + Math.cos(ang(i)) * R * r, cy + Math.sin(ang(i)) * R * r]
 
-  // 후보별 정규화 축값(레이더 그리기 + 요약 배지)
-  const series = items.map((c, si) => ({
-    id: c.id,
-    label: c.label,
-    color: SERIES[si % SERIES.length],
-    vals: AXES.map((a) => a.norm(c)),
-  }))
+  // 후보별 정규화 축값 + 현재 프로파일 가중 적합도
+  const series = items.map((c, si) => {
+    const vals = AXES.map((a) => a.norm(c))
+    return {
+      id: c.id,
+      label: c.label,
+      color: SERIES[si % SERIES.length],
+      vals,
+      fit: weightedScore(vals, profile.w),
+    }
+  })
+  // 현재 프로파일 기준 최고 적합도 후보
+  const bestFitId = series.reduce((b, s) => (s.fit > (b?.fit ?? -1) ? s : b), null)?.id
 
   const gridLevels = [0.25, 0.5, 0.75, 1]
 
   return (
     <div className="ct-radar">
+      {/* 축 가중치 프로파일 토글 — 우선순위별 적합도 재계산 */}
+      <div className="ctr-profiles" role="group" aria-label="축 가중치 프로파일">
+        {PROFILES.map((p) => (
+          <button
+            key={p.key}
+            type="button"
+            className={`ctr-prof ${p.key === profileKey ? 'on' : ''}`}
+            onClick={() => setProfileKey(p.key)}
+            aria-pressed={p.key === profileKey}
+            title={`${p.label} — 전력 ${p.w.power}·토지 ${p.w.land}·리스크 ${p.w.risk}·네트워크 ${p.w.net}·기상 ${p.w.climate}`}
+          >
+            {p.label}
+          </button>
+        ))}
+      </div>
       <svg viewBox={`0 0 ${size} ${size}`} className="ct-radar-svg" role="img" aria-label="후보지 5축 비교 레이더">
         {/* 배경 그리드(동심 오각형) */}
         {gridLevels.map((g) => (
@@ -118,12 +161,15 @@ function CompareRadar({ items }) {
       </svg>
       <div className="ct-radar-legend">
         {series.map((s) => (
-          <span key={s.id} className="ctr-leg">
+          <span key={s.id} className={`ctr-leg ${s.id === bestFitId ? 'best' : ''}`}>
             <i style={{ background: s.color }} />
             {s.label}
+            <b className="ctr-fit">{s.fit}</b>
+            {s.id === bestFitId && <span className="ctr-fit-star" title={`${profile.label} 기준 적합도 최고`}>★</span>}
           </span>
         ))}
       </div>
+      <p className="ctr-note">{profile.label} 가중 적합도(100점 환산) · 근거 없는 축은 0점</p>
     </div>
   )
 }

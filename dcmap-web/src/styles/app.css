@@ -1179,6 +1179,50 @@ a {
   border-radius: 3px;
   flex: none;
 }
+/* 축 가중치 프로파일 토글 */
+.ctr-profiles {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  margin-bottom: 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--navy-deep) 60%, transparent);
+  border: 1px solid var(--line);
+}
+.ctr-prof {
+  border: none;
+  background: none;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--grey);
+  cursor: pointer;
+}
+.ctr-prof.on {
+  background: color-mix(in srgb, var(--accent, #35d5ee) 22%, transparent);
+  color: var(--ink);
+  font-weight: var(--weight-bold);
+}
+/* 가중 적합도 점수 + 최고 표시 */
+.ctr-fit {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-bold);
+  color: color-mix(in srgb, var(--ink) 92%, transparent);
+}
+.ctr-leg.best .ctr-fit {
+  color: var(--accent, #35d5ee);
+}
+.ctr-fit-star {
+  color: var(--accent, #35d5ee);
+  font-size: 10px;
+}
+.ctr-note {
+  margin: 4px 0 0;
+  font-size: 10px;
+  color: var(--grey);
+  text-align: center;
+}
 @media (max-width: 760px) {
   .compare-tray {
     left: 8px;
