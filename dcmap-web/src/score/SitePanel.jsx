@@ -1097,6 +1097,16 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           )
         })()}
 
+        {/* 정밀 리포트·컨설팅 문의 CTA — 이 부지 맥락을 문의 폼에 전달(수익화 훅) */}
+        <Link
+          className="sp-report-cta"
+          to={`/pricing?type=${encodeURIComponent('정밀 리포트 요청')}&ctx=${encodeURIComponent(
+            `${point.lat.toFixed(4)},${point.lng.toFixed(4)}${sido ? ` · ${sido}` : ''} · ${mw}MW · 근거 ${r.knownScore}/${r.knownMax}`,
+          )}`}
+        >
+          ✦ 이 부지 정밀 리포트·컨설팅 문의 →
+        </Link>
+
         {/* AI 부지 브리프 결과 — 실데이터 스냅샷 기반, 없는 값은 '미확보'로 명시(정직) */}
         <AiResultCard
           ai={ai}
