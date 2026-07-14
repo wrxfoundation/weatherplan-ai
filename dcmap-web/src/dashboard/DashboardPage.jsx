@@ -80,6 +80,7 @@ function MiniBars({ bars, ariaLabel }) {
 export default function DashboardPage() {
   const [now, setNow] = useState(() => new Date())
   const [filings, setFilings] = useState(null)
+  const [filingCorp, setFilingCorp] = useState('전체') // 공시 운영사 필터
   const [epsis, setEpsis] = useState(null)
   const [trading, setTrading] = useState(null)
   const [status, setStatus] = useState(null)
@@ -420,26 +421,44 @@ export default function DashboardPage() {
             <div className="chart-title">DC 운영사 투자·공급·DC 공시 — DART 전자공시 (D2)</div>
             {filings?.available ? (
               <>
+                {/* 운영사 필터 + 건수 — 공시 흐름을 회사별로 끊어 읽게 */}
+                <div className="filing-corps" role="group" aria-label="공시 운영사 필터">
+                  <button type="button" className={filingCorp === '전체' ? 'on' : ''} onClick={() => setFilingCorp('전체')}>
+                    전체 {filings.filings.length}
+                  </button>
+                  {[...new Set(filings.filings.map((f) => f.corp))].map((c) => (
+                    <button key={c} type="button" className={filingCorp === c ? 'on' : ''} onClick={() => setFilingCorp(filingCorp === c ? '전체' : c)}>
+                      {c} {filings.filings.filter((f) => f.corp === c).length}
+                    </button>
+                  ))}
+                </div>
                 <div className="facility-list">
                   <ExpandableList
-                    items={filings.filings}
+                    items={filings.filings.filter((f) => filingCorp === '전체' || f.corp === filingCorp)}
                     initial={6}
-                    render={(f, i) => (
-                      <a key={i} className="facility-row" href={f.url} target="_blank" rel="noreferrer">
-                        <span className={`dot ${f.type === '데이터센터' ? 'operating' : 'construction'}`} />
-                        <span>
-                          <span className="name">{f.title}</span>
-                          <span className="meta">
-                            {f.corp} · {f.date}
-                            {f.type && (
-                              <span className={`badge ${f.type === '데이터센터' ? 'status-operating' : 'verify'}`} style={{ marginLeft: 6 }}>
-                                {f.type}
-                              </span>
-                            )}
+                    render={(f, i) => {
+                      // 제목 키워드 태그(투자·설비 신호) + 7일 내 NEW — 제목만으로 읽히는 신호 강화
+                      const kw = (String(f.title).match(/착공|증설|신설|수전|전력|투자|출자|유상증자|시설투자|공급계약|타법인/) || [])[0]
+                      const isNew = f.date && (Date.now() - new Date(f.date).getTime()) / 86400000 <= 7
+                      return (
+                        <a key={i} className="facility-row" href={f.url} target="_blank" rel="noreferrer">
+                          <span className={`dot ${f.type === '데이터센터' ? 'operating' : 'construction'}`} />
+                          <span>
+                            <span className="name">{f.title}</span>
+                            <span className="meta">
+                              {f.corp} · {f.date}
+                              {isNew && <span className="badge f-new" style={{ marginLeft: 6 }}>NEW</span>}
+                              {kw && <span className="badge f-kw" style={{ marginLeft: 6 }}>{kw}</span>}
+                              {f.type && (
+                                <span className={`badge ${f.type === '데이터센터' ? 'status-operating' : 'verify'}`} style={{ marginLeft: 6 }}>
+                                  {f.type}
+                                </span>
+                              )}
+                            </span>
                           </span>
-                        </span>
-                      </a>
-                    )}
+                        </a>
+                      )
+                    }}
                   />
                 </div>
                 <p className="chart-note">
