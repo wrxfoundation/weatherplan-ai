@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -10,9 +10,8 @@ import { recommendSites } from '../score/recommend.js'
 import { STYLE_3D, facilityLabelLayer } from './style3d.js'
 
 /* 3D 베타 — MapLibre GL
- * v5 성능 재점검: 79개 DOM 마커(프레임마다 transform 재계산 → 회전/기울임 버벅임의 주원인)를
- *   GPU 렌더 GL 서클 레이어로 교체. antialias off·maxPitch 제한·fadeDuration 축소로 렌더 부하↓.
- * 애니메이션 토글(기본 OFF): 켜면 송전선 흐름(line-dasharray 시퀀스) + 시설 반짝임(글로우 펄스). */
+ * v5 성능 경량화: 79개 DOM 마커(프레임마다 transform 재계산 → 회전/기울임 버벅임의 주원인)를
+ *   GPU 렌더 GL 서클 레이어로 교체. antialias off·maxPitch 제한·fadeDuration 축소로 렌더 부하↓. */
 
 const TITLE = '3D 맵 (베타) — AI InfraMap'
 const DESC = '한국 데이터센터 현황을 기울인 3D 시점에서 — MapLibre GL 전환 베타.'
@@ -28,30 +27,11 @@ const STATUS_COLOR = [
   '#7dd3fc',
 ]
 
-// 흐르는 송전선 — dash 시퀀스 순환(GPU, setPaintProperty만; 저비용)
-const DASH_SEQ = [
-  [0, 4, 3],
-  [0.5, 4, 2.5],
-  [1, 4, 2],
-  [1.5, 4, 1.5],
-  [2, 4, 1],
-  [2.5, 4, 0.5],
-  [3, 4, 0],
-  [0, 0.5, 3, 3.5],
-  [0, 1, 3, 3],
-  [0, 1.5, 3, 2.5],
-  [0, 2, 3, 2],
-  [0, 2.5, 3, 1.5],
-  [0, 3, 3, 1],
-  [0, 3.5, 3, 0.5],
-]
-
 export default function Map3DPage() {
   const wrapRef = useRef(null)
   const mapRef = useRef(null)
   const readyRef = useRef(false)
   const navigate = useNavigate()
-  const [anim, setAnim] = useState(false)
 
   useEffect(() => {
     document.title = TITLE
@@ -250,71 +230,11 @@ export default function Map3DPage() {
     }
   }, [navigate])
 
-  // 애니메이션 토글 — 송전선 흐름 + 시설 글로우 펄스. 기본 OFF(3D 렌더 부하 고려).
-  useEffect(() => {
-    const map = mapRef.current
-    if (!map || !anim) return
-    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    let raf = 0
-    let alive = true
-    const start = typeof performance !== 'undefined' ? performance.now() : 0
-    const tick = (now) => {
-      if (!alive) return
-      const map2 = mapRef.current
-      if (map2 && readyRef.current) {
-        const t = now - start
-        // 송전선 흐름
-        if (map2.getLayer('lines')) {
-          const idx = Math.floor((t / 55) % DASH_SEQ.length)
-          try {
-            map2.setPaintProperty('lines', 'line-dasharray', DASH_SEQ[idx])
-          } catch {
-            /* 무시 */
-          }
-        }
-        // 시설 글로우 펄스(0.2~0.55)
-        if (map2.getLayer('dc-glow')) {
-          const pulse = 0.38 + 0.2 * Math.sin(t / 480)
-          try {
-            map2.setPaintProperty('dc-glow', 'circle-opacity', pulse)
-          } catch {
-            /* 무시 */
-          }
-        }
-      }
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => {
-      alive = false
-      cancelAnimationFrame(raf)
-      // 토글 OFF 시 정적 상태 복원
-      const map2 = mapRef.current
-      if (map2 && readyRef.current) {
-        try {
-          if (map2.getLayer('lines')) map2.setPaintProperty('lines', 'line-dasharray', [1])
-          if (map2.getLayer('dc-glow')) map2.setPaintProperty('dc-glow', 'circle-opacity', 0.35)
-        } catch {
-          /* 무시 */
-        }
-      }
-    }
-  }, [anim])
-
   return (
     <>
       <TopBar />
       <div className="map-layout">
         <div ref={wrapRef} className="map-canvas map3d" />
-        <button
-          type="button"
-          className={`map3d-anim ${anim ? 'on' : ''}`}
-          onClick={() => setAnim((v) => !v)}
-          aria-pressed={anim}
-          title="송전망 흐름·시설 반짝임 애니메이션"
-        >
-          {anim ? '✨ 애니메이션 ON' : '애니메이션 OFF'}
-        </button>
         <div className="map3d-banner">
           <span className="badge status-operating">3D 베타 v5</span>
           우클릭 드래그로 회전·기울임 · 줌 13+ 건물 입체 · 🟡 추천입지 클릭 → 분석 · 송전선·변전소(154kV+) 전압별 색: 154 갈/345 보라/765 분홍
