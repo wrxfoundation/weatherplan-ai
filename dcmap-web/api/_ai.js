@@ -85,6 +85,68 @@ function buildUserContent(task, body) {
   return `${q ? `요청: ${q}\n\n` : ''}데이터(JSON):\n\`\`\`json\n${data}\n\`\`\``
 }
 
+/* ── 법제처 국가법령정보센터(law.go.kr DRF) 법령 원문 컨텍스트 ──
+ * qa 질문이 도메인 법령을 언급하면 실제 조문 원문을 조회해 컨텍스트로 주입 —
+ * AI가 기억이 아닌 '원문'을 인용하게 하는 정직성 강화 레이어.
+ * 환경변수 LAW_GO_KR_OC(무료 발급) 없거나 조회 실패 시 조용히 생략(기존 동작 불변).
+ * 주의: '한전 기본공급약관'은 법령이 아니라 약관이므로 대상 아님(정적 프롬프트가 담당). */
+const LAW_ALIASES = [
+  { law: '분산에너지 활성화 특별법', re: /분산에너지|전력계통영향평가|계통영향평가/ },
+  { law: '환경영향평가법', re: /환경영향평가/ },
+  { law: '건축법', re: /건축법|건축허가|사용승인/ },
+  { law: '국토의 계획 및 이용에 관한 법률', re: /국토계획법|용도지역|개발행위/ },
+  { law: '전기사업법', re: /전기사업|발전사업\s*허가/ },
+  { law: '인공지능 데이터센터', re: /AIDC|인공지능\s*데이터\s*센터\s*(특별)?법|에이아이\s*데이터센터/, search: true }, // 정식 법령명 미확정 — 검색 결과만 사용
+]
+const lawCache = new Map() // 서버리스 웜 인스턴스 내 캐시 (키: name|jo)
+
+async function fetchJsonWithTimeout(url, ms = 5000) {
+  const ctrl = new AbortController()
+  const t = setTimeout(() => ctrl.abort(), ms)
+  try {
+    const r = await fetch(url, { signal: ctrl.signal })
+    if (!r.ok) return null
+    return await r.json()
+  } catch {
+    return null
+  } finally {
+    clearTimeout(t)
+  }
+}
+
+async function fetchLawContext(query) {
+  const oc = process.env.LAW_GO_KR_OC
+  if (!oc || !query) return null
+  const hit = LAW_ALIASES.find((a) => a.re.test(query))
+  if (!hit) return null
+  // 조문 지정(제N조·제N조의M) 시 해당 조문만 — 토큰 절약·정밀 인용
+  const m = query.match(/제\s*(\d{1,3})조(?:의(\d{1,2}))?/)
+  const jo = m ? String(m[1]).padStart(4, '0') + String(m[2] || 0).padStart(2, '0') : null
+  const cacheKey = `${hit.law}|${jo || 'meta'}`
+  if (lawCache.has(cacheKey)) return lawCache.get(cacheKey)
+
+  const base = 'https://www.law.go.kr/DRF'
+  // 1) 법령 검색 → 정식 명칭·법령ID·시행일자 확보(실데이터만)
+  const search = await fetchJsonWithTimeout(`${base}/lawSearch.do?OC=${encodeURIComponent(oc)}&target=law&type=JSON&display=3&query=${encodeURIComponent(hit.law)}`)
+  let laws = search?.LawSearch?.law
+  if (!laws) return null
+  if (!Array.isArray(laws)) laws = [laws]
+  const top = laws[0]
+  if (!top?.법령ID) return null
+  const meta = `법령: ${top.법령명한글 || hit.law} · 법령ID ${top.법령ID}${top.시행일자 ? ` · 시행 ${top.시행일자}` : ''}${top.소관부처명 ? ` · ${top.소관부처명}` : ''}`
+
+  let body = ''
+  if (jo && !hit.search) {
+    // 2) 특정 조문 원문(JO 파라미터)
+    const svc = await fetchJsonWithTimeout(`${base}/lawService.do?OC=${encodeURIComponent(oc)}&target=law&type=JSON&ID=${encodeURIComponent(top.법령ID)}&JO=${jo}`)
+    const unit = svc?.법령?.조문?.조문단위
+    if (unit) body = JSON.stringify(unit).slice(0, 5000)
+  }
+  const ctx = `[법령 원문 컨텍스트 — 법제처 국가법령정보센터 조회]\n${meta}${body ? `\n조문 원문(JSON):\n${body}` : ''}\n(위 원문에 있는 내용만 인용할 것 — 원문에 없으면 "원문 확인 필요"로 답한다)`
+  lawCache.set(cacheKey, ctx)
+  return ctx
+}
+
 // 브라우저 교차출처 남용으로 ANTHROPIC 키 예산이 소진되지 않게 Origin 화이트리스트.
 // 자기출처(배포 도메인·프리뷰·로컬)만 허용. Origin 부재(서버-서버·curl 자가점검)는 통과.
 function originAllowed(origin) {
@@ -129,6 +191,13 @@ export async function aiHandler(req, res) {
     return
   }
 
+  // qa: 도메인 법령 언급 시 법제처 원문 컨텍스트 주입(LAW_GO_KR_OC 설정 시) — 실패는 조용히 생략
+  let userContent = buildUserContent(task, body)
+  if (task === 'qa') {
+    const lawCtx = await fetchLawContext(typeof body.query === 'string' ? body.query : '')
+    if (lawCtx) userContent += `\n\n${lawCtx}`
+  }
+
   const payload = {
     model: MODEL_FOR[task],
     max_tokens: MAXTOK_FOR[task],
@@ -137,7 +206,7 @@ export async function aiHandler(req, res) {
       { type: 'text', text: STATIC_SYSTEM, cache_control: { type: 'ephemeral' } },
       { type: 'text', text: TASK_SYSTEM[task] },
     ],
-    messages: [{ role: 'user', content: buildUserContent(task, body) }],
+    messages: [{ role: 'user', content: userContent }],
   }
 
   // 스트리밍 요청(긴 리포트/브리핑/비교/초안 UX) — SSE로 델타 전송
