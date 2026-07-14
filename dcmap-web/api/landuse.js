@@ -100,6 +100,44 @@ export default async function handler(req, res) {
   }
 
   const vwDomain = process.env.VWORLD_DOMAIN || 'aidatacenter-red.vercel.app'
+
+  // 필지(연속지적도) 경계 모드 — ?parcel=1: 지점이 속한 지적 폴리곤 1건(경계·지번·PNU)
+  if (req.query.parcel) {
+    const purl =
+      'https://api.vworld.kr/req/data?service=data&version=2.0&request=GetFeature&format=json&crs=EPSG:4326' +
+      `&size=1&page=1&data=LP_PA_CBND_BUBUN&geomFilter=POINT(${lng} ${lat})&key=${key}&domain=${encodeURIComponent(vwDomain)}`
+    try {
+      const { status, text } = await vworldGet(purl, vwDomain)
+      if (status >= 400) {
+        res.status(200).json({ available: false, reason: `upstream_${status}` })
+        return
+      }
+      let body = null
+      try {
+        body = JSON.parse(text)
+      } catch {
+        res.status(200).json({ available: false, reason: 'not_json' })
+        return
+      }
+      const f = body?.response?.result?.featureCollection?.features?.[0]
+      if (body?.response?.status !== 'OK' || !f?.geometry) {
+        res.status(200).json({ available: false, reason: 'no_parcel' })
+        return
+      }
+      const p = f.properties || {}
+      res.status(200).json({
+        available: true,
+        geometry: f.geometry,
+        pnu: p.pnu ?? null,
+        jibun: p.jibun ?? null,
+        addr: p.addr ?? null,
+      })
+    } catch (e) {
+      res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
+    }
+    return
+  }
+
   const url =
     'https://api.vworld.kr/req/data?service=data&version=2.0&request=GetFeature&format=json' +
     `&size=5&page=1&data=LT_C_UQ111&geomFilter=POINT(${lng} ${lat})&key=${key}&domain=${encodeURIComponent(vwDomain)}`

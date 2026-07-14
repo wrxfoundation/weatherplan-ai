@@ -79,6 +79,9 @@ export async function geocodeAddr(query) {
 }
 
 /** vworld 용도지역 (토지축 v1 근거) — { uses: string[] } | null. 브라우저 직접 우선, 실패 시 프록시. */
+/** 지점이 속한 필지(연속지적도) 경계 폴리곤 — {available, geometry, pnu, jibun, addr} */
+export const parcelAt = (lat, lng) => fetchJson(`/api/landuse?${q(lat, lng)}&parcel=1`)
+
 export const landUseFor = async (lat, lng) => {
   if (hasVworldClient()) {
     const r = await landUseClient(lat, lng)
