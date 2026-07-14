@@ -9,6 +9,7 @@ import AiResultCard from '../ai/AiResultCard.jsx'
 import SpringNumber from '../ui/SpringNumber.jsx'
 import CopyButton from '../ui/CopyButton.jsx'
 import LineIcon from '../components/LineIcon.jsx'
+import AidcScenario from './AidcScenario.jsx'
 
 // GPU별 대표 TDP(kW). 공개 스펙 기준 근사치 — 가속기당 소비전력(부대 IT 부하는 별도 계수).
 // NVIDIA 데이터센터 GPU가 사실상 표준이나, 추론·레거시·AMD까지 포함해 시나리오 폭을 넓힘.
@@ -697,6 +698,8 @@ export default function CalcPage() {
         )}
 
         <TrackCard mw={m.contractMw} nonCapital={nonCapital} onRegion={setNonCapital} />
+
+        <AidcScenario mw={m.contractMw} nonCapital={nonCapital} />
 
         <p className="footer-note">
           공개 전력 규모(power_mw_public)가 확인된 시설만 CTA 필터에 잡힙니다. 규모 비공개 시설이 다수이므로 실제
