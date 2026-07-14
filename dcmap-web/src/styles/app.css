@@ -178,6 +178,9 @@ a {
 .topbar nav a[data-nav='about'] {
   --nav-tone: var(--gold);
 }
+.topbar nav a[data-nav='glossary'] {
+  --nav-tone: #2dd4bf; /* 용어집 고정 teal — 섹션 accent 추종 금지(도트 색 변함 방지) */
+}
 .topbar nav a[data-nav]::before {
   content: '';
   width: 5px;
@@ -209,13 +212,13 @@ a {
 
 /* 문의 접수 메일 — 모든 페이지 상단에 상시 노출. 넓은 화면은 주소 전체, 좁으면 '문의'로 축약. */
 .topbar nav a.nav-contact {
-  --nav-tone: var(--accent);
+  --nav-tone: var(--nav-data); /* 고정 green — 섹션 accent 추종 금지(도트 색 변함 방지) */
   color: var(--grey);
   white-space: nowrap;
 }
 .topbar nav a.nav-contact:hover {
   color: var(--text);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  background: color-mix(in srgb, var(--nav-tone) 10%, transparent);
 }
 .nav-contact .contact-short {
   display: none;
@@ -7522,4 +7525,50 @@ main.about-page {
   --grey: #a99e88; /* 웜 그레이 — 청회색은 브라운 위에서 탁함 */
   --text: #f0e9db; /* 상아빛 잉크 */
   color: var(--text);
+}
+
+/* ── 3D 맵 v7 컨트롤 — 상태 필터 칩 + 카메라 프리셋 (맵 좌상단) ── */
+.m3d-ui {
+  position: absolute;
+  top: calc(var(--topbar-height) + 10px);
+  left: 12px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  max-width: calc(100vw - 24px);
+}
+.m3d-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--map-control-bg);
+  color: var(--grey);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  box-shadow: var(--glass-specular-soft);
+}
+.m3d-chip:hover {
+  color: var(--text);
+}
+.m3d-chip.on {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  background: color-mix(in srgb, var(--accent) 14%, var(--map-control-bg));
+}
+/* 상태별 온 색 — 2D 필터바와 동일 의미색 */
+.m3d-chip.s-operating.on { border-color: color-mix(in srgb, var(--green) 60%, var(--line)); color: var(--green); }
+.m3d-chip.s-construction.on { border-color: color-mix(in srgb, var(--orange) 60%, var(--line)); color: var(--orange); }
+.m3d-chip.s-planned.on { border-color: color-mix(in srgb, #7dd3fc 60%, var(--line)); color: #7dd3fc; }
+.m3d-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--line);
+  margin: 0 2px;
+}
+@media (max-width: 760px) {
+  .m3d-ui { top: calc(var(--topbar-height) + 8px); left: 8px; gap: 5px; }
+  .m3d-chip { padding: 7px 12px; }
 }
