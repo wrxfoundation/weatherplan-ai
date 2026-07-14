@@ -9,7 +9,7 @@
  * 에서 제외). 첫 실행 로그가 살아있는 URL을 자백한다(config 핫에디트로 교정).
  */
 import { PageTextAdapter, type PageTarget } from "../../engine/adapters/page-text.js";
-import type { CollectContext } from "../../engine/types.js";
+import type { CollectContext, CollectResult, NormalizedRecord } from "../../engine/types.js";
 
 export class CommitmentsWatchAdapter extends PageTextAdapter {
   readonly id = "commitments-watch";
@@ -32,6 +32,55 @@ export class CommitmentsWatchAdapter extends PageTextAdapter {
     return typeof ua === "string" && ua
       ? { headers: { "User-Agent": ua, Accept: "text/html,application/xhtml+xml", "Accept-Language": "en,ko;q=0.8" } }
       : undefined;
+  }
+
+  /**
+   * page-text 기본 collect를 오버라이드 — probe로 상태코드를 확인해 "문서 철거(404/410)"를
+   * 일시 실패와 구분한다. 철거는 소멸 이벤트로 확정(headline 기능), 403/5xx/네트워크는
+   * 삭제 판정에서 제외(오탐 방지). probe 미지원 환경에선 raw로 폴백(그 경우 4xx는 일시로 강등).
+   */
+  async collect(ctx: CollectContext): Promise<CollectResult> {
+    const targets = await this.targets(ctx);
+    const init = this.requestInit(ctx);
+    const probe = ctx.http.probe ?? ctx.http.raw;
+    const records: NormalizedRecord[] = [];
+    const rawEntries: Array<[string, unknown]> = [];
+    const transient = new Set<string>(); // 일시 실패/차단 → 삭제 보류
+    let goneCount = 0; // 404/410 철거 확인 수
+
+    for (const target of targets) {
+      try {
+        const res = await probe(target.url, init);
+        if (res.status === 200) {
+          const body = await res.text();
+          rawEntries.push([target.entityId, { url: target.url, status: 200, body }]);
+          records.push({ entityId: target.entityId, sourceUrl: target.url, fields: this.fieldsFor(body) });
+        } else if (res.status === 404 || res.status === 410) {
+          // 철거 확인 — 레코드를 만들지 않아 diff가 소멸로 잡고, transient에 없으니 삭제로 확정된다.
+          goneCount++;
+          rawEntries.push([target.entityId, { url: target.url, status: res.status, gone: true }]);
+          ctx.log(`[${this.id}] 문서 철거 확인(HTTP ${res.status}) — 소멸 기록: ${target.entityId} ${target.url}`);
+        } else {
+          transient.add(target.entityId); // 403/5xx 등 = 일시/차단 → 삭제 보류
+          ctx.log(`[${this.id}] 일시 실패(HTTP ${res.status}) — 삭제 보류: ${target.url}`);
+        }
+      } catch (error) {
+        transient.add(target.entityId); // 네트워크 오류 → 삭제 보류
+        ctx.log(`[${this.id}] 페치 실패 — 삭제 보류: ${target.url} (${error instanceof Error ? error.message : error})`);
+      }
+    }
+
+    // 성공도 철거확인도 하나 없이 전부 일시실패 = 소스/네트워크 장애 ("변경 없음"으로 위장 방지).
+    if (targets.length > 0 && records.length === 0 && goneCount === 0) {
+      throw new Error(`[${this.id}] 대상 ${targets.length}곳 전부 페치 실패 — 소스/네트워크 장애 의심.`);
+    }
+
+    return {
+      raw: Object.fromEntries(rawEntries),
+      records,
+      // 일시 실패한 대상만 삭제 판정에서 제외. 404/410 철거는 삭제로 확정(제외하지 않음).
+      removalScope: (stored) => !transient.has(stored.entityId),
+    };
   }
 }
 
