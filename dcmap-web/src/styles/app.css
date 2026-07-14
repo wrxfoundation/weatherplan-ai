@@ -6738,12 +6738,16 @@ summary:focus-visible,
   background: var(--accent);
 }
 .gmap-wrap {
+  position: relative;
+  overflow: hidden;
   margin: 16px 0;
   border: 1px solid var(--line);
   border-radius: 16px;
+  /* 불투명 우주 배경 — 반투명이면 페이지 도트 그리드가 비쳐 '희끗한 점선'으로 보임 */
   background:
-    radial-gradient(600px 320px at 30% 30%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 70%),
-    color-mix(in srgb, var(--navy-deep) 65%, transparent);
+    radial-gradient(600px 320px at 30% 30%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 70%),
+    radial-gradient(700px 420px at 72% 78%, rgba(20, 36, 66, 0.55), transparent 74%),
+    linear-gradient(180deg, #0a1a31 0%, #050d1a 100%);
   padding: 8px 8px 12px;
   overflow: hidden;
 }
@@ -6787,17 +6791,19 @@ summary:focus-visible,
   transition: r 0.16s ease;
 }
 .gmap-term-label {
-  font-size: 10.5px;
-  fill: #cfdcee; /* 어두운 폰트 가독성 개선 — 밝은 잉크 + 다크 할로 */
+  font-size: 12px; /* 10.5→12 — "글씨가 잘 안 보임" 피드백 */
+  font-weight: 600;
+  fill: #e4edf9; /* 밝은 잉크 + 다크 할로 */
   paint-order: stroke;
   stroke: rgba(4, 11, 22, 0.92);
-  stroke-width: 3px;
+  stroke-width: 3.2px;
   pointer-events: none;
 }
 .gmap-term.on .gmap-term-label,
 .gmap-term:hover .gmap-term-label {
-  fill: var(--ink);
+  fill: #ffffff; /* --ink 미정의 시절 검정으로 떨어지던 버그 지점 — 명시적 백색 + 액센트 할로 */
   font-weight: 700;
+  stroke: color-mix(in srgb, var(--accent) 45%, rgba(4, 11, 22, 0.95));
 }
 .gmap-term.dim {
   opacity: 0.16;
@@ -6821,7 +6827,7 @@ summary:focus-visible,
   fill: color-mix(in srgb, var(--amber) 45%, transparent);
 }
 .gmap-law-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   fill: #ffd98a; /* 앰버 라벨 밝게 + 할로 */
   paint-order: stroke;
@@ -6888,21 +6894,72 @@ summary:focus-visible,
   stroke: none;
 }
 
-/* ── 온톨로지 맵 v2 — 3D 공간감(틸트·패럴랙스·별·깊이) + 절차 레이어 ── */
+/* ── 온톨로지 맵 v2/v3 — 3D 공간감(틸트·패럴랙스·별·깊이·비네트) + 절차 레이어 + 줌 ── */
 .gmap-tilt {
-  perspective: 1100px;
+  perspective: 950px; /* v3: 원근 강화(1100→950) */
 }
 .gmap-tilt .gmap-svg {
-  transform: rotateX(7deg);
+  transform: rotateX(8.5deg);
   transform-origin: 50% 42%;
+}
+/* 비네트 — 가장자리를 어둡게 눌러 중앙이 떠 보이게(공간감) */
+.gmap-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  pointer-events: none;
+  box-shadow: inset 0 0 110px 34px rgba(2, 7, 15, 0.6);
 }
 .gmap-layer {
   transition: transform 0.18s ease-out;
   will-change: transform;
+  transform-origin: 50% 50%; /* 패럴랙스 미세 스케일의 기준점 */
 }
 .gmap-star {
   fill: #bcd3ef;
   animation: gmap-twinkle 4.2s ease-in-out infinite;
+}
+.gmap-star.near {
+  fill: #e7f1ff;
+  filter: drop-shadow(0 0 3px rgba(190, 215, 250, 0.5));
+}
+/* 줌 컨트롤 — 우상단 필 */
+.gmap-zoom-ui {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: flex;
+  gap: 4px;
+}
+.gmap-zoom-ui button {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+  background: color-mix(in srgb, var(--navy-deep) 78%, transparent);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--glass-specular-soft);
+}
+.gmap-zoom-ui button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.gmap-zoom-ui button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+/* 확대 상태 — 드래그 팬 활성(스크롤 제스처와 충돌 방지) */
+.gmap-wrap.zoomed .gmap-svg {
+  cursor: grab;
+  touch-action: none;
+}
+.gmap-wrap.zoomed .gmap-svg:active {
+  cursor: grabbing;
 }
 @keyframes gmap-twinkle {
   0%, 100% { opacity: inherit; }
@@ -6924,9 +6981,9 @@ summary:focus-visible,
   fill: color-mix(in srgb, var(--accent) 42%, transparent);
 }
 .gmap-proc-label {
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 700;
-  fill: #a9c0dc;
+  fill: #bfd2e8;
   paint-order: stroke;
   stroke: rgba(4, 11, 22, 0.9);
   stroke-width: 2.5px;
@@ -7329,5 +7386,59 @@ summary:focus-visible,
   }
   .wow-card:hover {
     transform: none;
+  }
+}
+
+/* ================= 모바일 최적화 일괄 (PC 무영향 — 전부 미디어쿼리 안) ================= */
+@media (max-width: 760px) {
+  /* /about 가로 스크롤 40px 버그 — 히어로 글로우의 음수 우측 inset이 스크롤 폭을 늘림 */
+  .about-hero::before {
+    left: 0;
+    right: 0;
+  }
+  /* iOS 사파리 입력 포커스 자동 확대 방지 — 폼 컨트롤 16px 미만이면 강제 줌됨 */
+  input[type='text'],
+  input[type='search'],
+  input[type='email'],
+  input[type='tel'],
+  input[type='number'],
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  /* 온톨로지 맵 — 터치 타깃 확대 + 컨트롤 크게 */
+  .gmap-zoom-ui button {
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+  }
+  /* 3D 배너 — 긴 안내문이 맵을 덮지 않게 축소 */
+  .map3d-banner {
+    font-size: var(--text-xs);
+    line-height: 1.5;
+  }
+}
+@media (max-width: 480px) {
+  /* 좁은 화면에서 본문 가용폭 확보 */
+  .page {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  /* 대시보드 롤업 — 열 간격·최소폭 축소(여전히 가로 스크롤 가능, 잘림 체감↓) */
+  .rollup-head,
+  .rollup-row {
+    min-width: 470px;
+    gap: 7px;
+  }
+}
+/* 터치 탭 하이라이트 제거(터치 기기에만 존재하는 UA 효과 — PC 무영향) */
+@media (hover: none) and (pointer: coarse) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* 주요 인터랙티브 요소 최소 터치 높이 */
+  .view-seg button,
+  .seg-tab {
+    min-height: 34px;
   }
 }

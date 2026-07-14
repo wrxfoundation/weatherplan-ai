@@ -1,8 +1,8 @@
 // 리드/문의 접수 클라이언트. 백엔드는 /api/power?src=lead (POST, _lead.js 위임).
 // 정직성: 서버가 실제 전달(webhook) 성공을 알릴 때만 '접수됨'. 미설정이면 mailto/클립보드로 실제 경로 보장.
 
-// 폴백 연락 이메일 — env 우선, 없으면 기존 공개 문의 주소(TopBar와 동일).
-const CONTACT_EMAIL = import.meta.env.VITE_LEAD_EMAIL || 'kwangdol@gmail.com'
+// 공개 문의 이메일 — env 우선, 없으면 기본 공개 문의 주소. UI에 직통 노출도 이 값 사용.
+export const CONTACT_EMAIL = import.meta.env.VITE_LEAD_EMAIL || 'kwangdol@gmail.com'
 
 export async function submitLead(payload, timeoutMs = 12000) {
   try {

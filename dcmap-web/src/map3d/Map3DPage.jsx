@@ -69,6 +69,7 @@ export default function Map3DPage() {
     }
     const SPREAD = 0.0045
     const dcFeatures = []
+    const colFeatures = [] // MW 용량 기둥(공개 용량이 있는 시설만 — 정직)
     for (const group of groups.values()) {
       group.forEach((f, gi) => {
         let { lat, lng } = f
@@ -76,6 +77,19 @@ export default function Map3DPage() {
           const a = (2 * Math.PI * gi) / group.length
           lat += SPREAD * Math.cos(a)
           lng += (SPREAD * Math.sin(a)) / Math.cos((f.lat * Math.PI) / 180)
+        }
+        if (f.power_mw_public != null && f.power_mw_public > 0) {
+          // 지점 주위 정사각 풋프린트(약 ±330m) — fill-extrusion 기둥용
+          const dLat = 0.003
+          const dLng = dLat / Math.cos((lat * Math.PI) / 180)
+          colFeatures.push({
+            type: 'Feature',
+            geometry: {
+              type: 'Polygon',
+              coordinates: [[[lng - dLng, lat - dLat], [lng + dLng, lat - dLat], [lng + dLng, lat + dLat], [lng - dLng, lat + dLat], [lng - dLng, lat - dLat]]],
+            },
+            properties: { status: f.status, slug: slugOf(f), mw: f.power_mw_public },
+          })
         }
         dcFeatures.push({
           type: 'Feature',
@@ -150,6 +164,39 @@ export default function Map3DPage() {
             'circle-color': ['case', ['>=', ['get', 'kv'], 765], '#f0abfc', ['>=', ['get', 'kv'], 345], '#c084fc', '#7dd3fc'],
             'circle-opacity': 0.5,
           },
+        })
+      } catch {
+        /* 무시 */
+      }
+
+      // MW 용량 기둥 — 공개 수전용량 비례 높이(줌이 가까울수록 배율 축소해 과장 방지).
+      // GL 압출 폴리곤 수십 개: 렌더 비용 미미. 미공개 용량 시설은 기둥 없음(정직).
+      try {
+        map.addSource('cols', { type: 'geojson', data: { type: 'FeatureCollection', features: colFeatures } })
+        map.addLayer({
+          id: 'dc-cols',
+          type: 'fill-extrusion',
+          source: 'cols',
+          paint: {
+            'fill-extrusion-color': STATUS_COLOR,
+            'fill-extrusion-height': [
+              'interpolate', ['linear'], ['zoom'],
+              6, ['*', ['get', 'mw'], 90],
+              9, ['*', ['get', 'mw'], 45],
+              13, ['*', ['get', 'mw'], 12],
+            ],
+            'fill-extrusion-opacity': 0.55,
+          },
+        })
+        map.on('click', 'dc-cols', (e) => {
+          const slug = e.features?.[0]?.properties?.slug
+          if (slug) navigate(`/dc/${slug}`)
+        })
+        map.on('mouseenter', 'dc-cols', () => {
+          map.getCanvas().style.cursor = 'pointer'
+        })
+        map.on('mouseleave', 'dc-cols', () => {
+          map.getCanvas().style.cursor = ''
         })
       } catch {
         /* 무시 */
@@ -236,8 +283,8 @@ export default function Map3DPage() {
       <div className="map-layout">
         <div ref={wrapRef} className="map-canvas map3d" />
         <div className="map3d-banner">
-          <span className="badge status-operating">3D 베타 v5</span>
-          우클릭 드래그로 회전·기울임 · 줌 13+ 건물 입체 · 🟡 추천입지 클릭 → 분석 · 송전선·변전소(154kV+) 전압별 색: 154 갈/345 보라/765 분홍
+          <span className="badge status-operating">3D 베타 v6</span>
+          우클릭 드래그로 회전·기울임 · 기둥 높이 = 공개 수전용량(MW, 미공개는 기둥 없음) · 줌 13+ 건물 입체 · 🟡 추천입지 클릭 → 분석 · 송전선·변전소(154kV+) 전압별 색: 154 갈/345 보라/765 분홍
         </div>
       </div>
     </>

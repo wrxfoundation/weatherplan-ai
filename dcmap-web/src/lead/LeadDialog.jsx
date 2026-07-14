@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { submitLead, mailtoFor, inquiryText, hasContactEmail, leadReasonLabel } from '../data/leadApi.js'
+import { submitLead, mailtoFor, inquiryText, hasContactEmail, leadReasonLabel, CONTACT_EMAIL } from '../data/leadApi.js'
 
 const TYPES = ['정밀 리포트 요청', 'Pro/구독 관심', '제휴 (EPC·냉각·PPA·법무)', '데이터·API', '매각·투자 문의', '기타 문의']
 
@@ -132,7 +132,10 @@ export default function LeadDialog({ open, onClose, defaultType = '정밀 리포
               <textarea value={form.message} onChange={set('message')} rows={3} placeholder="검토 배경·필요 사항을 적어주세요." />
             </label>
             {context && <div className="lead-ctx">첨부 맥락: {context}</div>}
-            <p className="lead-note">연락은 이메일 또는 연락처 중 하나만 있어도 됩니다.</p>
+            <p className="lead-note">
+              연락은 이메일 또는 연락처 중 하나만 있어도 됩니다. 직접 메일을 선호하시면{' '}
+              <a href={mailto || `mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> 로 보내주세요.
+            </p>
 
             {state === 'fallback' && (
               <div className="lead-fallback" role="status">
