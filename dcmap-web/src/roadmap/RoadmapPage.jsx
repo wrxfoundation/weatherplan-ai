@@ -127,7 +127,7 @@ const NODES = [
   { id: 'P03', lane: 'biz', gate: 'g0', axis: st(8).axis, title: '네트워크·백본 경로 검토', note: st(8).what, basis: st(8).source, links: st(8).links },
   { id: 'P04', lane: 'biz', gate: 'g1', axis: st(7).axis, title: '리스크 스크리닝(침수·민원·재해)', note: st(7).what, basis: st(7).source, links: st(7).links,
     bottleneck: '침수·산사태 노출과 고밀도 지역 민원 — 인허가·공사 단계의 대표 지연 요인' },
-  { id: 'P05', lane: 'gov', gate: 'g1', axis: '인허가', title: '부지 확보·건축 인허가 협의', note: '용도지역 적합·건축허가 사전협의. 절차 하자 하나가 사업을 멈춘다(버지니아 QTS 사례).', basis: '국토계획법·건축법·지자체 조례', links: [{ to: '/glossary', label: '인허가 용어집' }],
+  { id: 'P05', lane: 'gov', gate: 'g1', axis: '인허가', title: '부지 확보·건축 인허가 협의', note: '용도지역 적합·건축허가 사전협의. 절차 하자 하나가 사업을 멈춘다(버지니아 QTS 사례).', basis: '국토계획법·건축법·지자체 조례', links: [{ to: '/glossary', label: '인허가 용어집' }, { href: 'https://chris.gomdori.app/korea100', label: '범용 행정제도 구조(제도 은하) ↗' }],
     docs: '건축허가 신청 · 개발행위허가(해당 시) · 지자체 사전협의', bottleneck: '주민 민원·지자체 조례 — 절차 하자 시 소송·중단 리스크' },
   { id: 'P06', lane: 'gov', gate: 'g1', axis: '인허가', title: '환경영향평가', note: '사업 규모별 환경영향평가/소규모 환경영향평가 대상 판단·협의.', basis: '환경영향평가법', links: [],
     branch: '규모별 환경영향평가 / 소규모 환경영향평가 / 비대상' },
@@ -246,11 +246,17 @@ function ProcessFrame() {
         </div>
         {sel.links.length > 0 && (
           <div className="fd-links">
-            {sel.links.map((l) => (
-              <Link key={l.to + l.label} className="btn" to={l.to}>
-                {l.label}
-              </Link>
-            ))}
+            {sel.links.map((l) =>
+              l.href ? (
+                <a key={l.href + l.label} className="btn" href={l.href} target="_blank" rel="noreferrer">
+                  {l.label}
+                </a>
+              ) : (
+                <Link key={l.to + l.label} className="btn" to={l.to}>
+                  {l.label}
+                </Link>
+              ),
+            )}
           </div>
         )}
       </div>
