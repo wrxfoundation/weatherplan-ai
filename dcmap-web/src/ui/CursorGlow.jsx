@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 /* 커서 팔로우 브라이트 — 마우스 주변을 은은하게 밝히는 라디얼(섹션 accent 자동 추종).
  * 성능 원칙: 요소 1개·transform만 변경(rAF 스로틀)·합성 레이어 고정. 연속 애니메이션 없음.
  * 터치 기기(hover 불가)·모션 축소 설정에선 렌더하지 않는다. */
-const R = 340 // 글로우 반경(px)
+const R = 170 // 글로우 반경(px) — 피드백으로 절반 축소(340→170)
 
 export default function CursorGlow() {
   const ref = useRef(null)

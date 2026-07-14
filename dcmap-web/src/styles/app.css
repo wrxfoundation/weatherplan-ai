@@ -7025,6 +7025,14 @@ summary:focus-visible,
 .about-hero {
   position: relative;
   padding-top: 26px;
+  /* 배경 영상(430px)이 히어로 안에서 끝나도록 — 다음 섹션(WHY NOW)이 영상에 묻히지 않게 */
+  min-height: 440px;
+}
+/* 영상 위 가독성 — 히어로 텍스트 1px 그림자 */
+.about-hero .eyebrow,
+.about-hero h1,
+.about-hero .about-lede {
+  text-shadow: 0 1px 1px rgba(5, 3, 1, 0.85);
 }
 /* 히어로 워시 — 화면 좌우 끝까지 풀블리드(중앙 정렬 페이지 밖으로 확장).
  * 넘친 폭은 아래 body overflow-x clip으로 흡수(스크롤 유발 없음) */
@@ -7705,8 +7713,8 @@ main.about-page {
   position: fixed;
   left: 0;
   top: 0;
-  width: 680px;
-  height: 680px;
+  width: 340px; /* 피드백: 범위 절반 축소 (680→340, JSX R=170과 짝) */
+  height: 340px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
@@ -7733,7 +7741,7 @@ main.about-page {
   top: -86px;
   left: calc(50% - 50vw);
   right: calc(50% - 50vw);
-  height: 480px;
+  height: 430px; /* 480→430 — 히어로 안에서 종료(min-height 440과 짝) */
   overflow: hidden;
   pointer-events: none;
   /* 콘텐츠(z:relative 자식들)보다 아래, ::before 워시보다 아래 */
@@ -7750,14 +7758,58 @@ main.about-page {
   content: '';
   position: absolute;
   inset: 0;
-  /* 골드 재착색(color 블렌드) + 하단은 페이지 배경으로 녹아들게 페이드 */
+  /* 골드 재착색 + 하단 페이드 강화(40%→28% 시작, 88%에서 완전 불투명) — 아래 텍스트 묻힘 방지 */
   background:
-    linear-gradient(180deg, transparent 40%, #17120b 96%),
+    linear-gradient(180deg, transparent 28%, rgba(23, 18, 11, 0.75) 62%, #17120b 88%),
     color-mix(in srgb, var(--gold) 30%, transparent);
   mix-blend-mode: normal;
 }
 @media (prefers-reduced-motion: reduce), (max-width: 640px) {
   .about-hero-media {
     display: none; /* 모션 축소·모바일 데이터 절약 — 기존 그라데이션 유지 */
+  }
+}
+
+/* ── 플로팅 TOP 버튼 — 문서형 페이지 우측하단(맵·3D 제외는 컴포넌트에서) ── */
+.scroll-top-fab {
+  position: fixed;
+  right: 18px;
+  bottom: 22px;
+  z-index: 1090; /* topbar(1100) 바로 아래 */
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-surface-strong);
+  backdrop-filter: var(--glass-backdrop);
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--glass-specular-soft), var(--elev-2);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s var(--ease-premium), border-color 0.2s ease;
+}
+.scroll-top-fab.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.scroll-top-fab:hover {
+  border-color: var(--accent);
+  box-shadow: var(--glass-specular-soft), var(--glow-accent-soft), var(--elev-2);
+}
+@media (max-width: 760px) {
+  .scroll-top-fab {
+    right: 12px;
+    bottom: 84px; /* 모바일 하단 네비 위 */
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-top-fab {
+    transition: none;
   }
 }
