@@ -117,21 +117,34 @@ const GATES = [
 ]
 const st = (n) => STEPS[n - 1]
 // gatekeeper: 실제 사업을 멈추는 핵심 관문(계통 접속·계통영향평가)
+// 노드 분해 스키마(korea100 '제도 은하' 카드 형식 차용): bottleneck 병목 · branch 분기점 ·
+// docs 필요 서류 · time 리드타임 골자 — 전부 공개 근거(약관·법·국정감사)에서만 채우고, 없으면 생략(정직).
 const NODES = [
-  { id: 'P01', lane: 'biz', gate: 'g0', axis: st(1).axis, title: '부지·용도지역 검토', note: st(1).what, basis: st(1).source, links: st(1).links },
-  { id: 'P02', lane: 'biz', gate: 'g0', axis: st(2).axis, title: '수전전압 트랙 산정(GPU→MW)', note: st(2).what, basis: st(2).source, links: st(2).links },
+  { id: 'P01', lane: 'biz', gate: 'g0', axis: st(1).axis, title: '부지·용도지역 검토', note: st(1).what, basis: st(1).source, links: st(1).links,
+    docs: '토지이용계획확인원(토지이음) · 용도지역 확인', bottleneck: '용도지역 부적합·규제지구(토지거래허가 등) — 초기 스크리닝 누락 시 후단 전체 지연' },
+  { id: 'P02', lane: 'biz', gate: 'g0', axis: st(2).axis, title: '수전전압 트랙 산정(GPU→MW)', note: st(2).what, basis: st(2).source, links: st(2).links,
+    branch: '≤10MW 22.9kV / 10–40MW 154kV 원칙(변전소 여유 시 22.9kV 조건부) / 40MW+ 154kV 의무 / 400MW+ 345kV' },
   { id: 'P03', lane: 'biz', gate: 'g0', axis: st(8).axis, title: '네트워크·백본 경로 검토', note: st(8).what, basis: st(8).source, links: st(8).links },
-  { id: 'P04', lane: 'biz', gate: 'g1', axis: st(7).axis, title: '리스크 스크리닝(침수·민원·재해)', note: st(7).what, basis: st(7).source, links: st(7).links },
-  { id: 'P05', lane: 'gov', gate: 'g1', axis: '인허가', title: '부지 확보·건축 인허가 협의', note: '용도지역 적합·건축허가 사전협의. 절차 하자 하나가 사업을 멈춘다(버지니아 QTS 사례).', basis: '국토계획법·건축법·지자체 조례', links: [{ to: '/glossary', label: '인허가 용어집' }] },
-  { id: 'P06', lane: 'gov', gate: 'g1', axis: '인허가', title: '환경영향평가', note: '사업 규모별 환경영향평가/소규모 환경영향평가 대상 판단·협의.', basis: '환경영향평가법', links: [] },
-  { id: 'P07', lane: 'kepco', gate: 'g2', axis: '전력', title: '한전 접속 신청·기술검토', note: '수전전압 트랙(22.9/154kV)별 접속 신청과 기술검토. 40MW 초과는 154kV 의무.', basis: '한전 기본공급약관 제23조', links: [{ to: '/calc', label: 'GPU→MW 계산기' }], gatekeeper: true },
-  { id: 'P08', lane: 'psia', gate: 'g2', axis: '전력', title: '전력계통영향평가 심의(±15점)', note: st(3).what, basis: st(3).source, links: st(3).links, gatekeeper: true },
-  { id: 'P09', lane: 'kepco', gate: 'g2', axis: '전력', title: '송·변전 인프라 확인·확충', note: st(4).what, basis: st(4).source, links: st(4).links },
+  { id: 'P04', lane: 'biz', gate: 'g1', axis: st(7).axis, title: '리스크 스크리닝(침수·민원·재해)', note: st(7).what, basis: st(7).source, links: st(7).links,
+    bottleneck: '침수·산사태 노출과 고밀도 지역 민원 — 인허가·공사 단계의 대표 지연 요인' },
+  { id: 'P05', lane: 'gov', gate: 'g1', axis: '인허가', title: '부지 확보·건축 인허가 협의', note: '용도지역 적합·건축허가 사전협의. 절차 하자 하나가 사업을 멈춘다(버지니아 QTS 사례).', basis: '국토계획법·건축법·지자체 조례', links: [{ to: '/glossary', label: '인허가 용어집' }],
+    docs: '건축허가 신청 · 개발행위허가(해당 시) · 지자체 사전협의', bottleneck: '주민 민원·지자체 조례 — 절차 하자 시 소송·중단 리스크' },
+  { id: 'P06', lane: 'gov', gate: 'g1', axis: '인허가', title: '환경영향평가', note: '사업 규모별 환경영향평가/소규모 환경영향평가 대상 판단·협의.', basis: '환경영향평가법', links: [],
+    branch: '규모별 환경영향평가 / 소규모 환경영향평가 / 비대상' },
+  { id: 'P07', lane: 'kepco', gate: 'g2', axis: '전력', title: '한전 접속 신청·기술검토', note: '수전전압 트랙(22.9/154kV)별 접속 신청과 기술검토. 40MW 초과는 154kV 의무.', basis: '한전 기본공급약관 제23조', links: [{ to: '/calc', label: 'GPU→MW 계산기' }], gatekeeper: true,
+    docs: '전기사용신청 · 전기사용예정통지(5,000kW+)', bottleneck: '변전소·계통 여유 부족 → 공급 불가 판정 — 수도권 1단계 기술검토의 53%가 불가(’24.8–’25.3)', branch: '여유 有 → 접속 계약 / 여유 無 → 송변전 보강 대기 또는 입지 변경' },
+  { id: 'P08', lane: 'psia', gate: 'g2', axis: '전력', title: '전력계통영향평가 심의(±15점)', note: st(3).what, basis: st(3).source, links: st(3).links, gatekeeper: true,
+    time: '평가 대행 수수료 10MW당 약 1–1.5억원(국정감사 지적) + 심의 리드타임', bottleneck: '수도권 억제 배점(±15) — 전국 공급불가 판정의 91%가 수도권', branch: '비수도권 + 상한(대통령령 미정) 이내면 2027.3~ 면제 트랙' },
+  { id: 'P09', lane: 'kepco', gate: 'g2', axis: '전력', title: '송·변전 인프라 확인·확충', note: st(4).what, basis: st(4).source, links: st(4).links,
+    bottleneck: '송변전 건설은 수년 단위 — 완공 대기 리스크(한전 건설 4단계 공개)' },
   { id: 'P10', lane: 'gen', gate: 'g3', axis: '전력', title: '발전 조달(PPA·자가발전·재생E)', note: st(5).what, basis: st(5).source, links: st(5).links },
   { id: 'P11', lane: 'gen', gate: 'g3', axis: '운영', title: '금융·투자 조달', note: '대규모 CAPEX 투자·금융 조달. DART 공시로 착공·투자 신호를 읽는다.', basis: '사업자 공시(DART)', links: [{ to: '/dashboard', label: '대시보드' }] },
-  { id: 'P12', lane: 'biz', gate: 'g3', axis: st(6).axis, title: '냉각·용수 설계', note: st(6).what, basis: st(6).source, links: st(6).links },
-  { id: 'P13', lane: 'biz', gate: 'g4', axis: '인허가', title: '착공·건설', note: '소방·정보통신공사 등 개별 인허가를 병렬 처리 후 착공.', basis: 'AIDC 특별법 통합창구·타임아웃제', links: [] },
-  { id: 'P14', lane: 'gov', gate: 'g4', axis: '인허가', title: '준공·사용승인', note: st(9).what, basis: st(9).source, links: st(9).links },
+  { id: 'P12', lane: 'biz', gate: 'g3', axis: st(6).axis, title: '냉각·용수 설계', note: st(6).what, basis: st(6).source, links: st(6).links,
+    docs: '공업용수·상수도 인입 협의(지방·산단 상수도사업소)' },
+  { id: 'P13', lane: 'biz', gate: 'g4', axis: '인허가', title: '착공·건설', note: '소방·정보통신공사 등 개별 인허가를 병렬 처리 후 착공.', basis: 'AIDC 특별법 통합창구·타임아웃제', links: [],
+    time: 'AIDC 특별법 타임아웃제(2027.3~) — 기한 내 미처리 시 자동 처리 간주' },
+  { id: 'P14', lane: 'gov', gate: 'g4', axis: '인허가', title: '준공·사용승인', note: st(9).what, basis: st(9).source, links: st(9).links,
+    docs: '사용승인 신청 · 전기설비 사용전검사' },
   { id: 'P15', lane: 'biz', gate: 'g5', axis: st(10).axis, title: '운영(PUE·RE100·복원력)', note: st(10).what, basis: st(10).source, links: st(10).links },
 ]
 
@@ -199,8 +212,37 @@ function ProcessFrame() {
           </span>
         </div>
         <p className="fd-note">{sel.note}</p>
+        {/* 노드 분해(병목·분기점·서류·리드타임) — 공개 근거가 있는 항목만 노출(정직) */}
+        {(sel.bottleneck || sel.branch || sel.docs || sel.time) && (
+          <dl className="fd-decomp">
+            {sel.bottleneck && (
+              <div className="fd-d-row warn">
+                <dt>병목</dt>
+                <dd>{sel.bottleneck}</dd>
+              </div>
+            )}
+            {sel.branch && (
+              <div className="fd-d-row">
+                <dt>분기점</dt>
+                <dd>{sel.branch}</dd>
+              </div>
+            )}
+            {sel.docs && (
+              <div className="fd-d-row">
+                <dt>필요 서류</dt>
+                <dd>{sel.docs}</dd>
+              </div>
+            )}
+            {sel.time && (
+              <div className="fd-d-row">
+                <dt>비용·리드타임</dt>
+                <dd>{sel.time}</dd>
+              </div>
+            )}
+          </dl>
+        )}
         <div className="fd-basis">
-          <strong>공개 근거:</strong> {sel.basis}
+          <strong>공개 근거:</strong> {sel.basis} <span className="fd-asof">· 기준일 2026-07-14</span>
         </div>
         {sel.links.length > 0 && (
           <div className="fd-links">
