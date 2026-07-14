@@ -133,14 +133,19 @@ export default function AboutPage() {
            * 실패(CDN 불가) 시 컨테이너째 숨김 → 기존 그라데이션만 남아 무해. 모션축소·좁은 화면 미표시.
            * TODO: CDN 링크 만료 대비 public/media/ 이전 권장(로컬 환경에서 mp4 커밋). */}
           <div className="about-hero-media" aria-hidden="true">
-            {/* 둥둥 떠다니는 미니 번개 — 각기 다른 위치·주기·시차(결정적 배치, transform만 애니메이트) */}
+            {/* 둥둥 떠다니는 미니 번개 — 각기 다른 위치·주기·시차(결정적 배치, transform만 애니메이트).
+             * 피드백: 크기 2배 + 4개 추가(총 10개) */}
             {[
-              { left: '7%', top: '32%', s: 13, dur: 4.6, del: 0 },
-              { left: '21%', top: '62%', s: 10, dur: 5.4, del: -1.6 },
-              { left: '37%', top: '20%', s: 12, dur: 4.1, del: -2.8 },
-              { left: '55%', top: '52%', s: 9, dur: 5.9, del: -0.9 },
-              { left: '71%', top: '28%', s: 12, dur: 4.9, del: -3.4 },
-              { left: '86%', top: '58%', s: 10, dur: 5.2, del: -2.2 },
+              { left: '7%', top: '32%', s: 26, dur: 4.6, del: 0 },
+              { left: '21%', top: '62%', s: 20, dur: 5.4, del: -1.6 },
+              { left: '37%', top: '20%', s: 24, dur: 4.1, del: -2.8 },
+              { left: '55%', top: '52%', s: 18, dur: 5.9, del: -0.9 },
+              { left: '71%', top: '28%', s: 24, dur: 4.9, del: -3.4 },
+              { left: '86%', top: '58%', s: 20, dur: 5.2, del: -2.2 },
+              { left: '14%', top: '14%', s: 18, dur: 5.7, del: -4.1 },
+              { left: '46%', top: '70%', s: 22, dur: 4.4, del: -1.2 },
+              { left: '64%', top: '12%', s: 18, dur: 5.1, del: -3.0 },
+              { left: '93%', top: '30%', s: 22, dur: 4.7, del: -0.5 },
             ].map((b, i) => (
               <svg
                 key={i}

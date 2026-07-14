@@ -7034,6 +7034,10 @@ summary:focus-visible,
 .about-hero .about-lede {
   text-shadow: 0 1px 1px rgba(5, 3, 1, 0.85);
 }
+/* 리드 30% 밝게 — .page .sub(0,2,0)보다 높은 특이도로 */
+.about-hero p.about-lede {
+  color: color-mix(in srgb, var(--grey) 70%, #fff);
+}
 /* 히어로 워시 — 화면 좌우 끝까지 풀블리드(중앙 정렬 페이지 밖으로 확장).
  * 넘친 폭은 아래 body overflow-x clip으로 흡수(스크롤 유발 없음) */
 :root[data-section='about'] body {
@@ -7075,6 +7079,8 @@ summary:focus-visible,
 .about-lede {
   max-width: 64ch;
   line-height: 1.7;
+  /* 피드백: 리드 문단 30% 밝게 — 웜그레이에 백색 30% 혼합 */
+  color: color-mix(in srgb, var(--grey) 70%, #fff);
 }
 .about-lede b {
   color: var(--text);
