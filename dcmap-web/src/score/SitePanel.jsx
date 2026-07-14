@@ -1060,14 +1060,15 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             const w = window.open('', '_blank')
             if (!w) return
             w.document.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>AI InfraMap 부지 리포트</title><style>
-              @page{margin:16mm}
-              body{font-family:'Pretendard Variable',-apple-system,'Malgun Gothic',sans-serif;color:#111;line-height:1.55;max-width:760px;margin:0 auto;padding:20px;font-size:12.5px}
-              h1{font-size:20px;border-bottom:2px solid #111;padding-bottom:8px;margin:0 0 12px}
-              h2{font-size:14px;color:#0a4;margin:18px 0 6px;border-left:3px solid #0a4;padding-left:8px}
-              .li{margin:2px 0 2px 12px}.li.sub{margin-left:28px;color:#444;font-size:11.5px}
+              /* A4 규격 고정 — 프린터 기본값(Letter 등) 의존 제거 */
+              @page{size:A4;margin:16mm}
+              body{font-family:'Pretendard Variable',-apple-system,'Malgun Gothic',sans-serif;color:#111;line-height:1.55;max-width:760px;margin:0 auto;padding:20px;font-size:12.5px;word-break:keep-all;overflow-wrap:anywhere}
+              h1{font-size:20px;border-bottom:2px solid #111;padding-bottom:8px;margin:0 0 12px;break-after:avoid}
+              h2{font-size:14px;color:#0a4;margin:18px 0 6px;border-left:3px solid #0a4;padding-left:8px;break-after:avoid;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+              .li{margin:2px 0 2px 12px;break-inside:avoid}.li.sub{margin-left:28px;color:#444;font-size:11.5px}
               hr{border:0;border-top:1px solid #ccc;margin:16px 0}
               b{color:#000}p{margin:4px 0;color:#333}
-              @media print{body{padding:0}}
+              @media print{body{padding:0;max-width:100%}}
             </style></head><body>${html}
             <p style="margin-top:24px;color:#888;font-size:10.5px">AI InfraMap · ${new Date().toLocaleString('ko-KR')} · 공개 데이터 기반 간이 판정(미산출 축은 '대기' 명시)</p>
             <script>window.onload=function(){setTimeout(function(){window.print()},250)}<\/script>

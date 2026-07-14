@@ -7699,3 +7699,30 @@ main.about-page {
   gap: 8px;
   margin-top: 16px;
 }
+
+/* ── 커서 팔로우 브라이트 — 은은한 스크린 블렌드 라디얼(섹션 accent 추종) ── */
+.cursor-glow {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 680px;
+  height: 680px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 9%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 4%, transparent) 38%,
+    transparent 68%
+  );
+  mix-blend-mode: screen; /* 다크 배경 위에서만 밝아짐 — 콘텐츠 색 왜곡 없음 */
+  pointer-events: none;
+  z-index: 3000; /* topbar(1100) 위 — pointer-events 없음이라 상호작용 무해 */
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  will-change: transform;
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .cursor-glow {
+    display: none;
+  }
+}
