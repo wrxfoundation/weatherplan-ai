@@ -6,7 +6,7 @@ import { GEN_PERMIT_BUBBLES } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { SUBSTATIONS, SUBSTATION_META } from '../data/substations.js'
 import { POWER_MARKET_META, PURCHASE_PRICE_2024, PURCHASE_SUMMARY, PRICE_PEAK, PRICE_LOW } from '../data/powerMarket.js'
-import { DC_ASSESSMENT, DC_ASSESSMENT_ROLLUP, GRID_ASSESSMENT_META, approvalLabel } from '../data/gridAssessment.js'
+import { DC_ASSESSMENT, DC_ASSESSMENT_ROLLUP, GRID_ASSESSMENT_META, PSIA_REVIEW_2026, approvalLabel } from '../data/gridAssessment.js'
 import { GRID_HEADROOM, GRID_HEADROOM_META, headroomLabel } from '../data/gridHeadroom.js'
 import { RESERVE_12M, RESERVE_MIN, RESERVE_MAX, POWER_RESERVE_META } from '../data/powerReserve.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
@@ -523,6 +523,9 @@ export default function DashboardPage() {
                   비수도권 DC 승인율 <strong>{DC_ASSESSMENT_ROLLUP.비수도권.ratePct}</strong>% (가능 {Math.round(DC_ASSESSMENT_ROLLUP.비수도권.able).toLocaleString()}MW / 불가 {Math.round(DC_ASSESSMENT_ROLLUP.비수도권.unable).toLocaleString()}MW)
                 </div>
                 <div className="dash-row total">전국 {DC_ASSESSMENT_ROLLUP.전국.ratePct}% · DC 신청 {Math.round(DC_ASSESSMENT_ROLLUP.전국.able + DC_ASSESSMENT_ROLLUP.전국.unable).toLocaleString()}MW</div>
+                <div className="dash-row">
+                  본심사(위원회) 통과 — 수도권 <strong>{PSIA_REVIEW_2026.capital.passed}/{PSIA_REVIEW_2026.capital.reviewed}</strong>건 (신청 {PSIA_REVIEW_2026.capital.applied}건 대비 {Math.round((PSIA_REVIEW_2026.capital.passed / PSIA_REVIEW_2026.capital.applied) * 1000) / 10}%) · 비수도권 <strong>{PSIA_REVIEW_2026.nonCapital.passed}/{PSIA_REVIEW_2026.nonCapital.reviewed}</strong>건 ({Math.round((PSIA_REVIEW_2026.nonCapital.passed / PSIA_REVIEW_2026.nonCapital.reviewed) * 1000) / 10}%) <span className="muted" style={{ fontSize: '0.85em' }}>{PSIA_REVIEW_2026.asOf}</span>
+                </div>
               </div>
               <Gauge pct={Math.round(DC_ASSESSMENT_ROLLUP.비수도권.ratePct)} label="비수도권 승인율" sub={`수도권 ${DC_ASSESSMENT_ROLLUP.수도권.ratePct}%`} />
             </div>

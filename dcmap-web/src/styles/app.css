@@ -7591,3 +7591,111 @@ main.about-page {
   .m3d-ui { top: calc(var(--topbar-height) + 8px); left: 8px; gap: 5px; }
   .m3d-chip { padding: 7px 12px; }
 }
+
+/* ── 제도 트래커 (/roadmap?view=policy) — 확정/대기/예정 타임라인 ── */
+.policy-tracker {
+  margin-top: 14px;
+}
+.plc-track {
+  margin-top: 14px;
+  padding: 18px 20px 14px;
+}
+.plc-head h2 {
+  margin: 0 0 2px;
+  font-size: var(--text-title);
+  font-weight: var(--weight-bold);
+}
+.plc-sub {
+  margin: 0 0 12px;
+  font-size: var(--text-sm);
+  color: var(--grey);
+}
+.plc-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.plc-step {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  padding: 0 0 16px 2px;
+}
+/* 세로 레일 — 다음 단계로 이어지는 선 */
+.plc-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 16px;
+  bottom: -2px;
+  width: 2px;
+  background: color-mix(in srgb, var(--line) 80%, transparent);
+}
+.plc-dot {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  margin-top: 4px;
+  border-radius: 50%;
+  border: 2px solid var(--grey);
+  background: var(--surface);
+  z-index: 1;
+}
+.plc-step.st-done .plc-dot {
+  border-color: var(--green);
+  background: color-mix(in srgb, var(--green) 45%, var(--surface));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--green) 40%, transparent);
+}
+.plc-step.st-wait .plc-dot {
+  border-color: var(--orange);
+  background: color-mix(in srgb, var(--orange) 30%, var(--surface));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--orange) 35%, transparent);
+}
+.plc-row1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.plc-date {
+  font-size: var(--text-sm);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.badge.plc-state.st-done { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, var(--line)); }
+.badge.plc-state.st-wait { color: var(--orange); border-color: color-mix(in srgb, var(--orange) 45%, var(--line)); }
+.badge.plc-state.st-future { color: var(--grey); }
+.plc-label {
+  margin-top: 3px;
+  font-size: var(--text-body);
+  color: var(--text);
+  line-height: 1.5;
+}
+.plc-step.st-future .plc-label {
+  color: var(--grey);
+}
+.plc-note {
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  color: var(--grey);
+  line-height: 1.5;
+}
+.plc-src {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: var(--text-xs);
+  color: color-mix(in srgb, var(--accent) 80%, var(--grey));
+}
+.plc-impact {
+  margin: 4px 0 0;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  font-size: var(--text-sm);
+  color: color-mix(in srgb, var(--accent) 65%, var(--grey));
+  line-height: 1.5;
+}
+.plc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}

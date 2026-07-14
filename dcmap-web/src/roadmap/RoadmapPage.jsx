@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import PolicyTracker from './PolicyTracker.jsx'
 import TopBar from '../TopBar.jsx'
 import Term from '../components/Term.jsx'
 
@@ -132,9 +133,9 @@ const NODES = [
   { id: 'P06', lane: 'gov', gate: 'g1', axis: '인허가', title: '환경영향평가', note: '사업 규모별 환경영향평가/소규모 환경영향평가 대상 판단·협의.', basis: '환경영향평가법', links: [],
     branch: '규모별 환경영향평가 / 소규모 환경영향평가 / 비대상' },
   { id: 'P07', lane: 'kepco', gate: 'g2', axis: '전력', title: '한전 접속 신청·기술검토', note: '수전전압 트랙(22.9/154kV)별 접속 신청과 기술검토. 40MW 초과는 154kV 의무.', basis: '한전 기본공급약관 제23조', links: [{ to: '/calc', label: 'GPU→MW 계산기' }], gatekeeper: true,
-    docs: '전기사용신청 · 전기사용예정통지(5,000kW+)', bottleneck: '변전소·계통 여유 부족 → 공급 불가 판정 — 수도권 1단계 기술검토의 53%가 불가(’24.8–’25.3)', branch: '여유 有 → 접속 계약 / 여유 無 → 송변전 보강 대기 또는 입지 변경' },
+    docs: '전기사용신청 · 전기사용예정통지(5,000kW+)', bottleneck: '변전소·계통 여유 부족 → 공급 불가 판정 — 수도권 1차 기술검토 522건 중 53.4%가 불가(’25.8–’26.3, 기후부 공표)', branch: '여유 有 → 접속 계약 / 여유 無 → 송변전 보강 대기 또는 입지 변경' },
   { id: 'P08', lane: 'psia', gate: 'g2', axis: '전력', title: '전력계통영향평가 심의(±15점)', note: st(3).what, basis: st(3).source, links: st(3).links, gatekeeper: true,
-    time: '평가 대행 수수료 10MW당 약 1–1.5억원(국정감사 지적) + 심의 리드타임', bottleneck: '수도권 억제 배점(±15) — 전국 공급불가 판정의 91%가 수도권', branch: '비수도권 + 상한(대통령령 미정) 이내면 2027.3~ 면제 트랙' },
+    time: '평가 대행 수수료 10MW당 약 1–1.5억원(국정감사 지적) + 심의 리드타임', bottleneck: '수도권 억제 배점(±15) — 본심사 통과 수도권 10/24 vs 비수도권 26/29, 전국 공급불가의 91%가 수도권(’25.8–’26.3 기후부 공표)', branch: '비수도권 + 상한(대통령령 미정) 이내면 2027.3~ 면제 트랙 · 법정 고시 연내 제정 추진(대행자 제도 포함)' },
   { id: 'P09', lane: 'kepco', gate: 'g2', axis: '전력', title: '송·변전 인프라 확인·확충', note: st(4).what, basis: st(4).source, links: st(4).links,
     bottleneck: '송변전 건설은 수년 단위 — 완공 대기 리스크(한전 건설 4단계 공개)' },
   { id: 'P10', lane: 'gen', gate: 'g3', axis: '전력', title: '발전 조달(PPA·자가발전·재생E)', note: st(5).what, basis: st(5).source, links: st(5).links },
@@ -367,8 +368,8 @@ function OpsFrame() {
 export default function RoadmapPage() {
   const [mode, setMode] = useState(() => {
     const v = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('view') : null
-    return v === 'frame' || v === 'ops' ? v : 'guide'
-  }) // 'guide' | 'frame' | 'ops'
+    return v === 'frame' || v === 'ops' || v === 'policy' ? v : 'guide'
+  }) // 'guide' | 'frame' | 'ops' | 'policy'
   useEffect(() => {
     document.title = TITLE
     setMeta('name', 'description', DESC)
@@ -427,12 +428,23 @@ export default function RoadmapPage() {
           >
             완공 후 운영관리
           </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === 'policy'}
+            className={mode === 'policy' ? 'active' : ''}
+            onClick={() => setMode('policy')}
+          >
+            제도 트래커 <span className="badge" style={{ marginLeft: 4 }}>NEW</span>
+          </button>
         </div>
 
         {mode === 'frame' ? (
           <ProcessFrame />
         ) : mode === 'ops' ? (
           <OpsFrame />
+        ) : mode === 'policy' ? (
+          <PolicyTracker />
         ) : (
           <ol className="roadmap">
             {STEPS.map((s) => (
