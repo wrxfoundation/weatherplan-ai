@@ -21,6 +21,7 @@ import { type AggregateEntry, buildAggregateFeed } from "./aggregate.js";
 import { collectStatus } from "./status.js";
 import { readChangeLines, sourcePaths } from "./store.js";
 import { RECORD_FIELD, type ChangeEvent } from "./types.js";
+import { renderVerifyPage } from "./verify-page.js";
 
 const AGG_PER_SOURCE = 20; // 소스별 최근 이벤트 상한 — 한 고빈도 소스가 통합 피드를 잠식하지 않게
 
@@ -292,7 +293,8 @@ ${cards}
 <code>npx tsx mcp/server.ts</code> · 도구: list_sources · get_history · get_changes · verify_source</p>
 
 <div class="section"><span class="en">Verify</span><h2>직접 검증하기</h2></div>
-<p class="note">이 원장은 신뢰를 요구하지 않는다 — 아래 두 단계로 누구나 재계산할 수 있다.</p>
+<p class="note">이 원장은 신뢰를 요구하지 않는다 — <a href="./verify.html"><b>브라우저에서 클릭 한 번으로 재검증 →</b></a>
+당신의 브라우저가 공개 원장을 받아 제네시스부터 해시체인을 다시 계산한다(무설치·무신뢰). 또는 로컬에서:</p>
 <pre>git clone https://github.com/${escapeHtml(repo)}.git &amp;&amp; cd ${escapeHtml(repo.split("/")[1] ?? "repo")}
 npm ci &amp;&amp; npm run verify -- --all     # 전 소스 해시체인을 제네시스부터 전수 재계산</pre>
 <p class="note">외부 앵커(제3자 공증)는 openssl만으로 검증된다 — 리포 소유자도 위조할 수 없는 층.</p>
@@ -403,6 +405,8 @@ export function writeSite(root: string, dataDir: string, repo: string): { htmlPa
     }
   }
   writeFileSync(join(docsDir, "feed.xml"), buildAggregateFeed(repo, aggEntries));
+  // 공개 검증 페이지 — 방문자 브라우저가 Web Crypto로 원장을 직접 재검증(무설치·무신뢰).
+  writeFileSync(join(docsDir, "verify.html"), renderVerifyPage(repo));
   // GitHub Pages의 Jekyll 처리를 통째로 우회 — 우리는 완성된 정적 파일만 서빙한다
   writeFileSync(join(docsDir, ".nojekyll"), "");
   return { htmlPath, llmsPath };
