@@ -21,6 +21,7 @@ import Term from '../components/Term.jsx'
 import { useAiStream } from '../ai/useAiStream.js'
 import AiResultCard from '../ai/AiResultCard.jsx'
 import CopyButton from '../ui/CopyButton.jsx'
+import LineIcon from '../components/LineIcon.jsx'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
 export default function SitePanel({ point, onClose, onSelectFacility, onAddCompare, inCompare }) {
@@ -460,7 +461,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
 
         {/* 부지선정 핵심 — 전력·냉각·부지·리스크 순(항상 노출). 운영성 정보는 하단 접이식으로. */}
         <div className="spec-grid">
-          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}>⚡ 전력 <em>— DC 입지 1순위 제약</em></div>
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="power" /> 전력 <em>— DC 입지 1순위 제약</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k">이 지점 배전 접속여유 (<Term k="계통여유">한전 분산전원 22.9kV</Term> 라이브 조회 · 참고)</div>
             <div className="v">
@@ -623,7 +624,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             </div>
           )}
 
-          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}>❄ 냉각 <em>— 연평균기온·프리쿨링·PUE</em></div>
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="cooling" /> 냉각 <em>— 연평균기온·프리쿨링·PUE</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k">
               <Term k="프리쿨링">데이터센터 기후지수</Term> (냉각 적합도 · 아주나쁨~아주좋음)
@@ -649,7 +650,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             </div>
           </div>
 
-          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}>🏗 부지 <em>— 용도지역·주소</em></div>
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="site" /> 부지 <em>— 용도지역·주소</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k"><Term k="용도지역">용도지역</Term> (vworld 도시계획 — 부지 개발 가능성)</div>
             <div className="v">
@@ -702,7 +703,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             </div>
           </div>
 
-          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}>⚠ 리스크 <em>— 침수·산사태·네트워크·민원</em></div>
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="risk" /> 리스크 <em>— 침수·산사태·네트워크·민원</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k"><Term k="침수심">침수 위험</Term> (홍수위험지도 — DC에 치명적)</div>
             <div className="v">

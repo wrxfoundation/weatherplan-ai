@@ -255,8 +255,8 @@ export default function DashboardPage() {
         <p className="sub">
           공개 데이터 기준 현황 — 시드 v{DATA_VERSION.version} · {DATA_VERSION.date} · KOSIS {LAND_PRICE.period.slice(0, 4)}.
           {LAND_PRICE.period.slice(4)}
-          <span className="dash-clock">
-            {now.toLocaleTimeString('en-GB')} · {now.toLocaleDateString('ko-KR')}
+          <span className="dash-clock" title="한국 표준시 (UTC+9)">
+            {now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Seoul' })} · {now.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })} <span className="dash-tz">KST</span>
           </span>
         </p>
 

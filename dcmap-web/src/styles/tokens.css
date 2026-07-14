@@ -130,3 +130,8 @@
   --accent: var(--violet);
   --accent-deep: color-mix(in srgb, var(--violet) 55%, #171232);
 }
+/* 용어집 — 지식 섹션이지만 별도 톤(teal)으로 구분(보라 단조로움 해소) */
+:root[data-section='glossary'] {
+  --accent: #2dd4bf;
+  --accent-deep: color-mix(in srgb, #2dd4bf 55%, #06231e);
+}

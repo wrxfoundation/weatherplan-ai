@@ -399,10 +399,14 @@ a {
 .reco-sim {
   position: absolute;
   left: 12px;
-  bottom: 40px;
+  /* 좌하단 버튼 스택(AI·공유·범례, ~bottom:152) 위로 — 겹침 방지 */
+  bottom: 164px;
   z-index: 600;
   width: 244px;
   max-width: calc(100vw - 24px);
+  max-height: calc(100% - var(--topbar-height) - 200px);
+  display: flex;
+  flex-direction: column;
   padding: 12px;
   border-radius: 12px;
   background: color-mix(in srgb, var(--navy-deep, #0a1120) 90%, transparent);
@@ -608,9 +612,9 @@ a {
 /* 맵 우하단 클러스터 — 공유 버튼 + 범례(사이드패널 왼쪽). 좌하단 비교트레이와 겹치지 않게. */
 .map-br-cluster {
   position: absolute;
-  /* 좌하단으로 이동 — 우측 사이드패널 옆에 뭉쳐 누르기 어렵던 문제 해소. AI FAB(bottom:14) 위에 스택 */
+  /* 좌하단 — 스케일바(미터 표시) 위로 올림. AI FAB(bottom:38) 위에 스택 */
   left: 14px;
-  bottom: 60px;
+  bottom: 84px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -3398,6 +3402,17 @@ summary:focus-visible,
   margin: 8px 0 2px;
   padding-top: 8px;
   border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.spec-group-label .lni {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+/* 라인 아이콘 공통 — 텍스트 베이스라인 정렬 */
+.lni {
+  vertical-align: -2px;
 }
 .spec-grid > .spec-group-label:first-child {
   border-top: none;
@@ -3525,8 +3540,8 @@ summary:focus-visible,
 /* ---------- 맵 상단: 주소검색 + 기후 바 ---------- */
 .map-top {
   position: absolute;
-  /* 필터바(2줄) 아래로 내림 — 필터바가 전폭을 써도 겹치지 않게(내용 잘림 방지) */
-  top: calc(var(--topbar-height) + 108px);
+  /* 필터바(2줄) 바로 아래로 붙임 — 사이 여백 축소(요청) */
+  top: calc(var(--topbar-height) + 82px);
   right: calc(var(--panel-width) + 16px);
   z-index: 1000;
   width: 320px;
@@ -3655,16 +3670,24 @@ summary:focus-visible,
   border-color: var(--stroke-hi, var(--line));
 }
 .climate-bar.collapsed {
-  padding-bottom: 8px;
+  padding: 8px 12px;
 }
 .climate-bar.collapsed .cb-head {
   margin-bottom: 0;
+  flex-wrap: nowrap; /* 접힘 시 구/동 + 지수 + 기온 1줄 강제 */
+}
+.cb-pin {
+  flex-shrink: 0;
+  vertical-align: -1px;
+  color: var(--accent);
 }
 .cb-mini {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
   font-size: 12px;
 }
 .cb-mini .ci-dot {
@@ -4531,6 +4554,22 @@ summary:focus-visible,
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-medium);
   color: #fbbf24; /* 실시간 시각 강조(노란색) */
+}
+.dash-tz {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, #fbbf24 70%, var(--grey));
+  border: 1px solid color-mix(in srgb, #fbbf24 34%, var(--line));
+  border-radius: 5px;
+  padding: 1px 5px;
+  margin-left: 4px;
+}
+
+/* 스케일바(미터 표시) — 좌하단 버튼(bottom:38)에 가리지 않게 아래로 고정 */
+.leaflet-bottom.leaflet-left .leaflet-control-scale {
+  margin-bottom: 8px;
+  margin-left: 12px;
 }
 
 .dash-grid {
@@ -5410,9 +5449,9 @@ summary:focus-visible,
 /* 플로팅 AI 어시스턴트 — 사이드패널 왼쪽, 공유/범례 클러스터 위 */
 .ai-fab {
   position: absolute;
-  /* 좌하단으로 이동(우측 뭉침 해소). 컨트롤 클러스터 아래에 배치 — 엄지 접근 쉬운 코너 */
+  /* 좌하단 — 스케일바(미터 표시)가 가려지지 않게 그 위로 올림 */
   left: 14px;
-  bottom: 14px;
+  bottom: 38px;
   z-index: 1100;
   display: flex;
   flex-direction: column;
@@ -5736,15 +5775,38 @@ summary:focus-visible,
   height: 4px;
   cursor: pointer;
 }
+/* 재생조달 퀵 — 연결형 세그먼트 토글로 통일(주변 컨트롤과 높이·톤 일치) */
 .re-quick {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--navy-deep);
+  flex-shrink: 0;
+}
+.re-quick .chip {
+  height: 30px;
+  padding: 0 13px;
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--grey);
+  font-weight: 700;
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+.re-quick .chip:first-child {
+  border-left: 0;
+}
+.re-quick .chip:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--mint) 10%, transparent);
 }
 .re-quick .chip.on {
-  border-color: color-mix(in srgb, var(--mint) 55%, var(--line));
-  color: #6ee7b7;
-  background: color-mix(in srgb, var(--mint) 14%, transparent);
+  color: var(--navy-deep);
+  background: var(--mint);
 }
 .delta-up {
   color: #f5b544;

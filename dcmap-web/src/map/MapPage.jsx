@@ -7,6 +7,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import TopBar from '../TopBar.jsx'
 import FilterBar from './FilterBar.jsx'
 import ClimateBar from './ClimateBar.jsx'
+import LineIcon, { factorySvg } from '../components/LineIcon.jsx'
 import Legend from './Legend.jsx'
 import ShareButton from './ShareButton.jsx'
 import AiAssistant from '../ai/AiAssistant.jsx'
@@ -611,7 +612,7 @@ export default function MapPage({ power = false }) {
       const g = L.layerGroup()
       for (const [name, lat, lng, type] of INDUSTRIAL_COMPLEXES) {
         L.marker([lat, lng], {
-          icon: L.divIcon({ className: 'complex-marker', html: `<span class="complex-dot ${type === '국가' ? 'nat' : 'urb'}">🏭</span>`, iconSize: [22, 22] }),
+          icon: L.divIcon({ className: 'complex-marker', html: `<span class="complex-dot ${type === '국가' ? 'nat' : 'urb'}">${factorySvg()}</span>`, iconSize: [22, 22] }),
           bubblingMouseEvents: false,
         })
           .bindTooltip(`<div class="dc-hovercard"><strong>${name}</strong> · ${type}산단<br/><span class="muted">인센티브·전력/용수 기반시설 사전확보</span></div>`, {
@@ -1181,7 +1182,7 @@ export default function MapPage({ power = false }) {
                 {q && ` · “${q}”`}
               </h2>
               <p className="map-hint">
-                🧭 <strong>지도 빈 곳을 클릭</strong> → 부지 분석(전력·냉각·리스크 점수) · <strong>시설 마커 클릭</strong> → 상세 정보
+                <LineIcon name="target" size={14} /> <strong>지도 빈 곳을 클릭</strong> → 부지 분석(전력·냉각·리스크 점수) · <strong>시설 마커 클릭</strong> → 상세 정보
               </p>
               {filtered.length > 0 && (
                 <div className="status-summary">

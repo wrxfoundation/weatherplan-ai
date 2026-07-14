@@ -4,6 +4,7 @@ import { STATUS_LABEL, GEOCODE_LABEL, slugOf } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { revgeoFor } from '../data/liveApi.js'
 import { blurbFor } from '../content/facilityBlurbs.js'
+import LineIcon from '../components/LineIcon.jsx'
 
 export default function FacilityCard({ facility: f, compact = false }) {
   // vworld 리버스 지오코딩 — 좌표 기준 지번(동단위) 주소. env 연동 시 표시(미연동 시 null → 공개주소/시군구 폴백)
@@ -21,10 +22,7 @@ export default function FacilityCard({ facility: f, compact = false }) {
   return (
     <article className="facility-card">
       <div className="status-line">
-        <span className={`badge status-${f.status}`}>
-          <span className={`dot ${f.status === 'delayed' ? 'planned' : f.status}`} />
-          {STATUS_LABEL[f.status] ?? f.status}
-        </span>
+        <span className={`badge status-${f.status}`}>{STATUS_LABEL[f.status] ?? f.status}</span>
         <span className="badge">{f.type}</span>
         {f.needs_verify && <span className="badge verify">검증 필요</span>}
       </div>
@@ -106,7 +104,7 @@ export default function FacilityCard({ facility: f, compact = false }) {
       {!compact && (
         <div className="card-actions">
           <Link className="btn primary" to={`/dc/${slugOf(f)}`}>
-            시설 상세 <span className="btn-arrow">↗</span>
+            시설 상세 <span className="btn-arrow"><LineIcon name="arrowUR" size={13} /></span>
           </Link>
         </div>
       )}

@@ -66,14 +66,27 @@ export default function ClimateBar({ point, committed }) {
     <div className={`climate-bar ${collapsed ? 'collapsed' : ''}`}>
       <div className="cb-head">
         <span className="cb-where" title={addr?.parcel || placeName || coordStr}>
-          {committed ? '📍' : '🧭'}{' '}
+          <svg className="cb-pin" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            {committed ? (
+              <>
+                <path d="M8 14.5S13 10.4 13 6.5A5 5 0 0 0 3 6.5C3 10.4 8 14.5 8 14.5Z" />
+                <circle cx="8" cy="6.5" r="1.8" />
+              </>
+            ) : (
+              <>
+                <circle cx="8" cy="8" r="6.2" />
+                <path d="M10.6 5.4 9 9 5.4 10.6 7 7 10.6 5.4Z" />
+              </>
+            )}
+          </svg>{' '}
           {placeName ? (
             <>
               <b className="cb-place">{placeName}</b>
-              {coordStr && <span className="cb-coord">{coordStr}</span>}
+              {/* 접힘 시 좌표 숨김 — 구/동만 1줄로 */}
+              {coordStr && !collapsed && <span className="cb-coord">{coordStr}</span>}
             </>
           ) : (
-            <b className="cb-place">{coordStr}</b>
+            <b className="cb-place">{collapsed ? placeName || '위치 확인 중' : coordStr}</b>
           )}
         </span>
         {/* 접힘 시 헤더에 기후지수·기온만 압축 표시 */}
@@ -83,7 +96,7 @@ export default function ClimateBar({ point, committed }) {
             {wx?.temp != null && <b className="cb-mini-temp">{wx.temp}°C</b>}
           </span>
         )}
-        <span className="cb-src">케이웨더 실황</span>
+        {!collapsed && <span className="cb-src">케이웨더 실황</span>}
         <button type="button" className="cb-toggle" onClick={toggle} aria-expanded={!collapsed} aria-label={collapsed ? '기후 패널 펴기' : '기후 패널 접기'}>
           {collapsed ? '▾' : '▴'}
         </button>
