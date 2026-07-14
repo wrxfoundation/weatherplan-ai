@@ -7069,11 +7069,8 @@ summary:focus-visible,
 }
 .about-hero h1 em {
   font-style: normal;
-  /* 샴페인 골드 그라데이션 — 하이라이트도 저채도로(중후함) */
-  background: linear-gradient(115deg, #efe3c2 8%, var(--gold) 46%, #93743a 88%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  /* 그라데이션 클립 제거 — 투명 글리프 뒤로 text-shadow가 비쳐 '막 씌운' 느낌(피드백). 단색 골드로 */
+  color: var(--gold);
 }
 .about-lede {
   max-width: 64ch;
@@ -7741,7 +7738,8 @@ main.about-page {
   top: -86px;
   left: calc(50% - 50vw);
   right: calc(50% - 50vw);
-  height: 430px; /* 480→430 — 히어로 안에서 종료(min-height 440과 짝) */
+  /* 히어로 전체를 덮고 히어로 하단에서 종료 — WHY NOW 위까지 넉넉히 내려오되 다음 섹션 침범 없음 */
+  height: calc(100% + 86px);
   overflow: hidden;
   pointer-events: none;
   /* 콘텐츠(z:relative 자식들)보다 아래, ::before 워시보다 아래 */
@@ -7758,11 +7756,33 @@ main.about-page {
   content: '';
   position: absolute;
   inset: 0;
-  /* 골드 재착색 + 하단 페이드 강화(40%→28% 시작, 88%에서 완전 불투명) — 아래 텍스트 묻힘 방지 */
+  /* 골드 재착색 + 하단 페이드 — 영상 범위가 커진 만큼 페이드는 하단 절반에서만 */
   background:
-    linear-gradient(180deg, transparent 28%, rgba(23, 18, 11, 0.75) 62%, #17120b 88%),
+    linear-gradient(180deg, transparent 48%, rgba(23, 18, 11, 0.72) 78%, #17120b 96%),
     color-mix(in srgb, var(--gold) 30%, transparent);
   mix-blend-mode: normal;
+}
+/* 둥둥 미니 번개 — 골드 라인, 시차 부유(transform만) */
+.about-bolt {
+  position: absolute;
+  z-index: 1; /* ::after 오버레이 위 */
+  color: color-mix(in srgb, var(--gold) 85%, #fff);
+  opacity: 0.65;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--gold) 55%, transparent));
+  animation: bolt-bob 5s ease-in-out infinite;
+}
+@keyframes bolt-bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-bolt {
+    animation: none;
+  }
 }
 @media (prefers-reduced-motion: reduce), (max-width: 640px) {
   .about-hero-media {
