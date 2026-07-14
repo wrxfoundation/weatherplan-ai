@@ -7528,6 +7528,14 @@ summary:focus-visible,
   --grey: #a89d86;
   --text: #f0e9db;
 }
+/* GNB 하단 경계선 — 샴페인 틴트. --glass-border는 :root에서 이미 계산돼 상속되므로(당시 navy --line 사용)
+ * 스코프 토큰 재정의로는 안 바뀜 → 명시적 색 지정 */
+:root[data-section='about'] .topbar {
+  border-bottom-color: color-mix(in srgb, var(--gold) 34%, #382c1a);
+}
+:root[data-section='about'] .mobile-nav {
+  border-top-color: color-mix(in srgb, var(--gold) 30%, #382c1a);
+}
 main.about-page {
   --bg: #14100a;
   --navy-deep: #0d0a06;
