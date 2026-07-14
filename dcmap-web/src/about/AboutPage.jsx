@@ -129,6 +129,24 @@ export default function AboutPage() {
       <TopBar />
       <main className="page about-page">
         <section className="about-hero">
+          {/* 배경 루프 — 리퀴드 골드(힉스필드 생성, 사용자 선택). 그레이스케일 후 골드 오버레이로 단색톤 처리.
+           * 실패(CDN 불가) 시 컨테이너째 숨김 → 기존 그라데이션만 남아 무해. 모션축소·좁은 화면 미표시.
+           * TODO: CDN 링크 만료 대비 public/media/ 이전 권장(로컬 환경에서 mp4 커밋). */}
+          <div className="about-hero-media" aria-hidden="true">
+            <video
+              src="https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260709_004633_2ddc8857-ccd6-4a3c-994e-f16363558383.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              disablePictureInPicture
+              tabIndex={-1}
+              onError={(e) => {
+                const wrap = e.currentTarget.parentElement
+                if (wrap) wrap.style.display = 'none'
+              }}
+            />
+          </div>
           <div className="eyebrow">ABOUT · AI INFRAMAP</div>
           <h1>
             AI 데이터센터의 첫 질문, <em>“어디에 짓는가”</em>에 답합니다

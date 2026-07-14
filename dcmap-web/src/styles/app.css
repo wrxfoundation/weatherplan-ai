@@ -7726,3 +7726,38 @@ main.about-page {
     display: none;
   }
 }
+
+/* ── 소개 히어로 배경 루프 영상 — 단색톤(그레이스케일+골드 컬러 블렌드) ── */
+.about-hero-media {
+  position: absolute;
+  top: -86px;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  height: 480px;
+  overflow: hidden;
+  pointer-events: none;
+  /* 콘텐츠(z:relative 자식들)보다 아래, ::before 워시보다 아래 */
+}
+.about-hero-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 단색톤: 채도 제거 + 어둡게 → 아래 골드 오버레이가 색을 입힘 */
+  filter: grayscale(1) brightness(0.4) contrast(1.05);
+  opacity: 0.55;
+}
+.about-hero-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* 골드 재착색(color 블렌드) + 하단은 페이지 배경으로 녹아들게 페이드 */
+  background:
+    linear-gradient(180deg, transparent 40%, #17120b 96%),
+    color-mix(in srgb, var(--gold) 30%, transparent);
+  mix-blend-mode: normal;
+}
+@media (prefers-reduced-motion: reduce), (max-width: 640px) {
+  .about-hero-media {
+    display: none; /* 모션 축소·모바일 데이터 절약 — 기존 그라데이션 유지 */
+  }
+}
