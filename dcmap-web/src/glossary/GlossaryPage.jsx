@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import TopBar from '../TopBar.jsx'
 import { GLOSSARY, GLOSSARY_CATEGORIES } from '../content/glossary.js'
+import GlossaryMap from './GlossaryMap.jsx'
 
 const TITLE = '데이터센터 전력 인허가 용어집 — AI InfraMap'
 const DESC =
@@ -35,6 +36,22 @@ export function buildGlossaryJsonLd(origin = '') {
 
 export default function GlossaryPage() {
   const [cat, setCat] = useState('전체')
+  // 보기 모드 — 딕셔너리(리스트) / 온톨로지 맵(용어·법령 성좌). 선택 브라우저 저장.
+  const [view, setView] = useState(() => {
+    try {
+      return localStorage.getItem('dcmap.glossaryView') === 'map' ? 'map' : 'dict'
+    } catch {
+      return 'dict'
+    }
+  })
+  const setViewPersist = (v) => {
+    setView(v)
+    try {
+      localStorage.setItem('dcmap.glossaryView', v)
+    } catch {
+      /* 저장 불가 무시 */
+    }
+  }
   const countOf = useMemo(() => {
     const m = new Map()
     for (const g of GLOSSARY) m.set(g.category, (m.get(g.category) || 0) + 1)
@@ -64,18 +81,31 @@ export default function GlossaryPage() {
           용어입니다.
         </p>
 
-        <div className="seg-tabs" role="tablist" aria-label="용어 분류">
-          <button type="button" role="tab" className={`seg-tab ${cat === '전체' ? 'on' : ''}`} onClick={() => setCat('전체')} aria-selected={cat === '전체'}>
-            전체 <span className="n">{GLOSSARY.length}</span>
-          </button>
-          {GLOSSARY_CATEGORIES.map((c) => (
-            <button key={c.key} type="button" role="tab" className={`seg-tab ${cat === c.key ? 'on' : ''}`} onClick={() => setCat(c.key)} aria-selected={cat === c.key}>
-              {c.label} <span className="n">{countOf.get(c.key) || 0}</span>
+        <div className="glossary-toolbar">
+          <div className="seg-tabs" role="tablist" aria-label="용어 분류">
+            <button type="button" role="tab" className={`seg-tab ${cat === '전체' ? 'on' : ''}`} onClick={() => setCat('전체')} aria-selected={cat === '전체'}>
+              전체 <span className="n">{GLOSSARY.length}</span>
             </button>
-          ))}
+            {GLOSSARY_CATEGORIES.map((c) => (
+              <button key={c.key} type="button" role="tab" className={`seg-tab ${cat === c.key ? 'on' : ''}`} onClick={() => setCat(c.key)} aria-selected={cat === c.key}>
+                {c.label} <span className="n">{countOf.get(c.key) || 0}</span>
+              </button>
+            ))}
+          </div>
+          {/* 보기 모드 — 딕셔너리 / 온톨로지 맵 */}
+          <div className="view-seg" role="group" aria-label="보기 모드">
+            <button type="button" className={view === 'dict' ? 'on' : ''} onClick={() => setViewPersist('dict')} aria-pressed={view === 'dict'}>
+              딕셔너리
+            </button>
+            <button type="button" className={view === 'map' ? 'on' : ''} onClick={() => setViewPersist('map')} aria-pressed={view === 'map'}>
+              온톨로지 맵
+            </button>
+          </div>
         </div>
 
-        {shownCats.map((sec) => (
+        {view === 'map' && <GlossaryMap cat={cat} />}
+
+        {view === 'dict' && shownCats.map((sec) => (
           <section key={sec.key} className="glossary-section">
             <h2 className="glossary-cat">{sec.label}</h2>
             <dl className="glossary-list">

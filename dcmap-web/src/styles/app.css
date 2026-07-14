@@ -6696,3 +6696,182 @@ summary:focus-visible,
     display: none;
   }
 }
+
+/* ── 용어 온톨로지 맵 (딕셔너리/맵 모드) ── */
+.glossary-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.view-seg {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--navy-deep);
+}
+.view-seg button {
+  height: 34px;
+  padding: 0 15px;
+  border: 0;
+  border-left: 1px solid var(--line);
+  background: transparent;
+  color: var(--grey);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+.view-seg button:first-child {
+  border-left: 0;
+}
+.view-seg button:hover {
+  color: var(--ink);
+}
+.view-seg button.on {
+  color: var(--navy-deep);
+  background: var(--accent);
+}
+.gmap-wrap {
+  margin: 16px 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background:
+    radial-gradient(600px 320px at 30% 30%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 70%),
+    color-mix(in srgb, var(--navy-deep) 65%, transparent);
+  padding: 8px 8px 12px;
+  overflow: hidden;
+}
+.gmap-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.gmap-edge {
+  stroke: color-mix(in srgb, var(--grey) 22%, transparent);
+  stroke-width: 0.8;
+  transition: stroke 0.18s ease, stroke-width 0.18s ease, opacity 0.18s ease;
+}
+.gmap-edge.on {
+  stroke: color-mix(in srgb, var(--accent) 75%, transparent);
+  stroke-width: 1.6;
+}
+.gmap-edge.dim {
+  opacity: 0.18;
+}
+.gmap-cat {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  opacity: 0.34;
+  pointer-events: none;
+}
+.gmap-cat.dim {
+  opacity: 0.1;
+}
+.gmap-term {
+  cursor: pointer;
+}
+.gmap-term circle {
+  stroke: color-mix(in srgb, #fff 55%, transparent);
+  stroke-width: 0.8;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, currentColor 40%, transparent));
+  transition: r 0.16s ease;
+}
+.gmap-term-label {
+  font-size: 10.5px;
+  fill: var(--grey);
+  pointer-events: none;
+}
+.gmap-term.on .gmap-term-label,
+.gmap-term:hover .gmap-term-label {
+  fill: var(--ink);
+  font-weight: 700;
+}
+.gmap-term.dim {
+  opacity: 0.16;
+  pointer-events: none;
+}
+.gmap-term:focus-visible circle {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+.gmap-law {
+  cursor: pointer;
+}
+.gmap-law rect {
+  fill: color-mix(in srgb, var(--amber) 20%, transparent);
+  stroke: var(--amber);
+  stroke-width: 1.2;
+  transition: fill 0.16s ease;
+}
+.gmap-law.on rect,
+.gmap-law:hover rect {
+  fill: color-mix(in srgb, var(--amber) 45%, transparent);
+}
+.gmap-law-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  fill: color-mix(in srgb, var(--amber) 80%, var(--ink));
+  pointer-events: none;
+}
+.gmap-law:focus-visible rect {
+  stroke-width: 2.4;
+}
+.gmap-card {
+  margin: 4px 8px 2px;
+  padding: 13px 15px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+  background: color-mix(in srgb, var(--navy-deep) 88%, transparent);
+  animation: ai-spring-in 0.3s var(--spring-soft, ease) both;
+}
+.gmap-card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.gmap-card-head b {
+  font-size: var(--text-body);
+  color: var(--ink);
+}
+.gmap-x {
+  margin-left: auto;
+  background: none;
+  border: 0;
+  color: var(--grey);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 6px;
+}
+.gmap-x:hover {
+  color: var(--ink);
+}
+.gmap-card p {
+  font-size: var(--text-sm);
+  color: var(--ink-dim, var(--grey));
+  line-height: 1.6;
+  margin: 0 0 8px;
+}
+.gmap-links {
+  font-size: var(--text-xs);
+  color: var(--grey);
+  line-height: 1.55;
+}
+.gmap-hint {
+  margin: 6px 10px 2px;
+  font-size: var(--text-xs);
+  color: var(--grey);
+}
+@media (max-width: 640px) {
+  .gmap-term-label {
+    font-size: 13px;
+  }
+}
+.gmap-hit {
+  fill: transparent;
+  stroke: none;
+}
