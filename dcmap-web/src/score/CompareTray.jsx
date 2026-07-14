@@ -245,6 +245,11 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
       산사태노출pct: c.landslidePct ?? null,
       인구밀도: c.density ?? null,
       용도지역: c.zoneUse ?? null,
+      // 계통영향평가 통과 전망(규칙 추정 — 공식 판정 아님) — AI 비교평이 인용
+      계통영향평가전망: (() => {
+        const { composite, outlook } = psiaOf(c)
+        return composite == null ? '데이터 대기' : `${composite}/100 · ${outlook.label}`
+      })(),
     }))
     run('compare', { data })
   }
