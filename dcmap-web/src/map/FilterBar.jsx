@@ -69,6 +69,8 @@ export default function FilterBar({
   onToggleGenPermits,
   showHeadroom,
   onToggleHeadroom,
+  showApproval,
+  onToggleApproval,
 }) {
   // 레이어 토글을 의미 단위로 그루핑(방대해진 레이어 정돈): 표시·전력·자원·수요·망.
   // cond:false 인 항목(예: 송전선 데이터 없음)은 렌더 제외.
@@ -81,6 +83,7 @@ export default function FilterBar({
         { key: 'plants', icon: 'plant', text: '발전소', on: showPlants, toggle: onTogglePlants, title: '대형 발전단지(원전·석탄) 레이어 — 발전 인프라 근접성 맥락 (DC 전원 매칭 아님)' },
         { key: 'permit', icon: 'permit', text: '발전허가', on: showGenPermits, toggle: onToggleGenPermits, title: '2024년 이후 발전사업 허가 파이프라인 — 시도별 건수 버블(3MW 초과 허가대장). 전력 공급측 신호, 건수 기준' },
         { key: 'headroom', icon: 'headroom', text: '여유용량', on: showHeadroom, toggle: onToggleHeadroom, title: '계통 여유용량 — 시도별 한전 분산전원 여유(KEPCO env 연동 시 실데이터, 미연동 시 연동 대기)' },
+        { key: 'approval', icon: 'permit', text: '승인율', on: showApproval, toggle: onToggleApproval, title: 'DC 공급 승인율 — 계통영향평가 1차 기술검토(한전 2026.3.27) 시도별 가능/불가 실측. 크기=신청량 · 색=승인율(초록 70%+/주황 45%+/빨강 미만)' },
       ],
     },
     {

@@ -25,6 +25,7 @@ import { RENEWABLE_PLANTS } from '../data/renewablePlants.js'
 import { WATER_SOURCES } from '../data/waterSources.js'
 import { SEMI_CLUSTERS } from '../data/semiClusters.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
+import { dcApprovalForSido, approvalLabel } from '../data/gridAssessment.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor } from '../data/liveApi.js'
 
@@ -256,6 +257,8 @@ export default function MapPage({ power = false }) {
   const genLayerRef = useRef(null)
   const [showHeadroom, setShowHeadroom] = useState(() => _initLayers.has('headroom')) // 계통 여유용량 시도 버블 (한전 분산전원)
   const headroomLayerRef = useRef(null)
+  const [showApproval, setShowApproval] = useState(() => _initLayers.has('approval')) // DC 공급 승인율 시도 버블 (계통영향평가 1차 기술검토)
+  const approvalLayerRef = useRef(null)
   const [headrooms, setHeadrooms] = useState(null) // {sido: availableMw|null}
   const [region, setRegion] = useState(null) // 전력지도: 클릭한 시도 (지역 요약 카드)
   const [mapCenter, setMapCenter] = useState(null) // 상단 기후 바: 확정 지점 없을 때 지도 중심 기후
@@ -797,6 +800,51 @@ export default function MapPage({ power = false }) {
     }
   }, [showHeadroom, headrooms])
 
+  // DC 공급 승인율 시도 버블 — 계통영향평가 1차 기술검토(2026.3.27) 실측. 크기=신청량, 색=승인율
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (approvalLayerRef.current) {
+      map.removeLayer(approvalLayerRef.current)
+      approvalLayerRef.current = null
+    }
+    if (showApproval) {
+      const g = L.layerGroup()
+      const rows = SIDO_LIST.map((s) => ({ ...s, a: dcApprovalForSido(s.sido) })).filter((r) => r.a?.ratePct != null)
+      const maxT = Math.max(...rows.map((r) => r.a.able + r.a.unable), 1)
+      for (const r of rows) {
+        const total = r.a.able + r.a.unable
+        const rad = 11 + 24 * Math.sqrt(total / maxT) // 크기 = DC 신청 규모(MW)
+        const pct = r.a.ratePct
+        const col = pct >= 70 ? 'rgba(69,212,131' : pct >= 45 ? 'rgba(245,154,60' : 'rgba(239,68,68'
+        L.circleMarker([r.lat, r.lng], {
+          radius: rad,
+          color: `${col},0.9)`,
+          weight: 1.5,
+          fillColor: `${col},0.22)`,
+          fillOpacity: 0.5,
+          bubblingMouseEvents: false,
+        })
+          .bindTooltip(
+            `<div class="dc-hovercard"><strong>${r.sido}</strong> · DC 공급 승인율 <b>${pct}%</b> (${approvalLabel(pct)})<br/>가능 ${Math.round(r.a.able).toLocaleString()}MW · 불가 ${Math.round(r.a.unable).toLocaleString()}MW<br/><span style="opacity:.75">계통영향평가 1차 기술검토 · 2026.3.27 한전</span></div>`,
+            { direction: 'top', offset: [0, -rad], className: 'dc-hovercard', opacity: 1 },
+          )
+          .on('click', () => {
+            setSelected(null)
+            setSitePoint(null)
+            setRegion(r.sido)
+          })
+          .addTo(g)
+        L.marker([r.lat, r.lng], {
+          icon: L.divIcon({ className: 'gen-bubble-label', html: `${pct}%`, iconSize: [46, 16], iconAnchor: [23, 8] }),
+          interactive: false,
+        }).addTo(g)
+      }
+      g.addTo(map)
+      approvalLayerRef.current = g
+    }
+  }, [showApproval])
+
   // 새 선택(시설·지점·지역)이 생기면 모바일 바텀시트를 자동으로 펼쳐 결과를 바로 보게 한다
   useEffect(() => {
     if (selected || sitePoint || region) setSheetCollapsed(false)
@@ -842,13 +890,13 @@ export default function MapPage({ power = false }) {
       showReco && 'reco', showLabels && 'labels', showSubs && 'subs', showLines && 'lines',
       showPlants && 'plants', showRe && 're', showWater && 'water', showSemi && 'semi',
       showComplexes && 'complex', showNet && 'net', !power && showGenPermits && 'permit',
-      showHeadroom && 'headroom', showPublic && 'public',
+      showHeadroom && 'headroom', showApproval && 'approval', showPublic && 'public',
     ].filter(Boolean)
     const next = new URLSearchParams(searchParams)
     if (active.length) next.set('layers', active.join(','))
     else next.delete('layers')
     if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
-  }, [showReco, showLabels, showSubs, showLines, showPlants, showRe, showWater, showSemi, showComplexes, showNet, showGenPermits, showHeadroom, showPublic]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [showReco, showLabels, showSubs, showLines, showPlants, showRe, showWater, showSemi, showComplexes, showNet, showGenPermits, showHeadroom, showApproval, showPublic]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const cluster = clusterRef.current
@@ -1008,6 +1056,8 @@ export default function MapPage({ power = false }) {
         onToggleGenPermits={() => setShowGenPermits((v) => !v)}
         showHeadroom={showHeadroom}
         onToggleHeadroom={() => setShowHeadroom((v) => !v)}
+        showApproval={showApproval}
+        onToggleApproval={() => setShowApproval((v) => !v)}
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />
