@@ -205,21 +205,6 @@ export default function MapPage({ power = false }) {
     () => (showReco ? recommendSites(20, { minMw: recoMw || null, nonCapitalOnly: recoNonCap }) : []),
     [showReco, recoMw, recoNonCap],
   )
-  // 지도 애니메이션(송전망 흐름 + 시설 반짝임) — 기본 ON, 브라우저 저장. 순수 CSS 효과라 저비용.
-  const [anim, setAnim] = useState(() => {
-    try {
-      return localStorage.getItem('aiim_map_anim') !== '0'
-    } catch {
-      return true
-    }
-  })
-  useEffect(() => {
-    try {
-      localStorage.setItem('aiim_map_anim', anim ? '1' : '0')
-    } catch {
-      /* 저장 불가 무시 */
-    }
-  }, [anim])
   const [baseMap, setBaseMap] = useState(() => {
     try {
       const v = localStorage.getItem('dcmap.baseMap')
@@ -393,8 +378,7 @@ export default function MapPage({ power = false }) {
         if (cancelled || !mapObj.current) return
         const g = L.layerGroup()
         for (const { p, v } of lines) {
-          // 345kV+ 백본만 흐름 애니메이션 대상(pline-hv) — 저전압 다수 라인은 정적(성능)
-          L.polyline(p, { color: lineColor(v), weight: v >= 345 ? 2.2 : 1.2, opacity: 0.65, className: v >= 345 ? 'pline pline-hv' : 'pline' }).addTo(g)
+          L.polyline(p, { color: lineColor(v), weight: v >= 345 ? 2.2 : 1.2, opacity: 0.65 }).addTo(g)
         }
         g.addTo(map)
         linesLayerRef.current = g
@@ -991,7 +975,7 @@ export default function MapPage({ power = false }) {
         onToggleHeadroom={() => setShowHeadroom((v) => !v)}
       />
       <div className="map-layout">
-        <div ref={mapRef} className={`map-canvas${anim ? ' anim-on' : ''}`} />
+        <div ref={mapRef} className="map-canvas" />
         {/* 입지 시뮬레이터 — 추천입지 레이어 켤 때 필요 MW·입지 조건으로 재랭킹 */}
         {showReco && (
           <div className="reco-sim" role="region" aria-label="입지 시뮬레이터">
@@ -1252,15 +1236,6 @@ export default function MapPage({ power = false }) {
           )}
         </aside>
         <div className="map-br-cluster">
-          <button
-            type="button"
-            className={`map-anim-toggle${anim ? ' on' : ''}`}
-            onClick={() => setAnim((v) => !v)}
-            aria-pressed={anim}
-            title="송전망 흐름·시설 반짝임 애니메이션"
-          >
-            {anim ? '✨ 애니메이션' : '애니메이션 OFF'}
-          </button>
           <ShareButton />
           <Legend />
         </div>
