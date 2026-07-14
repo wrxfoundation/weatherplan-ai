@@ -101,17 +101,18 @@ export const STYLE_3D = {
       paint: { 'line-color': '#14263d', 'line-width': 0.8, 'line-dasharray': [4, 3] },
     },
     {
-      /* 건물 압출 — OSM 높이(render_height) 기반, 없으면 8m 기본. 줌 13부터 */
+      /* 건물 압출 — OSM 높이(render_height) 기반, 없으면 8m 기본.
+       * v7 경량화: minzoom 13→14 (도시 광역 뷰에서 수만 폴리곤 압출이 최대 GPU 부하원) */
       id: 'buildings-3d',
       type: 'fill-extrusion',
       source: 'omt',
       'source-layer': 'building',
-      minzoom: 13,
+      minzoom: 14,
       paint: {
         'fill-extrusion-color': '#10243d',
         'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 8],
         'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
-        'fill-extrusion-opacity': 0.82,
+        'fill-extrusion-opacity': 0.78,
       },
     },
     {
@@ -147,9 +148,8 @@ export function facilityLabelLayer(sourceId) {
       'text-font': ['Noto Sans Regular'],
       'text-size': 11,
       'text-offset': [0, 1.6],
+      /* v7 경량화: variable-anchor(4방향 충돌 재계산)를 고정 anchor로 — 회전/기울임 시 배치 연산 1/4 */
       'text-anchor': 'top',
-      'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-      'text-optional': false,
       'symbol-sort-key': ['get', 'sort'],
     },
     paint: {

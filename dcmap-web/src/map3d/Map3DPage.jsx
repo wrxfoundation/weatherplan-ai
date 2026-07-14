@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -27,11 +27,43 @@ const STATUS_COLOR = [
   '#7dd3fc',
 ]
 
+// 상태 필터 칩 정의 — planned에 delayed 포함(2D 필터바와 동일 그룹핑)
+const STATUS_CHIPS = [
+  { key: 'operating', label: '운영', statuses: ['operating'] },
+  { key: 'construction', label: '건설', statuses: ['construction'] },
+  { key: 'planned', label: '계획', statuses: ['planned', 'delayed'] },
+]
+// 카메라 프리셋 — 전국/수도권 빠른 점프
+const CAM_PRESETS = [
+  { key: 'kr', label: '전국', center: [127.6, 36.3], zoom: 6.4, pitch: 55, bearing: -12 },
+  { key: 'cap', label: '수도권', center: [126.98, 37.42], zoom: 9.1, pitch: 60, bearing: -16 },
+]
+
 export default function Map3DPage() {
   const wrapRef = useRef(null)
   const mapRef = useRef(null)
   const readyRef = useRef(false)
   const navigate = useNavigate()
+  // 상태 필터 — GL setFilter(GPU 측 필터)라 리렌더 비용 없음
+  const [statusOn, setStatusOn] = useState({ operating: true, construction: true, planned: true })
+  const statusRef = useRef(statusOn)
+  statusRef.current = statusOn
+
+  const applyStatusFilter = (map) => {
+    const act = STATUS_CHIPS.flatMap((c) => (statusRef.current[c.key] ? c.statuses : []))
+    const f = ['in', ['get', 'status'], ['literal', act]]
+    for (const id of ['dc-core', 'dc-glow', 'dc-labels', 'dc-cols']) {
+      try {
+        if (map.getLayer(id)) map.setFilter(id, f)
+      } catch {
+        /* 무시 */
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (mapRef.current && readyRef.current) applyStatusFilter(mapRef.current)
+  }, [statusOn]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     document.title = TITLE
@@ -55,6 +87,9 @@ export default function Map3DPage() {
       ],
       antialias: false, // MSAA 비활성 — 회전/기울임 시 GPU 부하 큰 폭 감소
       fadeDuration: 100, // 심볼 페이드 단축(렌더 프레임 절감)
+      pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5), // v7: 레티나·모바일 픽셀 수 상한(최대 GPU 절감 단일 항목)
+      maxTileCacheSize: 128, // v7: 타일 캐시 상한 — 장시간 탐색 시 메모리 증식 방지
+      refreshExpiredTiles: false, // v7: 만료 타일 재요청 안 함(정적 베이스맵)
       attributionControl: { compact: true },
     })
     mapRef.current = map
@@ -267,6 +302,7 @@ export default function Map3DPage() {
       }
 
       readyRef.current = true
+      applyStatusFilter(map) // 로드 전 사용자가 칩을 눌렀을 수 있음 — 현재 상태 재적용
     })
 
     return () => {
@@ -282,9 +318,34 @@ export default function Map3DPage() {
       <TopBar />
       <div className="map-layout">
         <div ref={wrapRef} className="map-canvas map3d" />
+        {/* v7 컨트롤 — 상태 필터(GL setFilter) + 카메라 프리셋 */}
+        <div className="m3d-ui" role="group" aria-label="3D 맵 컨트롤">
+          {STATUS_CHIPS.map((c) => (
+            <button
+              key={c.key}
+              type="button"
+              className={`chip m3d-chip s-${c.key}${statusOn[c.key] ? ' on' : ''}`}
+              onClick={() => setStatusOn((s) => ({ ...s, [c.key]: !s[c.key] }))}
+              aria-pressed={statusOn[c.key]}
+            >
+              {c.label}
+            </button>
+          ))}
+          <span className="m3d-sep" aria-hidden="true" />
+          {CAM_PRESETS.map((p) => (
+            <button
+              key={p.key}
+              type="button"
+              className="chip m3d-chip"
+              onClick={() => mapRef.current?.flyTo({ center: p.center, zoom: p.zoom, pitch: p.pitch, bearing: p.bearing, duration: 1100 })}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
         <div className="map3d-banner">
-          <span className="badge status-operating">3D 베타 v6</span>
-          우클릭 드래그로 회전·기울임 · 기둥 높이 = 공개 수전용량(MW, 미공개는 기둥 없음) · 줌 13+ 건물 입체 · 🟡 추천입지 클릭 → 분석 · 송전선·변전소(154kV+) 전압별 색: 154 갈/345 보라/765 분홍
+          <span className="badge status-operating">3D 베타 v7</span>
+          우클릭 드래그로 회전·기울임 · 기둥 높이 = 공개 수전용량(MW, 미공개는 기둥 없음) · 줌 14+ 건물 입체 · 🟡 추천입지 클릭 → 분석 · 송전선·변전소(154kV+) 전압별 색: 154 갈/345 보라/765 분홍
         </div>
       </div>
     </>
