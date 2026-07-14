@@ -4,6 +4,9 @@ import { STATUS_LABEL } from '../data/facilities.js'
 import { fmtRate } from '../data/landPrice.js'
 import { dcClimateIndex, nearestNormal } from './climateIndex.js'
 import { dongLabel } from '../data/liveApi.js'
+import { gridHeadroomForSido } from '../data/gridHeadroom.js'
+import { dcApprovalForSido } from '../data/gridAssessment.js'
+import { psiaScore, psiaOutlook } from './psia.js'
 
 export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom, flood, pop, disaster, energy, warning, climate, officialPrice, landReg, sido, water, kwater, re, waterSource, cluster }) {
   const L = []
@@ -41,6 +44,18 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
         : '대상 · 수도권 감점 (핵심 관문) — ±15점 억제 배점'
     L.push(`- P07 한전 접속·수전전압: ${p07}`)
     L.push(`- P08 전력계통영향평가(±15점): ${p08}`)
+  }
+  // 계통영향평가 통과 전망(공개 대리지표 규칙 추정) — 부지 분석 스코어카드와 동일 기준(psia.js)
+  {
+    const gridMw = gridHeadroomForSido(sido)?.mw ?? null
+    const approvalPct = dcApprovalForSido(sido)?.ratePct ?? null
+    const { composite, coverage, factors } = psiaScore({ nonCapital, mw, gridMw, approvalPct, subKm: r.nearestSub?.km ?? null })
+    if (mw >= 10 && composite != null) {
+      L.push(``)
+      L.push(`## 계통영향평가 통과 전망 — ${composite}/100 · ${psiaOutlook(composite, mw).label} (커버리지 ${coverage}%)`)
+      for (const f of factors) L.push(`- ${f.label}: ${f.score != null ? `${f.score}/100 (w${f.weight}) — ${f.basis}` : '데이터 대기'}`)
+      L.push(`(공개 대리지표 규칙 추정 — 공식 ±15 배점 아님 · 실제 판정은 한전·기후에너지환경부 심의)`)
+    }
   }
   L.push(``)
   L.push(`## 스코어 커버리지 — 근거 확보 ${r.knownScore}/${r.knownMax}점 · 커버리지 ${r.coverage}/100`)

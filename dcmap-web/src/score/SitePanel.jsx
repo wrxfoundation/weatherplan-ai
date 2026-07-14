@@ -23,6 +23,7 @@ import AiResultCard from '../ai/AiResultCard.jsx'
 import CopyButton from '../ui/CopyButton.jsx'
 import LineIcon from '../components/LineIcon.jsx'
 import PsiaScorecard from './PsiaScorecard.jsx'
+import { psiaScore, psiaOutlook } from './psia.js'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
 export default function SitePanel({ point, onClose, onSelectFacility, onAddCompare, inCompare }) {
@@ -226,6 +227,11 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
       기상: { 기후등급: climateIdx?.level ?? null, 기후라벨: climateIdx?.label ?? null },
       발전단지거리km: plantKm ?? null,
       축상태: r.axes.map((a) => ({ 축: a.label, 확보: a.knownMax > 0 ? `${a.known}/${a.max}` : '대기' })),
+      // 계통영향평가 통과 전망(공개 대리지표 규칙 추정 — 공식 판정 아님) — AI가 브리프에 인용
+      계통영향평가전망: (() => {
+        const { composite, coverage } = psiaScore({ nonCapital, mw, gridMw: grid?.mw ?? null, approvalPct: approval?.ratePct ?? null, subKm: r.nearestSub?.km ?? null })
+        return { 점수100: composite, 판정: psiaOutlook(composite, mw).label, 커버리지pct: coverage, 주의: '공개 대리지표 규칙 추정 — 공식 배점 아님' }
+      })(),
     }
     run('report', { data: snap })
   }
@@ -345,11 +351,22 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               <span className="hbar-label">{axis.label}</span>
               <span className="hbar-track">
                 {axis.knownMax > 0 && (
-                  <span className="hbar-fill" style={{ width: `${(axis.known / axis.max) * 100}%` }} />
+                  <>
+                    {/* 확보 구간(knownMax/max) 표시 — '대기'와 '약함' 혼동 방지: 획득분은 실색, 확보-미획득은 옅게, 나머지는 대기 */}
+                    <span className="hbar-known" style={{ width: `${(axis.knownMax / axis.max) * 100}%` }} />
+                    <span className="hbar-fill" style={{ width: `${(axis.known / axis.max) * 100}%` }} />
+                  </>
                 )}
               </span>
               <span className="hbar-value">
-                {axis.knownMax > 0 ? `${axis.known}/${axis.max}` : <span className="badge pending">대기</span>}
+                {axis.knownMax > 0 ? (
+                  <>
+                    {axis.known}/{axis.knownMax}
+                    {axis.knownMax < axis.max && <em className="hbar-wait" title={`${axis.max - axis.knownMax}점분 데이터 대기`}>+{axis.max - axis.knownMax} 대기</em>}
+                  </>
+                ) : (
+                  <span className="badge pending">대기</span>
+                )}
               </span>
             </div>
           ))}
