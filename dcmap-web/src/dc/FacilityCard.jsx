@@ -97,6 +97,7 @@ export default function FacilityCard({ facility: f, compact = false }) {
             </a>
           </>
         )}
+        {f.updated_at && <> · 갱신 {f.updated_at}</>}
         <br />
         <span className="geo-note">좌표 기준: {GEOCODE_LABEL[f.geocode_level]}</span>
       </div>

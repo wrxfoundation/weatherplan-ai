@@ -1081,6 +1081,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                       lng: point.lng,
                       label: dong || (addr?.parcel ? addr.parcel.split(' ').slice(-2).join(' ') : `${point.lat.toFixed(3)}, ${point.lng.toFixed(3)}`),
                       nonCapital,
+                      mw, // 계통영향평가 전망 비교용(추가 시점의 필요 용량)
                       score: r.knownScore,
                       coverage: r.knownMax,
                       pct: r.knownMax ? Math.round((r.knownScore / r.knownMax) * 100) : null,
