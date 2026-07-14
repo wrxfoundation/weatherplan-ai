@@ -12,6 +12,15 @@ export const GLYPHS_URL = 'https://tiles.openfreemap.org/fonts/{fontstack}/{rang
 export const STYLE_3D = {
   version: 8,
   glyphs: GLYPHS_URL,
+  /* 하늘·대기 — 기울인 시점에서 지평선 위 그라데이션(렌더 비용 미미, 공간감↑) */
+  sky: {
+    'sky-color': '#0b1d39',
+    'horizon-color': '#123252',
+    'fog-color': '#050d1a',
+    'sky-horizon-blend': 0.6,
+    'horizon-fog-blend': 0.65,
+    'fog-ground-blend': 0.85,
+  },
   sources: {
     omt: {
       type: 'vector',

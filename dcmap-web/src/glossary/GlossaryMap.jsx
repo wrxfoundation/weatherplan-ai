@@ -72,6 +72,17 @@ const STARS = Array.from({ length: 90 }, (_, i) => ({
   o: 0.1 + prand(i, 13) * 0.3,
   d: prand(i, 17) * 4,
 }))
+// 전경 더스트 — 가까운 별 소수(크고 밝게, 패럴랙스 이동량 최대 → 깊이 대비)
+const DUST = Array.from({ length: 16 }, (_, i) => ({
+  x: prand(i, 23) * W,
+  y: prand(i, 29) * (H - 80),
+  r: 1.1 + prand(i, 31) * 1.3,
+  o: 0.28 + prand(i, 37) * 0.3,
+  d: prand(i, 41) * 4,
+}))
+
+const MIN_K = 1
+const MAX_K = 3
 
 export default function GlossaryMap({ cat }) {
   const { terms, laws, edges, procs } = useMemo(layout, [])
@@ -82,18 +93,54 @@ export default function GlossaryMap({ cat }) {
   const wrapRef = useRef(null)
   const raf = useRef(0)
 
+  // 줌·팬 — 확대 요청 대응. k(배율)·pan(뷰박스 단위 이동)은 최상위 <g>에만 적용.
+  const [view, setView] = useState({ k: 1, x: 0, y: 0 })
+  const drag = useRef(null) // {sx, sy, ox, oy, moved}
+  const clampView = (v) => {
+    // 확대 시 콘텐츠가 프레임 밖으로 다 나가지 않게 팬 한계
+    const lim = ((v.k - 1) * W) / (2 * v.k)
+    const limY = ((v.k - 1) * H) / (2 * v.k)
+    return { k: v.k, x: Math.max(-lim, Math.min(lim, v.x)), y: Math.max(-limY, Math.min(limY, v.y)) }
+  }
+  const zoomBy = (f) => setView((v) => clampView({ ...v, k: Math.max(MIN_K, Math.min(MAX_K, v.k * f)) }))
+  const resetView = () => setView({ k: 1, x: 0, y: 0 })
+
+  const onPointerDown = (e) => {
+    if (view.k <= 1) return
+    drag.current = { sx: e.clientX, sy: e.clientY, ox: view.x, oy: view.y, moved: false }
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+  }
+  const onPointerMove = (e) => {
+    if (drag.current) {
+      const rect = wrapRef.current?.getBoundingClientRect()
+      if (!rect) return
+      const dx = ((e.clientX - drag.current.sx) * (W / rect.width)) / view.k
+      const dy = ((e.clientY - drag.current.sy) * (H / rect.height)) / view.k
+      if (Math.abs(e.clientX - drag.current.sx) + Math.abs(e.clientY - drag.current.sy) > 5) drag.current.moved = true
+      setView((v) => clampView({ ...v, x: drag.current.ox + dx, y: drag.current.oy + dy }))
+      return
+    }
+    onParallax(e)
+  }
+  const onPointerUp = () => {
+    // 드래그 직후의 click은 toggle에서 moved 플래그로 무시
+    if (drag.current) setTimeout(() => (drag.current = null), 0)
+  }
+
   // 마우스 패럴랙스 — 깊이 층별 이동량 차등(공간감). 모션축소·터치는 비활성.
-  const onMove = (e) => {
+  const onParallax = (e) => {
     if (typeof window === 'undefined' || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    if (e.pointerType && e.pointerType !== 'mouse') return
     const rect = wrapRef.current?.getBoundingClientRect()
     if (!rect) return
     const nx = ((e.clientX - rect.left) / rect.width - 0.5) * 2
     const ny = ((e.clientY - rect.top) / rect.height - 0.5) * 2
     cancelAnimationFrame(raf.current)
     raf.current = requestAnimationFrame(() => {
-      if (backRef.current) backRef.current.style.transform = `translate(${nx * -6}px, ${ny * -4}px)`
-      if (midRef.current) midRef.current.style.transform = `translate(${nx * -14}px, ${ny * -9}px)`
-      if (foreRef.current) foreRef.current.style.transform = `translate(${nx * -24}px, ${ny * -15}px)`
+      // 층별 이동량 + 미세 스케일 차등 — 뒤는 작고 느리게, 앞은 크고 빠르게(깊이 대비)
+      if (backRef.current) backRef.current.style.transform = `translate(${nx * -6}px, ${ny * -4}px) scale(0.988)`
+      if (midRef.current) midRef.current.style.transform = `translate(${nx * -15}px, ${ny * -10}px)`
+      if (foreRef.current) foreRef.current.style.transform = `translate(${nx * -27}px, ${ny * -17}px) scale(1.012)`
     })
   }
   const onLeave = () => {
@@ -110,12 +157,30 @@ export default function GlossaryMap({ cat }) {
 
   const dimCat = (c) => cat !== '전체' && c !== cat
   const edgeActive = (e) => ((selTerm || selProc) && e.from === (selTerm || selProc).id) || (selLaw && e.to === selLaw.id)
-  const toggle = (type, id) => setSel(sel?.id === id ? null : { type, id })
+  const toggle = (type, id) => {
+    if (drag.current?.moved) return // 팬 드래그 종료 시의 클릭은 선택으로 치지 않음
+    setSel(sel?.id === id ? null : { type, id })
+  }
 
   return (
-    <div className="gmap-wrap" ref={wrapRef} onMouseMove={onMove} onMouseLeave={onLeave}>
+    <div className={`gmap-wrap${view.k > 1 ? ' zoomed' : ''}`} ref={wrapRef} onMouseLeave={onLeave}>
+      <div className="gmap-zoom-ui" role="group" aria-label="온톨로지 맵 확대">
+        <button type="button" onClick={() => zoomBy(1.4)} aria-label="확대" disabled={view.k >= MAX_K}>+</button>
+        <button type="button" onClick={() => zoomBy(1 / 1.4)} aria-label="축소" disabled={view.k <= MIN_K}>−</button>
+        <button type="button" onClick={resetView} aria-label="원래 크기" disabled={view.k === 1}>⟲</button>
+      </div>
       <div className="gmap-tilt">
-        <svg viewBox={`0 0 ${W} ${H}`} className="gmap-svg" role="img" aria-label="용어·절차·법령 온톨로지 맵">
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          className="gmap-svg"
+          role="img"
+          aria-label="용어·절차·법령 온톨로지 맵"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+        >
+          <g transform={`translate(${W / 2 + view.x * view.k} ${H / 2 + view.y * view.k}) scale(${view.k}) translate(${-W / 2} ${-H / 2})`}>
           <defs>
             {GLOSSARY_CATEGORIES.map((c) => (
               <radialGradient key={c.key} id={`gmap-glow-${c.key}`}>
@@ -165,9 +230,10 @@ export default function GlossaryMap({ cat }) {
                 <g key={t.id} className={`gmap-term${on ? ' on' : ''}${dim ? ' dim' : ''}`} onClick={() => toggle('term', t.id)} role="button" tabIndex={0}
                    onKeyDown={(e) => e.key === 'Enter' && toggle('term', t.id)}>
                   <circle cx={t.x} cy={t.y} r="15" className="gmap-hit" />
-                  <circle cx={t.x} cy={t.y} r={r * 2.2} style={{ fill: t.color, opacity: 0.1 + t.z * 0.14 }} />
-                  <circle cx={t.x} cy={t.y} r={r} style={{ fill: t.color, opacity: 0.72 + t.z * 0.28 }} />
-                  <text x={t.x} y={t.y + 17} textAnchor="middle" className="gmap-term-label" style={{ opacity: 0.66 + t.z * 0.34 }}>
+                  <circle cx={t.x} cy={t.y} r={r * 2.2} style={{ fill: t.color, opacity: 0.12 + t.z * 0.14 }} />
+                  <circle cx={t.x} cy={t.y} r={r} style={{ fill: t.color, opacity: 0.82 + t.z * 0.18 }} />
+                  {/* 라벨 하한 상향(0.66→0.85) — "글씨가 잘 안 보임" 피드백. 깊이 차등은 유지하되 가독 우선 */}
+                  <text x={t.x} y={t.y + 17} textAnchor="middle" className="gmap-term-label" style={{ opacity: 0.85 + t.z * 0.15 }}>
                     {short}
                   </text>
                 </g>
@@ -208,6 +274,11 @@ export default function GlossaryMap({ cat }) {
                 </g>
               )
             })}
+            {/* 전경 더스트 — 가장 가까운 별(패럴랙스 최대 이동층에 실려 깊이 대비 강화) */}
+            {DUST.map((s, i) => (
+              <circle key={`d${i}`} cx={s.x} cy={s.y} r={s.r} className="gmap-star near" style={{ opacity: s.o, animationDelay: `${-s.d}s` }} />
+            ))}
+          </g>
           </g>
         </svg>
       </div>

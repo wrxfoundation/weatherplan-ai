@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import LeadDialog from './LeadDialog.jsx'
+import { CONTACT_EMAIL } from '../data/leadApi.js'
 
 const TITLE = '요금·문의 — AI InfraMap'
 const DESC = '데이터센터 부지 인텔리전스 — 무료 도구, 정밀 리포트, 제휴·데이터, 사업 문의.'
@@ -110,7 +111,8 @@ export default function PricingPage() {
           <h3>정직성 원칙</h3>
           <p>
             AI InfraMap은 <b>공개 데이터</b>(한전·전력거래소·KOSIS·SGIS·vworld·OSM·기상청 등)를 집계·가공합니다. 산출 근거가 없는 항목은 점수화하지 않고 “데이터 대기”로 명시하며, 값을 지어내지 않습니다.
-            상용 리포트·구독은 검토 후 개별 안내드리며, 자동 결제는 아직 제공하지 않습니다.
+            상용 리포트·구독은 검토 후 개별 안내드리며, 자동 결제는 아직 제공하지 않습니다. 직접 메일 문의:{' '}
+            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           </p>
           <div className="pricing-contact-row">
             <button type="button" className="btn" onClick={() => openDlg('데이터·API')}>
