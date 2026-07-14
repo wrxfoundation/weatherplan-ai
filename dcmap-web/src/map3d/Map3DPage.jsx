@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -9,23 +9,49 @@ import { loadPowerLines } from '../data/powerLines.js'
 import { recommendSites } from '../score/recommend.js'
 import { STYLE_3D, facilityLabelLayer } from './style3d.js'
 
-/* 3D 베타 — MapLibre GL 전환 (사용자 우선순위 배정)
- * v2: 벡터 타일(OpenFreeMap) 커스텀 다크 HUD 스타일 + 건물 압출(줌 13+) +
- *     심볼 레이어 시설 라벨(자동 충돌 회피) + 아이소 빌딩 DOM 마커
- * 남은 단계: 지형(DEM)·345kV 라인 레이어(정보 공개 시) → 검증 후 메인 맵 대체 */
-
-const ISO_SVG = `<svg viewBox="0 0 24 26" xmlns="http://www.w3.org/2000/svg">
-  <polygon class="f-top" points="12,2 22,8 12,14 2,8"/>
-  <polygon class="f-left" points="2,8 12,14 12,24 2,18"/>
-  <polygon class="f-right" points="12,14 22,8 22,18 12,24"/>
-</svg>`
+/* 3D 베타 — MapLibre GL
+ * v5 성능 재점검: 79개 DOM 마커(프레임마다 transform 재계산 → 회전/기울임 버벅임의 주원인)를
+ *   GPU 렌더 GL 서클 레이어로 교체. antialias off·maxPitch 제한·fadeDuration 축소로 렌더 부하↓.
+ * 애니메이션 토글(기본 OFF): 켜면 송전선 흐름(line-dasharray 시퀀스) + 시설 반짝임(글로우 펄스). */
 
 const TITLE = '3D 맵 (베타) — AI InfraMap'
-const DESC = '한국 데이터센터 현황을 기울인 3D 시점에서 — MapLibre GL 전환 1단계 베타.'
+const DESC = '한국 데이터센터 현황을 기울인 3D 시점에서 — MapLibre GL 전환 베타.'
+
+// 상태별 색(tokens.css 미러) — operating green / construction orange / delayed amber / planned sky
+const STATUS_COLOR = [
+  'match',
+  ['get', 'status'],
+  'operating', '#45d483',
+  'construction', '#f59a3c',
+  'delayed', '#f4c14b',
+  'planned', '#7dd3fc',
+  '#7dd3fc',
+]
+
+// 흐르는 송전선 — dash 시퀀스 순환(GPU, setPaintProperty만; 저비용)
+const DASH_SEQ = [
+  [0, 4, 3],
+  [0.5, 4, 2.5],
+  [1, 4, 2],
+  [1.5, 4, 1.5],
+  [2, 4, 1],
+  [2.5, 4, 0.5],
+  [3, 4, 0],
+  [0, 0.5, 3, 3.5],
+  [0, 1, 3, 3],
+  [0, 1.5, 3, 2.5],
+  [0, 2, 3, 2],
+  [0, 2.5, 3, 1.5],
+  [0, 3, 3, 1],
+  [0, 3.5, 3, 0.5],
+]
 
 export default function Map3DPage() {
   const wrapRef = useRef(null)
+  const mapRef = useRef(null)
+  const readyRef = useRef(false)
   const navigate = useNavigate()
+  const [anim, setAnim] = useState(false)
 
   useEffect(() => {
     document.title = TITLE
@@ -42,15 +68,19 @@ export default function Map3DPage() {
       zoom: 6.4,
       pitch: 55,
       bearing: -12,
+      maxPitch: 70,
       maxBounds: [
         [119.5, 30.5],
         [136.5, 41.5],
       ],
+      antialias: false, // MSAA 비활성 — 회전/기울임 시 GPU 부하 큰 폭 감소
+      fadeDuration: 100, // 심볼 페이드 단축(렌더 프레임 절감)
       attributionControl: { compact: true },
     })
+    mapRef.current = map
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right')
 
-    // 동일 좌표 그룹 분산 (2D 맵과 동일 규칙 — 표시 전용, 데이터 불변)
+    // 동일 좌표 그룹 분산(2D와 동일 규칙 — 표시 전용). GL 포인트 피처로만 구성(DOM 마커 없음).
     const groups = new Map()
     for (const f of FACILITIES) {
       const k = `${f.lat},${f.lng}`
@@ -58,8 +88,7 @@ export default function Map3DPage() {
       groups.get(k).push(f)
     }
     const SPREAD = 0.0045
-    const markers = []
-    const labelFeatures = []
+    const dcFeatures = []
     for (const group of groups.values()) {
       group.forEach((f, gi) => {
         let { lat, lng } = f
@@ -68,34 +97,29 @@ export default function Map3DPage() {
           lat += SPREAD * Math.cos(a)
           lng += (SPREAD * Math.sin(a)) / Math.cos((f.lat * Math.PI) / 180)
         }
-        const key = f.status === 'delayed' ? 'planned' : f.status
-        const el = document.createElement('div')
-        el.className = `dc-iso ${key}${f.power_mw_public >= HYPERSCALE_MW ? ' xl' : ''} dc-iso-3d`
-        el.innerHTML = ISO_SVG
-        el.title = `${f.name} · ${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`
-        el.addEventListener('click', () => navigate(`/dc/${slugOf(f)}`))
-        markers.push(new maplibregl.Marker({ element: el, anchor: 'bottom' }).setLngLat([lng, lat]).addTo(map))
-        labelFeatures.push({
+        dcFeatures.push({
           type: 'Feature',
           geometry: { type: 'Point', coordinates: [lng, lat] },
           properties: {
+            status: f.status,
+            slug: slugOf(f),
+            xl: f.power_mw_public >= HYPERSCALE_MW ? 1 : 0,
             label: `${f.name}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`,
-            // 공개 용량 큰 시설의 라벨이 충돌에서 살아남게 (심볼 정렬 키는 오름차순 우선)
+            title: `${f.name} · ${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`,
             sort: -(f.power_mw_public ?? 0),
           },
         })
       })
     }
 
-    // 시설 라벨 — 심볼 레이어의 자동 충돌 회피 (겹치면 우선순위 낮은 라벨 자동 숨김)
     map.on('load', () => {
-      map.addSource('dc', { type: 'geojson', data: { type: 'FeatureCollection', features: labelFeatures } })
-      map.addLayer(facilityLabelLayer('dc'))
+      if (cancelled) return
+      map.addSource('dc', { type: 'geojson', data: { type: 'FeatureCollection', features: dcFeatures } })
 
-      // 송전선(154kV+) — 전압별 색 라인(계통 백본). 2D 대비 빈약하던 3D에 송전망 추가. 동적 로드(2,500여 선로).
+      // 송전선(154kV+) — 전압별 색. 먼저 추가해 시설/라벨 아래로.
       loadPowerLines()
         .then((lines) => {
-          if (cancelled) return
+          if (cancelled || !map.getSource) return
           const feats = lines.map((ln) => ({
             type: 'Feature',
             geometry: { type: 'LineString', coordinates: ln.p.map(([la, lo]) => [lo, la]) },
@@ -108,6 +132,7 @@ export default function Map3DPage() {
                 id: 'lines',
                 type: 'line',
                 source: 'lines',
+                layout: { 'line-cap': 'round' },
                 paint: {
                   'line-color': [
                     'case',
@@ -122,7 +147,7 @@ export default function Map3DPage() {
                   'line-opacity': 0.5,
                 },
               },
-              map.getLayer('subs') ? 'subs' : 'dc', // 변전소·라벨 아래로
+              'dc-glow',
             )
           } catch {
             /* 스타일/타이밍 — 무시 */
@@ -130,7 +155,7 @@ export default function Map3DPage() {
         })
         .catch(() => {})
 
-      // 변전소(154kV+) — 전압별 색 서클(계통 접속점 맥락)
+      // 변전소(154kV+) — 전압별 색 서클
       try {
         map.addSource('subs', {
           type: 'geojson',
@@ -147,15 +172,52 @@ export default function Map3DPage() {
           },
         })
       } catch {
-        /* 스타일 로드 타이밍 — 무시 */
+        /* 무시 */
       }
+
+      // 시설 — GL 서클(글로우 + 코어). DOM 마커 대체(회전 시 버벅임 제거).
+      map.addLayer({
+        id: 'dc-glow',
+        type: 'circle',
+        source: 'dc',
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, ['case', ['==', ['get', 'xl'], 1], 9, 6], 12, ['case', ['==', ['get', 'xl'], 1], 20, 13]],
+          'circle-color': STATUS_COLOR,
+          'circle-blur': 1,
+          'circle-opacity': 0.35,
+        },
+      })
+      map.addLayer({
+        id: 'dc-core',
+        type: 'circle',
+        source: 'dc',
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 5, ['case', ['==', ['get', 'xl'], 1], 4.5, 3], 12, ['case', ['==', ['get', 'xl'], 1], 8, 5.5]],
+          'circle-color': STATUS_COLOR,
+          'circle-stroke-color': '#eaf4ff',
+          'circle-stroke-width': 1.2,
+          'circle-opacity': 0.95,
+        },
+      })
+      map.addLayer(facilityLabelLayer('dc'))
+
+      map.on('click', 'dc-core', (e) => {
+        const slug = e.features?.[0]?.properties?.slug
+        if (slug) navigate(`/dc/${slug}`)
+      })
+      map.on('mouseenter', 'dc-core', () => {
+        map.getCanvas().style.cursor = 'pointer'
+      })
+      map.on('mouseleave', 'dc-core', () => {
+        map.getCanvas().style.cursor = ''
+      })
 
       // 추천 입지 TOP20 — 금색 서클, 클릭 시 2D 분석으로
       try {
         const reco = recommendSites(20)
         map.addSource('reco', {
           type: 'geojson',
-          data: { type: 'FeatureCollection', features: reco.map((s, i) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [s.lng, s.lat] }, properties: { rank: i + 1, name: s.name, score: `${s.score}/${s.max}`, lat: s.lat, lng: s.lng } })) },
+          data: { type: 'FeatureCollection', features: reco.map((s, i) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [s.lng, s.lat] }, properties: { rank: i + 1, lat: s.lat, lng: s.lng } })) },
         })
         map.addLayer({
           id: 'reco-c',
@@ -176,22 +238,85 @@ export default function Map3DPage() {
       } catch {
         /* 무시 */
       }
+
+      readyRef.current = true
     })
 
     return () => {
       cancelled = true
-      markers.forEach((m) => m.remove())
+      readyRef.current = false
       map.remove()
+      mapRef.current = null
     }
   }, [navigate])
+
+  // 애니메이션 토글 — 송전선 흐름 + 시설 글로우 펄스. 기본 OFF(3D 렌더 부하 고려).
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !anim) return
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let raf = 0
+    let alive = true
+    const start = typeof performance !== 'undefined' ? performance.now() : 0
+    const tick = (now) => {
+      if (!alive) return
+      const map2 = mapRef.current
+      if (map2 && readyRef.current) {
+        const t = now - start
+        // 송전선 흐름
+        if (map2.getLayer('lines')) {
+          const idx = Math.floor((t / 55) % DASH_SEQ.length)
+          try {
+            map2.setPaintProperty('lines', 'line-dasharray', DASH_SEQ[idx])
+          } catch {
+            /* 무시 */
+          }
+        }
+        // 시설 글로우 펄스(0.2~0.55)
+        if (map2.getLayer('dc-glow')) {
+          const pulse = 0.38 + 0.2 * Math.sin(t / 480)
+          try {
+            map2.setPaintProperty('dc-glow', 'circle-opacity', pulse)
+          } catch {
+            /* 무시 */
+          }
+        }
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => {
+      alive = false
+      cancelAnimationFrame(raf)
+      // 토글 OFF 시 정적 상태 복원
+      const map2 = mapRef.current
+      if (map2 && readyRef.current) {
+        try {
+          if (map2.getLayer('lines')) map2.setPaintProperty('lines', 'line-dasharray', [1])
+          if (map2.getLayer('dc-glow')) map2.setPaintProperty('dc-glow', 'circle-opacity', 0.35)
+        } catch {
+          /* 무시 */
+        }
+      }
+    }
+  }, [anim])
 
   return (
     <>
       <TopBar />
       <div className="map-layout">
         <div ref={wrapRef} className="map-canvas map3d" />
+        <button
+          type="button"
+          className={`map3d-anim ${anim ? 'on' : ''}`}
+          onClick={() => setAnim((v) => !v)}
+          aria-pressed={anim}
+          title="송전망 흐름·시설 반짝임 애니메이션"
+        >
+          {anim ? '✨ 애니메이션 ON' : '애니메이션 OFF'}
+        </button>
         <div className="map3d-banner">
-          <span className="badge status-operating">3D 베타 v4</span>
+          <span className="badge status-operating">3D 베타 v5</span>
           우클릭 드래그로 회전·기울임 · 줌 13+ 건물 입체 · 🟡 추천입지 클릭 → 분석 · 송전선·변전소(154kV+) 전압별 색: 154 갈/345 보라/765 분홍
         </div>
       </div>
