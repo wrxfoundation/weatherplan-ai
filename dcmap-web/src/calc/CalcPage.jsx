@@ -8,6 +8,7 @@ import { useAiStream } from '../ai/useAiStream.js'
 import AiResultCard from '../ai/AiResultCard.jsx'
 import SpringNumber from '../ui/SpringNumber.jsx'
 import CopyButton from '../ui/CopyButton.jsx'
+import LineIcon from '../components/LineIcon.jsx'
 
 // GPU별 대표 TDP(kW). 공개 스펙 기준 근사치 — 가속기당 소비전력(부대 IT 부하는 별도 계수).
 // NVIDIA 데이터센터 GPU가 사실상 표준이나, 추론·레거시·AMD까지 포함해 시나리오 폭을 넓힘.
@@ -502,7 +503,7 @@ export default function CalcPage() {
               적은 전력으로 돌립니다(기상 레이어, M3 예정).
             </div>
             <Link className="btn primary" to={`/?min_mw=${m.ctaMw}${nonCapital ? '&noncap=1' : ''}`}>
-              이 용량 가능한 부지 보기 ({candidates}곳){nonCapital ? ' · 비수도권' : ''} <span className="btn-arrow">↗</span>
+              이 용량 가능한 부지 보기 ({candidates}곳){nonCapital ? ' · 비수도권' : ''} <span className="btn-arrow"><LineIcon name="arrowUR" size={13} /></span>
             </Link>
           </div>
 
