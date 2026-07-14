@@ -2,8 +2,8 @@
  * 스냅샷은 SitePanel에서 데이터 로드 후 '비교에 추가' 시점의 값으로 고정된다.
  * 근거점수 최고 후보에 '추천' 배지, 각 행에서 우수값을 강조. */
 import { useEffect, useState } from 'react'
-import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
-import AiText from '../ai/AiText.jsx'
+import { useAiStream } from '../ai/useAiStream.js'
+import AiResultCard from '../ai/AiResultCard.jsx'
 
 const TONE = { good: 'tone-good', warn: 'tone-warn', bad: 'tone-bad' }
 
@@ -195,13 +195,12 @@ const ROWS = [
 
 export default function CompareTray({ items, onRemove, onClear, onOpen }) {
   const [open, setOpen] = useState(false)
-  // AI 비교평: null | 'loading' | { text } | { error }
-  const [ai, setAi] = useState(null)
+  const { ai, run, reset, busy } = useAiStream()
   // 후보 구성이 바뀌면 이전 비교평 무효화(오판 방지)
   const idsKey = (items || []).map((c) => c.id).join('|')
   useEffect(() => {
-    setAi(null)
-  }, [idsKey])
+    reset()
+  }, [idsKey, reset])
 
   if (!items?.length) return null
 
@@ -209,9 +208,8 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
   const bestId = items.reduce((b, c) => ((c.pct ?? -1) > (b?.pct ?? -1) ? c : b), null)?.id
 
   // AI 비교평 — 스냅샷의 확보된 값만 넘긴다(없으면 프롬프트가 '미확보' 처리)
-  const genCompare = async () => {
+  const genCompare = () => {
     setOpen(true) // 접힌 상태에서 눌러도 로딩/결과가 보이도록 자동 펼침(무피드백 데드 상태 방지)
-    setAi('loading')
     const data = items.map((c) => ({
       후보: c.label,
       입지: c.nonCapital ? '비수도권' : '수도권',
@@ -230,9 +228,7 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
       인구밀도: c.density ?? null,
       용도지역: c.zoneUse ?? null,
     }))
-    const res = await callAiStream('compare', { data }, (partial) => setAi({ text: partial, streaming: true }))
-    if (res?.available && res.text) setAi({ text: res.text, usage: res.usage })
-    else setAi({ error: res?.reason || 'error' })
+    run('compare', { data })
   }
 
   // 비교 결과 PDF — 인쇄 최적화 HTML 표 → 브라우저 PDF
@@ -282,8 +278,8 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
           ⚖ 후보지 비교 <strong>{items.length}</strong>곳 {open ? '▾' : '▸'}
         </button>
         {items.length > 1 && (
-          <button type="button" className="chip ai" onClick={genCompare} disabled={ai === 'loading' || ai?.streaming} title="후보 AI 비교평">
-            {ai === 'loading' || ai?.streaming ? 'AI…' : '✨ AI 비교평'}
+          <button type="button" className="chip ai" onClick={genCompare} disabled={busy} title="후보 AI 비교평">
+            {busy ? 'AI…' : '✨ AI 비교평'}
           </button>
         )}
         <button type="button" className="chip" onClick={onPdf} title="후보지 비교표 PDF 저장">
@@ -293,26 +289,14 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
           전체 지우기
         </button>
       </div>
-      {open && ai && ai !== 'loading' && ai.text && (
-        <div className="ai-card ct-ai" role="region" aria-label="AI 비교평">
-          <div className="ai-card-head">
-            <span className="ai-badge">✨ AI 비교평</span>
-            <span className="ai-src">스냅샷 확보값 기반 · 없는 값은 미확보</span>
-          </div>
-          <AiText text={ai.text} />
-          {ai.streaming && <span className="ai-cursor" aria-hidden />}
-          {!ai.streaming && ai.usage && <div className="ai-usage">{usageLabel(ai.usage)}</div>}
-        </div>
-      )}
-      {open && ai && ai !== 'loading' && ai.error && (
-        <div className="ai-card err ct-ai" role="alert">
-          {aiReasonLabel(ai.error)}
-        </div>
-      )}
-      {open && ai === 'loading' && (
-        <div className="ai-card loading ct-ai" role="status">
-          <span className="sp-spinner" aria-hidden /> 후보 비교 분석 중…
-        </div>
+      {open && (
+        <AiResultCard
+          ai={ai}
+          badge="✨ AI 비교평"
+          src="스냅샷 확보값 기반 · 없는 값은 미확보"
+          className="ct-ai"
+          loadingText="후보 비교 분석 중…"
+        />
       )}
       {open && items.length > 1 && <CompareRadar items={items} />}
       {open && (
