@@ -202,6 +202,9 @@ export default function TopBar() {
         <NavLink to="/" end data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
           맵
         </NavLink>
+        <NavLink to="/about" data-nav="about" className={({ isActive }) => (isActive ? 'active' : '')}>
+          소개
+        </NavLink>
         <NavLink to="/map3d" data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
           3D <sup className="beta-sup">β</sup>
         </NavLink>
@@ -225,9 +228,6 @@ export default function TopBar() {
         </NavLink>
         <NavLink to="/glossary" data-nav="glossary" className={({ isActive }) => (isActive ? 'active' : '')}>
           용어집
-        </NavLink>
-        <NavLink to="/about" data-nav="about" className={({ isActive }) => (isActive ? 'active' : '')}>
-          소개
         </NavLink>
         <NavLink to="/pricing" data-nav="data" className={({ isActive }) => `nav-contact${isActive ? ' active' : ''}`} title="요금·문의">
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
