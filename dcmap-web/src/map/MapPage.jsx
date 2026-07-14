@@ -206,6 +206,40 @@ export default function MapPage({ power = false }) {
     () => (showReco ? recommendSites(20, { minMw: recoMw || null, nonCapitalOnly: recoNonCap }) : []),
     [showReco, recoMw, recoNonCap],
   )
+  // 사이드패널 확장(2배 폭) 토글 — 좌측 가운데 엣지 버튼. 선택은 브라우저 저장.
+  const [panelWide, setPanelWide] = useState(() => {
+    try {
+      return localStorage.getItem('dcmap.panelWide') === '1'
+    } catch {
+      return false
+    }
+  })
+  const togglePanelWide = () =>
+    setPanelWide((v) => {
+      const nv = !v
+      try {
+        localStorage.setItem('dcmap.panelWide', nv ? '1' : '0')
+      } catch {
+        /* 저장 불가 무시 */
+      }
+      return nv
+    })
+  // 확장 상태를 :root 클래스로 — 필터바·플로팅 요소 등 map-layout 밖의 --panel-width 소비자까지 일괄 반영
+  useEffect(() => {
+    document.documentElement.classList.toggle('panel-wide', panelWide)
+    // 패널 폭 변경 → 맵 캔버스 크기 변동 — 전환 애니메이션 후 Leaflet 재계산
+    const t = setTimeout(() => {
+      try {
+        mapObj.current?.invalidateSize()
+      } catch {
+        /* 무시 */
+      }
+    }, 320)
+    return () => {
+      clearTimeout(t)
+      document.documentElement.classList.remove('panel-wide')
+    }
+  }, [panelWide])
   const [baseMap, setBaseMap] = useState(() => {
     try {
       const v = localStorage.getItem('dcmap.baseMap')
@@ -977,6 +1011,19 @@ export default function MapPage({ power = false }) {
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />
+        {/* 사이드패널 확장 토글 — 패널 좌측 가운데 엣지(누르면 폭 2배) */}
+        <button
+          type="button"
+          className="panel-expand"
+          onClick={togglePanelWide}
+          aria-pressed={panelWide}
+          aria-label={panelWide ? '패널 좁히기' : '패널 넓히기'}
+          title={panelWide ? '패널 좁히기' : '패널 넓히기 (2배)'}
+        >
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            {panelWide ? <path d="M6 3.5 10.5 8 6 12.5" /> : <path d="M10 3.5 5.5 8 10 12.5" />}
+          </svg>
+        </button>
         {/* 입지 시뮬레이터 — 추천입지 레이어 켤 때 필요 MW·입지 조건으로 재랭킹 */}
         {showReco && (
           <div className="reco-sim" role="region" aria-label="입지 시뮬레이터">
