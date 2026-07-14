@@ -9,6 +9,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import bunyangAdapter from "../sources/bunyang-capsule/adapter.js";
+import { type AggregateEntry, buildAggregateFeed } from "../engine/aggregate.js";
 import { runOnce } from "../engine/pipeline.js";
 import { gatherSources, renderHtml, renderLlms, writeSite } from "../engine/site.js";
 import type { NormalizedRecord, SourceAdapter, SourceConfig } from "../engine/types.js";
@@ -116,4 +117,32 @@ test("writeSite: docs/에 파일을 쓰고, 빈 데이터에서도 동작한다"
   const html = readFileSync(htmlPath, "utf8");
   assert.ok(html.includes("첫 수집 전입니다"));
   assert.ok(readFileSync(llmsPath, "utf8").includes("Chronicle"));
+});
+
+test("통합 피드: 전 소스 이벤트를 소스 태그와 함께 하나의 Atom으로(최신순)", () => {
+  const entries: AggregateEntry[] = [
+    { sourceId: "a", title: "소스 A", event: { observed_at: "2026-07-10T00:00:00.000Z", entity_id: "a:1", field: "__record__", before: null, after: { x: 1 }, source_url: "https://a/1", content_hash: "h1", chain_hash: "c1" } },
+    { sourceId: "b", title: "소스 B", event: { observed_at: "2026-07-12T00:00:00.000Z", entity_id: "b:1", field: "price", before: 1, after: 2, source_url: "https://b/1", content_hash: "h2", chain_hash: "c2" } },
+  ];
+  const feed = buildAggregateFeed(REPO, entries);
+  assert.ok(feed.startsWith("<?xml"));
+  assert.ok(feed.includes("통합 인텔리전스 피드"));
+  assert.ok(feed.includes('<category term="a"/>') && feed.includes('<category term="b"/>'));
+  assert.ok(feed.includes("[소스 A]") && feed.includes("[소스 B]"));
+  assert.ok(feed.indexOf("b:1") < feed.indexOf("a:1"), "최신 이벤트(b, 07-12)가 위");
+  assert.ok(feed.includes("<updated>2026-07-12T00:00:00.000Z</updated>"), "피드 updated=최신 이벤트 시각");
+});
+
+test("writeSite: docs/feed.xml(통합) + HTML 소비 섹션 + llms 소비 가이드", async () => {
+  const dataDir = await setupData();
+  const siteRoot = mkdtempSync(join(tmpdir(), "chronicle-site-agg-"));
+  writeSite(siteRoot, dataDir, REPO);
+  const feed = readFileSync(join(siteRoot, "docs", "feed.xml"), "utf8");
+  assert.ok(feed.includes('<feed xmlns="http://www.w3.org/2005/Atom">'));
+  assert.ok(feed.includes('term="bunyang-capsule"'), "소스 태그 포함");
+  const html = readFileSync(join(siteRoot, "docs", "index.html"), "utf8");
+  assert.ok(html.includes("통합 인텔리전스 피드") && html.includes("./feed.xml"));
+  assert.ok(html.includes("get_history"), "MCP 질의 노출");
+  const llms = readFileSync(join(siteRoot, "docs", "llms.txt"), "utf8");
+  assert.ok(llms.includes("docs/feed.xml") && llms.includes("chronicle-mcp"));
 });

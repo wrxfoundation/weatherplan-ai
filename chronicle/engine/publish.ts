@@ -7,7 +7,7 @@ import { RECORD_FIELD, type ChangeEvent } from "./types.js";
 
 export const FEED_ENTRY_LIMIT = 50;
 
-function escapeXml(text: string): string {
+export function escapeXml(text: string): string {
   return (
     text
       // XML 1.0에서 불법인 제어문자·비문자·홀로 선 서로게이트를 U+FFFD로 치환
@@ -22,7 +22,7 @@ function escapeXml(text: string): string {
   );
 }
 
-function entryTitle(event: ChangeEvent): string {
+export function entryTitle(event: ChangeEvent): string {
   if (event.field === RECORD_FIELD) {
     return event.after === null ? `[삭제] ${event.entity_id}` : `[신규] ${event.entity_id}`;
   }
