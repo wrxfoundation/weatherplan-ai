@@ -50,6 +50,18 @@ export function dcApprovalForSido(sido) {
   return sido ? DC_ASSESSMENT[sido] || null : null
 }
 
+// 전력계통영향평가 시범운영 본심사(위원회) 결과 — 2026.5 기후에너지환경부 공표(심사기간 2025.8~2026.3).
+// 1차 기술검토(위 R 표)와 다른 단계: 기술검토 통과 후 위원회 본심사의 통과/부결.
+// 출처: 기후에너지환경부 자료 보도(머니투데이 2026-05-23). 수치는 공표값 그대로(가공·추정 없음).
+export const PSIA_REVIEW_2026 = {
+  asOf: '2025.8–2026.3 (2026.5 공표)',
+  source: '기후에너지환경부 시범운영 결과 (머니투데이 2026-05-23 보도)',
+  sourceUrl: 'https://www.mt.co.kr/tech/2026/05/23/2026052210211399740',
+  capital: { applied: 522, reviewed: 24, passed: 10 }, // 수도권: 1차 신청 522 → 본심사 24 → 통과 10 (신청 대비 1.9%)
+  nonCapital: { reviewed: 29, passed: 26 }, // 비수도권: 본심사 29 → 통과 26 (89.7%)
+  capitalUnableSharePct: 91.2, // 전국 공급불가 판정 중 수도권 비중
+}
+
 /** DC 승인율(%) → 정성 라벨 */
 export function approvalLabel(pct) {
   if (pct == null) return null

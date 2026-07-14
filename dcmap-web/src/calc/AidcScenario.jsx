@@ -85,6 +85,7 @@ export default function AidcScenario({ mw, nonCapital }) {
 
       <p className="chart-note">
         ⚠ 면제 상한은 <b>대통령령 미제정</b>으로 확정 전입니다 — 위 판정은 가정값 기반 <b>추정</b>이며 확정 시 자동 반영 예정. 근거: AIDC 특별법(’26.6.9 공포·’27.3.10 시행) · 분산에너지 활성화 특별법 전력계통영향평가.{' '}
+        <Link to="/roadmap?view=policy">시행령 진행 상황 (제도 트래커) →</Link>{' '}
         <Link to={`/?min_mw=${Math.max(1, Math.ceil(mw))}&noncap=1`}>비수도권 후보 맵 →</Link>
       </p>
     </div>
