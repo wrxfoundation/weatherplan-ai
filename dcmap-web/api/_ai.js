@@ -126,23 +126,28 @@ async function fetchLawContext(query) {
   if (lawCache.has(cacheKey)) return lawCache.get(cacheKey)
 
   const base = 'https://www.law.go.kr/DRF'
-  // 1) 법령 검색 → 정식 명칭·법령ID·시행일자 확보(실데이터만)
+  // 1) 목록조회(lawSearch) → 정식 명칭·법령일련번호(MST)·시행일자·상세링크 확보(실데이터만).
+  //    공식 매뉴얼: 본문조회는 목록조회에서 얻은 [법령일련번호] 또는 [법령상세링크]로 한다.
   const search = await fetchJsonWithTimeout(`${base}/lawSearch.do?OC=${encodeURIComponent(oc)}&target=law&type=JSON&display=3&query=${encodeURIComponent(hit.law)}`)
   let laws = search?.LawSearch?.law
   if (!laws) return null
   if (!Array.isArray(laws)) laws = [laws]
   const top = laws[0]
-  if (!top?.법령ID) return null
-  const meta = `법령: ${top.법령명한글 || hit.law} · 법령ID ${top.법령ID}${top.시행일자 ? ` · 시행 ${top.시행일자}` : ''}${top.소관부처명 ? ` · ${top.소관부처명}` : ''}`
+  const mst = top?.법령일련번호
+  const lawId = top?.법령ID
+  if (!mst && !lawId) return null
+  const detailLink = top?.법령상세링크 ? `https://www.law.go.kr${top.법령상세링크}` : null
+  const meta = `법령: ${top.법령명한글 || hit.law}${top.시행일자 ? ` · 시행 ${top.시행일자}` : ''}${top.공포일자 ? ` · 공포 ${top.공포일자}` : ''}${top.소관부처명 ? ` · ${top.소관부처명}` : ''}${detailLink ? `\n원문 링크: ${detailLink}` : ''}`
 
   let body = ''
   if (jo && !hit.search) {
-    // 2) 특정 조문 원문(JO 파라미터)
-    const svc = await fetchJsonWithTimeout(`${base}/lawService.do?OC=${encodeURIComponent(oc)}&target=law&type=JSON&ID=${encodeURIComponent(top.법령ID)}&JO=${jo}`)
+    // 2) 본문조회(lawService) — MST(법령일련번호) 우선, 없으면 ID 폴백. JO로 해당 조문만.
+    const key = mst ? `MST=${encodeURIComponent(mst)}` : `ID=${encodeURIComponent(lawId)}`
+    const svc = await fetchJsonWithTimeout(`${base}/lawService.do?OC=${encodeURIComponent(oc)}&target=law&type=JSON&${key}&JO=${jo}`)
     const unit = svc?.법령?.조문?.조문단위
     if (unit) body = JSON.stringify(unit).slice(0, 5000)
   }
-  const ctx = `[법령 원문 컨텍스트 — 법제처 국가법령정보센터 조회]\n${meta}${body ? `\n조문 원문(JSON):\n${body}` : ''}\n(위 원문에 있는 내용만 인용할 것 — 원문에 없으면 "원문 확인 필요"로 답한다)`
+  const ctx = `[법령 원문 컨텍스트 — 법제처 국가법령정보센터 조회]\n${meta}${body ? `\n조문 원문(JSON):\n${body}` : ''}\n(위 원문에 있는 내용만 인용하고, 답변에 위 원문 링크를 출처로 표기할 것 — 원문에 없으면 "원문 확인 필요"로 답한다)`
   lawCache.set(cacheKey, ctx)
   return ctx
 }
