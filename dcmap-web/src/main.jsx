@@ -20,6 +20,7 @@ const LandPulsePage = lazy(() => import('./land/LandPulsePage.jsx'))
 const ComparePage = lazy(() => import('./compare/ComparePage.jsx'))
 const DataExplorerPage = lazy(() => import('./explorer/DataExplorerPage.jsx'))
 const RoadmapPage = lazy(() => import('./roadmap/RoadmapPage.jsx'))
+const PricingPage = lazy(() => import('./lead/PricingPage.jsx'))
 
 /* SPA 라우트 전환 시 스크롤 최상단 — 긴 페이지에서 이전 스크롤 위치가 남는 UX 문제 방지 */
 function ScrollToTop() {
@@ -60,6 +61,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/insights" element={<InsightsIndexPage />} />
           <Route path="/insights/:slug" element={<InsightPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
           <Route path="*" element={<MapPage />} />
         </Routes>
       </Suspense>

@@ -16,6 +16,7 @@ import https from 'node:https'
 import { promises as dnsp } from 'node:dns'
 import { proxyConfigured, proxyGetText } from './_proxy.js'
 import { aiHandler } from './_ai.js'
+import { leadHandler } from './_lead.js'
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 
@@ -270,6 +271,10 @@ export default async function handler(req, res) {
   // (_ai.js는 '_' 접두라 함수 카운트 제외 · POST /api/power?src=ai)
   if (src === 'ai') {
     return aiHandler(req, res)
+  }
+  // 리드/문의 접수 위임 (POST /api/power?src=lead) — _lead.js도 '_' 접두라 함수 미카운트
+  if (src === 'lead') {
+    return leadHandler(req, res)
   }
   if (!HANDLERS[src]) {
     res.status(400).json({ available: false, reason: 'unknown_src' })

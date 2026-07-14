@@ -5,7 +5,7 @@ import { geocodeAddr } from './data/liveApi.js'
 
 // 라우트 → GNB 섹션(색상 톤). 페이지 전체 accent가 섹션 톤을 따른다.
 const SECTION_PREFIX = [
-  ['/calc', 'data'], ['/dashboard', 'data'], ['/data', 'data'], ['/stats', 'data'], ['/land', 'data'], ['/compare', 'data'],
+  ['/calc', 'data'], ['/dashboard', 'data'], ['/data', 'data'], ['/stats', 'data'], ['/land', 'data'], ['/compare', 'data'], ['/pricing', 'data'],
   ['/insights', 'knowledge'], ['/roadmap', 'knowledge'], ['/glossary', 'knowledge'],
   ['/map3d', 'explore'], ['/power', 'explore'], ['/dc', 'explore'], ['/region', 'explore'],
 ]
@@ -226,17 +226,13 @@ export default function TopBar() {
         <NavLink to="/glossary" data-nav="knowledge" className={({ isActive }) => (isActive ? 'active' : '')}>
           용어집
         </NavLink>
-        <a
-          href="mailto:kwangdol@gmail.com?subject=AI%20InfraMap%20문의"
-          className="nav-contact"
-          title="문의사항 접수: kwangdol@gmail.com"
-        >
+        <NavLink to="/pricing" data-nav="data" className={({ isActive }) => `nav-contact${isActive ? ' active' : ''}`} title="요금·문의">
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M2 4h12v8H2z M2 4.5l6 4 6-4" />
           </svg>
-          <span className="contact-full">kwangdol@gmail.com</span>
+          <span className="contact-full">요금·문의</span>
           <span className="contact-short">문의</span>
-        </a>
+        </NavLink>
       </nav>
 
     </header>
