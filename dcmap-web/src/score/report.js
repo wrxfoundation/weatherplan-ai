@@ -56,6 +56,12 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
       for (const f of factors) L.push(`- ${f.label}: ${f.score != null ? `${f.score}/100 (w${f.weight}) — ${f.basis}` : '데이터 대기'}`)
       L.push(`(공개 대리지표 규칙 추정 — 공식 ±15 배점 아님 · 실제 판정은 한전·기후에너지환경부 심의)`)
     }
+    // 제도 일정 — 리포트 수신자가 규제 타이밍을 함께 보도록(제도 트래커 요약, 확정 사실만)
+    L.push(``)
+    L.push(`## 제도 일정 (확정 사실 기준)`)
+    L.push(`- AIDC 특별법: ’26.6.9 공포 · **’27.3.10 시행** — 비수도권 면제 상한은 대통령령 미정(시행령 제정 중)`)
+    L.push(`- 전력계통영향평가 법정 고시: 행정예고 완료(’26.6) · 연내 제정 추진 — 평가 배점·대행자 제도 법정화 예정`)
+    L.push(`- 시범운영 본심사(’25.8–’26.3): 통과 수도권 10/24건 vs 비수도권 26/29건 (기후에너지환경부 공표)`)
   }
   L.push(``)
   L.push(`## 스코어 커버리지 — 근거 확보 ${r.knownScore}/${r.knownMax}점 · 커버리지 ${r.coverage}/100`)
