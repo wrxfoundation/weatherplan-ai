@@ -1,6 +1,10 @@
-# Korea Rising — verified K-pop snapshot (2026-07-12)
+# Korea Rising — verified K-pop snapshot (2026-07-14)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
+
+## 🏆 Circle Digital Chart — current #1
+**Cortis** — RedRed  
+_Circle Digital Chart #1 (via Wikipedia) 2026-07-14 03:58 UTC · Skill Score 0.70_
 
 ## 🎤 Verified roster (639 acts)
 - **2NE1**: I Am the Best
