@@ -6411,3 +6411,67 @@ summary:focus-visible,
     grid-template-columns: 1fr;
   }
 }
+
+/* ── AIDC 특별법 면제 시나리오 (해자 기능) ── */
+.aidc-card {
+  border-color: color-mix(in srgb, var(--violet) 28%, var(--line));
+}
+.aidc-cap-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+.aidc-cap-val {
+  color: var(--violet-ink);
+  font-size: var(--text-body);
+  margin-left: 4px;
+}
+.aidc-slider {
+  flex: 1 1 200px;
+  min-width: 150px;
+  accent-color: var(--violet);
+  height: 4px;
+  cursor: pointer;
+}
+.aidc-quick {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--navy-deep);
+}
+.aidc-quick .chip {
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--grey);
+  font-weight: 700;
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+.aidc-quick .chip:first-child { border-left: 0; }
+.aidc-quick .chip:hover { color: var(--ink); background: color-mix(in srgb, var(--violet) 10%, transparent); }
+.aidc-quick .chip.on { color: var(--navy-deep); background: var(--violet); }
+.aidc-verdict {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: var(--surface, color-mix(in srgb, var(--navy-deep) 60%, transparent));
+}
+.aidc-verdict.tone-good { border-color: color-mix(in srgb, var(--mint) 45%, var(--line)); background: color-mix(in srgb, var(--mint) 9%, transparent); }
+.aidc-verdict.tone-warn { border-color: color-mix(in srgb, var(--amber) 45%, var(--line)); background: color-mix(in srgb, var(--amber) 9%, transparent); }
+.aidc-verdict.tone-bad { border-color: color-mix(in srgb, var(--red, #f0736e) 42%, var(--line)); background: color-mix(in srgb, var(--red, #f0736e) 9%, transparent); }
+.aidc-verdict-head { font-weight: 800; font-size: var(--text-body); color: var(--ink); }
+.aidc-verdict.tone-good .aidc-verdict-head { color: #6ee7b7; }
+.aidc-verdict.tone-warn .aidc-verdict-head { color: var(--amber); }
+.aidc-verdict.tone-bad .aidc-verdict-head { color: #fca5a5; }
+.aidc-verdict-body { font-size: var(--text-sm); color: var(--ink-dim, var(--grey)); line-height: 1.5; }
