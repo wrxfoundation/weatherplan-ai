@@ -27,7 +27,7 @@ import { SEMI_CLUSTERS } from '../data/semiClusters.js'
 import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLicenses.js'
 import { dcApprovalForSido, approvalLabel } from '../data/gridAssessment.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
-import { headroomFor } from '../data/liveApi.js'
+import { headroomFor, parcelAt } from '../data/liveApi.js'
 
 const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ sido, lat, lng }))
 
@@ -259,6 +259,7 @@ export default function MapPage({ power = false }) {
   const headroomLayerRef = useRef(null)
   const [showApproval, setShowApproval] = useState(() => _initLayers.has('approval')) // DC 공급 승인율 시도 버블 (계통영향평가 1차 기술검토)
   const approvalLayerRef = useRef(null)
+  const parcelLayerRef = useRef(null) // 지점이 속한 필지(연속지적도) 경계
   const [headrooms, setHeadrooms] = useState(null) // {sido: availableMw|null}
   const [region, setRegion] = useState(null) // 전력지도: 클릭한 시도 (지역 요약 카드)
   const [mapCenter, setMapCenter] = useState(null) // 상단 기후 바: 확정 지점 없을 때 지도 중심 기후
@@ -883,6 +884,46 @@ export default function MapPage({ power = false }) {
     else next.delete('site')
     if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
   }, [sitePoint]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 필지 경계 — 지점(클릭·번지 검색)이 속한 연속지적도 폴리곤을 vworld에서 받아 표시.
+  // 검토 대상 땅의 실제 경계를 명확히(부지 인텔리전스 핵심 UX). 실패 시 조용히 생략(정직: 근사 표시 안 함).
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (parcelLayerRef.current) {
+      map.removeLayer(parcelLayerRef.current)
+      parcelLayerRef.current = null
+    }
+    if (!sitePoint) return
+    let alive = true
+    parcelAt(sitePoint.lat, sitePoint.lng)
+      .then((p) => {
+        if (!alive || !p?.available || !p.geometry) return
+        const layer = L.geoJSON(
+          { type: 'Feature', geometry: p.geometry },
+          {
+            style: {
+              color: 'rgba(53,213,238,0.95)',
+              weight: 2,
+              dashArray: '5 4',
+              fillColor: 'rgba(53,213,238,0.08)',
+              fillOpacity: 0.5,
+              interactive: false,
+            },
+          },
+        )
+        layer.bindTooltip(
+          `<div class="dc-hovercard"><strong>필지 경계</strong>${p.jibun ? ` · ${p.jibun}` : ''}${p.addr ? `<br/>${p.addr}` : ''}<br/><span style="opacity:.75">연속지적도(vworld) — 참고용, 지적측량 아님</span></div>`,
+          { sticky: true, className: 'dc-hovercard', opacity: 1 },
+        )
+        layer.addTo(map)
+        parcelLayerRef.current = layer
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [sitePoint])
 
   // 활성 레이어 → URL(?layers=) 동기화 (공유 링크로 켠 레이어 그대로 복원)
   useEffect(() => {
