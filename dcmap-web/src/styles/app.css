@@ -3288,7 +3288,7 @@ summary:focus-visible,
 }
 
 .beta-sup {
-  color: var(--accent);
+  color: var(--nav-explore); /* 섹션 accent를 따르지 않는 고정 시안 — 페이지 이동 시 β 색 변함 방지 */
   font-size: 9px;
   margin-left: 1px;
 }
@@ -7504,4 +7504,22 @@ summary:focus-visible,
 }
 .score-axes .hbar-value {
   min-width: 74px;
+}
+
+/* ── 소개 v3 — 웜 브라운 다크 배경(레퍼런스 준거). GNB(topbar·mobile-nav)는 :root 토큰을
+ * 그대로 쓰므로 불변 — 본문(main.about-page)에만 토큰을 재정의해 카드·보더·텍스트가 따라온다. */
+:root[data-section='about'] body {
+  background:
+    radial-gradient(1100px 700px at 85% -12%, color-mix(in srgb, var(--gold) 8%, transparent), transparent 62%),
+    radial-gradient(900px 650px at -8% 108%, color-mix(in srgb, var(--gold) 5%, transparent), transparent 60%),
+    linear-gradient(180deg, #17120b 0%, #0c0906 100%);
+}
+main.about-page {
+  --bg: #14100a;
+  --navy-deep: #0d0a06;
+  --surface: #1d1710;
+  --line: #382c1a;
+  --grey: #a99e88; /* 웜 그레이 — 청회색은 브라운 위에서 탁함 */
+  --text: #f0e9db; /* 상아빛 잉크 */
+  color: var(--text);
 }

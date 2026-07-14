@@ -199,11 +199,11 @@ export default function TopBar() {
       </div>
 
       <nav>
-        <NavLink to="/" end data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
-          맵
-        </NavLink>
         <NavLink to="/about" data-nav="about" className={({ isActive }) => (isActive ? 'active' : '')}>
           소개
+        </NavLink>
+        <NavLink to="/" end data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
+          맵
         </NavLink>
         <NavLink to="/map3d" data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
           3D <sup className="beta-sup">β</sup>
