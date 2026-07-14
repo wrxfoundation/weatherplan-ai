@@ -6762,10 +6762,13 @@ summary:focus-visible,
   opacity: 0.18;
 }
 .gmap-cat {
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 900;
   letter-spacing: -0.01em;
-  opacity: 0.34;
+  opacity: 0.55; /* 밋밋함 개선 — 성좌 라벨 또렷하게 */
+  paint-order: stroke;
+  stroke: rgba(4, 11, 22, 0.85);
+  stroke-width: 4px;
   pointer-events: none;
 }
 .gmap-cat.dim {
@@ -6782,7 +6785,10 @@ summary:focus-visible,
 }
 .gmap-term-label {
   font-size: 10.5px;
-  fill: var(--grey);
+  fill: #cfdcee; /* 어두운 폰트 가독성 개선 — 밝은 잉크 + 다크 할로 */
+  paint-order: stroke;
+  stroke: rgba(4, 11, 22, 0.92);
+  stroke-width: 3px;
   pointer-events: none;
 }
 .gmap-term.on .gmap-term-label,
@@ -6812,9 +6818,12 @@ summary:focus-visible,
   fill: color-mix(in srgb, var(--amber) 45%, transparent);
 }
 .gmap-law-label {
-  font-size: 10.5px;
-  font-weight: 700;
-  fill: color-mix(in srgb, var(--amber) 80%, var(--ink));
+  font-size: 11px;
+  font-weight: 800;
+  fill: #ffd98a; /* 앰버 라벨 밝게 + 할로 */
+  paint-order: stroke;
+  stroke: rgba(4, 11, 22, 0.92);
+  stroke-width: 3px;
   pointer-events: none;
 }
 .gmap-law:focus-visible rect {
@@ -6874,4 +6883,70 @@ summary:focus-visible,
 .gmap-hit {
   fill: transparent;
   stroke: none;
+}
+
+/* ── 온톨로지 맵 v2 — 3D 공간감(틸트·패럴랙스·별·깊이) + 절차 레이어 ── */
+.gmap-tilt {
+  perspective: 1100px;
+}
+.gmap-tilt .gmap-svg {
+  transform: rotateX(7deg);
+  transform-origin: 50% 42%;
+}
+.gmap-layer {
+  transition: transform 0.18s ease-out;
+  will-change: transform;
+}
+.gmap-star {
+  fill: #bcd3ef;
+  animation: gmap-twinkle 4.2s ease-in-out infinite;
+}
+@keyframes gmap-twinkle {
+  0%, 100% { opacity: inherit; }
+  50% { opacity: 0.04; }
+}
+.gmap-proc rect {
+  fill: color-mix(in srgb, var(--accent) 16%, transparent);
+  stroke: color-mix(in srgb, var(--accent) 65%, transparent);
+  stroke-width: 1.1;
+  transition: fill 0.16s ease;
+}
+.gmap-proc { cursor: pointer; }
+.gmap-proc.quiet rect {
+  stroke: color-mix(in srgb, var(--grey) 40%, transparent);
+  fill: color-mix(in srgb, var(--grey) 8%, transparent);
+}
+.gmap-proc.on rect,
+.gmap-proc:hover rect {
+  fill: color-mix(in srgb, var(--accent) 42%, transparent);
+}
+.gmap-proc-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  fill: #a9c0dc;
+  paint-order: stroke;
+  stroke: rgba(4, 11, 22, 0.9);
+  stroke-width: 2.5px;
+  pointer-events: none;
+}
+.gmap-proc-cap {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  fill: color-mix(in srgb, var(--grey) 75%, transparent);
+  pointer-events: none;
+}
+.gmap-proc:focus-visible rect {
+  stroke: var(--accent);
+  stroke-width: 2.2;
+}
+.gmap-law-link {
+  font-size: var(--text-xs);
+  color: var(--amber);
+  margin-left: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gmap-star { animation: none; }
+  .gmap-tilt .gmap-svg { transform: none; }
+  .gmap-layer { transition: none; }
 }
