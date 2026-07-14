@@ -25,6 +25,14 @@ import LineIcon from '../components/LineIcon.jsx'
 import PsiaScorecard from './PsiaScorecard.jsx'
 import { psiaScore, psiaOutlook } from './psia.js'
 
+/* SGIS 행정구역명은 레벨 경계 공백 없이 붙어 옴("경기도남양주시오남읍") — 시도/시군구(최대 2)/읍면동으로 분해해 띄어쓰기 */
+function fmtAdmNm(s) {
+  const m = String(s)
+    .replace(/\s+/g, '')
+    .match(/^([가-힣]+?(?:특별자치도|특별자치시|특별시|광역시|도))?([가-힣]+?(?:시|군|구))?([가-힣]+?(?:시|군|구))?(.+)?$/)
+  return m ? [m[1], m[2], m[3], m[4]].filter(Boolean).join(' ') : s
+}
+
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
 export default function SitePanel({ point, onClose, onSelectFacility, onAddCompare, inCompare }) {
   const [mw, setMw] = useState(40)
@@ -805,18 +813,24 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k"><Term k="인구격자">인구·밀도</Term> (SGIS 시군구 — 주민 수용성·민원)</div>
-            <div className="v">
+            <div className="v pop-v">
               {pop?.available ? (
                 <>
-                  {pop.admNm && `${pop.admNm} `}인구 <strong>{pop.population != null ? pop.population.toLocaleString() : '—'}명</strong>
-                  {pop.density != null && ` · 밀도 ${pop.density.toLocaleString()}명/km²`}
-                  {pop.households != null && ` · ${pop.households.toLocaleString()}세대`}
-                  {pop.density != null && (
-                    <span className={`badge ${pop.density < 3000 ? 'status-operating' : 'verify'}`} style={{ marginLeft: 8 }}>
-                      {pop.density < 3000 ? '저밀도 · 민원 리스크 낮음' : '고밀도 · 민원 유의'}
-                    </span>
-                  )}
-                  <span className="meta"> · {pop.level || '시군구'} 단위{pop.year ? ` · ${pop.year}` : ''}(정밀 반경은 격자 API 연동 시)</span>
+                  {/* 1줄: 행정구역(레벨 경계 띄어쓰기) + 판정 배지 / 2줄: 수치 / 3줄: 메타 — 가독 위계 */}
+                  <span className="pop-line1">
+                    {pop.admNm && <b>{fmtAdmNm(pop.admNm)}</b>}
+                    {pop.density != null && (
+                      <span className={`badge ${pop.density < 3000 ? 'status-operating' : 'verify'}`}>
+                        {pop.density < 3000 ? '저밀도 · 민원 리스크 낮음' : '고밀도 · 민원 유의'}
+                      </span>
+                    )}
+                  </span>
+                  <span className="pop-line2">
+                    인구 <strong>{pop.population != null ? pop.population.toLocaleString() : '—'}명</strong>
+                    {pop.density != null && ` · 밀도 ${pop.density.toLocaleString()}명/km²`}
+                    {pop.households != null && ` · ${pop.households.toLocaleString()}세대`}
+                  </span>
+                  <span className="meta">{pop.level || '시군구'} 단위{pop.year ? ` · ${pop.year}년` : ''} · 정밀 반경은 격자 API 연동 시</span>
                 </>
               ) : (
                 <span className="badge pending">연동 대기 — 리스크축 인구(SGIS 시군구)</span>

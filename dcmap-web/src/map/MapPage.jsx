@@ -896,9 +896,35 @@ export default function MapPage({ power = false }) {
     }
     if (!sitePoint) return
     let alive = true
+    // 폴리곤 평면 면적(㎡) — 등장방형 근사 + 신발끈. 필지 스케일에서 오차 무시 가능
+    const ringAreaM2 = (ring) => {
+      const rad = Math.PI / 180
+      const R = 6378137
+      const lat0 = ring[0][1] * rad
+      let a = 0
+      for (let i = 0; i < ring.length - 1; i++) {
+        const x1 = ring[i][0] * rad * R * Math.cos(lat0)
+        const y1 = ring[i][1] * rad * R
+        const x2 = ring[i + 1][0] * rad * R * Math.cos(lat0)
+        const y2 = ring[i + 1][1] * rad * R
+        a += x1 * y2 - x2 * y1
+      }
+      return Math.abs(a / 2)
+    }
+    const geomAreaM2 = (g) => {
+      try {
+        if (g.type === 'Polygon') return ringAreaM2(g.coordinates[0])
+        if (g.type === 'MultiPolygon') return g.coordinates.reduce((s, poly) => s + ringAreaM2(poly[0]), 0)
+      } catch {
+        /* 무시 */
+      }
+      return null
+    }
     parcelAt(sitePoint.lat, sitePoint.lng)
       .then((p) => {
         if (!alive || !p?.available || !p.geometry) return
+        const areaM2 = geomAreaM2(p.geometry)
+        const areaTxt = areaM2 ? `<br/>면적 ≈ <b>${Math.round(areaM2).toLocaleString()}㎡</b> (${Math.round(areaM2 / 3.3058).toLocaleString()}평)` : ''
         const layer = L.geoJSON(
           { type: 'Feature', geometry: p.geometry },
           {
@@ -913,7 +939,7 @@ export default function MapPage({ power = false }) {
           },
         )
         layer.bindTooltip(
-          `<div class="dc-hovercard"><strong>필지 경계</strong>${p.jibun ? ` · ${p.jibun}` : ''}${p.addr ? `<br/>${p.addr}` : ''}<br/><span style="opacity:.75">연속지적도(vworld) — 참고용, 지적측량 아님</span></div>`,
+          `<div class="dc-hovercard"><strong>필지 경계</strong>${p.jibun ? ` · ${p.jibun}` : ''}${p.addr ? `<br/>${p.addr}` : ''}${areaTxt}<br/><span style="opacity:.75">연속지적도(vworld) — 참고용, 지적측량 아님 · 면적은 도형 계산 근사</span></div>`,
           { sticky: true, className: 'dc-hovercard', opacity: 1 },
         )
         layer.addTo(map)

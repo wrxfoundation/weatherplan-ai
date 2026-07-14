@@ -7833,3 +7833,71 @@ main.about-page {
     transition: none;
   }
 }
+
+/* ── 소개 페이지 TOP 버튼 — 다크브라운 유리(웜 톤 통일) ── */
+:root[data-section='about'] .scroll-top-fab {
+  background: color-mix(in srgb, #1d1710 84%, transparent);
+  border-color: color-mix(in srgb, var(--gold) 32%, #382c1a);
+  color: var(--gold);
+}
+
+/* ── 인사이트 초안 생성 버튼 — 바이올렛 솔리드 CTA(기존 은은한 틴트에서 격상) ── */
+.ai-draft .btn.ai {
+  border: 0;
+  background: linear-gradient(135deg, var(--violet) 0%, #7c5cf0 100%);
+  color: #17102e;
+  font-weight: var(--weight-bold);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--violet) 35%, transparent);
+}
+.ai-draft .btn.ai:hover:not(:disabled) {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--violet) 85%, #fff) 0%, #8a6bff 100%);
+  box-shadow: 0 2px 16px color-mix(in srgb, var(--violet) 50%, transparent);
+}
+
+/* ── SitePanel 인구·밀도 셀 — 3줄 위계(행정구역/수치/메타)로 재정돈 ── */
+.pop-v .pop-line1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pop-v .pop-line1 b {
+  color: var(--text);
+}
+.pop-v .pop-line2 {
+  margin-top: 3px;
+}
+.pop-v .meta {
+  display: block;
+  margin-top: 3px;
+}
+
+/* ── 대시보드 공시 — 운영사 필터 칩 + NEW/키워드 배지 ── */
+.filing-corps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 10px;
+}
+.filing-corps button {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--grey);
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+.filing-corps button.on {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.badge.f-new {
+  color: var(--mint);
+  border-color: color-mix(in srgb, var(--mint) 50%, var(--line));
+}
+.badge.f-kw {
+  color: var(--orange);
+  border-color: color-mix(in srgb, var(--orange) 45%, var(--line));
+}
