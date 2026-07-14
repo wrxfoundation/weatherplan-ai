@@ -7023,15 +7023,24 @@ summary:focus-visible,
   position: relative;
   padding-top: 26px;
 }
+/* 히어로 워시 — 화면 좌우 끝까지 풀블리드(중앙 정렬 페이지 밖으로 확장).
+ * 넘친 폭은 아래 body overflow-x clip으로 흡수(스크롤 유발 없음) */
+:root[data-section='about'] body {
+  overflow-x: clip;
+}
 .about-hero::before {
   /* 상단 골드 워시 — 정적 라디얼(애니메이션 없음) */
   content: '';
   position: absolute;
-  inset: -80px -60px auto;
-  height: 340px;
+  top: -86px;
+  bottom: auto;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  height: 360px;
   background:
-    radial-gradient(420px 220px at 18% 8%, color-mix(in srgb, var(--gold) 13%, transparent), transparent 70%),
-    radial-gradient(520px 240px at 78% 0%, color-mix(in srgb, var(--gold) 7%, transparent), transparent 72%);
+    radial-gradient(46vw 240px at 24% 10%, color-mix(in srgb, var(--gold) 11%, transparent), transparent 70%),
+    radial-gradient(52vw 260px at 76% 0%, color-mix(in srgb, var(--gold) 6%, transparent), transparent 72%),
+    linear-gradient(180deg, color-mix(in srgb, var(--gold) 5%, transparent), transparent 78%);
   pointer-events: none;
 }
 .about-hero > * {
@@ -7049,7 +7058,8 @@ summary:focus-visible,
 }
 .about-hero h1 em {
   font-style: normal;
-  background: linear-gradient(115deg, #ffe9b3 8%, var(--gold) 46%, #cf9426 88%);
+  /* 샴페인 골드 그라데이션 — 하이라이트도 저채도로(중후함) */
+  background: linear-gradient(115deg, #efe3c2 8%, var(--gold) 46%, #93743a 88%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -7347,7 +7357,7 @@ summary:focus-visible,
 }
 .about-cta h2 em {
   font-style: normal;
-  background: linear-gradient(115deg, #ffe9b3 8%, var(--gold) 46%, #cf9426 88%);
+  background: linear-gradient(115deg, #efe3c2 8%, var(--gold) 46%, #93743a 88%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -7391,11 +7401,7 @@ summary:focus-visible,
 
 /* ================= 모바일 최적화 일괄 (PC 무영향 — 전부 미디어쿼리 안) ================= */
 @media (max-width: 760px) {
-  /* /about 가로 스크롤 40px 버그 — 히어로 글로우의 음수 우측 inset이 스크롤 폭을 늘림 */
-  .about-hero::before {
-    left: 0;
-    right: 0;
-  }
+  /* (참고) /about 히어로 글로우는 풀블리드 + body overflow-x clip으로 처리 — 별도 모바일 보정 불필요 */
   /* iOS 사파리 입력 포커스 자동 확대 방지 — 폼 컨트롤 16px 미만이면 강제 줌됨 */
   input[type='text'],
   input[type='search'],
@@ -7441,4 +7447,61 @@ summary:focus-visible,
   .seg-tab {
     min-height: 34px;
   }
+}
+
+/* ── 소개 v2 — 대시보드 카드 문법 이식 + 샴페인 골드 리파인 ──
+ * 카드: 좌상단 발광 스트로크(--stroke-gradient, about에선 accent=gold라 골드로 흐름)
+ *       + 하단 골드 포인트 라디얼 + 코너 워시. 대시보드/계산기 카드와 동일 문법. */
+.about-stat,
+.pain-card,
+.wow-card,
+.step-card,
+.about-honest,
+.about-cta {
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--gold) 11%, var(--line));
+  background:
+    radial-gradient(135% 78% at 66% 122%, color-mix(in srgb, var(--gold) 13%, transparent) 0%, transparent 58%),
+    var(--corner-wash),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface) 93%, var(--gold)) 0%, color-mix(in srgb, var(--surface) 88%, var(--bg)) 30%);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
+}
+.about-stat::before,
+.pain-card::before,
+.wow-card::before,
+.step-card::before,
+.about-honest::before,
+.about-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--stroke-gradient);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+/* 단계 연결 화살표는 스트로크 위로 */
+.step-card:not(:last-child)::after {
+  z-index: 1;
+}
+/* 스탯 숫자 — 순금색 대신 상아빛 하이라이트 섞어 차분하게 */
+.about-stat b {
+  color: color-mix(in srgb, var(--gold) 82%, #f4ecd8);
+}
+.pain-num {
+  color: color-mix(in srgb, var(--gold) 82%, #f4ecd8);
+}
+
+/* ── SitePanel 5축 막대 — 라벨·값 칼럼 축소로 막대 가용폭 확대(피드백: 막대 넉넉히) ── */
+.score-axes .hbar-row {
+  grid-template-columns: 64px 1fr auto;
+  gap: 8px;
+}
+.score-axes .hbar-value {
+  min-width: 74px;
 }
