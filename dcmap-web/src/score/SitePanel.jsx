@@ -22,6 +22,7 @@ import { useAiStream } from '../ai/useAiStream.js'
 import AiResultCard from '../ai/AiResultCard.jsx'
 import CopyButton from '../ui/CopyButton.jsx'
 import LineIcon from '../components/LineIcon.jsx'
+import PsiaScorecard from './PsiaScorecard.jsx'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
 export default function SitePanel({ point, onClose, onSelectFacility, onAddCompare, inCompare }) {
@@ -380,6 +381,15 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             </li>
           </ul>
         </details>
+
+        {/* 전력계통영향평가 통과 스코어카드 — 공개 요인 정량화(규제 독점 분석) */}
+        <PsiaScorecard
+          nonCapital={nonCapital}
+          mw={mw}
+          gridMw={grid?.mw ?? null}
+          approvalPct={approval?.ratePct ?? null}
+          subKm={r.nearestSub?.km ?? null}
+        />
 
         {/* 프로세스 관문 전망 — 용량·입지로 본 두 핵심 게이트(P07 접속·P08 계통영향평가) 통과 난이도 */}
         {(() => {
