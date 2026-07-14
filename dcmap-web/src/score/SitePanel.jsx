@@ -18,8 +18,8 @@ import { scoreSite, haversineKm } from './engine.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
 import Term from '../components/Term.jsx'
-import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
-import AiText from '../ai/AiText.jsx'
+import { useAiStream } from '../ai/useAiStream.js'
+import AiResultCard from '../ai/AiResultCard.jsx'
 import CopyButton from '../ui/CopyButton.jsx'
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
@@ -47,14 +47,14 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   // 로딩 상태 — 값 null이 '불러오는 중'인지 '데이터 없음'인지 구분(스피너 vs 미제공).
   const [loading, setLoading] = useState(true)
   // AI 부지 브리프: null(미생성) | 'loading' | { text, model } | { error }
-  const [ai, setAi] = useState(null)
+  const { ai, run, reset, busy } = useAiStream()
 
   useEffect(() => {
     let alive = true
     // 새 지점: 좌표 bbox로 수도권 잠정 판정(주소 확보 시 정정). 사용자 수동선택 플래그 초기화.
     zoneTouched.current = false
     setLoading(true)
-    setAi(null)
+    reset()
     setNonCapital(!isCapitalByPoint(point.lat, point.lng))
     setAddr(null)
     setWx(null)
@@ -182,8 +182,16 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     return { n10: r10.length, op10: r10.filter((f) => f.status === 'operating').length, n30: within(30).length }
   }, [point])
 
+  // 정적 데이터셋 최근접 스캔(O(n) 하버사인)은 point당 1회만 — 리렌더 13회+에서 재계산 방지.
+  const np = useMemo(() => nearestPlant(point), [point])
+  const wc = useMemo(() => windContext(point), [point])
+  const reNear = useMemo(() => nearestRenewable(point.lat, point.lng), [point])
+  const waterNear = useMemo(() => nearestWaterSource(point.lat, point.lng), [point])
+  const clusterNear = useMemo(() => nearestCluster(point.lat, point.lng), [point])
+  const icNear = useMemo(() => nearestIndustrialComplex(point.lat, point.lng), [point])
+
   // 스코어링 — 라이브 SGIS 리스크(침수·산사태·인구)·기후지수·발전단지 근접·계통 공급여유·DC 승인율을 실제 점수축에 반영(로드되며 갱신).
-  const plantKm = useMemo(() => nearestPlant(point)?.km ?? null, [point])
+  const plantKm = np?.km ?? null
   const r = useMemo(
     () => scoreSite({ lat: point.lat, lng: point.lng, mw, nonCapital, flood, landslide: disaster, pop, climate: climateIdx, plantKm, landUse, gridMw: grid?.mw ?? null, gridApproval: approval?.ratePct ?? null, parcelArea: landArea, parcelPrice: officialPrice }),
     [point, mw, nonCapital, flood, disaster, pop, climateIdx, plantKm, landUse, grid, approval, landArea, officialPrice],
@@ -191,8 +199,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const dong = dongLabel(addr) // 표출값 동단위 근거지
 
   // AI 부지 브리프 — 실제 확보된 값만 스냅샷으로 넘긴다(없으면 null → 프롬프트가 '미확보'로 처리).
-  const genAiReport = async () => {
-    setAi('loading')
+  const genAiReport = () => {
     const snap = {
       좌표: `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}`,
       주소: addr?.parcel || addr?.road || null,
@@ -218,9 +225,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
       발전단지거리km: plantKm ?? null,
       축상태: r.axes.map((a) => ({ 축: a.label, 확보: a.knownMax > 0 ? `${a.known}/${a.max}` : '대기' })),
     }
-    const res = await callAiStream('report', { data: snap }, (partial) => setAi({ text: partial, streaming: true }))
-    if (res?.available && res.text) setAi({ text: res.text, usage: res.usage })
-    else setAi({ error: res?.reason || 'error' })
+    run('report', { data: snap })
   }
   // 지역 전력 여건(한전 변전소 현황 + 전력 자급률 + 계통 공급여유) — 주소 시도 기준. 참고 맥락(부지별 여유량 아님).
   const regionPower = useMemo(
@@ -498,8 +503,6 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             </div>
           </div>
           {(() => {
-            const np = nearestPlant(point)
-            const wc = windContext(point)
             return np ? (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
                 <div className="k"><Term k="발전단지">발전 인프라</Term> 근접성 (맥락 — 전원 매칭 아님)</div>
@@ -517,7 +520,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             ) : null
           })()}
           {(() => {
-            const re = nearestRenewable(point.lat, point.lng)
+            const re = reNear
             if (!re) return null
             const label = re.km <= 10 ? '조달 유리' : re.km <= 30 ? '조달 가능' : '원거리'
             return (
@@ -537,7 +540,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             const hasWamis = w && w.m3day
             const kw = sido && kwater?.available ? kwater.bySido?.[sido] : null
             const hasKwater = kw && (kw.취수용량 > 0 || kw.정수용량 > 0)
-            const ws = nearestWaterSource(point.lat, point.lng) // 최근접 댐(상시)
+            const ws = waterNear // 최근접 댐(상시)
             const wsBadge = ws ? (ws.km <= 20 ? '수원 인접' : ws.km <= 50 ? '수원 근접' : '원거리') : null
             const wsTone = ws ? (ws.km <= 20 ? 'status-operating' : ws.km <= 50 ? 'verify' : 'pending') : null
             if (!hasWamis && !hasKwater && !ws) return null
@@ -677,7 +680,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             </div>
           ) : null}
           {(() => {
-            const ic = nearestIndustrialComplex(point.lat, point.lng)
+            const ic = icNear
             return ic ? (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
                 <div className="k">산업단지 입지 (인센티브·전력/용수 기반시설)</div>
@@ -757,7 +760,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               </span>
               <div className="cell-basis">기존/계획 DC 집적. 집적=광케이블·전력·인력 성숙(+), 과밀=전력·부지 경쟁(−). AI InfraMap 시설 시드 기준</div>
               {(() => {
-                const c = nearestCluster(point.lat, point.lng)
+                const c = clusterNear
                 if (!c || c.km > 40) return null // 40km 이내만 경쟁 신호
                 const heavy = (c.powerGw || 0) >= 5
                 return (
@@ -983,8 +986,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               fc,
               landPrice: landPriceFor(r.nearest[0]?.facility),
               dongPulse: dongPulseFor(r.nearest[0]?.facility),
-              plantCtx: nearestPlant(point),
-              windCtx: windContext(point),
+              plantCtx: np,
+              windCtx: wc,
               headroom,
               flood,
               pop,
@@ -997,9 +1000,9 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               sido,
               water,
               kwater,
-              re: nearestRenewable(point.lat, point.lng),
-              waterSource: nearestWaterSource(point.lat, point.lng),
-              cluster: nearestCluster(point.lat, point.lng),
+              re: reNear,
+              waterSource: waterNear,
+              cluster: clusterNear,
             })
           const onDownload = () => {
             const blob = new Blob([makeReport()], { type: 'text/markdown;charset=utf-8' })
@@ -1045,8 +1048,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           }
           return (
             <div className="card-actions">
-              <button type="button" className="btn ai" onClick={genAiReport} disabled={ai === 'loading' || ai?.streaming}>
-                {ai === 'loading' || ai?.streaming ? 'AI 분석 중…' : '✨ AI 부지 브리프'}
+              <button type="button" className="btn ai" onClick={genAiReport} disabled={busy}>
+                {busy ? 'AI 분석 중…' : '✨ AI 부지 브리프'}
               </button>
               <CopyButton getText={makeReport} label="간이 리포트 복사" copiedLabel="복사됨" />
               <button type="button" className="btn" onClick={onPdf}>
@@ -1074,7 +1077,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                       gridMw: grid?.mw ?? null,
                       approvalPct: approval?.ratePct ?? null,
                       subKm: r.nearestSub?.km ?? null,
-                      icKm: nearestIndustrialComplex(point.lat, point.lng)?.km ?? null,
+                      icKm: icNear?.km ?? null,
                       areaM2: landArea?.areaM2 ?? null,
                       netScore: r.axes.find((a) => a.key === 'network')?.known ?? null,
                       climate: climateIdx?.label ?? null,
@@ -1095,35 +1098,13 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
         })()}
 
         {/* AI 부지 브리프 결과 — 실데이터 스냅샷 기반, 없는 값은 '미확보'로 명시(정직) */}
-        {ai === 'loading' && (
-          <div className="ai-card loading" role="status">
-            <span className="sp-spinner" aria-hidden /> AI가 확보된 근거만으로 브리프를 작성 중…
-          </div>
-        )}
-        {ai && ai !== 'loading' && ai.text && (
-          <div className="ai-card" role="region" aria-label="AI 부지 브리프">
-            <div className="ai-card-head">
-              <span className="ai-badge">✨ AI 브리프</span>
-              <span className="ai-src">공개 데이터 스냅샷 기반 · 없는 값은 미확보 표기</span>
-            </div>
-            <AiText text={ai.text} />
-            {ai.streaming && <span className="ai-cursor" aria-hidden />}
-            {!ai.streaming && (
-              <>
-                {ai.usage && <div className="ai-usage">{usageLabel(ai.usage)}</div>}
-                <button type="button" className="ai-regen" onClick={genAiReport}>다시 생성</button>
-              </>
-            )}
-          </div>
-        )}
-        {ai && ai !== 'loading' && ai.error && (
-          <div className="ai-card err" role="alert">
-            {aiReasonLabel(ai.error)}
-            {ai.error !== 'not_configured' && (
-              <button type="button" className="ai-regen" onClick={genAiReport}>다시 시도</button>
-            )}
-          </div>
-        )}
+        <AiResultCard
+          ai={ai}
+          badge="✨ AI 브리프"
+          src="공개 데이터 스냅샷 기반 · 없는 값은 미확보 표기"
+          onRegen={genAiReport}
+          loadingText="AI가 확보된 근거만으로 브리프를 작성 중…"
+        />
 
         <p className="geo-note">
           간이 리포트 — 산출된 근거만 수치로, 대기 축은 명시. AI 브리프는 확보된 스냅샷만 사용(없는 값 생성 안 함).

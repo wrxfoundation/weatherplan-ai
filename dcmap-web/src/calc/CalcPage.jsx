@@ -4,8 +4,8 @@ import TopBar from '../TopBar.jsx'
 import { FACILITIES, CAPITAL_SIDOS } from '../data/facilities.js'
 import { checkPowerTrack } from './trackCheck.js'
 import Term from '../components/Term.jsx'
-import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
-import AiText from '../ai/AiText.jsx'
+import { useAiStream } from '../ai/useAiStream.js'
+import AiResultCard from '../ai/AiResultCard.jsx'
 import SpringNumber from '../ui/SpringNumber.jsx'
 import CopyButton from '../ui/CopyButton.jsx'
 
@@ -185,7 +185,7 @@ export default function CalcPage() {
   const [kgco2PerKwh, setKgco2PerKwh] = useState(() => Math.min(1, Math.max(0, num(sp.get('e'), DEFAULT_KGCO2_PER_KWH))))
   const [rePct, setRePct] = useState(() => Math.min(100, Math.max(0, Math.round(num(sp.get('re'), 0)))))
   const [ppaWonPerKwh, setPpaWonPerKwh] = useState(() => Math.min(500, Math.max(50, num(sp.get('ppa'), DEFAULT_PPA_WON_PER_KWH))))
-  const [ai, setAi] = useState(null) // null | 'loading' | { text, usage, streaming } | { error }
+  const { ai, run, busy } = useAiStream()
 
   const [scenarios, setScenarios] = useState(() => {
     try {
@@ -334,8 +334,7 @@ export default function CalcPage() {
     ].join('\n')
   }
 
-  const genAi = async () => {
-    setAi('loading')
+  const genAi = () => {
     const track = checkPowerTrack(m.contractMw, { nonCapital })
     const snap = {
       ...buildSnapshot(),
@@ -344,13 +343,7 @@ export default function CalcPage() {
       계통영향평가면제: track.exemption ? `${track.exemption.effective}~ 가능성` : null,
       이_용량_가능_공개시설수: candidates,
     }
-    const res = await callAiStream(
-      'calc',
-      { query: `${gpu.label} ${count.toLocaleString()}대 ${work.label} 클러스터 계산 결과 해설`, data: snap },
-      (partial) => setAi({ text: partial, streaming: true }),
-    )
-    if (res?.available && res.text) setAi({ text: res.text, usage: res.usage })
-    else setAi({ error: res?.reason || 'error' })
+    run('calc', { query: `${gpu.label} ${count.toLocaleString()}대 ${work.label} 클러스터 계산 결과 해설`, data: snap })
   }
 
   // 시나리오 저장/삭제 — localStorage 지속(최대 3개). 학습 vs 추론 TCO 비교 등.
@@ -643,8 +636,8 @@ export default function CalcPage() {
           </div>
 
           <div className="card-actions" style={{ marginTop: 12 }}>
-            <button type="button" className="btn ai" onClick={genAi} disabled={ai === 'loading' || ai?.streaming}>
-              {ai === 'loading' || ai?.streaming ? 'AI 해설 작성 중…' : '✨ AI 계산 해설'}
+            <button type="button" className="btn ai" onClick={genAi} disabled={busy}>
+              {busy ? 'AI 해설 작성 중…' : '✨ AI 계산 해설'}
             </button>
             <button type="button" className="btn" onClick={saveScenario}>
               {savedFlash ? '시나리오 저장됨 ✓' : '＋ 시나리오로 저장'}
@@ -653,35 +646,13 @@ export default function CalcPage() {
           </div>
 
           {/* AI 계산 해설 — 계산된 값만 스냅샷으로 전달(창작 없음) */}
-          {ai === 'loading' && (
-            <div className="ai-card loading" role="status">
-              <span className="sp-spinner" aria-hidden /> 계산 결과로 전력·경제성 해설 작성 중…
-            </div>
-          )}
-          {ai && ai !== 'loading' && ai.text && (
-            <div className="ai-card" role="region" aria-label="AI 계산 해설">
-              <div className="ai-card-head">
-                <span className="ai-badge">✨ AI 계산 해설</span>
-                <span className="ai-src">계산값 스냅샷 기반 · 전력비·탄소는 대표값 추정</span>
-              </div>
-              <AiText text={ai.text} />
-              {ai.streaming && <span className="ai-cursor" aria-hidden />}
-              {!ai.streaming && (
-                <>
-                  {ai.usage && <div className="ai-usage">{usageLabel(ai.usage)}</div>}
-                  <button type="button" className="ai-regen" onClick={genAi}>다시 생성</button>
-                </>
-              )}
-            </div>
-          )}
-          {ai && ai !== 'loading' && ai.error && (
-            <div className="ai-card err" role="alert">
-              {aiReasonLabel(ai.error)}
-              {ai.error !== 'not_configured' && (
-                <button type="button" className="ai-regen" onClick={genAi}>다시 시도</button>
-              )}
-            </div>
-          )}
+          <AiResultCard
+            ai={ai}
+            badge="✨ AI 계산 해설"
+            src="계산값 스냅샷 기반 · 전력비·탄소는 대표값 추정"
+            onRegen={genAi}
+            loadingText="계산 결과로 전력·경제성 해설 작성 중…"
+          />
 
           <p className="chart-note">
             랙 밀도·PUE·부하율은 업계 공개 설계 관행의 대표값(수정 가능) — 확정 설계값이 아닌 부지 검토용 근사입니다.

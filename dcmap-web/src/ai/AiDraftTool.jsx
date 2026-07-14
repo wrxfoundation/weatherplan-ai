@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
-import { callAiStream, usageLabel, aiReasonLabel } from '../data/aiApi.js'
+import { usageLabel } from '../data/aiApi.js'
 import { FACILITIES } from '../data/facilities.js'
 import { POWER_BALANCE } from '../data/powerBalance.js'
 import { recommendSites, recoReasons } from '../score/recommend.js'
-import AiText from './AiText.jsx'
+import { useAiStream } from './useAiStream.js'
+import AiResultCard from './AiResultCard.jsx'
 import CopyButton from '../ui/CopyButton.jsx'
 
 /* AI 인사이트 자동초안 — 운영자용. 주제 + 실제 집계 데이터 스냅샷만 넘겨 마크다운 기사 '초안'을 생성.
@@ -68,17 +69,14 @@ function buildSnapshot() {
 
 export default function AiDraftTool() {
   const [topic, setTopic] = useState('')
-  const [ai, setAi] = useState(null)
+  const { ai, run, busy } = useAiStream()
   const snapshot = useMemo(() => buildSnapshot(), [])
 
-  const gen = async (t) => {
+  const gen = (t) => {
     const query = (t ?? topic).trim()
-    if (!query || ai === 'loading') return
+    if (!query || busy) return
     setTopic(query)
-    setAi('loading')
-    const res = await callAiStream('draft', { query, data: snapshot }, (partial) => setAi({ text: partial, streaming: true }))
-    if (res?.available && res.text) setAi({ text: res.text, usage: res.usage })
-    else setAi({ error: res?.reason || 'error' })
+    run('draft', { query, data: snapshot })
   }
 
   return (
@@ -105,32 +103,26 @@ export default function AiDraftTool() {
           placeholder="예: 비수도권 계통 여유와 데이터센터 입지 유인"
           aria-label="초안 주제"
         />
-        <button type="submit" className="btn ai" disabled={ai === 'loading' || ai?.streaming || !topic.trim()}>
-          {ai === 'loading' || ai?.streaming ? '초안 작성 중…' : '초안 생성'}
+        <button type="submit" className="btn ai" disabled={busy || !topic.trim()}>
+          {busy ? '초안 작성 중…' : '초안 생성'}
         </button>
       </form>
       <div className="ai-draft-presets">
         {PRESETS.map((p) => (
-          <button key={p} type="button" className="ai-sug" onClick={() => gen(p)} disabled={ai === 'loading' || ai?.streaming}>
+          <button key={p} type="button" className="ai-sug" onClick={() => gen(p)} disabled={busy}>
             {p}
           </button>
         ))}
       </div>
 
-      {ai === 'loading' && (
-        <div className="ai-card loading" role="status">
-          <span className="sp-spinner" aria-hidden /> 실데이터 스냅샷으로 초안 작성 중…
-        </div>
-      )}
-      {ai && ai !== 'loading' && ai.text && (
-        <div className="ai-card" role="region" aria-label="AI 초안 결과">
-          <div className="ai-card-head">
-            <span className="ai-badge">✨ 초안 (검토 전)</span>
-            <span className="ai-src">사실 확인 후 발행하세요 · 스냅샷 실값만 사용</span>
-          </div>
-          <AiText text={ai.text} />
-          {ai.streaming && <span className="ai-cursor" aria-hidden />}
-          {!ai.streaming && (
+      <AiResultCard
+        ai={ai}
+        badge="✨ 초안 (검토 전)"
+        src="사실 확인 후 발행하세요 · 스냅샷 실값만 사용"
+        onRegen={() => gen()}
+        loadingText="실데이터 스냅샷으로 초안 작성 중…"
+        footer={
+          ai && ai.text ? (
             <div className="ai-draft-foot">
               <CopyButton getText={() => ai.text} label="초안 복사" copiedLabel="복사됨" />
               <button type="button" className="ai-regen" onClick={() => gen()}>
@@ -138,17 +130,9 @@ export default function AiDraftTool() {
               </button>
               {ai.usage && <span className="ai-usage">{usageLabel(ai.usage)}</span>}
             </div>
-          )}
-        </div>
-      )}
-      {ai && ai !== 'loading' && ai.error && (
-        <div className="ai-card err" role="alert">
-          {aiReasonLabel(ai.error)}
-          {ai.error !== 'not_configured' && (
-            <button type="button" className="ai-regen" onClick={() => gen()}>다시 시도</button>
-          )}
-        </div>
-      )}
+          ) : undefined
+        }
+      />
     </section>
   )
 }
