@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { STATUS_LABEL, isCapitalByAddr, isCapitalByPoint, FACILITIES } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, landUseFor, landRegFor, landAreaFor, landPriceOfficialFor, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, waterCapacity, kwaterInfra, dongLabel } from '../data/liveApi.js'
+import { forecastFor, headroomFor, landUseFor, landRegFor, landAreaFor, landPriceOfficialFor, parcelAt, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, waterCapacity, kwaterInfra, dongLabel } from '../data/liveApi.js'
+import { geomAreaM2 } from '../data/geomArea.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
 import { substationForSido } from '../data/substations.js'
@@ -122,10 +123,21 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     jobs.push(landUseFor(point.lat, point.lng).then((v) => alive && setLandUse(v)))
     jobs.push(landRegFor(point.lat, point.lng).then((v) => alive && setLandReg(v)))
     jobs.push(
-      landAreaFor(point.lat, point.lng).then((v) => {
+      landAreaFor(point.lat, point.lng).then(async (v) => {
         if (!alive) return
-        setLandArea(v)
-        if (v?.pnu) return landPriceOfficialFor(v.pnu).then((p) => alive && setOfficialPrice(p))
+        if (v) {
+          setLandArea(v)
+          if (v?.pnu) return landPriceOfficialFor(v.pnu).then((p) => alive && setOfficialPrice(p))
+          return undefined
+        }
+        // 클라 vworld 키가 없으면 서버 연속지적(parcel) 폴백 — 면적(도형 계산)·지번·지목까지 확보
+        const p = await parcelAt(point.lat, point.lng).catch(() => null)
+        if (!alive || !p?.available) return undefined
+        const areaM2 = p.geometry ? Math.round(geomAreaM2(p.geometry) ?? 0) || null : null
+        const jimok = (String(p.jibun || '').trim().match(/([가-힣])$/) || [])[1] || null
+        setLandArea({ areaM2, jibun: p.jibun ?? null, jimok, pnu: p.pnu ?? null, source: 'server-parcel' })
+        if (p.pnu) return landPriceOfficialFor(p.pnu).then((pr) => alive && setOfficialPrice(pr))
+        return undefined
       }),
     )
     jobs.push(forecastFor(point.lat, point.lng).then((v) => alive && setFc(v)))
@@ -509,6 +521,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   )}
                   {headroom.cumulativeMw != null && ` · 누적연계 ${headroom.cumulativeMw.toLocaleString()}MW`}
                   {headroom.capacityMw != null && ` · 용량 ${headroom.capacityMw.toLocaleString()}MW`}
+                  {headroom.substNm && (
+                    <span className="badge status-operating" style={{ marginLeft: 8 }}>{headroom.substNm}변전소</span>
+                  )}
+                  {headroom.rows != null && headroom.rows > 1 && (
+                    <span className="meta"> · 관내 선로 {headroom.rows}개 중 최대 여유</span>
+                  )}
                   {headroom.note && <div className="cell-basis">{headroom.note}</div>}
                 </>
               ) : (
@@ -696,7 +714,9 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               )}
               {landArea?.areaM2 != null && (
                 <div className="cell-basis">
-                  필지 면적 <strong>{landArea.areaM2.toLocaleString()}㎡</strong> (vworld 연속지적)
+                  필지 면적 <strong>{landArea.areaM2.toLocaleString()}㎡</strong> ({Math.round(landArea.areaM2 / 3.3058).toLocaleString()}평 · vworld 연속지적{landArea.source === 'server-parcel' ? ' · 도형 계산 근사' : ''})
+                  {landArea.jimok && <> · 지목 <strong>{landArea.jimok}</strong></>}
+                  {landArea.jibun && ` · ${landArea.jibun}`}
                   {officialPrice?.available && officialPrice.pricePerM2 != null && (
                     <> · 공시지가 <strong>{officialPrice.pricePerM2.toLocaleString()}원/㎡</strong>{officialPrice.year ? ` (${officialPrice.year})` : ''}</>
                   )}
