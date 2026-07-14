@@ -7,9 +7,10 @@ AI가 기억이 아니라 원문을 인용하게 하는 장치입니다.
 ## 활성화 (5분, 무료)
 
 1. https://open.law.go.kr → 회원가입 → **OPEN API 신청** (무료, 즉시).
-   - OC 값 = 가입 이메일의 ID 부분 (예: `user@gmail.com` → `user`).
+   - OC 값 = **마이페이지 → API인증키관리**의 "현재 API인증키(OC)" 값.
+     (기본값은 이메일 ID 부분이지만 변경 가능 — 화면에 표시된 현재 값을 그대로 사용)
 2. Vercel → Settings → Environment Variables:
-   - Key: `LAW_GO_KR_OC` / Value: 발급받은 OC
+   - Key: `LAW_GO_KR_OC` / Value: 위 API인증키(OC) 값
 3. Redeploy. 끝.
 
 ## 동작 방식 (정직성)
