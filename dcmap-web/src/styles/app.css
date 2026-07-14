@@ -7516,6 +7516,17 @@ summary:focus-visible,
     radial-gradient(1100px 700px at 85% -12%, color-mix(in srgb, var(--gold) 8%, transparent), transparent 62%),
     radial-gradient(900px 650px at -8% 108%, color-mix(in srgb, var(--gold) 5%, transparent), transparent 60%),
     linear-gradient(180deg, #17120b 0%, #0c0906 100%);
+  /* shorthand가 attachment를 scroll로 초기화 → 뷰포트 높이에서 그라데이션이 끊겨 띠가 생김. 기본 body와 동일하게 고정 */
+  background-attachment: fixed;
+}
+/* 소개 페이지에선 GNB(상단바·모바일 하단바)도 웜 톤 통일 — 유리 표면·보더·잉크 토큰만 재정의.
+ * 섹션 도트는 링크별 고정 --nav-tone(cyan·green·violet·teal·gold)이라 변동 없음 */
+:root[data-section='about'] .topbar,
+:root[data-section='about'] .mobile-nav {
+  --surface: #1d1710;
+  --line: #382c1a;
+  --grey: #a89d86;
+  --text: #f0e9db;
 }
 main.about-page {
   --bg: #14100a;
