@@ -28,6 +28,7 @@
   --violet: #a78bfa; /* 지식·가이드 GNB 섹션 톤 */
   --violet-ink: #c4b5fd; /* 지식·AI 전경 텍스트/커서(violet-300) */
   --mint: #34d399; /* AI·재생 강조 — 운영 green과 구분되는 민트 */
+  --gold: #f2c14e; /* 서비스 소개(쇼케이스) 황금톤 — 건설 orange와 구분되는 골드 */
 
   /* GNB 섹션 톤 — 탐색(맵)=cyan / 도구·데이터=green / 지식·가이드=violet */
   --nav-explore: #35d5ee;
@@ -134,4 +135,9 @@
 :root[data-section='glossary'] {
   --accent: #2dd4bf;
   --accent-deep: color-mix(in srgb, #2dd4bf 55%, #06231e);
+}
+/* 서비스 소개 — 황금톤(브랜드 쇼케이스). accent 파생값(글로우·보더·버튼) 자동 추종 */
+:root[data-section='about'] {
+  --accent: var(--gold);
+  --accent-deep: color-mix(in srgb, var(--gold) 55%, #261a05);
 }

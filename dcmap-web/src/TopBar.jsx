@@ -6,7 +6,7 @@ import { geocodeAddr } from './data/liveApi.js'
 // 라우트 → GNB 섹션(색상 톤). 페이지 전체 accent가 섹션 톤을 따른다.
 const SECTION_PREFIX = [
   ['/calc', 'data'], ['/dashboard', 'data'], ['/data', 'data'], ['/stats', 'data'], ['/land', 'data'], ['/compare', 'data'], ['/pricing', 'data'],
-  ['/insights', 'knowledge'], ['/roadmap', 'knowledge'], ['/glossary', 'glossary'],
+  ['/insights', 'knowledge'], ['/roadmap', 'knowledge'], ['/glossary', 'glossary'], ['/about', 'about'],
   ['/map3d', 'explore'], ['/power', 'explore'], ['/dc', 'explore'], ['/region', 'explore'],
 ]
 function sectionForPath(pathname) {
@@ -225,6 +225,9 @@ export default function TopBar() {
         </NavLink>
         <NavLink to="/glossary" data-nav="glossary" className={({ isActive }) => (isActive ? 'active' : '')}>
           용어집
+        </NavLink>
+        <NavLink to="/about" data-nav="about" className={({ isActive }) => (isActive ? 'active' : '')}>
+          소개
         </NavLink>
         <NavLink to="/pricing" data-nav="data" className={({ isActive }) => `nav-contact${isActive ? ' active' : ''}`} title="요금·문의">
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
