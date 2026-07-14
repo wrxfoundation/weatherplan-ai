@@ -1,7 +1,7 @@
 {
   "version": "0.1",
-  "generated_at": "2026-07-13",
-  "count": 79,
+  "generated_at": "2026-07-14",
+  "count": 81,
   "facilities": [
     {
       "id": "kr-naver-gak-chuncheon",
@@ -1740,6 +1740,50 @@
       "lat": 37.545116,
       "lng": 126.676059,
       "geocode_level": "sigungu"
+    },
+    {
+      "id": "kr-aegis-ansan-choji",
+      "country": "KR",
+      "name": "이지스 안산 초지동 데이터센터",
+      "name_en": "Aegis Ansan Choji Hyperscale DC",
+      "operator": "이지스자산운용",
+      "type": "코로케이션",
+      "status": "construction",
+      "sido": "경기",
+      "sigungu": "안산시",
+      "address_public": "경기 안산시 단원구 초지동",
+      "power_mw_public": 40,
+      "year": 2027,
+      "note": "이지스자산운용(인베스코) 하이퍼스케일 DC · 40MW 수전 · 착공 2025.3 · 준공 2027 하반기",
+      "source_type": "언론보도",
+      "source_url": "https://www.fnnews.com/news/202503120938184854",
+      "needs_verify": false,
+      "updated_at": "2026-07-14",
+      "lat": 37.315565,
+      "lng": 126.812133,
+      "geocode_level": "parcel"
+    },
+    {
+      "id": "kr-equinix-sl3x",
+      "country": "KR",
+      "name": "에퀴닉스 SL3x",
+      "name_en": "Equinix SL3x",
+      "operator": "에퀴닉스(GIC 합작)",
+      "type": "코로케이션",
+      "status": "operating",
+      "sido": "경기",
+      "sigungu": "고양시",
+      "address_public": "경기 고양시 덕양구 향동동 583",
+      "power_mw_public": 24,
+      "year": 2024,
+      "note": "Equinix xScale 하이퍼스케일 · GIC 합작 · 향동동 SL2x 인접 캠퍼스",
+      "source_type": "언론보도",
+      "source_url": "https://www.datacenterdynamics.com/en/companies/equinix",
+      "needs_verify": false,
+      "updated_at": "2026-07-14",
+      "lat": 37.597418,
+      "lng": 126.887062,
+      "geocode_level": "parcel"
     }
   ]
 }
