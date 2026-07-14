@@ -175,6 +175,9 @@ a {
 .topbar nav a[data-nav='knowledge'] {
   --nav-tone: var(--nav-knowledge);
 }
+.topbar nav a[data-nav='about'] {
+  --nav-tone: var(--gold);
+}
 .topbar nav a[data-nav]::before {
   content: '';
   width: 5px;
@@ -6949,4 +6952,382 @@ summary:focus-visible,
   .gmap-star { animation: none; }
   .gmap-tilt .gmap-svg { transform: none; }
   .gmap-layer { transition: none; }
+}
+
+/* ================= 서비스 소개 (/about) — 황금톤 쇼케이스 =================
+ * data-section='about'가 --accent를 --gold로 전환하므로, 여기서는 레이아웃과
+ * 골드 전용 질감(그라데이션 타이틀·워시)만 정의한다. 연속 애니메이션 금지(성능 원칙). */
+.about-page {
+  max-width: 1000px;
+}
+
+/* ---- 히어로 ---- */
+.about-hero {
+  position: relative;
+  padding-top: 26px;
+}
+.about-hero::before {
+  /* 상단 골드 워시 — 정적 라디얼(애니메이션 없음) */
+  content: '';
+  position: absolute;
+  inset: -80px -60px auto;
+  height: 340px;
+  background:
+    radial-gradient(420px 220px at 18% 8%, color-mix(in srgb, var(--gold) 13%, transparent), transparent 70%),
+    radial-gradient(520px 240px at 78% 0%, color-mix(in srgb, var(--gold) 7%, transparent), transparent 72%);
+  pointer-events: none;
+}
+.about-hero > * {
+  position: relative;
+}
+.about-hero h1 {
+  font-size: clamp(26px, 4.6vw, 36px);
+  max-width: 21em;
+  word-break: keep-all; /* 한글 어절 중간 줄바꿈 방지("답/합니다") */
+}
+.about-page h2,
+.about-lede,
+.wow-card h3 {
+  word-break: keep-all;
+}
+.about-hero h1 em {
+  font-style: normal;
+  background: linear-gradient(115deg, #ffe9b3 8%, var(--gold) 46%, #cf9426 88%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.about-lede {
+  max-width: 64ch;
+  line-height: 1.7;
+}
+.about-lede b {
+  color: var(--text);
+}
+
+/* 히어로 통계 스트립 — 숫자는 전부 데이터 산출값 */
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin: 24px 0 4px;
+}
+.about-stat {
+  padding: 14px 16px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--gold) 24%, var(--line));
+  background: var(--glass-surface);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
+}
+.about-stat b {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 26px;
+  font-weight: var(--weight-bold);
+  color: var(--gold);
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+.about-stat b small {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  margin-left: 3px;
+  color: color-mix(in srgb, var(--gold) 70%, var(--grey));
+}
+.about-stat span {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--text-xs);
+  color: var(--grey);
+  line-height: 1.4;
+}
+
+/* ---- 공통 섹션 ---- */
+.about-sec {
+  margin-top: 46px;
+}
+.about-sec h2 {
+  margin: 2px 0 6px;
+  font-size: 20px;
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-tight);
+}
+.about-sec-sub {
+  margin: 0 0 16px;
+  font-size: var(--text-body);
+  color: var(--grey);
+  max-width: 60ch;
+}
+
+/* ---- 시장 페인 ---- */
+.pain-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+.pain-card {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--navy-deep) 45%, transparent);
+}
+.pain-num {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 30px;
+  font-weight: var(--weight-bold);
+  color: var(--gold);
+  line-height: 1.05;
+}
+.pain-title {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+.pain-card p {
+  margin: 6px 0 0;
+  font-size: var(--text-xs);
+  color: var(--grey);
+  line-height: 1.55;
+}
+
+/* ---- wow 카드 ---- */
+.wow-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+.wow-card {
+  position: relative;
+  padding: 18px 18px 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--gold) 18%, var(--line));
+  background:
+    radial-gradient(240px 150px at 0% 0%, color-mix(in srgb, var(--gold) 7%, transparent), transparent 62%),
+    var(--glass-surface);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
+  transition: border-color var(--dur-fast) var(--ease-premium), transform var(--dur-fast) var(--ease-premium);
+}
+.wow-card:hover {
+  border-color: color-mix(in srgb, var(--gold) 42%, var(--line));
+  transform: translateY(-2px);
+}
+.wow-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.wow-num {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.18em;
+  color: color-mix(in srgb, var(--gold) 80%, var(--grey));
+}
+.wow-ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, var(--line));
+  color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+}
+.wow-card h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-tight);
+}
+.wow-card p {
+  margin: 0 0 10px;
+  font-size: var(--text-sm);
+  color: var(--grey);
+  line-height: 1.6;
+}
+.wow-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.wow-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--gold) 26%, var(--line));
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--gold);
+  text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-premium);
+}
+.wow-links a:hover {
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+}
+
+/* ---- 3단계 ---- */
+.steps-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+.step-card {
+  position: relative;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--navy-deep) 45%, transparent);
+}
+.step-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  color: var(--gold);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  margin-bottom: 8px;
+}
+.step-card b {
+  display: block;
+  font-size: var(--text-body);
+  margin-bottom: 4px;
+}
+.step-card p {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--grey);
+  line-height: 1.55;
+}
+/* 단계 사이 연결 화살표 — 데스크톱에서만 */
+.step-card:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: color-mix(in srgb, var(--gold) 60%, transparent);
+  font-size: 14px;
+  z-index: 1;
+}
+
+/* ---- 정직성 ---- */
+.about-honest {
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--gold) 20%, var(--line));
+  background: color-mix(in srgb, var(--navy-deep) 45%, transparent);
+}
+.honest-list {
+  margin: 10px 0 14px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+.honest-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: var(--text-sm);
+  color: var(--grey);
+  line-height: 1.6;
+}
+.honest-list li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.honest-list li b {
+  color: var(--text);
+}
+.src-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.src-chip {
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: var(--text-xs);
+  color: var(--grey);
+}
+
+/* ---- 마감 CTA ---- */
+.about-cta {
+  margin-top: 46px;
+  padding: 30px 22px 32px;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, var(--line));
+  background:
+    radial-gradient(380px 180px at 50% 0%, color-mix(in srgb, var(--gold) 10%, transparent), transparent 72%),
+    var(--glass-surface);
+  box-shadow: var(--glass-specular-soft), var(--elev-2);
+}
+.about-cta h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: var(--weight-bold);
+}
+.about-cta h2 em {
+  font-style: normal;
+  background: linear-gradient(115deg, #ffe9b3 8%, var(--gold) 46%, #cf9426 88%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.about-cta p {
+  margin: 0 0 16px;
+  font-size: var(--text-sm);
+  color: var(--grey);
+}
+.about-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .wow-grid,
+  .pain-grid,
+  .steps-row {
+    grid-template-columns: 1fr;
+  }
+  .step-card:not(:last-child)::after {
+    content: '↓';
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: -14px;
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wow-card,
+  .wow-links a {
+    transition: none;
+  }
+  .wow-card:hover {
+    transform: none;
+  }
 }
