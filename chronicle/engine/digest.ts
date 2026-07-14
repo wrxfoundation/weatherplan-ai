@@ -215,6 +215,148 @@ export function renderDigestMarkdown(d: Digest): string {
   return L.join("\n");
 }
 
+function esc(text: string): string {
+  return text
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "\uFFFD")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("\"", "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+/**
+ * 다이제스트를 투자자용 폴리시드 HTML로 렌더한다 — 통합 피드와 짝을 이루는 "한 장".
+ * site.ts와 같은 디자인 헤리티지(리퀴드 글래스·시그니처 블루틸·정적 글로우·Montserrat).
+ * 소멸(지금 찍은 자만 소유)과 조용한 수정을 전면에 세운다.
+ */
+export function renderDigestHtml(d: Digest, repo: string): string {
+  const day = esc(d.generatedAt.slice(0, 10));
+  const evLi = (list: DigestEvent[], kind: "del" | "chg"): string =>
+    list
+      .map((e) => {
+        const body =
+          kind === "del"
+            ? esc(summarize(e.before, 100))
+            : `${esc(summarize(e.before, 60))} <span class="arr">→</span> ${esc(summarize(e.after, 60))}`;
+        const field = kind === "chg" ? ` <span class="field">${esc(e.field)}</span>` : "";
+        return `<li><span class="src">${esc(e.source)}</span><code>${esc(e.entityId)}</code>${field}<span class="body">${body}</span><span class="when">${esc(e.observedAt.slice(0, 10))}</span></li>`;
+      })
+      .join("\n");
+
+  const rows = d.perSource
+    .map(
+      (s) =>
+        `<tr><td>${esc(s.source)}</td><td class="n">${s.entities.toLocaleString("ko-KR")}</td><td class="n">${s.chainLength.toLocaleString("ko-KR")}</td><td>${esc(s.updatedAt.slice(0, 10))}</td><td class="c">${s.headAnchored ? "⚓" : "—"}</td><td class="n">${s.bornRecent.toLocaleString("ko-KR")}</td><td class="n">${s.vanishedRecent}</td><td class="n">${s.editedRecent}</td></tr>`,
+    )
+    .join("\n");
+
+  return `<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chronicle 다이제스트 — ${day}</title>
+<meta name="description" content="시간해자 크로니클 다이제스트 — 최근 ${d.sinceDays}일 전 소스가 잡은 소멸·수정·신규. 무엇이 사라졌고 조용히 바뀌었나.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400..800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06141b;--glow:#0a2e3d;--line:#1e3a47;--ink:#eaf4f7;--mut:#9fb8c4;--dim:#6e8794;
+  --accent:#3bcfe4;--blue:#5fa8f5;--bad:#ef4444;--ok:#10b981;
+  --glass:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));--gbord:rgba(255,255,255,.14);
+  --blur:saturate(170%) blur(18px);--gshadow:0 10px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background-color:var(--bg);color:var(--ink);
+  font:16px/1.65 'Montserrat','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',system-ui,-apple-system,sans-serif;
+  background-image:radial-gradient(1100px 520px at 50% -160px,var(--glow) 0%,transparent 58%);background-attachment:fixed}
+main{max-width:940px;margin:0 auto;padding:44px 20px 72px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.82em;background:rgba(59,207,228,.08);border:1px solid rgba(59,207,228,.2);border-radius:6px;padding:1px 6px;word-break:break-all}
+.eyebrow{color:var(--dim);font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
+h1{font-size:30px;font-weight:800;letter-spacing:-.02em;margin-top:8px;
+  background:linear-gradient(90deg,var(--accent),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.period{color:var(--mut);margin-top:8px;font-size:14.5px}
+.totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:28px 0 6px}
+.tile{background:var(--glass);border:1px solid var(--gbord);border-radius:16px;padding:15px 17px;
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--gshadow)}
+.tile b{display:block;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.tile span{color:var(--mut);font-size:12.5px}
+.tile.hot{border-left:3px solid var(--bad)}
+.tile.hot b{color:#ff8080}
+.section{margin:40px 0 12px}
+.section h2{font-size:19px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+.section .dot{width:9px;height:9px;border-radius:50%}
+.dot-del{background:var(--bad)}.dot-chg{background:var(--blue)}
+.lead{color:var(--mut);font-size:14px;margin:2px 0 10px}
+ul.ev{list-style:none;background:var(--glass);border:1px solid var(--gbord);border-radius:16px;overflow:hidden;
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--gshadow)}
+ul.ev li{display:flex;align-items:baseline;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.05);font-size:13.5px;flex-wrap:wrap}
+ul.ev li:last-child{border-bottom:none}
+.src{font-size:11px;color:var(--accent);border:1px solid rgba(59,207,228,.35);border-radius:999px;padding:1px 8px;flex-shrink:0}
+.body{color:var(--mut);flex:1;min-width:200px}
+.field{color:var(--dim);font-family:var(--mono);font-size:12px}
+.arr{color:var(--accent)}
+.when{color:var(--dim);font-size:12px;font-variant-numeric:tabular-nums;margin-left:auto}
+.empty{color:var(--dim);padding:14px 16px;background:var(--glass);border:1px solid var(--gbord);border-radius:16px}
+.more{color:var(--dim);font-size:12.5px;padding:8px 16px}
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px;
+  background:var(--glass);border:1px solid var(--gbord);border-radius:16px;overflow:hidden;
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.05)}
+th{color:var(--dim);font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+td.n{text-align:right;font-variant-numeric:tabular-nums}td.c{text-align:center}
+tr:last-child td{border-bottom:none}
+footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <span class="eyebrow">Chronicle · 시간해자 크로니클</span>
+  <h1>다이제스트 — ${day}</h1>
+  <p class="period">최근 <b>${d.sinceDays}일</b>(${esc(d.since.slice(0, 10))}~) · 원장 위의 읽기 전용 집계 · <b>소멸</b>은 지금 찍은 자만 소유한다</p>
+</header>
+
+<div class="totals">
+  <div class="tile"><b>${d.totals.sources}</b><span>가동 소스</span></div>
+  <div class="tile"><b>${d.totals.entities.toLocaleString("ko-KR")}</b><span>추적 엔티티</span></div>
+  <div class="tile"><b>${d.totals.eventsAllTime.toLocaleString("ko-KR")}</b><span>봉인 이벤트(누적)</span></div>
+  <div class="tile hot"><b>${d.totals.vanishedRecent.toLocaleString("ko-KR")}</b><span>소멸(기간)</span></div>
+  <div class="tile"><b>${d.totals.editedRecent.toLocaleString("ko-KR")}</b><span>수정(기간)</span></div>
+  <div class="tile"><b>${d.trust.headsAnchored}/${d.totals.sources}</b><span>TSA 외부앵커</span></div>
+</div>
+
+<div class="section"><h2><span class="dot dot-del"></span>사라진 것 — 소멸</h2></div>
+<p class="lead">기관이 조용히 내렸지만, 여기엔 남는다. 지금 찍은 자만 소유하는 신호.</p>
+${d.vanished.length ? `<ul class="ev">\n${evLi(d.vanished, "del")}\n${d.vanishedTruncated > 0 ? `<li class="more">…외 ${d.vanishedTruncated}건 (원장에 전량 보존)</li>` : ""}</ul>` : '<p class="empty">이번 기간 소멸 없음.</p>'}
+
+<div class="section"><h2><span class="dot dot-chg"></span>바뀐 것 — 조용한 수정</h2></div>
+<p class="lead">before → after. 문구 삭제·상태 전환·가격 변경을 원장이 봉인했다.</p>
+${d.edited.length ? `<ul class="ev">\n${evLi(d.edited, "chg")}\n${d.editedTruncated > 0 ? `<li class="more">…외 ${d.editedTruncated}건 (원장에 전량 보존)</li>` : ""}</ul>` : '<p class="empty">이번 기간 필드 변경 없음.</p>'}
+
+<div class="section"><h2>소스별 현황</h2></div>
+<table>
+<thead><tr><th>소스</th><th>엔티티</th><th>체인</th><th>최신</th><th>앵커</th><th>신규</th><th>소멸</th><th>수정</th></tr></thead>
+<tbody>
+${rows}
+</tbody>
+</table>
+
+<footer>
+  <a href="./index.html">현황판</a>
+  <a href="./feed.xml">통합 피드</a>
+  <a href="./digest.md">마크다운</a>
+  <a href="https://github.com/${esc(repo)}">GitHub</a>
+  <span>무결성 검증: npm run verify · 재현: 각 소스 snapshots/</span>
+</footer>
+</main>
+</body>
+</html>
+`;
+}
+
 const isCliEntry = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 
 if (isCliEntry) {
@@ -227,21 +369,26 @@ if (isCliEntry) {
       root: { type: "string" },
       json: { type: "boolean", default: false },
       out: { type: "string" },
+      repo: { type: "string" },
     },
   });
   const root = values.root ? resolve(values.root) : defaultRoot;
   const dataDir = values["data-dir"] ? resolve(values["data-dir"]) : join(root, "data");
+  const repo = values.repo ?? process.env.GITHUB_REPOSITORY ?? "kwangdol-star/aiagentlabs";
   const sinceDays = values.since ? Number(values.since) : 30;
   const digest = buildDigest(dataDir, { sinceDays });
 
   if (values.json) {
     console.log(JSON.stringify(digest, null, 2));
   } else {
-    const markdown = renderDigestMarkdown(digest);
     const outPath = values.out ? resolve(values.out) : join(root, "docs", "digest.md");
-    if (!existsSync(dirname(outPath))) mkdirSync(dirname(outPath), { recursive: true });
-    writeFileSync(outPath, markdown);
-    console.log(`다이제스트 작성: ${outPath}`);
+    const docsDir = dirname(outPath);
+    if (!existsSync(docsDir)) mkdirSync(docsDir, { recursive: true });
+    writeFileSync(outPath, renderDigestMarkdown(digest));
+    // 투자자용 폴리시드 HTML (통합 피드와 짝, GitHub Pages에 게시)
+    const htmlPath = join(docsDir, "digest.html");
+    writeFileSync(htmlPath, renderDigestHtml(digest, repo));
+    console.log(`다이제스트 작성: ${outPath} + ${htmlPath}`);
     console.log(`  소스 ${digest.totals.sources} · 엔티티 ${digest.totals.entities} · 소멸 ${digest.totals.vanishedRecent} · 수정 ${digest.totals.editedRecent} · 앵커 ${digest.trust.headsAnchored}/${digest.totals.sources}`);
   }
 }

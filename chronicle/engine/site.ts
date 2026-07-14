@@ -284,7 +284,7 @@ ${cards}
 <p class="note">흩어진 ${sources.length}개 원장이 아니라 <b>하나의 자산</b> — 전 소스를 한 번에 구독·질의·요약한다.</p>
 <nav class="links">
   <a href="./feed.xml">통합 인텔리전스 피드 (Atom)</a>
-  <a href="./digest.md">주간 다이제스트</a>
+  <a href="./digest.html">주간 다이제스트</a>
   <a href="./status.json">기계 매니페스트 (status.json)</a>
   <a href="./llms.txt">llms.txt</a>
 </nav>
