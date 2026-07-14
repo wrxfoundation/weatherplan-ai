@@ -4,6 +4,13 @@
 import { useEffect, useState } from 'react'
 import { useAiStream } from '../ai/useAiStream.js'
 import AiResultCard from '../ai/AiResultCard.jsx'
+import { psiaScore, psiaOutlook } from './psia.js'
+
+// 후보의 계통영향평가 통과 전망(공유 로직) — 스냅샷 필드로 산출
+const psiaOf = (c) => {
+  const { composite } = psiaScore({ nonCapital: c.nonCapital, mw: c.mw ?? 40, gridMw: c.gridMw ?? null, approvalPct: c.approvalPct ?? null, subKm: c.subKm ?? null })
+  return { composite, outlook: psiaOutlook(composite, c.mw ?? 40) }
+}
 
 const TONE = { good: 'tone-good', warn: 'tone-warn', bad: 'tone-bad' }
 
@@ -179,6 +186,17 @@ function CompareRadar({ items }) {
 // 행 정의: get=표시값, tone=색, best=열 비교 시 '큰 값이 좋음(1)/작을수록 좋음(-1)/없음(0)'
 const ROWS = [
   { key: 'score', label: '근거 점수', get: (c) => (c.score != null ? `${c.score}/${c.coverage}` : '–'), best: (c) => c.pct ?? null, dir: 1 },
+  {
+    key: 'psia',
+    label: '계통영향평가 전망',
+    get: (c) => {
+      const { composite, outlook } = psiaOf(c)
+      return composite == null ? outlook.label : `${composite} · ${outlook.label.replace('통과 ', '')}`
+    },
+    tone: (c) => psiaOf(c).outlook.tone,
+    best: (c) => psiaOf(c).composite,
+    dir: 1,
+  },
   { key: 'zone', label: '입지', get: (c) => (c.nonCapital ? '비수도권' : '수도권'), tone: (c) => (c.nonCapital ? 'good' : 'warn') },
   { key: 'gridMw', label: '계통 공급여유', get: (c) => (c.gridMw != null ? `${c.gridMw.toLocaleString()}MW` : '–'), tone: (c) => (c.gridMw == null ? null : c.gridMw <= 10 ? 'bad' : c.gridMw <= 500 ? 'warn' : 'good'), best: (c) => c.gridMw, dir: 1 },
   { key: 'approval', label: 'DC 공급승인율', get: (c) => (c.approvalPct != null ? `${c.approvalPct}%` : '–'), tone: (c) => (c.approvalPct == null ? null : c.approvalPct >= 70 ? 'good' : c.approvalPct >= 45 ? 'warn' : 'bad'), best: (c) => c.approvalPct, dir: 1 },
