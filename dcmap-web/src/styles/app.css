@@ -6775,7 +6775,7 @@ summary:focus-visible,
   font-size: 21px;
   font-weight: 900;
   letter-spacing: -0.01em;
-  opacity: 0.55; /* 밋밋함 개선 — 성좌 라벨 또렷하게 */
+  opacity: 0.7; /* v4 선명도: 0.55→0.7 */
   paint-order: stroke;
   stroke: rgba(4, 11, 22, 0.85);
   stroke-width: 4px;
@@ -6794,12 +6794,12 @@ summary:focus-visible,
   transition: r 0.16s ease;
 }
 .gmap-term-label {
-  font-size: 12px; /* 10.5→12 — "글씨가 잘 안 보임" 피드백 */
+  font-size: 13px; /* v4 선명도: 12→13 */
   font-weight: 600;
-  fill: #e4edf9; /* 밝은 잉크 + 다크 할로 */
+  fill: #eef4fc; /* 밝은 잉크 + 다크 할로 */
   paint-order: stroke;
-  stroke: rgba(4, 11, 22, 0.92);
-  stroke-width: 3.2px;
+  stroke: rgba(3, 8, 17, 0.95);
+  stroke-width: 3.4px;
   pointer-events: none;
 }
 .gmap-term.on .gmap-term-label,
@@ -6830,9 +6830,9 @@ summary:focus-visible,
   fill: color-mix(in srgb, var(--amber) 45%, transparent);
 }
 .gmap-law-label {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 800;
-  fill: #ffd98a; /* 앰버 라벨 밝게 + 할로 */
+  fill: #ffdf9c; /* 앰버 라벨 밝게 + 할로 */
   paint-order: stroke;
   stroke: rgba(4, 11, 22, 0.92);
   stroke-width: 3px;
@@ -6899,11 +6899,14 @@ summary:focus-visible,
 
 /* ── 온톨로지 맵 v2/v3 — 3D 공간감(틸트·패럴랙스·별·깊이·비네트) + 절차 레이어 + 줌 ── */
 .gmap-tilt {
-  perspective: 950px; /* v3: 원근 강화(1100→950) */
+  perspective: 950px;
 }
 .gmap-tilt .gmap-svg {
-  transform: rotateX(8.5deg);
+  /* v4 선명도: 8.5°→3° — 기울임이 클수록 텍스트가 비정렬 격자에 래스터화되어 흐릿해짐.
+   * 공간감은 패럴랙스·비네트·깊이 스케일·더스트가 유지 */
+  transform: rotateX(3deg);
   transform-origin: 50% 42%;
+  backface-visibility: hidden;
 }
 /* 비네트 — 가장자리를 어둡게 눌러 중앙이 떠 보이게(공간감) */
 .gmap-wrap::after {
@@ -6984,9 +6987,9 @@ summary:focus-visible,
   fill: color-mix(in srgb, var(--accent) 42%, transparent);
 }
 .gmap-proc-label {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 700;
-  fill: #bfd2e8;
+  fill: #cddcee;
   paint-order: stroke;
   stroke: rgba(4, 11, 22, 0.9);
   stroke-width: 2.5px;
