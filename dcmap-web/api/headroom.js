@@ -226,6 +226,34 @@ export default async function handler(req, res) {
       return
     }
 
+    // 변전소별 목록 모드 (?list=1) — 관내 변전소 단위로 최대 여유 선로를 집계해 상위 8개 반환.
+    if (req.query.list) {
+      const bySubst = new Map()
+      for (const row of rows) {
+        const name = row.substNm ? String(row.substNm) : '미상'
+        const freeKw = num(row.vol3) ?? num(row.vol2) ?? num(row.vol1)
+        if (freeKw == null) continue
+        const cur = bySubst.get(name)
+        if (!cur || freeKw > cur) bySubst.set(name, freeKw)
+      }
+      const list = [...bySubst.entries()]
+        .map(([name, kw]) => ({ name, mw: kwToMw(kw) }))
+        .sort((a, b) => (b.mw ?? 0) - (a.mw ?? 0))
+        .slice(0, 8)
+      if (!list.length) {
+        res.status(200).json({ available: false, reason: 'no_capacity_fields' })
+        return
+      }
+      res.status(200).json({
+        available: true,
+        list,
+        rows: rows.length,
+        unit: 'MW',
+        note: '관내 변전소별 최대 여유 선로 (배전 22.9kV 분산전원 기준 · kW→MW 환산)',
+      })
+      return
+    }
+
     // 시군구 내 여러 변전소·DL(배전선로) 행 → 접속 관점에서 여유가 가장 큰 선로를 대표값으로.
     // 여유용량: vol3(DL) 우선, 없으면 vol2(변압기)·vol1(변전소). 누적연계: dlPwr/mtrPwr/substPwr.
     let best = null

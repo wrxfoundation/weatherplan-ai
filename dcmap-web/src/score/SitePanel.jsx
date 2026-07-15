@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { STATUS_LABEL, isCapitalByAddr, isCapitalByPoint, FACILITIES } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, landUseFor, landRegFor, landAreaFor, landPriceOfficialFor, parcelAt, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, waterCapacity, kwaterInfra, dongLabel } from '../data/liveApi.js'
+import { forecastFor, headroomFor, headroomListFor, landUseFor, landRegFor, landAreaFor, landPriceOfficialFor, parcelAt, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, waterCapacity, kwaterInfra, dongLabel } from '../data/liveApi.js'
 import { geomAreaM2 } from '../data/geomArea.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
@@ -45,6 +45,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const [landReg, setLandReg] = useState(null)
   const [landArea, setLandArea] = useState(null)
   const [energySeries, setEnergySeries] = useState(null) // null | 'loading' | [{ym, usage}] — 6개월 추이(온디맨드)
+  const [substList, setSubstList] = useState(null) // null | 'loading' | [{name, mw}] — 관내 변전소별 여유(온디맨드)
   const [officialPrice, setOfficialPrice] = useState(null)
   const [fc, setFc] = useState(null)
   const [headroom, setHeadroom] = useState(null)
@@ -256,10 +257,19 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     }
     run('report', { data: snap })
   }
-  // 지점 변경 시 전기사용량 추이 초기화(다른 지번의 추이가 남지 않게)
+  // 지점 변경 시 온디맨드 조회 결과 초기화(다른 지점의 값이 남지 않게)
   useEffect(() => {
     setEnergySeries(null)
+    setSubstList(null)
   }, [point])
+
+  // 관내 변전소별 여유 목록 — 온디맨드(추가 호출 1회)
+  const loadSubstList = async () => {
+    if (substList === 'loading') return
+    setSubstList('loading')
+    const r = await headroomListFor(point.lat, point.lng, addr?.legalCode).catch(() => null)
+    setSubstList(r?.available && Array.isArray(r.list) ? r.list : [])
+  }
 
   // 건축HUB 6개월 추이 — 호출 6회라 온디맨드(버튼). 최근월은 2~3개월 지연 반영.
   const loadEnergySeries = async () => {
@@ -554,6 +564,26 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   )}
                   {headroom.rows != null && headroom.rows > 1 && (
                     <span className="meta"> · 관내 선로 {headroom.rows}개 중 최대 여유</span>
+                  )}
+                  {/* 관내 변전소별 여유 목록 — 온디맨드(호출 1회) */}
+                  {substList == null && headroom.rows != null && headroom.rows > 1 && (
+                    <button type="button" className="btn" style={{ marginLeft: 8, padding: '2px 9px', fontSize: 'var(--text-xs)' }} onClick={loadSubstList}>
+                      변전소별 보기
+                    </button>
+                  )}
+                  {substList === 'loading' && <span className="meta"> · 변전소별 조회 중…</span>}
+                  {Array.isArray(substList) && (
+                    <ul className="subst-list">
+                      {substList.map((s2) => (
+                        <li key={s2.name}>
+                          <span className="sl-name">{s2.name}</span>
+                          <span className="sl-bar">
+                            <i style={{ width: `${Math.max(4, Math.round(((s2.mw ?? 0) / Math.max(...substList.map((x) => x.mw ?? 0), 1)) * 100))}%` }} />
+                          </span>
+                          <b className="sl-mw">{s2.mw != null ? `${s2.mw.toLocaleString()}MW` : '—'}</b>
+                        </li>
+                      ))}
+                    </ul>
                   )}
                   {headroom.note && <div className="cell-basis">{headroom.note}</div>}
                 </>
