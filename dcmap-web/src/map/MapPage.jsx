@@ -22,6 +22,7 @@ import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
 import { GRID_HEADROOM, GRID_HEADROOM_META } from '../data/gridHeadroom.js'
 import { RENEWABLE_ESS } from '../data/renewableEss.js'
 import { CAPITAL_PIPELINE } from '../data/capitalPipeline.js'
+import { DEV_CONFLICTS } from '../data/dcRealEstate.js'
 import { loadPowerLines, lineColor, POWER_LINES_AVAILABLE } from '../data/powerLines.js'
 import { NETWORK_NODES } from '../data/network.js'
 import { recommendSites, recoReasons } from '../score/recommend.js'
@@ -1444,6 +1445,20 @@ export default function MapPage({ power = false }) {
                       )}
                     </div>
                   </div>
+                  {(() => {
+                    const conflicts = DEV_CONFLICTS.filter((c) => c.region.startsWith(regionInfo.sido))
+                    if (!conflicts.length) return null
+                    return (
+                      <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                        <div className="k">DC 개발 민원·분쟁 사례 (알스퀘어 · 입지 리스크)</div>
+                        <div className="v">
+                          <strong>{conflicts.length}건</strong>
+                          <span className="muted"> · {conflicts.slice(0, 2).map((c) => c.region.replace(`${regionInfo.sido} `, '')).join('·')}{conflicts.length > 2 ? ' 등' : ''}</span>
+                          <div className="cell-basis">{conflicts[0].claims} — 주민 반발이 인허가 리드타임 리스크. <Link to="/data?tab=conflicts">전체 →</Link></div>
+                        </div>
+                      </div>
+                    )
+                  })()}
                   <div className="spec-cell">
                     <div className="k">데이터센터 시설</div>
                     <div className="v">
