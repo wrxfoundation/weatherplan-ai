@@ -22,6 +22,9 @@ title: 워크넷 채용 관측소 — 한국 AI·데이터 채용 (일간)
 endpoint: http://openapi.work.go.kr/opi/opi/opia/wantedApi.do
 key_env: DATA_GO_KR_KEY
 key_param: authKey
+# ★ 워크넷 API는 별도 활용신청 필요 + openapi.work.go.kr 해외 지오블록 가능성. 신청·확인
+#   전엔 휴면(초록·0건). 워크넷 채용정보 활용신청 → 첫 실기동 도달 확인 후 여기를 true 로.
+activated: false
 user_agent: "chronicle-jobs-observatory/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
 rate_limit_ms: 400
 

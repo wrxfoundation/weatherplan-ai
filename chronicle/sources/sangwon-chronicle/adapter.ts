@@ -85,8 +85,14 @@ export class SangwonChronicleAdapter extends BaseAdapter {
     const apiKey = env[keyEnv];
 
     if (!apiKey) {
-      ctx.log(`[${this.id}] 휴면 — 키(${keyEnv}) 미설정. 상가정보 API 활용신청 + 시크릿 재사용 시 라이브.`);
-      return { raw: { dormant: true }, records: [], removalScope: () => false };
+      ctx.log(`[${this.id}] 휴면 — 키(${keyEnv}) 미설정.`);
+      return { raw: { dormant: true, reason: "no_key" }, records: [], removalScope: () => false };
+    }
+    // 공유 DATA_GO_KR_KEY는 존재해도 이 API엔 별도 "활용신청"이 필요하다(그전엔 인증 오류).
+    // 활용신청 완료 전에는 휴면(초록·0건) — 매일 크론이 빨간불을 뿌리지 않게. 신청 후 config에서 activated:true.
+    if (cfg.activated !== true) {
+      ctx.log(`[${this.id}] 휴면 — 활용신청 미완(activated≠true). data.go.kr에서 상가(상권)정보 API 활용신청 후 config에서 activated: true 로.`);
+      return { raw: { dormant: true, reason: "not_activated" }, records: [], removalScope: () => false };
     }
 
     const query = (cfg.query as Record<string, unknown> | undefined) ?? {};

@@ -27,6 +27,7 @@ const config: SourceConfig = {
   page_size: 100,
   max_pages: 5,
   max_removal_ratio: 1,
+  activated: true,
   query: { type: "json", radius: 500 },
   targets: [
     { id: "gangnam", cx: 127.0276, cy: 37.4979 },
@@ -111,6 +112,18 @@ test("무키 = 휴면(0건, removalScope 전부 제외)", async () => {
   assert.equal(result.records.length, 0);
   assert.equal(result.removalScope!({ entityId: "store:S1", sourceUrl: "u", fields: {} }), false);
 });
+
+test(
+  "키 있어도 activated≠true면 휴면 — API 호출 안 함(활용신청 전 빨간불 방지)",
+  withKey(async () => {
+    let called = false;
+    const spy: HttpClient = { json: async () => { called = true; return {}; }, text: async () => "", raw: async () => new Response() };
+    const notActivated = { ...config, activated: false };
+    const result = await adapter.collect({ config: notActivated, http: spy, log: () => {}, now: () => new Date("2026-07-13T00:00:00Z") });
+    assert.equal(result.records.length, 0, "휴면 0건");
+    assert.equal(called, false, "API를 호출하지 않는다");
+  }),
+);
 
 test(
   "전 상권 오류=중단(자가진단), 일부 상권 실패=삭제판정 보류",

@@ -18,6 +18,9 @@ title: 상권 생멸 — 주요 상권 상가 생멸 (일간)
 endpoint: http://apis.data.go.kr/B553077/api/open/sdsc2/storeListInRadius
 key_env: DATA_GO_KR_KEY
 key_param: serviceKey
+# ★ 공유 DATA_GO_KR_KEY가 있어도 이 API엔 별도 활용신청 필요. 신청 완료 전엔 휴면(초록·0건).
+#   data.go.kr에서 "소상공인시장진흥공단_상가(상권)정보" 활용신청 → 여기를 true 로.
+activated: false
 user_agent: "chronicle-sangwon-chronicle/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
 rate_limit_ms: 400
 

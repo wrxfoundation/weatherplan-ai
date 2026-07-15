@@ -96,8 +96,14 @@ export class JobsObservatoryAdapter extends BaseAdapter {
     const apiKey = env[keyEnv];
 
     if (!apiKey) {
-      ctx.log(`[${this.id}] 휴면 — 키(${keyEnv}) 미설정. 워크넷 API 활용신청 + 시크릿 추가 시 라이브.`);
-      return { raw: { dormant: true }, records: [], removalScope: () => false };
+      ctx.log(`[${this.id}] 휴면 — 키(${keyEnv}) 미설정.`);
+      return { raw: { dormant: true, reason: "no_key" }, records: [], removalScope: () => false };
+    }
+    // 공유 DATA_GO_KR_KEY가 있어도 워크넷 API엔 별도 활용신청 필요 + openapi.work.go.kr 지오블록
+    // 가능성. 활용신청·확인 전에는 휴면(초록·0건)으로 두어 매일 빨간불을 막는다. 확인 후 activated:true.
+    if (cfg.activated !== true) {
+      ctx.log(`[${this.id}] 휴면 — 활용신청/도달 미확인(activated≠true). 워크넷 API 활용신청 후 config에서 activated: true 로.`);
+      return { raw: { dormant: true, reason: "not_activated" }, records: [], removalScope: () => false };
     }
 
     const query = (cfg.query as Record<string, unknown> | undefined) ?? {};

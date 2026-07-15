@@ -27,6 +27,7 @@ const config: SourceConfig = {
   page_size: 100,
   max_pages: 5,
   max_removal_ratio: 1,
+  activated: true,
   query: { callTp: "L", returnType: "XML", keyword: "인공지능" },
 };
 
