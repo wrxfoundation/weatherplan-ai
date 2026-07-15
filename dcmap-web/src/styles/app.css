@@ -3062,6 +3062,89 @@ summary:focus-visible,
   color: var(--text);
 }
 
+/* ── 데이터 탐색기: 업계 인텔 채널 큐레이션 ── */
+.intel-section {
+  margin-top: 36px;
+}
+.intel-title {
+  margin: 4px 0 6px;
+  font-size: var(--text-h2, 21px);
+  letter-spacing: -0.02em;
+}
+.intel-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.intel-card {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
+  padding: 14px 14px 10px;
+}
+.intel-card h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--accent) 78%, var(--text));
+}
+.intel-item {
+  display: block;
+  padding: 9px 10px;
+  margin: 0 -4px;
+  border-radius: var(--radius-md, 10px);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+}
+.intel-card .intel-item:last-child {
+  border-bottom: 0;
+}
+.intel-item:hover {
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+}
+.intel-name {
+  display: block;
+  color: var(--text);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-body);
+}
+.intel-ext {
+  color: var(--grey);
+  font-size: 11px;
+}
+.intel-item:hover .intel-ext {
+  color: var(--accent);
+}
+.intel-desc {
+  display: block;
+  margin-top: 2px;
+  color: var(--grey);
+  font-size: 12.5px;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+.intel-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+.intel-tag {
+  font-size: 10.5px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  color: color-mix(in srgb, var(--accent) 85%, var(--text));
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+@media (max-width: 960px) {
+  .intel-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* 발전 허가 시도 버블 라벨 — 버블 중앙 건수 숫자 */
 .gen-bubble-label {
   color: #eafcff;
