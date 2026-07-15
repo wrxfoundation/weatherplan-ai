@@ -8,6 +8,7 @@ import { GRID_HEADROOM, headroomLabel } from '../data/gridHeadroom.js'
 import { DC_ASSESSMENT, approvalLabel } from '../data/gridAssessment.js'
 import { SUBSTATIONS } from '../data/substations.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
+import { CAPITAL_PIPELINE } from '../data/capitalPipeline.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -132,6 +133,21 @@ const DATASETS = [
       { k: 'lng', label: '경도' },
     ],
     rows: INDUSTRIAL_COMPLEXES.map(([name, lat, lng, type]) => ({ name, type, lat, lng })),
+  },
+  {
+    key: 'capital',
+    label: '수도권 공급예정 DC',
+    asOf: '2026-03',
+    source: '삼일PwC 「한국 AI 데이터센터 산업의 현재와 투자방향」(2026.3) — PwC Analysis·KDCC. IT용량 기준(수전용량 아님), 준공예정은 지연 가능',
+    fullCsv: null,
+    columns: [
+      { k: 'operator', label: '사업자' },
+      { k: 'name', label: '센터명' },
+      { k: 'loc', label: '위치' },
+      { k: 'itMw', label: 'IT용량MW' },
+      { k: 'due', label: '준공예정' },
+    ],
+    rows: CAPITAL_PIPELINE.map((r) => ({ ...r })),
   },
   {
     key: 'dc',

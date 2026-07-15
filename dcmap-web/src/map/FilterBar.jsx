@@ -104,7 +104,7 @@ export default function FilterBar({
     {
       label: '망',
       chips: [
-        { key: 'net', icon: 'telecom', text: '통신망', on: showNet, toggle: onToggleNet, title: '통신망 — 백본 국사·IDC·해저케이블 육양국(OSM telecom + 시드). 네트워크축 근거' },
+        { key: 'net', icon: 'telecom', text: '통신망', on: showNet, toggle: onToggleNet, title: '통신망 — 백본 국사·IDC·해저케이블 육양국(OSM 공개 태깅 표본 + 시드). KT 국사가 과대표집된 표본이며, SKB·LGU+ 백본은 위치 미공개로 미표기(부재 아님)' },
       ],
     },
   ]
