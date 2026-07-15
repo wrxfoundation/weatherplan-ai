@@ -10,6 +10,7 @@ import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
 import { CAPITAL_PIPELINE, CAPITAL_PIPELINE_META } from '../data/capitalPipeline.js'
 import { SIDO_METRO_CD } from '../data/genLicenses.js'
 import { powerUsageFor } from '../data/liveApi.js'
+import { RENEWABLE_ESS, RENEWABLE_ESS_META, RENEWABLE_ESS_TOTAL } from '../data/renewableEss.js'
 
 function setMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`)
@@ -207,6 +208,47 @@ export default function RegionPage() {
               <p className="chart-note">
                 IT용량 기준(수전용량 아님) · 준공예정은 계획 시점 기준. 출처: {CAPITAL_PIPELINE_META.source}.{' '}
                 <Link to="/data?tab=capital">전체 목록·CSV →</Link>
+              </p>
+            </div>
+          )
+        })()}
+
+        {(() => {
+          const re = RENEWABLE_ESS[sido]
+          if (!re) return null
+          const solarRank =
+            Object.values(RENEWABLE_ESS)
+              .sort((a, b) => b.solar - a.solar)
+              .findIndex((r) => r.sido === sido) + 1
+          const pct = (v) => (v / RENEWABLE_ESS_TOTAL.solar) * 100
+          const bars = [
+            { k: '태양광', v: re.solar, max: RENEWABLE_ESS_TOTAL.solar },
+            { k: '풍력', v: re.wind, max: 3500 },
+            { k: 'ESS 저장', v: re.ess, max: RENEWABLE_ESS_TOTAL.ess },
+          ]
+          return (
+            <div className="calc-card">
+              <div className="chart-title">
+                {sido} 재생에너지·ESS 설비용량 (전국 태양광 {solarRank}위, {RENEWABLE_ESS_META.asOf})
+              </div>
+              {bars.map((b) => (
+                <div key={b.k} className="hbar-row">
+                  <span className="hbar-label">{b.k}</span>
+                  <span className="hbar-track">
+                    <span
+                      className="hbar-fill"
+                      style={{ width: b.v == null ? '0%' : `${Math.max((b.v / b.max) * 100, 1.5)}%` }}
+                    />
+                  </span>
+                  <span className="hbar-value">
+                    {b.v == null ? '원본 이상치·제외' : `${Math.round(b.v).toLocaleString()}MW`}
+                    {b.k === '태양광' && b.v != null ? ` · 전국비 ${pct(b.v).toFixed(1)}%` : ''}
+                  </span>
+                </div>
+              ))}
+              <p className="chart-note">
+                RE100·PPA 재생조달 근접성과 계통 저장 여건의 지역 신호(발전 설비용량 기준, 수전여유 아님). 출처:{' '}
+                {RENEWABLE_ESS_META.source} ({RENEWABLE_ESS_META.asOf}).{re.wind == null ? ' 제주 풍력은 원본 이상치로 제외.' : ''}
               </p>
             </div>
           )
