@@ -81,6 +81,21 @@ export default function TopBar() {
     document.documentElement.setAttribute('data-section', section)
   }, [location.pathname])
 
+  // SEO: SPA 내 라우트 전환 시 canonical·og:url 동기화(프리렌더 셸 값이 낡지 않게)
+  useEffect(() => {
+    const origin = (import.meta.env.VITE_SITE_ORIGIN || 'https://aiagentlabs.co.kr').replace(/\/$/, '')
+    const href = `${origin}${location.pathname === '/' ? '/' : location.pathname}`
+    let link = document.head.querySelector('link[rel="canonical"]')
+    if (!link) {
+      link = document.createElement('link')
+      link.setAttribute('rel', 'canonical')
+      document.head.appendChild(link)
+    }
+    link.setAttribute('href', href)
+    const og = document.head.querySelector('meta[property="og:url"]')
+    if (og) og.setAttribute('content', href)
+  }, [location.pathname])
+
   const onSearch = (value) => {
     if (location.pathname === '/') {
       const next = new URLSearchParams(searchParams)

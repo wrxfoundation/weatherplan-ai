@@ -10,6 +10,14 @@
     <meta property="og:title" content="AI InfraMap — 한국 AI 데이터센터 현황 맵" />
     <meta property="og:description" content="한국 데이터센터 현황 지도: 운영·건설·계획 시설의 위치, 운영사, 전력 규모를 공개 소스 기반으로 추적합니다." />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AI InfraMap" />
+    <meta property="og:url" content="https://aiagentlabs.co.kr/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="canonical" href="https://aiagentlabs.co.kr/" />
+    <!-- 조직·사이트 스키마 — 전 페이지 공통(프리렌더 셸에도 포함됨) -->
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://aiagentlabs.co.kr/#org","name":"AI InfraMap","url":"https://aiagentlabs.co.kr/","email":"kwangdol@gmail.com","description":"한국 AI 데이터센터 부지 인텔리전스 — 공개 데이터 기반 전력·인허가·리스크 판정"},{"@type":"WebSite","@id":"https://aiagentlabs.co.kr/#site","name":"AI InfraMap","url":"https://aiagentlabs.co.kr/","inLanguage":"ko","publisher":{"@id":"https://aiagentlabs.co.kr/#org"}}]}
+    </script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
@@ -23,6 +31,18 @@
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>AI InfraMap — 한국 AI 데이터센터 부지 인텔리전스</h1>
+      <p>
+        전국 데이터센터·발전·전력계통·인허가 규제를 공개 데이터로 집계해, 임의 지점의 부지 적합성을
+        전력·토지·리스크·네트워크·기상 5축으로 판정합니다. 이 서비스는 JavaScript가 필요합니다.
+      </p>
+      <p>
+        <a href="/about">서비스 소개</a> · <a href="/glossary">전력 인허가 용어집</a> ·
+        <a href="/roadmap">구축 로드맵</a> · <a href="/stats">국내 데이터센터 통계</a> ·
+        <a href="/insights">인사이트</a> · <a href="/pricing">요금·문의</a>
+      </p>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
