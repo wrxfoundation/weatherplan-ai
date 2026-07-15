@@ -5456,6 +5456,22 @@ summary:focus-visible,
   color: var(--ink);
   font-weight: var(--weight-bold);
 }
+/* 초안 생성 CTA — GPU 계산기(primary)급 강조를 AI 바이올렛 톤으로 (피드백: 더 돋보이게) */
+.ai-draft-input .btn.ai {
+  background: linear-gradient(180deg, var(--violet) 0%, color-mix(in srgb, var(--violet) 60%, #180f38) 100%);
+  border-color: color-mix(in srgb, var(--violet) 72%, var(--line));
+  border-radius: 999px;
+  color: #fff;
+  box-shadow: var(--glass-specular), 0 0 10px color-mix(in srgb, var(--violet) 32%, transparent), var(--elev-1);
+}
+.ai-draft-input .btn.ai:hover:not(:disabled) {
+  box-shadow: var(--glass-specular), 0 0 16px color-mix(in srgb, var(--violet) 45%, transparent), var(--elev-2);
+  transform: translateY(-1px);
+}
+.ai-draft-input .btn.ai:disabled {
+  opacity: 0.55;
+  box-shadow: none;
+}
 .btn.ai:hover:not(:disabled) {
   border-color: color-mix(in srgb, var(--violet) 60%, var(--accent));
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--violet) 30%, transparent), var(--glow-accent-soft, 0 0 14px -4px var(--accent));
