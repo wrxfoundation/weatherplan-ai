@@ -87,6 +87,9 @@ function clientScript(repo: string): string {
     "  $('go').disabled = false;\n" +
     "}\n" +
     "$('go').addEventListener('click', verify);\n" +
+    // ?source=<id> 딥링크 — 소스 카드/피드에서 원클릭으로 그 소스를 바로 재검증.
+    "var _pre = new URLSearchParams(location.search).get('source');\n" +
+    "if (_pre){ $('manual').value = _pre; verify(); }\n" +
     "loadSources();\n"
   );
 }

@@ -128,7 +128,7 @@ function renderSourceCard(source: SiteSource, repo: string): string {
   <div class="muted">최신 관측 ${escapeHtml(source.updatedAt)}</div>
   ${renderEvents(source.recent)}
   <nav class="links">
-    <a href="${blob}/changes.jsonl">원장</a><a href="${blob}/latest.json">현재 상태</a><a href="${blob}/feed.xml">피드</a><a href="${blob}/integrity.json">체인</a>${source.anchors > 0 ? `<a href="https://github.com/${repo}/tree/main/data/${source.id}/anchors">앵커 증서</a>` : ""}
+    <a href="./verify.html?source=${escapeHtml(source.id)}">✓ 검증</a><a href="${blob}/changes.jsonl">원장</a><a href="${blob}/latest.json">현재 상태</a><a href="${blob}/feed.xml">피드</a><a href="${blob}/integrity.json">체인</a>${source.anchors > 0 ? `<a href="https://github.com/${repo}/tree/main/data/${source.id}/anchors">앵커 증서</a>` : ""}
   </nav>
 </article>`;
 }
