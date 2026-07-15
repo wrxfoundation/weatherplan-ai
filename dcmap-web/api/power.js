@@ -27,8 +27,9 @@ const DEFAULTS = {
   supply: 'https://openapi.kpx.or.kr/openapi/forecast1dMaxBaseDate/getForecast1dMaxBaseDate?serviceKey={key}',
   trading:
     'https://apis.data.go.kr/B552115/PowerTradingResultInfo1/getPowerTradingResultInfo1?serviceKey={key}&pageNo=1&numOfRows=100&dataType=JSON',
-  // SMP(계통한계가격) 오늘 시간별 — KPX 레거시 openapi(XML). 삭제 예고된 API라 신형 전환 시 SMP_URL env로 교체.
-  smp: 'https://openapi.kpx.or.kr/openapi/smp1hToday/getSmp1hToday?serviceKey={key}',
+  // SMP(계통한계가격) 오늘 시간별 — KPX 레거시 openapi(XML). areaCd 필수(1=육지, 9=제주).
+  // 주의: data.go.kr 심의승인 대상(운영계정 제한) — 승인 키 확보 또는 신형 API 전환 시 SMP_URL env로 교체.
+  smp: 'https://openapi.kpx.or.kr/openapi/smp1hToday/getSmp1hToday?serviceKey={key}&areaCd=1',
 }
 const IS_XML = { supply: true, smp: true } // KPX openapi 계열은 XML 응답
 const ENV_KEY = { epsis: 'EPSIS_URL', supply: 'SUPPLY_URL', trading: 'TRADING_URL', smp: 'SMP_URL' }
@@ -266,13 +267,14 @@ function handleTrading(items) {
 }
 
 // ---- smp: 계통한계가격(오늘 시간별, 원/kWh) — areaCd 1=육지 · 9=제주 ----
-const SMP_TAGS = ['areaCd', 'tradeDay', 'tradeHour', 'smp']
+// 공식 스펙(활용자가이드 v1.6)의 응답 필드는 'tradHour'(오탈자 아님) — 방어적으로 tradeHour도 수용
+const SMP_TAGS = ['areaCd', 'tradeDay', 'tradHour', 'tradeHour', 'smp']
 function handleSmp(items) {
   const rows = []
   let asOf
   for (const it of items) {
     const price = num(it.smp)
-    const hour = num(it.tradeHour)
+    const hour = num(pick(it, ['tradHour', 'tradeHour']))
     if (price == null || hour == null) continue
     const area = String(it.areaCd ?? '').trim()
     if (area && area !== '1') continue // 육지만 — 제주는 별도 계통(시범사업 가격 상이)
