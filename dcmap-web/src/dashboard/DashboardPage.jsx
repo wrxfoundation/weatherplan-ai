@@ -11,7 +11,7 @@ import { GRID_HEADROOM, GRID_HEADROOM_META, headroomLabel } from '../data/gridHe
 import { RESERVE_12M, RESERVE_MIN, RESERVE_MAX, POWER_RESERVE_META } from '../data/powerReserve.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
-import { filingsRecent, epsisCapacity, apiStatus, tradingMix, smpToday, riskFor } from '../data/liveApi.js'
+import { filingsRecent, epsisCapacity, apiStatus, tradingMix, smpToday, fuelMixNow, riskFor } from '../data/liveApi.js'
 import { DC_DEMAND_OUTLOOK, DC_DEMAND_OUTLOOK_META } from '../data/dcDemandOutlook.js'
 
 const TITLE = '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스'
@@ -85,6 +85,7 @@ export default function DashboardPage() {
   const [epsis, setEpsis] = useState(null)
   const [trading, setTrading] = useState(null)
   const [smp, setSmp] = useState(null)
+  const [fuelmix, setFuelmix] = useState(null) // KPX 발전원별 5분 실측 믹스
   const [docScans, setDocScans] = useState({}) // rcpNo → 'loading' | 스캔 결과 (DART 본문 온디맨드)
   const [status, setStatus] = useState(null)
   const [riskRows, setRiskRows] = useState({})
@@ -99,6 +100,7 @@ export default function DashboardPage() {
     epsisCapacity().then((v) => alive && setEpsis(v))
     tradingMix().then((v) => alive && setTrading(v))
     smpToday().then((v) => alive && setSmp(v))
+    fuelMixNow().then((v) => alive && setFuelmix(v))
     apiStatus(true).then((v) => alive && setStatus(v))
     return () => {
       alive = false
@@ -150,10 +152,20 @@ export default function DashboardPage() {
     [riskRows],
   )
 
-  // KPX 수급예보(openapi.kpx.or.kr)는 클라우드 IP 차단으로 미연동 → 되는 데이터(전력거래실적)로
-  // 공급측 신호를 대체 구성: 실제 발전 믹스에서 재생/원자력/화석 비중.
+  // 발전 믹스 — 1순위: KPX 발전원별 발전량(5분 실측·신형 GW API), 폴백: 전력거래실적(일별)
   const RENEW = new Set(['태양광', '풍력', '해상풍력', '수력', '바이오', '연료전지', '신재생·기타'])
   const mix = useMemo(() => {
+    if (fuelmix?.available) {
+      return {
+        total: fuelmix.totalMw,
+        renewPct: fuelmix.renewPct,
+        nuclearPct: fuelmix.nuclearPct,
+        fossilPct: fuelmix.fossilPct,
+        asOf: fuelmix.asOf,
+        demandMw: fuelmix.demandMw,
+        live: true,
+      }
+    }
     const bars = (trading?.available ? trading.byFuel : [])?.filter((f) => f.tradedMwh != null) || []
     const total = bars.reduce((s, f) => s + f.tradedMwh, 0)
     if (!total) return null
@@ -162,8 +174,8 @@ export default function DashboardPage() {
     const nuclear = sum((f) => f.fuel === '원자력')
     const fossil = Math.max(0, total - renew - nuclear)
     const pct = (v) => Math.round((v / total) * 100)
-    return { total, renewPct: pct(renew), nuclearPct: pct(nuclear), fossilPct: pct(fossil), asOf: trading?.asOf }
-  }, [trading])
+    return { total, renewPct: pct(renew), nuclearPct: pct(nuclear), fossilPct: pct(fossil), asOf: trading?.asOf, live: false }
+  }, [trading, fuelmix])
 
   useEffect(() => {
     document.title = TITLE
@@ -754,7 +766,7 @@ export default function DashboardPage() {
           </section>
 
           <section className="calc-card">
-            <div className="chart-title">발전 믹스 — 재생·원자력·화석 비중 (거래실적 기준)</div>
+            <div className="chart-title">발전 믹스 — 재생·원자력·화석 비중 {mix?.live ? '(5분 실측, 라이브)' : '(거래실적 기준)'}</div>
             {mix ? (
               <>
                 <div className="dash-status">
@@ -768,6 +780,11 @@ export default function DashboardPage() {
                     <div className="dash-row">
                       화석·기타 <strong>{mix.fossilPct}</strong>%
                     </div>
+                    {mix.demandMw != null && (
+                      <div className="dash-row">
+                        시장수요 <strong>{Math.round(mix.demandMw).toLocaleString()}</strong>MW
+                      </div>
+                    )}
                     {mix.asOf && <div className="dash-row total">기준 {mix.asOf}</div>}
                   </div>
                   <Gauge pct={Math.max(0, Math.min(100, mix.renewPct))} label="재생 비중" />
@@ -779,8 +796,17 @@ export default function DashboardPage() {
                   {mix.fossilPct > 0 && <span className="seg pl" style={{ flexGrow: mix.fossilPct }} />}
                 </div>
                 <p className="chart-note">
-                  KPX 수급예보(공급예비율)는 서버 제약으로 미연동 — 대신 <strong>실제 발전 믹스</strong>로 계통 특성을 표기.
-                  재생 비중이 높을수록 간헐성 대응(ESS·계통)이 관건. 출처: <strong>KPX 전력거래실적</strong>(data.go.kr, 연료원별 실거래).{' '}
+                  {mix.live ? (
+                    <>
+                      <strong>5분 단위 실측</strong> 발전원별 출력(KPX 계통기준·육지+제주) — 지금 이 순간 계통이 어떤
+                      전원으로 돌아가는지. 재생 비중이 높을수록 간헐성 대응(ESS·계통)이 관건.
+                    </>
+                  ) : (
+                    <>
+                      실제 발전 믹스로 계통 특성을 표기 — 재생 비중이 높을수록 간헐성 대응(ESS·계통)이 관건. 출처:{' '}
+                      <strong>KPX 전력거래실적</strong>(data.go.kr, 연료원별 실거래).
+                    </>
+                  )}{' '}
                   <Link to="/insights/market-2025h2">±15점 시대 →</Link>
                 </p>
               </>
@@ -871,7 +897,7 @@ export default function DashboardPage() {
 
           {/* 전력시장 가격 — KPX SMP(계통한계가격) 오늘 시간별. DC 전력 OPEX의 실시간 신호 */}
           <section className="calc-card">
-            <div className="chart-title">전력시장 가격 — SMP 계통한계가격 (오늘 시간별, 라이브)</div>
+            <div className="chart-title">전력시장 가격 — SMP 계통한계가격 (하루전 확정, 시간별)</div>
             {smp?.available && smp.rows?.length ? (
               <>
                 <div className="dash-status">
@@ -909,15 +935,15 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <p className="chart-note">
-                  거래시간별 전력시장 도매가격(원/kWh) — DC 전력 OPEX·PPA 협상의 기준 신호. 평균은 시간별{' '}
-                  <strong>단순평균</strong>(KPX 공표 일 가중평균과 다름). 출처: {smp.source}.
+                  거래시간별 전력시장 도매가격(원/kWh) — DC 전력 OPEX·PPA 협상의 기준 신호. 하루전 발전계획 확정가로
+                  매일 23시경 갱신. 평균은 시간별 <strong>단순평균</strong>(KPX 공표 일 가중평균과 다름).
+                  {smp.peakDemandMw ? ` 예측수요 피크 ${Math.round(smp.peakDemandMw).toLocaleString()}MW.` : ''} 출처: {smp.source}.
                 </p>
               </>
             ) : (
               <p className="chart-note">
-                전력시장 도매가격(SMP) 시간별 추이 — DC 전력 OPEX의 실시간 신호. KPX 계통한계가격 API는{' '}
-                <strong>심의승인 대상</strong>(공공기관·활용사례 심의)이라 일반 키로는 연동이 제한됩니다. 승인 확보
-                또는 대체 API 연결 시 활성. 현재 <span className="badge verify">연동 대기</span> ·{' '}
+                전력시장 도매가격(SMP)·수요예측 시간별 — DC 전력 OPEX의 기준 신호. 신형 계통한계가격·수요예측
+                API(자동승인, 매일 23시경 갱신) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span> ·{' '}
                 <a href="https://new.kpx.or.kr/smpInland.es?mid=a10606080100" target="_blank" rel="noreferrer" className="mini-link">
                   KPX 공표 SMP 직접 보기 →
                 </a>

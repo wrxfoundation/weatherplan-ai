@@ -151,6 +151,9 @@ export const tradingMix = () => fetchJson('/api/power?src=trading', POWER_MS)
 /** KPX 계통한계가격(SMP) 오늘 시간별·육지 — { asOf, latest:{hour,smp}, avgSmp, minSmp, maxSmp, rows } | null */
 export const smpToday = () => fetchJson('/api/power?src=smp', POWER_MS)
 
+/** KPX 발전원별 발전량 5분 실측 — { asOf, byFuel, totalMw, renewPct, nuclearPct, fossilPct, demandMw } | null */
+export const fuelMixNow = () => fetchJson('/api/power?src=fuelmix', POWER_MS)
+
 /** 한전 계약종별 전력사용량(일반용 집계) — { year, month, cities:[{city,cntrPwrMw,usageGwh,unitCost}] } | null */
 export const powerUsageFor = (metroCd) => (metroCd ? fetchJson(`/api/headroom?usage=1&metroCd=${metroCd}`, POWER_MS) : Promise.resolve(null))
 
