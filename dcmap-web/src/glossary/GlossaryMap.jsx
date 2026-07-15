@@ -137,10 +137,10 @@ export default function GlossaryMap({ cat }) {
     const ny = ((e.clientY - rect.top) / rect.height - 0.5) * 2
     cancelAnimationFrame(raf.current)
     raf.current = requestAnimationFrame(() => {
-      // 층별 이동량 + 미세 스케일 차등 — 뒤는 작고 느리게, 앞은 크고 빠르게(깊이 대비)
-      if (backRef.current) backRef.current.style.transform = `translate(${nx * -6}px, ${ny * -4}px) scale(0.988)`
+      // 층별 이동량 차등(깊이 대비). v4 선명도: 소수점 scale 제거 — 텍스트 블러의 원인이라 translate만
+      if (backRef.current) backRef.current.style.transform = `translate(${nx * -6}px, ${ny * -4}px)`
       if (midRef.current) midRef.current.style.transform = `translate(${nx * -15}px, ${ny * -10}px)`
-      if (foreRef.current) foreRef.current.style.transform = `translate(${nx * -27}px, ${ny * -17}px) scale(1.012)`
+      if (foreRef.current) foreRef.current.style.transform = `translate(${nx * -27}px, ${ny * -17}px)`
     })
   }
   const onLeave = () => {
