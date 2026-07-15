@@ -84,6 +84,15 @@ function headroomPoints(mw) {
   return 10
 }
 
+// 관할 변전소 전력공급 여유(MW, 한전ON 실측) → 전력공급 여유 점수(10점 만점).
+// 시도 총량 프록시보다 정밀: 필요용량 대비 여유배수로 채점. 전 기간 0(포화)이면 0점.
+function supplyHeadroomPoints(availMw, reqMw) {
+  if (availMw == null) return null
+  if (availMw <= 0) return 0
+  const need = Math.max(reqMw || 40, 20)
+  return Math.round(Math.min(10, (availMw / (need * 3)) * 10) * 10) / 10
+}
+
 // 네트워크 근접성 → 점수(10점): 백본 국사/IDC/IX 거리 7점 + 해저케이블 육양국 거리 3점.
 function networkPoints(backboneKm, clsKm) {
   let p = 0
@@ -123,7 +132,7 @@ function pricePoints(won) {
   return 0.5
 }
 
-export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null, landUse = null, gridMw = null, gridApproval = null, parcelArea = null, parcelPrice = null } = {}) {
+export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, landslide = null, pop = null, climate = null, plantKm = null, landUse = null, gridMw = null, gridApproval = null, parcelArea = null, parcelPrice = null, substSupplyMw = null, substSupplyName = null } = {}) {
   const track = checkPowerTrack(mw, { nonCapital })
 
   // 계통 공급 가능성 — DC 전력계통영향평가 승인율(실데이터) 우선, 없으면 수도권/비수도권 트랙 이진 프록시.
@@ -174,16 +183,23 @@ export function scoreSite({ lat, lng, mw = 40, nonCapital = true, flood = null, 
       : { label: '지가 부담', max: 3, points: null, pending: '공시지가(원/㎡) 확보 후 — 지가변동률은 참고 표시 중' }
 
   // 자가발전 인접(직접 PPA·자가발전 잠재) — 발전단지 최근접 거리 기반. 가까울수록 가점.
-  // 배전 여유 프록시 — 지역 계통 공급여유(한전 연계가능용량, 시도 총량). 값 있으면 점수화.
+  // 전력공급 여유 — 관할 변전소 실측(한전ON, 시군구 최대 여유) 우선, 없으면 시도 총량 프록시.
   const gridItem =
-    gridMw != null
+    substSupplyMw != null
       ? {
-          label: '배전 여유 (한전 계통 공급여유)',
+          label: '전력공급 여유 (관할 변전소 실측)',
           max: 10,
-          points: headroomPoints(gridMw),
-          basis: `시도 총 공급여유 ${gridMw.toLocaleString()}MW (2027 전망) · 시군구별 편차 있음`,
+          points: supplyHeadroomPoints(substSupplyMw, mw),
+          basis: `관할 ${substSupplyName ? `${substSupplyName}변전소 ` : ''}최대 여유 ${substSupplyMw.toLocaleString()}MW (한전ON · 필요 ${mw}MW 대비) · 전기사용신청 후 확정`,
         }
-      : { label: '배전 여유 (한전 계통 공급여유)', max: 10, points: null, pending: '한전 연계가능용량(공급여유) 조회 필요' }
+      : gridMw != null
+        ? {
+            label: '배전 여유 (한전 계통 공급여유 · 시도 총량)',
+            max: 10,
+            points: headroomPoints(gridMw),
+            basis: `시도 총 공급여유 ${gridMw.toLocaleString()}MW (2027 전망) · 시군구별 편차 있음`,
+          }
+        : { label: '전력공급 여유', max: 10, points: null, pending: '부지 클릭 시 한전ON 관할 변전소 여유 조회(또는 시도 총량)' }
 
   // 154kV+ 변전소 거리 — OSM 변전소 좌표 기반 최근접 거리(실계산).
   const subDist = nearestSubstation(lat, lng)
