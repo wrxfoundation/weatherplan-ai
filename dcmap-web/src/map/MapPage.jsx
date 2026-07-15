@@ -1278,7 +1278,7 @@ export default function MapPage({ power = false }) {
                           <span className="badge verify">실데이터 연동 대기 · 공개 API 미제공</span>
                           <a
                             className="mini-link"
-                            href="https://cyber.kepco.co.kr/ckepco/mobile/resources/resources_search.jsp"
+                            href="https://online.kepco.co.kr/EWM092D00"
                             target="_blank"
                             rel="noreferrer"
                             style={{ marginLeft: 8 }}

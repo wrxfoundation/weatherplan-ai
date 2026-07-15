@@ -592,7 +592,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   <span className="badge pending">실데이터 연동 대기 · 공개 API 미제공</span>
                   <a
                     className="mini-link"
-                    href="https://cyber.kepco.co.kr/ckepco/mobile/resources/resources_search.jsp"
+                    href="https://online.kepco.co.kr/EWM092D00"
                     target="_blank"
                     rel="noreferrer"
                     style={{ marginLeft: 8 }}
@@ -1089,11 +1089,11 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
         <details className="mini-details">
           <summary>실무 조회 — 공식 시스템 바로가기(한전·RE클라우드·토지이음)</summary>
           <div className="quick-links">
-            <a className="btn" href="https://cyber.kepco.co.kr/ckepco/mobile/resources/resources_search_pt_capa.jsp" target="_blank" rel="noreferrer">
-              한전 접속가능 용량 (154kV)
+            <a className="btn" href="https://online.kepco.co.kr/EWM090D00" target="_blank" rel="noreferrer">
+              한전 배전용변압기 여유
             </a>
-            <a className="btn" href="https://cyber.kepco.co.kr/ckepco/mobile/resources/resources_search.jsp" target="_blank" rel="noreferrer">
-              한전 분산형전원 (22.9kV)
+            <a className="btn" href="https://online.kepco.co.kr/EWM092D00" target="_blank" rel="noreferrer">
+              한전 배전망 여유 (22.9kV)
             </a>
             <a className="btn" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">
               RE클라우드 계통·입지

@@ -1,7 +1,7 @@
 /**
  * KPX 전력 데이터 통합 프록시 (data.go.kr B552115) — Vercel Hobby 함수 12개 제한에 맞춰
- * epsis(발전설비)·supply(수급예보)·trading(전력거래실적) 3종을 하나의 함수로 통합.
- * 호출: /api/power?src=epsis | supply | trading
+ * epsis(발전설비)·supply(수급예보)·trading(전력거래실적)·smp(계통한계가격)를 하나의 함수로 통합.
+ * 호출: /api/power?src=epsis | supply | trading | smp
  *
  * 환경변수 (Vercel — 서버 env 전용, 리포 커밋 절대 금지):
  *  - DATA_GO_KR_KEY (필수) — data.go.kr 통합 인증키(디코딩 키, 공용).
@@ -27,10 +27,12 @@ const DEFAULTS = {
   supply: 'https://openapi.kpx.or.kr/openapi/forecast1dMaxBaseDate/getForecast1dMaxBaseDate?serviceKey={key}',
   trading:
     'https://apis.data.go.kr/B552115/PowerTradingResultInfo1/getPowerTradingResultInfo1?serviceKey={key}&pageNo=1&numOfRows=100&dataType=JSON',
+  // SMP(계통한계가격) 오늘 시간별 — KPX 레거시 openapi(XML). 삭제 예고된 API라 신형 전환 시 SMP_URL env로 교체.
+  smp: 'https://openapi.kpx.or.kr/openapi/smp1hToday/getSmp1hToday?serviceKey={key}',
 }
-const IS_XML = { supply: true } // supply만 XML 응답
-const ENV_KEY = { epsis: 'EPSIS_URL', supply: 'SUPPLY_URL', trading: 'TRADING_URL' }
-const CACHE = { epsis: 's-maxage=86400, stale-while-revalidate=604800', supply: 's-maxage=300, stale-while-revalidate=3600', trading: 's-maxage=3600, stale-while-revalidate=86400' }
+const IS_XML = { supply: true, smp: true } // KPX openapi 계열은 XML 응답
+const ENV_KEY = { epsis: 'EPSIS_URL', supply: 'SUPPLY_URL', trading: 'TRADING_URL', smp: 'SMP_URL' }
+const CACHE = { epsis: 's-maxage=86400, stale-while-revalidate=604800', supply: 's-maxage=300, stale-while-revalidate=3600', trading: 's-maxage=3600, stale-while-revalidate=86400', smp: 's-maxage=1800, stale-while-revalidate=21600' }
 
 const num = (v) => {
   if (v == null) return undefined
@@ -263,7 +265,40 @@ function handleTrading(items) {
   return { available: true, asOf: asOf ? String(asOf) : undefined, byFuel, totalMwh: totalMwh || undefined, source: 'KPX 전력거래실적 (data.go.kr)' }
 }
 
-const HANDLERS = { epsis: handleEpsis, supply: handleSupply, trading: handleTrading }
+// ---- smp: 계통한계가격(오늘 시간별, 원/kWh) — areaCd 1=육지 · 9=제주 ----
+const SMP_TAGS = ['areaCd', 'tradeDay', 'tradeHour', 'smp']
+function handleSmp(items) {
+  const rows = []
+  let asOf
+  for (const it of items) {
+    const price = num(it.smp)
+    const hour = num(it.tradeHour)
+    if (price == null || hour == null) continue
+    const area = String(it.areaCd ?? '').trim()
+    if (area && area !== '1') continue // 육지만 — 제주는 별도 계통(시범사업 가격 상이)
+    asOf = asOf ?? it.tradeDay
+    rows.push({ hour, smp: price })
+  }
+  if (!rows.length) return { available: false, reason: 'no_smp_fields' }
+  rows.sort((a, b) => a.hour - b.hour)
+  const latest = rows[rows.length - 1]
+  const prices = rows.map((r) => r.smp)
+  // 단순 산술평균 — KPX 공표 '일 가중평균'(거래량 가중)과 다르므로 라벨에 명시할 것
+  const avgSmp = Math.round((prices.reduce((s, v) => s + v, 0) / prices.length) * 10) / 10
+  return {
+    available: true,
+    asOf: asOf ? String(asOf) : undefined,
+    latest,
+    avgSmp,
+    minSmp: Math.min(...prices),
+    maxSmp: Math.max(...prices),
+    rows,
+    source: 'KPX 계통한계가격(SMP) — 오늘 시간별 · 육지',
+  }
+}
+
+const HANDLERS = { epsis: handleEpsis, supply: handleSupply, trading: handleTrading, smp: handleSmp }
+const XML_TAGS = { supply: SUPPLY_TAGS, smp: SMP_TAGS }
 
 export default async function handler(req, res) {
   const src = String(req.query.src || 'epsis')
@@ -295,7 +330,8 @@ export default async function handler(req, res) {
     let items
     let epsisTotal
     if (IS_XML[src]) {
-      // supply는 KPX openapi(openapi.kpx.or.kr) XML. 이 레거시 서버는 Vercel에서
+      const tags = XML_TAGS[src]
+      // supply·smp는 KPX openapi(openapi.kpx.or.kr) XML. 이 레거시 서버는 Vercel에서
       // 간헐 CONNECT_TIMEOUT(IPv6 블랙홀) — 3단 폴백: undici https → IPv4 직결 https → IPv4 직결 http.
       // 전체 마감시한(13s)으로 묶어 상태 프로브(15s)·함수예산(30s) 안에 반드시 반환 — 504 방지.
       const start = Date.now()
@@ -307,7 +343,7 @@ export default async function handler(req, res) {
       // 프록시(UPSTREAM_PROXY_BASE) 설정 시 KR-IP 경유를 최우선 — openapi.kpx.or.kr IP차단 근본 우회.
       if (proxyConfigured()) {
         try {
-          xr = parseXmlItems(await proxyGetText(url, Math.min(7000, remain())), SUPPLY_TAGS)
+          xr = parseXmlItems(await proxyGetText(url, Math.min(7000, remain())), tags)
           if (!xr?.items?.length) xr = null
         } catch (e0) {
           lastErr = e0
@@ -316,7 +352,7 @@ export default async function handler(req, res) {
       }
       try {
         if (!xr) {
-          xr = await fetchXmlItems(url, SUPPLY_TAGS, Math.min(6000, remain()))
+          xr = await fetchXmlItems(url, tags, Math.min(6000, remain()))
           if (xr?._status) xr = null
         }
       } catch (e1) {
@@ -326,7 +362,7 @@ export default async function handler(req, res) {
         for (const u of [url, httpUrl]) {
           if (remain() < 1500) break // 남은 예산 없으면 중단(마감시한 준수)
           try {
-            xr = parseXmlItems(await rawGetText(u, Math.min(6000, remain() - 500)), SUPPLY_TAGS)
+            xr = parseXmlItems(await rawGetText(u, Math.min(6000, remain() - 500)), tags)
             if (xr?.items?.length) break
           } catch (e2) {
             lastErr = e2

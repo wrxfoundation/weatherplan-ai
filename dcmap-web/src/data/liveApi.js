@@ -148,6 +148,9 @@ export const epsisCapacity = () => fetchJson('/api/power?src=epsis', POWER_MS)
 /** KPX 전력거래실적 — { asOf, byFuel:[{fuel,capacityMw,tradedMwh}], totalMwh } | null (연동 대기 시 null) */
 export const tradingMix = () => fetchJson('/api/power?src=trading', POWER_MS)
 
+/** KPX 계통한계가격(SMP) 오늘 시간별·육지 — { asOf, latest:{hour,smp}, avgSmp, minSmp, maxSmp, rows } | null */
+export const smpToday = () => fetchJson('/api/power?src=smp', POWER_MS)
+
 /** 건축HUB 지번별 전기사용량 — { usage, unit, useYm } | null. 법정동코드+번지+사용년월 필요 */
 export const bldEnergyFor = ({ sigunguCd, bjdongCd, bun, ji, useYm }) =>
   sigunguCd && bjdongCd && useYm
