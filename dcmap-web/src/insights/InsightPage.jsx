@@ -21,8 +21,18 @@ import LandingEdge from './articles/LandingEdge.jsx'
 import PowerSupplyChain from './articles/PowerSupplyChain.jsx'
 import PowerWaterMega from './articles/PowerWaterMega.jsx'
 import HyperscaleJukjeon from './articles/HyperscaleJukjeon.jsx'
+import PwcValueChain from './articles/PwcValueChain.jsx'
 
 const ARTICLES = {
+  'pwc-value-chain-2026': {
+    component: PwcValueChain,
+    sources: [
+      '삼일PwC 「한국 AI 데이터센터 산업의 현재와 투자방향: AI 인프라 Value Chain 관점의 구조적 투자 기회」(2026.3, 공개 세미나 자료 28p) — 시장규모(2.42조→10.19조)·수도권 75.3%·공급예정 21곳·5개 사업모델·그룹사 투자 현황',
+      'DC 수요-공급 갭(전기사용신청 906→7,343MW vs 공급가능 776→4,718MW): 산업통상자원부 제11차 전력수급기본계획·PwC analysis — 삼일PwC 리포트 p.19·21 재인용',
+      '계통영향평가 권역별 통과율(수도권 21%/비수도권 71%): 산업부 접수 195건 중 심사 33건(2024.8~2025.6) — 국민의힘 김성원 의원실·산업통상자원부·한국전력·동아일보, 삼일PwC 재인용. AI InfraMap이 별도 추적하는 한전 1차 기술검토·본심사 통계와 시점·모수 상이',
+      '전력자립도·증설 계획(164→200개): 산업통상자원부·에너지경제연구원 2024 지역에너지통계연보·KDCC — 맵의 자급률은 자체 보유 KEPCO 2025 데이터 사용',
+    ],
+  },
   'hyperscale-jukjeon': {
     component: HyperscaleJukjeon,
     sources: [

@@ -18,6 +18,7 @@ import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters, is
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
+import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
 import { loadPowerLines, lineColor, POWER_LINES_AVAILABLE } from '../data/powerLines.js'
 import { NETWORK_NODES } from '../data/network.js'
 import { recommendSites, recoReasons } from '../score/recommend.js'
@@ -653,7 +654,7 @@ export default function MapPage({ power = false }) {
           icon: L.divIcon({ className: 'net-marker', html: `<span class="net-dot ${cls}">${ico}</span>`, iconSize: [20, 20] }),
           bubblingMouseEvents: false,
         })
-          .bindTooltip(`<div class="dc-hovercard"><strong>${n.name}</strong> · ${n.type}<br/><span class="muted">네트워크 인프라(백본 근접)</span></div>`, {
+          .bindTooltip(`<div class="dc-hovercard"><strong>${n.name}</strong> · ${n.type}<br/><span class="muted">네트워크 인프라(백본 근접) — OSM 공개 태깅 표본. KT 위주로 수집되며 타 통신사 백본은 위치 미공개(부재 아님)</span></div>`, {
             direction: 'top',
             offset: [0, -9],
             className: 'dc-hovercard',
@@ -1286,6 +1287,19 @@ export default function MapPage({ power = false }) {
                             한전 여유용량 직접 조회 →
                           </a>
                         </>
+                      )}
+                    </div>
+                  </div>
+                  <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                    <div className="k">전력 자급률 (발전÷소비, ’25)</div>
+                    <div className="v">
+                      {POWER_BALANCE[regionInfo.sido] ? (
+                        <>
+                          <strong>{POWER_BALANCE[regionInfo.sido].ratio}%</strong>
+                          {` · ${selfSufficiencyLabel(POWER_BALANCE[regionInfo.sido].ratio)}`}
+                        </>
+                      ) : (
+                        <span className="muted">데이터 없음</span>
                       )}
                     </div>
                   </div>

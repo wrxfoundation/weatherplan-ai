@@ -302,6 +302,42 @@ export const GLOSSARY = [
     en: 'Levelized Cost of Electricity',
     def: '발전설비의 건설·운영·연료비를 수명 전체로 나눈 단위 전력당 원가. 데이터센터의 장기 OPEX를 좌우하는 전력비 벤치마크로, 조달 방식(한전·PPA·자가발전) 비교의 기준이 된다.',
   },
+  // ── 사업모델·투자 구조 (출처: 삼일PwC 「한국 AI 데이터센터 산업의 현재와 투자방향」 2026.3 등 공개 자료) ──
+  {
+    id: 'bts',
+    category: 'dc',
+    term: 'BTS (Built-to-Suit)',
+    en: 'Built-to-Suit',
+    def: '특정 임차인의 요구사항(설계·규모·사양)에 맞춰 데이터센터를 지어 장기 임대하는 방식. 글로벌 CSP와의 장기 임차확약이나 선급임차료·임차보증금을 사전에 받아 공실 리스크를 낮춘다.',
+  },
+  {
+    id: 'dbo',
+    category: 'dc',
+    term: 'DBO (설계-시공-운영)',
+    en: 'Design-Build-Operate',
+    def: '한 사업자가 데이터센터의 설계(Design)·시공(Build)·운영(Operate)까지 모든 단계를 통합해 책임지고 제공하는 턴키(Turn-key) 솔루션. LG CNS·KT클라우드·삼성SDS 등이 국내 주요 플레이어다.',
+  },
+  {
+    id: 'master-lease',
+    category: 'dc',
+    term: '마스터리스',
+    en: 'Master Lease',
+    def: '데이터센터 전체(또는 대부분)를 단일 임차인이 통으로 장기 임차하는 계약. 개발/투자사는 상면임대수익을 안정화하고, 착공 전 임차인 사전확보 수단으로 쓰인다. 위탁운영·직접운영과 함께 상업용 DC의 3대 운영 구조를 이룬다.',
+  },
+  {
+    id: 'dcim',
+    category: 'dc',
+    term: 'DCIM',
+    en: 'Data Center Infrastructure Management',
+    def: '데이터센터의 IT장비(서버·스토리지)와 시설 인프라(전력·냉각)를 통합 모니터링·관리하는 솔루션. 운영 데이터가 축적될수록 예지보전·자동제어·고객 락인(Lock-in)의 기반이 되어, 멀티사이트 운영 확대와 함께 중요성이 커지고 있다.',
+  },
+  {
+    id: 'sovereign-ai',
+    category: 'dc',
+    term: '소버린 AI',
+    en: 'Sovereign AI',
+    def: 'AI 개발·운영·통제를 자국의 법·정책·안보 체계 안에서 수행하려는 국가 전략. 각국이 국가 단위 AI 인프라(데이터센터·GPU) 투자를 확대하는 배경으로, 한국은 국가 AI컴퓨팅센터·GPU 확보 등 AI G3 전략을 추진 중이다.',
+  },
 ]
 
 // id → 용어 객체 빠른 조회(도움말 툴팁·용어 링크용)

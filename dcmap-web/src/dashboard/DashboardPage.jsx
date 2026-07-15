@@ -12,6 +12,7 @@ import { RESERVE_12M, RESERVE_MIN, RESERVE_MAX, POWER_RESERVE_META } from '../da
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
 import { filingsRecent, epsisCapacity, apiStatus, tradingMix, smpToday, riskFor } from '../data/liveApi.js'
+import { DC_DEMAND_OUTLOOK, DC_DEMAND_OUTLOOK_META } from '../data/dcDemandOutlook.js'
 
 const TITLE = '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스'
 const DESC =
@@ -781,6 +782,45 @@ export default function DashboardPage() {
                 KPX 전력거래실적(data.go.kr) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
               </p>
             )}
+          </section>
+
+          {/* DC 수요-공급 갭 — 전기사용신청 vs 한전 공급가능(11차 전기본). 부지 병목의 정량 근거 */}
+          <section className="calc-card">
+            <div className="chart-title">DC 수요-공급 갭 — 전기사용신청 vs 공급가능 전력 (MW)</div>
+            {(() => {
+              const max = Math.max(...DC_DEMAND_OUTLOOK.map((r) => r.demandMw))
+              return (
+                <ExpandableList
+                  items={DC_DEMAND_OUTLOOK}
+                  initial={5}
+                  unit="개년"
+                  render={(r) => (
+                    <div key={r.y} className="hbar-row">
+                      <span className="hbar-label">
+                        {r.y}
+                        {r.forecast ? 'F' : ''}
+                      </span>
+                      <span className="hbar-track" style={{ position: 'relative' }}>
+                        <span className="hbar-fill" style={{ width: `${(r.demandMw / max) * 100}%`, opacity: 0.45 }} />
+                        <span
+                          className="hbar-fill"
+                          style={{ position: 'absolute', left: 0, top: 0, width: `${(r.supplyMw / max) * 100}%` }}
+                        />
+                      </span>
+                      <span className="hbar-value">
+                        {r.demandMw.toLocaleString()} / {r.supplyMw.toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                />
+              )
+            })()}
+            <p className="chart-note">
+              막대: 연한색=수요(한전 제출 DC 전기사용신청) · 진한색=한전 공급 가능 전력. 2027년 전망 기준 신청의{' '}
+              <strong>{Math.round((DC_DEMAND_OUTLOOK.at(-1).supplyMw / DC_DEMAND_OUTLOOK.at(-1).demandMw) * 100)}%만 공급 가능</strong>{' '}
+              — 부지·계통이 병목이라는 정량 근거. 신청은 실제 착공과 다르며 지자체 프로젝트 다수는 수전용량 미확정(보수적 해석).
+              출처: {DC_DEMAND_OUTLOOK_META.source}.
+            </p>
           </section>
 
           {/* 전력시장 가격 — KPX SMP(계통한계가격) 오늘 시간별. DC 전력 OPEX의 실시간 신호 */}

@@ -1652,7 +1652,7 @@ summary:focus-visible,
   justify-content: center;
   gap: 7px;
   height: 34px;
-  padding: 1px 14px 0; /* 한글 광학 중앙 보정 — 디센더 여백으로 텍스트가 위로 떠 보이는 문제(+1px 하향) */
+  padding: 2px 14px 0; /* 한글 광학 중앙 보정 — 디센더 여백으로 텍스트가 위로 떠 보임(+2px 하향, 1px로 부족 피드백) */
   border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--line));
   background: color-mix(in srgb, var(--surface) 55%, transparent);
