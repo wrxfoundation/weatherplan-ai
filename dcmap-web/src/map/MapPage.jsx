@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster'
@@ -19,6 +19,7 @@ import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
+import { CAPITAL_PIPELINE } from '../data/capitalPipeline.js'
 import { loadPowerLines, lineColor, POWER_LINES_AVAILABLE } from '../data/powerLines.js'
 import { NETWORK_NODES } from '../data/network.js'
 import { recommendSites, recoReasons } from '../score/recommend.js'
@@ -1313,6 +1314,23 @@ export default function MapPage({ power = false }) {
                     <div className="k">DC 공개 전력</div>
                     <div className="v">{regionInfo.dcMw > 0 ? `${regionInfo.dcMw.toLocaleString()} MW` : '비공개'}</div>
                   </div>
+                  {(() => {
+                    // 수도권(서울·경기·인천)만 존재하는 집계 — 공급예정 민간 DC(삼일PwC·KDCC ’26.3)
+                    const pipe = CAPITAL_PIPELINE.filter((p) => p.loc.startsWith(regionInfo.sido))
+                    if (!pipe.length) return null
+                    const mwSum = pipe.reduce((s, p) => s + p.itMw, 0)
+                    return (
+                      <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                        <div className="k">공급예정 민간 DC (PwC·KDCC 집계 ’26.3)</div>
+                        <div className="v">
+                          <strong>{pipe.length}</strong>곳 · IT용량 합계 <strong>{mwSum.toLocaleString()}</strong>MW{' '}
+                          <Link className="mini-link" to="/data?tab=capital">
+                            목록 →
+                          </Link>
+                        </div>
+                      </div>
+                    )
+                  })()}
                 </div>
                 <p className="note">
                   발전 공급은 3MW 초과 허가대장(2024+ 건수·용량 참고치), 계통 여유는 한전 분산전원 기준. 공급-여유-DC를 한 지역에서 대비.

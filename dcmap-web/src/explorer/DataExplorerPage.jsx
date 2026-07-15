@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL } from '../data/facilities.js'
 import { GEN_RECENT, GEN_LICENSE_META } from '../data/genLicenses.js'
@@ -205,9 +206,20 @@ const INTEL_CHANNELS = [
 ]
 
 export default function DataExplorerPage() {
-  const [tab, setTab] = useState('gen')
+  // 탭 URL 동기화(?tab=) — 카드·아티클에서 특정 데이터셋으로 딥링크 가능하게
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const [tab, setTab] = useState(() => (DATASETS.some((d) => d.key === tabParam) ? tabParam : 'gen'))
   const [q, setQ] = useState('')
   const [page, setPage] = useState(0)
+  const selectTab = (k) => {
+    setTab(k)
+    setQ('')
+    const next = new URLSearchParams(searchParams)
+    if (k === 'gen') next.delete('tab')
+    else next.set('tab', k)
+    setSearchParams(next, { replace: true })
+  }
   useEffect(() => {
     document.title = '데이터 탐색기 — 축적 자료 검색·CSV 다운로드 · AI InfraMap'
     setQ('')
@@ -238,7 +250,7 @@ export default function DataExplorerPage() {
 
         <div className="seg-tabs" role="tablist" aria-label="데이터셋 분류">
           {DATASETS.map((d) => (
-            <button key={d.key} type="button" role="tab" className={`seg-tab ${tab === d.key ? 'on' : ''}`} onClick={() => { setTab(d.key); setQ('') }} aria-selected={tab === d.key}>
+            <button key={d.key} type="button" role="tab" className={`seg-tab ${tab === d.key ? 'on' : ''}`} onClick={() => selectTab(d.key)} aria-selected={tab === d.key}>
               {d.label} <span className="n">{d.rows.length.toLocaleString()}</span>
             </button>
           ))}
