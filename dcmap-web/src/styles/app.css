@@ -7727,11 +7727,12 @@ main.about-page {
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--accent) 9%, transparent) 0%,
-    color-mix(in srgb, var(--accent) 4%, transparent) 38%,
+    color-mix(in srgb, var(--accent) 12%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 5%, transparent) 38%,
     transparent 68%
   );
-  mix-blend-mode: screen; /* 다크 배경 위에서만 밝아짐 — 콘텐츠 색 왜곡 없음 */
+  /* 경량화: mix-blend-mode(screen) 제거 — 페이지 전체를 별도 버퍼로 합성해 GPU 메모리를
+   * 크게 먹던 주범. 저알파 라디얼만으로 다크 배경에서 시각 효과 거의 동일 */
   pointer-events: none;
   z-index: 3000; /* topbar(1100) 위 — pointer-events 없음이라 상호작용 무해 */
   opacity: 0;

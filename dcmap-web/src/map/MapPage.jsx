@@ -340,7 +340,9 @@ export default function MapPage({ power = false }) {
     // 시안(hero-v1) 준거: 줌 컨트롤 우하단, 축척 좌하단
     // maxZoom을 맵에 직접 지정 — 베이스 타일이 [baseMap] 이펙트에서 지연 추가되므로,
     // 그전에 markerCluster가 붙어도 'Map has no maxZoom specified' 크래시가 나지 않게.
-    const map = L.map(mapRef.current, { zoomControl: false, minZoom: 6, maxZoom: 19 })
+    // preferCanvas: 변전소 841·송전선 수천 폴리라인·산단 511 등 벡터 레이어를 SVG DOM 노드 대신
+    // 단일 캔버스에 래스터 — DOM 노드·리스너·메모리 대폭 절감(다중 탭 성능의 핵심)
+    const map = L.map(mapRef.current, { zoomControl: false, minZoom: 6, maxZoom: 19, preferCanvas: true })
     map.fitBounds(KR_BOUNDS, { padding: [8, 8] })
     map.setMaxBounds([
       [30.5, 119.5],
@@ -380,8 +382,33 @@ export default function MapPage({ power = false }) {
     })
     mapObj.current = map
     clusterRef.current = cluster
-    return () => map.remove()
-  }, [])
+    return () => {
+      // 언마운트 누수 방지 — 레이어 ref가 detached DOM·리스너를 붙든 채 살아남지 않게
+      // 전부 명시 해제(맵↔다른 페이지 왕복 시 노드·리스너 누적 실측으로 확인된 문제)
+      for (const r of [
+        plantsLayerRef, subsLayerRef, linesLayerRef, complexLayerRef, netLayerRef, reLayerRef,
+        waterLayerRef, semiLayerRef, recoLayerRef, publicLayerRef, genLayerRef, headroomLayerRef,
+        approvalLayerRef, parcelLayerRef, pointMarkerRef,
+      ]) {
+        try {
+          if (r.current) map.removeLayer(r.current)
+        } catch {
+          /* 무시 */
+        }
+        r.current = null
+      }
+      try {
+        cluster.clearLayers()
+        map.removeLayer(cluster)
+      } catch {
+        /* 무시 */
+      }
+      clusterRef.current = null
+      map.off()
+      map.remove()
+      mapObj.current = null
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 발전 인프라 레이어 토글
   useEffect(() => {

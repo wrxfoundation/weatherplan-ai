@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import LineIcon from '../components/LineIcon.jsx'
@@ -128,6 +128,20 @@ function setMeta(attr, key, content) {
 }
 
 export default function AboutPage() {
+  const videoRef = useRef(null)
+
+  // 경량화: 탭이 백그라운드로 가면 룹 영상 디코딩 정지 — 다중 탭에서 디코더·메모리 점유 방지
+  useEffect(() => {
+    const onVis = () => {
+      const v = videoRef.current
+      if (!v) return
+      if (document.hidden) v.pause()
+      else v.play().catch(() => {})
+    }
+    document.addEventListener('visibilitychange', onVis)
+    return () => document.removeEventListener('visibilitychange', onVis)
+  }, [])
+
   useEffect(() => {
     document.title = TITLE
     setMeta('name', 'description', DESC)
@@ -169,6 +183,7 @@ export default function AboutPage() {
           {/* 번개 부유 아이콘은 번잡 피드백으로 제거(2026.7) — 배경은 골드 룹 영상만 */}
           <div className="about-hero-media" aria-hidden="true">
             <video
+              ref={videoRef}
               src="https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260709_004633_2ddc8857-ccd6-4a3c-994e-f16363558383.mp4"
               autoPlay
               muted
