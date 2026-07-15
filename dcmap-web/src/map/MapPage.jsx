@@ -200,6 +200,8 @@ export default function MapPage({ power = false }) {
   const netLayerRef = useRef(null)
   const [showPipeline, setShowPipeline] = useState(() => _initLayers.has('pipeline')) // 수도권 공급예정 DC(근사)
   const pipelineLayerRef = useRef(null)
+  const siteSubstLayerRef = useRef(null)
+  const [siteSubsts, setSiteSubsts] = useState([]) // 부지 분석 시 반환된 변전소(실좌표·여유) — 색상 레이어
   const [showRe, setShowRe] = useState(() => _initLayers.has('re')) // 재생발전단지 레이어(RE100)
   const reLayerRef = useRef(null)
   const [showWater, setShowWater] = useState(() => _initLayers.has('water')) // 주요 수원(다목적·용수댐) 레이어
@@ -394,7 +396,7 @@ export default function MapPage({ power = false }) {
       for (const r of [
         plantsLayerRef, subsLayerRef, linesLayerRef, complexLayerRef, netLayerRef, pipelineLayerRef, reLayerRef,
         waterLayerRef, semiLayerRef, recoLayerRef, publicLayerRef, genLayerRef, headroomLayerRef,
-        approvalLayerRef, parcelLayerRef, pointMarkerRef,
+        approvalLayerRef, parcelLayerRef, pointMarkerRef, siteSubstLayerRef,
       ]) {
         try {
           if (r.current) map.removeLayer(r.current)
@@ -704,6 +706,36 @@ export default function MapPage({ power = false }) {
       pipelineLayerRef.current = g
     }
   }, [showPipeline])
+
+  // 부지 분석 시 반환된 변전소 전력공급 여유 — 실좌표에 색상 마커(초록=여유·회색=0). 클릭지점과 점선 연결.
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (siteSubstLayerRef.current) {
+      map.removeLayer(siteSubstLayerRef.current)
+      siteSubstLayerRef.current = null
+    }
+    if (!sitePoint || !siteSubsts.length) return
+    const g = L.layerGroup()
+    for (const s of siteSubsts) {
+      const has = s.maxMw > 0
+      const color = has ? '#34d399' : '#94a3b8'
+      const r = has ? Math.max(6, Math.min(18, Math.round(Math.sqrt(s.maxMw) * 1.1))) : 5
+      L.polyline([[sitePoint.lat, sitePoint.lng], [s.lat, s.lng]], {
+        color, weight: 1, opacity: has ? 0.4 : 0.2, dashArray: '3 4', bubblingMouseEvents: false,
+      }).addTo(g)
+      L.circleMarker([s.lat, s.lng], {
+        radius: r, color, weight: 1.8, fillColor: color, fillOpacity: has ? 0.32 : 0.15, bubblingMouseEvents: false,
+      })
+        .bindTooltip(
+          `<div class="dc-hovercard"><strong>${s.name}변전소</strong> · ${s.kv}<br/>${has ? `${s.firstAvailYear}년 ${s.series[s.years.indexOf(s.firstAvailYear)]?.toLocaleString()}MW~ · 최대 <b>${s.maxMw.toLocaleString()}MW</b>` : '전 기간 여유 0'}<br/><span class="muted">한전ON 전력공급 여유(연도별) · OSM 실좌표 · 참고</span></div>`,
+          { direction: 'top', offset: [0, -8], className: 'dc-hovercard', opacity: 1 },
+        )
+        .addTo(g)
+    }
+    g.addTo(map)
+    siteSubstLayerRef.current = g
+  }, [siteSubsts, sitePoint])
 
   // 주요 국가산단 레이어 토글 — 인센티브·기반시설 사전확보 입지(초록 사각 마커).
   useEffect(() => {
@@ -1428,6 +1460,7 @@ export default function MapPage({ power = false }) {
               }}
               onAddCompare={addCompare}
               inCompare={compare.some((c) => c.id === `${sitePoint.lat.toFixed(5)},${sitePoint.lng.toFixed(5)}`)}
+              onSubstations={setSiteSubsts}
             />
           ) : (
             <>
