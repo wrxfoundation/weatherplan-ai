@@ -93,6 +93,30 @@ const STEPS = [
 /* 실제 코드가 호출·집계에 사용하는 공개 소스만 나열(장식용 로고월 금지) */
 const SOURCES = ['한전', '전력거래소 EPSIS', 'KOSIS', 'SGIS', 'vworld', '기상청', 'K-water', '국가법령정보센터', 'DART', 'OSM']
 
+/* AEO: 자주 묻는 질문 — 답변엔진(AI 검색)이 그대로 인용할 Q&A. 확정 사실만, postbuild FAQPage와 동일 내용 */
+const FAQ = [
+  {
+    q: 'AI InfraMap은 어떤 서비스인가요?',
+    a: `전국 데이터센터·발전·계통·규제 공개 데이터를 한 장의 지도로 모아, 임의 지점의 데이터센터 부지 적합성을 전력·토지·리스크·네트워크·기상 5축으로 즉시 판정하는 부지 인텔리전스입니다. 검증 시설 ${FACILITIES.length}곳, 회원가입 없이 무료로 사용합니다.`,
+  },
+  {
+    q: '전력계통영향평가가 무엇이고 왜 중요한가요?',
+    a: '분산에너지 활성화 특별법에 따라 계약전력 10MW 이상 대규모 전력수요의 계통 영향을 심사하는 제도입니다. 시범운영(2025.8–2026.3)에서 수도권 1차 기술검토 522건 중 53.4%가 전력 공급 불가 판정을 받았고, 본심사 통과는 수도권 10/24건 대 비수도권 26/29건이었습니다. 데이터센터 부지 선정의 최대 관문입니다.',
+  },
+  {
+    q: '데이터센터 부지는 왜 비수도권이 유리한가요?',
+    a: '전력계통영향평가에 수도권 억제 배점(±15점)이 있고, 전국 공급불가 판정의 91%가 수도권에 집중돼 있습니다. 여기에 AIDC 특별법(2027.3.10 시행)이 비수도권 신·증축에 평가 면제 트랙을 열어줍니다(면제 용량 상한은 대통령령 미정).',
+  },
+  {
+    q: '데이터는 어디서 오고 믿을 수 있나요?',
+    a: '한전, 전력거래소(EPSIS), KOSIS, SGIS, vworld, 기상청, K-water, 국가법령정보센터, DART 등 공개 데이터만 사용합니다. 산출 근거가 없는 항목은 점수화하지 않고 "데이터 대기"로 명시하며, 수치에는 출처와 갱신일을 표기합니다.',
+  },
+  {
+    q: '이용 비용은 얼마인가요?',
+    a: '맵·부지 스코어링·GPU 계산기·AI 브리프는 무료(베타)입니다. 정밀 부지 리포트와 데이터·API 제휴는 요금·문의 페이지 또는 kwangdol@gmail.com으로 문의하세요.',
+  },
+]
+
 function setMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`)
   if (!el) {
@@ -109,6 +133,16 @@ export default function AboutPage() {
     setMeta('name', 'description', DESC)
     setMeta('property', 'og:title', TITLE)
     setMeta('property', 'og:description', DESC)
+    // AEO: FAQPage JSON-LD — SPA 진입 경로에서도 유지(프리렌더 셸과 동일 내용)
+    const script = document.createElement('script')
+    script.type = 'application/ld+json'
+    script.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+    })
+    document.head.appendChild(script)
+    return () => script.remove()
   }, [])
 
   // 히어로 통계 — 화면의 숫자는 전부 데이터에서 산출(하드코딩 금지)
@@ -278,6 +312,19 @@ export default function AboutPage() {
               <span key={s} className="src-chip">
                 {s}
               </span>
+            ))}
+          </div>
+        </section>
+
+        <section className="about-sec">
+          <div className="eyebrow">FAQ</div>
+          <h2>자주 묻는 질문</h2>
+          <div className="about-faq">
+            {FAQ.map((f) => (
+              <details key={f.q} className="faq-item">
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
             ))}
           </div>
         </section>
