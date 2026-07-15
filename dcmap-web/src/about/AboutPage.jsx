@@ -171,7 +171,11 @@ export default function AboutPage() {
     return [
       { v: FACILITIES.length, unit: '곳', lbl: '검증 시설 (운영·건설·계획)' },
       { v: operating, unit: '곳', lbl: '운영 중 시설' },
-      { v: mwPublic.toLocaleString(), unit: 'MW+', lbl: `공개 전력 합계 (운영 ${mwOperating.toLocaleString()}MW + 건설·계획 목표치) · 미공개 제외` },
+      {
+        v: (mwPublic / 1000).toFixed(1),
+        unit: 'GW+',
+        lbl: `개별 시설 공개 전력 합계 (${mwPublic.toLocaleString()}MW · 운영 ${mwOperating.toLocaleString()}MW 포함) — 규모 미공개·집합계획 제외분. 국가 AIDC 구축계획 18.4GW의 개별 공개분.`,
+      },
       { v: PROCESS_NODES.length, unit: '단계', lbl: '인허가 절차 로드맵' },
       { v: GLOSSARY.length, unit: '개', lbl: '전력·인허가 용어' },
     ]
