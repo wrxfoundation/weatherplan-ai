@@ -23,8 +23,17 @@ import PowerWaterMega from './articles/PowerWaterMega.jsx'
 import HyperscaleJukjeon from './articles/HyperscaleJukjeon.jsx'
 import PwcValueChain from './articles/PwcValueChain.jsx'
 import RsquareRealEstate from './articles/RsquareRealEstate.jsx'
+import GpuUtilization from './articles/GpuUtilization.jsx'
 
 const ARTICLES = {
+  'gpu-utilization-2026': {
+    component: GpuUtilization,
+    sources: [
+      'IT조선 「대규모 GPU 구축하는 韓 CSP, 그 다음은… "기업·개발자 선택받아야"」(정종길 기자, 2026.7.14) — 정부 GPU 사업 2조800억·9,704장(B300·베라루빈)·국가AI컴퓨팅센터 2.5조·국내 CSP GPUaaS·네오클라우드 비교',
+      'GPU 가동률: 벤처비트 리서치 전세계 100인+ 기업 기술책임자 573명 조사(자체 GPU 운영 기업 86% 가동률 50% 이하) — IT조선 재인용 / 국내 사용률 30~40%: 국내 클라우드 업계 관계자, IT조선 재인용',
+      '수요-공급 갭·전기사용신청 7,343MW: 삼일PwC(2026.3)·산업부 — 본 매체 別 인사이트 및 데이터 탐색기 수록. 계산기 MW=설계 수전용량(피크)이며 가동률 할인은 AI InfraMap 자체 프레임',
+    ],
+  },
   'rsquare-realestate-2025': {
     component: RsquareRealEstate,
     sources: [
