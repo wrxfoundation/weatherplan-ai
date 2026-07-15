@@ -11,6 +11,7 @@ import { SUBSTATIONS } from '../data/substations.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { CAPITAL_PIPELINE } from '../data/capitalPipeline.js'
 import { DC_DEALS, RACK_RATES, DEV_CONFLICTS, DEV_CONFLICTS_META } from '../data/dcRealEstate.js'
+import { GRID_CONSTRUCTION, GRID_CONSTRUCTION_META } from '../data/gridConstruction.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -151,6 +152,22 @@ const DATASETS = [
       { k: 'due', label: '준공예정' },
     ],
     rows: CAPITAL_PIPELINE.map((r) => ({ ...r, mwSupply: r.mwSupply ?? '', due: r.due ?? '' })),
+  },
+  {
+    key: 'gridbuild',
+    label: '송변전 건설 파이프라인',
+    asOf: GRID_CONSTRUCTION_META.asOf,
+    source: `${GRID_CONSTRUCTION_META.source}. ${GRID_CONSTRUCTION_META.note}`,
+    fullCsv: null,
+    columns: [
+      { k: 'stage', label: '단계' },
+      { k: 'kv', label: '전압' },
+      { k: 'name', label: '사업명' },
+      { k: 'kind', label: '설비종류' },
+      { k: 'hq', label: '담당본부' },
+      { k: 'office', label: '담당사업소' },
+    ],
+    rows: GRID_CONSTRUCTION.map((r) => ({ ...r })),
   },
   {
     key: 'deals',
