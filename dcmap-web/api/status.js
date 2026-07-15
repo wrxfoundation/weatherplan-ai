@@ -10,9 +10,10 @@ const SOURCES = [
   { key: 'landuse', label: 'vworld 용도지역', env: ['VWORLD_KEY'], path: '/api/landuse', point: true, axis: '토지' },
   { key: 'headroom', label: '한전 계통 여유용량', env: ['KEPCO_API_KEY'], path: '/api/headroom?metroCd=11', point: true, axis: '전력' },
   { key: 'epsis', label: 'EPSIS/전력시장 발전설비', env: ['DATA_GO_KR_KEY'], path: '/api/power?src=epsis', point: false, axis: '전력' },
-  { key: 'supply', label: 'KPX 전력수급예보', env: ['DATA_GO_KR_KEY'], path: '/api/power?src=supply', point: false, axis: '전력' },
+  { key: 'supply', label: 'KPX 현재 전력수급(5분)', env: ['DATA_GO_KR_KEY'], path: '/api/power?src=supply', point: false, axis: '전력' },
   { key: 'trading', label: 'KPX 전력거래실적', env: ['DATA_GO_KR_KEY'], path: '/api/power?src=trading', point: false, axis: '전력' },
-  { key: 'smp', label: 'KPX 계통한계가격(SMP)', env: ['DATA_GO_KR_KEY'], path: '/api/power?src=smp', point: false, axis: '전력' },
+  { key: 'smp', label: 'KPX 계통한계가격·수요예측', env: ['DATA_GO_KR_KEY'], path: '/api/power?src=smp', point: false, axis: '전력' },
+  { key: 'fuelmix', label: 'KPX 발전원별 발전량(5분)', env: ['DATA_GO_KR_KEY'], path: '/api/power?src=fuelmix', point: false, axis: '전력' },
   // probe는 실지번(강남구 삼성동 159, 무역센터)으로 엔드투엔드 검사 — needs_params 오탐 방지
   { key: 'bldenergy', label: '건축HUB 건물에너지', env: ['DATA_GO_KR_KEY'], path: '/api/bldenergy?kind=elec&sigunguCd=11680&bjdongCd=10500&bun=0159&ji=0000&useYm=202503', point: false, axis: '리스크' },
   { key: 'filings', label: 'DART 공시', env: ['DART_API_KEY'], path: '/api/filings', point: false, axis: '시장' },

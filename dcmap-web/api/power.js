@@ -23,17 +23,26 @@ const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 const DEFAULTS = {
   epsis:
     'https://apis.data.go.kr/B552115/PowerMarketGenInfo/getPowerMarketGenInfo?serviceKey={key}&pageNo=1&numOfRows=1000&dataType=JSON',
-  // 전력수급예보: KPX openapi(XML) — 최대예측수요(fcMaxload)·예측예비력(fcReservePwr)
-  supply: 'https://openapi.kpx.or.kr/openapi/forecast1dMaxBaseDate/getForecast1dMaxBaseDate?serviceKey={key}',
+  // 현재 전력수급(실시간 5분) — 신형 GW API(apis.data.go.kr 경유라 클라우드 차단 없음).
+  // 구 openapi.kpx.or.kr 수급예보(XML·IP차단)를 대체 — 공급능력·현재수요·예비력.
+  supply:
+    'https://apis.data.go.kr/B552115/sukub5mMaxDatetime2/getSukub5mMaxDatetime2?serviceKey={key}&pageNo=1&numOfRows=60&dataType=JSON',
   trading:
     'https://apis.data.go.kr/B552115/PowerTradingResultInfo1/getPowerTradingResultInfo1?serviceKey={key}&pageNo=1&numOfRows=100&dataType=JSON',
-  // SMP(계통한계가격) 오늘 시간별 — KPX 레거시 openapi(XML). areaCd 필수(1=육지, 9=제주).
-  // 주의: data.go.kr 심의승인 대상(운영계정 제한) — 승인 키 확보 또는 신형 API 전환 시 SMP_URL env로 교체.
-  smp: 'https://openapi.kpx.or.kr/openapi/smp1hToday/getSmp1hToday?serviceKey={key}&areaCd=1',
+  // SMP+수요예측(하루전 발전계획, 23시경 갱신) — 신형 API(자동승인·JSON). 레거시 smp1hToday(XML·심의제한) 대체.
+  smp: 'https://apis.data.go.kr/B552115/SmpWithForecastDemand/getSmpWithForecastDemand?serviceKey={key}&pageNo=1&numOfRows=100&dataType=JSON&areaCd=1',
+  // 발전원별 발전량 현황(실시간 5분·계통기준) — 실측 발전 믹스(수력~신재생 + PPA/BTM 추정 + 시장수요)
+  fuelmix: 'https://apis.data.go.kr/B552115/sumperfuel5m/getSumperfuel5m?serviceKey={key}&pageNo=1&numOfRows=2&dataType=JSON',
 }
-const IS_XML = { supply: true, smp: true } // KPX openapi 계열은 XML 응답
-const ENV_KEY = { epsis: 'EPSIS_URL', supply: 'SUPPLY_URL', trading: 'TRADING_URL', smp: 'SMP_URL' }
-const CACHE = { epsis: 's-maxage=86400, stale-while-revalidate=604800', supply: 's-maxage=300, stale-while-revalidate=3600', trading: 's-maxage=3600, stale-while-revalidate=86400', smp: 's-maxage=1800, stale-while-revalidate=21600' }
+const IS_XML = {} // 전 소스 신형 JSON API로 전환 — XML 폴백 머신은 env 오버라이드 대비 보존
+const ENV_KEY = { epsis: 'EPSIS_URL', supply: 'SUPPLY_URL', trading: 'TRADING_URL', smp: 'SMP_URL', fuelmix: 'FUELMIX_URL' }
+const CACHE = {
+  epsis: 's-maxage=86400, stale-while-revalidate=604800',
+  supply: 's-maxage=300, stale-while-revalidate=3600',
+  trading: 's-maxage=3600, stale-while-revalidate=86400',
+  smp: 's-maxage=1800, stale-while-revalidate=21600',
+  fuelmix: 's-maxage=300, stale-while-revalidate=1800',
+}
 
 const num = (v) => {
   if (v == null) return undefined
@@ -219,22 +228,63 @@ function handleEpsis(items, total) {
   }
 }
 
-// ---- supply: 전력수급예보(KPX XML) — fcMaxload 최대예측수요·fcReservePwr 예측예비력 ----
+// ---- supply: 현재 전력수급(신형 GW·5분) — 공급능력·현재수요·공급예비력/률.
+// 구 XML 수급예보(fc*) 필드도 pick으로 수용(SUPPLY_URL 오버라이드 대비) ----
 const SUPPLY_TAGS = ['fcDate', 'fcStime', 'fcEtime', 'fcMaxload', 'fcReservePwr', 'fcLevel']
 function handleSupply(items) {
   const rows = []
   for (const it of items) {
-    const peakMw = num(it.fcMaxload) // 최대예측수요
-    const reserveMw = num(it.fcReservePwr) // 예측예비력
-    if (peakMw == null && reserveMw == null) continue
-    const supplyMw = peakMw != null && reserveMw != null ? peakMw + reserveMw : undefined
-    const reservePct = reserveMw != null && peakMw ? Math.round((reserveMw / peakMw) * 1000) / 10 : undefined
-    const at = [it.fcDate, it.fcStime ? `${it.fcStime}시` : ''].filter(Boolean).join(' ')
-    rows.push({ at: at || undefined, supplyMw, peakMw, reserveMw, reservePct, level: num(it.fcLevel) })
+    const peakMw = num(pick(it, ['currPwrTot', 'currLoad', 'fcMaxload'])) // 현재(또는 예측최대) 수요
+    const supplyCap = num(pick(it, ['suppAbility', 'suppPwr'])) // 공급능력
+    let reserveMw = num(pick(it, ['supplyReservePwr', 'operReservePwr', 'fcReservePwr']))
+    let reservePct = num(pick(it, ['supplyReserveRate', 'operReserveRate']))
+    if (peakMw == null && reserveMw == null && supplyCap == null) continue
+    if (reserveMw == null && supplyCap != null && peakMw != null) reserveMw = supplyCap - peakMw
+    if (reservePct == null && reserveMw != null && peakMw) reservePct = Math.round((reserveMw / peakMw) * 1000) / 10
+    const supplyMw = supplyCap ?? (peakMw != null && reserveMw != null ? peakMw + reserveMw : undefined)
+    const at = pick(it, ['baseDatetime', 'baseDate', 'fcDate']) ?? undefined
+    rows.push({ at: at ? String(at) : undefined, supplyMw, peakMw, reserveMw, reservePct, level: num(it.fcLevel) })
   }
   if (!rows.length) return { available: false, reason: 'no_supply_fields' }
   const latest = rows[rows.length - 1]
-  return { available: true, asOf: latest.at, supplyMw: latest.supplyMw, peakMw: latest.peakMw, reserveMw: latest.reserveMw, reservePct: latest.reservePct, level: latest.level, rows: rows.slice(-48), source: 'KPX 전력수급예보조회' }
+  return { available: true, asOf: latest.at, supplyMw: latest.supplyMw, peakMw: latest.peakMw, reserveMw: latest.reserveMw, reservePct: latest.reservePct, level: latest.level, rows: rows.slice(-48), source: 'KPX 현재 전력수급현황(5분·계통기준)' }
+}
+
+// ---- fuelmix: 발전원별 발전량 현황(5분·MW) — 실측 발전 믹스 + PPA/BTM 추정 + 시장수요 ----
+const FUEL_NAMES = { fuelPwr1: '수력', fuelPwr2: '유류', fuelPwr3: '유연탄', fuelPwr4: '원자력', fuelPwr5: '양수', fuelPwr6: 'LNG', fuelPwr7: '국내탄', fuelPwr8: '태양광(시장)', fuelPwr9: '풍력', fuelPwr10: '신재생·기타' }
+const FUEL_RENEW = new Set(['수력', '태양광(시장)', '풍력', '신재생·기타'])
+function handleFuelmix(items) {
+  // 최신 행 1개(응답이 최신순인지 불명이라 baseDatetime 최대값 선택, 없으면 첫 행)
+  let it = items[0]
+  for (const row of items) {
+    if (String(pick(row, ['baseDatetime', 'baseDate']) ?? '') > String(pick(it, ['baseDatetime', 'baseDate']) ?? '')) it = row
+  }
+  const byFuel = []
+  let total = 0
+  let renew = 0
+  for (const [k, fuel] of Object.entries(FUEL_NAMES)) {
+    const mw = num(it[k])
+    if (mw == null || mw <= 0) continue
+    byFuel.push({ fuel, mw: Math.round(mw) })
+    total += mw
+    if (FUEL_RENEW.has(fuel)) renew += mw
+  }
+  if (!byFuel.length) return { available: false, reason: 'no_fuel_fields' }
+  byFuel.sort((a, b) => b.mw - a.mw)
+  const nuclear = byFuel.find((f) => f.fuel === '원자력')?.mw ?? 0
+  return {
+    available: true,
+    asOf: String(pick(it, ['baseDatetime', 'baseDate']) ?? '') || undefined,
+    byFuel,
+    totalMw: Math.round(total),
+    renewPct: Math.round((renew / total) * 100),
+    nuclearPct: Math.round((nuclear / total) * 100),
+    fossilPct: Math.max(0, 100 - Math.round((renew / total) * 100) - Math.round((nuclear / total) * 100)),
+    ppaMw: num(pick(it, ['pEsmw'])), // PPA 추정
+    btmMw: num(pick(it, ['bEmsw', 'bEsmw'])), // BTM(자가소비 태양광) 추정 — 스펙 오탈자 대비 둘 다
+    demandMw: num(pick(it, ['fuelPwrTot'])),
+    source: 'KPX 발전원별 발전량 현황(5분·계통기준, 육지+제주)',
+  }
 }
 
 // ---- trading: 전력거래실적(연료원별 거래량) ----
@@ -266,20 +316,20 @@ function handleTrading(items) {
   return { available: true, asOf: asOf ? String(asOf) : undefined, byFuel, totalMwh: totalMwh || undefined, source: 'KPX 전력거래실적 (data.go.kr)' }
 }
 
-// ---- smp: 계통한계가격(오늘 시간별, 원/kWh) — areaCd 1=육지 · 9=제주 ----
-// 공식 스펙(활용자가이드 v1.6)의 응답 필드는 'tradHour'(오탈자 아님) — 방어적으로 tradeHour도 수용
-const SMP_TAGS = ['areaCd', 'tradeDay', 'tradHour', 'tradeHour', 'smp']
+// ---- smp: 계통한계가격 + 수요예측(하루전 발전계획, 시간별) — areaCd 1=육지 · 9=제주 ----
+// 신형(SmpWithForecastDemand)·레거시(smp1hToday: tradHour 오탈자 포함) 필드 모두 방어적으로 수용
 function handleSmp(items) {
   const rows = []
   let asOf
   for (const it of items) {
-    const price = num(it.smp)
-    const hour = num(pick(it, ['tradHour', 'tradeHour']))
+    const price = num(pick(it, ['smp', 'smpVal']))
+    const hour = num(pick(it, ['tradHour', 'tradeHour', 'hour', 'time']))
     if (price == null || hour == null) continue
     const area = String(it.areaCd ?? '').trim()
     if (area && area !== '1') continue // 육지만 — 제주는 별도 계통(시범사업 가격 상이)
-    asOf = asOf ?? it.tradeDay
-    rows.push({ hour, smp: price })
+    asOf = asOf ?? pick(it, ['tradeDay', 'baseDate'])
+    const demandMw = num(pick(it, ['lfd', 'forecastDemand', 'fcstLoad', 'demand']))
+    rows.push(demandMw != null ? { hour, smp: price, demandMw } : { hour, smp: price })
   }
   if (!rows.length) return { available: false, reason: 'no_smp_fields' }
   rows.sort((a, b) => a.hour - b.hour)
@@ -294,13 +344,14 @@ function handleSmp(items) {
     avgSmp,
     minSmp: Math.min(...prices),
     maxSmp: Math.max(...prices),
+    peakDemandMw: rows.some((r) => r.demandMw != null) ? Math.max(...rows.map((r) => r.demandMw ?? 0)) : undefined,
     rows,
-    source: 'KPX 계통한계가격(SMP) — 오늘 시간별 · 육지',
+    source: 'KPX 계통한계가격·수요예측(하루전 발전계획) — 시간별 · 육지',
   }
 }
 
-const HANDLERS = { epsis: handleEpsis, supply: handleSupply, trading: handleTrading, smp: handleSmp }
-const XML_TAGS = { supply: SUPPLY_TAGS, smp: SMP_TAGS }
+const HANDLERS = { epsis: handleEpsis, supply: handleSupply, trading: handleTrading, smp: handleSmp, fuelmix: handleFuelmix }
+const XML_TAGS = { supply: SUPPLY_TAGS } // 신형 전환으로 기본은 미사용 — env 오버라이드(레거시 XML) 대비 보존
 
 export default async function handler(req, res) {
   const src = String(req.query.src || 'epsis')
