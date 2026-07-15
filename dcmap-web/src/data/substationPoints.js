@@ -845,3 +845,20 @@ export const SUBSTATION_POINTS = [
   [35.8656,127.07092,154,'전주변전소'],
   [36.32353,127.43919,154,'동대전변전소'],
 ]
+
+// 변전소명(한전ON 반환명, 예: '미금') → OSM 실좌표 매칭. 접미사(변전소·S/S·개폐소·변환소) 정규화 후 base 일치.
+// 용도: 한전ON은 '검색지역 관할' 변전소를 반환하며 소재지를 검색지역으로 라벨링 → 실제 위치를 OSM 좌표로 보정.
+const _stripSubst = (s) => String(s || '').replace(/\s+/g, '').replace(/(변전소|변환소|개폐소|S\/S|S\/Y)$/i, '').replace(/^신/, '신')
+const _SUBST_INDEX = (() => {
+  const m = new Map()
+  for (const [lat, lng, kv, nm] of SUBSTATION_POINTS) {
+    const base = _stripSubst(nm)
+    if (base && !m.has(base)) m.set(base, { lat, lng, kv, name: nm })
+  }
+  return m
+})()
+export function matchSubstationCoord(name) {
+  if (!name) return null
+  const base = _stripSubst(name)
+  return _SUBST_INDEX.get(base) || _SUBST_INDEX.get(base.replace(/^신/, '')) || null
+}
