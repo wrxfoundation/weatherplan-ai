@@ -234,14 +234,14 @@ async function usageHandler(req, res, key) {
  * 이 엔드포인트는 별도 API 키가 필요 없고 CORS가 열려 있으나, 클라우드 IP 차단 가능성 대비 프록시→직접 폴백.
  * 코드는 법정동코드(10자리)에서 파생: sido=앞2 · sigg=3~5 · emd=6~8.
  */
-async function kepcoPost(url, bodyObj, ms = 7000) {
+async function kepcoPost(url, bodyObj, ms = 7000, referer = 'https://online.kepco.co.kr/EWM094D00') {
   const payload = JSON.stringify(bodyObj)
   const headers = {
     'Content-Type': 'application/json; charset=UTF-8',
     Accept: 'application/json',
     'User-Agent': UA,
     Origin: 'https://online.kepco.co.kr',
-    Referer: 'https://online.kepco.co.kr/EWM094D00',
+    Referer: referer,
   }
   // 1) 프록시 경유(POST 지원 시) → 2) undici 직접
   if (proxyConfigured()) {
@@ -265,31 +265,16 @@ async function kepcoPost(url, bodyObj, ms = 7000) {
   return null
 }
 
-async function transHandler(req, res) {
-  res.setHeader('Cache-Control', 's-maxage=43200, stale-while-revalidate=604800')
-  const adm = String(req.query.admCd || '').replace(/\D/g, '')
-  if (!/^\d{8,10}$/.test(adm)) {
-    res.status(400).json({ available: false, reason: 'bad_admCd' })
-    return
-  }
-  const kv = req.query.kv === '345' ? '345' : '154'
-  const year = /^\d{4}$/.test(String(req.query.year)) ? String(req.query.year) : String(new Date().getFullYear())
-  const url = `https://online.kepco.co.kr/ew/cpct/retrieveTransCpct${kv}kV`
-  const reqParam = { sido_code: adm.slice(0, 2), sigg_code: adm.slice(2, 5), emd_code: adm.slice(5, 8), year, gubun: 'etc' }
-  try {
-    const body = await kepcoPost(url, { dma_reqParam: reqParam })
-    const list = Array.isArray(body?.dlt_resultList) ? body.dlt_resultList : []
-    if (!list.length) {
-      res.status(200).json({ available: false, reason: 'no_rows', kv, scope: reqParam })
-      return
-    }
-    const YKEYS = ['THIS_YY', 'ONE_YY', 'TWO_YY', 'THR_YY', 'FOR_YY', 'FIV_YY', 'SIX_YY']
-    const subs = list.map((r) => {
-      const base = Number.parseInt(r.RVW_YY, 10) || Number(year)
+// 한전ON 응답행 → 연도별 여유 표준화. 같은 WebSquare 시스템이라 전력공급/재생e가 동일 필드(THIS_YY..SIX_YY) 사용.
+const YKEYS = ['THIS_YY', 'ONE_YY', 'TWO_YY', 'THR_YY', 'FOR_YY', 'FIV_YY', 'SIX_YY']
+function normSubst(list, fallbackYear) {
+  return (Array.isArray(list) ? list : [])
+    .map((r) => {
+      const base = Number.parseInt(r.RVW_YY, 10) || Number(fallbackYear)
       const series = YKEYS.map((k) => num(r[k]) ?? 0)
       const firstIdx = series.findIndex((v) => v > 0)
       return {
-        name: String(r.PSPWPNM || r.PSS_NM || '미상'),
+        name: String(r.PSPWPNM || r.PSS_NM || r.SUBST_NM || '미상'),
         sido: r.SIDO_NM ? String(r.SIDO_NM) : undefined,
         sigg: r.SGG_NM ? String(r.SGG_NM) : undefined,
         emd: r.EMD_NM ? String(r.EMD_NM) : undefined,
@@ -298,16 +283,48 @@ async function transHandler(req, res) {
         series,
         firstAvailYear: firstIdx >= 0 ? base + firstIdx : null,
         maxMw: Math.max(...series),
-        genMw: num(r.PSSMINOVPLSCPCT) ?? 0, // 발전허가 신청용량
+        genMw: num(r.PSSMINOVPLSCPCT) ?? 0,
       }
     })
+    .filter((s) => s.name !== '미상' || s.maxMw > 0)
+}
+const listOf = (body) => (Array.isArray(body?.dlt_resultList) ? body.dlt_resultList : Array.isArray(body?.dlt_result) ? body.dlt_result : pickList(body) || [])
+
+/**
+ * 변전소 여유용량(연도별) — 한전ON. DC는 소비자이므로 '전력공급 여유'(subSt154·subSt23)가 1순위,
+ * '재생e 연계 여유'(retrieveTransCpct154kV, 발전 연결)는 참고. 셋을 병렬 조회해 그룹으로 반환.
+ * body는 법정동코드에서 파생한 지역코드. 응답 스키마는 동일 시스템 가정(미상시 해당 그룹 공란).
+ */
+async function transHandler(req, res) {
+  res.setHeader('Cache-Control', 's-maxage=43200, stale-while-revalidate=604800')
+  const adm = String(req.query.admCd || '').replace(/\D/g, '')
+  if (!/^\d{8,10}$/.test(adm)) {
+    res.status(400).json({ available: false, reason: 'bad_admCd' })
+    return
+  }
+  const year = /^\d{4}$/.test(String(req.query.year)) ? String(req.query.year) : String(new Date().getFullYear())
+  const codeBase = { sido_code: adm.slice(0, 2), sigg_code: adm.slice(2, 5), emd_code: adm.slice(5, 8) }
+  const O = 'https://online.kepco.co.kr'
+  try {
+    const [sup154, sup23, renew] = await Promise.all([
+      kepcoPost(`${O}/ew/api/energy/subSt154`, { dma_reqParam: codeBase }, 7000, `${O}/EWM104D04`).catch(() => null),
+      kepcoPost(`${O}/ew/api/energy/subSt23`, { dma_reqParam: codeBase }, 7000, `${O}/EWM104D04`).catch(() => null),
+      kepcoPost(`${O}/ew/cpct/retrieveTransCpct154kV`, { dma_reqParam: { ...codeBase, year, gubun: 'etc' } }, 7000).catch(() => null),
+    ])
+    const supply154 = normSubst(listOf(sup154), year)
+    const supply23 = normSubst(listOf(sup23), year)
+    const renewList = normSubst(listOf(renew), year)
+    const anySupply = supply154.length + supply23.length
+    if (!anySupply && !renewList.length && req.query.debug) {
+      res.status(200).json({ available: false, reason: 'no_rows', codeBase, raw: { sup154, sup23, renew } })
+      return
+    }
     res.status(200).json({
-      available: true,
-      kv,
+      available: anySupply > 0 || renewList.length > 0,
       unit: 'MW',
-      count: subs.length,
-      substations: subs,
-      note: '한전ON 송전망 여유용량(연도별) · 참고자료(전기사용신청 후 확정) · 345kV 변압기 용량 기준 · 분기 갱신',
+      supply: { kv154: supply154, kv23: supply23, count: anySupply },
+      renew: { kv154: renewList, count: renewList.length },
+      note: '한전ON 변전소 여유용량(연도별) · 참고자료(전기사용신청 후 확정) · 분기 갱신 · 전력공급=소비자 수전여유, 재생e=발전 연계여유',
     })
   } catch (e) {
     res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })

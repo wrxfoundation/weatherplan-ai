@@ -607,35 +607,57 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               )}
             </div>
           </div>
-          {transHr?.available && Array.isArray(transHr.substations) && transHr.substations.length > 0 && (
-            <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k">이 지역 변전소 송전망 여유용량 (한전ON · 연도별 · 참고)</div>
-              <div className="v">
-                {transHr.substations.slice(0, 4).map((s2) => {
-                  const mx = Math.max(...s2.series, 1)
-                  return (
-                    <div key={s2.name} className="th-row" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', margin: '3px 0' }}>
-                      <span className="sl-name" style={{ minWidth: 52, fontWeight: 700 }}>{s2.name}</span>
-                      <span className="meta" style={{ minWidth: 96 }}>
-                        {s2.firstAvailYear ? `${s2.firstAvailYear}년 ${s2.series[s2.years.indexOf(s2.firstAvailYear)]?.toLocaleString()}MW~` : '전 기간 0'}
-                      </span>
-                      <span style={{ display: 'inline-flex', gap: 2, alignItems: 'flex-end', height: 22 }}>
-                        {s2.series.map((mw, i) => (
-                          <i
-                            key={s2.years[i]}
-                            title={`${s2.years[i]} · ${mw.toLocaleString()}MW`}
-                            style={{ width: 7, height: `${Math.max(2, Math.round((mw / mx) * 22))}px`, background: mw > 0 ? 'var(--accent, #B07E1E)' : 'var(--line, #ccc)', borderRadius: 1, display: 'inline-block' }}
-                          />
-                        ))}
-                      </span>
-                      <b className="sl-mw">최대 {s2.maxMw.toLocaleString()}MW</b>
-                    </div>
-                  )
-                })}
-                <div className="cell-basis">{transHr.note} · 막대={transHr.substations[0]?.years?.[0]}~{transHr.substations[0]?.years?.slice(-1)[0]}년</div>
+          {(() => {
+            if (!transHr?.available) return null
+            // 전력공급 여유(소비자 수전) 1순위: 154kV 우선, 없으면 22.9kV. 변전소명으로 병합.
+            const byName = new Map()
+            for (const s of transHr.supply?.kv154 || []) byName.set(s.name, { ...s, kv: '154kV' })
+            for (const s of transHr.supply?.kv23 || []) if (!byName.has(s.name)) byName.set(s.name, { ...s, kv: '22.9kV' })
+            const supply = [...byName.values()].sort((a, b) => (b.maxMw ?? 0) - (a.maxMw ?? 0))
+            const renew = transHr.renew?.kv154 || []
+            if (!supply.length && !renew.length) return null
+            const Bars = ({ s }) => {
+              const mx = Math.max(...s.series, 1)
+              return (
+                <span style={{ display: 'inline-flex', gap: 2, alignItems: 'flex-end', height: 20 }}>
+                  {s.series.map((mw, i) => (
+                    <i key={s.years[i]} title={`${s.years[i]} · ${mw.toLocaleString()}MW`}
+                      style={{ width: 7, height: `${Math.max(2, Math.round((mw / mx) * 20))}px`, background: mw > 0 ? 'var(--accent, #B07E1E)' : 'var(--line, #556)', borderRadius: 1, display: 'inline-block' }} />
+                  ))}
+                </span>
+              )
+            }
+            const Row = ({ s }) => (
+              <div className="th-row" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', margin: '3px 0' }}>
+                <span className="sl-name" style={{ minWidth: 52, fontWeight: 700 }}>{s.name}</span>
+                {s.kv && <span className="badge" style={{ fontSize: 'var(--text-xs)' }}>{s.kv}</span>}
+                <span className="meta" style={{ minWidth: 92 }}>
+                  {s.firstAvailYear ? `${s.firstAvailYear}년 ${s.series[s.years.indexOf(s.firstAvailYear)]?.toLocaleString()}MW~` : '전 기간 0'}
+                </span>
+                <Bars s={s} />
+                <b className="sl-mw">최대 {s.maxMw.toLocaleString()}MW</b>
               </div>
-            </div>
-          )}
+            )
+            const spanYears = (supply[0] || renew[0])?.years
+            return (
+              <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                <div className="k">이 지역 변전소 전력공급 여유용량 (한전ON · 소비자 수전 · 연도별 · 참고)</div>
+                <div className="v">
+                  {supply.length > 0 ? (
+                    supply.slice(0, 5).map((s) => <Row key={`s-${s.name}`} s={s} />)
+                  ) : (
+                    <span className="badge pending">전력공급 여유 미조회 · 재생e 연계만 확인</span>
+                  )}
+                  {renew.length > 0 && (
+                    <div className="cell-basis" style={{ marginTop: 6 }}>
+                      참고 · 재생e 연계(발전) 여유: {renew.slice(0, 3).map((s) => `${s.name} 최대 ${s.maxMw.toLocaleString()}MW`).join(' · ')}
+                    </div>
+                  )}
+                  <div className="cell-basis">{transHr.note}{spanYears ? ` · 막대=${spanYears[0]}~${spanYears.slice(-1)[0]}년` : ''}</div>
+                </div>
+              </div>
+            )
+          })()}
           <div className="spec-cell">
             <div className="k"><Term k="수전전압">수전전압</Term> 트랙</div>
             <div className="v">{r.track.track.voltage}</div>
