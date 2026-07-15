@@ -12,6 +12,7 @@ import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { CAPITAL_PIPELINE } from '../data/capitalPipeline.js'
 import { DC_DEALS, RACK_RATES, DEV_CONFLICTS, DEV_CONFLICTS_META } from '../data/dcRealEstate.js'
 import { GRID_CONSTRUCTION, GRID_CONSTRUCTION_META, GRID_STAGE_LABEL } from '../data/gridConstruction.js'
+import { SUBSTATION_HEADROOM, SUBSTATION_HEADROOM_META } from '../data/substationHeadroom.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -152,6 +153,31 @@ const DATASETS = [
       { k: 'due', label: '준공예정' },
     ],
     rows: CAPITAL_PIPELINE.map((r) => ({ ...r, mwSupply: r.mwSupply ?? '', due: r.due ?? '' })),
+  },
+  {
+    key: 'subheadroom',
+    label: '변전소 여유용량(연도별)',
+    asOf: SUBSTATION_HEADROOM_META.updated,
+    source: `${SUBSTATION_HEADROOM_META.source}. ${SUBSTATION_HEADROOM_META.note}`,
+    fullCsv: null,
+    columns: [
+      { k: 'name', label: '변전소' },
+      { k: 'sido', label: '시도' },
+      { k: 'area', label: '검색지역' },
+      ...SUBSTATION_HEADROOM_META.years.map((y) => ({ k: `y${y}`, label: `${y} MW` })),
+      { k: 'firstAvailYear', label: '여유 발생' },
+      { k: 'genMw', label: '발전허가(MW)' },
+      { k: 'applicants', label: '접속예정(명)' },
+    ],
+    rows: SUBSTATION_HEADROOM.map((r) => ({
+      name: r.name,
+      sido: r.sido,
+      area: r.area,
+      ...Object.fromEntries(SUBSTATION_HEADROOM_META.years.map((y) => [`y${y}`, r.byYear[y]])),
+      firstAvailYear: r.firstAvailYear ?? '—',
+      genMw: r.genMw,
+      applicants: r.applicants,
+    })),
   },
   {
     key: 'gridbuild',

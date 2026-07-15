@@ -67,7 +67,8 @@ const TASK_SYSTEM = {
 }
 
 const MODEL_FOR = { report: MODEL_SONNET, brief: MODEL_SONNET, compare: MODEL_SONNET, draft: MODEL_SONNET, calc: MODEL_SONNET, search: MODEL_HAIKU, qa: MODEL_HAIKU }
-const MAXTOK_FOR = { report: 1500, brief: 1200, compare: 1500, draft: 2200, calc: 1100, search: 1200, qa: 900 }
+// 출력 잘림 방지 — 초안·리포트류 상향(2026.7 잘림 피드백 반영). Sonnet 기준 여유.
+const MAXTOK_FOR = { report: 2800, brief: 2000, compare: 2800, draft: 4096, calc: 1600, search: 1200, qa: 1200 }
 
 const ALLOWED = new Set(['report', 'search', 'qa', 'brief', 'compare', 'draft', 'calc'])
 
