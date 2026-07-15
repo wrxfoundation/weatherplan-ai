@@ -11,7 +11,7 @@ import { SUBSTATIONS } from '../data/substations.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { CAPITAL_PIPELINE } from '../data/capitalPipeline.js'
 import { DC_DEALS, RACK_RATES, DEV_CONFLICTS, DEV_CONFLICTS_META } from '../data/dcRealEstate.js'
-import { GRID_CONSTRUCTION, GRID_CONSTRUCTION_META } from '../data/gridConstruction.js'
+import { GRID_CONSTRUCTION, GRID_CONSTRUCTION_META, GRID_STAGE_LABEL } from '../data/gridConstruction.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -167,7 +167,7 @@ const DATASETS = [
       { k: 'hq', label: '담당본부' },
       { k: 'office', label: '담당사업소' },
     ],
-    rows: GRID_CONSTRUCTION.map((r) => ({ ...r })),
+    rows: GRID_CONSTRUCTION.map((r) => ({ ...r, stage: GRID_STAGE_LABEL[r.stage] || r.stage })),
   },
   {
     key: 'deals',
