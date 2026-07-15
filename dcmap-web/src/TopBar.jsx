@@ -81,6 +81,13 @@ export default function TopBar() {
     document.documentElement.setAttribute('data-section', section)
   }, [location.pathname])
 
+  // 라우트 전환 시 기본 타이틀 리셋 — 자체 타이틀이 없는 페이지(맵·계산기 등)로 이동해도
+  // 직전 페이지 타이틀(예: '서비스 소개')이 브라우저 탭에 남지 않게. 페이지 고유 타이틀은
+  // 각 페이지 effect가 이 뒤에 실행되며 덮어쓴다(TopBar는 페이지의 자식 → effect가 먼저 돈다).
+  useEffect(() => {
+    document.title = 'AI InfraMap — AI 데이터센터 부지 인텔리전스'
+  }, [location.pathname])
+
   // SEO: SPA 내 라우트 전환 시 canonical·og:url 동기화(프리렌더 셸 값이 낡지 않게)
   useEffect(() => {
     const origin = (import.meta.env.VITE_SITE_ORIGIN || 'https://aiagentlabs.co.kr').replace(/\/$/, '')

@@ -11,7 +11,7 @@ import { GRID_HEADROOM, GRID_HEADROOM_META, headroomLabel } from '../data/gridHe
 import { RESERVE_12M, RESERVE_MIN, RESERVE_MAX, POWER_RESERVE_META } from '../data/powerReserve.js'
 import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
-import { filingsRecent, epsisCapacity, apiStatus, tradingMix, riskFor } from '../data/liveApi.js'
+import { filingsRecent, epsisCapacity, apiStatus, tradingMix, smpToday, riskFor } from '../data/liveApi.js'
 
 const TITLE = '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스'
 const DESC =
@@ -83,6 +83,7 @@ export default function DashboardPage() {
   const [filingCorp, setFilingCorp] = useState('전체') // 공시 운영사 필터
   const [epsis, setEpsis] = useState(null)
   const [trading, setTrading] = useState(null)
+  const [smp, setSmp] = useState(null)
   const [status, setStatus] = useState(null)
   const [riskRows, setRiskRows] = useState({})
   useEffect(() => {
@@ -95,6 +96,7 @@ export default function DashboardPage() {
     filingsRecent().then((v) => alive && setFilings(v))
     epsisCapacity().then((v) => alive && setEpsis(v))
     tradingMix().then((v) => alive && setTrading(v))
+    smpToday().then((v) => alive && setSmp(v))
     apiStatus(true).then((v) => alive && setStatus(v))
     return () => {
       alive = false
@@ -777,6 +779,58 @@ export default function DashboardPage() {
               <p className="chart-note">
                 일별 연료원별 실제 전력거래량(발전 실적) — 설비용량이 아니라 계통에서 실제 돌아간 발전 믹스.
                 KPX 전력거래실적(data.go.kr) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
+              </p>
+            )}
+          </section>
+
+          {/* 전력시장 가격 — KPX SMP(계통한계가격) 오늘 시간별. DC 전력 OPEX의 실시간 신호 */}
+          <section className="calc-card">
+            <div className="chart-title">전력시장 가격 — SMP 계통한계가격 (오늘 시간별, 라이브)</div>
+            {smp?.available && smp.rows?.length ? (
+              <>
+                <div className="dash-status">
+                  <div className="status-rows">
+                    <div className="dash-row">
+                      최신 {smp.latest.hour}시 <strong>{smp.latest.smp.toLocaleString()}</strong>원/kWh
+                    </div>
+                    <div className="dash-row">
+                      오늘 단순평균 <strong>{smp.avgSmp.toLocaleString()}</strong>원/kWh
+                    </div>
+                    <div className="dash-row">
+                      범위 {smp.minSmp.toLocaleString()}~{smp.maxSmp.toLocaleString()}원
+                    </div>
+                    {smp.asOf && <div className="dash-row total">기준 {smp.asOf} · 육지</div>}
+                  </div>
+                </div>
+                <div className="hbar-mini-wrap">
+                  <div className="hbar-mini" role="img" aria-label="오늘 시간별 SMP">
+                    {(() => {
+                      const max = Math.max(...smp.rows.map((r) => r.smp), 1)
+                      return smp.rows.map((r) => (
+                        <span
+                          key={r.hour}
+                          className="hbar-mini-bar"
+                          title={`${r.hour}시: ${r.smp.toLocaleString()}원/kWh`}
+                          style={{ height: `${Math.max(6, Math.round((r.smp / max) * 100))}%` }}
+                        />
+                      ))
+                    })()}
+                  </div>
+                  <div className="hbar-mini-x" aria-hidden>
+                    {smp.rows.filter((_, i) => i % Math.max(1, Math.ceil(smp.rows.length / 6)) === 0).map((r) => (
+                      <span key={r.hour}>{r.hour}시</span>
+                    ))}
+                  </div>
+                </div>
+                <p className="chart-note">
+                  거래시간별 전력시장 도매가격(원/kWh) — DC 전력 OPEX·PPA 협상의 기준 신호. 평균은 시간별{' '}
+                  <strong>단순평균</strong>(KPX 공표 일 가중평균과 다름). 출처: {smp.source}.
+                </p>
+              </>
+            ) : (
+              <p className="chart-note">
+                전력시장 도매가격(SMP) 시간별 추이 — DC 전력 OPEX의 실시간 신호. KPX 계통한계가격(data.go.kr 인증키)
+                연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
               </p>
             )}
           </section>
