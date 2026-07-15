@@ -250,6 +250,61 @@ a {
   background: var(--bg);
 }
 
+/* 전국 실시간 전력시장 배지 — 지도 상단 중앙 유리 알약 */
+.map-live-badge {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--glass-bg, rgba(18, 22, 30, 0.72)) 88%, transparent);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.12));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+  color: var(--text, #e8eef7);
+  font-size: 12.5px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.14s, transform 0.14s;
+}
+.map-live-badge:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  transform: translateX(-50%) translateY(-1px);
+}
+.map-live-badge .mlb-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55);
+  animation: mlb-pulse 2.4s ease-out infinite;
+}
+@keyframes mlb-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5); }
+  70% { box-shadow: 0 0 0 7px rgba(52, 211, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .map-live-badge .mlb-dot { animation: none; }
+}
+.map-live-badge .mlb-label {
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.01em;
+}
+.map-live-badge .mlb-stat { color: var(--text-dim, #aab6c6); }
+.map-live-badge .mlb-stat b { color: var(--text, #e8eef7); font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) {
+  .map-live-badge { font-size: 11px; gap: 7px; padding: 5px 10px; top: 10px; }
+  .map-live-badge .mlb-label { display: none; }
+}
+
 /* ---------- FilterBar ---------- */
 .filterbar {
   position: absolute;
