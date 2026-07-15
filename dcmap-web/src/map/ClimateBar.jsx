@@ -110,7 +110,7 @@ export default function ClimateBar({ point, committed }) {
           <div className={`ci-badge tone-${idx.tone}`} title={idx.why}>
             <span className="ci-cap">
               DC 기후지수
-              <span className="ci-help" tabIndex={0} role="button" aria-label="DC 기후지수 설명" title={CLIMATE_HELP}>?</span>
+              <span className="ci-help" tabIndex={0} role="button" aria-label="DC 기후지수 설명" data-tip={CLIMATE_HELP}>?</span>
             </span>
             <span className="ci-label">{idx.label}</span>
             <span className="ci-scale" aria-label={`5단계 중 ${idx.level}단계`}>
@@ -123,7 +123,7 @@ export default function ClimateBar({ point, committed }) {
           <div className="ci-badge tone-wait">
             <span className="ci-cap">
               DC 기후지수
-              <span className="ci-help" tabIndex={0} role="button" aria-label="DC 기후지수 설명" title={CLIMATE_HELP}>?</span>
+              <span className="ci-help" tabIndex={0} role="button" aria-label="DC 기후지수 설명" data-tip={CLIMATE_HELP}>?</span>
             </span>
             <span className="ci-label">연동 대기</span>
           </div>
