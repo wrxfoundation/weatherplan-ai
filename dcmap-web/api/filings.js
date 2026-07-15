@@ -10,7 +10,10 @@
  *
  * 주의: DART list.json은 corp_code(고유번호) 기반 — 키워드 전문검색 API는 별도(document.xml).
  * v0는 알려진 DC 운영사 corp_code 목록으로 최근 공시를 모아 필터한다.
+ * v1: ?doc=접수번호 — 공시 원문(document.xml zip)을 받아 DC 키워드 스니펫·MW 언급을 온디맨드 스캔.
  */
+import { inflateRawSync } from 'node:zlib'
+
 const num = (v) => {
   const n = Number.parseInt(v, 10)
   return Number.isFinite(n) ? n : undefined
@@ -49,12 +52,104 @@ function ymd(d) {
   return `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}${String(d.getUTCDate()).padStart(2, '0')}`
 }
 
+/** ZIP 로컬 파일 헤더 순회 → 엔트리 버퍼들(deflate면 inflateRaw). DART 원문 zip은 표준 구조. */
+function unzipEntries(buf) {
+  const out = []
+  let i = 0
+  while (i + 30 <= buf.length && buf.readUInt32LE(i) === 0x04034b50) {
+    const method = buf.readUInt16LE(i + 8)
+    const compSize = buf.readUInt32LE(i + 18)
+    const nameLen = buf.readUInt16LE(i + 26)
+    const extraLen = buf.readUInt16LE(i + 28)
+    const start = i + 30 + nameLen + extraLen
+    if (!compSize || start + compSize > buf.length) break // 데이터 디스크립터 방식은 미지원 — 안전 중단
+    try {
+      out.push(method === 8 ? inflateRawSync(buf.subarray(start, start + compSize)) : Buffer.from(buf.subarray(start, start + compSize)))
+    } catch {
+      /* 개별 엔트리 해제 실패는 건너뜀 */
+    }
+    i = start + compSize
+  }
+  return out
+}
+
+/** XML/HTML 바이트 → 평문. 인코딩 선언(euc-kr 계열) 감지, 태그·엔티티 제거. */
+function toPlainText(bytes) {
+  const head = bytes.subarray(0, 200).toString('latin1').toLowerCase()
+  let text
+  try {
+    text = new TextDecoder(/euc-kr|ks_c_5601|ksc5601/.test(head) ? 'euc-kr' : 'utf-8').decode(bytes)
+  } catch {
+    text = bytes.toString('utf8')
+  }
+  return text
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&[#a-zA-Z0-9]+;/g, ' ')
+    .replace(/\s+/g, ' ')
+}
+
+/** 원문 스캔 — DC 키워드 스니펫(±90자)과 MW 언급 추출 */
+async function scanDocument(key, rcpNo, res) {
+  res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=604800')
+  const ctrl = new AbortController()
+  const t = setTimeout(() => ctrl.abort(), 12000)
+  try {
+    const r = await fetch(`https://opendart.fss.or.kr/api/document.xml?crtfc_key=${key}&rcept_no=${encodeURIComponent(rcpNo)}`, {
+      signal: ctrl.signal,
+    })
+    if (!r.ok) {
+      res.status(200).json({ available: false, reason: `upstream_${r.status}` })
+      return
+    }
+    const buf = Buffer.from(await r.arrayBuffer())
+    if (buf.subarray(0, 2).toString('latin1') !== 'PK') {
+      // zip이 아니면 DART 오류 JSON/XML(키 오류·미존재 등)
+      res.status(200).json({ available: false, reason: 'not_zip', hint: buf.subarray(0, 120).toString('utf8') })
+      return
+    }
+    const CAP = 3_000_000 // 스캔 상한(3MB 평문) — 함수 메모리·시간 예산 보호
+    let text = ''
+    for (const entry of unzipEntries(buf)) {
+      text += toPlainText(entry)
+      if (text.length > CAP) break
+    }
+    text = text.slice(0, CAP)
+    const kw = /(데이터\s*센터|IDC|AIDC|하이퍼스케일|클라우드\s*센터|전산\s*센터)/g
+    const snippets = []
+    let m
+    while ((m = kw.exec(text)) && snippets.length < 8) {
+      const s = Math.max(0, m.index - 90)
+      const e = Math.min(text.length, m.index + m[0].length + 90)
+      const snip = text.slice(s, e).trim()
+      if (!snippets.some((x) => x.includes(snip.slice(20, 60)))) snippets.push(`…${snip}…`)
+      kw.lastIndex = m.index + m[0].length + 60 // 같은 문단 중복 수집 방지
+    }
+    const mwMentions = [...new Set((text.match(/\d[\d,.]{0,8}\s*(?:MW|㎿|메가와트)/gi) || []).map((x) => x.replace(/\s+/g, '')))].slice(0, 10)
+    res.status(200).json({ available: true, rcpNo, hasDc: snippets.length > 0, snippets, mwMentions, scannedChars: text.length })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
+  } finally {
+    clearTimeout(t)
+  }
+}
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=7200')
 
   const key = process.env.DART_API_KEY
   if (!key) {
     res.status(200).json({ available: false, reason: 'not_configured' })
+    return
+  }
+
+  // 원문 스캔 모드 — ?doc=접수번호(14자리)
+  const doc = String(req.query.doc || '').trim()
+  if (doc) {
+    if (!/^\d{10,20}$/.test(doc)) {
+      res.status(400).json({ available: false, reason: 'bad_rcp_no' })
+      return
+    }
+    await scanDocument(key, doc, res)
     return
   }
 
@@ -82,6 +177,7 @@ export default async function handler(req, res) {
             title: nm,
             date: it.rcept_dt,
             type: isDc ? '데이터센터' : '투자·공급',
+            rcpNo: it.rcept_no, // 본문 스캔(?doc=)용
             url: `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${it.rcept_no}`,
           })
           if (out.length >= 5) break // 대형사 공시 폭주 방지 — 회사당 최근 5건까지
