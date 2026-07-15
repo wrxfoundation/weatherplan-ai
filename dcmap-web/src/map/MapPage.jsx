@@ -32,7 +32,7 @@ import { GEN_PERMIT_BUBBLES, SIDO_CENTROIDS, SIDO_METRO_CD } from '../data/genLi
 import { dcApprovalForSido, approvalLabel } from '../data/gridAssessment.js'
 import { geomAreaM2 } from '../data/geomArea.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
-import { headroomFor, parcelAt } from '../data/liveApi.js'
+import { headroomFor, parcelAt, smpToday, fuelMixNow, epsisCapacity } from '../data/liveApi.js'
 
 const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ sido, lat, lng }))
 
@@ -202,6 +202,7 @@ export default function MapPage({ power = false }) {
   const pipelineLayerRef = useRef(null)
   const siteSubstLayerRef = useRef(null)
   const [siteSubsts, setSiteSubsts] = useState([]) // 부지 분석 시 반환된 변전소(실좌표·여유) — 색상 레이어
+  const [livePulse, setLivePulse] = useState(null) // 전국 실시간 전력시장 배지(SMP·발전믹스·예비율)
   const [showRe, setShowRe] = useState(() => _initLayers.has('re')) // 재생발전단지 레이어(RE100)
   const reLayerRef = useRef(null)
   const [showWater, setShowWater] = useState(() => _initLayers.has('water')) // 주요 수원(다목적·용수댐) 레이어
@@ -737,6 +738,24 @@ export default function MapPage({ power = false }) {
     siteSubstLayerRef.current = g
   }, [siteSubsts, sitePoint])
 
+  // 전국 실시간 전력시장 배지 — SMP·발전믹스(재생 비중)·예비율. 마운트 1회(라이브, 실패는 미표시).
+  useEffect(() => {
+    let alive = true
+    Promise.all([smpToday().catch(() => null), fuelMixNow().catch(() => null), epsisCapacity().catch(() => null)]).then(
+      ([smp, mix, cap]) => {
+        if (!alive) return
+        const smpVal = smp?.latest?.smp ?? null
+        const renew = mix?.renewPct ?? null
+        const reserve = cap?.supplyReserveRate ?? cap?.reserveRate ?? null
+        if (smpVal == null && renew == null && reserve == null) return
+        setLivePulse({ smp: smpVal, hour: smp?.latest?.hour ?? null, renew, nuclear: mix?.nuclearPct ?? null, reserve })
+      },
+    )
+    return () => {
+      alive = false
+    }
+  }, [])
+
   // 주요 국가산단 레이어 토글 — 인센티브·기반시설 사전확보 입지(초록 사각 마커).
   useEffect(() => {
     const map = mapObj.current
@@ -1210,6 +1229,22 @@ export default function MapPage({ power = false }) {
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />
+        {/* 전국 실시간 전력시장 배지 — SMP·재생 비중·예비율(라이브). 대시보드로 딥링크 */}
+        {livePulse && (
+          <Link className="map-live-badge" to="/dashboard" title="실시간 전력수급·SMP·발전믹스 대시보드로">
+            <span className="mlb-dot" aria-hidden="true" />
+            <span className="mlb-label">전국 실시간</span>
+            {livePulse.smp != null && (
+              <span className="mlb-stat"><b>SMP {livePulse.smp.toLocaleString()}</b>원/kWh{livePulse.hour != null ? ` ${livePulse.hour}시` : ''}</span>
+            )}
+            {livePulse.renew != null && (
+              <span className="mlb-stat">재생 <b>{livePulse.renew}%</b></span>
+            )}
+            {livePulse.reserve != null && (
+              <span className="mlb-stat">예비율 <b>{livePulse.reserve}%</b></span>
+            )}
+          </Link>
+        )}
         {/* 사이드패널 확장 토글 — 패널 좌측 가운데 엣지(누르면 폭 2배) */}
         <button
           type="button"
