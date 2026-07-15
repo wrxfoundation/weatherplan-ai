@@ -130,6 +130,10 @@ export const climateFor = (lat, lng) => fetchJson(`/api/kweather?kind=climate&${
 export const headroomFor = (lat, lng, code) =>
   fetchJson(`/api/headroom?${q(lat, lng)}${code ? `&${String(code).length === 2 ? 'metroCd' : 'admCd'}=${code}` : ''}`)
 
+/** 관내 변전소별 여유 상위 목록 — {available, list:[{name, mw}], rows} */
+export const headroomListFor = (lat, lng, code) =>
+  fetchJson(`/api/headroom?${q(lat, lng)}&list=1${code ? `&${String(code).length === 2 ? 'metroCd' : 'admCd'}=${code}` : ''}`)
+
 /** DART 최근 DC 관련 공시 (D2 이벤트) — { filings: [{corp,title,date,url}] } | null */
 export const filingsRecent = () => fetchJson('/api/filings')
 

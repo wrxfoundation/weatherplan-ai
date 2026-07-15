@@ -20,7 +20,14 @@ function originAllowed(origin) {
   } catch {
     return false
   }
-  return host === 'localhost' || host.startsWith('localhost:') || host.endsWith('.vercel.app') || host.endsWith('koreaapi.dev')
+  return (
+    host === 'localhost' ||
+    host.startsWith('localhost:') ||
+    host.endsWith('.vercel.app') ||
+    host.endsWith('koreaapi.dev') ||
+    host === 'aiagentlabs.co.kr' ||
+    host.endsWith('.aiagentlabs.co.kr')
+  )
 }
 
 const clip = (v, n) => (typeof v === 'string' ? v.slice(0, n) : '')

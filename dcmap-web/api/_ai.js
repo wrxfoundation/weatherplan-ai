@@ -162,7 +162,14 @@ function originAllowed(origin) {
   } catch {
     return false
   }
-  return host === 'localhost' || host.startsWith('localhost:') || host.endsWith('.vercel.app') || host.endsWith('koreaapi.dev')
+  return (
+    host === 'localhost' ||
+    host.startsWith('localhost:') ||
+    host.endsWith('.vercel.app') ||
+    host.endsWith('koreaapi.dev') ||
+    host === 'aiagentlabs.co.kr' ||
+    host.endsWith('.aiagentlabs.co.kr')
+  )
 }
 
 export async function aiHandler(req, res) {
