@@ -641,7 +641,9 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             const spanYears = (supply[0] || renew[0])?.years
             return (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">이 지역 변전소 전력공급 여유용량 (한전ON · 소비자 수전 · 연도별 · 참고)</div>
+                <div className="k">이 지역 관할 변전소 전력공급 여유용량 (한전ON · 소비자 수전 · 연도별 · 참고)
+                  <span className="cell-basis" style={{ display: 'inline', marginLeft: 6 }}>· 검색 시군구 관할 변전소 기준(변전소 실제 소재지와 다를 수 있음)</span>
+                </div>
                 <div className="v">
                   {supply.length > 0 ? (
                     supply.slice(0, 5).map((s) => <Row key={`s-${s.name}`} s={s} />)

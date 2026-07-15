@@ -1459,6 +1459,13 @@ export default function MapPage({ power = false }) {
                 {minMw != null && ` · 필터 ≥ ${minMw} MW`}
                 {q && ` · “${q}”`}
               </h2>
+              <p className="map-hint" style={{ marginTop: 2 }}>
+                참고 — 전국 계통 공급여유 합계{' '}
+                <strong style={{ color: 'var(--accent)' }}>
+                  {(Object.values(GRID_HEADROOM).reduce((s, v) => s + (typeof v === 'number' ? v : v?.mw || 0), 0) / 1000).toFixed(1)}GW
+                </strong>{' '}
+                (17개 시도 · 한전 연계가능용량 {GRID_HEADROOM_META.year} 전망). 위 MW는 개별 공개 시설 합(시장 총량 아님).
+              </p>
               <p className="map-hint">
                 <LineIcon name="target" size={14} /> <strong>지도 빈 곳을 클릭</strong> → 부지 분석(전력·냉각·리스크 점수) · <strong>시설 마커 클릭</strong> → 상세 정보
               </p>
