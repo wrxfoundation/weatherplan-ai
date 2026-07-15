@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import LineIcon from '../components/LineIcon.jsx'
 import { FACILITIES } from '../data/facilities.js'
+import { GRID_HEADROOM, GRID_HEADROOM_META } from '../data/gridHeadroom.js'
 import { GLOSSARY } from '../content/glossary.js'
 import { PROCESS_NODES } from '../content/processOntology.js'
 
@@ -168,7 +169,14 @@ export default function AboutPage() {
     const mwOperating = Math.round(
       FACILITIES.filter((f) => f.status === 'operating').reduce((s, f) => s + (f.power_mw_public ?? 0), 0),
     )
+    const headroomTotalGw = (Object.values(GRID_HEADROOM).reduce((s, v) => s + (typeof v === 'number' ? v : v?.mw || 0), 0) / 1000)
     return [
+      {
+        v: headroomTotalGw.toFixed(1),
+        unit: 'GW',
+        lbl: `전국 계통 공급여유 합계 — 17개 시도 (한전 연계가능용량 ${GRID_HEADROOM_META.year} 전망) · 시군구·부지별 편차 큼`,
+        hero: true,
+      },
       { v: FACILITIES.length, unit: '곳', lbl: '검증 시설 (운영·건설·계획)' },
       { v: operating, unit: '곳', lbl: '운영 중 시설' },
       {
