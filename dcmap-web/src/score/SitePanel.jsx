@@ -36,7 +36,7 @@ function fmtAdmNm(s) {
 }
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
-export default function SitePanel({ point, onClose, onSelectFacility, onAddCompare, inCompare }) {
+export default function SitePanel({ point, onClose, onSelectFacility, onAddCompare, inCompare, onSubstations }) {
   const [mw, setMw] = useState(40)
   const [nonCapital, setNonCapital] = useState(true)
   const zoneTouched = useRef(false) // 사용자가 입지 구분을 직접 바꿨으면 자동판정으로 덮어쓰지 않음
@@ -51,6 +51,24 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const [fc, setFc] = useState(null)
   const [headroom, setHeadroom] = useState(null)
   const [transHr, setTransHr] = useState(null) // 변전소 송전망 여유용량(연도별) — 한전ON
+
+  // 전력공급 여유 변전소 → 실좌표 매칭 후 지도 레이어로 전달(색상=여유 유무). 부모(MapPage)가 플롯.
+  useEffect(() => {
+    if (!onSubstations) return
+    if (!transHr?.available) {
+      onSubstations([])
+      return
+    }
+    const byName = new Map()
+    for (const s of transHr.supply?.kv154 || []) byName.set(s.name, { ...s, kv: '154kV' })
+    for (const s of transHr.supply?.kv23 || []) if (!byName.has(s.name)) byName.set(s.name, { ...s, kv: '22.9kV' })
+    const out = []
+    for (const s of byName.values()) {
+      const c = matchSubstationCoord(s.name)
+      if (c) out.push({ name: s.name, kv: s.kv, lat: c.lat, lng: c.lng, series: s.series, years: s.years, maxMw: s.maxMw, firstAvailYear: s.firstAvailYear })
+    }
+    onSubstations(out)
+  }, [transHr, onSubstations])
   const [flood, setFlood] = useState(null)
   const [pop, setPop] = useState(null)
   const [disaster, setDisaster] = useState(null)
