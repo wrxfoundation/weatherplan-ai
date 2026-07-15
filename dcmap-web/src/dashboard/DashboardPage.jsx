@@ -85,6 +85,7 @@ export default function DashboardPage() {
   const [epsis, setEpsis] = useState(null)
   const [trading, setTrading] = useState(null)
   const [smp, setSmp] = useState(null)
+  const [docScans, setDocScans] = useState({}) // rcpNo → 'loading' | 스캔 결과 (DART 본문 온디맨드)
   const [status, setStatus] = useState(null)
   const [riskRows, setRiskRows] = useState({})
   useEffect(() => {
@@ -443,23 +444,68 @@ export default function DashboardPage() {
                       // 제목 키워드 태그(투자·설비 신호) + 7일 내 NEW — 제목만으로 읽히는 신호 강화
                       const kw = (String(f.title).match(/착공|증설|신설|수전|전력|투자|출자|유상증자|시설투자|공급계약|타법인/) || [])[0]
                       const isNew = f.date && (Date.now() - new Date(f.date).getTime()) / 86400000 <= 7
+                      const scan = f.rcpNo ? docScans[f.rcpNo] : undefined
+                      const runScan = async (e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        if (!f.rcpNo || scan) return
+                        setDocScans((prev) => ({ ...prev, [f.rcpNo]: 'loading' }))
+                        try {
+                          const r = await fetch(`/api/filings?doc=${f.rcpNo}`)
+                          const j = await r.json()
+                          setDocScans((prev) => ({ ...prev, [f.rcpNo]: j }))
+                        } catch {
+                          setDocScans((prev) => ({ ...prev, [f.rcpNo]: { available: false } }))
+                        }
+                      }
                       return (
-                        <a key={i} className="facility-row" href={f.url} target="_blank" rel="noreferrer">
-                          <span className={`dot ${f.type === '데이터센터' ? 'operating' : 'construction'}`} />
-                          <span>
-                            <span className="name">{f.title}</span>
-                            <span className="meta">
-                              {f.corp} · {f.date}
-                              {isNew && <span className="badge f-new" style={{ marginLeft: 6 }}>NEW</span>}
-                              {kw && <span className="badge f-kw" style={{ marginLeft: 6 }}>{kw}</span>}
-                              {f.type && (
-                                <span className={`badge ${f.type === '데이터센터' ? 'status-operating' : 'verify'}`} style={{ marginLeft: 6 }}>
-                                  {f.type}
-                                </span>
-                              )}
+                        <div key={i}>
+                          <a className="facility-row" href={f.url} target="_blank" rel="noreferrer">
+                            <span className={`dot ${f.type === '데이터센터' ? 'operating' : 'construction'}`} />
+                            <span>
+                              <span className="name">{f.title}</span>
+                              <span className="meta">
+                                {f.corp} · {f.date}
+                                {isNew && <span className="badge f-new" style={{ marginLeft: 6 }}>NEW</span>}
+                                {kw && <span className="badge f-kw" style={{ marginLeft: 6 }}>{kw}</span>}
+                                {f.type && (
+                                  <span className={`badge ${f.type === '데이터센터' ? 'status-operating' : 'verify'}`} style={{ marginLeft: 6 }}>
+                                    {f.type}
+                                  </span>
+                                )}
+                                {f.rcpNo && !scan && (
+                                  <button type="button" className="badge f-kw doc-scan-btn" onClick={runScan} title="공시 원문에서 데이터센터 언급·MW 수치를 스캔">
+                                    본문 스캔
+                                  </button>
+                                )}
+                                {scan === 'loading' && <span className="badge verify" style={{ marginLeft: 6 }}>스캔 중…</span>}
+                              </span>
                             </span>
-                          </span>
-                        </a>
+                          </a>
+                          {scan && scan !== 'loading' && (
+                            <p className="chart-note doc-scan-result">
+                              {scan.available ? (
+                                scan.hasDc ? (
+                                  <>
+                                    <strong>본문 DC 언급 {scan.snippets.length}건</strong>
+                                    {scan.mwMentions?.length > 0 && <> · MW 언급: {scan.mwMentions.join(', ')}</>}
+                                    <br />
+                                    {scan.snippets.slice(0, 2).map((s, si) => (
+                                      <span key={si} className="muted">
+                                        {s}
+                                        <br />
+                                      </span>
+                                    ))}
+                                  </>
+                                ) : (
+                                  <>본문에 데이터센터 직접 언급 없음{scan.mwMentions?.length > 0 && <> · MW 언급: {scan.mwMentions.join(', ')}</>} — 원문 링크로 확인 권장</>
+                                )
+                              ) : (
+                                <>본문 스캔 실패 — DART 원문 링크로 직접 확인</>
+                              )}
+                            </p>
+                          )}
+                        </div>
                       )
                     }}
                   />

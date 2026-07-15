@@ -33,4 +33,33 @@ const R = [
   ['퍼시픽자산운용', '부천 내동 데이터센터', '경기 부천', 66, 2031],
 ]
 
-export const CAPITAL_PIPELINE = R.map(([operator, name, loc, itMw, due]) => ({ operator, name, loc, itMw, due }))
+// 시군구 근사 좌표(시청·구청 인근) — 개별 부지 좌표가 아니다. 공공DC 레이어와 동일한
+// '시군구 중심점' 근사 원칙(툴팁·범례에 근사임을 명시). 부지 좌표 확인 시 개별 교체.
+const LOC_APPROX = {
+  '경기 용인': [37.2411, 127.1776],
+  '경기 부천': [37.5034, 126.766],
+  '경기 고양': [37.6584, 126.832],
+  '경기 안산': [37.3219, 126.8309],
+  '경기 의정부': [37.7381, 127.0338],
+  '경기 안양': [37.3943, 126.9568],
+  '인천 서구': [37.5454, 126.6759],
+  '경기 김포': [37.6153, 126.7156],
+  '인천 부평구': [37.507, 126.7219],
+  '서울 구로구': [37.4954, 126.8874],
+  '경기 하남': [37.5393, 127.2148],
+}
+
+// 같은 시군구에 여러 곳이 겹치면 근사점 주위로 소량 오프셋(결정적) — 마커 전부 보이게
+const seen = {}
+export const CAPITAL_PIPELINE = R.map(([operator, name, loc, itMw, due]) => {
+  const base = LOC_APPROX[loc] || null
+  let pos = base
+  if (base) {
+    const i = (seen[loc] = (seen[loc] ?? -1) + 1)
+    if (i > 0) {
+      const ang = (i * 60 * Math.PI) / 180
+      pos = [base[0] + 0.014 * Math.cos(ang), base[1] + 0.014 * Math.sin(ang)]
+    }
+  }
+  return { operator, name, loc, itMw, due, pos }
+})

@@ -3062,6 +3062,24 @@ summary:focus-visible,
   color: var(--text);
 }
 
+/* 공시 본문 스캔 — 온디맨드 버튼·결과 */
+.doc-scan-btn {
+  cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  margin-left: 6px;
+}
+.doc-scan-btn:hover {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.doc-scan-result {
+  margin: 2px 0 8px 22px;
+  padding: 8px 10px;
+  border-left: 2px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  border-radius: 0 8px 8px 0;
+}
+
 /* ── 데이터 탐색기: 업계 인텔 채널 큐레이션 ── */
 .intel-section {
   margin-top: 36px;

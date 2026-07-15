@@ -163,10 +163,15 @@ export default function AboutPage() {
   const stats = useMemo(() => {
     const operating = FACILITIES.filter((f) => f.status === 'operating').length
     const mwPublic = Math.round(FACILITIES.reduce((s, f) => s + (f.power_mw_public ?? 0), 0))
+    // 정직성: 공개 전력값은 수전·IT·계획 목표치(예: 솔라시도 파크 1,000MW)가 혼재된 참고 합계 —
+    // '수전용량 합계'로 표기하면 과대 주장이라 운영분을 병기한다
+    const mwOperating = Math.round(
+      FACILITIES.filter((f) => f.status === 'operating').reduce((s, f) => s + (f.power_mw_public ?? 0), 0),
+    )
     return [
       { v: FACILITIES.length, unit: '곳', lbl: '검증 시설 (운영·건설·계획)' },
       { v: operating, unit: '곳', lbl: '운영 중 시설' },
-      { v: mwPublic.toLocaleString(), unit: 'MW+', lbl: '공개 수전용량 합계 · 미공개 제외' },
+      { v: mwPublic.toLocaleString(), unit: 'MW+', lbl: `공개 전력 합계 (운영 ${mwOperating.toLocaleString()}MW + 건설·계획 목표치) · 미공개 제외` },
       { v: PROCESS_NODES.length, unit: '단계', lbl: '인허가 절차 로드맵' },
       { v: GLOSSARY.length, unit: '개', lbl: '전력·인허가 용어' },
     ]

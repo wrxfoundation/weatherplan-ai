@@ -196,6 +196,8 @@ export default function MapPage({ power = false }) {
   const complexLayerRef = useRef(null)
   const [showNet, setShowNet] = useState(() => _initLayers.has('net')) // 통신망 레이어(국사·IDC·육양국)
   const netLayerRef = useRef(null)
+  const [showPipeline, setShowPipeline] = useState(() => _initLayers.has('pipeline')) // 수도권 공급예정 DC(근사)
+  const pipelineLayerRef = useRef(null)
   const [showRe, setShowRe] = useState(() => _initLayers.has('re')) // 재생발전단지 레이어(RE100)
   const reLayerRef = useRef(null)
   const [showWater, setShowWater] = useState(() => _initLayers.has('water')) // 주요 수원(다목적·용수댐) 레이어
@@ -388,7 +390,7 @@ export default function MapPage({ power = false }) {
       // 언마운트 누수 방지 — 레이어 ref가 detached DOM·리스너를 붙든 채 살아남지 않게
       // 전부 명시 해제(맵↔다른 페이지 왕복 시 노드·리스너 누적 실측으로 확인된 문제)
       for (const r of [
-        plantsLayerRef, subsLayerRef, linesLayerRef, complexLayerRef, netLayerRef, reLayerRef,
+        plantsLayerRef, subsLayerRef, linesLayerRef, complexLayerRef, netLayerRef, pipelineLayerRef, reLayerRef,
         waterLayerRef, semiLayerRef, recoLayerRef, publicLayerRef, genLayerRef, headroomLayerRef,
         approvalLayerRef, parcelLayerRef, pointMarkerRef,
       ]) {
@@ -562,7 +564,7 @@ export default function MapPage({ power = false }) {
           fillOpacity: 0.55,
           bubblingMouseEvents: false,
         })
-          .bindTooltip(`<div class="dc-hovercard"><strong>${name || (type === 'W' ? '풍력단지' : '태양광단지')}</strong> · ${type === 'W' ? '풍력' : '태양광'}<br/><span class="muted">RE100/PPA 조달 맥락 · OSM</span></div>`, {
+          .bindTooltip(`<div class="dc-hovercard"><strong>${name || (type === 'W' ? '풍력단지' : '태양광단지')}</strong> · ${type === 'W' ? '풍력' : '태양광'}<br/><span class="muted">RE100/PPA 조달 맥락 · OSM 근사 좌표(개별 검증 전 참고용)</span></div>`, {
             direction: 'top',
             offset: [0, -6],
             className: 'dc-hovercard',
@@ -667,6 +669,39 @@ export default function MapPage({ power = false }) {
       netLayerRef.current = g
     }
   }, [showNet])
+
+  // 수도권 공급예정 민간 DC 레이어 — 삼일PwC·KDCC(’26.3) 21곳. 좌표는 시군구 근사(점선 골드 링).
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (pipelineLayerRef.current) {
+      map.removeLayer(pipelineLayerRef.current)
+      pipelineLayerRef.current = null
+    }
+    if (showPipeline) {
+      const g = L.layerGroup()
+      for (const p of CAPITAL_PIPELINE) {
+        if (!p.pos) continue
+        const r = Math.max(6, Math.min(17, Math.round(Math.sqrt(p.itMw) * 1.4)))
+        L.circleMarker(p.pos, {
+          radius: r,
+          color: '#d2b478',
+          weight: 1.6,
+          dashArray: '4 3',
+          fillColor: '#d2b478',
+          fillOpacity: 0.18,
+          bubblingMouseEvents: false,
+        })
+          .bindTooltip(
+            `<div class="dc-hovercard"><strong>${p.name}</strong><br/>${p.operator} · IT ${p.itMw}MW · ’${String(p.due).slice(2)} 준공예정<br/><span class="muted">시군구 근사 위치 — 개별 부지 아님 · PwC·KDCC ’26.3</span></div>`,
+            { direction: 'top', offset: [0, -8], className: 'dc-hovercard', opacity: 1 },
+          )
+          .addTo(g)
+      }
+      g.addTo(map)
+      pipelineLayerRef.current = g
+    }
+  }, [showPipeline])
 
   // 주요 국가산단 레이어 토글 — 인센티브·기반시설 사전확보 입지(초록 사각 마커).
   useEffect(() => {
@@ -964,14 +999,14 @@ export default function MapPage({ power = false }) {
     const active = [
       showReco && 'reco', showLabels && 'labels', showSubs && 'subs', showLines && 'lines',
       showPlants && 'plants', showRe && 're', showWater && 'water', showSemi && 'semi',
-      showComplexes && 'complex', showNet && 'net', !power && showGenPermits && 'permit',
+      showComplexes && 'complex', showNet && 'net', showPipeline && 'pipeline', !power && showGenPermits && 'permit',
       showHeadroom && 'headroom', showApproval && 'approval', showPublic && 'public',
     ].filter(Boolean)
     const next = new URLSearchParams(searchParams)
     if (active.length) next.set('layers', active.join(','))
     else next.delete('layers')
     if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
-  }, [showReco, showLabels, showSubs, showLines, showPlants, showRe, showWater, showSemi, showComplexes, showNet, showGenPermits, showHeadroom, showApproval, showPublic]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [showReco, showLabels, showSubs, showLines, showPlants, showRe, showWater, showSemi, showComplexes, showNet, showPipeline, showGenPermits, showHeadroom, showApproval, showPublic]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const cluster = clusterRef.current
@@ -1068,11 +1103,14 @@ export default function MapPage({ power = false }) {
     const dcs = FACILITIES.filter((f) => f.sido === region)
     const dcMw = dcs.reduce((s, f) => s + (f.power_mw_public ?? 0), 0)
     const np2025 = NEW_PLANTS_2025.find((x) => x.sido === region) || null
+    // headrooms 값은 {mw, substNm, rows} 객체(라이브) — 숫자만 꺼내 표기(과거 숫자형도 방어)
+    const h = headrooms?.[region]
     return {
       sido: region,
       gen: bubble || null,
       new2025: np2025,
-      headroomMw: headrooms?.[region] ?? null,
+      headroomMw: (typeof h === 'number' ? h : h?.mw) ?? null,
+      headroomSubst: typeof h === 'object' ? (h?.substNm ?? null) : null,
       dcCount: dcs.length,
       dcMw,
     }
@@ -1116,6 +1154,8 @@ export default function MapPage({ power = false }) {
         onToggleComplexes={() => setShowComplexes((v) => !v)}
         showNet={showNet}
         onToggleNet={() => setShowNet((v) => !v)}
+        showPipeline={showPipeline}
+        onTogglePipeline={() => setShowPipeline((v) => !v)}
         showRe={showRe}
         onToggleRe={() => setShowRe((v) => !v)}
         showWater={showWater}
@@ -1271,13 +1311,18 @@ export default function MapPage({ power = false }) {
                     </div>
                   </div>
                   <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                    <div className="k">계통 여유용량 (한전 분산전원 22.9kV)</div>
+                    <div className="k">배전 여유 (한전 분산전원 22.9kV · 라이브)</div>
                     <div className="v">
                       {regionInfo.headroomMw != null ? (
-                        <strong>{regionInfo.headroomMw.toLocaleString()} MW</strong>
+                        <>
+                          <strong>{regionInfo.headroomMw.toLocaleString()} MW</strong>
+                          {regionInfo.headroomSubst && (
+                            <span className="muted"> · 최대 여유 {regionInfo.headroomSubst}</span>
+                          )}
+                        </>
                       ) : (
                         <>
-                          <span className="badge verify">실데이터 연동 대기 · 공개 API 미제공</span>
+                          <span className="badge verify">연동 대기 (KEPCO 분산전원 API)</span>
                           <a
                             className="mini-link"
                             href="https://online.kepco.co.kr/EWM092D00"
@@ -1285,7 +1330,7 @@ export default function MapPage({ power = false }) {
                             rel="noreferrer"
                             style={{ marginLeft: 8 }}
                           >
-                            한전 여유용량 직접 조회 →
+                            한전 배전망 여유 직접 조회 →
                           </a>
                         </>
                       )}
@@ -1333,7 +1378,9 @@ export default function MapPage({ power = false }) {
                   })()}
                 </div>
                 <p className="note">
-                  발전 공급은 3MW 초과 허가대장(2024+ 건수·용량 참고치), 계통 여유는 한전 분산전원 기준. 공급-여유-DC를 한 지역에서 대비.
+                  발전 공급은 3MW 초과 허가대장(2024+ 건수·용량 참고치). 배전 여유는 한전 분산전원(22.9kV) 조회
+                  가능분 중 최대치 — <strong>대형 DC의 154kV 송전 접속여유와는 별개 지표</strong>이며 154kV+ 여유는
+                  비공개(정부의 345kV 변전소 공개 예고를 제도 트래커에서 추적 중). 공급-여유-DC를 한 지역에서 대비.
                 </p>
                 <div className="card-actions">
                   <button type="button" className="btn primary" onClick={() => { setSido(regionInfo.sido); setRegion(null) }}>
