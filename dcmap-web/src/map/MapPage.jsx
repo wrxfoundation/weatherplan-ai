@@ -19,6 +19,8 @@ import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
+import { GRID_HEADROOM, GRID_HEADROOM_META } from '../data/gridHeadroom.js'
+import { RENEWABLE_ESS } from '../data/renewableEss.js'
 import { CAPITAL_PIPELINE } from '../data/capitalPipeline.js'
 import { loadPowerLines, lineColor, POWER_LINES_AVAILABLE } from '../data/powerLines.js'
 import { NETWORK_NODES } from '../data/network.js'
@@ -1310,8 +1312,23 @@ export default function MapPage({ power = false }) {
                       )}
                     </div>
                   </div>
+                  {GRID_HEADROOM[regionInfo.sido] && (
+                    <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                      <div className="k">시도 총 계통 공급여유 (한전 연계가능용량 · {GRID_HEADROOM_META.year} 전망)</div>
+                      <div className="v">
+                        <strong>
+                          {(typeof GRID_HEADROOM[regionInfo.sido] === 'number'
+                            ? GRID_HEADROOM[regionInfo.sido]
+                            : GRID_HEADROOM[regionInfo.sido].mw
+                          ).toLocaleString()}{' '}
+                          MW
+                        </strong>
+                        <span className="muted"> · 시군구·부지별 편차 큼 (부지 클릭 시 변전소별 실측)</span>
+                      </div>
+                    </div>
+                  )}
                   <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                    <div className="k">배전 여유 (한전 분산전원 22.9kV · 라이브)</div>
+                    <div className="k">배전 여유 — 소규모 접속 (한전 분산전원 22.9kV · 라이브)</div>
                     <div className="v">
                       {regionInfo.headroomMw != null ? (
                         <>
@@ -1319,23 +1336,34 @@ export default function MapPage({ power = false }) {
                           {regionInfo.headroomSubst && (
                             <span className="muted"> · 최대 여유 {regionInfo.headroomSubst}</span>
                           )}
+                          <div className="cell-basis">대형 DC의 154kV 송전 접속여유는 별개 — 부지 클릭 시 변전소별 전력공급 여유(154kV·22.9kV) 자동 조회</div>
                         </>
                       ) : (
                         <>
                           <span className="badge verify">연동 대기 (KEPCO 분산전원 API)</span>
                           <a
                             className="mini-link"
-                            href="https://online.kepco.co.kr/EWM092D00"
+                            href="https://online.kepco.co.kr/EWM104D04"
                             target="_blank"
                             rel="noreferrer"
                             style={{ marginLeft: 8 }}
                           >
-                            한전 배전망 여유 직접 조회 →
+                            한전ON 변전소 여유 직접 조회 →
                           </a>
                         </>
                       )}
                     </div>
                   </div>
+                  {RENEWABLE_ESS[regionInfo.sido] && (
+                    <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+                      <div className="k">재생에너지·ESS 설비용량 (RE100·PPA 근접 · ’25.5)</div>
+                      <div className="v">
+                        <strong>태양광 {Math.round(RENEWABLE_ESS[regionInfo.sido].solar).toLocaleString()} MW</strong>
+                        {RENEWABLE_ESS[regionInfo.sido].wind != null && ` · 풍력 ${Math.round(RENEWABLE_ESS[regionInfo.sido].wind).toLocaleString()}MW`}
+                        {` · ESS 저장 ${Math.round(RENEWABLE_ESS[regionInfo.sido].ess).toLocaleString()}MW`}
+                      </div>
+                    </div>
+                  )}
                   <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
                     <div className="k">전력 자급률 (발전÷소비, ’25)</div>
                     <div className="v">
@@ -1379,8 +1407,9 @@ export default function MapPage({ power = false }) {
                 </div>
                 <p className="note">
                   발전 공급은 3MW 초과 허가대장(2024+ 건수·용량 참고치). 배전 여유는 한전 분산전원(22.9kV) 조회
-                  가능분 중 최대치 — <strong>대형 DC의 154kV 송전 접속여유와는 별개 지표</strong>이며 154kV+ 여유는
-                  비공개(정부의 345kV 변전소 공개 예고를 제도 트래커에서 추적 중). 공급-여유-DC를 한 지역에서 대비.
+                  가능분 중 최대치 — <strong>대형 DC의 154kV 송전 접속여유와는 별개 지표</strong>. 이제 <strong>154kV·22.9kV
+                  전력공급 여유는 한전ON 연동으로 부지 클릭 시 변전소별·연도별 실측 조회</strong>(345kV는 정부 공개 예고를 제도
+                  트래커에서 추적 중). 공급-여유-DC를 한 지역에서 대비.
                 </p>
                 <div className="card-actions">
                   <button type="button" className="btn primary" onClick={() => { setSido(regionInfo.sido); setRegion(null) }}>
