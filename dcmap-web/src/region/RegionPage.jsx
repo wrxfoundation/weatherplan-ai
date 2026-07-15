@@ -6,6 +6,8 @@ import AiBriefButton from '../ai/AiBriefButton.jsx'
 import { SLUG_TO_SIDO } from '../content/sido_slugs.js'
 import { LAND_DONG, LAND_DONG_PERIOD } from '../data/landPriceDong.js'
 import { fmtRate } from '../data/landPrice.js'
+import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
+import { CAPITAL_PIPELINE, CAPITAL_PIPELINE_META } from '../data/capitalPipeline.js'
 
 function setMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`)
@@ -98,6 +100,8 @@ export default function RegionPage() {
         <p className="sub">
           총 {list.length}곳 — 운영 {by.operating} · 건설 {by.construction} · 계획 {by.planned}
           {mw > 0 && ` · 공개 전력 합계 ${mw} MW`}
+          {POWER_BALANCE[sido] &&
+            ` · 전력 자급률 ${POWER_BALANCE[sido].ratio}% (${selfSufficiencyLabel(POWER_BALANCE[sido].ratio)}, ’25)`}
         </p>
 
         {/* 상태 비율 바 — 맵 사이드패널의 요약 문법 재사용 */}
@@ -135,6 +139,38 @@ export default function RegionPage() {
             })),
           }}
         />
+
+        {(() => {
+          // 수도권 시도만 데이터가 존재 — 공급예정 민간 DC 집계(삼일PwC·KDCC)
+          const pipe = CAPITAL_PIPELINE.filter((p) => p.loc.startsWith(sido)).sort((a, b) => a.due - b.due)
+          if (!pipe.length) return null
+          const mwSum = pipe.reduce((s, p) => s + p.itMw, 0)
+          const maxMw = Math.max(...pipe.map((p) => p.itMw), 1)
+          return (
+            <div className="calc-card">
+              <div className="chart-title">
+                {sido} 공급예정 민간 데이터센터 — {pipe.length}곳 · IT용량 합계 {mwSum.toLocaleString()}MW
+              </div>
+              {pipe.map((p) => (
+                <div key={p.name} className="hbar-row">
+                  <span className="hbar-label" title={`${p.operator} · ${p.loc}`}>
+                    {p.name}
+                  </span>
+                  <span className="hbar-track">
+                    <span className="hbar-fill" style={{ width: `${Math.max((p.itMw / maxMw) * 100, 2)}%` }} />
+                  </span>
+                  <span className="hbar-value">
+                    {p.itMw}MW · ’{String(p.due).slice(2)}
+                  </span>
+                </div>
+              ))}
+              <p className="chart-note">
+                IT용량 기준(수전용량 아님) · 준공예정은 계획 시점 기준. 출처: {CAPITAL_PIPELINE_META.source}.{' '}
+                <Link to="/data?tab=capital">전체 목록·CSV →</Link>
+              </p>
+            </div>
+          )
+        })()}
 
         {(() => {
           const rows = Object.entries(LAND_DONG.entries)

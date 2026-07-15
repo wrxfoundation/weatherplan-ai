@@ -50,7 +50,7 @@ export default function PwcValueChain() {
         기준)은 안산 5곳, 부천 3곳, 고양·하남·구로 각 2곳 — 그리고 단연 눈에 띄는{' '}
         <strong>AWS 인천 서구 가좌동 650MW(2026 준공예정)</strong>이다. 국내 최대급 하이퍼스케일
         (<Link to="/insights/hyperscale-jukjeon">죽전 퍼시픽써니</Link>가 수전 100MW) 기준을 훌쩍 넘는
-        규모다. 21곳 전체 목록은 <Link to="/data">데이터 탐색기의 '수도권 공급예정 DC' 탭</Link>에서 검색·CSV로
+        규모다. 21곳 전체 목록은 <Link to="/data?tab=capital">데이터 탐색기의 '수도권 공급예정 DC' 탭</Link>에서 검색·CSV로
         내려받을 수 있다. 주의: IT용량은 수전용량과 다른 지표이며, 준공예정은 계획 시점 기준이다.
       </p>
 

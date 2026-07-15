@@ -6,6 +6,7 @@ import { dcClimateIndex, nearestNormal } from './climateIndex.js'
 import { dongLabel } from '../data/liveApi.js'
 import { gridHeadroomForSido } from '../data/gridHeadroom.js'
 import { dcApprovalForSido } from '../data/gridAssessment.js'
+import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
 import { psiaScore, psiaOutlook } from './psia.js'
 
 export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, fc, landPrice, dongPulse, plantCtx, windCtx, headroom, flood, pop, disaster, energy, warning, climate, officialPrice, landReg, sido, water, kwater, re, waterSource, cluster }) {
@@ -55,6 +56,15 @@ export function buildSiteReport({ point, r, nonCapital, mw, addr, landUse, wx, f
       L.push(`## 계통영향평가 통과 전망 — ${composite}/100 · ${psiaOutlook(composite, mw).label} (커버리지 ${coverage}%)`)
       for (const f of factors) L.push(`- ${f.label}: ${f.score != null ? `${f.score}/100 (w${f.weight}) — ${f.basis}` : '데이터 대기'}`)
       L.push(`(공개 대리지표 규칙 추정 — 공식 ±15 배점 아님 · 실제 판정은 한전·기후에너지환경부 심의)`)
+    }
+    // 지역 전력 수급 맥락 — 자급률(발전÷소비)은 계통 여유의 잠재 신호(접속 여유와는 별개 명시)
+    const pb = sido ? POWER_BALANCE[sido] : null
+    if (pb) {
+      L.push(``)
+      L.push(`## 지역 전력 수급 맥락`)
+      L.push(
+        `- ${sido} 전력 자급률: ${pb.ratio}% (발전÷소비, KEPCO ’25) — ${selfSufficiencyLabel(pb.ratio)} · 개별 변전소 접속 여유와는 별개 지표`,
+      )
     }
     // 제도 일정 — 리포트 수신자가 규제 타이밍을 함께 보도록(제도 트래커 요약, 확정 사실만)
     L.push(``)
