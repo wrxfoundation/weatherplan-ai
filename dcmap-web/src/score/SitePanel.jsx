@@ -16,6 +16,7 @@ import { nearestRenewable } from '../data/renewablePlants.js'
 import { nearestWaterSource } from '../data/waterSources.js'
 import { nearestCluster } from '../data/semiClusters.js'
 import { scoreSite, haversineKm } from './engine.js'
+import { matchSubstationCoord } from '../data/substationPoints.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
 import Term from '../components/Term.jsx'
@@ -627,17 +628,24 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 </span>
               )
             }
-            const Row = ({ s }) => (
-              <div className="th-row" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', margin: '3px 0' }}>
-                <span className="sl-name" style={{ minWidth: 52, fontWeight: 700 }}>{s.name}</span>
-                {s.kv && <span className="badge" style={{ fontSize: 'var(--text-xs)' }}>{s.kv}</span>}
-                <span className="meta" style={{ minWidth: 92 }}>
-                  {s.firstAvailYear ? `${s.firstAvailYear}년 ${s.series[s.years.indexOf(s.firstAvailYear)]?.toLocaleString()}MW~` : '전 기간 0'}
-                </span>
-                <Bars s={s} />
-                <b className="sl-mw">최대 {s.maxMw.toLocaleString()}MW</b>
-              </div>
-            )
+            const Row = ({ s }) => {
+              const coord = matchSubstationCoord(s.name)
+              const distKm = coord ? Math.round(haversineKm(point.lat, point.lng, coord.lat, coord.lng)) : null
+              return (
+                <div className="th-row" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', margin: '3px 0' }}>
+                  <span className="sl-name" style={{ minWidth: 52, fontWeight: 700 }}>{s.name}</span>
+                  {s.kv && <span className="badge" style={{ fontSize: 'var(--text-xs)' }}>{s.kv}</span>}
+                  {distKm != null && (
+                    <span className="meta" title={`OSM 실좌표 ${coord.lat.toFixed(3)},${coord.lng.toFixed(3)} · ${coord.kv}kV`}>실위치 {distKm}km</span>
+                  )}
+                  <span className="meta" style={{ minWidth: 92 }}>
+                    {s.firstAvailYear ? `${s.firstAvailYear}년 ${s.series[s.years.indexOf(s.firstAvailYear)]?.toLocaleString()}MW~` : '전 기간 0'}
+                  </span>
+                  <Bars s={s} />
+                  <b className="sl-mw">최대 {s.maxMw.toLocaleString()}MW</b>
+                </div>
+              )
+            }
             const spanYears = (supply[0] || renew[0])?.years
             return (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
