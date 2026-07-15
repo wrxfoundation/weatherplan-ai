@@ -250,10 +250,10 @@ a {
   background: var(--bg);
 }
 
-/* 전국 실시간 전력시장 배지 — 지도 상단 중앙 유리 알약 */
+/* 전국 실시간 전력시장 배지 — 지도 하단 중앙 유리 알약(상단은 필터바가 덮어 하단으로) */
 .map-live-badge {
   position: absolute;
-  top: 14px;
+  bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 900;
@@ -301,8 +301,8 @@ a {
 .map-live-badge .mlb-stat { color: var(--text-dim, #aab6c6); }
 .map-live-badge .mlb-stat b { color: var(--text, #e8eef7); font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) {
-  .map-live-badge { font-size: 11px; gap: 7px; padding: 5px 10px; top: 10px; }
-  .map-live-badge .mlb-label { display: none; }
+  /* 모바일은 하단 바텀시트(패널)가 하단 중앙을 덮으므로 배지 숨김(데이터는 대시보드에) */
+  .map-live-badge { display: none; }
 }
 
 /* ---------- FilterBar ---------- */
