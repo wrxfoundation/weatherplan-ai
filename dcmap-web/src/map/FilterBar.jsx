@@ -201,7 +201,6 @@ export default function FilterBar({
 
       {/* 2줄: 지도 레이어(전력·자원·수요·망) — 서브그룹별 독립 알약, 넘치면 이 줄만 가로 스크롤(2줄 유지) */}
       <div className="fb-row fb-row-layers" role="group" aria-label="지도 레이어">
-        <span className="group-label">레이어</span>
         {LAYER_GROUPS.map((sg) => {
           const chips = sg.chips.filter((c) => c.cond !== false)
           if (!chips.length) return null
