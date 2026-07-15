@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { STATUS_LABEL, isCapitalByAddr, isCapitalByPoint, FACILITIES } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
-import { forecastFor, headroomFor, headroomListFor, landUseFor, landRegFor, landAreaFor, landPriceOfficialFor, parcelAt, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, waterCapacity, kwaterInfra, dongLabel } from '../data/liveApi.js'
+import { forecastFor, headroomFor, headroomListFor, transHeadroomFor, landUseFor, landRegFor, landAreaFor, landPriceOfficialFor, parcelAt, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, waterCapacity, kwaterInfra, dongLabel } from '../data/liveApi.js'
 import { geomAreaM2 } from '../data/geomArea.js'
 import { nearestPlant, windContext } from '../data/plants.js'
 import { networkContext } from '../data/network.js'
@@ -49,6 +49,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const [officialPrice, setOfficialPrice] = useState(null)
   const [fc, setFc] = useState(null)
   const [headroom, setHeadroom] = useState(null)
+  const [transHr, setTransHr] = useState(null) // 변전소 송전망 여유용량(연도별) — 한전ON
   const [flood, setFlood] = useState(null)
   const [pop, setPop] = useState(null)
   const [disaster, setDisaster] = useState(null)
@@ -78,6 +79,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     setOfficialPrice(null)
     setFc(null)
     setHeadroom(null)
+    setTransHr(null)
     setFlood(null)
     setPop(null)
     setDisaster(null)
@@ -117,6 +119,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           // 여유용량·재해: 브라우저가 받은 법정동코드를 서버로 넘겨 서버측 vworld(Vercel IP 502) 우회.
           // 코드 없으면(브라우저 vworld 미활성) admCd 없이 호출 → 서버 vworld 폴백(막히면 정직히 대기).
           nested.push(headroomFor(point.lat, point.lng, v?.legalCode).then((e) => alive && setHeadroom(e)))
+          // 변전소 송전망 여유용량(연도별) — 한전ON(법정동코드 필요). 실패는 정직히 대기.
+          if (v?.legalCode) nested.push(transHeadroomFor(v.legalCode).then((e) => alive && setTransHr(e)))
           nested.push(disasterFor(point.lat, point.lng, v?.legalCode).then((e) => alive && setDisaster(e)))
           return Promise.allSettled(nested)
         }),
@@ -603,6 +607,35 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               )}
             </div>
           </div>
+          {transHr?.available && Array.isArray(transHr.substations) && transHr.substations.length > 0 && (
+            <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
+              <div className="k">이 지역 변전소 송전망 여유용량 (한전ON · 연도별 · 참고)</div>
+              <div className="v">
+                {transHr.substations.slice(0, 4).map((s2) => {
+                  const mx = Math.max(...s2.series, 1)
+                  return (
+                    <div key={s2.name} className="th-row" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', margin: '3px 0' }}>
+                      <span className="sl-name" style={{ minWidth: 52, fontWeight: 700 }}>{s2.name}</span>
+                      <span className="meta" style={{ minWidth: 96 }}>
+                        {s2.firstAvailYear ? `${s2.firstAvailYear}년 ${s2.series[s2.years.indexOf(s2.firstAvailYear)]?.toLocaleString()}MW~` : '전 기간 0'}
+                      </span>
+                      <span style={{ display: 'inline-flex', gap: 2, alignItems: 'flex-end', height: 22 }}>
+                        {s2.series.map((mw, i) => (
+                          <i
+                            key={s2.years[i]}
+                            title={`${s2.years[i]} · ${mw.toLocaleString()}MW`}
+                            style={{ width: 7, height: `${Math.max(2, Math.round((mw / mx) * 22))}px`, background: mw > 0 ? 'var(--accent, #B07E1E)' : 'var(--line, #ccc)', borderRadius: 1, display: 'inline-block' }}
+                          />
+                        ))}
+                      </span>
+                      <b className="sl-mw">최대 {s2.maxMw.toLocaleString()}MW</b>
+                    </div>
+                  )
+                })}
+                <div className="cell-basis">{transHr.note} · 막대={transHr.substations[0]?.years?.[0]}~{transHr.substations[0]?.years?.slice(-1)[0]}년</div>
+              </div>
+            </div>
+          )}
           <div className="spec-cell">
             <div className="k"><Term k="수전전압">수전전압</Term> 트랙</div>
             <div className="v">{r.track.track.voltage}</div>

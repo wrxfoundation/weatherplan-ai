@@ -39,17 +39,21 @@ export function viaProxy(targetUrl) {
 }
 
 /** 프록시 경유 GET(text). 프록시가 정상 호스트라 undici happy-eyeballs/IP차단 이슈가 없다. */
-export async function proxyGetText(targetUrl, ms = 8000) {
+// opts(선택): { method, body, headers } — POST 등 지원(기본 GET). 추가 헤더는 프록시 헤더 위에 병합.
+export async function proxyGetText(targetUrl, ms = 8000, opts = {}) {
   const { url, headers } = viaProxy(targetUrl)
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), ms)
   try {
     const r = await fetch(url, {
       signal: ctrl.signal,
+      method: opts.method || 'GET',
+      body: opts.body,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
         Accept: '*/*',
         ...headers,
+        ...(opts.headers || {}),
       },
     })
     if (!r.ok) throw new Error(`proxy_${r.status}`)

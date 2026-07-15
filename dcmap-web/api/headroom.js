@@ -227,8 +227,101 @@ async function usageHandler(req, res, key) {
   res.status(200).json({ available: false, reason: 'no_recent_month' })
 }
 
+/**
+ * 한전ON 전력계통 통합정보 — 변전소 송전망 여유용량(연도별 MW).
+ * POST online.kepco.co.kr/ew/cpct/retrieveTransCpct{154|345}kV
+ *   body: {dma_reqParam:{sido_code, sigg_code, emd_code, year, gubun:"etc"}}
+ * 이 엔드포인트는 별도 API 키가 필요 없고 CORS가 열려 있으나, 클라우드 IP 차단 가능성 대비 프록시→직접 폴백.
+ * 코드는 법정동코드(10자리)에서 파생: sido=앞2 · sigg=3~5 · emd=6~8.
+ */
+async function kepcoPost(url, bodyObj, ms = 7000) {
+  const payload = JSON.stringify(bodyObj)
+  const headers = {
+    'Content-Type': 'application/json; charset=UTF-8',
+    Accept: 'application/json',
+    'User-Agent': UA,
+    Origin: 'https://online.kepco.co.kr',
+    Referer: 'https://online.kepco.co.kr/EWM094D00',
+  }
+  // 1) 프록시 경유(POST 지원 시) → 2) undici 직접
+  if (proxyConfigured()) {
+    try {
+      const t = asJson(await proxyGetText(url, ms, { method: 'POST', body: payload, headers }))
+      if (t) return t
+    } catch {
+      /* 폴백 */
+    }
+  }
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), ms)
+  try {
+    const r = await fetch(url, { method: 'POST', headers, body: payload, signal: ctrl.signal })
+    if (r.ok) return await r.json()
+  } catch {
+    /* null */
+  } finally {
+    clearTimeout(timer)
+  }
+  return null
+}
+
+async function transHandler(req, res) {
+  res.setHeader('Cache-Control', 's-maxage=43200, stale-while-revalidate=604800')
+  const adm = String(req.query.admCd || '').replace(/\D/g, '')
+  if (!/^\d{8,10}$/.test(adm)) {
+    res.status(400).json({ available: false, reason: 'bad_admCd' })
+    return
+  }
+  const kv = req.query.kv === '345' ? '345' : '154'
+  const year = /^\d{4}$/.test(String(req.query.year)) ? String(req.query.year) : String(new Date().getFullYear())
+  const url = `https://online.kepco.co.kr/ew/cpct/retrieveTransCpct${kv}kV`
+  const reqParam = { sido_code: adm.slice(0, 2), sigg_code: adm.slice(2, 5), emd_code: adm.slice(5, 8), year, gubun: 'etc' }
+  try {
+    const body = await kepcoPost(url, { dma_reqParam: reqParam })
+    const list = Array.isArray(body?.dlt_resultList) ? body.dlt_resultList : []
+    if (!list.length) {
+      res.status(200).json({ available: false, reason: 'no_rows', kv, scope: reqParam })
+      return
+    }
+    const YKEYS = ['THIS_YY', 'ONE_YY', 'TWO_YY', 'THR_YY', 'FOR_YY', 'FIV_YY', 'SIX_YY']
+    const subs = list.map((r) => {
+      const base = Number.parseInt(r.RVW_YY, 10) || Number(year)
+      const series = YKEYS.map((k) => num(r[k]) ?? 0)
+      const firstIdx = series.findIndex((v) => v > 0)
+      return {
+        name: String(r.PSPWPNM || r.PSS_NM || '미상'),
+        sido: r.SIDO_NM ? String(r.SIDO_NM) : undefined,
+        sigg: r.SGG_NM ? String(r.SGG_NM) : undefined,
+        emd: r.EMD_NM ? String(r.EMD_NM) : undefined,
+        baseYear: base,
+        years: series.map((_, i) => base + i),
+        series,
+        firstAvailYear: firstIdx >= 0 ? base + firstIdx : null,
+        maxMw: Math.max(...series),
+        genMw: num(r.PSSMINOVPLSCPCT) ?? 0, // 발전허가 신청용량
+      }
+    })
+    res.status(200).json({
+      available: true,
+      kv,
+      unit: 'MW',
+      count: subs.length,
+      substations: subs,
+      note: '한전ON 송전망 여유용량(연도별) · 참고자료(전기사용신청 후 확정) · 345kV 변압기 용량 기준 · 분기 갱신',
+    })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
+  }
+}
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=86400')
+
+  // 변전소 송전망 여유용량(연도별) — 한전ON. 별도 키 불필요(공개 조회 엔드포인트).
+  if (req.query.trans) {
+    await transHandler(req, res)
+    return
+  }
 
   const key = process.env.KEPCO_API_KEY
   const vworldKey = process.env.VWORLD_KEY
