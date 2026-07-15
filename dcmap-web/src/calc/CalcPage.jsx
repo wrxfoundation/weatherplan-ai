@@ -642,7 +642,7 @@ export default function CalcPage() {
               {busy ? 'AI 해설 작성 중…' : '✨ AI 계산 해설'}
             </button>
             <button type="button" className="btn" onClick={saveScenario}>
-              {savedFlash ? '시나리오 저장됨 ✓' : '＋ 시나리오로 저장'}
+              {savedFlash ? '시나리오 저장됨 ✓' : '+ 시나리오로 저장'}
             </button>
             <CopyButton getText={summaryText} label="요약 복사" copiedLabel="복사됨" />
           </div>
