@@ -869,8 +869,12 @@ export default function DashboardPage() {
               </>
             ) : (
               <p className="chart-note">
-                전력시장 도매가격(SMP) 시간별 추이 — DC 전력 OPEX의 실시간 신호. KPX 계통한계가격(data.go.kr 인증키)
-                연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
+                전력시장 도매가격(SMP) 시간별 추이 — DC 전력 OPEX의 실시간 신호. KPX 계통한계가격 API는{' '}
+                <strong>심의승인 대상</strong>(공공기관·활용사례 심의)이라 일반 키로는 연동이 제한됩니다. 승인 확보
+                또는 대체 API 연결 시 활성. 현재 <span className="badge verify">연동 대기</span> ·{' '}
+                <a href="https://new.kpx.or.kr/smpInland.es?mid=a10606080100" target="_blank" rel="noreferrer" className="mini-link">
+                  KPX 공표 SMP 직접 보기 →
+                </a>
               </p>
             )}
           </section>
