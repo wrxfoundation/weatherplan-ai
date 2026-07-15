@@ -101,7 +101,7 @@ export default function FilterBar({
         { key: 'semi', icon: 'semi', text: '반도체', on: showSemi, toggle: onToggleSemi, title: '반도체·AI 메가클러스터 — 용인 국가산단(9.3GW)·평택·이천·청주·광주전남(6.3GW·65만t/일). AI DC와 전력·용수를 두고 경쟁/공존하는 대수요처. 점선=예정. 출처: 3대 메가프로젝트 국민보고회' },
         { key: 'complex', icon: 'complex', text: '산단', on: showComplexes, toggle: onToggleComplexes, title: '전국 산업단지 511개 — 인센티브·전력/용수 기반시설 사전확보 입지(OSM 지정단지, 대표점 근사)' },
         { key: 'public', icon: 'public', text: '공공DC', on: showPublic, toggle: onTogglePublic, title: '행정·공공기관 데이터센터 61곳 — 행안부 공공데이터(연면적 500㎡+), 좌표는 시군구 중심점' },
-        { key: 'pipeline', icon: 'complex', text: '공급예정', on: showPipeline, toggle: onTogglePipeline, title: '수도권 공급예정 민간 DC 21곳 — 삼일PwC·KDCC(’26.3) 집계, IT용량 기준. 좌표는 시군구 근사(개별 부지 아님)' },
+        { key: 'pipeline', icon: 'complex', text: '공급예정', on: showPipeline, toggle: onTogglePipeline, title: '공급예정 민간 DC 26곳 — 삼일PwC(’26.3)·알스퀘어(’25.11) 교차 집계, IT용량 기준(부산 포함). 좌표는 시군구 근사(개별 부지 아님)' },
       ],
     },
     {
