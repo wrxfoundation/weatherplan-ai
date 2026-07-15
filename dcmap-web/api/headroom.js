@@ -265,16 +265,17 @@ async function kepcoPost(url, bodyObj, ms = 7000, referer = 'https://online.kepc
   return null
 }
 
-// 한전ON 응답행 → 연도별 여유 표준화. 같은 WebSquare 시스템이라 전력공급/재생e가 동일 필드(THIS_YY..SIX_YY) 사용.
+// 한전ON 응답행 → 연도별 여유 표준화. 전력공급(subSt154/23)·재생e(retrieveTransCpct) 필드 공통 매핑.
+//  기준연도: 전력공급=CRTR_YY, 재생e=RVW_YY. 변전소명: PSPWP_NM/PSPWPNM. 여유: THIS_YY..SIX_YY(현재~+6년).
 const YKEYS = ['THIS_YY', 'ONE_YY', 'TWO_YY', 'THR_YY', 'FOR_YY', 'FIV_YY', 'SIX_YY']
 function normSubst(list, fallbackYear) {
   return (Array.isArray(list) ? list : [])
     .map((r) => {
-      const base = Number.parseInt(r.RVW_YY, 10) || Number(fallbackYear)
+      const base = Number.parseInt(r.CRTR_YY ?? r.RVW_YY, 10) || Number(fallbackYear)
       const series = YKEYS.map((k) => num(r[k]) ?? 0)
       const firstIdx = series.findIndex((v) => v > 0)
       return {
-        name: String(r.PSPWPNM || r.PSS_NM || r.SUBST_NM || '미상'),
+        name: String(r.PSPWP_NM || r.PSPWPNM || r.PSS_NM || '미상'),
         sido: r.SIDO_NM ? String(r.SIDO_NM) : undefined,
         sigg: r.SGG_NM ? String(r.SGG_NM) : undefined,
         emd: r.EMD_NM ? String(r.EMD_NM) : undefined,
@@ -286,45 +287,54 @@ function normSubst(list, fallbackYear) {
         genMw: num(r.PSSMINOVPLSCPCT) ?? 0,
       }
     })
-    .filter((s) => s.name !== '미상' || s.maxMw > 0)
+    .filter((s) => s.name !== '미상')
 }
-const listOf = (body) => (Array.isArray(body?.dlt_resultList) ? body.dlt_resultList : Array.isArray(body?.dlt_result) ? body.dlt_result : pickList(body) || [])
 
 /**
  * 변전소 여유용량(연도별) — 한전ON. DC는 소비자이므로 '전력공급 여유'(subSt154·subSt23)가 1순위,
  * '재생e 연계 여유'(retrieveTransCpct154kV, 발전 연결)는 참고. 셋을 병렬 조회해 그룹으로 반환.
- * body는 법정동코드에서 파생한 지역코드. 응답 스키마는 동일 시스템 가정(미상시 해당 그룹 공란).
+ * emdCode='' → 시군구 전체 변전소(한전 화면과 동일). 실측 스키마:
+ *   전력공급: body {dma_subSt154:{sidoCode,siggCode,emdCode,year}} → resp dma_subSt154list (CRTR_YY 기준)
+ *   재생e:   body {dma_reqParam:{sido_code,sigg_code,emd_code,year,gubun}} → resp dlt_resultList (RVW_YY 기준)
  */
 async function transHandler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=43200, stale-while-revalidate=604800')
   const adm = String(req.query.admCd || '').replace(/\D/g, '')
-  if (!/^\d{8,10}$/.test(adm)) {
+  if (!/^\d{5,10}$/.test(adm)) {
     res.status(400).json({ available: false, reason: 'bad_admCd' })
     return
   }
   const year = /^\d{4}$/.test(String(req.query.year)) ? String(req.query.year) : String(new Date().getFullYear())
-  const codeBase = { sido_code: adm.slice(0, 2), sigg_code: adm.slice(2, 5), emd_code: adm.slice(5, 8) }
+  const sidoCode = adm.slice(0, 2)
+  const siggCode = adm.slice(2, 5)
+  const emdCode = adm.length >= 8 ? adm.slice(5, 8) : '' // 8자리↑면 읍면동, 아니면 시군구 전체
+  const supBody = (k) => ({ [`dma_subSt${k}`]: { sidoCode, siggCode, emdCode: '', year } }) // 시군구 전체 조회(한전 화면과 동일)
   const O = 'https://online.kepco.co.kr'
   try {
     const [sup154, sup23, renew] = await Promise.all([
-      kepcoPost(`${O}/ew/api/energy/subSt154`, { dma_reqParam: codeBase }, 7000, `${O}/EWM104D04`).catch(() => null),
-      kepcoPost(`${O}/ew/api/energy/subSt23`, { dma_reqParam: codeBase }, 7000, `${O}/EWM104D04`).catch(() => null),
-      kepcoPost(`${O}/ew/cpct/retrieveTransCpct154kV`, { dma_reqParam: { ...codeBase, year, gubun: 'etc' } }, 7000).catch(() => null),
+      kepcoPost(`${O}/ew/api/energy/subSt154`, supBody('154'), 7000, `${O}/EWM104D04`).catch(() => null),
+      kepcoPost(`${O}/ew/api/energy/subSt23`, supBody('23'), 7000, `${O}/EWM104D04`).catch(() => null),
+      kepcoPost(
+        `${O}/ew/cpct/retrieveTransCpct154kV`,
+        { dma_reqParam: { sido_code: sidoCode, sigg_code: siggCode, emd_code: emdCode, year, gubun: 'etc' } },
+        7000,
+      ).catch(() => null),
     ])
-    const supply154 = normSubst(listOf(sup154), year)
-    const supply23 = normSubst(listOf(sup23), year)
-    const renewList = normSubst(listOf(renew), year)
+    const supply154 = normSubst(sup154?.dma_subSt154list, year)
+    const supply23 = normSubst(sup23?.dma_subSt23list, year)
+    const renewList = normSubst(renew?.dlt_resultList, year)
     const anySupply = supply154.length + supply23.length
-    if (!anySupply && !renewList.length && req.query.debug) {
-      res.status(200).json({ available: false, reason: 'no_rows', codeBase, raw: { sup154, sup23, renew } })
+    if (req.query.debug) {
+      res.status(200).json({ available: anySupply > 0, codeBase: { sidoCode, siggCode, emdCode }, raw: { sup154, sup23, renew } })
       return
     }
     res.status(200).json({
       available: anySupply > 0 || renewList.length > 0,
       unit: 'MW',
+      scope: { sido: supply154[0]?.sido || supply23[0]?.sido, sigg: supply154[0]?.sigg || supply23[0]?.sigg },
       supply: { kv154: supply154, kv23: supply23, count: anySupply },
       renew: { kv154: renewList, count: renewList.length },
-      note: '한전ON 변전소 여유용량(연도별) · 참고자료(전기사용신청 후 확정) · 분기 갱신 · 전력공급=소비자 수전여유, 재생e=발전 연계여유',
+      note: '한전ON 변전소 전력공급 여유용량(연도별·시군구 전체) · 참고자료(전기사용신청 후 확정) · 분기 갱신 · 전력공급=소비자 수전여유',
     })
   } catch (e) {
     res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
