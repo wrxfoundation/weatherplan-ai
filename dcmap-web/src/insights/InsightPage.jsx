@@ -22,8 +22,18 @@ import PowerSupplyChain from './articles/PowerSupplyChain.jsx'
 import PowerWaterMega from './articles/PowerWaterMega.jsx'
 import HyperscaleJukjeon from './articles/HyperscaleJukjeon.jsx'
 import PwcValueChain from './articles/PwcValueChain.jsx'
+import RsquareRealEstate from './articles/RsquareRealEstate.jsx'
 
 const ARTICLES = {
+  'rsquare-realestate-2025': {
+    component: RsquareRealEstate,
+    sources: [
+      '알스퀘어 리서치센터 「2025 Data Center Report」(2025.11, 49p) — 인허가·착공·준공 추이(국토교통부 건축 데이터 기반)·거래 사례·랙 임대료·개발 갈등·수급 동향',
+      '거래 사례 5건(드림마크원 490억~하남 7,340억·SK AX 판교 5,068억): 알스퀘어 집계 — /data 거래 사례 탭에 수록',
+      '전자파 실측(DC 6곳 평균 ICNIRP 0.4%, 병원 0.68%·호텔 1.17%): 과학기술정보통신부 2025.8~9 측정 — 알스퀘어 재인용',
+      '랙 밀도(일반 IDC 7.1kW vs AIDC 30~60kW/rack): Uptime Institute·NVIDIA·Vertiv — 알스퀘어 재인용. 수도권 예비율 5%(2024): 산업통상자원부·EPSIS',
+    ],
+  },
   'pwc-value-chain-2026': {
     component: PwcValueChain,
     sources: [

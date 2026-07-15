@@ -10,6 +10,7 @@ import { DC_ASSESSMENT, approvalLabel } from '../data/gridAssessment.js'
 import { SUBSTATIONS } from '../data/substations.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
 import { CAPITAL_PIPELINE } from '../data/capitalPipeline.js'
+import { DC_DEALS, RACK_RATES, DEV_CONFLICTS, DEV_CONFLICTS_META } from '../data/dcRealEstate.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -137,18 +138,67 @@ const DATASETS = [
   },
   {
     key: 'capital',
-    label: '수도권 공급예정 DC',
+    label: '공급예정 DC',
     asOf: '2026-03',
-    source: '삼일PwC 「한국 AI 데이터센터 산업의 현재와 투자방향」(2026.3) — PwC Analysis·KDCC. IT용량 기준(수전용량 아님), 준공예정은 지연 가능',
+    source: '삼일PwC(2026.3)·알스퀘어(2025.11) 교차 — 원출처 PwC Analysis·KDCC·국토교통부. IT용량≠수전용량, 준공예정은 지연 가능',
     fullCsv: null,
     columns: [
       { k: 'operator', label: '사업자' },
       { k: 'name', label: '센터명' },
       { k: 'loc', label: '위치' },
       { k: 'itMw', label: 'IT용량MW' },
+      { k: 'mwSupply', label: '수전MW' },
       { k: 'due', label: '준공예정' },
     ],
-    rows: CAPITAL_PIPELINE.map((r) => ({ ...r })),
+    rows: CAPITAL_PIPELINE.map((r) => ({ ...r, mwSupply: r.mwSupply ?? '', due: r.due ?? '' })),
+  },
+  {
+    key: 'deals',
+    label: 'DC 거래 사례',
+    asOf: '2025-11',
+    source: '알스퀘어 리서치센터(2025.11) — 국내 데이터센터 주요 매매 거래. 수전용량 괄호는 IT Load',
+    fullCsv: null,
+    columns: [
+      { k: 'name', label: '자산명' },
+      { k: 'addr', label: '주소' },
+      { k: 'gfaM2', label: '연면적㎡' },
+      { k: 'power', label: '수전용량' },
+      { k: 'built', label: '준공' },
+      { k: 'dealAt', label: '거래시기' },
+      { k: 'priceEok', label: '매입가(억원)' },
+      { k: 'seller', label: '매도인' },
+      { k: 'buyer', label: '매수인' },
+    ],
+    rows: DC_DEALS.map((r) => ({ ...r })),
+  },
+  {
+    key: 'racks',
+    label: '랙 임대료',
+    asOf: '2025',
+    source: '알스퀘어 리서치센터(2025.11) — 코로케이션 업체별 공표 랙 임대료. Full 랙 기본 2.2kW(저밀도) — AIDC 고밀도 랙과 과금 구조 상이',
+    fullCsv: null,
+    columns: [
+      { k: 'vendor', label: '사업자' },
+      { k: 'rack', label: '랙 타입' },
+      { k: 'monthlyKrw', label: '월 임대료(원)' },
+      { k: 'basePower', label: '기본 전력' },
+      { k: 'extraRate', label: '추가 전력 단가' },
+    ],
+    rows: RACK_RATES.map((r) => ({ ...r, monthlyKrw: r.monthlyKrw.toLocaleString() })),
+  },
+  {
+    key: 'conflicts',
+    label: '개발 갈등 사례',
+    asOf: '2025-11',
+    source: `알스퀘어 리서치센터(2025.11). ${DEV_CONFLICTS_META.note}`,
+    fullCsv: null,
+    columns: [
+      { k: 'developer', label: '시행사' },
+      { k: 'region', label: '지역' },
+      { k: 'claims', label: '주민 주장' },
+      { k: 'outcome', label: '개발상 이슈' },
+    ],
+    rows: DEV_CONFLICTS.map((r) => ({ ...r })),
   },
   {
     key: 'dc',

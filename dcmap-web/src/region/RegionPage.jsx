@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, slugOf } from '../data/facilities.js'
@@ -8,6 +8,8 @@ import { LAND_DONG, LAND_DONG_PERIOD } from '../data/landPriceDong.js'
 import { fmtRate } from '../data/landPrice.js'
 import { POWER_BALANCE, selfSufficiencyLabel } from '../data/powerBalance.js'
 import { CAPITAL_PIPELINE, CAPITAL_PIPELINE_META } from '../data/capitalPipeline.js'
+import { SIDO_METRO_CD } from '../data/genLicenses.js'
+import { powerUsageFor } from '../data/liveApi.js'
 
 function setMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`)
@@ -41,6 +43,16 @@ export default function RegionPage() {
   const { slug } = useParams()
   const sido = SLUG_TO_SIDO[slug]
   const summary = useMemo(() => (sido ? regionSummary(sido) : null), [sido])
+  const [usage, setUsage] = useState(null) // 한전 계약종별(일반용) 시군구 집계 — 수요측 라이브
+
+  useEffect(() => {
+    let alive = true
+    setUsage(null)
+    powerUsageFor(SIDO_METRO_CD[sido]).then((v) => alive && setUsage(v))
+    return () => {
+      alive = false
+    }
+  }, [sido])
 
   useEffect(() => {
     if (!sido || !summary) return
@@ -139,6 +151,34 @@ export default function RegionPage() {
             })),
           }}
         />
+
+        {/* 전력 수요 밀도 — 한전 계약종별(일반용) 시군구 계약전력 라이브. 여유용량(공급측)의 보완 지표 */}
+        {usage?.available && usage.cities?.length > 0 && (
+          <div className="calc-card">
+            <div className="chart-title">
+              {sido} 전력 수요 밀도 — 일반용 계약전력 상위 시군구 ({usage.year}.{usage.month}, 한전 라이브)
+            </div>
+            {(() => {
+              const top = usage.cities.slice(0, 10)
+              const max = Math.max(...top.map((c) => c.cntrPwrMw), 1)
+              return top.map((c) => (
+                <div key={c.city} className="hbar-row">
+                  <span className="hbar-label">{c.city}</span>
+                  <span className="hbar-track">
+                    <span className="hbar-fill" style={{ width: `${Math.max((c.cntrPwrMw / max) * 100, 2)}%` }} />
+                  </span>
+                  <span className="hbar-value">
+                    {Math.round(c.cntrPwrMw).toLocaleString()}MW{c.unitCost != null ? ` · ${c.unitCost}원/kWh` : ''}
+                  </span>
+                </div>
+              ))
+            })()}
+            <p className="chart-note">
+              일반용 계약전력 합계(수요측 밀도)와 평균판매단가 — 계약전력이 큰 시군구일수록 상업·업무 전력 인프라가
+              두터운 곳. 민간 DC 전기요금 계약종(일반용)만 집계. 출처: {usage.source}.
+            </p>
+          </div>
+        )}
 
         {(() => {
           // 수도권 시도만 데이터가 존재 — 공급예정 민간 DC 집계(삼일PwC·KDCC)

@@ -138,6 +138,95 @@ function pickList(body) {
   return []
 }
 
+/* 공통 GET 폴백 체인 — 프록시 → undici → IPv4 직결 (bigdata.kepco 계열 공용) */
+async function kepcoGet(url) {
+  let body = null
+  if (proxyConfigured()) {
+    try {
+      body = asJson(await proxyGetText(url, 7000))
+    } catch {
+      body = null
+    }
+  }
+  if (!body) {
+    const b = await fetchJson(url, 6000)
+    if (b && !b._status) body = b
+  }
+  if (!body) {
+    for (const u of [url, url.replace('https://', 'http://')]) {
+      try {
+        const b = asJson(await rawGetText(u, 6000))
+        if (b) {
+          body = b
+          break
+        }
+      } catch {
+        /* 다음 경로 */
+      }
+    }
+  }
+  return body
+}
+
+/**
+ * 계약종별 전력사용량(contractType.do) — 시군구별 일반용 계약전력·사용량·평균판매단가.
+ * 여유용량(공급측)의 보완 지표: 수요측 밀도·단가 실측. 최근월은 2~3개월 지연 공표라 뒤로 탐색.
+ */
+async function usageHandler(req, res, key) {
+  res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=604800')
+  const metro = String(req.query.metroCd || '').replace(/\D/g, '')
+  if (!/^\d{2}$/.test(metro)) {
+    res.status(400).json({ available: false, reason: 'bad_metro' })
+    return
+  }
+  const now = new Date()
+  // 2~5개월 전을 순서대로 시도 — 공표 지연 대응
+  for (let back = 2; back <= 5; back++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - back, 1)
+    const year = String(d.getFullYear())
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const url = `https://bigdata.kepco.co.kr/openapi/v1/powerUsage/contractType.do?year=${year}&month=${month}&metroCd=${metro}&apiKey=${key}&returnType=json`
+    try {
+      const body = await kepcoGet(url)
+      const rows = pickList(body)
+      if (!rows.length) continue
+      // 일반용만 집계(민간 DC 요금 계약종) — 시군구별 계약전력 합계·사용량·가중평균 단가
+      const byCity = new Map()
+      for (const r of rows) {
+        if (!/일반용/.test(String(r.cntr || ''))) continue
+        const city = String(r.city || '').trim()
+        if (!city) continue
+        const cur = byCity.get(city) || { city, cntrPwrKw: 0, usageKwh: 0, billKrw: 0 }
+        cur.cntrPwrKw += num(r.cntrPwr) ?? 0
+        cur.usageKwh += num(r.powerUsage) ?? 0
+        cur.billKrw += num(r.bill) ?? 0
+        byCity.set(city, cur)
+      }
+      const cities = [...byCity.values()]
+        .map((c) => ({
+          city: c.city,
+          cntrPwrMw: Math.round(c.cntrPwrKw / 100) / 10,
+          usageGwh: Math.round(c.usageKwh / 100000) / 10,
+          unitCost: c.usageKwh > 0 ? Math.round((c.billKrw / c.usageKwh) * 10) / 10 : null,
+        }))
+        .sort((a, b) => b.cntrPwrMw - a.cntrPwrMw)
+      if (!cities.length) continue
+      res.status(200).json({
+        available: true,
+        year,
+        month,
+        cities,
+        totalCntrPwrMw: Math.round(cities.reduce((s, c) => s + c.cntrPwrMw, 0)),
+        source: '한전 전력데이터 개방포털 — 계약종별 전력사용량(일반용 집계)',
+      })
+      return
+    } catch {
+      /* 다음 달 시도 */
+    }
+  }
+  res.status(200).json({ available: false, reason: 'no_recent_month' })
+}
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=86400')
 
@@ -146,6 +235,12 @@ export default async function handler(req, res) {
   // KEPCO 키만 필수. vworld는 서버 폴백(좌표→코드)용이라, 클라이언트가 admCd/metroCd를 넘기면 불필요.
   if (!key) {
     res.status(200).json({ available: false, reason: 'not_configured' })
+    return
+  }
+
+  // 계약종별 전력사용량 모드 — ?usage=1&metroCd=41 (좌표 불필요)
+  if (req.query.usage) {
+    await usageHandler(req, res, key)
     return
   }
 
