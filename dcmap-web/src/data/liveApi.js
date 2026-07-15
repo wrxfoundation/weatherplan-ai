@@ -157,6 +157,10 @@ export const fuelMixNow = () => fetchJson('/api/power?src=fuelmix', POWER_MS)
 /** 한전 계약종별 전력사용량(일반용 집계) — { year, month, cities:[{city,cntrPwrMw,usageGwh,unitCost}] } | null */
 export const powerUsageFor = (metroCd) => (metroCd ? fetchJson(`/api/headroom?usage=1&metroCd=${metroCd}`, POWER_MS) : Promise.resolve(null))
 
+// 변전소 송전망 여유용량(연도별 MW) — 한전ON. admCd=법정동코드(8~10자리), kv=154|345.
+export const transHeadroomFor = (admCd, kv = '154') =>
+  /^\d{8,10}$/.test(String(admCd || '')) ? fetchJson(`/api/headroom?trans=1&admCd=${admCd}&kv=${kv}`, 12000) : Promise.resolve(null)
+
 /** 건축HUB 지번별 전기사용량 — { usage, unit, useYm } | null. 법정동코드+번지+사용년월 필요 */
 export const bldEnergyFor = ({ sigunguCd, bjdongCd, bun, ji, useYm }) =>
   sigunguCd && bjdongCd && useYm
