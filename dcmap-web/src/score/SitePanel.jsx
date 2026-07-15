@@ -242,7 +242,10 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const plantKm = np?.km ?? null
   // 관할 변전소 전력공급 여유 최대치(한전ON 실측) — 전력축 배전 여유 점수의 정밀 근거.
   const bestSupply = useMemo(() => {
-    const all = [...(transHr?.supply?.kv154 || []), ...(transHr?.supply?.kv23 || [])]
+    const all = [
+      ...(transHr?.supply?.kv154 || []).map((s) => ({ ...s, kv: '154kV' })),
+      ...(transHr?.supply?.kv23 || []).map((s) => ({ ...s, kv: '22.9kV' })),
+    ]
     return all.length ? all.reduce((b, s) => (s.maxMw > (b?.maxMw ?? -1) ? s : b), null) : null
   }, [transHr])
   const r = useMemo(
@@ -262,10 +265,13 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
       근거점수: `${r.knownScore}/${r.knownMax}`,
       커버리지pct: r.knownMax ? Math.round((r.knownScore / r.knownMax) * 100) : null,
       전력: {
-        계통공급여유MW: grid?.mw ?? null,
+        계통공급여유MW_시도총량: grid?.mw ?? null,
         DC공급승인율pct: approval?.ratePct ?? null,
         최근접변전소km: r.nearestSub?.km ?? null,
-        배전여유MW: headroom?.available ? (headroom.availableMw ?? null) : null,
+        배전여유MW_22_9kV: headroom?.available ? (headroom.availableMw ?? null) : null,
+        전력공급여유_관할변전소: bestSupply
+          ? { 변전소: bestSupply.name, 최대여유MW: bestSupply.maxMw, 최초여유연도: bestSupply.firstAvailYear, 전압: bestSupply.kv || null }
+          : null,
       },
       토지: { 필지면적m2: landArea?.areaM2 ?? null, 용도지역: landUse?.uses?.[0] ?? null, 공시지가원per_m2: officialPrice?.pricePerM2 ?? null },
       리스크: {
@@ -385,6 +391,14 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               {approval?.ratePct != null && (
                 <span className={`sum-chip tone-${approval.ratePct >= 70 ? 'good' : approval.ratePct >= 45 ? 'warn' : 'bad'}`}>
                   계통승인 {approval.ratePct}%
+                </span>
+              )}
+              {bestSupply && (
+                <span
+                  className={`sum-chip tone-${bestSupply.maxMw <= 0 ? 'bad' : bestSupply.maxMw >= mw * 3 ? 'good' : 'warn'}`}
+                  title={`관할 ${bestSupply.name}변전소 ${bestSupply.kv} · 한전ON 전력공급 여유`}
+                >
+                  여유 {bestSupply.maxMw > 0 ? `${bestSupply.maxMw.toLocaleString()}MW` : '0(포화)'}
                 </span>
               )}
               {climateIdx && <span className={`sum-chip tone-${climateTone}`}>냉각 {climateIdx.label}</span>}
