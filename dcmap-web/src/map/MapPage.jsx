@@ -752,7 +752,7 @@ export default function MapPage({ power = false }) {
       SIDO_LIST.map((s) =>
         // 시도 버블: 서버측 vworld 없이 시도코드(metroCd)를 직접 넘겨 KEPCO 조회.
         headroomFor(s.lat, s.lng, SIDO_METRO_CD[s.sido])
-          .then((v) => [s.sido, v?.available ? (v.availableMw ?? null) : null])
+          .then((v) => [s.sido, v?.available ? { mw: v.availableMw ?? null, substNm: v.substNm ?? null, rows: v.rows ?? null } : null])
           .catch(() => [s.sido, null]),
       ),
     ).then((pairs) => alive && setHeadrooms(Object.fromEntries(pairs)))
@@ -771,10 +771,11 @@ export default function MapPage({ power = false }) {
     }
     if (showHeadroom) {
       const g = L.layerGroup()
-      const vals = SIDO_LIST.map((s) => headrooms?.[s.sido]).filter((v) => v != null)
+      const vals = SIDO_LIST.map((s) => headrooms?.[s.sido]?.mw).filter((v) => v != null)
       const max = vals.length ? Math.max(...vals) : 0
       for (const s of SIDO_LIST) {
-        const mw = headrooms?.[s.sido]
+        const h = headrooms?.[s.sido]
+        const mw = h?.mw ?? null
         const has = mw != null && max > 0
         const r = has ? 10 + 26 * Math.sqrt(mw / max) : 9
         L.circleMarker([s.lat, s.lng], {
@@ -786,9 +787,10 @@ export default function MapPage({ power = false }) {
           dashArray: has ? undefined : '3 3',
           bubblingMouseEvents: false,
         })
-          .bindTooltip(`<div class="dc-hovercard"><strong>${s.sido}</strong> · 계통 여유용량<br/>${has ? `<b>${mw.toLocaleString()}MW</b>` : '연동 대기 (KEPCO env)'}</div>`, {
-            direction: 'top', offset: [0, -r], className: 'dc-hovercard', opacity: 1,
-          })
+          .bindTooltip(
+            `<div class="dc-hovercard"><strong>${s.sido}</strong> · 계통 여유용량<br/>${has ? `<b>${mw.toLocaleString()}MW</b>${h?.substNm ? ` · ${h.substNm}변전소 최대 여유` : ''}${h?.rows ? `<br/><span style="opacity:.75">관내 선로 ${h.rows}개 조회 (한전 분산전원)</span>` : ''}` : '연동 대기 (KEPCO env)'}</div>`,
+            { direction: 'top', offset: [0, -r], className: 'dc-hovercard', opacity: 1 },
+          )
           .on('click', () => {
             setSelected(null)
             setSitePoint(null)

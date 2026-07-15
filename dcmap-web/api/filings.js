@@ -30,7 +30,7 @@ const DC_CORPS = {
 // DART list.json은 report_nm(공시 '유형'명)만 준다 — '데이터센터'는 본문에 있고 제목엔 거의 없다.
 // 그래서 (a) 제목에 DC가 드러나는 드문 케이스 + (b) DC 투자 신호가 되는 공시유형(신규시설투자·공급계약·
 // 유형자산 양수·타법인 출자)을 함께 잡되, 유형을 태깅해 '내용 확인 필요'를 정직히 표기한다.
-const DC_KEYWORDS = /(데이터센터|데이터\s*센터|IDC|전산센터|AI\s*데이터|하이퍼스케일)/
+const DC_KEYWORDS = /(데이터센터|데이터\s*센터|IDC|AIDC|전산센터|AI\s*데이터|하이퍼스케일|클라우드\s*센터)/
 const CAPEX_KEYWORDS = /(신규\s*시설\s*투자|유형자산\s*(양수|취득)|타법인\s*주식.*출자|영업양수|단일판매.*공급계약|공급계약\s*체결|증설)/
 
 async function fetchJson(url, ms = 6000) {

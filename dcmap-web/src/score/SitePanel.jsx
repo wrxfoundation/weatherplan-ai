@@ -44,6 +44,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const [landUse, setLandUse] = useState(null)
   const [landReg, setLandReg] = useState(null)
   const [landArea, setLandArea] = useState(null)
+  const [energySeries, setEnergySeries] = useState(null) // null | 'loading' | [{ym, usage}] — 6개월 추이(온디맨드)
   const [officialPrice, setOfficialPrice] = useState(null)
   const [fc, setFc] = useState(null)
   const [headroom, setHeadroom] = useState(null)
@@ -255,6 +256,33 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     }
     run('report', { data: snap })
   }
+  // 지점 변경 시 전기사용량 추이 초기화(다른 지번의 추이가 남지 않게)
+  useEffect(() => {
+    setEnergySeries(null)
+  }, [point])
+
+  // 건축HUB 6개월 추이 — 호출 6회라 온디맨드(버튼). 최근월은 2~3개월 지연 반영.
+  const loadEnergySeries = async () => {
+    if (!addr?.sigunguCd || !addr?.bjdongCd || energySeries === 'loading') return
+    setEnergySeries('loading')
+    const months = [...Array(6)]
+      .map((_, i) => {
+        const d = new Date()
+        d.setDate(1)
+        d.setMonth(d.getMonth() - 3 - i)
+        return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`
+      })
+      .reverse()
+    const vals = await Promise.all(
+      months.map((ym) =>
+        bldEnergyFor({ sigunguCd: addr.sigunguCd, bjdongCd: addr.bjdongCd, bun: addr.bun, ji: addr.ji, useYm: ym })
+          .then((r) => ({ ym, usage: r?.available ? r.usage ?? null : null }))
+          .catch(() => ({ ym, usage: null })),
+      ),
+    )
+    setEnergySeries(vals)
+  }
+
   // 지역 전력 여건(한전 변전소 현황 + 전력 자급률 + 계통 공급여유) — 주소 시도 기준. 참고 맥락(부지별 여유량 아님).
   const regionPower = useMemo(
     () => (sido ? { sido, sub: substationForSido(sido), bal: POWER_BALANCE[sido] || null, grid, approval } : null),
@@ -936,6 +964,35 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   <>
                     {energy.useYm} <strong>{energy.usage.toLocaleString()} {energy.unit}</strong>
                     <span className="meta"> · 해당 지번 건물에너지 실측(단독·소규모·산업 용도 제외)</span>
+                    {/* 6개월 추이 — 온디맨드(호출 6회라 버튼 클릭 시에만) */}
+                    {energySeries == null && (
+                      <button type="button" className="btn" style={{ marginLeft: 8, padding: '2px 9px', fontSize: 'var(--text-xs)' }} onClick={loadEnergySeries}>
+                        6개월 추이
+                      </button>
+                    )}
+                    {energySeries === 'loading' && <span className="meta"> · 추이 조회 중…</span>}
+                    {Array.isArray(energySeries) && (
+                      <div className="hbar-mini-wrap">
+                        <div className="hbar-mini" role="img" aria-label="최근 6개월 전기사용량">
+                          {(() => {
+                            const max = Math.max(...energySeries.map((m) => m.usage ?? 0), 1)
+                            return energySeries.map((m) => (
+                              <span
+                                key={m.ym}
+                                className="hbar-mini-bar"
+                                title={`${m.ym}: ${m.usage != null ? `${m.usage.toLocaleString()} ${energy.unit}` : '데이터 없음'}`}
+                                style={{ height: `${m.usage != null ? Math.max(6, Math.round((m.usage / max) * 100)) : 3}%` }}
+                              />
+                            ))
+                          })()}
+                        </div>
+                        <div className="hbar-mini-x" aria-hidden>
+                          {energySeries.map((m) => (
+                            <span key={m.ym}>{m.ym.slice(4)}월</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </>
                 ) : addr?.sigunguCd ? (
                   <span className="badge pending">해당 지번 데이터 없음 — 대상 외(단독·200세대 미만·산업)일 수 있음</span>
