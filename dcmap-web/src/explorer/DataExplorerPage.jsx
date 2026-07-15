@@ -158,6 +158,36 @@ const DATASETS = [
 
 const PER_PAGE = 50
 
+/* 업계 인텔 채널 — 원천 데이터셋 너머, 인사이트 갱신 시 참조하는 정보원 큐레이션.
+ * 링크는 최상위(안정) URL만 사용 — 게시물 딥링크는 유실이 잦아 배제. 큐레이션 기준일 2026-07. */
+const INTEL_CHANNELS = [
+  {
+    cat: '데이터센터',
+    items: [
+      { name: '한국데이터센터연합회 (KDCC)', url: 'https://kdcc.or.kr', desc: '업계 협회 허브 — 뉴스레터·국내 DC 마켓 리포트·데이터센터 서밋 코리아', tags: ['마켓 리포트', '행사'] },
+      { name: 'Data Center Dynamics (DCD)', url: 'https://www.datacenterdynamics.com', desc: '글로벌 최대 DC 전문 매체 — 하이퍼스케일·투자·리츠, 국내 프로젝트 속보', tags: ['글로벌', '투자'] },
+      { name: '디지털데일리 · 전자신문', url: 'https://www.ddaily.co.kr', desc: '국내 IT지 — 전력계통영향평가·수도권 집중 등 DC 규제 커버리지', tags: ['규제', '계통영향평가'] },
+      { name: 'SK에코플랜트 뉴스룸', url: 'https://news.skecoplant.com', desc: '디벨로퍼 기술 블로그 — 랙당 전력밀도, 공랭→수냉 전환 조건 등 실무 디테일', tags: ['냉각', '전력밀도'] },
+    ],
+  },
+  {
+    cat: '전력 · 발전',
+    items: [
+      { name: '전기신문 (electimes)', url: 'https://www.electimes.com', desc: '전력업계 1위 전문지 — 계통·변전·송전 이슈 속보', tags: ['계통', '송전'] },
+      { name: '이투뉴스 (e2news)', url: 'https://www.e2news.com', desc: '에너지 정책 심층 — 지역별 차등 요금제 등 굵직한 제도 이슈', tags: ['정책', '차등요금'] },
+      { name: '전력거래소 EPSIS', url: 'https://epsis.kpx.or.kr', desc: '실시간 수급·SMP·발전량 원천 통계 — 전력 인사이트의 뿌리', tags: ['원천 데이터', 'SMP'] },
+      { name: '정책브리핑 보도자료', url: 'https://www.korea.kr/briefing/pressReleaseList.do', desc: '기후에너지환경부 보도자료·전력수급기본계획 등 정책 원문 확인 경로', tags: ['정책 원문'] },
+    ],
+  },
+  {
+    cat: '리포트 · 글로벌',
+    items: [
+      { name: '삼일PwC — AI 인프라 밸류체인', url: 'https://www.pwc.com/kr/ko/event/event-presentation/event_260318_3-3.pdf', desc: '국가 AI컴퓨팅센터·콜로케이션 사업모델 등 밸류체인 공개 분석 (PDF)', tags: ['밸류체인', 'PDF'] },
+      { name: 'SemiAnalysis', url: 'https://semianalysis.com', desc: 'AI 데이터센터 × 전력 글로벌 심층 분석 (딜런 파텔)', tags: ['글로벌', 'AI×전력'] },
+    ],
+  },
+]
+
 export default function DataExplorerPage() {
   const [tab, setTab] = useState('gen')
   const [q, setQ] = useState('')
@@ -258,6 +288,35 @@ export default function DataExplorerPage() {
             <button type="button" className="btn" disabled={pageSafe >= pageCount - 1} onClick={() => setPage(pageCount - 1)}>마지막 »</button>
           </div>
         )}
+
+        <section className="intel-section" aria-label="업계 인텔 채널">
+          <div className="eyebrow">WATCH</div>
+          <h2 className="intel-title">업계 인텔 채널 — 데이터셋 너머의 정보원</h2>
+          <p className="chart-note">
+            위 데이터셋을 갱신·해석할 때 참조하는 전문지·협회·원천 통계 큐레이션입니다. 국내 DC 판은 커뮤니티보다{' '}
+            <strong>전문지 + 협회 + 리포트</strong> 중심 — 모든 링크는 외부 사이트로 열립니다. 큐레이션 기준 2026-07.
+          </p>
+          <div className="intel-grid">
+            {INTEL_CHANNELS.map((g) => (
+              <div key={g.cat} className="intel-card">
+                <h3>{g.cat}</h3>
+                {g.items.map((it) => (
+                  <a key={it.name} className="intel-item" href={it.url} target="_blank" rel="noopener noreferrer">
+                    <span className="intel-name">
+                      {it.name} <span className="intel-ext" aria-hidden="true">↗</span>
+                    </span>
+                    <span className="intel-desc">{it.desc}</span>
+                    <span className="intel-tags">
+                      {it.tags.map((t) => (
+                        <span key={t} className="intel-tag">{t}</span>
+                      ))}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     </>
   )
