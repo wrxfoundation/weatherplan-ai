@@ -4,6 +4,36 @@ import { Link } from 'react-router-dom'
 export default function GpuUtilization() {
   return (
     <>
+      <div className="tldr">
+        <p className="tldr-kicker">⚡ 3분 쉽게 읽기</p>
+        <p className="tldr-one">
+          “정부가 GPU를 잔뜩 깔았는데, 정작 그걸 쓸 수요가 있냐는 질문이 뒤집혔다 — 공급만 보던 판에 수요를
+          얹는 글.”
+        </p>
+        <ol>
+          <li>
+            <strong>정부가 깐 물량</strong> — 2조800억으로 첨단 GPU <strong>9,704장</strong>(B300·베라루빈),
+            2.5조 국가AI컴퓨팅센터까지. 국내 AI 연산 자원이 빠르게 는다.
+          </li>
+          <li>
+            <strong>그런데 가동률 30~40%</strong> — 학습이 끝나면 필요량은 실제 이용량에 비례한다. 조사에서 자체
+            GPU 기업의 <strong>86%가 가동률 50% 이하</strong>, 국내는 <strong>30~40%</strong>.
+          </li>
+          <li>
+            <strong>기술은 있는데 수요층이 얇다</strong> — 국내 CSP는 GPUaaS 기술을 갖췄지만, AI 기업들이
+            네오클라우드(코어위브·람다·크루소)를 더 쓴다. “확보와 <strong>반복 사용</strong>은 다른 문제”.
+          </li>
+          <li>
+            <strong>그래서 부지엔?</strong> — 전기 신청 7,343MW는 <strong>신청 용량이지 가동 부하가 아니다</strong>.
+            가동률 30~40%면 초기 실제 전력 수요는 계약보다 낮게 실현될 수 있다.
+          </li>
+        </ol>
+        <p>
+          <strong>결론 한 줄</strong> — <Link to="/calc">GPU 계산기</Link>의 MW는 <strong>설계 수전용량(피크)</strong>이라
+          가동률로 다시 할인된다. 공급을 읽는 우리가 수요의 이 30~40%를 잊지 않는 이유다.
+        </p>
+      </div>
+
       <p>
         AI 데이터센터를 논할 때 우리는 늘 <strong>공급</strong>을 본다 — 땅이 있나, 전기가 오나, 계통이 받아주나.{' '}
         <Link to="/">AI InfraMap</Link>의 5축도 전부 공급측이다. 그런데 2026년 여름, 시장의 질문이 하나 뒤집혔다.{' '}

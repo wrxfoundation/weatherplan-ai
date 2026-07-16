@@ -4,6 +4,40 @@ import { Link } from 'react-router-dom'
 export default function RsquareRealEstate() {
   return (
     <>
+      <div className="tldr">
+        <p className="tldr-kicker">⚡ 3분 쉽게 읽기</p>
+        <p className="tldr-one">
+          “데이터센터를 새로 짓기가 어려워지자, 이미 다 지은 건물값이 뛰었다 — 부동산 통계가 전력 지도와 똑같은
+          결론에 도착한다.”
+        </p>
+        <ol>
+          <li>
+            <strong>인허가 절벽</strong> — 허가 건수가 2023년 25건 정점에서 2025년 9월 <strong>10건</strong>으로
+            반토막. 착공~준공 2년을 감안하면 지금의 인허가 절벽이 곧 <strong>2027~28년 공급 절벽</strong>이다.
+          </li>
+          <li>
+            <strong>완공 자산 프리미엄</strong> — 거래가가 2018년 490억(구로 IDC)에서 하남 <strong>7,340억</strong>·
+            판교 5,068억으로 뛰었다. 짓기 어려우니 이미 선 건물이 귀해진 것.
+          </li>
+          <li>
+            <strong>임대료 규칙이 바뀜</strong> — 옛날 랙엔 2.2kW면 됐는데 AI 랙은 <strong>30~60kW</strong>. 임대료가
+            ‘랙 개수’가 아니라 ‘전력(kW)’ 기준으로 재편된다 → 수전 능력이 곧 자산 가치.
+          </li>
+          <li>
+            <strong>갈등은 과학과 무관</strong> — 전자파 실측은 병원보다 낮은데(ICNIRP 0.4%) 사업은 철회된다.
+            민원은 과학이 아니라 <strong>커뮤니케이션</strong>의 문제.
+          </li>
+          <li>
+            <strong>수도권 마지노선</strong> — 수도권 전력 예비율이 2024년 <strong>5%</strong>(안정선 10%)까지
+            내려왔다. “수도권에 더 지을 수 있나”에 계통이 이미 답했다.
+          </li>
+        </ol>
+        <p>
+          <strong>결론 한 줄</strong> — 부동산 리서치가 도착한 답도 결국 <strong>“전력을 확보한 부지가 자산”</strong>.
+          아래는 그 근거를 건축·거래·임대료 통계로 푼다.
+        </p>
+      </div>
+
       <p>
         알스퀘어 리서치센터의 「2025 Data Center Report」(2025.11, 49p)는 데이터센터를{' '}
         <strong>부동산의 언어</strong>로 읽는다. 인허가·준공 통계는 국토교통부 건축 데이터에서, 임대료는 사업자
