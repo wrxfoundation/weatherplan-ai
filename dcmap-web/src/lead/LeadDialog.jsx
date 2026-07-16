@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { submitLead, mailtoFor, inquiryText, hasContactEmail, leadReasonLabel, CONTACT_EMAIL } from '../data/leadApi.js'
 
-const TYPES = ['정밀 리포트 요청', 'Pro/구독 관심', '제휴 (EPC·냉각·PPA·법무)', '데이터·API', '매각·투자 문의', '기타 문의']
+const TYPES = ['무료 부지 진단 (1건)', '정밀 리포트 요청', '후보지 랭킹 리포트', '모니터링 구독', '제휴 (EPC·냉각·PPA·법무)', '데이터·API', '매각·투자 문의', '기타 문의']
 
 /* 문의/리드 접수 모달 — 정직성: 서버 웹훅 전달 성공 시에만 '접수됨'. 미설정 시 mailto/클립보드 폴백. */
 export default function LeadDialog({ open, onClose, defaultType = '정밀 리포트 요청', context = '' }) {

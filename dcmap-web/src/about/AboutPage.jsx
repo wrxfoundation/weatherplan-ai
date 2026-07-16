@@ -264,6 +264,18 @@ export default function AboutPage() {
             <b>부지 인텔리전스</b>입니다.
           </p>
 
+          <div className="about-hook">
+            <span className="about-hook-stat">1.9%</span>
+            <span className="about-hook-copy">
+              수도권 계통영향평가 최종 승인율 — 100곳 신청에 2곳. <b>당신 부지가 그 2곳인가?</b> 검토 중인 부지
+              1곳을 무료로 판정해 드립니다.
+            </span>
+            <span className="about-hook-cta">
+              <Link className="btn primary" to="/pricing">무료 부지 진단</Link>
+              <Link className="btn" to="/report-sample">견본 리포트</Link>
+            </span>
+          </div>
+
           <div className="about-stats">
             {stats.map((s) => (
               <div key={s.lbl} className="about-stat">
