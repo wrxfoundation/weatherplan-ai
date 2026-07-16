@@ -1,0 +1,32 @@
+# P1 · 변전소 여유 월별 스냅샷 — GitHub Action 템플릿 (데이터 자산화)
+# ─────────────────────────────────────────────────────────────
+# 활성화: 이 파일을 저장소 ROOT의 .github/workflows/headroom-snapshot.yml 로 복사하고,
+#         저장소 Variables에 SNAPSHOT_BASE(배포 도메인, 예: https://<도메인>) 설정.
+#         (레포 루트가 weatherplan-ai이므로 dcmap-web/ 하위가 아닌 루트 .github/에 두어야 실행됨)
+# 정직성/보안: API 키는 프록시(서버) env에만. 이 워크플로·레포엔 키 금지.
+# 현재는 아티팩트 업로드까지 — 레포 자동 커밋 승격은 검토 후 별도 단계.
+name: headroom-snapshot
+on:
+  schedule:
+    - cron: '0 3 1 * *' # 매월 1일 03:00 UTC
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Collect substation headroom snapshot
+        env:
+          SNAPSHOT_BASE: ${{ vars.SNAPSHOT_BASE }}
+        run: node dcmap-web/scripts/snapshot-headroom.mjs || echo "collector skipped (base not set)"
+      - name: Upload snapshot artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: headroom-snapshot
+          path: dcmap-web/data/headroom_snapshots/*.json
+          if-no-files-found: ignore

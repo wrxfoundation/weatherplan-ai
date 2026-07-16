@@ -1,0 +1,12 @@
+{
+  "asOf": "2026-07",
+  "version": 1,
+  "source": "한국전력공사 한전ON — 전력계통 통합정보 변전소 검색(송전망 여유용량)",
+  "captured": "seed",
+  "note": "P1 시드 스냅샷 — 가평·미금(재생e 연계 여유). scripts/snapshot-headroom.mjs로 월별 자동 확장. 0=당해 여유 없음, 전기사용신청 후 확정.",
+  "years": [2026, 2027, 2028, 2029, 2030, 2031, 2032],
+  "entries": [
+    { "name": "가평", "sido": "경기", "area": "가평군 가평읍", "series": [0, 0, 370, 370, 435, 470, 470], "genMw": 0, "applicants": 0 },
+    { "name": "미금", "sido": "경기", "area": "가평군 가평읍", "series": [0, 0, 785, 815, 985, 990, 990], "genMw": 0, "applicants": 0 }
+  ]
+}

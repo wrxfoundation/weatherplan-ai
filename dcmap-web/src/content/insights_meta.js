@@ -3,6 +3,7 @@
 export const INSIGHTS = [
   {
     slug: 'build-reality-2026',
+    en: 'Finding good land is only the start. A Korean AI-datacenter project must clear five gates in order — site, grid connection, capital, GPU procurement & rack-spec fit, and utilization — and one blocked gate ends it. Capital-region PSIA approval is 1.9%; a fitted-out building can’t host next-gen GPUs if load/cooling specs are outdated; domestic GPU utilization is 30–40%. “Absorbable” datacenters do exist, but only those with pre-leased anchor tenants and current specs (AWS Incheon 650MW, Keppel Ansan). We quantify gates 1–2; gates 3–5 are market context. Site score is only the first gate. Sources: CBRE, PwC, R.square, IT Chosun.',
     category: '입지·토지',
     title: '지을 수 있나, 채울 수 있나 — 데이터센터 사업의 5관문',
     description:
@@ -11,6 +12,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'dc-coexistence-2026',
+    en: 'Social acceptance is the fourth siting axis. Even with power and land secured, community opposition can stop a project — Sejong Eojin-dong (30,000 households within 1km) and Goyang Deogi-dong (permits before consultation) both stalled on process, not physics. EMF measures below hospital levels (0.4% of ICNIRP) yet projects are withdrawn — permits are a trust problem, not a science one. Overseas, Meta Odense (waste heat → district heating), MS Espoo (−40% carbon), Google (120% water returned) turned conflict into coexistence, while Nevada Tahoe (49,000 residents’ power cut) and Georgia Fayetteville (water stress) are cautionary. Acceptance is design, not PR. Source: IT Donga (May 2026), KEEI.',
     category: '정책·인허가',
     title: '네 번째 입지 축, 수용성 — 1천조 시대에 정말 부족한 건 ‘공존의 기술’',
     description:
@@ -19,6 +21,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'cbre-exit-scarcity-2026',
+    en: 'Reading CBRE’s Korea datacenter report through a capital-markets lens. Demand is firm (1.4% vacancy, +70% rents since 2019, 88% anchor-leased) while supply is choked (1.9% PSIA approval, HVDC only useful post-2030). But Seoul cap-rate spread (~3.4pp) already matches ultra-low-rate Japan and is tighter than Singapore — further compression is over, so returns shift to NOI growth and obsolescence defense. Building lasts 30–40 yrs vs GPUs 2–3; Korea’s fully-fitted leases put re-capex risk on landlords. Buyer pool widens from domestic institutions to global infra funds to DC specialists (Keppel DC REIT, +6x in 10 yrs). Ansan DC is Korea’s first fund→REIT exit. Source: CBRE Research (Jul 2026).',
     category: '입지·토지',
     title: '캡레이트 압축은 끝났다 — CBRE로 읽는 데이터센터 희소성 프리미엄과 Exit',
     description:
@@ -27,6 +30,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'gpu-utilization-2026',
+    en: 'The demand-side signal supply-only maps miss. Korea’s government is deploying 9,704 advanced GPUs (₩2.08tn) plus a ₩2.5tn national AI compute center — but the question flipped: is there demand to use it? 86% of firms running their own GPUs sit below 50% utilization; Korea is 30–40%. The tech (GPUaaS) exists but the repeat-use demand base is thin, losing to neoclouds (CoreWeave, Lambda, Crusoe). Implication for siting: the 7,343MW of grid applications is requested capacity, not operating load — the GPU calculator’s MW is peak design capacity, discounted again by utilization. Source: IT Chosun (Jul 14, 2026).',
     category: '정책·인허가',
     title: 'GPU 9,704장 그 다음 — 가동률 30~40%가 말하는 수요의 진실',
     description:
@@ -35,6 +39,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'rsquare-realestate-2025',
+    en: 'Reading datacenters as real estate (R.square 2025 report). Permits collapsed from 25 (2023) to 10 (Sep 2025) — a 2027–28 supply cliff. Completed-asset prices jumped from ₩49bn (2018) to ₩734bn (Hanam) as scarcity got proven in transactions. Rent is repricing from per-rack (2.2kW) to per-kW as AI racks hit 30–60kW. EMF measures at 0.4% of ICNIRP (below hospitals) yet 8 projects were withdrawn — opposition is communication, not science. Capital-region reserve margin hit 5% (2024) — the grid’s answer to “can we build more here?”. Source: R.square Research Center.',
     category: '입지·토지',
     title: '인허가 절벽과 7,340억 프리미엄 — 부동산의 눈으로 본 데이터센터',
     description:
@@ -43,6 +48,7 @@ export const INSIGHTS = [
   },
   {
     slug: 'pwc-value-chain-2026',
+    en: 'PwC’s AI-DC value-chain report in map terms. Korea’s private DC market grows ₩2.42tn (2018) → ₩10.19tn (2028F), but 2027 grid applications (7,343MW) exceed KEPCO’s serveable 4,718MW by 1.56x. The gate tilted off the capital region: PSIA pass rates 21% (capital) vs 71% (non-capital); 83% of the 36 planned expansions are non-capital. Capital region still builds (AWS Incheon 650MW among 21 planned sites). Money flows to power/cooling infra and asset ownership; group bets include SK Ulsan (~₩7tn, AWS/OpenAI) and Hyundai Saemangeum (₩5.8tn). Source: PwC Korea (Mar 2026).',
     category: '입지·토지',
     title: '10조 시장, 1.56배 초과 수요 — 삼일PwC 리포트로 읽는 AI DC 밸류체인',
     description:

@@ -303,6 +303,14 @@ export default function InsightPage() {
         <div className="eyebrow">INSIGHT</div>
         <h1>{meta.title}</h1>
         <p className="sub">{meta.date}</p>
+        {meta.en && (
+          <details className="en-abstract">
+            <summary>
+              <span className="en-badge">EN</span> English summary
+            </summary>
+            <p>{meta.en}</p>
+          </details>
+        )}
         <div className="prose">
           <Body />
         </div>
