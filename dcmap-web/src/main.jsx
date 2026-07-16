@@ -6,6 +6,7 @@ import './styles/app.css'
 import MapPage from './map/MapPage.jsx'
 import CursorGlow from './ui/CursorGlow.jsx'
 import ScrollTopFab from './ui/ScrollTopFab.jsx'
+import SiteFooter from './ui/SiteFooter.jsx'
 
 /* 홈(맵)만 즉시 로드 — 나머지 라우트는 코드 스플릿.
  * 특히 /map3d의 maplibre-gl(~800KB)이 홈 번들에 실리는 것을 차단한다 */
@@ -77,6 +78,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="*" element={<MapPage />} />
         </Routes>
       </Suspense>
+      <SiteFooter />
     </BrowserRouter>
   </React.StrictMode>,
 )
