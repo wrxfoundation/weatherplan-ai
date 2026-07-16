@@ -8,6 +8,25 @@ import { useAiStream } from '../ai/useAiStream.js'
 import AiResultCard from '../ai/AiResultCard.jsx'
 import SpringNumber from '../ui/SpringNumber.jsx'
 import CopyButton from '../ui/CopyButton.jsx'
+import { useMapLang, setMapLang } from '../i18n/mapLang.js'
+
+/* 계산기 UI i18n(핵심 라벨). 앱 공용 언어 스토어 재사용(맵↔계산기 언어 유지). 엔진값·긴 산식 prose는 KO(Phase 2). */
+const CT = {
+  'GPU → 전력(MW) 계산기': 'GPU → Power (MW) calculator',
+  '필요 GPU 수량을 데이터센터 전력 수요·상면·연간 전력비·탄소로 환산하고, 그 용량이 가능한 부지를 맵에서 찾습니다.':
+    'Convert GPU count into datacenter power demand, floor space, annual power cost and carbon — then find sites that can serve that capacity.',
+  'GPU 모델': 'GPU model', 'GPU 수량': 'GPU count',
+  '워크로드 (부하율 연동)': 'Workload (load factor)', '냉각 방식 (PUE·랙밀도 연동)': 'Cooling (PUE · rack density)',
+  '전력효율지수': 'power efficiency', '이중화': 'redundancy',
+  '필요 랙': 'Racks needed', '연간 전력 사용량': 'Annual energy use', '냉각 유량 관점': 'Cooling flow',
+  '이 용량 가능한 부지 보기': 'Find sites for this capacity', 곳: '', 비수도권: 'Non-capital', 수도권: 'Capital', 입지: 'Region',
+  '이 용량의 전력 인허가 트랙': 'Power permitting track for this capacity', 기준: '',
+  '트랙': ' track', '회선 구성': 'Circuits', '심의회 상정까지 확정 수수료': 'Confirmed fee to hearing', '리드타임 골자': 'Lead time',
+  '대상 (5,000kW 이상)': 'Applicable (≥5,000kW)', 비대상: 'N/A', '대상 (10MW 이상)': 'Applicable (≥10MW)',
+  '대규모 학습': 'Large-scale training', '혼합(학습+추론)': 'Mixed (train+infer)', '추론 서비스': 'Inference serving',
+  '공랭 (CRAC/CRAH)': 'Air (CRAC/CRAH)', '액랭 D2C (직접칩냉각)': 'Liquid D2C (direct-to-chip)', 침지냉각: 'Immersion',
+  'N (여유 없음)': 'N (no margin)', 'N+1 (권장)': 'N+1 (recommended)', '2N (금융·미션크리티컬)': '2N (finance/mission-critical)',
+}
 import LineIcon from '../components/LineIcon.jsx'
 import AidcScenario from './AidcScenario.jsx'
 
@@ -66,16 +85,18 @@ const SCENARIO_KEY = 'aiim_calc_scenarios_v1'
 
 /* M2 스코어링 전력축 v0 — 규칙 기반 인허가 트랙 판정 (근거: 룰북 §1·§2) */
 function TrackCard({ mw, nonCapital, onRegion }) {
+  const lang = useMapLang()
+  const t = (ko) => (lang === 'en' ? CT[ko] ?? ko : ko)
   const r = useMemo(() => checkPowerTrack(mw, { nonCapital }), [mw, nonCapital])
   return (
     <div className="calc-card">
-      <div className="chart-title">이 용량의 전력 인허가 트랙 — {r.mw.toFixed(1)} MW 기준</div>
+      <div className="chart-title">{t('이 용량의 전력 인허가 트랙')} — {r.mw.toFixed(1)} MW</div>
       <div className="calc-grid">
         <label>
-          <span className="lbl-cap">입지</span>
+          <span className="lbl-cap">{t('입지')}</span>
           <select value={nonCapital ? 'non' : 'cap'} onChange={(e) => onRegion(e.target.value === 'non')}>
-            <option value="non">비수도권</option>
-            <option value="cap">수도권</option>
+            <option value="non">{t('비수도권')}</option>
+            <option value="cap">{t('수도권')}</option>
           </select>
         </label>
       </div>
@@ -116,37 +137,37 @@ function TrackCard({ mw, nonCapital, onRegion }) {
       <div className="spec-grid" style={{ marginTop: 12 }}>
         <div className="spec-cell">
           <div className="k">
-            <Term k="수전전압">수전전압</Term> 트랙
+            <Term k="수전전압">{lang === 'en' ? 'Intake voltage' : '수전전압'}</Term>{t('트랙')}
           </div>
           <div className="v">
             {r.mw > 40 ? <Term k="154kV">{r.track.voltage}</Term> : r.mw <= 10 ? <Term k="22.9kV">{r.track.voltage}</Term> : r.track.voltage}
           </div>
         </div>
         <div className="spec-cell">
-          <div className="k">회선 구성</div>
+          <div className="k">{t('회선 구성')}</div>
           <div className="v">{r.track.circuits}</div>
         </div>
         <div className="spec-cell">
           <div className="k">
-            <Term k="전기사용예정통지">전기사용예정통지</Term>
+            <Term k="전기사용예정통지">{lang === 'en' ? 'Intended-use notice' : '전기사용예정통지'}</Term>
           </div>
-          <div className="v">{r.preNoticeRequired ? '대상 (5,000kW 이상)' : '비대상'}</div>
+          <div className="v">{r.preNoticeRequired ? t('대상 (5,000kW 이상)') : t('비대상')}</div>
         </div>
         <div className="spec-cell">
           <div className="k">
-            <Term k="전력계통영향평가">전력계통영향평가</Term>
+            <Term k="전력계통영향평가">{lang === 'en' ? 'PSIA' : '전력계통영향평가'}</Term>
           </div>
           <div className="v">
-            {r.psiaRequired ? '대상 (10MW 이상)' : '비대상'}
-            {r.exemption && ` · ${r.exemption.effective}부터 면제 가능성`}
+            {r.psiaRequired ? t('대상 (10MW 이상)') : t('비대상')}
+            {r.exemption && (lang === 'en' ? ` · exemption possible from ${r.exemption.effective}` : ` · ${r.exemption.effective}부터 면제 가능성`)}
           </div>
         </div>
         <div className="spec-cell">
-          <div className="k">심의회 상정까지 확정 수수료</div>
+          <div className="k">{t('심의회 상정까지 확정 수수료')}</div>
           <div className="v">{r.fees.total}</div>
         </div>
         <div className="spec-cell">
-          <div className="k">리드타임 골자</div>
+          <div className="k">{t('리드타임 골자')}</div>
           <div className="v">
             {r.leadTime.review}
             {r.leadTime.assessment && ` + ${r.leadTime.assessment}`}
@@ -174,6 +195,8 @@ const num = (v, d) => {
 
 export default function CalcPage() {
   const [sp, setSp] = useSearchParams()
+  const lang = useMapLang()
+  const t = (ko) => (lang === 'en' ? CT[ko] ?? ko : ko)
 
   // URL 파라미터로 초기화(딥링크·공유·부지 연동). 없으면 기본값.
   const [gpuKey, setGpuKey] = useState(() => (GPU_PRESETS.some((g) => g.key === sp.get('g')) ? sp.get('g') : 'h100'))
@@ -410,14 +433,22 @@ export default function CalcPage() {
     <>
       <TopBar />
       <main className="page">
-        <div className="eyebrow">CAPACITY PLANNER</div>
-        <h1>GPU → 전력(MW) 계산기</h1>
-        <p className="sub">필요 GPU 수량을 데이터센터 전력 수요·상면·연간 전력비·탄소로 환산하고, 그 용량이 가능한 부지를 맵에서 찾습니다.</p>
+        <div className="ins-head-row">
+          <div>
+            <div className="eyebrow">CAPACITY PLANNER</div>
+            <h1>{t('GPU → 전력(MW) 계산기')}</h1>
+          </div>
+          <div className="ins-lang">
+            <button type="button" className={`rlang-btn${lang === 'ko' ? ' on' : ''}`} onClick={() => setMapLang('ko')}>KO</button>
+            <button type="button" className={`rlang-btn${lang === 'en' ? ' on' : ''}`} onClick={() => setMapLang('en')}>EN</button>
+          </div>
+        </div>
+        <p className="sub">{t('필요 GPU 수량을 데이터센터 전력 수요·상면·연간 전력비·탄소로 환산하고, 그 용량이 가능한 부지를 맵에서 찾습니다.')}</p>
 
         <div className="calc-card">
           <div className="calc-grid">
             <label>
-              <span className="lbl-cap">GPU 모델</span>
+              <span className="lbl-cap">{t('GPU 모델')}</span>
               <select value={gpuKey} onChange={(e) => setGpuKey(e.target.value)}>
                 {GPU_PRESETS.map((g) => (
                   <option key={g.key} value={g.key}>
@@ -428,7 +459,7 @@ export default function CalcPage() {
             </label>
             <label>
               <span className="lbl-cap">
-                GPU 수량{gpu.nvl72 && m.pods != null ? ` · NVL72 ${(Math.round(m.pods * 10) / 10).toLocaleString()}파드` : ''}
+                {t('GPU 수량')}{gpu.nvl72 && m.pods != null ? ` · NVL72 ${(Math.round(m.pods * 10) / 10).toLocaleString()}${lang === 'en' ? ' pods' : '파드'}` : ''}
               </span>
               <input
                 type="number"
@@ -439,28 +470,28 @@ export default function CalcPage() {
               />
             </label>
             <label>
-              <span className="lbl-cap">워크로드 (부하율 연동)</span>
+              <span className="lbl-cap">{t('워크로드 (부하율 연동)')}</span>
               <select value={workKey} onChange={(e) => setWorkKey(e.target.value)}>
                 {WORKLOADS.map((w) => (
                   <option key={w.key} value={w.key}>
-                    {w.label}
+                    {t(w.label)}
                   </option>
                 ))}
               </select>
             </label>
             <label>
-              <span className="lbl-cap">냉각 방식 (PUE·랙밀도 연동)</span>
+              <span className="lbl-cap">{t('냉각 방식 (PUE·랙밀도 연동)')}</span>
               <select value={coolKey} onChange={(e) => onCooling(e.target.value)}>
                 {COOLING_PRESETS.map((c) => (
                   <option key={c.key} value={c.key}>
-                    {c.label}
+                    {t(c.label)}
                   </option>
                 ))}
               </select>
             </label>
             <label>
               <span className="lbl-cap">
-                <Term k="PUE">PUE</Term> · 전력효율지수
+                <Term k="PUE">PUE</Term> · {t('전력효율지수')}
               </span>
               <input
                 type="number"
@@ -473,12 +504,12 @@ export default function CalcPage() {
             </label>
             <label>
               <span className="lbl-cap">
-                수전 여유 · <Term k="이중화">이중화</Term>
+                {lang === 'en' ? 'Intake margin · ' : '수전 여유 · '}<Term k="이중화">{t('이중화')}</Term>
               </span>
               <select value={redunKey} onChange={(e) => setRedunKey(e.target.value)}>
                 {REDUNDANCY.map((r) => (
                   <option key={r.key} value={r.key}>
-                    {r.label}
+                    {t(r.label)}
                   </option>
                 ))}
               </select>
@@ -504,25 +535,25 @@ export default function CalcPage() {
               적은 전력으로 돌립니다(기상 레이어, M3 예정).
             </div>
             <Link className="btn primary" to={`/?min_mw=${m.ctaMw}${nonCapital ? '&noncap=1' : ''}`}>
-              이 용량 가능한 부지 보기 ({candidates}곳){nonCapital ? ' · 비수도권' : ''} <span className="btn-arrow"><LineIcon name="arrowUR" size={13} /></span>
+              {t('이 용량 가능한 부지 보기')} ({candidates}{lang === 'en' ? '' : '곳'}){nonCapital ? ` · ${t('비수도권')}` : ''} <span className="btn-arrow"><LineIcon name="arrowUR" size={13} /></span>
             </Link>
           </div>
 
           <div className="spec-grid" style={{ marginTop: 4 }}>
             <div className="spec-cell">
-              <div className="k">필요 랙 (@{cooling.rackKw}kW/랙)</div>
-              <div className="v"><SpringNumber value={m.racks} format={(n) => Math.round(n).toLocaleString()} />대</div>
+              <div className="k">{t('필요 랙')} (@{cooling.rackKw}kW/{lang === 'en' ? 'rack' : '랙'})</div>
+              <div className="v"><SpringNumber value={m.racks} format={(n) => Math.round(n).toLocaleString()} />{lang === 'en' ? '' : '대'}</div>
             </div>
             <div className="spec-cell">
-              <div className="k">추정 <Term k="화이트스페이스">화이트스페이스</Term></div>
-              <div className="v">약 <SpringNumber value={m.sqm} format={(n) => Math.round(n).toLocaleString()} />㎡</div>
+              <div className="k">{lang === 'en' ? 'Est. ' : '추정 '}<Term k="화이트스페이스">{lang === 'en' ? 'white space' : '화이트스페이스'}</Term></div>
+              <div className="v">{lang === 'en' ? '~' : '약 '}<SpringNumber value={m.sqm} format={(n) => Math.round(n).toLocaleString()} />㎡</div>
             </div>
             <div className="spec-cell">
-              <div className="k">연간 전력 사용량 (부하율 {work.loadFactor})</div>
-              <div className="v">약 <SpringNumber value={m.gwhYear} format={(n) => n.toFixed(1)} /> GWh/년</div>
+              <div className="k">{t('연간 전력 사용량')} ({lang === 'en' ? 'load ' : '부하율 '}{work.loadFactor})</div>
+              <div className="v">{lang === 'en' ? '~' : '약 '}<SpringNumber value={m.gwhYear} format={(n) => n.toFixed(1)} /> GWh/{lang === 'en' ? 'yr' : '년'}</div>
             </div>
             <div className="spec-cell">
-              <div className="k">냉각 유량 관점</div>
+              <div className="k">{t('냉각 유량 관점')}</div>
               <div className="v">{coolKey === 'air' ? '냉수·외기 설비' : coolKey === 'd2c' ? '~1.5L/min·kW' : '~0.3L/min·kW (2상)'}</div>
             </div>
           </div>
