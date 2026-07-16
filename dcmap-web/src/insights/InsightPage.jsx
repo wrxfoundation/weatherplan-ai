@@ -24,8 +24,22 @@ import HyperscaleJukjeon from './articles/HyperscaleJukjeon.jsx'
 import PwcValueChain from './articles/PwcValueChain.jsx'
 import RsquareRealEstate from './articles/RsquareRealEstate.jsx'
 import GpuUtilization from './articles/GpuUtilization.jsx'
+import CbreExitScarcity from './articles/CbreExitScarcity.jsx'
 
 const ARTICLES = {
+  'cbre-exit-scarcity-2026': {
+    component: CbreExitScarcity,
+    sources: [
+      'CBRE Research 「한국 데이터센터 투자 — 공급 제약이 만드는 희소성 프리미엄과 Exit 가능성 진단」(2026.7, 45p) — 공실률 1.4%·상면임대료 25만원/kW(2019 대비 +70%)·수요구조(글로벌 CSP 54%·국내 IT 34%·우량 앵커 88% 장기임차)·전력계통영향평가 최종 승인율 1.9%·캡레이트 5.3~6.5%',
+      '캡레이트/스프레드 추이(서울수도권 5.3~6.5% vs 기준금리 2.5% / 미국 NAREIT DC 리츠 2005년 13~14%→2026년 5~6%, 스프레드 5~8%p→1.5~2%p): NAREIT·CBRE Research (Figure 29·30)',
+      '한국 임대차 구조(3~8년 Exit 전제 PF·램프업 0~36개월·연 2.0% 고정 인상 vs 미국 15~20년 CPI 연동)·물리적 진부화 4축(하중 2.5톤/㎡·전력밀도 40~50kW·액랭·완전설비형): CBRE Research·Vertiv (Figure 31·32·33)',
+      'NVIDIA GPU 로드맵(H100 ~15kW→블랙웰 15~25kW→루빈 25~50kW→파인만 50kW+·최대 피크 250~1,000kW): Vertiv·CBRE Research (Figure 33)',
+      '매수자 풀 3분류·거래사례(하남 7,340억 이지스→맥쿼리·에포크 안양 8,400억 40MW·세종텔레콤 분당 IDC)·Keppel DC REIT(2014 AUM 10억→2025 63억 싱가포르달러, 한국 아태 핵심허브 명시): Keppel DC REIT IR·CBRE Research (Figure 27·36·37·38)',
+      '안산 데이터센터(수전 60MW·IT 40MW·경기 반월국가산단 원시동·Keppel 펀드 3호·2026.5 SPA·총사업비 1조·현대건설 시공·2030 서비스): Keppel DC REIT IR·CBRE Research (Figure 39)',
+      'AIDC 특별법 6개 특례(인허가 일괄처리 제18조·전력계통영향평가 면제 비수도권 제19조·재생e 직접공급 제20조·시설물 설치기준 제21조·산업입지항만 제22·23조·AI DC 특구 제24·26조)·지역 전력 자급률(경북·전남 200%+·서울 12%·경기 62%): CBRE Research (Figure 34·35)',
+      '한국 AI 3축(수용 확산율 증가폭 6.4%p 세계1위·인구10만명당 AI특허 14.31건·모델 출시 세계3위): AI Index 2026 (Stanford HAI)·CBRE Research (Figure 24). 맵의 공급예정·변전소 여유 레이어는 AI InfraMap 자체 집계(삼일PwC·알스퀘어 교차·한전ON 실측)',
+    ],
+  },
   'gpu-utilization-2026': {
     component: GpuUtilization,
     sources: [
