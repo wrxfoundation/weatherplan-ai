@@ -233,6 +233,12 @@ prerender('/global', 'AI InfraMap — Korea AI Datacenter Site Intelligence', 'T
   name: 'AI InfraMap — Korea AI Datacenter Site Intelligence',
   inLanguage: 'en',
 })
+prerender('/methodology', 'Methodology — AI InfraMap Korea DC Site Intelligence', 'How AI InfraMap scores Korean AI-datacenter sites: PSIA pass-outlook scorecard, 5-axis site score, data sources & cadence, honesty policy, calibration roadmap. A due-diligence reference.', {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  name: 'AI InfraMap Methodology',
+  inLanguage: 'en',
+})
 prerender('/data', '데이터 탐색기 — AI InfraMap', '발전 허가대장·집단에너지·계통 공급여유·계통영향평가·변전소·산업단지·시설 시드 — 축적 원천 자료 검색·CSV 다운로드.', {
   '@context': 'https://schema.org',
   '@type': 'Dataset',

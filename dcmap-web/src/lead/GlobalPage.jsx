@@ -179,6 +179,9 @@ export default function GlobalPage() {
             <li><b>Every figure carries a source and date;</b> location precision is stated when low (we match substations to real OSM coordinates, not text guesses).</li>
             <li><b>AI briefs cite statute only</b> when the primary text (law.go.kr) was retrieved. That discipline is what makes outputs defensible in underwriting.</li>
           </ul>
+          <p className="global-sub" style={{ marginTop: 12 }}>
+            Full methodology reference (scorecard, weights, sources, limitations): <Link to="/methodology">read the methodology →</Link>
+          </p>
         </section>
 
         <section className="global-sec">

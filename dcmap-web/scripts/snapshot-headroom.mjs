@@ -56,28 +56,45 @@ async function fetchOne([label, admCd, sido, area]) {
   }
 }
 
+async function readExisting(file) {
+  try {
+    return JSON.parse(await readFile(file, 'utf8'))
+  } catch {
+    return null
+  }
+}
+
 async function main() {
   const month = ym()
+  const force = process.argv.includes('--force')
   const TARGETS = await loadTargets()
-  console.log(`▶ 변전소 여유 스냅샷 ${month} — 대상 ${TARGETS.length}건, base=${BASE}`)
-  const entries = (await Promise.all(TARGETS.map(fetchOne))).filter(Boolean)
-  if (!entries.length) {
+  console.log(`▶ 변전소 여유 스냅샷 ${month} — 대상 ${TARGETS.length}건, base=${BASE}${force ? ' (force)' : ''}`)
+  const fetched = (await Promise.all(TARGETS.map(fetchOne))).filter(Boolean)
+  if (!fetched.length) {
     console.error('수집 0건 — 프록시/네트워크 확인. 기존 스냅샷 보존(덮어쓰기 안 함).')
     process.exit(1)
   }
+
+  await mkdir(OUT_DIR, { recursive: true })
+  const file = resolve(OUT_DIR, `${month}.json`)
+
+  // 같은 월 파일이 있으면 신규 대상만 병합(기존 seed/수집분 보존). --force면 수집분으로 대체.
+  const prev = force ? null : await readExisting(file)
+  const byName = new Map((prev?.entries || []).map((e) => [e.name, e]))
+  for (const e of fetched) byName.set(e.name, e)
+  const entries = [...byName.values()]
+
   const snapshot = {
     asOf: month,
     version: 1,
     source: '한국전력공사 한전ON — 전력계통 통합정보 변전소 검색(송전망 여유용량)',
-    captured: 'auto',
-    note: `자동 수집(${entries.length}건). 0=당해 여유 없음, 전기사용신청 후 확정.`,
+    captured: prev ? 'merged' : 'auto',
+    note: `수집 ${fetched.length}건 / 총 ${entries.length}건. 0=당해 여유 없음, 전기사용신청 후 확정.`,
     years: YEARS,
     entries,
   }
-  await mkdir(OUT_DIR, { recursive: true })
-  const file = resolve(OUT_DIR, `${month}.json`)
   await writeFile(file, JSON.stringify(snapshot, null, 2) + '\n', 'utf8')
-  console.log(`✓ 저장 ${file} (${entries.length}건)`)
+  console.log(`✓ 저장 ${file} (수집 ${fetched.length} / 총 ${entries.length}건)`)
 }
 
 main().catch((e) => {
