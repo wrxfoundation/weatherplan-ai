@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import AcquirerNav from './AcquirerNav.jsx'
+import { useMapLang, setMapLang } from '../i18n/mapLang.js'
 
 const TITLE = '정밀 부지 리포트 — 견본 | AI InfraMap'
 const DESC =
@@ -37,7 +38,7 @@ const RISKS = [
 ]
 
 export default function SampleReportPage() {
-  const [lang, setLang] = useState('ko')
+  const lang = useMapLang()
   const en = lang === 'en'
   useEffect(() => {
     document.title = TITLE
@@ -51,8 +52,8 @@ export default function SampleReportPage() {
       <TopBar />
       <main className="page report-page">
         <AcquirerNav>
-          <button type="button" className={`rlang-btn${!en ? ' on' : ''}`} onClick={() => setLang('ko')}>KO</button>
-          <button type="button" className={`rlang-btn${en ? ' on' : ''}`} onClick={() => setLang('en')}>EN</button>
+          <button type="button" className={`rlang-btn${!en ? ' on' : ''}`} onClick={() => setMapLang('ko')}>KO</button>
+          <button type="button" className={`rlang-btn${en ? ' on' : ''}`} onClick={() => setMapLang('en')}>EN</button>
         </AcquirerNav>
 
         <div className="report-flag" role="note">

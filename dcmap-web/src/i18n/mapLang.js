@@ -1,15 +1,42 @@
 import { useSyncExternalStore } from 'react'
 
-/* 맵 UI 공유 언어 스토어 — FilterBar 토글 하나로 SitePanel까지 동기화(프롭 스레딩 없이).
- * Phase 1·2: 가시 라벨만. 데이터값·출처 각주는 KO 유지(Phase 3). */
-let lang = 'ko'
+/* 앱 공용 언어 스토어 — 토글 하나로 맵(FilterBar·SitePanel)·계산기·인사이트·견본 리포트까지 동기화.
+ * localStorage 지속(새로고침·재방문 유지). document.documentElement.lang 반영(a11y/SEO).
+ * 데이터값·출처 각주 등 미번역 영역은 각 화면에서 KO 유지(단계적 i18n). */
+const KEY = 'aimap-lang'
+function readInitial() {
+  try {
+    const v = typeof localStorage !== 'undefined' && localStorage.getItem(KEY)
+    return v === 'en' || v === 'ko' ? v : 'ko'
+  } catch {
+    return 'ko'
+  }
+}
+let lang = readInitial()
 const subs = new Set()
+if (typeof document !== 'undefined') {
+  try {
+    document.documentElement.lang = lang
+  } catch {
+    /* noop */
+  }
+}
 export function getMapLang() {
   return lang
 }
 export function setMapLang(next) {
-  if (next !== lang) {
+  if ((next === 'ko' || next === 'en') && next !== lang) {
     lang = next
+    try {
+      localStorage.setItem(KEY, next)
+    } catch {
+      /* noop */
+    }
+    try {
+      document.documentElement.lang = next
+    } catch {
+      /* noop */
+    }
     subs.forEach((f) => f())
   }
 }
