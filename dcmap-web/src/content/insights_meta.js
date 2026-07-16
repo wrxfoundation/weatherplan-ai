@@ -73,6 +73,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'power-water-mega-2026',
+    enTitle: 'A ₩800tn chip plan, ₩1,000tn of AI DCs — moot without water and power',
+    en: 'In June 2026 the government unveiled a ₩800tn Gwangju-Jeonnam semiconductor plan (6.3GW, 650,000 t/day industrial water) and ₩1,000tn of national AI datacenters by 2035 — but success converges on water and power. Yongin’s national complex is held up not by power/water but by 45% land compensation and an LH gap (power: 9.3GW with 3GW LNG self-supply in phase 1 + a 40km Bukcheonan line; water: a Han River twin-pipeline already fixed), while Honam’s RE100 hits the wall of 4-hour solar and ESS cost. Regional and DC-specific power tariffs are coming — an era where the electricity price decides siting. Source: Weekly Chosun 2915·2916.',
     category: '전력·계통',
     title: '800조 반도체·1,000조 AI DC — 물·전기 없으면 공염불',
     description:
@@ -101,6 +103,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'market-2025h2',
+    enTitle: '2H 2025 capital-region DC market & policy — the ±15-point PSIA era',
+    en: 'Capital-region operating capacity 601MW (+16%), pipeline 921MW (+43%), other regions at 31% — decentralization accelerates. The Nov 2025 PSIA rework introduced up to ±15 location points, mandatory adequate voltage and a quantified self-generation duty; a September grid-expansion special act followed — location became the score. Source: Cushman & Wakefield / KDCC 2H 2025.',
     category: '정책·인허가',
     title: '2025 하반기 수도권 DC 시장·정책 — 계통영향평가 ±15점 시대',
     description:
@@ -109,6 +113,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'ocean-datacenter',
+    enTitle: 'Why datacenters are moving to the sea — marine / subsea DCs',
+    en: 'In May 2026 a 2,000-server undersea datacenter off Shanghai went live on direct offshore-wind power and seawater cooling; Peter Thiel put $140M into a floating DC. Onshore bottlenecks — grid delays, cooling-water shortage, site conflict — are turning the sea into AI infrastructure’s new frontier, solving power, cooling and siting at once. Source: KDCC/STRABASE (Jun 2026).',
     category: '냉각·설비',
     title: '데이터센터는 왜 바다로 이동하는가 — 해양/수중 DC',
     description:
@@ -137,6 +143,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'orbital-bottleneck',
+    enTitle: 'The datacenter that needs no power plant — SpaceX’s bet on the AI bottleneck',
+    en: 'A large part of SpaceX’s $2tn day-one valuation was priced to orbital datacenters that don’t yet exist. The AI bottleneck has migrated GPU → power → grid → siting/cooling; the mismatch between US DC demand (41GW ≈ all its nuclear) and 4–10-year grid buildouts is why big tech became power developers — and how that right of way translates into siting in Korea. Source: KDDC Issue Focus (Jun 2026).',
     category: '전력·계통',
     title: '발전소가 필요 없는 데이터센터 — SpaceX가 산 ‘AI 병목 통행권’',
     description:
@@ -145,6 +153,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'cooling-platform-ma',
+    enTitle: 'Liquid-cooling M&A — how cooling became the bottleneck after GPUs and power',
+    en: 'Water-treatment firm Ecolab acquired liquid-cooling specialist CoolIT for $4.75B. The cooling battleground shifts from cold-plate/CDU hardware to integrated operating platforms combining water, chemistry and digital monitoring — from “how many chips did you secure” to “how densely and stably can you run them.” Why cooling is a siting problem of water, climate and contracted power. Source: KDDC Issue Focus (Jul 2026).',
     category: '냉각·설비',
     title: '액체냉각 M&A — 냉각이 GPU·전력 다음 병목이 되기까지',
     description:
@@ -153,6 +163,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'power-permit-battle',
+    enTitle: 'Power and permits decide it — why a $100bn project was scrapped',
+    en: 'Blackstone/QTS’s $100bn Virginia datacenter collapsed on procedural flaws and grid saturation. AI infrastructure is an industry of securing power, not servers — four investment signals (clean-energy share, transmission flexibility, rent, LCOE) and what Korea’s generation-permit ledger shows: 86.5% renewable, 86% non-capital pipeline. Source: Global Economic (Jul 2026) · generation-permit ledger v2.',
     category: '전력·계통',
     title: '전력·허가가 승부를 가른다 — 153조 프로젝트가 백지화된 이유',
     description:
@@ -181,6 +193,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'gpu-to-mw',
+    enTitle: 'How many MW is 10,000 GPUs — the calculator formula, disclosed',
+    en: 'H100 0.7kW · GB200 1.2kW × 1.2 overhead × PUE — 10,000 GB200s ≈ 18.7MW. The GPU model chooses the intake track (10MW PSIA, 40MW 154kV). The AI InfraMap GPU calculator’s formula, disclosed in full.',
     category: '전력·계통',
     title: 'GPU 1만 장은 몇 MW인가 — 계산기 산식 공개',
     description:
@@ -199,6 +213,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'land-pulse-methodology',
+    enTitle: 'Do land prices move when a datacenter arrives — the LAND PULSE method',
+    en: 'We began tracking monthly land-price change across 35 DC-siting municipalities and 539 survey zones. Yongsan +0.577%, Haenam Bugil-myeon −0.183% — but why we don’t yet claim causation, and why an event-to-land-price aligned time series becomes a moat. Source: KOSIS · Korea Real Estate Board (May 2026).',
     category: '입지·토지',
     title: '데이터센터가 들어서면 땅값이 움직일까 — LAND PULSE 방법론',
     description:
@@ -207,6 +223,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'liquid-cooling-brief',
+    enTitle: 'The shift to liquid cooling — the siting equation of the 2kW-GPU era',
+    en: 'GPU TDPs of 1,500–2,000W are the limit of single-phase direct-to-chip cooling. Going two-phase changes flow from 1.5 to 0.3 L/min per kW, and the cooling-components market heads to $14.9B by 2030 — how a cooling generation-change rewrites the siting equation of water, climate and contracted power. Source: OCP webinar (Parker Hannifin, Jun 2025).',
     category: '냉각·설비',
     title: '액체냉각으로의 전환 — GPU 2kW 시대의 입지 방정식',
     description:
@@ -215,6 +233,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'mega-project-aidc',
+    enTitle: 'Three mega-projects and AI datacenters — an 8.4GW map',
+    en: 'SK 5GW · GS 2.4GW · Naver 1GW, ₩550tn — the AI-datacenter track of the government’s three mega-projects and how the AIDC special act (non-capital PSIA exemption) reshapes Korea’s DC siting map. Source: MOTIE briefing (Jun 29, 2026).',
     category: '정책·인허가',
     title: '3대 메가프로젝트와 AI 데이터센터 — 8.4GW의 지도',
     description:
@@ -223,6 +243,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'dc-local-impact',
+    enTitle: 'What datacenters leave behind locally — a US fact sheet',
+    en: 'Employment +4–5%, information-sector jobs +22%, half of a county’s property tax — and the truth about the water and power burden. The facts of the datacenter-siting debate, seen through US data. The question isn’t “whether to build” but “where and how.”',
     category: '입지·토지',
     title: '데이터센터는 지역에 무엇을 남기나 — 미국 사례 팩트 시트',
     description:
