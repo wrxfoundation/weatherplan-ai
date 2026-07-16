@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { STATUS_LABEL, isCapitalByAddr, isCapitalByPoint, FACILITIES } from '../data/facilities.js'
+import { useMapLang } from '../i18n/mapLang.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
 import { forecastFor, headroomFor, headroomListFor, transHeadroomFor, landUseFor, landRegFor, landAreaFor, landPriceOfficialFor, parcelAt, revgeoFor, weatherFor, floodRiskFor, populationFor, disasterFor, bldEnergyFor, warningFor, climateFor, waterCapacity, kwaterInfra, dongLabel } from '../data/liveApi.js'
@@ -35,8 +36,35 @@ function fmtAdmNm(s) {
   return m ? [m[1], m[2], m[3], m[4]].filter(Boolean).join(' ') : s
 }
 
+/* 맵 UI i18n Phase 2 — SitePanel 가시 프레임 KO/EN(FilterBar와 공유 스토어). 데이터값·출처 각주는 KO 유지(Phase 3). */
+const SP_T = {
+  '← 목록으로': '← Back',
+  '지점 분석': 'Point analysis',
+  '부지 적합도 프리뷰': 'Site suitability preview',
+  점: '',
+  '근거 확보 · 스코어 커버리지': 'Evidence · coverage',
+  '입지는 사업 실현가능성 5관문 중 1관문 — 전력·자금·GPU 규격·가동률이 남았습니다':
+    'Location is only gate 1 of 5 — power, capital, GPU spec and utilization remain',
+  '공개 데이터 불러오는 중…': 'Loading public data…',
+  '응답 없는 축은 완료 후 ‘데이터 없음’으로 표시': 'Axes with no response show “no data” when done',
+  '✓ 공개 데이터 조회 완료 — 빈 항목은 해당 소스 미제공/연동 대기':
+    '✓ Public data loaded — blank items are unavailable / pending',
+  비수도권: 'Non-capital', 수도권: 'Capital',
+  변전소: 'Substation', 계통승인: 'Grid approval', 여유: 'Headroom',
+  '0(포화)': '0 (full)', 냉각: 'Cooling', 침수: 'Flood', 산사태: 'Landslide', 밀도: 'Density',
+  저: 'Low', 고: 'High', 낮음: 'Low',
+  매우좋음: 'Very good', 좋음: 'Good', 보통: 'Fair', 나쁨: 'Poor', 매우나쁨: 'Very poor',
+  높음: 'High', 중간: 'Medium',
+  '입지 구분 (주소 기준 자동판정 · 수정 가능)': 'Region (auto by address · editable)',
+  '필요 용량 (MW)': 'Required capacity (MW)',
+  전력: 'Power', 토지: 'Land', 리스크: 'Risk', 네트워크: 'Network', 기상: 'Climate',
+  대기: 'pending',
+}
+
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
 export default function SitePanel({ point, onClose, onSelectFacility, onAddCompare, inCompare, onSubstations }) {
+  const lang = useMapLang()
+  const t = (ko) => (lang === 'en' ? SP_T[ko] ?? ko : ko)
   const [mw, setMw] = useState(40)
   const [nonCapital, setNonCapital] = useState(true)
   const zoneTouched = useRef(false) // 사용자가 입지 구분을 직접 바꿨으면 자동판정으로 덮어쓰지 않음
@@ -337,12 +365,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
     <>
       <h2>
         <button type="button" className="chip btn" onClick={onClose}>
-          ← 목록으로
+          {t('← 목록으로')}
         </button>
       </h2>
       <article className="facility-card">
         <div className="status-line">
-          <span className="badge status-operating">지점 분석</span>
+          <span className="badge status-operating">{t('지점 분석')}</span>
           <button
             type="button"
             className="badge badge-btn"
@@ -360,10 +388,10 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             {copied === 'link' ? '링크 복사됨 ✓' : `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)} 🔗`}
           </button>
         </div>
-        <h3>부지 적합도 프리뷰</h3>
+        <h3>{t('부지 적합도 프리뷰')}</h3>
         <div className="score-headline">
-          <span className="score-headline-val">{r.knownScore}<span className="score-headline-max">/{r.knownMax}점</span></span>
-          <span className="score-headline-cov">근거 확보 · 스코어 커버리지 {r.coverage}/100</span>
+          <span className="score-headline-val">{r.knownScore}<span className="score-headline-max">/{r.knownMax}{t('점')}</span></span>
+          <span className="score-headline-cov">{t('근거 확보 · 스코어 커버리지')} {r.coverage}/100</span>
         </div>
 
         {/* 5관문 맥락 — 입지 점수는 사업 실현가능성의 첫 관문일 뿐임을 명시(정직성). 상세는 인사이트로. */}
@@ -372,7 +400,9 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             <b className="on">1</b><i>2</i><i>3</i><i>4</i><i>5</i>
           </span>
           <span className="gate-strip-txt">
-            <b>입지</b>는 사업 실현가능성 <b>5관문 중 1관문</b> — 전력·자금·GPU 규격·가동률이 남았습니다
+            {lang === 'en'
+              ? t('입지는 사업 실현가능성 5관문 중 1관문 — 전력·자금·GPU 규격·가동률이 남았습니다')
+              : <><b>입지</b>는 사업 실현가능성 <b>5관문 중 1관문</b> — 전력·자금·GPU 규격·가동률이 남았습니다</>}
           </span>
           <span className="gate-strip-arr" aria-hidden>→</span>
         </Link>
@@ -381,10 +411,10 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
         {loading ? (
           <div className="sp-loading" role="status" aria-live="polite">
             <span className="sp-spinner" aria-hidden />
-            공개 데이터 불러오는 중… <span className="sp-loading-sub">응답 없는 축은 완료 후 ‘데이터 없음’으로 표시</span>
+            {t('공개 데이터 불러오는 중…')} <span className="sp-loading-sub">{t('응답 없는 축은 완료 후 ‘데이터 없음’으로 표시')}</span>
           </div>
         ) : (
-          <div className="sp-loaded" role="status">✓ 공개 데이터 조회 완료 — 빈 항목은 해당 소스 미제공/연동 대기</div>
+          <div className="sp-loaded" role="status">{t('✓ 공개 데이터 조회 완료 — 빈 항목은 해당 소스 미제공/연동 대기')}</div>
         )}
 
         {/* 한눈에 — 핵심 판단값을 색 칩으로. 값은 아래 상세와 동일 소스(로드되며 채워짐). */}
@@ -393,15 +423,15 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           const expoTone = (o) => (o.exposurePct >= 30 ? 'bad' : o.exposurePct > 0 ? 'warn' : 'good')
           return (
             <div className="site-summary" aria-label="지점 한눈에 요약">
-              <span className={`sum-chip tone-${nonCapital ? 'good' : 'warn'}`}>{nonCapital ? '비수도권' : '수도권'}</span>
+              <span className={`sum-chip tone-${nonCapital ? 'good' : 'warn'}`}>{t(nonCapital ? '비수도권' : '수도권')}</span>
               {r.nearestSub && (
                 <span className={`sum-chip tone-${r.nearestSub.km <= 3 ? 'good' : r.nearestSub.km <= 12 ? 'warn' : 'bad'}`}>
-                  변전소 {r.nearestSub.km.toFixed(1)}km
+                  {t('변전소')} {r.nearestSub.km.toFixed(1)}km
                 </span>
               )}
               {approval?.ratePct != null && (
                 <span className={`sum-chip tone-${approval.ratePct >= 70 ? 'good' : approval.ratePct >= 45 ? 'warn' : 'bad'}`}>
-                  계통승인 {approval.ratePct}%
+                  {t('계통승인')} {approval.ratePct}%
                 </span>
               )}
               {bestSupply && (
@@ -409,23 +439,23 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   className={`sum-chip tone-${bestSupply.maxMw <= 0 ? 'bad' : bestSupply.maxMw >= mw * 3 ? 'good' : 'warn'}`}
                   title={`관할 ${bestSupply.name}변전소 ${bestSupply.kv} · 한전ON 전력공급 여유`}
                 >
-                  여유 {bestSupply.maxMw > 0 ? `${bestSupply.maxMw.toLocaleString()}MW` : '0(포화)'}
+                  {t('여유')} {bestSupply.maxMw > 0 ? `${bestSupply.maxMw.toLocaleString()}MW` : t('0(포화)')}
                 </span>
               )}
-              {climateIdx && <span className={`sum-chip tone-${climateTone}`}>냉각 {climateIdx.label}</span>}
+              {climateIdx && <span className={`sum-chip tone-${climateTone}`}>{t('냉각')} {t(climateIdx.label)}</span>}
               {flood?.available && flood.source === 'sgis' && (
-                <span className={`sum-chip tone-${expoTone(flood)}`}>침수 {flood.exposurePct <= 0 ? '낮음' : flood.grade}</span>
+                <span className={`sum-chip tone-${expoTone(flood)}`}>{t('침수')} {flood.exposurePct <= 0 ? t('낮음') : t(flood.grade)}</span>
               )}
               {disaster?.available && disaster.source === 'sgis' && (
-                <span className={`sum-chip tone-${expoTone(disaster)}`}>산사태 {disaster.exposurePct <= 0 ? '낮음' : disaster.grade}</span>
+                <span className={`sum-chip tone-${expoTone(disaster)}`}>{t('산사태')} {disaster.exposurePct <= 0 ? t('낮음') : t(disaster.grade)}</span>
               )}
               {pop?.available && pop.density != null && (
                 <span className={`sum-chip tone-${pop.density < 3000 ? 'good' : 'warn'}`}>
-                  밀도 {pop.density < 3000 ? '저' : '고'}
+                  {t('밀도')} {pop.density < 3000 ? t('저') : t('고')}
                 </span>
               )}
               {competition.n10 > 0 && (
-                <span className={`sum-chip tone-${competition.n10 >= 5 ? 'warn' : 'good'}`}>DC 반경10km {competition.n10}곳</span>
+                <span className={`sum-chip tone-${competition.n10 >= 5 ? 'warn' : 'good'}`}>{lang === 'en' ? `DC within 10km ${competition.n10}` : `DC 반경10km ${competition.n10}곳`}</span>
               )}
             </div>
           )
@@ -433,7 +463,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
 
         <div className="calc-grid">
           <label>
-            입지 구분 (주소 기준 자동판정 · 수정 가능)
+            {t('입지 구분 (주소 기준 자동판정 · 수정 가능)')}
             <select
               value={nonCapital ? 'non' : 'cap'}
               onChange={(e) => {
@@ -441,12 +471,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 setNonCapital(e.target.value === 'non')
               }}
             >
-              <option value="non">비수도권</option>
-              <option value="cap">수도권</option>
+              <option value="non">{t('비수도권')}</option>
+              <option value="cap">{t('수도권')}</option>
             </select>
           </label>
           <label>
-            필요 용량 (MW)
+            {t('필요 용량 (MW)')}
             <input
               type="number"
               min="1"
@@ -459,7 +489,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
         <div className="score-axes">
           {r.axes.map((axis) => (
             <div key={axis.key} className="hbar-row">
-              <span className="hbar-label">{axis.label}</span>
+              <span className="hbar-label">{t(axis.label)}</span>
               <span className="hbar-track">
                 {axis.knownMax > 0 && (
                   <>
@@ -473,10 +503,10 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 {axis.knownMax > 0 ? (
                   <>
                     {axis.known}/{axis.knownMax}
-                    {axis.knownMax < axis.max && <em className="hbar-wait" title={`${axis.max - axis.knownMax}점분 데이터 대기`}>+{axis.max - axis.knownMax} 대기</em>}
+                    {axis.knownMax < axis.max && <em className="hbar-wait" title={`${axis.max - axis.knownMax}점분 데이터 대기`}>+{axis.max - axis.knownMax} {t('대기')}</em>}
                   </>
                 ) : (
-                  <span className="badge pending">대기</span>
+                  <span className="badge pending">{t('대기')}</span>
                 )}
               </span>
             </div>
