@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { SIDOS, TYPES } from '../data/facilities.js'
+import { useMapLang, setMapLang } from '../i18n/mapLang.js'
 
 const STATUS_OPTIONS = [
   { key: 'operating', label: '운영' },
@@ -88,7 +88,7 @@ export default function FilterBar({
   showApproval,
   onToggleApproval,
 }) {
-  const [lang, setLang] = useState('ko')
+  const lang = useMapLang()
   const t = (ko) => (lang === 'en' ? T[ko] || ko : ko)
   // 레이어 토글을 의미 단위로 그루핑(방대해진 레이어 정돈): 표시·전력·자원·수요·망.
   // cond:false 인 항목(예: 송전선 데이터 없음)은 렌더 제외.
@@ -216,8 +216,8 @@ export default function FilterBar({
 
       {/* 맵 UI 언어 토글(Phase 1: 필터 라벨) */}
       <div className="group fb-lang" role="group" aria-label="language">
-        <button type="button" className={`chip ${lang === 'ko' ? 'on' : ''}`} onClick={() => setLang('ko')} aria-pressed={lang === 'ko'}>KO</button>
-        <button type="button" className={`chip ${lang === 'en' ? 'on' : ''}`} onClick={() => setLang('en')} aria-pressed={lang === 'en'}>EN</button>
+        <button type="button" className={`chip ${lang === 'ko' ? 'on' : ''}`} onClick={() => setMapLang('ko')} aria-pressed={lang === 'ko'}>KO</button>
+        <button type="button" className={`chip ${lang === 'en' ? 'on' : ''}`} onClick={() => setMapLang('en')} aria-pressed={lang === 'en'}>EN</button>
       </div>
       </div>
 
