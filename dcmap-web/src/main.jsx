@@ -1,6 +1,9 @@
 import React, { Suspense, lazy, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+/* 폰트 셀프호스팅(외부 CDN 의존 제거) — Pretendard(한글 가변·동적서브셋) + Montserrat(라틴 가변) */
+import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css'
+import '@fontsource-variable/montserrat'
 import './styles/tokens.css'
 import './styles/app.css'
 import MapPage from './map/MapPage.jsx'
