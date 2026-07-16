@@ -59,6 +59,13 @@ const SP_T = {
   '필요 용량 (MW)': 'Required capacity (MW)',
   전력: 'Power', 토지: 'Land', 리스크: 'Risk', 네트워크: 'Network', 기상: 'Climate',
   대기: 'pending',
+  '링크 복사됨 ✓': 'Link copied ✓',
+  '점수화 로드맵 — 연동된 축 / 남은 대기': 'Scoring roadmap — live axes / pending',
+  'AI 분석 중…': 'Analyzing…', '✨ AI 부지 브리프': '✨ AI site brief',
+  '간이 리포트 복사': 'Copy brief', 복사됨: 'Copied',
+  'PDF 저장': 'Save PDF', '.md 다운로드': '.md download',
+  '비교에 추가됨 ✓': 'Added to compare ✓', '⚖ 비교에 추가': '⚖ Add to compare',
+  '✦ 이 부지 정밀 리포트·컨설팅 문의 →': '✦ Request a detailed report / consulting →',
 }
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
@@ -385,7 +392,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               }
             }}
           >
-            {copied === 'link' ? '링크 복사됨 ✓' : `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)} 🔗`}
+            {copied === 'link' ? t('링크 복사됨 ✓') : `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)} 🔗`}
           </button>
         </div>
         <h3>{t('부지 적합도 프리뷰')}</h3>
@@ -527,7 +534,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           )
         })()}
         <details className="mini-details">
-          <summary>점수화 로드맵 — 연동된 축 / 남은 대기</summary>
+          <summary>{t('점수화 로드맵 — 연동된 축 / 남은 대기')}</summary>
           <ul className="score-basis roadmap-basis">
             <li>
               <b>이미 연동 (막대에 실값)</b>
@@ -1342,14 +1349,14 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           return (
             <div className="card-actions">
               <button type="button" className="btn ai" onClick={genAiReport} disabled={busy}>
-                {busy ? 'AI 분석 중…' : '✨ AI 부지 브리프'}
+                {busy ? t('AI 분석 중…') : t('✨ AI 부지 브리프')}
               </button>
-              <CopyButton getText={makeReport} label="간이 리포트 복사" copiedLabel="복사됨" />
+              <CopyButton getText={makeReport} label={t('간이 리포트 복사')} copiedLabel={t('복사됨')} />
               <button type="button" className="btn" onClick={onPdf}>
-                PDF 저장
+                {t('PDF 저장')}
               </button>
               <button type="button" className="btn" onClick={onDownload}>
-                .md 다운로드
+                {t('.md 다운로드')}
               </button>
               {onAddCompare && (
                 <button
@@ -1384,7 +1391,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                     })
                   }
                 >
-                  {inCompare ? '비교에 추가됨 ✓' : '⚖ 비교에 추가'}
+                  {inCompare ? t('비교에 추가됨 ✓') : t('⚖ 비교에 추가')}
                 </button>
               )}
             </div>
@@ -1398,7 +1405,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             `${point.lat.toFixed(4)},${point.lng.toFixed(4)}${sido ? ` · ${sido}` : ''} · ${mw}MW · 근거 ${r.knownScore}/${r.knownMax}`,
           )}`}
         >
-          ✦ 이 부지 정밀 리포트·컨설팅 문의 →
+          {t('✦ 이 부지 정밀 리포트·컨설팅 문의 →')}
         </Link>
 
         {/* AI 부지 브리프 결과 — 실데이터 스냅샷 기반, 없는 값은 '미확보'로 명시(정직) */}
