@@ -7875,8 +7875,10 @@ summary:focus-visible,
   box-shadow: var(--glass-specular-soft), var(--elev-1);
   transition: border-color var(--dur-fast) var(--ease-premium), transform var(--dur-fast) var(--ease-premium);
 }
-.gate-card.gate-us { --gate-tone: var(--accent); }
-.gate-card.gate-market { --gate-tone: var(--gold); }
+/* 확실성 그라데이션(소개=샴페인골드 톤에 맞춤): 우리가 정량화=밝은 골드 / 시장 데이터=브론즈 / 사업자 역량=그레이.
+   --accent에 의존하지 않고 골드 계열로 고정해 소개 페이지 배경 톤과 조화(cyan 클래시 방지). */
+.gate-card.gate-us { --gate-tone: var(--gold); }
+.gate-card.gate-market { --gate-tone: #b8905a; }
 .gate-card.gate-own { --gate-tone: var(--grey); }
 .gate-card:hover {
   border-color: color-mix(in srgb, var(--gate-tone) 42%, var(--line));
