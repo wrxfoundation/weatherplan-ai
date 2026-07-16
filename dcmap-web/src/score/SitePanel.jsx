@@ -366,6 +366,17 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           <span className="score-headline-cov">근거 확보 · 스코어 커버리지 {r.coverage}/100</span>
         </div>
 
+        {/* 5관문 맥락 — 입지 점수는 사업 실현가능성의 첫 관문일 뿐임을 명시(정직성). 상세는 인사이트로. */}
+        <Link className="gate-strip" to="/insights/build-reality-2026" title="데이터센터 사업의 5관문 — 지을 수 있나·채울 수 있나">
+          <span className="gate-strip-dots" aria-hidden>
+            <b className="on">1</b><i>2</i><i>3</i><i>4</i><i>5</i>
+          </span>
+          <span className="gate-strip-txt">
+            <b>입지</b>는 사업 실현가능성 <b>5관문 중 1관문</b> — 전력·자금·GPU 규격·가동률이 남았습니다
+          </span>
+          <span className="gate-strip-arr" aria-hidden>→</span>
+        </Link>
+
         {/* 로딩 고지 — 공개 데이터 조회 중임을 명시(끝나면 사라짐 → 이후의 '대기'는 데이터 없음). */}
         {loading ? (
           <div className="sp-loading" role="status" aria-live="polite">
