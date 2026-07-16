@@ -26,8 +26,20 @@ import RsquareRealEstate from './articles/RsquareRealEstate.jsx'
 import GpuUtilization from './articles/GpuUtilization.jsx'
 import CbreExitScarcity from './articles/CbreExitScarcity.jsx'
 import DcCoexistence from './articles/DcCoexistence.jsx'
+import BuildReality from './articles/BuildReality.jsx'
 
 const ARTICLES = {
+  'build-reality-2026': {
+    component: BuildReality,
+    sources: [
+      'DC 사업 5관문(부지·전력·자금·GPU규격·가동률) 종합 프레임 — AI InfraMap 자체(콘텐츠 등급 ④). 각 관문 수치는 아래 흡수 리포트에서 인용',
+      '관문1·2(부지·전력): 수도권 계통영향평가 최종 승인율 1.9%·1차 기술검토 공급불가 53.4%(기후에너지환경부 시범운영 ’25.8~’26.3)·40MW 154kV 트랙(한전 기본공급약관 제23조)·울산 SK LNG 자가발전 213GWh(IT동아 재인용)',
+      '관문3(자금): 하이퍼스케일 총사업비 1조·매수자 풀 3분류(에포크 안양 8,400억·하남 7,340억·Keppel DC REIT)·3~8년 Exit PF — CBRE Research(2026.7)',
+      '관문4(GPU·규격): GPU 로드맵 H100~15kW→블랙웰→루빈→파인만 50kW+·AI서버 40~100kW·하중 2.5톤/㎡·액체냉각·물리적 진부화·완전설비형 임대인 부담 — CBRE Research·Vertiv(2026.7) / 정부 GPU 9,704장 2조800억·네오클라우드 — IT조선(2026.7.14)',
+      '관문5(가동률): 국내 GPU 가동률 30~40%·자체 GPU 기업 86% 가동률 50% 이하(벤처비트 리서치 573명, IT조선 재인용)·전기사용신청 7,343MW≠가동부하 — 삼일PwC(2026.3)',
+      '소화 가능 조건(우량 앵커 88% 장기임차·선임차 2027 16%→2028 23.5%·AWS 인천 650MW·죽전 CSP 5개층·Keppel 안산): CBRE Research·현대건설 뉴스룸·삼일PwC 교차',
+    ],
+  },
   'dc-coexistence-2026': {
     component: DcCoexistence,
     sources: [

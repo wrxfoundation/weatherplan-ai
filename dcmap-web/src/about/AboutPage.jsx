@@ -91,6 +91,46 @@ const STEPS = [
   { n: '3', title: '브리프와 리포트', desc: 'AI 임원 브리프·PDF로 정리하고, 더 깊은 검토가 필요하면 정밀 리포트를 요청하세요.' },
 ]
 
+/* 사업 실현가능성 5관문 — 입지(어디)만이 아니라 지을 수 있나·채울 수 있나까지. 정직성: 우리가 점수화하는 건 1·2관문뿐.
+ * cov: 'us' 우리가 정량화 / 'market' 시장 데이터로 맥락화 / 'own' 사업자 고유 역량(우리 밖) */
+const GATES = [
+  {
+    n: '1', phase: '지을 수 있나', title: '부지 확보', cov: 'us',
+    q: '땅이 있어도 인허가·주민 수용성에서 막힌다.',
+    fact: '수도권 계통 심사 최종 승인율 1.9% · 세종·고양 등 수용성 무산 사례',
+    links: [{ to: '/', label: '맵에서 지점 스코어' }, { to: '/insights/dc-coexistence-2026', label: '수용성 축' }],
+  },
+  {
+    n: '2', phase: '지을 수 있나', title: '전력 수전', cov: 'us',
+    q: '10MW↑ 계통영향평가, 40MW↑ 154kV. 수도권은 절반 넘게 공급 불가.',
+    fact: '수도권 1차 기술검토 공급불가 53.4% · 울산 SK LNG 자가발전 우회',
+    links: [{ to: '/?layers=headroom', label: '변전소 여유 레이어' }, { to: '/calc', label: 'GPU→MW 계산' }],
+  },
+  {
+    n: '3', phase: '지을 수 있나', title: '자금 조달', cov: 'market',
+    q: '하이퍼스케일 1채 총사업비 1조 안팎. 되팔 그림(Exit)이 서야 PF가 돈다.',
+    fact: '매수자 풀 국내기관→글로벌인프라→DC전문자본(Keppel) · 3~8년 Exit',
+    links: [{ to: '/insights/cbre-exit-scarcity-2026', label: '투자·Exit 진단' }],
+  },
+  {
+    n: '4', phase: '채울 수 있나', title: 'GPU 조달·규격', cov: 'market',
+    q: 'GPU를 구해도 건물이 구형 설계면 최신 GPU를 물리적으로 못 받는다.',
+    fact: '랙당 40~100kW·하중 2.5톤/㎡·액체냉각 · 완전설비형=임대인 부담',
+    links: [{ to: '/insights/build-reality-2026', label: '물리적 진부화' }, { to: '/calc', label: '규격·MW 계산' }],
+  },
+  {
+    n: '5', phase: '채울 수 있나', title: '가동률(소화)', cov: 'own',
+    q: '다 지어도 채워야 돈이 된다. 선임차 없으면 빈 건물은 부채다.',
+    fact: '국내 GPU 가동률 30~40% · 우량 앵커 선임차 확보분만 안 빈다',
+    links: [{ to: '/insights/gpu-utilization-2026', label: '수요측 신호' }],
+  },
+]
+const GATE_COV = {
+  us: { label: '우리가 정량화', cls: 'gate-us' },
+  market: { label: '시장 데이터로 맥락화', cls: 'gate-market' },
+  own: { label: '사업자 고유 역량', cls: 'gate-own' },
+}
+
 /* 실제 코드가 호출·집계에 사용하는 공개 소스만 나열(장식용 로고월 금지) */
 const SOURCES = ['한전', '전력거래소 EPSIS', 'KOSIS', 'SGIS', 'vworld', '기상청', 'K-water', '국가법령정보센터', 'DART', 'OSM']
 
@@ -293,6 +333,49 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        <section className="about-sec">
+          <div className="eyebrow">REALITY CHECK</div>
+          <h2>입지는 첫 관문일 뿐 — 사업 실현가능성 5관문</h2>
+          <p className="about-sec-sub">
+            좋은 땅을 찾는 건 시작입니다. 데이터센터 사업은 <b>지을 수 있나</b>(부지·전력·자금)와{' '}
+            <b>채울 수 있나</b>(GPU 규격·가동률)를 차례로 통과해야 하고, 하나라도 막히면 끝입니다. 우리가 점수 매기는
+            건 1·2관문이고, 나머지는 시장 데이터로 맥락화하거나 사업자 고유 역량으로 남깁니다 — 그 경계를 흐리지
+            않는 게 원칙입니다.
+          </p>
+          <div className="gates-row">
+            {GATES.map((g) => {
+              const cov = GATE_COV[g.cov]
+              return (
+                <article key={g.n} className={`gate-card ${cov.cls}`}>
+                  <div className="gate-top">
+                    <span className="gate-n">{g.n}</span>
+                    <span className="gate-phase">{g.phase}</span>
+                  </div>
+                  <h3>{g.title}</h3>
+                  <p className="gate-q">{g.q}</p>
+                  <p className="gate-fact">{g.fact}</p>
+                  <div className="gate-foot">
+                    <span className={`gate-cov ${cov.cls}`}>{cov.label}</span>
+                    <span className="gate-links">
+                      {g.links.map((l) => (
+                        <Link key={l.to + l.label} to={l.to}>
+                          {l.label}
+                          <LineIcon name="arrowUR" size={10} />
+                        </Link>
+                      ))}
+                    </span>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+          <p className="about-sec-sub" style={{ marginTop: 14 }}>
+            현실 답: “소화 가능한 데이터센터”는 실재합니다 — 단 <b>우량 앵커 선임차 + 최신 규격</b>을 갖춘 것만
+            (AWS 인천 650MW·죽전 CSP 5개층·Keppel 안산). 투기적 소형 개발은 4·5관문에서 걸립니다.{' '}
+            <Link to="/insights/build-reality-2026">5관문 전체 분석 →</Link>
+          </p>
         </section>
 
         <section className="about-sec about-honest">
