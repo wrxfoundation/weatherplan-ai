@@ -4414,6 +4414,62 @@ summary:focus-visible,
   color: var(--accent);
 }
 
+/* tldr — 「쉽게 읽기」 리드 콜아웃 (글라스 + accent 좌측 강조, 인사이트 공용) */
+.prose .tldr {
+  background:
+    var(--corner-wash),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface) 92%, var(--accent)) 0%,
+      color-mix(in srgb, var(--surface) 88%, var(--bg)) 100%
+    );
+  border: 1px solid transparent;
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-specular), var(--elev-1);
+  padding: 18px 20px 6px;
+  margin: 4px 0 26px;
+}
+
+.prose .tldr-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs, 0.72rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+.prose .tldr p {
+  font-size: var(--text-md);
+  line-height: 1.72;
+  margin: 0 0 12px;
+}
+
+.prose .tldr .tldr-one {
+  font-weight: var(--weight-bold);
+  font-size: calc(var(--text-md) + 1px);
+}
+
+.prose .tldr ol {
+  margin: 0 0 12px;
+  padding-left: 1.1em;
+}
+
+.prose .tldr li {
+  font-size: var(--text-md);
+  line-height: 1.7;
+  margin: 0 0 8px;
+  padding-left: 4px;
+}
+
+.prose .tldr li strong {
+  color: color-mix(in srgb, var(--text) 88%, var(--accent));
+}
+
 /* stats — 스탯 타일 + 수평 비중 바 (그레이는 비강조 트랙 전용, 값 라벨 상시 노출) */
 .stat-grid {
   display: grid;
