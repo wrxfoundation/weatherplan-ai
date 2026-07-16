@@ -25,8 +25,18 @@ import PwcValueChain from './articles/PwcValueChain.jsx'
 import RsquareRealEstate from './articles/RsquareRealEstate.jsx'
 import GpuUtilization from './articles/GpuUtilization.jsx'
 import CbreExitScarcity from './articles/CbreExitScarcity.jsx'
+import DcCoexistence from './articles/DcCoexistence.jsx'
 
 const ARTICLES = {
+  'dc-coexistence-2026': {
+    component: DcCoexistence,
+    sources: [
+      'IT동아 「AI 데이터센터 지출 1천조 시대 — 사회는 AI보다 ‘공존의 기술’이 필요하다」(남시현 기자, 2026.5.15) — 국내 갈등(세종 어진동 반경 1km 3만여 세대·고양 덕이동 GS건설 마그나PFV)·해외 공존(오덴세 메타 지역난방·MS 에스포 탄소 40%↓·구글 수자원 120% 환원)·반면교사(네바다 타호 4.9만명 전력중단·조지아 페이엣빌 용수)·울산 SK LNG 자가발전 213GWh',
+      '국내 데이터센터 165개소(2024)·60% 수도권·적지 호남/영남/강원: 에너지경제연구원(KEEI) 「AI 시대 데이터센터 증가의 국내 에너지 소비 시사점」(2024.9) — IT동아 재인용',
+      '전자파 실측(DC 6곳 평균 ICNIRP 0.4%·병원 0.68%·호텔 1.17%): 과학기술정보통신부 2025.8~9 측정 — 알스퀘어 리서치센터 재인용 / 미국 지역영향(고용·물·세수)은 別 인사이트 dc-local-impact 참조',
+      '수용성=네 번째 입지 축·개발 갈등 사례 관리·인구 격자 리스크: AI InfraMap 자체 프레임(콘텐츠 등급 ④참고·인사이트)',
+    ],
+  },
   'cbre-exit-scarcity-2026': {
     component: CbreExitScarcity,
     sources: [

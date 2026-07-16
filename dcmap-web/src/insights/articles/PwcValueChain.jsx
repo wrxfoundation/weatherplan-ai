@@ -4,6 +4,41 @@ import { Link } from 'react-router-dom'
 export default function PwcValueChain() {
   return (
     <>
+      <div className="tldr">
+        <p className="tldr-kicker">⚡ 3분 쉽게 읽기</p>
+        <p className="tldr-one">
+          “회계법인이 돈의 언어로 정리했더니, 시장은 10조로 커지는데 전기가 신청의 64%밖에 없어서 관문이
+          비수도권으로 기운다 — 우리 맵이 매일 보던 그림이다.”
+        </p>
+        <ol>
+          <li>
+            <strong>10조 시장, 초과 수요</strong> — 국내 민간 DC 시장 2.42조(’18)→<strong>10.19조</strong>(’28F).
+            2027년 전기 신청 7,343MW인데 한전 공급 가능은 4,718MW(<strong>64%</strong>) — 수요가 공급을 1.56배
+            넘친다.
+          </li>
+          <li>
+            <strong>관문이 기울었다</strong> — 운영 중 DC의 75.3%가 수도권인데, 전력계통영향평가 통과율은 수도권
+            <strong> 21%</strong> vs 비수도권 <strong>71%</strong>. 신규 증설 계획 36개 중 <strong>83%가 비수도권</strong>.
+          </li>
+          <li>
+            <strong>그래도 수도권도 짓는다</strong> — 공급예정 21곳 중 단연 <strong>AWS 인천 650MW</strong>. 단,
+            IT용량과 수전용량은 다른 지표(과장 금지).
+          </li>
+          <li>
+            <strong>돈이 흐르는 자리</strong> — 5개 사업모델 중 전력·냉각 설비(반복 매출)와 자산 소유(희소성
+            프리미엄) 고리로 돈이 몰린다. “규모보다 <strong>증설 속도</strong>, 냉각 전환이 수익성 핵심”.
+          </li>
+          <li>
+            <strong>그룹사 베팅</strong> — SK 울산 약 7조(AWS·OpenAI)·현대차 새만금 AI DC 5.8조·삼성SDS 구미/해남·
+            네이버 각 세종 — 연산력 선점 경쟁이 시작됐다.
+          </li>
+        </ol>
+        <p>
+          <strong>결론 한 줄</strong> — <strong>“어디에 짓는가가 사업성의 첫 변수”</strong>라는 전제를 M&amp;A
+          데스크가 같은 숫자로 확인해 줬다. 아래는 그 28쪽을 맵의 언어로 푼다.
+        </p>
+      </div>
+
       <p>
         삼일PwC가 2026년 3월 공개한 「한국 AI 데이터센터 산업의 현재와 투자방향」은 이 판을 <strong>돈의
         언어</strong>로 정리한 보기 드문 자료다. 인프라·에너지 섹터가 M&A 관점에서 쓴 28쪽을 AI InfraMap의
