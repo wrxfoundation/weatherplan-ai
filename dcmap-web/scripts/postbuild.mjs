@@ -227,6 +227,12 @@ prerender('/report-sample', '정밀 부지 리포트 — 견본 | AI InfraMap', 
   '@type': 'WebPage',
   name: 'AI InfraMap 정밀 부지 리포트 견본',
 })
+prerender('/global', 'AI InfraMap — Korea AI Datacenter Site Intelligence', 'The Korea AI-datacenter siting market is opaque from outside. AI InfraMap turns Korean public grid, permitting and facility data into instant site feasibility. Partnership, data licensing and strategic conversations.', {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'AI InfraMap — Korea AI Datacenter Site Intelligence',
+  inLanguage: 'en',
+})
 prerender('/data', '데이터 탐색기 — AI InfraMap', '발전 허가대장·집단에너지·계통 공급여유·계통영향평가·변전소·산업단지·시설 시드 — 축적 원천 자료 검색·CSV 다운로드.', {
   '@context': 'https://schema.org',
   '@type': 'Dataset',
