@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { SIDOS, TYPES } from '../data/facilities.js'
 
 const STATUS_OPTIONS = [
@@ -5,6 +6,19 @@ const STATUS_OPTIONS = [
   { key: 'construction', label: '건설' },
   { key: 'planned', label: '계획' },
 ]
+
+/* 맵 UI i18n Phase 1 — FilterBar 가시 라벨 KO/EN(자체완결). 툴팁(title)·데이터값(유형/시도)은 KO 유지. */
+const T = {
+  운영: 'Operating', 건설: 'Construction', 계획: 'Planned',
+  '유형 전체': 'All types', '시도 전체': 'All regions',
+  '용량 ≥': 'Cap ≥',
+  '입지 전체': 'All', 수도권: 'Capital', 비수도권: 'Non-capital',
+  표시: 'Show', 추천입지: 'Top sites', 라벨: 'Labels',
+  전력: 'Power', 자원: 'Resource', 수요: 'Demand', 망: 'Network',
+  변전소: 'Substations', 송전선: 'Lines', 발전소: 'Plants', 발전허가: 'Gen permits',
+  여유용량: 'Headroom', 승인율: 'Approval', 재생: 'Renewable', 수원: 'Water',
+  반도체: 'Semiconductor', 산단: 'Ind. parks', 공공DC: 'Public DC', 공급예정: 'Pipeline', 통신망: 'Telecom',
+}
 
 // 레이어 아이콘 — 라인(스트로크) 형태로 통일. currentColor 상속, 14px.
 const ICON_PATHS = {
@@ -74,6 +88,8 @@ export default function FilterBar({
   showApproval,
   onToggleApproval,
 }) {
+  const [lang, setLang] = useState('ko')
+  const t = (ko) => (lang === 'en' ? T[ko] || ko : ko)
   // 레이어 토글을 의미 단위로 그루핑(방대해진 레이어 정돈): 표시·전력·자원·수요·망.
   // cond:false 인 항목(예: 송전선 데이터 없음)은 렌더 제외.
   const LAYER_GROUPS = [
@@ -124,22 +140,22 @@ export default function FilterBar({
             onClick={() => onToggleStatus(s.key)}
           >
             <span className={`dot ${s.key}`} />
-            {s.label}
+            {t(s.label)}
           </button>
         ))}
       </div>
 
       <select value={type} onChange={(e) => onType(e.target.value)} aria-label="유형 필터">
-        <option value="">유형 전체</option>
-        {TYPES.map((t) => (
-          <option key={t} value={t}>
-            {t}
+        <option value="">{t('유형 전체')}</option>
+        {TYPES.map((tp) => (
+          <option key={tp} value={tp}>
+            {tp}
           </option>
         ))}
       </select>
 
       <select value={sido} onChange={(e) => onSido(e.target.value)} aria-label="시도 필터">
-        <option value="">시도 전체</option>
+        <option value="">{t('시도 전체')}</option>
         {SIDOS.map((s) => (
           <option key={s} value={s}>
             {s}
@@ -149,7 +165,7 @@ export default function FilterBar({
 
       {/* 세부 검색 조건 — 필요 용량·입지(관문 유리)를 검색조건으로 흡수 */}
       <label className="mw-input" title="공개 전력 이 값 이상인 시설만">
-        용량 ≥
+        {t('용량 ≥')}
         <input
           type="number"
           min="0"
@@ -165,19 +181,19 @@ export default function FilterBar({
       {/* 입지: 전체 / 수도권 / 비수도권 */}
       <div className="group" title="수도권(서울·경기·인천)은 계통영향평가 ±15점 감점, 비수도권은 가점·AIDC 특별법 면제 유인">
         <button type="button" className={`chip ${!zone ? 'on' : ''}`} onClick={() => onZone('')} aria-pressed={!zone}>
-          입지 전체
+          {t('입지 전체')}
         </button>
         <button type="button" className={`chip ${zone === 'cap' ? 'on' : ''}`} onClick={() => onZone('cap')} aria-pressed={zone === 'cap'}>
-          수도권
+          {t('수도권')}
         </button>
         <button type="button" className={`chip ${zone === 'non' ? 'on' : ''}`} onClick={() => onZone('non')} aria-pressed={zone === 'non'}>
-          비수도권
+          {t('비수도권')}
         </button>
       </div>
 
       {/* 표시·추천 — 데이터 레이어와 성격이 달라 윗줄(검색컨트롤 옆)로. 방대한 레이어 줄을 덜고 윗줄 여백을 채움 */}
       <div className="group" role="group" aria-label="표시">
-        <span className="group-sublabel">표시</span>
+        <span className="group-sublabel">{t('표시')}</span>
         <button
           type="button"
           className={`chip chip-reco ${showReco ? 'on' : ''}`}
@@ -185,7 +201,7 @@ export default function FilterBar({
           aria-pressed={showReco}
           title="AI 추천 입지 TOP20 — 산업단지 후보를 정적 근거(변전소·공급여유·승인율·네트워크·자가발전)로 랭킹. 클릭 시 전체 분석"
         >
-          <Icon name="reco" /> 추천입지
+          <Icon name="reco" /> {t('추천입지')}
         </button>
         <button
           type="button"
@@ -194,8 +210,14 @@ export default function FilterBar({
           aria-pressed={showLabels}
           title="맵 위 시설명·용량 라벨 켜기/끄기"
         >
-          <Icon name="label" /> 라벨
+          <Icon name="label" /> {t('라벨')}
         </button>
+      </div>
+
+      {/* 맵 UI 언어 토글(Phase 1: 필터 라벨) */}
+      <div className="group fb-lang" role="group" aria-label="language">
+        <button type="button" className={`chip ${lang === 'ko' ? 'on' : ''}`} onClick={() => setLang('ko')} aria-pressed={lang === 'ko'}>KO</button>
+        <button type="button" className={`chip ${lang === 'en' ? 'on' : ''}`} onClick={() => setLang('en')} aria-pressed={lang === 'en'}>EN</button>
       </div>
       </div>
 
@@ -206,7 +228,7 @@ export default function FilterBar({
           if (!chips.length) return null
           return (
             <div className="group layer-pill" key={sg.label} role="group" aria-label={`레이어 ${sg.label}`}>
-              <span className="group-sublabel">{sg.label}</span>
+              <span className="group-sublabel">{t(sg.label)}</span>
               {chips.map((c) => (
                 <button
                   key={c.key}
@@ -216,7 +238,7 @@ export default function FilterBar({
                   aria-pressed={c.on}
                   title={c.title}
                 >
-                  <Icon name={c.icon} /> {c.text}
+                  <Icon name={c.icon} /> {t(c.text)}
                 </button>
               ))}
             </div>
