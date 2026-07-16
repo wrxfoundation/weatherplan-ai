@@ -160,6 +160,9 @@ export default function PricingPage() {
             <button type="button" className="btn" onClick={() => openDlg('기타 문의')}>
               기타 문의
             </button>
+            <Link className="btn" to="/global">
+              For global partners (EN) →
+            </Link>
           </div>
         </div>
       </main>
