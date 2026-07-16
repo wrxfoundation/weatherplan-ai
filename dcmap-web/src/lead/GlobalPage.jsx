@@ -4,6 +4,7 @@ import TopBar from '../TopBar.jsx'
 import { FACILITIES } from '../data/facilities.js'
 import { GRID_HEADROOM, GRID_HEADROOM_META } from '../data/gridHeadroom.js'
 import { INSIGHTS } from '../content/insights_meta.js'
+import { SNAPSHOT_COUNT, LATEST_SNAPSHOT } from '../data/headroomSnapshots.js'
 import { CONTACT_EMAIL } from '../data/leadApi.js'
 
 const TITLE = 'AI InfraMap — Korea AI Datacenter Site Intelligence (for partners & investors)'
@@ -110,7 +111,12 @@ export default function GlobalPage() {
             UI. Our roadmap hardens exactly that:
           </p>
           <ol className="global-pipeline">
-            <li><b>Live grid ingestion.</b> KEPCO ON substation reserve + PSIA outcomes on a scheduled refresh, versioned — so the dataset is current without manual curation.</li>
+            <li>
+              <b>Live grid ingestion.</b> KEPCO ON substation reserve + PSIA outcomes on a scheduled refresh, versioned — so the dataset is current without manual curation.
+              {LATEST_SNAPSHOT && (
+                <span className="pipe-status"> · in progress: {SNAPSHOT_COUNT} monthly snapshot{SNAPSHOT_COUNT > 1 ? 's' : ''}, latest {LATEST_SNAPSHOT.month}</span>
+              )}
+            </li>
             <li><b>Calibrated pass model.</b> The grid-impact outlook is back-tested against real assessment results and reported with accuracy — turning a heuristic into a defensible, licensable score.</li>
             <li><b>Change feed.</b> New applications, supply pipeline and approvals as a diff stream — the recurring signal a platform or fund subscribes to.</li>
             <li><b>English + API layer.</b> Bilingual surface and a data/score API so the asset plugs into an acquirer’s existing product.</li>

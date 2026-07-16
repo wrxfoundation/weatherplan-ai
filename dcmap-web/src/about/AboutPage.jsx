@@ -254,6 +254,10 @@ export default function AboutPage() {
               }}
             />
           </div>
+          <div className="about-lang">
+            <span className="alang-on">KO</span>
+            <Link to="/global">English →</Link>
+          </div>
           <div className="eyebrow">ABOUT · AI INFRAMAP</div>
           <h1>
             AI 데이터센터의 첫 질문, <em>“어디에 짓는가”</em>에 답합니다

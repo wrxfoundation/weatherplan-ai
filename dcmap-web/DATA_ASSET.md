@@ -15,10 +15,15 @@
 
 ## 파이프라인 로드맵 (인수가를 지키는 4단계)
 
-### P1 · 라이브 계통 수집 (Live grid ingestion)
+### P1 · 라이브 계통 수집 (Live grid ingestion) — 🟡 착수(스캐폴딩 완료)
 - 한전ON 변전소 실측 여유 + PSIA 결과를 **스케줄 갱신**(현재: `api/headroom.js` 프록시 온디맨드 → 목표: 주기 수집·스냅샷).
 - **버전 관리**: 갱신마다 스냅샷 저장(`asOf` 태깅). 시계열 확보 = "변화 감지" 상품(모니터링 구독)의 기반.
-- 산출: `data/headroom_snapshots/YYYY-MM.json` (또는 KV/DB). 수동 스크린샷 → 자동 폴백(undici·IPv4) 이미 구현됨.
+- **구현 완료(2026-07)**:
+  - 스냅샷 포맷·시드: `data/headroom_snapshots/2026-07.json`(가평·미금, version·asOf 태깅).
+  - 로더: `src/data/headroomSnapshots.js` — `LATEST_SNAPSHOT`·`SNAPSHOT_COUNT`·`headroomTrend(name)`·`latestDeltas()`. vite `import.meta.glob`로 신규 월 파일 자동 편입. `/global`에 P1 진행 상태 노출.
+  - 수집기: `scripts/snapshot-headroom.mjs` — 배포 프록시로 대상 시군구 여유 수집 → 월별 JSON. `SNAPSHOT_BASE` env, 키는 서버 전용.
+  - 스케줄 템플릿: `ops/headroom-snapshot.workflow.yml.template`(레포 루트 `.github/workflows/`로 복사·`SNAPSHOT_BASE` 설정 시 월 1회 실행).
+- **다음**: TARGETS를 수도권/비수도권 주요 시군구 법정동코드로 확장 · 스냅샷 2개월+ 쌓이면 `latestDeltas()`로 변화 피드(P3) 프리뷰.
 
 ### P2 · 판정 모델 캘리브레이션 (Calibrated pass model)
 - `src/score/psia*` 통과 전망을 **실제 심사 결과로 백테스트** → 정확도(precision/recall) 산출·공개.

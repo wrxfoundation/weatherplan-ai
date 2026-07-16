@@ -4391,6 +4391,40 @@ summary:focus-visible,
   max-width: 720px;
 }
 
+/* 인사이트 영문 요약(EN abstract) — 글로벌 독자 진입점. 접이식(details). */
+.en-abstract {
+  max-width: 720px;
+  margin: 6px 0 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  overflow: hidden;
+}
+.en-abstract > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--grey);
+  list-style: none;
+  user-select: none;
+}
+.en-abstract > summary::-webkit-details-marker { display: none; }
+.en-abstract > summary::after { content: '▾'; margin-left: auto; color: var(--grey); transition: transform var(--dur-fast) var(--ease-premium); }
+.en-abstract[open] > summary::after { transform: rotate(180deg); }
+.en-abstract .en-badge {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.04em;
+  color: var(--bg); background: var(--accent);
+  padding: 2px 6px; border-radius: 5px;
+}
+.en-abstract > p {
+  margin: 0; padding: 0 14px 14px;
+  font-size: var(--text-sm); line-height: 1.7; color: var(--ink);
+}
+
 .prose p {
   font-size: var(--text-md);
   font-weight: var(--weight-regular);
@@ -6681,6 +6715,10 @@ summary:focus-visible,
 .glang-on { font-weight: 800; color: var(--accent); }
 .global-lang a { color: var(--grey); text-decoration: none; }
 .global-lang a:hover { color: var(--accent); }
+.about-lang { display: flex; gap: 10px; align-items: center; justify-content: flex-end; font-size: var(--text-sm); position: relative; z-index: 2; }
+.alang-on { font-weight: 800; color: var(--gold); }
+.about-lang a { color: var(--grey); text-decoration: none; }
+.about-lang a:hover { color: var(--gold); }
 .global-hero { padding: 8px 0 20px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
 .global-hero h1 { font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 1.22; margin: 8px 0 14px; }
 .global-hero h1 em { color: var(--accent); font-style: normal; }
@@ -6707,6 +6745,7 @@ summary:focus-visible,
 .global-pipeline { margin: 8px 0 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 10px; }
 .global-pipeline li { font-size: var(--text-sm); line-height: 1.6; color: var(--ink); }
 .global-pipeline b { color: var(--text); }
+.pipe-status { color: var(--accent); font-weight: 600; }
 .fit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .fit-card { padding: 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--glass-surface); }
 .fit-card b { display: block; font-size: 14px; margin-bottom: 4px; }
