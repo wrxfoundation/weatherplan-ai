@@ -4824,11 +4824,24 @@ summary:focus-visible,
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   gap: 14px;
-  align-items: start; /* 위젯 높이 개별 — 빈 공간 스트레치 방지 */
+  align-items: stretch; /* 같은 줄 카드 높이 통일 — 정보 길이 차로 생기는 빈 공간(래그드 갭) 제거 */
 }
 
 .dash-grid .calc-card {
   margin-top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 카드 마무리 각주/기준선은 카드 바닥에 고정 — 짧은 카드도 의도된 여백으로 채워져 비어 보이지 않게 */
+.dash-grid .calc-card > .chart-note {
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+/* 목록형 카드는 목록이 남는 높이를 흡수(시설 리스트가 카드 하단까지) */
+.dash-grid .calc-card > .facility-list {
+  flex: 1 1 auto;
 }
 
 /* 대시보드 섹션 그룹 헤드 — 취지 중심 정돈(01 데이터센터 / 02 입지·시장 / 03 전력 / 04 진단) */
@@ -7513,6 +7526,123 @@ summary:focus-visible,
 }
 .wow-links a:hover {
   background: color-mix(in srgb, var(--gold) 12%, transparent);
+}
+
+/* ---- 사업 실현가능성 5관문 ---- */
+.gates-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+.gate-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 15px 13px;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--gate-tone, var(--grey)) 16%, var(--line));
+  border-top: 2px solid var(--gate-tone, var(--grey));
+  background:
+    radial-gradient(120px 70px at 0% 0%, color-mix(in srgb, var(--gate-tone, var(--grey)) 12%, transparent), transparent 70%),
+    var(--glass-surface);
+  box-shadow: var(--glass-specular-soft), var(--elev-1);
+  transition: border-color var(--dur-fast) var(--ease-premium), transform var(--dur-fast) var(--ease-premium);
+}
+.gate-card.gate-us { --gate-tone: var(--accent); }
+.gate-card.gate-market { --gate-tone: var(--gold); }
+.gate-card.gate-own { --gate-tone: var(--grey); }
+.gate-card:hover {
+  border-color: color-mix(in srgb, var(--gate-tone) 42%, var(--line));
+  transform: translateY(-2px);
+}
+.gate-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.gate-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border-radius: 7px;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--gate-tone);
+  border: 1px solid color-mix(in srgb, var(--gate-tone) 34%, var(--line));
+  background: color-mix(in srgb, var(--gate-tone) 8%, transparent);
+}
+.gate-phase {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--gate-tone) 78%, var(--grey));
+}
+.gate-card h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-tight);
+}
+.gate-q {
+  margin: 0 0 8px;
+  font-size: var(--text-sm);
+  color: var(--ink);
+  line-height: 1.55;
+}
+.gate-fact {
+  margin: 0 0 12px;
+  font-size: var(--text-xs);
+  color: var(--grey);
+  line-height: 1.5;
+}
+.gate-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.gate-cov {
+  align-self: flex-start;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: var(--gate-tone);
+  border: 1px solid color-mix(in srgb, var(--gate-tone) 30%, var(--line));
+  background: color-mix(in srgb, var(--gate-tone) 8%, transparent);
+}
+.gate-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.gate-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--gate-tone) 24%, var(--line));
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--gate-tone);
+  text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-premium);
+}
+.gate-links a:hover {
+  background: color-mix(in srgb, var(--gate-tone) 12%, transparent);
+}
+@media (max-width: 900px) {
+  .gates-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px) {
+  .gates-row { grid-template-columns: 1fr; }
 }
 
 /* ---- 3단계 ---- */
