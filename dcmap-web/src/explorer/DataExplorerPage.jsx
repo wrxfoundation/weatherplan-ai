@@ -13,6 +13,7 @@ import { CAPITAL_PIPELINE } from '../data/capitalPipeline.js'
 import { DC_DEALS, RACK_RATES, DEV_CONFLICTS, DEV_CONFLICTS_META } from '../data/dcRealEstate.js'
 import { GRID_CONSTRUCTION, GRID_CONSTRUCTION_META, GRID_STAGE_LABEL } from '../data/gridConstruction.js'
 import { SUBSTATION_HEADROOM, SUBSTATION_HEADROOM_META } from '../data/substationHeadroom.js'
+import { LATEST_SNAPSHOT, SNAPSHOT_COUNT } from '../data/headroomSnapshots.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -154,31 +155,42 @@ const DATASETS = [
     ],
     rows: CAPITAL_PIPELINE.map((r) => ({ ...r, mwSupply: r.mwSupply ?? '', due: r.due ?? '' })),
   },
-  {
-    key: 'subheadroom',
-    label: '변전소 여유용량(연도별)',
-    asOf: SUBSTATION_HEADROOM_META.updated,
-    source: `${SUBSTATION_HEADROOM_META.source}. ${SUBSTATION_HEADROOM_META.note}`,
-    fullCsv: null,
-    columns: [
-      { k: 'name', label: '변전소' },
-      { k: 'sido', label: '시도' },
-      { k: 'area', label: '검색지역' },
-      ...SUBSTATION_HEADROOM_META.years.map((y) => ({ k: `y${y}`, label: `${y} MW` })),
-      { k: 'firstAvailYear', label: '여유 발생' },
-      { k: 'genMw', label: '발전허가(MW)' },
-      { k: 'applicants', label: '접속예정(명)' },
-    ],
-    rows: SUBSTATION_HEADROOM.map((r) => ({
-      name: r.name,
-      sido: r.sido,
-      area: r.area,
-      ...Object.fromEntries(SUBSTATION_HEADROOM_META.years.map((y) => [`y${y}`, r.byYear[y]])),
-      firstAvailYear: r.firstAvailYear ?? '—',
-      genMw: r.genMw,
-      applicants: r.applicants,
-    })),
-  },
+  (() => {
+    // P1 파이프라인 소비: 최신 스냅샷(있으면)을 원천으로, 없으면 정적 시드로 폴백.
+    const years = LATEST_SNAPSHOT?.years || SUBSTATION_HEADROOM_META.years
+    const snapRows = LATEST_SNAPSHOT?.entries?.length
+      ? LATEST_SNAPSHOT.entries.map((e) => ({
+          name: e.name, sido: e.sido, area: e.area,
+          ...Object.fromEntries(years.map((y, i) => [`y${y}`, e.series?.[i] ?? null])),
+          firstAvailYear: years[(e.series || []).findIndex((v) => v > 0)] ?? '—',
+          genMw: e.genMw ?? 0, applicants: e.applicants ?? 0,
+        }))
+      : SUBSTATION_HEADROOM.map((r) => ({
+          name: r.name, sido: r.sido, area: r.area,
+          ...Object.fromEntries(SUBSTATION_HEADROOM_META.years.map((y) => [`y${y}`, r.byYear[y]])),
+          firstAvailYear: r.firstAvailYear ?? '—', genMw: r.genMw, applicants: r.applicants,
+        }))
+    const snapNote = LATEST_SNAPSHOT
+      ? `데이터 자산화 P1 스냅샷 파이프라인: ${SNAPSHOT_COUNT}개월 축적 · 최신 ${LATEST_SNAPSHOT.month}(${LATEST_SNAPSHOT.captured}). 월별 스냅샷이 쌓이면 변화 추이(delta)를 추적한다.`
+      : ''
+    return {
+      key: 'subheadroom',
+      label: '변전소 여유용량(연도별)',
+      asOf: LATEST_SNAPSHOT ? `스냅샷 ${LATEST_SNAPSHOT.month} · ${SUBSTATION_HEADROOM_META.updated}` : SUBSTATION_HEADROOM_META.updated,
+      source: `${SUBSTATION_HEADROOM_META.source}. ${SUBSTATION_HEADROOM_META.note} ${snapNote}`,
+      fullCsv: null,
+      columns: [
+        { k: 'name', label: '변전소' },
+        { k: 'sido', label: '시도' },
+        { k: 'area', label: '검색지역' },
+        ...years.map((y) => ({ k: `y${y}`, label: `${y} MW` })),
+        { k: 'firstAvailYear', label: '여유 발생' },
+        { k: 'genMw', label: '발전허가(MW)' },
+        { k: 'applicants', label: '접속예정(명)' },
+      ],
+      rows: snapRows,
+    }
+  })(),
   {
     key: 'gridbuild',
     label: '송변전 건설 파이프라인',
