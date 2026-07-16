@@ -7,6 +7,7 @@ import { INSIGHTS } from '../content/insights_meta.js'
 import { SNAPSHOT_COUNT, LATEST_SNAPSHOT } from '../data/headroomSnapshots.js'
 import { COVERAGE, DATA_DICTIONARY, PIPELINE } from '../data/dataCoverage.js'
 import { CONTACT_EMAIL } from '../data/leadApi.js'
+import AcquirerNav from './AcquirerNav.jsx'
 
 const TITLE = 'AI InfraMap — Korea AI Datacenter Site Intelligence (for partners & investors)'
 const DESC =
@@ -52,10 +53,7 @@ export default function GlobalPage() {
     <>
       <TopBar />
       <main className="page global-page">
-        <div className="global-lang">
-          <span className="glang-on">EN</span>
-          <Link to="/about">한국어 소개 →</Link>
-        </div>
+        <AcquirerNav />
 
         <header className="global-hero">
           <div className="eyebrow">FOR PARTNERS · INVESTORS · ACQUIRERS</div>

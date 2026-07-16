@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { DATA_DICTIONARY } from '../data/dataCoverage.js'
+import AcquirerNav from './AcquirerNav.jsx'
 
 const TITLE = 'Methodology — AI InfraMap Korea DC Site Intelligence'
 const DESC =
@@ -34,11 +35,9 @@ export default function MethodologyPage() {
     <>
       <TopBar />
       <main className="page method-page">
-        <div className="global-lang">
-          <span className="glang-on">EN</span>
-          <Link to="/global">Data room →</Link>
+        <AcquirerNav>
           <button type="button" className="rlang-btn" onClick={() => window.print()}>Print / PDF</button>
-        </div>
+        </AcquirerNav>
 
         <header className="method-head">
           <div className="eyebrow">METHODOLOGY · DUE-DILIGENCE REFERENCE</div>

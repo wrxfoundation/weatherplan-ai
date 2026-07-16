@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
+import AcquirerNav from './AcquirerNav.jsx'
 
 const TITLE = '정밀 부지 리포트 — 견본 | AI InfraMap'
 const DESC =
@@ -49,10 +50,10 @@ export default function SampleReportPage() {
     <>
       <TopBar />
       <main className="page report-page">
-        <div className="global-lang">
+        <AcquirerNav>
           <button type="button" className={`rlang-btn${!en ? ' on' : ''}`} onClick={() => setLang('ko')}>KO</button>
           <button type="button" className={`rlang-btn${en ? ' on' : ''}`} onClick={() => setLang('en')}>EN</button>
-        </div>
+        </AcquirerNav>
 
         <div className="report-flag" role="note">
           <b>{t('견본(SAMPLE)', 'SAMPLE')}</b> ·{' '}
