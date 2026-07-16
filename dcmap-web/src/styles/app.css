@@ -6755,6 +6755,23 @@ summary:focus-visible,
 .global-cta p { font-size: var(--text-sm); color: var(--grey); line-height: 1.6; margin: 0 auto 14px; max-width: 560px; }
 .global-cta-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 .global-fine { font-size: var(--text-xs); margin-top: 14px; }
+/* Data room — coverage grid · freshness · data dictionary */
+.coverage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 6px; }
+.cov-cell { padding: 12px 13px; border-radius: 12px; border: 1px solid var(--line); background: var(--glass-surface); display: flex; flex-direction: column; gap: 3px; }
+.cov-cell b { font-size: 22px; font-weight: 800; line-height: 1; color: var(--accent); }
+.cov-cell b small { font-size: 13px; color: var(--grey); }
+.cov-en { font-size: var(--text-xs); color: var(--ink); line-height: 1.35; }
+.cov-src { font-size: 10px; color: var(--grey); }
+.pipe-freshness { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; padding: 10px 13px; border-radius: 10px; font-size: var(--text-sm); color: var(--ink); border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line)); background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.pipe-freshness b { color: var(--accent); }
+.pf-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); flex: none; }
+.data-dict-h { font-size: var(--text-body); margin: 18px 0 8px; }
+.data-dict-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.data-dict { width: 100%; border-collapse: collapse; font-size: var(--text-sm); min-width: 560px; }
+.data-dict th, .data-dict td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.data-dict th { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.03em; color: var(--grey); font-weight: 700; }
+.data-dict td { color: var(--grey); line-height: 1.45; }
+.data-dict td b { color: var(--text); }
 @media (max-width: 620px) {
   .moat-grid, .fit-grid { grid-template-columns: 1fr; }
 }

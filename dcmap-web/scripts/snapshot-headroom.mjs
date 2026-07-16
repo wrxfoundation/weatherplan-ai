@@ -15,21 +15,21 @@
  *   - 프록시 응답을 그대로 스냅샷에 담고, captured='auto'/asOf 태깅. 값 가공·조작 금지.
  *   - 여유 0 == 당해 여유 없음(정상값). 전기사용신청 후 최종 확정 — 원문 유의사항 유지.
  */
-import { writeFile, mkdir } from 'node:fs/promises'
+import { writeFile, mkdir, readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const OUT_DIR = resolve(__dirname, '../data/headroom_snapshots')
+const TARGETS_FILE = resolve(__dirname, '../data/headroom_targets.json')
 const BASE = process.env.SNAPSHOT_BASE || 'http://localhost:3000'
 const YEARS = [2026, 2027, 2028, 2029, 2030, 2031, 2032]
 
-// 수집 대상: [라벨, 법정동코드(admCd 10자리), 시도, 시군구]. 확장 시 여기에 추가.
-const TARGETS = [
-  ['가평', '4182025000', '경기', '가평군 가평읍'],
-  ['미금', '4182025000', '경기', '가평군 가평읍'],
-  // TODO: 수도권/비수도권 주요 시군구 법정동코드로 확장(자동 대상 목록화).
-]
+// 수집 대상은 data/headroom_targets.json 매니페스트에서 읽는다(확장은 매니페스트 편집).
+async function loadTargets() {
+  const raw = JSON.parse(await readFile(TARGETS_FILE, 'utf8'))
+  return (raw.targets || []).map((t) => [t.label, t.admCd, t.sido, t.area])
+}
 
 function ym() {
   // 스냅샷 월(YYYY-MM). CI 환경변수 SNAPSHOT_MONTH로 오버라이드 가능.
@@ -58,6 +58,7 @@ async function fetchOne([label, admCd, sido, area]) {
 
 async function main() {
   const month = ym()
+  const TARGETS = await loadTargets()
   console.log(`▶ 변전소 여유 스냅샷 ${month} — 대상 ${TARGETS.length}건, base=${BASE}`)
   const entries = (await Promise.all(TARGETS.map(fetchOne))).filter(Boolean)
   if (!entries.length) {

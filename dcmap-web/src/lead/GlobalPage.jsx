@@ -5,6 +5,7 @@ import { FACILITIES } from '../data/facilities.js'
 import { GRID_HEADROOM, GRID_HEADROOM_META } from '../data/gridHeadroom.js'
 import { INSIGHTS } from '../content/insights_meta.js'
 import { SNAPSHOT_COUNT, LATEST_SNAPSHOT } from '../data/headroomSnapshots.js'
+import { COVERAGE, DATA_DICTIONARY, PIPELINE } from '../data/dataCoverage.js'
 import { CONTACT_EMAIL } from '../data/leadApi.js'
 
 const TITLE = 'AI InfraMap — Korea AI Datacenter Site Intelligence (for partners & investors)'
@@ -121,6 +122,63 @@ export default function GlobalPage() {
             <li><b>Change feed.</b> New applications, supply pipeline and approvals as a diff stream — the recurring signal a platform or fund subscribes to.</li>
             <li><b>English + API layer.</b> Bilingual surface and a data/score API so the asset plugs into an acquirer’s existing product.</li>
           </ol>
+        </section>
+
+        <section className="global-sec">
+          <div className="eyebrow">DATA ROOM</div>
+          <h2>Coverage &amp; freshness — what you’d actually acquire</h2>
+          <p className="global-sub">
+            All figures computed from the live dataset. Nothing estimated. Pipeline freshness reflects the P1
+            snapshot mechanism (expanding).
+          </p>
+          <div className="coverage-grid">
+            {COVERAGE.map((c) => (
+              <div key={c.k} className="cov-cell">
+                <b>{c.v}{c.unit && <small>{c.unit}</small>}</b>
+                <span className="cov-en">{c.en}</span>
+                <span className="cov-src">{c.src}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="pipe-freshness">
+            <span className="pf-dot" aria-hidden />
+            Pipeline P1 · substation-reserve snapshots: <b>{PIPELINE.snapshotMonths}</b> month
+            {PIPELINE.snapshotMonths > 1 ? 's' : ''}
+            {PIPELINE.latestMonth && <> · latest <b>{PIPELINE.latestMonth}</b></>} · targets defined{' '}
+            <b>{PIPELINE.targetsDefined}</b> · captured <b>{PIPELINE.captured}</b>
+          </div>
+
+          <h3 className="data-dict-h">Data dictionary</h3>
+          <div className="data-dict-wrap">
+            <table className="data-dict">
+              <thead>
+                <tr><th>Dataset</th><th>Source</th><th>Cadence</th><th>Coverage</th></tr>
+              </thead>
+              <tbody>
+                {DATA_DICTIONARY.map((d) => (
+                  <tr key={d.name}>
+                    <td><b>{d.name}</b></td><td>{d.source}</td><td>{d.cadence}</td><td>{d.coverage}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="global-sec">
+          <div className="eyebrow">METHODOLOGY &amp; HONESTY</div>
+          <h2>How the pass model works — and where it stops</h2>
+          <p className="global-sub">
+            The PSIA pass outlook is a weighted scorecard over five public proxies — capital-region penalty, regional
+            grid headroom, nearest-substation reserve, regional approval rate, and required capacity vs voltage track.
+            It is a probabilistic outlook, explicitly <b>not</b> the official scoring.
+          </p>
+          <ul className="global-pain">
+            <li><b>Axes without evidence are shown as “data pending”</b> — never back-filled with a plausible number.</li>
+            <li><b>Every figure carries a source and date;</b> location precision is stated when low (we match substations to real OSM coordinates, not text guesses).</li>
+            <li><b>AI briefs cite statute only</b> when the primary text (law.go.kr) was retrieved. That discipline is what makes outputs defensible in underwriting.</li>
+          </ul>
         </section>
 
         <section className="global-sec">
