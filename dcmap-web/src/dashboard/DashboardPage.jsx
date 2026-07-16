@@ -13,6 +13,18 @@ import { LAND_PRICE, fmtRate } from '../data/landPrice.js'
 import { LAND_DONG } from '../data/landPriceDong.js'
 import { filingsRecent, epsisCapacity, apiStatus, tradingMix, smpToday, fuelMixNow, riskFor } from '../data/liveApi.js'
 import { DC_DEMAND_OUTLOOK, DC_DEMAND_OUTLOOK_META } from '../data/dcDemandOutlook.js'
+import { useMapLang, setMapLang } from '../i18n/mapLang.js'
+
+/* 대시보드 내러티브 i18n(섹션 헤드·제목·해석). 앱 공용 언어 스토어. 데이터 행 라벨·차트 노트는 KO(Phase 2). */
+const DT = {
+  대시보드: 'Dashboard',
+  '데이터센터 현황': 'Datacenter status', '어디에 얼마나 — 분포·상태·용량·파이프라인': 'Where & how much — distribution, status, capacity, pipeline',
+  '입지·시장 신호': 'Location & market signals', '지가 흐름·사업자 공시 — 준비의 선행 지표': 'Land-price trends & filings — leading indicators',
+  '전력·계통': 'Power & grid', '공급 여건 — 계통영향평가·설비·발전 믹스 (DC 입지의 핵심 제약)': 'Supply conditions — PSIA, assets, generation mix (the core DC constraint)',
+  '시스템 진단': 'System diagnostics', '공개 API 연동 상태 — 값은 노출되지 않음': 'Public-API status — no values exposed',
+  '지역별 전력·데이터센터 한눈에 — 어디 중심으로 준비되는가': 'Power & datacenters by region — where preparation concentrates',
+  해석: 'Reading',
+}
 
 const TITLE = '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스'
 const DESC =
@@ -79,6 +91,8 @@ function MiniBars({ bars, ariaLabel }) {
 }
 
 export default function DashboardPage() {
+  const lang = useMapLang()
+  const t = (ko) => (lang === 'en' ? DT[ko] ?? ko : ko)
   const [now, setNow] = useState(() => new Date())
   const [filings, setFilings] = useState(null)
   const [filingCorp, setFilingCorp] = useState('전체') // 공시 운영사 필터
@@ -268,9 +282,15 @@ export default function DashboardPage() {
       <TopBar />
       <main className="page dashboard">
         <div className="eyebrow">KOREA DATA CENTER INTELLIGENCE</div>
-        <h1>대시보드</h1>
+        <div className="ins-head-row">
+          <h1>{t('대시보드')}</h1>
+          <div className="ins-lang">
+            <button type="button" className={`rlang-btn${lang === 'ko' ? ' on' : ''}`} onClick={() => setMapLang('ko')}>KO</button>
+            <button type="button" className={`rlang-btn${lang === 'en' ? ' on' : ''}`} onClick={() => setMapLang('en')}>EN</button>
+          </div>
+        </div>
         <p className="sub">
-          공개 데이터 기준 현황 — 시드 v{DATA_VERSION.version} · {DATA_VERSION.date} · KOSIS {LAND_PRICE.period.slice(0, 4)}.
+          {lang === 'en' ? 'Public-data snapshot' : '공개 데이터 기준 현황'} — {lang === 'en' ? 'seed' : '시드'} v{DATA_VERSION.version} · {DATA_VERSION.date} · KOSIS {LAND_PRICE.period.slice(0, 4)}.
           {LAND_PRICE.period.slice(4)}
           <span className="dash-clock" title="한국 표준시 (UTC+9)">
             {now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Seoul' })} · {now.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })} <span className="dash-tz">KST</span>
@@ -280,12 +300,12 @@ export default function DashboardPage() {
         <div className="dash-grid">
           <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
             <span className="dsh-num">01</span>
-            <span className="dsh-title">데이터센터 현황</span>
-            <span className="dsh-sub">어디에 얼마나 — 분포·상태·용량·파이프라인</span>
+            <span className="dsh-title">{t('데이터센터 현황')}</span>
+            <span className="dsh-sub">{t('어디에 얼마나 — 분포·상태·용량·파이프라인')}</span>
           </div>
           {/* 지역별 전력·데이터센터 한눈에 — 어디 중심으로 준비가 진행되는지(공개 소스) */}
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
-            <div className="chart-title">지역별 전력·데이터센터 한눈에 — 어디 중심으로 준비되는가</div>
+            <div className="chart-title">{t('지역별 전력·데이터센터 한눈에 — 어디 중심으로 준비되는가')}</div>
             <div className="rollup-table" role="table">
               <div className="rollup-head" role="row">
                 <span>지역</span>
@@ -321,17 +341,29 @@ export default function DashboardPage() {
               />
             </div>
             <div className="rollup-insight">
-              <span className="ri-tag">해석</span>
-              <p>
-                데이터센터는 <strong>수도권에 {rollupInsight.capDc}곳({rollupInsight.capPct}%)</strong> 몰려 있는 반면,
-                2025년 신규 발전설비는 <strong>비수도권에 {rollupInsight.nonNew.toLocaleString()}MW</strong>
-                {rollupInsight.capNew > 0 ? `(수도권 ${rollupInsight.capNew.toLocaleString()}MW)` : ''} 신설 —
-                <strong> 수요는 수도권, 신규 공급은 비수도권</strong>으로 갈린다.
-                {rollupInsight.topDc && ` 최다 DC 밀집은 ${rollupInsight.topDc.sido}(${rollupInsight.topDc.dcCount}곳)`}
-                {rollupInsight.topNew && `, 신규 발전은 ${rollupInsight.topNew.sido}(${rollupInsight.topNew.newMw.toLocaleString()}MW)에 집중`}.
-                계통영향평가 ±15점(수도권 감점·비수도권 가점)까지 겹쳐, <strong>전력이 있는 비수도권으로 신규 AIDC가 내려갈 유인</strong>이
-                수치로 드러난다.
-              </p>
+              <span className="ri-tag">{t('해석')}</span>
+              {lang === 'en' ? (
+                <p>
+                  Datacenters cluster <strong>in the capital region — {rollupInsight.capDc} sites ({rollupInsight.capPct}%)</strong>, while
+                  2025 new generation is <strong>{rollupInsight.nonNew.toLocaleString()}MW in non-capital regions</strong>
+                  {rollupInsight.capNew > 0 ? ` (capital ${rollupInsight.capNew.toLocaleString()}MW)` : ''} —
+                  <strong> demand in the capital region, new supply outside it</strong>.
+                  {rollupInsight.topDc && ` Densest DC cluster: ${rollupInsight.topDc.sido} (${rollupInsight.topDc.dcCount})`}
+                  {rollupInsight.topNew && `; new generation concentrates in ${rollupInsight.topNew.sido} (${rollupInsight.topNew.newMw.toLocaleString()}MW)`}.
+                  With the PSIA ±15 points (capital penalty, non-capital bonus) on top, <strong>the incentive for new AIDCs to move to power-rich non-capital regions</strong> shows up in the numbers.
+                </p>
+              ) : (
+                <p>
+                  데이터센터는 <strong>수도권에 {rollupInsight.capDc}곳({rollupInsight.capPct}%)</strong> 몰려 있는 반면,
+                  2025년 신규 발전설비는 <strong>비수도권에 {rollupInsight.nonNew.toLocaleString()}MW</strong>
+                  {rollupInsight.capNew > 0 ? `(수도권 ${rollupInsight.capNew.toLocaleString()}MW)` : ''} 신설 —
+                  <strong> 수요는 수도권, 신규 공급은 비수도권</strong>으로 갈린다.
+                  {rollupInsight.topDc && ` 최다 DC 밀집은 ${rollupInsight.topDc.sido}(${rollupInsight.topDc.dcCount}곳)`}
+                  {rollupInsight.topNew && `, 신규 발전은 ${rollupInsight.topNew.sido}(${rollupInsight.topNew.newMw.toLocaleString()}MW)에 집중`}.
+                  계통영향평가 ±15점(수도권 감점·비수도권 가점)까지 겹쳐, <strong>전력이 있는 비수도권으로 신규 AIDC가 내려갈 유인</strong>이
+                  수치로 드러난다.
+                </p>
+              )}
             </div>
             <p className="chart-note">
               데이터센터(공개 시드) · 2025 신규 발전 설비(설비현황) · 발전허가(3MW 초과 허가대장 2024+). 정렬: DC 공개용량 + 신규 발전
@@ -404,8 +436,8 @@ export default function DashboardPage() {
 
           <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
             <span className="dsh-num">02</span>
-            <span className="dsh-title">입지·시장 신호</span>
-            <span className="dsh-sub">지가 흐름·사업자 공시 — 준비의 선행 지표</span>
+            <span className="dsh-title">{t('입지·시장 신호')}</span>
+            <span className="dsh-sub">{t('지가 흐름·사업자 공시 — 준비의 선행 지표')}</span>
           </div>
           <section className="calc-card">
             <div className="chart-title">LAND PULSE — 입지 시군구 지가변동률 (월간, KOSIS)</div>
@@ -589,8 +621,8 @@ export default function DashboardPage() {
 
           <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
             <span className="dsh-num">03</span>
-            <span className="dsh-title">전력·계통</span>
-            <span className="dsh-sub">공급 여건 — 계통영향평가·설비·발전 믹스 (DC 입지의 핵심 제약)</span>
+            <span className="dsh-title">{t('전력·계통')}</span>
+            <span className="dsh-sub">{t('공급 여건 — 계통영향평가·설비·발전 믹스 (DC 입지의 핵심 제약)')}</span>
           </div>
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
             <div className="chart-title">전력계통영향평가 — 데이터센터 공급 가능/불가 (시도별, 한전 2026.3)</div>
@@ -1027,8 +1059,8 @@ export default function DashboardPage() {
 
           <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
             <span className="dsh-num">04</span>
-            <span className="dsh-title">시스템 진단</span>
-            <span className="dsh-sub">공개 API 연동 상태 — 값은 노출되지 않음</span>
+            <span className="dsh-title">{t('시스템 진단')}</span>
+            <span className="dsh-sub">{t('공개 API 연동 상태 — 값은 노출되지 않음')}</span>
           </div>
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
             <div className="chart-title">API 연동 현황 — 서버 env 진단</div>
