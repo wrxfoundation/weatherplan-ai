@@ -63,6 +63,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'hyperscale-jukjeon',
+    enTitle: 'Anatomy of a top-tier hyperscale — Jukjeon Pacific Sunny (100MW·PUE 1.3·Tier 3)',
+    en: 'A layer-by-layer teardown of one of Korea’s largest colocations (100MW intake, 64MW IT, 100,000㎡, Hyundai E&C, 43 months). 154kV underground direct intake for power, PUE 1.3 (77% of power to servers) for cooling, Tier 3 redundancy with live line-cut commissioning for uptime, 2t/㎡ post-tension for structure. A case where Yongin’s capital-region PSIA penalty was outweighed by demand — five extra floors pre-leased by a global CSP (+15 months, +₩321.5bn). Source: Hyundai E&C.',
     category: '냉각·설비',
     title: '국내 최대급 하이퍼스케일 해부 — 용인 죽전 퍼시픽써니(100MW·PUE 1.3·TIER 3)',
     description:
@@ -79,6 +81,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'power-supply-chain',
+    enTitle: 'From power plant to GPU — the AI datacenter electricity supply chain',
+    en: 'Understand an AI datacenter in the order electricity flows. The external chain (plant → 765/345kV transmission → 154kV+ substation → DC intake) and the internal one (intake → UPS → cooling → GPU → network), laid out at once. Why the substation is the “last gate” for power, and why generation surplus (Incheon 165%) and connection reserve (5MW) can be opposites — linked to real data on 788 substations, grid headroom, and DC serve-ability (capital 46% vs non-capital 84%), mapped onto the 5-axis score.',
     category: '전력·계통',
     title: '발전에서 GPU까지 — AI 데이터센터 전력공급 사슬 전개도',
     description:
@@ -87,6 +91,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'landing-edge',
+    enTitle: 'Capital-region grid saturation and the landing edge — why near cable landing stations',
+    en: 'The capital region lacks not land but power — new transmission takes 7+ years. A “landing edge” architecture overlays upstream generation (non-capital) with the cable landing stations where international traffic arrives (Busan Songjeong, Geoje) — the logic of Marseille and Virginia Beach. The ±15-point rework, AIDC exemptions, and 86.5% of 2025 new generation concentrating in non-capital regions all point the same way.',
     category: '입지·토지',
     title: '수도권 계통 포화와 랜딩 에지 — 왜 해저케이블 육양국 인근인가',
     description:
@@ -111,6 +117,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'national-infrastructure',
+    enTitle: 'When did datacenters become critical national infrastructure — security & geopolitics',
+    en: 'In March 2026 an Iranian drone strike on AWS Bahrain/UAE turned cloud outages into a matter of war and geopolitics. Datacenters are being reclassified as strategic assets on par with the grid and ports, and siting shifts from power → location → resilience → national-trust competition — why subsea cables, multi-region and disaster recovery become new siting axes. Source: KDCC/STRABASE.',
     category: '안보·지정학',
     title: '데이터센터는 언제 국가 핵심 인프라가 되었나 — 안보·복원력·지정학',
     description:
@@ -119,6 +127,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'utility-acquisition',
+    enTitle: 'Why datacenter firms are buying power companies — vertical integration',
+    en: 'Global DC power demand doubles in two years — 31GW (2025) → 66GW (2027). DigitalBridge, Blackstone, KKR and Brookfield are buying power plants, developers and storage, dissolving the boundary between datacenters and energy. The capital-market response as competition moves from compute to power-supply capability — and where domestic vertical integration sits. Source: KDCC/STRABASE (Jul 2026).',
     category: '전력·계통',
     title: '데이터센터 기업은 왜 전력회사를 사들이는가 — 수직 통합',
     description:
@@ -151,6 +161,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'power-track-40mw',
+    enTitle: 'The 40MW wall — datacenter intake-voltage tracks, fully mapped',
+    en: 'One number decides voltage, fee and lead time. Under KEPCO tariff §23: up to 10MW uses 22.9kV; 10–40MW is 154kV in principle (22.9kV conditionally where a substation has reserve); above 40MW mandates 154kV. The intake-review fee jumps from ₩1.35M to ₩7.26M. So the required capacity — set by GPU count and PUE — routes the entire permitting path.',
     category: '전력·계통',
     title: '40MW의 벽 — 데이터센터 수전전압 트랙 완전 정리',
     description:
@@ -159,6 +171,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'psia-exemption-2027',
+    enTitle: 'PSIA and the 2027 non-capital exemption — reading the AIDC act',
+    en: 'At ≥10MW a project falls under the Power System Impact Assessment, where the capital region is structurally disadvantaged by regional scoring. From Feb 2027 the AIDC special act opens an exemption for small non-capital AIDCs — but the threshold is delegated to a presidential decree (still undecided). Three practical scenarios, plus the 345kV information-disclosure variable.',
     category: '정책·인허가',
     title: '계통영향평가와 2027년 비수도권 면제 — AIDC 특별법 독법',
     description:
@@ -175,6 +189,8 @@ export const INSIGHTS = [
   },
   {
     slug: 'seoul-concentration',
+    enTitle: 'The 60% capital-region share and the first cracks — Korea’s datacenter geography',
+    en: '60% of Korea’s 165 datacenters sit in the capital region (KEEI 2024). But the large planned projects head to Haenam, Saemangeum, Pohang, Chuncheon and Ulsan — the “geography of plans” our 80-site seed reveals, and the real variables between plan and completion.',
     category: '입지·토지',
     title: '수도권 60%와 균열의 시작 — 한국 데이터센터의 지리',
     description:
