@@ -6637,6 +6637,8 @@ summary:focus-visible,
 
 /* ── 정밀 부지 리포트 견본(/report-sample) ── */
 .report-page { max-width: 860px; }
+.rlang-btn { font-size: var(--text-xs); font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--grey); cursor: pointer; }
+.rlang-btn.on { color: var(--bg); background: var(--accent); border-color: var(--accent); }
 .report-flag {
   margin-bottom: 18px; padding: 11px 15px; border-radius: 12px;
   font-size: var(--text-sm); line-height: 1.55; color: var(--ink);
@@ -6774,6 +6776,18 @@ summary:focus-visible,
 .data-dict td b { color: var(--text); }
 @media (max-width: 620px) {
   .moat-grid, .fit-grid { grid-template-columns: 1fr; }
+}
+/* Methodology 백서 */
+.method-page { max-width: 880px; }
+.method-head { padding: 6px 0 14px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.method-head h1 { font-size: clamp(1.5rem, 2.6vw, 2rem); line-height: 1.24; margin: 8px 0 12px; }
+.method-sec { margin: 24px 0; }
+.method-sec > h2 { font-size: var(--text-title); margin: 4px 0 10px; }
+@media print {
+  .top-bar, .global-lang, .cursor-glow, .scroll-top-fab { display: none !important; }
+  .method-page { max-width: 100%; }
+  .method-sec, .data-dict { break-inside: avoid; }
+  body { background: #fff; }
 }
 
 /* 문의 모달 */
