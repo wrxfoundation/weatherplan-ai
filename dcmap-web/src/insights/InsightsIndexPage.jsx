@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { INSIGHTS } from '../content/insights_meta.js'
 import AiDraftTool from '../ai/AiDraftTool.jsx'
+import { useMapLang, setMapLang } from '../i18n/mapLang.js'
 
 const TITLE = '인사이트 — AI InfraMap'
 const DESC = '데이터센터 입지·전력·민원·기상을 둘러싼 논쟁을 공개 데이터로 정리하는 AI InfraMap 인사이트.'
@@ -14,7 +15,7 @@ const EN_COUNT = INSIGHTS.filter((a) => a.en).length
 
 export default function InsightsIndexPage() {
   const [cat, setCat] = useState('전체')
-  const [lang, setLang] = useState('ko')
+  const lang = useMapLang()
   const en = lang === 'en'
   useEffect(() => {
     document.title = TITLE
@@ -43,8 +44,8 @@ export default function InsightsIndexPage() {
             <h1>{en ? 'Insights' : '인사이트'}</h1>
           </div>
           <div className="ins-lang">
-            <button type="button" className={`rlang-btn${!en ? ' on' : ''}`} onClick={() => setLang('ko')}>KO</button>
-            <button type="button" className={`rlang-btn${en ? ' on' : ''}`} onClick={() => setLang('en')}>EN <span className="ins-lang-n">{EN_COUNT}</span></button>
+            <button type="button" className={`rlang-btn${!en ? ' on' : ''}`} onClick={() => setMapLang('ko')}>KO</button>
+            <button type="button" className={`rlang-btn${en ? ' on' : ''}`} onClick={() => setMapLang('en')}>EN <span className="ins-lang-n">{EN_COUNT}</span></button>
           </div>
         </div>
         <p className="sub">
