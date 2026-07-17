@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { LAND_DONG, LAND_DONG_PERIOD } from '../data/landPriceDong.js'
 import { fmtRate } from '../data/landPrice.js'
+import { useMapLang } from '../i18n/mapLang.js'
 
 const TITLE = 'LAND PULSE — 입지 지가변동률 시·군·구·동 리스트 · AI InfraMap'
 const DESC =
@@ -20,6 +21,7 @@ function SignedBar({ rate, maxAbs }) {
 }
 
 export default function LandPulsePage() {
+  const en = useMapLang() === 'en'
   const [sido, setSido] = useState('')
   const [sort, setSort] = useState('rate') // rate | name
   const [open, setOpen] = useState(() => new Set())
@@ -67,24 +69,33 @@ export default function LandPulsePage() {
       <TopBar />
       <main className="page">
         <div className="eyebrow">LAND PULSE</div>
-        <h1>입지 지가변동률 — 시·군·구·동</h1>
+        <h1>{en ? 'Site land-price change — si·gun·gu·dong' : '입지 지가변동률 — 시·군·구·동'}</h1>
         <p className="sub">
-          DC 입지 시군구 {Object.keys(LAND_DONG.entries).length}곳 · 읍면동 조사구역 {totalDongs}개 —{' '}
-          {LAND_DONG_PERIOD} 월간, KOSIS·한국부동산원. 행을 누르면 동 단위로 펼쳐집니다.
+          {en ? (
+            <>
+              {Object.keys(LAND_DONG.entries).length} DC-site si·gun·gu · {totalDongs} eup·myeon·dong survey zones —{' '}
+              {LAND_DONG_PERIOD} monthly, KOSIS · Korea Real Estate Board. Tap a row to expand to dong level.
+            </>
+          ) : (
+            <>
+              DC 입지 시군구 {Object.keys(LAND_DONG.entries).length}곳 · 읍면동 조사구역 {totalDongs}개 —{' '}
+              {LAND_DONG_PERIOD} 월간, KOSIS·한국부동산원. 행을 누르면 동 단위로 펼쳐집니다.
+            </>
+          )}
         </p>
 
         <div className="filterbar-inline">
-          <select value={sido} onChange={(e) => setSido(e.target.value)} aria-label="시도 필터">
-            <option value="">시도 전체</option>
+          <select value={sido} onChange={(e) => setSido(e.target.value)} aria-label={en ? 'Sido filter' : '시도 필터'}>
+            <option value="">{en ? 'All sido' : '시도 전체'}</option>
             {sidos.map((s) => (
               <option key={s} value={s}>
                 {s}
               </option>
             ))}
           </select>
-          <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="정렬">
-            <option value="rate">변동률순</option>
-            <option value="name">이름순</option>
+          <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label={en ? 'Sort' : '정렬'}>
+            <option value="rate">{en ? 'By change rate' : '변동률순'}</option>
+            <option value="name">{en ? 'By name' : '이름순'}</option>
           </select>
         </div>
 
@@ -101,7 +112,7 @@ export default function LandPulsePage() {
                 <span className="land-name">{r.key}</span>
                 <SignedBar rate={r.rate} maxAbs={maxAbs} />
                 <span className="hbar-value">{fmtRate(r.rate)}</span>
-                <span className="land-meta">{r.dongs.length ? `${r.dongs.length}구역` : '세분화 미제공'}</span>
+                <span className="land-meta">{r.dongs.length ? (en ? `${r.dongs.length} zones` : `${r.dongs.length}구역`) : (en ? 'no breakdown' : '세분화 미제공')}</span>
                 <span className="land-caret">{r.dongs.length ? (open.has(r.key) ? '▾' : '▸') : ''}</span>
               </button>
               {open.has(r.key) && (
@@ -120,9 +131,20 @@ export default function LandPulsePage() {
         </div>
 
         <p className="footer-note">
-          구역 명칭은 부동산원 조사구역 단위(복수 법정동 병기 가능) · 음수는 amber. 단월 스냅샷으로 추세를 단정하지
-          않습니다 — 방법론과 정직성 규칙: <Link to="/insights/land-pulse-methodology">LAND PULSE 방법론</Link>.
-          기준월 갱신은 부동산원 공표(익월 하순) 후 자동 반영 예정(D5).
+          {en ? (
+            <>
+              Zone names follow Korea Real Estate Board survey-zone units (multiple legal-dong may be listed) · negatives in amber.
+              A single-month snapshot does not assert a trend — methodology and honesty rules:{' '}
+              <Link to="/insights/land-pulse-methodology">LAND PULSE methodology</Link>.
+              The base month auto-updates after the Board's publication (late the following month) (D5).
+            </>
+          ) : (
+            <>
+              구역 명칭은 부동산원 조사구역 단위(복수 법정동 병기 가능) · 음수는 amber. 단월 스냅샷으로 추세를 단정하지
+              않습니다 — 방법론과 정직성 규칙: <Link to="/insights/land-pulse-methodology">LAND PULSE 방법론</Link>.
+              기준월 갱신은 부동산원 공표(익월 하순) 후 자동 반영 예정(D5).
+            </>
+          )}
         </p>
       </main>
     </>

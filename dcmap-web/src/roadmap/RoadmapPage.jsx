@@ -3,6 +3,18 @@ import { Link } from 'react-router-dom'
 import PolicyTracker from './PolicyTracker.jsx'
 import TopBar from '../TopBar.jsx'
 import Term from '../components/Term.jsx'
+import { useMapLang } from '../i18n/mapLang.js'
+
+// 축 라벨 KO→EN(insight-tag 등에서 반복 사용)
+const AXIS_EN = { 토지: 'Land', 전력: 'Power', 냉각: 'Cooling', 리스크: 'Risk', 네트워크: 'Network', 인허가: 'Permitting', 운영: 'Operations' }
+const axisT = (a, en) => (en ? AXIS_EN[a] ?? a : a)
+// 로드맵 핵심 용어 칩 KO→EN(표시만; Term의 조회 key는 KO 유지)
+const TERM_EN = {
+  용도지역: 'Zoning', 지가변동률: 'Land-price change', 계약전력: 'Contracted capacity', 수전전압: 'Supply voltage',
+  전력계통영향평가: 'PSIA', '±15점': '±15 points', 계통여유: 'Grid headroom', 헤드룸: 'Headroom',
+  프리쿨링: 'Free cooling', 침수심: 'Flood depth', 인구격자: 'Population grid', 육양국: 'Cable landing station', 백본: 'Backbone',
+}
+const termT = (t, en) => (en ? TERM_EN[t] ?? t : t)
 
 // 각 단계의 어려운 용어 — 이름 옆 (?)로 그 자리에서 쉬운 설명(용어집과 별개, 인라인 도움말).
 const STEP_TERMS = {
@@ -37,63 +49,83 @@ const TRANS = { plan: 442, approved: 188, underway: 202, done: 14, total: 442 + 
 const STEPS = [
   {
     n: 1, axis: '토지', title: '부지 선정 — 용도지역·면적·지가',
+    title_en: 'Site selection — zoning · area · land price',
     what: '공업지역·계획관리 등 데이터센터가 허용되는 용도지역인지, 필요 면적·형상, 지가·거래가를 확인. 절차 하자 하나가 프로젝트를 멈춘다(버지니아 QTS 사례).',
+    what_en: 'Check whether the zoning allows datacenters (industrial, planned-management, etc.), the required area and shape, and land / transaction prices. One procedural flaw can halt a project (the Virginia QTS case).',
     source: 'vworld 용도지역·토지이음 · KOSIS/부동산원 지가',
-    links: [{ to: '/', label: '지점 분석(빈 곳 클릭)' }, { to: '/land', label: 'LAND PULSE 지가' }],
+    links: [{ to: '/', label: '지점 분석(빈 곳 클릭)', label_en: 'Point analysis (click empty spot)' }, { to: '/land', label: 'LAND PULSE 지가', label_en: 'LAND PULSE land price' }],
   },
   {
     n: 2, axis: '전력', title: '수전전압 트랙 결정 — 계약전력→전압',
+    title_en: 'Choosing the supply-voltage track — contracted capacity → voltage',
     what: '필요 용량이 전압 트랙을 결정한다(약관 제23조): 1만kW(10MW)까지 22.9kV 일반공급, 10~40MW는 154kV 원칙이나 한전 변전소 여유 시 22.9kV 조건부 가능, 40MW 초과 154kV 의무(400MW 초과 345kV). GPU 대수→MW 환산으로 트랙을 먼저 가늠.',
+    what_en: 'Required capacity decides the voltage track (Provisions Art. 23): up to 10,000kW (10MW) general 22.9kV supply; 10–40MW is 154kV in principle but 22.9kV is conditionally possible where the KEPCO substation has headroom; above 40MW 154kV is mandatory (above 400MW, 345kV). Gauge the track first by converting GPU count → MW.',
     source: '한전 기본공급약관 제23조',
-    links: [{ to: '/calc', label: 'GPU→MW 계산기' }, { to: '/insights/power-track-40mw', label: '40MW의 벽' }],
+    links: [{ to: '/calc', label: 'GPU→MW 계산기', label_en: 'GPU→MW calculator' }, { to: '/insights/power-track-40mw', label: '40MW의 벽', label_en: 'The 40MW wall' }],
   },
   {
     n: 3, axis: '전력', title: '계통 연계·계통영향평가',
+    title_en: 'Grid connection · power-system impact assessment',
     what: '10MW 이상은 전력계통영향평가 대상. 2025.11 개편으로 적정전압이 필수 요건이 되고 입지별 최대 ±15점 가감점(수도권 억제)·자가발전/에너지효율 의무가 정량화됐다. 비수도권은 AIDC 특별법(2027.2) 면제 가능 + 국가기간 전력망 특별법(2025.9)이 인프라 구축을 앞당긴다. 계통 여유용량이 큰 권역을 먼저 본다.',
+    what_en: 'Loads of 10MW or more are subject to the PSIA. The Nov 2025 revision made adequate voltage a mandatory requirement and quantified location-based scoring of up to ±15 points (capital-region suppression) plus self-generation / energy-efficiency obligations. Non-capital regions can be exempt under the AIDC Special Act (Feb 2027), and the National Backbone Power Grid Act (Sep 2025) speeds up infrastructure. Look first at regions with large grid headroom.',
     source: '기후에너지환경부 공고 제2025-139호(±15점 개편) · 국가기간 전력망 확충 특별법 · AIDC 특별법',
-    links: [{ to: '/power', label: '전력지도(발전·여유)' }, { to: '/insights/market-2025h2', label: '±15점 시대' }, { to: '/insights/psia-exemption-2027', label: '계통영향평가·특례' }],
+    links: [{ to: '/power', label: '전력지도(발전·여유)', label_en: 'Power map (generation · headroom)' }, { to: '/insights/market-2025h2', label: '±15점 시대', label_en: 'The ±15-point era' }, { to: '/insights/psia-exemption-2027', label: '계통영향평가·특례', label_en: 'PSIA · exemptions' }],
   },
   {
     n: 4, axis: '전력', title: '송·변전 인프라 확인 — 한전 건설 4단계',
+    title_en: 'Checking transmission / substation infrastructure — KEPCO’s 4 build stages',
     what: `접속 가능한 154kV+ 변전소·송전선로가 있는지, 인근 송변전 건설사업이 진행 중인지. 한전 송변전 건설 정보공개 플랫폼에 전국 ${TRANS.total}건이 단계별로 공개된다: 계획확정~사업승인전 ${TRANS.plan} · 사업승인~공사착수전 ${TRANS.approved} · 공사착수~완료전 ${TRANS.underway} · 완료~준공후1년 ${TRANS.done}.`,
+    what_en: `Whether a connectable 154kV+ substation / transmission line exists, and whether a nearby transmission-substation build is underway. KEPCO’s transmission-substation construction disclosure platform lists ${TRANS.total} nationwide projects by stage: plan confirmed–pre-approval ${TRANS.plan} · approved–pre-start ${TRANS.approved} · started–pre-completion ${TRANS.underway} · completed–within 1 yr of commissioning ${TRANS.done}.`,
     source: '한전 송변전 건설 정보공개 플랫폼(kepco.co.kr) · 345kV 여유 변전소 정보 공개(정부 예고)',
-    links: [{ to: '/insights/mega-project-aidc', label: '345kV 정보 공개' }],
+    links: [{ to: '/insights/mega-project-aidc', label: '345kV 정보 공개', label_en: '345kV disclosure' }],
   },
   {
     n: 5, axis: '전력', title: '발전 조달 — PPA·자가발전·재생E',
+    title_en: 'Generation procurement — PPA · self-generation · renewables',
     what: '유틸리티가 "발전기를 직접 들고 오라"는 시대. PPA 직결·자가발전·SMR·ESS로 전력을 확보한다. 발전사업 허가대장에서 신규 허가의 86.5%가 신재생 — 전남·경북·강원 벨트에 몰린다.',
+    what_en: 'An era where the utility says “bring your own generator.” Secure power via direct PPA, self-generation, SMR and ESS. In the generation-license register, 86.5% of new licenses are renewables — concentrated in the Jeonnam–Gyeongbuk–Gangwon belt.',
     source: '3MW 초과 발전사업 허가대장(2026-04) · EPSIS 발전설비',
-    links: [{ to: '/power', label: '발전 공급 지도' }, { to: '/insights/power-permit-battle', label: '전력·허가가 승부' }],
+    links: [{ to: '/power', label: '발전 공급 지도', label_en: 'Generation supply map' }, { to: '/insights/power-permit-battle', label: '전력·허가가 승부', label_en: 'Power & permits decide' }],
   },
   {
     n: 6, axis: '냉각', title: '냉각·용수 설계',
+    title_en: 'Cooling & water design',
     what: 'GPU TDP 1.5~2kW는 액체냉각 전환점. 냉각은 용수 확보·수질·기상(프리쿨링·습구온도)에 종속된 입지 문제다. 외기도입 여지가 큰 권역·용수원 근접을 본다.',
+    what_en: 'A GPU TDP of 1.5–2kW is the liquid-cooling tipping point. Cooling is a siting problem dependent on water supply, water quality and weather (free cooling, wet-bulb temperature). Look at regions with room for outside-air intake and proximity to a water source.',
     source: 'OCP 공개 기술자료 · 기상청 공공',
-    links: [{ to: '/insights/liquid-cooling-brief', label: '액체냉각 전환' }, { to: '/insights/cooling-platform-ma', label: '냉각 M&A' }],
+    links: [{ to: '/insights/liquid-cooling-brief', label: '액체냉각 전환', label_en: 'Liquid-cooling shift' }, { to: '/insights/cooling-platform-ma', label: '냉각 M&A', label_en: 'Cooling M&A' }],
   },
   {
     n: 7, axis: '리스크', title: '리스크 검토 — 침수·민원·재해·군사',
+    title_en: 'Risk review — flooding · complaints · disasters · military',
     what: '침수(홍수위험지도)·반경 주거 인구(민원 프록시)·재해 이력·군사/문화재/상수원 제약을 확인. 데이터센터에 침수는 치명적이다.',
+    what_en: 'Check flooding (flood-risk map), residential population within a radius (complaint proxy), disaster history, and military / cultural-heritage / water-source constraints. Flooding is fatal to a datacenter.',
     source: '홍수위험지도 · SGIS 인구격자 · 재난안전 재해연보',
-    links: [{ to: '/', label: '지점 분석 리스크 셀' }, { to: '/insights/national-infrastructure', label: '복원력·지정학' }],
+    links: [{ to: '/', label: '지점 분석 리스크 셀', label_en: 'Point analysis risk cell' }, { to: '/insights/national-infrastructure', label: '복원력·지정학', label_en: 'Resilience · geopolitics' }],
   },
   {
     n: 8, axis: '네트워크', title: '네트워크 — 백본·해저케이블',
+    title_en: 'Network — backbone · submarine cables',
     what: '백본 국사/IX 근접성과 해저케이블 육양국(부산 송정·거제 등)까지의 경로가 지연시간·다중 리전 구성을 좌우한다.',
+    what_en: 'Proximity to backbone POPs/IXs and the route to submarine-cable landing stations (Busan Songjeong, Geoje, etc.) govern latency and multi-region setups.',
     source: '공개 통신 인프라(근사·검증 대기)',
-    links: [{ to: '/', label: '지점 분석 네트워크 셀' }],
+    links: [{ to: '/', label: '지점 분석 네트워크 셀', label_en: 'Point analysis network cell' }],
   },
   {
     n: 9, axis: '인허가', title: '건설 인허가·환경영향평가·준공',
+    title_en: 'Construction permits · environmental impact assessment · completion',
     what: '건축허가·환경영향평가·소방·정보통신공사 등 개별 인허가를 병렬 처리. AIDC 특별법의 통합 창구·타임아웃제가 리드타임을 줄인다.',
+    what_en: 'Process individual permits — building permit, EIA, fire safety, IT/telecom works — in parallel. The AIDC Special Act’s single-window and time-out rules cut the lead time.',
     source: 'AIDC 특별법 · 지자체 인허가',
-    links: [{ to: '/glossary', label: '인허가 용어집' }],
+    links: [{ to: '/glossary', label: '인허가 용어집', label_en: 'Permitting glossary' }],
   },
   {
     n: 10, axis: '운영', title: '운영 — PUE·RE100·복원력',
+    title_en: 'Operations — PUE · RE100 · resilience',
     what: '준공 후 PUE·전력비(LCOE)·RE100 조달률이 장기 경쟁력을 가른다. 다중 리전·재해복구는 국가 신뢰도 경쟁의 조건이 된다.',
+    what_en: 'After commissioning, PUE, power cost (LCOE) and RE100 procurement rate decide long-term competitiveness. Multi-region and disaster recovery become conditions in the competition for national trust.',
     source: '사업자 공시(DART) · KDCC/KEEI',
-    links: [{ to: '/dashboard', label: '대시보드' }, { to: '/stats', label: '통계' }],
+    links: [{ to: '/dashboard', label: '대시보드', label_en: 'Dashboard' }, { to: '/stats', label: '통계', label_en: 'Statistics' }],
   },
 ]
 
@@ -102,54 +134,55 @@ const AXIS_ORDER = ['토지', '전력', '냉각', '리스크', '네트워크', '
 /* ---------- 프로세스 프레임(스윔레인) 모델 ---------- */
 // 레인 = 참여 주체, 게이트 = 단계. 공개 규정 기준 표준 흐름(사업별 상이).
 const LANES = [
-  { id: 'biz', label: '사업자(개발·운영)' },
-  { id: 'gov', label: '지자체(인허가권자)' },
-  { id: 'kepco', label: '한전(계통·송변전)' },
-  { id: 'psia', label: '전기위·기후에너지환경부' },
-  { id: 'gen', label: '발전사·투자자' },
+  { id: 'biz', label: '사업자(개발·운영)', label_en: 'Operator (dev · ops)' },
+  { id: 'gov', label: '지자체(인허가권자)', label_en: 'Local gov (permitting authority)' },
+  { id: 'kepco', label: '한전(계통·송변전)', label_en: 'KEPCO (grid · transmission)' },
+  { id: 'psia', label: '전기위·기후에너지환경부', label_en: 'Electricity Commission · Ministry of Climate, Energy & Environment' },
+  { id: 'gen', label: '발전사·투자자', label_en: 'Generators · investors' },
 ]
 const GATES = [
-  { id: 'g0', label: 'G0 입지검토' },
-  { id: 'g1', label: 'G1 부지·인허가' },
-  { id: 'g2', label: 'G2 전력계통' },
-  { id: 'g3', label: 'G3 조달·설계' },
-  { id: 'g4', label: 'G4 건설·준공' },
-  { id: 'g5', label: 'G5 운영' },
+  { id: 'g0', label: 'G0 입지검토', label_en: 'G0 Site review' },
+  { id: 'g1', label: 'G1 부지·인허가', label_en: 'G1 Site · permitting' },
+  { id: 'g2', label: 'G2 전력계통', label_en: 'G2 Power grid' },
+  { id: 'g3', label: 'G3 조달·설계', label_en: 'G3 Procurement · design' },
+  { id: 'g4', label: 'G4 건설·준공', label_en: 'G4 Build · completion' },
+  { id: 'g5', label: 'G5 운영', label_en: 'G5 Operations' },
 ]
 const st = (n) => STEPS[n - 1]
 // gatekeeper: 실제 사업을 멈추는 핵심 관문(계통 접속·계통영향평가)
 // 노드 분해 스키마(korea100 '제도 은하' 카드 형식 차용): bottleneck 병목 · branch 분기점 ·
 // docs 필요 서류 · time 리드타임 골자 — 전부 공개 근거(약관·법·국정감사)에서만 채우고, 없으면 생략(정직).
 const NODES = [
-  { id: 'P01', lane: 'biz', gate: 'g0', axis: st(1).axis, title: '부지·용도지역 검토', note: st(1).what, basis: st(1).source, links: st(1).links,
-    docs: '토지이용계획확인원(토지이음) · 용도지역 확인', bottleneck: '용도지역 부적합·규제지구(토지거래허가 등) — 초기 스크리닝 누락 시 후단 전체 지연' },
-  { id: 'P02', lane: 'biz', gate: 'g0', axis: st(2).axis, title: '수전전압 트랙 산정(GPU→MW)', note: st(2).what, basis: st(2).source, links: st(2).links,
-    branch: '≤10MW 22.9kV / 10–40MW 154kV 원칙(변전소 여유 시 22.9kV 조건부) / 40MW+ 154kV 의무 / 400MW+ 345kV' },
-  { id: 'P03', lane: 'biz', gate: 'g0', axis: st(8).axis, title: '네트워크·백본 경로 검토', note: st(8).what, basis: st(8).source, links: st(8).links },
-  { id: 'P04', lane: 'biz', gate: 'g1', axis: st(7).axis, title: '리스크 스크리닝(침수·민원·재해)', note: st(7).what, basis: st(7).source, links: st(7).links,
-    bottleneck: '침수·산사태 노출과 고밀도 지역 민원 — 인허가·공사 단계의 대표 지연 요인' },
-  { id: 'P05', lane: 'gov', gate: 'g1', axis: '인허가', title: '부지 확보·건축 인허가 협의', note: '용도지역 적합·건축허가 사전협의. 절차 하자 하나가 사업을 멈춘다(버지니아 QTS 사례).', basis: '국토계획법·건축법·지자체 조례', links: [{ to: '/glossary', label: '인허가 용어집' }, { href: 'https://chris.gomdori.app/korea100', label: '범용 행정제도 구조(제도 은하) ↗' }],
-    docs: '건축허가 신청 · 개발행위허가(해당 시) · 지자체 사전협의', bottleneck: '주민 민원·지자체 조례 — 절차 하자 시 소송·중단 리스크' },
-  { id: 'P06', lane: 'gov', gate: 'g1', axis: '인허가', title: '환경영향평가', note: '사업 규모별 환경영향평가/소규모 환경영향평가 대상 판단·협의.', basis: '환경영향평가법', links: [],
-    branch: '규모별 환경영향평가 / 소규모 환경영향평가 / 비대상' },
-  { id: 'P07', lane: 'kepco', gate: 'g2', axis: '전력', title: '한전 접속 신청·기술검토', note: '수전전압 트랙(22.9/154kV)별 접속 신청과 기술검토. 40MW 초과는 154kV 의무.', basis: '한전 기본공급약관 제23조', links: [{ to: '/calc', label: 'GPU→MW 계산기' }], gatekeeper: true,
-    docs: '전기사용신청 · 전기사용예정통지(5,000kW+)', bottleneck: '변전소·계통 여유 부족 → 공급 불가 판정 — 수도권 1차 기술검토 522건 중 53.4%가 불가(’25.8–’26.3, 기후부 공표)', branch: '여유 有 → 접속 계약 / 여유 無 → 송변전 보강 대기 또는 입지 변경' },
-  { id: 'P08', lane: 'psia', gate: 'g2', axis: '전력', title: '전력계통영향평가 심의(±15점)', note: st(3).what, basis: st(3).source, links: st(3).links, gatekeeper: true,
-    time: '평가 대행 수수료 10MW당 약 1–1.5억원(국정감사 지적) + 심의 리드타임', bottleneck: '수도권 억제 배점(±15) — 본심사 통과 수도권 10/24 vs 비수도권 26/29, 전국 공급불가의 91%가 수도권(’25.8–’26.3 기후부 공표)', branch: '비수도권 + 상한(대통령령 미정) 이내면 2027.3~ 면제 트랙 · 법정 고시 연내 제정 추진(대행자 제도 포함)' },
-  { id: 'P09', lane: 'kepco', gate: 'g2', axis: '전력', title: '송·변전 인프라 확인·확충', note: st(4).what, basis: st(4).source, links: st(4).links,
-    bottleneck: '송변전 건설은 수년 단위 — 완공 대기 리스크(한전 건설 4단계 공개)' },
-  { id: 'P10', lane: 'gen', gate: 'g3', axis: '전력', title: '발전 조달(PPA·자가발전·재생E)', note: st(5).what, basis: st(5).source, links: st(5).links },
-  { id: 'P11', lane: 'gen', gate: 'g3', axis: '운영', title: '금융·투자 조달', note: '대규모 CAPEX 투자·금융 조달. DART 공시로 착공·투자 신호를 읽는다.', basis: '사업자 공시(DART)', links: [{ to: '/dashboard', label: '대시보드' }] },
-  { id: 'P12', lane: 'biz', gate: 'g3', axis: st(6).axis, title: '냉각·용수 설계', note: st(6).what, basis: st(6).source, links: st(6).links,
-    docs: '공업용수·상수도 인입 협의(지방·산단 상수도사업소)' },
-  { id: 'P13', lane: 'biz', gate: 'g4', axis: '인허가', title: '착공·건설', note: '소방·정보통신공사 등 개별 인허가를 병렬 처리 후 착공.', basis: 'AIDC 특별법 통합창구·타임아웃제', links: [],
-    time: 'AIDC 특별법 타임아웃제(2027.3~) — 기한 내 미처리 시 자동 처리 간주' },
-  { id: 'P14', lane: 'gov', gate: 'g4', axis: '인허가', title: '준공·사용승인', note: st(9).what, basis: st(9).source, links: st(9).links,
-    docs: '사용승인 신청 · 전기설비 사용전검사' },
-  { id: 'P15', lane: 'biz', gate: 'g5', axis: st(10).axis, title: '운영(PUE·RE100·복원력)', note: st(10).what, basis: st(10).source, links: st(10).links },
+  { id: 'P01', lane: 'biz', gate: 'g0', axis: st(1).axis, title: '부지·용도지역 검토', title_en: 'Site · zoning review', note: st(1).what, note_en: st(1).what_en, basis: st(1).source, links: st(1).links,
+    docs: '토지이용계획확인원(토지이음) · 용도지역 확인', docs_en: 'Land-use plan confirmation (Toji-Eum) · zoning check', bottleneck: '용도지역 부적합·규제지구(토지거래허가 등) — 초기 스크리닝 누락 시 후단 전체 지연', bottleneck_en: 'Zoning mismatch · regulated district (land-transaction permit, etc.) — a missed early screening delays everything downstream' },
+  { id: 'P02', lane: 'biz', gate: 'g0', axis: st(2).axis, title: '수전전압 트랙 산정(GPU→MW)', title_en: 'Supply-voltage track sizing (GPU→MW)', note: st(2).what, note_en: st(2).what_en, basis: st(2).source, links: st(2).links,
+    branch: '≤10MW 22.9kV / 10–40MW 154kV 원칙(변전소 여유 시 22.9kV 조건부) / 40MW+ 154kV 의무 / 400MW+ 345kV', branch_en: '≤10MW 22.9kV / 10–40MW 154kV in principle (22.9kV conditional if substation headroom) / 40MW+ 154kV mandatory / 400MW+ 345kV' },
+  { id: 'P03', lane: 'biz', gate: 'g0', axis: st(8).axis, title: '네트워크·백본 경로 검토', title_en: 'Network · backbone route review', note: st(8).what, note_en: st(8).what_en, basis: st(8).source, links: st(8).links },
+  { id: 'P04', lane: 'biz', gate: 'g1', axis: st(7).axis, title: '리스크 스크리닝(침수·민원·재해)', title_en: 'Risk screening (flooding · complaints · disasters)', note: st(7).what, note_en: st(7).what_en, basis: st(7).source, links: st(7).links,
+    bottleneck: '침수·산사태 노출과 고밀도 지역 민원 — 인허가·공사 단계의 대표 지연 요인', bottleneck_en: 'Flood / landslide exposure and complaints in high-density areas — a leading delay factor in permitting and construction' },
+  { id: 'P05', lane: 'gov', gate: 'g1', axis: '인허가', title: '부지 확보·건축 인허가 협의', title_en: 'Site securing · building-permit consultation', note: '용도지역 적합·건축허가 사전협의. 절차 하자 하나가 사업을 멈춘다(버지니아 QTS 사례).', note_en: 'Zoning suitability · building-permit pre-consultation. One procedural flaw halts a project (the Virginia QTS case).', basis: '국토계획법·건축법·지자체 조례', links: [{ to: '/glossary', label: '인허가 용어집', label_en: 'Permitting glossary' }, { href: 'https://chris.gomdori.app/korea100', label: '범용 행정제도 구조(제도 은하) ↗', label_en: 'General administrative-system structure (Institution Galaxy) ↗' }],
+    docs: '건축허가 신청 · 개발행위허가(해당 시) · 지자체 사전협의', docs_en: 'Building-permit application · development-activity permit (if applicable) · local-gov pre-consultation', bottleneck: '주민 민원·지자체 조례 — 절차 하자 시 소송·중단 리스크', bottleneck_en: 'Resident complaints · local ordinances — litigation / suspension risk on a procedural flaw' },
+  { id: 'P06', lane: 'gov', gate: 'g1', axis: '인허가', title: '환경영향평가', title_en: 'Environmental impact assessment', note: '사업 규모별 환경영향평가/소규모 환경영향평가 대상 판단·협의.', note_en: 'Determine and consult on EIA / small-scale EIA applicability by project scale.', basis: '환경영향평가법', links: [],
+    branch: '규모별 환경영향평가 / 소규모 환경영향평가 / 비대상', branch_en: 'Scale-based EIA / small-scale EIA / not applicable' },
+  { id: 'P07', lane: 'kepco', gate: 'g2', axis: '전력', title: '한전 접속 신청·기술검토', title_en: 'KEPCO connection application · technical review', note: '수전전압 트랙(22.9/154kV)별 접속 신청과 기술검토. 40MW 초과는 154kV 의무.', note_en: 'Connection application and technical review by supply-voltage track (22.9/154kV). Above 40MW, 154kV is mandatory.', basis: '한전 기본공급약관 제23조', links: [{ to: '/calc', label: 'GPU→MW 계산기', label_en: 'GPU→MW calculator' }], gatekeeper: true,
+    docs: '전기사용신청 · 전기사용예정통지(5,000kW+)', docs_en: 'Electricity-use application · electricity-use advance notice (5,000kW+)', bottleneck: '변전소·계통 여유 부족 → 공급 불가 판정 — 수도권 1차 기술검토 522건 중 53.4%가 불가(’25.8–’26.3, 기후부 공표)', bottleneck_en: 'Insufficient substation / grid headroom → “supply not possible” — of 522 capital-region first-stage technical reviews, 53.4% were “not possible” (Aug ’25–Mar ’26, Ministry of Climate, Energy & Environment)', branch: '여유 有 → 접속 계약 / 여유 無 → 송변전 보강 대기 또는 입지 변경', branch_en: 'Headroom yes → connection contract / no → wait for transmission reinforcement or change site' },
+  { id: 'P08', lane: 'psia', gate: 'g2', axis: '전력', title: '전력계통영향평가 심의(±15점)', title_en: 'PSIA deliberation (±15 points)', note: st(3).what, note_en: st(3).what_en, basis: st(3).source, links: st(3).links, gatekeeper: true,
+    time: '평가 대행 수수료 10MW당 약 1–1.5억원(국정감사 지적) + 심의 리드타임', time_en: 'Assessment agency fee about KRW 100–150M per 10MW (flagged in a National Assembly audit) + review lead time', bottleneck: '수도권 억제 배점(±15) — 본심사 통과 수도권 10/24 vs 비수도권 26/29, 전국 공급불가의 91%가 수도권(’25.8–’26.3 기후부 공표)', bottleneck_en: 'Capital-region suppression score (±15) — main-review passes 10/24 in the capital region vs. 26/29 outside; 91% of nationwide “not possible” cases are in the capital region (Aug ’25–Mar ’26, Ministry of Climate, Energy & Environment)', branch: '비수도권 + 상한(대통령령 미정) 이내면 2027.3~ 면제 트랙 · 법정 고시 연내 제정 추진(대행자 제도 포함)', branch_en: 'Non-capital and within the cap (presidential decree pending) → exemption track from Mar 2027 · statutory notice targeted for enactment this year (incl. an agency scheme)' },
+  { id: 'P09', lane: 'kepco', gate: 'g2', axis: '전력', title: '송·변전 인프라 확인·확충', title_en: 'Transmission / substation infrastructure check · reinforcement', note: st(4).what, note_en: st(4).what_en, basis: st(4).source, links: st(4).links,
+    bottleneck: '송변전 건설은 수년 단위 — 완공 대기 리스크(한전 건설 4단계 공개)', bottleneck_en: 'Transmission-substation construction runs on a multi-year scale — completion-wait risk (KEPCO’s 4 build stages disclosed)' },
+  { id: 'P10', lane: 'gen', gate: 'g3', axis: '전력', title: '발전 조달(PPA·자가발전·재생E)', title_en: 'Generation procurement (PPA · self-generation · renewables)', note: st(5).what, note_en: st(5).what_en, basis: st(5).source, links: st(5).links },
+  { id: 'P11', lane: 'gen', gate: 'g3', axis: '운영', title: '금융·투자 조달', title_en: 'Financing · investment', note: '대규모 CAPEX 투자·금융 조달. DART 공시로 착공·투자 신호를 읽는다.', note_en: 'Large CAPEX investment and financing. Read start-of-construction and investment signals from DART disclosures.', basis: '사업자 공시(DART)', links: [{ to: '/dashboard', label: '대시보드', label_en: 'Dashboard' }] },
+  { id: 'P12', lane: 'biz', gate: 'g3', axis: st(6).axis, title: '냉각·용수 설계', title_en: 'Cooling & water design', note: st(6).what, note_en: st(6).what_en, basis: st(6).source, links: st(6).links,
+    docs: '공업용수·상수도 인입 협의(지방·산단 상수도사업소)', docs_en: 'Industrial-water / tap-water intake consultation (local · industrial-complex waterworks office)' },
+  { id: 'P13', lane: 'biz', gate: 'g4', axis: '인허가', title: '착공·건설', title_en: 'Groundbreaking · construction', note: '소방·정보통신공사 등 개별 인허가를 병렬 처리 후 착공.', note_en: 'Start construction after processing individual permits (fire safety, IT/telecom works, etc.) in parallel.', basis: 'AIDC 특별법 통합창구·타임아웃제', links: [],
+    time: 'AIDC 특별법 타임아웃제(2027.3~) — 기한 내 미처리 시 자동 처리 간주', time_en: 'AIDC Special Act time-out rule (from Mar 2027) — deemed auto-processed if not handled within the deadline' },
+  { id: 'P14', lane: 'gov', gate: 'g4', axis: '인허가', title: '준공·사용승인', title_en: 'Completion · use approval', note: st(9).what, note_en: st(9).what_en, basis: st(9).source, links: st(9).links,
+    docs: '사용승인 신청 · 전기설비 사용전검사', docs_en: 'Use-approval application · pre-use inspection of electrical facilities' },
+  { id: 'P15', lane: 'biz', gate: 'g5', axis: st(10).axis, title: '운영(PUE·RE100·복원력)', title_en: 'Operations (PUE · RE100 · resilience)', note: st(10).what, note_en: st(10).what_en, basis: st(10).source, links: st(10).links },
 ]
 
 function ProcessFrame() {
+  const en = useMapLang() === 'en'
   const [selId, setSelId] = useState('P08') // 기본 선택 = 핵심 관문(계통영향평가)
   const sel = NODES.find((n) => n.id === selId) ?? NODES[0]
   const selLane = LANES.find((l) => l.id === sel.lane)
@@ -161,17 +194,17 @@ function ProcessFrame() {
       <div className="frame-scroll">
         <div className="swimlane" style={{ gridTemplateColumns: cols }}>
           <div className="sl-corner">
-            레인 <span className="sl-slash">╲</span> 게이트
+            {en ? 'Lane' : '레인'} <span className="sl-slash">╲</span> {en ? 'Gate' : '게이트'}
           </div>
           {GATES.map((g) => (
             <div key={g.id} className="sl-gate">
-              {g.label}
+              {en ? g.label_en : g.label}
             </div>
           ))}
 
           {LANES.map((lane) => (
             <div key={lane.id} className="sl-row" style={{ display: 'contents' }}>
-              <div className="sl-lane">{lane.label}</div>
+              <div className="sl-lane">{en ? lane.label_en : lane.label}</div>
               {GATES.map((gate) => {
                 const cell = NODES.filter((n) => n.lane === lane.id && n.gate === gate.id)
                 return (
@@ -186,10 +219,10 @@ function ProcessFrame() {
                       >
                         <span className="sl-node-head">
                           <span className="sl-node-id">{n.id}</span>
-                          {n.gatekeeper && <span className="sl-badge">관문</span>}
+                          {n.gatekeeper && <span className="sl-badge">{en ? 'gate' : '관문'}</span>}
                         </span>
-                        <span className="sl-node-title">{n.title}</span>
-                        <span className="sl-node-axis">{n.axis}</span>
+                        <span className="sl-node-title">{en ? n.title_en : n.title}</span>
+                        <span className="sl-node-axis">{axisT(n.axis, en)}</span>
                       </button>
                     ))}
                   </div>
@@ -202,59 +235,59 @@ function ProcessFrame() {
 
       <div className="frame-detail">
         <div className="fd-head">
-          <span className="fd-eyebrow">노드 상세 · {sel.id}</span>
-          {sel.gatekeeper && <span className="sl-badge">핵심 관문</span>}
+          <span className="fd-eyebrow">{en ? 'Node detail' : '노드 상세'} · {sel.id}</span>
+          {sel.gatekeeper && <span className="sl-badge">{en ? 'key gate' : '핵심 관문'}</span>}
         </div>
-        <h2 className="fd-title">{sel.title}</h2>
+        <h2 className="fd-title">{en ? sel.title_en : sel.title}</h2>
         <div className="fd-meta">
-          <span className="insight-tag">{sel.axis}</span>
+          <span className="insight-tag">{axisT(sel.axis, en)}</span>
           <span className="fd-path">
-            {selGate?.label} · {selLane?.label}
+            {en ? selGate?.label_en : selGate?.label} · {en ? selLane?.label_en : selLane?.label}
           </span>
         </div>
-        <p className="fd-note">{sel.note}</p>
+        <p className="fd-note">{en ? sel.note_en : sel.note}</p>
         {/* 노드 분해(병목·분기점·서류·리드타임) — 공개 근거가 있는 항목만 노출(정직) */}
         {(sel.bottleneck || sel.branch || sel.docs || sel.time) && (
           <dl className="fd-decomp">
             {sel.bottleneck && (
               <div className="fd-d-row warn">
-                <dt>병목</dt>
-                <dd>{sel.bottleneck}</dd>
+                <dt>{en ? 'Bottleneck' : '병목'}</dt>
+                <dd>{en ? sel.bottleneck_en : sel.bottleneck}</dd>
               </div>
             )}
             {sel.branch && (
               <div className="fd-d-row">
-                <dt>분기점</dt>
-                <dd>{sel.branch}</dd>
+                <dt>{en ? 'Branch point' : '분기점'}</dt>
+                <dd>{en ? sel.branch_en : sel.branch}</dd>
               </div>
             )}
             {sel.docs && (
               <div className="fd-d-row">
-                <dt>필요 서류</dt>
-                <dd>{sel.docs}</dd>
+                <dt>{en ? 'Documents' : '필요 서류'}</dt>
+                <dd>{en ? sel.docs_en : sel.docs}</dd>
               </div>
             )}
             {sel.time && (
               <div className="fd-d-row">
-                <dt>비용·리드타임</dt>
-                <dd>{sel.time}</dd>
+                <dt>{en ? 'Cost · lead time' : '비용·리드타임'}</dt>
+                <dd>{en ? sel.time_en : sel.time}</dd>
               </div>
             )}
           </dl>
         )}
         <div className="fd-basis">
-          <strong>공개 근거:</strong> {sel.basis} <span className="fd-asof">· 기준일 2026-07-14</span>
+          <strong>{en ? 'Public basis:' : '공개 근거:'}</strong> {sel.basis} <span className="fd-asof">· {en ? 'as of' : '기준일'} 2026-07-14</span>
         </div>
         {sel.links.length > 0 && (
           <div className="fd-links">
             {sel.links.map((l) =>
               l.href ? (
                 <a key={l.href + l.label} className="btn" href={l.href} target="_blank" rel="noreferrer">
-                  {l.label}
+                  {en ? l.label_en : l.label}
                 </a>
               ) : (
                 <Link key={l.to + l.label} className="btn" to={l.to}>
-                  {l.label}
+                  {en ? l.label_en : l.label}
                 </Link>
               ),
             )}
@@ -271,101 +304,113 @@ function ProcessFrame() {
 
 // 운영 프로세스 — 상시 순환하는 6개 활동(NOC/DCIM 중심)
 const OPS_PHASES = [
-  { k: '상시 감시', d: 'NOC·DCIM 24/7 실시간 통합 감시 — 전력·온습도·트래픽·경보를 단일 대시보드로. 이상 징후를 임계 전에 포착.' },
-  { k: '예방정비(PM)', d: 'UPS·배터리·비상발전기·냉각기 정기 점검·교체 주기 관리. 고장을 사후가 아닌 선제로 차단.' },
-  { k: '인시던트 대응', d: '정전·과열·누수·침입·화재를 등급별 대응 절차(runbook)와 에스컬레이션으로. 복구시간(MTTR) 단축이 목표.' },
-  { k: '용량·에너지 최적화', d: '부하율·랙 전력밀도·PUE 추이 분석 → 냉각·전력 배분 튜닝. 증설 시점을 데이터로 판단.' },
-  { k: '지속가능성 관리', d: 'RE100/CFE 조달·폐열 재활용·용수 재이용·탄소 지표 관리. 규제·고객 요건 충족.' },
-  { k: '감사·규정준수', d: 'SLA 정산·정보보호(ISMS)·안전점검·이해관계자 보고. 신뢰도를 문서로 입증.' },
+  { k: '상시 감시', k_en: 'Continuous monitoring', d: 'NOC·DCIM 24/7 실시간 통합 감시 — 전력·온습도·트래픽·경보를 단일 대시보드로. 이상 징후를 임계 전에 포착.', d_en: 'NOC/DCIM 24/7 real-time integrated monitoring — power, temperature/humidity, traffic and alarms on a single dashboard. Catch anomalies before threshold.' },
+  { k: '예방정비(PM)', k_en: 'Preventive maintenance (PM)', d: 'UPS·배터리·비상발전기·냉각기 정기 점검·교체 주기 관리. 고장을 사후가 아닌 선제로 차단.', d_en: 'Scheduled inspection and replacement-cycle management for UPS, batteries, backup generators and chillers. Block failures pre-emptively, not after the fact.' },
+  { k: '인시던트 대응', k_en: 'Incident response', d: '정전·과열·누수·침입·화재를 등급별 대응 절차(runbook)와 에스컬레이션으로. 복구시간(MTTR) 단축이 목표.', d_en: 'Handle outages, overheating, leaks, intrusion and fire with tiered response runbooks and escalation. The goal is to cut recovery time (MTTR).' },
+  { k: '용량·에너지 최적화', k_en: 'Capacity & energy optimization', d: '부하율·랙 전력밀도·PUE 추이 분석 → 냉각·전력 배분 튜닝. 증설 시점을 데이터로 판단.', d_en: 'Analyze load factor, rack power density and PUE trends → tune cooling and power allocation. Decide expansion timing from data.' },
+  { k: '지속가능성 관리', k_en: 'Sustainability management', d: 'RE100/CFE 조달·폐열 재활용·용수 재이용·탄소 지표 관리. 규제·고객 요건 충족.', d_en: 'RE100/CFE procurement, waste-heat reuse, water reuse and carbon-metric management. Meet regulatory and customer requirements.' },
+  { k: '감사·규정준수', k_en: 'Audit & compliance', d: 'SLA 정산·정보보호(ISMS)·안전점검·이해관계자 보고. 신뢰도를 문서로 입증.', d_en: 'SLA settlement, information security (ISMS), safety inspection and stakeholder reporting. Prove trust with documentation.' },
 ]
 
 // 중점 관리 도메인 — 완공 후 무엇을 지켜보는가(축·관리 포인트·핵심지표)
 const OPS_DOMAINS = [
-  { axis: '전력', title: '전력 안정성·이중화', points: ['무정전 이중화(N+1·2N)·UPS·비상발전', '수전 안정도·전력품질(역률·THD)', 'EMS 실시간 부하 관리'], kpi: '가동률(Uptime) · 정전 0' },
-  { axis: '냉각', title: '냉각·열 관리', points: ['액체냉각 순환·칠러·항온항습', '핫/콜드 아일 격리·열 재순환 차단', '프리쿨링(외기) 활용률 극대화'], kpi: 'PUE · 온습도(ASHRAE 18~27℃)' },
-  { axis: '용수', title: '용수·수자원', points: ['냉각수 순환·수처리·재이용', '수질·스케일·레지오넬라 관리'], kpi: 'WUE(용수사용효율)' },
-  { axis: '네트워크', title: '네트워크·연결성', points: ['백본 이중 경로·다중 리전 DR', '지연시간·대역폭 SLA 관리'], kpi: '네트워크 가용성 · 이중화율' },
-  { axis: '보안·안전', title: '물리보안·소방·사이버', points: ['출입통제·CCTV·경계 보안', '가스소화·VESDA 조기 화재감지', '사이버(망분리·접근통제)'], kpi: '무단침입 0 · 화재 0' },
-  { axis: '지속가능', title: '에너지·지속가능성', points: ['RE100/CFE 조달·PPA 계약', '폐열 재활용·탄소 저감'], kpi: 'RE100 조달률 · 탄소집약도' },
-  { axis: '운영', title: '운영·인력·규정준수', points: ['NOC/DCIM 24/7·교대 운영', '변경·구성 관리(CMDB)', 'ISMS·개인정보·안전규정 준수'], kpi: 'MTTR · SLA 준수율' },
+  { axis: '전력', axis_en: 'Power', title: '전력 안정성·이중화', title_en: 'Power stability · redundancy', points: ['무정전 이중화(N+1·2N)·UPS·비상발전', '수전 안정도·전력품질(역률·THD)', 'EMS 실시간 부하 관리'], points_en: ['Uninterrupted redundancy (N+1·2N) · UPS · backup generation', 'Intake stability · power quality (power factor · THD)', 'EMS real-time load management'], kpi: '가동률(Uptime) · 정전 0', kpi_en: 'Uptime · zero outages' },
+  { axis: '냉각', axis_en: 'Cooling', title: '냉각·열 관리', title_en: 'Cooling · thermal management', points: ['액체냉각 순환·칠러·항온항습', '핫/콜드 아일 격리·열 재순환 차단', '프리쿨링(외기) 활용률 극대화'], points_en: ['Liquid-cooling loop · chillers · precision HVAC', 'Hot/cold aisle containment · block heat recirculation', 'Maximize free-cooling (outside-air) utilization'], kpi: 'PUE · 온습도(ASHRAE 18~27℃)', kpi_en: 'PUE · temp/humidity (ASHRAE 18–27℃)' },
+  { axis: '용수', axis_en: 'Water', title: '용수·수자원', title_en: 'Water · resources', points: ['냉각수 순환·수처리·재이용', '수질·스케일·레지오넬라 관리'], points_en: ['Cooling-water loop · treatment · reuse', 'Water quality · scaling · legionella control'], kpi: 'WUE(용수사용효율)', kpi_en: 'WUE (water usage effectiveness)' },
+  { axis: '네트워크', axis_en: 'Network', title: '네트워크·연결성', title_en: 'Network · connectivity', points: ['백본 이중 경로·다중 리전 DR', '지연시간·대역폭 SLA 관리'], points_en: ['Backbone dual paths · multi-region DR', 'Latency · bandwidth SLA management'], kpi: '네트워크 가용성 · 이중화율', kpi_en: 'Network availability · redundancy ratio' },
+  { axis: '보안·안전', axis_en: 'Security · safety', title: '물리보안·소방·사이버', title_en: 'Physical security · fire · cyber', points: ['출입통제·CCTV·경계 보안', '가스소화·VESDA 조기 화재감지', '사이버(망분리·접근통제)'], points_en: ['Access control · CCTV · perimeter security', 'Gas suppression · VESDA early fire detection', 'Cyber (network segregation · access control)'], kpi: '무단침입 0 · 화재 0', kpi_en: 'Zero intrusions · zero fires' },
+  { axis: '지속가능', axis_en: 'Sustainability', title: '에너지·지속가능성', title_en: 'Energy · sustainability', points: ['RE100/CFE 조달·PPA 계약', '폐열 재활용·탄소 저감'], points_en: ['RE100/CFE procurement · PPA contracts', 'Waste-heat reuse · carbon reduction'], kpi: 'RE100 조달률 · 탄소집약도', kpi_en: 'RE100 procurement rate · carbon intensity' },
+  { axis: '운영', axis_en: 'Operations', title: '운영·인력·규정준수', title_en: 'Operations · staffing · compliance', points: ['NOC/DCIM 24/7·교대 운영', '변경·구성 관리(CMDB)', 'ISMS·개인정보·안전규정 준수'], points_en: ['NOC/DCIM 24/7 · shift operations', 'Change & configuration management (CMDB)', 'ISMS · privacy · safety-rule compliance'], kpi: 'MTTR · SLA 준수율', kpi_en: 'MTTR · SLA compliance rate' },
 ]
 
 // 핵심 관리지표(KPI) — 완공 후 성과를 재는 표준 척도
 const OPS_KPI = [
-  { k: 'PUE', full: '전력사용효율', target: '≤ 1.3 (선도 ~1.1)', note: '총 전력 ÷ IT 전력. 냉각·손실이 낮을수록 1.0에 근접.' },
-  { k: 'WUE', full: '용수사용효율', target: '낮을수록 우수', note: 'IT kWh당 냉각 용수(L). 공랭↔수랭 트레이드오프.' },
-  { k: '가동률', full: 'Uptime / 가용성', target: 'Tier III 99.982% · Tier IV 99.995%', note: '연간 허용 정지 ≈ III 1.6시간 · IV 26분.' },
-  { k: 'MTBF/MTTR', full: '평균고장간격 / 평균복구시간', target: 'MTBF↑ · MTTR↓', note: '신뢰성(고장 빈도)과 회복력(복구 속도) 지표.' },
-  { k: 'RE100', full: '재생에너지 조달률', target: '100% 지향', note: '하이퍼스케일러 계약 요건. PPA·REC·자가발전.' },
-  { k: '랙 전력밀도', full: '랙당 전력', target: 'AI 랙 30~130kW+', note: 'GPU 고밀도가 액체냉각·전력설계를 강제.' },
+  { k: 'PUE', full: '전력사용효율', full_en: 'Power usage effectiveness', target: '≤ 1.3 (선도 ~1.1)', target_en: '≤ 1.3 (leading ~1.1)', note: '총 전력 ÷ IT 전력. 냉각·손실이 낮을수록 1.0에 근접.', note_en: 'Total power ÷ IT power. The lower the cooling/losses, the closer to 1.0.' },
+  { k: 'WUE', full: '용수사용효율', full_en: 'Water usage effectiveness', target: '낮을수록 우수', target_en: 'Lower is better', note: 'IT kWh당 냉각 용수(L). 공랭↔수랭 트레이드오프.', note_en: 'Cooling water (L) per IT kWh. Air- vs water-cooling trade-off.' },
+  { k: '가동률', k_en: 'Uptime', full: 'Uptime / 가용성', full_en: 'Uptime / availability', target: 'Tier III 99.982% · Tier IV 99.995%', target_en: 'Tier III 99.982% · Tier IV 99.995%', note: '연간 허용 정지 ≈ III 1.6시간 · IV 26분.', note_en: 'Allowed annual downtime ≈ III 1.6 h · IV 26 min.' },
+  { k: 'MTBF/MTTR', full: '평균고장간격 / 평균복구시간', full_en: 'Mean time between failures / mean time to repair', target: 'MTBF↑ · MTTR↓', target_en: 'MTBF↑ · MTTR↓', note: '신뢰성(고장 빈도)과 회복력(복구 속도) 지표.', note_en: 'Metrics for reliability (failure frequency) and resilience (recovery speed).' },
+  { k: 'RE100', full: '재생에너지 조달률', full_en: 'Renewable procurement rate', target: '100% 지향', target_en: 'Targeting 100%', note: '하이퍼스케일러 계약 요건. PPA·REC·자가발전.', note_en: 'A hyperscaler contract requirement. PPA · REC · self-generation.' },
+  { k: '랙 전력밀도', k_en: 'Rack power density', full: '랙당 전력', full_en: 'Power per rack', target: 'AI 랙 30~130kW+', target_en: 'AI racks 30–130kW+', note: 'GPU 고밀도가 액체냉각·전력설계를 강제.', note_en: 'High GPU density forces liquid cooling and power design.' },
 ]
 
 function OpsFrame() {
+  const en = useMapLang() === 'en'
   return (
     <div className="ops-frame">
       <p className="ops-intro">
-        준공·사용승인(G4) 이후 데이터센터의 가치는 <strong>얼마나 안 멈추고, 얼마나 효율적으로 도는가</strong>로 결정된다.
-        아래는 완공 후 상시 운영 프로세스와 중점 관리요소를 공개 산업표준(Uptime Institute Tier·ASHRAE·The Green Grid PUE/WUE·RE100)에 맞춰 정리한 것이다.
+        {en ? (
+          <>
+            After completion / use-approval (G4), a datacenter’s value is decided by <strong>how little it stops and how
+            efficiently it runs</strong>. Below is the post-completion continuous-operations process and key management
+            areas, organized to public industry standards (Uptime Institute Tier · ASHRAE · The Green Grid PUE/WUE · RE100).
+          </>
+        ) : (
+          <>
+            준공·사용승인(G4) 이후 데이터센터의 가치는 <strong>얼마나 안 멈추고, 얼마나 효율적으로 도는가</strong>로 결정된다.
+            아래는 완공 후 상시 운영 프로세스와 중점 관리요소를 공개 산업표준(Uptime Institute Tier·ASHRAE·The Green Grid PUE/WUE·RE100)에 맞춰 정리한 것이다.
+          </>
+        )}
       </p>
 
-      <h2 className="ops-h2">운영 프로세스 — 상시 순환</h2>
+      <h2 className="ops-h2">{en ? 'Operations process — continuous cycle' : '운영 프로세스 — 상시 순환'}</h2>
       <ol className="ops-phases">
         {OPS_PHASES.map((p, i) => (
           <li key={p.k} className="ops-phase">
             <span className="ops-phase-n">{i + 1}</span>
             <span className="ops-phase-body">
-              <b>{p.k}</b>
-              <span>{p.d}</span>
+              <b>{en ? p.k_en : p.k}</b>
+              <span>{en ? p.d_en : p.d}</span>
             </span>
           </li>
         ))}
       </ol>
 
-      <h2 className="ops-h2">중점 관리 도메인</h2>
+      <h2 className="ops-h2">{en ? 'Key management domains' : '중점 관리 도메인'}</h2>
       <div className="ops-domains">
         {OPS_DOMAINS.map((d) => (
           <div key={d.title} className="spec-cell ops-domain">
             <div className="ops-domain-head">
-              <span className="insight-tag">{d.axis}</span>
-              <h3 className="ops-domain-title">{d.title}</h3>
+              <span className="insight-tag">{en ? d.axis_en : d.axis}</span>
+              <h3 className="ops-domain-title">{en ? d.title_en : d.title}</h3>
             </div>
             <ul className="score-basis ops-domain-points">
-              {d.points.map((pt) => (
+              {(en ? d.points_en : d.points).map((pt) => (
                 <li key={pt}>
                   <span>{pt}</span>
                 </li>
               ))}
             </ul>
             <div className="ops-domain-kpi">
-              <span className="ops-kpi-label">핵심지표</span> {d.kpi}
+              <span className="ops-kpi-label">{en ? 'Key metric' : '핵심지표'}</span> {en ? d.kpi_en : d.kpi}
             </div>
           </div>
         ))}
       </div>
 
-      <h2 className="ops-h2">핵심 관리지표(KPI)</h2>
+      <h2 className="ops-h2">{en ? 'Key management indicators (KPIs)' : '핵심 관리지표(KPI)'}</h2>
       <div className="ops-kpi-grid">
         {OPS_KPI.map((m) => (
           <div key={m.k} className="spec-cell ops-kpi-cell">
             <div className="ops-kpi-top">
-              <span className="ops-kpi-k">{m.k}</span>
-              <span className="badge verify ops-kpi-target">{m.target}</span>
+              <span className="ops-kpi-k">{en ? (m.k_en ?? m.k) : m.k}</span>
+              <span className="badge verify ops-kpi-target">{en ? m.target_en : m.target}</span>
             </div>
-            <div className="ops-kpi-full">{m.full}</div>
-            <div className="ops-kpi-note">{m.note}</div>
+            <div className="ops-kpi-full">{en ? m.full_en : m.full}</div>
+            <div className="ops-kpi-note">{en ? m.note_en : m.note}</div>
           </div>
         ))}
       </div>
 
       <div className="ops-cta">
-        <Link className="btn" to="/dashboard">운영 대시보드</Link>
-        <Link className="btn" to="/insights/national-infrastructure">복원력·지정학 인사이트</Link>
+        <Link className="btn" to="/dashboard">{en ? 'Operations dashboard' : '운영 대시보드'}</Link>
+        <Link className="btn" to="/insights/national-infrastructure">{en ? 'Resilience · geopolitics insight' : '복원력·지정학 인사이트'}</Link>
       </div>
     </div>
   )
 }
 
 export default function RoadmapPage() {
+  const en = useMapLang() === 'en'
   const [mode, setMode] = useState(() => {
     const v = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('view') : null
     return v === 'frame' || v === 'ops' || v === 'policy' ? v : 'guide'
@@ -393,14 +438,25 @@ export default function RoadmapPage() {
       <TopBar />
       <main className="page">
         <div className="eyebrow">ROADMAP</div>
-        <h1>AI 데이터센터 구축 A–Z 로드맵</h1>
+        <h1>{en ? 'AI Datacenter Build A–Z Roadmap' : 'AI 데이터센터 구축 A–Z 로드맵'}</h1>
         <p className="sub">
-          한국에서 AI 데이터센터를 짓는 전 과정을 <strong>부지→전력→계통→송변전→발전 조달→냉각→리스크→네트워크→인허가→운영</strong>
-          {' '}10단계로. 각 단계는 공개 규정·데이터에 근거하고, AI InfraMap의 해당 도구로 연결된다. (버지니아 QTS 백지화가
-          보여주듯, 전력을 확보해도 절차 하나에서 멈춘다 — 그래서 전 과정이 하나의 지도다.)
+          {en ? (
+            <>
+              The full process of building an AI datacenter in Korea in 10 stages —{' '}
+              <strong>site → power → grid → transmission → generation procurement → cooling → risk → network → permitting → operations</strong>
+              {' '}. Each stage is grounded in public rules and data and links to the matching AI InfraMap tool. (As the Virginia QTS
+              cancellation shows, even with power secured a single procedure can stop you — which is why the whole process is one map.)
+            </>
+          ) : (
+            <>
+              한국에서 AI 데이터센터를 짓는 전 과정을 <strong>부지→전력→계통→송변전→발전 조달→냉각→리스크→네트워크→인허가→운영</strong>
+              {' '}10단계로. 각 단계는 공개 규정·데이터에 근거하고, AI InfraMap의 해당 도구로 연결된다. (버지니아 QTS 백지화가
+              보여주듯, 전력을 확보해도 절차 하나에서 멈춘다 — 그래서 전 과정이 하나의 지도다.)
+            </>
+          )}
         </p>
 
-        <div className="seg-tabs roadmap-modes" role="tablist" aria-label="로드맵 보기 모드">
+        <div className="seg-tabs roadmap-modes" role="tablist" aria-label={en ? 'Roadmap view mode' : '로드맵 보기 모드'}>
           <button
             type="button"
             role="tab"
@@ -408,7 +464,7 @@ export default function RoadmapPage() {
             className={mode === 'guide' ? 'active' : ''}
             onClick={() => setMode('guide')}
           >
-            가이드 (10단계)
+            {en ? 'Guide (10 stages)' : '가이드 (10단계)'}
           </button>
           <button
             type="button"
@@ -417,7 +473,7 @@ export default function RoadmapPage() {
             className={mode === 'frame' ? 'active' : ''}
             onClick={() => setMode('frame')}
           >
-            프로세스 프레임 (레인×게이트)
+            {en ? 'Process frame (lanes × gates)' : '프로세스 프레임 (레인×게이트)'}
           </button>
           <button
             type="button"
@@ -426,7 +482,7 @@ export default function RoadmapPage() {
             className={mode === 'ops' ? 'active' : ''}
             onClick={() => setMode('ops')}
           >
-            완공 후 운영관리
+            {en ? 'Post-completion operations' : '완공 후 운영관리'}
           </button>
           <button
             type="button"
@@ -435,7 +491,7 @@ export default function RoadmapPage() {
             className={mode === 'policy' ? 'active' : ''}
             onClick={() => setMode('policy')}
           >
-            제도 트래커 <span className="badge" style={{ marginLeft: 4 }}>NEW</span>
+            {en ? 'Policy tracker' : '제도 트래커'} <span className="badge" style={{ marginLeft: 4 }}>NEW</span>
           </button>
         </div>
 
@@ -452,26 +508,26 @@ export default function RoadmapPage() {
                 <div className="rm-num">{s.n}</div>
                 <div className="rm-body">
                   <div className="rm-head">
-                    <span className="insight-tag">{s.axis}</span>
-                    <h2 className="rm-title">{s.title}</h2>
+                    <span className="insight-tag">{axisT(s.axis, en)}</span>
+                    <h2 className="rm-title">{en ? s.title_en : s.title}</h2>
                   </div>
-                  <p className="rm-what">{s.what}</p>
+                  <p className="rm-what">{en ? s.what_en : s.what}</p>
                   {STEP_TERMS[s.n]?.length > 0 && (
-                    <div className="rm-terms" aria-label="핵심 용어">
-                      <span className="rm-terms-cap">핵심 용어</span>
+                    <div className="rm-terms" aria-label={en ? 'Key terms' : '핵심 용어'}>
+                      <span className="rm-terms-cap">{en ? 'Key terms' : '핵심 용어'}</span>
                       {STEP_TERMS[s.n].map((t) => (
                         <span className="rm-term-chip" key={t}>
-                          <Term k={t}>{t}</Term>
+                          <Term k={t}>{termT(t, en)}</Term>
                         </span>
                       ))}
                     </div>
                   )}
                   <div className="rm-meta">
-                    <span className="rm-source">공개 소스: {s.source}</span>
+                    <span className="rm-source">{en ? 'Public sources: ' : '공개 소스: '}{s.source}</span>
                     <span className="rm-links">
                       {s.links.map((l) => (
                         <Link key={l.to + l.label} className="btn" to={l.to}>
-                          {l.label}
+                          {en ? l.label_en : l.label}
                         </Link>
                       ))}
                     </span>
@@ -483,9 +539,9 @@ export default function RoadmapPage() {
         )}
 
         <p className="footer-note">
-          단계 구분은 한전 송변전 건설 4단계(계획확정·사업승인·공사착수·사업완료)와 AIDC 특별법·전력계통영향평가 시범운영 공고,
-          한전 기본공급약관을 참고한 공개 기준 정리입니다. 실제 사업은 부지·용량·시기에 따라 달라지며, 개별 인허가는 한전·기후에너지환경부·지자체
-          최신 공고를 확인하세요. 소관 부처는 '25.10 조직개편으로 기후에너지환경부 우선 확인.
+          {en
+            ? 'The stage breakdown is a public-reference synthesis drawing on KEPCO’s 4 transmission-substation build stages (plan confirmed · project approval · construction start · project completion), the AIDC Special Act and the PSIA pilot notice, and KEPCO’s Basic Supply Provisions. Actual projects vary by site, capacity and timing; for individual permits, check the latest KEPCO / Ministry of Climate, Energy and Environment / local-government notices. Following the Oct 2025 reorganization, check the Ministry of Climate, Energy and Environment first for the competent authority.'
+            : '단계 구분은 한전 송변전 건설 4단계(계획확정·사업승인·공사착수·사업완료)와 AIDC 특별법·전력계통영향평가 시범운영 공고, 한전 기본공급약관을 참고한 공개 기준 정리입니다. 실제 사업은 부지·용량·시기에 따라 달라지며, 개별 인허가는 한전·기후에너지환경부·지자체 최신 공고를 확인하세요. 소관 부처는 \'25.10 조직개편으로 기후에너지환경부 우선 확인.'}
         </p>
       </main>
     </>

@@ -5,6 +5,18 @@ import { useEffect, useState } from 'react'
 import { useAiStream } from '../ai/useAiStream.js'
 import AiResultCard from '../ai/AiResultCard.jsx'
 import { psiaScore, psiaOutlook } from './psia.js'
+import { useMapLang } from '../i18n/mapLang.js'
+
+/* i18n 사전 — 라벨만 번역(값·데이터·AI 프롬프트 키는 원본 유지). psia.js 파생 outlook.label은 KO 유지(공유 모듈). */
+const AXIS_EN = { 전력: 'Power', 토지: 'Land', 리스크: 'Risk', 네트워크: 'Network', 기상: 'Climate' }
+const PROFILE_EN = { 균형: 'Balanced', '전력 중시': 'Power-first', '냉각 중시': 'Cooling-first' }
+const ROWLABEL_EN = {
+  '근거 점수': 'Evidence score', '계통영향평가 전망': 'Grid impact outlook', 입지: 'Region', '계통 공급여유': 'Grid headroom',
+  'DC 공급승인율': 'DC approval rate', '변전소 거리': 'Substation distance', 네트워크: 'Network', '산단 거리': 'Ind. complex distance',
+  '부지 면적': 'Site area', '냉각(기후)': 'Cooling (climate)', '침수 노출': 'Flood exposure', '산사태 노출': 'Landslide exposure',
+  인구밀도: 'Population density', 용도지역: 'Zoning',
+}
+const VAL_EN = { 비수도권: 'Non-capital', 수도권: 'Capital', 낮음: 'Low' }
 
 // 후보의 계통영향평가 통과 전망(공유 로직) — 스냅샷 필드로 산출
 const psiaOf = (c) => {
@@ -87,7 +99,9 @@ function weightedScore(vals, w) {
 }
 
 /* 5축 스파이더 차트 — 후보 2~3곳을 겹쳐 그린다(부지 숏리스트 한눈 비교). */
-function CompareRadar({ items }) {
+function CompareRadar({ items, en }) {
+  const axL = (ko) => (en ? AXIS_EN[ko] ?? ko : ko)
+  const profL = (ko) => (en ? PROFILE_EN[ko] ?? ko : ko)
   const [profileKey, setProfileKey] = useState('balanced')
   const profile = PROFILES.find((p) => p.key === profileKey) ?? PROFILES[0]
   const size = 230
@@ -117,7 +131,7 @@ function CompareRadar({ items }) {
   return (
     <div className="ct-radar">
       {/* 축 가중치 프로파일 토글 — 우선순위별 적합도 재계산 */}
-      <div className="ctr-profiles" role="group" aria-label="축 가중치 프로파일">
+      <div className="ctr-profiles" role="group" aria-label={en ? 'Axis weight profile' : '축 가중치 프로파일'}>
         {PROFILES.map((p) => (
           <button
             key={p.key}
@@ -125,13 +139,15 @@ function CompareRadar({ items }) {
             className={`ctr-prof ${p.key === profileKey ? 'on' : ''}`}
             onClick={() => setProfileKey(p.key)}
             aria-pressed={p.key === profileKey}
-            title={`${p.label} — 전력 ${p.w.power}·토지 ${p.w.land}·리스크 ${p.w.risk}·네트워크 ${p.w.net}·기상 ${p.w.climate}`}
+            title={en
+              ? `${profL(p.label)} — Power ${p.w.power}·Land ${p.w.land}·Risk ${p.w.risk}·Network ${p.w.net}·Climate ${p.w.climate}`
+              : `${p.label} — 전력 ${p.w.power}·토지 ${p.w.land}·리스크 ${p.w.risk}·네트워크 ${p.w.net}·기상 ${p.w.climate}`}
           >
-            {p.label}
+            {profL(p.label)}
           </button>
         ))}
       </div>
-      <svg viewBox={`0 0 ${size} ${size}`} className="ct-radar-svg" role="img" aria-label="후보지 5축 비교 레이더">
+      <svg viewBox={`0 0 ${size} ${size}`} className="ct-radar-svg" role="img" aria-label={en ? 'Candidate 5-axis comparison radar' : '후보지 5축 비교 레이더'}>
         {/* 배경 그리드(동심 오각형) */}
         {gridLevels.map((g) => (
           <polygon
@@ -148,7 +164,7 @@ function CompareRadar({ items }) {
             <g key={a.key}>
               <line x1={cx} y1={cy} x2={x} y2={y} className="ctr-axis" />
               <text x={lx} y={ly} className="ctr-label" textAnchor="middle" dominantBaseline="middle">
-                {a.label}
+                {axL(a.label)}
               </text>
             </g>
           )
@@ -174,11 +190,11 @@ function CompareRadar({ items }) {
             <i style={{ background: s.color }} />
             {s.label}
             <b className="ctr-fit">{s.fit}</b>
-            {s.id === bestFitId && <span className="ctr-fit-star" title={`${profile.label} 기준 적합도 최고`}>★</span>}
+            {s.id === bestFitId && <span className="ctr-fit-star" title={en ? `Highest fit under ${profL(profile.label)}` : `${profile.label} 기준 적합도 최고`}>★</span>}
           </span>
         ))}
       </div>
-      <p className="ctr-note">{profile.label} 가중 적합도(100점 환산) · 근거 없는 축은 0점</p>
+      <p className="ctr-note">{en ? `${profL(profile.label)} weighted fit (out of 100) · axes without basis score 0` : `${profile.label} 가중 적합도(100점 환산) · 근거 없는 축은 0점`}</p>
     </div>
   )
 }
@@ -212,6 +228,9 @@ const ROWS = [
 ]
 
 export default function CompareTray({ items, onRemove, onClear, onOpen }) {
+  const en = useMapLang() === 'en'
+  const rowL = (ko) => (en ? ROWLABEL_EN[ko] ?? ko : ko)
+  const valL = (v) => (en ? VAL_EN[v] ?? v : v)
   const [open, setOpen] = useState(false)
   const { ai, run, reset, busy } = useAiStream()
   // 후보 구성이 바뀌면 이전 비교평 무효화(오판 방지)
@@ -257,11 +276,11 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
   // 비교 결과 PDF — 인쇄 최적화 HTML 표 → 브라우저 PDF
   const onPdf = () => {
     const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    const thead = `<tr><th>지표</th>${items.map((c) => `<th${c.id === bestId ? ' class="best"' : ''}>${esc(c.label)}${c.id === bestId ? ' ★' : ''}</th>`).join('')}</tr>`
-    const body = ROWS.map((row) => `<tr><td class="rl">${esc(row.label)}</td>${items.map((c) => `<td>${esc(row.get(c))}</td>`).join('')}</tr>`).join('')
+    const thead = `<tr><th>${en ? 'Metric' : '지표'}</th>${items.map((c) => `<th${c.id === bestId ? ' class="best"' : ''}>${esc(c.label)}${c.id === bestId ? ' ★' : ''}</th>`).join('')}</tr>`
+    const body = ROWS.map((row) => `<tr><td class="rl">${esc(rowL(row.label))}</td>${items.map((c) => `<td>${esc(valL(row.get(c)))}</td>`).join('')}</tr>`).join('')
     const w = window.open('', '_blank')
     if (!w) return
-    w.document.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>AI InfraMap 후보지 비교</title><style>
+    w.document.write(`<!doctype html><html lang="${en ? 'en' : 'ko'}"><head><meta charset="utf-8"><title>${en ? 'AI InfraMap candidate comparison' : 'AI InfraMap 후보지 비교'}</title><style>
       /* A4 가로 규격 고정 — 프린터 기본값 의존 제거 */
       @page{margin:14mm;size:A4 landscape}
       body{font-family:'Pretendard Variable',-apple-system,'Malgun Gothic',sans-serif;color:#111;padding:16px;font-size:12px;word-break:keep-all}
@@ -274,9 +293,9 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
       td.rl{text-align:left;font-weight:700;background:#fafafa;-webkit-print-color-adjust:exact;print-color-adjust:exact}
       .foot{margin-top:12px;color:#888;font-size:10px}
       @media print{body{padding:0}}
-    </style></head><body><h1>AI InfraMap — 후보지 비교 (${items.length}곳)</h1>
+    </style></head><body><h1>${en ? `AI InfraMap — candidate comparison (${items.length})` : `AI InfraMap — 후보지 비교 (${items.length}곳)`}</h1>
     <table><thead>${thead}</thead><tbody>${body}</tbody></table>
-    <p class="foot">★ = 근거 점수 최고 후보 · 공개 데이터 기반 정적 근거 · ${new Date().toLocaleString('ko-KR')} · AI InfraMap</p>
+    <p class="foot">${en ? `★ = highest evidence-score candidate · static basis from public data · ${new Date().toLocaleString('en-US')} · AI InfraMap` : `★ = 근거 점수 최고 후보 · 공개 데이터 기반 정적 근거 · ${new Date().toLocaleString('ko-KR')} · AI InfraMap`}</p>
     <script>window.onload=function(){setTimeout(function(){window.print()},250)}<\/script></body></html>`)
     w.document.close()
   }
@@ -302,30 +321,30 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
     <div className={`compare-tray ${open ? 'open' : ''}`}>
       <div className="ct-head">
         <button type="button" className="ct-toggle" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
-          ⚖ 후보지 비교 <strong>{items.length}</strong>곳 {open ? '▾' : '▸'}
+          {en ? <>⚖ Candidate comparison <strong>{items.length}</strong> {open ? '▾' : '▸'}</> : <>⚖ 후보지 비교 <strong>{items.length}</strong>곳 {open ? '▾' : '▸'}</>}
         </button>
         {items.length > 1 && (
-          <button type="button" className="chip ai" onClick={genCompare} disabled={busy} title="후보 AI 비교평">
-            {busy ? 'AI…' : '✨ AI 비교평'}
+          <button type="button" className="chip ai" onClick={genCompare} disabled={busy} title={en ? 'AI candidate comparison' : '후보 AI 비교평'}>
+            {busy ? 'AI…' : en ? '✨ AI comparison' : '✨ AI 비교평'}
           </button>
         )}
-        <button type="button" className="chip" onClick={onPdf} title="후보지 비교표 PDF 저장">
+        <button type="button" className="chip" onClick={onPdf} title={en ? 'Save comparison table as PDF' : '후보지 비교표 PDF 저장'}>
           PDF
         </button>
         <button type="button" className="chip" onClick={onClear}>
-          전체 지우기
+          {en ? 'Clear all' : '전체 지우기'}
         </button>
       </div>
       {open && (
         <AiResultCard
           ai={ai}
-          badge="✨ AI 비교평"
-          src="스냅샷 확보값 기반 · 없는 값은 미확보"
+          badge={en ? '✨ AI comparison' : '✨ AI 비교평'}
+          src={en ? 'Based on snapshot-captured values · missing values not captured' : '스냅샷 확보값 기반 · 없는 값은 미확보'}
           className="ct-ai"
-          loadingText="후보 비교 분석 중…"
+          loadingText={en ? 'Analyzing candidate comparison…' : '후보 비교 분석 중…'}
         />
       )}
-      {open && items.length > 1 && <CompareRadar items={items} />}
+      {open && items.length > 1 && <CompareRadar items={items} en={en} />}
       {open && (
         <div className="ct-table" role="table" style={{ '--ct-cols': items.length }}>
           <div className="ct-row ct-colhead" role="row">
@@ -333,11 +352,11 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
             {items.map((c, ci) => (
               <span key={c.id} className="ct-col" role="columnheader">
                 <i className="ct-swatch" style={{ background: SERIES[ci % SERIES.length] }} />
-                {c.id === bestId && <span className="ct-badge">추천</span>}
-                <button type="button" className="ct-open" onClick={() => onOpen(c)} title="이 지점 다시 분석">
+                {c.id === bestId && <span className="ct-badge">{en ? 'Top pick' : '추천'}</span>}
+                <button type="button" className="ct-open" onClick={() => onOpen(c)} title={en ? 'Re-analyze this point' : '이 지점 다시 분석'}>
                   {c.label}
                 </button>
-                <button type="button" className="ct-remove" onClick={() => onRemove(c.id)} aria-label="비교에서 제거">
+                <button type="button" className="ct-remove" onClick={() => onRemove(c.id)} aria-label={en ? 'Remove from comparison' : '비교에서 제거'}>
                   ✕
                 </button>
               </span>
@@ -345,13 +364,13 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
           </div>
           {ROWS.map((row) => (
             <div key={row.key} className="ct-row" role="row">
-              <span className="ct-rowlabel">{row.label}</span>
+              <span className="ct-rowlabel">{rowL(row.label)}</span>
               {items.map((c) => {
                 const t = row.tone?.(c)
                 const isBest = rowBest[row.key] && rowBest[row.key] === c.id
                 return (
                   <span key={c.id} className={`ct-cell ${t ? TONE[t] : ''} ${isBest ? 'ct-best' : ''}`} role="cell">
-                    {row.get(c)}
+                    {valL(row.get(c))}
                   </span>
                 )
               })}

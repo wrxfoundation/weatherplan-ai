@@ -6,6 +6,15 @@ import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
 import { nearestPlant } from '../data/plants.js'
 import { checkPowerTrack } from '../calc/trackCheck.js'
+import { useMapLang } from '../i18n/mapLang.js'
+
+// 비교 행 라벨 i18n — 값(상태·유형 등 데이터)은 원본 유지, 라벨만 번역
+const RL = {
+  상태: 'Status', 유형: 'Type', 운영사: 'Operator', '공개 전력': 'Public power', 연도: 'Year', 위치: 'Location',
+  '수전 트랙(공개 MW 기준)': 'Power track (public MW)', 계통영향평가: 'Grid impact assessment',
+  '지가변동률(월)': 'Land price change (monthly)', '동 단위 지가 범위': 'Dong-level land price range',
+  '최근접 대형 발전단지': 'Nearest large power complex', '검증 상태': 'Verification status',
+}
 
 const TITLE = '시설 비교 — AI InfraMap'
 const DESC = '데이터센터 2~3곳을 나란히 — 상태·전력·연도·지가·인허가 트랙·발전 인프라 근접성을 공개 데이터로 비교.'
@@ -19,6 +28,7 @@ function Cell({ f, row }) {
 }
 
 export default function ComparePage() {
+  const en = useMapLang() === 'en'
   const [params, setParams] = useSearchParams()
   const slugs = (params.get('ids') ?? '').split(',').filter(Boolean).slice(0, 3)
   const picks = [0, 1, 2].map((i) => (slugs[i] ? findBySlug(slugs[i]) : null))
@@ -40,9 +50,9 @@ export default function ComparePage() {
     () => [
       { k: '상태', r: (f) => STATUS_LABEL[f.status] ?? f.status },
       { k: '유형', r: (f) => f.type },
-      { k: '운영사', r: (f) => f.operator ?? '미공개' },
-      { k: '공개 전력', r: (f) => (f.power_mw_public != null ? `${f.power_mw_public} MW` : '비공개') },
-      { k: '연도', r: (f) => f.year ?? '미상' },
+      { k: '운영사', r: (f) => f.operator ?? (en ? 'Undisclosed' : '미공개') },
+      { k: '공개 전력', r: (f) => (f.power_mw_public != null ? `${f.power_mw_public} MW` : en ? 'Undisclosed' : '비공개') },
+      { k: '연도', r: (f) => f.year ?? (en ? 'Unknown' : '미상') },
       { k: '위치', r: (f) => `${f.sido}${f.sigungu ? ` ${f.sigungu}` : ''}` },
       {
         k: '수전 트랙(공개 MW 기준)',
@@ -56,8 +66,8 @@ export default function ComparePage() {
         r: (f) =>
           f.power_mw_public != null
             ? checkPowerTrack(f.power_mw_public, { nonCapital: !CAPITAL.has(f.sido) }).psiaRequired
-              ? '대상'
-              : '비대상'
+              ? en ? 'Applicable' : '대상'
+              : en ? 'N/A' : '비대상'
             : '—',
       },
       {
@@ -81,9 +91,9 @@ export default function ComparePage() {
           return np ? `${np.plant.name} ${np.km.toFixed(0)}km` : '—'
         },
       },
-      { k: '검증 상태', r: (f) => (f.needs_verify ? '검증 필요' : '공개 확인') },
+      { k: '검증 상태', r: (f) => (f.needs_verify ? (en ? 'needs verification' : '검증 필요') : (en ? 'public-confirmed' : '공개 확인')) },
     ],
-    [],
+    [en],
   )
 
   return (
@@ -91,8 +101,8 @@ export default function ComparePage() {
       <TopBar />
       <main className="page">
         <div className="eyebrow">COMPARE</div>
-        <h1>시설 비교</h1>
-        <p className="sub">최대 3곳 — 공개 데이터·규칙 기반 판정만 나란히 놓습니다.</p>
+        <h1>{en ? 'Facility comparison' : '시설 비교'}</h1>
+        <p className="sub">{en ? 'Up to 3 — only public data and rule-based verdicts, side by side.' : '최대 3곳 — 공개 데이터·규칙 기반 판정만 나란히 놓습니다.'}</p>
 
         <div className="calc-card">
           <div className="cmp-scroll">
@@ -105,9 +115,9 @@ export default function ComparePage() {
                       <select
                         value={picks[i] ? slugOf(picks[i]) : ''}
                         onChange={(e) => setPick(i, e.target.value)}
-                        aria-label={`비교 시설 ${i + 1}`}
+                        aria-label={en ? `Compare facility ${i + 1}` : `비교 시설 ${i + 1}`}
                       >
-                        <option value="">시설 선택…</option>
+                        <option value="">{en ? 'Select facility…' : '시설 선택…'}</option>
                         {sorted.map((f) => (
                           <option key={f.id} value={slugOf(f)}>
                             {f.name}
@@ -116,7 +126,7 @@ export default function ComparePage() {
                       </select>
                       {picks[i] && (
                         <Link className="cmp-detail" to={`/dc/${slugOf(picks[i])}`}>
-                          상세 ↗
+                          {en ? 'Detail ↗' : '상세 ↗'}
                         </Link>
                       )}
                     </th>
@@ -126,7 +136,7 @@ export default function ComparePage() {
               <tbody>
                 {rows.map(({ k, r }) => (
                   <tr key={k}>
-                    <th>{k}</th>
+                    <th>{en ? RL[k] ?? k : k}</th>
                     {picks.map((f, i) => (
                       <Cell key={i} f={f} row={r} />
                     ))}
@@ -136,8 +146,9 @@ export default function ComparePage() {
             </table>
           </div>
           <p className="chart-note">
-            수전 트랙·계통영향평가는 공개 용량을 현행 규정에 대입한 규칙 기반 판정 — 실제 계약과 다를 수 있습니다.
-            발전단지 거리는 근접성 맥락(전원 매칭 아님).
+            {en
+              ? 'Power track and grid impact assessment are rule-based verdicts applying public capacity to current regulations — actual contracts may differ. Power-complex distance is proximity context (not a power match).'
+              : '수전 트랙·계통영향평가는 공개 용량을 현행 규정에 대입한 규칙 기반 판정 — 실제 계약과 다를 수 있습니다. 발전단지 거리는 근접성 맥락(전원 매칭 아님).'}
           </p>
         </div>
       </main>

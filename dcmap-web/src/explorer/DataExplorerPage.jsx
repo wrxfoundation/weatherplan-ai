@@ -15,6 +15,7 @@ import { GRID_CONSTRUCTION, GRID_CONSTRUCTION_META, GRID_STAGE_LABEL } from '../
 import { SUBSTATION_HEADROOM, SUBSTATION_HEADROOM_META } from '../data/substationHeadroom.js'
 import { LATEST_SNAPSHOT, SNAPSHOT_COUNT } from '../data/headroomSnapshots.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
+import { useMapLang } from '../i18n/mapLang.js'
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
 
@@ -27,6 +28,7 @@ const DATASETS = [
     source: '3MW 초과 발전사업 허가대장 v2',
     fullCsv: `${BASE}/downloads/gen_licenses_full.csv`,
     fullLabel: `전체 ${GEN_LICENSE_META.total.toLocaleString()}건(2001–2026) CSV`,
+    fullLabelEn: `Full ${GEN_LICENSE_META.total.toLocaleString()} cases (2001–2026) CSV`,
     columns: [
       { k: 'date', label: '허가일' },
       { k: 'sido', label: '시도' },
@@ -44,6 +46,7 @@ const DATASETS = [
     source: '집단에너지 발전용량·공급량 현황',
     fullCsv: `${BASE}/downloads/chp_plants.csv`,
     fullLabel: '전체 56곳 CSV',
+    fullLabelEn: 'All 56 sites CSV',
     columns: [
       { k: 'op', label: '발전사' },
       { k: 'plant', label: '대상발전소' },
@@ -310,7 +313,81 @@ const INTEL_CHANNELS = [
   },
 ]
 
+/* i18n 사전 — 라벨/제목/출처(리터럴)만 번역. 데이터값·데이터파일 유래 source·소스명(한전·EPSIS 등)은 KO 유지. */
+const DS_LABEL_EN = {
+  '발전사업 허가 (2024+)': 'Power-gen licenses (2024+)',
+  '집단에너지(열병합) 발전소': 'District energy (CHP) plants',
+  '2025 신규 발전소(시도별)': '2025 new plants (by sido)',
+  '계통 공급여유(시도)': 'Grid headroom (sido)',
+  'DC 전력계통영향평가(시도)': 'DC grid impact assessment (sido)',
+  '변전소 현황(한전 본부)': 'Substations (KEPCO HQ)',
+  '산업단지(전국)': 'Industrial complexes (nationwide)',
+  '공급예정 DC': 'Upcoming DC supply',
+  '변전소 여유용량(연도별)': 'Substation headroom (by year)',
+  '송변전 건설 파이프라인': 'T&D construction pipeline',
+  'DC 거래 사례': 'DC deal cases',
+  '랙 임대료': 'Rack rates',
+  '개발 갈등 사례': 'Development conflict cases',
+  '데이터센터 시설 시드': 'Datacenter facility seed',
+}
+const COL_EN = {
+  허가일: 'License date', 시도: 'Sido', '상호(사업자)': 'Business name (operator)', 원동력: 'Prime mover',
+  '용량MW(참고치)': 'Capacity MW (indicative)', 허가연도: 'License year', 발전사: 'Operator', 대상발전소: 'Plant',
+  관리소: 'Management office', 공급년월: 'Supply date', 발전용량MW: 'Gen capacity MW', '신규 설비용량(KW)': 'New capacity (KW)',
+  '발전소 개수': 'Plant count', 공급여유MW: 'Headroom MW', 판정: 'Verdict', 비고: 'Note', 공급가능MW: 'Serviceable MW',
+  공급불가MW: 'Non-serviceable MW', '승인율%': 'Approval %', 지역본부: 'Regional HQ', '154kV+ 변전소': '154kV+ substations',
+  변압기MVA: 'Transformer MVA', 단지명: 'Complex name', 유형: 'Type', 위도: 'Lat', 경도: 'Lng', 사업자: 'Operator',
+  센터명: 'Center name', 위치: 'Location', IT용량MW: 'IT capacity MW', 수전MW: 'Supply MW', 준공예정: 'Due',
+  변전소: 'Substation', 검색지역: 'Search area', '여유 발생': 'First headroom', '발전허가(MW)': 'Gen license (MW)',
+  '접속예정(명)': 'Pending connections (n)', 단계: 'Stage', 전압: 'Voltage', 사업명: 'Project name', 설비종류: 'Facility type',
+  담당본부: 'HQ in charge', 담당사업소: 'Office in charge', 자산명: 'Asset name', 주소: 'Address', '연면적㎡': 'GFA ㎡',
+  수전용량: 'Supply capacity', 준공: 'Built', 거래시기: 'Deal date', '매입가(억원)': 'Price (100M KRW)', 매도인: 'Seller',
+  매수인: 'Buyer', '랙 타입': 'Rack type', '월 임대료(원)': 'Monthly rent (KRW)', '기본 전력': 'Base power',
+  '추가 전력 단가': 'Extra power rate', 시행사: 'Developer', 지역: 'Region', '주민 주장': 'Resident claims',
+  '개발상 이슈': 'Development issue', 시설명: 'Facility name', 운영사: 'Operator', 시군구: 'Sigungu', 상태: 'Status',
+  공개전력MW: 'Public power MW', 연도: 'Year',
+}
+const SRC_EN = {
+  '3MW 초과 발전사업 허가대장 v2': '3MW+ power-generation license register v2',
+  '집단에너지 발전용량·공급량 현황': 'District-energy generation capacity · supply status',
+  '2025년도 신규 발전소 설치 현황': '2025 new power-plant installation status',
+  '한국전력공사 계통 공급여유(연계가능용량) — 시도 총량': 'KEPCO grid headroom (interconnectable capacity) — sido totals',
+  '한전 전력계통영향평가 1차 기술검토 — 데이터센터': 'KEPCO power-grid impact assessment, 1st technical review — datacenters',
+  '한국전력공사 변전설비현황 — 지역본부별': 'KEPCO substation facility status — by regional HQ',
+  'OpenStreetMap landuse=industrial (지정단지 필터)': 'OpenStreetMap landuse=industrial (designated-complex filter)',
+  '삼일PwC(2026.3)·알스퀘어(2025.11) 교차 — 원출처 PwC Analysis·KDCC·국토교통부. IT용량≠수전용량, 준공예정은 지연 가능':
+    'Samil PwC (2026.3) · RSquare (2025.11) cross-check — original sources PwC Analysis · KDCC · MOLIT. IT capacity ≠ supply capacity; completion dates may slip',
+  '알스퀘어 리서치센터(2025.11) — 국내 데이터센터 주요 매매 거래. 수전용량 괄호는 IT Load':
+    'RSquare Research Center (2025.11) — major Korean datacenter transactions. Parenthesized supply capacity is IT Load',
+  '알스퀘어 리서치센터(2025.11) — 코로케이션 업체별 공표 랙 임대료. Full 랙 기본 2.2kW(저밀도) — AIDC 고밀도 랙과 과금 구조 상이':
+    'RSquare Research Center (2025.11) — published rack rates by colocation vendor. Full rack base 2.2kW (low density) — pricing structure differs from AIDC high-density racks',
+  'AI InfraMap 시드 v0.1 (공개 소스 집계)': 'AI InfraMap seed v0.1 (aggregated from public sources)',
+}
+const CAT_EN = { 데이터센터: 'Datacenter', '전력 · 발전': 'Power · generation', '리포트 · 글로벌': 'Reports · global' }
+const DESC_EN = {
+  '업계 협회 허브 — 뉴스레터·국내 DC 마켓 리포트·데이터센터 서밋 코리아': 'Industry-association hub — newsletter · Korea DC market reports · Data Center Summit Korea',
+  '글로벌 최대 DC 전문 매체 — 하이퍼스케일·투자·리츠, 국내 프로젝트 속보': 'Largest global DC trade outlet — hyperscale · investment · REITs, breaking Korea project news',
+  '국내 IT지 — 전력계통영향평가·수도권 집중 등 DC 규제 커버리지': 'Korean IT press — coverage of DC regulation such as grid impact assessment and capital-region concentration',
+  '디벨로퍼 기술 블로그 — 랙당 전력밀도, 공랭→수냉 전환 조건 등 실무 디테일': 'Developer tech blog — practical detail such as per-rack power density and air→liquid cooling transition conditions',
+  '전력업계 1위 전문지 — 계통·변전·송전 이슈 속보': 'No. 1 power-industry trade paper — breaking grid · substation · transmission news',
+  '에너지 정책 심층 — 지역별 차등 요금제 등 굵직한 제도 이슈': 'In-depth energy policy — major institutional issues such as regional differential tariffs',
+  '실시간 수급·SMP·발전량 원천 통계 — 전력 인사이트의 뿌리': 'Real-time supply-demand · SMP · generation source statistics — the root of power insights',
+  '기후에너지환경부 보도자료·전력수급기본계획 등 정책 원문 확인 경로': 'Path to primary policy texts — Ministry of Climate, Energy and Environment press releases, power supply-demand basic plan, etc.',
+  '국가 AI컴퓨팅센터·콜로케이션 사업모델 등 밸류체인 공개 분석 (PDF)': 'Public value-chain analysis — national AI computing center · colocation business models, etc. (PDF)',
+  'AI 데이터센터 × 전력 글로벌 심층 분석 (딜런 파텔)': 'Global deep analysis of AI datacenters × power (Dylan Patel)',
+}
+const TAG_EN = {
+  '마켓 리포트': 'Market report', 행사: 'Events', 글로벌: 'Global', 투자: 'Investment', 규제: 'Regulation',
+  계통영향평가: 'Grid impact assessment', 냉각: 'Cooling', 전력밀도: 'Power density', 계통: 'Grid', 송전: 'Transmission',
+  정책: 'Policy', 차등요금: 'Differential tariff', '원천 데이터': 'Source data', 'SMP': 'SMP', '정책 원문': 'Primary policy',
+  밸류체인: 'Value chain', PDF: 'PDF', 'AI×전력': 'AI×power',
+}
+
 export default function DataExplorerPage() {
+  const en = useMapLang() === 'en'
+  const dsL = (ko) => (en ? DS_LABEL_EN[ko] ?? ko : ko)
+  const colL = (ko) => (en ? COL_EN[ko] ?? ko : ko)
+  const srcL = (ko) => (en ? SRC_EN[ko] ?? ko : ko)
   // 탭 URL 동기화(?tab=) — 카드·아티클에서 특정 데이터셋으로 딥링크 가능하게
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
@@ -346,17 +423,27 @@ export default function DataExplorerPage() {
       <TopBar />
       <div className="power-page">
         <div className="eyebrow">DATA</div>
-        <h1 className="power-title">데이터 탐색기 — 축적 자료 검색 · CSV 다운로드</h1>
+        <h1 className="power-title">{en ? 'Data explorer — search accumulated sources · CSV download' : '데이터 탐색기 — 축적 자료 검색 · CSV 다운로드'}</h1>
         <p className="power-note">
-          AI InfraMap이 흡수한 원천 자료를 직접 검색하고 CSV로 내려받을 수 있습니다. 각 데이터셋의 <strong>기준일</strong>을
-          함께 표기 — 발전 허가대장 2026-04, 집단에너지 2025-07, 시설 시드 2026-07로 대부분 2025~2026 최신입니다.
-          (KDCC 시설 수 165는 2024 조사가 현재 공표된 최신치입니다.)
+          {en ? (
+            <>
+              Search the primary sources AI InfraMap has absorbed and download them as CSV. Each dataset's <strong>base date</strong> is
+              shown — the generation license register 2026-04, district energy 2025-07, facility seed 2026-07 — mostly current for 2025~2026.
+              (The KDCC facility count of 165 is the 2024 survey, the latest currently published.)
+            </>
+          ) : (
+            <>
+              AI InfraMap이 흡수한 원천 자료를 직접 검색하고 CSV로 내려받을 수 있습니다. 각 데이터셋의 <strong>기준일</strong>을
+              함께 표기 — 발전 허가대장 2026-04, 집단에너지 2025-07, 시설 시드 2026-07로 대부분 2025~2026 최신입니다.
+              (KDCC 시설 수 165는 2024 조사가 현재 공표된 최신치입니다.)
+            </>
+          )}
         </p>
 
-        <div className="seg-tabs" role="tablist" aria-label="데이터셋 분류">
+        <div className="seg-tabs" role="tablist" aria-label={en ? 'Dataset categories' : '데이터셋 분류'}>
           {DATASETS.map((d) => (
             <button key={d.key} type="button" role="tab" className={`seg-tab ${tab === d.key ? 'on' : ''}`} onClick={() => selectTab(d.key)} aria-selected={tab === d.key}>
-              {d.label} <span className="n">{d.rows.length.toLocaleString()}</span>
+              {dsL(d.label)} <span className="n">{d.rows.length.toLocaleString()}</span>
             </button>
           ))}
         </div>
@@ -365,29 +452,37 @@ export default function DataExplorerPage() {
           <input
             className="explorer-search"
             type="search"
-            placeholder={`${ds.label} 검색 (상호·지역·연료 등)`}
+            placeholder={en ? `Search ${dsL(ds.label)} (name · region · fuel, etc.)` : `${ds.label} 검색 (상호·지역·연료 등)`}
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            aria-label="데이터 검색"
+            aria-label={en ? 'Search data' : '데이터 검색'}
           />
           <span className="explorer-count">
-            {filtered.length.toLocaleString()} / {ds.rows.length.toLocaleString()}건
+            {filtered.length.toLocaleString()} / {ds.rows.length.toLocaleString()}{en ? '' : '건'}
           </span>
           <button
             type="button"
             className="btn primary"
             onClick={() => downloadCsv(`aiinframap_${ds.key}_${q ? 'filtered_' : ''}${ds.asOf}.csv`, toCsv(ds.columns, filtered))}
           >
-            ⬇ CSV 다운로드{q ? ' (검색결과)' : ''}
+            {en ? `⬇ Download CSV${q ? ' (results)' : ''}` : `⬇ CSV 다운로드${q ? ' (검색결과)' : ''}`}
           </button>
           {ds.fullCsv && (
             <a className="btn" href={ds.fullCsv} download>
-              ⬇ {ds.fullLabel}
+              ⬇ {en ? ds.fullLabelEn ?? ds.fullLabel : ds.fullLabel}
             </a>
           )}
         </div>
         <p className="chart-note" style={{ marginTop: 6 }}>
-          기준일 <strong>{ds.asOf}</strong> · 출처: {ds.source}. 페이지당 {PER_PAGE}건 · 전체 {filtered.length.toLocaleString()}건 브라우징(검색·CSV는 전체 대상). 용량(MW)은 참고치.
+          {en ? (
+            <>
+              Base date <strong>{ds.asOf}</strong> · Source: {srcL(ds.source)}. {PER_PAGE} per page · browsing all {filtered.length.toLocaleString()} rows (search · CSV cover the full set). Capacity (MW) is indicative.
+            </>
+          ) : (
+            <>
+              기준일 <strong>{ds.asOf}</strong> · 출처: {ds.source}. 페이지당 {PER_PAGE}건 · 전체 {filtered.length.toLocaleString()}건 브라우징(검색·CSV는 전체 대상). 용량(MW)은 참고치.
+            </>
+          )}
         </p>
 
         <div className="explorer-table-wrap">
@@ -395,7 +490,7 @@ export default function DataExplorerPage() {
             <thead>
               <tr>
                 <th style={{ width: 44, textAlign: 'right' }}>#</th>
-                {ds.columns.map((c) => <th key={c.k}>{c.label}</th>)}
+                {ds.columns.map((c) => <th key={c.k}>{colL(c.label)}</th>)}
               </tr>
             </thead>
             <tbody>
@@ -407,41 +502,50 @@ export default function DataExplorerPage() {
               ))}
             </tbody>
           </table>
-          {filtered.length === 0 && <p className="chart-note" style={{ padding: '12px' }}>검색 결과가 없습니다.</p>}
+          {filtered.length === 0 && <p className="chart-note" style={{ padding: '12px' }}>{en ? 'No search results.' : '검색 결과가 없습니다.'}</p>}
         </div>
 
         {pageCount > 1 && (
           <div className="pager">
-            <button type="button" className="btn" disabled={pageSafe === 0} onClick={() => setPage(0)}>« 처음</button>
-            <button type="button" className="btn" disabled={pageSafe === 0} onClick={() => setPage((p) => Math.max(0, p - 1))}>‹ 이전</button>
+            <button type="button" className="btn" disabled={pageSafe === 0} onClick={() => setPage(0)}>{en ? '« First' : '« 처음'}</button>
+            <button type="button" className="btn" disabled={pageSafe === 0} onClick={() => setPage((p) => Math.max(0, p - 1))}>{en ? '‹ Prev' : '‹ 이전'}</button>
             <span className="pager-info">
-              {pageSafe + 1} / {pageCount} 페이지 · {(pageSafe * PER_PAGE + 1).toLocaleString()}–{Math.min((pageSafe + 1) * PER_PAGE, filtered.length).toLocaleString()}
+              {pageSafe + 1} / {pageCount} {en ? 'page' : '페이지'} · {(pageSafe * PER_PAGE + 1).toLocaleString()}–{Math.min((pageSafe + 1) * PER_PAGE, filtered.length).toLocaleString()}
             </span>
-            <button type="button" className="btn" disabled={pageSafe >= pageCount - 1} onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}>다음 ›</button>
-            <button type="button" className="btn" disabled={pageSafe >= pageCount - 1} onClick={() => setPage(pageCount - 1)}>마지막 »</button>
+            <button type="button" className="btn" disabled={pageSafe >= pageCount - 1} onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}>{en ? 'Next ›' : '다음 ›'}</button>
+            <button type="button" className="btn" disabled={pageSafe >= pageCount - 1} onClick={() => setPage(pageCount - 1)}>{en ? 'Last »' : '마지막 »'}</button>
           </div>
         )}
 
-        <section className="intel-section" aria-label="업계 인텔 채널">
+        <section className="intel-section" aria-label={en ? 'Industry intel channels' : '업계 인텔 채널'}>
           <div className="eyebrow">WATCH</div>
-          <h2 className="intel-title">업계 인텔 채널 — 데이터셋 너머의 정보원</h2>
+          <h2 className="intel-title">{en ? 'Industry intel channels — sources beyond the datasets' : '업계 인텔 채널 — 데이터셋 너머의 정보원'}</h2>
           <p className="chart-note">
-            위 데이터셋을 갱신·해석할 때 참조하는 전문지·협회·원천 통계 큐레이션입니다. 국내 DC 판은 커뮤니티보다{' '}
-            <strong>전문지 + 협회 + 리포트</strong> 중심 — 모든 링크는 외부 사이트로 열립니다. 큐레이션 기준 2026-07.
+            {en ? (
+              <>
+                A curation of trade press · associations · primary statistics referenced when updating and interpreting the datasets above. Korea's DC scene is more{' '}
+                <strong>trade press + associations + reports</strong> than community-driven — all links open external sites. Curated as of 2026-07.
+              </>
+            ) : (
+              <>
+                위 데이터셋을 갱신·해석할 때 참조하는 전문지·협회·원천 통계 큐레이션입니다. 국내 DC 판은 커뮤니티보다{' '}
+                <strong>전문지 + 협회 + 리포트</strong> 중심 — 모든 링크는 외부 사이트로 열립니다. 큐레이션 기준 2026-07.
+              </>
+            )}
           </p>
           <div className="intel-grid">
             {INTEL_CHANNELS.map((g) => (
               <div key={g.cat} className="intel-card">
-                <h3>{g.cat}</h3>
+                <h3>{en ? CAT_EN[g.cat] ?? g.cat : g.cat}</h3>
                 {g.items.map((it) => (
                   <a key={it.name} className="intel-item" href={it.url} target="_blank" rel="noopener noreferrer">
                     <span className="intel-name">
                       {it.name} <span className="intel-ext" aria-hidden="true">↗</span>
                     </span>
-                    <span className="intel-desc">{it.desc}</span>
+                    <span className="intel-desc">{en ? DESC_EN[it.desc] ?? it.desc : it.desc}</span>
                     <span className="intel-tags">
                       {it.tags.map((t) => (
-                        <span key={t} className="intel-tag">{t}</span>
+                        <span key={t} className="intel-tag">{en ? TAG_EN[t] ?? t : t}</span>
                       ))}
                     </span>
                   </a>
