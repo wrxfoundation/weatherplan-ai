@@ -2,6 +2,16 @@
 // 콘텐츠 등급: 데이터 아키텍처 4계층 중 ④참고·인사이트. 시설 데이터(dc_centers)와 분리 관리.
 export const INSIGHTS = [
   {
+    slug: 'external-gates-2026',
+    enTitle: 'Beyond the five axes — the external-environment gates that kill a datacenter',
+    en: 'Our five axes only measure physical supply. What actually kills a datacenter lives outside them: legal exclusions, hidden hardware bottlenecks, and timing. Tier 0 kill switches (greenbelt, military-protection zones, airport height limits, water-source & heritage areas) make a high-scoring site un-buildable — a GO/NO-GO, not a deduction. Beyond PSIA there are more permit gates (energy-use consultation at ≥20 GWh/yr = every DC; EIA; and a newly proposed Seoul building-committee review). Hidden bottlenecks: 154kV transformers now take 2–4 years (30% shortage), and 1MW needs ~25.5M L/yr of water (~80% evaporated). And timing — new grid capacity mostly reaches DCs only after 2030 (a 2029 supply cliff). We’ll add a legal-exclusion overlay, a water axis, an equipment-lead-time tracker, and an actual-connection-timing note. Verified figures vs site-level GIS checks are marked. Sources: Seoul City Council, pv magazine/POWER, Energy Act decree, industry press.',
+    category: '입지·토지',
+    title: '5축 밖의 관문 — 데이터센터를 실제로 죽이는 외부환경 변수',
+    description:
+      '우리 5축(전력·토지·리스크·네트워크·기상)은 전부 ‘물리적 공급’만 잰다. 그런데 데이터센터를 실제로 죽이는 건 5축 밖에 있다 — 법적 배제, 숨은 하드웨어 병목, 타이밍. TIER 0 킬스위치(그린벨트·군사시설보호구역·공항 고도제한·상수원·문화재·접도)는 점수 높은 부지를 못 짓게 만든다 — 감점이 아니라 GO/NO-GO. PSIA 말고도 관문이 더 있다(에너지사용계획 협의 연 20GWh↑=사실상 모든 DC·환경영향평가·새로 추진되는 서울시 건축위 심의). 숨은 병목: 154kV 변압기 납기 2~4년(30% 부족), 1MW당 연 2,550만 L 용수(80% 증발). 그리고 타이밍 — 신규 계통 여유는 대부분 2030년 이후에야 DC에 닿고 2029 공급절벽이 온다. 우리가 넣을 것: 법적 배제 오버레이(6번째 판정)·용수 축·설비 리드타임 트래커·실접속 시점 표기. 검증 수치 vs 부지별 GIS 확인 대상을 구분 표기. 해외 툴이 안 하는 정직한 지도화. 소스: 서울시의회·pv magazine/POWER·에너지이용합리화법 시행령·산업 보도.',
+    date: '2026-07-17',
+  },
+  {
     slug: 'build-reality-2026',
     enTitle: 'Can you build it, can you fill it — the 5 gates of a DC project',
     en: 'Finding good land is only the start. A Korean AI-datacenter project must clear five gates in order — site, grid connection, capital, GPU procurement & rack-spec fit, and utilization — and one blocked gate ends it. Capital-region PSIA approval is 1.9%; a fitted-out building can’t host next-gen GPUs if load/cooling specs are outdated; domestic GPU utilization is 30–40%. “Absorbable” datacenters do exist, but only those with pre-leased anchor tenants and current specs (AWS Incheon 650MW, Keppel Ansan). We quantify gates 1–2; gates 3–5 are market context. Site score is only the first gate. Sources: CBRE, PwC, R.square, IT Chosun.',
