@@ -112,6 +112,7 @@ const SCENARIO_KEY = 'aiim_calc_scenarios_v1'
 /* M2 스코어링 전력축 v0 — 규칙 기반 인허가 트랙 판정 (근거: 룰북 §1·§2) */
 function TrackCard({ mw, nonCapital, onRegion }) {
   const lang = useMapLang()
+  const en = lang === 'en'
   const t = (ko) => (lang === 'en' ? CT[ko] ?? ko : ko)
   const r = useMemo(() => checkPowerTrack(mw, { nonCapital }), [mw, nonCapital])
   return (
@@ -172,12 +173,15 @@ function TrackCard({ mw, nonCapital, onRegion }) {
             <Term k="수전전압">{lang === 'en' ? 'Intake voltage' : '수전전압'}</Term>{t('트랙')}
           </div>
           <div className="v">
-            {r.mw > 40 ? <Term k="154kV">{r.track.voltage}</Term> : r.mw <= 10 ? <Term k="22.9kV">{r.track.voltage}</Term> : r.track.voltage}
+            {(() => {
+              const v = en ? r.track.voltageEn ?? r.track.voltage : r.track.voltage
+              return r.mw > 40 ? <Term k="154kV">{v}</Term> : r.mw <= 10 ? <Term k="22.9kV">{v}</Term> : v
+            })()}
           </div>
         </div>
         <div className="spec-cell">
           <div className="k">{t('회선 구성')}</div>
-          <div className="v">{r.track.circuits}</div>
+          <div className="v">{en ? r.track.circuitsEn ?? r.track.circuits : r.track.circuits}</div>
         </div>
         <div className="spec-cell">
           <div className="k">
@@ -196,17 +200,17 @@ function TrackCard({ mw, nonCapital, onRegion }) {
         </div>
         <div className="spec-cell">
           <div className="k">{t('심의회 상정까지 확정 수수료')}</div>
-          <div className="v">{r.fees.total}</div>
+          <div className="v">{en ? r.fees.totalEn ?? r.fees.total : r.fees.total}</div>
         </div>
         <div className="spec-cell">
           <div className="k">{t('리드타임 골자')}</div>
           <div className="v">
-            {r.leadTime.review}
-            {r.leadTime.assessment && ` + ${r.leadTime.assessment}`}
+            {en ? r.leadTime.reviewEn ?? r.leadTime.review : r.leadTime.review}
+            {r.leadTime.assessment && ` + ${en ? r.leadTime.assessmentEn ?? r.leadTime.assessment : r.leadTime.assessment}`}
           </div>
         </div>
       </div>
-      <p className="chart-note">{r.track.note}</p>
+      <p className="chart-note">{en ? r.track.noteEn ?? r.track.note : r.track.note}</p>
       {r.exemption && (
         <p className="chart-note">
           {lang === 'en'
@@ -214,10 +218,10 @@ function TrackCard({ mw, nonCapital, onRegion }) {
             : `AIDC 특별법: 비수도권 일정 규모 이하 시설은 ${r.exemption.effective}부터 전력계통영향평가 면제 — 규모 기준은 대통령령 위임(미제정)이라 확정 전입니다.`}
         </p>
       )}
-      {r.leadTime.deadline && <p className="chart-note">⚠ {r.leadTime.deadline}</p>}
+      {r.leadTime.deadline && <p className="chart-note">⚠ {en ? r.leadTime.deadlineEn ?? r.leadTime.deadline : r.leadTime.deadline}</p>}
       <p className="footer-note">
         {lang === 'en' ? 'Basis: ' : '근거: '}
-        {r.basis.join(' · ')}
+        {(en ? r.basisEn ?? r.basis : r.basis).join(' · ')}
         {lang === 'en' ? '. See the power-permit rulebook (repo docs) for full formulas.' : '. 상세 산식은 전력 인허가 룰북(리포 docs) 참조.'}
       </p>
     </div>

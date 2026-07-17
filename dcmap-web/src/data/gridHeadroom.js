@@ -41,8 +41,15 @@ export function gridHeadroomForSido(sido) {
 }
 
 /** 공급여유(MW) → 정성 라벨 */
-export function headroomLabel(mw) {
+export function headroomLabel(mw, en = false) {
   if (mw == null) return null
+  if (en) {
+    if (mw <= 10) return 'Grid saturated (no new large load)'
+    if (mw <= 100) return 'Very tight'
+    if (mw <= 500) return 'Limited'
+    if (mw <= 1500) return 'Some headroom'
+    return 'Ample headroom'
+  }
   if (mw <= 10) return '계통 포화(신규 대형부하 불가)'
   if (mw <= 100) return '매우 빠듯'
   if (mw <= 500) return '제한적'

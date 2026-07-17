@@ -63,8 +63,15 @@ export const PSIA_REVIEW_2026 = {
 }
 
 /** DC 승인율(%) → 정성 라벨 */
-export function approvalLabel(pct) {
+export function approvalLabel(pct, en = false) {
   if (pct == null) return null
+  if (en) {
+    if (pct >= 90) return 'Ample supply'
+    if (pct >= 70) return 'Mostly feasible'
+    if (pct >= 50) return 'Mixed'
+    if (pct >= 30) return 'Grid bottleneck'
+    return 'Severe bottleneck'
+  }
   if (pct >= 90) return '공급 원활'
   if (pct >= 70) return '대체로 가능'
   if (pct >= 50) return '혼재'
