@@ -2,6 +2,16 @@
 // 콘텐츠 등급: 데이터 아키텍처 4계층 중 ④참고·인사이트. 시설 데이터(dc_centers)와 분리 관리.
 export const INSIGHTS = [
   {
+    slug: 'ops-timing-2026',
+    enTitle: 'Siting is the ticket, operations is the return — the timing & operating gates',
+    en: 'Siting decides whether you CAN build; operations & timing decide whether it PAYS and WHEN it connects — the “Tier 3–4” external factors. Timing is a date, not a number: new grid capacity mostly reaches DCs only after 2030, a supply cliff looms around 2029, and a DC takes 3–5 years — so today’s headroom is really a calendar. Even after connection a saturated grid can impose re-dispatch (curtailment), and congested areas can be designated grid-management substations. Tariff drives the P&L: industrial (Type-Eul) time-of-use pricing (off-peak/mid/peak, seasonal) meets a peak-heavy AI load, and the Distributed Energy Act opens regional pricing. RE100/PPA annual matching ≠ 24-7 hourly carbon-free (CFE) — CBAM and hyperscaler ESG push toward hourly, changing bankability. Public/finance workloads carry CSAP and network-separation duties. Verified public patterns vs site-level assumptions are marked. Read with the siting-gates companion (external-gates-2026). Sources: Electric Times/KHARN, Shin & Kim & Chang newsletters, Distributed Energy Act/MOTIE, our own frame.',
+    category: '전력·계통',
+    title: '입지는 입장권, 운영이 수익률 — 데이터센터 운영·타이밍의 관문',
+    description:
+      '입지는 「지을 수 있나」를 정하고, 운영·타이밍은 「수지가 맞나·언제 붙나」를 정한다 — 5축 밖 ‘Tier 3·4’ 외부 요인. 타이밍은 숫자가 아니라 날짜다: 신규 계통 여유는 대부분 2030년 이후에야 DC에 닿고, 2029 공급절벽이 오며, DC 개발은 3~5년 — 지금의 계통여유는 사실 달력이다. 접속 뒤에도 포화 계통은 재급전(출력제한)을 부과할 수 있고, 혼잡지역은 계통관리변전소로 지정될 수 있다. 요금이 손익을 몬다: 산업용(을) 시간대별 요금(경부하·중간·최대·계절별)에 피크 편중 AI 부하가 얹히고, 분산에너지법이 지역별 요금을 연다. RE100/PPA 연간 매칭 ≠ 24-7 시간단위 무탄소(CFE) — CBAM·하이퍼스케일러 ESG가 시간단위로 밀며 파이낸싱 가능성을 바꾼다. 공공·금융 워크로드는 CSAP·망분리 의무를 진다. 검증된 공개 패턴 vs 부지별 가정을 구분 표기. 입지 관문 짝 글(external-gates-2026)과 함께 읽는다. 소스: 전기신문/KHARN·신·김앤장 뉴스레터·분산에너지법/산업부·자체 프레임.',
+    date: '2026-07-17',
+  },
+  {
     slug: 'external-gates-2026',
     enTitle: 'Beyond the five axes — the external-environment gates that kill a datacenter',
     en: 'Our five axes only measure physical supply. What actually kills a datacenter lives outside them: legal exclusions, hidden hardware bottlenecks, and timing. Tier 0 kill switches (greenbelt, military-protection zones, airport height limits, water-source & heritage areas) make a high-scoring site un-buildable — a GO/NO-GO, not a deduction. Beyond PSIA there are more permit gates (energy-use consultation at ≥20 GWh/yr = every DC; EIA; and a newly proposed Seoul building-committee review). Hidden bottlenecks: 154kV transformers now take 2–4 years (30% shortage), and 1MW needs ~25.5M L/yr of water (~80% evaporated). And timing — new grid capacity mostly reaches DCs only after 2030 (a 2029 supply cliff). We’ll add a legal-exclusion overlay, a water axis, an equipment-lead-time tracker, and an actual-connection-timing note. Verified figures vs site-level GIS checks are marked. Sources: Seoul City Council, pv magazine/POWER, Energy Act decree, industry press.',
