@@ -116,8 +116,10 @@ export default function ExternalGates() {
           <strong> grid “actual-connection timing”</strong> note beside headroom. Honesty line: transformer 2–4 yrs, water
           ~25.5M L/MW, the 20 GWh consultation trigger, 88% of Seoul buildable, and post-2030 real supply are all
           public-data verified; a specific parcel’s overlay conflicts and water rights need site-level GIS/administrative
-          confirmation; a Korean waste-heat-reuse mandate is not yet decided. A high five-axis score is the first gate — not
-          the finish line.
+          confirmation; a Korean waste-heat-reuse mandate is not yet decided. Status update: the Tier-0 exclusion overlay is
+          now wired end-to-end — the engine, a map layer, and a site-panel GO/NO-GO check — and auto-activates the moment
+          public GIS polygons are loaded deployment-side (currently data-pending, so it honestly reads as pending, not as
+          coverage). A high five-axis score is the first gate — not the finish line.
         </p>
       </>
     )
@@ -218,7 +220,9 @@ export default function ExternalGates() {
         우선순위: (1) 공개 GIS 기반 <strong>Tier 0 배제 오버레이</strong>를 6번째 ‘법적으로 지을 수 있나’ 판정으로,
         (2) <strong>용수 축</strong>과 <strong>설비 리드타임</strong> 트래커, (3) 계통 여유 옆에 <strong>‘실제 접속 시점’</strong>
         표기. 정직성: 변압기 2~4년·물 2,550만L/MW·협의 20GWh 트리거·서울 88%·2030년 이후 실공급은 공개자료로 검증됐고,
-        개별 부지의 오버레이 저촉·수리권은 부지별 GIS/행정 확인이 필요하며, 폐열 재이용 의무의 국내 도입은 미확정이다. 5축
+        개별 부지의 오버레이 저촉·수리권은 부지별 GIS/행정 확인이 필요하며, 폐열 재이용 의무의 국내 도입은 미확정이다. 진행
+        현황: Tier 0 배제 오버레이는 이제 엔진·맵 레이어·부지 패널 GO/NO-GO 판정까지 끝단으로 배선돼 있고, 배포측에서 공개 GIS
+        폴리곤이 수록되는 즉시 자동 활성화된다(현재는 데이터 대기라 커버리지가 아니라 ‘대기’로 정직하게 표시). 5축
         고득점은 첫 관문일 뿐, 결승선이 아니다.
       </p>
     </>

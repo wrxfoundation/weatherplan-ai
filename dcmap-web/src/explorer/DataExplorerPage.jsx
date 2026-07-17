@@ -1,6 +1,8 @@
 import { useMemo, useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
+import { EXCLUSION_LAYERS } from '../score/exclusions.js'
+import EXCLUSION_MANIFEST from '../../data/exclusions/manifest.json'
 import { FACILITIES, STATUS_LABEL } from '../data/facilities.js'
 import { GEN_RECENT, GEN_LICENSE_META } from '../data/genLicenses.js'
 import { CHP_PLANTS } from '../data/chpPlants.js'
@@ -281,6 +283,10 @@ const DATASETS = [
   },
 ]
 
+// 입지 배제구역 데이터셋 key — 딥링크(?tab=exclusions) 허용용. 실제 rows/columns는 언어별로 컴포넌트에서 생성.
+const EXCLUSION_KEY = 'exclusions'
+const DATASET_KEYS = new Set([...DATASETS.map((d) => d.key), EXCLUSION_KEY])
+
 const PER_PAGE = 50
 
 /* 업계 인텔 채널 — 원천 데이터셋 너머, 인사이트 갱신 시 참조하는 정보원 큐레이션.
@@ -329,6 +335,7 @@ const DS_LABEL_EN = {
   '랙 임대료': 'Rack rates',
   '개발 갈등 사례': 'Development conflict cases',
   '데이터센터 시설 시드': 'Datacenter facility seed',
+  '입지 배제구역': 'Exclusion zones',
 }
 const COL_EN = {
   허가일: 'License date', 시도: 'Sido', '상호(사업자)': 'Business name (operator)', 원동력: 'Prime mover',
@@ -391,7 +398,38 @@ export default function DataExplorerPage() {
   // 탭 URL 동기화(?tab=) — 카드·아티클에서 특정 데이터셋으로 딥링크 가능하게
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
-  const [tab, setTab] = useState(() => (DATASETS.some((d) => d.key === tabParam) ? tabParam : 'gen'))
+  const [tab, setTab] = useState(() => (DATASET_KEYS.has(tabParam) ? tabParam : 'gen'))
+
+  // 입지 배제구역 데이터셋 — EXCLUSION_LAYERS(엔진 계약) + manifest(수록 상태) 조인. 언어별 셀값이라 컴포넌트에서 생성.
+  // 정직성: manifest가 available=false면 '데이터 대기 / pending' 그대로 노출 — 커버리지를 암시하지 않는다.
+  const EXCLUSION_DS = useMemo(() => ({
+    key: EXCLUSION_KEY,
+    label: '입지 배제구역',
+    asOf: EXCLUSION_MANIFEST.asOf || (en ? 'data pending' : '데이터 대기'),
+    source: en
+      ? 'Legal-exclusion overlay from public GIS polygons (MOLIT · vWorld · MND · MOE · Korea Heritage Service). Population is deployment-side (ops/EXCLUSIONS-RUNBOOK.md) — all layers currently pending; the exclusion engine, map layer and site-panel GO/NO-GO check auto-activate once polygons load'
+      : '공개 GIS 폴리곤(국토교통부·브이월드·국방부·환경부·국가유산청) 기반 입지 배제 오버레이. 데이터 주입은 배포측 전용(ops/EXCLUSIONS-RUNBOOK.md) — 현재 전 레이어 데이터 대기, 폴리곤 수록 시 배제 엔진·맵 레이어·부지 패널 GO/NO-GO 판정이 자동 활성화',
+    fullCsv: null,
+    columns: [
+      { k: 'layer', label: en ? 'Layer' : '레이어' },
+      { k: 'kind', label: en ? 'Kind (No-go/Restrict)' : '유형(건축 불가/협의 필요)' },
+      { k: 'source', label: en ? 'Source' : '출처' },
+      { k: 'status', label: en ? 'Status' : '수록 상태' },
+    ],
+    rows: EXCLUSION_LAYERS.map((L) => {
+      const m = EXCLUSION_MANIFEST.layers.find((x) => x.key === L.key)
+      const available = !!m?.available
+      return {
+        layer: en ? L.en : L.ko,
+        kind: L.kind === 'block' ? (en ? 'No-go' : '건축 불가') : (en ? 'Restrict' : '협의 필요'),
+        source: L.source,
+        status: available
+          ? (en ? `loaded (${m.asOf})` : `수록 (${m.asOf})`)
+          : (en ? 'pending' : '데이터 대기'),
+      }
+    }),
+  }), [en])
+  const ALL_DATASETS = useMemo(() => [...DATASETS, EXCLUSION_DS], [EXCLUSION_DS])
   const [q, setQ] = useState('')
   const [page, setPage] = useState(0)
   const selectTab = (k) => {
@@ -407,7 +445,7 @@ export default function DataExplorerPage() {
     setQ('')
   }, [])
 
-  const ds = DATASETS.find((d) => d.key === tab)
+  const ds = ALL_DATASETS.find((d) => d.key === tab)
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase()
     if (!needle) return ds.rows
@@ -441,7 +479,7 @@ export default function DataExplorerPage() {
         </p>
 
         <div className="seg-tabs" role="tablist" aria-label={en ? 'Dataset categories' : '데이터셋 분류'}>
-          {DATASETS.map((d) => (
+          {ALL_DATASETS.map((d) => (
             <button key={d.key} type="button" role="tab" className={`seg-tab ${tab === d.key ? 'on' : ''}`} onClick={() => selectTab(d.key)} aria-selected={tab === d.key}>
               {dsL(d.label)} <span className="n">{d.rows.length.toLocaleString()}</span>
             </button>
@@ -484,6 +522,25 @@ export default function DataExplorerPage() {
             </>
           )}
         </p>
+        {ds.key === EXCLUSION_KEY && (
+          <p className="chart-note" style={{ marginTop: 6 }}>
+            {en ? (
+              <>
+                A “can you legally build” GO/NO-GO overlay outside the five axes. All five layers are currently{' '}
+                <strong>data-pending</strong> — nothing here says a specific parcel is covered or clear. Once public GIS
+                polygons are loaded deployment-side, each layer flips to “loaded (asOf)” and the exclusion check activates
+                automatically. See <Link to="/insights/external-gates-2026">the external-gates brief</Link>.
+              </>
+            ) : (
+              <>
+                5축 밖 ‘법적으로 지을 수 있나’ GO/NO-GO 오버레이입니다. 현재 5개 레이어 전부{' '}
+                <strong>데이터 대기</strong> — 특정 부지의 저촉·해당 없음을 뜻하지 않습니다. 배포측에서 공개 GIS 폴리곤이
+                수록되면 각 레이어가 ‘수록(asOf)’으로 바뀌고 배제 판정이 자동 활성화됩니다.{' '}
+                <Link to="/insights/external-gates-2026">외부 관문 브리프</Link> 참조.
+              </>
+            )}
+          </p>
+        )}
 
         <div className="explorer-table-wrap">
           <table className="explorer-table">

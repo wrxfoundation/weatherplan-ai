@@ -34,6 +34,7 @@ import { dcApprovalForSido, approvalLabel } from '../data/gridAssessment.js'
 import { geomAreaM2 } from '../data/geomArea.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor, parcelAt, smpToday, fuelMixNow, epsisCapacity } from '../data/liveApi.js'
+import { EXCLUSION_LAYERS, hasExclusionData, anyExclusionData, exclusionFeatureCollection } from '../score/exclusions.js'
 import { useMapLang } from '../i18n/mapLang.js'
 
 const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ sido, lat, lng }))
@@ -273,6 +274,8 @@ export default function MapPage({ power = false }) {
   const headroomLayerRef = useRef(null)
   const [showApproval, setShowApproval] = useState(() => _initLayers.has('approval')) // DC 공급 승인율 시도 버블 (계통영향평가 1차 기술검토)
   const approvalLayerRef = useRef(null)
+  const [showExclusions, setShowExclusions] = useState(() => _initLayers.has('exclusions')) // 배제구역 오버레이 (그린벨트·군사·공항 고도·상수원·문화재 GO/NO-GO 폴리곤)
+  const exclusionsLayerRef = useRef(null)
   const parcelLayerRef = useRef(null) // 지점이 속한 필지(연속지적도) 경계
   const [headrooms, setHeadrooms] = useState(null) // {sido: availableMw|null}
   const [region, setRegion] = useState(null) // 전력지도: 클릭한 시도 (지역 요약 카드)
@@ -401,7 +404,7 @@ export default function MapPage({ power = false }) {
       for (const r of [
         plantsLayerRef, subsLayerRef, linesLayerRef, complexLayerRef, netLayerRef, pipelineLayerRef, reLayerRef,
         waterLayerRef, semiLayerRef, recoLayerRef, publicLayerRef, genLayerRef, headroomLayerRef,
-        approvalLayerRef, parcelLayerRef, pointMarkerRef, siteSubstLayerRef,
+        approvalLayerRef, exclusionsLayerRef, parcelLayerRef, pointMarkerRef, siteSubstLayerRef,
       ]) {
         try {
           if (r.current) map.removeLayer(r.current)
@@ -970,6 +973,40 @@ export default function MapPage({ power = false }) {
     }
   }, [showApproval, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // 배제구역 오버레이 — 공개 GIS 폴리곤(그린벨트·군사·공항 고도·상수원·문화재) GO/NO-GO.
+  // 데이터가 실제 있는 레이어만 L.geoJSON으로 렌더(필지 경계와 동일 방식). block=빨강(입지 불가)/restrict=주황(조건부).
+  // 정직성: 폴리곤이 없으면 아무것도 그리지 않는다(가짜 구역 금지 — 대기 힌트는 FilterBar가 표시).
+  useEffect(() => {
+    const map = mapObj.current
+    if (!map) return
+    if (exclusionsLayerRef.current) {
+      map.removeLayer(exclusionsLayerRef.current)
+      exclusionsLayerRef.current = null
+    }
+    if (!showExclusions) return
+    const g = L.layerGroup()
+    for (const layer of EXCLUSION_LAYERS) {
+      if (!hasExclusionData(layer.key)) continue // 데이터 없는 레이어는 건너뜀(지어내지 않음)
+      const fc = exclusionFeatureCollection(layer.key)
+      if (!fc) continue
+      const block = layer.kind === 'block'
+      const stroke = block ? 'rgba(239,68,68,0.9)' : 'rgba(245,154,60,0.9)' // block=빨강 / restrict=주황
+      const fill = block ? 'rgba(239,68,68,0.22)' : 'rgba(245,154,60,0.2)'
+      L.geoJSON(fc, {
+        style: { color: stroke, weight: 1.5, fillColor: fill, fillOpacity: 0.35, dashArray: block ? undefined : '4 3' },
+        onEachFeature: (feat, lyr) => {
+          const nm = feat?.properties?.name
+          lyr.bindTooltip(
+            `<div class="dc-hovercard"><strong>${en ? layer.en : layer.ko}</strong>${nm ? ` · ${esc(nm)}` : ''}<br/><span class="muted">${block ? t('입지 불가 (GO/NO-GO)', 'No-go (GO/NO-GO)') : t('조건부 제약', 'Conditional restriction')} · ${t('공개 GIS', 'public GIS')} · ${esc(layer.source)}</span></div>`,
+            { sticky: true, className: 'dc-hovercard', opacity: 1 },
+          )
+        },
+      }).addTo(g)
+    }
+    g.addTo(map)
+    exclusionsLayerRef.current = g
+  }, [showExclusions, en]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // 새 선택(시설·지점·지역)이 생기면 모바일 바텀시트를 자동으로 펼쳐 결과를 바로 보게 한다
   useEffect(() => {
     if (selected || sitePoint || region) setSheetCollapsed(false)
@@ -1058,12 +1095,13 @@ export default function MapPage({ power = false }) {
       showPlants && 'plants', showRe && 're', showWater && 'water', showSemi && 'semi',
       showComplexes && 'complex', showNet && 'net', showPipeline && 'pipeline', !power && showGenPermits && 'permit',
       showHeadroom && 'headroom', showApproval && 'approval', showPublic && 'public',
+      showExclusions && 'exclusions',
     ].filter(Boolean)
     const next = new URLSearchParams(searchParams)
     if (active.length) next.set('layers', active.join(','))
     else next.delete('layers')
     if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
-  }, [showReco, showLabels, showSubs, showLines, showPlants, showRe, showWater, showSemi, showComplexes, showNet, showPipeline, showGenPermits, showHeadroom, showApproval, showPublic]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [showReco, showLabels, showSubs, showLines, showPlants, showRe, showWater, showSemi, showComplexes, showNet, showPipeline, showGenPermits, showHeadroom, showApproval, showPublic, showExclusions]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const cluster = clusterRef.current
@@ -1230,6 +1268,9 @@ export default function MapPage({ power = false }) {
         onToggleHeadroom={() => setShowHeadroom((v) => !v)}
         showApproval={showApproval}
         onToggleApproval={() => setShowApproval((v) => !v)}
+        showExclusions={showExclusions}
+        onToggleExclusions={() => setShowExclusions((v) => !v)}
+        exclusionsHasData={anyExclusionData()}
       />
       <div className="map-layout">
         <div ref={mapRef} className="map-canvas" />

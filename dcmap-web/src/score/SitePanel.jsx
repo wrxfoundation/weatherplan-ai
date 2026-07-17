@@ -17,6 +17,7 @@ import { nearestRenewable } from '../data/renewablePlants.js'
 import { nearestWaterSource } from '../data/waterSources.js'
 import { nearestCluster } from '../data/semiClusters.js'
 import { scoreSite, haversineKm } from './engine.js'
+import { checkExclusions, exclusionSummary } from './exclusions.js'
 import { matchSubstationCoord } from '../data/substationPoints.js'
 import { buildSiteReport } from './report.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from './climateIndex.js'
@@ -272,6 +273,10 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
   const waterNear = useMemo(() => nearestWaterSource(point.lat, point.lng), [point])
   const clusterNear = useMemo(() => nearestCluster(point.lat, point.lng), [point])
   const icNear = useMemo(() => nearestIndustrialComplex(point.lat, point.lng), [point])
+
+  // 배제 오버레이 판정 — 법적 건축가능성(GO/NO-GO). 폴리곤 데이터 부재 시 전 레이어 'pending'(데이터 대기)로 정직 반환.
+  const exResults = useMemo(() => checkExclusions({ lat: point.lat, lng: point.lng }), [point])
+  const exSummary = useMemo(() => exclusionSummary(exResults), [exResults])
 
   // 스코어링 — 라이브 SGIS 리스크(침수·산사태·인구)·기후지수·발전단지 근접·계통 공급여유·DC 승인율을 실제 점수축에 반영(로드되며 갱신).
   const plantKm = np?.km ?? null
@@ -655,13 +660,22 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               note: lang === 'en' ? 'high if evaporative; air-cooled raises PUE' : '증발냉각 시 다량 · 공랭 시 PUE↑',
               verdict: lang === 'en' ? 'Cooling-dependent' : '냉각방식 의존',
             },
-            {
-              id: 'X',
-              title: lang === 'en' ? 'Exclusion overlays' : '배제 오버레이',
-              note: lang === 'en' ? 'greenbelt · military · airport height · water-source · heritage' : '그린벨트·군사·공항 고도제한·상수원·문화재',
-              verdict: lang === 'en' ? 'Site GIS check' : '부지별 GIS 확인',
-            },
           ]
+          // 배제 오버레이 — 규칙 산출(E1~E3)과 달리 실제 GIS 폴리곤 저촉 판정. 데이터 부재 시 정직히 '데이터 대기'.
+          const exVerdict = exSummary.verdict
+          const exBadge = (g) => {
+            if (g.status === 'hit') {
+              const conflict = g.name
+                ? (lang === 'en' ? `Conflict: ${g.name}` : `저촉: ${g.name}`)
+                : (lang === 'en' ? 'Conflict' : '저촉')
+              if (g.kind === 'block')
+                return { cls: 'critical', text: `${conflict} · ${lang === 'en' ? 'likely not buildable' : '건축 불가 가능'}`, sev: 'gate' }
+              return { cls: 'verify', text: `${conflict} · ${lang === 'en' ? 'consultation needed' : '협의 필요'}`, sev: 'talk' }
+            }
+            if (g.status === 'clear')
+              return { cls: 'status-operating', text: lang === 'en' ? 'clear' : '해당 없음', sev: 'ok' }
+            return { cls: 'pending', text: lang === 'en' ? 'data pending' : '데이터 대기', sev: 'talk' }
+          }
           return (
             <>
               <div className="chart-title" style={{ marginTop: 14 }}>
@@ -679,11 +693,52 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   </div>
                 ))}
               </div>
+
+              {/* 배제 오버레이 — 법적 건축가능성(GO/NO-GO). 저촉을 지어내지 않고 데이터 부재는 '데이터 대기'로 정직 표기. */}
+              <div className="chart-title" style={{ marginTop: 14 }}>
+                {lang === 'en' ? 'Exclusion overlays — legal buildability (GO/NO-GO)' : '배제 오버레이 — 법적 건축가능성 (GO/NO-GO)'}
+              </div>
+              {exVerdict === 'no-go' && (
+                <div className="gate-row sev-gate" role="alert">
+                  <span className="gate-id">!</span>
+                  <span className="gate-body">
+                    <span className="gate-title">
+                      {lang === 'en'
+                        ? 'This site may fall in a legal exclusion zone — verify buildability first'
+                        : '이 부지는 법적 배제구역에 저촉될 수 있습니다 — 건축가능성 우선 확인'}
+                    </span>
+                  </span>
+                  <span className="badge critical">NO-GO</span>
+                </div>
+              )}
+              <div className="gate-outlook">
+                {exResults.map((g, i) => {
+                  const b = exBadge(g)
+                  return (
+                    <div key={g.key} className={`gate-row sev-${b.sev}`}>
+                      <span className="gate-id">X{i + 1}</span>
+                      <span className="gate-body">
+                        <span className="gate-title">{lang === 'en' ? g.en : g.ko}</span>
+                        <span className="gate-note">{g.source}</span>
+                      </span>
+                      <span className={`badge ${b.cls}`}>{b.text}</span>
+                    </div>
+                  )
+                })}
+              </div>
               <p className="chart-note">
                 {lang === 'en' ? (
-                  <>Rule-derived gates vs exclusions needing site-level GIS. Overlays are a GO/NO-GO check on Toji-eum / vWorld, not folded into the score. <Link to="/insights/external-gates-2026">External-gates brief →</Link></>
+                  <>Rule-derived gates (E1–E3) vs exclusions needing site-level GIS. Overlays are a GO/NO-GO check on Toji-eum / vWorld, not folded into the five-axis score.{' '}
+                    {exVerdict === 'pending'
+                      ? 'Overlay polygons are not loaded yet, so every layer shows data pending — a high five-axis score does not mean the site is legally buildable.'
+                      : 'A high five-axis score does not override a legal exclusion.'}{' '}
+                    <Link to="/insights/external-gates-2026">External-gates brief →</Link></>
                 ) : (
-                  <>규칙으로 산출되는 관문과 부지별 GIS 확인이 필요한 배제를 구분합니다. 배제 오버레이는 점수에 섞지 않고 토지이음·브이월드에서 GO/NO-GO로 확인. <Link to="/insights/external-gates-2026">외부 관문 브리프 →</Link></>
+                  <>규칙으로 산출되는 관문(E1~E3)과 부지별 GIS 확인이 필요한 배제를 구분합니다. 배제 오버레이는 점수에 섞지 않고 토지이음·브이월드에서 GO/NO-GO로 확인.{' '}
+                    {exVerdict === 'pending'
+                      ? '아직 오버레이 폴리곤이 연동되지 않아 전 레이어가 데이터 대기 상태입니다 — 5축 점수가 높아도 법적 건축가능성이 확인된 것은 아닙니다.'
+                      : '5축 점수가 높아도 법적 배제는 우선합니다.'}{' '}
+                    <Link to="/insights/external-gates-2026">외부 관문 브리프 →</Link></>
                 )}
               </p>
             </>

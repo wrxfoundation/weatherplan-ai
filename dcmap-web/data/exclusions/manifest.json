@@ -1,0 +1,12 @@
+{
+  "version": "v0",
+  "asOf": null,
+  "note": "입지 배제 오버레이 데이터 매니페스트. 배포측에서 scripts/fetch-exclusions.mjs로 layers/<key>.json(GeoJSON)을 채운다. 각 항목 available=true + asOf 갱신 시 엔진·SitePanel·맵이 자동 활성화.",
+  "layers": [
+    { "key": "greenbelt",      "available": false, "asOf": null, "source": "국토교통부·브이월드 도시계획(UP101)", "features": 0 },
+    { "key": "military",       "available": false, "asOf": null, "source": "국방부·토지이음 군사시설보호구역", "features": 0 },
+    { "key": "airport_height", "available": false, "asOf": null, "source": "국토교통부·한국공항공사 장애물제한표면", "features": 0 },
+    { "key": "water_source",   "available": false, "asOf": null, "source": "환경부 상수원보호구역", "features": 0 },
+    { "key": "heritage",       "available": false, "asOf": null, "source": "국가유산청 문화재보호구역·매장문화재 유존지역", "features": 0 }
+  ]
+}
