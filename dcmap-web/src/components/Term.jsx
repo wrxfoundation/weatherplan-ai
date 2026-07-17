@@ -1,5 +1,6 @@
 import { useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useMapLang } from '../i18n/mapLang.js'
 
 /* 전문용어 도움말 — 용어 뒤 (?) 아이콘에 마우스오버/포커스 시 쉬운 설명 표시.
  * 일반인도 이해할 수 있도록 어려운 용어를 그 자리에서 풀어준다.
@@ -30,13 +31,41 @@ export const TERMS = {
   발전단지: '원전·석탄·LNG 등 대형 발전소가 모인 단지. 다만 전력은 풀(pool) 계통으로 공급돼 특정 DC와 직접 매칭되지 않는다(근접성 맥락).',
 }
 
+/* 영문 정의 — 키는 TERMS와 동일(EN 토글 시 사용). */
+export const TERMS_EN = {
+  PUE: 'Power Usage Effectiveness. Total datacenter power ÷ IT-equipment power. Closer to 1 means less overhead (cooling, etc.) waste (1.5 = 50% overhead).',
+  계약전력: 'The maximum contracted power (kW) with KEPCO. It sets the intake voltage, base tariff and required equipment.',
+  수전전압: 'The voltage at which power is drawn from KEPCO. Larger loads must take higher voltage (22.9kV → 154kV).',
+  '154kV': '154,000 V extra-high voltage. Mandatory for large sites above 40MW — it requires investment in on-site substation equipment.',
+  '22.9kV': '22,900 V high voltage. The usual voltage for contracted power up to 10MW from the distribution grid (tariff art. 23). 10–40MW may use 22.9kV conditionally where substation headroom exists.',
+  전력계통영향평가: 'A pre-review (PSIA) of how a new large load (≥10MW) affects the grid. It must pass before power can be supplied.',
+  '±15점': 'A location score of up to ±15 in the PSIA. The capital region is penalized and non-capital regions credited, to steer loads to the provinces.',
+  이중화: 'Designing power with redundancy. N+1 = one spare feed; 2N = full redundancy (finance / mission-critical) to lower outage risk.',
+  화이트스페이스: 'The actual server-room floor area (㎡) where racks sit, including aisles and cooling space.',
+  계통여유: 'The headroom the local grid has to accept new load. More headroom makes it easier to host large sites.',
+  헤드룸: 'Spare capacity left on the grid. Same meaning as grid headroom.',
+  전기사용예정통지: 'A procedure by which new loads ≥5,000kW (5MW) notify KEPCO of their planned usage in advance.',
+  프리쿨링: 'Cooling with cold outside air or water. Cooler locations save cooling power and lower PUE.',
+  RE100: 'A campaign to source 100% of electricity from renewables. Global customers demand it of datacenters.',
+  PPA: 'Power Purchase Agreement. A direct, long-term power-purchase contract with a generator.',
+  용도지역: 'A zoning class (residential, commercial, industrial, green, etc.) governing what can be built and at what scale. Datacenters are allowed in industrial / planned-management zones.',
+  침수심: 'The expected flood-water depth (m). Datacenters are highly flood-sensitive, so flood-zone status and depth are core siting risks.',
+  인구격자: 'Population aggregated into fixed grids (100m / 1km) by the statistics office. More people within a radius means higher noise/landscape-complaint risk (a complaint proxy).',
+  육양국: 'The landing point where submarine cables come ashore (CLS — e.g. Busan Songjeong, Geoje). It drives international latency and multi-region design.',
+  백본: 'The core backbone network and internet exchange points (IX). Closer means lower latency and better multi-region design.',
+  지가변동률: 'The rate of change (%) in local land prices over a period. Read as a signal of siting cost and development pressure.',
+  발전단지: 'A cluster of large plants (nuclear, coal, LNG). Note that power is supplied via the pooled grid and does not directly match a specific DC (a proximity-context note).',
+}
+
 const POP_W = 260
 
 export default function Term({ children, def, k }) {
   const [pos, setPos] = useState(null) // {top,left} viewport 좌표 | null(닫힘)
   const btnRef = useRef(null)
   const id = useId()
-  const text = def ?? TERMS[k] ?? TERMS[children]
+  const en = useMapLang() === 'en'
+  const dict = en ? TERMS_EN : TERMS
+  const text = def ?? dict[k] ?? dict[children] ?? TERMS[k] ?? TERMS[children]
   if (!text) return <>{children}</>
 
   const open = () => {
@@ -55,7 +84,7 @@ export default function Term({ children, def, k }) {
         ref={btnRef}
         type="button"
         className="term-q"
-        aria-label={`${typeof children === 'string' ? children : '용어'} 설명`}
+        aria-label={en ? `About ${typeof children === 'string' ? children : 'term'}` : `${typeof children === 'string' ? children : '용어'} 설명`}
         aria-describedby={pos ? id : undefined}
         onMouseEnter={open}
         onMouseLeave={close}

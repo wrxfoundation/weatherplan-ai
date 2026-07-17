@@ -26,6 +26,19 @@ const CT = {
   '대규모 학습': 'Large-scale training', '혼합(학습+추론)': 'Mixed (train+infer)', '추론 서비스': 'Inference serving',
   '공랭 (CRAC/CRAH)': 'Air (CRAC/CRAH)', '액랭 D2C (직접칩냉각)': 'Liquid D2C (direct-to-chip)', 침지냉각: 'Immersion',
   'N (여유 없음)': 'N (no margin)', 'N+1 (권장)': 'N+1 (recommended)', '2N (금융·미션크리티컬)': '2N (finance/mission-critical)',
+  // Phase 2 — 경제성·PPA·시나리오 비교
+  '경제성·환경 (연간)': 'Economics · environment (annual)', '대표값 기반 추정 · 편집 가능': 'Representative estimate · editable',
+  '연간 전력비': 'Annual power cost', 계통단가: 'Grid tariff', 배출계수: 'Emission factor', '연간 탄소배출': 'Annual carbon',
+  '재생에너지 조달 (RE100 / 기업PPA)': 'Renewable procurement (RE100 / corporate PPA)', '시나리오 · 편집 가능': 'Scenario · editable',
+  '재생 조달 비율': 'Renewable share', '재생으로 상쇄되는 탄소': 'Carbon offset by renewables',
+  '전력비 변화 (vs 재생 0%)': 'Cost change (vs 0% renewable)', 'PPA 단가': 'PPA price',
+  '시나리오 비교': 'Scenario comparison', '전체 지우기': 'Clear all',
+  // 시나리오 비교 행 라벨
+  냉각: 'Cooling', 계약전력: 'Contract power', '연간 전력량': 'Annual energy', 재생조달: 'Renewable', '연간 탄소': 'Annual carbon',
+  // 액션 버튼
+  'AI 해설 작성 중…': 'Generating AI note…', '✨ AI 계산 해설': '✨ AI calc note',
+  '시나리오 저장됨 ✓': 'Scenario saved ✓', '+ 시나리오로 저장': '+ Save as scenario',
+  '요약 복사': 'Copy summary', 복사됨: 'Copied',
 }
 import LineIcon from '../components/LineIcon.jsx'
 import AidcScenario from './AidcScenario.jsx'
@@ -51,9 +64,9 @@ const GPU_PRESETS = [
 /* 워크로드 프로파일 — 부대부하(overhead)·연간 평균 부하율(loadFactor)을 배치 성격에 맞게 세팅.
  * 첨두 IT 부하(=계약전력 산정 기준)는 워크로드와 무관하나, 연간 에너지(GWh)는 부하율에 크게 좌우된다(정직). */
 const WORKLOADS = [
-  { key: 'training', label: '대규모 학습', overhead: 1.25, loadFactor: 0.9, note: '분산학습 — 인터커넥트 부하 큼·상시 고부하' },
-  { key: 'mixed', label: '혼합(학습+추론)', overhead: 1.2, loadFactor: 0.75, note: '학습·서빙 병행 — 중간 부하율' },
-  { key: 'inference', label: '추론 서비스', overhead: 1.15, loadFactor: 0.55, note: '서비스 트래픽 변동 — 평균 부하율 낮음' },
+  { key: 'training', label: '대규모 학습', overhead: 1.25, loadFactor: 0.9, note: '분산학습 — 인터커넥트 부하 큼·상시 고부하', noteEn: 'Distributed training — heavy interconnect, sustained high load' },
+  { key: 'mixed', label: '혼합(학습+추론)', overhead: 1.2, loadFactor: 0.75, note: '학습·서빙 병행 — 중간 부하율', noteEn: 'Training + serving — moderate load factor' },
+  { key: 'inference', label: '추론 서비스', overhead: 1.15, loadFactor: 0.55, note: '서비스 트래픽 변동 — 평균 부하율 낮음', noteEn: 'Variable service traffic — lower average load' },
 ]
 
 /* 냉각 방식 → PUE·랙 밀도 대표값 (업계 공개 설계 관행의 보수적 대표치 — 커스텀 PUE 입력으로 오버라이드 가능)
@@ -106,11 +119,17 @@ function TrackCard({ mw, nonCapital, onRegion }) {
         const pos = Math.min(100, (Math.min(r.mw, CAP) / CAP) * 100)
         const band = r.mw <= 10 ? 0 : r.mw <= 40 ? 1 : 2
         const nextMsg =
-          r.mw <= 10
-            ? `10MW까지 ${(10 - r.mw).toFixed(1)}MW 여유 — 초과 시 154kV 원칙(22.9kV는 변전소 여유 시 조건부) 구간`
-            : r.mw <= 40
-              ? `40MW까지 ${(40 - r.mw).toFixed(1)}MW — 초과 시 154kV 의무 구간`
-              : `154kV 의무 구간 (40MW 초과) — 자체 수전설비 투자 필요`
+          lang === 'en'
+            ? r.mw <= 10
+              ? `${(10 - r.mw).toFixed(1)}MW headroom to 10MW — above it, 154kV in principle (22.9kV conditional on substation headroom)`
+              : r.mw <= 40
+                ? `${(40 - r.mw).toFixed(1)}MW to 40MW — above it, 154kV is mandatory`
+                : `154kV mandatory band (>40MW) — on-site intake equipment required`
+            : r.mw <= 10
+              ? `10MW까지 ${(10 - r.mw).toFixed(1)}MW 여유 — 초과 시 154kV 원칙(22.9kV는 변전소 여유 시 조건부) 구간`
+              : r.mw <= 40
+                ? `40MW까지 ${(40 - r.mw).toFixed(1)}MW — 초과 시 154kV 의무 구간`
+                : `154kV 의무 구간 (40MW 초과) — 자체 수전설비 투자 필요`
         return (
           <div className="band-scale">
             <div className="band-track">
@@ -118,16 +137,16 @@ function TrackCard({ mw, nonCapital, onRegion }) {
                 22.9kV<br />≤10MW
               </div>
               <div className={`band-seg${band === 1 ? ' on' : ''}`} style={{ flex: 30 }}>
-154kV 원칙<br />10–40
+{lang === 'en' ? '154kV principle' : '154kV 원칙'}<br />10–40
               </div>
               <div className={`band-seg${band === 2 ? ' on' : ''}`} style={{ flex: 40 }}>
-                154kV 의무<br />40MW+
+                {lang === 'en' ? '154kV required' : '154kV 의무'}<br />40MW+
               </div>
               <div className="band-marker" style={{ left: `${pos}%` }} />
             </div>
             <div className="band-legend">
               <span>0</span>
-              <span>현재 {r.mw.toFixed(1)}MW · {nextMsg}</span>
+              <span>{lang === 'en' ? 'now' : '현재'} {r.mw.toFixed(1)}MW · {nextMsg}</span>
               <span>{CAP}MW+</span>
             </div>
           </div>
@@ -177,8 +196,9 @@ function TrackCard({ mw, nonCapital, onRegion }) {
       <p className="chart-note">{r.track.note}</p>
       {r.exemption && (
         <p className="chart-note">
-          AIDC 특별법: 비수도권 일정 규모 이하 시설은 {r.exemption.effective}부터 전력계통영향평가 면제 — 규모
-          기준은 대통령령 위임(미제정)이라 확정 전입니다.
+          {lang === 'en'
+            ? `AIDC special act: non-capital sites below a set size are exempt from the PSIA from ${r.exemption.effective} — the size threshold is delegated to a presidential decree (not yet enacted), so it is not final.`
+            : `AIDC 특별법: 비수도권 일정 규모 이하 시설은 ${r.exemption.effective}부터 전력계통영향평가 면제 — 규모 기준은 대통령령 위임(미제정)이라 확정 전입니다.`}
         </p>
       )}
       {r.leadTime.deadline && <p className="chart-note">⚠ {r.leadTime.deadline}</p>}
@@ -407,7 +427,7 @@ export default function CalcPage() {
     { k: 'zone', label: '입지', get: (s) => s.zone },
     { k: 'cool', label: '냉각', get: (s) => s.cool },
     { k: 'cap', label: '계약전력', get: (s) => `${s.cap.toLocaleString()}MW`, best: (s) => s.cap, dir: -1 },
-    { k: 'racks', label: '필요 랙', get: (s) => `${s.racks.toLocaleString()}대`, best: (s) => s.racks, dir: -1 },
+    { k: 'racks', label: '필요 랙', get: (s) => `${s.racks.toLocaleString()}${lang === 'en' ? '' : '대'}`, best: (s) => s.racks, dir: -1 },
     { k: 'gwh', label: '연간 전력량', get: (s) => `${s.gwh.toLocaleString()} GWh`, best: (s) => s.gwh, dir: -1 },
     { k: 're', label: '재생조달', get: (s) => `${s.re}%`, best: (s) => s.re, dir: 1 },
     { k: 'won', label: '연간 전력비', get: (s) => eokFmt(s.won), best: (s) => s.won, dir: -1 },
@@ -516,7 +536,11 @@ export default function CalcPage() {
             </label>
           </div>
           <p className="chart-note" style={{ marginTop: 2 }}>
-            {work.label}: {work.note} — 첨두 계약전력은 동일하나 <b>연간 전력량·전력비·탄소</b>는 부하율({work.loadFactor})에 좌우됩니다.
+            {t(work.label)}: {lang === 'en' ? work.noteEn : work.note} — {lang === 'en' ? (
+              <>peak contract power is the same, but <b>annual energy, cost and carbon</b> depend on the load factor ({work.loadFactor}).</>
+            ) : (
+              <>첨두 계약전력은 동일하나 <b>연간 전력량·전력비·탄소</b>는 부하율({work.loadFactor})에 좌우됩니다.</>
+            )}
           </p>
 
           <div className="calc-result">
@@ -525,14 +549,25 @@ export default function CalcPage() {
                 <SpringNumber value={m.contractMw} format={(n) => n.toFixed(1)} /> <small>MW</small>
               </div>
               <div className="geo-note">
-                IT {m.itMw.toFixed(1)} × PUE {pue} = {m.totalMw.toFixed(1)} MW × 여유 {redun.factor}
+                IT {m.itMw.toFixed(1)} × PUE {pue} = {m.totalMw.toFixed(1)} MW × {lang === 'en' ? 'margin' : '여유'} {redun.factor}
               </div>
             </div>
             <div className="steps">
-              {gpu.label} × {count.toLocaleString()}대 × 부대부하 {work.overhead} = IT 부하 → PUE(
-              {cooling.label.split(' ')[0]} 기준 {cooling.pue}, 수정 가능) → 이중화 여유까지 반영한{' '}
-              <strong>계약전력 관점의 수전 수요</strong>입니다. 프리쿨링 조건이 좋은 입지는 PUE를 낮춰 같은 GPU를 더
-              적은 전력으로 돌립니다(기상 레이어, M3 예정).
+              {lang === 'en' ? (
+                <>
+                  {gpu.label} × {count.toLocaleString()} × overhead {work.overhead} = IT load → PUE (
+                  {cooling.label.split(' ')[0]} ≈ {cooling.pue}, editable) → with redundancy margin, this is the{' '}
+                  <strong>intake demand in contract-power terms</strong>. Sites with good free-cooling lower PUE and run the
+                  same GPUs on less power (climate layer, planned M3).
+                </>
+              ) : (
+                <>
+                  {gpu.label} × {count.toLocaleString()}대 × 부대부하 {work.overhead} = IT 부하 → PUE(
+                  {cooling.label.split(' ')[0]} 기준 {cooling.pue}, 수정 가능) → 이중화 여유까지 반영한{' '}
+                  <strong>계약전력 관점의 수전 수요</strong>입니다. 프리쿨링 조건이 좋은 입지는 PUE를 낮춰 같은 GPU를 더
+                  적은 전력으로 돌립니다(기상 레이어, M3 예정).
+                </>
+              )}
             </div>
             <Link className="btn primary" to={`/?min_mw=${m.ctaMw}${nonCapital ? '&noncap=1' : ''}`}>
               {t('이 용량 가능한 부지 보기')} ({candidates}{lang === 'en' ? '' : '곳'}){nonCapital ? ` · ${t('비수도권')}` : ''} <span className="btn-arrow"><LineIcon name="arrowUR" size={13} /></span>
@@ -554,22 +589,22 @@ export default function CalcPage() {
             </div>
             <div className="spec-cell">
               <div className="k">{t('냉각 유량 관점')}</div>
-              <div className="v">{coolKey === 'air' ? '냉수·외기 설비' : coolKey === 'd2c' ? '~1.5L/min·kW' : '~0.3L/min·kW (2상)'}</div>
+              <div className="v">{coolKey === 'air' ? (lang === 'en' ? 'Chilled-water/air-side' : '냉수·외기 설비') : coolKey === 'd2c' ? '~1.5L/min·kW' : lang === 'en' ? '~0.3L/min·kW (2-phase)' : '~0.3L/min·kW (2상)'}</div>
             </div>
           </div>
 
           {/* 경제성·환경 — 연간 전력비·탄소(편집 가능한 공개 대표 단가/계수 기반 추정) */}
           <div className="econ-head">
-            <span className="chart-title" style={{ margin: 0 }}>경제성·환경 (연간)</span>
-            <span className="econ-flag">대표값 기반 추정 · 편집 가능</span>
+            <span className="chart-title" style={{ margin: 0 }}>{t('경제성·환경 (연간)')}</span>
+            <span className="econ-flag">{t('대표값 기반 추정 · 편집 가능')}</span>
           </div>
           <div className="spec-grid">
             <div className="spec-cell econ-cell">
-              <div className="k">연간 전력비{rePct > 0 ? ` · 재생 ${rePct}% 반영` : ''}</div>
+              <div className="k">{t('연간 전력비')}{rePct > 0 ? (lang === 'en' ? ` · ${rePct}% renewable` : ` · 재생 ${rePct}% 반영`) : ''}</div>
               <div className="v econ-big"><SpringNumber value={eokVal(m.wonYear)} format={eokFmt} /></div>
               <div className="cell-basis">
                 <label className="econ-inline">
-                  계통단가
+                  {t('계통단가')}
                   <input
                     type="number"
                     min="50"
@@ -578,17 +613,17 @@ export default function CalcPage() {
                     value={wonPerKwh}
                     onChange={(e) => setWonPerKwh(Math.min(500, Math.max(50, Number(e.target.value) || DEFAULT_WON_PER_KWH)))}
                   />
-                  원/kWh
+                  {lang === 'en' ? 'KRW/kWh' : '원/kWh'}
                 </label>
-                <span> · 한전 산업용(을) 고압 대표대 — 계절·시간대·계약종별 상이(실제는 한전 계약 확인)</span>
+                <span>{lang === 'en' ? ' · KEPCO industrial(B) high-voltage band — varies by season/time/contract (confirm with KEPCO)' : ' · 한전 산업용(을) 고압 대표대 — 계절·시간대·계약종별 상이(실제는 한전 계약 확인)'}</span>
               </div>
             </div>
             <div className="spec-cell econ-cell">
-              <div className="k">연간 탄소배출{rePct > 0 ? ` · 상쇄 후` : ''}</div>
+              <div className="k">{t('연간 탄소배출')}{rePct > 0 ? (lang === 'en' ? ' · after offset' : ` · 상쇄 후`) : ''}</div>
               <div className="v econ-big"><SpringNumber value={m.tco2Year} format={(n) => `${Math.round(n).toLocaleString()} tCO₂`} /></div>
               <div className="cell-basis">
                 <label className="econ-inline">
-                  배출계수
+                  {t('배출계수')}
                   <input
                     type="number"
                     min="0"
@@ -603,19 +638,19 @@ export default function CalcPage() {
                   />
                   kgCO₂/kWh
                 </label>
-                <span> · 국가 전력 온실가스 배출계수 대표치(연도별 갱신)</span>
+                <span>{lang === 'en' ? ' · national grid GHG emission factor (updated yearly)' : ' · 국가 전력 온실가스 배출계수 대표치(연도별 갱신)'}</span>
               </div>
             </div>
           </div>
 
           {/* PPA / RE100 재생조달 시나리오 — 재생비율만큼 배출 0·PPA 단가 적용 */}
           <div className="econ-head">
-            <span className="chart-title" style={{ margin: 0 }}>재생에너지 조달 (RE100 / 기업PPA)</span>
-            <span className="econ-flag">시나리오 · 편집 가능</span>
+            <span className="chart-title" style={{ margin: 0 }}>{t('재생에너지 조달 (RE100 / 기업PPA)')}</span>
+            <span className="econ-flag">{t('시나리오 · 편집 가능')}</span>
           </div>
           <div className="re-panel">
             <div className="re-slider-row">
-              <label className="lbl-cap" htmlFor="re-slider">재생 조달 비율 <b className="re-pct">{rePct}%</b></label>
+              <label className="lbl-cap" htmlFor="re-slider">{t('재생 조달 비율')} <b className="re-pct">{rePct}%</b></label>
               <input
                 id="re-slider"
                 className="re-slider"
@@ -636,18 +671,18 @@ export default function CalcPage() {
             </div>
             <div className="spec-grid">
               <div className="spec-cell">
-                <div className="k">재생으로 상쇄되는 탄소</div>
-                <div className="v"><SpringNumber value={m.tco2Offset} format={(n) => `${Math.round(n).toLocaleString()} tCO₂`} />/년</div>
-                <div className="cell-basis">잔여 배출 {Math.round(m.tco2Year).toLocaleString()} tCO₂ · 재생분 배출 0 가정</div>
+                <div className="k">{t('재생으로 상쇄되는 탄소')}</div>
+                <div className="v"><SpringNumber value={m.tco2Offset} format={(n) => `${Math.round(n).toLocaleString()} tCO₂`} />/{lang === 'en' ? 'yr' : '년'}</div>
+                <div className="cell-basis">{lang === 'en' ? `residual ${Math.round(m.tco2Year).toLocaleString()} tCO₂ · renewable share assumed zero-emission` : `잔여 배출 ${Math.round(m.tco2Year).toLocaleString()} tCO₂ · 재생분 배출 0 가정`}</div>
               </div>
               <div className="spec-cell">
-                <div className="k">전력비 변화 (vs 재생 0%)</div>
+                <div className="k">{t('전력비 변화 (vs 재생 0%)')}</div>
                 <div className={`v ${m.wonDelta > 0 ? 'delta-up' : m.wonDelta < 0 ? 'delta-down' : ''}`}>
                   {m.wonDelta === 0 ? '±0' : `${m.wonDelta > 0 ? '+' : '−'}${eokFmt(Math.abs(eokVal(m.wonDelta)))}`}
                 </div>
                 <div className="cell-basis">
                   <label className="econ-inline">
-                    PPA 단가
+                    {t('PPA 단가')}
                     <input
                       type="number"
                       min="50"
@@ -656,26 +691,29 @@ export default function CalcPage() {
                       value={ppaWonPerKwh}
                       onChange={(e) => setPpaWonPerKwh(Math.min(500, Math.max(50, Number(e.target.value) || DEFAULT_PPA_WON_PER_KWH)))}
                     />
-                    원/kWh
+                    {lang === 'en' ? 'KRW/kWh' : '원/kWh'}
                   </label>
-                  <span> · 재생 기업PPA 대표대(발전원·계약별 상이)</span>
+                  <span>{lang === 'en' ? ' · corporate renewable-PPA band (varies by source/contract)' : ' · 재생 기업PPA 대표대(발전원·계약별 상이)'}</span>
                 </div>
               </div>
             </div>
             <p className="chart-note" style={{ marginTop: 2 }}>
-              하이퍼스케일러 RE100/CFE 요건 검토용 — 재생비율만큼 계통 배출계수를 0으로, 단가를 PPA로 치환한 <b>단순 혼합 추정</b>입니다.
-              시간대별 매칭(24/7 CFE)·REC·계약 구조는 반영하지 않습니다.
+              {lang === 'en' ? (
+                <>For hyperscaler RE100/CFE screening — a <b>simple blended estimate</b> that zeroes the grid emission factor and swaps the price to PPA for the renewable share. It does not model hourly matching (24/7 CFE), RECs or contract structure.</>
+              ) : (
+                <>하이퍼스케일러 RE100/CFE 요건 검토용 — 재생비율만큼 계통 배출계수를 0으로, 단가를 PPA로 치환한 <b>단순 혼합 추정</b>입니다. 시간대별 매칭(24/7 CFE)·REC·계약 구조는 반영하지 않습니다.</>
+              )}
             </p>
           </div>
 
           <div className="card-actions" style={{ marginTop: 12 }}>
             <button type="button" className="btn ai" onClick={genAi} disabled={busy}>
-              {busy ? 'AI 해설 작성 중…' : '✨ AI 계산 해설'}
+              {busy ? t('AI 해설 작성 중…') : t('✨ AI 계산 해설')}
             </button>
             <button type="button" className="btn" onClick={saveScenario}>
-              {savedFlash ? '시나리오 저장됨 ✓' : '+ 시나리오로 저장'}
+              {savedFlash ? t('시나리오 저장됨 ✓') : t('+ 시나리오로 저장')}
             </button>
-            <CopyButton getText={summaryText} label="요약 복사" copiedLabel="복사됨" />
+            <CopyButton getText={summaryText} label={t('요약 복사')} copiedLabel={t('복사됨')} />
           </div>
 
           {/* AI 계산 해설 — 계산된 값만 스냅샷으로 전달(창작 없음) */}
@@ -688,8 +726,11 @@ export default function CalcPage() {
           />
 
           <p className="chart-note">
-            랙 밀도·PUE·부하율은 업계 공개 설계 관행의 대표값(수정 가능) — 확정 설계값이 아닌 부지 검토용 근사입니다.
-            냉각 방식별 유량·시장 맥락: <Link to="/insights/liquid-cooling-brief">액체냉각 브리프</Link>.
+            {lang === 'en' ? (
+              <>Rack density, PUE and load factor are representative industry design values (editable) — a siting approximation, not final design. Cooling-flow and market context: <Link to="/insights/liquid-cooling-brief">liquid-cooling brief</Link>.</>
+            ) : (
+              <>랙 밀도·PUE·부하율은 업계 공개 설계 관행의 대표값(수정 가능) — 확정 설계값이 아닌 부지 검토용 근사입니다. 냉각 방식별 유량·시장 맥락: <Link to="/insights/liquid-cooling-brief">액체냉각 브리프</Link>.</>
+            )}
           </p>
         </div>
 
@@ -697,8 +738,8 @@ export default function CalcPage() {
         {scenarios.length > 0 && (
           <div className="calc-card scen-card">
             <div className="econ-head" style={{ marginTop: 0 }}>
-              <span className="chart-title" style={{ margin: 0 }}>시나리오 비교 <b>{scenarios.length}</b></span>
-              <button type="button" className="chip" onClick={() => persist([])}>전체 지우기</button>
+              <span className="chart-title" style={{ margin: 0 }}>{t('시나리오 비교')} <b>{scenarios.length}</b></span>
+              <button type="button" className="chip" onClick={() => persist([])}>{t('전체 지우기')}</button>
             </div>
             <div className="scen-table" style={{ '--scen-cols': scenarios.length }}>
               <div className="scen-row scen-colhead">
@@ -706,13 +747,13 @@ export default function CalcPage() {
                 {scenarios.map((s) => (
                   <span key={s.id} className="scen-col">
                     <span className="scen-name" title={s.label}>{s.label}</span>
-                    <button type="button" className="scen-x" onClick={() => removeScenario(s.id)} aria-label="시나리오 제거">✕</button>
+                    <button type="button" className="scen-x" onClick={() => removeScenario(s.id)} aria-label={lang === 'en' ? 'Remove scenario' : '시나리오 제거'}>✕</button>
                   </span>
                 ))}
               </div>
               {SCEN_ROWS.map((row) => (
                 <div key={row.k} className="scen-row">
-                  <span className="scen-rl">{row.label}</span>
+                  <span className="scen-rl">{t(row.label)}</span>
                   {scenarios.map((s) => (
                     <span key={s.id} className={`scen-cell ${scenBest[row.k] === s.id ? 'scen-best' : ''}`}>
                       {row.get(s)}
@@ -722,8 +763,11 @@ export default function CalcPage() {
               ))}
             </div>
             <p className="chart-note">
-              현재 계산 구성을 “시나리오로 저장”하면 여기에 누적됩니다(최대 3, 브라우저 저장). 굵게=열 최우수(전력비·탄소·용량은 낮을수록, 재생조달은 높을수록).
-              <br />전력비·탄소는 편집 가능한 공개 대표 단가/계수 기반 <b>추정</b>입니다(확정 단가 아님).
+              {lang === 'en' ? (
+                <>“Save as scenario” accumulates configurations here (up to 3, stored in the browser). Bold = best in column (lower is better for cost/carbon/capacity, higher for renewables).<br />Cost and carbon are <b>estimates</b> from editable public representative prices/factors (not final).</>
+              ) : (
+                <>현재 계산 구성을 “시나리오로 저장”하면 여기에 누적됩니다(최대 3, 브라우저 저장). 굵게=열 최우수(전력비·탄소·용량은 낮을수록, 재생조달은 높을수록).<br />전력비·탄소는 편집 가능한 공개 대표 단가/계수 기반 <b>추정</b>입니다(확정 단가 아님).</>
+              )}
             </p>
           </div>
         )}
@@ -733,8 +777,9 @@ export default function CalcPage() {
         <AidcScenario mw={m.contractMw} nonCapital={nonCapital} />
 
         <p className="footer-note">
-          공개 전력 규모(power_mw_public)가 확인된 시설만 CTA 필터에 잡힙니다. 규모 비공개 시설이 다수이므로 실제
-          후보는 더 많을 수 있습니다.
+          {lang === 'en'
+            ? 'Only facilities with a disclosed power figure (power_mw_public) appear in the CTA filter. Many sites do not disclose capacity, so real candidates may be more numerous.'
+            : '공개 전력 규모(power_mw_public)가 확인된 시설만 CTA 필터에 잡힙니다. 규모 비공개 시설이 다수이므로 실제 후보는 더 많을 수 있습니다.'}
         </p>
       </main>
     </>
