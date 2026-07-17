@@ -215,7 +215,11 @@ function TrackCard({ mw, nonCapital, onRegion }) {
         </p>
       )}
       {r.leadTime.deadline && <p className="chart-note">⚠ {r.leadTime.deadline}</p>}
-      <p className="footer-note">근거: {r.basis.join(' · ')}. 상세 산식은 전력 인허가 룰북(리포 docs) 참조.</p>
+      <p className="footer-note">
+        {lang === 'en' ? 'Basis: ' : '근거: '}
+        {r.basis.join(' · ')}
+        {lang === 'en' ? '. See the power-permit rulebook (repo docs) for full formulas.' : '. 상세 산식은 전력 인허가 룰북(리포 docs) 참조.'}
+      </p>
     </div>
   )
 }

@@ -20,6 +20,7 @@ const T = {
   반도체: 'Semiconductor', 산단: 'Ind. parks', 공공DC: 'Public DC', 공급예정: 'Pipeline', 통신망: 'Telecom',
   규제: 'Regulation', 배제구역: 'Exclusion zones', '데이터 대기': 'data pending',
   '유형 필터': 'Type filter', '시도 필터': 'Region filter',
+  '최소 필요 용량(MW)': 'Min. required capacity (MW)', '지도 레이어': 'Map layers', 레이어: 'Layer',
 }
 // 시설 유형 표시 라벨(EN) — 필터 값(value)은 데이터값(KO) 유지, 표기만 번역
 const TYPE_EN = { 'AI 특화': 'AI-specialized', 금융: 'Finance', 엔터프라이즈: 'Enterprise', 코로케이션: 'Colocation', 클라우드: 'Cloud' }
@@ -188,7 +189,7 @@ export default function FilterBar({
           placeholder="MW"
           value={minMw ?? ''}
           onChange={(e) => onMinMw(e.target.value === '' ? null : Math.max(0, Number(e.target.value) || 0))}
-          aria-label="최소 필요 용량(MW)"
+          aria-label={t('최소 필요 용량(MW)')}
         />
         MW
       </label>
@@ -206,7 +207,7 @@ export default function FilterBar({
       </div>
 
       {/* 표시·추천 — 데이터 레이어와 성격이 달라 윗줄(검색컨트롤 옆)로. 방대한 레이어 줄을 덜고 윗줄 여백을 채움 */}
-      <div className="group" role="group" aria-label="표시">
+      <div className="group" role="group" aria-label={t('표시')}>
         <span className="group-sublabel">{t('표시')}</span>
         <button
           type="button"
@@ -236,12 +237,12 @@ export default function FilterBar({
       </div>
 
       {/* 2줄: 지도 레이어(전력·자원·수요·망) — 서브그룹별 독립 알약, 넘치면 이 줄만 가로 스크롤(2줄 유지) */}
-      <div className="fb-row fb-row-layers" role="group" aria-label="지도 레이어">
+      <div className="fb-row fb-row-layers" role="group" aria-label={t('지도 레이어')}>
         {LAYER_GROUPS.map((sg) => {
           const chips = sg.chips.filter((c) => c.cond !== false)
           if (!chips.length) return null
           return (
-            <div className="group layer-pill" key={sg.label} role="group" aria-label={`레이어 ${sg.label}`}>
+            <div className="group layer-pill" key={sg.label} role="group" aria-label={`${t('레이어')} ${t(sg.label)}`}>
               <span className="group-sublabel">{t(sg.label)}</span>
               {chips.map((c) => (
                 <button
