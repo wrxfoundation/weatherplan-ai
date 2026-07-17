@@ -33,6 +33,11 @@ const CT = {
   '재생 조달 비율': 'Renewable share', '재생으로 상쇄되는 탄소': 'Carbon offset by renewables',
   '전력비 변화 (vs 재생 0%)': 'Cost change (vs 0% renewable)', 'PPA 단가': 'PPA price',
   '시나리오 비교': 'Scenario comparison', '전체 지우기': 'Clear all',
+  // 외부 변수(용수·인허가·설비)
+  '외부 변수 — 용수·인허가·설비': 'External factors — water · permits · equipment',
+  '검증 수치 · 부지별 확인 필요': 'Verified figures · site-level check needed',
+  '용수 (증발냉각 가정)': 'Water (evaporative cooling assumed)', '원단위': 'Intensity',
+  '에너지사용계획 협의': 'Energy-use plan consultation', '대형 변압기 리드타임': 'Large-transformer lead time',
   // 시나리오 비교 행 라벨
   냉각: 'Cooling', 계약전력: 'Contract power', '연간 전력량': 'Annual energy', 재생조달: 'Renewable', '연간 탄소': 'Annual carbon',
   // 액션 버튼
@@ -230,6 +235,8 @@ export default function CalcPage() {
   const [kgco2PerKwh, setKgco2PerKwh] = useState(() => Math.min(1, Math.max(0, num(sp.get('e'), DEFAULT_KGCO2_PER_KWH))))
   const [rePct, setRePct] = useState(() => Math.min(100, Math.max(0, Math.round(num(sp.get('re'), 0)))))
   const [ppaWonPerKwh, setPpaWonPerKwh] = useState(() => Math.min(500, Math.max(50, num(sp.get('ppa'), DEFAULT_PPA_WON_PER_KWH))))
+  // 외부 변수: 용수 원단위(m³/MW·년) — 증발냉각 대표치(1MW≈2,550만 L=25,500 m³, 약 80% 증발). 편집·부지별 상이.
+  const [waterM3PerMwYr, setWaterM3PerMwYr] = useState(25500)
   const { ai, run, busy } = useAiStream()
 
   const [scenarios, setScenarios] = useState(() => {
@@ -775,6 +782,52 @@ export default function CalcPage() {
         <TrackCard mw={m.contractMw} nonCapital={nonCapital} onRegion={setNonCapital} />
 
         <AidcScenario mw={m.contractMw} nonCapital={nonCapital} />
+
+        {/* 외부 변수 — 5축 밖(용수·인허가·설비) 관문. external-gates 인사이트의 계산기 번안. 검증 수치 vs 부지별 확인 구분. */}
+        <div className="calc-card">
+          <div className="econ-head" style={{ marginTop: 0 }}>
+            <span className="chart-title" style={{ margin: 0 }}>{t('외부 변수 — 용수·인허가·설비')}</span>
+            <span className="econ-flag">{t('검증 수치 · 부지별 확인 필요')}</span>
+          </div>
+          <div className="spec-grid">
+            <div className="spec-cell econ-cell">
+              <div className="k">{t('용수 (증발냉각 가정)')}</div>
+              <div className="v econ-big">{Math.round(m.contractMw * waterM3PerMwYr).toLocaleString()} <small>m³/{lang === 'en' ? 'yr' : '년'}</small></div>
+              <div className="cell-basis">
+                <label className="econ-inline">
+                  {t('원단위')}
+                  <input
+                    type="number"
+                    min="0"
+                    max="60000"
+                    step="500"
+                    value={waterM3PerMwYr}
+                    onChange={(e) => setWaterM3PerMwYr(Math.min(60000, Math.max(0, Number(e.target.value) || 0)))}
+                  />
+                  m³/MW·{lang === 'en' ? 'yr' : '년'}
+                </label>
+                <span>{lang === 'en' ? ' · 1MW ≈ 25.5M L/yr (~80% evaporated). Air/dry cooling ≈ near-zero water but higher PUE — a water–energy tradeoff.' : ' · 1MW ≈ 2,550만 L/년(약 80% 증발). 공랭·건식은 용수 ≈ 0이나 PUE↑ — 물·전력 트레이드오프.'}</span>
+              </div>
+            </div>
+            <div className="spec-cell">
+              <div className="k">{t('에너지사용계획 협의')}</div>
+              <div className="v">{m.gwhYear >= 20 ? (lang === 'en' ? 'Subject (≥20 GWh/yr)' : '대상 (연 20GWh↑)') : (lang === 'en' ? 'N/A (<20 GWh/yr)' : '비대상 (연 20GWh 미만)')}</div>
+              <div className="cell-basis">{lang === 'en' ? `annual use ~${m.gwhYear.toFixed(1)} GWh · Energy Use Rationalization Act` : `연간 ~${m.gwhYear.toFixed(1)} GWh · 에너지이용합리화법 시행령`}</div>
+            </div>
+            <div className="spec-cell">
+              <div className="k">{t('대형 변압기 리드타임')}</div>
+              <div className="v">{m.contractMw > 40 ? (lang === 'en' ? '154kV MTr · 2–4 yrs' : '154kV 주변압기 · 2~4년') : m.contractMw >= 10 ? (lang === 'en' ? 'Intake gear · verify' : '수전설비 · 확인') : (lang === 'en' ? 'Low' : '낮음')}</div>
+              <div className="cell-basis">{lang === 'en' ? 'transformer market ~30% short — order years ahead' : '전력변압기 ~30% 공급부족 — 조기 발주 필요'}</div>
+            </div>
+          </div>
+          <p className="chart-note" style={{ marginTop: 2 }}>
+            {lang === 'en' ? (
+              <>Factors outside the five axes that decide completion. Verified public figures; a specific site’s water rights, discharge permit and exclusion overlays (greenbelt, military, heritage) need GIS/administrative confirmation. See <Link to="/insights/external-gates-2026">the external-gates brief</Link>.</>
+            ) : (
+              <>5축 밖에서 준공을 좌우하는 변수. 공개 검증 수치이며, 개별 부지의 수리권·방류허가·배제 오버레이(그린벨트·군사·문화재)는 GIS/행정 확인이 필요합니다. <Link to="/insights/external-gates-2026">외부 관문 브리프</Link> 참조.</>
+            )}
+          </p>
+        </div>
 
         <p className="footer-note">
           {lang === 'en'
