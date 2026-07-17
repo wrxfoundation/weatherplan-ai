@@ -31,64 +31,67 @@ function setMeta(attr, key, content) {
   el.setAttribute('content', content)
 }
 
-function StatTile({ value, unit, label, sub }) {
+function StatTile({ value, unit, unitEn, label, labelEn, sub, subEn, en = false }) {
   return (
     <div className="stat-tile">
       <div className="stat-value">
         {value}
-        <small>{unit}</small>
+        <small>{en ? unitEn ?? unit : unit}</small>
       </div>
-      <div className="stat-label">{label}</div>
-      {sub && <div className="stat-sub">{sub}</div>}
+      <div className="stat-label">{en ? labelEn ?? label : label}</div>
+      {sub && <div className="stat-sub">{en ? subEn ?? sub : sub}</div>}
     </div>
   )
 }
 
 /* 강조 1색(accent) + 비강조 그레이 트랙, 직접 라벨 상시 노출 — 2세그먼트 구성비 */
-function SplitBar({ title, a, b, note }) {
+function SplitBar({ title, titleEn, a, b, note, noteEn, en = false }) {
+  const aLabel = en ? a.labelEn ?? a.label : a.label
+  const bLabel = en ? b.labelEn ?? b.label : b.label
   return (
     <div className="chart-block">
-      <div className="chart-title">{title}</div>
-      <div className="split-bar" role="img" aria-label={`${a.label} ${a.pct}%, ${b.label} ${b.pct}%`}>
+      <div className="chart-title">{en ? titleEn ?? title : title}</div>
+      <div className="split-bar" role="img" aria-label={`${aLabel} ${a.pct}%, ${bLabel} ${b.pct}%`}>
         <span className="seg fill" style={{ width: `${a.pct}%` }} />
         <span className="seg track" style={{ width: `${b.pct}%` }} />
       </div>
       <div className="split-legend">
         <span>
-          <i className="swatch fill" /> {a.label} <strong>{a.pct}%</strong>
+          <i className="swatch fill" /> {aLabel} <strong>{a.pct}%</strong>
         </span>
         <span>
-          <i className="swatch track" /> {b.label} <strong>{b.pct}%</strong>
+          <i className="swatch track" /> {bLabel} <strong>{b.pct}%</strong>
         </span>
       </div>
-      {note && <p className="chart-note">{note}</p>}
+      {note && <p className="chart-note">{en ? noteEn ?? note : note}</p>}
     </div>
   )
 }
 
 /* 단일색 수평 바 — 크기 비교, 값 라벨 상시 노출.
  * total(또는 share) 지정 시 각 행에 전체 대비 비중 (n%)을 병기 — 라벨은 1줄 고정. */
-function HBars({ title, bars, note, unit = '%', total, share = false }) {
+function HBars({ title, titleEn, bars, note, noteEn, unit = '%', unitEn, total, share = false, en = false }) {
   const max = Math.max(...bars.map((b) => b.value))
   const denom = total ?? (share ? bars.reduce((s, b) => s + b.value, 0) : 0)
   const showShare = (share || total != null) && denom > 0
+  const defaultUnit = en ? unitEn ?? unit : unit
   return (
     <div className="chart-block">
-      <div className="chart-title">{title}</div>
+      <div className="chart-title">{en ? titleEn ?? title : title}</div>
       {bars.map((b) => (
         <div key={b.label} className="hbar-row">
-          <span className="hbar-label">{b.label}</span>
+          <span className="hbar-label">{en ? b.labelEn ?? b.label : b.label}</span>
           <span className="hbar-track">
             <span className="hbar-fill" style={{ width: `${(b.value / max) * 100}%` }} />
           </span>
           <span className="hbar-value">
             {b.value}
-            {b.unit ?? unit}
+            {en ? b.unitEn ?? b.unit ?? defaultUnit : b.unit ?? unit}
             {showShare && <em className="hbar-share"> ({Math.round((b.value / denom) * 100)}%)</em>}
           </span>
         </div>
       ))}
-      {note && <p className="chart-note">{note}</p>}
+      {note && <p className="chart-note">{en ? noteEn ?? note : note}</p>}
     </div>
   )
 }
@@ -137,7 +140,7 @@ export default function StatsPage() {
       <main className="page">
         <div className="eyebrow">MARKET DATA</div>
         <h1>{en ? 'Korea datacenter statistics' : '국내 데이터센터 통계'}</h1>
-        <p className="sub">{en ? `Capital-region concentration and power demand — as of ${STATS_SOURCE.publication}` : `수도권 집중과 전력 수요 — ${STATS_SOURCE.publication} 기준`}</p>
+        <p className="sub">{en ? `Capital-region concentration and power demand — as of ${STATS_SOURCE.publicationEn}` : `수도권 집중과 전력 수요 — ${STATS_SOURCE.publication} 기준`}</p>
 
         <nav className="stats-subnav" aria-label={en ? 'Jump to stats section' : '통계 섹션 바로가기'}>
           <a href="#overview">{en ? 'Market overview' : '시장 개요'}</a>
@@ -150,20 +153,20 @@ export default function StatsPage() {
           <h2 className="stats-section-h">{en ? 'Market overview' : '시장 개요'}</h2>
           <div className="stat-grid">
             {KPI.map((k) => (
-              <StatTile key={k.key} {...k} />
+              <StatTile key={k.key} {...k} en={en} />
             ))}
           </div>
 
         <div className="calc-card">
-          <div className="chart-title">{en ? 'Latest capital-region market snapshot' : '수도권 시장 최신 단면'} — {MARKET_2025H2.asOf} (Cushman &amp; Wakefield/KDCC)</div>
+          <div className="chart-title">{en ? 'Latest capital-region market snapshot' : '수도권 시장 최신 단면'} — {en ? MARKET_2025H2.asOfEn : MARKET_2025H2.asOf} (Cushman &amp; Wakefield/KDCC)</div>
           <div className="stat-grid" style={{ marginTop: 6 }}>
             {MARKET_2025H2.kpi.map((k) => (
-              <StatTile key={k.label} {...k} />
+              <StatTile key={k.label} {...k} en={en} />
             ))}
           </div>
-          <p className="chart-note">{MARKET_2025H2.note}</p>
+          <p className="chart-note">{en ? MARKET_2025H2.noteEn : MARKET_2025H2.note}</p>
           <p className="chart-note">
-            <strong>{en ? 'Policy (2H 2025):' : '정책(2H 2025):'}</strong> {MARKET_2025H2.policy}
+            <strong>{en ? 'Policy (2H 2025):' : '정책(2H 2025):'}</strong> {en ? MARKET_2025H2.policyEn : MARKET_2025H2.policy}
           </p>
           <p className="chart-note" style={{ opacity: 0.7 }}>
             {en
@@ -178,19 +181,19 @@ export default function StatsPage() {
           <h2 className="stats-section-h">{en ? 'Facility mix · systems' : '시설 구성·설비'}</h2>
         <div className="calc-card">
           {COMPOSITION.map((c) => (
-            <SplitBar key={c.key} {...c} />
+            <SplitBar key={c.key} {...c} en={en} />
           ))}
-          <HBars {...POWER_AVG} unit="MW" />
+          <HBars {...POWER_AVG} unit="MW" en={en} />
         </div>
 
         <div className="calc-card">
-          <HBars {...COOLING} />
+          <HBars {...COOLING} en={en} />
           <div className="stat-grid three">
             {BACKUP.map((k) => (
-              <StatTile key={k.label} {...k} />
+              <StatTile key={k.label} {...k} en={en} />
             ))}
           </div>
-          <HBars {...CUSTOMERS} unit="개" />
+          <HBars {...CUSTOMERS} unit="개" en={en} />
         </div>
 
         </section>
@@ -198,16 +201,16 @@ export default function StatsPage() {
         <section id="power" className="stats-section">
           <h2 className="stats-section-h">{en ? 'Power · grid supply side' : '전력·계통 공급측'}</h2>
         <div className="calc-card">
-          <HBars {...KEPCO_REGION} unit="MW" share />
+          <HBars {...KEPCO_REGION} unit="MW" share en={en} />
         </div>
 
         <div className="calc-card">
-          <div className="chart-title">{en ? 'Power-generation license pipeline' : '발전사업 허가 파이프라인'} — {GEN_PIPELINE.headline}</div>
-          <p className="chart-note">{GEN_PIPELINE.detail}</p>
+          <div className="chart-title">{en ? 'Power-generation license pipeline' : '발전사업 허가 파이프라인'} — {en ? GEN_PIPELINE.headlineEn : GEN_PIPELINE.headline}</div>
+          <p className="chart-note">{en ? GEN_PIPELINE.detailEn : GEN_PIPELINE.detail}</p>
           <HBars
             title={en ? `Licensed 2024+ new-pipeline fuel mix (${GEN_RECENT.length} cases)` : `허가 2024+ 신규 파이프라인 연료 구성 (${GEN_RECENT.length}건)`}
-            bars={GEN_RECENT_BY_FUEL.map((f) => ({ label: f.fuel, value: f.count, unit: '건' }))}
-            unit="건"
+            bars={GEN_RECENT_BY_FUEL.map((f) => ({ label: f.fuel, value: f.count, unit: en ? '' : '건' }))}
+            unit={en ? '' : '건'}
             share
             note={en
               ? 'Fuel cells · wind · solar · offshore wind lead new licenses — the supply-side pipeline for AIDC RE100 procurement. Individual capacities are indicative.'
@@ -215,15 +218,15 @@ export default function StatsPage() {
           />
           <HBars
             title={en ? `Licensed 2024+ regional distribution — non-capital ${GEN_RECENT_NONCAPITAL_PCT}%` : `허가 2024+ 지역 분포 — 비수도권 ${GEN_RECENT_NONCAPITAL_PCT}%`}
-            bars={GEN_RECENT_BY_SIDO.map((s) => ({ label: s.sido, value: s.count, unit: '건' }))}
-            unit="건"
+            bars={GEN_RECENT_BY_SIDO.map((s) => ({ label: s.sido, value: s.count, unit: en ? '' : '건' }))}
+            unit={en ? '' : '건'}
             share
             note={en
               ? 'Concentrated in the renewables belt of Jeonnam · Gyeongbuk · Gangwon — the AIDC Special Act non-capital incentive and grid-impact-assessment regional scoring align geographically. A supply-side signal read by the AI InfraMap power axis.'
               : '전남·경북·강원의 재생E 벨트에 집중 — AIDC 특별법 비수도권 유인과 계통영향평가 지역 배점이 지리적으로 정합한다. AI InfraMap 전력축이 읽는 공급측 신호.'}
           />
           <p className="chart-note" style={{ opacity: 0.7 }}>
-            {GEN_PIPELINE.source} · {en ? `cumulative ${GEN_LICENSE_META.total.toLocaleString()} cases` : `누적 ${GEN_LICENSE_META.total.toLocaleString()}건`}
+            {en ? GEN_PIPELINE.sourceEn : GEN_PIPELINE.source} · {en ? `cumulative ${GEN_LICENSE_META.total.toLocaleString()} cases` : `누적 ${GEN_LICENSE_META.total.toLocaleString()}건`}
           </p>
         </div>
 
@@ -397,9 +400,9 @@ export default function StatsPage() {
         </section>
 
         <p className="footer-note">
-          {en ? 'Source:' : '출처:'} {STATS_SOURCE.publication} · {STATS_SOURCE.base.join(' · ')} ({STATS_SOURCE.url})
+          {en ? 'Source:' : '출처:'} {en ? STATS_SOURCE.publicationEn : STATS_SOURCE.publication} · {STATS_SOURCE.base.join(' · ')} ({STATS_SOURCE.url})
           <br />
-          {STATS_SOURCE.note}
+          {en ? STATS_SOURCE.noteEn : STATS_SOURCE.note}
         </p>
       </main>
     </>

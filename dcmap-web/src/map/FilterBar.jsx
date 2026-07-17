@@ -19,7 +19,10 @@ const T = {
   여유용량: 'Headroom', 승인율: 'Approval', 재생: 'Renewable', 수원: 'Water',
   반도체: 'Semiconductor', 산단: 'Ind. parks', 공공DC: 'Public DC', 공급예정: 'Pipeline', 통신망: 'Telecom',
   규제: 'Regulation', 배제구역: 'Exclusion zones', '데이터 대기': 'data pending',
+  '유형 필터': 'Type filter', '시도 필터': 'Region filter',
 }
+// 시설 유형 표시 라벨(EN) — 필터 값(value)은 데이터값(KO) 유지, 표기만 번역
+const TYPE_EN = { 'AI 특화': 'AI-specialized', 금융: 'Finance', 엔터프라이즈: 'Enterprise', 코로케이션: 'Colocation', 클라우드: 'Cloud' }
 
 // 레이어 아이콘 — 라인(스트로크) 형태로 통일. currentColor 상속, 14px.
 const ICON_PATHS = {
@@ -156,16 +159,16 @@ export default function FilterBar({
         ))}
       </div>
 
-      <select value={type} onChange={(e) => onType(e.target.value)} aria-label="유형 필터">
+      <select value={type} onChange={(e) => onType(e.target.value)} aria-label={t('유형 필터')}>
         <option value="">{t('유형 전체')}</option>
         {TYPES.map((tp) => (
           <option key={tp} value={tp}>
-            {tp}
+            {lang === 'en' ? TYPE_EN[tp] ?? tp : tp}
           </option>
         ))}
       </select>
 
-      <select value={sido} onChange={(e) => onSido(e.target.value)} aria-label="시도 필터">
+      <select value={sido} onChange={(e) => onSido(e.target.value)} aria-label={t('시도 필터')}>
         <option value="">{t('시도 전체')}</option>
         {SIDOS.map((s) => (
           <option key={s} value={s}>

@@ -454,7 +454,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   {t('여유')} {bestSupply.maxMw > 0 ? `${bestSupply.maxMw.toLocaleString()}MW` : t('0(포화)')}
                 </span>
               )}
-              {climateIdx && <span className={`sum-chip tone-${climateTone}`}>{t('냉각')} {t(climateIdx.label)}</span>}
+              {climateIdx && <span className={`sum-chip tone-${climateTone}`}>{t('냉각')} {lang === 'en' ? climateIdx.labelEn ?? climateIdx.label : climateIdx.label}</span>}
               {flood?.available && flood.source === 'sgis' && (
                 <span className={`sum-chip tone-${expoTone(flood)}`}>{t('침수')} {flood.exposurePct <= 0 ? t('낮음') : t(flood.grade)}</span>
               )}
@@ -1045,11 +1045,11 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                         <i key={l.level} className={l.level === climateIdx.level ? `on tone-${climateIdx.tone}` : ''} />
                       ))}
                     </span>
-                    <b className="ci-inline-label">{climateIdx.label}</b>
-                    <span className="ci-temp">연평균 {climateIdx.temp}°C</span>
+                    <b className="ci-inline-label">{lang === 'en' ? climateIdx.labelEn ?? climateIdx.label : climateIdx.label}</b>
+                    <span className="ci-temp">{lang === 'en' ? 'annual mean' : '연평균'} {climateIdx.temp}°C</span>
                   </span>
-                  <div className="ci-why">{climateIdx.why}</div>
-                  <div className="ci-basis">근거: {climateIdx.basis}</div>
+                  <div className="ci-why">{lang === 'en' ? climateIdx.whyEn ?? climateIdx.why : climateIdx.why}</div>
+                  <div className="ci-basis">{lang === 'en' ? 'Basis' : '근거'}: {lang === 'en' ? climateIdx.basisEn ?? climateIdx.basis : climateIdx.basis}</div>
                 </div>
               ) : (
                 <span className="badge pending">연동 대기 — 기온 확보 후 산출</span>
