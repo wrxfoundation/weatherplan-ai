@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 전력공급 사슬 + AI DC 가동원리 전개도 — 발전에서 GPU까지.
  * 콘텐츠 등급 ③민간 가공: 전력계통 구조는 통용 지식, 수치는 AI InfraMap 축적 데이터(변전소·승인율·공급여유) 연결. */
@@ -20,6 +21,24 @@ const DC_CHAIN = [
   { icon: '🖥️', name: '서버랙·GPU', detail: '실제 연산. 랙당 40~130kW(AI). 전력의 대부분이 여기서 열로' },
   { icon: '🌐', name: '네트워크', detail: '백본·IX·해저케이블 육양 시설로 트래픽 송수신 — 지연·회선' },
   { icon: '🤖', name: 'AI 서비스', detail: '학습·추론 → 챗봇·검색·생성. 최종 사용자에게 도달' },
+]
+
+// EN mirrors of the two chains — visible text translated, icons/tone/kv units unchanged
+const GRID_CHAIN_EN = [
+  { icon: '🏭', name: 'Power plant', kv: '~24kV generation', note: 'Nuclear/coal/LNG/renewables. Low-voltage output before step-up at the generation stage', tone: 'gen' },
+  { icon: '🔺', name: 'Step-up substation', kv: '765 / 345kV', note: 'Extra-high-voltage step-up to minimize long-distance loss → transmission towers', tone: 'up' },
+  { icon: '〰️', name: 'Transmission grid', kv: '765 / 345kV', note: 'National backbone. From generation upstream (non-capital region) to demand centers', tone: 'line' },
+  { icon: '⚡', name: 'Substation', kv: '154kV+ step-down', note: 'The last gateway where a DC receives power — step-down to 154kV/22.9kV', tone: 'sub' },
+  { icon: '🏢', name: 'DC receiving facility', kv: '154 / 22.9kV', note: 'Receiving → on-premise substation. 40MW+ mandates a 154kV in-house receiving facility', tone: 'dc' },
+]
+
+const DC_CHAIN_EN = [
+  { icon: '🔌', name: 'Receiving & on-site substation', detail: '154kV→22.9kV→low voltage. Redundancy (backup lines) as the basis of uninterrupted power' },
+  { icon: '🔋', name: 'UPS & distribution', detail: 'UPS/batteries for momentary outages, emergency generators (on-site). Stable distribution down to the rack' },
+  { icon: '❄️', name: 'Cooling', detail: 'Chillers/CRAH (air cooling) → high-density GPUs use liquid cooling (D2C/immersion). The biggest PUE variable' },
+  { icon: '🖥️', name: 'Server racks & GPUs', detail: 'The actual compute. 40–130kW per rack (AI). Most of the power turns to heat here' },
+  { icon: '🌐', name: 'Network', detail: 'Sends and receives traffic via backbone, IX, and submarine cable landing stations — latency and circuits' },
+  { icon: '🤖', name: 'AI services', detail: 'Training/inference → chatbots, search, generation. Reaching the end user' },
 ]
 
 function ChainRow({ items, kind }) {
@@ -47,7 +66,137 @@ function ChainRow({ items, kind }) {
 }
 
 export default function PowerSupplyChain() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        The fastest way to understand an AI data center is to follow <strong>the order in which electricity
+        flows</strong>. Which gateways the electricity made at a power plant passes through before it reaches the
+        GPU, and how a completed DC actually runs — we lay out these two chains at once. AI InfraMap's scoring
+        (40 points for power) is a data-based scoring of each link in this chain.
+      </p>
+
+      <h2>① The external power chain — from generation to the DC boundary</h2>
+      <p>
+        Electricity has <strong>lower loss at higher voltage</strong>. So right after generation it is stepped up
+        to extra-high voltage (765/345kV) to cross the country, then <strong>stepped down to 154kV or below at a
+        substation</strong> near the demand center and fed into the data center. This is why the substation is
+        called "the last gateway where an AI data center receives power."
+      </p>
+      <ChainRow items={GRID_CHAIN_EN} kind="grid" />
+      <p className="psc-data">
+        <strong>Real data on the map</strong> — <strong>788</strong> substations of 154kV or above nationwide
+        (122 at 345kV, 9 at 765kV; KEPCO, July 2026). Check coordinates with the map's <em>🔌 substation</em> layer,
+        and point analysis actually computes the <strong>distance to the nearest substation</strong> as 15 points on
+        the power axis. Because generation upstream is concentrated in the non-capital region (86%+ of new 2025
+        generation outside the capital region), the non-capital region is favored from the very start of the chain.
+      </p>
+
+      <h2>② Why the bottleneck arises at the "substation"</h2>
+      <p>
+        Even with surplus electricity, <strong>if the connection is blocked</strong> you cannot build a DC. That is
+        because new transmission and substation facilities have lead times exceeding 7 years, and the existing
+        substations' <strong>spare interconnection capacity (supply headroom)</strong> varies wildly by region.
+        This physical bottleneck shows up directly in the institution (grid impact assessment).
+      </p>
+      <ul>
+        <li>
+          <strong>Grid supply headroom</strong> — from Incheon at 5MW and Jeju at 0MW (saturated) to Gyeongbuk at
+          7,935MW and Chungnam at 7,670MW (headroom). Generation surplus (Incheon's self-sufficiency rate 165%) and
+          acceptance headroom can be <strong>the exact opposite</strong> — "generation surplus ≠ connectable."
+        </li>
+        <li>
+          <strong>DC power-supply feasibility determination rate</strong> (KEPCO grid impact assessment) — capital
+          region <strong>46%</strong> vs. non-capital region <strong>84%</strong>. In Gyeonggi and Incheon, more
+          than half of applications are ruled infeasible for supply.
+        </li>
+      </ul>
+      <p className="psc-data">
+        AI InfraMap scores these two signals as 10 points for distribution headroom + 10 points for grid supply
+        feasibility on the power axis (all 17 provinces and metropolitan cities). For detailed background, see{' '}
+        <Link to="/insights/landing-edge">capital-region grid saturation and the landing edge</Link>.
+      </p>
+
+      <h2>③ How a DC runs internally — this is how it actually turns after completion</h2>
+      <p>
+        The electricity that passes through the receiving facility goes through several more links inside the data
+        center. The core is <strong>uninterrupted power</strong> (electricity must never cut off, not even for an
+        instant) and <strong>thermal management</strong> (most of the power turns into heat).
+      </p>
+      <ChainRow items={DC_CHAIN_EN} kind="dc" />
+      <p>
+        Because nearly all the incoming power turns into <strong>heat</strong> at the GPU, how efficiently that heat
+        is removed (PUE) governs operating cost. This is why <strong>cooling</strong> is directly tied to location
+        (annual mean temperature, free-cooling potential) — the reason AI InfraMap keeps a climate axis (DC climate
+        index). High-density AI racks are moving beyond the limits of air cooling toward{' '}
+        <Link to="/insights/liquid-cooling-brief">liquid cooling</Link>.
+      </p>
+      <p>
+        Once completed, a data center runs <strong>nonstop for all 8,760 hours of the year</strong>. The actual
+        operating principles that sustain that constant operation are the following five.
+      </p>
+      <ul>
+        <li>
+          <strong>Uninterrupted redundancy (N+1 or higher)</strong> — receiving lines, transformers, UPS, and
+          emergency generators are kept in reserve so server power is not cut off even during a KEPCO outage or
+          equipment failure (99.9%+ availability SLA).
+        </li>
+        <li>
+          <strong>Heat circulation loop</strong> — a closed loop of GPU heat → coolant/CRAH → chiller/cooling tower
+          → exhaust to outside air runs 24 hours. In winter and at night, free cooling turns off the chillers to
+          save power → PUE splits by season and location.
+        </li>
+        <li>
+          <strong>PUE management</strong> — total power ÷ IT power. The closer to 1.0, the more efficient. New
+          domestic AIDCs target 1.2–1.3, and this 0.1 difference amounts to tens of billions of won a year in
+          electricity bills at a large site (cf. summer purchase price of 164 won/kWh).
+        </li>
+        <li>
+          <strong>Load curve</strong> — training runs thousands of GPUs at full load for weeks, while inference
+          fluctuates with traffic. Since contracted power and cooling capacity must be set to the peak,{' '}
+          <strong>the contracted receiving power</strong> is itself the ceiling.
+        </li>
+        <li>
+          <strong>Network SLA</strong> — traffic is exchanged 24/7 via backbone, IX, and submarine cables, and
+          latency and dual routing govern service quality (landing edge, multi-region).
+        </li>
+      </ul>
+      <p>
+        In summary, a completed DC is a facility that constantly maintains the four cycles of{' '}
+        <strong>"uninterrupted electricity → never-warming cooling → never-stopping compute → flowing
+        traffic."</strong> What determines the ceiling of these cycles is precisely the location's power, cooling,
+        and network conditions — the very thing AI InfraMap scores at the coordinate level.
+      </p>
+
+      <h2>④ Seeing it again through the five axes</h2>
+      <p>Laying this chain directly onto AI InfraMap's five scoring axes gives the following.</p>
+      <ul>
+        <li>
+          <strong>Power (40)</strong> — substation distance, grid supply headroom, power-supply feasibility rate,
+          on-site generation proximity. Scoring ① and ② of the chain.
+        </li>
+        <li>
+          <strong>Climate/cooling (10)</strong> — the cooling efficiency of chain ③ (annual mean temperature, free
+          cooling).
+        </li>
+        <li>
+          <strong>Network (10)</strong> — the traffic of chain ③ (distance to backbone, IX, submarine cable landing
+          stations).
+        </li>
+        <li>
+          <strong>Land (25)</strong> — the vessel that holds the entire chain (zoning, industrial complex, area).
+        </li>
+        <li>
+          <strong>Risk (15)</strong> — the variables that threaten the chain (flooding, landslide, complaints).
+        </li>
+      </ul>
+      <p className="psc-data">
+        Clicking any point on the map fills each link of this chain with an evidence score. Power supply conditions
+        can be viewed nationwide in the power and grid section (approval rate, supply headroom, substation
+        infrastructure, generation mix, cost, reserve margin) of the <Link to="/dashboard">dashboard</Link>.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         AI 데이터센터를 이해하는 가장 빠른 길은 <strong>전기가 흐르는 순서</strong>를 따라가는 것이다. 발전소에서

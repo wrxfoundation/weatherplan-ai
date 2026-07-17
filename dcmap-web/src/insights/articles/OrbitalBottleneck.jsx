@@ -1,9 +1,73 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 1차 소스: KDDC Issue Focus(2026.6.16)·STRABASE — SpaceX 상장·AI1 궤도 데이터센터.
  * 콘텐츠 등급 ④참고·인사이트. 수치는 원문 인용, 국내 함의는 AI InfraMap 데이터로 연결. */
 export default function OrbitalBottleneck() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        In June 2026, the market was seized by doubt about AI. OpenAI missed its targets, Oracle and
+        CoreWeave plunged together, and a ‘bubble’ warning was attached to Big Tech’s USD 700 billion
+        in annual AI investment. In the very middle of that fear, the market handed{' '}
+        <strong>SpaceX (SPCX)</strong>, which listed on the Nasdaq on June 12, a{' '}
+        <strong>market capitalization of over USD 2 trillion</strong>. What is intriguing is that a
+        large part of this valuation was assigned to a <strong>‘data center that does not yet
+        exist’</strong> — a plan for an orbital data center of up to one million units. What the market
+        bought was not servers in space but a
+        <strong> ‘toll for the AI bottleneck’</strong>.
+      </p>
+
+      <h2>The bottleneck has never stopped — from GPUs to power, from power to the grid</h2>
+      <p>
+        The scarce resource in the generative-AI race was at first the GPU (the volume of H100, GB200,
+        and GB300 secured was, in effect, growth speed). Once chip supply loosened, the bottleneck
+        moved straight to <strong>power</strong>. The scale is not an abstraction but a number — current
+        U.S. data center power consumption is about <strong>41GW, on par with the U.S. merchant nuclear
+        fleet</strong> (about 40% of America’s roughly 100GW of total nuclear), and a single ultra-large
+        AI training cluster draws about 100MW (a small city’s worth). The IEA projects that global DC
+        power consumption will more than double to about <strong>945TWh</strong> by 2030, exceeding
+        Japan’s entire consumption. U.S. electricity rates have risen 42% versus 2019, and in
+        DC-dense areas power costs have jumped 30–50%.
+      </p>
+
+      <h2>The Speed Mismatch — which is why Big Tech became power developers</h2>
+      <p>
+        The more fundamental problem is the <strong>speed mismatch</strong>. AI capital investment is
+        deployed in 12–24 months, but <strong>expanding the power grid takes 4–10 years</strong>. Models
+        grow at the speed of light while electricity arrives at the speed of transmission lines and
+        substations. Unable to endure this gap, Big Tech became power developers itself — Microsoft is
+        pursuing 835MW by restarting the Three Mile Island reactor, Amazon 5GW of SMRs with X-energy, and
+        Google 500MW with Kairos Power. Yet most will not supply electricity until the mid-2030s.{' '}
+        <strong>Data centers need power now, but the reactors come ten years later.</strong>
+      </p>
+      <p>
+        The competitive criteria for data center operators have changed. In the past it was good
+        servers, low PUE, and networking, but now{' '}
+        <strong>the ability to secure power is competitiveness itself</strong>. The DC operator of the
+        AI era is a cloud company and a real-estate developer and, at the same time, a{' '}
+        <strong>power developer</strong>. SpaceX’s AI1 (70m wide, low-orbit solar continuous generation,
+        120–150kW equivalent to one GB300 rack) is the most extreme end point of this trend, one that
+        flipped the question itself by asking, “Why must it be connected to the grid at all?”
+      </p>
+
+      <h2>AI InfraMap’s Perspective — the toll is translated into ‘siting’ on the Korean Peninsula</h2>
+      <p>
+        Orbital data centers are outside reality for most operators. For those who remain on the ground,
+        the bottleneck’s migration translates directly into{' '}
+        <strong>‘where you build’</strong>. AI InfraMap reads that toll on the site — regions with spare
+        grid capacity (the power axis: <Link to="/insights/psia-exemption-2027">grid spare capacity and
+        the power-system impact assessment</Link>), belts where clean-energy supply is concentrated
+        (renewables at 86.5% and non-capital-region at 86%, as confirmed in the{' '}
+        <Link to="/stats">generation permit pipeline</Link>), and the permitting track that narrows the
+        speed mismatch (the AIDC Special Act’s non-capital-region exemption). The domestic version of the
+        same logic is covered in{' '}
+        <Link to="/insights/power-permit-battle">‘Power and Permits Decide the Contest’</Link>. Wherever
+        the AI bottleneck moves, that chokepoint is ultimately decided at a single point on the map.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         2026년 6월, 시장은 AI에 대한 의심에 사로잡혀 있었다. OpenAI는 목표를 놓쳤고 Oracle·CoreWeave는

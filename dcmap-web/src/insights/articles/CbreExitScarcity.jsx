@@ -1,8 +1,241 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ④참고·인사이트(글로벌 부동산 리서치) — 수치는 CBRE 리포트 Figure 단위로 인용, 재인용 출처는 출처 박스에 명시 */
 export default function CbreExitScarcity() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <div className="tldr">
+        <p className="tldr-kicker">⚡ 3-Minute Easy Read</p>
+        <p className="tldr-one">
+          “AI makes data centers desperately needed, but the capital region has no electricity to spare, so new
+          ones can’t be built. So a data center that has already secured power can name its price — but there
+          are 3 traps.”
+        </p>
+        <ol>
+          <li>
+            <strong>Why the frenzy</strong> — The four firms Google, MS, Amazon, and Meta say they’ll spend up
+            to USD 1.1 trillion (about KRW 1,500 trillion, more than double Korea’s annual budget) on data
+            centers. This is not a passing fad but a structural trend.
+          </li>
+          <li>
+            <strong>Why they can’t build</strong> — A single data center eats as much electricity as a mid-sized
+            city, yet the final approval rate of KEPCO’s capital-region review is <strong>1.9%</strong>(2 out of
+            every 100 applications). New substations are earmarked for Yongin semiconductors and new towns, and
+            the ultra-high-voltage lines (HVDC) to bring in regional power won’t be usable until after 2030.
+          </li>
+          <li>
+            <strong>What resulted</strong> — It’s just like redevelopment. New district designation is blocked,
+            and when only already-started districts remain, prices jump. Rents rose <strong>+70%</strong> over
+            6 years, vacancy is under 5%, and even buildings completing in 2027–28 have tenants lining up to
+            contract in advance (pre-lease).
+          </li>
+          <li>
+            <strong>Trap ① the old formula no longer works</strong> — The real-estate classic of “buy and wait
+            and it rises” is over. On the surface, Seoul’s yield (cap rate) is higher than Tokyo’s, so it looks
+            “still cheap,” but <strong>relative to risk there is already no room left to compress</strong>. That
+            is because the pure risk premium net of the base rate (the spread) is about 3.4%p in Seoul — the same
+            as ultra-low-rate Japan and actually tighter than Singapore (4.8%p). In other words, investors are
+            already pricing Seoul data centers as safely as a mature market, so the surface-level high yield does
+            not read as ‘upside.’ Now it’s a fight not for capital gains but for growing{' '}
+            <strong>rent (NOI)</strong>.
+          </li>
+          <li>
+            <strong>Trap ② the building lasts 40 years, the inside 2–3</strong> — GPUs bring out a new
+            generation every 2–3 years like smartphones, eating several times the power and heat. Older-design
+            buildings can’t take them. On top of that, Korea uses ‘Fully Fitted’ contracts, so the cooling and
+            power upgrade cost <strong>falls on the landlord</strong> (in the US the tenant bears it). This
+            future cost is almost never reflected in today’s transaction prices.
+          </li>
+          <li>
+            <strong>Trap ③ rent increases are locked</strong> — Korean practice is a fixed 2% per year, so net
+            of inflation the real rent stands still. That said, it is loosening lately as 10-year long-term
+            contracts with 3% per year and inflation indexing grow.
+          </li>
+          <li>
+            <strong>Can it actually be sold (Exit)</strong> — Until now it was a narrow market among domestic
+            managers, but Singapore’s Keppel put about KRW 100 billion into the Ansan data center. The report’s
+            highlight is that “develop and stabilize via a fund → sell to one’s own listed REIT” (a 50% IRR
+            verified in Singapore) may work in Korea for the first time. But global heavyweights attach demanding
+            conditions like 6-year+ long-term contracts and tenant-borne costs (Triple Net).
+          </li>
+        </ol>
+        <p>
+          <strong>Bottom line in one sentence</strong> — the reason to buy is clear (power-secured assets keep
+          getting scarcer). But the rules have changed from “buy and it rises” to{' '}
+          <strong>“a game won by those who can grow the rent and even calculate the cost of GPU generational
+          turnover.”</strong> Below unpacks that basis with the report’s figures.
+        </p>
+      </div>
+
+      <p>
+        CBRE Korea’s “Korea Data Center Investment — A Diagnosis of the Scarcity Premium Created by Supply
+        Constraints and Exit Feasibility” (2026.7, 45p) reads data centers in <strong>the language of capital</strong>.
+        Where the <Link to="/insights/rsquare-realestate-2025">RSquare report</Link> was real-estate statistics
+        on permitting, transactions, and rents, and <Link to="/insights/pwc-value-chain-2026">Samil PwC</Link>
+        was the value chain of the supply-demand gap, CBRE poses the next question —{' '}
+        <strong>“this asset — who, at what yield, and how, will resell it (Exit).”</strong> The conclusion meets
+        our map’s premise exactly: <strong>a site that has pre-empted power is a scarce asset.</strong>
+      </p>
+
+      <h2>Demand is structural; supply was blocked by power</h2>
+      <p>
+        The current capital-region data-center vacancy rate is <strong>1.4%</strong>(an all-time low), and floor
+        rent surged about <strong>70%</strong> over 6 years from KRW 140,000/kW in 2019 to{' '}
+        <strong>KRW 250,000/kW</strong> in 2025 (CAGR +9.4%). Demand is 54% global CSPs and 34% domestic IT
+        firms, with prime anchor tenants tying up <strong>88% in long-term leases</strong>. Added to this are
+        three latent demand groups — AI internalization by finance, public sovereign AI, and large-enterprise
+        AX transformation. Korea ranks top across all three axes of AI adoption (world No.1 in the increase in
+        diffusion rate), development (14.31 AI patents per 100,000 people, overwhelming the US at 4.68 and China
+        at 6.95), and production (world No.3 in model releases) — that is CBRE’s demand fundamental.
+      </p>
+      <p>
+        The problem is supply. The <strong>final approval rate of the capital-region power-grid impact
+        assessment is 1.9%</strong>, and real power utilization after the west-coast HVDC completes is projected
+        for <strong>after 2030</strong>. The diagnosis is that this phase of extremely high entry barriers is
+        the inflection point that <strong>pushes to a peak the scarcity value of completed assets that have
+        already secured power</strong>. To <Link to="/insights/rsquare-realestate-2025">RSquare’s picture</Link>
+        that the permitting cliff is the supply cliff, CBRE adds “and so the value of already-secured assets
+        rises.”
+      </p>
+
+      <h2>The 20-year cap-rate compression cycle is over — returns now come from NOI growth</h2>
+      <p>
+        88% of investors expect data-center prices to rise (the highest of all asset classes). But CBRE’s sober
+        warning starts here. The key is not the absolute cap rate but the{' '}
+        <strong>spread (the pure risk premium net of the base rate)</strong>. The tentative cap rate for
+        Seoul-metropolitan hyperscale is <strong>5.3–6.5%</strong>, and by absolute figure alone it looks
+        higher than Tokyo (around 4.5%), so it seems “still cheap.” But the spread over the base rate (2.5%) is{' '}
+        <strong>about 3.4%p</strong> — already the same level as ultra-low-rate Japan and{' '}
+        <strong>actually tighter</strong> than the global financial hub Singapore (4.8%p). It means the risk
+        premium investors demand of Seoul data centers is already compressed to a mature-market level — a
+        paradoxical state where <strong>it looks cheaper than Tokyo by absolute figure yet has no further
+        room to compress relative to risk</strong>. So Seoul’s high cap rate does not read as ‘upside room.’
+        The implied cap rate of US listed DC REITs (NAREIT) compressed over 20 years from 13–14% in 2005 to{' '}
+        <strong>5–6%</strong> in 2026, and the policy-rate spread is at a <strong>20-year low of 1.5–2%p</strong>
+        now, down from 5–8%p in the zero-rate era.
+      </p>
+      <p>
+        The implication is clear — <strong>dramatic capital gains via further cap-rate compression are
+        structurally hard to expect.</strong> This is a paradoxical signal that data centers have settled in as
+        an institutional-grade asset shoulder to shoulder with offices and logistics, and it means the future
+        return path has shifted to <strong>rent-growth rate (NOI growth)</strong> and{' '}
+        <strong>defense against technical obsolescence</strong>. One must see both the survey saying “prices
+        will rise” and the capital-market physics saying “they can’t easily rise further.”
+      </p>
+
+      <h2>Development capital premised on a 3–8 year Exit ties down NOI growth</h2>
+      <p>
+        Unlike US listed REITs with 15–20 year long-term leases, domestic data centers are mostly designed as{' '}
+        <strong>project funds and PFVs premised on a sale within 3–8 years</strong>. When this combines with a
+        rent discount over the 0–36 month initial ramp-up and{' '}
+        <strong>a low fixed escalation of around 2.0% per year</strong> (real stagnation to decline given
+        domestic inflation), early NOI growth is structurally tied down over the holding period of a fund aiming
+        for a short-term sale. In the US, 15–20 year contracts with CPI indexing (or 3%) are the standard.
+      </p>
+      <p>
+        That said, CBRE also notes easing signals. On robust demand, global operators secure at least 10-year
+        long-term leases when contracting 10MW or more, and as CPI indexing and 3.0% increases become common in
+        end-user contracts, the risks that once blocked NOI growth are being partly offset. It is the same
+        direction as <Link to="/insights/rsquare-realestate-2025">RSquare’s observation</Link> that lease
+        structures are being reorganized <strong>from a per-rack basis to a power-capacity (kW) basis</strong>.
+      </p>
+
+      <h2>The hardest risk to predict — the building lasts 30–40 years, the GPU 2–3</h2>
+      <p>
+        What CBRE pointed to as “the hardest risk to predict” is <strong>physical obsolescence</strong>. A
+        building’s useful life is 30–40 years, but GPU generational turnover is on a 2–3 year cycle. NVIDIA’s
+        roadmap soars from H100 (industry-average power density ~15kW) → Blackwell (15–25kW) → Rubin (25–50kW)
+        → Feynman (50kW+), and real operating power for the AI server class is already 40–100kW, with peak
+        maxima reaching <strong>250–1,000kW per rack</strong>. Obsolescence takes shape along four axes —{' '}
+        <strong>load</strong> (1.5→2.5 tons/㎡)·<strong>power density</strong> (5kW→40–50kW)·
+        <Link to="/insights/liquid-cooling-brief">cooling</Link> (air→liquid)·
+        <strong>fully-fitted depreciation</strong>.
+      </p>
+      <p>
+        The crux is <strong>who bears</strong> the risk. Where the global market commonly uses Triple Net
+        (Core &amp; Shell), in which the tenant pays for IT equipment and obsolescence, Korea commonly uses the{' '}
+        <strong>fully fitted</strong> model in which the landlord delivers even the infrastructure, so the
+        landlord bears the reinvestment (CapEx) risk. CBRE’s warning: “In domestic DC transactions, precedents
+        where physical-obsolescence cost is explicitly discounted into the price are extremely rare.” This is,
+        in effect, the asset-value-language translation of why we have said one must look at{' '}
+        <Link to="/insights/gpu-utilization-2026">30–40% utilization</Link> together with the{' '}
+        <Link to="/calc">design intake capacity of the GPU calculator</Link>.
+      </p>
+
+      <h2>The buyer pool widens from domestic institutions → global infrastructure → global DC-specialist capital</h2>
+      <p>
+        CBRE diagnoses Exit feasibility through <strong>a 3-way classification of the buyer pool</strong>. ①{' '}
+        <strong>Domestic institutional capital</strong> (5–7 year short-term; Epoch Anyang center about KRW 840
+        billion·40MW in progress) → ② <strong>Global infrastructure capital</strong> (10 years+; Macquarie
+        Infrastructure, KKR, Blackstone, Brookfield, GIC, CPP; Hanam data center KRW 734 billion, Igis →
+        Macquarie) → ③ <strong>Global DC-specialist capital</strong> (perpetual; Keppel DC REIT, Equinix,
+        Digital Realty). It is a signal that data centers are being incorporated as an institutional asset class
+        in commercial real-estate transactions, and large deals in prime assets such as Sejong Telecom’s Bundang
+        IDC are following.
+      </p>
+      <p>
+        The benchmark is Singapore’s <strong>Keppel DC REIT</strong> — growing 6x over 10 years from SGD 1
+        billion AUM in 2014 to about <strong>USD 6.3 billion in 2025</strong> (95.6% occupancy·6.5-year WALE),
+        and in its 2025 official announcement it <strong>named Korea, alongside Japan and Europe, as a core
+        Asia-Pacific hub</strong>. It is proof that global DC-specialist capital already recognizes the scarcity
+        premium of the capital region’s power-secured assets. But their entry is premised on a Triple Net
+        structure and securing a long-term WALE of 6 years or more — the restructuring of the domestic lease
+        structure seen earlier becomes the key to Exit.
+      </p>
+
+      <h2>The Ansan data center — the first operation of a Korean-style ‘fund→REIT’ Exit pipeline</h2>
+      <p>
+        Keppel has repeated a virtuous-cycle Exit of developing and stabilizing via a private fund, then selling
+        to the public-market Keppel DC REIT (Singapore’s KDC SGP 7·8 was a REIT sale of about KRW 1.6 trillion
+        in 2024, an LP-basis IRR of about 50%). The case where this structure first took concrete shape in Korea
+        is the <strong>Ansan data center</strong> (60MW intake·40MW IT, Wonsi-dong, Banwol National Industrial
+        Complex, Gyeonggi) — Keppel Fund No.3 was the main investor, and with the SPA signed in May 2026 it
+        became <strong>Keppel’s first DC investment asset in Korea</strong>. Total project cost is about KRW 1
+        trillion, with Hyundai E&amp;C, Shinyoung, and lenders jointly participating, targeting{' '}
+        <strong>service start in 2030</strong> after conversion to main PF in September. It is the most direct
+        precedent showing that the advanced-economy path — in which the Exit of a domestic asset moves beyond
+        repeated short-term trading to <strong>transfer to global perpetual capital</strong> — can work in Korea
+        too.
+      </p>
+
+      <h2>The 6 AIDC special-act exceptions — capital-region scarcity consolidates, non-capital thresholds ease</h2>
+      <p>
+        Policy direction is a <strong>core opportunity factor</strong> CBRE singled out. The Special Act for the
+        Promotion of the AI Data Center Industry contains 6 exceptions: batch permit processing (Art. 18;
+        power-grid impact assessment 150 days·building permit 40 days·<strong>a timeout system deeming
+        completion if not notified within the deadline</strong>)·<strong>exemption from the power-grid impact
+        assessment (Art. 19, non-capital only)</strong>·direct renewable supply (Art. 20, third-party PPA)·
+        eased facility-installation standards (Art. 21)·industrial-siting and harbor-act exceptions (Arts. 22–23)·
+        AI DC special zones (Arts. 24, 26). Because the core benefit — grid-impact-assessment exemption — applies
+        only to non-capital regions, <strong>the scarcity of the capital region’s power-secured assets actually
+        consolidates structurally</strong> — a structure in which the more deregulation lowers the non-capital
+        development threshold, the more the premium of capital-region completed assets grows. Regional power
+        self-sufficiency backs this up (Gyeongbuk and Jeonnam at 200%+ vs. Seoul at 12% and Gyeonggi at 62%).
+      </p>
+
+      <h2>How to read it — the 3-stage unfolding of the scarcity premium</h2>
+      <p>
+        CBRE’s conclusion is the convergence of three axes — demand, supply, and capital. Demand rises
+        structurally on AI, supply is blocked by power constraints, and capital widens the buyer pool from
+        domestic to global — at their intersection lies <strong>the scarcity premium of power-secured assets</strong>.
+        The unfolding is drawn in 3 stages: <strong>scarcity recognition in 2026–27 → transaction activation in
+        2028–29 → investment stabilization in 2030</strong>. Risks (the end of cap-rate compression, short-term
+        NOI-growth constraints, physical obsolescence) persist, but the diagnosis is that the capital-region
+        scarcity created by the government’s power-supply-limiting policy offsets them.
+      </p>
+      <p>
+        Three reports — real estate (RSquare), value chain (PwC), and capital markets (CBRE) — set out from
+        different doors and arrive at the same room:{' '}
+        <strong>“a site that has pre-empted power is the asset, and its scarcity is the premium.”</strong> On
+        the map, turning on the <Link to="/?layers=pipeline">planned-supply layer</Link> and the{' '}
+        <Link to="/?layers=headroom">substation headroom layer</Link> lets you overlay, at the point level,
+        which sites hold the physical basis of this premium — down to the likelihood of passing the grid impact
+        assessment and the substation’s power-supply headroom.
+      </p>
+    </>
+  ) : (
     <>
       <div className="tldr">
         <p className="tldr-kicker">⚡ 3분 쉽게 읽기</p>

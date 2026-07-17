@@ -1,8 +1,61 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ①법령·고시 — 한전 기본공급약관 제23조·기후에너지환경부 공고 기반 (docs/power-licensing-rulebook-v0.md) */
 export default function PowerTrack40mw() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        The first number to lock down when evaluating a data center site is not the land price or its assessed
+        value — it is the <strong>required capacity (MW)</strong>. That single number determines the receiving
+        voltage, who performs the interconnection works, the fees, and the lead time. There are two thresholds —{' '}
+        <strong>10MW and 40MW</strong> (Article 23 of the Basic Electricity Supply Terms).
+      </p>
+
+      <h2>10MW — the baseline for 22.9kV general supply</h2>
+      <p>
+        Under the table in Article 23 ①, a contracted capacity of <strong>10,000kW (10MW) or less</strong> is
+        supplied at 22.9kV, while <strong>above 10,000kW the rule is 154kV</strong>. Because 22.9kV connects to the
+        distribution network, it is relatively fast and cheap. Small and mid-sized colocation and edge facilities
+        sit below this baseline. That said, the current map's{' '}
+        <Link to="/stats">average receiving capacity of 17.7MW for domestic private data centers</Link> already
+        exceeds 10MW, placing them in the conditional band below.
+      </p>
+
+      <h2>10–40MW — 154kV as the rule, 22.9kV under conditions</h2>
+      <p>
+        Above 10,000kW the rule is 154kV, but the <strong>③-1 exception</strong> in Article 23 leaves a door open:
+        if the contracted capacity after new or expanded connection is <strong>40,000kW (40MW) or less</strong>,
+        the KEPCO substation has spare supply capability, and there are no issues with protection coordination,
+        line configuration, or metering, supply at 22.9kV is possible. In other words, this is a case-by-case band
+        in which a site's fate is subordinate to the state of the distribution network — the same 30MW load may end
+        up at 22.9kV or 154kV depending on which substation has jurisdiction. 40MW is the ceiling of this 22.9kV
+        exception.
+      </p>
+
+      <h2>40MW — the wall of the 154kV mandate</h2>
+      <p>
+        <strong>Above 40MW (40,000kW), the 22.9kV exception (③-1) closes and 154kV transmission-level supply
+        becomes mandatory</strong> (above 400,000kW, it becomes 345kV). A dedicated substation-class facility,
+        transmission line interconnection, and construction costs and timelines of a different order all follow.
+        The fees differ from the application stage onward — per the public notice, the combined pre-review and
+        technical review fees are roughly <strong>1.35 million won</strong> for 22.9kV versus about{' '}
+        <strong>7.26 million won</strong> for 154kV. The fees themselves are small money, but this gap is a preview
+        of the scale of facility investment that follows.
+      </p>
+
+      <h2>Implications in the AI era — the wall is hit more often</h2>
+      <p>
+        At the power density of GPU clusters, 40MW is a number reached quickly. Converting with the{' '}
+        <Link to="/calc">GPU calculator</Link> shows that just over 20,000 GB200 units already enter the mandatory
+        154kV band. If you are planning a hyperscale facility, the order of questions must change — before "is this
+        land good?" comes <strong>"at this capacity, which track am I on, and does this region have a grid that can
+        carry that track?"</strong> Click any point on the map and the track determination (receiving voltage,
+        whether a grid impact assessment applies) is shown immediately based on the MW you enter.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         데이터센터 부지 검토에서 가장 먼저 확정해야 할 숫자는 땅값도 지가도 아니고 <strong>필요 용량(MW)</strong>이다.

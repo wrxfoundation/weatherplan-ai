@@ -1,9 +1,102 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 1차 소스: 글로벌이코노믹(2026.7.6, Oilprice 재인용) — QTS 디지털 게이트웨이 백지화·4대 투자 신호.
  * 한국 근거: AI InfraMap D1 발전 허가대장 v2(2026-04-17) 자체 집계. 콘텐츠 등급 ④참고·인사이트. */
 export default function PowerPermitBattle() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        A data center campus once pursued as the largest in the world was <strong>scrapped before it could even
+        break ground</strong>. It was Blackstone-affiliated QTS's <strong>"Digital Gateway"</strong> planned for
+        Prince William County, Virginia — a 2,100-acre (about 1,100 soccer fields), 37-building project with a total
+        cost of $100 billion (about 153 trillion won). The three-year courtroom battle ended when co-developer
+        Compass dropped its lawsuit in April and QTS withdrew its July appeal. What brought the project down was
+        neither money nor technology. It was <strong>resident opposition, a saturated grid, and a seemingly trivial
+        procedural defect</strong>.
+      </p>
+
+      <h2>A single procedural step halted 153 trillion won</h2>
+      <p>
+        The Virginia Court of Appeals ruled the rezoning approval void, finding that when the county published the
+        notice of the resident public hearing in the newspaper it failed to observe the <strong>six-day interval
+        clause</strong> required by state law. It is a case showing that in large infrastructure, <strong>a region's
+        legal and procedural risk is itself investment risk</strong>. This is exactly why AI InfraMap treats zoning
+        and permitting procedures in site analysis with as much weight as power — even if you secure the power, a
+        single <Link to="/glossary">permitting procedure</Link> can halt the entire project.
+      </p>
+
+      <h2>"Bring your own generator" — becoming an industry that secures power</h2>
+      <p>
+        The power demand of a single hyperscale building is typically 100–300MW, but AI-specialized clusters surge
+        to the <strong>1GW (1,000MW) scale</strong>. A single campus uses power on par with an entire mid-sized
+        city. While transmission grid expansion takes 5–10 years, utilities have begun telling developers to
+        outright <strong>bring their own generators</strong>. Big Tech is <strong>effectively becoming a power
+        generator</strong>, building on-site gas plants, SMRs, and large ESS directly or wiring PPAs straight in.
+        The AI infrastructure race has changed in character from an industry that plugs in servers to{' '}
+        <strong>an industry that secures power</strong>.
+      </p>
+
+      <h2>Avoiding greenfield, toward existing assets — the movement of capital</h2>
+      <p>
+        As permitting and power risks soared, global capital avoids bare-land (greenfield) development and rushes
+        toward <strong>brownfield (existing assets) where power is already secured</strong>. In May, Blackstone
+        listed its "Digital Infrastructure Trust," raising $1.75 billion, and concentrates on acquiring safe,
+        fully-leased assets. The more new supply is blocked, the greater the{' '}
+        <strong>premium on assets that already hold power</strong>.
+      </p>
+
+      <h2>Four investment signals that will decide the lead</h2>
+      <p>The direction of this market should be read not by the scale of server expansion but by power-capability metrics.</p>
+      <ol>
+        <li>
+          <strong>Clean energy procurement rate</strong> — the degree to which environmental regulation and power
+          shortage risk are diversified. AI InfraMap approximates this by regional renewable-energy supply pipeline
+          (below).
+        </li>
+        <li>
+          <strong>Transmission grid capacity flexibility</strong> — identifying spare regions that can substitute
+          for saturated ones. AI InfraMap's power axis grid spare capacity (KEPCO D3) and 345kV substations with
+          headroom are precisely this signal.
+        </li>
+        <li>
+          <strong>Rent growth of completed assets</strong> — a market indicator of the intensity of supply
+          constraint.
+        </li>
+        <li>
+          <strong>Levelized cost of electricity (LCOE)</strong> — how much it actually costs to make a kWh. Because
+          the power-cost share of AI compute cost is absolute, this is the final report card that decides long-term
+          competitiveness.
+        </li>
+      </ol>
+
+      <h2>Korea's evidence — 86.5% renewable, and the non-capital belt</h2>
+      <p>
+        This narrative is already confirmed by data in Korea. In the{' '}
+        <strong>power-generation license register for projects above 3MW (as of 2026-04-17, 4,652 cases)</strong>{' '}
+        absorbed by AI InfraMap, of the 4,567 cases with a confirmed fuel source, <strong>86.5% are renewable</strong>{' '}
+        (wind, fuel cells, solar, offshore wind) — coal, LNG, and nuclear stop at around 8%. The <strong>633
+        cases</strong> in the new pipeline licensed since 2024 are concentrated in{' '}
+        <strong>Jeonnam (146), Gyeongbuk (85), and Gangwon (84)</strong>, and <strong>86% are outside the capital
+        region</strong>. Clean energy supply (signal ①) and regions with power headroom (signal ②) point to{' '}
+        <strong>geographically the same places</strong> on the Korean peninsula — and those places overlap precisely
+        with the non-capital region that the <Link to="/insights/psia-exemption-2027">AIDC special act</Link> lures
+        with grid impact assessment exemptions. The detailed distribution can be seen in <Link to="/stats">Statistics</Link>.
+      </p>
+
+      <h2>AI InfraMap's perspective</h2>
+      <p>
+        QTS's lesson is clear. The winner is not whoever has the semiconductor chips but{' '}
+        <strong>the operator who secures power the most cheaply, most certainly, and without procedural risk</strong>.
+        AI InfraMap layers onto each site the four signals starting with what is obtainable — clean energy supply via
+        the power-generation license pipeline (D1), transmission flexibility via grid spare capacity (D3), land cost
+        via LandPulse, and "Virginia-style scrapping" risk via zoning and permitting procedures.{' '}
+        <Link to="/">Click any point on the live map</Link> to check, starting from the evidence that can be computed
+        right now.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         세계 최대 규모로 추진되던 데이터센터 단지가 <strong>착공도 못 하고 백지화</strong>됐다. 블랙스톤 계열

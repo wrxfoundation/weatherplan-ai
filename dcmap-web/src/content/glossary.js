@@ -2,9 +2,9 @@
 // docs/power-licensing-rulebook-v0.md §7 콘텐츠 트랙 산출물. 특정 부지·사업자 정보 없음.
 
 export const GLOSSARY_CATEGORIES = [
-  { key: 'power', label: '전력 인허가' },
-  { key: 'dc', label: '데이터센터 기본' },
-  { key: 'cooling', label: '냉각 기술' }, // 출처: OCP 교육 웨비나 "Compact Thermal Management Solutions for High-Density AI Data Centers" (2025.6.26) 등 공개 기술 자료
+  { key: 'power', label: '전력 인허가', labelEn: 'Power Permitting' },
+  { key: 'dc', label: '데이터센터 기본', labelEn: 'Datacenter Basics' },
+  { key: 'cooling', label: '냉각 기술', labelEn: 'Cooling Technology' }, // 출처: OCP 교육 웨비나 "Compact Thermal Management Solutions for High-Density AI Data Centers" (2025.6.26) 등 공개 기술 자료
 ]
 
 export const GLOSSARY = [
@@ -14,6 +14,7 @@ export const GLOSSARY = [
     term: '계약전력',
     en: 'Contracted Capacity',
     def: '한전과 "최대 이만큼 쓰겠다"고 정하는 전력의 상한선. 요금과 설비 규모의 기준이 된다. 40,000kW(=40MW)급이면 약 1만 가구 이상이 동시에 쓰는 수준의 대규모 전력이다.',
+    defEn: 'The upper limit of power a customer agrees with KEPCO to use ("at most this much"). It sets the basis for tariffs and facility sizing. A 40,000kW (=40MW) class load is large-scale power on the order of what more than 10,000 households would draw at once.',
   },
   {
     id: 'voltage-class',
@@ -21,6 +22,7 @@ export const GLOSSARY = [
     term: '수전전압 등급 (22.9kV / 154kV / 345kV)',
     en: 'Supply Voltage Class',
     def: '한전이 전기를 보내주는 전압 등급. 22.9kV는 도심 배전망(전봇대·지중 배전선) 수준이고, 154kV 이상은 송전탑으로 보내는 고전압이다. 약관 제23조상 계약전력 1만kW(10MW) 이하는 22.9kV, 초과는 154kV가 원칙이며, 40MW까지는 한전 변전소 여유 시 22.9kV로도 조건부 공급이 가능하다. 40MW 초과부터 154kV가 의무화되고, 400MW 초과는 345kV 이상이다.',
+    defEn: 'The voltage class at which KEPCO delivers power. 22.9kV is the urban distribution-grid level (poles / underground distribution lines), while 154kV and above is high voltage carried on transmission towers. Under Article 23 of the Provisions, contracted capacity of 10,000kW (10MW) or less is 22.9kV in principle and above that is 154kV; up to 40MW, conditional supply at 22.9kV is possible if the KEPCO substation has spare capacity. Above 40MW, 154kV becomes mandatory, and above 400MW it is 345kV or higher.',
   },
   {
     id: 'sujeon',
@@ -28,6 +30,7 @@ export const GLOSSARY = [
     term: '수전(受電)',
     en: 'Power Reception',
     def: '한전에서 전기를 "받아오는" 것. 수전전압은 받을 때의 전압, 수전 시기는 전기를 처음 받는 시점을 뜻한다.',
+    defEn: 'The act of "receiving" electricity from KEPCO. The supply (reception) voltage is the voltage at the point of receipt, and the reception timing is when power is first received.',
   },
   {
     id: 'circuit',
@@ -35,6 +38,7 @@ export const GLOSSARY = [
     term: '회선',
     en: 'Circuit',
     def: '전기가 들어오는 선로 한 가닥(경로). 22.9kV는 한 회선당 최대 20MW라서, 예컨대 40MW를 받으려면 상용 두 회선이 필요하다.',
+    defEn: 'A single line (path) through which electricity comes in. At 22.9kV a circuit carries up to 20MW, so receiving, for example, 40MW requires two commercial circuits.',
   },
   {
     id: 'powered-land',
@@ -42,6 +46,7 @@ export const GLOSSARY = [
     term: 'Powered Land',
     en: 'Powered Land',
     def: '전력 공급이 확보된 상태의 부지를 부르는 업계 용어. 데이터센터 개발사들이 웃돈을 주고 사는 프리미엄 자산이다.',
+    defEn: 'An industry term for a site that already has secured power supply. It is a premium asset that data-center developers pay a premium to acquire.',
   },
   {
     id: 'own-substation',
@@ -49,6 +54,7 @@ export const GLOSSARY = [
     term: '수전설비(변전실)',
     en: 'Customer Substation',
     def: '고압으로 받은 전기를 부지 안에서 쓸 전압으로 낮추는 고객 소유 설비. 154kV로 받으면 필수라 투자비가 크게 늘어난다.',
+    defEn: 'Customer-owned equipment that steps down high-voltage incoming power to the voltage used on-site. It becomes mandatory when receiving at 154kV, sharply raising capital costs.',
   },
   {
     id: 'pre-notice',
@@ -56,6 +62,7 @@ export const GLOSSARY = [
     term: '전기사용(수전)예정통지',
     en: 'Advance Notice of Power Use',
     def: '대용량(5,000kW 이상) 고객이 정식 신청 전에 "이 위치에서 이만큼 쓸 예정"이라고 한전에 미리 알리는 절차. 계약이 아니라 비용·구속력이 없고, 한전이 공급 가능 여부를 검토해 회신해 준다.',
+    defEn: 'A procedure by which a large-capacity customer (5,000kW or more) notifies KEPCO in advance, before a formal application, that "we plan to use this much at this location." It is not a contract, carries no cost or binding force, and KEPCO reviews whether supply is feasible and replies.',
   },
   {
     id: 'pre-review',
@@ -63,6 +70,7 @@ export const GLOSSARY = [
     term: '공급방안 사전검토',
     en: 'Preliminary Supply Review',
     def: '예정통지를 받은 한전이 실제 어떤 경로·설비로 공급할 수 있는지 따져 회신하는 절차. 전압 등급에 따라 수수료(22.9kV 35만 원 / 154kV 67만 원)가 있다.',
+    defEn: 'A procedure in which KEPCO, having received an advance notice, examines through which route and facilities it can actually supply power and replies. It carries a fee depending on voltage class (KRW 350,000 for 22.9kV / KRW 670,000 for 154kV).',
   },
   {
     id: 'psia',
@@ -70,6 +78,7 @@ export const GLOSSARY = [
     term: '전력계통영향평가',
     en: 'Power System Impact Assessment',
     def: '10MW 이상 대규모 시설이 전력망(계통)에 주는 부담을 정부가 사전에 평가하는 제도. 분산에너지 활성화 특별법(2024.6 시행)에 근거하며, 이를 거쳐야 전기사용계약을 맺을 수 있다.',
+    defEn: 'A system under which the government assesses in advance the burden that a large facility (10MW or more) places on the power grid. It is based on the Special Act on the Promotion of Distributed Energy (effective Jun 2024), and passing it is a prerequisite for concluding an electricity-use contract.',
   },
   {
     id: 'trial-operation',
@@ -77,6 +86,7 @@ export const GLOSSARY = [
     term: '시범운영 (특례)',
     en: 'Trial Operation',
     def: '전력계통영향평가의 세부 규정(고시)이 만들어지기 전 임시 절차로 운영 중인 상태. 이 기간에는 "한전이 공급 가능하다고 하면 점수와 무관하게 심의회에 올려주는" 완화 특례가 적용된다(기후에너지환경부공고 제2025-139호).',
+    defEn: 'The state of operating under an interim procedure before the detailed rules (notice) of the Power System Impact Assessment are established. During this period an eased exception applies whereby "if KEPCO says supply is feasible, the case is put before the review council regardless of score" (Ministry of Climate, Energy and Environment Notice No. 2025-139).',
   },
   {
     id: 'admin-info-sharing',
@@ -84,6 +94,7 @@ export const GLOSSARY = [
     term: '행정정보 공동이용',
     en: 'Administrative Information Sharing',
     def: '신청인이 서류를 직접 떼지 않아도, 동의만 하면 담당 기관이 전산으로 구비서류를 확인해 주는 제도.',
+    defEn: 'A system whereby, with the applicant\'s consent alone, the responsible agency verifies the required documents electronically, so the applicant need not obtain them in person.',
   },
   {
     id: 'technical-review-fee',
@@ -91,6 +102,7 @@ export const GLOSSARY = [
     term: '기술검토비',
     en: 'Technical Review Fee',
     def: '"이 전력망에 이 용량을 붙일 수 있는가"를 한전이 계산해 주는 검토 수수료(22.9kV 100만 / 154kV 659만 / 345kV 988만 원 +VAT). 신청 후 20영업일 내 납부해야 하며, 결과와 무관하게 환급되지 않는다.',
+    defEn: 'A review fee KEPCO charges to calculate "whether this capacity can be connected to this grid" (KRW 1,000,000 for 22.9kV / 6,590,000 for 154kV / 9,880,000 for 345kV, plus VAT). It must be paid within 20 business days of application and is non-refundable regardless of the outcome.',
   },
   {
     id: 'backup-power',
@@ -98,6 +110,7 @@ export const GLOSSARY = [
     term: '예비전력 (갑/을)',
     en: 'Backup Power',
     def: '평상시 쓰는 상용전력이 고장 났을 때를 대비해 미리 계약해 두는 비상 공급. 상용과 같은 변전소에서 받으면 "갑", 다른 변전소에서 받으면 "을"이다.',
+    defEn: 'Emergency supply contracted in advance in case the normal commercial power in everyday use fails. It is "Type A (gap)" if received from the same substation as the commercial supply, and "Type B (eul)" if received from a different substation.',
   },
   {
     id: 'bizmail',
@@ -105,6 +118,7 @@ export const GLOSSARY = [
     term: '비즈메일',
     en: 'KEPCO Biz-Mail',
     def: '한전의 기업 고객용 전자문서 채널. 세금계산서 수발신 등에 쓰인다.',
+    defEn: 'KEPCO\'s electronic-document channel for corporate customers. It is used for sending and receiving tax invoices and the like.',
   },
   {
     id: 'voltage-maintenance',
@@ -112,6 +126,7 @@ export const GLOSSARY = [
     term: '적정전압 유지',
     en: 'Voltage Maintenance',
     def: '새 수요가 붙은 뒤에도 주변 전압이 기준 범위 안에 머무는 상태. 시범운영 특례에서도 유일하게 반드시 통과해야 하는 요건이다.',
+    defEn: 'The state in which surrounding voltage stays within the standard range even after new demand is connected. It is the one requirement that must be met even under the pilot-operation exception.',
   },
   {
     id: 'overload-ratio',
@@ -119,6 +134,7 @@ export const GLOSSARY = [
     term: '과부하율',
     en: 'Overload Ratio',
     def: '변압기·선로가 감당할 수 있는 용량 대비 실제 얼마나 쓰이고 있는지의 비율. 100%를 넘으면 과부하로, 신규 공급 거절 사유가 된다.',
+    defEn: 'The ratio of how much a transformer or line is actually being used relative to the capacity it can handle. Exceeding 100% means overload and becomes grounds for refusing new supply.',
   },
   {
     id: 'climate-ministry',
@@ -126,6 +142,7 @@ export const GLOSSARY = [
     term: '기후에너지환경부(기후부)',
     en: 'Ministry of Climate, Energy and Environment',
     def: '에너지 정책 주무 부처. 과거 산업통상자원부의 에너지 기능이 옮겨 왔고, 전력계통영향평가의 최종 관할이다.',
+    defEn: 'The ministry in charge of energy policy. The former energy functions of the Ministry of Trade, Industry and Energy were transferred here, and it holds final jurisdiction over the Power System Impact Assessment.',
   },
   {
     id: 'ess-xems',
@@ -133,6 +150,7 @@ export const GLOSSARY = [
     term: 'ESS / xEMS',
     en: 'Energy Storage / Energy Management System',
     def: '배터리 저장장치(ESS)와 에너지관리시스템(xEMS). 설치 계획을 내면 전력계통영향평가에서 가점을 주는 선택 항목이다.',
+    defEn: 'Battery energy storage systems (ESS) and energy management systems (xEMS). Submitting an installation plan is an optional item that earns bonus points in the Power System Impact Assessment.',
   },
   {
     id: 'power-policy-council',
@@ -140,6 +158,7 @@ export const GLOSSARY = [
     term: '전력정책심의회',
     en: 'Electric Power Policy Council',
     def: '전력계통영향평가 결과를 최종 심의·의결하는 정부 위원회. 여기를 통과해야 전기사용신청 단계로 넘어간다.',
+    defEn: 'The government council that gives final deliberation and resolution on Power System Impact Assessment results. Passing it is required to move on to the electricity-use application stage.',
   },
   {
     id: 'facility-charge',
@@ -147,6 +166,7 @@ export const GLOSSARY = [
     term: '시설부담금',
     en: 'Facility Charge',
     def: '전기를 새로 공급받을 때 고객이 한전에 내는 설비 분담금. 기본 금액에 선로 거리에 따른 가산이 붙는다.',
+    defEn: 'A facility cost-sharing charge the customer pays to KEPCO when newly receiving power. A surcharge based on line distance is added to the base amount.',
   },
   {
     id: 'service-connection',
@@ -154,6 +174,7 @@ export const GLOSSARY = [
     term: '인입(공사)',
     en: 'Service Connection',
     def: '한전 선로에서 고객 부지까지 전기를 끌어오는 공사. 변전소가 멀수록 비용이 커진다.',
+    defEn: 'Construction that brings electricity from KEPCO\'s line to the customer\'s site. The farther the substation, the higher the cost.',
   },
   {
     id: 'pue',
@@ -161,6 +182,7 @@ export const GLOSSARY = [
     term: 'PUE',
     en: 'Power Usage Effectiveness',
     def: '데이터센터 총 사용 전력 ÷ IT 장비 전력. 1.0에 가까울수록 효율적이다. 프리쿨링 조건이 좋은 입지는 PUE를 낮춰 같은 서버를 더 적은 전력으로 돌린다 — 40MW급에서 PUE 0.1 차이는 연간 수십억 원의 전기료 차이가 된다.',
+    defEn: 'Total data-center power ÷ IT-equipment power. The closer to 1.0, the more efficient. A site with good free-cooling conditions lowers PUE and runs the same servers on less power — at the 40MW class, a 0.1 difference in PUE amounts to billions of won a year in electricity-cost difference.',
   },
   {
     id: 'free-cooling',
@@ -168,6 +190,7 @@ export const GLOSSARY = [
     term: '프리쿨링',
     en: 'Free Cooling',
     def: '냉동기를 돌리지 않고 차가운 바깥 공기·물로 서버열을 식히는 방식. 연중 프리쿨링 가능 시간이 길수록 냉각 전력이 줄어든다. 기온·습구온도가 낮은 입지가 유리하다.',
+    defEn: 'A method of cooling server heat with cold outside air or water without running chillers. The more hours of free cooling available over the year, the less cooling power is used. Sites with low air temperature and wet-bulb temperature are advantageous.',
   },
   {
     id: 'colocation',
@@ -175,6 +198,7 @@ export const GLOSSARY = [
     term: '코로케이션',
     en: 'Colocation',
     def: '데이터센터 사업자가 상면(공간)·전력·냉각을 임대하고, 고객이 자기 서버를 들여놓는 상업 모델. 자체 데이터센터(하이퍼스케일)와 대비된다.',
+    defEn: 'A commercial model in which a data-center operator leases floor space, power, and cooling, and the customer brings in their own servers. It contrasts with owning one\'s own data center (hyperscale).',
   },
   {
     id: 'hyperscale',
@@ -182,6 +206,7 @@ export const GLOSSARY = [
     term: '하이퍼스케일',
     en: 'Hyperscale',
     def: '수만 대 이상 서버를 운영하는 초대형 데이터센터. 통상 수십 MW 이상의 전력 규모를 갖추고 단일 사업자(클라우드·빅테크)가 전용으로 쓴다.',
+    defEn: 'A very large data center running tens of thousands of servers or more. It typically has a power scale of tens of MW or more and is used exclusively by a single operator (cloud provider / big tech).',
   },
   {
     id: 'headroom',
@@ -189,6 +214,7 @@ export const GLOSSARY = [
     term: '계통 여유용량 (헤드룸)',
     en: 'Grid Headroom',
     def: '변전소·선로가 추가로 받아줄 수 있는 남은 용량. 한전은 스냅샷만 제공하고 이력을 보존하지 않으므로, 시점별로 축적한 여유용량 시계열은 소급 복원이 불가능한 데이터 자산이 된다.',
+    defEn: 'The remaining capacity a substation or line can additionally accept. Because KEPCO provides only snapshots and does not preserve history, a spare-capacity time series accumulated over time becomes a data asset that cannot be reconstructed retroactively.',
   },
   {
     id: 'tdp',
@@ -196,6 +222,7 @@ export const GLOSSARY = [
     term: 'TDP (열설계전력)',
     en: 'Thermal Design Power',
     def: '칩이 최대로 뿜어내는 열량의 설계 기준값. GPU 세대가 바뀔 때마다 상승해 왔고, 이 값이 공랭이냐 액체냉각이냐 — 냉각 방식 선택의 출발점이 된다.',
+    defEn: 'The design reference value for the maximum heat a chip emits. It has risen with each GPU generation, and this value is the starting point for choosing the cooling method — air cooling versus liquid cooling.',
   },
   {
     id: 'd2c',
@@ -203,6 +230,7 @@ export const GLOSSARY = [
     term: 'D2C 액체냉각 (단상)',
     en: 'Single-phase Direct-to-Chip',
     def: '칩 위에 콜드플레이트를 붙이고 냉각액(예: 물 80%+글리콜 20%)을 직접 순환시키는 방식. 공랭 대비 열 처리 능력이 크지만 유량이 많고(1kW당 약 1.5L/분) 누수 시 IT 장비 손상 위험이 있어 유지보수 부담이 있다.',
+    defEn: 'A method that attaches a cold plate on top of the chip and circulates coolant (e.g., 80% water + 20% glycol) directly. It has far greater heat-handling capacity than air cooling but requires high flow (about 1.5 L/min per kW) and carries a risk of IT-equipment damage on leakage, so it adds a maintenance burden.',
   },
   {
     id: 'two-phase',
@@ -210,6 +238,7 @@ export const GLOSSARY = [
     term: '2상 냉각',
     en: 'Two-phase Cooling',
     def: '냉매가 끓으며 기화할 때의 잠열로 열을 빼앗는 방식. 전기가 통하지 않는 유전냉매를 써서 누설돼도 장비 손상이 없고, 같은 열량 기준 유량이 단상의 1/5 수준(1kW당 약 0.3L/분). GPU TDP가 1,500~2,000W에 이르는 구간이 단상 D2C의 한계로 거론된다.',
+    defEn: 'A method that removes heat using the latent heat released as refrigerant boils and vaporizes. It uses a non-conductive dielectric refrigerant, so there is no equipment damage even on leakage, and for the same heat load the flow is about one-fifth that of single-phase (about 0.3 L/min per kW). The range where GPU TDP reaches 1,500-2,000W is cited as the limit of single-phase D2C.',
   },
   {
     id: 'immersion',
@@ -217,6 +246,7 @@ export const GLOSSARY = [
     term: '침지(액침)냉각',
     en: 'Immersion Cooling',
     def: '서버를 절연 유체(탄화수소 오일 등)에 통째로 담가 식히는 방식. 열밀도 대응력이 가장 높지만 기존 시설 개조·유체 호환성 검증·냉매 처분 등 표준화 과제가 남아 있다.',
+    defEn: 'A method that cools servers by fully submerging them in a dielectric fluid (such as hydrocarbon oil). It has the highest ability to handle heat density, but standardization challenges remain — retrofitting existing facilities, verifying fluid compatibility, and refrigerant disposal.',
   },
   {
     id: 'cdu',
@@ -224,6 +254,7 @@ export const GLOSSARY = [
     term: 'CDU (냉각수 분배 장치)',
     en: 'Coolant Distribution Unit',
     def: '시설 냉각수 루프와 서버(IT) 냉각 루프 사이에서 열교환과 유량·온도 제어를 담당하는 장비. 액체냉각 데이터센터의 심장 역할로, D2C·침지 모두에 쓰인다.',
+    defEn: 'Equipment that handles heat exchange and flow/temperature control between the facility coolant loop and the server (IT) cooling loop. It acts as the heart of a liquid-cooled data center and is used in both D2C and immersion cooling.',
   },
   {
     id: 'psia',
@@ -231,6 +262,7 @@ export const GLOSSARY = [
     term: '전력계통영향평가',
     en: 'Power System Impact Assessment',
     def: '대규모 전력수요(통상 10MW 이상)가 계통에 미치는 영향을 사전에 평가·검토하는 제도. 2025년 개편으로 적정전압 확보가 필수 요건이 되고, 입지에 따라 최대 ±15점의 가감점(수도권 억제)과 자가발전·에너지효율 의무가 정량화됐다.',
+    defEn: 'A system that assesses and reviews in advance the impact large power demand (typically 10MW or more) has on the grid. Under the 2025 overhaul, securing adequate voltage became a mandatory requirement, and location-based add/deduct points of up to ±15 (curbing the Seoul metropolitan area) plus self-generation and energy-efficiency obligations were quantified.',
   },
   {
     id: 'reserve-margin',
@@ -238,6 +270,7 @@ export const GLOSSARY = [
     term: '공급예비율',
     en: 'Reserve Margin',
     def: '전력 수요를 넘어 여유로 확보된 공급능력의 비율. 낮을수록 계통 여력이 얇다는 뜻으로, 데이터센터 냉방부하가 몰리는 여름에 최저로 떨어지는 경향이 있다. 특정 부지의 접속 여유(헤드룸)와는 다른 전국 단위 지표다.',
+    defEn: 'The ratio of supply capacity secured as a margin beyond power demand. The lower it is, the thinner the grid\'s headroom, and it tends to fall to its lowest in summer when data-center cooling loads pile up. It is a nationwide indicator, distinct from a specific site\'s connection headroom.',
   },
   {
     id: 'aidc-law',
@@ -245,6 +278,7 @@ export const GLOSSARY = [
     term: 'AIDC 특별법',
     en: 'AI Data Center Special Act',
     def: '인공지능 데이터센터의 비수도권 입지를 유도하기 위한 특별법. 통합 인허가 창구·처리기한(타임아웃)과 비수도권 전력계통영향평가 면제 가능 등의 유인을 담는다. 시행 시기·세부 요건은 공고를 확인해야 한다.',
+    defEn: 'A special act meant to encourage AI data centers to locate outside the Seoul metropolitan area. It offers incentives such as a unified permitting window, processing deadlines (timeouts), and possible exemption from the Power System Impact Assessment for non-metropolitan sites. The effective date and detailed requirements must be checked against the official notice.',
   },
   {
     id: 'ppa',
@@ -252,6 +286,7 @@ export const GLOSSARY = [
     term: 'PPA (전력구매계약)',
     en: 'Power Purchase Agreement',
     def: '발전사업자와 수요자가 전력을 장기·고정가로 직접 거래하는 계약. 재생에너지 PPA는 RE100 조달의 핵심 수단으로, 한전 도매 요금과 별개로 사업자가 직접 발전원을 확보하는 경로다.',
+    defEn: 'A contract in which a power generator and a consumer trade electricity directly on a long-term, fixed-price basis. A renewable PPA is a key means of RE100 procurement and a route for operators to secure generation sources directly, separate from KEPCO wholesale tariffs.',
   },
   {
     id: 're100',
@@ -259,6 +294,7 @@ export const GLOSSARY = [
     term: 'RE100',
     en: 'Renewable Electricity 100%',
     def: '기업이 사용하는 전력을 100% 재생에너지로 조달하겠다는 자발적 이니셔티브. 데이터센터는 전력 다소비 사업이라 RE100 조달률이 글로벌 고객 유치·규제 대응의 조건이 된다. PPA·자가발전·인증서(REC) 등으로 달성한다.',
+    defEn: 'A voluntary initiative under which a company commits to sourcing 100% of the electricity it uses from renewables. Because data centers are power-intensive, RE100 procurement rate becomes a condition for attracting global customers and meeting regulations. It is achieved through PPAs, self-generation, and certificates (RECs).',
   },
   {
     id: 'wue',
@@ -266,6 +302,7 @@ export const GLOSSARY = [
     term: 'WUE',
     en: 'Water Usage Effectiveness',
     def: '데이터센터가 IT 전력 1kWh당 소비하는 냉각용수량(L/kWh). 증발식 냉각은 WUE가 높고, 프리쿨링·폐열회수는 낮춘다. 용수 확보가 어려운 입지일수록 WUE 설계가 중요해진다.',
+    defEn: 'The volume of cooling water a data center consumes per kWh of IT power (L/kWh). Evaporative cooling raises WUE, while free cooling and waste-heat recovery lower it. The harder it is to secure water at a site, the more important WUE design becomes.',
   },
   {
     id: 'cdd',
@@ -273,6 +310,7 @@ export const GLOSSARY = [
     term: '냉방도일 (CDD)',
     en: 'Cooling Degree Days',
     def: '기준온도를 넘는 더위의 누적량을 나타내는 지표. 값이 클수록 냉방 부하가 크다는 뜻으로, 값이 낮은(서늘한) 입지가 데이터센터 냉각에 유리하다. DC 기후지수의 근거 중 하나다.',
+    defEn: 'An index representing the cumulative amount of heat above a reference temperature. A higher value means a greater cooling load, so a lower-value (cooler) site is advantageous for data-center cooling. It is one of the bases of the DC climate index.',
   },
   {
     id: 'wet-bulb',
@@ -280,6 +318,7 @@ export const GLOSSARY = [
     term: '습구온도',
     en: 'Wet-bulb Temperature',
     def: '증발 냉각으로 도달할 수 있는 최저 온도. 습구온도가 낮을수록 냉각탑·증발식 냉각의 효율이 높아 프리쿨링 가능 시간이 길어진다. 건구(일반)온도만큼 냉각 설계에 중요한 값이다.',
+    defEn: 'The lowest temperature reachable by evaporative cooling. The lower the wet-bulb temperature, the higher the efficiency of cooling towers and evaporative cooling, and the more hours free cooling is possible. It is as important to cooling design as the dry-bulb (ordinary) temperature.',
   },
   {
     id: 'tier',
@@ -287,6 +326,7 @@ export const GLOSSARY = [
     term: 'TIER 등급',
     en: 'Tier Classification',
     def: '데이터센터의 이중화·가용성 수준을 나타내는 등급(Ⅰ~Ⅳ). TIER Ⅲ는 무중단 유지보수, TIER Ⅳ는 완전 이중화(내결함)를 의미한다. 등급이 높을수록 전력·냉각 계통을 중복 구성해 가동률을 보장한다.',
+    defEn: 'A grade (I-IV) indicating a data center\'s redundancy and availability level. Tier III means concurrently maintainable (no downtime for maintenance), and Tier IV means fully redundant (fault-tolerant). The higher the grade, the more the power and cooling systems are duplicated to guarantee uptime.',
   },
   {
     id: 'cable-landing',
@@ -294,6 +334,7 @@ export const GLOSSARY = [
     term: '해저케이블 육양국',
     en: 'Cable Landing Station',
     def: '국제 해저 광케이블이 육지로 올라오는 접속 시설(부산 송정·거제 등). 데이터센터에서 육양국까지의 경로가 국제 지연시간과 다중 리전 구성을 좌우해 네트워크축의 근거가 된다.',
+    defEn: 'The connection facility where international submarine fiber-optic cables come ashore (e.g., Songjeong in Busan, Geoje). The route from a data center to the landing station governs international latency and multi-region configuration, making it the basis of the network axis.',
   },
   {
     id: 'lcoe',
@@ -301,6 +342,7 @@ export const GLOSSARY = [
     term: 'LCOE (균등화발전비용)',
     en: 'Levelized Cost of Electricity',
     def: '발전설비의 건설·운영·연료비를 수명 전체로 나눈 단위 전력당 원가. 데이터센터의 장기 OPEX를 좌우하는 전력비 벤치마크로, 조달 방식(한전·PPA·자가발전) 비교의 기준이 된다.',
+    defEn: 'The per-unit cost of electricity obtained by spreading a generation facility\'s construction, operation, and fuel costs over its entire lifetime. It is a power-cost benchmark that drives a data center\'s long-term OPEX and serves as the basis for comparing procurement methods (KEPCO / PPA / self-generation).',
   },
   // ── 사업모델·투자 구조 (출처: 삼일PwC 「한국 AI 데이터센터 산업의 현재와 투자방향」 2026.3 등 공개 자료) ──
   {
@@ -309,6 +351,7 @@ export const GLOSSARY = [
     term: 'BTS (Built-to-Suit)',
     en: 'Built-to-Suit',
     def: '특정 임차인의 요구사항(설계·규모·사양)에 맞춰 데이터센터를 지어 장기 임대하는 방식. 글로벌 CSP와의 장기 임차확약이나 선급임차료·임차보증금을 사전에 받아 공실 리스크를 낮춘다.',
+    defEn: 'A model of building a data center to a specific tenant\'s requirements (design, scale, specification) and leasing it long-term. Vacancy risk is lowered by securing in advance a long-term lease commitment from a global CSP or upfront rent and lease deposits.',
   },
   {
     id: 'dbo',
@@ -316,6 +359,7 @@ export const GLOSSARY = [
     term: 'DBO (설계-시공-운영)',
     en: 'Design-Build-Operate',
     def: '한 사업자가 데이터센터의 설계(Design)·시공(Build)·운영(Operate)까지 모든 단계를 통합해 책임지고 제공하는 턴키(Turn-key) 솔루션. LG CNS·KT클라우드·삼성SDS 등이 국내 주요 플레이어다.',
+    defEn: 'A turn-key solution in which a single operator integrally takes responsibility for all stages of a data center — Design, Build, and Operate. LG CNS, KT Cloud, and Samsung SDS are among the major domestic players.',
   },
   {
     id: 'master-lease',
@@ -323,6 +367,7 @@ export const GLOSSARY = [
     term: '마스터리스',
     en: 'Master Lease',
     def: '데이터센터 전체(또는 대부분)를 단일 임차인이 통으로 장기 임차하는 계약. 개발/투자사는 상면임대수익을 안정화하고, 착공 전 임차인 사전확보 수단으로 쓰인다. 위탁운영·직접운영과 함께 상업용 DC의 3대 운영 구조를 이룬다.',
+    defEn: 'A contract in which a single tenant leases an entire (or most of a) data center long-term as a whole. It stabilizes floor-space rental income for the developer/investor and serves as a means of securing a tenant before construction. Together with outsourced operation and direct operation, it forms one of the three main operating structures of a commercial DC.',
   },
   {
     id: 'dcim',
@@ -330,6 +375,7 @@ export const GLOSSARY = [
     term: 'DCIM',
     en: 'Data Center Infrastructure Management',
     def: '데이터센터의 IT장비(서버·스토리지)와 시설 인프라(전력·냉각)를 통합 모니터링·관리하는 솔루션. 운영 데이터가 축적될수록 예지보전·자동제어·고객 락인(Lock-in)의 기반이 되어, 멀티사이트 운영 확대와 함께 중요성이 커지고 있다.',
+    defEn: 'A solution that integrally monitors and manages a data center\'s IT equipment (servers, storage) and facility infrastructure (power, cooling). As operational data accumulates it becomes the basis for predictive maintenance, automated control, and customer lock-in, growing in importance alongside the expansion of multi-site operations.',
   },
   {
     id: 'sovereign-ai',
@@ -337,6 +383,7 @@ export const GLOSSARY = [
     term: '소버린 AI',
     en: 'Sovereign AI',
     def: 'AI 개발·운영·통제를 자국의 법·정책·안보 체계 안에서 수행하려는 국가 전략. 각국이 국가 단위 AI 인프라(데이터센터·GPU) 투자를 확대하는 배경으로, 한국은 국가 AI컴퓨팅센터·GPU 확보 등 AI G3 전략을 추진 중이다.',
+    defEn: 'A national strategy to carry out AI development, operation, and control within one\'s own legal, policy, and security framework. It underlies countries expanding national-scale AI infrastructure (data centers, GPUs) investment; Korea is pursuing its "AI G3" strategy through a national AI computing center and GPU procurement.',
   },
 ]
 

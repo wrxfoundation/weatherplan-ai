@@ -1,9 +1,95 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 1차 소스: 현대건설 뉴스룸 '용인 죽전 퍼시픽써니 데이터센터'(hdec.kr). 시공사 공식 자료 인용.
  * 콘텐츠 등급 ④참고·인사이트(사례 해부). 수치·사양은 원문 인용. */
 export default function HyperscaleJukjeon() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        In Jukjeon, Suji-gu, Yongin, Gyeonggi Province, the <strong>Pacific Sunny Data Center</strong>, which{' '}
+        <strong>completed construction in October 2025</strong>, is one of Korea's largest hyperscale colocation
+        facilities — with an intake capacity of <strong>100 MW</strong>, IT load of <strong>64 MW</strong>, and a
+        gross floor area of about <strong>100,000 m²</strong> (two buildings, 5 floors above ground and 3 below)
+        (built by Hyundai E&amp;C over 43 months). Dissecting this facility reveals how the very things AI InfraMap
+        measures across five axes — <strong>power intake, cooling efficiency, operational reliability, and
+        location</strong> — are actually realized. This piece is that dissection.
+      </p>
+
+      <h2>Power — pulling 154 kV underground to receive 100 MW</h2>
+      <p>
+        Pacific Sunny secured an intake capacity of up to 100 MW by <strong>directly bringing in 154 kV high
+        voltage via an underground line</strong> from the substation to the data center. This is the power some
+        160,000–200,000 households use simultaneously. The first thing AI InfraMap's <Link to="/">point
+        analysis</Link> asks — <strong>"Can this site receive 154 kV, and how many km away is the nearest
+        substation?"</strong> — is decided exactly here (<Link to="/insights/power-track-40mw">The 40 MW
+        Wall</Link>). Above 40 MW, a 154 kV intake becomes effectively mandatory, and investment in one's own
+        intake equipment and the distance to the substation become the gateway
+        (<Link to="/insights/power-supply-chain">the power supply chain</Link>).
+      </p>
+
+      <h2>Efficiency — PUE 1.3, with 77% of power going to servers</h2>
+      <p>
+        With high-efficiency cooling, the latest UPS systems, and a loss-minimizing distribution network, it
+        achieved a <strong>PUE of 1.3</strong>. That means about <strong>77% of total power goes to actual IT
+        equipment</strong> and only 23% to cooling and other facilities — an excellent level by international
+        standards. This is why AI InfraMap includes a site's{' '}
+        <Link to="/">cooling climate index</Link> (free-cooling potential) among its five axes — with the same
+        equipment, a cool, dry location lowers PUE. Maintaining and improving this PUE after completion is a core
+        metric of <Link to="/roadmap?view=ops">post-completion operations management</Link>.
+      </p>
+
+      <h2>Reliability — TIER 3, "if one line stops, another carries on"</h2>
+      <p>
+        To meet the international standard <strong>TIER 3</strong> (99.982% uptime, dual paths, concurrently
+        maintainable), all core electrical, mechanical, and cooling infrastructure was made{' '}
+        <strong>dual- and triple-redundant</strong>. The chillers and cooling towers on basement level 3, and the
+        emergency generators, fuel tanks, and UPS on basement level 2, are each designed with redundancy to
+        guarantee "uninterrupted operation under any variable." The highlight is commissioning —{' '}
+        <strong>a high-intensity test that deliberately cut off some lines</strong> to verify that data flow
+        continues even under fault conditions. This shows precisely how the{' '}
+        <strong>uninterrupted power (N+1, 2N) and incident response (MTTR)</strong> laid out in the roadmap's
+        post-completion operations management are proven in the field
+        (<Link to="/roadmap?view=ops">operations management framework</Link>).
+      </p>
+
+      <h2>Structure — special construction bearing 2 tons per m²</h2>
+      <p>
+        A data center must withstand the <strong>ultra-heavy loads</strong> of servers and electrical equipment.
+        Unlike an ordinary office, Pacific Sunny applied thick slabs that bear up to <strong>2 tons per m²</strong>,
+        a <strong>post-tension</strong> structure (a method that applies compression by tensioning steel strands),
+        a raised floor (vibration control), and BIM clash simulation. Why a data center is "special construction
+        distinct from ordinary buildings" — the fact that not only power and cooling but{' '}
+        <strong>the structure itself is different</strong> — is also why site evaluation goes beyond simple land
+        price and area.
+      </p>
+
+      <h2>Location — Yongin, the paradox of the metropolitan area</h2>
+      <p>
+        Pacific Sunny sits in Yongin (<strong>the Seoul metropolitan area</strong>). On AI InfraMap's five axes,
+        the metropolitan area scores in the deduction direction on the{' '}
+        <Link to="/insights/market-2025h2">grid-impact assessment (±15 points)</Link> — and yet this site worked
+        because it secured power through a direct 154 kV underground intake, and because demand (global CSPs) wanted
+        proximity to the metropolitan area. In fact, after construction began, a{' '}
+        <strong>global CSP decided to occupy 5 additional floors</strong>, leading to a change contract that
+        extended the schedule by 15 months and added 321.5 billion won. It's a case where demand beat the site's
+        penalty. It's also a large-demand belt that competes and coexists over power and water with the same
+        Yongin-area <Link to="/">semiconductor national industrial complex (9.3 GW)</Link>.
+      </p>
+
+      <h2>AI InfraMap's perspective — a single building is the answer to all five axes</h2>
+      <p>
+        A single Pacific Sunny building holds the answers to every question AI InfraMap asks of each site — 154 kV
+        intake (power), PUE 1.3 (cooling and weather), TIER 3 redundancy (operational reliability), 100 MW intake
+        capacity (scale), Yongin metropolitan area (location). When we click an arbitrary point on the map and
+        measure it across five axes, we are, in the end, using data to first gauge{' '}
+        <strong>"Can a building like Pacific Sunny stand on this spot?"</strong> The next stage — the entire process
+        of construction and post-completion operations — continues in the{' '}
+        <Link to="/roadmap">A–Z roadmap</Link>.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         경기도 용인시 수지구 죽전에 <strong>2025년 10월 준공한</strong> <strong>퍼시픽써니 데이터센터</strong>는 수전용량{' '}

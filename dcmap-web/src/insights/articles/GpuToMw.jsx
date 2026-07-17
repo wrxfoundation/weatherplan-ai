@@ -1,8 +1,54 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ③민간 가공(공개 스펙) — 계산기 산식 공개 (src/calc) */
 export default function GpuToMw() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        "If I have 10,000 GPUs, how big does the data center need to be?" — turning that question into a number
+        is the job of the <Link to="/calc">AI InfraMap GPU calculator</Link>. There's no reason to hide the
+        formula, so this piece lays it out as-is. There are three inputs:{' '}
+        <strong>GPU model and quantity, and PUE</strong>.
+      </p>
+
+      <h2>Step 1 — the chip's appetite</h2>
+      <p>
+        Based on public specs, the board power (TDP) of a single GPU is{' '}
+        <strong>about 0.7 kW for the H100/H200, about 1.0 kW for the B200, and about 1.2 kW for a single
+        Blackwell GPU in the GB200</strong> (a GB200 superchip pairs 2 GPUs with a Grace CPU for about 2.7 kW —
+        the calculation below is per GPU count). For 10,000 units that's 7–12 MW depending on the model — the
+        chip-only figure.
+      </p>
+
+      <h2>Step 2 — the server-and-network tax</h2>
+      <p>
+        GPUs don't run alone. CPUs, memory, storage, network switches, and power-conversion losses come with
+        them. The calculator accounts for these with an <strong>overhead factor of 1.2</strong> — a conservative
+        floor for industry design practice. At this point 10,000 GB200 GPUs already reach 14.4 MW.
+      </p>
+
+      <h2>Step 3 — the cooling tax, PUE</h2>
+      <p>
+        Finally, multiply by the facility-wide efficiency, <strong>PUE (Power Usage Effectiveness)</strong>. At
+        a PUE of 1.3, the whole facility must draw 1.3 MW for every 1 MW of IT load. The result:{' '}
+        <strong>10,000 GB200 units × 1.2 kW × 1.2 × PUE 1.3 ≈ 18.7 MW</strong>. The same 10,000 units at H100
+        would be about 10.9 MW — the choice of model changes the power-intake track.{' '}
+        A shift to <Link to="/insights/liquid-cooling-brief">liquid cooling</Link> that lowers PUE also means
+        fitting more GPUs into the same intake capacity.
+      </p>
+
+      <h2>This number is the permitting</h2>
+      <p>
+        If the result <strong>exceeds 10 MW it triggers a grid-impact assessment, and above 40 MW a 154 kV
+        intake becomes mandatory</strong> (see <Link to="/insights/power-track-40mw">The 40 MW Wall</Link>).
+        That's why the calculator's results screen shows more than just MW — it leads into a track verdict and a
+        "view sites that can support this capacity" button. Going from a GPU count all the way to candidate sites
+        on the map, in one breath, is the purpose of this tool.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         “GPU 1만 장이면 데이터센터가 얼마나 커야 하나요?” — 이 질문을 숫자로 바꾸는 것이{' '}

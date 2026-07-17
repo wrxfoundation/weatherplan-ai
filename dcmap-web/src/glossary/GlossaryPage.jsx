@@ -4,13 +4,6 @@ import { useMapLang } from '../i18n/mapLang.js'
 import { GLOSSARY, GLOSSARY_CATEGORIES } from '../content/glossary.js'
 import GlossaryMap from './GlossaryMap.jsx'
 
-/* 카테고리 라벨 KO→EN — GLOSSARY_CATEGORIES는 임포트 데이터라 편집하지 않고 표시만 번역 */
-const CAT_EN = {
-  '전력 인허가': 'Power permitting',
-  '데이터센터 기본': 'Datacenter basics',
-  '냉각 기술': 'Cooling technology',
-}
-
 const TITLE = '데이터센터 전력 인허가 용어집 — AI InfraMap'
 const DESC =
   '계약전력·수전전압·전력계통영향평가·과부하율·PUE·프리쿨링 — 데이터센터 부지와 전력 인허가를 이해하는 데 필요한 용어를 공개 규정 기준으로 쉽게 풀었습니다.'
@@ -44,7 +37,7 @@ export function buildGlossaryJsonLd(origin = '') {
 
 export default function GlossaryPage() {
   const en = useMapLang() === 'en'
-  const catLabel = (ko) => (en ? CAT_EN[ko] ?? ko : ko)
+  const catLabel = (c) => (en ? c.labelEn ?? c.label : c.label)
   const [cat, setCat] = useState('전체')
   // 보기 모드 — 딕셔너리(리스트) / 온톨로지 맵(용어·법령 성좌). 선택 브라우저 저장.
   const [view, setView] = useState(() => {
@@ -107,7 +100,7 @@ export default function GlossaryPage() {
             </button>
             {GLOSSARY_CATEGORIES.map((c) => (
               <button key={c.key} type="button" role="tab" className={`seg-tab ${cat === c.key ? 'on' : ''}`} onClick={() => setCat(c.key)} aria-selected={cat === c.key}>
-                {catLabel(c.label)} <span className="n">{countOf.get(c.key) || 0}</span>
+                {catLabel(c)} <span className="n">{countOf.get(c.key) || 0}</span>
               </button>
             ))}
           </div>
@@ -126,7 +119,7 @@ export default function GlossaryPage() {
 
         {view === 'dict' && shownCats.map((sec) => (
           <section key={sec.key} className="glossary-section">
-            <h2 className="glossary-cat">{catLabel(sec.label)}</h2>
+            <h2 className="glossary-cat">{catLabel(sec)}</h2>
             <dl className="glossary-list">
               {GLOSSARY.filter((g) => g.category === sec.key).map((g) => (
                 <div key={g.id} id={g.id} className="glossary-item">
@@ -134,7 +127,7 @@ export default function GlossaryPage() {
                     {g.term}
                     {g.en && <span className="glossary-en">{g.en}</span>}
                   </dt>
-                  <dd>{g.def}</dd>
+                  <dd>{en ? (g.defEn ?? g.def) : g.def}</dd>
                 </div>
               ))}
             </dl>

@@ -1,8 +1,140 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ④참고·인사이트(보도 종합) — 국내외 사례는 IT동아(2026.5.15) 재인용, 수치·출처는 본문·출처 박스에 명시 */
 export default function DcCoexistence() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <div className="tldr">
+        <p className="tldr-kicker">⚡ 3-Minute Easy Read</p>
+        <p className="tldr-one">
+          “No matter how much power and land you secure to build a data center, if the residents next door
+          object, you can’t build it. The real final gate is not technology but{' '}
+          <strong>‘can we live together (acceptance)’</strong>.”
+        </p>
+        <ol>
+          <li>
+            <strong>Why do they fall through</strong> — Sejong Eojin-dong had some 30,000 households living
+            within a 1km radius and was scrapped over resident opposition; Goyang Deogi-dong got into trouble
+            because it <strong>obtained the permit first, without resident communication</strong>. These are
+            cases that collapsed over communication, not over power or land.
+          </li>
+          <li>
+            <strong>What residents worry about</strong> — higher electricity bills, water, noise, EMF, and few
+            jobs. Of these, EMF, when actually measured, is even lower than a hospital (
+            <Link to="/insights/rsquare-realestate-2025">0.4% of ICNIRP</Link>), yet projects still collapse —
+            meaning it’s <strong>a communication problem, not a scientific one</strong>.
+          </li>
+          <li>
+            <strong>Some neighborhoods coexist well (the technology of coexistence)</strong> — In Odense,
+            Denmark, Meta returns the heat used for cooling as <strong>district heating</strong>, and Google
+            pledged to <strong>return 120% of the water it uses to nature</strong>, building a waterworks
+            facility and handing it over to the city.
+          </li>
+          <li>
+            <strong>And neighborhoods it ruined</strong> — In Nevada, USA, the utility notified that it would
+            cut power to <strong>49,000 residents</strong>, saying “the data center leaves electricity short,”
+            and Fayetteville, Georgia suffers from water shortages.
+          </li>
+          <li>
+            <strong>Korea’s hint</strong> — SK in Ulsan makes electricity directly via{' '}
+            <strong>LNG self-generation</strong> rather than leaning on the grid, and the Korea Energy Economics
+            Institute named <strong>Honam, Yeongnam, and Gangwon</strong> — where conflict is lower — as suitable
+            sites.
+          </li>
+        </ol>
+        <p>
+          <strong>Bottom line in one sentence</strong> — on top of power and land,{' '}
+          <strong>‘community acceptance’ is the fourth siting axis</strong>. As much as where you build,{' '}
+          <strong>how you build and what you give back</strong> decides whether the business succeeds or fails.
+        </p>
+      </div>
+
+      <p>
+        IT Donga reporter Nam Si-hyun’s “The Era of KRW 1,000 Trillion in AI Data Center Spending — Society
+        Needs the ‘Technology of Coexistence’ More Than AI” (2026.5.15) squarely addresses an axis our map
+        easily misses. The five axes of <Link to="/">AI InfraMap</Link> — power, land, risk, network, and
+        weather — are all <strong>physical supply</strong>. But even a physically perfect site{' '}
+        <strong>can’t be built if residents object</strong>. This is the domestic counterpart to{' '}
+        <Link to="/insights/dc-local-impact">the earlier piece</Link> that discussed “where and how” with US
+        data (employment, water, tax revenue), and finds the answer to that “how” in the technology of
+        coexistence.
+      </p>
+
+      <h2>Fall-throughs caused by permits without communication — Sejong Eojin-dong, Goyang Deogi-dong</h2>
+      <p>
+        The Sejong Eojin-dong data center was pursued on the Sejong Finance Center site in 2024, but{' '}
+        <strong>some 30,000 households within a 1km radius</strong> formed an emergency committee opposing the
+        installation. A location mixed in with commercial and business facilities was the flashpoint. In the
+        end the project fell through when sale negotiations between the investor and the building owner broke
+        down, but it left the lesson that “future development <strong>requires consultation with the local
+        community</strong>.” In Goyang Deogi-dong, GS Engineering &amp; Construction affiliate Magna PFV pursued
+        a two-basement, five-story facility, and the fact that it{' '}
+        <strong>obtained the building permit first, without resident communication</strong>, triggered social
+        backlash. Both cases stopped over <strong>procedure and communication</strong>, not over power or land.
+      </p>
+
+      <h2>The real axis of conflict — and the paradox of EMF</h2>
+      <p>
+        What residents fear is higher electricity bills, competition over water, noise, EMF, and the low-employment
+        perception that “there are few jobs but all the burden.” The interesting one among these is{' '}
+        <strong>EMF</strong> — when the Ministry of Science and ICT measured six data centers, the result
+        averaged <strong>0.4%</strong> of the human-protection standard (ICNIRP), lower even than hospitals
+        (0.68%) and hotels (1.17%) (<Link to="/insights/rsquare-realestate-2025">RSquare report</Link>). What
+        the fact that projects are still withdrawn tells us: on the data-center risk axis,{' '}
+        <strong>complaints are a matter of trust, not science</strong>, and the real variable is proximity to
+        densely populated areas. That is why AI InfraMap puts the <strong>population grid</strong> on the risk
+        axis in its point analysis.
+      </p>
+
+      <h2>The technology of coexistence — returning heat, repaying water</h2>
+      <p>
+        Abroad, cases that resolved conflict through <strong>win-win design</strong> have accumulated. The Meta
+        data center in Odense, Denmark supplies the hot water used for cooling as <strong>district heating</strong>,
+        and Microsoft too contributed to district heating in Espoo, Finland, cutting nearby carbon emissions by
+        about <strong>40%</strong>. Google set a goal of{' '}
+        <strong>returning more than 120% of the water resources it uses to nature</strong> by 2030, and in some
+        regions built waterworks facilities good for decades and even{' '}
+        <strong>permanently transferred groundwater usage rights to the city</strong>. This showed that a data
+        center can be <strong>a facility that gives back, not one that only takes</strong> from the region.
+      </p>
+
+      <h2>A cautionary tale — cutting the power, drying up the water</h2>
+      <p>
+        The opposite scene is just as clear. In Nevada, USA, a company that had supplied power near Lake Tahoe
+        notified that it would <strong>halt power supply from the following May</strong>, citing data-center
+        load, and the regional energy supplier was left having to find a new power source within a year for{' '}
+        <strong>49,000 residents</strong>. In Fayetteville, Georgia, a data-center complex of up to 16 buildings
+        moved in and a <strong>water-supply problem</strong> flared up. It is a warning of what kind of social
+        bill development that fails to design the technology of coexistence leaves behind.
+      </p>
+
+      <h2>Korea’s solution signals — self-generation and the relocation of suitable sites</h2>
+      <p>
+        Designs that skirt conflict are appearing domestically too. SK’s data center in Ulsan meets its needed
+        power (about <strong>213GWh</strong> per year) with <strong>LNG cogeneration self-generation</strong>
+        rather than leaning on the grid, directly importing about 30,000 tons of LNG a year — one way to bypass
+        capital-region grid saturation (<Link to="/insights/rsquare-realestate-2025">5% reserve margin</Link>).
+        In its September 2024 “Implications of Data Center Growth for Domestic Energy Consumption in the AI Era,”
+        the Korea Energy Economics Institute counted 165 domestic data centers (60% in the capital region) and
+        named <strong>Honam, Yeongnam, and Gangwon</strong> — with relatively better power and acceptance
+        conditions — as suitable sites. Non-capital dispersion becomes a choice that lowers not only the grid
+        burden but <Link to="/insights/landing-edge">the total volume of conflict</Link>.
+      </p>
+
+      <h2>Takeaway — acceptance is the fourth siting axis</h2>
+      <p>
+        To summarize: even with full physical supply (power and land), without <strong>social acceptance</strong>
+        the business stops. And acceptance is a matter of <strong>design</strong>, not PR — a structure that
+        returns heat as district heating, water as waterworks, and power via self-generation is itself risk
+        management. AI InfraMap adds the population grid and complaint history to the risk axis, and separately
+        manages the map’s <Link to="/data?tab=conflicts">development-conflict cases</Link>, in order to quantify
+        this “fourth axis.” As IT Donga’s thesis holds, in the KRW 1,000-trillion era what is truly scarce may
+        not be AI but the <strong>technology of coexistence</strong>.
+      </p>
+    </>
+  ) : (
     <>
       <div className="tldr">
         <p className="tldr-kicker">⚡ 3분 쉽게 읽기</p>

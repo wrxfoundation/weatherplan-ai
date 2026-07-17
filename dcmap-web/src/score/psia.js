@@ -53,9 +53,9 @@ export function psiaScore(input) {
 }
 
 export function psiaOutlook(composite, mw) {
-  if (mw < 10) return { tone: 'good', label: '비대상 (10MW 미만)' }
-  if (composite == null) return { tone: 'wait', label: '데이터 대기' }
-  if (composite >= 68) return { tone: 'good', label: '통과 유리' }
-  if (composite >= 45) return { tone: 'warn', label: '조건부 (보완 필요)' }
-  return { tone: 'bad', label: '통과 불리' }
+  if (mw < 10) return { tone: 'good', label: '비대상 (10MW 미만)', labelEn: 'Not subject (under 10MW)' }
+  if (composite == null) return { tone: 'wait', label: '데이터 대기', labelEn: 'Awaiting data' }
+  if (composite >= 68) return { tone: 'good', label: '통과 유리', labelEn: 'Pass favorable' }
+  if (composite >= 45) return { tone: 'warn', label: '조건부 (보완 필요)', labelEn: 'Conditional (needs work)' }
+  return { tone: 'bad', label: '통과 불리', labelEn: 'Pass unfavorable' }
 }

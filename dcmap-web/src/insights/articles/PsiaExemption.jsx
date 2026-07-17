@@ -1,8 +1,61 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ①법령·고시 — 전력계통영향평가 제도(공고 2025-139호)·AIDC 특별법 기반 */
 export default function PsiaExemption() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        From 2025, large-scale power demand with contracted capacity of <strong>10MW or more</strong> must undergo a{' '}
+        <strong>Power System Impact Assessment (PSIA)</strong>. The data-center industry calls it "effectively the
+        gateway to new capital-region builds." And in February 2027, a <strong>non-capital-region bypass</strong>{' '}
+        opens on this gateway — the AI Data Center Special Act.
+      </p>
+
+      <h2>The frame of the system — 10MW and the capital-region penalty</h2>
+      <p>
+        The system impact assessment reviews the burden a new large load places on the regional power grid. Its
+        evaluation items include not only grid headroom but a <strong>regional score</strong>, so the capital region,
+        where the grid is saturated, is structurally disadvantaged, while non-capital regions with surplus generation
+        are favored. Under the pilot-operation notice (Ministry of Climate, Energy and Environment Notice No.
+        2025-139), the procedure and scoring are already in operation, and failing to pass blocks the power-supply
+        consultation with KEPCO itself.
+      </p>
+
+      <h2>The special act — exemption for small non-capital AIDCs</h2>
+      <p>
+        The AI Data Center Special Act contains a special provision that <strong>exempts AI data centers below a
+        certain size in non-capital regions from the system impact assessment</strong>, and it is scheduled to{' '}
+        <strong>take effect in February 2027</strong>. The crux is the threshold of that "certain size" — the specific
+        figure is <strong>delegated to a presidential decree and still undecided</strong>. That single decree number
+        determines the effective reach of the exemption track. AI InfraMap has flagged this threshold's enactment as a
+        tracking item and will reflect it in the track-determination engine (
+        <Link to="/calc">calculator</Link> and site analysis) the moment it is finalized.
+      </p>
+
+      <h2>A practitioner's reading — three scenarios</h2>
+      <p>
+        First, <strong>capital region + 10MW or more</strong>: only the head-on approach. It is subject to assessment
+        and carries the regional-score disadvantage. Second,{' '}
+        <strong>non-capital region + large scale</strong>: subject to assessment but favored on the regional score,
+        with a possible benefit from an expedited-processing track. Third,{' '}
+        <strong>non-capital region + below the decree threshold</strong>: exempt from February 2027 — if you can design
+        the groundbreaking timing to come after that, one whole permitting risk disappears. Enter the location
+        category (capital / non-capital) and the MW figure in the map's site analysis and this scenario determination
+        is displayed at once.
+      </p>
+
+      <h2>The remaining variable — 345kV information disclosure</h2>
+      <p>
+        The government has signaled it will <strong>disclose information on 345kV substations</strong> with grid
+        headroom. The moment it does, "where is the headroom" turns from estimate into data, and AI InfraMap's
+        power-axis scoring (15 points for substation distance) becomes quantifiable. Until then, the power axis
+        honestly remains "on standby" — <Link to="/insights/land-pulse-methodology">not manufacturing fake scores</Link>{' '}
+        is this map's principle.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         2025년부터 계약전력 <strong>10MW 이상</strong>의 대규모 전력 수요는{' '}

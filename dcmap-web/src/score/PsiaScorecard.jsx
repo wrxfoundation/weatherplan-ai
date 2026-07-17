@@ -22,7 +22,7 @@ export default function PsiaScorecard({ nonCapital, mw, gridMw = null, approvalP
         <span className="psia-title">
           <Term k="전력계통영향평가">전력계통영향평가</Term> {en ? 'pass outlook' : '통과 전망'}
         </span>
-        <span className={`psia-verdict tone-${outlook.tone}`}>{outlook.label}</span>
+        <span className={`psia-verdict tone-${outlook.tone}`}>{en ? (outlook.labelEn ?? outlook.label) : outlook.label}</span>
       </div>
 
       {psiaTarget && composite != null ? (
