@@ -18,6 +18,7 @@ const T = {
   변전소: 'Substations', 송전선: 'Lines', 발전소: 'Plants', 발전허가: 'Gen permits',
   여유용량: 'Headroom', 승인율: 'Approval', 재생: 'Renewable', 수원: 'Water',
   반도체: 'Semiconductor', 산단: 'Ind. parks', 공공DC: 'Public DC', 공급예정: 'Pipeline', 통신망: 'Telecom',
+  규제: 'Regulation', 배제구역: 'Exclusion zones', '데이터 대기': 'data pending',
 }
 
 // 레이어 아이콘 — 라인(스트로크) 형태로 통일. currentColor 상속, 14px.
@@ -35,6 +36,7 @@ const ICON_PATHS = {
   telecom: <path d="M8 13V7 M4.2 4.2a5.4 5.4 0 0 1 7.6 0 M6 6a2.8 2.8 0 0 1 4 0" />, // 통신 안테나
   public: <path d="M2.5 13h11 M3.5 13V6.5l4.5-3 4.5 3V13 M6.5 13V9h3v4" />, // 공공 건물
   reco: <path d="M8 1.8l1.8 3.9 4.2.5-3.1 2.9.8 4.2L8 11.9 4.3 13.2l.8-4.2L2 6.1l4.2-.5Z" />, // 추천(별)
+  exclude: <path d="M8 1.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4Z M3.6 3.6l8.8 8.8" />, // 배제(금지 표지)
 }
 function Icon({ name }) {
   return (
@@ -87,6 +89,9 @@ export default function FilterBar({
   onToggleHeadroom,
   showApproval,
   onToggleApproval,
+  showExclusions,
+  onToggleExclusions,
+  exclusionsHasData = false,
 }) {
   const lang = useMapLang()
   const t = (ko) => (lang === 'en' ? T[ko] || ko : ko)
@@ -124,6 +129,12 @@ export default function FilterBar({
       label: '망',
       chips: [
         { key: 'net', icon: 'telecom', text: '통신망', on: showNet, toggle: onToggleNet, title: '통신망 — 백본 국사·IDC·해저케이블 육양국(OSM 공개 태깅 표본 + 시드). KT 국사가 과대표집된 표본이며, SKB·LGU+ 백본은 위치 미공개로 미표기(부재 아님)' },
+      ],
+    },
+    {
+      label: '규제',
+      chips: [
+        { key: 'exclusions', icon: 'exclude', text: '배제구역', on: showExclusions, toggle: onToggleExclusions, title: '배제구역 — 그린벨트·군사시설보호·공항 고도제한·상수원보호·문화재 공개 GIS 폴리곤. 법적 건축가능성 GO/NO-GO 오버레이(빨강=입지 불가/주황=조건부 제약). 배포측 GIS 데이터 확보 시 자동 활성, 미확보 시 데이터 대기(폴리곤 미표시 — 저촉 여부를 지어내지 않음)' },
       ],
     },
   ]
@@ -244,6 +255,17 @@ export default function FilterBar({
             </div>
           )
         })}
+        {/* 정직성: 배제구역 오버레이 ON인데 공개 GIS 폴리곤 미확보 → 데이터 대기 배지(가짜 폴리곤 금지) */}
+        {showExclusions && !exclusionsHasData && (
+          <span
+            className="badge verify"
+            title={lang === 'en'
+              ? 'Exclusion-zone overlay is on, but no public GIS polygons are bundled yet — nothing is drawn (no fabricated zones). Activates when the deployment provides the GIS data.'
+              : '배제구역 오버레이가 켜졌지만 공개 GIS 폴리곤이 아직 없어 아무것도 그리지 않습니다(가짜 구역 금지). 배포측 GIS 데이터 확보 시 자동 활성.'}
+          >
+            {t('배제구역')} · {t('데이터 대기')}
+          </span>
+        )}
       </div>
     </div>
   )

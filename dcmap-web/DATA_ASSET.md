@@ -49,6 +49,35 @@
 - **T3 오퍼레이터·펀드**(AirTrunk·Equinix·Digital Realty·Keppel / Blackstone·KKR·GIC) — 인수보다 유료 고객·제휴 먼저(= 인수 온램프).
 - 전례: DC Byte(Bloomberg 투자·제휴)·C&W(DC 조직 인수)·CoStar(프롭테크 연쇄 인수) — "지역·버티컬을 사서 채우는" 정상 거래.
 
+## 데이터 자산 · 입지 배제 오버레이 (Exclusion overlay) — 🟡 배선 완료 · 데이터 대기
+5축(전력·토지·리스크·네트워크·기상)은 **물리적 공급**만 잰다. 그 밖에서 준공을 죽이는 **법적 건축가능성(GO/NO-GO)**을 별도 오버레이로 판정한다. 엔진·맵 레이어·부지 패널 판정까지 **끝단 배선은 완료**돼 있고, 공개 GIS 폴리곤이 배포측에서 수록되면 **자동 활성화**된다. 현재는 전 레이어 **데이터 대기(pending)** — 커버리지를 암시하지 않는다.
+
+### 5개 레이어 (엔진 계약: `src/score/exclusions.js`의 `EXCLUSION_LAYERS`)
+| key | 레이어 | 유형(kind) | 출처 |
+|---|---|---|---|
+| `greenbelt` | 개발제한구역(그린벨트) | `block`(건축 불가/No-go) | 국토교통부·브이월드 도시계획(UP101) |
+| `military` | 군사시설보호구역 | `restrict`(협의 필요/Restrict) | 국방부·토지이음 군사시설보호구역 |
+| `airport_height` | 공항 고도제한(장애물제한표면) | `restrict` | 국토교통부·한국공항공사 장애물제한표면 |
+| `water_source` | 상수원보호구역 | `block` | 환경부 상수원보호구역 |
+| `heritage` | 문화재보호구역·매장문화재 유존지역 | `restrict` | 국가유산청 문화재보호구역·매장문화재 유존지역 |
+
+- `kind='block'` = 저촉 시 **건축 불가(No-go)**, `kind='restrict'` = **협의 필요(Restrict)**. 감점이 아니라 이진 판정(×).
+
+### GeoJSON 스키마 — `data/exclusions/layers/<key>.json`
+- 표준 **GeoJSON FeatureCollection**. `<key>`는 위 표의 key와 일치해야 로더(`import.meta.glob`)가 편입한다.
+- 각 Feature: `geometry`는 `Polygon` 또는 `MultiPolygon`(경위도, [lng, lat]). `properties.name`(또는 `NAME`/`보호구역명`) 권장 — 부지 패널에서 저촉 구역명 표기에 사용.
+- 파일이 없거나 `features` 배열이 비면 해당 레이어는 자동으로 `pending`. `hasExclusionData(key)`·`anyExclusionData()`로 존재 여부 판정, 저촉 여부는 절대 지어내지 않는다.
+
+### 매니페스트 — `data/exclusions/manifest.json`
+- 형식: `{ version, asOf, note, layers:[{ key, available, asOf, source, features }] }`.
+- 각 레이어의 **수록 상태(available)**·기준일(asOf)·피처 수(features)를 선언. `available=true`로 바뀌면 데이터 탐색기(입지 배제구역 탭)·엔진·SitePanel·맵이 자동 활성화.
+- **현재: 전 레이어 `available:false`, `asOf:null`(데이터 대기)** — 이것이 정직한 현 상태다.
+
+### 데이터 주입은 배포측 전용 (population is deployment-side)
+- 수집 절차: **`ops/EXCLUSIONS-RUNBOOK.md`** 참조. `scripts/fetch-exclusions.mjs`가 공개 GIS에서 `layers/<key>.json`을 채우고 `manifest.json`을 갱신하면 빌드에 번들돼 자동 활성화.
+- 이 샌드박스는 토지이음/브이월드/data.go.kr outbound가 차단돼 수집 불가 → 배포 환경에서만 채운다.
+- 표면: 데이터 탐색기 `/data?tab=exclusions`(레이어·유형·출처·수록 상태), 인사이트 `/insights/external-gates-2026`.
+
 ## 보안·정직성 불변식
 - 공개 데이터만. API 키(한전/data.go.kr/law.go.kr/vworld)는 **환경변수 전용**, 레포·로그 노출 금지.
 - 수치 = 출처·갱신일. 근거 없으면 "데이터 대기". 좌표는 실측 우선(텍스트 추정 금지).
