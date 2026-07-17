@@ -38,6 +38,10 @@ const CT = {
   '검증 수치 · 부지별 확인 필요': 'Verified figures · site-level check needed',
   '용수 (증발냉각 가정)': 'Water (evaporative cooling assumed)', '원단위': 'Intensity',
   '에너지사용계획 협의': 'Energy-use plan consultation', '대형 변압기 리드타임': 'Large-transformer lead time',
+  // 운영 환경 — 요금제·CFE·분산·ESG (정성 맥락 · 대표)
+  '운영 환경': 'Operating environment', '대표 맥락 · 부지·계약별 상이': 'Representative context · varies by site/contract',
+  '시간대별·계절 요금': 'Time-of-use & seasonal tariff', '24/7 CFE · 시간대 매칭': '24/7 CFE · hourly matching',
+  '비수도권 분산 인센티브': 'Non-capital distributed-energy incentives', 'CBAM · 고객 ESG': 'CBAM · customer ESG',
   // 시나리오 비교 행 라벨
   냉각: 'Cooling', 계약전력: 'Contract power', '연간 전력량': 'Annual energy', 재생조달: 'Renewable', '연간 탄소': 'Annual carbon',
   // 액션 버튼
@@ -825,6 +829,40 @@ export default function CalcPage() {
               <>Factors outside the five axes that decide completion. Verified public figures; a specific site’s water rights, discharge permit and exclusion overlays (greenbelt, military, heritage) need GIS/administrative confirmation. See <Link to="/insights/external-gates-2026">the external-gates brief</Link>.</>
             ) : (
               <>5축 밖에서 준공을 좌우하는 변수. 공개 검증 수치이며, 개별 부지의 수리권·방류허가·배제 오버레이(그린벨트·군사·문화재)는 GIS/행정 확인이 필요합니다. <Link to="/insights/external-gates-2026">외부 관문 브리프</Link> 참조.</>
+            )}
+          </p>
+
+          {/* 운영 환경 — 요금제·CFE·분산·ESG. 수치가 아닌 정성 맥락(대표)이라 note로만 제시(정직). 위 계통·PPA 단가는 연평균 대표값임을 명시. */}
+          <div className="econ-head">
+            <span className="chart-title" style={{ margin: 0 }}>{t('운영 환경')}</span>
+            <span className="econ-flag">{t('대표 맥락 · 부지·계약별 상이')}</span>
+          </div>
+          <p className="chart-note" style={{ marginTop: 2 }}>
+            <b>{t('시간대별·계절 요금')}</b> — {lang === 'en' ? (
+              <>the <b>grid tariff</b> above is an <b>annual average</b>. Real industrial (B) power is time-of-use (off-peak · mid-peak · on-peak), with summer & winter on-peak rates markedly higher. Peak-heavy AI load can pay above the average, so the true bill needs a KEPCO contract and load-pattern check (representative, not exact tariffs).</>
+            ) : (
+              <>위에서 쓴 <b>계통단가</b>는 <b>연평균 대표값</b>입니다. 실제 산업용(을)은 시간대별 요금제(경부하·중간부하·최대부하)로 여름·겨울 최대부하 단가가 크게 높습니다. 첨두 집중형 AI 부하는 평균보다 높은 단가를 부담할 수 있어, 실제 전력비는 한전 계약·부하 패턴 확인이 필요합니다(정확 요율 아님·대표 맥락).</>
+            )}
+          </p>
+          <p className="chart-note" style={{ marginTop: 2 }}>
+            <b>{t('24/7 CFE · 시간대 매칭')}</b> — {lang === 'en' ? (
+              <>RE100 <b>annual matching</b> ≠ <b>24/7 CFE hourly matching</b>. The PPA estimate above is an annual blended price and does not guarantee carbon-free every hour; true 24/7 CFE needs storage or firm clean power and costs more.</>
+            ) : (
+              <>RE100 <b>연간 매칭</b> ≠ <b>24/7 CFE 시간대 매칭</b>. 위 PPA 추정은 연간 혼합 단가로 매 시간 무탄소를 보장하지 않습니다. 진정한 24/7 무탄소는 저장장치·상시 무탄소(펌 클린) 전원이 필요해 비용이 더 듭니다.</>
+            )}
+          </p>
+          <p className="chart-note" style={{ marginTop: 2 }}>
+            <b>{t('비수도권 분산 인센티브')}</b> — {lang === 'en' ? (
+              <><b>The Distributed Energy Act</b> enables regional electricity pricing and non-capital siting incentives.{nonCapital ? <> With <b>non-capital</b> selected, this can be an advantage for grid-congestion relief and distributed interconnection (implementing rules still being finalized).</> : <> Non-capital sites may benefit here.</>}</>
+            ) : (
+              <><b>분산에너지법</b>은 지역별 차등요금·비수도권 입지 인센티브의 근거입니다.{nonCapital ? <> 현재 <b>비수도권</b> 선택 시 계통 혼잡 완화·분산 전원 연계에서 유리할 수 있습니다(제도 세부는 고시 진행 중).</> : <> 비수도권 입지는 이 점에서 유리할 수 있습니다.</>}</>
+            )}
+          </p>
+          <p className="chart-note" style={{ marginTop: 2 }}>
+            <b>{t('CBAM · 고객 ESG')}</b> — {lang === 'en' ? (
+              <>hyperscaler and EU customers increasingly require low-carbon power (CBAM, RE100 procurement), affecting project <b>bankability</b>. See <Link to="/insights/external-gates-2026">the external-gates brief</Link>.</>
+            ) : (
+              <>하이퍼스케일러·EU 고객은 저탄소 전력(CBAM 대응·RE100 조달)을 점점 요구하며, 이는 사업 <b>파이낸싱 적격성(뱅커빌리티)</b>에 영향을 줍니다. <Link to="/insights/external-gates-2026">외부 관문 브리프</Link> 참조.</>
             )}
           </p>
         </div>

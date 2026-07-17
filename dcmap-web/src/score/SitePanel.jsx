@@ -635,6 +635,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 · <Link to={`/calc?z=${nonCapital ? '1' : '0'}`}>이 입지로 GPU 계산 →</Link>{' '}
                 · <Link to="/roadmap?view=frame">전체 프로세스 프레임 →</Link>
               </p>
+              <p className="chart-note">
+                {lang === 'en'
+                  ? 'Grid headroom matters as a date, not just a number — new capacity mostly reaches DCs after 2030, a 2029 supply cliff, and congestion can force curtailment.'
+                  : '계통 여유는 ‘얼마’보다 ‘언제 붙나’ — 신규 여유 실공급 2030년 이후·2029 공급절벽·혼잡 시 재급전(출력제한) 가능.'}{' '}
+                <Link to="/insights/external-gates-2026">{lang === 'en' ? 'External-gates brief →' : '외부 관문 브리프 →'}</Link>
+              </p>
             </>
           )
         })()}
@@ -659,6 +665,35 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               title: lang === 'en' ? 'Cooling water' : '용수 (냉각수)',
               note: lang === 'en' ? 'high if evaporative; air-cooled raises PUE' : '증발냉각 시 다량 · 공랭 시 PUE↑',
               verdict: lang === 'en' ? 'Cooling-dependent' : '냉각방식 의존',
+            },
+            {
+              id: 'E4',
+              title: lang === 'en' ? 'Environmental impact assessment' : '환경영향평가',
+              note:
+                landArea?.areaM2 != null
+                  ? (lang === 'en'
+                      ? `scale·zone dependent · parcel ${landArea.areaM2.toLocaleString()}㎡`
+                      : `규모·용도지역별 · 필지 ${landArea.areaM2.toLocaleString()}㎡`)
+                  : (lang === 'en' ? 'scale·zone dependent — scale·zone check' : '규모·용도지역별 — 규모·용도 확인 필요'),
+              verdict: lang === 'en' ? 'Check' : '확인',
+            },
+            {
+              id: 'E5',
+              title: lang === 'en' ? 'Fire & hazardous materials (diesel, ESS battery)' : '소방·위험물 (비상디젤·ESS 배터리)',
+              note: lang === 'en' ? 'fire code by storage volume, design check' : '저장량별 화재기준·설계 확인',
+              verdict: lang === 'en' ? 'Design' : '설계',
+            },
+            {
+              id: 'E6',
+              title: lang === 'en' ? 'Disaster-impact review' : '재해영향평가',
+              note: lang === 'en' ? 'triggered by development area' : '개발면적 기준',
+              verdict: lang === 'en' ? 'Check' : '확인',
+            },
+            {
+              id: 'E7',
+              title: lang === 'en' ? 'Ground & hazard (active fault, landslide, soft ground)' : '지반·재해 (활성단층·산사태·연약지반)',
+              note: lang === 'en' ? 'site-level geotech survey, field check' : '부지별 지질조사·현장',
+              verdict: lang === 'en' ? 'Site check' : '부지 확인',
             },
           ]
           // 배제 오버레이 — 규칙 산출(E1~E3)과 달리 실제 GIS 폴리곤 저촉 판정. 데이터 부재 시 정직히 '데이터 대기'.

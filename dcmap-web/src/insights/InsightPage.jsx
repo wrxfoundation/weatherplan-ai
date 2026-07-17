@@ -29,8 +29,20 @@ import CbreExitScarcity from './articles/CbreExitScarcity.jsx'
 import DcCoexistence from './articles/DcCoexistence.jsx'
 import BuildReality from './articles/BuildReality.jsx'
 import ExternalGates from './articles/ExternalGates.jsx'
+import OpsTiming from './articles/OpsTiming.jsx'
 
 const ARTICLES = {
+  'ops-timing-2026': {
+    component: OpsTiming,
+    sources: [
+      '운영·타이밍 온톨로지(입지가 「지을 수 있나」라면 운영·타이밍은 「수지가 맞나·언제 붙나」) — AI InfraMap 자체 프레임(콘텐츠 등급 ④). 각 수치는 아래 공개자료 검증. 입지 관문은 別 인사이트 external-gates-2026 참조',
+      '신규 계통 여유 실공급 2030년 이후·2029 공급절벽·DC 개발 3~5년: 전기신문·KHARN 등 산업 보도 — 개별 부지 접속 시점은 한전/부지별 확인 대상',
+      '계통관리변전소 지정(포화·혼잡지역 신규 접속 제한·조건부)·재급전(출력제한): 신문·김앤장 법률사무소 뉴스레터 등 — 특정 변전소 지정 여부·조건은 부지별 확인 대상',
+      '산업용(을) 시간대별 요금(경부하·중간·최대·계절별)·지역별 전기요금제: 한전 전기공급약관·분산에너지 활성화 특별법(분산에너지법)·산업통상자원부 — 실제 원/kWh는 계약·지역별 계산(부지별 표기)',
+      'RE100/PPA 연간 매칭 vs 24-7 CFE(시간단위 무탄소)·CBAM(EU 탄소국경조정)·하이퍼스케일러 ESG 파이낸싱 요구: 공개 프레임 종합 — 특정 부지 실현 가능성은 지역 발전믹스·계약별 가정(검증 대상)',
+      'CSAP(클라우드 보안인증)·망분리(공공·금융 워크로드): 과학기술정보통신부·금융보안 규정 통용 — 특정 임차인군 자격 관문',
+    ],
+  },
   'external-gates-2026': {
     component: ExternalGates,
     sources: [
