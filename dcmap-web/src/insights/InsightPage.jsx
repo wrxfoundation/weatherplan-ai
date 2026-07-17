@@ -28,8 +28,21 @@ import GpuUtilization from './articles/GpuUtilization.jsx'
 import CbreExitScarcity from './articles/CbreExitScarcity.jsx'
 import DcCoexistence from './articles/DcCoexistence.jsx'
 import BuildReality from './articles/BuildReality.jsx'
+import ExternalGates from './articles/ExternalGates.jsx'
 
 const ARTICLES = {
+  'external-gates-2026': {
+    component: ExternalGates,
+    sources: [
+      '외부환경 변수 온톨로지(설치·인가·운영 5축 밖 관문) — AI InfraMap 자체 프레임(콘텐츠 등급 ④). 각 수치는 아래 공개자료 검증',
+      'DC 방송통신시설 분류·환경영향평가/주민의견 없이 건축 가능·서울 88% 설치가능·건축위 심의 의무화 건의안(2026.4): 서울시의회 — 언론 재인용',
+      '대형 변압기 리드타임 2~4년·전력변압기 시장 약 30% 공급부족·DC 사업자 생산슬롯 경쟁: pv magazine/POWER(2026) 등 산업 보도',
+      '에너지사용계획 협의 대상(연 전력 2천만 kWh=20GWh↑ 또는 연료·열 5천 TOE↑): 에너지이용합리화법 시행령 별표1(법제처)',
+      'DC 용수 1MW당 연 최대 2,550만 L·약 80% 증발(간접증발냉각): 산업 보도(단비뉴스 등) — 냉각방식·수리권은 부지별 확인 대상',
+      '신규 계통 여유 실공급 2030년 이후·2029 공급절벽·계통관리변전소 지정: 전기신문·신/김앤장 뉴스레터 등. 전력계통영향평가·AIDC 특별법은 別 인사이트(power-permit-battle·psia-exemption-2027) 참조',
+      '배제 오버레이(그린벨트·군사시설보호·공항 고도제한·상수원·문화재·접도)는 공개 GIS(토지이음·브이월드) 폴리곤 확보 대상 — 개별 부지 저촉 여부는 GIS/행정 확인 필요(미구현·데이터 대기)',
+    ],
+  },
   'build-reality-2026': {
     component: BuildReality,
     sources: [
