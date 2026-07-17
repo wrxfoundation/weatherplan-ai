@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { FACILITIES, STATUS_LABEL, SIDOS, slugOf } from './data/facilities.js'
 import { geocodeAddr } from './data/liveApi.js'
+import { useMapLang, setMapLang } from './i18n/mapLang.js'
 
 // 라우트 → GNB 섹션(색상 톤). 페이지 전체 accent가 섹션 톤을 따른다.
 const SECTION_PREFIX = [
@@ -26,14 +27,14 @@ function looksLikeAddress(q) {
 }
 
 /* 자동완성 후보: 시설(이름·운영사 매칭) 상위 5 + 지역 상위 2 */
-function suggest(qv) {
+function suggest(qv, en = false) {
   const v = qv.trim().toLowerCase()
   if (v.length < 1) return []
   const out = []
   for (const s of SIDOS) {
     if (s.toLowerCase().includes(v)) {
       const n = FACILITIES.filter((f) => f.sido === s).length
-      out.push({ kind: '지역', label: s, meta: `${n}곳`, to: `/?sido=${encodeURIComponent(s)}` })
+      out.push({ kind: en ? 'Region' : '지역', label: s, meta: en ? `${n} sites` : `${n}곳`, to: `/?sido=${encodeURIComponent(s)}` })
       if (out.length >= 2) break
     }
   }
@@ -55,7 +56,14 @@ function suggest(qv) {
   // 지번·도로명 주소 검색 통합(맵 상단 별도 검색창 대체). 주소처럼 보이면 최상단에 노출.
   const t = qv.trim()
   if (t.length >= 2) {
-    const geoItem = { kind: '주소', label: `‘${t}’ 위치로 이동 · 부지 분석`, meta: 'vworld 지오코딩', geo: true, query: t, to: '' }
+    const geoItem = {
+      kind: en ? 'Address' : '주소',
+      label: en ? `Go to ‘${t}’ · site analysis` : `‘${t}’ 위치로 이동 · 부지 분석`,
+      meta: en ? 'vWorld geocoding' : 'vworld 지오코딩',
+      geo: true,
+      query: t,
+      to: '',
+    }
     if (looksLikeAddress(t)) out.unshift(geoItem)
     else out.push(geoItem)
   }
@@ -72,8 +80,9 @@ export default function TopBar() {
   const [active, setActive] = useState(-1)
   const [geocoding, setGeocoding] = useState(false)
   const blurTimer = useRef(null)
+  const en = useMapLang() === 'en'
 
-  const items = useMemo(() => suggest(term), [term])
+  const items = useMemo(() => suggest(term, en), [term, en])
 
   // 현재 라우트의 섹션을 document root에 반영 → 페이지 전체 색상 톤 전환
   useEffect(() => {
@@ -85,8 +94,8 @@ export default function TopBar() {
   // 직전 페이지 타이틀(예: '서비스 소개')이 브라우저 탭에 남지 않게. 페이지 고유 타이틀은
   // 각 페이지 effect가 이 뒤에 실행되며 덮어쓴다(TopBar는 페이지의 자식 → effect가 먼저 돈다).
   useEffect(() => {
-    document.title = 'AI InfraMap — AI 데이터센터 부지 인텔리전스'
-  }, [location.pathname])
+    document.title = en ? 'AI InfraMap — AI datacenter site intelligence' : 'AI InfraMap — AI 데이터센터 부지 인텔리전스'
+  }, [location.pathname, en])
 
   // SEO: SPA 내 라우트 전환 시 canonical·og:url 동기화(프리렌더 셸 값이 낡지 않게)
   useEffect(() => {
@@ -170,7 +179,7 @@ export default function TopBar() {
       <div className="topbar-search">
         <input
           type="search"
-          placeholder="지역, 시설명, 운영사 검색…"
+          placeholder={en ? 'Search region, facility, operator…' : '지역, 시설명, 운영사 검색…'}
           value={term}
           onChange={(e) => {
             const v = e.target.value
@@ -184,15 +193,15 @@ export default function TopBar() {
             blurTimer.current = setTimeout(() => setOpen(false), 150)
           }}
           onKeyDown={onKey}
-          aria-label="시설 검색"
+          aria-label={en ? 'Search facilities' : '시설 검색'}
           aria-expanded={open && items.length > 0}
           role="combobox"
         />
         {geocoding && (
           <div className="search-suggest" role="status">
             <button type="button" className="searching" disabled>
-              <span className="sg-kind">주소</span>
-              <span>위치 찾는 중…</span>
+              <span className="sg-kind">{en ? 'Address' : '주소'}</span>
+              <span>{en ? 'Locating…' : '위치 찾는 중…'}</span>
             </button>
           </div>
         )}
@@ -222,42 +231,46 @@ export default function TopBar() {
 
       <nav>
         <NavLink to="/about" data-nav="about" className={({ isActive }) => (isActive ? 'active' : '')}>
-          소개
+          {en ? 'About' : '소개'}
         </NavLink>
         <NavLink to="/" end data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
-          맵
+          {en ? 'Map' : '맵'}
         </NavLink>
         <NavLink to="/map3d" data-nav="explore" className={({ isActive }) => (isActive ? 'active' : '')}>
           3D <sup className="beta-sup">β</sup>
         </NavLink>
         <NavLink to="/calc" data-nav="data" className={({ isActive }) => (isActive ? 'active' : '')}>
-          GPU 계산기
+          {en ? 'GPU calc' : 'GPU 계산기'}
         </NavLink>
         <NavLink to="/dashboard" data-nav="data" className={({ isActive }) => (isActive ? 'active' : '')}>
-          대시보드
+          {en ? 'Dashboard' : '대시보드'}
         </NavLink>
         <NavLink to="/data" data-nav="data" className={({ isActive }) => (isActive ? 'active' : '')}>
-          데이터
+          {en ? 'Data' : '데이터'}
         </NavLink>
         <NavLink to="/stats" data-nav="data" className={({ isActive }) => (isActive ? 'active' : '')}>
-          통계
+          {en ? 'Stats' : '통계'}
         </NavLink>
         <NavLink to="/insights" data-nav="knowledge" className={({ isActive }) => (isActive ? 'active' : '')}>
-          인사이트
+          {en ? 'Insights' : '인사이트'}
         </NavLink>
         <NavLink to="/roadmap" data-nav="knowledge" className={({ isActive }) => (isActive ? 'active' : '')}>
-          로드맵
+          {en ? 'Roadmap' : '로드맵'}
         </NavLink>
         <NavLink to="/glossary" data-nav="glossary" className={({ isActive }) => (isActive ? 'active' : '')}>
-          용어집
+          {en ? 'Glossary' : '용어집'}
         </NavLink>
-        <NavLink to="/pricing" data-nav="data" className={({ isActive }) => `nav-contact${isActive ? ' active' : ''}`} title="요금·문의">
+        <NavLink to="/pricing" data-nav="data" className={({ isActive }) => `nav-contact${isActive ? ' active' : ''}`} title={en ? 'Pricing · Contact' : '요금·문의'}>
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M2 4h12v8H2z M2 4.5l6 4 6-4" />
           </svg>
-          <span className="contact-full">요금·문의</span>
-          <span className="contact-short">문의</span>
+          <span className="contact-full">{en ? 'Pricing' : '요금·문의'}</span>
+          <span className="contact-short">{en ? 'Contact' : '문의'}</span>
         </NavLink>
+        <span className="nav-lang" role="group" aria-label="Language">
+          <button type="button" className={`nav-lang-btn${!en ? ' on' : ''}`} onClick={() => setMapLang('ko')} aria-pressed={!en}>KO</button>
+          <button type="button" className={`nav-lang-btn${en ? ' on' : ''}`} onClick={() => setMapLang('en')} aria-pressed={en}>EN</button>
+        </span>
       </nav>
 
     </header>
@@ -265,19 +278,19 @@ export default function TopBar() {
     {/* header 밖 형제로 — topbar의 backdrop-filter가 fixed 기준점이 되는 것 방지 */}
     <nav className="mobile-nav">
       <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
-        맵
+        {en ? 'Map' : '맵'}
       </NavLink>
       <NavLink to="/calc" className={({ isActive }) => (isActive ? 'active' : '')}>
-        계산기
+        {en ? 'Calc' : '계산기'}
       </NavLink>
       <NavLink to="/stats" className={({ isActive }) => (isActive ? 'active' : '')}>
-        통계
+        {en ? 'Stats' : '통계'}
       </NavLink>
       <NavLink to="/insights" className={({ isActive }) => (isActive ? 'active' : '')}>
-        인사이트
+        {en ? 'Insights' : '인사이트'}
       </NavLink>
       <NavLink to="/glossary" className={({ isActive }) => (isActive ? 'active' : '')}>
-        용어집
+        {en ? 'Glossary' : '용어집'}
       </NavLink>
     </nav>
     </>
