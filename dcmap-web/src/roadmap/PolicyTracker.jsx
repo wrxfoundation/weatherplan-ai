@@ -155,6 +155,48 @@ const TRACKS = [
       },
     ],
   },
+  {
+    key: 'permit-env',
+    title: '인허가·환경 관문 트랙 — 건축위 심의·환경평가',
+    titleEn: 'Permitting & environment gates — building-committee review · environmental assessment',
+    sub: 'DC 방송통신시설 분류 → 환경평가·주민의견 없이 건축 가능(서울 88%). 건축위 심의 의무화·입지 가이드라인 도입 논의',
+    subEn: 'DC classed as broadcasting/communications facility → buildable without EIA or resident input (88% of Seoul). Debate on mandatory building-committee review and siting guidelines',
+    impact: '건축위 심의·입지 가이드라인이 도입되면 부지 패널 「외부 관문」 체크와 외부환경 관문 인사이트에 신설 관문으로 반영합니다.',
+    impactEn: 'If a building-committee review and siting guidelines are introduced, we reflect them as new gates in the site panel’s “External gates” check and the external-gates brief.',
+    steps: [
+      {
+        date: '현행',
+        dateEn: 'Current',
+        label: 'DC=방송통신시설 분류 — 환경영향평가·주민의견수렴 없이 건축 가능(서울 면적 88% 설치가능)',
+        labelEn: 'DC classed as broadcasting/communications facility — buildable without EIA or resident consultation (88% of Seoul buildable)',
+        state: 'done',
+      },
+      {
+        date: '2026.04',
+        label: '서울시의회 건의안 통과 — 건축위 심의 의무화·데이터센터 입지 가이드라인 촉구(국회·국토부 이송)',
+        labelEn: 'Seoul Metropolitan Council resolution passed — urging mandatory building-committee review and DC siting guidelines (referred to the National Assembly and MOLIT)',
+        state: 'done',
+      },
+      {
+        date: '상시',
+        dateEn: 'Ongoing',
+        label: '에너지사용계획 협의(연 20GWh↑=사실상 모든 DC)·환경영향평가(규모·용도지역별)·통합환경허가 — 현행 법정 관문',
+        labelEn: 'Energy-use plan consultation (≥20 GWh/yr = effectively every DC) · environmental impact assessment (by scale/zone) · integrated environmental permit — existing statutory gates',
+        state: 'done',
+        note: '계산기 「외부 변수」 카드가 20GWh 협의 대상 여부를 자동 판정.',
+        noteEn: 'The calculator’s “External factors” card auto-determines whether the 20 GWh consultation applies.',
+      },
+      {
+        date: '미정',
+        dateEn: 'TBD',
+        label: '건축법·도시계획 개정 검토 — 건축위 심의 의무화·입지 규제 신설 여부',
+        labelEn: 'Review of Building Act / urban-planning amendments — whether to add mandatory building-committee review and siting restrictions',
+        state: 'wait',
+        note: '도입 시 지금의 ‘쉬운 인허가’가 조여진다 — 신설 관문을 외부 관문 체크에 반영 예정(현재는 데이터 대기).',
+        noteEn: 'If adopted, today’s easy permitting tightens — we plan to reflect the new gate in the External-gates check (currently data-pending).',
+      },
+    ],
+  },
 ]
 
 const STATE_LABEL = { done: '확정', wait: '진행 중 · 대기', future: '예정' }
