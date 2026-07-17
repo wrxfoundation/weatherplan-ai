@@ -20,7 +20,7 @@ export default function PsiaScorecard({ nonCapital, mw, gridMw = null, approvalP
     <div className="psia-card">
       <div className="psia-head">
         <span className="psia-title">
-          <Term k="전력계통영향평가">전력계통영향평가</Term> {en ? 'pass outlook' : '통과 전망'}
+          <Term k="전력계통영향평가">{en ? 'PSIA' : '전력계통영향평가'}</Term> {en ? 'pass outlook' : '통과 전망'}
         </span>
         <span className={`psia-verdict tone-${outlook.tone}`}>{en ? (outlook.labelEn ?? outlook.label) : outlook.label}</span>
       </div>
@@ -43,7 +43,7 @@ export default function PsiaScorecard({ nonCapital, mw, gridMw = null, approvalP
             {factors.map((f) => (
               <div key={f.key} className={`psia-row${f.score == null ? ' pending' : ''}`}>
                 <span className="psia-f-label">
-                  {f.label}
+                  {en ? f.labelEn ?? f.label : f.label}
                   <em className="psia-f-w">w{f.weight}</em>
                 </span>
                 <span className="psia-f-track">
@@ -57,7 +57,7 @@ export default function PsiaScorecard({ nonCapital, mw, gridMw = null, approvalP
           <div className="psia-basis">
             {factors.filter((f) => f.score != null).map((f) => (
               <div key={f.key}>
-                <b>{f.label}</b> {f.basis}
+                <b>{en ? f.labelEn ?? f.label : f.label}</b> {en ? f.basisEn ?? f.basis : f.basis}
               </div>
             ))}
           </div>

@@ -954,7 +954,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>${r.sido}</strong> · ${t('DC 공급 승인율', 'DC supply approval rate')} <b>${pct}%</b> (${approvalLabel(pct)})<br/>${t('가능', 'approved')} ${Math.round(r.a.able).toLocaleString()}MW · ${t('불가', 'rejected')} ${Math.round(r.a.unable).toLocaleString()}MW<br/><span style="opacity:.75">${t('계통영향평가 1차 기술검토 · 2026.3.27 한전', 'Grid impact assessment 1st technical review · 2026.3.27 한전')}</span></div>`,
+            `<div class="dc-hovercard"><strong>${r.sido}</strong> · ${t('DC 공급 승인율', 'DC supply approval rate')} <b>${pct}%</b> (${approvalLabel(pct, en)})<br/>${t('가능', 'approved')} ${Math.round(r.a.able).toLocaleString()}MW · ${t('불가', 'rejected')} ${Math.round(r.a.unable).toLocaleString()}MW<br/><span style="opacity:.75">${t('계통영향평가 1차 기술검토 · 2026.3.27 한전', 'Grid impact assessment 1st technical review · 2026.3.27 한전')}</span></div>`,
             { direction: 'top', offset: [0, -rad], className: 'dc-hovercard', opacity: 1 },
           )
           .on('click', () => {

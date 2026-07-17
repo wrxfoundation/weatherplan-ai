@@ -602,19 +602,6 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           <span className="score-headline-cov">{t('근거 확보 · 스코어 커버리지')} {r.coverage}/100</span>
         </div>
 
-        {/* 5관문 맥락 — 입지 점수는 사업 실현가능성의 첫 관문일 뿐임을 명시(정직성). 상세는 인사이트로. */}
-        <Link className="gate-strip" to="/insights/build-reality-2026" title={t('데이터센터 사업의 5관문 — 지을 수 있나·채울 수 있나')}>
-          <span className="gate-strip-dots" aria-hidden>
-            <b className="on">1</b><i>2</i><i>3</i><i>4</i><i>5</i>
-          </span>
-          <span className="gate-strip-txt">
-            {lang === 'en'
-              ? t('입지는 사업 실현가능성 5관문 중 1관문 — 전력·자금·GPU 규격·가동률이 남았습니다')
-              : <><b>입지</b>는 사업 실현가능성 <b>5관문 중 1관문</b> — 전력·자금·GPU 규격·가동률이 남았습니다</>}
-          </span>
-          <span className="gate-strip-arr" aria-hidden>→</span>
-        </Link>
-
         {/* 로딩 고지 — 공개 데이터 조회 중임을 명시(끝나면 사라짐 → 이후의 '대기'는 데이터 없음). */}
         {loading ? (
           <div className="sp-loading" role="status" aria-live="polite">
@@ -727,8 +714,8 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             <ul className="score-basis" aria-label={t('산출 근거')}>
               {scored.map((i) => (
                 <li key={i.label}>
-                  <b>{i.label}</b>
-                  <span>{i.basis}</span>
+                  <b>{lang === 'en' ? i.labelEn ?? i.label : i.label}</b>
+                  <span>{lang === 'en' ? i.basisEn ?? i.basis : i.basis}</span>
                 </li>
               ))}
             </ul>
@@ -1097,7 +1084,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           })()}
           <div className="spec-cell">
             <div className="k"><Term k="수전전압">{t('수전전압')}</Term> {t('트랙')}</div>
-            <div className="v">{r.track.track.voltage}</div>
+            <div className="v">{lang === 'en' ? r.track.track.voltageEn ?? r.track.track.voltage : r.track.track.voltage}</div>
           </div>
           <div className="spec-cell">
             <div className="k"><Term k="전력계통영향평가">{t('계통영향평가')}</Term></div>
@@ -1195,7 +1182,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   <div>
                     <strong>{t('계통 공급여유')} {regionPower.grid.mw.toLocaleString()}MW</strong>
                     <span className={`badge ${regionPower.grid.mw <= 10 ? 'critical' : regionPower.grid.mw <= 500 ? 'verify' : 'status-operating'}`} style={{ marginLeft: 6 }}>
-                      {headroomLabel(regionPower.grid.mw)}
+                      {headroomLabel(regionPower.grid.mw, lang === 'en')}
                     </span>
                     <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>
                       {t('한전 연계가능용량')} 2027{regionPower.grid.note ? ` · ${regionPower.grid.note}` : ''}
@@ -1207,7 +1194,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   <div style={{ marginTop: regionPower.grid ? 4 : 0 }}>
                     <strong>{t('전력공급 가능판정율')} {regionPower.approval.ratePct}%</strong>
                     <span className={`badge ${regionPower.approval.ratePct >= 70 ? 'status-operating' : regionPower.approval.ratePct >= 45 ? 'verify' : 'critical'}`} style={{ marginLeft: 6 }}>
-                      {approvalLabel(regionPower.approval.ratePct)}
+                      {approvalLabel(regionPower.approval.ratePct, lang === 'en')}
                     </span>
                     <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>{t('전력계통영향평가')} &apos;26.3</span>
                   </div>

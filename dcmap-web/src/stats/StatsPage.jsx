@@ -21,6 +21,15 @@ const DESC =
 
 const CAPITAL_SIDOS = new Set(['서울', '경기', '인천'])
 
+// EN source citations for data-file metas that ship KO-only source strings.
+// Keeps EN mode fully English without touching the shared data modules.
+const SRC_EN = {
+  chp: 'District-energy (CHP) plant generation-capacity · supply status (as of 2025-07-01, public CSV)',
+  newPlants: '2025 new power-plant installation status (capacity · count by sido, public statistics)',
+  nuclear:
+    "Nuclear Safety and Security Commission / KHNP, 'Status of nuclear power plants by unit' (published 2025-06-12). Capacity is official installed capacity (MWe).",
+}
+
 function setMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`)
   if (!el) {
@@ -272,7 +281,7 @@ export default function StatsPage() {
             unit="MW"
             total={CHP_STATS.totalMw}
             note={en
-              ? `${CHP_META.source} · share is against the district-energy total ${CHP_STATS.totalMw.toLocaleString()}MW · management offices are informal place names, so no individual coordinates are assigned (not placed on the map).`
+              ? `${SRC_EN.chp} · share is against the district-energy total ${CHP_STATS.totalMw.toLocaleString()}MW · management offices are informal place names, so no individual coordinates are assigned (not placed on the map).`
               : `${CHP_META.source} · 비중은 집단에너지 총 ${CHP_STATS.totalMw.toLocaleString()}MW 대비 · 관리소는 비공식 지명이라 개별 좌표 미부여(맵 미배치).`}
           />
         </div>
@@ -312,7 +321,7 @@ export default function StatsPage() {
             unit="MW"
             total={NEW_PLANTS_2025_TOTALS.totalMw}
             note={en
-              ? `${NEW_PLANTS_2025_META.source} · share is against the 2025 new total ${NEW_PLANTS_2025_TOTALS.totalMw.toLocaleString()}MW · most by count is Gyeongbuk ${NEW_PLANTS_2025.find((r) => r.sido === '경북')?.count.toLocaleString()} sites (mostly small-scale solar).`
+              ? `${SRC_EN.newPlants} · share is against the 2025 new total ${NEW_PLANTS_2025_TOTALS.totalMw.toLocaleString()}MW · most by count is Gyeongbuk ${NEW_PLANTS_2025.find((r) => r.sido === '경북')?.count.toLocaleString()} sites (mostly small-scale solar).`
               : `${NEW_PLANTS_2025_META.source} · 비중은 2025 신규 총 ${NEW_PLANTS_2025_TOTALS.totalMw.toLocaleString()}MW 대비 · 개수 최다는 경북 ${NEW_PLANTS_2025.find((r) => r.sido === '경북')?.count.toLocaleString()}개소(소규모 태양광 다수).`}
           />
         </div>
@@ -348,7 +357,7 @@ export default function StatsPage() {
             bars={NUCLEAR_FLEET.rows.map((r) => ({ label: en ? `${r.base} (${r.operatingUnits} units)` : `${r.base} (${r.operatingUnits}호기)`, value: r.operatingMw }))}
             unit="MW"
             total={NUCLEAR_FLEET.operatingMw}
-            note={`${NUCLEAR_META.source}`}
+            note={en ? SRC_EN.nuclear : NUCLEAR_META.source}
           />
         </div>
 
@@ -400,7 +409,7 @@ export default function StatsPage() {
         </section>
 
         <p className="footer-note">
-          {en ? 'Source:' : '출처:'} {en ? STATS_SOURCE.publicationEn : STATS_SOURCE.publication} · {STATS_SOURCE.base.join(' · ')} ({STATS_SOURCE.url})
+          {en ? 'Source:' : '출처:'} {en ? STATS_SOURCE.publicationEn : STATS_SOURCE.publication} · {(en ? STATS_SOURCE.baseEn : STATS_SOURCE.base).join(' · ')} ({STATS_SOURCE.url})
           <br />
           {en ? STATS_SOURCE.noteEn : STATS_SOURCE.note}
         </p>

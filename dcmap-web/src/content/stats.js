@@ -10,6 +10,10 @@ export const STATS_SOURCE = {
     '김철현·김성균(2025), 「AI 시대 데이터센터 증가의 국내 에너지 소비 시사점」, KEEI 기본연구보고서',
     'KDCC(한국데이터센터연합회), Korea Data Center Market Report 2024~2027 (2024) · 2025~2028 (2025)',
   ],
+  baseEn: [
+    'Kim Cheol-hyun · Kim Seong-gyun (2025), "Implications of the Rise of Datacenters for Domestic Energy Consumption in the AI Era," KEEI Basic Research Report',
+    'KDCC (Korea Data Center Council), Korea Data Center Market Report 2024~2027 (2024) · 2025~2028 (2025)',
+  ],
   url: 'https://kesis.keei.re.kr',
   note: '전산실 바닥면적 500㎡ 이상 데이터센터 기준. 조사 기관·분류 기준에 따라 시설 수는 달라질 수 있음.',
   noteEn: 'Based on datacenters with a server-room floor area of 500㎡ or more. Facility counts may vary by surveying body and classification criteria.',

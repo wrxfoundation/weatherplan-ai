@@ -15,7 +15,7 @@ import { filingsRecent, epsisCapacity, apiStatus, tradingMix, smpToday, fuelMixN
 import { DC_DEMAND_OUTLOOK, DC_DEMAND_OUTLOOK_META } from '../data/dcDemandOutlook.js'
 import { useMapLang, setMapLang } from '../i18n/mapLang.js'
 
-/* 대시보드 내러티브 i18n(섹션 헤드·제목·해석). 앱 공용 언어 스토어. 데이터 행 라벨·차트 노트는 KO(Phase 2). */
+/* 대시보드 내러티브 i18n(섹션 헤드·제목·해석·라벨·헤더·배지·버튼·차트노트). 앱 공용 언어 스토어. 데이터값(시도명·고유명사·숫자·단위값)은 KO 유지. */
 const DT = {
   대시보드: 'Dashboard',
   '데이터센터 현황': 'Datacenter status', '어디에 얼마나 — 분포·상태·용량·파이프라인': 'Where & how much — distribution, status, capacity, pipeline',
@@ -24,6 +24,43 @@ const DT = {
   '시스템 진단': 'System diagnostics', '공개 API 연동 상태 — 값은 노출되지 않음': 'Public-API status — no values exposed',
   '지역별 전력·데이터센터 한눈에 — 어디 중심으로 준비되는가': 'Power & datacenters by region — where preparation concentrates',
   해석: 'Reading',
+  // 롤업/표 헤더
+  지역: 'Region', 데이터센터: 'Datacenters', '2025 신규 발전': '2025 new generation', '발전허가(2024+)': 'Gen. permits (2024+)',
+  시도: 'Province', '홍수 노출': 'Flood exposure', '산사태 노출': 'Landslide exposure',
+  'DC 공급 승인율': 'DC supply approval', 가능: 'Able', 불가: 'Unable',
+  '계통 공급여유': 'Grid headroom', 판정: 'Rating',
+  '지역(한전 본부)': 'Region (KEPCO HQ)', '154kV+ 변전소': '154kV+ substations', '변압기 용량': 'Transformer capacity',
+  // 배지
+  수도권: 'Capital region',
+  // 차트 타이틀
+  'CAPACITY DISTRIBUTION — 지역별 공개 전력': 'CAPACITY DISTRIBUTION — public power by region',
+  'LAND PULSE — 입지 시군구 지가변동률 (월간, KOSIS)': 'LAND PULSE — land-price change in DC districts (monthly, KOSIS)',
+  'DC 운영사 투자·공급·DC 공시 — DART 전자공시 (D2)': 'DC operator investment/supply/DC filings — DART (D2)',
+  '지역별 재해 리스크 — DC 입지 시군구 (SGIS 홍수·산사태 영향구역 인구 노출률)':
+    'Disaster risk by region — DC districts (SGIS flood & landslide population exposure)',
+  '전력계통영향평가 — 데이터센터 공급 가능/불가 (시도별, 한전 2026.3)':
+    'Power System Impact Assessment — datacenter supply able/unable (by province, KEPCO 2026.3)',
+  '지역 계통 공급여유 — 한전 연계가능용량 (시도별, 2027 전망)':
+    'Regional grid headroom — KEPCO connectable capacity (by province, 2027 outlook)',
+  '지역별 송변전 인프라 — 154kV+ 변전소·변압기 용량 (한전 변전설비현황 2026.7)':
+    'T&D infrastructure by region — 154kV+ substations & transformer capacity (KEPCO 2026.7)',
+  '발전설비 현황 — EPSIS 전력시장 등록설비 (연료원/구분별)': 'Generation capacity — EPSIS market-registered assets (by fuel/type)',
+  '발전 실적 — KPX 전력거래실적 (연료원별, 라이브)': 'Generation output — KPX trading records (by fuel, live)',
+  'DC 수요-공급 갭 — 전기사용신청 vs 공급가능 전력 (MW)': 'DC demand–supply gap — electricity-use applications vs available supply (MW)',
+  '전력시장 가격 — SMP 계통한계가격 (하루전 확정, 시간별)': 'Power market price — SMP (day-ahead, hourly)',
+  '전력 원가 환경 — 한전 구입단가 (2024, DC OPEX 지표)': 'Power cost environment — KEPCO purchase price (2024, DC OPEX indicator)',
+  '전력수급 안정성 — 전국 공급예비율 (최근 12개월)': 'Supply adequacy — national reserve margin (last 12 months)',
+  'API 연동 현황 — 서버 env 진단': 'API integration status — server env diagnostics',
+  // 상태 라벨
+  운영: 'Operating', 건설: 'Construction', 계획: 'Planned',
+  재생에너지: 'Renewables', 원자력: 'Nuclear', '화석·기타': 'Fossil & other', 시장수요: 'Market demand',
+  // 게이지 라벨
+  '비수도권 승인율': 'Non-capital approval', '재생 비중': 'Renewable share',
+  '여름 원가 상승폭': 'Summer cost rise', '여름 최저 예비율': 'Summer low reserve',
+  // 버튼/상태 배지
+  '본문 스캔': 'Scan text', '스캔 중…': 'Scanning…', 전체: 'All',
+  '연동 대기': 'Awaiting integration', '진단 대기': 'Awaiting diagnostics',
+  연동: 'Live', 설정됨: 'Set', 'env 대기': 'Awaiting env',
 }
 
 const TITLE = '대시보드 — AI InfraMap 한국 데이터센터 인텔리전스'
@@ -36,7 +73,8 @@ const ARC = 'M 12 66 A 50 50 0 0 1 112 66'
 const ARC_LEN = Math.PI * 50
 
 /* 대시보드 리스트 공통 — 기본 N행 + "전체 보기" 확장 토글 (풀리스트는 카드 안에서 펼침) */
-function ExpandableList({ items, initial = 6, render, unit = '건' }) {
+function ExpandableList({ items, initial = 6, render, unit = '건', unitEn = 'items' }) {
+  const en = useMapLang() === 'en'
   const [open, setOpen] = useState(false)
   const shown = open ? items : items.slice(0, initial)
   return (
@@ -44,7 +82,13 @@ function ExpandableList({ items, initial = 6, render, unit = '건' }) {
       {shown.map(render)}
       {items.length > initial && (
         <button type="button" className="btn list-expand" onClick={() => setOpen((v) => !v)}>
-          {open ? '접기 ▲' : `전체 ${items.length.toLocaleString()}${unit} 상세보기 ▼`}
+          {open
+            ? en
+              ? 'Collapse ▲'
+              : '접기 ▲'
+            : en
+              ? `View all ${items.length.toLocaleString()} ${unitEn} ▼`
+              : `전체 ${items.length.toLocaleString()}${unit} 상세보기 ▼`}
         </button>
       )}
     </>
@@ -92,7 +136,8 @@ function MiniBars({ bars, ariaLabel }) {
 
 export default function DashboardPage() {
   const lang = useMapLang()
-  const t = (ko) => (lang === 'en' ? DT[ko] ?? ko : ko)
+  const en = lang === 'en'
+  const t = (ko) => (en ? DT[ko] ?? ko : ko)
   const [now, setNow] = useState(() => new Date())
   const [filings, setFilings] = useState(null)
   const [filingCorp, setFilingCorp] = useState('전체') // 공시 운영사 필터
@@ -292,7 +337,7 @@ export default function DashboardPage() {
         <p className="sub">
           {lang === 'en' ? 'Public-data snapshot' : '공개 데이터 기준 현황'} — {lang === 'en' ? 'seed' : '시드'} v{DATA_VERSION.version} · {DATA_VERSION.date} · KOSIS {LAND_PRICE.period.slice(0, 4)}.
           {LAND_PRICE.period.slice(4)}
-          <span className="dash-clock" title="한국 표준시 (UTC+9)">
+          <span className="dash-clock" title={en ? 'Korea Standard Time (UTC+9)' : '한국 표준시 (UTC+9)'}>
             {now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Seoul' })} · {now.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })} <span className="dash-tz">KST</span>
           </span>
         </p>
@@ -308,23 +353,24 @@ export default function DashboardPage() {
             <div className="chart-title">{t('지역별 전력·데이터센터 한눈에 — 어디 중심으로 준비되는가')}</div>
             <div className="rollup-table" role="table">
               <div className="rollup-head" role="row">
-                <span>지역</span>
-                <span>데이터센터</span>
-                <span>2025 신규 발전</span>
-                <span>발전허가(2024+)</span>
+                <span>{t('지역')}</span>
+                <span>{t('데이터센터')}</span>
+                <span>{t('2025 신규 발전')}</span>
+                <span>{t('발전허가(2024+)')}</span>
               </div>
               <ExpandableList
                 items={rollup}
                 initial={8}
                 unit="개 지역"
+                unitEn="regions"
                 render={(r) => (
                   <div key={r.sido} className="rollup-row" role="row">
                     <span className="rollup-sido">
                       <Link to={`/?sido=${encodeURIComponent(r.sido)}`}>{r.sido}</Link>
-                      {CAPITAL_SIDOS.has(r.sido) && <span className="badge" style={{ marginLeft: 6 }}>수도권</span>}
+                      {CAPITAL_SIDOS.has(r.sido) && <span className="badge" style={{ marginLeft: 6 }}>{t('수도권')}</span>}
                     </span>
                     <span>
-                      <b>{r.dcCount}</b>곳{r.dcMw > 0 ? ` · ${r.dcMw.toLocaleString()}MW` : ''}
+                      <b>{r.dcCount}</b>{en ? ' sites' : '곳'}{r.dcMw > 0 ? ` · ${r.dcMw.toLocaleString()}MW` : ''}
                       <span className="rollup-bar">
                         <i style={{ width: `${(r.dcMw / maxRollup) * 100}%` }} />
                       </span>
@@ -335,7 +381,7 @@ export default function DashboardPage() {
                         <i style={{ width: `${(r.newMw / maxRollup) * 100}%` }} />
                       </span>
                     </span>
-                    <span>{r.genCount > 0 ? `${r.genCount}건` : <span className="muted">–</span>}</span>
+                    <span>{r.genCount > 0 ? `${r.genCount}${en ? ' permits' : '건'}` : <span className="muted">–</span>}</span>
                   </div>
                 )}
               />
@@ -366,8 +412,18 @@ export default function DashboardPage() {
               )}
             </div>
             <p className="chart-note">
-              데이터센터(공개 시드) · 2025 신규 발전 설비(설비현황) · 발전허가(3MW 초과 허가대장 2024+). 정렬: DC 공개용량 + 신규 발전
-              합산 내림차순. 지역명 클릭 시 해당 지역 시설 맵으로. 출처: <strong>공개 데이터 기준</strong>(가짜 수치로 채우지 않음).
+              {en ? (
+                <>
+                  Datacenters (public seed) · 2025 new generation assets (capacity registry) · generation permits (registry of permits &gt;3MW, 2024+).
+                  Sorted by DC public capacity + new generation, descending. Click a region name for its facility map. Source:{' '}
+                  <strong>public data only</strong> (no fabricated figures).
+                </>
+              ) : (
+                <>
+                  데이터센터(공개 시드) · 2025 신규 발전 설비(설비현황) · 발전허가(3MW 초과 허가대장 2024+). 정렬: DC 공개용량 + 신규 발전
+                  합산 내림차순. 지역명 클릭 시 해당 지역 시설 맵으로. 출처: <strong>공개 데이터 기준</strong>(가짜 수치로 채우지 않음).
+                </>
+              )}
             </p>
           </section>
           <section className="calc-card">
@@ -375,16 +431,16 @@ export default function DashboardPage() {
             <div className="dash-status">
               <div className="status-rows">
                 <div className="dash-row">
-                  <span className="dot operating" /> 운영 <strong>{d.by.operating}</strong>
+                  <span className="dot operating" /> {t('운영')} <strong>{d.by.operating}</strong>
                 </div>
                 <div className="dash-row">
-                  <span className="dot construction" /> 건설 <strong>{d.by.construction}</strong>
+                  <span className="dot construction" /> {t('건설')} <strong>{d.by.construction}</strong>
                 </div>
                 <div className="dash-row">
-                  <span className="dot planned" /> 계획 <strong>{d.by.planned}</strong>
+                  <span className="dot planned" /> {t('계획')} <strong>{d.by.planned}</strong>
                 </div>
                 <div className="dash-row total">
-                  전체 <strong>{d.total}</strong>곳 · 공개 전력 <strong>{d.totalMw.toLocaleString()}</strong> MW
+                  {en ? 'Total' : '전체'} <strong>{d.total}</strong>{en ? ' sites' : '곳'} · {en ? 'public power' : '공개 전력'} <strong>{d.totalMw.toLocaleString()}</strong> MW
                 </div>
               </div>
               <Gauge pct={d.opPct} label="OPERATIONAL" />
@@ -392,11 +448,12 @@ export default function DashboardPage() {
           </section>
 
           <section className="calc-card">
-            <div className="chart-title">CAPACITY DISTRIBUTION — 지역별 공개 전력</div>
+            <div className="chart-title">{t('CAPACITY DISTRIBUTION — 지역별 공개 전력')}</div>
             <ExpandableList
               items={d.regions}
               initial={6}
               unit="개 지역"
+              unitEn="regions"
               render={([sido, mw]) => (
                 <div key={sido} className="hbar-row">
                   <span className="hbar-label">{sido}</span>
@@ -407,23 +464,30 @@ export default function DashboardPage() {
                 </div>
               )}
             />
-            <p className="chart-note">공개 용량(power_mw_public) 확인 시설만 집계 — 계획·건설 포함.</p>
+            <p className="chart-note">
+              {en
+                ? 'Counts only facilities with confirmed public capacity (power_mw_public) — includes planned & under construction.'
+                : '공개 용량(power_mw_public) 확인 시설만 집계 — 계획·건설 포함.'}
+            </p>
           </section>
 
           <section className="calc-card">
-            <div className="chart-title">CONSTRUCTION PIPELINE — 건설 중 {d.pipeline.length}곳</div>
+            <div className="chart-title">
+              {en ? `CONSTRUCTION PIPELINE — ${d.pipeline.length} under construction` : `CONSTRUCTION PIPELINE — 건설 중 ${d.pipeline.length}곳`}
+            </div>
             <div className="facility-list">
               <ExpandableList
                 items={d.pipeline}
                 initial={6}
                 unit="곳"
+                unitEn="sites"
                 render={(f) => (
                   <Link key={f.id} className="facility-row" to={`/dc/${slugOf(f)}`}>
                     <span className="dot construction" />
                     <span>
                       <span className="name">{f.name}</span>
                       <span className="meta">
-                        {f.sigungu ?? f.sido} · 목표 {f.year ?? '미상'}
+                        {f.sigungu ?? f.sido} · {en ? 'target' : '목표'} {f.year ?? (en ? 'TBD' : '미상')}
                         {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
                       </span>
                     </span>
@@ -431,7 +495,11 @@ export default function DashboardPage() {
                 )}
               />
             </div>
-            <p className="chart-note">공정률은 사업자 미공개 — 목표 연도 기준. 이벤트 타임라인은 D2 어댑터 가동 후.</p>
+            <p className="chart-note">
+              {en
+                ? 'Construction progress is undisclosed by operators — based on target year. Event timeline after the D2 adapter goes live.'
+                : '공정률은 사업자 미공개 — 목표 연도 기준. 이벤트 타임라인은 D2 어댑터 가동 후.'}
+            </p>
           </section>
 
           <div className="dash-section-head" style={{ gridColumn: '1 / -1' }}>
@@ -440,7 +508,7 @@ export default function DashboardPage() {
             <span className="dsh-sub">{t('지가 흐름·사업자 공시 — 준비의 선행 지표')}</span>
           </div>
           <section className="calc-card">
-            <div className="chart-title">LAND PULSE — 입지 시군구 지가변동률 (월간, KOSIS)</div>
+            <div className="chart-title">{t('LAND PULSE — 입지 시군구 지가변동률 (월간, KOSIS)')}</div>
             {[...d.landTop, ...d.landBottom].map(([k, v]) => (
               <div key={k} className="hbar-row">
                 <span className="hbar-label">{k}</span>
@@ -454,25 +522,28 @@ export default function DashboardPage() {
               </div>
             ))}
             <p className="chart-note">
-              상위 4 · 하위 4 — DC 입지 시군구만. 음수는 amber.{' '}
-              <Link to="/land">시·군·구·동 전체 리스트 →</Link>
+              {en ? 'Top 4 · bottom 4 — DC districts only. Negative shown in amber.' : '상위 4 · 하위 4 — DC 입지 시군구만. 음수는 amber.'}{' '}
+              <Link to="/land">{en ? 'Full city/county/district/dong list →' : '시·군·구·동 전체 리스트 →'}</Link>
             </p>
             {d.dongHot && (
               <p className="chart-note">
-                동 단위({d.dongCount}개 구역) 최고 <strong>{d.dongHot.sigungu} {d.dongHot.name} {fmtRate(d.dongHot.rate)}</strong> ·
-                최저 <strong>{d.dongCold.sigungu} {d.dongCold.name} {fmtRate(d.dongCold.rate)}</strong> — 시설 상세에서 구역별 확인.
+                {en ? `Dong level (${d.dongCount} areas) — highest ` : `동 단위(${d.dongCount}개 구역) 최고 `}
+                <strong>{d.dongHot.sigungu} {d.dongHot.name} {fmtRate(d.dongHot.rate)}</strong>
+                {en ? ' · lowest ' : ' · 최저 '}
+                <strong>{d.dongCold.sigungu} {d.dongCold.name} {fmtRate(d.dongCold.rate)}</strong>
+                {en ? ' — see per-area detail on each facility page.' : ' — 시설 상세에서 구역별 확인.'}
               </p>
             )}
           </section>
 
           <section className="calc-card">
-            <div className="chart-title">DC 운영사 투자·공급·DC 공시 — DART 전자공시 (D2)</div>
+            <div className="chart-title">{t('DC 운영사 투자·공급·DC 공시 — DART 전자공시 (D2)')}</div>
             {filings?.available ? (
               <>
                 {/* 운영사 필터 + 건수 — 공시 흐름을 회사별로 끊어 읽게 */}
-                <div className="filing-corps" role="group" aria-label="공시 운영사 필터">
+                <div className="filing-corps" role="group" aria-label={en ? 'Filter filings by operator' : '공시 운영사 필터'}>
                   <button type="button" className={filingCorp === '전체' ? 'on' : ''} onClick={() => setFilingCorp('전체')}>
-                    전체 {filings.filings.length}
+                    {t('전체')} {filings.filings.length}
                   </button>
                   {[...new Set(filings.filings.map((f) => f.corp))].map((c) => (
                     <button key={c} type="button" className={filingCorp === c ? 'on' : ''} onClick={() => setFilingCorp(filingCorp === c ? '전체' : c)}>
@@ -518,11 +589,11 @@ export default function DashboardPage() {
                                   </span>
                                 )}
                                 {f.rcpNo && !scan && (
-                                  <button type="button" className="badge f-kw doc-scan-btn" onClick={runScan} title="공시 원문에서 데이터센터 언급·MW 수치를 스캔">
-                                    본문 스캔
+                                  <button type="button" className="badge f-kw doc-scan-btn" onClick={runScan} title={en ? 'Scan the filing text for datacenter mentions & MW figures' : '공시 원문에서 데이터센터 언급·MW 수치를 스캔'}>
+                                    {t('본문 스캔')}
                                   </button>
                                 )}
-                                {scan === 'loading' && <span className="badge verify" style={{ marginLeft: 6 }}>스캔 중…</span>}
+                                {scan === 'loading' && <span className="badge verify" style={{ marginLeft: 6 }}>{t('스캔 중…')}</span>}
                               </span>
                             </span>
                           </a>
@@ -531,8 +602,8 @@ export default function DashboardPage() {
                               {scan.available ? (
                                 scan.hasDc ? (
                                   <>
-                                    <strong>본문 DC 언급 {scan.snippets.length}건</strong>
-                                    {scan.mwMentions?.length > 0 && <> · MW 언급: {scan.mwMentions.join(', ')}</>}
+                                    <strong>{en ? `${scan.snippets.length} DC mentions in text` : `본문 DC 언급 ${scan.snippets.length}건`}</strong>
+                                    {scan.mwMentions?.length > 0 && <> · {en ? 'MW mentions' : 'MW 언급'}: {scan.mwMentions.join(', ')}</>}
                                     <br />
                                     {scan.snippets.slice(0, 2).map((s, si) => (
                                       <span key={si} className="muted">
@@ -542,10 +613,14 @@ export default function DashboardPage() {
                                     ))}
                                   </>
                                 ) : (
-                                  <>본문에 데이터센터 직접 언급 없음{scan.mwMentions?.length > 0 && <> · MW 언급: {scan.mwMentions.join(', ')}</>} — 원문 링크로 확인 권장</>
+                                  <>
+                                    {en ? 'No direct datacenter mention in text' : '본문에 데이터센터 직접 언급 없음'}
+                                    {scan.mwMentions?.length > 0 && <> · {en ? 'MW mentions' : 'MW 언급'}: {scan.mwMentions.join(', ')}</>}
+                                    {en ? ' — check the source link' : ' — 원문 링크로 확인 권장'}
+                                  </>
                                 )
                               ) : (
-                                <>본문 스캔 실패 — DART 원문 링크로 직접 확인</>
+                                <>{en ? 'Text scan failed — check the DART source link directly' : '본문 스캔 실패 — DART 원문 링크로 직접 확인'}</>
                               )}
                             </p>
                           )}
@@ -555,43 +630,64 @@ export default function DashboardPage() {
                   />
                 </div>
                 <p className="chart-note">
-                  DC 운영·건설 상장사(삼성전자·SK·KT·LG U+·네이버·카카오·GS)의 최근 {filings.window_days ?? 90}일 공시.
-                  DART 공시 제목은 유형만 담겨 '<strong>투자·공급</strong>'은 데이터센터 여부를 본문에서 확인해야 함(제목에 DC 명시 시 '데이터센터' 태그).
+                  {en ? (
+                    <>
+                      Filings from the last {filings.window_days ?? 90} days by listed DC operators/builders (Samsung Electronics·SK·KT·LG U+·Naver·Kakao·GS).
+                      DART titles carry only the filing type, so &apos;<strong>investment/supply</strong>&apos; needs the body checked for datacenter relevance (a &apos;datacenter&apos; tag appears when the title names a DC).
+                    </>
+                  ) : (
+                    <>
+                      DC 운영·건설 상장사(삼성전자·SK·KT·LG U+·네이버·카카오·GS)의 최근 {filings.window_days ?? 90}일 공시.
+                      DART 공시 제목은 유형만 담겨 &apos;<strong>투자·공급</strong>&apos;은 데이터센터 여부를 본문에서 확인해야 함(제목에 DC 명시 시 &apos;데이터센터&apos; 태그).
+                    </>
+                  )}
                 </p>
               </>
             ) : (
               <p className="chart-note">
-                사업자 공시(투자·착공·설비 신설)는 언론보다 선행하는 1차 출처 — DART API 연동 시 실시간 표시.
-                현재 <span className="badge verify">연동 대기</span> (env 설정 후 활성).
+                {en ? (
+                  <>
+                    Operator filings (investment·groundbreaking·new assets) are a primary source that leads the press — shown live once the DART API is connected.
+                    Currently <span className="badge verify">{t('연동 대기')}</span> (active after env is set).
+                  </>
+                ) : (
+                  <>
+                    사업자 공시(투자·착공·설비 신설)는 언론보다 선행하는 1차 출처 — DART API 연동 시 실시간 표시.
+                    현재 <span className="badge verify">연동 대기</span> (env 설정 후 활성).
+                  </>
+                )}
               </p>
             )}
           </section>
 
           {/* 지역별 재해 리스크 — DC 입지 시군구별 SGIS 홍수·산사태 노출률(공개 소스) */}
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
-            <div className="chart-title">지역별 재해 리스크 — DC 입지 시군구 (SGIS 홍수·산사태 영향구역 인구 노출률)</div>
+            <div className="chart-title">{t('지역별 재해 리스크 — DC 입지 시군구 (SGIS 홍수·산사태 영향구역 인구 노출률)')}</div>
             {riskList.length === 0 ? (
               <p className="chart-note">
-                SGIS 국가 자연재해 위험지도 조회 중… (DC 입지 {riskTargets.length}개 시군구 · 서버 연동 시 표시)
+                {en
+                  ? `Querying the SGIS national natural-disaster risk map… (${riskTargets.length} DC districts · shown when the server is connected)`
+                  : `SGIS 국가 자연재해 위험지도 조회 중… (DC 입지 ${riskTargets.length}개 시군구 · 서버 연동 시 표시)`}
               </p>
             ) : (
               <>
                 <div className="rollup-table" role="table">
                   <div className="rollup-head" role="row">
-                    <span>지역</span>
-                    <span>홍수 노출</span>
-                    <span>산사태 노출</span>
+                    <span>{t('지역')}</span>
+                    <span>{t('홍수 노출')}</span>
+                    <span>{t('산사태 노출')}</span>
                     <span>DC</span>
                   </div>
                   <ExpandableList
                     items={riskList}
                     initial={10}
                     unit="개 지역"
+                    unitEn="regions"
                     render={(r) => (
                       <div key={r.key} className="rollup-row" role="row">
                         <span className="rollup-sido">
                           {r.sido} {r.sigungu}
-                          {CAPITAL_SIDOS.has(r.sido) && <span className="badge" style={{ marginLeft: 6 }}>수도권</span>}
+                          {CAPITAL_SIDOS.has(r.sido) && <span className="badge" style={{ marginLeft: 6 }}>{t('수도권')}</span>}
                         </span>
                         <span>
                           {r.floodPct != null ? <b>{r.floodPct}%</b> : <span className="muted">–</span>}
@@ -605,15 +701,25 @@ export default function DashboardPage() {
                             <i style={{ width: `${Math.min(100, r.lsPct ?? 0)}%` }} />
                           </span>
                         </span>
-                        <span>{r.dcCount}곳</span>
+                        <span>{r.dcCount}{en ? ' sites' : '곳'}</span>
                       </div>
                     )}
                   />
                 </div>
                 <p className="chart-note">
-                  홍수·산사태 <strong>영향구역 인구 노출률</strong>(읍면동 기준, 값 클수록 리스크). 정렬: 최대 노출 내림차순.
-                  대표점 = 시군구 내 DC 좌표. 출처: <strong>SGIS 국가 자연재해 위험지도</strong>
-                  ({Object.keys(riskRows).length}/{riskTargets.length} 조회 완료).
+                  {en ? (
+                    <>
+                      Flood & landslide <strong>population exposure in affected zones</strong> (eup/myeon/dong basis, higher = more risk). Sorted by max exposure, descending.
+                      Reference point = DC coordinates within the district. Source: <strong>SGIS national natural-disaster risk map</strong>
+                      {' '}({Object.keys(riskRows).length}/{riskTargets.length} queried).
+                    </>
+                  ) : (
+                    <>
+                      홍수·산사태 <strong>영향구역 인구 노출률</strong>(읍면동 기준, 값 클수록 리스크). 정렬: 최대 노출 내림차순.
+                      대표점 = 시군구 내 DC 좌표. 출처: <strong>SGIS 국가 자연재해 위험지도</strong>
+                      ({Object.keys(riskRows).length}/{riskTargets.length} 조회 완료).
+                    </>
+                  )}
                 </p>
               </>
             )}
@@ -625,28 +731,28 @@ export default function DashboardPage() {
             <span className="dsh-sub">{t('공급 여건 — 계통영향평가·설비·발전 믹스 (DC 입지의 핵심 제약)')}</span>
           </div>
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
-            <div className="chart-title">전력계통영향평가 — 데이터센터 공급 가능/불가 (시도별, 한전 2026.3)</div>
+            <div className="chart-title">{t('전력계통영향평가 — 데이터센터 공급 가능/불가 (시도별, 한전 2026.3)')}</div>
             <div className="dash-status" style={{ marginBottom: 8 }}>
               <div className="status-rows">
                 <div className="dash-row">
-                  수도권 DC 승인율 <strong>{DC_ASSESSMENT_ROLLUP.수도권.ratePct}</strong>% (가능 {Math.round(DC_ASSESSMENT_ROLLUP.수도권.able).toLocaleString()}MW / 불가 {Math.round(DC_ASSESSMENT_ROLLUP.수도권.unable).toLocaleString()}MW)
+                  {en ? 'Capital-region DC approval' : '수도권 DC 승인율'} <strong>{DC_ASSESSMENT_ROLLUP.수도권.ratePct}</strong>% ({en ? 'able' : '가능'} {Math.round(DC_ASSESSMENT_ROLLUP.수도권.able).toLocaleString()}MW / {en ? 'unable' : '불가'} {Math.round(DC_ASSESSMENT_ROLLUP.수도권.unable).toLocaleString()}MW)
                 </div>
                 <div className="dash-row">
-                  비수도권 DC 승인율 <strong>{DC_ASSESSMENT_ROLLUP.비수도권.ratePct}</strong>% (가능 {Math.round(DC_ASSESSMENT_ROLLUP.비수도권.able).toLocaleString()}MW / 불가 {Math.round(DC_ASSESSMENT_ROLLUP.비수도권.unable).toLocaleString()}MW)
+                  {en ? 'Non-capital DC approval' : '비수도권 DC 승인율'} <strong>{DC_ASSESSMENT_ROLLUP.비수도권.ratePct}</strong>% ({en ? 'able' : '가능'} {Math.round(DC_ASSESSMENT_ROLLUP.비수도권.able).toLocaleString()}MW / {en ? 'unable' : '불가'} {Math.round(DC_ASSESSMENT_ROLLUP.비수도권.unable).toLocaleString()}MW)
                 </div>
-                <div className="dash-row total">전국 {DC_ASSESSMENT_ROLLUP.전국.ratePct}% · DC 신청 {Math.round(DC_ASSESSMENT_ROLLUP.전국.able + DC_ASSESSMENT_ROLLUP.전국.unable).toLocaleString()}MW</div>
+                <div className="dash-row total">{en ? 'Nationwide' : '전국'} {DC_ASSESSMENT_ROLLUP.전국.ratePct}% · {en ? 'DC applications' : 'DC 신청'} {Math.round(DC_ASSESSMENT_ROLLUP.전국.able + DC_ASSESSMENT_ROLLUP.전국.unable).toLocaleString()}MW</div>
                 <div className="dash-row">
-                  본심사(위원회) 통과 — 수도권 <strong>{PSIA_REVIEW_2026.capital.passed}/{PSIA_REVIEW_2026.capital.reviewed}</strong>건 (신청 {PSIA_REVIEW_2026.capital.applied}건 대비 {Math.round((PSIA_REVIEW_2026.capital.passed / PSIA_REVIEW_2026.capital.applied) * 1000) / 10}%) · 비수도권 <strong>{PSIA_REVIEW_2026.nonCapital.passed}/{PSIA_REVIEW_2026.nonCapital.reviewed}</strong>건 ({Math.round((PSIA_REVIEW_2026.nonCapital.passed / PSIA_REVIEW_2026.nonCapital.reviewed) * 1000) / 10}%) <span className="muted" style={{ fontSize: '0.85em' }}>{PSIA_REVIEW_2026.asOf}</span>
+                  {en ? 'Main review (committee) passed — capital ' : '본심사(위원회) 통과 — 수도권 '}<strong>{PSIA_REVIEW_2026.capital.passed}/{PSIA_REVIEW_2026.capital.reviewed}</strong>{en ? '' : '건'} ({en ? `${Math.round((PSIA_REVIEW_2026.capital.passed / PSIA_REVIEW_2026.capital.applied) * 1000) / 10}% of ${PSIA_REVIEW_2026.capital.applied} applied` : `신청 ${PSIA_REVIEW_2026.capital.applied}건 대비 ${Math.round((PSIA_REVIEW_2026.capital.passed / PSIA_REVIEW_2026.capital.applied) * 1000) / 10}%`}) · {en ? 'non-capital ' : '비수도권 '}<strong>{PSIA_REVIEW_2026.nonCapital.passed}/{PSIA_REVIEW_2026.nonCapital.reviewed}</strong>{en ? '' : '건'} ({Math.round((PSIA_REVIEW_2026.nonCapital.passed / PSIA_REVIEW_2026.nonCapital.reviewed) * 1000) / 10}%) <span className="muted" style={{ fontSize: '0.85em' }}>{PSIA_REVIEW_2026.asOf}</span>
                 </div>
               </div>
-              <Gauge pct={Math.round(DC_ASSESSMENT_ROLLUP.비수도권.ratePct)} label="비수도권 승인율" sub={`수도권 ${DC_ASSESSMENT_ROLLUP.수도권.ratePct}%`} />
+              <Gauge pct={Math.round(DC_ASSESSMENT_ROLLUP.비수도권.ratePct)} label={t('비수도권 승인율')} sub={`${en ? 'capital' : '수도권'} ${DC_ASSESSMENT_ROLLUP.수도권.ratePct}%`} />
             </div>
             <div className="rollup-table" role="table">
               <div className="rollup-head" role="row">
-                <span>시도</span>
-                <span>DC 공급 승인율</span>
-                <span>가능</span>
-                <span>불가</span>
+                <span>{t('시도')}</span>
+                <span>{t('DC 공급 승인율')}</span>
+                <span>{t('가능')}</span>
+                <span>{t('불가')}</span>
               </div>
               {Object.values(DC_ASSESSMENT)
                 .filter((a) => a.ratePct != null)
@@ -655,10 +761,10 @@ export default function DashboardPage() {
                   <div key={a.sido} className="rollup-row" role="row">
                     <span className="rollup-sido">
                       {a.sido}
-                      {CAPITAL_SIDOS.has(a.sido) && <span className="badge" style={{ marginLeft: 6 }}>수도권</span>}
+                      {CAPITAL_SIDOS.has(a.sido) && <span className="badge" style={{ marginLeft: 6 }}>{t('수도권')}</span>}
                     </span>
                     <span>
-                      <b>{a.ratePct}%</b> <span className="muted" style={{ fontSize: '0.85em' }}>{approvalLabel(a.ratePct)}</span>
+                      <b>{a.ratePct}%</b> <span className="muted" style={{ fontSize: '0.85em' }}>{approvalLabel(a.ratePct, en)}</span>
                       <span className="rollup-bar">
                         <i style={{ width: `${a.ratePct}%`, background: a.ratePct < 45 ? '#ef4444' : undefined }} />
                       </span>
@@ -669,36 +775,52 @@ export default function DashboardPage() {
                 ))}
             </div>
             <div className="note-stack">
-              <p className="chart-note">
-                분산에너지 특별법 <strong>전력계통영향평가</strong> 1차 기술검토(한전) — DC 신·증설 신청 대비 기술적 <strong>전력공급 가능/불가 용량(MW)</strong>. 승인율=가능/(가능+불가).
-              </p>
-              <p className="chart-note key">
-                <strong>수도권 {DC_ASSESSMENT_ROLLUP.수도권.ratePct}% vs 비수도권 {DC_ASSESSMENT_ROLLUP.비수도권.ratePct}%</strong> — 수도권 계통 병목이 실측으로 드러남(경기·인천 신청의 절반 이상이 공급불가). 충북·경북·경남·대구·광주는 100% 가능.
-              </p>
-              <p className="chart-note">
-                신청 시점 누적 심사치이며 부지별 확정은 개별 1차 기술검토(주소 기준). 출처: <strong>{GRID_ASSESSMENT_META.source}</strong>.
-              </p>
+              {en ? (
+                <>
+                  <p className="chart-note">
+                    Distributed Energy Act <strong>Power System Impact Assessment</strong> first-stage technical review (KEPCO) — technical <strong>able/unable supply capacity (MW)</strong> against DC new/expansion applications. Approval = able/(able+unable).
+                  </p>
+                  <p className="chart-note key">
+                    <strong>Capital {DC_ASSESSMENT_ROLLUP.수도권.ratePct}% vs non-capital {DC_ASSESSMENT_ROLLUP.비수도권.ratePct}%</strong> — the capital grid bottleneck shows up in the data (over half of 경기·인천 applications are unsuppliable). 충북·경북·경남·대구·광주 are 100% able.
+                  </p>
+                  <p className="chart-note">
+                    Cumulative review figures at application time; per-site confirmation is a separate first-stage technical review (by address). Source: <strong>{GRID_ASSESSMENT_META.source}</strong>.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="chart-note">
+                    분산에너지 특별법 <strong>전력계통영향평가</strong> 1차 기술검토(한전) — DC 신·증설 신청 대비 기술적 <strong>전력공급 가능/불가 용량(MW)</strong>. 승인율=가능/(가능+불가).
+                  </p>
+                  <p className="chart-note key">
+                    <strong>수도권 {DC_ASSESSMENT_ROLLUP.수도권.ratePct}% vs 비수도권 {DC_ASSESSMENT_ROLLUP.비수도권.ratePct}%</strong> — 수도권 계통 병목이 실측으로 드러남(경기·인천 신청의 절반 이상이 공급불가). 충북·경북·경남·대구·광주는 100% 가능.
+                  </p>
+                  <p className="chart-note">
+                    신청 시점 누적 심사치이며 부지별 확정은 개별 1차 기술검토(주소 기준). 출처: <strong>{GRID_ASSESSMENT_META.source}</strong>.
+                  </p>
+                </>
+              )}
             </div>
           </section>
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
-            <div className="chart-title">지역 계통 공급여유 — 한전 연계가능용량 (시도별, 2027 전망)</div>
+            <div className="chart-title">{t('지역 계통 공급여유 — 한전 연계가능용량 (시도별, 2027 전망)')}</div>
             {(() => {
               const rows = Object.values(GRID_HEADROOM).filter((g) => g.sido !== '광주')
               const maxMw = Math.max(...rows.map((g) => g.mw), 1)
               return (
                 <div className="rollup-table" role="table">
                   <div className="rollup-head" role="row">
-                    <span>시도</span>
-                    <span>계통 공급여유</span>
-                    <span>판정</span>
+                    <span>{t('시도')}</span>
+                    <span>{t('계통 공급여유')}</span>
+                    <span>{t('판정')}</span>
                   </div>
                   {[...rows]
                     .sort((a, b) => b.mw - a.mw)
                     .map((g) => (
                       <div key={g.sido} className="rollup-row" role="row">
                         <span className="rollup-sido">
-                          {g.sido === '전남' ? '전남(광주통합)' : g.sido}
-                          {CAPITAL_SIDOS.has(g.sido) && <span className="badge" style={{ marginLeft: 6 }}>수도권</span>}
+                          {g.sido === '전남' ? (en ? '전남 (incl. Gwangju)' : '전남(광주통합)') : g.sido}
+                          {CAPITAL_SIDOS.has(g.sido) && <span className="badge" style={{ marginLeft: 6 }}>{t('수도권')}</span>}
                         </span>
                         <span>
                           <b>{g.mw.toLocaleString()}</b>MW
@@ -706,33 +828,49 @@ export default function DashboardPage() {
                             <i style={{ width: `${(g.mw / maxMw) * 100}%`, background: g.mw <= 10 ? '#ef4444' : undefined }} />
                           </span>
                         </span>
-                        <span className="muted" style={{ fontSize: '0.9em' }}>{headroomLabel(g.mw)}</span>
+                        <span className="muted" style={{ fontSize: '0.9em' }}>{headroomLabel(g.mw, en)}</span>
                       </div>
                     ))}
                 </div>
               )
             })()}
             <div className="note-stack">
-              <p className="chart-note">
-                한전 <strong>연계가능용량(공급여유)</strong> 시도 총량(2027 전망). DC 승인율(신청 대비)과 달리 <strong>잔여 연결 여력(MW)</strong>을 나타냄.
-              </p>
-              <p className="chart-note key">
-                <strong>인천 5MW(계통 포화)</strong>는 자급률 165%(발전 잉여)와 정반대 — 발전 잉여 ≠ 수용 여유. 경북·충남·전남은 여유·승인율 모두 우수.
-              </p>
-              <p className="chart-note">
-                시도 총량이라 시군구 편차 크며 부지별 확정은 한전 주소검색. 출처: <strong>{GRID_HEADROOM_META.source}</strong>.
-              </p>
+              {en ? (
+                <>
+                  <p className="chart-note">
+                    KEPCO <strong>connectable capacity (headroom)</strong>, province totals (2027 outlook). Unlike DC approval (vs applications), this shows <strong>remaining connection capacity (MW)</strong>.
+                  </p>
+                  <p className="chart-note key">
+                    <strong>인천 5MW (grid saturated)</strong> is the opposite of its 165% self-sufficiency (generation surplus) — generation surplus ≠ hosting headroom. 경북·충남·전남 rank well on both headroom and approval.
+                  </p>
+                  <p className="chart-note">
+                    Province totals hide large county-level variance; per-site confirmation via KEPCO address search. Source: <strong>{GRID_HEADROOM_META.source}</strong>.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="chart-note">
+                    한전 <strong>연계가능용량(공급여유)</strong> 시도 총량(2027 전망). DC 승인율(신청 대비)과 달리 <strong>잔여 연결 여력(MW)</strong>을 나타냄.
+                  </p>
+                  <p className="chart-note key">
+                    <strong>인천 5MW(계통 포화)</strong>는 자급률 165%(발전 잉여)와 정반대 — 발전 잉여 ≠ 수용 여유. 경북·충남·전남은 여유·승인율 모두 우수.
+                  </p>
+                  <p className="chart-note">
+                    시도 총량이라 시군구 편차 크며 부지별 확정은 한전 주소검색. 출처: <strong>{GRID_HEADROOM_META.source}</strong>.
+                  </p>
+                </>
+              )}
             </div>
           </section>
 
           {/* 지역별 송변전 인프라 — 한전 변전소 현황(154kV+). 설비 밀도(여유량 아님). 계통 수용력 그룹에 배치 */}
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
-            <div className="chart-title">지역별 송변전 인프라 — 154kV+ 변전소·변압기 용량 (한전 변전설비현황 2026.7)</div>
+            <div className="chart-title">{t('지역별 송변전 인프라 — 154kV+ 변전소·변압기 용량 (한전 변전설비현황 2026.7)')}</div>
             <div className="rollup-table" role="table">
               <div className="rollup-head" role="row">
-                <span>지역(한전 본부)</span>
-                <span>154kV+ 변전소</span>
-                <span>변압기 용량</span>
+                <span>{t('지역(한전 본부)')}</span>
+                <span>{t('154kV+ 변전소')}</span>
+                <span>{t('변압기 용량')}</span>
                 <span>345kV</span>
               </div>
               {[...SUBSTATIONS].sort((a, b) => b.hv - a.hv).map((s) => {
@@ -741,34 +879,48 @@ export default function DashboardPage() {
                   <div key={s.region} className="rollup-row" role="row">
                     <span className="rollup-sido">{s.region}</span>
                     <span>
-                      <b>{s.hv}</b>개
+                      <b>{s.hv}</b>{en ? '' : '개'}
                       <span className="rollup-bar">
                         <i style={{ width: `${(s.hv / maxHv) * 100}%` }} />
                       </span>
                     </span>
                     <span>{s.hvMva.toLocaleString()}MVA</span>
-                    <span>{s.n345}개</span>
+                    <span>{s.n345}{en ? '' : '개'}</span>
                   </div>
                 )
               })}
             </div>
             <div className="note-stack">
-              <p className="chart-note key">
-                한전 지역본부 단위 변전소 <strong>설비 밀도</strong>(154kV·345kV) — 인프라 규모 지표이며 <strong>부지별 접속 여유용량과는 다름</strong>.
-              </p>
-              <p className="chart-note">
-                여유는 <a href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드</a>/한전 접속가능용량 조회. 출처: <strong>{SUBSTATION_META.source}</strong>.
-              </p>
+              {en ? (
+                <>
+                  <p className="chart-note key">
+                    Substation <strong>asset density</strong> by KEPCO regional HQ (154kV·345kV) — an infrastructure-scale indicator, <strong>not the same as per-site spare connection capacity</strong>.
+                  </p>
+                  <p className="chart-note">
+                    Headroom via <a href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE Cloud</a> / KEPCO connectable-capacity lookup. Source: <strong>{SUBSTATION_META.source}</strong>.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="chart-note key">
+                    한전 지역본부 단위 변전소 <strong>설비 밀도</strong>(154kV·345kV) — 인프라 규모 지표이며 <strong>부지별 접속 여유용량과는 다름</strong>.
+                  </p>
+                  <p className="chart-note">
+                    여유는 <a href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드</a>/한전 접속가능용량 조회. 출처: <strong>{SUBSTATION_META.source}</strong>.
+                  </p>
+                </>
+              )}
             </div>
           </section>
           <section className="calc-card">
-            <div className="chart-title">발전설비 현황 — EPSIS 전력시장 등록설비 (연료원/구분별)</div>
+            <div className="chart-title">{t('발전설비 현황 — EPSIS 전력시장 등록설비 (연료원/구분별)')}</div>
             {epsis?.available ? (
               <>
                 <ExpandableList
                   items={epsis.byFuel || []}
                   initial={8}
                   unit="개 구분"
+                  unitEn="categories"
                   render={(f) => {
                     const max = Math.max(...epsis.byFuel.map((x) => x.mw))
                     return (
@@ -783,55 +935,91 @@ export default function DashboardPage() {
                   }}
                 />
                 <p className="chart-note">
-                  전력시장 등록 발전설비 연료원/구분별 설비용량 — 용량 기재 {epsis.capRows?.toLocaleString?.() ?? epsis.count?.toLocaleString?.() ?? 0}개
-                  {epsis.total ? ` / 전체 ${epsis.total.toLocaleString()}개 등록` : ''}
-                  {epsis.totalMw ? ` · 합계 ${epsis.totalMw.toLocaleString()}MW` : ''}. 설비용량 미기재 구분(DER·재생e공급 등)은 제외 —
-                  이 데이터셋에 용량이 없는 것이지 실제 0MW가 아님. 발전소 레이어 capacity 정합 소스(D3).
+                  {en ? (
+                    <>
+                      Registered generation capacity by fuel/type — {epsis.capRows?.toLocaleString?.() ?? epsis.count?.toLocaleString?.() ?? 0} with capacity listed
+                      {epsis.total ? ` / ${epsis.total.toLocaleString()} registered total` : ''}
+                      {epsis.totalMw ? ` · ${epsis.totalMw.toLocaleString()}MW total` : ''}. Categories without listed capacity (DER·renewable supply, etc.) are excluded —
+                      capacity is missing from this dataset, not actually 0MW. Capacity-reconciliation source for the power-plant layer (D3).
+                    </>
+                  ) : (
+                    <>
+                      전력시장 등록 발전설비 연료원/구분별 설비용량 — 용량 기재 {epsis.capRows?.toLocaleString?.() ?? epsis.count?.toLocaleString?.() ?? 0}개
+                      {epsis.total ? ` / 전체 ${epsis.total.toLocaleString()}개 등록` : ''}
+                      {epsis.totalMw ? ` · 합계 ${epsis.totalMw.toLocaleString()}MW` : ''}. 설비용량 미기재 구분(DER·재생e공급 등)은 제외 —
+                      이 데이터셋에 용량이 없는 것이지 실제 0MW가 아님. 발전소 레이어 capacity 정합 소스(D3).
+                    </>
+                  )}
                 </p>
               </>
             ) : (
               <p className="chart-note">
-                발전소별·연료원별 공식 설비용량(MW) — 발전소 레이어의 용량 공백과 집단에너지 좌표 공백을 메우는 소스.
-                data.go.kr 인증키(무인증 EPSIS 열람 별개) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
+                {en ? (
+                  <>
+                    Official capacity (MW) by plant/fuel — the source that fills capacity gaps in the plant layer and coordinate gaps for district energy.
+                    Active once the data.go.kr auth key is connected (separate from unauthenticated EPSIS browsing). Currently <span className="badge verify">{t('연동 대기')}</span>.
+                  </>
+                ) : (
+                  <>
+                    발전소별·연료원별 공식 설비용량(MW) — 발전소 레이어의 용량 공백과 집단에너지 좌표 공백을 메우는 소스.
+                    data.go.kr 인증키(무인증 EPSIS 열람 별개) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
+                  </>
+                )}
               </p>
             )}
           </section>
 
           <section className="calc-card">
-            <div className="chart-title">발전 믹스 — 재생·원자력·화석 비중 {mix?.live ? '(5분 실측, 라이브)' : '(거래실적 기준)'}</div>
+            <div className="chart-title">
+              {en
+                ? `Generation mix — renewable·nuclear·fossil share ${mix?.live ? '(5-min actual, live)' : '(trading records)'}`
+                : `발전 믹스 — 재생·원자력·화석 비중 ${mix?.live ? '(5분 실측, 라이브)' : '(거래실적 기준)'}`}
+            </div>
             {mix ? (
               <>
                 <div className="dash-status">
                   <div className="status-rows">
                     <div className="dash-row">
-                      재생에너지 <strong>{mix.renewPct}</strong>%
+                      {t('재생에너지')} <strong>{mix.renewPct}</strong>%
                     </div>
                     <div className="dash-row">
-                      원자력 <strong>{mix.nuclearPct}</strong>%
+                      {t('원자력')} <strong>{mix.nuclearPct}</strong>%
                     </div>
                     <div className="dash-row">
-                      화석·기타 <strong>{mix.fossilPct}</strong>%
+                      {t('화석·기타')} <strong>{mix.fossilPct}</strong>%
                     </div>
                     {mix.demandMw != null && (
                       <div className="dash-row">
-                        시장수요 <strong>{Math.round(mix.demandMw).toLocaleString()}</strong>MW
+                        {t('시장수요')} <strong>{Math.round(mix.demandMw).toLocaleString()}</strong>MW
                       </div>
                     )}
-                    {mix.asOf && <div className="dash-row total">기준 {mix.asOf}</div>}
+                    {mix.asOf && <div className="dash-row total">{en ? 'as of' : '기준'} {mix.asOf}</div>}
                   </div>
-                  <Gauge pct={Math.max(0, Math.min(100, mix.renewPct))} label="재생 비중" />
+                  <Gauge pct={Math.max(0, Math.min(100, mix.renewPct))} label={t('재생 비중')} />
                 </div>
                 {/* 재생-원자력-화석 스택 바 */}
-                <div className="status-bar" role="img" aria-label={`재생 ${mix.renewPct}%, 원자력 ${mix.nuclearPct}%, 화석 ${mix.fossilPct}%`} style={{ marginTop: 4 }}>
+                <div className="status-bar" role="img" aria-label={en ? `renewable ${mix.renewPct}%, nuclear ${mix.nuclearPct}%, fossil ${mix.fossilPct}%` : `재생 ${mix.renewPct}%, 원자력 ${mix.nuclearPct}%, 화석 ${mix.fossilPct}%`} style={{ marginTop: 4 }}>
                   {mix.renewPct > 0 && <span className="seg op" style={{ flexGrow: mix.renewPct }} />}
                   {mix.nuclearPct > 0 && <span className="seg co" style={{ flexGrow: mix.nuclearPct }} />}
                   {mix.fossilPct > 0 && <span className="seg pl" style={{ flexGrow: mix.fossilPct }} />}
                 </div>
                 <p className="chart-note">
                   {mix.live ? (
+                    en ? (
+                      <>
+                        <strong>5-minute actual</strong> output by source (KPX grid basis · mainland+Jeju) — what the grid is running on right now.
+                        The higher the renewable share, the more intermittency management (ESS·grid) matters.
+                      </>
+                    ) : (
+                      <>
+                        <strong>5분 단위 실측</strong> 발전원별 출력(KPX 계통기준·육지+제주) — 지금 이 순간 계통이 어떤
+                        전원으로 돌아가는지. 재생 비중이 높을수록 간헐성 대응(ESS·계통)이 관건.
+                      </>
+                    )
+                  ) : en ? (
                     <>
-                      <strong>5분 단위 실측</strong> 발전원별 출력(KPX 계통기준·육지+제주) — 지금 이 순간 계통이 어떤
-                      전원으로 돌아가는지. 재생 비중이 높을수록 간헐성 대응(ESS·계통)이 관건.
+                      Grid characteristics via the actual generation mix — the higher the renewable share, the more intermittency management (ESS·grid) matters. Source:{' '}
+                      <strong>KPX trading records</strong> (data.go.kr, actual trading by fuel).
                     </>
                   ) : (
                     <>
@@ -839,19 +1027,28 @@ export default function DashboardPage() {
                       <strong>KPX 전력거래실적</strong>(data.go.kr, 연료원별 실거래).
                     </>
                   )}{' '}
-                  <Link to="/insights/market-2025h2">±15점 시대 →</Link>
+                  <Link to="/insights/market-2025h2">{en ? 'The ±15-point era →' : '±15점 시대 →'}</Link>
                 </p>
               </>
             ) : (
               <p className="chart-note">
-                실제 발전 믹스의 재생·원자력·화석 비중 — 계통 특성 지표. KPX 전력거래실적(data.go.kr) 연동 시 활성. 현재{' '}
-                <span className="badge verify">연동 대기</span>.
+                {en ? (
+                  <>
+                    Renewable·nuclear·fossil share of the actual generation mix — a grid-characteristics indicator. Active once KPX trading records (data.go.kr) are connected. Currently{' '}
+                    <span className="badge verify">{t('연동 대기')}</span>.
+                  </>
+                ) : (
+                  <>
+                    실제 발전 믹스의 재생·원자력·화석 비중 — 계통 특성 지표. KPX 전력거래실적(data.go.kr) 연동 시 활성. 현재{' '}
+                    <span className="badge verify">연동 대기</span>.
+                  </>
+                )}
               </p>
             )}
           </section>
 
           <section className="calc-card">
-            <div className="chart-title">발전 실적 — KPX 전력거래실적 (연료원별, 라이브)</div>
+            <div className="chart-title">{t('발전 실적 — KPX 전력거래실적 (연료원별, 라이브)')}</div>
             {trading?.available && trading.byFuel?.length ? (
               <>
                 {(() => {
@@ -862,6 +1059,7 @@ export default function DashboardPage() {
                       items={bars}
                       initial={8}
                       unit="개 연료원"
+                      unitEn="fuels"
                       render={(f) => (
                         <div key={f.fuel} className="hbar-row">
                           <span className="hbar-label">{f.fuel}</span>
@@ -875,22 +1073,41 @@ export default function DashboardPage() {
                   )
                 })()}
                 <p className="chart-note">
-                  연료원별 실제 전력거래량{trading.asOf ? ` · ${trading.asOf}` : ''}
-                  {trading.totalMwh ? ` · 합계 ${trading.totalMwh.toLocaleString()}MWh` : ''}. 설비용량(EPSIS)과 달리
-                  실제 발전 믹스 — 값은 수정정산 변동 가능.
+                  {en ? (
+                    <>
+                      Actual traded electricity by fuel{trading.asOf ? ` · ${trading.asOf}` : ''}
+                      {trading.totalMwh ? ` · ${trading.totalMwh.toLocaleString()}MWh total` : ''}. Unlike installed capacity (EPSIS),
+                      this is the actual generation mix — values may change with settlement revisions.
+                    </>
+                  ) : (
+                    <>
+                      연료원별 실제 전력거래량{trading.asOf ? ` · ${trading.asOf}` : ''}
+                      {trading.totalMwh ? ` · 합계 ${trading.totalMwh.toLocaleString()}MWh` : ''}. 설비용량(EPSIS)과 달리
+                      실제 발전 믹스 — 값은 수정정산 변동 가능.
+                    </>
+                  )}
                 </p>
               </>
             ) : (
               <p className="chart-note">
-                일별 연료원별 실제 전력거래량(발전 실적) — 설비용량이 아니라 계통에서 실제 돌아간 발전 믹스.
-                KPX 전력거래실적(data.go.kr) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
+                {en ? (
+                  <>
+                    Daily actual traded electricity by fuel (generation output) — the mix actually run on the grid, not installed capacity.
+                    Active once KPX trading records (data.go.kr) are connected. Currently <span className="badge verify">{t('연동 대기')}</span>.
+                  </>
+                ) : (
+                  <>
+                    일별 연료원별 실제 전력거래량(발전 실적) — 설비용량이 아니라 계통에서 실제 돌아간 발전 믹스.
+                    KPX 전력거래실적(data.go.kr) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span>.
+                  </>
+                )}
               </p>
             )}
           </section>
 
           {/* DC 수요-공급 갭 — 전기사용신청 vs 한전 공급가능(11차 전기본). 부지 병목의 정량 근거 */}
           <section className="calc-card">
-            <div className="chart-title">DC 수요-공급 갭 — 전기사용신청 vs 공급가능 전력 (MW)</div>
+            <div className="chart-title">{t('DC 수요-공급 갭 — 전기사용신청 vs 공급가능 전력 (MW)')}</div>
             {(() => {
               const max = Math.max(...DC_DEMAND_OUTLOOK.map((r) => r.demandMw))
               return (
@@ -898,6 +1115,7 @@ export default function DashboardPage() {
                   items={DC_DEMAND_OUTLOOK}
                   initial={5}
                   unit="개년"
+                  unitEn="years"
                   render={(r) => (
                     <div key={r.y} className="hbar-row">
                       <span className="hbar-label">
@@ -920,41 +1138,52 @@ export default function DashboardPage() {
               )
             })()}
             <p className="chart-note">
-              막대: 연한색=수요(한전 제출 DC 전기사용신청) · 진한색=한전 공급 가능 전력. 2027년 전망 기준 신청의{' '}
-              <strong>{Math.round((DC_DEMAND_OUTLOOK.at(-1).supplyMw / DC_DEMAND_OUTLOOK.at(-1).demandMw) * 100)}%만 공급 가능</strong>{' '}
-              — 부지·계통이 병목이라는 정량 근거. 신청은 실제 착공과 다르며 지자체 프로젝트 다수는 수전용량 미확정(보수적 해석).
-              출처: {DC_DEMAND_OUTLOOK_META.source}.
+              {en ? (
+                <>
+                  Bars: light = demand (DC electricity-use applications filed with KEPCO) · dark = KEPCO available supply. On the 2027 outlook,{' '}
+                  <strong>only {Math.round((DC_DEMAND_OUTLOOK.at(-1).supplyMw / DC_DEMAND_OUTLOOK.at(-1).demandMw) * 100)}% of applications can be supplied</strong>{' '}
+                  — quantitative evidence that sites·grid are the bottleneck. Applications differ from actual groundbreaking, and many municipal projects have unconfirmed intake capacity (conservative reading).
+                  Source: {DC_DEMAND_OUTLOOK_META.source}.
+                </>
+              ) : (
+                <>
+                  막대: 연한색=수요(한전 제출 DC 전기사용신청) · 진한색=한전 공급 가능 전력. 2027년 전망 기준 신청의{' '}
+                  <strong>{Math.round((DC_DEMAND_OUTLOOK.at(-1).supplyMw / DC_DEMAND_OUTLOOK.at(-1).demandMw) * 100)}%만 공급 가능</strong>{' '}
+                  — 부지·계통이 병목이라는 정량 근거. 신청은 실제 착공과 다르며 지자체 프로젝트 다수는 수전용량 미확정(보수적 해석).
+                  출처: {DC_DEMAND_OUTLOOK_META.source}.
+                </>
+              )}
             </p>
           </section>
 
           {/* 전력시장 가격 — KPX SMP(계통한계가격) 오늘 시간별. DC 전력 OPEX의 실시간 신호 */}
           <section className="calc-card">
-            <div className="chart-title">전력시장 가격 — SMP 계통한계가격 (하루전 확정, 시간별)</div>
+            <div className="chart-title">{t('전력시장 가격 — SMP 계통한계가격 (하루전 확정, 시간별)')}</div>
             {smp?.available && smp.rows?.length ? (
               <>
                 <div className="dash-status">
                   <div className="status-rows">
                     <div className="dash-row">
-                      최신 {smp.latest.hour}시 <strong>{smp.latest.smp.toLocaleString()}</strong>원/kWh
+                      {en ? `Latest ${smp.latest.hour}:00` : `최신 ${smp.latest.hour}시`} <strong>{smp.latest.smp.toLocaleString()}</strong>{en ? ' KRW/kWh' : '원/kWh'}
                     </div>
                     <div className="dash-row">
-                      오늘 단순평균 <strong>{smp.avgSmp.toLocaleString()}</strong>원/kWh
+                      {en ? 'Today simple avg' : '오늘 단순평균'} <strong>{smp.avgSmp.toLocaleString()}</strong>{en ? ' KRW/kWh' : '원/kWh'}
                     </div>
                     <div className="dash-row">
-                      범위 {smp.minSmp.toLocaleString()}~{smp.maxSmp.toLocaleString()}원
+                      {en ? 'Range' : '범위'} {smp.minSmp.toLocaleString()}~{smp.maxSmp.toLocaleString()}{en ? ' KRW' : '원'}
                     </div>
-                    {smp.asOf && <div className="dash-row total">기준 {smp.asOf} · 육지</div>}
+                    {smp.asOf && <div className="dash-row total">{en ? 'as of' : '기준'} {smp.asOf} · {en ? 'mainland' : '육지'}</div>}
                   </div>
                 </div>
                 <div className="hbar-mini-wrap">
-                  <div className="hbar-mini" role="img" aria-label="오늘 시간별 SMP">
+                  <div className="hbar-mini" role="img" aria-label={en ? 'SMP by hour today' : '오늘 시간별 SMP'}>
                     {(() => {
                       const max = Math.max(...smp.rows.map((r) => r.smp), 1)
                       return smp.rows.map((r) => (
                         <span
                           key={r.hour}
                           className="hbar-mini-bar"
-                          title={`${r.hour}시: ${r.smp.toLocaleString()}원/kWh`}
+                          title={en ? `${r.hour}:00: ${r.smp.toLocaleString()} KRW/kWh` : `${r.hour}시: ${r.smp.toLocaleString()}원/kWh`}
                           style={{ height: `${Math.max(6, Math.round((r.smp / max) * 100))}%` }}
                         />
                       ))
@@ -962,98 +1191,148 @@ export default function DashboardPage() {
                   </div>
                   <div className="hbar-mini-x" aria-hidden>
                     {smp.rows.filter((_, i) => i % Math.max(1, Math.ceil(smp.rows.length / 6)) === 0).map((r) => (
-                      <span key={r.hour}>{r.hour}시</span>
+                      <span key={r.hour}>{en ? `${r.hour}h` : `${r.hour}시`}</span>
                     ))}
                   </div>
                 </div>
                 <p className="chart-note">
-                  거래시간별 전력시장 도매가격(원/kWh) — DC 전력 OPEX·PPA 협상의 기준 신호. 하루전 발전계획 확정가로
-                  매일 23시경 갱신. 평균은 시간별 <strong>단순평균</strong>(KPX 공표 일 가중평균과 다름).
-                  {smp.peakDemandMw ? ` 예측수요 피크 ${Math.round(smp.peakDemandMw).toLocaleString()}MW.` : ''} 출처: {smp.source}.
+                  {en ? (
+                    <>
+                      Wholesale market price by trading hour (KRW/kWh) — the reference signal for DC power OPEX·PPA negotiation. Day-ahead confirmed price,
+                      updated daily around 23:00. The average is a <strong>simple hourly average</strong> (differs from KPX&apos;s published daily weighted average).
+                      {smp.peakDemandMw ? ` Forecast demand peak ${Math.round(smp.peakDemandMw).toLocaleString()}MW.` : ''} Source: {smp.source}.
+                    </>
+                  ) : (
+                    <>
+                      거래시간별 전력시장 도매가격(원/kWh) — DC 전력 OPEX·PPA 협상의 기준 신호. 하루전 발전계획 확정가로
+                      매일 23시경 갱신. 평균은 시간별 <strong>단순평균</strong>(KPX 공표 일 가중평균과 다름).
+                      {smp.peakDemandMw ? ` 예측수요 피크 ${Math.round(smp.peakDemandMw).toLocaleString()}MW.` : ''} 출처: {smp.source}.
+                    </>
+                  )}
                 </p>
               </>
             ) : (
               <p className="chart-note">
-                전력시장 도매가격(SMP)·수요예측 시간별 — DC 전력 OPEX의 기준 신호. 신형 계통한계가격·수요예측
-                API(자동승인, 매일 23시경 갱신) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span> ·{' '}
-                <a href="https://new.kpx.or.kr/smpInland.es?mid=a10606080100" target="_blank" rel="noreferrer" className="mini-link">
-                  KPX 공표 SMP 직접 보기 →
-                </a>
+                {en ? (
+                  <>
+                    Wholesale market price (SMP)·demand forecast by hour — the reference signal for DC power OPEX. Active once the new SMP·demand-forecast
+                    API (auto-approved, updated daily around 23:00) is connected. Currently <span className="badge verify">{t('연동 대기')}</span> ·{' '}
+                    <a href="https://new.kpx.or.kr/smpInland.es?mid=a10606080100" target="_blank" rel="noreferrer" className="mini-link">
+                      View KPX-published SMP directly →
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    전력시장 도매가격(SMP)·수요예측 시간별 — DC 전력 OPEX의 기준 신호. 신형 계통한계가격·수요예측
+                    API(자동승인, 매일 23시경 갱신) 연동 시 활성. 현재 <span className="badge verify">연동 대기</span> ·{' '}
+                    <a href="https://new.kpx.or.kr/smpInland.es?mid=a10606080100" target="_blank" rel="noreferrer" className="mini-link">
+                      KPX 공표 SMP 직접 보기 →
+                    </a>
+                  </>
+                )}
               </p>
             )}
           </section>
 
           {/* 전력 원가 환경 — 한전 구입단가(2024). DC OPEX 맥락 */}
           <section className="calc-card">
-            <div className="chart-title">전력 원가 환경 — 한전 구입단가 (2024, DC OPEX 지표)</div>
+            <div className="chart-title">{t('전력 원가 환경 — 한전 구입단가 (2024, DC OPEX 지표)')}</div>
             <div className="dash-status">
               <div className="status-rows">
                 <div className="dash-row">
-                  평균 구입단가 <strong>{PURCHASE_SUMMARY.avgPrice}</strong>원/kWh
+                  {en ? 'Avg purchase price' : '평균 구입단가'} <strong>{PURCHASE_SUMMARY.avgPrice}</strong>{en ? ' KRW/kWh' : '원/kWh'}
                 </div>
                 <div className="dash-row">
-                  여름 피크 <strong>{PRICE_PEAK.price}</strong>원 ({PRICE_PEAK.m}월) · 최저 <strong>{PRICE_LOW.price}</strong>원 ({PRICE_LOW.m}월)
+                  {en ? 'Summer peak' : '여름 피크'} <strong>{PRICE_PEAK.price}</strong>{en ? ` KRW (mo. ${PRICE_PEAK.m})` : `원 (${PRICE_PEAK.m}월)`} · {en ? 'low' : '최저'} <strong>{PRICE_LOW.price}</strong>{en ? ` KRW (mo. ${PRICE_LOW.m})` : `원 (${PRICE_LOW.m}월)`}
                 </div>
                 <div className="dash-row">
-                  PPA(직접계약) 비중 <strong>{PURCHASE_SUMMARY.ppaSharePct}</strong>% · 단가 {PURCHASE_SUMMARY.ppaPrice}원
+                  {en ? 'PPA (direct contract) share' : 'PPA(직접계약) 비중'} <strong>{PURCHASE_SUMMARY.ppaSharePct}</strong>% · {en ? 'price' : '단가'} {PURCHASE_SUMMARY.ppaPrice}{en ? ' KRW' : '원'}
                 </div>
-                <div className="dash-row total">구입량 {Math.round(PURCHASE_SUMMARY.totalMwh / 1e6)}TWh (2024)</div>
+                <div className="dash-row total">{en ? `Purchased ${Math.round(PURCHASE_SUMMARY.totalMwh / 1e6)} TWh (2024)` : `구입량 ${Math.round(PURCHASE_SUMMARY.totalMwh / 1e6)}TWh (2024)`}</div>
               </div>
-              <Gauge pct={Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)} label="여름 원가 상승폭" />
+              <Gauge pct={Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)} label={t('여름 원가 상승폭')} />
             </div>
             {/* 월별 구입단가 미니 바 */}
             <MiniBars
-              ariaLabel="2024 월별 한전 구입단가"
+              ariaLabel={en ? '2024 monthly KEPCO purchase price' : '2024 월별 한전 구입단가'}
               bars={PURCHASE_PRICE_2024.map((p) => {
                 const max = PRICE_PEAK.price
                 const min = PRICE_LOW.price - 10
-                return { key: p.m, mon: p.m, h: Math.max(6, ((p.price - min) / (max - min)) * 100), hot: p.price >= 150, title: `${p.m}월 ${p.price}원/kWh` }
+                return { key: p.m, mon: p.m, h: Math.max(6, ((p.price - min) / (max - min)) * 100), hot: p.price >= 150, title: en ? `mo. ${p.m}: ${p.price} KRW/kWh` : `${p.m}월 ${p.price}원/kWh` }
               })}
             />
             <div className="note-stack">
-              <p className="chart-note key">
-                DC 운영비의 큰 축이 전력비 — <strong>냉방 수요가 겹치는 7~8월 구입단가가 최저월 대비 {Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)}% 급등</strong>(열 관리 설계·PUE가 원가에 직결).
-              </p>
-              <p className="chart-note">
-                직접 재생조달(PPA)은 아직 {PURCHASE_SUMMARY.ppaSharePct}%로 RE100 조달 초기 단계. 전국 도매 구입단가(한전)로 개별 계약·지역 차등은 별개.
-              </p>
-              <p className="chart-note">출처: <strong>{POWER_MARKET_META.source}</strong>.</p>
+              {en ? (
+                <>
+                  <p className="chart-note key">
+                    Power is a major share of DC operating cost — <strong>in July–August, when cooling demand overlaps, the purchase price jumps {Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)}% vs the lowest month</strong> (thermal design·PUE feed directly into cost).
+                  </p>
+                  <p className="chart-note">
+                    Direct renewable procurement (PPA) is still {PURCHASE_SUMMARY.ppaSharePct}% — early-stage RE100 sourcing. National wholesale purchase price (KEPCO); individual contracts·regional differentials are separate.
+                  </p>
+                  <p className="chart-note">Source: <strong>{POWER_MARKET_META.source}</strong>.</p>
+                </>
+              ) : (
+                <>
+                  <p className="chart-note key">
+                    DC 운영비의 큰 축이 전력비 — <strong>냉방 수요가 겹치는 7~8월 구입단가가 최저월 대비 {Math.round(((PRICE_PEAK.price - PRICE_LOW.price) / PRICE_LOW.price) * 100)}% 급등</strong>(열 관리 설계·PUE가 원가에 직결).
+                  </p>
+                  <p className="chart-note">
+                    직접 재생조달(PPA)은 아직 {PURCHASE_SUMMARY.ppaSharePct}%로 RE100 조달 초기 단계. 전국 도매 구입단가(한전)로 개별 계약·지역 차등은 별개.
+                  </p>
+                  <p className="chart-note">출처: <strong>{POWER_MARKET_META.source}</strong>.</p>
+                </>
+              )}
             </div>
           </section>
 
           {/* 전국 전력수급 — 월별 공급예비율. 여름 계통 여력 최소 */}
           <section className="calc-card">
-            <div className="chart-title">전력수급 안정성 — 전국 공급예비율 (최근 12개월)</div>
+            <div className="chart-title">{t('전력수급 안정성 — 전국 공급예비율 (최근 12개월)')}</div>
             <div className="dash-status" style={{ marginBottom: 8 }}>
               <div className="status-rows">
                 <div className="dash-row">
-                  여름 최저 예비율 <strong>{RESERVE_MIN.pct}</strong>% (&apos;{RESERVE_MIN.ym})
+                  {en ? 'Summer low reserve' : '여름 최저 예비율'} <strong>{RESERVE_MIN.pct}</strong>% (&apos;{RESERVE_MIN.ym})
                 </div>
                 <div className="dash-row">
-                  겨울 최고 <strong>{RESERVE_MAX.pct}</strong>% (&apos;{RESERVE_MAX.ym})
+                  {en ? 'Winter high' : '겨울 최고'} <strong>{RESERVE_MAX.pct}</strong>% (&apos;{RESERVE_MAX.ym})
                 </div>
-                <div className="dash-row total">피크일 기준 공급예비율</div>
+                <div className="dash-row total">{en ? 'Reserve margin on peak day' : '피크일 기준 공급예비율'}</div>
               </div>
-              <Gauge pct={Math.round(RESERVE_MIN.pct)} label="여름 최저 예비율" sub={`겨울 ${RESERVE_MAX.pct}%`} />
+              <Gauge pct={Math.round(RESERVE_MIN.pct)} label={t('여름 최저 예비율')} sub={`${en ? 'winter' : '겨울'} ${RESERVE_MAX.pct}%`} />
             </div>
             <MiniBars
-              ariaLabel="월별 공급예비율"
+              ariaLabel={en ? 'Monthly reserve margin' : '월별 공급예비율'}
               bars={RESERVE_12M.map(([ym, pct]) => ({
                 key: ym,
                 mon: parseInt(ym.split('.')[1], 10),
                 h: Math.max(6, (pct / RESERVE_MAX.pct) * 100),
                 hot: pct < 11,
-                title: `'${ym} · 예비율 ${pct}%`,
+                title: en ? `'${ym} · reserve ${pct}%` : `'${ym} · 예비율 ${pct}%`,
               }))}
             />
             <div className="note-stack">
-              <p className="chart-note key">
-                공급예비율이 낮을수록 계통 여력이 얇다 — <strong>DC 냉방부하가 최대인 여름(&apos;{RESERVE_MIN.ym})에 예비율 {RESERVE_MIN.pct}%로 최저</strong>.
-              </p>
-              <p className="chart-note">
-                대형 신규부하 접속·수급 리스크가 여름에 집중된다는 신호(원가 급등과 같은 방향). 전국 지표로 지역 계통 제약과는 별개.
-              </p>
-              <p className="chart-note">출처: <strong>{POWER_RESERVE_META.source}</strong>.</p>
+              {en ? (
+                <>
+                  <p className="chart-note key">
+                    A lower reserve margin means thinner grid slack — <strong>reserve bottoms at {RESERVE_MIN.pct}% in summer (&apos;{RESERVE_MIN.ym}), when DC cooling load peaks</strong>.
+                  </p>
+                  <p className="chart-note">
+                    A signal that large new-load connection·supply risk concentrates in summer (same direction as the cost spike). A national metric, separate from regional grid constraints.
+                  </p>
+                  <p className="chart-note">Source: <strong>{POWER_RESERVE_META.source}</strong>.</p>
+                </>
+              ) : (
+                <>
+                  <p className="chart-note key">
+                    공급예비율이 낮을수록 계통 여력이 얇다 — <strong>DC 냉방부하가 최대인 여름(&apos;{RESERVE_MIN.ym})에 예비율 {RESERVE_MIN.pct}%로 최저</strong>.
+                  </p>
+                  <p className="chart-note">
+                    대형 신규부하 접속·수급 리스크가 여름에 집중된다는 신호(원가 급등과 같은 방향). 전국 지표로 지역 계통 제약과는 별개.
+                  </p>
+                  <p className="chart-note">출처: <strong>{POWER_RESERVE_META.source}</strong>.</p>
+                </>
+              )}
             </div>
           </section>
 
@@ -1063,13 +1342,13 @@ export default function DashboardPage() {
             <span className="dsh-sub">{t('공개 API 연동 상태 — 값은 노출되지 않음')}</span>
           </div>
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
-            <div className="chart-title">API 연동 현황 — 서버 env 진단</div>
+            <div className="chart-title">{t('API 연동 현황 — 서버 env 진단')}</div>
             {status?.sources ? (
               <>
                 <div className="api-status-grid">
                   {status.sources.map((s) => {
                     const state = s.available ? 'live' : s.configured ? 'set' : 'wait'
-                    const label = s.available ? '연동' : s.configured ? '설정됨' : 'env 대기'
+                    const label = s.available ? t('연동') : s.configured ? t('설정됨') : t('env 대기')
                     return (
                       <div key={s.key} className="api-status-row">
                         <span className={`api-dot ${state}`} />
@@ -1084,25 +1363,52 @@ export default function DashboardPage() {
                   })}
                 </div>
                 <p className="chart-note">
-                  ● 연동(실응답) · ◐ 설정됨(env 있음, 업스트림 응답 대기/스키마 확인) · ○ env 대기. 값은 노출되지 않습니다.
-                  {status.probed ? '' : ' (probe 미실행 — 설정 여부만)'} 스키마 보정은 각 프록시의 `*_URL` env로 재배포 없이 가능.
+                  {en ? (
+                    <>
+                      ● Live (real response) · ◐ Set (env present, awaiting upstream response/schema check) · ○ Awaiting env. No values are exposed.
+                      {status.probed ? '' : ' (probe not run — configured status only)'} Schema fixes are possible via each proxy&apos;s `*_URL` env without redeploy.
+                    </>
+                  ) : (
+                    <>
+                      ● 연동(실응답) · ◐ 설정됨(env 있음, 업스트림 응답 대기/스키마 확인) · ○ env 대기. 값은 노출되지 않습니다.
+                      {status.probed ? '' : ' (probe 미실행 — 설정 여부만)'} 스키마 보정은 각 프록시의 `*_URL` env로 재배포 없이 가능.
+                    </>
+                  )}
                 </p>
                 <p className="chart-note" style={{ marginTop: 6 }}>
-                  ※ vworld(지번주소·용도지역)는 <strong>브라우저 직접 호출</strong>로 전환됨(서버 프록시 502는 정상) — 실제 동작은
-                  상단 주소검색으로 확인. 활성 조건: Vercel env <code>VITE_VWORLD_KEY</code>(도메인 등록키).
+                  {en ? (
+                    <>
+                      ※ vworld (lot address·zoning) has moved to <strong>direct browser calls</strong> (a server-proxy 502 is expected) — verify actual behavior
+                      via the address search at top. Activation: Vercel env <code>VITE_VWORLD_KEY</code> (domain-registered key).
+                    </>
+                  ) : (
+                    <>
+                      ※ vworld(지번주소·용도지역)는 <strong>브라우저 직접 호출</strong>로 전환됨(서버 프록시 502는 정상) — 실제 동작은
+                      상단 주소검색으로 확인. 활성 조건: Vercel env <code>VITE_VWORLD_KEY</code>(도메인 등록키).
+                    </>
+                  )}
                 </p>
               </>
             ) : (
               <p className="chart-note">
-                연동 현황은 서버리스(Vercel) 환경에서 표시됩니다. 정적 프리뷰에서는 <span className="badge verify">진단 대기</span>.
+                {en ? (
+                  <>
+                    Integration status is shown in the serverless (Vercel) environment. In static preview: <span className="badge verify">{t('진단 대기')}</span>.
+                  </>
+                ) : (
+                  <>
+                    연동 현황은 서버리스(Vercel) 환경에서 표시됩니다. 정적 프리뷰에서는 <span className="badge verify">진단 대기</span>.
+                  </>
+                )}
               </p>
             )}
           </section>
         </div>
 
         <p className="footer-note">
-          PUE 평균·전력망 연결률은 사업자 미공개/어댑터 대기 항목 — 가짜 수치로 채우지 않습니다. 계통 여유용량(D3)·
-          공시 알림(D2)은 API 연동 시 즉시 활성화됩니다.
+          {en
+            ? 'Average PUE·grid-connection rate are undisclosed by operators / awaiting adapters — not filled with fabricated figures. Grid headroom (D3)·filing alerts (D2) activate immediately once the APIs are connected.'
+            : 'PUE 평균·전력망 연결률은 사업자 미공개/어댑터 대기 항목 — 가짜 수치로 채우지 않습니다. 계통 여유용량(D3)·공시 알림(D2)은 API 연동 시 즉시 활성화됩니다.'}
         </p>
       </main>
     </>
