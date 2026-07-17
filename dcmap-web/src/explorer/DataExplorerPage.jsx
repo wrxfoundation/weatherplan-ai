@@ -178,11 +178,16 @@ const DATASETS = [
     const snapNote = LATEST_SNAPSHOT
       ? `데이터 자산화 P1 스냅샷 파이프라인: ${SNAPSHOT_COUNT}개월 축적 · 최신 ${LATEST_SNAPSHOT.month}(${LATEST_SNAPSHOT.captured}). 월별 스냅샷이 쌓이면 변화 추이(delta)를 추적한다.`
       : ''
+    const snapNoteEn = LATEST_SNAPSHOT
+      ? `Data-asset P1 snapshot pipeline: ${SNAPSHOT_COUNT} months accumulated · latest ${LATEST_SNAPSHOT.month} (${LATEST_SNAPSHOT.captured}). As monthly snapshots accumulate, change over time (delta) is tracked.`
+      : ''
     return {
       key: 'subheadroom',
       label: '변전소 여유용량(연도별)',
       asOf: LATEST_SNAPSHOT ? `스냅샷 ${LATEST_SNAPSHOT.month} · ${SUBSTATION_HEADROOM_META.updated}` : SUBSTATION_HEADROOM_META.updated,
+      asOfEn: LATEST_SNAPSHOT ? `Snapshot ${LATEST_SNAPSHOT.month} · ${AS_OF_EN[SUBSTATION_HEADROOM_META.updated] ?? SUBSTATION_HEADROOM_META.updated}` : null,
       source: `${SUBSTATION_HEADROOM_META.source}. ${SUBSTATION_HEADROOM_META.note} ${snapNote}`,
+      sourceEn: `KEPCO KEPCO-ON — power-grid integrated-info substation search (transmission headroom). Per-substation yearly headroom (MW) reference (Gapyeong · Migeum seeds use renewable-interconnection headroom). 0 = no headroom that year; confirmed after the electricity-use application. Clicking a site auto-queries power-supply / renewable headroom via the KEPCO-ON live proxy. ${snapNoteEn}`,
       fullCsv: null,
       columns: [
         { k: 'name', label: '변전소' },
@@ -201,6 +206,8 @@ const DATASETS = [
     label: '송변전 건설 파이프라인',
     asOf: GRID_CONSTRUCTION_META.asOf,
     source: `${GRID_CONSTRUCTION_META.source}. ${GRID_CONSTRUCTION_META.note}`,
+    sourceEn:
+      'KEPCO transmission & substation construction information-disclosure platform — list by project stage (read from captures). Collected subset. Original disclosure counts by stage: plan-fixed/pre-approval 442 · approved/pre-construction 189 · construction-started/pre-completion 202 · completed/within-1yr-of-commissioning 14. [Collection scope] For plan/pre-approval, the latter half (nos. 1–156, list pp.28–43) is fully read — substations & switching stations plus transmission lines (overhead/underground), power-duct and submarine cables; the first half (nos. 157–442, pp.1–27) is a substation/trunk-focused subset. For approved/pre-construction and construction-started/pre-completion, only "substation/converter nodes" were deliberately selected (transmission lines excluded) — connection opportunities open at substations & switching stations, so collection is node-centric. These are not headroom figures but the location/stage of new & expansion facilities — a leading indicator that a node’s power-intake conditions improve on completion.',
     fullCsv: null,
     columns: [
       { k: 'stage', label: '단계' },
@@ -251,6 +258,8 @@ const DATASETS = [
     label: '개발 갈등 사례',
     asOf: '2025-11',
     source: `알스퀘어 리서치센터(2025.11). ${DEV_CONFLICTS_META.note}`,
+    sourceEn:
+      'RSquare Research Center (2025.11). MSIT field measurement (Aug–Sep 2025): average high-voltage-line EMF at 6 DCs = 0.4% of the human-protection limit (ICNIRP) — lower than hospitals (0.68%) and hotels (1.17%). Even so, plan withdrawals and construction-start delays are common — a real variable on the risk axis.',
     fullCsv: null,
     columns: [
       { k: 'developer', label: '시행사' },
@@ -389,12 +398,42 @@ const TAG_EN = {
   정책: 'Policy', 차등요금: 'Differential tariff', '원천 데이터': 'Source data', 'SMP': 'SMP', '정책 원문': 'Primary policy',
   밸류체인: 'Value chain', PDF: 'PDF', 'AI×전력': 'AI×power',
 }
+// 파생 enum 셀값(판정/단계/상태) EN — 모듈 레벨 .map이 en을 못 받으므로 렌더 시점에 KO→EN 매핑.
+// 대상은 특정 (데이터셋, 컬럼) 조합의 열거값뿐 — 고유명사·숫자 셀은 건드리지 않는다(cellL 참조).
+const VERDICT_EN = {
+  // headroomLabel(mw)
+  '계통 포화(신규 대형부하 불가)': 'Grid saturated (no new large load)',
+  '매우 빠듯': 'Very tight', 제한적: 'Limited', '여유 있음': 'Some headroom', '여유 큼': 'Ample headroom',
+  // approvalLabel(pct)
+  '공급 원활': 'Ample supply', '대체로 가능': 'Mostly feasible', 혼재: 'Mixed', '계통 병목': 'Grid bottleneck', '심각 병목': 'Severe bottleneck',
+}
+const STAGE_EN = {
+  '계획확정-승인전': 'Planned-pre-approval', '승인-착수전': 'Approved-pre-start',
+  '착수-완료전': 'Started-pre-completion', 준공후1년: '1yr post-commissioning',
+}
+const STATUS_EN = { 운영: 'Operating', 건설: 'Construction', 계획: 'Planned', 지연: 'Delayed', 무산: 'Cancelled' }
+// 기준일(asOf) 중 KO 서술이 섞인 값만 번역. 순수 날짜(2026-04-17 등)는 그대로 KO=EN.
+const AS_OF_EN = {
+  '2027 전망': '2027 outlook',
+  '분기 갱신(3·6·9·12월 말)': 'Quarterly update (end of Mar · Jun · Sep · Dec)',
+}
 
 export default function DataExplorerPage() {
   const en = useMapLang() === 'en'
   const dsL = (ko) => (en ? DS_LABEL_EN[ko] ?? ko : ko)
   const colL = (ko) => (en ? COL_EN[ko] ?? ko : ko)
   const srcL = (ko) => (en ? SRC_EN[ko] ?? ko : ko)
+  // 출처 각주: 동적 조합 source는 데이터셋의 sourceEn을 우선, 없으면 정적 사전.
+  const srcOf = (d) => (en ? d.sourceEn ?? SRC_EN[d.source] ?? d.source : d.source)
+  const asOfOf = (d) => (en ? d.asOfEn ?? AS_OF_EN[d.asOf] ?? d.asOf : d.asOf)
+  // 파생 enum 셀만 EN 매핑 — 지정한 (데이터셋, 컬럼)에서만 동작(고유명사·숫자 셀 불변).
+  const cellL = (dsKey, colKey, v) => {
+    if (!en || v === '' || v == null) return v
+    if ((dsKey === 'headroom' || dsKey === 'assessment') && colKey === 'label') return VERDICT_EN[v] ?? v
+    if (dsKey === 'gridbuild' && colKey === 'stage') return STAGE_EN[v] ?? v
+    if (dsKey === 'dc' && colKey === 'status') return STATUS_EN[v] ?? v
+    return v
+  }
   // 탭 URL 동기화(?tab=) — 카드·아티클에서 특정 데이터셋으로 딥링크 가능하게
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
@@ -441,7 +480,11 @@ export default function DataExplorerPage() {
     setSearchParams(next, { replace: true })
   }
   useEffect(() => {
-    document.title = '데이터 탐색기 — 축적 자료 검색·CSV 다운로드 · AI InfraMap'
+    document.title = en
+      ? 'Data explorer — search accumulated sources · CSV download · AI InfraMap'
+      : '데이터 탐색기 — 축적 자료 검색·CSV 다운로드 · AI InfraMap'
+  }, [en])
+  useEffect(() => {
     setQ('')
   }, [])
 
@@ -514,7 +557,7 @@ export default function DataExplorerPage() {
         <p className="chart-note" style={{ marginTop: 6 }}>
           {en ? (
             <>
-              Base date <strong>{ds.asOf}</strong> · Source: {srcL(ds.source)}. {PER_PAGE} per page · browsing all {filtered.length.toLocaleString()} rows (search · CSV cover the full set). Capacity (MW) is indicative.
+              Base date <strong>{asOfOf(ds)}</strong> · Source: {srcOf(ds)}. {PER_PAGE} per page · browsing all {filtered.length.toLocaleString()} rows (search · CSV cover the full set). Capacity (MW) is indicative.
             </>
           ) : (
             <>
@@ -554,7 +597,10 @@ export default function DataExplorerPage() {
               {pageRows.map((r, i) => (
                 <tr key={i}>
                   <td style={{ textAlign: 'right', color: 'var(--grey)' }}>{pageSafe * PER_PAGE + i + 1}</td>
-                  {ds.columns.map((c) => <td key={c.k}>{r[c.k] === '' || r[c.k] == null ? '—' : String(r[c.k])}</td>)}
+                  {ds.columns.map((c) => {
+                    const v = cellL(ds.key, c.k, r[c.k])
+                    return <td key={c.k}>{v === '' || v == null ? '—' : String(v)}</td>
+                  })}
                 </tr>
               ))}
             </tbody>

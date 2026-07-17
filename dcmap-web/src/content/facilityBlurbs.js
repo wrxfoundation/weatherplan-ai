@@ -143,31 +143,56 @@ const TYPE_DESC = {
 }
 
 /** 큐레이션이 없을 때 — 시드 필드만으로 정직한 2줄 코멘트 생성(새 사실 창작 없음).
- *  en=true면 영어 스캐폴딩 + 지역·수치 원문. KO note는 미번역 산문이라 EN에서는 제외(누수 방지). */
+ *  KO 모드: KO 스캐폴딩 + KO 시드 산문 f.note 활용(종전과 동일, 비파괴).
+ *  EN 모드: KO 자유 산문 f.note를 번역하지 않고, 구조화 필드(운영사·유형·지역·상태·용량·연도)만으로
+ *           새 영어 문장을 합성한다. 지역·운영사·수치는 원문값 유지, 문장 골격만 영어. */
 export function genBlurb(f, en = false) {
+  return en ? genBlurbEn(f) : genBlurbKo(f)
+}
+
+// KO: 종전 동작 유지(시드 산문 f.note 노출).
+function genBlurbKo(f) {
   const td = TYPE_DESC[f.type]
-  const type = en ? (td?.en ?? f.type ?? '') : (td?.ko ?? f.type ?? '')
+  const type = td?.ko ?? f.type ?? ''
   const loc = [f.sido, f.sigungu].filter(Boolean).join(' ')
-  const first = en
-    ? f.status === 'operating'
-      ? `A ${type} facility operating in ${loc}${f.year ? ` (online ${f.year})` : ''}.`
-      : f.status === 'construction'
-        ? `A ${type} facility under construction in ${loc}${f.year ? ` — target ${f.year}` : ''}.`
-        : `A ${type} project at the planning stage in ${loc}.`
-    : f.status === 'operating'
+  const first =
+    f.status === 'operating'
       ? `${loc}에서 운영 중인 ${type} 시설${f.year ? ` (${f.year}년 가동)` : ''}.`
       : f.status === 'construction'
         ? `${loc}에 건설 중인 ${type} 시설${f.year ? ` — 목표 ${f.year}년` : ''}.`
         : `${loc}에 계획 단계인 ${type} 프로젝트.`
   const bits = []
-  if (f.power_mw_public != null) bits.push(en ? `public capacity ${f.power_mw_public}MW` : `공개 전력 규모 ${f.power_mw_public}MW`)
-  // note는 KO 시드 산문 — KO 모드에서만 노출(EN 누수 방지)
-  if (!en && f.note) bits.push(f.note)
-  const second = bits.length
-    ? `${bits.join(' · ')}.`
-    : en
-      ? 'Public details are limited; only confirmed facts are shown.'
-      : '공개된 세부 정보가 제한적인 시설로, 확인되는 사실만 표기한다.'
+  if (f.power_mw_public != null) bits.push(`공개 전력 규모 ${f.power_mw_public}MW`)
+  if (f.note) bits.push(f.note)
+  const second = bits.length ? `${bits.join(' · ')}.` : '공개된 세부 정보가 제한적인 시설로, 확인되는 사실만 표기한다.'
+  return `${first} ${second}`
+}
+
+// EN: 구조 데이터로 자연스러운 영어 코멘트 합성(f.note 미사용 — 미번역 KO 누수 방지).
+function genBlurbEn(f) {
+  const td = TYPE_DESC[f.type]
+  const type = td?.en ?? f.type ?? ''
+  const loc = [f.sido, f.sigungu].filter(Boolean).join(' ')
+  const inLoc = loc ? ` in ${loc}` : ''
+  // 1문장: "{Operator}'s {type} data center in {region}." — 운영사가 있으면 주어로, 없으면 관사로.
+  const noun = type ? `${type} data center` : 'data center'
+  const first = f.operator ? `${f.operator}'s ${noun}${inLoc}.` : `A ${noun}${inLoc}.`
+  // 2문장: 상태 + (연도·용량) 맥락. 있는 필드만 엮고, 없으면 상태만 서술.
+  const mw = f.power_mw_public != null ? `${f.power_mw_public}MW of disclosed capacity` : null
+  let second
+  if (f.status === 'operating') {
+    const parts = []
+    if (f.year) parts.push(`since ${f.year}`)
+    if (mw) parts.push(`with ${mw}`)
+    second = `It has been operating${parts.length ? ' ' + parts.join(', ') : ''}.`
+  } else if (f.status === 'construction') {
+    const parts = []
+    if (f.year) parts.push(`targeting ${f.year}`)
+    if (mw) parts.push(`with ${mw}`)
+    second = `It is under construction${parts.length ? ', ' + parts.join(', ') : ''}.`
+  } else {
+    second = `It is at the planning stage${mw ? `, with ${mw}` : ''}.`
+  }
   return `${first} ${second}`
 }
 
