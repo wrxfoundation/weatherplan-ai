@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
+import { useMapLang } from '../i18n/mapLang.js'
 import { INSIGHTS } from '../content/insights_meta.js'
 import DcLocalImpact from './articles/DcLocalImpact.jsx'
 import MegaProjectAidc from './articles/MegaProjectAidc.jsx'
@@ -252,6 +253,7 @@ function setMeta(attr, key, content) {
 
 export default function InsightPage() {
   const { slug } = useParams()
+  const en = useMapLang() === 'en'
   const meta = INSIGHTS.find((a) => a.slug === slug)
   const article = ARTICLES[slug]
 
@@ -281,10 +283,10 @@ export default function InsightPage() {
       <>
         <TopBar />
         <main className="page">
-          <h1>아티클을 찾을 수 없습니다</h1>
+          <h1>{en ? 'Article not found' : '아티클을 찾을 수 없습니다'}</h1>
           <p className="sub">
             <Link className="back-link" to="/insights">
-              ← 인사이트 목록
+              {en ? '← Insights' : '← 인사이트 목록'}
             </Link>
           </p>
         </main>
@@ -298,10 +300,10 @@ export default function InsightPage() {
       <TopBar />
       <main className="page">
         <Link className="back-link" to="/insights">
-          ← 인사이트
+          {en ? '← Insights' : '← 인사이트'}
         </Link>
         <div className="eyebrow">INSIGHT</div>
-        <h1>{meta.title}</h1>
+        <h1>{en && meta.enTitle ? meta.enTitle : meta.title}</h1>
         <p className="sub">{meta.date}</p>
         {meta.en && (
           <details className="en-abstract">
@@ -315,7 +317,7 @@ export default function InsightPage() {
           <Body />
         </div>
         <p className="footer-note">
-          출처
+          {en ? 'Source' : '출처'}
           <br />
           {article.sources.map((s) => (
             <span key={s}>
@@ -323,7 +325,9 @@ export default function InsightPage() {
               <br />
             </span>
           ))}
-          본 아티클은 공개 연구·보도에 기반한 참고·인사이트 콘텐츠이며, 시설 데이터(현황 맵)와 분리 관리됩니다.
+          {en
+            ? 'This article is reference / insight content based on public research and reporting, and is managed separately from facility data (the live map).'
+            : '본 아티클은 공개 연구·보도에 기반한 참고·인사이트 콘텐츠이며, 시설 데이터(현황 맵)와 분리 관리됩니다.'}
         </p>
       </main>
     </>

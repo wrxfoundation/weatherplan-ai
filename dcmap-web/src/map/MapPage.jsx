@@ -34,6 +34,7 @@ import { dcApprovalForSido, approvalLabel } from '../data/gridAssessment.js'
 import { geomAreaM2 } from '../data/geomArea.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor, parcelAt, smpToday, fuelMixNow, epsisCapacity } from '../data/liveApi.js'
+import { useMapLang } from '../i18n/mapLang.js'
 
 const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ sido, lat, lng }))
 
@@ -45,9 +46,9 @@ const VW_KEY = import.meta.env.VITE_VWORLD_KEY
 const vwUrl = (layer, ext) => `https://api.vworld.kr/req/wmts/1.0.0/${VW_KEY}/${layer}/{z}/{y}/{x}.${ext}`
 const VW_ATTR = '&copy; <a href="https://www.vworld.kr">국토교통부 브이월드</a>'
 const BASE_MAPS = {
-  dark: { label: '다크', needsKey: false, tiles: [{ url: DARK_TILES, attr: TILE_ATTRIBUTION }] },
-  vbase: { label: '한글', needsKey: true, tiles: [{ url: vwUrl('Base', 'png'), attr: VW_ATTR }] },
-  sat: { label: '위성', needsKey: true, tiles: [{ url: vwUrl('Satellite', 'jpeg'), attr: VW_ATTR }, { url: vwUrl('Hybrid', 'png'), attr: VW_ATTR }] },
+  dark: { label: '다크', labelEn: 'Dark', needsKey: false, tiles: [{ url: DARK_TILES, attr: TILE_ATTRIBUTION }] },
+  vbase: { label: '한글', labelEn: 'Korean', needsKey: true, tiles: [{ url: vwUrl('Base', 'png'), attr: VW_ATTR }] },
+  sat: { label: '위성', labelEn: 'Satellite', needsKey: true, tiles: [{ url: vwUrl('Satellite', 'jpeg'), attr: VW_ATTR }, { url: vwUrl('Hybrid', 'png'), attr: VW_ATTR }] },
 }
 const BASE_KEYS = Object.keys(BASE_MAPS).filter((k) => !BASE_MAPS[k].needsKey || VW_KEY)
 // 남한 bbox — 초기 뷰를 여기에 맞춰 북한·일본으로 화면이 낭비되지 않게 한다
@@ -106,36 +107,36 @@ const plantIcon = (p) => {
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
 
 /* 호버 카드 — 클릭 없이 보는 요약 (시설) */
-function hoverCard(f) {
+function hoverCard(f, t) {
   const key = f.status === 'delayed' ? 'planned' : f.status
   return `<div class="hc">
     <div class="hc-head"><span class="hc-dot ${key}"></span><strong>${esc(f.name)}</strong></div>
-    <div class="hc-meta">${esc(f.operator ?? '운영사 미공개')} · ${esc(f.sido)}${f.sigungu ? ' ' + esc(f.sigungu) : ''}</div>
-    <div class="hc-row">${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ' · 용량 비공개'}${f.year ? ` · ${f.year}` : ''}</div>
-    ${isCoarseGeocode(f.geocode_level) ? '<div class="hc-approx">📍 위치 근사 — 시군구 중심점(실제 부지 아님)</div>' : ''}
-    ${f.needs_verify ? '<div class="hc-verify">검증 필요</div>' : ''}
-    <div class="hc-cta">클릭 → 상세 카드</div>
+    <div class="hc-meta">${esc(f.operator ?? t('운영사 미공개', 'operator undisclosed'))} · ${esc(f.sido)}${f.sigungu ? ' ' + esc(f.sigungu) : ''}</div>
+    <div class="hc-row">${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : t(' · 용량 비공개', ' · capacity undisclosed')}${f.year ? ` · ${f.year}` : ''}</div>
+    ${isCoarseGeocode(f.geocode_level) ? `<div class="hc-approx">${t('📍 위치 근사 — 시군구 중심점(실제 부지 아님)', '📍 approx. location — sigungu centroid (not the actual site)')}</div>` : ''}
+    ${f.needs_verify ? `<div class="hc-verify">${t('검증 필요', 'needs verification')}</div>` : ''}
+    <div class="hc-cta">${t('클릭 → 상세 카드', 'Click → detail card')}</div>
   </div>`
 }
 
-function plantCard(p) {
+function plantCard(p, t) {
   if (p.type === '풍력') {
     return `<div class="hc">
       <div class="hc-head"><strong>${esc(p.name)}</strong></div>
       <div class="hc-meta">${esc(p.address)}</div>
-      <div class="hc-row">풍력 발전 지점 · 필지 좌표 (2023 현황)</div>
-      <div class="hc-verify">신재생 근접성 맥락 — DC 전원 매칭 아님</div>
+      <div class="hc-row">${t('풍력 발전 지점 · 필지 좌표 (2023 현황)', 'Wind generation point · parcel coordinates (2023 status)')}</div>
+      <div class="hc-verify">${t('신재생 근접성 맥락 — DC 전원 매칭 아님', 'Renewable proximity context — not a DC power match')}</div>
     </div>`
   }
   let cap
   if (p.capacity_mw != null) {
-    const bld = p.capacity_building_mw ? ` (+건설 ${p.capacity_building_mw.toLocaleString()}MW)` : ''
-    const units = p.units_operating ? ` · ${p.units_operating}호기 운영` : ''
-    cap = `${esc(p.type)} · 설비용량 ${p.capacity_mw.toLocaleString()}MW${bld}${units}`
+    const bld = p.capacity_building_mw ? t(` (+건설 ${p.capacity_building_mw.toLocaleString()}MW)`, ` (+under construction ${p.capacity_building_mw.toLocaleString()}MW)`) : ''
+    const units = p.units_operating ? t(` · ${p.units_operating}호기 운영`, ` · ${p.units_operating} units operating`) : ''
+    cap = `${esc(p.type)} · ${t('설비용량', 'capacity')} ${p.capacity_mw.toLocaleString()}MW${bld}${units}`
   } else {
-    cap = `${esc(p.type)} · 설비용량 EPSIS 검증 대기`
+    cap = `${esc(p.type)} · ${t('설비용량 EPSIS 검증 대기', 'capacity EPSIS verification pending')}`
   }
-  const src = p.capacity_mw != null ? '원안위/한수원 호기별 현황(2025-06) · DC 전원 매칭 아님' : '발전 인프라 맥락 — DC 전원 매칭 아님'
+  const src = p.capacity_mw != null ? t('원안위/한수원 호기별 현황(2025-06) · DC 전원 매칭 아님', '원안위/한수원 unit-by-unit status (2025-06) · not a DC power match') : t('발전 인프라 맥락 — DC 전원 매칭 아님', 'Power-generation infrastructure context — not a DC power match')
   return `<div class="hc">
     <div class="hc-head"><strong>${esc(p.name)}</strong></div>
     <div class="hc-meta">${esc(p.operator)} · ${esc(p.sido)} ${esc(p.sigungu)}</div>
@@ -152,16 +153,18 @@ const publicIcon = () =>
     iconSize: [18, 18],
   })
 
-function publicCard(f) {
+function publicCard(f, t) {
   return `<div class="hc">
     <div class="hc-head"><strong>${esc(f.name)}</strong></div>
     <div class="hc-meta">${esc(f.org)}${f.parent && f.parent !== f.org ? ` (${esc(f.parent)})` : ''}</div>
     <div class="hc-row">${esc(f.category)} · ${esc(f.sido)}${f.sigungu ? ' ' + esc(f.sigungu) : ''}</div>
-    <div class="hc-verify">행안부 공공데이터 · 좌표는 시군구 중심점</div>
+    <div class="hc-verify">${t('행안부 공공데이터 · 좌표는 시군구 중심점', '행안부 public data · coordinates are sigungu centroid')}</div>
   </div>`
 }
 
 export default function MapPage({ power = false }) {
+  const en = useMapLang() === 'en'
+  const t = (ko, enStr) => (en ? enStr : ko)
   const [searchParams, setSearchParams] = useSearchParams()
   const rawMw = Number.parseFloat(searchParams.get('min_mw'))
   const minMw = Number.isFinite(rawMw) && rawMw > 0 ? rawMw : null
@@ -432,13 +435,13 @@ export default function MapPage({ power = false }) {
       const g = L.layerGroup()
       for (const p of [...PLANTS, ...WIND_PLANTS]) {
         L.marker([p.lat, p.lng], { icon: plantIcon(p), bubblingMouseEvents: false })
-          .bindTooltip(plantCard(p), { direction: 'top', offset: [0, -10], className: 'dc-hovercard', opacity: 1 })
+          .bindTooltip(plantCard(p, t), { direction: 'top', offset: [0, -10], className: 'dc-hovercard', opacity: 1 })
           .addTo(g)
       }
       g.addTo(map)
       plantsLayerRef.current = g
     }
-  }, [showPlants])
+  }, [showPlants, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 송전선로 레이어 토글 — OSM power=line, 전압별 색 폴리라인(켤 때 JSON 지연 로드).
   useEffect(() => {
@@ -488,7 +491,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>${name || `${kv}kV 변전소`}</strong> · ${kv}kV<br/><span class="muted">한전 변전소 · OSM 좌표(근사)</span></div>`,
+            `<div class="dc-hovercard"><strong>${name || t(`${kv}kV 변전소`, `${kv}kV substation`)}</strong> · ${kv}kV<br/><span class="muted">${t('한전 변전소 · OSM 좌표(근사)', '한전 substation · OSM coordinates (approx)')}</span></div>`,
             { direction: 'top', offset: [0, -6], className: 'dc-hovercard', opacity: 1 },
           )
           .addTo(g)
@@ -496,7 +499,7 @@ export default function MapPage({ power = false }) {
       g.addTo(map)
       subsLayerRef.current = g
     }
-  }, [showSubs])
+  }, [showSubs, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 베이스맵 전환 — 다크(CartoDB) / 한글 일반(vworld) / 위성(vworld). 타일은 최하단.
   useEffect(() => {
@@ -535,7 +538,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>#${i + 1} ${s.name}</strong> · ${s.sido}<br/>정적 근거 <b>${s.score}/${s.max}</b><br/><span class="muted">${recoReasons(s).join(' · ')}</span><br/><span class="muted">클릭 → 전체 분석</span></div>`,
+            `<div class="dc-hovercard"><strong>#${i + 1} ${s.name}</strong> · ${s.sido}<br/>${t('정적 근거', 'static basis')} <b>${s.score}/${s.max}</b><br/><span class="muted">${recoReasons(s).join(' · ')}</span><br/><span class="muted">${t('클릭 → 전체 분석', 'Click → full analysis')}</span></div>`,
             { direction: 'top', offset: [0, -12], className: 'dc-hovercard', opacity: 1 },
           )
           .on('click', () => {
@@ -549,7 +552,7 @@ export default function MapPage({ power = false }) {
       g.addTo(map)
       recoLayerRef.current = g
     }
-  }, [showReco, recoTop])
+  }, [showReco, recoTop, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 재생발전단지 레이어 토글 — 대형 태양광·풍력(RE100 조달 맥락).
   useEffect(() => {
@@ -570,7 +573,7 @@ export default function MapPage({ power = false }) {
           fillOpacity: 0.55,
           bubblingMouseEvents: false,
         })
-          .bindTooltip(`<div class="dc-hovercard"><strong>${name || (type === 'W' ? '풍력단지' : '태양광단지')}</strong> · ${type === 'W' ? '풍력' : '태양광'}<br/><span class="muted">RE100/PPA 조달 맥락 · OSM 근사 좌표(개별 검증 전 참고용)</span></div>`, {
+          .bindTooltip(`<div class="dc-hovercard"><strong>${name || (type === 'W' ? t('풍력단지', 'Wind farm') : t('태양광단지', 'Solar farm'))}</strong> · ${type === 'W' ? t('풍력', 'Wind') : t('태양광', 'Solar')}<br/><span class="muted">${t('RE100/PPA 조달 맥락 · OSM 근사 좌표(개별 검증 전 참고용)', 'RE100/PPA procurement context · OSM approximate coordinates (reference before individual verification)')}</span></div>`, {
             direction: 'top',
             offset: [0, -6],
             className: 'dc-hovercard',
@@ -581,7 +584,7 @@ export default function MapPage({ power = false }) {
       g.addTo(map)
       reLayerRef.current = g
     }
-  }, [showRe])
+  }, [showRe, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 주요 수원(다목적·용수댐) 레이어 — 냉각수 공급원 근접 맥락. 크기는 저수용량 로그 스케일.
   useEffect(() => {
@@ -604,7 +607,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>${name}댐</strong> · ${type === 'M' ? '다목적' : '용수'}댐<br/><span class="muted">총저수 ${cap.toLocaleString()}백만㎥ · K-water(좌표 근사)</span></div>`,
+            `<div class="dc-hovercard"><strong>${t(`${name}댐`, `${name} Dam`)}</strong> · ${type === 'M' ? t('다목적댐', 'multipurpose dam') : t('용수댐', 'water-supply dam')}<br/><span class="muted">${t(`총저수 ${cap.toLocaleString()}백만㎥ · K-water(좌표 근사)`, `total storage ${cap.toLocaleString()} million㎥ · K-water (approx coordinates)`)}</span></div>`,
             { direction: 'top', offset: [0, -6], className: 'dc-hovercard', opacity: 1 },
           )
           .addTo(g)
@@ -612,7 +615,7 @@ export default function MapPage({ power = false }) {
       g.addTo(map)
       waterLayerRef.current = g
     }
-  }, [showWater])
+  }, [showWater, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 반도체·AI 메가클러스터 레이어 — 전력·용수 대수요처(DC와 계통·용수 경쟁/공존 앵커).
   useEffect(() => {
@@ -636,7 +639,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>${name}</strong> · ${operator}<br/><span class="muted">${status}${powerGw ? ` · 전력 ${powerGw}GW` : ''}${waterKtd ? ` · 용수 ${waterKtd.toLocaleString()}천t/일` : ''}</span>${note ? `<br/><span class="muted">${note}</span>` : ''}</div>`,
+            `<div class="dc-hovercard"><strong>${name}</strong> · ${operator}<br/><span class="muted">${status}${powerGw ? t(` · 전력 ${powerGw}GW`, ` · power ${powerGw}GW`) : ''}${waterKtd ? t(` · 용수 ${waterKtd.toLocaleString()}천t/일`, ` · water ${waterKtd.toLocaleString()}k t/day`) : ''}</span>${note ? `<br/><span class="muted">${note}</span>` : ''}</div>`,
             { direction: 'top', offset: [0, -6], className: 'dc-hovercard', opacity: 1 },
           )
           .addTo(g)
@@ -644,7 +647,7 @@ export default function MapPage({ power = false }) {
       g.addTo(map)
       semiLayerRef.current = g
     }
-  }, [showSemi])
+  }, [showSemi, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 통신망 레이어 토글 — 백본 국사·IDC·해저케이블 육양국(네트워크축 근거).
   useEffect(() => {
@@ -663,7 +666,7 @@ export default function MapPage({ power = false }) {
           icon: L.divIcon({ className: 'net-marker', html: `<span class="net-dot ${cls}">${ico}</span>`, iconSize: [20, 20] }),
           bubblingMouseEvents: false,
         })
-          .bindTooltip(`<div class="dc-hovercard"><strong>${n.name}</strong> · ${n.type}<br/><span class="muted">네트워크 인프라(백본 근접) — OSM 공개 태깅 표본. KT 위주로 수집되며 타 통신사 백본은 위치 미공개(부재 아님)</span></div>`, {
+          .bindTooltip(`<div class="dc-hovercard"><strong>${n.name}</strong> · ${n.type}<br/><span class="muted">${t('네트워크 인프라(백본 근접) — OSM 공개 태깅 표본. KT 위주로 수집되며 타 통신사 백본은 위치 미공개(부재 아님)', 'Network infrastructure (backbone proximity) — OSM public tagging sample. Collected mainly around KT; other carrier backbones are location-undisclosed (not absent)')}</span></div>`, {
             direction: 'top',
             offset: [0, -9],
             className: 'dc-hovercard',
@@ -674,7 +677,7 @@ export default function MapPage({ power = false }) {
       g.addTo(map)
       netLayerRef.current = g
     }
-  }, [showNet])
+  }, [showNet, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 수도권 공급예정 민간 DC 레이어 — 삼일PwC·KDCC(’26.3) 21곳. 좌표는 시군구 근사(점선 골드 링).
   useEffect(() => {
@@ -699,7 +702,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>${p.name}</strong><br/>${p.operator} · IT ${p.itMw}MW · ’${String(p.due).slice(2)} 준공예정<br/><span class="muted">시군구 근사 위치 — 개별 부지 아님 · PwC·KDCC ’26.3</span></div>`,
+            `<div class="dc-hovercard"><strong>${p.name}</strong><br/>${p.operator} · IT ${p.itMw}MW · ${t(`’${String(p.due).slice(2)} 준공예정`, `completion planned ’${String(p.due).slice(2)}`)}<br/><span class="muted">${t('시군구 근사 위치 — 개별 부지 아님 · PwC·KDCC ’26.3', 'sigungu approximate location — not an individual site · PwC·KDCC ’26.3')}</span></div>`,
             { direction: 'top', offset: [0, -8], className: 'dc-hovercard', opacity: 1 },
           )
           .addTo(g)
@@ -707,7 +710,7 @@ export default function MapPage({ power = false }) {
       g.addTo(map)
       pipelineLayerRef.current = g
     }
-  }, [showPipeline])
+  }, [showPipeline, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 부지 분석 시 반환된 변전소 전력공급 여유 — 실좌표에 색상 마커(초록=여유·회색=0). 클릭지점과 점선 연결.
   useEffect(() => {
@@ -730,14 +733,14 @@ export default function MapPage({ power = false }) {
         radius: r, color, weight: 1.8, fillColor: color, fillOpacity: has ? 0.32 : 0.15, bubblingMouseEvents: false,
       })
         .bindTooltip(
-          `<div class="dc-hovercard"><strong>${s.name}변전소</strong> · ${s.kv}<br/>${has ? `${s.firstAvailYear}년 ${s.series[s.years.indexOf(s.firstAvailYear)]?.toLocaleString()}MW~ · 최대 <b>${s.maxMw.toLocaleString()}MW</b>` : '전 기간 여유 0'}<br/><span class="muted">한전ON 전력공급 여유(연도별) · OSM 실좌표 · 참고</span></div>`,
+          `<div class="dc-hovercard"><strong>${t(`${s.name}변전소`, `${s.name} substation`)}</strong> · ${s.kv}<br/>${has ? t(`${s.firstAvailYear}년 ${s.series[s.years.indexOf(s.firstAvailYear)]?.toLocaleString()}MW~ · 최대 <b>${s.maxMw.toLocaleString()}MW</b>`, `${s.firstAvailYear} ${s.series[s.years.indexOf(s.firstAvailYear)]?.toLocaleString()}MW~ · max <b>${s.maxMw.toLocaleString()}MW</b>`) : t('전 기간 여유 0', 'zero headroom across all years')}<br/><span class="muted">${t('한전ON 전력공급 여유(연도별) · OSM 실좌표 · 참고', '한전ON power-supply headroom (by year) · OSM actual coordinates · reference')}</span></div>`,
           { direction: 'top', offset: [0, -8], className: 'dc-hovercard', opacity: 1 },
         )
         .addTo(g)
     }
     g.addTo(map)
     siteSubstLayerRef.current = g
-  }, [siteSubsts, sitePoint])
+  }, [siteSubsts, sitePoint, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 전국 실시간 전력시장 배지 — SMP·발전믹스(재생 비중)·예비율. 마운트 1회(라이브, 실패는 미표시).
   useEffect(() => {
@@ -772,7 +775,7 @@ export default function MapPage({ power = false }) {
           icon: L.divIcon({ className: 'complex-marker', html: `<span class="complex-dot ${type === '국가' ? 'nat' : 'urb'}">${factorySvg()}</span>`, iconSize: [22, 22] }),
           bubblingMouseEvents: false,
         })
-          .bindTooltip(`<div class="dc-hovercard"><strong>${name}</strong> · ${type}산단<br/><span class="muted">인센티브·전력/용수 기반시설 사전확보</span></div>`, {
+          .bindTooltip(`<div class="dc-hovercard"><strong>${name}</strong> · ${t(`${type}산단`, `${type} industrial complex`)}<br/><span class="muted">${t('인센티브·전력/용수 기반시설 사전확보', 'Incentives · power/water infrastructure pre-secured')}</span></div>`, {
             direction: 'top',
             offset: [0, -10],
             className: 'dc-hovercard',
@@ -783,7 +786,7 @@ export default function MapPage({ power = false }) {
       g.addTo(map)
       complexLayerRef.current = g
     }
-  }, [showComplexes])
+  }, [showComplexes, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 공공 DC 레이어 토글 — 같은 시군구 중심점 공유 다수라 동일 분산 규칙 적용
   useEffect(() => {
@@ -811,14 +814,14 @@ export default function MapPage({ power = false }) {
             lng += (SPREAD * Math.sin(a)) / Math.cos((f.lat * Math.PI) / 180)
           }
           L.marker([lat, lng], { icon: publicIcon(), bubblingMouseEvents: false })
-            .bindTooltip(publicCard(f), { direction: 'top', offset: [0, -10], className: 'dc-hovercard', opacity: 1 })
+            .bindTooltip(publicCard(f, t), { direction: 'top', offset: [0, -10], className: 'dc-hovercard', opacity: 1 })
             .addTo(g)
         })
       }
       g.addTo(map)
       publicLayerRef.current = g
     }
-  }, [showPublic])
+  }, [showPublic, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 발전 허가 2024+ 시도 버블 — 개별 지번좌표 부재 → 시도 중심점에 건수 버블(정직: 건수 기준)
   useEffect(() => {
@@ -843,7 +846,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>${b.sido}</strong> · 발전 허가 <b>${b.count}건</b> (2024+)<br/>신재생 ${renewPct}% · 최다 ${b.topFuel || '—'}</div>`,
+            `<div class="dc-hovercard"><strong>${b.sido}</strong> · ${t('발전 허가', 'Generation permits')} <b>${t(`${b.count}건`, `${b.count} cases`)}</b> (2024+)<br/>${t('신재생', 'Renewable')} ${renewPct}% · ${t('최다', 'top')} ${b.topFuel || '—'}</div>`,
             { direction: 'top', offset: [0, -r], className: 'dc-hovercard', opacity: 1 },
           )
           .on('click', () => {
@@ -860,7 +863,7 @@ export default function MapPage({ power = false }) {
       g.addTo(map)
       genLayerRef.current = g
     }
-  }, [showGenPermits])
+  }, [showGenPermits, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 계통 여유용량: 토글 시 17개 시도 중심점에서 headroom 조회 (KEPCO env 연동 시 실데이터)
   useEffect(() => {
@@ -906,7 +909,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>${s.sido}</strong> · 계통 여유용량<br/>${has ? `<b>${mw.toLocaleString()}MW</b>${h?.substNm ? ` · ${h.substNm}변전소 최대 여유` : ''}${h?.rows ? `<br/><span style="opacity:.75">관내 선로 ${h.rows}개 조회 (한전 분산전원)</span>` : ''}` : '연동 대기 (KEPCO env)'}</div>`,
+            `<div class="dc-hovercard"><strong>${s.sido}</strong> · ${t('계통 여유용량', 'Grid headroom')}<br/>${has ? `<b>${mw.toLocaleString()}MW</b>${h?.substNm ? t(` · ${h.substNm}변전소 최대 여유`, ` · ${h.substNm} substation max headroom`) : ''}${h?.rows ? `<br/><span style="opacity:.75">${t(`관내 선로 ${h.rows}개 조회 (한전 분산전원)`, `${h.rows} lines in area queried (한전 distributed generation)`)}</span>` : ''}` : t('연동 대기 (KEPCO env)', 'data pending (KEPCO env)')}</div>`,
             { direction: 'top', offset: [0, -r], className: 'dc-hovercard', opacity: 1 },
           )
           .on('click', () => {
@@ -920,7 +923,7 @@ export default function MapPage({ power = false }) {
       g.addTo(map)
       headroomLayerRef.current = g
     }
-  }, [showHeadroom, headrooms])
+  }, [showHeadroom, headrooms, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // DC 공급 승인율 시도 버블 — 계통영향평가 1차 기술검토(2026.3.27) 실측. 크기=신청량, 색=승인율
   useEffect(() => {
@@ -948,7 +951,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>${r.sido}</strong> · DC 공급 승인율 <b>${pct}%</b> (${approvalLabel(pct)})<br/>가능 ${Math.round(r.a.able).toLocaleString()}MW · 불가 ${Math.round(r.a.unable).toLocaleString()}MW<br/><span style="opacity:.75">계통영향평가 1차 기술검토 · 2026.3.27 한전</span></div>`,
+            `<div class="dc-hovercard"><strong>${r.sido}</strong> · ${t('DC 공급 승인율', 'DC supply approval rate')} <b>${pct}%</b> (${approvalLabel(pct)})<br/>${t('가능', 'approved')} ${Math.round(r.a.able).toLocaleString()}MW · ${t('불가', 'rejected')} ${Math.round(r.a.unable).toLocaleString()}MW<br/><span style="opacity:.75">${t('계통영향평가 1차 기술검토 · 2026.3.27 한전', 'Grid impact assessment 1st technical review · 2026.3.27 한전')}</span></div>`,
             { direction: 'top', offset: [0, -rad], className: 'dc-hovercard', opacity: 1 },
           )
           .on('click', () => {
@@ -965,7 +968,7 @@ export default function MapPage({ power = false }) {
       g.addTo(map)
       approvalLayerRef.current = g
     }
-  }, [showApproval])
+  }, [showApproval, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 새 선택(시설·지점·지역)이 생기면 모바일 바텀시트를 자동으로 펼쳐 결과를 바로 보게 한다
   useEffect(() => {
@@ -1021,7 +1024,7 @@ export default function MapPage({ power = false }) {
       .then((p) => {
         if (!alive || !p?.available || !p.geometry) return
         const areaM2 = geomAreaM2(p.geometry)
-        const areaTxt = areaM2 ? `<br/>면적 ≈ <b>${Math.round(areaM2).toLocaleString()}㎡</b> (${Math.round(areaM2 / 3.3058).toLocaleString()}평)` : ''
+        const areaTxt = areaM2 ? `<br/>${t('면적', 'Area')} ≈ <b>${Math.round(areaM2).toLocaleString()}㎡</b> (${Math.round(areaM2 / 3.3058).toLocaleString()}평)` : ''
         const layer = L.geoJSON(
           { type: 'Feature', geometry: p.geometry },
           {
@@ -1036,7 +1039,7 @@ export default function MapPage({ power = false }) {
           },
         )
         layer.bindTooltip(
-          `<div class="dc-hovercard"><strong>필지 경계</strong>${p.jibun ? ` · ${p.jibun}` : ''}${p.addr ? `<br/>${p.addr}` : ''}${areaTxt}<br/><span style="opacity:.75">연속지적도(vworld) — 참고용, 지적측량 아님 · 면적은 도형 계산 근사</span></div>`,
+          `<div class="dc-hovercard"><strong>${t('필지 경계', 'Parcel boundary')}</strong>${p.jibun ? ` · ${p.jibun}` : ''}${p.addr ? `<br/>${p.addr}` : ''}${areaTxt}<br/><span style="opacity:.75">${t('연속지적도(vworld) — 참고용, 지적측량 아님 · 면적은 도형 계산 근사', 'Continuous cadastral map (vworld) — reference, not a cadastral survey · area is an approximate geometric calc')}</span></div>`,
           { sticky: true, className: 'dc-hovercard', opacity: 1 },
         )
         layer.addTo(map)
@@ -1046,7 +1049,7 @@ export default function MapPage({ power = false }) {
     return () => {
       alive = false
     }
-  }, [sitePoint])
+  }, [sitePoint, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 활성 레이어 → URL(?layers=) 동기화 (공유 링크로 켠 레이어 그대로 복원)
   useEffect(() => {
@@ -1115,11 +1118,11 @@ export default function MapPage({ power = false }) {
         // 줌 13 미만에서 그룹(중심점 공유)은 개별 칩이 물리적으로 못 벌어짐 —
         // 대표 멤버 하나에만 "시군구 · N곳" 요약 라벨을 단다
         const groupSummary = group.length > 1 && !denseLabels
-        const labelText = groupSummary ? `${f.sido} ${f.sigungu ?? ''} · ${group.length}곳`.trim() : info
+        const labelText = groupSummary ? t(`${f.sido} ${f.sigungu ?? ''} · ${group.length}곳`, `${f.sido} ${f.sigungu ?? ''} · ${group.length} sites`).trim() : info
         const skipLabel = groupSummary && gi !== 0
         // 라벨 OFF: 호버 시 요약 카드 (클릭 없이 대략 정보) / 라벨 ON: 상시 칩
         m.bindTooltip(
-          showLabels && !skipLabel ? (groupSummary ? labelText : info) : hoverCard(f),
+          showLabels && !skipLabel ? (groupSummary ? labelText : info) : hoverCard(f, t),
           showLabels && !skipLabel
             ? groupSummary
               ? { permanent: true, direction: 'top', offset: [0, -12], className: 'dc-label' }
@@ -1135,7 +1138,7 @@ export default function MapPage({ power = false }) {
         idx += 1
       })
     }
-  }, [filtered, showLabels, isoView, denseLabels])
+  }, [filtered, showLabels, isoView, denseLabels, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleStatus = (key) =>
     setStatuses((prev) => {
@@ -1232,17 +1235,17 @@ export default function MapPage({ power = false }) {
         <div ref={mapRef} className="map-canvas" />
         {/* 전국 실시간 전력시장 배지 — SMP·재생 비중·예비율(라이브). 대시보드로 딥링크 */}
         {livePulse && (
-          <Link className="map-live-badge" to="/dashboard" title="실시간 전력수급·SMP·발전믹스 대시보드로">
+          <Link className="map-live-badge" to="/dashboard" title={t('실시간 전력수급·SMP·발전믹스 대시보드로', 'To the live power supply-demand · SMP · generation-mix dashboard')}>
             <span className="mlb-dot" aria-hidden="true" />
-            <span className="mlb-label">전국 실시간</span>
+            <span className="mlb-label">{t('전국 실시간', 'Nationwide live')}</span>
             {livePulse.smp != null && (
-              <span className="mlb-stat"><b>SMP {livePulse.smp.toLocaleString()}</b>원/kWh{livePulse.hour != null ? ` ${livePulse.hour}시` : ''}</span>
+              <span className="mlb-stat"><b>SMP {livePulse.smp.toLocaleString()}</b>{t('원/kWh', ' KRW/kWh')}{livePulse.hour != null ? t(` ${livePulse.hour}시`, ` ${livePulse.hour}:00`) : ''}</span>
             )}
             {livePulse.renew != null && (
-              <span className="mlb-stat">재생 <b>{livePulse.renew}%</b></span>
+              <span className="mlb-stat">{t('재생', 'Renewable')} <b>{livePulse.renew}%</b></span>
             )}
             {livePulse.reserve != null && (
-              <span className="mlb-stat">예비율 <b>{livePulse.reserve}%</b></span>
+              <span className="mlb-stat">{t('예비율', 'Reserve')} <b>{livePulse.reserve}%</b></span>
             )}
           </Link>
         )}
@@ -1252,8 +1255,8 @@ export default function MapPage({ power = false }) {
           className="panel-expand"
           onClick={togglePanelWide}
           aria-pressed={panelWide}
-          aria-label={panelWide ? '패널 좁히기' : '패널 넓히기'}
-          title={panelWide ? '패널 좁히기' : '패널 넓히기 (2배)'}
+          aria-label={panelWide ? t('패널 좁히기', 'Narrow panel') : t('패널 넓히기', 'Widen panel')}
+          title={panelWide ? t('패널 좁히기', 'Narrow panel') : t('패널 넓히기 (2배)', 'Widen panel (2x)')}
         >
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             {panelWide ? <path d="M6 3.5 10.5 8 6 12.5" /> : <path d="M10 3.5 5.5 8 10 12.5" />}
@@ -1261,18 +1264,18 @@ export default function MapPage({ power = false }) {
         </button>
         {/* 입지 시뮬레이터 — 추천입지 레이어 켤 때 필요 MW·입지 조건으로 재랭킹 */}
         {showReco && (
-          <div className="reco-sim" role="region" aria-label="입지 시뮬레이터">
+          <div className="reco-sim" role="region" aria-label={t('입지 시뮬레이터', 'Site simulator')}>
             <div className="rs-head">
-              <strong>🏆 AI 추천 입지</strong>
-              <span className="muted">정적 근거 랭킹 · 필터 재계산</span>
+              <strong>{t('🏆 AI 추천 입지', '🏆 AI recommended sites')}</strong>
+              <span className="muted">{t('정적 근거 랭킹 · 필터 재계산', 'Static-basis ranking · filter recompute')}</span>
             </div>
             <div className="rs-controls">
               <label>
-                필요 용량
+                {t('필요 용량', 'Required capacity')}
                 <input type="number" min="0" step="10" value={recoMw} onChange={(e) => setRecoMw(Math.max(0, Number(e.target.value) || 0))} /> MW
               </label>
               <button type="button" className={`chip ${recoNonCap ? 'on' : ''}`} onClick={() => setRecoNonCap((v) => !v)} aria-pressed={recoNonCap}>
-                비수도권만
+                {t('비수도권만', 'Non-capital only')}
               </button>
             </div>
             <ol className="rs-list">
@@ -1296,7 +1299,7 @@ export default function MapPage({ power = false }) {
                   </button>
                 </li>
               ))}
-              {recoTop.length === 0 && <li className="rs-empty">조건에 맞는 후보 없음 — 필요 MW를 낮춰보세요</li>}
+              {recoTop.length === 0 && <li className="rs-empty">{t('조건에 맞는 후보 없음 — 필요 MW를 낮춰보세요', 'No candidates match — try lowering the required MW')}</li>}
             </ol>
           </div>
         )}
@@ -1310,19 +1313,19 @@ export default function MapPage({ power = false }) {
             className="sheet-handle"
             onClick={() => setSheetCollapsed((v) => !v)}
             aria-expanded={!sheetCollapsed}
-            aria-label={sheetCollapsed ? '패널 펼치기' : '패널 접기'}
+            aria-label={sheetCollapsed ? t('패널 펼치기', 'Expand panel') : t('패널 접기', 'Collapse panel')}
           >
             <span className="sheet-grip" />
-            <span className="sheet-hint">{sheetCollapsed ? '▲ 패널 펼치기' : '▼ 지도 넓게 보기'}</span>
+            <span className="sheet-hint">{sheetCollapsed ? t('▲ 패널 펼치기', '▲ Expand panel') : t('▼ 지도 넓게 보기', '▼ See map wider')}</span>
           </button>
           {/* 베이스맵 전환 — 목록으로 줄에 맞춘 패널 헤더(스크롤 안쪽). 다크/한글/위성 */}
           {BASE_KEYS.length > 1 && (
-            <div className="panel-basemap" role="group" aria-label="지도 종류">
-              <span className="pb-label">지도</span>
+            <div className="panel-basemap" role="group" aria-label={t('지도 종류', 'Map type')}>
+              <span className="pb-label">{t('지도', 'Map')}</span>
               <div className="basemap-switch">
                 {BASE_KEYS.map((k) => (
                   <button key={k} type="button" className={`bm-btn ${baseMap === k ? 'on' : ''}`} onClick={() => setBaseMap(k)} aria-pressed={baseMap === k}>
-                    {BASE_MAPS[k].label}
+                    {en ? BASE_MAPS[k].labelEn : BASE_MAPS[k].label}
                   </button>
                 ))}
               </div>
@@ -1332,7 +1335,7 @@ export default function MapPage({ power = false }) {
             <>
               <h2>
                 <button type="button" className="chip btn" onClick={() => setSelected(null)}>
-                  ← 목록으로
+                  {t('← 목록으로', '← Back to list')}
                 </button>
               </h2>
               <FacilityCard facility={selected} />
@@ -1341,48 +1344,48 @@ export default function MapPage({ power = false }) {
             <>
               <h2>
                 <button type="button" className="chip btn" onClick={() => setRegion(null)}>
-                  ← 목록으로
+                  {t('← 목록으로', '← Back to list')}
                 </button>
               </h2>
               <article className="facility-card">
                 <div className="status-line">
-                  <span className="badge status-operating">전력 · 지역 요약</span>
+                  <span className="badge status-operating">{t('전력 · 지역 요약', 'Power · region summary')}</span>
                   <span className="badge">{regionInfo.sido}</span>
                 </div>
-                <h3>{regionInfo.sido} — 전력 공급 · 계통 · 데이터센터</h3>
+                <h3>{regionInfo.sido} — {t('전력 공급 · 계통 · 데이터센터', 'Power supply · grid · data centers')}</h3>
                 <div className="spec-grid">
                   <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                    <div className="k">발전 공급 파이프라인 (2024+ 허가)</div>
+                    <div className="k">{t('발전 공급 파이프라인 (2024+ 허가)', 'Generation supply pipeline (2024+ permits)')}</div>
                     <div className="v">
                       {regionInfo.gen ? (
                         <>
-                          <strong>{regionInfo.gen.count}건</strong>
-                          {regionInfo.gen.mw > 0 && ` · 용량 ${regionInfo.gen.mw.toLocaleString()}MW(참고)`}
-                          {' · 신재생 '}
+                          <strong>{t(`${regionInfo.gen.count}건`, `${regionInfo.gen.count} cases`)}</strong>
+                          {regionInfo.gen.mw > 0 && t(` · 용량 ${regionInfo.gen.mw.toLocaleString()}MW(참고)`, ` · capacity ${regionInfo.gen.mw.toLocaleString()}MW (ref)`)}
+                          {t(' · 신재생 ', ' · Renewable ')}
                           {Math.round((regionInfo.gen.renew / regionInfo.gen.count) * 100)}%
-                          {regionInfo.gen.topFuel && ` · 최다 ${regionInfo.gen.topFuel}`}
+                          {regionInfo.gen.topFuel && t(` · 최다 ${regionInfo.gen.topFuel}`, ` · top ${regionInfo.gen.topFuel}`)}
                         </>
                       ) : (
-                        <span className="muted">허가 없음</span>
+                        <span className="muted">{t('허가 없음', 'No permits')}</span>
                       )}
                     </div>
                   </div>
                   <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                    <div className="k">2025 신규 발전 설치 (설비용량·개수)</div>
+                    <div className="k">{t('2025 신규 발전 설치 (설비용량·개수)', '2025 new generation installs (capacity · count)')}</div>
                     <div className="v">
                       {regionInfo.new2025 ? (
                         <>
                           <strong>{Math.round(regionInfo.new2025.capacityKw / 1000).toLocaleString()} MW</strong>
-                          {` · ${regionInfo.new2025.count.toLocaleString()}개소`}
+                          {t(` · ${regionInfo.new2025.count.toLocaleString()}개소`, ` · ${regionInfo.new2025.count.toLocaleString()} sites`)}
                         </>
                       ) : (
-                        <span className="muted">데이터 없음</span>
+                        <span className="muted">{t('데이터 없음', 'No data')}</span>
                       )}
                     </div>
                   </div>
                   {GRID_HEADROOM[regionInfo.sido] && (
                     <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                      <div className="k">시도 총 계통 공급여유 (한전 연계가능용량 · {GRID_HEADROOM_META.year} 전망)</div>
+                      <div className="k">{t(`시도 총 계통 공급여유 (한전 연계가능용량 · ${GRID_HEADROOM_META.year} 전망)`, `Province total grid supply headroom (한전 interconnectable capacity · ${GRID_HEADROOM_META.year} outlook)`)}</div>
                       <div className="v">
                         <strong>
                           {(typeof GRID_HEADROOM[regionInfo.sido] === 'number'
@@ -1391,24 +1394,24 @@ export default function MapPage({ power = false }) {
                           ).toLocaleString()}{' '}
                           MW
                         </strong>
-                        <span className="muted"> · 시군구·부지별 편차 큼 (부지 클릭 시 변전소별 실측)</span>
+                        <span className="muted"> · {t('시군구·부지별 편차 큼 (부지 클릭 시 변전소별 실측)', 'large variation by sigungu/site (click a site for per-substation measurement)')}</span>
                       </div>
                     </div>
                   )}
                   <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                    <div className="k">배전 여유 — 소규모 접속 (한전 분산전원 22.9kV · 라이브)</div>
+                    <div className="k">{t('배전 여유 — 소규모 접속 (한전 분산전원 22.9kV · 라이브)', 'Distribution headroom — small-scale connection (한전 distributed generation 22.9kV · live)')}</div>
                     <div className="v">
                       {regionInfo.headroomMw != null ? (
                         <>
                           <strong>{regionInfo.headroomMw.toLocaleString()} MW</strong>
                           {regionInfo.headroomSubst && (
-                            <span className="muted"> · 최대 여유 {regionInfo.headroomSubst}</span>
+                            <span className="muted"> · {t('최대 여유', 'max headroom')} {regionInfo.headroomSubst}</span>
                           )}
-                          <div className="cell-basis">대형 DC의 154kV 송전 접속여유는 별개 — 부지 클릭 시 변전소별 전력공급 여유(154kV·22.9kV) 자동 조회</div>
+                          <div className="cell-basis">{t('대형 DC의 154kV 송전 접속여유는 별개 — 부지 클릭 시 변전소별 전력공급 여유(154kV·22.9kV) 자동 조회', 'Large-DC 154kV transmission connection headroom is separate — click a site to auto-query per-substation power-supply headroom (154kV·22.9kV)')}</div>
                         </>
                       ) : (
                         <>
-                          <span className="badge verify">연동 대기 (KEPCO 분산전원 API)</span>
+                          <span className="badge verify">{t('연동 대기 (KEPCO 분산전원 API)', 'data pending (KEPCO distributed-generation API)')}</span>
                           <a
                             className="mini-link"
                             href="https://online.kepco.co.kr/EWM104D04"
@@ -1416,7 +1419,7 @@ export default function MapPage({ power = false }) {
                             rel="noreferrer"
                             style={{ marginLeft: 8 }}
                           >
-                            한전ON 변전소 여유 직접 조회 →
+                            {t('한전ON 변전소 여유 직접 조회 →', '한전ON substation headroom direct query →')}
                           </a>
                         </>
                       )}
@@ -1424,16 +1427,16 @@ export default function MapPage({ power = false }) {
                   </div>
                   {RENEWABLE_ESS[regionInfo.sido] && (
                     <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                      <div className="k">재생에너지·ESS 설비용량 (RE100·PPA 근접 · ’25.5)</div>
+                      <div className="k">{t('재생에너지·ESS 설비용량 (RE100·PPA 근접 · ’25.5)', 'Renewable · ESS capacity (RE100·PPA proximity · ’25.5)')}</div>
                       <div className="v">
-                        <strong>태양광 {Math.round(RENEWABLE_ESS[regionInfo.sido].solar).toLocaleString()} MW</strong>
-                        {RENEWABLE_ESS[regionInfo.sido].wind != null && ` · 풍력 ${Math.round(RENEWABLE_ESS[regionInfo.sido].wind).toLocaleString()}MW`}
-                        {` · ESS 저장 ${Math.round(RENEWABLE_ESS[regionInfo.sido].ess).toLocaleString()}MW`}
+                        <strong>{t('태양광', 'Solar')} {Math.round(RENEWABLE_ESS[regionInfo.sido].solar).toLocaleString()} MW</strong>
+                        {RENEWABLE_ESS[regionInfo.sido].wind != null && t(` · 풍력 ${Math.round(RENEWABLE_ESS[regionInfo.sido].wind).toLocaleString()}MW`, ` · Wind ${Math.round(RENEWABLE_ESS[regionInfo.sido].wind).toLocaleString()}MW`)}
+                        {t(` · ESS 저장 ${Math.round(RENEWABLE_ESS[regionInfo.sido].ess).toLocaleString()}MW`, ` · ESS storage ${Math.round(RENEWABLE_ESS[regionInfo.sido].ess).toLocaleString()}MW`)}
                       </div>
                     </div>
                   )}
                   <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                    <div className="k">전력 자급률 (발전÷소비, ’25)</div>
+                    <div className="k">{t('전력 자급률 (발전÷소비, ’25)', 'Power self-sufficiency (generation÷consumption, ’25)')}</div>
                     <div className="v">
                       {POWER_BALANCE[regionInfo.sido] ? (
                         <>
@@ -1441,7 +1444,7 @@ export default function MapPage({ power = false }) {
                           {` · ${selfSufficiencyLabel(POWER_BALANCE[regionInfo.sido].ratio)}`}
                         </>
                       ) : (
-                        <span className="muted">데이터 없음</span>
+                        <span className="muted">{t('데이터 없음', 'No data')}</span>
                       )}
                     </div>
                   </div>
@@ -1450,24 +1453,24 @@ export default function MapPage({ power = false }) {
                     if (!conflicts.length) return null
                     return (
                       <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                        <div className="k">DC 개발 민원·분쟁 사례 (알스퀘어 · 입지 리스크)</div>
+                        <div className="k">{t('DC 개발 민원·분쟁 사례 (알스퀘어 · 입지 리스크)', 'DC development complaints/disputes (알스퀘어 · siting risk)')}</div>
                         <div className="v">
-                          <strong>{conflicts.length}건</strong>
-                          <span className="muted"> · {conflicts.slice(0, 2).map((c) => c.region.replace(`${regionInfo.sido} `, '')).join('·')}{conflicts.length > 2 ? ' 등' : ''}</span>
-                          <div className="cell-basis">{conflicts[0].claims} — 주민 반발이 인허가 리드타임 리스크. <Link to="/data?tab=conflicts">전체 →</Link></div>
+                          <strong>{t(`${conflicts.length}건`, `${conflicts.length} cases`)}</strong>
+                          <span className="muted"> · {conflicts.slice(0, 2).map((c) => c.region.replace(`${regionInfo.sido} `, '')).join('·')}{conflicts.length > 2 ? t(' 등', ' etc.') : ''}</span>
+                          <div className="cell-basis">{conflicts[0].claims} — {t('주민 반발이 인허가 리드타임 리스크.', 'resident opposition is a permitting lead-time risk.')} <Link to="/data?tab=conflicts">{t('전체 →', 'All →')}</Link></div>
                         </div>
                       </div>
                     )
                   })()}
                   <div className="spec-cell">
-                    <div className="k">데이터센터 시설</div>
+                    <div className="k">{t('데이터센터 시설', 'Data-center facilities')}</div>
                     <div className="v">
-                      <strong>{regionInfo.dcCount}</strong>곳
+                      <strong>{regionInfo.dcCount}</strong>{t('곳', ' sites')}
                     </div>
                   </div>
                   <div className="spec-cell">
-                    <div className="k">DC 공개 전력</div>
-                    <div className="v">{regionInfo.dcMw > 0 ? `${regionInfo.dcMw.toLocaleString()} MW` : '비공개'}</div>
+                    <div className="k">{t('DC 공개 전력', 'DC disclosed power')}</div>
+                    <div className="v">{regionInfo.dcMw > 0 ? `${regionInfo.dcMw.toLocaleString()} MW` : t('비공개', 'undisclosed')}</div>
                   </div>
                   {(() => {
                     // 수도권(서울·경기·인천)만 존재하는 집계 — 공급예정 민간 DC(삼일PwC·KDCC ’26.3)
@@ -1476,11 +1479,11 @@ export default function MapPage({ power = false }) {
                     const mwSum = pipe.reduce((s, p) => s + p.itMw, 0)
                     return (
                       <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                        <div className="k">공급예정 민간 DC (PwC·KDCC 집계 ’26.3)</div>
+                        <div className="k">{t('공급예정 민간 DC (PwC·KDCC 집계 ’26.3)', 'Planned private DC (PwC·KDCC tally ’26.3)')}</div>
                         <div className="v">
-                          <strong>{pipe.length}</strong>곳 · IT용량 합계 <strong>{mwSum.toLocaleString()}</strong>MW{' '}
+                          <strong>{pipe.length}</strong>{t('곳 · IT용량 합계 ', ' sites · total IT capacity ')}<strong>{mwSum.toLocaleString()}</strong>MW{' '}
                           <Link className="mini-link" to="/data?tab=capital">
-                            목록 →
+                            {t('목록 →', 'List →')}
                           </Link>
                         </div>
                       </div>
@@ -1488,14 +1491,26 @@ export default function MapPage({ power = false }) {
                   })()}
                 </div>
                 <p className="note">
-                  발전 공급은 3MW 초과 허가대장(2024+ 건수·용량 참고치). 배전 여유는 한전 분산전원(22.9kV) 조회
-                  가능분 중 최대치 — <strong>대형 DC의 154kV 송전 접속여유와는 별개 지표</strong>. 이제 <strong>154kV·22.9kV
-                  전력공급 여유는 한전ON 연동으로 부지 클릭 시 변전소별·연도별 실측 조회</strong>(345kV는 정부 공개 예고를 제도
-                  트래커에서 추적 중). 공급-여유-DC를 한 지역에서 대비.
+                  {en ? (
+                    <>
+                      Generation supply is from the 3MW-plus permit register (2024+ case/capacity reference). Distribution
+                      headroom is the maximum among what is queryable from 한전 distributed generation (22.9kV) —{' '}
+                      <strong>a separate indicator from a large DC's 154kV transmission connection headroom</strong>. Now{' '}
+                      <strong>154kV·22.9kV power-supply headroom is queried per-substation and per-year on site click via 한전ON</strong>{' '}
+                      (345kV government disclosure is pre-announced and tracked in the policy tracker). Compare supply-headroom-DC in one region.
+                    </>
+                  ) : (
+                    <>
+                      발전 공급은 3MW 초과 허가대장(2024+ 건수·용량 참고치). 배전 여유는 한전 분산전원(22.9kV) 조회
+                      가능분 중 최대치 — <strong>대형 DC의 154kV 송전 접속여유와는 별개 지표</strong>. 이제 <strong>154kV·22.9kV
+                      전력공급 여유는 한전ON 연동으로 부지 클릭 시 변전소별·연도별 실측 조회</strong>(345kV는 정부 공개 예고를 제도
+                      트래커에서 추적 중). 공급-여유-DC를 한 지역에서 대비.
+                    </>
+                  )}
                 </p>
                 <div className="card-actions">
                   <button type="button" className="btn primary" onClick={() => { setSido(regionInfo.sido); setRegion(null) }}>
-                    이 지역 시설만 보기
+                    {t('이 지역 시설만 보기', 'Show only this region\'s facilities')}
                   </button>
                 </div>
               </article>
@@ -1516,48 +1531,58 @@ export default function MapPage({ power = false }) {
             <>
               {power && (
                 <div className="power-banner">
-                  <strong>⚡ 전력 지도</strong> — 발전 공급 파이프라인(◎발전허가)·계통 여유용량(⚡여유용량)을 DC 위치와 겹쳐
-                  본다. 상단 칩으로 레이어를 켜고, 시설 마커를 누르면 정보가, 빈 곳을 누르면 지점 분석이 나온다.
+                  {en ? (
+                    <>
+                      <strong>⚡ Power map</strong> — see the generation supply pipeline (◎ generation permits) and grid
+                      headroom (⚡ headroom) overlaid on DC locations. Turn on layers with the top chips; click a facility
+                      marker for info, click empty space for site analysis.
+                    </>
+                  ) : (
+                    <>
+                      <strong>⚡ 전력 지도</strong> — 발전 공급 파이프라인(◎발전허가)·계통 여유용량(⚡여유용량)을 DC 위치와 겹쳐
+                      본다. 상단 칩으로 레이어를 켜고, 시설 마커를 누르면 정보가, 빈 곳을 누르면 지점 분석이 나온다.
+                    </>
+                  )}
                 </div>
               )}
               <div className="panel-title">
-                {power ? '전력 · 시설 요약' : '사이트 인텔리전스'}
-                <span className="ver-chip" title="시드 데이터 버전 · 기준일">
+                {power ? t('전력 · 시설 요약', 'Power · facility summary') : t('사이트 인텔리전스', 'Site intelligence')}
+                <span className="ver-chip" title={t('시드 데이터 버전 · 기준일', 'Seed data version · as-of date')}>
                   v{DATA_VERSION.version} · {DATA_VERSION.date}
                 </span>
               </div>
               <h2>
-                시설 <strong>{filtered.length}</strong>곳
+                {t('시설', 'Facilities')} <strong>{filtered.length}</strong>{t('곳', ' sites')}
                 {totalMw > 0 && (
                   <>
-                    {' · 공개 전력 '}
+                    {t(' · 공개 전력 ', ' · Disclosed power ')}
                     <strong>{totalMw.toLocaleString()}</strong> MW
-                    <span className="mw-disclosed" title="전력 규모를 공개한 시설만 합산 · 상당수가 계획(미준공) 용량이라 상태별로 분해 표기">
-                      {' '}({mwDisclosed}/{filtered.length}곳 공개 · 운영 {mwByStatus.operating.toLocaleString()}
-                      {mwByStatus.construction > 0 && ` · 건설 ${mwByStatus.construction.toLocaleString()}`}
-                      {mwByStatus.planned > 0 && ` · 계획 ${mwByStatus.planned.toLocaleString()}`} MW)
+                    <span className="mw-disclosed" title={t('전력 규모를 공개한 시설만 합산 · 상당수가 계획(미준공) 용량이라 상태별로 분해 표기', 'Only facilities that disclose power are summed · much is planned (not-yet-completed) capacity, so broken down by status')}>
+                      {' '}({mwDisclosed}/{filtered.length}{t('곳 공개 · 운영 ', ' sites disclosed · operating ')}{mwByStatus.operating.toLocaleString()}
+                      {mwByStatus.construction > 0 && t(` · 건설 ${mwByStatus.construction.toLocaleString()}`, ` · construction ${mwByStatus.construction.toLocaleString()}`)}
+                      {mwByStatus.planned > 0 && t(` · 계획 ${mwByStatus.planned.toLocaleString()}`, ` · planned ${mwByStatus.planned.toLocaleString()}`)} MW)
                     </span>
                   </>
                 )}
-                {minMw != null && ` · 필터 ≥ ${minMw} MW`}
+                {minMw != null && t(` · 필터 ≥ ${minMw} MW`, ` · filter ≥ ${minMw} MW`)}
                 {q && ` · “${q}”`}
               </h2>
               <p className="map-hint" style={{ marginTop: 2 }}>
-                참고 — 전국 계통 공급여유 합계{' '}
+                {t('참고 — 전국 계통 공급여유 합계', 'Note — nationwide grid supply headroom total')}{' '}
                 <strong style={{ color: 'var(--accent)' }}>
                   {(Object.values(GRID_HEADROOM).reduce((s, v) => s + (typeof v === 'number' ? v : v?.mw || 0), 0) / 1000).toFixed(1)}GW
                 </strong>{' '}
-                (17개 시도 · 한전 연계가능용량 {GRID_HEADROOM_META.year} 전망). 위 MW는 개별 공개 시설 합(시장 총량 아님).
+                {t(`(17개 시도 · 한전 연계가능용량 ${GRID_HEADROOM_META.year} 전망). 위 MW는 개별 공개 시설 합(시장 총량 아님).`, `(17 provinces · 한전 interconnectable capacity ${GRID_HEADROOM_META.year} outlook). The MW above is a sum of individually disclosed facilities (not a market total).`)}
               </p>
               <p className="map-hint">
-                <LineIcon name="target" size={14} /> <strong>지도 빈 곳을 클릭</strong> → 부지 분석(전력·냉각·리스크 점수) · <strong>시설 마커 클릭</strong> → 상세 정보
+                <LineIcon name="target" size={14} /> <strong>{t('지도 빈 곳을 클릭', 'Click empty space on the map')}</strong> → {t('부지 분석(전력·냉각·리스크 점수)', 'site analysis (power · cooling · risk score)')} · <strong>{t('시설 마커 클릭', 'Click a facility marker')}</strong> → {t('상세 정보', 'details')}
               </p>
               {filtered.length > 0 && (
                 <div className="status-summary">
                   <div
                     className="status-bar"
                     role="img"
-                    aria-label={`운영 ${statusCounts.operating}, 건설 ${statusCounts.construction}, 계획 ${statusCounts.planned}`}
+                    aria-label={t(`운영 ${statusCounts.operating}, 건설 ${statusCounts.construction}, 계획 ${statusCounts.planned}`, `Operating ${statusCounts.operating}, Construction ${statusCounts.construction}, Planned ${statusCounts.planned}`)}
                   >
                     {statusCounts.operating > 0 && <span className="seg op" style={{ flexGrow: statusCounts.operating }} />}
                     {statusCounts.construction > 0 && (
@@ -1567,22 +1592,22 @@ export default function MapPage({ power = false }) {
                   </div>
                   <div className="status-chips">
                     <span>
-                      <i className="dot operating" /> 운영 <strong>{statusCounts.operating}</strong>
+                      <i className="dot operating" /> {t('운영', 'Operating')} <strong>{statusCounts.operating}</strong>
                     </span>
                     <span>
-                      <i className="dot construction" /> 건설 <strong>{statusCounts.construction}</strong>
+                      <i className="dot construction" /> {t('건설', 'Construction')} <strong>{statusCounts.construction}</strong>
                     </span>
                     <span>
-                      <i className="dot planned" /> 계획 <strong>{statusCounts.planned}</strong>
+                      <i className="dot planned" /> {t('계획', 'Planned')} <strong>{statusCounts.planned}</strong>
                     </span>
                   </div>
                 </div>
               )}
               <div className="list-toolbar">
-                <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="정렬">
-                  <option value="status">상태순 (운영→계획)</option>
-                  <option value="mw">공개 용량순</option>
-                  <option value="name">이름순</option>
+                <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label={t('정렬', 'Sort')}>
+                  <option value="status">{t('상태순 (운영→계획)', 'By status (operating→planned)')}</option>
+                  <option value="mw">{t('공개 용량순', 'By disclosed capacity')}</option>
+                  <option value="name">{t('이름순', 'By name')}</option>
                 </select>
               </div>
               <div className="facility-list">
@@ -1595,7 +1620,7 @@ export default function MapPage({ power = false }) {
                         {f.sido}
                         {f.sigungu ? ` ${f.sigungu}` : ''} · {STATUS_LABEL[f.status] ?? f.status}
                         {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
-                        {isCoarseGeocode(f.geocode_level) && <span className="approx-tag" title="좌표가 시군구 중심점 — 실제 부지 아님">위치 근사</span>}
+                        {isCoarseGeocode(f.geocode_level) && <span className="approx-tag" title={t('좌표가 시군구 중심점 — 실제 부지 아님', 'coordinates are sigungu centroid — not the actual site')}>{t('위치 근사', 'approx. location')}</span>}
                       </span>
                     </span>
                   </button>

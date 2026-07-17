@@ -8,13 +8,16 @@ import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { loadPowerLines } from '../data/powerLines.js'
 import { recommendSites } from '../score/recommend.js'
 import { STYLE_3D, facilityLabelLayer } from './style3d.js'
+import { useMapLang } from '../i18n/mapLang.js'
 
 /* 3D 베타 — MapLibre GL
  * v5 성능 경량화: 79개 DOM 마커(프레임마다 transform 재계산 → 회전/기울임 버벅임의 주원인)를
  *   GPU 렌더 GL 서클 레이어로 교체. antialias off·maxPitch 제한·fadeDuration 축소로 렌더 부하↓. */
 
 const TITLE = '3D 맵 (베타) — AI InfraMap'
+const TITLE_EN = '3D Map (Beta) — AI InfraMap'
 const DESC = '한국 데이터센터 현황을 기울인 3D 시점에서 — MapLibre GL 전환 베타.'
+const DESC_EN = 'Korea data center status in a tilted 3D view — MapLibre GL migration beta.'
 
 // 상태별 색(tokens.css 미러) — operating green / construction orange / delayed amber / planned sky
 const STATUS_COLOR = [
@@ -29,14 +32,14 @@ const STATUS_COLOR = [
 
 // 상태 필터 칩 정의 — planned에 delayed 포함(2D 필터바와 동일 그룹핑)
 const STATUS_CHIPS = [
-  { key: 'operating', label: '운영', statuses: ['operating'] },
-  { key: 'construction', label: '건설', statuses: ['construction'] },
-  { key: 'planned', label: '계획', statuses: ['planned', 'delayed'] },
+  { key: 'operating', label: '운영', labelEn: 'Operating', statuses: ['operating'] },
+  { key: 'construction', label: '건설', labelEn: 'Construction', statuses: ['construction'] },
+  { key: 'planned', label: '계획', labelEn: 'Planned', statuses: ['planned', 'delayed'] },
 ]
 // 카메라 프리셋 — 전국/수도권 빠른 점프
 const CAM_PRESETS = [
-  { key: 'kr', label: '전국', center: [127.6, 36.3], zoom: 6.4, pitch: 55, bearing: -12 },
-  { key: 'cap', label: '수도권', center: [126.98, 37.42], zoom: 9.1, pitch: 60, bearing: -16 },
+  { key: 'kr', label: '전국', labelEn: 'Nationwide', center: [127.6, 36.3], zoom: 6.4, pitch: 55, bearing: -12 },
+  { key: 'cap', label: '수도권', labelEn: 'Capital region', center: [126.98, 37.42], zoom: 9.1, pitch: 60, bearing: -16 },
 ]
 
 export default function Map3DPage() {
@@ -44,6 +47,7 @@ export default function Map3DPage() {
   const mapRef = useRef(null)
   const readyRef = useRef(false)
   const navigate = useNavigate()
+  const en = useMapLang() === 'en'
   // 상태 필터 — GL setFilter(GPU 측 필터)라 리렌더 비용 없음
   const [statusOn, setStatusOn] = useState({ operating: true, construction: true, planned: true })
   const statusRef = useRef(statusOn)
@@ -66,10 +70,10 @@ export default function Map3DPage() {
   }, [statusOn]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    document.title = TITLE
+    document.title = en ? TITLE_EN : TITLE
     const el = document.head.querySelector('meta[name="description"]')
-    if (el) el.setAttribute('content', DESC)
-  }, [])
+    if (el) el.setAttribute('content', en ? DESC_EN : DESC)
+  }, [en])
 
   useEffect(() => {
     let cancelled = false
@@ -319,7 +323,7 @@ export default function Map3DPage() {
       <div className="map-layout">
         <div ref={wrapRef} className="map-canvas map3d" />
         {/* v7 컨트롤 — 상태 필터(GL setFilter) + 카메라 프리셋 */}
-        <div className="m3d-ui" role="group" aria-label="3D 맵 컨트롤">
+        <div className="m3d-ui" role="group" aria-label={en ? '3D map controls' : '3D 맵 컨트롤'}>
           {STATUS_CHIPS.map((c) => (
             <button
               key={c.key}
@@ -328,7 +332,7 @@ export default function Map3DPage() {
               onClick={() => setStatusOn((s) => ({ ...s, [c.key]: !s[c.key] }))}
               aria-pressed={statusOn[c.key]}
             >
-              {c.label}
+              {en ? c.labelEn : c.label}
             </button>
           ))}
           <span className="m3d-sep" aria-hidden="true" />
@@ -339,13 +343,15 @@ export default function Map3DPage() {
               className="chip m3d-chip"
               onClick={() => mapRef.current?.flyTo({ center: p.center, zoom: p.zoom, pitch: p.pitch, bearing: p.bearing, duration: 1100 })}
             >
-              {p.label}
+              {en ? p.labelEn : p.label}
             </button>
           ))}
         </div>
         <div className="map3d-banner">
-          <span className="badge status-operating">3D 베타 v7</span>
-          우클릭 드래그로 회전·기울임 · 기둥 높이 = 공개 수전용량(MW, 미공개는 기둥 없음) · 줌 14+ 건물 입체 · 🟡 추천입지 클릭 → 분석 · 송전선·변전소(154kV+) 전압별 색: 154 갈/345 보라/765 분홍
+          <span className="badge status-operating">{en ? '3D Beta v7' : '3D 베타 v7'}</span>
+          {en
+            ? ' Right-click drag to rotate/tilt · column height = public receiving capacity (MW; no column if undisclosed) · zoom 14+ for 3D buildings · 🟡 click a recommended site → analysis · transmission lines · substations (154kV+) colored by voltage: 154 brown / 345 purple / 765 pink'
+            : ' 우클릭 드래그로 회전·기울임 · 기둥 높이 = 공개 수전용량(MW, 미공개는 기둥 없음) · 줌 14+ 건물 입체 · 🟡 추천입지 클릭 → 분석 · 송전선·변전소(154kV+) 전압별 색: 154 갈/345 보라/765 분홍'}
         </div>
       </div>
     </>

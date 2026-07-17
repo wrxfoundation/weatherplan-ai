@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import TopBar from '../TopBar.jsx'
+import { useMapLang } from '../i18n/mapLang.js'
 import { GLOSSARY, GLOSSARY_CATEGORIES } from '../content/glossary.js'
 import GlossaryMap from './GlossaryMap.jsx'
+
+/* 카테고리 라벨 KO→EN — GLOSSARY_CATEGORIES는 임포트 데이터라 편집하지 않고 표시만 번역 */
+const CAT_EN = {
+  '전력 인허가': 'Power permitting',
+  '데이터센터 기본': 'Datacenter basics',
+  '냉각 기술': 'Cooling technology',
+}
 
 const TITLE = '데이터센터 전력 인허가 용어집 — AI InfraMap'
 const DESC =
@@ -35,6 +43,8 @@ export function buildGlossaryJsonLd(origin = '') {
 }
 
 export default function GlossaryPage() {
+  const en = useMapLang() === 'en'
+  const catLabel = (ko) => (en ? CAT_EN[ko] ?? ko : ko)
   const [cat, setCat] = useState('전체')
   // 보기 모드 — 딕셔너리(리스트) / 온톨로지 맵(용어·법령 성좌). 선택 브라우저 저장.
   const [view, setView] = useState(() => {
@@ -75,30 +85,39 @@ export default function GlossaryPage() {
       <TopBar />
       <main className="page">
         <div className="eyebrow">GLOSSARY</div>
-        <h1>전력 인허가 · 데이터센터 용어집</h1>
+        <h1>{en ? 'Power Permitting · Datacenter Glossary' : '전력 인허가 · 데이터센터 용어집'}</h1>
         <p className="sub">
-          공개 규정(한전 기본공급약관 · 기후에너지환경부공고 제2025-139호) 기준으로 풀어 쓴 {GLOSSARY.length}개
-          용어입니다.
+          {en ? (
+            <>
+              {GLOSSARY.length} terms explained against public rules (KEPCO Basic Supply Provisions · Ministry of Climate,
+              Energy and Environment Notice No. 2025-139).
+            </>
+          ) : (
+            <>
+              공개 규정(한전 기본공급약관 · 기후에너지환경부공고 제2025-139호) 기준으로 풀어 쓴 {GLOSSARY.length}개
+              용어입니다.
+            </>
+          )}
         </p>
 
         <div className="glossary-toolbar">
-          <div className="seg-tabs" role="tablist" aria-label="용어 분류">
+          <div className="seg-tabs" role="tablist" aria-label={en ? 'Term categories' : '용어 분류'}>
             <button type="button" role="tab" className={`seg-tab ${cat === '전체' ? 'on' : ''}`} onClick={() => setCat('전체')} aria-selected={cat === '전체'}>
-              전체 <span className="n">{GLOSSARY.length}</span>
+              {en ? 'All' : '전체'} <span className="n">{GLOSSARY.length}</span>
             </button>
             {GLOSSARY_CATEGORIES.map((c) => (
               <button key={c.key} type="button" role="tab" className={`seg-tab ${cat === c.key ? 'on' : ''}`} onClick={() => setCat(c.key)} aria-selected={cat === c.key}>
-                {c.label} <span className="n">{countOf.get(c.key) || 0}</span>
+                {catLabel(c.label)} <span className="n">{countOf.get(c.key) || 0}</span>
               </button>
             ))}
           </div>
           {/* 보기 모드 — 딕셔너리 / 온톨로지 맵 */}
-          <div className="view-seg" role="group" aria-label="보기 모드">
+          <div className="view-seg" role="group" aria-label={en ? 'View mode' : '보기 모드'}>
             <button type="button" className={view === 'dict' ? 'on' : ''} onClick={() => setViewPersist('dict')} aria-pressed={view === 'dict'}>
-              딕셔너리
+              {en ? 'Dictionary' : '딕셔너리'}
             </button>
             <button type="button" className={view === 'map' ? 'on' : ''} onClick={() => setViewPersist('map')} aria-pressed={view === 'map'}>
-              온톨로지 맵
+              {en ? 'Ontology map' : '온톨로지 맵'}
             </button>
           </div>
         </div>
@@ -107,7 +126,7 @@ export default function GlossaryPage() {
 
         {view === 'dict' && shownCats.map((sec) => (
           <section key={sec.key} className="glossary-section">
-            <h2 className="glossary-cat">{sec.label}</h2>
+            <h2 className="glossary-cat">{catLabel(sec.label)}</h2>
             <dl className="glossary-list">
               {GLOSSARY.filter((g) => g.category === sec.key).map((g) => (
                 <div key={g.id} id={g.id} className="glossary-item">
@@ -123,9 +142,9 @@ export default function GlossaryPage() {
         ))}
 
         <p className="footer-note">
-          본 용어집은 공개 규정·공개 기술 자료 기준의 일반 설명이며, 시범운영 고시가 정식 제정되면 수치·절차가 바뀔
-          수 있습니다. 냉각 기술 용어는 OCP 교육 웨비나(2025.6) 등 공개 기술 자료를 참고했습니다. 구체적 사업 검토는
-          한전·기후부 최신 공고를 확인하세요.
+          {en
+            ? 'This glossary gives general explanations based on public rules and public technical materials; figures and procedures may change once the pilot notice is formally enacted. Cooling-technology terms draw on public technical materials such as the OCP educational webinar (Jun 2025). For a specific project review, check the latest KEPCO / Ministry of Climate, Energy and Environment notices.'
+            : '본 용어집은 공개 규정·공개 기술 자료 기준의 일반 설명이며, 시범운영 고시가 정식 제정되면 수치·절차가 바뀔 수 있습니다. 냉각 기술 용어는 OCP 교육 웨비나(2025.6) 등 공개 기술 자료를 참고했습니다. 구체적 사업 검토는 한전·기후부 최신 공고를 확인하세요.'}
         </p>
       </main>
     </>
