@@ -1,8 +1,77 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ④참고·인사이트 — 수치는 OCP 공개 웨비나(Parker Hannifin, 2025.6.26) 기술 자료 기반 */
 export default function LiquidCoolingBrief() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        The siting conditions of an AI data center change first inside the server
+        room. As the thermal design power (TDP) of a single GPU reaches{' '}
+        <strong>1,500–2,000W</strong>, air cooling has already passed its limit,
+        and even today’s mainstream single-phase direct-to-chip cooling (D2C) is
+        approaching its ceiling. The shift in cooling method does not end as a
+        technology issue — it is a siting problem that rewrites{' '}
+        <strong>
+          how much water and power a site needs, and in what manner it uses them
+        </strong>
+        .
+      </p>
+
+      <h2>From single-phase to two-phase — 1.5 L/min per kW becomes 0.3 L/min</h2>
+      <p>
+        The boundary line presented by Parker Hannifin at an OCP (Open Compute
+        Project) public webinar is clear. A GPU TDP of{' '}
+        <strong>1,500–2,000W is the limit of single-phase D2C</strong>, and above
+        that you need <strong>two-phase cooling</strong>, where the coolant boils
+        and carries heat away as latent heat of vaporization. The flow-rate
+        requirement differs dramatically — to handle 1kW of heat, single-phase
+        needs about <strong>1.5 liters</strong> per minute, two-phase about{' '}
+        <strong>0.3 liters</strong>. That means handling the same heat load with
+        one-fifth the flow rate, and the premises of pump power, pipe diameter,
+        and cooling-water infrastructure all change.
+      </p>
+
+      <h2>Market — triple within a decade</h2>
+      <p>
+        The same material projects the data-center cooling-components market
+        reaching about <strong>$14.9 billion in 2030</strong>, tripling within a
+        decade. Immersion cooling is under standardization discussion, and the{' '}
+        <strong>PFAS (per- and polyfluoroalkyl substances) regulation</strong> on
+        two-phase coolant families remains the biggest variable in technology
+        choice — which coolant survives determines the answer to “what do you
+        accept in exchange for using less water?”
+      </p>
+
+      <h2>The siting equation changes</h2>
+      <p>
+        The cooling transition has three implications for site selection. First,{' '}
+        <strong>the weight of water conditions changes</strong> — the two-phase
+        transition lowers the flow-rate requirement, but the absolute demand of a
+        hyperscale campus grows, so the combination of “water cooling at a
+        water-scarce site” remains risky. Second,{' '}
+        <strong>weather conditions divide operating costs</strong> — free-cooling
+        (free-cooling) available hours and wet-bulb temperature are siting
+        variables that carry different weights by cooling method. Third, as
+        cooling power falls, the same receiving capacity can{' '}
+        <strong>carry more IT load</strong> — improving PUE is itself a
+        reinterpretation of contracted power.
+      </p>
+
+      <h2>AI InfraMap’s place</h2>
+      <p>
+        These three are exactly what AI InfraMap scoring’s weather axis (M3) and
+        power axis aim to quantify.{' '}
+        <Link to="/calc">The GPU calculator</Link> already reflects the cooling
+        burden with an overhead coefficient, and starting with the integration of
+        Kweather weather data,{' '}
+        <strong>site re-evaluation by cooling method</strong> will enter the
+        scoring. The generational turnover of cooling changes the definition of a
+        “good site” — tracking that definition with data is this map’s job.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         AI 데이터센터의 입지 조건은 서버실 안에서 먼저 바뀐다. GPU 한 장의 열설계전력(TDP)이{' '}
@@ -47,3 +116,4 @@ export default function LiquidCoolingBrief() {
     </>
   )
 }
+

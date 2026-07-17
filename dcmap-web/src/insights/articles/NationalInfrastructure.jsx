@@ -1,9 +1,64 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 1차 소스: KDCC/STRABASE Issue Focus, 「AI 인프라의 재분류…」 인포그래픽.
  * 콘텐츠 등급 ④참고·인사이트. 사건·기준 변화는 원문 인용, 국내 함의는 AI InfraMap 축으로 연결. */
 export default function NationalInfrastructure() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        Data centers are being reclassified from <strong>private infrastructure</strong> centered on
+        power and land into <strong>strategic assets</strong> that underpin national security and the
+        economic system. The trigger was the <strong>physical attack on Middle Eastern data
+        centers</strong> in March 2026 — an Iranian drone attack disrupted AWS operations in Bahrain
+        and the UAE, 31 services were affected through late April, and the Abu Dhabi facility also
+        suffered shrapnel damage. It was an event that confirmed cloud outages are no longer a matter
+        of IT systems but <strong>can be caused by war and geopolitical conflict</strong>.
+      </p>
+
+      <h2>Rethinking Risk — from IT outage to economic-system risk</h2>
+      <p>
+        The very nature of data center risk has changed. Yesterday’s cyberattack has expanded into a{' '}
+        <strong>physical attack</strong>, system failure into <strong>war and conflict</strong>,
+        service interruption into a <strong>cloud outage</strong>, and corporate operational risk into{' '}
+        <strong>economic-system risk</strong>. As AI infrastructure spreads across finance,
+        manufacturing, media, and public services, data centers have begun to be recognized as{' '}
+        <strong>national critical infrastructure</strong> akin to power grids, ports, and pipelines.
+      </p>
+
+      <h2>Redefining Siting Criteria — resilience and national trustworthiness</h2>
+      <p>
+        As a result, the criteria for siting evaluation have broadened. To the existing{' '}
+        <strong>power price, land, cooling, taxation, regulation, and customer accessibility</strong>,
+        one now adds <strong>air-defense systems, physical security, the stability of submarine-cable
+        routes, multi-region operations, disaster-recovery speed, geopolitical risk, policy and
+        diplomatic stability, and insurance costs</strong>. The axis of competition shifts from{' '}
+        <strong>power competition → siting competition → resilience competition → national-trust
+        competition</strong>. Rather than price and latency, customers are asking{' '}
+        <strong>whether service stays up even amid conflict</strong>, and have begun writing
+        multi-region and remote backup into contract terms. The fact that the Strait of Hormuz is not
+        only a crude-oil shipping lane but also a key submarine-cable route linking Asia, the Gulf, and
+        Europe shows that a location is, in itself, geopolitics.
+      </p>
+
+      <h2>AI InfraMap’s Perspective — Korea’s ‘national trustworthiness’ is a siting asset</h2>
+      <p>
+        This reclassification is double-edged for Korea. Division and proximity to military
+        installations are a demerit on the <strong>risk axis</strong> (the reason AI InfraMap treats the
+        military and disasters as siting risks), yet at the same time its relative policy stability and
+        dense power and telecommunications infrastructure can be a{' '}
+        <strong>strength in the competition over resilience and national trustworthiness</strong>. The
+        Busan submarine-cable landing, the feasibility of multi-region configurations, and
+        disaster-recovery systems are new siting layers that AI InfraMap will absorb going forward. If
+        the competitive criterion after power and permitting is ‘resilience,’ that too is ultimately a
+        matter of a single point on the map — the power-and-permitting axis continues in{' '}
+        <Link to="/insights/power-permit-battle">‘Power and Permits Decide the Contest’</Link>, and the
+        migration of the bottleneck in{' '}
+        <Link to="/insights/orbital-bottleneck">‘The AI Bottleneck Toll’</Link>.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         데이터센터가 전력·토지 중심의 <strong>민간 인프라</strong>에서, 국가 안보와 경제 시스템을 지탱하는{' '}

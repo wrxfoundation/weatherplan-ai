@@ -1,9 +1,50 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 1차 소스: KDCC/STRABASE Issue Focus(2026.6.23) — 해양/수중 데이터센터.
  * 콘텐츠 등급 ④참고·인사이트. 사례·수치는 원문 인용. */
 export default function OceanDatacenter() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        In May 2026, roughly <strong>2,000 servers</strong> began operating beneath the sea surface off
+        Shanghai. The electricity was drawn <strong>straight from a row of adjacent offshore wind
+        turbines</strong>, and cooling was handled by the surrounding seawater. Compared with onshore
+        siting, it reduces land use and freshwater cooling burdens, and its direct offshore-wind linkage
+        even lowers dependence on the transmission grid. That same month in the United States, Peter Thiel
+        put <strong>USD 140 million into a floating data center startup</strong> that runs AI on waves
+        (a valuation approaching USD 1 billion).
+      </p>
+
+      <h2>Why Go to Sea — bypassing the onshore bottleneck</h2>
+      <p>
+        The two events are no coincidence. AI computing demand is exploding while onshore infrastructure
+        cannot keep pace — <strong>the power grid is slow, cooling water is scarce, and sites become the
+        subject of political and environmental conflict</strong>. In the middle of this bottleneck, the
+        ocean data center — once dismissed as an experiment — returns as a next-generation strategy.
+        Where Microsoft (Project Natick) proved the possibility and then left, China is filling the gap
+        with <strong>state-led commercialization</strong> and the United States with{' '}
+        <strong>bets from private capital</strong>. The sea is no longer a laboratory but a new front in
+        the AI infrastructure race.
+      </p>
+
+      <h2>AI InfraMap’s Perspective — offshore or onshore, it comes down to power, cooling, and site</h2>
+      <p>
+        The appeal of the ocean data center is precisely that it solves, all at once, the three
+        variables AI InfraMap treats as the siting axis —
+        <strong>power (direct offshore-wind link), cooling (seawater), and site (avoiding local
+        complaints)</strong>. Flip it around, and the competitiveness of an onshore site reads through
+        the same three variables: is it a region with spare generation (<Link to="/power">power map</Link>),
+        can it do free-cooling and water supply
+        (<Link to="/insights/liquid-cooling-brief">cooling</Link>), and is its complaint and flood risk low (<Link to="/">site analysis</Link>).
+        With Korea surrounded by sea on three sides and offshore-wind permits surging (offshore wind in the{' '}
+        <Link to="/stats">generation permit register</Link>), ocean and coastal data centers are not a
+        distant story — wherever the bottleneck goes, that chokepoint is ultimately decided at a single
+        point on the map.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         2026년 5월, 상하이 앞바다 수면 아래에서 약 <strong>2,000대의 서버</strong>가 가동을 시작했다. 전기는 옆에

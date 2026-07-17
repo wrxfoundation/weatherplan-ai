@@ -1,8 +1,69 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ④참고·인사이트 — 수치는 미국 공개 연구·보도 기반, 재인용 경로를 출처 박스에 명시 */
 export default function DcLocalImpact() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        The criticism that data centers consume water, strain the power grid, and can push up local
+        electricity rates is not wrong. But the exaggeration that they "only cause harm with nothing given
+        in return" is equally at odds with the facts. The conclusion from America's public data is a single
+        one — the policy question should not be{' '}
+        <strong>"whether to build or not," but "where and in what manner to build."</strong>
+      </p>
+
+      <h2>Jobs — often overstated, but not nonexistent</h2>
+      <p>
+        Research by Dany Bahar and Greg Wright finds that in U.S. regions where data centers arrived,{' '}
+        <strong>total employment rose 4–5%, construction employment 11%, and information-sector employment
+        22%</strong>, with average wages up 3–4% as well. The effect persisted for{' '}
+        <strong>at least 5–6 years</strong> after construction ended. Both the claim that "they are just
+        warehouses full of servers with no jobs" and the spin that "they create enormous numbers of jobs"
+        are at a distance from the data.
+      </p>
+
+      <h2>Water — the total is small; the issue is local</h2>
+      <p>
+        In 2023, direct water use by U.S. data centers was <strong>about 66 billion liters</strong> — roughly
+        3% of what U.S. golf courses used that same year (about 2 trillion liters), and{' '}
+        <strong>less than 0.5%</strong> of total U.S. freshwater use. Many facilities reuse the same water in
+        closed-loop systems, and some statistics distort the picture by counting even natural evaporation
+        from hydropower generation as "water used by AI." That said, new water-cooled builds in
+        water-scarce regions like Phoenix warrant caution —{' '}
+        <strong>water should be assessed at the site level, not through a nationwide fear narrative.</strong>
+      </p>
+
+      <h2>Power — a real burden, with supply deciding the outcome</h2>
+      <p>
+        Power demand is genuinely worth worrying about. If data centers cluster in supply-constrained
+        regions, electricity rates can rise. But outcomes diverge by region — Virginia, where data centers
+        make up a large share of power demand, may face a heavier burden, whereas Texas has held price
+        increases in check by expanding generation and transmission capacity in tandem.{' '}
+        <strong>Choosing places with grid headroom</strong> reduces the total volume of conflict.
+      </p>
+
+      <h2>Tax revenue — the Loudoun County experiment</h2>
+      <p>
+        In Loudoun County, Virginia, data centers occupy only <strong>about 3%</strong> of the county's land
+        while generating <strong>nearly half of its property-tax revenue</strong>. Data-center-related
+        property-tax revenue in 2026 is projected at <strong>$1.3 billion</strong>, and with that funding the
+        county built 32 schools, 16 fire stations, and 6 libraries, along with roads, parks, and housing-support
+        programs — all while lowering residents' property-tax rates.
+      </p>
+
+      <h2>Implications for Korea</h2>
+      <p>
+        60% of Korea's data centers are concentrated in the Seoul metropolitan area (<Link to="/stats">statistics</Link>),
+        and new projects across the region are running into resident opposition. The lesson from the U.S. cases
+        is not a binary of for-or-against siting, but the <strong>science of location</strong> — quantifying grid
+        headroom, water supply, complaint risk, and weather conditions to answer "where and in what manner." This
+        is exactly the problem AI InfraMap's <Link to="/">status map</Link> and site-suitability scoring (M2) set
+        out to solve.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         데이터센터가 물을 쓰고, 전력망에 부담을 주고, 지역 전기요금 상승 압력을 만들 수 있다는 비판은 틀린 말이

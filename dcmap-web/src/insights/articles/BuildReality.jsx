@@ -1,8 +1,156 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ④참고·인사이트(종합) — DC 사업의 실현가능성 5관문을 흡수 리포트(CBRE·PwC·알스퀘어·IT조선) 수치로 정직하게 연결 */
 export default function BuildReality() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <div className="tldr">
+        <p className="tldr-kicker">⚡ 3-Minute Easy Read</p>
+        <p className="tldr-one">
+          “Finding good land is only the start. A data center business must clear five gates —{' '}
+          <strong>can you build it (site, power, capital)</strong> and{' '}
+          <strong>can you fill it (GPU spec, utilization)</strong>. If even one is blocked, it’s over.”
+        </p>
+        <ol>
+          <li>
+            <strong>Gate 1 Site</strong> — Even with land in hand, you get blocked at permitting and community
+            acceptance. The final approval rate for Seoul-metropolitan grid review is{' '}
+            <strong>1.9%</strong>, and projects have fallen through one after another over conflict.
+          </li>
+          <li>
+            <strong>Gate 2 Power</strong> — Above 40MW you need 154kV, and before that you must pass a “can we
+            give you the electricity” review. In the capital region, more than half get a verdict of{' '}
+            <strong>supply not available</strong>. So some, like SK in Ulsan, detour via{' '}
+            <strong>self-generation</strong>.
+          </li>
+          <li>
+            <strong>Gate 3 Capital</strong> — A single hyperscale runs roughly{' '}
+            <strong>KRW 1 trillion in total project cost</strong>. Only once site and power are secured do the
+            lenders come in, and project financing only turns once a resale (Exit) picture holds up 3–8 years
+            out.
+          </li>
+          <li>
+            <strong>Gate 4 GPU / Spec</strong> — Even if you obtain GPUs (competing with neoclouds), if the
+            building is <strong>an older design it can’t take the latest GPUs</strong>. Without a load capacity
+            of 2.5 tons/㎡, 40–50kW per rack, and liquid cooling, it’s just an empty building.
+          </li>
+          <li>
+            <strong>Gate 5 Utilization</strong> — Even fully built, it only makes money once{' '}
+            <strong>filled</strong>. Domestic GPU utilization is 30–40%. Only sites that locked in tenants in
+            advance (pre-lease) stay full.
+          </li>
+        </ol>
+        <p>
+          <strong>Bottom line in one sentence</strong> — “digestible data centers” do exist. But only those{' '}
+          <strong>that secure a prime anchor in advance (pre-lease) and meet the latest specs (load, power
+          density, liquid cooling)</strong>. Speculative small-scale development trips at Gates 4 and 5.
+        </p>
+      </div>
+
+      <p>
+        The 5-axis score of <Link to="/">AI InfraMap</Link> answers “<strong>where</strong> to build.” But even
+        after finding good land, a project must clear, in order, five gates:{' '}
+        <strong>securing the site → power intake → capital raising → GPU procurement and spec fit → utilization
+        (digestion)</strong>. This piece honestly connects those five gates using the actual figures from the
+        reports we have absorbed (
+        <Link to="/insights/cbre-exit-scarcity-2026">CBRE</Link>·
+        <Link to="/insights/pwc-value-chain-2026">Samil PwC</Link>·
+        <Link to="/insights/rsquare-realestate-2025">RSquare</Link>·
+        <Link to="/insights/gpu-utilization-2026">IT Chosun</Link>).
+      </p>
+
+      <h2>Gate 1 — Site: even with land, passing is hard</h2>
+      <p>
+        Land can be bought with money. The problem is whether you are <strong>allowed to build</strong> a data
+        center on it. The final approval rate for the main review of the Seoul-metropolitan power-grid impact
+        assessment is <strong>1.9%</strong>(<Link to="/insights/pwc-value-chain-2026">2 out of 100
+        applications</Link>), and before approval there is one more gate — <strong>community acceptance</strong>.
+        As in Sejong Eojin-dong and Goyang Deogi-dong, projects have fallen through one after another over
+        procedure and communication (<Link to="/insights/dc-coexistence-2026">acceptance = the fourth siting
+        axis</Link>). This is exactly where AI InfraMap quantifies: it overlays grid headroom, approval rates,
+        population grids, and development-conflict history at the point level.
+      </p>
+
+      <h2>Gate 2 — Power: the intake track and self-generation</h2>
+      <p>
+        A single data center consumes as much electricity as a mid-sized city. Once the MW figure produced by
+        the calculator <strong>exceeds 10MW it is subject to a grid impact assessment, and above 40MW a 154kV
+        intake obligation applies</strong>(<Link to="/insights/power-track-40mw">the 40MW wall</Link>). In the
+        capital region, more than half (53.4%) receive a “supply not available” verdict at the first technical
+        review. So <strong>SK in Ulsan</strong> detours around the grid with LNG cogeneration{' '}
+        <strong>self-generation</strong>(about 213GWh per year), and non-capital regions shift weight toward
+        areas with high power self-sufficiency (Gyeongbuk and Jeonnam at 200%+). The map’s{' '}
+        <Link to="/?layers=headroom">substation headroom layer</Link> is the physical basis for this gate.
+      </p>
+
+      <h2>Gate 3 — Capital: trillion-won PF and the resale (Exit) picture</h2>
+      <p>
+        The total project cost of a single hyperscale is around <strong>KRW 1 trillion</strong>(Keppel Ansan
+        data center, 60MW intake). This money only attracts lenders once site and power are secured — the order
+        is not reversed. And domestic development capital is mostly project funds premised on{' '}
+        <strong>a sale (Exit) within 3–8 years</strong>, so “to whom will it be resold” is designed in from the
+        very start. The buyer pool <Link to="/insights/cbre-exit-scarcity-2026">CBRE</Link> maps widens from
+        domestic institutions (Epoch Anyang, KRW 840 billion) → global infrastructure (Hanam, KRW 734 billion)
+        → global DC-specialist capital (Keppel DC REIT). Capital is a <strong>function</strong> of site and
+        power, not an independent variable.
+      </p>
+
+      <h2>Gate 4 — GPU procurement and spec: even obtained, if it doesn’t fit you can’t install it</h2>
+      <p>
+        GPUs are hard twice over. First, <strong>procurement</strong> — with the government buying 9,704 units
+        for KRW 2.08 trillion, the private sector fights for volume against global CSPs and neoclouds (CoreWeave,
+        Lambda, Crusoe). The trickier part is <strong>spec fit</strong>. GPUs bring out a new generation every
+        2–3 years like smartphones (H100 at ~15kW per rack → Blackwell → Rubin → Feynman at 50kW+), and the
+        latest AI servers demand <strong>40–100kW per rack, a 2.5-ton/㎡ load, and liquid cooling</strong>. An
+        older-design building, however well built, <strong>physically cannot take</strong> the latest GPUs — the{' '}
+        <Link to="/insights/cbre-exit-scarcity-2026">physical obsolescence</Link> that CBRE named its “hardest
+        risk to predict.” On top of that, Korea uses a fully fitted model in which the landlord delivers even
+        the cooling and power equipment, so <strong>the landlord bears</strong> this upgrade cost. That is why{' '}
+        <Link to="/insights/liquid-cooling-brief">liquid-cooling</Link> readiness is, in effect, the asset’s
+        lifespan.
+      </p>
+
+      <h2>Gate 5 — Utilization: building it doesn’t fill it</h2>
+      <p>
+        The last gate is the coldest. Even fully built, it only makes money once <strong>filled</strong>. Yet
+        domestic GPU utilization is <strong>30–40%</strong>, and 86% of firms running their own GPUs are below
+        50% utilization (<Link to="/insights/gpu-utilization-2026">demand-side signal</Link>). Even if the
+        technology (GPUaaS) exists, if the layer of demand that repeatedly uses domestic capacity is thin, a
+        cluster sits idle once training ends. In other words,{' '}
+        <strong>the applied-for power capacity (7,343MW) is not operating load</strong>. An empty data center
+        is not an asset but a liability.
+      </p>
+
+      <h2>So — do “digestible data centers” exist in reality?</h2>
+      <p>
+        They do. But the conditions are clear:{' '}
+        <strong>data centers that secure a prime anchor tenant in advance (pre-lease) and meet the latest specs</strong>.
+        By CBRE’s count, <strong>88% of capital-region floor space is tied up in long-term leases with prime
+        anchors</strong>, and the pre-lease share of pre-completion buildings rises from 16% in 2027 to 23.5%
+        in 2028. In practice, <strong>AWS Incheon 650MW</strong>, the{' '}
+        <Link to="/insights/hyperscale-jukjeon">Jukjeon Pacific Sunny (100MW)</Link> where a global CSP
+        pre-secured five floors, and <strong>Keppel Ansan</strong>, premised on securing a hyperscale lease,
+        are cases where “who fills it was decided before it was built.” Conversely, speculative small-scale
+        development without an anchor and with only an old spec trips at Gates 4 and 5 — it can’t take the
+        latest GPUs (spec), or it takes them but doesn’t fill (utilization).
+      </p>
+
+      <h2>Service coordinates — how far do we answer?</h2>
+      <p>
+        Let’s draw the line honestly. What AI InfraMap <strong>quantifies</strong> is Gates 1 and 2 (site and
+        power) — the 5-axis score of any point, the outlook for passing the grid impact assessment, the 40MW
+        track, and substation headroom. Gates 3, 4, and 5 (capital, GPU, utilization) we{' '}
+        <strong>contextualize with market data</strong> — the calculator’s MW output and the spec, obsolescence,
+        and demand-side insights play that role. The rest — namely{' '}
+        <strong>capital-raising capacity and GPU procurement and anchor securing</strong> — is an operator’s
+        proprietary capability, an area we cannot score. Not blurring that boundary —{' '}
+        <Link to="/insights/land-pulse-methodology">not making things up</Link> — is this service’s principle.
+        A siting score is only the <strong>first</strong> of the five gates, nothing more and nothing less.
+      </p>
+    </>
+  ) : (
     <>
       <div className="tldr">
         <p className="tldr-kicker">⚡ 3분 쉽게 읽기</p>

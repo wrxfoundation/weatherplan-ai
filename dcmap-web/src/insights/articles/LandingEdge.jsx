@@ -1,9 +1,100 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ④참고·인사이트 — 공개 사실(수도권 계통 포화·해저케이블 육양국·글로벌 랜딩에지 사례) 기반 자체 분석.
  * AI InfraMap의 비수도권 필터·네트워크축·프로세스 관문과 연결. */
 export default function LandingEdge() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        The reason it is hard to build more data centers in the Seoul
+        Capital Area is not a shortage of land. It is that{' '}
+        <strong>they can no longer draw more power</strong>. The capital
+        region’s grid has neared a physical threshold in the room (headroom) to
+        absorb large new demand, and building new substations and extra-high-voltage
+        transmission lines typically takes a lead time of{' '}
+        <strong>around 7 years</strong>. The clock of the AI market and the clock
+        of the power grid are out of sync.
+      </p>
+
+      <h2>Two bills for capital-area concentration — power and latency</h2>
+      <p>
+        The first bill is power. Generation happens mostly outside the capital
+        area (the Chungnam·Gyeongbuk·Jeonnam belt), while consumption is
+        concentrated in the capital region. Transmitting over long distances
+        leaks power through line resistance (transmission loss), and once the
+        grid saturates, new connections themselves queue up. AI data centers are
+        ultra-high-density at tens to 100kW per rack, which existing distribution
+        infrastructure cannot handle, ultimately creating an incentive to{' '}
+        <strong>deploy forward toward regions close to the generation source</strong>.
+      </p>
+      <p>
+        The second bill is network latency. International traffic enters through
+        the <strong>cable landing station (CLS)</strong> where submarine cables
+        reach land — domestically, gateways include Busan Songjeong and Geoje.
+        But if servers sit only in the capital area, traffic that entered at
+        Busan must climb hundreds of km up to Seoul and back down again, forming
+        a <strong>hairpinning</strong> structure. A round trip of hundreds of km
+        constantly incurs several ms of latency and dedicated-line cost
+        (backhaul). For real-time inference and financial traffic, this latency
+        is a matter of competitiveness.
+      </p>
+
+      <h2>Landing edge — abroad, they have already gone to the landing station</h2>
+      <p>
+        The solution is nothing new. France’s <strong>Marseille</strong>,
+        bypassing Paris, clustered data centers at the Mediterranean submarine-cable
+        landing site and became southern Europe’s hub, and the U.S.’s{' '}
+        <strong>Virginia Beach</strong> attached infrastructure to the
+        trans-Atlantic cable landing point to bypass Ashburn’s saturation. The
+        common grammar is one — physically overlapping{' '}
+        <strong>
+          an upstream region where power is secured + a landing station where
+          international traffic enters
+        </strong>
+        . This is the “landing-edge” architecture.
+      </p>
+
+      <h2>Korea’s coordinates — the non-capital region is itself gateway passage</h2>
+      <p>
+        This picture meshes exactly with our platform’s axis. The overhaul of
+        the Power System Impact Assessment (Nov 2025) introduced a{' '}
+        <Link to="/insights/market-2025h2">±15-point scoring</Link> that deducts
+        points from the capital area and awards them to non-capital regions, and
+        the AIDC Special Act opened an{' '}
+        <Link to="/insights/psia-exemption-2027">exemption track</Link> from the
+        grid impact assessment for non-capital projects below a certain scale.
+        Both the institutions and the physics (grid, latency) point the same way
+        — <strong>generation upstream + landing station</strong>.
+      </p>
+      <p>
+        In fact, <Link to="/stats">86.5% of new generation installed</Link> in
+        2025 was concentrated outside the capital area, and the generation-permit
+        pipeline likewise skews to non-capital regions at the same ratio. The
+        physical grounds are accumulating for demand (data centers) to follow
+        where supply goes.
+      </p>
+
+      <h2>How to read it on the map</h2>
+      <p>
+        AI InfraMap has moved this judgment into a tool. At the top of the map,
+        use the{' '}
+        <Link to="/?noncap=1">gateway-advantage (non-capital) filter</Link> to
+        strip out the capital area, and clicking any point brings up, on a single
+        screen, that point’s{' '}
+        <strong>network proximity (backbone·landing-station distance)</strong> and{' '}
+        <strong>process-gateway outlook</strong> (154kV connection, grid impact
+        assessment ±15 points). Opening the process frame lets you see, as a
+        flow, at which gate a project stalls. Not “is this land good?” but{' '}
+        <strong>
+          “is power secured and is it close to a landing station, can it pass
+          the gateway?”
+        </strong>{' '}
+        — the order of the questions changes.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         수도권에 데이터센터를 더 짓기 어려운 이유는 땅이 없어서가 아니다. <strong>전기를 더 받을 수 없어서</strong>다.
@@ -56,3 +147,4 @@ export default function LandingEdge() {
     </>
   )
 }
+

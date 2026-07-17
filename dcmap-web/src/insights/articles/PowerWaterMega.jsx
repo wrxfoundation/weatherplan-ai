@@ -1,9 +1,98 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 1차 소스: 주간조선 2916호(2026.7.5, 용인 반도체 메가 클러스터)·2915호(2026.6.29, 3대 메가프로젝트 국민보고회).
  * 정부 발표·현장 취재 인용. 콘텐츠 등급 ④참고·인사이트(보도 종합). 수치·정책은 원문 인용. */
 export default function PowerWaterMega() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        At the June 29, 2026 national briefing on the "Republic of Korea Great Leap Three Mega-Projects" at the
+        presidential office, Samsung Electronics and SK hynix announced they would invest <strong>800 trillion
+        won</strong> in Gwangju and Jeonnam to build four cutting-edge semiconductor fabs, while SK, GS, Naver and
+        others would invest <strong>more than 1,000 trillion won</strong> by 2035 to build{' '}
+        <strong>gigawatt (GW)-class AI data centers</strong> across the country. The government said it would supply
+        water and power "under national responsibility." Yet the success or failure of this vast blueprint converges
+        on two things — <strong>water and electricity</strong>. This is why AI InfraMap, from the outset, placed
+        power and water as hard gates in site evaluation among its five axes (power, land, risk, network, climate).
+      </p>
+
+      <h2>The bottleneck in numbers — 6.3GW, 650,000 tons per day</h2>
+      <p>
+        The government stated that the Honam-region semiconductor cluster requires <strong>6.3GW</strong> of power
+        and <strong>650,000 tons of industrial water per day</strong>. The plan is to cover power with renewables,
+        nuclear, and LNG, and water with <strong>dam surplus, power-plant water, and reused wastewater</strong>.
+        Presidential Chief of Staff Kang Hoon-sik said that "if we efficiently connect water sources that can
+        already be secured, supply of <strong>more than 1 million tons per day</strong> is possible." The crux is
+        not "possible" but "on time" — coordination with existing residential and agricultural water, drought
+        response, and the lead time for large-scale transmission grids all remain. AI InfraMap's{' '}
+        <Link to="/">point analysis</Link> showing cooling-water (industrial water) conditions via the{' '}
+        <strong>storage capacity of the nearest multipurpose and industrial-water dams</strong> and{' '}
+        <strong>intake and purification facility capacity (K-water national waterworks information)</strong> is
+        meant to answer the same question.
+      </p>
+
+      <h2>The Yongin paradox — "power and water were never the problem"</h2>
+      <p>
+        The Yongin national industrial complex, designated alongside Pyeongtaek as a "semiconductor mega-cluster" in
+        2023, got tripped up by the "move it to Honam" argument. But the cause of delay the field points to is not
+        power or water — <strong>land compensation is only about 45% agreed and complete</strong>, about 35% is
+        under expedited-ruling applications to the Central Land Expropriation Committee, and on top of that came the{' '}
+        <strong>vacancy of LH's president and vice president</strong> as executing entity. Power and water, in fact,
+        have finished administrative and technical review. Of the total <strong>9.3GW</strong> required, the
+        phase-1 portion is <strong>self-supplied by a 3GW LNG plant within the complex</strong>, and the shortfall
+        needs only <strong>about a 40km additional connection</strong> from the high-capacity transmission line that
+        already reaches Bukcheonan in Chungnam (reflected in the working draft of the 11th Basic Plan for Electricity
+        Supply and Demand). For water too, a <strong>twin-line pipeline using the Han River watershed has been
+        finalized</strong>, and detailed design for integrated water supply phases 1 and 2 is complete or underway.
+        The lesson is clear — <strong>the real bottleneck of a mega-cluster is often not generation capacity but
+        procedure, land, and governance</strong>. The gateways across the entire pre-construction process are
+        confirmed step by step in the process frame of the <Link to="/roadmap">A–Z roadmap</Link>.
+      </p>
+
+      <h2>Gwangju is no better than Yongin either — the RE100 wall</h2>
+      <p>
+        <strong>RE100</strong>, the core card of the relocation argument, hits a wall of reality in Honam as well.
+        Solar, the key renewable source in this area, generates only <strong>around 4 hours</strong> per day on
+        average, and monsoons, intermittency, and instability are fatal. The industry consensus is that the ESS
+        needed to fill this gap is premature due to cost and fire risk. Minister of Climate, Energy and Environment
+        Kim Sung-hwan has also shifted his position toward a <strong>mixed power supply</strong> that "mobilizes
+        every energy source — solar, wind, nuclear, SMR, and even the hydrogen conversion of LNG." This is why AI
+        InfraMap keeps proximity to renewable generation complexes only as a "reference signal" for RE100
+        procurement and <strong>does not include it in the 100-point total</strong> — because proximity does not
+        equal 24/7 procurement (<Link to="/insights/utility-acquisition">why they are buying up power
+        companies</Link>).
+      </p>
+
+      <h2>Signals reaching AI data centers — regional and DC-dedicated electricity tariffs</h2>
+      <p>
+        This announcement explicitly stated the introduction of a <strong>regional electricity tariff</strong> and a{' '}
+        <strong>data-center-dedicated electricity tariff</strong> to supply power to AI data centers. Regional
+        differentiated tariffs under the "local production for local consumption (jisan-jiso)" principle cement the
+        incentive for non-capital siting into policy, and this points in exactly the same direction as the ±15-point
+        grid impact assessment overhaul and the AIDC special act's non-capital exemption (<Link to="/insights/market-2025h2">the
+        ±15-point era</Link>). In other words, an <strong>era in which the electricity tariff decides the site</strong>{' '}
+        opens simultaneously on both the semiconductor and AI sides. The specifics are to be contained in the{' '}
+        <strong>12th Basic Plan for Electricity Supply and Demand</strong> to be announced in the second half of the
+        year, with transmission grid and nuclear expansion cited as remaining tasks.
+      </p>
+
+      <h2>AI InfraMap's perspective — bringing the blueprint down to the site level</h2>
+      <p>
+        800 trillion and 1,000 trillion are nation-scale numbers, but the actual success or failure is decided by{' '}
+        <strong>the power interconnection headroom, water intake, and risk of each individual site</strong>. AI
+        InfraMap brings that blueprint down to coordinates — overlaying, on one screen, the nation's{' '}
+        <Link to="/power">substations, grid supply headroom, and DC supply-feasibility determination rates</Link>,
+        the nearest <strong>multipurpose and industrial-water dams and waterworks intake and purification facility
+        capacity</strong>, and the direction of policy and data heading toward the non-capital region. It is a tool
+        that asks whether the very water and electricity the government promised to "supply without disruption"{' '}
+        <strong>actually reach a specific site</strong>. Related context continues in the{' '}
+        <Link to="/insights/power-supply-chain">power supply chain schematic</Link> and{' '}
+        <Link to="/insights/power-permit-battle">power and permitting as the battleground</Link>.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         2026년 6월 29일 청와대 ‘대한민국 대도약 3대 메가프로젝트’ 국민보고회에서 삼성전자·SK하이닉스는 광주·전남에{' '}

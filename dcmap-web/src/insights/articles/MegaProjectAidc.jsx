@@ -1,8 +1,87 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 1차 출처: 산업부 참고자료(2026.6.29 국민보고회)·korea.kr 정책브리핑(2026.5.8) — 세부는 출처 박스 */
 export default function MegaProjectAidc() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        The <strong>‘Korea Grand Leap Three Mega-Projects’</strong> (semiconductors,
+        physical AI, and AI data centers) that the government announced on June 29 at the Yeongbin-gwan
+        of the former Blue House is an announcement that rewrites the premises of Korea’s data center map.
+        Looking at the AI data center track alone —{' '}
+        <strong>Phase 1 of 8.4GW</strong> (SK 5GW, GS 2.4GW, Naver 1GW) built by the three companies
+        for a combined roughly <strong>KRW 550 trillion</strong>, with SK expanding in Phase 2 to 15GW
+        by 2035 for a <strong>total target of 18.4GW</strong>. Given that the current estimate of the
+        nation’s total data center power-intake capacity is about 1.9GW (<Link to="/stats">statistics</Link>),
+        the announced plans alone foreshadow roughly ten times the existing total capacity.
+      </p>
+
+      <h2>Regional Realignment — the center of gravity shifts outside the capital region</h2>
+      <p>
+        Alongside the mega-project, the national industrial map is divided by role: the Seoul
+        Capital Area for advanced semiconductor production, the Honam region for a second
+        semiconductor belt (4 fabs, KRW 800 trillion), the Chungcheong region for advanced
+        packaging (KRW 81 trillion), the Yeongnam region for physical AI, and{' '}
+        <strong>the Gangwon region as the hub for ultra-large AI data centers</strong>. In the
+        southwestern region, SK invests KRW 470 trillion (2 memory fabs +{' '}
+        <strong>1GW AI data center</strong>), Samsung KRW 425 trillion (2 fabs + a national AI
+        computing center), and Amkor KRW 1 trillion (Gwangju advanced packaging) — a combined
+        KRW 896 trillion. The Ministry of Trade, Industry and Energy created a dedicated unit
+        (Super-Regional Industry Cooperation Division), and in the Myeongji-Noksan industrial
+        complex in Busan a <strong>KRW 14 billion edge AI data center demonstration pilot</strong>
+        is also being launched.
+      </p>
+
+      <h2>Power Policy — the stakes of siting intelligence have grown</h2>
+      <p>
+        The infrastructure part of the announcement reshapes the official data landscape of data
+        center siting analysis. The government will{' '}
+        <strong>disclose information on 345kV grid substations with spare capacity</strong> to
+        encourage the geographic dispersion of AI data centers, fast-track power-system impact
+        assessments for non-capital-region data centers, and has signaled the introduction of{' '}
+        <strong>regional electricity tariffs and a dedicated tariff for AI data centers</strong>.
+        Early achievement of 100GW of renewable energy (by 2030), the use of SMRs, and transmission-grid
+        expansion and undergrounding are also included. An era in which electricity rates vary by
+        location — the economic value of “where you build” has officially grown.
+      </p>
+
+      <h2>The AIDC Special Act — changing the rules of the permitting game</h2>
+      <p>
+        The <strong>AI Data Center Special Act</strong>, which earlier passed the National Assembly on
+        May 7, takes effect in February 2027. There are three core points: it makes the Ministry of
+        Science and ICT a single unified window that processes multiple permits at once; it introduces
+        a <strong>timeout system</strong> whereby a permit is deemed processed once a set deadline
+        passes; and it <strong>exempts non-capital-region data centers below a certain size from the
+        power-system impact assessment</strong> (the threshold delegated to presidential decree). It is
+        a design that resolves capital-region concentration not through regulation but through an
+        asymmetry of incentives — the detailed rules are reflected in the{' '}
+        <Link to="/glossary">glossary</Link> and the power-permitting rulebook.
+      </p>
+
+      <h2>The Wall of Execution — the questions that remain</h2>
+      <p>
+        The point to watch is execution. The industry notes that the key issues are ① sentiment over
+        equity between regions, ② the bottleneck of supplying power and water simultaneously, ③ the gap
+        between renewable-energy potential and the actual ability to match 24/7 carbon-free electricity
+        (CFE), ④ policy continuity for a ten-year project, and ⑤ the structure of financing and resident
+        consent (re-citing the framing of the Connect contribution). In particular, many of the
+        gigawatt-class projects have <strong>not yet disclosed specific sites</strong> — where the sites
+        for SK’s 5GW, GS’s 2.4GW, Naver’s 1GW, and SK’s 1GW southwestern project are finalized will be
+        the biggest variable on Korea’s data center map over the next one to two years.
+      </p>
+
+      <h2>AI InfraMap’s Perspective</h2>
+      <p>
+        The 18.4GW plan, the disclosure of 345kV information, and the emergence of the
+        impact-assessment exemption track all mean a surge in demand for the “science of the site.”
+        AI InfraMap tracks publicly confirmed projects on the <Link to="/">status map</Link>, accumulates
+        the site-confirmation events of projects with undisclosed locations as a time series (D2), and
+        plans to absorb the 345kV disclosure data into its power layer as soon as it is released.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         정부가 6월 29일 청와대 영빈관에서 발표한 <strong>‘대한민국 대도약 3대 메가프로젝트’</strong>(반도체 ·

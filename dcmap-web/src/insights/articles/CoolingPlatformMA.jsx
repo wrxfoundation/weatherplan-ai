@@ -1,9 +1,59 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 1차 소스: KDDC Issue Focus(2026.7.7)·STRABASE — Ecolab의 CoolIT Systems 인수.
  * 콘텐츠 등급 ④참고·인사이트. 수치·거래 내용은 원문 인용. */
 export default function CoolingPlatformMA() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        Water-treatment and industrial-solutions company <strong>Ecolab</strong>(NYSE:ECL) has{' '}
+        <strong>acquired CoolIT Systems, a specialist in liquid cooling for high-density data centers, for approximately USD 4.75 billion</strong>{' '}
+        (closed 2026.7.2). This is not a simple equipment-maker acquisition — it signals that the bottleneck
+        in AI data centers does not end at GPUs and power, but is expanding into the problem of{' '}
+        <strong>thermal management, water management, chemical treatment, and operational data</strong> needed
+        to reliably cool those GPUs.
+      </p>
+
+      <h2>Cooling has become a baseline requirement, not an option</h2>
+      <p>
+        As the rack density of AI servers rises, air-cooling-centric designs approach their limits. Liquid
+        cooling is no longer a green option or a specialized HPC technology — it is now a{' '}
+        <strong>baseline requirement for actually realizing high-density AI infrastructure</strong>. The core
+        question shifts from “how many chips have you secured” to{' '}
+        <strong>“how densely and reliably can you operate those chips.”</strong> CoolIT is a leading
+        direct-to-chip liquid-cooling company, with a track record of custom cooling collaboration with NVIDIA
+        and AMD, and is expected to generate roughly USD 550 million in revenue over the next 12 months.
+      </p>
+
+      <h2>The competitive axis shifts — from hardware to an integrated operating platform</h2>
+      <p>
+        The significance of this deal lies less in the price than in the <strong>character of the acquirer</strong>.
+        A water-management and hygiene company bought a cooling-hardware company that sits tight against GPUs to
+        remove heat. It is a signal that the competitive axis in the cooling market is shifting from{' '}
+        <strong>selling hardware such as cold plates and CDUs to an integrated operating platform that combines
+        water, chemistry, digital monitoring, and services</strong>. Ecolab said it will bundle the real-time
+        water-quality sensing and control (3D TRASAR) capability it secured through its 2011 Nalco acquisition
+        and its ultrapure-water treatment (Ovivo) with CoolIT cooling, widening its Global High-Tech
+        addressable market from about USD 5 billion to <strong>USD 10 billion</strong>.
+      </p>
+
+      <h2>The AI InfraMap view — cooling is a siting problem of water, weather, and power</h2>
+      <p>
+        The transition to liquid cooling is not a hardware swap but a <strong>rewriting of the siting equation</strong>.
+        What the integrated platform manages is ultimately <strong>water (supply security and quality), chemistry,
+        and heat</strong> — all variables tied to the site. That is why AI InfraMap treats cooling as a siting
+        axis alongside weather, water, and contracted power. Why the generational shift in cooling elevates
+        free-cooling, wet-bulb temperature, and water availability into siting criteria is continued in{' '}
+        <Link to="/insights/liquid-cooling-brief">‘The Transition to Liquid Cooling’</Link>, and the bigger
+        picture of competition moving to power and permitting is continued in{' '}
+        <Link to="/insights/power-permit-battle">‘Power and Permitting Decide the Winner’</Link>. AI InfraMap
+        already tracks the cooling method of domestic data centers (18.1% outside-air intake) in{' '}
+        <Link to="/stats">Statistics</Link>.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         수처리·산업솔루션 기업 <strong>Ecolab</strong>(NYSE:ECL)이 고밀도 데이터센터용 액체냉각 전문기업{' '}

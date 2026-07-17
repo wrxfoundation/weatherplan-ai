@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { GLOSSARY, GLOSSARY_CATEGORIES } from '../content/glossary.js'
 import { PROCESS_NODES } from '../content/processOntology.js'
+import { useMapLang } from '../i18n/mapLang.js'
 
 /* 용어·절차·법령 온톨로지 맵 — korea100 '제도 은하' 문법의 경량 번안(정적 SVG, 의존성 0).
  * 3층: 용어(입자·성좌) ↔ 법령(중앙 다이아) ↔ 절차(하단 P01–P15 스트립).
@@ -9,12 +10,12 @@ import { PROCESS_NODES } from '../content/processOntology.js'
  * 공간감: 별배경 + 성좌 글로우 + 깊이(z)별 크기·광도 + 마우스 패럴랙스 + 원근 틸트(모션축소 시 비활성). */
 
 const LAW_DEFS = [
-  { id: 'yakgwan', label: '한전 기본공급약관 §23', re: /약관|기본공급|제23조/, url: 'https://cyber.kepco.co.kr/ckepco/front/jsp/CY/D/C/CYDCHP00201.jsp' },
-  { id: 'psia', label: '전력계통영향평가\n(분산에너지법·공고 2025-139)', re: /계통영향평가|분산에너지|2025-139/, url: 'https://www.law.go.kr/법령/분산에너지활성화특별법' },
-  { id: 'aidc', label: 'AIDC 특별법', re: /AIDC/ },
-  { id: 'env', label: '환경영향평가법', re: /환경영향평가법|환경영향평가\s*대상/, url: 'https://www.law.go.kr/법령/환경영향평가법' },
-  { id: 'kukto', label: '국토계획법(용도지역)', re: /국토계획법|용도지역/, url: 'https://www.law.go.kr/법령/국토의계획및이용에관한법률' },
-  { id: 'building', label: '건축법', re: /건축법|건축허가|사용승인/, url: 'https://www.law.go.kr/법령/건축법' },
+  { id: 'yakgwan', label: '한전 기본공급약관 §23', labelEn: 'KEPCO Basic Supply Provisions §23', re: /약관|기본공급|제23조/, url: 'https://cyber.kepco.co.kr/ckepco/front/jsp/CY/D/C/CYDCHP00201.jsp' },
+  { id: 'psia', label: '전력계통영향평가\n(분산에너지법·공고 2025-139)', labelEn: 'Power System Impact Assessment\n(Distributed Energy Act · Notice 2025-139)', re: /계통영향평가|분산에너지|2025-139/, url: 'https://www.law.go.kr/법령/분산에너지활성화특별법' },
+  { id: 'aidc', label: 'AIDC 특별법', labelEn: 'AIDC Special Act', re: /AIDC/ },
+  { id: 'env', label: '환경영향평가법', labelEn: 'Environmental Impact Assessment Act', re: /환경영향평가법|환경영향평가\s*대상/, url: 'https://www.law.go.kr/법령/환경영향평가법' },
+  { id: 'kukto', label: '국토계획법(용도지역)', labelEn: 'National Land Planning Act (Use Districts)', re: /국토계획법|용도지역/, url: 'https://www.law.go.kr/법령/국토의계획및이용에관한법률' },
+  { id: 'building', label: '건축법', labelEn: 'Building Act', re: /건축법|건축허가|사용승인/, url: 'https://www.law.go.kr/법령/건축법' },
 ]
 
 const CAT_COLOR = { power: '#35d5ee', dc: '#a78bfa', cooling: '#34d399' }
@@ -85,6 +86,11 @@ const MIN_K = 1
 const MAX_K = 3
 
 export default function GlossaryMap({ cat }) {
+  const en = useMapLang() === 'en'
+  // 라벨 헬퍼 — 노드 라벨은 임포트 데이터의 en/labelEn 필드 우선(KO fallback)
+  const lawLabel = (l) => (en ? l.labelEn ?? l.label : l.label)
+  const catLabel = (c) => (en ? c.labelEn ?? c.label : c.label)
+  const termName = (t) => (en ? t.en ?? t.term : t.term)
   const { terms, laws, edges, procs } = useMemo(layout, [])
   const [sel, setSel] = useState(null) // {type:'term'|'law'|'proc', id}
   const backRef = useRef(null)
@@ -164,17 +170,17 @@ export default function GlossaryMap({ cat }) {
 
   return (
     <div className={`gmap-wrap${view.k > 1 ? ' zoomed' : ''}`} ref={wrapRef} onMouseLeave={onLeave}>
-      <div className="gmap-zoom-ui" role="group" aria-label="온톨로지 맵 확대">
-        <button type="button" onClick={() => zoomBy(1.4)} aria-label="확대" disabled={view.k >= MAX_K}>+</button>
-        <button type="button" onClick={() => zoomBy(1 / 1.4)} aria-label="축소" disabled={view.k <= MIN_K}>−</button>
-        <button type="button" onClick={resetView} aria-label="원래 크기" disabled={view.k === 1}>⟲</button>
+      <div className="gmap-zoom-ui" role="group" aria-label={en ? 'Zoom ontology map' : '온톨로지 맵 확대'}>
+        <button type="button" onClick={() => zoomBy(1.4)} aria-label={en ? 'Zoom in' : '확대'} disabled={view.k >= MAX_K}>+</button>
+        <button type="button" onClick={() => zoomBy(1 / 1.4)} aria-label={en ? 'Zoom out' : '축소'} disabled={view.k <= MIN_K}>−</button>
+        <button type="button" onClick={resetView} aria-label={en ? 'Reset zoom' : '원래 크기'} disabled={view.k === 1}>⟲</button>
       </div>
       <div className="gmap-tilt">
         <svg
           viewBox={`0 0 ${W} ${H}`}
           className="gmap-svg"
           role="img"
-          aria-label="용어·절차·법령 온톨로지 맵"
+          aria-label={en ? 'Term · process · law ontology map' : '용어·절차·법령 온톨로지 맵'}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
@@ -218,13 +224,14 @@ export default function GlossaryMap({ cat }) {
             })}
             {GLOSSARY_CATEGORIES.map((c) => (
               <text key={c.key} x={CAT_POS[c.key].x} y={CAT_POS[c.key].y + 5} className={`gmap-cat${dimCat(c.key) ? ' dim' : ''}`} textAnchor="middle" style={{ fill: CAT_COLOR[c.key] }}>
-                {c.label}
+                {catLabel(c)}
               </text>
             ))}
             {terms.map((t) => {
               const on = selTerm?.id === t.id || (linkedFromIds && linkedFromIds.has(t.id))
               const dim = dimCat(t.category)
-              const short = t.term.length > 12 ? `${t.term.slice(0, 11)}…` : t.term
+              const name = termName(t)
+              const short = name.length > 12 ? `${name.slice(0, 11)}…` : name
               const r = (on ? 6.5 : 4.2) * (0.85 + t.z * 0.5) // 깊이별 크기 — 공간감
               return (
                 <g key={t.id} className={`gmap-term${on ? ' on' : ''}${dim ? ' dim' : ''}`} onClick={() => toggle('term', t.id)} role="button" tabIndex={0}
@@ -250,7 +257,7 @@ export default function GlossaryMap({ cat }) {
                    onKeyDown={(e) => e.key === 'Enter' && toggle('law', l.id)}>
                   <circle cx={l.x} cy={l.y} r="18" className="gmap-hit" />
                   <rect x={l.x - 10} y={l.y - 10} width="20" height="20" transform={`rotate(45 ${l.x} ${l.y})`} rx="3.5" />
-                  {l.label.split('\n').map((ln, i) => (
+                  {lawLabel(l).split('\n').map((ln, i) => (
                     <text key={i} x={l.x} y={l.y + 26 + i * 13} textAnchor="middle" className="gmap-law-label">
                       {ln}
                     </text>
@@ -259,7 +266,7 @@ export default function GlossaryMap({ cat }) {
               )
             })}
             {/* 절차 P01–P15 — 하단 아치 스트립 */}
-            <text x={W / 2} y={612} textAnchor="middle" className="gmap-proc-cap">구축 절차 P01–P15 (로드맵)</text>
+            <text x={W / 2} y={612} textAnchor="middle" className="gmap-proc-cap">{en ? 'Build process P01–P15 (roadmap)' : '구축 절차 P01–P15 (로드맵)'}</text>
             {procs.map((p, i) => {
               const on = selProc?.id === p.id || (linkedFromIds && linkedFromIds.has(p.id))
               const hasEdge = edges.some((e) => e.from === p.id)
@@ -284,20 +291,20 @@ export default function GlossaryMap({ cat }) {
       </div>
 
       {selTerm && (
-        <div className="gmap-card" role="region" aria-label="용어 상세">
+        <div className="gmap-card" role="region" aria-label={en ? 'Term detail' : '용어 상세'}>
           <div className="gmap-card-head">
-            <b>{selTerm.term}</b>
-            {selTerm.en && <span className="glossary-en">{selTerm.en}</span>}
-            <button type="button" className="gmap-x" onClick={() => setSel(null)} aria-label="닫기">✕</button>
+            <b>{en ? termName(selTerm) : selTerm.term}</b>
+            {en ? <span className="glossary-en">{selTerm.term}</span> : selTerm.en && <span className="glossary-en">{selTerm.en}</span>}
+            <button type="button" className="gmap-x" onClick={() => setSel(null)} aria-label={en ? 'Close' : '닫기'}>✕</button>
           </div>
-          <p>{selTerm.def}</p>
+          <p>{en ? (selTerm.defEn ?? selTerm.def) : selTerm.def}</p>
           {linkedLawIds?.size > 0 && (
             <div className="gmap-links">
-              근거·연결:{' '}
+              {en ? 'Basis · links:' : '근거·연결:'}{' '}
               {laws.filter((l) => linkedLawIds.has(l.id)).map((l, i) => (
                 <span key={l.id}>
                   {i > 0 && ' · '}
-                  {l.url ? <a href={l.url} target="_blank" rel="noreferrer">{l.label.replace('\n', ' ')} ↗</a> : l.label.replace('\n', ' ')}
+                  {l.url ? <a href={l.url} target="_blank" rel="noreferrer">{lawLabel(l).replace('\n', ' ')} ↗</a> : lawLabel(l).replace('\n', ' ')}
                 </span>
               ))}
             </div>
@@ -305,29 +312,29 @@ export default function GlossaryMap({ cat }) {
         </div>
       )}
       {selLaw && (
-        <div className="gmap-card" role="region" aria-label="법령 상세">
+        <div className="gmap-card" role="region" aria-label={en ? 'Law detail' : '법령 상세'}>
           <div className="gmap-card-head">
-            <b>{selLaw.label.replace('\n', ' ')}</b>
-            {selLaw.url && <a className="gmap-law-link" href={selLaw.url} target="_blank" rel="noreferrer">원문 ↗</a>}
-            <button type="button" className="gmap-x" onClick={() => setSel(null)} aria-label="닫기">✕</button>
+            <b>{lawLabel(selLaw).replace('\n', ' ')}</b>
+            {selLaw.url && <a className="gmap-law-link" href={selLaw.url} target="_blank" rel="noreferrer">{en ? 'Source ↗' : '원문 ↗'}</a>}
+            <button type="button" className="gmap-x" onClick={() => setSel(null)} aria-label={en ? 'Close' : '닫기'}>✕</button>
           </div>
           <div className="gmap-links">
-            {lawTerms.length > 0 && <>인용 용어 {lawTerms.length}개: {lawTerms.map((t) => t.term).join(' · ')}<br /></>}
-            {lawProcs.length > 0 && <>관련 절차: {lawProcs.map((p) => `${p.id} ${p.title}`).join(' · ')}</>}
+            {lawTerms.length > 0 && <>{en ? `${lawTerms.length} cited terms: ` : `인용 용어 ${lawTerms.length}개: `}{lawTerms.map((t) => termName(t)).join(' · ')}<br /></>}
+            {lawProcs.length > 0 && <>{en ? 'Related processes: ' : '관련 절차: '}{lawProcs.map((p) => `${p.id} ${p.title}`).join(' · ')}</>}
           </div>
         </div>
       )}
       {selProc && (
-        <div className="gmap-card" role="region" aria-label="절차 상세">
+        <div className="gmap-card" role="region" aria-label={en ? 'Process detail' : '절차 상세'}>
           <div className="gmap-card-head">
             <b>{selProc.id} · {selProc.title}</b>
-            <Link className="gmap-law-link" to="/roadmap?view=frame">프로세스 프레임 ↗</Link>
-            <button type="button" className="gmap-x" onClick={() => setSel(null)} aria-label="닫기">✕</button>
+            <Link className="gmap-law-link" to="/roadmap?view=frame">{en ? 'Process frame ↗' : '프로세스 프레임 ↗'}</Link>
+            <button type="button" className="gmap-x" onClick={() => setSel(null)} aria-label={en ? 'Close' : '닫기'}>✕</button>
           </div>
-          <div className="gmap-links">공개 근거: {selProc.basis}</div>
+          <div className="gmap-links">{en ? 'Public basis: ' : '공개 근거: '}{selProc.basis}</div>
         </div>
       )}
-      {!sel && <p className="gmap-hint">입자(용어) · 다이아(법령) · 사각(절차 P01–P15)를 클릭하면 정의와 연결이 표시됩니다 — 간선은 원문이 실제 인용한 법령만.</p>}
+      {!sel && <p className="gmap-hint">{en ? 'Click a particle (term) · diamond (law) · square (process P01–P15) to see its definition and links — edges show only the laws the source text actually cites.' : '입자(용어) · 다이아(법령) · 사각(절차 P01–P15)를 클릭하면 정의와 연결이 표시됩니다 — 간선은 원문이 실제 인용한 법령만.'}</p>}
     </div>
   )
 }

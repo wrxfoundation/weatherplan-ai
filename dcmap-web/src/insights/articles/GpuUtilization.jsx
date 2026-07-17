@@ -1,8 +1,113 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ④참고·인사이트(보도 종합) — 수요측 신호. 공급(부지·전력)만 보던 프레임에 수요를 얹는다. */
 export default function GpuUtilization() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <div className="tldr">
+        <p className="tldr-kicker">⚡ 3-minute easy read</p>
+        <p className="tldr-one">
+          "The government installed a mountain of GPUs — but the question of whether there's demand to actually
+          use them has been flipped. A piece that layers demand onto a board that only looked at supply."
+        </p>
+        <ol>
+          <li>
+            <strong>What the government installed</strong> — 2.08 trillion won for <strong>9,704</strong> cutting-edge
+            GPUs (B300, Vera Rubin), plus a 2.5-trillion-won National AI Computing Center. Domestic AI compute
+            resources are growing fast.
+          </li>
+          <li>
+            <strong>But utilization is 30–40%</strong> — once training is done, the amount needed scales with
+            actual usage. In one survey, <strong>86% of companies running their own GPUs were below 50%
+            utilization</strong>; in Korea it's <strong>30–40%</strong>.
+          </li>
+          <li>
+            <strong>The tech exists, but the demand base is thin</strong> — Korean CSPs have the GPUaaS
+            technology, yet AI companies use neoclouds (CoreWeave, Lambda, Crusoe) more. "Securing capacity and{' '}
+            <strong>repeated use</strong> are different problems."
+          </li>
+          <li>
+            <strong>So what does it mean for sites?</strong> — the 7,343 MW of power applications is a{' '}
+            <strong>requested capacity, not an operating load</strong>. At 30–40% utilization, actual early-stage
+            power demand can materialize below the contract.
+          </li>
+        </ol>
+        <p>
+          <strong>The one-line takeaway</strong> — the MW in the <Link to="/calc">GPU calculator</Link> is a{' '}
+          <strong>design intake capacity (peak)</strong>, so it gets discounted again by utilization. That's why
+          those of us reading supply never forget this 30–40% of demand.
+        </p>
+      </div>
+
+      <p>
+        When we discuss AI data centers we always look at <strong>supply</strong> — is there land, does power
+        arrive, will the grid accept it?{' '}
+        <Link to="/">AI InfraMap</Link>'s five axes are all supply-side too. But in the summer of 2026, the
+        market's question got flipped.{' '}
+        <strong>"We've installed this many GPUs — is there demand to use them?"</strong> This piece relays that
+        demand-side signal honestly.
+      </p>
+
+      <h2>The 9,704 GPUs the government installed</h2>
+      <p>
+        In June 2026, the Ministry of Science and ICT selected Naver Cloud, Samsung SDS, and Elice Group as
+        operators for a <strong>2.08-trillion-won</strong> GPU program. Securing <strong>9,704 cutting-edge GPUs,
+        including NVIDIA's B300 and Vera Rubin</strong>, it will roll out services sequentially, from the B300
+        this year to Vera Rubin in the first half of 2027. Add the <strong>2.5-trillion-won National AI Computing
+        Center</strong>, and domestic AI compute resources are growing rapidly. This capacity goes into proprietary
+        foundation models, national AI projects, and industry-academia-research development, with some commercialized
+        by CSPs as GPUaaS (GPU-as-a-Service).
+      </p>
+
+      <h2>The problem is after training — utilization of 30–40%</h2>
+      <p>
+        When <strong>first training</strong> a large model, hundreds to thousands of GPUs are committed intensively
+        for a while. That's why the government pushed GPU adoption. But once training ends, only retraining,
+        fine-tuning, and inference remain, and the amount needed then scales with{' '}
+        <strong>actual service usage</strong>. If the user base is thin, the cluster switched on for training can't
+        keep running — some GPUs are left idle.
+      </p>
+      <p>
+        The numbers back this up. A VentureBeat Research survey of 573 technology leaders at companies with more
+        than 100 employees worldwide found that <strong>86% of firms operating their own GPUs were below 50%
+        utilization</strong>. Korea is lower still, reportedly around <strong>30–40% utilization</strong>. "Securing
+        GPUs and turning them into a service that developers keep using are completely different problems" is the
+        industry's cold assessment.
+      </p>
+
+      <h2>The tech exists, but the demand base is thin — the neocloud assault</h2>
+      <p>
+        Korean CSPs (Naver Cloud, NHN Cloud, KT Cloud, Kakao Enterprise) <strong>already have the technology</strong>
+        for GPUaaS, which pools GPUs and allocates them by the duration and scale needed. The problem is choice:
+        whether AI companies and developers will repeatedly use domestic offerings over global CSPs or{' '}
+        <strong>neoclouds (CoreWeave, Lambda, Crusoe, Nebius)</strong>. Neoclouds don't just rent out GPUs — they
+        bundle high-speed networking, storage, and development environments to sell a continuous experience where you
+        "start training the moment you get access, scaling from small experiments to large-scale distributed
+        training." This is exactly where Korean CSPs concede they "have the fundamentals but lack developer-grade
+        convenience and continuity."
+      </p>
+
+      <h2>Why site intelligence must watch this signal</h2>
+      <p>
+        The demand-side signal is a <strong>reality anchor</strong> for supply planning. First, the power demand the
+        DC boom foreshadows (<Link to="/insights/pwc-value-chain-2026">7,343 MW of 2027 power-use applications</Link>)
+        is a <strong>requested capacity</strong>, not an <strong>operating load</strong>. If 30–40% utilization is the
+        reality, actual early power demand can materialize below the intake contract, which leaves slack in how we read
+        grid headroom. Second, idle GPUs mean the weight is shifting toward <strong>inference</strong> — and inference,
+        where user proximity and latency matter, changes the <Link to="/insights/landing-edge">grammar of location
+        (landing edge)</Link>. Third, the criticism that investment pours only into GPUs and buildings while operating
+        software takes a back seat is a signal that, after completion, <strong>operational efficiency (PUE,
+        utilization)</strong> divides asset value as much as location does.
+      </p>
+      <p>
+        So remember that the MW output of the <Link to="/calc">GPU calculator</Link> is a{' '}
+        <strong>design intake capacity</strong> (on a peak basis). Actual annual load gets discounted again by
+        utilization — that's why those of us reading supply never forget this 30–40% of demand.
+      </p>
+    </>
+  ) : (
     <>
       <div className="tldr">
         <p className="tldr-kicker">⚡ 3분 쉽게 읽기</p>

@@ -1,8 +1,155 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ③민간 가공(삼일PwC 공개 세미나 자료) 기반 — 수치는 원문 페이지 단위로 인용 */
 export default function PwcValueChain() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <div className="tldr">
+        <p className="tldr-kicker">⚡ Easy read in 3 minutes</p>
+        <p className="tldr-one">
+          "When an accounting firm organized it in the language of money, the market grows to KRW 10tn while power meets
+          only 64% of applications, so the gateway tilts to the non-capital regions — the picture our map has seen every
+          day."
+        </p>
+        <ol>
+          <li>
+            <strong>A KRW 10tn market, excess demand</strong> — Korea's private DC market grows from KRW 2.42tn ('18) →{' '}
+            <strong>KRW 10.19tn</strong> ('28F). In 2027, DC power applications reach 7,343MW while KEPCO's suppliable
+            capacity is 4,718MW (<strong>64%</strong>) — demand overshoots supply by 1.56×.
+          </li>
+          <li>
+            <strong>The gateway has tilted</strong> — 75.3% of operating DCs are in the capital region, yet the
+            power-system impact assessment pass rate is <strong> 21%</strong> for the capital region vs{' '}
+            <strong>71%</strong> for non-capital regions. Of 36 new expansion plans,{' '}
+            <strong>83% are non-capital</strong>.
+          </li>
+          <li>
+            <strong>Yet the capital region builds too</strong> — among 21 sites slated for supply, by far the largest is{' '}
+            <strong>AWS Incheon 650MW</strong>. Note, though, that IT capacity and received-power capacity are
+            different metrics (no exaggeration).
+          </li>
+          <li>
+            <strong>Where the money flows</strong> — among the five business models, money concentrates in the
+            power-and-cooling-equipment (recurring revenue) and asset-ownership (scarcity premium) links. "More than
+            scale, it's <strong>expansion speed</strong>, and cooling conversion is the key to profitability."
+          </li>
+          <li>
+            <strong>Conglomerate bets</strong> — SK Ulsan ~KRW 7tn (AWS·OpenAI), Hyundai Motor Saemangeum AI DC KRW
+            5.8tn, Samsung SDS Gumi/Haenam, Naver Gak Sejong — the race to lock in compute has begun.
+          </li>
+        </ol>
+        <p>
+          <strong>The conclusion in one line</strong> — an M&amp;A desk confirmed, with the same numbers, the premise
+          that <strong>"where you build is the first variable of viability."</strong> Below unpacks those 28 pages in
+          the map's language.
+        </p>
+      </div>
+
+      <p>
+        "The Present and Investment Direction of Korea's AI Data Center Industry," released by Samil PwC in March 2026,
+        is a rare document that organizes this arena in the <strong>language of money</strong>. Overlay its 28 pages —
+        written from an M&A perspective by the infrastructure and energy sector — with AI InfraMap's data, and you can
+        see which link of the value chain the bottleneck we watch every day on the map turns into money. The key figures
+        have been absorbed, alongside this article, into the <Link to="/data">data explorer</Link> and the{' '}
+        <Link to="/dashboard">dashboard</Link>.
+      </p>
+
+      <h2>The size of the market — a KRW 10tn market, and 1.56× excess demand</h2>
+      <p>
+        Korea's private data-center market is forecast to grow from <strong>KRW 2.42tn</strong> in 2018 to{' '}
+        <strong>KRW 10.19tn</strong> in 2028 (15%+ per year). Commercial (colocation) takes most of the growth.
+        Globally, DC demand grows from 95GW in 2025 to 166GW in 2030, and AI DC alone, taken separately, grows at{' '}
+        <strong>16.3% per year</strong> — nearly double that of general DC (9.0%).
+      </p>
+      <p>
+        The more important number is the demand-supply gap. DC electricity-use applications submitted to KEPCO reach{' '}
+        <strong>7,343MW</strong> in 2027, while the power KEPCO can supply is <strong>4,718MW</strong> — it can accept
+        only 64% of applications (based on the 11th Basic Plan for Electricity Supply and Demand). An application is not
+        yet a groundbreaking (many local-government projects have unconfirmed received-power capacity), but the
+        direction is clear: <strong>a market where demand exceeds supply</strong>, and the bottleneck's name is power.
+        This time series has been moved into the{' '}
+        <Link to="/dashboard">dashboard's 'DC demand-supply gap' card</Link>.
+      </p>
+
+      <h2>The numbers of location — 75.3% and 21% vs 71%</h2>
+      <p>
+        In 2024, <strong>75.3% of the roughly 93 operating private data centers are in the capital region</strong>
+        (Seoul 35, Gyeonggi 31, Incheon 4). The preference factors are familiar — infrastructure, CSPs' 8–20km
+        communication-distance requirement, workforce, ultra-low latency. Yet another page of the same document shows
+        the end of that inertia. Of 33 power-system impact assessment reviews received by the Ministry of Trade,
+        Industry and Energy (Aug 2024 – Jun 2025), the <strong>capital-region pass rate is 21%, non-capital 71%</strong>.
+        The timing and sample differ from the KEPCO first-stage technical review (53.4% supply-impossible in the capital
+        region) and main-review statistics we track separately, but every window reflects the same landscape —{' '}
+        <Link to="/insights/psia-exemption">the capital-region gateway is narrowing</Link>.
+      </p>
+      <p>
+        The result is a map of expansion. Nationwide DCs are set to grow from 164 to 200, and{' '}
+        <strong>of the 36 at the planning stage, 83% are non-capital</strong>. Gangwon +6, the Gyeongsang region +11,
+        the Jeolla region +7, the Chungcheong region +4. The regional power self-sufficiency this document cites as
+        grounds (Seoul 10.4%, Gangwon 213%, North Gyeongsang 216%) is a metric our map already holds for a more recent
+        year (2025, all 17 provinces and metropolitan cities) — now, click a province on the map and{' '}
+        <strong>the power self-sufficiency rate appears right on the regional summary card</strong>.
+      </p>
+
+      <h2>What gets built in the capital region — 21 sites, and AWS 650MW</h2>
+      <p>
+        Even so, capital-region supply does not stop. The <strong>21 private DCs slated for supply in the capital
+        region</strong> (by IT capacity) that the report tallies are Ansan 5, Bucheon 3, Goyang/Hanam/Guro 2 each — and,
+        standing out by far, <strong>AWS 650MW in Gajwa-dong, Seo-gu, Incheon (completion planned 2026)</strong>. It is
+        a scale that far exceeds the domestic top-tier hyperscale benchmark (
+        <Link to="/insights/hyperscale-jukjeon">Jukjeon Pacific Sunny</Link> at 100MW received). The full list of 21
+        sites can be searched and downloaded as CSV in the{' '}
+        <Link to="/data?tab=capital">data explorer's 'capital-region planned-supply DC' tab</Link>. Note: IT capacity is
+        a different metric from received-power capacity, and planned completion is based on the planning date.
+      </p>
+
+      <h2>The value chain — five places where money flows</h2>
+      <p>
+        The report cuts supply-side business models into five. ① <strong>EPC type</strong> (one-off orders per
+        project), ② <strong>Energy Infra supply type</strong> (power and cooling equipment + recurring revenue on
+        long-term contracts — equipment efficiency directly ties to DC competitiveness and the technical barrier to
+        entry is rising), ③ <strong>IT Infra supply type</strong> (servers and networks — a collaboration area, not an
+        entry point), ④ <strong>Energy-as-a-Service type</strong> (operations-management OPEX revenue — accumulating
+        operational data is the competitive edge), ⑤ <strong>Infra Owner type</strong> (colocation leasing — an
+        asset-scarcity premium in a supply-constrained environment). Lease-structure terms (BTS, DBO, master lease) and
+        DCIM have been newly added to the <Link to="/glossary">glossary</Link>.
+      </p>
+      <p>
+        The customer (demand) side's investment directions also organize into six — modular power architecture,
+        intelligent power management, immersion and D2C cooling, AI thermal management, integrated DCIM, and
+        GPU-as-a-service. Compressed into one line: <strong>"For power infrastructure, it's a competition of expansion
+        speed more than scale, and the shift in cooling method is the key variable of profitability."</strong> It is
+        exactly the same conclusion as our <Link to="/insights/liquid-cooling-brief">immersion-cooling brief</Link> and{' '}
+        <Link to="/insights/cooling-platform-ma">cooling-platform M&A</Link>.
+      </p>
+
+      <h2>The conglomerates' bets — the race to lock in compute</h2>
+      <p>
+        The final chapter is the coordinates of the large corporations. SK Group{' '}
+        <strong>Ulsan AIDC 100MW–1GW (~KRW 7tn, AWS·OpenAI partnership)</strong>, Hyundai Motor Group{' '}
+        <strong>KRW 5.8tn for the AI DC</strong> out of the KRW 9tn Saemangeum AI project, LG Uplus Paju KRW 600bn (in
+        DBO-method discussions with Google), Samsung SDS Gumi 60MW ('29) and Haenam 40MW national computing center, and
+        Naver Gak Sejong's 80MW expansion over three years. Staking its bet on AI G3, the government plans a{' '}
+        <strong>national AI computing center of KRW 2.5tn and 50,000 GPUs by 2030</strong>, and the Gwangju national AI
+        data center has received 120MW received-power permitting. Many of these facilities are already in our map's
+        facility seed, and the rest are incorporated after address and permit verification —{' '}
+        <Link to="/insights/land-pulse-methodology">not inventing coordinates</Link> is this map's principle.
+      </p>
+
+      <h2>A reading — where this report makes sense on our map</h2>
+      <p>
+        In summary, it is this. The market grows (KRW 10tn), demand overshoots supply (1.56×), the gateway has tilted to
+        the non-capital regions (21% vs 71%), and money concentrates in the power-and-cooling-equipment and
+        asset-ownership links. Translated into the language of site intelligence —{' '}
+        <strong>where you build is the first variable of viability</strong>, the premise of our service, has been
+        confirmed by an accounting firm's M&A desk with the same numbers. Turn on the{' '}
+        <Link to="/?layers=approval">approval-rate layer</Link> on the map and click a province to overlay
+        self-sufficiency, headroom capacity, and facilities, and these 28 pages become a single map.
+      </p>
+    </>
+  ) : (
     <>
       <div className="tldr">
         <p className="tldr-kicker">⚡ 3분 쉽게 읽기</p>

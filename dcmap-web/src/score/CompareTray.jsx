@@ -7,7 +7,7 @@ import AiResultCard from '../ai/AiResultCard.jsx'
 import { psiaScore, psiaOutlook } from './psia.js'
 import { useMapLang } from '../i18n/mapLang.js'
 
-/* i18n 사전 — 라벨만 번역(값·데이터·AI 프롬프트 키는 원본 유지). psia.js 파생 outlook.label은 KO 유지(공유 모듈). */
+/* i18n 사전 — 라벨만 번역(값·데이터·AI 프롬프트 키는 원본 유지). psia.js 파생 outlook은 EN 시 labelEn 사용(공유 모듈). */
 const AXIS_EN = { 전력: 'Power', 토지: 'Land', 리스크: 'Risk', 네트워크: 'Network', 기상: 'Climate' }
 const PROFILE_EN = { 균형: 'Balanced', '전력 중시': 'Power-first', '냉각 중시': 'Cooling-first' }
 const ROWLABEL_EN = {
@@ -205,9 +205,11 @@ const ROWS = [
   {
     key: 'psia',
     label: '계통영향평가 전망',
-    get: (c) => {
+    get: (c, en) => {
       const { composite, outlook } = psiaOf(c)
-      return composite == null ? outlook.label : `${composite} · ${outlook.label.replace('통과 ', '')}`
+      const lbl = en ? (outlook.labelEn ?? outlook.label) : outlook.label
+      const short = en ? lbl.replace('Pass ', '') : lbl.replace('통과 ', '')
+      return composite == null ? lbl : `${composite} · ${short}`
     },
     tone: (c) => psiaOf(c).outlook.tone,
     best: (c) => psiaOf(c).composite,
@@ -277,7 +279,7 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
   const onPdf = () => {
     const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     const thead = `<tr><th>${en ? 'Metric' : '지표'}</th>${items.map((c) => `<th${c.id === bestId ? ' class="best"' : ''}>${esc(c.label)}${c.id === bestId ? ' ★' : ''}</th>`).join('')}</tr>`
-    const body = ROWS.map((row) => `<tr><td class="rl">${esc(rowL(row.label))}</td>${items.map((c) => `<td>${esc(valL(row.get(c)))}</td>`).join('')}</tr>`).join('')
+    const body = ROWS.map((row) => `<tr><td class="rl">${esc(rowL(row.label))}</td>${items.map((c) => `<td>${esc(valL(row.get(c, en)))}</td>`).join('')}</tr>`).join('')
     const w = window.open('', '_blank')
     if (!w) return
     w.document.write(`<!doctype html><html lang="${en ? 'en' : 'ko'}"><head><meta charset="utf-8"><title>${en ? 'AI InfraMap candidate comparison' : 'AI InfraMap 후보지 비교'}</title><style>
@@ -370,7 +372,7 @@ export default function CompareTray({ items, onRemove, onClear, onOpen }) {
                 const isBest = rowBest[row.key] && rowBest[row.key] === c.id
                 return (
                   <span key={c.id} className={`ct-cell ${t ? TONE[t] : ''} ${isBest ? 'ct-best' : ''}`} role="cell">
-                    {valL(row.get(c))}
+                    {valL(row.get(c, en))}
                   </span>
                 )
               })}

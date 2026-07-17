@@ -1,8 +1,57 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ②공공 정형 + 자체 시드(공개 소스 집계) — KEEI·KDCC 및 dc_centers v0.1 */
 export default function SeoulConcentration() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        The geography of Korea's data centers can be summed up in one sentence —{' '}
+        <strong>concentration in the Seoul metropolitan area, and the first cracks in it</strong>. By KEEI (Korea
+        Energy Economics Institute) tallies, Korea had <strong>165 data centers (2024), roughly 60% of them in the
+        capital region</strong>. The 80 public-source seeds on the AI InfraMap status map paint the same picture —
+        Seoul, Gyeonggi, and Incheon account for more than half.
+      </p>
+
+      <h2>Why they clustered — people, not latency</h2>
+      <p>
+        The low-latency demand of finance, gaming, and cloud; operations staff; proximity to customers — capital-region
+        concentration was the product of rationality, not laziness. But the density that rationality created has now
+        become its own wall. There is no grid headroom, community acceptance is falling, and the{' '}
+        <Link to="/insights/psia-exemption-2027">regional scoring in the power-system impact assessment</Link> is
+        structurally unfavorable to the capital region.
+      </p>
+
+      <h2>Signs of the crack — what the seeds reveal</h2>
+      <p>
+        Look at the 30 under-construction and planned facilities on the status map and the direction becomes legible.{' '}
+        <strong>Haenam in South Jeolla (a planned 1GW-class Solaseado), Ulsan (SKT·AWS 100MW+), Saemangeum in North
+        Jeolla, Gangwon, Pohang in North Gyeongsang</strong> — the larger the project at the planning stage, the higher
+        its non-capital share. Renewable-energy headroom, competition among local governments to attract projects, the{' '}
+        <Link to="/insights/mega-project-aidc">AIDC track of the three mega-projects</Link>, and the 2027 special-law
+        exemption — the incentives all point south and east at once.
+      </p>
+
+      <h2>But operating facilities are still in the capital region</h2>
+      <p>
+        Make no mistake. <strong>The majority of the 50 operating facilities are still in the capital region</strong>,
+        and small-to-mid-sized facilities with an average received capacity of 17.7MW are the mainstay. The move away
+        from the capital region is happening first in the "geography of plans," and for a plan to become a completed
+        build it must solve the homework of grid, water, and workforce. How many of the 19 planned facilities actually
+        get built — that is the real variable in Korea's data-center map over the next three years, and it is why AI
+        InfraMap tracks the <Link to="/dashboard">pipeline</Link> by status.
+      </p>
+
+      <h2>Seeing it on the map</h2>
+      <p>
+        On the <Link to="/">status map</Link>, press the status filter (operating / under construction / planned) and
+        you see exactly the picture of this article — green (operating) packed into the capital region, orange (under
+        construction) and wireframe (planned) starting to rise at regional hubs. For details on each region, see area
+        pages like <Link to="/region/jeonnam">South Jeolla</Link> and <Link to="/region/ulsan">Ulsan</Link>.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         국내 데이터센터의 지리는 한 문장으로 요약된다 — <strong>수도권 집중, 그리고 균열의 시작</strong>.

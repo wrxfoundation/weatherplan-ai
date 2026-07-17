@@ -1,8 +1,129 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ③민간 가공(알스퀘어 리서치센터 공개 리포트) 기반 — 수치는 원문 페이지 단위 인용 */
 export default function RsquareRealEstate() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <div className="tldr">
+        <p className="tldr-kicker">⚡ Easy read in 3 minutes</p>
+        <p className="tldr-one">
+          "As building new data centers got harder, the value of already-built ones jumped — real-estate statistics
+          arrive at exactly the same conclusion as the power map."
+        </p>
+        <ol>
+          <li>
+            <strong>The permitting cliff</strong> — permit counts halved, from a peak of 25 in 2023 to{' '}
+            <strong>10</strong> by September 2025. Factoring in the two years from groundbreaking to completion, today's
+            permitting cliff is the <strong>supply cliff of 2027–28</strong>.
+          </li>
+          <li>
+            <strong>The premium on completed assets</strong> — transaction prices jumped from KRW 49.0bn in 2018 (Guro
+            IDC) to <strong>KRW 734.0bn</strong> in Hanam and KRW 506.8bn in Pangyo. Because building is hard,
+            already-standing buildings became scarce.
+          </li>
+          <li>
+            <strong>The rent rules changed</strong> — old racks needed 2.2kW, but an AI rack needs{' '}
+            <strong>30–60kW</strong>. Rent is being restructured around "power (kW)" rather than "number of racks" →
+            received-power capacity is asset value.
+          </li>
+          <li>
+            <strong>The conflict is unrelated to science</strong> — measured EMF is lower than a hospital's (0.4% of
+            ICNIRP), yet projects get withdrawn. Complaints are a matter of{' '}
+            <strong>communication</strong>, not science.
+          </li>
+          <li>
+            <strong>The capital region's last line</strong> — the capital region's power reserve margin fell to{' '}
+            <strong>5%</strong> in 2024 (the stability line is 10%). The grid has already answered "can more be built in
+            the capital region?"
+          </li>
+        </ol>
+        <p>
+          <strong>Bottom line in one sentence</strong> — the answer real-estate research arrives at is, in the end,{' '}
+          <strong>"a site with secured power is the asset."</strong> Below unpacks that basis through construction,
+          transaction, and rent statistics.
+        </p>
+      </div>
+
+      <p>
+        R Square Research Center's "2025 Data Center Report" (Nov 2025, 49pp) reads data centers in the{' '}
+        <strong>language of real estate</strong>. Permit and completion statistics come from the Ministry of Land,
+        Infrastructure and Transport's building data, rents from operators' published rates, and transactions from
+        actual deals — a source that starts from the exact opposite side of our power- and grid-centered map and
+        arrives at the same conclusion. The core data has been absorbed into the{' '}
+        <Link to="/data?tab=deals">data explorer</Link>.
+      </p>
+
+      <h2>The permitting cliff — from 25 to 10</h2>
+      <p>
+        Data-center permits peaked at 25 in 2023 and plunged to <strong>10</strong> by September 2025 — about half of
+        the 2024 level. The inflection point the report points to is the 2023 enactment of the{' '}
+        <strong>Distributed Energy Activation Special Act</strong> (which introduced the power-system impact assessment)
+        and the adequacy review of the received-power notice. Construction begins in the year of the permit or the
+        following year, and it averages two years from groundbreaking to completion — that is,{' '}
+        <strong>today's permitting cliff is the supply cliff of 2027–2028</strong>. Building statistics draw the same
+        picture as our <Link to="/insights/pwc-value-chain-2026">demand-supply gap analysis</Link>: demand is exploding
+        while the gateway has narrowed.
+      </p>
+
+      <h2>The explosion of the transaction market — from KRW 49.0bn to 734.0bn</h2>
+      <p>
+        A market where Dreammark One's Guro IDC traded for <strong>KRW 49.0bn</strong> in 2018 jumped to the 2024 Hanam
+        data center at <strong>KRW 734.0bn</strong> (IGIS → Macquarie Korea Infrastructure) and the 2025 SK AX Pangyo
+        IDC at <strong>KRW 506.8bn</strong> (SK Broadband). A market with annual transaction volume under KRW 100bn
+        grew to the trillion-won scale — the scarcity premium on completed assets in a supply-constrained environment
+        confirmed by actual deals. The five transaction cases (floor area, received capacity, sale price,
+        seller/buyer) can be seen in the <Link to="/data?tab=deals">transaction cases tab</Link>.
+      </p>
+
+      <h2>The physics of rent — the 2.2kW rack and the 60kW rack</h2>
+      <p>
+        The monthly rent for a domestic colocation full rack is in the{' '}
+        <strong>KRW 1.0m–1.3m</strong> range (published rates from KT Cloud, Gabia, BizMaru, KDT;{' '}
+        <Link to="/data?tab=racks">rack rent tab</Link>), and the standard provided power is typically{' '}
+        <strong>2.2kW per rack</strong>. Yet the rack density of an AI data center is{' '}
+        <strong>30–60kW/rack</strong> (4–8 times the 7.1kW average of a general IDC) — a physical quantity the existing
+        billing structure cannot hold. This is why the lease structure is moving from a per-rack basis to{' '}
+        <strong>per-power-capacity (kW) billing</strong>, and in a market where power becomes the very basis for rent,
+        a site's received-power capacity comes to determine its asset value.
+      </p>
+
+      <h2>Community conflict — plans withdrawn despite measured EMF of 0.4%</h2>
+      <p>
+        The development-conflict cases the report compiles number eight — Anyang (plan withdrawn, site sold), Yongin
+        Naver (plan withdrawn), Gimpo (groundbreaking denied), Gimhae NHN (plan withdrawn), and others. The interesting
+        part is the measurements: when the Ministry of Science and ICT measured the high-voltage-line EMF at six data
+        centers in August–September 2025, the result was an average of{' '}
+        <strong>0.4% of the human-protection standard (ICNIRP)</strong> — lower even than a hospital (0.68%) or a hotel
+        (1.17%). That projects are withdrawn nonetheless tells us this: on the data center's risk axis,{' '}
+        <strong>complaints are a matter of communication, not science</strong>, and proximity to densely populated
+        areas is the real variable. The full cases are in the{' '}
+        <Link to="/data?tab=conflicts">development conflicts tab</Link>, and population exposure can be checked in the
+        map's site analysis (population grid).
+      </p>
+
+      <h2>The capital region's 5% reserve margin — the physical last line</h2>
+      <p>
+        The national power reserve margin is below 10%, and the <strong>capital region's reserve margin fell to 5%</strong>{' '}
+        in 2024 (stability standard: 10% or more). In a structure where the capital region consumes 43.5% of peak power
+        demand, a 5% reserve margin is the grid already answering the question "can more be built in the capital
+        region?" When regional electricity tariffs (signaled for H2 2026) overlap with non-capital dispersion policy —
+        the shift in the center of gravity of location is not a choice but physics.
+      </p>
+
+      <h2>A reading — where building statistics meet grid data</h2>
+      <p>
+        In sum: permits are a cliff (25→10), completed assets carry a premium (KRW 734.0bn), rent is being restructured
+        by the kW, conflict is real regardless of measurements, and the capital-region grid is at its last line. The
+        conclusion real-estate research arrives at is, in the end,{' '}
+        <strong>"a site with secured power is the asset."</strong> Turn on the{' '}
+        <Link to="/?layers=pipeline">planned-supply layer</Link> on the map to see where this report's projects cluster,
+        and on the region pages you can also overlay the general-use contracted power (demand density) by city and
+        county.
+      </p>
+    </>
+  ) : (
     <>
       <div className="tldr">
         <p className="tldr-kicker">⚡ 3분 쉽게 읽기</p>

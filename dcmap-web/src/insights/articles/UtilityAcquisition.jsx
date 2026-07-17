@@ -1,9 +1,57 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 1차 소스: KDCC/STRABASE 1Page Focus(2026.7.7), 「데이터센터 기업은 왜 전력회사를 사들이는가」.
  * 콘텐츠 등급 ④참고·인사이트. 수치·투자자 전략은 원문 인용. */
 export default function UtilityAcquisition() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        As the competitive edge in the AI data-center industry shifts from securing GPUs to{' '}
+        <strong>the ability to secure power</strong>, data-center companies and investors are expanding a{' '}
+        <strong>vertical-integration strategy that directly secures generation assets as well</strong>. Global
+        data-center power demand is projected to more than double within two years, from <strong>31GW</strong> in 2025
+        to <strong>66GW</strong> in 2027, and at major hubs in the US and Europe, grid-connection delays have emerged
+        as a new business bottleneck.
+      </p>
+
+      <h2>The capital market's response — a generation-asset portfolio</h2>
+      <p>
+        Major infrastructure investors are buying up power plants, power-development firms, and energy storage systems
+        (ESS), erasing the boundary between the data-center and energy industries.{' '}
+        <strong>DigitalBridge</strong> aims for stable power through generation-asset investment,{' '}
+        <strong>Blackstone</strong> for supply-chain integration through combined data-center and energy investment,{' '}
+        <strong>KKR</strong> for long-term competitiveness through energy-infrastructure investment, and{' '}
+        <strong>Brookfield</strong> for minimizing power risk by expanding its generation-asset portfolio. Securing
+        generation assets has shifted from a matter of cutting operating costs to a core strategy for{' '}
+        <strong>business continuity and supply stability</strong>.
+      </p>
+
+      <h2>A realignment of the competitive structure — from IT infrastructure to energy infrastructure</h2>
+      <p>
+        The grammar of competition changes entirely. Securing GPUs → <strong>securing power</strong>, purchasing power
+        → <strong>securing generation assets</strong>, data-center-centered investment →{' '}
+        <strong>combined data-center + energy investment</strong>, IT infrastructure →{' '}
+        <strong>IT + energy infrastructure</strong>. The old flow of "secure GPUs → build DC → purchase power" is now
+        being realigned into "secure power → secure generation assets → combined DC + energy." The center of gravity in
+        AI-infrastructure competition has moved from computing resources to <strong>power-supply capability</strong>.
+      </p>
+
+      <h2>AI InfraMap's perspective — the coordinates of domestic vertical integration</h2>
+      <p>
+        The domestic version of this vertical integration is already in the data. In the{' '}
+        <Link to="/stats">power-generation business license register</Link> that AI InfraMap has absorbed, 86.5% of new
+        licenses are renewables, and self-generation and PPA direct-connection projects are increasing — supply-side
+        evidence of data centers becoming one body with power generators. The government's three mega-projects (
+        <Link to="/insights/mega-project-aidc">8.4GW</Link>) also design SMR and renewable-energy procurement together.
+        This is why AI InfraMap's power axis overlays grid headroom capacity and the generation pipeline on the same
+        map — because when choosing a site, <strong>how to secure power</strong> is already decided at the same time.
+        The technology-and-market narrative of the same shift is covered in{' '}
+        <Link to="/insights/orbital-bottleneck">"The AI Bottleneck Toll"</Link>.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         AI 데이터센터 산업의 경쟁력이 GPU 확보에서 <strong>전력 확보 능력</strong>으로 이동하면서, 데이터센터

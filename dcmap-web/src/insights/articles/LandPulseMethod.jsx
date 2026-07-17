@@ -1,8 +1,84 @@
 import { Link } from 'react-router-dom'
+import { useMapLang } from '../../i18n/mapLang.js'
 
 /* 콘텐츠 등급 ②공공 정형 — 수치는 전부 AI InfraMap이 직접 집계한 KOSIS·한국부동산원 공개 통계 (1차 출처) */
 export default function LandPulseMethod() {
-  return (
+  const en = useMapLang() === 'en'
+  return en ? (
+    <>
+      <p>
+        “Does land value rise when a data center moves in?” — it is the most
+        common question at the site-selection stage, yet no one in Korea has
+        answered it with data. To build that answer, AI InfraMap has begun to{' '}
+        <strong>
+          track the land-price fluctuation rate of data-center locations
+          nationwide, month by month, at the eup·myeon·dong level
+        </strong>
+        . This article discloses that methodology and the landscape of the first
+        snapshot.
+      </p>
+
+      <h2>What we measure — 35 si·gun·gu, 539 survey zones</h2>
+      <p>
+        The source is the “Land Price Fluctuation Rate” statistics of the
+        Ministry of Land, Infrastructure and Transport and the Korea Real Estate
+        Board (published on KOSIS). We narrow down to the{' '}
+        <strong>35 si·gun·gu</strong> where the 80 facilities on the status map
+        are located, and collect the monthly fluctuation rate of the{' '}
+        <strong>539 eup·myeon·dong-level survey zones</strong> within them. In
+        the first snapshot as of May 2026, among the DC-hosting si·gun·gu the
+        highest monthly gain was in{' '}
+        <strong>Yongsan-gu, Seoul (+0.577%)</strong>, and at the dong level in{' '}
+        <strong>the Dongbinggo-dong area of Yongsan-gu (+0.985%)</strong>, while
+        the lowest was in{' '}
+        <strong>Bugil-myeon, Haenam-gun, Jeonnam (−0.183%)</strong> — the very
+        county where the 1GW-class Solaseado plan was announced.
+      </p>
+
+      <h2>The honesty rule — we do not yet claim causation</h2>
+      <p>
+        Let us be clear. Yongsan’s rise is the power of redevelopment projects,
+        not the data center, and Haenam’s decline may be occurring <em>despite</em>{' '}
+        the plan’s announcement. To speak of a “data-center effect” from a
+        single-month snapshot is an overstatement. So AI InfraMap has three
+        rules. First, when a facility’s coordinates are the si·gun·gu centroid,
+        we <strong>do not tie a specific dong to the facility</strong>. Second,
+        we <strong>do not draw a trend line before at least three months</strong>{' '}
+        have accumulated. Third, we record not causation but only{' '}
+        <strong>event–land-price alignment</strong> — placing the timestamps of
+        groundbreakings, permits, and investment announcements side by side with
+        the land-price response is where the data’s job ends; interpretation
+        comes after.
+      </p>
+
+      <h2>Why this becomes a moat as it accumulates</h2>
+      <p>
+        The land-price fluctuation statistics themselves can be looked up
+        retroactively by anyone. But the{' '}
+        <strong>
+          aligned time series of “which zone moved in the month a given
+          announcement occurred”
+        </strong>{' '}
+        can only be held by those who accumulated the event records alongside it.
+        To answer the practical question at the site-selection stage — “is this
+        neighborhood at a price you can still enter at now?” — you need a
+        baseline from before the announcement, and that baseline belongs to
+        whoever starts building it now. AI InfraMap’s first baseline is May 2026.
+      </p>
+
+      <h2>What you can see now</h2>
+      <p>
+        On the LAND PULSE widget of the <Link to="/dashboard">dashboard</Link>{' '}
+        you can view the top and bottom fluctuation rates among hosting
+        si·gun·gu along with dong-level highlights, and on each{' '}
+        <Link to="/">facility detail</Link> you can check that si·gun·gu’s
+        average, highest, and lowest survey zones. Clicking any point on the map
+        displays the land-price signal of the nearest facility’s si·gun·gu
+        together with its dong-level range. It is all public statistics, and it
+        all carries a source.
+      </p>
+    </>
+  ) : (
     <>
       <p>
         “데이터센터가 들어서면 땅값이 오르나요?” — 부지선정 단계에서 가장 많이 받는 질문이지만, 국내에서 이걸
@@ -50,3 +126,4 @@ export default function LandPulseMethod() {
     </>
   )
 }
+
