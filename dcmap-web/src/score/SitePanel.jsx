@@ -67,6 +67,202 @@ const SP_T = {
   'PDF 저장': 'Save PDF', '.md 다운로드': '.md download',
   '비교에 추가됨 ✓': 'Added to compare ✓', '⚖ 비교에 추가': '⚖ Add to compare',
   '✦ 이 부지 정밀 리포트·컨설팅 문의 →': '✦ Request a detailed report / consulting →',
+
+  // aria-label / title
+  '이 지점 분석의 공유 링크 복사': 'Copy share link for this analysis',
+  '데이터센터 사업의 5관문 — 지을 수 있나·채울 수 있나': 'The 5 gates of a DC project — can you build it, can you fill it',
+  '지점 한눈에 요약': 'Point at a glance',
+  관할: 'Serving', '한전ON 전력공급 여유': 'KEPCO ON supply headroom',
+  '산출 근거': 'Scoring basis',
+  '점분 데이터 대기': ' pts of data pending',
+  '전력 확보 관문 타임라인': 'Power-securing gate timeline',
+  '3일 일별예보': 'Daily 3-day forecast',
+  '최근 6개월 전기사용량': 'Electricity use, last 6 months',
+
+  // roadmap details
+  '이미 연동 (막대에 실값)': 'Already live (real values in bars)',
+  '154kV+ 변전소 거리(OSM) · 계통 공급여유(한전 17시도) · DC 전력공급 가능판정율(전력계통영향평가) · 자가발전 인접 · 냉각 기후지수 · 인구밀도 · 침수 · 산사태 · 네트워크(백본·해저케이블 육양 시설 근접, OSM)':
+    'Distance to 154kV+ substations (OSM) · grid supply headroom (KEPCO 17 provinces) · DC supply-approval rate (grid impact assessment) · nearby self-generation · cooling climate index · population density · flood · landslide · network (backbone / submarine-cable landing proximity, OSM)',
+  '남은 대기': 'Still pending',
+  '부지 면적 · 산단 인센티브 · 지가 점수화(vworld 파셀) — 값이 확보된 축부터 위 5축 막대에 반영됩니다':
+    'Parcel area · industrial-park incentives · land-price scoring (vworld parcel) — each axis feeds the 5 bars above as its values arrive',
+
+  // P07 / P08 verdicts + notes
+  '22.9kV 배전 일반공급': '22.9kV distribution (general supply)',
+  '계약전력 1만kW 이하 원칙 — 계통 여유(헤드룸)가 지배 변수': 'Under 10,000kW contract as a rule — grid headroom is the governing variable',
+  '154kV 원칙 · 22.9kV 조건부': '154kV as a rule · 22.9kV conditional',
+  '제23조 ③-1: 변전소 여유 시 40MW까지 22.9kV 가능 · 40MW가 상한': 'Art. 23 ③-1: up to 40MW on 22.9kV if the substation has headroom · 40MW cap',
+  '154kV 의무': '154kV required',
+  '자체 수전설비 투자 + 154kV 변전소 거리가 지배 변수': 'Own receiving-station investment + distance to a 154kV substation govern',
+  '10MW 미만 · 비대상': 'Under 10MW · not subject',
+  '전력계통영향평가 대상 아님': 'Not subject to grid impact assessment',
+  '대상 · 비수도권 유인': 'Subject · non-capital incentive',
+  '지역 배점 가점 여지': 'Regional scoring bonus room',
+  'AIDC 특별법 면제 가능성': 'possible AIDC-Act exemption',
+  '지역 배점 가점 여지 — 계통영향평가 대상': 'Regional scoring bonus room — subject to grid impact assessment',
+  '대상 · 수도권 감점': 'Subject · capital-area penalty',
+  '±15점 중 수도권 억제 배점 — 핵심 관문': 'Capital-suppression weighting within ±15 pts — key gate',
+  '한전 접속·수전전압': 'KEPCO connection · supply voltage',
+  '전력계통영향평가 ±15점': 'Grid impact assessment ±15 pts',
+  '프로세스 관문 전망 — 이 지점': 'Process-gate outlook — this point',
+
+  // timeline steps
+  '수전 협의': 'Power intake consult',
+  '전기사용예정통지': 'Electricity-use notice',
+  '대상(5,000kW+)': 'Subject (5,000kW+)', 비대상: 'Not subject',
+  계통영향평가: 'Grid impact assessment',
+  '면제 가능': 'exemption possible', '대상(10MW+)': 'Subject (10MW+)',
+  '건축 인허가': 'Building permit', '용도지역·건축허가': 'Zoning · building permit',
+  '착공→준공': 'Break ground → completion', '전기설비·수전 준공': 'Electrical works · intake completion',
+  '용량·입지로 본 두 핵심 관문의 통과 난이도 추정 — 실제 판정은 한전·기후에너지환경부 심의.':
+    'Estimated pass difficulty of the two key gates by capacity/site — actual rulings are by KEPCO and the Ministry of Climate, Energy & Environment.',
+  '이 조건 통과 후보 맵 →': 'Candidates passing these conditions →',
+  '이 입지로 GPU 계산 →': 'GPU calc for this site →',
+  '전체 프로세스 프레임 →': 'Full process frame →',
+
+  // spec-grid: Power group
+  'DC 입지 1순위 제약': 'Top DC-siting constraint',
+  '이 지점 배전 접속여유': 'Distribution connection headroom at this point',
+  '한전 분산전원 22.9kV': 'KEPCO distributed 22.9kV',
+  '라이브 조회 · 참고': 'live query · reference',
+  '여유용량 미제공': 'headroom not provided',
+  누적연계: 'cumulative linked', 용량: 'capacity',
+  '관내 선로': 'max headroom of', '개 중 최대 여유': ' area lines',
+  '변전소별 보기': 'By substation', '변전소별 조회 중…': 'loading by substation…',
+  '실데이터 연동 대기 · 공개 API 미제공': 'Live data pending · no public API',
+  '한전 여유용량 직접 조회 →': 'Query KEPCO headroom directly →',
+  'OSM 실좌표': 'OSM actual coords', 실위치: 'actual loc',
+  년: '', '전 기간 0': 'zero throughout', 최대: 'max',
+  '이 지역 관할 변전소 전력공급 여유용량 (한전ON · 소비자 수전 · 연도별 · 참고)':
+    'Supply headroom of substations serving this area (KEPCO ON · consumer intake · by year · ref)',
+  '· 검색 시군구 관할 변전소 기준(변전소 실제 소재지와 다를 수 있음)':
+    '· based on substations serving the searched sub-region (may differ from the substation’s actual location)',
+  '전력공급 여유 미조회 · 재생e 연계만 확인': 'Supply headroom not queried · renewable link only',
+  '참고 · 재생e 연계(발전) 여유': 'Ref · renewable-link (gen) headroom',
+  막대: 'bars',
+  수전전압: 'Supply voltage', 트랙: 'track',
+  대상: 'Subject', '면제 가능성': 'exemption possible',
+  '발전 인프라': 'Generation infra', '근접성 (맥락 — 전원 매칭 아님)': 'proximity (context — not a supply match)',
+  풍력: 'wind', 내: 'within', 지점: 'sites', 최근접: 'nearest',
+  '조달 유리': 'Procurement favorable', '조달 가능': 'Procurement feasible', 원거리: 'Distant',
+  'RE100 조달 여건 (최근접 재생발전단지 · 참고)': 'RE100 procurement (nearest renewable plant · ref)',
+  풍력단지: 'wind farm', 태양광단지: 'solar farm', 태양광: 'solar',
+  '하이퍼스케일러 RE100/CFE 요건 — 대형 재생단지 근접 = 직접 PPA 잠재. OSM 대형 발전단지(소형 태양광 제외) 기준':
+    'Hyperscaler RE100/CFE needs — proximity to large renewable plants = direct-PPA potential. Based on OSM large plants (excl. small solar)',
+  '수원 인접': 'Water source near', '수원 근접': 'Water source close',
+  '용수 여유': 'Water headroom', '용수 보통': 'Water fair', '용수 확인要': 'Water: verify',
+  '냉각수(용수) 확보 여건': 'Cooling-water availability', 시도: 'prov.', 참고: 'ref',
+  '최근접 주요 수원': 'Nearest major water source', 댐: ' Dam',
+  저수: 'storage', '백만㎥': 'M m³',
+  '공업용수 취수 시설용량': 'Industrial-water intake capacity', '㎥/일': ' m³/day',
+  취수장: 'intakes', 곳: '',
+  '상수도 시설용량': 'Waterworks capacity', 정수: 'treated', 취수: 'intake',
+  정수장: 'treatment plants',
+  '한국수자원공사 다목적·용수댐(좌표 근사) · ': 'K-water multipurpose/supply dams (approx coords) · ',
+  '지역/근접 신호(부지 인입은 지방·산단 상수도사업소 별도 확인). 100점 외 참고':
+    'Regional/proximity signal (site intake needs a separate check with the local/industrial-park waterworks office). Reference outside the 100-pt score',
+  '지역 계통 수용력 (시도 기준 · 부지별은 한전 주소검색)': 'Regional grid capacity (province basis · per-site via KEPCO address search)',
+  '계통 공급여유': 'Grid supply headroom',
+  '한전 연계가능용량': 'KEPCO connectable capacity',
+  '전력공급 가능판정율': 'Supply-approval rate',
+  전력계통영향평가: 'Grid impact assessment',
+  자급률: 'self-sufficiency', '최근접 변전소': 'nearest substation', 개: '',
+  '시도 총량 신호(시군구 편차 큼) — 부지별 접속 여유는 ':
+    'Province-total signal (large sub-region variance) — per-site connection headroom via ',
+  'RE클라우드/한전 접속가능용량 →': 'REcloud / KEPCO connectable capacity →',
+
+  // Cooling group
+  '연평균기온·프리쿨링·PUE': 'annual mean temp · free-cooling · PUE',
+  '데이터센터 기후지수': 'Data-center climate index',
+  '(냉각 적합도 · 아주나쁨~아주좋음)': '(cooling suitability · very poor–very good)',
+  '5단계 중': 'level', 단계: ' of 5',
+  '연동 대기 — 기온 확보 후 산출': 'Pending — computed once temperature is available',
+
+  // Site group
+  부지: 'Site', '용도지역·주소': 'zoning · address',
+  용도지역: 'Zoning', '(vworld 도시계획 — 부지 개발 가능성)': '(vworld urban plan — site developability)',
+  '조회 대기 — 점수화는 캘리브레이션 후': 'Query pending — scoring after calibration',
+  '필지 면적': 'Parcel area', 평: ' pyeong', 'vworld 연속지적': 'vworld cadastral', ' · 도형 계산 근사': ' · geometry approx',
+  지목: 'land category', 공시지가: 'Official land price', '원/㎡': ' KRW/㎡',
+  '규제·제약 지구 (vworld 용도지구·지구단위계획 · 참고)':
+    'Regulation/restriction districts (vworld use districts / district-unit plan · ref)',
+  '토지거래허가·성장관리방안·지구단위계획 등 개발 제약/절차 신호(부지 매입·인허가 난이도). 100점 외 참고':
+    'Signals of development constraints/procedures (land-transaction permit, growth-management, district-unit plan) affecting acquisition & permitting. Reference outside the 100-pt score',
+  '산업단지 입지 (인센티브·전력/용수 기반시설)': 'Industrial-park siting (incentives · power/water infra)',
+  산단: ' ind. park',
+  '산단 내/근접은 세제·인센티브 + 전력·용수 사전확보 + 공업지역 인허가 수월. 전국 지정단지 511개(OSM landuse=industrial · 대표점 근사)':
+    'In/near an industrial park brings tax incentives + pre-secured power/water + easier industrial-zone permitting. 511 designated parks nationwide (OSM landuse=industrial · representative point)',
+  '지번주소 (vworld 리버스 지오코딩)': 'Lot address (vworld reverse geocoding)',
+  '조회 대기 — 연동 후 자동 표시': 'Query pending — auto-shown once linked',
+
+  // Risk group
+  '침수·산사태·네트워크·민원': 'flood · landslide · network · complaints',
+  '침수 위험': 'Flood risk', '(홍수위험지도 — DC에 치명적)': '(flood-hazard map — critical for DCs)',
+  '홍수영향구역 밖 · 위험 낮음': 'Outside flood zone · low risk',
+  '침수 노출': 'Flood exposure', '영향구역 인구': 'zone population', 명: '',
+  '침수구역 외 · 위험 낮음': 'Outside flood area · low risk',
+  침수심: 'flood depth',
+  '연동 대기 — 리스크축 침수(홍수위험지도)': 'Pending — flood risk axis (flood-hazard map)',
+  '네트워크 근접성': 'Network proximity', 백본: 'backbone', 해저케이블: 'submarine cable', '지연·회선': 'latency · circuits',
+  '백본/국사': 'Backbone/CO', '해저케이블 육양 시설': 'submarine-cable landing',
+  '경쟁·집적 밀도 (반경 내 데이터센터)': 'Competition/clustering density (DCs within radius)',
+  반경: 'within', 운영: 'operating',
+  '과밀 — 전력·부지 경쟁 유의': 'Overcrowded — watch power/land competition',
+  '집적 — 인프라 성숙': 'Clustered — mature infra', 한산: 'Sparse',
+  '기존/계획 DC 집적. 집적=광케이블·전력·인력 성숙(+), 과밀=전력·부지 경쟁(−). AI InfraMap 시설 시드 기준':
+    'Existing/planned DC clustering. Clustered = mature fiber/power/talent (+), overcrowded = power/land competition (−). Based on AI InfraMap facility seed',
+  '최근접 반도체 클러스터': 'Nearest semiconductor cluster',
+  용수: 'water', '천t/일': 'k t/day',
+  '전력·용수 경쟁 유의': 'Watch power/water competition', '대수요처 인접': 'Near major demand',
+  '인구·밀도': 'Population/density', '(SGIS 시군구 — 주민 수용성·민원)': '(SGIS sub-region — resident acceptance/complaints)',
+  '저밀도 · 민원 리스크 낮음': 'Low density · low complaint risk', '고밀도 · 민원 유의': 'High density · watch complaints',
+  인구: 'Population', '명/km²': ' /km²', 세대: ' households',
+  시군구: 'sub-region', 단위: 'level', '정밀 반경은 격자 API 연동 시': 'precise radius when the grid API is linked',
+  '연동 대기 — 리스크축 인구(SGIS 시군구)': 'Pending — population risk axis (SGIS sub-region)',
+
+  // spec-more (operational)
+  '운영·부가 참고 — 현재기상 · 3일예보 · 기상특보 · 과거기후 · 지번전기 · 재해 · 인근 지가':
+    'Operational / extra refs — current weather · 3-day forecast · alerts · historical climate · lot electricity · disasters · nearby land price',
+  '현재 기상 · 3일예보 (케이웨더 실황 — 운영 참고)': 'Current weather · 3-day forecast (Kweather live — ops ref)',
+  체감: 'feels', 습도: 'humidity', 강수: 'rain', 풍속: 'wind',
+  '연동 대기 — 케이웨더 실황(기상축)': 'Pending — Kweather live (climate axis)',
+  근거지: 'Reference point', 인근: 'nearby', '좌표 기준': 'by coordinates',
+  '강수 유의': 'Rain watch',
+  '기상특보 (운영 — 태풍·강풍·호우)': 'Weather alerts (ops — typhoon / wind / rain)',
+  '발효 중인 특보 없음': 'No active alerts',
+  '연동 대기 — 케이웨더 특보': 'Pending — Kweather alerts',
+  기후: 'Climate', '(과거 연별 — 기후지수 근거)': '(historical annual — climate-index basis)',
+  연평균: 'annual mean', 최고: 'high', 최저: 'low',
+  '연동 대기 — 케이웨더 과거 기후': 'Pending — Kweather historical climate',
+  '지번 실측 전기사용량 (국토부 건축HUB — 수요 맥락)': 'Lot metered electricity use (MOLIT BldHub — demand context)',
+  '해당 지번 건물에너지 실측(단독·소규모·산업 용도 제외)': 'metered building energy for this lot (excl. detached / small / industrial use)',
+  '6개월 추이': '6-month trend', '추이 조회 중…': 'loading trend…', '데이터 없음': 'no data', 월: '',
+  '해당 지번 데이터 없음 — 대상 외(단독·200세대 미만·산업)일 수 있음':
+    'No data for this lot — may be out of scope (detached / <200 units / industrial)',
+  '연동 대기 — 법정동코드 확보(vworld) 후 자동 조회': 'Pending — auto-queried after legal-dong code (vworld)',
+  '산사태·재해 위험 (SGIS 산사태위험지도)': 'Landslide/disaster risk (SGIS landslide-hazard map)',
+  '산사태 영향구역 밖 · 위험 낮음': 'Outside landslide zone · low risk',
+  '산사태 노출': 'Landslide exposure',
+  재해: 'Disasters', 건: ' events', '주 유형': 'main type', 최근: 'recent',
+  '연동 대기 — 리스크축 재해': 'Pending — disaster risk axis',
+  '지가변동률': 'land-price change rate',
+  '월간, KOSIS — 최근접 시설 시군구 기준': 'monthly, KOSIS — nearest facility sub-region',
+  '동 단위': 'dong-level', '개 구역': ' zones',
+
+  // practical lookups
+  '실무 조회 — 공식 시스템 바로가기(한전·RE클라우드·토지이음)': 'Practical lookups — official system links (KEPCO · REcloud · Toji-Eum)',
+  '한전 배전용변압기 여유': 'KEPCO distribution-transformer headroom',
+  '한전 배전망 여유 (22.9kV)': 'KEPCO distribution-line headroom (22.9kV)',
+  'RE클라우드 계통·입지': 'REcloud grid & siting',
+  '토지이음 (토지이용계획)': 'Toji-Eum (land-use plan)',
+  '최근접 시설': 'Nearest facilities',
+
+  // AI card + geo-note
+  '✨ AI 브리프': '✨ AI brief',
+  '공개 데이터 스냅샷 기반 · 없는 값은 미확보 표기': 'Based on a public-data snapshot · missing values marked unavailable',
+  'AI가 확보된 근거만으로 브리프를 작성 중…': 'AI is drafting from available evidence only…',
+  '간이 리포트 — 산출된 근거만 수치로, 대기 축은 명시. AI 브리프는 확보된 스냅샷만 사용(없는 값 생성 안 함).':
+    'Quick report — only computed evidence is quantified and pending axes are marked. The AI brief uses only the captured snapshot (no fabricated values).',
 }
 
 /* 맵 지점 클릭 → 부지 간이 분석 (시안 ScorePanel 자리의 정직한 v0 · L2 리포트 훅) */
@@ -386,7 +582,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           <button
             type="button"
             className="badge badge-btn"
-            title="이 지점 분석의 공유 링크 복사"
+            title={t('이 지점 분석의 공유 링크 복사')}
             onClick={async () => {
               try {
                 await navigator.clipboard.writeText(window.location.href)
@@ -407,7 +603,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
         </div>
 
         {/* 5관문 맥락 — 입지 점수는 사업 실현가능성의 첫 관문일 뿐임을 명시(정직성). 상세는 인사이트로. */}
-        <Link className="gate-strip" to="/insights/build-reality-2026" title="데이터센터 사업의 5관문 — 지을 수 있나·채울 수 있나">
+        <Link className="gate-strip" to="/insights/build-reality-2026" title={t('데이터센터 사업의 5관문 — 지을 수 있나·채울 수 있나')}>
           <span className="gate-strip-dots" aria-hidden>
             <b className="on">1</b><i>2</i><i>3</i><i>4</i><i>5</i>
           </span>
@@ -434,7 +630,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           const climateTone = climateIdx ? (climateIdx.level >= 4 ? 'good' : climateIdx.level === 3 ? 'warn' : 'bad') : null
           const expoTone = (o) => (o.exposurePct >= 30 ? 'bad' : o.exposurePct > 0 ? 'warn' : 'good')
           return (
-            <div className="site-summary" aria-label="지점 한눈에 요약">
+            <div className="site-summary" aria-label={t('지점 한눈에 요약')}>
               <span className={`sum-chip tone-${nonCapital ? 'good' : 'warn'}`}>{t(nonCapital ? '비수도권' : '수도권')}</span>
               {r.nearestSub && (
                 <span className={`sum-chip tone-${r.nearestSub.km <= 3 ? 'good' : r.nearestSub.km <= 12 ? 'warn' : 'bad'}`}>
@@ -449,7 +645,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               {bestSupply && (
                 <span
                   className={`sum-chip tone-${bestSupply.maxMw <= 0 ? 'bad' : bestSupply.maxMw >= mw * 3 ? 'good' : 'warn'}`}
-                  title={`관할 ${bestSupply.name}변전소 ${bestSupply.kv} · 한전ON 전력공급 여유`}
+                  title={`${t('관할')} ${bestSupply.name} ${t('변전소')} ${bestSupply.kv} · ${t('한전ON 전력공급 여유')}`}
                 >
                   {t('여유')} {bestSupply.maxMw > 0 ? `${bestSupply.maxMw.toLocaleString()}MW` : t('0(포화)')}
                 </span>
@@ -515,7 +711,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 {axis.knownMax > 0 ? (
                   <>
                     {axis.known}/{axis.knownMax}
-                    {axis.knownMax < axis.max && <em className="hbar-wait" title={`${axis.max - axis.knownMax}점분 데이터 대기`}>+{axis.max - axis.knownMax} {t('대기')}</em>}
+                    {axis.knownMax < axis.max && <em className="hbar-wait" title={`${axis.max - axis.knownMax}${t('점분 데이터 대기')}`}>+{axis.max - axis.knownMax} {t('대기')}</em>}
                   </>
                 ) : (
                   <span className="badge pending">{t('대기')}</span>
@@ -528,7 +724,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           const scored = r.axes.flatMap((a) => a.items.filter((i) => i.points != null && i.basis))
           if (!scored.length) return null
           return (
-            <ul className="score-basis" aria-label="산출 근거">
+            <ul className="score-basis" aria-label={t('산출 근거')}>
               {scored.map((i) => (
                 <li key={i.label}>
                   <b>{i.label}</b>
@@ -542,12 +738,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           <summary>{t('점수화 로드맵 — 연동된 축 / 남은 대기')}</summary>
           <ul className="score-basis roadmap-basis">
             <li>
-              <b>이미 연동 (막대에 실값)</b>
-              <span>154kV+ 변전소 거리(OSM) · 계통 공급여유(한전 17시도) · DC 전력공급 가능판정율(전력계통영향평가) · 자가발전 인접 · 냉각 기후지수 · 인구밀도 · 침수 · 산사태 · 네트워크(백본·해저케이블 육양 시설 근접, OSM)</span>
+              <b>{t('이미 연동 (막대에 실값)')}</b>
+              <span>{t('154kV+ 변전소 거리(OSM) · 계통 공급여유(한전 17시도) · DC 전력공급 가능판정율(전력계통영향평가) · 자가발전 인접 · 냉각 기후지수 · 인구밀도 · 침수 · 산사태 · 네트워크(백본·해저케이블 육양 시설 근접, OSM)')}</span>
             </li>
             <li>
-              <b>남은 대기</b>
-              <span>부지 면적 · 산단 인센티브 · 지가 점수화(vworld 파셀) — 값이 확보된 축부터 위 5축 막대에 반영됩니다</span>
+              <b>{t('남은 대기')}</b>
+              <span>{t('부지 면적 · 산단 인센티브 · 지가 점수화(vworld 파셀) — 값이 확보된 축부터 위 5축 막대에 반영됩니다')}</span>
             </li>
           </ul>
         </details>
@@ -563,35 +759,35 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
 
         {/* 프로세스 관문 전망 — 용량·입지로 본 두 핵심 게이트(P07 접속·P08 계통영향평가) 통과 난이도 */}
         {(() => {
-          const t = r.track
+          const trk = r.track
           let p07
           if (mw <= 10)
-            p07 = { sev: 'ok', verdict: '22.9kV 배전 일반공급', note: '계약전력 1만kW 이하 원칙 — 계통 여유(헤드룸)가 지배 변수' }
+            p07 = { sev: 'ok', verdict: t('22.9kV 배전 일반공급'), note: t('계약전력 1만kW 이하 원칙 — 계통 여유(헤드룸)가 지배 변수') }
           else if (mw <= 40)
-            p07 = { sev: 'talk', verdict: '154kV 원칙 · 22.9kV 조건부', note: '제23조 ③-1: 변전소 여유 시 40MW까지 22.9kV 가능 · 40MW가 상한' }
-          else p07 = { sev: 'gate', verdict: '154kV 의무', note: '자체 수전설비 투자 + 154kV 변전소 거리가 지배 변수' }
+            p07 = { sev: 'talk', verdict: t('154kV 원칙 · 22.9kV 조건부'), note: t('제23조 ③-1: 변전소 여유 시 40MW까지 22.9kV 가능 · 40MW가 상한') }
+          else p07 = { sev: 'gate', verdict: t('154kV 의무'), note: t('자체 수전설비 투자 + 154kV 변전소 거리가 지배 변수') }
 
           let p08
-          if (!t.psiaRequired) p08 = { sev: 'ok', verdict: '10MW 미만 · 비대상', note: '전력계통영향평가 대상 아님' }
+          if (!trk.psiaRequired) p08 = { sev: 'ok', verdict: t('10MW 미만 · 비대상'), note: t('전력계통영향평가 대상 아님') }
           else if (nonCapital)
             p08 = {
               sev: 'talk',
-              verdict: '대상 · 비수도권 유인',
-              note: t.exemption
-                ? `지역 배점 가점 여지 + ${t.exemption.effective}~ AIDC 특별법 면제 가능성`
-                : '지역 배점 가점 여지 — 계통영향평가 대상',
+              verdict: t('대상 · 비수도권 유인'),
+              note: trk.exemption
+                ? `${t('지역 배점 가점 여지')} + ${trk.exemption.effective}~ ${t('AIDC 특별법 면제 가능성')}`
+                : t('지역 배점 가점 여지 — 계통영향평가 대상'),
             }
-          else p08 = { sev: 'gate', verdict: '대상 · 수도권 감점', note: '±15점 중 수도권 억제 배점 — 핵심 관문' }
+          else p08 = { sev: 'gate', verdict: t('대상 · 수도권 감점'), note: t('±15점 중 수도권 억제 배점 — 핵심 관문') }
 
           const chip = (s) => (s === 'ok' ? 'status-operating' : 'verify')
           const rows = [
-            { id: 'P07', title: '한전 접속·수전전압', ...p07 },
-            { id: 'P08', title: '전력계통영향평가 ±15점', ...p08 },
+            { id: 'P07', title: t('한전 접속·수전전압'), ...p07 },
+            { id: 'P08', title: t('전력계통영향평가 ±15점'), ...p08 },
           ]
           return (
             <>
               <div className="chart-title" style={{ marginTop: 14 }}>
-                프로세스 관문 전망 — 이 지점 {mw}MW · {nonCapital ? '비수도권' : '수도권'}
+                {t('프로세스 관문 전망 — 이 지점')} {mw}MW · {t(nonCapital ? '비수도권' : '수도권')}
               </div>
               <div className="gate-outlook">
                 {rows.map((g) => (
@@ -607,16 +803,16 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               </div>
               {/* 전력 확보 타임라인 — 관문 스테퍼(대상/면제/비대상 색). 실제 리드타임은 심의·계약에 따라 변동 */}
               {(() => {
-                const t = r.track
+                const trk = r.track
                 const steps = [
-                  { k: '수전 협의', s: 'do', d: '한전 접속·수전전압' },
-                  { k: '전기사용예정통지', s: t.preNoticeRequired ? 'do' : 'skip', d: t.preNoticeRequired ? '대상(5,000kW+)' : '비대상' },
-                  { k: '계통영향평가', s: t.psiaRequired ? (t.exemption && nonCapital ? 'exempt' : 'do') : 'skip', d: t.psiaRequired ? (t.exemption && nonCapital ? `${t.exemption.effective}~ 면제 가능` : '대상(10MW+)') : '비대상' },
-                  { k: '건축 인허가', s: 'do', d: '용도지역·건축허가' },
-                  { k: '착공→준공', s: 'do', d: '전기설비·수전 준공' },
+                  { k: t('수전 협의'), s: 'do', d: t('한전 접속·수전전압') },
+                  { k: t('전기사용예정통지'), s: trk.preNoticeRequired ? 'do' : 'skip', d: trk.preNoticeRequired ? t('대상(5,000kW+)') : t('비대상') },
+                  { k: t('계통영향평가'), s: trk.psiaRequired ? (trk.exemption && nonCapital ? 'exempt' : 'do') : 'skip', d: trk.psiaRequired ? (trk.exemption && nonCapital ? `${trk.exemption.effective}~ ${t('면제 가능')}` : t('대상(10MW+)')) : t('비대상') },
+                  { k: t('건축 인허가'), s: 'do', d: t('용도지역·건축허가') },
+                  { k: t('착공→준공'), s: 'do', d: t('전기설비·수전 준공') },
                 ]
                 return (
-                  <div className="pwr-timeline" role="list" aria-label="전력 확보 관문 타임라인">
+                  <div className="pwr-timeline" role="list" aria-label={t('전력 확보 관문 타임라인')}>
                     {steps.map((st, i) => (
                       <div key={st.k} className={`pt-step pt-${st.s}`} role="listitem" title={st.d}>
                         <span className="pt-node">{st.s === 'skip' ? '–' : st.s === 'exempt' ? '✓' : i + 1}</span>
@@ -628,12 +824,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 )
               })()}
               <p className="chart-note">
-                용량·입지로 본 두 핵심 관문의 통과 난이도 추정 — 실제 판정은 한전·기후에너지환경부 심의.{' '}
+                {t('용량·입지로 본 두 핵심 관문의 통과 난이도 추정 — 실제 판정은 한전·기후에너지환경부 심의.')}{' '}
                 <Link to={`/?min_mw=${Math.max(1, Math.ceil(mw))}${nonCapital ? '&noncap=1' : ''}`}>
-                  이 조건 통과 후보 맵 →
+                  {t('이 조건 통과 후보 맵 →')}
                 </Link>{' '}
-                · <Link to={`/calc?z=${nonCapital ? '1' : '0'}`}>이 입지로 GPU 계산 →</Link>{' '}
-                · <Link to="/roadmap?view=frame">전체 프로세스 프레임 →</Link>
+                · <Link to={`/calc?z=${nonCapital ? '1' : '0'}`}>{t('이 입지로 GPU 계산 →')}</Link>{' '}
+                · <Link to="/roadmap?view=frame">{t('전체 프로세스 프레임 →')}</Link>
               </p>
               <p className="chart-note">
                 {lang === 'en'
@@ -782,32 +978,32 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
 
         {/* 부지선정 핵심 — 전력·냉각·부지·리스크 순(항상 노출). 운영성 정보는 하단 접이식으로. */}
         <div className="spec-grid">
-          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="power" /> 전력 <em>— DC 입지 1순위 제약</em></div>
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="power" /> {t('전력')} <em>— {t('DC 입지 1순위 제약')}</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">이 지점 배전 접속여유 (<Term k="계통여유">한전 분산전원 22.9kV</Term> 라이브 조회 · 참고)</div>
+            <div className="k">{t('이 지점 배전 접속여유')} (<Term k="계통여유">{t('한전 분산전원 22.9kV')}</Term> {t('라이브 조회 · 참고')})</div>
             <div className="v">
               {headroom?.available ? (
                 <>
                   {headroom.availableMw != null ? (
-                    <strong>여유 {headroom.availableMw.toLocaleString()}MW</strong>
+                    <strong>{t('여유')} {headroom.availableMw.toLocaleString()}MW</strong>
                   ) : (
-                    <span className="badge pending">여유용량 미제공</span>
+                    <span className="badge pending">{t('여유용량 미제공')}</span>
                   )}
-                  {headroom.cumulativeMw != null && ` · 누적연계 ${headroom.cumulativeMw.toLocaleString()}MW`}
-                  {headroom.capacityMw != null && ` · 용량 ${headroom.capacityMw.toLocaleString()}MW`}
+                  {headroom.cumulativeMw != null && ` · ${t('누적연계')} ${headroom.cumulativeMw.toLocaleString()}MW`}
+                  {headroom.capacityMw != null && ` · ${t('용량')} ${headroom.capacityMw.toLocaleString()}MW`}
                   {headroom.substNm && (
-                    <span className="badge status-operating" style={{ marginLeft: 8 }}>{headroom.substNm}변전소</span>
+                    <span className="badge status-operating" style={{ marginLeft: 8 }}>{headroom.substNm} {t('변전소')}</span>
                   )}
                   {headroom.rows != null && headroom.rows > 1 && (
-                    <span className="meta"> · 관내 선로 {headroom.rows}개 중 최대 여유</span>
+                    <span className="meta"> · {t('관내 선로')} {headroom.rows}{t('개 중 최대 여유')}</span>
                   )}
                   {/* 관내 변전소별 여유 목록 — 온디맨드(호출 1회) */}
                   {substList == null && headroom.rows != null && headroom.rows > 1 && (
                     <button type="button" className="btn" style={{ marginLeft: 8, padding: '2px 9px', fontSize: 'var(--text-xs)' }} onClick={loadSubstList}>
-                      변전소별 보기
+                      {t('변전소별 보기')}
                     </button>
                   )}
-                  {substList === 'loading' && <span className="meta"> · 변전소별 조회 중…</span>}
+                  {substList === 'loading' && <span className="meta"> · {t('변전소별 조회 중…')}</span>}
                   {Array.isArray(substList) && (
                     <ul className="subst-list">
                       {substList.map((s2) => (
@@ -825,7 +1021,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                 </>
               ) : (
                 <>
-                  <span className="badge pending">실데이터 연동 대기 · 공개 API 미제공</span>
+                  <span className="badge pending">{t('실데이터 연동 대기 · 공개 API 미제공')}</span>
                   <a
                     className="mini-link"
                     href="https://online.kepco.co.kr/EWM092D00"
@@ -833,7 +1029,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                     rel="noreferrer"
                     style={{ marginLeft: 8 }}
                   >
-                    한전 여유용량 직접 조회 →
+                    {t('한전 여유용량 직접 조회 →')}
                   </a>
                 </>
               )}
@@ -867,60 +1063,60 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   <span className="sl-name" style={{ minWidth: 52, fontWeight: 700 }}>{s.name}</span>
                   {s.kv && <span className="badge" style={{ fontSize: 'var(--text-xs)' }}>{s.kv}</span>}
                   {distKm != null && (
-                    <span className="meta" title={`OSM 실좌표 ${coord.lat.toFixed(3)},${coord.lng.toFixed(3)} · ${coord.kv}kV`}>실위치 {distKm}km</span>
+                    <span className="meta" title={`${t('OSM 실좌표')} ${coord.lat.toFixed(3)},${coord.lng.toFixed(3)} · ${coord.kv}kV`}>{t('실위치')} {distKm}km</span>
                   )}
                   <span className="meta" style={{ minWidth: 92 }}>
-                    {s.firstAvailYear ? `${s.firstAvailYear}년 ${s.series[s.years.indexOf(s.firstAvailYear)]?.toLocaleString()}MW~` : '전 기간 0'}
+                    {s.firstAvailYear ? `${s.firstAvailYear}${t('년')} ${s.series[s.years.indexOf(s.firstAvailYear)]?.toLocaleString()}MW~` : t('전 기간 0')}
                   </span>
                   <Bars s={s} />
-                  <b className="sl-mw">최대 {s.maxMw.toLocaleString()}MW</b>
+                  <b className="sl-mw">{t('최대')} {s.maxMw.toLocaleString()}MW</b>
                 </div>
               )
             }
             const spanYears = (supply[0] || renew[0])?.years
             return (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">이 지역 관할 변전소 전력공급 여유용량 (한전ON · 소비자 수전 · 연도별 · 참고)
-                  <span className="cell-basis" style={{ display: 'inline', marginLeft: 6 }}>· 검색 시군구 관할 변전소 기준(변전소 실제 소재지와 다를 수 있음)</span>
+                <div className="k">{t('이 지역 관할 변전소 전력공급 여유용량 (한전ON · 소비자 수전 · 연도별 · 참고)')}
+                  <span className="cell-basis" style={{ display: 'inline', marginLeft: 6 }}>{t('· 검색 시군구 관할 변전소 기준(변전소 실제 소재지와 다를 수 있음)')}</span>
                 </div>
                 <div className="v">
                   {supply.length > 0 ? (
                     supply.slice(0, 5).map((s) => <Row key={`s-${s.name}`} s={s} />)
                   ) : (
-                    <span className="badge pending">전력공급 여유 미조회 · 재생e 연계만 확인</span>
+                    <span className="badge pending">{t('전력공급 여유 미조회 · 재생e 연계만 확인')}</span>
                   )}
                   {renew.length > 0 && (
                     <div className="cell-basis" style={{ marginTop: 6 }}>
-                      참고 · 재생e 연계(발전) 여유: {renew.slice(0, 3).map((s) => `${s.name} 최대 ${s.maxMw.toLocaleString()}MW`).join(' · ')}
+                      {t('참고 · 재생e 연계(발전) 여유')}: {renew.slice(0, 3).map((s) => `${s.name} ${t('최대')} ${s.maxMw.toLocaleString()}MW`).join(' · ')}
                     </div>
                   )}
-                  <div className="cell-basis">{transHr.note}{spanYears ? ` · 막대=${spanYears[0]}~${spanYears.slice(-1)[0]}년` : ''}</div>
+                  <div className="cell-basis">{transHr.note}{spanYears ? ` · ${t('막대')}=${spanYears[0]}~${spanYears.slice(-1)[0]}${t('년')}` : ''}</div>
                 </div>
               </div>
             )
           })()}
           <div className="spec-cell">
-            <div className="k"><Term k="수전전압">수전전압</Term> 트랙</div>
+            <div className="k"><Term k="수전전압">{t('수전전압')}</Term> {t('트랙')}</div>
             <div className="v">{r.track.track.voltage}</div>
           </div>
           <div className="spec-cell">
-            <div className="k"><Term k="전력계통영향평가">계통영향평가</Term></div>
+            <div className="k"><Term k="전력계통영향평가">{t('계통영향평가')}</Term></div>
             <div className="v">
-              {r.track.psiaRequired ? '대상' : '비대상'}
-              {r.track.exemption && ` · ${r.track.exemption.effective}~ 면제 가능성`}
+              {r.track.psiaRequired ? t('대상') : t('비대상')}
+              {r.track.exemption && ` · ${r.track.exemption.effective}~ ${t('면제 가능성')}`}
             </div>
           </div>
           {(() => {
             return np ? (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k"><Term k="발전단지">발전 인프라</Term> 근접성 (맥락 — 전원 매칭 아님)</div>
+                <div className="k"><Term k="발전단지">{t('발전 인프라')}</Term> {t('근접성 (맥락 — 전원 매칭 아님)')}</div>
                 <div className="v">
                   {np.plant.name} · {np.plant.type}
                   {np.plant.capacity_mw != null && ` · ${np.plant.capacity_mw.toLocaleString()}MW`} · {np.km.toFixed(0)}km
                   {wc.nearest && (
                     <span className="meta">
                       {' '}
-                      · 풍력 {wc.radiusKm}km 내 {wc.count}지점 (최근접 {wc.nearest.km.toFixed(1)}km)
+                      · {t('풍력')} {wc.radiusKm}km {t('내')} {wc.count}{t('지점')} ({t('최근접')} {wc.nearest.km.toFixed(1)}km)
                     </span>
                   )}
                 </div>
@@ -930,14 +1126,14 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           {(() => {
             const re = reNear
             if (!re) return null
-            const label = re.km <= 10 ? '조달 유리' : re.km <= 30 ? '조달 가능' : '원거리'
+            const label = re.km <= 10 ? t('조달 유리') : re.km <= 30 ? t('조달 가능') : t('원거리')
             return (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">RE100 조달 여건 (최근접 재생발전단지 · 참고)</div>
+                <div className="k">{t('RE100 조달 여건 (최근접 재생발전단지 · 참고)')}</div>
                 <div className="v">
-                  최근접 <strong>{re.name || (re.type === 'W' ? '풍력단지' : '태양광단지')}</strong> ({re.type === 'W' ? '풍력' : '태양광'}) {re.km.toFixed(1)}km
+                  {t('최근접')} <strong>{re.name || (re.type === 'W' ? t('풍력단지') : t('태양광단지'))}</strong> ({re.type === 'W' ? t('풍력') : t('태양광')}) {re.km.toFixed(1)}km
                   <span className={`badge ${re.km <= 10 ? 'status-operating' : re.km <= 30 ? 'verify' : 'pending'}`} style={{ marginLeft: 6 }}>{label}</span>
-                  <div className="cell-basis">하이퍼스케일러 RE100/CFE 요건 — 대형 재생단지 근접 = 직접 PPA 잠재. OSM 대형 발전단지(소형 태양광 제외) 기준</div>
+                  <div className="cell-basis">{t('하이퍼스케일러 RE100/CFE 요건 — 대형 재생단지 근접 = 직접 PPA 잠재. OSM 대형 발전단지(소형 태양광 제외) 기준')}</div>
                 </div>
               </div>
             )
@@ -949,42 +1145,42 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             const kw = sido && kwater?.available ? kwater.bySido?.[sido] : null
             const hasKwater = kw && (kw.취수용량 > 0 || kw.정수용량 > 0)
             const ws = waterNear // 최근접 댐(상시)
-            const wsBadge = ws ? (ws.km <= 20 ? '수원 인접' : ws.km <= 50 ? '수원 근접' : '원거리') : null
+            const wsBadge = ws ? (ws.km <= 20 ? t('수원 인접') : ws.km <= 50 ? t('수원 근접') : t('원거리')) : null
             const wsTone = ws ? (ws.km <= 20 ? 'status-operating' : ws.km <= 50 ? 'verify' : 'pending') : null
             if (!hasWamis && !hasKwater && !ws) return null
-            const label = hasWamis ? (w.m3day >= 200000 ? '용수 여유' : w.m3day >= 50000 ? '용수 보통' : '용수 확인要') : null
+            const label = hasWamis ? (w.m3day >= 200000 ? t('용수 여유') : w.m3day >= 50000 ? t('용수 보통') : t('용수 확인要')) : null
             const badge = hasWamis ? (w.m3day >= 200000 ? 'status-operating' : w.m3day >= 50000 ? 'verify' : 'pending') : null
             return (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">냉각수(용수) 확보 여건 ({sido ? `${sido} 시도 · ` : ''}참고)</div>
+                <div className="k">{t('냉각수(용수) 확보 여건')} ({sido ? `${sido} ${t('시도')} · ` : ''}{t('참고')})</div>
                 <div className="v">
                   {ws && (
                     <div>
-                      최근접 주요 수원 <strong>{ws.name}댐</strong>
-                      <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>{ws.type}댐 · 저수 {ws.capMcm.toLocaleString()}백만㎥</span>
+                      {t('최근접 주요 수원')} <strong>{ws.name}{t('댐')}</strong>
+                      <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>{ws.type}{t('댐')} · {t('저수')} {ws.capMcm.toLocaleString()}{t('백만㎥')}</span>
                       <span style={{ marginLeft: 6 }}>{ws.km.toFixed(0)}km</span>
                       <span className={`badge ${wsTone}`} style={{ marginLeft: 6 }}>{wsBadge}</span>
                     </div>
                   )}
                   {hasWamis && (
                     <div style={{ marginTop: ws ? 4 : 0 }}>
-                      공업용수 취수 시설용량 <strong>{Math.round(w.m3day).toLocaleString()}㎥/일</strong>
-                      <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>취수장 {w.count}곳</span>
+                      {t('공업용수 취수 시설용량')} <strong>{Math.round(w.m3day).toLocaleString()}{t('㎥/일')}</strong>
+                      <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>{t('취수장')} {w.count}{t('곳')}</span>
                       <span className={`badge ${badge}`} style={{ marginLeft: 6 }}>{label}</span>
                     </div>
                   )}
                   {hasKwater && (
                     <div style={{ marginTop: hasWamis || ws ? 4 : 0 }}>
-                      상수도 시설용량{' '}
-                      {kw.정수용량 > 0 && <>정수 <strong>{Math.round(kw.정수용량).toLocaleString()}㎥/일</strong></>}
-                      {kw.취수용량 > 0 && <>{kw.정수용량 > 0 ? ' · ' : ''}취수 <strong>{Math.round(kw.취수용량).toLocaleString()}㎥/일</strong></>}
+                      {t('상수도 시설용량')}{' '}
+                      {kw.정수용량 > 0 && <>{t('정수')} <strong>{Math.round(kw.정수용량).toLocaleString()}{t('㎥/일')}</strong></>}
+                      {kw.취수용량 > 0 && <>{kw.정수용량 > 0 ? ' · ' : ''}{t('취수')} <strong>{Math.round(kw.취수용량).toLocaleString()}{t('㎥/일')}</strong></>}
                       <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>
-                        {[kw.정수N ? `정수장 ${kw.정수N}` : null, kw.취수N ? `취수장 ${kw.취수N}` : null].filter(Boolean).join(' · ')}
+                        {[kw.정수N ? `${t('정수장')} ${kw.정수N}` : null, kw.취수N ? `${t('취수장')} ${kw.취수N}` : null].filter(Boolean).join(' · ')}
                       </span>
                     </div>
                   )}
                   <div className="cell-basis">
-                    {ws ? '한국수자원공사 다목적·용수댐(좌표 근사) · ' : ''}{hasWamis ? `${water.source} · ` : ''}{hasKwater ? `${kwater.source} · ` : ''}지역/근접 신호(부지 인입은 지방·산단 상수도사업소 별도 확인). 100점 외 참고
+                    {ws ? t('한국수자원공사 다목적·용수댐(좌표 근사) · ') : ''}{hasWamis ? `${water.source} · ` : ''}{hasKwater ? `${kwater.source} · ` : ''}{t('지역/근접 신호(부지 인입은 지방·산단 상수도사업소 별도 확인). 100점 외 참고')}
                   </div>
                 </div>
               </div>
@@ -992,55 +1188,55 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           })()}
           {regionPower && (regionPower.sub || regionPower.bal || regionPower.grid || regionPower.approval) && (
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k">지역 계통 수용력 (시도 기준 · 부지별은 한전 주소검색)</div>
+              <div className="k">{t('지역 계통 수용력 (시도 기준 · 부지별은 한전 주소검색)')}</div>
               <div className="v">
                 {/* 1순위: 공급여유(하드 게이트) */}
                 {regionPower.grid && (
                   <div>
-                    <strong>계통 공급여유 {regionPower.grid.mw.toLocaleString()}MW</strong>
+                    <strong>{t('계통 공급여유')} {regionPower.grid.mw.toLocaleString()}MW</strong>
                     <span className={`badge ${regionPower.grid.mw <= 10 ? 'critical' : regionPower.grid.mw <= 500 ? 'verify' : 'status-operating'}`} style={{ marginLeft: 6 }}>
                       {headroomLabel(regionPower.grid.mw)}
                     </span>
                     <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>
-                      한전 연계가능용량 2027{regionPower.grid.note ? ` · ${regionPower.grid.note}` : ''}
+                      {t('한전 연계가능용량')} 2027{regionPower.grid.note ? ` · ${regionPower.grid.note}` : ''}
                     </span>
                   </div>
                 )}
                 {/* 2순위: 전력공급 가능판정율(전력계통영향평가) */}
                 {regionPower.approval && regionPower.approval.ratePct != null && (
                   <div style={{ marginTop: regionPower.grid ? 4 : 0 }}>
-                    <strong>전력공급 가능판정율 {regionPower.approval.ratePct}%</strong>
+                    <strong>{t('전력공급 가능판정율')} {regionPower.approval.ratePct}%</strong>
                     <span className={`badge ${regionPower.approval.ratePct >= 70 ? 'status-operating' : regionPower.approval.ratePct >= 45 ? 'verify' : 'critical'}`} style={{ marginLeft: 6 }}>
                       {approvalLabel(regionPower.approval.ratePct)}
                     </span>
-                    <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>전력계통영향평가 &apos;26.3</span>
+                    <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>{t('전력계통영향평가')} &apos;26.3</span>
                   </div>
                 )}
                 {/* 참고: 자급률·최근접 변전소·변전소 밀도를 한 줄로 압축 */}
                 <div className="cell-basis" style={{ marginTop: 5 }}>
-                  참고
-                  {regionPower.bal ? ` · 자급률 ${regionPower.bal.ratio}%` : ''}
-                  {r.nearestSub ? ` · 최근접 변전소 ${r.nearestSub.name || `${r.nearestSub.kv}kV`} ${r.nearestSub.km.toFixed(1)}km` : ''}
-                  {regionPower.sub ? ` · 시도 154kV+ ${regionPower.sub.hv.toLocaleString()}개` : ''}
+                  {t('참고')}
+                  {regionPower.bal ? ` · ${t('자급률')} ${regionPower.bal.ratio}%` : ''}
+                  {r.nearestSub ? ` · ${t('최근접 변전소')} ${r.nearestSub.name || `${r.nearestSub.kv}kV`} ${r.nearestSub.km.toFixed(1)}km` : ''}
+                  {regionPower.sub ? ` · ${t('시도')} 154kV+ ${regionPower.sub.hv.toLocaleString()}${t('개')}` : ''}
                 </div>
                 <div className="cell-basis">
-                  시도 총량 신호(시군구 편차 큼) — 부지별 접속 여유는{' '}
-                  <a className="mini-link" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">RE클라우드/한전 접속가능용량 →</a>
+                  {t('시도 총량 신호(시군구 편차 큼) — 부지별 접속 여유는 ')}
+                  <a className="mini-link" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">{t('RE클라우드/한전 접속가능용량 →')}</a>
                 </div>
               </div>
             </div>
           )}
 
-          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="cooling" /> 냉각 <em>— 연평균기온·프리쿨링·PUE</em></div>
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="cooling" /> {t('냉각')} <em>— {t('연평균기온·프리쿨링·PUE')}</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
             <div className="k">
-              <Term k="프리쿨링">데이터센터 기후지수</Term> (냉각 적합도 · 아주나쁨~아주좋음)
+              <Term k="프리쿨링">{t('데이터센터 기후지수')}</Term> {t('(냉각 적합도 · 아주나쁨~아주좋음)')}
             </div>
             <div className="v">
               {climateIdx ? (
                 <div className="ci-block">
                   <span className={`ci-inline tone-${climateIdx.tone}`}>
-                    <span className="ci-scale" aria-label={`5단계 중 ${climateIdx.level}단계`}>
+                    <span className="ci-scale" aria-label={`${t('5단계 중')} ${climateIdx.level}${t('단계')}`}>
                       {CLIMATE_LEVELS.map((l) => (
                         <i key={l.level} className={l.level === climateIdx.level ? `on tone-${climateIdx.tone}` : ''} />
                       ))}
@@ -1052,27 +1248,27 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                   <div className="ci-basis">{lang === 'en' ? 'Basis' : '근거'}: {lang === 'en' ? climateIdx.basisEn ?? climateIdx.basis : climateIdx.basis}</div>
                 </div>
               ) : (
-                <span className="badge pending">연동 대기 — 기온 확보 후 산출</span>
+                <span className="badge pending">{t('연동 대기 — 기온 확보 후 산출')}</span>
               )}
             </div>
           </div>
 
-          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="site" /> 부지 <em>— 용도지역·주소</em></div>
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="site" /> {t('부지')} <em>— {t('용도지역·주소')}</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k"><Term k="용도지역">용도지역</Term> (vworld 도시계획 — 부지 개발 가능성)</div>
+            <div className="k"><Term k="용도지역">{t('용도지역')}</Term> {t('(vworld 도시계획 — 부지 개발 가능성)')}</div>
             <div className="v">
               {landUse?.uses?.length ? (
                 landUse.uses.join(' · ')
               ) : (
-                <span className="badge pending">조회 대기 — 점수화는 캘리브레이션 후</span>
+                <span className="badge pending">{t('조회 대기 — 점수화는 캘리브레이션 후')}</span>
               )}
               {landArea?.areaM2 != null && (
                 <div className="cell-basis">
-                  필지 면적 <strong>{landArea.areaM2.toLocaleString()}㎡</strong> ({Math.round(landArea.areaM2 / 3.3058).toLocaleString()}평 · vworld 연속지적{landArea.source === 'server-parcel' ? ' · 도형 계산 근사' : ''})
-                  {landArea.jimok && <> · 지목 <strong>{landArea.jimok}</strong></>}
+                  {t('필지 면적')} <strong>{landArea.areaM2.toLocaleString()}㎡</strong> ({Math.round(landArea.areaM2 / 3.3058).toLocaleString()}{t('평')} · {t('vworld 연속지적')}{landArea.source === 'server-parcel' ? t(' · 도형 계산 근사') : ''})
+                  {landArea.jimok && <> · {t('지목')} <strong>{landArea.jimok}</strong></>}
                   {landArea.jibun && ` · ${landArea.jibun}`}
                   {officialPrice?.available && officialPrice.pricePerM2 != null && (
-                    <> · 공시지가 <strong>{officialPrice.pricePerM2.toLocaleString()}원/㎡</strong>{officialPrice.year ? ` (${officialPrice.year})` : ''}</>
+                    <> · {t('공시지가')} <strong>{officialPrice.pricePerM2.toLocaleString()}{t('원/㎡')}</strong>{officialPrice.year ? ` (${officialPrice.year})` : ''}</>
                   )}
                 </div>
               )}
@@ -1080,12 +1276,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           </div>
           {landReg?.regs?.length ? (
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k">규제·제약 지구 (vworld 용도지구·지구단위계획 · 참고)</div>
+              <div className="k">{t('규제·제약 지구 (vworld 용도지구·지구단위계획 · 참고)')}</div>
               <div className="v">
                 {landReg.regs.map((rg) => (
                   <span key={rg} className="badge verify" style={{ marginRight: 6, marginBottom: 4 }}>{rg}</span>
                 ))}
-                <div className="cell-basis">토지거래허가·성장관리방안·지구단위계획 등 개발 제약/절차 신호(부지 매입·인허가 난이도). 100점 외 참고</div>
+                <div className="cell-basis">{t('토지거래허가·성장관리방안·지구단위계획 등 개발 제약/절차 신호(부지 매입·인허가 난이도). 100점 외 참고')}</div>
               </div>
             </div>
           ) : null}
@@ -1093,57 +1289,57 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             const ic = icNear
             return ic ? (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">산업단지 입지 (인센티브·전력/용수 기반시설)</div>
+                <div className="k">{t('산업단지 입지 (인센티브·전력/용수 기반시설)')}</div>
                 <div className="v">
-                  최근접 <strong>{ic.name}</strong>
-                  <span className="badge" style={{ marginLeft: 6 }}>{ic.type}산단</span>
+                  {t('최근접')} <strong>{ic.name}</strong>
+                  <span className="badge" style={{ marginLeft: 6 }}>{ic.type}{t('산단')}</span>
                   <span style={{ marginLeft: 6 }}>{ic.km.toFixed(1)}km</span>
                   <div className="cell-basis">
-                    산단 내/근접은 세제·인센티브 + 전력·용수 사전확보 + 공업지역 인허가 수월. 전국 지정단지 511개(OSM landuse=industrial · 대표점 근사)
+                    {t('산단 내/근접은 세제·인센티브 + 전력·용수 사전확보 + 공업지역 인허가 수월. 전국 지정단지 511개(OSM landuse=industrial · 대표점 근사)')}
                   </div>
                 </div>
               </div>
             ) : null
           })()}
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">지번주소 (vworld 리버스 지오코딩)</div>
+            <div className="k">{t('지번주소 (vworld 리버스 지오코딩)')}</div>
             <div className="v">
-              {addr?.parcel ?? addr?.road ?? <span className="badge pending">조회 대기 — 연동 후 자동 표시</span>}
+              {addr?.parcel ?? addr?.road ?? <span className="badge pending">{t('조회 대기 — 연동 후 자동 표시')}</span>}
             </div>
           </div>
 
-          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="risk" /> 리스크 <em>— 침수·산사태·네트워크·민원</em></div>
+          <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="risk" /> {t('리스크')} <em>— {t('침수·산사태·네트워크·민원')}</em></div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k"><Term k="침수심">침수 위험</Term> (홍수위험지도 — DC에 치명적)</div>
+            <div className="k"><Term k="침수심">{t('침수 위험')}</Term> {t('(홍수위험지도 — DC에 치명적)')}</div>
             <div className="v">
               {flood?.available ? (
                 flood.source === 'sgis' ? (
                   flood.exposurePct <= 0 ? (
                     <>
-                      <span className="badge status-operating">홍수영향구역 밖 · 위험 낮음</span>
+                      <span className="badge status-operating">{t('홍수영향구역 밖 · 위험 낮음')}</span>
                       {flood.admNm && <span className="meta"> · {flood.admNm}</span>}
                     </>
                   ) : (
                     <>
-                      <span className={`badge ${flood.exposurePct >= 30 ? 'verify' : 'status-operating'}`}>침수 노출 {flood.grade}</span>
-                      {` · 영향구역 인구 ${flood.exposurePct}%`}
+                      <span className={`badge ${flood.exposurePct >= 30 ? 'verify' : 'status-operating'}`}>{t('침수 노출')} {flood.grade}</span>
+                      {` · ${t('영향구역 인구')} ${flood.exposurePct}%`}
                       {flood.affectedPop != null && flood.totalPop != null && (
-                        <span className="meta"> ({flood.affectedPop.toLocaleString()}/{flood.totalPop.toLocaleString()}명{flood.admNm ? ` · ${flood.admNm}` : ''}{flood.baseYear ? ` · ${flood.baseYear}` : ''})</span>
+                        <span className="meta"> ({flood.affectedPop.toLocaleString()}/{flood.totalPop.toLocaleString()}{t('명')}{flood.admNm ? ` · ${flood.admNm}` : ''}{flood.baseYear ? ` · ${flood.baseYear}` : ''})</span>
                       )}
                     </>
                   )
                 ) : flood.grade === '해당없음' || flood.depthM === 0 ? (
-                  <span className="badge status-operating">침수구역 외 · 위험 낮음</span>
+                  <span className="badge status-operating">{t('침수구역 외 · 위험 낮음')}</span>
                 ) : (
                   <>
-                    <span className="badge verify">침수 위험 {flood.grade}</span>
-                    {flood.depthM != null && ` · 침수심 ${flood.depthM}m`}
+                    <span className="badge verify">{t('침수 위험')} {flood.grade}</span>
+                    {flood.depthM != null && ` · ${t('침수심')} ${flood.depthM}m`}
                     {flood.floodType && ` · ${flood.floodType}`}
                     {flood.scenario && ` · ${flood.scenario}`}
                   </>
                 )
               ) : (
-                <span className="badge pending">연동 대기 — 리스크축 침수(홍수위험지도)</span>
+                <span className="badge pending">{t('연동 대기 — 리스크축 침수(홍수위험지도)')}</span>
               )}
             </div>
           </div>
@@ -1151,34 +1347,34 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             const net = networkContext(point)
             return (
               <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-                <div className="k">네트워크 근접성 (<Term k="백본">백본</Term>·<Term k="육양국">해저케이블</Term> — 지연·회선)</div>
+                <div className="k">{t('네트워크 근접성')} (<Term k="백본">{t('백본')}</Term>·<Term k="육양국">{t('해저케이블')}</Term> — {t('지연·회선')})</div>
                 <div className="v">
-                  {net.backbone && `백본/국사 ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
-                  {net.cls && ` · 해저케이블 육양 시설 ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
+                  {net.backbone && `${t('백본/국사')} ${net.backbone.node.name} ${net.backbone.km.toFixed(0)}km`}
+                  {net.cls && ` · ${t('해저케이블 육양 시설')} ${net.cls.node.name} ${net.cls.km.toFixed(0)}km`}
                   <span className="muted" style={{ marginLeft: 6, fontSize: '0.85em' }}>OSM telecom·근사</span>
                 </div>
               </div>
             )
           })()}
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k">경쟁·집적 밀도 (반경 내 데이터센터)</div>
+            <div className="k">{t('경쟁·집적 밀도 (반경 내 데이터센터)')}</div>
             <div className="v">
-              반경 10km <strong>{competition.n10}곳</strong>
-              {competition.op10 > 0 && ` (운영 ${competition.op10})`} · 반경 30km {competition.n30}곳
+              {t('반경')} 10km <strong>{competition.n10}{t('곳')}</strong>
+              {competition.op10 > 0 && ` (${t('운영')} ${competition.op10})`} · {t('반경')} 30km {competition.n30}{t('곳')}
               <span className={`badge ${competition.n10 >= 5 ? 'verify' : 'status-operating'}`} style={{ marginLeft: 6 }}>
-                {competition.n10 >= 5 ? '과밀 — 전력·부지 경쟁 유의' : competition.n10 >= 1 ? '집적 — 인프라 성숙' : '한산'}
+                {competition.n10 >= 5 ? t('과밀 — 전력·부지 경쟁 유의') : competition.n10 >= 1 ? t('집적 — 인프라 성숙') : t('한산')}
               </span>
-              <div className="cell-basis">기존/계획 DC 집적. 집적=광케이블·전력·인력 성숙(+), 과밀=전력·부지 경쟁(−). AI InfraMap 시설 시드 기준</div>
+              <div className="cell-basis">{t('기존/계획 DC 집적. 집적=광케이블·전력·인력 성숙(+), 과밀=전력·부지 경쟁(−). AI InfraMap 시설 시드 기준')}</div>
               {(() => {
                 const c = clusterNear
                 if (!c || c.km > 40) return null // 40km 이내만 경쟁 신호
                 const heavy = (c.powerGw || 0) >= 5
                 return (
                   <div className="cell-basis" style={{ marginTop: 5 }}>
-                    최근접 반도체 클러스터 <strong>{c.name}</strong>({c.operator}·{c.status}) {c.km.toFixed(0)}km
-                    {c.powerGw ? ` · 전력 ${c.powerGw}GW` : ''}{c.waterKtd ? ` · 용수 ${c.waterKtd.toLocaleString()}천t/일` : ''}
+                    {t('최근접 반도체 클러스터')} <strong>{c.name}</strong>({c.operator}·{c.status}) {c.km.toFixed(0)}km
+                    {c.powerGw ? ` · ${t('전력')} ${c.powerGw}GW` : ''}{c.waterKtd ? ` · ${t('용수')} ${c.waterKtd.toLocaleString()}${t('천t/일')}` : ''}
                     <span className={`badge ${heavy && c.km <= 25 ? 'critical' : 'verify'}`} style={{ marginLeft: 6 }}>
-                      {heavy && c.km <= 25 ? '전력·용수 경쟁 유의' : '대수요처 인접'}
+                      {heavy && c.km <= 25 ? t('전력·용수 경쟁 유의') : t('대수요처 인접')}
                     </span>
                   </div>
                 )
@@ -1186,7 +1382,7 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             </div>
           </div>
           <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-            <div className="k"><Term k="인구격자">인구·밀도</Term> (SGIS 시군구 — 주민 수용성·민원)</div>
+            <div className="k"><Term k="인구격자">{t('인구·밀도')}</Term> {t('(SGIS 시군구 — 주민 수용성·민원)')}</div>
             <div className="v pop-v">
               {pop?.available ? (
                 <>
@@ -1195,19 +1391,19 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                     {pop.admNm && <b>{fmtAdmNm(pop.admNm)}</b>}
                     {pop.density != null && (
                       <span className={`badge ${pop.density < 3000 ? 'status-operating' : 'verify'}`}>
-                        {pop.density < 3000 ? '저밀도 · 민원 리스크 낮음' : '고밀도 · 민원 유의'}
+                        {pop.density < 3000 ? t('저밀도 · 민원 리스크 낮음') : t('고밀도 · 민원 유의')}
                       </span>
                     )}
                   </span>
                   <span className="pop-line2">
-                    인구 <strong>{pop.population != null ? pop.population.toLocaleString() : '—'}명</strong>
-                    {pop.density != null && ` · 밀도 ${pop.density.toLocaleString()}명/km²`}
-                    {pop.households != null && ` · ${pop.households.toLocaleString()}세대`}
+                    {t('인구')} <strong>{pop.population != null ? pop.population.toLocaleString() : '—'}{t('명')}</strong>
+                    {pop.density != null && ` · ${t('밀도')} ${pop.density.toLocaleString()}${t('명/km²')}`}
+                    {pop.households != null && ` · ${pop.households.toLocaleString()}${t('세대')}`}
                   </span>
-                  <span className="meta">{pop.level || '시군구'} 단위{pop.year ? ` · ${pop.year}년` : ''} · 정밀 반경은 격자 API 연동 시</span>
+                  <span className="meta">{pop.level || t('시군구')} {t('단위')}{pop.year ? ` · ${pop.year}${t('년')}` : ''} · {t('정밀 반경은 격자 API 연동 시')}</span>
                 </>
               ) : (
-                <span className="badge pending">연동 대기 — 리스크축 인구(SGIS 시군구)</span>
+                <span className="badge pending">{t('연동 대기 — 리스크축 인구(SGIS 시군구)')}</span>
               )}
             </div>
           </div>
@@ -1215,30 +1411,30 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
 
         {/* 운영·부가 참고 — 접이식(기본 닫힘). 부지선정 핵심은 위, 운영/보조 지표는 여기로 정돈. */}
         <details className="spec-more">
-          <summary>운영·부가 참고 — 현재기상 · 3일예보 · 기상특보 · 과거기후 · 지번전기 · 재해 · 인근 지가</summary>
+          <summary>{t('운영·부가 참고 — 현재기상 · 3일예보 · 기상특보 · 과거기후 · 지번전기 · 재해 · 인근 지가')}</summary>
           <div className="spec-grid">
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k">현재 기상 · 3일예보 (케이웨더 실황 — 운영 참고)</div>
+              <div className="k">{t('현재 기상 · 3일예보 (케이웨더 실황 — 운영 참고)')}</div>
               <div className="v">
                 {wx ? (
                   <>
                     {wx.temp != null && `${wx.temp}°C`}
                     {wx.sky && ` · ${wx.sky}`}
-                    {wx.senseTemp != null && ` · 체감 ${wx.senseTemp}°C`}
-                    {wx.humidity != null && ` · 습도 ${wx.humidity}%`}
-                    {wx.rain1h != null && wx.rain1h > 0 && ` · 강수 ${wx.rain1h}mm/h`}
-                    {wx.windSpeed != null && ` · 풍속 ${wx.windSpeed}m/s`}
+                    {wx.senseTemp != null && ` · ${t('체감')} ${wx.senseTemp}°C`}
+                    {wx.humidity != null && ` · ${t('습도')} ${wx.humidity}%`}
+                    {wx.rain1h != null && wx.rain1h > 0 && ` · ${t('강수')} ${wx.rain1h}mm/h`}
+                    {wx.windSpeed != null && ` · ${t('풍속')} ${wx.windSpeed}m/s`}
                     {wx.pm10 != null && ` · PM10 ${wx.pm10}`}
                   </>
                 ) : (
-                  <span className="badge pending">연동 대기 — 케이웨더 실황(기상축)</span>
+                  <span className="badge pending">{t('연동 대기 — 케이웨더 실황(기상축)')}</span>
                 )}
               </div>
               {(dong || normal) && (
-                <div className="cell-basis">근거지 {dong || (normal ? `${normal.name} 인근` : '좌표 기준')}</div>
+                <div className="cell-basis">{t('근거지')} {dong || (normal ? `${normal.name} ${t('인근')}` : t('좌표 기준'))}</div>
               )}
               {fc?.days?.length > 0 && (
-                <div className="wx-strip" aria-label="3일 일별예보">
+                <div className="wx-strip" aria-label={t('3일 일별예보')}>
                   {fc.days.map((h, i) => (
                     <span key={i} className="wx-hour">
                       <em>{h.label}</em>
@@ -1246,12 +1442,12 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                       <span>{h.sky ?? ''}{h.rainProb != null ? ` ${h.rainProb}%` : ''}</span>
                     </span>
                   ))}
-                  {fc.rain && <span className="badge verify">강수 유의</span>}
+                  {fc.rain && <span className="badge verify">{t('강수 유의')}</span>}
                 </div>
               )}
             </div>
             <div className="spec-cell">
-              <div className="k">기상특보 (운영 — 태풍·강풍·호우)</div>
+              <div className="k">{t('기상특보 (운영 — 태풍·강풍·호우)')}</div>
               <div className="v">
                 {warning?.available ? (
                   warning.count > 0 ? (
@@ -1261,52 +1457,52 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                       </span>
                     ))
                   ) : (
-                    <span className="badge status-operating">발효 중인 특보 없음</span>
+                    <span className="badge status-operating">{t('발효 중인 특보 없음')}</span>
                   )
                 ) : (
-                  <span className="badge pending">연동 대기 — 케이웨더 특보</span>
+                  <span className="badge pending">{t('연동 대기 — 케이웨더 특보')}</span>
                 )}
               </div>
             </div>
             <div className="spec-cell">
-              <div className="k"><Term k="프리쿨링">기후</Term> (과거 연별 — 기후지수 근거)</div>
+              <div className="k"><Term k="프리쿨링">{t('기후')}</Term> {t('(과거 연별 — 기후지수 근거)')}</div>
               <div className="v">
                 {climate?.available ? (
                   <>
-                    {climate.avgTemp != null && `연평균 ${climate.avgTemp}°C`}
-                    {climate.maxTemp != null && ` · 최고 ${climate.maxTemp}°C`}
-                    {climate.minTemp != null && ` · 최저 ${climate.minTemp}°C`}
-                    {climate.rainSum != null && ` · 강수 ${climate.rainSum}mm`}
+                    {climate.avgTemp != null && `${t('연평균')} ${climate.avgTemp}°C`}
+                    {climate.maxTemp != null && ` · ${t('최고')} ${climate.maxTemp}°C`}
+                    {climate.minTemp != null && ` · ${t('최저')} ${climate.minTemp}°C`}
+                    {climate.rainSum != null && ` · ${t('강수')} ${climate.rainSum}mm`}
                   </>
                 ) : (
-                  <span className="badge pending">연동 대기 — 케이웨더 과거 기후</span>
+                  <span className="badge pending">{t('연동 대기 — 케이웨더 과거 기후')}</span>
                 )}
               </div>
             </div>
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k">지번 실측 전기사용량 (국토부 건축HUB — 수요 맥락)</div>
+              <div className="k">{t('지번 실측 전기사용량 (국토부 건축HUB — 수요 맥락)')}</div>
               <div className="v">
                 {energy?.available && energy.usage != null ? (
                   <>
                     {energy.useYm} <strong>{energy.usage.toLocaleString()} {energy.unit}</strong>
-                    <span className="meta"> · 해당 지번 건물에너지 실측(단독·소규모·산업 용도 제외)</span>
+                    <span className="meta"> · {t('해당 지번 건물에너지 실측(단독·소규모·산업 용도 제외)')}</span>
                     {/* 6개월 추이 — 온디맨드(호출 6회라 버튼 클릭 시에만) */}
                     {energySeries == null && (
                       <button type="button" className="btn" style={{ marginLeft: 8, padding: '2px 9px', fontSize: 'var(--text-xs)' }} onClick={loadEnergySeries}>
-                        6개월 추이
+                        {t('6개월 추이')}
                       </button>
                     )}
-                    {energySeries === 'loading' && <span className="meta"> · 추이 조회 중…</span>}
+                    {energySeries === 'loading' && <span className="meta"> · {t('추이 조회 중…')}</span>}
                     {Array.isArray(energySeries) && (
                       <div className="hbar-mini-wrap">
-                        <div className="hbar-mini" role="img" aria-label="최근 6개월 전기사용량">
+                        <div className="hbar-mini" role="img" aria-label={t('최근 6개월 전기사용량')}>
                           {(() => {
                             const max = Math.max(...energySeries.map((m) => m.usage ?? 0), 1)
                             return energySeries.map((m) => (
                               <span
                                 key={m.ym}
                                 className="hbar-mini-bar"
-                                title={`${m.ym}: ${m.usage != null ? `${m.usage.toLocaleString()} ${energy.unit}` : '데이터 없음'}`}
+                                title={`${m.ym}: ${m.usage != null ? `${m.usage.toLocaleString()} ${energy.unit}` : t('데이터 없음')}`}
                                 style={{ height: `${m.usage != null ? Math.max(6, Math.round((m.usage / max) * 100)) : 3}%` }}
                               />
                             ))
@@ -1314,47 +1510,47 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
                         </div>
                         <div className="hbar-mini-x" aria-hidden>
                           {energySeries.map((m) => (
-                            <span key={m.ym}>{m.ym.slice(4)}월</span>
+                            <span key={m.ym}>{m.ym.slice(4)}{t('월')}</span>
                           ))}
                         </div>
                       </div>
                     )}
                   </>
                 ) : addr?.sigunguCd ? (
-                  <span className="badge pending">해당 지번 데이터 없음 — 대상 외(단독·200세대 미만·산업)일 수 있음</span>
+                  <span className="badge pending">{t('해당 지번 데이터 없음 — 대상 외(단독·200세대 미만·산업)일 수 있음')}</span>
                 ) : (
-                  <span className="badge pending">연동 대기 — 법정동코드 확보(vworld) 후 자동 조회</span>
+                  <span className="badge pending">{t('연동 대기 — 법정동코드 확보(vworld) 후 자동 조회')}</span>
                 )}
               </div>
             </div>
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
-              <div className="k">산사태·재해 위험 (SGIS 산사태위험지도)</div>
+              <div className="k">{t('산사태·재해 위험 (SGIS 산사태위험지도)')}</div>
               <div className="v">
                 {disaster?.available ? (
                   disaster.source === 'sgis' ? (
                     disaster.exposurePct <= 0 ? (
                       <>
-                        <span className="badge status-operating">산사태 영향구역 밖 · 위험 낮음</span>
+                        <span className="badge status-operating">{t('산사태 영향구역 밖 · 위험 낮음')}</span>
                         {disaster.admNm && <span className="meta"> · {disaster.admNm}</span>}
                       </>
                     ) : (
                       <>
-                        <span className={`badge ${disaster.exposurePct >= 30 ? 'verify' : 'status-operating'}`}>산사태 노출 {disaster.grade}</span>
-                        {` · 영향구역 인구 ${disaster.exposurePct}%`}
+                        <span className={`badge ${disaster.exposurePct >= 30 ? 'verify' : 'status-operating'}`}>{t('산사태 노출')} {disaster.grade}</span>
+                        {` · ${t('영향구역 인구')} ${disaster.exposurePct}%`}
                         {disaster.affectedPop != null && disaster.totalPop != null && (
-                          <span className="meta"> ({disaster.affectedPop.toLocaleString()}/{disaster.totalPop.toLocaleString()}명{disaster.admNm ? ` · ${disaster.admNm}` : ''}{disaster.baseYear ? ` · ${disaster.baseYear}` : ''})</span>
+                          <span className="meta"> ({disaster.affectedPop.toLocaleString()}/{disaster.totalPop.toLocaleString()}{t('명')}{disaster.admNm ? ` · ${disaster.admNm}` : ''}{disaster.baseYear ? ` · ${disaster.baseYear}` : ''})</span>
                         )}
                       </>
                     )
                   ) : (
                     <>
-                      {disaster.events != null && <strong>재해 {disaster.events.toLocaleString()}건</strong>}
-                      {disaster.topType && ` · 주 유형 ${disaster.topType}`}
-                      {disaster.recentYear && ` · 최근 ${disaster.recentYear}`}
+                      {disaster.events != null && <strong>{t('재해')} {disaster.events.toLocaleString()}{t('건')}</strong>}
+                      {disaster.topType && ` · ${t('주 유형')} ${disaster.topType}`}
+                      {disaster.recentYear && ` · ${t('최근')} ${disaster.recentYear}`}
                     </>
                   )
                 ) : (
-                  <span className="badge pending">연동 대기 — 리스크축 재해</span>
+                  <span className="badge pending">{t('연동 대기 — 리스크축 재해')}</span>
                 )}
               </div>
             </div>
@@ -1364,14 +1560,14 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
               return lp ? (
                 <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
                   <div className="k">
-                    인근 <Term k="지가변동률">지가변동률</Term> · {lp.scope} ({lp.period} 월간, KOSIS — 최근접 시설 시군구 기준)
+                    {t('인근')} <Term k="지가변동률">{t('지가변동률')}</Term> · {lp.scope} ({lp.period} {t('월간, KOSIS — 최근접 시설 시군구 기준')})
                   </div>
                   <div className="v">
                     {fmtRate(lp.value)}
                     {dp && (
                       <span className="meta">
                         {' '}
-                        · 동 단위 {fmtRate(dp.bottom.rate)} ~ {fmtRate(dp.top.rate)} ({dp.count}개 구역)
+                        · {t('동 단위')} {fmtRate(dp.bottom.rate)} ~ {fmtRate(dp.top.rate)} ({dp.count}{t('개 구역')})
                       </span>
                     )}
                   </div>
@@ -1383,25 +1579,25 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
 
         {/* 실무 조회 — 공식 시스템 직접 확인(보조 액션이라 접이식) */}
         <details className="mini-details">
-          <summary>실무 조회 — 공식 시스템 바로가기(한전·RE클라우드·토지이음)</summary>
+          <summary>{t('실무 조회 — 공식 시스템 바로가기(한전·RE클라우드·토지이음)')}</summary>
           <div className="quick-links">
             <a className="btn" href="https://online.kepco.co.kr/EWM090D00" target="_blank" rel="noreferrer">
-              한전 배전용변압기 여유
+              {t('한전 배전용변압기 여유')}
             </a>
             <a className="btn" href="https://online.kepco.co.kr/EWM092D00" target="_blank" rel="noreferrer">
-              한전 배전망 여유 (22.9kV)
+              {t('한전 배전망 여유 (22.9kV)')}
             </a>
             <a className="btn" href="https://recloud.energy.or.kr/" target="_blank" rel="noreferrer">
-              RE클라우드 계통·입지
+              {t('RE클라우드 계통·입지')}
             </a>
             <a className="btn" href="https://www.eum.go.kr/" target="_blank" rel="noreferrer">
-              토지이음 (토지이용계획)
+              {t('토지이음 (토지이용계획)')}
             </a>
           </div>
         </details>
 
         <div className="chart-title" style={{ marginTop: 14 }}>
-          최근접 시설
+          {t('최근접 시설')}
         </div>
         <div className="facility-list stagger-in">
           {r.nearest.map(({ facility: f, km }) => (
@@ -1557,14 +1753,14 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
         {/* AI 부지 브리프 결과 — 실데이터 스냅샷 기반, 없는 값은 '미확보'로 명시(정직) */}
         <AiResultCard
           ai={ai}
-          badge="✨ AI 브리프"
-          src="공개 데이터 스냅샷 기반 · 없는 값은 미확보 표기"
+          badge={t('✨ AI 브리프')}
+          src={t('공개 데이터 스냅샷 기반 · 없는 값은 미확보 표기')}
           onRegen={genAiReport}
-          loadingText="AI가 확보된 근거만으로 브리프를 작성 중…"
+          loadingText={t('AI가 확보된 근거만으로 브리프를 작성 중…')}
         />
 
         <p className="geo-note">
-          간이 리포트 — 산출된 근거만 수치로, 대기 축은 명시. AI 브리프는 확보된 스냅샷만 사용(없는 값 생성 안 함).
+          {t('간이 리포트 — 산출된 근거만 수치로, 대기 축은 명시. AI 브리프는 확보된 스냅샷만 사용(없는 값 생성 안 함).')}
         </p>
       </article>
     </>
