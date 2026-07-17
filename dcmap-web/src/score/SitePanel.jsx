@@ -634,6 +634,62 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
           )
         })()}
 
+        {/* 외부 관문 — 5축 밖 변수(external-gates 인사이트 번안). 규칙 산출 vs 부지별 GIS 확인 구분(정직성). */}
+        {(() => {
+          const rows = [
+            {
+              id: 'E1',
+              title: lang === 'en' ? 'Energy-use plan consultation' : '에너지사용계획 협의',
+              note: lang === 'en' ? '≥20 GWh/yr = effectively every large DC' : '연 20GWh↑ = 대형 DC 사실상 전부',
+              verdict: mw >= 5 ? (lang === 'en' ? 'Subject' : '대상') : (lang === 'en' ? 'Check' : '확인'),
+            },
+            {
+              id: 'E2',
+              title: lang === 'en' ? 'Large-transformer lead time' : '대형 변압기 리드타임',
+              note: lang === 'en' ? '154kV class · market ~30% short' : '154kV급 · 시장 ~30% 공급부족',
+              verdict: mw > 40 ? (lang === 'en' ? '2–4 yrs' : '2~4년') : (lang === 'en' ? 'Verify' : '확인'),
+            },
+            {
+              id: 'E3',
+              title: lang === 'en' ? 'Cooling water' : '용수 (냉각수)',
+              note: lang === 'en' ? 'high if evaporative; air-cooled raises PUE' : '증발냉각 시 다량 · 공랭 시 PUE↑',
+              verdict: lang === 'en' ? 'Cooling-dependent' : '냉각방식 의존',
+            },
+            {
+              id: 'X',
+              title: lang === 'en' ? 'Exclusion overlays' : '배제 오버레이',
+              note: lang === 'en' ? 'greenbelt · military · airport height · water-source · heritage' : '그린벨트·군사·공항 고도제한·상수원·문화재',
+              verdict: lang === 'en' ? 'Site GIS check' : '부지별 GIS 확인',
+            },
+          ]
+          return (
+            <>
+              <div className="chart-title" style={{ marginTop: 14 }}>
+                {lang === 'en' ? 'External gates — beyond the five axes' : '외부 관문 — 5축 밖 변수'}
+              </div>
+              <div className="gate-outlook">
+                {rows.map((g) => (
+                  <div key={g.id} className="gate-row sev-talk">
+                    <span className="gate-id">{g.id}</span>
+                    <span className="gate-body">
+                      <span className="gate-title">{g.title}</span>
+                      <span className="gate-note">{g.note}</span>
+                    </span>
+                    <span className="badge verify">{g.verdict}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="chart-note">
+                {lang === 'en' ? (
+                  <>Rule-derived gates vs exclusions needing site-level GIS. Overlays are a GO/NO-GO check on Toji-eum / vWorld, not folded into the score. <Link to="/insights/external-gates-2026">External-gates brief →</Link></>
+                ) : (
+                  <>규칙으로 산출되는 관문과 부지별 GIS 확인이 필요한 배제를 구분합니다. 배제 오버레이는 점수에 섞지 않고 토지이음·브이월드에서 GO/NO-GO로 확인. <Link to="/insights/external-gates-2026">외부 관문 브리프 →</Link></>
+                )}
+              </p>
+            </>
+          )
+        })()}
+
         {/* 부지선정 핵심 — 전력·냉각·부지·리스크 순(항상 노출). 운영성 정보는 하단 접이식으로. */}
         <div className="spec-grid">
           <div className="spec-group-label" style={{ gridColumn: '1 / -1' }}><LineIcon name="power" /> 전력 <em>— DC 입지 1순위 제약</em></div>
