@@ -55,6 +55,10 @@ import AidcScenario from './AidcScenario.jsx'
 // GPU별 대표 TDP(kW). 공개 스펙 기준 근사치 — 가속기당 소비전력(부대 IT 부하는 별도 계수).
 // NVIDIA 데이터센터 GPU가 사실상 표준이나, 추론·레거시·AMD까지 포함해 시나리오 폭을 넓힘.
 // nvl72: GB200/GB300 NVL72 랙(가속기 72개/랙) 인식용 플래그.
+// GPU 라벨 KO 괄호를 EN 렌더 시 치환(필터/키는 불변, 표기만)
+const GPU_LABEL_EN = { '(칩당)': '(per chip)', '(중국)': '(China)', '(레거시)': '(legacy)', '(추론)': '(inference)' }
+const gpuLabel = (label, en) => (en ? label.replace(/\(칩당\)|\(중국\)|\(레거시\)|\(추론\)/g, (m) => GPU_LABEL_EN[m] ?? m) : label)
+
 const GPU_PRESETS = [
   { key: 'gb300', label: 'NVIDIA GB300 (칩당)', kw: 1.4, nvl72: true },
   { key: 'gb200', label: 'NVIDIA GB200 (칩당)', kw: 1.2, nvl72: true },
@@ -483,7 +487,7 @@ export default function CalcPage() {
               <select value={gpuKey} onChange={(e) => setGpuKey(e.target.value)}>
                 {GPU_PRESETS.map((g) => (
                   <option key={g.key} value={g.key}>
-                    {g.label} ({g.kw}kW)
+                    {gpuLabel(g.label, lang === 'en')} ({g.kw}kW)
                   </option>
                 ))}
               </select>

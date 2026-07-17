@@ -10,11 +10,11 @@
 //   ③ 현재기온 근사(참고치). 어떤 근거로 산출됐는지 basedOn/basis로 항상 표기한다.
 
 const LEVELS = [
-  { level: 5, label: '아주좋음', tone: 'vgood', why: '연중 외기냉방(프리쿨링) 가능시간이 매우 길어 냉각에 쓰는 전력(PUE)이 낮음 — 냉방 OPEX·수자원 부담 최소' },
-  { level: 4, label: '좋음', tone: 'good', why: '외기냉방 잠재력이 높아 냉각 효율이 유리 — 냉방 전력비 절감 여지가 큼' },
-  { level: 3, label: '보통', tone: 'mid', why: '냉방 부하와 외기냉방이 균형 — 표준적 냉각 설계로 대응 가능(전국 평균권)' },
-  { level: 2, label: '나쁨', tone: 'bad', why: '여름 냉방 부하가 커 냉각 전력·수자원 부담이 늘어남 — PUE 불리' },
-  { level: 1, label: '아주나쁨', tone: 'vbad', why: '온난(다습)해 연중 기계식 냉방 의존이 큼 — PUE·수자원·냉방 OPEX 부담 최대' },
+  { level: 5, label: '아주좋음', labelEn: 'Excellent', tone: 'vgood', why: '연중 외기냉방(프리쿨링) 가능시간이 매우 길어 냉각에 쓰는 전력(PUE)이 낮음 — 냉방 OPEX·수자원 부담 최소', whyEn: 'Outside-air free-cooling hours are very long year-round, so cooling power (PUE) stays low — minimal cooling OPEX and water burden' },
+  { level: 4, label: '좋음', labelEn: 'Good', tone: 'good', why: '외기냉방 잠재력이 높아 냉각 효율이 유리 — 냉방 전력비 절감 여지가 큼', whyEn: 'High free-cooling potential favours cooling efficiency — large room to cut cooling power cost' },
+  { level: 3, label: '보통', labelEn: 'Moderate', tone: 'mid', why: '냉방 부하와 외기냉방이 균형 — 표준적 냉각 설계로 대응 가능(전국 평균권)', whyEn: 'Cooling load and free-cooling are balanced — manageable with a standard cooling design (around the national average)' },
+  { level: 2, label: '나쁨', labelEn: 'Poor', tone: 'bad', why: '여름 냉방 부하가 커 냉각 전력·수자원 부담이 늘어남 — PUE 불리', whyEn: 'Summer cooling load is heavy, raising cooling power and water burden — unfavourable PUE' },
+  { level: 1, label: '아주나쁨', labelEn: 'Very poor', tone: 'vbad', why: '온난(다습)해 연중 기계식 냉방 의존이 큼 — PUE·수자원·냉방 OPEX 부담 최대', whyEn: 'Warm (and humid), so mechanical cooling is relied on year-round — maximum PUE, water and cooling-OPEX burden' },
 ]
 export const CLIMATE_LEVELS = LEVELS
 
@@ -79,25 +79,29 @@ export function nearestNormal(lat, lng) {
 
 /**
  * @param {{avgTemp?:number, normalTemp?:number, normalStation?:string, humidity?:number, currentTemp?:number}} d
- * @returns {{level,label,tone,temp,basedOn,why,basis,note}|null}
+ * @returns {{level,label,labelEn,tone,temp,basedOn,why,whyEn,basis,basisEn,note,noteEn}|null}
  */
 export function dcClimateIndex({ avgTemp, normalTemp, normalStation, humidity, currentTemp } = {}) {
   // 우선순위: 실측 연평균 → 기상청 평년값 → 현재기온 근사
   let t
   let basedOn
   let basis
+  let basisEn
   if (avgTemp != null) {
     t = avgTemp
     basedOn = 'annual'
     basis = `케이웨더 과거 연별 실측 연평균 ${t}°C`
+    basisEn = `KWeather observed annual mean ${t}°C`
   } else if (normalTemp != null) {
     t = normalTemp
     basedOn = 'normal'
     basis = `기상청 평년값(1991–2020) 연평균 ${t}°C${normalStation ? ` · 최근접 ${normalStation} 관측` : ''}`
+    basisEn = `기상청 climate normals (1991–2020) annual mean ${t}°C${normalStation ? ` · nearest ${normalStation} station` : ''}`
   } else if (currentTemp != null) {
     t = currentTemp
     basedOn = 'current'
     basis = `현재기온 ${t}°C 근사(연평균 미확보 — 참고치)`
+    basisEn = `current temperature ${t}°C approximation (annual mean unavailable — reference)`
   } else {
     return null
   }
@@ -106,12 +110,16 @@ export function dcClimateIndex({ avgTemp, normalTemp, normalStation, humidity, c
   // 고습(연 70%+)은 증발식·외기냉방 효율을 떨어뜨림 — 경계선(보통 이상)일 때만 1단계 하향 보조
   let level = base.level
   let humidNote = null
+  let humidNoteEn = null
   if (humidity != null && humidity >= 70 && level >= 3) {
     level = Math.max(1, level - 1)
     humidNote = `습도 ${humidity}%로 증발식·외기냉방 효율 저하 → 1단계 하향`
+    humidNoteEn = `humidity ${humidity}% lowers evaporative/free-cooling efficiency → dropped one level`
   }
   const adj = LEVELS.find((l) => l.level === level)
   const why = `${adj.why}${humidNote ? ` · ${humidNote}` : ''}`
+  const whyEn = `${adj.whyEn}${humidNoteEn ? ` · ${humidNoteEn}` : ''}`
   const note = `${basis} · ${why}`
-  return { level: adj.level, label: adj.label, tone: adj.tone, temp: t, basedOn, why, basis, note }
+  const noteEn = `${basisEn} · ${whyEn}`
+  return { level: adj.level, label: adj.label, labelEn: adj.labelEn, tone: adj.tone, temp: t, basedOn, why, whyEn, basis, basisEn, note, noteEn }
 }

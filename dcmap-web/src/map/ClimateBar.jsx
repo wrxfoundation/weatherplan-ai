@@ -60,6 +60,11 @@ export default function ClimateBar({ point, committed }) {
     currentTemp: wx?.temp,
   })
 
+  // DC 기후지수 표시값 — EN 모드에선 영문 형제 필드(labelEn/whyEn/basisEn) 우선, 없으면 KO 폴백.
+  const ciLabel = idx ? (en ? idx.labelEn ?? idx.label : idx.label) : null
+  const ciWhy = idx ? (en ? idx.whyEn ?? idx.why : idx.why) : null
+  const ciBasis = idx ? (en ? idx.basisEn ?? idx.basis : idx.basis) : null
+
   const dong = dongLabel(addr)
   const coordStr = point ? `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}` : ''
   // 구/동 단위를 앞에 크게, 좌표는 뒤에 작게 흐리게. 동 미확보(vworld 미연동) 시 최근접 관측지점 폴백.
@@ -96,7 +101,7 @@ export default function ClimateBar({ point, committed }) {
         {/* 접힘 시 헤더에 기후지수·기온만 압축 표시 */}
         {collapsed && (
           <span className="cb-mini">
-            {idx && <span className={`ci-dot tone-${idx.tone}`} title={idx.label}>{idx.label}</span>}
+            {idx && <span className={`ci-dot tone-${idx.tone}`} title={ciLabel}>{ciLabel}</span>}
             {wx?.temp != null && <b className="cb-mini-temp">{wx.temp}°C</b>}
           </span>
         )}
@@ -111,12 +116,12 @@ export default function ClimateBar({ point, committed }) {
       <div className="cb-body">
         {/* 데이터센터 기후지수 배지 (아주나쁨~아주좋음) */}
         {idx ? (
-          <div className={`ci-badge tone-${idx.tone}`} title={idx.why}>
+          <div className={`ci-badge tone-${idx.tone}`} title={ciWhy}>
             <span className="ci-cap">
               {en ? 'DC climate index' : 'DC 기후지수'}
               <span className="ci-help" tabIndex={0} role="button" aria-label={en ? 'DC climate index explanation' : 'DC 기후지수 설명'} data-tip={en ? CLIMATE_HELP_EN : CLIMATE_HELP}>?</span>
             </span>
-            <span className="ci-label">{idx.label}</span>
+            <span className="ci-label">{ciLabel}</span>
             <span className="ci-scale" aria-label={en ? `Level ${idx.level} of 5` : `5단계 중 ${idx.level}단계`}>
               {CLIMATE_LEVELS.map((l) => (
                 <i key={l.level} className={l.level === idx.level ? `on tone-${idx.tone}` : ''} />
@@ -152,8 +157,8 @@ export default function ClimateBar({ point, committed }) {
       {/* 왜 좋고/나쁜지 + 표출값 근거 */}
       {idx && (
         <>
-          <div className="cb-why">{idx.why}</div>
-          <div className="cb-basis">{en ? 'Basis' : '근거'}: {idx.basis}</div>
+          <div className="cb-why">{ciWhy}</div>
+          <div className="cb-basis">{en ? 'Basis' : '근거'}: {ciBasis}</div>
         </>
       )}
       </>
