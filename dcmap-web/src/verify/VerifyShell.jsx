@@ -17,6 +17,9 @@ export function verifyHome() {
 export function verifyReportPath() {
   return isWeatherFactHost() ? '/report' : '/verify/report'
 }
+export function verifyMapPath() {
+  return isWeatherFactHost() ? '/map' : '/verify/map'
+}
 
 export function VerifyTopBar() {
   const en = useMapLang() === 'en'
@@ -41,6 +44,9 @@ export function VerifyTopBar() {
       <nav className="vf-topnav" aria-label="WeatherFact">
         <NavLink to={home} end className={({ isActive }) => (isActive ? 'active' : '')}>
           {en ? 'Service' : '서비스'}
+        </NavLink>
+        <NavLink to={verifyMapPath()} className={({ isActive }) => (isActive ? 'active' : '')}>
+          {en ? 'Map' : '맵'}
         </NavLink>
         <Link to={`${verifyReportPath()}?${SAMPLE_REPORT_QS}`}>{en ? 'Sample report' : '리포트 견본'}</Link>
         <a href={`mailto:${CONTACT_EMAIL}`} className="vf-topnav-contact">{en ? 'Contact' : '문의'}</a>

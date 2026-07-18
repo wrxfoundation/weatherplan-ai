@@ -33,6 +33,7 @@ const MethodologyPage = lazy(() => import('./lead/MethodologyPage.jsx'))
 const AboutPage = lazy(() => import('./about/AboutPage.jsx'))
 const VerifyPage = lazy(() => import('./verify/VerifyPage.jsx'))
 const VerifyReportPage = lazy(() => import('./verify/VerifyReportPage.jsx'))
+const VerifyMapPage = lazy(() => import('./verify/VerifyMapPage.jsx'))
 import { isWeatherFactHost } from './verify/standalone.js'
 
 /* 웨더팩트 단독 모드(별도 도메인/VITE_WEATHERFACT=1) — verify 라우트만 노출.
@@ -74,8 +75,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Routes>
             <Route path="/" element={<VerifyPage />} />
             <Route path="/report" element={<VerifyReportPage />} />
+            <Route path="/map" element={<VerifyMapPage />} />
             <Route path="/verify" element={<Navigate to="/" replace />} />
             <Route path="/verify/report" element={<VerifyReportPage />} />
+            <Route path="/verify/map" element={<VerifyMapPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         ) : (
@@ -103,6 +106,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/about" element={<AboutPage />} />
           <Route path="/verify" element={<VerifyPage />} />
           <Route path="/verify/report" element={<VerifyReportPage />} />
+          <Route path="/verify/map" element={<VerifyMapPage />} />
           <Route path="*" element={<MapPage />} />
         </Routes>
         )}
