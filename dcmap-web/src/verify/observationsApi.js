@@ -13,6 +13,20 @@ export async function fetchObservations(stnId, from, to) {
   }
 }
 
+/* 시간별 관측 이력 — /api/kweather?kind=history&res=hour (기상청 ASOS 시간자료).
+ * 기간 3일 이하 보강 조회용 — 실패는 { available:false, reason } 그대로(가짜 값 금지). */
+export async function fetchHourlyObservations(stnId, from, to) {
+  try {
+    const r = await fetch(`/api/kweather?kind=history&res=hour&stn=${stnId}&from=${from}&to=${to}`, { headers: { Accept: 'application/json' } })
+    const ct = r.headers.get('content-type') || ''
+    if (!ct.includes('json')) return { available: false, reason: 'no_api' }
+    const j = await r.json()
+    return j && typeof j === 'object' ? j : { available: false, reason: 'bad_payload' }
+  } catch {
+    return { available: false, reason: 'network' }
+  }
+}
+
 /** 실측 행 요약 — 값이 null인 항목은 집계에서 제외(0으로 오인 금지) */
 export function summarizeRows(rows) {
   const has = (k) => rows.some((r) => r[k] != null)

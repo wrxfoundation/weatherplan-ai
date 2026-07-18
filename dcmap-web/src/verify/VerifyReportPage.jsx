@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { fetchObservations, summarizeRows } from './observationsApi.js'
+import { fetchObservations, fetchHourlyObservations, summarizeRows } from './observationsApi.js'
 import VerifyShell from './VerifyShell.jsx'
 import LineIcon from '../components/LineIcon.jsx'
 import { useMapLang } from '../i18n/mapLang.js'
@@ -160,6 +160,11 @@ const REPORT_CSS = `
 .vr-prose li b { color: var(--text); }
 .vr-src { margin: 12px 0 0; font-size: var(--text-xs); color: var(--grey); line-height: var(--lh-base); }
 
+/* 시간별 관측 소절 — 일자료 본체 아래 보강. 프린트 포함(스켈레톤·noprint 아님) */
+.vr-hourly { margin-top: 20px; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
+.vr-hourly h3 { font-size: var(--text-body); font-weight: var(--weight-bold); margin: 0 0 4px; }
+.vr-table tr.vr-day-break td { border-top: 2px solid var(--line); } /* 일자 경계 구분 */
+
 /* 파라미터 누락 안내 */
 .vr-missing { max-width: 560px; margin: 60px auto 0; text-align: center; padding: 30px 26px; }
 .vr-missing h1 { font-size: var(--text-title); margin: 10px 0 8px; }
@@ -233,6 +238,22 @@ export default function VerifyReportPage() {
       dead = true
     }
   }, [valid, primaryStn?.id, from, to])
+
+  /* 시간별 관측 — 기간 3일 이하일 때만 보강 조회. 실패 시 hourly.available=false → 소절 자체를 렌더하지 않음 */
+  const spanDays = valid ? Math.round((new Date(`${to}T00:00:00Z`) - new Date(`${from}T00:00:00Z`)) / 86400000) + 1 : 0
+  const wantHourly = valid && spanDays >= 1 && spanDays <= 3
+  const [hourly, setHourly] = useState(null)
+  useEffect(() => {
+    if (!wantHourly || !primaryStn) return undefined
+    let dead = false
+    setHourly(null)
+    fetchHourlyObservations(primaryStn.id, from, to).then((r) => {
+      if (!dead) setHourly(r)
+    })
+    return () => {
+      dead = true
+    }
+  }, [wantHourly, primaryStn?.id, from, to])
 
   const issued = new Date()
   const issuedStr = issued.toLocaleDateString(en ? 'en-US' : 'ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
@@ -449,6 +470,55 @@ export default function VerifyReportPage() {
                         ? 'Precipitation "0.0" includes no-precipitation days recorded as blank in the source.'
                         : '강수량 0.0에는 원자료에서 공란(무강수)으로 기록된 날이 포함됩니다.'}
                     </p>
+                    {spanDays > 3 ? (
+                      <p className="vf-muted">
+                        {en
+                          ? 'Hourly records are included when the queried period is 3 days or shorter.'
+                          : '기간 3일 이하 조회 시 시간별 자료가 포함됩니다.'}
+                      </p>
+                    ) : hourly?.available && hourly.rows?.length ? (
+                      <div className="vr-hourly">
+                        <h3>{en ? 'Hourly Observations (to pinpoint the time of incident)' : '시간별 관측 (사고 시각 특정용)'}</h3>
+                        <p className="vf-muted">
+                          {en
+                            ? `Hourly records from the same station, ${primaryStn.nameEn} (#${primaryStn.id}). Blank cells ("—") are values not recorded in the source — not zero.`
+                            : `동일 지점 ${primaryStn.name}(지점 ${primaryStn.id})의 시간별 관측 기록. 공란("—")은 원자료에 기록이 없는 값이며 0이 아닙니다.`}
+                        </p>
+                        <div className="vr-table-wrap">
+                          <table className="vr-table">
+                            <thead>
+                              <tr>
+                                <th>{en ? 'Time' : '시간'}</th>
+                                <th>{en ? 'Temp (℃)' : '기온(℃)'}</th>
+                                <th>{en ? 'Hourly precip. (mm)' : '시간강수(mm)'}</th>
+                                <th>{en ? 'Wind (m/s)' : '풍속(m/s)'}</th>
+                                <th>{en ? 'Wind dir. (°)' : '풍향(°)'}</th>
+                                <th>{en ? 'Humidity (%)' : '습도(%)'}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {hourly.rows.map((r, i) => {
+                                const day = String(r.time).slice(0, 10)
+                                const prevDay = i > 0 ? String(hourly.rows[i - 1].time).slice(0, 10) : day
+                                return (
+                                  <tr key={r.time} className={i > 0 && day !== prevDay ? 'vr-day-break' : undefined}>
+                                    <td className="vr-num">{r.time}</td>
+                                    <td className="vr-num">{fmt(r.ta)}</td>
+                                    <td className="vr-num">{fmt(r.rn)}</td>
+                                    <td className="vr-num">{fmt(r.ws)}</td>
+                                    <td className="vr-num">{r.wd == null ? '—' : r.wd}</td>
+                                    <td className="vr-num">{fmt(r.hm, 0)}</td>
+                                  </tr>
+                                )
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                        <p className="vf-muted">
+                          {en ? 'Source' : '출처'}: {hourly.source} · {en ? 'station' : '관측지점'} {primaryStn.name}({primaryStn.id})
+                        </p>
+                      </div>
+                    ) : null}
                   </>
                 )
               })()

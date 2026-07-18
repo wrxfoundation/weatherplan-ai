@@ -324,7 +324,9 @@ export default async function handler(req, res) {
  * 정직성: 실패·미설정 시 가짜 수치 금지 — reason만 반환하고 UI는 '데이터 대기' 유지.
  * ──────────────────────────────────────────────────────────────────── */
 const ASOS_DAILY_URL = 'https://apis.data.go.kr/1360000/AsosDalyInfoService/getWthrDataList'
+const ASOS_HOURLY_URL = 'https://apis.data.go.kr/1360000/AsosHourlyInfoService/getWthrDataList'
 const HISTORY_MAX_DAYS = 100
+const HOURLY_MAX_DAYS = 7 // 시간자료는 행 수가 24배 — 기간 제한을 짧게
 
 const histNum = (v) => {
   if (v == null || v === '') return null
@@ -350,6 +352,20 @@ export function _normalizeAsosItems(items) {
   }))
 }
 
+/** ASOS 시간자료 item[] → 시간 행 정규화 (없는 필드는 null 유지 — 0으로 오인 금지) */
+export function _normalizeAsosHourlyItems(items) {
+  const arr = Array.isArray(items) ? items : items ? [items] : []
+  return arr.map((it) => ({
+    time: it.tm || null,     // YYYY-MM-DD HH:MM
+    ta: histNum(it.ta),      // 기온 ℃
+    rn: histNum(it.rn),      // 시간강수량 mm (무강수 공란은 null — 원자료 그대로)
+    ws: histNum(it.ws),      // 풍속 m/s
+    wd: histNum(it.wd),      // 풍향 °(16방위)
+    hm: histNum(it.hm),      // 상대습도 %
+    pa: histNum(it.pa),      // 현지기압 hPa
+  }))
+}
+
 const isYmd = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ''))
 const ymdCompact = (s) => String(s).replaceAll('-', '')
 
@@ -362,6 +378,7 @@ async function handleHistory(req, res) {
     res.status(200).json({ available: false, reason: 'not_configured' })
     return
   }
+  const hourly = req.query.res === 'hour' // res 미지정 = 기존 일자료 경로(동작·응답 불변)
   const stn = String(req.query.stn || '')
   const { from } = req.query
   let { to } = req.query
@@ -380,16 +397,22 @@ async function handleHistory(req, res) {
     res.status(400).json({ available: false, reason: 'bad_range' })
     return
   }
-  if (spanDays > HISTORY_MAX_DAYS) {
+  if (hourly && spanDays > HOURLY_MAX_DAYS) {
+    res.status(400).json({ available: false, reason: 'range_too_long_hourly', maxDays: HOURLY_MAX_DAYS })
+    return
+  }
+  if (!hourly && spanDays > HISTORY_MAX_DAYS) {
     res.status(400).json({ available: false, reason: 'range_too_long', maxDays: HISTORY_MAX_DAYS })
     return
   }
 
   // data.go.kr 인증키: 이미 URL 인코딩된 키('%' 포함)는 그대로, 아니면 인코딩
   const svcKey = key.includes('%') ? key : encodeURIComponent(key)
-  const qs = `serviceKey=${svcKey}&pageNo=1&numOfRows=${HISTORY_MAX_DAYS * 2}&dataType=JSON&dataCd=ASOS&dateCd=DAY&startDt=${ymdCompact(from)}&endDt=${ymdCompact(to)}&stnIds=${stn}`
+  const qs = hourly
+    ? `serviceKey=${svcKey}&pageNo=1&numOfRows=${(HOURLY_MAX_DAYS + 1) * 24}&dataType=JSON&dataCd=ASOS&dateCd=HR&startDt=${ymdCompact(from)}&startHh=00&endDt=${ymdCompact(to)}&endHh=23&stnIds=${stn}`
+    : `serviceKey=${svcKey}&pageNo=1&numOfRows=${HISTORY_MAX_DAYS * 2}&dataType=JSON&dataCd=ASOS&dateCd=DAY&startDt=${ymdCompact(from)}&endDt=${ymdCompact(to)}&stnIds=${stn}`
   try {
-    const raw = await getJson(`${ASOS_DAILY_URL}?${qs}`, 9000)
+    const raw = await getJson(`${hourly ? ASOS_HOURLY_URL : ASOS_DAILY_URL}?${qs}`, 9000)
     if (raw?._status) {
       res.status(200).json({ available: false, reason: `upstream_http${raw._status}` })
       return
@@ -399,14 +422,20 @@ async function handleHistory(req, res) {
       res.status(200).json({ available: false, reason: `kma_${header?.resultCode || 'no_header'}`, detail: header?.resultMsg })
       return
     }
-    const rows = _normalizeAsosItems(raw?.response?.body?.items?.item).filter((r) => r.date)
+    const items = raw?.response?.body?.items?.item
+    const rows = hourly
+      ? _normalizeAsosHourlyItems(items).filter((r) => r.time)
+      : _normalizeAsosItems(items).filter((r) => r.date)
     if (!rows.length) {
       res.status(200).json({ available: false, reason: 'no_rows' })
       return
     }
     res.status(200).json({
       available: true,
-      source: '기상청 ASOS 일자료 · 공공데이터포털 AsosDalyInfoService',
+      source: hourly
+        ? '기상청 ASOS 시간자료 · 공공데이터포털 AsosHourlyInfoService'
+        : '기상청 ASOS 일자료 · 공공데이터포털 AsosDalyInfoService',
+      ...(hourly ? { res: 'hour' } : {}),
       stn: Number(stn),
       from,
       to,

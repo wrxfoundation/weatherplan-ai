@@ -4,6 +4,7 @@ import VerifyShell from './VerifyShell.jsx'
 import LeadDialog from '../lead/LeadDialog.jsx'
 import LineIcon from '../components/LineIcon.jsx'
 import { useMapLang } from '../i18n/mapLang.js'
+import { geocodeAddr } from '../data/liveApi.js'
 import { STATIONS_META } from './stationsData.js'
 import { nearestStations, coverageGrade, USE_CASES } from './verifyEngine.js'
 import { PROCESS_STEPS, PRICING_TIERS, FAQ } from './verifyContent.js'
@@ -25,6 +26,10 @@ export default function VerifyPage() {
   const [result, setResult] = useState(null) // { lat, lon, stations, grade }
   const [err, setErr] = useState('')
   const [dlg, setDlg] = useState(false)
+  const [addrQ, setAddrQ] = useState('')
+  const [addrBusy, setAddrBusy] = useState(false)
+  const [addrHit, setAddrHit] = useState(null) // { matched, matchType } — geocode 성공 시 확인 라벨용
+  const [addrMiss, setAddrMiss] = useState(false) // 실패/미설정 — 에러가 아닌 정직 안내
 
   useEffect(() => {
     document.title = en ? TITLE_EN : TITLE
@@ -34,6 +39,25 @@ export default function VerifyPage() {
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
   const selUse = useMemo(() => USE_CASES.find((u) => u.key === form.use) ?? USE_CASES[0], [form.use])
+
+  /* 주소 → 좌표 (vworld 지오코딩). 성공 시 위경도 입력값을 자동 채우되 확정하지 않음 — 사용자 검증 후 조회.
+   * 실패/미설정(geocodeAddr → null)은 에러가 아닌 '사용 불가' 정직 안내로 표시. */
+  const onAddrSearch = async (e) => {
+    e.preventDefault()
+    const q = addrQ.trim()
+    if (!q || addrBusy) return
+    setAddrBusy(true)
+    setAddrHit(null)
+    setAddrMiss(false)
+    const r = await geocodeAddr(q)
+    setAddrBusy(false)
+    if (r?.available && Number.isFinite(r.lat) && Number.isFinite(r.lng)) {
+      setForm((f) => ({ ...f, lat: r.lat.toFixed(5), lon: r.lng.toFixed(5) }))
+      setAddrHit({ matched: r.matched || q, matchType: r.matchType || null })
+    } else {
+      setAddrMiss(true)
+    }
+  }
 
   const onSearch = (e) => {
     e.preventDefault()
@@ -97,9 +121,43 @@ export default function VerifyPage() {
           <h2 className="vf-h2">{en ? 'Look up the nearest observation stations' : '최근접 관측지점 조회'}</h2>
           <p className="vf-muted">
             {en
-              ? 'Enter the coordinates of the incident point and the period to verify. Address search is in preparation — coordinate input only for now.'
-              : '사고·분쟁 지점의 좌표와 확인할 기간을 입력하세요. 주소 검색은 준비 중 — 현재는 좌표 직접 입력만 지원합니다.'}
+              ? 'Search an address or enter the coordinates of the incident point, plus the period to verify. An address is converted to coordinates — check them before looking up.'
+              : '사고·분쟁 지점의 주소를 검색하거나 좌표를 직접 입력하고, 확인할 기간을 입력하세요. 주소는 좌표로 변환되므로 조회 전 값을 확인해 주세요.'}
           </p>
+          <form className="vf-form" onSubmit={onAddrSearch} style={{ marginBottom: 14 }}>
+            <label>
+              {en ? 'Address search' : '주소 검색'}
+              <span style={{ display: 'flex', gap: 8 }}>
+                <input
+                  type="text"
+                  value={addrQ}
+                  onChange={(e) => setAddrQ(e.target.value)}
+                  placeholder={en ? 'e.g. Sejong-daero 110, Jung-gu, Seoul' : '예: 서울 중구 세종대로 110'}
+                  disabled={addrBusy}
+                  style={{ flex: 1 }}
+                />
+                <button type="submit" className="btn" disabled={addrBusy || !addrQ.trim()}>
+                  {addrBusy ? (en ? 'Searching…' : '검색 중…') : en ? 'Search' : '검색'}
+                </button>
+              </span>
+            </label>
+            {addrHit && (
+              <p className="vf-muted" style={{ margin: '8px 0 0' }}>
+                “{addrHit.matched}”
+                {addrHit.matchType ? (en ? ` (${addrHit.matchType === '지번' ? 'parcel' : 'road'} address)` : ` (${addrHit.matchType})`) : ''}{' '}
+                {en
+                  ? '→ converted to coordinates — verify the values below before looking up. Source: vworld geocoding, at query time.'
+                  : '→ 좌표로 변환됨 — 아래 위도·경도 값을 검증 후 사용해 주세요. 출처: vworld 지오코딩, 조회 시점 기준.'}
+              </p>
+            )}
+            {addrMiss && (
+              <p className="vf-muted" style={{ margin: '8px 0 0' }}>
+                {en
+                  ? 'Address search is unavailable right now — please enter coordinates directly.'
+                  : '주소 검색을 사용할 수 없습니다 — 좌표를 직접 입력해 주세요.'}
+              </p>
+            )}
+          </form>
           <form className="vf-form" onSubmit={onSearch}>
             <div className="vf-form-grid">
               <label>
@@ -145,7 +203,6 @@ export default function VerifyPage() {
               <button type="submit" className="btn primary">
                 {en ? 'Find stations' : '관측지점 조회'}
               </button>
-              <span className="vf-soon-badge">{en ? 'Address search — in preparation' : '주소 검색 준비 중'}</span>
             </div>
             {err && (
               <div className="vf-err" role="alert">
