@@ -12,6 +12,14 @@ export const STATUS_LABEL = {
   cancelled: '무산',
 }
 
+export const STATUS_LABEL_EN = {
+  operating: 'Operating',
+  construction: 'Construction',
+  planned: 'Planned',
+  delayed: 'Delayed',
+  cancelled: 'Cancelled',
+}
+
 export const GEOCODE_LABEL = {
   road: '도로명주소(검증)',
   parcel: '필지(사업자 공개주소)',

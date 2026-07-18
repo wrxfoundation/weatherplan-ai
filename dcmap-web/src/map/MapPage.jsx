@@ -14,7 +14,7 @@ import AiAssistant from '../ai/AiAssistant.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import CompareTray from '../score/CompareTray.jsx'
-import { FACILITIES, STATUS_LABEL, HYPERSCALE_MW, DATA_VERSION, applyFilters, isCoarseGeocode } from '../data/facilities.js'
+import { FACILITIES, STATUS_LABEL, STATUS_LABEL_EN, HYPERSCALE_MW, DATA_VERSION, applyFilters, isCoarseGeocode } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
@@ -113,7 +113,7 @@ function hoverCard(f, t) {
   return `<div class="hc">
     <div class="hc-head"><span class="hc-dot ${key}"></span><strong>${esc(f.name)}</strong></div>
     <div class="hc-meta">${esc(f.operator ?? t('운영사 미공개', 'operator undisclosed'))} · ${esc(f.sido)}${f.sigungu ? ' ' + esc(f.sigungu) : ''}</div>
-    <div class="hc-row">${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : t(' · 용량 비공개', ' · capacity undisclosed')}${f.year ? ` · ${f.year}` : ''}</div>
+    <div class="hc-row">${t(STATUS_LABEL[f.status] ?? f.status, STATUS_LABEL_EN[f.status] ?? f.status)}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : t(' · 용량 비공개', ' · capacity undisclosed')}${f.year ? ` · ${f.year}` : ''}</div>
     ${isCoarseGeocode(f.geocode_level) ? `<div class="hc-approx">${t('📍 위치 근사 — 시군구 중심점(실제 부지 아님)', '📍 approx. location — sigungu centroid (not the actual site)')}</div>` : ''}
     ${f.needs_verify ? `<div class="hc-verify">${t('검증 필요', 'needs verification')}</div>` : ''}
     <div class="hc-cta">${t('클릭 → 상세 카드', 'Click → detail card')}</div>
@@ -1132,7 +1132,7 @@ export default function MapPage({ power = false }) {
         }
         // bubblingMouseEvents:false — 마커 클릭이 맵 클릭(지점 분석)으로 전파되는 것 방지
         const m = L.marker([lat, lng], { icon: markerIcon(f, isoView), bubblingMouseEvents: false })
-        const info = `${f.name} · ${STATUS_LABEL[f.status] ?? f.status}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`
+        const info = `${f.name} · ${t(STATUS_LABEL[f.status] ?? f.status, STATUS_LABEL_EN[f.status] ?? f.status)}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`
         // 라벨 ON 방향 규칙: 그룹 분산 마커는 분산 각도의 바깥쪽으로 방사(서로 반대 방향으로
         // 벌어져 충돌 최소화), 단독 마커는 좌우 교차 — / OFF: 호버 툴팁
         let dir
@@ -1659,7 +1659,7 @@ export default function MapPage({ power = false }) {
                       <span className="name">{f.name}</span>
                       <span className="meta">
                         {f.sido}
-                        {f.sigungu ? ` ${f.sigungu}` : ''} · {STATUS_LABEL[f.status] ?? f.status}
+                        {f.sigungu ? ` ${f.sigungu}` : ''} · {t(STATUS_LABEL[f.status] ?? f.status, STATUS_LABEL_EN[f.status] ?? f.status)}
                         {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
                         {isCoarseGeocode(f.geocode_level) && <span className="approx-tag" title={t('좌표가 시군구 중심점 — 실제 부지 아님', 'coordinates are sigungu centroid — not the actual site')}>{t('위치 근사', 'approx. location')}</span>}
                       </span>

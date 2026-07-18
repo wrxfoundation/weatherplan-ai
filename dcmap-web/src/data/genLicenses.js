@@ -10,6 +10,24 @@ export const GEN_LICENSE_META = {
   renewableSharePct: raw.renewable_share_pct,
 }
 
+// 연료원(카테고리) KO→EN 라벨 — EN 모드 차트 게이팅용 (시도명은 지명이라 KO 유지)
+export const FUEL_LABEL_EN = {
+  LNG: 'LNG',
+  풍력: 'Wind',
+  '폐기물/SRF': 'Waste/SRF',
+  석탄: 'Coal',
+  '열병합/집단': 'CHP/District',
+  수력: 'Hydro',
+  원자력: 'Nuclear',
+  태양광: 'Solar',
+  연료전지: 'Fuel cell',
+  바이오: 'Bio',
+  해상풍력: 'Offshore wind',
+  수소: 'Hydrogen',
+  BESS: 'BESS',
+  육상풍력: 'Onshore wind',
+}
+
 // 연료원별 등재 건수 (누적) — 내림차순
 export const GEN_FUEL_TOTALS = Object.entries(raw.fuel_totals)
   .map(([fuel, count]) => ({ fuel, count }))

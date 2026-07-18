@@ -4,7 +4,12 @@ import { useMapLang } from '../i18n/mapLang.js'
 
 /* 전역 푸터 — 발견성(EN/파트너 클러스터 포함)·SEO 내부링크·마감감. 풀스크린 맵 라우트에서는 숨김. */
 const HIDE_ON = new Set(['/', '/map3d'])
-const SOURCES = ['한전', 'EPSIS', 'KOSIS', 'SGIS', 'vworld', '기상청', 'K-water', '국가법령정보센터', 'DART', 'OSM']
+const SOURCES = [
+  { ko: '한전', en: 'KEPCO' }, { ko: 'EPSIS', en: 'EPSIS' }, { ko: 'KOSIS', en: 'KOSIS' },
+  { ko: 'SGIS', en: 'SGIS' }, { ko: 'vworld', en: 'vworld' }, { ko: '기상청', en: 'KMA' },
+  { ko: 'K-water', en: 'K-water' }, { ko: '국가법령정보센터', en: 'Korea Law' },
+  { ko: 'DART', en: 'DART' }, { ko: 'OSM', en: 'OSM' },
+]
 
 const COLS = [
   {
@@ -74,7 +79,7 @@ export default function SiteFooter() {
       <div className="sf-bottom">
         <div className="sf-src" aria-label={en ? 'Data sources' : '데이터 소스'}>
           {SOURCES.map((s) => (
-            <span key={s} className="sf-chip">{s}</span>
+            <span key={s.ko} className="sf-chip">{en ? s.en : s.ko}</span>
           ))}
         </div>
         <div className="sf-meta">

@@ -316,13 +316,13 @@ a {
   max-width: calc(100% - var(--panel-width) - 24px);
 }
 
-/* 각 줄 — 한 줄 유지, 넘치면 그 줄만 가로 스크롤(줄 수는 항상 2로 고정) */
+/* 각 줄 — 넘치면(특히 EN 라벨이 길 때) 잘리지 않고 다음 줄로 래핑. 폭은 사이드패널을 피한 전폭. */
 .filterbar .fb-row {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  overflow-x: auto;
+  overflow-x: visible;
   overflow-y: visible;
   scrollbar-width: none;
   padding-bottom: 2px;

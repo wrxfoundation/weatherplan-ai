@@ -9,6 +9,7 @@ import {
   GEN_RECENT_BY_FUEL,
   GEN_RECENT_BY_SIDO,
   GEN_RECENT_NONCAPITAL_PCT,
+  FUEL_LABEL_EN,
 } from '../data/genLicenses.js'
 import { CHP_STATS, CHP_BY_OP, CHP_TOP_PLANTS, CHP_META } from '../data/chpPlants.js'
 import { NUCLEAR_FLEET, NUCLEAR_META } from '../data/plants.js'
@@ -218,7 +219,7 @@ export default function StatsPage() {
           <p className="chart-note">{en ? GEN_PIPELINE.detailEn : GEN_PIPELINE.detail}</p>
           <HBars
             title={en ? `Licensed 2024+ new-pipeline fuel mix (${GEN_RECENT.length} cases)` : `허가 2024+ 신규 파이프라인 연료 구성 (${GEN_RECENT.length}건)`}
-            bars={GEN_RECENT_BY_FUEL.map((f) => ({ label: f.fuel, value: f.count, unit: en ? '' : '건' }))}
+            bars={GEN_RECENT_BY_FUEL.map((f) => ({ label: f.fuel, labelEn: FUEL_LABEL_EN[f.fuel] ?? f.fuel, value: f.count, unit: en ? '' : '건' }))}
             unit={en ? '' : '건'}
             share
             note={en
