@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/postbuild.mjs",
+    "build": "node scripts/build-dispatch.mjs",
+    "build:dcmap": "vite build && node scripts/postbuild.mjs",
     "build:weatherfact": "VITE_WEATHERFACT=1 vite build && node scripts/postbuild-wf.mjs",
     "preview": "vite preview",
     "geocode": "node scripts/geocode.mjs"
