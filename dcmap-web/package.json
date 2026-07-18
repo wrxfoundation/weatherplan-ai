@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/postbuild.mjs",
-    "build:weatherfact": "VITE_WEATHERFACT=1 vite build",
+    "build:weatherfact": "VITE_WEATHERFACT=1 vite build && node scripts/postbuild-wf.mjs",
     "preview": "vite preview",
     "geocode": "node scripts/geocode.mjs"
   },
