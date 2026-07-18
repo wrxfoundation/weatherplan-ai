@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { fetchObservations, fetchHourlyObservations, summarizeRows } from './observationsApi.js'
 import { fetchNarrative } from './narrativeApi.js'
+import { fetchWarnings, WARN_CRITERIA } from './warningsApi.js'
 import VerifyShell from './VerifyShell.jsx'
 import LineIcon from '../components/LineIcon.jsx'
 import { useMapLang } from '../i18n/mapLang.js'
@@ -13,7 +14,10 @@ import './verify.css'
  * 프린트 친화(A4 감각) 문서 렌더. 정직성 원칙:
  *  - 실데이터 미연동 → 기상 데이터 섹션은 '데이터 대기' 상태 블록 + 값 칸 '—' 스켈레톤
  *  - 예시 표는 접힌 <details> 안에서만, "예시 데이터 — 실측 아님" 라벨과 함께
- *  - 감정사 검수 전 초안 — 법적 효력 없음 워터마크성 배지 상시 노출 */
+ *  - 감정사 검수 전 초안 — 법적 효력 없음 워터마크성 배지 상시 노출
+ * 섹션 구성은 기상산업기술원 기상감정(호우편) 사례집·기상감정 표준매뉴얼(2017) 감정서 양식
+ * (표지→의뢰내용→조사내용→감정 결과·의견→별첨자료)의 '항목 라벨'만 차용 — 본 문서는 감정서가
+ * 아니라 감정 전 단계 사실확인 자료이므로 결과·의견/직인/감정사 서명 항목은 두지 않는다. */
 
 /* 리포트 전용 스타일 — verify.css 토큰 위에 문서(A4)·프린트 오버라이드만 추가 */
 const REPORT_CSS = `
@@ -76,6 +80,32 @@ const REPORT_CSS = `
 }
 .vr-cover-grid dt { color: var(--grey); font-size: var(--text-sm); }
 .vr-cover-grid dd { margin: 0; font-size: var(--text-sm); font-weight: var(--weight-medium); text-align: right; }
+.vr-issued { margin: 14px 0 0; font-size: var(--text-sm); color: var(--grey); }
+.vr-issued b { color: var(--text); font-weight: var(--weight-medium); }
+
+/* 표지 아래 고지 — '감정서 아님' 굵은 1줄 (프린트 포함) */
+.vr-notice {
+  margin: 14px 0 0;
+  padding: 12px 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-base);
+}
+
+/* 특보 기준 참조 박스 */
+.vr-criteria {
+  margin-top: 14px;
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-radius: var(--radius-md);
+}
+.vr-criteria h3 { font-size: var(--text-sm); font-weight: var(--weight-bold); margin: 0 0 6px; }
+.vr-criteria ul { margin: 0; padding-left: 16px; }
+.vr-criteria li { font-size: var(--text-xs); color: var(--grey); line-height: var(--lh-base); }
+.vr-criteria li b { color: var(--text); }
 
 /* 섹션 */
 .vr-sec { margin-top: 26px; padding: 20px 24px; }
@@ -216,6 +246,9 @@ const DEMO_ROWS = [
   { d: '예시일 3', dEn: 'Sample day 3', rain: '3.5', gust: '9.8', note: '예시값' },
 ]
 
+/* WARN_CRITERIA(warningsApi.js) — 호우 주의보·경보 기준 표시용 항목 */
+const WARN_CRITERIA_ITEMS = [WARN_CRITERIA?.advisory, WARN_CRITERIA?.warning].filter(Boolean)
+
 export default function VerifyReportPage() {
   const [sp] = useSearchParams()
   const en = useMapLang() === 'en'
@@ -260,6 +293,21 @@ export default function VerifyReportPage() {
       dead = true
     }
   }, [wantHourly, primaryStn?.id, from, to])
+
+  /* 기상특보 발효 이력 — 과제 A 계약 { available, rows:[{tmFc,title}], caution }.
+   * 실패·미설정 시 warnings.available=false → §04는 한 줄 안내만 렌더 */
+  const [warnings, setWarnings] = useState(null)
+  useEffect(() => {
+    if (!valid || !primaryStn) return undefined
+    let dead = false
+    setWarnings(null)
+    fetchWarnings(primaryStn.id, from, to).then((r) => {
+      if (!dead) setWarnings(r)
+    })
+    return () => {
+      dead = true
+    }
+  }, [valid, primaryStn?.id, from, to])
 
   /* AI 감정 서술문 초안 — 수동 트리거 전용(자동 호출 금지). null=미요청, {available,...}=응답 그대로 */
   const [narrative, setNarrative] = useState(null)
@@ -340,33 +388,52 @@ export default function VerifyReportPage() {
             </span>
             <h1>{en ? 'Weather Fact-Check Report (Draft)' : '기상 사실확인 리포트 (초안)'}</h1>
             <p className="vr-sub-en">{en ? '기상 사실확인 리포트 · WeatherFact' : 'Weather Fact-Check Report · WeatherFact'}</p>
+            <p className="vr-issued">
+              {en ? 'Issued' : '발행일'} <b>{issuedStr}</b>
+            </p>
+          </section>
+
+          {/* 표지 아래 고지 — 감정서 아님(굵은 1줄) */}
+          <p className="vr-notice">
+            {en
+              ? 'This document is NOT a weather appraisal report (기상감정서) — it is a pre-appraisal factual record of observations, organized to follow the section headings of the Weather Appraisal Standard Manual (2017).'
+              : '본 문서는 기상감정서가 아니라, 감정 의뢰 전 단계의 관측 사실확인 자료입니다 — 기상감정 표준매뉴얼(2017) 양식 항목에 맞춰 구성'}
+          </p>
+
+          {/* §01 의뢰내용에 해당하는 정보 — 표준 양식 「의뢰내용」 항목 대응 */}
+          <section className="vf-card vr-sec">
+            <div className="vr-sec-head">
+              <span className="vr-sec-num">01</span>
+              <h2>{en ? 'Request Details (Standard Form: Request)' : '의뢰내용에 해당하는 정보'}</h2>
+            </div>
+            <p className="vf-muted">
+              {en
+                ? 'Labeled to correspond to the "Request" section of a standard appraisal report (target date/time, location, purpose). This is not an appraisal commission — an appraiser re-confirms these items when an actual appraisal is requested.'
+                : '기상감정 표준매뉴얼(2017) 감정서의 「의뢰내용」 항목(감정대상 일시·장소·목적)에 대응하도록 라벨링한 정보입니다. 본 문서는 감정 의뢰서가 아니며, 실제 감정 의뢰 시 감정사가 이 항목들을 재확인합니다.'}
+            </p>
             <dl className="vr-cover-grid">
               <div>
-                <dt>{en ? 'Target coordinates' : '대상 좌표'}</dt>
-                <dd className="vr-num">{coord}</dd>
-              </div>
-              <div>
-                <dt>{en ? 'Period' : '대상 기간'}</dt>
+                <dt>{en ? 'Target date/time (period)' : '감정대상 일시 (대상 기간)'}</dt>
                 <dd className="vr-num">
                   {from} ~ {to}
                 </dd>
               </div>
               <div>
-                <dt>{en ? 'Use case' : '용도'}</dt>
-                <dd>{en ? useCase.en : useCase.ko}</dd>
+                <dt>{en ? 'Target location (coordinates)' : '감정대상 장소 (좌표)'}</dt>
+                <dd className="vr-num">{coord}</dd>
               </div>
               <div>
-                <dt>{en ? 'Issued' : '발행일'}</dt>
-                <dd>{issuedStr}</dd>
+                <dt>{en ? 'Purpose (use case)' : '확인 목적 (용도)'}</dt>
+                <dd>{en ? useCase.en : useCase.ko}</dd>
               </div>
             </dl>
           </section>
 
-          {/* ② 관측 근거 */}
+          {/* §02 조사내용 — 관측 근거 */}
           <section className="vf-card vr-sec">
             <div className="vr-sec-head">
-              <span className="vr-sec-num">01</span>
-              <h2>{en ? 'Observation Basis — Nearest Stations' : '관측 근거 — 최근접 관측지점'}</h2>
+              <span className="vr-sec-num">02</span>
+              <h2>{en ? 'Investigation — Observation Basis (Nearest Stations)' : '조사내용 — 관측 근거 (최근접 관측지점)'}</h2>
             </div>
             <p className="vf-muted">
               {en
@@ -414,11 +481,11 @@ export default function VerifyReportPage() {
             </p>
           </section>
 
-          {/* ③ 기상 데이터 — 실측(연동 시) 또는 데이터 대기 */}
+          {/* §03 조사내용 — 관측자료: 실측(연동 시) 또는 데이터 대기 */}
           <section className="vf-card vr-sec">
             <div className="vr-sec-head">
-              <span className="vr-sec-num">02</span>
-              <h2>{en ? 'Weather Data for the Period' : '대상 기간 기상 데이터'}</h2>
+              <span className="vr-sec-num">03</span>
+              <h2>{en ? 'Investigation — Observed Records (Weather Data for the Period)' : '조사내용 — 관측자료 (대상 기간 기상 데이터)'}</h2>
             </div>
             {obs?.available && obs.rows?.length ? (
               (() => {
@@ -630,12 +697,12 @@ export default function VerifyReportPage() {
             )}
           </section>
 
-          {/* ③-1 감정 서술문 초안 (AI) — 실측 데이터가 있을 때만. 수동 트리거(자동 호출 금지).
+          {/* §03-1 감정 서술문 초안 (AI) — §03 조사내용의 부속. 실측 데이터가 있을 때만. 수동 트리거(자동 호출 금지).
              생성 성공 시에만 프린트 포함 — 미생성·대기 상태는 인쇄물에서 제외 */}
           {obs?.available && obs.rows?.length ? (
             <section className={`vf-card vr-sec${narrative?.available ? '' : ' vr-noprint'}`}>
               <div className="vr-sec-head">
-                <span className="vr-sec-num">02-1</span>
+                <span className="vr-sec-num">03-1</span>
                 <h2>{en ? 'Appraisal Narrative Draft (AI)' : '감정 서술문 초안 (AI)'}</h2>
               </div>
               {narrative?.available ? (
@@ -649,8 +716,8 @@ export default function VerifyReportPage() {
                   <p className="vr-ai-text">{narrative.text}</p>
                   <p className="vr-src">
                     {en
-                      ? `Narrative drafted by AI strictly from the observed records in section 02 (KMA ASOS station ${primaryStn.nameEn}, #${primaryStn.id}). `
-                      : `본 서술문은 02절의 관측 기록(기상청 ASOS ${primaryStn.name}, 지점 ${primaryStn.id})만을 근거로 AI가 작성한 초안입니다. `}
+                      ? `Narrative drafted by AI strictly from the observed records in section 03 (KMA ASOS station ${primaryStn.nameEn}, #${primaryStn.id}). `
+                      : `본 서술문은 03절의 관측 기록(기상청 ASOS ${primaryStn.name}, 지점 ${primaryStn.id})만을 근거로 AI가 작성한 초안입니다. `}
                     {en ? 'Generated' : '생성일'} {issuedStr}
                   </p>
                 </>
@@ -681,8 +748,8 @@ export default function VerifyReportPage() {
               ) : (
                 <p className="vf-muted">
                   {en
-                    ? 'Drafts a narrative appraisal statement from the observed records in section 02 only — no values are invented. Generation runs only when you press the button; the result is an AI draft with no legal effect before appraiser review.'
-                    : '02절의 관측 기록만을 근거로 감정 서술문 초안을 작성합니다 — 없는 수치는 만들지 않습니다. 버튼을 눌렀을 때만 생성되며, 결과물은 감정사 검수 전 법적 효력이 없는 AI 초안입니다.'}
+                    ? 'Drafts a narrative appraisal statement from the observed records in section 03 only — no values are invented. Generation runs only when you press the button; the result is an AI draft with no legal effect before appraiser review.'
+                    : '03절의 관측 기록만을 근거로 감정 서술문 초안을 작성합니다 — 없는 수치는 만들지 않습니다. 버튼을 눌렀을 때만 생성되며, 결과물은 감정사 검수 전 법적 효력이 없는 AI 초안입니다.'}
                 </p>
               )}
               {!narrative?.available && (
@@ -701,10 +768,86 @@ export default function VerifyReportPage() {
             </section>
           ) : null}
 
-          {/* ④ 방법론 */}
+          {/* §04 기상특보 발효 이력 — 과제 A warningsApi 계약. 실패·미설정 시 표 렌더 생략(한 줄 안내만) */}
           <section className="vf-card vr-sec">
             <div className="vr-sec-head">
-              <span className="vr-sec-num">03</span>
+              <span className="vr-sec-num">04</span>
+              <h2>{en ? 'Weather Warning History (In-Effect Records)' : '기상특보 발효 이력'}</h2>
+            </div>
+            {warnings?.available ? (
+              warnings.rows?.length ? (
+                <>
+                  <p className="vf-muted">
+                    {en
+                      ? 'Official warning/advisory announcements retrieved for the queried scope. The standard appraisal form cites warning records as investigation material (cf. casebook attachment "호우특보 발효 현황").'
+                      : '조회 범위에 대해 확인된 공식 특보 발표 기록입니다. 표준 감정서 양식에서는 특보 발효 현황을 조사자료로 인용합니다(사례집 별첨 「호우특보 발효 현황」 참조).'}
+                  </p>
+                  <div className="vr-table-wrap">
+                    <table className="vr-table">
+                      <thead>
+                        <tr>
+                          <th>{en ? 'Announced at' : '발표시각'}</th>
+                          <th>{en ? 'Title' : '제목'}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {warnings.rows.map((r, i) => (
+                          <tr key={`${r.tmFc}-${i}`}>
+                            <td className="vr-num">{r.tmFc}</td>
+                            <td style={{ whiteSpace: 'normal' }}>{r.title}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {warnings.caution && (
+                    <p className="vr-src">
+                      ※{' '}
+                      {typeof warnings.caution === 'string'
+                        ? warnings.caution
+                        : (en ? warnings.caution.en : warnings.caution.ko) || ''}
+                    </p>
+                  )}
+                  {WARN_CRITERIA_ITEMS.length > 0 && (
+                    <div className="vr-criteria">
+                      <h3>{en ? 'Reference — Heavy-rain advisory/warning criteria' : '참조 — 호우 주의보·경보 기준'}</h3>
+                      <ul>
+                        {WARN_CRITERIA_ITEMS.map((c, i) => (
+                          <li key={c.name?.ko || i}>
+                            <b>{en ? c.name?.en : c.name?.ko}</b> {en ? c.desc?.en : c.desc?.ko}
+                          </li>
+                        ))}
+                      </ul>
+                      {WARN_CRITERIA?.source && (
+                        <p className="vr-src">{en ? WARN_CRITERIA.source.en : WARN_CRITERIA.source.ko}</p>
+                      )}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="vf-muted">
+                  {en
+                    ? 'No warning/advisory announcements were found for the queried scope.'
+                    : '조회 범위에서 발표된 특보 기록이 확인되지 않았습니다.'}
+                </p>
+              )
+            ) : (
+              <p className="vf-muted">
+                {warnings === null
+                  ? en
+                    ? 'Retrieving warning history…'
+                    : '특보 발효 이력을 조회하는 중입니다…'
+                  : en
+                    ? `Warning history is not connected or the lookup failed${warnings.reason ? ` (reason: ${warnings.reason})` : ''} — this section is left without a table rather than filled with unverified entries.`
+                    : `특보 이력 조회가 미연동이거나 실패했습니다${warnings.reason ? ` (사유: ${warnings.reason})` : ''} — 확인되지 않은 내용을 채우는 대신 표 수록을 생략합니다.`}
+              </p>
+            )}
+          </section>
+
+          {/* §05 방법론 */}
+          <section className="vf-card vr-sec">
+            <div className="vr-sec-head">
+              <span className="vr-sec-num">05</span>
               <h2>{en ? 'Methodology' : '방법론'}</h2>
             </div>
             <ul className="vr-prose">
@@ -732,13 +875,19 @@ export default function VerifyReportPage() {
                   ? 'Grades A–D reflect only the distance to the nearest station (A < 5 km, B < 15 km, C < 30 km, D beyond) as a rough proxy for representativeness. The grade has no bearing on the legal standing of the underlying observations.'
                   : '등급 A~D는 최근접 지점 거리(A 5km 미만, B 15km 미만, C 30km 미만, D 그 이상)만 반영한 대표성의 근사 지표입니다. 등급은 원 관측값의 법적 지위와 무관합니다.'}
               </li>
+              <li>
+                <b>{en ? 'Scope versus a full appraisal.' : '본 자료의 범위와 기상감정의 범위.'}</b>{' '}
+                {en
+                  ? 'In an actual weather appraisal, quantitative estimation techniques for non-observed points — radar rain-rate regression against nearby station records, PRISM-type analysis weighted by station distance and elevation — and synoptic analysis (surface/upper-level charts, satellite and radar imagery) are additionally performed (per the casebook of the Korea Meteorological Industry Technology Institute). This document stops at collating official observed records; such expert analysis and the resulting opinion belong to the appraisal stage, not to this document.'
+                  : '실제 기상감정에서는 인접 관측지점 실측과의 레이더 강우강도 회귀분석, 지점 간 거리·고도를 가중하는 PRISM 분석 등 비관측지점 정량 추정 기법과, 일기도·위성·레이더 영상에 의한 종관분석이 추가로 수행됩니다(기상산업기술원 기상감정(호우편) 사례집 기준). 본 자료의 범위는 공식 관측 기록의 정리까지이며, 이러한 전문 분석과 그에 따른 의견 제시는 본 자료가 아닌 기상감정의 범위입니다.'}
+              </li>
             </ul>
           </section>
 
-          {/* ⑤ 한계·고지 */}
+          {/* §06 한계·고지 + 별첨 확장 목록 */}
           <section className="vf-card vr-sec">
             <div className="vr-sec-head">
-              <span className="vr-sec-num">04</span>
+              <span className="vr-sec-num">06</span>
               <h2>{en ? 'Limitations & Notices' : '한계·고지'}</h2>
             </div>
             <ul className="vr-prose">
@@ -766,6 +915,12 @@ export default function VerifyReportPage() {
                   ? 'All values (once connected) are station observations, not point measurements at the target coordinates. Distance and coverage grade above quantify this gap.'
                   : '(연동 후에도) 모든 값은 관측지점의 기록이며 대상 좌표에서의 직접 측정값이 아닙니다. 위의 거리·커버리지 등급이 그 간극을 정량화합니다.'}
               </li>
+              <li>
+                <b>{en ? 'Materials expandable as attachments.' : '별첨으로 확장 가능한 자료.'}</b>{' '}
+                {en
+                  ? 'Following the attachment structure of the standard appraisal casebook, the reviewed edition can append: surface/upper-level and numerical weather charts, satellite imagery, radar imagery, the original texts of warning announcements and the day’s forecast statements, and a terrain analysis of the site (topographic environment, orographic effect). These are added at the appraiser-review stage — none are included in this draft.'
+                  : '표준 사례집의 별첨 구성을 참조하면 검수본에는 지상·각층 일기도 및 수치일기도, 기상위성 영상, 기상레이더 영상, 특보 발표문 원문·당일 기상예보문, 사건지역 지형 분석(지형환경·산악효과) 등을 별첨으로 확장할 수 있습니다. 이들 자료는 감정사 검수 단계에서 추가되며, 본 초안에는 포함되어 있지 않습니다.'}
+              </li>
             </ul>
             <p className="vr-src">
               {en ? 'Sources: ' : '출처: '}
@@ -774,6 +929,10 @@ export default function VerifyReportPage() {
                 : '기상청 관측자료 · 케이웨더'}{' '}
               · {en ? 'station metadata as of' : '지점 메타데이터 기준'} {STATIONS_META.updated} · {en ? 'draft issued' : '초안 발행'}{' '}
               {issuedStr}
+              {' · '}
+              {en
+                ? 'Section layout: per the Weather Appraisal Casebook (Heavy Rain) and Weather Appraisal Standard Manual (2017) form, Korea Meteorological Industry Technology Institute'
+                : '섹션 구성: 기상산업기술원 기상감정(호우편) 사례집·기상감정 표준매뉴얼(2017) 양식 기준'}
             </p>
           </section>
 

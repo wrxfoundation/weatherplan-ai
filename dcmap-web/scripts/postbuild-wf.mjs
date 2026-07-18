@@ -25,11 +25,12 @@ function prerender(relPath, title, desc) {
 }
 
 /* 가이드 slug — src/verify/guides/guidesData.js가 병렬 생성 중이라 임시 하드코딩(합류 시 import로 교체) */
-const GUIDE_SLUGS = ['insurance-claims', 'construction-eot', 'legal-appraisal']
+const GUIDE_SLUGS = ['insurance-claims', 'construction-eot', 'legal-appraisal', 'appraisal-report-anatomy']
 const GUIDE_TITLES = {
   'insurance-claims': '보험 손해사정 활용 가이드',
   'construction-eot': '건설 공기연장(EOT) 클레임 활용 가이드',
   'legal-appraisal': '소송·법률 감정 활용 가이드',
+  'appraisal-report-anatomy': '기상감정서의 구조',
 }
 
 const PAGES = [

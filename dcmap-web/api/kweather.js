@@ -370,6 +370,11 @@ const isYmd = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ''))
 const ymdCompact = (s) => String(s).replaceAll('-', '')
 
 async function handleHistory(req, res) {
+  // res=warn — 기상특보 발효 이력(별도 상류). 기존 일자료(res 미지정)·시간자료(res=hour) 경로는 무변경.
+  if (req.query.res === 'warn') {
+    await handleWarnHistory(req, res)
+    return
+  }
   // 과거 관측은 불변 — 길게 캐시
   res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=604800')
 
@@ -441,6 +446,124 @@ async function handleHistory(req, res) {
       to,
       effectiveTo: clamped ? to : undefined,
       rows,
+    })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * 기상특보 발효 이력 — 사례집 별첨5 '호우특보 발효 현황' 표준 항목 대응.
+ * 호출: /api/kweather?kind=history&res=warn&stn=108&from=2018-09-01&to=2018-09-30
+ *
+ * 상류(※ 가정 — 실계약·실응답으로 미검증):
+ *   공공데이터포털 기상청_기상특보 조회서비스
+ *   https://apis.data.go.kr/1360000/WthrWrnInfoService/getWthrWrnList
+ *   (dataType=JSON, stnId=발표관서, fromTmFc/toTmFc=YYYYMMDD) — DATA_GO_KR_KEY 동일 키 사용.
+ *   stn 파라미터는 ASOS 지점번호를 그대로 받아 발표관서(stnId) 코드로 전달한다.
+ *   실제 발표관서 코드 체계와 다를 수 있으므로, 응답 필드가 확인되지 않으면
+ *   available:false(reason)로 정직하게 실패한다 — 가짜 이력 생성 금지.
+ * ──────────────────────────────────────────────────────────────────── */
+const WARN_LIST_URL = 'https://apis.data.go.kr/1360000/WthrWrnInfoService/getWthrWrnList'
+const WARN_MAX_DAYS = 100
+const WARN_CAUTION = '특보는 발표관서·특보구역 단위 — 대상 지점 적용 여부는 발표문 원문으로 확인 필요'
+
+/** 특보 목록 item[] → 행 정규화 — 존재 필드만 관대하게(title/tmFc/tmSeq/stnId), 창작 금지 */
+export function _normalizeWarnItems(items, stnFallback) {
+  const arr = Array.isArray(items) ? items : items ? [items] : []
+  return arr
+    .map((it) => ({
+      tmFc: it?.tmFc != null && it.tmFc !== '' ? String(it.tmFc) : null, // 발표시각
+      title: it?.title != null && it.title !== '' ? String(it.title) : null, // 제목(예: 호우주의보 발표)
+      stnId: it?.stnId != null && it.stnId !== '' ? String(it.stnId) : stnFallback ?? null, // 발표관서
+      ...(it?.tmSeq != null && it.tmSeq !== '' ? { tmSeq: String(it.tmSeq) } : {}), // 발표번호(있을 때만)
+    }))
+    .filter((r) => r.tmFc || r.title)
+}
+
+async function handleWarnHistory(req, res) {
+  // 과거 특보 이력 — 확정 후 사실상 불변이나 최근분 갱신 여지로 관측 일자료보다 짧게 캐시
+  res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400')
+
+  const key = process.env.DATA_GO_KR_KEY
+  if (!key) {
+    res.status(200).json({ available: false, reason: 'not_configured' })
+    return
+  }
+  const stn = String(req.query.stn || '')
+  const { from } = req.query
+  let { to } = req.query
+  if (!/^\d{2,3}$/.test(stn) || !isYmd(from) || !isYmd(to)) {
+    res.status(400).json({ available: false, reason: 'bad_params' })
+    return
+  }
+  // 특보는 당일 발표분도 존재 — 오늘까지로만 클램프
+  const today = new Date().toISOString().slice(0, 10)
+  const clamped = to > today
+  if (clamped) to = today
+  const fromD = new Date(`${from}T00:00:00Z`)
+  const toD = new Date(`${to}T00:00:00Z`)
+  const spanDays = Math.round((toD - fromD) / 86400000) + 1
+  if (!(spanDays >= 1)) {
+    res.status(400).json({ available: false, reason: 'bad_range' })
+    return
+  }
+  if (spanDays > WARN_MAX_DAYS) {
+    res.status(400).json({ available: false, reason: 'range_too_long', maxDays: WARN_MAX_DAYS })
+    return
+  }
+
+  const svcKey = key.includes('%') ? key : encodeURIComponent(key)
+  const qs = `serviceKey=${svcKey}&pageNo=1&numOfRows=500&dataType=JSON&stnId=${stn}&fromTmFc=${ymdCompact(from)}&toTmFc=${ymdCompact(to)}`
+  try {
+    const raw = await getJson(`${WARN_LIST_URL}?${qs}`, 9000)
+    if (raw?._status) {
+      res.status(200).json({ available: false, reason: `upstream_http${raw._status}` })
+      return
+    }
+    const header = raw?.response?.header
+    if (!header) {
+      res.status(200).json({ available: false, reason: 'kma_no_header' })
+      return
+    }
+    // resultCode 03(NO_DATA) = 기간 내 해당 관서 발표 이력 없음 — 상류가 명시한 사실이므로 빈 목록으로 반환
+    if (header.resultCode === '03' || /NO_DATA/i.test(String(header.resultMsg || ''))) {
+      res.status(200).json({
+        available: true,
+        source: '기상청 기상특보 조회서비스 · 공공데이터포털 WthrWrnInfoService(상류 가정)',
+        res: 'warn',
+        stn: Number(stn),
+        from,
+        to,
+        effectiveTo: clamped ? to : undefined,
+        rows: [],
+        count: 0,
+        note: '상류 NO_DATA — 조회 기간 내 해당 발표관서의 특보 발표 이력 없음(상류 응답 기준)',
+        caution: WARN_CAUTION,
+      })
+      return
+    }
+    if (header.resultCode !== '00') {
+      res.status(200).json({ available: false, reason: `kma_${header.resultCode || 'unknown'}`, detail: header.resultMsg })
+      return
+    }
+    const rows = _normalizeWarnItems(raw?.response?.body?.items?.item, stn)
+    if (!rows.length) {
+      // 성공 코드인데 인식 가능한 필드 없음 — 필드 불일치로 간주, 가짜 금지
+      res.status(200).json({ available: false, reason: 'no_rows_or_field_mismatch' })
+      return
+    }
+    res.status(200).json({
+      available: true,
+      source: '기상청 기상특보 조회서비스 · 공공데이터포털 WthrWrnInfoService(상류 가정)',
+      res: 'warn',
+      stn: Number(stn),
+      from,
+      to,
+      effectiveTo: clamped ? to : undefined,
+      rows,
+      count: rows.length,
+      caution: WARN_CAUTION,
     })
   } catch (e) {
     res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
