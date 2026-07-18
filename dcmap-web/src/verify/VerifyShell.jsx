@@ -20,6 +20,12 @@ export function verifyReportPath() {
 export function verifyMapPath() {
   return isWeatherFactHost() ? '/map' : '/verify/map'
 }
+export function verifyGuidesPath() {
+  return isWeatherFactHost() ? '/guides' : '/verify/guides'
+}
+export function verifyStationsPath() {
+  return isWeatherFactHost() ? '/stations' : '/verify/stations'
+}
 
 export function VerifyTopBar() {
   const en = useMapLang() === 'en'
@@ -48,6 +54,9 @@ export function VerifyTopBar() {
         <NavLink to={verifyMapPath()} className={({ isActive }) => (isActive ? 'active' : '')}>
           {en ? 'Map' : '맵'}
         </NavLink>
+        <NavLink to={verifyGuidesPath()} className={({ isActive }) => (isActive ? 'active' : '')}>
+          {en ? 'Guides' : '가이드'}
+        </NavLink>
         <Link to={`${verifyReportPath()}?${SAMPLE_REPORT_QS}`}>{en ? 'Sample report' : '리포트 견본'}</Link>
         <a href={`mailto:${CONTACT_EMAIL}`} className="vf-topnav-contact">{en ? 'Contact' : '문의'}</a>
         <span className="nav-lang" role="group" aria-label="Language">
@@ -72,6 +81,8 @@ export function VerifyFooter() {
         </p>
         <p className="vf-footer-src">
           {en ? 'Sources' : '출처'}: {STATIONS_META.source} · {en ? 'KMA observations · KWeather' : '기상청 관측자료 · 케이웨더'} · {STATIONS_META.updated}
+          {' · '}
+          <Link to={verifyStationsPath()}>{en ? 'Station explorer' : '관측지점 탐색기'}</Link>
           {' · '}
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
         </p>

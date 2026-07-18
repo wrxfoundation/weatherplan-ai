@@ -8,6 +8,7 @@ import { geocodeAddr } from '../data/liveApi.js'
 import { STATIONS_META } from './stationsData.js'
 import { nearestStations, coverageGrade, USE_CASES } from './verifyEngine.js'
 import { PROCESS_STEPS, PRICING_TIERS, FAQ } from './verifyContent.js'
+import { listCases, saveCase, removeCase } from './caseStore.js'
 import './verify.css'
 
 const TITLE = '웨더팩트 — 기상 사실확인·감정지원 리포트'
@@ -30,6 +31,10 @@ export default function VerifyPage() {
   const [addrBusy, setAddrBusy] = useState(false)
   const [addrHit, setAddrHit] = useState(null) // { matched, matchType } — geocode 성공 시 확인 라벨용
   const [addrMiss, setAddrMiss] = useState(false) // 실패/미설정 — 에러가 아닌 정직 안내
+  // 케이스 보관함 — 조회 조건 저장/불러오기 (Calc 시나리오 저장 패턴 이식, caseStore.js)
+  const [cases, setCases] = useState(() => listCases())
+  const [caseLabel, setCaseLabel] = useState('')
+  const [caseSaved, setCaseSaved] = useState(false)
 
   useEffect(() => {
     document.title = en ? TITLE_EN : TITLE
@@ -74,6 +79,11 @@ export default function VerifyPage() {
       return
     }
     setErr('')
+    runLookup(lat, lon)
+  }
+
+  /* 좌표 → 최근접 지점 매칭 실행 (직접 조회·케이스 불러오기 공용) */
+  const runLookup = (lat, lon) => {
     const stations = nearestStations(lat, lon, 3)
     const grade = stations.length ? coverageGrade(stations[0].distKm) : null
     setResult({ lat, lon, stations, grade })
@@ -89,6 +99,38 @@ export default function VerifyPage() {
     if (form.to) p.set('to', form.to)
     p.set('use', form.use)
     return `/verify/report?${p.toString()}`
+  }
+
+  /* 케이스별 리포트 링크 — 현재 폼이 아닌 저장된 케이스 값 기준 */
+  const caseReportHref = (c) => {
+    const p = new URLSearchParams()
+    p.set('lat', String(c.lat))
+    p.set('lon', String(c.lon))
+    if (c.from) p.set('from', c.from)
+    if (c.to) p.set('to', c.to)
+    if (c.use) p.set('use', c.use)
+    return `/verify/report?${p.toString()}`
+  }
+
+  /* 현재 조회 조건을 케이스로 저장 — 조건만 저장(관측값 아님), 라벨은 선택 */
+  const onSaveCase = () => {
+    if (!result) return
+    setCases(saveCase({ label: caseLabel, lat: result.lat, lon: result.lon, from: form.from, to: form.to, use: form.use }))
+    setCaseLabel('')
+    setCaseSaved(true)
+    setTimeout(() => setCaseSaved(false), 1600)
+  }
+
+  /* 케이스 불러오기 — 폼 채움 + 조회 즉시 재실행 */
+  const loadCase = (c) => {
+    setForm({ lat: String(c.lat), lon: String(c.lon), from: c.from, to: c.to, use: c.use || (USE_CASES[0]?.key ?? 'insurance') })
+    setErr('')
+    runLookup(c.lat, c.lon)
+  }
+
+  const useLabel = (key) => {
+    const u = USE_CASES.find((x) => x.key === key)
+    return u ? (en ? u.en : u.ko) : key
   }
 
   return (
@@ -259,6 +301,85 @@ export default function VerifyPage() {
                 {en ? 'Request appraiser review' : '감정사 검수 문의'}
               </button>
             </div>
+            {/* 케이스로 저장 — 조회 조건(좌표·기간·용도)만 저장, 라벨은 선택 */}
+            <form
+              className="vf-form"
+              style={{ marginTop: 12 }}
+              onSubmit={(e) => {
+                e.preventDefault()
+                onSaveCase()
+              }}
+            >
+              <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <input
+                  type="text"
+                  value={caseLabel}
+                  onChange={(e) => setCaseLabel(e.target.value)}
+                  placeholder={en ? 'Case label (optional) — e.g. hail damage, claim #2026-041' : '케이스 라벨 (선택) — 예: ○○사건 우박 피해'}
+                  maxLength={60}
+                  style={{ flex: 1, minWidth: 200 }}
+                />
+                <button type="submit" className="btn">
+                  {caseSaved ? (en ? 'Case saved ✓' : '케이스 저장됨 ✓') : en ? 'Save as case' : '케이스로 저장'}
+                </button>
+              </span>
+            </form>
+          </section>
+        )}
+
+        {/* ── 저장된 케이스 (비어 있으면 숨김) ─────────────────────────────── */}
+        {cases.length > 0 && (
+          <section className="vf-card vf-result">
+            <h2 className="vf-h2">
+              {en ? 'Saved cases' : '저장된 케이스'} <span className="vf-station-id">{cases.length}/20</span>
+            </h2>
+            <p className="vf-muted">
+              {en
+                ? 'For adjusters juggling several incidents — save lookup conditions per case and jump back anytime (conditions only, stored in this browser).'
+                : '여러 사건을 오가는 손해사정 워크플로용 — 사건별 조회 조건을 저장해 두고 언제든 다시 불러옵니다(조건만 저장 · 이 브라우저에 보관).'}
+            </p>
+            <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 8 }}>
+              {cases.map((c) => (
+                <li
+                  key={c.id}
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    gap: '6px 12px',
+                    padding: '10px 14px',
+                    border: '1px solid var(--line)',
+                    borderRadius: 'var(--radius-md)',
+                  }}
+                >
+                  <span style={{ flex: '1 1 220px', minWidth: 0 }}>
+                    <span className="vf-station-name" style={{ display: 'block', marginBottom: 2 }}>
+                      {c.label || `(${Number(c.lat).toFixed(4)}, ${Number(c.lon).toFixed(4)})`}
+                    </span>
+                    <span className="vf-meta-note" style={{ margin: 0, display: 'block' }}>
+                      ({Number(c.lat).toFixed(4)}, {Number(c.lon).toFixed(4)}) ·{' '}
+                      {c.from || c.to ? `${c.from || '…'} ~ ${c.to || '…'}` : en ? 'no period' : '기간 미지정'} · {useLabel(c.use)} ·{' '}
+                      {en ? 'saved ' : '저장 '}
+                      {(c.savedAt || '').slice(0, 10)}
+                    </span>
+                  </span>
+                  <span className="vf-cta-row" style={{ marginTop: 0 }}>
+                    <button type="button" className="btn" onClick={() => loadCase(c)}>
+                      {en ? 'Load' : '불러오기'}
+                    </button>
+                    <button type="button" className="btn" onClick={() => navigate(caseReportHref(c))}>
+                      {en ? 'Report' : '리포트'}
+                    </button>
+                    <button type="button" className="btn" onClick={() => navigate('/verify/map')}>
+                      {en ? 'Map' : '맵'}
+                    </button>
+                    <button type="button" className="btn" onClick={() => setCases(removeCase(c.id))}>
+                      {en ? 'Delete' : '삭제'}
+                    </button>
+                  </span>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
 

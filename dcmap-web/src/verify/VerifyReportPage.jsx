@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { fetchObservations, fetchHourlyObservations, summarizeRows } from './observationsApi.js'
+import { fetchNarrative } from './narrativeApi.js'
 import VerifyShell from './VerifyShell.jsx'
 import LineIcon from '../components/LineIcon.jsx'
 import { useMapLang } from '../i18n/mapLang.js'
@@ -165,6 +166,11 @@ const REPORT_CSS = `
 .vr-hourly h3 { font-size: var(--text-body); font-weight: var(--weight-bold); margin: 0 0 4px; }
 .vr-table tr.vr-day-break td { border-top: 2px solid var(--line); } /* 일자 경계 구분 */
 
+/* AI 감정 서술문 초안 — 생성된 서술문은 프린트 포함(버튼·대기 안내만 vr-noprint) */
+.vr-ai-badge-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.vr-ai-text { margin: 0; font-size: var(--text-sm); line-height: var(--lh-base); white-space: pre-wrap; }
+.vr-ai-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
 /* 파라미터 누락 안내 */
 .vr-missing { max-width: 560px; margin: 60px auto 0; text-align: center; padding: 30px 26px; }
 .vr-missing h1 { font-size: var(--text-title); margin: 10px 0 8px; }
@@ -255,6 +261,10 @@ export default function VerifyReportPage() {
     }
   }, [wantHourly, primaryStn?.id, from, to])
 
+  /* AI 감정 서술문 초안 — 수동 트리거 전용(자동 호출 금지). null=미요청, {available,...}=응답 그대로 */
+  const [narrative, setNarrative] = useState(null)
+  const [narrativeLoading, setNarrativeLoading] = useState(false)
+
   const issued = new Date()
   const issuedStr = issued.toLocaleDateString(en ? 'en-US' : 'ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
 
@@ -287,6 +297,24 @@ export default function VerifyReportPage() {
   const grade = stations.length ? coverageGrade(stations[0].distKm) : null
   const elements = en ? useCase.elementsEn : useCase.elementsKo
   const coord = `${lat.toFixed(4)}, ${lon.toFixed(4)}`
+
+  /* AI 서술문 생성 — 화면에 이미 렌더된 실측값만 payload로 전달(없는 값 전송 금지) */
+  const generateNarrative = () => {
+    if (narrativeLoading || !obs?.available || !obs.rows?.length || !primaryStn) return
+    setNarrativeLoading(true)
+    fetchNarrative({
+      coord: { lat, lon },
+      period: { from, to },
+      use: { key: useCase.key, ko: useCase.ko, en: useCase.en },
+      station: { name: primaryStn.name, id: primaryStn.id, distKm: primaryStn.distKm },
+      coverage: grade ? { grade: grade.grade, note: grade.ko } : null,
+      dailyRows: obs.rows,
+      ...(hourly?.available && hourly.rows?.length ? { hourlyRows: hourly.rows.slice(0, 72) } : {}),
+    }).then((r) => {
+      setNarrative(r)
+      setNarrativeLoading(false)
+    })
+  }
 
   return (
     <>
@@ -601,6 +629,77 @@ export default function VerifyReportPage() {
               </>
             )}
           </section>
+
+          {/* ③-1 감정 서술문 초안 (AI) — 실측 데이터가 있을 때만. 수동 트리거(자동 호출 금지).
+             생성 성공 시에만 프린트 포함 — 미생성·대기 상태는 인쇄물에서 제외 */}
+          {obs?.available && obs.rows?.length ? (
+            <section className={`vf-card vr-sec${narrative?.available ? '' : ' vr-noprint'}`}>
+              <div className="vr-sec-head">
+                <span className="vr-sec-num">02-1</span>
+                <h2>{en ? 'Appraisal Narrative Draft (AI)' : '감정 서술문 초안 (AI)'}</h2>
+              </div>
+              {narrative?.available ? (
+                <>
+                  <div className="vr-ai-badge-row">
+                    <span className="vr-draft-badge">
+                      <LineIcon name="risk" size={12} />
+                      {en ? 'AI-GENERATED DRAFT — no legal effect before appraiser review' : 'AI 생성 초안 — 감정사 검수 전 법적 효력 없음'}
+                    </span>
+                  </div>
+                  <p className="vr-ai-text">{narrative.text}</p>
+                  <p className="vr-src">
+                    {en
+                      ? `Narrative drafted by AI strictly from the observed records in section 02 (KMA ASOS station ${primaryStn.nameEn}, #${primaryStn.id}). `
+                      : `본 서술문은 02절의 관측 기록(기상청 ASOS ${primaryStn.name}, 지점 ${primaryStn.id})만을 근거로 AI가 작성한 초안입니다. `}
+                    {en ? 'Generated' : '생성일'} {issuedStr}
+                  </p>
+                </>
+              ) : narrative ? (
+                <div className="vr-wait" role="status">
+                  <LineIcon name="risk" size={18} />
+                  <div>
+                    <b>
+                      {narrative.reason === 'not_configured'
+                        ? en
+                          ? 'AI pending — ANTHROPIC_API_KEY not configured'
+                          : 'AI 연동 대기 — ANTHROPIC_API_KEY 미설정'
+                        : en
+                          ? 'AI pending — draft could not be generated'
+                          : 'AI 연동 대기 — 서술문을 생성하지 못했습니다'}
+                    </b>
+                    <p>
+                      {narrative.reason === 'not_configured'
+                        ? en
+                          ? 'The AI proxy is deployed but no API key is set on the server, so no narrative was generated. No fabricated text is shown in its place.'
+                          : 'AI 프록시는 배포되어 있으나 서버에 API 키가 설정되지 않아 서술문이 생성되지 않았습니다. 그 자리를 가짜 문장으로 채우지 않습니다.'
+                        : en
+                          ? `The request did not return a narrative (reason: ${narrative.reason}). You can retry below; no fabricated text is shown in its place.`
+                          : `요청이 서술문을 반환하지 못했습니다(사유: ${narrative.reason}). 아래에서 재시도할 수 있으며, 그 자리를 가짜 문장으로 채우지 않습니다.`}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <p className="vf-muted">
+                  {en
+                    ? 'Drafts a narrative appraisal statement from the observed records in section 02 only — no values are invented. Generation runs only when you press the button; the result is an AI draft with no legal effect before appraiser review.'
+                    : '02절의 관측 기록만을 근거로 감정 서술문 초안을 작성합니다 — 없는 수치는 만들지 않습니다. 버튼을 눌렀을 때만 생성되며, 결과물은 감정사 검수 전 법적 효력이 없는 AI 초안입니다.'}
+                </p>
+              )}
+              {!narrative?.available && (
+                <div className="vr-ai-actions vr-noprint">
+                  <button type="button" className="btn primary" disabled={narrativeLoading} onClick={generateNarrative}>
+                    {narrativeLoading
+                      ? en
+                        ? 'Generating…'
+                        : '생성 중…'
+                      : en
+                        ? 'Generate narrative draft'
+                        : '서술문 초안 생성'}
+                  </button>
+                </div>
+              )}
+            </section>
+          ) : null}
 
           {/* ④ 방법론 */}
           <section className="vf-card vr-sec">
