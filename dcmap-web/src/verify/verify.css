@@ -470,3 +470,30 @@
     font-size: var(--text-h1);
   }
 }
+
+/* ── 웨더팩트 전용 셸 (단독 브랜드 상단바·푸터) ─────────────────── */
+.vf-shell { display: flex; flex-direction: column; min-height: 100vh; }
+.vf-shell main { flex: 1; }
+.vf-topbar {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px clamp(14px, 4vw, 28px);
+  background: var(--glass-surface-strong);
+  border-bottom: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
+.vf-brand { display: inline-flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; font-size: var(--text-md); }
+.vf-brand b { font-weight: var(--weight-bold); letter-spacing: -0.01em; }
+.vf-brand-en { color: var(--accent); font-weight: var(--weight-bold); font-size: var(--text-sm); }
+.vf-brand-mark { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); }
+.vf-topnav { display: inline-flex; align-items: center; gap: clamp(8px, 2vw, 18px); font-size: var(--text-sm); }
+.vf-topnav a { color: var(--grey); text-decoration: none; padding: 6px 2px; }
+.vf-topnav a:hover, .vf-topnav a.active { color: var(--text); }
+.vf-topnav-contact { border: 1px solid var(--glass-border); border-radius: 999px; padding: 5px 12px !important; }
+.vf-footer { margin-top: 40px; border-top: 1px solid var(--glass-border); background: var(--glass-surface-strong); }
+.vf-footer-inner { max-width: 960px; margin: 0 auto; padding: 22px clamp(14px, 4vw, 28px) 30px; display: grid; gap: 6px; }
+.vf-footer-brand { font-size: var(--text-sm); color: var(--text); }
+.vf-footer-honesty { font-size: var(--text-xs); color: var(--grey); line-height: var(--lh-base); }
+.vf-footer-src { font-size: var(--text-xs); color: var(--grey); }
+.vf-footer-src a { color: var(--accent); text-decoration: none; }
+@media print { .vf-topbar, .vf-footer { display: none !important; } }

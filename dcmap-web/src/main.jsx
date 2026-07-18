@@ -33,6 +33,18 @@ const MethodologyPage = lazy(() => import('./lead/MethodologyPage.jsx'))
 const AboutPage = lazy(() => import('./about/AboutPage.jsx'))
 const VerifyPage = lazy(() => import('./verify/VerifyPage.jsx'))
 const VerifyReportPage = lazy(() => import('./verify/VerifyReportPage.jsx'))
+import { isWeatherFactHost } from './verify/standalone.js'
+
+/* 웨더팩트 단독 모드(별도 도메인/VITE_WEATHERFACT=1) — verify 라우트만 노출.
+ * 같은 코드베이스·별도 브랜드: 구매자에게 단일 목적 제품으로 보이게 한다. */
+const WEATHERFACT_STANDALONE = isWeatherFactHost()
+
+/* verify 계열은 자체 셸(VerifyShell) 푸터를 쓰므로 전역 SiteFooter 숨김 */
+function FooterGate() {
+  const { pathname } = useLocation()
+  if (WEATHERFACT_STANDALONE || pathname.startsWith('/verify') || pathname === '/report') return null
+  return <SiteFooter />
+}
 
 /* SPA 라우트 전환 시 스크롤 최상단 — 긴 페이지에서 이전 스크롤 위치가 남는 UX 문제 방지 */
 function ScrollToTop() {
@@ -58,6 +70,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ScrollTopFab />
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
+        {WEATHERFACT_STANDALONE ? (
+          <Routes>
+            <Route path="/" element={<VerifyPage />} />
+            <Route path="/report" element={<VerifyReportPage />} />
+            <Route path="/verify" element={<Navigate to="/" replace />} />
+            <Route path="/verify/report" element={<VerifyReportPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        ) : (
         <Routes>
           <Route path="/" element={<MapPage key="home" />} />
           <Route path="/map3d" element={<Map3DPage />} />
@@ -84,8 +105,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/verify/report" element={<VerifyReportPage />} />
           <Route path="*" element={<MapPage />} />
         </Routes>
+        )}
       </Suspense>
-      <SiteFooter />
+      <FooterGate />
     </BrowserRouter>
   </React.StrictMode>,
 )

@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom'
-import TopBar from '../TopBar.jsx'
+import VerifyShell from './VerifyShell.jsx'
 import LineIcon from '../components/LineIcon.jsx'
 import { useMapLang } from '../i18n/mapLang.js'
 import { STATIONS_META } from './stationsData.js'
@@ -225,7 +225,7 @@ export default function VerifyReportPage() {
     return (
       <>
         <style>{REPORT_CSS}</style>
-        <TopBar />
+        <VerifyShell>
         <main className="page verify-page vr-page">
           <div className="vf-card vr-missing">
             <LineIcon name="risk" size={22} />
@@ -240,6 +240,7 @@ export default function VerifyReportPage() {
             </Link>
           </div>
         </main>
+      </VerifyShell>
       </>
     )
   }
@@ -252,7 +253,7 @@ export default function VerifyReportPage() {
   return (
     <>
       <style>{REPORT_CSS}</style>
-      <TopBar />
+      <VerifyShell>
       <main className="page verify-page vr-page">
         <div className="vr-doc">
           {/* 툴바 — 인쇄물에서는 숨김 */}
@@ -515,6 +516,7 @@ export default function VerifyReportPage() {
           </div>
         </div>
       </main>
+    </VerifyShell>
     </>
   )
 }

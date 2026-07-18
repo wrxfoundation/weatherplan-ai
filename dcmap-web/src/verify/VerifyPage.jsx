@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import TopBar from '../TopBar.jsx'
+import VerifyShell from './VerifyShell.jsx'
 import LeadDialog from '../lead/LeadDialog.jsx'
 import LineIcon from '../components/LineIcon.jsx'
 import { useMapLang } from '../i18n/mapLang.js'
@@ -68,8 +68,7 @@ export default function VerifyPage() {
   }
 
   return (
-    <>
-      <TopBar />
+    <VerifyShell>
       <main className="page verify-page">
         {/* ── 히어로 ─────────────────────────────── */}
         <section className="vf-hero">
@@ -287,6 +286,6 @@ export default function VerifyPage() {
       </main>
 
       <LeadDialog open={dlg} defaultType="정밀 리포트 요청" context="weatherfact" onClose={() => setDlg(false)} />
-    </>
+    </VerifyShell>
   )
 }
