@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import VerifyShell, { verifyMapPath } from './VerifyShell.jsx'
 import LineIcon from '../components/LineIcon.jsx'
 import { useMapLang } from '../i18n/mapLang.js'
-import { ASOS_STATIONS, STATIONS_META } from './stationsData.js'
+import { STATIONS_META } from './stationsData.js'
+import { ALL_STATIONS, NETWORKS } from './verifyEngine.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
 import './verify.css'
 
@@ -34,15 +35,27 @@ export default function VerifyStationsPage() {
 
   const rows = useMemo(() => {
     const needle = q.trim().toLowerCase()
+    // AWS 행은 name/nameEn/since 가 null 일 수 있음(상류 미제공 — 창작 금지) → null 안전 처리
     const list = !needle
-      ? [...ASOS_STATIONS]
-      : ASOS_STATIONS.filter(
-          (s) => String(s.id).includes(needle) || s.name.includes(needle) || s.nameEn.toLowerCase().includes(needle)
+      ? [...ALL_STATIONS]
+      : ALL_STATIONS.filter(
+          (s) =>
+            String(s.id).includes(needle) ||
+            (s.name ?? '').includes(needle) ||
+            (s.nameEn ?? '').toLowerCase().includes(needle) ||
+            s.kind.toLowerCase().includes(needle)
         )
     const { key, dir } = sort
     list.sort((a, b) => {
-      if (key === 'name') return (en ? a.nameEn.localeCompare(b.nameEn) : a.name.localeCompare(b.name, 'ko')) * dir
-      return (a[key] - b[key]) * dir
+      if (key === 'name') {
+        const av = (en ? a.nameEn ?? a.name : a.name) ?? ''
+        const bv = (en ? b.nameEn ?? b.name : b.name) ?? ''
+        return av.localeCompare(bv, en ? undefined : 'ko') * dir
+      }
+      // since 등 null 은 항상 뒤로(오름차순 기준)
+      const av = a[key] ?? Infinity
+      const bv = b[key] ?? Infinity
+      return (av - bv) * dir
     })
     return list
   }, [q, sort, en])
@@ -52,6 +65,7 @@ export default function VerifyStationsPage() {
 
   const onCsv = () => {
     const columns = [
+      { k: 'kind', label: en ? 'network' : '관측망' },
       { k: 'id', label: en ? 'station_id' : '지점번호' },
       { k: 'name', label: en ? 'name_ko' : '지점명' },
       { k: 'nameEn', label: en ? 'name_en' : '지점명(EN)' },
@@ -61,8 +75,13 @@ export default function VerifyStationsPage() {
     ]
     const body = toCsv(columns, rows).replace(/^﻿/, '')
     // 정직성: CSV에도 근사값 고지 주석줄 동봉 — 파일만 돌아다녀도 출처·한계가 따라가게 (BOM은 Excel 한글 호환)
-    const comment = `# ${STATIONS_META.source} · ${STATIONS_META.note} · ${STATIONS_META.updated}`
-    downloadCsv('weatherfact_asos_stations.csv', '﻿' + comment + '\n' + body)
+    const comment = [
+      `# ASOS: ${STATIONS_META.source} · ${STATIONS_META.note} · ${STATIONS_META.updated}`,
+      NETWORKS.aws ? `# AWS: ${NETWORKS.aws.meta.source} · ${NETWORKS.aws.meta.note} · ${NETWORKS.aws.meta.updated}` : null,
+    ]
+      .filter(Boolean)
+      .join('\n')
+    downloadCsv(NETWORKS.aws ? 'weatherfact_stations.csv' : 'weatherfact_asos_stations.csv', '﻿' + comment + '\n' + body)
   }
 
   return (
@@ -73,9 +92,13 @@ export default function VerifyStationsPage() {
             {en ? 'Station Explorer' : '관측지점 탐색기'}
           </h1>
           <p className="vf-muted" style={{ marginTop: 8 }}>
-            {en
-              ? `All ${ASOS_STATIONS.length} KMA ASOS stations used for report matching — filter, sort, download as CSV.`
-              : `리포트 매칭에 쓰는 기상청 ASOS ${ASOS_STATIONS.length}개 지점 전체 — 필터·정렬·CSV 다운로드.`}
+            {NETWORKS.aws
+              ? en
+                ? `All ${ALL_STATIONS.length} KMA stations used for report matching (ASOS ${NETWORKS.asos.count} · AWS ${NETWORKS.aws.count}) — filter, sort, download as CSV.`
+                : `리포트 매칭에 쓰는 기상청 관측지점 ${ALL_STATIONS.length}개 전체(ASOS ${NETWORKS.asos.count} · AWS ${NETWORKS.aws.count}) — 필터·정렬·CSV 다운로드.`
+              : en
+                ? `All ${NETWORKS.asos.count} KMA ASOS stations used for report matching — filter, sort, download as CSV.`
+                : `리포트 매칭에 쓰는 기상청 ASOS ${NETWORKS.asos.count}개 지점 전체 — 필터·정렬·CSV 다운로드.`}
           </p>
         </header>
 
@@ -96,6 +119,13 @@ export default function VerifyStationsPage() {
                 ? 'Only stations we are confident exist are listed — accuracy over count. Nothing here is fabricated.'
                 : '확신 있는 실존 지점만 수록합니다(개수보다 정확성). 없는 수치는 만들지 않습니다.'}
             </li>
+            {!NETWORKS.aws && (
+              <li>
+                {en
+                  ? 'AWS stations appear automatically after the station pipeline is run (STN_INF=AWS).'
+                  : 'AWS 지점은 파이프라인 실행 후 자동 표시됩니다(STN_INF=AWS).'}
+              </li>
+            )}
           </ul>
         </section>
 
@@ -110,7 +140,7 @@ export default function VerifyStationsPage() {
               style={{ flex: '1 1 200px', minWidth: 160 }}
             />
             <span className="vf-muted" style={{ margin: 0 }}>
-              {rows.length}/{ASOS_STATIONS.length}
+              {rows.length}/{ALL_STATIONS.length}
             </span>
             <button type="button" className="btn" onClick={onCsv} disabled={!rows.length}>
               {en ? 'Download CSV' : 'CSV 다운로드'}
@@ -121,6 +151,7 @@ export default function VerifyStationsPage() {
             <table style={S.table}>
               <thead>
                 <tr>
+                  {NETWORKS.aws && <th style={S.th}>{en ? 'Network' : '관측망'}</th>}
                   <th style={S.th} aria-sort={sort.key === 'id' ? (sort.dir === 1 ? 'ascending' : 'descending') : 'none'}>
                     <button type="button" style={S.thBtn} onClick={() => onSort('id')}>
                       {en ? 'ID' : '지점번호'}{arrow('id')}
@@ -143,14 +174,17 @@ export default function VerifyStationsPage() {
               </thead>
               <tbody>
                 {rows.map((s) => (
-                  <tr key={s.id}>
+                  <tr key={`${s.kind}-${s.id}`}>
+                    {NETWORKS.aws && <td style={S.td}>{s.kind}</td>}
                     <td style={{ ...S.td, ...S.num }}>{s.id}</td>
                     <td style={S.td}>
-                      <b>{en ? s.nameEn : s.name}</b> <span className="vf-station-id">{en ? s.name : s.nameEn}</span>
+                      {/* AWS 행은 name/nameEn 이 null 일 수 있음(상류 미제공 — 창작 금지) */}
+                      <b>{(en ? s.nameEn ?? s.name : s.name ?? s.nameEn) ?? `#${s.id}`}</b>{' '}
+                      {(en ? s.name : s.nameEn) && <span className="vf-station-id">{en ? s.name : s.nameEn}</span>}
                     </td>
                     <td style={{ ...S.td, ...S.num }}>{s.lat.toFixed(3)}</td>
                     <td style={{ ...S.td, ...S.num }}>{s.lon.toFixed(3)}</td>
-                    <td style={{ ...S.td, ...S.num }}>{s.since}</td>
+                    <td style={{ ...S.td, ...S.num }}>{s.since ?? (en ? 'data pending' : '데이터 대기')}</td>
                     <td style={S.td}>
                       <Link to={verifyMapPath()}>{en ? 'Map' : '맵'}</Link>
                     </td>
@@ -158,7 +192,7 @@ export default function VerifyStationsPage() {
                 ))}
                 {!rows.length && (
                   <tr>
-                    <td style={S.td} colSpan={6}>
+                    <td style={S.td} colSpan={NETWORKS.aws ? 7 : 6}>
                       <span className="vf-muted" style={{ margin: 0 }}>{en ? 'No stations match the filter.' : '필터에 맞는 지점이 없습니다.'}</span>
                     </td>
                   </tr>
@@ -170,6 +204,11 @@ export default function VerifyStationsPage() {
 
         <p className="vf-muted" style={{ marginTop: 16 }}>
           {en ? 'Sources' : '출처'}: {STATIONS_META.source} ({STATIONS_META.updated}) · {STATIONS_META.note}
+          {NETWORKS.aws && (
+            <>
+              {' '}· {NETWORKS.aws.meta.source} ({NETWORKS.aws.meta.updated}) · {NETWORKS.aws.meta.note}
+            </>
+          )}
         </p>
       </main>
     </VerifyShell>

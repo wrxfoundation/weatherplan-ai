@@ -455,6 +455,7 @@ async function handleHistory(req, res) {
 /* ─────────────────────────────────────────────────────────────────────
  * 기상특보 발효 이력 — 사례집 별첨5 '호우특보 발효 현황' 표준 항목 대응.
  * 호출: /api/kweather?kind=history&res=warn&stn=108&from=2018-09-01&to=2018-09-30
+ *      (선택) office=발표관서코드 — 있으면 stn 대신 상류 stnId로 사용(클라이언트 근사 매핑용). 기존 stn 경로 하위호환.
  *
  * 상류(※ 가정 — 실계약·실응답으로 미검증):
  *   공공데이터포털 기상청_기상특보 조회서비스
@@ -490,7 +491,8 @@ async function handleWarnHistory(req, res) {
     res.status(200).json({ available: false, reason: 'not_configured' })
     return
   }
-  const stn = String(req.query.stn || '')
+  // office(발표관서 코드)가 있으면 stn 대신 사용 — 없으면 기존 stn 동작 그대로(하위호환)
+  const stn = String(req.query.office || req.query.stn || '')
   const { from } = req.query
   let { to } = req.query
   if (!/^\d{2,3}$/.test(stn) || !isYmd(from) || !isYmd(to)) {

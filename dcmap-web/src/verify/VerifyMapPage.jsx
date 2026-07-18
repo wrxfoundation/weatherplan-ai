@@ -6,8 +6,8 @@ import VerifyShell, { verifyHome } from './VerifyShell.jsx'
 import LineIcon from '../components/LineIcon.jsx'
 import { useMapLang } from '../i18n/mapLang.js'
 import { geocodeAddr } from '../data/liveApi.js'
-import { ASOS_STATIONS, STATIONS_META } from './stationsData.js'
-import { nearestStations, coverageGrade, USE_CASES } from './verifyEngine.js'
+import { STATIONS_META } from './stationsData.js'
+import { ALL_STATIONS, NETWORKS, nearestStations, coverageGrade, USE_CASES } from './verifyEngine.js'
 import './verify.css'
 
 /* 웨더팩트 맵 — dcmap 맵 헤리티지(다크 타일·레이어 토글 UX)를 사실확인 목적으로 이식.
@@ -26,15 +26,17 @@ const RING_STYLE = [
   { r: 15000, color: '#7ea6ff', label: '15km (B)' },
   { r: 30000, color: '#8a93a8', label: '30km (C)' },
 ]
+/* 관측망별 지점 색 — ASOS는 기존 색 유지, AWS는 보조색(구분용) */
+const KIND_COLOR = { ASOS: '#7ea6ff', AWS: '#e6b566' }
 
 export default function VerifyMapPage() {
   const en = useMapLang() === 'en'
   const navigate = useNavigate()
   const mapEl = useRef(null)
   const mapRef = useRef(null)
-  const layersRef = useRef({}) // { stations, labels, rings, picked }
+  const layersRef = useRef({}) // { stations, aws, labels, rings, picked }
   const [point, setPoint] = useState(null) // { lat, lon }
-  const [show, setShow] = useState({ stations: true, labels: false, rings: true })
+  const [show, setShow] = useState({ stations: true, aws: !!NETWORKS.aws, labels: false, rings: true })
   const [form, setForm] = useState({ from: '', to: '', use: USE_CASES[0]?.key ?? 'insurance' })
   const [addrQ, setAddrQ] = useState('')
   const [addrBusy, setAddrBusy] = useState(false)
@@ -55,18 +57,24 @@ export default function VerifyMapPage() {
     map.fitBounds(KR_BOUNDS)
     mapRef.current = map
 
+    /* 지점 레이어 — kind별 2개(ASOS 기존 색 · AWS 보조색). AWS 파일이 없으면 aws 레이어는 빈 그룹.
+     * 지점명 라벨은 ASOS만(전국 AWS 수백 지점 라벨은 클러터 — 필요 시 별도 과제로). */
     const stations = L.layerGroup()
+    const aws = L.layerGroup()
     const labels = L.layerGroup()
-    for (const s of ASOS_STATIONS) {
-      L.circleMarker([s.lat, s.lon], { radius: 5, color: '#7ea6ff', weight: 1.5, fillColor: '#7ea6ff', fillOpacity: 0.55 })
-        .bindTooltip(`${s.name} (${s.id})`, { direction: 'top', offset: [0, -6] })
-        .addTo(stations)
-      L.marker([s.lat, s.lon], {
-        interactive: false,
-        icon: L.divIcon({ className: 'vfm-stn-label', html: `<span>${s.name}</span>`, iconSize: [0, 0] }),
-      }).addTo(labels)
+    for (const s of ALL_STATIONS) {
+      const color = KIND_COLOR[s.kind] ?? KIND_COLOR.ASOS
+      L.circleMarker([s.lat, s.lon], { radius: s.kind === 'AWS' ? 4 : 5, color, weight: 1.5, fillColor: color, fillOpacity: 0.55 })
+        .bindTooltip(`${s.name ?? `#${s.id}`} (${s.id}) · ${s.kind}`, { direction: 'top', offset: [0, -6] })
+        .addTo(s.kind === 'AWS' ? aws : stations)
+      if (s.kind !== 'AWS') {
+        L.marker([s.lat, s.lon], {
+          interactive: false,
+          icon: L.divIcon({ className: 'vfm-stn-label', html: `<span>${s.name}</span>`, iconSize: [0, 0] }),
+        }).addTo(labels)
+      }
     }
-    layersRef.current = { stations, labels, rings: L.layerGroup(), picked: L.layerGroup() }
+    layersRef.current = { stations, aws, labels, rings: L.layerGroup(), picked: L.layerGroup() }
     stations.addTo(map)
     layersRef.current.picked.addTo(map)
     layersRef.current.rings.addTo(map)
@@ -88,6 +96,7 @@ export default function VerifyMapPage() {
       if (!on && map.hasLayer(layer)) map.removeLayer(layer)
     }
     sync(ly.stations, show.stations)
+    sync(ly.aws, show.aws && !!NETWORKS.aws)
     sync(ly.labels, show.labels)
     sync(ly.rings, show.rings)
   }, [show])
@@ -154,15 +163,29 @@ export default function VerifyMapPage() {
           {/* 레이어 토글 — dcmap FilterBar UX 축소판 */}
           <div className="vfm-filterbar" role="group" aria-label={en ? 'Map layers' : '맵 레이어'}>
             {[
-              { k: 'stations', ko: '관측지점', en: 'Stations' },
+              { k: 'stations', ko: 'ASOS 지점', en: 'ASOS stations' },
+              {
+                k: 'aws',
+                ko: 'AWS 지점',
+                en: 'AWS stations',
+                disabled: !NETWORKS.aws,
+                // AWS 지점 파일(awsStationsData.js) 미생성 시 — 데이터 대기(창작 금지)
+                title: NETWORKS.aws
+                  ? undefined
+                  : en
+                    ? 'Data pending — station pipeline run required'
+                    : '데이터 대기 — 지점 파이프라인 실행 필요',
+              },
               { k: 'labels', ko: '지점명', en: 'Labels' },
               { k: 'rings', ko: '커버리지 링', en: 'Coverage rings' },
             ].map((t) => (
               <button
                 key={t.k}
                 type="button"
-                className={`vfm-toggle${show[t.k] ? ' on' : ''}`}
-                aria-pressed={show[t.k]}
+                className={`vfm-toggle${show[t.k] && !t.disabled ? ' on' : ''}`}
+                aria-pressed={show[t.k] && !t.disabled}
+                disabled={t.disabled}
+                title={t.title}
                 onClick={() => setShow((s) => ({ ...s, [t.k]: !s[t.k] }))}
               >
                 {en ? t.en : t.ko}
@@ -207,8 +230,24 @@ export default function VerifyMapPage() {
               </p>
               <ul className="vfm-stnlist" role="list">
                 {near.map((s, i) => (
-                  <li key={s.id}>
-                    <b>{en ? s.nameEn : s.name}</b> <span className="vf-muted">#{s.id}</span>
+                  <li key={`${s.kind}-${s.id}`}>
+                    <b>{(en ? s.nameEn ?? s.name : s.name) ?? `#${s.id}`}</b>{' '}
+                    {/* kind 미니 배지 — verify.css 수정 금지라 자기 소유 인라인 스타일 */}
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 600,
+                        letterSpacing: '0.04em',
+                        padding: '1px 5px',
+                        borderRadius: 4,
+                        border: `1px solid ${KIND_COLOR[s.kind] ?? KIND_COLOR.ASOS}`,
+                        color: KIND_COLOR[s.kind] ?? KIND_COLOR.ASOS,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {s.kind}
+                    </span>{' '}
+                    <span className="vf-muted">#{s.id}</span>
                     <span className="vfm-dist">{s.distKm} km</span>
                     {i === 0 && <span className="vf-soon-badge">{en ? 'nearest' : '최근접'}</span>}
                   </li>

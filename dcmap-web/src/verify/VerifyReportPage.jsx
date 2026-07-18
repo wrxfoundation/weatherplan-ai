@@ -196,6 +196,36 @@ const REPORT_CSS = `
 .vr-hourly h3 { font-size: var(--text-body); font-weight: var(--weight-bold); margin: 0 0 4px; }
 .vr-table tr.vr-day-break td { border-top: 2px solid var(--line); } /* 일자 경계 구분 */
 
+/* §03 일자료 미니 차트 — 인라인 SVG(외부 라이브러리 없음). 프린트 포함 */
+.vr-chart { margin: 2px 0 16px; }
+.vr-chart svg { display: block; width: 100%; height: auto; }
+.vr-chart text { font-family: var(--font-latin), var(--font-sans); font-size: 10px; fill: var(--grey); }
+.vr-chart .vr-chart-title { font-weight: 600; }
+.vr-chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 0 0 4px;
+  font-size: var(--text-xs);
+  color: var(--grey);
+}
+.vr-chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.vr-chart-legend .vr-sw { display: inline-block; width: 16px; border-top: 2px solid var(--accent); }
+.vr-chart-legend .vr-sw-min { border-top-style: dashed; opacity: 0.45; }
+.vr-chart-legend .vr-sw-bar {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: 2px;
+  border-top-width: 1px;
+}
+
+/* 재현·검증 박스 — [링크 복사]는 화면 전용, 인쇄본에는 URL 텍스트 표기 */
+.vr-copy-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+.vr-print-url { display: none; }
+
 /* AI 감정 서술문 초안 — 생성된 서술문은 프린트 포함(버튼·대기 안내만 vr-noprint) */
 .vr-ai-badge-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
 .vr-ai-text { margin: 0; font-size: var(--text-sm); line-height: var(--lh-base); white-space: pre-wrap; }
@@ -235,6 +265,7 @@ const REPORT_CSS = `
   .vf-card { background: #fff; box-shadow: none; background-image: none; border-color: #bbb; break-inside: avoid; }
   .vr-sec { break-inside: avoid; }
   .vr-demo { display: none; } /* 예시 데이터는 인쇄물에서 제외 — 실측 오인 방지 */
+  .vr-print-url { display: block; margin: 10px 0 0; font-size: var(--text-xs); color: #444; word-break: break-all; }
   a { color: inherit; text-decoration: none; }
 }
 `
@@ -248,6 +279,197 @@ const DEMO_ROWS = [
 
 /* WARN_CRITERIA(warningsApi.js) — 호우 주의보·경보 기준 표시용 항목 */
 const WARN_CRITERIA_ITEMS = [WARN_CRITERIA?.advisory, WARN_CRITERIA?.warning].filter(Boolean)
+
+/* §03 일자료 미니 차트 — 외부 라이브러리 없는 인라인 SVG.
+ * 이중축을 쓰지 않고 밴드를 분리: 기온(최고·최저 꺾은선) 밴드 + 일강수량(막대) 밴드, 각자 축·단위.
+ * 값이 null인 날은 마크 생략(0으로 그리지 않음 — 선은 끊고, 막대는 생략).
+ * 색은 프린트 변수 체계(--accent·--line·--grey)만 사용 — 최저기온은 투명도(명도 차)+파선으로
+ * 최고기온과 구분되어 흑백 인쇄에서도 판별 가능. 실측 rows 2일 이상일 때만 호출된다. */
+function DailyMiniChart({ rows, sum, en }) {
+  const n = rows.length
+  const W = 760
+  const padL = 46
+  const padR = 12
+  const innerW = W - padL - padR
+  const slot = innerW / n
+  const cx = (i) => padL + slot * (i + 0.5)
+
+  const tempVals = rows.flatMap((r) => [r.maxTa, r.minTa]).filter((v) => v != null)
+  const rainVals = rows.map((r) => r.sumRn).filter((v) => v != null)
+  const hasTemp = tempVals.length > 0
+  const hasRain = rainVals.length > 0
+  if (!hasTemp && !hasRain) return null
+
+  /* 세로 레이아웃 — 존재하는 밴드만 쌓는다 */
+  const titleH = 14
+  const tempH = 104
+  const rainH = 80
+  const bandGap = 26
+  let cursor = 8
+  let tTop = 0
+  let tBot = 0
+  if (hasTemp) {
+    tTop = cursor + titleH
+    tBot = tTop + tempH
+    cursor = tBot + bandGap
+  }
+  let rTop = 0
+  let rBot = 0
+  if (hasRain) {
+    rTop = cursor + titleH
+    rBot = rTop + rainH
+    cursor = rBot
+  }
+  const H = cursor + 24 /* x축 날짜 라벨 공간 */
+  const xAxisY = (hasRain ? rBot : tBot) + 16
+
+  /* 기온 스케일 — 실측 극값에서 ±1℃ 여유 */
+  let tMin = 0
+  let tMax = 1
+  if (hasTemp) {
+    tMin = Math.floor(Math.min(...tempVals)) - 1
+    tMax = Math.ceil(Math.max(...tempVals)) + 1
+    if (tMax <= tMin) tMax = tMin + 1
+  }
+  const yT = (v) => tBot - ((v - tMin) / (tMax - tMin)) * tempH
+
+  /* 강수 스케일 — 0 기준, 최대값 10% 여유 */
+  const rObs = hasRain ? Math.max(...rainVals) : 0
+  const rMax = rObs > 0 ? Math.ceil(rObs * 1.1) : 1
+  const yR = (v) => rBot - (v / rMax) * rainH
+
+  const tempTicks = [...new Set([tMin, Math.round((tMin + tMax) / 2), tMax])]
+  const rainTicks = [...new Set([0, Math.round(rMax / 2), rMax])]
+
+  /* null에서 선을 끊는 세그먼트 — [{x,y}...] 배열의 배열 */
+  const segsOf = (key) => {
+    const segs = []
+    let cur = []
+    rows.forEach((r, i) => {
+      if (r[key] != null) {
+        cur.push([cx(i), yT(r[key])])
+      } else if (cur.length) {
+        segs.push(cur)
+        cur = []
+      }
+    })
+    if (cur.length) segs.push(cur)
+    return segs
+  }
+  const maxSegs = hasTemp ? segsOf('maxTa') : []
+  const minSegs = hasTemp ? segsOf('minTa') : []
+  const showDots = n <= 31 /* 밀도 높으면 점 생략(고립 점만 유지) */
+
+  const barW = Math.max(3, Math.min(18, slot * 0.6))
+  const xStep = Math.max(1, Math.ceil(n / 8))
+  const showXLabel = (i) => i % xStep === 0 || (i === n - 1 && (n - 1) % xStep >= xStep / 2)
+
+  /* 접근성 요약 — 화면 표에 있는 실측 요약값만 사용(창작 금지) */
+  const parts = []
+  if (sum.rainSum != null) parts.push(en ? `total precipitation ${sum.rainSum} mm` : `기간 강수 합계 ${sum.rainSum}mm`)
+  if (sum.hot) parts.push(en ? `highest temperature ${sum.hot.v}°C on ${sum.hot.date}` : `최고기온 ${sum.hot.v}℃(${sum.hot.date})`)
+  if (sum.cold) parts.push(en ? `lowest temperature ${sum.cold.v}°C on ${sum.cold.date}` : `최저기온 ${sum.cold.v}℃(${sum.cold.date})`)
+  const aria = en
+    ? `Chart of daily observed records over ${n} days: ${parts.join(', ') || 'no summarizable values'}. Days without a recorded value are omitted, not drawn as zero.`
+    : `일자료 차트, 총 ${n}일: ${parts.join(', ') || '요약 가능한 값 없음'}. 기록이 없는 날은 0이 아니라 표시를 생략합니다.`
+
+  const lineDots = (segs, opacity) =>
+    segs.flatMap((seg, si) =>
+      (showDots || seg.length === 1) ? seg.map(([x, yy], pi) => <circle key={`${si}-${pi}`} cx={x} cy={yy} r={2} fill="var(--accent)" fillOpacity={opacity} />) : []
+    )
+
+  return (
+    <div className="vr-chart">
+      <div className="vr-chart-legend" aria-hidden="true">
+        {hasTemp && (
+          <>
+            <span>
+              <i className="vr-sw" /> {en ? 'Max temp' : '최고기온'}
+            </span>
+            <span>
+              <i className="vr-sw vr-sw-min" /> {en ? 'Min temp' : '최저기온'}
+            </span>
+          </>
+        )}
+        {hasRain && (
+          <span>
+            <i className="vr-sw vr-sw-bar" /> {en ? 'Daily precip.' : '일강수량'}
+          </span>
+        )}
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={aria} focusable="false">
+        {hasTemp && (
+          <g>
+            <text x={padL} y={tTop - 4} className="vr-chart-title">
+              {en ? 'Max/min temperature (℃)' : '최고·최저기온(℃)'}
+            </text>
+            {tempTicks.map((t) => (
+              <g key={t}>
+                <line x1={padL} x2={W - padR} y1={yT(t)} y2={yT(t)} stroke="var(--line)" strokeOpacity="0.6" strokeWidth="1" />
+                <text x={padL - 6} y={yT(t) + 3} textAnchor="end">
+                  {t}
+                </text>
+              </g>
+            ))}
+            {maxSegs.map((seg, i) => (
+              <polyline key={`mx${i}`} points={seg.map((p) => p.join(',')).join(' ')} fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            ))}
+            {minSegs.map((seg, i) => (
+              <polyline key={`mn${i}`} points={seg.map((p) => p.join(',')).join(' ')} fill="none" stroke="var(--accent)" strokeOpacity="0.45" strokeWidth="2" strokeDasharray="5 3" strokeLinejoin="round" strokeLinecap="round" />
+            ))}
+            {lineDots(maxSegs, 1)}
+            {lineDots(minSegs, 0.45)}
+          </g>
+        )}
+        {hasRain && (
+          <g>
+            <text x={padL} y={rTop - 4} className="vr-chart-title">
+              {en ? 'Daily precipitation (mm)' : '일강수량(mm)'}
+            </text>
+            {rainTicks.map((t) => (
+              <g key={t}>
+                <line x1={padL} x2={W - padR} y1={yR(t)} y2={yR(t)} stroke="var(--line)" strokeOpacity="0.6" strokeWidth="1" />
+                <text x={padL - 6} y={yR(t) + 3} textAnchor="end">
+                  {t}
+                </text>
+              </g>
+            ))}
+            {rows.map((r, i) =>
+              r.sumRn != null && r.sumRn > 0 ? (
+                <rect
+                  key={r.date}
+                  x={cx(i) - barW / 2}
+                  y={yR(r.sumRn)}
+                  width={barW}
+                  height={Math.max(1, rBot - yR(r.sumRn))}
+                  rx="2"
+                  fill="var(--accent)"
+                  fillOpacity="0.28"
+                  stroke="var(--accent)"
+                  strokeOpacity="0.6"
+                  strokeWidth="1"
+                />
+              ) : null
+            )}
+            <line x1={padL} x2={W - padR} y1={rBot} y2={rBot} stroke="var(--line)" strokeWidth="1" />
+          </g>
+        )}
+        {rows.map((r, i) =>
+          showXLabel(i) ? (
+            <text key={r.date} x={cx(i)} y={xAxisY} textAnchor="middle">
+              {String(r.date).slice(5)}
+            </text>
+          ) : null
+        )}
+      </svg>
+      <p className="vf-muted" style={{ margin: '4px 0 0' }}>
+        {en
+          ? 'Days without a recorded value are omitted from the chart (not drawn as zero). Exact values are in the table below.'
+          : '기록이 없는 날은 차트에서 마크를 생략합니다(0으로 그리지 않음). 정확한 수치는 아래 표를 따릅니다.'}
+      </p>
+    </div>
+  )
+}
 
 export default function VerifyReportPage() {
   const [sp] = useSearchParams()
@@ -313,6 +535,9 @@ export default function VerifyReportPage() {
   const [narrative, setNarrative] = useState(null)
   const [narrativeLoading, setNarrativeLoading] = useState(false)
 
+  /* 재현성 박스 — [링크 복사] 피드백 */
+  const [copied, setCopied] = useState(false)
+
   const issued = new Date()
   const issuedStr = issued.toLocaleDateString(en ? 'en-US' : 'ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
 
@@ -345,6 +570,19 @@ export default function VerifyReportPage() {
   const grade = stations.length ? coverageGrade(stations[0].distKm) : null
   const elements = en ? useCase.elementsEn : useCase.elementsKo
   const coord = `${lat.toFixed(4)}, ${lon.toFixed(4)}`
+
+  /* 재현성 — 본 리포트는 URL 파라미터만으로 결정되므로 현재 URL이 곧 재조회 키 */
+  const reportUrl = typeof window !== 'undefined' ? window.location.href : ''
+  const copyLink = () => {
+    if (!reportUrl || !navigator.clipboard) return
+    navigator.clipboard
+      .writeText(reportUrl)
+      .then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      })
+      .catch(() => {})
+  }
 
   /* AI 서술문 생성 — 화면에 이미 렌더된 실측값만 payload로 전달(없는 값 전송 금지) */
   const generateNarrative = () => {
@@ -446,6 +684,7 @@ export default function VerifyReportPage() {
                   <tr>
                     <th>{en ? 'Station no.' : '지점번호'}</th>
                     <th>{en ? 'Station' : '지점명'}</th>
+                    <th>{en ? 'Network' : '관측망'}</th>
                     <th>{en ? 'Distance (km)' : '거리 (km)'}</th>
                     <th>{en ? 'Obs. since' : '관측개시'}</th>
                   </tr>
@@ -458,6 +697,8 @@ export default function VerifyReportPage() {
                         {en ? s.nameEn : s.name}
                         {i === 0 && <span className="vf-chip" style={{ marginLeft: 8 }}>{en ? 'nearest' : '최근접'}</span>}
                       </td>
+                      {/* 관측망 — 엔진의 kind(과제 A). 미제공 시 ASOS 폴백 */}
+                      <td>{s.kind || 'ASOS'}</td>
                       <td className="vr-num">{s.distKm.toFixed(1)}</td>
                       <td className="vr-num">{s.since}</td>
                     </tr>
@@ -529,6 +770,7 @@ export default function VerifyReportPage() {
                         </li>
                       )}
                     </ul>
+                    {obs.rows.length >= 2 && <DailyMiniChart rows={obs.rows} sum={s} en={en} />}
                     <div className="vr-table-wrap">
                       <table className="vr-table">
                         <thead>
@@ -933,6 +1175,40 @@ export default function VerifyReportPage() {
               {en
                 ? 'Section layout: per the Weather Appraisal Casebook (Heavy Rain) and Weather Appraisal Standard Manual (2017) form, Korea Meteorological Industry Technology Institute'
                 : '섹션 구성: 기상산업기술원 기상감정(호우편) 사례집·기상감정 표준매뉴얼(2017) 양식 기준'}
+            </p>
+          </section>
+
+          {/* 재현·검증 박스 — §06 부속. 본 리포트가 URL 파라미터만으로 재현되고,
+             원천이 공개 관측자료라 상대방도 재검증할 수 있음을 명시(인쇄본에는 URL 텍스트 표기) */}
+          <section className="vf-card vr-sec">
+            <div className="vr-sec-head">
+              <h2>{en ? 'How to Reproduce & Verify This Data' : '이 자료를 재현·검증하는 방법'}</h2>
+            </div>
+            <ul className="vr-prose">
+              <li>
+                <b>{en ? 'Re-query by URL parameters.' : 'URL 파라미터만으로 재조회.'}</b>{' '}
+                {en
+                  ? 'This report is fully determined by its URL parameters — coordinates (lat, lon), period (from, to) and use case (use). Opening the same URL re-retrieves the same records; no values are stored in the page itself.'
+                  : '본 리포트는 URL 파라미터 — 좌표(lat·lon)·기간(from·to)·용도(use) — 만으로 결정됩니다. 같은 URL을 열면 동일한 자료를 다시 조회하며, 페이지 자체에 저장된 값은 없습니다.'}
+              </li>
+              <li>
+                <b>{en ? 'Independent re-verification by any party.' : '상대방의 독립 재검증.'}</b>{' '}
+                {en
+                  ? `The source is public KMA station observation data, so any party — including the counterparty — can re-verify with the same station${primaryStn ? ` (${primaryStn.nameEn}, #${primaryStn.id})` : ''} and period through the Public Data Portal (data.go.kr) services "기상청_지상(종관, ASOS) 일자료 조회서비스" and "기상청_지상(종관, ASOS) 시간자료 조회서비스".`
+                  : `원천은 기상청 공개 관측자료이므로 상대방을 포함한 누구든 공공데이터포털(data.go.kr)의 「기상청_지상(종관, ASOS) 일자료 조회서비스」·「기상청_지상(종관, ASOS) 시간자료 조회서비스」에서 같은 지점${primaryStn ? `(${primaryStn.name}, 지점 ${primaryStn.id})` : ''}·기간으로 재검증할 수 있습니다.`}
+              </li>
+            </ul>
+            <div className="vr-copy-row vr-noprint">
+              <button type="button" className="btn" onClick={copyLink}>
+                {copied ? (en ? 'Copied' : '복사됨') : en ? 'Copy link' : '링크 복사'}
+              </button>
+              <span className="vf-muted" style={{ margin: 0 }}>
+                {en ? 'Share this URL to open the identical report.' : '이 URL을 공유하면 동일한 리포트가 그대로 열립니다.'}
+              </span>
+            </div>
+            <p className="vr-print-url">
+              {en ? 'Report URL: ' : '리포트 URL: '}
+              {reportUrl}
             </p>
           </section>
 
