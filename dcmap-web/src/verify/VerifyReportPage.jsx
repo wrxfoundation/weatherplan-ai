@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { fetchObservations, summarizeRows } from './observationsApi.js'
 import VerifyShell from './VerifyShell.jsx'
 import LineIcon from '../components/LineIcon.jsx'
 import { useMapLang } from '../i18n/mapLang.js'
@@ -217,6 +219,21 @@ export default function VerifyReportPage() {
   const valid =
     Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180 && !!from && !!to && !!useCase
 
+  /* 실측 관측 이력 — 최근접 지점 기준 서버리스 조회. 실패 시 obs.available=false → '데이터 대기' 유지 */
+  const primaryStn = valid ? nearestStations(lat, lon, 1)[0] : null
+  const [obs, setObs] = useState(null)
+  useEffect(() => {
+    if (!valid || !primaryStn) return undefined
+    let dead = false
+    setObs(null)
+    fetchObservations(primaryStn.id, from, to).then((r) => {
+      if (!dead) setObs(r)
+    })
+    return () => {
+      dead = true
+    }
+  }, [valid, primaryStn?.id, from, to])
+
   const issued = new Date()
   const issuedStr = issued.toLocaleDateString(en ? 'en-US' : 'ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
 
@@ -348,12 +365,95 @@ export default function VerifyReportPage() {
             </p>
           </section>
 
-          {/* ③ 기상 데이터 — 데이터 대기 */}
+          {/* ③ 기상 데이터 — 실측(연동 시) 또는 데이터 대기 */}
           <section className="vf-card vr-sec">
             <div className="vr-sec-head">
               <span className="vr-sec-num">02</span>
               <h2>{en ? 'Weather Data for the Period' : '대상 기간 기상 데이터'}</h2>
             </div>
+            {obs?.available && obs.rows?.length ? (
+              (() => {
+                const s = summarizeRows(obs.rows)
+                const showSnow = s.hasSnow
+                const fmt = (v, d = 1) => (v == null ? '—' : v.toFixed(d))
+                return (
+                  <>
+                    <p className="vf-muted">
+                      {en
+                        ? `Observed daily records from KMA ASOS station ${primaryStn.nameEn} (#${primaryStn.id}), ${primaryStn.distKm} km from the subject point. ${obs.rows.length} day(s).`
+                        : `기상청 ASOS ${primaryStn.name}(지점 ${primaryStn.id}) 관측 일자료 — 대상 지점에서 ${primaryStn.distKm}km. 총 ${obs.rows.length}일.`}
+                      {obs.effectiveTo && (
+                        <>
+                          {' '}
+                          {en
+                            ? `Note: daily records are published through ${obs.effectiveTo}; later dates are not yet available.`
+                            : `참고: 일자료는 ${obs.effectiveTo}까지 공표되어 이후 날짜는 아직 제공되지 않습니다.`}
+                        </>
+                      )}
+                    </p>
+                    <ul className="vr-sum" role="list">
+                      {s.rainSum != null && (
+                        <li>
+                          <b>{en ? 'Total precip.' : '기간 강수 합계'}</b> {fmt(s.rainSum)} mm · {en ? 'wet days' : '강수일'} {s.wetDays}
+                        </li>
+                      )}
+                      {s.gust && (
+                        <li>
+                          <b>{en ? 'Max inst. wind' : '최대순간풍속'}</b> {fmt(s.gust.v)} m/s ({s.gust.date})
+                        </li>
+                      )}
+                      {s.hot && (
+                        <li>
+                          <b>{en ? 'Highest temp.' : '최고기온 극값'}</b> {fmt(s.hot.v)}℃ ({s.hot.date})
+                        </li>
+                      )}
+                      {s.cold && (
+                        <li>
+                          <b>{en ? 'Lowest temp.' : '최저기온 극값'}</b> {fmt(s.cold.v)}℃ ({s.cold.date})
+                        </li>
+                      )}
+                    </ul>
+                    <div className="vr-table-wrap">
+                      <table className="vr-table">
+                        <thead>
+                          <tr>
+                            <th>{en ? 'Date' : '날짜'}</th>
+                            <th>{en ? 'Avg T (℃)' : '평균기온(℃)'}</th>
+                            <th>{en ? 'Min T (℃)' : '최저(℃)'}</th>
+                            <th>{en ? 'Max T (℃)' : '최고(℃)'}</th>
+                            <th>{en ? 'Precip. (mm)' : '일강수량(mm)'}</th>
+                            <th>{en ? 'Max inst. wind (m/s)' : '최대순간풍속(m/s)'}</th>
+                            <th>{en ? 'Avg wind (m/s)' : '평균풍속(m/s)'}</th>
+                            {showSnow && <th>{en ? 'Snow depth (cm)' : '최심적설(cm)'}</th>}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {obs.rows.map((r) => (
+                            <tr key={r.date}>
+                              <td>{r.date}</td>
+                              <td className="vr-num">{fmt(r.avgTa)}</td>
+                              <td className="vr-num">{fmt(r.minTa)}</td>
+                              <td className="vr-num">{fmt(r.maxTa)}</td>
+                              <td className="vr-num">{r.sumRn == null ? '0.0' : fmt(r.sumRn)}</td>
+                              <td className="vr-num">{fmt(r.maxInsWs)}</td>
+                              <td className="vr-num">{fmt(r.avgWs)}</td>
+                              {showSnow && <td className="vr-num">{fmt(r.ddMes)}</td>}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <p className="vf-muted">
+                      {en ? 'Source' : '출처'}: {obs.source} · {en ? 'station' : '관측지점'} {primaryStn.name}({primaryStn.id}) ·{' '}
+                      {en
+                        ? 'Precipitation "0.0" includes no-precipitation days recorded as blank in the source.'
+                        : '강수량 0.0에는 원자료에서 공란(무강수)으로 기록된 날이 포함됩니다.'}
+                    </p>
+                  </>
+                )
+              })()
+            ) : (
+              <>
             <div className="vr-wait" role="status">
               <LineIcon name="risk" size={18} />
               <div>
@@ -428,6 +528,8 @@ export default function VerifyReportPage() {
                 </div>
               </div>
             </details>
+              </>
+            )}
           </section>
 
           {/* ④ 방법론 */}

@@ -128,6 +128,11 @@ function daysFromHourly(d) {
 }
 
 export default async function handler(req, res) {
+  // 웨더팩트: 과거 관측 이력(기상청 ASOS 일자료) — 별도 키·별도 상류. Hobby 12함수 제한으로 이 함수에 동거.
+  if (req.query.kind === 'history') {
+    await handleHistory(req, res)
+    return
+  }
   const KINDS = ['current', 'forecast', 'warning', 'climate']
   const kind = KINDS.includes(req.query.kind) ? req.query.kind : 'current'
   const CACHE = {
@@ -307,6 +312,107 @@ export default async function handler(req, res) {
 
     const shape = raw?._status ? `http${raw._status}` : `e${raw?.error ?? 'null'}`
     res.status(200).json({ available: false, reason: `no_weather_fields_${shape}` })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * 웨더팩트 과거 관측 이력 — 기상청 ASOS 일자료(공공데이터포털 AsosDalyInfoService)
+ * 호출: /api/kweather?kind=history&stn=108&from=2026-06-01&to=2026-06-30
+ * 환경변수: DATA_GO_KR_KEY (공공데이터포털 일반 인증키). 미설정 → available:false('not_configured')
+ * 정직성: 실패·미설정 시 가짜 수치 금지 — reason만 반환하고 UI는 '데이터 대기' 유지.
+ * ──────────────────────────────────────────────────────────────────── */
+const ASOS_DAILY_URL = 'https://apis.data.go.kr/1360000/AsosDalyInfoService/getWthrDataList'
+const HISTORY_MAX_DAYS = 100
+
+const histNum = (v) => {
+  if (v == null || v === '') return null
+  const n = Number.parseFloat(v)
+  return Number.isFinite(n) ? n : null
+}
+
+/** ASOS 일자료 item[] → 리포트 행 정규화 (없는 필드는 null 유지 — 0으로 오인 금지) */
+export function _normalizeAsosItems(items) {
+  const arr = Array.isArray(items) ? items : items ? [items] : []
+  return arr.map((it) => ({
+    date: it.tm || null,               // YYYY-MM-DD
+    avgTa: histNum(it.avgTa),          // 평균기온 ℃
+    minTa: histNum(it.minTa),          // 최저기온 ℃
+    maxTa: histNum(it.maxTa),          // 최고기온 ℃
+    sumRn: histNum(it.sumRn),          // 일강수량 mm (무강수는 null/0 — 원자료 그대로)
+    maxInsWs: histNum(it.maxInsWs),    // 최대순간풍속 m/s
+    maxWs: histNum(it.maxWs),          // 최대풍속 m/s
+    avgWs: histNum(it.avgWs),          // 평균풍속 m/s
+    avgRhm: histNum(it.avgRhm),        // 평균상대습도 %
+    ddMes: histNum(it.ddMes),          // 일최심적설 cm
+    sumSsHr: histNum(it.sumSsHr),      // 합계일조시간 hr
+  }))
+}
+
+const isYmd = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ''))
+const ymdCompact = (s) => String(s).replaceAll('-', '')
+
+async function handleHistory(req, res) {
+  // 과거 관측은 불변 — 길게 캐시
+  res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=604800')
+
+  const key = process.env.DATA_GO_KR_KEY
+  if (!key) {
+    res.status(200).json({ available: false, reason: 'not_configured' })
+    return
+  }
+  const stn = String(req.query.stn || '')
+  const { from } = req.query
+  let { to } = req.query
+  if (!/^\d{2,3}$/.test(stn) || !isYmd(from) || !isYmd(to)) {
+    res.status(400).json({ available: false, reason: 'bad_params' })
+    return
+  }
+  // ASOS 일자료는 통상 D-1까지 공표 — 미래·당일은 어제로 클램프(정직: effectiveTo로 알림)
+  const yesterday = new Date(Date.now() - 24 * 3600 * 1000).toISOString().slice(0, 10)
+  const clamped = to > yesterday
+  if (clamped) to = yesterday
+  const fromD = new Date(`${from}T00:00:00Z`)
+  const toD = new Date(`${to}T00:00:00Z`)
+  const spanDays = Math.round((toD - fromD) / 86400000) + 1
+  if (!(spanDays >= 1)) {
+    res.status(400).json({ available: false, reason: 'bad_range' })
+    return
+  }
+  if (spanDays > HISTORY_MAX_DAYS) {
+    res.status(400).json({ available: false, reason: 'range_too_long', maxDays: HISTORY_MAX_DAYS })
+    return
+  }
+
+  // data.go.kr 인증키: 이미 URL 인코딩된 키('%' 포함)는 그대로, 아니면 인코딩
+  const svcKey = key.includes('%') ? key : encodeURIComponent(key)
+  const qs = `serviceKey=${svcKey}&pageNo=1&numOfRows=${HISTORY_MAX_DAYS * 2}&dataType=JSON&dataCd=ASOS&dateCd=DAY&startDt=${ymdCompact(from)}&endDt=${ymdCompact(to)}&stnIds=${stn}`
+  try {
+    const raw = await getJson(`${ASOS_DAILY_URL}?${qs}`, 9000)
+    if (raw?._status) {
+      res.status(200).json({ available: false, reason: `upstream_http${raw._status}` })
+      return
+    }
+    const header = raw?.response?.header
+    if (!header || header.resultCode !== '00') {
+      res.status(200).json({ available: false, reason: `kma_${header?.resultCode || 'no_header'}`, detail: header?.resultMsg })
+      return
+    }
+    const rows = _normalizeAsosItems(raw?.response?.body?.items?.item).filter((r) => r.date)
+    if (!rows.length) {
+      res.status(200).json({ available: false, reason: 'no_rows' })
+      return
+    }
+    res.status(200).json({
+      available: true,
+      source: '기상청 ASOS 일자료 · 공공데이터포털 AsosDalyInfoService',
+      stn: Number(stn),
+      from,
+      to,
+      effectiveTo: clamped ? to : undefined,
+      rows,
+    })
   } catch (e) {
     res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
   }
