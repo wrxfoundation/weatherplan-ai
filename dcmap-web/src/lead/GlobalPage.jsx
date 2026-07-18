@@ -75,6 +75,20 @@ export default function GlobalPage() {
         </header>
 
         <section className="global-sec">
+          <div className="eyebrow">WHY NOW</div>
+          <h2>Regulation is manufacturing the demand</h2>
+          <p className="global-sub">
+            This is not a market waiting for a catalyst — the catalyst already fired. Korea has written grid scarcity
+            into law, and every large AI datacenter now has to be sited around it.
+          </p>
+          <ul className="global-pain">
+            <li><b>Grid-impact assessment, from pilot toward permanent.</b> Since the 2026 pilot, any load of 10MW or more must clear a Power System Impact Assessment — turning “where to build” from a land-price question into a grid question, on every project.</li>
+            <li><b>AI-DC Special Act, effective 2027-03-10.</b> It opens an assessment-exemption track for non-capital new-builds and expansions (exemption cap pending a presidential decree) — steering a wave of siting decisions toward exactly the data we map.</li>
+            <li><b>No capital commits without a grid read first.</b> With a ~1.9% capital-region approval rate, nobody breaks ground on a guess. That makes site feasibility a recurring, structural need — not a one-off screen.</li>
+          </ul>
+        </section>
+
+        <section className="global-sec">
           <div className="eyebrow">WHY KOREA IS OPAQUE FROM OUTSIDE</div>
           <h2>The exact pain a global entrant has</h2>
           <ul className="global-pain">
@@ -179,6 +193,24 @@ export default function GlobalPage() {
           </ul>
           <p className="global-sub" style={{ marginTop: 12 }}>
             Full methodology reference (scorecard, weights, sources, limitations): <Link to="/methodology">read the methodology →</Link>
+          </p>
+        </section>
+
+        <section className="global-sec">
+          <div className="eyebrow">BUSINESS MODEL</div>
+          <h2>Free map on top, paid decisions underneath</h2>
+          <p className="global-sub">
+            The public map, site scoring, GPU calculator and AI briefs are free — they rank for Korea DC-siting queries
+            and pull qualified operators, advisors and funds in at the top of the funnel. Revenue sits one click deeper,
+            where a decision has to be defensible.
+          </p>
+          <ol className="global-pipeline">
+            <li><b>Free hook.</b> Map, 5-axis site score, GPU→MW calculator and AI briefs — no sign-up. The inbound and SEO surface.</li>
+            <li><b>Precision reports.</b> Per-site grid-pass verdict and candidate-ranking reports — a precision read in place of analyst-weeks — plus consulting on top.</li>
+            <li><b>Data licensing &amp; API.</b> The aggregated dataset, pass scores and grid layers licensed to platforms, advisors and operators — white-label or embedded.</li>
+          </ol>
+          <p className="global-sub" style={{ marginTop: 12 }}>
+            The tiers are laid out on the <Link to="/pricing">pricing page →</Link>
           </p>
         </section>
 

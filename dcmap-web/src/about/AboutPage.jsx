@@ -370,7 +370,7 @@ export default function AboutPage() {
           <h2>{en ? 'The site is the bottleneck' : '부지가 병목입니다'}</h2>
           <p className="about-sec-sub">
             {en
-              ? 'With the PSIA piloted in 2026, site selection became a “grid” problem, not a “land price” one.'
+              ? 'With the PSIA piloted in 2026 and the AI-DC Special Act taking effect in 2027, site selection became a “grid” problem, not a “land-price” one — and it is regulation, not the market alone, that now creates the demand.'
               : '전력계통영향평가가 2026년 시범 시행되면서, 부지 선정은 “땅값”이 아니라 “계통”의 문제가 됐습니다.'}
           </p>
           <div className="pain-grid">
@@ -560,7 +560,7 @@ export default function AboutPage() {
               </>
             )}
           </h2>
-          <p>{en ? 'Use it right away, no sign-up. For team rollout, detailed reports and data partnerships, get in touch.' : '회원가입 없이 바로 씁니다. 팀 도입·정밀 리포트·데이터 제휴는 문의로.'}</p>
+          <p>{en ? 'The map, site scoring, GPU calculator and AI briefs are free, no sign-up — that is the top of the funnel. Precision site reports, consulting and data/API partnerships are where it monetizes; for team rollout or a partnership, get in touch.' : '회원가입 없이 바로 씁니다. 팀 도입·정밀 리포트·데이터 제휴는 문의로.'}</p>
           <div className="about-cta-row">
             <Link className="btn primary" to="/">
               {en ? 'Open the map' : '맵 열기'}

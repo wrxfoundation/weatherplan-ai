@@ -21,6 +21,12 @@ import { useMapLang } from '../i18n/mapLang.js'
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
 
+// asOf(기준일) EN 매핑 — DATASETS 모듈 초기화 중(subheadroom IIFE) 참조되므로 반드시 그 위에 선언
+const AS_OF_EN = {
+  '2027 전망': '2027 outlook',
+  '분기 갱신(3·6·9·12월 말)': 'Quarterly update (end of Mar · Jun · Sep · Dec)',
+}
+
 // 데이터셋 정의 — 각 축적 자료를 검색·다운로드 가능하게 노출
 const DATASETS = [
   {
@@ -413,11 +419,6 @@ const STAGE_EN = {
 }
 const STATUS_EN = { 운영: 'Operating', 건설: 'Construction', 계획: 'Planned', 지연: 'Delayed', 무산: 'Cancelled' }
 // 기준일(asOf) 중 KO 서술이 섞인 값만 번역. 순수 날짜(2026-04-17 등)는 그대로 KO=EN.
-const AS_OF_EN = {
-  '2027 전망': '2027 outlook',
-  '분기 갱신(3·6·9·12월 말)': 'Quarterly update (end of Mar · Jun · Sep · Dec)',
-}
-
 export default function DataExplorerPage() {
   const en = useMapLang() === 'en'
   const dsL = (ko) => (en ? DS_LABEL_EN[ko] ?? ko : ko)
