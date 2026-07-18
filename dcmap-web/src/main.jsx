@@ -31,6 +31,8 @@ const SampleReportPage = lazy(() => import('./lead/SampleReportPage.jsx'))
 const GlobalPage = lazy(() => import('./lead/GlobalPage.jsx'))
 const MethodologyPage = lazy(() => import('./lead/MethodologyPage.jsx'))
 const AboutPage = lazy(() => import('./about/AboutPage.jsx'))
+const VerifyPage = lazy(() => import('./verify/VerifyPage.jsx'))
+const VerifyReportPage = lazy(() => import('./verify/VerifyReportPage.jsx'))
 
 /* SPA 라우트 전환 시 스크롤 최상단 — 긴 페이지에서 이전 스크롤 위치가 남는 UX 문제 방지 */
 function ScrollToTop() {
@@ -78,6 +80,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/global" element={<GlobalPage />} />
           <Route path="/methodology" element={<MethodologyPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/verify" element={<VerifyPage />} />
+          <Route path="/verify/report" element={<VerifyReportPage />} />
           <Route path="*" element={<MapPage />} />
         </Routes>
       </Suspense>

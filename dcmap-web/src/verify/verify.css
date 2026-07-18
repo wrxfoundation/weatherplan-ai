@@ -1,0 +1,472 @@
+/* 웨더팩트(/verify) 전용 스타일 — tokens.css 변수만 사용(hex는 페이지 accent 토큰 정의에 한정).
+ * 섹션 accent: 남색(인디고) 계열 — tokens.css 섹션 톤 오버라이드 패턴과 동일하게 페이지 스코프에서 재정의. */
+.verify-page {
+  --accent: #7e9bff; /* 남색 계열 페이지 accent (섹션 톤 오버라이드 패턴) */
+  --accent-deep: #3a5bd9;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 20px 72px;
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+/* ── 공용: 글라스 카드 ── */
+.verify-page .vf-card {
+  background: var(--glass-surface-strong);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elev-2), var(--glass-specular);
+  background-image: var(--corner-wash);
+  padding: 20px 22px;
+}
+
+.verify-page .vf-h2 {
+  font-size: var(--text-title);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-tight);
+  margin: 0 0 8px;
+}
+.verify-page .vf-muted {
+  color: var(--grey);
+  font-size: var(--text-sm);
+  line-height: var(--lh-base);
+  margin: 0 0 14px;
+}
+.verify-page .vf-section {
+  margin-top: 40px;
+}
+.verify-page .vf-section > .vf-h2 {
+  margin-bottom: 14px;
+}
+
+/* ── 히어로 ── */
+.vf-hero {
+  padding: 18px 0 26px;
+}
+.vf-hero h1 {
+  font-size: var(--text-display);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-tight);
+  margin: 6px 0 10px;
+}
+.vf-hero-en {
+  color: var(--accent);
+  font-weight: var(--weight-bold);
+}
+.vf-hero .sub {
+  color: var(--grey);
+  font-size: var(--text-md);
+  line-height: var(--lh-base);
+  max-width: 640px;
+  margin: 0 0 14px;
+}
+.vf-hero-sub-en {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--text-sm);
+  color: color-mix(in srgb, var(--grey) 80%, transparent);
+}
+.vf-hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── 배지·칩 ── */
+.vf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-surface);
+  box-shadow: var(--glass-specular-soft);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+}
+.vf-badge .lni {
+  color: var(--accent);
+}
+.vf-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  font-size: var(--text-xs);
+  color: var(--grey);
+}
+.vf-soon-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--orange) 45%, var(--line));
+  color: var(--orange);
+  background: color-mix(in srgb, var(--orange) 10%, transparent);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+/* ── 조회 폼 ── */
+.vf-form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.vf-form-grid .vf-span2 {
+  grid-column: span 2;
+}
+.vf-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--grey);
+}
+.vf-form input,
+.vf-form select {
+  appearance: none;
+  padding: 9px 11px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--map-control-bg);
+  color: var(--text);
+  font-size: var(--text-body);
+  font-family: var(--font-sans);
+  transition: border-color var(--dur-fast) var(--ease-premium), box-shadow var(--dur-fast) var(--ease-premium);
+}
+.vf-form input:focus,
+.vf-form select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--glow-accent-soft);
+}
+.vf-form input::placeholder {
+  color: color-mix(in srgb, var(--grey) 65%, transparent);
+}
+.vf-usecase-hint {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--line);
+  background: color-mix(in srgb, var(--surface) 40%, transparent);
+}
+.vf-usecase-desc {
+  font-size: var(--text-sm);
+  color: var(--grey);
+  line-height: var(--lh-base);
+}
+.vf-usecase-els {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.vf-form-foot {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.vf-err {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--orange) 50%, var(--line));
+  background: color-mix(in srgb, var(--orange) 12%, transparent);
+  color: var(--orange);
+  font-size: var(--text-sm);
+}
+
+/* ── 조회 결과 ── */
+.vf-result {
+  margin-top: 18px;
+}
+.vf-result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.vf-result-head .vf-h2 {
+  margin: 0;
+}
+.vf-grade {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  border: 1px solid;
+}
+.vf-grade-A {
+  color: var(--green);
+  border-color: color-mix(in srgb, var(--green) 50%, var(--line));
+  background: color-mix(in srgb, var(--green) 12%, transparent);
+}
+.vf-grade-B {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.vf-grade-C {
+  color: var(--orange);
+  border-color: color-mix(in srgb, var(--orange) 50%, var(--line));
+  background: color-mix(in srgb, var(--orange) 12%, transparent);
+}
+.vf-grade-D {
+  color: var(--grey);
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
+.vf-station-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.vf-station {
+  position: relative;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  box-shadow: var(--glass-specular-soft);
+}
+.vf-station.nearest {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  box-shadow: var(--glow-accent-soft), var(--glass-specular);
+}
+.vf-station-flag {
+  position: absolute;
+  top: -9px;
+  right: 12px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: var(--accent-deep);
+  color: var(--text);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+}
+.vf-station-name {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  margin-bottom: 8px;
+}
+.vf-station-id {
+  color: var(--grey);
+  font-weight: var(--weight-regular);
+  font-size: var(--text-sm);
+}
+.vf-station-meta {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.vf-station-meta > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.vf-station-meta dt {
+  color: var(--grey);
+  font-size: var(--text-sm);
+}
+.vf-station-meta dd {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+.vf-meta-note {
+  margin: 12px 0 0;
+  font-size: var(--text-xs);
+  color: var(--grey);
+  line-height: var(--lh-base);
+}
+.vf-cta-row {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── 프로세스 4단계 ── */
+.vf-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.vf-step {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.vf-step-num {
+  font-family: var(--font-latin), var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+.vf-step b {
+  font-size: var(--text-body);
+  font-weight: var(--weight-bold);
+}
+.vf-step p {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--grey);
+  line-height: var(--lh-base);
+}
+
+/* ── 요금 3티어 ── */
+.vf-tier-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.vf-tier {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.vf-tier-name {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+}
+.vf-tier-price {
+  font-size: var(--text-title);
+  font-weight: var(--weight-bold);
+  color: var(--accent);
+}
+.vf-tier ul {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+.vf-tier li {
+  font-size: var(--text-sm);
+  color: var(--grey);
+  line-height: var(--lh-base);
+}
+.vf-tier-note {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--grey);
+}
+.vf-tier-cta {
+  align-self: flex-start;
+}
+
+/* ── FAQ 아코디언 ── */
+.vf-faq {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.vf-faq-item {
+  padding: 0;
+  overflow: hidden;
+}
+.vf-faq-item summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 18px;
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: color var(--dur-fast) var(--ease-premium);
+}
+.vf-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.vf-faq-item summary::after {
+  content: '+';
+  color: var(--accent);
+  font-family: var(--font-latin), var(--font-sans);
+  font-weight: var(--weight-bold);
+  flex: none;
+}
+.vf-faq-item[open] summary {
+  color: var(--accent);
+}
+.vf-faq-item[open] summary::after {
+  content: '−';
+}
+.vf-faq-item p {
+  margin: 0;
+  padding: 0 18px 14px;
+  font-size: var(--text-sm);
+  color: var(--grey);
+  line-height: var(--lh-base);
+}
+
+/* ── 정직성 고지 ── */
+.vf-honesty {
+  margin-top: 40px;
+  border-color: color-mix(in srgb, var(--orange) 30%, var(--line));
+}
+.vf-honesty h3 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 10px;
+  font-size: var(--text-body);
+  font-weight: var(--weight-bold);
+}
+.vf-honesty h3 .lni {
+  color: var(--orange);
+}
+.vf-honesty ul {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.vf-honesty li {
+  font-size: var(--text-sm);
+  color: var(--grey);
+  line-height: var(--lh-base);
+}
+
+/* ── 반응형 ── */
+@media (max-width: 860px) {
+  .vf-steps,
+  .vf-tier-grid,
+  .vf-station-grid {
+    grid-template-columns: 1fr;
+  }
+  .vf-form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .vf-form-grid .vf-span2 {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 480px) {
+  .vf-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .verify-page {
+    padding: 20px 14px 56px;
+  }
+  .vf-hero h1 {
+    font-size: var(--text-h1);
+  }
+}

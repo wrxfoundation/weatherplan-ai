@@ -6,7 +6,7 @@ import { useMapLang, setMapLang } from './i18n/mapLang.js'
 
 // 라우트 → GNB 섹션(색상 톤). 페이지 전체 accent가 섹션 톤을 따른다.
 const SECTION_PREFIX = [
-  ['/calc', 'data'], ['/dashboard', 'data'], ['/data', 'data'], ['/stats', 'data'], ['/land', 'data'], ['/compare', 'data'], ['/pricing', 'data'],
+  ['/calc', 'data'], ['/dashboard', 'data'], ['/data', 'data'], ['/stats', 'data'], ['/land', 'data'], ['/compare', 'data'], ['/pricing', 'data'], ['/verify', 'data'],
   ['/insights', 'knowledge'], ['/roadmap', 'knowledge'], ['/glossary', 'glossary'], ['/about', 'about'],
   ['/map3d', 'explore'], ['/power', 'explore'], ['/dc', 'explore'], ['/region', 'explore'],
 ]
@@ -259,6 +259,9 @@ export default function TopBar() {
         </NavLink>
         <NavLink to="/glossary" data-nav="glossary" className={({ isActive }) => (isActive ? 'active' : '')}>
           {en ? 'Glossary' : '용어집'}
+        </NavLink>
+        <NavLink to="/verify" data-nav="data" className={({ isActive }) => (isActive ? 'active' : '')}>
+          {en ? 'WeatherFact' : '사실확인'}
         </NavLink>
         <NavLink to="/pricing" data-nav="data" className={({ isActive }) => `nav-contact${isActive ? ' active' : ''}`} title={en ? 'Pricing · Contact' : '요금·문의'}>
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
