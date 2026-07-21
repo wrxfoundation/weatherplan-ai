@@ -1,13 +1,10 @@
-# Korea Rising — verified K-pop snapshot (2026-07-20)
+# Korea Rising — verified K-pop snapshot (2026-07-21)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🏆 Circle Digital Chart — current #1
 **Cortis** — RedRed  
-_Circle Digital Chart #1 (via Wikipedia) 2026-07-20 04:36 UTC · Skill Score 0.70_
-
-## 🎬 Latest official releases (YouTube)
-- **BTS** — 'Dynamite' by V | BTS WORLD TOUR ‘ARIRANG’
+_Circle Digital Chart #1 (via Wikipedia) 2026-07-21 04:19 UTC · Skill Score 0.70_
 
 ## 🎤 Verified roster (639 acts)
 - **2NE1**: I Am the Best
