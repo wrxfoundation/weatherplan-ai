@@ -14,6 +14,9 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 import { CARE_TOOL_SCHEMAS, executeCareTool } from "../../lib/careTools.js";
+import { storeAvailable, upsertSession, saveMessages, saveBooking, saveOuting } from "../../lib/careStore.js";
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -178,7 +181,8 @@ export default async function handler(req, res) {
 
   try {
     const t0 = Date.now();
-    const { messages: rawMessages } = req.body || {};
+    const { messages: rawMessages, session_id: rawSessionId } = req.body || {};
+    const sessionId = UUID_RE.test(rawSessionId || "") ? rawSessionId : null;
     if (!rawMessages || !Array.isArray(rawMessages) || rawMessages.length === 0) {
       return res.status(400).json({ error: "messages 필수" });
     }
@@ -262,7 +266,25 @@ export default async function handler(req, res) {
       console.warn("[care-chat] 반복 요청 캐시 MISS — 정적 블록 오염 의심");
     }
 
+    // 영속화 — Supabase 설정 시에만. 실패해도 상담 응답에는 영향 없음 (allSettled)
+    let store = "none";
+    if (storeAvailable() && sessionId) {
+      const bookingEv = events.find((e) => e.type === "booking");
+      const wxEv = events.find((e) => e.type === "weather");
+      await Promise.allSettled([
+        upsertSession(sessionId, { channel: "web", demo: true }),
+        saveMessages(sessionId, [
+          { role: "user", content: lastUserMsg },
+          { role: "assistant", content: reply, model, usage: totalUsage },
+        ]),
+        ...(bookingEv ? [saveBooking(bookingEv.booking, sessionId)] : []),
+        ...(wxEv ? [saveOuting(wxEv, bookingEv?.booking?.id)] : []),
+      ]);
+      store = "db";
+    }
+
     return res.status(200).json({
+      store,
       content: reply,
       events,               // [{type:'quote'|'weather'|'slots'|'booking', ...}]
       usage: totalUsage,

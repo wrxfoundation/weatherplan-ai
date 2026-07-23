@@ -821,6 +821,25 @@ const WEEK_TICKER_SEED = (() => {
 
 const SENDING_STAGES = ["문의 파악 중…", "견적 계산 중…", "매니저 일정 확인 중…", "케이웨더 조회 중…"];
 
+const genUuid = () => {
+  try { return crypto.randomUUID(); } catch (_) {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0; return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+    });
+  }
+};
+
+/* DB 예약 행 → 콘솔 그리드 행 (영속화된 예약 복원) */
+function dbRowToToday(r) {
+  return {
+    id: r.id, start: parseHour(r.date_text || ""), hours: Number(r.hours) || 2,
+    recipient: "온라인 예약", hospital: r.hospital || "-",
+    managerId: r.manager_key, manager: r.manager_name || "-",
+    service: r.service_type === "hospital_vehicle" ? "병원동행+차량" : r.service_type === "home_care" ? "재택돌봄" : r.service_type === "dialysis" ? "정기 동행" : "병원동행",
+    price: r.price || 0, status: r.status || "confirmed",
+  };
+}
+
 /* ============================================================
  * 메인
  * ============================================================ */
@@ -839,6 +858,9 @@ export default function DemoPage() {
   const [briefingOpen, setBriefingOpen] = useState(false);
   const [debugOn, setDebugOn] = useState(false);
   const [lastMeta, setLastMeta] = useState(null);         // ?debug=1 아키텍처 패널용
+  const [dbState, setDbState] = useState("waiting");      // waiting | connected — dcmap '연동 대기' 정직 표기
+  const sessionIdRef = useRef(null);
+  if (!sessionIdRef.current) sessionIdRef.current = genUuid();
 
   const scrollRef = useRef(null);
   const userTurnRef = useRef(0);
@@ -879,6 +901,22 @@ export default function DemoPage() {
       const q = new URLSearchParams(window.location.search);
       if (q.get("debug") === "1" || localStorage.getItem("cm_debug") === "1") setDebugOn(true);
     } catch (_) {}
+  }, []);
+
+  // DB 부트스트랩 — Supabase 연동 시 오늘 예약 복원, 미연동 시 '연동 대기' (시드로 시연 완주)
+  useEffect(() => {
+    let dead = false;
+    fetch("/api/care-data").then((r) => r.json()).then((d) => {
+      if (dead) return;
+      if (d.available && d.ok !== false) {
+        setDbState("connected");
+        if (d.bookings?.length) {
+          const rows = d.bookings.map(dbRowToToday);
+          setToday((prev) => [...rows.filter((r) => !prev.some((x) => x.id === r.id)), ...prev]);
+        }
+      } else setDbState("waiting");
+    }).catch(() => { if (!dead) setDbState("waiting"); });
+    return () => { dead = true; };
   }, []);
 
   const markTyped = useCallback((id) => {
@@ -933,7 +971,7 @@ export default function DemoPage() {
       try {
         const res = await fetch("/api/care-chat", {
           method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: history }),
+          body: JSON.stringify({ messages: history, session_id: sessionIdRef.current }),
         });
         if (res.ok) {
           const data = await res.json();
@@ -941,9 +979,10 @@ export default function DemoPage() {
             reply = { content: data.content || "", events: data.events || [] };
             setLastMeta({
               mode: "live", model_used: data.model_used, complexity: data.complexity,
-              rounds: data.rounds, rules_injected: data.rules_injected,
+              rounds: data.rounds, rules_injected: data.rules_injected, store: data.store,
               usage: data.usage, elapsed_ms: data.elapsed_ms, events: (data.events || []).length,
             });
+            if (data.store === "db") setDbState("connected");
           }
         }
         if (!reply) setMode("demo");
@@ -986,6 +1025,7 @@ export default function DemoPage() {
 
   function reset(silent) {
     userTurnRef.current = 0;
+    sessionIdRef.current = genUuid(); // 새 상담 세션
     messagesRef.current = [GREETING];
     if (!silent) modeRef.current = "live";
     setMessages([GREETING]);
@@ -1219,6 +1259,10 @@ export default function DemoPage() {
                 <button className="btn-glass" onClick={() => setBriefingOpen((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 700, borderRadius: 9, padding: "6px 10px", color: C.ink }}>
                   <Icon name="clock" size={13} color={C.tealDk} /> 오늘 배차 브리핑
                 </button>
+                <span title={dbState === "connected" ? "Supabase 저장 활성" : "SUPABASE_URL 미설정 — 시드 데이터로 시연"}
+                  style={{ fontSize: 10.5, color: dbState === "connected" ? C.green : C.amber, display: "flex", alignItems: "center", gap: 4 }}>
+                  <Dot color={dbState === "connected" ? C.green : C.amber} /> {dbState === "connected" ? "DB 저장 중" : "DB 연동 대기"}
+                </span>
                 <span style={{ fontSize: 11, color: C.green, display: "flex", alignItems: "center", gap: 5 }}><Dot color={C.green} live /> 실시간 동기화</span>
               </div>
             </div>
@@ -1342,6 +1386,7 @@ export default function DemoPage() {
                       <span>model: <b>{lastMeta.model_used}</b>{lastMeta.complexity ? ` (${lastMeta.complexity})` : ""}</span>
                       <span>tool rounds: <b>{lastMeta.rounds}</b></span>
                       <span>rules: <b>{lastMeta.rules_injected ?? 0}</b></span>
+                      <span>store: <b>{lastMeta.store || "none"}</b></span>
                       <span>events: <b>{lastMeta.events}</b></span>
                       <span>elapsed: <b>{lastMeta.elapsed_ms}ms</b></span>
                       {lastMeta.usage && (
