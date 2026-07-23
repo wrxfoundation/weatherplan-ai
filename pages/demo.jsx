@@ -300,6 +300,21 @@ function WeatherCard({ w }) {
         </span>
       </div>
       <div style={{ padding: "11px 14px" }}>
+        {/* 출발지·도착지 2지점 — 왕복 전 구간 리스크 */}
+        {w.legs && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 10 }}>
+            {w.legs.map((l) => (
+              <div key={l.role} style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12, background: "rgba(255,255,255,0.55)", border: `1px solid ${C.lineSoft}`, borderRadius: 9, padding: "6px 9px" }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: l.role === "출발지" ? "#2C43B8" : C.tealDk, background: l.role === "출발지" ? "rgba(62,99,255,0.10)" : "rgba(31,138,122,0.10)", borderRadius: 6, padding: "1px 6px", flexShrink: 0 }}>{l.role}</span>
+                <b style={{ flexShrink: 0 }}>{l.location}</b>
+                <Icon name={skyIcon(l.sky)} size={13} color={/비|눈/.test(l.sky) ? C.blue : C.amber} />
+                <span style={{ color: C.sub, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{l.temp}℃ {l.sky}</span>
+                <span style={{ marginLeft: "auto", fontSize: 10.5, fontWeight: 700, color: scoreStyle(l.score).fg, background: scoreStyle(l.score).bg, borderRadius: 6, padding: "1px 7px", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{l.score}점 {l.verdict}</span>
+              </div>
+            ))}
+            <div style={{ fontSize: 10, color: C.faint }}>지표·판정은 컨디션이 더 나쁜 <b>{w.worst_leg}</b> 기준입니다</div>
+          </div>
+        )}
         <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
           <WxMetric icon="thermometer" label="기온" value={`${w.temp}℃ ${w.sky}`} />
           <WxMetric icon="wind" label="미세먼지" value={w.pm_grade} tone={/나쁨/.test(w.pm_grade) ? "#B23A28" : C.ink} />
@@ -535,18 +550,18 @@ function mockReply(userTurn) {
   }
   if (userTurn === 2) {
     const q = executeCareTool("estimate_quote", { service_type: "hospital", hours: 3 });
-    const wx = executeCareTool("outing_condition", { date: "다음주 화요일", location: "서울" });
+    const wx = executeCareTool("outing_condition", { date: "다음주 화요일", location: "서울대병원", origin: "관악구 신림동" });
     const s = executeCareTool("check_slots", { date: "다음주 화요일", hospital: "서울대병원", service_type: "hospital" });
     const top = s.available[0];
     return {
-      content: `오래 서 계시기 힘드시면 곁에서 부축·대기해 드리는 **외래 동행**으로 잡을게요. 이동·대기 포함 **3시간** 기준 견적입니다.\n그날 동행 컨디션은 **${wx.score}점 · ${wx.verdict}**이에요. 다만 **미세먼지 ${wx.pm_grade}** 예보라 **${wx.items[0]}** 챙겨 동행할게요. 평점 ${top.rating} **${top.name} 매니저**(${top.specialty})를 추천드려요. 이분으로 예약할까요?`,
+      content: `오래 서 계시기 힘드시면 곁에서 부축·대기해 드리는 **외래 동행**으로 잡을게요. 이동·대기 포함 **3시간** 기준 견적입니다.\n출발지(신림동)와 병원 쪽 날씨를 모두 확인했어요. 출발지는 괜찮은데 **병원 쪽에 비 소식**이 있어 동행 컨디션은 **${wx.score}점 · ${wx.verdict}**${wx.worst_leg ? ` (${wx.worst_leg} 기준)` : ""}이에요. ${wx.comment}. 평점 ${top.rating} **${top.name} 매니저**(${top.specialty})를 추천드려요. 이분으로 예약할까요?`,
       events: [q._event, wx._event, s._event],
     };
   }
   if (userTurn === 3) {
     const s = executeCareTool("check_slots", { date: "다음주 화요일", hospital: "서울대병원", service_type: "hospital" });
     const b = executeCareTool("create_booking", {
-      recipient_name: "어머니", hospital: "서울대병원", date: "다음주 화요일", time: "오전 9시",
+      recipient_name: "어머니", hospital: "서울대병원", origin: "관악구 신림동", date: "다음주 화요일", time: "오전 9시",
       hours: 3, service_type: "hospital", manager_id: s.available[0].manager_id,
     });
     return {
@@ -559,7 +574,7 @@ function mockReply(userTurn) {
 
 const AUTOPLAY = [
   "어머니가 다음주 화요일 서울대병원 외래 진료가 있어요. 동행 예약할 수 있을까요?",
-  "혼자 걷긴 하시는데 오래 서 계시는 걸 힘들어하세요. 오전 9시 진료예요.",
+  "혼자 걷긴 하시는데 오래 서 계시는 걸 힘들어하세요. 집은 관악구 신림동이고, 오전 9시 진료예요.",
   "네, 그분으로 예약할게요.",
 ];
 
@@ -606,8 +621,13 @@ export default function DemoPage() {
 
   useEffect(() => { messagesRef.current = messages; }, [messages]);
   useEffect(() => { modeRef.current = mode; }, [mode]);
+  // 사용자가 위로 스크롤해 읽는 중이면 잡아당기지 않음 (바닥 근처일 때만 자동 고정)
+  const nearBottom = () => {
+    const el = scrollRef.current;
+    return el ? el.scrollHeight - el.scrollTop - el.clientHeight < 140 : true;
+  };
   useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    if (scrollRef.current && nearBottom()) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, sending]);
 
   // 타이핑 진행 중엔 주기적으로 바닥 고정 (텍스트가 자라며 뷰 밖으로 나가는 것 방지)
@@ -615,7 +635,7 @@ export default function DemoPage() {
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant" || last.typed) return;
     const iv = setInterval(() => {
-      if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      if (scrollRef.current && nearBottom()) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }, 250);
     return () => clearInterval(iv);
   }, [messages]);
@@ -820,10 +840,20 @@ export default function DemoPage() {
           @keyframes dots{ 0%,80%,100%{opacity:.2} 40%{opacity:1} }
           .typing span{ animation:dots 1.2s infinite } .typing span:nth-child(2){animation-delay:.2s} .typing span:nth-child(3){animation-delay:.4s}
           @media (prefers-reduced-motion: reduce){ .orb,.bk-pulse,.fadein,.typing span,.pulse-dot{animation:none !important} }
+
+          /* 좁은 화면(모바일·세로): 패널이 세로로 쌓이고 페이지 전체가 스크롤됨.
+             챗봇은 고정 높이 + 내부 스크롤, 콘솔은 자연 흐름 — 잘림 없이 끝까지 볼 수 있음 */
+          @media (max-width: 920px){
+            .demo-root{ height:auto !important; min-height:100dvh; overflow:visible !important }
+            .demo-body{ flex-direction:column }
+            .pane-chat{ flex:none !important; width:100%; height:84dvh; min-height:460px }
+            .pane-console{ flex:none !important; width:100%; height:auto }
+            .console-scroll{ flex:none !important; overflow:visible !important }
+          }
         `}</style>
       </Head>
 
-      <div style={{ position: "relative", height: "100vh", display: "flex", flexDirection: "column", background: `linear-gradient(160deg,${C.cream},${C.cream2})`, color: C.ink, overflow: "hidden", fontFamily: '"Pretendard Variable",Pretendard,-apple-system,system-ui,"Noto Sans KR",sans-serif' }}>
+      <div className="demo-root" style={{ position: "relative", height: "100vh", display: "flex", flexDirection: "column", background: `linear-gradient(160deg,${C.cream},${C.cream2})`, color: C.ink, overflow: "hidden", fontFamily: '"Pretendard Variable",Pretendard,-apple-system,system-ui,"Noto Sans KR",sans-serif' }}>
         <Orbs />
 
         {/* 헤더 */}
@@ -853,9 +883,9 @@ export default function DemoPage() {
         </header>
 
         {/* 본문 2분할 */}
-        <div style={{ position: "relative", zIndex: 1, flex: 1, minHeight: 0, display: "flex", gap: 14, padding: 14, flexWrap: "wrap" }}>
+        <div className="demo-body" style={{ position: "relative", zIndex: 1, flex: 1, minHeight: 0, display: "flex", gap: 14, padding: 14 }}>
           {/* ── 좌: 챗봇 ── */}
-          <section className="glass-panel" style={{ flex: "1 1 380px", minWidth: 320, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
+          <section className="glass-panel pane-chat" style={{ flex: "1 1 380px", minWidth: 320, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
             <div style={{ flexShrink: 0, padding: "12px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 36, height: 36, borderRadius: 12, background: `linear-gradient(160deg,${C.evergreen},#1f342b)`, color: "#fff", display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)" }}>
                 <Icon name="sparkle" size={18} color="#8fe3d4" sw={1.4} />
@@ -923,7 +953,7 @@ export default function DemoPage() {
           </section>
 
           {/* ── 우: 콘솔 ── */}
-          <section className="glass-panel" style={{ flex: "1.15 1 460px", minWidth: 340, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
+          <section className="glass-panel pane-console" style={{ flex: "1.15 1 460px", minWidth: 340, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
             <div style={{ flexShrink: 0, padding: "12px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
                 <Chip name="calendar" bg="rgba(31,138,122,0.14)" fg={C.tealDk} box={30} size={16} />
@@ -940,7 +970,7 @@ export default function DemoPage() {
               </div>
             </div>
 
-            <div style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 13 }}>
+            <div className="console-scroll" style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 13 }}>
               {/* KPI */}
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 <Kpi label="오늘 GMV" value={manwon(kpi.gmv)} suffix="만원" accent={C.tealDk} sub="실시간" />
