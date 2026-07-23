@@ -35,6 +35,11 @@ const ICON_PATHS = {
   shield: "M12 22s7.5-3.8 7.5-9.5V5.2L12 2.5 4.5 5.2v7.3C4.5 18.2 12 22 12 22z",
   wallet: "M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v2M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3M3 7h15M21 12h-4a2 2 0 0 0 0 4h4v-4z",
   cross: "M12 6.5v11M6.5 12h11",
+  sun: "M12 17.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM12 1.7v2.1M12 20.2v2.1M4.2 4.2l1.5 1.5M18.3 18.3l1.5 1.5M1.7 12h2.1M20.2 12h2.1M4.2 19.8l1.5-1.5M18.3 5.7l1.5-1.5",
+  cloud: "M6.5 19a4 4 0 0 1-.8-7.92 6 6 0 0 1 11.6-1.6A4.5 4.5 0 0 1 17.5 19h-11z",
+  droplet: "M12 2.7c3 3.6 6 6.9 6 10.3a6 6 0 1 1-12 0c0-3.4 3-6.7 6-10.3z",
+  wind: "M3 12h11a3 3 0 1 0-3-3M3 16h15a3 3 0 1 1-3 3",
+  thermometer: "M14 14.76V5a2 2 0 1 0-4 0v9.76a4 4 0 1 0 4 0z",
 };
 function Icon({ name, size = 20, sw = 1.7, color }) {
   return (
@@ -217,9 +222,72 @@ function BookingCard({ b }) {
         <Row k="담당 매니저" v={<span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>{b.manager_name} <Star /> {b.manager_rating}</span>} />
         <div style={{ height: 1, background: C.line, margin: "8px 0" }} />
         <Row k={<b>결제 금액</b>} v={<b style={{ color: C.tealDk, fontSize: 16 }}>{won(b.price)}</b>} />
+        {b.outing && (
+          <div style={{ marginTop: 9, padding: "7px 10px", background: "rgba(188,130,54,0.09)", border: "1px solid rgba(188,130,54,0.22)", borderRadius: 10, display: "flex", alignItems: "center", gap: 7, fontSize: 11.5, color: C.ink2 }}>
+            <Icon name="sun" size={14} color={C.amber} />
+            <span>그날 외출 컨디션 <b style={{ color: "#8A6216" }}>{b.outing.grade}</b> · <b>{b.outing.items.join("·")}</b> 준비해 동행합니다</span>
+          </div>
+        )}
         <button className="btn-primary" style={{ width: "100%", marginTop: 11, borderRadius: 12, padding: "11px 0", fontSize: 13, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
           <Icon name="wallet" size={16} /> 토스로 선결제 (에스크로 보관)
         </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── 외출 컨디션 등급 색상 ─── */
+const WX_GRADE = {
+  "좋음": { fg: C.green, bg: "rgba(46,158,99,0.14)" },
+  "보통": { fg: C.tealDk, bg: "rgba(31,138,122,0.13)" },
+  "주의": { fg: "#8A6216", bg: "rgba(188,130,54,0.16)" },
+  "나쁨": { fg: "#B23A28", bg: "rgba(229,83,60,0.14)" },
+};
+const skyIcon = (sky = "") => /비|소나기/.test(sky) ? "droplet" : /눈/.test(sky) ? "cloud" : /구름|흐림/.test(sky) ? "cloud" : "sun";
+
+function WxMetric({ icon, label, value, tone }) {
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3, alignItems: "flex-start" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, color: C.faint }}>
+        <Icon name={icon} size={12} color={C.faint} /> {label}
+      </div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: tone || C.ink, whiteSpace: "nowrap" }}>{value}</div>
+    </div>
+  );
+}
+function ItemChips({ items }) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+      {items.map((it, i) => (
+        <span key={i} style={{ fontSize: 11, fontWeight: 600, color: C.tealDk, background: "rgba(31,138,122,0.10)", border: "1px solid rgba(31,138,122,0.24)", borderRadius: 8, padding: "3px 8px" }}>{it}</span>
+      ))}
+    </div>
+  );
+}
+
+/* ─── 챗봇: 외출 컨디션 카드 (케이웨더) ─── */
+function WeatherCard({ w }) {
+  const g = WX_GRADE[w.grade] || WX_GRADE["보통"];
+  return (
+    <div className="glass-card" style={{ marginTop: 8, borderRadius: 16, overflow: "hidden" }}>
+      <div style={{ padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${C.lineSoft}` }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 7, fontWeight: 700, fontSize: 13, color: C.ink }}>
+          <Icon name={skyIcon(w.sky)} size={15} color={C.amber} /> 외출 컨디션
+          <span style={{ fontSize: 11, fontWeight: 400, color: C.faint }}>· {w.date}</span>
+        </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: g.fg, background: g.bg, borderRadius: 7, padding: "2px 8px" }}>{w.grade}</span>
+          <span style={{ fontSize: 10.5, color: C.faint }}>케이웨더</span>
+        </span>
+      </div>
+      <div style={{ padding: "11px 14px" }}>
+        <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+          <WxMetric icon="thermometer" label="기온" value={`${w.temp}℃ ${w.sky}`} />
+          <WxMetric icon="wind" label="미세먼지" value={w.pm_grade} tone={/나쁨/.test(w.pm_grade) ? "#B23A28" : C.ink} />
+          <WxMetric icon="sun" label="자외선" value={w.uv_grade} tone={/높음|위험/.test(w.uv_grade) ? "#8A6216" : C.ink} />
+          <WxMetric icon="droplet" label="강수확률" value={`${w.pop}%`} />
+        </div>
+        <ItemChips items={w.items} />
       </div>
     </div>
   );
@@ -307,11 +375,12 @@ function mockReply(userTurn) {
   }
   if (userTurn === 2) {
     const q = executeCareTool("estimate_quote", { service_type: "hospital", hours: 3 });
+    const wx = executeCareTool("outing_condition", { date: "다음주 화요일", location: "서울" });
     const s = executeCareTool("check_slots", { date: "다음주 화요일", hospital: "서울대병원", service_type: "hospital" });
     const top = s.available[0];
     return {
-      content: `오래 서 계시기 힘드시면 곁에서 부축·대기해 드리는 **외래 동행**으로 잡을게요. 이동·대기 포함 **3시간** 기준 견적입니다.\n서울대병원 근처 배정 가능한 매니저예요. 평점 ${top.rating} **${top.name} 매니저**(${top.specialty})를 추천드려요. 이분으로 예약할까요?`,
-      events: [q._event, s._event],
+      content: `오래 서 계시기 힘드시면 곁에서 부축·대기해 드리는 **외래 동행**으로 잡을게요. 이동·대기 포함 **3시간** 기준 견적입니다.\n그날 서울은 **미세먼지 ${wx.pm_grade}** 예보라 **${wx.items[0]}** 챙겨 동행할게요. 평점 ${top.rating} **${top.name} 매니저**(${top.specialty})를 추천드려요. 이분으로 예약할까요?`,
+      events: [q._event, wx._event, s._event],
     };
   }
   if (userTurn === 3) {
@@ -369,6 +438,7 @@ export default function DemoPage() {
   const applyEvents = useCallback((events = []) => {
     events.forEach((ev) => {
       if (ev.type === "quote") pushTicker(`견적 산출 · ${won(ev.total)}`, "teal");
+      else if (ev.type === "weather") pushTicker(`외출 컨디션 · ${ev.grade} · ${ev.summary}`, "amber");
       else if (ev.type === "slots") pushTicker(`매니저 ${ev.available.length}명 매칭`, "blue");
       else if (ev.type === "booking") {
         const b = ev.booking;
@@ -585,6 +655,7 @@ export default function DemoPage() {
                   {m.events?.map((ev, i) => (
                     <div key={i} style={{ width: "88%", maxWidth: "88%" }}>
                       {ev.type === "quote" && <QuoteCard q={ev} />}
+                      {ev.type === "weather" && <WeatherCard w={ev} />}
                       {ev.type === "slots" && <SlotsCard slots={ev.available} />}
                       {ev.type === "booking" && <BookingCard b={ev.booking} />}
                     </div>
@@ -634,6 +705,32 @@ export default function DemoPage() {
                 <Kpi label="노쇼율" value={`${kpi.noShow}%`} accent={C.green} />
               </div>
 
+              {/* 오늘 외출 컨디션 (케이웨더) */}
+              {(() => {
+                const o = SEED_CONSOLE.outing;
+                const g = WX_GRADE[o.grade] || WX_GRADE["보통"];
+                return (
+                  <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+                    <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+                        <Icon name={skyIcon(o.sky)} size={14} color={C.amber} /> 오늘 외출 컨디션
+                        <span style={{ fontWeight: 400, color: C.faint }}>· {o.location} · 케이웨더</span>
+                      </span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: g.fg, background: g.bg, borderRadius: 7, padding: "3px 9px" }}>{o.grade}</span>
+                    </div>
+                    <div style={{ padding: "11px 15px" }}>
+                      <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+                        <WxMetric icon="thermometer" label="기온" value={`${o.temp}℃ ${o.sky}`} />
+                        <WxMetric icon="wind" label="미세먼지" value={o.pm_grade} />
+                        <WxMetric icon="sun" label="자외선" value={o.uv_grade} tone="#8A6216" />
+                        <WxMetric icon="droplet" label="습도" value={`${o.humidity}%`} />
+                      </div>
+                      <ItemChips items={o.items} />
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* 실시간 접수 티커 */}
               <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
                 <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
@@ -643,7 +740,7 @@ export default function DemoPage() {
                   {ticker.length === 0 && <div style={{ fontSize: 12, color: C.faint, padding: "9px 0" }}>챗봇에서 예약이 들어오면 여기에 실시간으로 표시됩니다.</div>}
                   {ticker.map((t) => (
                     <div key={t.id} className="fadein" style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", fontSize: 12.5 }}>
-                      <Dot color={t.tone === "green" ? C.green : t.tone === "blue" ? C.blue : C.teal} />
+                      <Dot color={t.tone === "green" ? C.green : t.tone === "blue" ? C.blue : t.tone === "amber" ? C.amber : C.teal} />
                       <span style={{ color: C.faint, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{t.stamp}</span>
                       <span style={{ color: C.ink, fontWeight: t.tone === "green" ? 700 : 400 }}>{t.label}</span>
                     </div>
