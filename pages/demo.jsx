@@ -899,6 +899,7 @@ export default function DemoPage() {
   const [lastMeta, setLastMeta] = useState(null);         // ?debug=1 아키텍처 패널용
   const [dbState, setDbState] = useState("waiting");      // waiting | connected — dcmap '연동 대기' 정직 표기
   const [familyProfile, setFamilyProfile] = useState(null); // 진화 루프 — 프론트(localStorage) 프로필
+  const [kakaoMode, setKakaoMode] = useState(false);        // 카카오 상담톡 스킨 (실채널 연동은 후속 — 프론트 더미)
   const familyProfileRef = useRef(null);
   const sessionIdRef = useRef(null);
   if (!sessionIdRef.current) sessionIdRef.current = genUuid();
@@ -1219,6 +1220,9 @@ export default function DemoPage() {
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, padding: "6px 11px", borderRadius: 999, background: liveMode ? "rgba(46,158,99,0.2)" : "rgba(188,130,54,0.24)", border: `1px solid ${liveMode ? "rgba(46,158,99,0.55)" : "rgba(188,130,54,0.55)"}` }}>
               <Dot color={liveMode ? "#43d17f" : "#e0a44a"} /> {liveMode ? "AI 연결됨" : "데모 스크립트"}
             </span>
+            <button className="btn-ghost" onClick={() => setKakaoMode((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, borderRadius: 11, padding: "8px 12px", background: kakaoMode ? "#FEE500" : undefined, color: kakaoMode ? "#191919" : undefined, border: kakaoMode ? "1px solid #FEE500" : undefined }}>
+              {kakaoMode ? "웹 스킨" : "카카오 스킨"}
+            </button>
             <button className="btn-glass" onClick={autoplay} disabled={autoOn} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 13, fontWeight: 700, borderRadius: 11, padding: "8px 14px" }}>
               <Icon name="play" size={15} color={C.tealDk} /> {autoOn ? "시연 중…" : "30초 자동 시연"}
             </button>
@@ -1231,14 +1235,19 @@ export default function DemoPage() {
         {/* 본문 2분할 */}
         <div className="demo-body" style={{ position: "relative", zIndex: 1, flex: 1, minHeight: 0, display: "flex", gap: 14, padding: 14 }}>
           {/* ── 좌: 챗봇 ── */}
-          <section className="glass-panel pane-chat" style={{ flex: "1 1 380px", minWidth: 320, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
-            <div style={{ flexShrink: 0, padding: "12px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 12, background: `linear-gradient(160deg,${C.evergreen},#1f342b)`, color: "#fff", display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)" }}>
-                <Icon name="sparkle" size={18} color="#8fe3d4" sw={1.4} />
+          <section className="glass-panel pane-chat" style={{ flex: "1 1 380px", minWidth: 320, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0, ...(kakaoMode ? { background: "#A9C2D8", border: "1px solid #8FB0CC" } : {}) }}>
+            <div style={{ flexShrink: 0, padding: "12px 16px", borderBottom: kakaoMode ? "1px solid #E8D200" : `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 10, ...(kakaoMode ? { background: "#FEE500" } : {}) }}>
+              <div style={{ width: 36, height: 36, borderRadius: kakaoMode ? "50%" : 12, background: kakaoMode ? "#FFFFFF" : `linear-gradient(160deg,${C.evergreen},#1f342b)`, color: "#fff", display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)" }}>
+                <Icon name={kakaoMode ? "heart" : "sparkle"} size={18} color={kakaoMode ? "#191919" : "#8fe3d4"} sw={1.6} />
               </div>
               <div style={{ flexShrink: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 6 }}>돌봄이 AI</div>
-                <div style={{ fontSize: 11, color: C.green, display: "flex", alignItems: "center", gap: 5 }}><Dot color={C.green} live /> 카카오 상담톡 · 24시간 실시간 응대</div>
+                <div style={{ fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 6, color: kakaoMode ? "#191919" : undefined }}>
+                  {kakaoMode ? "시니어케어매니저" : "돌봄이 AI"}
+                  {kakaoMode && <span style={{ fontSize: 9, fontWeight: 800, color: "#FEE500", background: "#191919", borderRadius: 5, padding: "1.5px 5px" }}>상담톡</span>}
+                </div>
+                <div style={{ fontSize: 11, color: kakaoMode ? "rgba(25,25,25,0.65)" : C.green, display: "flex", alignItems: "center", gap: 5 }}>
+                  {kakaoMode ? <>채널 연동 대기 · 데모 미리보기</> : <><Dot color={C.green} live /> 카카오 상담톡 · 24시간 실시간 응대</>}
+                </div>
               </div>
               {/* 단골 가족 배지 — 진화 루프 상태 표시 + 기록 삭제 */}
               {familyProfile?.last_booking && (
@@ -1277,10 +1286,12 @@ export default function DemoPage() {
                 <div key={m.id} className="fadein" style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start" }}>
                   <div style={{
                     maxWidth: "88%", padding: "10px 13px", borderRadius: 16, fontSize: 13.5, lineHeight: 1.55, whiteSpace: "pre-wrap",
-                    background: m.role === "user" ? `linear-gradient(180deg,#27392f,#16241d)` : "rgba(255,255,255,0.92)",
-                    color: m.role === "user" ? "#fff" : C.ink,
-                    border: m.role === "user" ? "1px solid rgba(255,255,255,0.12)" : `1px solid ${C.line}`,
-                    boxShadow: m.role === "user" ? "inset 0 1px 0 rgba(255,255,255,0.18), 0 6px 16px -10px rgba(18,30,23,0.6)" : "0 6px 16px -12px rgba(20,36,29,0.4)",
+                    background: kakaoMode
+                      ? (m.role === "user" ? "#FEE500" : "#FFFFFF")
+                      : (m.role === "user" ? `linear-gradient(180deg,#27392f,#16241d)` : "rgba(255,255,255,0.92)"),
+                    color: kakaoMode ? "#191919" : (m.role === "user" ? "#fff" : C.ink),
+                    border: kakaoMode ? "none" : (m.role === "user" ? "1px solid rgba(255,255,255,0.12)" : `1px solid ${C.line}`),
+                    boxShadow: kakaoMode ? "0 1px 2px rgba(0,0,0,0.12)" : (m.role === "user" ? "inset 0 1px 0 rgba(255,255,255,0.18), 0 6px 16px -10px rgba(18,30,23,0.6)" : "0 6px 16px -12px rgba(20,36,29,0.4)"),
                     borderBottomRightRadius: m.role === "user" ? 5 : 16,
                     borderBottomLeftRadius: m.role === "user" ? 16 : 5,
                   }}>
@@ -1307,7 +1318,7 @@ export default function DemoPage() {
               )}
             </div>
 
-            <div style={{ flexShrink: 0, padding: "11px 12px", borderTop: `1px solid ${C.line}`, display: "flex", gap: 8 }}>
+            <div style={{ flexShrink: 0, padding: "11px 12px", borderTop: kakaoMode ? "1px solid #8FB0CC" : `1px solid ${C.line}`, display: "flex", gap: 8, ...(kakaoMode ? { background: "#FFFFFF" } : {}) }}>
               <input
                 value={input} disabled={autoOn}
                 onChange={(e) => setInput(e.target.value)}
@@ -1319,7 +1330,7 @@ export default function DemoPage() {
                 <Icon name="send" size={18} />
               </button>
             </div>
-            <div style={{ flexShrink: 0, padding: "0 14px 9px", fontSize: 10, color: C.faint, textAlign: "center" }}>
+            <div style={{ flexShrink: 0, padding: "0 14px 9px", fontSize: 10, color: kakaoMode ? "rgba(25,25,25,0.55)" : C.faint, textAlign: "center", ...(kakaoMode ? { background: "#FFFFFF" } : {}) }}>
               예약·동행·요금 상담만 답변해요 · 의료 상담은 제공하지 않아요
             </div>
           </section>
