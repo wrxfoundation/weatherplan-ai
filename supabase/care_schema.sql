@@ -140,6 +140,14 @@ create table if not exists outing_snapshots ( -- 케이웨더 판정 이력 (성
   created_at  timestamptz default now()
 );
 
+-- ── 가족 프로필 (Leg 1 전환기: 무인증 데모의 가명 키 기반) ───────
+-- 정식 온보딩 후 customers/care_recipients/care_profiles로 이관.
+create table if not exists family_profiles (
+  key         uuid primary key,       -- 클라이언트 가명 키 (localStorage)
+  profile     jsonb not null default '{}',  -- mergeCareProfile 산출물 (5토픽 포함)
+  updated_at  timestamptz default now()
+);
+
 -- ── RLS (요지 — 실배포 시 auth.uid() 매핑 테이블과 함께 활성화) ──
 -- alter table bookings enable row level security;
 -- create policy agency_rw on bookings using (agency_id = auth_agency_id());

@@ -14,7 +14,7 @@
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Head from "next/head";
-import { executeCareTool, SEED_CONSOLE, SEED_MANAGERS } from "../lib/careTools";
+import { executeCareTool, SEED_CONSOLE, SEED_MANAGERS, mergeCareProfile } from "../lib/careTools";
 
 /* ─── SVG 라인 아이콘 세트 ─── */
 const ICON_PATHS = {
@@ -768,7 +768,31 @@ function mockCaseReply(text = "") {
   return null;
 }
 
-function mockReply(userTurn, text = "") {
+function mockReply(userTurn, text = "", profile = null) {
+  // ── 재방문 문진제로 (진화 루프의 실체) — 프로필이 있으면 되묻지 않는다 ──
+  if (profile?.last_booking && /예약|동행|부탁|잡아|또|다시/.test(text)) {
+    const hasDate = /(다음주|이번주|내일|모레|요일|\d+\s*시|오전|오후)/.test(text);
+    if (!hasDate) {
+      return {
+        content: `네! 지난번 조건 그대로 준비해 둘게요 — ${profile.recipient || "어르신"} · **${profile.hospital}** · ${profile.origin_area || "자택"} 출발${profile.preferred_manager ? ` · **${profile.preferred_manager} 매니저** 고정` : ""}. 날짜와 시간만 알려주세요.`,
+        events: [],
+      };
+    }
+    const dateText = (text.match(/(다음주\s*[월화수목금토일]요일|이번주\s*[월화수목금토일]요일|내일|모레)/) || [])[0] || "다음주 금요일";
+    const timeText = (text.match(/(오전|오후)\s*\d+\s*시/) || [])[0] || "오전 10시";
+    const hours = profile.last_booking.hours || 3;
+    const q = executeCareTool("estimate_quote", { service_type: profile.service_type || "hospital", hours });
+    const wx = executeCareTool("outing_condition", { date: dateText, location: profile.hospital || "서울", origin: profile.origin_area });
+    const b = executeCareTool("create_booking", {
+      recipient_name: profile.recipient || "어르신", hospital: profile.hospital || "서울대병원",
+      origin: profile.origin_area, date: dateText, time: timeText, hours,
+      service_type: profile.service_type || "hospital", manager_id: profile.preferred_manager_key || "mgr_02",
+    });
+    return {
+      content: `**문진 없이** 지난번 조건 그대로 접수했어요 — ${profile.recipient || "어르신"} · **${profile.hospital}** · ${profile.origin_area || "자택"} 출발, **${b.booking.manager_name} 매니저** 고정 배정.\n${profile.topics?.mobility_note ? `${profile.topics.mobility_note} 참고해서 준비할게요. ` : ""}그날 동행 컨디션은 **${wx.score}점 · ${wx.verdict}**이에요. ${wx.comment}. 아래 결제 링크로 확정해 주세요.`,
+      events: [q._event, wx._event, b._event],
+    };
+  }
   const byCase = mockCaseReply(text);
   if (byCase) return byCase;
   if (userTurn <= 1) {
@@ -804,7 +828,22 @@ const AUTOPLAY = [
   "네, 그분으로 예약할게요.",
 ];
 
-const GREETING = { id: "g0", role: "assistant", content: "안녕하세요, 시니어케어매니저 **돌봄이 AI**예요. 어떤 병원동행이나 돌봄이 필요하신가요? 편하게 말씀해 주세요.", events: [] };
+/* 인사말 — 프로필이 있으면 '기억하는 재방문 인사' (진화 루프의 첫 장면) */
+function makeGreeting(profile) {
+  if (profile?.last_booking) {
+    const mgr = profile.preferred_manager ? ` 이번에도 **${profile.preferred_manager} 매니저**로 잡아드릴 수 있어요.` : "";
+    return {
+      id: "g0", role: "assistant", events: [],
+      content: `다시 만나 반가워요! 지난번 ${profile.recipient || "어르신"} **${profile.hospital || "병원"}** 동행은 잘 다녀오셨어요?${mgr} 다음 일정 날짜만 말씀해 주시면 지난번 조건 그대로, 문진 없이 바로 접수합니다.`,
+    };
+  }
+  return { id: "g0", role: "assistant", content: "안녕하세요, 시니어케어매니저 **돌봄이 AI**예요. 어떤 병원동행이나 돌봄이 필요하신가요? 편하게 말씀해 주세요.", events: [] };
+}
+const GREETING = makeGreeting(null);
+
+const PROFILE_LS_KEY = "cm_family_profile";
+const loadProfileLS = () => { try { return JSON.parse(localStorage.getItem(PROFILE_LS_KEY) || "null"); } catch (_) { return null; } };
+const saveProfileLS = (p) => { try { p ? localStorage.setItem(PROFILE_LS_KEY, JSON.stringify(p)) : localStorage.removeItem(PROFILE_LS_KEY); } catch (_) {} };
 
 /* 주간 예보 중 나쁜 조건만 운영 알림으로 — wellbian daily-condition 게이팅 (좋은 날씨는 null) */
 const WEEK_TICKER_SEED = (() => {
@@ -859,8 +898,24 @@ export default function DemoPage() {
   const [debugOn, setDebugOn] = useState(false);
   const [lastMeta, setLastMeta] = useState(null);         // ?debug=1 아키텍처 패널용
   const [dbState, setDbState] = useState("waiting");      // waiting | connected — dcmap '연동 대기' 정직 표기
+  const [familyProfile, setFamilyProfile] = useState(null); // 진화 루프 — 프론트(localStorage) 프로필
+  const familyProfileRef = useRef(null);
   const sessionIdRef = useRef(null);
   if (!sessionIdRef.current) sessionIdRef.current = genUuid();
+  useEffect(() => { familyProfileRef.current = familyProfile; }, [familyProfile]);
+
+  // 프로필 로드 — 재방문이면 인사말부터 '기억하는' 톤으로 (대화 시작 전에만 교체)
+  useEffect(() => {
+    const p = loadProfileLS();
+    if (!p) return;
+    setFamilyProfile(p);
+    familyProfileRef.current = p;
+    if (userTurnRef.current === 0) {
+      const g = makeGreeting(p);
+      messagesRef.current = [g];
+      setMessages([g]);
+    }
+  }, []);
 
   const scrollRef = useRef(null);
   const userTurnRef = useRef(0);
@@ -946,6 +1001,17 @@ export default function DemoPage() {
         setToday((prev) => (prev.some((x) => x.id === row.id) ? prev : [row, ...prev]));
         setKpi((k) => ({ ...k, gmv: k.gmv + b.price, bookings: k.bookings + 1 }));
         setHighlightId(b.id);
+        // 진화 루프 — 예약 사실을 가족 프로필에 병합 (프론트 더미: localStorage)
+        setFamilyProfile((prev) => {
+          const merged = mergeCareProfile(prev, {
+            booking: b, origin: b.origin_area,
+            topics: { appointments: `${b.date} ${b.hospital} ${b.time || ""}`.trim() },
+            now: new Date().toISOString(),
+          });
+          saveProfileLS(merged);
+          familyProfileRef.current = merged;
+          return merged;
+        });
         pushTicker(`신규 예약 ${b.id} 접수 · ${won(b.price)}`, "green");
         setTimeout(() => setHighlightId((cur) => (cur === b.id ? null : cur)), 4200);
       }
@@ -989,7 +1055,7 @@ export default function DemoPage() {
       } catch (_) { setMode("demo"); }
     }
     if (!reply) {
-      reply = mockReply(turn, clean);
+      reply = mockReply(turn, clean, familyProfileRef.current);
       setLastMeta({ mode: "demo(폴백)", model_used: "—", rounds: 0, usage: null, elapsed_ms: 0, events: (reply.events || []).length });
     }
 
@@ -1026,9 +1092,10 @@ export default function DemoPage() {
   function reset(silent) {
     userTurnRef.current = 0;
     sessionIdRef.current = genUuid(); // 새 상담 세션
-    messagesRef.current = [GREETING];
+    const g = makeGreeting(familyProfileRef.current); // 프로필 유지 — 초기화해도 '기억'은 남는다
+    messagesRef.current = [g];
     if (!silent) modeRef.current = "live";
-    setMessages([GREETING]);
+    setMessages([g]);
     setInput("");
     setTicker(WEEK_TICKER_SEED);
     setKpi(SEED_CONSOLE.kpi);
@@ -1173,9 +1240,21 @@ export default function DemoPage() {
                 <div style={{ fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 6 }}>돌봄이 AI</div>
                 <div style={{ fontSize: 11, color: C.green, display: "flex", alignItems: "center", gap: 5 }}><Dot color={C.green} live /> 카카오 상담톡 · 24시간 실시간 응대</div>
               </div>
+              {/* 단골 가족 배지 — 진화 루프 상태 표시 + 기록 삭제 */}
+              {familyProfile?.last_booking && (
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 5, flexShrink: 0, fontSize: 10.5, fontWeight: 700, color: C.tealDk, background: "rgba(31,138,122,0.10)", border: "1px solid rgba(31,138,122,0.3)", borderRadius: 999, padding: "4px 9px" }}>
+                  단골 가족 · {familyProfile.visits}회
+                  <button title="기억 삭제 (처음 방문 상태로)" onClick={() => {
+                    saveProfileLS(null); familyProfileRef.current = null; setFamilyProfile(null);
+                    const g = makeGreeting(null); messagesRef.current = [g]; setMessages([g]); userTurnRef.current = 0;
+                  }} style={{ background: "none", border: "none", color: C.faint, fontSize: 12, lineHeight: 1, padding: 0, cursor: "pointer" }}>×</button>
+                </span>
+              )}
               {/* 대화 유형 케이스 버튼 — 가로 스크롤 칩 (wellbian QuickCard 계승) */}
               <div className="case-chips" style={{ flex: 1, minWidth: 0, display: "flex", gap: 6, overflowX: "auto", padding: "2px 0", scrollbarWidth: "thin" }}>
-                {CASE_PRESETS.map((c) => (
+                {(familyProfile?.last_booking
+                  ? [{ label: "재방문 예약", text: "어머니 다음주 금요일 오전 10시에 또 외래 있어요. 지난번처럼 부탁해요." }, ...CASE_PRESETS]
+                  : CASE_PRESETS).map((c) => (
                   <button key={c.label} disabled={sending || autoOn}
                     onClick={() => { if (!sending && !autoOn) runTurn(c.text); }}
                     style={{
