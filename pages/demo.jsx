@@ -74,6 +74,7 @@ const GRID_START = 8, GRID_END = 18, GRID_SPAN = GRID_END - GRID_START;
 /* ─── 포맷 헬퍼 ─── */
 const won = (n) => `${Math.round(n).toLocaleString("ko-KR")}원`;
 const manwon = (n) => Math.round(n / 10000);
+const hourLabel = (h) => `${String(Math.floor(h)).padStart(2, "0")}:${h % 1 ? "30" : "00"}`;
 
 function parseHour(t = "") {
   if (typeof t === "number") return t;
@@ -225,12 +226,27 @@ function BookingCard({ b }) {
         {b.outing && (
           <div style={{ marginTop: 9, padding: "7px 10px", background: "rgba(188,130,54,0.09)", border: "1px solid rgba(188,130,54,0.22)", borderRadius: 10, display: "flex", alignItems: "center", gap: 7, fontSize: 11.5, color: C.ink2 }}>
             <Icon name="sun" size={14} color={C.amber} />
-            <span>그날 외출 컨디션 <b style={{ color: "#8A6216" }}>{b.outing.grade}</b> · <b>{b.outing.items.join("·")}</b> 준비해 동행합니다</span>
+            <span>그날 동행 컨디션 <b style={{ color: scoreStyle(b.outing.score ?? 60).fg }}>{typeof b.outing.score === "number" ? `${b.outing.score}점 · ${b.outing.verdict}` : b.outing.grade}</b> · <b>{b.outing.items.join("·")}</b> 준비해 동행합니다</span>
+          </div>
+        )}
+        {b.checklist?.length > 0 && (
+          <div style={{ marginTop: 8 }}>
+            <div style={{ fontSize: 10.5, fontWeight: 700, color: C.faint, marginBottom: 5 }}>보호자 준비 체크리스트</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+              {b.checklist.map((it, i) => (
+                <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 600, color: C.ink2, background: "rgba(22,33,28,0.045)", border: `1px solid ${C.lineSoft}`, borderRadius: 8, padding: "3px 8px" }}>
+                  <Icon name="check" size={10} color={C.teal} /> {it}
+                </span>
+              ))}
+            </div>
           </div>
         )}
         <button className="btn-primary" style={{ width: "100%", marginTop: 11, borderRadius: 12, padding: "11px 0", fontSize: 13, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
           <Icon name="wallet" size={16} /> 토스로 선결제 (에스크로 보관)
         </button>
+        <div style={{ marginTop: 8, fontSize: 10, color: C.faint, textAlign: "center" }}>
+          본 서비스는 의료행위가 아닌 동행·생활지원 서비스입니다
+        </div>
       </div>
     </div>
   );
@@ -265,18 +281,21 @@ function ItemChips({ items }) {
   );
 }
 
-/* ─── 챗봇: 외출 컨디션 카드 (케이웨더) ─── */
+/* ─── 챗봇: 외출 컨디션 카드 (케이웨더 · wellbian NN점 판정 계승) ─── */
 function WeatherCard({ w }) {
-  const g = WX_GRADE[w.grade] || WX_GRADE["보통"];
+  const hasScore = typeof w.score === "number";
+  const s = hasScore ? scoreStyle(w.score) : (WX_GRADE[w.grade] || WX_GRADE["보통"]);
   return (
     <div className="glass-card" style={{ marginTop: 8, borderRadius: 16, overflow: "hidden" }}>
       <div style={{ padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${C.lineSoft}` }}>
         <span style={{ display: "flex", alignItems: "center", gap: 7, fontWeight: 700, fontSize: 13, color: C.ink }}>
-          <Icon name={skyIcon(w.sky)} size={15} color={C.amber} /> 외출 컨디션
+          <Icon name={skyIcon(w.sky)} size={15} color={C.amber} /> 동행 컨디션
           <span style={{ fontSize: 11, fontWeight: 400, color: C.faint }}>· {w.date}</span>
         </span>
         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: g.fg, background: g.bg, borderRadius: 7, padding: "2px 8px" }}>{w.grade}</span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: s.fg, background: s.bg, borderRadius: 7, padding: "2px 8px", fontVariantNumeric: "tabular-nums" }}>
+            {hasScore ? `${w.score}점 · ${w.verdict || w.grade}` : w.grade}
+          </span>
           <span style={{ fontSize: 10.5, color: C.faint }}>케이웨더</span>
         </span>
       </div>
@@ -287,7 +306,27 @@ function WeatherCard({ w }) {
           <WxMetric icon="sun" label="자외선" value={w.uv_grade} tone={/높음|위험/.test(w.uv_grade) ? "#8A6216" : C.ink} />
           <WxMetric icon="droplet" label="강수확률" value={`${w.pop}%`} />
         </div>
+        {/* 감점 사유 칩 — wellbian deductions[] 투명 공개 */}
+        {w.deductions?.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>
+            {w.deductions.map((d, i) => (
+              <span key={i} style={{ fontSize: 10.5, fontWeight: 600, color: s.fg, background: s.bg, border: `1px solid ${s.fg}33`, borderRadius: 7, padding: "2px 7px", fontVariantNumeric: "tabular-nums" }}>
+                {d.reason} −{d.points}
+              </span>
+            ))}
+          </div>
+        )}
+        {w.hard_stop && (
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 700, color: "#B23A28", background: "rgba(229,83,60,0.10)", border: "1px solid rgba(229,83,60,0.3)", borderRadius: 9, padding: "6px 9px", marginBottom: 8 }}>
+            <Icon name="shield" size={13} color="#B23A28" /> 안전 기준 초과 — 일정 변경 권장
+          </div>
+        )}
         <ItemChips items={w.items} />
+        {w.comment && (
+          <div style={{ marginTop: 8, fontSize: 12, color: C.ink2, background: "rgba(22,33,28,0.045)", border: `1px solid ${C.lineSoft}`, borderRadius: 9, padding: "7px 10px" }}>
+            💡 {w.comment}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -299,16 +338,59 @@ const uvTone = (g = "") => /위험/.test(g) ? "#B23A28" : /높음/.test(g) ? "#8
 const gradeTone = (g) => (WX_GRADE[g] || WX_GRADE["보통"]).fg;
 const clamp = (v) => Math.max(4, Math.min(100, v));
 
+/* wellbian RecommendCard scoreStyle — 85/70/55/40 5단 판정 팔레트 */
+function scoreStyle(score) {
+  if (score >= 85) return { fg: C.green, bg: "rgba(46,158,99,0.14)" };
+  if (score >= 70) return { fg: C.tealDk, bg: "rgba(31,138,122,0.13)" };
+  if (score >= 55) return { fg: "#8A6216", bg: "rgba(188,130,54,0.16)" };
+  if (score >= 40) return { fg: "#B4551F", bg: "rgba(217,110,43,0.15)" };
+  return { fg: "#B23A28", bg: "rgba(229,83,60,0.14)" };
+}
+
 function wxIndices(o) {
-  const outScore = { "좋음": 88, "보통": 70, "주의": 46, "나쁨": 24 }[o.grade] ?? 60;
+  // 외출지수는 wellbian 100점 감점제 엔진의 실제 score (등급→가짜점수 매핑 아님)
+  const outScore = o.score ?? ({ "좋음": 88, "보통": 70, "주의": 46, "나쁨": 24 }[o.grade] ?? 60);
   const pmBar = { "좋음": 22, "보통": 50, "나쁨": 80, "매우나쁨": 96 }[o.pm_grade] ?? 50;
   const uvBar = { "낮음": 18, "보통": 42, "높음": 66, "매우높음": 86, "위험": 98 }[o.uv_grade] ?? 40;
   return [
-    { key: "외출지수", val: String(outScore), tone: gradeTone(o.grade), bar: outScore },
+    { key: "외출지수", val: `${outScore}점`, tone: scoreStyle(outScore).fg, bar: outScore },
     { key: "미세먼지", val: o.pm_grade, tone: pmTone(o.pm_grade), bar: pmBar },
     { key: "자외선", val: o.uv_grade, tone: uvTone(o.uv_grade), bar: uvBar },
     { key: "체감기온", val: `${o.temp}℃`, tone: o.temp >= 31 ? "#8A6216" : o.temp <= 4 ? C.blue : C.ink, bar: clamp(((o.temp + 8) / 48) * 100) },
   ];
+}
+
+/* ─── wellbian TypingText 이식 — 22ms/글자, 탭 스킵, typed 플래그로 재타이핑 방지 ─── */
+function TypingText({ text, onComplete, done }) {
+  const [i, setI] = useState(done ? text.length : 0);
+  const doneRef = useRef(done);
+  useEffect(() => {
+    if (doneRef.current) return;
+    const iv = setInterval(() => {
+      setI((cur) => {
+        if (cur >= text.length) {
+          clearInterval(iv);
+          if (!doneRef.current) { doneRef.current = true; onComplete && onComplete(); }
+          return cur;
+        }
+        return cur + 2; // 2글자/tick — 한국어 체감 속도
+      });
+    }, 22);
+    return () => clearInterval(iv);
+  }, [text]); // eslint-disable-line
+  const finished = done || i >= text.length;
+  const skip = () => {
+    if (doneRef.current) return;
+    doneRef.current = true;
+    setI(text.length);
+    onComplete && onComplete();
+  };
+  return (
+    <span onClick={skip} style={{ cursor: finished ? "inherit" : "pointer" }}>
+      <Rich text={finished ? text : text.slice(0, i)} />
+      {!finished && <span style={{ display: "inline-block", width: 3, height: 13, background: "currentColor", opacity: 0.5, marginLeft: 2, animation: "dots 1.2s infinite" }} />}
+    </span>
+  );
 }
 function MiniMeter({ m }) {
   return (
@@ -329,9 +411,11 @@ function WxDashboard({ o }) {
     <div style={{ flexShrink: 0, padding: "10px 14px", borderBottom: `1px solid ${C.line}`, background: "rgba(255,255,255,0.5)" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
         <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 700, color: C.ink2 }}>
-          <Icon name={skyIcon(o.sky)} size={13} color={C.amber} /> 케이웨더 대시보드 <span style={{ fontWeight: 400, color: C.faint }}>· {o.location} · 오늘</span>
+          <Icon name={skyIcon(o.sky)} size={13} color={C.amber} /> 케이웨더 대시보드 <span style={{ fontWeight: 400, color: C.faint }}>· {o.location} · {o.date || "오늘"}</span>
         </span>
-        <span style={{ fontSize: 10.5, fontWeight: 700, color: g.fg, background: g.bg, borderRadius: 7, padding: "2px 8px" }}>외출 {o.grade}</span>
+        <span style={{ fontSize: 10.5, fontWeight: 700, color: typeof o.score === "number" ? scoreStyle(o.score).fg : g.fg, background: typeof o.score === "number" ? scoreStyle(o.score).bg : g.bg, borderRadius: 7, padding: "2px 8px", fontVariantNumeric: "tabular-nums" }}>
+          {typeof o.score === "number" ? `${o.score}점 · ${o.verdict || o.grade}` : `외출 ${o.grade}`}
+        </span>
       </div>
       <div style={{ display: "flex", gap: 12 }}>
         {wxIndices(o).map((m, i) => <MiniMeter key={i} m={m} />)}
@@ -455,7 +539,7 @@ function mockReply(userTurn) {
     const s = executeCareTool("check_slots", { date: "다음주 화요일", hospital: "서울대병원", service_type: "hospital" });
     const top = s.available[0];
     return {
-      content: `오래 서 계시기 힘드시면 곁에서 부축·대기해 드리는 **외래 동행**으로 잡을게요. 이동·대기 포함 **3시간** 기준 견적입니다.\n그날 서울은 **미세먼지 ${wx.pm_grade}** 예보라 **${wx.items[0]}** 챙겨 동행할게요. 평점 ${top.rating} **${top.name} 매니저**(${top.specialty})를 추천드려요. 이분으로 예약할까요?`,
+      content: `오래 서 계시기 힘드시면 곁에서 부축·대기해 드리는 **외래 동행**으로 잡을게요. 이동·대기 포함 **3시간** 기준 견적입니다.\n그날 동행 컨디션은 **${wx.score}점 · ${wx.verdict}**이에요. 다만 **미세먼지 ${wx.pm_grade}** 예보라 **${wx.items[0]}** 챙겨 동행할게요. 평점 ${top.rating} **${top.name} 매니저**(${top.specialty})를 추천드려요. 이분으로 예약할까요?`,
       events: [q._event, wx._event, s._event],
     };
   }
@@ -481,6 +565,21 @@ const AUTOPLAY = [
 
 const GREETING = { id: "g0", role: "assistant", content: "안녕하세요, 시니어케어매니저 **돌봄이 AI**예요. 어떤 병원동행이나 돌봄이 필요하신가요? 편하게 말씀해 주세요.", events: [] };
 
+/* 주간 예보 중 나쁜 조건만 운영 알림으로 — wellbian daily-condition 게이팅 (좋은 날씨는 null) */
+const WEEK_TICKER_SEED = (() => {
+  const idx = SEED_CONSOLE.week.findIndex((d) => d.today);
+  const alerts = [];
+  SEED_CONSOLE.week.forEach((d, i) => {
+    if (i <= idx) return; // 지난 날짜·오늘 제외, 다가올 리스크만
+    if (/비|눈/.test(d.sky)) alerts.push({ id: `wk-${d.date}`, stamp: "예보", label: `${d.label} ${d.date} 비 예보 — 우천 취소 리스크 · 보호자 사전 알림톡 권장`, tone: "amber" });
+    else if (/매우높음|위험/.test(d.uv_grade)) alerts.push({ id: `wk-${d.date}`, stamp: "예보", label: `${d.label} ${d.date} 자외선 ${d.uv_grade} — 오전 슬롯 우선 배치 권장`, tone: "amber" });
+    else if (/나쁨/.test(d.pm_grade)) alerts.push({ id: `wk-${d.date}`, stamp: "예보", label: `${d.label} ${d.date} 미세먼지 ${d.pm_grade} — KF94 지참 안내`, tone: "amber" });
+  });
+  return alerts.slice(0, 3);
+})();
+
+const SENDING_STAGES = ["문의 파악 중…", "견적 계산 중…", "매니저 일정 확인 중…", "케이웨더 조회 중…"];
+
 /* ============================================================
  * 메인
  * ============================================================ */
@@ -490,10 +589,15 @@ export default function DemoPage() {
   const [sending, setSending] = useState(false);
   const [mode, setMode] = useState("live");   // 'live' | 'demo'
   const [autoOn, setAutoOn] = useState(false);
-  const [ticker, setTicker] = useState([]);
+  const [ticker, setTicker] = useState(WEEK_TICKER_SEED);
   const [kpi, setKpi] = useState(SEED_CONSOLE.kpi);
   const [today, setToday] = useState(SEED_CONSOLE.today);
   const [highlightId, setHighlightId] = useState(null);
+  const [latestOuting, setLatestOuting] = useState(null); // 챗봇이 조회한 최신 컨디션 → 대시보드 동기화
+  const [stageIdx, setStageIdx] = useState(0);            // tool 단계 로딩 라벨
+  const [briefingOpen, setBriefingOpen] = useState(false);
+  const [debugOn, setDebugOn] = useState(false);
+  const [lastMeta, setLastMeta] = useState(null);         // ?debug=1 아키텍처 패널용
 
   const scrollRef = useRef(null);
   const userTurnRef = useRef(0);
@@ -506,6 +610,35 @@ export default function DemoPage() {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, sending]);
 
+  // 타이핑 진행 중엔 주기적으로 바닥 고정 (텍스트가 자라며 뷰 밖으로 나가는 것 방지)
+  useEffect(() => {
+    const last = messages[messages.length - 1];
+    if (!last || last.role !== "assistant" || last.typed) return;
+    const iv = setInterval(() => {
+      if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }, 250);
+    return () => clearInterval(iv);
+  }, [messages]);
+
+  // tool 단계 로딩 라벨 시퀀스 (1.2s 간격, events 도착 시 종료)
+  useEffect(() => {
+    if (!sending) { setStageIdx(0); return; }
+    const iv = setInterval(() => setStageIdx((i) => Math.min(i + 1, SENDING_STAGES.length - 1)), 1200);
+    return () => clearInterval(iv);
+  }, [sending]);
+
+  // ?debug=1 또는 localStorage cm_debug — wellbian 디버그 모드 3중 진입 축소판
+  useEffect(() => {
+    try {
+      const q = new URLSearchParams(window.location.search);
+      if (q.get("debug") === "1" || localStorage.getItem("cm_debug") === "1") setDebugOn(true);
+    } catch (_) {}
+  }, []);
+
+  const markTyped = useCallback((id) => {
+    setMessages((ms) => ms.map((x) => (x.id === id ? { ...x, typed: true } : x)));
+  }, []);
+
   const pushTicker = useCallback((label, tone) => {
     const stamp = new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(new Date());
     setTicker((t) => [{ id: `${stamp}-${label}`, stamp, label, tone }, ...t].slice(0, 6));
@@ -514,7 +647,10 @@ export default function DemoPage() {
   const applyEvents = useCallback((events = []) => {
     events.forEach((ev) => {
       if (ev.type === "quote") pushTicker(`견적 산출 · ${won(ev.total)}`, "teal");
-      else if (ev.type === "weather") pushTicker(`외출 컨디션 · ${ev.grade} · ${ev.summary}`, "amber");
+      else if (ev.type === "weather") {
+        setLatestOuting(ev); // 챗봇 대시보드 게이지 실시간 동기화
+        pushTicker(`동행 컨디션 ${typeof ev.score === "number" ? `${ev.score}점 · ${ev.verdict}` : ev.grade} · ${ev.summary}`, "amber");
+      }
       else if (ev.type === "slots") pushTicker(`매니저 ${ev.available.length}명 매칭`, "blue");
       else if (ev.type === "booking") {
         const b = ev.booking;
@@ -555,12 +691,22 @@ export default function DemoPage() {
         });
         if (res.ok) {
           const data = await res.json();
-          if (data.content || (data.events && data.events.length)) reply = { content: data.content || "", events: data.events || [] };
+          if (data.content || (data.events && data.events.length)) {
+            reply = { content: data.content || "", events: data.events || [] };
+            setLastMeta({
+              mode: "live", model_used: data.model_used, complexity: data.complexity,
+              rounds: data.rounds, rules_injected: data.rules_injected,
+              usage: data.usage, elapsed_ms: data.elapsed_ms, events: (data.events || []).length,
+            });
+          }
         }
         if (!reply) setMode("demo");
       } catch (_) { setMode("demo"); }
     }
-    if (!reply) reply = mockReply(turn);
+    if (!reply) {
+      reply = mockReply(turn);
+      setLastMeta({ mode: "demo(폴백)", model_used: "—", rounds: 0, usage: null, elapsed_ms: 0, events: (reply.events || []).length });
+    }
 
     await new Promise((r) => setTimeout(r, 480));
     setMessages((m) => [...m, { id: `a${turn}`, role: "assistant", content: reply.content, events: reply.events || [] }]);
@@ -598,12 +744,19 @@ export default function DemoPage() {
     if (!silent) modeRef.current = "live";
     setMessages([GREETING]);
     setInput("");
-    setTicker([]);
+    setTicker(WEEK_TICKER_SEED);
     setKpi(SEED_CONSOLE.kpi);
     setToday(SEED_CONSOLE.today);
     setHighlightId(null);
+    setLatestOuting(null);
+    setBriefingOpen(false);
     if (!silent) setMode("live");
   }
+
+  // 오늘 배차 브리핑 — 예약별 동행 컨디션·준비물 (전부 룰 엔진, LLM 0회)
+  const briefing = useMemo(() =>
+    today.map((b) => ({ b, o: executeCareTool("outing_condition", { date: "오늘", location: b.hospital }) })),
+  [today]);
 
   const managerLoad = useMemo(() => {
     const map = {};
@@ -714,8 +867,8 @@ export default function DemoPage() {
               <Icon name="message" size={18} color={C.faint} />
             </div>
 
-            {/* 컨디션·날씨지수 미니 대시보드 */}
-            <WxDashboard o={SEED_CONSOLE.outing} />
+            {/* 컨디션·날씨지수 미니 대시보드 — 챗봇이 컨디션 조회하면 그 날짜 기준으로 실시간 전환 */}
+            <WxDashboard o={latestOuting || SEED_CONSOLE.outing} />
 
             <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: 12 }}>
               {messages.map((m) => (
@@ -729,10 +882,13 @@ export default function DemoPage() {
                     borderBottomRightRadius: m.role === "user" ? 5 : 16,
                     borderBottomLeftRadius: m.role === "user" ? 16 : 5,
                   }}>
-                    <Rich text={m.content} />
+                    {m.role === "assistant"
+                      ? <TypingText text={m.content} done={!!m.typed} onComplete={() => markTyped(m.id)} />
+                      : <Rich text={m.content} />}
                   </div>
-                  {m.events?.map((ev, i) => (
-                    <div key={i} style={{ width: "88%", maxWidth: "88%" }}>
+                  {/* 인라인 카드는 타이핑 완료 후 노출 — '말한 뒤 카드가 뜨는' 연출 */}
+                  {(m.role !== "assistant" || m.typed) && m.events?.map((ev, i) => (
+                    <div key={i} className="fadein" style={{ width: "88%", maxWidth: "88%" }}>
                       {ev.type === "quote" && <QuoteCard q={ev} />}
                       {ev.type === "weather" && <WeatherCard w={ev} />}
                       {ev.type === "slots" && <SlotsCard slots={ev.available} />}
@@ -742,8 +898,9 @@ export default function DemoPage() {
                 </div>
               ))}
               {sending && (
-                <div className="fadein" style={{ alignSelf: "flex-start", padding: "11px 15px", background: "rgba(255,255,255,0.92)", border: `1px solid ${C.line}`, borderRadius: 16, borderBottomLeftRadius: 5 }}>
+                <div className="fadein" style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 9, padding: "11px 15px", background: "rgba(255,255,255,0.92)", border: `1px solid ${C.line}`, borderRadius: 16, borderBottomLeftRadius: 5 }}>
                   <span className="typing" style={{ fontSize: 18, letterSpacing: 2, color: C.faint }}><span>·</span><span>·</span><span>·</span></span>
+                  <span style={{ fontSize: 11.5, color: C.sub }}>{SENDING_STAGES[stageIdx]}</span>
                 </div>
               )}
             </div>
@@ -760,6 +917,9 @@ export default function DemoPage() {
                 <Icon name="send" size={18} />
               </button>
             </div>
+            <div style={{ flexShrink: 0, padding: "0 14px 9px", fontSize: 10, color: C.faint, textAlign: "center" }}>
+              예약·동행·요금 상담만 답변해요 · 의료 상담은 제공하지 않아요
+            </div>
           </section>
 
           {/* ── 우: 콘솔 ── */}
@@ -772,7 +932,12 @@ export default function DemoPage() {
                   <div style={{ fontSize: 11, color: C.faint }}>새벽케어 강남지점</div>
                 </div>
               </div>
-              <span style={{ fontSize: 11, color: C.green, display: "flex", alignItems: "center", gap: 5 }}><Dot color={C.green} live /> 실시간 동기화</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                <button className="btn-glass" onClick={() => setBriefingOpen((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 700, borderRadius: 9, padding: "6px 10px", color: C.ink }}>
+                  <Icon name="clock" size={13} color={C.tealDk} /> 오늘 배차 브리핑
+                </button>
+                <span style={{ fontSize: 11, color: C.green, display: "flex", alignItems: "center", gap: 5 }}><Dot color={C.green} live /> 실시간 동기화</span>
+              </div>
             </div>
 
             <div style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 13 }}>
@@ -809,6 +974,34 @@ export default function DemoPage() {
                   </div>
                 );
               })()}
+
+              {/* 오늘 배차 브리핑 — 예약별 동행 컨디션·준비물 (룰 엔진, LLM 0회) */}
+              {briefingOpen && (
+                <div className="glass-panel fadein" style={{ borderRadius: 18, overflow: "hidden", border: `1.5px solid rgba(31,138,122,0.4)` }}>
+                  <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+                      <Icon name="clock" size={14} color={C.teal} /> 오늘 배차 브리핑 <span style={{ fontWeight: 400, color: C.faint }}>· 예약 {briefing.length}건 · 케이웨더 기준</span>
+                    </span>
+                    <button onClick={() => setBriefingOpen(false)} style={{ background: "none", border: "none", color: C.faint, fontSize: 15, lineHeight: 1 }} aria-label="닫기">×</button>
+                  </div>
+                  <div style={{ padding: "6px 15px 10px" }}>
+                    {briefing.map(({ b, o }) => (
+                      <div key={b.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderBottom: `1px solid ${C.lineSoft}`, fontSize: 12 }}>
+                        <span style={{ fontVariantNumeric: "tabular-nums", color: C.faint, flexShrink: 0, width: 38 }}>{hourLabel(b.start)}</span>
+                        <span style={{ fontWeight: 600, color: C.ink, flexShrink: 0 }}>{b.hospital}</span>
+                        <span style={{ color: C.sub, flexShrink: 0 }}>{b.recipient}</span>
+                        <span style={{ fontSize: 10.5, fontWeight: 700, color: scoreStyle(o.score).fg, background: scoreStyle(o.score).bg, borderRadius: 6, padding: "1px 7px", flexShrink: 0, fontVariantNumeric: "tabular-nums" }}>{o.score}점 {o.verdict}</span>
+                        <span style={{ color: C.faint, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", flex: 1 }}>{o.items.slice(0, 2).join("·")}</span>
+                        <span style={{ color: C.sub, flexShrink: 0 }}>{b.manager} 매니저</span>
+                      </div>
+                    ))}
+                    <button className="btn-primary" onClick={() => { pushTicker(`브리핑 알림톡 ${briefing.length}건 발송 완료 (매니저 전원)`, "green"); setBriefingOpen(false); }}
+                      style={{ width: "100%", marginTop: 10, borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                      <Icon name="send" size={14} /> 매니저 알림톡 일괄 발송
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* 주간 일자별 외출 컨디션 캘린더 */}
               <WeekOuting week={SEED_CONSOLE.week} />
@@ -850,6 +1043,32 @@ export default function DemoPage() {
                   ))}
                 </div>
               </div>
+
+              {/* ?debug=1 — 아키텍처 상태 패널 (wellbian 디버그 모드 계승) */}
+              {debugOn && (
+                <div className="glass-panel" style={{ borderRadius: 14, padding: "10px 14px", fontSize: 11, fontFamily: "ui-monospace, monospace" }}>
+                  <div style={{ fontWeight: 700, marginBottom: 6, color: C.ink2, display: "flex", alignItems: "center", gap: 6 }}>
+                    <Icon name="activity" size={12} color={C.teal} /> DEBUG · 엔진 상태
+                  </div>
+                  {lastMeta ? (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 14px", color: C.sub }}>
+                      <span>mode: <b>{lastMeta.mode}</b></span>
+                      <span>model: <b>{lastMeta.model_used}</b>{lastMeta.complexity ? ` (${lastMeta.complexity})` : ""}</span>
+                      <span>tool rounds: <b>{lastMeta.rounds}</b></span>
+                      <span>rules: <b>{lastMeta.rules_injected ?? 0}</b></span>
+                      <span>events: <b>{lastMeta.events}</b></span>
+                      <span>elapsed: <b>{lastMeta.elapsed_ms}ms</b></span>
+                      {lastMeta.usage && (
+                        <span>tokens in/out: <b>{lastMeta.usage.input_tokens}/{lastMeta.usage.output_tokens}</b>
+                          {lastMeta.usage.cache_read_input_tokens > 0
+                            ? <b style={{ color: C.green }}> · 캐시 적중 {lastMeta.usage.cache_read_input_tokens}</b>
+                            : <b style={{ color: C.amber }}> · 캐시 미적중</b>}
+                        </span>
+                      )}
+                    </div>
+                  ) : <span style={{ color: C.faint }}>아직 요청 없음 — 메시지를 보내면 라우팅·캐시·토큰이 표시됩니다</span>}
+                </div>
+              )}
             </div>
           </section>
         </div>

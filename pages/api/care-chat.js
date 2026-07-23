@@ -19,6 +19,60 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const MAX_TOOL_ROUNDS = 5;
 
+/* ─── 모델 레지스트리 + 복잡도 라우터 (wellbian engine/router.js 계승) ───
+ * env 오버라이드로 재배포 없이 핫스왑. 클라이언트 모델 문자열은 절대 수신 안 함.
+ * tool 호출이 예상되는 질의(예약·견적·날씨)는 무조건 상위 모델. */
+const MODELS = {
+  complex: process.env.CARE_MODEL_COMPLEX || "claude-opus-4-8",
+  simple: process.env.CARE_MODEL_SIMPLE || "claude-haiku-4-5-20251001",
+};
+function classifyCareComplexity(lastUserMsg = "") {
+  const lo = String(lastUserMsg).trim();
+  const isGreeting = /^(안녕|반가|하이|ㅎㅇ|고마워|고맙|감사|네[\s.!~]*$|넵|응|오케이|ok|잘있어|잘가)/i.test(lo);
+  const hasBookingSignal = /예약|견적|얼마|비용|요금|동행|돌봄|병원|매니저|날씨|날짜|시간|내일|다음주|취소|변경/.test(lo);
+  if (isGreeting && lo.length < 20 && !hasBookingSignal) return "simple";
+  return "complex";
+}
+/* 파라미터 조립 단일 지점 — 최신 모델에 temperature 등 샘플링 파라미터 전송 금지 규약 강제 */
+function buildModelParams(model, systemBlocks, messages) {
+  return {
+    model,
+    max_tokens: 1400,
+    system: systemBlocks,
+    tools: CARE_TOOL_SCHEMAS,
+    messages,
+  };
+}
+
+/* ─── 케어 도메인 규칙 — wellbian DOMAIN_RULES 축소판 ───
+ * 30개 전체 주입 절대 금지 원칙: 정규식 트리거로 매칭된 블록만(최대 2개)
+ * buildDynamicContext() 뒤에 주입 → 정적 캐시 prefix는 1바이트도 불변. */
+const CARE_RULES = {
+  wheelchair: {
+    trigger: /휠체어|거동\s*불편|보행기|부축|못\s*걸|잘\s*못\s*걷/,
+    text: `[휠체어·거동불편 규칙]
+한파→근육경직→낙상위험↑→차량 포함(hospital_vehicle) 우선 제안+무릎담요. 강수→경사로·차량 승하차 미끄럼→이동시간 +15분 여유 견적. 휠체어 여부 확인됐으면 outing_condition에 mobility=wheelchair 전달. 엘리베이터 없는 층수 이동 여부 1회 확인.`,
+  },
+  dementia: {
+    trigger: /치매|인지\s*(저하|장애)|기억(력)?\s*(저하|없)|알츠하이머/,
+    text: `[치매·인지 케어 규칙]
+낯선 환경→불안↑→같은 매니저 지정 예약 권장(치매·인지 케어 전문 매니저 우선 추천). 문진은 짧게, 같은 질문 반복 금지. 보호자에게 어르신이 좋아하는 호칭·화제 1개를 미리 받아 매니저에게 전달하겠다고 안내. 대상자 본인 험담·아이 취급 표현 절대 금지.`,
+  },
+  dialysis: {
+    trigger: /투석|항암|정기\s*(동행|진료)|매주\s*(월|화|수|목|금)|주\s*[23][회번]/,
+    text: `[투석·항암 정기동행 규칙]
+주 2~3회 반복→정기 예약(같은 매니저 고정) 할인 안내. 치료 후 탈수·어지럼 흔함→귀가 시 부축 필수, 대기 포함 3시간+ 견적(dialysis 요금제). 치료 직후 컨디션 급변 가능→매니저 완료 리포트에 특이사항 기록됨을 안내.`,
+  },
+};
+function pickCareRules(lastUserMsg = "") {
+  const hits = [];
+  for (const key of Object.keys(CARE_RULES)) {
+    if (CARE_RULES[key].trigger.test(lastUserMsg)) hits.push(CARE_RULES[key].text);
+    if (hits.length >= 2) break; // 최대 2개만
+  }
+  return hits;
+}
+
 /* ─── 한국 시간 날짜 컨텍스트 (요일/다음주 계산은 서버가, 모델은 그대로 사용) ─── */
 function getDateContext() {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -30,7 +84,8 @@ function getDateContext() {
   const dayN = ["일", "월", "화", "수", "목", "금", "토"];
   const fmt = (dt) => `${dt.getMonth() + 1}/${dt.getDate()}(${dayN[dt.getDay()]})`;
   const tmr = new Date(y, m, d + 1);
-  const nextTue = new Date(y, m, d + ((2 - dow + 7) % 7 || 7));
+  // "다음주 화요일" = 다음주 월요일 + 1 (다음 화요일 발생일이 아님 — 월요일에도 +8일)
+  const nextTue = new Date(y, m, d + ((8 - dow) % 7 || 7) + 1);
   return `오늘: ${y}년 ${m + 1}월 ${d}일 ${dayN[dow]}요일 · 내일 ${fmt(tmr)} · 다음주 화요일 ${fmt(nextTue)}`;
 }
 
@@ -45,10 +100,28 @@ const STATIC_SYSTEM_PROMPT = `당신은 "돌봄이 AI"입니다. 시니어케어
 4) 예약: 보호자가 확정하면 create_booking 으로 예약을 접수하고 결제(에스크로) 안내로 마무리합니다.
 
 [외출 컨디션 — 케이웨더 연동 (시니어케어 핵심 차별점)]
-어르신은 폭염·한파·미세먼지·자외선에 취약합니다. 예약 날짜가 정해지면(견적/슬롯 단계 즈음) outing_condition 도구로 그날 그 지역의 케이웨더 예보(날씨·기온·미세먼지·자외선)와 종합 등급·준비물을 확인해, 동행 준비물을 한 줄로 안내하세요.
-- 예: "그날 서울 미세먼지 나쁨 예보라 KF94 마스크 챙겨 동행할게요." / "자외선 매우높음이라 양산·모자 준비하겠습니다."
-- 날씨·대기질 출처는 '케이웨더'로만 표기.
-- 의료조언 금지 가드레일은 그대로 — 질병 예방·처방 언급 금지, 어디까지나 '외출 준비물' 안내.
+어르신은 폭염·한파·미세먼지·자외선에 취약합니다. 예약 날짜가 정해지면(견적/슬롯 단계 즈음) outing_condition 도구로 그날 그 지역의 케이웨더 예보와 동행 컨디션 점수를 확인하세요. 거동 수준을 알면 mobility 파라미터로 전달(휠체어면 wheelchair).
+- 점수 계약: 외출 컨디션을 말할 때는 도구가 반환한 score와 verdict를 반드시 "NN점 · 등급" 형태로 인용. 카드에 뜨는 숫자와 본문 숫자가 달라선 안 됩니다.
+- 예: "그날 동행 컨디션은 **75점 · 좋음**이에요. 다만 미세먼지가 나쁨이라 KF94 마스크 챙겨 동행할게요."
+- reschedule_advised가 true면 무리하지 말고 인접 날짜 변경을 먼저 제안.
+- 날씨·대기질 출처는 '케이웨더'로만 표기. 전문용어(PM2.5·UV지수·강수확률NN%) 대신 일상어(미세먼지 나쁨·햇빛 강함·비 소식) 우선.
+
+[도구 강제 — 수치는 도구만 (절대 규칙)]
+- 요금·매니저·날씨·점수 수치는 반드시 estimate_quote/check_slots/outing_condition/create_booking 결과만 인용. 도구를 부르지 않은 상태에서 금액·기온·미세먼지·점수 언급 금지. 모르면 "확인해 볼게요" 하고 도구 호출.
+- "기술적 제약" / "데이터 조회 불가" / "시스템 오류" 같은 문구 절대 사용 금지. 도구가 실패 정보를 주면 그 안의 대안(제휴 지역 등)으로 자연스럽게 재제안.
+- check_slots가 matched_hospital=null을 주면: 사과 1문장 + partner_districts 중 가까운 지역 매니저로 안내 가능함을 제안.
+
+[버튼·UI 텍스트 출력 금지]
+[토스로 선결제] [예약 확정하기] [자세히 보기] 같은 버튼 문구를 본문에 쓰지 마세요. 결제 버튼·카드는 화면이 자동으로 렌더링합니다. 본문은 대화만.
+
+[의료 질문 4단 공식]
+증상·질병 질문을 받으면: (1) 공감 1문장 → (2) 해당 진료과 안내(진단 아님을 명시) → (3) "동행 매니저가 진료 때 여쭤볼 수 있게 메모해 둘게요"로 서비스 전환 → (4) 응급 징후(가슴 통증 30분+, 한쪽 마비, 발음 어눌)면 즉시 119 안내. 진단·약물·용량 언급은 어떤 경우에도 금지.
+보호자가 간병 소진·우울("지쳤어요", "너무 힘들어요")을 표현하면: 공감 먼저 + 정신건강위기상담 1577-0199를 부드럽게 1줄 안내.
+
+[대화 전진 규칙]
+매 응답 끝에 다음 단계로 나아가는 질문을 정확히 1개. (문진 중: "진료 예약 시간이 몇 시인가요?" / 견적 후: "이대로 가능한 매니저님을 찾아볼까요?" / 슬롯 후: "이분으로 예약할까요?") 예약 완료 후에는 질문 대신 안심 마무리.
+좋은 예: "오래 서 계시기 힘드시면 외래 동행으로 잡을게요. 진료가 몇 시부터인가요?"
+나쁜 예: "추가로 궁금하신 점이 있으시면 말씀해 주세요." (전진 없음 — 금지)
 
 [대화 원칙]
 - 따뜻하고 신뢰감 있게, 그러나 간결하게. 채팅 버블 기준 3~5문장.
@@ -96,10 +169,21 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { messages } = req.body || {};
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    const t0 = Date.now();
+    const { messages: rawMessages } = req.body || {};
+    if (!rawMessages || !Array.isArray(rawMessages) || rawMessages.length === 0) {
       return res.status(400).json({ error: "messages 필수" });
     }
+    // 입력 새니타이즈 — wellbian anthropic-stream.js 3종: 최근 N턴 + content truncate (max_tokens은 서버 고정)
+    const messages = rawMessages.slice(-20)
+      .map((m) => ({
+        ...m,
+        content: typeof m.content === "string" ? m.content.slice(0, 8000) : m.content,
+      }))
+      // 빈 assistant 메시지(도구 라운드 소진 등) 제거 — 아래 검증에서 400 나는 것 방지
+      .filter((m) => !(m.role === "assistant" && (m.content == null || m.content === "")));
+    // slice(-20) 홀짝 어긋남 방지 — 첫 메시지는 반드시 user (아니면 API 400)
+    while (messages.length && messages[0].role !== "user") messages.shift();
     const totalLen = messages.reduce((s, m) => s + (m.content?.length || 0), 0);
     if (totalLen > 40000) return res.status(413).json({ error: "대화가 너무 깁니다" });
 
@@ -108,9 +192,17 @@ export default async function handler(req, res) {
       if (m.role !== "user" && m.role !== "assistant") return res.status(400).json({ error: "role은 user 또는 assistant" });
     }
 
+    // 복잡도 라우팅 — 인사·짧은 잡담만 simple, 예약 신호 있으면 무조건 complex
+    const lastUserMsg = messages.filter((m) => m.role === "user").pop()?.content || "";
+    const complexity = classifyCareComplexity(lastUserMsg);
+    const model = MODELS[complexity];
+
+    // 케어 도메인 규칙 동적 주입 — 정적 캐시 prefix 뒤 별도 블록 (캐시 불변)
+    const careRules = pickCareRules(lastUserMsg);
     const systemBlocks = [
       { type: "text", text: STATIC_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
       { type: "text", text: buildDynamicContext() },
+      ...careRules.map((text) => ({ type: "text", text })),
     ];
 
     let currentMessages = [...messages];
@@ -120,13 +212,8 @@ export default async function handler(req, res) {
     const totalUsage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
 
     while (rounds < MAX_TOOL_ROUNDS) {
-      response = await anthropic.messages.create({
-        model: "claude-opus-4-8",
-        max_tokens: 1400,
-        system: systemBlocks,
-        tools: CARE_TOOL_SCHEMAS,
-        messages: currentMessages,
-      });
+      response = await anthropic.messages.create(buildModelParams(model, systemBlocks, currentMessages));
+      console.log(`[care-chat] round ${rounds} · ${model} · elapsed ${Date.now() - t0}ms`);
 
       if (response.usage) {
         totalUsage.input_tokens += response.usage.input_tokens || 0;
@@ -162,11 +249,21 @@ export default async function handler(req, res) {
     const reply = (response?.content || [])
       .filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
 
+    // 캐시 검증 루틴 — 반복 요청인데 cache_read=0이면 정적 블록 오염 의심 (CLAUDE.md 규약의 코드화)
+    if (messages.length > 2 && totalUsage.cache_read_input_tokens === 0) {
+      console.warn("[care-chat] 반복 요청 캐시 MISS — 정적 블록 오염 의심");
+    }
+
     return res.status(200).json({
       content: reply,
-      events,               // [{type:'quote'|'slots'|'booking', ...}]
+      events,               // [{type:'quote'|'weather'|'slots'|'booking', ...}]
       usage: totalUsage,
       stop_reason: response?.stop_reason,
+      model_used: model,
+      complexity,
+      rounds,
+      rules_injected: careRules.length,
+      elapsed_ms: Date.now() - t0,
     });
   } catch (err) {
     console.error("[/api/care-chat] Error:", err.status, err.message);
