@@ -315,7 +315,7 @@ function WeatherCard({ w }) {
             <div style={{ fontSize: 10, color: C.faint }}>지표·판정은 컨디션이 더 나쁜 <b>{w.worst_leg}</b> 기준입니다</div>
           </div>
         )}
-        <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+        <div className="wx-metrics" style={{ display: "flex", gap: 10, marginBottom: 10 }}>
           <WxMetric icon="thermometer" label="기온" value={`${w.temp}℃ ${w.sky}`} />
           <WxMetric icon="wind" label="미세먼지" value={w.pm_grade} tone={/나쁨/.test(w.pm_grade) ? "#B23A28" : C.ink} />
           <WxMetric icon="sun" label="자외선" value={w.uv_grade} tone={/높음|위험/.test(w.uv_grade) ? "#8A6216" : C.ink} />
@@ -432,7 +432,7 @@ function WxDashboard({ o }) {
           {typeof o.score === "number" ? `${o.score}점 · ${o.verdict || o.grade}` : `외출 ${o.grade}`}
         </span>
       </div>
-      <div style={{ display: "flex", gap: 12 }}>
+      <div className="wx-metrics" style={{ display: "flex", gap: 12 }}>
         {wxIndices(o).map((m, i) => <MiniMeter key={i} m={m} />)}
       </div>
     </div>
@@ -541,10 +541,79 @@ function Kpi({ label, value, suffix, sub, accent }) {
   );
 }
 
+/* ─── 대화 유형 케이스 버튼 (wellbian QuickCard → sendMessage 패턴) ───
+ * 클릭 시 프리셋 문장을 그대로 전송 — 라이브 모드는 Claude+CARE_RULES가,
+ * 데모 모드는 아래 키워드 라우터가 각각 대응. */
+const CASE_PRESETS = [
+  { label: "외래 동행",   text: "어머니가 다음주 화요일 서울대병원 외래 진료가 있어요. 동행 예약할 수 있을까요?" },
+  { label: "휠체어·차량", text: "아버지가 휠체어를 타세요. 다음주 금요일 삼성서울병원까지 차량으로 모셔야 해요." },
+  { label: "정기 투석",   text: "어머니가 매주 화·목 투석을 받으세요. 정기 동행은 어떻게 하나요?" },
+  { label: "치매 케어",   text: "아버지가 치매 초기세요. 낯선 사람을 불안해하시는데 병원 동행 가능할까요?" },
+  { label: "재택돌봄",    text: "퇴원한 어머니 재택돌봄이 필요해요. 하루 4시간 정도요." },
+  { label: "요금 문의",   text: "병원동행 요금이 어떻게 되나요?" },
+  { label: "의료 상담?",  text: "어머니가 요즘 어지럽다는데 무슨 약을 드려야 할까요?" },
+];
+
 /* ============================================================
  * 데모 스크립트 (API 폴백) — 실 API 실패 시 동일 이벤트로 완주
+ * 케이스 버튼 대응: 키워드 라우터 우선, 미매칭 시 턴 기반 기본 시나리오
  * ============================================================ */
-function mockReply(userTurn) {
+function mockCaseReply(text = "") {
+  // 의료질문 — 4단 공식 가드레일 시연 (진단·약물 금지)
+  if (/어지럽|무슨 약|약을 드|약 추천/.test(text)) {
+    return {
+      content: "걱정 많으시겠어요. 다만 **약 선택은 진단 영역**이라 제가 안내드릴 수는 없어요.\n어지럼증이 반복되면 가까운 **신경과나 이비인후과** 진료를 먼저 받아보시는 게 좋아요. 동행 예약을 하시면 **매니저가 진료 때 여쭤볼 수 있게 증상 메모**를 남겨둘게요.\n만약 한쪽 팔다리에 힘이 빠지거나 발음이 어눌해지는 증상이 함께 있다면 지체 없이 **119**에 연락하셔야 해요.\n진료 동행 예약을 도와드릴까요?",
+      events: [],
+    };
+  }
+  // 휠체어 + 차량
+  if (/휠체어/.test(text) && /차량|모셔|이동/.test(text)) {
+    const q = executeCareTool("estimate_quote", { service_type: "hospital_vehicle", hours: 4 });
+    const wx = executeCareTool("outing_condition", { date: "다음주 금요일", location: "삼성서울병원", mobility: "wheelchair" });
+    const s = executeCareTool("check_slots", { date: "다음주 금요일", hospital: "삼성서울병원", service_type: "hospital_vehicle" });
+    const top = s.available[0];
+    return {
+      content: `휠체어 이동이시면 **병원동행+차량**으로 잡는 게 좋아요. 휠체어 승하차까지 매니저가 함께합니다. 왕복 이동·대기 포함 **4시간** 기준 견적이에요.\n그날 동행 컨디션은 **${wx.score}점 · ${wx.verdict}**이에요. ${wx.comment}.\n차량 보유 매니저 중 **${top.name} 매니저**(⭐${top.rating} · ${top.specialty})가 배정 가능해요. 엘리베이터 없는 층 이동이 있을까요?`,
+      events: [q._event, wx._event, s._event],
+    };
+  }
+  // 정기 투석·항암
+  if (/투석|항암/.test(text)) {
+    const q = executeCareTool("estimate_quote", { service_type: "dialysis", hours: 3 });
+    return {
+      content: `주 2~3회 반복이시면 **정기 예약**으로 잡는 게 좋아요. **같은 매니저가 고정 배정**되어 어머님이 익숙해지시고, 반복 예약 할인도 적용됩니다.\n투석 후에는 어지럼이 흔해서 **귀가 시 부축까지** 기본 포함이에요. 대기 포함 **3시간** 기준 견적입니다.\n투석·항암 정기동행 전문 **이경숙 매니저**(⭐5.0)가 대표적이에요. 어느 병원에서 받으세요?`,
+      events: [q._event],
+    };
+  }
+  // 치매·인지
+  if (/치매|인지/.test(text)) {
+    return {
+      content: `치매 어르신은 **낯선 환경이 불안을 키우기 때문에**, 저희는 **같은 매니저 지정 예약**을 권해드려요. 매번 같은 분이 오시니 아버님도 금방 익숙해지세요.\n치매·인지 케어 전문 **박영희 매니저**(⭐4.8 · 187건)가 대표적이에요. 예약 시 아버님이 좋아하시는 **호칭이나 화제 1가지**를 알려주시면 매니저에게 미리 전달해 드립니다.\n어느 병원, 언제 진료인가요?`,
+      events: [],
+    };
+  }
+  // 재택돌봄
+  if (/재택|퇴원.*돌봄|집에서/.test(text)) {
+    const q = executeCareTool("estimate_quote", { service_type: "home_care", hours: 4 });
+    return {
+      content: `퇴원 직후엔 **재택돌봄**으로 식사·복약·거동을 챙겨드릴 수 있어요. 재택은 **최소 3시간**부터고, 요청하신 **4시간** 기준 견적입니다.\n식사 준비·복약 확인·가벼운 거동 보조·말벗까지 포함돼요. 어느 지역이고, 언제부터 시작할까요?`,
+      events: [q._event],
+    };
+  }
+  // 요금 문의 (일반)
+  if (/요금|얼마|비용|가격/.test(text) && !/병원.*예약|예약할/.test(text)) {
+    const q = executeCareTool("estimate_quote", { service_type: "hospital", hours: 2 });
+    return {
+      content: `투명하게 안내드릴게요.\n· **병원동행** 시간당 40,000원 (기본 2시간)\n· **병원동행+차량** 시간당 50,000원 — 휠체어·거동불편\n· **재택돌봄** 시간당 35,000원 (최소 3시간)\n· **정기 투석·항암 동행** 시간당 42,000원 (대기 포함 3시간~)\n주말·공휴일 15%, 야간(20시~) 20% 할증이 있고, 아래는 기본 2시간 예시 견적이에요. 제공기록지와 배상책임보험은 모두 포함입니다.\n어떤 서비스가 필요하세요?`,
+      events: [q._event],
+    };
+  }
+  return null;
+}
+
+function mockReply(userTurn, text = "") {
+  const byCase = mockCaseReply(text);
+  if (byCase) return byCase;
   if (userTurn <= 1) {
     return { content: "네, 어머니 병원동행 도와드릴게요. 두 가지만 여쭤볼게요.\n혼자 걸으실 수 있나요, 아니면 **휠체어**가 필요하실까요? 그리고 **진료 시작 시간**이 언제쯤인가요?", events: [] };
   }
@@ -724,7 +793,7 @@ export default function DemoPage() {
       } catch (_) { setMode("demo"); }
     }
     if (!reply) {
-      reply = mockReply(turn);
+      reply = mockReply(turn, clean);
       setLastMeta({ mode: "demo(폴백)", model_used: "—", rounds: 0, usage: null, elapsed_ms: 0, events: (reply.events || []).length });
     }
 
@@ -845,10 +914,17 @@ export default function DemoPage() {
              챗봇은 고정 높이 + 내부 스크롤, 콘솔은 자연 흐름 — 잘림 없이 끝까지 볼 수 있음 */
           @media (max-width: 920px){
             .demo-root{ height:auto !important; min-height:100dvh; overflow:visible !important }
-            .demo-body{ flex-direction:column }
+            .demo-body{ flex-direction:column; gap:12px; padding:10px }
             .pane-chat{ flex:none !important; width:100%; height:84dvh; min-height:460px }
             .pane-console{ flex:none !important; width:100%; height:auto }
             .console-scroll{ flex:none !important; overflow:visible !important }
+            .hdr-sub{ display:none }                        /* 헤더 부제 숨김 */
+            .kpi-row > *{ flex:1 1 44% !important }         /* KPI 2×2 */
+            .wx-metrics{ flex-wrap:wrap; row-gap:10px }     /* 날씨지표 2×2 */
+            .wx-metrics > *{ flex:1 1 44% !important }
+            .chat-input{ font-size:16px !important }        /* iOS 포커스 줌 방지 */
+            .brief-row{ flex-wrap:wrap; row-gap:2px }
+            .orb{ filter:blur(48px); opacity:.4 }           /* 모바일 GPU 부담 완화 */
           }
         `}</style>
       </Head>
@@ -866,7 +942,7 @@ export default function DemoPage() {
               <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 800, fontSize: 15, whiteSpace: "nowrap", letterSpacing: "-0.01em" }}>
                 시니어케어매니저 <Dot color="#EF4444" live />
               </div>
-              <div style={{ fontSize: 11, opacity: 0.72, whiteSpace: "nowrap" }}>AI 예약 → 배차 콘솔 실시간 연결 시연</div>
+              <div className="hdr-sub" style={{ fontSize: 11, opacity: 0.72, whiteSpace: "nowrap" }}>AI 예약 → 배차 콘솔 실시간 연결 시연</div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
@@ -890,11 +966,25 @@ export default function DemoPage() {
               <div style={{ width: 36, height: 36, borderRadius: 12, background: `linear-gradient(160deg,${C.evergreen},#1f342b)`, color: "#fff", display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)" }}>
                 <Icon name="sparkle" size={18} color="#8fe3d4" sw={1.4} />
               </div>
-              <div style={{ flex: 1 }}>
+              <div style={{ flexShrink: 0 }}>
                 <div style={{ fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 6 }}>돌봄이 AI</div>
                 <div style={{ fontSize: 11, color: C.green, display: "flex", alignItems: "center", gap: 5 }}><Dot color={C.green} live /> 카카오 상담톡 · 24시간 실시간 응대</div>
               </div>
-              <Icon name="message" size={18} color={C.faint} />
+              {/* 대화 유형 케이스 버튼 — 가로 스크롤 칩 (wellbian QuickCard 계승) */}
+              <div className="case-chips" style={{ flex: 1, minWidth: 0, display: "flex", gap: 6, overflowX: "auto", padding: "2px 0", scrollbarWidth: "thin" }}>
+                {CASE_PRESETS.map((c) => (
+                  <button key={c.label} disabled={sending || autoOn}
+                    onClick={() => { if (!sending && !autoOn) runTurn(c.text); }}
+                    style={{
+                      flexShrink: 0, fontSize: 11, fontWeight: 600, color: C.ink2,
+                      background: "rgba(255,255,255,0.65)", border: `1px solid ${C.line}`,
+                      borderRadius: 999, padding: "5px 11px", whiteSpace: "nowrap",
+                      opacity: (sending || autoOn) ? 0.5 : 1,
+                    }}>
+                    {c.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* 컨디션·날씨지수 미니 대시보드 — 챗봇이 컨디션 조회하면 그 날짜 기준으로 실시간 전환 */}
@@ -940,7 +1030,7 @@ export default function DemoPage() {
                 value={input} disabled={autoOn}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing) onSend(); }}
-                placeholder={autoOn ? "자동 시연 진행 중…" : "예: 아버지 다음주 항암 동행 예약하고 싶어요"}
+                className="chat-input" placeholder={autoOn ? "자동 시연 진행 중…" : "예: 아버지 다음주 항암 동행 예약하고 싶어요"}
                 style={{ flex: 1, border: `1px solid ${C.line}`, borderRadius: 13, padding: "12px 14px", fontSize: 13.5, outline: "none", background: autoOn ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.95)", color: C.ink }}
               />
               <button className="btn-primary" onClick={onSend} disabled={sending || autoOn || !input.trim()} style={{ borderRadius: 13, padding: "0 16px", display: "grid", placeItems: "center" }} aria-label="전송">
@@ -972,7 +1062,7 @@ export default function DemoPage() {
 
             <div className="console-scroll" style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 13 }}>
               {/* KPI */}
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <div className="kpi-row" style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 <Kpi label="오늘 GMV" value={manwon(kpi.gmv)} suffix="만원" accent={C.tealDk} sub="실시간" />
                 <Kpi label="예약 건수" value={kpi.bookings} suffix="건" />
                 <Kpi label="매니저 가동률" value={kpi.utilization} suffix="%" />
@@ -993,7 +1083,7 @@ export default function DemoPage() {
                       <span style={{ fontSize: 11, fontWeight: 700, color: g.fg, background: g.bg, borderRadius: 7, padding: "3px 9px" }}>{o.grade}</span>
                     </div>
                     <div style={{ padding: "11px 15px" }}>
-                      <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+                      <div className="wx-metrics" style={{ display: "flex", gap: 10, marginBottom: 10 }}>
                         <WxMetric icon="thermometer" label="기온" value={`${o.temp}℃ ${o.sky}`} />
                         <WxMetric icon="wind" label="미세먼지" value={o.pm_grade} />
                         <WxMetric icon="sun" label="자외선" value={o.uv_grade} tone="#8A6216" />
@@ -1016,7 +1106,7 @@ export default function DemoPage() {
                   </div>
                   <div style={{ padding: "6px 15px 10px" }}>
                     {briefing.map(({ b, o }) => (
-                      <div key={b.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderBottom: `1px solid ${C.lineSoft}`, fontSize: 12 }}>
+                      <div key={b.id} className="brief-row" style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderBottom: `1px solid ${C.lineSoft}`, fontSize: 12 }}>
                         <span style={{ fontVariantNumeric: "tabular-nums", color: C.faint, flexShrink: 0, width: 38 }}>{hourLabel(b.start)}</span>
                         <span style={{ fontWeight: 600, color: C.ink, flexShrink: 0 }}>{b.hospital}</span>
                         <span style={{ color: C.sub, flexShrink: 0 }}>{b.recipient}</span>
