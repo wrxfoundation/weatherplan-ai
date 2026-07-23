@@ -468,6 +468,151 @@ function WeekOuting({ week }) {
   );
 }
 
+/* ─── 콘솔: 실시간 관제 맵 — dcmap(명당 AI) HUD 헤리티지 이식 ───
+ * 딥네이비+시안 HUD, 아이소메트릭 빌딩 마커, 상태색(수행 green/이동 orange/대기 slate),
+ * 접힘 범례, 근사좌표 점선 링(데이터 정직성 — GPS 연동 전 위치는 근사임을 표시).
+ * 타일·외부 의존성 없는 자립형 SVG — 오프라인에서도 시연 완주. */
+const HUD = { bg: "#081527", line: "#1b3050", accent: "#35d5ee", green: "#45D483", orange: "#F59A3C", slate: "#64748b", text: "#c9d6e8", dim: "#6b7f99" };
+const MAP_HOSPITALS = {
+  "서울대병원": [95, 38], "세브란스": [70, 42], "신촌세브란스": [70, 42], "강남세브란스": [120, 78],
+  "경희대병원": [135, 25], "고대안암병원": [120, 30], "서울아산병원": [150, 75],
+  "삼성서울병원": [128, 82], "서울성모병원": [105, 80], "보라매병원": [78, 82],
+};
+const MAP_HOMES = { mgr_01: [63, 100], mgr_02: [86, 22], mgr_03: [132, 92], mgr_04: [48, 55], mgr_05: [140, 12] };
+const HAN_RIVER = "M0,62 C30,56 50,60 80,66 C110,72 130,58 160,52 C175,49 190,54 200,58";
+/* dcmap ISO_SVG 원형 이식 — 아이소메트릭 빌딩 (색은 상태별 fill로) */
+function IsoBuilding({ x, y, color, size = 11, dim }) {
+  const s = size / 24;
+  return (
+    <g transform={`translate(${x - size / 2},${y - size * 0.58}) scale(${s})`} opacity={dim ? 0.45 : 1}>
+      <polygon points="12,2 22,8 12,14 2,8" fill={color} />
+      <polygon points="2,8 12,14 12,24 2,18" fill={color} opacity="0.55" />
+      <polygon points="12,14 22,8 22,18 12,24" fill={color} opacity="0.75" />
+    </g>
+  );
+}
+function LiveOpsMap({ today, highlightId }) {
+  const [tick, setTick] = useState(0);
+  const [filter, setFilter] = useState("all"); // all|active|moving|idle
+  const [legendOpen, setLegendOpen] = useState(false);
+  const [sel, setSel] = useState(null);
+  const reduced = useRef(false);
+  useEffect(() => {
+    try { reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (_) {}
+    const iv = setInterval(() => setTick((t) => t + 1), 140);
+    return () => clearInterval(iv);
+  }, []);
+
+  // 매니저별 현재 임무 → 위치·상태 계산 (결정론적)
+  const phase = reduced.current ? 0.5 : (Math.sin(tick / 22) + 1) / 2; // 0..1 왕복
+  const managers = SEED_MANAGERS.map((m) => {
+    const jobs = today.filter((b) => b.managerId === m.id);
+    const active = jobs.find((b) => b.status === "in_service");
+    const moving = jobs.find((b) => b.status === "dispatched" || b.status === "confirmed");
+    const home = MAP_HOMES[m.id] || [100, 60];
+    let pos = home, status = "idle", job = null, route = null;
+    if (active && MAP_HOSPITALS[active.hospital]) {
+      pos = MAP_HOSPITALS[active.hospital]; status = "active"; job = active;
+    } else if (moving && MAP_HOSPITALS[moving.hospital]) {
+      const dest = MAP_HOSPITALS[moving.hospital];
+      const t01 = 0.3 + phase * 0.4; // 이동 중 왕복 근사 (GPS 연동 전 데모 연출)
+      pos = [home[0] + (dest[0] - home[0]) * t01, home[1] + (dest[1] - home[1]) * t01];
+      status = "moving"; job = moving; route = { from: home, to: dest, isNew: moving.id === highlightId };
+    }
+    return { m, pos, status, job, route };
+  });
+  const shown = managers.filter((x) => filter === "all" || x.status === (filter === "active" ? "active" : filter === "moving" ? "moving" : "idle"));
+  const hospitalsActive = new Set(today.filter((b) => b.status === "in_service").map((b) => b.hospital));
+  const hospitalsQueued = new Set(today.map((b) => b.hospital));
+  const stColor = (s) => s === "active" ? HUD.green : s === "moving" ? HUD.orange : HUD.slate;
+  const stLabel = (s) => s === "active" ? "수행중" : s === "moving" ? "이동중" : "대기";
+
+  return (
+    <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+      <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+          <Icon name="pin" size={14} color={C.teal} /> 실시간 관제 맵 <span style={{ fontWeight: 400, color: C.faint }}>· 서울 · GPS 연동 대기(근사 위치)</span>
+        </span>
+        <span style={{ display: "flex", gap: 5 }}>
+          {[["all", "전체"], ["active", "수행중"], ["moving", "이동중"], ["idle", "대기"]].map(([k, l]) => (
+            <button key={k} onClick={() => setFilter(k)} style={{ fontSize: 10.5, fontWeight: 600, borderRadius: 999, padding: "3px 9px", border: `1px solid ${filter === k ? "rgba(31,138,122,0.5)" : C.line}`, background: filter === k ? "rgba(31,138,122,0.12)" : "rgba(255,255,255,0.5)", color: filter === k ? C.tealDk : C.sub }}>{l}</button>
+          ))}
+        </span>
+      </div>
+      <div style={{ position: "relative", background: HUD.bg }}>
+        <svg viewBox="0 0 200 118" style={{ display: "block", width: "100%", height: "auto" }}>
+          {/* 엔지니어링 그리드 (dcmap body::before 문법) */}
+          {Array.from({ length: 9 }, (_, i) => <line key={`v${i}`} x1={(i + 1) * 20} y1="0" x2={(i + 1) * 20} y2="118" stroke={HUD.line} strokeWidth="0.3" opacity="0.5" />)}
+          {Array.from({ length: 5 }, (_, i) => <line key={`h${i}`} x1="0" y1={(i + 1) * 20} x2="200" y2={(i + 1) * 20} stroke={HUD.line} strokeWidth="0.3" opacity="0.5" />)}
+          {/* 한강 */}
+          <path d={HAN_RIVER} fill="none" stroke="#123a5c" strokeWidth="4.5" strokeLinecap="round" opacity="0.9" />
+          <path d={HAN_RIVER} fill="none" stroke="#1d5d8f" strokeWidth="1.2" strokeLinecap="round" opacity="0.8" />
+          {/* 이동 경로 */}
+          {shown.filter((x) => x.route).map((x) => (
+            <g key={`r${x.m.id}`}>
+              <line x1={x.route.from[0]} y1={x.route.from[1]} x2={x.route.to[0]} y2={x.route.to[1]}
+                stroke={x.route.isNew ? HUD.accent : HUD.orange} strokeWidth={x.route.isNew ? 1.1 : 0.7}
+                strokeDasharray="3 2.2" opacity={x.route.isNew ? 0.95 : 0.55} />
+            </g>
+          ))}
+          {/* 병원 — 아이소메트릭 빌딩 (dcmap ISO 마커 이식) */}
+          {Object.entries(MAP_HOSPITALS).filter(([n]) => !["신촌세브란스", "강남세브란스", "서울성모병원"].includes(n)).map(([name, [hx, hy]]) => {
+            const col = hospitalsActive.has(name) ? HUD.green : hospitalsQueued.has(name) ? HUD.orange : HUD.slate;
+            return (
+              <g key={name} style={{ cursor: "pointer" }} onClick={() => setSel({ type: "hospital", name })}>
+                <IsoBuilding x={hx} y={hy} color={col} size={hospitalsQueued.has(name) ? 12 : 9} dim={!hospitalsQueued.has(name)} />
+                <text x={hx} y={hy + 9.5} textAnchor="middle" fontSize="4.6" fill={hospitalsQueued.has(name) ? HUD.text : HUD.dim} fontWeight="600">{name.replace("병원", "")}</text>
+              </g>
+            );
+          })}
+          {/* 매니저 — 근사 위치 점선 링 (데이터 정직성) */}
+          {shown.map((x) => (
+            <g key={x.m.id} style={{ cursor: "pointer" }} onClick={() => setSel({ type: "manager", ...x })}>
+              {x.route?.isNew && <circle cx={x.pos[0]} cy={x.pos[1]} r={7 + phase * 3} fill="none" stroke={HUD.accent} strokeWidth="0.6" opacity={0.8 - phase * 0.5} />}
+              <circle cx={x.pos[0]} cy={x.pos[1]} r="4.6" fill="none" stroke={stColor(x.status)} strokeWidth="0.7" strokeDasharray="1.6 1.2" opacity="0.85" />
+              <circle cx={x.pos[0]} cy={x.pos[1]} r="3.2" fill={HUD.bg} stroke={stColor(x.status)} strokeWidth="1" />
+              <text x={x.pos[0]} y={x.pos[1] + 1.7} textAnchor="middle" fontSize="4.4" fill={stColor(x.status)} fontWeight="700">{x.m.name[0]}</text>
+            </g>
+          ))}
+        </svg>
+        {/* 접힘 범례 알약 (dcmap Legend 문법) */}
+        <div style={{ position: "absolute", left: 10, bottom: 10 }}>
+          {legendOpen ? (
+            <div onClick={() => setLegendOpen(false)} style={{ background: "rgba(8,21,39,0.88)", border: `1px solid ${HUD.line}`, borderRadius: 10, padding: "8px 11px", fontSize: 10, color: HUD.text, cursor: "pointer", backdropFilter: "blur(8px)" }}>
+              {[[HUD.green, "수행중"], [HUD.orange, "이동중·예약"], [HUD.slate, "대기"], [HUD.accent, "신규 배차 경로"]].map(([c, l]) => (
+                <div key={l} style={{ display: "flex", alignItems: "center", gap: 6, padding: "1.5px 0" }}>
+                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: c }} /> {l}
+                </div>
+              ))}
+              <div style={{ marginTop: 4, color: HUD.dim, fontSize: 9 }}>점선 링 = 근사 위치 (GPS 연동 전)</div>
+            </div>
+          ) : (
+            <button onClick={() => setLegendOpen(true)} style={{ background: "rgba(8,21,39,0.85)", border: `1px solid ${HUD.line}`, borderRadius: 999, padding: "4px 11px", fontSize: 10, color: HUD.text, cursor: "pointer" }}>범례</button>
+          )}
+        </div>
+        {/* 선택 상세 스트립 (dcmap SitePanel 축소판) */}
+        {sel && (
+          <div style={{ position: "absolute", right: 10, bottom: 10, maxWidth: "60%", background: "rgba(8,21,39,0.9)", border: `1px solid ${HUD.accent}44`, borderRadius: 10, padding: "8px 12px", fontSize: 11, color: HUD.text, backdropFilter: "blur(8px)" }}>
+            {sel.type === "manager" ? (
+              <>
+                <b style={{ color: HUD.accent }}>{sel.m.name} 매니저</b> · {stLabel(sel.status)}
+                {sel.job && <div style={{ color: HUD.dim, marginTop: 2 }}>{hourLabel(sel.job.start)} {sel.job.hospital} · {sel.job.recipient}</div>}
+                {!sel.job && <div style={{ color: HUD.dim, marginTop: 2 }}>{sel.m.areas[0]} 대기 · 오늘 {today.filter((b) => b.managerId === sel.m.id).length}건</div>}
+              </>
+            ) : (
+              <>
+                <b style={{ color: HUD.accent }}>{sel.name}</b>
+                <div style={{ color: HUD.dim, marginTop: 2 }}>오늘 예약 {today.filter((b) => b.hospital === sel.name).length}건</div>
+              </>
+            )}
+            <button onClick={() => setSel(null)} style={{ position: "absolute", top: 3, right: 6, background: "none", border: "none", color: HUD.dim, fontSize: 12, cursor: "pointer" }}>×</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ─── 콘솔: 배차 그리드 (매니저 × 시간) ─── */
 function DispatchGrid({ today, highlightId }) {
   const hours = Array.from({ length: GRID_SPAN + 1 }, (_, i) => GRID_START + i);
@@ -1086,6 +1231,9 @@ export default function DemoPage() {
                 <Kpi label="매니저 가동률" value={kpi.utilization} suffix="%" />
                 <Kpi label="노쇼율" value={`${kpi.noShow}%`} accent={C.green} />
               </div>
+
+              {/* 실시간 관제 맵 — dcmap 헤리티지 */}
+              <LiveOpsMap today={today} highlightId={highlightId} />
 
               {/* 오늘 외출 컨디션 (케이웨더) */}
               {(() => {
