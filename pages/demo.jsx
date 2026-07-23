@@ -91,6 +91,7 @@ const STATUS = {
   pending:    { label: "배차대기", fg: "#8A6216", tint: "rgba(188,130,54,0.16)", dot: C.amber },
   dispatched: { label: "배차완료", fg: "#2C43B8", tint: "rgba(62,99,255,0.13)", dot: C.blue },
   in_service: { label: "수행중",   fg: "#1E7A44", tint: "rgba(46,158,99,0.15)", dot: C.green },
+  done:       { label: "완료",     fg: "#5C6B66", tint: "rgba(22,33,28,0.08)",  dot: "#94a3b8" },
 };
 
 /* ─── **볼드** 지원 초경량 렌더러 ─── */
@@ -613,6 +614,89 @@ function LiveOpsMap({ today, highlightId }) {
   );
 }
 
+/* ─── 매니저 앱 (P5 목업) — GPS 체크인·완료 리포트 = '가정 내 센서' ───
+ * 실GPS·PWA 연동은 후속. 여기서의 액션이 콘솔 그리드·관제맵·티커에
+ * 실시간 반영 — 수요(챗봇)→운영(콘솔)→공급(매니저앱) 삼면 연결 시연. */
+function ManagerAppDrawer({ open, onClose, today, onCheckin, onComplete }) {
+  const [mgrId, setMgrId] = useState(null);
+  const [reportFor, setReportFor] = useState(null);
+  const [report, setReport] = useState({ fall: "none", med: "ok", mood: "good" });
+  if (!open) return null;
+  const withJobs = SEED_MANAGERS.filter((m) => today.some((b) => b.managerId === m.id));
+  const cur = SEED_MANAGERS.find((m) => m.id === (mgrId || withJobs[0]?.id)) || SEED_MANAGERS[1];
+  const jobs = today.filter((b) => b.managerId === cur.id).sort((a, b) => a.start - b.start);
+  const seg = (opts, val, set) => (
+    <div style={{ display: "flex", gap: 4 }}>
+      {opts.map(([k, l]) => (
+        <button key={k} onClick={() => set(k)} style={{ flex: 1, fontSize: 10.5, fontWeight: 600, borderRadius: 8, padding: "5px 0", border: `1px solid ${val === k ? "rgba(53,213,238,0.6)" : "rgba(255,255,255,0.14)"}`, background: val === k ? "rgba(53,213,238,0.16)" : "rgba(255,255,255,0.05)", color: val === k ? "#8fe3d4" : "#c9d6e8" }}>{l}</button>
+      ))}
+    </div>
+  );
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(8,15,25,0.45)", backdropFilter: "blur(3px)", display: "flex", justifyContent: "flex-end" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: 375, maxWidth: "94vw", height: "100%", background: "linear-gradient(180deg,#0e1f19,#0a1712)", borderLeft: "1px solid rgba(53,213,238,0.25)", display: "flex", flexDirection: "column", color: "#DCE8E3", boxShadow: "-18px 0 50px rgba(2,8,18,0.6)" }}>
+        <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 9 }}>
+          <div style={{ width: 34, height: 34, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, display: "grid", placeItems: "center", fontWeight: 700, color: "#fff" }}>{cur.name[0]}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>매니저 앱 <span style={{ fontSize: 10, color: "#8fe3d4", fontWeight: 600 }}>PWA · GPS 연동 대기(더미)</span></div>
+            <div style={{ fontSize: 11, color: "#7f958c" }}>{cur.name} 매니저 · ⭐{cur.rating} · 오늘 {jobs.length}건</div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#7f958c", fontSize: 18, cursor: "pointer" }}>×</button>
+        </div>
+        {/* 매니저 선택 탭 */}
+        <div style={{ display: "flex", gap: 5, padding: "9px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)", overflowX: "auto" }}>
+          {SEED_MANAGERS.map((m) => (
+            <button key={m.id} onClick={() => setMgrId(m.id)} style={{ flexShrink: 0, fontSize: 11, fontWeight: 600, borderRadius: 999, padding: "4px 10px", border: `1px solid ${cur.id === m.id ? "rgba(53,213,238,0.55)" : "rgba(255,255,255,0.12)"}`, background: cur.id === m.id ? "rgba(53,213,238,0.14)" : "transparent", color: cur.id === m.id ? "#8fe3d4" : "#93a8a0" }}>
+              {m.name}{today.some((b) => b.managerId === m.id) ? ` ·${today.filter((b) => b.managerId === m.id).length}` : ""}
+            </button>
+          ))}
+        </div>
+        <div style={{ flex: 1, overflowY: "auto", padding: 14, display: "flex", flexDirection: "column", gap: 10 }}>
+          {jobs.length === 0 && <div style={{ fontSize: 12, color: "#7f958c", textAlign: "center", padding: "30px 0" }}>오늘 배정된 일정이 없습니다</div>}
+          {jobs.map((b) => {
+            const st = STATUS[b.status] || STATUS.confirmed;
+            return (
+              <div key={b.id} style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, background: "rgba(255,255,255,0.04)", padding: "11px 13px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                  <b style={{ fontSize: 13.5 }}>{hourLabel(b.start)} {b.hospital}</b>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: st.fg === "#5C6B66" ? "#93a8a0" : "#0e1f19", background: st.dot, borderRadius: 6, padding: "2px 7px" }}>{st.label}</span>
+                </div>
+                <div style={{ fontSize: 11.5, color: "#93a8a0", marginBottom: 9 }}>{b.recipient} · {b.service} · {b.hours}시간</div>
+                {(b.status === "dispatched" || b.status === "confirmed" || b.status === "pending") && (
+                  <button onClick={() => onCheckin(b.id, cur.name)} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "none", background: "linear-gradient(180deg,#35d5ee,#1494c9)", color: "#04222b", cursor: "pointer" }}>
+                    GPS 출근 체크인
+                  </button>
+                )}
+                {b.status === "in_service" && reportFor !== b.id && (
+                  <button onClick={() => setReportFor(b.id)} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "1px solid rgba(69,212,131,0.5)", background: "rgba(69,212,131,0.12)", color: "#45D483", cursor: "pointer" }}>
+                    서비스 완료 · 리포트 작성
+                  </button>
+                )}
+                {b.status === "in_service" && reportFor === b.id && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 4 }}>
+                    <div style={{ fontSize: 10.5, color: "#7f958c" }}>완료 리포트 — 30초 체크 (가정 내 센서)</div>
+                    <div style={{ fontSize: 10.5, color: "#93a8a0" }}>낙상 위험</div>
+                    {seg([["none", "없음"], ["low", "낮음"], ["high", "높음"]], report.fall, (v) => setReport((r) => ({ ...r, fall: v })))}
+                    <div style={{ fontSize: 10.5, color: "#93a8a0" }}>복약 확인</div>
+                    {seg([["ok", "확인"], ["missed", "누락"], ["unknown", "모름"]], report.med, (v) => setReport((r) => ({ ...r, med: v })))}
+                    <div style={{ fontSize: 10.5, color: "#93a8a0" }}>어르신 기분</div>
+                    {seg([["good", "좋음"], ["flat", "보통"], ["low", "저조"]], report.mood, (v) => setReport((r) => ({ ...r, mood: v })))}
+                    <button onClick={() => { onComplete(b.id, cur.name, report); setReportFor(null); }} style={{ borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "none", background: "#45D483", color: "#06231a", cursor: "pointer", marginTop: 3 }}>
+                      리포트 제출 · 완료 처리
+                    </button>
+                  </div>
+                )}
+                {b.status === "done" && <div style={{ fontSize: 11, color: "#45D483" }}>✓ 완료 — 리포트 제출됨 · 제공기록지 자동 생성</div>}
+              </div>
+            );
+          })}
+          <div style={{ fontSize: 10, color: "#5d7169", textAlign: "center", marginTop: 4 }}>체크인·완료가 콘솔 배차 그리드·관제 맵·티커에 실시간 반영됩니다</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── 콘솔: 배차 그리드 (매니저 × 시간) ─── */
 function DispatchGrid({ today, highlightId }) {
   const hours = Array.from({ length: GRID_SPAN + 1 }, (_, i) => GRID_START + i);
@@ -900,6 +984,7 @@ export default function DemoPage() {
   const [dbState, setDbState] = useState("waiting");      // waiting | connected — dcmap '연동 대기' 정직 표기
   const [familyProfile, setFamilyProfile] = useState(null); // 진화 루프 — 프론트(localStorage) 프로필
   const [kakaoMode, setKakaoMode] = useState(false);        // 카카오 상담톡 스킨 (실채널 연동은 후속 — 프론트 더미)
+  const [managerAppOpen, setManagerAppOpen] = useState(false); // 매니저 앱(P5) 목업 드로어
   const familyProfileRef = useRef(null);
   const sessionIdRef = useRef(null);
   if (!sessionIdRef.current) sessionIdRef.current = genUuid();
@@ -1107,6 +1192,24 @@ export default function DemoPage() {
     if (!silent) setMode("live");
   }
 
+  // 매니저 앱 액션 → 콘솔·맵·티커 실시간 반영 (삼면 연결)
+  const handleCheckin = useCallback((id, mgrName) => {
+    setToday((prev) => prev.map((b) => (b.id === id ? { ...b, status: "in_service" } : b)));
+    pushTicker(`GPS 출근 체크인 — ${mgrName} 매니저 (${id})`, "teal");
+  }, [pushTicker]);
+  const handleComplete = useCallback((id, mgrName, report) => {
+    setToday((prev) => prev.map((b) => (b.id === id ? { ...b, status: "done" } : b)));
+    pushTicker(`완료 리포트 제출 — ${mgrName} 매니저 · 제공기록지 자동 생성 (${id})`, "green");
+    if (report.fall === "high") pushTicker(`낙상 위험 신호 감지 — 보호자·업체 알림 (${id})`, "amber");
+    // 가족 리포트 씨앗 — 우리 예약이면 기분 기록이 프로필 5토픽(mood)에 병합
+    const MOOD_LABEL = { good: "좋음", flat: "보통", low: "저조" };
+    setFamilyProfile((prev) => {
+      if (!prev?.last_booking || prev.last_booking.id !== id) return prev;
+      const merged = mergeCareProfile(prev, { topics: { mood: `최근 동행 시 기분 ${MOOD_LABEL[report.mood] || "보통"}` }, now: new Date().toISOString() });
+      saveProfileLS(merged); familyProfileRef.current = merged; return merged;
+    });
+  }, [pushTicker]);
+
   // 오늘 배차 브리핑 — 예약별 동행 컨디션·준비물 (전부 룰 엔진, LLM 0회)
   const briefing = useMemo(() =>
     today.map((b) => ({ b, o: executeCareTool("outing_condition", { date: "오늘", location: b.hospital }) })),
@@ -1220,6 +1323,9 @@ export default function DemoPage() {
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, padding: "6px 11px", borderRadius: 999, background: liveMode ? "rgba(46,158,99,0.2)" : "rgba(188,130,54,0.24)", border: `1px solid ${liveMode ? "rgba(46,158,99,0.55)" : "rgba(188,130,54,0.55)"}` }}>
               <Dot color={liveMode ? "#43d17f" : "#e0a44a"} /> {liveMode ? "AI 연결됨" : "데모 스크립트"}
             </span>
+            <button className="btn-ghost" onClick={() => setManagerAppOpen(true)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, borderRadius: 11, padding: "8px 12px" }}>
+              매니저 앱
+            </button>
             <button className="btn-ghost" onClick={() => setKakaoMode((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, borderRadius: 11, padding: "8px 12px", background: kakaoMode ? "#FEE500" : undefined, color: kakaoMode ? "#191919" : undefined, border: kakaoMode ? "1px solid #FEE500" : undefined }}>
               {kakaoMode ? "웹 스킨" : "카카오 스킨"}
             </button>
@@ -1464,6 +1570,34 @@ export default function DemoPage() {
                 </div>
               </div>
 
+              {/* 고객 CRM — 상담로그·프로필 기반 재예약 세그먼트 (운영 OS 확장, 더미) */}
+              <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+                <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+                  <Icon name="message" size={14} color={C.teal} /> 고객 CRM <span style={{ fontWeight: 400, color: C.faint }}>· 상담로그 기반 재예약 세그먼트</span>
+                </div>
+                <div style={{ padding: "4px 15px 10px" }}>
+                  {[
+                    ...(familyProfile?.last_booking ? [{
+                      name: `우리집(데모) — ${familyProfile.recipient || "어르신"}`,
+                      note: `${familyProfile.hospital} · ${familyProfile.visits}회 이용 · 단골 ${familyProfile.preferred_manager || "-"} 매니저${familyProfile.topics?.mood ? ` · ${familyProfile.topics.mood}` : ""}`,
+                      hot: true,
+                    }] : []),
+                    { name: "이O순 님 가족", note: "정기 투석 주 2회 · 이경숙 매니저 고정 · 다음 주기 예약 미생성", hot: true },
+                    { name: "정O남 님 가족", note: "항암 정기 · 2주 내 진료 예정 · 재예약률 견인 세그먼트", hot: false },
+                  ].map((r) => (
+                    <div key={r.name} className="brief-row" style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: `1px solid ${C.lineSoft}`, fontSize: 12 }}>
+                      <Dot color={r.hot ? C.amber : C.faint} />
+                      <b style={{ flexShrink: 0 }}>{r.name}</b>
+                      <span style={{ color: C.sub, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.note}</span>
+                      <button onClick={() => pushTicker(`재예약 제안 알림톡 발송 — ${r.name}`, "green")}
+                        style={{ flexShrink: 0, fontSize: 10.5, fontWeight: 700, borderRadius: 8, padding: "4px 9px", border: "1px solid rgba(31,138,122,0.4)", background: "rgba(31,138,122,0.08)", color: C.tealDk, cursor: "pointer" }}>
+                        재예약 제안
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* ?debug=1 — 아키텍처 상태 패널 (wellbian 디버그 모드 계승) */}
               {debugOn && (
                 <div className="glass-panel" style={{ borderRadius: 14, padding: "10px 14px", fontSize: 11, fontFamily: "ui-monospace, monospace" }}>
@@ -1493,6 +1627,10 @@ export default function DemoPage() {
             </div>
           </section>
         </div>
+
+        {/* 매니저 앱 드로어 (P5 목업) */}
+        <ManagerAppDrawer open={managerAppOpen} onClose={() => setManagerAppOpen(false)}
+          today={today} onCheckin={handleCheckin} onComplete={handleComplete} />
       </div>
     </>
   );
