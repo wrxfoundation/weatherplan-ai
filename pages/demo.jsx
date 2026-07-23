@@ -293,6 +293,82 @@ function WeatherCard({ w }) {
   );
 }
 
+/* ─── 날씨지수 톤/게이지 계산 ─── */
+const pmTone = (g = "") => /나쁨/.test(g) ? "#B23A28" : /보통/.test(g) ? C.tealDk : C.green;
+const uvTone = (g = "") => /위험/.test(g) ? "#B23A28" : /높음/.test(g) ? "#8A6216" : /보통/.test(g) ? C.tealDk : C.green;
+const gradeTone = (g) => (WX_GRADE[g] || WX_GRADE["보통"]).fg;
+const clamp = (v) => Math.max(4, Math.min(100, v));
+
+function wxIndices(o) {
+  const outScore = { "좋음": 88, "보통": 70, "주의": 46, "나쁨": 24 }[o.grade] ?? 60;
+  const pmBar = { "좋음": 22, "보통": 50, "나쁨": 80, "매우나쁨": 96 }[o.pm_grade] ?? 50;
+  const uvBar = { "낮음": 18, "보통": 42, "높음": 66, "매우높음": 86, "위험": 98 }[o.uv_grade] ?? 40;
+  return [
+    { key: "외출지수", val: String(outScore), tone: gradeTone(o.grade), bar: outScore },
+    { key: "미세먼지", val: o.pm_grade, tone: pmTone(o.pm_grade), bar: pmBar },
+    { key: "자외선", val: o.uv_grade, tone: uvTone(o.uv_grade), bar: uvBar },
+    { key: "체감기온", val: `${o.temp}℃`, tone: o.temp >= 31 ? "#8A6216" : o.temp <= 4 ? C.blue : C.ink, bar: clamp(((o.temp + 8) / 48) * 100) },
+  ];
+}
+function MiniMeter({ m }) {
+  return (
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: 10, color: C.faint, marginBottom: 2, whiteSpace: "nowrap" }}>{m.key}</div>
+      <div style={{ fontSize: 12.5, fontWeight: 700, color: m.tone, whiteSpace: "nowrap", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis" }}>{m.val}</div>
+      <div style={{ height: 4, borderRadius: 3, background: "rgba(22,33,28,0.09)", overflow: "hidden" }}>
+        <div style={{ width: `${m.bar}%`, height: "100%", background: m.tone, borderRadius: 3 }} />
+      </div>
+    </div>
+  );
+}
+
+/* ─── 챗봇 상단: 컨디션·날씨지수 미니 대시보드 ─── */
+function WxDashboard({ o }) {
+  const g = WX_GRADE[o.grade] || WX_GRADE["보통"];
+  return (
+    <div style={{ flexShrink: 0, padding: "10px 14px", borderBottom: `1px solid ${C.line}`, background: "rgba(255,255,255,0.5)" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 700, color: C.ink2 }}>
+          <Icon name={skyIcon(o.sky)} size={13} color={C.amber} /> 케이웨더 대시보드 <span style={{ fontWeight: 400, color: C.faint }}>· {o.location} · 오늘</span>
+        </span>
+        <span style={{ fontSize: 10.5, fontWeight: 700, color: g.fg, background: g.bg, borderRadius: 7, padding: "2px 8px" }}>외출 {o.grade}</span>
+      </div>
+      <div style={{ display: "flex", gap: 12 }}>
+        {wxIndices(o).map((m, i) => <MiniMeter key={i} m={m} />)}
+      </div>
+    </div>
+  );
+}
+
+/* ─── 콘솔: 주간 일자별 외출 컨디션 캘린더 ─── */
+function WeekOuting({ week }) {
+  return (
+    <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+      <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+        <Icon name="calendar" size={14} color={C.teal} /> 주간 외출 컨디션 <span style={{ fontWeight: 400, color: C.faint }}>· 케이웨더</span>
+      </div>
+      <div style={{ display: "flex", padding: "10px 8px", gap: 6, overflowX: "auto" }}>
+        {week.map((d) => {
+          const g = WX_GRADE[d.grade] || WX_GRADE["보통"];
+          const wknd = d.label === "토" || d.label === "일";
+          return (
+            <div key={d.date} title={`${d.sky} ${d.temp}℃ · 미세먼지 ${d.pm_grade} · 자외선 ${d.uv_grade}`}
+              style={{ flex: 1, minWidth: 58, borderRadius: 12, padding: "8px 6px 7px", textAlign: "center", background: d.today ? "rgba(31,138,122,0.10)" : "rgba(255,255,255,0.5)", border: `1px solid ${d.today ? "rgba(31,138,122,0.42)" : C.lineSoft}` }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: wknd ? (d.label === "일" ? C.red : C.blue) : C.ink2 }}>
+                {d.label}{d.today && <span style={{ fontSize: 8.5, color: C.teal }}> 오늘</span>}
+              </div>
+              <div style={{ fontSize: 9.5, color: C.faint, marginBottom: 4, fontVariantNumeric: "tabular-nums" }}>{d.date}</div>
+              <div style={{ display: "grid", placeItems: "center", margin: "1px 0 2px" }}><Icon name={skyIcon(d.sky)} size={17} color={/비|눈/.test(d.sky) ? C.blue : C.amber} /></div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: C.ink, fontVariantNumeric: "tabular-nums" }}>{d.temp}°</div>
+              <div style={{ marginTop: 5, fontSize: 9.5, fontWeight: 700, color: g.fg, background: g.bg, borderRadius: 6, padding: "2px 0" }}>{d.grade}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ─── 콘솔: 배차 그리드 (매니저 × 시간) ─── */
 function DispatchGrid({ today, highlightId }) {
   const hours = Array.from({ length: GRID_SPAN + 1 }, (_, i) => GRID_START + i);
@@ -638,6 +714,9 @@ export default function DemoPage() {
               <Icon name="message" size={18} color={C.faint} />
             </div>
 
+            {/* 컨디션·날씨지수 미니 대시보드 */}
+            <WxDashboard o={SEED_CONSOLE.outing} />
+
             <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: 12 }}>
               {messages.map((m) => (
                 <div key={m.id} className="fadein" style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start" }}>
@@ -730,6 +809,9 @@ export default function DemoPage() {
                   </div>
                 );
               })()}
+
+              {/* 주간 일자별 외출 컨디션 캘린더 */}
+              <WeekOuting week={SEED_CONSOLE.week} />
 
               {/* 실시간 접수 티커 */}
               <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
