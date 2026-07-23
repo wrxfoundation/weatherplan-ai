@@ -484,7 +484,8 @@ function DispatchGrid({ today, highlightId }) {
         <b style={{ fontSize: 13, color: C.ink, display: "flex", alignItems: "center", gap: 7 }}><Icon name="calendar" size={15} color={C.teal} /> 오늘의 배차 현황</b>
         <span style={{ fontSize: 11, color: C.faint }}>매니저 {SEED_MANAGERS.length}명 · 08–18시</span>
       </div>
-      <div style={{ overflowX: "auto" }}>
+      {/* 테이블 자체 스크롤 — 행이 늘거나 화면이 낮아도 표 안에서 세로 스크롤 */}
+      <div style={{ overflowX: "auto", overflowY: "auto", maxHeight: 340 }}>
         <div style={{ minWidth: 560 }}>
           <div style={{ display: "flex", paddingLeft: 78, borderBottom: `1px solid ${C.lineSoft}` }}>
             {hours.slice(0, -1).map((h) => (
@@ -910,6 +911,12 @@ export default function DemoPage() {
           .typing span{ animation:dots 1.2s infinite } .typing span:nth-child(2){animation-delay:.2s} .typing span:nth-child(3){animation-delay:.4s}
           @media (prefers-reduced-motion: reduce){ .orb,.bk-pulse,.fadein,.typing span,.pulse-dot{animation:none !important} }
 
+          /* 콘솔·챗 스크롤 영역의 자식은 절대 압축 금지 — flex column에서
+             overflow:hidden 위젯이 min-height 0으로 짓눌려 내용이 잘리는 것 방지.
+             위젯은 항상 원래 높이 유지, 넘치면 컨테이너가 스크롤. */
+          .console-scroll > *{ flex-shrink:0 }
+          .chat-msgs > *{ flex-shrink:0 }
+
           /* 좁은 화면(모바일·세로): 패널이 세로로 쌓이고 페이지 전체가 스크롤됨.
              챗봇은 고정 높이 + 내부 스크롤, 콘솔은 자연 흐름 — 잘림 없이 끝까지 볼 수 있음 */
           @media (max-width: 920px){
@@ -990,7 +997,7 @@ export default function DemoPage() {
             {/* 컨디션·날씨지수 미니 대시보드 — 챗봇이 컨디션 조회하면 그 날짜 기준으로 실시간 전환 */}
             <WxDashboard o={latestOuting || SEED_CONSOLE.outing} />
 
-            <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: 12 }}>
+            <div ref={scrollRef} className="chat-msgs" style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: 12 }}>
               {messages.map((m) => (
                 <div key={m.id} className="fadein" style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start" }}>
                   <div style={{
