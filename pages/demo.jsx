@@ -115,6 +115,7 @@ function Rich({ text }) {
 function CountUp({ value, suffix = "" }) {
   const [disp, setDisp] = useState(value);
   const prev = useRef(value);
+  const dispRef = useRef(value);
   useEffect(() => {
     const from = prev.current, to = value;
     if (from === to) return;
@@ -123,12 +124,14 @@ function CountUp({ value, suffix = "" }) {
     const tick = (now) => {
       const p = Math.min((now - t0) / dur, 1);
       const eased = 1 - Math.pow(1 - p, 3);
-      setDisp(Math.round(from + (to - from) * eased));
+      const v = Math.round(from + (to - from) * eased);
+      dispRef.current = v;
+      setDisp(v);
       if (p < 1) raf = requestAnimationFrame(tick);
       else prev.current = to;
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => { cancelAnimationFrame(raf); prev.current = dispRef.current; }; // 중도 갱신 시 역주행 방지
   }, [value]);
   return <>{disp.toLocaleString("ko-KR")}{suffix}</>;
 }
@@ -382,18 +385,16 @@ function TypingText({ text, onComplete, done }) {
   const doneRef = useRef(done);
   useEffect(() => {
     if (doneRef.current) return;
-    const iv = setInterval(() => {
-      setI((cur) => {
-        if (cur >= text.length) {
-          clearInterval(iv);
-          if (!doneRef.current) { doneRef.current = true; onComplete && onComplete(); }
-          return cur;
-        }
-        return cur + 2; // 2글자/tick — 한국어 체감 속도
-      });
-    }, 22);
+    const iv = setInterval(() => setI((cur) => Math.min(cur + 2, text.length)), 22); // updater는 순수하게
     return () => clearInterval(iv);
   }, [text]); // eslint-disable-line
+  // 완료 감지는 effect에서 — setState updater 내 부수효과(StrictMode 경고) 방지
+  useEffect(() => {
+    if (!doneRef.current && i >= text.length) {
+      doneRef.current = true;
+      onComplete && onComplete();
+    }
+  }, [i, text, onComplete]);
   const finished = done || i >= text.length;
   const skip = () => {
     if (doneRef.current) return;
@@ -534,7 +535,7 @@ function LiveOpsMap({ today, highlightId }) {
         <span style={{ fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
           <Icon name="pin" size={14} color={C.teal} /> 실시간 관제 맵 <span style={{ fontWeight: 400, color: C.faint }}>· 서울 · GPS 연동 대기(근사 위치)</span>
         </span>
-        <span style={{ display: "flex", gap: 5 }}>
+        <span className="map-chips" style={{ display: "flex", gap: 5 }}>
           {[["all", "전체"], ["active", "수행중"], ["moving", "이동중"], ["idle", "대기"]].map(([k, l]) => (
             <button key={k} onClick={() => setFilter(k)} style={{ fontSize: 10.5, fontWeight: 600, borderRadius: 999, padding: "3px 9px", border: `1px solid ${filter === k ? "rgba(31,138,122,0.5)" : C.line}`, background: filter === k ? "rgba(31,138,122,0.12)" : "rgba(255,255,255,0.5)", color: filter === k ? C.tealDk : C.sub }}>{l}</button>
           ))}
@@ -568,7 +569,7 @@ function LiveOpsMap({ today, highlightId }) {
           })}
           {/* 매니저 — 근사 위치 점선 링 (데이터 정직성) */}
           {shown.map((x) => (
-            <g key={x.m.id} style={{ cursor: "pointer" }} onClick={() => setSel({ type: "manager", ...x })}>
+            <g key={x.m.id} style={{ cursor: "pointer" }} onClick={() => setSel({ type: "manager", id: x.m.id })}>
               {x.route?.isNew && <circle cx={x.pos[0]} cy={x.pos[1]} r={7 + phase * 3} fill="none" stroke={HUD.accent} strokeWidth="0.6" opacity={0.8 - phase * 0.5} />}
               <circle cx={x.pos[0]} cy={x.pos[1]} r="4.6" fill="none" stroke={stColor(x.status)} strokeWidth="0.7" strokeDasharray="1.6 1.2" opacity="0.85" />
               <circle cx={x.pos[0]} cy={x.pos[1]} r="3.2" fill={HUD.bg} stroke={stColor(x.status)} strokeWidth="1" />
@@ -588,17 +589,20 @@ function LiveOpsMap({ today, highlightId }) {
               <div style={{ marginTop: 4, color: HUD.dim, fontSize: 9 }}>점선 링 = 근사 위치 (GPS 연동 전)</div>
             </div>
           ) : (
-            <button onClick={() => setLegendOpen(true)} style={{ background: "rgba(8,21,39,0.85)", border: `1px solid ${HUD.line}`, borderRadius: 999, padding: "4px 11px", fontSize: 10, color: HUD.text, cursor: "pointer" }}>범례</button>
+            <button className="pill-btn" onClick={() => setLegendOpen(true)} style={{ background: "rgba(8,21,39,0.85)", border: `1px solid ${HUD.line}`, borderRadius: 999, padding: "4px 11px", fontSize: 10, color: HUD.text, cursor: "pointer" }}>범례</button>
           )}
         </div>
-        {/* 선택 상세 스트립 (dcmap SitePanel 축소판) */}
-        {sel && (
+        {/* 선택 상세 스트립 (dcmap SitePanel 축소판) — id로 라이브 상태 참조 (스냅샷 고착 방지) */}
+        {sel && (() => {
+          const live = sel.type === "manager" ? managers.find((x) => x.m.id === sel.id) : null;
+          if (sel.type === "manager" && !live) return null;
+          return (
           <div style={{ position: "absolute", right: 10, bottom: 10, maxWidth: "60%", background: "rgba(8,21,39,0.9)", border: `1px solid ${HUD.accent}44`, borderRadius: 10, padding: "8px 12px", fontSize: 11, color: HUD.text, backdropFilter: "blur(8px)" }}>
             {sel.type === "manager" ? (
               <>
-                <b style={{ color: HUD.accent }}>{sel.m.name} 매니저</b> · {stLabel(sel.status)}
-                {sel.job && <div style={{ color: HUD.dim, marginTop: 2 }}>{hourLabel(sel.job.start)} {sel.job.hospital} · {sel.job.recipient}</div>}
-                {!sel.job && <div style={{ color: HUD.dim, marginTop: 2 }}>{sel.m.areas[0]} 대기 · 오늘 {today.filter((b) => b.managerId === sel.m.id).length}건</div>}
+                <b style={{ color: HUD.accent }}>{live.m.name} 매니저</b> · {stLabel(live.status)}
+                {live.job && <div style={{ color: HUD.dim, marginTop: 2 }}>{hourLabel(live.job.start)} {live.job.hospital} · {live.job.recipient}</div>}
+                {!live.job && <div style={{ color: HUD.dim, marginTop: 2 }}>{live.m.areas[0]} 대기 · 오늘 {today.filter((b) => b.managerId === live.m.id).length}건</div>}
               </>
             ) : (
               <>
@@ -608,7 +612,8 @@ function LiveOpsMap({ today, highlightId }) {
             )}
             <button onClick={() => setSel(null)} style={{ position: "absolute", top: 3, right: 6, background: "none", border: "none", color: HUD.dim, fontSize: 12, cursor: "pointer" }}>×</button>
           </div>
-        )}
+          );
+        })()}
       </div>
     </div>
   );
@@ -662,13 +667,16 @@ function ManagerAppDrawer({ open, onClose, today, onCheckin, onComplete }) {
                   <span style={{ fontSize: 10, fontWeight: 700, color: st.fg === "#5C6B66" ? "#93a8a0" : "#0e1f19", background: st.dot, borderRadius: 6, padding: "2px 7px" }}>{st.label}</span>
                 </div>
                 <div style={{ fontSize: 11.5, color: "#93a8a0", marginBottom: 9 }}>{b.recipient} · {b.service} · {b.hours}시간</div>
-                {(b.status === "dispatched" || b.status === "confirmed" || b.status === "pending") && (
+                {(b.status === "dispatched" || b.status === "confirmed") && (
                   <button onClick={() => onCheckin(b.id, cur.name)} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "none", background: "linear-gradient(180deg,#35d5ee,#1494c9)", color: "#04222b", cursor: "pointer" }}>
                     GPS 출근 체크인
                   </button>
                 )}
+                {b.status === "pending" && (
+                  <div style={{ fontSize: 11, color: "#93a8a0", textAlign: "center", padding: "6px 0" }}>업체 배차 확정 대기 중 — 배정되면 체크인이 열립니다</div>
+                )}
                 {b.status === "in_service" && reportFor !== b.id && (
-                  <button onClick={() => setReportFor(b.id)} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "1px solid rgba(69,212,131,0.5)", background: "rgba(69,212,131,0.12)", color: "#45D483", cursor: "pointer" }}>
+                  <button onClick={() => { setReport({ fall: "none", med: "ok", mood: "good" }); setReportFor(b.id); }} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "1px solid rgba(69,212,131,0.5)", background: "rgba(69,212,131,0.12)", color: "#45D483", cursor: "pointer" }}>
                     서비스 완료 · 리포트 작성
                   </button>
                 )}
@@ -733,7 +741,7 @@ function DispatchGrid({ today, highlightId }) {
                 ))}
                 {(byMgr[m.id] || []).map((b) => {
                   const left = ((b.start - GRID_START) / GRID_SPAN) * 100;
-                  const width = (b.hours / GRID_SPAN) * 100;
+                  const width = (Math.min(b.hours, GRID_END - b.start) / GRID_SPAN) * 100; // 18시 경계 클램프
                   const st = STATUS[b.status] || STATUS.confirmed;
                   const isNew = b.id === highlightId;
                   return (
@@ -852,33 +860,41 @@ function mockCaseReply(text = "") {
   return null;
 }
 
+const KNOWN_HOSPITALS = ["분당서울대병원", "강남세브란스", "신촌세브란스", "서울대병원", "세브란스", "삼성서울병원", "서울아산병원", "보라매병원", "경희대병원", "고대안암병원", "서울성모병원"];
+
 function mockReply(userTurn, text = "", profile = null) {
+  // 케이스 인텐트(요금·투석·치매·휠체어·재택·의료)가 항상 우선 — 재방문 분기의 하이재킹 방지
+  const byCase = mockCaseReply(text);
+  if (byCase) return byCase;
+
   // ── 재방문 문진제로 (진화 루프의 실체) — 프로필이 있으면 되묻지 않는다 ──
   if (profile?.last_booking && /예약|동행|부탁|잡아|또|다시/.test(text)) {
-    const hasDate = /(다음주|이번주|내일|모레|요일|\d+\s*시|오전|오후)/.test(text);
-    if (!hasDate) {
+    // 텍스트에 병원이 명시되면 프로필 병원보다 우선 (조용한 오예약 방지)
+    const saidHospital = KNOWN_HOSPITALS.find((h) => text.includes(h));
+    const hospital = saidHospital || profile.hospital || "서울대병원";
+    const dateText = (text.match(/((다음주|이번주)\s*[월화수목금토일]요일|\d+월\s*\d+일|내일|모레)/) || [])[0];
+    if (!dateText) {
       return {
-        content: `네! 지난번 조건 그대로 준비해 둘게요 — ${profile.recipient || "어르신"} · **${profile.hospital}** · ${profile.origin_area || "자택"} 출발${profile.preferred_manager ? ` · **${profile.preferred_manager} 매니저** 고정` : ""}. 날짜와 시간만 알려주세요.`,
+        content: `네! 지난번 조건 그대로 준비해 둘게요 — ${profile.recipient || "어르신"} · **${hospital}** · ${profile.origin_area || "자택"} 출발${profile.preferred_manager ? ` · **${profile.preferred_manager} 매니저** 고정` : ""}. 날짜와 시간만 알려주세요.`,
         events: [],
       };
     }
-    const dateText = (text.match(/(다음주\s*[월화수목금토일]요일|이번주\s*[월화수목금토일]요일|내일|모레)/) || [])[0] || "다음주 금요일";
-    const timeText = (text.match(/(오전|오후)\s*\d+\s*시/) || [])[0] || "오전 10시";
+    const timeMatch = (text.match(/(오전|오후)?\s*\d{1,2}\s*시(\s*(반|\d{1,2}\s*분))?/) || [])[0];
+    const timeText = timeMatch ? timeMatch.trim() : "오전 10시";
+    const timeNote = timeMatch ? "" : " 시간은 우선 **오전 10시**로 잡아뒀어요 — 진료 시간이 다르면 말씀해 주세요.";
     const hours = profile.last_booking.hours || 3;
     const q = executeCareTool("estimate_quote", { service_type: profile.service_type || "hospital", hours });
-    const wx = executeCareTool("outing_condition", { date: dateText, location: profile.hospital || "서울", origin: profile.origin_area });
+    const wx = executeCareTool("outing_condition", { date: dateText, location: hospital, origin: profile.origin_area });
     const b = executeCareTool("create_booking", {
-      recipient_name: profile.recipient || "어르신", hospital: profile.hospital || "서울대병원",
+      recipient_name: profile.recipient || "어르신", hospital,
       origin: profile.origin_area, date: dateText, time: timeText, hours,
       service_type: profile.service_type || "hospital", manager_id: profile.preferred_manager_key || "mgr_02",
     });
     return {
-      content: `**문진 없이** 지난번 조건 그대로 접수했어요 — ${profile.recipient || "어르신"} · **${profile.hospital}** · ${profile.origin_area || "자택"} 출발, **${b.booking.manager_name} 매니저** 고정 배정.\n${profile.topics?.mobility_note ? `${profile.topics.mobility_note} 참고해서 준비할게요. ` : ""}그날 동행 컨디션은 **${wx.score}점 · ${wx.verdict}**이에요. ${wx.comment}. 아래 결제 링크로 확정해 주세요.`,
+      content: `**문진 없이** 지난번 조건 그대로 접수했어요 — ${profile.recipient || "어르신"} · **${hospital}** · ${profile.origin_area || "자택"} 출발, **${b.booking.manager_name} 매니저** 고정 배정.${timeNote}\n${profile.topics?.mobility_note ? `${profile.topics.mobility_note} 참고해서 준비할게요. ` : ""}그날 동행 컨디션은 **${wx.score}점 · ${wx.verdict}**이에요. ${wx.comment}. 아래 결제 링크로 확정해 주세요.`,
       events: [q._event, wx._event, b._event],
     };
   }
-  const byCase = mockCaseReply(text);
-  if (byCase) return byCase;
   if (userTurn <= 1) {
     return { content: "네, 어머니 병원동행 도와드릴게요. 두 가지만 여쭤볼게요.\n혼자 걸으실 수 있나요, 아니면 **휠체어**가 필요하실까요? 그리고 **진료 시작 시간**이 언제쯤인가요?", events: [] };
   }
@@ -1007,6 +1023,11 @@ export default function DemoPage() {
   const userTurnRef = useRef(0);
   const messagesRef = useRef([GREETING]);
   const modeRef = useRef("live");
+  const epochRef = useRef(0);          // reset·기억삭제 시 증가 — 진행 중이던 응답 폐기 (유령 응답 방지)
+  const autoplayRef = useRef(false);   // 자동 시연 중엔 프로필 무시 — 대본 서사 보호
+  const bookedIdsRef = useRef(new Set()); // booking 이벤트 멱등 처리 (중복 KPI·visits 방지)
+  const tickerSeqRef = useRef(0);
+  const dbRowsRef = useRef([]);        // DB 복원 예약 — reset에도 유지
 
   useEffect(() => { messagesRef.current = messages; }, [messages]);
   useEffect(() => { modeRef.current = mode; }, [mode]);
@@ -1053,6 +1074,8 @@ export default function DemoPage() {
         setDbState("connected");
         if (d.bookings?.length) {
           const rows = d.bookings.map(dbRowToToday);
+          dbRowsRef.current = rows; // reset에도 유지되도록 보관
+          rows.forEach((r) => bookedIdsRef.current.add(r.id));
           setToday((prev) => [...rows.filter((r) => !prev.some((x) => x.id === r.id)), ...prev]);
         }
       } else setDbState("waiting");
@@ -1066,7 +1089,7 @@ export default function DemoPage() {
 
   const pushTicker = useCallback((label, tone) => {
     const stamp = new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(new Date());
-    setTicker((t) => [{ id: `${stamp}-${label}`, stamp, label, tone }, ...t].slice(0, 6));
+    setTicker((t) => [{ id: `t${++tickerSeqRef.current}`, stamp, label, tone }, ...t].slice(0, 6));
   }, []);
 
   const applyEvents = useCallback((events = []) => {
@@ -1079,6 +1102,8 @@ export default function DemoPage() {
       else if (ev.type === "slots") pushTicker(`매니저 ${ev.available.length}명 매칭`, "blue");
       else if (ev.type === "booking") {
         const b = ev.booking;
+        if (bookedIdsRef.current.has(b.id)) return; // 동일 예약 재수신 — KPI·visits·그리드 모두 스킵 (멱등)
+        bookedIdsRef.current.add(b.id);
         const row = {
           id: b.id, start: parseHour(b.time), hours: b.hours, recipient: b.recipient,
           hospital: b.hospital, managerId: b.manager_id, manager: b.manager_name,
@@ -1107,6 +1132,7 @@ export default function DemoPage() {
   const runTurn = useCallback(async (text) => {
     const clean = text.trim();
     if (!clean) return;
+    const epoch = epochRef.current; // 시작 시점 세대 캡처 — 도중 초기화되면 결과 폐기
     userTurnRef.current += 1;
     const turn = userTurnRef.current;
     setMessages((m) => [...m, { id: `u${turn}`, role: "user", content: clean, events: [] }]);
@@ -1141,11 +1167,13 @@ export default function DemoPage() {
       } catch (_) { setMode("demo"); }
     }
     if (!reply) {
-      reply = mockReply(turn, clean, familyProfileRef.current);
+      // 자동 시연 중엔 프로필 무시 — 대본(첫 방문 문진 서사)이 재방문 분기에 하이재킹되지 않게
+      reply = mockReply(turn, clean, autoplayRef.current ? null : familyProfileRef.current);
       setLastMeta({ mode: "demo(폴백)", model_used: "—", rounds: 0, usage: null, elapsed_ms: 0, events: (reply.events || []).length });
     }
 
     await new Promise((r) => setTimeout(r, 480));
+    if (epoch !== epochRef.current) { setSending(false); return null; } // 도중 초기화 — 유령 응답 폐기
     setMessages((m) => [...m, { id: `a${turn}`, role: "assistant", content: reply.content, events: reply.events || [] }]);
     applyEvents(reply.events);
     setSending(false);
@@ -1163,21 +1191,28 @@ export default function DemoPage() {
     if (autoOn) return;
     reset(true);
     setAutoOn(true);
-    await new Promise((r) => setTimeout(r, 500));
-    for (const line of AUTOPLAY) {
-      for (let i = 1; i <= line.length; i += 2) { setInput(line.slice(0, i)); await new Promise((r) => setTimeout(r, 16)); }
-      setInput(line);
-      await new Promise((r) => setTimeout(r, 350));
-      setInput("");
-      await runTurn(line);
-      await new Promise((r) => setTimeout(r, 900));
+    autoplayRef.current = true; // 대본 모드 — 재방문 프로필 분기 비활성
+    try {
+      await new Promise((r) => setTimeout(r, 500));
+      for (const line of AUTOPLAY) {
+        for (let i = 1; i <= line.length; i += 2) { setInput(line.slice(0, i)); await new Promise((r) => setTimeout(r, 16)); }
+        setInput(line);
+        await new Promise((r) => setTimeout(r, 350));
+        setInput("");
+        await runTurn(line);
+        await new Promise((r) => setTimeout(r, 900));
+      }
+    } finally {
+      autoplayRef.current = false;
+      setAutoOn(false);
     }
-    setAutoOn(false);
   }, [autoOn, runTurn]); // eslint-disable-line
 
   function reset(silent) {
+    epochRef.current += 1; // 진행 중이던 응답은 폐기 (유령 응답·중복 key 방지)
     userTurnRef.current = 0;
     sessionIdRef.current = genUuid(); // 새 상담 세션
+    bookedIdsRef.current = new Set(dbRowsRef.current.map((r) => r.id));
     const g = makeGreeting(familyProfileRef.current); // 프로필 유지 — 초기화해도 '기억'은 남는다
     messagesRef.current = [g];
     if (!silent) modeRef.current = "live";
@@ -1185,7 +1220,7 @@ export default function DemoPage() {
     setInput("");
     setTicker(WEEK_TICKER_SEED);
     setKpi(SEED_CONSOLE.kpi);
-    setToday(SEED_CONSOLE.today);
+    setToday([...dbRowsRef.current, ...SEED_CONSOLE.today]); // DB 복원 예약은 초기화에도 유지
     setHighlightId(null);
     setLatestOuting(null);
     setBriefingOpen(false);
@@ -1299,6 +1334,12 @@ export default function DemoPage() {
             .chat-input{ font-size:16px !important }        /* iOS 포커스 줌 방지 */
             .brief-row{ flex-wrap:wrap; row-gap:2px }
             .orb{ filter:blur(48px); opacity:.4 }           /* 모바일 GPU 부담 완화 */
+            /* 콘솔 헤더: 제목 한 줄 유지, 액션은 아래 줄로 깔끔하게 */
+            .console-hdr{ flex-wrap:wrap; row-gap:7px }
+            .console-hdr .hdr-actions{ width:100%; justify-content:flex-start }
+            .console-hdr .hdr-actions button{ white-space:nowrap }
+            /* 터치 타깃 32px+ (맵 필터·범례·CRM·케이스 칩) */
+            .map-chips button, .pill-btn, .case-chips button{ padding:7px 13px !important; font-size:11.5px !important; min-height:32px }
           }
         `}</style>
       </Head>
@@ -1329,7 +1370,7 @@ export default function DemoPage() {
             <button className="btn-ghost" onClick={() => setKakaoMode((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, borderRadius: 11, padding: "8px 12px", background: kakaoMode ? "#FEE500" : undefined, color: kakaoMode ? "#191919" : undefined, border: kakaoMode ? "1px solid #FEE500" : undefined }}>
               {kakaoMode ? "웹 스킨" : "카카오 스킨"}
             </button>
-            <button className="btn-glass" onClick={autoplay} disabled={autoOn} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 13, fontWeight: 700, borderRadius: 11, padding: "8px 14px" }}>
+            <button className="btn-glass" onClick={autoplay} disabled={autoOn || sending} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 13, fontWeight: 700, borderRadius: 11, padding: "8px 14px" }}>
               <Icon name="play" size={15} color={C.tealDk} /> {autoOn ? "시연 중…" : "30초 자동 시연"}
             </button>
             <button className="btn-ghost" onClick={() => reset(false)} disabled={autoOn} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, borderRadius: 11, padding: "8px 12px" }}>
@@ -1359,10 +1400,11 @@ export default function DemoPage() {
               {familyProfile?.last_booking && (
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 5, flexShrink: 0, fontSize: 10.5, fontWeight: 700, color: C.tealDk, background: "rgba(31,138,122,0.10)", border: "1px solid rgba(31,138,122,0.3)", borderRadius: 999, padding: "4px 9px" }}>
                   단골 가족 · {familyProfile.visits}회
-                  <button title="기억 삭제 (처음 방문 상태로)" onClick={() => {
+                  <button title="기억 삭제 (처음 방문 상태로)" disabled={sending || autoOn} onClick={() => {
+                    epochRef.current += 1; // 진행 중 응답 폐기
                     saveProfileLS(null); familyProfileRef.current = null; setFamilyProfile(null);
                     const g = makeGreeting(null); messagesRef.current = [g]; setMessages([g]); userTurnRef.current = 0;
-                  }} style={{ background: "none", border: "none", color: C.faint, fontSize: 12, lineHeight: 1, padding: 0, cursor: "pointer" }}>×</button>
+                  }} style={{ background: "none", border: "none", color: C.faint, fontSize: 12, lineHeight: 1, padding: 0, cursor: "pointer", opacity: (sending || autoOn) ? 0.4 : 1 }}>×</button>
                 </span>
               )}
               {/* 대화 유형 케이스 버튼 — 가로 스크롤 칩 (wellbian QuickCard 계승) */}
@@ -1443,15 +1485,15 @@ export default function DemoPage() {
 
           {/* ── 우: 콘솔 ── */}
           <section className="glass-panel pane-console" style={{ flex: "1.15 1 460px", minWidth: 340, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
-            <div style={{ flexShrink: 0, padding: "12px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+            <div className="console-hdr" style={{ flexShrink: 0, padding: "12px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
                 <Chip name="calendar" bg="rgba(31,138,122,0.14)" fg={C.tealDk} box={30} size={16} />
-                <div>
-                  <b style={{ fontSize: 14 }}>돌봄업체 관리자 콘솔</b>
-                  <div style={{ fontSize: 11, color: C.faint }}>새벽케어 강남지점</div>
+                <div style={{ minWidth: 0 }}>
+                  <b style={{ fontSize: 14, whiteSpace: "nowrap" }}>돌봄업체 관리자 콘솔</b>
+                  <div style={{ fontSize: 11, color: C.faint, whiteSpace: "nowrap" }}>새벽케어 강남지점</div>
                 </div>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+              <div className="hdr-actions" style={{ display: "flex", alignItems: "center", gap: 9 }}>
                 <button className="btn-glass" onClick={() => setBriefingOpen((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 700, borderRadius: 9, padding: "6px 10px", color: C.ink }}>
                   <Icon name="clock" size={13} color={C.tealDk} /> 오늘 배차 브리핑
                 </button>
@@ -1589,7 +1631,7 @@ export default function DemoPage() {
                       <Dot color={r.hot ? C.amber : C.faint} />
                       <b style={{ flexShrink: 0 }}>{r.name}</b>
                       <span style={{ color: C.sub, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.note}</span>
-                      <button onClick={() => pushTicker(`재예약 제안 알림톡 발송 — ${r.name}`, "green")}
+                      <button className="pill-btn" onClick={() => pushTicker(`재예약 제안 알림톡 발송 — ${r.name}`, "green")}
                         style={{ flexShrink: 0, fontSize: 10.5, fontWeight: 700, borderRadius: 8, padding: "4px 9px", border: "1px solid rgba(31,138,122,0.4)", background: "rgba(31,138,122,0.08)", color: C.tealDk, cursor: "pointer" }}>
                         재예약 제안
                       </button>

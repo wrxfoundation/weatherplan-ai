@@ -6,12 +6,12 @@
 import { fetchTodayBookings } from "../../lib/careStore.js";
 
 export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "no-store");
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
   try {
     const r = await fetchTodayBookings();
-    res.setHeader("Cache-Control", "no-store");
     return res.status(200).json(r);
   } catch (e) {
-    return res.status(200).json({ available: true, ok: false, bookings: [], error: e.message });
+    return res.status(200).json({ available: false, ok: false, bookings: [], error: e.message });
   }
 }

@@ -196,11 +196,14 @@ export default async function handler(req, res) {
       .filter((m) => !(m.role === "assistant" && (m.content == null || m.content === "")));
     // slice(-20) 홀짝 어긋남 방지 — 첫 메시지는 반드시 user (아니면 API 400)
     while (messages.length && messages[0].role !== "user") messages.shift();
+    if (!messages.length) return res.status(400).json({ error: "messages 필수" });
     const totalLen = messages.reduce((s, m) => s + (m.content?.length || 0), 0);
     if (totalLen > 40000) return res.status(413).json({ error: "대화가 너무 깁니다" });
 
     for (const m of messages) {
       if (!m.role || !m.content) return res.status(400).json({ error: "각 메시지에 role·content 필수" });
+      // content는 문자열만 — 클라이언트발 위조 tool_result 블록 주입 차단 ('수치는 도구만' 방어)
+      if (typeof m.content !== "string") return res.status(400).json({ error: "content는 문자열이어야 합니다" });
       if (m.role !== "user" && m.role !== "assistant") return res.status(400).json({ error: "role은 user 또는 assistant" });
     }
 
@@ -271,13 +274,14 @@ export default async function handler(req, res) {
     if (storeAvailable() && sessionId) {
       const bookingEv = events.find((e) => e.type === "booking");
       const wxEv = events.find((e) => e.type === "weather");
+      // FK 순서: 부모(session·booking) 먼저, 자식(messages·outing)은 그 뒤 병렬
+      await upsertSession(sessionId, { channel: "web", demo: true });
+      if (bookingEv) await saveBooking(bookingEv.booking, sessionId);
       await Promise.allSettled([
-        upsertSession(sessionId, { channel: "web", demo: true }),
         saveMessages(sessionId, [
           { role: "user", content: lastUserMsg },
           { role: "assistant", content: reply, model, usage: totalUsage },
         ]),
-        ...(bookingEv ? [saveBooking(bookingEv.booking, sessionId)] : []),
         ...(wxEv ? [saveOuting(wxEv, bookingEv?.booking?.id)] : []),
       ]);
       store = "db";
