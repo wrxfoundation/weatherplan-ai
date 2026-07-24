@@ -137,14 +137,18 @@ function CountUp({ value, suffix = "" }) {
   return <>{disp.toLocaleString("ko-KR")}{suffix}</>;
 }
 
-/* ─── 앰비언트 그라디언트 오브 ─── */
+/* ─── 앰비언트 배경 — 딥네이비 글로우 (AI 생성 이미지 + 오브, 네이버 AI탭 무드) ─── */
 function Orbs() {
   return (
     <div aria-hidden style={{ position: "fixed", inset: 0, overflow: "hidden", zIndex: 0, pointerEvents: "none" }}>
-      <div className="orb orb1" style={{ background: "radial-gradient(circle, rgba(37,99,235,0.40), transparent 66%)" }} />
-      <div className="orb orb2" style={{ background: "radial-gradient(circle, rgba(188,130,54,0.34), transparent 66%)" }} />
-      <div className="orb orb3" style={{ background: "radial-gradient(circle, rgba(53,182,238,0.26), transparent 66%)" }} />
-      <div className="orb orb4" style={{ background: "radial-gradient(circle, rgba(18,62,143,0.30), transparent 66%)" }} />
+      {/* AI 생성 광선 배경 — 로드 실패 시 그라디언트만 남아 안전 */}
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "url(/bg-glow.jpg)", backgroundSize: "cover", backgroundPosition: "center top", opacity: 0.9 }} />
+      {/* 하단 가독성 오버레이 — 패널 뒤 배경이 과하게 밝아지지 않게 */}
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(7,14,34,0.10) 0%, rgba(7,14,34,0.42) 58%, rgba(7,14,34,0.62) 100%)" }} />
+      <div className="orb orb1" style={{ background: "radial-gradient(circle, rgba(47,107,255,0.34), transparent 66%)" }} />
+      <div className="orb orb2" style={{ background: "radial-gradient(circle, rgba(124,58,237,0.28), transparent 66%)" }} />
+      <div className="orb orb3" style={{ background: "radial-gradient(circle, rgba(53,213,238,0.22), transparent 66%)" }} />
+      <div className="orb orb4" style={{ background: "radial-gradient(circle, rgba(47,107,255,0.22), transparent 66%)" }} />
     </div>
   );
 }
@@ -1429,7 +1433,7 @@ export default function DemoPage() {
     <>
       <Head>
         <title>K-CARE · Healthcare & Life Concierge 데모</title>
-        <meta name="theme-color" content="#F4EEE2" />
+        <meta name="theme-color" content="#070E22" />
         <meta name="robots" content="noindex" />
         <style>{`
           .orb{ position:absolute; border-radius:50%; filter:blur(64px); opacity:.55; will-change:transform }
@@ -1442,16 +1446,16 @@ export default function DemoPage() {
           @keyframes drift3{ 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-38px)} }
 
           .glass-panel{
-            background:linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.62));
-            backdrop-filter:blur(18px) saturate(150%); -webkit-backdrop-filter:blur(18px) saturate(150%);
-            border:1px solid rgba(255,255,255,0.7);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 10px 30px -14px rgba(10,24,50,0.30);
+            background:linear-gradient(180deg, rgba(255,255,255,0.88), rgba(244,248,255,0.80));
+            backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%);
+            border:1px solid rgba(255,255,255,0.55);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 0 0 1px rgba(127,200,245,0.10), 0 24px 60px -22px rgba(2,8,24,0.85);
           }
           .glass-card{
-            background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.74));
+            background:linear-gradient(180deg, rgba(255,255,255,0.94), rgba(246,249,255,0.84));
             backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%);
             border:1px solid rgba(255,255,255,0.72);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 8px 22px -14px rgba(10,24,50,0.28);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 8px 22px -14px rgba(2,8,24,0.5);
           }
           .btn-primary{
             background:linear-gradient(180deg,#123467,#0A1F42); color:#fff; border:1px solid rgba(255,255,255,0.14);
@@ -1511,11 +1515,11 @@ export default function DemoPage() {
         `}</style>
       </Head>
 
-      <div className="demo-root" style={{ position: "relative", height: "100vh", display: "flex", flexDirection: "column", background: `linear-gradient(160deg,${C.cream},${C.cream2})`, color: C.ink, overflow: "hidden", fontFamily: '"Pretendard Variable",Pretendard,-apple-system,system-ui,"Noto Sans KR",sans-serif' }}>
+      <div className="demo-root" style={{ position: "relative", height: "100vh", display: "flex", flexDirection: "column", background: "linear-gradient(160deg,#070E22 0%,#0A1734 46%,#160F3A 100%)", color: C.ink, overflow: "hidden", fontFamily: '"Pretendard Variable",Pretendard,-apple-system,system-ui,"Noto Sans KR",sans-serif' }}>
         <Orbs />
 
         {/* 헤더 */}
-        <header style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 18px", background: `linear-gradient(180deg,#0D2450,#081A3C)`, color: "#fff", flexWrap: "wrap", boxShadow: "0 6px 24px -12px rgba(0,0,0,0.5)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <header style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 18px", background: "rgba(8,18,44,0.55)", backdropFilter: "blur(18px) saturate(150%)", WebkitBackdropFilter: "blur(18px) saturate(150%)", color: "#fff", flexWrap: "wrap", boxShadow: "0 6px 24px -12px rgba(0,0,0,0.5)", borderBottom: "1px solid rgba(255,255,255,0.10)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 11, minWidth: 0 }}>
             <div style={{ width: 34, height: 34, borderRadius: 11, background: `linear-gradient(160deg,#2F6BFF,#123E8F)`, display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 12px -4px rgba(47,107,255,0.6)" }}>
               <Icon name="heart" size={18} color="#fff" sw={1.9} />
@@ -1544,12 +1548,13 @@ export default function DemoPage() {
         </header>
 
         {/* 역할 스위처 — K-CARE 5역할 유기 연동 (한 역할의 액션이 다른 역할 화면에 반영) */}
-        <nav style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", gap: 6, padding: "8px 16px", background: "#0A2148", borderBottom: "1px solid rgba(255,255,255,0.07)", overflowX: "auto" }}>
+        <nav style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", gap: 6, padding: "8px 16px", background: "rgba(9,20,50,0.45)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderBottom: "1px solid rgba(255,255,255,0.08)", overflowX: "auto" }}>
           {[["family", "가족 (보호자)"], ["senior", "사용자 (어르신)"], ["concierge", "컨시어지 (동행자)"], ["dispatch", "배치관리자"], ["admin", "관리자"]].map(([k, l]) => (
             <button key={k} onClick={() => setRole(k)} style={{
               flexShrink: 0, fontSize: 12, fontWeight: 700, borderRadius: 999, padding: "7px 14px", cursor: "pointer",
               border: `1px solid ${role === k ? "rgba(127,200,245,0.7)" : "rgba(255,255,255,0.14)"}`,
               background: role === k ? "linear-gradient(180deg,#2F6BFF,#1D4FD1)" : "rgba(255,255,255,0.05)",
+              boxShadow: role === k ? "0 0 20px -4px rgba(47,107,255,0.85), inset 0 1px 0 rgba(255,255,255,0.3)" : "none",
               color: role === k ? "#fff" : "#9FB4D6",
             }}>
               {l}{k === "family" && sos ? " ●" : ""}{k === "dispatch" && sos ? " ●" : ""}
