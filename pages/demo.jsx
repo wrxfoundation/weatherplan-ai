@@ -88,7 +88,7 @@ function parseHour(t = "") {
 }
 
 const STATUS = {
-  confirmed:  { label: "예약확정", fg: C.tealDk, tint: "rgba(31,138,122,0.14)", dot: C.teal },
+  confirmed:  { label: "예약확정", fg: C.tealDk, tint: "rgba(37,99,235,0.14)", dot: C.teal },
   pending:    { label: "배차대기", fg: "#8A6216", tint: "rgba(188,130,54,0.16)", dot: C.amber },
   dispatched: { label: "배차완료", fg: "#2C43B8", tint: "rgba(62,99,255,0.13)", dot: C.blue },
   in_service: { label: "수행중",   fg: "#1E7A44", tint: "rgba(46,158,99,0.15)", dot: C.green },
@@ -195,12 +195,12 @@ function SlotsCard({ slots }) {
   return (
     <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
       {slots.map((s, i) => (
-        <div key={s.manager_id} className="glass-card" style={{ borderRadius: 16, padding: "10px 12px", display: "flex", gap: 11, alignItems: "center", border: i === 0 ? `1.5px solid rgba(31,138,122,0.5)` : undefined }}>
+        <div key={s.manager_id} className="glass-card" style={{ borderRadius: 16, padding: "10px 12px", display: "flex", gap: 11, alignItems: "center", border: i === 0 ? `1.5px solid rgba(37,99,235,0.5)` : undefined }}>
           <div style={{ width: 40, height: 40, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, color: "#fff", display: "grid", placeItems: "center", fontWeight: 700, flexShrink: 0, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }}>{s.name[0]}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <b style={{ fontSize: 14 }}>{s.name} 매니저</b>
-              {i === 0 && <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", background: C.teal, borderRadius: 6, padding: "2px 7px" }}>추천</span>}
+              {i === 0 && <span style={{ fontSize: 11, fontWeight: 700, color: "#fff", background: C.teal, borderRadius: 6, padding: "2px 7px" }}>추천</span>}
             </div>
             <div style={{ fontSize: 12, color: C.sub, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
               <Star /> {s.rating} <span style={{ color: C.faint }}>({s.reviews})</span> · {s.specialty}
@@ -218,8 +218,8 @@ function SlotsCard({ slots }) {
 /* ─── 챗봇: 예약 확정 카드 ─── */
 function BookingCard({ b }) {
   return (
-    <div style={{ marginTop: 8, borderRadius: 16, overflow: "hidden", background: "rgba(255,255,255,0.85)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", border: `1.5px solid ${C.teal}`, boxShadow: "0 14px 36px -12px rgba(31,138,122,0.5), inset 0 1px 0 rgba(255,255,255,0.7)" }}>
-      <div style={{ padding: "11px 14px", background: `linear-gradient(180deg,${C.tealDk},#0f5147)`, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div style={{ marginTop: 8, borderRadius: 16, overflow: "hidden", background: "rgba(255,255,255,0.85)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", border: `1.5px solid ${C.teal}`, boxShadow: "0 14px 36px -12px rgba(37,99,235,0.5), inset 0 1px 0 rgba(255,255,255,0.7)" }}>
+      <div style={{ padding: "11px 14px", background: `linear-gradient(180deg,${C.tealDk},#123E8F)`, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span style={{ display: "flex", alignItems: "center", gap: 7, fontWeight: 700, fontSize: 13 }}>
           <Icon name="check" size={16} /> 예약 접수 완료
         </span>
@@ -233,14 +233,14 @@ function BookingCard({ b }) {
         <div style={{ height: 1, background: C.line, margin: "8px 0" }} />
         <Row k={<b>결제 금액</b>} v={<b style={{ color: C.tealDk, fontSize: 16 }}>{won(b.price)}</b>} />
         {b.outing && (
-          <div style={{ marginTop: 9, padding: "7px 10px", background: "rgba(188,130,54,0.09)", border: "1px solid rgba(188,130,54,0.22)", borderRadius: 10, display: "flex", alignItems: "center", gap: 7, fontSize: 11.5, color: C.ink2 }}>
+          <div style={{ marginTop: 9, padding: "7px 10px", background: "rgba(188,130,54,0.09)", border: "1px solid rgba(188,130,54,0.22)", borderRadius: 10, display: "flex", alignItems: "center", gap: 7, fontSize: 12, color: C.ink2 }}>
             <Icon name="sun" size={14} color={C.amber} />
             <span>그날 동행 컨디션 <b style={{ color: scoreStyle(b.outing.score ?? 60).fg }}>{typeof b.outing.score === "number" ? `${b.outing.score}점 · ${b.outing.verdict}` : b.outing.grade}</b> · <b>{b.outing.items.join("·")}</b> 준비해 동행합니다</span>
           </div>
         )}
         {b.checklist?.length > 0 && (
           <div style={{ marginTop: 8 }}>
-            <div style={{ fontSize: 10.5, fontWeight: 700, color: C.faint, marginBottom: 5 }}>보호자 준비 체크리스트</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: C.faint, marginBottom: 5 }}>보호자 준비 체크리스트</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
               {b.checklist.map((it, i) => (
                 <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 600, color: C.ink2, background: "rgba(22,33,28,0.045)", border: `1px solid ${C.lineSoft}`, borderRadius: 8, padding: "3px 8px" }}>
@@ -253,7 +253,7 @@ function BookingCard({ b }) {
         <button className="btn-primary" style={{ width: "100%", marginTop: 11, borderRadius: 12, padding: "11px 0", fontSize: 13, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
           <Icon name="wallet" size={16} /> 토스로 선결제 (에스크로 보관)
         </button>
-        <div style={{ marginTop: 8, fontSize: 10, color: C.faint, textAlign: "center" }}>
+        <div style={{ marginTop: 8, fontSize: 11, color: C.faint, textAlign: "center" }}>
           본 서비스는 의료행위가 아닌 동행·생활지원 서비스입니다
         </div>
       </div>
@@ -264,7 +264,7 @@ function BookingCard({ b }) {
 /* ─── 외출 컨디션 등급 색상 ─── */
 const WX_GRADE = {
   "좋음": { fg: C.green, bg: "rgba(46,158,99,0.14)" },
-  "보통": { fg: C.tealDk, bg: "rgba(31,138,122,0.13)" },
+  "보통": { fg: C.tealDk, bg: "rgba(37,99,235,0.13)" },
   "주의": { fg: "#8A6216", bg: "rgba(188,130,54,0.16)" },
   "나쁨": { fg: "#B23A28", bg: "rgba(229,83,60,0.14)" },
 };
@@ -273,7 +273,7 @@ const skyIcon = (sky = "") => /비|소나기/.test(sky) ? "droplet" : /눈/.test
 function WxMetric({ icon, label, value, tone }) {
   return (
     <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3, alignItems: "flex-start" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, color: C.faint }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: C.faint }}>
         <Icon name={icon} size={12} color={C.faint} /> {label}
       </div>
       <div style={{ fontSize: 13, fontWeight: 700, color: tone || C.ink, whiteSpace: "nowrap" }}>{value}</div>
@@ -284,7 +284,7 @@ function ItemChips({ items }) {
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
       {items.map((it, i) => (
-        <span key={i} style={{ fontSize: 11, fontWeight: 600, color: C.tealDk, background: "rgba(31,138,122,0.10)", border: "1px solid rgba(31,138,122,0.24)", borderRadius: 8, padding: "3px 8px" }}>{it}</span>
+        <span key={i} style={{ fontSize: 11, fontWeight: 600, color: C.tealDk, background: "rgba(37,99,235,0.10)", border: "1px solid rgba(37,99,235,0.24)", borderRadius: 8, padding: "3px 8px" }}>{it}</span>
       ))}
     </div>
   );
@@ -305,7 +305,7 @@ function WeatherCard({ w }) {
           <span style={{ fontSize: 11, fontWeight: 700, color: s.fg, background: s.bg, borderRadius: 7, padding: "2px 8px", fontVariantNumeric: "tabular-nums" }}>
             {hasScore ? `${w.score}점 · ${w.verdict || w.grade}` : w.grade}
           </span>
-          <span style={{ fontSize: 10.5, color: C.faint }}>케이웨더</span>
+          <span style={{ fontSize: 11, color: C.faint }}>케이웨더</span>
         </span>
       </div>
       <div style={{ padding: "11px 14px" }}>
@@ -314,14 +314,14 @@ function WeatherCard({ w }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 10 }}>
             {w.legs.map((l) => (
               <div key={l.role} style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12, background: "rgba(255,255,255,0.55)", border: `1px solid ${C.lineSoft}`, borderRadius: 9, padding: "6px 9px" }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: l.role === "출발지" ? "#2C43B8" : C.tealDk, background: l.role === "출발지" ? "rgba(62,99,255,0.10)" : "rgba(31,138,122,0.10)", borderRadius: 6, padding: "1px 6px", flexShrink: 0 }}>{l.role}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: l.role === "출발지" ? "#2C43B8" : C.tealDk, background: l.role === "출발지" ? "rgba(62,99,255,0.10)" : "rgba(37,99,235,0.10)", borderRadius: 6, padding: "1px 6px", flexShrink: 0 }}>{l.role}</span>
                 <b style={{ flexShrink: 0 }}>{l.location}</b>
                 <Icon name={skyIcon(l.sky)} size={13} color={/비|눈/.test(l.sky) ? C.blue : C.amber} />
                 <span style={{ color: C.sub, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{l.temp}℃ {l.sky}</span>
-                <span style={{ marginLeft: "auto", fontSize: 10.5, fontWeight: 700, color: scoreStyle(l.score).fg, background: scoreStyle(l.score).bg, borderRadius: 6, padding: "1px 7px", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{l.score}점 {l.verdict}</span>
+                <span style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: scoreStyle(l.score).fg, background: scoreStyle(l.score).bg, borderRadius: 6, padding: "1px 7px", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{l.score}점 {l.verdict}</span>
               </div>
             ))}
-            <div style={{ fontSize: 10, color: C.faint }}>지표·판정은 컨디션이 더 나쁜 <b>{w.worst_leg}</b> 기준입니다</div>
+            <div style={{ fontSize: 11, color: C.faint }}>지표·판정은 컨디션이 더 나쁜 <b>{w.worst_leg}</b> 기준입니다</div>
           </div>
         )}
         <div className="wx-metrics" style={{ display: "flex", gap: 10, marginBottom: 10 }}>
@@ -334,14 +334,14 @@ function WeatherCard({ w }) {
         {w.deductions?.length > 0 && (
           <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>
             {w.deductions.map((d, i) => (
-              <span key={i} style={{ fontSize: 10.5, fontWeight: 600, color: s.fg, background: s.bg, border: `1px solid ${s.fg}33`, borderRadius: 7, padding: "2px 7px", fontVariantNumeric: "tabular-nums" }}>
+              <span key={i} style={{ fontSize: 11, fontWeight: 600, color: s.fg, background: s.bg, border: `1px solid ${s.fg}33`, borderRadius: 7, padding: "2px 7px", fontVariantNumeric: "tabular-nums" }}>
                 {d.reason} −{d.points}
               </span>
             ))}
           </div>
         )}
         {w.hard_stop && (
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 700, color: "#B23A28", background: "rgba(229,83,60,0.10)", border: "1px solid rgba(229,83,60,0.3)", borderRadius: 9, padding: "6px 9px", marginBottom: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: "#B23A28", background: "rgba(229,83,60,0.10)", border: "1px solid rgba(229,83,60,0.3)", borderRadius: 9, padding: "6px 9px", marginBottom: 8 }}>
             <Icon name="shield" size={13} color="#B23A28" /> 안전 기준 초과 — 일정 변경 권장
           </div>
         )}
@@ -365,7 +365,7 @@ const clamp = (v) => Math.max(4, Math.min(100, v));
 /* wellbian RecommendCard scoreStyle — 85/70/55/40 5단 판정 팔레트 */
 function scoreStyle(score) {
   if (score >= 85) return { fg: C.green, bg: "rgba(46,158,99,0.14)" };
-  if (score >= 70) return { fg: C.tealDk, bg: "rgba(31,138,122,0.13)" };
+  if (score >= 70) return { fg: C.tealDk, bg: "rgba(37,99,235,0.13)" };
   if (score >= 55) return { fg: "#8A6216", bg: "rgba(188,130,54,0.16)" };
   if (score >= 40) return { fg: "#B4551F", bg: "rgba(217,110,43,0.15)" };
   return { fg: "#B23A28", bg: "rgba(229,83,60,0.14)" };
@@ -417,8 +417,8 @@ function TypingText({ text, onComplete, done }) {
 function MiniMeter({ m }) {
   return (
     <div style={{ flex: 1, minWidth: 0 }}>
-      <div style={{ fontSize: 10, color: C.faint, marginBottom: 2, whiteSpace: "nowrap" }}>{m.key}</div>
-      <div style={{ fontSize: 12.5, fontWeight: 700, color: m.tone, whiteSpace: "nowrap", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis" }}>{m.val}</div>
+      <div style={{ fontSize: 11, color: C.faint, marginBottom: 2, whiteSpace: "nowrap" }}>{m.key}</div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: m.tone, whiteSpace: "nowrap", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis" }}>{m.val}</div>
       <div style={{ height: 4, borderRadius: 3, background: "rgba(22,33,28,0.09)", overflow: "hidden" }}>
         <div style={{ width: `${m.bar}%`, height: "100%", background: m.tone, borderRadius: 3 }} />
       </div>
@@ -432,10 +432,10 @@ function WxDashboard({ o }) {
   return (
     <div style={{ flexShrink: 0, padding: "10px 14px", borderBottom: `1px solid ${C.line}`, background: "rgba(255,255,255,0.5)" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 700, color: C.ink2 }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: C.ink2 }}>
           <Icon name={skyIcon(o.sky)} size={13} color={C.amber} /> 케이웨더 대시보드 <span style={{ fontWeight: 400, color: C.faint }}>· {o.location} · {o.date || "오늘"}</span>
         </span>
-        <span style={{ fontSize: 10.5, fontWeight: 700, color: typeof o.score === "number" ? scoreStyle(o.score).fg : g.fg, background: typeof o.score === "number" ? scoreStyle(o.score).bg : g.bg, borderRadius: 7, padding: "2px 8px", fontVariantNumeric: "tabular-nums" }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: typeof o.score === "number" ? scoreStyle(o.score).fg : g.fg, background: typeof o.score === "number" ? scoreStyle(o.score).bg : g.bg, borderRadius: 7, padding: "2px 8px", fontVariantNumeric: "tabular-nums" }}>
           {typeof o.score === "number" ? `${o.score}점 · ${o.verdict || o.grade}` : `외출 ${o.grade}`}
         </span>
       </div>
@@ -459,14 +459,14 @@ function WeekOuting({ week }) {
           const wknd = d.label === "토" || d.label === "일";
           return (
             <div key={d.date} title={`${d.sky} ${d.temp}℃ · 미세먼지 ${d.pm_grade} · 자외선 ${d.uv_grade}`}
-              style={{ flex: 1, minWidth: 58, borderRadius: 12, padding: "8px 6px 7px", textAlign: "center", background: d.today ? "rgba(31,138,122,0.10)" : "rgba(255,255,255,0.5)", border: `1px solid ${d.today ? "rgba(31,138,122,0.42)" : C.lineSoft}` }}>
+              style={{ flex: 1, minWidth: 58, borderRadius: 12, padding: "8px 6px 7px", textAlign: "center", background: d.today ? "rgba(37,99,235,0.10)" : "rgba(255,255,255,0.5)", border: `1px solid ${d.today ? "rgba(37,99,235,0.42)" : C.lineSoft}` }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: wknd ? (d.label === "일" ? C.red : C.blue) : C.ink2 }}>
-                {d.label}{d.today && <span style={{ fontSize: 8.5, color: C.teal }}> 오늘</span>}
+                {d.label}{d.today && <span style={{ fontSize: 10, color: C.teal }}> 오늘</span>}
               </div>
-              <div style={{ fontSize: 9.5, color: C.faint, marginBottom: 4, fontVariantNumeric: "tabular-nums" }}>{d.date}</div>
+              <div style={{ fontSize: 10, color: C.faint, marginBottom: 4, fontVariantNumeric: "tabular-nums" }}>{d.date}</div>
               <div style={{ display: "grid", placeItems: "center", margin: "1px 0 2px" }}><Icon name={skyIcon(d.sky)} size={17} color={/비|눈/.test(d.sky) ? C.blue : C.amber} /></div>
               <div style={{ fontSize: 12, fontWeight: 700, color: C.ink, fontVariantNumeric: "tabular-nums" }}>{d.temp}°</div>
-              <div style={{ marginTop: 5, fontSize: 9.5, fontWeight: 700, color: g.fg, background: g.bg, borderRadius: 6, padding: "2px 0" }}>{d.grade}</div>
+              <div style={{ marginTop: 5, fontSize: 10, fontWeight: 700, color: g.fg, background: g.bg, borderRadius: 6, padding: "2px 0" }}>{d.grade}</div>
             </div>
           );
         })}
@@ -542,7 +542,7 @@ function LiveOpsMap({ today, highlightId }) {
         </span>
         <span className="map-chips" style={{ display: "flex", gap: 5 }}>
           {[["all", "전체"], ["active", "수행중"], ["moving", "이동중"], ["idle", "대기"]].map(([k, l]) => (
-            <button key={k} onClick={() => setFilter(k)} style={{ fontSize: 10.5, fontWeight: 600, borderRadius: 999, padding: "3px 9px", border: `1px solid ${filter === k ? "rgba(31,138,122,0.5)" : C.line}`, background: filter === k ? "rgba(31,138,122,0.12)" : "rgba(255,255,255,0.5)", color: filter === k ? C.tealDk : C.sub }}>{l}</button>
+            <button key={k} onClick={() => setFilter(k)} style={{ fontSize: 11, fontWeight: 600, borderRadius: 999, padding: "3px 9px", border: `1px solid ${filter === k ? "rgba(37,99,235,0.5)" : C.line}`, background: filter === k ? "rgba(37,99,235,0.12)" : "rgba(255,255,255,0.5)", color: filter === k ? C.tealDk : C.sub }}>{l}</button>
           ))}
         </span>
       </div>
@@ -585,16 +585,16 @@ function LiveOpsMap({ today, highlightId }) {
         {/* 접힘 범례 알약 (dcmap Legend 문법) */}
         <div style={{ position: "absolute", left: 10, bottom: 10 }}>
           {legendOpen ? (
-            <div onClick={() => setLegendOpen(false)} style={{ background: "rgba(8,21,39,0.88)", border: `1px solid ${HUD.line}`, borderRadius: 10, padding: "8px 11px", fontSize: 10, color: HUD.text, cursor: "pointer", backdropFilter: "blur(8px)" }}>
+            <div onClick={() => setLegendOpen(false)} style={{ background: "rgba(8,21,39,0.88)", border: `1px solid ${HUD.line}`, borderRadius: 10, padding: "8px 11px", fontSize: 11, color: HUD.text, cursor: "pointer", backdropFilter: "blur(8px)" }}>
               {[[HUD.green, "수행중"], [HUD.orange, "이동중·예약"], [HUD.slate, "대기"], [HUD.accent, "신규 배차 경로"]].map(([c, l]) => (
                 <div key={l} style={{ display: "flex", alignItems: "center", gap: 6, padding: "1.5px 0" }}>
                   <span style={{ width: 7, height: 7, borderRadius: "50%", background: c }} /> {l}
                 </div>
               ))}
-              <div style={{ marginTop: 4, color: HUD.dim, fontSize: 9 }}>점선 링 = 근사 위치 (GPS 연동 전)</div>
+              <div style={{ marginTop: 4, color: HUD.dim, fontSize: 10 }}>점선 링 = 근사 위치 (GPS 연동 전)</div>
             </div>
           ) : (
-            <button className="pill-btn" onClick={() => setLegendOpen(true)} style={{ background: "rgba(8,21,39,0.85)", border: `1px solid ${HUD.line}`, borderRadius: 999, padding: "4px 11px", fontSize: 10, color: HUD.text, cursor: "pointer" }}>범례</button>
+            <button className="pill-btn" onClick={() => setLegendOpen(true)} style={{ background: "rgba(8,21,39,0.85)", border: `1px solid ${HUD.line}`, borderRadius: 999, padding: "4px 11px", fontSize: 11, color: HUD.text, cursor: "pointer" }}>범례</button>
           )}
         </div>
         {/* 선택 상세 스트립 (dcmap SitePanel 축소판) — id로 라이브 상태 참조 (스냅샷 고착 방지) */}
@@ -637,7 +637,7 @@ function ConciergeBody({ today, onCheckin, onComplete, onClose }) {
   const seg = (opts, val, set) => (
     <div style={{ display: "flex", gap: 4 }}>
       {opts.map(([k, l]) => (
-        <button key={k} onClick={() => set(k)} style={{ flex: 1, fontSize: 10.5, fontWeight: 600, borderRadius: 8, padding: "5px 0", border: `1px solid ${val === k ? "rgba(53,213,238,0.6)" : "rgba(255,255,255,0.14)"}`, background: val === k ? "rgba(53,213,238,0.16)" : "rgba(255,255,255,0.05)", color: val === k ? "#7FC8F5" : "#c9d6e8" }}>{l}</button>
+        <button key={k} onClick={() => set(k)} style={{ flex: 1, fontSize: 11, fontWeight: 600, borderRadius: 8, padding: "5px 0", border: `1px solid ${val === k ? "rgba(53,213,238,0.6)" : "rgba(255,255,255,0.14)"}`, background: val === k ? "rgba(53,213,238,0.16)" : "rgba(255,255,255,0.05)", color: val === k ? "#7FC8F5" : "#c9d6e8" }}>{l}</button>
       ))}
     </div>
   );
@@ -646,7 +646,7 @@ function ConciergeBody({ today, onCheckin, onComplete, onClose }) {
         <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 9 }}>
           <div style={{ width: 34, height: 34, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, display: "grid", placeItems: "center", fontWeight: 700, color: "#fff" }}>{cur.name[0]}</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 700, fontSize: 14 }}>컨시어지 앱 <span style={{ fontSize: 10, color: "#7FC8F5", fontWeight: 600 }}>PWA · GPS 연동 대기(더미)</span></div>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>컨시어지 앱 <span style={{ fontSize: 11, color: "#7FC8F5", fontWeight: 600 }}>PWA · GPS 연동 대기(더미)</span></div>
             <div style={{ fontSize: 11, color: "#7E92B4" }}>{cur.name} 컨시어지 · ⭐{cur.rating} · 오늘 {jobs.length}건</div>
           </div>
           {onClose && <button onClick={onClose} style={{ background: "none", border: "none", color: "#7E92B4", fontSize: 18, cursor: "pointer" }}>×</button>}
@@ -666,12 +666,12 @@ function ConciergeBody({ today, onCheckin, onComplete, onClose }) {
             return (
               <div key={b.id} style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, background: "rgba(255,255,255,0.04)", padding: "11px 13px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                  <b style={{ fontSize: 13.5 }}>{hourLabel(b.start)} {b.hospital}</b>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: st.fg === "#5C6B66" ? "#93A6C6" : "#071633", background: st.dot, borderRadius: 6, padding: "2px 7px" }}>{st.label}</span>
+                  <b style={{ fontSize: 14 }}>{hourLabel(b.start)} {b.hospital}</b>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: st.fg === "#5C6B66" ? "#93A6C6" : "#071633", background: st.dot, borderRadius: 6, padding: "2px 7px" }}>{st.label}</span>
                 </div>
-                <div style={{ fontSize: 11.5, color: "#93A6C6", marginBottom: 9 }}>{b.recipient} · {b.service} · {b.hours}시간</div>
+                <div style={{ fontSize: 12, color: "#93A6C6", marginBottom: 9 }}>{b.recipient} · {b.service} · {b.hours}시간</div>
                 {(b.status === "dispatched" || b.status === "confirmed") && (
-                  <button onClick={() => onCheckin(b.id, cur.name)} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "none", background: "linear-gradient(180deg,#35d5ee,#1494c9)", color: "#04182B", cursor: "pointer" }}>
+                  <button onClick={() => onCheckin(b.id, cur.name)} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 13, fontWeight: 700, border: "none", background: "linear-gradient(180deg,#35d5ee,#1494c9)", color: "#04182B", cursor: "pointer" }}>
                     GPS 출근 체크인
                   </button>
                 )}
@@ -679,20 +679,20 @@ function ConciergeBody({ today, onCheckin, onComplete, onClose }) {
                   <div style={{ fontSize: 11, color: "#93A6C6", textAlign: "center", padding: "6px 0" }}>업체 배차 확정 대기 중 — 배정되면 체크인이 열립니다</div>
                 )}
                 {b.status === "in_service" && reportFor !== b.id && (
-                  <button onClick={() => { setReport({ fall: "none", med: "ok", mood: "good" }); setReportFor(b.id); }} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "1px solid rgba(61,191,122,0.5)", background: "rgba(61,191,122,0.12)", color: "#3DBF7A", cursor: "pointer" }}>
+                  <button onClick={() => { setReport({ fall: "none", med: "ok", mood: "good" }); setReportFor(b.id); }} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 13, fontWeight: 700, border: "1px solid rgba(61,191,122,0.5)", background: "rgba(61,191,122,0.12)", color: "#3DBF7A", cursor: "pointer" }}>
                     서비스 완료 · 리포트 작성
                   </button>
                 )}
                 {b.status === "in_service" && reportFor === b.id && (
                   <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 4 }}>
-                    <div style={{ fontSize: 10.5, color: "#7E92B4" }}>완료 리포트 — 30초 체크 (가정 내 센서)</div>
-                    <div style={{ fontSize: 10.5, color: "#93A6C6" }}>낙상 위험</div>
+                    <div style={{ fontSize: 11, color: "#7E92B4" }}>완료 리포트 — 30초 체크 (가정 내 센서)</div>
+                    <div style={{ fontSize: 11, color: "#93A6C6" }}>낙상 위험</div>
                     {seg([["none", "없음"], ["low", "낮음"], ["high", "높음"]], report.fall, (v) => setReport((r) => ({ ...r, fall: v })))}
-                    <div style={{ fontSize: 10.5, color: "#93A6C6" }}>복약 확인</div>
+                    <div style={{ fontSize: 11, color: "#93A6C6" }}>복약 확인</div>
                     {seg([["ok", "확인"], ["missed", "누락"], ["unknown", "모름"]], report.med, (v) => setReport((r) => ({ ...r, med: v })))}
-                    <div style={{ fontSize: 10.5, color: "#93A6C6" }}>어르신 기분</div>
+                    <div style={{ fontSize: 11, color: "#93A6C6" }}>어르신 기분</div>
                     {seg([["good", "좋음"], ["flat", "보통"], ["low", "저조"]], report.mood, (v) => setReport((r) => ({ ...r, mood: v })))}
-                    <button onClick={() => { onComplete(b.id, cur.name, report); setReportFor(null); }} style={{ borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "none", background: "#3DBF7A", color: "#06182E", cursor: "pointer", marginTop: 3 }}>
+                    <button onClick={() => { onComplete(b.id, cur.name, report); setReportFor(null); }} style={{ borderRadius: 10, padding: "9px 0", fontSize: 13, fontWeight: 700, border: "none", background: "#3DBF7A", color: "#06182E", cursor: "pointer", marginTop: 3 }}>
                       리포트 제출 · 완료 처리
                     </button>
                   </div>
@@ -701,7 +701,7 @@ function ConciergeBody({ today, onCheckin, onComplete, onClose }) {
               </div>
             );
           })}
-          <div style={{ fontSize: 10, color: "#5D7194", textAlign: "center", marginTop: 4 }}>체크인·완료가 배치관제·관리자·가족 화면에 실시간 반영됩니다</div>
+          <div style={{ fontSize: 11, color: "#5D7194", textAlign: "center", marginTop: 4 }}>체크인·완료가 배치관제·관리자·가족 화면에 실시간 반영됩니다</div>
         </div>
       </div>
   );
@@ -718,9 +718,9 @@ function FamilyPanel({ profile, today, sos, onClearSos, pushTicker, kakaoMode })
   const nextJob = [...today].filter((b) => b.status !== "done").sort((a, b) => a.start - b.start)[0];
   const metric = (icon, label, val, sub, tone) => (
     <div className="glass-panel" style={{ flex: "1 1 44%", borderRadius: 14, padding: "11px 13px", minWidth: 0 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10.5, color: C.faint, marginBottom: 4 }}><Icon name={icon} size={12} color={C.faint} /> {label}</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.faint, marginBottom: 4 }}><Icon name={icon} size={12} color={C.faint} /> {label}</div>
       <div style={{ fontSize: 20, fontWeight: 800, color: tone || C.ink, fontVariantNumeric: "tabular-nums" }}>{val}</div>
-      {sub && <div style={{ fontSize: 10.5, color: C.faint, marginTop: 2 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 11, color: C.faint, marginTop: 2 }}>{sub}</div>}
     </div>
   );
   return (
@@ -742,7 +742,7 @@ function FamilyPanel({ profile, today, sos, onClearSos, pushTicker, kakaoMode })
             <Dot color={C.red} live />
             <div style={{ flex: 1 }}>
               <b style={{ fontSize: 13, color: C.red }}>긴급 호출 (SOS) — {sos.time}</b>
-              <div style={{ fontSize: 11.5, color: C.ink2 }}>컨시어지·관제센터에 동시 전파됨 · 필요 시 119 연계</div>
+              <div style={{ fontSize: 12, color: C.ink2 }}>컨시어지·관제센터에 동시 전파됨 · 필요 시 119 연계</div>
             </div>
             <button className="pill-btn" onClick={onClearSos} style={{ fontSize: 11, fontWeight: 700, borderRadius: 9, padding: "6px 11px", border: `1px solid ${C.red}`, background: "#fff", color: C.red, cursor: "pointer" }}>확인 완료</button>
           </div>
@@ -759,12 +759,12 @@ function FamilyPanel({ profile, today, sos, onClearSos, pushTicker, kakaoMode })
           <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
             <Icon name="calendar" size={14} color={C.teal} /> 다가오는 일정
           </div>
-          <div style={{ padding: "10px 15px", fontSize: 12.5 }}>
+          <div style={{ padding: "10px 15px", fontSize: 13 }}>
             {nextJob ? (
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <b style={{ fontVariantNumeric: "tabular-nums" }}>{hourLabel(nextJob.start)}</b>
                 <span>{nextJob.hospital} · {nextJob.service}</span>
-                <span style={{ marginLeft: "auto", fontSize: 10.5, fontWeight: 700, color: (STATUS[nextJob.status] || STATUS.confirmed).fg, background: (STATUS[nextJob.status] || STATUS.confirmed).tint, borderRadius: 6, padding: "2px 7px" }}>{(STATUS[nextJob.status] || STATUS.confirmed).label}</span>
+                <span style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: (STATUS[nextJob.status] || STATUS.confirmed).fg, background: (STATUS[nextJob.status] || STATUS.confirmed).tint, borderRadius: 6, padding: "2px 7px" }}>{(STATUS[nextJob.status] || STATUS.confirmed).label}</span>
               </div>
             ) : <span style={{ color: C.faint }}>예정된 일정이 없어요 — AI 컨시어지로 예약해 보세요</span>}
             {profile?.topics?.appointments && <div style={{ marginTop: 6, fontSize: 11, color: C.sub }}>메모: {profile.topics.appointments}</div>}
@@ -777,7 +777,7 @@ function FamilyPanel({ profile, today, sos, onClearSos, pushTicker, kakaoMode })
             <div style={{ fontSize: 13, fontWeight: 700 }}>전담 컨시어지 · {mgr.name}</div>
             <div style={{ fontSize: 11, color: C.sub }}>⭐{mgr.rating} · {mgr.specialty} · 1:1 배정</div>
           </div>
-          <button className="pill-btn btn-primary" onClick={() => pushTicker(`가족 앱 → ${mgr.name} 컨시어지 1:1 상담 연결`, "blue")} style={{ borderRadius: 10, padding: "8px 13px", fontSize: 11.5, fontWeight: 700 }}>상담 연결</button>
+          <button className="pill-btn btn-primary" onClick={() => pushTicker(`가족 앱 → ${mgr.name} 컨시어지 1:1 상담 연결`, "blue")} style={{ borderRadius: 10, padding: "8px 13px", fontSize: 12, fontWeight: 700 }}>상담 연결</button>
         </div>
         {/* 케어 리포트 */}
         <div className="glass-panel" style={{ borderRadius: 16, overflow: "hidden" }}>
@@ -789,7 +789,7 @@ function FamilyPanel({ profile, today, sos, onClearSos, pushTicker, kakaoMode })
             <div>· 다음 정기 안부콜: 금요일 오전 <span style={{ color: C.faint }}>(AI 안부콜 · 예정)</span></div>
           </div>
         </div>
-        <div style={{ fontSize: 10, color: C.faint, textAlign: "center" }}>{kakaoMode ? "카카오 채널과 동일 데이터로 동작합니다" : "좌측 AI 컨시어지의 예약·리포트가 이 화면에 실시간 반영됩니다"}</div>
+        <div style={{ fontSize: 11, color: C.faint, textAlign: "center" }}>{kakaoMode ? "카카오 채널과 동일 데이터로 동작합니다" : "좌측 AI 컨시어지의 예약·리포트가 이 화면에 실시간 반영됩니다"}</div>
       </div>
     </section>
   );
@@ -811,22 +811,22 @@ function SeniorHome({ today, profile, onSos, sos }) {
           <div style={{ fontSize: 13, color: C.faint, marginBottom: 6 }}>오늘 일정</div>
           {nextJob ? (
             <>
-              <div style={{ fontSize: 24, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>{hourLabel(nextJob.start)} <span style={{ fontSize: 19 }}>{nextJob.hospital}</span></div>
+              <div style={{ fontSize: 24, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>{hourLabel(nextJob.start)} <span style={{ fontSize: 20 }}>{nextJob.hospital}</span></div>
               <div style={{ fontSize: 15, color: C.ink2, marginTop: 4 }}>{nextJob.manager} 컨시어지가 모시러 갑니다</div>
             </>
           ) : <div style={{ fontSize: 18, fontWeight: 700 }}>오늘은 편히 쉬는 날이에요</div>}
         </div>
         <div className="glass-panel" style={{ borderRadius: 18, padding: "14px 18px", display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 52, height: 52, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, color: "#fff", display: "grid", placeItems: "center", fontWeight: 800, fontSize: 21 }}>{mgrName[0]}</div>
+          <div style={{ width: 52, height: 52, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, color: "#fff", display: "grid", placeItems: "center", fontWeight: 800, fontSize: 22 }}>{mgrName[0]}</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 17, fontWeight: 800 }}>{mgrName} 컨시어지</div>
+            <div style={{ fontSize: 18, fontWeight: 800 }}>{mgrName} 컨시어지</div>
             <div style={{ fontSize: 13, color: C.sub }}>내 전담 담당자</div>
           </div>
           <button className="btn-primary" style={{ borderRadius: 14, padding: "13px 18px", fontSize: 15, fontWeight: 800 }}>전화하기</button>
         </div>
         <div className="glass-panel" style={{ borderRadius: 18, padding: "13px 18px", display: "flex", alignItems: "center", gap: 10 }}>
           <Icon name={skyIcon(o.sky)} size={26} color={C.amber} />
-          <div style={{ fontSize: 15, color: C.ink2 }}>오늘 {o.temp}℃ {o.sky} · 나들이 {o.verdict}<div style={{ fontSize: 12.5, color: C.faint }}>{o.comment}</div></div>
+          <div style={{ fontSize: 15, color: C.ink2 }}>오늘 {o.temp}℃ {o.sky} · 나들이 {o.verdict}<div style={{ fontSize: 13, color: C.faint }}>{o.comment}</div></div>
         </div>
         <button onClick={onSos} disabled={!!sos}
           style={{ borderRadius: 20, padding: "22px 0", fontSize: 22, fontWeight: 900, border: "none", cursor: "pointer", color: "#fff", background: sos ? "#B98A84" : `linear-gradient(180deg,#E4574A,#C23A2E)`, boxShadow: "0 12px 30px -10px rgba(220,75,63,0.55)" }}>
@@ -856,9 +856,9 @@ function RevenueSix({ kpi }) {
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {items.map((r) => (
           <div key={r.name} style={{ width: "50%", boxSizing: "border-box", padding: "10px 15px", borderBottom: `1px solid ${C.lineSoft}` }}>
-            <div style={{ fontSize: 10.5, color: C.faint }}>{r.name}</div>
-            <div style={{ fontSize: 14.5, fontWeight: 800, color: r.tone, marginTop: 2 }}>{r.val}</div>
-            <div style={{ fontSize: 10, color: C.faint, marginTop: 1 }}>{r.sub}</div>
+            <div style={{ fontSize: 11, color: C.faint }}>{r.name}</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: r.tone, marginTop: 2 }}>{r.val}</div>
+            <div style={{ fontSize: 11, color: C.faint, marginTop: 1 }}>{r.sub}</div>
           </div>
         ))}
       </div>
@@ -887,14 +887,14 @@ function DispatchGrid({ today, highlightId }) {
         <div style={{ minWidth: 560 }}>
           <div style={{ display: "flex", paddingLeft: 78, borderBottom: `1px solid ${C.lineSoft}` }}>
             {hours.slice(0, -1).map((h) => (
-              <div key={h} style={{ flex: 1, fontSize: 10, color: C.faint, padding: "5px 0 4px 3px", fontVariantNumeric: "tabular-nums" }}>{h}시</div>
+              <div key={h} style={{ flex: 1, fontSize: 11, color: C.faint, padding: "5px 0 4px 3px", fontVariantNumeric: "tabular-nums" }}>{h}시</div>
             ))}
           </div>
           {SEED_MANAGERS.map((m) => (
             <div key={m.id} style={{ display: "flex", alignItems: "stretch", borderBottom: `1px solid ${C.lineSoft}`, height: 48 }}>
               <div style={{ width: 78, flexShrink: 0, padding: "6px 9px", borderRight: `1px solid ${C.lineSoft}`, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <span style={{ fontSize: 12, fontWeight: 600, color: C.ink }}>{m.name}</span>
-                <span style={{ fontSize: 10, color: C.faint, display: "flex", alignItems: "center", gap: 2 }}><Star size={10} />{m.rating}</span>
+                <span style={{ fontSize: 11, color: C.faint, display: "flex", alignItems: "center", gap: 2 }}><Star size={10} />{m.rating}</span>
               </div>
               <div style={{ position: "relative", flex: 1 }}>
                 {hours.slice(1, -1).map((h) => (
@@ -910,8 +910,8 @@ function DispatchGrid({ today, highlightId }) {
                       style={{
                         position: "absolute", left: `${left}%`, width: `calc(${width}% - 5px)`, top: 6, bottom: 6,
                         background: st.tint, border: `1px solid ${isNew ? C.teal : st.dot}`, borderLeft: `3px solid ${st.dot}`,
-                        borderRadius: 8, padding: "3px 7px", overflow: "hidden", fontSize: 10.5, lineHeight: 1.18,
-                        backdropFilter: "blur(4px)", boxShadow: isNew ? "0 0 0 3px rgba(31,138,122,0.25)" : "none", zIndex: isNew ? 3 : 1,
+                        borderRadius: 8, padding: "3px 7px", overflow: "hidden", fontSize: 11, lineHeight: 1.18,
+                        backdropFilter: "blur(4px)", boxShadow: isNew ? "0 0 0 3px rgba(37,99,235,0.25)" : "none", zIndex: isNew ? 3 : 1,
                       }}>
                       <div style={{ fontWeight: 700, color: st.fg, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.hospital}</div>
                       <div style={{ color: C.sub, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.service}</div>
@@ -932,7 +932,7 @@ function Kpi({ label, value, suffix, sub, accent }) {
   return (
     <div className="glass-panel" style={{ flex: 1, borderRadius: 15, padding: "13px 15px", minWidth: 0 }}>
       <div style={{ fontSize: 11, color: C.faint, marginBottom: 5, whiteSpace: "nowrap" }}>{label}</div>
-      <div style={{ fontSize: 23, fontWeight: 800, color: accent || C.ink, fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}>
+      <div style={{ fontSize: 24, fontWeight: 800, color: accent || C.ink, fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}>
         {typeof value === "number" ? <CountUp value={value} suffix={suffix} /> : value}
       </div>
       {sub && <div style={{ fontSize: 11, color: C.green, marginTop: 3, display: "flex", alignItems: "center", gap: 3 }}><Icon name="activity" size={11} color={C.green} /> {sub}</div>}
@@ -1435,7 +1435,14 @@ export default function DemoPage() {
         <title>K-CARE · Healthcare & Life Concierge 데모</title>
         <meta name="theme-color" content="#070E22" />
         <meta name="robots" content="noindex" />
+        {/* 브랜드 타이포그래피 — 한글: Noto Sans KR / 숫자·영문: Montserrat (스택 폴스루) */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
         <style>{`
+          /* ── 타입 위계 ──
+             24/22/20/18 숫자·디스플레이(Montserrat 700-800) · 16/15 패널 타이틀(700)
+             14 본문 강조·카드 타이틀(700) · 13 본문(400-500) · 12 섹션 라벨(700) · 11 캡션(400-500) */
           .orb{ position:absolute; border-radius:50%; filter:blur(64px); opacity:.55; will-change:transform }
           .orb1{ width:520px; height:520px; top:-140px; left:-120px; animation:drift1 22s ease-in-out infinite }
           .orb2{ width:460px; height:460px; top:-80px; right:-100px; animation:drift2 26s ease-in-out infinite }
@@ -1476,7 +1483,7 @@ export default function DemoPage() {
           .pulse-dot{ box-shadow:0 0 0 0 rgba(239,68,68,0.5); animation:pulsedot 2.4s ease-in-out infinite }
           @keyframes pulsedot{ 0%,100%{opacity:1; box-shadow:0 0 9px 1px rgba(239,68,68,0.65)} 50%{opacity:.4; box-shadow:0 0 2px 0 rgba(239,68,68,0.15)} }
 
-          @keyframes bkpulse{ 0%{box-shadow:0 0 0 0 rgba(31,138,122,0.55)} 70%{box-shadow:0 0 0 11px rgba(31,138,122,0)} 100%{box-shadow:0 0 0 0 rgba(31,138,122,0)} }
+          @keyframes bkpulse{ 0%{box-shadow:0 0 0 0 rgba(37,99,235,0.55)} 70%{box-shadow:0 0 0 11px rgba(37,99,235,0)} 100%{box-shadow:0 0 0 0 rgba(37,99,235,0)} }
           .bk-pulse{ animation:bkpulse 1.5s ease-out 2 }
           @keyframes fadein{ from{opacity:0; transform:translateY(7px)} to{opacity:1; transform:none} }
           .fadein{ animation:fadein .38s ease both }
@@ -1510,12 +1517,12 @@ export default function DemoPage() {
             .console-hdr .hdr-actions{ width:100%; justify-content:flex-start }
             .console-hdr .hdr-actions button{ white-space:nowrap }
             /* 터치 타깃 32px+ (맵 필터·범례·CRM·케이스 칩) */
-            .map-chips button, .pill-btn, .case-chips button{ padding:7px 13px !important; font-size:11.5px !important; min-height:32px }
+            .map-chips button, .pill-btn, .case-chips button{ padding:7px 13px !important; font-size:12px !important; min-height:32px }
           }
         `}</style>
       </Head>
 
-      <div className="demo-root" style={{ position: "relative", height: "100vh", display: "flex", flexDirection: "column", background: "linear-gradient(160deg,#070E22 0%,#0A1734 46%,#160F3A 100%)", color: C.ink, overflow: "hidden", fontFamily: '"Pretendard Variable",Pretendard,-apple-system,system-ui,"Noto Sans KR",sans-serif' }}>
+      <div className="demo-root" style={{ position: "relative", height: "100vh", display: "flex", flexDirection: "column", background: "linear-gradient(160deg,#070E22 0%,#0A1734 46%,#160F3A 100%)", color: C.ink, overflow: "hidden", fontFamily: '"Montserrat","Noto Sans KR","Apple SD Gothic Neo",sans-serif' }}>
         <Orbs />
 
         {/* 헤더 */}
@@ -1535,7 +1542,7 @@ export default function DemoPage() {
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, padding: "6px 11px", borderRadius: 999, background: liveMode ? "rgba(46,158,99,0.2)" : "rgba(188,130,54,0.24)", border: `1px solid ${liveMode ? "rgba(46,158,99,0.55)" : "rgba(188,130,54,0.55)"}` }}>
               <Dot color={liveMode ? "#43d17f" : "#e0a44a"} /> {liveMode ? "AI 연결됨" : "데모 스크립트"}
             </span>
-            <button className="btn-ghost" onClick={() => setKakaoMode((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, borderRadius: 11, padding: "8px 12px", background: kakaoMode ? "#FEE500" : undefined, color: kakaoMode ? "#191919" : undefined, border: kakaoMode ? "1px solid #FEE500" : undefined }}>
+            <button className="btn-ghost" onClick={() => setKakaoMode((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 700, borderRadius: 11, padding: "8px 12px", background: kakaoMode ? "#FEE500" : undefined, color: kakaoMode ? "#191919" : undefined, border: kakaoMode ? "1px solid #FEE500" : undefined }}>
               {kakaoMode ? "웹 스킨" : "카카오 스킨"}
             </button>
             <button className="btn-glass" onClick={autoplay} disabled={autoOn || sending} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 13, fontWeight: 700, borderRadius: 11, padding: "8px 14px" }}>
@@ -1584,7 +1591,7 @@ export default function DemoPage() {
               <div style={{ flexShrink: 0 }}>
                 <div style={{ fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 6, color: kakaoMode ? "#191919" : undefined }}>
                   {kakaoMode ? "K-CARE" : "K-CARE AI 컨시어지"}
-                  {kakaoMode && <span style={{ fontSize: 9, fontWeight: 800, color: "#FEE500", background: "#191919", borderRadius: 5, padding: "1.5px 5px" }}>상담톡</span>}
+                  {kakaoMode && <span style={{ fontSize: 10, fontWeight: 800, color: "#FEE500", background: "#191919", borderRadius: 5, padding: "1.5px 5px" }}>상담톡</span>}
                 </div>
                 <div style={{ fontSize: 11, color: kakaoMode ? "rgba(25,25,25,0.65)" : C.green, display: "flex", alignItems: "center", gap: 5 }}>
                   {kakaoMode ? <>채널 연동 대기 · 데모 미리보기</> : <><Dot color={C.green} live /> 카카오 상담톡 · 24시간 실시간 응대</>}
@@ -1592,7 +1599,7 @@ export default function DemoPage() {
               </div>
               {/* 단골 가족 배지 — 진화 루프 상태 표시 + 기록 삭제 */}
               {familyProfile?.last_booking && (
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 5, flexShrink: 0, fontSize: 10.5, fontWeight: 700, color: C.tealDk, background: "rgba(31,138,122,0.10)", border: "1px solid rgba(31,138,122,0.3)", borderRadius: 999, padding: "4px 9px" }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 5, flexShrink: 0, fontSize: 11, fontWeight: 700, color: C.tealDk, background: "rgba(37,99,235,0.10)", border: "1px solid rgba(37,99,235,0.3)", borderRadius: 999, padding: "4px 9px" }}>
                   단골 가족 · {familyProfile.visits}회
                   <button title="기억 삭제 (처음 방문 상태로)" disabled={sending || autoOn} onClick={() => {
                     epochRef.current += 1; // 진행 중 응답 폐기
@@ -1627,7 +1634,7 @@ export default function DemoPage() {
               {messages.map((m) => (
                 <div key={m.id} className="fadein" style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start" }}>
                   <div style={{
-                    maxWidth: "88%", padding: "10px 13px", borderRadius: 16, fontSize: 13.5, lineHeight: 1.55, whiteSpace: "pre-wrap",
+                    maxWidth: "88%", padding: "10px 13px", borderRadius: 16, fontSize: 14, lineHeight: 1.55, whiteSpace: "pre-wrap",
                     background: kakaoMode
                       ? (m.role === "user" ? "#FEE500" : "#FFFFFF")
                       : (m.role === "user" ? `linear-gradient(180deg,#12305E,#0A1F42)` : "rgba(255,255,255,0.92)"),
@@ -1655,7 +1662,7 @@ export default function DemoPage() {
               {sending && (
                 <div className="fadein" style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 9, padding: "11px 15px", background: "rgba(255,255,255,0.92)", border: `1px solid ${C.line}`, borderRadius: 16, borderBottomLeftRadius: 5 }}>
                   <span className="typing" style={{ fontSize: 18, letterSpacing: 2, color: C.faint }}><span>·</span><span>·</span><span>·</span></span>
-                  <span style={{ fontSize: 11.5, color: C.sub }}>{SENDING_STAGES[stageIdx]}</span>
+                  <span style={{ fontSize: 12, color: C.sub }}>{SENDING_STAGES[stageIdx]}</span>
                 </div>
               )}
             </div>
@@ -1666,13 +1673,13 @@ export default function DemoPage() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing) onSend(); }}
                 className="chat-input" placeholder={autoOn ? "자동 시연 진행 중…" : "예: 아버지 다음주 항암 동행 예약하고 싶어요"}
-                style={{ flex: 1, border: `1px solid ${C.line}`, borderRadius: 13, padding: "12px 14px", fontSize: 13.5, outline: "none", background: autoOn ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.95)", color: C.ink }}
+                style={{ flex: 1, border: `1px solid ${C.line}`, borderRadius: 13, padding: "12px 14px", fontSize: 14, outline: "none", background: autoOn ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.95)", color: C.ink }}
               />
               <button className="btn-primary" onClick={onSend} disabled={sending || autoOn || !input.trim()} style={{ borderRadius: 13, padding: "0 16px", display: "grid", placeItems: "center" }} aria-label="전송">
                 <Icon name="send" size={18} />
               </button>
             </div>
-            <div style={{ flexShrink: 0, padding: "0 14px 9px", fontSize: 10, color: kakaoMode ? "rgba(25,25,25,0.55)" : C.faint, textAlign: "center", ...(kakaoMode ? { background: "#FFFFFF" } : {}) }}>
+            <div style={{ flexShrink: 0, padding: "0 14px 9px", fontSize: 11, color: kakaoMode ? "rgba(25,25,25,0.55)" : C.faint, textAlign: "center", ...(kakaoMode ? { background: "#FFFFFF" } : {}) }}>
               예약·동행·요금 상담만 답변해요 · 의료 상담은 제공하지 않아요
             </div>
           </section>
@@ -1696,12 +1703,12 @@ export default function DemoPage() {
               </div>
               <div className="hdr-actions" style={{ display: "flex", alignItems: "center", gap: 9 }}>
                 {role === "dispatch" && (
-                <button className="btn-glass" onClick={() => setBriefingOpen((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 700, borderRadius: 9, padding: "6px 10px", color: C.ink }}>
+                <button className="btn-glass" onClick={() => setBriefingOpen((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, borderRadius: 9, padding: "6px 10px", color: C.ink }}>
                   <Icon name="clock" size={13} color={C.tealDk} /> 오늘 배차 브리핑
                 </button>
                 )}
                 <span title={dbState === "connected" ? "Supabase 저장 활성" : "SUPABASE_URL 미설정 — 시드 데이터로 시연"}
-                  style={{ fontSize: 10.5, color: dbState === "connected" ? C.green : C.amber, display: "flex", alignItems: "center", gap: 4 }}>
+                  style={{ fontSize: 11, color: dbState === "connected" ? C.green : C.amber, display: "flex", alignItems: "center", gap: 4 }}>
                   <Dot color={dbState === "connected" ? C.green : C.amber} /> {dbState === "connected" ? "DB 저장 중" : "DB 연동 대기"}
                 </span>
                 <span style={{ fontSize: 11, color: C.green, display: "flex", alignItems: "center", gap: 5 }}><Dot color={C.green} live /> 실시간 동기화</span>
@@ -1751,7 +1758,7 @@ export default function DemoPage() {
 
               {/* 오늘 배차 브리핑 — 예약별 동행 컨디션·준비물 (룰 엔진, LLM 0회) */}
               {role === "dispatch" && briefingOpen && (
-                <div className="glass-panel fadein" style={{ borderRadius: 18, overflow: "hidden", border: `1.5px solid rgba(31,138,122,0.4)` }}>
+                <div className="glass-panel fadein" style={{ borderRadius: 18, overflow: "hidden", border: `1.5px solid rgba(37,99,235,0.4)` }}>
                   <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
                       <Icon name="clock" size={14} color={C.teal} /> 오늘 배차 브리핑 <span style={{ fontWeight: 400, color: C.faint }}>· 예약 {briefing.length}건 · 케이웨더 기준</span>
@@ -1764,13 +1771,13 @@ export default function DemoPage() {
                         <span style={{ fontVariantNumeric: "tabular-nums", color: C.faint, flexShrink: 0, width: 38 }}>{hourLabel(b.start)}</span>
                         <span style={{ fontWeight: 600, color: C.ink, flexShrink: 0 }}>{b.hospital}</span>
                         <span style={{ color: C.sub, flexShrink: 0 }}>{b.recipient}</span>
-                        <span style={{ fontSize: 10.5, fontWeight: 700, color: scoreStyle(o.score).fg, background: scoreStyle(o.score).bg, borderRadius: 6, padding: "1px 7px", flexShrink: 0, fontVariantNumeric: "tabular-nums" }}>{o.score}점 {o.verdict}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: scoreStyle(o.score).fg, background: scoreStyle(o.score).bg, borderRadius: 6, padding: "1px 7px", flexShrink: 0, fontVariantNumeric: "tabular-nums" }}>{o.score}점 {o.verdict}</span>
                         <span style={{ color: C.faint, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", flex: 1 }}>{o.items.slice(0, 2).join("·")}</span>
                         <span style={{ color: C.sub, flexShrink: 0 }}>{b.manager} 매니저</span>
                       </div>
                     ))}
                     <button className="btn-primary" onClick={() => { pushTicker(`브리핑 알림톡 ${briefing.length}건 발송 완료 (매니저 전원)`, "green"); setBriefingOpen(false); }}
-                      style={{ width: "100%", marginTop: 10, borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                      style={{ width: "100%", marginTop: 10, borderRadius: 10, padding: "9px 0", fontSize: 13, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
                       <Icon name="send" size={14} /> 매니저 알림톡 일괄 발송
                     </button>
                   </div>
@@ -1789,7 +1796,7 @@ export default function DemoPage() {
                 <div style={{ padding: "6px 15px", minHeight: 44 }}>
                   {ticker.length === 0 && <div style={{ fontSize: 12, color: C.faint, padding: "9px 0" }}>챗봇에서 예약이 들어오면 여기에 실시간으로 표시됩니다.</div>}
                   {ticker.map((t) => (
-                    <div key={t.id} className="fadein" style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", fontSize: 12.5 }}>
+                    <div key={t.id} className="fadein" style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", fontSize: 13 }}>
                       <Dot color={t.tone === "green" ? C.green : t.tone === "blue" ? C.blue : t.tone === "amber" ? C.amber : t.tone === "red" ? C.red : C.teal} live={t.tone === "red"} />
                       <span style={{ color: C.faint, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{t.stamp}</span>
                       <span style={{ color: t.tone === "red" ? C.red : C.ink, fontWeight: t.tone === "green" || t.tone === "red" ? 700 : 400 }}>{t.label}</span>
@@ -1813,8 +1820,8 @@ export default function DemoPage() {
                     <div key={m.id} style={{ display: "flex", alignItems: "center", gap: 9, padding: "10px 15px", width: "50%", boxSizing: "border-box" }}>
                       <div style={{ width: 32, height: 32, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, color: "#fff", display: "grid", placeItems: "center", fontSize: 13, fontWeight: 700, flexShrink: 0, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }}>{m.name[0]}</div>
                       <div style={{ minWidth: 0, flex: 1 }}>
-                        <div style={{ fontSize: 12.5, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "flex", alignItems: "center", gap: 4 }}>{m.name} <Star size={11} /> <span style={{ color: C.faint, fontWeight: 400 }}>{m.rating}</span></div>
-                        <div style={{ fontSize: 10.5, color: C.faint }}>오늘 {managerLoad[m.id] || 0}건 · {m.areas[0]}</div>
+                        <div style={{ fontSize: 13, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "flex", alignItems: "center", gap: 4 }}>{m.name} <Star size={11} /> <span style={{ color: C.faint, fontWeight: 400 }}>{m.rating}</span></div>
+                        <div style={{ fontSize: 11, color: C.faint }}>오늘 {managerLoad[m.id] || 0}건 · {m.areas[0]}</div>
                       </div>
                     </div>
                   ))}
@@ -1843,7 +1850,7 @@ export default function DemoPage() {
                       <b style={{ flexShrink: 0 }}>{r.name}</b>
                       <span style={{ color: C.sub, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.note}</span>
                       <button className="pill-btn" onClick={() => pushTicker(`재예약 제안 알림톡 발송 — ${r.name}`, "green")}
-                        style={{ flexShrink: 0, fontSize: 10.5, fontWeight: 700, borderRadius: 8, padding: "4px 9px", border: "1px solid rgba(31,138,122,0.4)", background: "rgba(31,138,122,0.08)", color: C.tealDk, cursor: "pointer" }}>
+                        style={{ flexShrink: 0, fontSize: 11, fontWeight: 700, borderRadius: 8, padding: "4px 9px", border: "1px solid rgba(37,99,235,0.4)", background: "rgba(37,99,235,0.08)", color: C.tealDk, cursor: "pointer" }}>
                         재예약 제안
                       </button>
                     </div>
