@@ -60,13 +60,14 @@ function Dot({ color, live }) {
   return <span className={live ? "pulse-dot" : ""} style={{ width: live ? 8 : 7, height: live ? 8 : 7, borderRadius: "50%", background: color, display: "inline-block", flexShrink: 0 }} />;
 }
 
-/* ─── 디자인 토큰 ─── */
+/* ─── 디자인 토큰 — K-CARE 딥블루 (Healthcare & Life Concierge) ─── */
 const C = {
-  cream: "#F4EEE2", cream2: "#EFE7D7",
-  ink: "#16211C", ink2: "#39473F", sub: "#68766D", faint: "#9AA69D",
-  line: "rgba(22,33,28,0.10)", lineSoft: "rgba(22,33,28,0.055)",
-  teal: "#1F8A7A", tealDk: "#14675A", green: "#2E9E63", blue: "#3E63FF", amber: "#BC8236", red: "#E5533C",
-  evergreen: "#14241D",
+  cream: "#EEF3FB", cream2: "#E2EAF6",            // 페이지 배경 (라이트 블루그레이)
+  ink: "#0E1B33", ink2: "#2A3B58", sub: "#4A5A75", faint: "#8393AC",
+  line: "rgba(14,27,51,0.10)", lineSoft: "rgba(14,27,51,0.055)",
+  teal: "#2563EB", tealDk: "#123E8F",              // 주 액션 (딥블루 계열 — 기존 토큰명 유지로 전면 전파)
+  green: "#1F9D5B", blue: "#2F6BFF", amber: "#BC8236", red: "#DC4B3F",
+  evergreen: "#0B2A5B",                            // 브랜드 딥네이비 (기존 토큰명 유지)
 };
 
 const GRID_START = 8, GRID_END = 18, GRID_SPAN = GRID_END - GRID_START;
@@ -140,10 +141,10 @@ function CountUp({ value, suffix = "" }) {
 function Orbs() {
   return (
     <div aria-hidden style={{ position: "fixed", inset: 0, overflow: "hidden", zIndex: 0, pointerEvents: "none" }}>
-      <div className="orb orb1" style={{ background: "radial-gradient(circle, rgba(31,138,122,0.42), transparent 66%)" }} />
+      <div className="orb orb1" style={{ background: "radial-gradient(circle, rgba(37,99,235,0.40), transparent 66%)" }} />
       <div className="orb orb2" style={{ background: "radial-gradient(circle, rgba(188,130,54,0.34), transparent 66%)" }} />
-      <div className="orb orb3" style={{ background: "radial-gradient(circle, rgba(62,99,255,0.24), transparent 66%)" }} />
-      <div className="orb orb4" style={{ background: "radial-gradient(circle, rgba(46,158,99,0.28), transparent 66%)" }} />
+      <div className="orb orb3" style={{ background: "radial-gradient(circle, rgba(53,182,238,0.26), transparent 66%)" }} />
+      <div className="orb orb4" style={{ background: "radial-gradient(circle, rgba(18,62,143,0.30), transparent 66%)" }} />
     </div>
   );
 }
@@ -474,7 +475,7 @@ function WeekOuting({ week }) {
  * 딥네이비+시안 HUD, 아이소메트릭 빌딩 마커, 상태색(수행 green/이동 orange/대기 slate),
  * 접힘 범례, 근사좌표 점선 링(데이터 정직성 — GPS 연동 전 위치는 근사임을 표시).
  * 타일·외부 의존성 없는 자립형 SVG — 오프라인에서도 시연 완주. */
-const HUD = { bg: "#081527", line: "#1b3050", accent: "#35d5ee", green: "#45D483", orange: "#F59A3C", slate: "#64748b", text: "#c9d6e8", dim: "#6b7f99" };
+const HUD = { bg: "#081527", line: "#1b3050", accent: "#35d5ee", green: "#3DBF7A", orange: "#F59A3C", slate: "#64748b", text: "#c9d6e8", dim: "#6b7f99" };
 const MAP_HOSPITALS = {
   "서울대병원": [95, 38], "세브란스": [70, 42], "신촌세브란스": [70, 42], "강남세브란스": [120, 78],
   "경희대병원": [135, 25], "고대안암병원": [120, 30], "서울아산병원": [150, 75],
@@ -622,84 +623,240 @@ function LiveOpsMap({ today, highlightId }) {
 /* ─── 매니저 앱 (P5 목업) — GPS 체크인·완료 리포트 = '가정 내 센서' ───
  * 실GPS·PWA 연동은 후속. 여기서의 액션이 콘솔 그리드·관제맵·티커에
  * 실시간 반영 — 수요(챗봇)→운영(콘솔)→공급(매니저앱) 삼면 연결 시연. */
-function ManagerAppDrawer({ open, onClose, today, onCheckin, onComplete }) {
+function ConciergeBody({ today, onCheckin, onComplete, onClose }) {
   const [mgrId, setMgrId] = useState(null);
   const [reportFor, setReportFor] = useState(null);
   const [report, setReport] = useState({ fall: "none", med: "ok", mood: "good" });
-  if (!open) return null;
   const withJobs = SEED_MANAGERS.filter((m) => today.some((b) => b.managerId === m.id));
   const cur = SEED_MANAGERS.find((m) => m.id === (mgrId || withJobs[0]?.id)) || SEED_MANAGERS[1];
   const jobs = today.filter((b) => b.managerId === cur.id).sort((a, b) => a.start - b.start);
   const seg = (opts, val, set) => (
     <div style={{ display: "flex", gap: 4 }}>
       {opts.map(([k, l]) => (
-        <button key={k} onClick={() => set(k)} style={{ flex: 1, fontSize: 10.5, fontWeight: 600, borderRadius: 8, padding: "5px 0", border: `1px solid ${val === k ? "rgba(53,213,238,0.6)" : "rgba(255,255,255,0.14)"}`, background: val === k ? "rgba(53,213,238,0.16)" : "rgba(255,255,255,0.05)", color: val === k ? "#8fe3d4" : "#c9d6e8" }}>{l}</button>
+        <button key={k} onClick={() => set(k)} style={{ flex: 1, fontSize: 10.5, fontWeight: 600, borderRadius: 8, padding: "5px 0", border: `1px solid ${val === k ? "rgba(53,213,238,0.6)" : "rgba(255,255,255,0.14)"}`, background: val === k ? "rgba(53,213,238,0.16)" : "rgba(255,255,255,0.05)", color: val === k ? "#7FC8F5" : "#c9d6e8" }}>{l}</button>
       ))}
     </div>
   );
   return (
-    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(8,15,25,0.45)", backdropFilter: "blur(3px)", display: "flex", justifyContent: "flex-end" }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ width: 375, maxWidth: "94vw", height: "100%", background: "linear-gradient(180deg,#0e1f19,#0a1712)", borderLeft: "1px solid rgba(53,213,238,0.25)", display: "flex", flexDirection: "column", color: "#DCE8E3", boxShadow: "-18px 0 50px rgba(2,8,18,0.6)" }}>
+      <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#0B1F42,#071633)", display: "flex", flexDirection: "column", color: "#DCE6F5" }}>
         <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 9 }}>
           <div style={{ width: 34, height: 34, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, display: "grid", placeItems: "center", fontWeight: 700, color: "#fff" }}>{cur.name[0]}</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 700, fontSize: 14 }}>매니저 앱 <span style={{ fontSize: 10, color: "#8fe3d4", fontWeight: 600 }}>PWA · GPS 연동 대기(더미)</span></div>
-            <div style={{ fontSize: 11, color: "#7f958c" }}>{cur.name} 매니저 · ⭐{cur.rating} · 오늘 {jobs.length}건</div>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>컨시어지 앱 <span style={{ fontSize: 10, color: "#7FC8F5", fontWeight: 600 }}>PWA · GPS 연동 대기(더미)</span></div>
+            <div style={{ fontSize: 11, color: "#7E92B4" }}>{cur.name} 컨시어지 · ⭐{cur.rating} · 오늘 {jobs.length}건</div>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "#7f958c", fontSize: 18, cursor: "pointer" }}>×</button>
+          {onClose && <button onClick={onClose} style={{ background: "none", border: "none", color: "#7E92B4", fontSize: 18, cursor: "pointer" }}>×</button>}
         </div>
         {/* 매니저 선택 탭 */}
         <div style={{ display: "flex", gap: 5, padding: "9px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)", overflowX: "auto" }}>
           {SEED_MANAGERS.map((m) => (
-            <button key={m.id} onClick={() => setMgrId(m.id)} style={{ flexShrink: 0, fontSize: 11, fontWeight: 600, borderRadius: 999, padding: "4px 10px", border: `1px solid ${cur.id === m.id ? "rgba(53,213,238,0.55)" : "rgba(255,255,255,0.12)"}`, background: cur.id === m.id ? "rgba(53,213,238,0.14)" : "transparent", color: cur.id === m.id ? "#8fe3d4" : "#93a8a0" }}>
+            <button key={m.id} onClick={() => setMgrId(m.id)} style={{ flexShrink: 0, fontSize: 11, fontWeight: 600, borderRadius: 999, padding: "4px 10px", border: `1px solid ${cur.id === m.id ? "rgba(53,213,238,0.55)" : "rgba(255,255,255,0.12)"}`, background: cur.id === m.id ? "rgba(53,213,238,0.14)" : "transparent", color: cur.id === m.id ? "#7FC8F5" : "#93A6C6" }}>
               {m.name}{today.some((b) => b.managerId === m.id) ? ` ·${today.filter((b) => b.managerId === m.id).length}` : ""}
             </button>
           ))}
         </div>
         <div style={{ flex: 1, overflowY: "auto", padding: 14, display: "flex", flexDirection: "column", gap: 10 }}>
-          {jobs.length === 0 && <div style={{ fontSize: 12, color: "#7f958c", textAlign: "center", padding: "30px 0" }}>오늘 배정된 일정이 없습니다</div>}
+          {jobs.length === 0 && <div style={{ fontSize: 12, color: "#7E92B4", textAlign: "center", padding: "30px 0" }}>오늘 배정된 일정이 없습니다</div>}
           {jobs.map((b) => {
             const st = STATUS[b.status] || STATUS.confirmed;
             return (
               <div key={b.id} style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, background: "rgba(255,255,255,0.04)", padding: "11px 13px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                   <b style={{ fontSize: 13.5 }}>{hourLabel(b.start)} {b.hospital}</b>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: st.fg === "#5C6B66" ? "#93a8a0" : "#0e1f19", background: st.dot, borderRadius: 6, padding: "2px 7px" }}>{st.label}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: st.fg === "#5C6B66" ? "#93A6C6" : "#071633", background: st.dot, borderRadius: 6, padding: "2px 7px" }}>{st.label}</span>
                 </div>
-                <div style={{ fontSize: 11.5, color: "#93a8a0", marginBottom: 9 }}>{b.recipient} · {b.service} · {b.hours}시간</div>
+                <div style={{ fontSize: 11.5, color: "#93A6C6", marginBottom: 9 }}>{b.recipient} · {b.service} · {b.hours}시간</div>
                 {(b.status === "dispatched" || b.status === "confirmed") && (
-                  <button onClick={() => onCheckin(b.id, cur.name)} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "none", background: "linear-gradient(180deg,#35d5ee,#1494c9)", color: "#04222b", cursor: "pointer" }}>
+                  <button onClick={() => onCheckin(b.id, cur.name)} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "none", background: "linear-gradient(180deg,#35d5ee,#1494c9)", color: "#04182B", cursor: "pointer" }}>
                     GPS 출근 체크인
                   </button>
                 )}
                 {b.status === "pending" && (
-                  <div style={{ fontSize: 11, color: "#93a8a0", textAlign: "center", padding: "6px 0" }}>업체 배차 확정 대기 중 — 배정되면 체크인이 열립니다</div>
+                  <div style={{ fontSize: 11, color: "#93A6C6", textAlign: "center", padding: "6px 0" }}>업체 배차 확정 대기 중 — 배정되면 체크인이 열립니다</div>
                 )}
                 {b.status === "in_service" && reportFor !== b.id && (
-                  <button onClick={() => { setReport({ fall: "none", med: "ok", mood: "good" }); setReportFor(b.id); }} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "1px solid rgba(69,212,131,0.5)", background: "rgba(69,212,131,0.12)", color: "#45D483", cursor: "pointer" }}>
+                  <button onClick={() => { setReport({ fall: "none", med: "ok", mood: "good" }); setReportFor(b.id); }} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "1px solid rgba(61,191,122,0.5)", background: "rgba(61,191,122,0.12)", color: "#3DBF7A", cursor: "pointer" }}>
                     서비스 완료 · 리포트 작성
                   </button>
                 )}
                 {b.status === "in_service" && reportFor === b.id && (
                   <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 4 }}>
-                    <div style={{ fontSize: 10.5, color: "#7f958c" }}>완료 리포트 — 30초 체크 (가정 내 센서)</div>
-                    <div style={{ fontSize: 10.5, color: "#93a8a0" }}>낙상 위험</div>
+                    <div style={{ fontSize: 10.5, color: "#7E92B4" }}>완료 리포트 — 30초 체크 (가정 내 센서)</div>
+                    <div style={{ fontSize: 10.5, color: "#93A6C6" }}>낙상 위험</div>
                     {seg([["none", "없음"], ["low", "낮음"], ["high", "높음"]], report.fall, (v) => setReport((r) => ({ ...r, fall: v })))}
-                    <div style={{ fontSize: 10.5, color: "#93a8a0" }}>복약 확인</div>
+                    <div style={{ fontSize: 10.5, color: "#93A6C6" }}>복약 확인</div>
                     {seg([["ok", "확인"], ["missed", "누락"], ["unknown", "모름"]], report.med, (v) => setReport((r) => ({ ...r, med: v })))}
-                    <div style={{ fontSize: 10.5, color: "#93a8a0" }}>어르신 기분</div>
+                    <div style={{ fontSize: 10.5, color: "#93A6C6" }}>어르신 기분</div>
                     {seg([["good", "좋음"], ["flat", "보통"], ["low", "저조"]], report.mood, (v) => setReport((r) => ({ ...r, mood: v })))}
-                    <button onClick={() => { onComplete(b.id, cur.name, report); setReportFor(null); }} style={{ borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "none", background: "#45D483", color: "#06231a", cursor: "pointer", marginTop: 3 }}>
+                    <button onClick={() => { onComplete(b.id, cur.name, report); setReportFor(null); }} style={{ borderRadius: 10, padding: "9px 0", fontSize: 12.5, fontWeight: 700, border: "none", background: "#3DBF7A", color: "#06182E", cursor: "pointer", marginTop: 3 }}>
                       리포트 제출 · 완료 처리
                     </button>
                   </div>
                 )}
-                {b.status === "done" && <div style={{ fontSize: 11, color: "#45D483" }}>✓ 완료 — 리포트 제출됨 · 제공기록지 자동 생성</div>}
+                {b.status === "done" && <div style={{ fontSize: 11, color: "#3DBF7A" }}>✓ 완료 — 리포트 제출됨 · 제공기록지 자동 생성</div>}
               </div>
             );
           })}
-          <div style={{ fontSize: 10, color: "#5d7169", textAlign: "center", marginTop: 4 }}>체크인·완료가 콘솔 배차 그리드·관제 맵·티커에 실시간 반영됩니다</div>
+          <div style={{ fontSize: 10, color: "#5D7194", textAlign: "center", marginTop: 4 }}>체크인·완료가 배치관제·관리자·가족 화면에 실시간 반영됩니다</div>
         </div>
+      </div>
+  );
+}
+
+/* ─── 가족 앱 (K-CARE Family Membership p10) — 실시간 건강·일정·컨시어지·리포트 ─── */
+function FamilyPanel({ profile, today, sos, onClearSos, pushTicker, kakaoMode }) {
+  const [tick, setTick] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setTick((t) => t + 1), 1400); return () => clearInterval(iv); }, []);
+  const hr = 71 + Math.round(Math.sin(tick / 2) * 3);           // 워치 더미 (연동 대기)
+  const bp = tick % 9 < 5 ? "128/78" : "126/79";
+  const mgrName = profile?.preferred_manager || "박영희";
+  const mgr = SEED_MANAGERS.find((m) => m.name === mgrName) || SEED_MANAGERS[1];
+  const nextJob = [...today].filter((b) => b.status !== "done").sort((a, b) => a.start - b.start)[0];
+  const metric = (icon, label, val, sub, tone) => (
+    <div className="glass-panel" style={{ flex: "1 1 44%", borderRadius: 14, padding: "11px 13px", minWidth: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10.5, color: C.faint, marginBottom: 4 }}><Icon name={icon} size={12} color={C.faint} /> {label}</div>
+      <div style={{ fontSize: 20, fontWeight: 800, color: tone || C.ink, fontVariantNumeric: "tabular-nums" }}>{val}</div>
+      {sub && <div style={{ fontSize: 10.5, color: C.faint, marginTop: 2 }}>{sub}</div>}
+    </div>
+  );
+  return (
+    <section className="glass-panel pane-console" style={{ flex: "1.15 1 460px", minWidth: 340, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
+      <div className="console-hdr" style={{ flexShrink: 0, padding: "12px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
+          <Chip name="users" bg="rgba(37,99,235,0.13)" fg={C.tealDk} box={30} size={16} />
+          <div style={{ minWidth: 0 }}>
+            <b style={{ fontSize: 14, whiteSpace: "nowrap" }}>가족 앱 — 우리 아빠·엄마</b>
+            <div style={{ fontSize: 11, color: C.faint, whiteSpace: "nowrap" }}>Family Membership · 워치 연동 대기(더미)</div>
+          </div>
+        </div>
+        <span style={{ fontSize: 11, color: C.green, display: "flex", alignItems: "center", gap: 5 }}><Dot color={C.green} live /> 실시간 공유 중</span>
+      </div>
+      <div className="console-scroll" style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 13 }}>
+        {/* 응급 알림 — SOS 유기 연동 (어르신 화면 → 가족·배치관제 동시) */}
+        {sos && (
+          <div className="fadein" style={{ display: "flex", alignItems: "center", gap: 9, padding: "12px 14px", borderRadius: 14, background: "rgba(220,75,63,0.12)", border: `1.5px solid ${C.red}` }}>
+            <Dot color={C.red} live />
+            <div style={{ flex: 1 }}>
+              <b style={{ fontSize: 13, color: C.red }}>긴급 호출 (SOS) — {sos.time}</b>
+              <div style={{ fontSize: 11.5, color: C.ink2 }}>컨시어지·관제센터에 동시 전파됨 · 필요 시 119 연계</div>
+            </div>
+            <button className="pill-btn" onClick={onClearSos} style={{ fontSize: 11, fontWeight: 700, borderRadius: 9, padding: "6px 11px", border: `1px solid ${C.red}`, background: "#fff", color: C.red, cursor: "pointer" }}>확인 완료</button>
+          </div>
+        )}
+        {/* 실시간 건강 (워치 더미) */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+          {metric("heart", "심박수", `${hr} bpm`, "정상 범위", hr > 76 ? "#B4551F" : C.ink)}
+          {metric("activity", "걸음 수", "6,345", "목표 70%")}
+          {metric("cloud", "수면", "7시간 20분", "어젯밤")}
+          {metric("droplet", "혈압", bp, "오늘 08:10", C.ink)}
+        </div>
+        {/* 오늘 일정 */}
+        <div className="glass-panel" style={{ borderRadius: 16, overflow: "hidden" }}>
+          <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+            <Icon name="calendar" size={14} color={C.teal} /> 다가오는 일정
+          </div>
+          <div style={{ padding: "10px 15px", fontSize: 12.5 }}>
+            {nextJob ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <b style={{ fontVariantNumeric: "tabular-nums" }}>{hourLabel(nextJob.start)}</b>
+                <span>{nextJob.hospital} · {nextJob.service}</span>
+                <span style={{ marginLeft: "auto", fontSize: 10.5, fontWeight: 700, color: (STATUS[nextJob.status] || STATUS.confirmed).fg, background: (STATUS[nextJob.status] || STATUS.confirmed).tint, borderRadius: 6, padding: "2px 7px" }}>{(STATUS[nextJob.status] || STATUS.confirmed).label}</span>
+              </div>
+            ) : <span style={{ color: C.faint }}>예정된 일정이 없어요 — AI 컨시어지로 예약해 보세요</span>}
+            {profile?.topics?.appointments && <div style={{ marginTop: 6, fontSize: 11, color: C.sub }}>메모: {profile.topics.appointments}</div>}
+          </div>
+        </div>
+        {/* 전담 컨시어지 */}
+        <div className="glass-panel" style={{ borderRadius: 16, padding: "12px 15px", display: "flex", alignItems: "center", gap: 11 }}>
+          <div style={{ width: 42, height: 42, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, color: "#fff", display: "grid", placeItems: "center", fontWeight: 700, fontSize: 16 }}>{mgr.name[0]}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 700 }}>전담 컨시어지 · {mgr.name}</div>
+            <div style={{ fontSize: 11, color: C.sub }}>⭐{mgr.rating} · {mgr.specialty} · 1:1 배정</div>
+          </div>
+          <button className="pill-btn btn-primary" onClick={() => pushTicker(`가족 앱 → ${mgr.name} 컨시어지 1:1 상담 연결`, "blue")} style={{ borderRadius: 10, padding: "8px 13px", fontSize: 11.5, fontWeight: 700 }}>상담 연결</button>
+        </div>
+        {/* 케어 리포트 */}
+        <div className="glass-panel" style={{ borderRadius: 16, overflow: "hidden" }}>
+          <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+            <Icon name="receipt" size={14} color={C.teal} /> 케어 리포트 <span style={{ fontWeight: 400, color: C.faint }}>· 동행·방문 후 자동 전달</span>
+          </div>
+          <div style={{ padding: "10px 15px", fontSize: 12, color: C.ink2, display: "flex", flexDirection: "column", gap: 5 }}>
+            {profile?.topics?.mood ? <div>· {profile.topics.mood} <span style={{ color: C.faint }}>(컨시어지 완료 리포트)</span></div> : <div style={{ color: C.faint }}>아직 리포트가 없어요 — 첫 동행 후 이곳에 도착합니다</div>}
+            <div>· 다음 정기 안부콜: 금요일 오전 <span style={{ color: C.faint }}>(AI 안부콜 · 예정)</span></div>
+          </div>
+        </div>
+        <div style={{ fontSize: 10, color: C.faint, textAlign: "center" }}>{kakaoMode ? "카카오 채널과 동일 데이터로 동작합니다" : "좌측 AI 컨시어지의 예약·리포트가 이 화면에 실시간 반영됩니다"}</div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 사용자(어르신) 홈 — 큰 글씨·단순 동선·SOS ─── */
+function SeniorHome({ today, profile, onSos, sos }) {
+  const nextJob = [...today].filter((b) => b.status !== "done").sort((a, b) => a.start - b.start)[0];
+  const mgrName = profile?.preferred_manager || "박영희";
+  const o = SEED_CONSOLE.outing;
+  return (
+    <section className="glass-panel pane-chat" style={{ flex: "1 1 420px", maxWidth: 560, margin: "0 auto", display: "flex", flexDirection: "column", borderRadius: 22, overflow: "hidden", minHeight: 0 }}>
+      <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.line}` }}>
+        <div style={{ fontSize: 22, fontWeight: 800 }}>안녕하세요, 어르신</div>
+        <div style={{ fontSize: 14, color: C.sub, marginTop: 2 }}>오늘도 K-CARE가 곁에 있어요</div>
+      </div>
+      <div className="console-scroll" style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 14 }}>
+        <div className="glass-panel" style={{ borderRadius: 18, padding: "16px 18px" }}>
+          <div style={{ fontSize: 13, color: C.faint, marginBottom: 6 }}>오늘 일정</div>
+          {nextJob ? (
+            <>
+              <div style={{ fontSize: 24, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>{hourLabel(nextJob.start)} <span style={{ fontSize: 19 }}>{nextJob.hospital}</span></div>
+              <div style={{ fontSize: 15, color: C.ink2, marginTop: 4 }}>{nextJob.manager} 컨시어지가 모시러 갑니다</div>
+            </>
+          ) : <div style={{ fontSize: 18, fontWeight: 700 }}>오늘은 편히 쉬는 날이에요</div>}
+        </div>
+        <div className="glass-panel" style={{ borderRadius: 18, padding: "14px 18px", display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ width: 52, height: 52, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, color: "#fff", display: "grid", placeItems: "center", fontWeight: 800, fontSize: 21 }}>{mgrName[0]}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 17, fontWeight: 800 }}>{mgrName} 컨시어지</div>
+            <div style={{ fontSize: 13, color: C.sub }}>내 전담 담당자</div>
+          </div>
+          <button className="btn-primary" style={{ borderRadius: 14, padding: "13px 18px", fontSize: 15, fontWeight: 800 }}>전화하기</button>
+        </div>
+        <div className="glass-panel" style={{ borderRadius: 18, padding: "13px 18px", display: "flex", alignItems: "center", gap: 10 }}>
+          <Icon name={skyIcon(o.sky)} size={26} color={C.amber} />
+          <div style={{ fontSize: 15, color: C.ink2 }}>오늘 {o.temp}℃ {o.sky} · 나들이 {o.verdict}<div style={{ fontSize: 12.5, color: C.faint }}>{o.comment}</div></div>
+        </div>
+        <button onClick={onSos} disabled={!!sos}
+          style={{ borderRadius: 20, padding: "22px 0", fontSize: 22, fontWeight: 900, border: "none", cursor: "pointer", color: "#fff", background: sos ? "#B98A84" : `linear-gradient(180deg,#E4574A,#C23A2E)`, boxShadow: "0 12px 30px -10px rgba(220,75,63,0.55)" }}>
+          {sos ? "도움 요청됨 — 연결 중…" : "🆘 도움 요청 (SOS)"}
+        </button>
+        <div style={{ fontSize: 12, color: C.faint, textAlign: "center" }}>버튼을 누르면 가족·컨시어지·관제센터에 즉시 알립니다</div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 관리자: 수익 6종 현황 (K-CARE BM p7) ─── */
+function RevenueSix({ kpi }) {
+  const items = [
+    { name: "병원동행 (건별)", val: `${manwon(kpi.gmv)}만원`, sub: "오늘 GMV · 수수료 연동", tone: C.tealDk },
+    { name: "가입비", val: "3건 · 45만원", sub: "온보딩·컨시어지 배정", tone: C.ink },
+    { name: "월 구독 (MRR)", val: "1,240만원", sub: "멤버십 96가구", tone: C.green },
+    { name: "건강검진 패키지", val: "실버12 · 골드5 · 다이아2", sub: "제휴 검진센터 연계", tone: C.ink },
+    { name: "병원연계 수수료", val: "320만원", sub: "협력병원 20+", tone: C.ink },
+    { name: "헬스케어 커머스", val: "180만원", sub: "상비약·용품·기기", tone: C.ink },
+  ];
+  return (
+    <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+      <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+        <Icon name="wallet" size={14} color={C.teal} /> 수익 6종 현황 <span style={{ fontWeight: 400, color: C.faint }}>· K-CARE BM · 이번 달(데모)</span>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+        {items.map((r) => (
+          <div key={r.name} style={{ width: "50%", boxSizing: "border-box", padding: "10px 15px", borderBottom: `1px solid ${C.lineSoft}` }}>
+            <div style={{ fontSize: 10.5, color: C.faint }}>{r.name}</div>
+            <div style={{ fontSize: 14.5, fontWeight: 800, color: r.tone, marginTop: 2 }}>{r.val}</div>
+            <div style={{ fontSize: 10, color: C.faint, marginTop: 1 }}>{r.sub}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -937,7 +1094,7 @@ function makeGreeting(profile) {
       content: `다시 만나 반가워요! 지난번 ${profile.recipient || "어르신"} **${profile.hospital || "병원"}** 동행은 잘 다녀오셨어요?${mgr} 다음 일정 날짜만 말씀해 주시면 지난번 조건 그대로, 문진 없이 바로 접수합니다.`,
     };
   }
-  return { id: "g0", role: "assistant", content: "안녕하세요, 시니어케어매니저 **돌봄이 AI**예요. 어떤 병원동행이나 돌봄이 필요하신가요? 편하게 말씀해 주세요.", events: [] };
+  return { id: "g0", role: "assistant", content: "안녕하세요, K-CARE **AI 컨시어지**예요. 어떤 병원동행이나 돌봄이 필요하신가요? 편하게 말씀해 주세요.", events: [] };
 }
 const GREETING = makeGreeting(null);
 
@@ -1000,7 +1157,8 @@ export default function DemoPage() {
   const [dbState, setDbState] = useState("waiting");      // waiting | connected — dcmap '연동 대기' 정직 표기
   const [familyProfile, setFamilyProfile] = useState(null); // 진화 루프 — 프론트(localStorage) 프로필
   const [kakaoMode, setKakaoMode] = useState(false);        // 카카오 상담톡 스킨 (실채널 연동은 후속 — 프론트 더미)
-  const [managerAppOpen, setManagerAppOpen] = useState(false); // 매니저 앱(P5) 목업 드로어
+  const [role, setRole] = useState("family");               // K-CARE 5역할: family|senior|concierge|dispatch|admin
+  const [sos, setSos] = useState(null);                     // 어르신 SOS — 가족·배치관제 유기 전파
   const familyProfileRef = useRef(null);
   const sessionIdRef = useRef(null);
   if (!sessionIdRef.current) sessionIdRef.current = genUuid();
@@ -1189,6 +1347,7 @@ export default function DemoPage() {
 
   const autoplay = useCallback(async () => {
     if (autoOn) return;
+    setRole("family"); // 자동 시연은 가족 챗 화면에서 진행
     reset(true);
     setAutoOn(true);
     autoplayRef.current = true; // 대본 모드 — 재방문 프로필 분기 비활성
@@ -1224,8 +1383,16 @@ export default function DemoPage() {
     setHighlightId(null);
     setLatestOuting(null);
     setBriefingOpen(false);
+    setSos(null); // SOS 상태도 초기화 — 데모 재시연 대비
     if (!silent) setMode("live");
   }
+
+  // SOS — 어르신 화면에서 발신 → 가족 배너·배치관제 티커 동시 전파
+  const handleSos = useCallback(() => {
+    const time = new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
+    setSos({ time });
+    pushTicker("SOS 긴급 호출 수신 — 어르신 단말 · 컨시어지 급파", "red");
+  }, [pushTicker]);
 
   // 매니저 앱 액션 → 콘솔·맵·티커 실시간 반영 (삼면 연결)
   const handleCheckin = useCallback((id, mgrName) => {
@@ -1261,7 +1428,7 @@ export default function DemoPage() {
   return (
     <>
       <Head>
-        <title>시니어케어매니저 · AI 예약 데모</title>
+        <title>K-CARE · Healthcare & Life Concierge 데모</title>
         <meta name="theme-color" content="#F4EEE2" />
         <meta name="robots" content="noindex" />
         <style>{`
@@ -1278,20 +1445,20 @@ export default function DemoPage() {
             background:linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.62));
             backdrop-filter:blur(18px) saturate(150%); -webkit-backdrop-filter:blur(18px) saturate(150%);
             border:1px solid rgba(255,255,255,0.7);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 10px 30px -14px rgba(20,36,29,0.30);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 10px 30px -14px rgba(10,24,50,0.30);
           }
           .glass-card{
             background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.74));
             backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%);
             border:1px solid rgba(255,255,255,0.72);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 8px 22px -14px rgba(20,36,29,0.28);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 8px 22px -14px rgba(10,24,50,0.28);
           }
           .btn-primary{
-            background:linear-gradient(180deg,#27392f,#15241d); color:#fff; border:1px solid rgba(255,255,255,0.14);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 8px 20px -8px rgba(18,30,23,0.6), 0 1px 2px rgba(0,0,0,0.2);
+            background:linear-gradient(180deg,#123467,#0A1F42); color:#fff; border:1px solid rgba(255,255,255,0.14);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 8px 20px -8px rgba(7,23,50,0.65), 0 1px 2px rgba(0,0,0,0.2);
             transition:transform .12s ease, box-shadow .12s ease;
           }
-          .btn-primary:hover:not(:disabled){ transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,0.24), 0 12px 26px -8px rgba(18,30,23,0.7) }
+          .btn-primary:hover:not(:disabled){ transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,0.24), 0 12px 26px -8px rgba(7,23,50,0.75) }
           .btn-primary:disabled{ opacity:.55 }
           .btn-glass{
             background:rgba(255,255,255,0.55); color:#16211C; border:1px solid rgba(255,255,255,0.7);
@@ -1348,25 +1515,22 @@ export default function DemoPage() {
         <Orbs />
 
         {/* 헤더 */}
-        <header style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 18px", background: `linear-gradient(180deg,#1a2c24,#12201a)`, color: "#fff", flexWrap: "wrap", boxShadow: "0 6px 24px -12px rgba(0,0,0,0.5)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <header style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 18px", background: `linear-gradient(180deg,#0D2450,#081A3C)`, color: "#fff", flexWrap: "wrap", boxShadow: "0 6px 24px -12px rgba(0,0,0,0.5)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 11, minWidth: 0 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 11, background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 12px -4px rgba(31,138,122,0.6)" }}>
+            <div style={{ width: 34, height: 34, borderRadius: 11, background: `linear-gradient(160deg,#2F6BFF,#123E8F)`, display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 12px -4px rgba(47,107,255,0.6)" }}>
               <Icon name="heart" size={18} color="#fff" sw={1.9} />
             </div>
             <div style={{ minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 800, fontSize: 15, whiteSpace: "nowrap", letterSpacing: "-0.01em" }}>
-                시니어케어매니저 <Dot color="#EF4444" live />
+                K-CARE <span style={{ fontWeight: 500, fontSize: 12, opacity: 0.85 }}>케어 플랫폼</span> <Dot color="#EF4444" live />
               </div>
-              <div className="hdr-sub" style={{ fontSize: 11, opacity: 0.72, whiteSpace: "nowrap" }}>AI 예약 → 배차 콘솔 실시간 연결 시연</div>
+              <div className="hdr-sub" style={{ fontSize: 11, opacity: 0.72, whiteSpace: "nowrap" }}>Healthcare & Life Concierge · 5역할 유기 연동 데모</div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, padding: "6px 11px", borderRadius: 999, background: liveMode ? "rgba(46,158,99,0.2)" : "rgba(188,130,54,0.24)", border: `1px solid ${liveMode ? "rgba(46,158,99,0.55)" : "rgba(188,130,54,0.55)"}` }}>
               <Dot color={liveMode ? "#43d17f" : "#e0a44a"} /> {liveMode ? "AI 연결됨" : "데모 스크립트"}
             </span>
-            <button className="btn-ghost" onClick={() => setManagerAppOpen(true)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, borderRadius: 11, padding: "8px 12px" }}>
-              매니저 앱
-            </button>
             <button className="btn-ghost" onClick={() => setKakaoMode((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, borderRadius: 11, padding: "8px 12px", background: kakaoMode ? "#FEE500" : undefined, color: kakaoMode ? "#191919" : undefined, border: kakaoMode ? "1px solid #FEE500" : undefined }}>
               {kakaoMode ? "웹 스킨" : "카카오 스킨"}
             </button>
@@ -1379,17 +1543,42 @@ export default function DemoPage() {
           </div>
         </header>
 
-        {/* 본문 2분할 */}
+        {/* 역할 스위처 — K-CARE 5역할 유기 연동 (한 역할의 액션이 다른 역할 화면에 반영) */}
+        <nav style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", gap: 6, padding: "8px 16px", background: "#0A2148", borderBottom: "1px solid rgba(255,255,255,0.07)", overflowX: "auto" }}>
+          {[["family", "가족 (보호자)"], ["senior", "사용자 (어르신)"], ["concierge", "컨시어지 (동행자)"], ["dispatch", "배치관리자"], ["admin", "관리자"]].map(([k, l]) => (
+            <button key={k} onClick={() => setRole(k)} style={{
+              flexShrink: 0, fontSize: 12, fontWeight: 700, borderRadius: 999, padding: "7px 14px", cursor: "pointer",
+              border: `1px solid ${role === k ? "rgba(127,200,245,0.7)" : "rgba(255,255,255,0.14)"}`,
+              background: role === k ? "linear-gradient(180deg,#2F6BFF,#1D4FD1)" : "rgba(255,255,255,0.05)",
+              color: role === k ? "#fff" : "#9FB4D6",
+            }}>
+              {l}{k === "family" && sos ? " ●" : ""}{k === "dispatch" && sos ? " ●" : ""}
+            </button>
+          ))}
+        </nav>
+
+        {/* 본문 — 역할별 뷰 (상태는 전 역할 공유) */}
         <div className="demo-body" style={{ position: "relative", zIndex: 1, flex: 1, minHeight: 0, display: "flex", gap: 14, padding: 14 }}>
-          {/* ── 좌: 챗봇 ── */}
+          {/* ── 사용자(어르신) ── */}
+          {role === "senior" && <SeniorHome today={today} profile={familyProfile} onSos={handleSos} sos={sos} />}
+
+          {/* ── 컨시어지(동행자) ── */}
+          {role === "concierge" && (
+            <section className="pane-chat" style={{ flex: "1 1 400px", maxWidth: 440, margin: "0 auto", borderRadius: 20, overflow: "hidden", minHeight: 0, border: "1px solid rgba(53,182,238,0.3)", boxShadow: "0 18px 50px rgba(4,12,28,0.45)" }}>
+              <ConciergeBody today={today} onCheckin={handleCheckin} onComplete={handleComplete} />
+            </section>
+          )}
+
+          {/* ── 가족: AI 컨시어지 챗 ── */}
+          {role === "family" && (
           <section className="glass-panel pane-chat" style={{ flex: "1 1 380px", minWidth: 320, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0, ...(kakaoMode ? { background: "#A9C2D8", border: "1px solid #8FB0CC" } : {}) }}>
             <div style={{ flexShrink: 0, padding: "12px 16px", borderBottom: kakaoMode ? "1px solid #E8D200" : `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 10, ...(kakaoMode ? { background: "#FEE500" } : {}) }}>
-              <div style={{ width: 36, height: 36, borderRadius: kakaoMode ? "50%" : 12, background: kakaoMode ? "#FFFFFF" : `linear-gradient(160deg,${C.evergreen},#1f342b)`, color: "#fff", display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)" }}>
-                <Icon name={kakaoMode ? "heart" : "sparkle"} size={18} color={kakaoMode ? "#191919" : "#8fe3d4"} sw={1.6} />
+              <div style={{ width: 36, height: 36, borderRadius: kakaoMode ? "50%" : 12, background: kakaoMode ? "#FFFFFF" : `linear-gradient(160deg,${C.evergreen},#123467)`, color: "#fff", display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)" }}>
+                <Icon name={kakaoMode ? "heart" : "sparkle"} size={18} color={kakaoMode ? "#191919" : "#7FC8F5"} sw={1.6} />
               </div>
               <div style={{ flexShrink: 0 }}>
                 <div style={{ fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 6, color: kakaoMode ? "#191919" : undefined }}>
-                  {kakaoMode ? "시니어케어매니저" : "돌봄이 AI"}
+                  {kakaoMode ? "K-CARE" : "K-CARE AI 컨시어지"}
                   {kakaoMode && <span style={{ fontSize: 9, fontWeight: 800, color: "#FEE500", background: "#191919", borderRadius: 5, padding: "1.5px 5px" }}>상담톡</span>}
                 </div>
                 <div style={{ fontSize: 11, color: kakaoMode ? "rgba(25,25,25,0.65)" : C.green, display: "flex", alignItems: "center", gap: 5 }}>
@@ -1436,10 +1625,10 @@ export default function DemoPage() {
                     maxWidth: "88%", padding: "10px 13px", borderRadius: 16, fontSize: 13.5, lineHeight: 1.55, whiteSpace: "pre-wrap",
                     background: kakaoMode
                       ? (m.role === "user" ? "#FEE500" : "#FFFFFF")
-                      : (m.role === "user" ? `linear-gradient(180deg,#27392f,#16241d)` : "rgba(255,255,255,0.92)"),
+                      : (m.role === "user" ? `linear-gradient(180deg,#12305E,#0A1F42)` : "rgba(255,255,255,0.92)"),
                     color: kakaoMode ? "#191919" : (m.role === "user" ? "#fff" : C.ink),
                     border: kakaoMode ? "none" : (m.role === "user" ? "1px solid rgba(255,255,255,0.12)" : `1px solid ${C.line}`),
-                    boxShadow: kakaoMode ? "0 1px 2px rgba(0,0,0,0.12)" : (m.role === "user" ? "inset 0 1px 0 rgba(255,255,255,0.18), 0 6px 16px -10px rgba(18,30,23,0.6)" : "0 6px 16px -12px rgba(20,36,29,0.4)"),
+                    boxShadow: kakaoMode ? "0 1px 2px rgba(0,0,0,0.12)" : (m.role === "user" ? "inset 0 1px 0 rgba(255,255,255,0.18), 0 6px 16px -10px rgba(7,23,50,0.6)" : "0 6px 16px -12px rgba(10,24,50,0.4)"),
                     borderBottomRightRadius: m.role === "user" ? 5 : 16,
                     borderBottomLeftRadius: m.role === "user" ? 16 : 5,
                   }}>
@@ -1482,21 +1671,30 @@ export default function DemoPage() {
               예약·동행·요금 상담만 답변해요 · 의료 상담은 제공하지 않아요
             </div>
           </section>
+          )}
 
-          {/* ── 우: 콘솔 ── */}
+          {/* 가족 앱 패널 — 멤버십·워치·SOS·리포트 (family 우측 페인) */}
+          {role === "family" && (
+            <FamilyPanel profile={familyProfile} today={today} sos={sos} onClearSos={() => setSos(null)} pushTicker={pushTicker} kakaoMode={kakaoMode} />
+          )}
+
+          {/* ── 우: 콘솔 (배치관리자 = 관제 / 관리자 = 경영) ── */}
+          {(role === "dispatch" || role === "admin") && (
           <section className="glass-panel pane-console" style={{ flex: "1.15 1 460px", minWidth: 340, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
             <div className="console-hdr" style={{ flexShrink: 0, padding: "12px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
-                <Chip name="calendar" bg="rgba(31,138,122,0.14)" fg={C.tealDk} box={30} size={16} />
+                <Chip name={role === "dispatch" ? "pin" : "calendar"} bg="rgba(47,107,255,0.14)" fg={C.tealDk} box={30} size={16} />
                 <div style={{ minWidth: 0 }}>
-                  <b style={{ fontSize: 14, whiteSpace: "nowrap" }}>돌봄업체 관리자 콘솔</b>
-                  <div style={{ fontSize: 11, color: C.faint, whiteSpace: "nowrap" }}>새벽케어 강남지점</div>
+                  <b style={{ fontSize: 14, whiteSpace: "nowrap" }}>{role === "dispatch" ? "배치 관제 센터" : "경영 대시보드"}</b>
+                  <div style={{ fontSize: 11, color: C.faint, whiteSpace: "nowrap" }}>K-CARE 강남지점</div>
                 </div>
               </div>
               <div className="hdr-actions" style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                {role === "dispatch" && (
                 <button className="btn-glass" onClick={() => setBriefingOpen((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 700, borderRadius: 9, padding: "6px 10px", color: C.ink }}>
                   <Icon name="clock" size={13} color={C.tealDk} /> 오늘 배차 브리핑
                 </button>
+                )}
                 <span title={dbState === "connected" ? "Supabase 저장 활성" : "SUPABASE_URL 미설정 — 시드 데이터로 시연"}
                   style={{ fontSize: 10.5, color: dbState === "connected" ? C.green : C.amber, display: "flex", alignItems: "center", gap: 4 }}>
                   <Dot color={dbState === "connected" ? C.green : C.amber} /> {dbState === "connected" ? "DB 저장 중" : "DB 연동 대기"}
@@ -1506,19 +1704,22 @@ export default function DemoPage() {
             </div>
 
             <div className="console-scroll" style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 13 }}>
-              {/* KPI */}
-              <div className="kpi-row" style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <Kpi label="오늘 GMV" value={manwon(kpi.gmv)} suffix="만원" accent={C.tealDk} sub="실시간" />
-                <Kpi label="예약 건수" value={kpi.bookings} suffix="건" />
-                <Kpi label="매니저 가동률" value={kpi.utilization} suffix="%" />
-                <Kpi label="노쇼율" value={`${kpi.noShow}%`} accent={C.green} />
-              </div>
+              {/* KPI + 수익 6종 — 경영(관리자) 뷰 */}
+              {role === "admin" && (
+                <div className="kpi-row" style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                  <Kpi label="오늘 GMV" value={manwon(kpi.gmv)} suffix="만원" accent={C.tealDk} sub="실시간" />
+                  <Kpi label="예약 건수" value={kpi.bookings} suffix="건" />
+                  <Kpi label="컨시어지 가동률" value={kpi.utilization} suffix="%" />
+                  <Kpi label="노쇼율" value={`${kpi.noShow}%`} accent={C.green} />
+                </div>
+              )}
+              {role === "admin" && <RevenueSix kpi={kpi} />}
 
-              {/* 실시간 관제 맵 — dcmap 헤리티지 */}
-              <LiveOpsMap today={today} highlightId={highlightId} />
+              {/* 실시간 관제 맵 — dcmap 헤리티지 (배치관리자 뷰) */}
+              {role === "dispatch" && <LiveOpsMap today={today} highlightId={highlightId} />}
 
-              {/* 오늘 외출 컨디션 (케이웨더) */}
-              {(() => {
+              {/* 오늘 외출 컨디션 (케이웨더) — 경영 뷰 */}
+              {role === "admin" && (() => {
                 const o = SEED_CONSOLE.outing;
                 const g = WX_GRADE[o.grade] || WX_GRADE["보통"];
                 return (
@@ -1544,7 +1745,7 @@ export default function DemoPage() {
               })()}
 
               {/* 오늘 배차 브리핑 — 예약별 동행 컨디션·준비물 (룰 엔진, LLM 0회) */}
-              {briefingOpen && (
+              {role === "dispatch" && briefingOpen && (
                 <div className="glass-panel fadein" style={{ borderRadius: 18, overflow: "hidden", border: `1.5px solid rgba(31,138,122,0.4)` }}>
                   <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
@@ -1571,10 +1772,11 @@ export default function DemoPage() {
                 </div>
               )}
 
-              {/* 주간 일자별 외출 컨디션 캘린더 */}
-              <WeekOuting week={SEED_CONSOLE.week} />
+              {/* 주간 일자별 외출 컨디션 캘린더 — 배치관리자 뷰 */}
+              {role === "dispatch" && <WeekOuting week={SEED_CONSOLE.week} />}
 
-              {/* 실시간 접수 티커 */}
+              {/* 실시간 접수 티커 — 배치관리자 뷰 (SOS 포함) */}
+              {role === "dispatch" && (
               <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
                 <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
                   <Icon name="activity" size={14} color={C.teal} /> 실시간 접수
@@ -1583,21 +1785,23 @@ export default function DemoPage() {
                   {ticker.length === 0 && <div style={{ fontSize: 12, color: C.faint, padding: "9px 0" }}>챗봇에서 예약이 들어오면 여기에 실시간으로 표시됩니다.</div>}
                   {ticker.map((t) => (
                     <div key={t.id} className="fadein" style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", fontSize: 12.5 }}>
-                      <Dot color={t.tone === "green" ? C.green : t.tone === "blue" ? C.blue : t.tone === "amber" ? C.amber : C.teal} />
+                      <Dot color={t.tone === "green" ? C.green : t.tone === "blue" ? C.blue : t.tone === "amber" ? C.amber : t.tone === "red" ? C.red : C.teal} live={t.tone === "red"} />
                       <span style={{ color: C.faint, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{t.stamp}</span>
-                      <span style={{ color: C.ink, fontWeight: t.tone === "green" ? 700 : 400 }}>{t.label}</span>
+                      <span style={{ color: t.tone === "red" ? C.red : C.ink, fontWeight: t.tone === "green" || t.tone === "red" ? 700 : 400 }}>{t.label}</span>
                     </div>
                   ))}
                 </div>
               </div>
+              )}
 
-              {/* 배차 그리드 */}
-              <DispatchGrid today={today} highlightId={highlightId} />
+              {/* 배차 그리드 — 배치관리자 뷰 */}
+              {role === "dispatch" && <DispatchGrid today={today} highlightId={highlightId} />}
 
-              {/* 매니저 현황 */}
+              {/* 컨시어지 현황 — 배치관리자 뷰 */}
+              {role === "dispatch" && (
               <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
                 <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
-                  <Icon name="users" size={14} color={C.teal} /> 케어매니저 현황
+                  <Icon name="users" size={14} color={C.teal} /> 전담 컨시어지 현황
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
                   {SEED_MANAGERS.map((m) => (
@@ -1611,8 +1815,10 @@ export default function DemoPage() {
                   ))}
                 </div>
               </div>
+              )}
 
-              {/* 고객 CRM — 상담로그·프로필 기반 재예약 세그먼트 (운영 OS 확장, 더미) */}
+              {/* 고객 CRM — 상담로그·프로필 기반 재예약 세그먼트 (경영 뷰 · CRM=자산) */}
+              {role === "admin" && (
               <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
                 <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
                   <Icon name="message" size={14} color={C.teal} /> 고객 CRM <span style={{ fontWeight: 400, color: C.faint }}>· 상담로그 기반 재예약 세그먼트</span>
@@ -1639,9 +1845,10 @@ export default function DemoPage() {
                   ))}
                 </div>
               </div>
+              )}
 
               {/* ?debug=1 — 아키텍처 상태 패널 (wellbian 디버그 모드 계승) */}
-              {debugOn && (
+              {role === "admin" && debugOn && (
                 <div className="glass-panel" style={{ borderRadius: 14, padding: "10px 14px", fontSize: 11, fontFamily: "ui-monospace, monospace" }}>
                   <div style={{ fontWeight: 700, marginBottom: 6, color: C.ink2, display: "flex", alignItems: "center", gap: 6 }}>
                     <Icon name="activity" size={12} color={C.teal} /> DEBUG · 엔진 상태
@@ -1668,11 +1875,8 @@ export default function DemoPage() {
               )}
             </div>
           </section>
+          )}
         </div>
-
-        {/* 매니저 앱 드로어 (P5 목업) */}
-        <ManagerAppDrawer open={managerAppOpen} onClose={() => setManagerAppOpen(false)}
-          today={today} onCheckin={handleCheckin} onComplete={handleComplete} />
       </div>
     </>
   );
