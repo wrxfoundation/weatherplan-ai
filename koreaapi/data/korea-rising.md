@@ -1,10 +1,13 @@
-# Korea Rising — verified K-pop snapshot (2026-07-23)
+# Korea Rising — verified K-pop snapshot (2026-07-24)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🏆 Circle Digital Chart — current #1
 **Rescene** — Love Attack  
-_Circle Digital Chart #1 (via Wikipedia) 2026-07-23 04:11 UTC · Skill Score 0.70_
+_Circle Digital Chart #1 (via Wikipedia) 2026-07-24 04:06 UTC · Skill Score 0.70_
+
+## 🎬 Latest official releases (YouTube)
+- **GFriend** — [MASHUP] Dreamcatcher SIYEON x GFRIEND YUJU – Speechless
 
 ## 🎤 Verified roster (639 acts)
 - **2NE1**: I Am the Best
