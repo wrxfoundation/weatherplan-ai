@@ -604,6 +604,89 @@ function BotBoard({ bots, reachable = true }) {
   );
 }
 
+/* 점수 추이 스파크라인 */
+function Sparkline({ points, width = 300, height = 56 }) {
+  if (!points || points.length < 2) return null;
+  const min = Math.min(...points), max = Math.max(...points);
+  const span = Math.max(max - min, 1);
+  const px = (i) => 6 + (i / (points.length - 1)) * (width - 12);
+  const py = (v) => height - 8 - ((v - min) / span) * (height - 16);
+  const path = points.map((v, i) => `${px(i).toFixed(1)},${py(v).toFixed(1)}`).join(" ");
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-label="점수 추이">
+      <polyline points={path} fill="none" stroke={T.brandTeal} strokeWidth="2.5"
+        strokeLinecap="round" strokeLinejoin="round" />
+      {points.map((v, i) => (
+        <circle key={i} cx={px(i)} cy={py(v)} r={i === points.length - 1 ? 4 : 2.5}
+          fill={i === points.length - 1 ? T.brandTeal : "#fff"}
+          stroke={T.brandTeal} strokeWidth="1.5" />
+      ))}
+    </svg>
+  );
+}
+
+/* 점수 추이 · 자체 벤치마크 카드 (DB 연동 시에만 표시) */
+function TrendCard({ trend, host }) {
+  if (!trend?.enabled) return null;
+  const history = trend.history || [];
+  const bench = trend.benchmark || { count: 0 };
+  const showTrend = history.length >= 2;
+  const showBench = bench.count >= 1;
+  if (!showTrend && !showBench) return null;
+  const first = history[0], last = history[history.length - 1];
+  const delta = showTrend ? last.overall - first.overall : 0;
+  return (
+    <div className="glass-card mx-auto mt-4 flex flex-col md:flex-row items-center justify-center gap-x-12 gap-y-4"
+      style={{ borderRadius: R.xxl, padding: "16px 28px", width: "fit-content", maxWidth: "100%" }}>
+      {showTrend && (
+        <div className="flex items-center gap-4">
+          <div>
+            <div style={{ color: T.ink, fontSize: 13, fontWeight: 600 }}>점수 추이 · {host}</div>
+            <div style={{ color: T.slate, fontSize: 12, marginTop: 3 }}>
+              {history.length}회 진단 · {first.overall}점 → {last.overall}점{" "}
+              <span style={{ color: delta >= 0 ? "#116A44" : T.coralDark, fontWeight: 600 }}>
+                ({delta >= 0 ? "+" : ""}{delta})
+              </span>
+            </div>
+          </div>
+          <Sparkline points={history.map((h) => h.overall)} />
+        </div>
+      )}
+      {showBench && (
+        <div style={{ color: T.slate, fontSize: 12.5, lineHeight: 1.6, maxWidth: 300 }}>
+          {bench.count >= 10 ? (
+            <>
+              자체 실측 벤치마크 <strong style={{ color: T.ink }}>{bench.count}곳</strong> ·
+              평균 <strong style={{ color: T.ink }}>{bench.avg}점</strong>
+              {bench.topPct != null && (
+                <> — 이 사이트는 <strong style={{ color: T.mossDark }}>상위 {bench.topPct}%</strong></>
+              )}
+            </>
+          ) : (
+            <>자체 벤치마크 축적 중 — 현재 {bench.count}곳 (10곳부터 백분위 표시)</>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* 프레임워크별 적용 가이드 — AI 명령서 맞춤 지침 */
+const FRAMEWORK_GUIDES = {
+  "WordPress": "SEO 플러그인(Yoast 또는 RankMath)으로 title·메타·스키마를 관리하고, JSON-LD·검증 메타 등 head 삽입은 WPCode 같은 헤더 삽입 플러그인을 사용하라. robots.txt는 SEO 플러그인의 파일 편집기에서 수정한다.",
+  "Next.js": "App Router면 layout/page의 metadata API, Pages Router면 next/head로 메타를 관리하라. JSON-LD는 layout에 <script type=\"application/ld+json\">으로 삽입하고, sitemap은 next-sitemap 패키지, robots.txt는 public/에 둔다.",
+  "Nuxt": "useHead()/useSeoMeta()로 메타를 관리하고 nuxt.config의 app.head로 전역 태그를 넣어라. 사이트맵은 @nuxtjs/sitemap 모듈을 쓴다.",
+  "Gatsby": "gatsby-plugin-react-helmet 또는 Head API로 메타를 관리하고, gatsby-plugin-sitemap으로 사이트맵을 생성하라.",
+  "카페24": "쇼핑몰 관리자 > 디자인 편집(스마트디자인)에서 레이아웃 HTML의 <head>를 직접 수정하고, 기본 메타는 관리자 > 쇼핑몰 설정 > 검색엔진 최적화(SEO) 메뉴를 사용하라.",
+  "아임웹": "사이트 관리 > 환경설정 > SEO에서 title·설명·OG를 설정하고, JSON-LD 등 커스텀 태그는 환경설정 > 외부 코드 삽입(head)에 넣어라.",
+  "모두(modoo)": "modoo는 head 편집이 제한적이다 — 기본 SEO 설정 메뉴를 채우고, 나머지 항목은 플랫폼 제약으로 적용 불가할 수 있음을 감안하라.",
+  "식스샵": "설정 > SEO 메뉴에서 메타를 관리하고, 커스텀 코드는 설정 > 코드 삽입에 넣어라.",
+  "Shopify": "온라인 스토어 > 테마 > 코드 편집에서 theme.liquid의 <head>를 수정하고, 기본 SEO는 각 페이지의 검색엔진 등록 정보 섹션을 사용하라.",
+  "Wix": "설정 > SEO 도구에서 메타·robots를 관리하고, 커스텀 코드는 설정 > 커스텀 코드(head)에 삽입하라.",
+  "Squarespace": "Marketing > SEO 패널과 페이지별 SEO 탭을 사용하고, 코드 삽입은 Settings > Advanced > Code Injection을 쓴다.",
+};
+const DEFAULT_GUIDE = "정적/커스텀 사이트로 보인다 — HTML 템플릿의 <head>와 서버 설정(nginx 등)을 직접 수정하면 된다. 아래 수정안 코드를 해당 템플릿 위치에 그대로 적용하라.";
+
 /* 역량 프로필 자동 해석 — 레이더 값 기반 결정론 코멘트 */
 const AXIS_ADVICE = {
   tech: "서버·크롤링 기본기를 먼저 복구해야 다른 개선이 의미를 갖습니다.",
@@ -775,6 +858,9 @@ function buildAiDirective(result, deepResult) {
   lines.push(`- 원칙 3: 예시 코드의 자리표시자(브랜드명·URL 등)는 실제 값으로 치환한다`);
   lines.push(`- 원칙 4: 작업 완료 후 항목별 변경 내역을 표로 보고한다`);
   lines.push("");
+  lines.push(`## 사이트 환경${t.framework ? ` — ${t.framework} 감지됨` : ""}`);
+  lines.push(FRAMEWORK_GUIDES[t.framework] || DEFAULT_GUIDE);
+  lines.push("");
   lines.push(`## 수정 작업 (우선순위 순 · ${issues.length}건)`);
 
   issues.forEach((c, i) => {
@@ -896,6 +982,7 @@ function buildDemoResult() {
     demo: true,
     target: {
       input: "demo.hanbit-tech.example", inputHost: "demo.hanbit-tech.example",
+      framework: null,
       finalUrl: "https://demo.hanbit-tech.example/",
       host: "demo.hanbit-tech.example", status: 200, redirects: 1, responseMs: 1840,
       scheme: "https", tlsValid: true,
@@ -1157,6 +1244,7 @@ export default function Home() {
   const [deepResult, setDeepResult] = useState(null);
   const [deepError, setDeepError] = useState(null);  // { message, hint }
   const [history, setHistory] = useState([]);
+  const [trend, setTrend] = useState(null);   // { enabled, history, benchmark }
   const [areaTab, setAreaTab] = useState("all");
   const [showPassed, setShowPassed] = useState(false);
   const [issueGroup, setIssueGroup] = useState("severity");  // severity | area | status
@@ -1254,6 +1342,12 @@ export default function Home() {
         host: data.target.inputHost || data.target.host, score: data.report.overall,
         grade: data.report.grade, ts: Date.now(),
       });
+      /* 이력·벤치마크 (DB 연동 시) — best-effort */
+      setTrend(null);
+      fetch(`/api/history?host=${encodeURIComponent(data.target.inputHost || data.target.host)}&overall=${data.report.overall}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => { if (j?.enabled) setTrend(j); })
+        .catch(() => {});
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
       fetchInsight(data);
     } catch {
@@ -1314,6 +1408,7 @@ export default function Home() {
     if (stage === "running") return;
     try {
       const demo = buildDemoResult();
+      setTrend(null);
       setResult(demo);
       setInsight(DEMO_INSIGHT);
       setInsightState("done");
@@ -1587,6 +1682,7 @@ export default function Home() {
                         `${(result.target.responseMs / 1000).toFixed(2)}s`,
                         result.target.scheme.toUpperCase(),
                         result.target.redirects > 0 ? `리다이렉트 ${result.target.redirects}회` : "리다이렉트 없음",
+                        ...(result.target.framework ? [result.target.framework] : []),
                       ].map((chip) => (
                         <span key={chip} style={{
                           background: "rgba(5,0,56,0.05)", color: T.slate, fontSize: 11.5, fontWeight: 500,
@@ -1634,6 +1730,8 @@ export default function Home() {
                   </div>
                 </div>
               </Reveal>
+
+              <TrendCard trend={trend} host={result.target.inputHost || result.target.host} />
             </div>
           </section>
 

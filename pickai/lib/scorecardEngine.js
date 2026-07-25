@@ -369,6 +369,22 @@ export function analyzeHtml(html) {
   /* 지식그래프 연결 — sameAs에 위키데이터/위키백과 */
   const hasKnowledgeGraphLink = /wikidata\.org|wikipedia\.org/i.test(sameAsBlob);
 
+  /* 프레임워크/빌더 감지 — AI 명령서 맞춤 지침용 */
+  const gen = metaBy("name", "generator") || "";
+  let framework = null;
+  if (/wordpress/i.test(gen) || /wp-content\/|wp-json/i.test(src)) framework = "WordPress";
+  else if (/id=["']__next["']|__NEXT_DATA__/.test(src)) framework = "Next.js";
+  else if (/window\.__NUXT__|id=["']__nuxt["']/.test(src)) framework = "Nuxt";
+  else if (/___gatsby/.test(src)) framework = "Gatsby";
+  else if (/cafe24\.com|cafe24img|ec-concier/i.test(src)) framework = "카페24";
+  else if (/imweb\.me|cdn\.imweb/i.test(src)) framework = "아임웹";
+  else if (/modoo\.at/i.test(src)) framework = "모두(modoo)";
+  else if (/sixshop/i.test(src)) framework = "식스샵";
+  else if (/cdn\.shopify|shopify\.com/i.test(src)) framework = "Shopify";
+  else if (/wixstatic\.com|wix\.com/i.test(src)) framework = "Wix";
+  else if (/squarespace/i.test(gen + src.slice(0, 4000))) framework = "Squarespace";
+  else if (gen) framework = gen.split(/\s+/)[0].slice(0, 30);
+
   const scriptCount = (src.match(/<script\b/gi) || []).length;
   const spaMarkers = /id=["'](root|app|__next|___gatsby)["'][^>]*>\s*<\/(div|main)>/i.test(src) ||
     /window\.__NUXT__|window\.__INITIAL_STATE__/.test(src);
@@ -391,6 +407,7 @@ export function analyzeHtml(html) {
     listCount, tableCount, blockquoteCount, attributedQuoteCount,
     firstStatRatio, internalLinkCount, hasHreflang,
     naverVerification, googleVerification, hasKnowledgeGraphLink,
+    framework,
   };
 }
 

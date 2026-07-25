@@ -11,8 +11,17 @@
     },
     "pages/api/insight.js": {
       "maxDuration": 30
+    },
+    "pages/api/benchmark-run.js": {
+      "maxDuration": 60
+    },
+    "pages/api/cron-rescan.js": {
+      "maxDuration": 60
     }
   },
+  "crons": [
+    { "path": "/api/cron-rescan", "schedule": "0 0 * * 1" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
