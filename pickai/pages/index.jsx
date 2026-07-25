@@ -1109,9 +1109,10 @@ function NavBar({ onNewScan }) {
   );
 }
 
+/* 배경색은 감싸는 블록이 칠한다 — 여기서 칠하면 뒤의 배경 영상이 경계에서 잘린다 */
 function Footer() {
   return (
-    <footer className="print-hide" style={{ background: T.footerBg, color: T.onDarkMuted }}>
+    <footer className="print-hide over-orb" style={{ background: "transparent", color: T.onDarkMuted }}>
       <div className="max-w-[1280px] mx-auto px-6" style={{ paddingTop: 48, paddingBottom: 40 }}>
         <div className="flex flex-wrap items-start justify-between gap-8">
           <div>
@@ -2375,8 +2376,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 마감 CTA ─── */}
-      <section className="relative overflow-hidden print-hide" style={{ background: T.footerBg }}>
+      {/* ─── 마감 CTA + 푸터 ───
+           영상이 두 영역에 걸쳐 하나로 이어지도록 같은 블록 안에 둔다.
+           (푸터가 자체 배경을 칠하면 영상이 그 경계에서 잘려 보인다) */}
+      <div className="relative overflow-hidden print-hide" style={{ background: T.footerBg }}>
         <VideoBackdrop src={FOOTER_VIDEO} poster={FOOTER_POSTER} variant="footer" />
         <div className="max-w-[1280px] mx-auto px-6 text-center over-orb" style={{ paddingTop: 80, paddingBottom: 80 }}>
           <Reveal>
@@ -2406,9 +2409,9 @@ export default function Home() {
             </div>
           </Reveal>
         </div>
-      </section>
 
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 }

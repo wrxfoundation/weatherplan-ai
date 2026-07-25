@@ -261,12 +261,16 @@ section:has(.hero-video.is-ready) .orb { opacity: 0.38; }
   opacity: 0; transition: opacity 1.4s ease;
 }
 .footer-video.is-ready { opacity: var(--footer-video-strength, 0.6); }
+/* CTA(위)와 푸터(아래)를 한 블록으로 덮는다. 헤드라인 뒤와 푸터 글씨 쪽은 진하게,
+   그 사이 구간은 옅게 두어 영상이 읽히게 한다. */
 .footer-video-scrim {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 62% 58% at 50% 50%,
-      rgba(5,0,56,0.72) 0%, rgba(5,0,56,0.56) 55%, rgba(5,0,56,0.42) 100%),
-    linear-gradient(180deg, rgba(5,0,56,0.62) 0%, rgba(5,0,56,0.34) 45%, rgba(5,0,56,0.74) 100%);
+    radial-gradient(ellipse 60% 46% at 50% 30%,
+      rgba(5,0,56,0.72) 0%, rgba(5,0,56,0.54) 58%, rgba(5,0,56,0.40) 100%),
+    linear-gradient(180deg,
+      rgba(5,0,56,0.56) 0%, rgba(5,0,56,0.30) 30%,
+      rgba(5,0,56,0.58) 66%, rgba(5,0,56,0.86) 100%);
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-video, .footer-video { display: none; }
