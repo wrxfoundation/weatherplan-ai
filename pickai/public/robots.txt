@@ -3,3 +3,6 @@ Allow: /
 
 # API 엔드포인트는 크롤링 제외
 Disallow: /api/
+
+# 내부용 측정 설계서는 크롤링 제외
+Disallow: /methodology

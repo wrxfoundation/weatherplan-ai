@@ -959,6 +959,7 @@ function Footer() {
             {[
               { label: "진단 기준", href: "#method" },
               { label: "정밀 진단", href: "#deep" },
+              { label: "측정 설계서 (내부)", href: "/methodology" },
             ].map((l) => (
               <a key={l.label} href={l.href} className="transition hover:opacity-100"
                 style={{ color: T.onDarkMuted, fontSize: 13 }}>
