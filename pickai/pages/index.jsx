@@ -1583,25 +1583,21 @@ export default function Home() {
                       <span style={{ color: GRADE_META[report.grade]?.color }}>종합 {report.overall}점</span>
                     </div>
                     {!siteReachable && (
-                      <div className="mt-3" style={{
-                        background: T.coralLight, borderRadius: R.lg, padding: "10px 14px",
-                        maxWidth: 560, textAlign: "left",
-                      }}>
-                        <p style={{ color: T.coralDark, fontSize: 12.5, lineHeight: 1.65 }}>
-                          <strong style={{ fontWeight: 600 }}>
-                            크롤러가 본문에 도달하지 못했습니다 (HTTP {result.target.status}
-                            {result.target.redirectLoop ? " · 리다이렉트 루프" : ""})
-                          </strong>
-                          {" "}— 그래서 콘텐츠 관련 항목이 전부 실패로 표시됩니다. 우선순위 1번(HTTP 상태 코드)
-                          수정안을 먼저 적용하세요. 주소 표기가 문제일 수도 있습니다:
-                        </p>
-                        <button onClick={() => runScan(altHost)} className="mt-2 transition hover:opacity-80 print-hide"
-                          style={{
-                            background: "#fff", color: T.coralDark, fontSize: 12.5, fontWeight: 600,
-                            padding: "6px 14px", borderRadius: R.full, border: `1px solid ${T.coralDark}`,
-                          }}>
-                          {altHost} 로 다시 진단해 보기 →
-                        </button>
+                      <div className="mt-3 flex justify-center lg:justify-start">
+                        <div style={{
+                          background: T.coralLight, borderRadius: R.lg, padding: "9px 16px",
+                          maxWidth: 520, width: "fit-content", textAlign: "left",
+                        }}>
+                          <p style={{ color: T.coralDark, fontSize: 12.5, lineHeight: 1.65 }}>
+                            <strong style={{ fontWeight: 600 }}>
+                              크롤러가 본문에 도달하지 못했습니다 (HTTP {result.target.status}
+                              {result.target.redirectLoop ? " · 리다이렉트 루프" : ""})
+                            </strong>
+                            {" "}— 콘텐츠 관련 항목이 전부 실패로 표시됩니다. 우선순위 1번(HTTP 상태 코드)의
+                            수정안을 사이트에 적용한 뒤 재진단하세요.
+                            {result.target.redirectLoop ? " 참고로 www 유무 등 주소 표기에 따라 결과가 다를 수 있습니다." : ""}
+                          </p>
+                        </div>
                       </div>
                     )}
                     <p style={{ color: T.slate, fontSize: 14, lineHeight: 1.7, marginTop: 10, maxWidth: 560 }}>
