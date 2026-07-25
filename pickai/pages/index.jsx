@@ -1563,8 +1563,11 @@ export default function Home() {
                 </div>
               )}
 
-              <Reveal className="glass-card" style={{ borderRadius: R.feature, padding: "24px 26px" }}>
-                <div className="flex flex-col lg:flex-row items-center gap-7">
+              <Reveal className="glass-card mx-auto" style={{
+                borderRadius: R.feature, padding: "26px 34px",
+                width: "fit-content", maxWidth: "100%",
+              }}>
+                <div className="flex flex-col lg:flex-row items-center gap-8">
                   <ScoreDonut score={report.overall} grade={report.grade} size={150} />
 
                   <div className="flex-1 min-w-0 text-center lg:text-left">
