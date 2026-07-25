@@ -60,14 +60,14 @@ function Dot({ color, live }) {
   return <span className={live ? "pulse-dot" : ""} style={{ width: live ? 8 : 7, height: live ? 8 : 7, borderRadius: "50%", background: color, display: "inline-block", flexShrink: 0 }} />;
 }
 
-/* ─── 디자인 토큰 — K-CARE 딥블루 (Healthcare & Life Concierge) ─── */
+/* ─── 디자인 토큰 — weatherplan-ai 헤리티지 (웜 오프화이트 + 딥잉크 #050038) ─── */
 const C = {
-  cream: "#EEF3FB", cream2: "#E2EAF6",            // 페이지 배경 (라이트 블루그레이)
-  ink: "#0E1B33", ink2: "#2A3B58", sub: "#4A5A75", faint: "#8393AC",
-  line: "rgba(14,27,51,0.10)", lineSoft: "rgba(14,27,51,0.055)",
-  teal: "#2563EB", tealDk: "#123E8F",              // 주 액션 (딥블루 계열 — 기존 토큰명 유지로 전면 전파)
-  green: "#1F9D5B", blue: "#2F6BFF", amber: "#BC8236", red: "#DC4B3F",
-  evergreen: "#0B2A5B",                            // 브랜드 딥네이비 (기존 토큰명 유지)
+  cream: "#F7F5EE", cream2: "#FAFAF6",             // 페이지 배경 (warm off-white)
+  ink: "#0F0A2E", ink2: "#2D2A4A", sub: "#6B6781", faint: "#8E8AA3",
+  line: "#E5E1D6", lineSoft: "#EFEBE0",            // hairline
+  teal: "#4EB3A8", tealDk: "#14443B",              // brandTeal / mossDark
+  green: "#1FAB6A", blue: "#4262FF", amber: "#BC8236", red: "#FF6850",
+  evergreen: "#050038",                            // inkDeep — 브랜드 시그니처
 };
 
 const GRID_START = 8, GRID_END = 18, GRID_SPAN = GRID_END - GRID_START;
@@ -88,9 +88,9 @@ function parseHour(t = "") {
 }
 
 const STATUS = {
-  confirmed:  { label: "예약확정", fg: C.tealDk, tint: "rgba(37,99,235,0.14)", dot: C.teal },
+  confirmed:  { label: "예약확정", fg: C.tealDk, tint: "rgba(78,179,168,0.14)", dot: C.teal },
   pending:    { label: "배차대기", fg: "#8A6216", tint: "rgba(188,130,54,0.16)", dot: C.amber },
-  dispatched: { label: "배차완료", fg: "#2C43B8", tint: "rgba(62,99,255,0.13)", dot: C.blue },
+  dispatched: { label: "배차완료", fg: "#2D47D8", tint: "rgba(66,98,255,0.13)", dot: C.blue },
   in_service: { label: "수행중",   fg: "#1E7A44", tint: "rgba(46,158,99,0.15)", dot: C.green },
   done:       { label: "완료",     fg: "#5C6B66", tint: "rgba(22,33,28,0.08)",  dot: "#94a3b8" },
 };
@@ -137,21 +137,8 @@ function CountUp({ value, suffix = "" }) {
   return <>{disp.toLocaleString("ko-KR")}{suffix}</>;
 }
 
-/* ─── 앰비언트 배경 — 딥네이비 글로우 (AI 생성 이미지 + 오브, 네이버 AI탭 무드) ─── */
-function Orbs() {
-  return (
-    <div aria-hidden style={{ position: "fixed", inset: 0, overflow: "hidden", zIndex: 0, pointerEvents: "none" }}>
-      {/* AI 생성 광선 배경 — 로드 실패 시 그라디언트만 남아 안전 */}
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "url(/bg-glow.jpg)", backgroundSize: "cover", backgroundPosition: "center top", opacity: 0.9 }} />
-      {/* 하단 가독성 오버레이 — 패널 뒤 배경이 과하게 밝아지지 않게 */}
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(7,14,34,0.10) 0%, rgba(7,14,34,0.42) 58%, rgba(7,14,34,0.62) 100%)" }} />
-      <div className="orb orb1" style={{ background: "radial-gradient(circle, rgba(47,107,255,0.34), transparent 66%)" }} />
-      <div className="orb orb2" style={{ background: "radial-gradient(circle, rgba(124,58,237,0.28), transparent 66%)" }} />
-      <div className="orb orb3" style={{ background: "radial-gradient(circle, rgba(53,213,238,0.22), transparent 66%)" }} />
-      <div className="orb orb4" style={{ background: "radial-gradient(circle, rgba(47,107,255,0.22), transparent 66%)" }} />
-    </div>
-  );
-}
+/* ─── 배경 — 헤리티지: 웜 오프화이트 플랫 (장식 오브 제거) ─── */
+function Orbs() { return null; }
 
 /* 공용: 아이콘 칩 */
 function Chip({ name, bg, fg, size = 18, box = 34, sw }) {
@@ -195,7 +182,7 @@ function SlotsCard({ slots }) {
   return (
     <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
       {slots.map((s, i) => (
-        <div key={s.manager_id} className="glass-card" style={{ borderRadius: 16, padding: "10px 12px", display: "flex", gap: 11, alignItems: "center", border: i === 0 ? `1.5px solid rgba(37,99,235,0.5)` : undefined }}>
+        <div key={s.manager_id} className="glass-card" style={{ borderRadius: 16, padding: "10px 12px", display: "flex", gap: 11, alignItems: "center", border: i === 0 ? `1.5px solid rgba(78,179,168,0.5)` : undefined }}>
           <div style={{ width: 40, height: 40, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, color: "#fff", display: "grid", placeItems: "center", fontWeight: 700, flexShrink: 0, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }}>{s.name[0]}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -218,8 +205,8 @@ function SlotsCard({ slots }) {
 /* ─── 챗봇: 예약 확정 카드 ─── */
 function BookingCard({ b }) {
   return (
-    <div style={{ marginTop: 8, borderRadius: 16, overflow: "hidden", background: "rgba(255,255,255,0.85)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", border: `1.5px solid ${C.teal}`, boxShadow: "0 14px 36px -12px rgba(37,99,235,0.5), inset 0 1px 0 rgba(255,255,255,0.7)" }}>
-      <div style={{ padding: "11px 14px", background: `linear-gradient(180deg,${C.tealDk},#123E8F)`, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div style={{ marginTop: 8, borderRadius: 16, overflow: "hidden", background: "#FFFFFF", border: `1.5px solid ${C.teal}`, boxShadow: "0 10px 24px -16px rgba(20,68,59,0.35)" }}>
+      <div style={{ padding: "11px 14px", background: `linear-gradient(180deg,${C.tealDk},#2D47D8)`, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span style={{ display: "flex", alignItems: "center", gap: 7, fontWeight: 700, fontSize: 13 }}>
           <Icon name="check" size={16} /> 예약 접수 완료
         </span>
@@ -264,7 +251,7 @@ function BookingCard({ b }) {
 /* ─── 외출 컨디션 등급 색상 ─── */
 const WX_GRADE = {
   "좋음": { fg: C.green, bg: "rgba(46,158,99,0.14)" },
-  "보통": { fg: C.tealDk, bg: "rgba(37,99,235,0.13)" },
+  "보통": { fg: C.tealDk, bg: "rgba(78,179,168,0.13)" },
   "주의": { fg: "#8A6216", bg: "rgba(188,130,54,0.16)" },
   "나쁨": { fg: "#B23A28", bg: "rgba(229,83,60,0.14)" },
 };
@@ -284,7 +271,7 @@ function ItemChips({ items }) {
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
       {items.map((it, i) => (
-        <span key={i} style={{ fontSize: 11, fontWeight: 600, color: C.tealDk, background: "rgba(37,99,235,0.10)", border: "1px solid rgba(37,99,235,0.24)", borderRadius: 8, padding: "3px 8px" }}>{it}</span>
+        <span key={i} style={{ fontSize: 11, fontWeight: 600, color: C.tealDk, background: "rgba(78,179,168,0.10)", border: "1px solid rgba(78,179,168,0.24)", borderRadius: 8, padding: "3px 8px" }}>{it}</span>
       ))}
     </div>
   );
@@ -314,7 +301,7 @@ function WeatherCard({ w }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 10 }}>
             {w.legs.map((l) => (
               <div key={l.role} style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12, background: "rgba(255,255,255,0.55)", border: `1px solid ${C.lineSoft}`, borderRadius: 9, padding: "6px 9px" }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: l.role === "출발지" ? "#2C43B8" : C.tealDk, background: l.role === "출발지" ? "rgba(62,99,255,0.10)" : "rgba(37,99,235,0.10)", borderRadius: 6, padding: "1px 6px", flexShrink: 0 }}>{l.role}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: l.role === "출발지" ? "#2D47D8" : C.tealDk, background: l.role === "출발지" ? "rgba(66,98,255,0.10)" : "rgba(78,179,168,0.10)", borderRadius: 6, padding: "1px 6px", flexShrink: 0 }}>{l.role}</span>
                 <b style={{ flexShrink: 0 }}>{l.location}</b>
                 <Icon name={skyIcon(l.sky)} size={13} color={/비|눈/.test(l.sky) ? C.blue : C.amber} />
                 <span style={{ color: C.sub, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{l.temp}℃ {l.sky}</span>
@@ -365,7 +352,7 @@ const clamp = (v) => Math.max(4, Math.min(100, v));
 /* wellbian RecommendCard scoreStyle — 85/70/55/40 5단 판정 팔레트 */
 function scoreStyle(score) {
   if (score >= 85) return { fg: C.green, bg: "rgba(46,158,99,0.14)" };
-  if (score >= 70) return { fg: C.tealDk, bg: "rgba(37,99,235,0.13)" };
+  if (score >= 70) return { fg: C.tealDk, bg: "rgba(78,179,168,0.13)" };
   if (score >= 55) return { fg: "#8A6216", bg: "rgba(188,130,54,0.16)" };
   if (score >= 40) return { fg: "#B4551F", bg: "rgba(217,110,43,0.15)" };
   return { fg: "#B23A28", bg: "rgba(229,83,60,0.14)" };
@@ -459,7 +446,7 @@ function WeekOuting({ week }) {
           const wknd = d.label === "토" || d.label === "일";
           return (
             <div key={d.date} title={`${d.sky} ${d.temp}℃ · 미세먼지 ${d.pm_grade} · 자외선 ${d.uv_grade}`}
-              style={{ flex: 1, minWidth: 58, borderRadius: 12, padding: "8px 6px 7px", textAlign: "center", background: d.today ? "rgba(37,99,235,0.10)" : "rgba(255,255,255,0.5)", border: `1px solid ${d.today ? "rgba(37,99,235,0.42)" : C.lineSoft}` }}>
+              style={{ flex: 1, minWidth: 58, borderRadius: 12, padding: "8px 6px 7px", textAlign: "center", background: d.today ? "rgba(78,179,168,0.10)" : "rgba(255,255,255,0.5)", border: `1px solid ${d.today ? "rgba(78,179,168,0.42)" : C.lineSoft}` }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: wknd ? (d.label === "일" ? C.red : C.blue) : C.ink2 }}>
                 {d.label}{d.today && <span style={{ fontSize: 10, color: C.teal }}> 오늘</span>}
               </div>
@@ -479,7 +466,7 @@ function WeekOuting({ week }) {
  * 딥네이비+시안 HUD, 아이소메트릭 빌딩 마커, 상태색(수행 green/이동 orange/대기 slate),
  * 접힘 범례, 근사좌표 점선 링(데이터 정직성 — GPS 연동 전 위치는 근사임을 표시).
  * 타일·외부 의존성 없는 자립형 SVG — 오프라인에서도 시연 완주. */
-const HUD = { bg: "#081527", line: "#1b3050", accent: "#35d5ee", green: "#3DBF7A", orange: "#F59A3C", slate: "#64748b", text: "#c9d6e8", dim: "#6b7f99" };
+const HUD = { bg: "#081527", line: "#1b3050", accent: "#4EB3A8", green: "#3DBF7A", orange: "#F59A3C", slate: "#64748b", text: "#c9d6e8", dim: "#6b7f99" };
 const MAP_HOSPITALS = {
   "서울대병원": [95, 38], "세브란스": [70, 42], "신촌세브란스": [70, 42], "강남세브란스": [120, 78],
   "경희대병원": [135, 25], "고대안암병원": [120, 30], "서울아산병원": [150, 75],
@@ -542,7 +529,7 @@ function LiveOpsMap({ today, highlightId }) {
         </span>
         <span className="map-chips" style={{ display: "flex", gap: 5 }}>
           {[["all", "전체"], ["active", "수행중"], ["moving", "이동중"], ["idle", "대기"]].map(([k, l]) => (
-            <button key={k} onClick={() => setFilter(k)} style={{ fontSize: 11, fontWeight: 600, borderRadius: 999, padding: "3px 9px", border: `1px solid ${filter === k ? "rgba(37,99,235,0.5)" : C.line}`, background: filter === k ? "rgba(37,99,235,0.12)" : "rgba(255,255,255,0.5)", color: filter === k ? C.tealDk : C.sub }}>{l}</button>
+            <button key={k} onClick={() => setFilter(k)} style={{ fontSize: 11, fontWeight: 600, borderRadius: 999, padding: "3px 9px", border: `1px solid ${filter === k ? "rgba(78,179,168,0.5)" : C.line}`, background: filter === k ? "rgba(78,179,168,0.12)" : "rgba(255,255,255,0.5)", color: filter === k ? C.tealDk : C.sub }}>{l}</button>
           ))}
         </span>
       </div>
@@ -637,16 +624,16 @@ function ConciergeBody({ today, onCheckin, onComplete, onClose }) {
   const seg = (opts, val, set) => (
     <div style={{ display: "flex", gap: 4 }}>
       {opts.map(([k, l]) => (
-        <button key={k} onClick={() => set(k)} style={{ flex: 1, fontSize: 11, fontWeight: 600, borderRadius: 8, padding: "5px 0", border: `1px solid ${val === k ? "rgba(53,213,238,0.6)" : "rgba(255,255,255,0.14)"}`, background: val === k ? "rgba(53,213,238,0.16)" : "rgba(255,255,255,0.05)", color: val === k ? "#7FC8F5" : "#c9d6e8" }}>{l}</button>
+        <button key={k} onClick={() => set(k)} style={{ flex: 1, fontSize: 11, fontWeight: 600, borderRadius: 8, padding: "5px 0", border: `1px solid ${val === k ? "rgba(53,213,238,0.6)" : "rgba(255,255,255,0.14)"}`, background: val === k ? "rgba(53,213,238,0.16)" : "rgba(255,255,255,0.05)", color: val === k ? "#4EB3A8" : "#c9d6e8" }}>{l}</button>
       ))}
     </div>
   );
   return (
-      <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#0B1F42,#071633)", display: "flex", flexDirection: "column", color: "#DCE6F5" }}>
+      <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#0A0532,#050038)", display: "flex", flexDirection: "column", color: "#DCE6F5" }}>
         <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 9 }}>
           <div style={{ width: 34, height: 34, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, display: "grid", placeItems: "center", fontWeight: 700, color: "#fff" }}>{cur.name[0]}</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 700, fontSize: 14 }}>컨시어지 앱 <span style={{ fontSize: 11, color: "#7FC8F5", fontWeight: 600 }}>PWA · GPS 연동 대기(더미)</span></div>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>컨시어지 앱 <span style={{ fontSize: 11, color: "#4EB3A8", fontWeight: 600 }}>PWA · GPS 연동 대기(더미)</span></div>
             <div style={{ fontSize: 11, color: "#7E92B4" }}>{cur.name} 컨시어지 · ⭐{cur.rating} · 오늘 {jobs.length}건</div>
           </div>
           {onClose && <button onClick={onClose} style={{ background: "none", border: "none", color: "#7E92B4", fontSize: 18, cursor: "pointer" }}>×</button>}
@@ -654,7 +641,7 @@ function ConciergeBody({ today, onCheckin, onComplete, onClose }) {
         {/* 매니저 선택 탭 */}
         <div style={{ display: "flex", gap: 5, padding: "9px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)", overflowX: "auto" }}>
           {SEED_MANAGERS.map((m) => (
-            <button key={m.id} onClick={() => setMgrId(m.id)} style={{ flexShrink: 0, fontSize: 11, fontWeight: 600, borderRadius: 999, padding: "4px 10px", border: `1px solid ${cur.id === m.id ? "rgba(53,213,238,0.55)" : "rgba(255,255,255,0.12)"}`, background: cur.id === m.id ? "rgba(53,213,238,0.14)" : "transparent", color: cur.id === m.id ? "#7FC8F5" : "#93A6C6" }}>
+            <button key={m.id} onClick={() => setMgrId(m.id)} style={{ flexShrink: 0, fontSize: 11, fontWeight: 600, borderRadius: 999, padding: "4px 10px", border: `1px solid ${cur.id === m.id ? "rgba(53,213,238,0.55)" : "rgba(255,255,255,0.12)"}`, background: cur.id === m.id ? "rgba(53,213,238,0.14)" : "transparent", color: cur.id === m.id ? "#4EB3A8" : "#93A6C6" }}>
               {m.name}{today.some((b) => b.managerId === m.id) ? ` ·${today.filter((b) => b.managerId === m.id).length}` : ""}
             </button>
           ))}
@@ -667,11 +654,11 @@ function ConciergeBody({ today, onCheckin, onComplete, onClose }) {
               <div key={b.id} style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, background: "rgba(255,255,255,0.04)", padding: "11px 13px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                   <b style={{ fontSize: 14 }}>{hourLabel(b.start)} {b.hospital}</b>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: st.fg === "#5C6B66" ? "#93A6C6" : "#071633", background: st.dot, borderRadius: 6, padding: "2px 7px" }}>{st.label}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: st.fg === "#5C6B66" ? "#93A6C6" : "#050038", background: st.dot, borderRadius: 6, padding: "2px 7px" }}>{st.label}</span>
                 </div>
                 <div style={{ fontSize: 12, color: "#93A6C6", marginBottom: 9 }}>{b.recipient} · {b.service} · {b.hours}시간</div>
                 {(b.status === "dispatched" || b.status === "confirmed") && (
-                  <button onClick={() => onCheckin(b.id, cur.name)} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 13, fontWeight: 700, border: "none", background: "linear-gradient(180deg,#35d5ee,#1494c9)", color: "#04182B", cursor: "pointer" }}>
+                  <button onClick={() => onCheckin(b.id, cur.name)} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 13, fontWeight: 700, border: "none", background: "linear-gradient(180deg,#4EB3A8,#1F6157)", color: "#04182B", cursor: "pointer" }}>
                     GPS 출근 체크인
                   </button>
                 )}
@@ -727,7 +714,7 @@ function FamilyPanel({ profile, today, sos, onClearSos, pushTicker, kakaoMode })
     <section className="glass-panel pane-console" style={{ flex: "1.15 1 460px", minWidth: 340, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
       <div className="console-hdr" style={{ flexShrink: 0, padding: "12px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
-          <Chip name="users" bg="rgba(37,99,235,0.13)" fg={C.tealDk} box={30} size={16} />
+          <Chip name="users" bg="rgba(78,179,168,0.13)" fg={C.tealDk} box={30} size={16} />
           <div style={{ minWidth: 0 }}>
             <b style={{ fontSize: 14, whiteSpace: "nowrap" }}>가족 앱 — 우리 아빠·엄마</b>
             <div style={{ fontSize: 11, color: C.faint, whiteSpace: "nowrap" }}>Family Membership · 워치 연동 대기(더미)</div>
@@ -911,7 +898,7 @@ function DispatchGrid({ today, highlightId }) {
                         position: "absolute", left: `${left}%`, width: `calc(${width}% - 5px)`, top: 6, bottom: 6,
                         background: st.tint, border: `1px solid ${isNew ? C.teal : st.dot}`, borderLeft: `3px solid ${st.dot}`,
                         borderRadius: 8, padding: "3px 7px", overflow: "hidden", fontSize: 11, lineHeight: 1.18,
-                        backdropFilter: "blur(4px)", boxShadow: isNew ? "0 0 0 3px rgba(37,99,235,0.25)" : "none", zIndex: isNew ? 3 : 1,
+                        backdropFilter: "blur(4px)", boxShadow: isNew ? "0 0 0 3px rgba(78,179,168,0.25)" : "none", zIndex: isNew ? 3 : 1,
                       }}>
                       <div style={{ fontWeight: 700, color: st.fg, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.hospital}</div>
                       <div style={{ color: C.sub, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.service}</div>
@@ -1433,7 +1420,7 @@ export default function DemoPage() {
     <>
       <Head>
         <title>K-CARE · Healthcare & Life Concierge 데모</title>
-        <meta name="theme-color" content="#070E22" />
+        <meta name="theme-color" content="#F7F5EE" />
         <meta name="robots" content="noindex" />
         {/* 브랜드 타이포그래피 — 한글: Noto Sans KR / 숫자·영문: Montserrat (스택 폴스루) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -1443,47 +1430,36 @@ export default function DemoPage() {
           /* ── 타입 위계 ──
              24/22/20/18 숫자·디스플레이(Montserrat 700-800) · 16/15 패널 타이틀(700)
              14 본문 강조·카드 타이틀(700) · 13 본문(400-500) · 12 섹션 라벨(700) · 11 캡션(400-500) */
-          .orb{ position:absolute; border-radius:50%; filter:blur(64px); opacity:.55; will-change:transform }
-          .orb1{ width:520px; height:520px; top:-140px; left:-120px; animation:drift1 22s ease-in-out infinite }
-          .orb2{ width:460px; height:460px; top:-80px; right:-100px; animation:drift2 26s ease-in-out infinite }
-          .orb3{ width:440px; height:440px; bottom:-160px; left:32%; animation:drift3 24s ease-in-out infinite }
-          .orb4{ width:380px; height:380px; bottom:-120px; right:8%; animation:drift1 20s ease-in-out infinite }
-          @keyframes drift1{ 0%,100%{transform:translate(0,0)} 50%{transform:translate(46px,34px)} }
-          @keyframes drift2{ 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,40px)} }
-          @keyframes drift3{ 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-38px)} }
 
           .glass-panel{
-            background:linear-gradient(180deg, rgba(255,255,255,0.88), rgba(244,248,255,0.80));
-            backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%);
-            border:1px solid rgba(255,255,255,0.55);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 0 0 1px rgba(127,200,245,0.10), 0 24px 60px -22px rgba(2,8,24,0.85);
+            background:#FFFFFF;
+            border:1px solid #E5E1D6;
+            box-shadow:0 1px 2px rgba(5,0,56,0.04), 0 10px 28px -22px rgba(5,0,56,0.14);
           }
           .glass-card{
-            background:linear-gradient(180deg, rgba(255,255,255,0.94), rgba(246,249,255,0.84));
-            backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%);
-            border:1px solid rgba(255,255,255,0.72);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 8px 22px -14px rgba(2,8,24,0.5);
+            background:#FAFAF6;
+            border:1px solid #EFEBE0;
+            box-shadow:0 1px 2px rgba(5,0,56,0.03);
           }
           .btn-primary{
-            background:linear-gradient(180deg,#123467,#0A1F42); color:#fff; border:1px solid rgba(255,255,255,0.14);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 8px 20px -8px rgba(7,23,50,0.65), 0 1px 2px rgba(0,0,0,0.2);
-            transition:transform .12s ease, box-shadow .12s ease;
+            background:#050038; color:#fff; border:1px solid #050038;
+            box-shadow:0 1px 2px rgba(5,0,56,0.18);
+            transition:transform .12s ease, background .12s ease;
           }
-          .btn-primary:hover:not(:disabled){ transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,0.24), 0 12px 26px -8px rgba(7,23,50,0.75) }
+          .btn-primary:hover:not(:disabled){ transform:translateY(-1px); background:#1F1A48 }
           .btn-primary:disabled{ opacity:.55 }
           .btn-glass{
-            background:rgba(255,255,255,0.55); color:#16211C; border:1px solid rgba(255,255,255,0.7);
-            backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 4px 12px -6px rgba(20,36,29,0.3);
+            background:#FFFFFF; color:#0F0A2E; border:1px solid #C9C5B7;
+            box-shadow:0 1px 2px rgba(5,0,56,0.06);
             transition:transform .12s ease;
           }
           .btn-glass:hover:not(:disabled){ transform:translateY(-1px) }
-          .btn-ghost{ background:rgba(255,255,255,0.14); color:#fff; border:1px solid rgba(255,255,255,0.28); backdrop-filter:blur(6px) }
+          .btn-ghost{ background:#FFFFFF; color:#0F0A2E; border:1px solid #C9C5B7 }
 
           .pulse-dot{ box-shadow:0 0 0 0 rgba(239,68,68,0.5); animation:pulsedot 2.4s ease-in-out infinite }
           @keyframes pulsedot{ 0%,100%{opacity:1; box-shadow:0 0 9px 1px rgba(239,68,68,0.65)} 50%{opacity:.4; box-shadow:0 0 2px 0 rgba(239,68,68,0.15)} }
 
-          @keyframes bkpulse{ 0%{box-shadow:0 0 0 0 rgba(37,99,235,0.55)} 70%{box-shadow:0 0 0 11px rgba(37,99,235,0)} 100%{box-shadow:0 0 0 0 rgba(37,99,235,0)} }
+          @keyframes bkpulse{ 0%{box-shadow:0 0 0 0 rgba(78,179,168,0.55)} 70%{box-shadow:0 0 0 11px rgba(78,179,168,0)} 100%{box-shadow:0 0 0 0 rgba(78,179,168,0)} }
           .bk-pulse{ animation:bkpulse 1.5s ease-out 2 }
           @keyframes fadein{ from{opacity:0; transform:translateY(7px)} to{opacity:1; transform:none} }
           .fadein{ animation:fadein .38s ease both }
@@ -1511,8 +1487,7 @@ export default function DemoPage() {
             .wx-metrics > *{ flex:1 1 44% !important }
             .chat-input{ font-size:16px !important }        /* iOS 포커스 줌 방지 */
             .brief-row{ flex-wrap:wrap; row-gap:2px }
-            .orb{ filter:blur(48px); opacity:.4 }           /* 모바일 GPU 부담 완화 */
-            /* 콘솔 헤더: 제목 한 줄 유지, 액션은 아래 줄로 깔끔하게 */
+              /* 콘솔 헤더: 제목 한 줄 유지, 액션은 아래 줄로 깔끔하게 */
             .console-hdr{ flex-wrap:wrap; row-gap:7px }
             .console-hdr .hdr-actions{ width:100%; justify-content:flex-start }
             .console-hdr .hdr-actions button{ white-space:nowrap }
@@ -1522,13 +1497,13 @@ export default function DemoPage() {
         `}</style>
       </Head>
 
-      <div className="demo-root" style={{ position: "relative", height: "100vh", display: "flex", flexDirection: "column", background: "linear-gradient(160deg,#070E22 0%,#0A1734 46%,#160F3A 100%)", color: C.ink, overflow: "hidden", fontFamily: '"Montserrat","Noto Sans KR","Apple SD Gothic Neo",sans-serif' }}>
+      <div className="demo-root" style={{ position: "relative", height: "100vh", display: "flex", flexDirection: "column", background: C.cream, color: C.ink, overflow: "hidden", fontFamily: '"Montserrat","Noto Sans KR","Apple SD Gothic Neo",sans-serif' }}>
         <Orbs />
 
         {/* 헤더 */}
-        <header style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 18px", background: "rgba(8,18,44,0.55)", backdropFilter: "blur(18px) saturate(150%)", WebkitBackdropFilter: "blur(18px) saturate(150%)", color: "#fff", flexWrap: "wrap", boxShadow: "0 6px 24px -12px rgba(0,0,0,0.5)", borderBottom: "1px solid rgba(255,255,255,0.10)" }}>
+        <header style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 18px", background: "#FFFFFF", color: C.ink, flexWrap: "wrap", borderBottom: "1px solid #E5E1D6" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 11, minWidth: 0 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 11, background: `linear-gradient(160deg,#2F6BFF,#123E8F)`, display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 12px -4px rgba(47,107,255,0.6)" }}>
+            <div style={{ width: 34, height: 34, borderRadius: 11, background: `#050038`, display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 12px -4px rgba(66,98,255,0.6)" }}>
               <Icon name="heart" size={18} color="#fff" sw={1.9} />
             </div>
             <div style={{ minWidth: 0 }}>
@@ -1539,8 +1514,8 @@ export default function DemoPage() {
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, padding: "6px 11px", borderRadius: 999, background: liveMode ? "rgba(46,158,99,0.2)" : "rgba(188,130,54,0.24)", border: `1px solid ${liveMode ? "rgba(46,158,99,0.55)" : "rgba(188,130,54,0.55)"}` }}>
-              <Dot color={liveMode ? "#43d17f" : "#e0a44a"} /> {liveMode ? "AI 연결됨" : "데모 스크립트"}
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, padding: "6px 11px", borderRadius: 999, background: liveMode ? "rgba(31,171,106,0.10)" : "rgba(188,130,54,0.12)", border: `1px solid ${liveMode ? "rgba(31,171,106,0.4)" : "rgba(188,130,54,0.4)"}`, color: liveMode ? "#14443B" : "#8A6216" }}>
+              <Dot color={liveMode ? "#1FAB6A" : "#C77817"} /> {liveMode ? "AI 연결됨" : "데모 스크립트"}
             </span>
             <button className="btn-ghost" onClick={() => setKakaoMode((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 700, borderRadius: 11, padding: "8px 12px", background: kakaoMode ? "#FEE500" : undefined, color: kakaoMode ? "#191919" : undefined, border: kakaoMode ? "1px solid #FEE500" : undefined }}>
               {kakaoMode ? "웹 스킨" : "카카오 스킨"}
@@ -1555,14 +1530,13 @@ export default function DemoPage() {
         </header>
 
         {/* 역할 스위처 — K-CARE 5역할 유기 연동 (한 역할의 액션이 다른 역할 화면에 반영) */}
-        <nav style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", gap: 6, padding: "8px 16px", background: "rgba(9,20,50,0.45)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderBottom: "1px solid rgba(255,255,255,0.08)", overflowX: "auto" }}>
+        <nav style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", gap: 6, padding: "8px 16px", background: "#FFFFFF", borderBottom: "1px solid #E5E1D6", overflowX: "auto" }}>
           {[["family", "가족 (보호자)"], ["senior", "사용자 (어르신)"], ["concierge", "컨시어지 (동행자)"], ["dispatch", "배치관리자"], ["admin", "관리자"]].map(([k, l]) => (
             <button key={k} onClick={() => setRole(k)} style={{
               flexShrink: 0, fontSize: 12, fontWeight: 700, borderRadius: 999, padding: "7px 14px", cursor: "pointer",
-              border: `1px solid ${role === k ? "rgba(127,200,245,0.7)" : "rgba(255,255,255,0.14)"}`,
-              background: role === k ? "linear-gradient(180deg,#2F6BFF,#1D4FD1)" : "rgba(255,255,255,0.05)",
-              boxShadow: role === k ? "0 0 20px -4px rgba(47,107,255,0.85), inset 0 1px 0 rgba(255,255,255,0.3)" : "none",
-              color: role === k ? "#fff" : "#9FB4D6",
+              border: `1px solid ${role === k ? "#050038" : "#E5E1D6"}`,
+              background: role === k ? "#050038" : "#FFFFFF",
+              color: role === k ? "#FFFFFF" : "#6B6781",
             }}>
               {l}{k === "family" && sos ? " ●" : ""}{k === "dispatch" && sos ? " ●" : ""}
             </button>
@@ -1576,7 +1550,7 @@ export default function DemoPage() {
 
           {/* ── 컨시어지(동행자) ── */}
           {role === "concierge" && (
-            <section className="pane-chat" style={{ flex: "1 1 400px", maxWidth: 440, margin: "0 auto", borderRadius: 20, overflow: "hidden", minHeight: 0, border: "1px solid rgba(53,182,238,0.3)", boxShadow: "0 18px 50px rgba(4,12,28,0.45)" }}>
+            <section className="pane-chat" style={{ flex: "1 1 400px", maxWidth: 440, margin: "0 auto", borderRadius: 20, overflow: "hidden", minHeight: 0, border: "1px solid #E5E1D6", boxShadow: "0 10px 28px -20px rgba(5,0,56,0.2)" }}>
               <ConciergeBody today={today} onCheckin={handleCheckin} onComplete={handleComplete} />
             </section>
           )}
@@ -1585,8 +1559,8 @@ export default function DemoPage() {
           {role === "family" && (
           <section className="glass-panel pane-chat" style={{ flex: "1 1 380px", minWidth: 320, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0, ...(kakaoMode ? { background: "#A9C2D8", border: "1px solid #8FB0CC" } : {}) }}>
             <div style={{ flexShrink: 0, padding: "12px 16px", borderBottom: kakaoMode ? "1px solid #E8D200" : `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 10, ...(kakaoMode ? { background: "#FEE500" } : {}) }}>
-              <div style={{ width: 36, height: 36, borderRadius: kakaoMode ? "50%" : 12, background: kakaoMode ? "#FFFFFF" : `linear-gradient(160deg,${C.evergreen},#123467)`, color: "#fff", display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)" }}>
-                <Icon name={kakaoMode ? "heart" : "sparkle"} size={18} color={kakaoMode ? "#191919" : "#7FC8F5"} sw={1.6} />
+              <div style={{ width: 36, height: 36, borderRadius: kakaoMode ? "50%" : 12, background: kakaoMode ? "#FFFFFF" : C.evergreen, color: "#fff", display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)" }}>
+                <Icon name={kakaoMode ? "heart" : "sparkle"} size={18} color={kakaoMode ? "#191919" : "#4EB3A8"} sw={1.6} />
               </div>
               <div style={{ flexShrink: 0 }}>
                 <div style={{ fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 6, color: kakaoMode ? "#191919" : undefined }}>
@@ -1599,7 +1573,7 @@ export default function DemoPage() {
               </div>
               {/* 단골 가족 배지 — 진화 루프 상태 표시 + 기록 삭제 */}
               {familyProfile?.last_booking && (
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 5, flexShrink: 0, fontSize: 11, fontWeight: 700, color: C.tealDk, background: "rgba(37,99,235,0.10)", border: "1px solid rgba(37,99,235,0.3)", borderRadius: 999, padding: "4px 9px" }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 5, flexShrink: 0, fontSize: 11, fontWeight: 700, color: C.tealDk, background: "rgba(78,179,168,0.10)", border: "1px solid rgba(78,179,168,0.3)", borderRadius: 999, padding: "4px 9px" }}>
                   단골 가족 · {familyProfile.visits}회
                   <button title="기억 삭제 (처음 방문 상태로)" disabled={sending || autoOn} onClick={() => {
                     epochRef.current += 1; // 진행 중 응답 폐기
@@ -1637,7 +1611,7 @@ export default function DemoPage() {
                     maxWidth: "88%", padding: "10px 13px", borderRadius: 16, fontSize: 14, lineHeight: 1.55, whiteSpace: "pre-wrap",
                     background: kakaoMode
                       ? (m.role === "user" ? "#FEE500" : "#FFFFFF")
-                      : (m.role === "user" ? `linear-gradient(180deg,#12305E,#0A1F42)` : "rgba(255,255,255,0.92)"),
+                      : (m.role === "user" ? `#050038` : "rgba(255,255,255,0.92)"),
                     color: kakaoMode ? "#191919" : (m.role === "user" ? "#fff" : C.ink),
                     border: kakaoMode ? "none" : (m.role === "user" ? "1px solid rgba(255,255,255,0.12)" : `1px solid ${C.line}`),
                     boxShadow: kakaoMode ? "0 1px 2px rgba(0,0,0,0.12)" : (m.role === "user" ? "inset 0 1px 0 rgba(255,255,255,0.18), 0 6px 16px -10px rgba(7,23,50,0.6)" : "0 6px 16px -12px rgba(10,24,50,0.4)"),
@@ -1695,7 +1669,7 @@ export default function DemoPage() {
           <section className="glass-panel pane-console" style={{ flex: "1.15 1 460px", minWidth: 340, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
             <div className="console-hdr" style={{ flexShrink: 0, padding: "12px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
-                <Chip name={role === "dispatch" ? "pin" : "calendar"} bg="rgba(47,107,255,0.14)" fg={C.tealDk} box={30} size={16} />
+                <Chip name={role === "dispatch" ? "pin" : "calendar"} bg="rgba(66,98,255,0.14)" fg={C.tealDk} box={30} size={16} />
                 <div style={{ minWidth: 0 }}>
                   <b style={{ fontSize: 14, whiteSpace: "nowrap" }}>{role === "dispatch" ? "배치 관제 센터" : "경영 대시보드"}</b>
                   <div style={{ fontSize: 11, color: C.faint, whiteSpace: "nowrap" }}>K-CARE 강남지점</div>
@@ -1758,7 +1732,7 @@ export default function DemoPage() {
 
               {/* 오늘 배차 브리핑 — 예약별 동행 컨디션·준비물 (룰 엔진, LLM 0회) */}
               {role === "dispatch" && briefingOpen && (
-                <div className="glass-panel fadein" style={{ borderRadius: 18, overflow: "hidden", border: `1.5px solid rgba(37,99,235,0.4)` }}>
+                <div className="glass-panel fadein" style={{ borderRadius: 18, overflow: "hidden", border: `1.5px solid rgba(78,179,168,0.4)` }}>
                   <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
                       <Icon name="clock" size={14} color={C.teal} /> 오늘 배차 브리핑 <span style={{ fontWeight: 400, color: C.faint }}>· 예약 {briefing.length}건 · 케이웨더 기준</span>
@@ -1850,7 +1824,7 @@ export default function DemoPage() {
                       <b style={{ flexShrink: 0 }}>{r.name}</b>
                       <span style={{ color: C.sub, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.note}</span>
                       <button className="pill-btn" onClick={() => pushTicker(`재예약 제안 알림톡 발송 — ${r.name}`, "green")}
-                        style={{ flexShrink: 0, fontSize: 11, fontWeight: 700, borderRadius: 8, padding: "4px 9px", border: "1px solid rgba(37,99,235,0.4)", background: "rgba(37,99,235,0.08)", color: C.tealDk, cursor: "pointer" }}>
+                        style={{ flexShrink: 0, fontSize: 11, fontWeight: 700, borderRadius: 8, padding: "4px 9px", border: "1px solid rgba(78,179,168,0.4)", background: "rgba(78,179,168,0.08)", color: C.tealDk, cursor: "pointer" }}>
                         재예약 제안
                       </button>
                     </div>
