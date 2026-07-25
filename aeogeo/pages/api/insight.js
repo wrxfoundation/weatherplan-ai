@@ -1,13 +1,10 @@
 /* ============================================================
- * Weather Plan AI · /api/scorecard-insight
+ * AEOGEO · /api/insight
  *
- * AI 성적표 — wellbian AI 총평 생성 (Sonnet 단발 호출)
- *
- * 규약 (CLAUDE.md):
- * - 시스템 프롬프트는 정적 문자열만 (동적 값 인터폴레이션 금지 — 프롬프트 캐시)
+ * AI 총평 생성 (Sonnet 단발 호출)
+ * - 시스템 프롬프트는 정적 문자열만 (프롬프트 캐시)
  * - 동적 데이터(점수·이슈)는 user 메시지로만 전달
- * - 최신 모델은 temperature 등 샘플링 파라미터 전송 금지
- * - 실패 시에도 진단 리포트는 이미 떠 있으므로 조용히 degrade
+ * - 실패 시에도 결정론 리포트는 이미 떠 있으므로 조용히 degrade
  * ============================================================ */
 
 import Anthropic from "@anthropic-ai/sdk";
@@ -18,9 +15,8 @@ const anthropic = new Anthropic({
 
 const INSIGHT_MODEL = "claude-sonnet-5";
 
-/* 정적 시스템 프롬프트 — 동적 값 절대 인터폴레이션 금지 */
-const STATIC_SYSTEM_PROMPT = `당신은 "wellbian AI" — Weather Plan AI의 AI 컨설턴트입니다.
-사용자 웹사이트의 AI 검색 준비도(SEO·AEO·GEO) 진단 결과를 받아 경영진에게 보고하듯 총평합니다.
+const STATIC_SYSTEM_PROMPT = `당신은 AEOGEO AI — 웹사이트의 AI 검색 준비도(SEO·AEO·GEO·확산) 진단 결과를 받아
+경영진에게 보고하듯 총평하는 컨설턴트입니다.
 
 역할:
 - 진단 데이터에 있는 사실만 언급 (수치·항목을 지어내지 않음)
@@ -38,17 +34,6 @@ const STATIC_SYSTEM_PROMPT = `당신은 "wellbian AI" — Weather Plan AI의 AI 
 말투: 단정하고 간결한 존댓말. 과장 금지. 한국어만.`;
 
 export default async function handler(req, res) {
-  const allowedOrigins = [
-    "https://weatherplan.kweather.co.kr",
-    "https://weatherplan-ai.vercel.app",
-    "http://localhost:3000",
-  ];
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
@@ -61,14 +46,13 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "진단 결과 필수" });
   }
 
-  /* 페이로드 최소화 — 상위 이슈 8건만 */
   const issueLines = (Array.isArray(issues) ? issues : [])
     .slice(0, 8)
     .map((i) => `- [${i.status === "fail" ? "실패" : "주의"}·${i.severity}] ${i.label}: ${String(i.summary || "").slice(0, 120)}`)
     .join("\n");
 
   const userMsg = `진단 대상: ${String(host || "").slice(0, 100)}
-종합 ${overall}점 (${grade}등급) · SEO ${areas.seo?.score}점 · AEO ${areas.aeo?.score}점 · GEO ${areas.geo?.score}점
+종합 ${overall}점 (${grade}등급) · SEO ${areas.seo?.score}점 · AEO ${areas.aeo?.score}점 · GEO ${areas.geo?.score}점 · 확산 ${areas.reach?.score}점
 
 우선순위 이슈:
 ${issueLines || "- 특이 이슈 없음"}`;
@@ -97,7 +81,7 @@ ${issueLines || "- 특이 이슈 없음"}`;
     }
     return res.status(200).json({ ok: true, insight });
   } catch (err) {
-    console.error("[/api/scorecard-insight]", err?.status || "", err?.message || err);
+    console.error("[/api/insight]", err?.status || "", err?.message || err);
     return res.status(502).json({ error: "AI 총평 생성에 실패했습니다" });
   }
 }

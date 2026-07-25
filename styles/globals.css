@@ -391,18 +391,3 @@ p, li, span    { word-break: keep-all; }
 @media (prefers-reduced-motion: reduce) {
   .orb-float, .orb-float-slow { animation: none; }
 }
-
-/* ────────── AI 성적표 — 인쇄(PDF 저장) 모드 ────────── */
-@media print {
-  .print-hide { display: none !important; }
-  .glass-card {
-    background: #fff !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    box-shadow: none !important;
-    border: 1px solid #E5E1D6 !important;
-  }
-  .orb, .hero-aurora, .nl-shine::before, .nl-shine::after { display: none !important; }
-  .reveal { opacity: 1 !important; transform: none !important; }
-  body { background: #fff !important; }
-}

@@ -1,14 +1,15 @@
 /* ============================================================
- * Weather Plan AI · AI 성적표 진단 엔진
+ * AEOGEO · AI 성적표 진단 엔진 v2
  *
- * SEO · AEO · GEO 결정론 체크 엔진 (순수 함수 — 네트워크 없음)
+ * SEO · AEO · GEO · 확산(Reach) 결정론 체크 엔진 (순수 함수 — 네트워크 없음)
  * pages/api/scorecard.js 가 수집한 아티팩트를 받아 채점한다.
  *
  * 설계 원칙:
  * - 결정론 전용: 같은 입력이면 항상 같은 점수 (재현 가능)
- * - LLM 심사·인용 측정이 필요한 항목은 "manual"(평가 불가)로 두고
- *   점수에서 제외한다 — FAIL로 위장하지 않는다
+ * - LLM 심사가 필요한 항목은 "manual"(평가 불가)로 두고 무료 점수에서
+ *   제외한다 — FAIL로 위장하지 않는다. 정밀 진단(deep-scan)이 별도로 채운다
  * - 치명적(critical) 체크가 FAIL이면 해당 영역 점수 상한 40점
+ * - 모든 체크에 일반인용 도움말(help)을 단다
  * ============================================================ */
 
 /* ─── AI 봇 카탈로그 ───
@@ -30,12 +31,40 @@ export const AI_BOTS = [
   { ua: "Applebot-Extended", vendor: "Apple",        kind: "train" },
 ];
 
+/* ─── 정밀 진단(LLM 심사) 루브릭 — deep-scan API·UI가 공유 ─── */
+export const DEEP_RUBRIC = [
+  {
+    key: "contentQuality", checkId: "content-quality-llm",
+    label: "콘텐츠 품질 · AEO 준비도",
+    desc: "콘텐츠의 깊이·독창성·답변 우선 구조",
+  },
+  {
+    key: "answerDirectness", checkId: "answer-directness",
+    label: "답변 직접성 · 자체완결성",
+    desc: "각 섹션 첫 문장이 질문에 바로 답하는가",
+  },
+  {
+    key: "intentFormat", checkId: "intent-format",
+    label: "의도-포맷 일치",
+    desc: "질문 의도별 최적 포맷(표·리스트·단답)을 쓰는가",
+  },
+  {
+    key: "eeatLlm", checkId: "eeat-llm",
+    label: "E-E-A-T 신호 (LLM)",
+    desc: "경험·전문성·권위·신뢰의 서술적 근거",
+  },
+];
+
+export function deepVerdict(score) {
+  return score >= 70 ? "pass" : score >= 40 ? "warn" : "fail";
+}
+
 /* ═════════════════════════════════════════════════════════════
    robots.txt 파서 (RFC 9309 — 그룹 · 최장 일치 · * / $ 와일드카드)
    ═════════════════════════════════════════════════════════════ */
 
 export function parseRobotsTxt(text) {
-  const groups = [];   // { agents: [..], rules: [{type:"allow"|"disallow", path}] }
+  const groups = [];
   const sitemaps = [];
   let current = null;
   let lastWasAgent = false;
@@ -63,16 +92,15 @@ export function parseRobotsTxt(text) {
     }
     lastWasAgent = false;
     if (field === "allow" || field === "disallow") {
-      if (!current) continue; // 그룹 밖 규칙은 무시
+      if (!current) continue;
       current.rules.push({ type: field, path: value });
     }
   }
   return { groups, sitemaps };
 }
 
-/* 패턴 매칭: * = 임의 문자열, $ = 끝 고정 */
 function robotsPathMatch(pattern, path) {
-  if (pattern === "") return false; // 빈 Disallow = 전체 허용
+  if (pattern === "") return false;
   let re = "";
   for (const ch of pattern) {
     if (ch === "*") re += ".*";
@@ -86,7 +114,6 @@ function robotsPathMatch(pattern, path) {
   }
 }
 
-/* 봇에 적용되는 그룹 선택: UA 토큰 최장 일치, 없으면 * 그룹 */
 function pickGroup(groups, botUa) {
   const bot = botUa.toLowerCase();
   let best = null;
@@ -103,7 +130,6 @@ function pickGroup(groups, botUa) {
   return best || star || null;
 }
 
-/* 판정: { allowed, rule } — rule은 사람이 읽을 근거 문자열 */
 export function robotsVerdict(parsed, botUa, path = "/") {
   if (!parsed || !parsed.groups || parsed.groups.length === 0) {
     return { allowed: true, rule: "robots.txt 없음 — 기본 허용" };
@@ -128,7 +154,7 @@ export function robotsVerdict(parsed, botUa, path = "/") {
 }
 
 /* ═════════════════════════════════════════════════════════════
-   HTML 경량 파서 (서버 전용 — 정규식 기반, 외부 의존성 0)
+   HTML 경량 파서 (정규식 기반, 외부 의존성 0 — 서버·브라우저 공용)
    ═════════════════════════════════════════════════════════════ */
 
 function parseAttrs(tag) {
@@ -154,10 +180,23 @@ function textOf(htmlFragment) {
   ).replace(/\s+/g, " ").trim();
 }
 
+/* 소셜 플랫폼 감지 테이블 */
+const SOCIAL_PLATFORMS = [
+  { key: "instagram", label: "인스타그램", re: /instagram\.com\// },
+  { key: "youtube",   label: "유튜브",     re: /youtube\.com\/|youtu\.be\// },
+  { key: "facebook",  label: "페이스북",   re: /facebook\.com\// },
+  { key: "x",         label: "X(트위터)",  re: /(^|\/\/)(www\.)?(x|twitter)\.com\// },
+  { key: "linkedin",  label: "링크드인",   re: /linkedin\.com\// },
+  { key: "naverblog", label: "네이버 블로그", re: /blog\.naver\.com\/|post\.naver\.com\// },
+  { key: "threads",   label: "스레드",     re: /threads\.(net|com)\// },
+  { key: "kakao",     label: "카카오 채널", re: /pf\.kakao\.com\// },
+  { key: "tiktok",    label: "틱톡",       re: /tiktok\.com\// },
+  { key: "telegram",  label: "텔레그램",   re: /t\.me\// },
+];
+
 export function analyzeHtml(html) {
   const src = String(html || "");
 
-  /* script/style 제거 본문 */
   const bodyOnly = src
     .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
     .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
@@ -166,11 +205,9 @@ export function analyzeHtml(html) {
   const text = textOf(bodyOnly);
   const words = text ? text.split(/\s+/) : [];
 
-  /* title */
   const titleM = src.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
   const title = titleM ? textOf(titleM[1]) : null;
 
-  /* meta */
   const metas = [];
   for (const m of src.matchAll(/<meta\b[^>]*>/gi)) metas.push(parseAttrs(m[0]));
   const metaBy = (key, name) =>
@@ -189,24 +226,24 @@ export function analyzeHtml(html) {
   const publishedTime = metaBy("property", "article:published_time") ||
     metaBy("property", "article:modified_time");
 
-  /* link */
   const links = [];
   for (const m of src.matchAll(/<link\b[^>]*>/gi)) links.push(parseAttrs(m[0]));
   const canonical = links.find((l) => (l.rel || "").toLowerCase().split(/\s+/).includes("canonical"))?.href ?? null;
   const favicon = links.some((l) => /(^|\s)(icon|shortcut icon|apple-touch-icon)(\s|$)/.test((l.rel || "").toLowerCase()));
+  const rssLink = links.find((l) =>
+    (l.rel || "").toLowerCase() === "alternate" &&
+    /application\/(rss|atom)\+xml/i.test(l.type || "")
+  )?.href ?? null;
 
-  /* html lang */
   const htmlTagM = src.match(/<html\b[^>]*>/i);
   const lang = htmlTagM ? (parseAttrs(htmlTagM[0]).lang || null) : null;
 
-  /* headings */
   const headings = [];
   for (const m of src.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi)) {
     const t = textOf(m[2]);
     if (t) headings.push({ level: Number(m[1]), text: t.slice(0, 160) });
   }
 
-  /* JSON-LD */
   const jsonld = [];
   for (const m of src.matchAll(/<script\b[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
     const raw = decodeEntities(m[1]).trim();
@@ -231,20 +268,48 @@ export function analyzeHtml(html) {
   jsonld.filter((b) => b.ok).forEach((b) => collectTypes(b.data));
   const hasSameAs = jsonld.filter((b) => b.ok).some((b) => JSON.stringify(b.data).includes('"sameAs"'));
 
-  /* images */
+  /* 조직명 추출 (위키백과 조회용) — Organization JSON-LD > og:site_name > title 앞토큰 */
+  let orgName = null;
+  for (const b of jsonld.filter((x) => x.ok)) {
+    const find = (node) => {
+      if (!node || typeof node !== "object") return null;
+      if (Array.isArray(node)) { for (const n of node) { const r = find(n); if (r) return r; } return null; }
+      const t = node["@type"];
+      const types = typeof t === "string" ? [t] : Array.isArray(t) ? t : [];
+      if (types.some((x) => /Organization|LocalBusiness|Corporation/i.test(x)) && typeof node.name === "string") {
+        return node.name;
+      }
+      if (node["@graph"]) return find(node["@graph"]);
+      return null;
+    };
+    orgName = find(b.data);
+    if (orgName) break;
+  }
+  if (!orgName) orgName = metaBy("property", "og:site_name");
+  if (!orgName && title) orgName = title.split(/[|·\-–—:]/)[0].trim();
+
   const images = [];
   for (const m of src.matchAll(/<img\b[^>]*>/gi)) images.push(parseAttrs(m[0]));
   const imgTotal = images.length;
   const imgWithAlt = images.filter((a) => (a.alt || "").trim().length > 0).length;
   const hasVideo = /<video\b|youtube\.com\/embed|player\.vimeo\.com/i.test(src);
 
-  /* anchors */
   const anchors = [];
   for (const m of src.matchAll(/<a\b[^>]*href\s*=\s*("([^"]*)"|'([^']*)')[^>]*>([\s\S]*?)<\/a>/gi)) {
     anchors.push({ href: (m[2] ?? m[3] ?? "").trim(), text: textOf(m[4]).slice(0, 80) });
   }
 
-  /* 신뢰 신호 휴리스틱 */
+  /* 소셜 채널 (앵커 + sameAs 문자열 전체에서 감지) */
+  const sameAsBlob = jsonld.filter((b) => b.ok).map((b) => JSON.stringify(b.data)).join(" ");
+  const linkBlob = anchors.map((a) => a.href).join(" ") + " " + sameAsBlob;
+  const socialPlatforms = SOCIAL_PLATFORMS.filter((p) => p.re.test(linkBlob)).map((p) => p.label);
+
+  /* 뉴스레터/구독 장치 */
+  const hasNewsletter =
+    /(뉴스레터|newsletter)/i.test(text) ||
+    (/type\s*=\s*["']email["']/i.test(src) && /(구독|subscribe|가입)/i.test(text)) ||
+    /stibee\.com|mailchimp\.com|substack\.com/i.test(linkBlob);
+
   const hasAbout = anchors.some((a) => /about|company|회사\s*소개|기업\s*소개|소개/i.test(a.href + " " + a.text));
   const hasContact = anchors.some((a) => /contact|문의|상담|inquiry|support/i.test(a.href + " " + a.text)) ||
     anchors.some((a) => a.href.startsWith("mailto:") || a.href.startsWith("tel:"));
@@ -253,12 +318,10 @@ export function analyzeHtml(html) {
   const hasAddress = /사업자\s*등록\s*번호|대표이사|대표\s*:|주소\s*:|copyright|©/i.test(text);
   const dateMatches = text.match(/20\d{2}[.\-/년]\s?\d{1,2}[.\-/월]\s?\d{1,2}/g) || [];
 
-  /* 1차 출처 인용 (권위 도메인으로 나가는 링크) */
   const primarySourceLinks = anchors.filter((a) =>
     /\.(go\.kr|or\.kr|re\.kr|ac\.kr|gov|edu|int)([/?#]|$)|wikipedia\.org|doi\.org|scholar\.google|data\.[a-z.]+/i.test(a.href)
   );
 
-  /* 통계 밀도: 숫자 토큰 / 100단어 */
   const numberTokens = text.match(/\d[\d,.]*\s?(%|퍼센트|원|억|만|배|위|점|명|건|개|시간|분|℃|°C|km|kg|mm)?/g) || [];
   const statDensity = words.length > 0 ? +(numberTokens.length / words.length * 100).toFixed(2) : 0;
 
@@ -267,7 +330,6 @@ export function analyzeHtml(html) {
   const avgSentenceWords = sentences.length > 0
     ? +(words.length / sentences.length).toFixed(1) : 0;
 
-  /* 질문형 헤딩 */
   const isQuestion = (t) =>
     /[?？]\s*$/.test(t) ||
     /^(왜|어떻게|무엇|뭐가|어디서?|언제|누가|얼마나|몇|어떤)/.test(t) ||
@@ -275,18 +337,18 @@ export function analyzeHtml(html) {
     /^(how|what|why|when|where|who|which|can|does|do(es)?|is|are|should)\b/i.test(t);
   const questionHeadings = headings.filter((h) => isQuestion(h.text));
 
-  /* SPA 셸 신호 */
   const scriptCount = (src.match(/<script\b/gi) || []).length;
   const spaMarkers = /id=["'](root|app|__next|___gatsby)["'][^>]*>\s*<\/(div|main)>/i.test(src) ||
     /window\.__NUXT__|window\.__INITIAL_STATE__/.test(src);
 
   return {
     title, description, metaRobots, og, twitterCard, viewport, charset, lang,
-    canonical, favicon, publishedTime,
+    canonical, favicon, publishedTime, rssLink, orgName,
     headings, questionHeadings,
     jsonld, ldTypes, hasSameAs,
     imgTotal, imgWithAlt, hasVideo,
     anchors: anchors.length,
+    socialPlatforms, hasNewsletter,
     hasAbout, hasContact, hasAuthor, hasAddress,
     dateCount: dateMatches.length,
     primarySourceCount: primarySourceLinks.length,
@@ -303,6 +365,8 @@ export function analyzeHtml(html) {
 
 const STATUS_SCORE = { pass: 1, warn: 0.5, fail: 0 };
 
+export const AREA_WEIGHTS = { seo: 0.30, aeo: 0.30, geo: 0.25, reach: 0.15 };
+
 export function gradeOf(score) {
   if (score >= 85) return "A";
   if (score >= 75) return "B";
@@ -312,16 +376,17 @@ export function gradeOf(score) {
 }
 
 function koreanLen(s) {
-  /* 한글 위주 문자열은 자모 조합 글자 수 그대로 */
   return [...String(s || "")].length;
 }
 
 /* artifacts:
    {
-     url, finalUrl, path, scheme, status, redirects, responseMs,
+     url, finalUrl, host, path, scheme, status, redirects, responseMs,
      tlsValid, tlsError, mixedContentCount, xRobotsTag,
      parsed (analyzeHtml 결과), robots { found, parsed, sitemaps },
      llmsTxtFound, sitemapXml { checked, ok, status },
+     rssProbe { checked, found },
+     wikipedia { checked, exact, hits, brand },
      bots: [{ ua, vendor, kind, robotsAllowed, robotsRule, live: {ran, ok, status} }],
    }
 */
@@ -339,6 +404,7 @@ export function runScorecard(a) {
   add({
     id: "http-status", area: "seo", severity: "critical", weight: 3,
     label: "HTTP 상태 코드 · 리다이렉트 체인",
+    help: "사이트 주소를 입력했을 때 서버가 정상 응답(200)을 주는지, 몇 번이나 다른 주소로 튕기는지(리다이렉트) 봅니다. 여러 번 튕기면 사람도 로봇도 도착이 느려집니다.",
     status: a.status >= 200 && a.status < 300
       ? (a.redirects <= 1 ? "pass" : "warn")
       : "fail",
@@ -365,6 +431,7 @@ export function runScorecard(a) {
     add({
       id: "https-tls", area: "seo", severity: "high", weight: 3,
       label: "HTTPS · TLS · 혼합 콘텐츠",
+      help: "주소창의 자물쇠(https)가 제대로 걸려 있는지 봅니다. 자물쇠가 깨져 있으면 방문자에게 '안전하지 않음' 경고가 뜨고, 검색 순위도 내려갑니다.",
       status: !ok ? "fail" : mixed > 0 ? "warn" : "pass",
       summary: !ok
         ? (a.tlsValid === false
@@ -398,6 +465,7 @@ export function runScorecard(a) {
     add({
       id: "robots-crawl", area: "seo", severity: "critical", weight: 3,
       label: "robots.txt 크롤 허용",
+      help: "robots.txt는 검색 로봇에게 '들어와도 됨/안 됨'을 알리는 안내문입니다. 실수로 전체 차단이 걸려 있으면 검색에서 사이트가 통째로 사라집니다.",
       status: v.allowed ? "pass" : "fail",
       summary: v.allowed
         ? "robots.txt가 이 URL의 크롤을 허용합니다."
@@ -425,6 +493,7 @@ export function runScorecard(a) {
     add({
       id: "noindex", area: "seo", severity: "critical", weight: 3,
       label: "인덱싱 차단 지시어 (noindex/nofollow)",
+      help: "페이지 안에 '검색 결과에 올리지 마세요(noindex)'라는 숨은 표시가 있는지 봅니다. 개발 중에 넣었다가 지우는 걸 잊는 경우가 의외로 많습니다.",
       status: noindex ? "fail" : nofollow ? "warn" : "pass",
       summary: noindex
         ? "noindex 지시어가 있어 검색 결과에서 제외됩니다."
@@ -453,6 +522,7 @@ export function runScorecard(a) {
     add({
       id: "title-tag", area: "seo", severity: "high", weight: 2,
       label: "Title 태그",
+      help: "브라우저 탭과 검색 결과에 뜨는 페이지 제목입니다. 너무 짧으면 무슨 사이트인지 알 수 없고, 너무 길면 잘립니다. '핵심 키워드 + 브랜드명' 조합이 정석입니다.",
       status: !t ? "fail" : len < minL || len > maxL + 5 ? "warn" : "pass",
       summary: !t
         ? "title 태그가 없습니다 — 검색 결과 제목을 검색엔진이 임의로 만듭니다."
@@ -483,6 +553,7 @@ export function runScorecard(a) {
     add({
       id: "meta-description", area: "seo", severity: "medium", weight: 2,
       label: "Meta Description",
+      help: "검색 결과에서 제목 아래 나오는 요약문입니다. 이게 없으면 검색엔진이 아무 문장이나 잘라서 보여주고, 클릭률이 떨어집니다.",
       status: !d ? "fail" : len < minL || len > maxL ? "warn" : "pass",
       summary: !d
         ? "meta description이 없습니다 — 검색 결과 요약문을 통제할 수 없습니다."
@@ -518,6 +589,7 @@ export function runScorecard(a) {
     add({
       id: "canonical", area: "seo", severity: "high", weight: 2,
       label: "Canonical 정합성 (자기참조 · 크로스도메인)",
+      help: "같은 페이지가 여러 주소(www 유무, ?파라미터 등)로 열릴 때 '이게 진짜 주소'라고 알려주는 표시입니다. 없으면 검색 점수가 여러 주소로 쪼개집니다.",
       status, summary,
       details: [
         { k: "canonical", v: c || "(없음)" },
@@ -545,6 +617,7 @@ export function runScorecard(a) {
     add({
       id: "heading-structure", area: "seo", severity: "high", weight: 2,
       label: "헤딩 구조 (단일 H1 · 레벨 스킵)",
+      help: "제목(H1)과 소제목(H2, H3)이 목차처럼 정리돼 있는지 봅니다. 책에 큰 제목이 없거나 챕터 번호가 뒤죽박죽이면 읽기 어려운 것과 같습니다.",
       status,
       summary: hs.length === 0
         ? "헤딩이 하나도 없습니다 — 문서 구조를 파싱할 수 없습니다."
@@ -576,6 +649,7 @@ export function runScorecard(a) {
     add({
       id: "jsonld-valid", area: "seo", severity: "high", weight: 2,
       label: "구조화 데이터 (JSON-LD) 유효성",
+      help: "구조화 데이터는 '우리는 이런 회사고 이 페이지는 이런 내용'이라고 기계가 읽기 쉽게 정리한 명함입니다. 문법이 하나라도 틀리면 명함 전체가 무시됩니다.",
       status: blocks.length === 0 ? "warn" : bad.length > 0 ? "fail" : "pass",
       summary: blocks.length === 0
         ? "JSON-LD가 없습니다 — 검색엔진·AI가 페이지 의미를 구조적으로 읽지 못합니다."
@@ -603,6 +677,7 @@ export function runScorecard(a) {
     add({
       id: "sitemap", area: "seo", severity: "medium", weight: 1.5,
       label: "XML 사이트맵 선언",
+      help: "사이트맵은 우리 사이트의 전체 페이지 목록표입니다. robots.txt에 위치를 적어두면 검색 로봇이 새 페이지를 훨씬 빨리 찾아냅니다.",
       status: declared ? "pass" : fileOk ? "warn" : "fail",
       summary: declared
         ? "robots.txt에 사이트맵이 선언되어 크롤러가 URL 목록을 빠르게 발견합니다."
@@ -628,6 +703,7 @@ export function runScorecard(a) {
     add({
       id: "eeat-onpage", area: "seo", severity: "high", weight: 2,
       label: "E-E-A-T 온페이지 신호 (저자 · About/Contact · 사업자 정보)",
+      help: "'이 사이트 뒤에 진짜 회사/사람이 있는가'를 보여주는 신호입니다. 회사 소개·문의처·사업자 정보가 있으면 검색엔진과 AI 모두 더 신뢰합니다.",
       status: signals >= 2 ? "pass" : signals === 1 ? "warn" : "fail",
       summary: signals >= 2
         ? "조직 실체를 확인할 수 있는 신뢰 신호가 충분합니다."
@@ -656,6 +732,7 @@ export function runScorecard(a) {
     add({
       id: "js-render-gap", area: "seo", severity: "high", weight: 2,
       label: "JS 렌더링 콘텐츠 갭 (SSR 커버리지)",
+      help: "일부 사이트는 자바스크립트를 실행해야만 내용이 보입니다. 그런데 AI 봇 상당수는 자바스크립트를 실행하지 않아서, 그런 사이트는 빈 종이로 보입니다.",
       status,
       summary: status === "pass"
         ? `raw-HTML에 본문 ${wc}단어가 담겨 있어 JS 미실행 크롤러도 콘텐츠를 확보합니다.`
@@ -678,33 +755,6 @@ export function runScorecard(a) {
   }
 
   {
-    const ogc = [p.og?.title, p.og?.description, p.og?.image].filter(Boolean).length;
-    add({
-      id: "og-social", area: "seo", severity: "medium", weight: 1.5,
-      label: "Open Graph · 소셜 카드",
-      status: ogc === 3 ? "pass" : ogc > 0 ? "warn" : "fail",
-      summary: ogc === 3
-        ? "OG 태그 3종이 모두 있어 공유·AI 미리보기가 완전합니다."
-        : ogc > 0
-          ? `OG 태그가 ${ogc}/3종만 있습니다 — 누락분을 채우세요.`
-          : "OG 태그가 없습니다 — 카톡·슬랙 공유와 AI 미리보기에서 빈 카드가 나갑니다.",
-      details: [
-        { k: "og:title", v: p.og?.title ? "있음" : "없음" },
-        { k: "og:description", v: p.og?.description ? "있음" : "없음" },
-        { k: "og:image", v: p.og?.image ? "있음" : "없음" },
-        { k: "twitter:card", v: p.twitterCard || "(없음)" },
-      ],
-      passRule: "og:title · og:description · og:image 3종 모두 있을 때 통과",
-      fix: ogc === 3 ? null : {
-        title: "OG 태그 3종 세트 추가",
-        action: "추가",
-        note: "공유 미리보기와 AI 인용 카드에 쓰이는 기본 3종입니다.",
-        code: `<meta property="og:title" content="페이지 제목">\n<meta property="og:description" content="한 줄 요약">\n<meta property="og:image" content="https://example.com/og-image.png">`,
-      },
-    });
-  }
-
-  {
     const items = [
       ["viewport", !!p.viewport], ["charset", !!p.charset],
       ["html lang", !!p.lang], ["favicon", !!p.favicon],
@@ -713,6 +763,7 @@ export function runScorecard(a) {
     add({
       id: "basic-meta", area: "seo", severity: "low", weight: 1,
       label: "기본 위생 (viewport · charset · lang · favicon)",
+      help: "모바일 화면 대응, 글자 깨짐 방지, 언어 표시, 탭 아이콘 — 웹사이트의 기본 예의 4종 세트입니다. 하나라도 빠지면 어딘가에서 어색하게 보입니다.",
       status: okCount === 4 ? "pass" : okCount >= 2 ? "warn" : "fail",
       summary: okCount === 4
         ? "기본 메타 위생 4종이 모두 갖춰져 있습니다."
@@ -730,6 +781,7 @@ export function runScorecard(a) {
   add({
     id: "freshness", area: "seo", severity: "medium", weight: pageType === "homepage" ? 0 : 1,
     label: "콘텐츠 신선도 신호",
+    help: "블로그·뉴스형 페이지는 '언제 쓴 글인지'가 중요합니다. 회사 홈처럼 날짜가 원래 없는 페이지는 평가에서 제외합니다.",
     status: pageType === "homepage" ? "na"
       : (p.publishedTime || p.dateCount > 0) ? "pass" : "warn",
     summary: pageType === "homepage"
@@ -749,27 +801,29 @@ export function runScorecard(a) {
   add({
     id: "cwv", area: "seo", severity: "high", weight: 0,
     label: "Core Web Vitals (랩 측정)",
+    help: "페이지가 뜨는 속도와 클릭 반응 속도입니다. 별도 성능 측정 장비(PSI)가 필요해 이 무료 진단에는 포함되지 않습니다.",
     status: "manual",
-    summary: "무료 결정론 진단에서는 PSI를 호출하지 않습니다 (재현성·속도 보장). 정밀 진단에서 측정됩니다.",
+    summary: "무료 결정론 진단에서는 PSI를 호출하지 않습니다 (재현성·속도 보장) — 로드맵 항목입니다.",
     details: [
       { k: "LCP 임계값", v: "≤ 2500ms" },
       { k: "INP 임계값", v: "≤ 200ms" },
       { k: "CLS 임계값", v: "≤ 0.1" },
     ],
-    passRule: "정밀 진단(비동기 랩 측정) 대상",
+    passRule: "비동기 랩 측정 레인 (로드맵)",
     fix: null,
   });
 
   add({
     id: "content-quality-llm", area: "seo", severity: "high", weight: 0,
     label: "콘텐츠 품질 · AEO 준비도 (LLM 심사)",
+    help: "글의 깊이와 독창성, '질문에 먼저 답하는 구조'인지를 AI 심사위원이 읽고 평가합니다. 아래 정밀 진단을 실행하면 채워집니다.",
     status: "manual",
-    summary: "콘텐츠 깊이·독창성·답변 우선 구조는 LLM이 심사합니다 — 무료 결정론 레인에서는 점수에서 제외됩니다.",
+    summary: "콘텐츠 깊이·독창성·답변 우선 구조는 LLM이 심사합니다 — 정밀 진단(무료 베타)을 실행하면 채워집니다.",
     details: [
       { k: "본문 단어 수", v: String(p.wordCount || 0) },
       { k: "섹션 수", v: String((p.headings || []).length) },
     ],
-    passRule: "LLM 서브점수 ≥ 70일 때 통과 (정밀 진단)",
+    passRule: "LLM 심사 점수 70 이상일 때 통과 (정밀 진단)",
     fix: null,
   });
 
@@ -781,6 +835,7 @@ export function runScorecard(a) {
     add({
       id: "question-headings", area: "aeo", severity: "high", weight: 2.5,
       label: "질문형 헤딩",
+      help: "사람들이 AI에게 묻는 문장('~은 어떻게 하나요?')을 소제목으로 그대로 쓰면, AI가 그 아래 답을 통째로 인용하기 쉬워집니다.",
       status: qn >= 3 || (total > 0 && qn / total >= 0.2) ? "pass" : qn >= 1 ? "warn" : "fail",
       summary: qn === 0
         ? "헤딩이 모두 서술형이며 질문형이 전혀 없습니다 — AI는 질문에 답하는 구조를 우선 인용합니다."
@@ -796,7 +851,7 @@ export function runScorecard(a) {
         title: "핵심 섹션을 질문형 헤딩으로 전환",
         action: "재작성",
         note: "사용자가 실제로 검색창·AI에 묻는 문장을 그대로 헤딩으로 쓰고, 바로 아래 2~3문장으로 직접 답하세요.",
-        code: `<h2>날씨 기반 광고는 어떻게 시작하나요?</h2>\n<p>핵심 답변을 첫 문장에 — 근거와 수치는 그 다음에.</p>`,
+        code: `<h2>서비스 도입은 어떻게 시작하나요?</h2>\n<p>핵심 답변을 첫 문장에 — 근거와 수치는 그 다음에.</p>`,
       },
     });
   }
@@ -806,6 +861,7 @@ export function runScorecard(a) {
     add({
       id: "entity-schema", area: "aeo", severity: "high", weight: 2.5,
       label: "엔티티 스키마 (Organization/Person + sameAs)",
+      help: "AI에게 '우리 회사는 이런 조직이고, 공식 유튜브·블로그는 여기'라고 신원을 등록하는 것입니다. 이게 있어야 AI가 브랜드를 하나의 실체로 인식합니다.",
       status: entity && p.hasSameAs ? "pass" : entity ? "warn" : "fail",
       summary: entity && p.hasSameAs
         ? "Organization 엔티티와 sameAs 연결이 있어 AI가 브랜드 실체를 식별합니다."
@@ -832,6 +888,7 @@ export function runScorecard(a) {
     add({
       id: "answer-schema", area: "aeo", severity: "high", weight: 2,
       label: "답변형 스키마 (FAQPage · HowTo · Article)",
+      help: "'자주 묻는 질문'이나 '따라하기 단계'를 기계가 읽는 형식으로 한 번 더 정리해 두는 것입니다. AI가 Q&A를 그대로 발췌하기 가장 쉬운 형태입니다.",
       status: answerTypes.length > 0 ? "pass" : hasAny ? "warn" : "fail",
       summary: answerTypes.length > 0
         ? `답변형 스키마(${answerTypes.slice(0, 3).join(", ")})가 있어 발췌·인용이 쉽습니다.`
@@ -859,6 +916,7 @@ export function runScorecard(a) {
     add({
       id: "heading-hierarchy", area: "aeo", severity: "medium", weight: 1.5,
       label: "헤딩 위계",
+      help: "AI는 소제목 단위로 내용을 잘라 답변에 씁니다. 소제목 층위가 정리돼 있어야 '이 질문의 답은 이 단락'이라고 정확히 집어낼 수 있습니다.",
       status: hs.length === 0 ? "fail" : hasH1 && !skip ? "pass" : "warn",
       summary: hs.length === 0
         ? "헤딩이 없어 답변 단위 분해가 불가능합니다."
@@ -880,6 +938,7 @@ export function runScorecard(a) {
     add({
       id: "readability", area: "aeo", severity: "medium", weight: 2,
       label: "가독성 점수",
+      help: "문장이 길수록 사람도 AI도 요점을 집어내기 어렵습니다. '한 문장 = 한 주장'으로 짧게 끊는 것이 발췌되기 좋은 글입니다.",
       status: !enough ? "warn" : avg <= 25 ? "pass" : avg <= 40 ? "warn" : "fail",
       summary: !enough
         ? "본문 텍스트가 적어 보수적으로 평가합니다."
@@ -909,6 +968,7 @@ export function runScorecard(a) {
     add({
       id: "eeat-signals", area: "aeo", severity: "high", weight: 2,
       label: "E-E-A-T 신호 (저자 · 날짜 · 출처 · 조직)",
+      help: "누가 언제 썼고 근거는 무엇인지 — AI가 '믿고 인용해도 되는 글'인지 가리는 기준입니다. 저자·날짜·출처 링크가 그 증거입니다.",
       status: signals >= 2 ? "pass" : signals === 1 ? "warn" : "fail",
       summary: signals >= 2
         ? `E-E-A-T 신호 ${signals}종 확인 — AI가 신뢰할 근거가 있습니다.`
@@ -934,20 +994,33 @@ export function runScorecard(a) {
   add({
     id: "intent-format", area: "aeo", severity: "medium", weight: 0,
     label: "의도-포맷 일치 (LLM)",
+    help: "비교 질문에는 표, 절차 질문에는 번호 목록 — 질문 종류에 맞는 형식을 쓰는지 AI 심사위원이 봅니다. 정밀 진단을 실행하면 채워집니다.",
     status: "manual",
-    summary: "질문 의도별 최적 포맷(표·리스트·단답) 일치는 LLM 심사 항목입니다 — 정밀 진단에서 평가됩니다.",
+    summary: "질문 의도별 최적 포맷(표·리스트·단답) 일치는 LLM 심사 항목입니다 — 정밀 진단(무료 베타)에서 평가됩니다.",
     details: [],
-    passRule: "정밀 진단(LLM 심사) 대상",
+    passRule: "LLM 심사 점수 70 이상일 때 통과 (정밀 진단)",
     fix: null,
   });
 
   add({
     id: "answer-directness", area: "aeo", severity: "medium", weight: 0,
     label: "답변 직접성 · 자체완결성 (LLM)",
+    help: "소제목 아래 첫 문장이 바로 결론부터 말하는지 봅니다. 뜸 들이는 글은 AI가 발췌하기 어렵습니다. 정밀 진단을 실행하면 채워집니다.",
     status: "manual",
-    summary: "섹션 첫 문장이 질문에 바로 답하는지는 LLM 심사 항목입니다 — 정밀 진단에서 평가됩니다.",
+    summary: "섹션 첫 문장이 질문에 바로 답하는지는 LLM 심사 항목입니다 — 정밀 진단(무료 베타)에서 평가됩니다.",
     details: [],
-    passRule: "정밀 진단(LLM 심사) 대상",
+    passRule: "LLM 심사 점수 70 이상일 때 통과 (정밀 진단)",
+    fix: null,
+  });
+
+  add({
+    id: "eeat-llm", area: "aeo", severity: "medium", weight: 0,
+    label: "E-E-A-T 신호 (LLM 심사)",
+    help: "표기상 신호를 넘어, 글 내용 자체가 실제 경험과 전문성을 보여주는지 AI 심사위원이 읽고 평가합니다. 정밀 진단을 실행하면 채워집니다.",
+    status: "manual",
+    summary: "경험·전문성·권위·신뢰의 서술적 근거는 LLM 심사 항목입니다 — 정밀 진단(무료 베타)에서 평가됩니다.",
+    details: [],
+    passRule: "LLM 심사 점수 70 이상일 때 통과 (정밀 진단)",
     fix: null,
   });
 
@@ -960,6 +1033,7 @@ export function runScorecard(a) {
     add({
       id: "stats-density", area: "geo", severity: "high", weight: 2.5,
       label: "통계 밀도 + 1차 출처 인용",
+      help: "AI는 '많이 좋아졌습니다'보다 '132곳에서 91%'처럼 숫자와 출처가 있는 문장을 골라 인용합니다. 본문에 수치가 얼마나 촘촘한지 재는 항목입니다.",
       status,
       summary: status === "pass"
         ? `통계 밀도 ${d}/100단어 · 1차 출처 ${cite}건 — 생성형 엔진이 인용할 근거가 풍부합니다.`
@@ -987,6 +1061,7 @@ export function runScorecard(a) {
     add({
       id: "citation-schema", area: "geo", severity: "high", weight: 2,
       label: "인용 관련 JSON-LD 스키마 타입",
+      help: "생성형 AI가 답변 아래 '출처 카드'를 달 때 참고하는 구조화 정보입니다. Article·FAQ·Organization 타입이 선언돼 있으면 출처로 뽑히기 쉽습니다.",
       status: citeTypes.length > 0 ? "pass" : hasAny ? "warn" : "fail",
       summary: citeTypes.length > 0
         ? `인용 친화 스키마(${citeTypes.slice(0, 3).join(", ")})가 선언되어 있습니다.`
@@ -1009,8 +1084,7 @@ export function runScorecard(a) {
     const bots = a.bots || [];
     const searchBlocked = bots.filter((b) => b.kind === "search" && !b.robotsAllowed);
     const trainBlocked = bots.filter((b) => b.kind === "train" && !b.robotsAllowed);
-    /* 메인 페치(일반 UA)가 2xx일 때만 라이브 페치 실패를 "봇 차단"으로 귀속
-       — 사이트가 모든 요청을 막는 경우와 구분하기 위함 */
+    /* 메인 페치(일반 UA)가 2xx일 때만 라이브 페치 실패를 "봇 차단"으로 귀속 */
     const liveMeaningful = a.status >= 200 && a.status < 300;
     const liveBlocked = liveMeaningful
       ? bots.filter((b) => b.live?.ran && b.live.ok === false && b.robotsAllowed)
@@ -1020,6 +1094,7 @@ export function runScorecard(a) {
     add({
       id: "ai-crawler-access", area: "geo", severity: "critical", weight: 3,
       label: "AI 크롤러 접근성 (GPTBot · ClaudeBot · PerplexityBot …)",
+      help: "ChatGPT·Claude·Perplexity의 수집 로봇이 우리 사이트에 들어올 수 있는지 봅니다. 검색용 봇을 막아두면 AI 답변에 인용될 길 자체가 끊깁니다.",
       status,
       summary: status === "pass"
         ? `검색·학습 AI 봇 ${bots.length}개가 모두 접근 가능합니다. AI 답변 인용 경로가 열려 있습니다.`
@@ -1044,6 +1119,7 @@ export function runScorecard(a) {
   add({
     id: "llms-txt", area: "geo", severity: "low", weight: 1,
     label: "/llms.txt 존재",
+    help: "llms.txt는 AI 전용 사이트 안내문(신생 표준)입니다. 아직 필수는 아니지만, 있으면 '우리는 AI 친화적'이라는 선도 신호가 됩니다.",
     status: a.llmsTxtFound ? "pass" : "warn",
     summary: a.llmsTxtFound
       ? "/llms.txt가 있습니다 — LLM에게 사이트 구조를 요약 제공하는 초기 표준을 선도 채택했습니다."
@@ -1069,6 +1145,7 @@ export function runScorecard(a) {
     add({
       id: "multimodal", area: "geo", severity: "medium", weight: 1.5,
       label: "멀티모달 콘텐츠 (이미지/영상 + alt)",
+      help: "alt 텍스트는 이미지에 붙이는 설명문입니다. AI는 이미지를 이 설명으로 이해하므로, alt가 없는 이미지는 AI에게 투명 인간입니다.",
       status,
       summary: total === 0 && !p.hasVideo
         ? "이미지·영상이 없습니다 — 멀티모달 인용 기회가 없습니다."
@@ -1087,7 +1164,7 @@ export function runScorecard(a) {
         title: "이미지 alt 텍스트 채우기",
         action: "추가",
         note: "장식용이 아닌 모든 이미지에 내용을 설명하는 alt를 넣으세요.",
-        code: `<img src="/chart.png" alt="2026년 여름 폭염일수와 음료 매출 상관 그래프 — 폭염 7일차에 매출 +24%">`,
+        code: `<img src="/chart.png" alt="2026년 상반기 도입 기업 수 추이 — 1월 40곳에서 6월 132곳으로 증가">`,
       },
     });
   }
@@ -1095,27 +1172,161 @@ export function runScorecard(a) {
   add({
     id: "citation-rate", area: "geo", severity: "high", weight: 0,
     label: "실제 AI 인용률",
+    help: "ChatGPT·Perplexity에 실제 질문을 여러 번 던져 우리 사이트가 답변 출처로 등장하는 비율을 재는 항목입니다. 반복 측정 인프라가 필요해 로드맵에 있습니다.",
     status: "manual",
-    summary: "여러 생성형 엔진에서 이 페이지가 실제로 인용되는 비율은 반복 프로빙으로 측정합니다 — 정밀 진단 대상입니다.",
+    summary: "여러 생성형 엔진에서 이 페이지가 실제로 인용되는 비율은 반복 프로빙으로 측정합니다 — 로드맵 항목입니다.",
     details: [],
-    passRule: "정밀 진단(GEO 인용 측정) 대상",
+    passRule: "GEO 인용 프로빙 레인 (로드맵)",
     fix: null,
   });
 
   add({
     id: "sov", area: "geo", severity: "high", weight: 0,
     label: "브랜드 언급률 · Share of Voice",
+    help: "'이 분야 추천 업체는?'이라고 AI에 물었을 때 우리 브랜드가 경쟁사 대비 얼마나 언급되는지 재는 항목입니다. 반복 측정 인프라가 필요해 로드맵에 있습니다.",
     status: "manual",
-    summary: "생성형 엔진 답변에서 브랜드가 언급되는 비율·경쟁사 대비 점유율은 정밀 진단에서 측정됩니다.",
+    summary: "생성형 엔진 답변에서 브랜드가 언급되는 비율·경쟁사 대비 점유율은 반복 프로빙으로 측정합니다 — 로드맵 항목입니다.",
     details: [],
-    passRule: "정밀 진단(GEO 인용 측정) 대상",
+    passRule: "GEO 인용 프로빙 레인 (로드맵)",
     fix: null,
   });
+
+  /* ── 확산 (Reach) ────────────────────────────── */
+
+  {
+    const platforms = p.socialPlatforms || [];
+    add({
+      id: "social-channels", area: "reach", severity: "medium", weight: 2,
+      label: "소셜 채널 연결",
+      help: "사이트에 공식 인스타·유튜브·블로그 링크가 걸려 있는지 봅니다. 채널이 연결돼 있어야 콘텐츠가 밖으로 퍼질 통로가 생기고, AI도 공식 채널을 함께 인식합니다.",
+      status: platforms.length >= 2 ? "pass" : platforms.length === 1 ? "warn" : "fail",
+      summary: platforms.length >= 2
+        ? `소셜 채널 ${platforms.length}종(${platforms.slice(0, 4).join(", ")})이 연결되어 확산 통로가 열려 있습니다.`
+        : platforms.length === 1
+          ? `소셜 채널이 ${platforms[0]} 1종뿐입니다 — 채널을 늘리고 사이트에 연결하세요.`
+          : "사이트에 연결된 소셜 채널이 없습니다 — 콘텐츠가 퍼질 통로가 보이지 않습니다.",
+      details: [
+        { k: "감지 채널", v: platforms.join(", ") || "(없음)" },
+        { k: "sameAs 연동", v: p.hasSameAs ? "있음" : "없음" },
+      ],
+      passRule: "소셜 플랫폼 2종 이상 연결 시 통과",
+      fix: platforms.length >= 2 ? null : {
+        title: "공식 채널 링크 추가",
+        action: "추가",
+        note: "푸터에 공식 채널 링크를 걸고, Organization 스키마의 sameAs에도 같은 주소를 넣으세요.",
+        code: `<footer>\n  <a href="https://www.instagram.com/브랜드">인스타그램</a>\n  <a href="https://www.youtube.com/@브랜드">유튜브</a>\n  <a href="https://blog.naver.com/브랜드">블로그</a>\n</footer>`,
+      },
+    });
+  }
+
+  {
+    const ogc = [p.og?.title, p.og?.description, p.og?.image].filter(Boolean).length;
+    const hasTw = !!p.twitterCard;
+    add({
+      id: "share-card", area: "reach", severity: "medium", weight: 2,
+      label: "공유 카드 (Open Graph · Twitter Card)",
+      help: "카톡·슬랙에 링크를 붙였을 때 나오는 미리보기 카드입니다. 카드가 예쁘게 나오는 링크가 훨씬 많이 클릭되고 공유됩니다 — 바이럴의 기본기입니다.",
+      status: ogc === 3 ? "pass" : ogc > 0 ? "warn" : "fail",
+      summary: ogc === 3
+        ? `OG 태그 3종 완비${hasTw ? " + Twitter Card" : ""} — 공유 시 완전한 미리보기 카드가 나갑니다.`
+        : ogc > 0
+          ? `OG 태그가 ${ogc}/3종만 있습니다 — 누락분을 채우면 공유 클릭률이 올라갑니다.`
+          : "OG 태그가 없습니다 — 카톡·슬랙 공유 시 빈 카드가 나가 확산이 죽습니다.",
+      details: [
+        { k: "og:title", v: p.og?.title ? "있음" : "없음" },
+        { k: "og:description", v: p.og?.description ? "있음" : "없음" },
+        { k: "og:image", v: p.og?.image ? "있음" : "없음" },
+        { k: "twitter:card", v: p.twitterCard || "(없음)" },
+      ],
+      passRule: "og:title · og:description · og:image 3종 모두 있을 때 통과",
+      fix: ogc === 3 ? null : {
+        title: "공유 카드 태그 추가",
+        action: "추가",
+        note: "미리보기 카드에 쓰이는 기본 3종 + 트위터 카드입니다.",
+        code: `<meta property="og:title" content="페이지 제목">\n<meta property="og:description" content="한 줄 요약">\n<meta property="og:image" content="https://example.com/og-image.png">\n<meta name="twitter:card" content="summary_large_image">`,
+      },
+    });
+  }
+
+  {
+    const found = !!p.rssLink || a.rssProbe?.found === true;
+    add({
+      id: "rss-feed", area: "reach", severity: "low", weight: 1,
+      label: "RSS/Atom 피드",
+      help: "RSS는 새 글이 올라오면 구독자·뉴스 서비스·AI 수집기에 자동으로 알려주는 방송 채널입니다. 콘텐츠를 내는 사이트라면 확산 자동화의 기본입니다.",
+      status: found ? "pass" : "warn",
+      summary: found
+        ? "RSS/Atom 피드가 있어 새 콘텐츠가 구독 생태계로 자동 전파됩니다."
+        : "RSS/Atom 피드가 없습니다 — 콘텐츠형 사이트라면 피드를 열어 자동 확산 경로를 만드세요.",
+      details: [
+        { k: "link rel=alternate", v: p.rssLink || "(없음)" },
+        { k: "/rss·/feed 프로브", v: a.rssProbe?.checked ? (a.rssProbe.found ? "발견" : "없음") : "미실행" },
+      ],
+      passRule: "피드 링크 선언 또는 표준 경로 응답 시 통과",
+      fix: found ? null : {
+        title: "RSS 피드 노출",
+        action: "추가",
+        note: "블로그/뉴스 섹션이 있다면 피드를 생성하고 <head>에 선언하세요.",
+        code: `<link rel="alternate" type="application/rss+xml" title="브랜드 블로그" href="${a.scheme}://${a.host}/rss.xml">`,
+      },
+    });
+  }
+
+  {
+    const w = a.wikipedia || { checked: false };
+    add({
+      id: "wikipedia-presence", area: "reach", severity: "low", weight: 1,
+      label: "위키백과 등재 (실측)",
+      help: "위키백과에 브랜드 문서가 있는지 실제로 조회합니다. AI들은 위키백과를 가장 신뢰하는 출처로 쓰기 때문에, 등재 여부가 브랜드 인지도의 강력한 대리 지표입니다.",
+      status: !w.checked ? "na" : w.exact ? "pass" : (w.hits || 0) > 0 ? "warn" : "fail",
+      summary: !w.checked
+        ? "위키백과 조회를 실행하지 못했습니다 — 이번 진단에서는 평가 제외."
+        : w.exact
+          ? `위키백과에 "${w.brand}" 문서가 등재되어 있습니다 — AI가 참조하는 최상위 신뢰 출처를 확보했습니다.`
+          : (w.hits || 0) > 0
+            ? `위키백과에 브랜드 단독 문서는 없지만 언급된 문서 ${w.hits}건이 검색됩니다.`
+            : `위키백과에서 "${w.brand || "브랜드"}"를 찾지 못했습니다 — 장기적인 확산·권위 구축 과제입니다.`,
+      details: [
+        { k: "조회 브랜드", v: w.brand || "(추출 실패)" },
+        { k: "단독 문서", v: !w.checked ? "미실행" : w.exact ? "있음" : "없음" },
+        { k: "언급 문서", v: !w.checked ? "-" : `${w.hits || 0}건` },
+      ],
+      passRule: "브랜드 단독 문서가 존재할 때 통과",
+      fix: (w.checked && !w.exact) ? {
+        title: "3자 출처 만들기 (장기 과제)",
+        action: "전략",
+        note: "위키백과는 직접 만들 수 없습니다. 언론 보도·수상·공공데이터 등 독립적인 3자 출처가 쌓이면 등재 가능성이 생깁니다. 우선 보도자료·미디어킷 페이지부터 정비하세요.",
+        code: null,
+      } : null,
+    });
+  }
+
+  {
+    add({
+      id: "newsletter", area: "reach", severity: "low", weight: 1,
+      label: "뉴스레터 · 구독 장치",
+      help: "방문자가 다시 찾아오게 만드는 재방문 장치(뉴스레터 구독, 이메일 수집)가 있는지 봅니다. 한 번 온 트래픽을 자산으로 바꾸는 기본 도구입니다.",
+      status: p.hasNewsletter ? "pass" : "warn",
+      summary: p.hasNewsletter
+        ? "뉴스레터/구독 장치가 감지됩니다 — 방문 트래픽을 구독 자산으로 전환하고 있습니다."
+        : "뉴스레터/구독 장치가 보이지 않습니다 — 재방문·재확산 루프가 없습니다.",
+      details: [
+        { k: "구독 장치", v: p.hasNewsletter ? "감지" : "없음" },
+      ],
+      passRule: "구독 폼 또는 뉴스레터 링크 감지 시 통과",
+      fix: p.hasNewsletter ? null : {
+        title: "구독 장치 추가",
+        action: "추가",
+        note: "스티비·메일침프 등 무료 플랜으로도 시작할 수 있습니다.",
+        code: `<form action="/subscribe" method="post">\n  <input type="email" name="email" placeholder="이메일 주소">\n  <button type="submit">뉴스레터 구독</button>\n</form>`,
+      },
+    });
+  }
 
   /* ── 영역 점수 집계 ─────────────────────────── */
 
   const areas = {};
-  for (const key of ["seo", "aeo", "geo"]) {
+  for (const key of ["seo", "aeo", "geo", "reach"]) {
     const list = checks.filter((c) => c.area === key);
     const scored = list.filter((c) => c.weight > 0 && c.status !== "na" && c.status !== "manual");
     const wsum = scored.reduce((s, c) => s + c.weight, 0);
@@ -1138,16 +1349,22 @@ export function runScorecard(a) {
     };
   }
 
-  const overall = Math.round(areas.seo.score * 0.35 + areas.aeo.score * 0.35 + areas.geo.score * 0.30);
+  const overall = Math.round(
+    areas.seo.score * AREA_WEIGHTS.seo +
+    areas.aeo.score * AREA_WEIGHTS.aeo +
+    areas.geo.score * AREA_WEIGHTS.geo +
+    areas.reach.score * AREA_WEIGHTS.reach
+  );
 
-  /* ── 레이더 6축 ─────────────────────────────── */
+  /* ── 레이더 7축 ─────────────────────────────── */
   const AXES = [
     { key: "tech",    label: "기술 기반",     ids: ["http-status", "https-tls", "robots-crawl", "noindex", "sitemap", "js-render-gap", "basic-meta"] },
     { key: "content", label: "콘텐츠 구조",   ids: ["title-tag", "meta-description", "heading-structure", "heading-hierarchy", "readability"] },
     { key: "schema",  label: "스키마·엔티티", ids: ["jsonld-valid", "entity-schema", "answer-schema", "citation-schema"] },
-    { key: "trust",   label: "신뢰 신호",     ids: ["eeat-onpage", "eeat-signals", "og-social", "canonical"] },
+    { key: "trust",   label: "신뢰 신호",     ids: ["eeat-onpage", "eeat-signals", "canonical"] },
     { key: "open",    label: "AI 개방성",     ids: ["ai-crawler-access", "llms-txt"] },
     { key: "cite",    label: "인용 경쟁력",   ids: ["stats-density", "question-headings", "multimodal"] },
+    { key: "reach",   label: "확산 신호",     ids: ["social-channels", "share-card", "rss-feed", "wikipedia-presence", "newsletter"] },
   ];
   const radar = AXES.map((ax) => {
     const list = checks.filter((c) => ax.ids.includes(c.id) && c.weight > 0 && c.status !== "na" && c.status !== "manual");
@@ -1168,7 +1385,7 @@ export function runScorecard(a) {
     .map((c) => c.id);
 
   return {
-    engine: "wpai-deterministic-v1",
+    engine: "aeogeo-deterministic-v2",
     pageType,
     overall,
     grade: gradeOf(overall),
@@ -1176,6 +1393,6 @@ export function runScorecard(a) {
     radar,
     issues,
     checks,
-    weights: { seo: 0.35, aeo: 0.35, geo: 0.30 },
+    weights: AREA_WEIGHTS,
   };
 }

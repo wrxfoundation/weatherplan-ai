@@ -1,18 +1,15 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "buildCommand": "next build",
-  "devCommand": "next dev",
-  "installCommand": "npm install",
-  "git": {
-    "deploymentEnabled": {
-      "claude/upbeat-thompson-ke0gz2": false,
-      "koreaapi-standalone": false
-    }
-  },
   "regions": ["icn1"],
   "functions": {
-    "pages/api/claude.js": {
+    "pages/api/scorecard.js": {
+      "maxDuration": 30
+    },
+    "pages/api/deep-scan.js": {
+      "maxDuration": 60
+    },
+    "pages/api/insight.js": {
       "maxDuration": 30
     }
   },

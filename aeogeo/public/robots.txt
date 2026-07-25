@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# API 엔드포인트는 크롤링 제외
+Disallow: /api/

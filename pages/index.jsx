@@ -1329,16 +1329,14 @@ function Nav() {
 
         <div className="hidden lg:flex items-center gap-7">
           {[
-            { href: "#cases",       label: "글로벌 사례" },
-            { href: "#how",         label: "작동 방식" },
-            { href: "#triggers",    label: "날씨 데이터" },
-            { href: "#trust",       label: "정확도" },
-            { href: "#pricing",     label: "가격" },
-            { href: "/ai-scorecard", label: "AI 성적표" },
+            { href: "#cases",      label: "글로벌 사례" },
+            { href: "#how",        label: "작동 방식" },
+            { href: "#triggers",   label: "날씨 데이터" },
+            { href: "#trust",      label: "정확도" },
+            { href: "#pricing",    label: "가격" },
           ].map((l) => (
             <a key={l.href} href={l.href}
               onClick={(e) => {
-                if (!l.href.startsWith("#")) return; // 페이지 링크는 기본 내비게이션
                 e.preventDefault();
                 const target = document.querySelector(l.href);
                 if (target) {
@@ -3867,7 +3865,6 @@ function Footer() {
               { label: "케이웨더 데이터", href: "#triggers" },
               { label: "정확도",        href: "#trust" },
               { label: "가격",          href: "#pricing" },
-              { label: "AI 성적표",     href: "/ai-scorecard" },
             ]},
             { title: "쓰는 사람",  items: [
               { label: "대형광고주",   href: "#personas" },
