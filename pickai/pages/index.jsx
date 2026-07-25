@@ -999,6 +999,60 @@ const DEEP_STAGES = [
 
 const HISTORY_KEY = "pickai-history";
 
+/* 리스트 그룹핑·정렬 유틸 */
+const SEV_RANK = { critical: 0, high: 1, medium: 2, low: 3 };
+const STATUS_RANK = { fail: 0, warn: 1, manual: 2, na: 3, pass: 4 };
+const AREA_ORDER = ["seo", "aeo", "geo", "reach"];
+
+function sortChecksBy(list, mode) {
+  if (mode === "severity") {
+    return [...list].sort((a, b) => SEV_RANK[a.severity] - SEV_RANK[b.severity] || b.weight - a.weight);
+  }
+  if (mode === "status") {
+    return [...list].sort((a, b) =>
+      STATUS_RANK[a.status] - STATUS_RANK[b.status] || SEV_RANK[a.severity] - SEV_RANK[b.severity]);
+  }
+  return list;
+}
+
+/* 정렬·그룹 선택 칩 */
+function SortChips({ options, value, onChange }) {
+  return (
+    <div className="flex items-center gap-1.5 flex-wrap">
+      {options.map(([k, label]) => (
+        <button key={k} onClick={() => onChange(k)} className="transition"
+          style={{
+            background: value === k ? T.inkDeep : "rgba(255,255,255,0.7)",
+            color: value === k ? T.onDark : T.charcoal,
+            fontSize: 12.5, fontWeight: 500, padding: "6px 13px", borderRadius: R.full,
+            border: `1px solid ${value === k ? T.inkDeep : T.hairline}`,
+          }}>
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* 그룹 헤더 (접기/펼치기 지원) */
+function GroupHeader({ title, counts, collapsed, onToggle }) {
+  return (
+    <button onClick={onToggle}
+      className="w-full flex items-center gap-2.5 text-left transition hover:opacity-80"
+      style={{
+        background: "rgba(5,0,56,0.045)", border: `1px solid ${T.hairlineSoft}`,
+        borderRadius: R.lg, padding: "10px 16px", marginTop: 10,
+      }}>
+      <span aria-hidden="true" style={{
+        color: T.steel, fontSize: 11, transform: collapsed ? "rotate(-90deg)" : "none",
+        transition: "transform 0.2s ease",
+      }}>▾</span>
+      <span style={{ color: T.ink, fontSize: 13.5, fontWeight: 600 }}>{title}</span>
+      <span style={{ color: T.steel, fontSize: 12 }}>{counts}</span>
+    </button>
+  );
+}
+
 export default function Home() {
   const [input, setInput] = useState("");
   const [stage, setStage] = useState("idle");
@@ -1014,6 +1068,9 @@ export default function Home() {
   const [history, setHistory] = useState([]);
   const [areaTab, setAreaTab] = useState("all");
   const [showPassed, setShowPassed] = useState(false);
+  const [issueGroup, setIssueGroup] = useState("severity");  // severity | area | status
+  const [detailSort, setDetailSort] = useState("default");   // default | severity | status
+  const [collapsedGroups, setCollapsedGroups] = useState({});
   const resultRef = useRef(null);
   const deepRef = useRef(null);
   const inputRef = useRef(null);
@@ -1218,6 +1275,21 @@ export default function Home() {
 
   const issueChecks = (report?.issues || []).map((id) => checksById[id]).filter(Boolean);
   const failCount = issueChecks.filter((c) => c.status === "fail").length;
+
+  /* 우선순위 이슈 — 그룹 뷰 구성 */
+  const issueGroups = useMemo(() => {
+    if (issueGroup === "area") {
+      return AREA_ORDER
+        .map((a) => ({ key: a, title: AREA_META[a].label, items: issueChecks.filter((c) => c.area === a) }))
+        .filter((g) => g.items.length > 0);
+    }
+    if (issueGroup === "status") {
+      return [["fail", "실패 — 우선 해결"], ["warn", "주의 — 개선 권장"]]
+        .map(([s, title]) => ({ key: s, title, items: issueChecks.filter((c) => c.status === s) }))
+        .filter((g) => g.items.length > 0);
+    }
+    return [{ key: "all", title: null, items: issueChecks }];
+  }, [issueChecks, issueGroup]);
   const manualChecks = (report?.checks || []).filter((c) => c.status === "manual");
   const deepTargets = manualChecks.filter((c) => DEEP_RUBRIC.some((r) => r.checkId === c.id));
   const roadmapChecks = manualChecks.filter((c) => !DEEP_RUBRIC.some((r) => r.checkId === c.id));
@@ -1654,24 +1726,48 @@ export default function Home() {
           {/* 우선순위 이슈 */}
           <section style={{ background: T.surface }}>
             <div className="max-w-[1280px] mx-auto px-6" style={{ paddingTop: 48, paddingBottom: 8 }}>
-              <Reveal className="mb-5">
-                <h2 style={{ color: T.inkDeep, fontSize: 24, fontWeight: 600, letterSpacing: "-0.015em" }}>
-                  우선순위 이슈
-                </h2>
-                <p style={{ color: T.slate, fontSize: 14, marginTop: 6 }}>
-                  심각도 순 {issueChecks.length}건 · 실패 {failCount}건 — 항목마다 <span style={{
-                    display: "inline-flex", width: 16, height: 16, borderRadius: 999,
-                    background: "rgba(5,0,56,0.08)", color: T.slate, fontSize: 10.5, fontWeight: 600,
-                    alignItems: "center", justifyContent: "center", verticalAlign: "-2px",
-                  }}>?</span> 를 누르면 쉬운 설명이 나옵니다.
-                </p>
+              <Reveal className="mb-5 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <h2 style={{ color: T.inkDeep, fontSize: 24, fontWeight: 600, letterSpacing: "-0.015em" }}>
+                    우선순위 이슈
+                  </h2>
+                  <p style={{ color: T.slate, fontSize: 14, marginTop: 6 }}>
+                    {issueChecks.length}건 · 실패 {failCount}건 — 항목마다 <span style={{
+                      display: "inline-flex", width: 16, height: 16, borderRadius: 999,
+                      background: "rgba(5,0,56,0.08)", color: T.slate, fontSize: 10.5, fontWeight: 600,
+                      alignItems: "center", justifyContent: "center", verticalAlign: "-2px",
+                    }}>?</span> 를 누르면 쉬운 설명이 나옵니다.
+                  </p>
+                </div>
+                <div className="print-hide">
+                  <SortChips value={issueGroup} onChange={setIssueGroup}
+                    options={[["severity", "심각도순"], ["area", "영역별 묶기"], ["status", "상태별 묶기"]]} />
+                </div>
               </Reveal>
               <div className="flex flex-col gap-2.5">
-                {issueChecks.map((c, i) => (
-                  <Reveal key={c.id} delay={Math.min(i * 40, 240)}>
-                    <CheckItem check={c} rank={i + 1} defaultOpen={i === 0} deep={deepByCheckId[c.id]} />
-                  </Reveal>
-                ))}
+                {(() => {
+                  let rank = 0;
+                  return issueGroups.map((g) => (
+                    <div key={g.key} className="flex flex-col gap-2.5">
+                      {g.title && (
+                        <GroupHeader
+                          title={g.title}
+                          counts={`${g.items.length}건`}
+                          collapsed={!!collapsedGroups[`issue-${g.key}`]}
+                          onToggle={() => setCollapsedGroups((p) => ({ ...p, [`issue-${g.key}`]: !p[`issue-${g.key}`] }))}
+                        />
+                      )}
+                      {!collapsedGroups[`issue-${g.key}`] && g.items.map((c) => {
+                        rank += 1;
+                        return (
+                          <CheckItem key={c.id} check={c} rank={rank}
+                            defaultOpen={rank === 1 && issueGroup === "severity"}
+                            deep={deepByCheckId[c.id]} />
+                        );
+                      })}
+                    </div>
+                  ));
+                })()}
                 {issueChecks.length === 0 && (
                   <div className="glass-card text-center" style={{ borderRadius: R.xxl, padding: 40 }}>
                     <div style={{ fontSize: 32 }}>🎉</div>
@@ -1750,6 +1846,12 @@ export default function Home() {
                 </div>
               </Reveal>
 
+              <div className="flex items-center justify-between flex-wrap gap-2 mb-4 print-hide">
+                <span style={{ color: T.steel, fontSize: 12.5, fontWeight: 500 }}>그룹 내 정렬</span>
+                <SortChips value={detailSort} onChange={setDetailSort}
+                  options={[["default", "기본 순서"], ["severity", "심각도순"], ["status", "상태순"]]} />
+              </div>
+
               {areaTab !== "all" && (
                 <p style={{ color: T.steel, fontSize: 13, marginBottom: 14 }}>
                   {AREA_META[areaTab].label} — {AREA_META[areaTab].desc} · 종합 반영 가중치 {AREA_META[areaTab].weight}
@@ -1757,7 +1859,31 @@ export default function Home() {
               )}
 
               <div className="flex flex-col gap-2.5">
-                {visibleChecks.map((c) => <CheckItem key={c.id} check={c} deep={deepByCheckId[c.id]} />)}
+                {areaTab === "all" ? (
+                  AREA_ORDER.map((a) => {
+                    const items = sortChecksBy(visibleChecks.filter((c) => c.area === a), detailSort);
+                    if (items.length === 0) return null;
+                    const all = (report.checks || []).filter((c) => c.area === a);
+                    const gKey = `detail-${a}`;
+                    return (
+                      <div key={a} className="flex flex-col gap-2.5">
+                        <GroupHeader
+                          title={AREA_META[a].label}
+                          counts={`표시 ${items.length}건 · 통과 ${all.filter((c) => c.status === "pass").length} · 주의 ${all.filter((c) => c.status === "warn").length} · 실패 ${all.filter((c) => c.status === "fail").length}`}
+                          collapsed={!!collapsedGroups[gKey]}
+                          onToggle={() => setCollapsedGroups((p) => ({ ...p, [gKey]: !p[gKey] }))}
+                        />
+                        {!collapsedGroups[gKey] && items.map((c) => (
+                          <CheckItem key={c.id} check={c} deep={deepByCheckId[c.id]} />
+                        ))}
+                      </div>
+                    );
+                  })
+                ) : (
+                  sortChecksBy(visibleChecks, detailSort).map((c) => (
+                    <CheckItem key={c.id} check={c} deep={deepByCheckId[c.id]} />
+                  ))
+                )}
                 {visibleChecks.length === 0 && (
                   <p style={{ color: T.steel, fontSize: 13.5, padding: "18px 4px" }}>
                     이 필터에 해당하는 항목이 없습니다 — "통과 항목 보기"를 켜보세요.
