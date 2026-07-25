@@ -28,8 +28,8 @@ AI 총평과 정밀 진단(LLM 심사)만 비활성화됩니다.
 | `lib/scorecardEngine.js` | 결정론 채점 엔진 (순수 함수 · 의존성 0 · 재현 가능) |
 | `lib/netUtils.js` | SSRF 가드 · 타임아웃 페치 · 리다이렉트 추적 공용 유틸 |
 | `pages/api/scorecard.js` | 무료 진단 수집기 (메인 페치 + robots/llms/sitemap/RSS/위키백과 병렬) |
-| `pages/api/deep-scan.js` | 정밀 진단 — Sonnet 고정 루브릭 LLM 심사 4항목 |
-| `pages/api/insight.js` | AI 총평 (Sonnet 단발 호출) |
+| `pages/api/deep-scan.js` | 정밀 진단 — Opus(claude-opus-4-8) 고정 루브릭 LLM 심사 4항목 |
+| `pages/api/insight.js` | AI 총평 (Opus 단발 호출) |
 | `pages/index.jsx` | 전체 UI (진단 · 리포트 · 도움말 · AI 명령서 내보내기) |
 
 ## 채점 원칙

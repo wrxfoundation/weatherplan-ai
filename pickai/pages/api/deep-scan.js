@@ -3,7 +3,7 @@
  *
  * 정밀 진단 — LLM 심사 (베타 기간 한시 무료)
  *
- * 무료 결정론 진단이 다루지 못하는 4개 항목을 Sonnet이 고정
+ * 무료 결정론 진단이 다루지 못하는 4개 항목을 Opus가 고정
  * 루브릭으로 심사한다:
  *   1) contentQuality  — 콘텐츠 깊이·독창성·답변 우선 구조
  *   2) answerDirectness — 섹션 첫 문장이 질문에 바로 답하는가
@@ -26,7 +26,7 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const DEEP_MODEL = "claude-sonnet-5";
+const DEEP_MODEL = "claude-opus-4-8";
 const MAX_TEXT_CHARS = 9000;
 
 /* 정적 시스템 프롬프트 — 동적 값 절대 인터폴레이션 금지 (프롬프트 캐시) */

@@ -1,7 +1,7 @@
 /* ============================================================
  * Pick AI · /api/insight
  *
- * AI 총평 생성 (Sonnet 단발 호출)
+ * AI 총평 생성 (Opus 단발 호출 — 내부 운영 우선, 품질 우선)
  * - 시스템 프롬프트는 정적 문자열만 (프롬프트 캐시)
  * - 동적 데이터(점수·이슈)는 user 메시지로만 전달
  * - 실패 시에도 결정론 리포트는 이미 떠 있으므로 조용히 degrade
@@ -13,7 +13,7 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const INSIGHT_MODEL = "claude-sonnet-5";
+const INSIGHT_MODEL = "claude-opus-4-8";
 
 const STATIC_SYSTEM_PROMPT = `당신은 Pick AI — 웹사이트의 AI 검색 준비도(SEO·AEO·GEO·확산) 진단 결과를 받아
 경영진에게 보고하듯 총평하는 컨설턴트입니다.
