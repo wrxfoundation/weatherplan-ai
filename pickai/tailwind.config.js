@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: [
+          "Montserrat",
           "Pretendard Variable",
           "Pretendard",
           "-apple-system",
