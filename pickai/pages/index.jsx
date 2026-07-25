@@ -1334,6 +1334,31 @@ function GroupHeader({ title, counts, collapsed, onToggle }) {
   );
 }
 
+/* ─── 히어로 배경 영상 ───
+   public/hero.mp4 를 넣으면 자동으로 재생된다. 파일이 없으면 onCanPlay가 오지 않아
+   투명한 상태로 남고 기존 오로라 배경이 그대로 보인다(= 안전한 폴백).
+   HERO_VIDEO를 null로 두면 영상 레이어 자체를 렌더하지 않는다. */
+const HERO_VIDEO = "/hero.mp4";
+const HERO_POSTER = "/hero-poster.jpg";
+
+function HeroVideo() {
+  const [ready, setReady] = useState(false);
+  if (!HERO_VIDEO) return null;
+  return (
+    <div className="hero-video-wrap" aria-hidden="true">
+      <video
+        className={`hero-video${ready ? " is-ready" : ""}`}
+        autoPlay muted loop playsInline preload="metadata"
+        poster={HERO_POSTER || undefined}
+        onCanPlay={() => setReady(true)}
+      >
+        <source src={HERO_VIDEO} type="video/mp4" />
+      </video>
+      <div className="hero-video-scrim" />
+    </div>
+  );
+}
+
 export default function Home() {
   const [input, setInput] = useState("");
   const [stage, setStage] = useState("idle");
@@ -1627,6 +1652,7 @@ export default function Home() {
 
       {/* ─── HERO ─── */}
       <section className="relative overflow-hidden print-hide" style={{ background: T.canvas }}>
+        <HeroVideo />
         <div className="hero-aurora" />
         <div className="orb orb-teal orb-float" style={{ width: 480, height: 480, top: "-5%", right: "-12%" }} />
         <div className="orb orb-lavender orb-float-slow" style={{ width: 380, height: 380, bottom: "-15%", left: "-8%" }} />
