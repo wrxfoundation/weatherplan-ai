@@ -337,8 +337,9 @@ function ScoreBar({ value, color, height = 8 }) {
 }
 
 function RadarChart({ data, size = 280 }) {
+  const pad = 52; /* 긴 축 라벨(스키마·엔티티 등)이 잘리지 않도록 좌우 여백 */
   const cx = size / 2, cy = size / 2;
-  const rMax = size / 2 - 46;
+  const rMax = size / 2 - 48;
   const n = data.length;
   const pt = (i, ratio) => {
     const ang = (Math.PI * 2 * i) / n - Math.PI / 2;
@@ -350,7 +351,7 @@ function RadarChart({ data, size = 280 }) {
     .map((d, i) => pt(i, Math.max(0.04, (d.value ?? 0) / 100)).map((v) => v.toFixed(1)).join(","))
     .join(" ");
   return (
-    <svg width="100%" viewBox={`0 0 ${size} ${size}`} style={{ maxWidth: size }} role="img"
+    <svg width="100%" viewBox={`${-pad} -14 ${size + pad * 2} ${size + 28}`} style={{ maxWidth: size + pad * 2 }} role="img"
       aria-label="영역별 7축 점수 레이더 차트">
       {[0.25, 0.5, 0.75, 1].map((ratio) => (
         <polygon key={ratio} points={ringPath(ratio)} fill="none"
@@ -523,14 +524,17 @@ function CheckItem({ check, defaultOpen = false, rank, deep }) {
    ═════════════════════════════════════════════════════════════ */
 
 function BotBoard({ bots }) {
+  const [helpOpen, setHelpOpen] = useState(null);
   const groups = [
     {
       key: "search", title: "AI 검색 봇",
       desc: "ChatGPT Search·Perplexity 등 — 차단되면 AI 답변에 인용될 수 없습니다.",
+      help: "AI 검색 봇은 ChatGPT·Perplexity 같은 서비스가 답변을 만들 때 실시간으로 웹을 읽어가는 수집 로봇입니다. 이 봇이 차단되면 우리 사이트는 AI 답변의 출처 후보에서 아예 빠집니다. 'robots'는 사이트 안내문(robots.txt)이 허용하는지, '라이브 페치'는 실제 봇 신분으로 접속했을 때 서버·방화벽(WAF)이 막는지를 각각 확인한 결과입니다.",
     },
     {
       key: "train", title: "학습/수집 봇",
       desc: "모델 학습용 크롤러 — 정책에 따라 의도적으로 막을 수도 있습니다.",
+      help: "학습/수집 봇은 AI 모델을 훈련시키려고 콘텐츠를 모아가는 로봇입니다. 막아도 AI 검색 인용에는 지장이 없어서, 저작권 정책에 따라 일부러 차단하는 회사도 많습니다 (그래서 차단이어도 '실패'가 아닌 '주의'로만 처리합니다). '미실행'은 이번 진단에서 실제 접속 테스트 없이 robots.txt 판정만 했다는 표시입니다.",
     },
   ];
   return (
@@ -541,7 +545,11 @@ function BotBoard({ bots }) {
         return (
           <div key={g.key} className="glass-card" style={{ borderRadius: R.xxl, padding: 22 }}>
             <div className="flex items-center justify-between gap-3 flex-wrap mb-1">
-              <div style={{ color: T.ink, fontSize: 15, fontWeight: 600 }}>{g.title}</div>
+              <div className="flex items-center gap-2" style={{ color: T.ink, fontSize: 15, fontWeight: 600 }}>
+                {g.title}
+                <HelpToggle open={helpOpen === g.key}
+                  onToggle={() => setHelpOpen((v) => (v === g.key ? null : g.key))} />
+              </div>
               <span style={{
                 background: blocked === 0 ? T.tealLight : T.coralLight,
                 color: blocked === 0 ? T.mossDark : T.coralDark,
@@ -551,6 +559,7 @@ function BotBoard({ bots }) {
               </span>
             </div>
             <p style={{ color: T.slate, fontSize: 12.5, lineHeight: 1.6, marginBottom: 14 }}>{g.desc}</p>
+            {helpOpen === g.key && <div style={{ marginBottom: 14, marginTop: -4 }}><HelpBox>{g.help}</HelpBox></div>}
             <div className="flex flex-col" style={{ gap: 1 }}>
               <div className="grid items-center" style={{
                 gridTemplateColumns: "minmax(0,1.5fr) minmax(0,1fr) auto auto", gap: 10,
@@ -584,6 +593,73 @@ function BotBoard({ bots }) {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/* 역량 프로필 자동 해석 — 레이더 값 기반 결정론 코멘트 */
+const AXIS_ADVICE = {
+  tech: "서버·크롤링 기본기를 먼저 복구해야 다른 개선이 의미를 갖습니다.",
+  content: "제목·헤딩·문장 구조만 다듬어도 가장 빠르게 점수가 오르는 축입니다.",
+  schema: "구조화 데이터(JSON-LD)와 엔티티 선언이 약합니다 — 복붙 수정안으로 바로 채울 수 있는 영역입니다.",
+  trust: "회사 실체·저자·출처 표기를 보강해 AI가 믿을 근거부터 만드세요.",
+  open: "AI 봇 차단을 풀어야 인용 경로 자체가 열립니다.",
+  cite: "수치·출처·질문형 구조를 넣어 'AI가 인용할 이유'를 만드는 것이 다음 과제입니다.",
+  reach: "소셜·피드·공유 카드 같은 확산 통로를 여는 것이 다음 과제입니다.",
+};
+
+function radarComment(radar) {
+  const vals = (radar || []).filter((d) => d.value != null);
+  if (vals.length < 2) return null;
+  const best = [...vals].sort((a, b) => b.value - a.value)[0];
+  const worst = [...vals].sort((a, b) => a.value - b.value)[0];
+  const gap = best.value - worst.value;
+  const balance = gap >= 50
+    ? "축 간 편차가 커서 약한 축이 전체 인상을 끌어내리는 모양새입니다."
+    : gap >= 25
+      ? "전반적으로 고르지만 보강할 축이 분명합니다."
+      : "축 간 균형이 잘 잡혀 있습니다.";
+  return {
+    best, worst,
+    text: `강점은 "${best.label}"(${best.value}점), 가장 약한 축은 "${worst.label}"(${worst.value}점)입니다. ${balance} ${AXIS_ADVICE[worst.key] || ""}`,
+  };
+}
+
+/* 역량 프로필 카드 — 레이더 + (?) 도움말 + 자동 해석 코멘트 */
+function RadarProfileCard({ radar }) {
+  const [helpOpen, setHelpOpen] = useState(false);
+  const comment = radarComment(radar);
+  return (
+    <div className="glass-card flex flex-col items-center h-full"
+      style={{ borderRadius: R.xxl, padding: 24 }}>
+      <div className="self-start mb-2 flex items-center gap-2" style={{ color: T.ink, fontSize: 15, fontWeight: 600 }}>
+        역량 프로필
+        <HelpToggle open={helpOpen} onToggle={() => setHelpOpen((v) => !v)} />
+      </div>
+      <p className="self-start" style={{ color: T.slate, fontSize: 12.5, lineHeight: 1.6, marginBottom: 10 }}>
+        결정론 체크 30개를 7개 역량축으로 재구성한 프로필입니다.
+      </p>
+      {helpOpen && (
+        <div className="self-start w-full" style={{ marginBottom: 10, marginTop: -2 }}>
+          <HelpBox>
+            축이 바깥쪽에 가까울수록 그 역량이 튼튼하고, 안쪽으로 움푹 들어간 축이
+            지금 가장 약한 부분입니다. 7개 축은 30개 체크를 성격별로 묶어 100점 만점으로
+            환산한 것입니다.
+          </HelpBox>
+        </div>
+      )}
+      <RadarChart data={radar} />
+      {comment && (
+        <div className="self-stretch mt-3" style={{
+          background: "rgba(78,179,168,0.1)", borderRadius: R.lg, padding: "12px 14px",
+        }}>
+          <div className="flex items-center gap-2 mb-1.5">
+            <Logo size={18} />
+            <span style={{ color: T.mossDark, fontSize: 12, fontWeight: 600 }}>Pick AI 코멘트</span>
+          </div>
+          <p style={{ color: T.charcoal, fontSize: 12.5, lineHeight: 1.7 }}>{comment.text}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -1568,15 +1644,8 @@ export default function Home() {
           <section style={{ background: T.surface }}>
             <div className="max-w-[1280px] mx-auto px-6" style={{ paddingTop: 28, paddingBottom: 8 }}>
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-                <Reveal className="lg:col-span-2 glass-card flex flex-col items-center"
-                  style={{ borderRadius: R.xxl, padding: 24 }}>
-                  <div className="self-start mb-2" style={{ color: T.ink, fontSize: 15, fontWeight: 600 }}>
-                    역량 프로필
-                  </div>
-                  <p className="self-start" style={{ color: T.slate, fontSize: 12.5, lineHeight: 1.6, marginBottom: 10 }}>
-                    결정론 체크 30개를 7개 역량축으로 재구성한 프로필입니다.
-                  </p>
-                  <RadarChart data={report.radar} />
+                <Reveal className="lg:col-span-2">
+                  <RadarProfileCard radar={report.radar} />
                 </Reveal>
 
                 <Reveal delay={80} className="lg:col-span-3">
