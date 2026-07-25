@@ -945,7 +945,7 @@ function Footer() {
               <div className="leading-none">
                 <div style={{ color: T.onDark, fontSize: 14, fontWeight: 600 }}>Pick AI</div>
                 <div style={{ color: T.onDarkMuted, fontSize: 11, marginTop: 3, letterSpacing: "0.04em", fontWeight: 500 }}>
-                  AI 성적표 · v0.1 Beta
+                  AI 성적표 · Beta
                 </div>
               </div>
             </div>
