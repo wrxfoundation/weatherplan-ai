@@ -256,9 +256,21 @@ section:has(.hero-video.is-ready) .orb { opacity: 0.38; }
 /* ─── 푸터 배경 영상 ───
    푸터는 어두운 배경이므로 크림이 아니라 네이비 스크림을 덮는다. */
 .footer-video-wrap { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+/* 푸터 영상 단색화 —
+   원본이 어떤 색이든(예: 황금색) 명암만 남기고 브랜드 틸 계열 단색으로 물들인다.
+   grayscale로 색을 지우고 → sepia로 단색 기준색을 넣고 → hue-rotate로 틸까지 돌린다.
+   --footer-video-hue 를 바꾸면 색이 바뀐다 (0deg 갈색 · 150deg 틸 · 200deg 파랑).
+   원본 색을 그대로 쓰려면 --footer-video-filter: none. */
+:root {
+  --footer-video-hue: 140deg;
+  --footer-video-sat: 1.45;
+  --footer-video-filter: grayscale(1) sepia(1)
+    hue-rotate(var(--footer-video-hue)) saturate(var(--footer-video-sat)) brightness(0.92);
+}
 .footer-video {
   width: 100%; height: 100%; object-fit: cover;
   opacity: 0; transition: opacity 1.4s ease;
+  filter: var(--footer-video-filter);
 }
 .footer-video.is-ready { opacity: var(--footer-video-strength, 0.6); }
 /* CTA(위)와 푸터(아래)를 한 블록으로 덮는다. 헤드라인 뒤와 푸터 글씨 쪽은 진하게,
