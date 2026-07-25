@@ -468,11 +468,12 @@ function CheckItem({ check, defaultOpen = false, rank, deep }) {
           )}
 
           {!deep && check.details?.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 mt-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 mt-3">
               {check.details.map((d) => (
-                <div key={d.k} className="flex items-baseline gap-2 min-w-0">
+                <div key={d.k} className="flex items-baseline justify-between gap-4 min-w-0"
+                  style={{ padding: "7px 2px", borderBottom: `1px solid ${T.hairlineSoft}` }}>
                   <span className="flex-shrink-0" style={{ color: T.steel, fontSize: 12, fontWeight: 500 }}>{d.k}</span>
-                  <span className="truncate" style={{ color: T.ink, fontSize: 12.5, fontWeight: 500 }} title={d.v}>{d.v}</span>
+                  <span className="truncate text-right" style={{ color: T.ink, fontSize: 12.5, fontWeight: 500 }} title={d.v}>{d.v}</span>
                 </div>
               ))}
             </div>
@@ -990,7 +991,7 @@ function NavBar({ onNewScan }) {
         <div className="hidden md:flex items-center gap-7">
           {[
             { href: "#method", label: "진단 기준" },
-            { href: "#deep", label: "정밀 진단" },
+            ...(DEEP_SCAN_ENABLED ? [{ href: "#deep", label: "정밀 진단" }] : []),
           ].map((l) => (
             <a key={l.href} href={l.href} className="transition hover:opacity-70"
               style={{ color: T.ink, fontSize: 14, fontWeight: 500 }}>
@@ -999,9 +1000,11 @@ function NavBar({ onNewScan }) {
           ))}
         </div>
         <div className="flex items-center gap-1">
-          <span className="hidden md:inline-flex mr-2">
-            <Tag_ tint="lavender">정밀 진단 베타 무료</Tag_>
-          </span>
+          {DEEP_SCAN_ENABLED && (
+            <span className="hidden md:inline-flex mr-2">
+              <Tag_ tint="lavender">정밀 진단 베타 무료</Tag_>
+            </span>
+          )}
           <BtnPrimary compact onClick={onNewScan}>
             무료 진단 →
           </BtnPrimary>
@@ -1035,7 +1038,7 @@ function Footer() {
           <div className="flex flex-wrap gap-x-10 gap-y-3">
             {[
               { label: "진단 기준", href: "#method" },
-              { label: "정밀 진단", href: "#deep" },
+              ...(DEEP_SCAN_ENABLED ? [{ label: "정밀 진단", href: "#deep" }] : []),
               { label: "측정 설계서 (내부)", href: "/methodology" },
             ].map((l) => (
               <a key={l.label} href={l.href} className="transition hover:opacity-100"
@@ -1048,7 +1051,7 @@ function Footer() {
         <div className="mt-8 pt-5 flex flex-wrap justify-between gap-2"
           style={{ borderTop: "1px solid rgba(255,255,255,0.1)", fontSize: 11 }}>
           <span>© 2026 Pick AI. All rights reserved.</span>
-          <span>베타 기간에는 정밀 진단을 포함한 모든 기능이 무료입니다.</span>
+          <span>베타 기간에는 모든 기능이 무료입니다.</span>
         </div>
       </div>
     </footer>
@@ -1075,6 +1078,9 @@ const DEEP_STAGES = [
 ];
 
 const HISTORY_KEY = "pickai-history";
+
+/* 정밀 진단(LLM 심사) 노출 여부 — 재공개 시 true로만 바꾸면 됨 */
+const DEEP_SCAN_ENABLED = false;
 
 /* 리스트 그룹핑·정렬 유틸 */
 const SEV_RANK = { critical: 0, high: 1, medium: 2, low: 3 };
@@ -1379,7 +1385,8 @@ export default function Home() {
   const roadmapChecks = manualChecks.filter((c) => !DEEP_RUBRIC.some((r) => r.checkId === c.id));
   const visibleChecks = (report?.checks || []).filter((c) =>
     (areaTab === "all" || c.area === areaTab) &&
-    (showPassed || (c.status !== "pass" && c.status !== "na"))
+    (showPassed || (c.status !== "pass" && c.status !== "na")) &&
+    (DEEP_SCAN_ENABLED || !DEEP_RUBRIC.some((r) => r.checkId === c.id))
   );
 
   return (
@@ -1387,7 +1394,7 @@ export default function Home() {
       <Head>
         <title>Pick AI — AI 성적표 · SEO·AEO·GEO·확산 무료 진단</title>
         <meta name="description"
-          content="AI가 답을 고르는 시대 — 결정론 체크 30개와 AI 크롤러 13종, 확산 신호 실측으로 사이트의 AI 검색 준비도를 60초 안에 진단합니다. 복붙 수정안, AI 실행 명령서(.md), 정밀 진단(LLM 심사)까지 베타 기간 무료." />
+          content="AI가 답을 고르는 시대 — 결정론 체크 30개와 AI 크롤러 13종, 확산 신호 실측으로 사이트의 AI 검색 준비도를 60초 안에 진단합니다. 복붙 수정안과 AI 실행 명령서(.md)까지 베타 기간 무료." />
         <meta property="og:title" content="Pick AI — 우리 사이트, AI 검색에서 몇 점일까?" />
         <meta property="og:description" content="SEO·AEO·GEO·확산 통합 무료 진단 — 60초 안에 점수·수정안·AI 명령서까지." />
         <meta name="twitter:card" content="summary" />
@@ -1410,11 +1417,6 @@ export default function Home() {
                 "@type": "Question",
                 name: "Pick AI 성적표는 무엇을 진단하나요?",
                 acceptedAnswer: { "@type": "Answer", text: "검색엔진(SEO)·답변엔진(AEO)·생성형엔진(GEO)·확산 신호 4개 영역의 결정론 체크 30개로 사이트의 AI 검색 준비도를 진단합니다. 같은 사이트면 항상 같은 점수가 나오는 재현 가능한 채점입니다." },
-              },
-              {
-                "@type": "Question",
-                name: "정밀 진단은 무엇이고 비용이 드나요?",
-                acceptedAnswer: { "@type": "Answer", text: "정밀 진단은 콘텐츠 품질·답변 직접성·의도-포맷 일치·E-E-A-T를 LLM 심사위원이 고정 루브릭으로 채점하는 기능입니다. 베타 기간에는 한시적으로 무료입니다." },
               },
               {
                 "@type": "Question",
@@ -1491,7 +1493,7 @@ export default function Home() {
             </div>
 
             <p style={{ color: T.stone, fontSize: 12, marginTop: 16 }}>
-              결정론 전용 점수 · 같은 사이트는 언제나 같은 점수 · 로그인 없이 무료 · 정밀 진단(LLM 심사)도 베타 기간 무료
+              결정론 전용 점수 · 같은 사이트는 언제나 같은 점수 · 로그인 없이 무료
             </p>
           </div>
 
@@ -1605,8 +1607,8 @@ export default function Home() {
                     <p style={{ color: T.slate, fontSize: 14, lineHeight: 1.7, marginTop: 10, maxWidth: 560 }}>
                       개선 항목 <strong style={{ color: T.coralDark, fontWeight: 600 }}>{issueChecks.length}건</strong>
                       {failCount > 0 && <> · 실패 <strong style={{ color: T.coralDark, fontWeight: 600 }}>{failCount}건</strong></>}
-                      {" "}· 정밀 진단 대상 {deepTargets.length}건 — 모든 이슈에 복붙 수정안이 붙어 있고,
-                      아래에서 <strong style={{ color: T.ink, fontWeight: 600 }}>AI 명령서</strong>로 통째로 내보낼 수 있습니다.
+                      {" "}— 모든 이슈에 복붙 수정안이 붙어 있고, 아래에서{" "}
+                      <strong style={{ color: T.ink, fontWeight: 600 }}>AI 명령서</strong>로 통째로 내보낼 수 있습니다.
                     </p>
 
                     <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mt-6 print-hide">
@@ -1662,8 +1664,8 @@ export default function Home() {
                     );
                   })}
                   <p style={{ color: T.stone, fontSize: 11.5, lineHeight: 1.6, padding: "0 4px" }}>
-                    종합 = SEO 30% · AEO 30% · GEO 25% · 확산 15% 가중 평균. LLM 심사 항목은
-                    무료 점수에서 제외되며 FAIL로 위장하지 않습니다.
+                    종합 = SEO 30% · AEO 30% · GEO 25% · 확산 15% 가중 평균. 결정론으로 잴 수 없는
+                    항목은 점수에서 제외하며 FAIL로 위장하지 않습니다.
                   </p>
                 </Reveal>
               </div>
@@ -1697,7 +1699,8 @@ export default function Home() {
             </div>
           </section>
 
-          {/* 정밀 진단 (LLM 심사) */}
+          {/* 정밀 진단 (LLM 심사) — 현재 비공개 (DEEP_SCAN_ENABLED) */}
+          {DEEP_SCAN_ENABLED && (
           <section id="deep" style={{ background: T.surface, scrollMarginTop: 88 }}>
             <div className="max-w-[1280px] mx-auto px-6" style={{ paddingTop: 48, paddingBottom: 8 }} ref={deepRef}>
               <Reveal className="glass-card" style={{ borderRadius: R.xxxl, padding: "28px 30px" }}>
@@ -1858,6 +1861,7 @@ export default function Home() {
               </Reveal>
             </div>
           </section>
+          )}
 
           {/* 우선순위 이슈 */}
           <section style={{ background: T.surface }}>
@@ -2093,8 +2097,8 @@ export default function Home() {
               </div>
               <div style={{ color: T.slate, fontSize: 12.5, lineHeight: 1.7 }}>
                 통과 100% · 주의 50% · 실패 0%를 가중 합산합니다. 치명적 체크(크롤 차단·noindex·도달 실패 등)가
-                실패하면 해당 영역은 40점 상한이 적용됩니다. LLM 심사(정밀 진단)는 별도 점수로 표기되어
-                결정론 점수의 재현성을 해치지 않습니다.
+                실패하면 해당 영역은 40점 상한이 적용됩니다. LLM 심사·실제 인용률 측정 등 결정론으로
+                잴 수 없는 항목은 점수에 넣지 않고 로드맵에서 준비합니다.
               </div>
             </div>
           </Reveal>
@@ -2115,8 +2119,8 @@ export default function Home() {
               진단은 60초, 수정은 <span style={{ color: T.brandTeal }}>AI 명령서</span> 한 장
             </h2>
             <p style={{ color: T.onDarkMuted, fontSize: 15, lineHeight: 1.7, marginTop: 16, maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
-              베타 기간에는 정밀 진단(LLM 심사)까지 전부 무료입니다.
-              실제 AI 인용률·브랜드 언급률 측정은 로드맵에서 준비 중입니다.
+              베타 기간에는 모든 기능이 무료입니다.
+              LLM 정밀 심사와 실제 AI 인용률·브랜드 언급률 측정은 로드맵에서 준비 중입니다.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-9">
               <button onClick={reset} className="btn-shine inline-flex items-center gap-1.5 transition hover:opacity-95 active:translate-y-px"
