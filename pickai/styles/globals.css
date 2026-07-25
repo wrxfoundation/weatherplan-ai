@@ -224,26 +224,34 @@ p, li, span    { word-break: keep-all; }
 /* ─── 히어로 배경 영상 ───
    public/ 에 영상 파일이 있을 때만 페이드인. 파일이 없으면 오로라 배경만 남는다. */
 .hero-video-wrap { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+/* 히어로 영상 노출도 — 이 값 하나로 조절한다. 0 = 안 보임, 1 = 원본 그대로.
+   0.62 = 처음(거의 안 보임)과 완전 노출의 중간. */
+:root { --hero-video-strength: 0.62; }
+
 .hero-video {
   width: 100%; height: 100%; object-fit: cover;
   opacity: 0; transition: opacity 1.4s ease;
-  filter: saturate(1.14) contrast(1.08);
+  filter: saturate(1.08) contrast(1.04);
 }
-.hero-video.is-ready { opacity: 1; }
-/* 크림 스크림 — 헤드라인 뒤(중앙 상단)에만 집중적으로 깔고 가장자리는 영상을 그대로 보여준다.
-   본문 대비 확보가 목적이므로 텍스트 영역 밖까지 덮을 이유가 없다. */
+.hero-video.is-ready { opacity: var(--hero-video-strength); }
+/* 크림 스크림 — 헤드라인 뒤(중앙 상단)에 집중적으로 깔고 가장자리는 옅게.
+   본문 대비 확보가 목적이므로 텍스트 영역 밖까지 진하게 덮을 이유가 없다. */
 .hero-video-scrim {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 56% 44% at 50% 30%,
-      rgba(247,245,238,0.82) 0%, rgba(247,245,238,0.46) 52%, rgba(247,245,238,0.04) 100%),
+    radial-gradient(ellipse 60% 48% at 50% 32%,
+      rgba(247,245,238,0.62) 0%, rgba(247,245,238,0.34) 54%, rgba(247,245,238,0.10) 100%),
     linear-gradient(180deg,
-      rgba(247,245,238,0.26) 0%, rgba(247,245,238,0.00) 28%,
-      rgba(247,245,238,0.00) 60%, rgba(247,245,238,0.78) 100%);
+      rgba(247,245,238,0.20) 0%, rgba(247,245,238,0.00) 30%,
+      rgba(247,245,238,0.00) 62%, rgba(247,245,238,0.72) 100%);
 }
 /* 영상이 재생 중이면 오로라·오브는 뒤로 물린다 — 둘이 겹치면 화면이 뿌예진다 */
-section:has(.hero-video.is-ready) .hero-aurora { opacity: 0.4; }
-section:has(.hero-video.is-ready) .orb { opacity: 0.22; }
+section:has(.hero-video.is-ready) .hero-aurora { opacity: 0.7; }
+section:has(.hero-video.is-ready) .orb { opacity: 0.38; }
+
+/* 히어로 하단 캡션 — 영상 위에 놓이므로 옅은 회색으로는 읽히지 않는다.
+   박스를 두르는 대신 크림색 헤일로로 배경과 분리한다. */
+.hero-caption { text-shadow: 0 1px 2px rgba(247,245,238,0.95), 0 0 10px rgba(247,245,238,0.85); }
 
 /* ─── 푸터 배경 영상 ───
    푸터는 어두운 배경이므로 크림이 아니라 네이비 스크림을 덮는다. */

@@ -1744,7 +1744,7 @@ export default function Home() {
               ))}
             </div>
 
-            <p style={{ color: T.stone, fontSize: 12, marginTop: 16 }}>
+            <p className="hero-caption" style={{ color: T.slate, fontSize: 12, marginTop: 16 }}>
               결정론 전용 점수 · 같은 사이트는 언제나 같은 점수 · 로그인 없이 무료
             </p>
           </div>
