@@ -1157,13 +1157,116 @@ function Footer() {
    9.  메인 페이지
    ═════════════════════════════════════════════════════════════ */
 
-const SCAN_STAGES = [
-  "사이트 연결 · 리다이렉트 확인",
-  "robots.txt · AI 봇 13종 접근성 검사",
-  "구조 · 스키마 · 인용 신호 분석",
-  "확산 신호 실측 (소셜 · RSS · 위키백과)",
-  "결정론 체크 39개 채점 · 리포트 생성",
-];
+/* 해커 스타일 터미널 스캔 연출 — 실제 파이프라인 단계를 로그로 스트리밍 */
+function buildScanScript(host) {
+  const j = (base, spread) => base + Math.floor(Math.random() * spread);
+  const rows = [
+    { cmd: true, text: `$ pickai scan --target ${host} --checks 39`, d: j(120, 120) },
+    { text: "DNS 조회 · 사설망 가드 통과", tag: "OK", d: j(360, 240) },
+    { text: "TLS 핸드셰이크 · 인증서 체인 검증", tag: "유효", d: j(420, 260) },
+    { text: `GET https://${host}/ · 리다이렉트 추적(max 10)`, tag: "수신", d: j(600, 400) },
+    { text: "raw HTML 확보 (본문 캡 1.5MB)", tag: "완료", d: j(420, 300) },
+    { text: "robots.txt 파싱 [RFC 9309 · 최장 일치]", tag: "그룹 분석", d: j(500, 300) },
+    { text: "AI 봇 13종 판정 — GPTBot ✓ ClaudeBot ✓ OAI-SearchBot ✓ +10", tag: "판정", d: j(700, 400) },
+    { text: "라이브 페치 ×4 (실제 봇 User-Agent)", tag: "실행", d: j(800, 500) },
+    { text: "llms.txt · sitemap.xml · RSS 프로브", tag: "확인", d: j(600, 400) },
+    { text: "위키백과 엔티티 조회 (ko → en)", tag: "질의", d: j(900, 600) },
+    { text: "헤딩 위계 · JSON-LD · 엔티티 스키마 추출", tag: "파싱", d: j(600, 400) },
+    { text: "통계 밀도 · 인용문 · 답변 선행 배치 측정", tag: "계산", d: j(700, 400) },
+    { text: "확산 신호 — 소셜 ×10 플랫폼 · 구독 장치 감지", tag: "감지", d: j(600, 400) },
+    { text: "프레임워크 시그니처 스캔 (WordPress·Next·카페24…)", tag: "감지", d: j(500, 350) },
+    { text: "결정론 체크 39개 가중 채점 ██████████", tag: "채점", d: j(900, 500) },
+    { text: "레이더 7축 · 등급 산출 · 수정안 생성", tag: "생성", d: j(700, 400) },
+  ];
+  let t = 0;
+  return rows.map((r) => { t += r.d; return { ...r, at: t }; });
+}
+
+const SPIN = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+
+function TerminalLoader({ host }) {
+  const script = useMemo(() => buildScanScript(host || "target"), [host]);
+  const [now, setNow] = useState(0);
+  const [frame, setFrame] = useState(0);
+  const bodyRef = useRef(null);
+  const t0 = useRef(null);
+
+  useEffect(() => {
+    t0.current = performance.now();
+    const iv = setInterval(() => {
+      setNow(performance.now() - t0.current);
+      setFrame((f) => (f + 1) % SPIN.length);
+    }, 110);
+    return () => clearInterval(iv);
+  }, []);
+
+  useEffect(() => {
+    const el = bodyRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [now]);
+
+  const visible = script.filter((r) => r.at <= now);
+  const exhausted = visible.length === script.length;
+  const stamp = (ms) => `[+${(ms / 1000).toFixed(2)}s]`;
+
+  return (
+    <div className="mx-auto mt-10" style={{ maxWidth: 640 }}>
+      <div style={{
+        background: "#050038", borderRadius: R.xl, overflow: "hidden",
+        boxShadow: "0 20px 50px rgba(5,0,56,0.35), inset 0 1px 0 rgba(255,255,255,0.06)",
+        border: "1px solid rgba(78,179,168,0.25)",
+      }}>
+        {/* 타이틀 바 */}
+        <div className="flex items-center gap-2" style={{
+          padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.08)",
+          background: "rgba(255,255,255,0.03)",
+        }}>
+          {["#FF5F57", "#FEBC2E", "#28C840"].map((c) => (
+            <span key={c} style={{ width: 10, height: 10, borderRadius: 999, background: c, display: "inline-block" }} />
+          ))}
+          <span className="ml-2" style={{
+            color: "rgba(255,255,255,0.45)", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em",
+            fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
+          }}>
+            PICKAI SCAN ENGINE · deterministic-v2
+          </span>
+        </div>
+        {/* 로그 바디 */}
+        <div ref={bodyRef} style={{
+          padding: "14px 16px", height: 264, overflowY: "hidden",
+          fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
+          fontSize: 12.5, lineHeight: 1.9,
+        }}>
+          {visible.map((r, i) => (
+            <div key={i} className="term-line" style={{ display: "flex", gap: 8, whiteSpace: "nowrap" }}>
+              {r.cmd ? (
+                <span style={{ color: "#EDEBFF", fontWeight: 600 }}>{r.text}</span>
+              ) : (
+                <>
+                  <span style={{ color: "rgba(255,255,255,0.28)", flexShrink: 0 }}>{stamp(r.at)}</span>
+                  <span style={{ color: "#9FE8DF", overflow: "hidden", textOverflow: "ellipsis" }}>▸ {r.text}</span>
+                  {r.tag && <span style={{ color: "#4EB3A8", fontWeight: 600, flexShrink: 0 }}>{r.tag}</span>}
+                </>
+              )}
+            </div>
+          ))}
+          <div style={{ display: "flex", gap: 8 }}>
+            {exhausted ? (
+              <span style={{ color: "#FEBC2E" }}>
+                {SPIN[frame]} 원격 응답 수신 대기 중… (사이트 응답 속도에 따라 수 초 소요)
+              </span>
+            ) : (
+              <span className="term-cursor" aria-hidden="true" />
+            )}
+          </div>
+        </div>
+      </div>
+      <p className="text-center" style={{ color: T.stone, fontSize: 11.5, marginTop: 10 }}>
+        실제 수집 파이프라인 순서 그대로 진행됩니다 — 잠시만 기다려 주세요
+      </p>
+    </div>
+  );
+}
 
 const DEEP_STAGES = [
   "페이지 본문 재수집",
@@ -1234,7 +1337,6 @@ function GroupHeader({ title, counts, collapsed, onToggle }) {
 export default function Home() {
   const [input, setInput] = useState("");
   const [stage, setStage] = useState("idle");
-  const [scanStep, setScanStep] = useState(0);
   const [result, setResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [insightState, setInsightState] = useState("idle");
@@ -1253,7 +1355,6 @@ export default function Home() {
   const resultRef = useRef(null);
   const deepRef = useRef(null);
   const inputRef = useRef(null);
-  const scanTimerRef = useRef(null);
   const deepTimerRef = useRef(null);
 
   useEffect(() => {
@@ -1266,7 +1367,7 @@ export default function Home() {
     } catch {}
   }, []);
 
-  useEffect(() => () => { clearInterval(scanTimerRef.current); clearInterval(deepTimerRef.current); }, []);
+  useEffect(() => () => { clearInterval(deepTimerRef.current); }, []);
 
   const pushHistory = useCallback((entry) => {
     setHistory((prev) => {
@@ -1308,7 +1409,6 @@ export default function Home() {
     if (!url || stage === "running") return;
     setInput(url);
     setStage("running");
-    setScanStep(0);
     setResult(null);
     setInsight(null);
     setInsightState("idle");
@@ -1317,12 +1417,6 @@ export default function Home() {
     setAreaTab("all");
     setShowPassed(false);
 
-    let step = 0;
-    scanTimerRef.current = setInterval(() => {
-      step = Math.min(step + 1, SCAN_STAGES.length - 1);
-      setScanStep(step);
-    }, 2400);
-
     try {
       const resp = await fetch("/api/scorecard", {
         method: "POST",
@@ -1330,7 +1424,6 @@ export default function Home() {
         body: JSON.stringify({ url }),
       });
       const data = await resp.json();
-      clearInterval(scanTimerRef.current);
       if (!resp.ok || !data.ok) {
         setErrorMsg(data.error || "진단에 실패했습니다 — 잠시 후 다시 시도해 주세요.");
         setStage("error");
@@ -1351,7 +1444,6 @@ export default function Home() {
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
       fetchInsight(data);
     } catch {
-      clearInterval(scanTimerRef.current);
       setErrorMsg("네트워크 오류가 발생했습니다 — 잠시 후 다시 시도해 주세요.");
       setStage("error");
     }
@@ -1601,32 +1693,7 @@ export default function Home() {
           </div>
 
           {stage === "running" && (
-            <div className="glass-card mx-auto mt-10" style={{ borderRadius: R.xxl, padding: 24, maxWidth: 560 }}>
-              <div className="flex flex-col gap-3">
-                {SCAN_STAGES.map((s, i) => (
-                  <div key={s} className="flex items-center gap-3">
-                    {i < scanStep ? (
-                      <span className="inline-flex items-center justify-center flex-shrink-0" style={{
-                        width: 18, height: 18, borderRadius: R.full, background: T.tealLight,
-                        color: T.mossDark, fontSize: 10, fontWeight: 600,
-                      }}>✓</span>
-                    ) : i === scanStep ? (
-                      <span className="inline-flex items-center justify-center flex-shrink-0" style={{ width: 18 }}>
-                        <LiveDot color={T.brandTeal} />
-                      </span>
-                    ) : (
-                      <span className="flex-shrink-0" style={{
-                        width: 18, height: 18, borderRadius: R.full, border: `1.5px solid ${T.hairline}`,
-                      }} />
-                    )}
-                    <span style={{
-                      color: i <= scanStep ? T.ink : T.stone, fontSize: 13.5,
-                      fontWeight: i === scanStep ? 600 : 500,
-                    }}>{s}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <TerminalLoader host={(input || "").replace(/^https?:\/\//, "").replace(/\/.*$/, "") || "target"} />
           )}
 
           {stage === "error" && (
