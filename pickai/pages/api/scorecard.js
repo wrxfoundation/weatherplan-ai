@@ -150,6 +150,7 @@ export default async function handler(req, res) {
       responseMs: chain.responseMs,
       tlsValid: chain.tlsValid,
       tlsError: chain.tlsError,
+      redirectLoop: chain.redirectLoop === true,
       mixedContentCount,
       xRobotsTag,
       parsed,

@@ -10,7 +10,7 @@ import { lookup } from "node:dns/promises";
 
 export const MAIN_TIMEOUT_MS = 12000;
 export const SIDE_TIMEOUT_MS = 6000;
-export const MAX_REDIRECTS = 5;
+export const MAX_REDIRECTS = 10;
 export const MAX_BODY_BYTES = 1_500_000;
 export const DEFAULT_UA =
   "Mozilla/5.0 (compatible; PickAI-Scorecard/1.0; +https://github.com/aeogeo)";
@@ -106,6 +106,7 @@ export async function fetchChain(startUrl) {
   let tlsValid = url.protocol === "https:" ? true : null;
   let tlsError = null;
   const t0 = Date.now();
+  const visited = new Set([url.href]);
 
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
     await assertPublicHost(url.hostname);
@@ -134,10 +135,16 @@ export async function fetchChain(startUrl) {
     if (resp.status >= 300 && resp.status < 400) {
       const loc = resp.headers.get("location");
       if (!loc || redirects >= MAX_REDIRECTS) {
-        return { finalUrl: url, status: resp.status, redirects, resp, tlsValid, tlsError, responseMs: Date.now() - t0 };
+        return { finalUrl: url, status: resp.status, redirects, resp, tlsValid, tlsError, responseMs: Date.now() - t0, redirectLoop: redirects >= MAX_REDIRECTS };
       }
       redirects += 1;
-      url = new URL(loc, url);
+      const next = new URL(loc, url);
+      if (visited.has(next.href)) {
+        /* 리다이렉트 루프 — 더 따라가도 의미 없음 */
+        return { finalUrl: url, status: resp.status, redirects, resp, tlsValid, tlsError, responseMs: Date.now() - t0, redirectLoop: true };
+      }
+      visited.add(next.href);
+      url = next;
       if (url.protocol === "https:" && tlsValid === null) tlsValid = true;
       continue;
     }

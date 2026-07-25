@@ -410,14 +410,21 @@ export function runScorecard(a) {
       : "fail",
     summary: a.status >= 200 && a.status < 300
       ? `${a.status} OK${a.redirects ? ` (리다이렉트 ${a.redirects}회)` : ""} — 크롤러가 정상 도달합니다.`
-      : `최종 상태 ${a.status || "도달 실패"} — 크롤러가 콘텐츠에 도달하지 못합니다.`,
+      : a.status >= 300 && a.status < 400
+        ? `리다이렉트가 ${a.redirects}회가 넘도록 끝나지 않습니다${a.redirectLoop ? " (루프 감지)" : ""} — 크롤러가 콘텐츠에 도달하지 못합니다. www↔비-www·http↔https 리다이렉트 설정 오류가 가장 흔한 원인입니다.`
+        : `최종 상태 ${a.status || "도달 실패"} — 크롤러가 콘텐츠에 도달하지 못합니다.`,
     details: [
       { k: "최종 상태", v: String(a.status || "-") },
       { k: "리다이렉트", v: `${a.redirects}회` },
       { k: "응답 시간", v: `${a.responseMs}ms` },
     ],
     passRule: "2xx이며 리다이렉트 1회 이하일 때 통과",
-    fix: a.redirects > 1 ? {
+    fix: (a.status >= 300 && a.status < 400) ? {
+      title: "리다이렉트 루프/과다 체인 해소",
+      action: "정리",
+      note: "www↔비-www, http↔https가 서로를 가리키면 루프가 됩니다. 최종 대표 주소 하나를 정하고, 나머지는 전부 그 주소로 단 한 번의 301이 되게 정리하세요.",
+      code: `# 대표 주소를 https://example.com 하나로 통일 (nginx 예시)\nserver { listen 80; server_name example.com www.example.com;\n  return 301 https://example.com$request_uri; }\nserver { listen 443 ssl; server_name www.example.com;\n  return 301 https://example.com$request_uri; }`,
+    } : a.redirects > 1 ? {
       title: "리다이렉트 체인 단축",
       action: "정리",
       note: "중간 리다이렉트를 제거하고 최초 URL이 바로 최종 URL로 301 되도록 정리하세요.",
