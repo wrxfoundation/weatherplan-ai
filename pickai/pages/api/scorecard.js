@@ -166,6 +166,7 @@ export default async function handler(req, res) {
       ok: true,
       target: {
         input: String(req.body.url).trim(),
+        inputHost: target.hostname,
         finalUrl: finalUrl.href,
         host: finalUrl.host,
         status: chain.status,

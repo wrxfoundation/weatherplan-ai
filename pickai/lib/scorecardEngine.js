@@ -1091,23 +1091,29 @@ export function runScorecard(a) {
     const bots = a.bots || [];
     const searchBlocked = bots.filter((b) => b.kind === "search" && !b.robotsAllowed);
     const trainBlocked = bots.filter((b) => b.kind === "train" && !b.robotsAllowed);
-    /* 메인 페치(일반 UA)가 2xx일 때만 라이브 페치 실패를 "봇 차단"으로 귀속 */
-    const liveMeaningful = a.status >= 200 && a.status < 300;
-    const liveBlocked = liveMeaningful
-      ? bots.filter((b) => b.live?.ran && b.live.ok === false && b.robotsAllowed)
+    /* 메인 페치(일반 UA)가 2xx일 때만 라이브 페치 실패를 "봇 차단"으로 귀속
+       (3xx 리다이렉트 응답은 차단으로 세지 않음) */
+    const reachable = a.status >= 200 && a.status < 300;
+    const liveBlocked = reachable
+      ? bots.filter((b) => b.live?.ran && b.live.ok === false && !b.live.redirect && b.robotsAllowed)
       : [];
-    const status = searchBlocked.length > 0 || liveBlocked.some((b) => b.kind === "search")
-      ? "fail" : trainBlocked.length > 0 ? "warn" : "pass";
+    /* 사이트 자체가 도달 불가면 robots가 허용이어도 봇은 본문을 못 가져간다 — 개방성 100점 모순 방지 */
+    const status = !reachable
+      ? "fail"
+      : searchBlocked.length > 0 || liveBlocked.some((b) => b.kind === "search")
+        ? "fail" : trainBlocked.length > 0 ? "warn" : "pass";
     add({
       id: "ai-crawler-access", area: "geo", severity: "critical", weight: 3,
       label: "AI 크롤러 접근성 (GPTBot · ClaudeBot · PerplexityBot …)",
       help: "ChatGPT·Claude·Perplexity의 수집 로봇이 우리 사이트에 들어올 수 있는지 봅니다. 검색용 봇을 막아두면 AI 답변에 인용될 길 자체가 끊깁니다.",
       status,
-      summary: status === "pass"
-        ? `검색·학습 AI 봇 ${bots.length}개가 모두 접근 가능합니다. AI 답변 인용 경로가 열려 있습니다.`
-        : status === "warn"
-          ? `학습 봇 ${trainBlocked.length}개가 차단되어 있습니다 (정책상 의도라면 문제 없음). 검색 봇은 모두 허용입니다.`
-          : `검색 AI 봇 ${searchBlocked.length + liveBlocked.filter((b) => b.kind === "search").length}개가 차단되어 있습니다 — AI 답변에 인용될 수 없는 상태입니다.`,
+      summary: !reachable
+        ? `robots.txt 기준 ${bots.filter((b) => b.robotsAllowed).length}/${bots.length}개 봇이 허용이지만, 사이트 자체가 도달 불가(HTTP ${a.status || "실패"}) 상태라 AI 봇도 본문을 수집할 수 없습니다 — HTTP 상태 문제부터 해결해야 개방성이 의미를 갖습니다.`
+        : status === "pass"
+          ? `검색·학습 AI 봇 ${bots.length}개가 모두 접근 가능합니다. AI 답변 인용 경로가 열려 있습니다.`
+          : status === "warn"
+            ? `학습 봇 ${trainBlocked.length}개가 차단되어 있습니다 (정책상 의도라면 문제 없음). 검색 봇은 모두 허용입니다.`
+            : `검색 AI 봇 ${searchBlocked.length + liveBlocked.filter((b) => b.kind === "search").length}개가 차단되어 있습니다 — AI 답변에 인용될 수 없는 상태입니다.`,
       details: [
         { k: "검색 봇 허용", v: `${bots.filter((b) => b.kind === "search" && b.robotsAllowed).length}/${bots.filter((b) => b.kind === "search").length}` },
         { k: "학습 봇 허용", v: `${bots.filter((b) => b.kind === "train" && b.robotsAllowed).length}/${bots.filter((b) => b.kind === "train").length}` },

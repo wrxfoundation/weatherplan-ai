@@ -159,9 +159,14 @@ export async function probe(url, ua) {
     const resp = await fetchWithTimeout(url, { ua }, SIDE_TIMEOUT_MS);
     const status = resp.status;
     try { await resp.body?.cancel?.(); } catch {}
-    return { ran: true, ok: status >= 200 && status < 400, status };
+    return {
+      ran: true,
+      ok: status >= 200 && status < 300,
+      redirect: status >= 300 && status < 400,
+      status,
+    };
   } catch {
-    return { ran: true, ok: false, status: 0 };
+    return { ran: true, ok: false, redirect: false, status: 0 };
   }
 }
 

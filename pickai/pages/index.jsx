@@ -524,7 +524,7 @@ function CheckItem({ check, defaultOpen = false, rank, deep }) {
    4.  AI 크롤러 보드
    ═════════════════════════════════════════════════════════════ */
 
-function BotBoard({ bots }) {
+function BotBoard({ bots, reachable = true }) {
   const [helpOpen, setHelpOpen] = useState(null);
   const groups = [
     {
@@ -552,11 +552,11 @@ function BotBoard({ bots }) {
                   onToggle={() => setHelpOpen((v) => (v === g.key ? null : g.key))} />
               </div>
               <span style={{
-                background: blocked === 0 ? T.tealLight : T.coralLight,
-                color: blocked === 0 ? T.mossDark : T.coralDark,
+                background: !reachable ? "#FFE5C2" : blocked === 0 ? T.tealLight : T.coralLight,
+                color: !reachable ? "#7A4500" : blocked === 0 ? T.mossDark : T.coralDark,
                 fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: R.full,
               }}>
-                {blocked === 0 ? "전체 접근 가능" : `${blocked}개 차단`}
+                {!reachable ? "판정 제한 — 사이트 도달 불가" : blocked === 0 ? "전체 접근 가능" : `${blocked}개 차단`}
               </span>
             </div>
             <p style={{ color: T.slate, fontSize: 12.5, lineHeight: 1.6, marginBottom: 14 }}>{g.desc}</p>
@@ -583,10 +583,16 @@ function BotBoard({ bots }) {
                     {b.robotsAllowed ? "허용" : "차단"}
                   </span>
                   <span className="text-right" style={{
-                    color: !b.live?.ran ? T.stone : b.live.ok ? "#116A44" : T.coralDark,
+                    color: !b.live?.ran ? T.stone
+                      : b.live.ok ? "#116A44"
+                      : b.live.redirect ? T.steel
+                      : T.coralDark,
                     fontSize: 12, fontWeight: 600, minWidth: 64,
                   }}>
-                    {!b.live?.ran ? "미실행" : b.live.ok ? `OK ${b.live.status}` : `차단 ${b.live.status || ""}`}
+                    {!b.live?.ran ? "미실행"
+                      : b.live.ok ? `OK ${b.live.status}`
+                      : b.live.redirect ? `${b.live.status} 리다이렉트`
+                      : `차단 ${b.live.status || ""}`}
                   </span>
                 </div>
               ))}
@@ -888,7 +894,8 @@ function buildDemoResult() {
     ok: true,
     demo: true,
     target: {
-      input: "demo.hanbit-tech.example", finalUrl: "https://demo.hanbit-tech.example/",
+      input: "demo.hanbit-tech.example", inputHost: "demo.hanbit-tech.example",
+      finalUrl: "https://demo.hanbit-tech.example/",
       host: "demo.hanbit-tech.example", status: 200, redirects: 1, responseMs: 1840,
       scheme: "https", tlsValid: true,
     },
@@ -1243,7 +1250,7 @@ export default function Home() {
       setResult(data);
       setStage("done");
       pushHistory({
-        host: data.target.host, score: data.report.overall,
+        host: data.target.inputHost || data.target.host, score: data.report.overall,
         grade: data.report.grade, ts: Date.now(),
       });
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
@@ -1556,15 +1563,21 @@ export default function Home() {
                 </div>
               )}
 
-              <Reveal className="glass-card" style={{ borderRadius: R.feature, padding: "36px 32px" }}>
-                <div className="flex flex-col lg:flex-row items-center gap-10">
-                  <ScoreDonut score={report.overall} grade={report.grade} />
+              <Reveal className="glass-card" style={{ borderRadius: R.feature, padding: "24px 26px" }}>
+                <div className="flex flex-col lg:flex-row items-center gap-7">
+                  <ScoreDonut score={report.overall} grade={report.grade} size={150} />
 
                   <div className="flex-1 min-w-0 text-center lg:text-left">
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-3">
-                      <span style={{ color: T.ink, fontSize: 20, fontWeight: 600, letterSpacing: "-0.01em" }}>
-                        {result.target.host}
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-2.5">
+                      <span style={{ color: T.ink, fontSize: 18, fontWeight: 600, letterSpacing: "-0.01em" }}>
+                        {result.target.inputHost || result.target.host}
                       </span>
+                      {result.target.inputHost && result.target.inputHost !== result.target.host && (
+                        <span style={{
+                          background: T.tealLight, color: T.mossDark, fontSize: 11.5, fontWeight: 600,
+                          padding: "3px 9px", borderRadius: R.full,
+                        }}>최종 도달 {result.target.host}</span>
+                      )}
                       {[
                         `HTTP ${result.target.status}`,
                         `${(result.target.responseMs / 1000).toFixed(2)}s`,
@@ -1578,7 +1591,7 @@ export default function Home() {
                       ))}
                     </div>
 
-                    <div style={{ color: T.inkDeep, fontSize: 24, fontWeight: 600, letterSpacing: "-0.015em", lineHeight: 1.3 }}>
+                    <div style={{ color: T.inkDeep, fontSize: 20, fontWeight: 600, letterSpacing: "-0.015em", lineHeight: 1.3 }}>
                       {GRADE_META[report.grade]?.label} —{" "}
                       <span style={{ color: GRADE_META[report.grade]?.color }}>종합 {report.overall}점</span>
                     </div>
@@ -1600,14 +1613,14 @@ export default function Home() {
                         </div>
                       </div>
                     )}
-                    <p style={{ color: T.slate, fontSize: 14, lineHeight: 1.7, marginTop: 10, maxWidth: 560 }}>
+                    <p style={{ color: T.slate, fontSize: 13, lineHeight: 1.65, marginTop: 8, maxWidth: 560 }}>
                       개선 항목 <strong style={{ color: T.coralDark, fontWeight: 600 }}>{issueChecks.length}건</strong>
                       {failCount > 0 && <> · 실패 <strong style={{ color: T.coralDark, fontWeight: 600 }}>{failCount}건</strong></>}
                       {" "}— 모든 이슈에 복붙 수정안이 붙어 있고, 아래에서{" "}
                       <strong style={{ color: T.ink, fontWeight: 600 }}>AI 명령서</strong>로 통째로 내보낼 수 있습니다.
                     </p>
 
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mt-6 print-hide">
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mt-4 print-hide">
                       <BtnPrimary compact onClick={exportDirective}>AI 명령서 (.md) ↓</BtnPrimary>
                       <span className="inline-flex"><CopyBtn text={() => buildAiDirective(result, deepResult)} label="AI 명령서 복사" doneLabel="복사 완료 ✓" /></span>
                       <BtnSecondary compact onClick={() => window.print()}>리포트 인쇄 · PDF</BtnSecondary>
@@ -1683,7 +1696,7 @@ export default function Home() {
                       robots.txt(RFC 9309 최장 일치) + 봇 UA 라이브 페치 검증
                     </span>
                   </div>
-                  <BotBoard bots={result.bots} />
+                  <BotBoard bots={result.bots} reachable={siteReachable} />
                   {(result.target.status < 200 || result.target.status >= 300) && (
                     <p style={{ color: T.steel, fontSize: 12, lineHeight: 1.6, marginTop: 10 }}>
                       * 사이트가 일반 요청에도 HTTP {result.target.status}을 반환해 라이브 페치 판정이
