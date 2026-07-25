@@ -2,6 +2,7 @@ const SITE_URL = "https://weatherplan-ai.vercel.app";
 
 const STATIC_ROUTES = [
   { path: "/",             priority: "1.0", changefreq: "daily"   },
+  { path: "/ai-scorecard", priority: "0.9", changefreq: "weekly"  },
   { path: "/studio",       priority: "0.9", changefreq: "weekly"  },
   { path: "/onboarding",   priority: "0.8", changefreq: "monthly" },
   { path: "/dashboard",    priority: "0.7", changefreq: "weekly"  },
