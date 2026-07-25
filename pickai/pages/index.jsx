@@ -695,6 +695,7 @@ function InsightCard({ state, insight }) {
       {state === "error" && (
         <p style={{ color: T.slate, fontSize: 13.5, lineHeight: 1.7 }}>
           AI 총평을 불러오지 못했습니다 — 아래 결정론 진단 결과는 그대로 유효합니다.
+          (서버에 ANTHROPIC_API_KEY가 등록·재배포되지 않았거나 일시적 API 오류일 수 있습니다)
         </p>
       )}
 
@@ -1140,7 +1141,7 @@ export default function Home() {
   const [deepState, setDeepState] = useState("idle");   // idle | loading | done | error
   const [deepStep, setDeepStep] = useState(0);
   const [deepResult, setDeepResult] = useState(null);
-  const [deepError, setDeepError] = useState("");
+  const [deepError, setDeepError] = useState(null);  // { message, hint }
   const [history, setHistory] = useState([]);
   const [areaTab, setAreaTab] = useState("all");
   const [showPassed, setShowPassed] = useState(false);
@@ -1252,7 +1253,7 @@ export default function Home() {
     if (!result || deepState === "loading") return;
     setDeepState("loading");
     setDeepStep(0);
-    setDeepError("");
+    setDeepError(null);
 
     let step = 0;
     deepTimerRef.current = setInterval(() => {
@@ -1279,7 +1280,10 @@ export default function Home() {
       const data = await resp.json();
       clearInterval(deepTimerRef.current);
       if (!resp.ok || !data.ok) {
-        setDeepError(data.error || "정밀 진단에 실패했습니다 — 잠시 후 다시 시도해 주세요.");
+        setDeepError({
+          message: data.error || "정밀 진단에 실패했습니다 — 잠시 후 다시 시도해 주세요.",
+          hint: data.hint || null,
+        });
         setDeepState("error");
         return;
       }
@@ -1287,7 +1291,7 @@ export default function Home() {
       setDeepState("done");
     } catch {
       clearInterval(deepTimerRef.current);
-      setDeepError("네트워크 오류가 발생했습니다 — 잠시 후 다시 시도해 주세요.");
+      setDeepError({ message: "네트워크 오류가 발생했습니다 — 잠시 후 다시 시도해 주세요.", hint: null });
       setDeepState("error");
     }
   }, [result, deepState]);
@@ -1351,6 +1355,10 @@ export default function Home() {
 
   const issueChecks = (report?.issues || []).map((id) => checksById[id]).filter(Boolean);
   const failCount = issueChecks.filter((c) => c.status === "fail").length;
+  const siteReachable = !!result && result.target.status >= 200 && result.target.status < 300;
+  const altHost = result
+    ? (result.target.host.startsWith("www.") ? result.target.host.slice(4) : "www." + result.target.host)
+    : null;
 
   /* 우선순위 이슈 — 그룹 뷰 구성 */
   const issueGroups = useMemo(() => {
@@ -1572,6 +1580,28 @@ export default function Home() {
                       {GRADE_META[report.grade]?.label} —{" "}
                       <span style={{ color: GRADE_META[report.grade]?.color }}>종합 {report.overall}점</span>
                     </div>
+                    {!siteReachable && (
+                      <div className="mt-3" style={{
+                        background: T.coralLight, borderRadius: R.lg, padding: "10px 14px",
+                        maxWidth: 560, textAlign: "left",
+                      }}>
+                        <p style={{ color: T.coralDark, fontSize: 12.5, lineHeight: 1.65 }}>
+                          <strong style={{ fontWeight: 600 }}>
+                            크롤러가 본문에 도달하지 못했습니다 (HTTP {result.target.status}
+                            {result.target.redirectLoop ? " · 리다이렉트 루프" : ""})
+                          </strong>
+                          {" "}— 그래서 콘텐츠 관련 항목이 전부 실패로 표시됩니다. 우선순위 1번(HTTP 상태 코드)
+                          수정안을 먼저 적용하세요. 주소 표기가 문제일 수도 있습니다:
+                        </p>
+                        <button onClick={() => runScan(altHost)} className="mt-2 transition hover:opacity-80 print-hide"
+                          style={{
+                            background: "#fff", color: T.coralDark, fontSize: 12.5, fontWeight: 600,
+                            padding: "6px 14px", borderRadius: R.full, border: `1px solid ${T.coralDark}`,
+                          }}>
+                          {altHost} 로 다시 진단해 보기 →
+                        </button>
+                      </div>
+                    )}
                     <p style={{ color: T.slate, fontSize: 14, lineHeight: 1.7, marginTop: 10, maxWidth: 560 }}>
                       개선 항목 <strong style={{ color: T.coralDark, fontWeight: 600 }}>{issueChecks.length}건</strong>
                       {failCount > 0 && <> · 실패 <strong style={{ color: T.coralDark, fontWeight: 600 }}>{failCount}건</strong></>}
@@ -1685,12 +1715,36 @@ export default function Home() {
                       정밀 점수는 결정론 종합 점수와 분리 표기되어 재현성을 해치지 않습니다.
                     </p>
                   </div>
-                  {deepState !== "done" && (
+                  {deepState !== "done" && siteReachable && (
                     <BtnPrimary onClick={runDeep} disabled={deepState === "loading"}>
                       {deepState === "loading" ? "심사 중…" : "정밀 진단 시작 (무료)"}
                     </BtnPrimary>
                   )}
                 </div>
+
+                {!siteReachable && (
+                  <div className="mt-5" style={{
+                    background: "rgba(5,0,56,0.035)", border: `1px dashed ${T.hairlineStrong}`,
+                    borderRadius: R.lg, padding: "16px 18px",
+                  }}>
+                    <div style={{ color: T.ink, fontSize: 13.5, fontWeight: 600, marginBottom: 6 }}>
+                      지금은 정밀 진단을 실행할 수 없습니다 — 사이트가 HTTP {result.target.status}
+                      {result.target.redirectLoop ? "(리다이렉트 루프)" : ""}로 응답 중
+                    </div>
+                    <p style={{ color: T.slate, fontSize: 13, lineHeight: 1.7 }}>
+                      LLM 심사는 실제 본문을 읽어야 해서 사이트가 정상 응답(200)일 때만 가능합니다.
+                      해결 순서: ① 우선순위 이슈 1번(HTTP 상태 코드)의 수정안으로 리다이렉트 설정을
+                      정리하거나 ② 주소 표기를 바꿔 다시 진단해 보세요.
+                    </p>
+                    <button onClick={() => runScan(altHost)} className="mt-3 transition hover:opacity-80 print-hide"
+                      style={{
+                        background: T.inkDeep, color: "#fff", fontSize: 12.5, fontWeight: 600,
+                        padding: "7px 15px", borderRadius: R.full, border: "none",
+                      }}>
+                      {altHost} 로 다시 진단해 보기 →
+                    </button>
+                  </div>
+                )}
 
                 {deepState === "loading" && (
                   <div className="mt-6 flex flex-col gap-3" style={{ maxWidth: 460 }}>
@@ -1719,15 +1773,28 @@ export default function Home() {
                   </div>
                 )}
 
-                {deepState === "error" && (
+                {deepState === "error" && deepError && (
                   <div className="mt-5" style={{
-                    background: T.coralLight, borderRadius: R.lg, padding: "12px 16px",
+                    background: T.coralLight, borderRadius: R.lg, padding: "14px 16px",
                   }}>
-                    <span style={{ color: T.coralDark, fontSize: 13, fontWeight: 500 }}>{deepError}</span>
-                    <button onClick={runDeep} className="ml-3 transition hover:opacity-80" style={{
-                      color: T.coralDark, fontSize: 13, fontWeight: 600, background: "none",
-                      border: "none", textDecoration: "underline",
-                    }}>다시 시도</button>
+                    <div style={{ color: T.coralDark, fontSize: 13, fontWeight: 600 }}>{deepError.message}</div>
+                    {deepError.hint && (
+                      <p style={{ color: T.coralDark, fontSize: 12.5, lineHeight: 1.7, marginTop: 6, opacity: 0.9 }}>
+                        해결 방법 — {deepError.hint}
+                      </p>
+                    )}
+                    <div className="mt-2.5 flex items-center gap-3 flex-wrap">
+                      <button onClick={runDeep} className="transition hover:opacity-80" style={{
+                        color: T.coralDark, fontSize: 13, fontWeight: 600, background: "none",
+                        border: "none", textDecoration: "underline", padding: 0,
+                      }}>다시 시도</button>
+                      {altHost && (
+                        <button onClick={() => runScan(altHost)} className="transition hover:opacity-80" style={{
+                          color: T.coralDark, fontSize: 13, fontWeight: 600, background: "none",
+                          border: "none", textDecoration: "underline", padding: 0,
+                        }}>{altHost} 로 다시 진단</button>
+                      )}
+                    </div>
                   </div>
                 )}
 

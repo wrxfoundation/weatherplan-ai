@@ -173,6 +173,7 @@ export default async function handler(req, res) {
         responseMs: chain.responseMs,
         scheme: finalUrl.protocol.replace(":", ""),
         tlsValid: chain.tlsValid,
+        redirectLoop: chain.redirectLoop === true,
       },
       bots,
       report,

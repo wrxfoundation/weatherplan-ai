@@ -91,8 +91,19 @@ export default async function handler(req, res) {
   let html = "";
   try {
     chain = await fetchChain(target.href);
+    if (chain.status >= 300 && chain.status < 400) {
+      return res.status(422).json({
+        error: `사이트가 리다이렉트(${chain.status})로만 응답해 본문에 도달하지 못했습니다`,
+        reason: "redirect",
+        hint: "www↔비-www·http↔https 리다이렉트 설정이 서로를 가리키는 루프일 가능성이 큽니다. 무료 진단의 'HTTP 상태 코드' 항목에 있는 수정안을 적용해 사이트가 200으로 응답하게 만든 뒤 다시 시도하세요. 주소 표기를 바꿔(www 붙이거나 빼고) 진단하면 통과할 수도 있습니다.",
+      });
+    }
     if (chain.status < 200 || chain.status >= 300) {
-      return res.status(422).json({ error: `사이트가 ${chain.status}를 반환해 본문을 심사할 수 없습니다` });
+      return res.status(422).json({
+        error: `사이트가 ${chain.status}를 반환해 본문을 심사할 수 없습니다`,
+        reason: "status",
+        hint: "서버가 정상 응답(200)해야 본문을 읽고 LLM 심사를 할 수 있습니다. 방화벽(WAF)이 봇 요청을 막고 있다면 해제하거나, 무료 진단의 'HTTP 상태 코드' 항목을 먼저 해결하세요.",
+      });
     }
     html = await readBodyCapped(chain.resp);
   } catch (err) {
