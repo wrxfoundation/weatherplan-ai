@@ -1,5 +1,5 @@
 /* ============================================================
- * AEOGEO · AI 성적표 진단 엔진 v2
+ * Pick AI · AI 성적표 진단 엔진 v2
  *
  * SEO · AEO · GEO · 확산(Reach) 결정론 체크 엔진 (순수 함수 — 네트워크 없음)
  * pages/api/scorecard.js 가 수집한 아티팩트를 받아 채점한다.
@@ -1385,7 +1385,7 @@ export function runScorecard(a) {
     .map((c) => c.id);
 
   return {
-    engine: "aeogeo-deterministic-v2",
+    engine: "pickai-deterministic-v2",
     pageType,
     overall,
     grade: gradeOf(overall),

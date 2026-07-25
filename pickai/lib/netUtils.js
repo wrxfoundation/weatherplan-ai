@@ -1,5 +1,5 @@
 /* ============================================================
- * AEOGEO · 네트워크 공용 유틸 (서버 전용)
+ * Pick AI · 네트워크 공용 유틸 (서버 전용)
  *
  * - SSRF 가드: 사설 IP · localhost · 비 http(s) 차단
  * - 타임아웃 페치 · 본문 크기 캡 · 수동 리다이렉트 추적
@@ -13,7 +13,7 @@ export const SIDE_TIMEOUT_MS = 6000;
 export const MAX_REDIRECTS = 5;
 export const MAX_BODY_BYTES = 1_500_000;
 export const DEFAULT_UA =
-  "Mozilla/5.0 (compatible; AEOGEO-Scorecard/1.0; +https://github.com/aeogeo)";
+  "Mozilla/5.0 (compatible; PickAI-Scorecard/1.0; +https://github.com/aeogeo)";
 
 function isPrivateIp(ip) {
   if (/^(127\.|10\.|0\.|169\.254\.|192\.168\.)/.test(ip)) return true;

@@ -1,5 +1,5 @@
 /* ============================================================
- * AEOGEO · /api/insight
+ * Pick AI · /api/insight
  *
  * AI 총평 생성 (Sonnet 단발 호출)
  * - 시스템 프롬프트는 정적 문자열만 (프롬프트 캐시)
@@ -15,13 +15,16 @@ const anthropic = new Anthropic({
 
 const INSIGHT_MODEL = "claude-sonnet-5";
 
-const STATIC_SYSTEM_PROMPT = `당신은 AEOGEO AI — 웹사이트의 AI 검색 준비도(SEO·AEO·GEO·확산) 진단 결과를 받아
+const STATIC_SYSTEM_PROMPT = `당신은 Pick AI — 웹사이트의 AI 검색 준비도(SEO·AEO·GEO·확산) 진단 결과를 받아
 경영진에게 보고하듯 총평하는 컨설턴트입니다.
 
 역할:
 - 진단 데이터에 있는 사실만 언급 (수치·항목을 지어내지 않음)
 - 마케터가 바로 실행할 수 있는 우선순위 중심으로
-- 전문 용어는 한 줄 안에서 풀어서
+- 전문 용어는 반드시 괄호로 쉬운 말을 병기 — 예: JSON-LD(기계가 읽는 사이트 명함),
+  스키마(구조화 정보), H1(페이지 대제목), sameAs(공식 채널 연결 목록),
+  크롤러(수집 로봇), canonical(대표 주소 표시), alt 텍스트(이미지 설명문)
+- 일반인이 읽어도 바로 이해되는 문장으로
 
 출력 형식 — 반드시 아래 JSON만 출력 (다른 텍스트·마크다운 금지):
 {

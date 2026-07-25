@@ -1,5 +1,5 @@
 /**
- * AEOGEO — AI 성적표 (단일 서비스)
+ * Pick AI — AI 성적표 (단일 서비스)
  * ─────────────────────────────────────────────
  * SEO · AEO · GEO · 확산 통합 무료 진단
  *  · 결정론 체크 30개 + AI 크롤러 13종 + 확산 신호 실측(위키백과 등)
@@ -87,8 +87,6 @@ const AREA_META = {
   geo: { label: "생성형엔진 (GEO)", short: "GEO", desc: "생성형 AI가 출처로 인용할 근거가 있는가", weight: "25%" },
   reach: { label: "확산 신호 (Reach)", short: "확산", desc: "콘텐츠가 밖으로 퍼질 통로·언급 기반이 있는가", weight: "15%" },
 };
-
-const CONTACT_MAILTO = "mailto:wrxfoundation@gmail.com?subject=AEOGEO%20문의";
 
 /* ═════════════════════════════════════════════════════════════
    1.  공용 소품
@@ -596,11 +594,11 @@ function BotBoard({ bots }) {
 
 function InsightCard({ state, insight }) {
   return (
-    <div className={`glass-card nl-shine ${state === "loading" ? "nl-shine-active" : ""}`}
+    <div className="glass-card"
       style={{ borderRadius: R.xxxl, padding: "26px 28px" }}>
       <div className="flex items-center gap-2.5 mb-4">
         <Logo size={26} />
-        <span style={{ color: T.ink, fontSize: 14, fontWeight: 600 }}>AEOGEO AI 총평</span>
+        <span style={{ color: T.ink, fontSize: 14, fontWeight: 600 }}>Pick AI 총평</span>
         {state === "loading" && (
           <span className="inline-flex items-center gap-1.5" style={{ color: T.slate, fontSize: 12.5 }}>
             <LiveDot color={T.brandTeal} /> 진단 결과를 읽고 있습니다…
@@ -678,7 +676,7 @@ function buildAiDirective(result, deepResult) {
   const lines = [];
   lines.push(`# AI 실행 명령서 — ${t.host} AI 검색 최적화 (SEO·AEO·GEO·확산)`);
   lines.push("");
-  lines.push(`> 생성: AEOGEO AI 성적표 · ${dateStr} · 종합 ${r.overall}점(${r.grade}등급)`);
+  lines.push(`> 생성: Pick AI 성적표 · ${dateStr} · 종합 ${r.overall}점(${r.grade}등급)`);
   lines.push(`> SEO ${r.areas.seo.score} · AEO ${r.areas.aeo.score} · GEO ${r.areas.geo.score} · 확산 ${r.areas.reach.score}${deepResult ? ` · 정밀(LLM 심사) ${deepResult.deepScore}` : ""}`);
   lines.push("");
   lines.push(`## 사용법`);
@@ -735,10 +733,10 @@ function buildAiDirective(result, deepResult) {
   lines.push(`## 완료 기준`);
   lines.push(`- 위 "수정 작업"의 실패 항목이 모두 해소되고, 주의 항목은 가능한 범위에서 개선된다`);
   lines.push(`- 통과 항목의 상태가 퇴행하지 않는다`);
-  lines.push(`- 수정 후 AEOGEO AI 성적표로 재진단하여 점수 상승을 확인한다`);
+  lines.push(`- 수정 후 Pick AI 성적표로 재진단하여 점수 상승을 확인한다`);
   lines.push("");
   lines.push(`---`);
-  lines.push(`_AEOGEO — AI 성적표가 생성한 실행 명령서입니다. 예시 코드는 사이트 구조에 맞게 조정하세요._`);
+  lines.push(`_Pick AI — AI 성적표가 생성한 실행 명령서입니다. 예시 코드는 사이트 구조에 맞게 조정하세요._`);
   return lines.join("\n");
 }
 
@@ -825,14 +823,14 @@ function buildDemoResult() {
 const DEMO_INSIGHT = {
   headline: "읽을 수는 있지만 인용할 이유가 없는 사이트",
   summary:
-    "크롤 접근성과 보안 연결, 봇 개방성은 안정적입니다. 하지만 AI가 이 사이트를 답변에 인용하려면 근거가 필요한데 — 깨진 JSON-LD와 빈약한 엔티티 신호, H1 없는 문서 구조가 인용 경로를 막고 있습니다.",
+    "크롤 접근성(수집 로봇이 들어올 수 있는지)과 보안 연결은 안정적입니다. 하지만 AI가 이 사이트를 답변에 인용하려면 근거가 필요한데 — 깨진 JSON-LD(기계가 읽는 사이트 명함 데이터)와 빈약한 엔티티 신호(브랜드 신원 정보), H1(페이지 대제목) 없는 문서 구조가 인용 경로를 막고 있습니다.",
   priorities: [
-    "깨진 JSON-LD의 굽은 따옴표부터 고치세요 — 문법 오류 하나로 구조화 데이터 전체가 무시되고 있습니다.",
-    "Organization 스키마에 sameAs로 공식 채널을 연결하고, 페이지 주제를 담은 H1을 추가하세요.",
-    "핵심 섹션을 질문형 헤딩으로 늘리고, 첫 문장에 수치가 담긴 직접 답변과 1차 출처 링크를 두세요.",
+    "깨진 JSON-LD(기계가 읽는 사이트 명함)의 굽은 따옴표부터 고치세요 — 문법 오류 하나로 구조화 데이터 전체가 무시되고 있습니다.",
+    "Organization 스키마(회사 신원 정보)에 sameAs(공식 채널 연결 목록)로 유튜브·블로그를 연결하고, 페이지 주제를 담은 H1(대제목)을 추가하세요.",
+    "핵심 섹션을 질문형 헤딩(질문 형태의 소제목)으로 늘리고, 첫 문장에 수치가 담긴 직접 답변과 1차 출처(공신력 있는 원본 자료) 링크를 두세요.",
   ],
   outlook:
-    "위 세 가지만 반영해도 답변엔진이 발췌할 수 있는 구조가 갖춰집니다. 이후 통계·1차 출처를 보강하면 생성형 엔진의 출처 카드에 오를 확률이 실질적으로 올라갑니다.",
+    "위 세 가지만 반영해도 답변엔진(질문에 바로 답을 주는 AI 검색)이 발췌할 수 있는 구조가 갖춰집니다. 이후 통계·1차 출처를 보강하면 생성형 엔진의 출처 카드에 오를 확률이 실질적으로 올라갑니다.",
 };
 
 const DEMO_DEEP = {
@@ -905,7 +903,7 @@ function NavBar({ onNewScan }) {
           <Logo size={36} />
           <div className="leading-none min-w-0">
             <div style={{ color: T.ink, fontSize: 15, fontWeight: 600, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}>
-              AEOGEO
+              Pick AI
             </div>
             <div className="hidden sm:block" style={{ color: T.slate, fontSize: 11, marginTop: 4, letterSpacing: "0.04em", fontWeight: 500 }}>
               AI 성적표 · SEO·AEO·GEO·확산 진단
@@ -916,7 +914,6 @@ function NavBar({ onNewScan }) {
           {[
             { href: "#method", label: "진단 기준" },
             { href: "#deep", label: "정밀 진단" },
-            { href: CONTACT_MAILTO, label: "문의" },
           ].map((l) => (
             <a key={l.href} href={l.href} className="transition hover:opacity-70"
               style={{ color: T.ink, fontSize: 14, fontWeight: 500 }}>
@@ -946,7 +943,7 @@ function Footer() {
             <div className="flex items-center gap-3 mb-4">
               <Logo size={30} />
               <div className="leading-none">
-                <div style={{ color: T.onDark, fontSize: 14, fontWeight: 600 }}>AEOGEO</div>
+                <div style={{ color: T.onDark, fontSize: 14, fontWeight: 600 }}>Pick AI</div>
                 <div style={{ color: T.onDarkMuted, fontSize: 11, marginTop: 3, letterSpacing: "0.04em", fontWeight: 500 }}>
                   AI 성적표 · v0.1 Beta
                 </div>
@@ -962,7 +959,6 @@ function Footer() {
             {[
               { label: "진단 기준", href: "#method" },
               { label: "정밀 진단", href: "#deep" },
-              { label: "문의", href: CONTACT_MAILTO },
             ].map((l) => (
               <a key={l.label} href={l.href} className="transition hover:opacity-100"
                 style={{ color: T.onDarkMuted, fontSize: 13 }}>
@@ -973,7 +969,7 @@ function Footer() {
         </div>
         <div className="mt-8 pt-5 flex flex-wrap justify-between gap-2"
           style={{ borderTop: "1px solid rgba(255,255,255,0.1)", fontSize: 11 }}>
-          <span>© 2026 AEOGEO. All rights reserved.</span>
+          <span>© 2026 Pick AI. All rights reserved.</span>
           <span>베타 기간에는 정밀 진단을 포함한 모든 기능이 무료입니다.</span>
         </div>
       </div>
@@ -1000,7 +996,7 @@ const DEEP_STAGES = [
   "심사평 · 개선 지시 정리",
 ];
 
-const HISTORY_KEY = "aeogeo-history";
+const HISTORY_KEY = "pickai-history";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -1195,14 +1191,14 @@ export default function Home() {
   const shareResult = useCallback(async () => {
     if (!result) return;
     const shareUrl = `${window.location.origin}/?url=${encodeURIComponent(result.target.host)}`;
-    const text = `[AEOGEO AI 성적표] ${result.target.host} — 종합 ${result.report.overall}점 (${result.report.grade}등급) · SEO ${result.report.areas.seo.score} · AEO ${result.report.areas.aeo.score} · GEO ${result.report.areas.geo.score} · 확산 ${result.report.areas.reach.score}\n${shareUrl}`;
+    const text = `[Pick AI 성적표] ${result.target.host} — 종합 ${result.report.overall}점 (${result.report.grade}등급) · SEO ${result.report.areas.seo.score} · AEO ${result.report.areas.aeo.score} · GEO ${result.report.areas.geo.score} · 확산 ${result.report.areas.reach.score}\n${shareUrl}`;
     try { await navigator.clipboard.writeText(text); } catch {}
   }, [result]);
 
   const exportDirective = useCallback(() => {
     if (!result) return;
     const md = buildAiDirective(result, deepResult);
-    downloadText(`aeogeo-ai-directive-${result.target.host}.md`, md);
+    downloadText(`pickai-directive-${result.target.host}.md`, md);
   }, [result, deepResult]);
 
   const report = result?.report;
@@ -1232,17 +1228,17 @@ export default function Home() {
   return (
     <div style={{ background: T.surface, minHeight: "100vh" }}>
       <Head>
-        <title>AEOGEO — AI 성적표 · SEO·AEO·GEO·확산 무료 진단</title>
+        <title>Pick AI — AI 성적표 · SEO·AEO·GEO·확산 무료 진단</title>
         <meta name="description"
           content="AI가 답을 고르는 시대 — 결정론 체크 30개와 AI 크롤러 13종, 확산 신호 실측으로 사이트의 AI 검색 준비도를 60초 안에 진단합니다. 복붙 수정안, AI 실행 명령서(.md), 정밀 진단(LLM 심사)까지 베타 기간 무료." />
-        <meta property="og:title" content="AEOGEO — 우리 사이트, AI 검색에서 몇 점일까?" />
+        <meta property="og:title" content="Pick AI — 우리 사이트, AI 검색에서 몇 점일까?" />
         <meta property="og:description" content="SEO·AEO·GEO·확산 통합 무료 진단 — 60초 안에 점수·수정안·AI 명령서까지." />
         <meta name="twitter:card" content="summary" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            name: "AEOGEO — AI 성적표",
+            name: "Pick AI — AI 성적표",
             applicationCategory: "BusinessApplication",
             description: "웹사이트의 AI 검색 준비도(SEO·AEO·GEO·확산)를 무료로 진단하는 도구",
             offers: { "@type": "Offer", price: "0", priceCurrency: "KRW" },
@@ -1255,7 +1251,7 @@ export default function Home() {
             mainEntity: [
               {
                 "@type": "Question",
-                name: "AEOGEO AI 성적표는 무엇을 진단하나요?",
+                name: "Pick AI 성적표는 무엇을 진단하나요?",
                 acceptedAnswer: { "@type": "Answer", text: "검색엔진(SEO)·답변엔진(AEO)·생성형엔진(GEO)·확산 신호 4개 영역의 결정론 체크 30개로 사이트의 AI 검색 준비도를 진단합니다. 같은 사이트면 항상 같은 점수가 나오는 재현 가능한 채점입니다." },
               },
               {
@@ -1292,12 +1288,12 @@ export default function Home() {
               <span className="marker-underline">몇 점</span>일까요?
             </h1>
             <p style={{ color: T.slate, fontSize: 16, lineHeight: 1.7, marginTop: 18, fontWeight: 400 }}>
-              ChatGPT·Claude·Perplexity가 답을 고르는 시대 —<br className="hidden sm:block" />
+              ChatGPT·Claude·Gemini가 답을 고르는 시대 —<br className="hidden sm:block" />
               크롤 접근성부터 확산 신호까지 <strong style={{ color: T.ink, fontWeight: 600 }}>결정론 체크 30개</strong>를 60초 안에.
               수정안은 전부 복붙 가능, <strong style={{ color: T.ink, fontWeight: 600 }}>AI 명령서</strong>로 내보내 AI에게 시킬 수도 있습니다.
             </p>
 
-            <div className={`glass-card nl-shine ${stage === "running" ? "nl-shine-active" : ""} mx-auto mt-9`}
+            <div className="glass-card mx-auto mt-9"
               style={{ borderRadius: R.xxl, padding: 10, maxWidth: 620 }}>
               <form className="flex flex-col sm:flex-row sm:items-center gap-2" onSubmit={(e) => { e.preventDefault(); runScan(); }}>
                 <input
@@ -1532,7 +1528,7 @@ export default function Home() {
           {/* 정밀 진단 (LLM 심사) */}
           <section id="deep" style={{ background: T.surface, scrollMarginTop: 88 }}>
             <div className="max-w-[1280px] mx-auto px-6" style={{ paddingTop: 48, paddingBottom: 8 }} ref={deepRef}>
-              <Reveal className="glass-card nl-shine" style={{ borderRadius: R.xxxl, padding: "28px 30px" }}>
+              <Reveal className="glass-card" style={{ borderRadius: R.xxxl, padding: "28px 30px" }}>
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div style={{ maxWidth: 640 }}>
                     <div className="flex items-center gap-2.5 flex-wrap">
@@ -1857,7 +1853,7 @@ export default function Home() {
             </h2>
             <p style={{ color: T.onDarkMuted, fontSize: 15, lineHeight: 1.7, marginTop: 16, maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
               베타 기간에는 정밀 진단(LLM 심사)까지 전부 무료입니다.
-              써보고 아쉬운 점은 문의로 알려주세요 — 로드맵(실제 AI 인용률·브랜드 언급률 측정)에 반영합니다.
+              실제 AI 인용률·브랜드 언급률 측정은 로드맵에서 준비 중입니다.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-9">
               <button onClick={reset} className="btn-shine inline-flex items-center gap-1.5 transition hover:opacity-95 active:translate-y-px"
@@ -1869,14 +1865,6 @@ export default function Home() {
                 }}>
                 내 사이트 무료 진단 →
               </button>
-              <a href={CONTACT_MAILTO}
-                className="inline-flex items-center gap-1.5 transition hover:opacity-80"
-                style={{
-                  color: T.onDark, fontSize: 14, fontWeight: 500, padding: "14px 24px",
-                  borderRadius: R.full, border: "1px solid rgba(255,255,255,0.28)", textDecoration: "none",
-                }}>
-                피드백 · 문의
-              </a>
             </div>
           </Reveal>
         </div>
