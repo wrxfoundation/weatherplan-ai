@@ -1344,21 +1344,25 @@ function GroupHeader({ title, counts, collapsed, onToggle }) {
    빈 문자열("")로 두면 영상 레이어 자체를 렌더하지 않는다. */
 const HERO_VIDEO = process.env.NEXT_PUBLIC_HERO_VIDEO ?? "/hero.mp4";
 const HERO_POSTER = process.env.NEXT_PUBLIC_HERO_POSTER ?? "/hero-poster.jpg";
+/* 마감 CTA(어두운 섹션) 배경 영상 — 히어로와 별도 파일 */
+const FOOTER_VIDEO = process.env.NEXT_PUBLIC_FOOTER_VIDEO ?? "/footer.mp4";
+const FOOTER_POSTER = process.env.NEXT_PUBLIC_FOOTER_POSTER ?? "/footer-poster.jpg";
 
-function HeroVideo() {
+/* variant: "hero"(밝은 크림 스크림) | "footer"(어두운 네이비 스크림) */
+function VideoBackdrop({ src, poster, variant }) {
   const [ready, setReady] = useState(false);
-  if (!HERO_VIDEO) return null;
+  if (!src) return null;
   return (
-    <div className="hero-video-wrap" aria-hidden="true">
+    <div className={`${variant}-video-wrap`} aria-hidden="true">
       <video
-        className={`hero-video${ready ? " is-ready" : ""}`}
+        className={`${variant}-video${ready ? " is-ready" : ""}`}
         autoPlay muted loop playsInline preload="metadata"
-        poster={HERO_POSTER || undefined}
+        poster={poster || undefined}
         onCanPlay={() => setReady(true)}
       >
-        <source src={HERO_VIDEO} type="video/mp4" />
+        <source src={src} type="video/mp4" />
       </video>
-      <div className="hero-video-scrim" />
+      <div className={`${variant}-video-scrim`} />
     </div>
   );
 }
@@ -1401,6 +1405,14 @@ export default function Home() {
   const pushHistory = useCallback((entry) => {
     setHistory((prev) => {
       const next = [entry, ...prev.filter((h) => h.host !== entry.host)].slice(0, 5);
+      try { localStorage.setItem(HISTORY_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }, []);
+
+  const removeHistory = useCallback((host) => {
+    setHistory((prev) => {
+      const next = prev.filter((h) => h.host !== host);
       try { localStorage.setItem(HISTORY_KEY, JSON.stringify(next)); } catch {}
       return next;
     });
@@ -1656,7 +1668,7 @@ export default function Home() {
 
       {/* ─── HERO ─── */}
       <section className="relative overflow-hidden print-hide" style={{ background: T.canvas }}>
-        <HeroVideo />
+        <VideoBackdrop src={HERO_VIDEO} poster={HERO_POSTER} variant="hero" />
         <div className="hero-aurora" />
         <div className="orb orb-teal orb-float" style={{ width: 480, height: 480, top: "-5%", right: "-12%" }} />
         <div className="orb orb-lavender orb-float-slow" style={{ width: 380, height: 380, bottom: "-15%", left: "-8%" }} />
@@ -1707,13 +1719,28 @@ export default function Home() {
                 예시 리포트 미리 보기
               </button>
               {history.map((h) => (
-                <button key={h.host} onClick={() => runScan(h.host)} className="transition hover:opacity-75"
+                <span key={h.host} className="inline-flex items-center overflow-hidden"
                   style={{
-                    background: "rgba(255,255,255,0.7)", color: T.slate, fontSize: 12.5, fontWeight: 500,
-                    padding: "6px 14px", borderRadius: R.full, border: `1px solid ${T.hairlineSoft}`,
+                    background: "rgba(255,255,255,0.7)", borderRadius: R.full,
+                    border: `1px solid ${T.hairlineSoft}`,
                   }}>
-                  {h.host} · <span style={{ color: GRADE_META[h.grade]?.color, fontWeight: 600 }}>{h.score}점</span>
-                </button>
+                  <button onClick={() => runScan(h.host)} className="transition hover:opacity-70"
+                    title={`${h.host} 다시 진단`}
+                    style={{
+                      background: "transparent", border: "none", color: T.slate,
+                      fontSize: 12.5, fontWeight: 500, padding: "6px 6px 6px 14px",
+                    }}>
+                    {h.host} · <span style={{ color: GRADE_META[h.grade]?.color, fontWeight: 600 }}>{h.score}점</span>
+                  </button>
+                  <button onClick={() => removeHistory(h.host)} className="chip-x"
+                    aria-label={`${h.host} 기록 삭제`} title="기록 삭제"
+                    style={{
+                      background: "transparent", border: "none", color: T.stone,
+                      fontSize: 15, lineHeight: 1, padding: "6px 11px 7px 5px",
+                    }}>
+                    ×
+                  </button>
+                </span>
               ))}
             </div>
 
@@ -2315,7 +2342,8 @@ export default function Home() {
 
       {/* ─── 마감 CTA ─── */}
       <section className="relative overflow-hidden print-hide" style={{ background: T.footerBg }}>
-        <div className="max-w-[1280px] mx-auto px-6 text-center" style={{ paddingTop: 80, paddingBottom: 80 }}>
+        <VideoBackdrop src={FOOTER_VIDEO} poster={FOOTER_POSTER} variant="footer" />
+        <div className="max-w-[1280px] mx-auto px-6 text-center over-orb" style={{ paddingTop: 80, paddingBottom: 80 }}>
           <Reveal>
             <div style={{ color: T.brandTeal, fontSize: 13, fontWeight: 600, letterSpacing: "0.08em", marginBottom: 14 }}>
               FREE BETA

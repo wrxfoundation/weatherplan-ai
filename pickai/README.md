@@ -37,17 +37,25 @@ AI 총평과 정밀 진단(LLM 심사)만 비활성화됩니다.
 | `pages/api/benchmark-run.js` | 벤치마크 축적 (ADMIN_TOKEN 보호) |
 | `pages/api/cron-rescan.js` | 주간 자동 재진단 + 변동 알림 (Vercel Cron) |
 
-## 히어로 배경 영상 (선택)
+## 배경 영상 (선택) — 히어로 · 푸터 CTA
 
-히어로 섹션 배경에 무음·루프 영상을 깔 수 있다. 넣는 방법은 두 가지.
+두 곳에 무음·루프 배경 영상을 깔 수 있다.
+
+| 위치 | 파일 | 환경변수 | 스크림 |
+|---|---|---|---|
+| 히어로 | `public/hero.mp4` | `NEXT_PUBLIC_HERO_VIDEO` | 크림(밝은 배경·어두운 글씨) |
+| 마감 CTA | `public/footer.mp4` | `NEXT_PUBLIC_FOOTER_VIDEO` | 네이비(어두운 배경·흰 글씨) |
+
+포스터(첫 프레임) 이미지는 각각 `public/hero-poster.jpg`, `public/footer-poster.jpg`.
 
 ### 방법 1 — 파일로 넣기 (운영 권장)
 
 ```bash
-bash scripts/add-hero-video.sh "<영상 URL 또는 로컬 파일 경로>"
+bash scripts/add-hero-video.sh "<영상 URL 또는 로컬 파일 경로>"          # → public/hero.mp4
+bash scripts/add-hero-video.sh "<영상 URL 또는 로컬 파일 경로>" footer   # → public/footer.mp4
 ```
 
-스크립트가 `public/hero.mp4` 배치 + 무음·저용량 재인코딩 + `public/hero-poster.jpg`(첫 프레임) 추출까지 처리한다.
+스크립트가 배치 + 무음·저용량 재인코딩 + 포스터 추출까지 처리한다.
 ffmpeg이 없으면 원본을 그대로 배치한다. 수동으로 할 경우:
 
 ```bash
@@ -56,15 +64,18 @@ ffmpeg -i in.mp4 -an -vcodec libx264 -crf 30 -preset slow -movflags +faststart p
 
 ### 방법 2 — 환경변수로 외부 URL 지정 (빠른 확인용)
 
-Vercel 환경변수에 `NEXT_PUBLIC_HERO_VIDEO=https://...` 를 넣고 Redeploy 하면 파일 배치 없이 바로 확인된다.
-외부 호스트는 우리가 통제할 수 없으므로(만료·정책 변경 위험) **확인용으로만** 쓰고 운영에는 방법 1을 권장.
+Vercel 환경변수에 `NEXT_PUBLIC_HERO_VIDEO=https://...` / `NEXT_PUBLIC_FOOTER_VIDEO=https://...` 를 넣고
+Redeploy 하면 파일 배치 없이 바로 확인된다. 외부 호스트는 우리가 통제할 수 없으므로(만료·정책 변경 위험)
+**확인용으로만** 쓰고 운영에는 방법 1을 권장.
 
 ### 동작 규칙
 
-- 영상이 **없으면** 레이어는 투명하게 남고 기존 오로라 그라디언트 배경만 보인다 — 별도 설정 불필요
-- 헤드라인 가독성을 위해 영상 위에 크림색 스크림(`.hero-video-scrim`)이 덮인다.
-  너무 흐리거나 진하면 `styles/globals.css`의 스크림 alpha 값을 조절
-- 영상 레이어를 아예 끄려면 `NEXT_PUBLIC_HERO_VIDEO=""` (빈 문자열)
+- 영상이 **없으면** 레이어는 투명하게 남고 기존 배경(오로라 그라디언트 / 네이비)만 보인다 — 별도 설정 불필요
+- 본문 가독성을 위해 영상 위에 스크림이 덮인다. 히어로는 **헤드라인 뒤(중앙 상단)에만 집중적으로** 깔고
+  가장자리는 거의 덮지 않는다. 농도 조절은 `styles/globals.css`의
+  `.hero-video-scrim` / `.footer-video-scrim` alpha 값
+- 히어로 영상이 재생 중이면 오로라·오브가 자동으로 흐려진다(겹치면 화면이 뿌예지므로)
+- 영상 레이어를 끄려면 해당 환경변수를 `""`(빈 문자열)로
 - `prefers-reduced-motion` 사용자에게는 영상이 표시되지 않는다
 - 권장 사양: 16:9 · 1080p · 5초 내외 · 무음 · 2MB 이하(H.264 mp4)
 
