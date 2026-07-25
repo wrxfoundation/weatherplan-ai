@@ -13,7 +13,7 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const INSIGHT_MODEL = "claude-opus-4-8";
+const INSIGHT_MODEL = "claude-opus-5";
 
 const STATIC_SYSTEM_PROMPT = `당신은 Pick AI — 웹사이트의 AI 검색 준비도(SEO·AEO·GEO·확산) 진단 결과를 받아
 경영진에게 보고하듯 총평하는 컨설턴트입니다.

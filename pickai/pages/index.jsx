@@ -1362,7 +1362,7 @@ export default function Home() {
             </h1>
             <p style={{ color: T.slate, fontSize: 16, lineHeight: 1.7, marginTop: 18, fontWeight: 400 }}>
               ChatGPT·Claude·Gemini가 답을 고르는 시대 —<br className="hidden sm:block" />
-              크롤 접근성부터 확산 신호까지 <strong style={{ color: T.ink, fontWeight: 600 }}>결정론 체크 30개</strong>를 60초 안에.
+              크롤 접근성부터 확산 신호까지 <strong style={{ color: T.ink, fontWeight: 600 }}>결정론 체크 30개</strong>를 60초 안에.<br />
               수정안은 전부 복붙 가능, <strong style={{ color: T.ink, fontWeight: 600 }}>AI 명령서</strong>로 내보내 AI에게 시킬 수도 있습니다.
             </p>
 

@@ -26,7 +26,7 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const DEEP_MODEL = "claude-opus-4-8";
+const DEEP_MODEL = "claude-opus-5";
 const MAX_TEXT_CHARS = 9000;
 
 /* 정적 시스템 프롬프트 — 동적 값 절대 인터폴레이션 금지 (프롬프트 캐시) */
