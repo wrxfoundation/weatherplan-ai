@@ -1,13 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-07-24)
+# Korea Rising — verified K-pop snapshot (2026-07-25)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🏆 Circle Digital Chart — current #1
 **Rescene** — Love Attack  
-_Circle Digital Chart #1 (via Wikipedia) 2026-07-24 04:06 UTC · Skill Score 0.70_
+_Circle Digital Chart #1 (via Wikipedia) 2026-07-25 04:10 UTC · Skill Score 0.70_
 
 ## 🎬 Latest official releases (YouTube)
-- **GFriend** — [MASHUP] Dreamcatcher SIYEON x GFRIEND YUJU – Speechless
+- **LE SSERAFIM** — 키캡의 위험성
+- **aespa** — Hush hush #aespa #æspa #에스파 #エスパ #NINGNING #닝닝 #KISSNTELL #aespaKISSNTELL
 
 ## 🎤 Verified roster (639 acts)
 - **2NE1**: I Am the Best
@@ -142,7 +143,7 @@ _Circle Digital Chart #1 (via Wikipedia) 2026-07-24 04:06 UTC · Skill Score 0.7
 - **Virgin Books**: The Plotters
 - **WM Entertainment**: Oh My Girl
 - **WakeOne**: Kep1er, Zerobaseone
-- **Warner Bros. Records**: Purple Rain
+- **Warner Records Inc.**: Purple Rain
 - **Wizet**: MapleStory
 - **YG Entertainment**: 2NE1, AKMU, Babymonster, Blackpink, G-Dragon
 - **Yangsan**: Tongdosa
