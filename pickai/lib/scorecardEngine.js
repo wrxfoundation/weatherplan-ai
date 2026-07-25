@@ -337,6 +337,38 @@ export function analyzeHtml(html) {
     /^(how|what|why|when|where|who|which|can|does|do(es)?|is|are|should)\b/i.test(t);
   const questionHeadings = headings.filter((h) => isQuestion(h.text));
 
+  /* 구조화 블록 (리스트·표) — Princeton GEO 연구: 구조화 콘텐츠가 생성형 인용에 유리 */
+  const listCount = (src.match(/<[uo]l\b/gi) || []).length;
+  const tableCount = (src.match(/<table\b/gi) || []).length;
+
+  /* 인용문 신호 — Princeton KDD 2024 "Quotation Addition" 레버 */
+  const blockquoteCount = (src.match(/<blockquote\b/gi) || []).length;
+  const attributedQuoteCount = (text.match(/(에 따르면|라고 말했|라고 밝혔|라고 전했|according to|, said |, says )/gi) || []).length;
+
+  /* 답변 선행 배치 — Zyppy 2025: LLM 인용의 44.2%가 본문 앞 30%에서 발생 */
+  let firstStatRatio = null;
+  {
+    const m = text.match(/\d[\d,.]*/);
+    if (m && text.length > 0) firstStatRatio = +(m.index / text.length).toFixed(3);
+  }
+
+  /* 내부 링크 (발견 가능성) */
+  const internalLinkCount = anchors.filter((a) => {
+    const h = a.href;
+    return h && !/^(https?:|mailto:|tel:|javascript:|#)/i.test(h);
+  }).length;
+
+  /* 다국어(hreflang) */
+  const hasHreflang = links.some((l) =>
+    (l.rel || "").toLowerCase() === "alternate" && !!l.hreflang);
+
+  /* 검색 콘솔 소유 확인 메타 (네이버·구글) */
+  const naverVerification = !!metaBy("name", "naver-site-verification");
+  const googleVerification = !!metaBy("name", "google-site-verification");
+
+  /* 지식그래프 연결 — sameAs에 위키데이터/위키백과 */
+  const hasKnowledgeGraphLink = /wikidata\.org|wikipedia\.org/i.test(sameAsBlob);
+
   const scriptCount = (src.match(/<script\b/gi) || []).length;
   const spaMarkers = /id=["'](root|app|__next|___gatsby)["'][^>]*>\s*<\/(div|main)>/i.test(src) ||
     /window\.__NUXT__|window\.__INITIAL_STATE__/.test(src);
@@ -356,6 +388,9 @@ export function analyzeHtml(html) {
     statDensity, numberCount: numberTokens.length,
     sentenceCount: sentences.length, avgSentenceWords,
     scriptCount, spaMarkers,
+    listCount, tableCount, blockquoteCount, attributedQuoteCount,
+    firstStatRatio, internalLinkCount, hasHreflang,
+    naverVerification, googleVerification, hasKnowledgeGraphLink,
   };
 }
 
@@ -805,6 +840,122 @@ export function runScorecard(a) {
     fix: null,
   });
 
+  {
+    const reachable = a.status >= 200 && a.status < 300;
+    const ms = a.responseMs || 0;
+    add({
+      id: "response-speed", area: "seo", severity: "low", weight: 1,
+      label: "응답 속도 (서버 TTFB 근사)",
+      help: "AI 수집 로봇은 기다려주지 않습니다 — 응답이 느린 사이트는 수집을 중도 포기하는 경우가 많습니다. 첫 응답이 오기까지 걸린 시간을 봅니다.",
+      status: !reachable ? "na" : ms <= 1500 ? "pass" : ms <= 3000 ? "warn" : "fail",
+      summary: !reachable
+        ? "도달 실패 상태라 속도 평가를 제외합니다."
+        : ms <= 1500
+          ? `첫 응답 ${ms}ms — 크롤러가 쾌적하게 수집할 수 있는 속도입니다.`
+          : ms <= 3000
+            ? `첫 응답 ${ms}ms — 느린 편입니다. 크롤 빈도가 줄 수 있습니다.`
+            : `첫 응답 ${ms}ms — 매우 느립니다. AI 크롤러가 수집을 포기할 수 있습니다.`,
+      details: [
+        { k: "측정 응답 시간", v: `${ms}ms` },
+        { k: "권장", v: "1,500ms 이하" },
+      ],
+      passRule: "첫 응답 1,500ms 이하일 때 통과 (네트워크 상황에 따라 변동 가능한 참고 지표)",
+      fix: (!reachable || ms <= 1500) ? null : {
+        title: "서버 응답 가속",
+        action: "정리",
+        note: "CDN 캐싱, 서버 사이드 캐시, 불필요한 리다이렉트 제거가 가장 효과적입니다.",
+        code: null,
+      },
+    });
+  }
+
+  {
+    const h = a.headers || {};
+    const compressed = /gzip|br|deflate|zstd/i.test(h.contentEncoding || "");
+    const cacheable = !!(h.cacheControl || h.etag || h.lastModified);
+    const okCount = [compressed, cacheable].filter(Boolean).length;
+    add({
+      id: "crawl-efficiency", area: "seo", severity: "low", weight: 1,
+      label: "크롤 효율 (압축 · 캐시 헤더)",
+      help: "압축 전송과 캐시 헤더는 크롤러가 같은 예산으로 더 많은 페이지를 가져가게 해줍니다. 크롤 예산이 아껴질수록 사이트 전체가 더 자주, 더 깊게 수집됩니다.",
+      status: a.status >= 200 && a.status < 300
+        ? (okCount === 2 ? "pass" : okCount === 1 ? "warn" : "fail")
+        : "na",
+      summary: !(a.status >= 200 && a.status < 300)
+        ? "도달 실패 상태라 평가를 제외합니다."
+        : okCount === 2
+          ? "압축 전송과 캐시 헤더가 모두 있어 크롤 효율이 좋습니다."
+          : okCount === 1
+            ? `${compressed ? "압축은 되지만 캐시 헤더가 없습니다" : "캐시 헤더는 있지만 압축 전송이 확인되지 않습니다"} — 나머지 하나를 보강하세요.`
+            : "압축·캐시 헤더가 모두 확인되지 않습니다 — 크롤 예산이 낭비됩니다.",
+      details: [
+        { k: "Content-Encoding", v: h.contentEncoding || "(없음)" },
+        { k: "Cache-Control", v: h.cacheControl ? h.cacheControl.slice(0, 40) : "(없음)" },
+        { k: "ETag / Last-Modified", v: (h.etag || h.lastModified) ? "있음" : "없음" },
+      ],
+      passRule: "압축 전송 + 캐시 헤더(Cache-Control·ETag·Last-Modified 중 1개) 둘 다 있을 때 통과",
+      fix: okCount === 2 ? null : {
+        title: "압축·캐시 헤더 활성화",
+        action: "추가",
+        code: `# nginx 예시\ngzip on;\ngzip_types text/html text/css application/javascript application/json;\nadd_header Cache-Control "public, max-age=3600";`,
+      },
+    });
+  }
+
+  {
+    const nv = p.naverVerification;
+    const gv = p.googleVerification;
+    add({
+      id: "verification-meta", area: "seo", severity: "low", weight: 1,
+      label: "검색 콘솔 연동 신호 (네이버 · 구글)",
+      help: "네이버 서치어드바이저·구글 서치콘솔에 사이트를 등록하면 소유 확인 메타 태그가 남습니다. 이 태그는 '검색 성과를 실제로 관리하는 사이트'라는 운영 신호이자, 색인 요청·오류 확인의 출발점입니다.",
+      status: (nv && gv) ? "pass" : (nv || gv) ? "warn" : "fail",
+      summary: nv && gv
+        ? "네이버·구글 검색 콘솔 소유 확인이 모두 있습니다 — 색인을 능동 관리 중입니다."
+        : (nv || gv)
+          ? `${nv ? "네이버만" : "구글만"} 연동되어 있습니다 — ${nv ? "구글 서치콘솔" : "네이버 서치어드바이저"}도 등록하세요.`
+          : "검색 콘솔 소유 확인 메타가 없습니다 — 색인 상태를 확인·요청할 채널이 없습니다.",
+      details: [
+        { k: "naver-site-verification", v: nv ? "있음" : "없음" },
+        { k: "google-site-verification", v: gv ? "있음" : "없음" },
+      ],
+      passRule: "네이버·구글 소유 확인 메타가 모두 있을 때 통과",
+      fix: (nv && gv) ? null : {
+        title: "검색 콘솔 등록",
+        action: "추가",
+        note: "네이버 서치어드바이저와 구글 서치콘솔에서 발급받은 메타 태그를 <head>에 넣으세요.",
+        code: `<meta name="naver-site-verification" content="발급받은 코드">\n<meta name="google-site-verification" content="발급받은 코드">`,
+      },
+    });
+  }
+
+  {
+    const n = p.internalLinkCount || 0;
+    const reachable = a.status >= 200 && a.status < 300;
+    add({
+      id: "internal-links", area: "seo", severity: "low", weight: 1,
+      label: "내부 링크 구조",
+      help: "크롤러는 링크를 타고 사이트를 발견합니다. 페이지 안에 내부 링크가 충분해야 다른 페이지들도 수집·색인됩니다.",
+      status: !reachable ? "na" : n >= 10 ? "pass" : n >= 3 ? "warn" : "fail",
+      summary: !reachable
+        ? "도달 실패 상태라 평가를 제외합니다."
+        : n >= 10
+          ? `내부 링크 ${n}개 — 크롤러가 사이트 구조를 잘 발견할 수 있습니다.`
+          : n >= 3
+            ? `내부 링크가 ${n}개로 적습니다 — 주요 페이지로 가는 링크를 보강하세요.`
+            : `내부 링크가 ${n}개뿐입니다 — 크롤러가 다른 페이지를 발견할 경로가 없습니다.`,
+      details: [
+        { k: "내부 링크 수", v: `${n}개` },
+      ],
+      passRule: "내부 링크 10개 이상일 때 통과",
+      fix: (!reachable || n >= 10) ? null : {
+        title: "내비게이션·푸터 내부 링크 보강",
+        action: "추가",
+        code: `<nav>\n  <a href="/products">제품</a>\n  <a href="/pricing">가격</a>\n  <a href="/blog">블로그</a>\n  <a href="/about">회사 소개</a>\n</nav>`,
+      },
+    });
+  }
+
   add({
     id: "cwv", area: "seo", severity: "high", weight: 0,
     label: "Core Web Vitals (랩 측정)",
@@ -998,6 +1149,64 @@ export function runScorecard(a) {
     });
   }
 
+  {
+    const blocks = (p.listCount || 0) + (p.tableCount || 0);
+    const enough = (p.wordCount || 0) >= 100;
+    add({
+      id: "structured-blocks", area: "aeo", severity: "medium", weight: 1.5,
+      label: "구조화 블록 (리스트 · 표)",
+      help: "AI는 긴 문단보다 목록과 표를 훨씬 잘 발췌합니다. GEO 연구(Princeton, KDD 2024)에서도 구조화된 콘텐츠가 생성형 답변에 더 잘 인용되는 것으로 확인됐습니다.",
+      status: blocks >= 3 ? "pass" : blocks >= 1 ? "warn" : enough ? "fail" : "warn",
+      summary: blocks >= 3
+        ? `리스트·표 ${blocks}개 — AI가 발췌하기 좋은 구조화 콘텐츠입니다.`
+        : blocks >= 1
+          ? `리스트·표가 ${blocks}개뿐입니다 — 나열형 정보를 목록·표로 더 바꿔보세요.`
+          : enough
+            ? "리스트·표가 전혀 없습니다 — 전부 서술형 문단이면 AI가 발췌하기 어렵습니다."
+            : "본문이 적어 보수적으로 평가합니다 — 콘텐츠를 늘릴 때 목록·표 구조를 쓰세요.",
+      details: [
+        { k: "리스트(ul/ol)", v: `${p.listCount || 0}개` },
+        { k: "표(table)", v: `${p.tableCount || 0}개` },
+      ],
+      passRule: "리스트·표 합계 3개 이상일 때 통과",
+      fix: blocks >= 3 ? null : {
+        title: "나열 정보를 목록·표로 전환",
+        action: "재작성",
+        note: "제품 비교는 표로, 절차·특징은 번호/불릿 목록으로 바꾸세요.",
+        code: `<ul>\n  <li>특징 1 — 구체적 수치 포함</li>\n  <li>특징 2 — 구체적 수치 포함</li>\n</ul>`,
+      },
+    });
+  }
+
+  {
+    const r = p.firstStatRatio;
+    const hasStats = (p.numberCount || 0) > 0;
+    add({
+      id: "answer-position", area: "aeo", severity: "medium", weight: 1.5,
+      label: "답변 선행 배치 (핵심 정보의 위치)",
+      help: "LLM 인용의 44.2%가 본문 앞 30% 구간에서 나온다는 분석(Zyppy, 2025)이 있습니다. 결론과 핵심 수치를 서두에 두면 인용 확률이 크게 올라갑니다.",
+      status: !hasStats ? "fail" : r != null && r <= 0.3 ? "pass" : r != null && r <= 0.6 ? "warn" : "fail",
+      summary: !hasStats
+        ? "본문에 수치가 없어 선행 배치를 평가할 수 없습니다 — 우선 핵심 수치부터 넣으세요."
+        : r <= 0.3
+          ? `첫 번째 수치가 본문 앞 ${Math.round(r * 100)}% 지점에 등장합니다 — 인용되기 좋은 배치입니다.`
+          : r <= 0.6
+            ? `첫 번째 수치가 본문 ${Math.round(r * 100)}% 지점에야 등장합니다 — 핵심 정보를 서두로 끌어올리세요.`
+            : `핵심 수치가 본문 후반(${Math.round(r * 100)}% 지점)에 있습니다 — AI는 대부분 앞부분만 발췌합니다.`,
+      details: [
+        { k: "첫 수치 등장 위치", v: r != null ? `본문 ${Math.round(r * 100)}% 지점` : "(수치 없음)" },
+        { k: "권장", v: "앞 30% 이내" },
+      ],
+      passRule: "첫 번째 수치가 본문 앞 30% 이내에 등장할 때 통과",
+      fix: (hasStats && r != null && r <= 0.3) ? null : {
+        title: "핵심 결론·수치를 서두로 이동",
+        action: "재작성",
+        note: "첫 문단에서 결론과 대표 수치를 먼저 말하고, 배경 설명은 그 뒤로 미루세요.",
+        code: `<!-- 첫 문단 예시 -->\n<p>도입 기업 132곳의 재계약률은 91%입니다.\n이 성과의 배경에는 세 가지 이유가 있습니다.</p>`,
+      },
+    });
+  }
+
   add({
     id: "intent-format", area: "aeo", severity: "medium", weight: 0,
     label: "의도-포맷 일치 (LLM)",
@@ -1063,7 +1272,7 @@ export function runScorecard(a) {
   }
 
   {
-    const citeTypes = (p.ldTypes || []).filter((t) => /Article|FAQPage|Organization|Dataset|Report|HowTo/i.test(t));
+    const citeTypes = (p.ldTypes || []).filter((t) => /Article|FAQPage|Organization|Dataset|Report|HowTo|Product|Review|AggregateRating|VideoObject|Speakable/i.test(t));
     const hasAny = (p.jsonld || []).some((b) => b.ok);
     add({
       id: "citation-schema", area: "geo", severity: "high", weight: 2,
@@ -1178,6 +1387,59 @@ export function runScorecard(a) {
         action: "추가",
         note: "장식용이 아닌 모든 이미지에 내용을 설명하는 alt를 넣으세요.",
         code: `<img src="/chart.png" alt="2026년 상반기 도입 기업 수 추이 — 1월 40곳에서 6월 132곳으로 증가">`,
+      },
+    });
+  }
+
+  {
+    const bq = p.blockquoteCount || 0;
+    const att = p.attributedQuoteCount || 0;
+    add({
+      id: "quotation", area: "geo", severity: "medium", weight: 1.5,
+      label: "인용문 · 전문가 발언",
+      help: "GEO 원조 연구(Princeton, KDD 2024)가 확인한 3대 인용 레버 중 하나가 '인용문 추가'입니다. 출처가 달린 전문가 발언·인용문이 있는 콘텐츠는 생성형 답변에 인용될 확률이 최대 40%까지 올라갑니다.",
+      status: (bq >= 1 || att >= 2) ? "pass" : att >= 1 ? "warn" : "fail",
+      summary: bq >= 1 || att >= 2
+        ? `인용 블록 ${bq}개 · 출처 표기 발언 ${att}건 — 생성형 엔진이 신뢰하는 인용 구조입니다.`
+        : att >= 1
+          ? "출처 표기 발언이 1건 있습니다 — 전문가 인용을 더 보강하세요."
+          : "출처가 달린 인용문·전문가 발언이 없습니다 — GEO 3대 인용 레버 중 하나가 비어 있습니다.",
+      details: [
+        { k: "blockquote", v: `${bq}개` },
+        { k: "출처 표기 발언(에 따르면 등)", v: `${att}건` },
+      ],
+      passRule: "인용 블록 1개 이상 또는 출처 표기 발언 2건 이상일 때 통과",
+      fix: (bq >= 1 || att >= 2) ? null : {
+        title: "출처 있는 인용문 추가",
+        action: "재작성",
+        note: "권위자·기관의 발언을 실명 출처와 함께 인용하세요.",
+        code: `<blockquote>\n  "구체적 발언 내용" — 홍길동, ○○협회 회장 (2026)\n</blockquote>\n<p>○○연구원 보고서에 따르면 도입 효과는 평균 18%였습니다.</p>`,
+      },
+    });
+  }
+
+  {
+    const kg = p.hasKnowledgeGraphLink;
+    add({
+      id: "knowledge-graph", area: "geo", severity: "low", weight: 1,
+      label: "지식그래프 연결 (Wikidata · 위키백과 sameAs)",
+      help: "sameAs에 위키데이터·위키백과 문서를 연결하면 구글 지식그래프와 AI가 브랜드를 공인된 엔티티로 확정하는 데 도움이 됩니다. 소셜 링크보다 한 단계 강한 신원 증명입니다.",
+      status: kg ? "pass" : p.hasSameAs ? "warn" : "fail",
+      summary: kg
+        ? "sameAs에 위키데이터/위키백과 연결이 있습니다 — 엔티티 신원이 가장 강한 형태로 선언되어 있습니다."
+        : p.hasSameAs
+          ? "sameAs는 있지만 위키데이터/위키백과 연결이 없습니다 — 등재되어 있다면 반드시 연결하세요."
+          : "sameAs 자체가 없어 지식그래프 연결도 없습니다.",
+      details: [
+        { k: "Wikidata/위키백과 sameAs", v: kg ? "있음" : "없음" },
+        { k: "sameAs", v: p.hasSameAs ? "있음" : "없음" },
+      ],
+      passRule: "sameAs에 위키데이터 또는 위키백과 URL이 있을 때 통과",
+      fix: kg ? null : {
+        title: "지식그래프 sameAs 연결",
+        action: "추가",
+        note: "위키데이터에 브랜드 항목이 있다면 그 URL을, 없다면 우선 소셜 채널을 유지하며 3자 출처를 쌓으세요.",
+        code: `"sameAs": [\n  "https://www.wikidata.org/wiki/Q000000",\n  "https://ko.wikipedia.org/wiki/브랜드명"\n]`,
       },
     });
   }
@@ -1336,6 +1598,27 @@ export function runScorecard(a) {
     });
   }
 
+  {
+    add({
+      id: "hreflang-intl", area: "reach", severity: "low", weight: 1,
+      label: "다국어 신호 (hreflang)",
+      help: "hreflang은 '이 페이지의 영어판은 여기'라고 알려주는 표시입니다. 글로벌 AI 답변(영어 질문)에 인용되려면 다국어 버전과 이 연결이 필요합니다.",
+      status: p.hasHreflang ? "pass" : "warn",
+      summary: p.hasHreflang
+        ? "hreflang 다국어 연결이 있습니다 — 글로벌 AI 답변 노출 기반이 갖춰져 있습니다."
+        : "hreflang이 없습니다 — 한국어 단일 페이지는 영어권 AI 답변에 인용되기 어렵습니다 (내수 전용이라면 무시해도 됩니다).",
+      details: [
+        { k: "hreflang alternate", v: p.hasHreflang ? "있음" : "없음" },
+      ],
+      passRule: "hreflang alternate 링크가 1개 이상일 때 통과",
+      fix: p.hasHreflang ? null : {
+        title: "다국어 버전 + hreflang 연결 (선택)",
+        action: "추가",
+        code: `<link rel="alternate" hreflang="ko" href="https://example.com/">\n<link rel="alternate" hreflang="en" href="https://example.com/en/">`,
+      },
+    });
+  }
+
   /* ── 영역 점수 집계 ─────────────────────────── */
 
   const areas = {};
@@ -1371,13 +1654,13 @@ export function runScorecard(a) {
 
   /* ── 레이더 7축 ─────────────────────────────── */
   const AXES = [
-    { key: "tech",    label: "기술 기반",     ids: ["http-status", "https-tls", "robots-crawl", "noindex", "sitemap", "js-render-gap", "basic-meta"] },
-    { key: "content", label: "콘텐츠 구조",   ids: ["title-tag", "meta-description", "heading-structure", "heading-hierarchy", "readability"] },
-    { key: "schema",  label: "스키마·엔티티", ids: ["jsonld-valid", "entity-schema", "answer-schema", "citation-schema"] },
+    { key: "tech",    label: "기술 기반",     ids: ["http-status", "https-tls", "robots-crawl", "noindex", "sitemap", "js-render-gap", "basic-meta", "response-speed", "crawl-efficiency", "verification-meta", "internal-links"] },
+    { key: "content", label: "콘텐츠 구조",   ids: ["title-tag", "meta-description", "heading-structure", "heading-hierarchy", "readability", "structured-blocks", "answer-position"] },
+    { key: "schema",  label: "스키마·엔티티", ids: ["jsonld-valid", "entity-schema", "answer-schema", "citation-schema", "knowledge-graph"] },
     { key: "trust",   label: "신뢰 신호",     ids: ["eeat-onpage", "eeat-signals", "canonical"] },
     { key: "open",    label: "AI 개방성",     ids: ["ai-crawler-access", "llms-txt"] },
-    { key: "cite",    label: "인용 경쟁력",   ids: ["stats-density", "question-headings", "multimodal"] },
-    { key: "reach",   label: "확산 신호",     ids: ["social-channels", "share-card", "rss-feed", "wikipedia-presence", "newsletter"] },
+    { key: "cite",    label: "인용 경쟁력",   ids: ["stats-density", "question-headings", "multimodal", "quotation"] },
+    { key: "reach",   label: "확산 신호",     ids: ["social-channels", "share-card", "rss-feed", "wikipedia-presence", "newsletter", "hreflang-intl"] },
   ];
   const radar = AXES.map((ax) => {
     const list = checks.filter((c) => ax.ids.includes(c.id) && c.weight > 0 && c.status !== "na" && c.status !== "manual");

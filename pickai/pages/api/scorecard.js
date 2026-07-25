@@ -82,6 +82,12 @@ export default async function handler(req, res) {
     const finalUrl = chain.finalUrl;
     const html = chain.status >= 200 && chain.status < 300 ? await readBodyCapped(chain.resp) : "";
     const xRobotsTag = chain.resp.headers.get("x-robots-tag") || null;
+    const respHeaders = {
+      contentEncoding: chain.resp.headers.get("content-encoding") || null,
+      cacheControl: chain.resp.headers.get("cache-control") || null,
+      etag: chain.resp.headers.get("etag") || null,
+      lastModified: chain.resp.headers.get("last-modified") || null,
+    };
     const originBase = `${finalUrl.protocol}//${finalUrl.host}`;
 
     /* 2) HTML 분석 (조직명은 위키백과 조회에 필요) */
@@ -151,6 +157,7 @@ export default async function handler(req, res) {
       tlsValid: chain.tlsValid,
       tlsError: chain.tlsError,
       redirectLoop: chain.redirectLoop === true,
+      headers: respHeaders,
       mixedContentCount,
       xRobotsTag,
       parsed,

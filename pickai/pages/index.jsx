@@ -2,7 +2,7 @@
  * Pick AI — AI 성적표 (단일 서비스)
  * ─────────────────────────────────────────────
  * SEO · AEO · GEO · 확산 통합 무료 진단
- *  · 결정론 체크 30개 + AI 크롤러 13종 + 확산 신호 실측(위키백과 등)
+ *  · 결정론 체크 39개 + AI 크롤러 13종 + 확산 신호 실측(위키백과 등)
  *  · 정밀 진단(LLM 심사) — 베타 기간 한시 무료
  *  · 모든 체크에 (?) 일반인용 도움말
  *  · AI 명령서(.md) 내보내기 — AI 어시스턴트/코딩 에이전트에 붙여넣는 실행 지시서
@@ -644,7 +644,7 @@ function RadarProfileCard({ radar }) {
         <HelpToggle open={helpOpen} onToggle={() => setHelpOpen((v) => !v)} />
       </div>
       <p className="self-start" style={{ color: T.slate, fontSize: 12.5, lineHeight: 1.6, marginBottom: 10 }}>
-        결정론 체크 30개를 7개 역량축으로 재구성한 프로필입니다.
+        결정론 체크 39개를 7개 역량축으로 재구성한 프로필입니다.
       </p>
       {helpOpen && (
         <div className="self-start w-full" style={{ marginBottom: 10, marginTop: -2 }}>
@@ -882,6 +882,7 @@ function buildDemoResult() {
     tlsError: null,
     mixedContentCount: 0,
     xRobotsTag: null,
+    headers: { contentEncoding: "gzip", cacheControl: null, etag: null, lastModified: null },
     parsed,
     robots: { found: true, parsed: { groups: [{ agents: ["*"], rules: [{ type: "allow", path: "/" }] }], sitemaps: [] }, sitemaps: [] },
     llmsTxtFound: false,
@@ -1074,7 +1075,7 @@ const SCAN_STAGES = [
   "robots.txt · AI 봇 13종 접근성 검사",
   "구조 · 스키마 · 인용 신호 분석",
   "확산 신호 실측 (소셜 · RSS · 위키백과)",
-  "결정론 체크 30개 채점 · 리포트 생성",
+  "결정론 체크 39개 채점 · 리포트 생성",
 ];
 
 const DEEP_STAGES = [
@@ -1401,7 +1402,7 @@ export default function Home() {
       <Head>
         <title>Pick AI — AI 성적표 · SEO·AEO·GEO·확산 무료 진단</title>
         <meta name="description"
-          content="AI가 답을 고르는 시대 — 결정론 체크 30개와 AI 크롤러 13종, 확산 신호 실측으로 사이트의 AI 검색 준비도를 60초 안에 진단합니다. 복붙 수정안과 AI 실행 명령서(.md)까지 베타 기간 무료." />
+          content="AI가 답을 고르는 시대 — 결정론 체크 39개와 AI 크롤러 13종, 확산 신호 실측으로 사이트의 AI 검색 준비도를 60초 안에 진단합니다. 복붙 수정안과 AI 실행 명령서(.md)까지 베타 기간 무료." />
         <meta property="og:title" content="Pick AI — 우리 사이트, AI 검색에서 몇 점일까?" />
         <meta property="og:description" content="SEO·AEO·GEO·확산 통합 무료 진단 — 60초 안에 점수·수정안·AI 명령서까지." />
         <meta name="twitter:card" content="summary" />
@@ -1423,7 +1424,7 @@ export default function Home() {
               {
                 "@type": "Question",
                 name: "Pick AI 성적표는 무엇을 진단하나요?",
-                acceptedAnswer: { "@type": "Answer", text: "검색엔진(SEO)·답변엔진(AEO)·생성형엔진(GEO)·확산 신호 4개 영역의 결정론 체크 30개로 사이트의 AI 검색 준비도를 진단합니다. 같은 사이트면 항상 같은 점수가 나오는 재현 가능한 채점입니다." },
+                acceptedAnswer: { "@type": "Answer", text: "검색엔진(SEO)·답변엔진(AEO)·생성형엔진(GEO)·확산 신호 4개 영역의 결정론 체크 39개로 사이트의 AI 검색 준비도를 진단합니다. 같은 사이트면 항상 같은 점수가 나오는 재현 가능한 채점입니다." },
               },
               {
                 "@type": "Question",
@@ -1455,7 +1456,7 @@ export default function Home() {
             </h1>
             <p style={{ color: T.slate, fontSize: 16, lineHeight: 1.7, marginTop: 18, fontWeight: 400 }}>
               ChatGPT·Claude·Gemini가 답을 고르는 시대 —<br className="hidden sm:block" />
-              크롤 접근성부터 확산 신호까지 <strong style={{ color: T.ink, fontWeight: 600 }}>결정론 체크 30개</strong>를 60초 안에.<br />
+              크롤 접근성부터 확산 신호까지 <strong style={{ color: T.ink, fontWeight: 600 }}>결정론 체크 39개</strong>를 60초 안에.<br />
               수정안은 전부 복붙 가능, <strong style={{ color: T.ink, fontWeight: 600 }}>AI 명령서</strong>로 내보내 AI에게 시킬 수도 있습니다.
             </p>
 
