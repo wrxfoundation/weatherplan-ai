@@ -1335,11 +1335,15 @@ function GroupHeader({ title, counts, collapsed, onToggle }) {
 }
 
 /* ─── 히어로 배경 영상 ───
-   public/hero.mp4 를 넣으면 자동으로 재생된다. 파일이 없으면 onCanPlay가 오지 않아
-   투명한 상태로 남고 기존 오로라 배경이 그대로 보인다(= 안전한 폴백).
-   HERO_VIDEO를 null로 두면 영상 레이어 자체를 렌더하지 않는다. */
-const HERO_VIDEO = "/hero.mp4";
-const HERO_POSTER = "/hero-poster.jpg";
+   기본값은 public/hero.mp4. 파일이 없으면 onCanPlay가 오지 않아 투명한 상태로 남고
+   기존 오로라 배경이 그대로 보인다(= 안전한 폴백).
+
+   NEXT_PUBLIC_HERO_VIDEO 환경변수로 외부 URL을 넣으면 파일 배치 없이 바로 확인할 수 있다.
+   다만 외부 호스트는 우리가 통제할 수 없으므로 확인용으로만 쓰고,
+   운영에는 public/hero.mp4 로 직접 넣는 것을 권장.
+   빈 문자열("")로 두면 영상 레이어 자체를 렌더하지 않는다. */
+const HERO_VIDEO = process.env.NEXT_PUBLIC_HERO_VIDEO ?? "/hero.mp4";
+const HERO_POSTER = process.env.NEXT_PUBLIC_HERO_POSTER ?? "/hero-poster.jpg";
 
 function HeroVideo() {
   const [ready, setReady] = useState(false);
