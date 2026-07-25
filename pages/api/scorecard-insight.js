@@ -1,7 +1,7 @@
 /* ============================================================
  * Weather Plan AI · /api/scorecard-insight
  *
- * AI 성적표 — wellbian AI 총평 생성 (경량 모델 단발 호출)
+ * AI 성적표 — wellbian AI 총평 생성 (Sonnet 단발 호출)
  *
  * 규약 (CLAUDE.md):
  * - 시스템 프롬프트는 정적 문자열만 (동적 값 인터폴레이션 금지 — 프롬프트 캐시)
@@ -16,10 +16,10 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const INSIGHT_MODEL = "claude-haiku-4-5-20251001";
+const INSIGHT_MODEL = "claude-sonnet-5";
 
 /* 정적 시스템 프롬프트 — 동적 값 절대 인터폴레이션 금지 */
-const STATIC_SYSTEM_PROMPT = `당신은 "wellbian AI" — Weather Plan AI(케이웨더 디지털사업본부)의 AI 컨설턴트입니다.
+const STATIC_SYSTEM_PROMPT = `당신은 "wellbian AI" — Weather Plan AI의 AI 컨설턴트입니다.
 사용자 웹사이트의 AI 검색 준비도(SEO·AEO·GEO) 진단 결과를 받아 경영진에게 보고하듯 총평합니다.
 
 역할:

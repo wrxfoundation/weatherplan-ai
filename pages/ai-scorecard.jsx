@@ -740,7 +740,7 @@ function NavLite() {
               Weather Plan AI <span style={{ color: T.brandTeal }}>·</span> AI 성적표
             </div>
             <div className="hidden sm:block" style={{ color: T.slate, fontSize: 11, marginTop: 4, letterSpacing: "0.04em", fontWeight: 500 }}>
-              by KWeather · wellbian AI
+              powered by wellbian AI
             </div>
           </div>
         </a>
@@ -783,12 +783,12 @@ function FooterLite() {
               <div className="leading-none">
                 <div style={{ color: T.onDark, fontSize: 14, fontWeight: 600 }}>Weather Plan AI</div>
                 <div style={{ color: T.onDarkMuted, fontSize: 11, marginTop: 3, letterSpacing: "0.04em", fontWeight: 500 }}>
-                  by KWeather · wellbian AI
+                  powered by wellbian AI
                 </div>
               </div>
             </div>
             <p style={{ fontSize: 13, lineHeight: 1.65, maxWidth: 300 }}>
-              국내 최초·최대 날씨 기반 광고 AI.<br />코스닥 상장 케이웨더 디지털사업본부.
+              국내 최초·최대 날씨 기반 광고 AI.<br />AI 검색 시대의 노출과 전환을 함께 설계합니다.
             </p>
           </div>
           <div className="flex flex-wrap gap-x-10 gap-y-3">
@@ -806,7 +806,7 @@ function FooterLite() {
           </div>
         </div>
         <div className="mt-8 pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.1)", fontSize: 11 }}>
-          © 2026 KWeather Corp. All rights reserved.
+          © 2026 Weather Plan AI. All rights reserved.
         </div>
       </div>
     </footer>
@@ -1004,7 +1004,7 @@ export default function AiScorecard() {
             offers: { "@type": "Offer", price: "0", priceCurrency: "KRW" },
             publisher: {
               "@type": "Organization",
-              name: "케이웨더 디지털사업본부",
+              name: "Weather Plan AI",
               url: "https://weatherplan-ai.vercel.app",
             },
           }),
@@ -1491,7 +1491,7 @@ export default function AiScorecard() {
               AI가 우리 사이트를 인용하게 만들었다면,<br />이제 <span style={{ color: T.brandTeal }}>팔리는 타이밍</span>을 잡을 차례
             </h2>
             <p style={{ color: T.onDarkMuted, fontSize: 15, lineHeight: 1.7, marginTop: 16, maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
-              Weather Plan AI는 케이웨더 데이터로 "언제 광고해야 팔리는지"를 알려주는
+              Weather Plan AI는 날씨 데이터로 "언제 광고해야 팔리는지"를 알려주는
               B2B 의사결정 AI입니다. AI 성적표로 노출 기반을 다졌다면, 날씨 타이밍으로 전환을 만드세요.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-9">
