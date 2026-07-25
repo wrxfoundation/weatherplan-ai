@@ -189,8 +189,8 @@ export default function Methodology() {
           </P>
           <P style={{ marginBottom: 8 }}>
             <strong>왜 믿을 수 있나</strong> — ① 같은 사이트는 언제나 같은 점수(결정론·재현 가능)
-            ② 모든 항목의 통과 조건·가중치 공개 ③ 단위 테스트 20건 + 처방 민감도 검증
-            (방치 F 33점 → 처방 적용 → A 100점, 단조 상승) 통과 ④ 측정 불가 항목은 점수에서
+            ② 모든 항목의 통과 조건·가중치 공개 ③ 단위 테스트 31건 + 처방 민감도 검증
+            (방치 F 31점 → 처방 7단계 → A 100점, 단조 상승) 통과 ④ 측정 불가 항목은 점수에서
             제외하며 실패로 위장하지 않음.
           </P>
           <P style={{ marginBottom: 0 }}>
@@ -334,6 +334,48 @@ export default function Methodology() {
           </div>
         ))}
 
+        {/* 5-1. 연구 근거 보강 레버 */}
+        <div style={{ marginTop: 8 }}>
+          <div className="flex items-center gap-2.5" style={{ marginBottom: 10 }}>
+            <Chip bg={T.lavender} fg={T.lavenderInk}>2026.07 보강</Chip>
+            <span style={{ color: T.ink, fontSize: 14, fontWeight: 600 }}>외부 연구 기반 추가 레버 9종</span>
+          </div>
+          <Card style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${T.hairlineStrong}` }}>
+                  {["체크", "영역", "근거"].map((h) => (
+                    <th key={h} style={{ textAlign: "left", padding: "8px 8px", color: T.steel, fontWeight: 600, fontSize: 11.5 }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["인용문 · 전문가 발언", "GEO", "Princeton 외 (KDD 2024) — 3대 인용 레버 'Quotation Addition'. 통계·출처·인용문이 생성형 노출을 최대 +40% 개선"],
+                  ["답변 선행 배치", "AEO", "Zyppy (2025) — LLM 인용의 44.2%가 본문 앞 30% 구간에서 발생. 첫 수치 등장 위치를 측정"],
+                  ["구조화 블록 (리스트·표)", "AEO", "동일 연구군 — 구조화 콘텐츠가 서술형 문단보다 발췌·인용에 유리"],
+                  ["응답 속도 (TTFB 근사)", "SEO", "업계 공통 — AI 크롤러는 느린 응답에서 수집을 중도 포기"],
+                  ["크롤 효율 (압축·캐시 헤더)", "SEO", "크롤 예산 최적화 — 같은 예산으로 더 많은 페이지 수집"],
+                  ["검색 콘솔 연동 (네이버·구글)", "SEO", "한국 시장 특화 — 색인 능동 관리의 운영 신호 (벤치마크 원본에 없던 항목)"],
+                  ["내부 링크 구조", "SEO", "크롤러의 페이지 발견 경로 확보"],
+                  ["지식그래프 연결 (Wikidata sameAs)", "GEO", "소셜보다 강한 엔티티 신원 증명 — 지식그래프·AI의 브랜드 확정에 기여"],
+                  ["다국어 신호 (hreflang)", "확산", "영어권 AI 답변 인용 대비 — 글로벌 확산 기반"],
+                ].map((row) => (
+                  <tr key={row[0]} style={{ borderBottom: `1px solid ${T.hairlineSoft}`, verticalAlign: "top" }}>
+                    <td style={{ padding: "8px 8px", color: T.ink, fontWeight: 600, whiteSpace: "nowrap" }}>{row[0]}</td>
+                    <td style={{ padding: "8px 8px", color: T.charcoal, whiteSpace: "nowrap" }}>{row[1]}</td>
+                    <td style={{ padding: "8px 8px", color: T.slate, lineHeight: 1.6 }}>{row[2]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card>
+          <P style={{ color: T.slate, fontSize: 12.5 }}>
+            인용 친화 스키마 타입도 확장되었습니다 (Product · Review · AggregateRating ·
+            VideoObject · Speakable — 이커머스 별점 스니펫과 음성 AI 대응).
+          </P>
+        </div>
+
         {/* 6. 크롤러 판정 */}
         <H2 id="crawler" num="6.">AI 크롤러 판정 원리</H2>
         <P>
@@ -420,8 +462,9 @@ export default function Methodology() {
         {/* 9. 검증 */}
         <H2 id="validation" num="9.">검증 결과</H2>
         <P>
-          <strong>단위 테스트 20건</strong> — robots 파서(최장 일치·와일드카드·그룹 공유), HTML 분석
-          (스키마·소셜·질문형 헤딩 감지), 채점 구성({detChecks.length}개 결정론 + {manualChecks.length}개 제외),
+          <strong>단위 테스트 31건</strong> — robots 파서(최장 일치·와일드카드·그룹 공유 + 네이버형
+          Allow: /$ 등 실제 대형 사이트 패턴 11건), HTML 분석(스키마·소셜·질문형 헤딩·인용문·구조화
+          블록 감지), 채점 구성({detChecks.length}개 결정론 + {manualChecks.length}개 제외),
           동일 입력 → 동일 출력(결정론), 치명 결함 게이팅 — 전부 통과.
         </P>
         <P>
@@ -466,7 +509,7 @@ export default function Methodology() {
             <li><strong>인용률 정량 보장 없음</strong> — "점수 N점 상승 = 인용률 M% 상승"은 현재 실측 불가. 체크 항목은 업계 공통 인용 요인에 근거하지만, 인과의 최종 검증은 반복 프로빙(로드맵)이 필요.</li>
             <li><strong>홈 1페이지 기준</strong> — 진단은 입력한 URL 1페이지를 봅니다. 사이트 전체 감사는 페이지별 반복 진단으로 근사.</li>
             <li><strong>휴리스틱의 한계</strong> — About 링크·저자 표기 등 일부 신호는 패턴 감지라 드물게 오탐/미탐 가능. 상세 판정 근거를 모두 노출해 사람이 재확인할 수 있게 함.</li>
-            <li><strong>로드맵</strong> — ① 실제 AI 인용률·브랜드 언급률(SOV) 반복 프로빙 ② Core Web Vitals 랩 측정 ③ 다중 페이지 감사.</li>
+            <li><strong>로드맵</strong> — ① 실제 AI 인용률·브랜드 언급률(SOV) 반복 프로빙 ② Core Web Vitals 랩 측정 ③ 다중 페이지 감사(사이트맵 기반) ④ 진단 이력 저장·점수 추이 추적 ⑤ 경쟁사 나란히 비교 모드 ⑥ 자체 벤치마크 DB(국내 기업 실측 축적).</li>
           </ul>
         </Card>
 
