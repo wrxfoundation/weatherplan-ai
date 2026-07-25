@@ -1135,7 +1135,8 @@ function Footer() {
             {[
               { label: "진단 기준", href: "#method" },
               ...(DEEP_SCAN_ENABLED ? [{ label: "정밀 진단", href: "#deep" }] : []),
-              { label: "측정 설계서 (내부)", href: "/methodology" },
+              /* 측정 설계서(/methodology)는 내부용 — 링크를 노출하지 않는다.
+                 페이지 자체는 URL로 직접 접근 가능하며 noindex + robots.txt Disallow 유지. */
             ].map((l) => (
               <a key={l.label} href={l.href} className="transition hover:opacity-100"
                 style={{ color: T.onDarkMuted, fontSize: 13 }}>
