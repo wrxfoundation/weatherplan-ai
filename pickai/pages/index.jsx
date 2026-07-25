@@ -1348,20 +1348,55 @@ const HERO_POSTER = process.env.NEXT_PUBLIC_HERO_POSTER ?? "/hero-poster.jpg";
 const FOOTER_VIDEO = process.env.NEXT_PUBLIC_FOOTER_VIDEO ?? "/footer.mp4";
 const FOOTER_POSTER = process.env.NEXT_PUBLIC_FOOTER_POSTER ?? "/footer-poster.jpg";
 
-/* variant: "hero"(밝은 크림 스크림) | "footer"(어두운 네이비 스크림) */
+/* variant: "hero"(밝은 크림 스크림) | "footer"(어두운 네이비 스크림)
+ *
+ * 화면 밖에 있는 영상은 브라우저가 로딩과 자동재생을 미룬다(특히 푸터처럼 접힌 아래).
+ * 그래서 canplay 이벤트만 기다리면 영영 나타나지 않는다.
+ * 뷰포트 근처에 들어온 시점에 직접 load()·play()를 걸고,
+ * 준비 신호도 loadeddata/canplay/playing 중 먼저 오는 것으로 받는다. */
 function VideoBackdrop({ src, poster, variant }) {
   const [ready, setReady] = useState(false);
+  const [near, setNear] = useState(false);
+  const wrapRef = useRef(null);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver !== "function") { setNear(true); return; }
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { setNear(true); io.disconnect(); }
+    }, { rootMargin: "400px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!near || !v) return;
+    v.preload = "auto";
+    try { v.load(); } catch {}
+    /* 자동재생이 막힌 환경에서는 play()가 거부된다 — 그래도 첫 프레임은 로드되므로
+       정지 화면으로라도 배경이 남는다. */
+    const p = v.play();
+    if (p && typeof p.catch === "function") p.catch(() => {});
+  }, [near]);
+
   if (!src) return null;
+  const markReady = () => setReady(true);
   return (
-    <div className={`${variant}-video-wrap`} aria-hidden="true">
+    <div ref={wrapRef} className={`${variant}-video-wrap`} aria-hidden="true">
       <video
+        ref={videoRef}
         className={`${variant}-video${ready ? " is-ready" : ""}`}
-        autoPlay muted loop playsInline preload="metadata"
+        autoPlay muted loop playsInline preload="none"
         poster={poster || undefined}
-        onCanPlay={() => setReady(true)}
-      >
-        <source src={src} type="video/mp4" />
-      </video>
+        onLoadedData={markReady}
+        onCanPlay={markReady}
+        onPlaying={markReady}
+        onError={() => console.warn(`[Pick AI] 배경 영상을 불러오지 못했습니다: ${src}`)}
+        src={src}
+      />
       <div className={`${variant}-video-scrim`} />
     </div>
   );
