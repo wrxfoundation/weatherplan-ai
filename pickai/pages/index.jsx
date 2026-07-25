@@ -995,18 +995,18 @@ function NavBar({ onNewScan }) {
             </div>
           </div>
         </a>
-        <div className="hidden md:flex items-center gap-7">
-          {[
-            { href: "#method", label: "진단 기준" },
-            ...(DEEP_SCAN_ENABLED ? [{ href: "#deep", label: "정밀 진단" }] : []),
-          ].map((l) => (
-            <a key={l.href} href={l.href} className="transition hover:opacity-70"
-              style={{ color: T.ink, fontSize: 14, fontWeight: 500 }}>
-              {l.label}
-            </a>
-          ))}
-        </div>
         <div className="flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-6 mr-5">
+            {[
+              { href: "#method", label: "진단 기준" },
+              ...(DEEP_SCAN_ENABLED ? [{ href: "#deep", label: "정밀 진단" }] : []),
+            ].map((l) => (
+              <a key={l.href} href={l.href} className="transition hover:opacity-70"
+                style={{ color: T.ink, fontSize: 14, fontWeight: 500 }}>
+                {l.label}
+              </a>
+            ))}
+          </div>
           {DEEP_SCAN_ENABLED && (
             <span className="hidden md:inline-flex mr-2">
               <Tag_ tint="lavender">정밀 진단 베타 무료</Tag_>
