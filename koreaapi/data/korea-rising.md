@@ -1,14 +1,10 @@
-# Korea Rising — verified K-pop snapshot (2026-07-25)
+# Korea Rising — verified K-pop snapshot (2026-07-26)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
-## 🏆 Circle Digital Chart — current #1
-**Rescene** — Love Attack  
-_Circle Digital Chart #1 (via Wikipedia) 2026-07-25 04:10 UTC · Skill Score 0.70_
-
 ## 🎬 Latest official releases (YouTube)
-- **LE SSERAFIM** — 키캡의 위험성
-- **aespa** — Hush hush #aespa #æspa #에스파 #エスパ #NINGNING #닝닝 #KISSNTELL #aespaKISSNTELL
+- **ZEROBASEONE** — 우당탕탕 차차차 ♫⋆｡♪ ₊
+- **LE SSERAFIM** — 2026 LE SSERAFIM TOUR ‘PUREFLOW’ IN JAPAN #KIMCHAEWON POV👀🙌 #LE_SSERAFIM #르세라핌 #PUREFLOW_IN_JAPAN
 
 ## 🎤 Verified roster (639 acts)
 - **2NE1**: I Am the Best
@@ -16,6 +12,7 @@ _Circle Digital Chart #1 (via Wikipedia) 2026-07-25 04:10 UTC · Skill Score 0.7
 - **Abyss Company**: Sunmi
 - **Amorepacific Corporation**: Laneige, Mamonde
 - **Andong**: Hahoe Folk Village
+- **Atlético Madrid**: Lee Kang-in
 - **BPM Entertainment**: Viviz
 - **BTS**: Boy with Luv, Spring Day
 - **Belift Lab**: Enhypen, Illit
@@ -104,7 +101,6 @@ _Circle Digital Chart #1 (via Wikipedia) 2026-07-25 04:10 UTC · Skill Score 0.7
 - **Odolttogi (Animation Studio)**: Leafie, A Hen into the Wild
 - **Paldal-gu**: Suwon World Cup Stadium
 - **Paris Croissant**: Paris Baguette
-- **Paris Saint-Germain FC**: Lee Kang-in
 - **Pledis Entertainment**: Seventeen
 - **Pohang**: Pohang University of Science and Technology
 - **Psy**: Gangnam Style
@@ -143,7 +139,7 @@ _Circle Digital Chart #1 (via Wikipedia) 2026-07-25 04:10 UTC · Skill Score 0.7
 - **Virgin Books**: The Plotters
 - **WM Entertainment**: Oh My Girl
 - **WakeOne**: Kep1er, Zerobaseone
-- **Warner Records Inc.**: Purple Rain
+- **Warner Bros. Records**: Purple Rain
 - **Wizet**: MapleStory
 - **YG Entertainment**: 2NE1, AKMU, Babymonster, Blackpink, G-Dragon
 - **Yangsan**: Tongdosa
