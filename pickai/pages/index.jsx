@@ -18,6 +18,7 @@ import Head from "next/head";
 import {
   analyzeHtml, runScorecard, AI_BOTS, DEEP_RUBRIC, deepVerdict,
 } from "../lib/scorecardEngine";
+import { buildComparison, comparisonToMarkdown } from "../lib/compare";
 
 /* ═════════════════════════════════════════════════════════════
    0.  DESIGN TOKENS
@@ -758,6 +759,252 @@ function RadarProfileCard({ radar }) {
    5.  AI 총평 카드
    ═════════════════════════════════════════════════════════════ */
 
+/* ─── 경쟁사 나란히 비교 ───
+   내 사이트 진단이 끝난 뒤, 경쟁사 주소를 넣으면 같은 39개 체크로 재보고
+   "경쟁사는 갖췄는데 우리는 빠뜨린 항목"을 뽑아 준다. 이게 실제 작업 목록이다. */
+function RankBar({ value, isMe }) {
+  const g = GRADE_META[gradeLetter(value)] || GRADE_META.C;
+  return (
+    <div style={{ background: "rgba(5,0,56,0.06)", borderRadius: R.full, height: 8, overflow: "hidden" }}>
+      <div style={{
+        width: `${Math.max(2, value)}%`, height: "100%", borderRadius: R.full,
+        background: isMe ? T.brandTeal : g.color, opacity: isMe ? 1 : 0.45,
+        transition: "width 0.6s cubic-bezier(0.22,1,0.36,1)",
+      }} />
+    </div>
+  );
+}
+
+function gradeLetter(score) {
+  return score >= 85 ? "A" : score >= 75 ? "B" : score >= 65 ? "C" : score >= 50 ? "D" : "F";
+}
+
+function CompareCard({ state, rows, comparison, onAdd, onRemove, onRun, onReset }) {
+  const [openGap, setOpenGap] = useState(null);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const busy = state === "running";
+
+  return (
+    <Reveal className="glass-card" style={{ borderRadius: R.xxl, padding: "22px 24px" }}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2" style={{ color: T.ink, fontSize: 15, fontWeight: 600 }}>
+            경쟁사 나란히 비교
+            <HelpToggle open={helpOpen} onToggle={() => setHelpOpen((v) => !v)} />
+          </div>
+          <div style={{ color: T.steel, fontSize: 12.5, marginTop: 4 }}>
+            같은 기준·같은 시점으로 재기 때문에 점수를 그대로 비교할 수 있습니다.
+          </div>
+        </div>
+        {comparison && (
+          <BtnSecondary compact onClick={onReset}>비교 초기화</BtnSecondary>
+        )}
+      </div>
+
+      {helpOpen && (
+        <HelpBox>
+          경쟁사 주소를 넣으면 똑같은 39개 항목으로 함께 진단해, 경쟁사는 통과했는데 우리만 놓친 항목을 뽑아 줍니다.
+          무엇부터 손봐야 할지 가장 빠르게 알 수 있는 목록입니다.
+        </HelpBox>
+      )}
+
+      {/* 입력 */}
+      {!comparison && (
+        <div className="mt-4">
+          <div className="flex flex-col gap-2">
+            {rows.map((row, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <input
+                  value={row.url}
+                  onChange={(e) => onAdd(i, e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") onRun(); }}
+                  placeholder={`경쟁사 ${i + 1} 주소 — 예: competitor.co.kr`}
+                  inputMode="url" autoComplete="url" spellCheck={false}
+                  disabled={busy}
+                  className="flex-1 min-w-0"
+                  style={{
+                    color: T.ink, fontSize: 14, fontWeight: 500, padding: "9px 13px",
+                    borderRadius: R.lg, border: `1px solid ${T.hairline}`,
+                    background: "rgba(255,255,255,0.7)", outline: "none",
+                  }}
+                  aria-label={`경쟁사 ${i + 1} 주소`}
+                />
+                {rows.length > 1 && !busy && (
+                  <button onClick={() => onRemove(i)} className="chip-x" aria-label={`경쟁사 ${i + 1} 입력 삭제`}
+                    style={{ background: "transparent", border: "none", color: T.stone, fontSize: 16, padding: "6px 8px", borderRadius: R.full }}>
+                    ×
+                  </button>
+                )}
+                {row.error && (
+                  <span style={{ color: T.coralDark, fontSize: 12 }}>{row.error}</span>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-2 mt-3">
+            <BtnPrimary compact onClick={onRun} disabled={busy}>
+              {busy ? "비교 진단 중…" : "비교하기"}
+            </BtnPrimary>
+            {rows.length < 2 && !busy && (
+              <BtnSecondary compact onClick={() => onAdd(rows.length, "")}>경쟁사 추가</BtnSecondary>
+            )}
+            <span style={{ color: T.stone, fontSize: 12 }}>최대 2곳 · 각 사이트당 10~30초</span>
+          </div>
+        </div>
+      )}
+
+      {/* 결과 */}
+      {comparison && (
+        <div className="mt-5">
+          <div style={{ color: T.charcoal, fontSize: 13.5, fontWeight: 600, marginBottom: 10 }}>
+            총점 순위 — {comparison.myRank}위 / {comparison.total}개 사이트
+          </div>
+          <div className="flex flex-col gap-2.5">
+            {comparison.ranking.map((r, i) => (
+              <div key={r.inputHost + i} className="flex items-center gap-3">
+                <span style={{ color: T.stone, fontSize: 12, width: 16, textAlign: "right" }}>{i + 1}</span>
+                <span style={{
+                  color: r.isMe ? T.ink : T.slate, fontSize: 13,
+                  fontWeight: r.isMe ? 600 : 500, width: 190,
+                  overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                }} title={r.inputHost}>
+                  {r.inputHost}{r.isMe && <span style={{ color: T.brandTeal, fontWeight: 600 }}> (우리)</span>}
+                </span>
+                <span className="flex-1 min-w-0"><RankBar value={r.overall} isMe={r.isMe} /></span>
+                <span style={{ color: T.ink, fontSize: 13, fontWeight: 600, width: 34, textAlign: "right" }}>{r.overall}</span>
+                <GradeBadge grade={r.grade} size={26} />
+                {!r.reachable && (
+                  <span style={{ color: T.coralDark, fontSize: 11 }}>도달 불가</span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* 영역별 */}
+          <div className="mt-6 overflow-x-auto">
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 460 }}>
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${T.hairline}` }}>
+                  <th style={{ textAlign: "left", padding: "8px 10px", color: T.steel, fontWeight: 500, fontSize: 12 }}>영역</th>
+                  <th style={{ textAlign: "right", padding: "8px 10px", color: T.ink, fontWeight: 600, fontSize: 12 }}>우리</th>
+                  {comparison.rivals.map((rv) => (
+                    <th key={rv.inputHost} style={{ textAlign: "right", padding: "8px 10px", color: T.steel, fontWeight: 500, fontSize: 12, maxWidth: 130, overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {rv.inputHost}
+                    </th>
+                  ))}
+                  <th style={{ textAlign: "right", padding: "8px 10px", color: T.steel, fontWeight: 500, fontSize: 12 }}>격차</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparison.areaRows.map((row) => (
+                  <tr key={row.key} style={{ borderBottom: `1px solid ${T.hairlineSoft}` }}>
+                    <td style={{ padding: "9px 10px", color: T.charcoal }}>{row.label}</td>
+                    <td style={{ padding: "9px 10px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{row.mine}</td>
+                    {row.rivals.map((v, i) => (
+                      <td key={i} style={{ padding: "9px 10px", textAlign: "right", color: T.slate }}>{v}</td>
+                    ))}
+                    <td style={{
+                      padding: "9px 10px", textAlign: "right", fontWeight: 600,
+                      color: row.delta > 0 ? T.mossDark : row.delta < 0 ? T.coralDark : T.steel,
+                    }}>
+                      {row.delta > 0 ? `+${row.delta}` : row.delta}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* 격차 목록 — 핵심 */}
+          <div className="mt-6">
+            <div style={{ color: T.ink, fontSize: 14, fontWeight: 600, marginBottom: 4 }}>
+              경쟁사는 갖췄는데 우리가 빠뜨린 항목 · {comparison.gaps.length}건
+            </div>
+            <div style={{ color: T.steel, fontSize: 12.5, marginBottom: 12 }}>
+              여기부터 처리하면 격차가 가장 빨리 좁혀집니다.
+            </div>
+            {comparison.gaps.length === 0 ? (
+              <div style={{ color: T.slate, fontSize: 13, padding: "14px 16px", background: "rgba(78,179,168,0.08)", borderRadius: R.lg }}>
+                경쟁사가 통과하고 우리가 놓친 항목이 없습니다.
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {comparison.gaps.map((g) => {
+                  const open = openGap === g.id;
+                  return (
+                    <div key={g.id} style={{ border: `1px solid ${T.hairlineSoft}`, borderRadius: R.lg, overflow: "hidden" }}>
+                      <button
+                        onClick={() => setOpenGap(open ? null : g.id)}
+                        className="w-full flex flex-wrap items-center gap-2 text-left transition hover:opacity-80"
+                        style={{ background: "rgba(255,255,255,0.6)", border: "none", padding: "11px 14px" }}
+                        aria-expanded={open}
+                      >
+                        <StatusChip status={g.mine} compact />
+                        <AreaChip area={g.area} />
+                        <span style={{ color: T.ink, fontSize: 13.5, fontWeight: 500, flex: 1, minWidth: 160 }}>{g.label}</span>
+                        <span style={{ color: T.steel, fontSize: 12 }}>
+                          {g.rivals.filter((r) => r.status === "pass").map((r) => r.host).join(", ")} 통과
+                        </span>
+                        <span style={{ color: T.stone, fontSize: 12 }}>{open ? "▴" : "▾"}</span>
+                      </button>
+                      {open && (
+                        <div style={{ padding: "12px 14px", borderTop: `1px solid ${T.hairlineSoft}`, background: "rgba(255,255,255,0.35)" }}>
+                          <div style={{ color: T.slate, fontSize: 13, lineHeight: 1.65 }}>{g.summary}</div>
+                          {g.help && (
+                            <div style={{ color: T.steel, fontSize: 12.5, lineHeight: 1.6, marginTop: 6 }}>{g.help}</div>
+                          )}
+                          {g.fix?.how && (
+                            <div style={{ marginTop: 10 }}>
+                              <div style={{ color: T.ink, fontSize: 12.5, fontWeight: 600, marginBottom: 4 }}>조치</div>
+                              <div style={{ color: T.slate, fontSize: 13, lineHeight: 1.65 }}>{g.fix.how}</div>
+                            </div>
+                          )}
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {g.rivals.map((r, i) => (
+                              <span key={i} style={{
+                                fontSize: 11.5, color: T.slate, background: "rgba(5,0,56,0.04)",
+                                padding: "3px 9px", borderRadius: R.full,
+                              }}>
+                                {r.host} · {STATUS_META[r.status]?.label || r.status}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {comparison.wins.length > 0 && (
+            <div className="mt-5">
+              <div style={{ color: T.charcoal, fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
+                우리가 앞선 항목 · {comparison.wins.length}건
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {comparison.wins.map((w) => (
+                  <span key={w.id} style={{
+                    fontSize: 12, color: T.slate, background: "rgba(78,179,168,0.10)",
+                    padding: "4px 11px", borderRadius: R.full,
+                  }}>
+                    {w.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div style={{ color: T.stone, fontSize: 11.5, marginTop: 16, lineHeight: 1.6 }}>
+            비교 결과는 AI 명령서에도 함께 담깁니다. 경쟁사 사이트는 공개된 첫 화면만 읽으며, 로그인이 필요한 영역은 진단하지 않습니다.
+          </div>
+        </div>
+      )}
+    </Reveal>
+  );
+}
+
 function InsightCard({ state, insight }) {
   return (
     <div className="glass-card"
@@ -830,7 +1077,7 @@ function InsightCard({ state, insight }) {
    6.  AI 명령서 생성기 (.md)
    ═════════════════════════════════════════════════════════════ */
 
-function buildAiDirective(result, deepResult) {
+function buildAiDirective(result, deepResult, comparison) {
   const r = result.report;
   const t = result.target;
   const date = new Date(result.scannedAt || Date.now());
@@ -894,6 +1141,11 @@ function buildAiDirective(result, deepResult) {
       if (it.rationale) lines.push(`- 심사평: ${it.rationale}`);
       (it.improvements || []).forEach((im) => lines.push(`- 지시: ${im}`));
     }
+  }
+
+  if (comparison) {
+    lines.push("");
+    lines.push(comparisonToMarkdown(comparison));
   }
 
   lines.push("");
@@ -1417,6 +1669,10 @@ export default function Home() {
   const [deepError, setDeepError] = useState(null);  // { message, hint }
   const [history, setHistory] = useState([]);
   const [trend, setTrend] = useState(null);   // { enabled, history, benchmark }
+  /* 경쟁사 비교 */
+  const [rivalRows, setRivalRows] = useState([{ url: "", error: "" }]);
+  const [compareState, setCompareState] = useState("idle");  // idle | running | done
+  const [comparison, setComparison] = useState(null);
   const [areaTab, setAreaTab] = useState("all");
   const [showPassed, setShowPassed] = useState(false);
   const [issueGroup, setIssueGroup] = useState("severity");  // severity | area | status
@@ -1494,6 +1750,10 @@ export default function Home() {
     setDeepResult(null);
     setAreaTab("all");
     setShowPassed(false);
+    /* 다른 사이트를 새로 진단하면 기존 비교 결과는 의미가 없다 */
+    setComparison(null);
+    setCompareState("idle");
+    setRivalRows([{ url: "", error: "" }]);
 
     try {
       const resp = await fetch("/api/scorecard", {
@@ -1601,6 +1861,9 @@ export default function Home() {
     setDeepState("idle");
     setDeepResult(null);
     setErrorMsg("");
+    setComparison(null);
+    setCompareState("idle");
+    setRivalRows([{ url: "", error: "" }]);
     setTimeout(() => inputRef.current?.focus(), 60);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
@@ -1614,9 +1877,74 @@ export default function Home() {
 
   const exportDirective = useCallback(() => {
     if (!result) return;
-    const md = buildAiDirective(result, deepResult);
+    const md = buildAiDirective(result, deepResult, comparison);
     downloadText(`pickai-directive-${result.target.host}.md`, md);
-  }, [result, deepResult]);
+  }, [result, deepResult, comparison]);
+
+  /* ── 경쟁사 비교 ──
+     서버 함수를 새로 만들지 않고 기존 /api/scorecard를 사이트 수만큼 병렬 호출한다.
+     각 호출이 자기 타임아웃을 갖기 때문에 한 함수에 몰아넣는 것보다 안전하다. */
+  const setRivalUrl = useCallback((i, url) => {
+    setRivalRows((prev) => {
+      const next = prev.slice();
+      if (i >= next.length) next.push({ url, error: "" });
+      else next[i] = { ...next[i], url, error: "" };
+      return next.slice(0, 2);
+    });
+  }, []);
+
+  const removeRival = useCallback((i) => {
+    setRivalRows((prev) => (prev.length <= 1 ? prev : prev.filter((_, k) => k !== i)));
+  }, []);
+
+  const resetCompare = useCallback(() => {
+    setComparison(null);
+    setCompareState("idle");
+    setRivalRows([{ url: "", error: "" }]);
+  }, []);
+
+  const runCompare = useCallback(async () => {
+    if (!result || compareState === "running") return;
+    const targets = rivalRows.map((r) => (r.url || "").trim()).filter(Boolean);
+    if (targets.length === 0) {
+      setRivalRows((prev) => prev.map((r, i) => (i === 0 ? { ...r, error: "주소를 입력해 주세요" } : r)));
+      return;
+    }
+    setCompareState("running");
+    setRivalRows((prev) => prev.map((r) => ({ ...r, error: "" })));
+
+    const settled = await Promise.all(targets.map(async (url) => {
+      try {
+        const resp = await fetch("/api/scorecard", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) return { url, error: data.error || "진단 실패" };
+        return { url, data };
+      } catch {
+        return { url, error: "네트워크 오류" };
+      }
+    }));
+
+    const good = settled.filter((s) => s.data).map((s) => s.data);
+    if (good.length === 0) {
+      setRivalRows((prev) => prev.map((r) => {
+        const hit = settled.find((s) => s.url === (r.url || "").trim());
+        return hit?.error ? { ...r, error: hit.error } : r;
+      }));
+      setCompareState("idle");
+      return;
+    }
+    /* 일부만 실패한 경우 — 성공한 곳끼리 비교하고 실패는 해당 입력칸에 표시 */
+    setRivalRows((prev) => prev.map((r) => {
+      const hit = settled.find((s) => s.url === (r.url || "").trim());
+      return hit?.error ? { ...r, error: hit.error } : r;
+    }));
+    setComparison(buildComparison(result, good));
+    setCompareState("done");
+  }, [result, rivalRows, compareState]);
 
   const report = result?.report;
   const checksById = useMemo(() => {
@@ -1883,7 +2211,7 @@ export default function Home() {
 
                     <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mt-4 print-hide">
                       <BtnPrimary compact onClick={exportDirective}>AI 명령서 (.md) ↓</BtnPrimary>
-                      <span className="inline-flex"><CopyBtn text={() => buildAiDirective(result, deepResult)} label="AI 명령서 복사" doneLabel="복사 완료 ✓" /></span>
+                      <span className="inline-flex"><CopyBtn text={() => buildAiDirective(result, deepResult, comparison)} label="AI 명령서 복사" doneLabel="복사 완료 ✓" /></span>
                       <BtnSecondary compact onClick={() => window.print()}>리포트 인쇄 · PDF</BtnSecondary>
                       <BtnSecondary compact onClick={shareResult}>결과 링크 복사</BtnSecondary>
                       <BtnSecondary compact onClick={reset}>새 진단</BtnSecondary>
@@ -1893,6 +2221,18 @@ export default function Home() {
               </Reveal>
 
               <TrendCard trend={trend} host={result.target.inputHost || result.target.host} />
+
+              <div className="mt-4 print-hide">
+                <CompareCard
+                  state={compareState}
+                  rows={rivalRows}
+                  comparison={comparison}
+                  onAdd={setRivalUrl}
+                  onRemove={removeRival}
+                  onRun={runCompare}
+                  onReset={resetCompare}
+                />
+              </div>
             </div>
           </section>
 
