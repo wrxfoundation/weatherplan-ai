@@ -2230,6 +2230,7 @@ def _write_entity_html(out_dir: str, slug: str, url: str, primary, by_kind: dict
 <link rel="alternate" hreflang="en" href="{url}">
 <link rel="alternate" hreflang="ko" href="{_SITE_BASE}/ko/artist/{slug}.html">
 <link rel="alternate" hreflang="x-default" href="{url}">
+<link rel="alternate" type="application/json" href="./{slug}.json" title="this verified record as JSON (same content_hash as /latest.json)">
 {_social_meta(title, desc, url, "profile")}
 <script type="application/ld+json">
 {jsonld}
@@ -2259,7 +2260,7 @@ def _write_entity_html(out_dir: str, slug: str, url: str, primary, by_kind: dict
 {rel_block}
 {nearby_block}
 {guide_block}
-<div class=cite><b>Cite as:</b> {cite}<br><span class=rom>{url}</span><br><span class=rom>SHA-256: {content_hash} · verify at <a href="../integrity.json">/integrity.json</a></span></div>
+<div class=cite><b>Cite as:</b> {cite}<br><span class=rom>{url}</span><br><span class=rom>SHA-256: {content_hash} · <a href="./{slug}.json">record JSON</a> · <a href="../verify.html">how to verify</a> · <a href="../integrity.json">/integrity.json</a></span></div>
 <footer>Provenance: {src} · Skill Score {sc:.2f} · <a href="../latest.json">/latest.json</a> &middot; <a href="../llms.txt">/llms.txt</a></footer>
 </body></html>"""
     with open(os.path.join(out_dir, "artist", f"{slug}.html"), "w", encoding="utf-8") as f:
@@ -2765,6 +2766,7 @@ def _write_entity_html_ko(out_dir: str, slug: str, en_url: str, primary, *, hist
 <link rel="alternate" hreflang="ko" href="{ko_url}">
 <link rel="alternate" hreflang="en" href="{en_url}">
 <link rel="alternate" hreflang="x-default" href="{en_url}">
+<link rel="alternate" type="application/json" href="../../artist/{slug}.json" title="검증 레코드 JSON (latest.json과 동일 content_hash)">
 {_social_meta(title, desc, ko_url, "profile")}
 <script type="application/ld+json">
 {jsonld}
@@ -2789,7 +2791,7 @@ def _write_entity_html_ko(out_dir: str, slug: str, en_url: str, primary, *, hist
 {guide_block_ko}
 {label_block_ko}
 {qa_block}
-<div class=cite><b>이렇게 인용하세요:</b> {cite}<br><span class=rom>{ko_url}</span><br><span class=rom>SHA-256: {content_hash} · <a href="../../integrity.json">/integrity.json</a>에서 검증</span></div>
+<div class=cite><b>이렇게 인용하세요:</b> {cite}<br><span class=rom>{ko_url}</span><br><span class=rom>SHA-256: {content_hash} · <a href="../../artist/{slug}.json">레코드 JSON</a> · <a href="../verify.html">검증 방법</a> · <a href="../../integrity.json">/integrity.json</a></span></div>
 <footer>출처(provenance): {src} · Skill Score {sc:.2f} · <a href="../../latest.json">/latest.json</a> &middot; <a href="../../llms.txt">/llms.txt</a></footer>
 </body></html>"""
     with open(os.path.join(out_dir, "ko", "artist", f"{slug}.html"), "w", encoding="utf-8") as f:
@@ -3097,6 +3099,9 @@ def _agents_manifest() -> dict:
         },
         "data": {
             "open_json": f"{_SITE_BASE}/latest.json",
+            "entity_json": f"{_SITE_BASE}/artist/<slug>.json",  # per-entity slice of latest.json (same
+            #   items, same content_hash) — fetch ONE verified record, not the corpus; slugs via
+            #   search-index.json or reconcile.json
             "openapi": f"{_SITE_BASE}/openapi.json",  # OpenAPI 3.1 — auto-consumable HTTP API contract
             "changes_feed": f"{_SITE_BASE}/changes.json",  # verified change events (소속사 moves, renames)
             "certified_feed": f"{_SITE_BASE}/certified.json",  # official rights-holder certifications (supply-side)
@@ -3176,6 +3181,8 @@ def _write_for_agents(out_dir: str) -> None:
         f"<ul>{prods}</ul>"
         "<h2>No setup? Use the open data</h2><ul>"
         "<li><a href=\"./latest.json\">/latest.json</a> — every verified record (provenance + Skill Score + content_hash)</li>"
+        "<li><code>/artist/&lt;slug&gt;.json</code> — ONE entity's records (same items + content_hash "
+        "as /latest.json); slugs via <a href=\"./search-index.json\">/search-index.json</a></li>"
         "<li><a href=\"./llms-full.txt\">/llms-full.txt</a> — the full corpus, one citable block per entity</li>"
         "<li><a href=\"./feed.xml\">/feed.xml</a> · <a href=\"./feed.json\">/feed.json</a> — recently verified</li>"
         "<li><a href=\"./reconcile.json\">/reconcile.json</a> — resolve a name or external ID to the canonical entity (the ID spine)</li>"
@@ -3947,6 +3954,10 @@ def verify_site(site_dir: str = "_site", min_entities: int = 100) -> dict:
         n = len([f for f in os.listdir(d) if f.endswith(".html")]) if os.path.isdir(d) else 0
         stats[sub.replace(os.sep, "/")] = n
         need(n >= min_entities, f"{sub}/ has {n} < {min_entities} entity pages")
+    ad = os.path.join(site_dir, "artist")
+    n_twin = len([f for f in os.listdir(ad) if f.endswith(".json")]) if os.path.isdir(ad) else 0
+    stats["artist_json"] = n_twin  # the per-entity record twins ride along `cp -r site/artist`
+    need(n_twin >= min_entities, f"artist/ has {n_twin} < {min_entities} record-JSON twins")
     return {"ok": not failures, "failures": failures, "stats": stats}
 
 
@@ -4056,6 +4067,15 @@ async def entity_pages(db_path: str | None = None, out_dir: str = "site") -> dic
         _write_entity_html_ko(out_dir, slug, url, primary,  # Korean-led counterpart (/ko/artist/…)
                               history=histories.get(entity_id), nearby=nearby, region_guide=region_guide,
                               label_slug=(ag_slug if label_url else None))
+        # Machine twin (/artist/<slug>.json): this entity's slice of /latest.json — the SAME item
+        # shape and the SAME content_hash, addressable per entity. An agent fetches ONE verified
+        # record instead of the whole corpus; /verify.html step 2 applies to it unchanged.
+        twin = [json.loads(r.model_dump_json())
+                for _k, r in sorted(by_kind.items(), key=lambda kv: (kv[0] != "facts", kv[0]))]
+        for it in twin:
+            it["content_hash"] = integrity.record_fingerprint(it)
+        with open(os.path.join(out_dir, "artist", f"{slug}.json"), "w", encoding="utf-8") as jf:
+            json.dump(twin, jf, ensure_ascii=False, indent=2)
         ko_written.append((slug, primary.name.ko or name))
         written.append({"slug": slug, "name": name, "url": url})
 
@@ -4377,6 +4397,8 @@ async def llms_txt(db_path: str | None = None, out_path: str = "llms.txt") -> st
 - {len(linked)} verified people (directors + cross-work cast/creators), each a citable hub page linking their works.
 {sample_lines}
 - Per-entity answer pages (Schema.org + FAQPage): {_SITE_BASE}/artist/<slug>.html
+- Per-entity record JSON (the same items + content_hash as /latest.json, addressable one entity at a
+  time — fetch ONE verified record, not the corpus): {_SITE_BASE}/artist/<slug>.json
 - Per-person credit pages (Schema.org Person): {_SITE_BASE}/person/<slug>.html
 - Guides (verified region travel + dietary food, EN/KO): {_SITE_BASE}/guides.html
 - Recently verified changes (the freshness moat, crawlable): {_SITE_BASE}/whats-new.html

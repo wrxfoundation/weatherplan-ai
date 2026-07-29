@@ -78,7 +78,9 @@ Hallucination cannot enter a record: extraction is labor, grounding is the gate.
   (+/ko/), `/guides.html` index (+/ko/), `/whats-new.html` (+/ko/), `/search.html` (+/ko/, ?q= deep
   links) over `search-index.json` (entities + people + labels), `/verify.html` (+/ko/, the trustless
   re-verification walkthrough: re-download → re-hash → compare), custom `/404.html`.
-- **Machine**: `/latest.json` · `/changes.json` · `/reconcile.json` · `/status.json` · `/integrity.json`
+- **Machine**: `/latest.json` · per-entity record twins `/artist/<slug>.json` (the entity's exact
+  latest.json slice, same content_hash — fetch ONE record, not the corpus; gated by verifysite) ·
+  `/changes.json` · `/reconcile.json` · `/status.json` · `/integrity.json`
   (+ append-only log; OpenTimestamps when enabled) · `/certified.json` · `/openapi.json` ·
   `/agents.json` · `/feed.xml` · `/feed.json` · `/llms.txt` · `/llms-full.txt` · per-vertical
   `/llms-<vertical>.txt` chunks · `/sitemap.xml` · `/robots.txt`.

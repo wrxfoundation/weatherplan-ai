@@ -16,6 +16,10 @@ Korean-surface parity, a self-healing freshness engine, and deploy safety.
   re-verification via content_hash + integrity chain), the manifest also at `/.well-known/agent.json`.
 - **MCP over a URL**: the HTTP app mounts the MCP server at `/mcp` (Streamable HTTP) — one
   deployment serves REST + MCP; any MCP client connects with zero install (`agents.json → mcp.http`).
+- **Per-entity record JSON** (`/artist/<slug>.json`) — the entity's exact `/latest.json` slice (same
+  items, same `content_hash`), so the static host serves one addressable verified record per entity;
+  linked from every entity page (`rel=alternate` + the cite line), advertised in `agents.json →
+  data.entity_json` + `llms.txt`, and required by the `verifysite` deploy gate.
 - ~18x faster serving reads: every store scan collapsed to one window-function query
   (`store.latest_all`).
 
