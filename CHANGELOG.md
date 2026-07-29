@@ -47,6 +47,10 @@ Korean-surface parity, a self-healing freshness engine, and deploy safety.
   glass + signature-edge design) as `og:image` + large Twitter card on every page, an inline SVG
   favicon everywhere, and the home's WebSite node now declares its `?q=` search (**SearchAction**,
   sitelinks-searchbox form) with an Organization `logo`.
+- **Open-data catalog**: per-vertical corpus slices (`/latest-<vertical>.json` — the fetch unit
+  between one entity twin and the full corpus, same `content_hash` per record), `reconcile.json`
+  entries now point at each entity's record twin (`record`), and **`/data.html`** (+ `/ko/`)
+  catalogs every machine surface with copy-paste fetches.
 
 ### Data engine & ops
 - **refresh** — re-verifies the stalest discovered entities every collect tick (half-TTL threshold,

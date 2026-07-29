@@ -90,6 +90,7 @@ jobs:
           cp feed.json _site/feed.json   # JSON Feed at /feed.json
           cp data/korea-rising.md _site/korea-rising.md   # shareable verified digest
           cp data/latest.json _site/latest.json   # open machine-readable verified data
+          cp data/latest-*.json _site/ 2>/dev/null || true   # per-vertical corpus slices (JSON twin of llms-<v>.txt)
           cp data/openapi.json _site/openapi.json   # OpenAPI 3.1 spec — auto-consumable HTTP API contract
           cp data/changes.json _site/changes.json   # verified change feed (소속사 moves, renames) — advertised in agents.json/llms.txt
           cp data/certified.json _site/certified.json   # official rights-holder certification registry (supply-side)

@@ -599,6 +599,15 @@ async def export(db_path: str | None = None, *, out_dir: str = "data") -> dict:
         rec["content_hash"] = integrity.record_fingerprint(rec)
     with open(os.path.join(out_dir, "latest.json"), "w", encoding="utf-8") as f:
         json.dump(latest_list, f, ensure_ascii=False, indent=2)
+    # Per-vertical slices (/latest-<vertical>.json): the fetch unit between one entity twin and the
+    # full corpus — "every verified beach / K-pop artist" in one request. The SAME items (same
+    # content_hash) partitioned by entity_id prefix, so slice verification == corpus verification.
+    by_vert: dict[str, list] = {}
+    for rec in latest_list:
+        by_vert.setdefault(rec["entity_id"].split(":", 1)[0], []).append(rec)
+    for v, items in sorted(by_vert.items()):
+        with open(os.path.join(out_dir, f"latest-{v}.json"), "w", encoding="utf-8") as f:
+            json.dump(items, f, ensure_ascii=False, indent=2)
     # changes.json — the freshness grind made visible: verified change events (소속사 moves, renames)
     # across the store, the stale facts LLMs miss. A GEO magnet + proof the operational grind works.
     changes = _compute_changes(recs)
@@ -1469,6 +1478,7 @@ async def report_html(db_path: str | None = None, out_path: str = "report.html")
  <a class="pill" href="./whats-new.html">🆕 What's new</a>
  <a class="pill" href="./search.html">🔍 Search</a>
  <a class="pill" href="./verify.html">🧾 Verify it yourself</a>
+ <a class="pill" href="./data.html">🗂 Data catalog</a>
  <a class="pill" href="./latest.json">/latest.json · open data</a>
  <a class="pill" href="./openapi.json">/openapi.json · OpenAPI 3.1</a>
  <a class="pill" href="./llms.txt">/llms.txt · agent index</a>
@@ -3197,7 +3207,10 @@ def _agents_manifest() -> dict:
             ],
         },
         "data": {
+            "catalog": f"{_SITE_BASE}/data.html",  # every machine surface, one legible page
             "open_json": f"{_SITE_BASE}/latest.json",
+            "vertical_json": f"{_SITE_BASE}/latest-<vertical>.json",  # one vertical's slice (same
+            #   items + content_hash as the corpus) — artist · place · food · beach · …
             "entity_json": f"{_SITE_BASE}/artist/<slug>.json",  # per-entity slice of latest.json (same
             #   items, same content_hash) — fetch ONE verified record, not the corpus; slugs via
             #   search-index.json or reconcile.json
@@ -3952,6 +3965,77 @@ def _write_verify(out_dir: str) -> None:
                             _breadcrumb("검증", f"{_SITE_BASE}/ko/verify.html")]}))
 
 
+def _write_data_catalog(out_dir: str) -> None:
+    """/data.html (+ /ko/) — the open-data catalog: ONE page listing every machine surface with what
+    it is and a copy-paste fetch. The machine assets multiplied (corpus, slices, twins, llms chunks,
+    feeds, reconciliation, integrity) — without a catalog, each one is discoverable only by reading
+    agents.json or the docs. This is the human-legible developer-portal front door."""
+    def sec(title: str, rows: list[tuple[str, str]], curl: str | None = None) -> str:
+        lis = "".join(f"<li><a href=\"{h}\"><code>{html.escape(h.lstrip('.'))}</code></a> — "
+                      f"{d}</li>" for h, d in rows)
+        pre = f"<pre><code>{html.escape(curl)}</code></pre>" if curl else ""
+        return f"<h2>{title}</h2><ul>{lis}</ul>{pre}"
+
+    en_body = (
+        "<p class=lede>Every verified record is fetchable at three sizes — one entity, one vertical, "
+        "or the whole corpus — plus feeds, resolution, and the integrity chain. All static, all "
+        "hash-verifiable, no key.</p>"
+        + sec("Corpus · slices · single records", [
+            ("./latest.json", "the full verified corpus (provenance + Skill Score + content_hash per record)"),
+            ("./latest-artist.json", "one vertical's slice — the pattern is <code>/latest-&lt;vertical&gt;.json</code> (artist · place · food · …)"),
+            ("./artist/bts.json", "ONE entity's records — <code>/artist/&lt;slug&gt;.json</code>, same items + content_hash as the corpus"),
+        ], f"curl -s {_SITE_BASE}/latest-artist.json | jq '.[0]'")
+        + sec("LLM-ready text", [
+            ("./llms.txt", "the agent index (what this is, tools, coverage)"),
+            ("./llms-full.txt", "the whole corpus as one ingestible text"),
+        ]).replace("</ul>", "<li><code>/llms-&lt;vertical&gt;.txt</code> — per-vertical text chunks "
+                            "(e.g. /llms-food.txt · /llms-artist.txt)</li></ul>")
+        + sec("Freshness", [
+            ("./feed.xml", "RSS of recently verified records"),
+            ("./feed.json", "the same as JSON Feed"),
+            ("./changes.json", "verified change events (소속사 moves, renames), timestamped"),
+            ("./whats-new.html", "the human change page"),
+        ])
+        + sec("Resolution & health", [
+            ("./reconcile.json", "name / external-ID → canonical entity (+ its record URL)"),
+            ("./search-index.json", "the slim name index the site search runs on"),
+            ("./status.json", "health + freshness snapshot (poll this)"),
+            ("./certified.json", "official rights-holder certifications"),
+        ], f"curl -s {_SITE_BASE}/status.json | jq '.fresh, .entities'")
+        + sec("Integrity & contracts", [
+            ("./integrity.json", "dataset hash + append-only chain head"),
+            ("./integrity-log.jsonl", "the attestation log (every build's hash, chained)"),
+            ("./verify.html", "how to re-verify everything yourself"),
+            ("./openapi.json", "the HTTP API contract (OpenAPI 3.1)"),
+            ("./agents.json", "the machine manifest (MCP, terms, autonomous use)"),
+        ]))
+    _write_hub_html(out_dir, "data.html", "🗂", "Data catalog",
+                    "Every machine surface in one place: corpus, per-vertical slices, per-entity "
+                    "records, LLM text, feeds, reconciliation, integrity — static, verifiable, no key.",
+                    en_body, _escape_jsonld({"@context": "https://schema.org", "@graph": [
+                        _breadcrumb("Data", f"{_SITE_BASE}/data.html")]}))
+    ko_body = (
+        "<p class=lede>검증된 레코드를 세 가지 크기로 — 엔티티 하나, 버티컬 하나, 전체 코퍼스. 전부 "
+        "정적이고, 해시로 재검증 가능하며, 키가 필요 없습니다.</p>"
+        "<h2>코퍼스 · 슬라이스 · 단일 레코드</h2><ul>"
+        "<li><a href='../latest.json'><code>/latest.json</code></a> — 전체 검증 코퍼스</li>"
+        "<li><a href='../latest-artist.json'><code>/latest-&lt;vertical&gt;.json</code></a> — 버티컬 슬라이스</li>"
+        "<li><a href='../artist/bts.json'><code>/artist/&lt;slug&gt;.json</code></a> — 엔티티 하나의 레코드 (코퍼스와 동일 content_hash)</li></ul>"
+        "<h2>LLM 텍스트 · 신선도 · 해석</h2><ul>"
+        "<li><a href='../llms.txt'><code>/llms.txt</code></a> · <a href='../llms-full.txt'><code>/llms-full.txt</code></a> · <code>/llms-&lt;vertical&gt;.txt</code></li>"
+        "<li><a href='../feed.xml'><code>/feed.xml</code></a> · <a href='../changes.json'><code>/changes.json</code></a> — 최근 검증·변경</li>"
+        "<li><a href='../reconcile.json'><code>/reconcile.json</code></a> — 이름/외부ID → 정본 엔티티(+레코드 URL)</li>"
+        "<li><a href='../status.json'><code>/status.json</code></a> — 건강·신선도 스냅샷</li></ul>"
+        "<h2>무결성 · 계약</h2><ul>"
+        "<li><a href='../integrity.json'><code>/integrity.json</code></a> · <a href='../integrity-log.jsonl'><code>/integrity-log.jsonl</code></a> — 해시 체인</li>"
+        "<li><a href='./verify.html'>직접 검증하기</a> · <a href='../openapi.json'><code>/openapi.json</code></a> · <a href='../agents.json'><code>/agents.json</code></a></li></ul>")
+    _write_ko_list_page(out_dir, "data.html", "데이터 카탈로그",
+                        "모든 기계 표면을 한 곳에: 코퍼스 · 버티컬 슬라이스 · 엔티티 레코드 · LLM 텍스트 · "
+                        "피드 · 해석 · 무결성 — 정적, 검증 가능, 무료.", ko_body,
+                        _escape_jsonld({"@context": "https://schema.org", "@graph": [
+                            _breadcrumb("데이터", f"{_SITE_BASE}/ko/data.html")]}))
+
+
 def _write_whats_new(out_dir: str, recs: list, by_entity: dict) -> int:
     """A crawlable /whats-new.html (+ /ko/) — verified CHANGE EVENTS (소속사 moves, renames) as a cited
     freshness asset: the time-moat made VISIBLE. Each change is timestamped in an append-only history a
@@ -4031,7 +4115,8 @@ def verify_site(site_dir: str = "_site", min_entities: int = 100) -> dict:
     need(os.path.exists(idx) and os.path.getsize(idx) > 5000, "index.html missing or suspiciously small")
     for f in ("guides.html", "whats-new.html", "search.html", "llms.txt", "llms-full.txt",
               "search-index.json", "sitemap.xml", "agents.json", "reconcile.json", "status.json",
-              os.path.join(".well-known", "agent.json"), "404.html", "verify.html", "og.png"):
+              os.path.join(".well-known", "agent.json"), "404.html", "verify.html", "og.png",
+              "data.html"):
         need(os.path.exists(os.path.join(site_dir, f)), f"{f} missing")
     try:
         entries = json.load(open(os.path.join(site_dir, "search-index.json"), encoding="utf-8"))
@@ -4303,6 +4388,7 @@ async def entity_pages(db_path: str | None = None, out_dir: str = "site") -> dic
     # Client-side search over the whole verified graph — entities + person hubs + label hubs.
     n_search = _write_search(out_dir, by_entity, people=people_written, labels=labels_written)
     _write_verify(out_dir)  # /verify.html (+/ko/) — the trustless re-verification walkthrough
+    _write_data_catalog(out_dir)  # /data.html (+/ko/) — every machine surface, one legible page
     # Custom 404 (GitHub Pages serves /404.html): recover a lost visitor/crawler into search + guides.
     # Deliberately NOT via _write_hub_html — that would declare a hreflang /ko/404.html that never
     # exists (the hreflang-to-404 class); a 404 is noindex and needs no language pairing.
@@ -4382,6 +4468,7 @@ async def sitemap(db_path: str | None = None, out_path: str = "sitemap.xml") -> 
     urls += [(f"{_SITE_BASE}/whats-new.html", "0.8"), (f"{_SITE_BASE}/ko/whats-new.html", "0.6")]
     urls += [(f"{_SITE_BASE}/search.html", "0.6"), (f"{_SITE_BASE}/ko/search.html", "0.5")]
     urls += [(f"{_SITE_BASE}/verify.html", "0.6"), (f"{_SITE_BASE}/ko/verify.html", "0.5")]
+    urls += [(f"{_SITE_BASE}/data.html", "0.6"), (f"{_SITE_BASE}/ko/data.html", "0.5")]
     # hreflang pairs, by the /ko/ path convention: a URL whose mirror is ALSO in the map gets
     # reciprocal xhtml:link alternates (Google's multilingual-sitemap form — full /ko/ parity exists,
     # but without the declared pairs engines may treat EN/KO as duplicates or under-index the KO
@@ -4517,6 +4604,8 @@ async def llms_txt(db_path: str | None = None, out_path: str = "llms.txt") -> st
 - Per-entity answer pages (Schema.org + FAQPage): {_SITE_BASE}/artist/<slug>.html
 - Per-entity record JSON (the same items + content_hash as /latest.json, addressable one entity at a
   time — fetch ONE verified record, not the corpus): {_SITE_BASE}/artist/<slug>.json
+- Per-vertical JSON slices (one vertical's corpus in one fetch, same content_hash per record):
+  {_SITE_BASE}/latest-<vertical>.json · full catalog of every machine surface: {_SITE_BASE}/data.html
 - Per-person credit pages (Schema.org Person): {_SITE_BASE}/person/<slug>.html
 - Guides (verified region travel + dietary food, EN/KO): {_SITE_BASE}/guides.html
 - Recently verified changes (the freshness moat, crawlable): {_SITE_BASE}/whats-new.html
@@ -4755,6 +4844,7 @@ async def reconcile_json(db_path: str | None = None, out_path: str = "reconcile.
             "skill": round(r.provenance.skill_score, 2),
             "content_hash": integrity.record_fingerprint(json.loads(r.model_dump_json())),
             "url": f"{_SITE_BASE}/artist/{_slug(eid)}.html",
+            "record": f"{_SITE_BASE}/artist/{_slug(eid)}.json",     # the machine twin — resolve → fetch
             "ids": ids,                                            # external IDs (wikidata/tmdb/…)
             "sameAs": _source_urls(r.provenance.sources),          # cross-source authority links
         })
