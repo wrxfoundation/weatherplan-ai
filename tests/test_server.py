@@ -10,6 +10,7 @@ Run:  PYTHONPATH=src python -m pytest tests/test_server.py -q
 from __future__ import annotations
 
 import asyncio
+import os
 import inspect
 
 import pytest
@@ -18,6 +19,10 @@ pytest.importorskip("fastmcp")  # the agent surface needs fastmcp; skip if absen
 
 from koreaapi import server  # noqa: E402  (imported after importorskip by design)
 from koreaapi.admin import seed  # noqa: E402
+
+# repo root, resolved RELATIVE to this file — the suite must pass on GitHub runners too,
+# where the checkout path is not /home/user/koreaapi-build
+_REPO = os.path.join(os.path.dirname(__file__), "..")
 
 EXPECTED_TOOLS = {
     "get_artist_status",
@@ -53,7 +58,7 @@ def test_server_registers_its_tools():
 def test_install_doc_lists_every_live_tool():
     # docs/MCP_INSTALL.md is the operator's front door; it once said 'Tools (11)' while the server
     # exposed 16. Pin: every live tool name appears in the doc (and the count in the heading).
-    doc = open("/home/user/koreaapi-build/docs/MCP_INSTALL.md", encoding="utf-8").read()
+    doc = open(os.path.join(_REPO, "docs/MCP_INSTALL.md"), encoding="utf-8").read()
     names = _tool_names()
     missing = [n for n in names if f"`{n}(" not in doc and f"`{n}()`" not in doc]
     assert not missing, f"MCP_INSTALL.md missing tools: {missing}"

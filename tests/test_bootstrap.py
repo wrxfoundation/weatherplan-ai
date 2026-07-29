@@ -6,6 +6,7 @@ collect steps run. Cold-start (no live site yet) reports and continues; never cr
 from __future__ import annotations
 
 import asyncio
+import os
 import io
 import json
 import tempfile
@@ -15,6 +16,10 @@ from datetime import datetime, timezone
 from koreaapi import admin
 from koreaapi.models import Name, Provenance, Record
 from koreaapi.pipeline import store
+
+# repo root, resolved RELATIVE to this file — the suite must pass on GitHub runners too,
+# where the checkout path is not /home/user/koreaapi-build
+_REPO = os.path.join(os.path.dirname(__file__), "..")
 
 
 def _record(eid: str, ko: str, en: str) -> dict:
@@ -79,7 +84,7 @@ def test_pages_workflow_self_heals_and_gates_at_corpus_scale():
     # The cache-eviction disaster: without bootstrap, a pages build on a fresh DB would be roster-only,
     # PASS a 100-entity gate, and OVERWRITE the live /latest.json — destroying bootstrap's own recovery
     # source. pages must heal first AND gate above roster size.
-    wf = open("/home/user/koreaapi-build/.github/workflows/pages.yml", encoding="utf-8").read()
+    wf = open(os.path.join(_REPO, ".github/workflows/pages.yml"), encoding="utf-8").read()
     assert "koreaapi.admin bootstrap" in wf and wf.index("admin bootstrap") < wf.index("admin pull")
     assert "verifysite _site 1000" in wf                      # 1000 > the ~658-entity roster
 
@@ -90,13 +95,13 @@ def test_every_documented_dormant_key_is_wired_in_the_workflows():
     keys = ("TMDB_API_KEY", "TOURAPI_KEY", "KOSIS_API_KEY", "KOPIS_API_KEY",
             "KHERITAGE_API_KEY", "YOUTUBE_API_KEY", "ANTHROPIC_API_KEY")
     for wf in ("collect.yml", "pages.yml"):
-        text = open(f"/home/user/koreaapi-build/.github/workflows/{wf}", encoding="utf-8").read()
+        text = open(os.path.join(_REPO, f".github/workflows/{wf}"), encoding="utf-8").read()
         missing = [k for k in keys if f"secrets.{k}" not in text]
         assert not missing, f"{wf} missing env mapping for: {missing}"
 
 
 def test_collect_workflow_self_heals_before_collecting():
-    wf = open("/home/user/koreaapi-build/.github/workflows/collect.yml", encoding="utf-8").read()
+    wf = open(os.path.join(_REPO, ".github/workflows/collect.yml"), encoding="utf-8").read()
     assert "koreaapi.admin bootstrap" in wf
     assert wf.index("admin bootstrap") < wf.index("admin pull")          # heal FIRST, then collect
 

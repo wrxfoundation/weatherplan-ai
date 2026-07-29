@@ -12,6 +12,10 @@ from koreaapi import admin
 from koreaapi.pipeline.ingest import ingest_one
 from koreaapi.sources.mock import MockSource
 
+# repo root, resolved RELATIVE to this file — the suite must pass on GitHub runners too,
+# where the checkout path is not /home/user/koreaapi-build
+_REPO = os.path.join(os.path.dirname(__file__), "..")
+
 
 def _build(tmp_path) -> str:
     db = tempfile.mktemp(suffix=".db")
@@ -65,7 +69,7 @@ def test_for_agents_page_and_manifest(tmp_path):
     wk = json.load(open(os.path.join(out, ".well-known", "agent.json"), encoding="utf-8"))
     assert wk["name"] == man["name"] and wk["canonical"].endswith("/agents.json")
     assert wk["autonomous_use"]["allowed"] is True
-    wf = open("/home/user/koreaapi-build/.github/workflows/pages.yml", encoding="utf-8").read()
+    wf = open(os.path.join(_REPO, ".github/workflows/pages.yml"), encoding="utf-8").read()
     assert "cp -r site/.well-known _site/.well-known" in wf     # dot-dir: no glob catches it — guard the cp
 
 

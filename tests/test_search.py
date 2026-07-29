@@ -6,12 +6,17 @@ Pages workflow (the *.html glob misses .json)."""
 from __future__ import annotations
 
 import asyncio
+import os
 import json
 import tempfile
 
 from koreaapi import admin
 from koreaapi.pipeline.ingest import ingest_one
 from koreaapi.sources.mock import MockSource
+
+# repo root, resolved RELATIVE to this file — the suite must pass on GitHub runners too,
+# where the checkout path is not /home/user/koreaapi-build
+_REPO = os.path.join(os.path.dirname(__file__), "..")
 
 
 def _seed(db: str) -> None:
@@ -86,7 +91,7 @@ def test_grounded_aliases_are_visible_and_in_jsonld(tmp_path):
 def test_pages_workflow_copies_the_search_index():
     # The deploy copies site/*.html by glob — a .json at site root must be copied explicitly, or search
     # 404s in production while passing every offline test. Guard the workflow line itself.
-    wf = open("/home/user/koreaapi-build/.github/workflows/pages.yml", encoding="utf-8").read()
+    wf = open(os.path.join(_REPO, ".github/workflows/pages.yml"), encoding="utf-8").read()
     assert "cp site/search-index.json _site/" in wf
 
 

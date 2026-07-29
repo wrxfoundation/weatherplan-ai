@@ -9,6 +9,7 @@ injected sources."""
 from __future__ import annotations
 
 import asyncio
+import os
 import tempfile
 from datetime import datetime, timedelta, timezone
 
@@ -16,6 +17,10 @@ from koreaapi import admin
 from koreaapi.models import Name, Provenance, Record
 from koreaapi.pipeline import store
 from koreaapi.sources.mock import MockSource
+
+# repo root, resolved RELATIVE to this file — the suite must pass on GitHub runners too,
+# where the checkout path is not /home/user/koreaapi-build
+_REPO = os.path.join(os.path.dirname(__file__), "..")
 
 NOW = datetime.now(timezone.utc)
 
@@ -153,7 +158,7 @@ def test_status_json_reports_the_stale_pool(tmp_path):
 
 
 def test_collect_workflow_runs_refresh_every_tick():
-    wf = open("/home/user/koreaapi-build/.github/workflows/collect.yml", encoding="utf-8").read()
+    wf = open(os.path.join(_REPO, ".github/workflows/collect.yml"), encoding="utf-8").read()
     assert "koreaapi.admin refresh" in wf                         # the freshness engine is wired into collect
 
 

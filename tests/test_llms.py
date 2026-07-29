@@ -15,6 +15,10 @@ from koreaapi import admin
 from koreaapi.pipeline.ingest import ingest_one
 from koreaapi.sources.mock import MockSource
 
+# repo root, resolved RELATIVE to this file — the suite must pass on GitHub runners too,
+# where the checkout path is not /home/user/koreaapi-build
+_REPO = os.path.join(os.path.dirname(__file__), "..")
+
 
 def _sources(payload: dict) -> list:
     return [MockSource("Wikidata", payload), MockSource("Wikipedia", payload)]  # agree -> cross-verified
@@ -65,7 +69,7 @@ def test_llms_full_writes_per_vertical_chunks(tmp_path):
     assert "llms-full.txt" in chunk and "llms.txt" in chunk                  # links back to the index
     assert (tmp_path / "llms-artist.txt").exists()                           # one chunk per present vertical
     assert not (tmp_path / "llms-temple.txt").exists()                       # absent vertical -> no file
-    wf = open("/home/user/koreaapi-build/.github/workflows/pages.yml", encoding="utf-8").read()
+    wf = open(os.path.join(_REPO, ".github/workflows/pages.yml"), encoding="utf-8").read()
     assert "cp llms*.txt _site/" in wf                                       # deploy copies the chunks (glob)
 
 
