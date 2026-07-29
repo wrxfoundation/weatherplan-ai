@@ -39,6 +39,10 @@ Korean-surface parity, a self-healing freshness engine, and deploy safety.
 - **`/verify.html`** (+ `/ko/`) — the trustless re-verification walkthrough: dataset `sha256sum` vs
   `integrity.json`, per-record `content_hash`, the append-only chain, the Bitcoin anchor
   (`ots verify`). The integrity machinery, human-legible.
+- **Multilingual sitemap**: every EN↔KO page pair carries reciprocal `xhtml:link` hreflang
+  alternates (both entries, per Google's form) so the full `/ko/` layer indexes as pairs, not
+  duplicates; entity pages (EN + KO) advertise their machine twin as a schema.org **Dataset →
+  DataDownload** node in the crawled graph.
 
 ### Data engine & ops
 - **refresh** — re-verifies the stalest discovered entities every collect tick (half-TTL threshold,

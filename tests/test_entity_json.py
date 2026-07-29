@@ -57,6 +57,12 @@ def test_pages_link_the_twin(tmp_path):
     ko = open(os.path.join(out, "ko", "artist", "bts.html"), encoding="utf-8").read()
     assert 'type="application/json" href="../../artist/bts.json"' in ko
     assert '<a href="../verify.html">검증 방법</a>' in ko
+    # the JSON-LD graph advertises the twin as a Dataset distribution (DataDownload) on BOTH
+    # language layers — an answer engine lifting the node finds the machine record + hash story
+    for page, marker in [(en, "verified record (KoreaAPI)"), (ko, "검증 레코드 (KoreaAPI)")]:
+        ld = page.split("application/ld+json")[1]
+        assert '"@type": "Dataset"' in ld and '"@type": "DataDownload"' in ld
+        assert '/artist/bts.json"' in ld and marker in ld
 
 
 def test_manifest_and_llms_advertise_the_pattern(tmp_path):

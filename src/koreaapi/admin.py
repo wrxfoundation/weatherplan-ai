@@ -853,6 +853,41 @@ def _entity_node(r) -> dict:
     return node
 
 
+def _record_dataset_node(r, slug: str, *, lang: str = "en") -> dict:
+    """Schema.org Dataset node for the entity's machine twin (/artist/<slug>.json): the crawled HTML
+    page ADVERTISES its verifiable per-record download (distribution → DataDownload), so an answer
+    engine or a graph-walking agent finds the exact machine record — and its hash story — from the
+    node it lifts. Same twin for EN and KO (records are bilingual)."""
+    name = r.name.en_official or r.name.ko
+    ko = lang == "ko"
+    page = f"{_SITE_BASE}/ko/artist/{slug}.html" if ko else f"{_SITE_BASE}/artist/{slug}.html"
+    node = {
+        "@type": "Dataset",
+        "name": (f"{r.name.ko or name} — 검증 레코드 (KoreaAPI)" if ko
+                 else f"{name} — verified record (KoreaAPI)"),
+        "description": ((f"{r.name.ko or name} 교차검증 구조화 레코드: 정본 한/영/로마자 이름, 검증된 "
+                         "사실, 출처(provenance), Skill Score, SHA-256 content_hash — /latest.json과 "
+                         "동일 항목이며 해시로 재검증 가능.") if ko else
+                        (f"Cross-verified structured record for {name}: canonical bilingual names "
+                         "(KO/EN/romanized), verified facts, provenance, Skill Score, and a SHA-256 "
+                         "content_hash — the same item served in /latest.json, re-verifiable per "
+                         "/verify.html.")),
+        "url": page,
+        "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json",
+                          "contentUrl": f"{_SITE_BASE}/artist/{slug}.json"}],
+        "license": LICENSE["url"],
+        "creditText": LICENSE["attribution"],
+        "dateModified": r.snapshot_at.isoformat(),
+        "isPartOf": {"@type": "Dataset", "name": "KoreaAPI — verified Korean-culture data",
+                     "url": _SITE_BASE,
+                     "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json",
+                                       "contentUrl": f"{_SITE_BASE}/latest.json"}]},
+    }
+    if ko:
+        node["inLanguage"] = "ko"
+    return node
+
+
 # Geo verticals: a physical place with a located-in region (P131) + coordinates (P625). ONE node shape,
 # keyed by schema.org @type — adding a geo vertical needs only an entry here (+ its roster/sources wiring),
 # no new branch in _entity_node_core.
@@ -2698,7 +2733,8 @@ def _write_entity_html_ko(out_dir: str, slug: str, en_url: str, primary, *, hist
     _abstract_ko = (primary.data.get("abstract_ko") or "").strip()
     if _abstract_ko:  # the crawled Korean node describes in KOREAN (Naver lifts description, not prose)
         node_ko["description"] = _abstract_ko
-    graph_ko = [node_ko] + ([_faqpage_node(qas_ko)] if qas_ko else [])
+    graph_ko = ([node_ko] + ([_faqpage_node(qas_ko)] if qas_ko else [])
+                + [_record_dataset_node(primary, slug, lang="ko")])  # 기계 트윈 광고 (KO 노드에도)
     jsonld = _escape_jsonld({"@context": "https://schema.org", "@graph": graph_ko})
     qa_block = ("<h2>자주 묻는 질문</h2>" + "".join(
         f"<div class=qa><div class=q>{html.escape(q)}</div><div class=a>{html.escape(a)}</div></div>"
@@ -4065,7 +4101,8 @@ async def entity_pages(db_path: str | None = None, out_dir: str = "site") -> dic
             ])
         doc = {"@context": "https://schema.org",
                "@graph": [node]
-               + ([_faqpage_node(qas)] if qas else []) + [_breadcrumb(name, url, middle=mid)]}
+               + ([_faqpage_node(qas)] if qas else []) + [_breadcrumb(name, url, middle=mid)]
+               + [_record_dataset_node(primary, slug)]}  # the machine twin, advertised on the node
         related = _related(entity_id, primary, by_entity)
         ag = primary.data.get("agency_en") or primary.data.get("agency_ko")
         ag_slug = _person_slug(ag) if ag else ""
@@ -4315,13 +4352,31 @@ async def sitemap(db_path: str | None = None, out_path: str = "sitemap.xml") -> 
     urls += [(f"{_SITE_BASE}/whats-new.html", "0.8"), (f"{_SITE_BASE}/ko/whats-new.html", "0.6")]
     urls += [(f"{_SITE_BASE}/search.html", "0.6"), (f"{_SITE_BASE}/ko/search.html", "0.5")]
     urls += [(f"{_SITE_BASE}/verify.html", "0.6"), (f"{_SITE_BASE}/ko/verify.html", "0.5")]
-    body = "".join(
-        f"  <url><loc>{u}</loc><lastmod>{today}</lastmod>"
-        f"<changefreq>daily</changefreq><priority>{p}</priority></url>\n"
-        for u, p in urls
-    )
+    # hreflang pairs, by the /ko/ path convention: a URL whose mirror is ALSO in the map gets
+    # reciprocal xhtml:link alternates (Google's multilingual-sitemap form — full /ko/ parity exists,
+    # but without the declared pairs engines may treat EN/KO as duplicates or under-index the KO
+    # layer). Data files (latest.json, korea-rising.md) have no mirror -> plain entries.
+    urlset = {u for u, _p in urls}
+    ko_prefix = f"{_SITE_BASE}/ko/"
+
+    def _mirror(u: str) -> str:
+        return (f"{_SITE_BASE}/" + u[len(ko_prefix):] if u.startswith(ko_prefix)
+                else ko_prefix + u[len(_SITE_BASE) + 1:])
+
+    lines = []
+    for u, p in urls:
+        en_u, ko_u = (_mirror(u), u) if u.startswith(ko_prefix) else (u, _mirror(u))
+        alts = ""
+        if en_u in urlset and ko_u in urlset:  # both sides listed -> annotate BOTH entries identically
+            alts = (f'<xhtml:link rel="alternate" hreflang="en" href="{en_u}"/>'
+                    f'<xhtml:link rel="alternate" hreflang="ko" href="{ko_u}"/>'
+                    f'<xhtml:link rel="alternate" hreflang="x-default" href="{en_u}"/>')
+        lines.append(f"  <url><loc>{u}</loc><lastmod>{today}</lastmod>"
+                     f"<changefreq>daily</changefreq><priority>{p}</priority>{alts}</url>\n")
+    body = "".join(lines)
     doc = ('<?xml version="1.0" encoding="UTF-8"?>\n'
-           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+           'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
            f"{body}</urlset>\n")
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(doc)

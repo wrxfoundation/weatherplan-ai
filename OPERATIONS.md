@@ -83,7 +83,7 @@ Hallucination cannot enter a record: extraction is labor, grounding is the gate.
   `/changes.json` · `/reconcile.json` · `/status.json` · `/integrity.json`
   (+ append-only log; OpenTimestamps when enabled) · `/certified.json` · `/openapi.json` ·
   `/agents.json` · `/feed.xml` · `/feed.json` · `/llms.txt` · `/llms-full.txt` · per-vertical
-  `/llms-<vertical>.txt` chunks · `/sitemap.xml` · `/robots.txt`.
+  `/llms-<vertical>.txt` chunks · `/sitemap.xml` (EN↔KO reciprocal hreflang pairs) · `/robots.txt`.
 - **API/MCP**: 16 MCP tools (incl. `ask` free-text router, `get_answer` over 11 Answer Products —
   canonical-name · fact-check · identity-resolve · trend-radar · agency-roster · person-credits ·
   related-network(+nearby) · trip-plan(map-ready + walkable clusters) · food-guide · compare ·
