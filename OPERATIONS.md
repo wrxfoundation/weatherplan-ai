@@ -80,8 +80,10 @@ Hallucination cannot enter a record: extraction is labor, grounding is the gate.
   re-verification walkthrough: re-download → re-hash → compare), custom `/404.html`.
 - **Machine**: `/latest.json` · per-vertical slices `/latest-<vertical>.json` · per-entity record
   twins `/artist/<slug>.json` (the entity's exact latest.json slice, same content_hash — fetch ONE
-  record, not the corpus; gated by verifysite) · the `/data.html` catalog (+/ko/) listing all of it ·
-  `/changes.json` · `/reconcile.json` (each entry links its record twin) · `/status.json` · `/integrity.json`
+  record, not the corpus; gated by verifysite) · pre-computed Answer Products `/answers/*.json`
+  (trip-plan/food-guide/agency-roster, /v1/answer envelope) · the `/data.html` catalog (+/ko/)
+  listing all of it · `/changes.json` · `/reconcile.json` (each entry links its record twin) ·
+  `/status.json` · `/integrity.json`
   (+ append-only log; OpenTimestamps when enabled) · `/certified.json` · `/openapi.json` ·
   `/agents.json` · `/feed.xml` · `/feed.json` · `/llms.txt` · `/llms-full.txt` · per-vertical
   `/llms-<vertical>.txt` chunks · `/sitemap.xml` (EN↔KO reciprocal hreflang pairs) · `/robots.txt`.

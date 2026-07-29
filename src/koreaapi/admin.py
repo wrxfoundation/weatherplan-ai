@@ -3214,6 +3214,8 @@ def _agents_manifest() -> dict:
             "entity_json": f"{_SITE_BASE}/artist/<slug>.json",  # per-entity slice of latest.json (same
             #   items, same content_hash) — fetch ONE verified record, not the corpus; slugs via
             #   search-index.json or reconcile.json
+            "answers_precomputed": f"{_SITE_BASE}/answers/index.json",  # static Answer Products
+            #   (trip-plan/food-guide/agency-roster) — the /v1/answer envelope, no server needed
             "openapi": f"{_SITE_BASE}/openapi.json",  # OpenAPI 3.1 — auto-consumable HTTP API contract
             "changes_feed": f"{_SITE_BASE}/changes.json",  # verified change events (소속사 moves, renames)
             "certified_feed": f"{_SITE_BASE}/certified.json",  # official rights-holder certifications (supply-side)
@@ -3984,6 +3986,8 @@ def _write_data_catalog(out_dir: str) -> None:
             ("./latest.json", "the full verified corpus (provenance + Skill Score + content_hash per record)"),
             ("./latest-artist.json", "one vertical's slice — the pattern is <code>/latest-&lt;vertical&gt;.json</code> (artist · place · food · …)"),
             ("./artist/bts.json", "ONE entity's records — <code>/artist/&lt;slug&gt;.json</code>, same items + content_hash as the corpus"),
+            ("./answers/index.json", "pre-computed <b>Answer Products</b> (trip-plan · food-guide · "
+                                     "agency-roster) — the /v1/answer envelope as static JSON"),
         ], f"curl -s {_SITE_BASE}/latest-artist.json | jq '.[0]'")
         + sec("LLM-ready text", [
             ("./llms.txt", "the agent index (what this is, tools, coverage)"),
@@ -4020,7 +4024,9 @@ def _write_data_catalog(out_dir: str) -> None:
         "<h2>코퍼스 · 슬라이스 · 단일 레코드</h2><ul>"
         "<li><a href='../latest.json'><code>/latest.json</code></a> — 전체 검증 코퍼스</li>"
         "<li><a href='../latest-artist.json'><code>/latest-&lt;vertical&gt;.json</code></a> — 버티컬 슬라이스</li>"
-        "<li><a href='../artist/bts.json'><code>/artist/&lt;slug&gt;.json</code></a> — 엔티티 하나의 레코드 (코퍼스와 동일 content_hash)</li></ul>"
+        "<li><a href='../artist/bts.json'><code>/artist/&lt;slug&gt;.json</code></a> — 엔티티 하나의 레코드 (코퍼스와 동일 content_hash)</li>"
+        "<li><a href='../answers/index.json'><code>/answers/</code></a> — 사전계산 Answer Products "
+        "(여행플랜·음식가이드·소속로스터, /v1/answer와 동일 envelope)</li></ul>"
         "<h2>LLM 텍스트 · 신선도 · 해석</h2><ul>"
         "<li><a href='../llms.txt'><code>/llms.txt</code></a> · <a href='../llms-full.txt'><code>/llms-full.txt</code></a> · <code>/llms-&lt;vertical&gt;.txt</code></li>"
         "<li><a href='../feed.xml'><code>/feed.xml</code></a> · <a href='../changes.json'><code>/changes.json</code></a> — 최근 검증·변경</li>"
@@ -4389,6 +4395,40 @@ async def entity_pages(db_path: str | None = None, out_dir: str = "site") -> dic
     n_search = _write_search(out_dir, by_entity, people=people_written, labels=labels_written)
     _write_verify(out_dir)  # /verify.html (+/ko/) — the trustless re-verification walkthrough
     _write_data_catalog(out_dir)  # /data.html (+/ko/) — every machine surface, one legible page
+
+    # Pre-computed Answer Products (/answers/<product>-<key>.json): the ENUMERABLE products
+    # (trip-plan per region · food-guide per dietary filter · agency-roster per label hub),
+    # materialized as static machine answers — the same envelope the live /v1/answer serves
+    # (product · signal · action · score · rationale · answer · evidence), fetchable TODAY on the
+    # static host while REST + /mcp wait on an HTTP deployment. Key sets are the SAME selectors
+    # the guide/food/label pages render, so an answer never exists without its citable page.
+    os.makedirs(os.path.join(out_dir, "answers"), exist_ok=True)
+    precomputed: list[dict] = []
+    _pre_seen: set[str] = set()
+
+    async def _precompute(pid: str, key_slug: str, query: str) -> None:
+        fname = f"{pid}-{key_slug}.json"
+        if fname in _pre_seen:  # two label names normalizing to one slug must not double-list
+            return
+        _pre_seen.add(fname)
+        env = await answers.answer(pid, query, db_path=db_path)
+        with open(os.path.join(out_dir, "answers", fname), "w", encoding="utf-8") as f:
+            json.dump(env, f, ensure_ascii=False, indent=2)
+        precomputed.append({"product": pid, "query": query,
+                            "url": f"{_SITE_BASE}/answers/{fname}"})
+
+    for _region, _gslug, _n in _guide_slugs(_region_guides_data(by_entity)):
+        await _precompute("trip-plan", _gslug, _region)
+    for _fslug, _t, _question, _m in _food_guide_matches(by_entity):
+        await _precompute("food-guide", _fslug, _question)
+    for _L in labels.values():
+        if _L["slug"] in label_slugs:
+            await _precompute("agency-roster", _L["slug"], _L["name"])
+    with open(os.path.join(out_dir, "answers", "index.json"), "w", encoding="utf-8") as f:
+        json.dump({"count": len(precomputed), "answers": precomputed,
+                   "note": ("pre-computed Answer Products over the verified store — the same "
+                            "envelope the live /v1/answer serves; regenerated every build")},
+                  f, ensure_ascii=False, indent=2)
     # Custom 404 (GitHub Pages serves /404.html): recover a lost visitor/crawler into search + guides.
     # Deliberately NOT via _write_hub_html — that would declare a hreflang /ko/404.html that never
     # exists (the hreflang-to-404 class); a 404 is noindex and needs no language pairing.
@@ -4411,7 +4451,8 @@ async def entity_pages(db_path: str | None = None, out_dir: str = "site") -> dic
 
     return {"entities": written, "people": people_written, "hubs": hubs_written,
             "labels": labels_written, "ko": len(ko_written), "guides": guides_written,
-            "food_guides": food_guides_written, "changes": n_changes, "search_index": n_search}
+            "food_guides": food_guides_written, "changes": n_changes, "search_index": n_search,
+            "answers": len(precomputed)}
 
 
 async def sitemap(db_path: str | None = None, out_path: str = "sitemap.xml") -> str:
@@ -4606,6 +4647,8 @@ async def llms_txt(db_path: str | None = None, out_path: str = "llms.txt") -> st
   time — fetch ONE verified record, not the corpus): {_SITE_BASE}/artist/<slug>.json
 - Per-vertical JSON slices (one vertical's corpus in one fetch, same content_hash per record):
   {_SITE_BASE}/latest-<vertical>.json · full catalog of every machine surface: {_SITE_BASE}/data.html
+- Pre-computed Answer Products (trip-plan · food-guide · agency-roster as static JSON, the same
+  envelope the live /v1/answer serves): {_SITE_BASE}/answers/index.json
 - Per-person credit pages (Schema.org Person): {_SITE_BASE}/person/<slug>.html
 - Guides (verified region travel + dietary food, EN/KO): {_SITE_BASE}/guides.html
 - Recently verified changes (the freshness moat, crawlable): {_SITE_BASE}/whats-new.html

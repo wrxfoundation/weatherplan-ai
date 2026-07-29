@@ -51,6 +51,9 @@ Korean-surface parity, a self-healing freshness engine, and deploy safety.
   between one entity twin and the full corpus, same `content_hash` per record), `reconcile.json`
   entries now point at each entity's record twin (`record`), and **`/data.html`** (+ `/ko/`)
   catalogs every machine surface with copy-paste fetches.
+- **Pre-computed Answer Products** (`/answers/<product>-<key>.json` + `index.json`): the enumerable
+  products — trip-plan per region, food-guide per dietary filter, agency-roster per label — as
+  static machine answers in the same envelope `/v1/answer` serves, live on the static host today.
 
 ### Data engine & ops
 - **refresh** — re-verifies the stalest discovered entities every collect tick (half-TTL threshold,
