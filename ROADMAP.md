@@ -276,3 +276,43 @@ but are NOT the main lever for an agent-first product. The agent-era equivalents
 brand and a penalty risk. ✅ **Earn** citations by being the verifiable default (provenance + Skill
 Score + the public GEO page + a genuinely useful free "Korea Rising" digest people link/share).
 Earned ≫ bought → prioritise registry listings + citation-worthiness, not a backlink campaign.
+
+---
+
+## Absorbed from weathermarket.ai (WDM) — sibling-product review, 2026-07-29
+
+WDM (weathermarket.ai — KWeather's consensus **weather** oracle: 167 cities, multi-source
+consensus snapshots, on-chain anchoring, agent-payable datasets, prediction-market verdicts) is
+the same thesis in a different vertical: **sell verified ground truth to agents.** Reviewed for
+what KoreaAPI should absorb.
+
+**Absorbed now (shipped this round):**
+- **MCP over a URL** — WDM serves MCP at `POST /api/mcp` (Streamable HTTP, zero install). The
+  KoreaAPI HTTP app now mounts its own MCP server at **`/mcp`** (same 16 tools; one deployment =
+  REST + MCP; advertised in `agents.json → mcp.http`). Distribution: an agent that can't install
+  a local server can still connect to a URL.
+- **`/verify.html` (+ `/ko/`)** — WDM leads with "trustless: re-verify everything yourself." Our
+  integrity chain (dataset hash · per-record `content_hash` · append-only log · OpenTimestamps
+  Bitcoin anchor) existed as machine files only; now it's a crawlable step-by-step walkthrough,
+  linked from the homepage. The proof pillar, human-legible.
+
+**Already had (WDM validates the direction, no action):** consensus/cross-verification as the
+product · SHA-256 reproducible datasets · a 402 payment rail (ours dormant by design) ·
+agent-first manifests · prediction-market settlement as a premium lane (decision-gated vertical
+above).
+
+**Deferred (commerce rails — Phase-2 trigger = traffic/agent demand, same as x402):**
+1. **quote → pay → claim dataset purchase** — WDM sells one-shot dataset bundles: priced quote
+   (with TTL) → pay → claim by tx receipt → download; re-download gated by a signature. Ours:
+   quote a `latest.json` slice (vertical / date-range) → x402 pay → claim by receipt. Hooks into
+   `get_buy_options` + the existing x402 plan.
+2. **Prepaid credit metering** — top up a balance, meter per call; a lower-friction second lane
+   beside per-call x402 for agent fleets. Add when the rail wakes, not before.
+3. **Verdict-oracle framing** — WDM ships an explicit "verdict oracle for prediction markets."
+   Reinforces (doesn't change) our decision-gated settlement-oracle vertical: when built, LEAD
+   with claim → resolution → machine-citable verdict.
+
+⛔ **Not absorbed:** per-snapshot on-chain anchoring (we anchor the chain HEAD via OpenTimestamps —
+free, keyless; per-snapshot chain writes add cost + coupling, not trust, at our cadence) ·
+USDT/wallet-native settlement (stays x402/USDC per the Phase-2 plan) · anything token-shaped
+(guardrail above stands).

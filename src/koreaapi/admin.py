@@ -1420,6 +1420,7 @@ async def report_html(db_path: str | None = None, out_path: str = "report.html")
  <a class="pill" href="./guides.html">🧳 Guides (region + food)</a>
  <a class="pill" href="./whats-new.html">🆕 What's new</a>
  <a class="pill" href="./search.html">🔍 Search</a>
+ <a class="pill" href="./verify.html">🧾 Verify it yourself</a>
  <a class="pill" href="./latest.json">/latest.json · open data</a>
  <a class="pill" href="./openapi.json">/openapi.json · OpenAPI 3.1</a>
  <a class="pill" href="./llms.txt">/llms.txt · agent index</a>
@@ -3079,6 +3080,10 @@ def _agents_manifest() -> dict:
         "mcp": {
             "transport": "stdio",
             "command": "python -m koreaapi.server",
+            "http": {"transport": "streamable-http", "path": "/mcp",
+                     "note": ("the SAME tools over a URL — when the HTTP host is deployed, point any "
+                              "MCP client (Claude Desktop / Cursor) at https://<host>/mcp; no install, "
+                              "no API key")},
             "install": "pip install koreaapi  (or: uvx --from koreaapi koreaapi-mcp)",
             "tools": [{"name": n, "description": d} for n, d in _MCP_TOOLS],
             "resources": [
@@ -3790,6 +3795,57 @@ def _write_search(out_dir: str, by_entity: dict, *, people: list[dict] | None = 
     return n
 
 
+def _write_verify(out_dir: str) -> None:
+    """/verify.html (+ /ko/) — the TRUSTLESS re-verification walkthrough: re-download, re-hash,
+    compare. The integrity chain existed (integrity.json + append-only log + optional Bitcoin
+    anchoring) but only as machine files; this makes 'don't trust us — check' a crawlable,
+    step-by-step page (the proof pillar, human-legible)."""
+    en_body = (
+        "<p class=lede>Every KoreaAPI dataset and record is hash-verifiable. You never have to trust "
+        "us — re-download, re-hash, compare.</p>"
+        "<h2>1 · Verify the dataset</h2>"
+        f"<pre><code>curl -s {_SITE_BASE}/latest.json | sha256sum\n"
+        f"curl -s {_SITE_BASE}/integrity.json   # compare with dataset_hash</code></pre>"
+        "<p class=rom>Same bytes, same hash — a tampered or stale mirror cannot reproduce it.</p>"
+        "<h2>2 · Verify one record</h2>"
+        "<p>Every API response and entity page carries a <code>content_hash</code> — the SHA-256 "
+        "fingerprint of that record's canonical JSON. Fetch the record from "
+        f"<a href=\"{_SITE_BASE}/latest.json\">/latest.json</a>, canonicalize, hash, compare.</p>"
+        "<h2>3 · Verify the history chain</h2>"
+        f"<p>The append-only attestation log at <a href=\"{_SITE_BASE}/integrity-log.jsonl\">"
+        "/integrity-log.jsonl</a> chains every build's dataset hash; <code>integrity.json</code> "
+        "carries the current chain head. A rewritten history breaks the chain.</p>"
+        "<h2>4 · Verify the Bitcoin anchor (when present)</h2>"
+        "<pre><code>pip install opentimestamps-client\n"
+        f"curl -sO {_SITE_BASE}/integrity-head.txt && curl -sO {_SITE_BASE}/integrity-head.txt.ots\n"
+        "ots verify integrity-head.txt.ots</code></pre>"
+        "<p class=rom>The chain head is timestamped into Bitcoin via OpenTimestamps — a latecomer "
+        "cannot backdate it.</p>")
+    _write_hub_html(out_dir, "verify.html", "🧾", "Verify it yourself",
+                    "Trustless re-verification: re-download, re-hash, compare — dataset hash, "
+                    "per-record content hashes, the append-only chain, and the Bitcoin anchor.",
+                    en_body, _escape_jsonld({"@context": "https://schema.org", "@graph": [
+                        _breadcrumb("Verify", f"{_SITE_BASE}/verify.html")]}))
+    ko_body = (
+        "<p class=lede>KoreaAPI의 모든 데이터셋과 레코드는 해시로 재검증할 수 있습니다. 신뢰가 아니라 "
+        "검증입니다 — 다시 받고, 다시 해시하고, 대조하세요.</p>"
+        "<h2>1 · 데이터셋 검증</h2>"
+        f"<pre><code>curl -s {_SITE_BASE}/latest.json | sha256sum\n"
+        f"curl -s {_SITE_BASE}/integrity.json   # dataset_hash와 대조</code></pre>"
+        "<h2>2 · 개별 레코드 검증</h2>"
+        "<p>모든 응답·페이지의 <code>content_hash</code>는 해당 레코드 정규 JSON의 SHA-256입니다.</p>"
+        "<h2>3 · 히스토리 체인 검증</h2>"
+        f"<p><a href=\"../integrity-log.jsonl\">/integrity-log.jsonl</a>이 빌드마다의 해시를 체인으로 "
+        "잇습니다. 과거를 고쳐 쓰면 체인이 끊깁니다.</p>"
+        "<h2>4 · 비트코인 앵커 검증 (있을 때)</h2>"
+        "<pre><code>ots verify integrity-head.txt.ots</code></pre>")
+    _write_ko_list_page(out_dir, "verify.html", "직접 검증하기",
+                        "무신뢰 재검증 — 다시 받고, 다시 해시하고, 대조 (데이터셋 해시 · 레코드 해시 · "
+                        "append-only 체인 · 비트코인 앵커).", ko_body,
+                        _escape_jsonld({"@context": "https://schema.org", "@graph": [
+                            _breadcrumb("검증", f"{_SITE_BASE}/ko/verify.html")]}))
+
+
 def _write_whats_new(out_dir: str, recs: list, by_entity: dict) -> int:
     """A crawlable /whats-new.html (+ /ko/) — verified CHANGE EVENTS (소속사 moves, renames) as a cited
     freshness asset: the time-moat made VISIBLE. Each change is timestamped in an append-only history a
@@ -3869,7 +3925,7 @@ def verify_site(site_dir: str = "_site", min_entities: int = 100) -> dict:
     need(os.path.exists(idx) and os.path.getsize(idx) > 5000, "index.html missing or suspiciously small")
     for f in ("guides.html", "whats-new.html", "search.html", "llms.txt", "llms-full.txt",
               "search-index.json", "sitemap.xml", "agents.json", "reconcile.json", "status.json",
-              os.path.join(".well-known", "agent.json"), "404.html"):
+              os.path.join(".well-known", "agent.json"), "404.html", "verify.html"):
         need(os.path.exists(os.path.join(site_dir, f)), f"{f} missing")
     try:
         entries = json.load(open(os.path.join(site_dir, "search-index.json"), encoding="utf-8"))
@@ -4126,6 +4182,7 @@ async def entity_pages(db_path: str | None = None, out_dir: str = "site") -> dic
     n_changes = _write_whats_new(out_dir, _recs, by_entity)
     # Client-side search over the whole verified graph — entities + person hubs + label hubs.
     n_search = _write_search(out_dir, by_entity, people=people_written, labels=labels_written)
+    _write_verify(out_dir)  # /verify.html (+/ko/) — the trustless re-verification walkthrough
     # Custom 404 (GitHub Pages serves /404.html): recover a lost visitor/crawler into search + guides.
     # Deliberately NOT via _write_hub_html — that would declare a hreflang /ko/404.html that never
     # exists (the hreflang-to-404 class); a 404 is noindex and needs no language pairing.
@@ -4204,6 +4261,7 @@ async def sitemap(db_path: str | None = None, out_path: str = "sitemap.xml") -> 
     # Freshness page (high priority — it's the "what changed" surface) + its Korean counterpart.
     urls += [(f"{_SITE_BASE}/whats-new.html", "0.8"), (f"{_SITE_BASE}/ko/whats-new.html", "0.6")]
     urls += [(f"{_SITE_BASE}/search.html", "0.6"), (f"{_SITE_BASE}/ko/search.html", "0.5")]
+    urls += [(f"{_SITE_BASE}/verify.html", "0.6"), (f"{_SITE_BASE}/ko/verify.html", "0.5")]
     body = "".join(
         f"  <url><loc>{u}</loc><lastmod>{today}</lastmod>"
         f"<changefreq>daily</changefreq><priority>{p}</priority></url>\n"

@@ -14,6 +14,8 @@ Korean-surface parity, a self-healing freshness engine, and deploy safety.
 - Machine-actionable HTTP errors (404/405/500 carry the next action), cache headers for agent fleets,
   `agents.json → autonomous_use` (terms for autonomous/spawned agents, incl. downstream
   re-verification via content_hash + integrity chain), the manifest also at `/.well-known/agent.json`.
+- **MCP over a URL**: the HTTP app mounts the MCP server at `/mcp` (Streamable HTTP) — one
+  deployment serves REST + MCP; any MCP client connects with zero install (`agents.json → mcp.http`).
 - ~18x faster serving reads: every store scan collapsed to one window-function query
   (`store.latest_all`).
 
@@ -30,6 +32,9 @@ Korean-surface parity, a self-healing freshness engine, and deploy safety.
   (`/llms-<vertical>.txt`), grounded "What is X?" FAQ on every entity page, richer JSON-LD
   (dateModified · isPartOf · license · identifier · alternateName), custom 404, source-disagreement
   notes ("shown, not hidden"), Korean label hubs (`/ko/label/`) and full KO-page parity.
+- **`/verify.html`** (+ `/ko/`) — the trustless re-verification walkthrough: dataset `sha256sum` vs
+  `integrity.json`, per-record `content_hash`, the append-only chain, the Bitcoin anchor
+  (`ots verify`). The integrity machinery, human-legible.
 
 ### Data engine & ops
 - **refresh** — re-verifies the stalest discovered entities every collect tick (half-TTL threshold,

@@ -76,7 +76,8 @@ Hallucination cannot enter a record: extraction is labor, grounding is the gate.
 - **Hubs**: 40 vertical hubs (+/ko/), `/people.html`, `/label/<slug>.html` (+/ko/), region guides
   `/guide-<region>.html` (+/ko/, walkable clusters + TouristTrip), food guides `/food-<diet>.html`
   (+/ko/), `/guides.html` index (+/ko/), `/whats-new.html` (+/ko/), `/search.html` (+/ko/, ?q= deep
-  links) over `search-index.json` (entities + people + labels), custom `/404.html`.
+  links) over `search-index.json` (entities + people + labels), `/verify.html` (+/ko/, the trustless
+  re-verification walkthrough: re-download → re-hash → compare), custom `/404.html`.
 - **Machine**: `/latest.json` · `/changes.json` · `/reconcile.json` · `/status.json` · `/integrity.json`
   (+ append-only log; OpenTimestamps when enabled) · `/certified.json` · `/openapi.json` ·
   `/agents.json` · `/feed.xml` · `/feed.json` · `/llms.txt` · `/llms-full.txt` · per-vertical
@@ -84,7 +85,9 @@ Hallucination cannot enter a record: extraction is labor, grounding is the gate.
 - **API/MCP**: 16 MCP tools (incl. `ask` free-text router, `get_answer` over 11 Answer Products —
   canonical-name · fact-check · identity-resolve · trend-radar · agency-roster · person-credits ·
   related-network(+nearby) · trip-plan(map-ready + walkable clusters) · food-guide · compare ·
-  evidence-pack) + the same over HTTP `/v1/*` (`/v1/answer?product=auto` = ask).
+  evidence-pack) + the same over HTTP `/v1/*` (`/v1/answer?product=auto` = ask). The HTTP app also
+  mounts the MCP server itself at **`/mcp`** (Streamable HTTP) — one deployment serves REST *and*
+  MCP-over-URL (point any MCP client at `https://<host>/mcp`, zero install).
 
 ## Verification layers (what protects a deploy)
 

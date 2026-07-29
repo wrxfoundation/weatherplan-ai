@@ -50,6 +50,8 @@ def test_for_agents_page_and_manifest(tmp_path):
     assert "open-data ecosystem" in man["trust_model"]["ecosystem"]   # positioned as the verification layer
     assert any(t["name"] == "get_verified" for t in man["mcp"]["tools"])
     assert man["mcp"]["command"] == "python -m koreaapi.server"
+    http = man["mcp"]["http"]                                    # the remote lane: same tools, zero install
+    assert http["transport"] == "streamable-http" and http["path"] == "/mcp"
     assert man["data"]["open_json"].endswith("/latest.json")
     assert man["data"]["guides"].endswith("/guides.html")            # crawlable guide assets, discoverable
     assert man["data"]["whats_new"].endswith("/whats-new.html")      # the freshness page, discoverable
@@ -65,6 +67,32 @@ def test_for_agents_page_and_manifest(tmp_path):
     assert wk["autonomous_use"]["allowed"] is True
     wf = open("/home/user/koreaapi-build/.github/workflows/pages.yml", encoding="utf-8").read()
     assert "cp -r site/.well-known _site/.well-known" in wf     # dot-dir: no glob catches it — guard the cp
+
+
+def test_verify_pages_trustless_walkthrough(tmp_path):
+    # /verify.html (+ /ko/) — the integrity chain (dataset hash · content_hash · append-only log ·
+    # Bitcoin anchor) existed as machine files only; this page makes "don't trust us — re-verify"
+    # a crawlable, step-by-step human surface, linked from the homepage and the sitemap.
+    db = tempfile.mktemp(suffix=".db")
+    p = {"name_ko": "방탄소년단", "name_en_official": "BTS", "name_en_source": "official"}
+    asyncio.run(ingest_one("facts", "artist:bts",
+                           [MockSource("Wikidata", p), MockSource("Wikipedia", p)], db_path=db))
+    out = str(tmp_path / "site")
+    asyncio.run(admin.entity_pages(db_path=db, out_dir=out))
+    en = open(os.path.join(out, "verify.html"), encoding="utf-8").read()
+    assert "sha256sum" in en and "dataset_hash" in en           # step 1: whole-dataset hash
+    assert "content_hash" in en                                  # step 2: per-record hash
+    assert "integrity-log.jsonl" in en                           # step 3: the append-only chain
+    assert "ots verify" in en                                    # step 4: the Bitcoin anchor
+    ko = open(os.path.join(out, "ko", "verify.html"), encoding="utf-8").read()
+    assert '<html lang="ko">' in ko and "sha256sum" in ko and "ots verify" in ko
+    rep = tempfile.mktemp(suffix=".html")
+    asyncio.run(admin.report_html(db_path=db, out_path=rep))
+    assert './verify.html' in open(rep, encoding="utf-8").read()  # homepage pill -> discoverable
+    sm = tempfile.mktemp(suffix=".xml")
+    asyncio.run(admin.sitemap(db_path=db, out_path=sm))
+    smt = open(sm, encoding="utf-8").read()
+    assert "/verify.html" in smt and "/ko/verify.html" in smt
 
 
 def test_pricing_pages(tmp_path):
