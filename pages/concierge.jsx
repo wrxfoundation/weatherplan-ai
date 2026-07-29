@@ -33,12 +33,17 @@ export default function ConciergePage() {
               </div>
               <div className="mt-0.5 text-[19px] font-black text-navy">박지현 · 주 동행</div>
             </div>
-            <button
-              onClick={() => dispatch({ type: "demo", payload: { offline: !state.demo.offline } })}
-              className="btn-press rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11px] font-bold text-muted"
-            >
-              {state.demo.offline ? "온라인 전환" : "오프라인 시연"}
-            </button>
+            <div className="flex items-center gap-2">
+              <a href="/" className="text-[11px] font-bold text-muted/50">
+                데모 홈
+              </a>
+              <button
+                onClick={() => dispatch({ type: "demo", payload: { offline: !state.demo.offline } })}
+                className="btn-press rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11px] font-bold text-muted"
+              >
+                {state.demo.offline ? "온라인 전환" : "오프라인 시연"}
+              </button>
+            </div>
           </header>
 
           {/* 오프라인 배너 — 로컬 큐 잔여 표시 */}
