@@ -6,11 +6,16 @@ from __future__ import annotations
 
 import asyncio
 import os
+import shutil
 import tempfile
 
 from koreaapi import admin
 from koreaapi.pipeline.ingest import ingest_one
 from koreaapi.sources.mock import MockSource
+
+# repo root, resolved RELATIVE to this file — the suite must pass on GitHub runners too,
+# where the checkout path is not /home/user/koreaapi-build
+_REPO = os.path.join(os.path.dirname(__file__), "..")
 
 
 def _build(tmp_path) -> str:
@@ -27,6 +32,7 @@ def _build(tmp_path) -> str:
     asyncio.run(admin.llms_full_txt(db_path=db, out_path=os.path.join(site, "llms-full.txt")))
     asyncio.run(admin.reconcile_json(db_path=db, out_path=os.path.join(site, "reconcile.json")))
     asyncio.run(admin.status_json(db_path=db, out_path=os.path.join(site, "status.json")))
+    shutil.copy(os.path.join(_REPO, "og.png"), site)  # committed asset the workflow cp's into _site
     return site
 
 
@@ -47,7 +53,7 @@ def test_verify_site_fails_loudly_on_a_broken_build(tmp_path):
 
 
 def test_pages_workflow_gates_the_deploy():
-    wf = open("/home/user/koreaapi-build/.github/workflows/pages.yml", encoding="utf-8").read()
+    wf = open(os.path.join(_REPO, ".github/workflows/pages.yml"), encoding="utf-8").read()
     assert "koreaapi.admin verifysite _site" in wf                   # the gate runs before upload
     assert wf.index("verifysite _site") < wf.index("upload-pages-artifact")
 

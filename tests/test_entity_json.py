@@ -8,6 +8,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import shutil
 import tempfile
 
 from koreaapi import admin, integrity
@@ -89,6 +90,7 @@ def test_verifysite_gates_the_twins(tmp_path):
     asyncio.run(admin.llms_full_txt(db_path=db, out_path=os.path.join(site, "llms-full.txt")))
     asyncio.run(admin.reconcile_json(db_path=db, out_path=os.path.join(site, "reconcile.json")))
     asyncio.run(admin.status_json(db_path=db, out_path=os.path.join(site, "status.json")))
+    shutil.copy(os.path.join(os.path.dirname(__file__), "..", "og.png"), site)
     res = admin.verify_site(site, min_entities=2)
     assert res["ok"], res["failures"]
     assert res["stats"]["artist_json"] >= 2

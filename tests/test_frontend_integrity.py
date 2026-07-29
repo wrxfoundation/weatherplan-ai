@@ -72,8 +72,10 @@ def test_generated_frontend_is_sound(tmp_path):
                 json.loads(block)
             except Exception as e:
                 issues.append(f"[JSON-LD] {rel}: {e}")
-        # no unfilled f-string placeholder or bare rendered None leaked into the page
-        for ph in set(re.findall(r"\{[a-zA-Z_][a-zA-Z0-9_]*\}", t)):
+        # no unfilled f-string placeholder or bare rendered None leaked into the page.
+        # {search_term_string} is NOT a leak: schema.org SearchAction REQUIRES that literal
+        # template token in urlTemplate (Google's sitelinks-searchbox form).
+        for ph in set(re.findall(r"\{[a-zA-Z_][a-zA-Z0-9_]*\}", t)) - {"{search_term_string}"}:
             issues.append(f"[placeholder] {rel}: unfilled {ph}")
         if re.search(r">\s*None\s*<", t) or re.search(r":\s*None[<\s]", t):
             issues.append(f"[None-leak] {rel}")

@@ -43,6 +43,10 @@ Korean-surface parity, a self-healing freshness engine, and deploy safety.
   alternates (both entries, per Google's form) so the full `/ko/` layer indexes as pairs, not
   duplicates; entity pages (EN + KO) advertise their machine twin as a schema.org **Dataset →
   DataDownload** node in the crawled graph.
+- **Share/discovery surface**: a committed 1200×630 brand card (`/og.png`, drawn in the site's own
+  glass + signature-edge design) as `og:image` + large Twitter card on every page, an inline SVG
+  favicon everywhere, and the home's WebSite node now declares its `?q=` search (**SearchAction**,
+  sitelinks-searchbox form) with an Organization `logo`.
 
 ### Data engine & ops
 - **refresh** — re-verifies the stalest discovered entities every collect tick (half-TTL threshold,

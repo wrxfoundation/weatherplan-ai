@@ -1203,8 +1203,14 @@ def _jsonld(records: list, generated_iso: str, person_nodes: list | None = None)
                 ],
                 "sameAs": ["https://github.com/kwangdol-star/koreaapi"],
             },
-            {"@type": "WebSite", "name": "KoreaAPI", "url": f"{_SITE_BASE}/", "inLanguage": ["en", "ko"]},
+            {"@type": "WebSite", "name": "KoreaAPI", "url": f"{_SITE_BASE}/", "inLanguage": ["en", "ko"],
+             # sitelinks-searchbox eligibility: the site HAS a working ?q= search — declare it
+             "potentialAction": {"@type": "SearchAction",
+                                 "target": {"@type": "EntryPoint",
+                                            "urlTemplate": f"{_SITE_BASE}/search.html?q={{search_term_string}}"},
+                                 "query-input": "required name=search_term_string"}},
             {"@type": "Organization", "name": "KoreaAPI", "url": f"{_SITE_BASE}/",
+             "logo": f"{_SITE_BASE}/og.png",  # brand image for knowledge-panel / rich results
              "sameAs": ["https://github.com/kwangdol-star/koreaapi"]},
             *groups,
             *(person_nodes or []),
@@ -1352,9 +1358,15 @@ async def report_html(db_path: str | None = None, out_path: str = "report.html")
 <meta property="og:title" content="KoreaAPI — verifiable Korean-culture data for AI agents">
 <meta property="og:description" content="Verifiable, bilingual Korean culture data (K-pop · K-drama · K-film) for AI agents &amp; answer engines. Every record carries its source + a Skill Score.">
 <meta property="og:url" content="{_SITE_BASE}/">
+<meta property="og:image" content="{_SITE_BASE}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="KoreaAPI — the verifiable data layer for Korean culture">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="KoreaAPI — verifiable Korean-culture data for AI agents">
 <meta name="twitter:description" content="K-pop · K-drama · K-film, cross-verified with provenance + Skill Score. Citable by any answer engine.">
+<meta name="twitter:image" content="{_SITE_BASE}/og.png">
+{_FAVICON}
 <script type="application/ld+json">
 {jsonld}
 </script>
@@ -2093,18 +2105,36 @@ def _breadcrumb(name: str, url: str, *, middle: tuple[str, str] | None = None) -
     return {"@type": "BreadcrumbList", "itemListElement": items}
 
 
+# Brand favicon — the taegeuk-gradient dot in a gold ring, inline as a data URI so every generated
+# page carries it with zero extra requests/assets ('#' must be %23-escaped inside a data URI).
+_FAVICON = ("<link rel=\"icon\" href='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" "
+            'viewBox="0 0 32 32"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">'
+            '<stop offset="0" stop-color="%23cd2e3a"/><stop offset="1" stop-color="%230047a0"/>'
+            '</linearGradient></defs><circle cx="16" cy="16" r="12.5" fill="url(%23g)"/>'
+            '<circle cx="16" cy="16" r="14.6" fill="none" stroke="%23E9C46A" stroke-width="2.2"/>'
+            "</svg>'>")
+
+
 def _social_meta(title: str, desc: str, url: str, og_type: str = "website") -> str:
-    """Open Graph + Twitter card tags (richer link previews when a page is shared / cited). `title`
-    and `desc` must already be HTML-attribute-escaped by the caller (html.escape, quote=True)."""
+    """Open Graph + Twitter card tags (richer link previews when a page is shared / cited) + the
+    brand share image and favicon. `title` and `desc` must already be HTML-attribute-escaped by the
+    caller (html.escape, quote=True). og.png is a committed 1200×630 asset (copied by pages.yml) —
+    without og:image, a share into KakaoTalk/Slack/X renders as a bare text scrap."""
     return (
         f'<meta property="og:type" content="{og_type}">'
         f'<meta property="og:site_name" content="KoreaAPI">'
         f'<meta property="og:title" content="{title}">'
         f'<meta property="og:description" content="{desc}">'
         f'<meta property="og:url" content="{url}">'
-        f'<meta name="twitter:card" content="summary">'
+        f'<meta property="og:image" content="{_SITE_BASE}/og.png">'
+        f'<meta property="og:image:width" content="1200">'
+        f'<meta property="og:image:height" content="630">'
+        f'<meta property="og:image:alt" content="KoreaAPI — the verifiable data layer for Korean culture">'
+        f'<meta name="twitter:card" content="summary_large_image">'
         f'<meta name="twitter:title" content="{title}">'
         f'<meta name="twitter:description" content="{desc}">'
+        f'<meta name="twitter:image" content="{_SITE_BASE}/og.png">'
+        f"{_FAVICON}"
     )
 
 
@@ -4001,7 +4031,7 @@ def verify_site(site_dir: str = "_site", min_entities: int = 100) -> dict:
     need(os.path.exists(idx) and os.path.getsize(idx) > 5000, "index.html missing or suspiciously small")
     for f in ("guides.html", "whats-new.html", "search.html", "llms.txt", "llms-full.txt",
               "search-index.json", "sitemap.xml", "agents.json", "reconcile.json", "status.json",
-              os.path.join(".well-known", "agent.json"), "404.html", "verify.html"):
+              os.path.join(".well-known", "agent.json"), "404.html", "verify.html", "og.png"):
         need(os.path.exists(os.path.join(site_dir, f)), f"{f} missing")
     try:
         entries = json.load(open(os.path.join(site_dir, "search-index.json"), encoding="utf-8"))
