@@ -102,6 +102,11 @@ locally — set `MCP_TRANSPORT=http` on any host (Render / Railway / Fly):
 MCP_TRANSPORT=http PORT=8080 python -m koreaapi.server
 ```
 
+The HTTP API app (`koreaapi.api`) also **mounts the MCP server at `/mcp`** (Streamable HTTP), so a
+single deployment serves both the REST surface (`/v1/*`) and MCP: point any MCP client
+(Claude Desktop · Cursor · an agent framework) at `https://<host>/mcp` — same 16 tools, no install,
+no API key. `agents.json → mcp.http` advertises this lane machine-readably.
+
 ## Registries (get discovered)
 
 [`smithery.yaml`](../smithery.yaml) describes the start command for the

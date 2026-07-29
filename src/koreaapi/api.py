@@ -21,7 +21,7 @@ from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-from starlette.routing import Route
+from starlette.routing import Mount, Route
 
 from . import answers, service
 from .license import LICENSE
@@ -322,6 +322,13 @@ async def openapi(request: Request) -> JSONResponse:
     return JSONResponse(openapi_spec())
 
 
+# The MCP server mounted INSIDE the HTTP app (Streamable HTTP): one deployment serves REST *and*
+# MCP — an agent (Cursor / Claude Desktop / any MCP client) just points at https://<host>/mcp with
+# no install, no API key. Same read-only tools over the same verified store.
+from .server import mcp as _mcp  # noqa: E402  (import here keeps the module graph acyclic)
+
+_mcp_app = _mcp.http_app(path="/")
+
 routes = [
     Route("/", index),
     Route("/healthz", health),
@@ -342,6 +349,7 @@ routes = [
     Route("/v1/answer", answer),
     Route("/v1/korea-rising", korea_rising),
     Route("/billing/stripe/checkout", stripe_checkout, methods=["POST"]),
+    Mount("/mcp", app=_mcp_app),  # MCP over HTTP — point an MCP client at <host>/mcp
 ]
 
 # Machine-actionable errors — the caller is an autonomous agent, not a human reading a browser page:
@@ -400,7 +408,8 @@ class _CacheHeaders:
 
 app = Starlette(routes=routes,
                 middleware=[Middleware(_CacheHeaders)],
-                exception_handlers={404: _json_404, 405: _json_405, Exception: _json_500})
+                exception_handlers={404: _json_404, 405: _json_405, Exception: _json_500},
+                lifespan=_mcp_app.lifespan)  # the MCP session manager needs its lifespan run
 
 
 def main() -> None:
