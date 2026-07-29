@@ -39,6 +39,20 @@ export default function Home() {
             >
               가족 앱 미리보기 {joined ? "" : "(데모 데이터)"}
             </Link>
+            <div className="grid grid-cols-2 gap-3">
+              <Link
+                href="/elder"
+                className="btn-press block rounded-2xl border border-white/25 py-4 text-center text-[15px] font-bold text-white"
+              >
+                어르신 화면
+              </Link>
+              <Link
+                href="/concierge"
+                className="btn-press block rounded-2xl border border-white/25 py-4 text-center text-[15px] font-bold text-white"
+              >
+                컨시어지 화면
+              </Link>
+            </div>
           </div>
 
           <div className="mt-10 border-t border-white/10 pt-5 text-[11px] leading-[1.8] text-white/40">
