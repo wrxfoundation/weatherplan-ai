@@ -1,16 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-07-28)
+# Korea Rising — verified K-pop snapshot (2026-07-29)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🏆 Circle Digital Chart — current #1
 **Rescene** — Love Attack  
-_Circle Digital Chart #1 (via Wikipedia) 2026-07-28 04:04 UTC · Skill Score 0.70_
+_Circle Digital Chart #1 (via Wikipedia) 2026-07-29 04:09 UTC · Skill Score 0.70_
 
 ## 🎬 Latest official releases (YouTube)
-- **EXO** — 엑소엘 야호 ✌️#SUHO #수호 #EXO #엑소 #weareoneEXO
-- **NMIXX** — ‘Como la Flor’ by 릴리 #NMIXX #엔믹스 #릴리 #LILY
-- **NewJeans** — [Light Jeans] 2026 Summer of NewJeans BehindㅣNewJeans
-- **BTS** — BTS (방탄소년단) 'NORMAL (Korean Ver.)' Lyric Video
+- **IVE** — 🗂️ I-VIEW ㄴ LEESEO in NEWARK #IVE #아이브 #LEESEO #이서 #SHOW_WHAT_I_AM #Shorts
+- **BTS** — BTS (방탄소년단) 'NORMAL (Korean Ver.)' Visualizer for ARMY
 
 ## 🎤 Verified roster (639 acts)
 - **2NE1**: I Am the Best
