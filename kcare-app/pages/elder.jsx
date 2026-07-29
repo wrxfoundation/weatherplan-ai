@@ -32,8 +32,13 @@ export default function ElderHome() {
       <div className="min-h-screen bg-nav">
         <div className="mx-auto min-h-screen w-full max-w-[430px] bg-elder pb-40">
           <header className="px-6 pb-2 pt-7">
-            <div className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
-              K-CARE
+            <div className="flex items-center justify-between">
+              <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
+                K-CARE
+              </span>
+              <a href="/" className="text-[13px] font-bold text-muted/50">
+                데모 홈
+              </a>
             </div>
             <h1 className="mt-1 text-[30px] font-black leading-[1.3] text-navy">
               {elderName} 어르신,
@@ -266,6 +271,7 @@ function SosButton({ phase, setPhase, onDispatch }) {
             onPointerDown={startHold}
             onPointerUp={endHold}
             onPointerLeave={endHold}
+            onContextMenu={(e) => e.preventDefault()}
             className="relative flex h-[96px] w-[96px] select-none flex-col items-center justify-center rounded-full bg-[#F2B705] text-navy shadow-[0_10px_28px_-8px_rgba(138,93,18,.55)]"
             style={{
               background:

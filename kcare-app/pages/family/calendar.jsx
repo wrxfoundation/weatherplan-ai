@@ -15,7 +15,17 @@ export default function CalendarPage() {
   const { state, dispatch } = useAppState();
   const today = new Date();
   const [ym, setYm] = useState({ y: today.getFullYear(), m: today.getMonth() });
-  const [selected, setSelected] = useState(today.getDate());
+  // 첫 진입 시 빈 날짜 대신 가장 가까운 일정이 있는 날을 보여준다 (홈 "다음 일정" 동선)
+  const [selected, setSelected] = useState(() => {
+    const inMonth = state.events.filter((e) => {
+      const d = new Date(e.at);
+      return d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth();
+    });
+    const next =
+      inMonth.filter((e) => e.at >= Date.now()).sort((a, b) => a.at - b.at)[0] ||
+      inMonth.sort((a, b) => b.at - a.at)[0];
+    return next ? new Date(next.at).getDate() : today.getDate();
+  });
   const [creating, setCreating] = useState(false);
 
   const events = state.events;
@@ -208,6 +218,9 @@ export default function CalendarPage() {
             onClose={() => setCreating(false)}
             onCreate={(ev) => {
               dispatch({ type: "addEvent", payload: ev });
+              const d = new Date(ev.at);
+              setYm({ y: d.getFullYear(), m: d.getMonth() });
+              setSelected(d.getDate());
               setCreating(false);
             }}
           />

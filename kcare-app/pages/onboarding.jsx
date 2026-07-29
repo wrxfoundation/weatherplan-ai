@@ -24,6 +24,7 @@ export default function Onboarding() {
     paymentMode: "limit",
     limitAmount: PRICING.paymentLimitDefault,
   });
+  const [waitlisted, setWaitlisted] = useState(false);
   const set = (patch) => setForm((f) => ({ ...f, ...patch }));
 
   const result = form.district ? screenRegion(form.district) : null;
@@ -150,7 +151,10 @@ export default function Onboarding() {
                   <SectionLabel>어르신 거주 지역</SectionLabel>
                   <select
                     value={form.district || ""}
-                    onChange={(e) => set({ district: e.target.value })}
+                    onChange={(e) => {
+                      set({ district: e.target.value });
+                      setWaitlisted(false);
+                    }}
                     className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 text-[14px] outline-none focus:border-gold"
                   >
                     <option value="" disabled>
@@ -212,6 +216,13 @@ export default function Onboarding() {
                 </Card>
               )}
 
+              {waitlisted && (
+                <div className="animate-tickIn rounded-card border border-green/30 bg-[#F1FAF6] p-4 text-[13px] leading-[1.7] text-green">
+                  대기 등록이 접수되었습니다. 해당 지역 서비스가 열리면 남겨주신 연락처로
+                  가장 먼저 안내드립니다. (데모 — 연락처 수집은 실연동 대기)
+                </div>
+              )}
+
               <div className="flex gap-2">
                 <GhostButton onClick={() => setStep(0)} className="flex-1">
                   이전
@@ -219,9 +230,10 @@ export default function Onboarding() {
                 {restricted ? (
                   <PrimaryButton
                     className="flex-[2]"
-                    onClick={() => alert("대기 등록되었습니다. 서비스 개시 시 가장 먼저 안내드립니다. (데모)")}
+                    disabled={waitlisted}
+                    onClick={() => setWaitlisted(true)}
                   >
-                    대기 등록 남기기
+                    {waitlisted ? "대기 등록 완료" : "대기 등록 남기기"}
                   </PrimaryButton>
                 ) : (
                   <PrimaryButton
