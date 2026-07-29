@@ -1,0 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Montserrat:wght@500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-nav font-sans text-ink;
+    font-weight: 500;
+  }
+  button {
+    touch-action: manipulation;
+  }
+}
+
+@layer components {
+  /* 주요 버튼 press 상태 — 핸드오프 공통 인터랙션 규칙 */
+  .btn-press {
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  }
+  .btn-press:active {
+    transform: translateY(1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sosPulse,
+  .animate-livePing,
+  .animate-escalateGlow {
+    animation: none !important;
+  }
+}
