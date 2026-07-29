@@ -1327,7 +1327,7 @@ async def report_html(db_path: str | None = None, out_path: str = "report.html")
  :root{{--bg:#0D0B06;--panel:#17120A;--panel2:#1E1710;--line:#3A2F1A;--ink:#F7F2E8;--mut:#C2B7A3;--dim:#8C8068;--accent:#E9C46A;--accent2:#D9A441;--ok:#10B981;--bad:#EF4444;
   --glass:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));--gbord:rgba(255,255,255,.14);
   --blur:saturate(170%) blur(18px);
-  --gshadow:0 14px 44px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35),inset 0 1.5px 0 rgba(255,255,255,.28),inset 0 0 0 1px rgba(255,255,255,.04),inset 0 -16px 30px rgba(6,10,22,.6)}}
+  --gshadow:0 14px 44px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35),inset 1.5px 1.5px 0 rgba(255,255,255,.28),inset 0 0 0 1px rgba(255,255,255,.04),inset 0 -16px 30px rgba(6,10,22,.6)}}
  *{{box-sizing:border-box}}
  body{{font-family:'Montserrat','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',system-ui,-apple-system,sans-serif;color:var(--ink);margin:0;padding:34px 20px 52px;line-height:1.5;
   background:
@@ -1344,10 +1344,10 @@ async def report_html(db_path: str | None = None, out_path: str = "report.html")
  @keyframes dotglow{{0%,100%{{box-shadow:0 0 6px rgba(205,46,58,.5)}}50%{{box-shadow:0 0 15px rgba(0,71,160,.7)}}}}
  .tag{{color:var(--mut);margin:11px 0 18px;font-size:15px;max-width:780px}}
  .pills{{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}}
- .pill{{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.28)}}
+ .pill{{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.4),inset 1px 1px 0 rgba(255,255,255,.28)}}
  .pill:hover{{border-color:var(--accent);color:var(--accent);text-decoration:none;transform:translateY(-1px)}}
  .chips{{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}}
- .chip{{font-size:12px;color:var(--mut);background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:10px;padding:7px 12px;box-shadow:0 6px 18px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.22)}}
+ .chip{{font-size:12px;color:var(--mut);background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:10px;padding:7px 12px;box-shadow:0 6px 18px rgba(0,0,0,.4),inset 1px 1px 0 rgba(255,255,255,.22)}}
  .chip b{{color:var(--ink)}}
  .note{{color:var(--mut);font-size:13px;line-height:1.65;background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-left:3px solid var(--accent);border-radius:14px;padding:15px 18px;margin-bottom:24px;max-width:1000px;box-shadow:var(--gshadow)}}
  .note b{{color:var(--ink)}}
@@ -1358,7 +1358,7 @@ async def report_html(db_path: str | None = None, out_path: str = "report.html")
  .card .k{{color:var(--mut);font-size:12px;margin-top:3px}}
  .tablewrap{{overflow:hidden;overflow-x:auto;border:1px solid var(--gbord);border-radius:18px;background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--gshadow)}}
  table{{width:100%;border-collapse:collapse;min-width:900px;background:transparent}}
- th,td{{padding:13px 14px;text-align:left;font-size:13px;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.08)}}
+ th,td{{padding:13px 14px;text-align:left;font-size:13px;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.10);{_ROW_FADE}}}
  th{{color:var(--mut);font-weight:600;background:rgba(255,255,255,.06);font-size:11px;text-transform:uppercase;letter-spacing:.04em}}
  tbody tr:last-child td{{border-bottom:none}}
  tbody tr:hover{{background:rgba(255,255,255,.06)}}
@@ -1370,9 +1370,10 @@ async def report_html(db_path: str | None = None, out_path: str = "report.html")
  a{{color:var(--accent);text-decoration:none}} a:hover{{text-decoration:underline}}
  h2.sec{{font-size:18px;font-weight:800;letter-spacing:-.01em;margin:30px 0 12px}}
  .pchips{{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}}
- .pchip{{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;color:var(--ink);box-shadow:0 6px 16px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.22)}}
+ .pchip{{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;color:var(--ink);box-shadow:0 6px 16px rgba(0,0,0,.38),inset 1px 1px 0 rgba(255,255,255,.22)}}
  .pchip:hover{{border-color:var(--accent);color:var(--accent);text-decoration:none;transform:translateY(-1px)}}
  footer{{color:var(--dim);margin-top:24px;font-size:12px;line-height:1.7}}
+ {_edge_css('.tablewrap,.card')}
 </style></head><body><div class="wrap">
 <div class="brand"><span class="dot"></span><h1>KoreaAPI {_FLAG}</h1></div>
 <div class="tag">The verifiable data layer for Korean culture — callable by any AI agent (MCP), citable by any answer engine.</div>
@@ -1503,6 +1504,28 @@ _FONT_STACK = "'Montserrat','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic'
 # put a `@keyframes ... body::before{...}` string here.
 _AURORA = ""
 
+
+def _edge_css(sel: str) -> str:
+    """The signature glass edge: a border that is CRISP gold-white at the TOP-LEFT and fades to
+    nothing at the bottom-right (one 135° light source across the whole site). Drawn as a masked
+    gradient ring (::before, mask-composite punches out the middle) because a plain gradient
+    border-image can't sit on a translucent backdrop-blurred surface without tinting it. The
+    element's own border drops to a whisper so the fade genuinely reaches zero."""
+    ring = ",".join(f"{s}::before" for s in sel.split(","))
+    return (
+        sel + "{position:relative;border-color:rgba(255,255,255,.05)}"
+        + ring + '{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.2px;'
+        "background:linear-gradient(135deg,rgba(233,196,106,.85),rgba(255,255,255,.34) 26%,"
+        "rgba(255,255,255,.10) 52%,rgba(255,255,255,0) 78%);"
+        "-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);"
+        "-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}"
+    )
+
+
+# Directional row separators for glass tables: crisp at the LEFT, fading out to the right — the
+# same 135° light story as `_edge_css`, applied to the lines INSIDE the table frame.
+_ROW_FADE = "border-image:linear-gradient(90deg,rgba(255,255,255,.18),rgba(255,255,255,.02)) 1"
+
 # Clean line (stroke) SVG icons — replace the emoji glyphs in section/hub/pill labels. Gold stroke,
 # currentColor-free so they read consistently on any surface. Sized in em; vertical-aligned inline.
 def _icon(paths: str) -> str:
@@ -1626,7 +1649,7 @@ _ICON = {
 }
 
 _ENTITY_STYLE = _FONT_LINKS + "<style>" + _AURORA + """
- :root{--glass:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));--gbord:rgba(255,255,255,.14);--blur:saturate(170%) blur(18px);--gshadow:0 14px 44px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35),inset 0 1.5px 0 rgba(255,255,255,.26),inset 0 0 0 1px rgba(255,255,255,.04),inset 0 -16px 30px rgba(6,10,22,.6)}
+ :root{--glass:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));--gbord:rgba(255,255,255,.14);--blur:saturate(170%) blur(18px);--gshadow:0 14px 44px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35),inset 1.5px 1.5px 0 rgba(255,255,255,.26),inset 0 0 0 1px rgba(255,255,255,.04),inset 0 -16px 30px rgba(6,10,22,.6)}
  body{font-family:'Montserrat','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',system-ui,-apple-system,sans-serif;color:#F7F2E8;margin:0 auto;padding:34px 22px 48px;line-height:1.55;max-width:860px;
   background:
    radial-gradient(760px 440px at 0% -8%,rgba(233,196,106,.20),transparent 60%),
@@ -1639,12 +1662,19 @@ _ENTITY_STYLE = _FONT_LINKS + "<style>" + _AURORA + """
  .sub{color:#C2B7A3;margin:6px 0 8px;font-size:13px}
  ul{padding-left:18px} li{margin:5px 0}
  .people{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:8px}
- .people li{margin:0;background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:10px;padding:6px 11px;font-size:13px;box-shadow:0 6px 16px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.20)}
+ .people li{margin:0;background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:10px;padding:6px 11px;font-size:13px;box-shadow:0 6px 16px rgba(0,0,0,.38),inset 1px 1px 0 rgba(255,255,255,.20)}
  .people li a{color:#E9C46A}
  .qa{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:14px;padding:12px 16px;margin:9px 0;box-shadow:var(--gshadow)}
  .qa .q{font-weight:700} .qa .a{color:#E0D7C6;margin-top:3px;font-size:14px}
  .cite{background:linear-gradient(135deg,rgba(233,196,106,.16),rgba(255,255,255,.02));backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid rgba(233,196,106,.35);border-radius:14px;padding:12px 16px;margin:18px 0;font-size:13px;box-shadow:var(--gshadow)}
+ pre{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:14px;padding:13px 16px;overflow-x:auto;font-size:13px;box-shadow:var(--gshadow)}
+ code{color:#E9C46A}
+ table{width:100%;border-collapse:separate;border-spacing:0;background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:14px;overflow:hidden;box-shadow:var(--gshadow)}
+ th,td{padding:10px 13px;text-align:left;font-size:13px;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.10);""" + _ROW_FADE + """}
+ th{color:#C2B7A3;font-weight:600;background:rgba(255,255,255,.06);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+ tbody tr:last-child td{border-bottom:none}
  .back{font-size:13px;margin:0 0 12px} footer{color:#8C8068;margin-top:20px;font-size:12px}
+ """ + _edge_css(".qa,.cite,pre,table") + """
 </style>"""
 
 
@@ -2373,7 +2403,7 @@ _VERTICALS = {
 }
 
 _HUB_STYLE = "<style>" + _AURORA + """
- :root{--glass:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));--gbord:rgba(255,255,255,.14);--blur:saturate(170%) blur(18px);--gshadow:0 14px 44px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35),inset 0 1.5px 0 rgba(255,255,255,.26),inset 0 0 0 1px rgba(255,255,255,.04),inset 0 -16px 30px rgba(6,10,22,.6)}
+ :root{--glass:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));--gbord:rgba(255,255,255,.14);--blur:saturate(170%) blur(18px);--gshadow:0 14px 44px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35),inset 1.5px 1.5px 0 rgba(255,255,255,.26),inset 0 0 0 1px rgba(255,255,255,.04),inset 0 -16px 30px rgba(6,10,22,.6)}
  body{font-family:'Montserrat','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',system-ui,-apple-system,sans-serif;color:#F7F2E8;margin:0 auto;padding:34px 20px 52px;line-height:1.5;max-width:1180px;
   background:
    radial-gradient(900px 500px at 8% -10%,rgba(233,196,106,.20),transparent 60%),
@@ -2385,16 +2415,19 @@ _HUB_STYLE = "<style>" + _AURORA + """
  .back{font-size:13px;margin:0 0 12px}
  .tablewrap{overflow:hidden;overflow-x:auto;border:1px solid var(--gbord);border-radius:18px;background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--gshadow)}
  table{width:100%;border-collapse:collapse;min-width:820px;background:transparent}
- th,td{padding:12px 14px;text-align:left;font-size:13px;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.08)}
+ th,td{padding:12px 14px;text-align:left;font-size:13px;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.10);""" + _ROW_FADE + """}
  th{color:#C2B7A3;font-weight:600;background:rgba(255,255,255,.06);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
  tbody tr:last-child td{border-bottom:none} tbody tr:hover{background:rgba(255,255,255,.06)}
  td b a{color:#F7F2E8;font-weight:700} td b a:hover{color:#E9C46A}
  .ko{color:#C2B7A3} .rom{color:#8C8068;font-size:11px}
  .badge{color:#06140E;font-weight:800;padding:3px 9px;border-radius:6px;font-size:12px;white-space:nowrap}
  .fresh{color:#10B981;font-weight:700} .stale{color:#EF4444;font-weight:800} .src{color:#C2B7A3;font-size:12px;max-width:230px}
- .pchips{display:flex;flex-wrap:wrap;gap:8px} .pchip{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;color:#F7F2E8;box-shadow:0 6px 16px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.20)}
+ .pchips{display:flex;flex-wrap:wrap;gap:8px} .pchip{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;color:#F7F2E8;box-shadow:0 6px 16px rgba(0,0,0,.38),inset 1px 1px 0 rgba(255,255,255,.20)}
  .pchip:hover{border-color:#E9C46A;color:#E9C46A;text-decoration:none;transform:translateY(-1px)}
+ pre{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:14px;padding:13px 16px;overflow-x:auto;font-size:13px;box-shadow:var(--gshadow)}
+ code{color:#E9C46A}
  footer{color:#8C8068;margin-top:22px;font-size:12px}
+ """ + _edge_css(".tablewrap,pre") + """
 </style>"""
 
 
@@ -4831,7 +4864,7 @@ async def monitor_html(db_path: str | None = None, out_path: str = "monitor.html
 <title>KoreaAPI · Monitor</title><meta name="robots" content="noindex">
 {_FONT_LINKS}
 <style>{_AURORA}
- :root{{--glass:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));--gbord:rgba(255,255,255,.14);--blur:saturate(170%) blur(18px);--gshadow:0 14px 40px rgba(0,0,0,.5),inset 0 1.5px 0 rgba(255,255,255,.24),inset 0 -14px 28px rgba(6,10,22,.55)}}
+ :root{{--glass:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));--gbord:rgba(255,255,255,.14);--blur:saturate(170%) blur(18px);--gshadow:0 14px 40px rgba(0,0,0,.5),inset 1.5px 1.5px 0 rgba(255,255,255,.24),inset 0 -14px 28px rgba(6,10,22,.55)}}
  body{{font-family:'Montserrat','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',system-ui,-apple-system,sans-serif;color:#F7F2E8;margin:0;padding:28px 24px;
   background:radial-gradient(900px 480px at 10% -10%,rgba(233,196,106,.16),transparent 60%),radial-gradient(820px 460px at 100% 0%,rgba(217,164,65,.14),transparent 55%),#0D0B06;background-attachment:fixed}}
  h1{{margin:0 0 2px}} h2{{font-size:14px;color:#C2B7A3;margin:22px 0 8px}} .sub{{color:#C2B7A3;margin-bottom:18px;font-size:13px}}
@@ -4839,10 +4872,11 @@ async def monitor_html(db_path: str | None = None, out_path: str = "monitor.html
  .card .v{{font-size:20px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:-.01em}} .card .k{{color:#C2B7A3;font-size:12px}}
  .grid{{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}} .panel{{flex:1;min-width:300px}}
  table{{width:100%;border-collapse:collapse;background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--gbord);border-radius:14px;overflow:hidden;box-shadow:var(--gshadow)}}
- th,td{{padding:7px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px}} th{{color:#C2B7A3;background:rgba(255,255,255,.06)}}
+ th,td{{padding:7px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.10);{_ROW_FADE};font-size:13px}} th{{color:#C2B7A3;background:rgba(255,255,255,.06)}}
  .bw{{background:#2A2316;border-radius:4px;height:10px;width:120px;overflow:hidden}} .b{{height:10px}}
  .pill{{color:#0D0B06;font-weight:700;padding:1px 7px;border-radius:5px;font-size:12px}}
  .warn{{color:#F59E0B;font-weight:600}} .ok{{color:#10B981}} footer{{color:#8C8068;margin-top:18px;font-size:12px}}
+ {_edge_css('table,.card')}
 </style></head><body>
 <h1>KoreaAPI &middot; Monitor</h1>
 <div class="sub">Data-quality cockpit over the append-only verified store. (Public view: <a href="./index.html" style="color:#E9C46A">index.html</a>.)</div>
