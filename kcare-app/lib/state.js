@@ -1,18 +1,25 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
-import { INITIAL_EVENTS, INITIAL_REQUESTS } from "./mock";
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
+import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT } from "./mock";
 import { PRICING } from "./config";
 import { transition } from "./requests";
 
 // 앱 전역 상태 — 데모 단계에서는 클라이언트 보관(localStorage).
 // 실제 구현에서 이 상태는 전부 서버 소유가 된다 (핸드오프 04 §4).
+// 역할 간 연동 데모: 어르신 SOS → 가족 배너 / 컨시어지 보충 요청 → 가족 결제 승인.
 
-const KEY = "kcare-demo-state-v1";
+const KEY = "kcare-demo-state-v2";
 
 const DEFAULT = {
   onboarding: null, // { rel, res, elderName, district, tier, paymentMode, limitAmount, joinedAt }
   events: INITIAL_EVENTS,
   requests: INITIAL_REQUESTS,
-  demo: { sos: false, anomaly: "open" }, // 시연 토글 (open|sent|dismissed)
+  demo: { sos: false, anomaly: "open", offline: false },
+  // REQ-01 — 병력 기반 우선 표시는 자동 추론이 아니라 사람이 설정한다
+  priority: { factors: ["기온"], source: "보호자 설정" },
+  elder: { medTaken: false },
+  // 컨시어지 방문 수행 상태 + 감사 타임라인 (REQ-12 골격)
+  visit: { checkedIn: false, kitDone: false, reportSent: false, audit: [] },
+  kit: INITIAL_KIT,
 };
 
 function reducer(state, action) {
@@ -34,6 +41,19 @@ function reducer(state, action) {
       };
     case "demo":
       return { ...state, demo: { ...state.demo, ...action.payload } };
+    case "medTaken":
+      return { ...state, elder: { ...state.elder, medTaken: true } };
+    case "audit":
+      return {
+        ...state,
+        visit: {
+          ...state.visit,
+          ...(action.patch || {}),
+          audit: [...state.visit.audit, { at: Date.now(), ...action.event }],
+        },
+      };
+    case "kitUpdate":
+      return { ...state, kit: action.items };
     case "reset":
       return DEFAULT;
     default:
@@ -45,6 +65,9 @@ const Ctx = createContext(null);
 
 export function AppStateProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, DEFAULT);
+  // 목 데이터가 현재 시각 기준이라 서버 프리렌더와 클라이언트가 어긋난다.
+  // 데모 단계에서는 마운트 후 렌더로 하이드레이션 불일치를 차단한다.
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     try {
@@ -53,6 +76,7 @@ export function AppStateProvider({ children }) {
     } catch (_) {
       /* 손상된 저장값은 무시 */
     }
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -63,7 +87,11 @@ export function AppStateProvider({ children }) {
     }
   }, [state]);
 
-  return <Ctx.Provider value={{ state, dispatch }}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={{ state, dispatch }}>
+      {ready ? children : <div className="min-h-screen bg-nav" />}
+    </Ctx.Provider>
+  );
 }
 
 export function useAppState() {
