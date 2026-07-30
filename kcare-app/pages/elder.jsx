@@ -92,6 +92,33 @@ function ElderCard({ show, order, style, className = "", children }) {
   );
 }
 
+// 표준 어르신 액션 버튼 — 톤앤매너 통일: p-7(28px) · 22px/700 · rounded-2xl · btn-elder 그림자.
+// 색은 의미 3종만 쓴다: primary(네이비 · 기본 행동) / success(초록 · 복약·주문) /
+// cool(청색 · 냉방 전용 — 빨강은 SOS 전용). 완료 후엔 전부 done(흰 바탕·회색 글자)으로 감쇠.
+const ELDER_BTN = {
+  primary: { background: "#0A1F3C", color: "#FFFFFF" },
+  success: { background: "#1E7A5A", color: "#FFFFFF" },
+  cool: { background: "#2F5D8A", color: "#FFFFFF" },
+  done: { background: "rgba(255,255,255,.85)", color: "#5C5A54" },
+};
+function ElderBtn({ variant = "primary", lines, className = "", children, ...props }) {
+  return (
+    <button
+      {...props}
+      className={`btn-elder w-full rounded-2xl p-7 text-[22px] font-bold ${className}`}
+      style={ELDER_BTN[variant]}
+    >
+      {lines
+        ? lines.map((l) => (
+            <span key={l} className="block leading-[1.35]">
+              {l}
+            </span>
+          ))
+        : children}
+    </button>
+  );
+}
+
 function CardHead({ title, titleColor = "#0A1F3C", right, rightColor = "#5C5A54" }) {
   return (
     <div className="flex items-baseline justify-between gap-3">
@@ -277,12 +304,9 @@ export default function ElderHome() {
                   <p className="py-3 text-[19px] text-muted">더 잡힌 일정이 없습니다.</p>
                 )}
               </div>
-              <button
-                onClick={() => setEventSheet(true)}
-                className="btn-elder mt-2 w-full rounded-2xl bg-navy p-6 text-[21px] font-bold text-white"
-              >
+              <ElderBtn className="mt-2" onClick={() => setEventSheet(true)}>
                 일정 하나 남기기
-              </button>
+              </ElderBtn>
             </ElderCard>
 
             {/* order 2 · 안부 전화 — 앰비언트 AI. 어르신은 받기만 하면 된다.
@@ -334,7 +358,7 @@ export default function ElderHome() {
                   </div>
                 ))}
               </div>
-              <button
+              <ElderBtn
                 onClick={() => {
                   if (medTaken) return; // 1회성 — undo 없음
                   dispatch({ type: "medTaken" });
@@ -344,14 +368,11 @@ export default function ElderHome() {
                   });
                 }}
                 disabled={medTaken}
-                className="btn-elder mt-2 w-full rounded-2xl p-7 text-[22px] font-bold"
-                style={{
-                  background: medTaken ? "rgba(255,255,255,.85)" : "#1E7A5A",
-                  color: medTaken ? "#5C5A54" : "#FFFFFF",
-                }}
+                variant={medTaken ? "done" : "success"}
+                className="mt-2"
               >
                 {medTaken ? "오늘 약 모두 드셨습니다" : "저녁 약 먹었어요"}
-              </button>
+              </ElderBtn>
             </ElderCard>
 
             {/* order 3 · 지금 집 안 — 위험을 직접 말하는 유일한 카드. 버튼은 청색(빨강은 SOS 전용) */}
@@ -384,7 +405,7 @@ export default function ElderHome() {
                 <p className="mt-1 text-[19px] leading-[1.6] text-ink">{indoor.alertBody}</p>
               </div>
               {/* 냉방 + 가족 알림을 한 버튼이 동시에 — 선택지를 늘리지 않는다 (2행 레이블) */}
-              <button
+              <ElderBtn
                 onClick={() => {
                   if (cooled) return; // 1회성
                   dispatch({ type: "elderPatch", patch: { cooled: true } });
@@ -394,15 +415,10 @@ export default function ElderHome() {
                   });
                 }}
                 disabled={cooled}
-                className="btn-elder mt-4 w-full rounded-2xl p-7 text-[22px] font-bold text-white"
-                style={{ background: "#2F5D8A" }}
-              >
-                {indoor.btnLines.map((line) => (
-                  <span key={line} className="block leading-[1.35]">
-                    {line}
-                  </span>
-                ))}
-              </button>
+                variant={cooled ? "done" : "cool"}
+                className="mt-4"
+                lines={indoor.btnLines}
+              />
             </ElderCard>
 
             {/* order 4 · 오늘 여쭤볼 것 — 인지 부담 면제. 출처 3종 투명 표기 */}
@@ -430,7 +446,7 @@ export default function ElderHome() {
                 ))}
               </div>
               {/* 음성이 1차 입력 수단 — 키보드 입력 UI 금지 */}
-              <button
+              <ElderBtn
                 onClick={() => {
                   if (askAdded) return; // 1회성
                   dispatch({ type: "elderPatch", patch: { askAdded: true } });
@@ -440,11 +456,11 @@ export default function ElderHome() {
                   });
                 }}
                 disabled={askAdded}
-                className="btn-elder mt-2 w-full rounded-2xl p-6 text-[21px] font-bold text-white"
-                style={{ background: askAdded ? "#5C5A54" : "#0A1F3C" }}
+                variant={askAdded ? "done" : "primary"}
+                className="mt-2"
               >
                 {askAdded ? "말씀하신 내용이 담겼습니다" : "말로 하나 더 남기기"}
-              </button>
+              </ElderBtn>
             </ElderCard>
 
             {/* order 4 · 병원 가는 길 — F8 2구간. 점수를 문장으로 번역하는 유일한 화면 */}
@@ -548,7 +564,7 @@ export default function ElderHome() {
                   ? `"${VOICE_MSG.transcript}"`
                   : "아들이 보낸 목소리 메시지가 있습니다"}
               </p>
-              <button
+              <ElderBtn
                 onClick={() => {
                   if (!voicePlayed) {
                     dispatch({ type: "elderPatch", patch: { voicePlayed: true } });
@@ -564,14 +580,11 @@ export default function ElderHome() {
                     });
                   }
                 }}
-                className="btn-elder mt-4 w-full rounded-2xl p-7 text-[22px] font-bold"
-                style={{
-                  background: voicePlayed ? "rgba(255,255,255,.85)" : "#0A1F3C",
-                  color: voicePlayed ? "#5C5A54" : "#FFFFFF",
-                }}
+                variant={voicePlayed ? "done" : "primary"}
+                className="mt-4"
               >
                 {voicePlayed ? "답장 보내기" : `메시지 듣기 (${VOICE_MSG.durationSec}초)`}
-              </button>
+              </ElderBtn>
               {voiceReplied && (
                 <p className="mt-3 text-[19px] font-bold text-green">
                   목소리 답장을 보냈습니다
@@ -632,7 +645,7 @@ export default function ElderHome() {
                 }
                 if (items.length === 0) return null;
                 return (
-                  <button
+                  <ElderBtn
                     onClick={() => {
                       const mode = needApproval ? "approval" : "ordered";
                       setStoreSent(mode);
@@ -676,8 +689,8 @@ export default function ElderHome() {
                         },
                       });
                     }}
-                    className="btn-elder mt-4 w-full rounded-2xl p-6 text-[21px] font-bold text-white"
-                    style={{ background: needApproval ? "#0A1F3C" : "#1E7A5A" }}
+                    variant={needApproval ? "primary" : "success"}
+                    className="mt-4"
                   >
                     <span className="block leading-[1.35]">
                       {needApproval ? "가족에게 부탁하기" : "바로 주문하기"}
@@ -685,7 +698,7 @@ export default function ElderHome() {
                     <span className="block text-[19px] leading-[1.35] text-white/85">
                       {items.length}가지 · {fmtWon(total)}
                     </span>
-                  </button>
+                  </ElderBtn>
                 );
               })()}
             </ElderCard>
