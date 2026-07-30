@@ -286,6 +286,14 @@ export default function FamilyHome() {
             />
             <Row k="병원동행 잔여" v="연 4회 중 3회 남음" />
             <Row k="안심방문" v="이번 달 예정 · 캘린더 참조" />
+            <Row
+              k="우선 확인 날씨"
+              v={
+                <Link href="/family/my" className="text-gold underline underline-offset-2">
+                  {state.priority.factors.join(" · ")} · 설정
+                </Link>
+              }
+            />
           </div>
         </Card>
 

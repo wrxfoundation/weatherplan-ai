@@ -105,7 +105,13 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch }) {
             </Badge>
           )}
           <span className="ml-auto text-[10px] font-bold text-muted/70">
-            {req.dir === "fromConcierge" ? "컨시어지 → 보호자" : "보호자 → 컨시어지"}
+            {
+              {
+                fromConcierge: "컨시어지 → 보호자",
+                fromElder: "어르신 → 보호자",
+                fromGuardian: "보호자 → 컨시어지",
+              }[req.dir]
+            }
           </span>
         </div>
         <div className="mt-2 text-[15px] font-bold leading-[1.45] text-navy">{req.type}</div>

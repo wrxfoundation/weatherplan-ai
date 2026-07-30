@@ -6,13 +6,16 @@ import {
   ELDER,
   ELDER_NOW,
   ELDER_VISITORS,
+  EVENT_KINDS,
   FAMILY_SEEN,
   INDOOR,
   MED_DOSES,
   OUTING,
+  STORE_ITEMS,
   VOICE_MSG,
 } from "../lib/mock";
-import { useAppState } from "../lib/state";
+import { fmtWon } from "../lib/config";
+import { needsGuardianApproval, useAppState } from "../lib/state";
 
 // 사용자(어르신) 홈 — 핸드오프 06 elder 상세 명세 + REQ-01(우선 날씨) + REQ-06(SOS 오작동 방지)
 // 구조: 헤더(날짜·인사)·푸터(SOS·전화·탭) 고정, 카드 스택만 스크롤 (06 §1).
@@ -115,6 +118,9 @@ export default function ElderHome() {
   const [sosPhase, setSosPhase] = useState("idle"); // idle | confirm | sent
   const [calling, setCalling] = useState(false);
   const [voiceReplied, setVoiceReplied] = useState(false);
+  const [eventSheet, setEventSheet] = useState(false); // 간단등록 (REQ-02 권한표)
+  const [storeSel, setStoreSel] = useState({});
+  const [storeSent, setStoreSent] = useState(null); // 'approval' | 'ordered'
   const callTimer = useRef(null);
 
   const { medTaken, cooled, voicePlayed, askAdded } = state.elder;
@@ -251,6 +257,32 @@ export default function ElderHome() {
                 )}
               </ElderCard>
             )}
+
+            {/* order 1 · 다가오는 일정 — 조회 + 간단등록 (REQ-02 어르신 권한: 조회·알림확인·간단등록) */}
+            <ElderCard show={tab === "today"} order={1}>
+              <CardHead title="다가오는 일정" />
+              <div className="mt-1">
+                {upcoming.slice(1, 3).map((e) => (
+                  <div key={e.id} className="border-t border-navy/[.07] py-[14px] first:border-t-0">
+                    <div className="text-[20px] font-bold text-navy">
+                      {spokenDay(e.at)} {spokenTime(e.at)}
+                    </div>
+                    <div className="mt-[3px] text-[19px] text-muted">
+                      {e.title} · {EVENT_KINDS[e.kind].label}
+                    </div>
+                  </div>
+                ))}
+                {upcoming.length <= 1 && (
+                  <p className="py-3 text-[19px] text-muted">더 잡힌 일정이 없습니다.</p>
+                )}
+              </div>
+              <button
+                onClick={() => setEventSheet(true)}
+                className="btn-press mt-2 w-full rounded-2xl bg-navy p-6 text-[21px] font-bold text-white"
+              >
+                일정 하나 남기기
+              </button>
+            </ElderCard>
 
             {/* order 2 · 오늘 약 — 카드 전체가 미완료 상태 표현. 미완료는 호박색 (원칙 4) */}
             <ElderCard
@@ -529,6 +561,117 @@ export default function ElderHome() {
               )}
             </ElderCard>
 
+            {/* order 7 · 필요한 물건 담기 — 부모가 담고 결제권한대로 분기 (회의 6 · REQ-07).
+                직접 결제 상거래 화면이라 금액 표기는 예외적으로 허용 */}
+            <ElderCard show={tab === "family"} order={7}>
+              <CardHead title="필요한 물건" right="담아두면 배송으로 옵니다" />
+              <div className="mt-2 space-y-2">
+                {STORE_ITEMS.slice(0, 5).map((i) => {
+                  const on = !!storeSel[i.id];
+                  return (
+                    <button
+                      key={i.id}
+                      onClick={() => {
+                        setStoreSent(null);
+                        setStoreSel((s) => ({ ...s, [i.id]: !s[i.id] }));
+                      }}
+                      className="btn-press flex w-full items-center gap-3 rounded-[14px] p-4 text-left"
+                      style={{
+                        ...SUB_CARD,
+                        padding: "14px 15px",
+                        outline: on ? "2px solid #B08D57" : "none",
+                      }}
+                    >
+                      <span
+                        className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
+                        style={{
+                          background: on ? "#1E7A5A" : "rgba(10,31,60,.08)",
+                          color: on ? "#fff" : "transparent",
+                        }}
+                      >
+                        ✓
+                      </span>
+                      <span className="flex-1 text-[19px] font-bold text-ink">{i.name}</span>
+                      <span className="font-num text-[19px] font-bold text-navy">
+                        {fmtWon(i.price)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              {(() => {
+                const items = STORE_ITEMS.filter((i) => storeSel[i.id]);
+                const total = items.reduce((s, i) => s + i.price, 0);
+                const needApproval = needsGuardianApproval(state.onboarding, total);
+                if (storeSent) {
+                  return (
+                    <p className="mt-4 rounded-2xl bg-green/10 p-4 text-[19px] font-bold leading-[1.5] text-green">
+                      {storeSent === "approval"
+                        ? "가족에게 전달했습니다. 승인되면 배송으로 옵니다."
+                        : "주문했습니다. 다음 배송 때 함께 옵니다."}
+                    </p>
+                  );
+                }
+                if (items.length === 0) return null;
+                return (
+                  <button
+                    onClick={() => {
+                      const mode = needApproval ? "approval" : "ordered";
+                      setStoreSent(mode);
+                      setStoreSel({});
+                      dispatch({ type: "demo", payload: { cart: true } });
+                      dispatch({
+                        type: "addRequest",
+                        payload: {
+                          id: `rq-${Date.now()}`,
+                          dir: "fromElder",
+                          type: needApproval ? "물건 승인 부탁해요" : "물건을 담았어요",
+                          detail: `어르신 담은 물품: ${items.map((i) => i.name).join(", ")}`,
+                          amount: total,
+                          preferredDate: null,
+                          urgency: "normal",
+                          assignee: "박지현",
+                          photos: [],
+                          status: needApproval ? "awaitingPayment" : "inProgress",
+                          history: needApproval
+                            ? [
+                                { at: Date.now(), status: "requested", note: "어르신 장바구니" },
+                                { at: Date.now(), status: "confirmed", note: "" },
+                                { at: Date.now(), status: "awaitingPayment", note: `한도 초과 · ${fmtWon(total)}` },
+                              ]
+                            : [
+                                { at: Date.now(), status: "requested", note: "어르신 장바구니" },
+                                { at: Date.now(), status: "confirmed", note: "" },
+                                { at: Date.now(), status: "inProgress", note: `어르신 직접 결제 ${fmtWon(total)} (한도 내 · 데모)` },
+                              ],
+                          proof: null,
+                        },
+                      });
+                      dispatch({
+                        type: "pushEvent",
+                        payload: {
+                          kind: "장바구니",
+                          text: needApproval
+                            ? `김순자 장바구니 ${items.length}건 · 보호자 승인 요청 (${fmtWon(total)})`
+                            : `김순자 직접 주문 ${items.length}건 · ${fmtWon(total)} (한도 내)`,
+                          color: "#B08D57",
+                        },
+                      });
+                    }}
+                    className="btn-press mt-4 w-full rounded-2xl p-6 text-[21px] font-bold text-white"
+                    style={{ background: needApproval ? "#0A1F3C" : "#1E7A5A" }}
+                  >
+                    <span className="block leading-[1.35]">
+                      {needApproval ? "가족에게 부탁하기" : "바로 주문하기"}
+                    </span>
+                    <span className="block text-[19px] leading-[1.35] text-white/85">
+                      {items.length}가지 · {fmtWon(total)}
+                    </span>
+                  </button>
+                );
+              })()}
+            </ElderCard>
+
             {/* order 7 · 토요일 배송 — 금액 없음. 품목·수량만 (정보 비대칭의 최소 예) */}
             <ElderCard show={tab === "family"} order={7}>
               <CardHead title={`${DELIVERY.dayLabel} 배송`} right={DELIVERY.timeLabel} />
@@ -633,8 +776,135 @@ export default function ElderHome() {
             </nav>
           </footer>
         </div>
+
+        {/* 간단등록 시트 — 큰 활자 · 프리셋만. 자유 입력 없음 (저인지부하) */}
+        {eventSheet && (
+          <ElderEventSheet
+            onClose={() => setEventSheet(false)}
+            onCreate={(ev) => {
+              dispatch({ type: "addEvent", payload: ev });
+              dispatch({
+                type: "pushEvent",
+                payload: { kind: "일정", text: `어르신 간단등록 · ${ev.title}`, color: "#8FA9CC" },
+              });
+              setEventSheet(false);
+            }}
+          />
+        )}
       </div>
     </>
+  );
+}
+
+// 어르신 간단등록 — REQ-02 권한표 "간단등록". 종류·날짜·시간을 큰 버튼으로만 고른다.
+const ELDER_EVENT_KINDS = [
+  { kind: "family", label: "가족이 와요" },
+  { kind: "hospital", label: "병원 갈 일" },
+  { kind: "request", label: "부탁할 일" },
+];
+const ELDER_DAYS = [
+  { add: 0, label: "오늘" },
+  { add: 1, label: "내일" },
+  { add: 2, label: "모레" },
+];
+const ELDER_TIMES = [
+  { h: 9, label: "아침 9시" },
+  { h: 12, label: "낮 12시" },
+  { h: 15, label: "오후 3시" },
+  { h: 18, label: "저녁 6시" },
+];
+
+function ElderEventSheet({ onClose, onCreate }) {
+  const [kind, setKind] = useState(null);
+  const [day, setDay] = useState(null);
+  const [time, setTime] = useState(null);
+
+  const ready = kind && day !== null && time !== null;
+
+  const save = () => {
+    if (!ready) return;
+    const d = new Date();
+    d.setDate(d.getDate() + day.add);
+    d.setHours(time.h, 0, 0, 0);
+    onCreate({
+      id: `ev-${Date.now()}`,
+      kind: kind.kind,
+      title: kind.label,
+      at: d.getTime(),
+      source: "어르신 등록",
+      note: "",
+    });
+  };
+
+  const Pick = ({ options, value, onPick, valueKey }) => (
+    <div className="mt-2 grid grid-cols-3 gap-2">
+      {options.map((o) => {
+        const on = value === o;
+        return (
+          <button
+            key={o[valueKey]}
+            onClick={() => onPick(o)}
+            className={`btn-press rounded-2xl border-2 px-2 py-4 text-[20px] font-bold leading-[1.3] ${
+              on ? "border-navy bg-navy text-white" : "border-navy/15 text-ink"
+            }`}
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-[rgba(8,23,45,.6)]">
+      <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-[28px] bg-elder p-6 pb-8 break-keep">
+        <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
+        <div className="text-[26px] font-black text-navy">일정 남기기</div>
+        <p className="mt-1 text-[19px] leading-[1.5] text-muted">
+          가족과 선생님에게도 함께 보입니다.
+        </p>
+
+        <div className="mt-5 text-[19px] font-bold text-navy">무슨 일인가요?</div>
+        <Pick options={ELDER_EVENT_KINDS} value={kind} onPick={setKind} valueKey="kind" />
+
+        <div className="mt-5 text-[19px] font-bold text-navy">언제인가요?</div>
+        <Pick options={ELDER_DAYS} value={day} onPick={setDay} valueKey="label" />
+
+        <div className="mt-5 text-[19px] font-bold text-navy">몇 시쯤인가요?</div>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          {ELDER_TIMES.map((t) => {
+            const on = time === t;
+            return (
+              <button
+                key={t.h}
+                onClick={() => setTime(t)}
+                className={`btn-press rounded-2xl border-2 px-2 py-4 text-[20px] font-bold ${
+                  on ? "border-navy bg-navy text-white" : "border-navy/15 text-ink"
+                }`}
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-6 flex gap-2">
+          <button
+            onClick={onClose}
+            className="btn-press flex-1 rounded-2xl border-2 border-navy/20 p-5 text-[20px] font-bold text-muted"
+          >
+            닫기
+          </button>
+          <button
+            onClick={save}
+            disabled={!ready}
+            className="btn-press flex-[2] rounded-2xl bg-navy p-5 text-[21px] font-bold text-white disabled:opacity-40"
+          >
+            남기기
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useReducer, useState } from "react";
-import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS } from "./mock";
+import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS, SEED_REPORTS } from "./mock";
 import { PRICING } from "./config";
 import { transition } from "./requests";
 
@@ -15,8 +15,10 @@ const DEFAULT = {
   requests: INITIAL_REQUESTS,
   // cart: 가족 앱(REQ-07 장바구니)에서 변경 — 어르신 화면은 읽기만 (핸드오프 06 §3.9)
   demo: { sos: false, anomaly: "open", offline: false, cart: false },
-  // REQ-01 — 병력 기반 우선 표시는 자동 추론이 아니라 사람이 설정한다
-  priority: { factors: ["기온"], source: "보호자 설정" },
+  // REQ-01 — 병력 기반 우선 표시는 자동 추론이 아니라 사람이 설정한다 (설정 주체 기록)
+  priority: { factors: ["기온"], source: "보호자 설정", setAt: null },
+  // 관찰 리포트 누적 — 본인 작성 전체 열람 · 타인 작성은 공유분만 (회의 7)
+  reports: SEED_REPORTS.map((r) => ({ ...r, at: Date.now() - r.daysAgo * 86400000 })),
   // 어르신 1회성 잠금 상태 (undo 없음이 의도 — 핸드오프 06 §5). voicePlayed만 재클릭 가능.
   elder: { medTaken: false, cooled: false, voicePlayed: false, askAdded: false },
   // 관제 콘솔 상태 — sos 해제는 관제(ackSos)만 가능 (핸드오프 06 §5 · 09 §10)
@@ -49,6 +51,18 @@ function reducer(state, action) {
       return { ...state, onboarding: action.payload };
     case "addEvent":
       return { ...state, events: [...state.events, action.payload] };
+    case "updateEvent":
+      // 보호자 권한: 조회·등록·수정 (REQ-02 권한표)
+      return {
+        ...state,
+        events: state.events.map((e) =>
+          e.id === action.id ? { ...e, ...action.patch } : e
+        ),
+      };
+    case "setPriority":
+      return { ...state, priority: { ...action.payload, setAt: Date.now() } };
+    case "addReport":
+      return { ...state, reports: [{ ...action.payload, at: Date.now() }, ...state.reports] };
     case "addRequest":
       return { ...state, requests: [action.payload, ...state.requests] };
     case "transitionRequest":

@@ -560,3 +560,106 @@ export const ADMIN_COHORTS = [
   { month: "5월", m1: "93%", m3: "—", m6: "—", ltv: "산정 중" },
   { month: "6월", m1: "95%", m3: "—", m6: "—", ltv: "산정 중" },
 ];
+
+// ─── 회의 요구 전면 반영분 (더미 우선) ──────────────────────────────────────────
+
+// 병력 기반 우선 날씨 — 사람이 설정한다 (자동 추론 금지 · 회의 1 조건부 반영).
+// factors 값은 어르신 화면 그리드 라벨과 일치해야 정렬이 작동한다.
+export const WEATHER_FACTORS = ["기온", "자외선", "미세먼지", "습도", "비 올 확률"];
+export const PRIORITY_PRESETS = [
+  { label: "심혈관 · 갑상선", factors: ["기온"], hint: "온도 변화에 취약 — 고온·한파 우선" },
+  { label: "호흡기", factors: ["미세먼지", "습도"], hint: "미세먼지·습도 우선" },
+  { label: "피부 · 안질환", factors: ["자외선"], hint: "자외선 우선" },
+  { label: "관절", factors: ["습도", "비 올 확률"], hint: "습도·강수 우선" },
+];
+
+// 어르신 스토어 — 부모가 담고 결제권한에 따라 분기 (회의 6 · REQ-07).
+// 금액 비노출 원칙(06)의 예외: 직접 결제 상거래 화면은 금액 표기가 필수.
+export const STORE_ITEMS = [
+  { id: "s1", name: "파스 (대형 20매)", price: 12000 },
+  { id: "s2", name: "혈당 시험지 50매", price: 28000 },
+  { id: "s3", name: "KF94 마스크 30매", price: 15000 },
+  { id: "s4", name: "생수 2L 12병", price: 9800 },
+  { id: "s5", name: "종합 영양제 (2개월)", price: 39000 },
+  { id: "s6", name: "무릎 보호대 (의료용)", price: 62000 },
+];
+
+// 컨시어지 구매대행 품목 — 쇼핑탭 (회의 7.1). 예상금액 → 보호자 승인 → 구매 → 완료사진
+export const CONCIERGE_SHOP_ITEMS = [
+  { id: "c1", name: "해열제 (고객 요청)", est: 6500 },
+  { id: "c2", name: "파스", est: 12000 },
+  { id: "c3", name: "소독약 · 거즈", est: 8000 },
+  { id: "c4", name: "밴드 리필", est: 4500 },
+];
+
+// MOU 병원 — 진료 과목마다 한 곳 이상 (회의 8)
+export const MOU_HOSPITALS = [
+  { dept: "내과", name: "강남세브란스", note: "패스트트랙 · 예약 API 부분 연동", fast: true },
+  { dept: "정형외과", name: "분당서울대병원", note: "재진 패스트트랙 대기 2일", fast: true },
+  { dept: "재활의학과", name: "고대구로병원", note: "휠체어 동선 확인 완료", fast: false },
+  { dept: "순환기내과", name: "서울아산병원", note: "패스트트랙 슬롯 운영", fast: true },
+  { dept: "안과", name: "삼성서울병원", note: "백내장 수술 연계", fast: false },
+  { dept: "치과", name: "강남 미소치과의원", note: "방문 진료 협의 중", fast: false },
+];
+
+// 리포트 누적 시드 — 본인 작성은 전체, 타인 작성은 공유분만 (회의 7)
+export const SEED_REPORTS = [
+  {
+    id: "rp1",
+    by: "박지현",
+    daysAgo: 30,
+    flagged: 1,
+    note: "거실 정리 상태 양호. \"요즘 입맛이 없다\"고 두 번 말씀하심.",
+    secretNote: "다음 방문 시 식사량 재확인",
+    shared: true,
+  },
+  {
+    id: "rp2",
+    by: "서다인",
+    daysAgo: 60,
+    flagged: 0,
+    note: "특이 관찰 없음. 환기 양호.",
+    secretNote: "",
+    shared: true,
+  },
+];
+
+// 옵션 서비스 — 신규 등록·판매 프로세스 (회의 9 · REQ-04 야간 외주)
+// 보험은 GA 등록 전 모집 금지(H4) — 기능 플래그로 잠금
+export const OPTION_SERVICES = [
+  {
+    key: "night",
+    name: "야간 출동 서비스 (외주)",
+    desc: "야간 긴급 출동 — 외주 파트너 수행 · 가구별 옵션",
+    price: "월 12,000원 (확정 전)",
+    locked: false,
+  },
+  {
+    key: "escort",
+    name: "추가 병원동행 (건별)",
+    desc: "기본 연 4회 초과분 · 건별 이용",
+    price: "건당 48,000원",
+    locked: false,
+  },
+  {
+    key: "insurance",
+    name: "보험 연계",
+    desc: "보험회사 입점 연계 상품",
+    price: "준비 중",
+    locked: true,
+    lockNote: "GA 등록 후 오픈 (등록 전 모집 금지 · 기능 플래그 잠금)",
+  },
+];
+
+// 방문 영상 3모드 — REQ-12 (회의 확정). 항상 녹화 금지, 필요한 순간 세그먼트만.
+export const VIDEO_MODES = [
+  { key: "tele", name: "원격상담 모드", rule: "고객·보호자 요청 시에만 연결 · 기본 저장 없음 · 녹화는 별도 동의 시" },
+  { key: "visit", name: "방문기록 모드", rule: "사전 동의 가구만 · 품질관리·분쟁 예방 목적 · 제한 열람" },
+  { key: "sos", name: "긴급상황 모드", rule: "낙상·응급 시 관제·의료진과 일시 공유 · 사건 종료 후 삭제" },
+];
+export const VIDEO_SEGMENTS = ["현관 진입 · 본인 확인", "케어박스 점검", "생활환경 확인", "서비스 종료 확인"];
+export const VIDEO_POLICY = {
+  allowed: ["거실", "현관", "주방", "병원 이동", "약상자 점검", "생활환경 확인"],
+  banned: ["욕실", "화장실", "탈의공간", "침실"],
+  retention: "일반 방문 4주 후 자동 삭제 · 사고·민원은 사건 종료 시까지 · 법적 분쟁은 법령 기준 별도 보관",
+};

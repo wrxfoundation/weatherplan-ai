@@ -23,6 +23,7 @@ export default function Onboarding() {
     district: null,
     paymentMode: "limit",
     limitAmount: PRICING.paymentLimitDefault,
+    videoConsent: false,
   });
   const [waitlisted, setWaitlisted] = useState(false);
   const set = (patch) => setForm((f) => ({ ...f, ...patch }));
@@ -43,6 +44,7 @@ export default function Onboarding() {
         tier: result?.tier ?? 1,
         paymentMode: form.paymentMode,
         limitAmount: form.limitAmount,
+        videoConsent: form.videoConsent,
         joinedAt: Date.now(),
       },
     });
@@ -358,6 +360,31 @@ export default function Onboarding() {
                     </li>
                   ))}
                 </ul>
+              </Card>
+              {/* REQ-12 — 방문기록 영상 별도 동의 (가입 약관 항목, 선택) */}
+              <Card
+                onClick={() => set({ videoConsent: !form.videoConsent })}
+                className={`p-4 ${form.videoConsent ? "border-gold ring-1 ring-gold/50" : ""}`}
+              >
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[11px] font-bold ${
+                      form.videoConsent
+                        ? "border-gold bg-gold text-white"
+                        : "border-navy/25 text-transparent"
+                    }`}
+                  >
+                    ✓
+                  </span>
+                  <span className="text-[13px] font-bold text-navy">
+                    방문기록 영상 촬영 동의 (선택)
+                  </span>
+                </div>
+                <p className="mt-1.5 pl-6 text-[11px] leading-[1.7] text-muted">
+                  서비스 품질관리·분쟁 예방 목적. 거실·현관·주방 등 서비스 공간만 촬영하며
+                  욕실·화장실·탈의공간·침실은 촬영하지 않습니다. 일반 방문 영상은 4주 후 자동
+                  삭제되고, 열람은 보호자·관리자로 제한됩니다.
+                </p>
               </Card>
               <div className="flex gap-2">
                 <GhostButton onClick={() => setStep(2)} className="flex-1">

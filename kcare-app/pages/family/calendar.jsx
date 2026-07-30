@@ -27,6 +27,7 @@ export default function CalendarPage() {
     return next ? new Date(next.at).getDate() : today.getDate();
   });
   const [creating, setCreating] = useState(false);
+  const [editing, setEditing] = useState(null); // 수정 대상 이벤트 — 보호자 권한(REQ-02)
 
   const events = state.events;
 
@@ -187,6 +188,12 @@ export default function CalendarPage() {
                       <div className="mt-1 text-[12px] leading-[1.6] text-muted">{e.note}</div>
                     )}
                   </div>
+                  <button
+                    onClick={() => setEditing(e)}
+                    className="btn-press shrink-0 rounded-lg border border-navy/15 px-2.5 py-1.5 text-[11px] font-bold text-muted"
+                  >
+                    수정
+                  </button>
                 </div>
               ))}
             </div>
@@ -225,14 +232,33 @@ export default function CalendarPage() {
             }}
           />
         )}
+
+        {editing && (
+          <CreateEventSheet
+            initial={editing}
+            defaultDate={new Date(editing.at)}
+            onClose={() => setEditing(null)}
+            onCreate={(ev) => {
+              dispatch({
+                type: "updateEvent",
+                id: editing.id,
+                patch: { kind: ev.kind, title: ev.title, at: ev.at, note: `보호자 수정 · ${editing.source}` },
+              });
+              const d = new Date(ev.at);
+              setYm({ y: d.getFullYear(), m: d.getMonth() });
+              setSelected(d.getDate());
+              setEditing(null);
+            }}
+          />
+        )}
       </FamilyLayout>
     </>
   );
 }
 
-function CreateEventSheet({ defaultDate, onClose, onCreate }) {
-  const [kind, setKind] = useState("family");
-  const [title, setTitle] = useState("");
+function CreateEventSheet({ defaultDate, initial, onClose, onCreate }) {
+  const [kind, setKind] = useState(initial?.kind || "family");
+  const [title, setTitle] = useState(initial?.title || "");
   const [dt, setDt] = useState(() => {
     const d = new Date(defaultDate.getTime() - defaultDate.getTimezoneOffset() * 60000);
     return d.toISOString().slice(0, 16);
@@ -242,9 +268,11 @@ function CreateEventSheet({ defaultDate, onClose, onCreate }) {
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(8,23,45,.45)]">
       <div className="w-full max-w-[430px] rounded-t-3xl bg-white p-6 pb-8">
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
-        <div className="text-[17px] font-black text-navy">일정 등록</div>
+        <div className="text-[17px] font-black text-navy">{initial ? "일정 수정" : "일정 등록"}</div>
         <p className="mt-1 text-[11px] text-muted">
-          등록한 일정은 어르신·컨시어지 캘린더에 즉시 공유됩니다.
+          {initial
+            ? "수정 내용은 어르신·컨시어지 캘린더에 즉시 반영됩니다."
+            : "등록한 일정은 어르신·컨시어지 캘린더에 즉시 공유됩니다."}
         </p>
         <div className="mt-4">
           <SectionLabel>종류</SectionLabel>
@@ -298,7 +326,7 @@ function CreateEventSheet({ defaultDate, onClose, onCreate }) {
               })
             }
           >
-            등록
+            {initial ? "저장" : "등록"}
           </PrimaryButton>
         </div>
       </div>

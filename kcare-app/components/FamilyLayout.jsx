@@ -8,8 +8,8 @@ const TABS = [
   { href: "/family", label: "홈", icon: "⌂" },
   { href: "/family/calendar", label: "캘린더", icon: "▦" },
   { href: "/family/requests", label: "해주세요", icon: "✚" },
-  { href: "/family/store", label: "스토어", icon: "◇", soon: true },
-  { href: "/family/my", label: "마이", icon: "☺", soon: true },
+  { href: "/family/store", label: "스토어", icon: "◇" },
+  { href: "/family/my", label: "마이", icon: "☺" },
 ];
 
 export default function FamilyLayout({ children, title }) {
