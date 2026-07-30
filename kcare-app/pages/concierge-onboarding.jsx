@@ -26,7 +26,7 @@ export default function ConciergeOnboarding() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [region, setRegion] = useState(null);
-  const [cert, setCert] = useState(null);
+  const [certs, setCerts] = useState([]);
   const [crimCheck, setCrimCheck] = useState(false);
   const [privacy, setPrivacy] = useState(false);
   const [gps, setGps] = useState(false);
@@ -34,7 +34,16 @@ export default function ConciergeOnboarding() {
 
   const codeOk = code.trim().length >= 6;
   const infoOk = name.trim() && phone.replace(/\D/g, "").length >= 10 && region;
-  const docsOk = cert && crimCheck;
+  const docsOk = certs.length > 0 && crimCheck;
+
+  // 자격 중복 선택 — "해당 없음"은 다른 자격과 배타적
+  const NONE = CERTS[CERTS.length - 1];
+  const toggleCert = (c) =>
+    setCerts((prev) => {
+      if (c === NONE) return prev.includes(NONE) ? [] : [NONE];
+      const next = prev.includes(c) ? prev.filter((x) => x !== c) : [...prev.filter((x) => x !== NONE), c];
+      return next;
+    });
   const allPledged = PLEDGES.every(([t]) => pledged[t]) && privacy && gps;
 
   const finish = () => {
@@ -160,19 +169,29 @@ export default function ConciergeOnboarding() {
           {step === 2 && (
             <section className="mt-6 space-y-4 animate-tickIn">
               <Card className="p-[18px]">
-                <SectionLabel>보유 자격</SectionLabel>
+                <SectionLabel>보유 자격 — 중복 선택 가능</SectionLabel>
                 <div className="mt-2 space-y-2">
-                  {CERTS.map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => setCert(c)}
-                      className={`btn-press w-full rounded-xl border px-4 py-3 text-left text-[14px] font-bold ${
-                        cert === c ? "border-gold bg-gold/10 text-navy" : "border-navy/15 text-muted"
-                      }`}
-                    >
-                      {c}
-                    </button>
-                  ))}
+                  {CERTS.map((c) => {
+                    const on = certs.includes(c);
+                    return (
+                      <button
+                        key={c}
+                        onClick={() => toggleCert(c)}
+                        className={`btn-press flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left text-[14px] font-bold ${
+                          on ? "border-gold bg-gold/10 text-navy" : "border-navy/15 text-muted"
+                        }`}
+                      >
+                        <span>{c}</span>
+                        <span
+                          className={`inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[12px] ${
+                            on ? "border-gold bg-gold text-white" : "border-navy/20 text-transparent"
+                          }`}
+                        >
+                          ✓
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
                 <div className="mt-4">
                   <SectionLabel>서류 제출</SectionLabel>
