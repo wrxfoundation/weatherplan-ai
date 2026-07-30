@@ -7,6 +7,7 @@ import {
   JOBS,
   MAP_DISTRICTS,
   MAP_HOSPITALS,
+  MOU_HOSPITALS,
   RISK_WATCH,
   ROUTE_CHAIN,
   SCORE_FACTORS,
@@ -53,6 +54,14 @@ const RISK_LEVEL = {
   높음: { fg: "#C0392B", bg: "rgba(192,57,43,.1)" },
   중간: { fg: "#8A5D12", bg: "rgba(138,93,18,.1)" },
 };
+
+// 발송 센터 — 관제 중간관리 커뮤니케이션. 모든 발송은 티커(감사 로그)에 남는다
+const COMMS_TEMPLATES = [
+  { id: "heat", title: "폭염 안내 — 보호자 전체 공지", desc: "내일 폭염 특보 예보 · 외출 일정 조정 권고 포함", kind: "메시지", log: "보호자 6가구에 폭염 안내 공지 발송", color: "#8FA9CC" },
+  { id: "call", title: "안부 콜 캠페인 — 미수신 어르신", desc: "워치 무수집 · 리포트 미열람 가구 대상 음성 콜", kind: "대응", log: "안부 콜 캠페인 시작 — 대상 2가구", color: "#FF8A80" },
+  { id: "briefAll", title: "컨시어지 일괄 브리핑 재발송", desc: "내일 08:30 이전 확인 필수 · 미확인 시 개별 콜", kind: "브리핑", log: "컨시어지 9명에게 내일 브리핑 재발송", color: "#F0D9A8" },
+  { id: "tz", title: "리포트 발송 시간 안내 — 해외 보호자", desc: "시차 가구(LA · 시드니) 발송 시간 재확인", kind: "리포트", log: "해외 보호자 2명에게 발송 시간 안내", color: "#8FE3C0" },
+];
 
 function hourToHM(h) {
   const hh = Math.floor(h);
@@ -194,6 +203,11 @@ export default function DispatchConsole() {
   const [briefed, setBriefed] = useState(false);
   const [mapMode, setMapMode] = useState("light"); // 맵 타일 라이트/다크
   const [query, setQuery] = useState(""); // 통합 검색
+  const [menu, setMenu] = useState("dash"); // GNB — 대시보드 외 관리 메뉴
+  const [sent, setSent] = useState({}); // 발송 센터 원샷
+  const elders = DIRECTORY_ALL.filter((d) => d.type === "elder");
+  const guardians = DIRECTORY_ALL.filter((d) => d.type === "guardian");
+  const concierges = DIRECTORY_ALL.filter((d) => d.type === "concierge");
   const [profile, setProfile] = useState(null); // 플로팅 프로필 카드
 
   const openProfile = (name) => {
@@ -334,11 +348,12 @@ export default function DispatchConsole() {
     : { label: "정상 운영", cls: "bg-[rgba(30,122,90,.12)] text-green" };
 
   const jumpTo = (a) => {
+    setMenu("dash");
     if (a.jumpTab) {
       setTab(a.jumpTab);
-      setTimeout(() => document.getElementById("disp-tabs")?.scrollIntoView({ behavior: "smooth" }), 50);
+      setTimeout(() => document.getElementById("disp-tabs")?.scrollIntoView({ behavior: "smooth" }), 80);
     } else if (a.jump) {
-      document.getElementById(a.jump)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => document.getElementById(a.jump)?.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
     }
   };
 
@@ -353,6 +368,45 @@ export default function DispatchConsole() {
   };
   const tickerGroup = TICKER_GROUPS[tickerFilter];
   const tickerItems = state.ticker.filter((e) => !tickerGroup || tickerGroup.includes(e.kind));
+  const renderTicker = (maxH) => (
+    <>
+      <div className="mt-2.5 flex flex-wrap gap-1.5">
+        {[["all", "전체"], ["urgent", "긴급"], ["dispatchG", "배차"], ["care", "케어"], ["commerce", "커머스"]].map(
+          ([k, label]) => (
+            <button
+              key={k}
+              onClick={() => setTickerFilter(k)}
+              className="btn-press rounded-full border px-2.5 py-1 text-[10px] font-bold"
+              style={
+                tickerFilter === k
+                  ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
+                  : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
+              }
+            >
+              {label}
+            </button>
+          )
+        )}
+      </div>
+      <div className="mt-2.5 space-y-[9px] overflow-y-auto pr-1" style={{ maxHeight: maxH }}>
+        {tickerItems.length === 0 && <div className="py-2 text-[12px] text-muted">해당 종류의 접수가 없습니다.</div>}
+        {tickerItems.map((e) => (
+          <div key={e.id} className="flex animate-tickIn items-start gap-2">
+            <span className="w-[34px] shrink-0 pt-0.5 font-num text-[10px] font-semibold text-muted">
+              {new Date(e.at).toTimeString().slice(0, 5)}
+            </span>
+            <span
+              className="shrink-0 rounded-[20px] px-2 py-0.5 text-[10px] font-bold text-navy"
+              style={{ background: `${e.color}33` }}
+            >
+              {e.kind}
+            </span>
+            <span className="flex-1 text-[12px] leading-[1.5] text-ink">{e.text}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  );
 
   const forecast = range === "3" ? WEEK_FORECAST.slice(0, 3) : WEEK_FORECAST;
 
@@ -376,9 +430,13 @@ export default function DispatchConsole() {
               </div>
               <div className="mt-0.5 flex flex-wrap items-center gap-2.5">
                 <h1 className="text-[26px] font-bold tracking-[-.01em] text-navy">강남지점 실시간 관제</h1>
-                <span className={`rounded-full px-3 py-1 text-[11px] font-bold ${status.cls}`}>
+                <button
+                  onClick={() => setMenu("dash")}
+                  title="대시보드로 이동"
+                  className={`btn-press rounded-full px-3 py-1 text-[11px] font-bold ${status.cls}`}
+                >
                   {status.label}
-                </span>
+                </button>
               </div>
               <div className="mt-1 flex items-center gap-2 text-[13px] text-muted">
                 <span>
@@ -395,11 +453,15 @@ export default function DispatchConsole() {
               {kpis.map((k) => (
                 <button
                   key={k.k}
-                  onClick={() =>
-                    k.jump
-                      ? document.getElementById(k.jump)?.scrollIntoView({ behavior: "smooth", block: "center" })
-                      : setTab(k.tab)
-                  }
+                  onClick={() => {
+                    setMenu("dash");
+                    if (k.jump)
+                      setTimeout(
+                        () => document.getElementById(k.jump)?.scrollIntoView({ behavior: "smooth", block: "center" }),
+                        80
+                      );
+                    else setTab(k.tab);
+                  }}
                   className="card-glass btn-press min-w-[104px] rounded-xl px-4 py-[11px] text-left"
                   title="클릭하면 해당 화면으로 이동"
                 >
@@ -412,8 +474,35 @@ export default function DispatchConsole() {
             </div>
           </header>
 
-          {/* ── 통합 검색 — 보호자·어르신·컨시어지·병원 (GNB) ── */}
-          <div className="relative mt-3 max-w-[520px]">
+          {/* ── GNB — 관제 업무 메뉴 + 통합 검색 (역할·기능별 분리) ── */}
+          <nav className="mt-4 flex flex-wrap items-center gap-2 border-b border-navy/[.08] pb-3">
+            {[
+              ["dash", "대시보드", null],
+              ["elder", "어르신", elders.length],
+              ["guardian", "보호자", guardians.length],
+              ["concierge", "컨시어지", concierges.length],
+              ["hospital", "병원", MOU_HOSPITALS.length],
+              ["comms", "커뮤니케이션", null],
+            ].map(([k, label, n]) => (
+              <button
+                key={k}
+                onClick={() => setMenu(k)}
+                className="btn-press rounded-[10px] border px-3.5 py-2 text-[12px] font-bold"
+                style={
+                  menu === k
+                    ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
+                    : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
+                }
+              >
+                {label}
+                {n != null && (
+                  <span className={`ml-1.5 font-num text-[10px] ${menu === k ? "text-white/60" : "text-muted/70"}`}>
+                    {n}
+                  </span>
+                )}
+              </button>
+            ))}
+            <div className="relative ml-auto w-full min-w-[240px] sm:w-[320px]">
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -442,63 +531,13 @@ export default function DispatchConsole() {
                 ))}
               </div>
             )}
-            {query.trim().length >= 1 && searchResults.length === 0 && (
-              <div className="card-glass absolute left-0 right-0 top-[46px] z-[1050] rounded-xl px-4 py-3 text-[12px] text-muted">
-                검색 결과가 없습니다.
-              </div>
-            )}
-          </div>
-
-          {/* ── 액션 큐 — 지금 처리할 일. 우선순위순, 클릭 즉시 해당 화면 (고도화) ── */}
-          <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
-            <div className="flex items-baseline justify-between">
-              <h2 className="text-[13px] font-bold tracking-[.02em] text-navy">지금 처리할 일</h2>
-              <span className="font-num text-[11px] text-muted">{actions.length}건 · 우선순위순</span>
+              {query.trim().length >= 1 && searchResults.length === 0 && (
+                <div className="card-glass absolute left-0 right-0 top-[46px] z-[1050] rounded-xl px-4 py-3 text-[12px] text-muted">
+                  검색 결과가 없습니다.
+                </div>
+              )}
             </div>
-            {actions.length === 0 ? (
-              <div className="mt-3 rounded-xl bg-[rgba(30,122,90,.08)] px-4 py-3 text-[12px] font-medium text-green">
-                처리 대기 없음 — 정상 운영 중입니다.
-              </div>
-            ) : (
-              <div className="mt-3 space-y-2">
-                {actions.map((a) => (
-                  <div
-                    key={a.id}
-                    className="flex items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5"
-                  >
-                    <span
-                      className={`h-2.5 w-2.5 shrink-0 rounded-full ${a.level === "critical" ? "animate-livePing" : ""}`}
-                      style={{
-                        background: a.level === "critical" ? "#C0392B" : a.level === "high" ? "#8A5D12" : "#5C5A54",
-                      }}
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-[13px] font-bold text-navy">{a.title}</div>
-                      <div className="truncate text-[11px] text-muted">{a.meta}</div>
-                    </div>
-                    {a.act ? (
-                      <button
-                        onClick={() => {
-                          setHandled((h) => ({ ...h, [a.id]: true }));
-                          push(...a.ticker);
-                        }}
-                        className="btn-press shrink-0 rounded-[10px] border border-green/40 px-3.5 py-2 text-[12px] font-bold text-green"
-                      >
-                        {a.act}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => jumpTo(a)}
-                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[12px] font-bold text-navy"
-                      >
-                        보기 →
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
+          </nav>
 
           {/* ── SOS 배너 (09 §2 + REQ-04 경계) ── */}
           {sos && (
@@ -602,6 +641,61 @@ export default function DispatchConsole() {
               </div>
             </section>
           )}
+
+          {/* ▼ 대시보드 — 운영 상황판 (menu) */}
+          {menu === "dash" && (
+            <>
+          {/* ── 액션 큐 — 지금 처리할 일. 우선순위순, 클릭 즉시 해당 화면 (고도화) ── */}
+          <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-[13px] font-bold tracking-[.02em] text-navy">지금 처리할 일</h2>
+              <span className="font-num text-[11px] text-muted">{actions.length}건 · 우선순위순</span>
+            </div>
+            {actions.length === 0 ? (
+              <div className="mt-3 rounded-xl bg-[rgba(30,122,90,.08)] px-4 py-3 text-[12px] font-medium text-green">
+                처리 대기 없음 — 정상 운영 중입니다.
+              </div>
+            ) : (
+              <div className="mt-3 space-y-2">
+                {actions.map((a) => (
+                  <div
+                    key={a.id}
+                    className="flex items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5"
+                  >
+                    <span
+                      className={`h-2.5 w-2.5 shrink-0 rounded-full ${a.level === "critical" ? "animate-livePing" : ""}`}
+                      style={{
+                        background: a.level === "critical" ? "#C0392B" : a.level === "high" ? "#8A5D12" : "#5C5A54",
+                      }}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-[13px] font-bold text-navy">{a.title}</div>
+                      <div className="truncate text-[11px] text-muted">{a.meta}</div>
+                    </div>
+                    {a.act ? (
+                      <button
+                        onClick={() => {
+                          setHandled((h) => ({ ...h, [a.id]: true }));
+                          push(...a.ticker);
+                        }}
+                        className="btn-press shrink-0 rounded-[10px] border border-green/40 px-3.5 py-2 text-[12px] font-bold text-green"
+                      >
+                        {a.act}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => jumpTo(a)}
+                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[12px] font-bold text-navy"
+                      >
+                        보기 →
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
 
           {/* ── AI 자율 배차 (09 §3) — L4: 승인 없이는 실행되지 않는다 ── */}
           {assign === "pending" ? (
@@ -815,43 +909,7 @@ export default function DispatchConsole() {
 
               <Panel className="min-w-0">
                 <PanelHead title="실시간 접수 티커" right="전 화면 액션 → 감사 로그 실시간 뷰" />
-                <div className="mt-2.5 flex flex-wrap gap-1.5">
-                  {[["all", "전체"], ["urgent", "긴급"], ["dispatchG", "배차"], ["care", "케어"], ["commerce", "커머스"]].map(
-                    ([k, label]) => (
-                      <button
-                        key={k}
-                        onClick={() => setTickerFilter(k)}
-                        className="btn-press rounded-full border px-2.5 py-1 text-[10px] font-bold"
-                        style={
-                          tickerFilter === k
-                            ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
-                            : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
-                        }
-                      >
-                        {label}
-                      </button>
-                    )
-                  )}
-                </div>
-                <div className="mt-2.5 max-h-[230px] space-y-[9px] overflow-y-auto pr-1">
-                  {tickerItems.length === 0 && (
-                    <div className="py-2 text-[12px] text-muted">해당 종류의 접수가 없습니다.</div>
-                  )}
-                  {tickerItems.map((e) => (
-                    <div key={e.id} className="flex animate-tickIn items-start gap-2">
-                      <span className="w-[34px] shrink-0 pt-0.5 font-num text-[10px] font-semibold text-muted">
-                        {new Date(e.at).toTimeString().slice(0, 5)}
-                      </span>
-                      <span
-                        className="shrink-0 rounded-[20px] px-2 py-0.5 text-[10px] font-bold text-navy"
-                        style={{ background: `${e.color}33` }}
-                      >
-                        {e.kind}
-                      </span>
-                      <span className="flex-1 text-[12px] leading-[1.5] text-ink">{e.text}</span>
-                    </div>
-                  ))}
-                </div>
+                {renderTicker(230)}
               </Panel>
             </div>
           )}
@@ -1226,6 +1284,270 @@ export default function DispatchConsole() {
                   </div>
                 </Panel>
               </div>
+            </div>
+          )}
+            </>
+          )}
+
+          {/* ════ 어르신 관리 — 명부 + 리스크 워치 ════ */}
+          {menu === "elder" && (
+            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="어르신 명부"
+                  right={`전체 ${elders.length}명 · 위험 ${RISK_WATCH.filter((r) => r.level === "높음").length}명`}
+                />
+                <div className="mt-3 space-y-2">
+                  {elders.map((d) => (
+                    <div
+                      key={d.name}
+                      className="flex items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5"
+                    >
+                      <button onClick={() => openProfile(d.name)} className="min-w-0 flex-1 text-left hover:opacity-75">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
+                            {d.name}
+                          </span>
+                          <span className="font-num text-[11px] text-muted">{d.tag}세</span>
+                          {d.alert && (
+                            <span className="rounded-full border border-amber/30 bg-[#FFF7E8] px-2 py-0.5 text-[9px] font-bold text-amber">
+                              챙길 것
+                            </span>
+                          )}
+                        </div>
+                        <div className="mt-0.5 truncate text-[11px] text-muted">{d.summary}</div>
+                      </button>
+                      <button
+                        onClick={() => push("대응", `${d.name} 안부 확인 콜 접수 — 담당 컨시어지 배정`, "#8FA9CC")}
+                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy"
+                      >
+                        안부 콜
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
+                  상세 주소는 담당 확정 후에만 노출됩니다 · 명부 클릭 시 담당·일정·챙길 것 프로필
+                </p>
+              </Panel>
+              <Panel className="min-w-0">
+                <PanelHead title="오늘 리스크 워치" right="환경 × 건강 이력 교차 · 단일 지표 판정 금지" />
+                <div className="mt-3 space-y-2.5">
+                  {RISK_WATCH.map((r) => (
+                    <div key={r.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                          style={{ color: RISK_LEVEL[r.level].fg, background: RISK_LEVEL[r.level].bg }}
+                        >
+                          {r.level}
+                        </span>
+                        <button
+                          onClick={() => openProfile(r.name.split(" (")[0])}
+                          className="text-[12px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
+                        >
+                          {r.name}
+                        </button>
+                      </div>
+                      <div className="mt-1 text-[11px] leading-[1.55] text-muted">{r.why}</div>
+                      <div className="mt-1 text-[11px] font-bold leading-[1.55] text-ink">조치 — {r.action}</div>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+            </div>
+          )}
+
+          {/* ════ 보호자 관리 — 주/부 보호자 · 시차 가구 ════ */}
+          {menu === "guardian" && (
+            <>
+              <p className="mt-4 rounded-xl border border-navy/[.08] bg-white/50 px-4 py-2.5 text-[11px] leading-[1.6] text-muted">
+                가입 정책 — 주 보호자 가입 후 초대 링크로 부 보호자 참여 · 결제 승인 권한은 주 보호자에게만
+              </p>
+              <div className="mt-3 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                {guardians.map((d) => (
+                  <Panel key={d.name} className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => openProfile(d.name)}
+                        className="text-[14px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
+                      >
+                        {d.name}
+                      </button>
+                      <span className="text-[11px] text-muted">{d.tag}</span>
+                      {d.summary.includes("주 보호자") && (
+                        <span className="ml-auto rounded-full bg-gold/15 px-2 py-0.5 text-[9px] font-bold text-[#7A5C28]">
+                          주 보호자
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1 text-[11px] leading-[1.55] text-muted">{d.summary}</p>
+                    <div className="mt-2.5 space-y-1.5 border-t border-navy/[.08] pt-2.5">
+                      {d.rows.map(([k, v]) => (
+                        <div key={k} className="flex gap-2 text-[11px]">
+                          <span className="w-[44px] shrink-0 font-bold text-gold">{k}</span>
+                          <span className="flex-1 leading-[1.55] text-ink">{v}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 flex gap-2">
+                      <button
+                        onClick={() => push("리포트", `${d.name}에게 최신 케어 리포트 재발송`, "#8FE3C0")}
+                        className="btn-press rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy"
+                      >
+                        리포트 재발송
+                      </button>
+                      <button
+                        onClick={() => push("메시지", `${d.name}에게 상황 확인 알림 발송`, "#8FA9CC")}
+                        className="btn-press rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy"
+                      >
+                        상황 알림
+                      </button>
+                    </div>
+                  </Panel>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* ════ 컨시어지 관리 — 명부 + 피로도 게이트 ════ */}
+          {menu === "concierge" && (
+            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <Panel className="min-w-0">
+                <PanelHead title="컨시어지 명부" right={`전체 ${concierges.length}명 · 평점 출처: 가족 만족도`} />
+                <div className="mt-3 space-y-2">
+                  {concierges.map((d) => (
+                    <div
+                      key={d.name}
+                      className="flex items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5"
+                    >
+                      <button onClick={() => openProfile(d.name)} className="min-w-0 flex-1 text-left hover:opacity-75">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
+                            {d.name}
+                          </span>
+                          <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[9px] font-bold text-navy">
+                            {d.tag}
+                          </span>
+                        </div>
+                        <div className="mt-0.5 truncate text-[11px] text-muted">{d.summary}</div>
+                      </button>
+                      <button
+                        onClick={() => push("브리핑", `${d.name}에게 내일 배차 브리핑 재발송`, "#F0D9A8")}
+                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy"
+                      >
+                        브리핑
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
+                  판매액·업셀 지표는 평가에서 제외 — 평점·케어 품질만 표시 (원칙 1)
+                </p>
+              </Panel>
+              <Panel className="min-w-0">
+                <PanelHead title="근무 시간 · 피로도 상한" right="일 10시간 · 주 52시간 상한" />
+                <div className="mt-3 space-y-2.5">
+                  {FATIGUE.map((f) => (
+                    <div key={f.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex items-baseline justify-between">
+                        <button
+                          onClick={() => openProfile(f.name)}
+                          className="text-[12px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
+                        >
+                          {f.name}
+                        </button>
+                        <span className="font-num text-[11px] font-bold" style={{ color: f.color }}>
+                          {f.hours} · {f.state}
+                        </span>
+                      </div>
+                      <div className="mt-1.5 h-[6px] overflow-hidden rounded-full bg-navy/[.08]">
+                        <span className="block h-full rounded-full" style={{ width: `${f.w}%`, background: f.color }} />
+                      </div>
+                      <div className="mt-1 text-[10px] text-muted">{f.jobs}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
+                  피로도는 표시가 아니라 게이트 — 90% 이상은 AI 배정 후보에서 자동 제외
+                </p>
+              </Panel>
+            </div>
+          )}
+
+          {/* ════ 병원 관리 — MOU 제휴 현황 ════ */}
+          {menu === "hospital" && (
+            <Panel className="mt-4">
+              <PanelHead title="제휴 (MOU) 병원" right="진료 과목마다 한 곳 이상 · 회의 8" />
+              <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                {MOU_HOSPITALS.map((h) => (
+                  <div key={h.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[9px] font-bold text-navy">
+                        {h.dept}
+                      </span>
+                      <button
+                        onClick={() => openProfile(h.name)}
+                        className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
+                      >
+                        {h.name}
+                      </button>
+                      {h.fast && (
+                        <span className="ml-auto rounded-full bg-gold/15 px-2 py-0.5 text-[9px] font-bold text-[#7A5C28]">
+                          패스트트랙
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-1 text-[11px] leading-[1.55] text-muted">{h.note}</div>
+                    <button
+                      onClick={() => push("예약", `${h.name} ${h.dept} 예약 슬롯 조회 — 응답 대기`, "#8FA9CC")}
+                      className="btn-press mt-2 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy"
+                    >
+                      슬롯 조회
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </Panel>
+          )}
+
+          {/* ════ 커뮤니케이션 — 발송 센터 + 감사 로그 ════ */}
+          {menu === "comms" && (
+            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <Panel className="min-w-0">
+                <PanelHead title="발송 센터" right="보호자 · 어르신 · 컨시어지 일괄 커뮤니케이션" />
+                <div className="mt-3 space-y-2">
+                  {COMMS_TEMPLATES.map((t) => (
+                    <div
+                      key={t.id}
+                      className="flex items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[12px] font-bold text-navy">{t.title}</div>
+                        <div className="truncate text-[11px] text-muted">{t.desc}</div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          if (sent[t.id]) return;
+                          setSent((v) => ({ ...v, [t.id]: true }));
+                          push(t.kind, t.log, t.color);
+                        }}
+                        disabled={!!sent[t.id]}
+                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[12px] font-bold text-navy disabled:opacity-50"
+                      >
+                        {sent[t.id] ? "발송됨" : "발송"}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
+                  모든 발송은 감사 로그(티커)에 기록 · 어르신 안내는 음성 콜 우선 · 진단어 없이 생활어 사용
+                </p>
+              </Panel>
+              <Panel className="min-w-0">
+                <PanelHead title="실시간 접수 티커" right="전 화면 액션 → 감사 로그 실시간 뷰" />
+                {renderTicker(430)}
+              </Panel>
             </div>
           )}
         </div>
