@@ -586,6 +586,12 @@ export default function ConciergePage() {
                 <Card className="p-[18px]">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[17px] font-black text-navy">동행 완료 리포트</span>
+                    <a
+                      href="/report/visit"
+                      className="btn-press rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
+                    >
+                      A4 인쇄본
+                    </a>
                     <span className="chip-gold rounded-full px-2.5 py-1 text-[11px] font-bold">
                       AI 초안 · 음성 기록 기반
                     </span>

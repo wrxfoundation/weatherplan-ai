@@ -161,10 +161,16 @@ export default function AdminConsole() {
               <span className="rounded-md bg-gold px-1.5 py-0.5 text-[11px] font-bold tracking-[.1em] text-navy">AI</span>
               <h2 className="text-[15px] font-bold text-navy">주간 경영 브리핑</h2>
               <span className="font-num text-[12px] text-muted">{EXEC_BRIEF.date}</span>
+              <a
+                href="/report/exec"
+                className="btn-press ml-auto rounded-[10px] border border-navy/20 px-3.5 py-1.5 text-[12px] font-bold text-navy"
+              >
+                월간 리포트 PDF
+              </a>
               <button
                 onClick={() => setExecRead(true)}
                 disabled={execRead}
-                className="btn-press ml-auto rounded-[10px] border border-navy/20 px-3.5 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
+                className="btn-press rounded-[10px] border border-navy/20 px-3.5 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
               >
                 {execRead ? "읽음 확인됨 ✓" : "읽음 확인"}
               </button>

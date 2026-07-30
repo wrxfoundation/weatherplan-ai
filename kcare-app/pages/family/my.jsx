@@ -74,11 +74,17 @@ export default function MyPage() {
               pdfRequested ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
             }`}
           >
-            {pdfRequested ? "✓ 요청됨 — 생성되면 알림으로 전달" : "증빙 보고서 열기 (PDF)"}
+            {pdfRequested ? "✓ 요청됨 — 생성되면 알림으로 전달" : "증빙 보고서 요청"}
           </button>
           {pdfRequested && (
             <div className="mt-2 text-center">
               <PendingTag>PDF 생성 연동 대기</PendingTag>
+              <Link
+                href="/report/care"
+                className="btn-press mt-2 block w-full rounded-xl border border-navy/20 py-3 text-center text-[14px] font-bold text-navy"
+              >
+                월간 케어 리포트 보기 · PDF 저장 (A4)
+              </Link>
             </div>
           )}
           <div className="mt-4 flex items-center justify-between border-t border-navy/[.08] pt-3">

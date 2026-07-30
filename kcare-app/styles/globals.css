@@ -136,3 +136,30 @@
     animation: none !important;
   }
 }
+
+/* ── A4 인쇄 리포트 (/report/*) ── */
+@page {
+  size: A4;
+  margin: 14mm;
+}
+@media print {
+  .print-hide {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+  }
+  .report-sheet {
+    margin: 0 !important;
+    max-width: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .avoid-break {
+    break-inside: avoid;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
