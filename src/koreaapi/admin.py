@@ -3206,6 +3206,13 @@ def _agents_manifest() -> dict:
                 {"name": "canonical_korean_name", "about": "the authoritative Korean + official-English spelling"},
             ],
         },
+        "skill": {  # the SKILL.md lane (Claude Code / Codex / OpenCode …) — no MCP client, no server
+            "skill_md": f"{_SITE_BASE}/skill/SKILL.md",
+            "install": ("git clone --depth 1 https://github.com/kwangdol-star/koreaapi && "
+                        "cp -r koreaapi/skills/koreaapi ~/.claude/skills/koreaapi"),
+            "note": ("the same verified data over plain HTTPS — the bundled stdlib script resolves a "
+                     "name, fetches the record, and INDEPENDENTLY re-verifies its content_hash"),
+        },
         "data": {
             "catalog": f"{_SITE_BASE}/data.html",  # every machine surface, one legible page
             "open_json": f"{_SITE_BASE}/latest.json",

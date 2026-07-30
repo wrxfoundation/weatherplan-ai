@@ -316,3 +316,39 @@ above).
 free, keyless; per-snapshot chain writes add cost + coupling, not trust, at our cadence) ·
 USDT/wallet-native settlement (stays x402/USDC per the Phase-2 plan) · anything token-shaped
 (guardrail above stands).
+
+---
+
+## Absorbed from NomaDamas/k-skill — Korean daily-life skill collection review, 2026-07-30
+
+k-skill = 100+ `SKILL.md` skills (SRT·KTX·카톡·정부24·홈택스·당근 …) installable into ANY
+skill-supporting coding agent (Claude Code · Codex · OpenCode · ClawHub), with operator-key
+proxying and fixture-tested scripts. It proves a distribution lane we didn't have.
+
+**Absorbed now (shipped this round):**
+- **The SKILL lane** — `skills/koreaapi/` (SKILL.md + stdlib-only `koreaapi_lookup.py`:
+  resolve → fetch the verified record → INDEPENDENTLY re-verify `content_hash` → cite line,
+  exit 2 on mismatch). Served at `/skill/` on the site, advertised in `agents.json → skill`,
+  documented in MCP_INSTALL. Frontmatter mirrors k-skill conventions (name/description/license/
+  metadata{category,locale}) so a cross-listing PR drops in nearly as-is. A sync test pins the
+  script's standalone fingerprint to `koreaapi.integrity.record_fingerprint` — algorithm drift
+  breaks CI, not user trust.
+
+**Validates (no action):** keyless static surfaces (k-skill needs a hosted proxy to hide operator
+keys; our data lane needs none) · fixture-tested scripts · "없으면 없다" honesty.
+
+**Deferred (on-thesis source candidates spotted via their catalog):**
+1. **KOFIC/KOBIS 박스오피스** — their cinema skill is showtimes/booking (out of lane), but the
+   adjacent KOFIC OpenAPI is settlement-grade daily/weekly box office = the FILM vertical's
+   "chart" (Circle Chart analog). Dormant rail candidate: `KOBIS_API_KEY`.
+2. **DART 전자공시 anchor** — HYBE·SM·JYP·YG are listed corps; DART corporate filings are an
+   official-source verification tier for label/company entities (above P856). `DART_API_KEY`.
+3. **Sports results (KBO·KBL·K리그)** — settlement-oracle feeds for the decision-gated
+   prediction-market vertical (rumor ≠ settlement; league data is settlement-grade).
+
+**User action available:** cross-list KoreaAPI INTO k-skill (their CONTRIBUTING: Korean comms,
+PR to `dev`, README table + `docs/features/` entry) — our SKILL.md is drop-in shaped.
+
+⛔ **Not absorbed:** real-time booking/automation lanes (SRT/KTX/카톡 — out of lane) ·
+scraping-backed surfaces (anti-doctrine: fragile, gray) · hosted key-proxy (nothing to hide —
+keyless by design).

@@ -107,6 +107,21 @@ single deployment serves both the REST surface (`/v1/*`) and MCP: point any MCP 
 (Claude Desktop · Cursor · an agent framework) at `https://<host>/mcp` — same 16 tools, no install,
 no API key. `agents.json → mcp.http` advertises this lane machine-readably.
 
+## Claude Skill (no MCP client at all)
+
+For skill-supporting agents (Claude Code · Codex CLI · OpenCode …) the bundled **skill** serves the
+same verified data over plain HTTPS — no server, no key:
+
+```bash
+git clone --depth 1 https://github.com/kwangdol-star/koreaapi
+cp -r koreaapi/skills/koreaapi ~/.claude/skills/koreaapi   # or ~/.agents/skills/koreaapi
+```
+
+Its stdlib-only `koreaapi_lookup.py` resolves a name → fetches the verified record →
+**independently re-verifies** the SHA-256 `content_hash` → prints the citable line (exit 2 on any
+mismatch). The skill is also served at <https://aiagentlabs.co.kr/skill/SKILL.md>, and advertised
+machine-readably in `agents.json → skill`.
+
 ## Registries (get discovered)
 
 [`smithery.yaml`](../smithery.yaml) describes the start command for the

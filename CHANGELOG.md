@@ -54,6 +54,11 @@ Korean-surface parity, a self-healing freshness engine, and deploy safety.
 - **Pre-computed Answer Products** (`/answers/<product>-<key>.json` + `index.json`): the enumerable
   products — trip-plan per region, food-guide per dietary filter, agency-roster per label — as
   static machine answers in the same envelope `/v1/answer` serves, live on the static host today.
+- **Claude-Skill lane** (`skills/koreaapi/`, served at `/skill/`): SKILL.md + a stdlib-only
+  lookup script that resolves a name, fetches the verified record, **independently re-verifies**
+  its `content_hash` (exit 2 on mismatch), and prints the citable line — installable into any
+  skill-supporting agent with no server and no key; a sync test pins the standalone fingerprint
+  to `integrity.record_fingerprint`.
 
 ### Data engine & ops
 - **refresh** — re-verifies the stalest discovered entities every collect tick (half-TTL threshold,

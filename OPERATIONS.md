@@ -92,7 +92,9 @@ Hallucination cannot enter a record: extraction is labor, grounding is the gate.
   related-network(+nearby) · trip-plan(map-ready + walkable clusters) · food-guide · compare ·
   evidence-pack) + the same over HTTP `/v1/*` (`/v1/answer?product=auto` = ask). The HTTP app also
   mounts the MCP server itself at **`/mcp`** (Streamable HTTP) — one deployment serves REST *and*
-  MCP-over-URL (point any MCP client at `https://<host>/mcp`, zero install).
+  MCP-over-URL (point any MCP client at `https://<host>/mcp`, zero install). A third lane ships as
+  a **Claude Skill** (`skills/koreaapi/`, served at `/skill/`): SKILL.md + a stdlib lookup script
+  that independently re-verifies `content_hash` — for agents with no MCP client at all.
 
 ## Verification layers (what protects a deploy)
 
