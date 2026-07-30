@@ -906,3 +906,105 @@ export const DIRECTORY_TYPE = {
   concierge: { label: "컨시어지", fg: "#8FE3C0", bg: "rgba(30,122,90,.3)" },
   hospital: { label: "병원", fg: "#C9A46B", bg: "rgba(176,141,87,.25)" },
 };
+
+// ════ 경영 · 사람 관리 (관제 = 현장 관리, 경영 = 사람 관리 · 분석) ════
+// 집계 전용 — 개별 사건은 관제 소관. HR·CS 조치는 세그먼트/담당 배정 수준까지만.
+
+export const PEOPLE_KPIS = [
+  { k: "가입 가구", v: "128", sub: "+12 이번 달", color: "#0A1F3C" },
+  { k: "활성 어르신", v: "132", sub: "멤버십 유지 97%", color: "#0A1F3C" },
+  { k: "보호자 계정", v: "241", sub: "주 128 · 부 113", color: "#0A1F3C" },
+  { k: "컨시어지 재직", v: "24", sub: "수습 5 · 시니어 4", color: "#0A1F3C" },
+  { k: "컨시어지 90일 유지", v: "87%", sub: "업계 평균 61%", color: "#1E7A5A" },
+  { k: "보호자 NPS", v: "62", sub: "리포트 만족 기여 1위", color: "#1E7A5A" },
+];
+
+// 컨시어지 — 케어 품질 분포 (평점 출처: 가족 만족도. 판매액 컬럼 금지 — 원칙 1)
+export const STAFF_QUALITY_DIST = [
+  { band: "4.8 이상", n: 9, w: 38, color: "#1E7A5A", note: "시니어 후보군" },
+  { band: "4.5 – 4.7", n: 11, w: 46, color: "#B08D57", note: "표준 구간" },
+  { band: "4.5 미만", n: 4, w: 16, color: "#8A5D12", note: "코칭 대상 · 3개월 재평가" },
+];
+export const STAFF_QUALITY_OPS = [
+  { k: "2인 페어 준수", v: "100%", note: "예외 0건 — 시스템 강제" },
+  { k: "리포트 정시 전송", v: "96%", note: "동행 후 2시간 내" },
+  { k: "브리핑 사전 확인", v: "89%", note: "미확인 시 개별 콜" },
+  { k: "GPS 체크인 정시", v: "94%", note: "지연 대부분 교통" },
+];
+export const STAFF_PIPELINE = [
+  { stage: "지원", n: 46, w: 100 },
+  { stage: "서류 · 인터뷰", n: 18, w: 39 },
+  { stage: "교육 수료", n: 9, w: 20 },
+  { stage: "수습 (부 동행 12건)", n: 5, w: 11 },
+  { stage: "일반 전환", n: 3, w: 7 },
+];
+// HR 워치 — 이직·번아웃 신호. 개별 사건이 아니라 사람 관리 (경영 소관)
+export const STAFF_HR_WATCH = [
+  { name: "서다인", why: "주 근무 상한 근접 3주 연속 · 권역 간 이동 과다", action: "권역 재편 + 2주 배차 하향", level: "높음" },
+  { name: "오하늘", why: "수습 평점 4.3 · 어르신 응대 피드백 2건", action: "시니어 동행 코칭 4회 배정", level: "중간" },
+  { name: "이수민", why: "타 권역 지원 반복 — 피로 누적 · 만족도 하락 신호", action: "지원 요청 상한 설정 · 면담", level: "중간" },
+];
+export const INCENTIVE_MIX = [
+  { k: "가족 만족도", pct: 40, note: "평점 · 재예약 의사" },
+  { k: "리포트 충실도", pct: 30, note: "관찰 항목 완성도 · 정시" },
+  { k: "안전 · 무사고", pct: 30, note: "체크인 · 페어 규정 준수" },
+];
+export const STAFF_CERTS = [
+  { k: "요양보호사 자격", n: 14, w: 58 },
+  { k: "간호 인력 출신", n: 6, w: 25 },
+  { k: "치매 케어 교육 이수", n: 17, w: 71 },
+  { k: "응급처치 갱신 필요", n: 4, w: 17, warn: true },
+];
+
+// 보호자 · 가구 — 가입 퍼널 (최근 90일) · 참여도 · 이탈 세그먼트
+export const FAMILY_FUNNEL = [
+  { stage: "상담 접수", n: 210, w: 100 },
+  { stage: "어르신 등록", n: 156, w: 74 },
+  { stage: "결제 · 가입 확정", n: 128, w: 61 },
+  { stage: "부보호자 초대 발송", n: 96, w: 46 },
+  { stage: "초대 수락", n: 74, w: 35, note: "수락률 77%" },
+];
+export const FAMILY_ENGAGE = [
+  { k: "리포트 열람 (주보호자)", v: "91%", color: "#1E7A5A", note: "발송 24시간 내" },
+  { k: "리포트 열람 (부보호자)", v: "64%", color: "#8A5D12", note: "시차 가구 보정 후 71%" },
+  { k: "결제 승인 응답 중간값", v: "18분", color: "#1E7A5A", note: "5만원 한도 정책" },
+  { k: "주간 앱 방문", v: "4.2회", color: "#0A1F3C", note: "리포트 발송일 피크" },
+];
+export const CHURN_SEGMENTS = [
+  { seg: "리포트 2주 미열람", n: "6가구", action: "CS 아웃바운드 + 발송 시간 재설정", level: "중간" },
+  { seg: "결제 실패 · 갱신 임박", n: "2가구", action: "결제 수단 교체 안내 (D-5)", level: "높음" },
+  { seg: "요청 무응답 3회 이상", n: "3가구", action: "주보호자 유선 확인", level: "중간" },
+];
+export const MEMBERSHIP_MIX = [
+  { k: "티어 1 (월 57,000)", n: 84, w: 66 },
+  { k: "티어 2", n: 32, w: 25 },
+  { k: "티어 3", n: 12, w: 9 },
+];
+export const OPTION_ATTACH = [
+  { k: "야간 출동 (외주)", v: "22%", note: "SOS 야간 공백 보완" },
+  { k: "간병보험 (GA)", v: "출시 대기", note: "라이선스 확보 후 오픈" },
+];
+
+// 어르신 케어 성과 — 월 집계만 (개별 사건 비노출)
+export const CARE_OUTCOMES = [
+  { k: "복약 순응률", v: "92%", target: "목표 90%", color: "#1E7A5A" },
+  { k: "병원 동행 정시율", v: "91%", target: "목표 95%", color: "#8A5D12" },
+  { k: "일정 조정 권고 수용", v: "68%", target: "목표 60%", color: "#1E7A5A" },
+  { k: "리포트 가족 전달", v: "1.4h", target: "목표 2h 내", color: "#1E7A5A" },
+];
+export const SAFETY_MONTHLY = [
+  { k: "SOS", v: "4건", note: "초동 평균 41초 · 전월 5건" },
+  { k: "낙상 복합 알림", v: "10건", note: "전월 12건 · 오탐 개선" },
+  { k: "119 연계", v: "1건", note: "기본 보증 범위 내 조치" },
+  { k: "야간 공백 접수", v: "3건", note: "야간 옵션 미가입 가구" },
+];
+export const ELDER_MIX = [
+  { k: "75 – 79세", n: 58, w: 44 },
+  { k: "80 – 84세", n: 51, w: 39 },
+  { k: "85세 이상", n: 23, w: 17 },
+];
+export const ELDER_RISK_MIX = [
+  { k: "위험 높음", n: 11, color: "#C0392B" },
+  { k: "중간 · 관찰", n: 34, color: "#8A5D12" },
+  { k: "안정", n: 87, color: "#1E7A5A" },
+];
