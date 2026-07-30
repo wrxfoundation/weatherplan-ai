@@ -39,15 +39,28 @@ const DEFAULT = {
 
 function reducer(state, action) {
   switch (action.type) {
-    case "hydrate":
-      // 구버전 저장값(elder/demo에 새 키가 없는 형태)과 깊은 병합 — 새 키 기본값 유지
+    case "hydrate": {
+      // 구버전 저장값(슬라이스에 새 키가 없는 형태)과 깊은 병합 — 새 키 기본값 유지.
+      // localStorage는 신뢰할 수 없는 입력: 객체·배열 형태를 검증하고 아니면 기본값을 지킨다.
+      const p = action.payload && typeof action.payload === "object" ? action.payload : {};
+      const arr = (v, fallback) => (Array.isArray(v) ? v : fallback);
       return {
         ...state,
-        ...action.payload,
-        demo: { ...state.demo, ...(action.payload.demo || {}) },
-        elder: { ...state.elder, ...(action.payload.elder || {}) },
-        ops: { ...state.ops, ...(action.payload.ops || {}) },
+        ...p,
+        demo: { ...state.demo, ...(p.demo || {}) },
+        elder: { ...state.elder, ...(p.elder || {}) },
+        ops: { ...state.ops, ...(p.ops || {}) },
+        visit: {
+          ...state.visit,
+          ...(p.visit || {}),
+          audit: arr(p.visit && p.visit.audit, state.visit.audit),
+        },
+        ticker: arr(p.ticker, state.ticker),
+        events: arr(p.events, state.events),
+        reports: arr(p.reports, state.reports),
+        requests: arr(p.requests, state.requests),
       };
+    }
     case "completeOnboarding":
       return { ...state, onboarding: action.payload };
     case "addEvent":

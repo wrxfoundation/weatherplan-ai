@@ -36,21 +36,39 @@ ${COMMON}
 - 3~5문장.`,
 };
 
+const RATE = new Map(); // ip → timestamps (인스턴스 로컬)
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.status(405).json({ error: "POST only" });
     return;
   }
+  // 입력 검증 — 신뢰할 수 없는 클라이언트 입력: 타입·길이·role 화이트리스트
+  const { question, context, role } = req.body || {};
+  if (typeof question !== "string" || !question.trim() || question.length > 600) {
+    res.status(400).json({ error: "invalid-question" });
+    return;
+  }
+  const safeContext = typeof context === "string" ? context.slice(0, 6000) : "";
+  const safeRole = ["guardian", "dispatch", "admin"].includes(role) ? role : "guardian";
+
+  // 레이트 리밋 — 인스턴스 로컬 (데모 수준: IP당 분당 20회)
+  const ip = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || req.socket?.remoteAddress || "?";
+  const now = Date.now();
+  const bucket = RATE.get(ip) || [];
+  const recent = bucket.filter((t) => now - t < 60_000);
+  if (recent.length >= 20) {
+    res.status(429).json({ error: "rate-limited" });
+    return;
+  }
+  recent.push(now);
+  RATE.set(ip, recent);
+  if (RATE.size > 500) RATE.clear(); // 메모리 상한 — 데모 안전장치
+
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) {
     // 데모 환경 — 키 미설정. 클라이언트가 기록 기반 데모 답변으로 폴백한다.
     res.status(503).json({ error: "ai-not-configured" });
-    return;
-  }
-
-  const { question, context, role } = req.body || {};
-  if (!question) {
-    res.status(400).json({ error: "question required" });
     return;
   }
 
@@ -59,11 +77,11 @@ export default async function handler(req, res) {
     const msg = await client.messages.create({
       model: AI_CONFIG.model,
       max_tokens: AI_CONFIG.maxTokens,
-      system: ROLE_SYSTEM[role] || ROLE_SYSTEM.guardian,
+      system: ROLE_SYSTEM[safeRole],
       messages: [
         {
           role: "user",
-          content: `[컨텍스트]\n${context || "(제공된 기록 없음)"}\n\n[질문]\n${question}`,
+          content: `[컨텍스트]\n${safeContext || "(제공된 기록 없음)"}\n\n[질문]\n${question.slice(0, 600)}`,
         },
       ],
     });
