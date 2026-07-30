@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, Badge } from "../../components/ui";
-import { MOU_HOSPITALS } from "../../lib/mock";
+import { HOSPITAL_PARTNERS, MOU_HOSPITALS } from "../../lib/mock";
 import { useAppState } from "../../lib/state";
 
 // 제휴 병원 찾기 — 회의 8. MOU 병원만, 진료 과목마다 한 곳 이상.
@@ -63,6 +63,12 @@ export default function HospitalsPage() {
             </div>
             <div className="mt-2 text-[17px] font-bold text-navy">{h.name}</div>
             <div className="mt-0.5 text-[13px] text-muted">{h.note}</div>
+            {HOSPITAL_PARTNERS[h.name] && (
+              <div className="mt-1.5 text-[12px] text-muted">
+                가용 슬롯 <b className="text-ink">{HOSPITAL_PARTNERS[h.name].slots}</b> · 이번 달
+                K-CARE 동행 <b className="font-num text-ink">{HOSPITAL_PARTNERS[h.name].trips}건</b>
+              </div>
+            )}
             <button
               onClick={() => requestEscort(h)}
               disabled={!!requested[h.name]}

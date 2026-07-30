@@ -91,10 +91,14 @@ export default function RequestsPage() {
   );
 }
 
+const STEP_ORDER = ["requested", "confirmed", "awaitingPayment", "inProgress", "done"];
+const STEP_LABELS = ["접수", "확정", "결제", "진행", "완료"];
+
 function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
   const [notified, setNotified] = useState(false); // 부 보호자 → 주 보호자 승인 알림
   const st = STATUS[req.status];
   const needApproval = needsGuardianApproval(onboarding, req.amount);
+  const stepIdx = STEP_ORDER.indexOf(req.status); // 취소·처리불가·관리자 검토는 -1 → 스텝퍼 미표시
 
   return (
     <Card className="overflow-hidden">
@@ -132,6 +136,29 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
           <span>담당 {req.assignee}</span>
           {req.photos.length > 0 && <span>사진 {req.photos.length}장</span>}
         </div>
+        {/* 진행 스텝퍼 — 지금 어디까지 왔는지 한눈에 */}
+        {stepIdx >= 0 && (
+          <div className="mt-3 flex items-center gap-1">
+            {STEP_LABELS.map((l, i) => (
+              <div key={l} className="flex-1">
+                <div
+                  className="h-[5px] rounded-full"
+                  style={{
+                    background:
+                      i < stepIdx ? "#0A1F3C" : i === stepIdx ? "#B08D57" : "rgba(10,31,60,.1)",
+                  }}
+                />
+                <div
+                  className={`mt-1 text-center text-[10px] font-bold ${
+                    i === stepIdx ? "text-[#7A5C28]" : i < stepIdx ? "text-navy" : "text-muted/50"
+                  }`}
+                >
+                  {l}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </button>
 
       {open && (

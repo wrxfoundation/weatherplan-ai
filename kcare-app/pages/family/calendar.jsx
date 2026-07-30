@@ -212,6 +212,17 @@ export default function CalendarPage() {
                     {e.note && (
                       <div className="mt-1 text-[13px] leading-[1.6] text-muted">{e.note}</div>
                     )}
+                    {/* 병원 일정 — 외출 컨디션 · 동행 편성 상태 (케이웨더 × 배차 연동) */}
+                    {e.kind === "hospital" && (
+                      <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        <span className="rounded-full border border-amber/30 bg-[#FFF7E8] px-2 py-0.5 text-[11px] font-bold text-amber">
+                          외출지수 52 주의 · 차량 권장
+                        </span>
+                        <span className="rounded-full bg-green/10 px-2 py-0.5 text-[11px] font-bold text-green">
+                          동행 확정 — 박지현 + 서다인
+                        </span>
+                      </div>
+                    )}
                   </div>
                   {isPrimary && (
                     <button

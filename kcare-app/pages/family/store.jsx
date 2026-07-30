@@ -59,6 +59,15 @@ export default function StorePage() {
           요청으로 도착하고, 보호자 주문은 바로 결제됩니다.
         </p>
 
+        {/* 케어 필요 기반 추천 — 환경(폭염) × 이력. 판매 목표 아님 (원칙 1) */}
+        <Card className="border border-amber/30 p-4" style={{ background: "linear-gradient(180deg,#FFF7E8,#FBEFD8)" }}>
+          <div className="text-[12px] font-bold text-amber">폭염 특보 — 이번 주 챙기면 좋은 것</div>
+          <p className="mt-1 text-[14px] leading-[1.65] text-ink">
+            실내 온도가 높은 날이 이어집니다. 보냉백 · 생수 묶음 · 쿨매트를 아래 목록에서 확인해
+            보세요 — 담당 컨시어지가 다음 방문에 함께 전달합니다.
+          </p>
+          <p className="mt-1.5 text-[11px] text-muted">추천 기준: 케이웨더 환경 신호 × 어르신 이력 — 판매 실적과 무관합니다</p>
+        </Card>
         <Card className="p-4">
           <SectionLabel>생활 · 건강 물품</SectionLabel>
           <div className="mt-3 space-y-2">
