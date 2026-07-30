@@ -471,7 +471,8 @@ export const MAP_HOSPITALS = [
 ];
 export function mapPeople(sos) {
   return [
-    { lat: 37.4945, lng: 127.0614, label: sos ? "김순자 · SOS" : "김순자 · 대치동", color: sos ? "#FF6B5B" : "rgba(255,255,255,.5)" },
+    // 평시 색은 라이트 OSM 타일 가독용 네이비 톤 (다크 타일 원안: rgba(255,255,255,.5))
+    { lat: 37.4945, lng: 127.0614, label: sos ? "김순자 · SOS" : "김순자 · 대치동", color: sos ? "#FF6B5B" : "#3B5C8A" },
     { lat: 37.5029, lng: 127.0567, label: "박지현 · 이동중", color: "#4ADE80" },
     { lat: 37.4956, lng: 126.8974, label: "정민호 · 수행중", color: "#4ADE80" },
     { lat: 37.5219, lng: 126.9895, label: "한서연 · 대기", color: "#8FA9CC" },

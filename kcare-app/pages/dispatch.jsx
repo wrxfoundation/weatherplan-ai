@@ -112,10 +112,12 @@ function ControlMap({ sos }) {
         scrollWheelZoom: false, // 페이지 스크롤 중 줌 방지 — 관제사가 위치를 잃는다
       });
       mapRef.current = map;
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-        subdomains: "abcd",
+      // 타일: 표준 OpenStreetMap (요청 반영 · 우선). 09 §4 원안은 CARTO 다크 —
+      // 라이브러리·타일을 바꿔도 좌표는 그대로 쓴다.
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        subdomains: "abc",
         maxZoom: 19,
-        attribution: "© OpenStreetMap © CARTO",
+        attribution: "© OpenStreetMap contributors",
       }).addTo(map);
 
       const pts = [];
@@ -131,7 +133,8 @@ function ControlMap({ sos }) {
           .addTo(map)
           .bindPopup(label, { className: "kcare-popup" });
       };
-      MAP_DISTRICTS.forEach((d) => add(d.lat, d.lng, d.name, "rgba(255,255,255,.4)", 4));
+      // 라이트 타일 위 가독을 위해 흰색 계열 마커는 네이비 톤으로
+      MAP_DISTRICTS.forEach((d) => add(d.lat, d.lng, d.name, "rgba(10,31,60,.35)", 4));
       MAP_HOSPITALS.forEach((h) => add(h.lat, h.lng, `${h.name} · 제휴 병원`, "#B08D57", 7));
       mapPeople(sos).forEach((p) => add(p.lat, p.lng, p.label, p.color, 7));
       map.fitBounds(L.latLngBounds(pts), { padding: [26, 26] });
@@ -151,7 +154,7 @@ function ControlMap({ sos }) {
 
   return (
     <div className="relative">
-      <div ref={nodeRef} className="h-[300px] overflow-hidden rounded-[10px] bg-[#0E2647]" />
+      <div ref={nodeRef} className="h-[300px] overflow-hidden rounded-[10px] bg-[#E6EBF2]" />
       <div className="pointer-events-none absolute bottom-2 left-2 z-[1000] rounded-md bg-black/45 px-2 py-1 text-[9px] font-bold tracking-[.08em] text-white/80">
         SEOUL · OpenStreetMap 실측 좌표
       </div>
