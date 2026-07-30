@@ -147,31 +147,16 @@ export default function AdminConsole() {
             </p>
           </header>
 
-          {/* ── 사람 KPI — 전 탭 공통. 보더: 좌상 진하게 → 우하 옅게 (그라디언트 보더) ── */}
+          {/* ── 사람 KPI — 전 탭 공통 (card-glass 원톤) ── */}
           <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
             {PEOPLE_KPIS.map((k) => (
-              <div
-                key={k.k}
-                className="rounded-[14px] p-[1.5px]"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(10,31,60,.42), rgba(10,31,60,.12) 45%, rgba(10,31,60,.03) 75%, rgba(255,255,255,.5))",
-                }}
-              >
-                <div
-                  className="h-full rounded-[12.5px] p-4"
-                  style={{
-                    background: "linear-gradient(180deg, rgba(255,255,255,.97), rgba(255,255,255,.88))",
-                    boxShadow: "inset 0 1px 0 rgba(255,255,255,1), 0 16px 34px -28px rgba(10,31,60,.45)",
-                  }}
-                >
-                  <div className="text-[11px] font-bold text-muted">{k.k}</div>
-                  <div className="mt-1 font-num text-[25px] font-bold" style={{ color: k.color }}>
-                    {k.v}
-                  </div>
-                  <div className="mt-0.5 text-[11px] text-muted">{k.sub}</div>
+              <Panel key={k.k} className="!p-4">
+                <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                <div className="mt-1 font-num text-[25px] font-bold" style={{ color: k.color }}>
+                  {k.v}
                 </div>
-              </div>
+                <div className="mt-0.5 text-[11px] text-muted">{k.sub}</div>
+              </Panel>
             ))}
           </div>
 
