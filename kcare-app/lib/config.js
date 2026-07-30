@@ -50,5 +50,13 @@ export const PAYMENT_MODES = [
   },
 ];
 
+// AI 설정 — 기본 모델은 Claude Sonnet (서버 내부 값).
+// 외부(사용자 노출) 명칭은 항상 "AI"로 통일한다 — 모델·제공사 이름을 UI·응답에 노출하지 않는다.
+export const AI_CONFIG = {
+  model: "claude-sonnet-5", // 기본. 복잡 질의 라우팅이 필요해지면 여기서 분기
+  publicLabel: "AI", // 외부 표기 통일
+  maxTokens: 600,
+};
+
 export const fmtWon = (n) =>
   n == null ? "별도 산정" : `${new Intl.NumberFormat("ko-KR").format(n)}원`;

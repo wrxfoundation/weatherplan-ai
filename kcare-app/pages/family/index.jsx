@@ -32,6 +32,34 @@ export default function FamilyHome() {
     .slice(0, 3);
   const [aiBooked, setAiBooked] = useState(false);
   const [askAi, setAskAi] = useState(null); // AI 케어 어시스턴트 — 선택한 질문
+
+  // AI 어시스턴트 — /api/ai (기본 모델: Claude Sonnet, 외부 표기는 'AI').
+  // 키 미설정·오류 시 기록 기반 데모 답변으로 폴백해 시연이 끊기지 않는다.
+  const askAssistant = async (qa) => {
+    if (askAi?.q === qa.q) {
+      setAskAi(null);
+      return;
+    }
+    setAskAi({ ...qa, loading: true });
+    try {
+      const ctx = [
+        `주간 요약: ${WEEKLY.map((w) => `${w.name} ${w.value} (${w.last})`).join(" · ")}`,
+        `실시간: ${VITALS.map((vt) => `${vt.name} ${vt.value}${vt.unit} (${vt.status})`).join(" · ")}`,
+        `다가오는 일정: ${upcoming.map((e) => e.title).join(" · ")}`,
+        "안부 전화: '어지러움' 발언 2회 · '무릎이 조금 아프다' 1회 — 진료 질문 목록 반영됨",
+      ].join("\n");
+      const r = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: qa.q, context: ctx }),
+      });
+      if (!r.ok) throw new Error("ai-unavailable");
+      const d = await r.json();
+      setAskAi({ q: qa.q, a: d.answer, src: "실시간 AI 응답 · 케어 기록 기반", loading: false });
+    } catch (_) {
+      setAskAi({ ...qa, loading: false }); // 데모 폴백 — 기록 기반 준비 답변
+    }
+  };
   const pendingApprovals = state.requests.filter((r) => r.status === "awaitingPayment").length;
   const repScore = Math.min(...OUTING.legs.map((l) => l.score)); // 두 구간 중 낮은 값
 
@@ -226,7 +254,7 @@ export default function FamilyHome() {
             {AI_ASSISTANT_QA.map((qa) => (
               <button
                 key={qa.q}
-                onClick={() => setAskAi(askAi?.q === qa.q ? null : qa)}
+                onClick={() => askAssistant(qa)}
                 className={`btn-press rounded-full border px-3 py-2 text-[12px] font-bold ${
                   askAi?.q === qa.q ? "border-navy bg-navy text-white" : "border-navy/15 text-muted"
                 }`}
@@ -243,10 +271,16 @@ export default function FamilyHome() {
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
               }}
             >
-              <p className="text-[13px] leading-[1.75] text-ink">{askAi.a}</p>
-              <p className="mt-2 border-t border-navy/[.08] pt-2 text-[10px] font-bold text-muted">
-                근거: {askAi.src}
-              </p>
+              {askAi.loading ? (
+                <p className="text-[13px] leading-[1.75] text-muted">기록을 확인하고 있어요…</p>
+              ) : (
+                <>
+                  <p className="text-[13px] leading-[1.75] text-ink">{askAi.a}</p>
+                  <p className="mt-2 border-t border-navy/[.08] pt-2 text-[10px] font-bold text-muted">
+                    근거: {askAi.src}
+                  </p>
+                </>
+              )}
             </div>
           )}
           <p className="mt-2.5 text-[10px] leading-[1.6] text-muted">
