@@ -287,7 +287,7 @@ export default function ElderHome() {
             )}
 
             {/* order 1 · 다가오는 일정 — 조회 + 간단등록 (REQ-02 어르신 권한: 조회·알림확인·간단등록) */}
-            <ElderCard show={tab === "today"} order={1}>
+            <ElderCard show={tab === "today"} order={6}>
               <CardHead title="다가오는 일정" />
               <div className="mt-1">
                 {upcoming.slice(1, 3).map((e) => (
@@ -464,7 +464,7 @@ export default function ElderHome() {
             </ElderCard>
 
             {/* order 4 · 병원 가는 길 — F8 2구간. 점수를 문장으로 번역하는 유일한 화면 */}
-            <ElderCard show={tab === "today"} order={4}>
+            <ElderCard show={tab === "today"} order={3}>
               <div className="text-[19px] font-bold text-navy">병원 가는 길</div>
               <div className="mt-3 space-y-2.5">
                 {OUTING.legs.map((l) => (
@@ -594,7 +594,7 @@ export default function ElderHome() {
 
             {/* order 7 · 필요한 물건 담기 — 부모가 담고 결제권한대로 분기 (회의 6 · REQ-07).
                 직접 결제 상거래 화면이라 금액 표기는 예외적으로 허용 */}
-            <ElderCard show={tab === "family"} order={7}>
+            <ElderCard show={tab === "family"} order={8}>
               <CardHead title="필요한 물건" right="담아두면 배송으로 옵니다" />
               <div className="mt-2 space-y-2">
                 {STORE_ITEMS.slice(0, 5).map((i) => {
@@ -719,7 +719,7 @@ export default function ElderHome() {
             {/* order 8 · 자녀들이 보고 있습니다 — 고립감 해소. 상대 시간만, 부정 표현 금지 */}
             <ElderCard
               show={tab === "family"}
-              order={8}
+              order={9}
               style={{
                 background: "linear-gradient(180deg, #F1FAF6, #E6F4EE)",
                 border: "1px solid rgba(30,122,90,.26)",

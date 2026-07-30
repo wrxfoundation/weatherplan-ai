@@ -284,33 +284,6 @@ export default function ConciergePage() {
                   </p>
                 </Card>
 
-                {/* 다음 일정 — 주소 게이팅 유지 (REQ-09) */}
-                <Card className="p-4">
-                  <div className="flex items-center gap-2">
-                    <span className="font-num text-[14px] font-bold text-navy">{a2.time}</span>
-                    <span className="text-[13px] font-bold text-ink">{a2.customer}</span>
-                    <span className="ml-auto">
-                      <Badge fg="#8A5D12" bg="rgba(138,93,18,.12)">
-                        배정 대기
-                      </Badge>
-                    </span>
-                  </div>
-                  <div className="mt-1 text-[12px] text-muted">{a2.purpose}</div>
-                  <div className="mt-2 border-t border-navy/10 pt-2 text-[12px]">
-                    <span className="font-bold text-gold">고객 </span>
-                    <span className="text-muted">
-                      {a2.dong} — <span className="text-amber">담당 확정 후 상세 주소 표시</span>
-                    </span>
-                    {a2.hospital && (
-                      <>
-                        <br />
-                        <span className="font-bold text-gold">병원 </span>
-                        <span className="text-ink">{a2.hospital}</span>
-                      </>
-                    )}
-                  </div>
-                </Card>
-
                 {/* 방문 수행 — 체크인 후 진행 (감사 타임라인) */}
                 <SectionLabel>방문 수행</SectionLabel>
                 <Card className="p-4">
@@ -459,6 +432,33 @@ export default function ConciergePage() {
                   >
                     {apptDone ? "✓ 등록됨 · 3주 뒤 오전 9시 30분" : "다음 예약 등록 (병원 확정분)"}
                   </button>
+                </Card>
+
+                {/* 내일 일정 — 오늘 업무 뒤에 확인 · 주소 게이팅 유지 (REQ-09) */}
+                <Card className="p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="font-num text-[14px] font-bold text-navy">{a2.time}</span>
+                    <span className="text-[13px] font-bold text-ink">{a2.customer}</span>
+                    <span className="ml-auto">
+                      <Badge fg="#8A5D12" bg="rgba(138,93,18,.12)">
+                        배정 대기
+                      </Badge>
+                    </span>
+                  </div>
+                  <div className="mt-1 text-[12px] text-muted">{a2.purpose}</div>
+                  <div className="mt-2 border-t border-navy/10 pt-2 text-[12px]">
+                    <span className="font-bold text-gold">고객 </span>
+                    <span className="text-muted">
+                      {a2.dong} — <span className="text-amber">담당 확정 후 상세 주소 표시</span>
+                    </span>
+                    {a2.hospital && (
+                      <>
+                        <br />
+                        <span className="font-bold text-gold">병원 </span>
+                        <span className="text-ink">{a2.hospital}</span>
+                      </>
+                    )}
+                  </div>
                 </Card>
               </>
             )}

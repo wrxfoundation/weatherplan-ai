@@ -51,23 +51,74 @@ export default function MyPage() {
         <title>마이 — K-CARE</title>
       </Head>
       <FamilyLayout title="마이">
-        {/* 멤버십 요약 */}
+        {/* 케어 리포트 — 마이에 통합 (GNB 리포트 탭 제거) */}
         <Card className="p-[18px]">
-          <SectionLabel>멤버십</SectionLabel>
-          <div className="mt-3 space-y-2 text-[13px]">
-            <Row k="서비스 지역" v={ob ? `${ob.district} · ${ob.tier === 2 ? "2급지" : "1급지"}` : `${ELDER.district} · 1급지 (데모)`} />
-            <Row k="월 구독료" v={ob?.tier === 2 ? "별도 산정" : fmtWon(57000)} />
-            <Row
-              k="결제권한"
-              v={
-                !ob || ob.paymentMode === "limit"
-                  ? `${fmtWon(ob?.limitAmount ?? 50000)} 이하 어르신 직접 결제`
-                  : { both: "양쪽 모두 결제", guardianOnly: "보호자만 결제", elderOnly: "어르신만 결제" }[ob.paymentMode]
-              }
-            />
-            <Row k="방문기록 영상 동의" v={ob?.videoConsent ? "동의함" : "미동의 (가입 시 선택)"} />
+          <div className="text-[15px] font-black text-navy">케어 리포트</div>
+          <p className="mt-1.5 text-[12px] leading-[1.7] text-muted">
+            동행이 완료되면 컨시어지가 검수한 리포트가 도착합니다. 월간 리포트는 방문 관찰과
+            워치 데이터를 함께 정리해 매월 첫 주에 전달됩니다.
+          </p>
+          <button
+            onClick={() => {
+              if (pdfRequested) return;
+              setPdfRequested(true);
+              dispatch({
+                type: "pushEvent",
+                payload: { kind: "리포트", text: "보호자 증빙 보고서 PDF 요청", color: "#8FA9CC" },
+              });
+            }}
+            className={`btn-press mt-3 w-full rounded-xl border py-3 text-[13px] font-bold ${
+              pdfRequested ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
+            }`}
+          >
+            {pdfRequested ? "✓ 요청됨 — 생성되면 알림으로 전달" : "증빙 보고서 열기 (PDF)"}
+          </button>
+          {pdfRequested && (
+            <div className="mt-2 text-center">
+              <PendingTag>PDF 생성 연동 대기</PendingTag>
+            </div>
+          )}
+          <div className="mt-4 flex items-center justify-between border-t border-navy/[.08] pt-3">
+            <SectionLabel>방문 관찰 리포트</SectionLabel>
+            <span className="text-[11px] text-muted">공유분 {sharedReports.length}건</span>
           </div>
+          {sharedReports.length === 0 ? (
+            <p className="mt-3 text-[13px] text-muted">아직 공유된 리포트가 없습니다.</p>
+          ) : (
+            <div className="mt-3 space-y-3">
+              {sharedReports.map((r) => (
+                <div key={r.id} className="border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[12px] font-bold text-navy">{r.by} 선생님</span>
+                    <span className="font-num text-[10px] text-muted">
+                      {new Date(r.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
+                      {" · 특이 "}
+                      {r.flagged}건
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[12px] leading-[1.7] text-ink">{r.note}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="mt-3 border-t border-navy/[.07] pt-2.5 text-[10px] leading-[1.6] text-muted">
+            컨시어지가 공유로 설정한 리포트만 표시됩니다. 판단·진단이 아니라 관찰 사실과 직접
+            발언만 기록됩니다 (의료법 17조).
+          </p>
         </Card>
+
+        {/* MOU 병원 찾기 */}
+        <Link href="/family/hospitals" className="block">
+          <Card className="btn-press flex items-center justify-between p-4">
+            <div>
+              <div className="text-[14px] font-bold text-navy">제휴 병원 찾기</div>
+              <div className="mt-0.5 text-[11px] text-muted">
+                진료 과목별 MOU 병원 · 패스트트랙 · 동행 예약 요청
+              </div>
+            </div>
+            <span className="text-[18px] text-muted/50">›</span>
+          </Card>
+        </Link>
 
         {/* 우선 확인 날씨 — REQ-01 (사람이 설정 · 주체 기록) */}
         <Card className="p-[18px]">
@@ -128,73 +179,22 @@ export default function MyPage() {
           </div>
         </Card>
 
-        {/* MOU 병원 찾기 */}
-        <Link href="/family/hospitals" className="block">
-          <Card className="btn-press flex items-center justify-between p-4">
-            <div>
-              <div className="text-[14px] font-bold text-navy">제휴 병원 찾기</div>
-              <div className="mt-0.5 text-[11px] text-muted">
-                진료 과목별 MOU 병원 · 패스트트랙 · 동행 예약 요청
-              </div>
-            </div>
-            <span className="text-[18px] text-muted/50">›</span>
-          </Card>
-        </Link>
-
-        {/* 케어 리포트 — 마이에 통합 (GNB 리포트 탭 제거) */}
+        {/* 멤버십 요약 */}
         <Card className="p-[18px]">
-          <div className="text-[15px] font-black text-navy">케어 리포트</div>
-          <p className="mt-1.5 text-[12px] leading-[1.7] text-muted">
-            동행이 완료되면 컨시어지가 검수한 리포트가 도착합니다. 월간 리포트는 방문 관찰과
-            워치 데이터를 함께 정리해 매월 첫 주에 전달됩니다.
-          </p>
-          <button
-            onClick={() => {
-              if (pdfRequested) return;
-              setPdfRequested(true);
-              dispatch({
-                type: "pushEvent",
-                payload: { kind: "리포트", text: "보호자 증빙 보고서 PDF 요청", color: "#8FA9CC" },
-              });
-            }}
-            className={`btn-press mt-3 w-full rounded-xl border py-3 text-[13px] font-bold ${
-              pdfRequested ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
-            }`}
-          >
-            {pdfRequested ? "✓ 요청됨 — 생성되면 알림으로 전달" : "증빙 보고서 열기 (PDF)"}
-          </button>
-          {pdfRequested && (
-            <div className="mt-2 text-center">
-              <PendingTag>PDF 생성 연동 대기</PendingTag>
-            </div>
-          )}
-          <div className="mt-4 flex items-center justify-between border-t border-navy/[.08] pt-3">
-            <SectionLabel>방문 관찰 리포트</SectionLabel>
-            <span className="text-[11px] text-muted">공유분 {sharedReports.length}건</span>
+          <SectionLabel>멤버십</SectionLabel>
+          <div className="mt-3 space-y-2 text-[13px]">
+            <Row k="서비스 지역" v={ob ? `${ob.district} · ${ob.tier === 2 ? "2급지" : "1급지"}` : `${ELDER.district} · 1급지 (데모)`} />
+            <Row k="월 구독료" v={ob?.tier === 2 ? "별도 산정" : fmtWon(57000)} />
+            <Row
+              k="결제권한"
+              v={
+                !ob || ob.paymentMode === "limit"
+                  ? `${fmtWon(ob?.limitAmount ?? 50000)} 이하 어르신 직접 결제`
+                  : { both: "양쪽 모두 결제", guardianOnly: "보호자만 결제", elderOnly: "어르신만 결제" }[ob.paymentMode]
+              }
+            />
+            <Row k="방문기록 영상 동의" v={ob?.videoConsent ? "동의함" : "미동의 (가입 시 선택)"} />
           </div>
-          {sharedReports.length === 0 ? (
-            <p className="mt-3 text-[13px] text-muted">아직 공유된 리포트가 없습니다.</p>
-          ) : (
-            <div className="mt-3 space-y-3">
-              {sharedReports.map((r) => (
-                <div key={r.id} className="border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-[12px] font-bold text-navy">{r.by} 선생님</span>
-                    <span className="font-num text-[10px] text-muted">
-                      {new Date(r.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
-                      {" · 특이 "}
-                      {r.flagged}건
-                    </span>
-                  </div>
-                  <p className="mt-1 text-[12px] leading-[1.7] text-ink">{r.note}</p>
-                </div>
-              ))}
-            </div>
-          )}
-          <p className="mt-3 border-t border-navy/[.07] pt-2.5 text-[10px] leading-[1.6] text-muted">
-            컨시어지가 공유로 설정한 리포트만 표시됩니다. 판단·진단이 아니라 관찰 사실과 직접
-            발언만 기록됩니다 (의료법 17조).
-          </p>
         </Card>
 
         {settingOpen && (
