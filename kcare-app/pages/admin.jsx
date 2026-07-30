@@ -12,6 +12,7 @@ import {
   CHURN_FACTORS,
   LIFECYCLE_STAGES,
   NBA_QUEUE,
+  COACHING_LOG,
   NPS_LOOP,
   TRUST_METRICS,
   CARE_OUTCOMES,
@@ -254,6 +255,32 @@ export default function AdminConsole() {
                     ))}
                   </div>
                 </div>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="코칭 로그" right={<span className="text-[12px] text-muted">케어하는 사람을 케어한다</span>} />
+                <div className="mt-3 space-y-2.5">
+                  {COACHING_LOG.map((c) => (
+                    <div key={c.who} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[13px] font-bold text-navy">{c.who}</span>
+                        <span className="text-[11px] text-muted">코치 {c.coach}</span>
+                        <span
+                          className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                            c.state === "조치" ? "bg-gold/15 text-[#7A5C28]" : "bg-green/10 text-green"
+                          }`}
+                        >
+                          {c.state}
+                        </span>
+                      </div>
+                      <div className="mt-1 text-[12px] leading-[1.6] text-ink">{c.topic}</div>
+                      <div className="mt-0.5 text-[11px] text-muted">다음 — {c.next}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  코칭은 평가가 아니라 성장 기록입니다 — 90일 유지율 87%의 다른 절반은 여기서 나옵니다.
+                </p>
               </Panel>
             </div>
           )}

@@ -13,6 +13,7 @@ import {
   GROWTH_QUESTS,
   KIT_DOCS,
   RECOVERY_STEPS,
+  THANKS_FEED,
   TODAY_DETAIL,
   OBSERVATION_ITEMS,
   OUTING,
@@ -981,6 +982,29 @@ export default function ConciergePage() {
                   </div>
                   <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                     승급 기준은 케어 품질 · 자격뿐입니다 — 판매 실적은 반영되지 않습니다 (원칙 1).
+                  </p>
+                </Card>
+
+                {/* 가족의 감사 한마디 — 인정(Recognition)은 정산만큼 중요하다 */}
+                <Card className="border border-gold/30 p-[18px]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[17px] font-black text-navy">가족의 감사 한마디</span>
+                    <Badge fg="#7A5C28" bg="rgba(176,141,87,.15)">
+                      이번 주 {THANKS_FEED.length}건
+                    </Badge>
+                  </div>
+                  <div className="mt-3 space-y-3">
+                    {THANKS_FEED.map((t) => (
+                      <div key={t.from} className="border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
+                        <p className="text-[14px] leading-[1.7] text-ink">"{t.text}"</p>
+                        <div className="mt-1 text-[11px] text-muted">
+                          {t.from} · {t.at}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    감사 메시지는 평점과 별개로 그대로 전달됩니다 — 케어하는 사람을 케어하는 것부터.
                   </p>
                 </Card>
 

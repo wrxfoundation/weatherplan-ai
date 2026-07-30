@@ -14,6 +14,10 @@ import {
   CRM_STAGE,
   CRM_TIMELINE,
   COMMS_TRACKING,
+  HOSPITAL_PARTNERS,
+  INSURANCE_PARTNER,
+  MORNING_BRIEF,
+  PARTNER_STATUS,
   DIRECTORY_ALL,
   DIRECTORY_TYPE,
   DISPATCH_AI_QA,
@@ -211,6 +215,7 @@ export default function DispatchConsole() {
   const [query, setQuery] = useState(""); // 통합 검색
   const [menu, setMenu] = useState("dash"); // GNB — 대시보드 외 관리 메뉴
   const [sent, setSent] = useState({}); // 발송 센터 원샷
+  const [briefRead, setBriefRead] = useState(false); // 아침 브리핑 읽음
   const elders = DIRECTORY_ALL.filter((d) => d.type === "elder");
   const guardians = DIRECTORY_ALL.filter((d) => d.type === "guardian");
   const concierges = DIRECTORY_ALL.filter((d) => d.type === "concierge");
@@ -702,6 +707,35 @@ export default function DispatchConsole() {
             )}
           </section>
 
+
+          {/* ── AI 아침 브리핑 — 능동형: 묻기 전에 먼저 요약한다 (읽음도 감사 로그) ── */}
+          <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="rounded-md bg-gold px-1.5 py-0.5 text-[11px] font-bold tracking-[.1em] text-navy">AI</span>
+              <h2 className="text-[15px] font-bold text-navy">아침 브리핑</h2>
+              <span className="font-num text-[12px] text-muted">{MORNING_BRIEF.date}</span>
+              <button
+                onClick={() => {
+                  if (briefRead) return;
+                  setBriefRead(true);
+                  push("브리핑", "관제 아침 브리핑 읽음 확인", "#F0D9A8");
+                }}
+                disabled={briefRead}
+                className="btn-press ml-auto rounded-[10px] border border-navy/20 px-3.5 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
+              >
+                {briefRead ? "읽음 확인됨 ✓" : "읽음 확인"}
+              </button>
+            </div>
+            <p className="mt-2 text-[14px] font-bold leading-[1.6] text-ink">{MORNING_BRIEF.summary}</p>
+            <div className="mt-2.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}>
+              {MORNING_BRIEF.items.map((b) => (
+                <div key={b.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                  <div className="text-[11px] font-bold text-gold">{b.k}</div>
+                  <div className="mt-0.5 text-[12px] leading-[1.6] text-ink">{b.text}</div>
+                </div>
+              ))}
+            </div>
+          </section>
 
           {/* ── AI 자율 배차 (09 §3) — L4: 승인 없이는 실행되지 않는다 ── */}
           {assign === "pending" ? (
@@ -1509,6 +1543,25 @@ export default function DispatchConsole() {
                       )}
                     </div>
                     <div className="mt-1 text-[12px] leading-[1.55] text-muted">{h.note}</div>
+                    {/* 파트너 레코드 — 관계도 관리 대상 (담당 · 최근 접점 · 실적 · 슬롯) */}
+                    {HOSPITAL_PARTNERS[h.name] && (
+                      <div className="mt-2 space-y-1 border-t border-navy/[.06] pt-2 text-[11px] leading-[1.6]">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
+                            style={{ background: PARTNER_STATUS[HOSPITAL_PARTNERS[h.name].status] }}
+                          >
+                            {HOSPITAL_PARTNERS[h.name].status}
+                          </span>
+                          <span className="text-muted">담당 {HOSPITAL_PARTNERS[h.name].contact}</span>
+                        </div>
+                        <div className="text-muted">
+                          최근 접점 {HOSPITAL_PARTNERS[h.name].last} · 이번 달 동행{" "}
+                          <span className="font-num font-bold text-ink">{HOSPITAL_PARTNERS[h.name].trips}건</span> ·
+                          가용 슬롯 <span className="font-bold text-ink">{HOSPITAL_PARTNERS[h.name].slots}</span>
+                        </div>
+                      </div>
+                    )}
                     <button
                       onClick={() => push("예약", `${h.name} ${h.dept} 예약 슬롯 조회 — 응답 대기`, "#8FA9CC")}
                       className="btn-press mt-2 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
@@ -1517,6 +1570,25 @@ export default function DispatchConsole() {
                     </button>
                   </div>
                 ))}
+              </div>
+              {/* 보험 GA — 파트너 파이프라인 (H4: 등록 전 모집 금지) */}
+              <div className="mt-3 rounded-xl border border-navy/[.06] bg-white/60 px-4 py-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[13px] font-bold text-navy">{INSURANCE_PARTNER.name}</span>
+                  <div className="ml-auto flex flex-wrap gap-1.5">
+                    {INSURANCE_PARTNER.stage.map(([st, done]) => (
+                      <span
+                        key={st}
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                          done ? "bg-green/10 text-green" : "border border-navy/15 text-muted"
+                        }`}
+                      >
+                        {done ? `✓ ${st}` : st}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">{INSURANCE_PARTNER.note}</p>
               </div>
             </Panel>
           )}

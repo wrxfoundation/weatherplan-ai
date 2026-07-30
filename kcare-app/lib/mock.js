@@ -1204,3 +1204,43 @@ export const NPS_LOOP = {
     { k: "비추천 → 이탈", v: "2가구", note: "전분기 5가구 → 감소" },
   ],
 };
+
+// ════ 확장 — AI 능동형 아침 브리핑 (관제 출근 3분 요약 · 읽음도 감사 로그) ════
+export const MORNING_BRIEF = {
+  date: "7/30 (목) 07:30 생성",
+  summary: "오늘 배차 6건 · 위험 높음 2명 · 오후 체감 36° 폭염 주의 — 외출 브리핑 발송이 최우선입니다.",
+  items: [
+    { k: "날씨", text: "14시 체감 36° · 외출지수 오후 급락 — 13:50 김순자님 동행은 차량 대기 최소화" },
+    { k: "인력", text: "이수민 상한 임박 자동 제외 · 서다인 주의 구간 — 추가 배차 없이 운영 가능" },
+    { k: "리스크", text: "박말순님 워치 6시간 무수집 — 09시 배터리 확인 콜 예정" },
+    { k: "추천 순서", text: "① 외출 브리핑 발송 ② AI 배정안 승인 ③ 미매칭 재배치 확정 (15:50 전)" },
+  ],
+};
+
+// ════ 확장 — 병원 파트너 레코드 (파트너도 관계 관리: 담당·최근 접점·실적) ════
+export const HOSPITAL_PARTNERS = {
+  강남세브란스: { contact: "예약팀 김OO", last: "7/28 슬롯 협의", trips: 14, slots: "내일 오전 2", status: "양호" },
+  분당서울대병원: { contact: "원무 박OO", last: "7/21 재진 프로세스", trips: 9, slots: "D+2 1", status: "양호" },
+  고대구로병원: { contact: "재활센터 이OO", last: "7/15 휠체어 동선", trips: 6, slots: "협의 필요", status: "재협의" },
+  서울아산병원: { contact: "협력센터 최OO", last: "어제 패스트트랙 확인", trips: 17, slots: "오늘 오후 1", status: "양호" },
+  삼성서울병원: { contact: "안과 코디 정OO", last: "6/30 수술 연계", trips: 4, slots: "—", status: "점검" },
+  "강남 미소치과의원": { contact: "실장 한OO", last: "7/10 방문진료 협의", trips: 2, slots: "협의 중", status: "협의" },
+};
+export const PARTNER_STATUS = { 양호: "#1E7A5A", 재협의: "#C0392B", 점검: "#8A5D12", 협의: "#8A5D12" };
+export const INSURANCE_PARTNER = {
+  name: "간병보험 GA 파트너",
+  stage: [["라이선스 확보", true], ["상품 설계", true], ["감독 신고", false], ["오픈", false]],
+  note: "GA 등록 전 보험 모집 금지(H4) — 등록 완료까지 앱 내 기능 잠금 유지",
+};
+
+// ════ 확장 — 컨시어지 내부 CRM: 인정(감사 피드) · 코칭 로그 (케어하는 사람을 케어한다) ════
+export const THANKS_FEED = [
+  { from: "김민수 (김순자님 가족)", text: "어머니가 \"박 선생 오는 날이 제일 좋다\"고 하세요. 감사합니다.", at: "어제" },
+  { from: "이정민 (이영호님 가족)", text: "낙상 뒤에 세심하게 살펴주셔서 마음이 놓였습니다.", at: "7/27" },
+  { from: "오태식님", text: "검진 내내 손 잡아줘서 고마웠어요.", at: "7/28" },
+];
+export const COACHING_LOG = [
+  { who: "오하늘 (수습)", coach: "박지현", topic: "어르신 응대 — 속도 맞추기 · 경청", next: "8/2 동행 코칭 3회차", state: "진행" },
+  { who: "서다인", coach: "관제 매니저", topic: "권역 이동 부담 면담 — 배차 하향 합의", next: "2주 후 재점검", state: "조치" },
+  { who: "김도윤", coach: "한서연", topic: "투석 동행 자격 준비 (6/10건)", next: "8월 내 10건 달성 예상", state: "진행" },
+];
