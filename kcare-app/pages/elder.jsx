@@ -1,28 +1,159 @@
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
-import { CONCIERGES, EVENT_KINDS, OUTING } from "../lib/mock";
+import {
+  ASK_DOCTOR,
+  DELIVERY,
+  ELDER,
+  ELDER_NOW,
+  ELDER_VISITORS,
+  FAMILY_SEEN,
+  INDOOR,
+  MED_DOSES,
+  OUTING,
+  VOICE_MSG,
+} from "../lib/mock";
 import { useAppState } from "../lib/state";
 
-// 사용자(어르신) 홈 — 핸드오프 02 elder 명세 + REQ-01(우선 날씨) + REQ-06(SOS)
-// 접근성 규격(타협 불가): 본문 19px+, 제목 30px/900, 버튼 라벨 21px+, 버튼 패딩 28px,
-// 색만으로 상태 전달 금지, 링크 대신 버튼.
-// 정보 비대칭: 어르신을 평가하는 데이터(낙상 의심·이상 징후)는 이 화면에 없다.
+// 사용자(어르신) 홈 — 핸드오프 06 elder 상세 명세 + REQ-01(우선 날씨) + REQ-06(SOS 오작동 방지)
+// 구조: 헤더(날짜·인사)·푸터(SOS·전화·탭) 고정, 카드 스택만 스크롤 (06 §1).
+// 카드는 언마운트 없이 display 전환 + CSS order 정렬 (06 §2).
+// 접근성(타협 불가): 본문 19px 하한(예외 18px 3곳), 버튼 패딩 24~30px, 탭 60px, 색+텍스트 병행.
+// 1회성 잠금(med·cooled·askAdded)에 undo 없음 — 의도된 설계, "버그"로 고치지 말 것 (06 §5).
+
+const LEVEL_COLOR = {
+  ok: "#1E7A5A",
+  caution: "#8A5D12",
+  danger: "#C0392B",
+  neutral: "#40413F",
+};
+
+// 밝은 카드 기본형 · 내부 서브카드 (06 §3 공통 스타일)
+const LIGHT_CARD = {
+  background: "linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.74))",
+  border: "1px solid rgba(255,255,255,.92)",
+  boxShadow:
+    "inset 0 1px 0 rgba(255,255,255,1), 0 0 0 1px rgba(10,31,60,.08), 0 20px 40px -30px rgba(10,31,60,.5)",
+};
+const SUB_CARD = {
+  borderRadius: 14,
+  padding: "14px 15px",
+  background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
+  boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
+};
+
+const TABS = [
+  { key: "today", label: "오늘", glyph: "⌂" },
+  { key: "health", label: "건강", glyph: "♡" },
+  { key: "family", label: "가족", glyph: "☺" },
+];
+
+// "김순자" → "순자" — 성 포함 호칭 금지 (06 §1 헤더 카피)
+function givenName(full) {
+  return full && full.length >= 3 ? full.slice(1) : full || "";
+}
+
+// 24시간제 금지 — "오후 2시 30분" 구어 표기 (06 §7)
+function spokenTime(ts) {
+  const d = new Date(ts);
+  const h = d.getHours();
+  const m = d.getMinutes();
+  const mer = h < 12 ? "오전" : "오후";
+  const h12 = h % 12 || 12;
+  return m === 0 ? `${mer} ${h12}시` : `${mer} ${h12}시 ${m}분`;
+}
+
+function spokenDay(ts) {
+  return new Date(ts).toLocaleDateString("ko-KR", {
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  });
+}
+
+function isToday(ts) {
+  const a = new Date(ts);
+  const b = new Date();
+  return a.toDateString() === b.toDateString();
+}
+
+// 카드 래퍼 — display 전환(언마운트 없음) + order 정렬 (06 §2)
+function ElderCard({ show, order, style, className = "", children }) {
+  return (
+    <section
+      className={`shrink-0 rounded-[20px] p-5 ${className}`}
+      style={{ order, display: show ? undefined : "none", ...(style || LIGHT_CARD) }}
+    >
+      {children}
+    </section>
+  );
+}
+
+function CardHead({ title, titleColor = "#0A1F3C", right, rightColor = "#5C5A54" }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3">
+      <div className="text-[19px] font-bold" style={{ color: titleColor }}>
+        {title}
+      </div>
+      {right && (
+        <div className="text-[19px] font-medium" style={{ color: rightColor }}>
+          {right}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ElderHome() {
   const { state, dispatch } = useAppState();
-  const [tab, setTab] = useState("today");
+  const [tab, setTabRaw] = useState("today"); // elderTab — 기본 'today'
+  const scrollRef = useRef(null);
+  // 카드는 언마운트하지 않지만, 탭 전환 시 스크롤은 맨 위로 — 카드 상단이 잘려 보이지 않게
+  const setTab = (k) => {
+    setTabRaw(k);
+    scrollRef.current?.scrollTo({ top: 0 });
+  };
   const [sosPhase, setSosPhase] = useState("idle"); // idle | confirm | sent
+  const [calling, setCalling] = useState(false);
+  const [voiceReplied, setVoiceReplied] = useState(false);
+  const callTimer = useRef(null);
 
-  const elderName = state.onboarding?.elderName || "김순자";
+  const { medTaken, cooled, voicePlayed, askAdded } = state.elder;
+  const cart = state.demo.cart;
+
+  const name = givenName(state.onboarding?.elderName || ELDER.name);
+  const now = new Date();
+  const dateLong = now.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  });
+
+  // REQ-02 공유 캘린더에서 다음 일정 바인딩
   const upcoming = [...state.events].sort((a, b) => a.at - b.at).filter((e) => e.at > Date.now());
   const next = upcoming[0];
-  const priority = state.priority;
 
-  // REQ-01 — 설정된 우선 요소를 최상단으로 정렬 (자동 추론 아님, 설정 출처 표기)
-  const factors = [...OUTING.factors].sort(
+  // REQ-01 — 보호자가 설정한 우선 요소를 그리드 앞으로 (자동 추론 아님)
+  const priority = state.priority;
+  const nowFactors = [...ELDER_NOW.factors].sort(
     (a, b) =>
-      (priority.factors.includes(b.name) ? 1 : 0) - (priority.factors.includes(a.name) ? 1 : 0)
+      (priority.factors.includes(b.label) ? 1 : 0) - (priority.factors.includes(a.label) ? 1 : 0)
   );
+
+  // 오늘 약 — 저녁 1건만 상태 의존 (done: null → medTaken)
+  const doses = MED_DOSES.map((d) => ({ ...d, done: d.done === null ? medTaken : d.done }));
+  const doneCount = doses.filter((d) => d.done).length;
+  const medProgress = `${doses.length}회 중 ${doneCount}회 완료`;
+
+  const indoor = cooled ? INDOOR.cooled : INDOOR.hot;
+
+  useEffect(() => () => clearTimeout(callTimer.current), []);
+
+  const callTeacher = () => {
+    if (calling) return;
+    setCalling(true);
+    callTimer.current = setTimeout(() => setCalling(false), 2600);
+  };
 
   return (
     <>
@@ -30,8 +161,10 @@ export default function ElderHome() {
         <title>어르신 홈 — K-CARE</title>
       </Head>
       <div className="min-h-screen bg-nav">
-        <div className="mx-auto min-h-screen w-full max-w-[430px] bg-elder pb-40">
-          <header className="px-6 pb-2 pt-7">
+        {/* break-keep: 한국어 어절 단위 줄바꿈 — 카피 개행(<br/>)과 병용 (06 §6) */}
+        <div className="mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-[22px]">
+          {/* ── 고정 헤더: 날짜 · 인사 ── */}
+          <header className="shrink-0 pt-6">
             <div className="flex items-center justify-between">
               <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
                 K-CARE
@@ -40,184 +173,447 @@ export default function ElderHome() {
                 데모 홈
               </a>
             </div>
-            <h1 className="mt-1 text-[30px] font-black leading-[1.3] text-navy">
-              {elderName} 어르신,
-              <br />
-              좋은 오후예요
+            <div className="mt-2 text-[19px] font-medium text-muted">{dateLong}</div>
+            <h1 className="text-[30px] font-black leading-[1.3] text-navy">
+              {name} 어르신, 안녕하세요
             </h1>
           </header>
 
-          {/* 탭 — 히트 타겟 크게 */}
-          <div className="flex gap-2 px-6 pt-3">
-            {[
-              ["today", "오늘"],
-              ["health", "건강"],
-            ].map(([k, label]) => (
-              <button
-                key={k}
-                onClick={() => setTab(k)}
-                className={`btn-press min-h-[56px] flex-1 rounded-2xl border-2 text-[21px] font-bold ${
-                  tab === k
-                    ? "border-navy bg-navy text-white"
-                    : "border-navy/20 bg-white text-muted"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          <main className="space-y-4 px-5 pt-4">
-            {tab === "today" && (
-              <>
-                {/* 오늘 찾아뵙는 분 — 사기·침입 방어 문구 삭제 불가 */}
-                <section className="rounded-[20px] border-2 border-gold bg-white p-6">
-                  <div className="text-[19px] font-bold text-amber">오늘 찾아뵙는 분</div>
-                  <p className="mt-2 text-[19px] leading-[1.6] text-ink">
-                    두 분이 함께 옵니다. 문 열기 전에 얼굴을 확인하세요.
-                  </p>
-                  <div className="mt-4 space-y-3">
-                    {CONCIERGES.map((c) => (
-                      <div key={c.name} className="flex items-center gap-4">
-                        <span className="flex h-[56px] w-[56px] items-center justify-center rounded-full bg-navy text-[22px] font-bold text-white">
-                          {c.name.slice(0, 1)}
-                        </span>
-                        <div>
-                          <div className="text-[22px] font-bold text-navy">{c.name}</div>
-                          <div className="text-[19px] text-muted">{c.role}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="mt-4 rounded-2xl bg-[#FDF6E8] p-4 text-[19px] leading-[1.6] text-amber">
-                    두 분 다 목에 K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지
-                    마시고 노란 버튼을 누르세요.
-                  </p>
-                </section>
-
-                {/* 오늘 일정 — '선생님' 호칭 유지 */}
-                {next && (
-                  <section className="rounded-[20px] bg-navy p-6 text-white">
-                    <div className="text-[19px] text-white/70">
-                      {EVENT_KINDS[next.kind].label}
-                    </div>
-                    <div className="mt-1 font-num text-[26px] font-bold">
-                      {new Date(next.at).toLocaleString("ko-KR", {
-                        month: "long",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}
-                    </div>
-                    <p className="mt-2 text-[20px] font-bold leading-[1.55]">
-                      {next.kind === "hospital" || next.kind === "visit"
-                        ? `박지현 선생님이 모시러 옵니다`
-                        : next.title}
-                    </p>
-                    <p className="mt-1 text-[19px] leading-[1.55] text-white/75">{next.title}</p>
-                  </section>
-                )}
-
-                {/* 지금 우리 동네 — REQ-01 우선 요소 강조 */}
-                <section className="rounded-[20px] bg-white p-6">
-                  <div className="flex items-baseline justify-between">
-                    <div className="text-[19px] font-bold text-muted">지금 우리 동네</div>
-                    <div className="text-[13px] text-muted/70">우선 항목 · {priority.source}</div>
-                  </div>
-                  <div className="mt-2 flex items-end gap-3">
-                    <span className="font-num text-[44px] font-bold leading-none text-navy">
-                      {factors[0].value}
-                    </span>
-                    <span className="pb-1 text-[21px] font-bold text-amber">
-                      {factors[0].name} 먼저 보세요
-                    </span>
-                  </div>
-                  <div className="mt-4 grid grid-cols-2 gap-3">
-                    {factors.slice(1).map((f) => (
-                      <div key={f.name} className="rounded-2xl bg-paper p-4">
-                        <div className="text-[17px] text-muted">{f.name}</div>
-                        <div className="font-num text-[24px] font-bold text-navy">{f.value}</div>
-                      </div>
-                    ))}
-                    <div className="rounded-2xl bg-paper p-4">
-                      <div className="text-[17px] text-muted">외출 점수</div>
-                      <div className="font-num text-[24px] font-bold text-navy">
-                        {Math.min(...OUTING.legs.map((l) => l.score))}점
-                      </div>
-                    </div>
-                  </div>
-                  <p className="mt-4 text-[19px] leading-[1.6] text-ink">{OUTING.advice}</p>
-                </section>
-              </>
-            )}
-
-            {tab === "health" && (
-              <>
-                {/* 오늘 약 — 복약 완료 1버튼 */}
-                <section className="rounded-[20px] bg-white p-6">
-                  <div className="text-[19px] font-bold text-muted">오늘 약</div>
-                  <div className="mt-3 flex items-center gap-4">
-                    <span className="w-[62px] shrink-0 font-num text-[19px] font-bold text-navy">
-                      08:00
-                    </span>
-                    <div className="flex-1 text-[21px] font-bold text-ink">아침 혈압약</div>
+          {/* ── 카드 스택 (유일한 스크롤 영역) ── */}
+          <main
+            ref={scrollRef}
+            className="mt-4 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto pb-2"
+          >
+            {/* order 0 · 오늘 찾아뵙는 분 — 방문 사기 방어. 유일한 2px 테두리 */}
+            <ElderCard
+              show={tab === "today"}
+              order={0}
+              style={{ ...LIGHT_CARD, border: "2px solid #B08D57" }}
+            >
+              <div className="text-[19px] font-bold text-[#7A5C28]">오늘 찾아뵙는 분</div>
+              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
+                두 분이 함께 옵니다.
+                <br />문 열기 전에 얼굴을 확인하세요.
+              </p>
+              <div className="mt-3 space-y-2.5">
+                {ELDER_VISITORS.map((v) => (
+                  <div key={v.displayName} className="flex items-center gap-4" style={SUB_CARD}>
                     <span
-                      className={`text-[19px] font-bold ${
-                        state.elder.medTaken ? "text-green" : "text-amber"
-                      }`}
+                      className="flex h-[56px] w-[56px] shrink-0 items-center justify-center whitespace-nowrap rounded-full text-[15px] font-bold"
+                      style={{ background: v.avBg, color: v.avFg }}
                     >
-                      {state.elder.medTaken ? "드셨어요" : "아직"}
+                      {v.initials}
+                    </span>
+                    <div>
+                      <div className="text-[22px] font-bold text-navy">{v.displayName}</div>
+                      <div className="mt-[3px] text-[19px] text-muted">{v.relationLabel}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* "노란 버튼" 카피 → 빨간 SOS로 수정 (06 §10-7 미해결 항목 해소) */}
+              <p className="mt-4 text-[19px] leading-[1.6] text-muted">
+                두 분 다 목에 K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지 마시고 아래
+                빨간 SOS 버튼을 누르세요.
+              </p>
+            </ElderCard>
+
+            {/* order 1 · 오늘 일정 — 유일한 네이비 다크 카드 */}
+            {next && (
+              <ElderCard
+                show={tab === "today"}
+                order={1}
+                style={{
+                  background: "#0A1F3C",
+                  backgroundImage:
+                    "linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0))",
+                  boxShadow:
+                    "inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.3), 0 24px 48px -30px rgba(10,31,60,.85)",
+                }}
+                className="text-white"
+              >
+                <div className="text-[19px] font-bold text-gold">
+                  {isToday(next.at) ? "오늘 일정" : "다음 일정"}
+                </div>
+                <div className="mt-1 text-[26px] font-bold leading-[1.4]">
+                  {!isToday(next.at) && (
+                    <>
+                      {spokenDay(next.at)}
+                      <br />
+                    </>
+                  )}
+                  {spokenTime(next.at)}
+                  <br />
+                  {next.title}
+                </div>
+                {next.note && (
+                  <p className="mt-2 text-[19px] leading-[1.6] text-white/[.86]">{next.note}</p>
+                )}
+              </ElderCard>
+            )}
+
+            {/* order 2 · 오늘 약 — 카드 전체가 미완료 상태 표현. 미완료는 호박색 (원칙 4) */}
+            <ElderCard
+              show={tab === "health"}
+              order={2}
+              style={{
+                background: medTaken
+                  ? LIGHT_CARD.background
+                  : "linear-gradient(180deg,#FFF7E8,#FBEFD8)",
+                border: medTaken ? LIGHT_CARD.border : "1px solid rgba(138,93,18,.3)",
+                boxShadow: LIGHT_CARD.boxShadow,
+              }}
+            >
+              <CardHead title="오늘 약" right={medProgress} />
+              <div className="mt-1">
+                {doses.map((d) => (
+                  <div
+                    key={d.slotLabel}
+                    className="flex items-center gap-3 border-t border-navy/[.07] py-[14px] first:border-t-0"
+                  >
+                    <span className="w-[62px] shrink-0 font-num text-[19px] font-bold text-navy">
+                      {d.slotLabel}
+                    </span>
+                    <span className="flex-1 text-[19px] text-ink">{d.drugs}</span>
+                    <span
+                      className="text-[18px] font-bold"
+                      style={{ color: d.done ? LEVEL_COLOR.ok : LEVEL_COLOR.caution }}
+                    >
+                      {d.done ? "완료" : "남음"}
                     </span>
                   </div>
-                  {!state.elder.medTaken && (
-                    <button
-                      onClick={() => dispatch({ type: "medTaken" })}
-                      className="btn-press mt-5 w-full rounded-2xl bg-green p-7 text-[22px] font-bold text-white"
-                    >
-                      약 먹었어요
-                    </button>
-                  )}
-                  {state.elder.medTaken && (
-                    <p className="mt-4 rounded-2xl bg-green/10 p-4 text-[19px] font-bold text-green">
-                      잘하셨어요. 가족에게도 전달했습니다.
-                    </p>
-                  )}
-                </section>
+                ))}
+              </div>
+              <button
+                onClick={() => {
+                  if (medTaken) return; // 1회성 — undo 없음
+                  dispatch({ type: "medTaken" });
+                }}
+                disabled={medTaken}
+                className="btn-press mt-2 w-full rounded-2xl p-7 text-[22px] font-bold"
+                style={{
+                  background: medTaken ? "rgba(255,255,255,.85)" : "#1E7A5A",
+                  color: medTaken ? "#5C5A54" : "#FFFFFF",
+                }}
+              >
+                {medTaken ? "오늘 약 모두 드셨습니다" : "저녁 약 먹었어요"}
+              </button>
+            </ElderCard>
 
-                {/* 지금 집 안 — 측정기 미설치: 정직 표기 */}
-                <section className="rounded-[20px] bg-white p-6">
-                  <div className="text-[19px] font-bold text-muted">지금 집 안</div>
-                  <p className="mt-3 text-[19px] leading-[1.65] text-ink">
-                    실내 온도 측정기는 첫 방문 때 선생님이 설치해 드립니다.
-                  </p>
-                  <span className="mt-3 inline-block rounded-xl border border-muted/30 px-3 py-2 text-[17px] font-bold text-muted">
-                    설치 예정 · 연동 대기
+            {/* order 3 · 지금 집 안 — 위험을 직접 말하는 유일한 카드. 버튼은 청색(빨강은 SOS 전용) */}
+            <ElderCard show={tab === "health"} order={3}>
+              <CardHead title="지금 집 안" right="실내 · 거실 센서" />
+              <div className="mt-2 flex items-end gap-3">
+                <span
+                  className="font-num text-[44px] font-bold leading-none"
+                  style={{ color: cooled ? "#0A1F3C" : "#C0392B" }}
+                >
+                  {indoor.tempLabel}
+                </span>
+                <span className="pb-1 text-[19px] text-muted">{indoor.sub}</span>
+              </div>
+              <div
+                className="mt-4 rounded-[14px] px-[17px] py-4"
+                style={{
+                  background: cooled ? "rgba(30,122,90,.08)" : "rgba(192,57,43,.07)",
+                  border: cooled
+                    ? "1px solid rgba(30,122,90,.26)"
+                    : "1px solid rgba(192,57,43,.25)",
+                }}
+              >
+                <div
+                  className="text-[19px] font-bold"
+                  style={{ color: LEVEL_COLOR[indoor.level] }}
+                >
+                  {indoor.alertTitle}
+                </div>
+                <p className="mt-1 text-[19px] leading-[1.6] text-ink">{indoor.alertBody}</p>
+              </div>
+              {/* 냉방 + 가족 알림을 한 버튼이 동시에 — 선택지를 늘리지 않는다 (2행 레이블) */}
+              <button
+                onClick={() => {
+                  if (cooled) return; // 1회성
+                  dispatch({ type: "elderPatch", patch: { cooled: true } });
+                }}
+                disabled={cooled}
+                className="btn-press mt-4 w-full rounded-2xl p-7 text-[22px] font-bold text-white"
+                style={{ background: "#2F5D8A" }}
+              >
+                {indoor.btnLines.map((line) => (
+                  <span key={line} className="block leading-[1.35]">
+                    {line}
                   </span>
-                </section>
+                ))}
+              </button>
+            </ElderCard>
 
-                {/* 자녀들이 보고 있습니다 — 감시가 아니라 관심 */}
-                <section className="rounded-[20px] border border-green/25 bg-[#F1FAF6] p-6">
-                  <div className="text-[19px] font-bold text-green">가족이 함께 봅니다</div>
-                  <p className="mt-2 text-[19px] leading-[1.65] text-ink">
-                    민수·지영·현우, 세 자녀가 멀리 있어도 매일 확인하고 있습니다.
-                  </p>
-                </section>
-              </>
-            )}
+            {/* order 4 · 오늘 여쭤볼 것 — 인지 부담 면제. 출처 3종 투명 표기 */}
+            <ElderCard show={tab === "today"} order={4}>
+              <div className="text-[19px] font-bold text-navy">오늘 여쭤볼 것</div>
+              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
+                잊으셔도 됩니다.
+                <br />
+                선생님이 대신 여쭤봅니다.
+              </p>
+              <div className="mt-1">
+                {ASK_DOCTOR.map((q) => (
+                  <div
+                    key={q.seq}
+                    className="flex gap-3 border-t border-navy/[.07] py-[14px] first:border-t-0"
+                  >
+                    <span className="w-[22px] shrink-0 font-num text-[19px] font-bold text-gold">
+                      {q.seq}
+                    </span>
+                    <div>
+                      <div className="text-[20px] leading-[1.5] text-ink">{q.text}</div>
+                      <div className="mt-[5px] text-[18px] text-muted">{q.sourceLabel}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* 음성이 1차 입력 수단 — 키보드 입력 UI 금지 */}
+              <button
+                onClick={() => {
+                  if (askAdded) return; // 1회성
+                  dispatch({ type: "elderPatch", patch: { askAdded: true } });
+                }}
+                disabled={askAdded}
+                className="btn-press mt-2 w-full rounded-2xl p-6 text-[21px] font-bold text-white"
+                style={{ background: askAdded ? "#5C5A54" : "#0A1F3C" }}
+              >
+                {askAdded ? "말씀하신 내용이 담겼습니다" : "말로 하나 더 남기기"}
+              </button>
+            </ElderCard>
+
+            {/* order 4 · 병원 가는 길 — F8 2구간. 점수를 문장으로 번역하는 유일한 화면 */}
+            <ElderCard show={tab === "today"} order={4}>
+              <div className="text-[19px] font-bold text-navy">병원 가는 길</div>
+              <div className="mt-3 space-y-2.5">
+                {OUTING.legs.map((l) => (
+                  <div key={l.tag} style={SUB_CARD}>
+                    <div className="flex items-baseline gap-2.5">
+                      <span className="text-[19px] font-bold tracking-[.04em] text-muted">
+                        {l.tag}
+                      </span>
+                      <span className="flex-1 text-[19px] font-bold text-navy">{l.place}</span>
+                      <span className="font-num text-[22px] font-bold text-navy">{l.score}</span>
+                      <span
+                        className="text-[19px] font-bold"
+                        style={{ color: LEVEL_COLOR[l.level] }}
+                      >
+                        {l.grade}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-[19px] leading-[1.6] text-ink">{l.detail}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 rounded-[14px] border border-[#EFE0BF] bg-[#FDF6E8] px-4 py-[15px]">
+                <div className="text-[19px] font-bold text-[#7A6231]">오늘은 이렇게 하세요</div>
+                <p className="mt-1 text-[20px] leading-[1.65] text-[#5A4A22]">
+                  {OUTING.adviceElder}
+                </p>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {OUTING.kit.map((k) => (
+                  <span
+                    key={k}
+                    className="rounded-[20px] px-3.5 py-[9px] text-[19px] font-bold text-navy"
+                    style={{
+                      border: "1px solid rgba(10,31,60,.14)",
+                      background:
+                        "linear-gradient(180deg,rgba(253,252,249,.98),rgba(249,247,242,.96))",
+                    }}
+                  >
+                    {k}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-3 text-[19px] text-muted">{OUTING.source}</div>
+            </ElderCard>
+
+            {/* order 5 · 지금 우리 동네 — 실외(청색조). 실내 카드와 색으로 구분 */}
+            <ElderCard
+              show={tab === "today"}
+              order={5}
+              style={{
+                background: "linear-gradient(180deg, #FAFCFF, #F2F7FD)",
+                border: "1px solid rgba(147,178,214,.24)",
+                boxShadow: LIGHT_CARD.boxShadow,
+              }}
+            >
+              <CardHead title="지금 우리 동네" right={`실외 · ${ELDER.dong}`} rightColor="#5C7799" />
+              <div className="mt-2 flex items-end gap-3">
+                <span className="font-num text-[44px] font-bold leading-none text-navy">
+                  {ELDER_NOW.tempLabel}
+                </span>
+                <span className="pb-1 text-[19px] text-muted">{ELDER_NOW.feelsLabel}</span>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2.5">
+                {nowFactors.map((f) => (
+                  <div key={f.label} style={{ ...SUB_CARD, padding: "12px 13px" }}>
+                    <div className="text-[19px] text-muted">{f.label}</div>
+                    <div
+                      className="text-[21px] font-bold"
+                      style={{ color: LEVEL_COLOR[f.level] }}
+                    >
+                      {f.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* REQ-01 — 우선 표시는 보호자 설정 (자동 추론 아님) */}
+              <div className="mt-3 text-[13px] text-muted/60">우선 항목 · {priority.source}</div>
+            </ElderCard>
+
+            {/* order 6 · 아들 민수 (음성) — 텍스트 아닌 음성. 재생 버튼이 답장 버튼으로 변신 */}
+            <ElderCard
+              show={tab === "family"}
+              order={6}
+              style={
+                voicePlayed
+                  ? LIGHT_CARD
+                  : {
+                      background: "linear-gradient(180deg,#FBF6EC,#F4EEE1)",
+                      border: "1px solid rgba(176,141,87,.45)",
+                      boxShadow: LIGHT_CARD.boxShadow,
+                    }
+              }
+            >
+              <CardHead title={VOICE_MSG.fromLabel} right={voicePlayed ? "방금 들음" : "오늘 아침"} />
+              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
+                {voicePlayed
+                  ? `"${VOICE_MSG.transcript}"`
+                  : "아들이 보낸 목소리 메시지가 있습니다"}
+              </p>
+              <button
+                onClick={() => {
+                  if (!voicePlayed) {
+                    dispatch({ type: "elderPatch", patch: { voicePlayed: true } });
+                  } else {
+                    setVoiceReplied(true); // 재클릭 가능 — 듣기 → 답장
+                  }
+                }}
+                className="btn-press mt-4 w-full rounded-2xl p-7 text-[22px] font-bold"
+                style={{
+                  background: voicePlayed ? "rgba(255,255,255,.85)" : "#0A1F3C",
+                  color: voicePlayed ? "#5C5A54" : "#FFFFFF",
+                }}
+              >
+                {voicePlayed ? "답장 보내기" : `메시지 듣기 (${VOICE_MSG.durationSec}초)`}
+              </button>
+              {voiceReplied && (
+                <p className="mt-3 text-[19px] font-bold text-green">
+                  목소리 답장을 보냈습니다
+                </p>
+              )}
+            </ElderCard>
+
+            {/* order 7 · 토요일 배송 — 금액 없음. 품목·수량만 (정보 비대칭의 최소 예) */}
+            <ElderCard show={tab === "family"} order={7}>
+              <CardHead title={`${DELIVERY.dayLabel} 배송`} right={DELIVERY.timeLabel} />
+              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
+                약과 필요한 물건이
+                <br />
+                집으로 옵니다
+              </p>
+              <p className="mt-2 text-[19px] leading-[1.6] text-muted">
+                {cart ? DELIVERY.itemsWithCart : DELIVERY.itemsBase}
+              </p>
+            </ElderCard>
+
+            {/* order 8 · 자녀들이 보고 있습니다 — 고립감 해소. 상대 시간만, 부정 표현 금지 */}
+            <ElderCard
+              show={tab === "family"}
+              order={8}
+              style={{
+                background: "linear-gradient(180deg, #F1FAF6, #E6F4EE)",
+                border: "1px solid rgba(30,122,90,.26)",
+                boxShadow: LIGHT_CARD.boxShadow,
+              }}
+            >
+              <div className="text-[19px] font-bold text-green">자녀들이 보고 있습니다</div>
+              <div className="mt-1">
+                {FAMILY_SEEN.map((f) => (
+                  <div
+                    key={f.displayName}
+                    className="flex items-center gap-3.5 border-t border-green/[.16] py-[14px] first:border-t-0"
+                  >
+                    <span
+                      className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full text-[16px] font-bold"
+                      style={{ background: f.avBg, color: f.avFg }}
+                    >
+                      {f.initials}
+                    </span>
+                    <div>
+                      <div className="text-[20px] font-bold text-navy">{f.displayName}</div>
+                      <div className="text-[18px] text-[#2B4A3E]">{f.seenLabel}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-1 text-[19px] leading-[1.6] text-[#2B4A3E]">
+                멀리 있어도 매일 확인하고 있습니다.
+              </p>
+            </ElderCard>
           </main>
-        </div>
 
-        {/* SOS — REQ-06: 하단 중앙 플로팅 · 항상 보임 · 2초 길게 누르기 */}
-        <SosButton
-          phase={sosPhase}
-          setPhase={setSosPhase}
-          onDispatch={() => dispatch({ type: "demo", payload: { sos: true } })}
-        />
+          {/* ── 고정 푸터: SOS · 전화 · 탭 (스크롤 밖 — 06 원칙 5) ── */}
+          <footer className="shrink-0 pb-3 pt-4">
+            <SosButton
+              phase={sosPhase}
+              setPhase={setSosPhase}
+              onDispatch={() => dispatch({ type: "demo", payload: { sos: true } })}
+            />
+            {/* SOS(응급)와 전화(문의)의 분리 — 색·크기로 명확히 구분 (06 §4.2) */}
+            <button
+              onClick={callTeacher}
+              className="btn-press mt-2.5 w-full rounded-2xl p-6 text-[22px] font-bold text-navy"
+              style={{
+                background: "linear-gradient(180deg, rgba(255,255,255,.92), rgba(240,238,232,.78))",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                border: "1px solid rgba(255,255,255,.9)",
+                boxShadow:
+                  "inset 0 1px 0 #FFFFFF, inset 0 -3px 0 rgba(10,31,60,.13), inset 0 0 0 1px rgba(10,31,60,.14), 0 10px 20px -12px rgba(10,31,60,.45)",
+              }}
+            >
+              {calling ? "박지현 선생님께 연결 중입니다" : "선생님께 전화"}
+            </button>
+            {/* 하단 탭 3개 — 아이콘+라벨 병행 (아이콘 전용 금지) */}
+            <nav className="mt-3 flex border-t border-navy/[.12] pt-2">
+              {TABS.map((t) => {
+                const active = tab === t.key;
+                const color = active ? "#0A1F3C" : "#5C5A54";
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setTab(t.key)}
+                    className="flex min-h-[60px] flex-1 flex-col items-center justify-center gap-1"
+                  >
+                    <span aria-hidden className="text-[20px] leading-none" style={{ color }}>
+                      {t.glyph}
+                    </span>
+                    <span className="text-[16px] font-bold" style={{ color }}>
+                      {t.label}
+                    </span>
+                    <span
+                      className="h-[3px] w-[26px] rounded-full"
+                      style={{ background: active ? "#0A1F3C" : "transparent" }}
+                    />
+                  </button>
+                );
+              })}
+            </nav>
+          </footer>
+        </div>
       </div>
     </>
   );
 }
 
+// SOS — REQ-06 확정: 2초 길게 누르기(진행 표시) → 5초 취소 카운트다운 → 자동 접수.
+// 스타일: 붉은 배경·흰 텍스트 기본의 글라스모피즘 (블러 + 반투명 + 광택 하이라이트).
 function SosButton({ phase, setPhase, onDispatch }) {
   const [hold, setHold] = useState(0); // 0~100 길게 누르기 진행
   const [count, setCount] = useState(5);
@@ -264,31 +660,38 @@ function SosButton({ phase, setPhase, onDispatch }) {
 
   return (
     <>
-      {/* 플로팅 버튼 — 항상 보이는 위치 */}
-      {phase === "idle" && (
-        <div className="fixed bottom-5 left-1/2 z-40 -translate-x-1/2">
-          <button
-            onPointerDown={startHold}
-            onPointerUp={endHold}
-            onPointerLeave={endHold}
-            onContextMenu={(e) => e.preventDefault()}
-            className="relative flex h-[96px] w-[96px] select-none flex-col items-center justify-center rounded-full bg-[#F2B705] text-navy shadow-[0_10px_28px_-8px_rgba(138,93,18,.55)]"
-            style={{
-              background:
-                hold > 0
-                  ? `conic-gradient(#C0392B ${hold * 3.6}deg, #F2B705 0deg)`
-                  : undefined,
-            }}
-          >
-            <span className="text-[24px] font-black leading-none">SOS</span>
-            <span className="mt-1 text-[13px] font-bold leading-[1.2]">
-              2초 꾹
-              <br />
-              누르세요
-            </span>
-          </button>
-        </div>
-      )}
+      <button
+        aria-label="긴급 도움 요청"
+        onPointerDown={startHold}
+        onPointerUp={endHold}
+        onPointerLeave={endHold}
+        onContextMenu={(e) => e.preventDefault()}
+        className="btn-press animate-sosPulse relative w-full select-none overflow-hidden rounded-2xl px-5 py-[26px] text-white"
+        style={{
+          animationDuration: "2.4s", // prefers-reduced-motion 시 globals.css에서 정지
+          touchAction: "none",
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.04) 55%), rgba(192,57,43,.86)",
+          backdropFilter: "blur(14px) saturate(1.5)",
+          WebkitBackdropFilter: "blur(14px) saturate(1.5)",
+          border: "1px solid rgba(255,255,255,.42)",
+          boxShadow:
+            "inset 0 1px 0 rgba(255,255,255,.45), inset 0 -4px 0 rgba(96,20,14,.35), 0 12px 24px -10px rgba(192,57,43,.55)",
+        }}
+      >
+        {/* 길게 누르기 진행 표시 (REQ-06) */}
+        <span
+          aria-hidden
+          className="absolute inset-y-0 left-0 bg-[#8E2417]/70"
+          style={{ width: `${hold}%` }}
+        />
+        <span className="relative block text-[32px] font-black leading-none tracking-[.02em]">
+          SOS 도움 요청
+        </span>
+        <span className="relative mt-2 block text-[17px] font-bold text-white/85">
+          2초 꾹 누르시면 접수됩니다
+        </span>
+      </button>
 
       {/* 5초 취소 유예 화면 */}
       {phase === "confirm" && (

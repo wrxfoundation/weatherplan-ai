@@ -13,10 +13,12 @@ const DEFAULT = {
   onboarding: null, // { rel, res, elderName, district, tier, paymentMode, limitAmount, joinedAt }
   events: INITIAL_EVENTS,
   requests: INITIAL_REQUESTS,
-  demo: { sos: false, anomaly: "open", offline: false },
+  // cart: 가족 앱(REQ-07 장바구니)에서 변경 — 어르신 화면은 읽기만 (핸드오프 06 §3.9)
+  demo: { sos: false, anomaly: "open", offline: false, cart: false },
   // REQ-01 — 병력 기반 우선 표시는 자동 추론이 아니라 사람이 설정한다
   priority: { factors: ["기온"], source: "보호자 설정" },
-  elder: { medTaken: false },
+  // 어르신 1회성 잠금 상태 (undo 없음이 의도 — 핸드오프 06 §5). voicePlayed만 재클릭 가능.
+  elder: { medTaken: false, cooled: false, voicePlayed: false, askAdded: false },
   // 컨시어지 방문 수행 상태 + 감사 타임라인 (REQ-12 골격)
   visit: { checkedIn: false, kitDone: false, reportSent: false, audit: [] },
   kit: INITIAL_KIT,
@@ -25,7 +27,13 @@ const DEFAULT = {
 function reducer(state, action) {
   switch (action.type) {
     case "hydrate":
-      return { ...state, ...action.payload };
+      // 구버전 저장값(elder/demo에 새 키가 없는 형태)과 깊은 병합 — 새 키 기본값 유지
+      return {
+        ...state,
+        ...action.payload,
+        demo: { ...state.demo, ...(action.payload.demo || {}) },
+        elder: { ...state.elder, ...(action.payload.elder || {}) },
+      };
     case "completeOnboarding":
       return { ...state, onboarding: action.payload };
     case "addEvent":
@@ -43,6 +51,8 @@ function reducer(state, action) {
       return { ...state, demo: { ...state.demo, ...action.payload } };
     case "medTaken":
       return { ...state, elder: { ...state.elder, medTaken: true } };
+    case "elderPatch":
+      return { ...state, elder: { ...state.elder, ...action.patch } };
     case "audit":
       return {
         ...state,

@@ -138,19 +138,141 @@ export const WEEKLY = [
   { name: "복약", value: "19/21", delta: "+2", last: "지난주 17/21" },
 ];
 
+// F8 외출 컨디션 — 서버 1회 계산 가정(핸드오프 06 §3.4). 어르신·가족·컨시어지가
+// 같은 legs를 역할별로 다르게 표현한다. grade는 서버 확정값 — 클라이언트 재계산 금지.
+// 도착지는 일정(ev1)과 맞춰 강남세브란스 유지 (명세 예시는 서울아산병원).
 export const OUTING = {
   legs: [
-    { tag: "출발", place: "대치동 자택", score: 78 },
-    { tag: "도착", place: "강남세브란스", score: 71 },
+    {
+      tag: "출발",
+      place: "대치동 자택",
+      score: 62,
+      grade: "보통",
+      level: "caution",
+      detail: "13:50 · 체감 35° · 자외선 매우 높음 · 미세먼지 보통",
+    },
+    {
+      tag: "도착",
+      place: "강남세브란스",
+      score: 52,
+      grade: "주의",
+      level: "danger",
+      detail: "14:30 · 체감 36° · 자외선 매우 높음 · 미세먼지 나쁨 82",
+    },
   ],
-  factors: [
-    { name: "기온", value: "31°" },
-    { name: "미세먼지", value: "보통" },
-    { name: "자외선", value: "높음" },
-  ],
-  advice: "오후 2~4시 외출은 피하고, 양산과 물을 준비하세요.",
-  kit: ["양산", "생수", "KF94"],
+  advice: "오후 2~4시 외출은 피하고, 양산과 물을 준비하세요.", // 가족·컨시어지용 압축 표현
+  adviceElder:
+    "햇볕이 매우 강합니다. 밝은 색 긴팔과 챙 넓은 모자를 쓰시고, 병원 근처는 공기가 나쁘니 마스크를 끼세요.",
+  kit: ["양산", "챙 넓은 모자", "KF94 마스크", "생수 500ml", "얇은 긴팔"],
+  source: "100점 감점식 · 케이웨더 제공",
 };
+
+// ─── 어르신 화면 전용 뷰 데이터 — 핸드오프 06 §3 · §8 ─────────────────────────
+// 내부 용어(주/부 동행)를 어르신 노출 카피로 번역한 값. 관제·컨시어지 화면은 CONCIERGES 사용.
+
+export const ELDER_VISITORS = [
+  {
+    initials: "박지현",
+    displayName: "박지현 선생님",
+    relationLabel: "늘 오시던 분 · 오후 1시 50분", // 방문 횟수 기반 분기 (첫 방문 = "처음 오시는 분" + 사진)
+    avBg: "#0A1F3C",
+    avFg: "#FFFFFF",
+    isPrimary: true,
+  },
+  {
+    initials: "서다인",
+    displayName: "서다인 선생님",
+    relationLabel: "함께 오는 분 · 짐과 접수 담당",
+    avBg: "linear-gradient(180deg,#FBF6EC,#F4EEE1)",
+    avFg: "#0A1F3C",
+    isPrimary: false,
+  },
+];
+
+// done: null → 상태(state.elder.medTaken) 의존. 미완료는 1건만 (실패 목록 금지 — 06 §3.6)
+export const MED_DOSES = [
+  { slotLabel: "아침", drugs: "혈압약 · 아스피린", done: true },
+  { slotLabel: "점심", drugs: "당뇨약", done: true },
+  { slotLabel: "저녁 7시", drugs: "혈압약 · 콜레스테롤약", done: null },
+];
+
+// 실내 센서 카드 — cooled 상태별 표현 (06 §3.7). 데모 목 값: 센서 실연동 전.
+export const INDOOR = {
+  hot: {
+    tempLabel: "31°",
+    sub: "습도 62% · 에어컨 꺼짐",
+    level: "danger",
+    alertTitle: "집 안이 너무 덥습니다",
+    alertBody: "실외보다 2도 낮지만 온열질환 주의 구간입니다. 에어컨을 켜고 물을 드세요.",
+    btnLines: ["에어컨 켜고", "가족에게 알리기"],
+  },
+  cooled: {
+    tempLabel: "28°",
+    sub: "습도 58% · 에어컨 가동 중",
+    level: "ok",
+    alertTitle: "적정 온도로 내려갔습니다",
+    alertBody: "가족과 컨시어지에게도 알렸습니다. 물을 한 잔 드시고 쉬세요.",
+    btnLines: ["가족에게", "알림 완료"],
+  },
+};
+
+// 실외 현재 — 지금 우리 동네 (06 §3.5). level → 색 매핑은 클라이언트.
+export const ELDER_NOW = {
+  tempLabel: "33°",
+  feelsLabel: "체감 35° · 맑음",
+  factors: [
+    { label: "자외선", value: "매우 높음", level: "danger" },
+    { label: "미세먼지", value: "보통 45", level: "caution" },
+    { label: "습도", value: "62%", level: "neutral" },
+    { label: "비 올 확률", value: "10%", level: "neutral" },
+  ],
+};
+
+// 오늘 여쭤볼 것 — 출처 3종(elder|family|concierge)이 요점. 데이터 방화벽 원칙 (06 §3.3)
+export const ASK_DOCTOR = [
+  { seq: 1, text: "어지러운 게 약 때문인지 여쭤보기", source: "elder", sourceLabel: "어르신이 말씀하신 것" },
+  { seq: 2, text: "무릎 통증 약을 같이 먹어도 되는지", source: "family", sourceLabel: "아들 민수가 남긴 것" },
+  { seq: 3, text: "다음 진료는 언제 와야 하는지", source: "concierge", sourceLabel: "컨시어지가 확인할 것" },
+];
+
+export const VOICE_MSG = {
+  fromLabel: "아들 민수",
+  durationSec: 28,
+  transcript: "어머니, 오늘 병원 잘 다녀오세요. 저녁에 다시 전화드릴게요.",
+};
+
+// 배송 — 금액 필드 없음(스키마 방어선). cart는 가족 앱(REQ-07)에서 바뀌고 여기선 읽기만.
+export const DELIVERY = {
+  dayLabel: "토요일",
+  timeLabel: "오전 10시",
+  itemsBase: "혈압약 · 시험지 · 위생용품 (3가지)",
+  itemsWithCart: "혈압약 · 시험지 · 위생용품 · 파스 · 커프 (5가지)",
+};
+
+// 자녀 확인 기록 — 상대 시간만, 미확인 카운트 금지 (06 §3.10). GUARDIANS 페르소나와 동일 인물.
+export const FAMILY_SEEN = [
+  {
+    initials: "민수",
+    displayName: "아들 민수",
+    seenLabel: "어제 저녁 리포트를 봤습니다",
+    avBg: "#0A1F3C",
+    avFg: "#FFFFFF",
+  },
+  {
+    initials: "지영",
+    displayName: "딸 지영",
+    seenLabel: "오늘 아침에 확인했습니다",
+    avBg: "linear-gradient(180deg,#FBF6EC,#F4EEE1)",
+    avFg: "#0A1F3C",
+  },
+  {
+    initials: "현우",
+    displayName: "아들 현우",
+    seenLabel: "그저께 확인했습니다",
+    avBg: "linear-gradient(180deg,#FBFAF7,#F5F3EE)",
+    avFg: "#40413F",
+  },
+];
 
 // K-CARE 안심케어박스 초기 재고 — REQ-10
 // isMedicine=true 품목은 고객 요청 구매분 보관 또는 고객 소유 수량 확인만 (의료법 27조 경계)
