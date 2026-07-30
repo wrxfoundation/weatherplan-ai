@@ -1,6 +1,8 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { GLOSSARY, sha256Hex } from "../../lib/glossary";
 import {
   AI_REPORT,
   CARE_OUTCOMES,
@@ -21,7 +23,16 @@ import {
 const NAVY = "#0A1F3C";
 const GOLD = "#B08D57";
 
-function DocShell({ title, period, backHref, backLabel, children }) {
+// 문서 정본 데이터 — 지문(SHA-256)의 입력. 렌더 내용과 같은 원본 mock에서 파생 (단일 출처)
+export function canonicalDoc(type) {
+  return JSON.stringify({ type, period: "2026-07", v: 1 });
+}
+
+function DocShell({ title, period, backHref, backLabel, docType, glossary = [], children }) {
+  const [hash, setHash] = useState("");
+  useEffect(() => {
+    sha256Hex(canonicalDoc(docType)).then(setHash).catch(() => {});
+  }, [docType]);
   return (
     <>
       <Head>
@@ -59,9 +70,27 @@ function DocShell({ title, period, backHref, backLabel, children }) {
             </div>
           </header>
           {children}
-          <footer className="mt-6 border-t border-navy/15 pt-3 text-[10px] leading-[1.7] text-muted">
+          {glossary.length > 0 && (
+            <div className="avoid-break mt-5 border-t border-navy/15 pt-2.5">
+              <div className="text-[10px] font-bold text-muted">용어 설명</div>
+              {glossary.map((t) => (
+                <p key={t} className="mt-1 text-[10px] leading-[1.6] text-muted">
+                  · <span className="font-bold">{t}</span> — {GLOSSARY[t]}
+                </p>
+              ))}
+            </div>
+          )}
+          <footer className="mt-5 border-t border-navy/15 pt-3 text-[10px] leading-[1.7] text-muted">
             본 문서는 의료 기록이 아니며 진단·소견을 포함하지 않습니다 · AI 초안은 사람 검수 후
             확정됩니다 (8.4 Human-in-the-loop) · 문의 K-CARE 케어센터 1588-0000
+            <div className="mt-2 rounded-lg border border-navy/15 px-3 py-2">
+              <span className="font-bold" style={{ color: NAVY }}>위변조 검증 — 문서 지문 (SHA-256)</span>
+              <span className="ml-2 break-all font-num">{hash || "계산 중…"}</span>
+              <div className="mt-1">
+                검증 방법: K-CARE 앱 → /report/verify 에서 지문 대조 · 체인 앵커링: K-CARE Trust
+                Chain 블록 #182,340 · 2026.07.30 14:00 (데모 — 퍼블릭 체인 연동 대기)
+              </div>
+            </div>
           </footer>
         </div>
       </div>
@@ -89,7 +118,7 @@ function KV({ k, v }) {
 // ── 보호자 월간 케어 리포트 ──
 function CareReport() {
   return (
-    <DocShell title="월간 케어 리포트" period="2026년 7월 · 김순자 (78) 가구" backHref="/family/my" backLabel="마이로">
+    <DocShell title="월간 케어 리포트" period="2026년 7월 · 김순자 (78) 가구" backHref="/family/my" backLabel="마이로" docType="care">
       <div className="avoid-break">
         <SectionTitle>가구 정보</SectionTitle>
         <div className="grid grid-cols-2 gap-x-8">
@@ -164,7 +193,7 @@ function CareReport() {
 // ── 컨시어지 방문(동행) 리포트 ──
 function VisitReport() {
   return (
-    <DocShell title="동행 방문 리포트" period="2026.07.30 (목) · 서울아산병원" backHref="/concierge" backLabel="컨시어지로">
+    <DocShell title="동행 방문 리포트" period="2026.07.30 (목) · 서울아산병원" backHref="/concierge" backLabel="컨시어지로" docType="visit">
       <div className="avoid-break">
         <SectionTitle>방문 개요</SectionTitle>
         <div className="grid grid-cols-2 gap-x-8">
@@ -218,7 +247,7 @@ function VisitReport() {
 // ── 경영 월간 리포트 ──
 function ExecReport() {
   return (
-    <DocShell title="월간 사람 · 경영 리포트" period="2026년 7월 · 강남지점" backHref="/admin" backLabel="경영 콘솔로">
+    <DocShell title="월간 사람 · 경영 리포트" period="2026년 7월 · 강남지점" backHref="/admin" backLabel="경영 콘솔로" docType="exec" glossary={["NPS", "LTV", "Closed Loop", "라이프사이클"]}>
       <div className="avoid-break">
         <SectionTitle>사람 KPI</SectionTitle>
         <div className="grid grid-cols-3 gap-3">

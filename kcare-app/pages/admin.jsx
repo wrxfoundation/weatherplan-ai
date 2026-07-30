@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useState } from "react";
 import { PendingTag } from "../components/ui";
 import AiChat from "../components/AiChat";
+import HelpTip from "../components/HelpTip";
 import {
   ADMIN_AI_QA,
   ADMIN_COHORTS,
@@ -382,7 +383,7 @@ export default function AdminConsole() {
 
               <Panel className="min-w-0">
                 <PanelHead
-                  title="NPS 수집 루프"
+                  title={<>NPS 수집 루프<HelpTip term="NPS" /></>}
                   right={<span className="text-[12px] text-muted">동행 후 24h 설문 · 응답률 {NPS_LOOP.respond}</span>}
                 />
                 <div className="mt-3 flex gap-2">
@@ -411,7 +412,7 @@ export default function AdminConsole() {
           {tab === "crm" && (
             <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
               <Panel className="min-w-0">
-                <PanelHead title="라이프사이클 스테이지" right={<span className="text-[12px] text-muted">전체 128가구 · 세그먼트 집계</span>} />
+                <PanelHead title={<>라이프사이클 스테이지<HelpTip term="라이프사이클" /></>} right={<span className="text-[12px] text-muted">전체 128가구 · 세그먼트 집계</span>} />
                 <div className="mt-3 space-y-3">
                   {LIFECYCLE_STAGES.map((s) => (
                     <BarRow key={s.k} label={s.k} value={`${s.n}가구`} w={s.w} color={s.color} note={s.note} />
@@ -423,7 +424,7 @@ export default function AdminConsole() {
               </Panel>
 
               <Panel className="min-w-0">
-                <PanelHead title="이탈 신호 스코어 분포" right={<span className="text-[12px] text-muted">요인 · 가중치 공개</span>} />
+                <PanelHead title={<>이탈 신호 스코어 분포<HelpTip term="이탈 신호" /></>} right={<span className="text-[12px] text-muted">요인 · 가중치 공개</span>} />
                 <div className="mt-3 flex gap-2">
                   {CHURN_BANDS.map((b) => (
                     <div key={b.k} className="flex-1 rounded-xl border border-navy/[.06] bg-white/60 px-3 py-3 text-center">
@@ -443,7 +444,7 @@ export default function AdminConsole() {
               </Panel>
 
               <Panel className="min-w-0">
-                <PanelHead title="Next Best Action 큐" right={<span className="text-[12px] text-muted">세그먼트 → 조치 → 담당 배정</span>} />
+                <PanelHead title={<>Next Best Action 큐<HelpTip term="NBA" /></>} right={<span className="text-[12px] text-muted">세그먼트 → 조치 → 담당 배정</span>} />
                 <div className="mt-3 space-y-2.5">
                   {NBA_QUEUE.map((n) => (
                     <div key={n.id} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
@@ -476,7 +477,7 @@ export default function AdminConsole() {
               </Panel>
 
               <Panel className="min-w-0">
-                <PanelHead title="조치 효과 (Closed Loop)" right={<span className="text-[12px] text-muted">조치는 효과로 검증한다</span>} />
+                <PanelHead title={<>조치 효과 (Closed Loop)<HelpTip term="Closed Loop" /></>} right={<span className="text-[12px] text-muted">조치는 효과로 검증한다</span>} />
                 <div className="mt-3 space-y-2.5">
                   {ACTION_RESULTS.map((r) => (
                     <div key={r.act} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
@@ -558,7 +559,7 @@ export default function AdminConsole() {
               </Panel>
 
               <Panel className="min-w-0">
-                <PanelHead title="신뢰 거버넌스 — 해자" right={<span className="text-[12px] text-muted">신뢰는 기능이 아니라 구조</span>} />
+                <PanelHead title={<>신뢰 거버넌스 — 해자<HelpTip term="해자" /></>} right={<span className="text-[12px] text-muted">신뢰는 기능이 아니라 구조</span>} />
                 <div className="mt-3 grid grid-cols-2 gap-2">
                   {TRUST_METRICS.map((t) => (
                     <StatTile key={t.k} k={t.k} v={t.v} note={t.note} />
@@ -637,7 +638,7 @@ export default function AdminConsole() {
 
                 {/* ── SLA 집계 ── */}
                 <Panel>
-                  <PanelHead title="SLA 집계" right={<span className="text-[12px] text-muted">개별 사건 비노출 · 집계만</span>} />
+                  <PanelHead title={<>SLA 집계<HelpTip term="SLA" /></>} right={<span className="text-[12px] text-muted">개별 사건 비노출 · 집계만</span>} />
                   <div className="mt-3 space-y-3">
                     {ADMIN_SLA.map((s) => (
                       <div
@@ -739,7 +740,7 @@ export default function AdminConsole() {
 
               {/* ── 코호트 리텐션 ── */}
               <Panel>
-                <PanelHead title="코호트 리텐션" right={<PendingTag>목 수치 · LTV 산정 방식 미확정</PendingTag>} />
+                <PanelHead title={<>코호트 리텐션<HelpTip term="코호트" /><HelpTip term="LTV" /></>} right={<PendingTag>목 수치 · LTV 산정 방식 미확정</PendingTag>} />
                 <div className="mt-3 overflow-x-auto">
                   <table className="w-full min-w-[520px] text-left">
                     <thead>

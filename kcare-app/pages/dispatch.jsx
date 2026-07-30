@@ -30,6 +30,7 @@ import {
 } from "../lib/mock";
 import { useAppState } from "../lib/state";
 import AiChat from "../components/AiChat";
+import HelpTip from "../components/HelpTip";
 
 // 배치관리자(관제) — 핸드오프 09 상세 명세 + REQ-04(긴급 대응 범위, 회의 확정 우선).
 // 데스크톱 전용 · 정보 밀도가 정당한 유일한 화면 (10~13px 활자가 정답 — 09 §0).
@@ -761,6 +762,7 @@ export default function DispatchConsole() {
                   <span className="rounded-md bg-gold px-2 py-1 text-[11px] font-bold tracking-[.14em] text-navy">
                     AI 자율 배차 · L4
                   </span>
+                  <HelpTip term="L4" light />
                   <span className="text-[16px] font-bold">신규 요청 3건의 배정안이 준비되었습니다</span>
                 </div>
                 <span className="text-[12px] text-white/60">승인 없이는 실행되지 않습니다 · 8.5 자율성 등급</span>
@@ -1076,7 +1078,10 @@ export default function DispatchConsole() {
                 {/* SLA 관제 (09 §8.4) — 네이비 · 글래스 바 */}
                 <section className="card-navy rounded-[14px] p-[18px]" style={{ background: NAVY }}>
                   <div className="flex items-baseline justify-between">
-                    <h2 className="text-[15px] font-bold text-white">SLA 관제</h2>
+                    <h2 className="text-[15px] font-bold text-white">
+                      SLA 관제
+                      <HelpTip term="SLA" light />
+                    </h2>
                     <span className="text-[12px] text-white/50">목표 대비 오늘</span>
                   </div>
                   <div className="mt-3 space-y-3">
