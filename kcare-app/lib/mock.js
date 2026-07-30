@@ -43,7 +43,7 @@ export const INITIAL_EVENTS = [
   {
     id: "ev1",
     kind: "hospital",
-    title: "내과 진료 · 강남세브란스",
+    title: "순환기내과 진료 · 서울아산병원",
     at: daysFromNow(7, 10, 0),
     source: "컨시어지 등록",
     note: "박지현 선생님 동행 · 픽업 09:10",
@@ -140,7 +140,7 @@ export const WEEKLY = [
 
 // F8 외출 컨디션 — 서버 1회 계산 가정(핸드오프 06 §3.4). 어르신·가족·컨시어지가
 // 같은 legs를 역할별로 다르게 표현한다. grade는 서버 확정값 — 클라이언트 재계산 금지.
-// 도착지는 일정(ev1)과 맞춰 강남세브란스 유지 (명세 예시는 서울아산병원).
+// 도착지는 서울아산병원 — 일정(ev1)·관제 JOBS·브리핑과 단일 값.
 export const OUTING = {
   legs: [
     {
@@ -153,7 +153,7 @@ export const OUTING = {
     },
     {
       tag: "도착",
-      place: "강남세브란스",
+      place: "서울아산병원",
       score: 52,
       grade: "주의",
       level: "danger",
@@ -165,6 +165,16 @@ export const OUTING = {
     "햇볕이 매우 강합니다. 밝은 색 긴팔과 챙 넓은 모자를 쓰시고, 병원 근처는 공기가 나쁘니 마스크를 끼세요.",
   kit: ["양산", "챙 넓은 모자", "KF94 마스크", "생수 500ml", "얇은 긴팔"],
   source: "100점 감점식 · 케이웨더 제공",
+  asOf: "케이웨더 · 14:00 기준",
+  // 보호자 카드 3열 요인 그리드 (디자인 콘솔)
+  factors3: [
+    { label: "실내 온도", value: "31° 주의", level: "caution" },
+    { label: "실외 체감", value: "36°", level: "neutral" },
+    { label: "미세먼지", value: "나쁨 82", level: "danger" },
+  ],
+  // 문장형 안내 — 이미 한 조치를 말한다 (어르신 안내 + 컨시어지 준비물 자동 반영)
+  adviceGuardian:
+    "병원 근처 미세먼지가 나쁨입니다. 어머니께 KF94 마스크와 양산을 안내했고, 컨시어지 준비물에도 자동 반영됐습니다.",
 };
 
 // ─── 어르신 화면 전용 뷰 데이터 — 핸드오프 06 §3 · §8 ─────────────────────────
@@ -662,4 +672,42 @@ export const VIDEO_POLICY = {
   allowed: ["거실", "현관", "주방", "병원 이동", "약상자 점검", "생활환경 확인"],
   banned: ["욕실", "화장실", "탈의공간", "침실"],
   retention: "일반 방문 4주 후 자동 삭제 · 사고·민원은 사건 종료 시까지 · 법적 분쟁은 법령 기준 별도 보관",
+};
+
+// ─── 보호자 앱 디자인 콘솔 정합분 ──────────────────────────────────────────────
+
+// 실시간 건강 요약 5지표 — 지표별 상태 라벨 병행 (색만으로 상태 전달 금지)
+export const VITALS = [
+  { name: "심박수", value: "72", unit: "bpm", status: "정상 범위", level: "ok" },
+  { name: "걸음 수", value: "3,140", unit: "걸음", status: "목표의 62%", level: "neutral" },
+  { name: "수면", value: "6.2", unit: "시간", status: "3일 평균 하락", level: "caution" },
+  { name: "혈압", value: "128/82", unit: "mmHg", status: "경계", level: "caution" },
+  { name: "복약 준수율", value: "86", unit: "%", status: "미이행 2회 · 저녁 대기", level: "caution" },
+];
+
+// 담당 컨시어지 2인 1조 — 관계 연속성("12번 모셨습니다")이 신뢰의 근거
+export const CARE_TEAM = {
+  dateLabel: "8/23 (금) 동행",
+  members: [
+    {
+      initials: "박지현",
+      name: "박지현",
+      role: "주 동행",
+      career: "간호사 · 상급종합 14년 · 평점 4.9",
+      relation: "어머니를 12번 모셨습니다",
+      avBg: "#0A1F3C",
+      avFg: "#FFFFFF",
+    },
+    {
+      initials: "서다인",
+      name: "서다인",
+      role: "부 동행",
+      career: "요양보호사 · 차량 · 접수와 서류 담당",
+      relation: "이번이 두 번째입니다",
+      avBg: "linear-gradient(180deg,#FBF6EC,#F4EEE1)",
+      avFg: "#0A1F3C",
+    },
+  ],
+  trust:
+    "두 사람 모두 신원조회와 배상책임보험을 마쳤습니다. 방문 전날 저녁에 두 분의 사진과 이름을 다시 보내드립니다 — 어머니께서 문 앞에서 확인하실 수 있도록.",
 };

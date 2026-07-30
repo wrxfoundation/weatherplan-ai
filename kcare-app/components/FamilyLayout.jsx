@@ -6,8 +6,9 @@ import { useAppState } from "../lib/state";
 
 const TABS = [
   { href: "/family", label: "홈", icon: "⌂" },
-  { href: "/family/calendar", label: "캘린더", icon: "▦" },
+  { href: "/family/calendar", label: "예약", icon: "▦" },
   { href: "/family/requests", label: "해주세요", icon: "✚" },
+  { href: "/family/reports", label: "리포트", icon: "▤" },
   { href: "/family/store", label: "스토어", icon: "◇" },
   { href: "/family/my", label: "마이", icon: "☺" },
 ];
@@ -30,14 +31,15 @@ export default function FamilyLayout({ children, title }) {
                 {title || `어머니 · ${elderName}`}
               </div>
             </div>
-            <Avatar name={elderName} size={38} />
+            {/* 성 제외 이름 — 디자인 콘솔 헤더 아바타 */}
+            <Avatar name={elderName} text={elderName.length >= 3 ? elderName.slice(1) : elderName} size={38} />
           </div>
         </header>
 
         <main className="flex-1 space-y-3.5 overflow-y-auto px-4 pb-28 pt-4">{children}</main>
 
         <nav className="fixed bottom-0 left-1/2 z-30 w-full max-w-[430px] -translate-x-1/2 border-t border-navy/10 bg-white/95 backdrop-blur">
-          <div className="grid grid-cols-5">
+          <div className="grid grid-cols-6">
             {TABS.map((t) => {
               const active =
                 t.href === "/family"

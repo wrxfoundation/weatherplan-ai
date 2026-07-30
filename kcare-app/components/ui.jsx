@@ -56,13 +56,18 @@ export function GhostButton({ children, onClick, className = "" }) {
   );
 }
 
-export function Avatar({ name, size = 30, className = "" }) {
+export function Avatar({ name, text, size = 30, className = "" }) {
+  const label = text || name.slice(0, 1);
   return (
     <span
-      className={`inline-flex shrink-0 items-center justify-center rounded-full bg-navy font-num font-bold text-white ${className}`}
-      style={{ width: size, height: size, fontSize: Math.max(10, size * 0.36) }}
+      className={`inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-navy font-num font-bold text-white ${className}`}
+      style={{
+        width: size,
+        height: size,
+        fontSize: Math.max(10, (size * 0.36) / Math.max(1, label.length * 0.55)),
+      }}
     >
-      {name.slice(0, 1)}
+      {label}
     </span>
   );
 }

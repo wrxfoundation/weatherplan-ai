@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, Badge, PendingTag, Avatar } from "../../components/ui";
-import { ELDER, GUARDIANS, WEEKLY, OUTING, EVENT_KINDS } from "../../lib/mock";
+import { CARE_TEAM, ELDER, EVENT_KINDS, GUARDIANS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 
@@ -26,7 +26,11 @@ export default function FamilyHome() {
   const elderName = ob?.elderName || ELDER.name;
   const anomaly = state.demo.anomaly;
 
-  const upcoming = [...state.events].sort((a, b) => a.at - b.at).find((e) => e.at > Date.now());
+  const upcoming = [...state.events]
+    .sort((a, b) => a.at - b.at)
+    .filter((e) => e.at > Date.now())
+    .slice(0, 3);
+  const [aiBooked, setAiBooked] = useState(false);
   const pendingApprovals = state.requests.filter((r) => r.status === "awaitingPayment").length;
   const repScore = Math.min(...OUTING.legs.map((l) => l.score)); // 두 구간 중 낮은 값
 
@@ -68,7 +72,8 @@ export default function FamilyHome() {
               새벽 3시 12분, 거실에서 5초간 급격한 움직임 후 정지
             </div>
             <p className="mt-1 text-[12px] leading-[1.7] text-[#5A4A22]">
-              낙상 의심 패턴입니다. 어르신은 아직 SOS를 누르지 않았습니다.
+              낙상 의심 패턴입니다. 이후 심박 108bpm(평소 72), 오전 복약 미기록. 어르신은
+              아직 SOS를 누르지 않았습니다.
             </p>
             <div className="mt-3 space-y-1.5">
               {[
@@ -104,7 +109,7 @@ export default function FamilyHome() {
             {/* 제품 약속 — 생략 불가 (repo-CLAUDE.md) */}
             <p className="mt-3 text-[10px] leading-[1.6] text-[#8A7A4E]">
               AI는 감지·제안만 하고 조치는 사람이 결정합니다 · 오탐 신고는 모델 재학습에
-              반영됩니다
+              반영됩니다 (8.4)
             </p>
           </div>
         )}
@@ -119,23 +124,48 @@ export default function FamilyHome() {
           </div>
         )}
 
-        {/* 다음 일정 — REQ-02: 홈에는 한 줄만, 클릭 시 캘린더 */}
-        {upcoming && (
-          <Link href="/family/calendar" className="block">
-            <Card className="btn-press flex items-center gap-3 p-4">
-              <span
-                className="h-[38px] w-[4px] shrink-0 rounded-full"
-                style={{ background: EVENT_KINDS[upcoming.kind].color }}
-              />
-              <div className="min-w-0 flex-1">
-                <SectionLabel>다음 일정</SectionLabel>
-                <div className="mt-0.5 truncate text-[14px] font-bold text-navy">
-                  {fmtDT(upcoming.at)} · {upcoming.title}
-                </div>
-              </div>
-              <span className="text-[18px] text-muted/50">›</span>
-            </Card>
-          </Link>
+        {/* 다가오는 일정 — 리스트 3건 + 상태 배지 (디자인 콘솔 · REQ-02) */}
+        {upcoming.length > 0 && (
+          <Card className="p-[18px]">
+            <div className="flex items-center justify-between">
+              <div className="text-[15px] font-black text-navy">다가오는 일정</div>
+              <Link
+                href="/family/calendar"
+                className="btn-press rounded-lg border border-navy/15 px-3 py-1.5 text-[11px] font-bold text-muted"
+              >
+                일정 변경
+              </Link>
+            </div>
+            <div className="mt-2.5 space-y-3">
+              {upcoming.map((e) => {
+                const [label, fg, bg] = e.source?.includes("AI")
+                  ? ["확정", "#1E7A5A", "rgba(30,122,90,.12)"]
+                  : e.kind === "medication"
+                  ? ["대기", "#5C5A54", "rgba(92,90,84,.1)"]
+                  : ["예정", "#3B5C8A", "rgba(59,92,138,.12)"];
+                const sameDay = new Date(e.at).toDateString() === new Date().toDateString();
+                const timeLabel = sameDay
+                  ? new Date(e.at).toTimeString().slice(0, 5)
+                  : new Date(e.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" });
+                return (
+                  <div key={e.id} className="flex items-start gap-3">
+                    <span className="w-[44px] shrink-0 pt-[1px] font-num text-[13px] font-bold text-navy">
+                      {timeLabel}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-[13px] font-bold text-ink">{e.title}</div>
+                      <div className="mt-0.5 truncate text-[11px] text-muted">
+                        {e.note || `${EVENT_KINDS[e.kind].label} · ${e.source}`}
+                      </div>
+                    </div>
+                    <Badge fg={fg} bg={bg}>
+                      {label}
+                    </Badge>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
         )}
 
         {/* 승인 대기 배지 — REQ-03/07 연결 */}
@@ -182,64 +212,181 @@ export default function FamilyHome() {
           </p>
         </div>
 
-        {/* 실시간 건강 요약 — 실연동 대기 정직 표기 */}
+        {/* 실시간 건강 요약 — 5지표 · 지표별 상태 라벨 병행 (디자인 콘솔 · F2-6) */}
         <Card className="p-[18px]">
           <div className="flex items-center justify-between">
-            <SectionLabel>실시간 건강 요약</SectionLabel>
-            <PendingTag>웨어러블 실연동 대기</PendingTag>
+            <div className="text-[15px] font-black text-navy">실시간 건강 요약</div>
+            <span className="font-num text-[11px] text-muted">14:38 갱신</span>
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2.5">
-            {[
-              ["심박", "72", "bpm"],
-              ["걸음", "3,820", "보"],
-              ["수면", "6.4", "시간"],
-              ["혈압", "128/84", ""],
-            ].map(([k, v, u]) => (
-              <div key={k} className="rounded-xl bg-paper p-3">
-                <div className="text-[11px] text-muted">{k}</div>
-                <div className="font-num text-[22px] font-bold text-navy">
-                  {v} <span className="text-[11px] font-bold text-muted">{u}</span>
+            {VITALS.map((v) => (
+              <div
+                key={v.name}
+                className="rounded-xl p-3.5"
+                style={{
+                  background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
+                }}
+              >
+                <div className="text-[11px] text-muted">{v.name}</div>
+                <div className="mt-0.5 font-num text-[22px] font-bold leading-none text-navy">
+                  {v.value} <span className="text-[11px] font-bold text-muted">{v.unit}</span>
+                </div>
+                <div
+                  className="mt-1.5 text-[11px] font-bold"
+                  style={{ color: { ok: "#1E7A5A", caution: "#8A5D12", danger: "#C0392B", neutral: "#5C5A54" }[v.level] }}
+                >
+                  {v.status}
                 </div>
               </div>
             ))}
           </div>
+          <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
+            웨어러블 실연동 대기 — 표기 지표는 연동 후 실측값으로 대체 (F2-6)
+          </p>
         </Card>
 
-        {/* 오늘 외출 컨디션 — 두 구간 중 낮은 값 대표 (안전 측) */}
-        <Card className="p-[18px]">
+        {/* 오늘 외출 컨디션 — 두 구간 중 낮은 값 대표 (안전 측) · 디자인 콘솔 정합 */}
+        <Card
+          className="border-[rgba(147,178,214,.24)] p-[18px]"
+          style={{ background: "linear-gradient(180deg, #FAFCFF, #F2F7FD)" }}
+        >
           <div className="flex items-center justify-between">
-            <SectionLabel>오늘 외출 컨디션</SectionLabel>
-            <Badge fg="#8A5D12" bg="rgba(138,93,18,.12)">
+            <div className="text-[15px] font-black text-navy">오늘 외출 컨디션</div>
+            <span className="font-num text-[11px] text-muted">{OUTING.asOf}</span>
+          </div>
+          <div className="mt-2 flex items-center gap-2.5">
+            <span className="font-num text-[34px] font-bold leading-none text-danger">{repScore}</span>
+            <span className="text-[11px] text-muted">/100</span>
+            <span className="rounded-full bg-danger px-2.5 py-1 text-[11px] font-bold text-white">
               주의
-            </Badge>
+            </span>
+            <span className="ml-auto text-[11px] text-muted">두 구간 중 낮은 값</span>
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="font-num text-[30px] font-bold text-navy">{repScore}</span>
-            <span className="text-[11px] text-muted">/ 100 · 두 구간 중 낮은 값</span>
-          </div>
-          <div className="mt-2.5 space-y-1.5">
+          <div className="mt-3 space-y-1.5">
             {OUTING.legs.map((l) => (
-              <div key={l.tag} className="flex items-center gap-2 text-[12px]">
+              <div
+                key={l.tag}
+                className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[12px]"
+                style={{
+                  background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
+                }}
+              >
                 <span className="w-[34px] shrink-0 font-bold text-gold">{l.tag}</span>
-                <span className="flex-1 text-muted">{l.place}</span>
-                <span className="font-num font-bold text-navy">{l.score}</span>
+                <span className="flex-1 font-bold text-ink">{l.place}</span>
+                <span className="font-num text-[14px] font-bold text-navy">{l.score}</span>
+                <span
+                  className="w-[30px] text-right text-[11px] font-bold"
+                  style={{ color: l.level === "danger" ? "#C0392B" : "#8A5D12" }}
+                >
+                  {l.grade}
+                </span>
               </div>
             ))}
           </div>
-          <p className="mt-3 rounded-xl bg-paper p-3 text-[12px] leading-[1.7] text-ink">
-            {OUTING.advice}
+          {/* 3열 요인 그리드 (디자인 콘솔) */}
+          <div className="mt-2.5 grid grid-cols-3 gap-2">
+            {OUTING.factors3.map((f) => (
+              <div
+                key={f.label}
+                className="rounded-xl px-3 py-2.5"
+                style={{
+                  background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
+                }}
+              >
+                <div className="text-[10px] text-muted">{f.label}</div>
+                <div
+                  className="mt-0.5 font-num text-[13px] font-bold"
+                  style={{ color: { caution: "#8A5D12", danger: "#C0392B", neutral: "#0A1F3C" }[f.level] }}
+                >
+                  {f.value}
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* 문장형 안내 — 이미 한 조치를 말한다 */}
+          <p className="mt-2.5 rounded-xl border border-[#EFE0BF] bg-[#FDF6E8] p-3 text-[12px] leading-[1.7] text-[#5A4A22]">
+            {OUTING.adviceGuardian}
           </p>
           <div className="mt-2.5 flex flex-wrap gap-1.5">
             {OUTING.kit.map((k) => (
-              <span
-                key={k}
-                className="rounded-full border border-gold/40 bg-gold/10 px-2.5 py-1 text-[11px] font-bold text-amber"
-              >
+              <span key={k} className="chip-gold rounded-full px-2.5 py-1 text-[11px] font-bold">
                 {k}
               </span>
             ))}
           </div>
         </Card>
+
+        {/* 담당 컨시어지 · 2인 1조 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}
+        <div className="card-navy rounded-card bg-navy p-[18px] text-white">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold tracking-[.14em] text-gold-soft">
+              담당 컨시어지 · 2인 1조
+            </span>
+            <span className="font-num text-[11px] text-white/60">{CARE_TEAM.dateLabel}</span>
+          </div>
+          <div className="mt-3 space-y-2.5">
+            {CARE_TEAM.members.map((m) => (
+              <div
+                key={m.name}
+                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[.05] p-3.5"
+              >
+                <span
+                  className="flex h-[48px] w-[48px] shrink-0 items-center justify-center whitespace-nowrap rounded-full text-[13px] font-bold"
+                  style={{ background: m.avBg, color: m.avFg }}
+                >
+                  {m.initials}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[14px] font-bold">
+                    {m.name}{" "}
+                    <span className="text-[10px] font-bold text-gold-soft">{m.role}</span>
+                  </div>
+                  <div className="mt-0.5 text-[11px] text-white/60">{m.career}</div>
+                  <div className="mt-0.5 text-[11px] font-bold text-[#8FE3C0]">{m.relation}</div>
+                </div>
+                <button
+                  aria-label={`${m.name}에게 전화`}
+                  className="btn-press flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/[.06] text-[15px]"
+                >
+                  ☏
+                </button>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-[11px] leading-[1.7] text-white/60">{CARE_TEAM.trust}</p>
+          <button
+            onClick={() => {
+              if (aiBooked) return;
+              setAiBooked(true);
+              const at = new Date();
+              at.setDate(at.getDate() + 24);
+              at.setHours(10, 0, 0, 0);
+              dispatch({
+                type: "addEvent",
+                payload: {
+                  id: `ev-${Date.now()}`,
+                  kind: "nextAppt",
+                  title: "순환기내과 정기 외래 · 서울아산병원",
+                  at: at.getTime(),
+                  source: "AI 컨시어지 접수",
+                  note: "AI 컨시어지 접수 완료 · 차량 동행",
+                },
+              });
+              dispatch({
+                type: "pushEvent",
+                payload: { kind: "예약", text: "AI 컨시어지 예약 접수 · 순환기내과 정기 외래", color: "#B08D57" },
+              });
+            }}
+            className={`btn-press btn-dark mt-3.5 w-full rounded-xl py-3.5 text-[14px] font-bold ${
+              aiBooked ? "bg-green text-white" : "bg-gold text-navy"
+            }`}
+          >
+            {aiBooked ? "✓ 예약 접수됨 · 다가오는 일정에서 확인" : "AI로 예약하기"}
+          </button>
+        </div>
 
         {/* 형제 공동 관리 — 순위 없음, 사실만 */}
         <Card className="p-[18px]">

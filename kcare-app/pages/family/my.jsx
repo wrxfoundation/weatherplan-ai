@@ -140,31 +140,18 @@ export default function MyPage() {
           </Card>
         </Link>
 
-        {/* 케어 리포트 — 공유된 리포트만 (컨시어지 공유 설정 반영) */}
-        <Card className="p-[18px]">
-          <div className="flex items-center justify-between">
-            <SectionLabel>케어 리포트</SectionLabel>
-            <span className="text-[11px] text-muted">공유분 {sharedReports.length}건</span>
-          </div>
-          <div className="mt-3 space-y-3">
-            {sharedReports.slice(0, 3).map((r) => (
-              <div key={r.id} className="border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-[12px] font-bold text-navy">{r.by} 선생님</span>
-                  <span className="font-num text-[10px] text-muted">
-                    {new Date(r.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
-                    {" · 특이 "}
-                    {r.flagged}건
-                  </span>
-                </div>
-                <p className="mt-1 text-[12px] leading-[1.65] text-ink">{r.note}</p>
+        {/* 케어 리포트 — 리포트 탭으로 이동 */}
+        <Link href="/family/reports" className="block">
+          <Card className="btn-press flex items-center justify-between p-4">
+            <div>
+              <div className="text-[14px] font-bold text-navy">케어 리포트</div>
+              <div className="mt-0.5 text-[11px] text-muted">
+                공유 리포트 {sharedReports.length}건 · 증빙 보고서 (PDF)
               </div>
-            ))}
-          </div>
-          <p className="mt-3 border-t border-navy/[.07] pt-2.5 text-[10px] leading-[1.6] text-muted">
-            컨시어지가 공유로 설정한 리포트만 표시됩니다. 내부 메모는 보이지 않습니다.
-          </p>
-        </Card>
+            </div>
+            <span className="text-[18px] text-muted/50">›</span>
+          </Card>
+        </Link>
 
         {settingOpen && (
           <PrioritySheet
