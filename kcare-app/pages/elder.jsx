@@ -288,6 +288,10 @@ export default function ElderHome() {
                 onClick={() => {
                   if (medTaken) return; // 1회성 — undo 없음
                   dispatch({ type: "medTaken" });
+                  dispatch({
+                    type: "pushEvent",
+                    payload: { kind: "복약", text: "김순자 저녁 복약 완료 · 가족 앱 준수율 갱신", color: "#4ADE80" },
+                  });
                 }}
                 disabled={medTaken}
                 className="btn-press mt-2 w-full rounded-2xl p-7 text-[22px] font-bold"
@@ -334,6 +338,10 @@ export default function ElderHome() {
                 onClick={() => {
                   if (cooled) return; // 1회성
                   dispatch({ type: "elderPatch", patch: { cooled: true } });
+                  dispatch({
+                    type: "pushEvent",
+                    payload: { kind: "환경", text: "김순자 자택 실내 31° → 냉방 가동 · 가족 알림", color: "#FF8A80" },
+                  });
                 }}
                 disabled={cooled}
                 className="btn-press mt-4 w-full rounded-2xl p-7 text-[22px] font-bold text-white"
@@ -376,6 +384,10 @@ export default function ElderHome() {
                 onClick={() => {
                   if (askAdded) return; // 1회성
                   dispatch({ type: "elderPatch", patch: { askAdded: true } });
+                  dispatch({
+                    type: "pushEvent",
+                    payload: { kind: "어르신", text: "진료 질문 1건 추가 · 컨시어지 전달", color: "#B08D57" },
+                  });
                 }}
                 disabled={askAdded}
                 className="btn-press mt-2 w-full rounded-2xl p-6 text-[21px] font-bold text-white"
@@ -490,8 +502,16 @@ export default function ElderHome() {
                 onClick={() => {
                   if (!voicePlayed) {
                     dispatch({ type: "elderPatch", patch: { voicePlayed: true } });
+                    dispatch({
+                      type: "pushEvent",
+                      payload: { kind: "메시지", text: "어르신이 아들 음성 메시지 청취 완료", color: "#8FA9CC" },
+                    });
                   } else {
                     setVoiceReplied(true); // 재클릭 가능 — 듣기 → 답장
+                    dispatch({
+                      type: "pushEvent",
+                      payload: { kind: "메시지", text: "김순자 → 아들 민수 음성 답장 전송", color: "#8FA9CC" },
+                    });
                   }
                 }}
                 className="btn-press mt-4 w-full rounded-2xl p-7 text-[22px] font-bold"
@@ -563,7 +583,13 @@ export default function ElderHome() {
             <SosButton
               phase={sosPhase}
               setPhase={setSosPhase}
-              onDispatch={() => dispatch({ type: "demo", payload: { sos: true } })}
+              onDispatch={() => {
+                dispatch({ type: "demo", payload: { sos: true } });
+                dispatch({
+                  type: "pushEvent",
+                  payload: { kind: "SOS", text: "김순자(78) SOS 발신 · 가족·관제 동시 점등", color: "#FF8A80" },
+                });
+              }}
             />
             {/* SOS(응급)와 전화(문의)의 분리 — 색·크기로 명확히 구분 (06 §4.2) */}
             <button

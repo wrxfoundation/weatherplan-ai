@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useReducer, useState } from "react";
-import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT } from "./mock";
+import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS } from "./mock";
 import { PRICING } from "./config";
 import { transition } from "./requests";
 
@@ -19,8 +19,16 @@ const DEFAULT = {
   priority: { factors: ["기온"], source: "보호자 설정" },
   // 어르신 1회성 잠금 상태 (undo 없음이 의도 — 핸드오프 06 §5). voicePlayed만 재클릭 가능.
   elder: { medTaken: false, cooled: false, voicePlayed: false, askAdded: false },
-  // 관제 콘솔 상태 — sos 해제는 관제(ackSos)만 가능 (핸드오프 06 §5 · 02 §4)
-  ops: { sosDispatched: false, sos119: false, fall: "open", assign: "pending" },
+  // 관제 콘솔 상태 — sos 해제는 관제(ackSos)만 가능 (핸드오프 06 §5 · 09 §10)
+  ops: { sosDispatched: false, sos119: false, assign: "pending", unmatchFixed: false },
+  // 실시간 접수 티커 = 감사 로그의 실시간 뷰 (09 §7.2). 전 화면 액션이 여기로 push
+  ticker: SEED_EVENTS.map((e, i) => ({
+    id: `seed${i}`,
+    at: Date.now() - e.minAgo * 60000,
+    kind: e.kind,
+    text: e.text,
+    color: e.color,
+  })),
   // 컨시어지 방문 수행 상태 + 감사 타임라인 (REQ-12 골격)
   visit: { checkedIn: false, kitDone: false, reportSent: false, audit: [] },
   kit: INITIAL_KIT,
@@ -58,6 +66,15 @@ function reducer(state, action) {
       return { ...state, elder: { ...state.elder, ...action.patch } };
     case "opsPatch":
       return { ...state, ops: { ...state.ops, ...action.patch } };
+    case "pushEvent":
+      // 하나의 이벤트 스트림 — 규제 대응·분쟁 조사·품질 관리가 같은 데이터를 쓴다 (09 §7.2)
+      return {
+        ...state,
+        ticker: [
+          { id: `ev${Date.now()}`, at: Date.now(), ...action.payload },
+          ...state.ticker,
+        ].slice(0, 40),
+      };
     case "ackSos":
       // SOS 해제 — 관제 전용. 급파·연계 플래그도 함께 초기화
       return {

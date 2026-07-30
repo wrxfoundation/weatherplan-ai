@@ -27,6 +27,19 @@
   }
 }
 
+/* 관제 맵 팝업 — 핸드오프 09 §4 (.kcare-popup) */
+.kcare-popup .leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 14px 30px -18px rgba(10, 31, 60, 0.65);
+  font-family: "Noto Sans KR", sans-serif;
+}
+.kcare-popup .leaflet-popup-content {
+  margin: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0a1f3c;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-sosPulse,
   .animate-livePing,

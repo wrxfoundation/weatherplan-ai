@@ -334,99 +334,157 @@ export const OBSERVATION_ITEMS = [
 // 진단성 어휘 — 입력 단계 경고 (의료법 17조 · REQ-11)
 export const DIAGNOSIS_WORDS = ["우울증", "치매", "정신질환", "자살", "조현", "진단"];
 
-// ─── 관제(dispatch) 목 데이터 — 핸드오프 02 §4 + REQ-04 ────────────────────────
+// ─── 관제(dispatch) 목 데이터 — 핸드오프 09 상세 명세 + REQ-04 ─────────────────
 // 서비스 경계(REQ-04): 기본 상품 보증 범위는 "긴급신호 접수 + 119 연계"까지.
 // 컨시어지 급파는 주간·가용 시. 야간 출동은 외주 옵션 상품(가구별 플래그).
 
+// KPI (09 §1) — SOS 값은 화면에서 상태로 계산
 export const DISPATCH_KPIS = [
-  { label: "가동 컨시어지", value: "14" },
-  { label: "진행 중 동행", value: "6" },
-  { label: "대기 배차", value: "3" },
-  { label: "SOS 초동 (오늘)", value: "41초" },
+  { k: "진행중", v: "2", color: "#0A1F3C" },
+  { k: "오늘 배차", v: "6", color: "#0A1F3C" },
+  { k: "가동률", v: "82%", color: "#1E7A5A" },
 ];
 
-// AI 자율 배차 배정안 — why(선정 근거) 없는 배정안은 렌더 금지 (핸드오프 02 §4)
+// ⚙ 오늘 배차의 단일 원본 (09 §6) — 그리드·페어보드·KPI·동선이 전부 여기서 파생.
+// s/e는 시(hour) 소수. kind가 null인 건(j2)은 화면에서 상태로 계산:
+// sosDispatched → 'sos', visit.checkedIn → 'active', 아니면 'planned'.
+export const JOBS = [
+  { id: "j1", t: "09:00", s: 9, e: 11.5, client: "오태식 (77)", job: "KMI 검진 · 수면내시경 보호자", lead: "박지현", sup: "오하늘", kind: "done", note: "동성 페어 · 검진 대행 자격 보유 · 순환 규칙 통과", state: "완료" },
+  { id: "j2", t: "13:50", s: 13.83, e: 16.17, client: "김순자 (78)", job: "서울아산 순환기내과 · 차량", lead: "박지현", sup: "서다인", kind: null, note: "동성 페어 · 단골 리드 유지 · 연속 2회차", state: "진행중" },
+  { id: "j3", t: "15:00", s: 15, e: 17, client: "이영호 (81)", job: "분당서울대 정형외과", lead: "한서연", sup: "오하늘", kind: "planned", note: "동성 페어 · 신규 조합 (유착 방지)", state: "확정" },
+  { id: "j4", t: "16:20", s: 16.33, e: 19, client: "한복자 (79)", job: "투석 동행 · 왕복", lead: "정민호", sup: null, kind: "sos", note: "부 동행 미배정 · 투석은 수습 배차 불가", state: "짝 없음" },
+  { id: "j5", t: "17:00", s: 17, e: 19, client: "박말순 (83)", job: "강동경희대 내과 · 도보", lead: "윤세라", sup: "최도현", kind: "planned", note: "동일 페어 3회 연속 — 다음 배정은 순환 필요 (4회부터 위반)", state: "순환 경고" },
+  { id: "j6", t: "18:10", s: 18.17, e: 20, client: "최정자 (75)", job: "약국 · 장보기 동행", lead: "서다인", sup: "김도윤", kind: "planned", note: "리드 연속 근무 7.6시간 · 주의 구간이나 상한 내", state: "확정" },
+];
+
+// 인력 명부 8명 (09 §6). 매출·판매 지표 필드 금지 (원칙 1)
+export const STAFF = [
+  { name: "박지현", meta: "주 동행 · 강남 · 4.9" },
+  { name: "서다인", meta: "주·부 겸용 · 강남 · 4.8" },
+  { name: "한서연", meta: "주 동행 · 서초·분당 · 5.0" },
+  { name: "오하늘", meta: "부 동행 · 수습 · 4.3" },
+  { name: "정민호", meta: "주 동행 · 강동 · 4.7" },
+  { name: "윤세라", meta: "주 동행 · 강동 · 4.8" },
+  { name: "최도현", meta: "부 동행 · 강동 · 4.6" },
+  { name: "김도윤", meta: "부 동행 · 송파 · 4.5" },
+];
+
+// AI 자율 배차 L4 (09 §3) — why(근거)는 규제 요건. 없으면 렌더 금지
 export const AI_ASSIGN = [
-  {
-    customer: "김순자 (78)",
-    time: "13:50",
-    task: "안심방문 · 케어박스 점검",
-    to: "박지현 · 서다인",
-    fit: 96,
-    why: "기존 담당 페어 · 자택 1.2km · 동성 페어 규칙 충족",
-  },
-  {
-    customer: "이영호 (81)",
-    time: "내일 09:10",
-    task: "병원동행 · 정형외과 재진",
-    to: "김도윤 · 정민재",
-    fit: 91,
-    why: "어르신 성별 동일 1명 포함 · 패스트트랙 동행 경험 8회",
-  },
-  {
-    customer: "박말순 (83)",
-    time: "15:30",
-    task: "약국 구매대행 · 생활 심부름",
-    to: "한지민 · 이서연",
-    fit: 88,
-    why: "동선 인접 (대치동 → 역삼동 2.1km) · 4회 연속 배정 제한 준수",
-  },
+  { client: "한복자 (79)", time: "7/28 09:00", job: "고대구로 재활의학과 · 휠체어", staff: "한서연 + 김도윤", score: 96, why: "주: 재활 이력 2회 · 부: 휠체어 이동 실습 필요 · 동성 페어 · 신규 조합" },
+  { client: "오태식 (77)", time: "7/28 13:00", job: "KMI 검진 · 수면내시경 보호자", staff: "정민호 + 오하늘", score: 94, why: "주: 검진 대행 자격 · 부: 당일 공백 4시간 · 순환 규칙 통과" },
+  { client: "최정자 (75)", time: "7/29 08:30", job: "세브란스 투석 · 주 3회 고정", staff: "윤세라 + 최도현", score: 91, why: "주: 투석 동행 이력 11회 · 이수민은 주 근무 상한 임박으로 후보 제외" },
 ];
 
-// SLA — SOS 초동은 "접수·연계" SLA (현장 도착 SLA 아님 — REQ-04 문서화)
-export const DISPATCH_SLA = [
-  { name: "SOS 초동 응답 (접수·연계)", target: "60초", current: "41초", pct: 68, note: "오늘 2건 · 최장 52초" },
-  { name: "배차 확정", target: "10분", current: "6분", pct: 60, note: "AI 배정안 승인 대기 1건 포함" },
-  { name: "방문 리포트 발송", target: "24시간", current: "9시간", pct: 38, note: "지연 0건" },
-  { name: "가족 문의 콜백", target: "4시간", current: "1.8시간", pct: 45, note: "야간 접수분 익일 오전 처리" },
+// SLA 관제 (09 §8.4) — SOS 초동은 "접수·연계" SLA (현장 도착 아님, REQ-04)
+export const SLA_ROWS = [
+  { k: "SOS 초동 응답 (접수·연계)", target: "60초", now: "41초", w: 68, color: "#1E7A5A", note: "오늘 2건 · 최장 52초" },
+  { k: "낙상 복합 알림 → 확인", target: "3분", now: "2분 10초", w: 72, color: "#1E7A5A", note: "단독 충격은 알림 미발송" },
+  { k: "픽업 정시율", target: "95%", now: "91%", w: 91, color: "#8A5D12", note: "지연 3건 · 전부 교통" },
+  { k: "리포트 전송 (동행 후)", target: "2시간", now: "1시간 24분", w: 70, color: "#1E7A5A", note: "AI 초안 적용 이후 단축" },
+  { k: "짝 미매칭 해소", target: "30분", now: "52분", w: 100, color: "#C0392B", note: "오늘 1건 · 목표 초과" },
 ];
 
-// 위험 관찰 목록 — 사건 C(폭염) 등. 원시 경보가 아니라 "조치"가 주어
-export const RISK_WATCH = [
-  {
-    who: "김순자 (78)",
-    why: "실내 31° + 폭염 특보 + 심부전 이력",
-    action: "냉방 확인 콜 완료 · 동행 시 보냉백 지참",
-    level: "높음",
-  },
-  {
-    who: "이영호 (81)",
-    why: "재진 전 복약 변경 이력",
-    action: "동행 시 처방전 지참 확인",
-    level: "중간",
-  },
-  {
-    who: "박말순 (83)",
-    why: "워치 6시간 무수집 (배터리 추정)",
-    action: "배터리 원인 분리 후 안부콜",
-    level: "중간",
-  },
-];
-
-// 지자체 재난 피드 — 원시 경보를 "우리가 이미 한 조치"로 해석해 노출 (핸드오프 02 §4)
-export const DISASTER_FEED = [
-  {
-    raw: "폭염 특보 발효 (강남구)",
-    done: "독거 12가구 냉방 확인 콜 완료 · 동행 6건에 보냉백 지참 지시",
-  },
-  {
-    raw: "오후 소나기 예보 (수도권)",
-    done: "15시 이후 동행 3건에 우산 · 이동 경로 미끄럼 주의 반영",
-  },
-];
-
-// 지도 마커 대체 목록 — Leaflet 연동 대기. 컨시어지/병원 팝업 정보를 카드로 표기
-export const MAP_MARKERS = {
-  concierges: [
-    { name: "박지현 · 서다인", status: "김순자 자택 방문 중", detail: "간호사 출신 · 주동행 214건 · 평점 4.9" },
-    { name: "김도윤 · 정민재", status: "역삼 거점 대기", detail: "요양보호사 · 주동행 96건 · 평점 4.7" },
-    { name: "한지민 · 이서연", status: "이동 중 (대치동)", detail: "수습 1명 포함 · 부동행 페어" },
-  ],
-  hospitals: [
-    { name: "강남세브란스", detail: "패스트트랙 대기 2일 · 예약 API 부분 연동 (3/18)" },
-    { name: "서울아산병원", detail: "패스트트랙 슬롯 운영 · 전화 예약 대행" },
+// 짝 미매칭 (09 §8.3) — 1인 배차라는 선택지가 없다. feasible:false도 이유와 함께 표시
+export const UNMATCHED = {
+  time: "16:20",
+  client: "한복자 (79)",
+  reason: "투석 동행 자격자 중 가용 부 동행 0명 · 자동 탐색 3회 · 인접 권역 2곳 확장",
+  options: [
+    { label: "송파 권역 서다인 재배치", cost: "이동 24분 · 18:10 건 재편성 필요", fg: "#8A5D12" },
+    { label: "시니어 박지현 부 동행 투입", cost: "단가 역전 · 이번 건 마진 −18,000", fg: "#8A5D12" },
+    { label: "고객 일정 조정 요청 (내일 오전)", cost: "투석은 지연 불가 — 선택지 아님", fg: "#C0392B" },
   ],
 };
+
+// 동선 체인 (09 §8.5) — 프로토타입 하드코딩. 실제 구현은 JOBS 파생 + 라우팅 API 실측
+export const ROUTE_CHAIN = [
+  { staff: "박지현 (주)", legs: ["13:50 대치동 자택", "14:30 서울아산", "16:10 대치동 복귀"], gap: "오늘 마지막 건 · 여유 정상", color: "#1E7A5A" },
+  { staff: "서다인 (부 → 주)", legs: ["13:50 대치동 · 부 동행", "16:10 동행 종료", "17:32 송파 이동 38분", "18:10 최정자 · 주 동행"], gap: "여유 1시간 22분 · 정상 (일 7.6시간 · 주의 구간)", color: "#8A5D12" },
+  { staff: "정민호 (주)", legs: ["16:20 길동 자택", "17:00 투석센터", "19:00 자택 복귀"], gap: "부 동행 미배정 — 출발 보류 중 (해소 목표 15:50)", color: "#C0392B" },
+];
+
+// 피로도 (09 §8.6) — 표시가 아니라 게이트. 90%+ 는 AI 배정 후보 자동 제외
+export const FATIGUE = [
+  { name: "서다인", hours: "7.6h", w: 76, jobs: "부 1 + 주 1건 · 권역 간 이동 포함", state: "주의", color: "#8A5D12" },
+  { name: "박지현", hours: "6.2h", w: 62, jobs: "주 동행 2건 · 이동 1.4시간", state: "정상", color: "#1E7A5A" },
+  { name: "오하늘", hours: "5.8h", w: 58, jobs: "부 동행 2건 · 수습", state: "정상", color: "#1E7A5A" },
+  { name: "이수민", hours: "9.6h", w: 96, jobs: "타 권역 지원 · 오늘 강남 배차 없음", state: "상한 임박", color: "#C0392B" },
+];
+
+// 리스크 워치 (09 §8.7) — why는 항상 "환경 × 이력" 교차. 단일 지표 판정 금지
+export const RISK_WATCH = [
+  { level: "높음", name: "김순자 (78)", why: "실내 31° + 폭염 특보 + 심부전 이력", action: "냉방 확인 콜 + 동행 시 보냉백 지참" },
+  { level: "높음", name: "박말순 (83)", why: "등급 갱신 심사 중 · 낙상 이력 2회", action: "2인 모두 부축 가능 인력으로 편성" },
+  { level: "중간", name: "이영호 (81)", why: "어제 낙상 복합 알림 · 경과 관찰", action: "동행 전 컨디션 확인 · 무리 시 취소 권한" },
+  { level: "중간", name: "최정자 (75)", why: "투석일 다음날 · 탈수 위험", action: "도보 구간 최소화 · 차량 배차 고정" },
+];
+
+// 컨디션 예보 캘린더 (09 §9.1) — jobs 건수가 점수와 역상관 (예보 기반 배차 조절의 증거)
+export const WEEK_FORECAST = [
+  { day: "일 26", score: 68, grade: "보통", note: "폭염 주의", jobs: "9건", tone: "warn" },
+  { day: "월 27", score: 74, grade: "좋음", note: "맑음", jobs: "11건", tone: "ok" },
+  { day: "화 28", score: 81, grade: "좋음", note: "구름 조금", jobs: "12건", tone: "ok" },
+  { day: "수 29", score: 58, grade: "주의", note: "소나기", jobs: "8건", tone: "warn" },
+  { day: "목 30", score: 64, grade: "보통", note: "습도 높음", jobs: "10건", tone: "warn" },
+  { day: "금 31", score: 41, grade: "위험", note: "폭염 특보", jobs: "6건", tone: "bad" },
+  { day: "토 1", score: 77, grade: "좋음", note: "맑음", jobs: "7건", tone: "ok" },
+];
+
+// 감점 내역 (09 §9.2) — 룰 엔진 L0 · 결측은 0점이 아니라 계산 제외 + 커버리지 표기
+export const SCORE_FACTORS = [
+  { name: "기온", weight: 25, basis: "33° · 폭염주의보 구간", delta: "−14", color: "#C0392B" },
+  { name: "체감온도", weight: 25, basis: "36° · 습도 68% 반영", delta: "−16", color: "#C0392B" },
+  { name: "미세먼지", weight: 20, basis: "PM10 82 · 나쁨", delta: "−12", color: "#8A5D12" },
+  { name: "자외선", weight: 20, basis: "지수 매우 높음", delta: "−16", color: "#C0392B" },
+  { name: "강수", weight: 10, basis: "강수 확률 10% · 영향 없음", delta: "0", color: "#1E7A5A" },
+];
+
+// 오늘 배차 브리핑 (09 §9.3) — 34점 건의 "일정 조정 권고"는 자동 실행 금지 (관제사 판단)
+export const BRIEFINGS = [
+  { score: 52, grade: "주의", name: "김순자 · 서울아산병원", detail: "자외선 -16 · 미세먼지 -12 · 체감 -20 · 양산·KF94·생수", legs: "출발 대치동 62 보통 → 도착 풍납동 52 주의", color: "#C0392B" },
+  { score: 84, grade: "좋음", name: "박말순 · 재택 방문", detail: "감점 요인 없음 · 준비물 없음", legs: "출발 길동 86 좋음 → 도착 길동 84 좋음", color: "#1E7A5A" },
+  { score: 34, grade: "나쁨", name: "최정자 · 세브란스 투석", detail: "미세먼지 나쁨 -24 · KF94 필수 · 일정 조정 권고 (F8-4)", legs: "출발 방배동 41 주의 → 도착 신촌동 34 나쁨", color: "#C0392B" },
+];
+
+// 컨시어지 현황 (09 §9.4) — 평점만. 매출·판매액 컬럼 금지 (원칙 1)
+export const STAFF_STATUS = [
+  { name: "박지현", area: "강남·서초", jobs: "2건", rating: "4.9", color: "#1E7A5A" },
+  { name: "이수민", area: "송파·강동", jobs: "2건", rating: "4.8", color: "#1E7A5A" },
+  { name: "정민호", area: "강남", jobs: "1건", rating: "4.7", color: "#7A5C28" },
+  { name: "한서연", area: "서초·동작", jobs: "2건", rating: "5.0", color: "#8FA9CC" },
+];
+
+// 관제 맵 실측 좌표 (09 §4) — 전부 실제 서울 좌표. 라이브러리를 바꿔도 좌표는 그대로
+export const MAP_DISTRICTS = [
+  { name: "종로구", lat: 37.5735, lng: 126.9788 },
+  { name: "마포구", lat: 37.5637, lng: 126.9084 },
+  { name: "영등포구", lat: 37.5264, lng: 126.8963 },
+  { name: "강남구", lat: 37.5172, lng: 127.0473 },
+  { name: "송파구", lat: 37.5145, lng: 127.1059 },
+  { name: "한강", lat: 37.5185, lng: 126.9976 },
+];
+export const MAP_HOSPITALS = [
+  { name: "세브란스", lat: 37.5622, lng: 126.9408 },
+  { name: "서울아산병원", lat: 37.527, lng: 127.1088 },
+  { name: "삼성서울병원", lat: 37.4881, lng: 127.0857 },
+];
+export function mapPeople(sos) {
+  return [
+    { lat: 37.4945, lng: 127.0614, label: sos ? "김순자 · SOS" : "김순자 · 대치동", color: sos ? "#FF6B5B" : "rgba(255,255,255,.5)" },
+    { lat: 37.5029, lng: 127.0567, label: "박지현 · 이동중", color: "#4ADE80" },
+    { lat: 37.4956, lng: 126.8974, label: "정민호 · 수행중", color: "#4ADE80" },
+    { lat: 37.5219, lng: 126.9895, label: "한서연 · 대기", color: "#8FA9CC" },
+  ];
+}
+
+// 실시간 접수 티커 초기값 — 이후 이벤트는 전 화면 액션이 state.events로 push
+export const SEED_EVENTS = [
+  { kind: "리포트", text: "오태식 (77) 케어 리포트 검수 확정 · 가족 앱 전달", color: "#8FA9CC", minAgo: 8 },
+  { kind: "체크인", text: "박지현 · 오태식 (77) 동행 완료 처리", color: "#4ADE80", minAgo: 21 },
+  { kind: "배차", text: "AI 배정안 3건 준비 · 승인 대기", color: "#B08D57", minAgo: 34 },
+  { kind: "보험", text: "실손 청구 접수 C-260726-118", color: "#8FA9CC", minAgo: 52 },
+];
 
 // ─── 경영(admin) 목 데이터 — 핸드오프 02 §5. 개별 사건 없음, 집계만 ─────────────
 
