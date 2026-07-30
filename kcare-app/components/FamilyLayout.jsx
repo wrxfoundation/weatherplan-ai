@@ -14,8 +14,9 @@ const TABS = [
 
 export default function FamilyLayout({ children, title }) {
   const router = useRouter();
-  const { state } = useAppState();
+  const { state, dispatch } = useAppState();
   const elderName = state.onboarding?.elderName || ELDER.name;
+  const role = state.demo.guardianRole || "primary";
 
   return (
     <div className="min-h-screen bg-nav">
@@ -26,8 +27,25 @@ export default function FamilyLayout({ children, title }) {
               <div className="font-num text-[10px] font-bold tracking-[.18em] text-gold">
                 FAMILY MEMBERSHIP
               </div>
-              <div className="mt-0.5 text-[19px] font-black leading-tight text-navy">
-                {title || `어머니 · ${elderName}`}
+              <div className="mt-0.5 flex items-center gap-2">
+                <span className="text-[19px] font-black leading-tight text-navy">
+                  {title || `어머니 · ${elderName}`}
+                </span>
+                {/* 역할 배지 — 탭하면 주/부 전환 (시연) */}
+                <button
+                  onClick={() =>
+                    dispatch({
+                      type: "demo",
+                      payload: { guardianRole: role === "primary" ? "secondary" : "primary" },
+                    })
+                  }
+                  title="시연 — 주/부 보호자 전환"
+                  className={`btn-press rounded-full px-2 py-[3px] text-[9px] font-bold ${
+                    role === "primary" ? "chip-gold" : "bg-navy/[.07] text-muted"
+                  }`}
+                >
+                  {role === "primary" ? "주 보호자" : "부 보호자"}
+                </button>
               </div>
             </div>
             {/* 성 제외 이름 — 디자인 콘솔 헤더 아바타 */}

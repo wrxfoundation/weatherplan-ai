@@ -14,6 +14,7 @@ const DOW = ["일", "월", "화", "수", "목", "금", "토"];
 
 export default function CalendarPage() {
   const { state, dispatch } = useAppState();
+  const isPrimary = (state.demo.guardianRole || "primary") === "primary";
   const today = new Date();
   const [ym, setYm] = useState({ y: today.getFullYear(), m: today.getMonth() });
   // 첫 진입 시 빈 날짜 대신 가장 가까운 일정이 있는 날을 보여준다 (홈 "다음 일정" 동선)
@@ -212,12 +213,14 @@ export default function CalendarPage() {
                       <div className="mt-1 text-[12px] leading-[1.6] text-muted">{e.note}</div>
                     )}
                   </div>
-                  <button
-                    onClick={() => setEditing(e)}
-                    className="btn-press shrink-0 rounded-lg border border-navy/15 px-2.5 py-1.5 text-[11px] font-bold text-muted"
-                  >
-                    수정
-                  </button>
+                  {isPrimary && (
+                    <button
+                      onClick={() => setEditing(e)}
+                      className="btn-press shrink-0 rounded-lg border border-navy/15 px-2.5 py-1.5 text-[11px] font-bold text-muted"
+                    >
+                      수정
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

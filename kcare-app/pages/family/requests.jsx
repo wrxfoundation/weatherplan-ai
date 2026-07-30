@@ -14,6 +14,7 @@ const fmtD = (t) =>
 
 export default function RequestsPage() {
   const { state, dispatch } = useAppState();
+  const isPrimary = (state.demo.guardianRole || "primary") === "primary";
   const [creating, setCreating] = useState(false);
   const [openId, setOpenId] = useState(null);
   const ob = state.onboarding;
@@ -53,6 +54,7 @@ export default function RequestsPage() {
             onToggle={() => setOpenId(openId === r.id ? null : r.id)}
             onboarding={ob}
             dispatch={dispatch}
+            isPrimary={isPrimary}
           />
         ))}
 
@@ -67,6 +69,7 @@ export default function RequestsPage() {
                 onToggle={() => setOpenId(openId === r.id ? null : r.id)}
                 onboarding={ob}
                 dispatch={dispatch}
+                isPrimary={isPrimary}
               />
             ))}
           </>
@@ -88,7 +91,8 @@ export default function RequestsPage() {
   );
 }
 
-function RequestCard({ req, open, onToggle, onboarding, dispatch }) {
+function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
+  const [notified, setNotified] = useState(false); // 부 보호자 → 주 보호자 승인 알림
   const st = STATUS[req.status];
   const needApproval = needsGuardianApproval(onboarding, req.amount);
 
@@ -184,34 +188,53 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch }) {
                   </>
                 )}
               </div>
-              <div className="mt-2.5 flex gap-2">
-                <GhostButton
-                  className="flex-1"
-                  onClick={() =>
+              {isPrimary ? (
+                <div className="mt-2.5 flex gap-2">
+                  <GhostButton
+                    className="flex-1"
+                    onClick={() =>
+                      dispatch({
+                        type: "transitionRequest",
+                        id: req.id,
+                        to: "needsAdmin",
+                        note: "보호자가 금액 확인을 요청함",
+                      })
+                    }
+                  >
+                    금액 문의
+                  </GhostButton>
+                  <PrimaryButton
+                    className="flex-[2]"
+                    onClick={() =>
+                      dispatch({
+                        type: "transitionRequest",
+                        id: req.id,
+                        to: "inProgress",
+                        note: `보호자 승인 · ${fmtWon(req.amount)} (결제 연동 대기 · 데모)`,
+                      })
+                    }
+                  >
+                    승인하고 결제 (데모)
+                  </PrimaryButton>
+                </div>
+              ) : (
+                // 부 보호자 — 결제 승인 권한 없음. 주 보호자 호출만
+                <button
+                  onClick={() => {
+                    if (notified) return;
+                    setNotified(true);
                     dispatch({
-                      type: "transitionRequest",
-                      id: req.id,
-                      to: "needsAdmin",
-                      note: "보호자가 금액 확인을 요청함",
-                    })
-                  }
+                      type: "pushEvent",
+                      payload: { kind: "승인", text: "부 보호자 → 주 보호자 결제 승인 요청 알림", color: "#8FA9CC" },
+                    });
+                  }}
+                  className={`btn-press mt-2.5 w-full rounded-xl border py-3 text-[13px] font-bold ${
+                    notified ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
+                  }`}
                 >
-                  금액 문의
-                </GhostButton>
-                <PrimaryButton
-                  className="flex-[2]"
-                  onClick={() =>
-                    dispatch({
-                      type: "transitionRequest",
-                      id: req.id,
-                      to: "inProgress",
-                      note: `보호자 승인 · ${fmtWon(req.amount)} (결제 연동 대기 · 데모)`,
-                    })
-                  }
-                >
-                  승인하고 결제 (데모)
-                </PrimaryButton>
-              </div>
+                  {notified ? "✓ 주 보호자(민수)에게 알림 보냄" : "결제 승인은 주 보호자 권한 — 알림 보내기"}
+                </button>
+              )}
             </div>
           )}
 

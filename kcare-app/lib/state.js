@@ -14,7 +14,8 @@ const DEFAULT = {
   events: INITIAL_EVENTS,
   requests: INITIAL_REQUESTS,
   // cart: 가족 앱(REQ-07 장바구니)에서 변경 — 어르신 화면은 읽기만 (핸드오프 06 §3.9)
-  demo: { sos: false, anomaly: "open", offline: false, cart: false },
+  // guardianRole: 주(primary)/부(secondary) 보호자 — 권한 분기 시연용. 초대 정책 문서 참조
+  demo: { sos: false, anomaly: "open", offline: false, cart: false, guardianRole: "primary" },
   // REQ-01 — 병력 기반 우선 표시는 자동 추론이 아니라 사람이 설정한다 (설정 주체 기록)
   priority: { factors: ["기온"], source: "보호자 설정", setAt: null },
   // 관찰 리포트 누적 — 본인 작성 전체 열람 · 타인 작성은 공유분만 (회의 7)

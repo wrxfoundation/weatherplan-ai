@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, PendingTag } from "../../components/ui";
-import { ELDER, OPTION_SERVICES, PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
+import { ELDER, GUARDIANS, INVITE, OPTION_SERVICES, PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 
@@ -16,11 +16,13 @@ export default function MyPage() {
   const [settingOpen, setSettingOpen] = useState(false);
   const [applied, setApplied] = useState({}); // 옵션 신청 상태 (데모)
   const [pdfRequested, setPdfRequested] = useState(false);
+  const [invited, setInvited] = useState(false);
+  const isPrimary = (state.demo.guardianRole || "primary") === "primary";
 
   const sharedReports = state.reports.filter((r) => r.shared);
 
   const applyOption = (o) => {
-    if (o.locked || applied[o.key]) return;
+    if (!isPrimary || o.locked || applied[o.key]) return; // 결제 수반 — 주 보호자 전용
     setApplied((a) => ({ ...a, [o.key]: true }));
     dispatch({
       type: "addRequest",
@@ -139,9 +141,15 @@ export default function MyPage() {
             어르신 화면의 &lsquo;지금 우리 동네&rsquo;에서 설정한 요소가 먼저 보입니다. 병력에
             맞춰 보호자·컨시어지·어르신이 직접 설정합니다 — 건강정보로 자동 추천하지 않습니다.
           </p>
-          <GhostButton className="mt-3" onClick={() => setSettingOpen(true)}>
-            우선 요소 설정
-          </GhostButton>
+          {isPrimary ? (
+            <GhostButton className="mt-3" onClick={() => setSettingOpen(true)}>
+              우선 요소 설정
+            </GhostButton>
+          ) : (
+            <p className="mt-3 rounded-xl bg-navy/[.05] px-3 py-2.5 text-[11px] font-bold text-muted/70">
+              설정 변경은 주 보호자만 할 수 있습니다
+            </p>
+          )}
         </Card>
 
         {/* 옵션 서비스 — 접수 → 결제요청 (보험은 GA 등록 전 잠금) */}
@@ -164,19 +172,75 @@ export default function MyPage() {
                 ) : (
                   <button
                     onClick={() => applyOption(o)}
-                    disabled={!!applied[o.key]}
+                    disabled={!isPrimary || !!applied[o.key]}
                     className={`btn-press mt-2 rounded-lg border px-3.5 py-2 text-[12px] font-bold ${
                       applied[o.key]
                         ? "border-green/30 bg-green/10 text-green"
-                        : "border-navy/20 text-navy"
+                        : isPrimary
+                        ? "border-navy/20 text-navy"
+                        : "border-navy/10 text-muted/50"
                     }`}
                   >
-                    {applied[o.key] ? "접수됨 · 해주세요에서 확인" : "신청 (접수 → 결제요청)"}
+                    {applied[o.key]
+                      ? "접수됨 · 해주세요에서 확인"
+                      : isPrimary
+                      ? "신청 (접수 → 결제요청)"
+                      : "주 보호자만 신청할 수 있습니다"}
                   </button>
                 )}
               </div>
             ))}
           </div>
+        </Card>
+
+        {/* 가족 구성원 · 초대 — 주 보호자가 초대 링크 발급, 부 보호자는 조회만 */}
+        <Card className="p-[18px]">
+          <div className="flex items-center justify-between">
+            <SectionLabel>가족 구성원</SectionLabel>
+            <span className="text-[11px] text-muted">{GUARDIANS.length} / 5명</span>
+          </div>
+          <div className="mt-3 space-y-2.5">
+            {GUARDIANS.map((g) => (
+              <div key={g.name} className="flex items-center gap-2.5 text-[13px]">
+                <span className="flex-1 font-bold text-ink">{g.name}</span>
+                <span className="text-[11px] text-muted">{g.relation.split(" · ")[0]}</span>
+                <Badge
+                  fg={g.isPrimary ? "#7A5C28" : "#5C5A54"}
+                  bg={g.isPrimary ? "rgba(176,141,87,.16)" : "rgba(92,90,84,.1)"}
+                >
+                  {g.isPrimary ? "주 보호자" : "부 보호자"}
+                </Badge>
+              </div>
+            ))}
+          </div>
+          {isPrimary ? (
+            <>
+              <button
+                onClick={() => {
+                  if (invited) return;
+                  setInvited(true);
+                  dispatch({
+                    type: "pushEvent",
+                    payload: { kind: "초대", text: "부 보호자 초대 링크 발급 (7일 · 1회용)", color: "#8FA9CC" },
+                  });
+                }}
+                className={`btn-press mt-3.5 w-full rounded-xl border py-3 text-[13px] font-bold ${
+                  invited ? "border-green/30 bg-green/10 text-green" : "border-navy bg-navy text-white"
+                }`}
+              >
+                {invited ? `✓ 초대 링크 생성됨 — ${INVITE.link}` : "부 보호자 초대 링크 만들기"}
+              </button>
+              <p className="mt-2 text-[10px] leading-[1.6] text-muted">
+                {INVITE.rule}. 참여자는 이름·관계·연락처만 입력하면 됩니다 — 결제수단은 필요
+                없습니다. 구성원 제거는 주 보호자만 할 수 있습니다.
+              </p>
+            </>
+          ) : (
+            <p className="mt-3.5 rounded-xl bg-navy/[.05] px-3 py-2.5 text-[11px] leading-[1.6] text-muted">
+              초대·구성원 관리는 주 보호자만 할 수 있습니다. 상태·리포트·일정은 모든 보호자에게
+              동일하게 공유됩니다.
+            </p>
+          )}
         </Card>
 
         {/* 멤버십 요약 */}
