@@ -1,16 +1,12 @@
-# Korea Rising — verified K-pop snapshot (2026-07-29)
+# Korea Rising — verified K-pop snapshot (2026-07-30)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🏆 Circle Digital Chart — current #1
 **Rescene** — Love Attack  
-_Circle Digital Chart #1 (via Wikipedia) 2026-07-29 04:09 UTC · Skill Score 0.70_
+_Circle Digital Chart #1 (via Wikipedia) 2026-07-30 04:07 UTC · Skill Score 0.70_
 
-## 🎬 Latest official releases (YouTube)
-- **IVE** — 🗂️ I-VIEW ㄴ LEESEO in NEWARK #IVE #아이브 #LEESEO #이서 #SHOW_WHAT_I_AM #Shorts
-- **BTS** — BTS (방탄소년단) 'NORMAL (Korean Ver.)' Visualizer for ARMY
-
-## 🎤 Verified roster (639 acts)
+## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
 - **ADOR**: NewJeans
 - **Abyss Company**: Sunmi
@@ -73,7 +69,7 @@ _Circle Digital Chart #1 (via Wikipedia) 2026-07-29 04:09 UTC · Skill Score 0.7
 - **JTBC**: Itaewon Class, King the Land, Knowing Bros
 - **JYP Entertainment**: Itzy, Nmixx, Stray Kids, Twice, Xdinary Heroes
 - **Jamsil-dong**: Jamsil Baseball Stadium
-- **Jeju Province**: Hallasan, Hallasan National Park, Jeju International Airport, Seongsan Ilchulbong
+- **Jeju Province**: Hallasan, Hallasan National Park, Hyeopjae Beach, Jeju International Airport, Seongsan Ilchulbong
 - **Jeongseon County**: High1 Resort
 - **Jeonju**: Jeonju Hanok Village, Jeonju International Film Festival, Jeonju World Cup Stadium
 - **Jinbu-myeon**: Woljeongsa
