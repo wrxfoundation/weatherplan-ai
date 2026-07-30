@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, Badge, PendingTag, Avatar } from "../../components/ui";
-import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_KINDS, GUARDIANS, NPS_REASONS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
+import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_KINDS, FEED_TONE, GUARDIANS, NEIGHBORHOOD_FEED, NPS_REASONS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
 
 import { useAppState } from "../../lib/state";
 
@@ -344,6 +344,16 @@ export default function FamilyHome() {
           </div>
         </Card>
 
+        {/* 우리 동네 소식 — 동·구 단위 재난·안전·정책·바우처 (디자인 콘솔 복원) */}
+        <NeighborhoodFeed
+          onApply={(item) =>
+            dispatch({
+              type: "pushEvent",
+              payload: { kind: "정책", text: `${item.title} — 신청 대행 요청 접수`, color: "#F0D9A8" },
+            })
+          }
+        />
+
         {/* 담당 컨시어지 · 2인 1조 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}
         <div className="card-navy rounded-card bg-navy p-[18px] text-white">
           <div className="flex items-center justify-between">
@@ -645,6 +655,54 @@ function NpsCard({ onEvent, onDetractor }) {
           제출
         </button>
       )}
+    </Card>
+  );
+}
+
+// 우리 동네 소식 — 대치동 · 강남구. 재난/안전은 정보, 바우처는 신청 대행까지 (해주세요 연계)
+function NeighborhoodFeed({ onApply }) {
+  const [applied, setApplied] = useState({});
+  return (
+    <Card className="p-[18px]">
+      <div className="flex items-baseline justify-between">
+        <div className="text-[17px] font-black text-navy">우리 동네 소식</div>
+        <span className="text-[12px] text-muted">대치동 · 강남구</span>
+      </div>
+      <div className="mt-3 space-y-3">
+        {NEIGHBORHOOD_FEED.map((n) => (
+          <div key={n.id} className="border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
+            <div className="flex items-center gap-2">
+              <span
+                className="rounded-full px-2 py-0.5 text-[11px] font-bold"
+                style={{ color: FEED_TONE[n.tone].fg, background: FEED_TONE[n.tone].bg }}
+              >
+                {n.kind}
+              </span>
+              <span className="text-[14px] font-bold leading-[1.4] text-navy">{n.title}</span>
+              <span className="ml-auto shrink-0 font-num text-[11px] text-muted">{n.at}</span>
+            </div>
+            <p className="mt-1 text-[13px] leading-[1.65] text-muted">{n.body}</p>
+            {n.action && (
+              <button
+                onClick={() => {
+                  if (applied[n.id]) return;
+                  setApplied((v) => ({ ...v, [n.id]: true }));
+                  onApply(n);
+                }}
+                disabled={!!applied[n.id]}
+                className={`btn-press mt-2 rounded-xl border px-3.5 py-2 text-[13px] font-bold ${
+                  applied[n.id] ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
+                }`}
+              >
+                {applied[n.id] ? "요청됨 — 컨시어지가 서류까지 대행합니다" : n.action}
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+        행정안전부 재난문자 · 구청 복지 공고 기준 — 어머니에게 해당하는 것만 골라 알려드립니다.
+      </p>
     </Card>
   );
 }

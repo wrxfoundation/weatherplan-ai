@@ -1,0 +1,83 @@
+// 라인 SVG 아이콘 — stroke: currentColor · 1.8px · 24 viewBox (유니코드 글리프 대체)
+const PATHS = {
+  home: (
+    <>
+      <path d="M3 11.2 12 3.5l9 7.7" />
+      <path d="M5.5 9.8V20h13V9.8" />
+    </>
+  ),
+  calendar: (
+    <>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+      <path d="M3.5 9.5h17M8.5 3v4M15.5 3v4" />
+    </>
+  ),
+  plus: <path d="M12 5.5v13M5.5 12h13" />,
+  bag: (
+    <>
+      <path d="M6.2 8.2h11.6l1.1 11.3H5.1L6.2 8.2Z" />
+      <path d="M9 8a3 3 0 0 1 6 0" />
+    </>
+  ),
+  user: (
+    <>
+      <circle cx="12" cy="8.2" r="3.4" />
+      <path d="M5 20a7 7 0 0 1 14 0" />
+    </>
+  ),
+  users: (
+    <>
+      <circle cx="9" cy="8.8" r="3" />
+      <path d="M3.5 19.5a5.5 5.5 0 0 1 11 0" />
+      <circle cx="17" cy="9.8" r="2.4" />
+      <path d="M15.6 19.5a4.6 4.6 0 0 1 5.4-4.3" />
+    </>
+  ),
+  heart: <path d="M12 19.8S4.8 15.4 3.3 11a4.7 4.7 0 0 1 8.7-3 4.7 4.7 0 0 1 8.7 3c-1.5 4.4-8.7 8.8-8.7 8.8Z" />,
+  doc: (
+    <>
+      <path d="M7 3.5h7l4 4V20.5H7V3.5Z" />
+      <path d="M14 3.5v4.5h4M9.5 12.5h5M9.5 16h5" />
+    </>
+  ),
+  diamond: <path d="M12 3.5 19.5 12 12 20.5 4.5 12 12 3.5Z" />,
+  coin: (
+    <>
+      <circle cx="12" cy="12" r="8.3" />
+      <path d="M8.7 9.3 10.3 15l1.7-4.6 1.7 4.6 1.6-5.7M8.3 12.4h7.4" />
+    </>
+  ),
+  speaker: (
+    <>
+      <path d="M4 10v4h3.2l5 4V6l-5 4H4Z" />
+      <path d="M15.6 9.3a4 4 0 0 1 0 5.4M18 7.2a7 7 0 0 1 0 9.6" />
+    </>
+  ),
+  megaphone: (
+    <>
+      <path d="M4 10.5v3l11.5 4.5v-12L4 10.5Z" />
+      <path d="M18.5 9.5a3.5 3.5 0 0 1 0 5M6.5 14.2 8 19.5" />
+    </>
+  ),
+};
+
+export default function Icon({ name, size = 18, strokeWidth = 1.8, className = "" }) {
+  const d = PATHS[name];
+  if (!d) return null;
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      {d}
+    </svg>
+  );
+}

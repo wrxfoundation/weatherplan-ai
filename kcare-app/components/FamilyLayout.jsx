@@ -1,15 +1,16 @@
 import Link from "next/link";
+import Icon from "./icons";
 import { useRouter } from "next/router";
 import { Avatar } from "./ui";
 import { ELDER } from "../lib/mock";
 import { useAppState } from "../lib/state";
 
 const TABS = [
-  { href: "/family", label: "홈", icon: "⌂" },
-  { href: "/family/calendar", label: "예약", icon: "▦" },
-  { href: "/family/requests", label: "해주세요", icon: "✚" },
-  { href: "/family/store", label: "스토어", icon: "◇" },
-  { href: "/family/my", label: "마이", icon: "☺" },
+  { href: "/family", label: "홈", icon: "home" },
+  { href: "/family/calendar", label: "예약", icon: "calendar" },
+  { href: "/family/requests", label: "해주세요", icon: "plus" },
+  { href: "/family/store", label: "스토어", icon: "bag" },
+  { href: "/family/my", label: "마이", icon: "user" },
 ];
 
 export default function FamilyLayout({ children, title }) {
@@ -72,7 +73,7 @@ export default function FamilyLayout({ children, title }) {
                     active ? "text-navy" : t.soon ? "text-muted/40" : "text-muted"
                   }`}
                 >
-                  <span className="text-[18px] leading-none">{t.icon}</span>
+                  <Icon name={t.icon} size={19} />
                   <span>
                     {t.label}
                     {t.soon && <span className="ml-0.5 text-[10px] text-gold">예정</span>}

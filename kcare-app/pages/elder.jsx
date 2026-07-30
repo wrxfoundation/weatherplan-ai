@@ -17,6 +17,7 @@ import {
 } from "../lib/mock";
 import { fmtWon } from "../lib/config";
 import { needsGuardianApproval, useAppState } from "../lib/state";
+import Icon from "../components/icons";
 
 // 사용자(어르신) 홈 — 핸드오프 06 elder 상세 명세 + REQ-01(우선 날씨) + REQ-06(SOS 오작동 방지)
 // 구조: 헤더(날짜·인사)·푸터(SOS·전화·탭) 고정, 카드 스택만 스크롤 (06 §1).
@@ -46,9 +47,9 @@ const SUB_CARD = {
 };
 
 const TABS = [
-  { key: "today", label: "오늘", glyph: "⌂" },
-  { key: "health", label: "건강", glyph: "♡" },
-  { key: "family", label: "가족", glyph: "☺" },
+  { key: "today", label: "오늘", glyph: "home" },
+  { key: "health", label: "건강", glyph: "heart" },
+  { key: "family", label: "가족", glyph: "users" },
 ];
 
 // "김순자" → "순자" — 성 포함 호칭 금지 (06 §1 헤더 카피)
@@ -305,13 +306,14 @@ export default function ElderHome() {
                 <button
                   onClick={() => speakNext(next)}
                   aria-label="오늘 일정을 소리로 들려드립니다"
-                  className="btn-elder mt-4 w-full rounded-2xl py-[18px] text-[22px] font-bold text-white"
+                  className="btn-elder mt-4 flex w-full items-center justify-center gap-2.5 rounded-2xl py-[18px] text-[22px] font-bold text-white"
                   style={{
-                    background: "rgba(255,255,255,.14)",
-                    boxShadow: "inset 0 1px 0 rgba(255,255,255,.25)",
+                    background: "#1B7F79",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,.28), 0 10px 22px -14px rgba(27,127,121,.7)",
                   }}
                 >
-                  {speaking ? "그만 듣기" : "🔊 소리로 듣기"}
+                  <Icon name="speaker" size={26} strokeWidth={2} />
+                  {speaking ? "그만 듣기" : "소리로 듣기"}
                 </button>
               </ElderCard>
             )}
@@ -821,8 +823,8 @@ export default function ElderHome() {
                     onClick={() => setTab(t.key)}
                     className="flex min-h-[60px] flex-1 flex-col items-center justify-center gap-1"
                   >
-                    <span aria-hidden className="text-[20px] leading-none" style={{ color }}>
-                      {t.glyph}
+                    <span aria-hidden style={{ color }}>
+                      <Icon name={t.glyph} size={24} strokeWidth={2} />
                     </span>
                     <span className="text-[16px] font-bold" style={{ color }}>
                       {t.label}

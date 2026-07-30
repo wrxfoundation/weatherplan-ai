@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useMemo, useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../components/ui";
+import Icon from "../components/icons";
 import {
   AI_BRIEFING,
   AI_REPORT,
@@ -33,10 +34,10 @@ import { useAppState } from "../lib/state";
 // · 의료 측정값 입력 없음 · 소견/진단 기재 금지 · 1인 진입 금지(2인 체크인) · 제안은 근거 동반.
 
 const TABS = [
-  { key: "today", label: "오늘", icon: "⌂" },
-  { key: "report", label: "리포트", icon: "▤" },
-  { key: "suggest", label: "제안", icon: "◇" },
-  { key: "pay", label: "정산", icon: "₩" },
+  { key: "today", label: "오늘", icon: "home" },
+  { key: "report", label: "리포트", icon: "doc" },
+  { key: "suggest", label: "제안", icon: "diamond" },
+  { key: "pay", label: "정산", icon: "coin" },
 ];
 
 export default function ConciergePage() {
@@ -205,7 +206,7 @@ export default function ConciergePage() {
                         {pairCalled ? "호출됨" : "짝 호출"}
                       </button>
                     </div>
-                    <div className="mt-3 space-y-2 border-t border-white/12 pt-3">
+                    <div className="mt-3 space-y-2 border-t border-white/[.06] pt-3">
                       {PAIR_TODAY.duties.map((d) => (
                         <div key={d.who} className="flex gap-2.5 text-[13px]">
                           <span className="w-[52px] shrink-0 font-bold text-gold-soft">{d.who}</span>
@@ -214,7 +215,7 @@ export default function ConciergePage() {
                       ))}
                     </div>
                     {/* 1인 진입 금지 — 원칙의 실행 카피 */}
-                    <p className="mt-3 border-t border-white/12 pt-2.5 text-[12px] leading-[1.7] text-white/60">
+                    <p className="mt-3 border-t border-white/[.06] pt-2.5 text-[12px] leading-[1.7] text-white/60">
                       {PAIR_TODAY.rule}
                     </p>
                   </div>
@@ -947,7 +948,14 @@ export default function ConciergePage() {
                 </div>
 
                 {/* 주간 확정 수익 — 네이비 카드 */}
-                <div className="card-navy rounded-card bg-navy p-[18px] text-white">
+                <div
+                  className="card-navy rounded-card bg-navy p-[18px] text-white"
+                  style={{
+                    backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0))",
+                    boxShadow:
+                      "inset 0 1px 0 rgba(255,255,255,.16), inset 0 0 0 1px rgba(255,255,255,.05), 0 18px 36px -24px rgba(10,31,60,.8)",
+                  }}
+                >
                   <div className="text-[12px] font-bold tracking-[.1em] text-gold-soft">
                     이번 주 확정 수익
                   </div>
@@ -958,7 +966,7 @@ export default function ConciergePage() {
                     <span className="text-[15px] text-white/70">원</span>
                   </div>
                   <div className="mt-1.5 text-[12px] text-white/60">{EARNINGS.delta}</div>
-                  <div className="mt-4 space-y-2.5 border-t border-white/12 pt-3.5">
+                  <div className="mt-4 space-y-2.5 border-t border-white/[.06] pt-3.5">
                     {EARNINGS.breakdown.map((b) => (
                       <div key={b.name} className="flex items-baseline gap-2 text-[15px]">
                         <span className="font-bold">{b.name}</span>
@@ -976,7 +984,7 @@ export default function ConciergePage() {
                     <br />
                     {EARNINGS.principleNote}
                   </p>
-                  <div className="mt-3.5 grid grid-cols-3 gap-2 border-t border-white/12 pt-3">
+                  <div className="mt-3.5 grid grid-cols-3 gap-2 border-t border-white/[.06] pt-3">
                     {EARNINGS.stats.map(([k, val]) => (
                       <div key={k}>
                         <div className="text-[11px] text-white/50">{k}</div>
@@ -1132,7 +1140,7 @@ export default function ConciergePage() {
                       active ? "text-navy" : "text-muted"
                     }`}
                   >
-                    <span className="text-[18px] leading-none">{t.icon}</span>
+                    <Icon name={t.icon} size={19} />
                     <span>{t.label}</span>
                     {active && <span className="mt-0.5 h-[3px] w-5 rounded-full bg-gold" />}
                   </button>
