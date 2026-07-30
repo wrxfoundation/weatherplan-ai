@@ -60,6 +60,14 @@ export default function Onboarding() {
         joinedAt: Date.now(),
       },
     });
+    dispatch({
+      type: "pushEvent",
+      payload: {
+        kind: "가입",
+        text: `신규 가입 접수 — ${form.elderName || "김순자"}님 가구 (${form.district} · ${form.rel})`,
+        color: "#8FE3C0",
+      },
+    });
     setStep(4);
   };
 
@@ -493,6 +501,32 @@ export default function Onboarding() {
                 <br />
                 접수되었습니다
               </h1>
+              {/* 가입 요약 — 입력한 그대로 확인 (신뢰: 데이터는 가족의 것) */}
+              <Card className="p-5">
+                <SectionLabel>가입 정보 요약</SectionLabel>
+                <div className="mt-3 space-y-2 text-[14px]">
+                  {[
+                    ["어르신", `${form.elderName || "김순자"}님 · ${form.district}`],
+                    ["보호자", `${form.rel === "기타" ? form.relDetail || "기타" : form.rel} · ${form.phone || "연락처 미입력"}`],
+                    ["서비스 지역", `${result?.tier === 2 ? "2급지 (별도 산정)" : "1급지"}`],
+                    [
+                      "결제권한",
+                      { limit: `${(form.limitAmount ?? 50000).toLocaleString()}원 이하 어르신 직접`, both: "양쪽 모두", guardianOnly: "보호자만", elderOnly: "어르신만" }[form.paymentMode] || "한도형",
+                    ],
+                    ["방문기록 영상", form.videoConsent ? "동의" : "미동의 (언제든 변경 가능)"],
+                  ].map(([k, v]) => (
+                    <div key={k} className="flex justify-between gap-3 border-b border-navy/[.07] pb-2 last:border-b-0">
+                      <span className="text-muted">{k}</span>
+                      <span className="text-right font-bold text-ink">{v}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 text-[12px] leading-[1.7] text-muted">
+                  잘못 입력하셨나요? 가입 정보는 마이 탭에서 언제든 수정할 수 있고, 상담 콜에서 함께
+                  확인합니다.
+                </p>
+              </Card>
+
               <Card className="p-5">
                 <SectionLabel>다음 단계</SectionLabel>
                 <ol className="mt-3 space-y-4">
@@ -513,6 +547,16 @@ export default function Onboarding() {
                   ))}
                 </ol>
               </Card>
+              {/* 부보호자 초대 — 가입 정책 연결 (주 보호자 → 초대 링크) */}
+              <Card className="p-5">
+                <SectionLabel>가족과 함께 보세요</SectionLabel>
+                <p className="mt-2 text-[14px] leading-[1.7] text-ink">
+                  지금 가입하신 분이 <b>주 보호자</b>입니다. 형제자매 등 부보호자는 마이 탭의{" "}
+                  <b>초대 링크</b>로 참여할 수 있어요 — 리포트는 함께 보고, 결제 승인은 주 보호자만
+                  합니다.
+                </p>
+              </Card>
+
               <PrimaryButton onClick={() => router.push("/family")}>
                 가족 앱으로 이동
               </PrimaryButton>
