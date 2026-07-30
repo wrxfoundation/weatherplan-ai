@@ -1357,3 +1357,78 @@ export const WELFARE_METRICS = [
   { k: "상해보험 가입", v: "100%", note: "전원 자동 · 청구 이력 1건" },
   { k: "혹서 수당 지급", v: "31건", note: "7월 폭염특보 일수 기준" },
 ];
+
+// ════ 날씨 관제 (관제 GNB '날씨') — 기상 데이터는 케이웨더 단일 출처 ════
+// 수치는 SCORE_FACTORS(체감 36°·PM10 82·자외선 매우 높음)·WEEK_FORECAST(목 30 습도 높음 · 금 31 폭염 특보)와 동기.
+export const WEATHER_NOW = {
+  temp: "33.4°",
+  feels: "36.1°",
+  sky: "구름 조금",
+  humid: "68%",
+  wind: "남서 2.8m/s",
+  uv: "매우 높음",
+  alert: {
+    name: "폭염주의보",
+    since: "오늘 10:00 발효 · 서울 전역",
+    guide: "체감 35° 이상 — 12~17시 어르신 외출 동행 최소화 · 차량 대기 냉방 유지",
+  },
+  updated: "5분 전 갱신",
+};
+export const WEATHER_AIR = [
+  { k: "미세먼지 PM10", v: "82", grade: "나쁨", tone: "bad" },
+  { k: "초미세먼지 PM2.5", v: "41", grade: "나쁨", tone: "bad" },
+  { k: "오존", v: "0.092", grade: "주의", tone: "warn" },
+  { k: "통합 대기", v: "—", grade: "나쁨", tone: "bad" },
+];
+export const WEATHER_HOURLY = [
+  { t: "14시", temp: "33°", feels: "36°", pop: "10%", note: "폭염 피크" },
+  { t: "15시", temp: "34°", feels: "36°", pop: "10%", note: "자외선 최고" },
+  { t: "16시", temp: "33°", feels: "35°", pop: "10%", note: "" },
+  { t: "17시", temp: "32°", feels: "34°", pop: "20%", note: "" },
+  { t: "18시", temp: "30°", feels: "32°", pop: "20%", note: "동행 권장대" },
+  { t: "19시", temp: "29°", feels: "30°", pop: "30%", note: "" },
+];
+// 권역별 — 이름은 MAP_DISTRICTS와 일치해야 지도에 얹힌다 (한강 제외)
+export const WEATHER_DISTRICTS = [
+  // dir: 지도 라벨 방향 — 인접 권역(마포↔종로 · 강남↔송파)이 겹치지 않게 분산
+  { name: "종로구", temp: "32.8°", pm: "보통 64", tone: "warn", dir: "top" },
+  { name: "마포구", temp: "32.5°", pm: "보통 58", tone: "warn", dir: "left" },
+  { name: "영등포구", temp: "33.1°", pm: "나쁨 78", tone: "bad", dir: "left" },
+  { name: "강남구", temp: "33.4°", pm: "나쁨 82", tone: "bad", dir: "bottom" },
+  { name: "송파구", temp: "33.9°", pm: "나쁨 85", tone: "bad", dir: "right" },
+];
+// 이슈는 곧 케어 판단 재료 — 각 이슈에 관제 액션을 붙인다 (자동 실행 금지 · 관제사 판단)
+export const WEATHER_ISSUES = [
+  {
+    level: "특보",
+    tone: "bad",
+    title: "폭염주의보 발효 — 서울 전역",
+    time: "10:00 발효 · 내일(금) 폭염경보 격상 가능",
+    care: "위험 높음 2가구 냉방 확인 콜 · 12~17시 동행은 차량 대기 최소화 · 혹서 수당 자동 적용",
+    cta: "발송 센터에서 폭염 안내 발송",
+  },
+  {
+    level: "주의",
+    tone: "warn",
+    title: "미세먼지 나쁨 — 강남 · 송파 PM10 80+",
+    time: "오후 내 지속 전망",
+    care: "호흡기 이력 가구 KF94 준비물 자동 반영 · 병원 정문 하차 동선으로 노출 최소화",
+    cta: null,
+  },
+  {
+    level: "주의",
+    tone: "warn",
+    title: "오존 · 자외선 동반 상승 — 14~17시",
+    time: "자외선 지수 매우 높음",
+    care: "장시간 야외 대기 금지 · 양산 · 생수 준비물 반영 (F8-4 일정 조정 권고 유지)",
+    cta: null,
+  },
+  {
+    level: "예보",
+    tone: "info",
+    title: "금 31 폭염 특보 지속 · 토 1 맑음 회복",
+    time: "케이웨더 주간 전망",
+    care: "금요일 배차 6건으로 이미 축소 편성 — 연기 가능 일정은 토요일로 이동 권고",
+    cta: null,
+  },
+];

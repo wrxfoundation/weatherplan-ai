@@ -28,6 +28,11 @@ import {
   STAFF_STATUS,
   UNMATCHED,
   WEEK_FORECAST,
+  WEATHER_NOW,
+  WEATHER_AIR,
+  WEATHER_HOURLY,
+  WEATHER_DISTRICTS,
+  WEATHER_ISSUES,
   mapPeople,
 } from "../lib/mock";
 import { useAppState } from "../lib/state";
@@ -207,6 +212,83 @@ function ControlMap({ sos, mode = "light", onSelect }) {
   );
 }
 
+// 날씨 지도 — 관제 맵과 같은 Leaflet · 권역 마커에 기온·미세먼지를 상시 라벨로 표시.
+// 데이터 출처는 케이웨더 단일 (WEATHER_DISTRICTS ↔ MAP_DISTRICTS 이름 매칭).
+const WEATHER_TONE = {
+  bad: "#C0392B",
+  warn: "#8A5D12",
+  info: "#0A1F3C",
+  ok: "#1E7A5A",
+};
+
+function WeatherMap() {
+  const nodeRef = useRef(null);
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    import("leaflet").then((mod) => {
+      const L = mod.default || mod;
+      if (cancelled || !nodeRef.current) return;
+      const map = L.map(nodeRef.current, {
+        zoomControl: true,
+        attributionControl: true,
+        scrollWheelZoom: false,
+      });
+      mapRef.current = map;
+      const tile = MAP_TILES.light;
+      L.tileLayer(tile.url, { subdomains: tile.subdomains, maxZoom: 19, attribution: tile.attribution }).addTo(map);
+
+      const pts = [];
+      WEATHER_DISTRICTS.forEach((w) => {
+        const d = MAP_DISTRICTS.find((x) => x.name === w.name);
+        if (!d) return;
+        pts.push([d.lat, d.lng]);
+        const color = WEATHER_TONE[w.tone] || WEATHER_TONE.info;
+        // 상시 라벨은 기온만 — 5개 권역이 가까워 긴 라벨은 어느 방향이든 충돌한다.
+        // 미세먼지 등 상세는 클릭 팝업 + 지도 아래 권역 칩에서 확인.
+        L.circleMarker([d.lat, d.lng], {
+          radius: 11,
+          color,
+          weight: 2,
+          fillColor: color,
+          fillOpacity: 0.35,
+        })
+          .addTo(map)
+          .bindPopup(`${w.name} ${w.temp} · 미세먼지 ${w.pm}`, { className: "kcare-popup" })
+          .bindTooltip(w.temp, {
+            permanent: true,
+            direction: w.dir || "top",
+            offset: { top: [0, -12], bottom: [0, 12], left: [-12, 0], right: [12, 0] }[w.dir] || [0, -12],
+            className: "kcare-wx-label",
+          });
+      });
+      // 좌우 여백 — 좌/우 방향 상시 라벨이 화면 밖으로 잘리지 않을 만큼만
+      map.fitBounds(L.latLngBounds(pts), { padding: [64, 36] });
+    });
+
+    const onResize = () => mapRef.current && mapRef.current.invalidateSize();
+    window.addEventListener("resize", onResize);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("resize", onResize);
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, []);
+
+  return (
+    <div className="relative">
+      <div ref={nodeRef} className="h-[300px] overflow-hidden rounded-[10px]" style={{ background: MAP_TILES.light.bg }} />
+      <div className="pointer-events-none absolute bottom-2 left-2 z-[1000] rounded-md bg-black/45 px-2 py-1 text-[10px] font-bold tracking-[.08em] text-white/80">
+        기상 데이터 — 케이웨더 · 5분 갱신
+      </div>
+    </div>
+  );
+}
+
 export default function DispatchConsole() {
   const { state, dispatch } = useAppState();
   const { sos } = state.demo;
@@ -223,7 +305,7 @@ export default function DispatchConsole() {
   const router = useRouter();
   useEffect(() => {
     const m = router.query.menu;
-    if (typeof m === "string" && ["dash", "elder", "guardian", "concierge", "hospital", "comms"].includes(m)) {
+    if (typeof m === "string" && ["dash", "elder", "guardian", "concierge", "hospital", "weather", "comms"].includes(m)) {
       setMenu(m);
     }
   }, [router.query.menu]);
@@ -524,6 +606,7 @@ export default function DispatchConsole() {
               ["guardian", "보호자", guardians.length],
               ["concierge", "컨시어지", concierges.length],
               ["hospital", "병원", MOU_HOSPITALS.length],
+              ["weather", "날씨", null],
               ["comms", "커뮤니케이션", null],
             ].map(([k, label, n]) => (
               <button
@@ -1722,6 +1805,138 @@ export default function DispatchConsole() {
                 onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
               />
             </Panel>
+          )}
+
+          {/* ════ 날씨 — 현재 기상 · 대기질 · 권역 지도 · 이슈 → 케어 연계 (출처: 케이웨더) ════ */}
+          {menu === "weather" && (
+            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <Panel className="min-w-0">
+                <PanelHead title="현재 기상 — 강남지점 권역" right={`케이웨더 · ${WEATHER_NOW.updated}`} />
+                {/* 특보 배너 — 빨강은 위험 신호 전용 원칙과 일치 */}
+                <div className="mt-3 rounded-xl border border-danger/25 bg-danger/[.07] px-4 py-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-danger px-2.5 py-0.5 text-[11px] font-bold text-white">
+                      {WEATHER_NOW.alert.name}
+                    </span>
+                    <span className="text-[12px] font-bold text-danger">{WEATHER_NOW.alert.since}</span>
+                  </div>
+                  <p className="mt-1.5 text-[12px] leading-[1.6] text-navy">{WEATHER_NOW.alert.guide}</p>
+                </div>
+                {/* 현재값 */}
+                <div className="mt-3 flex items-end gap-4">
+                  <div>
+                    <div className="font-num text-[44px] font-bold leading-none text-navy">{WEATHER_NOW.temp}</div>
+                    <div className="mt-1 text-[12px] font-bold text-danger">체감 {WEATHER_NOW.feels}</div>
+                  </div>
+                  <div className="grid flex-1 grid-cols-2 gap-1.5">
+                    {[["하늘", WEATHER_NOW.sky], ["습도", WEATHER_NOW.humid], ["바람", WEATHER_NOW.wind], ["자외선", WEATHER_NOW.uv]].map(
+                      ([k, v]) => (
+                        <div key={k} className="rounded-lg bg-navy/[.04] px-2.5 py-1.5">
+                          <span className="text-[11px] font-bold text-muted">{k}</span>{" "}
+                          <span className="text-[12px] font-bold text-navy">{v}</span>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+                {/* 대기질 */}
+                <div className="mt-3 grid grid-cols-4 gap-1.5">
+                  {WEATHER_AIR.map((a) => (
+                    <div key={a.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-2 py-2 text-center">
+                      <div className="text-[10px] font-bold leading-[1.4] text-muted">{a.k}</div>
+                      <div className="font-num text-[16px] font-bold text-navy">{a.v}</div>
+                      <div className="text-[11px] font-bold" style={{ color: WEATHER_TONE[a.tone] }}>
+                        {a.grade}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* 시간별 */}
+                <div className="mt-3 grid grid-cols-6 gap-1">
+                  {WEATHER_HOURLY.map((h) => (
+                    <div key={h.t} className="rounded-lg bg-navy/[.03] px-1 py-1.5 text-center" title={h.note || undefined}>
+                      <div className="text-[10px] font-bold text-muted">{h.t}</div>
+                      <div className="font-num text-[13px] font-bold text-navy">{h.temp}</div>
+                      <div className="text-[10px] text-muted">체감 {h.feels}</div>
+                      {h.note && <div className="mt-0.5 text-[9px] font-bold text-amber">{h.note}</div>}
+                    </div>
+                  ))}
+                </div>
+                {/* 주간 스트립 — 대시보드 컨디션 예보와 동일 데이터 */}
+                <div className="mt-3 border-t border-navy/[.08] pt-2.5">
+                  <div className="mb-1.5 text-[11px] font-bold text-muted">주간 외출지수 — 예보 기반 배차 조절 (대시보드와 동일)</div>
+                  <div className="grid grid-cols-7 gap-1">
+                    {WEEK_FORECAST.map((f) => (
+                      <div key={f.day} className="rounded-lg bg-navy/[.03] px-1 py-1.5 text-center">
+                        <div className="text-[10px] font-bold text-muted">{f.day}</div>
+                        <div
+                          className="font-num text-[14px] font-bold"
+                          style={{ color: f.tone === "bad" ? "#C0392B" : f.tone === "warn" ? "#8A5D12" : "#1E7A5A" }}
+                        >
+                          {f.score}
+                        </div>
+                        <div className="text-[9px] text-muted">{f.note}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="날씨 지도" right="권역별 기온 · 미세먼지" />
+                <div className="mt-3">
+                  <WeatherMap />
+                </div>
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {WEATHER_DISTRICTS.map((w) => (
+                    <span
+                      key={w.name}
+                      className="rounded-full px-2.5 py-1 text-[11px] font-bold"
+                      style={{ color: WEATHER_TONE[w.tone], background: `${WEATHER_TONE[w.tone]}14` }}
+                    >
+                      {w.name} {w.temp} · {w.pm}
+                    </span>
+                  ))}
+                </div>
+                <p className="mt-2.5 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
+                  나쁨 권역(강남 · 송파)의 오늘 동행은 병원 정문 하차 동선 · KF94 준비물이 자동 반영됩니다 —
+                  외출지수 감점 내역은 대시보드 컨디션 예보에서 확인.
+                </p>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="날씨 이슈 → 케어 연계" right="자동 실행 없음 · 관제사 판단 (L4)" />
+                <div className="mt-3 space-y-2">
+                  {WEATHER_ISSUES.map((w) => (
+                    <div key={w.title} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span
+                          className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
+                          style={{ background: WEATHER_TONE[w.tone] }}
+                        >
+                          {w.level}
+                        </span>
+                        <span className="text-[13px] font-bold text-navy">{w.title}</span>
+                        <span className="ml-auto text-[11px] text-muted">{w.time}</span>
+                      </div>
+                      <p className="mt-1.5 text-[12px] leading-[1.65] text-ink">{w.care}</p>
+                      {w.cta && (
+                        <button
+                          onClick={() => setMenu("comms")}
+                          className="btn-press mt-2 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
+                        >
+                          {w.cta} →
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
+                  기상 데이터는 케이웨더 단일 출처 · 이슈는 배차 · 발송 · 준비물 판단의 재료입니다 — 발송은
+                  발송 센터에서, 일정 조정은 관제사 승인으로만 실행됩니다.
+                </p>
+              </Panel>
+            </div>
           )}
 
           {/* ════ 커뮤니케이션 — 발송 센터 + 감사 로그 ════ */}
