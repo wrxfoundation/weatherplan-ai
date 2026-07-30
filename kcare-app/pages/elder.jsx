@@ -147,6 +147,25 @@ export default function ElderHome() {
   const [calling, setCalling] = useState(false);
   const [voiceReplied, setVoiceReplied] = useState(false);
   const [eventSheet, setEventSheet] = useState(false); // 간단등록 (REQ-02 권한표)
+  const [speaking, setSpeaking] = useState(false); // 일정 음성 안내 (접근성)
+
+  // 소리로 듣기 — 브라우저 내장 TTS. 어르신 카피 규칙: 시스템 주어 없이, 말하듯이
+  const speakNext = (ev) => {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    if (speaking) {
+      window.speechSynthesis.cancel();
+      setSpeaking(false);
+      return;
+    }
+    const text = `${isToday(ev.at) ? "오늘" : spokenDay(ev.at)} ${spokenTime(ev.at)}, ${ev.title}. ${ev.note || ""}`;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "ko-KR";
+    u.rate = 0.85;
+    u.onend = () => setSpeaking(false);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+    setSpeaking(true);
+  };
   const [storeSel, setStoreSel] = useState({});
   const [storeSent, setStoreSent] = useState(null); // 'approval' | 'ordered'
   const callTimer = useRef(null);
@@ -283,6 +302,17 @@ export default function ElderHome() {
                 {next.note && (
                   <p className="mt-2 text-[19px] leading-[1.6] text-white/[.86]">{next.note}</p>
                 )}
+                <button
+                  onClick={() => speakNext(next)}
+                  aria-label="오늘 일정을 소리로 들려드립니다"
+                  className="btn-elder mt-4 w-full rounded-2xl py-[18px] text-[22px] font-bold text-white"
+                  style={{
+                    background: "rgba(255,255,255,.14)",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,.25)",
+                  }}
+                >
+                  {speaking ? "그만 듣기" : "🔊 소리로 듣기"}
+                </button>
               </ElderCard>
             )}
 

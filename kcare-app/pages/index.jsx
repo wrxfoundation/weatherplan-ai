@@ -1,28 +1,78 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
 import { useAppState } from "../lib/state";
 
 // 데모 홈 = 시연 허브 — 6단계 시연 동선(슬라이드와 동일) + 라이브 데모 상태 + 원탭 초기화.
-// 발표자는 이 화면에서 시작해 순서대로 클릭만 하면 15분 데모가 완성된다.
+// KO/EN 토글은 허브 한정 (해외 이해관계자 배석 대비) — 앱 본문은 한국어 단일.
 
-const DEMO_STEPS = [
-  { n: "01", role: "어르신", href: "/elder", text: "SOS 글라스 버튼 (2초 홀드) · AI 안부 전화 — 빨강은 SOS뿐" },
-  { n: "02", role: "보호자", href: "/family", text: "시연 컨트롤로 SOS 발생 → 배너 확인 · NPS 4점 제출 (회복 플로우)" },
-  { n: "03", role: "관제", href: "/dispatch", text: "상태 필 · 급파 지시 → 액션 큐에 NPS 회복 콜 자동 등장" },
-  { n: "04", role: "컨시어지", href: "/concierge", text: "긴급 급파 배너 수락 · 선호 카드 · 오늘의 한 끗" },
-  { n: "05", role: "감사 로그", href: "/dispatch", text: "관제 티커 — 전 역할의 액션이 실시간 기록 (열람도 공개)" },
-  { n: "06", role: "경영", href: "/admin", text: "사람 KPI · CRM 라이프사이클 · NPS 루프 · 신뢰 거버넌스로 클로징" },
-];
+const T = {
+  ko: {
+    h1: "부모의 병원 가는 길을 자녀가 대신 지킵니다",
+    sub: "전담 컨시어지 2인 1조 · 24시간 관제 · 공유 캘린더 · 안심케어박스. 자녀(보호자)가 결제하고 부모(어르신)가 서비스를 받는 구독형 케어 멤버십입니다.",
+    demoState: "DEMO 상태",
+    idle: "대기 — 시연 준비 완료",
+    reset: "↺ 시연 초기화",
+    flowTitle: "시연 동선 — 15분 데모 가이드",
+    flowHint: "순서대로 클릭 · 하나의 케어 루프",
+    closing: "클로징 3원칙 — 구조가 해자 (동의 · 접근 기록 전면 공개) · 사람이 최종 판단 (L4) · 케어가 지표 (판매액 없는 평가)",
+    join: "가입 상담 시작하기",
+    rejoin: "가입 정보 다시 입력",
+    footer: "데모 빌드입니다 — 결제 · 웨어러블 · 병원 연동은 “연동 대기”로 표기됩니다.",
+    joinedChip: (name) => `가입 완료 · ${name}님 가구`,
+    sosChip: (d) => (d ? "SOS · 급파 중" : "SOS 진행 중"),
+    visitChip: "동행 중 (체크인)",
+    npsChip: "NPS 회복 콜 대기",
+    roles: [["/family", "가족 앱"], ["/elder", "어르신 화면"], ["/concierge", "컨시어지"], ["/dispatch", "관제 콘솔"], ["/admin", "경영 콘솔"]],
+    steps: [
+      { n: "01", role: "어르신", href: "/elder", text: "SOS 글라스 버튼 (2초 홀드) · 소리로 듣기 · AI 안부 전화 — 빨강은 SOS뿐" },
+      { n: "02", role: "보호자", href: "/family", text: "시연 컨트롤로 SOS 발생 → 배너 확인 · NPS 4점 제출 (회복 플로우)" },
+      { n: "03", role: "관제", href: "/dispatch", text: "상태 필 · 급파 지시 → 액션 큐에 NPS 회복 콜 자동 등장" },
+      { n: "04", role: "컨시어지", href: "/concierge", text: "긴급 급파 배너 수락 · 선호 카드 · 오늘의 한 끗" },
+      { n: "05", role: "감사 로그", href: "/dispatch", text: "관제 티커 — 전 역할의 액션이 실시간 기록 (열람도 공개)" },
+      { n: "06", role: "경영", href: "/admin", text: "사람 KPI · CRM 라이프사이클 · NPS 루프 · 신뢰 거버넌스로 클로징" },
+    ],
+  },
+  en: {
+    h1: "We walk your parents to the hospital, so you don't have to worry",
+    sub: "Two-person concierge teams · 24/7 dispatch center · shared calendar · care box. A subscription care membership — adult children pay, parents receive the care.",
+    demoState: "DEMO STATE",
+    idle: "Idle — ready to present",
+    reset: "↺ Reset demo",
+    flowTitle: "Demo flow — 15-minute guide",
+    flowHint: "Click in order · one care loop",
+    closing: "Closing principles — Trust is the moat (consent & access log fully disclosed) · Humans make the final call (L4) · Care is the metric (no sales-based evaluation)",
+    join: "Start enrollment",
+    rejoin: "Re-enter enrollment info",
+    footer: "Demo build — payments, wearables and hospital integrations are marked as “pending”.",
+    joinedChip: (name) => `Enrolled · ${name}'s household`,
+    sosChip: (d) => (d ? "SOS · dispatching" : "SOS active"),
+    visitChip: "Visit in progress",
+    npsChip: "NPS recovery call queued",
+    roles: [["/family", "Family app"], ["/elder", "Elder screen"], ["/concierge", "Concierge"], ["/dispatch", "Dispatch console"], ["/admin", "Executive console"]],
+    steps: [
+      { n: "01", role: "Elder", href: "/elder", text: "Glass SOS button (2s hold) · listen aloud · AI check-in call — red is for SOS only" },
+      { n: "02", role: "Family", href: "/family", text: "Trigger SOS from demo controls → banner · submit NPS 4 (recovery flow)" },
+      { n: "03", role: "Dispatch", href: "/dispatch", text: "Status pill · dispatch order → NPS recovery call appears in the action queue" },
+      { n: "04", role: "Concierge", href: "/concierge", text: "Accept the emergency dispatch banner · preference card · today's one detail" },
+      { n: "05", role: "Audit log", href: "/dispatch", text: "Dispatch ticker — every role's action recorded live (views disclosed too)" },
+      { n: "06", role: "Executive", href: "/admin", text: "People KPIs · CRM lifecycle · NPS loop · close with trust governance" },
+    ],
+  },
+};
 
 export default function Home() {
   const { state, dispatch } = useAppState();
+  const [lang, setLang] = useState("ko");
+  const t = T[lang];
   const joined = !!state.onboarding;
 
   // 라이브 데모 상태 — 발표자가 현재 시연 상태를 한눈에
   const live = [
-    state.demo.sos && { label: state.ops.sosDispatched ? "SOS · 급파 중" : "SOS 진행 중", cls: "bg-danger text-white animate-sosPulse" },
-    state.visit.checkedIn && { label: "동행 중 (체크인)", cls: "bg-green/20 text-[#8FE3C0]" },
-    state.ops.npsDetractor && { label: "NPS 회복 콜 대기", cls: "bg-[rgba(138,93,18,.3)] text-[#F0D9A8]" },
+    joined && { label: t.joinedChip(state.onboarding.elderName || "김순자"), cls: "bg-gold/20 text-[#E8CFA4]" },
+    state.demo.sos && { label: t.sosChip(state.ops.sosDispatched), cls: "bg-danger text-white animate-sosPulse" },
+    state.visit.checkedIn && { label: t.visitChip, cls: "bg-green/20 text-[#8FE3C0]" },
+    state.ops.npsDetractor && { label: t.npsChip, cls: "bg-[rgba(138,93,18,.3)] text-[#F0D9A8]" },
   ].filter(Boolean);
 
   return (
@@ -32,24 +82,32 @@ export default function Home() {
       </Head>
       <div className="flex min-h-screen items-start justify-center bg-nav px-5">
         <div className="w-full max-w-[880px] py-12">
-          <div className="font-num text-[29px] font-extrabold tracking-[.04em] text-white">
-            K-CARE <span className="align-top text-[11px] font-bold text-gold">BETA</span>
+          <div className="flex items-start justify-between">
+            <div className="font-num text-[29px] font-extrabold tracking-[.04em] text-white">
+              K-CARE <span className="align-top text-[11px] font-bold text-gold">BETA</span>
+            </div>
+            <div className="flex gap-1 rounded-full border border-white/15 p-1">
+              {["ko", "en"].map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  className={`btn-press rounded-full px-3 py-1 text-[11px] font-bold ${
+                    lang === l ? "bg-white text-nav" : "text-white/50"
+                  }`}
+                >
+                  {l.toUpperCase()}
+                </button>
+              ))}
+            </div>
           </div>
-          <h1 className="mt-4 text-[30px] font-black leading-[1.35] text-white">
-            부모의 병원 가는 길을 자녀가 대신 지킵니다
-          </h1>
-          <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.8] text-white/60">
-            전담 컨시어지 2인 1조 · 24시간 관제 · 공유 캘린더 · 안심케어박스. 자녀(보호자)가
-            결제하고 부모(어르신)가 서비스를 받는 구독형 케어 멤버십입니다.
-          </p>
+          <h1 className="mt-4 text-[30px] font-black leading-[1.35] text-white">{t.h1}</h1>
+          <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.8] text-white/60">{t.sub}</p>
 
           {/* 라이브 데모 상태 + 초기화 */}
           <div className="mt-6 flex flex-wrap items-center gap-2">
-            <span className="text-[12px] font-bold tracking-[.12em] text-white/40">DEMO 상태</span>
+            <span className="text-[12px] font-bold tracking-[.12em] text-white/40">{t.demoState}</span>
             {live.length === 0 && (
-              <span className="rounded-full bg-white/10 px-3 py-1 text-[12px] font-bold text-white/60">
-                대기 — 시연 준비 완료
-              </span>
+              <span className="rounded-full bg-white/10 px-3 py-1 text-[12px] font-bold text-white/60">{t.idle}</span>
             )}
             {live.map((l) => (
               <span key={l.label} className={`rounded-full px-3 py-1 text-[12px] font-bold ${l.cls}`}>
@@ -60,18 +118,18 @@ export default function Home() {
               onClick={() => dispatch({ type: "reset" })}
               className="btn-press ml-auto rounded-full border border-white/25 px-4 py-1.5 text-[12px] font-bold text-white/80"
             >
-              ↺ 시연 초기화
+              {t.reset}
             </button>
           </div>
 
           {/* 시연 동선 6단계 — 슬라이드와 동일한 순서 */}
           <div className="mt-6 rounded-2xl border border-white/10 bg-white/[.04] p-5">
             <div className="flex items-baseline justify-between">
-              <h2 className="text-[16px] font-bold text-white">시연 동선 — 15분 데모 가이드</h2>
-              <span className="text-[11px] text-white/40">순서대로 클릭 · 하나의 케어 루프</span>
+              <h2 className="text-[16px] font-bold text-white">{t.flowTitle}</h2>
+              <span className="text-[11px] text-white/40">{t.flowHint}</span>
             </div>
             <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
-              {DEMO_STEPS.map((s) => (
+              {t.steps.map((s) => (
                 <Link
                   key={s.n}
                   href={s.href}
@@ -89,10 +147,7 @@ export default function Home() {
                 </Link>
               ))}
             </div>
-            <p className="mt-4 border-t border-white/10 pt-3 text-[11px] leading-[1.7] text-white/40">
-              클로징 3원칙 — 구조가 해자 (동의 · 접근 기록 전면 공개) · 사람이 최종 판단 (L4) · 케어가
-              지표 (판매액 없는 평가)
-            </p>
+            <p className="mt-4 border-t border-white/10 pt-3 text-[11px] leading-[1.7] text-white/40">{t.closing}</p>
           </div>
 
           {/* 역할 바로가기 + 온보딩 */}
@@ -101,15 +156,9 @@ export default function Home() {
               href="/onboarding"
               className="btn-press block rounded-2xl bg-gold py-3.5 text-center text-[15px] font-bold text-nav shadow-[inset_0_1px_0_rgba(255,255,255,.35)]"
             >
-              {joined ? "가입 정보 다시 입력" : "가입 상담 시작하기"}
+              {joined ? t.rejoin : t.join}
             </Link>
-            {[
-              ["/family", "가족 앱"],
-              ["/elder", "어르신 화면"],
-              ["/concierge", "컨시어지"],
-              ["/dispatch", "관제 콘솔"],
-              ["/admin", "경영 콘솔"],
-            ].map(([href, label]) => (
+            {t.roles.map(([href, label]) => (
               <Link
                 key={href}
                 href={href}
@@ -120,9 +169,7 @@ export default function Home() {
             ))}
           </div>
 
-          <p className="mt-8 border-t border-white/10 pt-4 text-[12px] leading-[1.8] text-white/40">
-            데모 빌드입니다 — 결제 · 웨어러블 · 병원 연동은 &ldquo;연동 대기&rdquo;로 표기됩니다.
-          </p>
+          <p className="mt-8 border-t border-white/10 pt-4 text-[12px] leading-[1.8] text-white/40">{t.footer}</p>
         </div>
       </div>
     </>
