@@ -18,18 +18,28 @@ export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     rel: null,
+    relDetail: "", // 관계 '기타' 상세 — 누구인지 기재
     res: null,
+    phone: "", // 보호자 연락처 — 배정 상담·대기 안내에 필수
     elderName: "",
     district: null,
     paymentMode: "limit",
     limitAmount: PRICING.paymentLimitDefault,
-    videoConsent: false,
+    agreeTerms: false, // 필수 — 이용약관 (임시보호자 범위 · 119 연계 한계 포함)
+    agreePrivacy: false, // 필수 — 개인정보·건강정보 처리
+    videoConsent: false, // 선택 — 방문기록 영상
   });
   const [waitlisted, setWaitlisted] = useState(false);
   const set = (patch) => setForm((f) => ({ ...f, ...patch }));
 
   const result = form.district ? screenRegion(form.district) : null;
   const restricted = result && result.tier === 0;
+  const phoneDigits = form.phone.replace(/\D/g, "");
+  const step0Ready =
+    form.rel &&
+    form.res &&
+    phoneDigits.length >= 10 &&
+    (form.rel !== "기타" || form.relDetail.trim());
 
   const steps = ["보호자", "이용적합성 심사", "결제권한", "상품 확인", "완료"];
 
@@ -38,6 +48,8 @@ export default function Onboarding() {
       type: "completeOnboarding",
       payload: {
         rel: form.rel,
+        relDetail: form.rel === "기타" ? form.relDetail.trim() : null,
+        phone: form.phone,
         res: form.res,
         elderName: form.elderName || "김순자",
         district: form.district,
@@ -100,6 +112,15 @@ export default function Onboarding() {
                     </button>
                   ))}
                 </div>
+                {/* 기타 선택 시 — 누구인지 기재 (필수) */}
+                {form.rel === "기타" && (
+                  <input
+                    value={form.relDetail}
+                    onChange={(e) => set({ relDetail: e.target.value })}
+                    placeholder="어떤 관계인지 적어주세요 (예: 조카, 손주, 이웃, 복지기관)"
+                    className="animate-tickIn mt-2 w-full rounded-xl border border-gold/60 bg-white px-3.5 py-3 text-[14px] outline-none focus:border-gold"
+                  />
+                )}
                 <div className="mt-5">
                   <SectionLabel>거주지</SectionLabel>
                   <div className="mt-3 grid grid-cols-2 gap-2">
@@ -124,8 +145,24 @@ export default function Onboarding() {
                     </p>
                   )}
                 </div>
+                {/* 연락처 — 배정 상담 콜·대기 안내에 필수 */}
+                <div className="mt-5">
+                  <SectionLabel>보호자 연락처</SectionLabel>
+                  <input
+                    value={form.phone}
+                    onChange={(e) => set({ phone: e.target.value })}
+                    type="tel"
+                    inputMode="tel"
+                    placeholder="010-0000-0000"
+                    className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 font-num text-[14px] outline-none focus:border-gold"
+                  />
+                  <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">
+                    배정 상담 콜(30분)과 서비스 안내에 사용합니다. 이 번호 외에는 연락하지
+                    않습니다.
+                  </p>
+                </div>
               </Card>
-              <PrimaryButton disabled={!form.rel || !form.res} onClick={() => setStep(1)}>
+              <PrimaryButton disabled={!step0Ready} onClick={() => setStep(1)}>
                 다음
               </PrimaryButton>
             </section>
@@ -220,8 +257,8 @@ export default function Onboarding() {
 
               {waitlisted && (
                 <div className="animate-tickIn rounded-card border border-green/30 bg-[#F1FAF6] p-4 text-[13px] leading-[1.7] text-green">
-                  대기 등록이 접수되었습니다. 해당 지역 서비스가 열리면 남겨주신 연락처로
-                  가장 먼저 안내드립니다. (데모 — 연락처 수집은 실연동 대기)
+                  대기 등록이 접수되었습니다. 해당 지역 서비스가 열리면 남겨주신 연락처(
+                  {form.phone})로 가장 먼저 안내드립니다.
                 </div>
               )}
 
@@ -361,6 +398,49 @@ export default function Onboarding() {
                   ))}
                 </ul>
               </Card>
+              {/* 필수 동의 2건 — 없으면 가입 불가 */}
+              <Card className="p-4">
+                <SectionLabel>필수 동의</SectionLabel>
+                <div className="mt-2.5 space-y-2.5">
+                  {[
+                    [
+                      "agreeTerms",
+                      "서비스 이용약관 동의",
+                      "임시보호자 역할 범위 · 보호자 부재 시 조치 · 긴급 대응은 접수 + 119 연계까지 (기본 상품)",
+                    ],
+                    [
+                      "agreePrivacy",
+                      "개인정보·건강정보 처리 동의",
+                      "케어 프로필 구축 · 리포트 작성 목적. 건강정보는 서비스 제공 외 목적으로 쓰지 않습니다.",
+                    ],
+                  ].map(([key, label, desc]) => (
+                    <button
+                      key={key}
+                      onClick={() => set({ [key]: !form[key] })}
+                      className="flex w-full items-start gap-2 text-left"
+                    >
+                      <span
+                        className={`mt-[1px] inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[11px] font-bold ${
+                          form[key]
+                            ? "border-navy bg-navy text-white"
+                            : "border-navy/25 text-transparent"
+                        }`}
+                      >
+                        ✓
+                      </span>
+                      <span>
+                        <span className="text-[13px] font-bold text-navy">
+                          {label} <span className="text-danger">(필수)</span>
+                        </span>
+                        <span className="mt-0.5 block text-[11px] leading-[1.6] text-muted">
+                          {desc}
+                        </span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </Card>
+
               {/* REQ-12 — 방문기록 영상 별도 동의 (가입 약관 항목, 선택) */}
               <Card
                 onClick={() => set({ videoConsent: !form.videoConsent })}
@@ -390,8 +470,14 @@ export default function Onboarding() {
                 <GhostButton onClick={() => setStep(2)} className="flex-1">
                   이전
                 </GhostButton>
-                <PrimaryButton className="flex-[2]" onClick={finish}>
-                  가입 신청 (결제 연동 대기 · 데모)
+                <PrimaryButton
+                  className="flex-[2]"
+                  disabled={!form.agreeTerms || !form.agreePrivacy}
+                  onClick={finish}
+                >
+                  {form.agreeTerms && form.agreePrivacy
+                    ? "가입 신청 (결제 연동 대기 · 데모)"
+                    : "필수 동의 후 가입할 수 있습니다"}
                 </PrimaryButton>
               </div>
             </section>
@@ -412,7 +498,7 @@ export default function Onboarding() {
                 <ol className="mt-3 space-y-4">
                   {[
                     ["전담 컨시어지 배정", "2인 1조 · 영업일 1일 이내"],
-                    ["사전 상담 콜", "30분 · 방문 확인 항목과 케어 프로필 구축"],
+                    ["사전 상담 콜", `30분 · ${form.phone}로 연락 · 케어 프로필 구축`],
                     ["첫 안심방문", "갤럭시 워치 · 안심케어박스 전달"],
                   ].map(([t, d], i) => (
                     <li key={t} className="flex items-start gap-3">
