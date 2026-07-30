@@ -41,6 +41,7 @@ import {
   VOICE_FEED,
   VOICE_METRICS,
   VOICE_STATUS,
+  WELFARE_METRICS,
   MKT_CHANNELS,
   MKT_RULES,
 } from "../lib/mock";
@@ -354,6 +355,19 @@ export default function AdminConsole() {
                 <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                   컨시어지는 사업 파트너입니다 — 목소리가 기능이 된 사례 5건 (케어박스 경량화 · 필담 카드
                   등). "지쳐요" 체크인 증가 시 HR 워치와 교차 확인합니다.
+                </p>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="파트너 복지 이용 현황" right={<span className="text-[12px] text-muted">상담 내용 비공개 · 이용률만 익명 집계</span>} />
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {WELFARE_METRICS.map((w) => (
+                    <StatTile key={w.k} k={w.k} v={w.v} note={w.note} />
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  복지는 비용이 아니라 유지율 투자입니다 — 90일 유지 87% · 이직으로 인한 재채용 비용이
+                  복지 예산을 상회합니다. 심리상담 예약은 감사 로그에도 남지 않습니다 (비밀 보장 설계).
                 </p>
               </Panel>
             </div>

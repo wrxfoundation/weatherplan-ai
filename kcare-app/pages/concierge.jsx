@@ -17,6 +17,7 @@ import {
   THANKS_FEED,
   TODAY_DETAIL,
   VOICE_TYPES,
+  WELFARE_ITEMS,
   OBSERVATION_ITEMS,
   OUTING,
   PAIR_TODAY,
@@ -56,6 +57,7 @@ export default function ConciergePage() {
   const [voiceText, setVoiceText] = useState("");
   const [voiceAnon, setVoiceAnon] = useState(true);
   const [voiceSent, setVoiceSent] = useState(false);
+  const [eapBooked, setEapBooked] = useState(false); // 심리상담 예약 — 감사 로그에 남기지 않는다
   const [prefAdded, setPrefAdded] = useState(false); // 선호 카드 — 오늘 기록 원샷
   const [detailDone, setDetailDone] = useState(false); // 오늘의 한 끗 완료
   const [pairSigned, setPairSigned] = useState(false); // 서다인 서명 (데모)
@@ -1162,6 +1164,51 @@ export default function ConciergePage() {
                       </p>
                     </>
                   )}
+                </Card>
+
+                {/* 파트너 복지 — 케어하는 사람을 케어한다. 상담은 비밀 보장 (로그 미기록) */}
+                <Card className="p-[18px]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[17px] font-black text-navy">파트너 복지</span>
+                    <Badge fg="#7A5C28" bg="rgba(176,141,87,.15)">
+                      전 컨시어지 공통
+                    </Badge>
+                  </div>
+                  <div className="mt-3 space-y-3">
+                    {WELFARE_ITEMS.map((w) => (
+                      <div key={w.k} className="border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
+                        <div className="flex items-center gap-2.5">
+                          <span className="min-w-0 flex-1">
+                            <span className="block text-[14px] font-bold text-navy">{w.k}</span>
+                            <span className="mt-0.5 block text-[12px] leading-[1.6] text-muted">{w.desc}</span>
+                          </span>
+                          {w.eap && (
+                            <button
+                              onClick={() => setEapBooked(true)}
+                              disabled={eapBooked}
+                              className={`btn-press shrink-0 rounded-xl border px-3.5 py-2 text-[13px] font-bold ${
+                                eapBooked
+                                  ? "border-green/30 bg-green/10 text-green"
+                                  : "border-navy/20 text-navy"
+                              }`}
+                            >
+                              {eapBooked ? "예약됨 · 문자 안내" : w.action}
+                            </button>
+                          )}
+                        </div>
+                        {w.eap && eapBooked && (
+                          <p className="mt-2 rounded-xl bg-green/10 px-3 py-2 text-[12px] leading-[1.6] text-green">
+                            외부 상담기관에서 직접 연락드립니다. 이 예약은 회사 기록 · 감사 로그 어디에도
+                            남지 않습니다.
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    상담 내용은 회사에 공유되지 않습니다 (이용 건수만 익명 집계) · 복지는 평가 · 등급과
+                    무관하게 전원 동일 적용됩니다.
+                  </p>
                 </Card>
 
                 {/* 건별 정산 내역 */}
