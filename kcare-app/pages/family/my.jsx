@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, PendingTag } from "../../components/ui";
-import { ELDER, GUARDIANS, INVITE, OPTION_SERVICES, PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
+import { ACCESS_LOG, CONSENTS, ELDER, GUARDIANS, INVITE, OPTION_SERVICES, PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 
@@ -259,6 +259,48 @@ export default function MyPage() {
             />
             <Row k="방문기록 영상 동의" v={ob?.videoConsent ? "동의함" : "미동의 (가입 시 선택)"} />
           </div>
+        </Card>
+
+        {/* 데이터 · 동의 — 신뢰 센터: 누가 언제 우리 가족 데이터를 봤는지 전부 공개 (해자) */}
+        <Card className="p-[18px]">
+          <SectionLabel>데이터 · 동의</SectionLabel>
+          <p className="mt-2 text-[12px] leading-[1.7] text-muted">
+            어머니의 데이터는 가족의 것입니다. 어떤 동의가 있고, 누가 언제 열람했는지 전부 여기서
+            확인할 수 있습니다.
+          </p>
+          <div className="mt-3 space-y-2">
+            {CONSENTS.map((c) => (
+              <div key={c.k} className="flex items-center justify-between gap-3 text-[12px]">
+                <span className="text-ink">{c.k}</span>
+                <span
+                  className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                    c.on ? "bg-green/10 text-green" : "bg-navy/[.06] text-muted"
+                  }`}
+                >
+                  {c.state}
+                  {c.until !== "—" ? ` · ${c.until}` : ""}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 border-t border-navy/[.08] pt-3">
+            <div className="text-[11px] font-bold text-navy">최근 접근 기록</div>
+            <div className="mt-2 space-y-2">
+              {ACCESS_LOG.map((l, i) => (
+                <div key={i} className="text-[11px] leading-[1.6]">
+                  <span className="font-num font-semibold text-muted">{l.at}</span>{" "}
+                  <span className="font-bold text-ink">{l.who}</span>
+                  <span className="text-muted">
+                    {" "}
+                    — {l.what} · {l.why}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
+            동의는 언제든 바꿀 수 있습니다 · 철회해도 기본 케어는 유지됩니다 · 탈퇴 시 24시간 내 삭제
+          </p>
         </Card>
 
         {settingOpen && (

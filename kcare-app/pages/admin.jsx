@@ -7,6 +7,12 @@ import {
   ADMIN_COHORTS,
   ADMIN_RISKS,
   ADMIN_SLA,
+  ACTION_RESULTS,
+  CHURN_BANDS,
+  CHURN_FACTORS,
+  LIFECYCLE_STAGES,
+  NBA_QUEUE,
+  TRUST_METRICS,
   CARE_OUTCOMES,
   CHURN_SEGMENTS,
   ELDER_MIX,
@@ -101,6 +107,7 @@ function StatTile({ k, v, color = NAVY, note }) {
 
 export default function AdminConsole() {
   const [tab, setTab] = useState("staff");
+  const [nbaDone, setNbaDone] = useState({}); // NBA 큐 — 담당 배정 원샷
   const counts = REVENUE_STREAMS.reduce(
     (acc, s) => ({ ...acc, [s.status]: (acc[s.status] || 0) + 1 }),
     {}
@@ -149,6 +156,7 @@ export default function AdminConsole() {
             {[
               ["staff", "컨시어지 분석"],
               ["family", "보호자 · 가구"],
+              ["crm", "CRM · 라이프사이클"],
               ["care", "케어 성과"],
               ["biz", "수익 · 리스크"],
             ].map(([k, label]) => (
@@ -313,6 +321,107 @@ export default function AdminConsole() {
             </div>
           )}
 
+          {/* ════ CRM · 라이프사이클 — 스테이지 · 이탈 스코어 · NBA · Closed Loop ════ */}
+          {tab === "crm" && (
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <Panel className="min-w-0">
+                <PanelHead title="라이프사이클 스테이지" right={<span className="text-[11px] text-muted">전체 128가구 · 세그먼트 집계</span>} />
+                <div className="mt-3 space-y-3">
+                  {LIFECYCLE_STAGES.map((s) => (
+                    <BarRow key={s.k} label={s.k} value={`${s.n}가구`} w={s.w} color={s.color} note={s.note} />
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
+                  가입은 시작일 뿐입니다 — 온보딩 첫 30일이 이탈의 61%. 스테이지별 플레이북으로 관리합니다.
+                </p>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="이탈 신호 스코어 분포" right={<span className="text-[11px] text-muted">요인 · 가중치 공개</span>} />
+                <div className="mt-3 flex gap-2">
+                  {CHURN_BANDS.map((b) => (
+                    <div key={b.k} className="flex-1 rounded-xl border border-navy/[.06] bg-white/60 px-3 py-3 text-center">
+                      <div className="font-num text-[20px] font-bold" style={{ color: b.color }}>
+                        {b.n}
+                      </div>
+                      <div className="mt-0.5 text-[10px] font-bold text-muted">{b.k}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 rounded-xl bg-navy/[.04] px-3 py-2 text-[10px] leading-[1.7] text-muted">
+                  스코어 구성 — {CHURN_FACTORS}
+                </p>
+                <p className="mt-2.5 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
+                  블랙박스 스코어 금지 — 요인과 가중치를 공개합니다. 개별 가구 개입은 CS · 관제 소관입니다.
+                </p>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="Next Best Action 큐" right={<span className="text-[11px] text-muted">세그먼트 → 조치 → 담당 배정</span>} />
+                <div className="mt-3 space-y-2.5">
+                  {NBA_QUEUE.map((n) => (
+                    <div key={n.id} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                          style={{ color: LEVEL_STYLE[n.level].fg, background: LEVEL_STYLE[n.level].bg }}
+                        >
+                          {n.level}
+                        </span>
+                        <span className="text-[12px] font-bold text-navy">{n.seg}</span>
+                      </div>
+                      <div className="mt-1 text-[11px] leading-[1.55] text-ink">{n.act}</div>
+                      <div className="mt-1.5 flex items-center gap-2">
+                        <span className="text-[10px] text-muted">기대 효과 — {n.expect}</span>
+                        <button
+                          onClick={() => setNbaDone((v) => ({ ...v, [n.id]: true }))}
+                          disabled={!!nbaDone[n.id]}
+                          className="btn-press ml-auto rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy disabled:opacity-50"
+                        >
+                          {nbaDone[n.id] ? `${n.owner} 배정됨 ✓` : `${n.owner} 배정`}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
+                  경영은 배정까지 — 실행과 기록은 CS · 관제 도구에서 진행됩니다 (개별 개입 금지 원칙 유지).
+                </p>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="조치 효과 (Closed Loop)" right={<span className="text-[11px] text-muted">조치는 효과로 검증한다</span>} />
+                <div className="mt-3 space-y-2.5">
+                  {ACTION_RESULTS.map((r) => (
+                    <div key={r.act} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[12px] font-bold text-navy">{r.act}</span>
+                        <span
+                          className="ml-auto rounded-full px-2 py-0.5 text-[9px] font-bold"
+                          style={
+                            r.verdict === "롤백"
+                              ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
+                              : r.verdict === "표준화"
+                              ? { color: "#7A5C28", background: "rgba(176,141,87,.16)" }
+                              : { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
+                          }
+                        >
+                          {r.verdict}
+                        </span>
+                      </div>
+                      <div className="mt-1 text-[11px] text-muted">
+                        대상 {r.target} · 결과 <span className="font-num font-bold text-ink">{r.result}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
+                  효과 없는 조치는 롤백합니다 — 플레이북은 데이터로만 늘립니다.
+                </p>
+              </Panel>
+            </div>
+          )}
+
           {/* ════ 케어 성과 — 어르신 결과 지표 · 안전 집계 · 구성 ════ */}
           {tab === "care" && (
             <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
@@ -359,6 +468,19 @@ export default function AdminConsole() {
                 </div>
                 <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
                   위험 분류는 환경 × 건강 이력 교차 — 단일 지표 판정 금지. 개별 명단은 관제 리스크 워치의 소관.
+                </p>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="신뢰 거버넌스 — 해자" right={<span className="text-[11px] text-muted">신뢰는 기능이 아니라 구조</span>} />
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {TRUST_METRICS.map((t) => (
+                    <StatTile key={t.k} k={t.k} v={t.v} note={t.note} />
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
+                  경쟁이 따라오기 어려운 것은 화면이 아니라 이 숫자들입니다 — 동의 · 접근 공개 · 민감정보
+                  게이팅은 처음부터 설계에 박혀 있습니다.
                 </p>
               </Panel>
             </div>

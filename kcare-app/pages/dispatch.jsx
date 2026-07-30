@@ -11,6 +11,8 @@ import {
   RISK_WATCH,
   ROUTE_CHAIN,
   SCORE_FACTORS,
+  CRM_STAGE,
+  CRM_TIMELINE,
   DIRECTORY_ALL,
   DIRECTORY_TYPE,
   DISPATCH_AI_QA,
@@ -1555,7 +1557,13 @@ export default function DispatchConsole() {
         </div>
 
         {/* 플로팅 프로필 카드 — 그리드·검색에서 열림 */}
-        {profile && <FloatProfile item={profile} onClose={() => setProfile(null)} />}
+        {profile && (
+          <FloatProfile
+            item={profile}
+            onClose={() => setProfile(null)}
+            onAction={(text) => push("대응", text, "#8FA9CC")}
+          />
+        )}
 
         {/* AI 관제 어시스턴트 — 우측 하단 플로팅 */}
         <AiChat
@@ -1573,8 +1581,11 @@ export default function DispatchConsole() {
 }
 
 // 플로팅 프로필 — 담당·상태·챙길 것 한눈에. 상세 주소 등은 게이팅 원칙 유지 (더미)
-function FloatProfile({ item, onClose }) {
+function FloatProfile({ item, onClose, onAction }) {
   const t = DIRECTORY_TYPE[item.type];
+  const crm = CRM_STAGE[item.name]; // 가구 360° — 어르신(가구) 레코드에만 존재
+  const tl = CRM_TIMELINE[item.name];
+  const [acted, setActed] = useState(false);
   return (
     <div className="fixed inset-0 z-[1100]" onClick={onClose}>
       <div
@@ -1611,6 +1622,63 @@ function FloatProfile({ item, onClose }) {
         {item.alert && (
           <p className="mt-2.5 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3 py-2 text-[11px] font-bold leading-[1.6] text-[#5A4A22]">
             챙길 것 — {item.alert}
+          </p>
+        )}
+        {/* ── 가구 360° — 라이프사이클 · 이탈 신호 · 타임라인 · 추천 조치 (CRM) ── */}
+        {crm && (
+          <div className="mt-2.5 flex items-center gap-2 border-t border-navy/[.08] pt-2.5">
+            <span
+              className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
+              style={{ background: crm.color }}
+            >
+              {crm.stage}
+            </span>
+            <span className="font-num text-[10px] text-muted">가입 {crm.months}개월</span>
+            <span
+              className="ml-auto font-num text-[10px] font-bold"
+              style={{ color: crm.churn >= 70 ? "#C0392B" : crm.churn >= 40 ? "#8A5D12" : "#1E7A5A" }}
+              title="구성: 리포트 미열람 35 · 요청 무응답 25 · 결제 신호 25 · 방문 감소 15"
+            >
+              이탈 신호 {crm.churn}
+            </span>
+          </div>
+        )}
+        {tl && (
+          <div className="mt-2.5 border-t border-navy/[.08] pt-2.5">
+            <div className="text-[10px] font-bold tracking-[.1em] text-muted">가구 타임라인</div>
+            <div className="mt-1.5 max-h-[140px] space-y-1.5 overflow-y-auto pr-1">
+              {tl.map((ev, i) => (
+                <div key={i} className="flex gap-2 text-[11px]">
+                  <span className="w-[36px] shrink-0 font-num text-[10px] font-semibold text-muted">{ev.at}</span>
+                  <span className="shrink-0 rounded-full bg-navy/[.06] px-1.5 text-[9px] font-bold leading-[18px] text-navy">
+                    {ev.kind}
+                  </span>
+                  <span className="flex-1 leading-[1.5] text-ink">{ev.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {crm && (
+          <div className="mt-2.5 border-t border-navy/[.08] pt-2.5">
+            <div className="text-[10px] font-bold text-gold">다음 추천 조치 (AI)</div>
+            <p className="mt-1 text-[11px] leading-[1.6] text-ink">{crm.nba}</p>
+            <button
+              onClick={() => {
+                if (acted) return;
+                setActed(true);
+                onAction?.(`${item.name} — ${crm.nba.split(" — ")[0]} 실행 기록`);
+              }}
+              disabled={acted}
+              className="btn-press mt-2 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy disabled:opacity-50"
+            >
+              {acted ? "실행 기록됨 ✓" : "실행 · 기록"}
+            </button>
+          </div>
+        )}
+        {crm && (
+          <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[9px] leading-[1.5] text-muted">
+            이 열람은 접근 기록에 남고 보호자에게 공개됩니다 — 신뢰 거버넌스
           </p>
         )}
       </div>

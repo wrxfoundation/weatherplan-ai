@@ -9,7 +9,11 @@ import {
   CONCIERGE_SHOP_ITEMS,
   DIAGNOSIS_WORDS,
   EARNINGS,
+  ELDER_PREFS,
+  GROWTH_QUESTS,
   KIT_DOCS,
+  RECOVERY_STEPS,
+  TODAY_DETAIL,
   OBSERVATION_ITEMS,
   OUTING,
   PAIR_TODAY,
@@ -43,6 +47,8 @@ export default function ConciergePage() {
   const [shopSent, setShopSent] = useState(false);
   const [apptDone, setApptDone] = useState(false);
   const [pairCalled, setPairCalled] = useState(false);
+  const [prefAdded, setPrefAdded] = useState(false); // 선호 카드 — 오늘 기록 원샷
+  const [detailDone, setDetailDone] = useState(false); // 오늘의 한 끗 완료
   const [pairSigned, setPairSigned] = useState(false); // 서다인 서명 (데모)
   const [aiSent, setAiSent] = useState(false);
   const [pdfIssued, setPdfIssued] = useState(false);
@@ -248,6 +254,71 @@ export default function ConciergePage() {
                   >
                     {v.checkedIn ? "✓ 출근 체크인 완료" : "GPS 출근 체크인"}
                   </button>
+                </Card>
+
+                {/* 오늘의 한 끗 — 선제 케어 한 가지 (세계 최고 컨시어지: anticipation) */}
+                <Card className="border border-gold/30 p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="chip-gold rounded-full px-2 py-[3px] text-[9px] font-bold">AI</span>
+                    <span className="text-[14px] font-black text-navy">오늘의 한 끗</span>
+                  </div>
+                  <p className="mt-2 text-[13px] leading-[1.7] text-ink">{TODAY_DETAIL.text}</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="text-[10px] text-muted">근거 — {TODAY_DETAIL.src}</span>
+                    <button
+                      onClick={() => {
+                        if (detailDone) return;
+                        setDetailDone(true);
+                        push("어르신", "오늘의 한 끗 완료 — 생신 축하 인사 · 가족 메시지 전달", "#F0D9A8");
+                      }}
+                      disabled={detailDone}
+                      className={`btn-press btn-dark ml-auto shrink-0 rounded-xl px-4 py-2.5 text-[12px] font-bold text-white ${
+                        detailDone ? "bg-green" : "bg-navy"
+                      }`}
+                    >
+                      {detailDone ? "✓ 전달 완료" : "전달했어요"}
+                    </button>
+                  </div>
+                </Card>
+
+                {/* 선호 카드 — 개인화 기억 (세계 최고 컨시어지: 좋은 동행은 기억에서 나온다) */}
+                <Card className="p-[18px]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[15px] font-black text-navy">김순자님 선호 카드</span>
+                    <Badge fg="#7A5C28" bg="rgba(176,141,87,.15)">
+                      방문 전 30초 확인
+                    </Badge>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    {ELDER_PREFS.map(([k, val]) => (
+                      <div key={k} className="flex gap-2.5 text-[12px]">
+                        <span className="w-[56px] shrink-0 font-bold text-gold">{k}</span>
+                        <span className="flex-1 leading-[1.6] text-ink">{val}</span>
+                      </div>
+                    ))}
+                    {prefAdded && (
+                      <div className="flex gap-2.5 text-[12px]">
+                        <span className="w-[56px] shrink-0 font-bold text-gold">오늘 기록</span>
+                        <span className="flex-1 leading-[1.6] text-ink">
+                          병원 로비 소음에 피로감 — 대기는 조용한 쪽 좌석으로
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (prefAdded) return;
+                      setPrefAdded(true);
+                      push("어르신", "선호 카드 기록 추가 — 대기석 소음 민감", "#F0D9A8");
+                    }}
+                    disabled={prefAdded}
+                    className="btn-press mt-3 w-full rounded-xl border border-navy/15 py-2.5 text-[12px] font-bold text-navy disabled:opacity-60"
+                  >
+                    {prefAdded ? "오늘 알게 된 선호 기록됨 ✓" : "+ 오늘 알게 된 선호 기록"}
+                  </button>
+                  <p className="mt-2 text-[10px] leading-[1.6] text-muted">
+                    선호 카드는 담당 페어와 관제만 봅니다 · 다음 동행 브리핑에 자동 반영됩니다.
+                  </p>
                 </Card>
 
                 {/* AI 동행 브리핑 — 케어 프로필 자동 주입. 확정/미확정 구분 (03 profile) */}
@@ -459,6 +530,25 @@ export default function ConciergePage() {
                       </>
                     )}
                   </div>
+                </Card>
+                {/* 서비스 리커버리 — 실수는 숨기지 않고 회복한다 */}
+                <Card className="p-[18px]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[15px] font-black text-navy">서비스 리커버리</span>
+                    <span className="text-[10px] font-bold text-muted">실수 · 불만이 있었을 때</span>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    {RECOVERY_STEPS.map(([k, val]) => (
+                      <div key={k} className="flex gap-2.5 text-[12px]">
+                        <span className="w-[64px] shrink-0 font-bold text-gold">{k}</span>
+                        <span className="flex-1 leading-[1.6] text-ink">{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
+                    리커버리는 감점이 아닙니다 — 보고를 미루는 것만 감점입니다. 무리한 진행 대신 취소
+                    권한을 쓰세요.
+                  </p>
                 </Card>
               </>
             )}
@@ -865,6 +955,34 @@ export default function ConciergePage() {
                     ))}
                   </div>
                 </div>
+
+                {/* 시니어 승급 로드맵 — 성장 과제 (평가는 케어 품질·자격만) */}
+                <Card className="p-[18px]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[15px] font-black text-navy">시니어 승급 로드맵</span>
+                    <Badge fg="#7A5C28" bg="rgba(176,141,87,.15)">
+                      다음 등급: 시니어 · 수당 +15%
+                    </Badge>
+                  </div>
+                  <div className="mt-3 space-y-3">
+                    {GROWTH_QUESTS.map((g) => (
+                      <div key={g.k}>
+                        <div className="flex items-baseline justify-between text-[12px]">
+                          <span className="font-bold text-navy">{g.k}</span>
+                          <span className="font-num text-[11px] font-bold" style={{ color: g.color === "#C9CFD8" ? "#5C5A54" : g.color }}>
+                            {g.state}
+                          </span>
+                        </div>
+                        <div className="mt-1.5 h-[6px] overflow-hidden rounded-full bg-navy/[.08]">
+                          <div className="h-full rounded-full" style={{ width: `${g.w}%`, background: g.color }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
+                    승급 기준은 케어 품질 · 자격뿐입니다 — 판매 실적은 반영되지 않습니다 (원칙 1).
+                  </p>
+                </Card>
 
                 {/* 건별 정산 내역 */}
                 <Card className="p-[18px]">
