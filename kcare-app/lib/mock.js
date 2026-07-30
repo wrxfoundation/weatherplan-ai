@@ -1162,7 +1162,7 @@ export const GROWTH_QUESTS = [
 // ════ 신뢰 거버넌스 — 해자 (설계에 박힌 신뢰: 동의 · 접근 공개 · 게이팅) ════
 // 나중에 붙일 수 없는 것이 해자다. 모든 열람은 기록되고, 기록은 가족에게 공개된다.
 export const CONSENTS = [
-  { k: "위치 정보 (동행 중)", state: "동의", until: "2027.02", on: true },
+  { k: "위치 정보 (동행 중)", state: "동의", until: "2026.08", on: true, expiring: "D-15" },
   { k: "방문기록 영상 (요약 30초)", state: "동의", until: "2027.02", on: true },
   { k: "건강 신호 (워치)", state: "동의", until: "2027.02", on: true },
   { k: "제휴 병원 정보 제공", state: "예약 시 건별 동의", until: "—", on: false },
@@ -1179,3 +1179,28 @@ export const TRUST_METRICS = [
   { k: "삭제 요청 처리", v: "24h 내", note: "탈퇴 시 데이터 삭제 SLA" },
   { k: "민감정보 게이팅 위반", v: "0건", note: "주소 · 건강 접근 통제" },
 ];
+
+// 발송 추적 — 양방향화: 보내고 끝이 아니라 수신·열람·응답까지. 미열람은 채널 에스컬레이션
+export const COMMS_TRACKING = {
+  heat: { sent: 6, read: 4, replied: 2, next: "미열람 2가구 — 내일 09:00 음성 콜 자동 전환" },
+  call: { sent: 2, read: 2, replied: 1, next: "무응답 1가구 — 보호자 알림 병행" },
+  briefAll: { sent: 9, read: 8, replied: 8, next: "미확인 1명 — 08:00 개별 콜 예약" },
+  tz: { sent: 2, read: 1, replied: 1, next: "미열람 1가구 — 현지 저녁 시간대 재발송" },
+  consent: { sent: 3, read: 2, replied: 2, next: "미응답 1가구 — 주보호자 유선 안내 예약" },
+};
+
+// NPS 수집 루프 — 동행 후 24h 설문 · 비추천은 즉시 회복 플로우 (점수보다 회복 속도)
+export const NPS_REASONS = ["도착 지각", "소통 아쉬움", "준비물 누락", "리포트 지연", "기타"];
+export const NPS_LOOP = {
+  respond: "71%",
+  mix: [
+    { k: "추천 (9–10)", v: "58%", color: "#1E7A5A" },
+    { k: "중립 (7–8)", v: "24%", color: "#B08D57" },
+    { k: "비추천 (0–6)", v: "18%", color: "#C0392B" },
+  ],
+  recovery: [
+    { k: "24h 내 회복 연락", v: "100%", note: "SLA — 매니저 직접 콜" },
+    { k: "회복 후 재응답", v: "+4.2점", note: "재설문 평균 상승" },
+    { k: "비추천 → 이탈", v: "2가구", note: "전분기 5가구 → 감소" },
+  ],
+};

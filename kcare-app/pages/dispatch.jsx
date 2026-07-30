@@ -13,6 +13,7 @@ import {
   SCORE_FACTORS,
   CRM_STAGE,
   CRM_TIMELINE,
+  COMMS_TRACKING,
   DIRECTORY_ALL,
   DIRECTORY_TYPE,
   DISPATCH_AI_QA,
@@ -65,6 +66,7 @@ const COMMS_TEMPLATES = [
   { id: "call", title: "안부 콜 캠페인 — 미수신 어르신", desc: "워치 무수집 · 리포트 미열람 가구 대상 음성 콜", kind: "대응", log: "안부 콜 캠페인 시작 — 대상 2가구", color: "#FF8A80" },
   { id: "briefAll", title: "컨시어지 일괄 브리핑 재발송", desc: "내일 08:30 이전 확인 필수 · 미확인 시 개별 콜", kind: "브리핑", log: "컨시어지 9명에게 내일 브리핑 재발송", color: "#F0D9A8" },
   { id: "tz", title: "리포트 발송 시간 안내 — 해외 보호자", desc: "시차 가구(LA · 시드니) 발송 시간 재확인", kind: "리포트", log: "해외 보호자 2명에게 발송 시간 안내", color: "#8FE3C0" },
+  { id: "consent", title: "동의 갱신 안내 — 만료 30일 전", desc: "위치 정보 동의 만료 예정 3가구 · 원탭 갱신 링크", kind: "설정", log: "동의 갱신 안내 발송 — 만료 예정 3가구", color: "#8FA9CC" },
 ];
 
 function hourToHM(h) {
@@ -1521,31 +1523,52 @@ export default function DispatchConsole() {
               <Panel className="min-w-0">
                 <PanelHead title="발송 센터" right="보호자 · 어르신 · 컨시어지 일괄 커뮤니케이션" />
                 <div className="mt-3 space-y-2">
-                  {COMMS_TEMPLATES.map((t) => (
-                    <div
-                      key={t.id}
-                      className="flex items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="text-[12px] font-bold text-navy">{t.title}</div>
-                        <div className="truncate text-[11px] text-muted">{t.desc}</div>
+                  {COMMS_TEMPLATES.map((t) => {
+                    const tr = COMMS_TRACKING[t.id];
+                    return (
+                      <div key={t.id} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex items-center gap-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="text-[12px] font-bold text-navy">{t.title}</div>
+                            <div className="truncate text-[11px] text-muted">{t.desc}</div>
+                          </div>
+                          <button
+                            onClick={() => {
+                              if (sent[t.id]) return;
+                              setSent((v) => ({ ...v, [t.id]: true }));
+                              push(t.kind, t.log, t.color);
+                            }}
+                            disabled={!!sent[t.id]}
+                            className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[12px] font-bold text-navy disabled:opacity-50"
+                          >
+                            {sent[t.id] ? "발송됨" : "발송"}
+                          </button>
+                        </div>
+                        {/* 양방향 추적 — 보내고 끝이 아니라 열람·응답까지 */}
+                        {sent[t.id] && tr && (
+                          <div className="mt-2 border-t border-navy/[.06] pt-2">
+                            <div className="flex flex-wrap gap-1.5">
+                              {[["발송", tr.sent], ["수신", tr.sent], ["열람", tr.read], ["응답", tr.replied]].map(
+                                ([k, n]) => (
+                                  <span
+                                    key={k}
+                                    className="rounded-full bg-navy/[.05] px-2 py-0.5 text-[10px] font-bold text-navy"
+                                  >
+                                    {k} <span className="font-num">{n}</span>
+                                  </span>
+                                )
+                              )}
+                            </div>
+                            <div className="mt-1.5 text-[10px] font-bold text-amber">{tr.next}</div>
+                          </div>
+                        )}
                       </div>
-                      <button
-                        onClick={() => {
-                          if (sent[t.id]) return;
-                          setSent((v) => ({ ...v, [t.id]: true }));
-                          push(t.kind, t.log, t.color);
-                        }}
-                        disabled={!!sent[t.id]}
-                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[12px] font-bold text-navy disabled:opacity-50"
-                      >
-                        {sent[t.id] ? "발송됨" : "발송"}
-                      </button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
-                  모든 발송은 감사 로그(티커)에 기록 · 어르신 안내는 음성 콜 우선 · 진단어 없이 생활어 사용
+                  모든 발송은 감사 로그(티커)에 기록 · 미열람은 앱 → 문자 → 음성 콜 순 자동 에스컬레이션 ·
+                  어르신 안내는 음성 콜 우선 · 진단어 없이 생활어 사용
                 </p>
               </Panel>
               <Panel className="min-w-0">

@@ -14,6 +14,7 @@ export default function MyPage() {
   const { state, dispatch } = useAppState();
   const ob = state.onboarding;
   const [settingOpen, setSettingOpen] = useState(false);
+  const [consentRenewed, setConsentRenewed] = useState(false); // 동의 갱신 원탭
   const [applied, setApplied] = useState({}); // 옵션 신청 상태 (데모)
   const [pdfRequested, setPdfRequested] = useState(false);
   const [invited, setInvited] = useState(false);
@@ -272,14 +273,35 @@ export default function MyPage() {
             {CONSENTS.map((c) => (
               <div key={c.k} className="flex items-center justify-between gap-3 text-[12px]">
                 <span className="text-ink">{c.k}</span>
-                <span
-                  className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                    c.on ? "bg-green/10 text-green" : "bg-navy/[.06] text-muted"
-                  }`}
-                >
-                  {c.state}
-                  {c.until !== "—" ? ` · ${c.until}` : ""}
-                </span>
+                {c.expiring && !consentRenewed ? (
+                  <span className="flex shrink-0 items-center gap-1.5">
+                    <span className="rounded-full border border-amber/30 bg-[#FFF7E8] px-2 py-0.5 text-[10px] font-bold text-amber">
+                      동의 · {c.expiring} 만료
+                    </span>
+                    <button
+                      onClick={() => {
+                        setConsentRenewed(true);
+                        dispatch({
+                          type: "pushEvent",
+                          payload: { kind: "설정", text: "위치 정보 동의 갱신 완료 (1년 연장)", color: "#8FA9CC" },
+                        });
+                      }}
+                      className="btn-press rounded-full bg-navy px-2.5 py-0.5 text-[10px] font-bold text-white"
+                    >
+                      갱신
+                    </button>
+                  </span>
+                ) : (
+                  <span
+                    className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                      c.on ? "bg-green/10 text-green" : "bg-navy/[.06] text-muted"
+                    }`}
+                  >
+                    {c.expiring && consentRenewed
+                      ? "갱신 완료 · 2027.08"
+                      : `${c.state}${c.until !== "—" ? ` · ${c.until}` : ""}`}
+                  </span>
+                )}
               </div>
             ))}
           </div>
@@ -299,7 +321,8 @@ export default function MyPage() {
             </div>
           </div>
           <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
-            동의는 언제든 바꿀 수 있습니다 · 철회해도 기본 케어는 유지됩니다 · 탈퇴 시 24시간 내 삭제
+            동의는 언제든 바꿀 수 있습니다 · 만료 30일 전 자동 안내 · 철회해도 기본 케어는 유지 · 탈퇴 시
+            24시간 내 삭제
           </p>
         </Card>
 

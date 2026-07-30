@@ -12,6 +12,7 @@ import {
   CHURN_FACTORS,
   LIFECYCLE_STAGES,
   NBA_QUEUE,
+  NPS_LOOP,
   TRUST_METRICS,
   CARE_OUTCOMES,
   CHURN_SEGMENTS,
@@ -317,6 +318,31 @@ export default function AdminConsole() {
                     <StatTile key={o.k} k={o.k} v={o.v} note={o.note} />
                   ))}
                 </div>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="NPS 수집 루프"
+                  right={<span className="text-[11px] text-muted">동행 후 24h 설문 · 응답률 {NPS_LOOP.respond}</span>}
+                />
+                <div className="mt-3 flex gap-2">
+                  {NPS_LOOP.mix.map((m) => (
+                    <div key={m.k} className="flex-1 rounded-xl border border-navy/[.06] bg-white/60 px-3 py-3 text-center">
+                      <div className="font-num text-[18px] font-bold" style={{ color: m.color }}>
+                        {m.v}
+                      </div>
+                      <div className="mt-0.5 text-[10px] font-bold text-muted">{m.k}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 grid grid-cols-3 gap-2 border-t border-navy/[.08] pt-3">
+                  {NPS_LOOP.recovery.map((r) => (
+                    <StatTile key={r.k} k={r.k} v={r.v} note={r.note} />
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
+                  비추천(0 – 6)은 접수 즉시 회복 플로우 — 점수보다 회복 속도가 NPS를 만듭니다.
+                </p>
               </Panel>
             </div>
           )}

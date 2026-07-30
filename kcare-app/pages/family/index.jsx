@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, Badge, PendingTag, Avatar } from "../../components/ui";
-import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_KINDS, GUARDIANS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
+import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_KINDS, GUARDIANS, NPS_REASONS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
 
 import { useAppState } from "../../lib/state";
 
@@ -187,6 +187,11 @@ export default function FamilyHome() {
             AI가 워치·방문 기록을 요약하고 사람이 검수합니다 (8.4)
           </p>
         </div>
+
+        {/* 동행 후 만족도 — NPS 수집 루프. 비추천(≤6)은 즉시 회복 플로우 */}
+        <NpsCard
+          onEvent={(text, color) => dispatch({ type: "pushEvent", payload: { kind: "CS", text, color } })}
+        />
 
         {/* 승인 대기 배지 — REQ-03/07 연결 */}
         {pendingApprovals > 0 && (
@@ -533,3 +538,94 @@ export default function FamilyHome() {
   );
 }
 
+// 동행 후 만족도 — NPS 루프: 0–10 선택 → 비추천(≤6)은 사유 + 24h 회복 안내
+function NpsCard({ onEvent }) {
+  const [score, setScore] = useState(null);
+  const [reason, setReason] = useState(null);
+  const [done, setDone] = useState(false);
+
+  if (done)
+    return (
+      <Card className="p-4">
+        <div className="text-[13px] font-bold text-navy">
+          {score <= 6
+            ? "접수했습니다 — 24시간 안에 담당 매니저가 연락드립니다"
+            : "감사합니다 — 다음 동행도 잘 준비하겠습니다"}
+        </div>
+        <p className="mt-1 text-[11px] leading-[1.6] text-muted">
+          {score <= 6
+            ? "낮은 점수는 회복이 먼저입니다 — 조치 결과를 다시 알려드립니다."
+            : score >= 9
+            ? "주변에 비슷한 고민을 하는 가족이 있다면 마이 탭의 초대 링크로 소개해 주세요."
+            : "의견은 서비스 개선에 반영됩니다."}
+        </p>
+      </Card>
+    );
+
+  return (
+    <Card className="p-[18px]">
+      <SectionLabel>오늘 동행은 어떠셨나요?</SectionLabel>
+      <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">
+        13:50 서울아산 동행이 끝났습니다. 가족의 점수가 케어 품질 평가와 개선의 기준이 됩니다.
+      </p>
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {Array.from({ length: 11 }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setScore(i)}
+            className="btn-press h-[34px] w-[34px] rounded-[10px] border font-num text-[13px] font-bold"
+            style={
+              score === i
+                ? {
+                    background: i <= 6 ? "#C0392B" : i <= 8 ? "#B08D57" : "#1E7A5A",
+                    color: "#FFFFFF",
+                    borderColor: "transparent",
+                  }
+                : { background: "rgba(255,255,255,.7)", color: "#0A1F3C", borderColor: "rgba(10,31,60,.14)" }
+            }
+          >
+            {i}
+          </button>
+        ))}
+      </div>
+      {score != null && score <= 6 && (
+        <div className="mt-3 border-t border-navy/[.08] pt-3">
+          <div className="text-[12px] font-bold text-navy">무엇이 가장 아쉬우셨나요?</div>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {NPS_REASONS.map((r) => (
+              <button
+                key={r}
+                onClick={() => setReason(r)}
+                className="btn-press rounded-full border px-3 py-1.5 text-[11px] font-bold"
+                style={
+                  reason === r
+                    ? { background: "#0A1F3C", color: "#FFFFFF", borderColor: "#0A1F3C" }
+                    : { background: "rgba(255,255,255,.7)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
+                }
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      {score != null && (
+        <button
+          onClick={() => {
+            setDone(true);
+            onEvent(
+              score <= 6
+                ? `만족도 ${score}점 접수 — 회복 플로우 시작 (${reason || "사유 미선택"} · 24h 내 연락)`
+                : `만족도 ${score}점 접수 — 감사 인사 발송`,
+              score <= 6 ? "#FF8A80" : "#8FE3C0"
+            );
+          }}
+          disabled={score <= 6 && !reason}
+          className="btn-press btn-dark mt-3 w-full rounded-xl bg-navy py-3 text-[13px] font-bold text-white disabled:opacity-50"
+        >
+          제출
+        </button>
+      )}
+    </Card>
+  );
+}
