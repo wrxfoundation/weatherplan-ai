@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import {
   AI_ASSIGN,
@@ -215,6 +216,14 @@ export default function DispatchConsole() {
   const [mapMode, setMapMode] = useState("light"); // 맵 타일 라이트/다크
   const [query, setQuery] = useState(""); // 통합 검색
   const [menu, setMenu] = useState("dash"); // GNB — 대시보드 외 관리 메뉴
+  // 딥링크 — /dispatch?menu=comms 등 (시연 동선에서 감사 로그를 관제와 구분 진입)
+  const router = useRouter();
+  useEffect(() => {
+    const m = router.query.menu;
+    if (typeof m === "string" && ["dash", "elder", "guardian", "concierge", "hospital", "comms"].includes(m)) {
+      setMenu(m);
+    }
+  }, [router.query.menu]);
   const [sent, setSent] = useState({}); // 발송 센터 원샷
   const [briefRead, setBriefRead] = useState(false); // 아침 브리핑 읽음
   const elders = DIRECTORY_ALL.filter((d) => d.type === "elder");

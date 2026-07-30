@@ -36,6 +36,10 @@ import {
   STAFF_PIPELINE,
   STAFF_QUALITY_DIST,
   STAFF_QUALITY_OPS,
+  CS_METRICS,
+  CS_TOPICS,
+  MKT_CHANNELS,
+  MKT_RULES,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -143,16 +147,31 @@ export default function AdminConsole() {
             </p>
           </header>
 
-          {/* ── 사람 KPI — 전 탭 공통 ── */}
+          {/* ── 사람 KPI — 전 탭 공통. 보더: 좌상 진하게 → 우하 옅게 (그라디언트 보더) ── */}
           <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
             {PEOPLE_KPIS.map((k) => (
-              <Panel key={k.k} className="!p-4">
-                <div className="text-[11px] font-bold text-muted">{k.k}</div>
-                <div className="mt-1 font-num text-[25px] font-bold" style={{ color: k.color }}>
-                  {k.v}
+              <div
+                key={k.k}
+                className="rounded-[14px] p-[1.5px]"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(10,31,60,.42), rgba(10,31,60,.12) 45%, rgba(10,31,60,.03) 75%, rgba(255,255,255,.5))",
+                }}
+              >
+                <div
+                  className="h-full rounded-[12.5px] p-4"
+                  style={{
+                    background: "linear-gradient(180deg, rgba(255,255,255,.97), rgba(255,255,255,.88))",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,1), 0 16px 34px -28px rgba(10,31,60,.45)",
+                  }}
+                >
+                  <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                  <div className="mt-1 font-num text-[25px] font-bold" style={{ color: k.color }}>
+                    {k.v}
+                  </div>
+                  <div className="mt-0.5 text-[11px] text-muted">{k.sub}</div>
                 </div>
-                <div className="mt-0.5 text-[11px] text-muted">{k.sub}</div>
-              </Panel>
+              </div>
             ))}
           </div>
 
@@ -193,6 +212,7 @@ export default function AdminConsole() {
               ["staff", "컨시어지 분석"],
               ["family", "보호자 · 가구"],
               ["crm", "CRM · 라이프사이클"],
+              ["cs", "CS · 마케팅"],
               ["care", "케어 성과"],
               ["biz", "수익 · 리스크"],
             ].map(([k, label]) => (
@@ -504,6 +524,71 @@ export default function AdminConsole() {
                 </div>
                 <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                   효과 없는 조치는 롤백합니다 — 플레이북은 데이터로만 늘립니다.
+                </p>
+              </Panel>
+            </div>
+          )}
+
+          {/* ════ CS · 마케팅 — 베타 단계: 별도 콘솔 대신 경영 집계 (개별 응대는 CS 도구) ════ */}
+          {tab === "cs" && (
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <Panel className="min-w-0">
+                <PanelHead title="CS 운영 지표" right={<span className="text-[12px] text-muted">개별 응대는 CS 도구 · 여기는 집계</span>} />
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {CS_METRICS.map((c) => (
+                    <StatTile key={c.k} k={c.k} v={c.v} note={c.note} />
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  최고의 CS는 회복 속도입니다 — NPS 비추천 접수는 자동으로 회복 콜 큐에 올라갑니다.
+                </p>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="자주 묻는 주제 Top 5" right={<span className="text-[12px] text-muted">이번 주 · 제품 개선 신호</span>} />
+                <div className="mt-3 space-y-3">
+                  {CS_TOPICS.map((t) => (
+                    <BarRow key={t.k} label={t.k} value={`${t.n}건`} w={t.w} color={NAVY} />
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  1위가 "바우처 신청 대행" — 동네 소식 피드의 신청 대행 버튼이 여기서 나왔습니다.
+                  문의는 기능이 되어야 줄어듭니다.
+                </p>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="유입 채널" right={<span className="text-[12px] text-muted">최근 90일 가입 기준</span>} />
+                <div className="mt-3 space-y-2.5">
+                  {MKT_CHANNELS.map((m) => (
+                    <div key={m.k} className="flex items-baseline gap-3 border-t border-navy/[.06] pt-2.5 first:border-t-0 first:pt-0">
+                      <span className="text-[13px] font-bold text-navy">{m.k}</span>
+                      <span className="ml-auto font-num text-[17px] font-bold" style={{ color: m.color }}>
+                        {m.v}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-2 space-y-1">
+                  {MKT_CHANNELS.map((m) => (
+                    <div key={m.k} className="text-[11px] text-muted">
+                      · {m.k} — {m.note}
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  추천이 최고의 마케팅입니다 — NPS 추천군(9–10)의 초대 링크가 유입 1위 · 획득 비용 0원.
+                </p>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="마케팅 운영 원칙" right={<span className="text-[12px] text-muted">심의 · 규정</span>} />
+                <p className="mt-3 rounded-xl border border-navy/[.08] bg-white/60 px-4 py-3 text-[13px] leading-[1.75] text-ink">
+                  {MKT_RULES}
+                </p>
+                <p className="mt-3 text-[11px] leading-[1.7] text-muted">
+                  케어 서비스의 광고는 신뢰 자산입니다 — 과장 한 줄이 해자(동의 · 접근 공개)를 무너뜨립니다.
+                  캠페인 효과는 조치 효과(Closed Loop)와 같은 방식으로 검증 후 표준화합니다.
                 </p>
               </Panel>
             </div>
