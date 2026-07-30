@@ -434,7 +434,9 @@ export default function FamilyHome() {
         <Card className="p-[18px]">
           <div className="flex items-center justify-between">
             <div className="text-[17px] font-black text-navy">실시간 건강 요약</div>
-            <span className="font-num text-[12px] text-muted">14:38 갱신</span>
+            <Link href="/family/watch" className="text-[12px] font-bold text-navy underline decoration-navy/25 underline-offset-2">
+              워치 상세 →
+            </Link>
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2.5">
             {VITALS.map((v) => (

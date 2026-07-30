@@ -1291,3 +1291,33 @@ export const MKT_CHANNELS = [
   { k: "지역 커뮤니티", v: "12%", note: "강남구 맘카페 · 경로당", color: "#8A5D12" },
 ];
 export const MKT_RULES = "의료 효능 · 치료 표현 광고 금지 (의료법 56조) · 후기는 동의받은 실제 가족 사례만 사용";
+
+// ════ 웨어러블 — 갤럭시 Fit3 (Samsung Health → Health Connect → 폰 컴패니언, 준실시간 동기화) ════
+// 정직 표기: Fit3는 서드파티 SDK 미제공 — 실시간 스트리밍이 아니라 5분 주기 동기화.
+// 낙상 SOS는 Fit3 → 보호자 직통이 기본, 관제 연계는 컴패니언 앱 경유 (삼성 파트너 협의 항목).
+export const FIT3_INFO = {
+  device: "갤럭시 Fit3",
+  path: "Samsung Health → Health Connect → K-CARE 컴패니언(폰)",
+  cycle: "5분 주기 동기화 (준실시간)",
+  lastSync: "14:02",
+  battery: "62%",
+};
+export const FIT3_METRICS = [
+  { icon: "heart", name: "심박수", value: "72", unit: "bpm", status: "정상 범위 · 오늘 평균 71", level: "ok", action: "고 · 저심박 지속 시 보호자 알림 + 진료 상담 안내" },
+  { icon: "activity", name: "활동량", value: "3,140", unit: "걸음", status: "목표의 62% · 활동 52분", level: "neutral", action: "활동량 급감 시 컨디션 변화 신호로 확인 콜" },
+  { icon: "moon", name: "수면", value: "6.2", unit: "시간", status: "수면 점수 71 · 깊은잠 1.1h", level: "caution", action: "수면 부족 · 급변 시 생활 관리 안내" },
+  { icon: "drop", name: "혈중산소 SpO₂", value: "96", unit: "%", status: "야간 평균 95%", level: "ok", action: "평소보다 지속 저하 시 병원 상담 안내" },
+  { icon: "wave", name: "스트레스", value: "보통", unit: "", status: "HRV 기반 추정", level: "neutral", partner: true, action: "높은 상태 지속 시 휴식 · 안부 콜" },
+  { icon: "alert", name: "낙상 감지", value: "이상 없음", unit: "", status: "어제 복합 알림 1건 → 오탐 확인", level: "ok", sos: true, action: "낙상 감지 → 보호자 알림 → 무응답 시 관제 확인" },
+  { icon: "pin", name: "위치", value: "자택", unit: "", status: "스마트폰 연동 · 대치동", level: "ok", action: "외출 동선 확인 · 긴급 시 참고 (동행 중에만 상세)" },
+  { icon: "watch", name: "착용 상태", value: "착용 중", unit: "", status: "마지막 수신 14:02 · 배터리 62%", level: "ok", action: "6시간 무수집 시 가족 알림 + 확인 콜" },
+];
+// 관제 — 가구별 워치 보드 (착용 · 수신 · 핵심 신호)
+export const WATCH_BOARD = [
+  { name: "김순자", wear: "착용", sync: "14:02", hr: "72", spo2: "96%", note: "동행 중 — 위치 공유 ON", level: "ok" },
+  { name: "이영호", wear: "착용", sync: "13:58", hr: "68", spo2: "97%", note: "낙상 복합 알림 경과 관찰", level: "caution" },
+  { name: "박말순", wear: "미수집", sync: "08:01", hr: "—", spo2: "—", note: "6시간 무수집 — 배터리 확인 콜", level: "warn" },
+  { name: "한복자", wear: "착용", sync: "14:00", hr: "76", spo2: "95%", note: "투석 전 안정", level: "ok" },
+  { name: "오태식", wear: "착용", sync: "13:55", hr: "70", spo2: "97%", note: "검진 완료 귀가", level: "ok" },
+  { name: "최정자", wear: "착용", sync: "14:01", hr: "74", spo2: "96%", note: "투석 다음날 — 탈수 주의", level: "caution" },
+];

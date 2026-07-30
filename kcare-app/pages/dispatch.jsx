@@ -19,6 +19,7 @@ import {
   INSURANCE_PARTNER,
   MORNING_BRIEF,
   PARTNER_STATUS,
+  WATCH_BOARD,
   DIRECTORY_ALL,
   DIRECTORY_TYPE,
   DISPATCH_AI_QA,
@@ -1397,6 +1398,61 @@ export default function DispatchConsole() {
                   상세 주소는 담당 확정 후에만 노출됩니다 · 명부 클릭 시 담당·일정·챙길 것 프로필
                 </p>
               </Panel>
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="웨어러블 보드 — 갤럭시 Fit3"
+                  right={<span className="text-[12px] text-muted">5분 주기 동기화 (준실시간)</span>}
+                />
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[420px] text-left text-[12px]">
+                    <thead>
+                      <tr className="whitespace-nowrap border-b border-navy/15 text-[11px] font-bold text-muted">
+                        <th className="py-1.5 pr-3">어르신</th>
+                        <th className="py-1.5 pr-3">착용</th>
+                        <th className="py-1.5 pr-3">수신</th>
+                        <th className="py-1.5 pr-3">심박</th>
+                        <th className="py-1.5 pr-3">SpO₂</th>
+                        <th className="py-1.5">특이</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {WATCH_BOARD.map((w) => (
+                        <tr key={w.name} className="border-b border-navy/[.06]">
+                          <td className="py-2 pr-3">
+                            <button
+                              onClick={() => openProfile(w.name)}
+                              className="font-bold text-navy underline decoration-navy/20 underline-offset-2"
+                            >
+                              {w.name}
+                            </button>
+                          </td>
+                          <td className="whitespace-nowrap py-2 pr-3">
+                            <span
+                              className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                              style={
+                                w.level === "warn"
+                                  ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
+                                  : { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
+                              }
+                            >
+                              {w.wear}
+                            </span>
+                          </td>
+                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.sync}</td>
+                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.hr}</td>
+                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.spo2}</td>
+                          <td className="py-2 text-muted">{w.note}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
+                  Samsung Health → Health Connect → 컴패니언 경유 — 실시간 스트리밍이 아닌 준실시간 ·
+                  단일 지표로 판정하지 않습니다
+                </p>
+              </Panel>
+
               <Panel className="min-w-0">
                 <PanelHead title="오늘 리스크 워치" right="환경 × 건강 이력 교차 · 단일 지표 판정 금지" />
                 <div className="mt-3 space-y-2.5">
