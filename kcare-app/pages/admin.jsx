@@ -3,6 +3,8 @@ import { useState } from "react";
 import { PendingTag } from "../components/ui";
 import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
+import RosterTable from "../components/RosterTable";
+import { ROSTERS } from "../lib/rosters";
 import {
   ADMIN_AI_QA,
   ADMIN_COHORTS,
@@ -202,6 +204,7 @@ export default function AdminConsole() {
               ["family", "보호자 · 가구"],
               ["crm", "CRM · 라이프사이클"],
               ["cs", "CS · 마케팅"],
+              ["roster", "명부"],
               ["care", "케어 성과"],
               ["biz", "수익 · 리스크"],
             ].map(([k, label]) => (
@@ -625,6 +628,22 @@ export default function AdminConsole() {
                   캠페인 효과는 조치 효과(Closed Loop)와 같은 방식으로 검증 후 표준화합니다.
                 </p>
               </Panel>
+            </div>
+          )}
+
+          {/* ════ 명부 — 어르신·보호자·컨시어지·병원 리스팅 + 엑셀 내보내기 ════ */}
+          {tab === "roster" && (
+            <div className="space-y-4">
+              {[ROSTERS.elders, ROSTERS.guardians, ROSTERS.concierges, ROSTERS.hospitals].map((r) => (
+                <Panel key={r.title} className="min-w-0">
+                  <RosterTable roster={r} />
+                </Panel>
+              ))}
+              <p className="px-1 text-[11px] leading-[1.7] text-muted">
+                게이팅 원칙 — 명부에는 상세 주소 · 건강 상세가 없습니다 (동 단위 · 상태 라벨까지만).
+                내보낸 파일의 관리 책임은 다운로드한 계정에 있으며, 다운로드 이력은 접근 기록으로
+                남습니다.
+              </p>
             </div>
           )}
 

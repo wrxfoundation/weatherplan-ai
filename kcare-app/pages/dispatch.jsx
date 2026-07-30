@@ -33,6 +33,8 @@ import {
 import { useAppState } from "../lib/state";
 import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
+import RosterTable from "../components/RosterTable";
+import { ROSTERS } from "../lib/rosters";
 
 // 배치관리자(관제) — 핸드오프 09 상세 명세 + REQ-04(긴급 대응 범위, 회의 확정 우선).
 // 데스크톱 전용 · 정보 밀도가 정당한 유일한 화면 (10~13px 활자가 정답 — 09 §0).
@@ -1491,6 +1493,16 @@ export default function DispatchConsole() {
             </div>
           )}
 
+          {menu === "elder" && (
+            <Panel className="mt-4 min-w-0">
+              <RosterTable
+                roster={ROSTERS.elders}
+                onRowClick={openProfile}
+                onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
+              />
+            </Panel>
+          )}
+
           {/* ════ 보호자 관리 — 주/부 보호자 · 시차 가구 ════ */}
           {menu === "guardian" && (
             <>
@@ -1541,6 +1553,16 @@ export default function DispatchConsole() {
                 ))}
               </div>
             </>
+          )}
+
+          {menu === "guardian" && (
+            <Panel className="mt-4 min-w-0">
+              <RosterTable
+                roster={ROSTERS.guardians}
+                onRowClick={openProfile}
+                onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
+              />
+            </Panel>
           )}
 
           {/* ════ 컨시어지 관리 — 명부 + 피로도 게이트 ════ */}
@@ -1606,6 +1628,16 @@ export default function DispatchConsole() {
                 </p>
               </Panel>
             </div>
+          )}
+
+          {menu === "concierge" && (
+            <Panel className="mt-4 min-w-0">
+              <RosterTable
+                roster={ROSTERS.concierges}
+                onRowClick={openProfile}
+                onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
+              />
+            </Panel>
           )}
 
           {/* ════ 병원 관리 — MOU 제휴 현황 ════ */}
@@ -1679,6 +1711,16 @@ export default function DispatchConsole() {
                 </div>
                 <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">{INSURANCE_PARTNER.note}</p>
               </div>
+            </Panel>
+          )}
+
+          {menu === "hospital" && (
+            <Panel className="mt-4 min-w-0">
+              <RosterTable
+                roster={ROSTERS.hospitals}
+                onRowClick={openProfile}
+                onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
+              />
             </Panel>
           )}
 
