@@ -38,6 +38,9 @@ import {
   STAFF_QUALITY_OPS,
   CS_METRICS,
   CS_TOPICS,
+  VOICE_FEED,
+  VOICE_METRICS,
+  VOICE_STATUS,
   MKT_CHANNELS,
   MKT_RULES,
 } from "../lib/mock";
@@ -319,6 +322,38 @@ export default function AdminConsole() {
                 </div>
                 <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                   코칭은 평가가 아니라 성장 기록입니다 — 90일 유지율 87%의 다른 절반은 여기서 나옵니다.
+                </p>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead title="현장의 소리" right={<span className="text-[12px] text-muted">평가 미반영 · 익명 보장 · 48h 답변</span>} />
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {VOICE_METRICS.map((v) => (
+                    <StatTile key={v.k} k={v.k} v={v.v} note={v.note} />
+                  ))}
+                </div>
+                <div className="mt-3 space-y-2.5 border-t border-navy/[.08] pt-3">
+                  {VOICE_FEED.map((f) => (
+                    <div key={f.at + f.text} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">
+                          {f.type}
+                        </span>
+                        <span className="font-num text-[11px] text-muted">{f.at} · {f.who}</span>
+                        <span
+                          className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
+                          style={{ color: VOICE_STATUS[f.status].fg, background: VOICE_STATUS[f.status].bg }}
+                        >
+                          {f.status}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-[12px] leading-[1.6] text-ink">{f.text}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  컨시어지는 사업 파트너입니다 — 목소리가 기능이 된 사례 5건 (케어박스 경량화 · 필담 카드
+                  등). "지쳐요" 체크인 증가 시 HR 워치와 교차 확인합니다.
                 </p>
               </Panel>
             </div>

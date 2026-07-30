@@ -16,6 +16,7 @@ import {
   RECOVERY_STEPS,
   THANKS_FEED,
   TODAY_DETAIL,
+  VOICE_TYPES,
   OBSERVATION_ITEMS,
   OUTING,
   PAIR_TODAY,
@@ -50,6 +51,11 @@ export default function ConciergePage() {
   const [apptDone, setApptDone] = useState(false);
   const [pairCalled, setPairCalled] = useState(false);
   const [sosAck, setSosAck] = useState(false); // 관제 급파 수락 원샷
+  const [voiceMood, setVoiceMood] = useState(null); // 현장의 소리 — 마음 체크인
+  const [voiceType, setVoiceType] = useState(null);
+  const [voiceText, setVoiceText] = useState("");
+  const [voiceAnon, setVoiceAnon] = useState(true);
+  const [voiceSent, setVoiceSent] = useState(false);
   const [prefAdded, setPrefAdded] = useState(false); // 선호 카드 — 오늘 기록 원샷
   const [detailDone, setDetailDone] = useState(false); // 오늘의 한 끗 완료
   const [pairSigned, setPairSigned] = useState(false); // 서다인 서명 (데모)
@@ -1051,6 +1057,111 @@ export default function ConciergePage() {
                   <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                     감사 메시지는 평점과 별개로 그대로 전달됩니다 — 케어하는 사람을 케어하는 것부터.
                   </p>
+                </Card>
+
+                {/* 현장의 소리 — 불편·제안 접수. 목소리는 평가에 반영되지 않는다 (심리적 안전) */}
+                <Card className="p-[18px]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[17px] font-black text-navy">현장의 소리</span>
+                    <span className="text-[11px] font-bold text-muted">48시간 내 답변 약속</span>
+                  </div>
+                  {voiceSent ? (
+                    <div className="mt-3 rounded-xl bg-green/10 px-4 py-3">
+                      <div className="text-[14px] font-bold text-green">접수했습니다 — 고맙습니다</div>
+                      <p className="mt-1 text-[12px] leading-[1.6] text-muted">
+                        48시간 안에 답변드리고, 반영되면 무엇이 바뀌었는지 알려드립니다.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mt-3">
+                        <div className="text-[12px] font-bold text-muted">오늘 마음은 어떠세요?</div>
+                        <div className="mt-2 flex gap-1.5">
+                          {["좋아요", "보통이에요", "지쳐요"].map((m) => (
+                            <button
+                              key={m}
+                              onClick={() => setVoiceMood(m)}
+                              className="btn-press flex-1 rounded-xl border py-2.5 text-[13px] font-bold"
+                              style={
+                                voiceMood === m
+                                  ? m === "지쳐요"
+                                    ? { background: "rgba(138,93,18,.12)", color: "#8A5D12", borderColor: "rgba(138,93,18,.3)" }
+                                    : { background: "#0A1F3C", color: "#FFFFFF", borderColor: "#0A1F3C" }
+                                  : { background: "rgba(255,255,255,.7)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
+                              }
+                            >
+                              {m}
+                            </button>
+                          ))}
+                        </div>
+                        {voiceMood === "지쳐요" && (
+                          <p className="mt-2 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3 py-2 text-[12px] leading-[1.6] text-[#5A4A22]">
+                            지친 날은 말해주셔서 고맙습니다 — 매니저가 배차 조정 여부를 먼저 살펴봅니다.
+                          </p>
+                        )}
+                      </div>
+                      <div className="mt-3.5">
+                        <div className="text-[12px] font-bold text-muted">하고 싶은 이야기</div>
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {VOICE_TYPES.map((t) => (
+                            <button
+                              key={t}
+                              onClick={() => setVoiceType(t)}
+                              className="btn-press rounded-full border px-3 py-1.5 text-[12px] font-bold"
+                              style={
+                                voiceType === t
+                                  ? { background: "#0A1F3C", color: "#FFFFFF", borderColor: "#0A1F3C" }
+                                  : { background: "rgba(255,255,255,.7)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
+                              }
+                            >
+                              {t}
+                            </button>
+                          ))}
+                        </div>
+                        <textarea
+                          value={voiceText}
+                          onChange={(e) => setVoiceText(e.target.value)}
+                          rows={3}
+                          placeholder="불편했던 점, 바꾸면 좋을 점, 어르신 관련 제안 — 무엇이든 편하게요."
+                          className="mt-2 w-full rounded-xl border border-navy/15 bg-white/80 px-3.5 py-3 text-[14px] leading-[1.6] text-ink outline-none placeholder:text-muted/60 focus:border-gold"
+                        />
+                        <button
+                          onClick={() => setVoiceAnon((v) => !v)}
+                          className="mt-1 flex items-center gap-2 text-[13px] font-bold text-navy"
+                        >
+                          <span
+                            className={`inline-flex h-[18px] w-[18px] items-center justify-center rounded-md border text-[11px] ${
+                              voiceAnon ? "border-navy bg-navy text-white" : "border-navy/25 text-transparent"
+                            }`}
+                          >
+                            ✓
+                          </span>
+                          익명으로 보내기
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => {
+                          if (!voiceText.trim() || !voiceType) return;
+                          setVoiceSent(true);
+                          push(
+                            "메시지",
+                            `현장의 소리 접수 — ${voiceType} (${voiceAnon ? "익명" : "박지현"})${
+                              voiceMood === "지쳐요" ? " · 마음 체크인: 지침 — 배차 조정 검토" : ""
+                            }`,
+                            "#8FA9CC"
+                          );
+                        }}
+                        disabled={!voiceText.trim() || !voiceType}
+                        className="btn-press btn-dark mt-3 w-full rounded-xl bg-navy py-3.5 text-[15px] font-bold text-white disabled:opacity-40"
+                      >
+                        보내기
+                      </button>
+                      <p className="mt-2.5 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                        목소리는 평가·평점에 반영되지 않습니다 — 개선에만 사용됩니다. 익명 제출은 관리자도
+                        작성자를 볼 수 없습니다.
+                      </p>
+                    </>
+                  )}
                 </Card>
 
                 {/* 건별 정산 내역 */}
