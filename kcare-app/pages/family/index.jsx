@@ -191,12 +191,16 @@ export default function FamilyHome() {
         {/* 승인 대기 배지 — REQ-03/07 연결 */}
         {pendingApprovals > 0 && (
           <Link href="/family/requests" className="block">
-            <Card className="btn-press flex items-center justify-between border-amber/30 p-4">
-              <div className="text-[13px] font-bold text-amber">
+            {/* 주홍색 강조 — 즉시 행동이 필요한 카드 (컨시어지 수행 버튼과 동일 액센트) */}
+            <div
+              className="btn-press btn-dark flex items-center justify-between rounded-card p-4 text-white"
+              style={{ background: "#D9542B" }}
+            >
+              <div className="text-[14px] font-bold">
                 결제 승인이 필요한 요청 {pendingApprovals}건
               </div>
-              <span className="text-[18px] text-amber/60">›</span>
-            </Card>
+              <span className="text-[18px] text-white/80">›</span>
+            </div>
           </Link>
         )}
 
