@@ -278,7 +278,7 @@ export default function ElderHome() {
               </div>
               <button
                 onClick={() => setEventSheet(true)}
-                className="btn-press mt-2 w-full rounded-2xl bg-navy p-6 text-[21px] font-bold text-white"
+                className="btn-elder mt-2 w-full rounded-2xl bg-navy p-6 text-[21px] font-bold text-white"
               >
                 일정 하나 남기기
               </button>
@@ -326,7 +326,7 @@ export default function ElderHome() {
                   });
                 }}
                 disabled={medTaken}
-                className="btn-press mt-2 w-full rounded-2xl p-7 text-[22px] font-bold"
+                className="btn-elder mt-2 w-full rounded-2xl p-7 text-[22px] font-bold"
                 style={{
                   background: medTaken ? "rgba(255,255,255,.85)" : "#1E7A5A",
                   color: medTaken ? "#5C5A54" : "#FFFFFF",
@@ -376,7 +376,7 @@ export default function ElderHome() {
                   });
                 }}
                 disabled={cooled}
-                className="btn-press mt-4 w-full rounded-2xl p-7 text-[22px] font-bold text-white"
+                className="btn-elder mt-4 w-full rounded-2xl p-7 text-[22px] font-bold text-white"
                 style={{ background: "#2F5D8A" }}
               >
                 {indoor.btnLines.map((line) => (
@@ -422,7 +422,7 @@ export default function ElderHome() {
                   });
                 }}
                 disabled={askAdded}
-                className="btn-press mt-2 w-full rounded-2xl p-6 text-[21px] font-bold text-white"
+                className="btn-elder mt-2 w-full rounded-2xl p-6 text-[21px] font-bold text-white"
                 style={{ background: askAdded ? "#5C5A54" : "#0A1F3C" }}
               >
                 {askAdded ? "말씀하신 내용이 담겼습니다" : "말로 하나 더 남기기"}
@@ -546,7 +546,7 @@ export default function ElderHome() {
                     });
                   }
                 }}
-                className="btn-press mt-4 w-full rounded-2xl p-7 text-[22px] font-bold"
+                className="btn-elder mt-4 w-full rounded-2xl p-7 text-[22px] font-bold"
                 style={{
                   background: voicePlayed ? "rgba(255,255,255,.85)" : "#0A1F3C",
                   color: voicePlayed ? "#5C5A54" : "#FFFFFF",
@@ -658,7 +658,7 @@ export default function ElderHome() {
                         },
                       });
                     }}
-                    className="btn-press mt-4 w-full rounded-2xl p-6 text-[21px] font-bold text-white"
+                    className="btn-elder mt-4 w-full rounded-2xl p-6 text-[21px] font-bold text-white"
                     style={{ background: needApproval ? "#0A1F3C" : "#1E7A5A" }}
                   >
                     <span className="block leading-[1.35]">
@@ -898,7 +898,7 @@ function ElderEventSheet({ onClose, onCreate }) {
           <button
             onClick={save}
             disabled={!ready}
-            className="btn-press flex-[2] rounded-2xl bg-navy p-5 text-[21px] font-bold text-white disabled:opacity-40"
+            className="btn-elder flex-[2] rounded-2xl bg-navy p-5 text-[21px] font-bold text-white disabled:opacity-40"
           >
             남기기
           </button>

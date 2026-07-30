@@ -62,7 +62,7 @@ function hourToHM(h) {
 function Panel({ children, className = "", style }) {
   return (
     <section
-      className={`rounded-[14px] border border-navy/10 bg-white p-[18px] shadow-[0_10px_24px_-18px_rgba(10,31,60,.35)] ${className}`}
+      className={`card-glass rounded-[14px] p-[18px] ${className}`}
       style={style}
     >
       {children}
@@ -249,7 +249,7 @@ export default function DispatchConsole() {
       <Head>
         <title>배치 관제 센터 — K-CARE</title>
       </Head>
-      <div className="min-h-screen bg-paper px-4 pb-10 pt-7 text-ink sm:px-8">
+      <div className="console-bg min-h-screen px-4 pb-10 pt-7 text-ink sm:px-8">
         <div className="mx-auto max-w-[1240px]">
           {/* ── 헤더: 제목 + 시계 + KPI ── */}
           <header className="flex flex-wrap items-end justify-between gap-4">
@@ -262,7 +262,7 @@ export default function DispatchConsole() {
                   데모 홈
                 </a>
               </div>
-              <h1 className="mt-0.5 text-[26px] font-bold text-navy">강남지점 실시간 관제</h1>
+              <h1 className="mt-0.5 text-[26px] font-bold tracking-[-.01em] text-navy">강남지점 실시간 관제</h1>
               <div className="mt-1 flex items-center gap-2 text-[13px] text-muted">
                 <span>
                   {now.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "short" })}
@@ -276,7 +276,7 @@ export default function DispatchConsole() {
             </div>
             <div className="flex flex-wrap gap-2">
               {kpis.map((k) => (
-                <div key={k.k} className="min-w-[104px] rounded-xl border border-navy/10 bg-white px-4 py-[11px]">
+                <div key={k.k} className="card-glass min-w-[104px] rounded-xl px-4 py-[11px]">
                   <div className="text-[10px] font-bold text-muted">{k.k}</div>
                   <div className="font-num text-[20px] font-bold" style={{ color: k.color }}>
                     {k.v}
@@ -309,7 +309,7 @@ export default function DispatchConsole() {
                     push("대응", "박지현 급파 지시 · 119 연계 대기", "#FF8A80");
                   }}
                   disabled={sosDispatched}
-                  className="btn-press rounded-xl bg-white px-4 py-2.5 text-[13px] font-bold text-danger disabled:opacity-80"
+                  className="btn-press btn-on-red rounded-xl bg-white px-4 py-2.5 text-[13px] font-bold text-danger disabled:opacity-80"
                 >
                   {sosDispatched ? "급파 중 · 박지현" : "급파 지시 (주간 · 가용)"}
                 </button>
@@ -345,7 +345,7 @@ export default function DispatchConsole() {
           {/* ── AI 자율 배차 (09 §3) — L4: 승인 없이는 실행되지 않는다 ── */}
           {assign === "pending" ? (
             <section
-              className="mt-[18px] rounded-[14px] px-5 py-[18px] text-white"
+              className="card-navy mt-[18px] rounded-[14px] px-5 py-[18px] text-white"
               style={{
                 background: NAVY,
                 backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,0))",
@@ -383,7 +383,7 @@ export default function DispatchConsole() {
                     dispatch({ type: "opsPatch", patch: { assign: "done" } });
                     push("배차", "AI 배정안 3건 일괄 승인 · 평균 적합도 94%", "#B08D57");
                   }}
-                  className="btn-press rounded-xl bg-gold px-4 py-2.5 text-[13px] font-bold text-navy"
+                  className="btn-press btn-dark rounded-xl bg-gold px-4 py-2.5 text-[13px] font-bold text-navy"
                 >
                   3건 일괄 승인
                 </button>
@@ -412,7 +412,7 @@ export default function DispatchConsole() {
           )}
 
           {/* ── 관제 맵 (09 §4) ── */}
-          <section className="mt-[18px] rounded-[14px] p-[18px]" style={{ background: NAVY }}>
+          <section className="card-navy mt-[18px] rounded-[14px] p-[18px]" style={{ background: NAVY }}>
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-[13px] font-bold text-white">관제 맵</h2>
               <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-white/70">
@@ -637,7 +637,7 @@ export default function DispatchConsole() {
                       dispatch({ type: "opsPatch", patch: { unmatchFixed: true } });
                       push("배차", "한복자 님 투석 동행 페어 편성 완료 · 서다인 재배치", "#8FA9CC");
                     }}
-                    className="btn-press mt-3 w-full rounded-xl px-4 py-3 text-[12px] font-bold text-white"
+                    className="btn-press btn-dark mt-3 w-full rounded-xl px-4 py-3 text-[12px] font-bold text-white"
                     style={{ background: unmatchFixed ? "#5C5A54" : NAVY }}
                   >
                     {unmatchFixed ? "서다인 재배치 승인 · 18:10 건 재편성 완료" : "송파 권역 서다인 재배치 승인"}
@@ -649,7 +649,7 @@ export default function DispatchConsole() {
                 </section>
 
                 {/* SLA 관제 (09 §8.4) — 네이비 · 글래스 바 */}
-                <section className="rounded-[14px] p-[18px]" style={{ background: NAVY }}>
+                <section className="card-navy rounded-[14px] p-[18px]" style={{ background: NAVY }}>
                   <div className="flex items-baseline justify-between">
                     <h2 className="text-[13px] font-bold text-white">SLA 관제</h2>
                     <span className="text-[11px] text-white/50">목표 대비 오늘</span>

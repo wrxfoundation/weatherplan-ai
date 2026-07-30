@@ -24,7 +24,7 @@ const STREAM_STATUS = {
 function Panel({ children, className = "" }) {
   return (
     <section
-      className={`rounded-[14px] border border-navy/10 bg-white p-[18px] shadow-[0_10px_24px_-18px_rgba(10,31,60,.35)] ${className}`}
+      className={`card-glass rounded-[14px] p-[18px] ${className}`}
     >
       {children}
     </section>
@@ -51,7 +51,7 @@ export default function AdminConsole() {
       <Head>
         <title>경영 콘솔 — K-CARE</title>
       </Head>
-      <div className="min-h-screen bg-paper px-4 pb-10 pt-7 text-ink sm:px-8">
+      <div className="console-bg min-h-screen px-4 pb-10 pt-7 text-ink sm:px-8">
         <div className="mx-auto max-w-[1240px] space-y-4">
           {/* ── 헤더 — 실시간 사건 티커 없음 (의도) ── */}
           <header>
@@ -63,7 +63,7 @@ export default function AdminConsole() {
                 데모 홈
               </a>
             </div>
-            <h1 className="mt-0.5 text-[26px] font-bold text-navy">수익 · 리스크 총괄</h1>
+            <h1 className="mt-0.5 text-[26px] font-bold tracking-[-.01em] text-navy">수익 · 리스크 총괄</h1>
             <p className="mt-1.5 max-w-[80ch] text-[13px] leading-[1.75] text-muted">
               이 화면은 집계만 봅니다. 개별 SOS · 사건은 관제(배치관리자) 화면의 소관이며, 여기에는
               실시간 티커를 두지 않습니다 — 경영이 개별 사건에 개입하지 않기 위한 설계입니다.

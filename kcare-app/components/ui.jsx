@@ -5,7 +5,7 @@ export function Card({ children, className = "", onClick }) {
   return (
     <Tag
       onClick={onClick}
-      className={`block w-full text-left rounded-card bg-white border border-navy/10 shadow-[0_6px_18px_-12px_rgba(10,31,60,.25)] ${
+      className={`card-glass block w-full text-left rounded-card ${
         onClick ? "btn-press" : ""
       } ${className}`}
     >
@@ -38,7 +38,7 @@ export function PrimaryButton({ children, onClick, className = "", disabled }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`btn-press w-full rounded-xl bg-navy py-3.5 text-[14px] font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,.18),0_8px_16px_-9px_rgba(10,31,60,.6)] disabled:opacity-40 ${className}`}
+      className={`btn-press btn-dark w-full rounded-xl bg-navy py-3.5 text-[14px] font-bold text-white disabled:opacity-40 ${className}`}
     >
       {children}
     </button>
