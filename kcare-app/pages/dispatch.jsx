@@ -514,7 +514,7 @@ export default function DispatchConsole() {
               className="card-glass w-full rounded-xl px-4 py-2.5 text-[13px] font-medium text-navy outline-none placeholder:text-muted/60 focus:ring-1 focus:ring-gold"
             />
             {searchResults.length > 0 && (
-              <div className="card-glass absolute left-0 right-0 top-[46px] z-[1050] overflow-hidden rounded-xl">
+              <div className="card-frost absolute left-0 right-0 top-[46px] z-[1050] overflow-hidden rounded-xl">
                 {searchResults.map((d) => (
                   <button
                     key={`${d.type}-${d.name}`}
@@ -536,7 +536,7 @@ export default function DispatchConsole() {
               </div>
             )}
               {query.trim().length >= 1 && searchResults.length === 0 && (
-                <div className="card-glass absolute left-0 right-0 top-[46px] z-[1050] rounded-xl px-4 py-3 text-[12px] text-muted">
+                <div className="card-frost absolute left-0 right-0 top-[46px] z-[1050] rounded-xl px-4 py-3 text-[12px] text-muted">
                   검색 결과가 없습니다.
                 </div>
               )}
@@ -1587,9 +1587,9 @@ function FloatProfile({ item, onClose, onAction }) {
   const tl = CRM_TIMELINE[item.name];
   const [acted, setActed] = useState(false);
   return (
-    <div className="fixed inset-0 z-[1100]" onClick={onClose}>
+    <div className="overlay-scrim fixed inset-0 z-[1100]" onClick={onClose}>
       <div
-        className="card-glass absolute right-6 top-24 w-[320px] max-w-[calc(100vw-32px)] rounded-[14px] p-4"
+        className="card-frost absolute right-6 top-24 w-[320px] max-w-[calc(100vw-32px)] rounded-[14px] p-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2">

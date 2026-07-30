@@ -53,7 +53,7 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
     <>
       {open && (
         <div
-          className="card-glass fixed bottom-[88px] right-5 z-[1200] flex w-[360px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-2xl"
+          className="card-frost fixed bottom-[88px] right-5 z-[1200] flex w-[360px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-2xl"
           style={{ height: "min(500px, calc(100vh - 130px))" }}
         >
           {/* 헤더 */}
