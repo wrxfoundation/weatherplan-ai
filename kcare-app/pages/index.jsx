@@ -52,6 +52,18 @@ export default function Home() {
               >
                 컨시어지 화면
               </Link>
+              <Link
+                href="/dispatch"
+                className="btn-press block rounded-2xl border border-white/25 py-4 text-center text-[15px] font-bold text-white"
+              >
+                관제 콘솔
+              </Link>
+              <Link
+                href="/admin"
+                className="btn-press block rounded-2xl border border-white/25 py-4 text-center text-[15px] font-bold text-white"
+              >
+                경영 콘솔
+              </Link>
             </div>
           </div>
 

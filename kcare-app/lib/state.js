@@ -19,6 +19,8 @@ const DEFAULT = {
   priority: { factors: ["기온"], source: "보호자 설정" },
   // 어르신 1회성 잠금 상태 (undo 없음이 의도 — 핸드오프 06 §5). voicePlayed만 재클릭 가능.
   elder: { medTaken: false, cooled: false, voicePlayed: false, askAdded: false },
+  // 관제 콘솔 상태 — sos 해제는 관제(ackSos)만 가능 (핸드오프 06 §5 · 02 §4)
+  ops: { sosDispatched: false, sos119: false, fall: "open", assign: "pending" },
   // 컨시어지 방문 수행 상태 + 감사 타임라인 (REQ-12 골격)
   visit: { checkedIn: false, kitDone: false, reportSent: false, audit: [] },
   kit: INITIAL_KIT,
@@ -33,6 +35,7 @@ function reducer(state, action) {
         ...action.payload,
         demo: { ...state.demo, ...(action.payload.demo || {}) },
         elder: { ...state.elder, ...(action.payload.elder || {}) },
+        ops: { ...state.ops, ...(action.payload.ops || {}) },
       };
     case "completeOnboarding":
       return { ...state, onboarding: action.payload };
@@ -53,6 +56,15 @@ function reducer(state, action) {
       return { ...state, elder: { ...state.elder, medTaken: true } };
     case "elderPatch":
       return { ...state, elder: { ...state.elder, ...action.patch } };
+    case "opsPatch":
+      return { ...state, ops: { ...state.ops, ...action.patch } };
+    case "ackSos":
+      // SOS 해제 — 관제 전용. 급파·연계 플래그도 함께 초기화
+      return {
+        ...state,
+        demo: { ...state.demo, sos: false },
+        ops: { ...state.ops, sosDispatched: false, sos119: false },
+      };
     case "audit":
       return {
         ...state,

@@ -333,3 +333,171 @@ export const OBSERVATION_ITEMS = [
 
 // 진단성 어휘 — 입력 단계 경고 (의료법 17조 · REQ-11)
 export const DIAGNOSIS_WORDS = ["우울증", "치매", "정신질환", "자살", "조현", "진단"];
+
+// ─── 관제(dispatch) 목 데이터 — 핸드오프 02 §4 + REQ-04 ────────────────────────
+// 서비스 경계(REQ-04): 기본 상품 보증 범위는 "긴급신호 접수 + 119 연계"까지.
+// 컨시어지 급파는 주간·가용 시. 야간 출동은 외주 옵션 상품(가구별 플래그).
+
+export const DISPATCH_KPIS = [
+  { label: "가동 컨시어지", value: "14" },
+  { label: "진행 중 동행", value: "6" },
+  { label: "대기 배차", value: "3" },
+  { label: "SOS 초동 (오늘)", value: "41초" },
+];
+
+// AI 자율 배차 배정안 — why(선정 근거) 없는 배정안은 렌더 금지 (핸드오프 02 §4)
+export const AI_ASSIGN = [
+  {
+    customer: "김순자 (78)",
+    time: "13:50",
+    task: "안심방문 · 케어박스 점검",
+    to: "박지현 · 서다인",
+    fit: 96,
+    why: "기존 담당 페어 · 자택 1.2km · 동성 페어 규칙 충족",
+  },
+  {
+    customer: "이영호 (81)",
+    time: "내일 09:10",
+    task: "병원동행 · 정형외과 재진",
+    to: "김도윤 · 정민재",
+    fit: 91,
+    why: "어르신 성별 동일 1명 포함 · 패스트트랙 동행 경험 8회",
+  },
+  {
+    customer: "박말순 (83)",
+    time: "15:30",
+    task: "약국 구매대행 · 생활 심부름",
+    to: "한지민 · 이서연",
+    fit: 88,
+    why: "동선 인접 (대치동 → 역삼동 2.1km) · 4회 연속 배정 제한 준수",
+  },
+];
+
+// SLA — SOS 초동은 "접수·연계" SLA (현장 도착 SLA 아님 — REQ-04 문서화)
+export const DISPATCH_SLA = [
+  { name: "SOS 초동 응답 (접수·연계)", target: "60초", current: "41초", pct: 68, note: "오늘 2건 · 최장 52초" },
+  { name: "배차 확정", target: "10분", current: "6분", pct: 60, note: "AI 배정안 승인 대기 1건 포함" },
+  { name: "방문 리포트 발송", target: "24시간", current: "9시간", pct: 38, note: "지연 0건" },
+  { name: "가족 문의 콜백", target: "4시간", current: "1.8시간", pct: 45, note: "야간 접수분 익일 오전 처리" },
+];
+
+// 위험 관찰 목록 — 사건 C(폭염) 등. 원시 경보가 아니라 "조치"가 주어
+export const RISK_WATCH = [
+  {
+    who: "김순자 (78)",
+    why: "실내 31° + 폭염 특보 + 심부전 이력",
+    action: "냉방 확인 콜 완료 · 동행 시 보냉백 지참",
+    level: "높음",
+  },
+  {
+    who: "이영호 (81)",
+    why: "재진 전 복약 변경 이력",
+    action: "동행 시 처방전 지참 확인",
+    level: "중간",
+  },
+  {
+    who: "박말순 (83)",
+    why: "워치 6시간 무수집 (배터리 추정)",
+    action: "배터리 원인 분리 후 안부콜",
+    level: "중간",
+  },
+];
+
+// 지자체 재난 피드 — 원시 경보를 "우리가 이미 한 조치"로 해석해 노출 (핸드오프 02 §4)
+export const DISASTER_FEED = [
+  {
+    raw: "폭염 특보 발효 (강남구)",
+    done: "독거 12가구 냉방 확인 콜 완료 · 동행 6건에 보냉백 지참 지시",
+  },
+  {
+    raw: "오후 소나기 예보 (수도권)",
+    done: "15시 이후 동행 3건에 우산 · 이동 경로 미끄럼 주의 반영",
+  },
+];
+
+// 지도 마커 대체 목록 — Leaflet 연동 대기. 컨시어지/병원 팝업 정보를 카드로 표기
+export const MAP_MARKERS = {
+  concierges: [
+    { name: "박지현 · 서다인", status: "김순자 자택 방문 중", detail: "간호사 출신 · 주동행 214건 · 평점 4.9" },
+    { name: "김도윤 · 정민재", status: "역삼 거점 대기", detail: "요양보호사 · 주동행 96건 · 평점 4.7" },
+    { name: "한지민 · 이서연", status: "이동 중 (대치동)", detail: "수습 1명 포함 · 부동행 페어" },
+  ],
+  hospitals: [
+    { name: "강남세브란스", detail: "패스트트랙 대기 2일 · 예약 API 부분 연동 (3/18)" },
+    { name: "서울아산병원", detail: "패스트트랙 슬롯 운영 · 전화 예약 대행" },
+  ],
+};
+
+// ─── 경영(admin) 목 데이터 — 핸드오프 02 §5. 개별 사건 없음, 집계만 ─────────────
+
+// 수익원 22종 커버리지 — impl(구현) / cond(조건부: 규제·제휴 선행) / todo(미구현)
+export const REVENUE_STREAMS = [
+  { no: "01", name: "병원동행 (건별)", status: "impl" },
+  { no: "02", name: "가입비", status: "impl" },
+  { no: "03", name: "월 구독", status: "impl" },
+  { no: "04", name: "제휴 병원 연계", status: "cond" },
+  { no: "05", name: "검진 패키지", status: "cond" },
+  { no: "06", name: "헬스케어 커머스", status: "impl" },
+  { no: "07", name: "해외 환자 인바운드", status: "todo" },
+  { no: "08", name: "글로벌 아웃바운드", status: "todo" },
+  { no: "09", name: "보험 연계 (GA)", status: "cond" },
+  { no: "10", name: "데이터 라이선싱", status: "cond" },
+  { no: "11", name: "안심케어박스", status: "impl" },
+  { no: "12", name: "재가급여", status: "cond" },
+  { no: "13", name: "B2B SaaS 공급", status: "todo" },
+  { no: "14", name: "기관 위탁 운영", status: "todo" },
+  { no: "15", name: "복지용구", status: "cond" },
+  { no: "16", name: "생활지원 (행정·심부름)", status: "impl" },
+  { no: "17", name: "가사 · 청소 연계", status: "cond" },
+  { no: "18", name: "렌탈 (대리점형)", status: "todo" },
+  { no: "19", name: "생활 계약 점검", status: "todo" },
+  { no: "20", name: "케어푸드", status: "todo" },
+  { no: "21", name: "디바이스 렌탈", status: "cond" },
+  { no: "22", name: "원격 진료 연계 (행정)", status: "todo" },
+];
+
+// 수익 예측 — 목 수치. 실데이터 연동 대기 표기 필수
+export const REVENUE_FORECAST = [
+  { name: "월 구독 (03)", amount: "₩ 48,450,000", pct: 72, phase: "P0" },
+  { name: "병원동행 건별 (01)", amount: "₩ 21,300,000", pct: 54, phase: "P0" },
+  { name: "가입비 (02)", amount: "₩ 12,600,000", pct: 41, phase: "P0" },
+  { name: "커머스 · 케어박스 (06 · 11)", amount: "₩ 6,180,000", pct: 23, phase: "P1" },
+  { name: "재가급여 (12)", amount: "₩ 0", pct: 0, phase: "P2 · 지정 심사 대기" },
+];
+
+// 규칙 성능 — 오탐률 30% 초과 단독 규칙은 발송 금지 (핸드오프 02 §5 · 03 device)
+export const RULE_PERF = [
+  { name: "낙상 복합 (충격 3G + 모션 정지 + 통화 실패)", fired: 12, real: 11, falseRate: "8.3%", policy: "발송" },
+  { name: "낙상 충격 단독", fired: 36, real: 22, falseRate: "38.9%", policy: "발송 금지 · 로그만" },
+  { name: "6시간 무수집", fired: 16, real: 13, falseRate: "18.8%", policy: "배터리 분리 후 발송" },
+  { name: "실내 고온 (31° · 30분)", fired: 41, real: 39, falseRate: "4.9%", policy: "발송" },
+];
+
+// SLA 집계 — 관제와 같은 수치의 집계 뷰 (개별 사건 비노출)
+export const ADMIN_SLA = [
+  { name: "SOS 초동 응답", target: "60초", current: "41초", note: "오늘 2건 · 최장 52초" },
+  { name: "배차 확정", target: "10분", current: "6분", note: "주간 평균" },
+  { name: "방문 리포트", target: "24시간", current: "9시간", note: "지연 0건" },
+  { name: "CS 콜백", target: "4시간", current: "1.8시간", note: "NPS 디텍터 24시간 내 전화 별도" },
+];
+
+// 리스크 요약 — 01-domain-rules.md와 단일 출처 유지 (요약만 노출)
+export const ADMIN_RISKS = {
+  critical: 4,
+  high: 13,
+  top: [
+    { grade: "C", name: "의료법 17조 — 진단성 기록", action: "관찰 12항목 고정 + 금칙어 필터 (REQ-11 구현)" },
+    { grade: "C", name: "의료법 27조 — 무면허 의료행위", action: "케어박스 의약품 경계 (REQ-10 구현)" },
+    { grade: "C", name: "병원 건별 수수료 (C4)", action: "건별 수수료 UI 부재 확인" },
+    { grade: "H", name: "GA 등록 전 보험 모집 (H4)", action: "기능 플래그 잠금" },
+    { grade: "H", name: "재가급여 부당청구 환수 (H8)", action: "청구 배치 전 자격·한도 검증 필수 경로" },
+  ],
+};
+
+// 코호트 리텐션 — 목 수치. LTV는 산정 방식 미확정
+export const ADMIN_COHORTS = [
+  { month: "3월", m1: "92%", m3: "81%", m6: "74%", ltv: "₩ 1,840,000" },
+  { month: "4월", m1: "94%", m3: "83%", m6: "—", ltv: "산정 중" },
+  { month: "5월", m1: "93%", m3: "—", m6: "—", ltv: "산정 중" },
+  { month: "6월", m1: "95%", m3: "—", m6: "—", ltv: "산정 중" },
+];
