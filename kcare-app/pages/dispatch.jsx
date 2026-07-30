@@ -11,6 +11,8 @@ import {
   RISK_WATCH,
   ROUTE_CHAIN,
   SCORE_FACTORS,
+  DIRECTORY_ALL,
+  DIRECTORY_TYPE,
   SLA_ROWS,
   STAFF,
   STAFF_STATUS,
@@ -96,8 +98,25 @@ function useElapsed(active) {
   return `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
 }
 
-// 관제 맵 — Leaflet · CARTO 다크 타일 · 실측 좌표 (09 §4)
-function ControlMap({ sos }) {
+// 관제 맵 — Leaflet · 실측 좌표 (09 §4) · 타일 라이트(OSM)/다크(CARTO) 선택
+const MAP_TILES = {
+  light: {
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    subdomains: "abc",
+    attribution: "© OpenStreetMap contributors",
+    bg: "#E6EBF2",
+    district: "rgba(10,31,60,.35)",
+  },
+  dark: {
+    url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    subdomains: "abcd",
+    attribution: "© OpenStreetMap © CARTO",
+    bg: "#0E2647",
+    district: "rgba(255,255,255,.4)",
+  },
+};
+
+function ControlMap({ sos, mode = "light" }) {
   const nodeRef = useRef(null);
   const mapRef = useRef(null);
 
@@ -112,12 +131,11 @@ function ControlMap({ sos }) {
         scrollWheelZoom: false, // 페이지 스크롤 중 줌 방지 — 관제사가 위치를 잃는다
       });
       mapRef.current = map;
-      // 타일: 표준 OpenStreetMap (요청 반영 · 우선). 09 §4 원안은 CARTO 다크 —
-      // 라이브러리·타일을 바꿔도 좌표는 그대로 쓴다.
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        subdomains: "abc",
+      const tile = MAP_TILES[mode] || MAP_TILES.light;
+      L.tileLayer(tile.url, {
+        subdomains: tile.subdomains,
         maxZoom: 19,
-        attribution: "© OpenStreetMap contributors",
+        attribution: tile.attribution,
       }).addTo(map);
 
       const pts = [];
@@ -133,10 +151,10 @@ function ControlMap({ sos }) {
           .addTo(map)
           .bindPopup(label, { className: "kcare-popup" });
       };
-      // 라이트 타일 위 가독을 위해 흰색 계열 마커는 네이비 톤으로
-      MAP_DISTRICTS.forEach((d) => add(d.lat, d.lng, d.name, "rgba(10,31,60,.35)", 4));
+      const tileTheme = MAP_TILES[mode] || MAP_TILES.light;
+      MAP_DISTRICTS.forEach((d) => add(d.lat, d.lng, d.name, tileTheme.district, 4));
       MAP_HOSPITALS.forEach((h) => add(h.lat, h.lng, `${h.name} · 제휴 병원`, "#B08D57", 7));
-      mapPeople(sos).forEach((p) => add(p.lat, p.lng, p.label, p.color, 7));
+      mapPeople(sos, mode).forEach((p) => add(p.lat, p.lng, p.label, p.color, 7));
       map.fitBounds(L.latLngBounds(pts), { padding: [26, 26] });
     });
 
@@ -150,11 +168,15 @@ function ControlMap({ sos }) {
         mapRef.current = null;
       }
     };
-  }, [sos]);
+  }, [sos, mode]);
 
   return (
     <div className="relative">
-      <div ref={nodeRef} className="h-[300px] overflow-hidden rounded-[10px] bg-[#E6EBF2]" />
+      <div
+        ref={nodeRef}
+        className="h-[300px] overflow-hidden rounded-[10px]"
+        style={{ background: (MAP_TILES[mode] || MAP_TILES.light).bg }}
+      />
       <div className="pointer-events-none absolute bottom-2 left-2 z-[1000] rounded-md bg-black/45 px-2 py-1 text-[9px] font-bold tracking-[.08em] text-white/80">
         SEOUL · OpenStreetMap 실측 좌표
       </div>
@@ -171,6 +193,23 @@ export default function DispatchConsole() {
   const [tab, setTab] = useState("live");
   const [range, setRange] = useState("7");
   const [briefed, setBriefed] = useState(false);
+  const [mapMode, setMapMode] = useState("light"); // 맵 타일 라이트/다크
+  const [query, setQuery] = useState(""); // 통합 검색
+  const [profile, setProfile] = useState(null); // 플로팅 프로필 카드
+
+  const openProfile = (name) => {
+    const item = DIRECTORY_ALL.find((d) => d.name === name);
+    if (item) {
+      setProfile(item);
+      setQuery("");
+    }
+  };
+  const searchResults =
+    query.trim().length >= 1
+      ? DIRECTORY_ALL.filter(
+          (d) => d.name.includes(query.trim()) || d.summary.includes(query.trim())
+        ).slice(0, 8)
+      : [];
 
   // 초 단위 시계 (09 §1) — SOS 경과가 초 단위라 화면이 1초 틱으로 갱신
   const [now, setNow] = useState(() => new Date());
@@ -286,6 +325,43 @@ export default function DispatchConsole() {
             </div>
           </header>
 
+          {/* ── 통합 검색 — 보호자·어르신·컨시어지·병원 (GNB) ── */}
+          <div className="relative mt-3 max-w-[520px]">
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="검색 — 어르신 · 보호자 · 컨시어지 · 병원"
+              className="card-glass w-full rounded-xl px-4 py-2.5 text-[13px] font-medium text-navy outline-none placeholder:text-muted/60 focus:ring-1 focus:ring-gold"
+            />
+            {searchResults.length > 0 && (
+              <div className="card-glass absolute left-0 right-0 top-[46px] z-[1050] overflow-hidden rounded-xl">
+                {searchResults.map((d) => (
+                  <button
+                    key={`${d.type}-${d.name}`}
+                    onClick={() => openProfile(d.name)}
+                    className="flex w-full items-center gap-2.5 border-t border-navy/[.06] px-4 py-2.5 text-left first:border-t-0 hover:bg-navy/[.04]"
+                  >
+                    <span
+                      className="shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold"
+                      style={{ color: "#0A1F3C", background: "rgba(10,31,60,.08)" }}
+                    >
+                      {DIRECTORY_TYPE[d.type].label}
+                    </span>
+                    <span className="shrink-0 text-[13px] font-bold text-navy">
+                      {d.name} <span className="text-[10px] font-medium text-muted">{d.tag}</span>
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-[11px] text-muted">{d.summary}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            {query.trim().length >= 1 && searchResults.length === 0 && (
+              <div className="card-glass absolute left-0 right-0 top-[46px] z-[1050] rounded-xl px-4 py-3 text-[12px] text-muted">
+                검색 결과가 없습니다.
+              </div>
+            )}
+          </div>
+
           {/* ── SOS 배너 (09 §2 + REQ-04 경계) ── */}
           {sos && (
             <section className="mt-[18px] flex flex-wrap items-center gap-[18px] rounded-[14px] bg-danger px-5 py-4 text-white animate-sosPulse">
@@ -363,7 +439,14 @@ export default function DispatchConsole() {
               <div className="mt-4 grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
                 {/* why(근거) 없는 배정안은 렌더 금지 — 블랙박스 금지 (규제 요건) */}
                 {AI_ASSIGN.filter((a) => a.why).map((a) => (
-                  <div key={a.client} className="rounded-xl border border-white/12 bg-white/[.05] p-3.5">
+                  <div
+                    key={a.client}
+                    className="rounded-xl bg-white/[.05] p-3.5"
+                    style={{
+                      boxShadow:
+                        "inset 0 1px 0 rgba(255,255,255,.14), inset 0 0 0 1px rgba(255,255,255,.06), 0 10px 22px -18px rgba(0,0,0,.6)",
+                    }}
+                  >
                     <div className="flex items-baseline justify-between">
                       <span className="text-[12px] font-bold">{a.client}</span>
                       <span className="font-num text-[10px] text-white/60">{a.time}</span>
@@ -428,9 +511,25 @@ export default function DispatchConsole() {
                   </span>
                 ))}
                 <span className="font-medium text-white/45">OpenStreetMap 기반 실측 좌표</span>
+                <span className="ml-2 flex overflow-hidden rounded-lg border border-white/20">
+                  {[
+                    ["light", "라이트"],
+                    ["dark", "다크"],
+                  ].map(([m, label]) => (
+                    <button
+                      key={m}
+                      onClick={() => setMapMode(m)}
+                      className={`px-2.5 py-1 text-[10px] font-bold ${
+                        mapMode === m ? "bg-white/90 text-navy" : "text-white/60"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </span>
               </div>
             </div>
-            <ControlMap sos={sos} />
+            <ControlMap sos={sos} mode={mapMode} />
           </section>
 
           {/* ── 탭 3개 — 아웃라인 버튼형, 언마운트 전환 (09 §5) ── */}
@@ -471,10 +570,16 @@ export default function DispatchConsole() {
                 <div className="mt-1 space-y-1">
                   {rows.map((r) => (
                     <div key={r.name} className="flex border-t border-navy/[.06] py-1 first:border-t-0">
-                      <div className="w-[108px] shrink-0 pr-2 pt-2">
-                        <div className="text-[12px] font-bold text-navy">{r.name}</div>
+                      <button
+                        onClick={() => openProfile(r.name)}
+                        className="w-[108px] shrink-0 pr-2 pt-2 text-left hover:opacity-70"
+                        title="프로필 보기"
+                      >
+                        <div className="text-[12px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
+                          {r.name}
+                        </div>
                         <div className="text-[10px] text-muted">{r.meta}</div>
-                      </div>
+                      </button>
                       <div className="relative min-h-[56px] flex-1">
                         {nowPct > 0 && nowPct < 100 && (
                           <span
@@ -487,14 +592,16 @@ export default function DispatchConsole() {
                           />
                         )}
                         {r.bars.map((b) => (
-                          <div
+                          <button
                             key={b.id}
-                            className="absolute bottom-[9px] top-[9px] overflow-hidden rounded-lg px-2 py-1"
+                            onClick={() => openProfile(b.label.split(" (")[0])}
+                            className="absolute bottom-[9px] top-[9px] overflow-hidden rounded-lg px-2 py-1 text-left hover:opacity-85"
                             style={{ left: `${b.left}%`, width: `${b.width}%`, background: b.bg, color: b.fg }}
+                            title="어르신 상태 보기"
                           >
                             <div className="truncate whitespace-nowrap text-[11px] font-bold">{b.label}</div>
                             <div className="truncate whitespace-nowrap text-[10px] opacity-85">{b.sub}</div>
-                          </div>
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -915,7 +1022,56 @@ export default function DispatchConsole() {
             </div>
           )}
         </div>
+
+        {/* 플로팅 프로필 카드 — 그리드·검색에서 열림 */}
+        {profile && <FloatProfile item={profile} onClose={() => setProfile(null)} />}
       </div>
     </>
+  );
+}
+
+// 플로팅 프로필 — 담당·상태·챙길 것 한눈에. 상세 주소 등은 게이팅 원칙 유지 (더미)
+function FloatProfile({ item, onClose }) {
+  const t = DIRECTORY_TYPE[item.type];
+  return (
+    <div className="fixed inset-0 z-[1100]" onClick={onClose}>
+      <div
+        className="card-glass absolute right-6 top-24 w-[320px] max-w-[calc(100vw-32px)] rounded-[14px] p-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-2">
+          <span
+            className="rounded-full px-2 py-0.5 text-[9px] font-bold"
+            style={{ color: "#0A1F3C", background: "rgba(10,31,60,.08)" }}
+          >
+            {t.label}
+          </span>
+          <span className="text-[15px] font-bold text-navy">
+            {item.name} <span className="text-[11px] font-medium text-muted">{item.tag}</span>
+          </span>
+          <button
+            onClick={onClose}
+            aria-label="닫기"
+            className="btn-press ml-auto flex h-[26px] w-[26px] items-center justify-center rounded-lg border border-navy/15 text-[12px] font-bold text-muted"
+          >
+            ✕
+          </button>
+        </div>
+        <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">{item.summary}</p>
+        <div className="mt-2.5 space-y-1.5 border-t border-navy/[.08] pt-2.5">
+          {item.rows.map(([k, v]) => (
+            <div key={k} className="flex gap-2 text-[11px]">
+              <span className="w-[44px] shrink-0 font-bold text-gold">{k}</span>
+              <span className="flex-1 leading-[1.55] text-ink">{v}</span>
+            </div>
+          ))}
+        </div>
+        {item.alert && (
+          <p className="mt-2.5 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3 py-2 text-[11px] font-bold leading-[1.6] text-[#5A4A22]">
+            챙길 것 — {item.alert}
+          </p>
+        )}
+      </div>
+    </div>
   );
 }
