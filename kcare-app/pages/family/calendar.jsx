@@ -2,7 +2,8 @@ import Head from "next/head";
 import { useMemo, useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, GhostButton } from "../../components/ui";
-import { EVENT_KINDS } from "../../lib/mock";
+import Link from "next/link";
+import { EVENT_KINDS, MOU_HOSPITALS } from "../../lib/mock";
 import { useAppState } from "../../lib/state";
 
 // 공유 캘린더 — REQ-02
@@ -83,6 +84,29 @@ export default function CalendarPage() {
             </div>
           </Card>
         )}
+
+        {/* 제휴 병원 진입점 — 예약하러 온 동선에서 병원부터 찾는다 */}
+        <Link href="/family/hospitals" className="block">
+          <Card className="btn-press p-4">
+            <div className="flex items-center justify-between">
+              <div className="text-[14px] font-bold text-navy">제휴 병원 찾기</div>
+              <span className="text-[18px] text-muted/50">›</span>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {MOU_HOSPITALS.slice(0, 4).map((h) => (
+                <span key={h.dept} className="chip-gold rounded-full px-2.5 py-1 text-[11px] font-bold">
+                  {h.dept}
+                </span>
+              ))}
+              <span className="rounded-full border border-navy/15 px-2.5 py-1 text-[11px] font-bold text-muted">
+                전체 보기
+              </span>
+            </div>
+            <p className="mt-2 text-[11px] text-muted">
+              MOU 병원 · 패스트트랙 · 동행 예약 요청까지 한 번에
+            </p>
+          </Card>
+        </Link>
 
         {/* 월 그리드 */}
         <Card className="p-4">

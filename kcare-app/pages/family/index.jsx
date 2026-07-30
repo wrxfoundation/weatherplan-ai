@@ -463,6 +463,13 @@ export default function FamilyHome() {
           >
             {aiBooked ? "✓ 예약 접수됨 · 다가오는 일정에서 확인" : "AI로 예약하기"}
           </button>
+          {/* 제휴 병원 진입점 — 동행 예약 흐름과 같은 맥락 */}
+          <Link
+            href="/family/hospitals"
+            className="btn-press mt-2 block w-full rounded-xl border border-white/25 bg-white/[.06] py-3 text-center text-[13px] font-bold text-white/85"
+          >
+            제휴 병원 찾기 · 과목별 MOU · 패스트트랙
+          </Link>
         </div>
 
         {/* 형제 공동 관리 — 순위 없음, 사실만 */}
