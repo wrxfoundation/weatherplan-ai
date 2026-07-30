@@ -13,6 +13,7 @@ import {
   SCORE_FACTORS,
   DIRECTORY_ALL,
   DIRECTORY_TYPE,
+  DISPATCH_AI_QA,
   SLA_ROWS,
   STAFF,
   STAFF_STATUS,
@@ -21,6 +22,7 @@ import {
   mapPeople,
 } from "../lib/mock";
 import { useAppState } from "../lib/state";
+import AiChat from "../components/AiChat";
 
 // 배치관리자(관제) — 핸드오프 09 상세 명세 + REQ-04(긴급 대응 범위, 회의 확정 우선).
 // 데스크톱 전용 · 정보 밀도가 정당한 유일한 화면 (10~13px 활자가 정답 — 09 §0).
@@ -1554,6 +1556,17 @@ export default function DispatchConsole() {
 
         {/* 플로팅 프로필 카드 — 그리드·검색에서 열림 */}
         {profile && <FloatProfile item={profile} onClose={() => setProfile(null)} />}
+
+        {/* AI 관제 어시스턴트 — 우측 하단 플로팅 */}
+        <AiChat
+          role="dispatch"
+          title="AI 관제 어시스턴트"
+          subtitle="상황 요약 · 우선순위 제안"
+          qa={DISPATCH_AI_QA}
+          context={`SOS ${sos ? "진행 중" : "없음"} · 처리 대기 ${actions.length}건 · 미매칭 ${unmatchedCount}건 · 오늘 배차 ${jobs.length}건 · AI 배정안 ${assign === "pending" ? "3건 대기" : "확정"}`}
+          intro="관제 상황을 요약해 드립니다. 지금 급한 일, 미매칭 해소 옵션, 리스크 워치를 물어보세요."
+          note="AI 제안은 참고용입니다 — 배차 · 해제 등 실행은 관제 담당자 승인으로만 진행됩니다 (L4 · 8.4 Human-in-the-loop)."
+        />
       </div>
     </>
   );

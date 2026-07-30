@@ -1,7 +1,9 @@
 import Head from "next/head";
 import { useState } from "react";
 import { PendingTag } from "../components/ui";
+import AiChat from "../components/AiChat";
 import {
+  ADMIN_AI_QA,
   ADMIN_COHORTS,
   ADMIN_RISKS,
   ADMIN_SLA,
@@ -558,6 +560,17 @@ export default function AdminConsole() {
             </>
           )}
         </div>
+
+        {/* AI 경영 어시스턴트 — 우측 하단 플로팅 */}
+        <AiChat
+          role="admin"
+          title="AI 경영 어시스턴트"
+          subtitle="사람 지표 분석 · 집계 전용"
+          qa={ADMIN_AI_QA}
+          context="가입 128가구(+12) · 활성 어르신 132 · 보호자 241(주 128 / 부 113) · 컨시어지 24 · 90일 유지 87% · NPS 62 · 이탈 위험 11가구 · 부보호자 열람 64%"
+          intro="사람 · 경영 지표를 분석해 드립니다. 이번 달 요약, 이탈 위험 조치, 유지율 개선 포인트를 물어보세요."
+          note="집계 데이터만 다룹니다 — 개별 사건 · 개인정보는 관제 · CS 소관입니다."
+        />
       </div>
     </>
   );
