@@ -205,7 +205,7 @@ function ControlMap({ sos, mode = "light", onSelect }) {
 export default function DispatchConsole() {
   const { state, dispatch } = useAppState();
   const { sos } = state.demo;
-  const { sosDispatched, sos119, assign, unmatchFixed } = state.ops;
+  const { sosDispatched, sos119, assign, unmatchFixed, npsDetractor } = state.ops;
   const checkedIn = state.visit.checkedIn;
   const { label: elapsed, sec: elapsedSec } = useElapsed(sos);
   const [tab, setTab] = useState("live");
@@ -325,6 +325,14 @@ export default function DispatchConsole() {
     actions.push({
       id: "unmatch", level: "high", title: "짝 미매칭 — 한복자 (79) 투석 16:20",
       meta: "해소 목표 15:50 · 서다인 재배치안 승인 대기", jumpTab: "pair",
+    });
+  if (npsDetractor && !handled.npsCall)
+    actions.push({
+      id: "npsCall", level: "high",
+      title: `만족도 ${npsDetractor.score}점 회복 콜 — 김민수 (${npsDetractor.reason || "사유 미선택"})`,
+      meta: "보호자 앱 NPS 접수 → 24h SLA · 회복이 먼저", act: "콜 완료",
+      ticker: ["대응", "NPS 회복 콜 완료 — 김민수 · 조치 결과 가족 공유 예정", "#8FA9CC"],
+      clear: { npsDetractor: null },
     });
   if (assign === "pending")
     actions.push({
@@ -687,6 +695,7 @@ export default function DispatchConsole() {
                       <button
                         onClick={() => {
                           setHandled((h) => ({ ...h, [a.id]: true }));
+                          if (a.clear) dispatch({ type: "opsPatch", patch: a.clear });
                           push(...a.ticker);
                         }}
                         className="btn-press shrink-0 rounded-[10px] border border-green/40 px-3.5 py-2 text-[13px] font-bold text-green"

@@ -88,6 +88,21 @@ export default function FamilyHome() {
           </div>
         )}
 
+        {/* 컨시어지 체크인 → 보호자 라이브 — 역할 간 실시간 연동 */}
+        {state.visit.checkedIn && !state.demo.sos && (
+          <Card className="flex items-center gap-3 p-4">
+            <span className="h-[10px] w-[10px] shrink-0 animate-livePing rounded-full bg-green" />
+            <div className="min-w-0 flex-1">
+              <div className="text-[14px] font-bold text-navy">
+                지금 박지현 컨시어지가 어머니와 동행 중입니다
+              </div>
+              <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">
+                13:50 출발 · GPS · 시간 기록 중 — 종료 후 2시간 안에 리포트가 도착합니다
+              </div>
+            </div>
+          </Card>
+        )}
+
         {/* AI 이상 징후 카드 — anomaly === 'open' */}
         {anomaly === "open" && (
           <div className="rounded-card border border-amber/35 bg-gradient-to-b from-[#FFF7E8] to-[#FBEFD8] p-[18px]">
@@ -191,6 +206,9 @@ export default function FamilyHome() {
         {/* 동행 후 만족도 — NPS 수집 루프. 비추천(≤6)은 즉시 회복 플로우 */}
         <NpsCard
           onEvent={(text, color) => dispatch({ type: "pushEvent", payload: { kind: "CS", text, color } })}
+          onDetractor={(score, reason) =>
+            dispatch({ type: "opsPatch", patch: { npsDetractor: { score, reason } } })
+          }
         />
 
         {/* 승인 대기 배지 — REQ-03/07 연결 */}
@@ -539,7 +557,7 @@ export default function FamilyHome() {
 }
 
 // 동행 후 만족도 — NPS 루프: 0–10 선택 → 비추천(≤6)은 사유 + 24h 회복 안내
-function NpsCard({ onEvent }) {
+function NpsCard({ onEvent, onDetractor }) {
   const [score, setScore] = useState(null);
   const [reason, setReason] = useState(null);
   const [done, setDone] = useState(false);
@@ -613,6 +631,7 @@ function NpsCard({ onEvent }) {
         <button
           onClick={() => {
             setDone(true);
+            if (score <= 6) onDetractor?.(score, reason);
             onEvent(
               score <= 6
                 ? `만족도 ${score}점 접수 — 회복 플로우 시작 (${reason || "사유 미선택"} · 24h 내 연락)`

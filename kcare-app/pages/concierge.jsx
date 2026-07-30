@@ -48,6 +48,7 @@ export default function ConciergePage() {
   const [shopSent, setShopSent] = useState(false);
   const [apptDone, setApptDone] = useState(false);
   const [pairCalled, setPairCalled] = useState(false);
+  const [sosAck, setSosAck] = useState(false); // 관제 급파 수락 원샷
   const [prefAdded, setPrefAdded] = useState(false); // 선호 카드 — 오늘 기록 원샷
   const [detailDone, setDetailDone] = useState(false); // 오늘의 한 끗 완료
   const [pairSigned, setPairSigned] = useState(false); // 서다인 서명 (데모)
@@ -109,6 +110,30 @@ export default function ConciergePage() {
             {/* ════ 오늘 탭 ════ */}
             {tab === "today" && (
               <>
+                {/* 관제 급파 → 컨시어지 긴급 배너 — 역할 간 실시간 연동 (SOS + 급파 지시 시) */}
+                {state.demo.sos && state.ops.sosDispatched && (
+                  <div className="animate-sosPulse rounded-2xl bg-danger p-4 text-white">
+                    <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 급파 · 관제 지시</div>
+                    <div className="mt-1 text-[18px] font-bold leading-[1.4]">
+                      김순자님 SOS — 최근접 동행자로 지정되었습니다
+                    </div>
+                    <div className="mt-0.5 text-[13px] opacity-90">
+                      대치동 자택 1.2km · 서다인(부)과 2인 급파 · 도착 예정 6분
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (sosAck) return;
+                        setSosAck(true);
+                        push("대응", "박지현 급파 수락 — 이동 시작 (도착 예정 6분)", "#FF8A80");
+                      }}
+                      disabled={sosAck}
+                      className="btn-press mt-3 w-full rounded-[10px] bg-white py-3 text-[16px] font-bold text-danger disabled:opacity-80"
+                    >
+                      {sosAck ? "✓ 수락됨 — 이동 중 (관제 공유)" : "급파 수락 · 이동 시작"}
+                    </button>
+                  </div>
+                )}
+
                 {state.demo.offline && (
                   <div className="rounded-[14px] border border-amber/30 bg-gradient-to-b from-[#FFF7E8] to-[#FBEFD8] p-3.5">
                     <div className="text-[13px] font-bold text-amber">
