@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, Badge, PendingTag, Avatar } from "../../components/ui";
-import { CARE_TEAM, ELDER, EVENT_KINDS, GUARDIANS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
+import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_KINDS, GUARDIANS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 
@@ -31,6 +31,7 @@ export default function FamilyHome() {
     .filter((e) => e.at > Date.now())
     .slice(0, 3);
   const [aiBooked, setAiBooked] = useState(false);
+  const [askAi, setAskAi] = useState(null); // AI 케어 어시스턴트 — 선택한 질문
   const pendingApprovals = state.requests.filter((r) => r.status === "awaitingPayment").length;
   const repScore = Math.min(...OUTING.legs.map((l) => l.score)); // 두 구간 중 낮은 값
 
@@ -210,7 +211,49 @@ export default function FamilyHome() {
             숫자를 읽고 판단하는 일은 저희가 합니다. 한 줄이 초록이면 연락하지 않으셔도
             됩니다.
           </p>
+          <p className="mt-1.5 text-[10px] text-white/40">
+            AI가 워치·방문 기록을 요약하고 사람이 검수합니다 (8.4)
+          </p>
         </div>
+
+        {/* AI 케어 어시스턴트 — 답변은 항상 근거 동반 · 의료 판단 아님 */}
+        <Card className="p-[18px]">
+          <div className="flex items-center gap-2">
+            <span className="text-[15px] font-black text-navy">AI 케어 어시스턴트</span>
+            <span className="chip-gold rounded-full px-2 py-[3px] text-[9px] font-bold">근거 동반 답변</span>
+          </div>
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {AI_ASSISTANT_QA.map((qa) => (
+              <button
+                key={qa.q}
+                onClick={() => setAskAi(askAi?.q === qa.q ? null : qa)}
+                className={`btn-press rounded-full border px-3 py-2 text-[12px] font-bold ${
+                  askAi?.q === qa.q ? "border-navy bg-navy text-white" : "border-navy/15 text-muted"
+                }`}
+              >
+                {qa.q}
+              </button>
+            ))}
+          </div>
+          {askAi && (
+            <div
+              className="animate-tickIn mt-3 rounded-xl p-3.5"
+              style={{
+                background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
+              }}
+            >
+              <p className="text-[13px] leading-[1.75] text-ink">{askAi.a}</p>
+              <p className="mt-2 border-t border-navy/[.08] pt-2 text-[10px] font-bold text-muted">
+                근거: {askAi.src}
+              </p>
+            </div>
+          )}
+          <p className="mt-2.5 text-[10px] leading-[1.6] text-muted">
+            수집된 기록에서만 답합니다 · 의료 판단이 아니며, 이상 징후는 사람이 확인 후
+            알립니다 (8.4)
+          </p>
+        </Card>
 
         {/* 실시간 건강 요약 — 5지표 · 지표별 상태 라벨 병행 (디자인 콘솔 · F2-6) */}
         <Card className="p-[18px]">

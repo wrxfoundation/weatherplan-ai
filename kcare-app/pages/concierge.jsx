@@ -2,7 +2,9 @@ import Head from "next/head";
 import { useMemo, useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../components/ui";
 import {
+  AI_BRIEFING,
   AI_REPORT,
+  AI_VOICE_DRAFT,
   CARE_SUGGESTIONS,
   CONCIERGE_SHOP_ITEMS,
   DIAGNOSIS_WORDS,
@@ -246,6 +248,40 @@ export default function ConciergePage() {
                   >
                     {v.checkedIn ? "✓ 출근 체크인 완료" : "GPS 출근 체크인"}
                   </button>
+                </Card>
+
+                {/* AI 동행 브리핑 — 케어 프로필 자동 주입. 확정/미확정 구분 (03 profile) */}
+                <Card className="p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[14px] font-black text-navy">AI 동행 브리핑</span>
+                    <span className="chip-gold rounded-full px-2 py-[3px] text-[9px] font-bold">
+                      케어 프로필 기반
+                    </span>
+                  </div>
+                  <div className="mt-2.5 space-y-1.5">
+                    {AI_BRIEFING.confirmed.map((b) => (
+                      <div key={b} className="flex items-start gap-2 text-[12px] leading-[1.6] text-ink">
+                        <span className="mt-[2px] inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-green/15 text-[9px] font-bold text-green">
+                          ✓
+                        </span>
+                        {b}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-2.5 rounded-xl border border-amber/30 bg-[#FFF7E8] p-3">
+                    <div className="text-[10px] font-bold tracking-[.08em] text-amber">
+                      미확정 — 확인된 정보가 아닙니다
+                    </div>
+                    {AI_BRIEFING.unconfirmed.map((u) => (
+                      <p key={u} className="mt-1 text-[12px] leading-[1.6] text-[#5A4A22]">
+                        {u}
+                      </p>
+                    ))}
+                  </div>
+                  <p className="mt-2.5 text-[10px] leading-[1.6] text-muted">
+                    관찰·발언 기록에서 AI가 추렸습니다 — 진단·판단 없음. 새 관찰은 리포트로
+                    쌓이고 다음 브리핑에 반영됩니다.
+                  </p>
                 </Card>
 
                 {/* 다음 일정 — 주소 게이팅 유지 (REQ-09) */}
@@ -1159,7 +1195,8 @@ function ReportSheet({ onClose, onSend }) {
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
         <div className="text-[17px] font-black text-navy">가정환경 · 정서 관찰 리포트</div>
         <p className="mt-1 text-[11px] leading-[1.7] text-muted">
-          관찰한 사실과 들은 말만 적어주세요. 판단·진단은 기록하지 않습니다.
+          관찰한 사실과 들은 말만 적어주세요. 판단·진단은 기록하지 않습니다. 음성으로
+          불러주면 AI가 관찰 문장으로 정리하고, 진단 표현은 자동 차단됩니다.
           <br />
           좋은 예: &ldquo;지난 방문보다 대화량이 감소했고, &lsquo;아무것도 하기 싫다&rsquo;는
           말을 세 차례 함.&rdquo;
@@ -1186,7 +1223,15 @@ function ReportSheet({ onClose, onSend }) {
         </div>
 
         <div className="mt-4">
-          <SectionLabel>관찰 내용 · 직접 발언 인용</SectionLabel>
+          <div className="flex items-center justify-between">
+            <SectionLabel>관찰 내용 · 직접 발언 인용</SectionLabel>
+            <button
+              onClick={() => setNote((n) => (n.trim() ? n : AI_VOICE_DRAFT))}
+              className="btn-press rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11px] font-bold text-navy"
+            >
+              🎙 AI 음성 초안 (데모)
+            </button>
+          </div>
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}

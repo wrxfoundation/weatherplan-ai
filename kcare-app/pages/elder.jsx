@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import {
+  AI_CALL,
   ASK_DOCTOR,
   DELIVERY,
   ELDER,
@@ -282,6 +283,23 @@ export default function ElderHome() {
               >
                 일정 하나 남기기
               </button>
+            </ElderCard>
+
+            {/* order 2 · 안부 전화 — 앰비언트 AI. 어르신은 받기만 하면 된다.
+                버튼 없음 · 시스템 주어(AI가~) 없음 (06 §7). 발언은 질문·리포트에 자동 반영 */}
+            <ElderCard show={tab === "today"} order={2}>
+              <CardHead title="안부 전화" right={AI_CALL.timeLabel} />
+              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
+                {AI_CALL.body.split("\n").map((line, i) => (
+                  <span key={i} className="block">
+                    {line}
+                  </span>
+                ))}
+              </p>
+              <div className="mt-3" style={SUB_CARD}>
+                <p className="text-[19px] leading-[1.6] text-ink">{AI_CALL.yesterday}</p>
+              </div>
+              <p className="mt-3 text-[19px] leading-[1.6] text-muted">{AI_CALL.autoNote}</p>
             </ElderCard>
 
             {/* order 2 · 오늘 약 — 카드 전체가 미완료 상태 표현. 미완료는 호박색 (원칙 4) */}
