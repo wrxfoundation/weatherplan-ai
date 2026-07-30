@@ -78,7 +78,7 @@ export default function Onboarding() {
                   className={`h-[4px] rounded-full ${i <= step ? "bg-gold" : "bg-navy/10"}`}
                 />
                 <div
-                  className={`mt-1 text-[9px] font-bold ${
+                  className={`mt-1 text-[10px] font-bold ${
                     i === step ? "text-navy" : "text-muted/60"
                   }`}
                 >
@@ -90,7 +90,7 @@ export default function Onboarding() {
 
           {step === 0 && (
             <section className="animate-tickIn space-y-4">
-              <h1 className="text-[24px] font-black leading-[1.4] text-navy">
+              <h1 className="text-[27px] font-black leading-[1.4] text-navy">
                 어르신과의 관계를
                 <br />
                 알려주세요
@@ -102,7 +102,7 @@ export default function Onboarding() {
                     <button
                       key={r}
                       onClick={() => set({ rel: r })}
-                      className={`btn-press rounded-xl border py-3 text-[14px] font-bold ${
+                      className={`btn-press rounded-xl border py-3 text-[16px] font-bold ${
                         form.rel === r
                           ? "border-gold bg-gold/10 text-navy"
                           : "border-navy/15 text-muted"
@@ -118,7 +118,7 @@ export default function Onboarding() {
                     value={form.relDetail}
                     onChange={(e) => set({ relDetail: e.target.value })}
                     placeholder="어떤 관계인지 적어주세요 (예: 조카, 손주, 이웃, 복지기관)"
-                    className="animate-tickIn mt-2 w-full rounded-xl border border-gold/60 bg-white px-3.5 py-3 text-[14px] outline-none focus:border-gold"
+                    className="animate-tickIn mt-2 w-full rounded-xl border border-gold/60 bg-white px-3.5 py-3 text-[16px] outline-none focus:border-gold"
                   />
                 )}
                 <div className="mt-5">
@@ -128,7 +128,7 @@ export default function Onboarding() {
                       <button
                         key={r}
                         onClick={() => set({ res: r })}
-                        className={`btn-press rounded-xl border py-3 text-[14px] font-bold ${
+                        className={`btn-press rounded-xl border py-3 text-[16px] font-bold ${
                           form.res === r
                             ? "border-gold bg-gold/10 text-navy"
                             : "border-navy/15 text-muted"
@@ -139,7 +139,7 @@ export default function Onboarding() {
                     ))}
                   </div>
                   {form.res === "해외" && (
-                    <p className="mt-3 rounded-xl bg-navy/5 p-3 text-[12px] leading-[1.7] text-muted">
+                    <p className="mt-3 rounded-xl bg-navy/5 p-3 text-[13px] leading-[1.7] text-muted">
                       해외 거주 보호자는 시차에 맞춘 리포트 발송 시각과 현지 통화 결제를
                       배정 상담에서 함께 설정합니다.
                     </p>
@@ -154,9 +154,9 @@ export default function Onboarding() {
                     type="tel"
                     inputMode="tel"
                     placeholder="010-0000-0000"
-                    className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 font-num text-[14px] outline-none focus:border-gold"
+                    className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 font-num text-[16px] outline-none focus:border-gold"
                   />
-                  <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">
+                  <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">
                     배정 상담 콜(30분)과 서비스 안내에 사용합니다. 이 번호 외에는 연락하지
                     않습니다.
                   </p>
@@ -170,11 +170,11 @@ export default function Onboarding() {
 
           {step === 1 && (
             <section className="animate-tickIn space-y-4">
-              <h1 className="text-[24px] font-black leading-[1.4] text-navy">
+              <h1 className="text-[27px] font-black leading-[1.4] text-navy">
                 서비스 가능지역 및<br />
                 이용적합성 심사
               </h1>
-              <p className="text-[12px] leading-[1.7] text-muted">
+              <p className="text-[13px] leading-[1.7] text-muted">
                 주소 기준으로 서비스 권역을 먼저 확인하고, 나머지 항목은 방문 상담에서
                 확인합니다.
               </p>
@@ -184,7 +184,7 @@ export default function Onboarding() {
                   value={form.elderName}
                   onChange={(e) => set({ elderName: e.target.value })}
                   placeholder="예: 김순자"
-                  className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 text-[14px] outline-none focus:border-gold"
+                  className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 text-[16px] outline-none focus:border-gold"
                 />
                 <div className="mt-5">
                   <SectionLabel>어르신 거주 지역</SectionLabel>
@@ -194,7 +194,7 @@ export default function Onboarding() {
                       set({ district: e.target.value });
                       setWaitlisted(false);
                     }}
-                    className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 text-[14px] outline-none focus:border-gold"
+                    className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 text-[16px] outline-none focus:border-gold"
                   >
                     <option value="" disabled>
                       지역 선택
@@ -223,17 +223,17 @@ export default function Onboarding() {
                       {result.label}
                     </Badge>
                   </div>
-                  <p className="mt-2 text-[13px] leading-[1.75] text-ink">{result.summary}</p>
+                  <p className="mt-2 text-[15px] leading-[1.75] text-ink">{result.summary}</p>
                   {result.tier === 1 && (
                     <div className="mt-3 rounded-xl bg-navy p-3.5 text-white">
-                      <span className="text-[12px] opacity-75">월 구독료 </span>
-                      <span className="font-num text-[20px] font-bold">
+                      <span className="text-[13px] opacity-75">월 구독료 </span>
+                      <span className="font-num text-[22px] font-bold">
                         {fmtWon(PRICING.subscription.tier1.monthly)}
                       </span>
                     </div>
                   )}
                   {result.tier === 2 && (
-                    <div className="mt-3 rounded-xl bg-amber/10 p-3.5 text-[12px] leading-[1.7] text-amber">
+                    <div className="mt-3 rounded-xl bg-amber/10 p-3.5 text-[13px] leading-[1.7] text-amber">
                       2급지 구독료·출동비는 확정 전입니다. 배정 상담에서 안내드립니다.
                     </div>
                   )}
@@ -244,7 +244,7 @@ export default function Onboarding() {
                         {SCREENING_ITEMS.filter((i) => !i.auto).map((i) => (
                           <span
                             key={i.name}
-                            className="rounded-full border border-navy/15 px-2.5 py-1 text-[11px] text-muted"
+                            className="rounded-full border border-navy/15 px-2.5 py-1 text-[12px] text-muted"
                           >
                             {i.name}
                           </span>
@@ -256,7 +256,7 @@ export default function Onboarding() {
               )}
 
               {waitlisted && (
-                <div className="animate-tickIn rounded-card border border-green/30 bg-[#F1FAF6] p-4 text-[13px] leading-[1.7] text-green">
+                <div className="animate-tickIn rounded-card border border-green/30 bg-[#F1FAF6] p-4 text-[15px] leading-[1.7] text-green">
                   대기 등록이 접수되었습니다. 해당 지역 서비스가 열리면 남겨주신 연락처(
                   {form.phone})로 가장 먼저 안내드립니다.
                 </div>
@@ -289,12 +289,12 @@ export default function Onboarding() {
 
           {step === 2 && (
             <section className="animate-tickIn space-y-4">
-              <h1 className="text-[24px] font-black leading-[1.4] text-navy">
+              <h1 className="text-[27px] font-black leading-[1.4] text-navy">
                 결제권한을
                 <br />
                 선택해 주세요
               </h1>
-              <p className="text-[12px] leading-[1.7] text-muted">
+              <p className="text-[13px] leading-[1.7] text-muted">
                 어르신이 스토어에 담은 물품을 누가 결제할지 정합니다. 가입 후에도 보호자가
                 변경할 수 있습니다.
               </p>
@@ -313,19 +313,19 @@ export default function Onboarding() {
                             on ? "border-gold" : "border-navy/20"
                           }`}
                         />
-                        <span className="text-[14px] font-bold text-navy">{m.label}</span>
+                        <span className="text-[16px] font-bold text-navy">{m.label}</span>
                         {m.recommended && (
                           <Badge fg="#8A5D12" bg="rgba(176,141,87,.16)">
                             권장
                           </Badge>
                         )}
                       </div>
-                      <p className="mt-1.5 pl-6 text-[12px] leading-[1.65] text-muted">
+                      <p className="mt-1.5 pl-6 text-[13px] leading-[1.65] text-muted">
                         {m.desc}
                       </p>
                       {m.key === "limit" && on && (
                         <div className="mt-3 flex items-center gap-2 pl-6">
-                          <span className="text-[12px] text-muted">한도</span>
+                          <span className="text-[13px] text-muted">한도</span>
                           {[30000, 50000, 100000].map((v) => (
                             <button
                               key={v}
@@ -333,7 +333,7 @@ export default function Onboarding() {
                                 e.stopPropagation();
                                 set({ limitAmount: v });
                               }}
-                              className={`btn-press rounded-lg border px-2.5 py-1.5 font-num text-[12px] font-bold ${
+                              className={`btn-press rounded-lg border px-2.5 py-1.5 font-num text-[13px] font-bold ${
                                 form.limitAmount === v
                                   ? "border-gold bg-gold/10 text-navy"
                                   : "border-navy/15 text-muted"
@@ -361,7 +361,7 @@ export default function Onboarding() {
 
           {step === 3 && (
             <section className="animate-tickIn space-y-4">
-              <h1 className="text-[24px] font-black leading-[1.4] text-navy">
+              <h1 className="text-[27px] font-black leading-[1.4] text-navy">
                 기본상품을
                 <br />
                 확인해 주세요
@@ -372,12 +372,12 @@ export default function Onboarding() {
                     <span className="text-gold-soft">K-CARE 기본 멤버십</span>
                   </SectionLabel>
                   <div className="mt-2 flex items-baseline gap-1.5">
-                    <span className="font-num text-[30px] font-bold">
+                    <span className="font-num text-[34px] font-bold">
                       {result?.tier === 2 ? "별도 산정" : fmtWon(PRICING.subscription.tier1.monthly)}
                     </span>
-                    {result?.tier !== 2 && <span className="text-[12px] opacity-70">/ 월 · 1급지</span>}
+                    {result?.tier !== 2 && <span className="text-[13px] opacity-70">/ 월 · 1급지</span>}
                   </div>
-                  <div className="mt-1.5 text-[11px] leading-[1.7] opacity-70">
+                  <div className="mt-1.5 text-[12px] leading-[1.7] opacity-70">
                     최초 1회 가입비 {fmtWon(PRICING.joinFee.min)}
                     {!PRICING.joinFee.confirmed &&
                       ` (확정 전 · 최대 ${fmtWon(PRICING.joinFee.max)})`}{" "}
@@ -387,12 +387,12 @@ export default function Onboarding() {
                 <ul className="space-y-2.5 p-5">
                   {BASE_BENEFITS.map((b) => (
                     <li key={b.name} className="flex items-start gap-2.5">
-                      <span className="mt-[3px] inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-full bg-green/15 text-[10px] font-bold text-green">
+                      <span className="mt-[3px] inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-full bg-green/15 text-[11px] font-bold text-green">
                         ✓
                       </span>
                       <div>
-                        <div className="text-[13px] font-bold text-ink">{b.name}</div>
-                        {b.note && <div className="text-[11px] text-muted">{b.note}</div>}
+                        <div className="text-[15px] font-bold text-ink">{b.name}</div>
+                        {b.note && <div className="text-[12px] text-muted">{b.note}</div>}
                       </div>
                     </li>
                   ))}
@@ -420,7 +420,7 @@ export default function Onboarding() {
                       className="flex w-full items-start gap-2 text-left"
                     >
                       <span
-                        className={`mt-[1px] inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[11px] font-bold ${
+                        className={`mt-[1px] inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[12px] font-bold ${
                           form[key]
                             ? "border-navy bg-navy text-white"
                             : "border-navy/25 text-transparent"
@@ -429,10 +429,10 @@ export default function Onboarding() {
                         ✓
                       </span>
                       <span>
-                        <span className="text-[13px] font-bold text-navy">
+                        <span className="text-[15px] font-bold text-navy">
                           {label} <span className="text-danger">(필수)</span>
                         </span>
-                        <span className="mt-0.5 block text-[11px] leading-[1.6] text-muted">
+                        <span className="mt-0.5 block text-[12px] leading-[1.6] text-muted">
                           {desc}
                         </span>
                       </span>
@@ -448,7 +448,7 @@ export default function Onboarding() {
               >
                 <div className="flex items-center gap-2">
                   <span
-                    className={`inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[11px] font-bold ${
+                    className={`inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[12px] font-bold ${
                       form.videoConsent
                         ? "border-gold bg-gold text-white"
                         : "border-navy/25 text-transparent"
@@ -456,11 +456,11 @@ export default function Onboarding() {
                   >
                     ✓
                   </span>
-                  <span className="text-[13px] font-bold text-navy">
+                  <span className="text-[15px] font-bold text-navy">
                     방문기록 영상 촬영 동의 (선택)
                   </span>
                 </div>
-                <p className="mt-1.5 pl-6 text-[11px] leading-[1.7] text-muted">
+                <p className="mt-1.5 pl-6 text-[12px] leading-[1.7] text-muted">
                   서비스 품질관리·분쟁 예방 목적. 거실·현관·주방 등 서비스 공간만 촬영하며
                   욕실·화장실·탈의공간·침실은 촬영하지 않습니다. 일반 방문 영상은 4주 후 자동
                   삭제되고, 열람은 보호자·관리자로 제한됩니다.
@@ -485,10 +485,10 @@ export default function Onboarding() {
 
           {step === 4 && (
             <section className="animate-tickIn space-y-4 pt-6">
-              <div className="mx-auto flex h-[64px] w-[64px] items-center justify-center rounded-full bg-green/12 text-[28px] text-green">
+              <div className="mx-auto flex h-[64px] w-[64px] items-center justify-center rounded-full bg-green/12 text-[31px] text-green">
                 ✓
               </div>
-              <h1 className="text-center text-[24px] font-black leading-[1.4] text-navy">
+              <h1 className="text-center text-[27px] font-black leading-[1.4] text-navy">
                 가입 신청이
                 <br />
                 접수되었습니다
@@ -502,12 +502,12 @@ export default function Onboarding() {
                     ["첫 안심방문", "갤럭시 워치 · 안심케어박스 전달"],
                   ].map(([t, d], i) => (
                     <li key={t} className="flex items-start gap-3">
-                      <span className="mt-[1px] inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-navy font-num text-[11px] font-bold text-white">
+                      <span className="mt-[1px] inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-navy font-num text-[12px] font-bold text-white">
                         {i + 1}
                       </span>
                       <div>
-                        <div className="text-[14px] font-bold text-navy">{t}</div>
-                        <div className="text-[12px] text-muted">{d}</div>
+                        <div className="text-[16px] font-bold text-navy">{t}</div>
+                        <div className="text-[13px] text-muted">{d}</div>
                       </div>
                     </li>
                   ))}

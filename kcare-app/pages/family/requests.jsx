@@ -37,13 +37,13 @@ export default function RequestsPage() {
         <title>해주세요 — K-CARE</title>
       </Head>
       <FamilyLayout title="해주세요">
-        <p className="px-1 text-[12px] leading-[1.7] text-muted">
+        <p className="px-1 text-[13px] leading-[1.7] text-muted">
           채팅이 아니라 처리 상태가 남는 업무형 요청입니다. 모든 요청은 사진·금액·완료증빙과
           함께 기록됩니다.{limitLabel && ` 결제권한: ${limitLabel}.`}
         </p>
 
         {active.length === 0 && (
-          <Card className="p-5 text-center text-[13px] text-muted">진행 중인 요청이 없습니다.</Card>
+          <Card className="p-5 text-center text-[15px] text-muted">진행 중인 요청이 없습니다.</Card>
         )}
 
         {active.map((r) => (
@@ -108,7 +108,7 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
               긴급
             </Badge>
           )}
-          <span className="ml-auto text-[10px] font-bold text-muted/70">
+          <span className="ml-auto text-[11px] font-bold text-muted/70">
             {
               {
                 fromConcierge: "컨시어지 → 보호자",
@@ -118,11 +118,11 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
             }
           </span>
         </div>
-        <div className="mt-2 text-[15px] font-bold leading-[1.45] text-navy">{req.type}</div>
-        <div className="mt-0.5 line-clamp-2 text-[12px] leading-[1.65] text-muted">
+        <div className="mt-2 text-[17px] font-bold leading-[1.45] text-navy">{req.type}</div>
+        <div className="mt-0.5 line-clamp-2 text-[13px] leading-[1.65] text-muted">
           {req.detail}
         </div>
-        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted">
+        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-muted">
           {req.amount != null && (
             <span>
               금액 <b className="font-num text-ink">{fmtWon(req.amount)}</b>
@@ -146,17 +146,17 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
                   style={{ background: STATUS[h.status].fg }}
                 />
                 <div className="min-w-0 flex-1">
-                  <span className="text-[12px] font-bold text-ink">
+                  <span className="text-[13px] font-bold text-ink">
                     {STATUS[h.status].label}
                   </span>
-                  <span className="ml-2 font-num text-[10px] text-muted">
+                  <span className="ml-2 font-num text-[11px] text-muted">
                     {new Date(h.at).toLocaleDateString("ko-KR", {
                       month: "numeric",
                       day: "numeric",
                     })}
                   </span>
                   {h.note && (
-                    <div className="text-[11px] leading-[1.6] text-muted">{h.note}</div>
+                    <div className="text-[12px] leading-[1.6] text-muted">{h.note}</div>
                   )}
                 </div>
               </div>
@@ -164,7 +164,7 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
           </div>
 
           {req.proof && (
-            <div className="mt-3 rounded-xl border border-green/25 bg-green/5 p-3 text-[11px] text-green">
+            <div className="mt-3 rounded-xl border border-green/25 bg-green/5 p-3 text-[12px] text-green">
               완료증빙 첨부됨 · {req.proof}
             </div>
           )}
@@ -172,7 +172,7 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
           {/* 결제대기 — 보호자 승인 (REQ-07 한도 로직) */}
           {req.status === "awaitingPayment" && (
             <div className="mt-4">
-              <div className="rounded-xl border border-amber/30 bg-white p-3.5 text-[12px] leading-[1.7] text-ink">
+              <div className="rounded-xl border border-amber/30 bg-white p-3.5 text-[13px] leading-[1.7] text-ink">
                 {needApproval ? (
                   <>
                     결제 금액 <b className="font-num">{fmtWon(req.amount)}</b> —{" "}
@@ -228,7 +228,7 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
                       payload: { kind: "승인", text: "부 보호자 → 주 보호자 결제 승인 요청 알림", color: "#8FA9CC" },
                     });
                   }}
-                  className={`btn-press mt-2.5 w-full rounded-xl border py-3 text-[13px] font-bold ${
+                  className={`btn-press mt-2.5 w-full rounded-xl border py-3 text-[15px] font-bold ${
                     notified ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
                   }`}
                 >
@@ -273,8 +273,8 @@ function CreateRequestSheet({ onClose, onCreate }) {
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(8,23,45,.45)]">
       <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-3xl bg-white p-6 pb-8">
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
-        <div className="text-[17px] font-black text-navy">해주세요 요청</div>
-        <p className="mt-1 text-[11px] text-muted">
+        <div className="text-[19px] font-black text-navy">해주세요 요청</div>
+        <p className="mt-1 text-[12px] text-muted">
           담당 컨시어지에게 전달되고, 처리 상태가 단계별로 기록됩니다.
         </p>
 
@@ -285,7 +285,7 @@ function CreateRequestSheet({ onClose, onCreate }) {
               <button
                 key={p}
                 onClick={() => setType(p)}
-                className={`btn-press rounded-full border px-3 py-1.5 text-[12px] font-bold ${
+                className={`btn-press rounded-full border px-3 py-1.5 text-[13px] font-bold ${
                   type === p ? "border-gold bg-gold/10 text-navy" : "border-navy/15 text-muted"
                 }`}
               >
@@ -302,7 +302,7 @@ function CreateRequestSheet({ onClose, onCreate }) {
             onChange={(e) => setDetail(e.target.value)}
             rows={3}
             placeholder="무엇을 어떻게 해드리면 될까요?"
-            className="mt-2 w-full resize-none rounded-xl border border-navy/15 px-3.5 py-3 text-[14px] leading-[1.6] outline-none focus:border-gold"
+            className="mt-2 w-full resize-none rounded-xl border border-navy/15 px-3.5 py-3 text-[16px] leading-[1.6] outline-none focus:border-gold"
           />
         </div>
 
@@ -315,7 +315,7 @@ function CreateRequestSheet({ onClose, onCreate }) {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="원"
-              className="mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 font-num text-[14px] outline-none focus:border-gold"
+              className="mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 font-num text-[16px] outline-none focus:border-gold"
             />
           </div>
           <div>
@@ -324,7 +324,7 @@ function CreateRequestSheet({ onClose, onCreate }) {
               type="date"
               value={preferredDate}
               onChange={(e) => setPreferredDate(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 text-[13px] outline-none focus:border-gold"
+              className="mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] outline-none focus:border-gold"
             />
           </div>
         </div>
@@ -337,7 +337,7 @@ function CreateRequestSheet({ onClose, onCreate }) {
                 <button
                   key={k}
                   onClick={() => setUrgency(k)}
-                  className={`btn-press rounded-lg border px-3 py-1.5 text-[12px] font-bold ${
+                  className={`btn-press rounded-lg border px-3 py-1.5 text-[13px] font-bold ${
                     urgency === k
                       ? "border-gold bg-gold/10 text-navy"
                       : "border-navy/15 text-muted"
@@ -352,7 +352,7 @@ function CreateRequestSheet({ onClose, onCreate }) {
             <SectionLabel>사진 첨부</SectionLabel>
             <button
               onClick={() => setPhoto((v) => !v)}
-              className={`btn-press mt-2 w-full rounded-lg border px-3 py-1.5 text-[12px] font-bold ${
+              className={`btn-press mt-2 w-full rounded-lg border px-3 py-1.5 text-[13px] font-bold ${
                 photo ? "border-gold bg-gold/10 text-navy" : "border-navy/15 text-muted"
               }`}
             >

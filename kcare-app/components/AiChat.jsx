@@ -58,17 +58,17 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
         >
           {/* 헤더 */}
           <div className="flex items-center gap-2.5 px-4 py-3" style={{ background: NAVY }}>
-            <span className="rounded-md bg-gold px-1.5 py-0.5 text-[10px] font-bold tracking-[.1em] text-navy">
+            <span className="rounded-md bg-gold px-1.5 py-0.5 text-[11px] font-bold tracking-[.1em] text-navy">
               AI
             </span>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-[13px] font-bold text-white">{title}</div>
-              <div className="truncate text-[10px] text-white/60">{subtitle}</div>
+              <div className="truncate text-[15px] font-bold text-white">{title}</div>
+              <div className="truncate text-[11px] text-white/60">{subtitle}</div>
             </div>
             <button
               onClick={() => setOpen(false)}
               aria-label="닫기"
-              className="btn-press flex h-[26px] w-[26px] items-center justify-center rounded-lg text-[12px] font-bold text-white/70"
+              className="btn-press flex h-[26px] w-[26px] items-center justify-center rounded-lg text-[13px] font-bold text-white/70"
             >
               ✕
             </button>
@@ -76,14 +76,14 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
 
           {/* 메시지 */}
           <div ref={listRef} className="flex-1 space-y-2.5 overflow-y-auto px-3.5 py-3">
-            <div className="max-w-[88%] rounded-xl rounded-tl-sm border border-navy/[.08] bg-white/70 px-3 py-2 text-[12px] leading-[1.6] text-ink">
+            <div className="max-w-[88%] rounded-xl rounded-tl-sm border border-navy/[.08] bg-white/70 px-3 py-2 text-[13px] leading-[1.6] text-ink">
               {intro}
             </div>
             {msgs.map((m, i) =>
               m.who === "me" ? (
                 <div
                   key={i}
-                  className="ml-auto max-w-[88%] rounded-xl rounded-tr-sm px-3 py-2 text-[12px] leading-[1.6] text-white"
+                  className="ml-auto max-w-[88%] rounded-xl rounded-tr-sm px-3 py-2 text-[13px] leading-[1.6] text-white"
                   style={{ background: NAVY }}
                 >
                   {m.text}
@@ -93,15 +93,15 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
                   key={i}
                   className="max-w-[88%] rounded-xl rounded-tl-sm border border-navy/[.08] bg-white/70 px-3 py-2"
                 >
-                  <div className="text-[12px] leading-[1.6] text-ink">{m.text}</div>
+                  <div className="text-[13px] leading-[1.6] text-ink">{m.text}</div>
                   {m.src && (
-                    <div className="mt-1 border-t border-navy/[.06] pt-1 text-[10px] text-muted">근거 — {m.src}</div>
+                    <div className="mt-1 border-t border-navy/[.06] pt-1 text-[11px] text-muted">근거 — {m.src}</div>
                   )}
                 </div>
               )
             )}
             {busy && (
-              <div className="max-w-[88%] rounded-xl rounded-tl-sm border border-navy/[.08] bg-white/70 px-3 py-2 text-[12px] text-muted">
+              <div className="max-w-[88%] rounded-xl rounded-tl-sm border border-navy/[.08] bg-white/70 px-3 py-2 text-[13px] text-muted">
                 답변 작성 중…
               </div>
             )}
@@ -114,7 +114,7 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
                 key={x.q}
                 onClick={() => ask(x.q, x)}
                 disabled={busy}
-                className="btn-press rounded-full border border-navy/15 bg-white/60 px-2.5 py-1 text-[10px] font-bold text-navy disabled:opacity-50"
+                className="btn-press rounded-full border border-navy/15 bg-white/60 px-2.5 py-1 text-[11px] font-bold text-navy disabled:opacity-50"
               >
                 {x.q}
               </button>
@@ -133,18 +133,18 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="질문을 입력하세요"
-              className="min-w-0 flex-1 rounded-xl border border-navy/15 bg-white/80 px-3 py-2 text-[12px] text-ink outline-none placeholder:text-muted/60 focus:ring-1 focus:ring-gold"
+              className="min-w-0 flex-1 rounded-xl border border-navy/15 bg-white/80 px-3 py-2 text-[13px] text-ink outline-none placeholder:text-muted/60 focus:ring-1 focus:ring-gold"
             />
             <button
               type="submit"
               disabled={busy || !input.trim()}
-              className="btn-press rounded-xl px-3.5 py-2 text-[12px] font-bold text-white disabled:opacity-50"
+              className="btn-press rounded-xl px-3.5 py-2 text-[13px] font-bold text-white disabled:opacity-50"
               style={{ background: NAVY }}
             >
               전송
             </button>
           </form>
-          {note && <p className="border-t border-navy/[.08] px-3.5 py-2 text-[9px] leading-[1.5] text-muted">{note}</p>}
+          {note && <p className="border-t border-navy/[.08] px-3.5 py-2 text-[10px] leading-[1.5] text-muted">{note}</p>}
         </div>
       )}
 
@@ -152,7 +152,7 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label="AI 어시스턴트"
-        className="btn-press fixed bottom-5 right-5 z-[1200] flex h-[52px] w-[52px] items-center justify-center rounded-full text-[14px] font-bold text-white"
+        className="btn-press fixed bottom-5 right-5 z-[1200] flex h-[52px] w-[52px] items-center justify-center rounded-full text-[16px] font-bold text-white"
         style={{
           background: NAVY,
           boxShadow:

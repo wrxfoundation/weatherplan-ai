@@ -54,7 +54,7 @@ export default function StorePage() {
         <title>스토어 — K-CARE</title>
       </Head>
       <FamilyLayout title="스토어">
-        <p className="px-1 text-[12px] leading-[1.7] text-muted">
+        <p className="px-1 text-[13px] leading-[1.7] text-muted">
           어르신 화면과 같은 카탈로그입니다. 어르신이 담은 물품은 결제권한 설정에 따라 승인
           요청으로 도착하고, 보호자 주문은 바로 결제됩니다.
         </p>
@@ -73,14 +73,14 @@ export default function StorePage() {
                   }`}
                 >
                   <span
-                    className={`inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[11px] font-bold ${
+                    className={`inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[12px] font-bold ${
                       on ? "border-gold bg-gold text-white" : "border-navy/25 text-transparent"
                     }`}
                   >
                     ✓
                   </span>
-                  <span className="flex-1 text-[13px] font-bold text-ink">{i.name}</span>
-                  <span className="font-num text-[13px] font-bold text-navy">{fmtWon(i.price)}</span>
+                  <span className="flex-1 text-[15px] font-bold text-ink">{i.name}</span>
+                  <span className="font-num text-[15px] font-bold text-navy">{fmtWon(i.price)}</span>
                 </button>
               );
             })}
@@ -90,14 +90,14 @@ export default function StorePage() {
         {items.length > 0 && !ordered && (
           <Card className="p-4">
             <div className="flex items-baseline justify-between">
-              <span className="text-[13px] font-bold text-navy">담은 물품 {items.length}건</span>
-              <span className="font-num text-[17px] font-bold text-navy">{fmtWon(total)}</span>
+              <span className="text-[15px] font-bold text-navy">담은 물품 {items.length}건</span>
+              <span className="font-num text-[19px] font-bold text-navy">{fmtWon(total)}</span>
             </div>
           </Card>
         )}
 
         {ordered ? (
-          <Card className="border-green/30 bg-[#F1FAF6] p-4 text-[13px] font-bold text-green">
+          <Card className="border-green/30 bg-[#F1FAF6] p-4 text-[15px] font-bold text-green">
             주문이 접수되었습니다 — 다음 배송일에 전달됩니다. 어르신 화면의 배송 안내도
             갱신되었습니다.
           </Card>

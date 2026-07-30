@@ -44,7 +44,7 @@ export default function HospitalsPage() {
         <title>제휴 병원 찾기 — K-CARE</title>
       </Head>
       <FamilyLayout title="제휴 병원 찾기">
-        <p className="px-1 text-[12px] leading-[1.7] text-muted">
+        <p className="px-1 text-[13px] leading-[1.7] text-muted">
           K-CARE와 MOU를 맺은 병원만 안내합니다. 동행 예약을 요청하면 담당 컨시어지가 예약을
           확인하고 캘린더에 등록합니다.
         </p>
@@ -61,12 +61,12 @@ export default function HospitalsPage() {
                 </Badge>
               )}
             </div>
-            <div className="mt-2 text-[15px] font-bold text-navy">{h.name}</div>
-            <div className="mt-0.5 text-[12px] text-muted">{h.note}</div>
+            <div className="mt-2 text-[17px] font-bold text-navy">{h.name}</div>
+            <div className="mt-0.5 text-[13px] text-muted">{h.note}</div>
             <button
               onClick={() => requestEscort(h)}
               disabled={!!requested[h.name]}
-              className={`btn-press mt-3 w-full rounded-xl border py-2.5 text-[13px] font-bold ${
+              className={`btn-press mt-3 w-full rounded-xl border py-2.5 text-[15px] font-bold ${
                 requested[h.name]
                   ? "border-green/30 bg-green/10 text-green"
                   : "border-navy/20 text-navy"
@@ -79,7 +79,7 @@ export default function HospitalsPage() {
 
         <Card className="p-4">
           <SectionLabel>안내</SectionLabel>
-          <p className="mt-2 text-[11px] leading-[1.7] text-muted">
+          <p className="mt-2 text-[12px] leading-[1.7] text-muted">
             목록에 없는 병원도 동행은 가능합니다 (패스트트랙 미적용). 제휴 병원은 진료 과목별로
             계속 추가됩니다.
           </p>

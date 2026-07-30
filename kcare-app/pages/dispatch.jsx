@@ -89,8 +89,8 @@ function Panel({ children, className = "", style }) {
 function PanelHead({ title, right }) {
   return (
     <div className="flex flex-wrap items-baseline justify-between gap-2">
-      <h2 className="text-[13px] font-bold text-navy">{title}</h2>
-      {right && <div className="text-[11px] text-muted">{right}</div>}
+      <h2 className="text-[15px] font-bold text-navy">{title}</h2>
+      {right && <div className="text-[12px] text-muted">{right}</div>}
     </div>
   );
 }
@@ -191,7 +191,7 @@ function ControlMap({ sos, mode = "light", onSelect }) {
         className="h-[300px] overflow-hidden rounded-[10px]"
         style={{ background: (MAP_TILES[mode] || MAP_TILES.light).bg }}
       />
-      <div className="pointer-events-none absolute bottom-2 left-2 z-[1000] rounded-md bg-black/45 px-2 py-1 text-[9px] font-bold tracking-[.08em] text-white/80">
+      <div className="pointer-events-none absolute bottom-2 left-2 z-[1000] rounded-md bg-black/45 px-2 py-1 text-[10px] font-bold tracking-[.08em] text-white/80">
         SEOUL · OpenStreetMap 실측 좌표
       </div>
     </div>
@@ -382,7 +382,7 @@ export default function DispatchConsole() {
             <button
               key={k}
               onClick={() => setTickerFilter(k)}
-              className="btn-press rounded-full border px-2.5 py-1 text-[10px] font-bold"
+              className="btn-press rounded-full border px-2.5 py-1 text-[11px] font-bold"
               style={
                 tickerFilter === k
                   ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
@@ -395,19 +395,19 @@ export default function DispatchConsole() {
         )}
       </div>
       <div className="mt-2.5 space-y-[9px] overflow-y-auto pr-1" style={{ maxHeight: maxH }}>
-        {tickerItems.length === 0 && <div className="py-2 text-[12px] text-muted">해당 종류의 접수가 없습니다.</div>}
+        {tickerItems.length === 0 && <div className="py-2 text-[13px] text-muted">해당 종류의 접수가 없습니다.</div>}
         {tickerItems.map((e) => (
           <div key={e.id} className="flex animate-tickIn items-start gap-2">
-            <span className="w-[34px] shrink-0 pt-0.5 font-num text-[10px] font-semibold text-muted">
+            <span className="w-[34px] shrink-0 pt-0.5 font-num text-[11px] font-semibold text-muted">
               {new Date(e.at).toTimeString().slice(0, 5)}
             </span>
             <span
-              className="shrink-0 rounded-[20px] px-2 py-0.5 text-[10px] font-bold text-navy"
+              className="shrink-0 rounded-[20px] px-2 py-0.5 text-[11px] font-bold text-navy"
               style={{ background: `${e.color}33` }}
             >
               {e.kind}
             </span>
-            <span className="flex-1 text-[12px] leading-[1.5] text-ink">{e.text}</span>
+            <span className="flex-1 text-[13px] leading-[1.5] text-ink">{e.text}</span>
           </div>
         ))}
       </div>
@@ -427,32 +427,32 @@ export default function DispatchConsole() {
           <header className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
-                <span className="text-[11px] font-bold tracking-[.16em] text-muted">
+                <span className="text-[12px] font-bold tracking-[.16em] text-muted">
                   역할 04 / 배치 관제 센터
                 </span>
-                <a href="/" className="text-[11px] font-bold text-muted/60 underline-offset-2 hover:underline">
+                <a href="/" className="text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
                   데모 홈
                 </a>
               </div>
               <div className="mt-0.5 flex flex-wrap items-center gap-2.5">
-                <h1 className="text-[26px] font-bold tracking-[-.01em] text-navy">강남지점 실시간 관제</h1>
+                <h1 className="text-[29px] font-bold tracking-[-.01em] text-navy">강남지점 실시간 관제</h1>
                 <button
                   onClick={() => setMenu("dash")}
                   title="대시보드로 이동"
-                  className={`btn-press rounded-full px-3 py-1 text-[11px] font-bold ${status.cls}`}
+                  className={`btn-press rounded-full px-3 py-1 text-[12px] font-bold ${status.cls}`}
                 >
                   {status.label}
                 </button>
               </div>
-              <div className="mt-1 flex items-center gap-2 text-[13px] text-muted">
+              <div className="mt-1 flex items-center gap-2 text-[15px] text-muted">
                 <span>
                   {now.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "short" })}
                 </span>
                 <span className="h-[3px] w-[3px] rounded-full bg-navy/30" />
-                <span className="font-num text-[15px] font-bold text-navy">{now.toTimeString().slice(0, 8)}</span>
-                <span className="text-[11px] font-semibold">KST</span>
+                <span className="font-num text-[17px] font-bold text-navy">{now.toTimeString().slice(0, 8)}</span>
+                <span className="text-[12px] font-semibold">KST</span>
                 <span className="ml-1 h-[6px] w-[6px] animate-livePing rounded-full bg-green" />
-                <span className="text-[11px] font-bold text-green">LIVE</span>
+                <span className="text-[12px] font-bold text-green">LIVE</span>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -471,8 +471,8 @@ export default function DispatchConsole() {
                   className="card-glass btn-press min-w-[104px] rounded-xl px-4 py-[11px] text-left"
                   title="클릭하면 해당 화면으로 이동"
                 >
-                  <div className="text-[10px] font-bold text-muted">{k.k}</div>
-                  <div className="font-num text-[20px] font-bold" style={{ color: k.color }}>
+                  <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                  <div className="font-num text-[22px] font-bold" style={{ color: k.color }}>
                     {k.v}
                   </div>
                 </button>
@@ -493,7 +493,7 @@ export default function DispatchConsole() {
               <button
                 key={k}
                 onClick={() => setMenu(k)}
-                className="btn-press rounded-[10px] border px-3.5 py-2 text-[12px] font-bold"
+                className="btn-press rounded-[10px] border px-3.5 py-2 text-[13px] font-bold"
                 style={
                   menu === k
                     ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
@@ -502,7 +502,7 @@ export default function DispatchConsole() {
               >
                 {label}
                 {n != null && (
-                  <span className={`ml-1.5 font-num text-[10px] ${menu === k ? "text-white/60" : "text-muted/70"}`}>
+                  <span className={`ml-1.5 font-num text-[11px] ${menu === k ? "text-white/60" : "text-muted/70"}`}>
                     {n}
                   </span>
                 )}
@@ -513,7 +513,7 @@ export default function DispatchConsole() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="검색 — 어르신 · 보호자 · 컨시어지 · 병원"
-              className="card-glass w-full rounded-xl px-4 py-2.5 text-[13px] font-medium text-navy outline-none placeholder:text-muted/60 focus:ring-1 focus:ring-gold"
+              className="card-glass w-full rounded-xl px-4 py-2.5 text-[15px] font-medium text-navy outline-none placeholder:text-muted/60 focus:ring-1 focus:ring-gold"
             />
             {searchResults.length > 0 && (
               <div className="card-frost absolute left-0 right-0 top-[46px] z-[1050] overflow-hidden rounded-xl">
@@ -524,21 +524,21 @@ export default function DispatchConsole() {
                     className="flex w-full items-center gap-2.5 border-t border-navy/[.06] px-4 py-2.5 text-left first:border-t-0 hover:bg-navy/[.04]"
                   >
                     <span
-                      className="shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold"
+                      className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
                       style={{ color: "#0A1F3C", background: "rgba(10,31,60,.08)" }}
                     >
                       {DIRECTORY_TYPE[d.type].label}
                     </span>
-                    <span className="shrink-0 text-[13px] font-bold text-navy">
-                      {d.name} <span className="text-[10px] font-medium text-muted">{d.tag}</span>
+                    <span className="shrink-0 text-[15px] font-bold text-navy">
+                      {d.name} <span className="text-[11px] font-medium text-muted">{d.tag}</span>
                     </span>
-                    <span className="min-w-0 flex-1 truncate text-[11px] text-muted">{d.summary}</span>
+                    <span className="min-w-0 flex-1 truncate text-[12px] text-muted">{d.summary}</span>
                   </button>
                 ))}
               </div>
             )}
               {query.trim().length >= 1 && searchResults.length === 0 && (
-                <div className="card-frost absolute left-0 right-0 top-[46px] z-[1050] rounded-xl px-4 py-3 text-[12px] text-muted">
+                <div className="card-frost absolute left-0 right-0 top-[46px] z-[1050] rounded-xl px-4 py-3 text-[13px] text-muted">
                   검색 결과가 없습니다.
                 </div>
               )}
@@ -551,14 +551,14 @@ export default function DispatchConsole() {
               id="sos-banner"
               className="mt-[18px] flex flex-wrap items-center gap-[18px] rounded-[14px] bg-danger px-5 py-4 text-white animate-sosPulse"
             >
-              <span className="rounded-lg bg-white/[.18] px-2.5 py-1.5 text-[11px] font-bold tracking-[.14em]">
+              <span className="rounded-lg bg-white/[.18] px-2.5 py-1.5 text-[12px] font-bold tracking-[.14em]">
                 SOS
               </span>
               <div className="min-w-[240px] flex-1">
-                <div className="text-[15px] font-bold">
+                <div className="text-[17px] font-bold">
                   김순자 (78) · 강남구 대치동 — 최근접 컨시어지 박지현 (1.2km)
                 </div>
-                <div className="mt-0.5 font-num text-[12px] opacity-[.88]">
+                <div className="mt-0.5 font-num text-[13px] opacity-[.88]">
                   경과 {elapsed} · 목표 응답 60초 이내 · {sos119 ? "119 연계 완료" : "119 연계 대기"}
                 </div>
                 <div className="mt-2 h-[6px] w-full max-w-[300px] overflow-hidden rounded-full bg-white/25">
@@ -575,7 +575,7 @@ export default function DispatchConsole() {
                   {[["접수", true], ["급파", sosDispatched], ["119 연계", sos119], ["해제", false]].map(([st, done]) => (
                     <span
                       key={st}
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                      className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
                         done ? "bg-white text-danger" : "border border-white/40 text-white/75"
                       }`}
                     >
@@ -593,7 +593,7 @@ export default function DispatchConsole() {
                     push("대응", "박지현 급파 지시 · 119 연계 대기", "#FF8A80");
                   }}
                   disabled={sosDispatched}
-                  className="btn-press btn-on-red rounded-xl bg-white px-4 py-2.5 text-[13px] font-bold text-danger disabled:opacity-80"
+                  className="btn-press btn-on-red rounded-xl bg-white px-4 py-2.5 text-[15px] font-bold text-danger disabled:opacity-80"
                 >
                   {sosDispatched ? "급파 중 · 박지현" : "급파 지시 (주간 · 가용)"}
                 </button>
@@ -604,7 +604,7 @@ export default function DispatchConsole() {
                     push("대응", "119 연계 기록 · 기본 보증 범위 내 조치", "#FF8A80");
                   }}
                   disabled={sos119}
-                  className="btn-press rounded-xl border border-white/70 px-4 py-2.5 text-[13px] font-bold disabled:opacity-70"
+                  className="btn-press rounded-xl border border-white/70 px-4 py-2.5 text-[15px] font-bold disabled:opacity-70"
                 >
                   {sos119 ? "119 연계 기록됨" : "119 연계"}
                 </button>
@@ -613,7 +613,7 @@ export default function DispatchConsole() {
                     dispatch({ type: "ackSos" });
                     push("대응", "SOS 확인 처리 — 알림 상태 해제", "#8FA9CC");
                   }}
-                  className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[13px] font-medium"
+                  className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[15px] font-medium"
                 >
                   해제
                 </button>
@@ -624,7 +624,7 @@ export default function DispatchConsole() {
                     push("대응", "김순자 워치 자동 통화 시도 — 응답 대기", "#FF8A80");
                   }}
                   disabled={watchCalled}
-                  className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[13px] font-medium disabled:opacity-70"
+                  className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[15px] font-medium disabled:opacity-70"
                 >
                   {watchCalled ? "워치 통화 시도됨" : "워치 통화"}
                 </button>
@@ -635,13 +635,13 @@ export default function DispatchConsole() {
                     push("대응", "보호자 김민수에게 상황 확인 알림 발송", "#8FA9CC");
                   }}
                   disabled={guardianPinged}
-                  className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[13px] font-medium disabled:opacity-70"
+                  className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[15px] font-medium disabled:opacity-70"
                 >
                   {guardianPinged ? "보호자 알림 발송됨" : "보호자 알림"}
                 </button>
               </div>
               {/* REQ-04 — 서비스 경계 고지 (회의 확정) */}
-              <div className="w-full border-t border-white/25 pt-2 text-[11px] opacity-80">
+              <div className="w-full border-t border-white/25 pt-2 text-[12px] opacity-80">
                 기본 상품 보증 범위: 긴급신호 접수 + 119 연계까지 · 현장 도착 SLA 아님 · 이 가구는 야간
                 출동(외주) 옵션 미가입
               </div>
@@ -654,11 +654,11 @@ export default function DispatchConsole() {
           {/* ── 액션 큐 — 지금 처리할 일. 우선순위순, 클릭 즉시 해당 화면 (고도화) ── */}
           <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
             <div className="flex items-baseline justify-between">
-              <h2 className="text-[13px] font-bold tracking-[.02em] text-navy">지금 처리할 일</h2>
-              <span className="font-num text-[11px] text-muted">{actions.length}건 · 우선순위순</span>
+              <h2 className="text-[15px] font-bold tracking-[.02em] text-navy">지금 처리할 일</h2>
+              <span className="font-num text-[12px] text-muted">{actions.length}건 · 우선순위순</span>
             </div>
             {actions.length === 0 ? (
-              <div className="mt-3 rounded-xl bg-[rgba(30,122,90,.08)] px-4 py-3 text-[12px] font-medium text-green">
+              <div className="mt-3 rounded-xl bg-[rgba(30,122,90,.08)] px-4 py-3 text-[13px] font-medium text-green">
                 처리 대기 없음 — 정상 운영 중입니다.
               </div>
             ) : (
@@ -675,8 +675,8 @@ export default function DispatchConsole() {
                       }}
                     />
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-[13px] font-bold text-navy">{a.title}</div>
-                      <div className="truncate text-[11px] text-muted">{a.meta}</div>
+                      <div className="truncate text-[15px] font-bold text-navy">{a.title}</div>
+                      <div className="truncate text-[12px] text-muted">{a.meta}</div>
                     </div>
                     {a.act ? (
                       <button
@@ -684,14 +684,14 @@ export default function DispatchConsole() {
                           setHandled((h) => ({ ...h, [a.id]: true }));
                           push(...a.ticker);
                         }}
-                        className="btn-press shrink-0 rounded-[10px] border border-green/40 px-3.5 py-2 text-[12px] font-bold text-green"
+                        className="btn-press shrink-0 rounded-[10px] border border-green/40 px-3.5 py-2 text-[13px] font-bold text-green"
                       >
                         {a.act}
                       </button>
                     ) : (
                       <button
                         onClick={() => jumpTo(a)}
-                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[12px] font-bold text-navy"
+                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[13px] font-bold text-navy"
                       >
                         보기 →
                       </button>
@@ -715,12 +715,12 @@ export default function DispatchConsole() {
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-3">
-                  <span className="rounded-md bg-gold px-2 py-1 text-[10px] font-bold tracking-[.14em] text-navy">
+                  <span className="rounded-md bg-gold px-2 py-1 text-[11px] font-bold tracking-[.14em] text-navy">
                     AI 자율 배차 · L4
                   </span>
-                  <span className="text-[14px] font-bold">신규 요청 3건의 배정안이 준비되었습니다</span>
+                  <span className="text-[16px] font-bold">신규 요청 3건의 배정안이 준비되었습니다</span>
                 </div>
-                <span className="text-[11px] text-white/60">승인 없이는 실행되지 않습니다 · 8.5 자율성 등급</span>
+                <span className="text-[12px] text-white/60">승인 없이는 실행되지 않습니다 · 8.5 자율성 등급</span>
               </div>
               <div className="mt-4 grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
                 {/* why(근거) 없는 배정안은 렌더 금지 — 블랙박스 금지 (규제 요건) */}
@@ -734,13 +734,13 @@ export default function DispatchConsole() {
                     }}
                   >
                     <div className="flex items-baseline justify-between">
-                      <span className="text-[12px] font-bold">{a.client}</span>
-                      <span className="font-num text-[10px] text-white/60">{a.time}</span>
+                      <span className="text-[13px] font-bold">{a.client}</span>
+                      <span className="font-num text-[11px] text-white/60">{a.time}</span>
                     </div>
-                    <div className="mt-0.5 text-[11px] text-white/70">{a.job}</div>
-                    <div className="mt-1.5 text-[12px] font-bold text-gold-soft">→ {a.staff}</div>
-                    <div className="mt-0.5 font-num text-[11px] font-bold text-[#8FE3C0]">적합 {a.score}%</div>
-                    <div className="mt-2 border-t border-white/10 pt-1.5 text-[10px] leading-[1.55] text-white/55">
+                    <div className="mt-0.5 text-[12px] text-white/70">{a.job}</div>
+                    <div className="mt-1.5 text-[13px] font-bold text-gold-soft">→ {a.staff}</div>
+                    <div className="mt-0.5 font-num text-[12px] font-bold text-[#8FE3C0]">적합 {a.score}%</div>
+                    <div className="mt-2 border-t border-white/10 pt-1.5 text-[11px] leading-[1.55] text-white/55">
                       {a.why}
                     </div>
                   </div>
@@ -752,14 +752,14 @@ export default function DispatchConsole() {
                     dispatch({ type: "opsPatch", patch: { assign: "done" } });
                     push("배차", "AI 배정안 3건 일괄 승인 · 평균 적합도 94%", "#B08D57");
                   }}
-                  className="btn-press btn-dark rounded-xl bg-gold px-4 py-2.5 text-[13px] font-bold text-navy"
+                  className="btn-press btn-dark rounded-xl bg-gold px-4 py-2.5 text-[15px] font-bold text-navy"
                 >
                   3건 일괄 승인
                 </button>
                 {/* 개별 검토는 일괄 승인과 대등한 선택지 — 없으면 실질 L5 */}
                 <button
                   onClick={() => push("배차", "AI 배정안 개별 검토 모드 진입", "#8FA9CC")}
-                  className="btn-press rounded-xl border border-white/25 bg-white/[.06] px-4 py-2.5 text-[13px] font-medium text-white/85"
+                  className="btn-press rounded-xl border border-white/25 bg-white/[.06] px-4 py-2.5 text-[15px] font-medium text-white/85"
                 >
                   개별 검토
                 </button>
@@ -771,20 +771,20 @@ export default function DispatchConsole() {
               style={{ borderColor: "rgba(30,122,90,.28)", background: "linear-gradient(180deg, #F1FAF6, #E6F4EE)" }}
             >
               <div>
-                <span className="text-[11px] font-bold text-green">배정 승인 완료</span>
-                <div className="mt-0.5 text-[13px] text-[#2B4A3E]">
+                <span className="text-[12px] font-bold text-green">배정 승인 완료</span>
+                <div className="mt-0.5 text-[15px] text-[#2B4A3E]">
                   3건이 각 컨시어지 앱으로 전송되었습니다 · 평균 적합도 94% · 수동 개입 0건
                 </div>
               </div>
-              <span className="text-[11px] text-[#4A6B5E]">승인 이력은 감사 로그에 기록됩니다</span>
+              <span className="text-[12px] text-[#4A6B5E]">승인 이력은 감사 로그에 기록됩니다</span>
             </section>
           )}
 
           {/* ── 관제 맵 (09 §4) ── */}
           <section className="card-navy mt-[18px] rounded-[14px] p-[18px]" style={{ background: NAVY }}>
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-[13px] font-bold text-white">관제 맵</h2>
-              <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-white/70">
+              <h2 className="text-[15px] font-bold text-white">관제 맵</h2>
+              <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold text-white/70">
                 {[
                   ["#4ADE80", "이동·수행중"],
                   ["#8FA9CC", "대기"],
@@ -805,7 +805,7 @@ export default function DispatchConsole() {
                     <button
                       key={m}
                       onClick={() => setMapMode(m)}
-                      className={`px-2.5 py-1 text-[10px] font-bold ${
+                      className={`px-2.5 py-1 text-[11px] font-bold ${
                         mapMode === m ? "bg-white/90 text-navy" : "text-white/60"
                       }`}
                     >
@@ -828,7 +828,7 @@ export default function DispatchConsole() {
               <button
                 key={k}
                 onClick={() => setTab(k)}
-                className="btn-press rounded-[10px] border px-[18px] py-2.5 text-[12px] font-bold"
+                className="btn-press rounded-[10px] border px-[18px] py-2.5 text-[13px] font-bold"
                 style={
                   tab === k
                     ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
@@ -844,11 +844,13 @@ export default function DispatchConsole() {
           {tab === "live" && (
             <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
               <Panel className="min-w-0">
-                <PanelHead title="배차 그리드" right={<span className="font-num text-[11px]">08:00 — 20:00 KST</span>} />
-                {/* 시간축 */}
-                <div className="mt-3 flex pl-[108px]">
+                <PanelHead title="배차 그리드" right={<span className="font-num text-[12px]">08:00 — 20:00 KST</span>} />
+                {/* 시간축 — 모바일에선 그리드 전체 가로 스크롤 */}
+                <div className="mt-3 overflow-x-auto">
+                  <div className="min-w-[600px]">
+                <div className="flex pl-[108px]">
                   {["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"].map((h) => (
-                    <span key={h} className="flex-1 font-num text-[10px] font-semibold text-muted">
+                    <span key={h} className="flex-1 font-num text-[11px] font-semibold text-muted">
                       {h}
                     </span>
                   ))}
@@ -861,10 +863,10 @@ export default function DispatchConsole() {
                         className="w-[108px] shrink-0 pr-2 pt-2 text-left hover:opacity-70"
                         title="프로필 보기"
                       >
-                        <div className="text-[12px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
+                        <div className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
                           {r.name}
                         </div>
-                        <div className="text-[10px] text-muted">{r.meta}</div>
+                        <div className="text-[11px] text-muted">{r.meta}</div>
                       </button>
                       <div className="relative min-h-[56px] flex-1">
                         {nowPct > 0 && nowPct < 100 && (
@@ -885,16 +887,18 @@ export default function DispatchConsole() {
                             style={{ left: `${b.left}%`, width: `${b.width}%`, background: b.bg, color: b.fg }}
                             title="어르신 상태 보기"
                           >
-                            <div className="truncate whitespace-nowrap text-[11px] font-bold">{b.label}</div>
-                            <div className="truncate whitespace-nowrap text-[10px] opacity-85">{b.sub}</div>
+                            <div className="truncate whitespace-nowrap text-[12px] font-bold">{b.label}</div>
+                            <div className="truncate whitespace-nowrap text-[11px] opacity-85">{b.sub}</div>
                           </button>
                         ))}
                       </div>
                     </div>
                   ))}
                 </div>
+                  </div>
+                </div>
                 {/* 범례 + 현재 시각 */}
-                <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-navy/[.08] pt-2.5 text-[10px] font-bold text-muted">
+                <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-navy/[.08] pt-2.5 text-[11px] font-bold text-muted">
                   {[
                     ["수행중", KIND_STYLE.active.bg],
                     ["예정", KIND_STYLE.planned.bg],
@@ -927,11 +931,11 @@ export default function DispatchConsole() {
               <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(196px, 1fr))" }}>
                 {pairKpis.map((k) => (
                   <Panel key={k.k} className="!p-4">
-                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
-                    <div className="mt-1 font-num text-[24px] font-bold" style={{ color: k.color }}>
+                    <div className="text-[12px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[27px] font-bold" style={{ color: k.color }}>
                       {k.v}
                     </div>
-                    <div className="mt-0.5 text-[10px] text-muted">{k.note}</div>
+                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
                   </Panel>
                 ))}
               </div>
@@ -941,7 +945,7 @@ export default function DispatchConsole() {
                 <PanelHead title="오늘 페어 편성 보드" right="주 동행 + 부 동행 · 짝이 비면 배차 확정 불가" />
                 <div className="mt-3 overflow-x-auto">
                   <div className="min-w-[700px]">
-                    <div className="flex gap-2 border-b border-navy/10 pb-2 text-[10px] font-bold tracking-[.06em] text-muted">
+                    <div className="flex gap-2 border-b border-navy/10 pb-2 text-[11px] font-bold tracking-[.06em] text-muted">
                       <span style={{ flex: ".5" }}>시각</span>
                       <span style={{ flex: "1.5" }}>고객 · 업무</span>
                       <span style={{ flex: ".8" }}>주 동행</span>
@@ -950,13 +954,13 @@ export default function DispatchConsole() {
                       <span style={{ flex: ".7" }}>상태</span>
                     </div>
                     {jobs.map((j) => (
-                      <div key={j.id} className="flex items-center gap-2 border-b border-navy/[.06] py-2.5 text-[11px]">
+                      <div key={j.id} className="flex items-center gap-2 border-b border-navy/[.06] py-2.5 text-[12px]">
                         <span className="font-num font-bold text-navy" style={{ flex: ".5" }}>
                           {j.t}
                         </span>
                         <span style={{ flex: "1.5" }}>
                           <span className="font-bold text-navy">{j.client}</span>
-                          <span className="block text-[10px] text-muted">{j.job}</span>
+                          <span className="block text-[11px] text-muted">{j.job}</span>
                         </span>
                         <span className="font-bold text-ink" style={{ flex: ".8" }}>
                           {j.lead}
@@ -964,12 +968,12 @@ export default function DispatchConsole() {
                         <span className="font-bold" style={{ flex: ".8", color: j.sup ? "#40413F" : "#C0392B" }}>
                           {j.sup || "—"}
                         </span>
-                        <span className="text-[10px] leading-[1.5] text-muted" style={{ flex: "1.6" }}>
+                        <span className="text-[11px] leading-[1.5] text-muted" style={{ flex: "1.6" }}>
                           {j.note}
                         </span>
                         <span style={{ flex: ".7" }}>
                           <span
-                            className="inline-block rounded-full px-2 py-1 text-[10px] font-bold"
+                            className="inline-block rounded-full px-2 py-1 text-[11px] font-bold"
                             style={{ color: STATE_PILL[j.state].fg, background: STATE_PILL[j.state].bg }}
                           >
                             {j.state}
@@ -991,19 +995,19 @@ export default function DispatchConsole() {
                   }}
                 >
                   <div className="flex items-baseline justify-between">
-                    <span className="text-[10px] font-bold tracking-[.14em] text-[#8A1C1C]">
+                    <span className="text-[11px] font-bold tracking-[.14em] text-[#8A1C1C]">
                       짝 미매칭 · 예약 확정 보류
                     </span>
-                    <span className="font-num text-[11px] font-bold text-[#8A1C1C]">{UNMATCHED.time}</span>
+                    <span className="font-num text-[12px] font-bold text-[#8A1C1C]">{UNMATCHED.time}</span>
                   </div>
-                  <div className="mt-2 text-[15px] font-bold text-[#7A241C]">{UNMATCHED.client}</div>
-                  <div className="mt-1 text-[11px] leading-[1.6] text-[#7A241C]">{UNMATCHED.reason}</div>
+                  <div className="mt-2 text-[17px] font-bold text-[#7A241C]">{UNMATCHED.client}</div>
+                  <div className="mt-1 text-[12px] leading-[1.6] text-[#7A241C]">{UNMATCHED.reason}</div>
                   <div className="mt-3 space-y-2">
                     {/* feasible:false(3안)도 숨기지 않고 불가 이유와 함께 표시 */}
                     {UNMATCHED.options.map((o) => (
                       <div key={o.label} className="rounded-xl border border-navy/10 bg-white/70 px-3 py-2.5">
-                        <div className="text-[12px] font-bold text-navy">{o.label}</div>
-                        <div className="mt-0.5 text-[11px] font-bold opacity-85" style={{ color: o.fg }}>
+                        <div className="text-[13px] font-bold text-navy">{o.label}</div>
+                        <div className="mt-0.5 text-[12px] font-bold opacity-85" style={{ color: o.fg }}>
                           {o.cost}
                         </div>
                       </div>
@@ -1015,12 +1019,12 @@ export default function DispatchConsole() {
                       dispatch({ type: "opsPatch", patch: { unmatchFixed: true } });
                       push("배차", "한복자 님 투석 동행 페어 편성 완료 · 서다인 재배치", "#8FA9CC");
                     }}
-                    className="btn-press btn-dark mt-3 w-full rounded-xl px-4 py-3 text-[12px] font-bold text-white"
+                    className="btn-press btn-dark mt-3 w-full rounded-xl px-4 py-3 text-[13px] font-bold text-white"
                     style={{ background: unmatchFixed ? "#5C5A54" : NAVY }}
                   >
                     {unmatchFixed ? "서다인 재배치 승인 · 18:10 건 재편성 완료" : "송파 권역 서다인 재배치 승인"}
                   </button>
-                  <p className="mt-2.5 text-[10px] leading-[1.6] text-[#7A241C]">
+                  <p className="mt-2.5 text-[11px] leading-[1.6] text-[#7A241C]">
                     짝을 못 찾았다고 1인 배차로 내리지 않습니다. 재배치 · 시니어 투입 · 일정 조정
                     중에서만 고릅니다.
                   </p>
@@ -1029,16 +1033,16 @@ export default function DispatchConsole() {
                 {/* SLA 관제 (09 §8.4) — 네이비 · 글래스 바 */}
                 <section className="card-navy rounded-[14px] p-[18px]" style={{ background: NAVY }}>
                   <div className="flex items-baseline justify-between">
-                    <h2 className="text-[13px] font-bold text-white">SLA 관제</h2>
-                    <span className="text-[11px] text-white/50">목표 대비 오늘</span>
+                    <h2 className="text-[15px] font-bold text-white">SLA 관제</h2>
+                    <span className="text-[12px] text-white/50">목표 대비 오늘</span>
                   </div>
                   <div className="mt-3 space-y-3">
                     {SLA_ROWS.map((s) => (
                       <div key={s.k}>
-                        <div className="flex items-baseline justify-between gap-2 text-[12px]">
+                        <div className="flex items-baseline justify-between gap-2 text-[13px]">
                           <span className="font-medium text-white">{s.k}</span>
                           <span className="shrink-0">
-                            <span className="text-[10px] text-white/45">목표 {s.target} · </span>
+                            <span className="text-[11px] text-white/45">목표 {s.target} · </span>
                             <span className="font-num font-bold" style={{ color: s.color === "#C0392B" ? "#FF8A80" : s.color === "#8A5D12" ? "#F0D9A8" : "#8FE3C0" }}>
                               {s.now}
                             </span>
@@ -1063,7 +1067,7 @@ export default function DispatchConsole() {
                             }}
                           />
                         </div>
-                        <div className="mt-1 text-[10px] text-white/45">{s.note}</div>
+                        <div className="mt-1 text-[11px] text-white/45">{s.note}</div>
                       </div>
                     ))}
                   </div>
@@ -1075,25 +1079,25 @@ export default function DispatchConsole() {
                   <div className="mt-3 space-y-4">
                     {ROUTE_CHAIN.map((r) => (
                       <div key={r.staff}>
-                        <div className="text-[12px] font-bold text-navy">{r.staff}</div>
+                        <div className="text-[13px] font-bold text-navy">{r.staff}</div>
                         <div className="mt-2 flex flex-wrap items-start">
                           {r.legs.map((leg, i) => (
                             <span key={leg} className="flex items-start">
                               {i > 0 && <span className="mx-1 mt-[4px] h-[2px] w-[18px] bg-navy/[.16]" />}
                               <span className="flex flex-col items-start">
                                 <span className="h-[9px] w-[9px] rounded-full bg-[#3B5C8A]" />
-                                <span className="mt-1 whitespace-nowrap text-[10px] text-ink">{leg}</span>
+                                <span className="mt-1 whitespace-nowrap text-[11px] text-ink">{leg}</span>
                               </span>
                             </span>
                           ))}
                         </div>
-                        <div className="mt-1.5 text-[11px] font-bold" style={{ color: r.color }}>
+                        <div className="mt-1.5 text-[12px] font-bold" style={{ color: r.color }}>
                           {r.gap}
                         </div>
                       </div>
                     ))}
                   </div>
-                  <p className="mt-3 border-t border-navy/[.08] pt-2 text-[10px] leading-[1.6] text-muted">
+                  <p className="mt-3 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.6] text-muted">
                     이동 여유가 실제 소요보다 짧으면 다음 건이 자동으로 지연 위험으로 표시되고, 픽업
                     정시율 SLA에 선반영됩니다.
                   </p>
@@ -1106,22 +1110,22 @@ export default function DispatchConsole() {
                     {FATIGUE.map((f) => (
                       <div key={f.name} className="flex items-center gap-3">
                         <div className="w-[104px] shrink-0">
-                          <div className="text-[12px] font-bold text-navy">{f.name}</div>
-                          <div className="text-[10px] text-muted">{f.jobs}</div>
+                          <div className="text-[13px] font-bold text-navy">{f.name}</div>
+                          <div className="text-[11px] text-muted">{f.jobs}</div>
                         </div>
                         <div className="flex-1">
                           <div className="h-[6px] overflow-hidden rounded-full bg-navy/[.08]">
                             <div className="h-full rounded-full" style={{ width: `${f.w}%`, background: f.color }} />
                           </div>
                         </div>
-                        <span className="w-[40px] shrink-0 font-num text-[12px] font-bold text-navy">{f.hours}</span>
-                        <span className="w-[54px] shrink-0 text-right text-[10px] font-bold" style={{ color: f.color }}>
+                        <span className="w-[40px] shrink-0 font-num text-[13px] font-bold text-navy">{f.hours}</span>
+                        <span className="w-[54px] shrink-0 text-right text-[11px] font-bold" style={{ color: f.color }}>
                           {f.state}
                         </span>
                       </div>
                     ))}
                   </div>
-                  <p className="mt-3 border-t border-navy/[.08] pt-2 text-[10px] leading-[1.7] text-muted">
+                  <p className="mt-3 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
                     이수민은 상한 임박으로 오늘 배차 후보에서 자동 제외됐고 7/29 투석 건 AI 제안에서도
                     빠졌습니다 — 피곤한 동행자가 어르신을 부축하는 것이 가장 흔한 사고 원인입니다.
                   </p>
@@ -1134,15 +1138,15 @@ export default function DispatchConsole() {
                     {RISK_WATCH.map((w) => (
                       <div key={w.name} className="flex items-start gap-2.5 border-t border-navy/[.06] pt-2.5 first:border-t-0 first:pt-0">
                         <span
-                          className="mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
+                          className="mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold"
                           style={{ color: RISK_LEVEL[w.level].fg, background: RISK_LEVEL[w.level].bg }}
                         >
                           {w.level}
                         </span>
                         <div>
-                          <div className="text-[12px] font-bold text-navy">{w.name}</div>
-                          <div className="text-[10px] text-muted">{w.why}</div>
-                          <div className="mt-0.5 text-[11px] font-semibold text-navy">→ {w.action}</div>
+                          <div className="text-[13px] font-bold text-navy">{w.name}</div>
+                          <div className="text-[11px] text-muted">{w.why}</div>
+                          <div className="mt-0.5 text-[12px] font-semibold text-navy">→ {w.action}</div>
                         </div>
                       </div>
                     ))}
@@ -1159,7 +1163,7 @@ export default function DispatchConsole() {
               <Panel>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-3">
-                    <h2 className="text-[13px] font-bold text-navy">
+                    <h2 className="text-[15px] font-bold text-navy">
                       {range === "3" ? "3일 컨디션 예보 캘린더" : "주간 컨디션 예보 캘린더"}
                     </h2>
                     <div className="flex gap-1">
@@ -1167,7 +1171,7 @@ export default function DispatchConsole() {
                         <button
                           key={r}
                           onClick={() => setRange(r)}
-                          className="rounded-lg px-[11px] py-[5px] text-[10px] font-bold"
+                          className="rounded-lg px-[11px] py-[5px] text-[11px] font-bold"
                           style={
                             range === r
                               ? { background: NAVY, color: "#fff" }
@@ -1179,7 +1183,7 @@ export default function DispatchConsole() {
                       ))}
                     </div>
                   </div>
-                  <span className="text-[11px] text-muted">F5-6 · 케이웨더</span>
+                  <span className="text-[12px] text-muted">F5-6 · 케이웨더</span>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {forecast.map((d) => (
@@ -1188,19 +1192,19 @@ export default function DispatchConsole() {
                       className="min-w-[96px] flex-1 rounded-xl border px-3 py-2.5"
                       style={{ background: FORECAST_TONE[d.tone].bg, borderColor: FORECAST_TONE[d.tone].border }}
                     >
-                      <div className="text-[10px] font-bold text-muted">{d.day}</div>
+                      <div className="text-[11px] font-bold text-muted">{d.day}</div>
                       <div className="mt-0.5 flex items-baseline gap-1.5">
-                        <span className="font-num text-[18px] font-bold text-navy">{d.score}</span>
-                        <span className="text-[10px] font-bold" style={{ color: FORECAST_TONE[d.tone].fg }}>
+                        <span className="font-num text-[20px] font-bold text-navy">{d.score}</span>
+                        <span className="text-[11px] font-bold" style={{ color: FORECAST_TONE[d.tone].fg }}>
                           {d.grade}
                         </span>
                       </div>
-                      <div className="text-[10px] text-muted">{d.note}</div>
-                      <div className="font-num text-[10px] text-muted">{d.jobs}</div>
+                      <div className="text-[11px] text-muted">{d.note}</div>
+                      <div className="font-num text-[11px] text-muted">{d.jobs}</div>
                     </div>
                   ))}
                 </div>
-                <p className="mt-2.5 text-[10px] leading-[1.6] text-muted">
+                <p className="mt-2.5 text-[11px] leading-[1.6] text-muted">
                   31일(금) 폭염 특보 예보 — 배차 6건 중 3건에 일정 조정 권고를 선제 발송할 수 있습니다
                   (F8-4)
                 </p>
@@ -1212,21 +1216,21 @@ export default function DispatchConsole() {
                   <PanelHead title="감점 내역 · 김순자 (78) 도착 구간" right="100점 감점식 · 룰 엔진(L0) · 커버리지 100%" />
                   <div className="mt-3 space-y-2">
                     {SCORE_FACTORS.map((f) => (
-                      <div key={f.name} className="flex items-center gap-2 text-[11px]">
+                      <div key={f.name} className="flex items-center gap-2 text-[12px]">
                         <span className="w-[72px] shrink-0 font-bold text-navy">{f.name}</span>
-                        <span className="w-[48px] shrink-0 font-num text-[10px] text-muted">가중 {f.weight}</span>
+                        <span className="w-[48px] shrink-0 font-num text-[11px] text-muted">가중 {f.weight}</span>
                         <span className="flex-1 text-muted">{f.basis}</span>
-                        <span className="w-[42px] shrink-0 text-right font-num text-[12px] font-bold" style={{ color: f.color }}>
+                        <span className="w-[42px] shrink-0 text-right font-num text-[13px] font-bold" style={{ color: f.color }}>
                           {f.delta}
                         </span>
                       </div>
                     ))}
                     <div className="flex items-baseline justify-between border-t border-navy/[.18] pt-2">
-                      <span className="text-[11px] font-bold text-navy">최종 점수</span>
-                      <span className="font-num text-[14px] font-bold text-danger">52 · 주의</span>
+                      <span className="text-[12px] font-bold text-navy">최종 점수</span>
+                      <span className="font-num text-[16px] font-bold text-danger">52 · 주의</span>
                     </div>
                   </div>
-                  <p className="mt-2.5 text-[10px] leading-[1.7] text-muted">
+                  <p className="mt-2.5 text-[11px] leading-[1.7] text-muted">
                     측정값이 없는 지표는 0점으로 세지 않고 계산에서 제외한 뒤 커버리지로 표기합니다 —
                     결측을 감점으로 위장하지 않습니다
                   </p>
@@ -1238,18 +1242,18 @@ export default function DispatchConsole() {
                   <div className="mt-3 space-y-3">
                     {BRIEFINGS.map((b) => (
                       <div key={b.name} className="flex gap-3 border-t border-navy/[.06] pt-2.5 first:border-t-0 first:pt-0">
-                        <span className="w-[40px] shrink-0 font-num text-[18px] font-bold" style={{ color: b.color }}>
+                        <span className="w-[40px] shrink-0 font-num text-[20px] font-bold" style={{ color: b.color }}>
                           {b.score}
                         </span>
                         <div className="min-w-0">
-                          <div className="text-[12px] font-medium text-navy">
+                          <div className="text-[13px] font-medium text-navy">
                             {b.name}{" "}
-                            <span className="text-[10px] font-bold" style={{ color: b.color }}>
+                            <span className="text-[11px] font-bold" style={{ color: b.color }}>
                               {b.grade}
                             </span>
                           </div>
-                          <div className="text-[10px] text-muted">{b.detail}</div>
-                          <div className="text-[10px] text-muted">{b.legs}</div>
+                          <div className="text-[11px] text-muted">{b.detail}</div>
+                          <div className="text-[11px] text-muted">{b.legs}</div>
                         </div>
                       </div>
                     ))}
@@ -1261,7 +1265,7 @@ export default function DispatchConsole() {
                       setBriefed(true);
                       push("브리핑", "외출 컨디션 브리핑 3건 발송 · 가족·컨시어지 앱", "#8FA9CC");
                     }}
-                    className="btn-press mt-3 w-full rounded-xl border px-4 py-2.5 text-[12px] font-bold"
+                    className="btn-press mt-3 w-full rounded-xl border px-4 py-2.5 text-[13px] font-bold"
                     style={
                       briefed
                         ? { borderColor: "rgba(10,31,60,.14)", color: "#5C5A54" }
@@ -1277,12 +1281,12 @@ export default function DispatchConsole() {
                   <PanelHead title="컨시어지 현황" right="평점 출처: 가족 만족도" />
                   <div className="mt-3 space-y-2.5">
                     {STAFF_STATUS.map((s) => (
-                      <div key={s.name} className="flex items-center gap-2.5 text-[11px]">
+                      <div key={s.name} className="flex items-center gap-2.5 text-[12px]">
                         <span className="h-[7px] w-[7px] shrink-0 rounded-full" style={{ background: s.color }} />
-                        <span className="flex-1 text-[12px] font-medium text-navy">{s.name}</span>
+                        <span className="flex-1 text-[13px] font-medium text-navy">{s.name}</span>
                         <span className="w-[84px] shrink-0 text-muted">{s.area}</span>
-                        <span className="w-[32px] shrink-0 font-num text-[12px] font-bold text-navy">{s.jobs}</span>
-                        <span className="w-[34px] shrink-0 text-right font-num text-[11px] text-[#7A5C28]">
+                        <span className="w-[32px] shrink-0 font-num text-[13px] font-bold text-navy">{s.jobs}</span>
+                        <span className="w-[34px] shrink-0 text-right font-num text-[12px] text-[#7A5C28]">
                           {s.rating}
                         </span>
                       </div>
@@ -1311,28 +1315,28 @@ export default function DispatchConsole() {
                     >
                       <button onClick={() => openProfile(d.name)} className="min-w-0 flex-1 text-left hover:opacity-75">
                         <div className="flex items-center gap-2">
-                          <span className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
+                          <span className="text-[15px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
                             {d.name}
                           </span>
-                          <span className="font-num text-[11px] text-muted">{d.tag}세</span>
+                          <span className="font-num text-[12px] text-muted">{d.tag}세</span>
                           {d.alert && (
-                            <span className="rounded-full border border-amber/30 bg-[#FFF7E8] px-2 py-0.5 text-[9px] font-bold text-amber">
+                            <span className="rounded-full border border-amber/30 bg-[#FFF7E8] px-2 py-0.5 text-[10px] font-bold text-amber">
                               챙길 것
                             </span>
                           )}
                         </div>
-                        <div className="mt-0.5 truncate text-[11px] text-muted">{d.summary}</div>
+                        <div className="mt-0.5 truncate text-[12px] text-muted">{d.summary}</div>
                       </button>
                       <button
                         onClick={() => push("대응", `${d.name} 안부 확인 콜 접수 — 담당 컨시어지 배정`, "#8FA9CC")}
-                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy"
+                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
                       >
                         안부 콜
                       </button>
                     </div>
                   ))}
                 </div>
-                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
                   상세 주소는 담당 확정 후에만 노출됩니다 · 명부 클릭 시 담당·일정·챙길 것 프로필
                 </p>
               </Panel>
@@ -1343,20 +1347,20 @@ export default function DispatchConsole() {
                     <div key={r.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                       <div className="flex items-center gap-2">
                         <span
-                          className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                          className="rounded-full px-2 py-0.5 text-[11px] font-bold"
                           style={{ color: RISK_LEVEL[r.level].fg, background: RISK_LEVEL[r.level].bg }}
                         >
                           {r.level}
                         </span>
                         <button
                           onClick={() => openProfile(r.name.split(" (")[0])}
-                          className="text-[12px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
+                          className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
                         >
                           {r.name}
                         </button>
                       </div>
-                      <div className="mt-1 text-[11px] leading-[1.55] text-muted">{r.why}</div>
-                      <div className="mt-1 text-[11px] font-bold leading-[1.55] text-ink">조치 — {r.action}</div>
+                      <div className="mt-1 text-[12px] leading-[1.55] text-muted">{r.why}</div>
+                      <div className="mt-1 text-[12px] font-bold leading-[1.55] text-ink">조치 — {r.action}</div>
                     </div>
                   ))}
                 </div>
@@ -1367,7 +1371,7 @@ export default function DispatchConsole() {
           {/* ════ 보호자 관리 — 주/부 보호자 · 시차 가구 ════ */}
           {menu === "guardian" && (
             <>
-              <p className="mt-4 rounded-xl border border-navy/[.08] bg-white/50 px-4 py-2.5 text-[11px] leading-[1.6] text-muted">
+              <p className="mt-4 rounded-xl border border-navy/[.08] bg-white/50 px-4 py-2.5 text-[12px] leading-[1.6] text-muted">
                 가입 정책 — 주 보호자 가입 후 초대 링크로 부 보호자 참여 · 결제 승인 권한은 주 보호자에게만
               </p>
               <div className="mt-3 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
@@ -1376,21 +1380,21 @@ export default function DispatchConsole() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => openProfile(d.name)}
-                        className="text-[14px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
+                        className="text-[16px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
                       >
                         {d.name}
                       </button>
-                      <span className="text-[11px] text-muted">{d.tag}</span>
+                      <span className="text-[12px] text-muted">{d.tag}</span>
                       {d.summary.includes("주 보호자") && (
-                        <span className="ml-auto rounded-full bg-gold/15 px-2 py-0.5 text-[9px] font-bold text-[#7A5C28]">
+                        <span className="ml-auto rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-bold text-[#7A5C28]">
                           주 보호자
                         </span>
                       )}
                     </div>
-                    <p className="mt-1 text-[11px] leading-[1.55] text-muted">{d.summary}</p>
+                    <p className="mt-1 text-[12px] leading-[1.55] text-muted">{d.summary}</p>
                     <div className="mt-2.5 space-y-1.5 border-t border-navy/[.08] pt-2.5">
                       {d.rows.map(([k, v]) => (
-                        <div key={k} className="flex gap-2 text-[11px]">
+                        <div key={k} className="flex gap-2 text-[12px]">
                           <span className="w-[44px] shrink-0 font-bold text-gold">{k}</span>
                           <span className="flex-1 leading-[1.55] text-ink">{v}</span>
                         </div>
@@ -1399,13 +1403,13 @@ export default function DispatchConsole() {
                     <div className="mt-3 flex gap-2">
                       <button
                         onClick={() => push("리포트", `${d.name}에게 최신 케어 리포트 재발송`, "#8FE3C0")}
-                        className="btn-press rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy"
+                        className="btn-press rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
                       >
                         리포트 재발송
                       </button>
                       <button
                         onClick={() => push("메시지", `${d.name}에게 상황 확인 알림 발송`, "#8FA9CC")}
-                        className="btn-press rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy"
+                        className="btn-press rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
                       >
                         상황 알림
                       </button>
@@ -1429,25 +1433,25 @@ export default function DispatchConsole() {
                     >
                       <button onClick={() => openProfile(d.name)} className="min-w-0 flex-1 text-left hover:opacity-75">
                         <div className="flex items-center gap-2">
-                          <span className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
+                          <span className="text-[15px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
                             {d.name}
                           </span>
-                          <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[9px] font-bold text-navy">
+                          <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">
                             {d.tag}
                           </span>
                         </div>
-                        <div className="mt-0.5 truncate text-[11px] text-muted">{d.summary}</div>
+                        <div className="mt-0.5 truncate text-[12px] text-muted">{d.summary}</div>
                       </button>
                       <button
                         onClick={() => push("브리핑", `${d.name}에게 내일 배차 브리핑 재발송`, "#F0D9A8")}
-                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy"
+                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
                       >
                         브리핑
                       </button>
                     </div>
                   ))}
                 </div>
-                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
                   판매액·업셀 지표는 평가에서 제외 — 평점·케어 품질만 표시 (원칙 1)
                 </p>
               </Panel>
@@ -1459,22 +1463,22 @@ export default function DispatchConsole() {
                       <div className="flex items-baseline justify-between">
                         <button
                           onClick={() => openProfile(f.name)}
-                          className="text-[12px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
+                          className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
                         >
                           {f.name}
                         </button>
-                        <span className="font-num text-[11px] font-bold" style={{ color: f.color }}>
+                        <span className="font-num text-[12px] font-bold" style={{ color: f.color }}>
                           {f.hours} · {f.state}
                         </span>
                       </div>
                       <div className="mt-1.5 h-[6px] overflow-hidden rounded-full bg-navy/[.08]">
                         <span className="block h-full rounded-full" style={{ width: `${f.w}%`, background: f.color }} />
                       </div>
-                      <div className="mt-1 text-[10px] text-muted">{f.jobs}</div>
+                      <div className="mt-1 text-[11px] text-muted">{f.jobs}</div>
                     </div>
                   ))}
                 </div>
-                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
                   피로도는 표시가 아니라 게이트 — 90% 이상은 AI 배정 후보에서 자동 제외
                 </p>
               </Panel>
@@ -1489,25 +1493,25 @@ export default function DispatchConsole() {
                 {MOU_HOSPITALS.map((h) => (
                   <div key={h.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
                     <div className="flex items-center gap-2">
-                      <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[9px] font-bold text-navy">
+                      <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">
                         {h.dept}
                       </span>
                       <button
                         onClick={() => openProfile(h.name)}
-                        className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
+                        className="text-[15px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
                       >
                         {h.name}
                       </button>
                       {h.fast && (
-                        <span className="ml-auto rounded-full bg-gold/15 px-2 py-0.5 text-[9px] font-bold text-[#7A5C28]">
+                        <span className="ml-auto rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-bold text-[#7A5C28]">
                           패스트트랙
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 text-[11px] leading-[1.55] text-muted">{h.note}</div>
+                    <div className="mt-1 text-[12px] leading-[1.55] text-muted">{h.note}</div>
                     <button
                       onClick={() => push("예약", `${h.name} ${h.dept} 예약 슬롯 조회 — 응답 대기`, "#8FA9CC")}
-                      className="btn-press mt-2 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy"
+                      className="btn-press mt-2 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
                     >
                       슬롯 조회
                     </button>
@@ -1529,8 +1533,8 @@ export default function DispatchConsole() {
                       <div key={t.id} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                         <div className="flex items-center gap-3">
                           <div className="min-w-0 flex-1">
-                            <div className="text-[12px] font-bold text-navy">{t.title}</div>
-                            <div className="truncate text-[11px] text-muted">{t.desc}</div>
+                            <div className="text-[13px] font-bold text-navy">{t.title}</div>
+                            <div className="truncate text-[12px] text-muted">{t.desc}</div>
                           </div>
                           <button
                             onClick={() => {
@@ -1539,7 +1543,7 @@ export default function DispatchConsole() {
                               push(t.kind, t.log, t.color);
                             }}
                             disabled={!!sent[t.id]}
-                            className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[12px] font-bold text-navy disabled:opacity-50"
+                            className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[13px] font-bold text-navy disabled:opacity-50"
                           >
                             {sent[t.id] ? "발송됨" : "발송"}
                           </button>
@@ -1552,21 +1556,21 @@ export default function DispatchConsole() {
                                 ([k, n]) => (
                                   <span
                                     key={k}
-                                    className="rounded-full bg-navy/[.05] px-2 py-0.5 text-[10px] font-bold text-navy"
+                                    className="rounded-full bg-navy/[.05] px-2 py-0.5 text-[11px] font-bold text-navy"
                                   >
                                     {k} <span className="font-num">{n}</span>
                                   </span>
                                 )
                               )}
                             </div>
-                            <div className="mt-1.5 text-[10px] font-bold text-amber">{tr.next}</div>
+                            <div className="mt-1.5 text-[11px] font-bold text-amber">{tr.next}</div>
                           </div>
                         )}
                       </div>
                     );
                   })}
                 </div>
-                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
                   모든 발송은 감사 로그(티커)에 기록 · 미열람은 앱 → 문자 → 음성 콜 순 자동 에스컬레이션 ·
                   어르신 안내는 음성 콜 우선 · 진단어 없이 생활어 사용
                 </p>
@@ -1617,33 +1621,33 @@ function FloatProfile({ item, onClose, onAction }) {
       >
         <div className="flex items-center gap-2">
           <span
-            className="rounded-full px-2 py-0.5 text-[9px] font-bold"
+            className="rounded-full px-2 py-0.5 text-[10px] font-bold"
             style={{ color: "#0A1F3C", background: "rgba(10,31,60,.08)" }}
           >
             {t.label}
           </span>
-          <span className="text-[15px] font-bold text-navy">
-            {item.name} <span className="text-[11px] font-medium text-muted">{item.tag}</span>
+          <span className="text-[17px] font-bold text-navy">
+            {item.name} <span className="text-[12px] font-medium text-muted">{item.tag}</span>
           </span>
           <button
             onClick={onClose}
             aria-label="닫기"
-            className="btn-press ml-auto flex h-[26px] w-[26px] items-center justify-center rounded-lg border border-navy/15 text-[12px] font-bold text-muted"
+            className="btn-press ml-auto flex h-[26px] w-[26px] items-center justify-center rounded-lg border border-navy/15 text-[13px] font-bold text-muted"
           >
             ✕
           </button>
         </div>
-        <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">{item.summary}</p>
+        <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">{item.summary}</p>
         <div className="mt-2.5 space-y-1.5 border-t border-navy/[.08] pt-2.5">
           {item.rows.map(([k, v]) => (
-            <div key={k} className="flex gap-2 text-[11px]">
+            <div key={k} className="flex gap-2 text-[12px]">
               <span className="w-[44px] shrink-0 font-bold text-gold">{k}</span>
               <span className="flex-1 leading-[1.55] text-ink">{v}</span>
             </div>
           ))}
         </div>
         {item.alert && (
-          <p className="mt-2.5 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3 py-2 text-[11px] font-bold leading-[1.6] text-[#5A4A22]">
+          <p className="mt-2.5 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3 py-2 text-[12px] font-bold leading-[1.6] text-[#5A4A22]">
             챙길 것 — {item.alert}
           </p>
         )}
@@ -1651,14 +1655,14 @@ function FloatProfile({ item, onClose, onAction }) {
         {crm && (
           <div className="mt-2.5 flex items-center gap-2 border-t border-navy/[.08] pt-2.5">
             <span
-              className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
+              className="rounded-full px-2 py-0.5 text-[11px] font-bold text-white"
               style={{ background: crm.color }}
             >
               {crm.stage}
             </span>
-            <span className="font-num text-[10px] text-muted">가입 {crm.months}개월</span>
+            <span className="font-num text-[11px] text-muted">가입 {crm.months}개월</span>
             <span
-              className="ml-auto font-num text-[10px] font-bold"
+              className="ml-auto font-num text-[11px] font-bold"
               style={{ color: crm.churn >= 70 ? "#C0392B" : crm.churn >= 40 ? "#8A5D12" : "#1E7A5A" }}
               title="구성: 리포트 미열람 35 · 요청 무응답 25 · 결제 신호 25 · 방문 감소 15"
             >
@@ -1668,12 +1672,12 @@ function FloatProfile({ item, onClose, onAction }) {
         )}
         {tl && (
           <div className="mt-2.5 border-t border-navy/[.08] pt-2.5">
-            <div className="text-[10px] font-bold tracking-[.1em] text-muted">가구 타임라인</div>
+            <div className="text-[11px] font-bold tracking-[.1em] text-muted">가구 타임라인</div>
             <div className="mt-1.5 max-h-[140px] space-y-1.5 overflow-y-auto pr-1">
               {tl.map((ev, i) => (
-                <div key={i} className="flex gap-2 text-[11px]">
-                  <span className="w-[36px] shrink-0 font-num text-[10px] font-semibold text-muted">{ev.at}</span>
-                  <span className="shrink-0 rounded-full bg-navy/[.06] px-1.5 text-[9px] font-bold leading-[18px] text-navy">
+                <div key={i} className="flex gap-2 text-[12px]">
+                  <span className="w-[36px] shrink-0 font-num text-[11px] font-semibold text-muted">{ev.at}</span>
+                  <span className="shrink-0 rounded-full bg-navy/[.06] px-1.5 text-[10px] font-bold leading-[18px] text-navy">
                     {ev.kind}
                   </span>
                   <span className="flex-1 leading-[1.5] text-ink">{ev.text}</span>
@@ -1684,8 +1688,8 @@ function FloatProfile({ item, onClose, onAction }) {
         )}
         {crm && (
           <div className="mt-2.5 border-t border-navy/[.08] pt-2.5">
-            <div className="text-[10px] font-bold text-gold">다음 추천 조치 (AI)</div>
-            <p className="mt-1 text-[11px] leading-[1.6] text-ink">{crm.nba}</p>
+            <div className="text-[11px] font-bold text-gold">다음 추천 조치 (AI)</div>
+            <p className="mt-1 text-[12px] leading-[1.6] text-ink">{crm.nba}</p>
             <button
               onClick={() => {
                 if (acted) return;
@@ -1693,14 +1697,14 @@ function FloatProfile({ item, onClose, onAction }) {
                 onAction?.(`${item.name} — ${crm.nba.split(" — ")[0]} 실행 기록`);
               }}
               disabled={acted}
-              className="btn-press mt-2 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-navy disabled:opacity-50"
+              className="btn-press mt-2 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
             >
               {acted ? "실행 기록됨 ✓" : "실행 · 기록"}
             </button>
           </div>
         )}
         {crm && (
-          <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[9px] leading-[1.5] text-muted">
+          <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[10px] leading-[1.5] text-muted">
             이 열람은 접근 기록에 남고 보호자에게 공개됩니다 — 신뢰 거버넌스
           </p>
         )}

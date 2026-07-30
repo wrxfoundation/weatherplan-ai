@@ -37,6 +37,12 @@
   }
 
   /* 글래스 카드 — 주요 콘텐츠 카드 (05 §상태 계열) */
+  /* 한국어 줄바꿈 — 단어 중간에서 깨지지 않게 (전 화면) */
+  body {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
   .card-glass {
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.7));
     border: 1px solid rgba(255, 255, 255, 0.9);

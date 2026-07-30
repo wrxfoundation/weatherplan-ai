@@ -80,23 +80,23 @@ export default function ConciergePage() {
           <header className="sticky top-0 z-20 border-b border-navy/10 bg-paper/95 px-5 pb-3 pt-4 backdrop-blur">
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-num text-[10px] font-bold tracking-[.18em] text-gold">
+                <div className="font-num text-[11px] font-bold tracking-[.18em] text-gold">
                   CONCIERGE
                 </div>
                 <div className="mt-0.5 flex items-center gap-2">
-                  <span className="text-[19px] font-black text-navy">박지현 · 주 동행</span>
-                  <span className="chip-gold rounded-full px-2 py-[3px] font-num text-[9px] font-bold">
+                  <span className="text-[21px] font-black text-navy">박지현 · 주 동행</span>
+                  <span className="chip-gold rounded-full px-2 py-[3px] font-num text-[10px] font-bold">
                     {EARNINGS.grade}
                   </span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <a href="/" className="text-[11px] font-bold text-muted/50">
+                <a href="/" className="text-[12px] font-bold text-muted/50">
                   데모 홈
                 </a>
                 <button
                   onClick={() => dispatch({ type: "demo", payload: { offline: !state.demo.offline } })}
-                  className="btn-press rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11px] font-bold text-muted"
+                  className="btn-press rounded-lg border border-navy/20 px-2.5 py-1.5 text-[12px] font-bold text-muted"
                 >
                   {state.demo.offline ? "온라인 전환" : "오프라인 시연"}
                 </button>
@@ -110,10 +110,10 @@ export default function ConciergePage() {
               <>
                 {state.demo.offline && (
                   <div className="rounded-[14px] border border-amber/30 bg-gradient-to-b from-[#FFF7E8] to-[#FBEFD8] p-3.5">
-                    <div className="text-[12px] font-bold text-amber">
+                    <div className="text-[13px] font-bold text-amber">
                       오프라인 — 기록은 기기에 저장 중입니다
                     </div>
-                    <p className="mt-1 text-[11px] leading-[1.6] text-[#5A4A22]">
+                    <p className="mt-1 text-[12px] leading-[1.6] text-[#5A4A22]">
                       오늘 일정·체크리스트는 미리 받아 두었습니다. 연결이 돌아오면 대기 중인 기록{" "}
                       {v.audit.length}건이 자동 전송됩니다.
                     </p>
@@ -123,15 +123,15 @@ export default function ConciergePage() {
                 {/* 오늘 동행 — 디자인 콘솔 (시간범위 · 케어 메타 · 짝 · 컨디션 · 출근 체크인) */}
                 <Card className="p-[18px]">
                   <div className="flex items-center justify-between">
-                    <span className="font-num text-[16px] font-bold text-navy">{a1.timeRange}</span>
+                    <span className="font-num text-[18px] font-bold text-navy">{a1.timeRange}</span>
                     <Badge fg="#FFFFFF" bg="#0A1F3C">
                       {v.checkedIn ? "수행중" : "예정"}
                     </Badge>
                   </div>
-                  <div className="mt-2 text-[18px] font-black text-navy">
+                  <div className="mt-2 text-[20px] font-black text-navy">
                     {a1.customer} · {a1.hospital}
                   </div>
-                  <div className="mt-1 text-[12px] leading-[1.7] text-muted">
+                  <div className="mt-1 text-[13px] leading-[1.7] text-muted">
                     {a1.meta1}
                     <br />
                     {a1.meta2}
@@ -140,10 +140,10 @@ export default function ConciergePage() {
                   {/* 오늘의 짝 — 2인 1조 실행 UI */}
                   <div className="card-navy mt-3.5 rounded-[14px] bg-navy p-4 text-white">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold tracking-[.1em] text-gold-soft">
+                      <span className="text-[12px] font-bold tracking-[.1em] text-gold-soft">
                         오늘의 짝
                       </span>
-                      <span className="chip-gold rounded-full px-2.5 py-1 text-[10px] font-bold">
+                      <span className="chip-gold rounded-full px-2.5 py-1 text-[11px] font-bold">
                         {v.checkedIn && pairCalled
                           ? "2인 체크인 완료"
                           : pairCalled
@@ -153,16 +153,16 @@ export default function ConciergePage() {
                     </div>
                     <div className="mt-3 flex items-center gap-3">
                       <span
-                        className="flex h-[48px] w-[48px] shrink-0 items-center justify-center whitespace-nowrap rounded-full text-[13px] font-bold"
+                        className="flex h-[48px] w-[48px] shrink-0 items-center justify-center whitespace-nowrap rounded-full text-[15px] font-bold"
                         style={{ background: PAIR_TODAY.avBg, color: PAIR_TODAY.avFg }}
                       >
                         {PAIR_TODAY.initials}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <div className="text-[14px] font-bold">
+                        <div className="text-[16px] font-bold">
                           {PAIR_TODAY.name} · {PAIR_TODAY.role}
                         </div>
-                        <div className="mt-0.5 font-num text-[11px] text-white/65">
+                        <div className="mt-0.5 font-num text-[12px] text-white/65">
                           {PAIR_TODAY.eta}
                         </div>
                       </div>
@@ -172,7 +172,7 @@ export default function ConciergePage() {
                           setPairCalled(true);
                           push("동행", "부 동행 서다인 호출 · 위치 공유 요청", "#8FA9CC");
                         }}
-                        className={`btn-press btn-dark shrink-0 rounded-xl px-4 py-3 text-[13px] font-bold text-white ${
+                        className={`btn-press btn-dark shrink-0 rounded-xl px-4 py-3 text-[15px] font-bold text-white ${
                           pairCalled ? "bg-muted" : "bg-green"
                         }`}
                       >
@@ -181,14 +181,14 @@ export default function ConciergePage() {
                     </div>
                     <div className="mt-3 space-y-2 border-t border-white/12 pt-3">
                       {PAIR_TODAY.duties.map((d) => (
-                        <div key={d.who} className="flex gap-2.5 text-[12px]">
+                        <div key={d.who} className="flex gap-2.5 text-[13px]">
                           <span className="w-[52px] shrink-0 font-bold text-gold-soft">{d.who}</span>
                           <span className="flex-1 leading-[1.6] text-white/85">{d.what}</span>
                         </div>
                       ))}
                     </div>
                     {/* 1인 진입 금지 — 원칙의 실행 카피 */}
-                    <p className="mt-3 border-t border-white/12 pt-2.5 text-[11px] leading-[1.7] text-white/60">
+                    <p className="mt-3 border-t border-white/12 pt-2.5 text-[12px] leading-[1.7] text-white/60">
                       {PAIR_TODAY.rule}
                     </p>
                   </div>
@@ -202,22 +202,22 @@ export default function ConciergePage() {
                     }}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[12px] font-bold text-[#5C7799]">
+                      <span className="text-[13px] font-bold text-[#5C7799]">
                         외출 컨디션 · 2구간
                       </span>
-                      <span className="font-num text-[10px] text-muted">{OUTING.asOf}</span>
+                      <span className="font-num text-[11px] text-muted">{OUTING.asOf}</span>
                     </div>
                     <div className="mt-2 space-y-1.5">
                       {OUTING.legs.map((l) => (
-                        <div key={l.tag} className="flex items-center gap-2 text-[12px]">
+                        <div key={l.tag} className="flex items-center gap-2 text-[13px]">
                           <span className="w-[30px] shrink-0 font-bold text-gold">{l.tag}</span>
                           <span className="shrink-0 font-bold text-ink">{l.place}</span>
-                          <span className="flex-1 truncate text-right text-[11px] text-muted">
+                          <span className="flex-1 truncate text-right text-[12px] text-muted">
                             {l.compact}
                           </span>
-                          <span className="font-num text-[14px] font-bold text-navy">{l.score}</span>
+                          <span className="font-num text-[16px] font-bold text-navy">{l.score}</span>
                           <span
-                            className="w-[28px] text-right text-[11px] font-bold"
+                            className="w-[28px] text-right text-[12px] font-bold"
                             style={{ color: l.level === "danger" ? "#C0392B" : "#8A5D12" }}
                           >
                             {l.grade}
@@ -230,7 +230,7 @@ export default function ConciergePage() {
                   {/* 준비물 — 날씨 자동 반영 + 동행 문서 */}
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {[...OUTING.kit, ...KIT_DOCS].map((k) => (
-                      <span key={k} className="chip-gold rounded-full px-2.5 py-1 text-[11px] font-bold">
+                      <span key={k} className="chip-gold rounded-full px-2.5 py-1 text-[12px] font-bold">
                         {k}
                       </span>
                     ))}
@@ -248,7 +248,7 @@ export default function ConciergePage() {
                       push("체크인", "박지현 · 김순자(78) 동행 수행중 전환", "#4ADE80");
                     }}
                     disabled={v.checkedIn}
-                    className={`btn-press btn-dark mt-4 w-full rounded-xl py-3.5 text-[15px] font-bold text-white ${
+                    className={`btn-press btn-dark mt-4 w-full rounded-xl py-3.5 text-[17px] font-bold text-white ${
                       v.checkedIn ? "bg-green" : "bg-navy"
                     }`}
                   >
@@ -259,12 +259,12 @@ export default function ConciergePage() {
                 {/* 오늘의 한 끗 — 선제 케어 한 가지 (세계 최고 컨시어지: anticipation) */}
                 <Card className="border border-gold/30 p-4">
                   <div className="flex items-center gap-2">
-                    <span className="chip-gold rounded-full px-2 py-[3px] text-[9px] font-bold">AI</span>
-                    <span className="text-[14px] font-black text-navy">오늘의 한 끗</span>
+                    <span className="chip-gold rounded-full px-2 py-[3px] text-[10px] font-bold">AI</span>
+                    <span className="text-[16px] font-black text-navy">오늘의 한 끗</span>
                   </div>
-                  <p className="mt-2 text-[13px] leading-[1.7] text-ink">{TODAY_DETAIL.text}</p>
+                  <p className="mt-2 text-[15px] leading-[1.7] text-ink">{TODAY_DETAIL.text}</p>
                   <div className="mt-2 flex items-center gap-2">
-                    <span className="text-[10px] text-muted">근거 — {TODAY_DETAIL.src}</span>
+                    <span className="text-[11px] text-muted">근거 — {TODAY_DETAIL.src}</span>
                     <button
                       onClick={() => {
                         if (detailDone) return;
@@ -272,7 +272,7 @@ export default function ConciergePage() {
                         push("어르신", "오늘의 한 끗 완료 — 생신 축하 인사 · 가족 메시지 전달", "#F0D9A8");
                       }}
                       disabled={detailDone}
-                      className={`btn-press btn-dark ml-auto shrink-0 rounded-xl px-4 py-2.5 text-[12px] font-bold text-white ${
+                      className={`btn-press btn-dark ml-auto shrink-0 rounded-xl px-4 py-2.5 text-[13px] font-bold text-white ${
                         detailDone ? "bg-green" : "bg-navy"
                       }`}
                     >
@@ -284,20 +284,20 @@ export default function ConciergePage() {
                 {/* 선호 카드 — 개인화 기억 (세계 최고 컨시어지: 좋은 동행은 기억에서 나온다) */}
                 <Card className="p-[18px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[15px] font-black text-navy">김순자님 선호 카드</span>
+                    <span className="text-[17px] font-black text-navy">김순자님 선호 카드</span>
                     <Badge fg="#7A5C28" bg="rgba(176,141,87,.15)">
                       방문 전 30초 확인
                     </Badge>
                   </div>
                   <div className="mt-3 space-y-2">
                     {ELDER_PREFS.map(([k, val]) => (
-                      <div key={k} className="flex gap-2.5 text-[12px]">
+                      <div key={k} className="flex gap-2.5 text-[13px]">
                         <span className="w-[56px] shrink-0 font-bold text-gold">{k}</span>
                         <span className="flex-1 leading-[1.6] text-ink">{val}</span>
                       </div>
                     ))}
                     {prefAdded && (
-                      <div className="flex gap-2.5 text-[12px]">
+                      <div className="flex gap-2.5 text-[13px]">
                         <span className="w-[56px] shrink-0 font-bold text-gold">오늘 기록</span>
                         <span className="flex-1 leading-[1.6] text-ink">
                           병원 로비 소음에 피로감 — 대기는 조용한 쪽 좌석으로
@@ -312,11 +312,11 @@ export default function ConciergePage() {
                       push("어르신", "선호 카드 기록 추가 — 대기석 소음 민감", "#F0D9A8");
                     }}
                     disabled={prefAdded}
-                    className="btn-press mt-3 w-full rounded-xl border border-navy/15 py-2.5 text-[12px] font-bold text-navy disabled:opacity-60"
+                    className="btn-press mt-3 w-full rounded-xl border border-navy/15 py-2.5 text-[13px] font-bold text-navy disabled:opacity-60"
                   >
                     {prefAdded ? "오늘 알게 된 선호 기록됨 ✓" : "+ 오늘 알게 된 선호 기록"}
                   </button>
-                  <p className="mt-2 text-[10px] leading-[1.6] text-muted">
+                  <p className="mt-2 text-[11px] leading-[1.6] text-muted">
                     선호 카드는 담당 페어와 관제만 봅니다 · 다음 동행 브리핑에 자동 반영됩니다.
                   </p>
                 </Card>
@@ -324,15 +324,15 @@ export default function ConciergePage() {
                 {/* AI 동행 브리핑 — 케어 프로필 자동 주입. 확정/미확정 구분 (03 profile) */}
                 <Card className="p-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-[14px] font-black text-navy">AI 동행 브리핑</span>
-                    <span className="chip-gold rounded-full px-2 py-[3px] text-[9px] font-bold">
+                    <span className="text-[16px] font-black text-navy">AI 동행 브리핑</span>
+                    <span className="chip-gold rounded-full px-2 py-[3px] text-[10px] font-bold">
                       케어 프로필 기반
                     </span>
                   </div>
                   <div className="mt-2.5 space-y-1.5">
                     {AI_BRIEFING.confirmed.map((b) => (
-                      <div key={b} className="flex items-start gap-2 text-[12px] leading-[1.6] text-ink">
-                        <span className="mt-[2px] inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-green/15 text-[9px] font-bold text-green">
+                      <div key={b} className="flex items-start gap-2 text-[13px] leading-[1.6] text-ink">
+                        <span className="mt-[2px] inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-green/15 text-[10px] font-bold text-green">
                           ✓
                         </span>
                         {b}
@@ -340,16 +340,16 @@ export default function ConciergePage() {
                     ))}
                   </div>
                   <div className="mt-2.5 rounded-xl border border-amber/30 bg-[#FFF7E8] p-3">
-                    <div className="text-[10px] font-bold tracking-[.08em] text-amber">
+                    <div className="text-[11px] font-bold tracking-[.08em] text-amber">
                       미확정 — 확인된 정보가 아닙니다
                     </div>
                     {AI_BRIEFING.unconfirmed.map((u) => (
-                      <p key={u} className="mt-1 text-[12px] leading-[1.6] text-[#5A4A22]">
+                      <p key={u} className="mt-1 text-[13px] leading-[1.6] text-[#5A4A22]">
                         {u}
                       </p>
                     ))}
                   </div>
-                  <p className="mt-2.5 text-[10px] leading-[1.6] text-muted">
+                  <p className="mt-2.5 text-[11px] leading-[1.6] text-muted">
                     관찰·발언 기록에서 AI가 추렸습니다 — 진단·판단 없음. 새 관찰은 리포트로
                     쌓이고 다음 브리핑에 반영됩니다.
                   </p>
@@ -377,7 +377,7 @@ export default function ConciergePage() {
                       <SectionLabel>방문 기록 (자동 연결)</SectionLabel>
                       <div className="mt-2 space-y-1.5">
                         {v.audit.map((e, i) => (
-                          <div key={i} className="flex items-center gap-2 text-[12px]">
+                          <div key={i} className="flex items-center gap-2 text-[13px]">
                             <span className="font-num font-bold text-navy">{fmtT(e.at)}</span>
                             <span
                               className="h-[7px] w-[7px] rounded-full"
@@ -390,7 +390,7 @@ export default function ConciergePage() {
                           </div>
                         ))}
                       </div>
-                      <p className="mt-2.5 text-[10px] leading-[1.6] text-muted">
+                      <p className="mt-2.5 text-[11px] leading-[1.6] text-muted">
                         GPS·시간·체크리스트·사진·리포트가 하나의 방문 기록으로 묶여 보관됩니다.
                         {state.demo.offline && " (오프라인 — 연결 복구 시 전송)"}
                       </p>
@@ -405,7 +405,7 @@ export default function ConciergePage() {
                     {VIDEO_MODES.map((m) => (
                       <div key={m.key} className="rounded-xl border border-navy/10 p-3">
                         <div className="flex items-center gap-2">
-                          <span className="text-[13px] font-bold text-navy">{m.name}</span>
+                          <span className="text-[15px] font-bold text-navy">{m.name}</span>
                           {m.key === "visit" && (
                             <Badge
                               fg={videoConsent ? "#1E7A5A" : "#8A5D12"}
@@ -420,7 +420,7 @@ export default function ConciergePage() {
                             </Badge>
                           )}
                         </div>
-                        <p className="mt-1 text-[10px] leading-[1.6] text-muted">{m.rule}</p>
+                        <p className="mt-1 text-[11px] leading-[1.6] text-muted">{m.rule}</p>
                         {m.key === "visit" && videoConsent && (
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             {VIDEO_SEGMENTS.map((s) => (
@@ -432,7 +432,7 @@ export default function ConciergePage() {
                                     event: { kind: "video", label: `영상 세그먼트 촬영 · ${s}` },
                                   })
                                 }
-                                className="btn-press rounded-full border border-navy/15 px-3 py-1.5 text-[11px] font-bold text-muted"
+                                className="btn-press rounded-full border border-navy/15 px-3 py-1.5 text-[12px] font-bold text-muted"
                               >
                                 ⏺ {s}
                               </button>
@@ -440,7 +440,7 @@ export default function ConciergePage() {
                           </div>
                         )}
                         {m.key === "tele" && (
-                          <p className="mt-1.5 text-[11px] font-bold text-muted/70">
+                          <p className="mt-1.5 text-[12px] font-bold text-muted/70">
                             고객·보호자 요청 대기 중 — 요청 없이는 연결하지 않습니다
                           </p>
                         )}
@@ -452,7 +452,7 @@ export default function ConciergePage() {
                                 event: { kind: "video", label: "긴급 영상 — 관제센터 일시 공유 시작" },
                               })
                             }
-                            className="btn-press mt-1.5 rounded-lg bg-danger px-3 py-2 text-[11px] font-bold text-white"
+                            className="btn-press mt-1.5 rounded-lg bg-danger px-3 py-2 text-[12px] font-bold text-white"
                           >
                             관제센터 영상 공유
                           </button>
@@ -460,7 +460,7 @@ export default function ConciergePage() {
                       </div>
                     ))}
                   </div>
-                  <p className="mt-3 border-t border-navy/10 pt-2.5 text-[10px] leading-[1.7] text-muted">
+                  <p className="mt-3 border-t border-navy/10 pt-2.5 text-[11px] leading-[1.7] text-muted">
                     촬영 불가: {VIDEO_POLICY.banned.join(" · ")} (내부 규정) · 보관: {VIDEO_POLICY.retention}
                   </p>
                 </Card>
@@ -468,7 +468,7 @@ export default function ConciergePage() {
                 {/* 다음 진료 예약 — 공유 캘린더 즉시 반영 (REQ-02) */}
                 <SectionLabel>다음 진료 예약</SectionLabel>
                 <Card className="p-4">
-                  <p className="text-[12px] leading-[1.7] text-muted">
+                  <p className="text-[13px] leading-[1.7] text-muted">
                     병원에서 다음 예약을 잡으면 여기서 등록합니다. 보호자·어르신 캘린더에 즉시
                     공유됩니다.
                   </p>
@@ -497,7 +497,7 @@ export default function ConciergePage() {
                       push("예약", "다음 진료 예약 등록 · 보호자·어르신 캘린더 공유", "#8FA9CC");
                     }}
                     disabled={apptDone}
-                    className={`btn-press mt-3 w-full rounded-xl border py-3 text-[13px] font-bold ${
+                    className={`btn-press mt-3 w-full rounded-xl border py-3 text-[15px] font-bold ${
                       apptDone ? "border-green/30 bg-green/10 text-green" : "border-navy bg-navy text-white"
                     }`}
                   >
@@ -508,16 +508,16 @@ export default function ConciergePage() {
                 {/* 내일 일정 — 오늘 업무 뒤에 확인 · 주소 게이팅 유지 (REQ-09) */}
                 <Card className="p-4">
                   <div className="flex items-center gap-2">
-                    <span className="font-num text-[14px] font-bold text-navy">{a2.time}</span>
-                    <span className="text-[13px] font-bold text-ink">{a2.customer}</span>
+                    <span className="font-num text-[16px] font-bold text-navy">{a2.time}</span>
+                    <span className="text-[15px] font-bold text-ink">{a2.customer}</span>
                     <span className="ml-auto">
                       <Badge fg="#8A5D12" bg="rgba(138,93,18,.12)">
                         배정 대기
                       </Badge>
                     </span>
                   </div>
-                  <div className="mt-1 text-[12px] text-muted">{a2.purpose}</div>
-                  <div className="mt-2 border-t border-navy/10 pt-2 text-[12px]">
+                  <div className="mt-1 text-[13px] text-muted">{a2.purpose}</div>
+                  <div className="mt-2 border-t border-navy/10 pt-2 text-[13px]">
                     <span className="font-bold text-gold">고객 </span>
                     <span className="text-muted">
                       {a2.dong} — <span className="text-amber">담당 확정 후 상세 주소 표시</span>
@@ -534,18 +534,18 @@ export default function ConciergePage() {
                 {/* 서비스 리커버리 — 실수는 숨기지 않고 회복한다 */}
                 <Card className="p-[18px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[15px] font-black text-navy">서비스 리커버리</span>
-                    <span className="text-[10px] font-bold text-muted">실수 · 불만이 있었을 때</span>
+                    <span className="text-[17px] font-black text-navy">서비스 리커버리</span>
+                    <span className="text-[11px] font-bold text-muted">실수 · 불만이 있었을 때</span>
                   </div>
                   <div className="mt-3 space-y-2">
                     {RECOVERY_STEPS.map(([k, val]) => (
-                      <div key={k} className="flex gap-2.5 text-[12px]">
+                      <div key={k} className="flex gap-2.5 text-[13px]">
                         <span className="w-[64px] shrink-0 font-bold text-gold">{k}</span>
                         <span className="flex-1 leading-[1.6] text-ink">{val}</span>
                       </div>
                     ))}
                   </div>
-                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                     리커버리는 감점이 아닙니다 — 보고를 미루는 것만 감점입니다. 무리한 진행 대신 취소
                     권한을 쓰세요.
                   </p>
@@ -559,13 +559,13 @@ export default function ConciergePage() {
                 {/* 동행 완료 리포트 — AI 초안 + 2인 서명 (디자인 콘솔) */}
                 <Card className="p-[18px]">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-[15px] font-black text-navy">동행 완료 리포트</span>
-                    <span className="chip-gold rounded-full px-2.5 py-1 text-[10px] font-bold">
+                    <span className="text-[17px] font-black text-navy">동행 완료 리포트</span>
+                    <span className="chip-gold rounded-full px-2.5 py-1 text-[11px] font-bold">
                       AI 초안 · 음성 기록 기반
                     </span>
                   </div>
                   <div
-                    className="mt-3 rounded-xl p-3.5 text-[13px] leading-[1.75] text-ink"
+                    className="mt-3 rounded-xl p-3.5 text-[15px] leading-[1.75] text-ink"
                     style={{
                       background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
                       boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
@@ -573,42 +573,42 @@ export default function ConciergePage() {
                   >
                     {AI_REPORT.draft}
                   </div>
-                  <p className="mt-2 text-[11px] leading-[1.65] text-muted">{AI_REPORT.hitl}</p>
+                  <p className="mt-2 text-[12px] leading-[1.65] text-muted">{AI_REPORT.hitl}</p>
 
                   {/* 2인 확인 서명 — 각자의 기록이 각자의 증언 */}
                   <div className="mt-3.5 rounded-xl border border-navy/10 p-3.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[13px] font-bold text-navy">2인 확인 서명</span>
-                      <span className="font-num text-[11px] font-bold text-muted">
+                      <span className="text-[15px] font-bold text-navy">2인 확인 서명</span>
+                      <span className="font-num text-[12px] font-bold text-muted">
                         {pairSigned ? "2 / 2 서명" : "1 / 2 서명"}
                       </span>
                     </div>
                     <div className="mt-2.5 space-y-2">
                       <div className="flex items-center gap-2.5">
-                        <span className="flex h-[18px] w-[18px] items-center justify-center rounded-md bg-green text-[11px] font-bold text-white">
+                        <span className="flex h-[18px] w-[18px] items-center justify-center rounded-md bg-green text-[12px] font-bold text-white">
                           ✓
                         </span>
-                        <span className="flex-1 text-[13px] font-bold text-ink">박지현 · 주 동행</span>
-                        <span className="font-num text-[11px] text-muted">15:52</span>
+                        <span className="flex-1 text-[15px] font-bold text-ink">박지현 · 주 동행</span>
+                        <span className="font-num text-[12px] text-muted">15:52</span>
                       </div>
                       <button
                         onClick={() => !pairSigned && setPairSigned(true)}
                         className="flex w-full items-center gap-2.5 text-left"
                       >
                         <span
-                          className={`flex h-[18px] w-[18px] items-center justify-center rounded-md border text-[11px] font-bold ${
+                          className={`flex h-[18px] w-[18px] items-center justify-center rounded-md border text-[12px] font-bold ${
                             pairSigned ? "border-green bg-green text-white" : "border-navy/25 text-transparent"
                           }`}
                         >
                           ✓
                         </span>
-                        <span className="flex-1 text-[13px] font-bold text-ink">서다인 · 부 동행</span>
-                        <span className="font-num text-[11px] text-muted">
+                        <span className="flex-1 text-[15px] font-bold text-ink">서다인 · 부 동행</span>
+                        <span className="font-num text-[12px] text-muted">
                           {pairSigned ? "15:58 (데모)" : "대기 — 눌러서 서명 시연"}
                         </span>
                       </button>
                     </div>
-                    <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[10px] leading-[1.7] text-muted">
+                    <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
                       {AI_REPORT.signRule}
                     </p>
                   </div>
@@ -619,7 +619,7 @@ export default function ConciergePage() {
                       setPdfIssued(true);
                       push("리포트", "증빙 보고서 PDF 발행 (데모)", "#8FA9CC");
                     }}
-                    className={`btn-press mt-3 w-full rounded-xl border py-3 text-[13px] font-bold ${
+                    className={`btn-press mt-3 w-full rounded-xl border py-3 text-[15px] font-bold ${
                       pdfIssued ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
                     }`}
                   >
@@ -643,7 +643,7 @@ export default function ConciergePage() {
                       push("리포트", "동행 리포트 검수 확정 · 가족 앱 전달", "#8FA9CC");
                     }}
                     disabled={!pairSigned || aiSent}
-                    className={`btn-press btn-dark mt-2 w-full rounded-xl py-3.5 text-[14px] font-bold text-white ${
+                    className={`btn-press btn-dark mt-2 w-full rounded-xl py-3.5 text-[16px] font-bold text-white ${
                       aiSent ? "bg-muted" : "bg-green"
                     } disabled:opacity-50`}
                   >
@@ -664,8 +664,8 @@ export default function ConciergePage() {
                       return (
                         <div key={r.id} className="border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
                           <div className="flex items-center gap-2">
-                            <span className="text-[12px] font-bold text-navy">{r.by}</span>
-                            <span className="font-num text-[10px] text-muted">
+                            <span className="text-[13px] font-bold text-navy">{r.by}</span>
+                            <span className="font-num text-[11px] text-muted">
                               {new Date(r.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
                               {" · 특이 "}
                               {r.flagged}건
@@ -681,11 +681,11 @@ export default function ConciergePage() {
                               )}
                             </span>
                           </div>
-                          <p className="mt-1 text-[12px] leading-[1.65] text-ink">
+                          <p className="mt-1 text-[13px] leading-[1.65] text-ink">
                             {mine ? r.note : r.shared ? r.note : "비공개 리포트 — 작성자만 열람"}
                           </p>
                           {mine && r.secretNote && (
-                            <p className="mt-1 rounded-lg bg-navy/[.05] px-2.5 py-1.5 text-[11px] text-muted">
+                            <p className="mt-1 rounded-lg bg-navy/[.05] px-2.5 py-1.5 text-[12px] text-muted">
                               🔒 내부 메모: {r.secretNote}
                             </p>
                           )}
@@ -693,7 +693,7 @@ export default function ConciergePage() {
                       );
                     })}
                   </div>
-                  <p className="mt-3 border-t border-navy/10 pt-2.5 text-[10px] leading-[1.6] text-muted">
+                  <p className="mt-3 border-t border-navy/10 pt-2.5 text-[11px] leading-[1.6] text-muted">
                     본인이 만든 리포트는 전체가, 다른 컨시어지 리포트는 공유된 부분만 보입니다.
                   </p>
                 </Card>
@@ -708,10 +708,10 @@ export default function ConciergePage() {
                 {CARE_SUGGESTIONS.map((sg) => (
                   <Card key={sg.item} className="p-4">
                     <div className="flex items-baseline justify-between">
-                      <span className="text-[14px] font-bold text-navy">{sg.item}</span>
-                      <span className="font-num text-[12px] text-muted">예상 {fmtWon(sg.est)}</span>
+                      <span className="text-[16px] font-bold text-navy">{sg.item}</span>
+                      <span className="font-num text-[13px] text-muted">예상 {fmtWon(sg.est)}</span>
                     </div>
-                    <div className="mt-1 text-[11px] font-bold text-amber">{sg.trigger}</div>
+                    <div className="mt-1 text-[12px] font-bold text-amber">{sg.trigger}</div>
                     <button
                       onClick={() => {
                         if (suggested[sg.item]) return;
@@ -736,7 +736,7 @@ export default function ConciergePage() {
                         push("제안", `케어 제안 전송 · ${sg.item} (근거 동반)`, "#B08D57");
                       }}
                       disabled={!!suggested[sg.item]}
-                      className={`btn-press mt-2.5 w-full rounded-xl border py-2.5 text-[12px] font-bold ${
+                      className={`btn-press mt-2.5 w-full rounded-xl border py-2.5 text-[13px] font-bold ${
                         suggested[sg.item]
                           ? "border-green/30 bg-green/10 text-green"
                           : "border-navy/20 text-navy"
@@ -746,7 +746,7 @@ export default function ConciergePage() {
                     </button>
                   </Card>
                 ))}
-                <p className="px-1 text-[10px] leading-[1.7] text-muted">
+                <p className="px-1 text-[11px] leading-[1.7] text-muted">
                   근거 없는 제안은 보낼 수 없습니다. 제안·판매 실적은 평가와 보상에 반영되지
                   않습니다 (원칙 1).
                 </p>
@@ -766,14 +766,14 @@ export default function ConciergePage() {
                           }`}
                         >
                           <span
-                            className={`inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded border text-[10px] font-bold ${
+                            className={`inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded border text-[11px] font-bold ${
                               on ? "border-gold bg-gold text-white" : "border-navy/25 text-transparent"
                             }`}
                           >
                             ✓
                           </span>
-                          <span className="flex-1 text-[13px] font-bold text-ink">{i.name}</span>
-                          <span className="font-num text-[12px] text-muted">예상 {fmtWon(i.est)}</span>
+                          <span className="flex-1 text-[15px] font-bold text-ink">{i.name}</span>
+                          <span className="font-num text-[13px] text-muted">예상 {fmtWon(i.est)}</span>
                         </button>
                       );
                     })}
@@ -783,14 +783,14 @@ export default function ConciergePage() {
                     const est = items.reduce((s, i) => s + i.est, 0);
                     if (shopSent) {
                       return (
-                        <p className="mt-3 rounded-xl border border-green/25 bg-green/5 p-3 text-[12px] font-bold text-green">
+                        <p className="mt-3 rounded-xl border border-green/25 bg-green/5 p-3 text-[13px] font-bold text-green">
                           보호자 승인 요청 전송됨 — 승인되면 구매 후 완료사진을 올립니다.
                         </p>
                       );
                     }
                     if (items.length === 0) {
                       return (
-                        <p className="mt-3 text-[11px] text-muted">
+                        <p className="mt-3 text-[12px] text-muted">
                           물품을 담으면 예상금액과 함께 보호자 승인 요청이 전송됩니다.
                         </p>
                       );
@@ -826,7 +826,7 @@ export default function ConciergePage() {
                           });
                           push("구매대행", `구매대행 ${items.length}건 승인 요청 · 예상 ${fmtWon(est)}`, "#B08D57");
                         }}
-                        className="btn-press btn-dark mt-3 w-full rounded-xl bg-navy py-3 text-[13px] font-bold text-white"
+                        className="btn-press btn-dark mt-3 w-full rounded-xl bg-navy py-3 text-[15px] font-bold text-white"
                       >
                         보호자 승인 요청 · 예상 {fmtWon(est)}
                       </button>
@@ -837,7 +837,7 @@ export default function ConciergePage() {
                       <SectionLabel>구매 진행중 — 완료사진</SectionLabel>
                       {purchasing.map((r) => (
                         <div key={r.id} className="mt-2 flex items-center gap-2">
-                          <span className="flex-1 text-[12px] font-bold text-ink">{r.type}</span>
+                          <span className="flex-1 text-[13px] font-bold text-ink">{r.type}</span>
                           <button
                             onClick={() => {
                               dispatch({
@@ -851,7 +851,7 @@ export default function ConciergePage() {
                                 event: { kind: "photo", label: "구매대행 완료사진 업로드" },
                               });
                             }}
-                            className="btn-press rounded-lg border border-green/40 px-3 py-1.5 text-[11px] font-bold text-green"
+                            className="btn-press rounded-lg border border-green/40 px-3 py-1.5 text-[12px] font-bold text-green"
                           >
                             완료사진 + 종결
                           </button>
@@ -891,13 +891,13 @@ export default function ConciergePage() {
                             event: { kind: "request", label: `보호자 요청 등록 · ${p}` },
                           });
                         }}
-                        className="btn-press rounded-full border border-navy/15 px-3 py-1.5 text-[12px] font-bold text-muted"
+                        className="btn-press rounded-full border border-navy/15 px-3 py-1.5 text-[13px] font-bold text-muted"
                       >
                         {p}
                       </button>
                     ))}
                   </div>
-                  <p className="mt-3 text-[10px] leading-[1.6] text-muted">
+                  <p className="mt-3 text-[11px] leading-[1.6] text-muted">
                     등록한 요청은 보호자 &lsquo;해주세요&rsquo; 화면에 상태와 함께 표시됩니다. 성과
                     지표에 판매액은 기록되지 않습니다.
                   </p>
@@ -909,37 +909,37 @@ export default function ConciergePage() {
             {tab === "pay" && (
               <>
                 <div className="px-1">
-                  <div className="font-num text-[10px] font-bold tracking-[.18em] text-gold">
+                  <div className="font-num text-[11px] font-bold tracking-[.18em] text-gold">
                     MY EARNINGS · {EARNINGS.week}
                   </div>
                 </div>
 
                 {/* 주간 확정 수익 — 네이비 카드 */}
                 <div className="card-navy rounded-card bg-navy p-[18px] text-white">
-                  <div className="text-[11px] font-bold tracking-[.1em] text-gold-soft">
+                  <div className="text-[12px] font-bold tracking-[.1em] text-gold-soft">
                     이번 주 확정 수익
                   </div>
                   <div className="mt-1.5 flex items-baseline gap-1.5">
-                    <span className="font-num text-[34px] font-bold leading-none">
+                    <span className="font-num text-[38px] font-bold leading-none">
                       {EARNINGS.total}
                     </span>
-                    <span className="text-[13px] text-white/70">원</span>
+                    <span className="text-[15px] text-white/70">원</span>
                   </div>
-                  <div className="mt-1.5 text-[11px] text-white/60">{EARNINGS.delta}</div>
+                  <div className="mt-1.5 text-[12px] text-white/60">{EARNINGS.delta}</div>
                   <div className="mt-4 space-y-2.5 border-t border-white/12 pt-3.5">
                     {EARNINGS.breakdown.map((b) => (
-                      <div key={b.name} className="flex items-baseline gap-2 text-[13px]">
+                      <div key={b.name} className="flex items-baseline gap-2 text-[15px]">
                         <span className="font-bold">{b.name}</span>
-                        <span className="text-[10px] text-white/50">{b.meta}</span>
+                        <span className="text-[11px] text-white/50">{b.meta}</span>
                         <span
-                          className={`ml-auto font-num text-[14px] font-bold ${b.gold ? "text-gold-soft" : ""}`}
+                          className={`ml-auto font-num text-[16px] font-bold ${b.gold ? "text-gold-soft" : ""}`}
                         >
                           {b.amount}
                         </span>
                       </div>
                     ))}
                   </div>
-                  <p className="mt-3 text-[10px] leading-[1.7] text-white/50">
+                  <p className="mt-3 text-[11px] leading-[1.7] text-white/50">
                     {EARNINGS.designNote}
                     <br />
                     {EARNINGS.principleNote}
@@ -947,8 +947,8 @@ export default function ConciergePage() {
                   <div className="mt-3.5 grid grid-cols-3 gap-2 border-t border-white/12 pt-3">
                     {EARNINGS.stats.map(([k, val]) => (
                       <div key={k}>
-                        <div className="text-[10px] text-white/50">{k}</div>
-                        <div className={`font-num text-[18px] font-bold ${k === "평점" ? "text-gold-soft" : ""}`}>
+                        <div className="text-[11px] text-white/50">{k}</div>
+                        <div className={`font-num text-[20px] font-bold ${k === "평점" ? "text-gold-soft" : ""}`}>
                           {val}
                         </div>
                       </div>
@@ -959,7 +959,7 @@ export default function ConciergePage() {
                 {/* 시니어 승급 로드맵 — 성장 과제 (평가는 케어 품질·자격만) */}
                 <Card className="p-[18px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[15px] font-black text-navy">시니어 승급 로드맵</span>
+                    <span className="text-[17px] font-black text-navy">시니어 승급 로드맵</span>
                     <Badge fg="#7A5C28" bg="rgba(176,141,87,.15)">
                       다음 등급: 시니어 · 수당 +15%
                     </Badge>
@@ -967,9 +967,9 @@ export default function ConciergePage() {
                   <div className="mt-3 space-y-3">
                     {GROWTH_QUESTS.map((g) => (
                       <div key={g.k}>
-                        <div className="flex items-baseline justify-between text-[12px]">
+                        <div className="flex items-baseline justify-between text-[13px]">
                           <span className="font-bold text-navy">{g.k}</span>
-                          <span className="font-num text-[11px] font-bold" style={{ color: g.color === "#C9CFD8" ? "#5C5A54" : g.color }}>
+                          <span className="font-num text-[12px] font-bold" style={{ color: g.color === "#C9CFD8" ? "#5C5A54" : g.color }}>
                             {g.state}
                           </span>
                         </div>
@@ -979,7 +979,7 @@ export default function ConciergePage() {
                       </div>
                     ))}
                   </div>
-                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.7] text-muted">
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                     승급 기준은 케어 품질 · 자격뿐입니다 — 판매 실적은 반영되지 않습니다 (원칙 1).
                   </p>
                 </Card>
@@ -987,19 +987,19 @@ export default function ConciergePage() {
                 {/* 건별 정산 내역 */}
                 <Card className="p-[18px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[15px] font-black text-navy">건별 정산 내역</span>
-                    <span className="font-num text-[11px] text-muted">{EARNINGS.items.length}건</span>
+                    <span className="text-[17px] font-black text-navy">건별 정산 내역</span>
+                    <span className="font-num text-[12px] text-muted">{EARNINGS.items.length}건</span>
                   </div>
                   <div className="mt-2 space-y-3">
                     {EARNINGS.items.map((it) => (
                       <div key={it.who} className="flex items-center gap-2.5 border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
                         <div className="min-w-0 flex-1">
-                          <div className="truncate text-[13px] font-bold text-ink">{it.who}</div>
-                          <div className="mt-0.5 text-[11px] text-muted">{it.meta}</div>
+                          <div className="truncate text-[15px] font-bold text-ink">{it.who}</div>
+                          <div className="mt-0.5 text-[12px] text-muted">{it.meta}</div>
                         </div>
                         <div className="shrink-0 text-right">
-                          <div className="font-num text-[15px] font-bold text-navy">{it.net}</div>
-                          <div className="font-num text-[10px] text-muted/70">{it.gross}</div>
+                          <div className="font-num text-[17px] font-bold text-navy">{it.net}</div>
+                          <div className="font-num text-[11px] text-muted/70">{it.gross}</div>
                         </div>
                         <Badge
                           fg={it.state === "확정" ? "#1E7A5A" : "#8A5D12"}
@@ -1010,20 +1010,20 @@ export default function ConciergePage() {
                       </div>
                     ))}
                   </div>
-                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
                     {EARNINGS.feeNote}
                   </p>
                 </Card>
 
                 {/* 등급 인센티브 */}
                 <Card className="p-[18px]">
-                  <div className="text-[15px] font-black text-navy">등급 인센티브</div>
-                  <div className="mt-2.5 flex items-baseline justify-between text-[12px]">
+                  <div className="text-[17px] font-black text-navy">등급 인센티브</div>
+                  <div className="mt-2.5 flex items-baseline justify-between text-[13px]">
                     <span>
                       <span className="font-num font-bold text-navy">{EARNINGS.tier.now}</span>{" "}
                       <span className="text-muted">{EARNINGS.tier.perk}</span>
                     </span>
-                    <span className="font-num text-[11px] text-muted">{EARNINGS.tier.toNext}</span>
+                    <span className="font-num text-[12px] text-muted">{EARNINGS.tier.toNext}</span>
                   </div>
                   <div className="mt-2 h-[8px] overflow-hidden rounded-full bg-navy/[.08]">
                     <div
@@ -1034,13 +1034,13 @@ export default function ConciergePage() {
                       }}
                     />
                   </div>
-                  <p className="mt-2.5 text-[11px] leading-[1.7] text-muted">{EARNINGS.tier.nextPerk}</p>
+                  <p className="mt-2.5 text-[12px] leading-[1.7] text-muted">{EARNINGS.tier.nextPerk}</p>
                 </Card>
 
                 {/* 수락 현황 — "놓친 수익" 프레임 대신 취소 권한 보장 (원칙 유지) */}
                 <div className="rounded-card border border-amber/30 bg-gradient-to-b from-[#FFF7E8] to-[#FBEFD8] p-4">
-                  <div className="text-[13px] font-bold text-amber">이번 주 수락 현황</div>
-                  <p className="mt-1 text-[12px] leading-[1.75] text-[#5A4A22]">
+                  <div className="text-[15px] font-bold text-amber">이번 주 수락 현황</div>
+                  <p className="mt-1 text-[13px] leading-[1.75] text-[#5A4A22]">
                     {EARNINGS.declinedNote}
                   </p>
                 </div>
@@ -1053,13 +1053,13 @@ export default function ConciergePage() {
                     push("정산", "박지현 조기 지급 신청 · 한도 내 승인 대기", "#8FA9CC");
                   }}
                   disabled={earlyPay}
-                  className={`btn-press btn-dark w-full rounded-xl py-3.5 text-[14px] font-bold text-white ${
+                  className={`btn-press btn-dark w-full rounded-xl py-3.5 text-[16px] font-bold text-white ${
                     earlyPay ? "bg-green" : "bg-navy"
                   }`}
                 >
                   {earlyPay ? "✓ 조기 지급 신청됨 · 한도 내 승인 대기" : "조기 지급 신청 (수수료 1%)"}
                 </button>
-                <p className="px-1 text-center text-[10px] text-muted">{EARNINGS.earlyPayNote}</p>
+                <p className="px-1 text-center text-[11px] text-muted">{EARNINGS.earlyPayNote}</p>
               </>
             )}
           </main>
@@ -1073,11 +1073,11 @@ export default function ConciergePage() {
                   <button
                     key={t.key}
                     onClick={() => setTab(t.key)}
-                    className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[11px] font-bold ${
+                    className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[12px] font-bold ${
                       active ? "text-navy" : "text-muted"
                     }`}
                   >
-                    <span className="text-[16px] leading-none">{t.icon}</span>
+                    <span className="text-[18px] leading-none">{t.icon}</span>
                     <span>{t.label}</span>
                     {active && <span className="mt-0.5 h-[3px] w-5 rounded-full bg-gold" />}
                   </button>
@@ -1167,7 +1167,7 @@ function StepBtn({ done, disabled, label, onClick }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`btn-press min-h-[64px] rounded-xl border p-2 text-[12px] font-bold leading-[1.4] ${
+      className={`btn-press min-h-[64px] rounded-xl border p-2 text-[13px] font-bold leading-[1.4] ${
         done
           ? "border-green/30 bg-green/10 text-green"
           : disabled
@@ -1202,15 +1202,15 @@ function KitSheet({ items, onboarding, onClose, onDone }) {
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(8,23,45,.45)]">
       <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-3xl bg-white p-6 pb-8">
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
-        <div className="text-[17px] font-black text-navy">안심케어박스 점검</div>
-        <p className="mt-1 text-[11px] leading-[1.6] text-muted">
+        <div className="text-[19px] font-black text-navy">안심케어박스 점검</div>
+        <p className="mt-1 text-[12px] leading-[1.6] text-muted">
           품목별 잔여량·유효기간·개봉 여부를 기록합니다. 의약품은{" "}
           <b>수량 확인과 구매대행만</b> — 복약 보조는 직무 범위가 아닙니다.
         </p>
 
         <button
           onClick={() => setPhotoTaken(true)}
-          className={`btn-press mt-4 w-full rounded-xl border py-3 text-[13px] font-bold ${
+          className={`btn-press mt-4 w-full rounded-xl border py-3 text-[15px] font-bold ${
             photoTaken ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
           }`}
         >
@@ -1221,10 +1221,10 @@ function KitSheet({ items, onboarding, onClose, onDone }) {
           {rows.map((r, i) => (
             <div key={r.name} className="rounded-xl border border-navy/10 p-3">
               <div className="flex items-center gap-2">
-                <span className="flex-1 text-[13px] font-bold text-ink">
+                <span className="flex-1 text-[15px] font-bold text-ink">
                   {r.name}
                   {r.isMedicine && (
-                    <span className="ml-1.5 rounded bg-amber/10 px-1.5 py-[1px] text-[9px] font-bold text-amber">
+                    <span className="ml-1.5 rounded bg-amber/10 px-1.5 py-[1px] text-[10px] font-bold text-amber">
                       수량 확인만
                     </span>
                   )}
@@ -1235,7 +1235,7 @@ function KitSheet({ items, onboarding, onClose, onDone }) {
                   </Badge>
                 )}
               </div>
-              <div className="mt-2 flex items-center gap-3 text-[12px] text-muted">
+              <div className="mt-2 flex items-center gap-3 text-[13px] text-muted">
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => setQty(i, -1)}
@@ -1262,7 +1262,7 @@ function KitSheet({ items, onboarding, onClose, onDone }) {
         </div>
 
         {refill.length > 0 && (
-          <div className="mt-4 rounded-xl border border-amber/30 bg-[#FFF7E8] p-3.5 text-[12px] leading-[1.7] text-[#5A4A22]">
+          <div className="mt-4 rounded-xl border border-amber/30 bg-[#FFF7E8] p-3.5 text-[13px] leading-[1.7] text-[#5A4A22]">
             보충 필요 {refill.length}건: {refill.join(", ")}
             <br />
             예상 금액 <b className="font-num">{fmtWon(estAmount)}</b> — 보호자 승인 요청과 함께
@@ -1273,7 +1273,7 @@ function KitSheet({ items, onboarding, onClose, onDone }) {
         {/* 새 키트 전달사진 — 교체 완료 증빙 */}
         <button
           onClick={() => setNewKitPhoto(true)}
-          className={`btn-press mt-3 w-full rounded-xl border py-3 text-[13px] font-bold ${
+          className={`btn-press mt-3 w-full rounded-xl border py-3 text-[15px] font-bold ${
             newKitPhoto ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
           }`}
         >
@@ -1311,8 +1311,8 @@ function ReportSheet({ onClose, onSend }) {
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(8,23,45,.45)]">
       <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-3xl bg-white p-6 pb-8">
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
-        <div className="text-[17px] font-black text-navy">가정환경 · 정서 관찰 리포트</div>
-        <p className="mt-1 text-[11px] leading-[1.7] text-muted">
+        <div className="text-[19px] font-black text-navy">가정환경 · 정서 관찰 리포트</div>
+        <p className="mt-1 text-[12px] leading-[1.7] text-muted">
           관찰한 사실과 들은 말만 적어주세요. 판단·진단은 기록하지 않습니다. 음성으로
           불러주면 AI가 관찰 문장으로 정리하고, 진단 표현은 자동 차단됩니다.
           <br />
@@ -1327,12 +1327,12 @@ function ReportSheet({ onClose, onSend }) {
               <button
                 key={it}
                 onClick={() => setFlags((f) => ({ ...f, [it]: !f[it] }))}
-                className={`btn-press rounded-xl border px-2.5 py-2.5 text-left text-[12px] font-bold leading-[1.4] ${
+                className={`btn-press rounded-xl border px-2.5 py-2.5 text-left text-[13px] font-bold leading-[1.4] ${
                   on ? "border-amber bg-amber/10 text-amber" : "border-navy/12 text-muted"
                 }`}
               >
                 {it}
-                <span className="mt-0.5 block text-[10px] font-medium">
+                <span className="mt-0.5 block text-[11px] font-medium">
                   {on ? "특이 관찰" : "양호"}
                 </span>
               </button>
@@ -1345,7 +1345,7 @@ function ReportSheet({ onClose, onSend }) {
             <SectionLabel>관찰 내용 · 직접 발언 인용</SectionLabel>
             <button
               onClick={() => setNote((n) => (n.trim() ? n : AI_VOICE_DRAFT))}
-              className="btn-press rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11px] font-bold text-navy"
+              className="btn-press rounded-lg border border-navy/20 px-2.5 py-1.5 text-[12px] font-bold text-navy"
             >
               🎙 AI 음성 초안 (데모)
             </button>
@@ -1355,12 +1355,12 @@ function ReportSheet({ onClose, onSend }) {
             onChange={(e) => setNote(e.target.value)}
             rows={4}
             placeholder='예: 거실에 신문이 쌓여 있음. "요즘 입맛이 없다"고 두 번 말씀하심.'
-            className={`mt-2 w-full resize-none rounded-xl border px-3.5 py-3 text-[14px] leading-[1.7] outline-none ${
+            className={`mt-2 w-full resize-none rounded-xl border px-3.5 py-3 text-[16px] leading-[1.7] outline-none ${
               banned.length ? "border-danger" : "border-navy/15 focus:border-gold"
             }`}
           />
           {banned.length > 0 && (
-            <p className="mt-1.5 rounded-lg bg-danger/8 px-3 py-2 text-[11px] font-bold leading-[1.6] text-danger">
+            <p className="mt-1.5 rounded-lg bg-danger/8 px-3 py-2 text-[12px] font-bold leading-[1.6] text-danger">
               &lsquo;{banned.join(", ")}&rsquo; — 진단 표현은 기록할 수 없습니다 (의료법
               제17조). 관찰한 사실과 직접 발언 인용으로 바꿔 주세요.
             </p>
@@ -1373,7 +1373,7 @@ function ReportSheet({ onClose, onSend }) {
             value={secretNote}
             onChange={(e) => setSecretNote(e.target.value)}
             placeholder="다음 방문 인계용 — 보호자에게 보이지 않습니다"
-            className="mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 text-[13px] outline-none focus:border-gold"
+            className="mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] outline-none focus:border-gold"
           />
         </div>
 
@@ -1384,14 +1384,14 @@ function ReportSheet({ onClose, onSend }) {
           }`}
         >
           <span
-            className={`inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[11px] font-bold ${
+            className={`inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[12px] font-bold ${
               shared ? "border-green bg-green text-white" : "border-navy/25 text-transparent"
             }`}
           >
             ✓
           </span>
-          <span className="text-[12px] font-bold text-ink">보호자에게 공유</span>
-          <span className="ml-auto text-[10px] text-muted">
+          <span className="text-[13px] font-bold text-ink">보호자에게 공유</span>
+          <span className="ml-auto text-[11px] text-muted">
             {shared ? "가족 앱 케어 리포트에 표시" : "내부 전용 — 관리자·본인만"}
           </span>
         </button>

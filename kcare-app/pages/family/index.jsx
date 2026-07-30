@@ -72,16 +72,16 @@ export default function FamilyHome() {
         {/* SOS 배너 — 조건부, 최상단 */}
         {state.demo.sos && (
           <div className="animate-sosPulse rounded-2xl bg-danger p-4 text-white">
-            <div className="text-[11px] font-bold tracking-[.14em] opacity-85">
+            <div className="text-[12px] font-bold tracking-[.14em] opacity-85">
               긴급 · SOS 수신
             </div>
-            <div className="mt-1 text-[17px] font-bold">어머니가 도움을 요청했습니다</div>
-            <div className="mt-0.5 text-[12px] opacity-90">
+            <div className="mt-1 text-[19px] font-bold">어머니가 도움을 요청했습니다</div>
+            <div className="mt-0.5 text-[13px] opacity-90">
               박지현 · 서다인 2인 급파 중 (1.2km) · 관제센터 확인
             </div>
             <button
               onClick={() => dispatch({ type: "demo", payload: { sos: false } })}
-              className="btn-press mt-3 w-full rounded-[10px] bg-white py-3 text-[14px] font-bold text-danger"
+              className="btn-press mt-3 w-full rounded-[10px] bg-white py-3 text-[16px] font-bold text-danger"
             >
               확인했습니다
             </button>
@@ -93,14 +93,14 @@ export default function FamilyHome() {
           <div className="rounded-card border border-amber/35 bg-gradient-to-b from-[#FFF7E8] to-[#FBEFD8] p-[18px]">
             <div className="flex items-center gap-2">
               <span className="h-[7px] w-[7px] animate-livePing rounded-full bg-amber" />
-              <span className="text-[11px] font-bold text-amber">
+              <span className="text-[12px] font-bold text-amber">
                 AI 이상 징후 감지 · 사람 확인 필요
               </span>
             </div>
-            <div className="mt-2 text-[15px] font-bold leading-[1.5] text-ink">
+            <div className="mt-2 text-[17px] font-bold leading-[1.5] text-ink">
               새벽 3시 12분, 거실에서 5초간 급격한 움직임 후 정지
             </div>
-            <p className="mt-1 text-[12px] leading-[1.7] text-[#5A4A22]">
+            <p className="mt-1 text-[13px] leading-[1.7] text-[#5A4A22]">
               낙상 의심 패턴입니다. 이후 심박 108bpm(평소 72), 오전 복약 미기록. 어르신은
               아직 SOS를 누르지 않았습니다.
             </p>
@@ -111,11 +111,11 @@ export default function FamilyHome() {
                 ["08:00", "아침 혈압약 복약 미기록", "미이행", "#8A5D12"],
               ].map(([t, txt, tag, color]) => (
                 <div key={t} className="flex items-center gap-2">
-                  <span className="w-[40px] shrink-0 font-num text-[10px] font-bold text-amber">
+                  <span className="w-[40px] shrink-0 font-num text-[11px] font-bold text-amber">
                     {t}
                   </span>
-                  <span className="flex-1 text-[12px] text-ink">{txt}</span>
-                  <span className="text-[11px] font-bold" style={{ color }}>
+                  <span className="flex-1 text-[13px] text-ink">{txt}</span>
+                  <span className="text-[12px] font-bold" style={{ color }}>
                     {tag}
                   </span>
                 </div>
@@ -124,19 +124,19 @@ export default function FamilyHome() {
             <div className="mt-3.5 flex gap-2">
               <button
                 onClick={() => dispatch({ type: "demo", payload: { anomaly: "sent" } })}
-                className="btn-press flex-1 animate-escalateGlow rounded-[10px] bg-danger py-3 text-[13px] font-bold text-white"
+                className="btn-press flex-1 animate-escalateGlow rounded-[10px] bg-danger py-3 text-[15px] font-bold text-white"
               >
                 지금 확인 요청
               </button>
               <button
                 onClick={() => dispatch({ type: "demo", payload: { anomaly: "dismissed" } })}
-                className="btn-press flex-1 rounded-[10px] border border-amber/30 bg-white/60 py-3 text-[13px] font-bold text-amber"
+                className="btn-press flex-1 rounded-[10px] border border-amber/30 bg-white/60 py-3 text-[15px] font-bold text-amber"
               >
                 괜찮습니다
               </button>
             </div>
             {/* 제품 약속 — 생략 불가 (repo-CLAUDE.md) */}
-            <p className="mt-3 text-[10px] leading-[1.6] text-[#8A7A4E]">
+            <p className="mt-3 text-[11px] leading-[1.6] text-[#8A7A4E]">
               AI는 감지·제안만 하고 조치는 사람이 결정합니다 · 오탐 신고는 모델 재학습에
               반영됩니다 (8.4)
             </p>
@@ -145,8 +145,8 @@ export default function FamilyHome() {
 
         {anomaly === "sent" && (
           <div className="rounded-card border border-green/30 bg-gradient-to-b from-[#F1FAF6] to-[#E6F4EE] p-[18px]">
-            <div className="text-[13px] font-bold text-green">확인 요청을 전달했습니다</div>
-            <p className="mt-1 text-[12px] leading-[1.7] text-muted">
+            <div className="text-[15px] font-bold text-green">확인 요청을 전달했습니다</div>
+            <p className="mt-1 text-[13px] leading-[1.7] text-muted">
               관제센터가 안부콜을 진행하고, 필요 시 담당 컨시어지가 방문합니다. 결과는 이
               화면과 알림으로 전달됩니다.
             </p>
@@ -163,27 +163,27 @@ export default function FamilyHome() {
               평소와 같음
             </Badge>
           </div>
-          <div className="mt-2 text-[17px] font-bold leading-[1.55]">
+          <div className="mt-2 text-[19px] font-bold leading-[1.55]">
             어제 잘 주무셨고, 아침 약도 챙겨 드셨습니다. 오후에 동네 한 바퀴 산책도
             하셨어요.
           </div>
           <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/10 pt-3.5">
             {WEEKLY.map((w) => (
               <div key={w.name}>
-                <div className="text-[10px] text-white/55">{w.name}</div>
-                <div className="font-num text-[16px] font-bold">
+                <div className="text-[11px] text-white/55">{w.name}</div>
+                <div className="font-num text-[18px] font-bold">
                   {w.value}{" "}
-                  <span className="text-[10px] font-bold text-[#4ADE80]">{w.delta}</span>
+                  <span className="text-[11px] font-bold text-[#4ADE80]">{w.delta}</span>
                 </div>
-                <div className="text-[9px] text-white/40">{w.last}</div>
+                <div className="text-[10px] text-white/40">{w.last}</div>
               </div>
             ))}
           </div>
-          <p className="mt-3.5 text-[11px] leading-[1.7] text-white/55">
+          <p className="mt-3.5 text-[12px] leading-[1.7] text-white/55">
             숫자를 읽고 판단하는 일은 저희가 합니다. 한 줄이 초록이면 연락하지 않으셔도
             됩니다.
           </p>
-          <p className="mt-1.5 text-[10px] text-white/40">
+          <p className="mt-1.5 text-[11px] text-white/40">
             AI가 워치·방문 기록을 요약하고 사람이 검수합니다 (8.4)
           </p>
         </div>
@@ -201,10 +201,10 @@ export default function FamilyHome() {
               className="btn-press btn-dark flex items-center justify-between rounded-card p-4 text-white"
               style={{ background: "#D9542B" }}
             >
-              <div className="text-[14px] font-bold">
+              <div className="text-[16px] font-bold">
                 결제 승인이 필요한 요청 {pendingApprovals}건
               </div>
-              <span className="text-[18px] text-white/80">›</span>
+              <span className="text-[20px] text-white/80">›</span>
             </div>
           </Link>
         )}
@@ -213,10 +213,10 @@ export default function FamilyHome() {
         {upcoming.length > 0 && (
           <Card className="p-[18px]">
             <div className="flex items-center justify-between">
-              <div className="text-[15px] font-black text-navy">다가오는 일정</div>
+              <div className="text-[17px] font-black text-navy">다가오는 일정</div>
               <Link
                 href="/family/calendar"
-                className="btn-press rounded-lg border border-navy/15 px-3 py-1.5 text-[11px] font-bold text-muted"
+                className="btn-press rounded-lg border border-navy/15 px-3 py-1.5 text-[12px] font-bold text-muted"
               >
                 일정 변경
               </Link>
@@ -234,12 +234,12 @@ export default function FamilyHome() {
                   : new Date(e.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" });
                 return (
                   <div key={e.id} className="flex items-start gap-3">
-                    <span className="w-[44px] shrink-0 pt-[1px] font-num text-[13px] font-bold text-navy">
+                    <span className="w-[44px] shrink-0 pt-[1px] font-num text-[15px] font-bold text-navy">
                       {timeLabel}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-[13px] font-bold text-ink">{e.title}</div>
-                      <div className="mt-0.5 truncate text-[11px] text-muted">
+                      <div className="truncate text-[15px] font-bold text-ink">{e.title}</div>
+                      <div className="mt-0.5 truncate text-[12px] text-muted">
                         {e.note || `${EVENT_KINDS[e.kind].label} · ${e.source}`}
                       </div>
                     </div>
@@ -259,22 +259,22 @@ export default function FamilyHome() {
           style={{ background: "linear-gradient(180deg, #FAFCFF, #F2F7FD)" }}
         >
           <div className="flex items-center justify-between">
-            <div className="text-[15px] font-black text-navy">오늘 외출 컨디션</div>
-            <span className="font-num text-[11px] text-muted">{OUTING.asOf}</span>
+            <div className="text-[17px] font-black text-navy">오늘 외출 컨디션</div>
+            <span className="font-num text-[12px] text-muted">{OUTING.asOf}</span>
           </div>
           <div className="mt-2 flex items-center gap-2.5">
-            <span className="font-num text-[34px] font-bold leading-none text-danger">{repScore}</span>
-            <span className="text-[11px] text-muted">/100</span>
-            <span className="rounded-full bg-danger px-2.5 py-1 text-[11px] font-bold text-white">
+            <span className="font-num text-[38px] font-bold leading-none text-danger">{repScore}</span>
+            <span className="text-[12px] text-muted">/100</span>
+            <span className="rounded-full bg-danger px-2.5 py-1 text-[12px] font-bold text-white">
               주의
             </span>
-            <span className="ml-auto text-[11px] text-muted">두 구간 중 낮은 값</span>
+            <span className="ml-auto text-[12px] text-muted">두 구간 중 낮은 값</span>
           </div>
           <div className="mt-3 space-y-1.5">
             {OUTING.legs.map((l) => (
               <div
                 key={l.tag}
-                className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[12px]"
+                className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[13px]"
                 style={{
                   background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
@@ -282,9 +282,9 @@ export default function FamilyHome() {
               >
                 <span className="w-[34px] shrink-0 font-bold text-gold">{l.tag}</span>
                 <span className="flex-1 font-bold text-ink">{l.place}</span>
-                <span className="font-num text-[14px] font-bold text-navy">{l.score}</span>
+                <span className="font-num text-[16px] font-bold text-navy">{l.score}</span>
                 <span
-                  className="w-[30px] text-right text-[11px] font-bold"
+                  className="w-[30px] text-right text-[12px] font-bold"
                   style={{ color: l.level === "danger" ? "#C0392B" : "#8A5D12" }}
                 >
                   {l.grade}
@@ -303,9 +303,9 @@ export default function FamilyHome() {
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
                 }}
               >
-                <div className="text-[10px] text-muted">{f.label}</div>
+                <div className="text-[11px] text-muted">{f.label}</div>
                 <div
-                  className="mt-0.5 font-num text-[13px] font-bold"
+                  className="mt-0.5 font-num text-[15px] font-bold"
                   style={{ color: { caution: "#8A5D12", danger: "#C0392B", neutral: "#0A1F3C" }[f.level] }}
                 >
                   {f.value}
@@ -314,12 +314,12 @@ export default function FamilyHome() {
             ))}
           </div>
           {/* 문장형 안내 — 이미 한 조치를 말한다 */}
-          <p className="mt-2.5 rounded-xl border border-[#EFE0BF] bg-[#FDF6E8] p-3 text-[12px] leading-[1.7] text-[#5A4A22]">
+          <p className="mt-2.5 rounded-xl border border-[#EFE0BF] bg-[#FDF6E8] p-3 text-[13px] leading-[1.7] text-[#5A4A22]">
             {OUTING.adviceGuardian}
           </p>
           <div className="mt-2.5 flex flex-wrap gap-1.5">
             {OUTING.kit.map((k) => (
-              <span key={k} className="chip-gold rounded-full px-2.5 py-1 text-[11px] font-bold">
+              <span key={k} className="chip-gold rounded-full px-2.5 py-1 text-[12px] font-bold">
                 {k}
               </span>
             ))}
@@ -329,10 +329,10 @@ export default function FamilyHome() {
         {/* 담당 컨시어지 · 2인 1조 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}
         <div className="card-navy rounded-card bg-navy p-[18px] text-white">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold tracking-[.14em] text-gold-soft">
+            <span className="text-[12px] font-bold tracking-[.14em] text-gold-soft">
               담당 컨시어지 · 2인 1조
             </span>
-            <span className="font-num text-[11px] text-white/60">{CARE_TEAM.dateLabel}</span>
+            <span className="font-num text-[12px] text-white/60">{CARE_TEAM.dateLabel}</span>
           </div>
           <div className="mt-3 space-y-2.5">
             {CARE_TEAM.members.map((m) => (
@@ -341,29 +341,29 @@ export default function FamilyHome() {
                 className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[.05] p-3.5"
               >
                 <span
-                  className="flex h-[48px] w-[48px] shrink-0 items-center justify-center whitespace-nowrap rounded-full text-[13px] font-bold"
+                  className="flex h-[48px] w-[48px] shrink-0 items-center justify-center whitespace-nowrap rounded-full text-[15px] font-bold"
                   style={{ background: m.avBg, color: m.avFg }}
                 >
                   {m.initials}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[14px] font-bold">
+                  <div className="text-[16px] font-bold">
                     {m.name}{" "}
-                    <span className="text-[10px] font-bold text-gold-soft">{m.role}</span>
+                    <span className="text-[11px] font-bold text-gold-soft">{m.role}</span>
                   </div>
-                  <div className="mt-0.5 text-[11px] text-white/60">{m.career}</div>
-                  <div className="mt-0.5 text-[11px] font-bold text-[#8FE3C0]">{m.relation}</div>
+                  <div className="mt-0.5 text-[12px] text-white/60">{m.career}</div>
+                  <div className="mt-0.5 text-[12px] font-bold text-[#8FE3C0]">{m.relation}</div>
                 </div>
                 <button
                   aria-label={`${m.name}에게 전화`}
-                  className="btn-press flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/[.06] text-[15px]"
+                  className="btn-press flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/[.06] text-[17px]"
                 >
                   ☏
                 </button>
               </div>
             ))}
           </div>
-          <p className="mt-3 text-[11px] leading-[1.7] text-white/60">{CARE_TEAM.trust}</p>
+          <p className="mt-3 text-[12px] leading-[1.7] text-white/60">{CARE_TEAM.trust}</p>
           <button
             onClick={() => {
               if (aiBooked) return;
@@ -387,7 +387,7 @@ export default function FamilyHome() {
                 payload: { kind: "예약", text: "AI 컨시어지 예약 접수 · 순환기내과 정기 외래", color: "#B08D57" },
               });
             }}
-            className={`btn-press btn-dark mt-3.5 w-full rounded-xl py-3.5 text-[14px] font-bold ${
+            className={`btn-press btn-dark mt-3.5 w-full rounded-xl py-3.5 text-[16px] font-bold ${
               aiBooked ? "bg-green text-white" : "bg-gold text-navy"
             }`}
           >
@@ -396,7 +396,7 @@ export default function FamilyHome() {
           {/* 제휴 병원 진입점 — 동행 예약 흐름과 같은 맥락 */}
           <Link
             href="/family/hospitals"
-            className="btn-press mt-2 block w-full rounded-xl border border-white/25 bg-white/[.06] py-3 text-center text-[13px] font-bold text-white/85"
+            className="btn-press mt-2 block w-full rounded-xl border border-white/25 bg-white/[.06] py-3 text-center text-[15px] font-bold text-white/85"
           >
             제휴 병원 찾기 · 과목별 MOU · 패스트트랙
           </Link>
@@ -405,8 +405,8 @@ export default function FamilyHome() {
         {/* 실시간 건강 요약 — 5지표 · 지표별 상태 라벨 병행 (디자인 콘솔 · F2-6) */}
         <Card className="p-[18px]">
           <div className="flex items-center justify-between">
-            <div className="text-[15px] font-black text-navy">실시간 건강 요약</div>
-            <span className="font-num text-[11px] text-muted">14:38 갱신</span>
+            <div className="text-[17px] font-black text-navy">실시간 건강 요약</div>
+            <span className="font-num text-[12px] text-muted">14:38 갱신</span>
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2.5">
             {VITALS.map((v) => (
@@ -418,12 +418,12 @@ export default function FamilyHome() {
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
                 }}
               >
-                <div className="text-[11px] text-muted">{v.name}</div>
-                <div className="mt-0.5 font-num text-[22px] font-bold leading-none text-navy">
-                  {v.value} <span className="text-[11px] font-bold text-muted">{v.unit}</span>
+                <div className="text-[12px] text-muted">{v.name}</div>
+                <div className="mt-0.5 font-num text-[25px] font-bold leading-none text-navy">
+                  {v.value} <span className="text-[12px] font-bold text-muted">{v.unit}</span>
                 </div>
                 <div
-                  className="mt-1.5 text-[11px] font-bold"
+                  className="mt-1.5 text-[12px] font-bold"
                   style={{ color: { ok: "#1E7A5A", caution: "#8A5D12", danger: "#C0392B", neutral: "#5C5A54" }[v.level] }}
                 >
                   {v.status}
@@ -431,7 +431,7 @@ export default function FamilyHome() {
               </div>
             ))}
           </div>
-          <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[10px] leading-[1.6] text-muted">
+          <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
             웨어러블 실연동 대기 — 표기 지표는 연동 후 실측값으로 대체 (F2-6)
           </p>
         </Card>
@@ -439,15 +439,15 @@ export default function FamilyHome() {
         {/* AI 케어 어시스턴트 — 답변은 항상 근거 동반 · 의료 판단 아님 */}
         <Card className="p-[18px]">
           <div className="flex items-center gap-2">
-            <span className="text-[15px] font-black text-navy">AI 케어 어시스턴트</span>
-            <span className="chip-gold rounded-full px-2 py-[3px] text-[9px] font-bold">근거 동반 답변</span>
+            <span className="text-[17px] font-black text-navy">AI 케어 어시스턴트</span>
+            <span className="chip-gold rounded-full px-2 py-[3px] text-[10px] font-bold">근거 동반 답변</span>
           </div>
           <div className="mt-2.5 flex flex-wrap gap-1.5">
             {AI_ASSISTANT_QA.map((qa) => (
               <button
                 key={qa.q}
                 onClick={() => askAssistant(qa)}
-                className={`btn-press rounded-full border px-3 py-2 text-[12px] font-bold ${
+                className={`btn-press rounded-full border px-3 py-2 text-[13px] font-bold ${
                   askAi?.q === qa.q ? "border-navy bg-navy text-white" : "border-navy/15 text-muted"
                 }`}
               >
@@ -464,18 +464,18 @@ export default function FamilyHome() {
               }}
             >
               {askAi.loading ? (
-                <p className="text-[13px] leading-[1.75] text-muted">기록을 확인하고 있어요…</p>
+                <p className="text-[15px] leading-[1.75] text-muted">기록을 확인하고 있어요…</p>
               ) : (
                 <>
-                  <p className="text-[13px] leading-[1.75] text-ink">{askAi.a}</p>
-                  <p className="mt-2 border-t border-navy/[.08] pt-2 text-[10px] font-bold text-muted">
+                  <p className="text-[15px] leading-[1.75] text-ink">{askAi.a}</p>
+                  <p className="mt-2 border-t border-navy/[.08] pt-2 text-[11px] font-bold text-muted">
                     근거: {askAi.src}
                   </p>
                 </>
               )}
             </div>
           )}
-          <p className="mt-2.5 text-[10px] leading-[1.6] text-muted">
+          <p className="mt-2.5 text-[11px] leading-[1.6] text-muted">
             수집된 기록에서만 답합니다 · 의료 판단이 아니며, 이상 징후는 사람이 확인 후
             알립니다 (8.4)
           </p>
@@ -489,21 +489,21 @@ export default function FamilyHome() {
               <div key={g.name} className="flex items-center gap-3">
                 <Avatar name={g.name} size={30} />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[13px] font-bold text-ink">
+                  <div className="text-[15px] font-bold text-ink">
                     {g.name}
                     {g.isPrimary && (
-                      <span className="ml-1.5 text-[10px] font-bold text-gold">연락 담당</span>
+                      <span className="ml-1.5 text-[11px] font-bold text-gold">연락 담당</span>
                     )}
                   </div>
-                  <div className="text-[11px] text-muted">
+                  <div className="text-[12px] text-muted">
                     {g.relation} · {g.residence}
                   </div>
                 </div>
-                <div className="font-num text-[12px] font-bold text-muted">분담 {g.share}</div>
+                <div className="font-num text-[13px] font-bold text-muted">분담 {g.share}</div>
               </div>
             ))}
           </div>
-          <p className="mt-3.5 border-t border-navy/10 pt-3 text-[11px] leading-[1.7] text-muted">
+          <p className="mt-3.5 border-t border-navy/10 pt-3 text-[12px] leading-[1.7] text-muted">
             연락 담당은 한 명으로 고정하고 결과는 세 분 모두에게 동시에 전달됩니다.
           </p>
         </Card>
@@ -512,7 +512,7 @@ export default function FamilyHome() {
         <div className="pt-1 text-center">
           <button
             onClick={() => setDemoOpen((v) => !v)}
-            className="text-[11px] font-bold text-muted/50 underline underline-offset-2"
+            className="text-[12px] font-bold text-muted/50 underline underline-offset-2"
           >
             시연 컨트롤 {demoOpen ? "닫기" : "열기"}
           </button>
@@ -520,13 +520,13 @@ export default function FamilyHome() {
             <div className="mt-2 flex justify-center gap-2">
               <button
                 onClick={() => dispatch({ type: "demo", payload: { sos: !state.demo.sos } })}
-                className="btn-press rounded-lg border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-muted"
+                className="btn-press rounded-lg border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-muted"
               >
                 SOS {state.demo.sos ? "해제" : "발생"}
               </button>
               <button
                 onClick={() => dispatch({ type: "demo", payload: { anomaly: "open" } })}
-                className="btn-press rounded-lg border border-navy/20 px-3 py-1.5 text-[11px] font-bold text-muted"
+                className="btn-press rounded-lg border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-muted"
               >
                 이상 징후 재현
               </button>
@@ -547,12 +547,12 @@ function NpsCard({ onEvent }) {
   if (done)
     return (
       <Card className="p-4">
-        <div className="text-[13px] font-bold text-navy">
+        <div className="text-[15px] font-bold text-navy">
           {score <= 6
             ? "접수했습니다 — 24시간 안에 담당 매니저가 연락드립니다"
             : "감사합니다 — 다음 동행도 잘 준비하겠습니다"}
         </div>
-        <p className="mt-1 text-[11px] leading-[1.6] text-muted">
+        <p className="mt-1 text-[12px] leading-[1.6] text-muted">
           {score <= 6
             ? "낮은 점수는 회복이 먼저입니다 — 조치 결과를 다시 알려드립니다."
             : score >= 9
@@ -565,7 +565,7 @@ function NpsCard({ onEvent }) {
   return (
     <Card className="p-[18px]">
       <SectionLabel>오늘 동행은 어떠셨나요?</SectionLabel>
-      <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">
+      <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">
         13:50 서울아산 동행이 끝났습니다. 가족의 점수가 케어 품질 평가와 개선의 기준이 됩니다.
       </p>
       <div className="mt-3 flex flex-wrap gap-1.5">
@@ -573,7 +573,7 @@ function NpsCard({ onEvent }) {
           <button
             key={i}
             onClick={() => setScore(i)}
-            className="btn-press h-[34px] w-[34px] rounded-[10px] border font-num text-[13px] font-bold"
+            className="btn-press h-[34px] w-[34px] rounded-[10px] border font-num text-[15px] font-bold"
             style={
               score === i
                 ? {
@@ -590,13 +590,13 @@ function NpsCard({ onEvent }) {
       </div>
       {score != null && score <= 6 && (
         <div className="mt-3 border-t border-navy/[.08] pt-3">
-          <div className="text-[12px] font-bold text-navy">무엇이 가장 아쉬우셨나요?</div>
+          <div className="text-[13px] font-bold text-navy">무엇이 가장 아쉬우셨나요?</div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {NPS_REASONS.map((r) => (
               <button
                 key={r}
                 onClick={() => setReason(r)}
-                className="btn-press rounded-full border px-3 py-1.5 text-[11px] font-bold"
+                className="btn-press rounded-full border px-3 py-1.5 text-[12px] font-bold"
                 style={
                   reason === r
                     ? { background: "#0A1F3C", color: "#FFFFFF", borderColor: "#0A1F3C" }
@@ -621,7 +621,7 @@ function NpsCard({ onEvent }) {
             );
           }}
           disabled={score <= 6 && !reason}
-          className="btn-press btn-dark mt-3 w-full rounded-xl bg-navy py-3 text-[13px] font-bold text-white disabled:opacity-50"
+          className="btn-press btn-dark mt-3 w-full rounded-xl bg-navy py-3 text-[15px] font-bold text-white disabled:opacity-50"
         >
           제출
         </button>

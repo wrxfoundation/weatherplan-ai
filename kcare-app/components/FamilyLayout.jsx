@@ -24,11 +24,11 @@ export default function FamilyLayout({ children, title }) {
         <header className="sticky top-0 z-20 border-b border-navy/10 bg-paper/95 px-5 pb-3 pt-4 backdrop-blur">
           <div className="flex items-center justify-between">
             <div>
-              <div className="font-num text-[10px] font-bold tracking-[.18em] text-gold">
+              <div className="font-num text-[11px] font-bold tracking-[.18em] text-gold">
                 FAMILY MEMBERSHIP
               </div>
               <div className="mt-0.5 flex items-center gap-2">
-                <span className="text-[19px] font-black leading-tight text-navy">
+                <span className="text-[21px] font-black leading-tight text-navy">
                   {title || `어머니 · ${elderName}`}
                 </span>
                 {/* 역할 배지 — 탭하면 주/부 전환 (시연) */}
@@ -40,7 +40,7 @@ export default function FamilyLayout({ children, title }) {
                     })
                   }
                   title="시연 — 주/부 보호자 전환"
-                  className={`btn-press rounded-full px-2 py-[3px] text-[9px] font-bold ${
+                  className={`btn-press rounded-full px-2 py-[3px] text-[10px] font-bold ${
                     role === "primary" ? "chip-gold" : "bg-navy/[.07] text-muted"
                   }`}
                 >
@@ -68,14 +68,14 @@ export default function FamilyLayout({ children, title }) {
                   href={t.soon ? "#" : t.href}
                   aria-disabled={t.soon}
                   onClick={(e) => t.soon && e.preventDefault()}
-                  className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[11px] font-bold ${
+                  className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[12px] font-bold ${
                     active ? "text-navy" : t.soon ? "text-muted/40" : "text-muted"
                   }`}
                 >
-                  <span className="text-[16px] leading-none">{t.icon}</span>
+                  <span className="text-[18px] leading-none">{t.icon}</span>
                   <span>
                     {t.label}
-                    {t.soon && <span className="ml-0.5 text-[9px] text-gold">예정</span>}
+                    {t.soon && <span className="ml-0.5 text-[10px] text-gold">예정</span>}
                   </span>
                   {active && <span className="mt-0.5 h-[3px] w-5 rounded-full bg-gold" />}
                 </Link>
