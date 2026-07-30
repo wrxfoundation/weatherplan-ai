@@ -13,6 +13,7 @@ import {
   LIFECYCLE_STAGES,
   NBA_QUEUE,
   COACHING_LOG,
+  EXEC_BRIEF,
   NPS_LOOP,
   TRUST_METRICS,
   CARE_OUTCOMES,
@@ -110,6 +111,7 @@ function StatTile({ k, v, color = NAVY, note }) {
 export default function AdminConsole() {
   const [tab, setTab] = useState("staff");
   const [nbaDone, setNbaDone] = useState({}); // NBA 큐 — 담당 배정 원샷
+  const [execRead, setExecRead] = useState(false); // 주간 브리핑 읽음
   const counts = REVENUE_STREAMS.reduce(
     (acc, s) => ({ ...acc, [s.status]: (acc[s.status] || 0) + 1 }),
     {}
@@ -152,6 +154,31 @@ export default function AdminConsole() {
               </Panel>
             ))}
           </div>
+
+          {/* ── 주간 AI 브리핑 — 능동형 (집계 전용 · 개별 사건 없음) ── */}
+          <Panel>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="rounded-md bg-gold px-1.5 py-0.5 text-[11px] font-bold tracking-[.1em] text-navy">AI</span>
+              <h2 className="text-[15px] font-bold text-navy">주간 경영 브리핑</h2>
+              <span className="font-num text-[12px] text-muted">{EXEC_BRIEF.date}</span>
+              <button
+                onClick={() => setExecRead(true)}
+                disabled={execRead}
+                className="btn-press ml-auto rounded-[10px] border border-navy/20 px-3.5 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
+              >
+                {execRead ? "읽음 확인됨 ✓" : "읽음 확인"}
+              </button>
+            </div>
+            <p className="mt-2 text-[14px] font-bold leading-[1.6] text-ink">{EXEC_BRIEF.summary}</p>
+            <div className="mt-2.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+              {EXEC_BRIEF.items.map((b) => (
+                <div key={b.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                  <div className="text-[11px] font-bold text-gold">{b.k}</div>
+                  <div className="mt-0.5 text-[12px] leading-[1.6] text-ink">{b.text}</div>
+                </div>
+              ))}
+            </div>
+          </Panel>
 
           {/* ── 탭 — 사람 축 3개 + 수익·리스크 ── */}
           <div className="flex flex-wrap gap-2">
