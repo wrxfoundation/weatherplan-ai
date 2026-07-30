@@ -231,10 +231,20 @@ export default function DispatchConsole() {
   const guardians = DIRECTORY_ALL.filter((d) => d.type === "guardian");
   const concierges = DIRECTORY_ALL.filter((d) => d.type === "concierge");
   const [profile, setProfile] = useState(null); // 플로팅 프로필 카드
+  const [profilePos, setProfilePos] = useState({ x: 0, y: 0 }); // 클릭 지점 — 카드가 근처에 뜬다
+  const lastPointer = useRef({ x: 0, y: 0 });
+  useEffect(() => {
+    const h = (e) => {
+      lastPointer.current = { x: e.clientX, y: e.clientY };
+    };
+    window.addEventListener("pointerdown", h);
+    return () => window.removeEventListener("pointerdown", h);
+  }, []);
 
   const openProfile = (name) => {
     const item = DIRECTORY_ALL.find((d) => d.name === name);
     if (item) {
+      setProfilePos(lastPointer.current);
       setProfile(item);
       setQuery("");
     }
@@ -1738,6 +1748,7 @@ export default function DispatchConsole() {
         {profile && (
           <FloatProfile
             item={profile}
+            pos={profilePos}
             onClose={() => setProfile(null)}
             onAction={(text) => push("대응", text, "#8FA9CC")}
           />
@@ -1759,15 +1770,24 @@ export default function DispatchConsole() {
 }
 
 // 플로팅 프로필 — 담당·상태·챙길 것 한눈에. 상세 주소 등은 게이팅 원칙 유지 (더미)
-function FloatProfile({ item, onClose, onAction }) {
+function FloatProfile({ item, pos, onClose, onAction }) {
+  // 클릭 지점 근처 배치 — 뷰포트 밖으로 나가지 않게 클램프 (카드 320 × 최대 560)
+  const W = 320;
+  const H = 560;
+  const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+  const left = Math.max(12, Math.min((pos?.x ?? vw - W) + 14, vw - W - 12));
+  const top = Math.max(12, Math.min((pos?.y ?? 96) - 24, vh - Math.min(H, vh - 24) - 12));
   const t = DIRECTORY_TYPE[item.type];
   const crm = CRM_STAGE[item.name]; // 가구 360° — 어르신(가구) 레코드에만 존재
   const tl = CRM_TIMELINE[item.name];
   const [acted, setActed] = useState(false);
   return (
-    <div className="overlay-scrim fixed inset-0 z-[1100]" onClick={onClose}>
+    <div className="fixed inset-0 z-[1100]" onClick={onClose}>
+      {/* 스크림 없음 — 카드 자체(card-frost)가 자기 영역 뒤만 블러 처리한다 */}
       <div
-        className="card-frost absolute right-6 top-24 w-[320px] max-w-[calc(100vw-32px)] rounded-[14px] p-4"
+        className="card-frost absolute w-[320px] max-w-[calc(100vw-24px)] overflow-y-auto rounded-[14px] p-4"
+        style={{ left, top, maxHeight: "min(560px, calc(100vh - 24px))" }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2">
