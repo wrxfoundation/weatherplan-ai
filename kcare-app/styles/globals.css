@@ -64,6 +64,29 @@
       0 24px 48px -24px rgba(10, 31, 60, 0.5);
   }
 
+  /* 다크 카드 그라디언트 보더 — 좌상 진하게(밝게) → 우하 옅어짐. 래퍼 없이 ::before 마스크 */
+  .border-grad-dark {
+    position: relative;
+  }
+  .border-grad-dark::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.42),
+      rgba(255, 255, 255, 0.12) 45%,
+      rgba(255, 255, 255, 0.02) 80%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
   /* 플로팅 카드 뒤 스크림 — 화면 전체를 살짝 눌러 카드에 집중시킨다 */
   .overlay-scrim {
     background: rgba(10, 31, 60, 0.12);

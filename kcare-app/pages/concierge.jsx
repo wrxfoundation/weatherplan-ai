@@ -165,7 +165,13 @@ export default function ConciergePage() {
                   </div>
 
                   {/* 오늘의 짝 — 2인 1조 실행 UI */}
-                  <div className="card-navy mt-3.5 rounded-[14px] bg-navy p-4 text-white">
+                  <div
+                    className="card-navy border-grad-dark mt-3.5 rounded-[14px] bg-navy p-4 text-white"
+                    style={{
+                      backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,0))",
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,.14), 0 18px 36px -24px rgba(10,31,60,.8)",
+                    }}
+                  >
                     <div className="flex items-center justify-between">
                       <span className="text-[12px] font-bold tracking-[.1em] text-gold-soft">
                         오늘의 짝
@@ -949,7 +955,7 @@ export default function ConciergePage() {
 
                 {/* 주간 확정 수익 — 네이비 카드 */}
                 <div
-                  className="card-navy rounded-card bg-navy p-[18px] text-white"
+                  className="card-navy border-grad-dark rounded-card bg-navy p-[18px] text-white"
                   style={{
                     backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0))",
                     boxShadow:
