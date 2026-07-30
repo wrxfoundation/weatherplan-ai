@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   AI_ASSIGN,
   BRIEFINGS,
-  DISPATCH_KPIS,
   FATIGUE,
   JOBS,
   MAP_DISTRICTS,
@@ -95,7 +94,7 @@ function useElapsed(active) {
     const t = setInterval(() => setSec(Math.floor((Date.now() - startRef.current) / 1000)), 1000);
     return () => clearInterval(t);
   }, [active]);
-  return `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
+  return { sec, label: `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}` };
 }
 
 // 관제 맵 — Leaflet · 실측 좌표 (09 §4) · 타일 라이트(OSM)/다크(CARTO) 선택
@@ -116,7 +115,7 @@ const MAP_TILES = {
   },
 };
 
-function ControlMap({ sos, mode = "light" }) {
+function ControlMap({ sos, mode = "light", onSelect }) {
   const nodeRef = useRef(null);
   const mapRef = useRef(null);
 
@@ -139,22 +138,22 @@ function ControlMap({ sos, mode = "light" }) {
       }).addTo(map);
 
       const pts = [];
-      const add = (lat, lng, label, color, radius) => {
+      const add = (lat, lng, label, color, radius, sel) => {
         pts.push([lat, lng]);
-        L.circleMarker([lat, lng], {
+        const m = L.circleMarker([lat, lng], {
           radius,
           color,
           weight: 2,
           fillColor: color,
           fillOpacity: 0.5,
-        })
-          .addTo(map)
-          .bindPopup(label, { className: "kcare-popup" });
+        });
+        m.addTo(map).bindPopup(label, { className: "kcare-popup" });
+        if (sel && onSelect) m.on("click", () => onSelect(sel)); // 마커 → 플로팅 프로필
       };
       const tileTheme = MAP_TILES[mode] || MAP_TILES.light;
       MAP_DISTRICTS.forEach((d) => add(d.lat, d.lng, d.name, tileTheme.district, 4));
-      MAP_HOSPITALS.forEach((h) => add(h.lat, h.lng, `${h.name} · 제휴 병원`, "#B08D57", 7));
-      mapPeople(sos, mode).forEach((p) => add(p.lat, p.lng, p.label, p.color, 7));
+      MAP_HOSPITALS.forEach((h) => add(h.lat, h.lng, `${h.name} · 제휴 병원`, "#B08D57", 7, h.name));
+      mapPeople(sos, mode).forEach((p) => add(p.lat, p.lng, p.label, p.color, 7, p.label.split(" ·")[0]));
       map.fitBounds(L.latLngBounds(pts), { padding: [26, 26] });
     });
 
@@ -189,7 +188,7 @@ export default function DispatchConsole() {
   const { sos } = state.demo;
   const { sosDispatched, sos119, assign, unmatchFixed } = state.ops;
   const checkedIn = state.visit.checkedIn;
-  const elapsed = useElapsed(sos);
+  const { label: elapsed, sec: elapsedSec } = useElapsed(sos);
   const [tab, setTab] = useState("live");
   const [range, setRange] = useState("7");
   const [briefed, setBriefed] = useState(false);
@@ -276,10 +275,84 @@ export default function DispatchConsole() {
     { k: "단독 배차", v: "0", note: "예외 승인 절차 없음", color: "#1E7A5A" },
   ];
 
+  // KPI — 실시간 계산 · 클릭 시 해당 화면으로 점프
+  const unmatchedCount = jobs.filter((j) => !j.sup).length;
   const kpis = [
-    ...DISPATCH_KPIS,
-    { k: "SOS", v: sos ? "1" : "0", color: sos ? "#C0392B" : "#5C5A54" },
+    { k: "진행중", v: "2", color: "#0A1F3C", tab: "live" },
+    { k: "오늘 배차", v: String(jobs.length), color: "#0A1F3C", tab: "live" },
+    { k: "가동률", v: "82%", color: "#1E7A5A", tab: "plan" },
+    { k: "미매칭", v: String(unmatchedCount), color: unmatchedCount > 0 ? "#C0392B" : "#5C5A54", tab: "pair" },
+    { k: "SOS", v: sos ? "1" : "0", color: sos ? "#C0392B" : "#5C5A54", jump: "sos-banner" },
   ];
+
+  // ── 액션 큐 — 지금 관제가 처리할 일. 우선순위·마감을 한 줄로 (상황파악 → 적시 대응) ──
+  const [handled, setHandled] = useState({});
+  const [watchCalled, setWatchCalled] = useState(false);
+  const [guardianPinged, setGuardianPinged] = useState(false);
+  const actions = [];
+  if (sos)
+    actions.push({
+      id: "sos", level: "critical",
+      title: sosDispatched ? "SOS 대응 중 — 119 연계·해제 판단" : "SOS 급파 지시 필요",
+      meta: `경과 ${elapsed} · 목표 60초`, jump: "sos-banner",
+    });
+  if (unmatchedCount > 0)
+    actions.push({
+      id: "unmatch", level: "high", title: "짝 미매칭 — 한복자 (79) 투석 16:20",
+      meta: "해소 목표 15:50 · 서다인 재배치안 승인 대기", jumpTab: "pair",
+    });
+  if (assign === "pending")
+    actions.push({
+      id: "assign", level: "high", title: `AI 배정안 ${AI_ASSIGN.length}건 승인 대기`,
+      meta: "평균 적합 94% · 목표 10분 내 확정", jump: "ai-assign",
+    });
+  if (!handled.fallCall)
+    actions.push({
+      id: "fallCall", level: "med", title: "이영호 (81) 경과 관찰 콜",
+      meta: "어제 낙상 복합 알림 · 동행 전 컨디션 확인", act: "콜 완료",
+      ticker: ["대응", "이영호 경과 관찰 콜 완료 · 컨디션 양호", "#8FA9CC"],
+    });
+  if (!handled.battCall)
+    actions.push({
+      id: "battCall", level: "med", title: "박말순 (83) 워치 무수집 확인 콜",
+      meta: "6시간 무수집 · 배터리 원인 분리 후 판단", act: "콜 완료",
+      ticker: ["대응", "박말순 배터리 확인 콜 완료 · 충전 안내", "#8FA9CC"],
+    });
+  if (!briefed)
+    actions.push({
+      id: "brief", level: "med", title: "외출 브리핑 3건 발송",
+      meta: "최정자 34점 — 일정 조정 권고 포함", jumpTab: "plan",
+    });
+  const LEVEL_ORDER = { critical: 0, high: 1, med: 2 };
+  actions.sort((a, b) => LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level]);
+
+  // 헤더 상태 필 — 한눈에 관제 상황 등급
+  const status = sos
+    ? { label: "SOS 대응 중", cls: "animate-sosPulse bg-danger text-white" }
+    : actions.length > 0
+    ? { label: `주의 · 처리 대기 ${actions.length}건`, cls: "border border-amber/30 bg-[#FFF7E8] text-amber" }
+    : { label: "정상 운영", cls: "bg-[rgba(30,122,90,.12)] text-green" };
+
+  const jumpTo = (a) => {
+    if (a.jumpTab) {
+      setTab(a.jumpTab);
+      setTimeout(() => document.getElementById("disp-tabs")?.scrollIntoView({ behavior: "smooth" }), 50);
+    } else if (a.jump) {
+      document.getElementById(a.jump)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
+  // 티커 필터 — 관제사가 원하는 종류만 빠르게
+  const [tickerFilter, setTickerFilter] = useState("all");
+  const TICKER_GROUPS = {
+    all: null,
+    urgent: ["SOS", "대응", "환경"],
+    dispatchG: ["배차", "동행", "예약", "브리핑"],
+    care: ["복약", "리포트", "메시지", "어르신", "체크인", "일정"],
+    commerce: ["구매대행", "장바구니", "스토어", "옵션", "정산", "보험", "제안", "설정"],
+  };
+  const tickerGroup = TICKER_GROUPS[tickerFilter];
+  const tickerItems = state.ticker.filter((e) => !tickerGroup || tickerGroup.includes(e.kind));
 
   const forecast = range === "3" ? WEEK_FORECAST.slice(0, 3) : WEEK_FORECAST;
 
@@ -301,7 +374,12 @@ export default function DispatchConsole() {
                   데모 홈
                 </a>
               </div>
-              <h1 className="mt-0.5 text-[26px] font-bold tracking-[-.01em] text-navy">강남지점 실시간 관제</h1>
+              <div className="mt-0.5 flex flex-wrap items-center gap-2.5">
+                <h1 className="text-[26px] font-bold tracking-[-.01em] text-navy">강남지점 실시간 관제</h1>
+                <span className={`rounded-full px-3 py-1 text-[11px] font-bold ${status.cls}`}>
+                  {status.label}
+                </span>
+              </div>
               <div className="mt-1 flex items-center gap-2 text-[13px] text-muted">
                 <span>
                   {now.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "short" })}
@@ -315,12 +393,21 @@ export default function DispatchConsole() {
             </div>
             <div className="flex flex-wrap gap-2">
               {kpis.map((k) => (
-                <div key={k.k} className="card-glass min-w-[104px] rounded-xl px-4 py-[11px]">
+                <button
+                  key={k.k}
+                  onClick={() =>
+                    k.jump
+                      ? document.getElementById(k.jump)?.scrollIntoView({ behavior: "smooth", block: "center" })
+                      : setTab(k.tab)
+                  }
+                  className="card-glass btn-press min-w-[104px] rounded-xl px-4 py-[11px] text-left"
+                  title="클릭하면 해당 화면으로 이동"
+                >
                   <div className="text-[10px] font-bold text-muted">{k.k}</div>
                   <div className="font-num text-[20px] font-bold" style={{ color: k.color }}>
                     {k.v}
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </header>
@@ -362,9 +449,63 @@ export default function DispatchConsole() {
             )}
           </div>
 
+          {/* ── 액션 큐 — 지금 처리할 일. 우선순위순, 클릭 즉시 해당 화면 (고도화) ── */}
+          <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-[13px] font-bold tracking-[.02em] text-navy">지금 처리할 일</h2>
+              <span className="font-num text-[11px] text-muted">{actions.length}건 · 우선순위순</span>
+            </div>
+            {actions.length === 0 ? (
+              <div className="mt-3 rounded-xl bg-[rgba(30,122,90,.08)] px-4 py-3 text-[12px] font-medium text-green">
+                처리 대기 없음 — 정상 운영 중입니다.
+              </div>
+            ) : (
+              <div className="mt-3 space-y-2">
+                {actions.map((a) => (
+                  <div
+                    key={a.id}
+                    className="flex items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5"
+                  >
+                    <span
+                      className={`h-2.5 w-2.5 shrink-0 rounded-full ${a.level === "critical" ? "animate-livePing" : ""}`}
+                      style={{
+                        background: a.level === "critical" ? "#C0392B" : a.level === "high" ? "#8A5D12" : "#5C5A54",
+                      }}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-[13px] font-bold text-navy">{a.title}</div>
+                      <div className="truncate text-[11px] text-muted">{a.meta}</div>
+                    </div>
+                    {a.act ? (
+                      <button
+                        onClick={() => {
+                          setHandled((h) => ({ ...h, [a.id]: true }));
+                          push(...a.ticker);
+                        }}
+                        className="btn-press shrink-0 rounded-[10px] border border-green/40 px-3.5 py-2 text-[12px] font-bold text-green"
+                      >
+                        {a.act}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => jumpTo(a)}
+                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[12px] font-bold text-navy"
+                      >
+                        보기 →
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
           {/* ── SOS 배너 (09 §2 + REQ-04 경계) ── */}
           {sos && (
-            <section className="mt-[18px] flex flex-wrap items-center gap-[18px] rounded-[14px] bg-danger px-5 py-4 text-white animate-sosPulse">
+            <section
+              id="sos-banner"
+              className="mt-[18px] flex flex-wrap items-center gap-[18px] rounded-[14px] bg-danger px-5 py-4 text-white animate-sosPulse"
+            >
               <span className="rounded-lg bg-white/[.18] px-2.5 py-1.5 text-[11px] font-bold tracking-[.14em]">
                 SOS
               </span>
@@ -374,6 +515,28 @@ export default function DispatchConsole() {
                 </div>
                 <div className="mt-0.5 font-num text-[12px] opacity-[.88]">
                   경과 {elapsed} · 목표 응답 60초 이내 · {sos119 ? "119 연계 완료" : "119 연계 대기"}
+                </div>
+                <div className="mt-2 h-[6px] w-full max-w-[300px] overflow-hidden rounded-full bg-white/25">
+                  <span
+                    className="block h-full rounded-full"
+                    style={{
+                      width: `${Math.min(100, (elapsedSec / 60) * 100)}%`,
+                      background: elapsedSec >= 60 ? "#FFD9D4" : "#FFFFFF",
+                      transition: "width 1s linear",
+                    }}
+                  />
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {[["접수", true], ["급파", sosDispatched], ["119 연계", sos119], ["해제", false]].map(([st, done]) => (
+                    <span
+                      key={st}
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                        done ? "bg-white text-danger" : "border border-white/40 text-white/75"
+                      }`}
+                    >
+                      {done ? `✓ ${st}` : st}
+                    </span>
+                  ))}
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -409,6 +572,28 @@ export default function DispatchConsole() {
                 >
                   해제
                 </button>
+                <button
+                  onClick={() => {
+                    if (watchCalled) return;
+                    setWatchCalled(true);
+                    push("대응", "김순자 워치 자동 통화 시도 — 응답 대기", "#FF8A80");
+                  }}
+                  disabled={watchCalled}
+                  className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[13px] font-medium disabled:opacity-70"
+                >
+                  {watchCalled ? "워치 통화 시도됨" : "워치 통화"}
+                </button>
+                <button
+                  onClick={() => {
+                    if (guardianPinged) return;
+                    setGuardianPinged(true);
+                    push("대응", "보호자 김민수에게 상황 확인 알림 발송", "#8FA9CC");
+                  }}
+                  disabled={guardianPinged}
+                  className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[13px] font-medium disabled:opacity-70"
+                >
+                  {guardianPinged ? "보호자 알림 발송됨" : "보호자 알림"}
+                </button>
               </div>
               {/* REQ-04 — 서비스 경계 고지 (회의 확정) */}
               <div className="w-full border-t border-white/25 pt-2 text-[11px] opacity-80">
@@ -421,6 +606,7 @@ export default function DispatchConsole() {
           {/* ── AI 자율 배차 (09 §3) — L4: 승인 없이는 실행되지 않는다 ── */}
           {assign === "pending" ? (
             <section
+              id="ai-assign"
               className="card-navy mt-[18px] rounded-[14px] px-5 py-[18px] text-white"
               style={{
                 background: NAVY,
@@ -529,11 +715,11 @@ export default function DispatchConsole() {
                 </span>
               </div>
             </div>
-            <ControlMap sos={sos} mode={mapMode} />
+            <ControlMap sos={sos} mode={mapMode} onSelect={openProfile} />
           </section>
 
           {/* ── 탭 3개 — 아웃라인 버튼형, 언마운트 전환 (09 §5) ── */}
-          <div className="mt-[18px] flex flex-wrap gap-2">
+          <div id="disp-tabs" className="mt-[18px] flex flex-wrap gap-2">
             {[
               ["live", "실시간 운영"],
               ["pair", "페어 편성 · 예외"],
@@ -629,8 +815,29 @@ export default function DispatchConsole() {
 
               <Panel className="min-w-0">
                 <PanelHead title="실시간 접수 티커" right="전 화면 액션 → 감사 로그 실시간 뷰" />
-                <div className="mt-3 max-h-[230px] space-y-[9px] overflow-y-auto pr-1">
-                  {state.ticker.map((e) => (
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {[["all", "전체"], ["urgent", "긴급"], ["dispatchG", "배차"], ["care", "케어"], ["commerce", "커머스"]].map(
+                    ([k, label]) => (
+                      <button
+                        key={k}
+                        onClick={() => setTickerFilter(k)}
+                        className="btn-press rounded-full border px-2.5 py-1 text-[10px] font-bold"
+                        style={
+                          tickerFilter === k
+                            ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
+                            : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
+                        }
+                      >
+                        {label}
+                      </button>
+                    )
+                  )}
+                </div>
+                <div className="mt-2.5 max-h-[230px] space-y-[9px] overflow-y-auto pr-1">
+                  {tickerItems.length === 0 && (
+                    <div className="py-2 text-[12px] text-muted">해당 종류의 접수가 없습니다.</div>
+                  )}
+                  {tickerItems.map((e) => (
                     <div key={e.id} className="flex animate-tickIn items-start gap-2">
                       <span className="w-[34px] shrink-0 pt-0.5 font-num text-[10px] font-semibold text-muted">
                         {new Date(e.at).toTimeString().slice(0, 5)}
