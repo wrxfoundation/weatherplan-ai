@@ -1008,6 +1008,7 @@ export default function ConciergePage() {
 }
 
 function StepBtn({ done, disabled, label, onClick }) {
+  // 활성 배경 주홍색 — 수행 단계 버튼 강조 (요청 반영)
   return (
     <button
       onClick={onClick}
@@ -1017,7 +1018,7 @@ function StepBtn({ done, disabled, label, onClick }) {
           ? "border-green/30 bg-green/10 text-green"
           : disabled
           ? "border-navy/10 text-muted/40"
-          : "border-navy bg-navy text-white"
+          : "btn-dark border-[#D9542B] bg-[#D9542B] text-white"
       }`}
     >
       {done ? "✓ " : ""}
