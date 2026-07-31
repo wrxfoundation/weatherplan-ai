@@ -138,6 +138,9 @@ import {
   AI_LOCKED,
   AI_ACCURACY,
   AI_RULES,
+  AI_AXES,
+  AI_MULTIPLY,
+  AI_MODEL_POLICY,
   AI_EVIDENCE,
   CAP_TABLE,
   ROUNDS,
@@ -2884,9 +2887,10 @@ export default function AdminConsole() {
                   right={<span className="text-[12px] text-muted">지금 {AI_STAGE_NOW} · 다음 단계는 데이터가 열어 준다</span>}
                 />
                 <p className="mt-2 max-w-[92ch] text-[13px] leading-[1.75] text-muted">
-                  우리 AI는 모델을 바꿔서 좋아지는 것이 아니라 <b className="text-navy">업력과 기록이 쌓여서</b> 좋아집니다.
-                  그래서 단계마다 <b className="text-navy">무엇이 얼마나 쌓여야 열리는지</b>를 숨기지 않고 적습니다 —
-                  이것이 경쟁사가 자본으로 따라올 수 없는 유일한 지점입니다.
+                  성능은 <b className="text-navy">모델 × 기록</b>입니다 — 둘 중 하나를 고르는 문제가 아닙니다.
+                  좋은 모델이 나오면 당연히 바꿔서 더 좋아지고, 그 위에 우리 기록이 곱해집니다.
+                  다만 모델 상승분은 경쟁사도 같은 날 같이 받고, <b className="text-navy">기록 상승분은 우리만 받습니다</b>.
+                  아래 단계는 그 기록 축의 진도이며, 단계마다 무엇이 얼마나 쌓여야 열리는지를 숨기지 않고 적습니다.
                 </p>
                 <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(212px, 1fr))" }}>
                   {AI_STAGES.map((st) => {
@@ -2926,6 +2930,85 @@ export default function AdminConsole() {
                       </div>
                     );
                   })}
+                </div>
+              </Panel>
+
+              {/* ── 두 축 — 모델과 기록은 곱셈이다 ── */}
+              <Panel>
+                <PanelHead
+                  title="성능의 두 축 — 모델 × 기록"
+                  right={<span className="text-[12px] text-muted">둘 다 필요하고, 둘의 성격이 다르다</span>}
+                />
+                <div className="mt-3 grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+                  {AI_AXES.map((ax) => (
+                    <div
+                      key={ax.k}
+                      className="rounded-xl border px-4 py-3.5"
+                      style={{ borderColor: `${TONE[ax.tone].fg}33`, background: TONE[ax.tone].bg }}
+                    >
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[14px] font-bold text-navy">{ax.k}</span>
+                        <span
+                          className="ml-auto shrink-0 rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-bold"
+                          style={{ color: TONE[ax.tone].fg }}
+                        >
+                          {ax.who}
+                        </span>
+                      </div>
+                      <ul className="mt-2 space-y-1">
+                        {ax.gets.map((g) => (
+                          <li key={g} className="flex gap-1.5 text-[12px] leading-[1.6] text-ink">
+                            <span className="shrink-0" style={{ color: TONE[ax.tone].fg }}>·</span>
+                            <span>{g}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="mt-2 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">{ax.note}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 rounded-xl bg-navy/[.04] px-4 py-3 text-[12px] leading-[1.75] text-ink">
+                  <b className="text-navy">모델은 일반 지능을 주고, 기록은 이 어르신을 줍니다.</b> 최신 모델도 김순자 어르신의
+                  왼쪽 귀가 안 들린다는 것은 모릅니다. 반대로 기록만 많고 모델이 낡으면 38개 속성을 브리프 6줄로 압축하지 못합니다.
+                  둘 중 하나만으로는 동행 브리프 한 장도 못 씁니다.
+                </p>
+
+                <div className="mt-3.5">
+                  <div className="text-[12px] font-bold text-navy">모델이 좋아질수록 기록의 가치가 함께 커집니다</div>
+                  <div className="mt-2 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                    {AI_MULTIPLY.map((m) => (
+                      <div key={m.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="text-[12px] font-bold text-navy">{m.k}</div>
+                        <div className="mt-1 text-[11px] leading-[1.6] text-muted">이전 — {m.was}</div>
+                        <div className="mt-0.5 text-[11px] font-bold leading-[1.6] text-green">지금 — {m.now}</div>
+                        <div className="mt-1.5 border-t border-navy/[.06] pt-1.5 text-[11px] leading-[1.6] text-ink">{m.why}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-2.5 text-[11px] leading-[1.7] text-muted">
+                    그래서 <b className="text-navy">지금 처리하지 못하는 기록도 원문으로 남깁니다</b> — 요약만 남기면
+                    모델이 좋아졌을 때 되살릴 것이 없습니다 (보존 기간 · 동의 범위 내).
+                  </p>
+                </div>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="모델 교체 정책"
+                  right={<span className="text-[12px] text-muted">좋은 모델이 나오면 바꾼다 · 검증 없이는 바꾸지 않는다</span>}
+                />
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                  {AI_MODEL_POLICY.map((r, i) => (
+                    <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex items-start gap-2">
+                        <span className="mt-[1px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-gold font-num text-[10px] font-bold text-navy">
+                          {i + 1}
+                        </span>
+                        <span className="text-[12px] font-bold text-navy">{r.k}</span>
+                      </div>
+                      <p className="mt-1.5 text-[11px] leading-[1.7] text-muted">{r.body}</p>
+                    </div>
+                  ))}
                 </div>
               </Panel>
 
@@ -2979,7 +3062,8 @@ export default function AdminConsole() {
                     ))}
                   </div>
                   <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                    같은 모델로 같은 질문을 해도 답이 좋아진 이유는 하나입니다 — 그 사이 기록이 늘었습니다.
+                    이 구간은 <b className="text-navy">모델을 고정한 채</b> 측정했습니다 — 그래서 이 상승은 온전히 기록의 몫입니다.
+                    모델 세대가 오르면 이 위에 더 얹힙니다 (다만 그 몫은 경쟁사도 같이 받습니다).
                   </p>
                 </Panel>
               </div>
