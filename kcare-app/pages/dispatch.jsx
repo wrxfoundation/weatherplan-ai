@@ -36,6 +36,8 @@ import {
   SOS_HISTORY,
   SOS_KPIS,
   SOS_AFTER,
+  ELDER_TAGS,
+  TAG_TONE,
   DIRECTORY_ALL,
   DIRECTORY_TYPE,
   DISPATCH_AI_QA,
@@ -2699,6 +2701,7 @@ function FloatProfile({ item, pos, onClose, onAction }) {
   const t = DIRECTORY_TYPE[item.type];
   const crm = CRM_STAGE[item.name]; // 가구 360° — 어르신(가구) 레코드에만 존재
   const tl = CRM_TIMELINE[item.name];
+  const tag = ELDER_TAGS[item.name]; // 성별 · 장애 정도 · 보훈 · 장기요양 (어르신만)
   const [acted, setActed] = useState(false);
   return (
     <div className="fixed inset-0 z-[1100]" onClick={onClose}>
@@ -2727,6 +2730,32 @@ function FloatProfile({ item, pos, onClose, onAction }) {
           </button>
         </div>
         <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">{item.summary}</p>
+        {/* 기본 속성 칩 — 성별 · 장애 정도 · 보훈 · 장기요양 (케어 수행에 필요한 범위만) */}
+        {tag && (
+          <>
+            <div className="mt-2 flex flex-wrap gap-1">
+              <span className="rounded-md px-2 py-0.5 text-[10px] font-bold" style={{ color: TAG_TONE.sex.fg, background: TAG_TONE.sex.bg }}>
+                {tag.sex} · {tag.age}세
+              </span>
+              {tag.disability && (
+                <span className="rounded-md px-2 py-0.5 text-[10px] font-bold" style={{ color: TAG_TONE.disability.fg, background: TAG_TONE.disability.bg }}>
+                  {tag.disability}
+                </span>
+              )}
+              {tag.veteran && (
+                <span className="rounded-md px-2 py-0.5 text-[10px] font-bold" style={{ color: TAG_TONE.veteran.fg, background: TAG_TONE.veteran.bg }}>
+                  {tag.veteran}
+                </span>
+              )}
+              {tag.ltc && (
+                <span className="rounded-md px-2 py-0.5 text-[10px] font-bold" style={{ color: TAG_TONE.ltc.fg, background: TAG_TONE.ltc.bg }}>
+                  {tag.ltc}
+                </span>
+              )}
+            </div>
+            <p className="mt-1 text-[11px] leading-[1.5] text-muted">케어 반영 — {tag.care}</p>
+          </>
+        )}
         <div className="mt-2.5 space-y-1.5 border-t border-navy/[.08] pt-2.5">
           {item.rows.map(([k, v]) => (
             <div key={k} className="flex gap-2 text-[12px]">

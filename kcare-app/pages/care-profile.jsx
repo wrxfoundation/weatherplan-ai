@@ -12,6 +12,8 @@ import {
   CP_GAPS,
   CP_FEATURES,
   CP_GLOSSARY,
+  ELDER_TAGS,
+  TAG_TONE,
 } from "../lib/mock";
 
 // 확장 / F7 진화형 케어 프로필 · F11-1 AI 안부콜.
@@ -109,6 +111,21 @@ export default function CareProfile() {
             {/* 케어 프로필 테이블 */}
             <Panel className="min-w-0">
               <PanelHead title="김순자 (78) 케어 프로필" right="자동 병합 · 출처 표기" />
+              {/* 기본 속성 칩 — 성별 · 장애 정도 · 보훈 · 장기요양 */}
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {[
+                  [`${ELDER_TAGS.김순자.sex} · ${ELDER_TAGS.김순자.age}세`, TAG_TONE.sex],
+                  [ELDER_TAGS.김순자.disability, TAG_TONE.disability],
+                  [ELDER_TAGS.김순자.veteran, TAG_TONE.veteran],
+                  [ELDER_TAGS.김순자.ltc, TAG_TONE.ltc],
+                ]
+                  .filter(([v]) => v)
+                  .map(([v, tone]) => (
+                    <span key={v} className="rounded-md px-2 py-1 text-[11px] font-bold" style={{ color: tone.fg, background: tone.bg }}>
+                      {v}
+                    </span>
+                  ))}
+              </div>
               <div className="mt-3 overflow-x-auto">
                 <table className="w-full min-w-[320px] text-left text-[12px]">
                   <thead>

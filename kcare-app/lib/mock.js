@@ -2231,3 +2231,29 @@ export const AR_ITEMS = [
   { k: "급여 청구 보류", v: "2건 · 418만", note: "한도 초과 자동 보류 — 자격·한도 사전 검증 대상", tone: "warn", act: "공단 재청구 준비" },
   { k: "제휴 미수금", v: "1건 · 140만", note: "병원 연계 수수료 — 계약 구조 전환 전까지 수취 중단", tone: "bad", act: "수취 중단 유지 (C4)" },
 ];
+
+// ════ 어르신 기본 속성 — 성별 · 장애 정도 · 보훈 · 장기요양등급 ════
+// 표기 원칙: 장애등급제 폐지(2019) 이후 법령 표기를 따른다 —
+// "장애의 정도가 심한 장애인 / 심하지 않은 장애인" (구 1~6급 표기 금지).
+// 장애·보훈은 민감정보(S1/S2) — 케어 수행에 필요한 범위만 칩으로 표시하고 열람은 기록된다.
+export const ELDER_TAGS = {
+  김순자: { sex: "여", age: 78, disability: "심한 장애 (지체)", veteran: null, ltc: "장기요양 3등급",
+    care: "휠체어 이송 · 계단 동선 확인 · 활동지원 병행" },
+  이영호: { sex: "남", age: 81, disability: null, veteran: "국가유공자 (참전)", ltc: "장기요양 4등급",
+    care: "보훈병원 우선 이용 · 보훈 감면 대상 안내" },
+  박말순: { sex: "여", age: 83, disability: "심하지 않은 장애 (청각)", veteran: null, ltc: "장기요양 2등급",
+    care: "필담 카드 · 정면에서 천천히 말하기" },
+  한복자: { sex: "여", age: 79, disability: "심한 장애 (신장)", veteran: null, ltc: "장기요양 3등급",
+    care: "주 3회 투석 동행 · 투석 자격자 배차 필수" },
+  오태식: { sex: "남", age: 77, disability: null, veteran: "보훈보상대상자 유족", ltc: "인지지원등급",
+    care: "보훈 감면 · 검진 대행 이용" },
+  최정자: { sex: "여", age: 75, disability: null, veteran: null, ltc: "장기요양 4등급",
+    care: "투석 다음날 탈수 주의" },
+};
+// 칩 톤 — 한눈에 구분 (빨강은 SOS 전용이므로 장애는 앰버 계열 사용)
+export const TAG_TONE = {
+  sex: { fg: "#0A1F3C", bg: "rgba(10,31,60,.06)" },
+  disability: { fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
+  veteran: { fg: "#7A5C28", bg: "rgba(176,141,87,.18)" },
+  ltc: { fg: "#1B7F79", bg: "rgba(27,127,121,.1)" },
+};
