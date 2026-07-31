@@ -1940,23 +1940,22 @@ export const SEC_STATUS = [
 // ════ 경영 · 대시보드 (전체 포괄) — 섹션 요약 점프 카드 ════
 export const EXEC_OVERVIEW = [
   { menu: "branches", label: "지점 현황", headline: "운영 4 · 오픈 준비 1", sub: "페어 준수 100% · SOS 0 (주)" },
-  { menu: "strategy", label: "전략 · OKR", headline: "Q3 진척 58%", sub: "규제 O4 지연 — 의료법 전환 착수 필요" },
-  { menu: "growth", label: "그로스 · 바이럴", headline: "K-factor 0.42", sub: "LTV/CAC 14.7x · 루프 병목은 초대 발송" },
-  { menu: "staff", label: "컨시어지 분석", headline: "평점 4.8 · 유지 87%", sub: "코칭 대상 4명 · 현장의 소리 답변률 100%" },
   { menu: "staffmgmt", label: "인원 관리", headline: "전체 46명", sub: "채용 정체 23명 — 신원 조회 5건 최대" },
-  { menu: "family", label: "보호자 · 가구", headline: "128가구 · NPS 62", sub: "부보호자 열람 64% — 주의 신호" },
+  { menu: "staff", label: "컨시어지 분석", headline: "평점 4.8 · 유지 87%", sub: "코칭 대상 4명 · 이탈 위험 1명" },
   { menu: "crm", label: "CRM · 라이프사이클", headline: "퍼널 정체 26건", sub: "결제 단계 6건 — 최대 이탈 구간" },
-  { menu: "cs", label: "CS · 마케팅", headline: "회복 콜 24h 내 92%", sub: "문의 1위 바우처 대행 — 기능화 완료" },
-  { menu: "roster", label: "명부", headline: "4종 통합", sub: "최근 1개월 신규 등록 5건" },
-  { menu: "care", label: "케어 성과", headline: "동행 정시율 91%", sub: "SOS 오인율 0 · 야간 공백 3건" },
+  { menu: "cs", label: "CS · 문의", headline: "회복 콜 24h 내 92%", sub: "문의 1위 바우처 대행 — 기능화 완료" },
+  { menu: "family", label: "보호자 · 가구", headline: "128가구 · NPS 62", sub: "부보호자 열람 64% — 주의 신호" },
+  { menu: "growth", label: "그로스 · 바이럴", headline: "K-factor 0.42", sub: "LTV/CAC 14.7x · 병목은 초대 발송" },
   { menu: "pricing", label: "가격 · 상품", headline: "ARPU 70만", sub: "가입비 미확정 — 퍼널 최대 병목" },
+  { menu: "cash", label: "자금 흐름", headline: "순현금 +2,340만", sub: "유입 1.42억 · 미수 870만" },
+  { menu: "pl", label: "예산 · 손익", headline: "영업이익 2,340만", sub: "GPM 29.4% — 목표 32% 미달" },
+  { menu: "care", label: "케어 성과", headline: "동행 정시율 91%", sub: "SOS 오인율 0 · 야간 공백 3건" },
   { menu: "partners", label: "파트너 · 제휴", headline: "제휴 18곳", sub: "병원 연계 구조 전환 1건 (C4)" },
   { menu: "product", label: "제품 · 로드맵", headline: "v1.1 개발 중", sub: "결제·정산 자동화 38% — 최우선" },
-  { menu: "pl", label: "예산 · 손익", headline: "영업이익 2,340만", sub: "GPM 29.4% — 목표 32% 미달" },
-  { menu: "cash", label: "자금 흐름", headline: "순현금 +2,340만", sub: "유입 1.42억 · 유출 1.19억 · 미수 870만" },
-  { menu: "biz", label: "수익 · 리스크", headline: "수익원 22종", sub: "구현 커버리지 · 코호트 리텐션" },
+  { menu: "strategy", label: "전략 · OKR", headline: "Q3 진척 58%", sub: "규제 O4 지연 — 의료법 전환 착수" },
   { menu: "risk", label: "리스크 · 컴플라이언스", headline: "CRITICAL 4 · 미완화 5", sub: "의료법 27조 3항 시정이 최우선" },
   { menu: "security", label: "보안 · 데이터", headline: "분류 4등급 · 공개 100%", sub: "실서버 전환은 Supabase 로드맵" },
+  { menu: "roster", label: "명부", headline: "4종 통합", sub: "최근 1개월 신규 등록 5건" },
 ];
 
 // ════ 경영 · CRM 퍼널 정체 보드 — 최근 90일 코호트 · 단계 클릭 → 정체 가구 대응 ════
@@ -2509,3 +2508,34 @@ export const SCENARIOS = [
   { k: "낙관 (Bull)", homes: "280가구", rev: "월 3.1억", op: "+6,800만", runway: "24개월+", note: "K-factor 0.6 달성 · 급여사업 조기 진입", tone: "ok" },
   { k: "비관 (Bear)", homes: "160가구", rev: "월 1.7억", op: "+400만", runway: "9개월", note: "채용 실패로 확장 정체 · 규제 지연", tone: "bad" },
 ];
+
+// ════ 경영 · 이번 주 챙길 일 (전 섹션 긴급 항목 통합) ════
+// 방대한 섹션을 다 돌지 않아도 "지금 손대야 할 것"만 대시보드에서 본다.
+// urgency: now(이번 주) · soon(2주 내) · watch(관찰)
+export const EXEC_PRIORITY = [
+  { u: "now", k: "의료법 27조 3항 계약 구조 전환", why: "병원 연계 수수료가 알선으로 해석될 위험 · 형사 리스크 (C4)",
+    who: "법무 · 제휴", menu: "risk", label: "리스크 · 컴플라이언스" },
+  { u: "now", k: "가입비 정책 확정 (12~15만)", why: "결제 단계 −18% 이탈의 직접 원인 · 퍼널 최대 병목",
+    who: "경영 · 의사결정", menu: "pricing", label: "가격 · 상품" },
+  { u: "now", k: "자격 만료 임박 2명 · 배차 제한 예정", why: "정민호 요양보호사 D-30 · 오하늘 BLS 갱신 — 배차 게이트 작동",
+    who: "지점장", menu: "staffmgmt", label: "인원 관리" },
+  { u: "now", k: "신원 조회 정체 5명 (최대 11일)", why: "외부 기관 회신 지연 — 일산 오픈 인력 12명 목표에 직결",
+    who: "채용 담당", menu: "staffmgmt", label: "인원 관리" },
+  { u: "soon", k: "결제 실패 6가구 · 312만", why: "카드 만료 3 · 잔액 부족 2 · 해외 카드 1 — 이탈 신호와 동일 건",
+    who: "CS팀", menu: "crm", label: "CRM · 라이프사이클" },
+  { u: "soon", k: "송파·마포 수급 갭 (화·목 0.8)", why: "배차 실패 구간 · 크로스 지원으로 임시 대응 중",
+    who: "운영총괄", menu: "branches", label: "지점 현황" },
+  { u: "soon", k: "PIA(개인정보 영향평가) 8월 진행", why: "완료 전에는 실명 데이터 투입 불가 — 실서버 전환 게이트",
+    who: "CPO", menu: "security", label: "보안 · 데이터" },
+  { u: "watch", k: "GPM 29.4% (목표 32%)", why: "티어2 역마진 · 크로스 지원 이동 수당 상승",
+    who: "재무", menu: "pl", label: "예산 · 손익" },
+  { u: "watch", k: "바이럴 루프 병목 — 초대 발송 52%", why: "추천 의향 79가구 대비 실제 발송 41건",
+    who: "그로스", menu: "growth", label: "그로스 · 바이럴" },
+  { u: "watch", k: "오하늘 이탈 위험 82점", why: "가동률 34% · 컴플레인 2건 · '지쳐요' 체크인 교차",
+    who: "박성호 지점장", menu: "staff", label: "컨시어지 분석" },
+];
+export const PRIORITY_TONE = {
+  now: { label: "이번 주", fg: "#C0392B", bg: "rgba(192,57,43,.1)" },
+  soon: { label: "2주 내", fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
+  watch: { label: "관찰", fg: "#5C5A54", bg: "rgba(10,31,60,.06)" },
+};

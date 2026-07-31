@@ -141,6 +141,8 @@ import {
   PL_ROWS,
   BUDGET_ALERTS,
   SCENARIOS,
+  EXEC_PRIORITY,
+  PRIORITY_TONE,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -166,41 +168,41 @@ const LEVEL_STYLE = {
 
 // 좌측 GNB — 섹션이 늘어나는 구조라 탭 대신 사이드 내비 (모바일은 가로 칩)
 // 좌측 GNB — 그룹으로 묶어 17개 섹션을 탐색 가능하게
+// 좌측 GNB — 긴급도·확인 빈도 순 (매일 → 주간 → 월간 → 분기). 그룹 라벨에 주기를 표기해
+// "지금 봐야 할 것"이 위에 오도록 정렬한다. 4번째 값 true = 숨김(코드는 유지).
 const MENU_GROUPS = [
-  ["총괄", [
+  ["매일", [
     ["dash", "대시보드", "home"],
     ["branches", "지점 현황", "pin"],
   ]],
-  ["성장 · 고객", [
-    ["strategy", "전략 · OKR", "target"],
+  ["주간 · 사람", [
+    ["staffmgmt", "인원 관리", "user"],
+    ["staff", "컨시어지 분석", "heart"],
+  ]],
+  ["주간 · 고객", [
+    ["crm", "CRM · 라이프사이클", "activity"],
+    ["cs", "CS · 문의", "megaphone"],
+    ["family", "보호자 · 가구", "users"],
+  ]],
+  ["월간 · 성장 · 돈", [
     ["growth", "그로스 · 바이럴", "trend"],
     ["pricing", "가격 · 상품", "bag"],
-    ["family", "보호자 · 가구", "users"],
-    ["crm", "CRM · 라이프사이클", "activity"],
-    ["cs", "CS · 마케팅", "megaphone"],
-  ]],
-  ["제휴 · 공공", [
-    ["partners", "파트너 · 제휴", "diamond"],
-  ]],
-  ["사람", [
-    ["staff", "컨시어지 분석", "heart"],
-    ["staffmgmt", "인원 관리", "user"],
-    ["roster", "명부", "doc"],
-  ]],
-  ["운영 · 제품", [
-    ["care", "케어 성과", "plus"],
-    ["product", "제품 · 로드맵", "box"],
-  ]],
-  ["재무", [
     ["cash", "자금 흐름", "coin"],
     ["pl", "예산 · 손익", "chart"],
-    ["biz", "수익 · 리스크", "wave"],
-    // 투자 · IR — 현재 비공개(시연 제외). 4번째 값 true = 사이드바 숨김, 섹션 코드는 유지
-    ["ir", "투자 · IR", "chart", true],
   ]],
-  ["거버넌스", [
+  ["월간 · 품질 · 제휴", [
+    ["care", "케어 성과", "plus"],
+    ["partners", "파트너 · 제휴", "diamond"],
+    ["product", "제품 · 로드맵", "box"],
+  ]],
+  ["분기 · 전략 · 거버넌스", [
+    ["strategy", "전략 · OKR", "target"],
     ["risk", "리스크 · 컴플라이언스", "alert"],
     ["security", "보안 · 데이터", "shield"],
+  ]],
+  ["상시 조회", [
+    ["roster", "명부", "doc"],
+    ["ir", "투자 · IR", "chart", true],
   ]],
 ];
 const MENUS = MENU_GROUPS.flatMap(([, items]) => items);
@@ -399,6 +401,41 @@ export default function AdminConsole() {
                 이 화면은 집계만 봅니다. 개별 SOS · 사건은 관제 소관이며 실시간 티커를 두지 않습니다 —
                 경영이 개별 사건에 개입하지 않기 위한 설계입니다.
               </p>
+              {/* 이번 주 챙길 일 — 전 섹션 긴급 항목을 한 곳에 (긴급도 순) */}
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="이번 주 챙길 일"
+                  right={<span className="text-[12px] text-muted">전 섹션 긴급 항목 통합 · 클릭하면 해당 섹션으로</span>}
+                />
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {["now", "soon", "watch"].map((u) => (
+                    <span key={u} className="rounded-full px-2.5 py-1 text-[11px] font-bold" style={{ color: PRIORITY_TONE[u].fg, background: PRIORITY_TONE[u].bg }}>
+                      {PRIORITY_TONE[u].label} {EXEC_PRIORITY.filter((x) => x.u === u).length}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-3 space-y-1.5">
+                  {EXEC_PRIORITY.map((x) => (
+                    <button
+                      key={x.k}
+                      onClick={() => setTab(x.menu)}
+                      className="btn-press flex w-full flex-wrap items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5 text-left hover:bg-navy/[.03]"
+                    >
+                      <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: PRIORITY_TONE[x.u].fg, background: PRIORITY_TONE[x.u].bg }}>
+                        {PRIORITY_TONE[x.u].label}
+                      </span>
+                      <span className="text-[13px] font-bold text-navy">{x.k}</span>
+                      <span className="min-w-0 flex-1 text-[12px] leading-[1.5] text-muted">{x.why}</span>
+                      <span className="shrink-0 text-[11px] font-bold text-muted">{x.who}</span>
+                      <span className="shrink-0 text-[11px] font-bold text-gold">{x.label} →</span>
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  좌측 메뉴는 확인 주기 순입니다 — 매일(대시보드 · 지점) → 주간(사람 · 고객) → 월간(성장 · 돈 · 품질) → 분기(전략 · 거버넌스).
+                </p>
+              </Panel>
+
           {/* 사람 KPI — 대시보드 전용 (섹션 반복 제거) */}
           <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
             {PEOPLE_KPIS.map((k) => (
@@ -1733,19 +1770,6 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
-              <Panel className="min-w-0">
-                <PanelHead title="멤버십 구성 · 옵션 부착" right={<PendingTag>가입비 12 – 15만 · 미확정</PendingTag>} />
-                <div className="mt-3 space-y-3">
-                  {MEMBERSHIP_MIX.map((m) => (
-                    <BarRow key={m.k} label={m.k} value={`${m.n}가구`} w={m.w} color="#B08D57" />
-                  ))}
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-2 border-t border-navy/[.08] pt-3">
-                  {OPTION_ATTACH.map((o) => (
-                    <StatTile key={o.k} k={o.k} v={o.v} note={o.note} />
-                  ))}
-                </div>
-              </Panel>
 
               <Panel className="min-w-0">
                 <PanelHead
@@ -1999,32 +2023,9 @@ export default function AdminConsole() {
                 </p>
               </Panel>
 
-              <Panel className="min-w-0">
-                <PanelHead title="유입 채널" right={<span className="text-[12px] text-muted">최근 90일 가입 기준</span>} />
-                <div className="mt-3 space-y-2.5">
-                  {MKT_CHANNELS.map((m) => (
-                    <div key={m.k} className="flex items-baseline gap-3 border-t border-navy/[.06] pt-2.5 first:border-t-0 first:pt-0">
-                      <span className="text-[13px] font-bold text-navy">{m.k}</span>
-                      <span className="ml-auto font-num text-[17px] font-bold" style={{ color: m.color }}>
-                        {m.v}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-2 space-y-1">
-                  {MKT_CHANNELS.map((m) => (
-                    <div key={m.k} className="text-[11px] text-muted">
-                      · {m.k} — {m.note}
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                  추천이 최고의 마케팅입니다 — NPS 추천군(9–10)의 초대 링크가 유입 1위 · 획득 비용 0원.
-                </p>
-              </Panel>
 
               <Panel className="min-w-0">
-                <PanelHead title="마케팅 운영 원칙" right={<span className="text-[12px] text-muted">심의 · 규정</span>} />
+                <PanelHead title="마케팅 운영 원칙" right={<span className="text-[12px] text-muted">심의 · 규정 · 유입 채널은 그로스 섹션</span>} />
                 <p className="mt-3 rounded-xl border border-navy/[.08] bg-white/60 px-4 py-3 text-[13px] leading-[1.75] text-ink">
                   {MKT_RULES}
                 </p>
@@ -2200,16 +2201,24 @@ export default function AdminConsole() {
               </Panel>
 
               <Panel className="min-w-0">
-                <PanelHead title={<>신뢰 거버넌스 — 해자<HelpTip term="해자" /></>} right={<span className="text-[12px] text-muted">신뢰는 기능이 아니라 구조</span>} />
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  {TRUST_METRICS.map((t) => (
-                    <StatTile key={t.k} k={t.k} v={t.v} note={t.note} />
+                <PanelHead title={<>SLA 집계<HelpTip term="SLA" /></>} right={<span className="text-[12px] text-muted">개별 사건 비노출 · 집계만</span>} />
+                <div className="mt-3 space-y-3">
+                  {ADMIN_SLA.map((s) => (
+                    <div
+                      key={s.name}
+                      className="flex items-baseline justify-between gap-3 border-t border-navy/[.06] pt-3 first:border-t-0 first:pt-0"
+                    >
+                      <div>
+                        <div className="text-[15px] font-bold text-navy">{s.name}</div>
+                        <div className="mt-0.5 text-[11px] text-muted">{s.note}</div>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <span className="font-num text-[20px] font-bold text-green">{s.current}</span>
+                        <span className="ml-1.5 font-num text-[12px] text-muted/70">/ {s.target}</span>
+                      </div>
+                    </div>
                   ))}
                 </div>
-                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                  경쟁이 따라오기 어려운 것은 화면이 아니라 이 숫자들입니다 — 동의 · 접근 공개 · 민감정보
-                  게이팅은 처음부터 설계에 박혀 있습니다.
-                </p>
               </Panel>
             </div>
           )}
@@ -2280,6 +2289,66 @@ export default function AdminConsole() {
                   </div>
                 </Panel>
               </div>
+
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="수익원 22종 커버리지"
+                  right={
+                    <span className="flex gap-3 text-[11px] font-bold">
+                      {Object.entries(STREAM_STATUS).map(([k, v]) => (
+                        <span key={k} className="flex items-center gap-1 text-muted">
+                          <span className="h-[8px] w-[8px] rounded-full" style={{ background: v.color }} />
+                          {v.label} {counts[k] || 0}
+                        </span>
+                      ))}
+                    </span>
+                  }
+                />
+                <div className="mt-3 grid gap-1.5" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
+                  {REVENUE_STREAMS.map((s) => (
+                    <div
+                      key={s.no}
+                      className="flex items-center gap-2 rounded-lg border border-navy/[.08] bg-elder px-2.5 py-2"
+                    >
+                      <span
+                        className="h-[8px] w-[8px] shrink-0 rounded-full"
+                        style={{ background: STREAM_STATUS[s.status].color }}
+                      />
+                      <span className="font-num text-[11px] font-bold text-muted/70">{s.no}</span>
+                      <span className="truncate text-[12px] font-medium text-ink">{s.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+
+              {/* ── 코호트 리텐션 ── */}
+              <Panel>
+                <PanelHead title={<>코호트 리텐션<HelpTip term="코호트" /><HelpTip term="LTV" /></>} right={<PendingTag>목 수치 · LTV 산정 방식 미확정</PendingTag>} />
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[520px] text-left">
+                    <thead>
+                      <tr className="whitespace-nowrap text-[11px] font-bold tracking-[.1em] text-muted">
+                        <th className="pb-2 pr-4 font-bold">가입 월</th>
+                        <th className="pb-2 pr-4 font-bold">M1</th>
+                        <th className="pb-2 pr-4 font-bold">M3</th>
+                        <th className="pb-2 pr-4 font-bold">M6</th>
+                        <th className="pb-2 font-bold">LTV</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ADMIN_COHORTS.map((c) => (
+                        <tr key={c.month} className="whitespace-nowrap border-t border-navy/[.08] text-[13px]">
+                          <td className="py-2.5 pr-4 font-bold text-navy">{c.month}</td>
+                          <td className="py-2.5 pr-4 font-num font-bold text-green">{c.m1}</td>
+                          <td className="py-2.5 pr-4 font-num text-ink">{c.m3}</td>
+                          <td className="py-2.5 pr-4 font-num text-ink">{c.m6}</td>
+                          <td className="py-2.5 font-num text-ink">{c.ltv}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Panel>
             </div>
           )}
 
@@ -2796,202 +2865,6 @@ export default function AdminConsole() {
           )}
 
           {/* ════ 수익 · 리스크 — 기존 총괄 뷰 ════ */}
-          {tab === "biz" && (
-            <>
-              <Panel>
-                <PanelHead
-                  title="수익원 22종 커버리지"
-                  right={
-                    <span className="flex gap-3 text-[11px] font-bold">
-                      {Object.entries(STREAM_STATUS).map(([k, v]) => (
-                        <span key={k} className="flex items-center gap-1 text-muted">
-                          <span className="h-[8px] w-[8px] rounded-full" style={{ background: v.color }} />
-                          {v.label} {counts[k] || 0}
-                        </span>
-                      ))}
-                    </span>
-                  }
-                />
-                <div className="mt-3 grid gap-1.5" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
-                  {REVENUE_STREAMS.map((s) => (
-                    <div
-                      key={s.no}
-                      className="flex items-center gap-2 rounded-lg border border-navy/[.08] bg-elder px-2.5 py-2"
-                    >
-                      <span
-                        className="h-[8px] w-[8px] shrink-0 rounded-full"
-                        style={{ background: STREAM_STATUS[s.status].color }}
-                      />
-                      <span className="font-num text-[11px] font-bold text-muted/70">{s.no}</span>
-                      <span className="truncate text-[12px] font-medium text-ink">{s.name}</span>
-                    </div>
-                  ))}
-                </div>
-              </Panel>
-
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
-                {/* ── 수익 예측 ── */}
-                <Panel>
-                  <PanelHead title="수익 예측 (월)" right={<PendingTag>목 수치 · 실데이터 연동 대기</PendingTag>} />
-                  <div className="mt-3 space-y-3">
-                    {REVENUE_FORECAST.map((f) => (
-                      <div key={f.name}>
-                        <div className="flex items-baseline justify-between gap-2 text-[13px]">
-                          <span className="font-bold text-navy">{f.name}</span>
-                          <span className="flex items-center gap-2">
-                            <span className="font-num font-bold text-navy">{f.amount}</span>
-                            <span className="rounded-full bg-navy/[.06] px-2 py-[2px] text-[10px] font-bold text-amber">
-                              {f.phase}
-                            </span>
-                          </span>
-                        </div>
-                        <div className="mt-1.5 h-[5px] overflow-hidden rounded-full bg-navy/[.08]">
-                          <div className="h-full rounded-full bg-gold" style={{ width: `${f.pct}%` }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {/* 급여 사업 평가 규칙 — 단독 마진 뷰 금지 */}
-                  <p className="mt-4 border-t border-navy/[.08] pt-3 text-[11px] leading-[1.7] text-muted">
-                    재가급여(12)는 단독 마진으로 평가하지 않습니다 — 13.4% 마진은 의도값이며 KPI는 12개월
-                    누적 기여입니다.
-                  </p>
-                </Panel>
-
-                {/* ── SLA 집계 ── */}
-                <Panel>
-                  <PanelHead title={<>SLA 집계<HelpTip term="SLA" /></>} right={<span className="text-[12px] text-muted">개별 사건 비노출 · 집계만</span>} />
-                  <div className="mt-3 space-y-3">
-                    {ADMIN_SLA.map((s) => (
-                      <div
-                        key={s.name}
-                        className="flex items-baseline justify-between gap-3 border-t border-navy/[.06] pt-3 first:border-t-0 first:pt-0"
-                      >
-                        <div>
-                          <div className="text-[15px] font-bold text-navy">{s.name}</div>
-                          <div className="mt-0.5 text-[11px] text-muted">{s.note}</div>
-                        </div>
-                        <div className="shrink-0 text-right">
-                          <span className="font-num text-[20px] font-bold text-green">{s.current}</span>
-                          <span className="ml-1.5 font-num text-[12px] text-muted/70">/ {s.target}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </Panel>
-
-                {/* ── 규칙 성능 ── */}
-                <Panel>
-                  <PanelHead title="알림 규칙 성능" />
-                  <div className="mt-3 space-y-3">
-                    {RULE_PERF.map((r) => {
-                      const banned = r.policy.includes("금지");
-                      return (
-                        <div key={r.name} className="border-t border-navy/[.06] pt-3 first:border-t-0 first:pt-0">
-                          <div className="text-[13px] font-bold text-navy">{r.name}</div>
-                          <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-muted">
-                            <span>
-                              발동 <span className="font-num font-bold text-ink">{r.fired}</span>
-                            </span>
-                            <span>
-                              실제 <span className="font-num font-bold text-ink">{r.real}</span>
-                            </span>
-                            <span>
-                              오탐률{" "}
-                              <span className="font-num font-bold" style={{ color: banned ? "#C0392B" : "#1E7A5A" }}>
-                                {r.falseRate}
-                              </span>
-                            </span>
-                            <span
-                              className="rounded-full px-2 py-[2px] text-[10px] font-bold"
-                              style={
-                                banned
-                                  ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
-                                  : { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
-                              }
-                            >
-                              {r.policy}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <p className="mt-3 border-t border-navy/[.08] pt-2 text-[11px] font-bold text-muted">
-                    오탐률 30%를 넘는 단독 규칙은 발송 금지 — 임계값 조정은 이 화면의 유일한 개입입니다.
-                  </p>
-                </Panel>
-
-                {/* ── 리스크 요약 — 01-domain-rules.md와 단일 출처 ── */}
-                <Panel>
-                  <PanelHead
-                    title="리스크 요약"
-                    right={
-                      <span className="flex gap-2 text-[12px] font-bold">
-                        <span className="rounded-full bg-[rgba(192,57,43,.1)] px-2.5 py-1 text-danger">
-                          CRITICAL {ADMIN_RISKS.critical}
-                        </span>
-                        <span className="rounded-full bg-[rgba(138,93,18,.1)] px-2.5 py-1 text-amber">
-                          HIGH {ADMIN_RISKS.high}
-                        </span>
-                      </span>
-                    }
-                  />
-                  <div className="mt-3 space-y-2.5">
-                    {ADMIN_RISKS.top.map((r) => (
-                      <div key={r.name} className="flex gap-2.5 border-t border-navy/[.06] pt-2.5 first:border-t-0 first:pt-0">
-                        <span
-                          className="mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md text-[11px] font-bold"
-                          style={
-                            r.grade === "C"
-                              ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
-                              : { color: "#8A5D12", background: "rgba(138,93,18,.1)" }
-                          }
-                        >
-                          {r.grade}
-                        </span>
-                        <div>
-                          <div className="text-[13px] font-bold text-navy">{r.name}</div>
-                          <div className="mt-0.5 text-[12px] text-muted">{r.action}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </Panel>
-              </div>
-
-              {/* ── 코호트 리텐션 ── */}
-              <Panel>
-                <PanelHead title={<>코호트 리텐션<HelpTip term="코호트" /><HelpTip term="LTV" /></>} right={<PendingTag>목 수치 · LTV 산정 방식 미확정</PendingTag>} />
-                <div className="mt-3 overflow-x-auto">
-                  <table className="w-full min-w-[520px] text-left">
-                    <thead>
-                      <tr className="whitespace-nowrap text-[11px] font-bold tracking-[.1em] text-muted">
-                        <th className="pb-2 pr-4 font-bold">가입 월</th>
-                        <th className="pb-2 pr-4 font-bold">M1</th>
-                        <th className="pb-2 pr-4 font-bold">M3</th>
-                        <th className="pb-2 pr-4 font-bold">M6</th>
-                        <th className="pb-2 font-bold">LTV</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ADMIN_COHORTS.map((c) => (
-                        <tr key={c.month} className="whitespace-nowrap border-t border-navy/[.08] text-[13px]">
-                          <td className="py-2.5 pr-4 font-bold text-navy">{c.month}</td>
-                          <td className="py-2.5 pr-4 font-num font-bold text-green">{c.m1}</td>
-                          <td className="py-2.5 pr-4 font-num text-ink">{c.m3}</td>
-                          <td className="py-2.5 pr-4 font-num text-ink">{c.m6}</td>
-                          <td className="py-2.5 font-num text-ink">{c.ltv}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </Panel>
-            </>
-          )}
-
-          {/* ════ 리스크 · 컴플라이언스 — 거버넌스 (무엇이 회사를 멈추게 하는가) ════ */}
           {tab === "risk" && (
             <div className="space-y-4">
               <div>
