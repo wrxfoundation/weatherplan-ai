@@ -129,6 +129,18 @@ import {
   ROUNDS,
   DATAROOM,
   IR_UPDATE,
+  PARTNER_KPIS,
+  PARTNER_PORTFOLIO,
+  B2G_PIPELINE,
+  PARTNER_RULES,
+  PRICING_KPIS,
+  PLANS,
+  OPTIONS_CATALOG,
+  PRICING_DECISIONS,
+  PL_KPIS,
+  PL_ROWS,
+  BUDGET_ALERTS,
+  SCENARIOS,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -162,9 +174,13 @@ const MENU_GROUPS = [
   ["성장 · 고객", [
     ["strategy", "전략 · OKR", "target"],
     ["growth", "그로스 · 바이럴", "trend"],
+    ["pricing", "가격 · 상품", "bag"],
     ["family", "보호자 · 가구", "users"],
     ["crm", "CRM · 라이프사이클", "activity"],
     ["cs", "CS · 마케팅", "megaphone"],
+  ]],
+  ["제휴 · 공공", [
+    ["partners", "파트너 · 제휴", "diamond"],
   ]],
   ["사람", [
     ["staff", "컨시어지 분석", "heart"],
@@ -175,10 +191,12 @@ const MENU_GROUPS = [
     ["care", "케어 성과", "plus"],
     ["product", "제품 · 로드맵", "box"],
   ]],
-  ["재무 · 투자", [
+  ["재무", [
     ["cash", "자금 흐름", "coin"],
-    ["ir", "투자 · IR", "chart"],
-    ["biz", "수익 · 리스크", "diamond"],
+    ["pl", "예산 · 손익", "chart"],
+    ["biz", "수익 · 리스크", "wave"],
+    // 투자 · IR — 현재 비공개(시연 제외). 4번째 값 true = 사이드바 숨김, 섹션 코드는 유지
+    ["ir", "투자 · IR", "chart", true],
   ]],
   ["거버넌스", [
     ["risk", "리스크 · 컴플라이언스", "alert"],
@@ -310,10 +328,11 @@ export default function AdminConsole() {
           </div>
           <nav className="mt-3.5 min-h-0 flex-1 space-y-1.5 overflow-y-auto px-3 pb-3">
             {MENU_GROUPS.map(([group, items]) => (
+              items.every(([, , , hidden]) => hidden) ? null : (
               <div key={group}>
                 <div className="px-3 pb-0.5 pt-1 text-[10px] font-bold tracking-[.14em] text-white/25">{group}</div>
                 <div className="space-y-0.5">
-                  {items.map(([k, label, icon]) => (
+                  {items.filter(([, , , hidden]) => !hidden).map(([k, label, icon]) => (
                     <button
                       key={k}
                       onClick={() => setTab(k)}
@@ -330,6 +349,7 @@ export default function AdminConsole() {
                   ))}
                 </div>
               </div>
+              )
             ))}
           </nav>
           <div className="border-t border-white/10 px-5 py-3">
@@ -355,7 +375,7 @@ export default function AdminConsole() {
 
           {/* 모바일 — 가로 스크롤 칩 (전고 사이드바 대체) */}
               <nav className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
-                {MENUS.map(([k, label]) => (
+                {MENUS.filter(([, , , hidden]) => !hidden).map(([k, label]) => (
                   <button
                     key={k}
                     onClick={() => setTab(k)}
@@ -2191,6 +2211,236 @@ export default function AdminConsole() {
                   게이팅은 처음부터 설계에 박혀 있습니다.
                 </p>
               </Panel>
+            </div>
+          )}
+
+          {/* ════ 가격 · 상품 — 플랜 · 옵션 · 가격 결정 (퍼널 최대 병목 대응) ════ */}
+          {tab === "pricing" && (
+            <div className="space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">경영 / 가격 · 상품</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">가격 · 상품 설계</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  가격은 마케팅이 아니라 약속입니다 — 케어 원가를 감당하지 못하는 가격은 결국 사람을 갈아 넣게 됩니다.
+                </p>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+                {PRICING_KPIS.map((k) => (
+                  <Panel key={k.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[24px] font-bold" style={{ color: k.color }}>{k.v}</div>
+                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              <Panel className="min-w-0">
+                <PanelHead title="멤버십 플랜" right={<span className="text-[12px] text-muted">128가구 구성 · 기업 복지는 미출시</span>} />
+                <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+                  {PLANS.map((pl) => (
+                    <div key={pl.k} className="rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[14px] font-bold text-navy">{pl.k}</span>
+                        <span className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[pl.tone].fg, background: TONE[pl.tone].bg }}>{pl.n}</span>
+                      </div>
+                      <div className="mt-1 font-num text-[22px] font-bold text-navy">{pl.price}</div>
+                      <p className="mt-1 text-[12px] leading-[1.55] text-ink">{pl.inc}</p>
+                      <p className="mt-1 text-[11px] leading-[1.5] text-muted">{pl.who}</p>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+                <Panel className="min-w-0">
+                  <PanelHead title="옵션 카탈로그 · 부착률" right={<span className="text-[12px] text-muted">확장은 가구 수보다 부착률</span>} />
+                  <div className="mt-3 space-y-3">
+                    {OPTIONS_CATALOG.map((o) => (
+                      <BarRow key={o.k} label={`${o.k} · ${o.price}`} value={`${o.attach}%`} w={o.attach * 2} color={o.attach >= 30 ? "#1E7A5A" : "#B08D57"} note={o.note} />
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    유닛 이코노믹스상 가구당 기여이익이 얇아 옵션 부착률이 확장의 실질 지렛대입니다 — 다만 부착률을 컨시어지 평가에 넣지 않습니다 (원칙 1).
+                  </p>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead title="가격 결정 대기" right={<span className="text-[12px] font-bold text-danger">가입비 확정이 최우선</span>} />
+                  <div className="mt-3 space-y-2">
+                    {PRICING_DECISIONS.map((d) => (
+                      <div key={d.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[13px] font-bold text-navy">{d.k}</span>
+                          <span className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[d.tone].fg, background: TONE[d.tone].bg }}>{d.state}</span>
+                        </div>
+                        <div className="mt-1 text-[12px] leading-[1.55] text-muted">배경 — {d.why}</div>
+                        <div className="mt-0.5 text-[12px] font-bold leading-[1.55] text-ink">{d.opt}</div>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+              </div>
+            </div>
+          )}
+
+          {/* ════ 파트너 · 제휴 — 포트폴리오 · B2G 파이프라인 · 원칙 ════ */}
+          {tab === "partners" && (
+            <div className="space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">경영 / 제휴 · 공공</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">파트너 · 제휴</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  제휴는 매출 다각화이자 리스크 유입 경로입니다 — 제휴사 부실은 우리 고객의 피해가 됩니다.
+                </p>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+                {PARTNER_KPIS.map((k) => (
+                  <Panel key={k.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[24px] font-bold" style={{ color: k.color }}>{k.v}</div>
+                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              <Panel className="min-w-0">
+                <PanelHead title="제휴 포트폴리오" right={<span className="text-[12px] text-muted">유형 · 기여 매출 · 상태</span>} />
+                <div className="mt-3 space-y-2">
+                  {PARTNER_PORTFOLIO.map((pp) => (
+                    <div key={pp.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">{pp.type}</span>
+                        <span className="text-[13px] font-bold text-navy">{pp.k}</span>
+                        <span className="ml-auto font-num text-[13px] font-bold text-navy">{pp.rev}</span>
+                        <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[pp.tone].fg, background: TONE[pp.tone].bg }}>{pp.state}</span>
+                      </div>
+                      <div className="mt-1 text-[12px] leading-[1.55] text-muted">{pp.note}</div>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+                <Panel className="min-w-0">
+                  <PanelHead title="B2G · 공공사업 파이프라인" right={<span className="text-[12px] text-muted">지자체 장기 계약 = 대기업 방어선</span>} />
+                  <div className="mt-3 space-y-2">
+                    {B2G_PIPELINE.map((b) => (
+                      <div key={b.k} className="flex flex-wrap items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <span className="text-[13px] font-bold text-navy">{b.k}</span>
+                        <span className="text-[11px] text-muted">{b.org}</span>
+                        <span className="ml-auto shrink-0 font-num text-[11px] font-bold text-amber">{b.due}</span>
+                        <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[b.tone].fg, background: TONE[b.tone].bg }}>{b.state}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead title="제휴 원칙" right={<span className="text-[12px] text-muted">매출보다 먼저 지키는 것</span>} />
+                  <ol className="mt-3 space-y-2">
+                    {PARTNER_RULES.map((r, i) => (
+                      <li key={r} className="flex items-start gap-2.5 text-[12px] leading-[1.65] text-ink">
+                        <span className="mt-[1px] flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-full bg-gold font-num text-[10px] font-bold text-navy">{i + 1}</span>
+                        {r}
+                      </li>
+                    ))}
+                  </ol>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    병원 연계(670만)는 계약 구조 전환 전까지 수취를 중단합니다 — 매출보다 형사 리스크가 큽니다 (C4).
+                  </p>
+                </Panel>
+              </div>
+            </div>
+          )}
+
+          {/* ════ 예산 · 손익 — P&L · 예산 대비 실적 · 시나리오 ════ */}
+          {tab === "pl" && (
+            <div className="space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">경영 / 재무 · 손익</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">예산 · 손익 (P&amp;L)</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  자금 흐름이 현금의 이동이라면, 여기는 벌었는지 잃었는지를 봅니다 — 계획 대비 실적으로.
+                </p>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+                {PL_KPIS.map((k) => (
+                  <Panel key={k.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[24px] font-bold" style={{ color: k.color }}>{k.v}</div>
+                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              <Panel className="min-w-0">
+                <PanelHead title="손익계산 — 계획 대비 실적 (월)" right={<span className="text-[12px] text-muted">차이가 큰 항목이 다음 달 안건</span>} />
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[720px] text-left text-[12px]">
+                    <thead>
+                      <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                        <th className="py-2 pr-4">항목</th>
+                        <th className="py-2 pr-4">계획</th>
+                        <th className="py-2 pr-4">실적</th>
+                        <th className="py-2 pr-4">차이</th>
+                        <th className="py-2">비고</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {PL_ROWS.map((r) => (
+                        <tr key={r.k} className={`border-b border-navy/[.06] ${r.k === "영업이익" || r.k === "매출총이익" ? "bg-navy/[.03]" : ""}`}>
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-bold text-navy">{r.k}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-num text-muted">{r.plan}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-num font-bold text-navy">{r.act}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-num font-bold" style={{ color: TONE[r.tone].fg }}>{r.diff}</td>
+                          <td className="py-2.5 text-[12px] leading-[1.55] text-muted">{r.note}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+                <Panel className="min-w-0">
+                  <PanelHead title="예산 경보" right={<span className="text-[12px] text-muted">이번 달 이슈</span>} />
+                  <div className="mt-3 space-y-2">
+                    {BUDGET_ALERTS.map((a) => (
+                      <div key={a.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[a.tone].fg, background: TONE[a.tone].bg }}>{a.level}</span>
+                          <span className="text-[13px] font-bold text-navy">{a.k}</span>
+                        </div>
+                        <div className="mt-1 text-[12px] leading-[1.55] text-muted">{a.text}</div>
+                        <div className="mt-0.5 text-[12px] font-bold leading-[1.55] text-ink">→ {a.act}</div>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead title="시나리오 — 12개월 후" right={<span className="text-[12px] text-muted">확장 속도는 채용이 정한다</span>} />
+                  <div className="mt-3 space-y-2">
+                    {SCENARIOS.map((sc) => (
+                      <div key={sc.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[13px] font-bold" style={{ color: TONE[sc.tone].fg }}>{sc.k}</span>
+                          <span className="ml-auto font-num text-[12px] font-bold text-navy">{sc.homes}</span>
+                        </div>
+                        <div className="mt-1 flex flex-wrap gap-x-4 text-[12px]">
+                          <span className="text-muted">매출 <b className="font-num text-ink">{sc.rev}</b></span>
+                          <span className="text-muted">영업이익 <b className="font-num text-ink">{sc.op}</b></span>
+                          <span className="text-muted">런웨이 <b className="font-num text-ink">{sc.runway}</b></span>
+                        </div>
+                        <div className="mt-0.5 text-[11px] leading-[1.5] text-muted">{sc.note}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    비관 시나리오의 원인은 시장이 아니라 채용입니다 — 인력 수급이 성장 상한이라는 구조가 여기서도 확인됩니다.
+                  </p>
+                </Panel>
+              </div>
             </div>
           )}
 

@@ -1949,9 +1949,11 @@ export const EXEC_OVERVIEW = [
   { menu: "cs", label: "CS · 마케팅", headline: "회복 콜 24h 내 92%", sub: "문의 1위 바우처 대행 — 기능화 완료" },
   { menu: "roster", label: "명부", headline: "4종 통합", sub: "최근 1개월 신규 등록 5건" },
   { menu: "care", label: "케어 성과", headline: "동행 정시율 91%", sub: "SOS 오인율 0 · 야간 공백 3건" },
+  { menu: "pricing", label: "가격 · 상품", headline: "ARPU 70만", sub: "가입비 미확정 — 퍼널 최대 병목" },
+  { menu: "partners", label: "파트너 · 제휴", headline: "제휴 18곳", sub: "병원 연계 구조 전환 1건 (C4)" },
   { menu: "product", label: "제품 · 로드맵", headline: "v1.1 개발 중", sub: "결제·정산 자동화 38% — 최우선" },
+  { menu: "pl", label: "예산 · 손익", headline: "영업이익 2,340만", sub: "GPM 29.4% — 목표 32% 미달" },
   { menu: "cash", label: "자금 흐름", headline: "순현금 +2,340만", sub: "유입 1.42억 · 유출 1.19억 · 미수 870만" },
-  { menu: "ir", label: "투자 · IR", headline: "런웨이 14개월", sub: "Pre-A 준비 · 데이터룸 미비 1건" },
   { menu: "biz", label: "수익 · 리스크", headline: "수익원 22종", sub: "구현 커버리지 · 코호트 리텐션" },
   { menu: "risk", label: "리스크 · 컴플라이언스", headline: "CRITICAL 4 · 미완화 5", sub: "의료법 27조 3항 시정이 최우선" },
   { menu: "security", label: "보안 · 데이터", headline: "분류 4등급 · 공개 100%", sub: "실서버 전환은 Supabase 로드맵" },
@@ -2417,3 +2419,93 @@ export const IR_UPDATE = {
     "요청 사항 (소개 · 채용 · 자문) — 투자자가 도울 수 있는 형태로",
   ],
 };
+
+// ════ 경영 · 파트너 · 제휴 (B2G 포함 · 매출 다각화 축) ════
+export const PARTNER_KPIS = [
+  { k: "제휴 기관", v: "18곳", note: "병원 6 · 요양 5 · 지자체 3 · 기타 4", color: "#0A1F3C" },
+  { k: "제휴 기여 매출", v: "월 1,650만", note: "전체 유입의 11.6%", color: "#1E7A5A" },
+  { k: "계약 갱신 임박", v: "3건", note: "90일 내 — 조건 재협의 필요", color: "#8A5D12" },
+  { k: "구조 전환 대상", v: "1건", note: "병원 연계 — 알선 소지 (C4)", color: "#C0392B" },
+];
+export const PARTNER_PORTFOLIO = [
+  { k: "제휴 병원 (6)", type: "의료", rev: "670만", state: "구조 전환", tone: "bad",
+    note: "패스트트랙 · 예약 행정 — 건별 수수료를 월정액 광고·행정 용역으로 전환 필요" },
+  { k: "제휴 요양기관 (5)", type: "인력·유입", rev: "—", state: "운영", tone: "ok",
+    note: "채용 유입 1위 채널(61% 중 상당) · CAC 12만 · 상호 추천" },
+  { k: "지자체 · 복지관 (3)", type: "B2G", rev: "420만", state: "확대", tone: "ok",
+    note: "사회서비스 제공기관 · 바우처 연계 — 장기 계약이 대기업 방어선" },
+  { k: "보험 GA (준비)", type: "금융", rev: "—", state: "자회사 설립 전", tone: "warn",
+    note: "무자격 모집 금지 — 설계사 자격자만 청약 · 컨시어지는 연결까지" },
+  { k: "복지용구 · 렌탈 (2)", type: "커머스", rev: "310만", state: "운영", tone: "ok",
+    note: "급여 연계 대상 — 사업소 지정 후 확대 (재가급여 후행)" },
+  { k: "상조 · 장례 (2)", type: "생애주기", rev: "250만", state: "실사 중", tone: "warn",
+    note: "선수금 50% 예치 확인된 업체만 · 반기 재무 실사 (H5)" },
+];
+export const B2G_PIPELINE = [
+  { k: "사회서비스 제공기관 등록", org: "강남구", state: "운영 중", due: "11월 갱신", tone: "ok" },
+  { k: "노인맞춤돌봄 수행기관 공모", org: "송파구", state: "제안서 준비", due: "9월 마감", tone: "warn" },
+  { k: "장기요양기관 지정 신청", org: "보건복지부", state: "경영 결정 대기", due: "내년 3월", tone: "warn" },
+  { k: "AI 돌봄 실증사업", org: "서울시", state: "컨소시엄 협의", due: "10월 접수", tone: "info" },
+  { k: "고독사 예방 안부확인 위탁", org: "마포구", state: "검토", due: "미정", tone: "info" },
+];
+export const PARTNER_RULES = [
+  "환자 소개 대가는 받지 않는다 — 광고·행정 용역 계약으로만 (의료법 27조 3항)",
+  "어르신에게 선택지를 2곳 이상 제시하고 선택 근거를 기록한다 (유도 정황 차단)",
+  "제휴사 부실은 우리 고객 피해로 이어진다 — 상조·렌탈은 반기 재무 실사 필수",
+  "지자체 계약은 단가보다 지속성 — 낮은 마진이라도 장기 계약이 해자가 된다",
+];
+
+// ════ 경영 · 가격 · 상품 (Pricing & Packaging) ════
+export const PRICING_KPIS = [
+  { k: "평균 객단가 (ARPU)", v: "70만", note: "월 · 옵션 포함", color: "#0A1F3C" },
+  { k: "옵션 부착률", v: "22%", note: "야간 출동 · 추가 동행", color: "#8A5D12" },
+  { k: "가입비 정책", v: "미확정", note: "12~15만 · 퍼널 최대 병목", color: "#C0392B" },
+  { k: "가격 인상 여력", v: "+8%", note: "NPS 62 · 이탈 민감도 낮은 구간", color: "#1E7A5A" },
+];
+export const PLANS = [
+  { k: "베이직", price: "39만", inc: "월 안부콜 4 · 연 2회 동행 · 리포트", who: "원거리 가족 · 저빈도", n: "—", tone: "info" },
+  { k: "티어1 (표준)", price: "68만", inc: "월 동행 2회 · 안부콜 주 3 · 케어박스 · 워치", who: "가장 많은 선택 (75%)", n: "96가구", tone: "ok" },
+  { k: "티어2 (집중)", price: "98만", inc: "월 동행 4회 · 투석·재활 대응 · 우선 배차", who: "고난도 케어 필요", n: "32가구", tone: "ok" },
+  { k: "기업 복지 (B2B)", price: "협의", inc: "임직원 부모 케어 — 단체 계약", who: "미출시 — 파일럿 검토", n: "—", tone: "warn" },
+];
+export const OPTIONS_CATALOG = [
+  { k: "야간 출동 옵션", price: "월 12만", attach: 22, note: "야간 공백 3건 → 보증 범위 실질 보완" },
+  { k: "추가 동행 (건당)", price: "9만", attach: 38, note: "티어 초과분 · 가장 높은 부착" },
+  { k: "해외 가족 리포트 번역", price: "월 3만", attach: 9, note: "LA·시드니 가구 대상" },
+  { k: "복지용구 구매대행", price: "수수료 8%", attach: 17, note: "급여 연계 시 본인부담만" },
+  { k: "케어푸드 정기배송", price: "월 14만", attach: 11, note: "식이 제한 프로필 연동" },
+];
+export const PRICING_DECISIONS = [
+  { k: "가입비 12~15만 확정", why: "결제 단계 −18% 이탈의 직접 원인 · CS 문의 3위", opt: "① 15만 유지 ② 12만 인하 ③ 첫 달 유예(체험가)", state: "이번 주 상정", tone: "bad" },
+  { k: "티어2 가격 인상 (+8%)", why: "투석·재활 원가가 티어1 대비 1.4배 · 현재 역마진 구간", opt: "98만 → 106만 · 기존 가구 6개월 유예", state: "검토", tone: "warn" },
+  { k: "기업 복지 상품 출시", why: "B2B 단체 계약은 CAC 0 · 지자체와 다른 축", opt: "파일럿 2개사 → 표준 상품화", state: "구상", tone: "info" },
+  { k: "옵션 번들 (야간+추가동행)", why: "개별 부착률 22%/38% — 번들 시 예상 45%", opt: "월 18만 번들 (개별 대비 −14%)", state: "실험 설계", tone: "info" },
+];
+
+// ════ 경영 · 예산 · 손익 (P&L · 예산 대비 실적) ════
+export const PL_KPIS = [
+  { k: "월 매출", v: "1.42억", note: "예산 1.38억 대비 +2.9%", color: "#1E7A5A" },
+  { k: "매출총이익", v: "4,180만", note: "GPM 29.4% · 목표 32%", color: "#8A5D12" },
+  { k: "영업이익", v: "2,340만", note: "OPM 16.5%", color: "#1E7A5A" },
+  { k: "예산 집행률", v: "86%", note: "누적 · 마케팅 미집행 잔여", color: "#0A1F3C" },
+];
+export const PL_ROWS = [
+  { k: "매출", plan: "1.38억", act: "1.42억", diff: "+2.9%", tone: "ok", note: "가구 +12 · 옵션 부착 상승" },
+  { k: "매출원가 (동행 정산·지분)", plan: "−9,600만", act: "−1.00억", diff: "+4.2%", tone: "warn", note: "크로스 지원 이동 수당 증가" },
+  { k: "매출총이익", plan: "4,200만", act: "4,180만", diff: "−0.5%", tone: "warn", note: "GPM 29.4% (목표 32%)" },
+  { k: "인건비 (본사·지점장)", plan: "−1,180만", act: "−1,150만", diff: "−2.5%", tone: "ok", note: "일산 지점장 9월 합류" },
+  { k: "지점 운영비", plan: "−520만", act: "−540만", diff: "+3.8%", tone: "warn", note: "일산 오픈 준비 집기" },
+  { k: "마케팅", plan: "−400만", act: "−310만", diff: "−22.5%", tone: "ok", note: "추천 유입 61% — 유료 집행 축소" },
+  { k: "보험·교육·복지", plan: "−160만", act: "−154만", diff: "−3.8%", tone: "ok", note: "계획 내" },
+  { k: "영업이익", plan: "1,940만", act: "2,340만", diff: "+20.6%", tone: "ok", note: "마케팅 미집행 효과 포함" },
+];
+export const BUDGET_ALERTS = [
+  { level: "주의", k: "매출원가율 상승", text: "크로스 지원 이동 수당이 계획 대비 +4.2% — 수급 갭 해소 전까지 지속 전망", act: "일산·송파 채용 완료 시 정상화", tone: "warn" },
+  { level: "정보", k: "마케팅 미집행 890만", text: "추천 유입이 유료 채널을 대체 — 잔여 예산은 채용 브랜딩으로 전용 검토", act: "8월 경영회의 안건", tone: "info" },
+  { level: "주의", k: "GPM 29.4% (목표 32%)", text: "티어2 역마진 구간 — 가격 인상 결정과 연동", act: "가격 · 상품 섹션 참조", tone: "warn" },
+];
+export const SCENARIOS = [
+  { k: "기본 (Base)", homes: "220가구", rev: "월 2.4억", op: "+4,100만", runway: "18개월", note: "일산 오픈 · 현 성장률 유지", tone: "ok" },
+  { k: "낙관 (Bull)", homes: "280가구", rev: "월 3.1억", op: "+6,800만", runway: "24개월+", note: "K-factor 0.6 달성 · 급여사업 조기 진입", tone: "ok" },
+  { k: "비관 (Bear)", homes: "160가구", rev: "월 1.7억", op: "+400만", runway: "9개월", note: "채용 실패로 확장 정체 · 규제 지연", tone: "bad" },
+];
