@@ -2672,6 +2672,21 @@ export default function DispatchConsole() {
   );
 }
 
+// 가구 타임라인 칩 — 폭 고정(2~3자 혼재 시 원형처럼 보이지 않게) + 종류별 톤
+const TL_TONE = {
+  SOS: { fg: "#C0392B", bg: "rgba(192,57,43,.1)" },
+  알림: { fg: "#C0392B", bg: "rgba(192,57,43,.1)" },
+  워치: { fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
+  심사: { fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
+  동행: { fg: "#1E7A5A", bg: "rgba(30,122,90,.1)" },
+  체크인: { fg: "#1E7A5A", bg: "rgba(30,122,90,.1)" },
+  안부: { fg: "#1B7F79", bg: "rgba(27,127,121,.1)" },
+  예약: { fg: "#1B7F79", bg: "rgba(27,127,121,.1)" },
+  구매: { fg: "#7A5C28", bg: "rgba(176,141,87,.16)" },
+  결제: { fg: "#7A5C28", bg: "rgba(176,141,87,.16)" },
+};
+const tlTone = (k) => TL_TONE[k] || { fg: "#0A1F3C", bg: "rgba(10,31,60,.06)" };
+
 // 플로팅 프로필 — 담당·상태·챙길 것 한눈에. 상세 주소 등은 게이팅 원칙 유지 (더미)
 function FloatProfile({ item, pos, onClose, onAction }) {
   // 클릭 지점 근처 배치 — 뷰포트 밖으로 나가지 않게 클램프 (카드 320 × 최대 560)
@@ -2747,16 +2762,22 @@ function FloatProfile({ item, pos, onClose, onAction }) {
         {tl && (
           <div className="mt-2.5 border-t border-navy/[.08] pt-2.5">
             <div className="text-[11px] font-bold tracking-[.1em] text-muted">가구 타임라인</div>
-            <div className="mt-1.5 max-h-[140px] space-y-1.5 overflow-y-auto pr-1">
-              {tl.map((ev, i) => (
-                <div key={i} className="flex gap-2 text-[12px]">
-                  <span className="w-[36px] shrink-0 font-num text-[11px] font-semibold text-muted">{ev.at}</span>
-                  <span className="shrink-0 rounded-full bg-navy/[.06] px-1.5 text-[10px] font-bold leading-[18px] text-navy">
-                    {ev.kind}
-                  </span>
-                  <span className="flex-1 leading-[1.5] text-ink">{ev.text}</span>
-                </div>
-              ))}
+            <div className="mt-1.5 max-h-[168px] space-y-2 overflow-y-auto pr-1">
+              {tl.map((ev, i) => {
+                const t = tlTone(ev.kind);
+                return (
+                  <div key={i} className="flex items-start gap-2 text-[12px]">
+                    <span className="mt-[1px] w-[34px] shrink-0 font-num text-[11px] font-semibold text-muted">{ev.at}</span>
+                    <span
+                      className="mt-[1px] w-[42px] shrink-0 rounded-md text-center text-[10px] font-bold leading-[18px]"
+                      style={{ color: t.fg, background: t.bg }}
+                    >
+                      {ev.kind}
+                    </span>
+                    <span className="min-w-0 flex-1 leading-[1.55] text-ink">{ev.text}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
