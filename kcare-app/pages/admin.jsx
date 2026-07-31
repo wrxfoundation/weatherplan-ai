@@ -88,6 +88,14 @@ import {
   AI_PEOPLE_SIGNALS,
   AI_PEOPLE_SPLIT,
   PEOPLE_MAP,
+  SEC_KPIS,
+  SEC_CLASSES,
+  SEC_MATRIX,
+  SEC_TECH,
+  SEC_AI_RULES,
+  SEC_LIFECYCLE,
+  SEC_INCIDENT,
+  SEC_STATUS,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -123,6 +131,7 @@ const MENUS = [
   ["care", "케어 성과", "heart"],
   ["biz", "수익 · 리스크", "coin"],
   ["risk", "리스크 · 컴플라이언스", "alert"],
+  ["security", "보안 · 데이터", "shield"],
 ];
 
 // 톤 공용 스타일 — 인원 관리 · 리스크 섹션
@@ -2083,6 +2092,179 @@ export default function AdminConsole() {
                   </div>
                   <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                     CPO가 분기별 내부 감사를 수행하고, 위반 발견 시 해당 기능을 즉시 중단하는 킬 스위치를 운영합니다.
+                  </p>
+                </Panel>
+              </div>
+            </div>
+          )}
+
+          {/* ════ 보안 · 데이터 거버넌스 — 질병·민감 프로필 보호 체계 ════ */}
+          {tab === "security" && (
+            <div className="space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">거버넌스 / 개인정보 · 보안</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">보안 · 데이터 거버넌스</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  질병 · 민감 프로필을 다루는 서비스의 원칙 — 덜 모으고 · 짧게 두고 · 좁게 열고 · 전부 기록한다.
+                </p>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+                {SEC_KPIS.map((k) => (
+                  <Panel key={k.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[25px] font-bold text-navy">{k.v}</div>
+                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              {/* 데이터 분류 4등급 */}
+              <Panel className="min-w-0">
+                <PanelHead title="데이터 분류 체계 — 4등급" right={<span className="text-[12px] text-muted">등급이 암호화 · 접근 · 보존을 결정한다</span>} />
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[860px] text-left text-[12px]">
+                    <thead>
+                      <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                        <th className="py-2 pr-4">등급</th>
+                        <th className="py-2 pr-4">대표 항목</th>
+                        <th className="py-2 pr-4">저장 · 암호화</th>
+                        <th className="py-2 pr-4">접근</th>
+                        <th className="py-2">보존 · 파기</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {SEC_CLASSES.map((c) => (
+                        <tr key={c.grade} className="border-b border-navy/[.06] align-top">
+                          <td className="whitespace-nowrap py-2.5 pr-4">
+                            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[c.tone].fg, background: TONE[c.tone].bg }}>{c.grade}</span>
+                          </td>
+                          <td className="py-2.5 pr-4 text-[12px] leading-[1.6] text-ink">{c.examples}</td>
+                          <td className="py-2.5 pr-4 text-[12px] leading-[1.6] text-muted">{c.store}</td>
+                          <td className="py-2.5 pr-4 text-[12px] leading-[1.6] text-muted">{c.access}</td>
+                          <td className="py-2.5 text-[12px] leading-[1.6] text-muted">{c.keep}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+                {/* 접근 매트릭스 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="역할 × 데이터 접근 매트릭스" right={<span className="text-[12px] text-muted">S1 건강 · S2 식별 · S3 운영 — ● 열람 · ◐ 제한 · ✕ 차단</span>} />
+                  <div className="mt-3 overflow-x-auto">
+                    <table className="w-full min-w-[340px] text-left text-[12px]">
+                      <thead>
+                        <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                          <th className="py-2 pr-3">역할</th>
+                          {SEC_MATRIX.cols.map((c) => (<th key={c} className="px-0.5 py-2 text-center">{c}</th>))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {SEC_MATRIX.rows.map((r) => (
+                          <tr key={r.role} className="border-b border-navy/[.06]" title={r.note}>
+                            <td className="whitespace-nowrap py-2 pr-3 font-bold text-navy">{r.role}</td>
+                            {r.v.map((v, i) => (
+                              <td key={i} className="px-1 py-2 text-center font-bold" style={{ color: v === "✕" ? "#C0392B" : v === "◐" ? "#8A5D12" : "#1E7A5A" }}>{v}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="mt-2 space-y-0.5">
+                    {SEC_MATRIX.rows.map((r) => (
+                      <div key={r.role} className="text-[11px] leading-[1.6] text-muted">· {r.role} — {r.note}</div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] font-bold leading-[1.7] text-danger">{SEC_MATRIX.foot}</p>
+                </Panel>
+
+                {/* 기술 통제 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="기술 통제" right={<span className="text-[12px] text-muted">키와 데이터를 같은 곳에 두지 않는다</span>} />
+                  <div className="mt-3 space-y-2.5">
+                    {SEC_TECH.map((t2) => (
+                      <div key={t2.k} className="flex items-baseline gap-3 border-t border-navy/[.06] pt-2.5 first:border-t-0 first:pt-0">
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[13px] font-bold text-navy">{t2.k}</div>
+                          <div className="text-[11px] text-muted">{t2.note}</div>
+                        </div>
+                        <span className="shrink-0 text-right font-num text-[12px] font-bold text-ink">{t2.v}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+
+                {/* AI 데이터 경계 */}
+                <Panel className="min-w-0">
+                  <PanelHead title={<><span className="mr-2 rounded-md bg-gold px-1.5 py-0.5 text-[11px] font-bold tracking-[.1em] text-navy">AI</span>AI 데이터 경계</>} right={<span className="text-[12px] text-muted">모델이 바뀌어도 데이터는 우리 것</span>} />
+                  <ol className="mt-3 space-y-2">
+                    {SEC_AI_RULES.map((r, i) => (
+                      <li key={r} className="flex items-start gap-2 text-[12px] leading-[1.65] text-ink">
+                        <span className="mt-[1px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-navy/[.08] font-num text-[10px] font-bold text-navy">{i + 1}</span>
+                        {r}
+                      </li>
+                    ))}
+                  </ol>
+                </Panel>
+
+                {/* 수집→파기 수명주기 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="데이터 수명주기 — 수집부터 파기까지" />
+                  <ol className="mt-3 space-y-2.5">
+                    {SEC_LIFECYCLE.map(([k, v], i) => (
+                      <li key={k} className="flex items-start gap-3">
+                        <span className="mt-[1px] flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-gold font-num text-[10px] font-bold text-navy">{String(i + 1).padStart(2, "0")}</span>
+                        <div>
+                          <div className="text-[13px] font-bold text-navy">{k}</div>
+                          <div className="text-[12px] leading-[1.6] text-muted">{v}</div>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </Panel>
+
+                {/* 침해 대응 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="침해 대응 플레이북" right={<span className="text-[12px] font-bold text-danger">숨기지 않는 것이 신뢰 해자</span>} />
+                  <div className="mt-3 space-y-2">
+                    {SEC_INCIDENT.map(([k, v, sla], i) => (
+                      <div key={k} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <span className="mt-[1px] flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-navy font-num text-[10px] font-bold text-white">{i + 1}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[13px] font-bold text-navy">{k}</div>
+                          <div className="text-[12px] leading-[1.6] text-muted">{v}</div>
+                        </div>
+                        <span className="shrink-0 rounded-full bg-navy/[.06] px-2 py-0.5 font-num text-[10px] font-bold text-navy">{sla}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+
+                {/* 구현 현황 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="구현 현황 — 데모 vs 실서비스" right={<span className="text-[12px] text-muted">정직한 표기 — 데모는 목 데이터</span>} />
+                  <div className="mt-3 space-y-2">
+                    {SEC_STATUS.map((st) => (
+                      <div key={st.k} className="flex items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[13px] font-bold text-navy">{st.k}</div>
+                          <div className="text-[11px] text-muted">{st.note}</div>
+                        </div>
+                        <span
+                          className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
+                          style={st.state === "구현" ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" } : { color: "#8A5D12", background: "rgba(138,93,18,.12)" }}
+                        >
+                          {st.state}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    실서비스 전환 게이트 — 서버 DB 이전 · 필드 암호화 · PIA 완료 전에는 실명 데이터를 넣지 않습니다.
+                    데모의 인물 · 건강 정보는 전부 가상입니다.
                   </p>
                 </Panel>
               </div>
