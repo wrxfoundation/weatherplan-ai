@@ -76,6 +76,11 @@ import {
   RISK_STATE_STYLE,
   INSURANCE_ROWS,
   REG_CALENDAR,
+  BRANCH_TOTALS,
+  BRANCHES,
+  BRANCH_ALERTS,
+  BRANCH_OPEN_STEPS,
+  BRANCH_SUPPORT,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -101,6 +106,7 @@ const LEVEL_STYLE = {
 
 // 좌측 GNB — 섹션이 늘어나는 구조라 탭 대신 사이드 내비 (모바일은 가로 칩)
 const MENUS = [
+  ["branches", "지점 현황", "pin"],
   ["staff", "컨시어지 분석", "users"],
   ["staffmgmt", "인원 관리", "user"],
   ["family", "보호자 · 가구", "home"],
@@ -203,7 +209,7 @@ function StatTile({ k, v, color = NAVY, note }) {
 }
 
 export default function AdminConsole() {
-  const [tab, setTab] = useState("staff");
+  const [tab, setTab] = useState("branches"); // 랜딩 = 다지점 통합 현황
   const [rosterSub, setRosterSub] = useState("home"); // 명부 서브메뉴 — 종합/어르신/보호자/컨시어지/병원
   const [smOpen, setSmOpen] = useState(false); // 인원 관리 — 프로필 카드 열림 (데모: 박지현 기준)
   const [renewSent, setRenewSent] = useState(false); // 자격 갱신 안내 원샷
@@ -332,6 +338,190 @@ export default function AdminConsole() {
                   </button>
                 ))}
               </nav>
+
+          {/* ════ 지점 현황 — 다지점 통합 (비교는 케어 품질·안전 지표만, 판매액 순위 금지) ════ */}
+          {tab === "branches" && (
+            <div className="space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">경영 / 다지점 관리</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">지점 통합 현황</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  지점 비교는 케어 품질 · 안전 · 수급 지표만 봅니다 — 판매액 순위를 만들지 않습니다 (원칙 1).
+                </p>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+                {BRANCH_TOTALS.map((k) => (
+                  <Panel key={k.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[25px] font-bold text-navy">{k.v}</div>
+                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              {/* 지점 카드 */}
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+                {BRANCHES.map((b) => (
+                  <Panel key={b.name} className="min-w-0 !p-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[15px] font-bold text-navy">{b.name}</span>
+                      {b.hq && <span className="rounded-md bg-gold/20 px-1.5 py-0.5 text-[9px] font-bold text-[#7A5C28]">본점</span>}
+                      <span
+                        className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
+                        style={
+                          b.tone === "ok" ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
+                          : b.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
+                          : b.tone === "prep" ? { color: "#7A5C28", background: "rgba(176,141,87,.16)" }
+                          : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
+                        }
+                      >
+                        {b.state}
+                      </span>
+                    </div>
+                    <div className="mt-0.5 text-[11px] text-muted">{b.area} · 오픈 {b.open}</div>
+                    {b.state !== "오픈 준비" ? (
+                      <div className="mt-2.5 grid grid-cols-3 gap-1.5">
+                        {[["가구", b.homes], ["컨시어지", b.staff], ["가동률", b.load], ["평점", b.rate], ["NPS", b.nps], ["오늘 배차", b.jobs]].map(([k, v]) => (
+                          <div key={k} className="rounded-lg bg-navy/[.04] px-2 py-1.5 text-center">
+                            <div className="text-[9px] font-bold text-muted">{k}</div>
+                            <div className="font-num text-[14px] font-bold text-navy">{v}</div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="mt-2.5 rounded-lg bg-navy/[.04] px-3 py-2.5 text-[12px] font-bold text-navy">
+                        컨시어지 채용 8/12 · 병원 제휴 2/4 · 10월 오픈 목표
+                      </div>
+                    )}
+                    <p className="mt-2 border-t border-navy/[.06] pt-2 text-[11px] leading-[1.6] text-muted">{b.issue}</p>
+                  </Panel>
+                ))}
+              </div>
+
+              {/* 지점 비교 테이블 */}
+              <Panel className="min-w-0">
+                <PanelHead title="지점 비교" right={<span className="text-[12px] text-muted">케어 품질 · 안전 · 수급 — 판매액 컬럼 없음</span>} />
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[760px] text-left text-[12px]">
+                    <thead>
+                      <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                        <th className="py-2 pr-4">지점</th>
+                        <th className="py-2 pr-4">가입 가구</th>
+                        <th className="py-2 pr-4">컨시어지</th>
+                        <th className="py-2 pr-4">가동률</th>
+                        <th className="py-2 pr-4">평점</th>
+                        <th className="py-2 pr-4">NPS</th>
+                        <th className="py-2 pr-4">SOS (월)</th>
+                        <th className="py-2 pr-4">미매칭 (주)</th>
+                        <th className="py-2">상태</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {BRANCHES.map((b) => (
+                        <tr key={b.name} className="whitespace-nowrap border-b border-navy/[.06]">
+                          <td className="py-2.5 pr-4 font-bold text-navy">{b.name}{b.hq ? " ★" : ""}</td>
+                          <td className="py-2.5 pr-4 font-num text-ink">{b.homes || "—"}</td>
+                          <td className="py-2.5 pr-4 font-num text-ink">{b.staff || "—"}</td>
+                          <td className="py-2.5 pr-4 font-num text-ink">{b.load}</td>
+                          <td className="py-2.5 pr-4 font-num text-ink">{b.rate}</td>
+                          <td className="py-2.5 pr-4 font-num font-bold text-ink">{b.nps ?? "—"}</td>
+                          <td className="py-2.5 pr-4 font-num text-ink">{b.sos}</td>
+                          <td className="py-2.5 pr-4 font-num text-ink">{b.unmatch}</td>
+                          <td className="py-2.5">
+                            <span
+                              className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                              style={
+                                b.tone === "ok" ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
+                                : b.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
+                                : b.tone === "prep" ? { color: "#7A5C28", background: "rgba(176,141,87,.16)" }
+                                : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
+                              }
+                            >
+                              {b.state}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  권역 × 요일 수급 갭 상세는 인원 관리 메뉴에서 — 지점별 개별 사건은 각 지점 관제 소관이며 여기는 집계만 봅니다.
+                </p>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+                {/* 지점 이슈 · 액션 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="지점 이슈 · 액션" right={<span className="text-[12px] text-muted">이번 주 집계</span>} />
+                  <div className="mt-3 space-y-2.5">
+                    {BRANCH_ALERTS.map((a) => (
+                      <div key={a.branch + a.text} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">{a.branch}</span>
+                          <span
+                            className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                            style={
+                              a.level === "주의" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
+                              : a.level === "관찰" ? { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
+                              : { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
+                            }
+                          >
+                            {a.level}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-[12px] leading-[1.6] text-ink">{a.text}</p>
+                        {a.act !== "—" && <p className="mt-0.5 text-[12px] font-bold leading-[1.55] text-navy">→ {a.act}</p>}
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+
+                {/* 오픈 파이프라인 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="신규 지점 오픈 파이프라인 — 일산·고양" right={<span className="text-[12px] font-bold text-amber">10월 오픈 목표</span>} />
+                  <ol className="mt-3 space-y-2.5">
+                    {BRANCH_OPEN_STEPS.map(([k, st, note], i) => (
+                      <li key={k} className="flex items-start gap-3">
+                        <span
+                          className="mt-[1px] flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full font-num text-[11px] font-bold"
+                          style={st === "완료" ? { background: "#1E7A5A", color: "#fff" } : st.startsWith("진행") ? { background: "#B08D57", color: "#0A1F3C" } : { background: "rgba(10,31,60,.08)", color: "#0A1F3C" }}
+                        >
+                          {st === "완료" ? "✓" : i + 1}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-[13px] font-bold text-navy">{k}</span>
+                            <span className="font-num text-[11px] font-bold text-amber">{st}</span>
+                          </div>
+                          <div className="text-[11px] leading-[1.6] text-muted">{note}</div>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    오픈 게이트 — 컨시어지 12명 · 병원 제휴 4곳 · 경계선 교육 100% 미충족 시 오픈을 연기합니다 (원칙이 확장 속도보다 우선).
+                  </p>
+                </Panel>
+
+                {/* 지점 간 크로스 지원 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="지점 간 크로스 지원" right={<span className="text-[12px] text-muted">본점 → 신규 지점 시니어 파견</span>} />
+                  <div className="mt-3 space-y-2.5">
+                    {BRANCH_SUPPORT.map((c) => (
+                      <div key={c.who} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="text-[13px] font-bold text-navy">{c.who} <span className="font-num text-muted">→</span> {c.to}</div>
+                        <p className="mt-1 text-[12px] leading-[1.6] text-muted">{c.note}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    크로스 지원도 2인 1조 · 페어 순환 규칙을 그대로 따릅니다 — 장거리 지원자의 피로 누적은 이탈 위험 예측(인원 관리)과 연동해 상한을 겁니다.
+                  </p>
+                </Panel>
+              </div>
+            </div>
+          )}
 
           {/* ════ 컨시어지 분석 — 품질 · 파이프라인 · HR 워치 ════ */}
           {tab === "staff" && (
