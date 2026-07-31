@@ -1,10 +1,15 @@
-# Korea Rising — verified K-pop snapshot (2026-07-30)
+# Korea Rising — verified K-pop snapshot (2026-07-31)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🏆 Circle Digital Chart — current #1
 **Rescene** — Love Attack  
-_Circle Digital Chart #1 (via Wikipedia) 2026-07-30 04:07 UTC · Skill Score 0.70_
+_Circle Digital Chart #1 (via Wikipedia) 2026-07-31 04:24 UTC · Skill Score 0.70_
+
+## 🎬 Latest official releases (YouTube)
+- **ZEROBASEONE** — 거니니! 기다려 구해줄게 🏊 (특별출연: 소 of 오이소박이)
+- **NMIXX** — ᴡᴇᴛ💦 #NMIXX #엔믹스 #규진 #KYUJIN
+- **BTS** — BTS (방탄소년단) 'NORMAL (Korean Ver.)' Visualizer for ARMY
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
