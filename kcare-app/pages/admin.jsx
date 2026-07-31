@@ -5,6 +5,7 @@ import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
 import Icon from "../components/icons";
 import RosterTable from "../components/RosterTable";
+import MobileSectionNav from "../components/MobileSectionNav";
 import { ROSTERS, ROSTER_CHECKS, ROSTER_ACCESS, searchAll } from "../lib/rosters";
 import {
   ADMIN_AI_QA,
@@ -222,7 +223,6 @@ const MENU_GROUPS = [
     ["ir", "투자 · IR", "chart", true],
   ]],
 ];
-const MENUS = MENU_GROUPS.flatMap(([, items]) => items);
 const GROUP_OF = Object.fromEntries(MENU_GROUPS.flatMap(([g, items]) => items.map(([k]) => [k, g])));
 
 // 톤 공용 스타일 — 인원 관리 · 리스크 섹션
@@ -356,6 +356,17 @@ export default function AdminConsole() {
     if (g) setNavOpen((o) => (o[g] ? o : { ...o, [g]: true }));
   }, [tab]);
 
+  // 좌측 메뉴로 섹션을 바꾸면 본문은 항상 맨 위에서 시작한다 —
+  // 긴 섹션을 보다가 다른 섹션으로 가면 중간부터 보이던 문제.
+  const scrollFirst = useRef(true);
+  useEffect(() => {
+    if (scrollFirst.current) {
+      scrollFirst.current = false;
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [tab, rosterSub]);
+
   const allFolded = MENU_GROUPS.every(([g]) => !navOpen[g]);
   const hits = useMemo(() => searchAll(rosterQ), [rosterQ]);
   const openRoster = (sub, view = null, q = "") => {
@@ -454,23 +465,8 @@ export default function AdminConsole() {
             <h1 className="mt-0.5 text-[29px] font-bold tracking-[-.01em] text-navy">사람 · 경영 총괄</h1>
           </header>
 
-          {/* 모바일 — 가로 스크롤 칩 (전고 사이드바 대체) */}
-              <nav className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
-                {MENUS.filter(([, , , hidden]) => !hidden).map(([k, label]) => (
-                  <button
-                    key={k}
-                    onClick={() => setTab(k)}
-                    className="btn-press shrink-0 rounded-[10px] border px-3.5 py-2 text-[13px] font-bold"
-                    style={
-                      tab === k
-                        ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
-                        : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
-                    }
-                  >
-                    {label}
-                  </button>
-                ))}
-              </nav>
+          {/* 모바일 — 현재 섹션 표시 + 눌러서 그룹 목록 (칩 18개를 옆으로 미는 것보다 빠르다) */}
+          <MobileSectionNav groups={MENU_GROUPS} current={tab} onSelect={setTab} />
 
           {/* ════ 대시보드 — 전체 포괄 (사람 KPI · 주간 브리핑 · 섹션 요약) ════ */}
           {tab === "dash" && (
@@ -498,15 +494,20 @@ export default function AdminConsole() {
                     <button
                       key={x.k}
                       onClick={() => setTab(x.menu)}
-                      className="btn-press flex w-full flex-wrap items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5 text-left hover:bg-navy/[.03]"
+                      className="btn-press flex w-full flex-col items-start gap-1.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5 text-left hover:bg-navy/[.03] sm:flex-row sm:flex-wrap sm:items-center sm:gap-2.5"
                     >
-                      <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: PRIORITY_TONE[x.u].fg, background: PRIORITY_TONE[x.u].bg }}>
-                        {PRIORITY_TONE[x.u].label}
+                      {/* 모바일: 배지+제목 / 사유 / 담당·이동 3줄로 쌓고, sm 이상에서 한 줄로 */}
+                      <span className="flex items-center gap-2 sm:contents">
+                        <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: PRIORITY_TONE[x.u].fg, background: PRIORITY_TONE[x.u].bg }}>
+                          {PRIORITY_TONE[x.u].label}
+                        </span>
+                        <span className="text-[13px] font-bold text-navy">{x.k}</span>
                       </span>
-                      <span className="text-[13px] font-bold text-navy">{x.k}</span>
-                      <span className="min-w-0 flex-1 text-[12px] leading-[1.5] text-muted">{x.why}</span>
-                      <span className="shrink-0 text-[11px] font-bold text-muted">{x.who}</span>
-                      <span className="shrink-0 text-[11px] font-bold text-gold">{x.label} →</span>
+                      <span className="min-w-0 w-full text-[12px] leading-[1.5] text-muted sm:w-auto sm:flex-1">{x.why}</span>
+                      <span className="flex w-full items-center gap-2 sm:contents">
+                        <span className="shrink-0 text-[11px] font-bold text-muted">{x.who}</span>
+                        <span className="ml-auto shrink-0 text-[11px] font-bold text-gold sm:ml-0">{x.label} →</span>
+                      </span>
                     </button>
                   ))}
                 </div>

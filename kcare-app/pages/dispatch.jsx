@@ -60,6 +60,7 @@ import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
 import Icon from "../components/icons";
 import RosterTable from "../components/RosterTable";
+import MobileSectionNav from "../components/MobileSectionNav";
 import { ROSTERS } from "../lib/rosters";
 
 // 배치관리자(관제) — 핸드오프 09 상세 명세 + REQ-04(긴급 대응 범위, 회의 확정 우선).
@@ -372,6 +373,16 @@ export default function DispatchConsole() {
   }, []);
 
   const profileNames = useMemo(() => new Set(DIRECTORY_ALL.map((d) => d.name)), []);
+  // 좌측 메뉴로 화면을 바꾸면 본문은 항상 맨 위에서 시작한다
+  const scrollFirst = useRef(true);
+  useEffect(() => {
+    if (scrollFirst.current) {
+      scrollFirst.current = false;
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [menu]);
+
   const openProfile = (name) => {
     const item = DIRECTORY_ALL.find((d) => d.name === name);
     if (item) {
@@ -686,22 +697,14 @@ export default function DispatchConsole() {
 
           {/* ── 모바일 메뉴 칩(사이드바 대체) + 통합 검색 ── */}
           <nav className="mt-4 flex flex-wrap items-center gap-2 border-b border-navy/[.08] pb-3">
-            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
-              {DISPATCH_MENUS.map(([k, label]) => (
-                <button
-                  key={k}
-                  onClick={() => setMenu(k)}
-                  className="btn-press shrink-0 rounded-[10px] border px-3.5 py-2 text-[13px] font-bold"
-                  style={
-                    menu === k
-                      ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
-                      : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
-                  }
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            <MobileSectionNav
+              groups={[["관제", DISPATCH_MENUS]]}
+              current={menu}
+              onSelect={setMenu}
+              badges={MENU_COUNTS}
+              dots={{ sos: !!sos }}
+              className="w-full"
+            />
             <div className="relative ml-auto w-full min-w-[240px] sm:w-[320px]">
             <input
               value={query}

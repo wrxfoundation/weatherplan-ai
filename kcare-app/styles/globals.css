@@ -202,3 +202,37 @@
     print-color-adjust: exact;
   }
 }
+
+/* ─── 모바일 최적화 ─── */
+/* 가독성 — 데스크톱 밀도를 위해 쓴 10~11px는 좁은 화면에서 한 단계 키운다.
+   보호자는 40~60대, 어르신 화면은 별도 대형 활자(btn-elder) 체계를 쓴다. */
+@media (max-width: 640px) {
+  .text-\[10px\] {
+    font-size: 11px;
+  }
+  .text-\[11px\] {
+    font-size: 12px;
+  }
+  /* 터치 타깃 — 손가락으로 누를 수 있는 최소 높이 */
+  .btn-press {
+    min-height: 36px;
+  }
+  /* 가로 스크롤 표(명부·손익 등)는 관성 스크롤 + 스냅 없이 자연스럽게 */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* iOS 사파리 — 입력 포커스 시 자동 확대 방지 (16px 미만이면 확대된다) */
+@supports (-webkit-touch-callout: none) {
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* 노치 대응 — 하단 고정 요소가 홈 인디케이터에 가리지 않게 */
+.safe-b {
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
+}

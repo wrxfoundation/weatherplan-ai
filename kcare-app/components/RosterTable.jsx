@@ -211,13 +211,13 @@ export default function RosterTable({ roster, onExport, onRowClick, clickableNam
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-1.5 text-[12px] text-muted">
+            <div className="flex w-full items-center gap-1.5 text-[12px] text-muted sm:w-auto">
               <input
                 type="date"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
                 aria-label="시작일"
-                className="rounded-[10px] border border-navy/15 bg-white/70 px-2 py-1.5 font-num text-[12px] text-ink outline-none focus:ring-1 focus:ring-gold"
+                className="min-w-0 flex-1 rounded-[10px] border border-navy/15 bg-white/70 px-2 py-1.5 font-num text-[12px] text-ink outline-none focus:ring-1 focus:ring-gold sm:flex-none"
               />
               ~
               <input
@@ -225,7 +225,7 @@ export default function RosterTable({ roster, onExport, onRowClick, clickableNam
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
                 aria-label="종료일"
-                className="rounded-[10px] border border-navy/15 bg-white/70 px-2 py-1.5 font-num text-[12px] text-ink outline-none focus:ring-1 focus:ring-gold"
+                className="min-w-0 flex-1 rounded-[10px] border border-navy/15 bg-white/70 px-2 py-1.5 font-num text-[12px] text-ink outline-none focus:ring-1 focus:ring-gold sm:flex-none"
               />
             </div>
           </>
@@ -312,7 +312,8 @@ export default function RosterTable({ roster, onExport, onRowClick, clickableNam
         </div>
       )}
 
-      <div className="mt-3 overflow-x-auto">
+      <p className="mt-3 text-[11px] font-bold text-muted sm:hidden">← 표를 좌우로 밀어 보세요 · 컬럼 버튼으로 열을 줄일 수 있습니다</p>
+      <div className="mt-1.5 overflow-x-auto sm:mt-3">
         <table className="w-full min-w-[720px] text-left text-[12px]">
           <thead>
             <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">

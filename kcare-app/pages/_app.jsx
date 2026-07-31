@@ -1,11 +1,32 @@
 import "leaflet/dist/leaflet.css";
 import "../styles/globals.css";
+import Head from "next/head";
 import { AppStateProvider } from "../lib/state";
 
 export default function App({ Component, pageProps }) {
   return (
-    <AppStateProvider>
-      <Component {...pageProps} />
-    </AppStateProvider>
+    <>
+      {/*
+        Head는 AppStateProvider "밖"에 둔다 —
+        프로바이더는 하이드레이션 불일치를 막으려고 마운트 전까지 children을 렌더하지 않는데,
+        그 안에 있으면 서버 HTML에 메타 태그가 아예 실리지 않는다 (모바일에서 첫 페인트가 기본 배율로 뜬다).
+      */}
+      <Head>
+        {/* 확대는 막지 않는다 — 어르신 · 보호자 접근성 (maximum-scale=1 금지) */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="theme-color" content="#0A1F3C" />
+        <meta name="color-scheme" content="light" />
+        <meta name="format-detection" content="telephone=no" />
+        {/* 홈 화면에 추가했을 때 앱처럼 보이게 */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="K-CARE" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        {/* 기본 제목 — 각 페이지의 Head가 하이드레이션 후 덮어쓴다 */}
+        <title>K-CARE</title>
+      </Head>
+      <AppStateProvider>
+        <Component {...pageProps} />
+      </AppStateProvider>
+    </>
   );
 }
