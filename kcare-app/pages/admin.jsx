@@ -125,6 +125,12 @@ import {
   TECH_DEBT,
   FEATURE_COVERAGE,
   IR_KPIS,
+  IR_METRICS,
+  IR_STATE,
+  IR_PROOF,
+  IR_LTV_DEF,
+  IR_PROOFS,
+  IR_GAPS,
   CAP_TABLE,
   ROUNDS,
   DATAROOM,
@@ -939,6 +945,165 @@ export default function AdminConsole() {
                 ))}
               </div>
 
+              {/* ── IR 지표 — 투자자가 실제로 언더라이팅하는 것 ── */}
+              <Panel>
+                <PanelHead
+                  title="투자자가 보는 지표"
+                  right={
+                    <span className="text-[12px] text-muted">
+                      기준선 대비 판정 + 증빙 등급 · 눌러서 해당 섹션으로
+                    </span>
+                  }
+                />
+                <p className="mt-2 max-w-[92ch] text-[12px] leading-[1.75] text-muted">
+                  라운드는 지표가 좋아서가 아니라 <b className="text-navy">증명되는 지표가 있어서</b> 만들어집니다.
+                  그래서 값과 함께 기준선 충족 여부, 그리고 지금 당장 로그로 제출할 수 있는지(증빙 등급)를 같이 둡니다 —
+                  부풀린 숫자 하나가 나머지 숫자 전부의 신뢰를 깎습니다.
+                </p>
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {Object.entries(IR_PROOF).map(([k, t]) => (
+                    <span
+                      key={k}
+                      className="rounded-full px-2.5 py-1 text-[11px] font-bold"
+                      style={{ background: t.bg, color: t.fg }}
+                    >
+                      {t.label} — {t.desc}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-3 space-y-3.5">
+                  {IR_METRICS.map(([group, items]) => (
+                    <div key={group}>
+                      <div className="text-[11px] font-bold tracking-[.12em] text-muted">{group}</div>
+                      <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                        {items.map((m) => {
+                          const st = IR_STATE[m.state];
+                          const pr = IR_PROOF[m.proof];
+                          return (
+                            <button
+                              key={m.k}
+                              onClick={() => setTab(m.menu)}
+                              className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5 text-left hover:bg-navy/[.03]"
+                            >
+                              <div className="flex items-baseline gap-2">
+                                <span className="min-w-0 flex-1 truncate text-[12px] font-bold text-navy">{m.k}</span>
+                                <span className="shrink-0 font-num text-[15px] font-bold" style={{ color: st.fg }}>
+                                  {m.v}
+                                </span>
+                              </div>
+                              <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                                <span
+                                  className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                                  style={{ background: st.bg, color: st.fg }}
+                                >
+                                  {st.label} · 기준 {m.base}
+                                </span>
+                                <span
+                                  className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                                  style={{ background: pr.bg, color: pr.fg }}
+                                >
+                                  {pr.label}
+                                </span>
+                              </div>
+                              <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">{m.why}</p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3.5 rounded-xl border border-navy/[.08] bg-white/50 p-3">
+                  <div className="text-[12px] font-bold text-navy">지표 정의 — LTV는 두 값이 있고, IR에서는 하나만 씁니다</div>
+                  <div className="mt-2 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                    {IR_LTV_DEF.map((d) => (
+                      <div key={d.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-[12px] font-bold text-navy">{d.k}</span>
+                          <span className="ml-auto font-num text-[14px] font-bold text-navy">{d.v}</span>
+                        </div>
+                        <div className="mt-1 text-[11px] leading-[1.6] text-muted">{d.how}</div>
+                        <div className="mt-1 text-[11px] font-bold" style={{ color: "#8A5D12" }}>{d.use}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-2.5 text-[11px] leading-[1.7] text-muted">
+                    슬라이드마다 다른 LTV가 나오는 것이 실사에서 가장 흔한 사고입니다 — 정의를 하나로 고정하고,
+                    자료 어디서든 같은 산식만 씁니다.
+                  </p>
+                </div>
+              </Panel>
+
+              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+                {/* 우리만 증명 가능한 것 — 어필의 실체 */}
+                <Panel className="min-w-0">
+                  <PanelHead
+                    title="우리만 증명할 수 있는 것"
+                    right={<span className="text-[12px] text-muted">잘 살리면 그대로 라운드의 논거</span>}
+                  />
+                  <div className="mt-3 space-y-2.5">
+                    {IR_PROOFS.map((pf, i) => (
+                      <div key={pf.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
+                        <div className="flex items-start gap-2.5">
+                          <span className="mt-[1px] flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-gold font-num text-[10px] font-bold text-navy">
+                            {i + 1}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-[13px] font-bold leading-[1.5] text-navy">{pf.k}</div>
+                            <div className="mt-1 font-num text-[14px] font-bold text-green">{pf.v}</div>
+                          </div>
+                        </div>
+                        <p className="mt-2 text-[12px] leading-[1.7] text-muted">{pf.body}</p>
+                        <div className="mt-2 flex items-start gap-2 rounded-lg bg-navy/[.04] px-3 py-2">
+                          <span className="shrink-0 text-[10px] font-bold text-gold">지금부터 기록</span>
+                          <span className="text-[11px] leading-[1.6] text-ink">{pf.keep}</span>
+                        </div>
+                        <button
+                          onClick={() => setTab(pf.menu)}
+                          className="btn-press mt-2 text-[11px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
+                        >
+                          해당 섹션에서 보기 →
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+
+                {/* 실사 전에 메울 것 */}
+                <Panel className="min-w-0">
+                  <PanelHead
+                    title="실사 전에 메울 것"
+                    right={<span className="text-[12px] text-muted">지금 안 채우면 라운드에서 깎이는 것</span>}
+                  />
+                  <div className="mt-3 space-y-2">
+                    {IR_GAPS.map((g) => (
+                      <button
+                        key={g.k}
+                        onClick={() => setTab(g.menu)}
+                        className="block w-full rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5 text-left hover:bg-navy/[.03]"
+                      >
+                        <div className="flex items-baseline gap-2">
+                          <span className="min-w-0 flex-1 text-[13px] font-bold text-navy">{g.k}</span>
+                          <span
+                            className="shrink-0 rounded-full px-2 py-0.5 font-num text-[10px] font-bold"
+                            style={{ background: TONE[g.tone].bg, color: TONE[g.tone].fg }}
+                          >
+                            {g.when}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-[11px] leading-[1.6]" style={{ color: TONE[g.tone].fg }}>
+                          {g.risk}
+                        </p>
+                        <p className="mt-1 text-[11px] leading-[1.6] text-muted">→ {g.fix}</p>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    다섯 중 셋은 지표가 아니라 기록의 문제입니다 — 지금부터 남기지 않으면 나중에 만들 수 없습니다.
+                  </p>
+                </Panel>
+              </div>
+
               <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead title="시장 규모 — TAM · SAM · SOM" right={<span className="text-[12px] text-muted">3년 목표 기준</span>} />
@@ -1075,7 +1240,7 @@ export default function AdminConsole() {
                           <th className="py-2 pr-3">채널</th>
                           <th className="py-2 pr-3">비중</th>
                           <th className="py-2 pr-3">CAC</th>
-                          <th className="py-2 pr-3">LTV</th>
+                          <th className="py-2 pr-3">LTV (매출)</th>
                           <th className="py-2">회수</th>
                         </tr>
                       </thead>
@@ -2494,7 +2659,7 @@ export default function AdminConsole() {
 
               {/* ── 코호트 리텐션 ── */}
               <Panel>
-                <PanelHead title={<>코호트 리텐션<HelpTip term="코호트" /><HelpTip term="LTV" /></>} right={<PendingTag>목 수치 · LTV 산정 방식 미확정</PendingTag>} />
+                <PanelHead title={<>코호트 리텐션<HelpTip term="코호트" /><HelpTip term="LTV" /></>} right={<span className="text-[12px] text-muted">LTV는 기여이익 기준 — 산식은 전략 · OKR의 지표 정의</span>} />
                 <div className="mt-3 overflow-x-auto">
                   <table className="w-full min-w-[520px] text-left">
                     <thead>

@@ -1952,7 +1952,7 @@ export const EXEC_OVERVIEW = [
   { menu: "care", label: "케어 성과", headline: "동행 정시율 91%", sub: "SOS 오인율 0 · 야간 공백 3건" },
   { menu: "partners", label: "파트너 · 제휴", headline: "제휴 18곳", sub: "병원 연계 구조 전환 1건 (C4)" },
   { menu: "product", label: "제품 · 로드맵", headline: "v1.1 개발 중", sub: "결제·정산 자동화 38% — 최우선" },
-  { menu: "strategy", label: "전략 · OKR", headline: "Q3 진척 58%", sub: "규제 O4 지연 — 의료법 전환 착수" },
+  { menu: "strategy", label: "전략 · OKR", headline: "Q3 진척 58%", sub: "IR 지표 14종 중 미달 3 · 증빙 부분 3" },
   { menu: "risk", label: "리스크 · 컴플라이언스", headline: "CRITICAL 4 · 미완화 5", sub: "의료법 27조 3항 시정이 최우선" },
   { menu: "security", label: "보안 · 데이터", headline: "분류 4등급 · 공개 100%", sub: "실서버 전환은 Supabase 로드맵" },
   { menu: "roster", label: "명부", headline: "4종 통합", sub: "최근 1개월 신규 등록 5건" },
@@ -2305,14 +2305,108 @@ export const MILESTONES = [
   ["2027 Q2", "Pre-A 라운드 · 6지점 · 가구 400", "목표"],
 ];
 
+// ════ 경영 · IR 지표 (투자자가 실제로 언더라이팅하는 것) ════
+// 원칙: 부풀린 숫자는 라운드를 못 만들고 실사에서 나머지 숫자까지 무너뜨린다.
+// 그래서 지표마다 "기준선 · 충족 여부"와 함께 "증빙 등급"을 같이 둔다.
+export const IR_PROOF = {
+  hard: { label: "증빙", fg: "#1E7A5A", bg: "rgba(30,122,90,.1)", desc: "로그 · DB에서 그대로 제출 가능" },
+  partial: { label: "부분", fg: "#8A5D12", bg: "rgba(138,93,18,.12)", desc: "집계는 되나 기간 · 정의 보강 필요" },
+  story: { label: "서사", fg: "#C0392B", bg: "rgba(192,57,43,.1)", desc: "아직 숫자 없음 — 지금부터 기록" },
+};
+export const IR_STATE = {
+  pass: { label: "충족", fg: "#1E7A5A", bg: "rgba(30,122,90,.1)" },
+  near: { label: "근접", fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
+  miss: { label: "미달", fg: "#C0392B", bg: "rgba(192,57,43,.1)" },
+};
+export const IR_METRICS = [
+  ["성장 — 지금 속도가 나는가", [
+    { k: "MRR 성장 (MoM)", v: "+9.4%", base: "≥ 10%", state: "near", proof: "hard", menu: "pl",
+      why: "3개월 연속 두 자릿수가 사실상 라운드 입장권" },
+    { k: "가구 성장 (MoM)", v: "+10.3%", base: "≥ 10%", state: "pass", proof: "hard", menu: "branches",
+      why: "매출보다 가구 수가 먼저 — 매출은 뒤따라온다" },
+    { k: "신규 지점 램프", v: "분당 45일 8가구", base: "90일 15가구", state: "near", proof: "partial", menu: "branches",
+      why: "지점이 공식이 되면 질문이 '될까'에서 '몇 개 열까'로 바뀐다" },
+  ]],
+  ["유지 · 확장 — 새는가", [
+    { k: "자발적 해지율 (월)", v: "1.1%", base: "< 1.5%", state: "pass", proof: "hard", menu: "crm",
+      why: "자연 종료(사망 · 시설 입소)를 분리한 값 — 이 분리가 이 카테고리의 핵심" },
+    { k: "가구 12개월 유지", v: "84%", base: "≥ 75%", state: "pass", proof: "partial", menu: "crm",
+      why: "코호트가 14개월뿐 — 24개월 확보 전까지는 추정치" },
+    { k: "NRR (순매출 유지)", v: "104%", base: "≥ 100%", state: "pass", proof: "hard", menu: "pricing",
+      why: "100%를 넘기면 '해지가 나도 매출은 는다'는 서사가 성립" },
+    { k: "옵션 부착률", v: "38%", base: "≥ 40%", state: "near", proof: "hard", menu: "pricing",
+      why: "NRR을 만드는 사실상 유일한 레버" },
+  ]],
+  ["유닛 이코노믹스 — 남는가", [
+    { k: "CAC 회수 기간", v: "4.0개월", base: "≤ 9개월", state: "pass", proof: "hard", menu: "growth",
+      why: "회수가 빠르면 성장에 자금이 덜 든다 — 조달 규모를 줄이는 근거" },
+    { k: "LTV / CAC (기여 기준)", v: "3.5x", base: "≥ 3x", state: "pass", proof: "partial", menu: "growth",
+      why: "매출 기준 35x는 쓰지 않는다 — 부풀린 배수는 실사 첫 질문에서 깨진다" },
+    { k: "매출총이익률", v: "29.4%", base: "≥ 32%", state: "miss", proof: "hard", menu: "pl",
+      why: "케어업 마진의 상한을 증명해야 소프트웨어 배수가 붙는다" },
+    { k: "무료(추천) 유입 비중", v: "61%", base: "≥ 35%", state: "pass", proof: "hard", menu: "growth",
+      why: "가구가 늘어도 CAC가 오르지 않는다는 증거" },
+  ]],
+  ["공급 · 해자 — 남이 못 따라오는가", [
+    { k: "컨시어지 90일 유지", v: "87%", base: "업계 61%", state: "pass", proof: "hard", menu: "staff",
+      why: "'사람 사업은 안 된다'는 반론을 정면으로 깨는 유일한 숫자" },
+    { k: "가동률", v: "82%", base: "75 ~ 85%", state: "pass", proof: "hard", menu: "staffmgmt",
+      why: "낮으면 낭비 · 높으면 이탈 — 밴드 안에 있다는 것이 운영력의 증명" },
+    { k: "채용 → 투입 리드타임", v: "31일", base: "≤ 21일", state: "miss", proof: "hard", menu: "staffmgmt",
+      why: "이 숫자가 곧 지점 확장 속도의 상한 — 자금을 넣어도 이 이상 못 연다" },
+    { k: "중대 사건", v: "0건", base: "0건 유지", state: "pass", proof: "hard", menu: "risk",
+      why: "1건이면 밸류에이션이 아니라 존속의 문제가 된다" },
+  ]],
+];
+// LTV 정의 — 슬라이드마다 다른 값이 나오는 것이 실사에서 가장 흔한 사고
+export const IR_LTV_DEF = [
+  { k: "LTV (매출 기준)", v: "980만", how: "가구당 월 구독 70만 × 평균 유지 14개월", use: "시장 규모 · 가격 논의에만" },
+  { k: "LTV (기여이익 기준)", v: "98만", how: "가구당 월 기여이익 7만 × 평균 유지 14개월", use: "IR · LTV/CAC는 이 값만 사용" },
+];
+export const IR_PROOFS = [
+  {
+    k: "이탈의 성격을 분리해서 증명한다",
+    v: "자발적 해지 1.1% / 월",
+    body: "해지 21건 중 자연 종료(사망 6 · 시설 입소 5 · 이사 3)가 14건, 서비스 사유가 7건. 시니어 케어는 자연 감소가 있는 카테고리라 합산 이탈률만 내놓으면 우리 잘못이 아닌 것까지 우리 점수로 깎인다.",
+    keep: "해지 사유 코드를 계약 종료 시점 필수 입력으로 고정 — 사후 분류는 실사에서 인정되지 않는다.",
+    menu: "crm",
+  },
+  {
+    k: "사람 사업의 반론을 숫자로 뒤집는다",
+    v: "컨시어지 90일 유지 87% · 업계 61%",
+    body: "짝 원칙(2인 1가구) · 피로도 상한 · 순환 배정이 유지율을 만들고, 유지율이 무사고를, 무사고가 가구 유지를 만든다. 이 연쇄를 한 장으로 보여주는 것이 이 회사의 해자 설명이다.",
+    keep: "컨시어지별 재직 개월 · 사고 건수 · 담당 가구 유지율을 같은 키로 조인 가능하게 적재.",
+    menu: "staff",
+  },
+  {
+    k: "지점 J-커브가 재현된다는 것을 보여준다",
+    v: "BEP 강남 11개월 → 송파 8개월 → 마포 6개월(예상)",
+    body: "지점마다 손익분기가 빨라지면 투자는 '이 회사가 될까'가 아니라 '몇 개 열 자금인가'의 문제가 된다. 오픈 비용 4,200만 · 회수 개월이 공식이 되는 순간 조달 논리 자체가 바뀐다.",
+    keep: "지점별 오픈일 · 월 누적 손익 · 가구 수를 월 스냅샷으로 적재 — 사후 재구성이 불가능한 데이터.",
+    menu: "branches",
+  },
+];
+export const IR_GAPS = [
+  { k: "코호트 길이 14개월", risk: "LTV · 12개월 유지가 전부 추정치 — 실사에서 가장 먼저 찔린다",
+    fix: "24개월 코호트 확보 전까지 보수 시나리오(유지 10개월) 병기", when: "2027 Q1", menu: "crm", tone: "warn" },
+  { k: "지표가 수기 집계", risk: "슬라이드 숫자와 DB 숫자가 다르면 나머지 숫자까지 못 믿게 된다",
+    fix: "대시보드 지표를 analytics 뷰로 고정 · 산식 문서화", when: "2026 Q4", menu: "security", tone: "warn" },
+  { k: "의료법 27조 3항 계약 구조", risk: "병원 연계 수수료가 알선으로 해석되면 형사 리스크 — 딜 브레이커",
+    fix: "법무 의견서 + 수수료 → 정액 업무위탁으로 계약 전환", when: "2026 Q3", menu: "risk", tone: "bad" },
+  { k: "PIA 미완료", risk: "민감정보(질병 · 장애) 처리 근거 미비 — 실서버 전환 자체가 막힌다",
+    fix: "8월 PIA 진행 · 완료 전 실명 데이터 투입 금지", when: "2026 Q3", menu: "security", tone: "bad" },
+  { k: "매출총이익률 29.4%", risk: "케어업 마진 상한이 30% 아래로 보이면 소프트웨어 배수가 안 붙는다",
+    fix: "권역 밀도 상향 · 크로스 지원 이동 수당 축소로 32% 경로", when: "2026 Q4", menu: "pl", tone: "warn" },
+];
+
 // ════ 경영 · 그로스 · 바이럴 루프 ════
 export const GROWTH_KPIS = [
   { k: "K-factor", v: "0.42", note: "가구 1곳이 데려오는 신규 가구", color: "#8A5D12" },
   { k: "추천 유입", v: "61%", note: "채널 1위 · 획득 비용 0원", color: "#1E7A5A" },
   { k: "CAC", v: "28만", note: "유료 채널 혼합 평균", color: "#0A1F3C" },
-  { k: "LTV", v: "412만", note: "평균 유지 14개월 × 기여", color: "#1E7A5A" },
-  { k: "LTV / CAC", v: "14.7x", note: "건전 기준 3x 상회", color: "#1E7A5A" },
-  { k: "회수 기간", v: "4.2개월", note: "CAC 회수 · 목표 6개월 이내", color: "#1E7A5A" },
+  { k: "LTV (기여 기준)", v: "98만", note: "월 기여 7만 × 유지 14개월", color: "#1E7A5A" },
+  { k: "LTV / CAC", v: "3.5x", note: "기여이익 기준 · 건전선 3x 상회", color: "#1E7A5A" },
+  { k: "회수 기간", v: "4.0개월", note: "CAC 28만 ÷ 월 기여 7만", color: "#1E7A5A" },
 ];
 export const VIRAL_LOOP = [
   { k: "케어 경험", v: "128가구", note: "동행 후 만족 — 루프의 시작", conv: null },
