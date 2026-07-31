@@ -1941,9 +1941,9 @@ export const SEC_STATUS = [
 export const EXEC_OVERVIEW = [
   { menu: "branches", label: "지점 현황", headline: "운영 4 · 오픈 준비 1", sub: "페어 준수 100% · SOS 0 (주)" },
   { menu: "staff", label: "컨시어지 분석", headline: "평점 4.8 · 유지 87%", sub: "코칭 대상 4명 · 현장의 소리 답변률 100%" },
-  { menu: "staffmgmt", label: "인원 관리", headline: "전체 46명", sub: "자격 만료 임박 2 · 경계 교육 미이수 3" },
+  { menu: "staffmgmt", label: "인원 관리", headline: "전체 46명", sub: "채용 정체 23명 — 신원 조회 5건 최대" },
   { menu: "family", label: "보호자 · 가구", headline: "128가구 · NPS 62", sub: "부보호자 열람 64% — 주의 신호" },
-  { menu: "crm", label: "CRM · 라이프사이클", headline: "이탈 위험 11가구", sub: "NBA 큐 대기 3건 · 온보딩 30일 집중" },
+  { menu: "crm", label: "CRM · 라이프사이클", headline: "퍼널 정체 26건", sub: "결제 단계 6건 — 최대 이탈 구간" },
   { menu: "cs", label: "CS · 마케팅", headline: "회복 콜 24h 내 92%", sub: "문의 1위 바우처 대행 — 기능화 완료" },
   { menu: "roster", label: "명부", headline: "4종 통합", sub: "최근 1개월 신규 등록 5건" },
   { menu: "care", label: "케어 성과", headline: "동행 정시율 91%", sub: "SOS 오인율 0 · 야간 공백 3건" },
@@ -2036,3 +2036,78 @@ export const WEAR_CONSENT = [
   { k: "위치 공유 (동행 중)", v: "128 / 132", note: "동행 구간에만 수집", tone: "ok" },
   { k: "데이터 보존", v: "S1 등급", note: "케어 종료 후 1년 → 자동 파기", tone: "info" },
 ];
+
+// ════ 관제 · 역할 간 핸드오프 정체 보드 ════
+// 이 사업의 사고는 사람과 사람 사이(인수인계 지점)에서 난다 — 각 단계의 '멈춘 건'을 본다.
+export const HANDOFF_CHAIN = [
+  { id: "req", stage: "요청 접수", from: "보호자", to: "관제", n: 14, stuckN: 3, sla: "2h 내 확인", note: "가족 앱 요청 · 전화 접수" },
+  { id: "assign", stage: "배차 편성", from: "관제", to: "AI 제안 → 관제 승인", n: 11, stuckN: 2, sla: "제안 후 1h", note: "짝 미매칭이 최대 지연 원인" },
+  { id: "accept", stage: "컨시어지 수락", from: "관제", to: "컨시어지", n: 9, stuckN: 2, sla: "발송 후 30분", worst: true, note: "미수락이 곧 배차 실패 — 최대 정체 구간" },
+  { id: "visit", stage: "동행 수행", from: "컨시어지", to: "현장", n: 7, stuckN: 1, sla: "정시 ±10분", note: "지연 대부분 교통" },
+  { id: "report", stage: "리포트 작성", from: "컨시어지", to: "관제", n: 6, stuckN: 3, sla: "동행 후 2h", note: "정시 전송 96% — 나머지가 여기 쌓인다" },
+  { id: "review", stage: "검수 · 가족 전달", from: "관제", to: "보호자", n: 5, stuckN: 2, sla: "접수 후 3h", note: "진단어 검수 후 전달" },
+];
+export const HANDOFF_STUCK = {
+  req: [
+    { code: "REQ-118", who: "김민수 (김순자 가구)", wait: "3h 12분 대기", signal: "병원 변경 요청 — 접수만 되고 담당 미지정", act: "관제 담당 지정 + 회신", owner: "관제" },
+    { code: "REQ-121", who: "김지영 (LA · 부보호자)", wait: "5h 40분 대기", signal: "시차 — 야간 접수분 아침까지 미확인", act: "해외 가구 우선 큐로 이동", owner: "관제" },
+    { code: "REQ-124", who: "이영호 가구", wait: "2h 05분 대기", signal: "차량 배차 오류 항의 — 1차 응대만", act: "지점장 회신 배정", owner: "지점장" },
+  ],
+  assign: [
+    { code: "JOB-4412", who: "16:20 투석 왕복 (한복자)", wait: "1h 30분 정체", signal: "부 동행 짝 미매칭 — 투석 자격자 부족", act: "송파 크로스 지원 요청", owner: "관제" },
+    { code: "JOB-4418", who: "내일 09:10 정형외과 (이영호)", wait: "2h 정체", signal: "AI 배정안 3건 승인 대기", act: "배정안 승인 (L4)", owner: "관제" },
+  ],
+  accept: [
+    { code: "DSP-2201", who: "오하늘 (수습)", wait: "42분 미수락", signal: "발송 후 무응답 — 앱 알림 미확인 추정", act: "음성 콜 에스컬레이션", owner: "관제" },
+    { code: "DSP-2205", who: "이수민", wait: "35분 미수락", signal: "피로도 상한 임박 — 자동 제외 대상인데 발송됨", act: "대체 인력 재배정", owner: "관제" },
+  ],
+  visit: [
+    { code: "VIS-0912", who: "박지현 · 서울아산", wait: "12분 지연", signal: "교통 지연 — 어르신 대기 중", act: "가족 지연 안내 발송", owner: "관제" },
+  ],
+  report: [
+    { code: "RPT-3301", who: "윤세라 · 박말순 재택", wait: "4h 초과", signal: "동행 종료 후 리포트 미작성", act: "앱 리마인더 + 확인 콜", owner: "관제" },
+    { code: "RPT-3305", who: "정민호 · 한복자 투석", wait: "2h 30분", signal: "작성 중 저장만 · 전송 안 됨", act: "전송 안내", owner: "관제" },
+    { code: "RPT-3309", who: "오하늘 · 오태식 검진", wait: "3h", signal: "수습 — 기재 항목 누락으로 반려됨", act: "시니어 코치 동반 재작성", owner: "지점장" },
+  ],
+  review: [
+    { code: "REV-1102", who: "최도현 리포트 (박말순)", wait: "2h 40분", signal: "진단어 의심 표현 1건 — 검수 보류", act: "표현 수정 요청", owner: "관제" },
+    { code: "REV-1105", who: "서다인 리포트 (최정자)", wait: "1h 50분", signal: "검수 완료 · 가족 전달 미발송", act: "가족 전달 발송", owner: "관제" },
+  ],
+};
+
+// ════ 경영 · 채용 → 현장 투입 정체 (사람 파이프라인) ════
+export const HIRE_STUCK_STAGES = [
+  { id: "doc", stage: "서류 · 자격 확인", n: 78, stuckN: 6, sla: "접수 후 3일", note: "자격증 진위 조회 자동화" },
+  { id: "itv", stage: "대면 면접", n: 41, stuckN: 4, sla: "일정 확정 5일", note: "상황 판단 시나리오 6문항" },
+  { id: "bg", stage: "신원 조회", n: 27, stuckN: 5, sla: "회신 7일", worst: true, note: "외부 회신 대기 — 최대 정체 구간" },
+  { id: "edu", stage: "교육 · 서약", n: 18, stuckN: 3, sla: "합류 후 14일", note: "경계선 교육 16시간 + 실습" },
+  { id: "first", stage: "첫 배차 (부 동행)", n: 12, stuckN: 2, sla: "교육 수료 7일", note: "첫 4건 선임 동반" },
+  { id: "conv", stage: "수습 → 일반 전환", n: 7, stuckN: 3, sla: "부 동행 12건", note: "전환 지연은 소득 정체로 직결 — 이탈 신호" },
+];
+export const HIRE_STUCK = {
+  doc: [
+    { code: "A-0412", who: "지원자 · 강남 권역", wait: "6일 정체", signal: "보건증 미제출 — 2회 안내 후 무응답", act: "최종 안내 후 종결 처리", owner: "채용 담당" },
+    { code: "A-0431", who: "지원자 · 마포 권역", wait: "4일 정체", signal: "요양보호사 자격 진위 조회 회신 지연", act: "협회 재조회 요청", owner: "채용 담당" },
+  ],
+  itv: [
+    { code: "A-0388", who: "지원자 · 송파 권역", wait: "8일 정체", signal: "면접 일정 3회 조율 실패 (주간 근무 중)", act: "야간·주말 면접 슬롯 제안", owner: "이정란 지점장" },
+    { code: "A-0402", who: "지원자 · 분당 권역", wait: "5일 정체", signal: "면접 완료 · 평가 미제출", act: "면접관 평가 입력 독려", owner: "최윤희 지점장" },
+  ],
+  bg: [
+    { code: "A-0355", who: "합격 예정 · 강동 권역", wait: "11일 정체", signal: "성범죄 경력 조회 회신 대기 — 기관 지연", act: "회신 독촉 · 대체 인력 준비", owner: "채용 담당" },
+    { code: "A-0361", who: "합격 예정 · 일산 (오픈)", wait: "9일 정체", signal: "노인학대 경력 조회 서류 반려 (서식 오류)", act: "서식 재제출 안내", owner: "강혜원 지점장" },
+    { code: "A-0369", who: "합격 예정 · 마포 권역", wait: "7일 정체", signal: "건강진단 예약 미완료", act: "제휴 검진기관 예약 대행", owner: "채용 담당" },
+  ],
+  edu: [
+    { code: "N-0121", who: "박지현(신규 동명) · 강남", wait: "9일 정체", signal: "등록 완료 · 기본 교육 미배정 (차수 대기)", act: "8월 1차 교육 배정", owner: "박성호 지점장" },
+    { code: "N-0126", who: "신규 · 송파", wait: "6일 정체", signal: "경계선 교육 미이수 — 배차 자동 제외 상태", act: "재교육 일정 확정", owner: "이정란 지점장" },
+  ],
+  first: [
+    { code: "N-0118", who: "수습 · 마포", wait: "10일 정체", signal: "교육 수료 후 첫 배차 없음 — 권역 수요 부족", act: "인접 권역 크로스 배차", owner: "관제" },
+  ],
+  conv: [
+    { code: "C-0207", who: "오하늘 · 마포 (수습)", wait: "부 동행 6/12 · 8주 경과", signal: "배차 부족으로 전환 요건 미달 — 소득 정체", act: "우선 배차 2주 + 1:1 면담", owner: "박성호 지점장" },
+    { code: "C-0211", who: "김도윤 · 송파 (수습)", wait: "부 동행 9/12 · 투석 자격 6/10", signal: "고난도 배차 게이트에 막힘", act: "투석 자격 교육 우선 배정", owner: "이정란 지점장" },
+    { code: "C-0214", who: "최도현 · 강동 (부 동행)", wait: "부 동행 12/12 · 평점 4.6", signal: "요건 충족 · 전환 심사 미상신", act: "전환 상신 처리", owner: "지점장" },
+  ],
+};

@@ -99,6 +99,8 @@ import {
   EXEC_OVERVIEW,
   CRM_FUNNEL,
   CRM_STUCK,
+  HIRE_STUCK_STAGES,
+  HIRE_STUCK,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -236,6 +238,8 @@ export default function AdminConsole() {
   const [psDone, setPsDone] = useState({}); // AI 사람 신호 — 담당 배정 원샷
   const [funnelStage, setFunnelStage] = useState("pay"); // CRM 퍼널 정체 — 선택 단계 (기본: 최대 이탈 구간)
   const [stuckDone, setStuckDone] = useState({}); // 정체 가구 대응 배정 원샷
+  const [hireStage, setHireStage] = useState("bg"); // 채용 정체 — 선택 단계 (기본: 최대 정체)
+  const [hireDone, setHireDone] = useState({}); // 채용 정체 처리 원샷
   const [nbaDone, setNbaDone] = useState({}); // NBA 큐 — 담당 배정 원샷
   const [execRead, setExecRead] = useState(false); // 주간 브리핑 읽음
   const counts = REVENUE_STREAMS.reduce(
@@ -901,6 +905,89 @@ export default function AdminConsole() {
                   {renewSent ? "갱신 안내 발송됨 ✓" : "갱신 안내 발송"}
                 </button>
               </div>
+
+              {/* 채용 → 현장 투입 정체 보드 — 단계 클릭 → 멈춘 사람 */}
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="채용 → 현장 투입 정체"
+                  right={<span className="text-[12px] text-muted">단계를 클릭하면 멈춰 있는 사람이 열립니다 · 지연은 곧 수급 갭</span>}
+                />
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+                  {HIRE_STUCK_STAGES.map((h, i) => {
+                    const on = hireStage === h.id;
+                    const tone = h.stuckN >= 5 ? "#C0392B" : h.stuckN >= 3 ? "#8A5D12" : "#1E7A5A";
+                    return (
+                      <button
+                        key={h.id}
+                        onClick={() => setHireStage(h.id)}
+                        className="btn-press rounded-xl border px-3 py-2.5 text-left"
+                        style={
+                          on
+                            ? { borderColor: NAVY, background: "rgba(10,31,60,.05)", boxShadow: "inset 0 0 0 1px rgba(10,31,60,.35)" }
+                            : { borderColor: "rgba(10,31,60,.08)", background: "rgba(255,255,255,.6)" }
+                        }
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-num text-[10px] font-bold text-muted">{String(i + 1).padStart(2, "0")}</span>
+                          <span className="text-[12px] font-bold text-navy">{h.stage}</span>
+                          {h.worst && <span className="ml-auto rounded-full bg-danger/10 px-1.5 py-0.5 text-[9px] font-bold text-danger">최대 정체</span>}
+                        </div>
+                        <div className="mt-1 flex items-baseline gap-1.5">
+                          <span className="font-num text-[18px] font-bold text-navy">{h.n}</span>
+                          <span className="text-[10px] text-muted">명</span>
+                        </div>
+                        <div className="mt-1 h-[5px] overflow-hidden rounded-full bg-navy/[.08]">
+                          <div className="h-full rounded-full" style={{ width: `${Math.round((h.stuckN / h.n) * 100)}%`, background: tone }} />
+                        </div>
+                        <div className="mt-1 flex items-center gap-1.5">
+                          <span className="font-num text-[11px] font-bold" style={{ color: tone }}>정체 {h.stuckN}</span>
+                          <span className="ml-auto text-[10px] text-muted">{h.sla}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+                {(() => {
+                  const cur = HIRE_STUCK_STAGES.find((h) => h.id === hireStage);
+                  const rows = HIRE_STUCK[hireStage] || [];
+                  return (
+                    <div className="mt-3 border-t border-navy/[.08] pt-3">
+                      <div className="flex flex-wrap items-baseline gap-2">
+                        <span className="text-[14px] font-bold text-navy">{cur.stage}</span>
+                        <span className="font-num text-[12px] font-bold text-danger">정체 {cur.stuckN}명</span>
+                        <span className="text-[12px] text-muted">— {cur.note}</span>
+                      </div>
+                      <div className="mt-2.5 space-y-2">
+                        {rows.map((r) => (
+                          <div key={r.code} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="rounded-full bg-navy/[.06] px-2 py-0.5 font-num text-[10px] font-bold text-navy">{r.code}</span>
+                              <span className="text-[13px] font-bold text-navy">{r.who}</span>
+                              <span className="font-num text-[11px] font-bold text-amber">{r.wait}</span>
+                            </div>
+                            <div className="mt-1 text-[12px] leading-[1.55] text-muted">{r.signal}</div>
+                            <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                              <span className="min-w-0 flex-1 text-[12px] font-bold leading-[1.55] text-ink">조치 — {r.act}</span>
+                              <button
+                                onClick={() => setHireDone((v) => ({ ...v, [r.code]: true }))}
+                                disabled={!!hireDone[r.code]}
+                                className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
+                              >
+                                {hireDone[r.code] ? `${r.owner} 배정됨 ✓` : `${r.owner} 배정`}
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        {rows.length === 0 && <p className="py-3 text-center text-[12px] text-muted">이 단계에 정체된 인원이 없습니다.</p>}
+                      </div>
+                    </div>
+                  );
+                })()}
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  신원 조회는 외부 회신 대기라 가장 오래 멈춥니다 — 예외는 두지 않되 대체 인력을 준비합니다.
+                  수습 전환 지연은 소득 정체로 이어져 이탈 위험 예측과 직결됩니다.
+                </p>
+              </Panel>
 
               <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
                 {/* 인력 명부 */}

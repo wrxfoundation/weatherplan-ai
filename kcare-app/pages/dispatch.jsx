@@ -26,6 +26,8 @@ import {
   WEAR_ACTIONS,
   WEAR_PIPELINE,
   WEAR_CONSENT,
+  HANDOFF_CHAIN,
+  HANDOFF_STUCK,
   DIRECTORY_ALL,
   DIRECTORY_TYPE,
   DISPATCH_AI_QA,
@@ -331,6 +333,8 @@ export default function DispatchConsole() {
   const [sent, setSent] = useState({}); // 발송 센터 원샷
   const [briefRead, setBriefRead] = useState(false); // 아침 브리핑 읽음
   const [wearDone, setWearDone] = useState({}); // 웨어러블 기기 액션 원샷
+  const [hoStage, setHoStage] = useState("accept"); // 핸드오프 정체 — 선택 단계 (기본: 최대 정체)
+  const [hoDone, setHoDone] = useState({}); // 정체 건 처리 원샷
   const elders = DIRECTORY_ALL.filter((d) => d.type === "elder");
   const guardians = DIRECTORY_ALL.filter((d) => d.type === "guardian");
   const concierges = DIRECTORY_ALL.filter((d) => d.type === "concierge");
@@ -873,6 +877,90 @@ export default function DispatchConsole() {
                 ))}
               </div>
             )}
+          </section>
+
+          {/* ── 역할 간 핸드오프 정체 — 사고는 사람과 사람 사이에서 난다 (단계 클릭 → 멈춘 건) ── */}
+          <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 className="text-[15px] font-bold tracking-[.02em] text-navy">역할 간 핸드오프 정체</h2>
+              <span className="text-[12px] text-muted">보호자 → 관제 → 컨시어지 → 관제 → 보호자 · 단계를 클릭하면 멈춘 건이 열립니다</span>
+            </div>
+            <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              {HANDOFF_CHAIN.map((h, i) => {
+                const on = hoStage === h.id;
+                const tone = h.stuckN >= 3 ? "#C0392B" : h.stuckN >= 2 ? "#8A5D12" : "#1E7A5A";
+                return (
+                  <button
+                    key={h.id}
+                    onClick={() => setHoStage(h.id)}
+                    className="btn-press rounded-xl border px-3 py-2.5 text-left"
+                    style={
+                      on
+                        ? { borderColor: NAVY, background: "rgba(10,31,60,.05)", boxShadow: "inset 0 0 0 1px rgba(10,31,60,.35)" }
+                        : { borderColor: "rgba(10,31,60,.08)", background: "rgba(255,255,255,.6)" }
+                    }
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-num text-[10px] font-bold text-muted">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-[12px] font-bold text-navy">{h.stage}</span>
+                      {h.worst && <span className="ml-auto rounded-full bg-danger/10 px-1.5 py-0.5 text-[9px] font-bold text-danger">최대 정체</span>}
+                    </div>
+                    <div className="mt-0.5 text-[10px] text-muted">{h.from} → {h.to}</div>
+                    <div className="mt-1.5 h-[5px] overflow-hidden rounded-full bg-navy/[.08]">
+                      <div className="h-full rounded-full" style={{ width: `${Math.round((h.stuckN / h.n) * 100)}%`, background: tone }} />
+                    </div>
+                    <div className="mt-1 flex items-center gap-1.5">
+                      <span className="font-num text-[11px] font-bold" style={{ color: tone }}>정체 {h.stuckN}</span>
+                      <span className="font-num text-[10px] text-muted">/ 진행 {h.n}</span>
+                      <span className="ml-auto text-[10px] text-muted">{h.sla}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            {(() => {
+              const cur = HANDOFF_CHAIN.find((h) => h.id === hoStage);
+              const rows = HANDOFF_STUCK[hoStage] || [];
+              return (
+                <div className="mt-3 border-t border-navy/[.08] pt-3">
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <span className="text-[14px] font-bold text-navy">{cur.stage}</span>
+                    <span className="font-num text-[12px] font-bold text-danger">정체 {cur.stuckN}건</span>
+                    <span className="text-[12px] text-muted">— {cur.note}</span>
+                  </div>
+                  <div className="mt-2.5 space-y-2">
+                    {rows.map((r) => (
+                      <div key={r.code} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="rounded-full bg-navy/[.06] px-2 py-0.5 font-num text-[10px] font-bold text-navy">{r.code}</span>
+                          <span className="text-[13px] font-bold text-navy">{r.who}</span>
+                          <span className="font-num text-[11px] font-bold text-danger">{r.wait}</span>
+                        </div>
+                        <div className="mt-1 text-[12px] leading-[1.55] text-muted">{r.signal}</div>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                          <span className="min-w-0 flex-1 text-[12px] font-bold leading-[1.55] text-ink">조치 — {r.act}</span>
+                          <button
+                            onClick={() => {
+                              if (hoDone[r.code]) return;
+                              setHoDone((v) => ({ ...v, [r.code]: true }));
+                              push("대응", `핸드오프 정체 처리 — ${r.code} · ${r.act}`, "#8FA9CC");
+                            }}
+                            disabled={!!hoDone[r.code]}
+                            className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
+                          >
+                            {hoDone[r.code] ? `${r.owner} 처리됨 ✓` : `${r.owner} 처리`}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    {rows.length === 0 && <p className="py-3 text-center text-[12px] text-muted">이 단계에 멈춘 건이 없습니다.</p>}
+                  </div>
+                </div>
+              );
+            })()}
+            <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+              사고는 사람과 사람 사이에서 납니다 — 각 단계의 SLA를 넘긴 건만 여기 모입니다. 처리는 감사 로그에 기록됩니다.
+            </p>
           </section>
 
 
