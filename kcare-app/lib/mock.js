@@ -1951,3 +1951,37 @@ export const EXEC_OVERVIEW = [
   { menu: "risk", label: "리스크 · 컴플라이언스", headline: "CRITICAL 4 · 미완화 5", sub: "의료법 27조 3항 시정이 최우선" },
   { menu: "security", label: "보안 · 데이터", headline: "분류 4등급 · 공개 100%", sub: "실서버 전환은 Supabase 로드맵" },
 ];
+
+// ════ 경영 · CRM 퍼널 정체 보드 — 최근 90일 코호트 · 단계 클릭 → 정체 가구 대응 ════
+// 원칙: 정체 가구는 가명 ID로만 표시(경영은 개별 레코드 접근 없음) · 경영은 배정까지, 실행은 CS·관제·지점장.
+export const CRM_FUNNEL = [
+  { id: "lead", stage: "상담 신청", n: 46, conv: null, stuckN: 8, sla: "첫 콜 48h", note: "제휴 요양기관 · 추천 유입 중심" },
+  { id: "reg", stage: "등록 · 정보 입력", n: 38, conv: 83, stuckN: 5, sla: "3일 내 완료", note: "병력 입력 단계에서 이탈 집중" },
+  { id: "pay", stage: "결제 · 가입 확정", n: 31, conv: 82, stuckN: 6, sla: "견적 후 5일", worst: true, note: "최대 이탈 구간 −18% — 가입비 정책 미확정 영향" },
+  { id: "onb", stage: "온보딩 첫 30일", n: 24, conv: 77, stuckN: 4, sla: "첫 동행 14일 내", note: "전체 이탈의 61%가 이 구간" },
+  { id: "settle", stage: "정착 · 갱신", n: 19, conv: 79, stuckN: 3, sla: "갱신 D-30 접점", note: "코호트 정착 전환 — 갱신 · 동의 만료 관리로 연결" },
+];
+export const CRM_STUCK = {
+  lead: [
+    { code: "L-118", days: "6일 정체", signal: "낮 시간 전화 2회 부재 · 문자 미응답", act: "저녁 시간대 콜 재시도 + 서비스 안내문 발송", owner: "CS팀" },
+    { code: "L-104", days: "9일 정체", signal: "상담 후 “가족과 상의” — 후속 접점 없음", act: "형제 초대 링크 안내 · 주말 콜 배정", owner: "CS팀" },
+    { code: "L-097", days: "5일 정체", signal: "요금 문의 후 무응답", act: "멤버십 구성 비교표 발송 + 콜", owner: "CS팀" },
+  ],
+  reg: [
+    { code: "R-052", days: "5일 정체", signal: "어르신 정보 입력 중단 (병력 단계)", act: "전화로 대신 입력 지원 — 문진 부담 낮추기", owner: "CS팀" },
+    { code: "R-047", days: "4일 정체", signal: "부보호자 초대만 완료 · 주보호자 미완", act: "주보호자에게 남은 1단계 리마인드", owner: "CS팀" },
+  ],
+  pay: [
+    { code: "P-031", days: "7일 정체", signal: "결제 단계 이탈 — 가입비 문의 1회", act: "가입비 안내 + 첫 달 체험 제안 (정책 확정 전 한시)", owner: "CS팀" },
+    { code: "P-029", days: "12일 정체", signal: "견적 후 무응답 · 경쟁 서비스 비교 추정", act: "차별점 자료(감사 로그 · 2인 1조) 발송 + 지점장 콜", owner: "지점장" },
+    { code: "P-027", days: "5일 정체", signal: "해외 보호자 결제 수단 문제 (LA)", act: "해외 카드 · 시차 결제 안내", owner: "CS팀" },
+  ],
+  onb: [
+    { code: "O-012", days: "8일 정체", signal: "첫 동행 후 리포트 열람 0회", act: "열람 가이드 콜 + 부보호자 초대 재안내", owner: "관제" },
+    { code: "O-009", days: "14일 정체", signal: "둘째 동행 예약 없음 — 어르신 거부감", act: "선호 컨시어지 재지정 + 짧은 산책 동행 제안", owner: "관제" },
+  ],
+  settle: [
+    { code: "S-201", days: "D-21", signal: "위치 동의 만료 임박 · 갱신 미완", act: "원탭 갱신 링크 재발송", owner: "CS팀" },
+    { code: "S-188", days: "D-9", signal: "멤버십 갱신 임박 · 부보호자 열람 급감", act: "가구 360 리뷰 후 갱신 제안 콜", owner: "지점장" },
+  ],
+};

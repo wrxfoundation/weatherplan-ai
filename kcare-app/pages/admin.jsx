@@ -97,6 +97,8 @@ import {
   SEC_INCIDENT,
   SEC_STATUS,
   EXEC_OVERVIEW,
+  CRM_FUNNEL,
+  CRM_STUCK,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -232,6 +234,8 @@ export default function AdminConsole() {
   const [smOpen, setSmOpen] = useState(false); // 인원 관리 — 프로필 카드 열림 (데모: 박지현 기준)
   const [renewSent, setRenewSent] = useState(false); // 자격 갱신 안내 원샷
   const [psDone, setPsDone] = useState({}); // AI 사람 신호 — 담당 배정 원샷
+  const [funnelStage, setFunnelStage] = useState("pay"); // CRM 퍼널 정체 — 선택 단계 (기본: 최대 이탈 구간)
+  const [stuckDone, setStuckDone] = useState({}); // 정체 가구 대응 배정 원샷
   const [nbaDone, setNbaDone] = useState({}); // NBA 큐 — 담당 배정 원샷
   const [execRead, setExecRead] = useState(false); // 주간 브리핑 읽음
   const counts = REVENUE_STREAMS.reduce(
@@ -1366,6 +1370,101 @@ export default function AdminConsole() {
 
           {/* ════ CRM · 라이프사이클 — 스테이지 · 이탈 스코어 · NBA · Closed Loop ════ */}
           {tab === "crm" && (
+            <div className="space-y-4">
+            {/* ── 퍼널 정체 보드 — 단계 클릭 → 정체 가구 · 권장 대응 · 담당 배정 ── */}
+            <Panel className="min-w-0">
+              <PanelHead
+                title="퍼널 정체 보드"
+                right={<span className="text-[12px] text-muted">최근 90일 코호트 · 단계를 클릭하면 정체 가구가 열립니다</span>}
+              />
+              <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
+                {CRM_FUNNEL.map((f, i) => {
+                  const on = funnelStage === f.id;
+                  const stuckTone = f.stuckN >= 6 ? "#C0392B" : f.stuckN >= 4 ? "#8A5D12" : "#1E7A5A";
+                  return (
+                    <button
+                      key={f.id}
+                      onClick={() => setFunnelStage(f.id)}
+                      className="btn-press rounded-xl border px-3.5 py-3 text-left"
+                      style={
+                        on
+                          ? { borderColor: NAVY, background: "rgba(10,31,60,.05)", boxShadow: "inset 0 0 0 1px rgba(10,31,60,.35)" }
+                          : { borderColor: "rgba(10,31,60,.08)", background: "rgba(255,255,255,.6)" }
+                      }
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-num text-[10px] font-bold text-muted">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="text-[12px] font-bold text-navy">{f.stage}</span>
+                        {f.worst && (
+                          <span className="ml-auto rounded-full bg-danger/10 px-1.5 py-0.5 text-[9px] font-bold text-danger">최대 이탈</span>
+                        )}
+                      </div>
+                      <div className="mt-1 flex items-baseline gap-1.5">
+                        <span className="font-num text-[20px] font-bold text-navy">{f.n}</span>
+                        <span className="text-[10px] text-muted">가구</span>
+                        {f.conv != null && (
+                          <span className="ml-auto font-num text-[11px] font-bold" style={{ color: f.conv < 80 ? "#C0392B" : "#1E7A5A" }}>
+                            전환 {f.conv}%
+                          </span>
+                        )}
+                      </div>
+                      {/* 정체 게이지 — 단계 내 정체 비중 */}
+                      <div className="mt-1.5 h-[5px] overflow-hidden rounded-full bg-navy/[.08]">
+                        <div className="h-full rounded-full" style={{ width: `${Math.round((f.stuckN / f.n) * 100)}%`, background: stuckTone }} />
+                      </div>
+                      <div className="mt-1 flex items-center gap-1.5">
+                        <span className="font-num text-[11px] font-bold" style={{ color: stuckTone }}>정체 {f.stuckN}건</span>
+                        <span className="ml-auto text-[10px] text-muted">SLA {f.sla}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* 선택 단계 상세 — 정체 가구 · 권장 대응 */}
+              {(() => {
+                const cur = CRM_FUNNEL.find((f) => f.id === funnelStage);
+                const rows = CRM_STUCK[funnelStage] || [];
+                return (
+                  <div className="mt-3 border-t border-navy/[.08] pt-3">
+                    <div className="flex flex-wrap items-baseline gap-2">
+                      <span className="text-[14px] font-bold text-navy">{cur.stage}</span>
+                      <span className="font-num text-[12px] font-bold text-danger">정체 {cur.stuckN}건</span>
+                      <span className="text-[12px] text-muted">— {cur.note}</span>
+                    </div>
+                    <div className="mt-2.5 space-y-2">
+                      {rows.map((r) => (
+                        <div key={r.code} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="rounded-full bg-navy/[.06] px-2 py-0.5 font-num text-[10px] font-bold text-navy">{r.code}</span>
+                            <span className="font-num text-[11px] font-bold text-amber">{r.days}</span>
+                            <span className="text-[12px] text-muted">{r.signal}</span>
+                          </div>
+                          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                            <span className="min-w-0 flex-1 text-[12px] font-bold leading-[1.55] text-ink">권장 대응 — {r.act}</span>
+                            <button
+                              onClick={() => setStuckDone((v) => ({ ...v, [r.code]: true }))}
+                              disabled={!!stuckDone[r.code]}
+                              className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
+                            >
+                              {stuckDone[r.code] ? `${r.owner} 배정됨 ✓` : `${r.owner} 배정`}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                      {rows.length === 0 && (
+                        <p className="py-3 text-center text-[12px] text-muted">이 단계에 정체 가구가 없습니다.</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+              <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                가구는 가명 코드로만 표시됩니다 — 경영은 개별 레코드에 접근하지 않고 배정까지만 합니다 (실행·기록은 CS · 관제 · 지점장 도구).
+                결제 단계(−18%)가 최대 병목이며, 가입비 정책 확정이 선결 과제입니다.
+              </p>
+            </Panel>
+
             <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead title={<>라이프사이클 스테이지<HelpTip term="라이프사이클" /></>} right={<span className="text-[12px] text-muted">전체 128가구 · 세그먼트 집계</span>} />
@@ -1462,6 +1561,7 @@ export default function AdminConsole() {
                   효과 없는 조치는 롤백합니다 — 플레이북은 데이터로만 늘립니다.
                 </p>
               </Panel>
+            </div>
             </div>
           )}
 
