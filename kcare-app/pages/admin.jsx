@@ -219,7 +219,39 @@ export default function AdminConsole() {
       <Head>
         <title>경영 콘솔 — K-CARE</title>
       </Head>
-      <div className="console-bg min-h-screen px-4 pb-10 pt-7 text-ink sm:px-8">
+      <div className="console-bg min-h-screen text-ink lg:flex">
+        {/* 전고 사이드바 — 화면 전체 높이 고정 · 헤더 아래 매립형 아님 (다크 네이비) */}
+        <aside className="sticky top-0 hidden h-screen w-[232px] shrink-0 flex-col overflow-y-auto lg:flex" style={{ background: NAVY }}>
+          <div className="px-5 pt-6">
+            <div className="font-num text-[20px] font-extrabold tracking-[.04em] text-white">
+              K-CARE <span className="align-top text-[9px] font-bold text-gold">BETA</span>
+            </div>
+            <div className="mt-1 text-[11px] font-bold tracking-[.14em] text-white/40">경영 콘솔 · 사람 관리</div>
+          </div>
+          <nav className="mt-5 flex-1 space-y-0.5 px-3 pb-4">
+            {MENUS.map(([k, label, icon]) => (
+              <button
+                key={k}
+                onClick={() => setTab(k)}
+                className="btn-press flex w-full items-center gap-2.5 rounded-[10px] border-l-[3px] px-3 py-2.5 text-left text-[13px] font-bold"
+                style={
+                  tab === k
+                    ? { background: "rgba(255,255,255,.1)", color: "#FFFFFF", borderColor: "#B08D57" }
+                    : { color: "rgba(255,255,255,.55)", borderColor: "transparent" }
+                }
+              >
+                <Icon name={icon} size={16} />
+                <span className="min-w-0 flex-1 truncate">{label}</span>
+              </button>
+            ))}
+          </nav>
+          <div className="border-t border-white/10 px-5 py-4">
+            <p className="text-[10px] leading-[1.6] text-white/35">집계 전용 콘솔 — 개별 사건 개입은 관제 · CS 소관</p>
+            <a href="/" className="btn-press mt-2.5 block rounded-[10px] border border-white/20 py-2 text-center text-[12px] font-bold text-white/80">데모 홈</a>
+          </div>
+        </aside>
+
+        <div className="min-w-0 flex-1 px-4 pb-10 pt-7 sm:px-8">
         <div className="mx-auto max-w-[1240px] space-y-4">
           {/* ── 헤더 — 실시간 사건 티커 없음 (의도) ── */}
           <header>
@@ -283,33 +315,7 @@ export default function AdminConsole() {
             </div>
           </Panel>
 
-          {/* ── 좌측 GNB + 콘텐츠 — 섹션 확장 대비 사이드 내비 구조 ── */}
-          <div className="flex items-start gap-4">
-            <aside className="hidden w-[212px] shrink-0 lg:block">
-              <nav className="card-glass sticky top-4 space-y-0.5 rounded-[14px] p-2">
-                {MENUS.map(([k, label, icon]) => (
-                  <button
-                    key={k}
-                    onClick={() => setTab(k)}
-                    className="btn-press flex w-full items-center gap-2.5 rounded-[10px] px-3 py-2.5 text-left text-[13px] font-bold"
-                    style={
-                      tab === k
-                        ? { background: NAVY, color: "#FFFFFF" }
-                        : { color: "#5C5A54" }
-                    }
-                  >
-                    <Icon name={icon} size={16} />
-                    <span className="min-w-0 flex-1 truncate">{label}</span>
-                  </button>
-                ))}
-                <p className="border-t border-navy/[.08] px-3 pb-1 pt-2.5 text-[10px] leading-[1.6] text-muted">
-                  집계 전용 콘솔 — 개별 사건 개입은 관제 · CS 소관
-                </p>
-              </nav>
-            </aside>
-
-            <div className="min-w-0 flex-1 space-y-4">
-              {/* 모바일 — 가로 스크롤 칩 (좌측 GNB 대체) */}
+          {/* 모바일 — 가로 스크롤 칩 (전고 사이드바 대체) */}
               <nav className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
                 {MENUS.map(([k, label]) => (
                   <button
@@ -1733,8 +1739,7 @@ export default function AdminConsole() {
               </div>
             </div>
           )}
-            </div>
-          </div>
+        </div>
         </div>
 
         {/* AI 경영 어시스턴트 — 우측 하단 플로팅 */}
