@@ -96,6 +96,13 @@ const PATHS = {
       <path d="M18.5 9.5a3.5 3.5 0 0 1 0 5M6.5 14.2 8 19.5" />
     </>
   ),
+  chev: <path d="M6.5 9.5 12 15l5.5-5.5" />,
+  search: (
+    <>
+      <circle cx="10.8" cy="10.8" r="6.3" />
+      <path d="M15.4 15.4 20 20" />
+    </>
+  ),
 };
 
 export default function Icon({ name, size = 18, strokeWidth = 1.8, className = "" }) {

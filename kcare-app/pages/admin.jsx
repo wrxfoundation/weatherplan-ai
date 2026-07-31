@@ -1,11 +1,11 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PendingTag } from "../components/ui";
 import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
 import Icon from "../components/icons";
 import RosterTable from "../components/RosterTable";
-import { ROSTERS } from "../lib/rosters";
+import { ROSTERS, ROSTER_CHECKS, ROSTER_ACCESS, searchAll } from "../lib/rosters";
 import {
   ADMIN_AI_QA,
   ADMIN_COHORTS,
@@ -206,6 +206,7 @@ const MENU_GROUPS = [
   ]],
 ];
 const MENUS = MENU_GROUPS.flatMap(([, items]) => items);
+const GROUP_OF = Object.fromEntries(MENU_GROUPS.flatMap(([g, items]) => items.map(([k]) => [k, g])));
 
 // 톤 공용 스타일 — 인원 관리 · 리스크 섹션
 const TONE = {
@@ -309,6 +310,43 @@ export default function AdminConsole() {
   const [hireDone, setHireDone] = useState({}); // 채용 정체 처리 원샷
   const [nbaDone, setNbaDone] = useState({}); // NBA 큐 — 담당 배정 원샷
   const [execRead, setExecRead] = useState(false); // 주간 브리핑 읽음
+  // 좌측 GNB 접기/펴기 — 그룹 단위. 섹션이 17개라 안 보는 주기는 접어 두는 게 기본 사용법이다.
+  const [navOpen, setNavOpen] = useState(() => Object.fromEntries(MENU_GROUPS.map(([g]) => [g, true])));
+  const [rosterQ, setRosterQ] = useState(""); // 명부 통합 검색어
+  const [subQ, setSubQ] = useState(""); // 유형별 명부로 이월되는 검색어
+  const [subView, setSubView] = useState(null); // 품질 점검에서 넘어온 빠른 필터
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("kcare-admin-nav-v1"));
+      if (saved && typeof saved === "object") setNavOpen((o) => ({ ...o, ...saved }));
+    } catch {}
+  }, []);
+  useEffect(() => {
+    try {
+      localStorage.setItem("kcare-admin-nav-v1", JSON.stringify(navOpen));
+    } catch {}
+  }, [navOpen]);
+  // 다른 화면에서 섹션으로 점프하면(이번 주 챙길 일 등) 그 그룹은 자동으로 펴진다.
+  // 단 첫 렌더는 제외 — "모두 접기" 상태로 다시 들어왔을 때 한 그룹만 멋대로 펴지지 않게.
+  const navFirst = useRef(true);
+  useEffect(() => {
+    if (navFirst.current) {
+      navFirst.current = false;
+      return;
+    }
+    const g = GROUP_OF[tab];
+    if (g) setNavOpen((o) => (o[g] ? o : { ...o, [g]: true }));
+  }, [tab]);
+
+  const allFolded = MENU_GROUPS.every(([g]) => !navOpen[g]);
+  const hits = useMemo(() => searchAll(rosterQ), [rosterQ]);
+  const openRoster = (sub, view = null, q = "") => {
+    setRosterSub(sub);
+    setSubView(view);
+    setSubQ(q);
+    setTab("roster");
+  };
   const counts = REVENUE_STREAMS.reduce(
     (acc, s) => ({ ...acc, [s.status]: (acc[s.status] || 0) + 1 }),
     {}
@@ -328,31 +366,55 @@ export default function AdminConsole() {
             </div>
             <div className="mt-1 text-[11px] font-bold tracking-[.14em] text-white/40">경영 콘솔 · 사람 관리</div>
           </div>
-          <nav className="mt-3.5 min-h-0 flex-1 space-y-1.5 overflow-y-auto px-3 pb-3">
-            {MENU_GROUPS.map(([group, items]) => (
-              items.every(([, , , hidden]) => hidden) ? null : (
-              <div key={group}>
-                <div className="px-3 pb-0.5 pt-1 text-[10px] font-bold tracking-[.14em] text-white/25">{group}</div>
-                <div className="space-y-0.5">
-                  {items.filter(([, , , hidden]) => !hidden).map(([k, label, icon]) => (
-                    <button
-                      key={k}
-                      onClick={() => setTab(k)}
-                      className="btn-press flex w-full items-center gap-2.5 rounded-[10px] border-l-[3px] px-3 py-[7px] text-left text-[13px] font-bold"
-                      style={
-                        tab === k
-                          ? { background: "rgba(255,255,255,.1)", color: "#FFFFFF", borderColor: "#B08D57" }
-                          : { color: "rgba(255,255,255,.55)", borderColor: "transparent" }
-                      }
-                    >
-                      <Icon name={icon} size={16} />
-                      <span className="min-w-0 flex-1 truncate">{label}</span>
-                    </button>
-                  ))}
+          <nav className="mt-3 min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-3">
+            <button
+              onClick={() =>
+                setNavOpen(Object.fromEntries(MENU_GROUPS.map(([g]) => [g, allFolded])))
+              }
+              className="btn-press mb-0.5 flex w-full items-center justify-center gap-1.5 rounded-[9px] border border-white/10 py-1.5 text-[11px] font-bold text-white/45"
+            >
+              {allFolded ? "모두 펴기" : "모두 접기"}
+              <Icon name="chev" size={12} className={allFolded ? "-rotate-90" : ""} />
+            </button>
+            {MENU_GROUPS.map(([group, items]) => {
+              const vis = items.filter(([, , , hidden]) => !hidden);
+              if (!vis.length) return null;
+              const open = !!navOpen[group];
+              const here = vis.some(([k]) => k === tab);
+              return (
+                <div key={group}>
+                  <button
+                    onClick={() => setNavOpen((o) => ({ ...o, [group]: !open }))}
+                    aria-expanded={open}
+                    className="flex w-full items-center gap-1.5 rounded-[8px] px-3 py-1.5 text-[10px] font-bold tracking-[.14em] text-white/25 hover:bg-white/[.05] hover:text-white/50"
+                  >
+                    <span className="min-w-0 flex-1 truncate text-left">{group}</span>
+                    {!open && here && <span className="h-[5px] w-[5px] shrink-0 rounded-full bg-gold" />}
+                    {!open && <span className="font-num text-[10px] text-white/25">{vis.length}</span>}
+                    <Icon name="chev" size={13} className={`shrink-0 transition-transform ${open ? "" : "-rotate-90"}`} />
+                  </button>
+                  {open && (
+                    <div className="space-y-0.5">
+                      {vis.map(([k, label, icon]) => (
+                        <button
+                          key={k}
+                          onClick={() => setTab(k)}
+                          className="btn-press flex w-full items-center gap-2.5 rounded-[10px] border-l-[3px] px-3 py-[7px] text-left text-[13px] font-bold"
+                          style={
+                            tab === k
+                              ? { background: "rgba(255,255,255,.1)", color: "#FFFFFF", borderColor: "#B08D57" }
+                              : { color: "rgba(255,255,255,.55)", borderColor: "transparent" }
+                          }
+                        >
+                          <Icon name={icon} size={16} />
+                          <span className="min-w-0 flex-1 truncate">{label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-              )
-            ))}
+              );
+            })}
           </nav>
           <div className="border-t border-white/10 px-5 py-3">
             <p className="text-[10px] leading-[1.5] text-white/35">집계 전용 콘솔 — 개별 사건 개입은 관제 · CS 소관</p>
@@ -2045,7 +2107,11 @@ export default function AdminConsole() {
                 {ROSTER_SUBS.map(([k, label]) => (
                   <button
                     key={k}
-                    onClick={() => setRosterSub(k)}
+                    onClick={() => {
+                      setRosterSub(k);
+                      setSubQ("");
+                      setSubView(null);
+                    }}
                     className="btn-press rounded-full border px-4 py-2 text-[13px] font-bold"
                     style={
                       rosterSub === k
@@ -2063,15 +2129,70 @@ export default function AdminConsole() {
                 ))}
               </div>
 
-              {/* 종합 — 규모 · 신규 등록 흐름 · 유형별 바로가기 */}
+              {/* 종합 — 통합 검색 · 규모 · 품질 점검 · 신규 등록 흐름 · 접근 기록 */}
               {rosterSub === "home" && (
                 <>
+                  {/* 전 명부 교차 검색 — 이름 하나로 어르신·보호자·컨시어지·병원을 동시에 */}
+                  <Panel>
+                    <PanelHead
+                      title="명부 통합 검색"
+                      right={<span className="text-[12px] text-muted">4개 명부 동시 · 결과를 눌러 해당 명부로</span>}
+                    />
+                    <div className="mt-3 flex items-center gap-2 rounded-[10px] border border-navy/15 bg-white/70 px-3 py-2">
+                      <span className="text-muted">
+                        <Icon name="search" size={16} />
+                      </span>
+                      <input
+                        value={rosterQ}
+                        onChange={(e) => setRosterQ(e.target.value)}
+                        placeholder="이름 · 동 · 지점 · 담당 · 병원 — 전 명부에서 찾기"
+                        className="min-w-0 flex-1 bg-transparent text-[13px] text-ink outline-none placeholder:text-muted/60"
+                      />
+                      {rosterQ && (
+                        <button onClick={() => setRosterQ("")} className="btn-press text-[12px] font-bold text-muted">
+                          지우기
+                        </button>
+                      )}
+                    </div>
+                    {rosterQ.trim() && (
+                      <div className="mt-2.5 space-y-1.5">
+                        <div className="text-[11px] font-bold text-muted">
+                          결과 <span className="font-num text-navy">{hits.length}</span>건
+                        </div>
+                        {hits.slice(0, 8).map((h) => (
+                          <button
+                            key={`${h.sub}-${h.name}`}
+                            onClick={() => openRoster(h.sub, null, h.name)}
+                            className="flex w-full items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2 text-left hover:bg-navy/[.03]"
+                          >
+                            <span className="shrink-0 rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">
+                              {h.title.replace(" 명부", "")}
+                            </span>
+                            <span className="shrink-0 text-[13px] font-bold text-navy">{h.name}</span>
+                            <span className="min-w-0 flex-1 truncate text-[12px] text-muted">{h.desc}</span>
+                            <span className="shrink-0 text-[12px] font-bold text-gold">→</span>
+                          </button>
+                        ))}
+                        {hits.length === 0 && (
+                          <p className="py-2 text-center text-[12px] text-muted">일치하는 항목이 없습니다.</p>
+                        )}
+                        {hits.length > 8 && (
+                          <p className="pt-0.5 text-[11px] text-muted">상위 8건만 표시 — 유형별 명부에서 좁혀 보세요.</p>
+                        )}
+                      </div>
+                    )}
+                    <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                      게이팅 원칙 — 명부에는 상세 주소 · 건강 상세가 없습니다 (동 단위 · 상태 라벨까지만).
+                      내보낸 파일의 관리 책임은 다운로드한 계정에 있으며, 다운로드 이력은 접근 기록으로 남습니다.
+                    </p>
+                  </Panel>
+
                   <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
                     {[
-                      ["활성 어르신", "132", "명부 표시는 대표 6건"],
-                      ["보호자", "241", "주 128 · 부 113"],
-                      ["컨시어지", "24", "수습 3 포함"],
-                      ["제휴 병원", "6", "패스트트랙 3"],
+                      ["활성 어르신", "132", `명부 표시 ${ROSTERS.elders.rows.length}건`],
+                      ["보호자", "241", `명부 표시 ${ROSTERS.guardians.rows.length}건 · 주 128 · 부 113`],
+                      ["컨시어지", "24", `재직 전원 ${ROSTERS.concierges.rows.length}건 · 수습 4`],
+                      ["제휴 병원", String(ROSTERS.hospitals.rows.length), "패스트트랙 3"],
                     ].map(([k, v, note]) => (
                       <Panel key={k} className="!p-4">
                         <div className="text-[11px] font-bold text-muted">{k}</div>
@@ -2081,7 +2202,45 @@ export default function AdminConsole() {
                     ))}
                   </div>
 
-                  <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+                  <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))" }}>
+                    {/* 명부 품질 점검 — 방대해질수록 사람이 못 보는 "빠진 것"을 규칙으로 잡는다 */}
+                    <Panel className="min-w-0">
+                      <PanelHead
+                        title="명부 품질 점검"
+                        right={<span className="text-[12px] text-muted">규칙 위반 · 누락 — 눌러서 해당 조건으로</span>}
+                      />
+                      <div className="mt-3 space-y-1.5">
+                        {ROSTER_CHECKS.map((c) => {
+                          const r = ROSTERS[c.sub];
+                          const v = r.views.find((x) => x.k === c.view);
+                          const n = r.rows.filter(v.match).length;
+                          const t = TONE[n === 0 ? "ok" : c.tone];
+                          return (
+                            <button
+                              key={`${c.sub}-${c.view}`}
+                              onClick={() => openRoster(c.sub, c.view)}
+                              disabled={n === 0}
+                              className="flex w-full items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5 text-left enabled:hover:bg-navy/[.03] disabled:opacity-55"
+                            >
+                              <span
+                                className="mt-[1px] shrink-0 rounded-full px-2 py-0.5 font-num text-[11px] font-bold"
+                                style={{ background: t.bg, color: t.fg }}
+                              >
+                                {n}
+                              </span>
+                              <span className="min-w-0 flex-1">
+                                <span className="block text-[13px] font-bold text-navy">{c.label}</span>
+                                <span className="mt-0.5 block text-[11px] leading-[1.6] text-muted">{c.why}</span>
+                              </span>
+                              <span className="shrink-0 text-[11px] font-bold text-muted">
+                                {r.title.replace(" 명부", "")} {n > 0 && <span className="text-gold">→</span>}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </Panel>
+
                     <Panel className="min-w-0">
                       <PanelHead title="신규 등록 흐름" right={<span className="text-[12px] text-muted">등록일 기준 · 전 명부 통합</span>} />
                       <div className="mt-3 grid grid-cols-3 gap-2">
@@ -2097,7 +2256,7 @@ export default function AdminConsole() {
                         {recentRegs(30).slice(0, 5).map((r) => (
                           <button
                             key={`${r.type}-${r.name}`}
-                            onClick={() => setRosterSub(r.sub)}
+                            onClick={() => openRoster(r.sub)}
                             className="flex w-full items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2 text-left hover:bg-navy/[.03]"
                           >
                             <span className="shrink-0 rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">
@@ -2113,29 +2272,37 @@ export default function AdminConsole() {
                       </div>
                     </Panel>
 
+                    {/* 접근 · 내보내기 기록 — 원칙을 문구가 아니라 기록으로 */}
                     <Panel className="min-w-0">
-                      <PanelHead title="명부 바로가기" right={<span className="text-[12px] text-muted">유형별 검색 · 기간 필터 · 엑셀</span>} />
-                      <div className="mt-3 grid grid-cols-2 gap-2">
-                        {ROSTER_SUBS.filter(([k]) => k !== "home").map(([k, label, icon]) => (
-                          <button
-                            key={k}
-                            onClick={() => setRosterSub(k)}
-                            className="btn-press rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3 text-left hover:bg-navy/[.03]"
-                          >
-                            <div className="flex items-center gap-2 text-navy">
-                              <Icon name={icon} size={16} />
-                              <span className="text-[13px] font-bold">{label} 명부</span>
+                      <PanelHead
+                        title="접근 · 내보내기 기록"
+                        right={<span className="text-[12px] text-muted">최근 5건 · 전체는 보안 · 데이터 섹션</span>}
+                      />
+                      <div className="mt-3 space-y-1.5">
+                        {ROSTER_ACCESS.map((a) => {
+                          const t = TONE[a.tone];
+                          return (
+                            <div
+                              key={`${a.at}-${a.act}`}
+                              className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2"
+                            >
+                              <span className="w-[62px] shrink-0 font-num text-[11px] text-muted">{a.at}</span>
+                              <span className="min-w-0 flex-1">
+                                <span className="block text-[12px] font-bold text-navy">{a.act}</span>
+                                <span className="mt-0.5 block text-[11px] leading-[1.6] text-muted">{a.detail}</span>
+                              </span>
+                              <span
+                                className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
+                                style={{ background: t.bg, color: t.fg }}
+                              >
+                                {a.who}
+                              </span>
                             </div>
-                            <div className="mt-1 font-num text-[19px] font-bold text-navy">
-                              {ROSTERS[k].rows.length}
-                              <span className="ml-1 text-[11px] font-medium text-muted">건 표시</span>
-                            </div>
-                          </button>
-                        ))}
+                          );
+                        })}
                       </div>
                       <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                        게이팅 원칙 — 명부에는 상세 주소 · 건강 상세가 없습니다 (동 단위 · 상태 라벨까지만).
-                        내보낸 파일의 관리 책임은 다운로드한 계정에 있으며, 다운로드 이력은 접근 기록으로 남습니다.
+                        지점장은 자기 지점 행만 조회됩니다 (행 수준 접근 제어) — 타 지점 접근은 차단과 함께 기록됩니다.
                       </p>
                     </Panel>
                   </div>
@@ -2145,7 +2312,11 @@ export default function AdminConsole() {
               {/* 유형별 명부 — 검색 · 기간 필터는 테이블 내장 */}
               {rosterSub !== "home" && (
                 <Panel className="min-w-0">
-                  <RosterTable roster={ROSTERS[rosterSub]} />
+                  <RosterTable
+                    roster={ROSTERS[rosterSub]}
+                    defaultQuery={subQ}
+                    defaultView={subView}
+                  />
                 </Panel>
               )}
             </div>

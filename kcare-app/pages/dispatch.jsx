@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AI_ASSIGN,
   BRIEFINGS,
@@ -350,12 +350,12 @@ export default function DispatchConsole() {
   const elders = DIRECTORY_ALL.filter((d) => d.type === "elder");
   const guardians = DIRECTORY_ALL.filter((d) => d.type === "guardian");
   const concierges = DIRECTORY_ALL.filter((d) => d.type === "concierge");
-  // 사이드바 배지 카운트 — 메뉴별 관리 대상 수
+  // 사이드바 배지 카운트 — 메뉴별 관리 대상 수 (명부가 단일 출처 · 상세 프로필 보유 수와 다름)
   const MENU_COUNTS = {
-    elder: elders.length,
-    guardian: guardians.length,
-    concierge: concierges.length,
-    hospital: MOU_HOSPITALS.length,
+    elder: ROSTERS.elders.rows.length,
+    guardian: ROSTERS.guardians.rows.length,
+    concierge: ROSTERS.concierges.rows.length,
+    hospital: ROSTERS.hospitals.rows.length,
     wearable: WEAR_DEVICES.length,
   };
   const [profile, setProfile] = useState(null); // 플로팅 프로필 카드
@@ -369,6 +369,7 @@ export default function DispatchConsole() {
     return () => window.removeEventListener("pointerdown", h);
   }, []);
 
+  const profileNames = useMemo(() => new Set(DIRECTORY_ALL.map((d) => d.name)), []);
   const openProfile = (name) => {
     const item = DIRECTORY_ALL.find((d) => d.name === name);
     if (item) {
@@ -1613,8 +1614,8 @@ export default function DispatchConsole() {
             <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead
-                  title="어르신 명부"
-                  right={`전체 ${elders.length}명 · 위험 ${RISK_WATCH.filter((r) => r.level === "높음").length}명`}
+                  title="오늘 챙길 어르신"
+                  right={`상세 프로필 ${elders.length}명 · 위험 ${RISK_WATCH.filter((r) => r.level === "높음").length}명 · 전체는 아래 명부`}
                 />
                 <div className="mt-3 space-y-2">
                   {elders.map((d) => (
@@ -1683,6 +1684,7 @@ export default function DispatchConsole() {
               <RosterTable
                 roster={ROSTERS.elders}
                 onRowClick={openProfile}
+                clickableNames={profileNames}
                 onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
               />
             </Panel>
@@ -1745,6 +1747,7 @@ export default function DispatchConsole() {
               <RosterTable
                 roster={ROSTERS.guardians}
                 onRowClick={openProfile}
+                clickableNames={profileNames}
                 onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
               />
             </Panel>
@@ -1754,7 +1757,7 @@ export default function DispatchConsole() {
           {menu === "concierge" && (
             <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
               <Panel className="min-w-0">
-                <PanelHead title="컨시어지 명부" right={`전체 ${concierges.length}명 · 평점 출처: 가족 만족도`} />
+                <PanelHead title="오늘 가동 컨시어지" right={`상세 프로필 ${concierges.length}명 · 평점 출처: 가족 만족도 · 전체는 아래 명부`} />
                 <div className="mt-3 space-y-2">
                   {concierges.map((d) => (
                     <div
@@ -1820,6 +1823,7 @@ export default function DispatchConsole() {
               <RosterTable
                 roster={ROSTERS.concierges}
                 onRowClick={openProfile}
+                clickableNames={profileNames}
                 onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
               />
             </Panel>
@@ -1904,6 +1908,7 @@ export default function DispatchConsole() {
               <RosterTable
                 roster={ROSTERS.hospitals}
                 onRowClick={openProfile}
+                clickableNames={profileNames}
                 onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
               />
             </Panel>
