@@ -1985,3 +1985,54 @@ export const CRM_STUCK = {
     { code: "S-188", days: "D-9", signal: "멤버십 갱신 임박 · 부보호자 열람 급감", act: "가구 360 리뷰 후 갱신 제안 콜", owner: "지점장" },
   ],
 };
+
+// ════ 관제 · 웨어러블 운영 섹션 (기기 자산 · 알림 · 배터리 · 페어링) ════
+// 원칙: 단일 지표로 판정하지 않는다 · 알림은 복합 조건 · 낙상은 보호자 직통 + 관제 우회 (이중 경로).
+export const WEAR_KPIS = [
+  { k: "배포 기기", v: "132", note: "어르신 1인 1대 · 예비 8대", color: "#0A1F3C" },
+  { k: "정상 수신", v: "126", note: "5분 주기 준실시간", color: "#1E7A5A" },
+  { k: "무수집 4h+", v: "3", note: "배터리 · 착용 확인 콜 대상", color: "#C0392B" },
+  { k: "배터리 20% 이하", v: "5", note: "방문 시 충전 안내", color: "#8A5D12" },
+  { k: "미착용 (오늘)", v: "4", note: "전날 취침 후 미착용", color: "#8A5D12" },
+  { k: "펌웨어 최신", v: "94%", note: "8대 업데이트 대기", color: "#0A1F3C" },
+];
+// 기기 자산 대장 — 명부와 별개로 '기기'를 관리한다
+export const WEAR_DEVICES = [
+  { serial: "FIT3-0142", owner: "김순자", branch: "강남", batt: 78, fw: "최신", state: "정상", since: "2025-05-14", tone: "ok" },
+  { serial: "FIT3-0177", owner: "이영호", branch: "송파", batt: 61, fw: "최신", state: "알림 관찰", since: "2026-07-29", tone: "warn" },
+  { serial: "FIT3-0119", owner: "박말순", branch: "강동", batt: 9, fw: "업데이트 대기", state: "무수집 6h", since: "2025-10-22", tone: "bad" },
+  { serial: "FIT3-0203", owner: "한복자", branch: "강동", batt: 44, fw: "최신", state: "정상", since: "2025-08-20", tone: "ok" },
+  { serial: "FIT3-0088", owner: "오태식", branch: "강남", batt: 83, fw: "최신", state: "정상", since: "2025-12-16", tone: "ok" },
+  { serial: "FIT3-0231", owner: "최정자", branch: "서초", batt: 17, fw: "최신", state: "배터리 부족", since: "2026-07-08", tone: "warn" },
+  { serial: "FIT3-0250", owner: "— (예비)", branch: "본점 보관", batt: 100, fw: "최신", state: "미배포", since: "—", tone: "info" },
+];
+// 알림 규칙 — 단일 지표 금지 · 복합 조건 · 오탐률 30% 초과는 단독 발송 금지
+export const WEAR_RULES = [
+  { k: "낙상 복합 감지", cond: "충격 감지 + 30초 무동작 + 심박 급변", fired: "4건", real: "3건", falseRate: "25%", route: "보호자 직통 + 관제 동시 (이중 경로)", tone: "ok" },
+  { k: "장시간 무수집", cond: "4시간 이상 데이터 없음 + 배터리 20% 이하", fired: "9건", real: "8건", falseRate: "11%", route: "관제 확인 콜 → 컨시어지 방문 시 점검", tone: "ok" },
+  { k: "야간 이상 심박", cond: "취침 구간 심박 ±25% + 3회 연속", fired: "6건", real: "2건", falseRate: "67%", route: "단독 발송 금지 — 아침 브리핑에 관찰 기록만", tone: "bad" },
+  { k: "SpO₂ 저하", cond: "94% 미만 + 10분 지속 + 활동 없음", fired: "3건", real: "2건", falseRate: "33%", route: "관제 확인 후 보호자 안내 (자동 발송 안 함)", tone: "warn" },
+  { k: "미착용 지속", cond: "12시간 이상 착용 감지 없음", fired: "7건", real: "7건", falseRate: "0%", route: "안부 콜 큐 · 거부 시 사유 기록", tone: "ok" },
+];
+// 오늘의 기기 액션 큐 — 관제가 처리하는 기기 단위 업무
+export const WEAR_ACTIONS = [
+  { level: "긴급", serial: "FIT3-0119", who: "박말순 (83)", text: "6시간 무수집 + 배터리 9% — 착용·충전 확인 필요", act: "확인 콜", tone: "bad" },
+  { level: "주의", serial: "FIT3-0231", who: "최정자 (75)", text: "배터리 17% · 오늘 18:10 동행 예정", act: "동행 시 충전 안내", tone: "warn" },
+  { level: "주의", serial: "FIT3-0177", who: "이영호 (81)", text: "어제 낙상 복합 알림 — 경과 관찰 24h 남음", act: "경과 확인", tone: "warn" },
+  { level: "일반", serial: "FIT3-0119", who: "박말순 (83)", text: "펌웨어 업데이트 대기 — 다음 방문 시 적용", act: "방문 배정", tone: "info" },
+];
+// 연동 상태 — Fit3 → Samsung Health → Health Connect → 컴패니언
+export const WEAR_PIPELINE = [
+  ["기기 (갤럭시 Fit3)", "정상", "심박 · 활동 · 수면 · SpO₂ · 낙상 · 착용", "ok"],
+  ["Samsung Health", "정상", "기기 데이터 1차 수집", "ok"],
+  ["Health Connect", "정상", "앱 간 표준 연동 계층 (Android)", "ok"],
+  ["컴패니언 앱", "정상", "5분 주기 동기화 · 준실시간", "ok"],
+  ["스트레스 지표", "미연동", "파트너 SDK 조건부 — 삼성 제휴 필요", "warn"],
+  ["위치 (GPS)", "폰 GPS 사용", "워치 단독 GPS 미탑재 — 폰 경유", "info"],
+];
+export const WEAR_CONSENT = [
+  { k: "생체정보 수집 동의", v: "132 / 132", note: "가입 시 필수 · 만료 D-30 갱신 루프", tone: "ok" },
+  { k: "낙상 시 보호자 직통", v: "129 / 132", note: "3가구 미동의 — 관제 경유만", tone: "warn" },
+  { k: "위치 공유 (동행 중)", v: "128 / 132", note: "동행 구간에만 수집", tone: "ok" },
+  { k: "데이터 보존", v: "S1 등급", note: "케어 종료 후 1년 → 자동 파기", tone: "info" },
+];

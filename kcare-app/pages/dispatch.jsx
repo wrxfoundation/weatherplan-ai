@@ -20,6 +20,12 @@ import {
   MORNING_BRIEF,
   PARTNER_STATUS,
   WATCH_BOARD,
+  WEAR_KPIS,
+  WEAR_DEVICES,
+  WEAR_RULES,
+  WEAR_ACTIONS,
+  WEAR_PIPELINE,
+  WEAR_CONSENT,
   DIRECTORY_ALL,
   DIRECTORY_TYPE,
   DISPATCH_AI_QA,
@@ -38,6 +44,7 @@ import {
 import { useAppState } from "../lib/state";
 import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
+import Icon from "../components/icons";
 import RosterTable from "../components/RosterTable";
 import { ROSTERS } from "../lib/rosters";
 
@@ -125,6 +132,18 @@ function useElapsed(active) {
   }, [active]);
   return { sec, label: `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}` };
 }
+
+// 관제 좌측 GNB — 업무 단위 분리 (경영 콘솔과 동일 구조)
+const DISPATCH_MENUS = [
+  ["dash", "대시보드", "home"],
+  ["elder", "어르신", "user"],
+  ["guardian", "보호자", "users"],
+  ["concierge", "컨시어지", "heart"],
+  ["hospital", "병원", "plus"],
+  ["wearable", "웨어러블", "watch"],
+  ["weather", "날씨", "drop"],
+  ["comms", "커뮤니케이션", "megaphone"],
+];
 
 // 관제 맵 — Leaflet · 실측 좌표 (09 §4) · 타일 라이트(OSM)/다크(CARTO) 선택
 const MAP_TILES = {
@@ -305,15 +324,24 @@ export default function DispatchConsole() {
   const router = useRouter();
   useEffect(() => {
     const m = router.query.menu;
-    if (typeof m === "string" && ["dash", "elder", "guardian", "concierge", "hospital", "weather", "comms"].includes(m)) {
+    if (typeof m === "string" && ["dash", "elder", "guardian", "concierge", "hospital", "wearable", "weather", "comms"].includes(m)) {
       setMenu(m);
     }
   }, [router.query.menu]);
   const [sent, setSent] = useState({}); // 발송 센터 원샷
   const [briefRead, setBriefRead] = useState(false); // 아침 브리핑 읽음
+  const [wearDone, setWearDone] = useState({}); // 웨어러블 기기 액션 원샷
   const elders = DIRECTORY_ALL.filter((d) => d.type === "elder");
   const guardians = DIRECTORY_ALL.filter((d) => d.type === "guardian");
   const concierges = DIRECTORY_ALL.filter((d) => d.type === "concierge");
+  // 사이드바 배지 카운트 — 메뉴별 관리 대상 수
+  const MENU_COUNTS = {
+    elder: elders.length,
+    guardian: guardians.length,
+    concierge: concierges.length,
+    hospital: MOU_HOSPITALS.length,
+    wearable: WEAR_DEVICES.length,
+  };
   const [profile, setProfile] = useState(null); // 플로팅 프로필 카드
   const [profilePos, setProfilePos] = useState({ x: 0, y: 0 }); // 클릭 지점 — 카드가 근처에 뜬다
   const lastPointer = useRef({ x: 0, y: 0 });
@@ -539,7 +567,43 @@ export default function DispatchConsole() {
       <Head>
         <title>배치 관제 센터 — K-CARE</title>
       </Head>
-      <div className="console-bg min-h-screen px-4 pb-10 pt-7 text-ink sm:px-8">
+      <div className="console-bg min-h-screen text-ink lg:flex">
+        {/* 전고 사이드바 — 경영 콘솔과 동일 구조 (관제 업무 메뉴) */}
+        <aside className="sticky top-0 hidden h-screen w-[212px] shrink-0 flex-col overflow-y-auto lg:flex" style={{ background: NAVY }}>
+          <div className="px-5 pt-6">
+            <div className="font-num text-[20px] font-extrabold tracking-[.04em] text-white">
+              K-CARE <span className="align-top text-[9px] font-bold text-gold">BETA</span>
+            </div>
+            <div className="mt-1 text-[11px] font-bold tracking-[.14em] text-white/40">관제 콘솔 · 현장 관리</div>
+          </div>
+          <nav className="mt-5 flex-1 space-y-0.5 px-3 pb-4">
+            {DISPATCH_MENUS.map(([k, label, icon]) => {
+              const n = MENU_COUNTS[k];
+              return (
+                <button
+                  key={k}
+                  onClick={() => setMenu(k)}
+                  className="btn-press flex w-full items-center gap-2.5 rounded-[10px] border-l-[3px] px-3 py-2.5 text-left text-[13px] font-bold"
+                  style={
+                    menu === k
+                      ? { background: "rgba(255,255,255,.1)", color: "#FFFFFF", borderColor: "#B08D57" }
+                      : { color: "rgba(255,255,255,.55)", borderColor: "transparent" }
+                  }
+                >
+                  <Icon name={icon} size={16} />
+                  <span className="min-w-0 flex-1 truncate">{label}</span>
+                  {n != null && <span className="shrink-0 font-num text-[11px] text-white/40">{n}</span>}
+                </button>
+              );
+            })}
+          </nav>
+          <div className="border-t border-white/10 px-5 py-4">
+            <p className="text-[10px] leading-[1.6] text-white/35">현장 관제 — 배차 · 해제 실행은 관제사 승인 (L4)</p>
+            <a href="/" className="btn-press mt-2.5 block rounded-[10px] border border-white/20 py-2 text-center text-[12px] font-bold text-white/80">데모 홈</a>
+          </div>
+        </aside>
+
+        <div className="min-w-0 flex-1 px-4 pb-10 pt-7 sm:px-8">
         <div className="mx-auto max-w-[1240px]">
           {/* ── 헤더: 제목 + 시계 + KPI ── */}
           <header className="flex flex-wrap items-end justify-between gap-4">
@@ -598,35 +662,24 @@ export default function DispatchConsole() {
             </div>
           </header>
 
-          {/* ── GNB — 관제 업무 메뉴 + 통합 검색 (역할·기능별 분리) ── */}
+          {/* ── 모바일 메뉴 칩(사이드바 대체) + 통합 검색 ── */}
           <nav className="mt-4 flex flex-wrap items-center gap-2 border-b border-navy/[.08] pb-3">
-            {[
-              ["dash", "대시보드", null],
-              ["elder", "어르신", elders.length],
-              ["guardian", "보호자", guardians.length],
-              ["concierge", "컨시어지", concierges.length],
-              ["hospital", "병원", MOU_HOSPITALS.length],
-              ["weather", "날씨", null],
-              ["comms", "커뮤니케이션", null],
-            ].map(([k, label, n]) => (
-              <button
-                key={k}
-                onClick={() => setMenu(k)}
-                className="btn-press rounded-[10px] border px-3.5 py-2 text-[13px] font-bold"
-                style={
-                  menu === k
-                    ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
-                    : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
-                }
-              >
-                {label}
-                {n != null && (
-                  <span className={`ml-1.5 font-num text-[11px] ${menu === k ? "text-white/60" : "text-muted/70"}`}>
-                    {n}
-                  </span>
-                )}
-              </button>
-            ))}
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
+              {DISPATCH_MENUS.map(([k, label]) => (
+                <button
+                  key={k}
+                  onClick={() => setMenu(k)}
+                  className="btn-press shrink-0 rounded-[10px] border px-3.5 py-2 text-[13px] font-bold"
+                  style={
+                    menu === k
+                      ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
+                      : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
+                  }
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
             <div className="relative ml-auto w-full min-w-[240px] sm:w-[320px]">
             <input
               value={query}
@@ -1493,60 +1546,6 @@ export default function DispatchConsole() {
                   상세 주소는 담당 확정 후에만 노출됩니다 · 명부 클릭 시 담당·일정·챙길 것 프로필
                 </p>
               </Panel>
-              <Panel className="min-w-0">
-                <PanelHead
-                  title="웨어러블 보드 — 갤럭시 Fit3"
-                  right={<span className="text-[12px] text-muted">5분 주기 동기화 (준실시간)</span>}
-                />
-                <div className="mt-3 overflow-x-auto">
-                  <table className="w-full min-w-[420px] text-left text-[12px]">
-                    <thead>
-                      <tr className="whitespace-nowrap border-b border-navy/15 text-[11px] font-bold text-muted">
-                        <th className="py-1.5 pr-3">어르신</th>
-                        <th className="py-1.5 pr-3">착용</th>
-                        <th className="py-1.5 pr-3">수신</th>
-                        <th className="py-1.5 pr-3">심박</th>
-                        <th className="py-1.5 pr-3">SpO₂</th>
-                        <th className="py-1.5">특이</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {WATCH_BOARD.map((w) => (
-                        <tr key={w.name} className="border-b border-navy/[.06]">
-                          <td className="py-2 pr-3">
-                            <button
-                              onClick={() => openProfile(w.name)}
-                              className="font-bold text-navy underline decoration-navy/20 underline-offset-2"
-                            >
-                              {w.name}
-                            </button>
-                          </td>
-                          <td className="whitespace-nowrap py-2 pr-3">
-                            <span
-                              className="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                              style={
-                                w.level === "warn"
-                                  ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
-                                  : { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
-                              }
-                            >
-                              {w.wear}
-                            </span>
-                          </td>
-                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.sync}</td>
-                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.hr}</td>
-                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.spo2}</td>
-                          <td className="py-2 text-muted">{w.note}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
-                  Samsung Health → Health Connect → 컴패니언 경유 — 실시간 스트리밍이 아닌 준실시간 ·
-                  단일 지표로 판정하지 않습니다
-                </p>
-              </Panel>
 
               <Panel className="min-w-0">
                 <PanelHead title="오늘 리스크 워치" right="환경 × 건강 이력 교차 · 단일 지표 판정 금지" />
@@ -1807,6 +1806,255 @@ export default function DispatchConsole() {
             </Panel>
           )}
 
+          {/* ════ 웨어러블 — 기기 자산 · 알림 규칙 · 액션 큐 · 연동 상태 (갤럭시 Fit3) ════ */}
+          {menu === "wearable" && (
+            <div className="mt-4 space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">현장 / 기기 · 알림 · 연동</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">웨어러블 운영 — 갤럭시 Fit3</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  단일 지표로 판정하지 않습니다 — 알림은 복합 조건, 낙상은 보호자 직통 + 관제 이중 경로.
+                </p>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" }}>
+                {WEAR_KPIS.map((k) => (
+                  <div key={k.k} className="card-glass rounded-[14px] p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[24px] font-bold" style={{ color: k.color }}>{k.v}</div>
+                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 오늘의 기기 액션 큐 */}
+              <Panel className="min-w-0">
+                <PanelHead title="오늘의 기기 액션 큐" right="기기 단위 업무 — 사람 배차와 분리 관리" />
+                <div className="mt-3 space-y-2">
+                  {WEAR_ACTIONS.map((a, i) => (
+                    <div key={a.serial + i} className="flex flex-wrap items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <span
+                        className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                        style={
+                          a.tone === "bad" ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
+                          : a.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
+                          : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
+                        }
+                      >
+                        {a.level}
+                      </span>
+                      <span className="font-num text-[11px] font-bold text-navy">{a.serial}</span>
+                      <button onClick={() => openProfile(a.who.split(" (")[0])} className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
+                        {a.who}
+                      </button>
+                      <span className="min-w-0 flex-1 text-[12px] text-muted">{a.text}</span>
+                      <button
+                        onClick={() => {
+                          if (wearDone[a.serial + i]) return;
+                          setWearDone((v) => ({ ...v, [a.serial + i]: true }));
+                          push("설정", `웨어러블 ${a.act} — ${a.serial} · ${a.who}`, "#8FA9CC");
+                        }}
+                        disabled={!!wearDone[a.serial + i]}
+                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
+                      >
+                        {wearDone[a.serial + i] ? "처리됨 ✓" : a.act}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(470px, 1fr))" }}>
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="실시간 수신 보드"
+                  right={<span className="text-[12px] text-muted">5분 주기 동기화 (준실시간)</span>}
+                />
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[420px] text-left text-[12px]">
+                    <thead>
+                      <tr className="whitespace-nowrap border-b border-navy/15 text-[11px] font-bold text-muted">
+                        <th className="py-1.5 pr-3">어르신</th>
+                        <th className="py-1.5 pr-3">착용</th>
+                        <th className="py-1.5 pr-3">수신</th>
+                        <th className="py-1.5 pr-3">심박</th>
+                        <th className="py-1.5 pr-3">SpO₂</th>
+                        <th className="py-1.5">특이</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {WATCH_BOARD.map((w) => (
+                        <tr key={w.name} className="border-b border-navy/[.06]">
+                          <td className="py-2 pr-3">
+                            <button
+                              onClick={() => openProfile(w.name)}
+                              className="font-bold text-navy underline decoration-navy/20 underline-offset-2"
+                            >
+                              {w.name}
+                            </button>
+                          </td>
+                          <td className="whitespace-nowrap py-2 pr-3">
+                            <span
+                              className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                              style={
+                                w.level === "warn"
+                                  ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
+                                  : { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
+                              }
+                            >
+                              {w.wear}
+                            </span>
+                          </td>
+                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.sync}</td>
+                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.hr}</td>
+                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.spo2}</td>
+                          <td className="py-2 text-muted">{w.note}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
+                  Samsung Health → Health Connect → 컴패니언 경유 — 실시간 스트리밍이 아닌 준실시간 ·
+                  단일 지표로 판정하지 않습니다
+                </p>
+              </Panel>
+
+                {/* 기기 자산 대장 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="기기 자산 대장" right={<span className="text-[12px] text-muted">시리얼 · 배터리 · 펌웨어 · 배포일</span>} />
+                  <div className="mt-3 overflow-x-auto">
+                    <table className="w-full min-w-[520px] text-left text-[12px]">
+                      <thead>
+                        <tr className="whitespace-nowrap border-b border-navy/15 text-[11px] font-bold text-muted">
+                          <th className="py-1.5 pr-3">시리얼</th>
+                          <th className="py-1.5 pr-3">사용자</th>
+                          <th className="py-1.5 pr-3">지점</th>
+                          <th className="py-1.5 pr-3">배터리</th>
+                          <th className="py-1.5 pr-3">펌웨어</th>
+                          <th className="py-1.5">상태</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {WEAR_DEVICES.map((d) => (
+                          <tr key={d.serial} className="border-b border-navy/[.06]">
+                            <td className="whitespace-nowrap py-2 pr-3 font-num font-bold text-navy">{d.serial}</td>
+                            <td className="whitespace-nowrap py-2 pr-3 text-ink">{d.owner}</td>
+                            <td className="whitespace-nowrap py-2 pr-3 text-muted">{d.branch}</td>
+                            <td className="whitespace-nowrap py-2 pr-3">
+                              <span className="font-num font-bold" style={{ color: d.batt <= 20 ? "#C0392B" : d.batt <= 50 ? "#8A5D12" : "#1E7A5A" }}>
+                                {d.batt}%
+                              </span>
+                            </td>
+                            <td className="whitespace-nowrap py-2 pr-3 text-muted">{d.fw}</td>
+                            <td className="whitespace-nowrap py-2">
+                              <span
+                                className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                                style={
+                                  d.tone === "bad" ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
+                                  : d.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
+                                  : d.tone === "ok" ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
+                                  : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
+                                }
+                              >
+                                {d.state}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
+                    분실 · 파손 · 반납은 기기 대장에서 관리합니다 — 어르신 명부(사람)와 기기 대장(자산)은 분리 운영.
+                  </p>
+                </Panel>
+
+                {/* 알림 규칙 성능 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="알림 규칙 · 오탐률" right={<span className="text-[12px] font-bold text-danger">오탐 30% 초과는 단독 발송 금지</span>} />
+                  <div className="mt-3 space-y-2.5">
+                    {WEAR_RULES.map((r) => (
+                      <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[13px] font-bold text-navy">{r.k}</span>
+                          <span
+                            className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
+                            style={
+                              r.tone === "bad" ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
+                              : r.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
+                              : { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
+                            }
+                          >
+                            오탐 {r.falseRate}
+                          </span>
+                        </div>
+                        <div className="mt-1 text-[12px] leading-[1.6] text-muted">조건 — {r.cond}</div>
+                        <div className="mt-0.5 flex flex-wrap gap-x-3 text-[11px] text-muted">
+                          <span>발동 <span className="font-num font-bold text-ink">{r.fired}</span></span>
+                          <span>실제 <span className="font-num font-bold text-ink">{r.real}</span></span>
+                        </div>
+                        <div className="mt-1 text-[12px] font-bold leading-[1.55] text-ink">경로 — {r.route}</div>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+
+                {/* 연동 파이프라인 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="연동 상태" right={<span className="text-[12px] text-muted">Fit3 → Samsung Health → Health Connect → 컴패니언</span>} />
+                  <div className="mt-3 space-y-2">
+                    {WEAR_PIPELINE.map(([k, st, note, tone], i) => (
+                      <div key={k} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <span className="mt-[1px] flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-navy/[.08] font-num text-[10px] font-bold text-navy">{i + 1}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[13px] font-bold text-navy">{k}</div>
+                          <div className="text-[11px] leading-[1.6] text-muted">{note}</div>
+                        </div>
+                        <span
+                          className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
+                          style={
+                            tone === "ok" ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
+                            : tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
+                            : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
+                          }
+                        >
+                          {st}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
+                    스트레스 지표는 파트너 SDK 조건부 — 삼성 제휴 협의 대상입니다. 위치는 워치 단독 GPS가 없어 폰 경유로 수집합니다.
+                  </p>
+                </Panel>
+
+                {/* 동의 · 데이터 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="동의 · 데이터 관리" right={<span className="text-[12px] text-muted">생체정보 = S1 민감 등급</span>} />
+                  <div className="mt-3 space-y-2.5">
+                    {WEAR_CONSENT.map((c) => (
+                      <div key={c.k} className="flex items-baseline gap-3 border-t border-navy/[.06] pt-2.5 first:border-t-0 first:pt-0">
+                        <div className="min-w-0">
+                          <div className="text-[13px] font-bold text-navy">{c.k}</div>
+                          <div className="text-[11px] text-muted">{c.note}</div>
+                        </div>
+                        <span
+                          className="ml-auto shrink-0 font-num text-[13px] font-bold"
+                          style={{ color: c.tone === "warn" ? "#8A5D12" : c.tone === "ok" ? "#1E7A5A" : "#0A1F3C" }}
+                        >
+                          {c.v}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    낙상 직통 미동의 3가구는 관제 경유로만 통보됩니다 — 동의 없이 경로를 바꾸지 않습니다.
+                  </p>
+                </Panel>
+              </div>
+            </div>
+          )}
+
           {/* ════ 날씨 — 현재 기상 · 대기질 · 권역 지도 · 이슈 → 케어 연계 (출처: 케이웨더) ════ */}
           {menu === "weather" && (
             <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
@@ -2010,6 +2258,8 @@ export default function DispatchConsole() {
             onAction={(text) => push("대응", text, "#8FA9CC")}
           />
         )}
+
+        </div>
 
         {/* AI 관제 어시스턴트 — 우측 하단 플로팅 */}
         <AiChat
