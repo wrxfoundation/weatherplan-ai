@@ -1932,7 +1932,22 @@ export const SEC_STATUS = [
   { k: "API 검증 · 레이트 리밋 · no-store", state: "구현", note: "보안 QA 완료" },
   { k: "접근 기록 전면 공개 (감사 로그)", state: "구현", note: "전 역할 액션 티커 기록" },
   { k: "동의 만료 갱신 루프 (D-30)", state: "구현", note: "신뢰센터 · 발송 센터 연동" },
-  { k: "서버 DB · 필드 암호화 · KMS", state: "실서비스 전환 시", note: "데모는 목 데이터 · localStorage" },
+  { k: "실서버 전환 — Supabase 서울 리전", state: "로드맵", note: "RLS로 접근 매트릭스 구현 · Vault 필드 암호화 · service 키 서버 전용 · PITR — 데모는 목 데이터" },
   { k: "PIA (개인정보 영향평가)", state: "8월 진행", note: "규제 캘린더 등재 · 건강 민감정보 대량 처리" },
   { k: "가명정보 적정성 외부 검증", state: "내년 2월", note: "데이터 활용 전 선결" },
+];
+
+// ════ 경영 · 대시보드 (전체 포괄) — 섹션 요약 점프 카드 ════
+export const EXEC_OVERVIEW = [
+  { menu: "branches", label: "지점 현황", headline: "운영 4 · 오픈 준비 1", sub: "페어 준수 100% · SOS 0 (주)" },
+  { menu: "staff", label: "컨시어지 분석", headline: "평점 4.8 · 유지 87%", sub: "코칭 대상 4명 · 현장의 소리 답변률 100%" },
+  { menu: "staffmgmt", label: "인원 관리", headline: "전체 46명", sub: "자격 만료 임박 2 · 경계 교육 미이수 3" },
+  { menu: "family", label: "보호자 · 가구", headline: "128가구 · NPS 62", sub: "부보호자 열람 64% — 주의 신호" },
+  { menu: "crm", label: "CRM · 라이프사이클", headline: "이탈 위험 11가구", sub: "NBA 큐 대기 3건 · 온보딩 30일 집중" },
+  { menu: "cs", label: "CS · 마케팅", headline: "회복 콜 24h 내 92%", sub: "문의 1위 바우처 대행 — 기능화 완료" },
+  { menu: "roster", label: "명부", headline: "4종 통합", sub: "최근 1개월 신규 등록 5건" },
+  { menu: "care", label: "케어 성과", headline: "동행 정시율 91%", sub: "SOS 오인율 0 · 야간 공백 3건" },
+  { menu: "biz", label: "수익 · 리스크", headline: "수익원 22종", sub: "구현 커버리지 · 코호트 리텐션" },
+  { menu: "risk", label: "리스크 · 컴플라이언스", headline: "CRITICAL 4 · 미완화 5", sub: "의료법 27조 3항 시정이 최우선" },
+  { menu: "security", label: "보안 · 데이터", headline: "분류 4등급 · 공개 100%", sub: "실서버 전환은 Supabase 로드맵" },
 ];

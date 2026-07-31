@@ -96,6 +96,7 @@ import {
   SEC_LIFECYCLE,
   SEC_INCIDENT,
   SEC_STATUS,
+  EXEC_OVERVIEW,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -121,6 +122,7 @@ const LEVEL_STYLE = {
 
 // 좌측 GNB — 섹션이 늘어나는 구조라 탭 대신 사이드 내비 (모바일은 가로 칩)
 const MENUS = [
+  ["dash", "대시보드", "home"],
   ["branches", "지점 현황", "pin"],
   ["staff", "컨시어지 분석", "users"],
   ["staffmgmt", "인원 관리", "user"],
@@ -225,7 +227,7 @@ function StatTile({ k, v, color = NAVY, note }) {
 }
 
 export default function AdminConsole() {
-  const [tab, setTab] = useState("branches"); // 랜딩 = 다지점 통합 현황
+  const [tab, setTab] = useState("dash"); // 랜딩 = 전체 포괄 대시보드
   const [rosterSub, setRosterSub] = useState("home"); // 명부 서브메뉴 — 종합/어르신/보호자/컨시어지/병원
   const [smOpen, setSmOpen] = useState(false); // 인원 관리 — 프로필 카드 열림 (데모: 박지현 기준)
   const [renewSent, setRenewSent] = useState(false); // 자격 갱신 안내 원샷
@@ -287,14 +289,35 @@ export default function AdminConsole() {
               </a>
             </div>
             <h1 className="mt-0.5 text-[29px] font-bold tracking-[-.01em] text-navy">사람 · 경영 총괄</h1>
-            <p className="mt-1.5 max-w-[84ch] text-[15px] leading-[1.75] text-muted">
-              관제가 현장을 본다면, 경영은 사람을 봅니다 — 컨시어지 · 보호자 · 어르신의 관리와 분석.
-              이 화면은 집계만 봅니다. 개별 SOS · 사건은 관제 화면의 소관이며, 여기에는 실시간 티커를
-              두지 않습니다 — 경영이 개별 사건에 개입하지 않기 위한 설계입니다.
-            </p>
           </header>
 
-          {/* ── 사람 KPI — 전 탭 공통 (card-glass 원톤) ── */}
+          {/* 모바일 — 가로 스크롤 칩 (전고 사이드바 대체) */}
+              <nav className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
+                {MENUS.map(([k, label]) => (
+                  <button
+                    key={k}
+                    onClick={() => setTab(k)}
+                    className="btn-press shrink-0 rounded-[10px] border px-3.5 py-2 text-[13px] font-bold"
+                    style={
+                      tab === k
+                        ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
+                        : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
+                    }
+                  >
+                    {label}
+                  </button>
+                ))}
+              </nav>
+
+          {/* ════ 대시보드 — 전체 포괄 (사람 KPI · 주간 브리핑 · 섹션 요약) ════ */}
+          {tab === "dash" && (
+            <div className="space-y-4">
+              <p className="max-w-[84ch] text-[14px] leading-[1.75] text-muted">
+                관제가 현장을 본다면, 경영은 사람을 봅니다 — 컨시어지 · 보호자 · 어르신의 관리와 분석.
+                이 화면은 집계만 봅니다. 개별 SOS · 사건은 관제 소관이며 실시간 티커를 두지 않습니다 —
+                경영이 개별 사건에 개입하지 않기 위한 설계입니다.
+              </p>
+          {/* 사람 KPI — 대시보드 전용 (섹션 반복 제거) */}
           <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
             {PEOPLE_KPIS.map((k) => (
               <Panel key={k.k} className="!p-4">
@@ -338,23 +361,25 @@ export default function AdminConsole() {
             </div>
           </Panel>
 
-          {/* 모바일 — 가로 스크롤 칩 (전고 사이드바 대체) */}
-              <nav className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
-                {MENUS.map(([k, label]) => (
-                  <button
-                    key={k}
-                    onClick={() => setTab(k)}
-                    className="btn-press shrink-0 rounded-[10px] border px-3.5 py-2 text-[13px] font-bold"
-                    style={
-                      tab === k
-                        ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
-                        : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
-                    }
-                  >
-                    {label}
-                  </button>
-                ))}
-              </nav>
+              {/* 섹션 요약 — 전 메뉴 한눈에 · 클릭 이동 */}
+              <Panel className="min-w-0">
+                <PanelHead title="섹션 요약" right={<span className="text-[12px] text-muted">각 카드를 클릭하면 해당 섹션으로 이동합니다</span>} />
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))" }}>
+                  {EXEC_OVERVIEW.map((o) => (
+                    <button
+                      key={o.menu}
+                      onClick={() => setTab(o.menu)}
+                      className="btn-press rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3 text-left hover:bg-navy/[.03]"
+                    >
+                      <div className="text-[12px] font-bold text-gold">{o.label}</div>
+                      <div className="mt-0.5 font-num text-[15px] font-bold text-navy">{o.headline}</div>
+                      <div className="mt-0.5 text-[11px] leading-[1.5] text-muted">{o.sub}</div>
+                    </button>
+                  ))}
+                </div>
+              </Panel>
+            </div>
+          )}
 
           {/* ════ 지점 현황 — 다지점 통합 (비교는 케어 품질·안전 지표만, 판매액 순위 금지) ════ */}
           {tab === "branches" && (
