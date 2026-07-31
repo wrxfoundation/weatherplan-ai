@@ -39,6 +39,8 @@ import {
   ELDER_TAGS,
   TAG_TONE,
   DIRECTORY_ALL,
+  AI_STAGE_NOW,
+  AI_EVIDENCE,
   DIRECTORY_TYPE,
   DISPATCH_AI_QA,
   SLA_ROWS,
@@ -2673,6 +2675,8 @@ export default function DispatchConsole() {
           context={`SOS ${sos ? "진행 중" : "없음"} · 처리 대기 ${actions.length}건 · 미매칭 ${unmatchedCount}건 · 오늘 배차 ${jobs.length}건 · AI 배정안 ${assign === "pending" ? "3건 대기" : "확정"}`}
           intro="관제 상황을 요약해 드립니다. 지금 급한 일, 미매칭 해소 옵션, 리스크 워치를 물어보세요."
           note="AI 제안은 참고용입니다 — 배차 · 해제 등 실행은 관제 담당자 승인으로만 진행됩니다 (L4 · 8.4 Human-in-the-loop)."
+          stage={AI_STAGE_NOW}
+          evidence={AI_EVIDENCE.dispatch}
         />
       </div>
     </>

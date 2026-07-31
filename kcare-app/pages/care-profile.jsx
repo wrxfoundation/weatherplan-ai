@@ -9,6 +9,7 @@ import {
   CP_GUARD,
   CP_BRIEF,
   CP_TIMELINE,
+  CP_TENURE,
   CP_GAPS,
   CP_FEATURES,
   CP_GLOSSARY,
@@ -274,6 +275,56 @@ export default function CareProfile() {
               </div>
               <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                 보행 보조 필요 → 휠체어 필요로 3개월 만에 바뀌었습니다. 이런 방향성이 등급 재신청·복지용구 급여 시점을 정하는 근거가 됩니다.
+              </p>
+            </Panel>
+
+            {/* 가입 개월별 진화 — 쓸수록 알아가는 것이 늘어난다 */}
+            <Panel className="min-w-0">
+              <PanelHead title="쓸수록 알아 갑니다" right="가입 개월에 따라 할 수 있는 일이 달라집니다" />
+              <p className="mt-2 text-[12px] leading-[1.75] text-muted">
+                프로필은 처음부터 완성되지 않습니다. 같은 서비스라도 1개월째와 14개월째에 할 수 있는 일이
+                다릅니다 — 아래는 이 가구에서 실제로 늘어난 것입니다.
+              </p>
+              <div className="mt-3 space-y-2">
+                {CP_TENURE.map((t) => {
+                  const now = t.state === "now";
+                  const next = t.state === "next";
+                  return (
+                    <div
+                      key={t.m}
+                      className="rounded-xl border px-3.5 py-3"
+                      style={
+                        now
+                          ? { borderColor: "#B08D57", background: "rgba(176,141,87,.08)" }
+                          : { borderColor: "rgba(10,31,60,.08)", background: "rgba(255,255,255,.6)", opacity: next ? 0.7 : 1 }
+                      }
+                    >
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[13px] font-bold" style={{ color: now ? "#B08D57" : "#0A1F3C" }}>
+                          {t.m}
+                        </span>
+                        <span className="ml-auto shrink-0 font-num text-[11px] font-bold text-muted">{t.attrs}</span>
+                      </div>
+                      <ul className="mt-1.5 space-y-1">
+                        {t.can.map((c) => (
+                          <li key={c} className="flex gap-1.5 text-[12px] leading-[1.6] text-ink">
+                            <span className="shrink-0 text-green">✓</span>
+                            <span>{c}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      {t.cant && (
+                        <p className="mt-1.5 border-t border-navy/[.06] pt-1.5 text-[11px] leading-[1.6] text-muted">
+                          아직 못 하는 것 — {t.cant}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                이 가구의 기록은 이 가구에만 쓰입니다. 다른 가구로 넘어가는 것은 동의받은 집계 통계뿐이며,
+                모델을 바꿔도 프로필은 그대로 남습니다 (원칙 9.4).
               </p>
             </Panel>
 

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 // 외부 표기는 "AI"로 통일 (모델·제공사 비노출) · /api/ai 503(키 미설정) 시 기록 기반 데모 답변 폴백.
 const NAVY = "#0A1F3C";
 
-export default function AiChat({ role, title, subtitle, qa, context, note, intro }) {
+export default function AiChat({ role, title, subtitle, qa, context, note, intro, stage, evidence }) {
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState([]);
   const [input, setInput] = useState("");
@@ -62,7 +62,15 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
               AI
             </span>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-[15px] font-bold text-white">{title}</div>
+              <div className="flex items-center gap-1.5">
+                <span className="truncate text-[15px] font-bold text-white">{title}</span>
+                {/* 진화 단계 — 이 AI가 지금 어디까지 할 수 있는지 (업력·DB에 따라 올라간다) */}
+                {stage && (
+                  <span className="shrink-0 rounded-md border border-white/25 px-1.5 py-[1px] font-num text-[10px] font-bold text-white/80">
+                    {stage}
+                  </span>
+                )}
+              </div>
               <div className="truncate text-[11px] text-white/60">{subtitle}</div>
             </div>
             <button
@@ -107,8 +115,15 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
             )}
           </div>
 
+          {/* 학습 범위 — "이 답이 무엇에 근거하는가"를 늘 보이게 (쌓일수록 이 줄이 커진다) */}
+          {evidence && (
+            <div className="border-t border-navy/[.08] px-3.5 pt-2 text-[10px] leading-[1.55] text-muted">
+              <span className="font-bold text-navy/70">학습 범위</span> — {evidence}
+            </div>
+          )}
+
           {/* 추천 질문 */}
-          <div className="flex flex-wrap gap-1.5 border-t border-navy/[.08] px-3.5 pb-2 pt-2.5">
+          <div className="flex flex-wrap gap-1.5 px-3.5 pb-2 pt-2">
             {qa.map((x) => (
               <button
                 key={x.q}

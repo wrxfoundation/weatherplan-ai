@@ -130,7 +130,15 @@ import {
   IR_PROOF,
   IR_LTV_DEF,
   IR_PROOFS,
+  IR_PROOF_AI,
   IR_GAPS,
+  AI_STAGE_NOW,
+  AI_STAGES,
+  AI_ASSETS,
+  AI_LOCKED,
+  AI_ACCURACY,
+  AI_RULES,
+  AI_EVIDENCE,
   CAP_TABLE,
   ROUNDS,
   DATAROOM,
@@ -1042,7 +1050,7 @@ export default function AdminConsole() {
                     right={<span className="text-[12px] text-muted">잘 살리면 그대로 라운드의 논거</span>}
                   />
                   <div className="mt-3 space-y-2.5">
-                    {IR_PROOFS.map((pf, i) => (
+                    {[...IR_PROOFS, IR_PROOF_AI].map((pf, i) => (
                       <div key={pf.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
                         <div className="flex items-start gap-2.5">
                           <span className="mt-[1px] flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-gold font-num text-[10px] font-bold text-navy">
@@ -2869,6 +2877,173 @@ export default function AdminConsole() {
                 ))}
               </div>
 
+              {/* ── AI 진화 — 업력과 DB가 쌓일수록 능력이 올라간다 ── */}
+              <Panel>
+                <PanelHead
+                  title="AI 진화 단계"
+                  right={<span className="text-[12px] text-muted">지금 {AI_STAGE_NOW} · 다음 단계는 데이터가 열어 준다</span>}
+                />
+                <p className="mt-2 max-w-[92ch] text-[13px] leading-[1.75] text-muted">
+                  우리 AI는 모델을 바꿔서 좋아지는 것이 아니라 <b className="text-navy">업력과 기록이 쌓여서</b> 좋아집니다.
+                  그래서 단계마다 <b className="text-navy">무엇이 얼마나 쌓여야 열리는지</b>를 숨기지 않고 적습니다 —
+                  이것이 경쟁사가 자본으로 따라올 수 없는 유일한 지점입니다.
+                </p>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(212px, 1fr))" }}>
+                  {AI_STAGES.map((st) => {
+                    const done = st.state === "완료";
+                    const live = st.id === AI_STAGE_NOW;
+                    return (
+                      <div
+                        key={st.id}
+                        className="rounded-xl border px-3.5 py-3"
+                        style={
+                          live
+                            ? { borderColor: "#B08D57", background: "rgba(176,141,87,.08)" }
+                            : { borderColor: "rgba(10,31,60,.08)", background: "rgba(255,255,255,.6)" }
+                        }
+                      >
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="flex h-[22px] w-[26px] shrink-0 items-center justify-center rounded-md font-num text-[11px] font-bold"
+                            style={done ? { background: "#1E7A5A", color: "#FFFFFF" } : live ? { background: "#B08D57", color: "#0A1F3C" } : { background: "rgba(10,31,60,.08)", color: "#5C5A54" }}
+                          >
+                            {st.id}
+                          </span>
+                          <span className="min-w-0 flex-1 truncate text-[13px] font-bold text-navy">{st.k}</span>
+                          <span className="shrink-0 font-num text-[11px] font-bold text-muted">{st.pct}%</span>
+                        </div>
+                        <div className="mt-1.5 h-[5px] overflow-hidden rounded-full bg-navy/[.08]">
+                          <div
+                            className="h-full rounded-full"
+                            style={{ width: `${st.pct}%`, background: done ? "#1E7A5A" : live ? "#B08D57" : "#9AA3AF" }}
+                          />
+                        </div>
+                        <p className="mt-2 text-[11px] leading-[1.6] text-ink">{st.what}</p>
+                        <p className="mt-1.5 border-t border-navy/[.06] pt-1.5 text-[11px] leading-[1.6] text-muted">
+                          해금 조건 — {st.gate}
+                        </p>
+                        <div className="mt-1 font-num text-[11px] font-bold text-muted">{st.state} · {st.when}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Panel>
+
+              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+                <Panel className="min-w-0">
+                  <PanelHead
+                    title="데이터 자산 축적"
+                    right={<span className="text-[12px] text-muted">쌓이는 속도 = 진화 속도</span>}
+                  />
+                  <div className="mt-3 space-y-1.5">
+                    {AI_ASSETS.map((a) => (
+                      <div key={a.k} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2">
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[12px] font-bold text-navy">{a.k}</span>
+                          <span className="mt-0.5 block text-[11px] leading-[1.6] text-muted">{a.use}</span>
+                        </span>
+                        <span className="shrink-0 text-right">
+                          <span className="block font-num text-[13px] font-bold" style={{ color: TONE[a.tone].fg }}>{a.n}</span>
+                          <span className="block font-num text-[10px] text-muted">{a.rate}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    붉은 두 줄(해지 사유 · 사고 라벨)이 지금 E3를 막고 있습니다 — 데이터가 없어서가 아니라
+                    <b className="text-navy"> 라벨을 안 남겨서</b>입니다. 입력 시점을 고치는 것이 모델을 바꾸는 것보다 빠릅니다.
+                  </p>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead
+                    title="진화의 증거"
+                    right={<span className="text-[12px] text-muted">6개월 전 → 지금</span>}
+                  />
+                  <div className="mt-3 space-y-3">
+                    {AI_ACCURACY.map((a) => (
+                      <div key={a.k}>
+                        <div className="flex items-baseline gap-2 text-[12px]">
+                          <span className="font-bold text-navy">{a.k}</span>
+                          <span className="ml-auto shrink-0 font-num text-[11px] text-muted">{a.was}%</span>
+                          <span className="shrink-0 text-[11px] text-muted">→</span>
+                          <span className="shrink-0 font-num text-[13px] font-bold text-green">{a.now}%</span>
+                        </div>
+                        <div className="relative mt-1 h-[6px] overflow-hidden rounded-full bg-navy/[.06]">
+                          {/* 뒤 막대 = 지금 · 앞 막대 = 6개월 전 (늘어난 만큼이 초록으로 남는다) */}
+                          <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${a.now}%`, background: "#1E7A5A" }} />
+                          <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${a.was}%`, background: "rgba(10,31,60,.25)" }} />
+                        </div>
+                        <p className="mt-1 text-[11px] leading-[1.6] text-muted">{a.note}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    같은 모델로 같은 질문을 해도 답이 좋아진 이유는 하나입니다 — 그 사이 기록이 늘었습니다.
+                  </p>
+                </Panel>
+              </div>
+
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="잠긴 기능 · 해금 조건"
+                  right={<span className="text-[12px] text-muted">무엇이 쌓이면 켜지는지 · 눌러서 해당 섹션으로</span>}
+                />
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+                  {AI_LOCKED.map((f) => {
+                    const tone = f.pct >= 100 ? "ok" : f.pct >= 60 ? "warn" : "bad";
+                    return (
+                      <button
+                        key={f.k}
+                        onClick={() => setTab(f.menu)}
+                        className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3 text-left hover:bg-navy/[.03]"
+                      >
+                        <div className="flex items-baseline gap-2">
+                          <span className="min-w-0 flex-1 text-[13px] font-bold text-navy">{f.k}</span>
+                          <span
+                            className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
+                            style={{ background: TONE[tone].bg, color: TONE[tone].fg }}
+                          >
+                            {f.state}
+                          </span>
+                        </div>
+                        <div className="mt-2 flex items-baseline gap-2 text-[11px]">
+                          <span className="text-muted">{f.need}</span>
+                          <span className="ml-auto shrink-0 font-num font-bold" style={{ color: TONE[tone].fg }}>
+                            {f.now}
+                          </span>
+                        </div>
+                        <div className="mt-1 h-[6px] overflow-hidden rounded-full bg-navy/[.08]">
+                          <div className="h-full rounded-full" style={{ width: `${f.pct}%`, background: TONE[tone].fg }} />
+                        </div>
+                        <p className="mt-2 text-[11px] leading-[1.6] text-ink">{f.how}</p>
+                        <p className="mt-1 font-num text-[11px] font-bold text-muted">{f.eta}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </Panel>
+
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="진화 원칙"
+                  right={<span className="text-[12px] text-muted">능력이 올라가도 바뀌지 않는 것</span>}
+                />
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                  {AI_RULES.map((r, i) => (
+                    <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex items-start gap-2">
+                        <span className="mt-[1px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-navy font-num text-[10px] font-bold text-white">
+                          {i + 1}
+                        </span>
+                        <span className="text-[12px] font-bold text-navy">{r.k}</span>
+                      </div>
+                      <p className="mt-1.5 text-[11px] leading-[1.7] text-muted">{r.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+
               <Panel className="min-w-0">
                 <PanelHead title="릴리스 계획" right={<span className="text-[12px] text-muted">실서버 전환이 v1.1의 전부</span>} />
                 <div className="mt-3 space-y-2">
@@ -3603,6 +3778,8 @@ export default function AdminConsole() {
           context="가입 128가구(+12) · 활성 어르신 132 · 보호자 241(주 128 / 부 113) · 컨시어지 24 · 90일 유지 87% · NPS 62 · 이탈 위험 11가구 · 부보호자 열람 64%"
           intro="사람 · 경영 지표를 분석해 드립니다. 이번 달 요약, 이탈 위험 조치, 유지율 개선 포인트를 물어보세요."
           note="집계 데이터만 다룹니다 — 개별 사건 · 개인정보는 관제 · CS 소관입니다."
+          stage={AI_STAGE_NOW}
+          evidence={AI_EVIDENCE.admin}
         />
       </div>
     </>
