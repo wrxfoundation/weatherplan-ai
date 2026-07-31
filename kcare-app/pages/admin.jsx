@@ -81,6 +81,13 @@ import {
   BRANCH_ALERTS,
   BRANCH_OPEN_STEPS,
   BRANCH_SUPPORT,
+  BRANCH_MANAGERS,
+  MGR_RHYTHM,
+  MGR_CAN,
+  MGR_CANT,
+  AI_PEOPLE_SIGNALS,
+  AI_PEOPLE_SPLIT,
+  PEOPLE_MAP,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -213,6 +220,7 @@ export default function AdminConsole() {
   const [rosterSub, setRosterSub] = useState("home"); // 명부 서브메뉴 — 종합/어르신/보호자/컨시어지/병원
   const [smOpen, setSmOpen] = useState(false); // 인원 관리 — 프로필 카드 열림 (데모: 박지현 기준)
   const [renewSent, setRenewSent] = useState(false); // 자격 갱신 안내 원샷
+  const [psDone, setPsDone] = useState({}); // AI 사람 신호 — 담당 배정 원샷
   const [nbaDone, setNbaDone] = useState({}); // NBA 큐 — 담당 배정 원샷
   const [execRead, setExecRead] = useState(false); // 주간 브리핑 읽음
   const counts = REVENUE_STREAMS.reduce(
@@ -358,6 +366,80 @@ export default function AdminConsole() {
                   </Panel>
                 ))}
               </div>
+
+              {/* AI 사람 신호 — 교차 감지는 AI, 인사 결정은 사람 (L4 인사 원칙) */}
+              <Panel className="min-w-0">
+                <PanelHead
+                  title={<><span className="mr-2 rounded-md bg-gold px-1.5 py-0.5 text-[11px] font-bold tracking-[.1em] text-navy">AI</span>사람 신호 — 교차 감지</>}
+                  right={<span className="text-[12px] text-muted">AI는 신호 교차·제안까지 · 면담·배정·징계는 항상 사람 (L4 인사)</span>}
+                />
+                <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                  {AI_PEOPLE_SIGNALS.map((sg) => (
+                    <div key={sg.id} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
+                      <div className="text-[13px] font-bold text-navy">{sg.who}</div>
+                      <p className="mt-1 text-[12px] leading-[1.6] text-muted">{sg.cross}</p>
+                      <p className="mt-1 text-[12px] font-bold leading-[1.6] text-ink">제안 — {sg.suggest}</p>
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                        <button
+                          onClick={() => setPsDone((v) => ({ ...v, [sg.id]: true }))}
+                          disabled={!!psDone[sg.id]}
+                          className="btn-press rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
+                        >
+                          {psDone[sg.id] ? `${sg.owner} 배정됨 ✓` : `${sg.owner} 배정`}
+                        </button>
+                        <button
+                          onClick={() => setTab(sg.menu)}
+                          className="btn-press rounded-[10px] px-2.5 py-1.5 text-[11px] font-bold text-muted hover:text-navy"
+                        >
+                          {sg.menuLabel} →
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 grid gap-2.5 border-t border-navy/[.08] pt-3 sm:grid-cols-2">
+                  <div className="rounded-xl bg-navy/[.04] px-3.5 py-2.5">
+                    <div className="text-[11px] font-bold text-gold">AI가 돕는 것</div>
+                    <ul className="mt-1 space-y-0.5">
+                      {AI_PEOPLE_SPLIT.ai.map((x) => (
+                        <li key={x} className="text-[12px] leading-[1.6] text-ink">· {x}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="rounded-xl bg-navy/[.04] px-3.5 py-2.5">
+                    <div className="text-[11px] font-bold text-navy">사람이 정하는 것</div>
+                    <ul className="mt-1 space-y-0.5">
+                      {AI_PEOPLE_SPLIT.human.map((x) => (
+                        <li key={x} className="text-[12px] leading-[1.6] text-ink">· {x}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </Panel>
+
+              {/* 사람 관리 체계 맵 — 흩어진 사람 기능의 단계별 정돈 (메뉴 점프) */}
+              <Panel className="min-w-0">
+                <PanelHead title="사람 관리 체계 맵" right={<span className="text-[12px] text-muted">채용 → 온보딩 → 운영 → 성장 → 보호 · 클릭하면 담당 화면으로</span>} />
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
+                  {PEOPLE_MAP.map((m, i) => (
+                    <button
+                      key={m.stage}
+                      onClick={() => setTab(m.menu)}
+                      className="btn-press rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3 text-left hover:bg-navy/[.03]"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-gold font-num text-[10px] font-bold text-navy">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="text-[13px] font-bold text-navy">{m.stage}</span>
+                      </div>
+                      <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">{m.what}</p>
+                      <div className="mt-1.5 text-[11px] font-bold text-gold">{m.label} →</div>
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  전 단계 공통 — 판매액 지표 없음 · 모든 열람 기록 공개 · 인사 결정은 사람. 배차·현장 개입은 관제 콘솔 소관입니다.
+                </p>
+              </Panel>
 
               {/* 지점 카드 */}
               <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
@@ -520,6 +602,83 @@ export default function AdminConsole() {
                   </p>
                 </Panel>
               </div>
+
+              {/* ── 지점장 보드 — 지점을 맡은 사람을 관리한다 ── */}
+              <Panel className="min-w-0">
+                <PanelHead title="지점장 보드" right={<span className="text-[12px] text-muted">지점장 평가도 사람 지표만 — 팀 유지율 · 팀 평점 · 소리 응답 SLA · 페어 준수</span>} />
+                <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+                  {BRANCH_MANAGERS.map((m) => (
+                    <div key={m.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-full bg-navy text-[13px] font-bold text-white">{m.name[0]}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[14px] font-bold text-navy">{m.name}</span>
+                            <span
+                              className="rounded-full px-2 py-0.5 text-[9px] font-bold"
+                              style={
+                                m.tone === "ok" ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
+                                : m.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
+                                : { color: "#7A5C28", background: "rgba(176,141,87,.16)" }
+                              }
+                            >
+                              {m.state}
+                            </span>
+                          </div>
+                          <div className="truncate text-[11px] text-muted">{m.branch} · {m.career}</div>
+                        </div>
+                      </div>
+                      <div className="mt-2.5 grid grid-cols-3 gap-1.5">
+                        {[["팀", `${m.team || "—"}명`], ["팀 유지율", m.keep], ["팀 평점", m.rate]].map(([k, v]) => (
+                          <div key={k} className="rounded-lg bg-navy/[.04] px-1.5 py-1.5 text-center">
+                            <div className="text-[9px] font-bold text-muted">{k}</div>
+                            <div className="font-num text-[13px] font-bold text-navy">{v}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-1.5 flex gap-1.5 text-[10px] text-muted">
+                        <span>재직 {m.tenure}</span>
+                        <span>· 소리 응답 {m.sla}</span>
+                      </div>
+                      <p className="mt-1.5 border-t border-navy/[.06] pt-1.5 text-[11px] leading-[1.6] text-ink">
+                        <span className="font-bold text-gold">이번 주 — </span>{m.focus}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 grid gap-2.5 border-t border-navy/[.08] pt-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                  <div>
+                    <div className="text-[12px] font-bold text-navy">지점장 운영 리듬</div>
+                    <div className="mt-2 space-y-1.5">
+                      {MGR_RHYTHM.map(([k, v]) => (
+                        <div key={k} className="text-[12px] leading-[1.6] text-ink">
+                          <span className="font-bold text-navy">{k}</span> <span className="text-muted">— {v}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="rounded-xl bg-green/[.05] px-3.5 py-2.5">
+                    <div className="text-[11px] font-bold text-green">지점장이 할 수 있다</div>
+                    <ul className="mt-1 space-y-0.5">
+                      {MGR_CAN.map((x) => (
+                        <li key={x} className="text-[11px] leading-[1.6] text-ink">✓ {x}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="rounded-xl bg-danger/[.04] px-3.5 py-2.5">
+                    <div className="text-[11px] font-bold text-danger">지점장도 할 수 없다</div>
+                    <ul className="mt-1 space-y-0.5">
+                      {MGR_CANT.map((x) => (
+                        <li key={x} className="text-[11px] leading-[1.6] text-ink">✕ {x}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  지점장 권한도 시스템이 강제합니다 — 평점 수정·단독 배차 예외·EAP 기록 열람은 권한 자체가 없습니다.
+                  내부 승격(분당 최윤희)이 기본 경로입니다: 시니어 → 코치 → 지점장.
+                </p>
+              </Panel>
             </div>
           )}
 
