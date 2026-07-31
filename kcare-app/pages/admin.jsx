@@ -101,6 +101,14 @@ import {
   CRM_STUCK,
   HIRE_STUCK_STAGES,
   HIRE_STUCK,
+  CASH_KPIS,
+  CASH_IN,
+  CASH_OUT,
+  CASH_FLOW_STEPS,
+  CORP_CARDS,
+  CARD_ALERTS,
+  SETTLE_CYCLE,
+  AR_ITEMS,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -135,7 +143,8 @@ const MENUS = [
   ["cs", "CS · 마케팅", "megaphone"],
   ["roster", "명부", "doc"],
   ["care", "케어 성과", "heart"],
-  ["biz", "수익 · 리스크", "coin"],
+  ["cash", "자금 흐름", "coin"],
+  ["biz", "수익 · 리스크", "diamond"],
   ["risk", "리스크 · 컴플라이언스", "alert"],
   ["security", "보안 · 데이터", "shield"],
 ];
@@ -1892,6 +1901,206 @@ export default function AdminConsole() {
                   게이팅은 처음부터 설계에 박혀 있습니다.
                 </p>
               </Panel>
+            </div>
+          )}
+
+          {/* ════ 자금 흐름 — 유입 · 유출 · 카드 지출 · 정산 · 미수 (돈이 흐르는 전 구간) ════ */}
+          {tab === "cash" && (
+            <div className="space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">경영 / 자금 · 지출 · 정산</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">자금 흐름 관리</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  사람 평가에는 판매액을 쓰지 않지만, 회사의 돈은 끝까지 추적합니다 — 고객 결제부터 현장 지급까지.
+                </p>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+                {CASH_KPIS.map((k) => (
+                  <Panel key={k.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[24px] font-bold" style={{ color: k.color }}>{k.v}</div>
+                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              {/* 자금 흐름도 — 결제에서 잔여 현금까지 */}
+              <Panel className="min-w-0">
+                <PanelHead title="자금 흐름도" right={<span className="text-[12px] text-muted">고객 결제 → 회사 수취 → 현장 지급 → 운영 → 잔여</span>} />
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
+                  {CASH_FLOW_STEPS.map((f, i) => (
+                    <div key={f.k} className="relative rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-num text-[10px] font-bold text-muted">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="text-[12px] font-bold text-navy">{f.k}</span>
+                      </div>
+                      <div
+                        className="mt-1 font-num text-[20px] font-bold"
+                        style={{ color: f.k === "잔여 현금" ? "#1E7A5A" : f.tone === "warn" ? "#8A5D12" : "#0A1F3C" }}
+                      >
+                        {f.v}
+                      </div>
+                      <div className="mt-0.5 text-[11px] leading-[1.5] text-muted">{f.note}</div>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+                {/* 유입 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="유입 — 수익원별 (월)" right={<span className="text-[12px] font-bold text-green">1.42억</span>} />
+                  <div className="mt-3 space-y-3">
+                    {CASH_IN.map((c) => (
+                      <BarRow
+                        key={c.k}
+                        label={c.k}
+                        value={c.v}
+                        w={c.w}
+                        color={c.tone === "bad" ? "#C0392B" : c.tone === "warn" ? "#8A5D12" : "#1E7A5A"}
+                        note={c.note}
+                      />
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    병원 연계(05)는 계약 구조 전환 전까지 수취를 중단합니다 — 리스크 C4 최우선 시정 항목.
+                  </p>
+                </Panel>
+
+                {/* 유출 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="유출 — 비용 구성 (월)" right={<span className="text-[12px] font-bold text-danger">1.19억</span>} />
+                  <div className="mt-3 space-y-3">
+                    {CASH_OUT.map((c) => (
+                      <BarRow
+                        key={c.k}
+                        label={c.k}
+                        value={c.v}
+                        w={c.w}
+                        color={c.tone === "warn" ? "#8A5D12" : "#B08D57"}
+                        note={c.note}
+                      />
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    유출의 68%가 사람에게 갑니다(정산 + 지분) — 이 비중을 낮추는 방향의 원가 절감은 하지 않습니다.
+                  </p>
+                </Panel>
+              </div>
+
+              {/* 법인카드 · 지출 관리 */}
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="법인카드 · 지출 관리"
+                  right={<span className="text-[12px] font-bold text-danger">확인 필요 {CARD_ALERTS.filter((a) => a.level === "확인 필요").length}건</span>}
+                />
+                <div className="mt-3 space-y-2">
+                  {CARD_ALERTS.map((a) => (
+                    <div key={a.text} className="flex flex-wrap items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <span
+                        className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                        style={{ color: TONE[a.tone].fg, background: TONE[a.tone].bg }}
+                      >
+                        {a.level}
+                      </span>
+                      <span className="min-w-0 flex-1 text-[12px] text-ink">{a.text}</span>
+                      <span className="shrink-0 text-[12px] font-bold text-navy">→ {a.act}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[820px] text-left text-[12px]">
+                    <thead>
+                      <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                        <th className="py-2 pr-4">카드번호</th>
+                        <th className="py-2 pr-4">별칭</th>
+                        <th className="py-2 pr-4">소지자</th>
+                        <th className="py-2 pr-4">한도</th>
+                        <th className="py-2 pr-4">사용률</th>
+                        <th className="py-2 pr-4">최근 결제</th>
+                        <th className="py-2">상태</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {CORP_CARDS.map((c) => (
+                        <tr key={c.no} className="border-b border-navy/[.06] align-top">
+                          <td className="whitespace-nowrap py-2.5 pr-4">
+                            <span className="font-num font-bold text-navy">{c.no}</span>
+                            <div className="text-[11px] text-muted">{c.note}</div>
+                          </td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-bold text-navy">{c.alias}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 text-ink">{c.owner}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-num text-ink">{c.limit}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4">
+                            <div className="flex items-center gap-2">
+                              <div className="h-[5px] w-[70px] overflow-hidden rounded-full bg-navy/[.08]">
+                                <div
+                                  className="h-full rounded-full"
+                                  style={{ width: `${c.used}%`, background: c.used >= 90 ? "#C0392B" : c.used >= 70 ? "#8A5D12" : "#1E7A5A" }}
+                                />
+                              </div>
+                              <span className="font-num font-bold" style={{ color: c.used >= 90 ? "#C0392B" : c.used >= 70 ? "#8A5D12" : "#1E7A5A" }}>
+                                {c.used}%
+                              </span>
+                            </div>
+                          </td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 text-muted">{c.last}</td>
+                          <td className="whitespace-nowrap py-2.5">
+                            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[c.tone].fg, background: TONE[c.tone].bg }}>
+                              {c.state}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  복지 · EAP 카드는 총액만 회계 처리하고 개인 이용 내역은 식별하지 않습니다 — 상담 비밀 보장 원칙의 회계 버전입니다.
+                </p>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+                {/* 정산 사이클 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="정산 사이클" right={<span className="text-[12px] text-muted">사람에게 나가는 돈은 늦으면 신뢰가 깨진다</span>} />
+                  <ol className="mt-3 space-y-2">
+                    {SETTLE_CYCLE.map(([k, v, when], i) => (
+                      <li key={k} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <span className="mt-[1px] flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-gold font-num text-[10px] font-bold text-navy">{i + 1}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[12px] font-bold text-navy">{k}</div>
+                          <div className="text-[12px] leading-[1.55] text-muted">{v}</div>
+                        </div>
+                        <span className="shrink-0 font-num text-[10px] font-bold text-green">{when}</span>
+                      </li>
+                    ))}
+                  </ol>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    정산 지연 0건 — 24시간 정산은 채용 퍼널 문의 1위 항목이자 리텐션 장치입니다.
+                  </p>
+                </Panel>
+
+                {/* 미수 · 회수 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="미수 · 회수 관리" right={<span className="text-[12px] font-bold text-amber">870만</span>} />
+                  <div className="mt-3 space-y-2">
+                    {AR_ITEMS.map((a) => (
+                      <div key={a.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[13px] font-bold text-navy">{a.k}</span>
+                          <span className="ml-auto font-num text-[13px] font-bold" style={{ color: TONE[a.tone].fg }}>{a.v}</span>
+                        </div>
+                        <div className="mt-1 text-[12px] leading-[1.55] text-muted">{a.note}</div>
+                        <div className="mt-1 text-[12px] font-bold leading-[1.55] text-ink">→ {a.act}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    결제 실패 6가구는 CRM 퍼널의 결제 정체 구간과 같은 건입니다 — 돈 문제는 이탈 신호로도 같이 봅니다.
+                  </p>
+                </Panel>
+              </div>
             </div>
           )}
 
