@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PendingTag } from "../components/ui";
 import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
+import Icon from "../components/icons";
 import RosterTable from "../components/RosterTable";
 import { ROSTERS } from "../lib/rosters";
 import {
@@ -69,6 +70,41 @@ const LEVEL_STYLE = {
   중간: { fg: "#8A5D12", bg: "rgba(138,93,18,.1)" },
 };
 
+// 좌측 GNB — 섹션이 늘어나는 구조라 탭 대신 사이드 내비 (모바일은 가로 칩)
+const MENUS = [
+  ["staff", "컨시어지 분석", "users"],
+  ["family", "보호자 · 가구", "home"],
+  ["crm", "CRM · 라이프사이클", "activity"],
+  ["cs", "CS · 마케팅", "megaphone"],
+  ["roster", "명부", "doc"],
+  ["care", "케어 성과", "heart"],
+  ["biz", "수익 · 리스크", "coin"],
+];
+
+// 명부 서브메뉴 — 종합 대시보드 + 유형별 분리 관리 (방대해질 명부의 기본 골격)
+const ROSTER_SUBS = [
+  ["home", "종합", null],
+  ["elders", "어르신", "user"],
+  ["guardians", "보호자", "users"],
+  ["concierges", "컨시어지", "heart"],
+  ["hospitals", "병원", "plus"],
+];
+
+// 최근 등록 집계 — 등록일(dateCol) 기준, 전 명부 통합
+function recentRegs(days) {
+  const cut = Date.now() - days * 86400000;
+  return [
+    ["elders", "어르신"],
+    ["guardians", "보호자"],
+    ["concierges", "컨시어지"],
+    ["hospitals", "병원"],
+  ].flatMap(([key, label]) =>
+    ROSTERS[key].rows
+      .filter((r) => new Date(`${r[ROSTERS[key].dateCol]}T00:00:00`).getTime() >= cut)
+      .map((r) => ({ type: label, sub: key, name: r[0], date: r[ROSTERS[key].dateCol] }))
+  ).sort((a, b) => (a.date < b.date ? 1 : -1));
+}
+
 function Panel({ children, className = "" }) {
   return (
     <section
@@ -121,6 +157,7 @@ function StatTile({ k, v, color = NAVY, note }) {
 
 export default function AdminConsole() {
   const [tab, setTab] = useState("staff");
+  const [rosterSub, setRosterSub] = useState("home"); // 명부 서브메뉴 — 종합/어르신/보호자/컨시어지/병원
   const [nbaDone, setNbaDone] = useState({}); // NBA 큐 — 담당 배정 원샷
   const [execRead, setExecRead] = useState(false); // 주간 브리핑 읽음
   const counts = REVENUE_STREAMS.reduce(
@@ -197,31 +234,49 @@ export default function AdminConsole() {
             </div>
           </Panel>
 
-          {/* ── 탭 — 사람 축 3개 + 수익·리스크 ── */}
-          <div className="flex flex-wrap gap-2">
-            {[
-              ["staff", "컨시어지 분석"],
-              ["family", "보호자 · 가구"],
-              ["crm", "CRM · 라이프사이클"],
-              ["cs", "CS · 마케팅"],
-              ["roster", "명부"],
-              ["care", "케어 성과"],
-              ["biz", "수익 · 리스크"],
-            ].map(([k, label]) => (
-              <button
-                key={k}
-                onClick={() => setTab(k)}
-                className="btn-press rounded-[10px] border px-[18px] py-2.5 text-[13px] font-bold"
-                style={
-                  tab === k
-                    ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
-                    : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
-                }
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          {/* ── 좌측 GNB + 콘텐츠 — 섹션 확장 대비 사이드 내비 구조 ── */}
+          <div className="flex items-start gap-4">
+            <aside className="hidden w-[212px] shrink-0 lg:block">
+              <nav className="card-glass sticky top-4 space-y-0.5 rounded-[14px] p-2">
+                {MENUS.map(([k, label, icon]) => (
+                  <button
+                    key={k}
+                    onClick={() => setTab(k)}
+                    className="btn-press flex w-full items-center gap-2.5 rounded-[10px] px-3 py-2.5 text-left text-[13px] font-bold"
+                    style={
+                      tab === k
+                        ? { background: NAVY, color: "#FFFFFF" }
+                        : { color: "#5C5A54" }
+                    }
+                  >
+                    <Icon name={icon} size={16} />
+                    <span className="min-w-0 flex-1 truncate">{label}</span>
+                  </button>
+                ))}
+                <p className="border-t border-navy/[.08] px-3 pb-1 pt-2.5 text-[10px] leading-[1.6] text-muted">
+                  집계 전용 콘솔 — 개별 사건 개입은 관제 · CS 소관
+                </p>
+              </nav>
+            </aside>
+
+            <div className="min-w-0 flex-1 space-y-4">
+              {/* 모바일 — 가로 스크롤 칩 (좌측 GNB 대체) */}
+              <nav className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
+                {MENUS.map(([k, label]) => (
+                  <button
+                    key={k}
+                    onClick={() => setTab(k)}
+                    className="btn-press shrink-0 rounded-[10px] border px-3.5 py-2 text-[13px] font-bold"
+                    style={
+                      tab === k
+                        ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
+                        : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
+                    }
+                  >
+                    {label}
+                  </button>
+                ))}
+              </nav>
 
           {/* ════ 컨시어지 분석 — 품질 · 파이프라인 · HR 워치 ════ */}
           {tab === "staff" && (
@@ -631,19 +686,117 @@ export default function AdminConsole() {
             </div>
           )}
 
-          {/* ════ 명부 — 어르신·보호자·컨시어지·병원 리스팅 + 엑셀 내보내기 ════ */}
+          {/* ════ 명부 — 종합 대시보드 + 유형별 서브메뉴 (어르신·보호자·컨시어지·병원) ════ */}
           {tab === "roster" && (
             <div className="space-y-4">
-              {[ROSTERS.elders, ROSTERS.guardians, ROSTERS.concierges, ROSTERS.hospitals].map((r) => (
-                <Panel key={r.title} className="min-w-0">
-                  <RosterTable roster={r} />
+              {/* 서브 내비 — 명부가 방대해지는 구조라 유형별 분리 관리 */}
+              <div className="flex flex-wrap gap-2">
+                {ROSTER_SUBS.map(([k, label]) => (
+                  <button
+                    key={k}
+                    onClick={() => setRosterSub(k)}
+                    className="btn-press rounded-full border px-4 py-2 text-[13px] font-bold"
+                    style={
+                      rosterSub === k
+                        ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
+                        : { background: "rgba(255,255,255,.6)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
+                    }
+                  >
+                    {label}
+                    {k !== "home" && (
+                      <span className={`ml-1.5 font-num text-[11px] ${rosterSub === k ? "text-white/60" : "text-muted/70"}`}>
+                        {ROSTERS[k].rows.length}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* 종합 — 규모 · 신규 등록 흐름 · 유형별 바로가기 */}
+              {rosterSub === "home" && (
+                <>
+                  <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+                    {[
+                      ["활성 어르신", "132", "명부 표시는 대표 6건"],
+                      ["보호자", "241", "주 128 · 부 113"],
+                      ["컨시어지", "24", "수습 3 포함"],
+                      ["제휴 병원", "6", "패스트트랙 3"],
+                    ].map(([k, v, note]) => (
+                      <Panel key={k} className="!p-4">
+                        <div className="text-[11px] font-bold text-muted">{k}</div>
+                        <div className="mt-1 font-num text-[25px] font-bold text-navy">{v}</div>
+                        <div className="mt-0.5 text-[11px] text-muted">{note}</div>
+                      </Panel>
+                    ))}
+                  </div>
+
+                  <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+                    <Panel className="min-w-0">
+                      <PanelHead title="신규 등록 흐름" right={<span className="text-[12px] text-muted">등록일 기준 · 전 명부 통합</span>} />
+                      <div className="mt-3 grid grid-cols-3 gap-2">
+                        {[
+                          ["오늘", recentRegs(1).length],
+                          ["최근 1주", recentRegs(7).length],
+                          ["최근 1개월", recentRegs(30).length],
+                        ].map(([k, n]) => (
+                          <StatTile key={k} k={k} v={`${n}건`} />
+                        ))}
+                      </div>
+                      <div className="mt-3 space-y-2 border-t border-navy/[.08] pt-3">
+                        {recentRegs(30).slice(0, 5).map((r) => (
+                          <button
+                            key={`${r.type}-${r.name}`}
+                            onClick={() => setRosterSub(r.sub)}
+                            className="flex w-full items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2 text-left hover:bg-navy/[.03]"
+                          >
+                            <span className="shrink-0 rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">
+                              {r.type}
+                            </span>
+                            <span className="text-[13px] font-bold text-navy">{r.name}</span>
+                            <span className="ml-auto font-num text-[11px] text-muted">{r.date}</span>
+                          </button>
+                        ))}
+                        {recentRegs(30).length === 0 && (
+                          <p className="py-2 text-center text-[12px] text-muted">최근 1개월 신규 등록이 없습니다.</p>
+                        )}
+                      </div>
+                    </Panel>
+
+                    <Panel className="min-w-0">
+                      <PanelHead title="명부 바로가기" right={<span className="text-[12px] text-muted">유형별 검색 · 기간 필터 · 엑셀</span>} />
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        {ROSTER_SUBS.filter(([k]) => k !== "home").map(([k, label, icon]) => (
+                          <button
+                            key={k}
+                            onClick={() => setRosterSub(k)}
+                            className="btn-press rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3 text-left hover:bg-navy/[.03]"
+                          >
+                            <div className="flex items-center gap-2 text-navy">
+                              <Icon name={icon} size={16} />
+                              <span className="text-[13px] font-bold">{label} 명부</span>
+                            </div>
+                            <div className="mt-1 font-num text-[19px] font-bold text-navy">
+                              {ROSTERS[k].rows.length}
+                              <span className="ml-1 text-[11px] font-medium text-muted">건 표시</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                      <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                        게이팅 원칙 — 명부에는 상세 주소 · 건강 상세가 없습니다 (동 단위 · 상태 라벨까지만).
+                        내보낸 파일의 관리 책임은 다운로드한 계정에 있으며, 다운로드 이력은 접근 기록으로 남습니다.
+                      </p>
+                    </Panel>
+                  </div>
+                </>
+              )}
+
+              {/* 유형별 명부 — 검색 · 기간 필터는 테이블 내장 */}
+              {rosterSub !== "home" && (
+                <Panel className="min-w-0">
+                  <RosterTable roster={ROSTERS[rosterSub]} />
                 </Panel>
-              ))}
-              <p className="px-1 text-[11px] leading-[1.7] text-muted">
-                게이팅 원칙 — 명부에는 상세 주소 · 건강 상세가 없습니다 (동 단위 · 상태 라벨까지만).
-                내보낸 파일의 관리 책임은 다운로드한 계정에 있으며, 다운로드 이력은 접근 기록으로
-                남습니다.
-              </p>
+              )}
             </div>
           )}
 
@@ -906,6 +1059,8 @@ export default function AdminConsole() {
               </Panel>
             </>
           )}
+            </div>
+          </div>
         </div>
 
         {/* AI 경영 어시스턴트 — 우측 하단 플로팅 */}
