@@ -109,6 +109,26 @@ import {
   CARD_ALERTS,
   SETTLE_CYCLE,
   AR_ITEMS,
+  OKR_QUARTER,
+  OKRS,
+  MARKET_SIZE,
+  COMPETITORS,
+  MILESTONES,
+  GROWTH_KPIS,
+  VIRAL_LOOP,
+  LOOP_BOTTLENECK,
+  CHANNELS,
+  UNIT_ECON,
+  EXPERIMENTS,
+  PRODUCT_KPIS,
+  RELEASES,
+  TECH_DEBT,
+  FEATURE_COVERAGE,
+  IR_KPIS,
+  CAP_TABLE,
+  ROUNDS,
+  DATAROOM,
+  IR_UPDATE,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -133,21 +153,39 @@ const LEVEL_STYLE = {
 };
 
 // 좌측 GNB — 섹션이 늘어나는 구조라 탭 대신 사이드 내비 (모바일은 가로 칩)
-const MENUS = [
-  ["dash", "대시보드", "home"],
-  ["branches", "지점 현황", "pin"],
-  ["staff", "컨시어지 분석", "users"],
-  ["staffmgmt", "인원 관리", "user"],
-  ["family", "보호자 · 가구", "home"],
-  ["crm", "CRM · 라이프사이클", "activity"],
-  ["cs", "CS · 마케팅", "megaphone"],
-  ["roster", "명부", "doc"],
-  ["care", "케어 성과", "heart"],
-  ["cash", "자금 흐름", "coin"],
-  ["biz", "수익 · 리스크", "diamond"],
-  ["risk", "리스크 · 컴플라이언스", "alert"],
-  ["security", "보안 · 데이터", "shield"],
+// 좌측 GNB — 그룹으로 묶어 17개 섹션을 탐색 가능하게
+const MENU_GROUPS = [
+  ["총괄", [
+    ["dash", "대시보드", "home"],
+    ["branches", "지점 현황", "pin"],
+  ]],
+  ["성장 · 고객", [
+    ["strategy", "전략 · OKR", "target"],
+    ["growth", "그로스 · 바이럴", "trend"],
+    ["family", "보호자 · 가구", "users"],
+    ["crm", "CRM · 라이프사이클", "activity"],
+    ["cs", "CS · 마케팅", "megaphone"],
+  ]],
+  ["사람", [
+    ["staff", "컨시어지 분석", "heart"],
+    ["staffmgmt", "인원 관리", "user"],
+    ["roster", "명부", "doc"],
+  ]],
+  ["운영 · 제품", [
+    ["care", "케어 성과", "plus"],
+    ["product", "제품 · 로드맵", "box"],
+  ]],
+  ["재무 · 투자", [
+    ["cash", "자금 흐름", "coin"],
+    ["ir", "투자 · IR", "chart"],
+    ["biz", "수익 · 리스크", "diamond"],
+  ]],
+  ["거버넌스", [
+    ["risk", "리스크 · 컴플라이언스", "alert"],
+    ["security", "보안 · 데이터", "shield"],
+  ]],
 ];
+const MENUS = MENU_GROUPS.flatMap(([, items]) => items);
 
 // 톤 공용 스타일 — 인원 관리 · 리스크 섹션
 const TONE = {
@@ -263,32 +301,39 @@ export default function AdminConsole() {
       </Head>
       <div className="console-bg min-h-screen text-ink lg:flex">
         {/* 전고 사이드바 — 화면 전체 높이 고정 · 헤더 아래 매립형 아님 (다크 네이비) */}
-        <aside className="sticky top-0 hidden h-screen w-[232px] shrink-0 flex-col overflow-y-auto lg:flex" style={{ background: NAVY }}>
-          <div className="px-5 pt-6">
-            <div className="font-num text-[20px] font-extrabold tracking-[.04em] text-white">
+        <aside className="sticky top-0 hidden h-screen w-[232px] shrink-0 flex-col lg:flex" style={{ background: NAVY }}>
+          <div className="px-5 pt-5">
+            <div className="font-num text-[19px] font-extrabold tracking-[.04em] text-white">
               K-CARE <span className="align-top text-[9px] font-bold text-gold">BETA</span>
             </div>
             <div className="mt-1 text-[11px] font-bold tracking-[.14em] text-white/40">경영 콘솔 · 사람 관리</div>
           </div>
-          <nav className="mt-5 flex-1 space-y-0.5 px-3 pb-4">
-            {MENUS.map(([k, label, icon]) => (
-              <button
-                key={k}
-                onClick={() => setTab(k)}
-                className="btn-press flex w-full items-center gap-2.5 rounded-[10px] border-l-[3px] px-3 py-2.5 text-left text-[13px] font-bold"
-                style={
-                  tab === k
-                    ? { background: "rgba(255,255,255,.1)", color: "#FFFFFF", borderColor: "#B08D57" }
-                    : { color: "rgba(255,255,255,.55)", borderColor: "transparent" }
-                }
-              >
-                <Icon name={icon} size={16} />
-                <span className="min-w-0 flex-1 truncate">{label}</span>
-              </button>
+          <nav className="mt-3.5 min-h-0 flex-1 space-y-1.5 overflow-y-auto px-3 pb-3">
+            {MENU_GROUPS.map(([group, items]) => (
+              <div key={group}>
+                <div className="px-3 pb-0.5 pt-1 text-[10px] font-bold tracking-[.14em] text-white/25">{group}</div>
+                <div className="space-y-0.5">
+                  {items.map(([k, label, icon]) => (
+                    <button
+                      key={k}
+                      onClick={() => setTab(k)}
+                      className="btn-press flex w-full items-center gap-2.5 rounded-[10px] border-l-[3px] px-3 py-[7px] text-left text-[13px] font-bold"
+                      style={
+                        tab === k
+                          ? { background: "rgba(255,255,255,.1)", color: "#FFFFFF", borderColor: "#B08D57" }
+                          : { color: "rgba(255,255,255,.55)", borderColor: "transparent" }
+                      }
+                    >
+                      <Icon name={icon} size={16} />
+                      <span className="min-w-0 flex-1 truncate">{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </nav>
-          <div className="border-t border-white/10 px-5 py-4">
-            <p className="text-[10px] leading-[1.6] text-white/35">집계 전용 콘솔 — 개별 사건 개입은 관제 · CS 소관</p>
+          <div className="border-t border-white/10 px-5 py-3">
+            <p className="text-[10px] leading-[1.5] text-white/35">집계 전용 콘솔 — 개별 사건 개입은 관제 · CS 소관</p>
             <a href="/" className="btn-press mt-2.5 block rounded-[10px] border border-white/20 py-2 text-center text-[12px] font-bold text-white/80">데모 홈</a>
           </div>
         </aside>
@@ -729,6 +774,251 @@ export default function AdminConsole() {
                   지점장 권한도 시스템이 강제합니다 — 평점 수정·단독 배차 예외·EAP 기록 열람은 권한 자체가 없습니다.
                   내부 승격(분당 최윤희)이 기본 경로입니다: 시니어 → 코치 → 지점장.
                 </p>
+              </Panel>
+            </div>
+          )}
+
+          {/* ════ 전략 · OKR — 분기 목표 · 시장 · 경쟁 · 마일스톤 ════ */}
+          {tab === "strategy" && (
+            <div className="space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">경영 / 전략 · 목표</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">전략 · OKR — {OKR_QUARTER}</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  목표는 4개까지만 둡니다 — 다 하려다 아무것도 못 하는 것이 스케일업의 첫 실패입니다.
+                </p>
+              </div>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+                {OKRS.map((o, i) => (
+                  <Panel key={o.o} className="min-w-0">
+                    <div className="flex items-start gap-2.5">
+                      <span className="mt-[1px] flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full bg-gold font-num text-[11px] font-bold text-navy">O{i + 1}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[14px] font-bold leading-[1.5] text-navy">{o.o}</div>
+                        <div className="mt-1.5 flex items-center gap-2">
+                          <div className="h-[6px] flex-1 overflow-hidden rounded-full bg-navy/[.08]">
+                            <div className="h-full rounded-full" style={{ width: `${o.progress}%`, background: o.progress >= 70 ? "#1E7A5A" : o.progress >= 45 ? "#8A5D12" : "#C0392B" }} />
+                          </div>
+                          <span className="font-num text-[12px] font-bold text-navy">{o.progress}%</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-3 space-y-2 border-t border-navy/[.08] pt-3">
+                      {o.krs.map((kr) => (
+                        <div key={kr.k}>
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-[12px] font-bold text-navy">{kr.k}</span>
+                            <span className="ml-auto shrink-0 text-[11px] font-bold" style={{ color: TONE[kr.tone].fg }}>{kr.now}</span>
+                          </div>
+                          <div className="mt-1 h-[4px] overflow-hidden rounded-full bg-navy/[.06]">
+                            <div className="h-full rounded-full" style={{ width: `${kr.pct}%`, background: TONE[kr.tone].fg }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Panel>
+                ))}
+              </div>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+                <Panel className="min-w-0">
+                  <PanelHead title="시장 규모 — TAM · SAM · SOM" right={<span className="text-[12px] text-muted">3년 목표 기준</span>} />
+                  <div className="mt-3 space-y-3">
+                    {MARKET_SIZE.map((m) => (
+                      <BarRow key={m.k} label={m.k} value={m.v} w={m.w} color="#B08D57" note={m.note} />
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    SOM은 지점 확장 속도에 종속됩니다 — 인력 수급(채용 퍼널)이 곧 시장 점유 속도입니다.
+                  </p>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead title="마일스톤" right={<span className="text-[12px] text-muted">분기 단위</span>} />
+                  <ol className="mt-3 space-y-2">
+                    {MILESTONES.map(([q, what, st], i) => (
+                      <li key={q} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <span className="mt-[1px] flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-navy font-num text-[10px] font-bold text-white">{i + 1}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-num text-[12px] font-bold text-navy">{q}</div>
+                          <div className="text-[12px] leading-[1.55] text-ink">{what}</div>
+                        </div>
+                        <span className="shrink-0 rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">{st}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </Panel>
+              </div>
+
+              <Panel className="min-w-0">
+                <PanelHead title="경쟁 포지셔닝" right={<span className="text-[12px] text-muted">우리가 이기는 지점 · 지는 지점을 같이 본다</span>} />
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[820px] text-left text-[12px]">
+                    <thead>
+                      <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                        <th className="py-2 pr-4">경쟁 유형</th>
+                        <th className="py-2 pr-4">과금</th>
+                        <th className="py-2 pr-4">동행 구조</th>
+                        <th className="py-2 pr-4">그들의 강점 · 약점</th>
+                        <th className="py-2">우리의 차별점</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {COMPETITORS.map((c) => (
+                        <tr key={c.k} className="border-b border-navy/[.06] align-top">
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-bold text-navy">{c.k}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 text-ink">{c.price}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 text-ink">{c.pair}</td>
+                          <td className="py-2.5 pr-4 text-[12px] leading-[1.6] text-muted">{c.moat}</td>
+                          <td className="py-2.5 text-[12px] font-bold leading-[1.6]" style={{ color: TONE[c.tone].fg }}>{c.us}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Panel>
+            </div>
+          )}
+
+          {/* ════ 그로스 · 바이럴 루프 — K-factor · 채널 · 유닛 이코노믹스 · 실험 ════ */}
+          {tab === "growth" && (
+            <div className="space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">경영 / 성장 · 획득</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">그로스 · 바이럴 루프</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  케어 품질이 곧 획득 채널입니다 — 좋은 동행이 추천을 만들고, 추천이 CAC를 0으로 만듭니다.
+                </p>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+                {GROWTH_KPIS.map((k) => (
+                  <Panel key={k.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[24px] font-bold" style={{ color: k.color }}>{k.v}</div>
+                    <div className="mt-0.5 text-[11px] leading-[1.5] text-muted">{k.note}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              {/* 바이럴 루프 */}
+              <Panel className="min-w-0">
+                <PanelHead title="바이럴 루프 — 케어 경험이 다음 가구를 데려온다" right={<span className="text-[12px] text-muted">단계별 전환율 · 최근 90일</span>} />
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
+                  {VIRAL_LOOP.map((v, i) => (
+                    <div
+                      key={v.k}
+                      className="rounded-xl border px-3.5 py-3"
+                      style={v.k === LOOP_BOTTLENECK.stage
+                        ? { borderColor: "rgba(192,57,43,.35)", background: "rgba(192,57,43,.05)" }
+                        : { borderColor: "rgba(10,31,60,.08)", background: "rgba(255,255,255,.6)" }}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-num text-[10px] font-bold text-muted">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="text-[12px] font-bold text-navy">{v.k}</span>
+                        {v.k === LOOP_BOTTLENECK.stage && (
+                          <span className="ml-auto rounded-full bg-danger/10 px-1.5 py-0.5 text-[9px] font-bold text-danger">병목</span>
+                        )}
+                      </div>
+                      <div className="mt-1 font-num text-[20px] font-bold text-navy">{v.v}</div>
+                      <div className="mt-0.5 text-[11px] leading-[1.5] text-muted">{v.note}</div>
+                      {v.conv != null && (
+                        <div className="mt-1.5 h-[4px] overflow-hidden rounded-full bg-navy/[.08]">
+                          <div className="h-full rounded-full" style={{ width: `${v.conv}%`, background: v.k === LOOP_BOTTLENECK.stage ? "#C0392B" : "#1E7A5A" }} />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 rounded-xl border border-danger/25 bg-danger/[.05] px-4 py-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-danger px-2 py-0.5 text-[10px] font-bold text-white">루프 병목</span>
+                    <span className="text-[13px] font-bold text-navy">{LOOP_BOTTLENECK.stage}</span>
+                    <span className="text-[12px] text-muted">— {LOOP_BOTTLENECK.why}</span>
+                  </div>
+                  <ol className="mt-2 space-y-1">
+                    {LOOP_BOTTLENECK.acts.map((a, i) => (
+                      <li key={a} className="flex items-start gap-2 text-[12px] leading-[1.6] text-ink">
+                        <span className="mt-[1px] flex h-[17px] w-[17px] shrink-0 items-center justify-center rounded-full bg-danger font-num text-[9px] font-bold text-white">{i + 1}</span>
+                        {a}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+                <Panel className="min-w-0">
+                  <PanelHead title="채널별 CAC · LTV · 회수" right={<span className="text-[12px] text-muted">비중 · 최근 90일 가입</span>} />
+                  <div className="mt-3 overflow-x-auto">
+                    <table className="w-full min-w-[440px] text-left text-[12px]">
+                      <thead>
+                        <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                          <th className="py-2 pr-3">채널</th>
+                          <th className="py-2 pr-3">비중</th>
+                          <th className="py-2 pr-3">CAC</th>
+                          <th className="py-2 pr-3">LTV</th>
+                          <th className="py-2">회수</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {CHANNELS.map((c) => (
+                          <tr key={c.k} className="border-b border-navy/[.06]">
+                            <td className="whitespace-nowrap py-2 pr-3 font-bold text-navy">{c.k}</td>
+                            <td className="whitespace-nowrap py-2 pr-3">
+                              <div className="flex items-center gap-1.5">
+                                <div className="h-[4px] w-[36px] overflow-hidden rounded-full bg-navy/[.08]">
+                                  <div className="h-full rounded-full bg-gold" style={{ width: `${c.share}%` }} />
+                                </div>
+                                <span className="font-num text-[11px]">{c.share}%</span>
+                              </div>
+                            </td>
+                            <td className="whitespace-nowrap py-2 pr-3 font-num font-bold" style={{ color: TONE[c.tone].fg }}>{c.cac}</td>
+                            <td className="whitespace-nowrap py-2 pr-3 font-num text-ink">{c.ltv}</td>
+                            <td className="whitespace-nowrap py-2 text-muted">{c.payback}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    검색 광고는 회수 9.4개월로 목표(6개월)를 넘습니다 — 다만 중단 테스트에서 총 유입이 7% 줄어 롤백했습니다.
+                  </p>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead title="유닛 이코노믹스 — 가구 1곳 월 기준" right={<span className="text-[12px] font-bold text-green">+7만 기여</span>} />
+                  <div className="mt-3 space-y-2">
+                    {UNIT_ECON.map((u, i) => (
+                      <div
+                        key={u.k}
+                        className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 ${i === UNIT_ECON.length - 1 ? "border-2 border-green/30 bg-green/[.05]" : "border border-navy/[.06] bg-white/60"}`}
+                      >
+                        <span className="min-w-0 flex-1 text-[13px] font-bold text-navy">{u.k}</span>
+                        <span className="shrink-0 font-num text-[15px] font-bold" style={{ color: u.tone === "bad" ? "#C0392B" : "#1E7A5A" }}>{u.v}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    가구당 기여이익이 얇은 구조입니다 — 확장은 가구 수가 아니라 <b className="text-navy">가구당 옵션 부착률</b>과
+                    지점 고정비 분산으로 만듭니다. 원가 절감을 정산 단가에서 찾지 않습니다.
+                  </p>
+                </Panel>
+              </div>
+
+              <Panel className="min-w-0">
+                <PanelHead title="성장 실험 — 가설 · 상태 · 결과" right={<span className="text-[12px] text-muted">효과 없으면 롤백 (Closed Loop와 동일 원칙)</span>} />
+                <div className="mt-3 space-y-2">
+                  {EXPERIMENTS.map((e) => (
+                    <div key={e.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-[13px] font-bold text-navy">{e.k}</span>
+                        <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[e.tone].fg, background: TONE[e.tone].bg }}>{e.state}</span>
+                        <span className="ml-auto shrink-0 text-[11px] font-bold" style={{ color: TONE[e.tone].fg }}>{e.impact}</span>
+                      </div>
+                      <div className="mt-1 text-[12px] leading-[1.55] text-muted">가설 — {e.hyp}</div>
+                    </div>
+                  ))}
+                </div>
               </Panel>
             </div>
           )}
@@ -1904,6 +2194,74 @@ export default function AdminConsole() {
             </div>
           )}
 
+          {/* ════ 제품 · 로드맵 — 릴리스 · 기능 커버리지 · 기술 부채 ════ */}
+          {tab === "product" && (
+            <div className="space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">경영 / 제품 · 기술</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">제품 · 로드맵</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  운영 원칙이 곧 제품 스펙입니다 — 방침이 바뀌면 릴리스가 따라갑니다(반대 방향은 없습니다).
+                </p>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+                {PRODUCT_KPIS.map((k) => (
+                  <Panel key={k.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[24px] font-bold" style={{ color: k.color }}>{k.v}</div>
+                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              <Panel className="min-w-0">
+                <PanelHead title="릴리스 계획" right={<span className="text-[12px] text-muted">실서버 전환이 v1.1의 전부</span>} />
+                <div className="mt-3 space-y-2">
+                  {RELEASES.map((r) => (
+                    <div key={r.v} className="flex flex-wrap items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <span className="font-num text-[13px] font-bold text-navy">{r.v}</span>
+                      <span className="font-num text-[11px] text-muted">{r.when}</span>
+                      <span className="min-w-0 flex-1 text-[12px] leading-[1.55] text-ink">{r.items}</span>
+                      <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[r.tone].fg, background: TONE[r.tone].bg }}>{r.state}</span>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+                <Panel className="min-w-0">
+                  <PanelHead title="영역별 기능 커버리지" right={<span className="text-[12px] text-muted">데모 v1.0 기준</span>} />
+                  <div className="mt-3 space-y-3">
+                    {FEATURE_COVERAGE.map((f) => (
+                      <BarRow key={f.k} label={f.k} value={`${f.pct}%`} w={f.pct} color={f.pct >= 80 ? "#1E7A5A" : f.pct >= 60 ? "#8A5D12" : "#C0392B"} />
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    결제·정산 자동화(38%)가 가장 낮습니다 — 24시간 정산 약속을 사람 손으로 지키고 있다는 뜻이라 v1.2 최우선입니다.
+                  </p>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead title="기술 부채 · 해소 계획" right={<span className="text-[12px] font-bold text-danger">실서버 전환 전 해소</span>} />
+                  <div className="mt-3 space-y-2">
+                    {TECH_DEBT.map((t2) => (
+                      <div key={t2.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[13px] font-bold text-navy">{t2.k}</span>
+                          <span className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[t2.tone].fg, background: TONE[t2.tone].bg }}>
+                            {t2.tone === "bad" ? "높음" : t2.tone === "warn" ? "중간" : "낮음"}
+                          </span>
+                        </div>
+                        <div className="mt-1 text-[12px] leading-[1.55] text-muted">리스크 — {t2.risk}</div>
+                        <div className="mt-0.5 text-[12px] font-bold leading-[1.55] text-ink">계획 — {t2.plan}</div>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+              </div>
+            </div>
+          )}
+
           {/* ════ 자금 흐름 — 유입 · 유출 · 카드 지출 · 정산 · 미수 (돈이 흐르는 전 구간) ════ */}
           {tab === "cash" && (
             <div className="space-y-4">
@@ -2098,6 +2456,89 @@ export default function AdminConsole() {
                   </div>
                   <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                     결제 실패 6가구는 CRM 퍼널의 결제 정체 구간과 같은 건입니다 — 돈 문제는 이탈 신호로도 같이 봅니다.
+                  </p>
+                </Panel>
+              </div>
+            </div>
+          )}
+
+          {/* ════ 투자 · IR — 캡테이블 · 라운드 · 데이터룸 · 투자자 업데이트 ════ */}
+          {tab === "ir" && (
+            <div className="space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">경영 / 투자 · IR</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">투자 · IR</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  투자자에게 보여줄 숫자를 따로 만들지 않습니다 — 운영에서 쓰는 지표를 그대로 씁니다.
+                </p>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+                {IR_KPIS.map((k) => (
+                  <Panel key={k.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[23px] font-bold" style={{ color: k.color }}>{k.v}</div>
+                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+                <Panel className="min-w-0">
+                  <PanelHead title="캡테이블" right={<span className="text-[12px] text-muted">베스팅 2년 · 1년 클리프 적용</span>} />
+                  <div className="mt-3 space-y-3">
+                    {CAP_TABLE.map((c) => (
+                      <BarRow key={c.k} label={c.k} value={`${c.pct}%`} w={c.pct} color={c.tone === "warn" ? "#8A5D12" : "#B08D57"} note={c.note} />
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    임직원 풀 12%는 시니어 컨시어지까지 포함하는 설계입니다 — 현장이 지분을 갖는 구조가 이 사업의 리텐션 장치입니다.
+                  </p>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead title="라운드 히스토리 · 계획" right={<span className="text-[12px] text-muted">Pre-A 준비 중</span>} />
+                  <div className="mt-3 space-y-2">
+                    {ROUNDS.map((r) => (
+                      <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[13px] font-bold text-navy">{r.k}</span>
+                          <span className="font-num text-[11px] text-muted">{r.when}</span>
+                          <span className="ml-auto font-num text-[14px] font-bold text-navy">{r.amount}</span>
+                          <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[r.tone].fg, background: TONE[r.tone].bg }}>{r.state}</span>
+                        </div>
+                        <div className="mt-1 text-[12px] leading-[1.55] text-muted">용도 — {r.use}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    Pre-A 전에 CRITICAL 리스크 4건이 정리되어야 합니다 — 실사에서 가장 먼저 열리는 항목입니다.
+                  </p>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead title="데이터룸 준비 상태" right={<span className="text-[12px] font-bold text-danger">미비 1 · 진행 2</span>} />
+                  <div className="mt-3 space-y-1.5">
+                    {DATAROOM.map((d) => (
+                      <div key={d.k} className="flex items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2">
+                        <span className="min-w-0 flex-1 text-[12px] font-bold text-navy">{d.k}</span>
+                        <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[d.tone].fg, background: TONE[d.tone].bg }}>{d.state}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead title="투자자 업데이트" right={<span className="text-[12px] text-muted">{IR_UPDATE.cycle}</span>} />
+                  <ol className="mt-3 space-y-2">
+                    {IR_UPDATE.items.map((x, i) => (
+                      <li key={x} className="flex items-start gap-2.5 text-[12px] leading-[1.65] text-ink">
+                        <span className="mt-[1px] flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-full bg-gold font-num text-[10px] font-bold text-navy">{i + 1}</span>
+                        {x}
+                      </li>
+                    ))}
+                  </ol>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    나쁜 소식을 먼저, 같은 크기로 씁니다 — 침해 대응 원칙(숨기지 않는다)을 투자자 커뮤니케이션에도 적용합니다.
                   </p>
                 </Panel>
               </div>

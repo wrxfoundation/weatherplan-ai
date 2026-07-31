@@ -1940,6 +1940,8 @@ export const SEC_STATUS = [
 // ════ 경영 · 대시보드 (전체 포괄) — 섹션 요약 점프 카드 ════
 export const EXEC_OVERVIEW = [
   { menu: "branches", label: "지점 현황", headline: "운영 4 · 오픈 준비 1", sub: "페어 준수 100% · SOS 0 (주)" },
+  { menu: "strategy", label: "전략 · OKR", headline: "Q3 진척 58%", sub: "규제 O4 지연 — 의료법 전환 착수 필요" },
+  { menu: "growth", label: "그로스 · 바이럴", headline: "K-factor 0.42", sub: "LTV/CAC 14.7x · 루프 병목은 초대 발송" },
   { menu: "staff", label: "컨시어지 분석", headline: "평점 4.8 · 유지 87%", sub: "코칭 대상 4명 · 현장의 소리 답변률 100%" },
   { menu: "staffmgmt", label: "인원 관리", headline: "전체 46명", sub: "채용 정체 23명 — 신원 조회 5건 최대" },
   { menu: "family", label: "보호자 · 가구", headline: "128가구 · NPS 62", sub: "부보호자 열람 64% — 주의 신호" },
@@ -1947,7 +1949,9 @@ export const EXEC_OVERVIEW = [
   { menu: "cs", label: "CS · 마케팅", headline: "회복 콜 24h 내 92%", sub: "문의 1위 바우처 대행 — 기능화 완료" },
   { menu: "roster", label: "명부", headline: "4종 통합", sub: "최근 1개월 신규 등록 5건" },
   { menu: "care", label: "케어 성과", headline: "동행 정시율 91%", sub: "SOS 오인율 0 · 야간 공백 3건" },
+  { menu: "product", label: "제품 · 로드맵", headline: "v1.1 개발 중", sub: "결제·정산 자동화 38% — 최우선" },
   { menu: "cash", label: "자금 흐름", headline: "순현금 +2,340만", sub: "유입 1.42억 · 유출 1.19억 · 미수 870만" },
+  { menu: "ir", label: "투자 · IR", headline: "런웨이 14개월", sub: "Pre-A 준비 · 데이터룸 미비 1건" },
   { menu: "biz", label: "수익 · 리스크", headline: "수익원 22종", sub: "구현 커버리지 · 코호트 리텐션" },
   { menu: "risk", label: "리스크 · 컴플라이언스", headline: "CRITICAL 4 · 미완화 5", sub: "의료법 27조 3항 시정이 최우선" },
   { menu: "security", label: "보안 · 데이터", headline: "분류 4등급 · 공개 100%", sub: "실서버 전환은 Supabase 로드맵" },
@@ -2256,4 +2260,160 @@ export const TAG_TONE = {
   disability: { fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
   veteran: { fg: "#7A5C28", bg: "rgba(176,141,87,.18)" },
   ltc: { fg: "#1B7F79", bg: "rgba(27,127,121,.1)" },
+};
+
+// ════ 경영 · 전략 · OKR (스케일업 방향타) ════
+export const OKR_QUARTER = "2026 Q3 (7~9월)";
+export const OKRS = [
+  { o: "케어 품질을 지키면서 지점을 2배로 연다", progress: 62, krs: [
+    { k: "일산 지점 오픈 (인력 12 · 병원 4)", now: "8 / 12명 · 2 / 4곳", pct: 58, tone: "warn" },
+    { k: "전 지점 페어 준수 100% 유지", now: "100%", pct: 100, tone: "ok" },
+    { k: "지점별 NPS 60 이상", now: "마포 58 · 나머지 충족", pct: 75, tone: "warn" },
+  ]},
+  { o: "가구가 스스로 가구를 데려온다 (바이럴)", progress: 48, krs: [
+    { k: "K-factor 0.6 달성", now: "0.42", pct: 70, tone: "warn" },
+    { k: "추천 유입 비중 70%", now: "61%", pct: 87, tone: "ok" },
+    { k: "온보딩 30일 이탈 −30%", now: "−18%", pct: 60, tone: "warn" },
+  ]},
+  { o: "사람이 남는 회사를 만든다", progress: 81, krs: [
+    { k: "컨시어지 90일 유지 90%", now: "87%", pct: 96, tone: "ok" },
+    { k: "수습 → 일반 전환 8명", now: "5명", pct: 63, tone: "warn" },
+    { k: "정산 지연 0건 유지", now: "0건", pct: 100, tone: "ok" },
+  ]},
+  { o: "규제 리스크를 착수 전에 없앤다", progress: 40, krs: [
+    { k: "의료법 27조 3항 계약 구조 전환", now: "착수 필요", pct: 10, tone: "bad" },
+    { k: "PIA(개인정보 영향평가) 완료", now: "8월 진행", pct: 45, tone: "warn" },
+    { k: "CRITICAL 리스크 4 → 1", now: "4건", pct: 25, tone: "bad" },
+  ]},
+];
+export const MARKET_SIZE = [
+  { k: "TAM · 국내 시니어 케어", v: "24.6조", note: "65세 이상 1,024만 · 돌봄 지출 총액", w: 100 },
+  { k: "SAM · 수도권 유료 동행·구독", v: "1.8조", note: "수도권 중산층 이상 · 자녀 결제 가능 가구", w: 34 },
+  { k: "SOM · 3년 목표", v: "420억", note: "4개 권역 × 가구 4,000 · 점유 2.3%", w: 12 },
+];
+export const COMPETITORS = [
+  { k: "건별 매칭 플랫폼", price: "건당 과금", pair: "단독 동행", moat: "가격 경쟁 · 동행자 이탈률 높음", us: "구독 + 2인 1조로 안전·지속 소득", tone: "warn" },
+  { k: "대형 요양기관", price: "급여 중심", pair: "인력 중심", moat: "공단 급여 의존 · 디지털 접점 약함", us: "가족 앱 · 감사 로그 · 프로필 자산", tone: "info" },
+  { k: "대기업 신규 진입", price: "미정", pair: "미정", moat: "자본력 · 브랜드", us: "진화형 프로필 데이터 · 지자체 선점", tone: "bad" },
+  { k: "지역 소규모 업체", price: "저가", pair: "혼재", moat: "지역 밀착", us: "표준 프로세스 · 다지점 품질 균일", tone: "info" },
+];
+export const MILESTONES = [
+  ["2026 Q3", "일산 오픈 · 가구 160 · 의료법 계약 전환", "진행"],
+  ["2026 Q4", "실서버 전환(Supabase) · PIA 완료 · 가구 220", "예정"],
+  ["2027 Q1", "장기요양기관 지정 · 급여사업 본격화", "검토"],
+  ["2027 Q2", "Pre-A 라운드 · 6지점 · 가구 400", "목표"],
+];
+
+// ════ 경영 · 그로스 · 바이럴 루프 ════
+export const GROWTH_KPIS = [
+  { k: "K-factor", v: "0.42", note: "가구 1곳이 데려오는 신규 가구", color: "#8A5D12" },
+  { k: "추천 유입", v: "61%", note: "채널 1위 · 획득 비용 0원", color: "#1E7A5A" },
+  { k: "CAC", v: "28만", note: "유료 채널 혼합 평균", color: "#0A1F3C" },
+  { k: "LTV", v: "412만", note: "평균 유지 14개월 × 기여", color: "#1E7A5A" },
+  { k: "LTV / CAC", v: "14.7x", note: "건전 기준 3x 상회", color: "#1E7A5A" },
+  { k: "회수 기간", v: "4.2개월", note: "CAC 회수 · 목표 6개월 이내", color: "#1E7A5A" },
+];
+export const VIRAL_LOOP = [
+  { k: "케어 경험", v: "128가구", note: "동행 후 만족 — 루프의 시작", conv: null },
+  { k: "NPS 추천군 (9–10)", v: "79가구", note: "62% — 추천 의향 확보", conv: 62 },
+  { k: "초대 링크 발송", v: "41건", note: "52% — 앱 내 원탭 초대", conv: 52 },
+  { k: "상담 신청", v: "23건", note: "56% — 지인 신뢰가 전환을 올린다", conv: 56 },
+  { k: "가입 완료", v: "12가구", note: "52% — 유료 채널의 3.1배", conv: 52 },
+];
+export const LOOP_BOTTLENECK = {
+  stage: "초대 링크 발송",
+  why: "추천 의향(79) 대비 실제 발송(41) — 52%에서 절반이 샌다",
+  acts: [
+    "동행 직후 만족 순간에 초대 카드 노출 (현재는 마이페이지 안쪽)",
+    "형제 초대와 지인 초대를 분리 — 문구·보상 구조가 다르다",
+    "추천인·피추천인 양측 혜택 명시 (현재 피추천인만)",
+  ],
+};
+export const CHANNELS = [
+  { k: "가구 추천 (바이럴)", share: 61, cac: "0원", ltv: "438만", payback: "즉시", tone: "ok" },
+  { k: "제휴 요양기관", share: 14, cac: "12만", ltv: "402만", payback: "1.8개월", tone: "ok" },
+  { k: "병원 대기실 · 오프라인", share: 11, cac: "34만", ltv: "391만", payback: "5.1개월", tone: "warn" },
+  { k: "검색 광고", share: 9, cac: "61만", ltv: "355만", payback: "9.4개월", tone: "bad" },
+  { k: "지자체 · 복지관 연계", share: 5, cac: "8만", ltv: "376만", payback: "1.2개월", tone: "ok" },
+];
+export const UNIT_ECON = [
+  { k: "가구당 월 구독", v: "+70만", tone: "ok" },
+  { k: "동행 원가 (정산·수당)", v: "−48만", tone: "bad" },
+  { k: "지분 지급 (구독 8%)", v: "−5.6만", tone: "bad" },
+  { k: "운영 배부 (지점·보험)", v: "−9.4만", tone: "bad" },
+  { k: "가구당 월 기여이익", v: "+7만", tone: "ok" },
+];
+export const EXPERIMENTS = [
+  { k: "동행 직후 초대 카드 노출", hyp: "만족 순간 노출 시 발송률 52% → 70%", state: "진행 중", impact: "K-factor +0.12 예상", tone: "warn" },
+  { k: "첫 달 체험가 (가입비 유예)", hyp: "결제 단계 이탈 −18%p 완화", state: "설계", impact: "퍼널 최대 병목 대응", tone: "info" },
+  { k: "부보호자 초대 자동 리마인드", hyp: "열람률 64% → 80% · 이탈 선행지표 개선", state: "완료", impact: "이탈 −9% (검증됨)", tone: "ok" },
+  { k: "검색 광고 중단 테스트", hyp: "CAC 61만 채널 중단해도 총 유입 유지", state: "완료", impact: "롤백 — 신규 −7% 감소", tone: "bad" },
+];
+
+// ════ 경영 · 제품 · 로드맵 ════
+export const PRODUCT_KPIS = [
+  { k: "구현 완료 기능", v: "42", note: "F 시리즈 · 데모 기준", color: "#1E7A5A" },
+  { k: "부분 구현", v: "7", note: "조건부 · 연동 대기", color: "#8A5D12" },
+  { k: "Phase 2 대기", v: "11", note: "예측 추천 · 퍼블릭 체인 등", color: "#5C5A54" },
+  { k: "기술 부채", v: "5건", note: "실서버 전환 전 해소 대상", color: "#C0392B" },
+];
+export const RELEASES = [
+  { v: "v1.0 (현재)", when: "2026-07", items: "5역할 데모 · 관제 8메뉴 · 경영 17섹션 · A4 리포트 · 감사 로그", state: "배포됨", tone: "ok" },
+  { v: "v1.1", when: "2026-08", items: "실서버 전환 M1~M3 · 로그인 · 알림 실발송", state: "개발", tone: "warn" },
+  { v: "v1.2", when: "2026-09", items: "웨어러블 실연동 · 결제 PG · 정산 자동화", state: "설계", tone: "info" },
+  { v: "v2.0", when: "2026-Q4", items: "지자체 계약 대응 · 다지점 운영 · 급여 청구 연동", state: "구상", tone: "info" },
+];
+export const TECH_DEBT = [
+  { k: "상태 저장소 localStorage", risk: "실데이터 저장 불가 · 다중 기기 미지원", plan: "Supabase 전환 (M1~M8)", tone: "bad" },
+  { k: "목 데이터 219종 하드코딩", risk: "화면-데이터 결합 · 변경 비용", plan: "API 계층 분리 후 점진 이관", tone: "warn" },
+  { k: "AI 프롬프트 서버 라우트 단일", risk: "장애 시 전 AI 기능 중단", plan: "폴백 응답 + 큐잉 (부분 구현)", tone: "warn" },
+  { k: "Next 14 · 이미지 최적화 미사용", risk: "성능 여유 있으나 확장 시 병목", plan: "Next 16 업그레이드 검토", tone: "info" },
+  { k: "테스트 자동화 부재", risk: "회귀 검증을 수동 스크린샷에 의존", plan: "E2E 스모크 + CI 도입", tone: "warn" },
+];
+export const FEATURE_COVERAGE = [
+  { k: "케어 운영 (배차·동행·리포트)", pct: 92 },
+  { k: "가족 경험 (앱·리포트·NPS)", pct: 88 },
+  { k: "컨시어지 경험 (정산·성장·보호)", pct: 85 },
+  { k: "AI (프로필·안부콜·브리핑)", pct: 74 },
+  { k: "웨어러블 · 기기 운영", pct: 61 },
+  { k: "결제 · 정산 자동화", pct: 38 },
+];
+
+// ════ 경영 · 투자 · IR ════
+export const IR_KPIS = [
+  { k: "MRR", v: "1.42억", note: "전월 대비 +9.4%", color: "#1E7A5A" },
+  { k: "번레이트 (순)", v: "−0 (흑자)", note: "순현금 +2,340만", color: "#1E7A5A" },
+  { k: "런웨이", v: "14개월", note: "투자 미반영 · 현 소진 속도", color: "#0A1F3C" },
+  { k: "가구 성장률", v: "+10.3%", note: "MoM · 128가구", color: "#1E7A5A" },
+  { k: "총 유지율 (12개월)", v: "84%", note: "가구 기준", color: "#1E7A5A" },
+];
+export const CAP_TABLE = [
+  { k: "창업팀 (4인)", pct: 72, note: "베스팅 적용 — 2년 · 1년 클리프", tone: "ok" },
+  { k: "임직원 스톡옵션 풀", pct: 12, note: "시니어 컨시어지·핵심 인력 배정 예정", tone: "ok" },
+  { k: "엔젤 · 시드", pct: 11, note: "초기 라운드 완료분", tone: "info" },
+  { k: "예비 (Pre-A 희석분)", pct: 5, note: "라운드 시 재조정", tone: "warn" },
+];
+export const ROUNDS = [
+  { k: "시드 (완료)", when: "2025-09", amount: "3.5억", use: "MVP 개발 · 강남 본점 · 초기 인력", state: "완료", tone: "ok" },
+  { k: "브릿지 (완료)", when: "2026-03", amount: "2.0억", use: "송파·마포 오픈 · 웨어러블 도입", state: "완료", tone: "ok" },
+  { k: "Pre-A (준비)", when: "2027-Q2 목표", amount: "15~20억", use: "6지점 확장 · 급여사업 · 실서버 인프라", state: "준비", tone: "warn" },
+];
+export const DATAROOM = [
+  { k: "재무제표 · 자금 흐름", state: "준비 완료", tone: "ok" },
+  { k: "코호트 · 유닛 이코노믹스", state: "준비 완료", tone: "ok" },
+  { k: "리스크 레지스터 23건", state: "준비 완료", tone: "ok" },
+  { k: "의료법 자문 의견서", state: "미비 — C4 시정 후", tone: "bad" },
+  { k: "PIA 결과 보고서", state: "8월 진행", tone: "warn" },
+  { k: "컨시어지 계약서 표준안", state: "노무 자문 대기", tone: "warn" },
+  { k: "지자체 · 병원 제휴 계약", state: "준비 완료", tone: "ok" },
+  { k: "기술 아키텍처 · DB 설계", state: "준비 완료", tone: "ok" },
+];
+export const IR_UPDATE = {
+  cycle: "월간 · 매월 5일 발송",
+  items: [
+    "핵심 지표 5종(MRR · 가구 · 유지율 · NPS · 런웨이) — 좋은 소식과 나쁜 소식을 같은 크기로",
+    "지난달 약속한 것의 결과 — 달성 여부를 먼저 쓴다",
+    "이번 달 최대 리스크 1건과 대응 계획",
+    "요청 사항 (소개 · 채용 · 자문) — 투자자가 도울 수 있는 형태로",
+  ],
 };
