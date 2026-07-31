@@ -47,6 +47,35 @@ import {
   WELFARE_METRICS,
   MKT_CHANNELS,
   MKT_RULES,
+  SM_KPIS,
+  SM_ALERT,
+  SM_ROSTER,
+  SM_PROFILE,
+  HIRE_FUNNEL,
+  BG_GATES,
+  EDU_ITEMS,
+  SUPPLY_GAP,
+  ATTRITION,
+  GRADE_TABLE,
+  DISCIPLINE,
+  RETENTION_KPIS,
+  PAY_COMPARE,
+  RETENTION_ITEMS,
+  PAY_SIM,
+  GROWTH_PATH,
+  PROTECT_RULES,
+  PAIR_WHY,
+  PAIR_RULES,
+  PAIR_STATS,
+  RC_KPIS,
+  MEDLAW_ROWS,
+  MEDLAW_FIX,
+  FIELD_CAN,
+  FIELD_CANT,
+  RISK_REGISTER,
+  RISK_STATE_STYLE,
+  INSURANCE_ROWS,
+  REG_CALENDAR,
 } from "../lib/mock";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
@@ -73,13 +102,31 @@ const LEVEL_STYLE = {
 // 좌측 GNB — 섹션이 늘어나는 구조라 탭 대신 사이드 내비 (모바일은 가로 칩)
 const MENUS = [
   ["staff", "컨시어지 분석", "users"],
+  ["staffmgmt", "인원 관리", "user"],
   ["family", "보호자 · 가구", "home"],
   ["crm", "CRM · 라이프사이클", "activity"],
   ["cs", "CS · 마케팅", "megaphone"],
   ["roster", "명부", "doc"],
   ["care", "케어 성과", "heart"],
   ["biz", "수익 · 리스크", "coin"],
+  ["risk", "리스크 · 컴플라이언스", "alert"],
 ];
+
+// 톤 공용 스타일 — 인원 관리 · 리스크 섹션
+const TONE = {
+  ok: { fg: "#1E7A5A", bg: "rgba(30,122,90,.1)" },
+  warn: { fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
+  bad: { fg: "#C0392B", bg: "rgba(192,57,43,.1)" },
+  info: { fg: "#5C5A54", bg: "rgba(10,31,60,.06)" },
+};
+
+// 수급 갭 히트맵 셀 — 1.0 미만이 배차 실패 구간 (붉을수록 부족)
+function gapCell(v) {
+  if (v < 1.0) return { background: "rgba(192,57,43,.18)", color: "#C0392B" };
+  if (v < 1.3) return { background: "rgba(138,93,18,.14)", color: "#8A5D12" };
+  if (v < 1.8) return { background: "rgba(10,31,60,.05)", color: "#0A1F3C" };
+  return { background: "rgba(30,122,90,.1)", color: "#1E7A5A" };
+}
 
 // 명부 서브메뉴 — 종합 대시보드 + 유형별 분리 관리 (방대해질 명부의 기본 골격)
 const ROSTER_SUBS = [
@@ -158,6 +205,8 @@ function StatTile({ k, v, color = NAVY, note }) {
 export default function AdminConsole() {
   const [tab, setTab] = useState("staff");
   const [rosterSub, setRosterSub] = useState("home"); // 명부 서브메뉴 — 종합/어르신/보호자/컨시어지/병원
+  const [smOpen, setSmOpen] = useState(false); // 인원 관리 — 프로필 카드 열림 (데모: 박지현 기준)
+  const [renewSent, setRenewSent] = useState(false); // 자격 갱신 안내 원샷
   const [nbaDone, setNbaDone] = useState({}); // NBA 큐 — 담당 배정 원샷
   const [execRead, setExecRead] = useState(false); // 주간 브리핑 읽음
   const counts = REVENUE_STREAMS.reduce(
@@ -428,6 +477,412 @@ export default function AdminConsole() {
                   복지 예산을 상회합니다. 심리상담 예약은 감사 로그에도 남지 않습니다 (비밀 보장 설계).
                 </p>
               </Panel>
+            </div>
+          )}
+
+          {/* ════ 인원 관리 — 인력·자격·프로필 · 2인 1조 · 채용 · 처우 (운영) ════ */}
+          {tab === "staffmgmt" && (
+            <div className="space-y-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-[.14em] text-muted">운영 / 인력 · 자격 · 프로필</div>
+                <h2 className="mt-0.5 text-[17px] font-bold text-navy">컨시어지 인원 관리</h2>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" }}>
+                {SM_KPIS.map((k) => (
+                  <Panel key={k.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[25px] font-bold" style={{ color: k.color }}>{k.v}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              {/* 자격 만료 임박 배너 */}
+              <div className="flex flex-wrap items-center gap-3 rounded-[14px] border border-danger/25 bg-danger/[.06] px-4 py-3">
+                <span className="rounded-full bg-danger px-2.5 py-0.5 text-[11px] font-bold text-white">자격 만료 임박</span>
+                <p className="min-w-0 flex-1 text-[13px] leading-[1.6] text-navy">{SM_ALERT}</p>
+                <button
+                  onClick={() => setRenewSent(true)}
+                  disabled={renewSent}
+                  className="btn-press shrink-0 rounded-[10px] border border-danger/40 px-3.5 py-2 text-[12px] font-bold text-danger disabled:opacity-50"
+                >
+                  {renewSent ? "갱신 안내 발송됨 ✓" : "갱신 안내 발송"}
+                </button>
+              </div>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+                {/* 인력 명부 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="인력 명부" right={<span className="text-[12px] text-muted">클릭해 프로필 열기</span>} />
+                  <div className="mt-3 overflow-x-auto">
+                    <table className="w-full min-w-[520px] text-left text-[12px]">
+                      <thead>
+                        <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                          <th className="py-2 pr-4">이름 · 자격</th>
+                          <th className="py-2 pr-4">권역</th>
+                          <th className="py-2 pr-4">가동</th>
+                          <th className="py-2 pr-4">평점</th>
+                          <th className="py-2">상태</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {SM_ROSTER.map((r) => (
+                          <tr key={r.name} onClick={() => setSmOpen(true)} className="cursor-pointer whitespace-nowrap border-b border-navy/[.06] hover:bg-navy/[.03]">
+                            <td className="py-2 pr-4"><span className="font-bold text-navy">{r.name}</span> <span className="text-[11px] text-muted">{r.cert}</span></td>
+                            <td className="py-2 pr-4 text-ink">{r.area}</td>
+                            <td className="py-2 pr-4 font-num text-ink">{r.load}</td>
+                            <td className="py-2 pr-4 font-num text-ink">{r.rate}</td>
+                            <td className="py-2"><span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[r.tone].fg, background: TONE[r.tone].bg }}>{r.state}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    데모 명부는 대표 6명 표시 — 상세 프로필 카드는 박지현 기준 예시입니다.
+                  </p>
+                </Panel>
+
+                {/* 프로필 카드 — 박지현 (데모) */}
+                {smOpen && (
+                  <Panel className="min-w-0">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-navy text-[15px] font-bold text-white">박</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[16px] font-bold text-navy">{SM_PROFILE.name}</span>
+                          <span className="rounded-full bg-gold/20 px-2 py-0.5 font-num text-[10px] font-bold text-[#7A5C28]">{SM_PROFILE.grade}</span>
+                        </div>
+                        <div className="truncate text-[11px] text-muted">{SM_PROFILE.sub}</div>
+                      </div>
+                      <button onClick={() => setSmOpen(false)} aria-label="닫기" className="btn-press text-[13px] font-bold text-muted">✕</button>
+                    </div>
+                    <div className="mt-3 grid grid-cols-3 gap-2">
+                      {SM_PROFILE.stats.map(([k, v]) => (
+                        <div key={k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3 py-2.5 text-center">
+                          <div className="text-[10px] font-bold text-muted">{k}</div>
+                          <div className="font-num text-[17px] font-bold text-navy">{v}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 border-t border-navy/[.08] pt-2.5">
+                      <div className="text-[12px] font-bold text-navy">자격 · 검증</div>
+                      <div className="mt-2 space-y-1.5">
+                        {SM_PROFILE.certs.map(([k, until, st]) => (
+                          <div key={k} className="flex items-center gap-2 text-[12px]">
+                            <span className="font-bold text-ink">{k}</span>
+                            <span className="font-num text-[11px] text-muted">{until}</span>
+                            <span className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE.ok.fg, background: TONE.ok.bg }}>{st}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mt-3 border-t border-navy/[.08] pt-2.5">
+                      <div className="text-[12px] font-bold text-navy">전문 역량 · 매칭 태그</div>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {SM_PROFILE.tags.map((tg) => (
+                          <span key={tg} className="rounded-full bg-navy/[.06] px-2.5 py-1 text-[11px] font-bold text-navy">{tg}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mt-3 border-t border-navy/[.08] pt-2.5">
+                      <div className="text-[12px] font-bold text-navy">가용 시간</div>
+                      <div className="mt-2 grid grid-cols-7 gap-1">
+                        {SM_PROFILE.hours.map(([d, h]) => (
+                          <div key={d} className="rounded-lg bg-navy/[.04] px-1 py-1.5 text-center">
+                            <div className="text-[10px] font-bold text-muted">{d}</div>
+                            <div className={`font-num text-[12px] font-bold ${h === "휴" ? "text-muted" : "text-navy"}`}>{h}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-[11px] leading-[1.6] text-muted">가용 시간·권역·역량 태그가 AI 배차 적합도 계산에 그대로 입력됩니다.</p>
+                    </div>
+                    <div className="mt-3 border-t border-navy/[.08] pt-2.5">
+                      <div className="text-[12px] font-bold text-navy">교육 이수 · 다음 과정</div>
+                      <div className="mt-2 space-y-1.5">
+                        {SM_PROFILE.edu.map(([k, d, st]) => (
+                          <div key={k} className="flex items-center gap-2 text-[12px]">
+                            <span className="font-bold text-ink">{k}</span>
+                            <span className="font-num text-[11px] text-muted">{d}</span>
+                            <span className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold" style={st === "완료" ? { color: TONE.ok.fg, background: TONE.ok.bg } : { color: TONE.warn.fg, background: TONE.warn.bg }}>{st}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </Panel>
+                )}
+
+                {/* 2인 1조 원칙 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="2인 1조 페어 배차 — 예외 없는 운영 원칙" right={<span className="text-[12px] font-bold text-danger">단독 배차 불가</span>} />
+                  <p className="mt-2 text-[12px] leading-[1.7] text-muted">
+                    어르신 단독 가구에 성인 1명이 들어가는 구조는 양쪽 모두에게 위험합니다. 2인 1조는 비용이 아니라 이 사업을 계속하기 위한 조건입니다.
+                  </p>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    {PAIR_WHY.map(([cat, k, v]) => (
+                      <div key={k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="text-[10px] font-bold text-gold">{cat}</div>
+                        <div className="mt-0.5 text-[12px] font-bold text-navy">{k}</div>
+                        <p className="mt-1 text-[11px] leading-[1.6] text-muted">{v}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 border-t border-navy/[.08] pt-2.5">
+                    <div className="text-[12px] font-bold text-navy">페어링 규칙</div>
+                    <ol className="mt-2 space-y-1.5">
+                      {PAIR_RULES.map((r, i) => (
+                        <li key={r} className="flex items-start gap-2 text-[12px] leading-[1.6] text-ink">
+                          <span className="mt-[1px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-navy/[.08] font-num text-[10px] font-bold text-navy">{i + 1}</span>
+                          {r}
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 border-t border-navy/[.08] pt-3">
+                    {PAIR_STATS.map((k) => (
+                      <StatTile key={k.k} k={k.k} v={k.v} note={k.note} />
+                    ))}
+                  </div>
+                </Panel>
+
+                {/* 채용 파이프라인 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="채용 파이프라인 — 지원부터 현장 투입까지 평균 24일" right={<span className="text-[12px] text-muted">이번 달 · 최종 합격률 8.4%</span>} />
+                  <div className="mt-3 space-y-3">
+                    {HIRE_FUNNEL.map((f) => (
+                      <BarRow key={f.stage} label={f.stage} value={`${f.n}명`} w={Math.round((f.n / HIRE_FUNNEL[0].n) * 100)} color={NAVY} note={f.note} />
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    탈락 사유 1위는 신원조회(성범죄·아동학대 경력)이며 예외를 두지 않습니다. 요양보호사 수급이 급여사업(12)의 성장 상한을 정하므로 이 퍼널의 전환율이 곧 확장 속도입니다.
+                  </p>
+                </Panel>
+
+                {/* 신원 검증 게이트 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="신원 검증 게이트 · 5종" right={<span className="text-[12px] font-bold text-danger">1건이라도 미통과면 배차 불가</span>} />
+                  <div className="mt-3 space-y-2">
+                    {BG_GATES.map((g) => (
+                      <div key={g.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[13px] font-bold text-navy">{g.k}</span>
+                          <span className="ml-auto font-num text-[13px] font-bold text-ink">{g.v}</span>
+                          <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[g.tone].fg, background: TONE[g.tone].bg }}>{g.note}</span>
+                        </div>
+                        <div className="mt-0.5 text-[11px] text-muted">{g.law}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    신원조회는 채용 시 1회가 아니라 연 1회 재확인합니다. 어르신 단독 가구에 진입하는 직무이므로 재직 중 발생한 결격 사유를 놓치면 회사가 책임집니다.
+                  </p>
+                </Panel>
+
+                {/* 서약 · 교육 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="의료법 행위 경계 서약 · 교육" right={<span className="text-[12px] text-muted">배차 전제 조건</span>} />
+                  <p className="mt-2 text-[12px] leading-[1.7] text-muted">
+                    의료법 제27조 위반은 본사 방침이 아니라 현장의 선의에서 발생합니다 — “어르신이 부탁해서 약을 챙겨드렸다”가 무면허 의료행위가 되는 지점을 반복 교육합니다.
+                  </p>
+                  <div className="mt-3 space-y-3">
+                    {EDU_ITEMS.map((e) => (
+                      <BarRow key={e.k} label={e.k} value={e.v} w={parseInt(e.v, 10)} color={parseInt(e.v, 10) < 95 ? "#8A5D12" : "#1E7A5A"} note={e.cycle} />
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] font-bold leading-[1.7] text-amber">
+                    경계선 교육 미이수 3명 배차에서 자동 제외
+                  </p>
+                </Panel>
+
+                {/* 수급 갭 히트맵 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="권역 × 요일 수급 갭" right={<span className="text-[12px] text-muted">붉을수록 인력 부족 · 배차 실패 위험</span>} />
+                  <div className="mt-3 overflow-x-auto">
+                    <table className="w-full min-w-[420px] text-center text-[12px]">
+                      <thead>
+                        <tr className="text-[11px] font-bold text-muted">
+                          <th className="py-1.5 pr-2 text-left">권역</th>
+                          {SUPPLY_GAP.days.map((d) => (<th key={d} className="px-1 py-1.5">{d}</th>))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {SUPPLY_GAP.rows.map((r) => (
+                          <tr key={r.area}>
+                            <td className="whitespace-nowrap py-1 pr-2 text-left text-[12px] font-bold text-navy">{r.area}</td>
+                            {r.v.map((v, i) => (
+                              <td key={i} className="p-0.5">
+                                <div className="rounded-md py-1.5 font-num text-[11px] font-bold" style={gapCell(v)}>{v.toFixed(1)}</div>
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    숫자는 수요 대비 가용 인력 배수입니다. 1.0 미만은 배차 실패가 발생하는 구간 — 강남·송파 화·목 오전이 상시 부족 구간입니다.
+                  </p>
+                </Panel>
+
+                {/* 이탈 위험 예측 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="이탈 위험 예측" right={<span className="text-[12px] text-muted">한 명 이탈 = 담당 가구 평균 6.2가구 재배정</span>} />
+                  <div className="mt-3 space-y-2.5">
+                    {ATTRITION.map((a) => (
+                      <div key={a.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[13px] font-bold text-navy">{a.name}</span>
+                          <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={a.level === "높음" ? { color: TONE.bad.fg, background: TONE.bad.bg } : a.level === "주의" ? { color: TONE.warn.fg, background: TONE.warn.bg } : { color: TONE.info.fg, background: TONE.info.bg }}>{a.level}</span>
+                          <span className="ml-auto font-num text-[15px] font-bold" style={{ color: a.score >= 70 ? "#C0392B" : a.score >= 50 ? "#8A5D12" : "#1E7A5A" }}>{a.score}</span>
+                        </div>
+                        <div className="mt-1 text-[12px] leading-[1.55] text-muted">{a.why}</div>
+                        <div className="mt-0.5 text-[12px] font-bold leading-[1.55] text-ink">→ {a.act}</div>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+
+                {/* 위반 · 징계 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="위반 · 징계 이력" right={<span className="text-[12px] text-muted">경계선 위반은 평점과 별도로 관리</span>} />
+                  <div className="mt-3 space-y-2.5">
+                    {DISCIPLINE.map((d) => (
+                      <div key={d.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[d.tone].fg, background: TONE[d.tone].bg }}>{d.level}</span>
+                          <span className="text-[13px] font-bold text-navy">{d.k}</span>
+                          <span className="ml-auto font-num text-[11px] text-muted">{d.m}</span>
+                        </div>
+                        <div className="mt-1 text-[12px] leading-[1.55] text-muted">{d.act}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] font-bold leading-[1.7] text-danger">
+                    무면허 의료행위·금품 수수·기록 위조는 1회로 계약 해지합니다 — 경고 단계를 두지 않습니다.
+                  </p>
+                </Panel>
+              </div>
+
+              {/* ── 등급 체계 ── */}
+              <Panel className="min-w-0">
+                <PanelHead title="등급 체계 — 단가 · 권한 · 승급 조건" right={<span className="text-[12px] text-muted">2인 1조 기준 주/부 두 요율 · 평가 기준은 판매액이 아니라 케어 품질</span>} />
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[720px] text-left text-[12px]">
+                    <thead>
+                      <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                        <th className="py-2 pr-4">등급</th>
+                        <th className="py-2 pr-4">인원</th>
+                        <th className="py-2 pr-4">주 동행 건당</th>
+                        <th className="py-2 pr-4">부 동행 건당</th>
+                        <th className="py-2">승급 조건 · 권한</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {GRADE_TABLE.map((g) => (
+                        <tr key={g.g} className="border-b border-navy/[.06]">
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-bold text-navy">{g.g}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-num text-ink">{g.n}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-num font-bold text-ink">{g.lead}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-num text-ink">{g.sup}</td>
+                          <td className="py-2.5 text-[12px] leading-[1.6] text-muted">{g.note}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Panel>
+
+              {/* ── 처우 설계 · 리텐션 ── */}
+              <Panel className="min-w-0">
+                <PanelHead title="처우 설계 · 리텐션 — 좋은 동행자를 뺏기지 않는 구조" right={<span className="text-[12px] text-muted">방어선은 시급이 아니라 끊기지 않는 소득과 회사가 내 편이라는 경험</span>} />
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
+                  {RETENTION_KPIS.map((k) => (
+                    <StatTile key={k.k} k={k.k} v={k.v} note={k.note} />
+                  ))}
+                </div>
+                {/* 월 실수령 비교 */}
+                <div className="mt-4 border-t border-navy/[.08] pt-3">
+                  <div className="text-[12px] font-bold text-navy">핵심 장치 — 단골 가구 지분제 <span className="ml-1 font-medium text-muted">건별 노동 → 반복 소득 · 월 실수령 비교(동일 근무 강도)</span></div>
+                  <div className="mt-2.5 space-y-3">
+                    {PAY_COMPARE.map((c) => (
+                      <BarRow key={c.k} label={c.k} value={c.v} w={c.w} color={c.k.includes("K-CARE") ? "#B08D57" : "#9AA3AF"} note={c.note} />
+                    ))}
+                  </div>
+                  <p className="mt-2.5 text-[11px] leading-[1.7] text-muted">
+                    지분은 동행 원가(85%)가 아니라 구독 매출에서 나갑니다 — 구독 가구가 늘수록 회사와 동행자가 같이 버는 구조입니다.
+                  </p>
+                </div>
+                {/* 8개 제도 */}
+                <div className="mt-4 grid gap-2.5 border-t border-navy/[.08] pt-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                  {RETENTION_ITEMS.map((r) => (
+                    <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">{r.cat}</span>
+                        <span className="text-[13px] font-bold text-navy">{r.k}</span>
+                        {r.key && <span className="ml-auto rounded-md bg-gold/20 px-1.5 py-0.5 font-num text-[9px] font-bold text-[#7A5C28]">KEY</span>}
+                      </div>
+                      <div className="mt-0.5 text-[11px] font-bold text-gold">{r.sub}</div>
+                      <p className="mt-1 text-[12px] leading-[1.65] text-ink">{r.text}</p>
+                      <div className="mt-1.5 flex flex-wrap gap-x-3 text-[11px] text-muted">
+                        <span>부담 {r.cost}</span>
+                        <span className="font-bold text-green">{r.effect}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* 실수령 시뮬레이션 */}
+                <div className="mt-4 border-t border-navy/[.08] pt-3">
+                  <div className="text-[12px] font-bold text-navy">등급별 월 실수령 시뮬레이션 <span className="ml-1 font-medium text-muted">2인 1조 기준 · 모집 공고에 그대로 쓰는 숫자</span></div>
+                  <div className="mt-2.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+                    {PAY_SIM.map((g) => (
+                      <div key={g.g} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-[13px] font-bold text-navy">{g.g}</span>
+                          <span className="text-[11px] text-muted">{g.mix}</span>
+                        </div>
+                        <div className="mt-1 font-num text-[21px] font-bold text-navy">{g.v}</div>
+                        <div className="mt-0.5 text-[11px] leading-[1.6] text-muted">{g.note}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-2.5 text-[11px] leading-[1.7] text-muted">
+                    3.3% 원천징수 전 금액 · 주 동행 142,800 / 부 동행 48,000 기준. 2인 1조라 배차 슬롯이 두 배로 열려 하위 등급도 일할 기회가 늘고, 지분과 수당은 배차량과 무관해 비수기 변동 폭이 건별 매칭의 절반 수준입니다.
+                  </p>
+                </div>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+                {/* 성장 경로 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="성장 경로 — 현장을 떠나지 않고 올라간다" />
+                  <ol className="mt-3 space-y-2.5">
+                    {GROWTH_PATH.map(([k, cond, gain], i) => (
+                      <li key={k} className="flex items-start gap-3">
+                        <span className="mt-[1px] flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full bg-gold font-num text-[11px] font-bold text-navy">{String(i + 1).padStart(2, "0")}</span>
+                        <div>
+                          <div className="text-[13px] font-bold text-navy">{k} <span className="ml-1 text-[11px] font-medium text-muted">{cond}</span></div>
+                          <div className="text-[12px] leading-[1.6] text-ink">{gain}</div>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </Panel>
+
+                {/* 보호 규칙 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="컨시어지 보호 규칙" right={<span className="text-[12px] text-muted">고객이 무조건 옳지는 않습니다</span>} />
+                  <div className="mt-3 space-y-2">
+                    {PROTECT_RULES.map(([k, v]) => (
+                      <div key={k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="text-[13px] font-bold text-navy">{k}</div>
+                        <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{v}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    이 규칙은 고객 약관에도 동일하게 명시합니다 — 동행자에게만 약속하고 고객에게 숨기면 현장에서 지켜지지 않습니다.
+                  </p>
+                </Panel>
+              </div>
             </div>
           )}
 
@@ -1058,6 +1513,225 @@ export default function AdminConsole() {
                 </div>
               </Panel>
             </>
+          )}
+
+          {/* ════ 리스크 · 컴플라이언스 — 거버넌스 (무엇이 회사를 멈추게 하는가) ════ */}
+          {tab === "risk" && (
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-[17px] font-bold text-navy">무엇이 회사를 멈추게 하는가</h2>
+                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
+                  발생확률 × 영향도로 정렬하고, 완화되지 않은 항목은 착수를 막습니다.
+                </p>
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+                {RC_KPIS.map((k) => (
+                  <Panel key={k.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
+                    <div className="mt-1 font-num text-[25px] font-bold" style={{ color: k.color }}>{k.v}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              {/* 의료법 조항별 준수 */}
+              <Panel className="min-w-0">
+                <PanelHead title="의료법 준수 재점검 — 조항별" right={<span className="text-[12px] font-bold text-danger">위반 소지 1건 · 조건부 3건</span>} />
+                <p className="mt-2 text-[12px] leading-[1.7] text-muted">비의료인이 운영하는 플랫폼은 이 8개 조항 위에서만 존재할 수 있습니다.</p>
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[860px] text-left text-[12px]">
+                    <thead>
+                      <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                        <th className="py-2 pr-4">조항</th>
+                        <th className="py-2 pr-4">우리 서비스의 접점</th>
+                        <th className="py-2 pr-4">지금 지키는 방법</th>
+                        <th className="py-2">판정</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {MEDLAW_ROWS.map((r) => (
+                        <tr key={r.law} className="border-b border-navy/[.06] align-top">
+                          <td className="whitespace-nowrap py-2.5 pr-4">
+                            <div className="font-bold text-navy">{r.law}</div>
+                            <div className="text-[11px] text-muted">{r.sub}</div>
+                          </td>
+                          <td className="py-2.5 pr-4 text-ink">{r.touch}</td>
+                          <td className="py-2.5 pr-4 text-[12px] leading-[1.6] text-muted">{r.how}</td>
+                          <td className="whitespace-nowrap py-2.5">
+                            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[r.tone].fg, background: TONE[r.tone].bg }}>{r.verdict}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Panel>
+
+              {/* 최우선 시정 */}
+              <div className="rounded-[14px] border border-danger/25 bg-danger/[.06] p-[18px]">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-danger px-2.5 py-0.5 text-[11px] font-bold text-white">최우선 시정</span>
+                  <span className="text-[14px] font-bold text-navy">{MEDLAW_FIX.title}</span>
+                </div>
+                <p className="mt-2 text-[12px] leading-[1.7] text-ink">{MEDLAW_FIX.why}</p>
+                <ol className="mt-2.5 space-y-1.5">
+                  {MEDLAW_FIX.steps.map((st, i) => (
+                    <li key={st} className="flex items-start gap-2 text-[12px] leading-[1.6] text-ink">
+                      <span className="mt-[1px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-danger font-num text-[10px] font-bold text-white">{i + 1}</span>
+                      {st}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              {/* 현장 행위 경계선 */}
+              <Panel className="min-w-0">
+                <PanelHead title="현장 행위 경계선 — 컨시어지" right={<span className="text-[12px] text-muted">위반은 본사가 아니라 현장에서 발생합니다</span>} />
+                <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+                  <div className="rounded-xl border border-green/25 bg-green/[.05] p-3.5">
+                    <div className="text-[12px] font-bold text-green">할 수 있다</div>
+                    <ul className="mt-2 space-y-1.5">
+                      {FIELD_CAN.map((f) => (
+                        <li key={f} className="flex items-start gap-2 text-[12px] leading-[1.6] text-ink">
+                          <span className="mt-[2px] shrink-0 text-[11px] font-bold text-green">✓</span>{f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="rounded-xl border border-danger/20 bg-danger/[.04] p-3.5">
+                    <div className="text-[12px] font-bold text-danger">절대 안 된다</div>
+                    <ul className="mt-2 space-y-1.5">
+                      {FIELD_CANT.map((f) => (
+                        <li key={f} className="flex items-start gap-2 text-[12px] leading-[1.6] text-ink">
+                          <span className="mt-[2px] shrink-0 text-[11px] font-bold text-danger">✕</span>{f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  이 경계선은 인원 관리 화면의 서약·교육 이수 항목과 연결되어 있고, 미이수자는 배차에서 자동 제외됩니다.
+                </p>
+              </Panel>
+
+              {/* 리스크 매트릭스 + 레지스터 */}
+              <Panel className="min-w-0">
+                <PanelHead title="리스크 레지스터 · 23건" right={<span className="text-[12px] text-muted">발생 가능성 × 영향 · 등급 · 완화 조치 · 담당</span>} />
+                {/* 매트릭스 — 3×3 그리드 배치 */}
+                <div className="mt-3 grid grid-cols-[24px_1fr] gap-1">
+                  <div className="flex items-center justify-center">
+                    <span className="rotate-180 text-[10px] font-bold tracking-[.1em] text-muted" style={{ writingMode: "vertical-rl" }}>↑ 영향 큼</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1">
+                    {[3, 2, 1].map((impactBand) =>
+                      [1, 2, 3].map((probBand) => {
+                        const band = (v) => (v >= 3 ? 3 : v >= 2.3 ? 2 : 1);
+                        const items = RISK_REGISTER.filter((r) => band(r.impact) === impactBand && r.prob === probBand);
+                        const heat =
+                          impactBand + probBand >= 5 ? "rgba(192,57,43,.10)" : impactBand + probBand >= 4 ? "rgba(138,93,18,.08)" : "rgba(10,31,60,.03)";
+                        return (
+                          <div key={`${impactBand}-${probBand}`} className="min-h-[64px] rounded-lg p-1.5" style={{ background: heat }}>
+                            <div className="flex flex-wrap gap-1">
+                              {items.map((r) => (
+                                <span
+                                  key={r.id}
+                                  title={r.name}
+                                  className="rounded-md px-1.5 py-0.5 font-num text-[10px] font-bold"
+                                  style={r.state === "미완화" ? { background: "#C0392B", color: "#fff" } : { background: "rgba(10,31,60,.1)", color: "#0A1F3C" }}
+                                >
+                                  {r.id}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                    <div className="col-span-3 flex justify-between px-1 text-[10px] font-bold text-muted">
+                      <span>낮음</span><span>중간</span><span>높음 · 발생 가능성 →</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="mt-2 text-[11px] leading-[1.6] text-muted">
+                  등록부 23건 전체를 발생 가능성 × 영향으로 배치했습니다. 우상단에 남은 항목과 <span className="font-bold text-danger">미완화(빨강)</span> 항목이 착수 게이트를 막고 있는 리스크입니다.
+                </p>
+                {/* 레지스터 테이블 */}
+                <div className="mt-3 overflow-x-auto border-t border-navy/[.08] pt-3">
+                  <table className="w-full min-w-[860px] text-left text-[12px]">
+                    <thead>
+                      <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                        <th className="py-2 pr-3">등급</th>
+                        <th className="py-2 pr-4">리스크</th>
+                        <th className="py-2 pr-4">완화 조치</th>
+                        <th className="py-2 pr-4">담당</th>
+                        <th className="py-2">상태</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {RISK_REGISTER.map((r) => (
+                        <tr key={r.id} className="border-b border-navy/[.06] align-top">
+                          <td className="whitespace-nowrap py-2.5 pr-3">
+                            <span className="rounded-md px-1.5 py-0.5 font-num text-[10px] font-bold" style={r.id.startsWith("C") ? { background: "rgba(192,57,43,.1)", color: "#C0392B" } : r.id.startsWith("H") ? { background: "rgba(138,93,18,.12)", color: "#8A5D12" } : { background: "rgba(10,31,60,.06)", color: "#0A1F3C" }}>{r.id}</span>
+                          </td>
+                          <td className="py-2.5 pr-4">
+                            <div className="font-bold text-navy">{r.name}</div>
+                            <div className="text-[11px] text-muted">{r.detail}</div>
+                          </td>
+                          <td className="py-2.5 pr-4 text-[12px] leading-[1.6] text-muted">{r.act}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 text-ink">{r.owner}</td>
+                          <td className="whitespace-nowrap py-2.5">
+                            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: RISK_STATE_STYLE[r.state].fg, background: RISK_STATE_STYLE[r.state].bg }}>{r.state}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] font-bold leading-[1.7] text-danger">
+                  CRITICAL 항목이 '완화됨'이 되기 전에는 해당 사업 영역의 착수 승인을 내리지 않습니다 — 인바운드 유치업 등록이 대표 사례입니다.
+                </p>
+              </Panel>
+
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+                {/* 보험 · 배상 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="보험 · 배상 체계" />
+                  <div className="mt-3 space-y-2.5">
+                    {INSURANCE_ROWS.map((r) => (
+                      <div key={r.k} className="flex items-baseline gap-3 border-t border-navy/[.06] pt-2.5 first:border-t-0 first:pt-0">
+                        <div className="min-w-0">
+                          <div className="text-[13px] font-bold text-navy">{r.k}</div>
+                          <div className="text-[11px] text-muted">{r.sub}</div>
+                        </div>
+                        <span className="ml-auto shrink-0 font-num text-[15px] font-bold text-navy">{r.v}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    동행 중 낙상 1건의 평균 배상은 320만원 — 연 12건 가정 시 보험료 대비 손해율 61%로 관리 가능 범위입니다.
+                  </p>
+                </Panel>
+
+                {/* 규제 준수 캘린더 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="규제 준수 캘린더" right={<span className="text-[12px] text-muted">CPO 분기 감사 · 위반 시 킬 스위치</span>} />
+                  <div className="mt-3 space-y-2">
+                    {REG_CALENDAR.map((c) => (
+                      <div key={c.m + c.k} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2">
+                        <span className="mt-0.5 w-[52px] shrink-0 font-num text-[11px] font-bold text-navy">{c.m}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[12px] font-bold leading-[1.5] text-navy">{c.k}</div>
+                          <div className="text-[11px] text-muted">{c.law}</div>
+                        </div>
+                        <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[c.tone].fg, background: TONE[c.tone].bg }}>{c.state}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    CPO가 분기별 내부 감사를 수행하고, 위반 발견 시 해당 기능을 즉시 중단하는 킬 스위치를 운영합니다.
+                  </p>
+                </Panel>
+              </div>
+            </div>
           )}
             </div>
           </div>
