@@ -56,7 +56,7 @@ export async function getHistory(host, limit = 20) {
   if (!dbEnabled()) return null;
   try {
     const q = `${base()}?host=eq.${encodeURIComponent(host)}&is_benchmark=eq.false` +
-      `&select=overall,grade,seo,aeo,geo,reach,http_status,source,created_at` +
+      `&select=overall,grade,seo,aeo,geo,reach,http_status,source,engine,created_at` +
       `&order=created_at.desc&limit=${limit}`;
     const r = await req(q, { headers: headers() });
     if (!r.ok) return null;

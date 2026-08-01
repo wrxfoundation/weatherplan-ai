@@ -186,6 +186,8 @@ function textOf(htmlFragment) {
    · Instagram 10.9% · LinkedIn 5.9% · Quora 4.6%
    커뮤니티(Reddit·Quora)가 1위 인용 소스인데 목록에 빠져 있어 추가한다.
    citedByAi 표시는 실제 AI 인용 상위 소스인지 여부 — 안내 문구에서 우선순위를 알려주는 데 쓴다. */
+export const ENGINE_ID = "pickai-deterministic-v3";
+
 const SOCIAL_PLATFORMS = [
   { key: "reddit",    label: "레딧",       re: /reddit\.com\//,  citedByAi: true },
   { key: "quora",     label: "쿠오라",     re: /quora\.com\//,   citedByAi: true },
@@ -201,6 +203,41 @@ const SOCIAL_PLATFORMS = [
   { key: "tiktok",    label: "틱톡",       re: /tiktok\.com\// },
   { key: "telegram",  label: "텔레그램",   re: /t\.me\// },
 ];
+
+/* 모호(헤지) 표현 —
+   인용된 텍스트는 단정적 문체가 모호한 문체보다 1.8배 많다
+   (Growth Memo / Gauge, ChatGPT 응답 120만 건 · 인용 18,012건 분석, 2026.2).
+
+   주의: 한국어 "~할 수 있습니다"는 대부분 헤지가 아니라 기능·가능성 서술이다
+   ("API로 데이터를 받을 수 있습니다"). 이걸 헤지로 세면 멀쩡한 제품 설명이
+   전부 감점되므로 의도적으로 제외하고, 추측·완충 표현만 센다. */
+const HEDGE_PATTERNS = [
+  /것\s?같(습니다|다|아|은|았)/g,
+  /것으로\s?(보입니다|보인다|보이며|예상)/g,
+  /듯\s?(합니다|하다|하며|보입니다)/g,
+  /(으?로|라고)\s?(추정|예상|여겨|판단|생각)(됩니다|된다|되며)/g,
+  /수도\s?있(습니다|다|으며|는)/g,
+  /* \b는 한글 뒤에서 동작하지 않는다. "아마추어·아마존" 오탐을 막으려면
+     뒤에 한글이 오지 않는 경우만 센다. */
+  /아마도(?![가-힣])/g,
+  /아마(?=[\s,.])/g,
+  /어쩌면/g,
+  /일반적으로/g,
+  /대체로/g,
+  /대개/g,
+  /\b(may|might|could)\s+(be|have|help|lead|result|vary)/gi,
+  /\b(possibly|perhaps|arguably|presumably|somewhat|relatively)\b/gi,
+  /\b(seems?|appears?)\s+to\b/gi,
+  /\btends?\s+to\b/gi,
+  /\b(generally|typically|usually)\b/gi,
+];
+
+export function countHedges(text) {
+  const t = String(text || "");
+  let n = 0;
+  for (const re of HEDGE_PATTERNS) n += (t.match(re) || []).length;
+  return n;
+}
 
 export function analyzeHtml(html) {
   const src = String(html || "");
@@ -336,6 +373,10 @@ export function analyzeHtml(html) {
   const numberTokens = text.match(/\d[\d,.]*\s?(%|퍼센트|원|억|만|배|위|점|명|건|개|시간|분|℃|°C|km|kg|mm)?/g) || [];
   const statDensity = words.length > 0 ? +(numberTokens.length / words.length * 100).toFixed(2) : 0;
 
+  /* 모호(헤지) 표현 밀도 — 100단어당 건수 */
+  const hedgeCount = countHedges(text);
+  const hedgeDensity = words.length > 0 ? +(hedgeCount / words.length * 100).toFixed(2) : 0;
+
   /* 문장 길이 (가독성) — lookbehind 미사용 (구형 Safari 호환) */
   const sentences = text.split(/[.!?。…]+["')\]]?\s+/).filter((s) => s.trim().length > 4);
   const avgSentenceWords = sentences.length > 0
@@ -412,6 +453,7 @@ export function analyzeHtml(html) {
     dateCount: dateMatches.length,
     primarySourceCount: primarySourceLinks.length,
     wordCount: words.length,
+    hedgeCount, hedgeDensity,
     statDensity, numberCount: numberTokens.length,
     sentenceCount: sentences.length, avgSentenceWords,
     scriptCount, spaMarkers,
@@ -1207,6 +1249,40 @@ export function runScorecard(a) {
   }
 
   {
+    const wc = p.wordCount || 0;
+    const d = p.hedgeDensity || 0;
+    const n = p.hedgeCount || 0;
+    /* 본문이 너무 짧으면 밀도가 요동친다 — 판정하지 않는다 */
+    const status = wc < 120 ? "na" : d <= 1.0 ? "pass" : d <= 2.5 ? "warn" : "fail";
+    add({
+      id: "definitive-tone", area: "aeo", severity: "medium", weight: 1.5,
+      label: "단정적 문체 (모호 표현 밀도)",
+      help: "AI는 '~일 수도 있습니다', '일반적으로' 같은 얼버무리는 문장보다 '~이다', '~를 뜻한다'처럼 딱 잘라 말하는 문장을 훨씬 자주 인용합니다. 본문에 추측성 표현이 얼마나 섞여 있는지 재는 항목입니다.",
+      status,
+      summary: wc < 120
+        ? "본문이 짧아 문체를 판정하지 않았습니다 (120단어 이상부터 측정)."
+        : status === "pass"
+          ? `모호 표현이 100단어당 ${d}건으로 적습니다 — 단정적으로 서술되어 인용되기 좋습니다.`
+          : status === "warn"
+            ? `모호 표현이 100단어당 ${d}건입니다 — 추측성 문장을 단정형으로 바꾸면 인용 확률이 올라갑니다.`
+            : `모호 표현이 100단어당 ${d}건으로 많습니다 — AI가 근거로 쓰기 어려운 얼버무리는 문체입니다.`,
+      details: [
+        { k: "모호 표현", v: wc < 120 ? "(측정 안 함)" : `${n}건 · 100단어당 ${d}건` },
+        { k: "권장", v: "100단어당 1건 이하" },
+        { k: "근거", v: "단정적 문체 1.8배 더 인용 (인용 18,012건 분석, 2026)" },
+      ],
+      passRule: "본문 120단어 이상이고 모호 표현이 100단어당 1건 이하일 때 통과",
+      fix: status === "pass" || status === "na" ? null : {
+        title: "추측성 표현을 단정형으로",
+        action: "수정",
+        note: "사실인 것은 사실로 쓰세요. 근거가 있으면 수치와 출처를 붙여 단정하고, 정말 불확실한 것만 조건을 명시하세요. "
+          + "다만 확인되지 않은 것을 단정하라는 뜻은 아닙니다 — 모르는 것은 빼거나 근거를 만들어 붙이는 쪽이 맞습니다.",
+        code: `<!-- 이렇게 쓰지 말고 -->\n<p>이 방법은 일반적으로 효과가 있을 수도 있습니다.</p>\n\n<!-- 이렇게 -->\n<p>이 방법은 도입 3개월 만에 응답 시간을 40% 줄였습니다. (2026년 자체 측정, 132개 지점)</p>`,
+      },
+    });
+  }
+
+  {
     const r = p.firstStatRatio;
     const hasStats = (p.numberCount || 0) > 0;
     add({
@@ -1717,7 +1793,7 @@ export function runScorecard(a) {
     .map((c) => c.id);
 
   return {
-    engine: "pickai-deterministic-v2",
+    engine: ENGINE_ID,
     pageType,
     overall,
     grade: gradeOf(overall),

@@ -13,7 +13,7 @@
 import { useMemo, useCallback } from "react";
 import Head from "next/head";
 import {
-  analyzeHtml, runScorecard, AI_BOTS, AREA_WEIGHTS, DEEP_RUBRIC,
+  analyzeHtml, runScorecard, AI_BOTS, AREA_WEIGHTS, DEEP_RUBRIC, ENGINE_ID,
 } from "../lib/scorecardEngine";
 
 const T = {
@@ -162,7 +162,7 @@ export default function Methodology() {
           Pick AI — AI 성적표 측정 설계서
         </h1>
         <p style={{ color: T.slate, fontSize: 14, marginTop: 10 }}>
-          엔진 pickai-deterministic-v2 · 결정론 체크 {detChecks.length}개 + LLM 심사 {DEEP_RUBRIC.length}개 ·
+          엔진 {ENGINE_ID} · 결정론 체크 {detChecks.length}개 + LLM 심사 {DEEP_RUBRIC.length}개 ·
           이 문서의 체크 목록·통과 조건·가중치는 <strong style={{ color: T.ink }}>채점 엔진 코드에서 직접 추출</strong>되어
           문서와 실제 채점이 어긋날 수 없습니다.
         </p>
@@ -337,8 +337,8 @@ export default function Methodology() {
         {/* 5-1. 연구 근거 보강 레버 */}
         <div style={{ marginTop: 8 }}>
           <div className="flex items-center gap-2.5" style={{ marginBottom: 10 }}>
-            <Chip bg={T.lavender} fg={T.lavenderInk}>2026.07 보강</Chip>
-            <span style={{ color: T.ink, fontSize: 14, fontWeight: 600 }}>외부 연구 기반 추가 레버 9종</span>
+            <Chip bg={T.lavender} fg={T.lavenderInk}>2026.08 보강</Chip>
+            <span style={{ color: T.ink, fontSize: 14, fontWeight: 600 }}>외부 연구 기반 추가 레버 10종</span>
           </div>
           <Card style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
@@ -360,6 +360,7 @@ export default function Methodology() {
                   ["내부 링크 구조", "SEO", "크롤러의 페이지 발견 경로 확보"],
                   ["지식그래프 연결 (Wikidata sameAs)", "GEO", "소셜보다 강한 엔티티 신원 증명 — 지식그래프·AI의 브랜드 확정에 기여"],
                   ["다국어 신호 (hreflang)", "확산", "영어권 AI 답변 인용 대비 — 글로벌 확산 기반"],
+                  ["단정적 문체 (모호 표현 밀도)", "AEO", "Growth Memo / Gauge (2026.2) — ChatGPT 응답 120만 건·인용 18,012건 분석에서 단정적 문체가 모호한 문체보다 1.8배 더 인용. 한국어 '~할 수 있습니다'(기능 서술)는 헤지에서 제외하고 추측·완충 표현만 계수"],
                 ].map((row) => (
                   <tr key={row[0]} style={{ borderBottom: `1px solid ${T.hairlineSoft}`, verticalAlign: "top" }}>
                     <td style={{ padding: "8px 8px", color: T.ink, fontWeight: 600, whiteSpace: "nowrap" }}>{row[0]}</td>
@@ -510,7 +511,8 @@ export default function Methodology() {
             <li><strong>홈 1페이지 기준</strong> — 진단은 입력한 URL 1페이지를 봅니다. 사이트 전체 감사는 페이지별 반복 진단으로 근사.</li>
             <li><strong>휴리스틱의 한계</strong> — About 링크·저자 표기 등 일부 신호는 패턴 감지라 드물게 오탐/미탐 가능. 상세 판정 근거를 모두 노출해 사람이 재확인할 수 있게 함.</li>
             <li><strong>로드맵</strong> — ① 실제 AI 인용률·브랜드 언급률(SOV) 반복 프로빙 ② Core Web Vitals 랩 측정 ③ 다중 페이지 감사(사이트맵 기반). <em>구현 완료: 진단 이력·점수 추이(DB), 자체 벤치마크 축적·실측 백분위, 주간 자동 재진단·변동 알림, AI 명령서 프레임워크 맞춤 지침, 사이트 나란히 비교.</em></li>
-            <li><strong>나란히 비교의 경계</strong> — 상대 사이트도 공개된 첫 화면 1개만 같은 39개 항목으로 재며, 로그인이 필요한 영역이나 하위 페이지는 보지 않는다. 따라서 &ldquo;사이트 전체의 우열&rdquo;이 아니라 &ldquo;대표 페이지의 AI 검색 대비 상태&rdquo; 비교로 읽어야 한다. 두 사이트를 같은 시점에 같은 기준으로 재기 때문에 점수 자체는 그대로 견줄 수 있다. 무엇을 비교 대상으로 삼을지는 시스템이 판정하지 않고 사용자가 정하며, 페이지 성격(홈·글·일반)이 서로 다르면 경고를 띄운다.</li>
+            <li><strong>엔진 버전과 점수 비교</strong> — 채점 항목이 추가되면 같은 사이트라도 점수가 달라진다. v2 → v3에서 &ldquo;단정적 문체&rdquo; 1개가 추가되어 AEO 가중치 분포가 바뀌었다. 그래서 진단 기록마다 엔진 버전을 함께 저장하고, 추이 그래프에 서로 다른 버전이 섞여 있으면 &ldquo;점수 변화의 일부는 사이트가 아니라 기준이 달라진 것&rdquo;이라고 화면에 표시한다. 버전이 같은 구간끼리만 순수 비교로 읽어야 한다.</li>
+            <li><strong>나란히 비교의 경계</strong> — 상대 사이트도 공개된 첫 화면 1개만 같은 40개 항목으로 재며, 로그인이 필요한 영역이나 하위 페이지는 보지 않는다. 따라서 &ldquo;사이트 전체의 우열&rdquo;이 아니라 &ldquo;대표 페이지의 AI 검색 대비 상태&rdquo; 비교로 읽어야 한다. 두 사이트를 같은 시점에 같은 기준으로 재기 때문에 점수 자체는 그대로 견줄 수 있다. 무엇을 비교 대상으로 삼을지는 시스템이 판정하지 않고 사용자가 정하며, 페이지 성격(홈·글·일반)이 서로 다르면 경고를 띄운다.</li>
           </ul>
         </Card>
 

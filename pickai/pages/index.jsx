@@ -2,7 +2,7 @@
  * Pick AI — AI 성적표 (단일 서비스)
  * ─────────────────────────────────────────────
  * SEO · AEO · GEO · 확산 통합 무료 진단
- *  · 결정론 체크 39개 + AI 크롤러 13종 + 확산 신호 실측(위키백과 등)
+ *  · 결정론 체크 40개 + AI 크롤러 13종 + 확산 신호 실측(위키백과 등)
  *  · 정밀 진단(LLM 심사) — 베타 기간 한시 무료
  *  · 모든 체크에 (?) 일반인용 도움말
  *  · AI 명령서(.md) 내보내기 — AI 어시스턴트/코딩 에이전트에 붙여넣는 실행 지시서
@@ -636,6 +636,9 @@ function TrendCard({ trend, host }) {
   if (!showTrend && !showBench) return null;
   const first = history[0], last = history[history.length - 1];
   const delta = showTrend ? last.overall - first.overall : 0;
+  /* 채점 엔진이 바뀐 구간이 섞여 있으면 점수 변화가 사이트 변화가 아닐 수 있다 */
+  const engines = [...new Set(history.map((h) => h.engine).filter(Boolean))];
+  const engineChanged = showTrend && engines.length > 1;
   return (
     <div className="glass-card mx-auto mt-4 flex flex-col md:flex-row items-center justify-center gap-x-12 gap-y-4"
       style={{ borderRadius: R.xxl, padding: "16px 28px", width: "fit-content", maxWidth: "100%" }}>
@@ -651,6 +654,12 @@ function TrendCard({ trend, host }) {
             </div>
           </div>
           <Sparkline points={history.map((h) => h.overall)} />
+        </div>
+      )}
+      {engineChanged && (
+        <div style={{ color: T.steel, fontSize: 11.5, lineHeight: 1.6, maxWidth: 260 }}>
+          이 구간에 채점 엔진이 바뀐 기록이 섞여 있습니다({engines.join(" → ")}).
+          점수 변화의 일부는 사이트가 아니라 기준이 달라진 것일 수 있습니다.
         </div>
       )}
       {showBench && (
@@ -728,7 +737,7 @@ function RadarProfileCard({ radar }) {
         <HelpToggle open={helpOpen} onToggle={() => setHelpOpen((v) => !v)} />
       </div>
       <p className="self-start" style={{ color: T.slate, fontSize: 12.5, lineHeight: 1.6, marginBottom: 10 }}>
-        결정론 체크 39개를 7개 역량축으로 재구성한 프로필입니다.
+        결정론 체크 40개를 7개 역량축으로 재구성한 프로필입니다.
       </p>
       {helpOpen && (
         <div className="self-start w-full" style={{ marginBottom: 10, marginTop: -2 }}>
@@ -760,7 +769,7 @@ function RadarProfileCard({ radar }) {
    ═════════════════════════════════════════════════════════════ */
 
 /* ─── 경쟁사 나란히 비교 ───
-   내 사이트 진단이 끝난 뒤, 경쟁사 주소를 넣으면 같은 39개 체크로 재보고
+   내 사이트 진단이 끝난 뒤, 경쟁사 주소를 넣으면 같은 40개 체크로 재보고
    "경쟁사는 갖췄는데 우리는 빠뜨린 항목"을 뽑아 준다. 이게 실제 작업 목록이다. */
 function RankBar({ value, isMe }) {
   const g = GRADE_META[gradeLetter(value)] || GRADE_META.C;
@@ -803,7 +812,7 @@ function CompareCard({ state, rows, comparison, onAdd, onRemove, onRun, onReset 
 
       {helpOpen && (
         <HelpBox>
-          비교할 주소를 넣으면 똑같은 39개 항목으로 함께 진단해, 상대는 통과했는데 우리만 놓친 항목을 뽑아 줍니다.
+          비교할 주소를 넣으면 똑같은 40개 항목으로 함께 진단해, 상대는 통과했는데 우리만 놓친 항목을 뽑아 줍니다.
           무엇부터 손봐야 할지 가장 빠르게 알 수 있는 목록입니다.
           경쟁사뿐 아니라 업계 1등 사이트(목표 수준 확인), 계열사·다른 브랜드(내부 편차 확인),
           우리 사이트의 개편 전후·www 유무 주소(변화 확인)를 넣어도 됩니다.
@@ -1436,7 +1445,7 @@ function Footer() {
 function buildScanScript(host) {
   const j = (base, spread) => base + Math.floor(Math.random() * spread);
   const rows = [
-    { cmd: true, text: `$ pickai scan --target ${host} --checks 39`, d: j(120, 120) },
+    { cmd: true, text: `$ pickai scan --target ${host} --checks 40`, d: j(120, 120) },
     { text: "DNS 조회 · 사설망 가드 통과", tag: "OK", d: j(360, 240) },
     { text: "TLS 핸드셰이크 · 인증서 체인 검증", tag: "유효", d: j(420, 260) },
     { text: `GET https://${host}/ · 리다이렉트 추적(max 10)`, tag: "수신", d: j(600, 400) },
@@ -1450,7 +1459,7 @@ function buildScanScript(host) {
     { text: "통계 밀도 · 인용문 · 답변 선행 배치 측정", tag: "계산", d: j(700, 400) },
     { text: "확산 신호 — 소셜 ×10 플랫폼 · 구독 장치 감지", tag: "감지", d: j(600, 400) },
     { text: "프레임워크 시그니처 스캔 (WordPress·Next·카페24…)", tag: "감지", d: j(500, 350) },
-    { text: "결정론 체크 39개 가중 채점 ██████████", tag: "채점", d: j(900, 500) },
+    { text: "결정론 체크 40개 가중 채점 ██████████", tag: "채점", d: j(900, 500) },
     { text: "레이더 7축 · 등급 산출 · 수정안 생성", tag: "생성", d: j(700, 400) },
   ];
   let t = 0;
@@ -2016,7 +2025,7 @@ export default function Home() {
       <Head>
         <title>Pick AI — AI 성적표 · SEO·AEO·GEO·확산 무료 진단</title>
         <meta name="description"
-          content="AI가 답을 고르는 시대 — 결정론 체크 39개와 AI 크롤러 13종, 확산 신호 실측으로 사이트의 AI 검색 준비도를 60초 안에 진단합니다. 복붙 수정안과 AI 실행 명령서(.md)까지 베타 기간 무료." />
+          content="AI가 답을 고르는 시대 — 결정론 체크 40개와 AI 크롤러 13종, 확산 신호 실측으로 사이트의 AI 검색 준비도를 60초 안에 진단합니다. 복붙 수정안과 AI 실행 명령서(.md)까지 베타 기간 무료." />
         <meta property="og:title" content="Pick AI — 우리 사이트, AI 검색에서 몇 점일까?" />
         <meta property="og:description" content="SEO·AEO·GEO·확산 통합 무료 진단 — 60초 안에 점수·수정안·AI 명령서까지." />
         <meta name="twitter:card" content="summary" />
@@ -2038,7 +2047,7 @@ export default function Home() {
               {
                 "@type": "Question",
                 name: "Pick AI 성적표는 무엇을 진단하나요?",
-                acceptedAnswer: { "@type": "Answer", text: "검색엔진(SEO)·답변엔진(AEO)·생성형엔진(GEO)·확산 신호 4개 영역의 결정론 체크 39개로 사이트의 AI 검색 준비도를 진단합니다. 같은 사이트면 항상 같은 점수가 나오는 재현 가능한 채점입니다." },
+                acceptedAnswer: { "@type": "Answer", text: "검색엔진(SEO)·답변엔진(AEO)·생성형엔진(GEO)·확산 신호 4개 영역의 결정론 체크 40개로 사이트의 AI 검색 준비도를 진단합니다. 같은 사이트면 항상 같은 점수가 나오는 재현 가능한 채점입니다." },
               },
               {
                 "@type": "Question",
@@ -2071,7 +2080,7 @@ export default function Home() {
             </h1>
             <p style={{ color: T.slate, fontSize: 16, lineHeight: 1.7, marginTop: 18, fontWeight: 400 }}>
               ChatGPT·Claude·Gemini가 답을 고르는 시대 —<br className="hidden sm:block" />
-              크롤 접근성부터 확산 신호까지 <strong style={{ color: T.ink, fontWeight: 600 }}>결정론 체크 39개</strong>를 60초 안에.<br />
+              크롤 접근성부터 확산 신호까지 <strong style={{ color: T.ink, fontWeight: 600 }}>결정론 체크 40개</strong>를 60초 안에.<br />
               수정안은 전부 복붙 가능, <strong style={{ color: T.ink, fontWeight: 600 }}>AI 명령서</strong>로 내보내 AI에게 시킬 수도 있습니다.
             </p>
 
