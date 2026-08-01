@@ -66,7 +66,10 @@ Korean-surface parity, a self-healing freshness engine, and deploy safety.
   carry-forward). Fixes the "everything goes stale" failure mode.
 - **verifysite** — a pre-deploy gate on the assembled site; a broken/skeleton build fails instead of
   deploying (Pages keeps the last good deployment).
-- New dormant official source: **KHS (국가유산청)** for heritage/temples/palaces (key-gated, inert).
+- New dormant official sources: **KHS (국가유산청)** for heritage/temples/palaces, and
+  **KOFIC/KOBIS box office** — the film vertical's settlement chart (`admin boxoffice` →
+  `chart:kobis-boxoffice`; `ingest_chart` generalized so music and film charts share one path).
+  Both key-gated and inert until their secret exists.
 - `status.json` freshness + geo-coverage observability; OPERATIONS.md (the operator's map); README
   rewritten to match the shipped system.
 

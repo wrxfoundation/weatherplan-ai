@@ -9,6 +9,7 @@ CLI:
   python -m koreaapi.admin seed     # populate koreaapi.db with sample snapshots (offline)
   python -m koreaapi.admin pull     # LIVE: pull real Wikidata snapshots (needs network egress)
   python -m koreaapi.admin chart    # LIVE: Circle Chart weekly + LLM-extract (needs egress + key)
+  python -m koreaapi.admin boxoffice # LIVE: KOFIC/KOBIS film box office (dormant until KOBIS_API_KEY)
   python -m koreaapi.admin youtube  # LIVE: official-channel release snapshots (needs YOUTUBE_API_KEY)
   python -m koreaapi.admin sweep    # LIVE: discover labelmates from each anchored agency (SPARQL)
   python -m koreaapi.admin discover # LIVE: bulk-discover each vertical's Korean entities (SPARQL) -> 10x
@@ -55,6 +56,7 @@ from .pipeline.scheduler import CADENCE
 from .roster import ARTISTS, CERTIFIED, FOOD_SPICE, FOOD_VEG, NAMES
 from .service import cluster_walkable, haversine_km
 from .sources.circlechart import CircleChartSource
+from .sources.kobis import KobisSource
 from .sources.kosis import KOSISSource
 from .sources.openlibrary import OpenLibrarySource
 from .sources.mock import MockSource
@@ -5256,6 +5258,24 @@ def _main(argv: list[str]) -> int:
             asyncio.run(ingest_chart(chart, db_path=None))
             top = chart["entries"][0]
             print(f"chart: ingested {n} weekly #1(s) -> current #1 {top['artist']} - {top.get('title', '')}")
+    elif cmd == "boxoffice":
+        # The FILM vertical's settlement chart (KOFIC/KOBIS) — the Circle Chart analog. Dormant
+        # until KOBIS_API_KEY exists; a dormant/blocked run reports and exits 0 (never breaks collect).
+        box = asyncio.run(KobisSource().fetch_chart())
+        entries = box.get("entries") or []
+        if not entries:
+            print(f"boxoffice: 0 entries ({box.get('note') or 'nothing returned'}) — "
+                  f"target {box.get('target_date')}; add KOBIS_API_KEY to activate")
+        else:
+            top = entries[0]
+            asyncio.run(ingest_chart(
+                box, db_path=None, entity_id="chart:kobis-boxoffice",
+                name_ko="영화관입장권통합전산망 박스오피스", name_en="KOFIC Box Office",
+                summary_en=(f"KOFIC/KOBIS box office ({box.get('target_date')}) — {len(entries)} films "
+                            f"(#1: {top['title']}, {top.get('audience_day') or '?'} admissions)."),
+                summary_ko=(f"영화진흥위원회 박스오피스 ({box.get('target_date')}) — {len(entries)}편 "
+                            f"(1위: {top['title']}, 관객 {top.get('audience_day') or '?'}명).")))
+            print(f"boxoffice: ingested {len(entries)} film(s) -> #1 {top['title']}")
     elif cmd == "sweep":
         out = asyncio.run(sweep())
         print(

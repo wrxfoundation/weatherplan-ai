@@ -56,6 +56,7 @@ jobs:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }} # 3rd-source cross-check for drama/film/animation (skipped if unset)
           TOURAPI_KEY: ${{ secrets.TOURAPI_KEY }} # KTO official place-authority source + badge (skipped if unset)
           KOSIS_API_KEY: ${{ secrets.KOSIS_API_KEY }} # 국가통계포털 region population attrs (skipped if unset)
+          KOBIS_API_KEY: ${{ secrets.KOBIS_API_KEY }} # KOFIC/KOBIS film box office — the film vertical's settlement chart (skipped if unset)
           KOPIS_API_KEY: ${{ secrets.KOPIS_API_KEY }} # 공연예술통합전산망 theater source (skipped if unset)
           KHERITAGE_API_KEY: ${{ secrets.KHERITAGE_API_KEY }} # 국가유산청 heritage source (skipped if unset)
           KHERITAGE_URL: ${{ secrets.KHERITAGE_URL }} # optional endpoint override (the agency renamed in 2024)
@@ -69,6 +70,7 @@ jobs:
           uv run python -m koreaapi.admin pull
           uv run python -m koreaapi.admin sweep
           uv run python -m koreaapi.admin chart
+          uv run python -m koreaapi.admin boxoffice   # KOFIC/KOBIS film box office (dormant until KOBIS_API_KEY)
           uv run python -m koreaapi.admin youtube
           uv run python -m koreaapi.admin report
           uv run python -m koreaapi.admin entitypages

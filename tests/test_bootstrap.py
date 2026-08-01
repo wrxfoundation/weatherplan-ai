@@ -93,7 +93,7 @@ def test_every_documented_dormant_key_is_wired_in_the_workflows():
     # 'Activation is adding a repo secret' (OPERATIONS) is only true if the workflow maps the secret
     # into env — KOPIS/KHERITAGE once weren't. Pin every documented rail key into BOTH workflows.
     keys = ("TMDB_API_KEY", "TOURAPI_KEY", "KOSIS_API_KEY", "KOPIS_API_KEY",
-            "KHERITAGE_API_KEY", "YOUTUBE_API_KEY", "ANTHROPIC_API_KEY")
+            "KHERITAGE_API_KEY", "KOBIS_API_KEY", "YOUTUBE_API_KEY", "ANTHROPIC_API_KEY")
     for wf in ("collect.yml", "pages.yml"):
         text = open(os.path.join(_REPO, f".github/workflows/{wf}"), encoding="utf-8").read()
         missing = [k for k in keys if f"secrets.{k}" not in text]

@@ -62,3 +62,12 @@ Set any of these → drop in `.env` + GitHub Actions secrets → ping me; I wire
 - 발급(무료): https://kosis.kr → 로그인 → 공유서비스(OpenAPI) → 활용신청 → 인증키 확인.
 - 등록: GitHub → Settings → Secrets and variables → Actions → `KOSIS_API_KEY`.
 - 미설정 시: 소스는 완전 휴면(수집은 정상 진행) — 다른 키들과 같은 dormant 패턴.
+
+## KOBIS_API_KEY — KOFIC 영화관입장권통합전산망 (영화 박스오피스 = 영화 버티컬의 정산 차트)
+- 무엇: 일별/주별 박스오피스 순위·관객수를 `chart:kobis-boxoffice` 스냅샷으로 적재. 음악의
+  써클차트에 대응하는 **영화 버티컬의 정산급(settlement-grade) 출처** — 예측시장 정산·트렌드 신호.
+- 이름 교차검증에는 **쓰지 않음**(국내 개봉 제목은 마케팅 표기라 이름 합의를 떨어뜨림 — Spotify 교훈).
+- 발급(무료): https://www.kobis.or.kr/kobisopenapi → 회원가입 → 키 발급.
+- 등록: GitHub → Settings → Secrets and variables → Actions → `KOBIS_API_KEY`.
+- 미설정 시: 완전 휴면(`boxoffice`가 0건 보고 후 정상 종료). 최초 활성화 때 응답 필드 모양을 한 번
+  확인하고, 엔드포인트가 다르면 `KOBIS_URL`로 덮어쓰면 됨(코드 수정 불필요).

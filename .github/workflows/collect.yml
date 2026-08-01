@@ -52,6 +52,7 @@ jobs:
           KHERITAGE_API_KEY: ${{ secrets.KHERITAGE_API_KEY }} # 국가유산청 heritage source (skipped if unset)
           KHERITAGE_URL: ${{ secrets.KHERITAGE_URL }} # optional endpoint override (the agency renamed in 2024)
           KOSIS_API_KEY: ${{ secrets.KOSIS_API_KEY }} # 국가통계포털 region population attrs (skipped if unset)
+          KOBIS_API_KEY: ${{ secrets.KOBIS_API_KEY }} # KOFIC/KOBIS film box office — the film vertical's settlement chart (skipped if unset)
         run: |
           # SELF-HEAL first: if the cache was evicted (store reset to ~roster size), re-seed the
           # accumulated current state from the LIVE site's /latest.json before collecting.
@@ -68,9 +69,10 @@ jobs:
           # (at the 00:17 UTC tick) to stay within the YouTube Data API daily quota and save LLM cost.
           if [ "$(date -u +%H)" = "00" ]; then
             uv run python -m koreaapi.admin chart
+            uv run python -m koreaapi.admin boxoffice  # KOFIC/KOBIS daily box office (dormant until KOBIS_API_KEY)
             uv run python -m koreaapi.admin youtube
           else
-            echo "chart/youtube: skipped this tick (run once/day at 00 UTC — YouTube quota / cost)"
+            echo "chart/youtube/boxoffice: skipped this tick (run once/day at 00 UTC — YouTube quota / cost)"
           fi
           uv run python -m koreaapi.admin export
           uv run python -m koreaapi.admin digest

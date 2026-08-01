@@ -338,9 +338,12 @@ proxying and fixture-tested scripts. It proves a distribution lane we didn't hav
 keys; our data lane needs none) · fixture-tested scripts · "없으면 없다" honesty.
 
 **Deferred (on-thesis source candidates spotted via their catalog):**
-1. **KOFIC/KOBIS 박스오피스** — their cinema skill is showtimes/booking (out of lane), but the
-   adjacent KOFIC OpenAPI is settlement-grade daily/weekly box office = the FILM vertical's
-   "chart" (Circle Chart analog). Dormant rail candidate: `KOBIS_API_KEY`.
+1. ~~**KOFIC/KOBIS 박스오피스**~~ → ✅ **SHIPPED DORMANT (2026-07-31)**: `sources/kobis.py` +
+   `admin boxoffice` + `chart:kobis-boxoffice`, key-gated on `KOBIS_API_KEY` (`KOBIS_URL`
+   overridable), wired into both workflows at the daily 00-UTC tick. `ingest_chart` was
+   generalized so music and film settlement charts share ONE code path (and one single-source
+   cap). Outcome data only — never a name cross-verifier (Korean release titles would lower name
+   agreement). Activation = adding the free kobis.or.kr secret; verify the field shape once.
 2. **DART 전자공시 anchor** — HYBE·SM·JYP·YG are listed corps; DART corporate filings are an
    official-source verification tier for label/company entities (above P856). `DART_API_KEY`.
 3. **Sports results (KBO·KBL·K리그)** — settlement-oracle feeds for the decision-gated

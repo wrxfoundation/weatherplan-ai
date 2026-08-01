@@ -65,7 +65,9 @@ Hallucination cannot enter a record: extraction is labor, grounding is the gate.
 
 `TMDB_API_KEY` · `TOURAPI_KEY` (KTO) · `KOSIS_API_KEY` · `KOPIS_API_KEY` (theaters) ·
 `KHERITAGE_API_KEY` (+ `KHERITAGE_URL` override; verify the field shape on first activation) ·
-`YOUTUBE_API_KEY` · x402/Stripe payment rails. A missing key is a graceful skip, never an error.
+`KOBIS_API_KEY` (KOFIC film box office — the film vertical's settlement chart; + `KOBIS_URL`
+override, verify the field shape on first activation) · `YOUTUBE_API_KEY` · x402/Stripe payment
+rails. A missing key is a graceful skip, never an error.
 
 ## Surfaces inventory (everything the build ships)
 

@@ -677,9 +677,15 @@ async def ingest_one(
     return record
 
 
-async def ingest_chart(chart: dict, *, db_path: str | None = None) -> Record | None:
-    """Append a Circle Chart weekly snapshot (kind='chart') - settlement-grade outcome data.
+async def ingest_chart(chart: dict, *, db_path: str | None = None,
+                       entity_id: str = "chart:circle-digital",
+                       name_ko: str = "써클 디지털 차트", name_en: str = "Circle Digital Chart",
+                       summary_en: str | None = None, summary_ko: str | None = None) -> Record | None:
+    """Append a settlement-grade chart snapshot (kind='chart') - OUTCOME data, not name data.
 
+    The defaults describe the Circle Digital Chart (music); the KOFIC/KOBIS film box office rides
+    the SAME path with its own entity_id + summaries, so every vertical's settlement chart is one
+    code path (and one place where the single-source cap is enforced).
     One official source, so the Skill Score is single-source-capped (honest: un-cross-verified).
     Empty entries (egress blocked / no key / page changed) -> nothing appended (never break).
     """
@@ -697,12 +703,12 @@ async def ingest_chart(chart: dict, *, db_path: str | None = None) -> Record | N
         translation_official=True,
     )
     record = Record(
-        entity_id="chart:circle-digital",
+        entity_id=entity_id,
         kind="chart",
-        name=Name(ko="써클 디지털 차트", en_official="Circle Digital Chart"),
+        name=Name(ko=name_ko, en_official=name_en),
         snapshot_at=now,
-        summary_en=f"Circle Digital Chart - {len(entries)} weekly #1s (current #1: {top.get('artist', '')} - {top.get('title', '')}).",
-        summary_ko=f"써클 디지털 차트 - 주간 1위 {len(entries)}건 (현재 1위: {top.get('artist', '')}).",
+        summary_en=summary_en or f"Circle Digital Chart - {len(entries)} weekly #1s (current #1: {top.get('artist', '')} - {top.get('title', '')}).",
+        summary_ko=summary_ko or f"써클 디지털 차트 - 주간 1위 {len(entries)}건 (현재 1위: {top.get('artist', '')}).",
         data={"entries": entries, "source_url": chart.get("source_url")},
         provenance=Provenance(
             sources=[chart.get("citation", "Circle Chart")],
