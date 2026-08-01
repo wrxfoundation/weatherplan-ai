@@ -14,8 +14,10 @@ import {
   OUTING,
   STORE_ITEMS,
   VOICE_MSG,
+  VOICE_TO,
+  ASK_SERVICES,
 } from "../lib/mock";
-import { fmtWon } from "../lib/config";
+import { PRICING, fmtWon } from "../lib/config";
 import { needsGuardianApproval, useAppState } from "../lib/state";
 import Icon from "../components/icons";
 
@@ -46,9 +48,13 @@ const SUB_CARD = {
   boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
 };
 
+// 해주세요 — 그룹 순서 (ASK_SERVICES의 g 값)
+const ASK_GROUPS = ["약 · 병원", "장보기", "집안일", "바깥일", "말동무"];
+
 const TABS = [
   { key: "today", label: "오늘", glyph: "home" },
   { key: "health", label: "건강", glyph: "heart" },
+  { key: "ask", label: "해주세요", glyph: "hand" },
   { key: "family", label: "가족", glyph: "users" },
 ];
 
@@ -169,10 +175,42 @@ export default function ElderHome() {
   };
   const [storeSel, setStoreSel] = useState({});
   const [storeSent, setStoreSent] = useState(null); // 'approval' | 'ordered'
+  const [voiceTo, setVoiceTo] = useState(null); // 음성 메시지 수신자 (null이면 미선택)
+  const [voiceSent, setVoiceSent] = useState([]); // 보낸 목소리 목록 (최근 순)
+  const [askSel, setAskSel] = useState(null); // '해주세요' 선택 항목
+  const [askSent, setAskSent] = useState(null); // { name, mode, amount }
   const callTimer = useRef(null);
 
   const { medTaken, cooled, voicePlayed, askAdded } = state.elder;
   const cart = state.demo.cart;
+
+  // ── 해주세요: 결제권한(REQ-07)을 어르신 말로 옮긴다 ──
+  // 결제 모드는 온보딩에서 정해진 값을 그대로 따른다. 여기서 바꾸지 않는다.
+  const payMode = state.onboarding?.paymentMode || "limit";
+  const payLimit = state.onboarding?.limitAmount ?? PRICING.paymentLimitDefault;
+  const approver = (state.onboarding?.guardianName || "아들 민수").replace(/^아들 |^차녀 |^삼남 /, "");
+  const payRule = {
+    approver,
+    headline: {
+      limit: `${fmtWon(payLimit)}까지는 바로 해드리고, 그보다 크면 ${approver} 님이 확인해 줍니다.`,
+      both: "어르신도 가족도 바로 결제할 수 있습니다.",
+      guardianOnly: `${approver} 님이 확인해 주면 바로 시작합니다.`,
+      elderOnly: "어르신이 직접 결제하십니다.",
+    }[payMode],
+    sub: "약 타다 주기 · 장보기 · 은행 동행 같은 것을 부탁하시면 선생님이 대신 해드립니다.",
+  };
+  // 선택 항목의 결제 분기 — 무료(멤버십 포함) / 본인 결제 / 보호자 승인
+  const askPlan = (() => {
+    if (!askSel) return { mode: null, approval: false, notice: "", cta: "" };
+    if (askSel.est === 0) {
+      return { mode: "free", approval: false, notice: "멤버십에 포함된 것이라 따로 내실 돈이 없습니다.", cta: "부탁하기" };
+    }
+    const approval = needsGuardianApproval(state.onboarding, askSel.est);
+    return approval
+      ? { mode: "approval", approval: true, notice: `${approver} 님에게 확인을 부탁드립니다. 승인되면 바로 시작합니다.`, cta: "가족에게 부탁하기" }
+      : { mode: "self", approval: false, notice: `${fmtWon(payLimit)} 안이라 바로 진행됩니다.`, cta: "바로 부탁하기" };
+  })();
+  const myRequests = (state.requests || []).filter((r) => r.dir === "fromElder");
 
   const name = givenName(state.onboarding?.elderName || ELDER.name);
   const now = new Date();
@@ -590,6 +628,190 @@ export default function ElderHome() {
               <div className="mt-3 text-[13px] text-muted/60">우선 항목 · {priority.source}</div>
             </ElderCard>
 
+            {/* ══ 해주세요 탭 — 대행 · 구매 요청. 결제권한(REQ-07)에 따라 본인 결제 / 보호자 승인 ══ */}
+            {/* order 0 · 지금 결제가 어떻게 되어 있는지 쉬운 말로 */}
+            <ElderCard show={tab === "ask"} order={0} style={LIGHT_CARD}>
+              <CardHead title="부탁하시면 저희가 합니다" right="대신 해드립니다" />
+              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
+                {payRule.headline}
+              </p>
+              <p className="mt-2 text-[19px] leading-[1.6] text-muted">{payRule.sub}</p>
+            </ElderCard>
+
+            {/* order 1 · 무엇을 부탁할지 고르기 — 한 번에 하나만 (저인지부하) */}
+            {ASK_GROUPS.map((g, gi) => (
+              <ElderCard key={g} show={tab === "ask"} order={1 + gi} style={LIGHT_CARD}>
+                <CardHead title={g} right={gi === 0 ? "하나만 골라 주세요" : ""} />
+                <div className="mt-2 space-y-2">
+                  {ASK_SERVICES.filter((a) => a.g === g).map((a) => {
+                    const on = askSel?.id === a.id;
+                    return (
+                      <button
+                        key={a.id}
+                        onClick={() => {
+                          setAskSent(null);
+                          setAskSel(on ? null : a);
+                        }}
+                        className="btn-press flex w-full items-center gap-3 text-left"
+                        style={{ ...SUB_CARD, outline: on ? "3px solid #B08D57" : "none" }}
+                      >
+                        <span
+                          className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
+                          style={{ background: on ? "#1E7A5A" : "rgba(10,31,60,.08)", color: on ? "#fff" : "transparent" }}
+                        >
+                          ✓
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[19px] font-bold leading-[1.35] text-ink">{a.name}</span>
+                          <span className="block text-[17px] leading-[1.35] text-muted">{a.note}</span>
+                        </span>
+                        <span className="shrink-0 font-num text-[18px] font-bold text-navy">
+                          {a.est === 0 ? "무료" : fmtWon(a.est)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </ElderCard>
+            ))}
+
+            {/* order 8 · 확인 · 보내기 — 결제권한대로 문구와 결과가 갈린다 */}
+            <ElderCard show={tab === "ask"} order={8} style={LIGHT_CARD}>
+              {askSent ? (
+                <>
+                  <CardHead title="보냈습니다" right={askSent.mode === "approval" ? "승인 기다리는 중" : "접수됨"} />
+                  <p className="mt-2 text-[20px] leading-[1.6] text-ink">{askSent.name}</p>
+                  <p className="mt-3 rounded-2xl bg-green/10 p-4 text-[19px] font-bold leading-[1.5] text-green">
+                    {askSent.mode === "approval"
+                      ? `${payRule.approver} 님에게 확인을 부탁드렸습니다. 승인되면 바로 시작합니다.`
+                      : askSent.mode === "free"
+                      ? "선생님에게 전달했습니다. 곧 연락드립니다."
+                      : "접수했습니다. 선생님이 곧 시작합니다."}
+                  </p>
+                  <ElderBtn onClick={() => { setAskSent(null); setAskSel(null); }} variant="done" className="mt-4">
+                    다른 것도 부탁하기
+                  </ElderBtn>
+                </>
+              ) : !askSel ? (
+                <>
+                  <CardHead title="고르시면 여기에 보입니다" right="" />
+                  <p className="mt-2 text-[20px] leading-[1.6] text-muted">
+                    위에서 부탁할 것을 하나 눌러 주세요.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <CardHead title="이렇게 부탁할까요" right={askSel.est === 0 ? "비용 없음" : fmtWon(askSel.est)} />
+                  <p className="mt-2 text-[22px] font-bold leading-[1.5] text-navy">{askSel.name}</p>
+                  <p className="mt-1 text-[19px] leading-[1.6] text-muted">{askSel.note}</p>
+                  <p className="mt-3 rounded-2xl p-4 text-[19px] font-bold leading-[1.5]"
+                     style={askPlan.approval
+                       ? { background: "rgba(138,93,18,.1)", color: "#8A5D12" }
+                       : { background: "rgba(30,122,90,.1)", color: "#1E7A5A" }}>
+                    {askPlan.notice}
+                  </p>
+                  <ElderBtn
+                    onClick={() => {
+                      const amount = askSel.est;
+                      setAskSent({ name: askSel.name, mode: askPlan.mode, amount });
+                      dispatch({
+                        type: "addRequest",
+                        payload: {
+                          id: `rq-${Date.now()}`,
+                          dir: "fromElder",
+                          type: askPlan.approval ? "부탁 · 승인 필요" : "부탁",
+                          detail: `${askSel.name} (${askSel.note})`,
+                          amount,
+                          preferredDate: null,
+                          urgency: "normal",
+                          assignee: "박지현",
+                          photos: [],
+                          status: askPlan.approval ? "awaitingPayment" : "inProgress",
+                          history: [
+                            { at: Date.now(), status: "requested", note: "어르신 해주세요" },
+                            { at: Date.now(), status: "confirmed", note: "" },
+                            askPlan.approval
+                              ? { at: Date.now(), status: "awaitingPayment", note: `보호자 승인 대기 · ${fmtWon(amount)}` }
+                              : { at: Date.now(), status: "inProgress", note: amount === 0 ? "멤버십 포함" : `어르신 직접 결제 ${fmtWon(amount)} (한도 내 · 데모)` },
+                          ],
+                          proof: null,
+                        },
+                      });
+                      dispatch({
+                        type: "pushEvent",
+                        payload: {
+                          kind: "부탁",
+                          text: askPlan.approval
+                            ? `김순자 해주세요 — ${askSel.name} · 보호자 승인 요청 (${fmtWon(amount)})`
+                            : `김순자 해주세요 — ${askSel.name} · ${amount === 0 ? "멤버십 포함" : `직접 결제 ${fmtWon(amount)}`}`,
+                          color: "#B08D57",
+                        },
+                      });
+                    }}
+                    variant={askPlan.approval ? "primary" : "success"}
+                  >
+                    <span className="block leading-[1.35]">{askPlan.cta}</span>
+                    <span className="block text-[19px] leading-[1.35] text-white/85">
+                      {askSel.est === 0 ? "비용 없음" : fmtWon(askSel.est)}
+                    </span>
+                  </ElderBtn>
+                </>
+              )}
+            </ElderCard>
+
+            {/* order 9 · 진행 중인 부탁 */}
+            <ElderCard show={tab === "ask"} order={9} style={LIGHT_CARD}>
+              <CardHead title="부탁해 둔 것" right={`${myRequests.length}건`} />
+              {myRequests.length === 0 ? (
+                <p className="mt-2 text-[20px] leading-[1.6] text-muted">아직 부탁하신 것이 없습니다.</p>
+              ) : (
+                <div className="mt-2 space-y-2">
+                  {myRequests.slice(0, 4).map((r) => (
+                    <div key={r.id} style={SUB_CARD}>
+                      <div className="text-[19px] font-bold leading-[1.35] text-navy">{r.detail}</div>
+                      <div className="mt-1 text-[18px] font-bold" style={{ color: r.status === "awaitingPayment" ? "#8A5D12" : "#1E7A5A" }}>
+                        {r.status === "awaitingPayment" ? `${payRule.approver} 님 승인 기다리는 중` : "선생님이 진행 중입니다"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </ElderCard>
+
+            {/* order 5 · 목소리 보내기 — 받는 사람 고르고 꾹 눌러 말하면 끝 */}
+            <ElderCard
+              show={tab === "family"}
+              order={5}
+              style={{
+                background: "linear-gradient(180deg,#FBF6EC,#F4EEE1)",
+                border: "1px solid rgba(176,141,87,.45)",
+                boxShadow: LIGHT_CARD.boxShadow,
+              }}
+            >
+              <CardHead title="목소리 보내기" right="글자 안 써도 됩니다" />
+              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
+                받을 사람을 고르고
+                <br />
+                아래 버튼을 꾹 누른 채 말씀하세요.
+              </p>
+              <VoiceRecorder
+                to={voiceTo}
+                onPick={setVoiceTo}
+                sent={voiceSent}
+                onSend={(sec) => {
+                  setVoiceSent((v) => [{ to: voiceTo.name, sec }, ...v]);
+                  dispatch({
+                    type: "pushEvent",
+                    payload: {
+                      kind: "메시지",
+                      text: `김순자(78) → ${voiceTo.name} 목소리 메시지 ${sec}초 전송`,
+                      color: "#8FA9CC",
+                    },
+                  });
+                }}
+              />
+            </ElderCard>
+
             {/* order 6 · 아들 민수 (음성) — 텍스트 아닌 음성. 재생 버튼이 답장 버튼으로 변신 */}
             <ElderCard
               show={tab === "family"}
@@ -775,9 +997,15 @@ export default function ElderHome() {
               <div className="text-[19px] font-bold text-green">자녀들이 보고 있습니다</div>
               <div className="mt-1">
                 {FAMILY_SEEN.map((f) => (
-                  <div
+                  <button
                     key={f.displayName}
-                    className="flex items-center gap-3.5 border-t border-green/[.16] py-[14px] first:border-t-0"
+                    onClick={() => {
+                      // 이 자녀에게 바로 목소리 보내기 — 위 카드로 올라가 수신자가 미리 선택된다
+                      const hit = VOICE_TO.find((v) => v.name === f.displayName) || VOICE_TO[0];
+                      setVoiceTo(hit);
+                      scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="btn-press flex w-full items-center gap-3.5 border-t border-green/[.16] py-[14px] text-left first:border-t-0"
                   >
                     <span
                       className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full text-[16px] font-bold"
@@ -785,11 +1013,14 @@ export default function ElderHome() {
                     >
                       {f.initials}
                     </span>
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <div className="text-[20px] font-bold text-navy">{f.displayName}</div>
                       <div className="text-[18px] text-[#2B4A3E]">{f.seenLabel}</div>
                     </div>
-                  </div>
+                    <span className="shrink-0 text-green" aria-hidden>
+                      <Icon name="mic" size={24} strokeWidth={2} />
+                    </span>
+                  </button>
                 ))}
               </div>
               <p className="mt-1 text-[19px] leading-[1.6] text-[#2B4A3E]">
@@ -971,6 +1202,126 @@ function ElderEventSheet({ onClose, onCreate }) {
         </div>
       </div>
     </div>
+  );
+}
+
+// 목소리 보내기 — 어르신에게 타이핑은 장벽이다. 받는 사람 고르고 꾹 눌러 말하면 끝.
+// 빨강은 SOS 전용이므로 녹음 중 색은 금색 계열을 쓴다 (06 §4.2).
+function VoiceRecorder({ to, onPick, onSend, sent }) {
+  const [rec, setRec] = useState(false);
+  const [sec, setSec] = useState(0);
+  const [tooShort, setTooShort] = useState(false);
+  const timer = useRef(null);
+
+  const start = () => {
+    if (!to || rec) return;
+    setTooShort(false);
+    setSec(0);
+    setRec(true);
+    timer.current = setInterval(() => setSec((v) => Math.min(60, v + 1)), 1000);
+  };
+  const stop = () => {
+    if (!rec) return;
+    clearInterval(timer.current);
+    setRec(false);
+    if (sec < 1) {
+      setTooShort(true); // 스치듯 눌린 것은 보내지 않는다
+      return;
+    }
+    onSend(sec);
+    setSec(0);
+  };
+  useEffect(() => () => clearInterval(timer.current), []);
+
+  return (
+    <>
+      <div className="mt-2 grid grid-cols-2 gap-2.5">
+        {VOICE_TO.map((v) => {
+          const on = to?.id === v.id;
+          return (
+            <button
+              key={v.id}
+              onClick={() => onPick(v)}
+              className="btn-press flex items-center gap-3 rounded-[14px] p-3.5 text-left"
+              style={{ ...SUB_CARD, padding: "12px 13px", outline: on ? "3px solid #B08D57" : "none" }}
+            >
+              <span
+                className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full text-[15px] font-bold"
+                style={{ background: v.avBg, color: v.avFg }}
+              >
+                {v.initials}
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[18px] font-bold leading-[1.3] text-navy">{v.name}</span>
+                <span className="block text-[15px] leading-[1.3] text-muted">{v.sub}</span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <button
+        aria-label="꾹 누르고 말하기"
+        disabled={!to}
+        onPointerDown={start}
+        onPointerUp={stop}
+        onPointerLeave={stop}
+        onContextMenu={(e) => e.preventDefault()}
+        className="btn-press mt-3.5 w-full select-none rounded-2xl px-5 py-[26px] disabled:opacity-45"
+        style={{
+          touchAction: "none",
+          background: rec
+            ? "linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.04) 55%), rgba(176,141,87,.92)"
+            : "linear-gradient(180deg, rgba(255,255,255,.94), rgba(240,238,232,.8))",
+          color: rec ? "#FFFFFF" : "#0A1F3C",
+          border: rec ? "1px solid rgba(255,255,255,.5)" : "1px solid rgba(255,255,255,.9)",
+          boxShadow: rec
+            ? "inset 0 1px 0 rgba(255,255,255,.45), 0 12px 24px -10px rgba(176,141,87,.6)"
+            : "inset 0 1px 0 #FFFFFF, inset 0 -3px 0 rgba(10,31,60,.13), inset 0 0 0 1px rgba(10,31,60,.14)",
+        }}
+      >
+        <span className="flex items-center justify-center gap-2.5">
+          <Icon name="mic" size={30} strokeWidth={2} />
+          <span className="text-[26px] font-black leading-none">
+            {rec ? `말씀하세요  ${sec}초` : "꾹 누르고 말하기"}
+          </span>
+        </span>
+        <span className="mt-2 block text-[17px] font-bold" style={{ color: rec ? "rgba(255,255,255,.85)" : "#5C5A54" }}>
+          {!to ? "위에서 받을 사람을 먼저 고르세요" : rec ? "손을 떼면 바로 보냅니다" : `${to.name}에게 보냅니다`}
+        </span>
+        {/* 녹음 중 파형 — 소리가 들어가고 있다는 것을 눈으로 확인 */}
+        {rec && (
+          <span className="mt-3 flex items-end justify-center gap-[3px]" aria-hidden>
+            {[10, 20, 14, 26, 16, 30, 12, 22, 18, 28, 13, 24].map((h, i) => (
+              <span
+                key={i}
+                className="w-[5px] rounded-full bg-white/85"
+                style={{ height: h, animation: `sosPulse 1s ease-in-out ${i * 0.08}s infinite` }}
+              />
+            ))}
+          </span>
+        )}
+      </button>
+
+      {tooShort && (
+        <p className="mt-3 text-[19px] font-bold leading-[1.5] text-amber">
+          너무 짧습니다. 조금 더 길게 눌러 주세요.
+        </p>
+      )}
+      {sent.length > 0 && (
+        <div className="mt-3 space-y-2">
+          {sent.slice(0, 3).map((m, i) => (
+            <div key={i} className="flex items-center gap-3 rounded-[14px]" style={{ ...SUB_CARD, padding: "12px 14px" }}>
+              <span className="text-green">
+                <Icon name="mic" size={22} strokeWidth={2} />
+              </span>
+              <span className="flex-1 text-[18px] font-bold text-navy">{m.to}에게 보냈습니다</span>
+              <span className="font-num text-[17px] font-bold text-muted">{m.sec}초</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
   );
 }
 
