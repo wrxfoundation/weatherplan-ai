@@ -231,6 +231,20 @@ export default function ElderHome() {
             <h1 className="text-[30px] font-black leading-[1.3] text-navy">
               {name} 어르신, 안녕하세요
             </h1>
+            {/* SOS는 화면 최상단 고정 — 카드가 어디까지 내려가 있든 항상 처음 보이는 자리 (REQ-06) */}
+            <div className="mt-3.5">
+              <SosButton
+                phase={sosPhase}
+                setPhase={setSosPhase}
+                onDispatch={() => {
+                  dispatch({ type: "demo", payload: { sos: true } });
+                  dispatch({
+                    type: "pushEvent",
+                    payload: { kind: "SOS", text: "김순자(78) SOS 발신 · 가족·관제 동시 점등", color: "#FF8A80" },
+                  });
+                }}
+              />
+            </div>
           </header>
 
           {/* ── 카드 스택 (유일한 스크롤 영역) ── */}
@@ -267,7 +281,7 @@ export default function ElderHome() {
               </div>
               {/* "노란 버튼" 카피 → 빨간 SOS로 수정 (06 §10-7 미해결 항목 해소) */}
               <p className="mt-4 text-[19px] leading-[1.6] text-muted">
-                두 분 다 목에 K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지 마시고 아래
+                두 분 다 목에 K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지 마시고 맨 위
                 빨간 SOS 버튼을 누르세요.
               </p>
             </ElderCard>
@@ -784,23 +798,12 @@ export default function ElderHome() {
             </ElderCard>
           </main>
 
-          {/* ── 고정 푸터: SOS · 전화 · 탭 (스크롤 밖 — 06 원칙 5) ── */}
+          {/* ── 고정 푸터: 전화 · 탭 (스크롤 밖 — 06 원칙 5). SOS는 최상단으로 분리 ── */}
           <footer className="shrink-0 pb-3 pt-4">
-            <SosButton
-              phase={sosPhase}
-              setPhase={setSosPhase}
-              onDispatch={() => {
-                dispatch({ type: "demo", payload: { sos: true } });
-                dispatch({
-                  type: "pushEvent",
-                  payload: { kind: "SOS", text: "김순자(78) SOS 발신 · 가족·관제 동시 점등", color: "#FF8A80" },
-                });
-              }}
-            />
-            {/* SOS(응급)와 전화(문의)의 분리 — 색·크기로 명확히 구분 (06 §4.2) */}
+            {/* SOS(응급)는 위, 전화(문의)는 아래 — 화면 양 끝으로 갈라 오작동을 막는다 (06 §4.2) */}
             <button
               onClick={callTeacher}
-              className="btn-press mt-2.5 w-full rounded-2xl p-6 text-[22px] font-bold text-navy"
+              className="btn-press w-full rounded-2xl p-6 text-[22px] font-bold text-navy"
               style={{
                 background: "linear-gradient(180deg, rgba(255,255,255,.92), rgba(240,238,232,.78))",
                 backdropFilter: "blur(10px)",
