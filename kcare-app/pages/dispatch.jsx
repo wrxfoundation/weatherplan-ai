@@ -25,6 +25,12 @@ import {
   WEAR_RULES,
   WEAR_ACTIONS,
   WEAR_PIPELINE,
+  FALL_CHAIN,
+  FALL_SCOPE,
+  FALL_SMS,
+  FALL_READY,
+  FALL_PLAN,
+  FALL_METRICS,
   WEAR_CONSENT,
   HANDOFF_CHAIN,
   HANDOFF_STUCK,
@@ -249,6 +255,14 @@ function ControlMap({ sos, mode = "light", onSelect }) {
 
 // 날씨 지도 — 관제 맵과 같은 Leaflet · 권역 마커에 기온·미세먼지를 상시 라벨로 표시.
 // 데이터 출처는 케이웨더 단일 (WEATHER_DISTRICTS ↔ MAP_DISTRICTS 이름 매칭).
+// 공용 톤 — 낙상 대응 · 준비 상태 표기
+const TONE = {
+  ok: { fg: "#1E7A5A", bg: "rgba(30,122,90,.1)" },
+  warn: { fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
+  bad: { fg: "#C0392B", bg: "rgba(192,57,43,.1)" },
+  info: { fg: "#5C5A54", bg: "rgba(10,31,60,.06)" },
+};
+
 const WEATHER_TONE = {
   bad: "#C0392B",
   warn: "#8A5D12",
@@ -2221,7 +2235,8 @@ export default function DispatchConsole() {
                 <div className="text-[11px] font-bold tracking-[.14em] text-muted">현장 / 기기 · 알림 · 연동</div>
                 <h2 className="mt-0.5 text-[17px] font-bold text-navy">웨어러블 운영 — 갤럭시 Fit3</h2>
                 <p className="mt-1 text-[13px] leading-[1.7] text-muted">
-                  단일 지표로 판정하지 않습니다 — 알림은 복합 조건, 낙상은 보호자 직통 + 관제 이중 경로.
+                  단일 지표로 판정하지 않습니다 — 알림은 복합 조건. 낙상은 <b className="text-navy">기기가 감지하고 우리가 대응합니다</b>
+                  (밴드에 앱을 올릴 수 없어 감지는 우리 영역이 아닙니다).
                 </p>
               </div>
               <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" }}>
@@ -2375,6 +2390,179 @@ export default function DispatchConsole() {
                   <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
                     분실 · 파손 · 반납은 기기 대장에서 관리합니다 — 어르신 명부(사람)와 기기 대장(자산)은 분리 운영.
                   </p>
+                </Panel>
+
+                {/* ── 낙상 대응 — 감지는 기기가, 대응은 우리가 ── */}
+                <Panel className="col-span-full min-w-0">
+                  <PanelHead
+                    title="낙상 대응 체계"
+                    right={<span className="text-[12px] text-muted">감지는 기기 · 대응은 우리 — 경계가 어디인지 먼저 못 박는다</span>}
+                  />
+                  <p className="mt-2 max-w-[92ch] text-[12px] leading-[1.75] text-muted">
+                    Fit3에는 우리 앱을 올릴 수 없어 <b className="text-navy">낙상 감지를 우리가 만들 방법이 없습니다</b>.
+                    수신 API도 없습니다. 실현 가능한 유일한 경로는 폰의 긴급 SOS가 우리에게 닿게 하는 것이고,
+                    거기서부터 30초 안에 티켓을 만들어 대응하는 것이 우리 서비스입니다.
+                  </p>
+                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(232px, 1fr))" }}>
+                    {FALL_CHAIN.map((c) => {
+                      const ours = c.who === "K-CARE";
+                      return (
+                        <div
+                          key={c.s}
+                          className="rounded-xl border px-3.5 py-3"
+                          style={
+                            ours
+                              ? { borderColor: "rgba(176,141,87,.45)", background: "rgba(176,141,87,.08)" }
+                              : { borderColor: "rgba(10,31,60,.08)", background: "rgba(255,255,255,.6)" }
+                          }
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="font-num text-[11px] font-bold text-muted">{c.s}</span>
+                            <span
+                              className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                              style={ours ? { background: "#B08D57", color: "#0A1F3C" } : { background: "rgba(10,31,60,.07)", color: "#5C5A54" }}
+                            >
+                              {c.who}
+                            </span>
+                            <span className="ml-auto font-num text-[10px] text-muted">{c.t}</span>
+                          </div>
+                          <div className="mt-1.5 text-[13px] font-bold text-navy">{c.k}</div>
+                          <p className="mt-1 text-[11px] leading-[1.6] text-muted">{c.body}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                    <div className="rounded-xl border border-green/25 bg-green/[.06] px-3.5 py-3">
+                      <div className="text-[12px] font-bold text-green">우리가 할 수 있는 것</div>
+                      <ul className="mt-1.5 space-y-1">
+                        {FALL_SCOPE.can.map((x) => (
+                          <li key={x} className="flex gap-1.5 text-[12px] leading-[1.6] text-ink">
+                            <span className="shrink-0 text-green">✓</span>
+                            <span>{x}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="rounded-xl border border-danger/25 bg-danger/[.05] px-3.5 py-3">
+                      <div className="text-[12px] font-bold text-danger">못 하는 것 — 약속하면 안 되는 것</div>
+                      <ul className="mt-1.5 space-y-1">
+                        {FALL_SCOPE.cant.map((x) => (
+                          <li key={x} className="flex gap-1.5 text-[12px] leading-[1.6] text-ink">
+                            <span className="shrink-0 text-danger">✕</span>
+                            <span>{x}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </Panel>
+
+                {/* 가구별 준비 상태 — 미등록이 곧 사각지대 */}
+                <Panel className="min-w-0">
+                  <PanelHead
+                    title="가구별 낙상 경로 준비"
+                    right={
+                      <span className="text-[12px] font-bold text-danger">
+                        미준비 {FALL_READY.filter((r) => r.tone === "bad").length}가구 — 낙상이 나도 우리에게 안 온다
+                      </span>
+                    }
+                  />
+                  <div className="mt-3 space-y-1.5">
+                    {FALL_READY.map((r) => (
+                      <div key={r.who} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[13px] font-bold text-navy">{r.who}</span>
+                          <span
+                            className="ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
+                            style={{ background: TONE[r.tone].bg, color: TONE[r.tone].fg }}
+                          >
+                            {r.tone === "ok" ? "준비됨" : "미준비"}
+                          </span>
+                        </div>
+                        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted">
+                          <span>폰 <b className="text-ink">{r.phone}</b></span>
+                          <span>1순위 <b className="text-ink">{r.sos1}</b></span>
+                          <span>2순위 <b className="text-ink">{r.sos2}</b></span>
+                          <span>낙상 감지 <b className="text-ink">{r.fall}</b></span>
+                        </div>
+                        <div className="mt-1 text-[12px] font-bold leading-[1.55]" style={{ color: TONE[r.tone].fg }}>
+                          {r.state}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    긴급 연락처 1순위가 관제 게이트웨이가 아니면 낙상은 보호자에게만 갑니다 —
+                    해외 거주 보호자라면 사실상 아무에게도 안 가는 것과 같습니다. 방문 설정 대상으로 큐에 올립니다.
+                  </p>
+                </Panel>
+
+                {/* 문자 파싱 규격 */}
+                <Panel className="min-w-0">
+                  <PanelHead title="긴급 SOS 문자에서 뽑는 것" right={<span className="text-[12px] text-muted">실물 실측 후 확정</span>} />
+                  <div className="mt-3 space-y-1.5">
+                    {FALL_SMS.map((f) => (
+                      <div key={f.f} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2">
+                        <span className="w-[74px] shrink-0 text-[12px] font-bold text-navy">{f.f}</span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block font-num text-[12px] font-bold" style={{ color: TONE[f.tone].fg }}>{f.v}</span>
+                          <span className="mt-0.5 block text-[11px] leading-[1.6] text-muted">{f.use}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    발신 번호가 매칭 키입니다 — 어르신 폰 번호가 사전 등록돼 있지 않으면 문자가 와도 티켓이 안 만들어집니다.
+                  </p>
+                </Panel>
+
+                {/* 2주 실증 + 측정 지표 */}
+                <Panel className="col-span-full min-w-0">
+                  <PanelHead title="2주 실증 계획" right={<span className="text-[12px] text-muted">문서로는 안 나오는 것부터 실물로</span>} />
+                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                    {FALL_PLAN.map((x) => (
+                      <div key={x.d} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex items-baseline gap-2">
+                          <span className="font-num text-[11px] font-bold text-gold">{x.d}</span>
+                          <span className="min-w-0 flex-1 text-[12px] font-bold text-navy">{x.k}</span>
+                          <span className="shrink-0 text-[10px] font-bold text-muted">{x.who}</span>
+                        </div>
+                        <p className="mt-1 text-[11px] leading-[1.6] text-muted">{x.body}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3.5 border-t border-navy/[.08] pt-3">
+                    <div className="text-[12px] font-bold text-navy">무엇을 측정하고, 무엇을 계약서에 쓸 것인가</div>
+                    <div className="mt-2 overflow-x-auto">
+                      <table className="w-full min-w-[560px] text-left text-[12px]">
+                        <thead>
+                          <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                            <th className="py-2 pr-3">지표</th>
+                            <th className="py-2 pr-3">목표</th>
+                            <th className="py-2 pr-3">측정 방법</th>
+                            <th className="py-2">해석</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {FALL_METRICS.map((m) => (
+                            <tr key={m.k} className="border-b border-navy/[.06] align-top">
+                              <td className="whitespace-nowrap py-2 pr-3 font-bold text-navy">{m.k}</td>
+                              <td className="whitespace-nowrap py-2 pr-3 font-num font-bold text-green">{m.target}</td>
+                              <td className="py-2 pr-3 text-[11px] leading-[1.6] text-ink">{m.how}</td>
+                              <td className="py-2 text-[11px] leading-[1.6] text-muted">{m.note}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <p className="mt-2.5 text-[11px] leading-[1.7] text-muted">
+                      감지율 · 오탐률은 <b className="text-navy">기기 성능</b>이라 우리가 못 고칩니다 — 90%에 못 미치면
+                      Fit3 단독을 포기하고 LTE 응급버튼을 병행할지 판단하는 기준으로 씁니다.
+                      반대로 <b className="text-navy">도달 30초 · 첫 접촉 60초 · 현장 20분</b>은 우리 책임 구간이라 계약서에 쓸 수 있습니다.
+                    </p>
+                  </div>
                 </Panel>
 
                 {/* 알림 규칙 성능 */}
