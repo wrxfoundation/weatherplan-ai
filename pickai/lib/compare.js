@@ -12,6 +12,8 @@ const STATUS_RANK = { pass: 3, warn: 2, fail: 1, na: 0, manual: 0 };
 const SEV_RANK = { critical: 0, high: 1, medium: 2, low: 3 };
 
 /** 점수 비교용 — 결과 하나를 가벼운 요약으로 */
+export const PAGE_TYPE_LABEL = { homepage: "홈", article: "글·기사", page: "일반 페이지" };
+
 export function summarize(result) {
   const r = result.report;
   return {
@@ -20,6 +22,7 @@ export function summarize(result) {
     status: result.target.status,
     reachable: result.target.status >= 200 && result.target.status < 300,
     framework: result.target.framework || null,
+    pageType: r.pageType || null,
     overall: r.overall,
     grade: r.grade,
     areas: {
@@ -121,16 +124,29 @@ export function buildComparison(mine, rivals) {
     .sort((a, b) => b.overall - a.overall || (a.isMe ? -1 : 1));
   const myRank = ranking.findIndex((r) => r.isMe) + 1;
 
-  return { me, rivals: rivalSums, areaRows, gaps, wins, ranking, myRank, total: ranking.length };
+  /* 페이지 성격이 서로 다르면 점수 차이가 성격 차이일 수 있다 —
+     홈 vs 블로그 글을 나란히 놓고 우열을 논하면 오독이 된다. */
+  const types = ranking.map((r) => r.pageType).filter(Boolean);
+  const pageTypeMismatch = new Set(types).size > 1;
+
+  return {
+    me, rivals: rivalSums, areaRows, gaps, wins, ranking,
+    myRank, total: ranking.length, pageTypeMismatch,
+  };
 }
 
 /** AI 명령서에 붙일 경쟁 격차 섹션 */
 export function comparisonToMarkdown(cmp) {
   if (!cmp) return "";
   const lines = [];
-  lines.push("## 경쟁사 비교");
+  lines.push("## 나란히 비교");
   lines.push("");
   lines.push(`총점 순위: ${cmp.myRank}위 / ${cmp.total}개 사이트`);
+  if (cmp.pageTypeMismatch) {
+    lines.push("");
+    lines.push("> 주의: 비교한 주소들의 페이지 성격이 서로 다릅니다(예: 홈 vs 글). " +
+      "점수 차이가 페이지 성격 차이일 수 있으니 같은 성격의 주소끼리 다시 비교해 보세요.");
+  }
   lines.push("");
   lines.push("| 사이트 | 총점 | 등급 | SEO | AEO | GEO | 확산 |");
   lines.push("|---|---|---|---|---|---|---|");
@@ -143,9 +159,9 @@ export function comparisonToMarkdown(cmp) {
   lines.push("");
 
   if (cmp.gaps.length > 0) {
-    lines.push("### 경쟁사는 갖췄는데 우리가 빠뜨린 항목");
+    lines.push("### 상대 사이트는 갖췄는데 우리가 빠뜨린 항목");
     lines.push("");
-    lines.push("아래 항목부터 처리하면 경쟁사와의 격차가 가장 빨리 좁혀집니다.");
+    lines.push("아래 항목부터 처리하면 격차가 가장 빨리 좁혀집니다.");
     lines.push("");
     for (const g of cmp.gaps.slice(0, 12)) {
       const ahead = g.rivals.filter((r) => r.rank > (STATUS_RANK[g.mine] ?? 0)).map((r) => r.host).join(", ");
@@ -155,7 +171,7 @@ export function comparisonToMarkdown(cmp) {
     }
     lines.push("");
   } else {
-    lines.push("경쟁사가 갖추고 우리가 빠뜨린 항목은 없습니다.");
+    lines.push("상대 사이트가 갖추고 우리가 빠뜨린 항목은 없습니다.");
     lines.push("");
   }
 

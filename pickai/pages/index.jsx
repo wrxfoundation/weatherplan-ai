@@ -18,7 +18,7 @@ import Head from "next/head";
 import {
   analyzeHtml, runScorecard, AI_BOTS, DEEP_RUBRIC, deepVerdict,
 } from "../lib/scorecardEngine";
-import { buildComparison, comparisonToMarkdown } from "../lib/compare";
+import { buildComparison, comparisonToMarkdown, PAGE_TYPE_LABEL } from "../lib/compare";
 
 /* ═════════════════════════════════════════════════════════════
    0.  DESIGN TOKENS
@@ -789,11 +789,11 @@ function CompareCard({ state, rows, comparison, onAdd, onRemove, onRun, onReset 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2" style={{ color: T.ink, fontSize: 15, fontWeight: 600 }}>
-            경쟁사 나란히 비교
+            사이트 나란히 비교
             <HelpToggle open={helpOpen} onToggle={() => setHelpOpen((v) => !v)} />
           </div>
           <div style={{ color: T.steel, fontSize: 12.5, marginTop: 4 }}>
-            같은 기준·같은 시점으로 재기 때문에 점수를 그대로 비교할 수 있습니다.
+            비교할 주소를 넣으면 같은 기준·같은 시점으로 재서 나란히 놓아 줍니다.
           </div>
         </div>
         {comparison && (
@@ -803,8 +803,10 @@ function CompareCard({ state, rows, comparison, onAdd, onRemove, onRun, onReset 
 
       {helpOpen && (
         <HelpBox>
-          경쟁사 주소를 넣으면 똑같은 39개 항목으로 함께 진단해, 경쟁사는 통과했는데 우리만 놓친 항목을 뽑아 줍니다.
+          비교할 주소를 넣으면 똑같은 39개 항목으로 함께 진단해, 상대는 통과했는데 우리만 놓친 항목을 뽑아 줍니다.
           무엇부터 손봐야 할지 가장 빠르게 알 수 있는 목록입니다.
+          경쟁사뿐 아니라 업계 1등 사이트(목표 수준 확인), 계열사·다른 브랜드(내부 편차 확인),
+          우리 사이트의 개편 전후·www 유무 주소(변화 확인)를 넣어도 됩니다.
         </HelpBox>
       )}
 
@@ -818,7 +820,7 @@ function CompareCard({ state, rows, comparison, onAdd, onRemove, onRun, onReset 
                   value={row.url}
                   onChange={(e) => onAdd(i, e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter") onRun(); }}
-                  placeholder={`경쟁사 ${i + 1} 주소 — 예: competitor.co.kr`}
+                  placeholder={`비교할 사이트 ${i + 1} 주소 — 예: example.co.kr`}
                   inputMode="url" autoComplete="url" spellCheck={false}
                   disabled={busy}
                   className="flex-1 min-w-0"
@@ -827,10 +829,10 @@ function CompareCard({ state, rows, comparison, onAdd, onRemove, onRun, onReset 
                     borderRadius: R.lg, border: `1px solid ${T.hairline}`,
                     background: "rgba(255,255,255,0.7)", outline: "none",
                   }}
-                  aria-label={`경쟁사 ${i + 1} 주소`}
+                  aria-label={`비교할 사이트 ${i + 1} 주소`}
                 />
                 {rows.length > 1 && !busy && (
-                  <button onClick={() => onRemove(i)} className="chip-x" aria-label={`경쟁사 ${i + 1} 입력 삭제`}
+                  <button onClick={() => onRemove(i)} className="chip-x" aria-label={`비교할 사이트 ${i + 1} 입력 삭제`}
                     style={{ background: "transparent", border: "none", color: T.stone, fontSize: 16, padding: "6px 8px", borderRadius: R.full }}>
                     ×
                   </button>
@@ -846,7 +848,7 @@ function CompareCard({ state, rows, comparison, onAdd, onRemove, onRun, onReset 
               {busy ? "비교 진단 중…" : "비교하기"}
             </BtnPrimary>
             {rows.length < 2 && !busy && (
-              <BtnSecondary compact onClick={() => onAdd(rows.length, "")}>경쟁사 추가</BtnSecondary>
+              <BtnSecondary compact onClick={() => onAdd(rows.length, "")}>사이트 추가</BtnSecondary>
             )}
             <span style={{ color: T.stone, fontSize: 12 }}>최대 2곳 · 각 사이트당 10~30초</span>
           </div>
@@ -859,6 +861,25 @@ function CompareCard({ state, rows, comparison, onAdd, onRemove, onRun, onReset 
           <div style={{ color: T.charcoal, fontSize: 13.5, fontWeight: 600, marginBottom: 10 }}>
             총점 순위 — {comparison.myRank}위 / {comparison.total}개 사이트
           </div>
+
+          {comparison.pageTypeMismatch && (
+            <div style={{
+              background: "rgba(255,176,32,0.10)", border: "1px solid rgba(255,176,32,0.35)",
+              borderRadius: R.lg, padding: "10px 14px", marginBottom: 14,
+              color: T.charcoal, fontSize: 12.5, lineHeight: 1.65,
+            }}>
+              비교한 주소들의 <strong style={{ fontWeight: 600 }}>페이지 성격이 서로 다릅니다</strong>
+              {" ("}
+              {comparison.ranking.map((r, i) => (
+                <span key={r.inputHost + i}>
+                  {i > 0 && " · "}
+                  {r.inputHost}: {PAGE_TYPE_LABEL[r.pageType] || "알 수 없음"}
+                </span>
+              ))}
+              {"). "}
+              점수 차이가 실력 차이가 아니라 페이지 성격 차이일 수 있으니, 같은 성격의 주소끼리 다시 비교해 보세요.
+            </div>
+          )}
           <div className="flex flex-col gap-2.5">
             {comparison.ranking.map((r, i) => (
               <div key={r.inputHost + i} className="flex items-center gap-3">
@@ -918,14 +939,14 @@ function CompareCard({ state, rows, comparison, onAdd, onRemove, onRun, onReset 
           {/* 격차 목록 — 핵심 */}
           <div className="mt-6">
             <div style={{ color: T.ink, fontSize: 14, fontWeight: 600, marginBottom: 4 }}>
-              경쟁사는 갖췄는데 우리가 빠뜨린 항목 · {comparison.gaps.length}건
+              상대 사이트는 갖췄는데 우리가 빠뜨린 항목 · {comparison.gaps.length}건
             </div>
             <div style={{ color: T.steel, fontSize: 12.5, marginBottom: 12 }}>
               여기부터 처리하면 격차가 가장 빨리 좁혀집니다.
             </div>
             {comparison.gaps.length === 0 ? (
               <div style={{ color: T.slate, fontSize: 13, padding: "14px 16px", background: "rgba(78,179,168,0.08)", borderRadius: R.lg }}>
-                경쟁사가 통과하고 우리가 놓친 항목이 없습니다.
+                상대 사이트가 통과하고 우리가 놓친 항목이 없습니다.
               </div>
             ) : (
               <div className="flex flex-col gap-2">
@@ -997,7 +1018,7 @@ function CompareCard({ state, rows, comparison, onAdd, onRemove, onRun, onReset 
           )}
 
           <div style={{ color: T.stone, fontSize: 11.5, marginTop: 16, lineHeight: 1.6 }}>
-            비교 결과는 AI 명령서에도 함께 담깁니다. 경쟁사 사이트는 공개된 첫 화면만 읽으며, 로그인이 필요한 영역은 진단하지 않습니다.
+            비교 결과는 AI 명령서에도 함께 담깁니다. 상대 사이트도 공개된 첫 화면 1개만 읽으며, 로그인이 필요한 영역이나 하위 페이지는 진단하지 않습니다.
           </div>
         </div>
       )}

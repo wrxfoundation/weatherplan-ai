@@ -181,9 +181,17 @@ function textOf(htmlFragment) {
 }
 
 /* 소셜 플랫폼 감지 테이블 */
+/* AI 인용 소스 분포 (Semrush, AI 인용 15만 건 분석 · 2025.6):
+   Reddit 40.1% · Wikipedia 26.3% · YouTube 23.5% · Google 23.3% · Medium 20.0%
+   · Instagram 10.9% · LinkedIn 5.9% · Quora 4.6%
+   커뮤니티(Reddit·Quora)가 1위 인용 소스인데 목록에 빠져 있어 추가한다.
+   citedByAi 표시는 실제 AI 인용 상위 소스인지 여부 — 안내 문구에서 우선순위를 알려주는 데 쓴다. */
 const SOCIAL_PLATFORMS = [
+  { key: "reddit",    label: "레딧",       re: /reddit\.com\//,  citedByAi: true },
+  { key: "quora",     label: "쿠오라",     re: /quora\.com\//,   citedByAi: true },
+  { key: "medium",    label: "미디엄",     re: /medium\.com\//,  citedByAi: true },
   { key: "instagram", label: "인스타그램", re: /instagram\.com\// },
-  { key: "youtube",   label: "유튜브",     re: /youtube\.com\/|youtu\.be\// },
+  { key: "youtube",   label: "유튜브",     re: /youtube\.com\/|youtu\.be\//, citedByAi: true },
   { key: "facebook",  label: "페이스북",   re: /facebook\.com\// },
   { key: "x",         label: "X(트위터)",  re: /(^|\/\/)(www\.)?(x|twitter)\.com\// },
   { key: "linkedin",  label: "링크드인",   re: /linkedin\.com\// },
@@ -302,7 +310,10 @@ export function analyzeHtml(html) {
   /* 소셜 채널 (앵커 + sameAs 문자열 전체에서 감지) */
   const sameAsBlob = jsonld.filter((b) => b.ok).map((b) => JSON.stringify(b.data)).join(" ");
   const linkBlob = anchors.map((a) => a.href).join(" ") + " " + sameAsBlob;
-  const socialPlatforms = SOCIAL_PLATFORMS.filter((p) => p.re.test(linkBlob)).map((p) => p.label);
+  const matchedPlatforms = SOCIAL_PLATFORMS.filter((p) => p.re.test(linkBlob));
+  const socialPlatforms = matchedPlatforms.map((p) => p.label);
+  /* AI가 실제로 많이 인용하는 소스(레딧·유튜브·미디엄·쿠오라)에 연결돼 있는지 */
+  const aiCitedPlatforms = matchedPlatforms.filter((p) => p.citedByAi).map((p) => p.label);
 
   /* 뉴스레터/구독 장치 */
   const hasNewsletter =
@@ -396,7 +407,7 @@ export function analyzeHtml(html) {
     jsonld, ldTypes, hasSameAs,
     imgTotal, imgWithAlt, hasVideo,
     anchors: anchors.length,
-    socialPlatforms, hasNewsletter,
+    socialPlatforms, aiCitedPlatforms, hasNewsletter,
     hasAbout, hasContact, hasAuthor, hasAddress,
     dateCount: dateMatches.length,
     primarySourceCount: primarySourceLinks.length,
@@ -1487,26 +1498,34 @@ export function runScorecard(a) {
 
   {
     const platforms = p.socialPlatforms || [];
+    const aiCited = p.aiCitedPlatforms || [];
     add({
       id: "social-channels", area: "reach", severity: "medium", weight: 2,
       label: "소셜 채널 연결",
-      help: "사이트에 공식 인스타·유튜브·블로그 링크가 걸려 있는지 봅니다. 채널이 연결돼 있어야 콘텐츠가 밖으로 퍼질 통로가 생기고, AI도 공식 채널을 함께 인식합니다.",
+      help: "사이트에 공식 인스타·유튜브·레딧 같은 채널 링크가 걸려 있는지 봅니다. 채널이 연결돼 있어야 콘텐츠가 밖으로 퍼질 통로가 생기고, AI도 공식 채널을 함께 인식합니다. 특히 AI 답변은 커뮤니티(레딧)와 영상(유튜브)을 가장 많이 인용합니다.",
       status: platforms.length >= 2 ? "pass" : platforms.length === 1 ? "warn" : "fail",
       summary: platforms.length >= 2
         ? `소셜 채널 ${platforms.length}종(${platforms.slice(0, 4).join(", ")})이 연결되어 확산 통로가 열려 있습니다.`
+          + (aiCited.length === 0 ? " 다만 AI가 많이 인용하는 커뮤니티·영상 채널은 없습니다." : ` AI 인용 상위 채널로는 ${aiCited.join(", ")}이(가) 잡힙니다.`)
         : platforms.length === 1
           ? `소셜 채널이 ${platforms[0]} 1종뿐입니다 — 채널을 늘리고 사이트에 연결하세요.`
           : "사이트에 연결된 소셜 채널이 없습니다 — 콘텐츠가 퍼질 통로가 보이지 않습니다.",
       details: [
         { k: "감지 채널", v: platforms.join(", ") || "(없음)" },
+        { k: "AI 인용 상위 채널", v: aiCited.length ? aiCited.join(", ") : "(없음)" },
         { k: "sameAs 연동", v: p.hasSameAs ? "있음" : "없음" },
       ],
       passRule: "소셜 플랫폼 2종 이상 연결 시 통과",
-      fix: platforms.length >= 2 ? null : {
-        title: "공식 채널 링크 추가",
+      fix: platforms.length >= 2 && aiCited.length > 0 ? null : {
+        title: aiCited.length === 0 ? "AI가 실제로 인용하는 채널부터 연결" : "공식 채널 링크 추가",
         action: "추가",
-        note: "푸터에 공식 채널 링크를 걸고, Organization 스키마의 sameAs에도 같은 주소를 넣으세요.",
-        code: `<footer>\n  <a href="https://www.instagram.com/브랜드">인스타그램</a>\n  <a href="https://www.youtube.com/@브랜드">유튜브</a>\n  <a href="https://blog.naver.com/브랜드">블로그</a>\n</footer>`,
+        note: aiCited.length === 0
+          ? "AI 답변이 인용하는 출처는 커뮤니티·영상에 크게 쏠려 있습니다(레딧 40.1%, 위키백과 26.3%, 유튜브 23.5% — Semrush, AI 인용 15만 건 분석, 2025.6). "
+            + "인스타·카카오만 연결돼 있으면 확산 통로는 있어도 AI 인용 경로는 비어 있는 셈입니다. "
+            + "다만 커뮤니티는 홍보 글을 올리는 곳이 아니라, 실제로 도움이 되는 답변을 남겨 신뢰를 쌓는 곳입니다 — "
+            + "광고 계정 도배나 직원이 고객인 척 남기는 후기는 적발 시 채널 차단과 평판 손상으로 되돌아옵니다."
+          : "푸터에 공식 채널 링크를 걸고, Organization 스키마의 sameAs에도 같은 주소를 넣으세요.",
+        code: `<footer>\n  <a href="https://www.youtube.com/@브랜드">유튜브</a>\n  <a href="https://www.reddit.com/user/브랜드">레딧</a>\n  <a href="https://www.instagram.com/브랜드">인스타그램</a>\n</footer>`,
       },
     });
   }
