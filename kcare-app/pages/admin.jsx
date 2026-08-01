@@ -143,14 +143,16 @@ import {
   AI_MULTIPLY,
   AI_MODEL_POLICY,
   AI_EVIDENCE,
-  GLASS_DEVICES,
-  GLASS_SCALE,
+  REC_DEVICES,
+  REC_COMPARE,
+  REC_SCALE,
+  REC_HYBRID,
   GLASS_MODES,
   GLASS_RETENTION,
   GLASS_TRANSFER,
   GLASS_FIELD,
-  GLASS_VALUE,
-  GLASS_PHASES,
+  GLASS_ONLY,
+  REC_PHASES,
   CAP_TABLE,
   ROUNDS,
   DATAROOM,
@@ -2889,20 +2891,21 @@ export default function AdminConsole() {
                 ))}
               </div>
 
-              {/* ── 동행 기록 글래스 — 기기 · 비용 · 보관 정책 ── */}
+              {/* ── 동행 기록 기기 — 바디캠 · 글래스 비교와 비용 ── */}
               <Panel>
                 <PanelHead
-                  title="동행 기록 글래스 — 도입 검토"
+                  title="동행 기록 기기 — 도입 검토"
                   right={<span className="text-[12px] text-muted">비용의 90%는 클라우드가 아니라 하드웨어다</span>}
                 />
                 <p className="mt-2 max-w-[92ch] text-[13px] leading-[1.75] text-muted">
-                  1인칭 기록 · 관제 원격 지원 · 핸즈프리를 얻는 대신, 비용 구조가 <b className="text-navy">클라우드 문제에서 자산 문제</b>로
-                  바뀝니다. 기기는 1인 1대가 아니라 <b className="text-navy">지점 공용(동행 시 불출)</b>으로 잡아야 대수가 3분의 1로 줄어듭니다.
+                  계산해 보면 <b className="text-navy">바디캠이 초기 33% · 월 27% 싸면서 성능도 앞섭니다</b> —
+                  배터리 8~12시간, 사전 녹화 버퍼 30초, IP67. 글래스가 이기는 건 시선 일치와 원격 지원 둘뿐이라,
+                  <b className="text-navy"> 바디캠으로 깔고 원격 지원이 필요한 곳에만 글래스를 얹는 것</b>이 무리 없는 안입니다.
                 </p>
 
-                <div className="mt-3 text-[12px] font-bold text-navy">기기 선택</div>
+                <div className="mt-3 text-[12px] font-bold text-navy">기기 4안</div>
                 <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
-                  {GLASS_DEVICES.map((d) => (
+                  {REC_DEVICES.map((d) => (
                     <div
                       key={d.id}
                       className="rounded-xl border px-3.5 py-3"
@@ -2944,9 +2947,98 @@ export default function AdminConsole() {
                   ))}
                 </div>
                 <p className="mt-2 text-[11px] leading-[1.7] text-muted">
-                  C안(컨슈머 글래스)이 가장 트렌디하지만 <b className="text-navy">영상이 제조사 클라우드를 경유</b>합니다 —
+                  C안(컨슈머 글래스)은 가장 트렌디하지만 <b className="text-navy">영상이 제조사 클라우드를 경유</b>합니다 —
                   민감정보 처리위탁 요건을 못 맞춰 케어 기록으로는 쓸 수 없습니다. 취향이 아니라 규정 문제입니다.
                 </p>
+
+                <div className="mt-4 text-[12px] font-bold text-navy">바디캠 vs 글래스 — 항목별로 누가 이기나</div>
+                <div className="mt-1.5 grid gap-1.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))" }}>
+                  {REC_COMPARE.map((c) => (
+                    <div key={c.k} className="flex items-center gap-2 rounded-xl border border-navy/[.06] bg-white/60 px-3 py-2">
+                      <span className="w-[92px] shrink-0 text-[11px] font-bold text-navy">{c.k}</span>
+                      <span
+                        className="min-w-0 flex-1 rounded-lg px-2 py-1 text-[11px] leading-[1.5]"
+                        style={c.win === "cam" ? { background: "rgba(30,122,90,.1)", color: "#1E7A5A", fontWeight: 700 } : { color: "#5C5A54" }}
+                      >
+                        {c.cam}
+                      </span>
+                      <span
+                        className="min-w-0 flex-1 rounded-lg px-2 py-1 text-[11px] leading-[1.5]"
+                        style={c.win === "gl" ? { background: "rgba(176,141,87,.16)", color: "#8A5D12", fontWeight: 700 } : { color: "#5C5A54" }}
+                      >
+                        {c.gl}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-1.5 text-[11px] text-muted">
+                  왼쪽 = 바디캠 · 오른쪽 = 글래스 · 색이 칠해진 쪽이 우세. <b className="text-navy">8개 중 5개를 바디캠이 가져갑니다.</b>
+                </p>
+
+                <div className="mt-4 text-[12px] font-bold text-navy">규모별 총비용 — 두 안 나란히 (구간 녹화 8분 · 30일 보관 공통)</div>
+                <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+                  {REC_SCALE.map((sc) => (
+                    <div key={sc.n} className="rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[14px] font-bold text-navy">{sc.n}</span>
+                        <span className="ml-auto font-num text-[11px] text-muted">컨시어지 {sc.staff}</span>
+                      </div>
+                      <div className="mt-2 rounded-lg border border-green/25 bg-green/[.06] px-3 py-2">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-[11px] font-bold text-green">바디캠 (권장)</span>
+                          <span className="ml-auto font-num text-[10px] text-muted">{sc.cam.units}</span>
+                        </div>
+                        <div className="mt-1 flex items-baseline gap-3">
+                          <span className="text-[10px] text-muted">초기 <b className="font-num text-[13px] text-navy">{sc.cam.capex}</b></span>
+                          <span className="text-[10px] text-muted">월 <b className="font-num text-[13px] text-navy">{sc.cam.opex}</b></span>
+                          <span className="ml-auto font-num text-[12px] font-bold text-green">{sc.cam.per} / 가구</span>
+                        </div>
+                        <div className="mt-1.5 space-y-0.5 border-t border-green/20 pt-1.5">
+                          {sc.cam.detail.map(([k, v]) => (
+                            <div key={k} className="flex items-baseline gap-2 text-[10px]">
+                              <span className="min-w-0 flex-1 text-muted">{k}</span>
+                              <span className="shrink-0 font-num font-bold text-ink">{v}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="mt-1.5 rounded-lg border border-navy/[.08] bg-white/50 px-3 py-2">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-[11px] font-bold text-muted">글래스 (병행안)</span>
+                          <span className="ml-auto font-num text-[10px] text-muted">{sc.gl.units}</span>
+                        </div>
+                        <div className="mt-1 flex items-baseline gap-3">
+                          <span className="text-[10px] text-muted">초기 <b className="font-num text-[13px] text-navy">{sc.gl.capex}</b></span>
+                          <span className="text-[10px] text-muted">월 <b className="font-num text-[13px] text-navy">{sc.gl.opex}</b></span>
+                          <span className="ml-auto font-num text-[12px] font-bold text-muted">{sc.gl.per} / 가구</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] leading-[1.7] text-muted">
+                  대수가 다른 이유 — 글래스는 배터리 2시간이라 <b className="text-navy">동행 회 단위</b>로 돌려 쓰고,
+                  바디캠은 8시간 이상이라 <b className="text-navy">하루 단위</b>로 불출합니다. 바디캠이 대수는 더 필요하지만
+                  단가가 절반 이하라 총액은 낮고, 불출 · 반납이 하루 한 번이라 운영도 단순합니다.
+                </p>
+
+                <div className="mt-4 text-[12px] font-bold text-navy">단계 전략 — 무리 없이</div>
+                <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                  {REC_HYBRID.map((h) => (
+                    <div
+                      key={h.d}
+                      className="rounded-xl border px-3.5 py-2.5"
+                      style={{ borderColor: `${TONE[h.tone].fg}33`, background: TONE[h.tone].bg }}
+                    >
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-num text-[11px] font-bold" style={{ color: TONE[h.tone].fg }}>{h.d}</span>
+                        <span className="min-w-0 flex-1 text-[12px] font-bold text-navy">{h.k}</span>
+                      </div>
+                      <p className="mt-1 text-[11px] leading-[1.6] text-muted">{h.body}</p>
+                      <div className="mt-1 font-num text-[11px] font-bold text-navy">{h.cost}</div>
+                    </div>
+                  ))}
+                </div>
 
                 <div className="mt-4 text-[12px] font-bold text-navy">녹화 방식이 비용을 결정한다 — 화질 × 길이 × 보관기간은 곱해진다</div>
                 <div className="mt-1.5 overflow-x-auto">
@@ -2978,41 +3070,8 @@ export default function AdminConsole() {
                   </table>
                 </div>
 
-                <div className="mt-4 text-[12px] font-bold text-navy">규모별 총비용 — 권장안(B · 공용 배치 · 구간 녹화 · 30일)</div>
-                <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
-                  {GLASS_SCALE.map((sc) => (
-                    <div key={sc.n} className="rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-[14px] font-bold text-navy">{sc.n}</span>
-                        <span className="ml-auto font-num text-[11px] text-muted">컨시어지 {sc.staff} · 기기 {sc.units}</span>
-                      </div>
-                      <div className="mt-2 flex gap-2">
-                        <div className="min-w-0 flex-1 rounded-lg bg-navy/[.04] px-3 py-2">
-                          <div className="text-[10px] font-bold text-muted">초기 투자</div>
-                          <div className="font-num text-[16px] font-bold text-navy">{sc.capex}</div>
-                        </div>
-                        <div className="min-w-0 flex-1 rounded-lg bg-gold/[.12] px-3 py-2">
-                          <div className="text-[10px] font-bold text-muted">월 운영</div>
-                          <div className="font-num text-[16px] font-bold text-navy">{sc.opex}</div>
-                        </div>
-                      </div>
-                      <div className="mt-2 space-y-0.5 border-t border-navy/[.08] pt-2">
-                        {sc.detail.map(([k, v]) => (
-                          <div key={k} className="flex items-baseline gap-2 text-[11px]">
-                            <span className="min-w-0 flex-1 text-muted">{k}</span>
-                            <span className="shrink-0 font-num font-bold text-ink">{v}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="mt-2 border-t border-navy/[.08] pt-2 text-[12px] font-bold text-navy">
-                        가구당 월 <span className="font-num text-green">{sc.per}</span>
-                        <span className="ml-1 text-[11px] font-medium text-muted">— 구독 57,000원의 3.5~5.5%</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
                 <p className="mt-2 text-[11px] leading-[1.7] text-muted">
-                  초기 투자가 부담이면 <b className="text-navy">리스(대당 월 3만 수준)</b>가 현금 0으로 같은 월비용을 만듭니다 —
+                  초기 투자가 부담이면 <b className="text-navy">리스(대당 월 1.5만 수준)</b>가 현금 0으로 같은 월비용을 만듭니다 —
                   파일럿 단계에서는 리스가 맞습니다. 그리고 서버에서 재인코딩하면 10,000가구 기준 월 340만이 더 붙으니,
                   <b className="text-navy"> 기기에서 H.265로 바로 올리는 것</b>이 설계 전제입니다.
                 </p>
@@ -3075,9 +3134,9 @@ export default function AdminConsole() {
                 </Panel>
 
                 <Panel className="min-w-0">
-                  <PanelHead title="글래스를 고르는 이유" right={<span className="text-[12px] text-muted">기록만이면 바디캠이 더 싸다</span>} />
+                  <PanelHead title="글래스를 굳이 얹는다면" right={<span className="text-[12px] text-muted">바디캠으로 안 되는 것만 남긴다</span>} />
                   <div className="mt-3 space-y-2">
-                    {GLASS_VALUE.map((v) => (
+                    {GLASS_ONLY.map((v) => (
                       <div key={v.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                         <div className="text-[13px] font-bold text-navy">{v.k}</div>
                         <p className="mt-1 text-[11px] leading-[1.7] text-muted">{v.body}</p>
@@ -3086,15 +3145,16 @@ export default function AdminConsole() {
                     ))}
                   </div>
                   <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                    단순 기록만 필요하면 바디캠이 1/3 가격입니다 — 원격 지원과 1인칭 시점을 쓸 계획이 있어야 글래스가 정당해집니다.
+                    기본은 바디캠입니다. 위 세 가지를 실제로 쓸 계획이 없다면 글래스는 얹지 마세요 —
+                    2단계는 수습 교육에 원격 지원 수요가 확인된 뒤에 판단합니다.
                   </p>
                 </Panel>
               </div>
 
               <Panel className="min-w-0">
-                <PanelHead title="도입 단계 · 회귀 기준" right={<span className="text-[12px] text-muted">중단 기준을 먼저 정하고 시작한다</span>} />
+                <PanelHead title="도입 단계 · 회귀 기준" right={<span className="text-[12px] text-muted">바디캠 기준 · 중단 기준을 먼저 정하고 시작한다</span>} />
                 <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-                  {GLASS_PHASES.map((x) => (
+                  {REC_PHASES.map((x) => (
                     <div key={x.d} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                       <div className="flex items-baseline gap-2">
                         <span className="font-num text-[11px] font-bold text-gold">{x.d}</span>
