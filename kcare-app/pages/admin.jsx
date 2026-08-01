@@ -143,6 +143,14 @@ import {
   AI_MULTIPLY,
   AI_MODEL_POLICY,
   AI_EVIDENCE,
+  GLASS_DEVICES,
+  GLASS_SCALE,
+  GLASS_MODES,
+  GLASS_RETENTION,
+  GLASS_TRANSFER,
+  GLASS_FIELD,
+  GLASS_VALUE,
+  GLASS_PHASES,
   CAP_TABLE,
   ROUNDS,
   DATAROOM,
@@ -2880,6 +2888,228 @@ export default function AdminConsole() {
                   </Panel>
                 ))}
               </div>
+
+              {/* ── 동행 기록 글래스 — 기기 · 비용 · 보관 정책 ── */}
+              <Panel>
+                <PanelHead
+                  title="동행 기록 글래스 — 도입 검토"
+                  right={<span className="text-[12px] text-muted">비용의 90%는 클라우드가 아니라 하드웨어다</span>}
+                />
+                <p className="mt-2 max-w-[92ch] text-[13px] leading-[1.75] text-muted">
+                  1인칭 기록 · 관제 원격 지원 · 핸즈프리를 얻는 대신, 비용 구조가 <b className="text-navy">클라우드 문제에서 자산 문제</b>로
+                  바뀝니다. 기기는 1인 1대가 아니라 <b className="text-navy">지점 공용(동행 시 불출)</b>으로 잡아야 대수가 3분의 1로 줄어듭니다.
+                </p>
+
+                <div className="mt-3 text-[12px] font-bold text-navy">기기 선택</div>
+                <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                  {GLASS_DEVICES.map((d) => (
+                    <div
+                      key={d.id}
+                      className="rounded-xl border px-3.5 py-3"
+                      style={
+                        d.state === "권장"
+                          ? { borderColor: "rgba(30,122,90,.35)", background: "rgba(30,122,90,.06)" }
+                          : { borderColor: "rgba(10,31,60,.08)", background: "rgba(255,255,255,.6)" }
+                      }
+                    >
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-num text-[11px] font-bold text-muted">{d.id}</span>
+                        <span className="min-w-0 flex-1 text-[13px] font-bold text-navy">{d.k}</span>
+                        <span
+                          className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
+                          style={{ background: TONE[d.tone].bg, color: TONE[d.tone].fg }}
+                        >
+                          {d.state}
+                        </span>
+                      </div>
+                      <div className="mt-0.5 flex items-baseline gap-2">
+                        <span className="text-[11px] text-muted">{d.ex}</span>
+                        <span className="ml-auto font-num text-[13px] font-bold text-navy">{d.price} / 대</span>
+                      </div>
+                      <ul className="mt-2 space-y-0.5">
+                        {d.pros.map((x) => (
+                          <li key={x} className="flex gap-1.5 text-[11px] leading-[1.6] text-ink">
+                            <span className="shrink-0 text-green">+</span>
+                            <span>{x}</span>
+                          </li>
+                        ))}
+                        {d.cons.map((x) => (
+                          <li key={x} className="flex gap-1.5 text-[11px] leading-[1.6] text-muted">
+                            <span className="shrink-0 text-danger">−</span>
+                            <span>{x}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] leading-[1.7] text-muted">
+                  C안(컨슈머 글래스)이 가장 트렌디하지만 <b className="text-navy">영상이 제조사 클라우드를 경유</b>합니다 —
+                  민감정보 처리위탁 요건을 못 맞춰 케어 기록으로는 쓸 수 없습니다. 취향이 아니라 규정 문제입니다.
+                </p>
+
+                <div className="mt-4 text-[12px] font-bold text-navy">녹화 방식이 비용을 결정한다 — 화질 × 길이 × 보관기간은 곱해진다</div>
+                <div className="mt-1.5 overflow-x-auto">
+                  <table className="w-full min-w-[620px] text-left text-[12px]">
+                    <thead>
+                      <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                        <th className="py-2 pr-3">방식</th>
+                        <th className="py-2 pr-3">회당 용량</th>
+                        <th className="py-2 pr-3">10,000가구 월 클라우드</th>
+                        <th className="py-2 pr-3">판정</th>
+                        <th className="py-2">이유</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {GLASS_MODES.map((m) => (
+                        <tr key={m.k} className="border-b border-navy/[.06] align-top">
+                          <td className="whitespace-nowrap py-2 pr-3 font-bold text-navy">{m.k}</td>
+                          <td className="whitespace-nowrap py-2 pr-3 font-num text-ink">{m.size}</td>
+                          <td className="whitespace-nowrap py-2 pr-3 font-num font-bold" style={{ color: TONE[m.tone].fg }}>{m.cloud10k}</td>
+                          <td className="whitespace-nowrap py-2 pr-3">
+                            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: TONE[m.tone].bg, color: TONE[m.tone].fg }}>
+                              {m.state}
+                            </span>
+                          </td>
+                          <td className="py-2 text-[11px] leading-[1.6] text-muted">{m.why}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="mt-4 text-[12px] font-bold text-navy">규모별 총비용 — 권장안(B · 공용 배치 · 구간 녹화 · 30일)</div>
+                <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                  {GLASS_SCALE.map((sc) => (
+                    <div key={sc.n} className="rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[14px] font-bold text-navy">{sc.n}</span>
+                        <span className="ml-auto font-num text-[11px] text-muted">컨시어지 {sc.staff} · 기기 {sc.units}</span>
+                      </div>
+                      <div className="mt-2 flex gap-2">
+                        <div className="min-w-0 flex-1 rounded-lg bg-navy/[.04] px-3 py-2">
+                          <div className="text-[10px] font-bold text-muted">초기 투자</div>
+                          <div className="font-num text-[16px] font-bold text-navy">{sc.capex}</div>
+                        </div>
+                        <div className="min-w-0 flex-1 rounded-lg bg-gold/[.12] px-3 py-2">
+                          <div className="text-[10px] font-bold text-muted">월 운영</div>
+                          <div className="font-num text-[16px] font-bold text-navy">{sc.opex}</div>
+                        </div>
+                      </div>
+                      <div className="mt-2 space-y-0.5 border-t border-navy/[.08] pt-2">
+                        {sc.detail.map(([k, v]) => (
+                          <div key={k} className="flex items-baseline gap-2 text-[11px]">
+                            <span className="min-w-0 flex-1 text-muted">{k}</span>
+                            <span className="shrink-0 font-num font-bold text-ink">{v}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-2 border-t border-navy/[.08] pt-2 text-[12px] font-bold text-navy">
+                        가구당 월 <span className="font-num text-green">{sc.per}</span>
+                        <span className="ml-1 text-[11px] font-medium text-muted">— 구독 57,000원의 3.5~5.5%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] leading-[1.7] text-muted">
+                  초기 투자가 부담이면 <b className="text-navy">리스(대당 월 3만 수준)</b>가 현금 0으로 같은 월비용을 만듭니다 —
+                  파일럿 단계에서는 리스가 맞습니다. 그리고 서버에서 재인코딩하면 10,000가구 기준 월 340만이 더 붙으니,
+                  <b className="text-navy"> 기기에서 H.265로 바로 올리는 것</b>이 설계 전제입니다.
+                </p>
+              </Panel>
+
+              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+                <Panel className="min-w-0">
+                  <PanelHead title="보관 · 파기" right={<span className="text-[12px] text-muted">우리는 의료기관이 아니다 — 10년 보존 대상 아님</span>} />
+                  <div className="mt-3 space-y-2">
+                    {GLASS_RETENTION.map((r) => (
+                      <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-[13px] font-bold text-navy">{r.k}</span>
+                          <span className="ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: TONE[r.tone].bg, color: TONE[r.tone].fg }}>
+                            {r.term}
+                          </span>
+                        </div>
+                        <div className="mt-1 font-num text-[11px] text-muted">{r.store}</div>
+                        <p className="mt-0.5 text-[11px] leading-[1.6] text-ink">{r.why}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    30일을 1년으로 늘리면 스토리지가 12배입니다 — 보관기한은 정책이 아니라 원가입니다.
+                  </p>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead title="옮겨서 보관해도 되는가" right={<span className="text-[12px] text-muted">위탁 · 국외이전 · 사내 보관</span>} />
+                  <div className="mt-3 space-y-2">
+                    {GLASS_TRANSFER.map((t) => (
+                      <div key={t.q} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="flex items-start gap-2">
+                          <span className="mt-[1px] shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold" style={{ background: TONE[t.tone].bg, color: TONE[t.tone].fg }}>
+                            Q
+                          </span>
+                          <span className="text-[12px] font-bold text-navy">{t.q}</span>
+                        </div>
+                        <p className="mt-1.5 text-[11px] leading-[1.7] text-muted">{t.a}</p>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+              </div>
+
+              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+                <Panel className="min-w-0">
+                  <PanelHead title="현장 운영 규칙" right={<span className="text-[12px] text-muted">거부감은 설계로 관리한다</span>} />
+                  <div className="mt-3 space-y-1.5">
+                    {GLASS_FIELD.map((f) => (
+                      <div key={f.k} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2">
+                        <span className="mt-[3px] h-[7px] w-[7px] shrink-0 rounded-full" style={{ background: TONE[f.tone].fg }} />
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[12px] font-bold text-navy">{f.k}</span>
+                          <span className="mt-0.5 block text-[11px] leading-[1.6] text-muted">{f.body}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+
+                <Panel className="min-w-0">
+                  <PanelHead title="글래스를 고르는 이유" right={<span className="text-[12px] text-muted">기록만이면 바디캠이 더 싸다</span>} />
+                  <div className="mt-3 space-y-2">
+                    {GLASS_VALUE.map((v) => (
+                      <div key={v.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                        <div className="text-[13px] font-bold text-navy">{v.k}</div>
+                        <p className="mt-1 text-[11px] leading-[1.7] text-muted">{v.body}</p>
+                        <div className="mt-1.5 border-t border-navy/[.06] pt-1.5 text-[11px] font-bold text-gold">{v.ir}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    단순 기록만 필요하면 바디캠이 1/3 가격입니다 — 원격 지원과 1인칭 시점을 쓸 계획이 있어야 글래스가 정당해집니다.
+                  </p>
+                </Panel>
+              </div>
+
+              <Panel className="min-w-0">
+                <PanelHead title="도입 단계 · 회귀 기준" right={<span className="text-[12px] text-muted">중단 기준을 먼저 정하고 시작한다</span>} />
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                  {GLASS_PHASES.map((x) => (
+                    <div key={x.d} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-num text-[11px] font-bold text-gold">{x.d}</span>
+                        <span className="min-w-0 flex-1 text-[12px] font-bold text-navy">{x.k}</span>
+                        <span className="shrink-0 text-[10px] font-bold text-muted">{x.who}</span>
+                      </div>
+                      <p className="mt-1 text-[11px] leading-[1.6] text-muted">{x.body}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  2단계(병원 MOU 촬영 조항)가 실제 게이트입니다 — 기기를 먼저 사도 조항이 없으면 진료실에서 못 씁니다.
+                  제휴 6곳 재협상 안건에 지금 올리세요.
+                </p>
+              </Panel>
 
               {/* ── AI 진화 — 업력과 DB가 쌓일수록 능력이 올라간다 ── */}
               <Panel>
