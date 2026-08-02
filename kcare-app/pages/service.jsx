@@ -150,19 +150,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             <BgVideo webm="/hero/loop.webm" mp4="/hero/loop.mp4" poster="/hero/home.webp" className="hero-vid" />
           )}
           <div className="mx-auto w-full max-w-[880px]">
-            {/* 펜 흘림체 — 이 한 줄만 (font-pen = Nanum Brush Script).
-                볼펜체(Nanum Pen)는 획이 둥글어 유치해 보여서 붓펜으로 바꾸고
-                10도 기울였다. 기울기는 서체에 이탤릭 자족이 없어 브라우저가
-                합성한다 — 손글씨체는 원래 기울어 있어 합성 기울기가 어색하지 않다.
-                이 서체는 같은 px 에서도 글자가 훨씬 작게 보여서, 고딕 12.5px 를
-                그대로 쓰면 눌려서 안 읽힌다. 34px 로 키워야 고딕 13px 정도의
-                덩치가 된다.
-                자간(tracking)은 없앴다 — 흘려 쓴 획을 벌리면 연결이 끊겨 보인다.
-                굵기는 400 하나뿐인 서체라 명시해 둔다. body 가 500 을 물려주는데
-                브라우저가 가짜 굵기를 합성하면 얇은 획이 뭉갠다.
-                색도 gold(#B08D57) 대신 amber(#8A5D12) 로 내렸다 — 획이 얇아
-                옅은 골드로는 종이 위에서 읽히지 않는다 (대비 2.69:1 → 4.99:1). */}
-            <div className="font-pen text-[34px] font-normal leading-[1.25] text-amber [font-style:oblique_10deg]">{LANDING.eyebrow}</div>
+            <div className="font-num text-[12.5px] font-bold tracking-[.2em] text-gold">{LANDING.eyebrow}</div>
             <h1 className="mt-4 text-[34.5px] font-black leading-[1.32] text-navy sm:text-[49.5px]">
               {LANDING.h1[0]}
               <br />
@@ -170,7 +158,10 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             </h1>
             <p className="mt-5 max-w-[560px] text-[18px] leading-[1.85] text-muted sm:text-[19px]">{LANDING.sub}</p>
             {/* 정체를 못 박는 한 줄 — 간병·요양으로 오해되면 가격 저항이 바로 생긴다 */}
-            <p className="mt-4 inline-block rounded-full border border-gold/35 bg-gold/[.08] px-4 py-1.5 text-[14.5px] font-bold text-amber">
+            {/* 칩 배경은 거의 불투명해야 한다. bg-gold/[.08] 로 두면 뒤 영상이 그대로
+                비쳐서 앰버 글자 대비가 4.0:1 까지 떨어진다 (기준 4.5). 종이색을 깔아
+                배경과 무관하게 읽히게 한다 — 겉보기 색은 거의 그대로다. */}
+            <p className="mt-4 inline-block rounded-full border border-gold/35 bg-[#F6F1E5]/95 px-4 py-1.5 text-[14.5px] font-bold text-amber">
               {LANDING.kicker}
             </p>
 

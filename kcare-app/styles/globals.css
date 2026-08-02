@@ -1,25 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Montserrat:wght@500;600;700;800&family=Nanum+Brush+Script&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Montserrat:wght@500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* 펜 흘림체가 못 뜰 때의 대체 — 구글 폰트가 막히거나 느린 경우.
-   Nanum Brush Script 는 같은 px 에서 글자가 훨씬 작게 보여서 34px 로 키워 뒀는데,
-   그대로 고딕으로 떨어지면 31px 짜리 거대한 줄이 된다. size-adjust 로 대체
-   서체만 45% 로 줄여 원래 의도한 13px 언저리로 맞춘다.
-
-   local() 이 하나도 안 맞으면 이 @font-face 는 통째로 무시되고 다음 후보
-   (Noto Sans KR)가 원래 크기로 그려진다 — 즉 안 맞아도 지금보다 나빠지지는
-   않는다. 맞을 때만 이득인 안전장치다.
-   size-adjust 를 모르는 구형 브라우저도 마찬가지로 무시할 뿐이다. */
-@font-face {
-  font-family: "Pen Fallback";
-  src:
-    local("Noto Sans KR"), local("Noto Sans CJK KR"), local("NanumGothic"),
-    local("Apple SD Gothic Neo"), local("Malgun Gothic");
-  size-adjust: 45%;
-}
 
 @layer base {
   html {
@@ -655,18 +638,29 @@
   );
 }
 /* 좁은 화면에서는 글자가 사진 위로 겹치므로 위에서 아래로 덮는다.
-   우하단 나무 탁자가 가장 어두운 지점이라 그쪽을 남기고 본문 구간을 가린다. */
+
+   처음에는 영상 .55 에 장막을 .97~.55 로 깔았는데, 둘이 곱해지면서 영상이
+   화면에 기여하는 양이 전 구간 2~4/255 (1.6% 미만) 였다 — 사실상 안 보였다.
+   영상을 데스크톱과 비슷한 수준(.88)으로 올리고, 장막은 "글자가 있는 곳만"
+   덮도록 다시 그렸다.
+
+   기준이 되는 세로 위치 (390px 기준 히어로 높이 약 1007px):
+     ~360px  제목·본문이 놓이는 구간 — 여기는 계속 강하게 덮는다
+     ~540px  칩·버튼 구간
+     569px~  근거 4칸 카드 — 카드가 자기 배경을 가지므로 장막이 덜 필요하다
+   그래서 55% 지점부터 장막을 빠르게 걷는다.                               */
 @media (max-width: 900px) {
-  .hero-bg::before { background-position: 76% center; opacity: .55; filter: brightness(1.2); }
+  .hero-bg::before { background-position: 76% center; opacity: .88; filter: brightness(1.2); }
   /* 영상도 정지 이미지와 같은 취급 — 둘이 어긋나면 영상이 얹히는 순간 밝기가 튄다 */
-  .hero-bg > .hero-vid { object-position: 76% center; opacity: .55; }
+  .hero-bg > .hero-vid { object-position: 76% center; opacity: .88; }
   .hero-bg::after {
     background: linear-gradient(
       172deg,
-      rgba(241, 239, 232, .97) 0%,
-      rgba(241, 239, 232, .93) 52%,
-      rgba(241, 239, 232, .74) 82%,
-      rgba(241, 239, 232, .55) 100%
+      rgba(241, 239, 232, .94) 0%,
+      rgba(241, 239, 232, .93) 42%,
+      rgba(241, 239, 232, .86) 58%,
+      rgba(241, 239, 232, .52) 78%,
+      rgba(241, 239, 232, .30) 100%
     );
   }
 }
