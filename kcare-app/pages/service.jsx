@@ -8,7 +8,7 @@ import { CHECKUP, CHECKUP_HEAD, CHECKUP_RULE, CHECKUP_CASE } from "../lib/checku
 import Icon from "../components/icons";
 import ScrollTop from "../components/ScrollTop";
 import AiChat from "../components/AiChat";
-import HeroVideo from "../components/HeroVideo";
+import BgVideo from "../components/BgVideo";
 
 // 서비스 랜딩 — 앱이 아니라 "서비스를 파는" 화면.
 // pages/index.jsx 는 시연 허브(내부용)이고, 이 화면이 대외 얼굴이다.
@@ -23,10 +23,16 @@ import HeroVideo from "../components/HeroVideo";
 
 const NAVY = "#0A1F3C";
 
-function Section({ id, eyebrow, title, desc, children, tone = "paper" }) {
-  const bg = tone === "navy" ? "bg-navy text-white" : tone === "white" ? "bg-white" : "bg-paper";
+// tone="navy" 섹션은 배경에 루프 영상이 깔린다 (public/bg/navy.*).
+// 남색 톤은 그대로 두고 결만 얹는다 — 자세한 원리는 globals.css 의 .sec-navy 참고.
+function Section({ id, eyebrow, title, desc, children, tone = "paper", video }) {
+  const navy = tone === "navy";
+  const bg = navy ? "bg-navy text-white" : tone === "white" ? "bg-white" : "bg-paper";
   return (
-    <section id={id} className={`${bg} px-5 py-14 sm:py-20`}>
+    <section id={id} className={`${bg} ${navy ? "sec-navy " : ""}px-5 py-14 sm:py-20`}>
+      {navy && video && (
+        <BgVideo webm="/bg/navy.webm" mp4="/bg/navy.mp4" poster="/bg/navy.webp" className="sec-vid" />
+      )}
       <div className="mx-auto w-full max-w-[880px]">
         {eyebrow && (
           <div className={`font-num text-[12.5px] font-bold tracking-[.2em] ${tone === "navy" ? "text-gold-soft" : "text-gold"}`}>
@@ -86,12 +92,19 @@ function FaqItem({ q, a, open, onToggle }) {
 export async function getStaticProps() {
   const fs = require("fs");
   const path = require("path");
-  const at = (f) => fs.existsSync(path.join(process.cwd(), "public", "hero", f));
-  const heroArt = at("home.webp");
-  return { props: { heroArt, heroVideo: heroArt && at("loop.webm") && at("loop.mp4") } };
+  const at = (dir, f) => fs.existsSync(path.join(process.cwd(), "public", dir, f));
+  const heroArt = at("hero", "home.webp");
+  return {
+    props: {
+      heroArt,
+      heroVideo: heroArt && at("hero", "loop.webm") && at("hero", "loop.mp4"),
+      // 남색 섹션 배경 — poster 까지 세 개가 다 있어야 켠다
+      navyVideo: at("bg", "navy.webp") && at("bg", "navy.webm") && at("bg", "navy.mp4"),
+    },
+  };
 }
 
-export default function ServiceLanding({ heroArt, heroVideo }) {
+export default function ServiceLanding({ heroArt, heroVideo, navyVideo }) {
   const [openKey, setOpenKey] = useState("0-0"); // 첫 항목은 열어 둔다 — 아코디언 사용법 힌트
   const monthly = fmtWon(PRICING.subscription.monthly);
   const entry = fmtWon(PRICING.entryFee.total);
@@ -138,7 +151,9 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
         {/* ── 히어로 ── */}
         {/* public/hero/ 에 파일이 있으면 배경이 켜진다 (getStaticProps 에서 확인) */}
         <section className={`${heroArt ? "hero-bg " : ""}px-5 pb-14 pt-12 sm:pb-20 sm:pt-20`}>
-          {heroVideo && <HeroVideo />}
+          {heroVideo && (
+            <BgVideo webm="/hero/loop.webm" mp4="/hero/loop.mp4" poster="/hero/home.webp" className="hero-vid" />
+          )}
           <div className="mx-auto w-full max-w-[880px]">
             <div className="font-num text-[12.5px] font-bold tracking-[.2em] text-gold">{LANDING.eyebrow}</div>
             <h1 className="mt-4 text-[34.5px] font-black leading-[1.32] text-navy sm:text-[49.5px]">
@@ -186,6 +201,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
         {/* ── 하지 않는 것 (일부러 위쪽) ── */}
         <Section
           tone="navy"
+          video={navyVideo}
           eyebrow="경계"
           title="저희가 하지 않는 것부터 말씀드립니다"
           desc="시니어 케어에서 가족이 가장 먼저 확인하려는 것은 무엇을 할 수 있는지가 아니라, 어디까지만 하는지입니다."
@@ -431,7 +447,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
         </Section>
 
         {/* ── 마무리 ── */}
-        <Section tone="navy" title="먼저 상담부터 받아 보세요" desc="가입을 권하기 전에 어르신 상태와 필요한 것부터 확인합니다. 상담에는 비용이 들지 않습니다.">
+        <Section tone="navy" video={navyVideo} title="먼저 상담부터 받아 보세요" desc="가입을 권하기 전에 어르신 상태와 필요한 것부터 확인합니다. 상담에는 비용이 들지 않습니다.">
           <div className="flex flex-wrap gap-2.5">
             <Link
               href="/onboarding"

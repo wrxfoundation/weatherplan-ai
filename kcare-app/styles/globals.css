@@ -445,6 +445,64 @@
    public/hero/ 에 파일을 넣으면 켜지고, 없으면 배경 없이 그대로 나온다.
    왼쪽은 제목 자리이므로 페이퍼색으로 덮어 가독성을 먼저 지킨다.          */
 
+/* ── 남색 섹션 배경 영상 (Section tone="navy") ────────────────────────────
+   남색 톤은 그대로 유지하고, 영상은 그 위에 결만 얹는다.
+
+   원리: 영상 파일 자체를 흑백으로 구워 뒀다 (public/bg/navy.*).
+   흑백 영상을 남색 바탕에 soft-light 로 얹으면 남색의 명도만 오르내리고
+   색상(hue)은 남색 그대로 남는다 — 그래서 "남색 위에 숲의 결"이 된다.
+   런타임에 filter: grayscale() 을 거는 방법도 있지만, 스크롤할 때마다
+   프레임마다 다시 계산해야 해서 파일에 미리 구워 두는 편이 훨씬 싸다.
+   (흑백으로 구운 덕에 원본의 금빛→푸른빛 색 이동도 같이 사라져 루프가 매끄럽다.)
+
+   soft-light 를 모르는 브라우저는 이 선언을 버리고 opacity 만 남는다 —
+   남색이 살짝 옅어질 뿐 글자는 그대로 읽힌다.                              */
+.sec-navy { position: relative; overflow: hidden; }
+.sec-navy > * { position: relative; z-index: 3; }
+.sec-navy > .sec-vid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 세로로 짧은 섹션(마무리 CTA)은 cover 가 가운데만 잘라 쓰는데, 그 구간이
+     제일 밋밋하다. 안개와 빛이 걸린 위쪽을 살짝 끌어와 결이 보이게 한다. */
+  object-position: center 38%;
+  opacity: .42;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+/* 영상이 붙기 전(그리고 못 붙을 때)의 바닥 — poster 와 같은 그림 */
+.sec-navy::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/bg/navy.webp");
+  background-size: cover;
+  background-position: center 38%;
+  opacity: .42;
+  mix-blend-mode: soft-light;
+}
+/* 영상이 얹히면 정지 이미지는 물린다 — 둘 다 soft-light 로 겹치면 두 번 밝아진다 */
+.sec-navy:has(.sec-vid)::before { opacity: 0; }
+/* 아래쪽 글자 구간은 조금 더 눌러 준다 — 숲 윗부분(하늘)이 가장 밝아서
+   제목이 그 위에 걸리면 대비가 떨어진다. */
+.sec-navy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 31, 60, .40) 0%,
+    rgba(10, 31, 60, .58) 46%,
+    rgba(10, 31, 60, .72) 100%
+  );
+}
+
 /* 히어로 안의 카드만 바닥을 올린다.
    card-glass 는 아래로 갈수록 흰색이 .94 → .70 으로 옅어지는데, 하필 그 옅은
    구간에 카드 본문 셋째 줄이 앉는다. 종이 위에서는 뒤가 어차피 종이색이라
