@@ -435,7 +435,8 @@ export default function AdminConsole() {
                     {!open && <span className="font-num text-[10px] text-white/25">{vis.length}</span>}
                     <Icon name="chev" size={13} className={`shrink-0 transition-transform ${open ? "" : "-rotate-90"}`} />
                   </button>
-                  {open && (
+                  <div className={`smooth-open ${open ? "is-open" : ""}`}>
+                    <div>
                     <div className="space-y-0.5">
                       {vis.map(([k, label, icon]) => (
                         <button
@@ -453,7 +454,8 @@ export default function AdminConsole() {
                         </button>
                       ))}
                     </div>
-                  )}
+                    </div>
+                  </div>
                 </div>
               );
             })}
@@ -483,6 +485,8 @@ export default function AdminConsole() {
           <MobileSectionNav groups={MENU_GROUPS} current={tab} onSelect={setTab} />
 
           {/* ════ 대시보드 — 전체 포괄 (사람 KPI · 주간 브리핑 · 섹션 요약) ════ */}
+          {/* 섹션 본문 — 좌측 메뉴로 바꾸면 스르르 올라오며 들어온다 (key로 애니메이션 재생) */}
+          <div key={tab} className="section-in space-y-4">
           {tab === "dash" && (
             <div className="space-y-4">
               <p className="max-w-[84ch] text-[14px] leading-[1.75] text-muted">
@@ -4220,6 +4224,7 @@ export default function AdminConsole() {
               </div>
             </div>
           )}
+          </div>
         </div>
         </div>
 

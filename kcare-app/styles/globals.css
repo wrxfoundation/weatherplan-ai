@@ -251,3 +251,71 @@
   width: 0;
   height: 0;
 }
+
+/* ─── 펼침 애니메이션 (관제 · 경영 콘솔) ───
+   높이를 모르는 영역을 부드럽게 여닫는다. grid-template-rows 0fr → 1fr 방식이라
+   max-height 어림값 없이도 내용 높이 그대로 열린다.
+   사용: 바깥 <div class="smooth-open [is-open]"> → 안쪽 <div> 한 겹 필수.
+   주의: 클래스명을 'collapse'로 쓰면 Tailwind 내장 유틸리티(visibility: collapse)와
+   충돌해 내용이 통째로 사라진다. */
+.smooth-open {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.24s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.18s ease;
+  opacity: 0;
+}
+.smooth-open > * {
+  min-height: 0;
+  overflow: hidden;
+}
+.smooth-open.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/* 표 행 — 필터 · 정렬 · 더보기로 목록이 바뀔 때 스르르 올라오며 나타난다.
+   앞쪽 몇 행만 시차를 주고 나머지는 동시에 (긴 목록에서 지연이 쌓이지 않게) */
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rows-in > tr {
+  animation: rowIn 0.26s ease both;
+}
+.rows-in > tr:nth-child(1) { animation-delay: 0ms; }
+.rows-in > tr:nth-child(2) { animation-delay: 20ms; }
+.rows-in > tr:nth-child(3) { animation-delay: 40ms; }
+.rows-in > tr:nth-child(4) { animation-delay: 60ms; }
+.rows-in > tr:nth-child(5) { animation-delay: 80ms; }
+.rows-in > tr:nth-child(n + 6) { animation-delay: 100ms; }
+
+/* 섹션 전환 — 좌측 메뉴로 화면을 바꿀 때 내용이 살짝 올라오며 들어온다 */
+@keyframes sectionIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.section-in {
+  animation: sectionIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smooth-open {
+    transition: none;
+  }
+  .rows-in > tr,
+  .section-in {
+    animation: none;
+  }
+}

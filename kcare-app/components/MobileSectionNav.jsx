@@ -43,8 +43,9 @@ export default function MobileSectionNav({ groups, current, onSelect, badges = {
         </span>
       </button>
 
-      {open && (
-        <div className="card-frost absolute left-0 right-0 top-[calc(100%+6px)] z-[900] max-h-[70vh] overflow-y-auto rounded-[14px] p-2">
+      <div className={`smooth-open absolute left-0 right-0 top-[calc(100%+6px)] z-[900] ${open ? "is-open" : "pointer-events-none"}`}>
+        <div>
+        <div className="card-frost max-h-[70vh] overflow-y-auto rounded-[14px] p-2">
           {groups.map(([group, list]) => {
             const vis = list.filter(([, , , hidden]) => !hidden);
             if (!vis.length) return null;
@@ -77,7 +78,8 @@ export default function MobileSectionNav({ groups, current, onSelect, badges = {
             );
           })}
         </div>
-      )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -862,6 +862,8 @@ export default function DispatchConsole() {
           )}
 
           {/* ▼ 대시보드 — 운영 상황판 (menu) */}
+          {/* 섹션 본문 — 좌측 메뉴로 바꾸면 스르르 올라오며 들어온다 */}
+          <div key={menu} className="section-in">
           {menu === "dash" && (
             <>
           {/* ── 액션 큐 — 지금 처리할 일. 우선순위순, 클릭 즉시 해당 화면 (고도화) ── */}
@@ -2893,6 +2895,7 @@ export default function DispatchConsole() {
           />
         )}
 
+          </div>
         </div>
 
         {/* AI 관제 어시스턴트 — 우측 하단 플로팅 */}

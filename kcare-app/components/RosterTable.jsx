@@ -274,8 +274,9 @@ export default function RosterTable({ roster, onExport, onRowClick, clickableNam
         </div>
       )}
 
-      {/* 값 필터(패싯) — 접기/펴기 */}
-      {openFilter && (
+      {/* 값 필터(패싯) — 스르르 열리는 접기/펴기 */}
+      <div className={`smooth-open ${openFilter ? "is-open" : ""}`}>
+        <div>
         <div className="mt-2 space-y-2 rounded-xl border border-navy/[.08] bg-white/50 p-3">
           {facetVals.map((f) => (
             <div key={f.col} className="flex flex-wrap items-center gap-1.5">
@@ -288,10 +289,12 @@ export default function RosterTable({ roster, onExport, onRowClick, clickableNam
             </div>
           ))}
         </div>
-      )}
+        </div>
+      </div>
 
       {/* 컬럼 접기 — 방대한 표에서 지금 필요한 열만 */}
-      {openCols && (
+      <div className={`smooth-open ${openCols ? "is-open" : ""}`}>
+        <div>
         <div className="mt-2 flex flex-wrap items-center gap-1.5 rounded-xl border border-navy/[.08] bg-white/50 p-3">
           <span className="w-[52px] shrink-0 text-[11px] font-bold text-muted">컬럼</span>
           {roster.cols.map((c, i) => (
@@ -310,7 +313,8 @@ export default function RosterTable({ roster, onExport, onRowClick, clickableNam
             </Chip>
           ))}
         </div>
-      )}
+        </div>
+      </div>
 
       <p className="mt-3 text-[11px] font-bold text-muted sm:hidden">← 표를 좌우로 밀어 보세요 · 컬럼 버튼으로 열을 줄일 수 있습니다</p>
       <div className="mt-1.5 overflow-x-auto sm:mt-3">
@@ -343,7 +347,10 @@ export default function RosterTable({ roster, onExport, onRowClick, clickableNam
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody
+            className="rows-in"
+            key={`${roster.file}-${view || ""}-${JSON.stringify(facet)}-${q}-${sort?.col ?? ""}${sort?.dir ?? ""}-${limit}`}
+          >
             {shown.map((r) => {
               const can = clickable(r[0]);
               return (
