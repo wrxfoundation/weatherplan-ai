@@ -15,6 +15,46 @@ const anthropic = new Anthropic({
 
 const INSIGHT_MODEL = "claude-opus-5";
 
+/* 한국어 JSON(총평 + 우선순위 3건 + 전망)은 700토큰으로는 중간에 잘린다.
+   잘리면 JSON 파싱이 깨지고, 예전에는 그 원문이 그대로 화면에 나갔다. */
+const INSIGHT_MAX_TOKENS = 1600;
+
+/* 부분 응답에서 필드를 건져낸다. JSON 원문이 사용자에게 노출되지 않게 하는 것이 목적.
+   완전한 파싱이 되면 그대로 쓰고, 깨졌으면 문자열 필드만 정규식으로 회수한다. */
+function parseInsight(raw) {
+  const text = String(raw || "");
+  const start = text.indexOf("{");
+  if (start >= 0) {
+    const end = text.lastIndexOf("}");
+    if (end > start) {
+      try {
+        const o = JSON.parse(text.slice(start, end + 1));
+        if (o && typeof o === "object") return o;
+      } catch { /* 아래 회수 로직으로 */ }
+    }
+  }
+
+  const str = (key) => {
+    const m = text.match(new RegExp(`"${key}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`));
+    if (!m) return "";
+    try { return JSON.parse(`"${m[1]}"`); } catch { return m[1]; }
+  };
+  const headline = str("headline");
+  const summary = str("summary");
+  if (!headline && !summary) return null;
+
+  /* priorities 배열은 닫히지 않았을 수 있으므로 완성된 문자열 항목만 회수 */
+  const priorities = [];
+  const arr = text.match(/"priorities"\s*:\s*\[([\s\S]*)/);
+  if (arr) {
+    for (const m of arr[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)) {
+      try { priorities.push(JSON.parse(`"${m[1]}"`)); } catch { priorities.push(m[1]); }
+      if (priorities.length >= 3) break;
+    }
+  }
+  return { headline, summary, priorities, outlook: str("outlook"), truncated: true };
+}
+
 const STATIC_SYSTEM_PROMPT = `당신은 Pick AI — 웹사이트의 AI 검색 준비도(SEO·AEO·GEO·확산) 진단 결과를 받아
 경영진에게 보고하듯 총평하는 컨설턴트입니다.
 
@@ -63,7 +103,7 @@ ${issueLines || "- 특이 이슈 없음"}`;
   try {
     const msg = await anthropic.messages.create({
       model: INSIGHT_MODEL,
-      max_tokens: 700,
+      max_tokens: INSIGHT_MAX_TOKENS,
       system: [
         {
           type: "text",
@@ -75,12 +115,16 @@ ${issueLines || "- 특이 이슈 없음"}`;
     });
 
     const raw = msg.content?.find((b) => b.type === "text")?.text || "";
-    let insight = null;
-    try {
-      const jsonStr = raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1);
-      insight = JSON.parse(jsonStr);
-    } catch {
-      insight = { headline: "진단 총평", summary: raw.slice(0, 400), priorities: [], outlook: "" };
+    const insight = parseInsight(raw);
+
+    /* 건질 게 없으면 깨진 문자열을 보여주느니 실패로 처리한다 —
+       결정론 리포트는 이미 화면에 떠 있으므로 총평만 조용히 빠진다. */
+    if (!insight || (!insight.headline && !insight.summary)) {
+      console.error("[/api/insight] 응답 파싱 실패", { stop: msg.stop_reason, len: raw.length });
+      return res.status(502).json({ error: "AI 총평 생성에 실패했습니다" });
+    }
+    if (msg.stop_reason === "max_tokens") {
+      console.warn("[/api/insight] 응답이 토큰 한도에서 잘림 — max_tokens 상향 검토");
     }
     return res.status(200).json({ ok: true, insight });
   } catch (err) {

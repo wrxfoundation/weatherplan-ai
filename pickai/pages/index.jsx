@@ -636,9 +636,6 @@ function TrendCard({ trend, host }) {
   if (!showTrend && !showBench) return null;
   const first = history[0], last = history[history.length - 1];
   const delta = showTrend ? last.overall - first.overall : 0;
-  /* 채점 엔진이 바뀐 구간이 섞여 있으면 점수 변화가 사이트 변화가 아닐 수 있다 */
-  const engines = [...new Set(history.map((h) => h.engine).filter(Boolean))];
-  const engineChanged = showTrend && engines.length > 1;
   return (
     <div className="glass-card mx-auto mt-4 flex flex-col md:flex-row items-center justify-center gap-x-12 gap-y-4"
       style={{ borderRadius: R.xxl, padding: "16px 28px", width: "fit-content", maxWidth: "100%" }}>
@@ -654,12 +651,6 @@ function TrendCard({ trend, host }) {
             </div>
           </div>
           <Sparkline points={history.map((h) => h.overall)} />
-        </div>
-      )}
-      {engineChanged && (
-        <div style={{ color: T.steel, fontSize: 11.5, lineHeight: 1.6, maxWidth: 260 }}>
-          이 구간에 채점 엔진이 바뀐 기록이 섞여 있습니다({engines.join(" → ")}).
-          점수 변화의 일부는 사이트가 아니라 기준이 달라진 것일 수 있습니다.
         </div>
       )}
       {showBench && (
