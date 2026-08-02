@@ -17,7 +17,7 @@ import { useEffect, useRef, useState } from "react";
 // 배경 이미지와 같은 파일이고, 그 파일이 곧 영상의 0번 프레임이라 어느 쪽으로
 // 굴러가든 같은 그림이 보인다.
 //
-// className 으로 위치·크기·톤을 넘긴다 (.hero-vid / .sec-vid).
+// className 으로 위치·크기·톤을 넘긴다 (현재는 히어로의 .hero-vid 하나).
 
 export default function BgVideo({ webm, mp4, poster, className }) {
   const [on, setOn] = useState(false);
