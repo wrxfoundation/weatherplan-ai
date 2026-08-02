@@ -72,19 +72,59 @@ export default async function handler(req, res) {
     return;
   }
 
+  // 사고(thinking)는 끈다 — 답변이 3~5문장이라 얻는 게 없고,
+  // 켜두면 max_tokens 예산을 사고가 먹어 답변이 잘린다.
+  // 프롬프트 캐싱은 쓰지 않는다: 역할별 시스템 프롬프트가 캐시 최소 길이에
+  // 한참 못 미쳐 cache_control을 붙여도 조용히 무시된다 (비용만 늘어남).
+  const params = {
+    model: AI_CONFIG.model,
+    max_tokens: AI_CONFIG.maxTokens,
+    thinking: { type: "disabled" },
+    system: ROLE_SYSTEM[safeRole],
+    messages: [
+      {
+        role: "user",
+        content: `[컨텍스트]\n${safeContext || "(제공된 기록 없음)"}\n\n[질문]\n${question.slice(0, 600)}`,
+      },
+    ],
+  };
+
+  const client = new Anthropic({ apiKey: key });
+
+  // 스트리밍 — 답변이 다 끝날 때까지 화면이 멈춰 있으면 시연에서 "죽은 것처럼" 보인다.
+  // 첫 글자가 뜨는 시점을 앞당기는 게 목적. 실패 시 아래 비스트리밍 경로로 폴백한다.
+  if (req.body?.stream) {
+    let opened = false;
+    try {
+      const stream = client.messages.stream(params);
+      for await (const ev of stream) {
+        if (ev.type !== "content_block_delta" || ev.delta?.type !== "text_delta") continue;
+        if (!opened) {
+          opened = true;
+          res.writeHead(200, {
+            "Content-Type": "text/plain; charset=utf-8",
+            "Cache-Control": "no-store, max-age=0",
+            "X-Accel-Buffering": "no", // 프록시 버퍼링 방지 — 안 그러면 스트리밍이 무의미
+          });
+        }
+        res.write(ev.delta.text);
+      }
+      if (!opened) {
+        // 텍스트가 한 글자도 안 온 경우 — 헤더를 아직 안 보냈으니 오류로 처리
+        res.status(502).json({ error: "ai-unavailable" });
+        return;
+      }
+      res.end();
+    } catch (e) {
+      // 헤더를 이미 보냈으면 상태 코드를 바꿀 수 없다 — 끊고 클라이언트가 폴백하게 둔다
+      if (opened) res.end();
+      else res.status(502).json({ error: "ai-unavailable" });
+    }
+    return;
+  }
+
   try {
-    const client = new Anthropic({ apiKey: key });
-    const msg = await client.messages.create({
-      model: AI_CONFIG.model,
-      max_tokens: AI_CONFIG.maxTokens,
-      system: ROLE_SYSTEM[safeRole],
-      messages: [
-        {
-          role: "user",
-          content: `[컨텍스트]\n${safeContext || "(제공된 기록 없음)"}\n\n[질문]\n${question.slice(0, 600)}`,
-        },
-      ],
-    });
+    const msg = await client.messages.create(params);
     const text = msg.content?.find((b) => b.type === "text")?.text || "";
     res.status(200).json({ answer: text });
   } catch (e) {

@@ -3,8 +3,11 @@ import { useMemo, useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../components/ui";
 import Icon from "../components/icons";
 import {
-  AI_BRIEFING,
   AI_REPORT,
+  OUTING,
+} from "../lib/mock";
+import {
+  AI_BRIEFING,
   AI_VOICE_DRAFT,
   CARE_SUGGESTIONS,
   CONCIERGE_SHOP_ITEMS,
@@ -19,13 +22,12 @@ import {
   VOICE_TYPES,
   WELFARE_ITEMS,
   OBSERVATION_ITEMS,
-  OUTING,
   PAIR_TODAY,
   TODAY_ROUTE,
   VIDEO_MODES,
   VIDEO_POLICY,
   VIDEO_SEGMENTS,
-} from "../lib/mock";
+} from "../lib/console";;
 import { CONCIERGE_PRESETS } from "../lib/requests";
 import { fmtWon } from "../lib/config";
 import { useAppState } from "../lib/state";

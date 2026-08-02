@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useState } from "react";
-import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS, SEED_REPORTS } from "./mock";
+// mock.js 가 아니라 seed.js 에서 가져온다 — state 는 _app 에서 import 되므로
+// 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
+import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS, SEED_REPORTS } from "./seed";
 import { PRICING } from "./config";
 import { transition } from "./requests";
 

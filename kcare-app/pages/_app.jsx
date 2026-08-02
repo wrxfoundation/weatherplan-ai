@@ -2,6 +2,7 @@ import "leaflet/dist/leaflet.css";
 import "../styles/globals.css";
 import Head from "next/head";
 import { AppStateProvider } from "../lib/state";
+import Boundary from "../components/Boundary";
 
 export default function App({ Component, pageProps }) {
   return (
@@ -24,9 +25,12 @@ export default function App({ Component, pageProps }) {
         {/* 기본 제목 — 각 페이지의 Head가 하이드레이션 후 덮어쓴다 */}
         <title>K-CARE</title>
       </Head>
-      <AppStateProvider>
-        <Component {...pageProps} />
-      </AppStateProvider>
+      {/* 한 화면이 터져도 흰 화면 대신 안내가 뜨게 — 시연 사고 방지 */}
+      <Boundary>
+        <AppStateProvider>
+          <Component {...pageProps} />
+        </AppStateProvider>
+      </Boundary>
     </>
   );
 }

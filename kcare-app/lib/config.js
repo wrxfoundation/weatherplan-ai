@@ -63,7 +63,11 @@ export const PAYMENT_MODES = [
 export const AI_CONFIG = {
   model: "claude-sonnet-5", // 기본. 복잡 질의 라우팅이 필요해지면 여기서 분기
   publicLabel: "AI", // 외부 표기 통일
-  maxTokens: 600,
+  // maxTokens는 "사고 + 응답"을 합쳐서 자르는 상한이다.
+  // 이 모델은 thinking을 명시하지 않으면 적응형 사고가 켜지므로,
+  // 600으로 두면 사고가 예산을 먹고 답변이 중간에 잘린다.
+  // 답변은 3~5문장이라 사고가 필요 없고, 끄는 편이 체감 속도에도 낫다 (api/ai.js 참고).
+  maxTokens: 900,
 };
 
 export const fmtWon = (n) =>

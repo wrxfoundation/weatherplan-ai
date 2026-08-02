@@ -15,37 +15,90 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
     if (listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight;
   }, [msgs, busy]);
 
+  // 마지막 말풍선을 조작하는 4가지 동작 — 스트리밍과 데모 답변이 같은 경로를 쓴다
+  const openBubble = (text) => setMsgs((m) => [...m, { who: "ai", text, streaming: true }]);
+  const fill = (text) => setMsgs((m) => m.map((x, i) => (i === m.length - 1 ? { ...x, text } : x)));
+  const seal = (msg) => setMsgs((m) => m.map((x, i) => (i === m.length - 1 ? msg : x)));
+  const drop = () => setMsgs((m) => m.slice(0, -1));
+
+  // 데모 답변 타이핑 — 서버 스트리밍과 체감을 맞추기 위한 것.
+  // 문자 단위로 그리면 한글에서 자모가 튀어 보여 어절 단위로 끊는다.
+  const type = (reply) =>
+    new Promise((done) => {
+      if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+        setMsgs((m) => [...m, reply]);
+        return done();
+      }
+      const words = reply.text.split(/(\s+)/);
+      openBubble("");
+      let i = 0;
+      const tick = () => {
+        i += 2; // 어절 + 뒤따르는 공백
+        if (i >= words.length) {
+          seal(reply);
+          return done();
+        }
+        fill(words.slice(0, i).join(""));
+        setTimeout(tick, 26);
+      };
+      setTimeout(tick, 120);
+    });
+
   const ask = async (q, canned) => {
     const question = (q || "").trim();
     if (!question || busy) return;
     setMsgs((m) => [...m, { who: "me", text: question }]);
     setInput("");
     setBusy(true);
-    let reply = null;
+    let served = false;
     try {
       const r = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, context, role }),
+        body: JSON.stringify({ question, context, role, stream: true }),
       });
-      if (r.ok) {
+      const streamed = r.ok && r.body && (r.headers.get("content-type") || "").startsWith("text/plain");
+      if (streamed) {
+        // 도착하는 대로 그린다 — 다 기다렸다 한 번에 띄우지 않는다
+        const reader = r.body.getReader();
+        const dec = new TextDecoder();
+        let acc = "";
+        openBubble(""); // 빈 말풍선을 먼저 띄우고 그 안을 채운다
+        for (;;) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          acc += dec.decode(value, { stream: true });
+          fill(acc);
+        }
+        if (acc.trim()) {
+          seal({ who: "ai", text: acc });
+          served = true;
+        } else {
+          drop(); // 한 글자도 못 받음 — 빈 말풍선을 남기지 않는다
+        }
+      } else if (r.ok) {
         const d = await r.json();
-        reply = { who: "ai", text: d.answer };
+        if (d.answer) {
+          setMsgs((m) => [...m, { who: "ai", text: d.answer }]);
+          served = true;
+        }
       }
     } catch {
-      /* 네트워크 오류 — 아래 데모 폴백 */
+      /* 네트워크·스트림 오류 — 아래 데모 답변으로 폴백 */
     }
-    if (!reply) {
+
+    if (!served) {
+      // 데모 답변도 같은 속도감으로 흐르게 한다 — 키가 없는 환경에서도 화면 반응이 같아야 한다
       const hit = canned || qa.find((x) => (x.keys || []).some((k) => question.includes(k)));
-      reply = hit
+      const reply = hit
         ? { who: "ai", text: hit.a, src: hit.src }
         : {
             who: "ai",
             text: "데모 모드에서는 준비된 기록 범위에서만 답할 수 있습니다. 아래 추천 질문을 눌러 보세요.",
             src: "데모 안내",
           };
+      await type(reply);
     }
-    setMsgs((m) => [...m, reply]);
     setBusy(false);
   };
 
@@ -101,15 +154,22 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
                   key={i}
                   className="max-w-[88%] rounded-xl rounded-tl-sm border border-navy/[.08] bg-white/70 px-3 py-2"
                 >
-                  <div className="text-[13px] leading-[1.6] text-ink">{m.text}</div>
+                  <div className="text-[13px] leading-[1.6] text-ink">
+                    {m.text}
+                    {m.streaming && <span className="ai-caret" aria-hidden="true" />}
+                  </div>
                   {m.src && (
                     <div className="mt-1 border-t border-navy/[.06] pt-1 text-[11px] text-muted">근거 — {m.src}</div>
                   )}
                 </div>
               )
             )}
-            {busy && (
-              <div className="max-w-[88%] rounded-xl rounded-tl-sm border border-navy/[.08] bg-white/70 px-3 py-2 text-[13px] text-muted">
+            {/* 스트리밍이 시작되면 글자가 직접 흐르므로 이 자리표시자는 그 전까지만 */}
+            {busy && !msgs[msgs.length - 1]?.streaming && (
+              <div
+                className="max-w-[88%] rounded-xl rounded-tl-sm border border-navy/[.08] bg-white/70 px-3 py-2 text-[13px] text-muted"
+                aria-live="polite"
+              >
                 답변 작성 중…
               </div>
             )}

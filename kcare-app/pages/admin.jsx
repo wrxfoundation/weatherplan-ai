@@ -9,6 +9,14 @@ import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
 import { ROSTERS, ROSTER_CHECKS, ROSTER_ACCESS, searchAll } from "../lib/rosters";
 import {
+  LIFECYCLE_STAGES,
+  EXEC_BRIEF,
+  NPS_LOOP,
+  TRUST_METRICS,
+  CARE_OUTCOMES,
+  PEOPLE_KPIS,
+} from "../lib/mock";
+import {
   ADMIN_AI_QA,
   ADMIN_COHORTS,
   ADMIN_RISKS,
@@ -16,13 +24,8 @@ import {
   ACTION_RESULTS,
   CHURN_BANDS,
   CHURN_FACTORS,
-  LIFECYCLE_STAGES,
   NBA_QUEUE,
   COACHING_LOG,
-  EXEC_BRIEF,
-  NPS_LOOP,
-  TRUST_METRICS,
-  CARE_OUTCOMES,
   CHURN_SEGMENTS,
   ELDER_MIX,
   ELDER_RISK_MIX,
@@ -31,7 +34,6 @@ import {
   INCENTIVE_MIX,
   MEMBERSHIP_MIX,
   OPTION_ATTACH,
-  PEOPLE_KPIS,
   REVENUE_FORECAST,
   REVENUE_STREAMS,
   RULE_PERF,
@@ -176,7 +178,7 @@ import {
   SCENARIOS,
   EXEC_PRIORITY,
   PRIORITY_TONE,
-} from "../lib/mock";
+} from "../lib/console";;
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
 // 관제(09)가 현장 관리라면, 경영은 사람 관리다: 컨시어지·보호자·어르신의 관리와 분석.

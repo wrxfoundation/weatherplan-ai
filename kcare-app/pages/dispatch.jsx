@@ -2,20 +2,24 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  JOBS,
+  MOU_HOSPITALS,
+  CRM_TIMELINE,
+  HOSPITAL_PARTNERS,
+  ELDER_TAGS,
+  TAG_TONE,
+} from "../lib/mock";
+import {
   AI_ASSIGN,
   BRIEFINGS,
   FATIGUE,
-  JOBS,
   MAP_DISTRICTS,
   MAP_HOSPITALS,
-  MOU_HOSPITALS,
   RISK_WATCH,
   ROUTE_CHAIN,
   SCORE_FACTORS,
   CRM_STAGE,
-  CRM_TIMELINE,
   COMMS_TRACKING,
-  HOSPITAL_PARTNERS,
   INSURANCE_PARTNER,
   MORNING_BRIEF,
   PARTNER_STATUS,
@@ -44,8 +48,6 @@ import {
   SOS_HISTORY,
   SOS_KPIS,
   SOS_AFTER,
-  ELDER_TAGS,
-  TAG_TONE,
   DIRECTORY_ALL,
   AI_STAGE_NOW,
   AI_EVIDENCE,
@@ -62,7 +64,7 @@ import {
   WEATHER_DISTRICTS,
   WEATHER_ISSUES,
   mapPeople,
-} from "../lib/mock";
+} from "../lib/console";;
 import { useAppState } from "../lib/state";
 import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";

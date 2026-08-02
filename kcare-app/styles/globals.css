@@ -330,3 +330,16 @@
     animation: none;
   }
 }
+
+/* AI 답변 스트리밍 커서 — 글자가 흐르는 동안만 깜빡인다 */
+.ai-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: #0A1F3C;
+  animation: aiCaret 1s steps(2, start) infinite;
+}
+@keyframes aiCaret { to { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .ai-caret { animation: none; } }
