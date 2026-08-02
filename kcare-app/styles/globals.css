@@ -1,11 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Montserrat:wght@500;600;700;800&family=Nanum+Pen+Script&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Montserrat:wght@500;600;700;800&family=Nanum+Brush+Script&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* 펜 흘림체가 못 뜰 때의 대체 — 구글 폰트가 막히거나 느린 경우.
-   Nanum Pen Script 는 같은 px 에서 글자가 훨씬 작게 보여서 31px 로 키워 뒀는데,
+   Nanum Brush Script 는 같은 px 에서 글자가 훨씬 작게 보여서 34px 로 키워 뒀는데,
    그대로 고딕으로 떨어지면 31px 짜리 거대한 줄이 된다. size-adjust 로 대체
    서체만 45% 로 줄여 원래 의도한 13px 언저리로 맞춘다.
 
@@ -191,6 +191,83 @@
   .animate-escalateGlow {
     animation: none !important;
   }
+}
+
+/* ── 가입 상담 CTA — 골드 글라스 + 주기적 반짝임 ─────────────────────────
+   backdrop-filter(블러)는 쓰지 않는다. 상단바가 이미 backdrop-blur 를 걸고
+   있어서 그 안의 버튼에 또 걸면 스크롤할 때마다 블러를 두 겹 다시 합성한다.
+   유리 느낌은 블러가 아니라 위쪽 하이라이트와 아래쪽 그림자의 대비에서 나온다
+   (AI 플로팅 버튼과 같은 방식).
+
+   반짝임은 ::after 로 얹은 사선 광택 띠가 버튼을 훑고 지나가는 것이다.
+   translate 만 움직이므로 합성 단계에서만 처리되고 레이아웃/페인트를 다시
+   하지 않는다. 5.6초 중 뒤쪽 1.4초에만 지나가고 나머지는 멈춰 있다 —
+   계속 번쩍이면 광고처럼 보인다.                                         */
+.btn-cta {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(150deg, rgba(20, 52, 92, .96) 0%, rgba(10, 31, 60, .94) 46%, rgba(6, 21, 42, .98) 100%);
+  border: 1px solid rgba(255, 255, 255, .26);
+  box-shadow:
+    0 12px 26px -14px rgba(10, 31, 60, .62),
+    inset 0 1px 0 rgba(255, 255, 255, .30),
+    inset 0 -1.5px 2px rgba(0, 0, 0, .22);
+}
+.btn-cta::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  /* 양수여야 한다. 음수로 두면 버튼 자체 배경 뒤로 깔려서 광택이 안 보인다.
+     글자 위를 지나가는 것은 의도한 것 — 광택은 표면을 훑는 것이라 그래야 맞다. */
+  z-index: 1;
+  /* 띠의 최대 밝기는 .34 를 넘기지 않는다.
+     이 광택은 글자 위를 지나가므로, 밝기를 올리면 그 순간 흰 글자 대비가
+     떨어진다. 남색(#0A1F3C) 위 흰 글자가 AA(4.5:1)를 지키려면 띠 알파가
+     0.38 이하여야 한다 (0.40 이면 4.46:1 로 미달). 여유를 두고 .34 로 둔다.
+     더 눈에 띄게 하려면 밝기가 아니라 띠 폭을 넓혀야 한다. */
+  background: linear-gradient(
+    104deg,
+    transparent 34%,
+    rgba(255, 255, 255, .12) 44%,
+    rgba(255, 255, 255, .34) 50%,
+    rgba(255, 255, 255, .12) 56%,
+    transparent 66%
+  );
+  transform: translateX(-135%);
+  animation: ctaShine 5.6s cubic-bezier(.35, 0, .2, 1) infinite;
+  pointer-events: none;
+}
+@keyframes ctaShine {
+  0%, 75% { transform: translateX(-135%); }
+  100%    { transform: translateX(135%); }
+}
+/* 좁은 화면 — 손가락으로 누를 크기를 확보하고, 작은 화면에서 광택이 묻히지
+   않게 조금 더 밝고 조금 더 빠르게 지나가게 한다. */
+@media (max-width: 640px) {
+  /* 요소 이름을 붙여 명시도를 올린다 — 뒤에 오는 .btn-press{min-height:36px} 와
+     명시도가 같으면 그쪽이 이겨서 44px 이 안 먹는다. */
+  a.btn-cta,
+  button.btn-cta { min-height: 44px; border-color: rgba(255, 255, 255, .32); }
+  .btn-cta {
+    /* (위 블록 이어짐) */
+  }
+  /* 좁은 화면에서 광택이 묻히지 않게 — 밝기가 아니라 띠를 넓히고 조금 빠르게.
+     밝기를 올리면 그 순간 흰 글자가 안 읽힌다 (위 주석의 0.38 상한). */
+  .btn-cta::after {
+    background: linear-gradient(
+      104deg,
+      transparent 24%,
+      rgba(255, 255, 255, .11) 40%,
+      rgba(255, 255, 255, .30) 50%,
+      rgba(255, 255, 255, .11) 60%,
+      transparent 76%
+    );
+    animation-duration: 4.4s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-cta::after { animation: none; transform: translateX(-135%); }
 }
 
 /* ── A4 인쇄 리포트 (/report/*) ── */

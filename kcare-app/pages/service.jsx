@@ -135,7 +135,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
               </a>
               <Link
                 href="/onboarding"
-                className="btn-press whitespace-nowrap rounded-xl bg-navy px-3.5 py-2 text-[14.5px] font-bold text-white"
+                className="btn-press btn-cta inline-flex items-center whitespace-nowrap rounded-xl px-4 py-2 text-[14.5px] font-bold text-white"
               >
                 가입 상담
               </Link>
@@ -150,16 +150,19 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             <BgVideo webm="/hero/loop.webm" mp4="/hero/loop.mp4" poster="/hero/home.webp" className="hero-vid" />
           )}
           <div className="mx-auto w-full max-w-[880px]">
-            {/* 펜 흘림체 — 이 한 줄만 (font-pen = Nanum Pen Script).
+            {/* 펜 흘림체 — 이 한 줄만 (font-pen = Nanum Brush Script).
+                볼펜체(Nanum Pen)는 획이 둥글어 유치해 보여서 붓펜으로 바꾸고
+                10도 기울였다. 기울기는 서체에 이탤릭 자족이 없어 브라우저가
+                합성한다 — 손글씨체는 원래 기울어 있어 합성 기울기가 어색하지 않다.
                 이 서체는 같은 px 에서도 글자가 훨씬 작게 보여서, 고딕 12.5px 를
-                그대로 쓰면 눌려서 안 읽힌다. 31px 로 키워야 고딕 13px 정도의
+                그대로 쓰면 눌려서 안 읽힌다. 34px 로 키워야 고딕 13px 정도의
                 덩치가 된다.
                 자간(tracking)은 없앴다 — 흘려 쓴 획을 벌리면 연결이 끊겨 보인다.
                 굵기는 400 하나뿐인 서체라 명시해 둔다. body 가 500 을 물려주는데
                 브라우저가 가짜 굵기를 합성하면 얇은 획이 뭉갠다.
                 색도 gold(#B08D57) 대신 amber(#8A5D12) 로 내렸다 — 획이 얇아
                 옅은 골드로는 종이 위에서 읽히지 않는다 (대비 2.69:1 → 4.99:1). */}
-            <div className="font-pen text-[31px] font-normal leading-[1.2] text-amber">{LANDING.eyebrow}</div>
+            <div className="font-pen text-[34px] font-normal leading-[1.25] text-amber [font-style:oblique_10deg]">{LANDING.eyebrow}</div>
             <h1 className="mt-4 text-[34.5px] font-black leading-[1.32] text-navy sm:text-[49.5px]">
               {LANDING.h1[0]}
               <br />
@@ -174,7 +177,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             <div className="mt-8 flex flex-wrap gap-2.5">
               <Link
                 href="/onboarding"
-                className="btn-press rounded-xl bg-navy px-6 py-3.5 text-[17px] font-bold text-white"
+                className="btn-press btn-cta inline-flex items-center rounded-xl px-6 py-3.5 text-[17px] font-bold text-white"
               >
                 가입 상담 신청
               </Link>

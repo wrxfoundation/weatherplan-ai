@@ -34,9 +34,11 @@ module.exports = {
         ],
         num: ["Montserrat", "Noto Sans KR", "sans-serif"],
         // 펜 흘림체 — 히어로 아이브로우 한 줄에만 쓴다.
+        // Nanum Pen(볼펜체)은 획이 둥글어 유치해 보여서 Brush(붓펜)로 바꿨다.
+        // 획이 가늘고 흐름이 있어 기울였을 때 정돈돼 보인다.
         // 굵기가 400 하나뿐이라 font-bold 를 걸면 브라우저가 가짜 굵기를
         // 합성해 획이 뭉개진다. 굵기를 지정하지 말 것.
-        pen: ["Nanum Pen Script", "Pen Fallback", "Noto Sans KR", "cursive"],
+        pen: ["Nanum Brush Script", "Pen Fallback", "Noto Sans KR", "cursive"],
       },
       borderRadius: {
         card: "18px",
