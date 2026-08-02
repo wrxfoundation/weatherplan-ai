@@ -456,7 +456,7 @@
    "돌 위에 반투명 판을 올린" 것으로 읽혀서 그 문제가 없다.
    가죽 그레인 판도 만들어 뒀다 (public/bg/leather.webp) — url 만 바꾸면
    교체된다. 다만 결 굵기가 달라 background-size 도 같이 조정해야 한다
-   (가죽 320px/.38 · 대리석 640px/.26).
+   (가죽 320px/.38 · 대리석 640px/.21).
 
    텍스처는 흑백이고, 남색 바탕에 soft-light 로 얹어 남색의 명도만
    오르내리게 한다 — 색상은 남색 그대로다.
@@ -476,7 +476,7 @@
   z-index: 0;
   background-image: url("/bg/marble.webp");
   background-size: 640px 640px;
-  opacity: .26;
+  opacity: .21;
   mix-blend-mode: soft-light;
 }
 .sec-navy::after {

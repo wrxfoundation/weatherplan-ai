@@ -19,7 +19,7 @@
 
 | | `background-image` | `background-size` | `opacity` |
 |---|---|---|---|
-| 대리석 (지금) | `url("/bg/marble.webp")` | `640px 640px` | `.26` |
+| 대리석 (지금) | `url("/bg/marble.webp")` | `640px 640px` | `.21` |
 | 가죽 그레인 | `url("/bg/leather.webp")` | `320px 320px` | `.38` |
 
 대리석을 320px 로 줄이면 맥이 잔금처럼 보이고, 가죽을 640px 로 키우면
