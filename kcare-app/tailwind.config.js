@@ -33,6 +33,10 @@ module.exports = {
           "sans-serif",
         ],
         num: ["Montserrat", "Noto Sans KR", "sans-serif"],
+        // 펜 흘림체 — 히어로 아이브로우 한 줄에만 쓴다.
+        // 굵기가 400 하나뿐이라 font-bold 를 걸면 브라우저가 가짜 굵기를
+        // 합성해 획이 뭉개진다. 굵기를 지정하지 말 것.
+        pen: ["Nanum Pen Script", "Pen Fallback", "Noto Sans KR", "cursive"],
       },
       borderRadius: {
         card: "18px",

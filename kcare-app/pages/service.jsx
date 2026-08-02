@@ -150,7 +150,16 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             <BgVideo webm="/hero/loop.webm" mp4="/hero/loop.mp4" poster="/hero/home.webp" className="hero-vid" />
           )}
           <div className="mx-auto w-full max-w-[880px]">
-            <div className="font-num text-[12.5px] font-bold tracking-[.2em] text-gold">{LANDING.eyebrow}</div>
+            {/* 펜 흘림체 — 이 한 줄만 (font-pen = Nanum Pen Script).
+                이 서체는 같은 px 에서도 글자가 훨씬 작게 보여서, 고딕 12.5px 를
+                그대로 쓰면 눌려서 안 읽힌다. 31px 로 키워야 고딕 13px 정도의
+                덩치가 된다.
+                자간(tracking)은 없앴다 — 흘려 쓴 획을 벌리면 연결이 끊겨 보인다.
+                굵기는 400 하나뿐인 서체라 명시해 둔다. body 가 500 을 물려주는데
+                브라우저가 가짜 굵기를 합성하면 얇은 획이 뭉갠다.
+                색도 gold(#B08D57) 대신 amber(#8A5D12) 로 내렸다 — 획이 얇아
+                옅은 골드로는 종이 위에서 읽히지 않는다 (대비 2.69:1 → 4.99:1). */}
+            <div className="font-pen text-[31px] font-normal leading-[1.2] text-amber">{LANDING.eyebrow}</div>
             <h1 className="mt-4 text-[34.5px] font-black leading-[1.32] text-navy sm:text-[49.5px]">
               {LANDING.h1[0]}
               <br />

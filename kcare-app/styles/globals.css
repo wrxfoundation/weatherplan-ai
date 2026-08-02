@@ -1,8 +1,25 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Montserrat:wght@500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Montserrat:wght@500;600;700;800&family=Nanum+Pen+Script&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 펜 흘림체가 못 뜰 때의 대체 — 구글 폰트가 막히거나 느린 경우.
+   Nanum Pen Script 는 같은 px 에서 글자가 훨씬 작게 보여서 31px 로 키워 뒀는데,
+   그대로 고딕으로 떨어지면 31px 짜리 거대한 줄이 된다. size-adjust 로 대체
+   서체만 45% 로 줄여 원래 의도한 13px 언저리로 맞춘다.
+
+   local() 이 하나도 안 맞으면 이 @font-face 는 통째로 무시되고 다음 후보
+   (Noto Sans KR)가 원래 크기로 그려진다 — 즉 안 맞아도 지금보다 나빠지지는
+   않는다. 맞을 때만 이득인 안전장치다.
+   size-adjust 를 모르는 구형 브라우저도 마찬가지로 무시할 뿐이다. */
+@font-face {
+  font-family: "Pen Fallback";
+  src:
+    local("Noto Sans KR"), local("Noto Sans CJK KR"), local("NanumGothic"),
+    local("Apple SD Gothic Neo"), local("Malgun Gothic");
+  size-adjust: 45%;
+}
 
 @layer base {
   html {
