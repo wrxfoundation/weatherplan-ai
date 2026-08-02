@@ -6,9 +6,9 @@
 
 | 파일 | 크기 | 역할 |
 |---|---|---|
-| `home.webp` | 60KB | 정지 배경 + 영상 poster. 첫 화면을 그리는 건 이 파일입니다 |
-| `loop.webm` | 429KB | 루프 영상 (VP9) — Chrome · Firefox · Edge |
-| `loop.mp4` | 1.1MB | 루프 영상 (H.264) — Safari · iOS |
+| `home.webp` | 64KB | 정지 배경 + 영상 poster. 첫 화면을 그리는 건 이 파일입니다 |
+| `loop.webm` | 368KB | 루프 영상 (VP9) — Chrome · Firefox · Edge |
+| `loop.mp4` | 964KB | 루프 영상 (H.264) — Safari · iOS |
 
 셋 다 같은 원본에서 나왔고, **`home.webp` 는 `loop` 의 0번 프레임과 같은 그림**입니다.
 그래서 정지 이미지 → 영상으로 넘어갈 때 화면이 튀지 않습니다. 이 관계가 깨지면
@@ -46,41 +46,53 @@
 | 항목 | 값 |
 |---|---|
 | 크기 | 1280 × 720 · 24fps |
-| 길이 | 14초 (원본 7초를 앞뒤로 이어 붙임 — 아래 참고) |
+| 길이 | 13.2초 (원본 7초를 2배 느리게 — 아래 참고) |
 | 소리 | **없음** — 트랙 자체를 뺍니다 |
 | 용량 | webm 500KB · mp4 1.2MB 이하 |
 | 구도 | 정지 이미지와 동일 |
 
-## 루프를 만드는 방법 (되감기 이어붙이기)
+## 루프를 만드는 방법 (정방향만 · 2배 느리게 · 끝에서 겹쳐 넘기기)
 
-원본은 꽃이 피어나는 7초짜리라 그대로 `loop` 를 걸면 되감길 때 꽃이 확 사라져
-끊깁니다. 그래서 **뒤로 한 번, 앞으로 한 번** 이어 붙여 양쪽 끝을 없앴습니다.
+**되감기(역재생)는 쓰지 않습니다.** 앞뒤로 이어 붙이면 되감기는 동안 꽃이
+오므라들어 시드는 것처럼 보입니다. 꽃이 피는 방향만 씁니다.
 
-`ffmpeg` 한 줄이면 다시 만들 수 있습니다 (`N` = 원본 총 프레임 수):
+그래서 세 가지를 겁니다:
+
+1. **2배 느리게** — 원본 7초는 배경으로 쓰기에 빠릅니다. 단순 배속은 프레임이
+   복제돼 반짝이가 튀므로(측정: 프레임간 차이가 `0.0 1.1 0.0 1.4` 로 진동),
+   `minterpolate` 로 중간 프레임을 새로 만들어 24fps 를 채웁니다.
+2. **정방향 1회** — 꽃이 피는 방향으로만 갑니다.
+3. **끝 0.8초를 처음과 겹쳐 넘김** — 그냥 끊으면 활짝 핀 꽃이 한 프레임 만에
+   사라져 눈에 띕니다. 겹쳐 넘기면 꽃만 서서히 옅어지고 벽·화분·커튼은
+   그대로라 티가 안 납니다. 되감기가 아니라 **디졸브**라 꽃이 오므라들지 않습니다.
 
 ```sh
-FC="[0:v]split=2[a][b];[a]reverse[rev];\
-[b]trim=start_frame=1:end_frame=<N-1>,setpts=PTS-STARTPTS[fwd];\
-[rev][fwd]concat=n=2:v=1:a=0,fps=24,format=yuv420p[o]"
+SRC=원본.mp4
+# 1) 2배 느리게 (중간 프레임 생성)
+ffmpeg -i "$SRC" -an -vf \
+  "setpts=2*PTS,minterpolate=fps=24:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1" \
+  -c:v ffv1 slow.mkv
 
-# H.264 (Safari)
-ffmpeg -i 원본.mp4 -filter_complex "$FC" -map "[o]" -an \
-  -c:v libx264 -preset veryslow -crf 28 -profile:v main -movflags +faststart loop.mp4
+# 2) 끝 X초를 처음과 겹쳐 넘김 (D = slow.mkv 길이, X = 0.8)
+D=13.959; X=0.8; OFF=$(python3 -c "print($D-2*$X)")
+ffmpeg -i slow.mkv -filter_complex \
+ "[0:v]split=2[a][b];[a]trim=start=$X,setpts=PTS-STARTPTS[main];\
+[b]trim=end=$X,setpts=PTS-STARTPTS[head];\
+[main][head]xfade=transition=fade:duration=$X:offset=$OFF,fps=24,format=yuv420p[o]" \
+ -map "[o]" -an -c:v ffv1 loop_ref.mkv
 
-# VP9 (그 외) — 같은 화질에서 40% 크기
-ffmpeg -i 원본.mp4 -filter_complex "$FC" -map "[o]" -an \
-  -c:v libvpx-vp9 -crf 46 -b:v 0 -row-mt 1 -cpu-used 1 loop.webm
-
-# poster = 루프의 0번 프레임
-ffmpeg -i loop.mp4 -vf "select=eq(n\,0)" -vsync 0 -q:v 92 home.webp
+# 3) 배포용 두 벌 + poster
+ffmpeg -i loop_ref.mkv -an -c:v libx264 -preset veryslow -crf 28 \
+  -profile:v main -pix_fmt yuv420p -movflags +faststart loop.mp4
+ffmpeg -i loop_ref.mkv -an -c:v libvpx-vp9 -crf 46 -b:v 0 -row-mt 1 -cpu-used 1 loop.webm
+ffmpeg -i loop.mp4 -vf "select=eq(n\,0)" -vsync 0 poster.png   # → home.webp (quality 92)
 ```
 
-되감기 쪽(`rev`)을 **먼저** 두는 게 핵심입니다. 그래야 루프의 0번 프레임이
-원본의 마지막 컷(꽃이 활짝 핀 장면)이 되고, 그 컷이 poster 로도 쓰여
-정지 화면이 가장 예쁜 상태로 잡힙니다.
+`xfade` 가 끝나는 지점은 `head` 의 마지막 프레임(원본 X 초 지점)이고 루프의
+0번 프레임은 `main` 의 첫 프레임(역시 원본 X 초 지점)이라, 되감김 자리가
+그대로 이어집니다 (실측 프레임차 0.69/255 — 안 보입니다).
 
-`trim` 의 `start_frame=1` / `end_frame=<N-1>` 은 이음매에서 같은 프레임이
-두 번 나오지 않게 하려고 앞뒤 한 장씩 버리는 것입니다.
+**그냥 끊고 싶다면** 2)번을 빼고 `slow.mkv` 를 바로 3)번에 넣으면 됩니다.
 
 ## 이미 적용된 안전장치
 
