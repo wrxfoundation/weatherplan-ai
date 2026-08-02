@@ -8,6 +8,7 @@ import { CHECKUP, CHECKUP_HEAD, CHECKUP_RULE, CHECKUP_CASE } from "../lib/checku
 import Icon from "../components/icons";
 import ScrollTop from "../components/ScrollTop";
 import AiChat from "../components/AiChat";
+import HeroVideo from "../components/HeroVideo";
 
 // 서비스 랜딩 — 앱이 아니라 "서비스를 파는" 화면.
 // pages/index.jsx 는 시연 허브(내부용)이고, 이 화면이 대외 얼굴이다.
@@ -78,15 +79,19 @@ function FaqItem({ q, a, open, onToggle }) {
 
 // 히어로 배경은 파일이 있으면 켜지고 없으면 꺼진다 — 빌드 시점에 확인한다.
 // 런타임에 이미지 로드를 시도해 보는 방식은 실패할 때 콘솔에 404를 남기므로 쓰지 않는다.
-// 쓰는 법: public/hero/home.webp 를 넣고 다시 빌드하면 끝 (스위치를 만질 필요 없음).
+// 쓰는 법: public/hero/ 에 파일을 넣고 다시 빌드하면 끝 (스위치를 만질 필요 없음).
+//   home.webp            정지 배경 — 이것만 있어도 배경이 켜진다
+//   loop.webm + loop.mp4 루프 영상 — 둘 다 있어야 켠다. 한쪽만 두면 그 코덱을
+//                        못 읽는 브라우저에서 재생 경로가 통째로 없어진다.
 export async function getStaticProps() {
   const fs = require("fs");
   const path = require("path");
-  const heroArt = fs.existsSync(path.join(process.cwd(), "public", "hero", "home.webp"));
-  return { props: { heroArt } };
+  const at = (f) => fs.existsSync(path.join(process.cwd(), "public", "hero", f));
+  const heroArt = at("home.webp");
+  return { props: { heroArt, heroVideo: heroArt && at("loop.webm") && at("loop.mp4") } };
 }
 
-export default function ServiceLanding({ heroArt }) {
+export default function ServiceLanding({ heroArt, heroVideo }) {
   const [openKey, setOpenKey] = useState("0-0"); // 첫 항목은 열어 둔다 — 아코디언 사용법 힌트
   const monthly = fmtWon(PRICING.subscription.monthly);
   const entry = fmtWon(PRICING.entryFee.total);
@@ -131,8 +136,9 @@ export default function ServiceLanding({ heroArt }) {
         </header>
 
         {/* ── 히어로 ── */}
-        {/* public/hero/home.webp 가 있으면 배경이 켜진다 (getStaticProps 에서 확인) */}
+        {/* public/hero/ 에 파일이 있으면 배경이 켜진다 (getStaticProps 에서 확인) */}
         <section className={`${heroArt ? "hero-bg " : ""}px-5 pb-14 pt-12 sm:pb-20 sm:pt-20`}>
+          {heroVideo && <HeroVideo />}
           <div className="mx-auto w-full max-w-[880px]">
             <div className="font-num text-[12.5px] font-bold tracking-[.2em] text-gold">{LANDING.eyebrow}</div>
             <h1 className="mt-4 text-[34.5px] font-black leading-[1.32] text-navy sm:text-[49.5px]">

@@ -9,6 +9,9 @@ const CSP = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com",
+  // 히어로 루프 영상 — 자기 출처만. default-src로도 이미 같은 결과지만,
+  // 나중에 default-src가 넓어져도 영상 출처는 따라 넓어지지 않게 못 박아 둔다.
+  "media-src 'self'",
   "connect-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",

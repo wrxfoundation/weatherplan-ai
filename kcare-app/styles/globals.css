@@ -442,10 +442,42 @@
 }
 
 /* ── 서비스 랜딩 히어로 배경 (pages/service.jsx) ──────────────────────────
-   public/hero/home.webp 를 넣으면 켜지고, 없으면 배경 없이 그대로 나온다.
+   public/hero/ 에 파일을 넣으면 켜지고, 없으면 배경 없이 그대로 나온다.
    왼쪽은 제목 자리이므로 페이퍼색으로 덮어 가독성을 먼저 지킨다.          */
+
+/* 히어로 안의 카드만 바닥을 올린다.
+   card-glass 는 아래로 갈수록 흰색이 .94 → .70 으로 옅어지는데, 하필 그 옅은
+   구간에 카드 본문 셋째 줄이 앉는다. 종이 위에서는 뒤가 어차피 종이색이라
+   티가 안 나지만, 뒤에서 영상이 움직이면 어두운 구간(나무 탁자)이 비쳐
+   본문 대비가 5.99:1 → 4.31:1 로 떨어져 AA(4.5) 아래로 내려갔다.
+   그래서 히어로 안에서만 바닥을 .86 으로 올린다 — 종이 위에서는 차이가
+   2/255 라 눈에 안 보이고, 영상 위에서만 효과가 난다. */
+.hero-bg .card-glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(255, 255, 255, .86));
+}
+/* 히어로 배경 레이어 순서 (아래 → 위)
+     0  ::before  정지 이미지 — 첫 페인트를 담당한다. 영상이 못 뜨는 경우(모션 최소화·
+                  저사양·iOS 저전력 모드)에도 화면이 비지 않게 하는 바닥이다.
+     1  .hero-vid 루프 영상 — 하이드레이션 뒤에 얹힌다. 0번 프레임이 정지 이미지와
+                  같은 컷이라 얹히는 순간 화면이 튀지 않는다.
+     2  ::after   페이퍼색 장막
+     3  콘텐츠 */
 .hero-bg { position: relative; overflow: hidden; }
-.hero-bg > * { position: relative; z-index: 2; }
+.hero-bg > * { position: relative; z-index: 3; }
+/* 위 규칙(0,1,0)보다 구체적(0,2,0)이라 선언 순서와 무관하게 이긴다 —
+   영상도 .hero-bg의 직계 자식이라 그냥 두면 콘텐츠 층으로 올라온다. */
+.hero-bg > .hero-vid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 68% center; /* ::before의 background-position과 같은 값 */
+  opacity: .92;
+  filter: brightness(1.2);
+  pointer-events: none;
+}
 
 .hero-bg::before {
   content: "";
@@ -461,6 +493,11 @@
      가독성 쪽으로는 안전하다 (측정치는 커밋 메시지 참고). */
   filter: brightness(1.2);
 }
+/* 영상이 붙으면 정지 이미지는 물러난다.
+   둘 다 .92로 겹쳐 두면 합성 불투명도가 .92가 아니라 .99가 되어 배경만 진해진다.
+   영상의 poster가 이 이미지와 같은 파일(= 영상의 0번 프레임)이라 물러나도 그림은 그대로다.
+   :has()를 모르는 옛 브라우저는 이 규칙을 통째로 버린다 — 배경이 아주 살짝 진해질 뿐이다. */
+.hero-bg:has(.hero-vid)::before { opacity: 0; }
 /* 왼쪽 → 오른쪽으로 걷히는 페이퍼색 장막.
    제목이 놓이는 왼쪽 절반만 확실히 덮고, 오른쪽(창·화분·탁자)은 살려 둔다. */
 .hero-bg::after {
@@ -481,6 +518,8 @@
    우하단 나무 탁자가 가장 어두운 지점이라 그쪽을 남기고 본문 구간을 가린다. */
 @media (max-width: 900px) {
   .hero-bg::before { background-position: 76% center; opacity: .55; filter: brightness(1.2); }
+  /* 영상도 정지 이미지와 같은 취급 — 둘이 어긋나면 영상이 얹히는 순간 밝기가 튄다 */
+  .hero-bg > .hero-vid { object-position: 76% center; opacity: .55; }
   .hero-bg::after {
     background: linear-gradient(
       172deg,
