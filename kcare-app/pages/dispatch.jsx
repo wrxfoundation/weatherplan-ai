@@ -69,6 +69,7 @@ import HelpTip from "../components/HelpTip";
 import Icon from "../components/icons";
 import RosterTable from "../components/RosterTable";
 import MobileSectionNav from "../components/MobileSectionNav";
+import StaggerIn from "../components/StaggerIn";
 import { ROSTERS } from "../lib/rosters";
 
 // 배치관리자(관제) — 핸드오프 09 상세 명세 + REQ-04(긴급 대응 범위, 회의 확정 우선).
@@ -863,7 +864,7 @@ export default function DispatchConsole() {
 
           {/* ▼ 대시보드 — 운영 상황판 (menu) */}
           {/* 섹션 본문 — 좌측 메뉴로 바꾸면 스르르 올라오며 들어온다 */}
-          <div key={menu} className="section-in">
+          <StaggerIn trigger={menu}>
           {menu === "dash" && (
             <>
           {/* ── 액션 큐 — 지금 처리할 일. 우선순위순, 클릭 즉시 해당 화면 (고도화) ── */}
@@ -2883,6 +2884,7 @@ export default function DispatchConsole() {
               </Panel>
             </div>
           )}
+          </StaggerIn>
         </div>
 
         {/* 플로팅 프로필 카드 — 그리드·검색에서 열림 */}
@@ -2895,7 +2897,6 @@ export default function DispatchConsole() {
           />
         )}
 
-          </div>
         </div>
 
         {/* AI 관제 어시스턴트 — 우측 하단 플로팅 */}

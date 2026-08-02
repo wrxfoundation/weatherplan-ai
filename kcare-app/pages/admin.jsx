@@ -6,6 +6,7 @@ import HelpTip from "../components/HelpTip";
 import Icon from "../components/icons";
 import RosterTable from "../components/RosterTable";
 import MobileSectionNav from "../components/MobileSectionNav";
+import StaggerIn from "../components/StaggerIn";
 import { ROSTERS, ROSTER_CHECKS, ROSTER_ACCESS, searchAll } from "../lib/rosters";
 import {
   ADMIN_AI_QA,
@@ -486,7 +487,7 @@ export default function AdminConsole() {
 
           {/* ════ 대시보드 — 전체 포괄 (사람 KPI · 주간 브리핑 · 섹션 요약) ════ */}
           {/* 섹션 본문 — 좌측 메뉴로 바꾸면 스르르 올라오며 들어온다 (key로 애니메이션 재생) */}
-          <div key={tab} className="section-in space-y-4">
+          <StaggerIn trigger={tab} className="space-y-4">
           {tab === "dash" && (
             <div className="space-y-4">
               <p className="max-w-[84ch] text-[14px] leading-[1.75] text-muted">
@@ -4224,7 +4225,7 @@ export default function AdminConsole() {
               </div>
             </div>
           )}
-          </div>
+          </StaggerIn>
         </div>
         </div>
 
