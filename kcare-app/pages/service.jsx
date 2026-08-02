@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FAQ, FAQ_NOTE, LANDING, LANDING_AI_QA } from "../lib/faq";
 import { PRICING, BASE_BENEFITS, HOUSEHOLD, fmtWon } from "../lib/config";
 import { WITHDRAWAL } from "../lib/lifecycle";
+import { TRUST, FIT_FOR, PARTNERS, PARTNERS_NOTE } from "../lib/trust";
 import { CHECKUP, CHECKUP_HEAD, CHECKUP_RULE, CHECKUP_CASE } from "../lib/checkup";
 import Icon from "../components/icons";
 import ScrollTop from "../components/ScrollTop";
@@ -100,7 +101,8 @@ export async function getStaticProps() {
 }
 
 export default function ServiceLanding({ heroArt, heroVideo }) {
-  const [openKey, setOpenKey] = useState("0-0"); // 첫 항목은 열어 둔다 — 아코디언 사용법 힌트
+  const [openKey, setOpenKey] = useState(null);
+  const [openGroup, setOpenGroup] = useState(null); // FAQ 그룹 — 전부 접어 둔다
   const monthly = fmtWon(PRICING.subscription.monthly);
   const entry = fmtWon(PRICING.entryFee.total);
 
@@ -412,6 +414,73 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
           </div>
         </Section>
 
+        {/* ── 믿을 수 있는 K-CARE ── */}
+        <Section
+          id="trust"
+          tone="navy"
+          eyebrow="믿을 수 있는 이유"
+          title="말보다 원칙으로 보여 드립니다"
+          desc="인증서를 앞세우는 대신, 저희가 매일 지키는 운영 원칙을 그대로 공개합니다. 지키지 못하면 바로 드러나는 것들입니다."
+        >
+          <div className="grid gap-3 sm:grid-cols-2">
+            {TRUST.map((t) => (
+              <div
+                key={t.no}
+                className="flex gap-4 rounded-[14px] border border-white/[.07] bg-white/[.045] px-5 py-5"
+              >
+                <div className="flex shrink-0 flex-col items-center gap-2">
+                  <span className="font-num text-[13.5px] font-bold text-gold-soft">{t.no}</span>
+                  <span className="text-gold-soft">
+                    <Icon name={t.icon} size={25} />
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-[17px] font-bold text-white">{t.k}</h3>
+                  <p className="mt-2 text-[14.5px] leading-[1.8] text-white/70">{t.v}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* ── 이런 분께 권합니다 ── */}
+        <Section
+          eyebrow="권해 드리는 경우"
+          title="이런 분께 권합니다"
+          desc="아직 스스로 지내실 수 있을 때 시작하는 편이 낫습니다. 이미 돌봄이 필요한 상태라면 요양·간병 쪽이 맞습니다."
+        >
+          <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+            {FIT_FOR.map((f) => (
+              <li
+                key={f.k}
+                className="flex items-center gap-3 rounded-[14px] border border-navy/[.08] bg-white/70 px-4 py-3.5"
+              >
+                <span className="shrink-0 text-gold">
+                  <Icon name={f.icon} size={22} />
+                </span>
+                <span className="min-w-0 text-[15.5px] font-bold leading-[1.5] text-navy">{f.k}</span>
+              </li>
+            ))}
+          </ul>
+        </Section>
+
+        {/* ── 파트너사 — 확정된 곳이 없으면 통째로 안 그린다 (lib/trust.js) ── */}
+        {PARTNERS.length > 0 && (
+          <Section tone="white" eyebrow="파트너" title="함께하는 곳" desc={PARTNERS_NOTE}>
+            <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+              {PARTNERS.map((p) => (
+                <li
+                  key={p.name}
+                  className="rounded-[14px] border border-navy/[.08] bg-paper px-4 py-4 text-center"
+                >
+                  <div className="text-[15.5px] font-bold text-navy">{p.name}</div>
+                  {p.note && <div className="mt-1 text-[13.5px] text-muted">{p.note}</div>}
+                </li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
         {/* ── FAQ ── */}
         <Section
           id="faq"
@@ -420,26 +489,49 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
           title="가족들이 실제로 물어보시는 것들"
           desc={FAQ_NOTE}
         >
-          <div className="space-y-9">
-            {FAQ.map((group, gi) => (
-              <div key={group.g}>
-                <div className="mb-1 text-[13.5px] font-bold tracking-[.14em] text-gold">{group.g}</div>
-                <div className="border-t border-navy/[.1]">
-                  {group.items.map((it, ii) => {
-                    const key = `${gi}-${ii}`;
-                    return (
-                      <FaqItem
-                        key={it.q}
-                        q={it.q}
-                        a={it.a}
-                        open={openKey === key}
-                        onToggle={() => setOpenKey((v) => (v === key ? null : key))}
-                      />
-                    );
-                  })}
+          {/* 39문항을 한 번에 펼쳐 두면 화면이 끝없이 길어져서 그 아래 내용이
+              아예 안 읽힌다. 그룹 단위로 접고 전부 닫아 둔다 — 6줄로 줄어든다. */}
+          <div className="border-t border-navy/[.1]">
+            {FAQ.map((group, gi) => {
+              const on = openGroup === gi;
+              return (
+                <div key={group.g} className="border-b border-navy/[.1]">
+                  <h3>
+                    <button
+                      onClick={() => setOpenGroup((v) => (v === gi ? null : gi))}
+                      aria-expanded={on}
+                      className="btn-press flex min-h-[52px] w-full items-center gap-3 py-3 text-left"
+                    >
+                      <span className="min-w-0 flex-1 text-[17px] font-bold text-navy">{group.g}</span>
+                      <span className="shrink-0 font-num text-[13.5px] font-bold text-muted">
+                        {group.items.length}
+                      </span>
+                      <span className={`shrink-0 text-muted transition-transform ${on ? "rotate-180" : ""}`}>
+                        <Icon name="chev" size={19} />
+                      </span>
+                    </button>
+                  </h3>
+                  <div className={`smooth-open ${on ? "is-open" : ""}`}>
+                    <div>
+                      <div className="border-t border-navy/[.07] pb-2">
+                        {group.items.map((it, ii) => {
+                          const key = `${gi}-${ii}`;
+                          return (
+                            <FaqItem
+                              key={it.q}
+                              q={it.q}
+                              a={it.a}
+                              open={openKey === key}
+                              onToggle={() => setOpenKey((v) => (v === key ? null : key))}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </Section>
 
