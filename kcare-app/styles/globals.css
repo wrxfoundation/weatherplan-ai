@@ -454,33 +454,37 @@
   z-index: 0;
   background-image: url("/hero/home.webp");
   background-size: cover;
-  background-position: 72% center;
-  opacity: .62;
+  background-position: 68% center;
+  /* 사진이 이미 아주 옅어서 더 죽이면 넣은 의미가 없다 — 거의 그대로 쓴다 */
+  opacity: .92;
 }
-/* 왼쪽 → 오른쪽으로 걷히는 페이퍼색 장막. 제목이 놓이는 구간은 거의 불투명하다 */
+/* 왼쪽 → 오른쪽으로 걷히는 페이퍼색 장막.
+   제목이 놓이는 왼쪽 절반만 확실히 덮고, 오른쪽(창·화분·탁자)은 살려 둔다. */
 .hero-bg::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 1;
   background: linear-gradient(
-    100deg,
-    #F1EFE8 0%,
-    #F1EFE8 34%,
-    rgba(241, 239, 232, .92) 48%,
-    rgba(241, 239, 232, .55) 72%,
-    rgba(241, 239, 232, .28) 100%
+    98deg,
+    rgba(241, 239, 232, .97) 0%,
+    rgba(241, 239, 232, .93) 26%,
+    rgba(241, 239, 232, .70) 45%,
+    rgba(241, 239, 232, .28) 68%,
+    rgba(241, 239, 232, .06) 100%
   );
 }
-/* 좁은 화면에서는 글자가 이미지 위로 겹치므로 더 강하게 덮는다 */
+/* 좁은 화면에서는 글자가 사진 위로 겹치므로 위에서 아래로 덮는다.
+   우하단 나무 탁자가 가장 어두운 지점이라 그쪽을 남기고 본문 구간을 가린다. */
 @media (max-width: 900px) {
-  .hero-bg::before { background-position: 82% center; opacity: .42; }
+  .hero-bg::before { background-position: 76% center; opacity: .55; }
   .hero-bg::after {
     background: linear-gradient(
-      170deg,
-      #F1EFE8 0%,
-      rgba(241, 239, 232, .96) 55%,
-      rgba(241, 239, 232, .72) 100%
+      172deg,
+      rgba(241, 239, 232, .97) 0%,
+      rgba(241, 239, 232, .93) 52%,
+      rgba(241, 239, 232, .74) 82%,
+      rgba(241, 239, 232, .55) 100%
     );
   }
 }
