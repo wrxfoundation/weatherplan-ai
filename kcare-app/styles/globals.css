@@ -450,17 +450,20 @@
    과부하다 — 디코딩이 계속 돌고 파일도 400KB 씩 붙는다.
    대신 CSS 패턴으로 결만 준다. 추가 파일 0바이트, 디코딩 0.
 
-   무엇을 그리는가: 가죽 그레인 (public/bg/leather.webp · 30KB).
+   무엇을 그리는가: 대리석 결 (public/bg/marble.webp · 23KB).
    처음에는 점 격자를 썼는데, 규칙적인 격자라 반투명 카드 밑으로 비칠 때
    줄이 어긋난 것처럼 보였다. 불규칙한 결은 카드 밑으로 비쳐도
-   "가죽 위에 반투명 판을 올린" 것으로 읽혀서 그 문제가 없다.
+   "돌 위에 반투명 판을 올린" 것으로 읽혀서 그 문제가 없다.
+   가죽 그레인 판도 만들어 뒀다 (public/bg/leather.webp) — url 만 바꾸면
+   교체된다. 다만 결 굵기가 달라 background-size 도 같이 조정해야 한다
+   (가죽 320px/.38 · 대리석 640px/.26).
 
    텍스처는 흑백이고, 남색 바탕에 soft-light 로 얹어 남색의 명도만
    오르내리게 한다 — 색상은 남색 그대로다.
 
-   640px 타일을 320px 로 줄여 깐다. 고밀도 화면에서 2배 밀도로 찍혀
-   결이 뭉개지지 않는다. 타일은 상하좌우가 이어지도록 만들었으므로
-   background-size 를 바꿔도 이음매는 안 생긴다 (다만 결 굵기가 바뀐다).
+   640px 타일을 640px 그대로 깐다 — 대리석은 맥이 길게 흘러야 돌로 읽혀서
+   가죽 그레인처럼 줄이면 잔금처럼 보인다. 타일은 상하좌우가 이어지도록
+   만들었으므로 background-size 를 바꿔도 이음매는 안 생긴다.
 
    결만 있으면 평평해 보이므로 좌상단에서 들어오는 옅은 골드 빛을 겹쳐
    깊이를 준다. 아래쪽은 살짝 눌러 글자 대비를 지킨다.                      */
@@ -471,9 +474,9 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: url("/bg/leather.webp");
-  background-size: 320px 320px;
-  opacity: .38;
+  background-image: url("/bg/marble.webp");
+  background-size: 640px 640px;
+  opacity: .26;
   mix-blend-mode: soft-light;
 }
 .sec-navy::after {
