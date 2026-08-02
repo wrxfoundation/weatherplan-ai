@@ -20,6 +20,7 @@ import {
 import { PRICING, fmtWon } from "../lib/config";
 import { needsGuardianApproval, useAppState } from "../lib/state";
 import Icon from "../components/icons";
+import Splash from "../components/Splash";
 
 // 사용자(어르신) 홈 — 핸드오프 06 elder 상세 명세 + REQ-01(우선 날씨) + REQ-06(SOS 오작동 방지)
 // 구조: 헤더(날짜·인사)·푸터(SOS·전화·탭) 고정, 카드 스택만 스크롤 (06 §1).
@@ -254,6 +255,7 @@ export default function ElderHome() {
       <Head>
         <title>어르신 홈 — K-CARE</title>
       </Head>
+      <Splash service="elder" />
       <div className="min-h-screen bg-nav">
         {/* break-keep: 한국어 어절 단위 줄바꿈 — 카피 개행(<br/>)과 병용 (06 §6) */}
         <div className="mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-4 min-[380px]:px-[22px]">

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { Avatar } from "./ui";
 import { ELDER } from "../lib/mock";
 import { useAppState } from "../lib/state";
+import Splash from "./Splash";
 
 const TABS = [
   { href: "/family", label: "홈", icon: "home" },
@@ -20,6 +21,8 @@ export default function FamilyLayout({ children, title }) {
   const role = state.demo.guardianRole || "primary";
 
   return (
+    <>
+      <Splash service="family" />
     <div className="min-h-screen bg-nav">
       <div className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-paper shadow-[0_0_60px_rgba(0,0,0,.45)]">
         <header className="sticky top-0 z-20 border-b border-navy/10 bg-paper/95 px-5 pb-3 pt-4 backdrop-blur">
@@ -86,5 +89,6 @@ export default function FamilyLayout({ children, title }) {
         </nav>
       </div>
     </div>
+    </>
   );
 }

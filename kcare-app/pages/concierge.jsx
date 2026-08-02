@@ -31,6 +31,7 @@ import {
 import { CONCIERGE_PRESETS } from "../lib/requests";
 import { fmtWon } from "../lib/config";
 import { useAppState } from "../lib/state";
+import Splash from "../components/Splash";
 
 // 컨시어지 앱 — REQ-09(동선·주소 게이팅) · REQ-10(케어박스) · REQ-11(관찰 리포트)
 // · REQ-12(감사 타임라인·영상) + 디자인 콘솔 정합 (오늘·리포트·제안·정산 4탭).
@@ -88,6 +89,7 @@ export default function ConciergePage() {
       <Head>
         <title>컨시어지 — K-CARE</title>
       </Head>
+      <Splash service="concierge" />
       <div className="min-h-screen bg-nav">
         <div className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-paper">
           <header className="sticky top-0 z-20 border-b border-navy/10 bg-paper/95 px-5 pb-3 pt-4 backdrop-blur">
