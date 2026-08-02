@@ -165,6 +165,10 @@ import {
   PLANS,
   OPTIONS_CATALOG,
   PRICING_DECISIONS,
+  PRICING_UNIT,
+  REV_DEF,
+  PROFIT_SPLIT,
+  GOVERNANCE,
   PL_KPIS,
   PL_ROWS,
   BUDGET_ALERTS,
@@ -2602,7 +2606,7 @@ export default function AdminConsole() {
               </div>
 
               <Panel className="min-w-0">
-                <PanelHead title="멤버십 플랜" right={<span className="text-[12px] text-muted">128가구 구성 · 기업 복지는 미출시</span>} />
+                <PanelHead title="확정 상품 구조" right={<span className="text-[12px] font-bold text-green">2026-08-01 방향성 회의 확정</span>} />
                 <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
                   {PLANS.map((pl) => (
                     <div key={pl.k} className="rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3">
@@ -2618,6 +2622,23 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
+              <Panel className="min-w-0">
+                <PanelHead
+                  title={PRICING_UNIT.head}
+                  right={<span className="text-[12px] text-muted">가구 1곳 · 월 기준</span>}
+                />
+                <div className="mt-3 space-y-1.5">
+                  {PRICING_UNIT.rows.map((r) => (
+                    <div key={r.k} className="flex items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2">
+                      <span className="min-w-0 flex-1 text-[13px] font-bold text-navy">{r.k}</span>
+                      <span className="shrink-0 font-num text-[15px] font-bold" style={{ color: TONE[r.tone].fg }}>{r.v}</span>
+                      <span className="hidden w-[200px] shrink-0 text-right text-[11px] text-muted sm:block">{r.note}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[12px] leading-[1.75] text-muted">{PRICING_UNIT.note}</p>
+              </Panel>
+
               <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead title="옵션 카탈로그 · 부착률" right={<span className="text-[12px] text-muted">확장은 가구 수보다 부착률</span>} />
@@ -2627,12 +2648,13 @@ export default function AdminConsole() {
                     ))}
                   </div>
                   <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                    유닛 이코노믹스상 가구당 기여이익이 얇아 옵션 부착률이 확장의 실질 지렛대입니다 — 다만 부착률을 컨시어지 평가에 넣지 않습니다 (원칙 1).
+                    기본 구독이 구조적 역마진이라 옵션 부착률은 “확장의 지렛대”가 아니라 <b className="text-navy">손익분기의 조건</b>입니다 —
+                    다만 부착률을 컨시어지 평가에 넣지는 않습니다 (원칙 1).
                   </p>
                 </Panel>
 
                 <Panel className="min-w-0">
-                  <PanelHead title="가격 결정 대기" right={<span className="text-[12px] font-bold text-danger">가입비 확정이 최우선</span>} />
+                  <PanelHead title="가격 결정 · 확정 이력" right={<span className="text-[12px] text-muted">남은 것은 유통 경로 하나</span>} />
                   <div className="mt-3 space-y-2">
                     {PRICING_DECISIONS.map((d) => (
                       <div key={d.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
@@ -2783,13 +2805,70 @@ export default function AdminConsole() {
           {/* ════ 예산 · 손익 — P&L · 예산 대비 실적 · 시나리오 ════ */}
           {tab === "pl" && (
             <div className="space-y-4">
-              <div>
-                <div className="text-[11px] font-bold tracking-[.14em] text-muted">경영 / 재무 · 손익</div>
-                <h2 className="mt-0.5 text-[17px] font-bold text-navy">예산 · 손익 (P&amp;L)</h2>
-                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
-                  자금 흐름이 현금의 이동이라면, 여기는 벌었는지 잃었는지를 봅니다 — 계획 대비 실적으로.
+              {/* ── 매출 정의 · 수익 배분 (2026-08-01 회의 확정) ── */}
+              <Panel>
+                <PanelHead
+                  title="매출의 정의 · 수익 배분"
+                  right={<span className="text-[12px] font-bold text-green">2026-08-01 방향성 회의 확정</span>}
+                />
+                <p className="mt-2 max-w-[92ch] text-[12px] leading-[1.75] text-muted">
+                  무엇을 매출로 볼지부터 못 박았습니다 — 나중에 서로 다른 숫자를 들고 오면 그때부터 오해가 시작되기 때문입니다.
+                  {" "}{REV_DEF.base}
                 </p>
-              </div>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+                  <div className="rounded-xl border border-green/25 bg-green/[.06] px-3.5 py-3">
+                    <div className="text-[12px] font-bold text-green">매출로 잡는 것</div>
+                    <div className="mt-1.5 space-y-1.5">
+                      {REV_DEF.include.map((x) => (
+                        <div key={x.k}>
+                          <span className="text-[12px] font-bold text-navy">{x.k}</span>
+                          <span className="mt-0.5 block text-[11px] leading-[1.6] text-muted">{x.body}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-danger/25 bg-danger/[.05] px-3.5 py-3">
+                    <div className="text-[12px] font-bold text-danger">매출로 잡지 않는 것</div>
+                    <div className="mt-1.5 space-y-1.5">
+                      {REV_DEF.exclude.map((x) => (
+                        <div key={x.k}>
+                          <span className="text-[12px] font-bold text-navy">{x.k}</span>
+                          <span className="mt-0.5 block text-[11px] leading-[1.6] text-muted">{x.why}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-3.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                  <div>
+                    <div className="text-[12px] font-bold text-navy">배분 구조</div>
+                    <div className="mt-1.5 space-y-1">
+                      {PROFIT_SPLIT.map((r) => (
+                        <div key={r.k} className="flex items-center gap-2 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2">
+                          <span className="shrink-0 text-[12px] font-bold" style={{ color: TONE[r.tone].fg }}>{r.k}</span>
+                          <span className="min-w-0 flex-1 text-right font-num text-[12px] font-bold text-navy">{r.v}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-2 text-[11px] leading-[1.7] text-muted">
+                      유보금 10%를 먼저 떼는 이유 — 회사에 남는 것이 있어야 다음 것을 만들 수 있기 때문입니다.
+                    </p>
+                  </div>
+                  <div>
+                    <div className="text-[12px] font-bold text-navy">운영 · 거버넌스</div>
+                    <div className="mt-1.5 space-y-1.5">
+                      {GOVERNANCE.map((g) => (
+                        <div key={g.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2">
+                          <span className="text-[12px] font-bold text-navy">{g.k}</span>
+                          <span className="mt-0.5 block text-[11px] leading-[1.6] text-muted">{g.body}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Panel>
+
               <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
                 {PL_KPIS.map((k) => (
                   <Panel key={k.k} className="!p-4">

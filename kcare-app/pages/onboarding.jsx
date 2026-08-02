@@ -236,7 +236,7 @@ export default function Onboarding() {
                     <div className="mt-3 rounded-xl bg-navy p-3.5 text-white">
                       <span className="text-[13px] opacity-75">월 구독료 </span>
                       <span className="font-num text-[22px] font-bold">
-                        {fmtWon(PRICING.subscription.tier1.monthly)}
+                        {fmtWon(PRICING.subscription.monthly)}
                       </span>
                     </div>
                   )}
@@ -381,15 +381,13 @@ export default function Onboarding() {
                   </SectionLabel>
                   <div className="mt-2 flex items-baseline gap-1.5">
                     <span className="font-num text-[34px] font-bold">
-                      {result?.tier === 2 ? "별도 산정" : fmtWon(PRICING.subscription.tier1.monthly)}
+                      {result?.tier === 2 ? "별도 산정" : fmtWon(PRICING.subscription.monthly)}
                     </span>
                     {result?.tier !== 2 && <span className="text-[13px] opacity-70">/ 월 · 1급지</span>}
                   </div>
                   <div className="mt-1.5 text-[12px] leading-[1.7] opacity-70">
-                    최초 1회 가입비 {fmtWon(PRICING.joinFee.min)}
-                    {!PRICING.joinFee.confirmed &&
-                      ` (확정 전 · 최대 ${fmtWon(PRICING.joinFee.max)})`}{" "}
-                    · 언제든 해지 가능
+                    최초 1회 진입비 {fmtWon(PRICING.entryFee.amount)} (부가세 별도 ·
+                    합계 {fmtWon(PRICING.entryFee.total)}) · 최소 약정 {PRICING.subscription.term}개월
                   </div>
                 </div>
                 <ul className="space-y-2.5 p-5">

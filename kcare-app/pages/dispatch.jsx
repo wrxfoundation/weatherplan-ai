@@ -31,6 +31,8 @@ import {
   FALL_READY,
   FALL_PLAN,
   FALL_METRICS,
+  SOS_119,
+  SOS_CONSENT,
   WEAR_CONSENT,
   HANDOFF_CHAIN,
   HANDOFF_STUCK,
@@ -1944,6 +1946,42 @@ export default function DispatchConsole() {
                   경과는 관제만 봅니다 (가족 화면 비노출).
                 </p>
               </div>
+
+              {/* ── 119 신고 프로토콜 (2026-08-01 회의 확정) ── */}
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="119 신고 프로토콜"
+                  right={<span className="text-[12px] text-muted">신고는 하되 흔적을 남긴다</span>}
+                />
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(232px, 1fr))" }}>
+                  {SOS_119.map((x) => (
+                    <div
+                      key={x.s}
+                      className="rounded-xl border px-3.5 py-3"
+                      style={{ borderColor: `${TONE[x.tone].fg}30`, background: TONE[x.tone].bg }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="font-num text-[11px] font-bold text-muted">{x.s}</span>
+                        <span className="min-w-0 flex-1 text-[13px] font-bold text-navy">{x.k}</span>
+                        <span className="shrink-0 font-num text-[10px] font-bold" style={{ color: TONE[x.tone].fg }}>{x.t}</span>
+                      </div>
+                      <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">{x.body}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 rounded-xl border border-navy/[.08] bg-white/50 p-3.5">
+                  <div className="text-[12px] font-bold text-navy">{SOS_CONSENT.head}</div>
+                  <ul className="mt-1.5 space-y-1">
+                    {SOS_CONSENT.items.map((x) => (
+                      <li key={x} className="flex gap-1.5 text-[12px] leading-[1.6] text-ink">
+                        <span className="shrink-0 text-gold">·</span>
+                        <span>{x}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-2 text-[11px] leading-[1.7] text-muted">{SOS_CONSENT.note}</p>
+                </div>
+              </Panel>
 
               {/* 현재 상황 배너 */}
               {sos ? (
