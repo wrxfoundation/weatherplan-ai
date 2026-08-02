@@ -1,11 +1,13 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
-import { FAQ, FAQ_NOTE, LANDING } from "../lib/faq";
+import { FAQ, FAQ_NOTE, LANDING, LANDING_AI_QA } from "../lib/faq";
 import { PRICING, BASE_BENEFITS, HOUSEHOLD, HERO_ART, fmtWon } from "../lib/config";
 import { WITHDRAWAL } from "../lib/lifecycle";
 import { CHECKUP, CHECKUP_HEAD, CHECKUP_RULE, CHECKUP_CASE } from "../lib/checkup";
 import Icon from "../components/icons";
+import ScrollTop from "../components/ScrollTop";
+import AiChat from "../components/AiChat";
 
 // 서비스 랜딩 — 앱이 아니라 "서비스를 파는" 화면.
 // pages/index.jsx 는 시연 허브(내부용)이고, 이 화면이 대외 얼굴이다.
@@ -166,7 +168,7 @@ export default function ServiceLanding() {
         >
           <div className="grid gap-3 sm:grid-cols-2">
             {LANDING.nots.map((n) => (
-              <div key={n.k} className="flex gap-3.5 rounded-[14px] border border-white/12 bg-white/[.05] px-5 py-4">
+              <div key={n.k} className="flex gap-3.5 rounded-[14px] border border-white/[.07] bg-white/[.045] px-5 py-4">
                 <span className="mt-0.5 shrink-0 text-gold-soft">
                   <Icon name={n.icon} size={22} />
                 </span>
@@ -436,6 +438,27 @@ export default function ServiceLanding() {
             </p>
           </div>
         </footer>
+
+        {/* 우측 하단 고정 — 위쪽에 맨 위로, 아래쪽에 AI 상담 */}
+        <ScrollTop />
+        <AiChat
+          role="guardian"
+          title="K-CARE 상담"
+          subtitle="요금 · 이용 방법 · 해지 규정"
+          qa={LANDING_AI_QA}
+          context={
+            `진입비 ${entry}(부가세 포함) · 월 ${monthly}. ` +
+            "포함: 갤럭시 Fit3, 케어박스, 최초 21항목 점검, 앱 설치, 안심방문 월 1회, " +
+            "병원 동행 연 1회, 보호자 알림·공유 캘린더, 월간 리포트, 24시간 긴급 접수. " +
+            "점검 21가지 = 몸 7 · 마음 7 · 집 7. 마음 항목은 진단하지 않고 지난달 대비 변화만 기록. " +
+            "2인 1조 예외 없음. 중도 해지 위약금 없음, 잔여분 일할 환급. 청약철회 14일. " +
+            "운영 지역: 서울 강남·송파·서초, 마포·강서 확대 중. " +
+            "부부 가구 요금은 설계 중이며 미확정. 의료행위·상시 위치추적·대리 인출은 하지 않음."
+          }
+          intro="요금, 이용 방법, 해지 규정을 물어보세요. 아래 질문을 눌러 보셔도 됩니다."
+          note="가입 상담은 별도로 담당자가 연락드립니다. 이 창은 안내용입니다."
+          evidence="공개된 요금표 · 점검 항목 · 해지 규정 범위 안에서만 답합니다."
+        />
       </div>
     </>
   );
