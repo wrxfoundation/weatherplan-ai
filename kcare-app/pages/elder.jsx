@@ -127,13 +127,15 @@ function ElderBtn({ variant = "primary", lines, className = "", children, ...pro
 }
 
 function CardHead({ title, titleColor = "#0A1F3C", right, rightColor = "#5C5A54" }) {
+  // 제목과 보조 라벨이 한 줄에 안 들어가면 보조 라벨을 아래로 내린다.
+  // 붙여 두면 좁은 화면에서 제목이 "부탁하시면 저희가 / 합니다"처럼 어색하게 끊긴다.
   return (
-    <div className="flex items-baseline justify-between gap-3">
-      <div className="text-[19px] font-bold" style={{ color: titleColor }}>
+    <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+      <div className="min-w-0 text-[19px] font-bold" style={{ color: titleColor }}>
         {title}
       </div>
       {right && (
-        <div className="text-[19px] font-medium" style={{ color: rightColor }}>
+        <div className="text-[19px] font-medium leading-[1.4]" style={{ color: rightColor }}>
           {right}
         </div>
       )}
@@ -254,7 +256,7 @@ export default function ElderHome() {
       </Head>
       <div className="min-h-screen bg-nav">
         {/* break-keep: 한국어 어절 단위 줄바꿈 — 카피 개행(<br/>)과 병용 (06 §6) */}
-        <div className="mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-[22px]">
+        <div className="mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-4 min-[380px]:px-[22px]">
           {/* ── 고정 헤더: 날짜 · 인사 ── */}
           <header className="shrink-0 pt-6">
             <div className="flex items-center justify-between">
@@ -288,7 +290,7 @@ export default function ElderHome() {
           {/* ── 카드 스택 (유일한 스크롤 영역) ── */}
           <main
             ref={scrollRef}
-            className="mt-4 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto pb-2"
+            className="elder-scroll mt-4 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto pb-6"
           >
             {/* order 0 · 오늘 찾아뵙는 분 — 방문 사기 방어. 유일한 2px 테두리 */}
             <ElderCard
@@ -652,21 +654,24 @@ export default function ElderHome() {
                           setAskSent(null);
                           setAskSel(on ? null : a);
                         }}
-                        className="btn-press flex w-full items-center gap-3 text-left"
+                        className="btn-press flex w-full items-start gap-3 text-left"
                         style={{ ...SUB_CARD, outline: on ? "3px solid #B08D57" : "none" }}
                       >
                         <span
-                          className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
+                          className="mt-[2px] flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
                           style={{ background: on ? "#1E7A5A" : "rgba(10,31,60,.08)", color: on ? "#fff" : "transparent" }}
                         >
                           ✓
                         </span>
+                        {/* 이름은 한 줄을 다 쓰고, 금액은 아래로 — 좁은 화면에서 이름이 어색하게 끊기지 않게 */}
                         <span className="min-w-0 flex-1">
                           <span className="block text-[19px] font-bold leading-[1.35] text-ink">{a.name}</span>
-                          <span className="block text-[17px] leading-[1.35] text-muted">{a.note}</span>
-                        </span>
-                        <span className="shrink-0 font-num text-[18px] font-bold text-navy">
-                          {a.est === 0 ? "무료" : fmtWon(a.est)}
+                          <span className="mt-0.5 flex flex-wrap items-baseline gap-x-2">
+                            <span className="font-num text-[18px] font-bold text-navy">
+                              {a.est === 0 ? "무료" : fmtWon(a.est)}
+                            </span>
+                            <span className="text-[17px] leading-[1.35] text-muted">{a.note}</span>
+                          </span>
                         </span>
                       </button>
                     );
@@ -1235,7 +1240,7 @@ function VoiceRecorder({ to, onPick, onSend, sent }) {
 
   return (
     <>
-      <div className="mt-2 grid grid-cols-2 gap-2.5">
+      <div className="mt-2 grid grid-cols-1 gap-2.5 min-[400px]:grid-cols-2">
         {VOICE_TO.map((v) => {
           const on = to?.id === v.id;
           return (
