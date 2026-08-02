@@ -450,12 +450,19 @@
    과부하다 — 디코딩이 계속 돌고 파일도 400KB 씩 붙는다.
    대신 CSS 패턴으로 결만 준다. 추가 파일 0바이트, 디코딩 0.
 
-   무엇을 그리는가: 22px 간격의 아주 작은 골드 점 격자.
-   "매달 같은 자리를 같은 기준으로 짚는다"는 서비스 성격을 결로 옮긴 것이다.
-   사선 해칭은 시선이 한쪽으로 끌리고, 굵은 격자는 표 계산지처럼 보이고,
-   파형은 반복 이음매가 띠로 드러나서 전부 접었다.
+   무엇을 그리는가: 가죽 그레인 (public/bg/leather.webp · 30KB).
+   처음에는 점 격자를 썼는데, 규칙적인 격자라 반투명 카드 밑으로 비칠 때
+   줄이 어긋난 것처럼 보였다. 불규칙한 결은 카드 밑으로 비쳐도
+   "가죽 위에 반투명 판을 올린" 것으로 읽혀서 그 문제가 없다.
 
-   점만 있으면 평평해 보이므로 좌상단에서 들어오는 옅은 골드 빛을 겹쳐
+   텍스처는 흑백이고, 남색 바탕에 soft-light 로 얹어 남색의 명도만
+   오르내리게 한다 — 색상은 남색 그대로다.
+
+   640px 타일을 320px 로 줄여 깐다. 고밀도 화면에서 2배 밀도로 찍혀
+   결이 뭉개지지 않는다. 타일은 상하좌우가 이어지도록 만들었으므로
+   background-size 를 바꿔도 이음매는 안 생긴다 (다만 결 굵기가 바뀐다).
+
+   결만 있으면 평평해 보이므로 좌상단에서 들어오는 옅은 골드 빛을 겹쳐
    깊이를 준다. 아래쪽은 살짝 눌러 글자 대비를 지킨다.                      */
 .sec-navy { position: relative; overflow: hidden; }
 .sec-navy > * { position: relative; z-index: 2; }
@@ -464,12 +471,10 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image:
-    /* 미세 점 격자 — 1px 점이 22px 마다 */
-    radial-gradient(rgba(201, 164, 107, .18) 1px, transparent 1.2px),
-    /* 좌상단 골드 빛 — 격자가 평평해 보이지 않게 */
-    radial-gradient(112% 82% at 18% -12%, rgba(201, 164, 107, .13) 0%, transparent 62%);
-  background-size: 22px 22px, 100% 100%;
+  background-image: url("/bg/leather.webp");
+  background-size: 320px 320px;
+  opacity: .38;
+  mix-blend-mode: soft-light;
 }
 .sec-navy::after {
   content: "";
@@ -477,7 +482,9 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(10, 31, 60, 0) 0%, rgba(10, 31, 60, .30) 100%);
+  background:
+    radial-gradient(112% 82% at 18% -12%, rgba(201, 164, 107, .12) 0%, transparent 62%),
+    linear-gradient(180deg, rgba(10, 31, 60, 0) 0%, rgba(10, 31, 60, .30) 100%);
 }
 
 /* 히어로 안의 카드만 바닥을 올린다.
