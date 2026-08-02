@@ -440,3 +440,47 @@
 @media (prefers-reduced-motion: reduce) {
   .kc-splash, .kc-splash-in > *, .kc-seal-ring, .kc-foot { animation: none; transition: none; }
 }
+
+/* ── 서비스 랜딩 히어로 배경 (pages/service.jsx) ──────────────────────────
+   public/hero/home.webp 를 넣으면 켜지고, 없으면 배경 없이 그대로 나온다.
+   왼쪽은 제목 자리이므로 페이퍼색으로 덮어 가독성을 먼저 지킨다.          */
+.hero-bg { position: relative; overflow: hidden; }
+.hero-bg > * { position: relative; z-index: 2; }
+
+.hero-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/hero/home.webp");
+  background-size: cover;
+  background-position: 72% center;
+  opacity: .62;
+}
+/* 왼쪽 → 오른쪽으로 걷히는 페이퍼색 장막. 제목이 놓이는 구간은 거의 불투명하다 */
+.hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    100deg,
+    #F1EFE8 0%,
+    #F1EFE8 34%,
+    rgba(241, 239, 232, .92) 48%,
+    rgba(241, 239, 232, .55) 72%,
+    rgba(241, 239, 232, .28) 100%
+  );
+}
+/* 좁은 화면에서는 글자가 이미지 위로 겹치므로 더 강하게 덮는다 */
+@media (max-width: 900px) {
+  .hero-bg::before { background-position: 82% center; opacity: .42; }
+  .hero-bg::after {
+    background: linear-gradient(
+      170deg,
+      #F1EFE8 0%,
+      rgba(241, 239, 232, .96) 55%,
+      rgba(241, 239, 232, .72) 100%
+    );
+  }
+}

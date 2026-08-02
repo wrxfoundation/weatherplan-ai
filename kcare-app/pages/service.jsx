@@ -2,7 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import { FAQ, FAQ_NOTE, LANDING } from "../lib/faq";
-import { PRICING, BASE_BENEFITS, HOUSEHOLD, fmtWon } from "../lib/config";
+import { PRICING, BASE_BENEFITS, HOUSEHOLD, HERO_ART, fmtWon } from "../lib/config";
 import { WITHDRAWAL } from "../lib/lifecycle";
 import { CHECKUP, CHECKUP_HEAD, CHECKUP_RULE, CHECKUP_CASE } from "../lib/checkup";
 import Icon from "../components/icons";
@@ -110,7 +110,9 @@ export default function ServiceLanding() {
         </header>
 
         {/* ── 히어로 ── */}
-        <section className="px-5 pb-14 pt-12 sm:pb-20 sm:pt-20">
+        {/* 배경 이미지는 lib/config.js 의 HERO_ART 로 켠다 — 파일을 넣기 전에는
+            CSS 가 이미지를 요청하지 않아 콘솔에 404가 남지 않는다 */}
+        <section className={`${HERO_ART ? "hero-bg " : ""}px-5 pb-14 pt-12 sm:pb-20 sm:pt-20`}>
           <div className="mx-auto w-full max-w-[880px]">
             <div className="font-num text-[11px] font-bold tracking-[.2em] text-gold">{LANDING.eyebrow}</div>
             <h1 className="mt-4 text-[31px] font-black leading-[1.32] text-navy sm:text-[44px]">
@@ -143,6 +145,9 @@ export default function ServiceLanding() {
             <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {LANDING.proof.map((p) => (
                 <div key={p.k} className="card-glass rounded-[14px] px-4 py-4">
+                  <span className="mb-2 inline-block text-gold">
+                    <Icon name={p.icon} size={20} />
+                  </span>
                   <div className="font-num text-[19px] font-bold text-navy">{p.k}</div>
                   <div className="mt-0.5 text-[12px] font-bold text-gold">{p.v}</div>
                   <div className="mt-2 text-[11px] leading-[1.65] text-muted">{p.note}</div>
@@ -161,9 +166,14 @@ export default function ServiceLanding() {
         >
           <div className="grid gap-3 sm:grid-cols-2">
             {LANDING.nots.map((n) => (
-              <div key={n.k} className="rounded-[14px] border border-white/12 bg-white/[.05] px-5 py-4">
-                <div className="text-[15px] font-bold text-white">{n.k}</div>
-                <div className="mt-2 text-[13px] leading-[1.8] text-white/65">{n.v}</div>
+              <div key={n.k} className="flex gap-3.5 rounded-[14px] border border-white/12 bg-white/[.05] px-5 py-4">
+                <span className="mt-0.5 shrink-0 text-gold-soft">
+                  <Icon name={n.icon} size={22} />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-[15px] font-bold text-white">{n.k}</div>
+                  <div className="mt-2 text-[13px] leading-[1.8] text-white/65">{n.v}</div>
+                </div>
               </div>
             ))}
           </div>
@@ -183,7 +193,12 @@ export default function ServiceLanding() {
                   {s.n}
                 </span>
                 <div className="min-w-0">
-                  <div className="text-[15px] font-bold text-navy">{s.k}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gold">
+                      <Icon name={s.icon} size={18} />
+                    </span>
+                    <span className="text-[15px] font-bold text-navy">{s.k}</span>
+                  </div>
                   <div className="mt-1.5 text-[13px] leading-[1.8] text-muted">{s.d}</div>
                 </div>
               </li>
@@ -211,9 +226,10 @@ export default function ServiceLanding() {
                   <div className="flex items-baseline gap-2">
                     {/* 축 이름이 한 글자(몸·집)와 두 글자(마음)로 갈리므로 고정 원이 아니라 알약 */}
                     <span
-                      className="inline-flex h-[26px] items-center justify-center whitespace-nowrap rounded-full px-3 text-[13px] font-bold text-white"
+                      className="inline-flex h-[27px] items-center justify-center gap-1.5 whitespace-nowrap rounded-full pl-2.5 pr-3 text-[13px] font-bold text-white"
                       style={{ background: c }}
                     >
+                      <Icon name={col.icon} size={15} />
                       {col.axis}
                     </span>
                     <span className="font-num text-[12px] font-bold text-muted">{col.items.length}가지</span>

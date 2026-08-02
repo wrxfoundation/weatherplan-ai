@@ -106,5 +106,9 @@ export const AI_CONFIG = {
   maxTokens: 900,
 };
 
+// 히어로 배경 이미지 스위치 — public/hero/home.webp 를 넣은 뒤 true 로 바꾼다.
+// false 인 동안에는 CSS 가 이미지를 아예 요청하지 않는다 (시연 중 콘솔에 404가 남지 않게).
+export const HERO_ART = false;
+
 export const fmtWon = (n) =>
   n == null ? "별도 산정" : `${new Intl.NumberFormat("ko-KR").format(n)}원`;

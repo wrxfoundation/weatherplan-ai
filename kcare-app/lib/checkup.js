@@ -25,6 +25,7 @@ export const CHECKUP_HEAD = {
 export const CHECKUP = [
   {
     axis: "몸",
+    icon: "activity",
     tone: "green",
     note: "측정할 수 있는 것은 측정하고, 나머지는 본 것을 적습니다.",
     items: [
@@ -39,6 +40,7 @@ export const CHECKUP = [
   },
   {
     axis: "마음",
+    icon: "heart",
     tone: "gold",
     note: "진단하지 않습니다. 지난달과 다른지만 적습니다.",
     // 이 축이 이번에 새로 세운 부분
@@ -54,6 +56,7 @@ export const CHECKUP = [
   },
   {
     axis: "집",
+    icon: "home",
     tone: "navy",
     note: "사는 공간이 그 사람의 상태를 말해 줍니다. 두 분이 계셔도 집은 함께 봅니다.",
     items: [
