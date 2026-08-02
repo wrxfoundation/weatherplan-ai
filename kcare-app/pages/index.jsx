@@ -11,7 +11,7 @@ const T = {
     // 슬로건은 예방·변화 감지로 확립 — 병원 동행은 연 1회 포함분이라
     // 간판으로 걸면 서비스의 무게중심(매월 안심방문 + 생활 요청)을 가린다.
     h1: "부모님의 작은 변화를,\n가장 먼저 알아채는 사람",
-    sub: "간병이 아니라 그 앞의 시간입니다. 매월 같은 사람이 같은 기준으로 21항목을 보고, 지난달과 달라진 점을 기록합니다. 2인 1조 · 24시간 관제 · 자녀가 결제하고 부모가 받는 구독 멤버십.",
+    sub: "몸만이 아니라 마음도 봅니다. 매월 같은 사람이 같은 기준으로 몸·마음·집 21항목을 보고, 지난달과 달라진 점을 기록합니다. 말수가 줄고 외출이 없어지는 것이 혈압보다 먼저 오기 때문입니다. 2인 1조 · 24시간 관제 · 구독 멤버십.",
     demoState: "DEMO 상태",
     idle: "대기 — 시연 준비 완료",
     reset: "↺ 시연 초기화",
@@ -37,7 +37,7 @@ const T = {
   },
   en: {
     h1: "The first to notice\nthe small changes",
-    sub: "Not nursing care — the time before it. The same person visits every month, checks the same 21 items, and records what changed since last month. Two-person teams · 24/7 dispatch · adult children pay, parents receive.",
+    sub: "We watch the mind as closely as the body. The same person visits every month, checks the same 21 items across body, mind and home, and records what changed — because fewer words and fewer outings come long before blood pressure does. Two-person teams · 24/7 dispatch · subscription membership.",
     demoState: "DEMO STATE",
     idle: "Idle — ready to present",
     reset: "↺ Reset demo",

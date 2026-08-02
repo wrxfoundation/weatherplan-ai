@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FAQ, FAQ_NOTE, LANDING } from "../lib/faq";
 import { PRICING, BASE_BENEFITS, fmtWon } from "../lib/config";
 import { WITHDRAWAL } from "../lib/lifecycle";
+import { CHECKUP, CHECKUP_HEAD, CHECKUP_RULE, CHECKUP_CASE } from "../lib/checkup";
 import Icon from "../components/icons";
 
 // 서비스 랜딩 — 앱이 아니라 "서비스를 파는" 화면.
@@ -89,6 +90,9 @@ export default function ServiceLanding() {
           <div className="mx-auto flex w-full max-w-[880px] items-center justify-between px-5 py-3.5">
             <span className="font-num text-[15px] font-bold tracking-[.16em] text-navy">K-CARE</span>
             <nav className="flex items-center gap-1.5">
+              <a href="#checkup" className="btn-press rounded-lg px-2.5 py-1.5 text-[13px] font-bold text-muted">
+                점검 항목
+              </a>
               <a href="#pricing" className="btn-press rounded-lg px-2.5 py-1.5 text-[13px] font-bold text-muted">
                 요금
               </a>
@@ -181,6 +185,75 @@ export default function ServiceLanding() {
               </li>
             ))}
           </ol>
+        </Section>
+
+
+        {/* ── 21항목 — "무엇을 보는가"의 실체 ── */}
+        <Section
+          id="checkup"
+          eyebrow="점검 항목"
+          title={CHECKUP_HEAD.title}
+          desc={CHECKUP_HEAD.desc}
+        >
+          <p className="-mt-3 mb-6 max-w-[640px] break-keep rounded-[14px] border border-gold/25 bg-gold/[.07] px-5 py-4 text-[14px] leading-[1.9] text-ink">
+            {CHECKUP_HEAD.key}
+          </p>
+
+          <div className="grid gap-3.5 lg:grid-cols-3">
+            {CHECKUP.map((col) => {
+              const c = col.tone === "green" ? "#1E7A5A" : col.tone === "gold" ? "#B08D57" : "#0A1F3C";
+              return (
+                <div key={col.axis} className="card-glass rounded-[16px] px-5 py-5">
+                  <div className="flex items-baseline gap-2">
+                    {/* 축 이름이 한 글자(몸·집)와 두 글자(마음)로 갈리므로 고정 원이 아니라 알약 */}
+                    <span
+                      className="inline-flex h-[26px] items-center justify-center whitespace-nowrap rounded-full px-3 text-[13px] font-bold text-white"
+                      style={{ background: c }}
+                    >
+                      {col.axis}
+                    </span>
+                    <span className="font-num text-[12px] font-bold text-muted">{col.items.length}가지</span>
+                  </div>
+                  <p className="mt-2.5 text-[12px] leading-[1.7] text-muted">{col.note}</p>
+                  <ul className="mt-3 space-y-2.5">
+                    {col.items.map((it) => (
+                      <li key={it.k} className="border-t border-navy/[.07] pt-2.5">
+                        <div className="text-[13.5px] font-bold text-navy">{it.k}</div>
+                        <div className="mt-0.5 text-[12px] leading-[1.6] text-ink">{it.w}</div>
+                        <div className="mt-1 text-[11px] leading-[1.6] text-muted">{it.why}</div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* 기록 원칙 — 진단하지 않는다는 선을 여기서 명확히 */}
+          <div className="mt-4 rounded-[16px] border border-navy/[.1] bg-white/60 px-5 py-5">
+            <div className="text-[15px] font-bold text-navy">기록하는 방식</div>
+            <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+              {CHECKUP_RULE.map((r) => (
+                <div key={r.k} className="rounded-[12px] border border-navy/[.07] bg-paper/50 px-4 py-3">
+                  <div className="text-[13px] font-bold text-navy">{r.k}</div>
+                  <div className="mt-1.5 text-[12px] leading-[1.75] text-muted">{r.v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 사례 — 원칙보다 이 한 편이 설득력이 크다 */}
+          <div className="mt-4 rounded-[16px] border border-navy/[.1] bg-white/60 px-5 py-5">
+            <div className="flex flex-wrap items-baseline gap-2">
+              <h3 className="text-[15px] font-bold text-navy">{CHECKUP_CASE.title}</h3>
+              <span className="rounded-full border border-navy/15 px-2 py-0.5 text-[10px] font-bold text-muted">
+                {CHECKUP_CASE.tag}
+              </span>
+            </div>
+            <p className="mt-2.5 max-w-[680px] whitespace-pre-line break-keep text-[13.5px] leading-[1.95] text-ink">
+              {CHECKUP_CASE.body}
+            </p>
+          </div>
         </Section>
 
         {/* ── 요금 ── */}
