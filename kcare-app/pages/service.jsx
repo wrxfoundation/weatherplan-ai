@@ -14,6 +14,11 @@ import AiChat from "../components/AiChat";
 //
 // 구성 원칙: 자랑을 앞에 두지 않고 "무엇을 하지 않는가"를 위쪽에 둔다.
 // 시니어 케어에서 가족이 가장 먼저 확인하려는 것은 능력이 아니라 경계다.
+//
+// 활자 크기: 이 화면만 기본보다 12% 크다 (0.5px 단위 반올림).
+// 콘솔·앱은 정보 밀도가 우선이지만 이 화면은 처음 보는 사람이 읽는 곳이라
+// 밀도보다 읽히는 것이 먼저다. 값이 13.5px 처럼 어중간한 이유가 이것이다.
+// 아이콘 크기도 같은 비율로 키웠다 — 글자만 키우면 아이콘이 상대적으로 작아 보인다.
 
 const NAVY = "#0A1F3C";
 
@@ -23,17 +28,17 @@ function Section({ id, eyebrow, title, desc, children, tone = "paper" }) {
     <section id={id} className={`${bg} px-5 py-14 sm:py-20`}>
       <div className="mx-auto w-full max-w-[880px]">
         {eyebrow && (
-          <div className={`font-num text-[11px] font-bold tracking-[.2em] ${tone === "navy" ? "text-gold-soft" : "text-gold"}`}>
+          <div className={`font-num text-[12.5px] font-bold tracking-[.2em] ${tone === "navy" ? "text-gold-soft" : "text-gold"}`}>
             {eyebrow}
           </div>
         )}
         {title && (
-          <h2 className={`mt-2.5 break-keep text-[25px] font-black leading-[1.35] sm:text-[31px] ${tone === "navy" ? "text-white" : "text-navy"}`}>
+          <h2 className={`mt-2.5 break-keep text-[28px] font-black leading-[1.35] sm:text-[34.5px] ${tone === "navy" ? "text-white" : "text-navy"}`}>
             {title}
           </h2>
         )}
         {desc && (
-          <p className={`mt-3.5 max-w-[640px] break-keep text-[15px] leading-[1.85] ${tone === "navy" ? "text-white/70" : "text-muted"}`}>
+          <p className={`mt-3.5 max-w-[640px] break-keep text-[17px] leading-[1.85] ${tone === "navy" ? "text-white/70" : "text-muted"}`}>
             {desc}
           </p>
         )}
@@ -52,18 +57,18 @@ function FaqItem({ q, a, open, onToggle }) {
           aria-expanded={open}
           className="btn-press flex w-full items-start gap-3 py-4 text-left"
         >
-          <span className="mt-[3px] shrink-0 font-num text-[13px] font-bold text-gold">Q</span>
-          <span className="min-w-0 flex-1 break-keep text-[15px] font-bold leading-[1.6] text-navy">{q}</span>
+          <span className="mt-[3px] shrink-0 font-num text-[14.5px] font-bold text-gold">Q</span>
+          <span className="min-w-0 flex-1 break-keep text-[17px] font-bold leading-[1.6] text-navy">{q}</span>
           <span className={`mt-0.5 shrink-0 text-muted transition-transform ${open ? "rotate-180" : ""}`}>
-            <Icon name="chev" size={17} />
+            <Icon name="chev" size={19} />
           </span>
         </button>
       </h3>
       <div className={`smooth-open ${open ? "is-open" : ""}`}>
         <div>
           <div className="flex gap-3 pb-5">
-            <span className="mt-[2px] shrink-0 font-num text-[13px] font-bold text-navy/25">A</span>
-            <p className="min-w-0 flex-1 whitespace-pre-line break-keep text-[14px] leading-[1.9] text-ink">{a}</p>
+            <span className="mt-[2px] shrink-0 font-num text-[14.5px] font-bold text-navy/25">A</span>
+            <p className="min-w-0 flex-1 whitespace-pre-line break-keep text-[15.5px] leading-[1.9] text-ink">{a}</p>
           </div>
         </div>
       </div>
@@ -100,20 +105,24 @@ export default function ServiceLanding({ heroArt }) {
         {/* ── 상단 바 ── */}
         <header className="sticky top-0 z-40 border-b border-navy/[.08] bg-paper/92 backdrop-blur">
           <div className="mx-auto flex w-full max-w-[880px] items-center justify-between px-5 py-3.5">
-            <span className="font-num text-[15px] font-bold tracking-[.16em] text-navy">K-CARE</span>
+            <span className="whitespace-nowrap font-num text-[17px] font-bold tracking-[.16em] text-navy">
+              K-CARE
+            </span>
+            {/* 좁은 화면에서는 구간 링크를 숨긴다 — 어차피 스크롤로 닿는 곳이고,
+                로고와 CTA 까지 줄바꿈되면 상단바가 무너진다 (활자 12% 확대 이후 확인) */}
             <nav className="flex items-center gap-1.5">
-              <a href="#checkup" className="btn-press rounded-lg px-2.5 py-1.5 text-[13px] font-bold text-muted">
+              <a href="#checkup" className="btn-press hidden whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[14.5px] font-bold text-muted sm:inline-block">
                 점검 항목
               </a>
-              <a href="#pricing" className="btn-press rounded-lg px-2.5 py-1.5 text-[13px] font-bold text-muted">
+              <a href="#pricing" className="btn-press hidden whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[14.5px] font-bold text-muted sm:inline-block">
                 요금
               </a>
-              <a href="#faq" className="btn-press rounded-lg px-2.5 py-1.5 text-[13px] font-bold text-muted">
+              <a href="#faq" className="btn-press hidden whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[14.5px] font-bold text-muted md:inline-block">
                 자주 묻는 질문
               </a>
               <Link
                 href="/onboarding"
-                className="btn-press rounded-xl bg-navy px-3.5 py-2 text-[13px] font-bold text-white"
+                className="btn-press whitespace-nowrap rounded-xl bg-navy px-3.5 py-2 text-[14.5px] font-bold text-white"
               >
                 가입 상담
               </Link>
@@ -125,28 +134,28 @@ export default function ServiceLanding({ heroArt }) {
         {/* public/hero/home.webp 가 있으면 배경이 켜진다 (getStaticProps 에서 확인) */}
         <section className={`${heroArt ? "hero-bg " : ""}px-5 pb-14 pt-12 sm:pb-20 sm:pt-20`}>
           <div className="mx-auto w-full max-w-[880px]">
-            <div className="font-num text-[11px] font-bold tracking-[.2em] text-gold">{LANDING.eyebrow}</div>
-            <h1 className="mt-4 text-[31px] font-black leading-[1.32] text-navy sm:text-[44px]">
+            <div className="font-num text-[12.5px] font-bold tracking-[.2em] text-gold">{LANDING.eyebrow}</div>
+            <h1 className="mt-4 text-[34.5px] font-black leading-[1.32] text-navy sm:text-[49.5px]">
               {LANDING.h1[0]}
               <br />
               {LANDING.h1[1]}
             </h1>
-            <p className="mt-5 max-w-[560px] text-[16px] leading-[1.85] text-muted sm:text-[17px]">{LANDING.sub}</p>
+            <p className="mt-5 max-w-[560px] text-[18px] leading-[1.85] text-muted sm:text-[19px]">{LANDING.sub}</p>
             {/* 정체를 못 박는 한 줄 — 간병·요양으로 오해되면 가격 저항이 바로 생긴다 */}
-            <p className="mt-4 inline-block rounded-full border border-gold/35 bg-gold/[.08] px-4 py-1.5 text-[13px] font-bold text-amber">
+            <p className="mt-4 inline-block rounded-full border border-gold/35 bg-gold/[.08] px-4 py-1.5 text-[14.5px] font-bold text-amber">
               {LANDING.kicker}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-2.5">
               <Link
                 href="/onboarding"
-                className="btn-press rounded-xl bg-navy px-6 py-3.5 text-[15px] font-bold text-white"
+                className="btn-press rounded-xl bg-navy px-6 py-3.5 text-[17px] font-bold text-white"
               >
                 가입 상담 신청
               </Link>
               <a
                 href="#pricing"
-                className="btn-press rounded-xl border border-navy/20 bg-white/70 px-6 py-3.5 text-[15px] font-bold text-navy"
+                className="btn-press rounded-xl border border-navy/20 bg-white/70 px-6 py-3.5 text-[17px] font-bold text-navy"
               >
                 요금 보기
               </a>
@@ -157,11 +166,11 @@ export default function ServiceLanding({ heroArt }) {
               {LANDING.proof.map((p) => (
                 <div key={p.k} className="card-glass rounded-[14px] px-4 py-4">
                   <span className="mb-2 inline-block text-gold">
-                    <Icon name={p.icon} size={20} />
+                    <Icon name={p.icon} size={22} />
                   </span>
-                  <div className="font-num text-[19px] font-bold text-navy">{p.k}</div>
-                  <div className="mt-0.5 text-[12px] font-bold text-gold">{p.v}</div>
-                  <div className="mt-2 text-[11px] leading-[1.65] text-muted">{p.note}</div>
+                  <div className="font-num text-[21.5px] font-bold text-navy">{p.k}</div>
+                  <div className="mt-0.5 text-[13.5px] font-bold text-gold">{p.v}</div>
+                  <div className="mt-2 text-[12.5px] leading-[1.65] text-muted">{p.note}</div>
                 </div>
               ))}
             </div>
@@ -179,11 +188,11 @@ export default function ServiceLanding({ heroArt }) {
             {LANDING.nots.map((n) => (
               <div key={n.k} className="flex gap-3.5 rounded-[14px] border border-white/[.07] bg-white/[.045] px-5 py-4">
                 <span className="mt-0.5 shrink-0 text-gold-soft">
-                  <Icon name={n.icon} size={22} />
+                  <Icon name={n.icon} size={25} />
                 </span>
                 <div className="min-w-0">
-                  <div className="text-[15px] font-bold text-white">{n.k}</div>
-                  <div className="mt-2 text-[13px] leading-[1.8] text-white/65">{n.v}</div>
+                  <div className="text-[17px] font-bold text-white">{n.k}</div>
+                  <div className="mt-2 text-[14.5px] leading-[1.8] text-white/65">{n.v}</div>
                 </div>
               </div>
             ))}
@@ -200,17 +209,17 @@ export default function ServiceLanding({ heroArt }) {
           <ol className="grid gap-3 sm:grid-cols-2">
             {LANDING.steps.map((s) => (
               <li key={s.n} className="flex gap-3.5 rounded-[14px] border border-navy/[.09] bg-paper/60 px-5 py-4">
-                <span className="flex h-[27px] w-[27px] shrink-0 items-center justify-center rounded-full bg-navy font-num text-[13px] font-bold text-white">
+                <span className="flex h-[27px] w-[27px] shrink-0 items-center justify-center rounded-full bg-navy font-num text-[14.5px] font-bold text-white">
                   {s.n}
                 </span>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-gold">
-                      <Icon name={s.icon} size={18} />
+                      <Icon name={s.icon} size={20} />
                     </span>
-                    <span className="text-[15px] font-bold text-navy">{s.k}</span>
+                    <span className="text-[17px] font-bold text-navy">{s.k}</span>
                   </div>
-                  <div className="mt-1.5 text-[13px] leading-[1.8] text-muted">{s.d}</div>
+                  <div className="mt-1.5 text-[14.5px] leading-[1.8] text-muted">{s.d}</div>
                 </div>
               </li>
             ))}
@@ -225,7 +234,7 @@ export default function ServiceLanding({ heroArt }) {
           title={CHECKUP_HEAD.title}
           desc={CHECKUP_HEAD.desc}
         >
-          <p className="-mt-3 mb-6 max-w-[640px] break-keep rounded-[14px] border border-gold/25 bg-gold/[.07] px-5 py-4 text-[14px] leading-[1.9] text-ink">
+          <p className="-mt-3 mb-6 max-w-[640px] break-keep rounded-[14px] border border-gold/25 bg-gold/[.07] px-5 py-4 text-[15.5px] leading-[1.9] text-ink">
             {CHECKUP_HEAD.key}
           </p>
 
@@ -237,21 +246,21 @@ export default function ServiceLanding({ heroArt }) {
                   <div className="flex items-baseline gap-2">
                     {/* 축 이름이 한 글자(몸·집)와 두 글자(마음)로 갈리므로 고정 원이 아니라 알약 */}
                     <span
-                      className="inline-flex h-[27px] items-center justify-center gap-1.5 whitespace-nowrap rounded-full pl-2.5 pr-3 text-[13px] font-bold text-white"
+                      className="inline-flex h-[27px] items-center justify-center gap-1.5 whitespace-nowrap rounded-full pl-2.5 pr-3 text-[14.5px] font-bold text-white"
                       style={{ background: c }}
                     >
-                      <Icon name={col.icon} size={15} />
+                      <Icon name={col.icon} size={17} />
                       {col.axis}
                     </span>
-                    <span className="font-num text-[12px] font-bold text-muted">{col.items.length}가지</span>
+                    <span className="font-num text-[13.5px] font-bold text-muted">{col.items.length}가지</span>
                   </div>
-                  <p className="mt-2.5 text-[12px] leading-[1.7] text-muted">{col.note}</p>
+                  <p className="mt-2.5 text-[13.5px] leading-[1.7] text-muted">{col.note}</p>
                   <ul className="mt-3 space-y-2.5">
                     {col.items.map((it) => (
                       <li key={it.k} className="border-t border-navy/[.07] pt-2.5">
-                        <div className="text-[13.5px] font-bold text-navy">{it.k}</div>
-                        <div className="mt-0.5 text-[12px] leading-[1.6] text-ink">{it.w}</div>
-                        <div className="mt-1 text-[11px] leading-[1.6] text-muted">{it.why}</div>
+                        <div className="text-[15px] font-bold text-navy">{it.k}</div>
+                        <div className="mt-0.5 text-[13.5px] leading-[1.6] text-ink">{it.w}</div>
+                        <div className="mt-1 text-[12.5px] leading-[1.6] text-muted">{it.why}</div>
                       </li>
                     ))}
                   </ul>
@@ -262,12 +271,12 @@ export default function ServiceLanding({ heroArt }) {
 
           {/* 기록 원칙 — 진단하지 않는다는 선을 여기서 명확히 */}
           <div className="mt-4 rounded-[16px] border border-navy/[.1] bg-white/60 px-5 py-5">
-            <div className="text-[15px] font-bold text-navy">기록하는 방식</div>
+            <div className="text-[17px] font-bold text-navy">기록하는 방식</div>
             <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
               {CHECKUP_RULE.map((r) => (
                 <div key={r.k} className="rounded-[12px] border border-navy/[.07] bg-paper/50 px-4 py-3">
-                  <div className="text-[13px] font-bold text-navy">{r.k}</div>
-                  <div className="mt-1.5 text-[12px] leading-[1.75] text-muted">{r.v}</div>
+                  <div className="text-[14.5px] font-bold text-navy">{r.k}</div>
+                  <div className="mt-1.5 text-[13.5px] leading-[1.75] text-muted">{r.v}</div>
                 </div>
               ))}
             </div>
@@ -276,12 +285,12 @@ export default function ServiceLanding({ heroArt }) {
           {/* 사례 — 원칙보다 이 한 편이 설득력이 크다 */}
           <div className="mt-4 rounded-[16px] border border-navy/[.1] bg-white/60 px-5 py-5">
             <div className="flex flex-wrap items-baseline gap-2">
-              <h3 className="text-[15px] font-bold text-navy">{CHECKUP_CASE.title}</h3>
-              <span className="rounded-full border border-navy/15 px-2 py-0.5 text-[10px] font-bold text-muted">
+              <h3 className="text-[17px] font-bold text-navy">{CHECKUP_CASE.title}</h3>
+              <span className="rounded-full border border-navy/15 px-2 py-0.5 text-[11px] font-bold text-muted">
                 {CHECKUP_CASE.tag}
               </span>
             </div>
-            <p className="mt-2.5 max-w-[680px] whitespace-pre-line break-keep text-[13.5px] leading-[1.95] text-ink">
+            <p className="mt-2.5 max-w-[680px] whitespace-pre-line break-keep text-[15px] leading-[1.95] text-ink">
               {CHECKUP_CASE.body}
             </p>
           </div>
@@ -296,11 +305,11 @@ export default function ServiceLanding({ heroArt }) {
         >
           <div className="grid gap-3.5 sm:grid-cols-2">
             <div className="card-glass rounded-[16px] px-5 py-5">
-              <div className="text-[12px] font-bold tracking-[.14em] text-gold">최초 1회</div>
-              <div className="mt-1.5 font-num text-[27px] font-bold text-navy">{entry}</div>
+              <div className="text-[13.5px] font-bold tracking-[.14em] text-gold">최초 1회</div>
+              <div className="mt-1.5 font-num text-[30px] font-bold text-navy">{entry}</div>
               <ul className="mt-4 space-y-2">
                 {BASE_BENEFITS.filter((b) => b.when === "최초").map((b) => (
-                  <li key={b.name} className="flex gap-2 text-[13px] leading-[1.7]">
+                  <li key={b.name} className="flex gap-2 text-[14.5px] leading-[1.7]">
                     <span className="mt-[7px] h-[4px] w-[4px] shrink-0 rounded-full bg-gold" />
                     <span className="text-ink">
                       <b className="font-bold text-navy">{b.name}</b>
@@ -312,14 +321,14 @@ export default function ServiceLanding({ heroArt }) {
             </div>
 
             <div className="card-glass rounded-[16px] px-5 py-5">
-              <div className="text-[12px] font-bold tracking-[.14em] text-gold">매월</div>
-              <div className="mt-1.5 font-num text-[27px] font-bold text-navy">
+              <div className="text-[13.5px] font-bold tracking-[.14em] text-gold">매월</div>
+              <div className="mt-1.5 font-num text-[30px] font-bold text-navy">
                 {monthly}
-                <span className="ml-1 text-[13px] font-bold text-muted">/ 월</span>
+                <span className="ml-1 text-[14.5px] font-bold text-muted">/ 월</span>
               </div>
               <ul className="mt-4 space-y-2">
                 {BASE_BENEFITS.filter((b) => b.when !== "최초").map((b) => (
-                  <li key={b.name} className="flex gap-2 text-[13px] leading-[1.7]">
+                  <li key={b.name} className="flex gap-2 text-[14.5px] leading-[1.7]">
                     <span className="mt-[7px] h-[4px] w-[4px] shrink-0 rounded-full bg-navy/25" />
                     <span className="text-ink">
                       <b className="font-bold text-navy">{b.name}</b>
@@ -334,17 +343,17 @@ export default function ServiceLanding({ heroArt }) {
           {/* 부부 가구 — 미확정이므로 확정값처럼 보이게 쓰지 않는다 */}
           <div className="mt-4 rounded-[16px] border border-gold/30 bg-gold/[.05] px-5 py-5">
             <div className="flex flex-wrap items-baseline gap-2">
-              <h3 className="text-[15px] font-bold text-navy">두 분이 함께 계신 경우</h3>
-              <span className="rounded-full border border-amber/35 px-2 py-0.5 text-[10px] font-bold text-amber">
+              <h3 className="text-[17px] font-bold text-navy">두 분이 함께 계신 경우</h3>
+              <span className="rounded-full border border-amber/35 px-2 py-0.5 text-[11px] font-bold text-amber">
                 요금 확정 전
               </span>
             </div>
-            <p className="mt-2.5 max-w-[640px] text-[13px] leading-[1.85] text-ink">
+            <p className="mt-2.5 max-w-[640px] text-[14.5px] leading-[1.85] text-ink">
               방문은 가구 단위로 한 번 가고, 점검은 두 분이 각각 받으십니다. 몸 7가지와 마음
               7가지는 각자 보고, 집 7가지는 함께 봅니다. 웨어러블은 두 분께 각각, 케어박스는
               가구에 하나입니다.
             </p>
-            <p className="mt-2 text-[12px] leading-[1.8] text-muted">
+            <p className="mt-2 text-[13.5px] leading-[1.8] text-muted">
               두 분 요금은 1인 요금에 2인차를 더하는 방식으로 설계 중입니다. 확정 전이라
               여기에 금액을 적지 않고, 상담에서 안내드립니다.
             </p>
@@ -352,12 +361,12 @@ export default function ServiceLanding({ heroArt }) {
 
           {/* 해지 조건을 요금 바로 아래 — 숨기지 않는다 */}
           <div className="mt-4 rounded-[16px] border border-navy/[.1] bg-white/60 px-5 py-5">
-            <div className="text-[15px] font-bold text-navy">해지와 환불</div>
+            <div className="text-[17px] font-bold text-navy">해지와 환불</div>
             <div className="mt-3 overflow-x-auto">
               <table className="w-full min-w-[440px] border-collapse text-left">
                 <caption className="sr-only">해지 시점별 환불 규정</caption>
                 <thead>
-                  <tr className="border-b-2 border-navy/15 text-[11px] font-bold text-muted">
+                  <tr className="border-b-2 border-navy/15 text-[12.5px] font-bold text-muted">
                     <th scope="col" className="whitespace-nowrap py-2 pr-3">구분</th>
                     <th scope="col" className="whitespace-nowrap py-2 pr-3">시점</th>
                     <th scope="col" className="whitespace-nowrap py-2 pr-3">비용</th>
@@ -367,18 +376,18 @@ export default function ServiceLanding({ heroArt }) {
                 <tbody>
                   {WITHDRAWAL.rows.map((r) => (
                     <tr key={r.k} className="border-b border-navy/[.06]">
-                      <th scope="row" className="whitespace-nowrap py-2.5 pr-3 text-[13px] font-bold text-navy">
+                      <th scope="row" className="whitespace-nowrap py-2.5 pr-3 text-[14.5px] font-bold text-navy">
                         {r.k}
                       </th>
-                      <td className="whitespace-nowrap py-2.5 pr-3 text-[12px] text-muted">{r.when}</td>
-                      <td className="whitespace-nowrap py-2.5 pr-3 text-[12px] font-bold text-navy">{r.fee}</td>
-                      <td className="py-2.5 text-[12px] leading-[1.6] text-muted">{r.note}</td>
+                      <td className="whitespace-nowrap py-2.5 pr-3 text-[13.5px] text-muted">{r.when}</td>
+                      <td className="whitespace-nowrap py-2.5 pr-3 text-[13.5px] font-bold text-navy">{r.fee}</td>
+                      <td className="py-2.5 text-[13.5px] leading-[1.6] text-muted">{r.note}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[12px] leading-[1.8] text-muted">
+            <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[13.5px] leading-[1.8] text-muted">
               중도 해지에 위약금이 없습니다. 12개월은 요금 산정의 기준이지 묶어 두는 장치가 아닙니다.
             </p>
           </div>
@@ -395,7 +404,7 @@ export default function ServiceLanding({ heroArt }) {
           <div className="space-y-9">
             {FAQ.map((group, gi) => (
               <div key={group.g}>
-                <div className="mb-1 text-[12px] font-bold tracking-[.14em] text-gold">{group.g}</div>
+                <div className="mb-1 text-[13.5px] font-bold tracking-[.14em] text-gold">{group.g}</div>
                 <div className="border-t border-navy/[.1]">
                   {group.items.map((it, ii) => {
                     const key = `${gi}-${ii}`;
@@ -420,13 +429,13 @@ export default function ServiceLanding({ heroArt }) {
           <div className="flex flex-wrap gap-2.5">
             <Link
               href="/onboarding"
-              className="btn-press rounded-xl bg-white px-6 py-3.5 text-[15px] font-bold text-navy"
+              className="btn-press rounded-xl bg-white px-6 py-3.5 text-[17px] font-bold text-navy"
             >
               가입 상담 신청
             </Link>
             <Link
               href="/"
-              className="btn-press rounded-xl border border-white/25 px-6 py-3.5 text-[15px] font-bold text-white"
+              className="btn-press rounded-xl border border-white/25 px-6 py-3.5 text-[17px] font-bold text-white"
             >
               데모 화면 보기
             </Link>
@@ -434,7 +443,7 @@ export default function ServiceLanding({ heroArt }) {
         </Section>
 
         <footer className="border-t border-navy/[.08] px-5 py-8">
-          <div className="mx-auto w-full max-w-[880px] text-[11px] leading-[1.9] text-muted">
+          <div className="mx-auto w-full max-w-[880px] text-[12.5px] leading-[1.9] text-muted">
             <div className="font-num font-bold tracking-[.16em] text-navy/60">K-CARE</div>
             <p className="mt-2">
               케이웨더 시니어 케어 멤버십 · 서울 강남구 · 송파구 · 서초구 운영 중

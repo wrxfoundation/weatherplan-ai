@@ -457,6 +457,9 @@
   background-position: 68% center;
   /* 사진이 이미 아주 옅어서 더 죽이면 넣은 의미가 없다 — 거의 그대로 쓴다 */
   opacity: .92;
+  /* +20% 밝게. 배경이 밝아지면 네이비 글자와의 대비는 오히려 올라가므로
+     가독성 쪽으로는 안전하다 (측정치는 커밋 메시지 참고). */
+  filter: brightness(1.2);
 }
 /* 왼쪽 → 오른쪽으로 걷히는 페이퍼색 장막.
    제목이 놓이는 왼쪽 절반만 확실히 덮고, 오른쪽(창·화분·탁자)은 살려 둔다. */
@@ -477,7 +480,7 @@
 /* 좁은 화면에서는 글자가 사진 위로 겹치므로 위에서 아래로 덮는다.
    우하단 나무 탁자가 가장 어두운 지점이라 그쪽을 남기고 본문 구간을 가린다. */
 @media (max-width: 900px) {
-  .hero-bg::before { background-position: 76% center; opacity: .55; }
+  .hero-bg::before { background-position: 76% center; opacity: .55; filter: brightness(1.2); }
   .hero-bg::after {
     background: linear-gradient(
       172deg,
