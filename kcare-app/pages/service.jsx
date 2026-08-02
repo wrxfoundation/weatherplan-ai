@@ -2,7 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import { FAQ, FAQ_NOTE, LANDING } from "../lib/faq";
-import { PRICING, BASE_BENEFITS, fmtWon } from "../lib/config";
+import { PRICING, BASE_BENEFITS, HOUSEHOLD, fmtWon } from "../lib/config";
 import { WITHDRAWAL } from "../lib/lifecycle";
 import { CHECKUP, CHECKUP_HEAD, CHECKUP_RULE, CHECKUP_CASE } from "../lib/checkup";
 import Icon from "../components/icons";
@@ -77,10 +77,10 @@ export default function ServiceLanding() {
   return (
     <>
       <Head>
-        <title>K-CARE — 혼자 계신 부모님 곁에, 정기적으로 사람이 갑니다</title>
+        <title>K-CARE — 부모님은 늘 괜찮다고 하십니다</title>
         <meta
           name="description"
-          content="월 1회 안심방문, 병원 동행, 24시간 긴급 접수. 2인 1조 원칙의 시니어 케어 멤버십."
+          content="정말 괜찮은지는 가 봐야 압니다. 매달 몸·마음·집 21가지를 같은 기준으로 살피는 시니어 케어 멤버십. 2인 1조 원칙."
         />
       </Head>
 
@@ -119,6 +119,10 @@ export default function ServiceLanding() {
               {LANDING.h1[1]}
             </h1>
             <p className="mt-5 max-w-[560px] text-[16px] leading-[1.85] text-muted sm:text-[17px]">{LANDING.sub}</p>
+            {/* 정체를 못 박는 한 줄 — 간병·요양으로 오해되면 가격 저항이 바로 생긴다 */}
+            <p className="mt-4 inline-block rounded-full border border-gold/35 bg-gold/[.08] px-4 py-1.5 text-[13px] font-bold text-amber">
+              {LANDING.kicker}
+            </p>
 
             <div className="mt-8 flex flex-wrap gap-2.5">
               <Link
@@ -298,6 +302,25 @@ export default function ServiceLanding() {
                 ))}
               </ul>
             </div>
+          </div>
+
+          {/* 부부 가구 — 미확정이므로 확정값처럼 보이게 쓰지 않는다 */}
+          <div className="mt-4 rounded-[16px] border border-gold/30 bg-gold/[.05] px-5 py-5">
+            <div className="flex flex-wrap items-baseline gap-2">
+              <h3 className="text-[15px] font-bold text-navy">두 분이 함께 계신 경우</h3>
+              <span className="rounded-full border border-amber/35 px-2 py-0.5 text-[10px] font-bold text-amber">
+                요금 확정 전
+              </span>
+            </div>
+            <p className="mt-2.5 max-w-[640px] text-[13px] leading-[1.85] text-ink">
+              방문은 가구 단위로 한 번 가고, 점검은 두 분이 각각 받으십니다. 몸 7가지와 마음
+              7가지는 각자 보고, 집 7가지는 함께 봅니다. 웨어러블은 두 분께 각각, 케어박스는
+              가구에 하나입니다.
+            </p>
+            <p className="mt-2 text-[12px] leading-[1.8] text-muted">
+              두 분 요금은 1인 요금에 2인차를 더하는 방식으로 설계 중입니다. 확정 전이라
+              여기에 금액을 적지 않고, 상담에서 안내드립니다.
+            </p>
           </div>
 
           {/* 해지 조건을 요금 바로 아래 — 숨기지 않는다 */}
