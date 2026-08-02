@@ -2,7 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import { FAQ, FAQ_NOTE, LANDING, LANDING_AI_QA } from "../lib/faq";
-import { PRICING, BASE_BENEFITS, HOUSEHOLD, HERO_ART, fmtWon } from "../lib/config";
+import { PRICING, BASE_BENEFITS, HOUSEHOLD, fmtWon } from "../lib/config";
 import { WITHDRAWAL } from "../lib/lifecycle";
 import { CHECKUP, CHECKUP_HEAD, CHECKUP_RULE, CHECKUP_CASE } from "../lib/checkup";
 import Icon from "../components/icons";
@@ -71,7 +71,17 @@ function FaqItem({ q, a, open, onToggle }) {
   );
 }
 
-export default function ServiceLanding() {
+// 히어로 배경은 파일이 있으면 켜지고 없으면 꺼진다 — 빌드 시점에 확인한다.
+// 런타임에 이미지 로드를 시도해 보는 방식은 실패할 때 콘솔에 404를 남기므로 쓰지 않는다.
+// 쓰는 법: public/hero/home.webp 를 넣고 다시 빌드하면 끝 (스위치를 만질 필요 없음).
+export async function getStaticProps() {
+  const fs = require("fs");
+  const path = require("path");
+  const heroArt = fs.existsSync(path.join(process.cwd(), "public", "hero", "home.webp"));
+  return { props: { heroArt } };
+}
+
+export default function ServiceLanding({ heroArt }) {
   const [openKey, setOpenKey] = useState("0-0"); // 첫 항목은 열어 둔다 — 아코디언 사용법 힌트
   const monthly = fmtWon(PRICING.subscription.monthly);
   const entry = fmtWon(PRICING.entryFee.total);
@@ -112,9 +122,8 @@ export default function ServiceLanding() {
         </header>
 
         {/* ── 히어로 ── */}
-        {/* 배경 이미지는 lib/config.js 의 HERO_ART 로 켠다 — 파일을 넣기 전에는
-            CSS 가 이미지를 요청하지 않아 콘솔에 404가 남지 않는다 */}
-        <section className={`${HERO_ART ? "hero-bg " : ""}px-5 pb-14 pt-12 sm:pb-20 sm:pt-20`}>
+        {/* public/hero/home.webp 가 있으면 배경이 켜진다 (getStaticProps 에서 확인) */}
+        <section className={`${heroArt ? "hero-bg " : ""}px-5 pb-14 pt-12 sm:pb-20 sm:pt-20`}>
           <div className="mx-auto w-full max-w-[880px]">
             <div className="font-num text-[11px] font-bold tracking-[.2em] text-gold">{LANDING.eyebrow}</div>
             <h1 className="mt-4 text-[31px] font-black leading-[1.32] text-navy sm:text-[44px]">

@@ -223,15 +223,23 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
         </div>
       )}
 
-      {/* 플로팅 버튼 — 우측 하단 */}
+      {/* 플로팅 버튼 — 우측 하단.
+          골드 글라스모피즘: 반투명 골드 그라데이션 + 밝은 테두리 + 안쪽 하이라이트.
+          backdrop-filter(블러)는 쓰지 않는다 — 고정 버튼에 블러를 걸면 스크롤할 때마다
+          뒤 배경을 다시 합성해야 해서 저사양 기기에서 눈에 띄게 버벅인다.
+          유리 느낌은 블러가 아니라 위쪽 하이라이트와 아래쪽 그림자의 대비에서 나온다. */}
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label="AI 어시스턴트"
-        className="btn-press fixed bottom-5 right-5 z-[1200] flex h-[52px] w-[52px] items-center justify-center rounded-full text-[16px] font-bold text-white"
+        className="btn-press fixed bottom-5 right-5 z-[1200] flex h-[52px] w-[52px] items-center justify-center rounded-full text-[15px] font-bold tracking-[.04em]"
         style={{
-          background: NAVY,
+          color: NAVY, // 골드 위에서는 네이비가 대비가 가장 크다
+          background:
+            "linear-gradient(150deg, rgba(214,181,126,.94) 0%, rgba(188,152,95,.90) 48%, rgba(160,126,72,.94) 100%)",
+          border: "1px solid rgba(255,255,255,.42)",
           boxShadow:
-            "0 12px 28px -10px rgba(10,31,60,.55), inset 0 1px 0 rgba(255,255,255,.18), 0 0 0 2px rgba(176,141,87,.45)",
+            "0 14px 30px -12px rgba(122,92,40,.62), 0 2px 6px -2px rgba(10,31,60,.25)," +
+            " inset 0 1.5px 0 rgba(255,255,255,.62), inset 0 -1.5px 2px rgba(122,92,40,.22)",
         }}
       >
         {open ? "✕" : "AI"}
