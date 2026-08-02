@@ -178,7 +178,17 @@ import {
   SCENARIOS,
   EXEC_PRIORITY,
   PRIORITY_TONE,
-} from "../lib/console";;
+} from "../lib/console";
+import {
+  LIFECYCLE_HEAD,
+  GUARDIANSHIP,
+  BEREAVEMENT,
+  MISSING,
+  ABUSE,
+  WITHDRAWAL,
+  GRIEVANCE,
+  CONSENT_WITHDRAW,
+} from "../lib/lifecycle";
 
 // 관리자(경영) — 핸드오프 02 §5 + 사람 관리 중심 고도화.
 // 관제(09)가 현장 관리라면, 경영은 사람 관리다: 컨시어지·보호자·어르신의 관리와 분석.
@@ -234,6 +244,7 @@ const MENU_GROUPS = [
     ["strategy", "전략 · OKR", "target"],
     ["risk", "리스크 · 컴플라이언스", "alert"],
     ["security", "보안 · 데이터", "shield"],
+    ["lifecycle", "생애주기 · 법정절차", "heart"],
   ]],
   ["상시 조회", [
     ["roster", "명부", "doc"],
@@ -4225,6 +4236,402 @@ export default function AdminConsole() {
                   </p>
                 </Panel>
               </div>
+            </div>
+          )}
+
+          {tab === "lifecycle" && (
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-[17px] font-bold text-navy">{LIFECYCLE_HEAD.title}</h2>
+                <p className="mt-1 max-w-[760px] text-[13px] leading-[1.75] text-muted">{LIFECYCLE_HEAD.desc}</p>
+              </div>
+
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+                {LIFECYCLE_HEAD.gaps.map((g) => (
+                  <Panel key={g.k} className="!p-4">
+                    <div className="text-[11px] font-bold text-muted">{g.k}</div>
+                    <div className="mt-1 text-[15px] font-bold" style={{ color: TONE[g.tone].fg }}>{g.v}</div>
+                    <div className="mt-1.5 text-[11px] leading-[1.6] text-muted">{g.note}</div>
+                  </Panel>
+                ))}
+              </div>
+
+              {/* 1. 후견 · 법정대리 */}
+              <Panel className="min-w-0">
+                <PanelHead title="후견 · 법정대리" right={<span className="text-[11px] font-bold text-amber">{GUARDIANSHIP.check}</span>} />
+                <p className="mt-2 max-w-[760px] text-[12px] leading-[1.8] text-muted">{GUARDIANSHIP.why}</p>
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[620px] text-left text-[12px]">
+                    <caption className="sr-only">후견 유형별 대리 범위</caption>
+                    <thead>
+                      <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                        <th scope="col" className="py-2 pr-4">유형</th>
+                        <th scope="col" className="py-2 pr-4">판단 능력</th>
+                        <th scope="col" className="py-2 pr-4">대리 범위</th>
+                        <th scope="col" className="py-2">우리 처리</th>
+                      </tr>
+                    </thead>
+                    <tbody className="rows-in">
+                      {GUARDIANSHIP.types.map((t) => (
+                        <tr key={t.k} className="border-b border-navy/[.06]">
+                          <th scope="row" className="whitespace-nowrap py-2.5 pr-4 font-bold text-navy">{t.k}</th>
+                          <td className="whitespace-nowrap py-2.5 pr-4 text-muted">{t.who}</td>
+                          <td className="whitespace-nowrap py-2.5 pr-4 font-bold" style={{ color: TONE[t.tone].fg }}>{t.can}</td>
+                          <td className="py-2.5 leading-[1.6] text-muted">{t.note}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="mt-4 grid gap-2.5 md:grid-cols-2">
+                  <div>
+                    <div className="text-[12px] font-bold text-navy">권한 이전 4단계</div>
+                    <div className="mt-2 space-y-2">
+                      {GUARDIANSHIP.ladder.map((l) => (
+                        <div key={l.step} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                          <div className="flex items-baseline gap-2">
+                            <span className="font-num text-[11px] font-bold text-gold">{l.step}</span>
+                            <span className="text-[13px] font-bold text-navy">{l.k}</span>
+                            <span className="ml-auto text-[10px] font-bold text-muted">{l.who}</span>
+                          </div>
+                          <div className="mt-1 text-[11px] leading-[1.65] text-muted">
+                            <b className="text-navy/70">방아쇠</b> {l.trig}
+                          </div>
+                          <div className="mt-0.5 text-[11px] leading-[1.65] text-muted">
+                            <b className="text-navy/70">조치</b> {l.act}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[12px] font-bold text-danger">회사가 하지 않는 것</div>
+                    <ul className="mt-2 space-y-2">
+                      {GUARDIANSHIP.never.map((n) => (
+                        <li key={n} className="flex gap-2 rounded-xl border border-danger/15 bg-danger/[.04] px-3.5 py-2.5 text-[12px] leading-[1.7] text-ink">
+                          <span className="mt-[7px] h-[4px] w-[4px] shrink-0 rounded-full bg-danger" />
+                          <span>{n}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </Panel>
+
+              {/* 2. 임종 · 멤버십 종결 */}
+              <Panel className="min-w-0">
+                <PanelHead title="임종 · 멤버십 종결" right={<span className="text-[11px] font-bold text-amber">{BEREAVEMENT.check}</span>} />
+                <p className="mt-2 max-w-[760px] text-[12px] leading-[1.8] text-muted">{BEREAVEMENT.why}</p>
+
+                <div className="mt-3 space-y-2">
+                  {BEREAVEMENT.flow.map((f) => (
+                    <div key={f.d} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: TONE[f.tone].fg, background: TONE[f.tone].bg }}>{f.d}</span>
+                      <span className="text-[13px] font-bold text-navy">{f.k}</span>
+                      <span className="w-full text-[11px] leading-[1.65] text-muted sm:w-auto sm:flex-1">{f.act}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  <div className="overflow-x-auto">
+                    <div className="text-[12px] font-bold text-navy">정산 규칙</div>
+                    <table className="mt-2 w-full min-w-[300px] text-left text-[12px]">
+                      <caption className="sr-only">사망 시 항목별 정산 규칙</caption>
+                      <thead>
+                        <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                          <th scope="col" className="py-2 pr-3">항목</th>
+                          <th scope="col" className="py-2 pr-3">처리</th>
+                          <th scope="col" className="py-2">비고</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {BEREAVEMENT.settle.map((r) => (
+                          <tr key={r.k} className="border-b border-navy/[.06]">
+                            <th scope="row" className="py-2.5 pr-3 font-bold text-navy">{r.k}</th>
+                            <td className="py-2.5 pr-3 text-navy">{r.rule}</td>
+                            <td className="py-2.5 leading-[1.6] text-muted">{r.note}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div>
+                    <div className="text-[12px] font-bold text-navy">기록 처리</div>
+                    <p className="mt-2 text-[11px] leading-[1.8] text-muted">{BEREAVEMENT.records.rule}</p>
+                    <div className="mt-2 space-y-1.5">
+                      {BEREAVEMENT.records.options.map((o) => (
+                        <div key={o.k} className="rounded-lg border border-navy/[.06] bg-white/60 px-3 py-2 text-[11px] leading-[1.6]">
+                          <b className="text-navy">{o.k}</b> <span className="text-muted">{o.v}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-2.5 rounded-lg bg-gold/[.08] px-3 py-2 text-[11px] leading-[1.7] text-amber">{BEREAVEMENT.voiceNote}</p>
+                  </div>
+                </div>
+              </Panel>
+
+              {/* 3. 실종 · 배회 */}
+              <Panel className="min-w-0">
+                <PanelHead title="실종 · 배회 대응" right={<span className="text-[11px] font-bold text-green">{MISSING.check}</span>} />
+                <p className="mt-2 max-w-[760px] text-[12px] leading-[1.8] text-muted">{MISSING.why}</p>
+
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <div className="overflow-x-auto">
+                    <div className="text-[12px] font-bold text-navy">감지 신호 — 단독 판단 금지</div>
+                    <table className="mt-2 w-full min-w-[300px] text-left text-[12px]">
+                      <caption className="sr-only">배회 감지 신호와 신뢰도</caption>
+                      <thead>
+                        <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                          <th scope="col" className="py-2 pr-3">신호</th>
+                          <th scope="col" className="py-2 pr-3">조건</th>
+                          <th scope="col" className="py-2">신뢰도</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {MISSING.signals.map((r) => (
+                          <tr key={r.k} className="border-b border-navy/[.06]">
+                            <th scope="row" className="py-2.5 pr-3 font-bold text-navy">{r.k}</th>
+                            <td className="py-2.5 pr-3 text-muted">{r.d}</td>
+                            <td className="py-2.5 font-bold text-navy">{r.conf}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div>
+                    <div className="text-[12px] font-bold text-navy">초동 프로토콜</div>
+                    <div className="mt-2 space-y-1.5">
+                      {MISSING.protocol.map((r) => (
+                        <div key={r.t} className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 rounded-lg border border-navy/[.06] bg-white/60 px-3 py-2">
+                          <span className="font-num text-[11px] font-bold" style={{ color: r.tone ? TONE[r.tone].fg : "#B08D57" }}>{r.t}</span>
+                          <span className="text-[12px] font-bold text-navy">{r.k}</span>
+                          <span className="ml-auto text-[10px] font-bold text-muted">{r.who}</span>
+                          <span className="w-full text-[11px] leading-[1.6] text-muted">{r.act}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-3.5 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                  {MISSING.prepare.map((r) => (
+                    <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="text-[12px] font-bold text-navy">{r.k}</div>
+                      <div className="mt-1 text-[11px] leading-[1.6] text-muted">{r.v}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.75] text-muted">{MISSING.limit}</p>
+              </Panel>
+
+              {/* 4. 학대 의심 */}
+              <Panel className="min-w-0">
+                <PanelHead title="노인학대 의심 대응" right={<span className="text-[11px] font-bold text-amber">{ABUSE.check}</span>} />
+                <p className="mt-2 max-w-[760px] text-[12px] leading-[1.8] text-muted">{ABUSE.why}</p>
+                <p className="mt-2.5 rounded-xl border border-navy/10 bg-white/60 px-3.5 py-2.5 text-[11px] leading-[1.8] text-ink">{ABUSE.legal}</p>
+
+                <div className="mt-3.5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {ABUSE.kinds.map((r) => (
+                    <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="text-[12px] font-bold text-navy">{r.k}</div>
+                      <div className="mt-1 text-[11px] leading-[1.6] text-muted">{r.sign}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  <div>
+                    <div className="text-[12px] font-bold text-green">현장에서 할 것</div>
+                    <ul className="mt-2 space-y-1.5">
+                      {ABUSE.onsite.do.map((t) => (
+                        <li key={t} className="flex gap-2 rounded-lg border border-green/15 bg-green/[.04] px-3 py-2 text-[11px] leading-[1.7] text-ink">
+                          <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-green" />
+                          <span>{t}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <div className="text-[12px] font-bold text-danger">절대 하지 않을 것</div>
+                    <ul className="mt-2 space-y-1.5">
+                      {ABUSE.onsite.dont.map((t) => (
+                        <li key={t} className="flex gap-2 rounded-lg border border-danger/15 bg-danger/[.04] px-3 py-2 text-[11px] leading-[1.7] text-ink">
+                          <span className="mt-[6px] h-[4px] w-[4px] shrink-0 rounded-full bg-danger" />
+                          <span>{t}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="mt-3.5 space-y-1.5">
+                  {ABUSE.flow.map((r) => (
+                    <div key={r.t} className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 rounded-lg border border-navy/[.06] bg-white/60 px-3 py-2">
+                      <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: r.tone ? TONE[r.tone].fg : "#5C5A54", background: r.tone ? TONE[r.tone].bg : "rgba(10,31,60,.06)" }}>{r.t}</span>
+                      <span className="text-[12px] font-bold text-navy">{r.k}</span>
+                      <span className="ml-auto text-[10px] font-bold text-muted">{r.who}</span>
+                      <span className="w-full text-[11px] leading-[1.6] text-muted">{r.act}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="mt-3 rounded-xl bg-danger/[.05] px-3.5 py-2.5 text-[11px] leading-[1.8] text-ink">{ABUSE.conflict}</p>
+                <div className="mt-2.5 flex flex-wrap gap-2">
+                  {ABUSE.contact.map((c) => (
+                    <span key={c.k} className="rounded-full border border-navy/15 bg-white/70 px-3 py-1 text-[11px] text-muted">
+                      <b className="text-navy">{c.k}</b> <span className="font-num font-bold text-danger">{c.v}</span> · {c.note}
+                    </span>
+                  ))}
+                </div>
+              </Panel>
+
+              {/* 5. 청약철회 · 해지 */}
+              <Panel className="min-w-0">
+                <PanelHead title="청약철회 · 해지 · 환불" right={<span className="text-[11px] font-bold text-amber">{WITHDRAWAL.check}</span>} />
+                <p className="mt-2 max-w-[760px] text-[12px] leading-[1.8] text-muted">{WITHDRAWAL.why}</p>
+                <p className="mt-2 rounded-xl border border-amber/20 bg-gold/[.06] px-3.5 py-2.5 text-[11px] leading-[1.8] text-amber">{WITHDRAWAL.legalNote}</p>
+
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <div className="overflow-x-auto">
+                    <div className="text-[12px] font-bold text-navy">계약 단위</div>
+                    <table className="mt-2 w-full min-w-[320px] text-left text-[12px]">
+                      <caption className="sr-only">계약 해지 시점별 환불</caption>
+                      <thead>
+                        <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                          <th scope="col" className="py-2 pr-3">구분</th>
+                          <th scope="col" className="py-2 pr-3">시점</th>
+                          <th scope="col" className="py-2">비용</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {WITHDRAWAL.rows.map((r) => (
+                          <tr key={r.k} className="border-b border-navy/[.06]">
+                            <th scope="row" className="py-2.5 pr-3 font-bold text-navy">{r.k}</th>
+                            <td className="py-2.5 pr-3 text-muted">{r.when}</td>
+                            <td className="py-2.5 font-bold" style={{ color: TONE[r.tone].fg }}>{r.fee}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <div className="text-[12px] font-bold text-navy">회차 단위 (예약 변경·취소)</div>
+                    <table className="mt-2 w-full min-w-[300px] text-left text-[12px]">
+                      <caption className="sr-only">회차 취소 수수료</caption>
+                      <thead>
+                        <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                          <th scope="col" className="py-2 pr-3">시점</th>
+                          <th scope="col" className="py-2 pr-3">수수료</th>
+                          <th scope="col" className="py-2">비고</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {WITHDRAWAL.visitCancel.map((r) => (
+                          <tr key={r.k} className="border-b border-navy/[.06]">
+                            <th scope="row" className="py-2.5 pr-3 font-bold text-navy">{r.k}</th>
+                            <td className="py-2.5 pr-3 font-bold" style={{ color: r.tone ? TONE[r.tone].fg : "#0A1F3C" }}>{r.fee}</td>
+                            <td className="py-2.5 leading-[1.6] text-muted">{r.note}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <p className="mt-3 rounded-xl bg-navy/[.04] px-3.5 py-2.5 text-[11px] leading-[1.8] text-ink">{WITHDRAWAL.diff}</p>
+              </Panel>
+
+              {/* 6. 고충 · 이의제기 */}
+              <Panel className="min-w-0">
+                <PanelHead title="고충 · 이의제기" right={<span className="text-[11px] font-bold text-green">{GRIEVANCE.check}</span>} />
+                <p className="mt-2 max-w-[760px] text-[12px] leading-[1.8] text-muted">{GRIEVANCE.why}</p>
+
+                <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                  {GRIEVANCE.who.map((r) => (
+                    <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                      <div className="text-[12px] font-bold text-navy">{r.k}</div>
+                      <div className="mt-1 text-[11px] leading-[1.6] text-muted">{r.how}</div>
+                      {r.note && <div className="mt-1 text-[10px] text-muted/80">{r.note}</div>}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-3 grid gap-2.5 md:grid-cols-2">
+                  {GRIEVANCE.stages.map((r) => (
+                    <div key={r.s} className="rounded-xl border border-navy/[.08] bg-white/60 px-4 py-3">
+                      <div className="flex items-baseline gap-2">
+                        <span className="rounded-full bg-navy px-2 py-0.5 text-[10px] font-bold text-white">{r.s}</span>
+                        <span className="text-[13px] font-bold text-navy">{r.k}</span>
+                        <span className="ml-auto text-[10px] font-bold text-gold">{r.due}</span>
+                      </div>
+                      <div className="mt-1.5 text-[11px] leading-[1.7] text-muted">
+                        <b className="text-navy/70">담당</b> {r.who}
+                      </div>
+                      <div className="mt-0.5 text-[11px] leading-[1.7] text-muted">{r.note}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <ul className="space-y-1.5">
+                    {GRIEVANCE.rules.map((t) => (
+                      <li key={t} className="flex gap-2 text-[11px] leading-[1.75] text-ink">
+                        <span className="mt-[7px] h-[4px] w-[4px] shrink-0 rounded-full bg-gold" />
+                        <span>{t}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="space-y-1.5">
+                    {GRIEVANCE.kpi.map((r) => (
+                      <div key={r.k} className="flex items-baseline gap-2 rounded-lg border border-navy/[.06] bg-white/60 px-3 py-2">
+                        <span className="text-[11px] font-bold text-navy">{r.k}</span>
+                        <span className="ml-auto font-num text-[12px] font-bold text-green">{r.v}</span>
+                        <span className="text-[10px] text-muted">{r.note}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Panel>
+
+              {/* 7. 동의 철회 */}
+              <Panel className="min-w-0">
+                <PanelHead title="동의 철회" right={<span className="text-[11px] font-bold text-green">{CONSENT_WITHDRAW.check}</span>} />
+                <p className="mt-2 max-w-[760px] text-[12px] leading-[1.8] text-muted">{CONSENT_WITHDRAW.why}</p>
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[560px] text-left text-[12px]">
+                    <caption className="sr-only">동의 항목별 철회 시 영향</caption>
+                    <thead>
+                      <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
+                        <th scope="col" className="py-2 pr-4">동의 항목</th>
+                        <th scope="col" className="py-2 pr-4">철회 시</th>
+                        <th scope="col" className="py-2">구분</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {CONSENT_WITHDRAW.items.map((r) => (
+                        <tr key={r.k} className="border-b border-navy/[.06]">
+                          <th scope="row" className="py-2.5 pr-4 font-bold text-navy">{r.k}</th>
+                          <td className="py-2.5 pr-4 leading-[1.6] text-muted">{r.effect}</td>
+                          <td className="py-2.5">
+                            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={r.block ? { color: TONE.bad.fg, background: TONE.bad.bg } : { color: TONE.ok.fg, background: TONE.ok.bg }}>
+                              {r.block ? "필수" : "선택"}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <ul className="mt-3 space-y-1.5">
+                  {CONSENT_WITHDRAW.rule.map((t) => (
+                    <li key={t} className="flex gap-2 text-[11px] leading-[1.75] text-ink">
+                      <span className="mt-[7px] h-[4px] w-[4px] shrink-0 rounded-full bg-gold" />
+                      <span>{t}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Panel>
             </div>
           )}
           </StaggerIn>
