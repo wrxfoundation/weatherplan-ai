@@ -290,7 +290,7 @@ export default function ElderHome() {
           {/* ── 카드 스택 (유일한 스크롤 영역) ── */}
           <main
             ref={scrollRef}
-            className="elder-scroll mt-4 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto pb-6"
+            className="elder-scroll -mx-2 mt-4 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto px-2 pb-5"
           >
             {/* order 0 · 오늘 찾아뵙는 분 — 방문 사기 방어. 유일한 2px 테두리 */}
             <ElderCard

@@ -237,9 +237,17 @@
   padding-bottom: max(0px, env(safe-area-inset-bottom));
 }
 
-/* 어르신 홈 — 카드가 스크롤 끝에서 칼로 자른 듯 끊겨 보이지 않게 아래를 부드럽게 흐린다.
-   푸터(전화·탭)가 밝은 색이라, 잘린 단면이 흰색으로 잘려 보이던 문제. */
+/* 어르신 홈 본문 스크롤 —
+   ① 스크롤바를 숨긴다. 스크롤바가 뜨면 그 폭만큼 오른쪽에서만 내용이 밀려
+      카드가 왼쪽으로 치우치고 우측 테두리가 잘린 것처럼 보인다 (좌우 여백 비대칭).
+   ② 페이드 마스크는 쓰지 않는다 — 어르신 화면에서 글자가 흐려지면 안 된다.
+      대신 아래 여백을 넉넉히 둬서 카드가 푸터에 맞닿아 잘리지 않게 한다. */
 .elder-scroll {
-  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 26px), transparent 100%);
-  mask-image: linear-gradient(180deg, #000 calc(100% - 26px), transparent 100%);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* 구형 Edge */
+  overscroll-behavior: contain;
+}
+.elder-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
