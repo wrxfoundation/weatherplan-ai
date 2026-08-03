@@ -113,7 +113,8 @@ export default function CalendarPage() {
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <button
-              className="btn-press h-8 w-8 rounded-lg border border-navy/15 text-muted"
+              aria-label="이전 달"
+              className="btn-press h-11 w-11 rounded-lg border border-navy/15 text-muted"
               onClick={() => {
                 const m = ym.m - 1;
                 setYm(m < 0 ? { y: ym.y - 1, m: 11 } : { ...ym, m });
@@ -126,7 +127,8 @@ export default function CalendarPage() {
               {ym.y}. {String(ym.m + 1).padStart(2, "0")}
             </div>
             <button
-              className="btn-press h-8 w-8 rounded-lg border border-navy/15 text-muted"
+              aria-label="다음 달"
+              className="btn-press h-11 w-11 rounded-lg border border-navy/15 text-muted"
               onClick={() => {
                 const m = ym.m + 1;
                 setYm(m > 11 ? { y: ym.y + 1, m: 0 } : { ...ym, m });
@@ -147,12 +149,21 @@ export default function CalendarPage() {
                 {d}
               </div>
             ))}
-            {cells.map((d, i) => (
+            {cells.map((d, i) =>
+              /* 달 시작 전 빈 칸까지 <button> 으로 그리면 이름 없는 버튼이 된다
+                 (axe critical: button-name). 빈 칸은 컨트롤이 아니므로 div 로 둔다. */
+              !d ? (
+                <div key={i} className="mx-auto my-[2px] h-[44px] w-[44px]" aria-hidden="true" />
+              ) : (
               <button
                 key={i}
-                disabled={!d}
                 onClick={() => setSelected(d)}
-                className={`relative mx-auto my-[2px] flex h-[40px] w-[40px] flex-col items-center justify-center rounded-xl ${
+                /* 숫자만 있으면 스크린리더가 "15" 라고만 읽는다 — 무슨 날인지 말해 준다 */
+                aria-label={`${ym.m + 1}월 ${d}일${
+                  (monthEvents[d] || []).length ? ` · 일정 ${(monthEvents[d] || []).length}건` : ""
+                }`}
+                aria-pressed={d === selected}
+                className={`relative mx-auto my-[2px] flex h-[44px] w-[44px] flex-col items-center justify-center rounded-xl ${
                   d === selected
                     ? "bg-navy text-white"
                     : isToday(d)
@@ -178,7 +189,8 @@ export default function CalendarPage() {
                   </>
                 )}
               </button>
-            ))}
+              )
+            )}
           </div>
         </Card>
 

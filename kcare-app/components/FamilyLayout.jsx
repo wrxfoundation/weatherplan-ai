@@ -32,9 +32,11 @@ export default function FamilyLayout({ children, title }) {
                 FAMILY MEMBERSHIP
               </div>
               <div className="mt-0.5 flex items-center gap-2">
-                <span className="text-[21px] font-black leading-tight text-navy">
+                {/* 화면마다 제목이 바뀌므로 여기가 이 화면의 h1 이다.
+                    이게 없으면 /family 계열 7개 화면 전부 h1 없는 문서가 된다. */}
+                <h1 className="text-[21px] font-black leading-tight text-navy">
                   {title || `어머니 · ${elderName}`}
-                </span>
+                </h1>
                 {/* 역할 배지 — 탭하면 주/부 전환 (시연) */}
                 <button
                   onClick={() =>

@@ -68,19 +68,24 @@ export default function CareProfile() {
       <Head>
         <title>케어 프로필 — K-CARE</title>
       </Head>
-      <div className="console-bg min-h-screen px-4 pb-10 pt-7 text-ink sm:px-8">
+      {/* 랜드마크 — 이 화면은 헤더도 본문 안에 있어 래퍼 전체가 본문이다 */}
+      <div role="main" className="console-bg min-h-screen px-4 pb-10 pt-7 text-ink sm:px-8">
         <div className="mx-auto max-w-[1240px] space-y-4">
-          <header>
+          {/* 콘텐츠 제목 영역 — 페이지 배너가 아니다.
+              <header> 로 두면 banner 랜드마크로 잡히는데, 이 파일은 role="main"
+              (속성)이라 <main> 요소처럼 배너 매핑을 막아 주지 못한다. 그래서
+              본문 안에 배너가 중첩된 것으로 보고된다 (axe: landmark-banner-is-top-level). */}
+          <div>
             <div className="flex items-center gap-3">
               <span className="text-[12px] font-bold tracking-[.16em] text-muted">확장 / F7 진화형 케어 프로필 · F11-1 AI 안부콜</span>
-              <a href="/" className="text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">데모 홈</a>
+              <a href="/" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">데모 홈</a>
               <a href="/dispatch?menu=elder" className="text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">관제 · 어르신</a>
             </div>
             <h1 className="mt-0.5 text-[29px] font-bold tracking-[-.01em] text-navy">쓸수록 깊어지는 프로필</h1>
             <p className="mt-1.5 max-w-[84ch] text-[15px] leading-[1.75] text-muted">
               모델이 바뀌어도 남는 자산 — 프로필은 특정 AI에 종속되지 않게 저장합니다.
             </p>
-          </header>
+          </div>
 
           {/* KPI */}
           <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>

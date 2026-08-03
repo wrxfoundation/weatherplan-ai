@@ -99,14 +99,15 @@ export default function ConciergePage() {
                   CONCIERGE
                 </div>
                 <div className="mt-0.5 flex items-center gap-2">
-                  <span className="text-[21px] font-black text-navy">박지현 · 주 동행</span>
+                  {/* 이 화면의 h1 — 없으면 문서에 제목 계층이 아예 없다 */}
+                  <h1 className="text-[21px] font-black text-navy">박지현 · 주 동행</h1>
                   <span className="chip-gold rounded-full px-2 py-[3px] font-num text-[10px] font-bold">
                     {EARNINGS.grade}
                   </span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <a href="/" className="text-[12px] font-bold text-muted/50">
+                <a href="/" className="tap text-[12px] font-bold text-muted/50">
                   데모 홈
                 </a>
                 <button

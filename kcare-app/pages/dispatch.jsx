@@ -577,7 +577,7 @@ export default function DispatchConsole() {
             <button
               key={k}
               onClick={() => setTickerFilter(k)}
-              className="btn-press rounded-full border px-2.5 py-1 text-[11px] font-bold"
+              className="btn-press rounded-full border btn-press px-3 py-2.5 text-[11px] font-bold"
               style={
                 tickerFilter === k
                   ? { background: NAVY, color: "#FFFFFF", borderColor: NAVY }
@@ -625,7 +625,8 @@ export default function DispatchConsole() {
             </div>
             <div className="mt-1 text-[11px] font-bold tracking-[.14em] text-white/40">관제 콘솔 · 현장 관리</div>
           </div>
-          <nav className="mt-5 min-h-0 flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
+          {/* nav 가 이 화면에 둘이라 이름을 붙여 구분한다 (axe: landmark-unique) */}
+          <nav aria-label="관제 메뉴" className="mt-5 min-h-0 flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
             {DISPATCH_MENUS.map(([k, label, icon]) => {
               const n = MENU_COUNTS[k];
               return (
@@ -655,16 +656,23 @@ export default function DispatchConsole() {
           </div>
         </aside>
 
-        <div className="min-w-0 flex-1 px-4 pb-10 pt-7 sm:px-8">
+        {/* 랜드마크 — 이 파일은 3,000줄대라 태그를 <main> 으로 바꾸면 짝을 잘못 맞출
+            위험이 크다. role="main" 은 보조기기에 같은 랜드마크로 전달되고
+            구조를 건드리지 않는다. 파일을 쪼갤 때 <main> 으로 바꾼다. */}
+        <div role="main" className="min-w-0 flex-1 px-4 pb-10 pt-7 sm:px-8">
         <div className="mx-auto max-w-[1240px]">
           {/* ── 헤더: 제목 + 시계 + KPI ── */}
-          <header className="flex flex-wrap items-end justify-between gap-4">
+          {/* 콘텐츠 제목 영역 — 페이지 배너가 아니다.
+              <header> 로 두면 banner 랜드마크로 잡히는데, 이 파일은 role="main"
+              (속성)이라 <main> 요소처럼 배너 매핑을 막아 주지 못한다. 그래서
+              본문 안에 배너가 중첩된 것으로 보고된다 (axe: landmark-banner-is-top-level). */}
+          <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
                 <span className="text-[12px] font-bold tracking-[.16em] text-muted">
                   역할 04 / 배치 관제 센터
                 </span>
-                <a href="/" className="text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
+                <a href="/" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
                   데모 홈
                 </a>
               </div>
@@ -712,10 +720,10 @@ export default function DispatchConsole() {
                 </button>
               ))}
             </div>
-          </header>
+          </div>
 
           {/* ── 모바일 메뉴 칩(사이드바 대체) + 통합 검색 ── */}
-          <nav className="mt-4 flex flex-wrap items-center gap-2 border-b border-navy/[.08] pb-3">
+          <nav aria-label="화면 전환" className="mt-4 flex flex-wrap items-center gap-2 border-b border-navy/[.08] pb-3">
             <MobileSectionNav
               groups={[["관제", DISPATCH_MENUS]]}
               current={menu}
@@ -1138,7 +1146,7 @@ export default function DispatchConsole() {
                     <button
                       key={m}
                       onClick={() => setMapMode(m)}
-                      className={`px-2.5 py-1 text-[11px] font-bold ${
+                      className={`btn-press px-3 py-2.5 text-[11px] font-bold ${
                         mapMode === m ? "bg-white/90 text-navy" : "text-white/60"
                       }`}
                     >
@@ -2778,7 +2786,7 @@ export default function DispatchConsole() {
                   {WEATHER_DISTRICTS.map((w) => (
                     <span
                       key={w.name}
-                      className="rounded-full px-2.5 py-1 text-[11px] font-bold"
+                      className="rounded-full btn-press px-3 py-2.5 text-[11px] font-bold"
                       style={{ color: WEATHER_TONE[w.tone], background: `${WEATHER_TONE[w.tone]}14` }}
                     >
                       {w.name} {w.temp} · {w.pm}

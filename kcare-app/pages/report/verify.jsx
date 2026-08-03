@@ -44,6 +44,9 @@ export default function VerifyPage() {
       </Head>
       <div className="min-h-screen bg-paper px-4 py-10">
         <div className="mx-auto w-full max-w-[640px]">
+        {/* 랜드마크 — 없으면 스크린리더에서 본문으로 건너뛸 수 없고
+              내용 전체가 랜드마크 밖으로 잡힌다 (axe: region · landmark-one-main) */}
+        <main>
           <Link href="/" className="text-[13px] font-bold text-muted underline underline-offset-2">
             ← 데모 홈
           </Link>
@@ -100,6 +103,7 @@ export default function VerifyPage() {
               퍼블릭 체인 · 공인 타임스탬프(TSA) 연동은 실서비스 단계 과제입니다.
             </p>
           </div>
+        </main>
         </div>
       </div>
     </>

@@ -434,7 +434,7 @@ export default function FamilyHome() {
         <Card className="p-[18px]">
           <div className="flex items-center justify-between">
             <div className="text-[17px] font-black text-navy">실시간 건강 요약</div>
-            <Link href="/family/watch" className="text-[12px] font-bold text-navy underline decoration-navy/25 underline-offset-2">
+            <Link href="/family/watch" className="tap text-[12px] font-bold text-navy underline decoration-navy/25 underline-offset-2">
               워치 상세 →
             </Link>
           </div>
@@ -542,7 +542,7 @@ export default function FamilyHome() {
         <div className="pt-1 text-center">
           <button
             onClick={() => setDemoOpen((v) => !v)}
-            className="text-[12px] font-bold text-muted/50 underline underline-offset-2"
+            className="tap text-[12px] font-bold text-muted/50 underline underline-offset-2"
           >
             시연 컨트롤 {demoOpen ? "닫기" : "열기"}
           </button>

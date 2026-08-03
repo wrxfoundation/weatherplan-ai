@@ -480,20 +480,27 @@ export default function AdminConsole() {
           </div>
         </aside>
 
-        <div className="min-w-0 flex-1 px-4 pb-10 pt-7 sm:px-8">
+        {/* 랜드마크 — 이 파일은 3,000줄대라 태그를 <main> 으로 바꾸면 짝을 잘못 맞출
+            위험이 크다. role="main" 은 보조기기에 같은 랜드마크로 전달되고
+            구조를 건드리지 않는다. 파일을 쪼갤 때 <main> 으로 바꾼다. */}
+        <div role="main" className="min-w-0 flex-1 px-4 pb-10 pt-7 sm:px-8">
         <div className="mx-auto max-w-[1240px] space-y-4">
           {/* ── 헤더 — 실시간 사건 티커 없음 (의도) ── */}
-          <header>
+          {/* 콘텐츠 제목 영역 — 페이지 배너가 아니다.
+              <header> 로 두면 banner 랜드마크로 잡히는데, 이 파일은 role="main"
+              (속성)이라 <main> 요소처럼 배너 매핑을 막아 주지 못한다. 그래서
+              본문 안에 배너가 중첩된 것으로 보고된다 (axe: landmark-banner-is-top-level). */}
+          <div>
             <div className="flex items-center gap-3">
               <span className="text-[12px] font-bold tracking-[.16em] text-muted">
                 역할 05 / 관리자 · 경영
               </span>
-              <a href="/" className="text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
+              <a href="/" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
                 데모 홈
               </a>
             </div>
             <h1 className="mt-0.5 text-[29px] font-bold tracking-[-.01em] text-navy">사람 · 경영 총괄</h1>
-          </header>
+          </div>
 
           {/* 모바일 — 현재 섹션 표시 + 눌러서 그룹 목록 (칩 18개를 옆으로 미는 것보다 빠르다) */}
           <MobileSectionNav groups={MENU_GROUPS} current={tab} onSelect={setTab} />

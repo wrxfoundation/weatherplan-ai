@@ -78,6 +78,9 @@ export default function Onboarding() {
       </Head>
       <div className="min-h-screen bg-nav">
         <div className="mx-auto min-h-screen w-full max-w-[430px] bg-paper px-4 pb-16 pt-5">
+        {/* 랜드마크 — 없으면 스크린리더에서 본문으로 건너뛸 수 없고
+              내용 전체가 랜드마크 밖으로 잡힌다 (axe: region · landmark-one-main) */}
+        <main>
           {/* 진행 표시 */}
           <div className="mb-6 flex items-center gap-1.5">
             {steps.map((s, i) => (
@@ -560,6 +563,7 @@ export default function Onboarding() {
               </PrimaryButton>
             </section>
           )}
+        </main>
         </div>
       </div>
     </>

@@ -145,7 +145,10 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
           </div>
         </header>
 
-        {/* ── 히어로 ── */}
+        {/* 랜드마크 — 이게 없으면 스크린리더에서 "본문으로 건너뛰기"가 안 되고
+            섹션들이 전부 랜드마크 밖 콘텐츠로 잡힌다 (axe: region · landmark-one-main) */}
+        <main>
+          {/* ── 히어로 ── */}
         {/* public/hero/ 에 파일이 있으면 배경이 켜진다 (getStaticProps 에서 확인) */}
         <section className={`${heroArt ? "hero-bg " : ""}px-5 pb-14 pt-12 sm:pb-20 sm:pt-20`}>
           {heroVideo && (
@@ -552,6 +555,8 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             </Link>
           </div>
         </Section>
+
+        </main>
 
         <footer className="border-t border-navy/[.08] px-5 py-8">
           <div className="mx-auto w-full max-w-[880px] text-[12.5px] leading-[1.9] text-muted">

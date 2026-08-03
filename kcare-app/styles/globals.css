@@ -139,6 +139,16 @@
   }
 }
 
+/* Leaflet 기본 확대·축소 버튼은 30px 이라 손가락으로 누르기에 작다.
+   서드파티 마크업이라 클래스를 못 붙이므로 여기서 넓힌다. */
+/* leaflet.css 가 뒤에 실려서 같은 명시도로는 밀린다 — 컨테이너를 붙여 올린다 */
+.leaflet-container .leaflet-bar a,
+.leaflet-touch .leaflet-bar a {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+}
+
 /* 관제 맵 팝업 — 핸드오프 09 §4 (.kcare-popup) */
 .kcare-popup .leaflet-popup-content-wrapper {
   border-radius: 12px;
@@ -290,9 +300,35 @@
   .text-\[11px\] {
     font-size: 12px;
   }
-  /* 터치 타깃 — 손가락으로 누를 수 있는 최소 높이 */
+  /* 터치 타깃 — 손가락으로 누를 수 있는 최소 크기.
+     36px 로 두고 있었는데 실측해 보니 콘솔 화면에서 44px 미만 타깃이 130개였다
+     (/family/calendar 41 · /dispatch 34 · /admin 23 · /family 21).
+     WCAG 2.2 AA(2.5.8)는 24px 이 최소이고 44px 이 권장값이다.
+     칩·배지처럼 누를 수 없는 것에는 .btn-press 가 안 붙으므로 여기만 올리면 된다. */
   .btn-press {
-    min-height: 36px;
+    min-height: 44px;
+  }
+  /* 아이콘만 있는 정사각 버튼은 가로도 같이 확보한다 */
+  button.btn-press,
+  a.btn-press {
+    min-width: 44px;
+  }
+  /* 인라인 텍스트 링크는 예외 — 문장 안에 있는 링크까지 44px 로 부풀리면
+     줄 간격이 무너진다. 이런 곳에는 .btn-inline 을 붙여 제외한다. */
+  .btn-press.btn-inline {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  /* 홀로 서 있는 작은 링크(데모 홈 · 상세 보기 등)에 붙인다.
+     글자는 그대로 두고 누를 수 있는 영역만 44px 로 넓힌다 —
+     padding 을 주면 줄이 밀리므로 inline-flex 로 높이만 확보한다. */
+  .tap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
   }
   /* 가로 스크롤 표(명부·손익 등)는 관성 스크롤 + 스냅 없이 자연스럽게 */
   .overflow-x-auto {

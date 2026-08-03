@@ -265,7 +265,7 @@ export default function ElderHome() {
               <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
                 K-CARE
               </span>
-              <a href="/" className="text-[13px] font-bold text-muted/50">
+              <a href="/" className="tap text-[13px] font-bold text-muted/50">
                 데모 홈
               </a>
             </div>
