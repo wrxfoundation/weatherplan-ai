@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Logo from "../components/Logo";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -626,7 +627,7 @@ export default function DispatchConsole() {
         <aside className="sticky top-0 hidden h-screen w-[212px] shrink-0 flex-col lg:flex" style={{ background: NAVY }}>
           <div className="px-5 pt-6">
             <div className="font-num text-[20px] font-extrabold tracking-[.04em] text-white">
-              K-CARE <span className="align-top text-[9px] font-bold text-gold">BETA</span>
+              <Logo height={20} tone="onDark" beta />
             </div>
             <div className="mt-1 text-[11px] font-bold tracking-[.14em] text-white/40">관제 콘솔 · 현장 관리</div>
           </div>

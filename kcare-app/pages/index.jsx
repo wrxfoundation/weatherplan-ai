@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Logo from "../components/Logo";
 import Link from "next/link";
 import { useState } from "react";
 import { useAppState } from "../lib/state";
@@ -87,7 +88,7 @@ export default function Home() {
         <main className="w-full max-w-[880px] py-12">
           <div className="flex items-start justify-between">
             <div className="font-num text-[29px] font-extrabold tracking-[.04em] text-white">
-              K-CARE <span className="align-top text-[11px] font-bold text-gold">BETA</span>
+              <Logo height={30} tone="onDark" beta />
             </div>
             <div className="flex gap-1 rounded-full border border-white/15 p-1">
               {["ko", "en"].map((l) => (

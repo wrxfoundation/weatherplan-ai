@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 
+// 로고 자동 감지 — public/brand/ 에 파일을 넣으면 켜지고 없으면 글자 로고로 둔다.
+// 여기서 확인하는 이유: 화면마다 getStaticProps 를 넣을 수는 없고(콘솔 화면은
+// 아예 안 쓴다), 런타임에 이미지 로드를 시도하면 없을 때 404 가 화면마다 남는다.
+// next.config.js 는 빌드 시점에 Node 로 돌아가므로 여기서 한 번만 보면 된다.
+const fs = require("fs");
+const path = require("path");
+const BRAND_LOGO = ["logo.svg", "logo.webp", "logo.png"]
+  .map((f) => (fs.existsSync(path.join(__dirname, "public", "brand", f)) ? `/brand/${f}` : null))
+  .find(Boolean) || "";
+
 // CSP — 민감 프로필을 다루는 앱: 허용 출처를 명시적으로 한정한다.
 // 외부 허용은 폰트(Google Fonts)와 지도 타일(OSM·CARTO)뿐 · 그 외 전부 자기 출처.
 // 'unsafe-inline'은 Next Pages Router 런타임 인라인 스크립트/스타일 때문에 필요 (eval 불허).
@@ -23,6 +33,7 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: { unoptimized: true }, // next/image 미사용 — 이미지 최적화 엔드포인트 표면 축소
+  env: { NEXT_PUBLIC_BRAND_LOGO: BRAND_LOGO },
   async headers() {
     return [
       {

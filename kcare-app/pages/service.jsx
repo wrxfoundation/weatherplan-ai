@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Logo from "../components/Logo";
 import Link from "next/link";
 import { useState } from "react";
 import { FAQ, FAQ_NOTE, LANDING, LANDING_AI_QA } from "../lib/faq";
@@ -118,9 +119,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
         {/* ── 상단 바 ── */}
         <header className="sticky top-0 z-40 border-b border-navy/[.08] bg-paper/92 backdrop-blur">
           <div className="mx-auto flex w-full max-w-[880px] items-center justify-between px-5 py-3.5">
-            <span className="whitespace-nowrap font-num text-[17px] font-bold tracking-[.16em] text-navy">
-              K-CARE
-            </span>
+            <Logo height={22} />
             {/* 좁은 화면에서는 구간 링크를 숨긴다 — 어차피 스크롤로 닿는 곳이고,
                 로고와 CTA 까지 줄바꿈되면 상단바가 무너진다 (활자 12% 확대 이후 확인) */}
             <nav className="flex items-center gap-1.5">
@@ -564,7 +563,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
 
         <footer className="border-t border-navy/[.08] px-5 py-8">
           <div className="mx-auto w-full max-w-[880px] text-[12.5px] leading-[1.9] text-muted">
-            <div className="font-num font-bold tracking-[.16em] text-navy/60">K-CARE</div>
+            <Logo height={17} className="opacity-60" />
             <p className="mt-2">
               케이웨더 시니어 케어 멤버십 · 서울 강남구 · 송파구 · 서초구 운영 중
               <br />

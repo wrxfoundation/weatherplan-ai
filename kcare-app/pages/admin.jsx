@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Logo from "../components/Logo";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PendingTag } from "../components/ui";
@@ -412,7 +413,7 @@ export default function AdminConsole() {
         <aside className="sticky top-0 hidden h-screen w-[232px] shrink-0 flex-col lg:flex" style={{ background: NAVY }}>
           <div className="px-5 pt-5">
             <div className="font-num text-[19px] font-extrabold tracking-[.04em] text-white">
-              K-CARE <span className="align-top text-[9px] font-bold text-gold">BETA</span>
+              <Logo height={20} tone="onDark" beta />
             </div>
             <div className="mt-1 text-[11px] font-bold tracking-[.14em] text-white/40">경영 콘솔 · 사람 관리</div>
           </div>
