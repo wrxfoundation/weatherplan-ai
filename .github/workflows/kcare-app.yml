@@ -1,0 +1,53 @@
+name: kcare-app
+
+# kcare-app 안에서 바뀐 것만 검사한다 (저장소에 다른 앱도 있다)
+on:
+  push:
+    branches: ["**"]
+    paths: ["kcare-app/**", ".github/workflows/kcare-app.yml"]
+  pull_request:
+    paths: ["kcare-app/**", ".github/workflows/kcare-app.yml"]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: kcare-app
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: kcare-app/package-lock.json
+
+      - run: npm ci
+
+      # 린트는 경고도 실패로 본다 — 지금 0건이라 늘어나는 즉시 잡힌다
+      - name: 린트 (경고 0 기준)
+        run: npx next lint --max-warnings=0
+
+      - name: 빌드
+        run: npm run build
+
+      # 스모크가 쓰는 브라우저. 프로젝트는 playwright-core 만 의존하므로
+      # 실행 파일은 여기서 따로 받는다.
+      # 버전을 playwright-core 와 정확히 맞춰야 한다 — 어긋나면 설치된 리비전과
+      # playwright-core 가 찾는 리비전이 달라서 "executable doesn't exist" 로 죽는다.
+      - name: 브라우저 설치
+        run: npx --yes playwright@1.62.1 install --with-deps chromium
+
+      - name: 서버 기동
+        run: |
+          npm start &
+          npx --yes wait-on http://localhost:3100/service --timeout 90000
+
+      # 빌드가 못 잡는 것들을 여기서 잡는다 —
+      # 렌더 시점 오류 · 빈 화면 · 접근성 회귀 · 터치 타깃 축소
+      - name: 스모크 (17개 화면)
+        run: npm run smoke
+        env:
+          SMOKE_BASE: http://localhost:3100

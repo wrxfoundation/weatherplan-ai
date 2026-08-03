@@ -2,7 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import { FAQ, FAQ_NOTE, LANDING, LANDING_AI_QA } from "../lib/faq";
-import { PRICING, BASE_BENEFITS, HOUSEHOLD, fmtWon } from "../lib/config";
+import { PRICING, BASE_BENEFITS, fmtWon } from "../lib/config";
 import { WITHDRAWAL } from "../lib/lifecycle";
 import { TRUST, FIT_FOR, PARTNERS, PARTNERS_NOTE } from "../lib/trust";
 import { CHECKUP, CHECKUP_HEAD, CHECKUP_RULE, CHECKUP_CASE } from "../lib/checkup";
@@ -21,8 +21,6 @@ import BgVideo from "../components/BgVideo";
 // 콘솔·앱은 정보 밀도가 우선이지만 이 화면은 처음 보는 사람이 읽는 곳이라
 // 밀도보다 읽히는 것이 먼저다. 값이 13.5px 처럼 어중간한 이유가 이것이다.
 // 아이콘 크기도 같은 비율로 키웠다 — 글자만 키우면 아이콘이 상대적으로 작아 보인다.
-
-const NAVY = "#0A1F3C";
 
 // tone="navy" 섹션은 배경에 미세 점 격자 패턴이 깔린다 (CSS 전용 · 추가 파일 없음).
 // 자세한 것은 globals.css 의 .sec-navy 참고.

@@ -63,7 +63,8 @@ export default function ConciergeOnboarding() {
       <Head>
         <title>컨시어지 등록 — K-CARE</title>
       </Head>
-      <div className="min-h-screen bg-paper px-5 py-8">
+      {/* 랜드마크 — 스모크 테스트가 이 화면들에서 잡아냈다 (region · landmark-one-main) */}
+      <div role="main" className="min-h-screen bg-paper px-5 py-8">
         <div className="mx-auto w-full max-w-[430px]">
           <div className="font-num text-[13px] font-bold tracking-[.18em] text-gold">
             CONCIERGE ONBOARDING

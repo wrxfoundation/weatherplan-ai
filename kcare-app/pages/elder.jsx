@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
   AI_CALL,
@@ -265,9 +266,9 @@ export default function ElderHome() {
               <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
                 K-CARE
               </span>
-              <a href="/" className="tap text-[13px] font-bold text-muted/50">
+              <Link href="/" className="tap text-[13px] font-bold text-muted/50">
                 데모 홈
-              </a>
+              </Link>
             </div>
             <div className="mt-2 text-[19px] font-medium text-muted">{dateLong}</div>
             <h1 className="text-[30px] font-black leading-[1.3] text-navy">

@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PendingTag } from "../components/ui";
 import AiChat from "../components/AiChat";
@@ -12,14 +13,12 @@ import {
   LIFECYCLE_STAGES,
   EXEC_BRIEF,
   NPS_LOOP,
-  TRUST_METRICS,
   CARE_OUTCOMES,
   PEOPLE_KPIS,
 } from "../lib/mock";
 import {
   ADMIN_AI_QA,
   ADMIN_COHORTS,
-  ADMIN_RISKS,
   ADMIN_SLA,
   ACTION_RESULTS,
   CHURN_BANDS,
@@ -32,11 +31,7 @@ import {
   FAMILY_ENGAGE,
   FAMILY_FUNNEL,
   INCENTIVE_MIX,
-  MEMBERSHIP_MIX,
-  OPTION_ATTACH,
-  REVENUE_FORECAST,
   REVENUE_STREAMS,
-  RULE_PERF,
   SAFETY_MONTHLY,
   STAFF_CERTS,
   STAFF_HR_WATCH,
@@ -49,7 +44,6 @@ import {
   VOICE_METRICS,
   VOICE_STATUS,
   WELFARE_METRICS,
-  MKT_CHANNELS,
   MKT_RULES,
   SM_KPIS,
   SM_ALERT,
@@ -476,7 +470,7 @@ export default function AdminConsole() {
           </nav>
           <div className="border-t border-white/10 px-5 py-3">
             <p className="text-[10px] leading-[1.5] text-white/35">집계 전용 콘솔 — 개별 사건 개입은 관제 · CS 소관</p>
-            <a href="/" className="btn-press mt-2.5 block rounded-[10px] border border-white/20 py-2 text-center text-[12px] font-bold text-white/80">데모 홈</a>
+            <Link href="/" className="btn-press mt-2.5 block rounded-[10px] border border-white/20 py-2 text-center text-[12px] font-bold text-white/80">데모 홈</Link>
           </div>
         </aside>
 
@@ -495,9 +489,9 @@ export default function AdminConsole() {
               <span className="text-[12px] font-bold tracking-[.16em] text-muted">
                 역할 05 / 관리자 · 경영
               </span>
-              <a href="/" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
+              <Link href="/" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
                 데모 홈
-              </a>
+              </Link>
             </div>
             <h1 className="mt-0.5 text-[29px] font-bold tracking-[-.01em] text-navy">사람 · 경영 총괄</h1>
           </div>
@@ -574,12 +568,12 @@ export default function AdminConsole() {
               <span className="rounded-md bg-gold px-1.5 py-0.5 text-[11px] font-bold tracking-[.1em] text-navy">AI</span>
               <h2 className="text-[15px] font-bold text-navy">주간 경영 브리핑</h2>
               <span className="font-num text-[12px] text-muted">{EXEC_BRIEF.date}</span>
-              <a
+              <Link
                 href="/report/exec"
                 className="btn-press ml-auto rounded-[10px] border border-navy/20 px-3.5 py-1.5 text-[12px] font-bold text-navy"
               >
                 월간 리포트 PDF
-              </a>
+              </Link>
               <button
                 onClick={() => setExecRead(true)}
                 disabled={execRead}

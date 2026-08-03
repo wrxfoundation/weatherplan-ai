@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -242,6 +243,10 @@ function ControlMap({ sos, mode = "light", onSelect }) {
         mapRef.current = null;
       }
     };
+    // onSelect 는 의존성에 넣지 않는다 — 부모가 리렌더될 때마다 새 함수가 오므로
+    // 넣으면 지도를 통째로 다시 만든다(타일 재요청 + 깜빡임). 여기서는 최신 값을
+    // 참조할 필요도 없어서 초기화 시점 것으로 충분하다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sos, mode]);
 
   return (
@@ -652,7 +657,7 @@ export default function DispatchConsole() {
           </nav>
           <div className="border-t border-white/10 px-5 py-4">
             <p className="text-[10px] leading-[1.6] text-white/35">현장 관제 — 배차 · 해제 실행은 관제사 승인 (L4)</p>
-            <a href="/" className="btn-press mt-2.5 block rounded-[10px] border border-white/20 py-2 text-center text-[12px] font-bold text-white/80">데모 홈</a>
+            <Link href="/" className="btn-press mt-2.5 block rounded-[10px] border border-white/20 py-2 text-center text-[12px] font-bold text-white/80">데모 홈</Link>
           </div>
         </aside>
 
@@ -672,9 +677,9 @@ export default function DispatchConsole() {
                 <span className="text-[12px] font-bold tracking-[.16em] text-muted">
                   역할 04 / 배치 관제 센터
                 </span>
-                <a href="/" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
+                <Link href="/" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
                   데모 홈
-                </a>
+                </Link>
               </div>
               <div className="mt-0.5 flex flex-wrap items-center gap-2.5">
                 <h1 className="text-[29px] font-bold tracking-[-.01em] text-navy">강남지점 실시간 관제</h1>

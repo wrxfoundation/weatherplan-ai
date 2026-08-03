@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../components/ui";
 import Icon from "../components/icons";
@@ -107,9 +108,9 @@ export default function ConciergePage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <a href="/" className="tap text-[12px] font-bold text-muted/50">
+                <Link href="/" className="tap text-[12px] font-bold text-muted/50">
                   데모 홈
-                </a>
+                </Link>
                 <button
                   onClick={() => dispatch({ type: "demo", payload: { offline: !state.demo.offline } })}
                   className="btn-press rounded-lg border border-navy/20 px-2.5 py-1.5 text-[12px] font-bold text-muted"
@@ -606,12 +607,12 @@ export default function ConciergePage() {
                 <Card className="p-[18px]">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[17px] font-black text-navy">동행 완료 리포트</span>
-                    <a
+                    <Link
                       href="/report/visit"
                       className="btn-press rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
                     >
                       A4 인쇄본
-                    </a>
+                    </Link>
                     <span className="chip-gold rounded-full px-2.5 py-1 text-[11px] font-bold">
                       AI 초안 · 음성 기록 기반
                     </span>
@@ -1415,7 +1416,7 @@ function StepBtn({ done, disabled, label, onClick }) {
 
 // 케어박스 점검 시트 — REQ-10
 // 의약품(isMedicine)은 수량 확인만. 보충은 보호자 승인 → 구매대행.
-function KitSheet({ items, onboarding, onClose, onDone }) {
+function KitSheet({ items, _onboarding, onClose, onDone }) {
   const [rows, setRows] = useState(items);
   const [photoTaken, setPhotoTaken] = useState(false);
   const [newKitPhoto, setNewKitPhoto] = useState(false); // 새 키트 전달사진 (회의 7.3)

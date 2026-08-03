@@ -47,7 +47,7 @@ export default function VerifyPage() {
         {/* 랜드마크 — 없으면 스크린리더에서 본문으로 건너뛸 수 없고
               내용 전체가 랜드마크 밖으로 잡힌다 (axe: region · landmark-one-main) */}
         <main>
-          <Link href="/" className="text-[13px] font-bold text-muted underline underline-offset-2">
+          <Link href="/" className="tap text-[13px] font-bold text-muted underline underline-offset-2">
             ← 데모 홈
           </Link>
           <h1 className="mt-3 text-[25px] font-black text-navy">리포트 위변조 검증</h1>

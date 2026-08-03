@@ -5,7 +5,7 @@
 // 어르신·가족이 함께 쓰는 값은 mock.js 에 남기고, 콘솔에서만 보는 값은 여기 둔다.
 // 새 데이터를 추가할 때 어느 화면이 쓰는지 먼저 보고 파일을 고를 것.
 
-import { JOBS, MOU_HOSPITALS, OUTING } from "./mock";
+import { MOU_HOSPITALS } from "./mock";
 
 // 컨시어지 당일 동선 — REQ-09. 상세 주소는 담당 확정(approved) 후에만.
 export const TODAY_ROUTE = [

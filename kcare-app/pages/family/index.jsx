@@ -2,28 +2,17 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
-import { Card, SectionLabel, Badge, PendingTag, Avatar } from "../../components/ui";
-import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_KINDS, FEED_TONE, GUARDIANS, NEIGHBORHOOD_FEED, NPS_REASONS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
+import { Card, SectionLabel, Badge, Avatar } from "../../components/ui";
+import { AI_ASSISTANT_QA, CARE_TEAM, EVENT_KINDS, FEED_TONE, GUARDIANS, NEIGHBORHOOD_FEED, NPS_REASONS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
 
 import { useAppState } from "../../lib/state";
 
 // 가족 앱 홈 — 핸드오프 02 family 명세 + REQ-02(다음 일정 홈 노출)
 // 정보 비대칭 규칙: 경과시간·SLA 비노출, 가족 행동은 '확인했습니다' 1개.
-
-const fmtDT = (t) =>
-  new Date(t).toLocaleString("ko-KR", {
-    month: "long",
-    day: "numeric",
-    weekday: "short",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-
 export default function FamilyHome() {
   const { state, dispatch } = useAppState();
   const [demoOpen, setDemoOpen] = useState(false);
   const ob = state.onboarding;
-  const elderName = ob?.elderName || ELDER.name;
   const anomaly = state.demo.anomaly;
 
   const upcoming = [...state.events]

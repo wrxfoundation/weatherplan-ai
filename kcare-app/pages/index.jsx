@@ -83,7 +83,8 @@ export default function Home() {
         <title>K-CARE</title>
       </Head>
       <div className="flex min-h-screen items-start justify-center bg-nav px-5">
-        <div className="w-full max-w-[880px] py-12">
+        {/* 랜드마크 — 스모크 테스트가 이 화면들에서 잡아냈다 (region · landmark-one-main) */}
+        <main className="w-full max-w-[880px] py-12">
           <div className="flex items-start justify-between">
             <div className="font-num text-[29px] font-extrabold tracking-[.04em] text-white">
               K-CARE <span className="align-top text-[11px] font-bold text-gold">BETA</span>
@@ -175,7 +176,7 @@ export default function Home() {
           </div>
 
           <p className="mt-8 border-t border-white/10 pt-4 text-[12px] leading-[1.8] text-white/40">{t.footer}</p>
-        </div>
+        </main>
       </div>
     </>
   );

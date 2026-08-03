@@ -10,7 +10,7 @@ import { useAppState } from "../../lib/state";
 // 보호자 결제는 승인 절차 없이 바로 주문 (자기 결제).
 
 export default function StorePage() {
-  const { state, dispatch } = useAppState();
+  const { dispatch } = useAppState(); // state 는 안 쓴다 — dispatch 만 필요
   const [sel, setSel] = useState({});
   const [ordered, setOrdered] = useState(false);
 

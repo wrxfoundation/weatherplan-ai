@@ -16,6 +16,9 @@ export default function App({ Component, pageProps }) {
         {/* 확대는 막지 않는다 — 어르신 · 보호자 접근성 (maximum-scale=1 금지) */}
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#0A1F3C" />
+        {/* 파비콘이 없어 모든 화면에서 /favicon.ico 404 가 났다 (스모크가 잡음).
+            임시 마크이므로 정식 로고를 받으면 교체한다. */}
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <meta name="color-scheme" content="light" />
         <meta name="format-detection" content="telephone=no" />
         {/* 홈 화면에 추가했을 때 앱처럼 보이게 */}
