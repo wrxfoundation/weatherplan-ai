@@ -25,7 +25,7 @@ from collections import deque
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT_BRAND = ROOT / "public" / "brand"
@@ -37,6 +37,11 @@ PLATE = "#0A1F3C"                               # 파비콘 바탕 (앱의 navy 
 
 REF_ALPHA = 0.8588      # 솔리드 픽셀의 alpha_raw — 이 값을 1.0 으로 정규화
 LUM_SPLIT = 98          # 언매팅한 색의 밝기 경계 (진한 파랑 ~86 · 밝은 파랑 ~108)
+
+# 태그라인("Global Healthcare Concierge") 보정 — 아래 두 값이 하는 일은
+# write_svg / separate 주석에 자세히 적었다.
+TAG_PT_YMAX = 2620      # potrace y 가 이보다 작으면 태그라인 (소스 y 450 아래)
+TAG_STROKE = 30         # potrace 단위. g 의 scale(0.1) 을 거쳐 소스 3px 이 된다
 
 
 # ── 1. 누끼 + 색 분리 ────────────────────────────────────────────────────────
@@ -51,14 +56,25 @@ def separate(src):
     F = np.clip((a - 255.0 * (1 - al[..., None])) / np.maximum(al[..., None], 1e-6), 0, 255)
     lum = 0.2126 * F[..., 0] + 0.7152 * F[..., 1] + 0.0722 * F[..., 2]
 
-    solid = al > 0.75
+    # 국소 정규화. 원본 태그라인은 획마다 진하기가 들쭉날쭉하다 — 세로획은
+    # alpha 0.8 인데 가로획은 0.3 도 안 되는 곳이 있다(획이 지나가는 열의 7%).
+    # 고정 문턱을 그대로 쓰면 그 흐린 가로획이 통째로 사라져 글자가 끊긴다.
+    # 그래서 각 획을 '자기 주변 최대값' 기준으로 재어 절반 지점에서 자른다.
+    # 바닥값 0.28 은 안전장치다 — 획이 없는 곳의 글로우는 최대 0.04 라
+    # 0.04/0.28 = 0.14 로 문턱(0.45)에 한참 못 미친다. 획이 확실한 곳은
+    # 국소 최대가 1.0 이라 나눠도 그대로여서 심볼·워드마크는 변하지 않는다.
+    lmax = np.asarray(Image.fromarray((al * 255).astype(np.uint8))
+                      .filter(ImageFilter.MaxFilter(11))).astype(float) / 255.0
+    alc = np.clip(al / np.maximum(lmax, 0.28), 0, 1)
+
+    solid = alc > 0.75
     owner = np.zeros((H, W), np.uint8)
     owner[solid & (lum < LUM_SPLIT)] = 1
     owner[solid & (lum >= LUM_SPLIT)] = 2
 
     # 안티에일리어싱 띠의 주인 정하기 — 두 색을 동시에 키운다.
     # 한쪽만 팽창시키면 경계가 그만큼 밀린다.
-    region = al > 0.45          # 글로우 꼬리(0.45 아래)는 버린다
+    region = alc > 0.45         # 글로우 꼬리(0.45 아래)는 버린다
     for _ in range(24):
         if not (owner[region] == 0).any():
             break
@@ -203,11 +219,22 @@ def write_svg(out, box, paths, prim, acc, xmax=None, plate=None):
     x0, y0, x1, y1 = box
     w, h = x1 - x0 + 1, y1 - y0 + 1
 
-    def d(name):
+    def d(name, tagline=None):
+        """tagline=True 면 태그라인 서브패스만, False 면 나머지만, None 이면 전부"""
         sp = _subpaths(paths[name])
         if xmax is not None:
             sp = [s for s in sp if s[1][2] <= xmax]
+        if tagline is not None:
+            sp = [s for s in sp if (s[1][3] < TAG_PT_YMAX) == tagline]
         return " ".join(s for s, _ in sp)
+
+    # 태그라인은 획이 5px(전체 높이 540 대비 약 1%)이라 실제로 쓰는 크기에서
+    # 0.3 CSS px 이 된다. 1 픽셀도 안 되는 선은 래스터라이저가 자리에 따라
+    # 살리기도 하고 지우기도 해서 글자가 드문드문 끊겨 보인다. 획에 stroke 를
+    # 얹어 3px 키운다 — 26px(푸터)에서도 고르게 나오는 최소치다.
+    # 심볼·워드마크는 이미 충분히 굵어 건드리지 않는다.
+    tag = d("primary", tagline=True)
+    rest = d("primary", tagline=False)
 
     # width/height 를 명시한다 — viewBox 만 있는 SVG 를 <img> 로 걸면 렌더러에 따라
     # 고유 비율을 못 읽고 300x150 으로 떨어질 수 있다 (width:auto 가 무너진다)
@@ -216,10 +243,13 @@ def write_svg(out, box, paths, prim, acc, xmax=None, plate=None):
     if plate:
         parts.append(f'<rect x="{x0:g}" y="{y0:g}" width="{w:g}" height="{h:g}" '
                      f'rx="{plate[1]:g}" fill="{plate[0]}"/>')
-    parts += [f'<g transform="{XFORM}">',
-              f'<path fill="{prim}" d="{d("primary")}"/>',
-              f'<path fill="{acc}" d="{d("accent")}"/>',
-              "</g></svg>"]
+    parts.append(f'<g transform="{XFORM}">')
+    if rest:
+        parts.append(f'<path fill="{prim}" d="{rest}"/>')
+    if tag:
+        parts.append(f'<path fill="{prim}" stroke="{prim}" stroke-width="{TAG_STROKE}" '
+                     f'stroke-linejoin="round" stroke-linecap="round" d="{tag}"/>')
+    parts += [f'<path fill="{acc}" d="{d("accent")}"/>', "</g></svg>"]
     out.write_text("\n".join(parts) + "\n")
     print(f"{out.relative_to(ROOT)}  {out.stat().st_size} bytes  viewBox {x0:g} {y0:g} {w:g} {h:g}")
 
