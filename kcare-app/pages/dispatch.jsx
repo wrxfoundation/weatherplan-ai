@@ -626,9 +626,7 @@ export default function DispatchConsole() {
         {/* 전고 사이드바 — 경영 콘솔과 동일 구조 (관제 업무 메뉴) */}
         <aside className="sticky top-0 hidden h-screen w-[212px] shrink-0 flex-col lg:flex" style={{ background: NAVY }}>
           <div className="px-5 pt-6">
-            <div className="font-num text-[20px] font-extrabold tracking-[.04em] text-white">
-              <Logo height={20} tone="onDark" beta />
-            </div>
+            <Logo height={30} tone="onDark" beta />
             <div className="mt-1 text-[11px] font-bold tracking-[.14em] text-white/40">관제 콘솔 · 현장 관리</div>
           </div>
           {/* nav 가 이 화면에 둘이라 이름을 붙여 구분한다 (axe: landmark-unique) */}

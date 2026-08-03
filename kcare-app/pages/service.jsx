@@ -119,7 +119,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
         {/* ── 상단 바 ── */}
         <header className="sticky top-0 z-40 border-b border-navy/[.08] bg-paper/92 backdrop-blur">
           <div className="mx-auto flex w-full max-w-[880px] items-center justify-between px-5 py-3.5">
-            <Logo height={22} />
+            <Logo height={32} />
             {/* 좁은 화면에서는 구간 링크를 숨긴다 — 어차피 스크롤로 닿는 곳이고,
                 로고와 CTA 까지 줄바꿈되면 상단바가 무너진다 (활자 12% 확대 이후 확인) */}
             <nav className="flex items-center gap-1.5">
@@ -563,7 +563,10 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
 
         <footer className="border-t border-navy/[.08] px-5 py-8">
           <div className="mx-auto w-full max-w-[880px] text-[12.5px] leading-[1.9] text-muted">
-            <Logo height={17} className="opacity-60" />
+            {/* 푸터는 조용해야 하지만, 로고 색이 남색(#0A1F3C)에서 브랜드 파랑
+                (#24618A)으로 바뀌면서 같은 opacity-60 에서 대비가 4.23 → 2.59 로
+                떨어졌다. 80 으로 올려 예전 무게(3.86)에 맞춘다. */}
+            <Logo height={26} className="opacity-80" />
             <p className="mt-2">
               케이웨더 시니어 케어 멤버십 · 서울 강남구 · 송파구 · 서초구 운영 중
               <br />

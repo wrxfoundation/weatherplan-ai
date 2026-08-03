@@ -87,9 +87,7 @@ export default function Home() {
         {/* 랜드마크 — 스모크 테스트가 이 화면들에서 잡아냈다 (region · landmark-one-main) */}
         <main className="w-full max-w-[880px] py-12">
           <div className="flex items-start justify-between">
-            <div className="font-num text-[29px] font-extrabold tracking-[.04em] text-white">
-              <Logo height={30} tone="onDark" beta />
-            </div>
+            <Logo height={42} tone="onDark" beta />
             <div className="flex gap-1 rounded-full border border-white/15 p-1">
               {["ko", "en"].map((l) => (
                 <button

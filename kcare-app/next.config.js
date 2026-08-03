@@ -6,9 +6,15 @@
 // next.config.js 는 빌드 시점에 Node 로 돌아가므로 여기서 한 번만 보면 된다.
 const fs = require("fs");
 const path = require("path");
-const BRAND_LOGO = ["logo.svg", "logo.webp", "logo.png"]
-  .map((f) => (fs.existsSync(path.join(__dirname, "public", "brand", f)) ? `/brand/${f}` : null))
-  .find(Boolean) || "";
+const pick = (stem) =>
+  ["svg", "webp", "png"]
+    .map((e) => (fs.existsSync(path.join(__dirname, "public", "brand", `${stem}.${e}`)) ? `/brand/${stem}.${e}` : null))
+    .find(Boolean) || "";
+const BRAND_LOGO = pick("logo");
+// 어두운 배경 전용 파일. 없으면 밝은 배경용을 흰색으로 반전해 쓴다 — 단색 로고면
+// 그걸로 충분하지만, K-CARE 로고처럼 2색이면 두 색이 같은 흰색이 되어 심볼이
+// 한 덩어리로 뭉친다. 그래서 어두운 배경용을 따로 둔다.
+const BRAND_LOGO_DARK = pick("logo-dark");
 
 // CSP — 민감 프로필을 다루는 앱: 허용 출처를 명시적으로 한정한다.
 // 외부 허용은 폰트(Google Fonts)와 지도 타일(OSM·CARTO)뿐 · 그 외 전부 자기 출처.
@@ -33,7 +39,7 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: { unoptimized: true }, // next/image 미사용 — 이미지 최적화 엔드포인트 표면 축소
-  env: { NEXT_PUBLIC_BRAND_LOGO: BRAND_LOGO },
+  env: { NEXT_PUBLIC_BRAND_LOGO: BRAND_LOGO, NEXT_PUBLIC_BRAND_LOGO_DARK: BRAND_LOGO_DARK },
   async headers() {
     return [
       {

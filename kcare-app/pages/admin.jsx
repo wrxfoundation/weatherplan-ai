@@ -412,9 +412,7 @@ export default function AdminConsole() {
         {/* 전고 사이드바 — 화면 전체 높이 고정 · 헤더 아래 매립형 아님 (다크 네이비) */}
         <aside className="sticky top-0 hidden h-screen w-[232px] shrink-0 flex-col lg:flex" style={{ background: NAVY }}>
           <div className="px-5 pt-5">
-            <div className="font-num text-[19px] font-extrabold tracking-[.04em] text-white">
-              <Logo height={20} tone="onDark" beta />
-            </div>
+            <Logo height={30} tone="onDark" beta />
             <div className="mt-1 text-[11px] font-bold tracking-[.14em] text-white/40">경영 콘솔 · 사람 관리</div>
           </div>
           <nav className="mt-3 min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-3">
