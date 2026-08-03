@@ -450,16 +450,22 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
           title="이런 분께 권합니다"
           desc="아직 스스로 지내실 수 있을 때 시작하는 편이 낫습니다. 이미 돌봄이 필요한 상태라면 요양·간병 쪽이 맞습니다."
         >
-          <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+          {/* 9칸 3x3 격자였는데 세로로 250px 을 먹어 아래 내용이 밀렸다.
+              한 줄로 이어지는 칩으로 바꾼다 — 폭이 모자라면 다음 줄로 흐를 뿐
+              칸이 격자로 갈라지지 않아 한 문장처럼 읽힌다.
+              가로 스크롤 대신 흐르게 두는 이유: 스크롤 영역을 만들면 키보드로
+              닿을 수 없는 스크롤 영역이 되어 별도 처리가 필요하고, 모바일에서
+              옆으로 밀어야 나머지가 보인다는 것도 바로 알기 어렵다. */}
+          <ul className="flex flex-wrap gap-x-2 gap-y-2.5">
             {FIT_FOR.map((f) => (
               <li
                 key={f.k}
-                className="flex items-center gap-3 rounded-[14px] border border-navy/[.08] bg-white/70 px-4 py-3.5"
+                className="inline-flex items-center gap-2 rounded-full border border-navy/[.09] bg-white/75 py-2 pl-3 pr-4"
               >
                 <span className="shrink-0 text-gold">
-                  <Icon name={f.icon} size={22} />
+                  <Icon name={f.icon} size={18} />
                 </span>
-                <span className="min-w-0 text-[15.5px] font-bold leading-[1.5] text-navy">{f.k}</span>
+                <span className="whitespace-nowrap text-[14.5px] font-bold leading-none text-navy">{f.k}</span>
               </li>
             ))}
           </ul>
