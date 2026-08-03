@@ -265,7 +265,7 @@ function ControlMap({ sos, mode = "light", onSelect }) {
 }
 
 // 날씨 지도 — 관제 맵과 같은 Leaflet · 권역 마커에 기온·미세먼지를 상시 라벨로 표시.
-// 데이터 출처는 케이웨더 단일 (WEATHER_DISTRICTS ↔ MAP_DISTRICTS 이름 매칭).
+// 데이터는 단일 출처를 쓴다 (WEATHER_DISTRICTS ↔ MAP_DISTRICTS 이름 매칭).
 // 공용 톤 — 낙상 대응 · 준비 상태 표기
 const TONE = {
   ok: { fg: "#1E7A5A", bg: "rgba(30,122,90,.1)" },
@@ -343,7 +343,7 @@ function WeatherMap() {
     <div className="relative">
       <div ref={nodeRef} className="h-[300px] overflow-hidden rounded-[10px]" style={{ background: MAP_TILES.light.bg }} />
       <div className="pointer-events-none absolute bottom-2 left-2 z-[1000] rounded-md bg-black/45 px-2 py-1 text-[10px] font-bold tracking-[.08em] text-white/80">
-        기상 데이터 — 케이웨더 · 5분 갱신
+        기상 데이터 — 5분 갱신
       </div>
     </div>
   );
@@ -1531,7 +1531,7 @@ export default function DispatchConsole() {
                       ))}
                     </div>
                   </div>
-                  <span className="text-[12px] text-muted">F5-6 · 케이웨더</span>
+                  <span className="text-[12px] text-muted">F5-6 · 주간 전망</span>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {forecast.map((d) => (
@@ -1586,7 +1586,7 @@ export default function DispatchConsole() {
 
                 {/* 오늘 배차 브리핑 (09 §9.3) */}
                 <Panel>
-                  <PanelHead title="오늘 배차 브리핑 · 외출 컨디션" right="출발지·도착지 2구간 · 케이웨더" />
+                  <PanelHead title="오늘 배차 브리핑 · 외출 컨디션" right="출발지·도착지 2구간" />
                   <div className="mt-3 space-y-3">
                     {BRIEFINGS.map((b) => (
                       <div key={b.name} className="flex gap-3 border-t border-navy/[.06] pt-2.5 first:border-t-0 first:pt-0">
@@ -2706,11 +2706,11 @@ export default function DispatchConsole() {
             </div>
           )}
 
-          {/* ════ 날씨 — 현재 기상 · 대기질 · 권역 지도 · 이슈 → 케어 연계 (출처: 케이웨더) ════ */}
+          {/* ════ 날씨 — 현재 기상 · 대기질 · 권역 지도 · 이슈 → 케어 연계 ════ */}
           {menu === "weather" && (
             <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
               <Panel className="min-w-0">
-                <PanelHead title="현재 기상 — 강남지점 권역" right={`케이웨더 · ${WEATHER_NOW.updated}`} />
+                <PanelHead title="현재 기상 — 강남지점 권역" right={WEATHER_NOW.updated} />
                 {/* 특보 배너 — 빨강은 위험 신호 전용 원칙과 일치 */}
                 <div className="mt-3 rounded-xl border border-danger/25 bg-danger/[.07] px-4 py-3">
                   <div className="flex flex-wrap items-center gap-2">
@@ -2831,7 +2831,7 @@ export default function DispatchConsole() {
                   ))}
                 </div>
                 <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
-                  기상 데이터는 케이웨더 단일 출처 · 이슈는 배차 · 발송 · 준비물 판단의 재료입니다 — 발송은
+                  기상 데이터는 단일 출처 · 이슈는 배차 · 발송 · 준비물 판단의 재료입니다 — 발송은
                   발송 센터에서, 일정 조정은 관제사 승인으로만 실행됩니다.
                 </p>
               </Panel>

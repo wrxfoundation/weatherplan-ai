@@ -771,7 +771,9 @@ export const WELFARE_METRICS = [
   { k: "혹서 수당 지급", v: "31건", note: "7월 폭염특보 일수 기준" },
 ];
 
-// ════ 날씨 관제 (관제 GNB '날씨') — 기상 데이터는 케이웨더 단일 출처 ════
+// ════ 날씨 관제 (관제 GNB '날씨') — 기상 데이터는 단일 출처 ════
+// 공급사는 아직 확정 전이라 화면 어디에도 회사 이름을 쓰지 않는다.
+// 정해지면 여기와 dispatch.jsx 의 '기상 데이터' 라벨에 한 번에 넣는다.
 // 수치는 SCORE_FACTORS(체감 36°·PM10 82·자외선 매우 높음)·WEEK_FORECAST(목 30 습도 높음 · 금 31 폭염 특보)와 동기.
 export const WEATHER_NOW = {
   temp: "33.4°",
@@ -844,7 +846,7 @@ export const WEATHER_ISSUES = [
     level: "예보",
     tone: "info",
     title: "금 31 폭염 특보 지속 · 토 1 맑음 회복",
-    time: "케이웨더 주간 전망",
+    time: "주간 전망",
     care: "금요일 배차 6건으로 이미 축소 편성 — 연기 가능 일정은 토요일로 이동 권고",
     cta: null,
   },
@@ -1086,7 +1088,7 @@ export const RISK_REGISTER = [
   { id: "H12", name: "심리 모니터링 중 무자격 상담 개입 (수익원 21)", detail: "발생 중간 × 영향 큼 · 위탁 취소·행정처분", act: "행위 범위를 발굴·모니터링·연계·동행으로 고정 · 상담 발화 금지 교육 · 유자격자 배치", owner: "운영 · 법무", state: "검토중", prob: 2, impact: 2.4 },
   { id: "H13", name: "상속·법률사무 유상 알선 (변호사법 제109조)", detail: "발생 낮음 × 영향 큼 · 7년 이하 징역 또는 5천만원 이하 벌금", act: "전문가 연결은 무보수 원칙 · 소개료·성공보수·구독 배분 전면 금지 · 유상 대행은 사후 행정 절차로 한정", owner: "법무", state: "설계완료", prob: 1, impact: 2.7 },
   { id: "M1", name: "VASP 신고 의무 발생", detail: "발생 중간 × 영향 중간", act: "직접 수탁·매매 금지 · 라이선스 PSP 위탁 구조 고정", owner: "법무", state: "설계완료", prob: 2, impact: 2 },
-  { id: "M2", name: "외부 API 장애 (케이웨더·PG)", detail: "발생 중간 × 영향 중간", act: "룰 기반 폴백 가이드 · 캐시된 최근값 표기 · 수동 전환", owner: "CTO", state: "완화됨", prob: 2, impact: 1.9 },
+  { id: "M2", name: "외부 API 장애 (기상·PG)", detail: "발생 중간 × 영향 중간", act: "룰 기반 폴백 가이드 · 캐시된 최근값 표기 · 수동 전환", owner: "CTO", state: "완화됨", prob: 2, impact: 1.9 },
   { id: "M3", name: "대기업 시장 진입", detail: "발생 높음 × 영향 중간", act: "진화형 케어 프로필 데이터 해자 · 지자체 장기 계약 선점", owner: "전략", state: "모니터링", prob: 3, impact: 1.9 },
   { id: "B1", name: "재가급여 저마진이 전사 수익성 희석", detail: "발생 높음 × 영향 중간 · 총이익률 13.4%", act: "단독 손익이 아닌 12개월 누적 기여로 평가 · 전환율 미달 시 확장 중단", owner: "경영 · 재무", state: "모니터링", prob: 3, impact: 1.8 },
   { id: "B2", name: "플랫폼 고객사의 자체 구축 이탈", detail: "발생 중간 × 영향 중간 · 라이선스 MRR", act: "AI 리포트·환경 데이터 등 복제 비용 큰 모듈을 계약 핵심에 배치 · 다년 계약", owner: "전략 · 개발", state: "모니터링", prob: 2, impact: 1.8 },

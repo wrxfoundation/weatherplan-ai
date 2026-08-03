@@ -66,7 +66,7 @@ export default function StorePage() {
             실내 온도가 높은 날이 이어집니다. 보냉백 · 생수 묶음 · 쿨매트를 아래 목록에서 확인해
             보세요 — 담당 컨시어지가 다음 방문에 함께 전달합니다.
           </p>
-          <p className="mt-1.5 text-[11px] text-muted">추천 기준: 케이웨더 환경 신호 × 어르신 이력 — 판매 실적과 무관합니다</p>
+          <p className="mt-1.5 text-[11px] text-muted">추천 기준: 환경 신호 × 어르신 이력 — 판매 실적과 무관합니다</p>
         </Card>
         <Card className="p-4">
           <SectionLabel>생활 · 건강 물품</SectionLabel>

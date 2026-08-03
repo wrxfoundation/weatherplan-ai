@@ -568,7 +568,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
                 떨어졌다. 80 으로 올려 예전 무게(3.86)에 맞춘다. */}
             <Logo height={26} className="opacity-80" />
             <p className="mt-2">
-              케이웨더 시니어 케어 멤버십 · 서울 강남구 · 송파구 · 서초구 운영 중
+              시니어 케어 프리미엄 멤버십 · 서울 강남구 · 송파구 · 서초구 운영 중
               <br />
               노인학대 신고 1577-1389 (노인보호전문기관) · 긴급 112 · 119
             </p>

@@ -241,7 +241,7 @@ ALTER TABLE ops.dispatch_jobs
 | `CASH_IN/OUT` · `CORP_CARDS` | `billing.*` |
 | `CONSENTS` / `ACCESS_LOG` | `governance.consents` / `access_log` |
 | `RISK_REGISTER` / `REG_CALENDAR` | `governance.risk_register` / `compliance_calendar` |
-| `WEATHER_*` | `ref.weather_snapshots` (케이웨더 API 캐시) |
+| `WEATHER_*` | `ref.weather_snapshots` (기상 API 캐시) |
 
 ---
 
