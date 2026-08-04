@@ -1,17 +1,17 @@
-# Korea Rising — verified K-pop snapshot (2026-08-03)
+# Korea Rising — verified K-pop snapshot (2026-08-04)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🏆 Circle Digital Chart — current #1
 **Rescene** — Love Attack  
-_Circle Digital Chart #1 (via Wikipedia) 2026-08-03 04:31 UTC · Skill Score 0.70_
+_Circle Digital Chart #1 (via Wikipedia) 2026-08-04 04:02 UTC · Skill Score 0.70_
 
 ## 🎬 Latest official releases (YouTube)
-- **Mamamoo** — 마마무(MAMAMOO) '1cm의 자존심' Special Clip (4WARD Concert ver.)
-- **Stray Kids** — Stray Kids "THIS & THAT" 3D ALBUM PREVIEW THIS VER. / THAT VER.
-- **LE SSERAFIM** — Thank you KANAGAWA #SAKURA POV 👀❤️‍🔥 #LE_SSERAFIM #르세라핌 #PUREFLOW #PUREFLOW_IN_JAPAN
+- **ITZY** — [TOUR-LOG] EP02 #LIA #SYDNEY | ITZY 3RD WORLD TOUR 'TUNNEL VISION'
+- **Stray Kids** — This & That 스테이 컴퍼니의 비밀 NG Cuts｜2026 STAYweeK
+- **LE SSERAFIM** — see you in the crowd💋
 - **BLACKPINK** — BLACKPINK - DEADLINE JACKET MAKING FILM
-- **aespa** — In halo #aespa #æspa #에스파 #エスパ #KISSNTELL #aespaKISSNTELL
+- **NewJeans** — [Light Jeans] 2026 Summer of NewJeans BehindㅣNewJeans
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
