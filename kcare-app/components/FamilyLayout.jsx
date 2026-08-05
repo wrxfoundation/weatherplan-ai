@@ -3,6 +3,7 @@ import Icon from "./icons";
 import { useRouter } from "next/router";
 import { Avatar } from "./ui";
 import { ELDER } from "../lib/mock";
+import { trackOf, subjectLabel } from "../lib/tracks";
 import { useAppState } from "../lib/state";
 import Splash from "./Splash";
 
@@ -19,6 +20,13 @@ export default function FamilyLayout({ children, title }) {
   const { state, dispatch } = useAppState();
   const elderName = state.onboarding?.elderName || ELDER.name;
   const role = state.demo.guardianRole || "primary";
+  // 정기 케어는 "어머니 · 김순자", 나머지 트랙은 "병원 동행 · 이정민" 처럼
+  // 무엇으로 쓰고 있는지가 제목에 드러나야 한다.
+  const track = trackOf(state.onboarding?.track);
+  const heading =
+    track.id === "elder"
+      ? `${subjectLabel(track, state.onboarding)} · ${elderName}`
+      : `${track.short} · ${elderName}`;
 
   return (
     <>
@@ -35,7 +43,7 @@ export default function FamilyLayout({ children, title }) {
                 {/* 화면마다 제목이 바뀌므로 여기가 이 화면의 h1 이다.
                     이게 없으면 /family 계열 7개 화면 전부 h1 없는 문서가 된다. */}
                 <h1 className="text-[21px] font-black leading-tight text-navy">
-                  {title || `어머니 · ${elderName}`}
+                  {title || heading}
                 </h1>
                 {/* 역할 배지 — 탭하면 주/부 전환 (시연) */}
                 <button

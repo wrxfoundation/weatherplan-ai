@@ -3,16 +3,25 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, Badge, Avatar } from "../../components/ui";
+import Icon from "../../components/icons";
 import { AI_ASSISTANT_QA, CARE_TEAM, EVENT_KINDS, FEED_TONE, GUARDIANS, NEIGHBORHOOD_FEED, NPS_REASONS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
+import { trackOf, subjectLabel } from "../../lib/tracks";
 
 import { useAppState } from "../../lib/state";
 
 // 가족 앱 홈 — 핸드오프 02 family 명세 + REQ-02(다음 일정 홈 노출)
 // 정보 비대칭 규칙: 경과시간·SLA 비노출, 가족 행동은 '확인했습니다' 1개.
+//
+// 트랙별로 화면이 달라진다 (lib/tracks.js). 상단 요약 카드의 문구가 바뀌고,
+// 트랙에 없는 블록은 아예 그리지 않는다 — 워치를 안 드리는 트랙에서 "실시간
+// 건강 요약"이 보이면 그건 거짓말이다. 온보딩 전(데모 직행)에는 기본 트랙을 쓴다.
 export default function FamilyHome() {
   const { state, dispatch } = useAppState();
   const [demoOpen, setDemoOpen] = useState(false);
   const ob = state.onboarding;
+  const track = trackOf(ob?.track);
+  const has = (b) => track.home.blocks.includes(b);
+  const subj = subjectLabel(track, ob); // 화면에서 이용자를 부르는 말 — 트랙마다 다르다
   const anomaly = state.demo.anomaly;
 
   const upcoming = [...state.events]
@@ -64,7 +73,7 @@ export default function FamilyHome() {
             <div className="text-[12px] font-bold tracking-[.14em] opacity-85">
               긴급 · SOS 수신
             </div>
-            <div className="mt-1 text-[19px] font-bold">어머니가 도움을 요청했습니다</div>
+            <div className="mt-1 text-[19px] font-bold">{subj}이(가) 도움을 요청했습니다</div>
             <div className="mt-0.5 text-[13px] opacity-90">
               박지현 · 서다인 2인 급파 중 (1.2km) · 관제센터 확인
             </div>
@@ -83,7 +92,7 @@ export default function FamilyHome() {
             <span className="h-[10px] w-[10px] shrink-0 animate-livePing rounded-full bg-green" />
             <div className="min-w-0 flex-1">
               <div className="text-[14px] font-bold text-navy">
-                지금 박지현 컨시어지가 어머니와 동행 중입니다
+                지금 박지현 컨시어지가 {subj} 곁에 함께 있습니다
               </div>
               <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">
                 13:50 출발 · GPS · 시간 기록 중 — 종료 후 2시간 안에 리포트가 도착합니다
@@ -157,39 +166,47 @@ export default function FamilyHome() {
           </div>
         )}
 
-        {/* 오늘 어머니는 — 핵심 약속 카피 포함 */}
+        {/* 상단 요약 — 트랙에 따라 제목·문구·지표가 바뀐다 */}
         <div className="rounded-card bg-navy p-[18px] text-white">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <SectionLabel>
-              <span className="text-white/60">오늘 {ob?.rel === "배우자" ? "배우자" : "어머니"}는</span>
+              <span className="text-white/60">
+                {track.id === "elder" && ob?.rel === "배우자"
+                  ? "오늘 배우자는"
+                  : track.home.title}
+              </span>
             </SectionLabel>
             <Badge fg="#0A1F3C" bg="#4ADE80">
-              평소와 같음
+              {track.home.badge}
             </Badge>
           </div>
-          <div className="mt-2 text-[19px] font-bold leading-[1.55]">
-            어제 잘 주무셨고, 아침 약도 챙겨 드셨습니다. 오후에 동네 한 바퀴 산책도
-            하셨어요.
-          </div>
-          <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/10 pt-3.5">
-            {WEEKLY.map((w) => (
-              <div key={w.name}>
-                <div className="text-[11px] text-white/55">{w.name}</div>
-                <div className="font-num text-[18px] font-bold">
-                  {w.value}{" "}
-                  <span className="text-[11px] font-bold text-[#4ADE80]">{w.delta}</span>
+          <div className="mt-2 text-[19px] font-bold leading-[1.55]">{track.home.line}</div>
+          {has("weekly") && (
+            <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/10 pt-3.5">
+              {WEEKLY.map((w) => (
+                <div key={w.name}>
+                  <div className="text-[11px] text-white/55">{w.name}</div>
+                  <div className="font-num text-[18px] font-bold">
+                    {w.value}{" "}
+                    <span className="text-[11px] font-bold text-[#4ADE80]">{w.delta}</span>
+                  </div>
+                  <div className="text-[10px] text-white/40">{w.last}</div>
                 </div>
-                <div className="text-[10px] text-white/40">{w.last}</div>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3.5 text-[12px] leading-[1.7] text-white/55">
-            숫자를 읽고 판단하는 일은 저희가 합니다. 한 줄이 초록이면 연락하지 않으셔도
-            됩니다.
-          </p>
+              ))}
+            </div>
+          )}
+          <p className="mt-3.5 text-[12px] leading-[1.7] text-white/55">{track.home.foot}</p>
           <p className="mt-1.5 text-[11px] text-white/40">
-            AI가 워치·방문 기록을 요약하고 사람이 검수합니다 (8.4)
+            AI가 기록을 요약하고 사람이 검수합니다 (8.4)
           </p>
+          {/* 지금 어떤 서비스로 쓰고 있는지 — 트랙이 바뀌면 화면이 바뀌므로 명시한다 */}
+          <div className="mt-3.5 flex items-center gap-2 border-t border-white/10 pt-3">
+            <span className="text-gold-soft">
+              <Icon name={track.icon} size={16} />
+            </span>
+            <span className="text-[12px] font-bold text-white/70">{track.short}</span>
+            <span className="text-[11px] text-white/35">· {track.who}</span>
+          </div>
         </div>
 
         {/* 동행 후 만족도 — NPS 수집 루프. 비추천(≤6)은 즉시 회복 플로우 */}
@@ -261,87 +278,91 @@ export default function FamilyHome() {
         )}
 
         {/* 오늘 외출 컨디션 — 두 구간 중 낮은 값 대표 (안전 측) · 디자인 콘솔 정합 */}
-        <Card
-          className="border-[rgba(147,178,214,.24)] p-[18px]"
-          style={{ background: "linear-gradient(180deg, #FAFCFF, #F2F7FD)" }}
-        >
-          <div className="flex items-center justify-between">
-            <div className="text-[17px] font-black text-navy">오늘 외출 컨디션</div>
-            <span className="font-num text-[12px] text-muted">{OUTING.asOf}</span>
-          </div>
-          <div className="mt-2 flex items-center gap-2.5">
-            <span className="font-num text-[38px] font-bold leading-none text-danger">{repScore}</span>
-            <span className="text-[12px] text-muted">/100</span>
-            <span className="rounded-full bg-danger px-2.5 py-1 text-[12px] font-bold text-white">
-              주의
-            </span>
-            <span className="ml-auto text-[12px] text-muted">두 구간 중 낮은 값</span>
-          </div>
-          <div className="mt-3 space-y-1.5">
-            {OUTING.legs.map((l) => (
-              <div
-                key={l.tag}
-                className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[13px]"
-                style={{
-                  background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
-                }}
-              >
-                <span className="w-[34px] shrink-0 font-bold text-gold">{l.tag}</span>
-                <span className="flex-1 font-bold text-ink">{l.place}</span>
-                <span className="font-num text-[16px] font-bold text-navy">{l.score}</span>
-                <span
-                  className="w-[30px] text-right text-[12px] font-bold"
-                  style={{ color: l.level === "danger" ? "#C0392B" : "#8A5D12" }}
-                >
-                  {l.grade}
-                </span>
-              </div>
-            ))}
-          </div>
-          {/* 3열 요인 그리드 (디자인 콘솔) */}
-          <div className="mt-2.5 grid grid-cols-3 gap-2">
-            {OUTING.factors3.map((f) => (
-              <div
-                key={f.label}
-                className="rounded-xl px-3 py-2.5"
-                style={{
-                  background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
-                }}
-              >
-                <div className="text-[11px] text-muted">{f.label}</div>
-                <div
-                  className="mt-0.5 font-num text-[15px] font-bold"
-                  style={{ color: { caution: "#8A5D12", danger: "#C0392B", neutral: "#0A1F3C" }[f.level] }}
-                >
-                  {f.value}
-                </div>
-              </div>
-            ))}
-          </div>
-          {/* 문장형 안내 — 이미 한 조치를 말한다 */}
-          <p className="mt-2.5 rounded-xl border border-[#EFE0BF] bg-[#FDF6E8] p-3 text-[13px] leading-[1.7] text-[#5A4A22]">
-            {OUTING.adviceGuardian}
-          </p>
-          <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {OUTING.kit.map((k) => (
-              <span key={k} className="chip-gold rounded-full px-2.5 py-1 text-[12px] font-bold">
-                {k}
+        {has("outing") && (
+          <Card
+            className="border-[rgba(147,178,214,.24)] p-[18px]"
+            style={{ background: "linear-gradient(180deg, #FAFCFF, #F2F7FD)" }}
+          >
+            <div className="flex items-center justify-between">
+              <div className="text-[17px] font-black text-navy">오늘 외출 컨디션</div>
+              <span className="font-num text-[12px] text-muted">{OUTING.asOf}</span>
+            </div>
+            <div className="mt-2 flex items-center gap-2.5">
+              <span className="font-num text-[38px] font-bold leading-none text-danger">{repScore}</span>
+              <span className="text-[12px] text-muted">/100</span>
+              <span className="rounded-full bg-danger px-2.5 py-1 text-[12px] font-bold text-white">
+                주의
               </span>
-            ))}
-          </div>
-        </Card>
+              <span className="ml-auto text-[12px] text-muted">두 구간 중 낮은 값</span>
+            </div>
+            <div className="mt-3 space-y-1.5">
+              {OUTING.legs.map((l) => (
+                <div
+                  key={l.tag}
+                  className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[13px]"
+                  style={{
+                    background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
+                  }}
+                >
+                  <span className="w-[34px] shrink-0 font-bold text-gold">{l.tag}</span>
+                  <span className="flex-1 font-bold text-ink">{l.place}</span>
+                  <span className="font-num text-[16px] font-bold text-navy">{l.score}</span>
+                  <span
+                    className="w-[30px] text-right text-[12px] font-bold"
+                    style={{ color: l.level === "danger" ? "#C0392B" : "#8A5D12" }}
+                  >
+                    {l.grade}
+                  </span>
+                </div>
+              ))}
+            </div>
+            {/* 3열 요인 그리드 (디자인 콘솔) */}
+            <div className="mt-2.5 grid grid-cols-3 gap-2">
+              {OUTING.factors3.map((f) => (
+                <div
+                  key={f.label}
+                  className="rounded-xl px-3 py-2.5"
+                  style={{
+                    background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
+                  }}
+                >
+                  <div className="text-[11px] text-muted">{f.label}</div>
+                  <div
+                    className="mt-0.5 font-num text-[15px] font-bold"
+                    style={{ color: { caution: "#8A5D12", danger: "#C0392B", neutral: "#0A1F3C" }[f.level] }}
+                  >
+                    {f.value}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* 문장형 안내 — 이미 한 조치를 말한다 */}
+            <p className="mt-2.5 rounded-xl border border-[#EFE0BF] bg-[#FDF6E8] p-3 text-[13px] leading-[1.7] text-[#5A4A22]">
+              {OUTING.adviceGuardian}
+            </p>
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              {OUTING.kit.map((k) => (
+                <span key={k} className="chip-gold rounded-full px-2.5 py-1 text-[12px] font-bold">
+                  {k}
+                </span>
+              ))}
+            </div>
+          </Card>
+        )}
 
         {/* 우리 동네 소식 — 동·구 단위 재난·안전·정책·바우처 (디자인 콘솔 복원) */}
-        <NeighborhoodFeed
-          onApply={(item) =>
-            dispatch({
-              type: "pushEvent",
-              payload: { kind: "정책", text: `${item.title} — 신청 대행 요청 접수`, color: "#F0D9A8" },
-            })
-          }
-        />
+        {has("feed") && (
+          <NeighborhoodFeed
+            onApply={(item) =>
+              dispatch({
+                type: "pushEvent",
+                payload: { kind: "정책", text: `${item.title} — 신청 대행 요청 접수`, color: "#F0D9A8" },
+              })
+            }
+          />
+        )}
 
         {/* 담당 컨시어지 · 2인 1조 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}
         <div className="card-navy rounded-card bg-navy p-[18px] text-white">
@@ -420,112 +441,118 @@ export default function FamilyHome() {
         </div>
 
         {/* 실시간 건강 요약 — 5지표 · 지표별 상태 라벨 병행 (디자인 콘솔 · F2-6) */}
-        <Card className="p-[18px]">
-          <div className="flex items-center justify-between">
-            <div className="text-[17px] font-black text-navy">실시간 건강 요약</div>
-            <Link href="/family/watch" className="tap text-[12px] font-bold text-navy underline decoration-navy/25 underline-offset-2">
-              워치 상세 →
-            </Link>
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-2.5">
-            {VITALS.map((v) => (
+        {has("vitals") && (
+          <Card className="p-[18px]">
+            <div className="flex items-center justify-between">
+              <div className="text-[17px] font-black text-navy">실시간 건강 요약</div>
+              <Link href="/family/watch" className="tap text-[12px] font-bold text-navy underline decoration-navy/25 underline-offset-2">
+                워치 상세 →
+              </Link>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2.5">
+              {VITALS.map((v) => (
+                <div
+                  key={v.name}
+                  className="rounded-xl p-3.5"
+                  style={{
+                    background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
+                  }}
+                >
+                  <div className="text-[12px] text-muted">{v.name}</div>
+                  <div className="mt-0.5 font-num text-[25px] font-bold leading-none text-navy">
+                    {v.value} <span className="text-[12px] font-bold text-muted">{v.unit}</span>
+                  </div>
+                  <div
+                    className="mt-1.5 text-[12px] font-bold"
+                    style={{ color: { ok: "#1E7A5A", caution: "#8A5D12", danger: "#C0392B", neutral: "#5C5A54" }[v.level] }}
+                  >
+                    {v.status}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
+              웨어러블 실연동 대기 — 표기 지표는 연동 후 실측값으로 대체 (F2-6)
+            </p>
+          </Card>
+        )}
+
+        {/* AI 케어 어시스턴트 — 답변은 항상 근거 동반 · 의료 판단 아님 */}
+        {has("assistant") && (
+          <Card className="p-[18px]">
+            <div className="flex items-center gap-2">
+              <span className="text-[17px] font-black text-navy">AI 케어 어시스턴트</span>
+              <span className="chip-gold rounded-full px-2 py-[3px] text-[10px] font-bold">근거 동반 답변</span>
+            </div>
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              {AI_ASSISTANT_QA.map((qa) => (
+                <button
+                  key={qa.q}
+                  onClick={() => askAssistant(qa)}
+                  className={`btn-press rounded-full border px-3 py-2 text-[13px] font-bold ${
+                    askAi?.q === qa.q ? "border-navy bg-navy text-white" : "border-navy/15 text-muted"
+                  }`}
+                >
+                  {qa.q}
+                </button>
+              ))}
+            </div>
+            {askAi && (
               <div
-                key={v.name}
-                className="rounded-xl p-3.5"
+                className="animate-tickIn mt-3 rounded-xl p-3.5"
                 style={{
                   background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
                 }}
               >
-                <div className="text-[12px] text-muted">{v.name}</div>
-                <div className="mt-0.5 font-num text-[25px] font-bold leading-none text-navy">
-                  {v.value} <span className="text-[12px] font-bold text-muted">{v.unit}</span>
-                </div>
-                <div
-                  className="mt-1.5 text-[12px] font-bold"
-                  style={{ color: { ok: "#1E7A5A", caution: "#8A5D12", danger: "#C0392B", neutral: "#5C5A54" }[v.level] }}
-                >
-                  {v.status}
-                </div>
+                {askAi.loading ? (
+                  <p className="text-[15px] leading-[1.75] text-muted">기록을 확인하고 있어요…</p>
+                ) : (
+                  <>
+                    <p className="text-[15px] leading-[1.75] text-ink">{askAi.a}</p>
+                    <p className="mt-2 border-t border-navy/[.08] pt-2 text-[11px] font-bold text-muted">
+                      근거: {askAi.src}
+                    </p>
+                  </>
+                )}
               </div>
-            ))}
-          </div>
-          <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
-            웨어러블 실연동 대기 — 표기 지표는 연동 후 실측값으로 대체 (F2-6)
-          </p>
-        </Card>
-
-        {/* AI 케어 어시스턴트 — 답변은 항상 근거 동반 · 의료 판단 아님 */}
-        <Card className="p-[18px]">
-          <div className="flex items-center gap-2">
-            <span className="text-[17px] font-black text-navy">AI 케어 어시스턴트</span>
-            <span className="chip-gold rounded-full px-2 py-[3px] text-[10px] font-bold">근거 동반 답변</span>
-          </div>
-          <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {AI_ASSISTANT_QA.map((qa) => (
-              <button
-                key={qa.q}
-                onClick={() => askAssistant(qa)}
-                className={`btn-press rounded-full border px-3 py-2 text-[13px] font-bold ${
-                  askAi?.q === qa.q ? "border-navy bg-navy text-white" : "border-navy/15 text-muted"
-                }`}
-              >
-                {qa.q}
-              </button>
-            ))}
-          </div>
-          {askAi && (
-            <div
-              className="animate-tickIn mt-3 rounded-xl p-3.5"
-              style={{
-                background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
-                boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
-              }}
-            >
-              {askAi.loading ? (
-                <p className="text-[15px] leading-[1.75] text-muted">기록을 확인하고 있어요…</p>
-              ) : (
-                <>
-                  <p className="text-[15px] leading-[1.75] text-ink">{askAi.a}</p>
-                  <p className="mt-2 border-t border-navy/[.08] pt-2 text-[11px] font-bold text-muted">
-                    근거: {askAi.src}
-                  </p>
-                </>
-              )}
-            </div>
-          )}
-          <p className="mt-2.5 text-[11px] leading-[1.6] text-muted">
-            수집된 기록에서만 답합니다 · 의료 판단이 아니며, 이상 징후는 사람이 확인 후
-            알립니다 (8.4)
-          </p>
-        </Card>
+            )}
+            <p className="mt-2.5 text-[11px] leading-[1.6] text-muted">
+              수집된 기록에서만 답합니다 · 의료 판단이 아니며, 이상 징후는 사람이 확인 후
+              알립니다 (8.4)
+            </p>
+          </Card>
+        )}
 
         {/* 형제 공동 관리 — 순위 없음, 사실만 */}
-        <Card className="p-[18px]">
-          <SectionLabel>가족 공동 관리</SectionLabel>
-          <div className="mt-3 space-y-3">
-            {GUARDIANS.map((g) => (
-              <div key={g.name} className="flex items-center gap-3">
-                <Avatar name={g.name} size={30} />
-                <div className="min-w-0 flex-1">
-                  <div className="text-[15px] font-bold text-ink">
-                    {g.name}
-                    {g.isPrimary && (
-                      <span className="ml-1.5 text-[11px] font-bold text-gold">연락 담당</span>
-                    )}
+        {has("siblings") && (
+          <Card className="p-[18px]">
+            <SectionLabel>가족 공동 관리</SectionLabel>
+            <div className="mt-3 space-y-3">
+              {GUARDIANS.map((g) => (
+                <div key={g.name} className="flex items-center gap-3">
+                  <Avatar name={g.name} size={30} />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[15px] font-bold text-ink">
+                      {g.name}
+                      {g.isPrimary && (
+                        <span className="ml-1.5 text-[11px] font-bold text-gold">연락 담당</span>
+                      )}
+                    </div>
+                    <div className="text-[12px] text-muted">
+                      {g.relation} · {g.residence}
+                    </div>
                   </div>
-                  <div className="text-[12px] text-muted">
-                    {g.relation} · {g.residence}
-                  </div>
+                  <div className="font-num text-[13px] font-bold text-muted">분담 {g.share}</div>
                 </div>
-                <div className="font-num text-[13px] font-bold text-muted">분담 {g.share}</div>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3.5 border-t border-navy/10 pt-3 text-[12px] leading-[1.7] text-muted">
-            연락 담당은 한 명으로 고정하고 결과는 세 분 모두에게 동시에 전달됩니다.
-          </p>
-        </Card>
+              ))}
+            </div>
+            <p className="mt-3.5 border-t border-navy/10 pt-3 text-[12px] leading-[1.7] text-muted">
+              연락 담당은 한 명으로 고정하고 결과는 세 분 모두에게 동시에 전달됩니다.
+            </p>
+          </Card>
+        )}
 
         {/* 시연 컨트롤 — 데모 전용 */}
         <div className="pt-1 text-center">
@@ -692,7 +719,7 @@ function NeighborhoodFeed({ onApply }) {
         ))}
       </div>
       <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-        행정안전부 재난문자 · 구청 복지 공고 기준 — 어머니에게 해당하는 것만 골라 알려드립니다.
+        행정안전부 재난문자 · 구청 복지 공고 기준 — 해당하는 것만 골라 알려드립니다.
       </p>
     </Card>
   );

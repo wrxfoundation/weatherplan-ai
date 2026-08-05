@@ -122,7 +122,7 @@ export default function Splash({ service = "family" }) {
         </div>
 
         <div className="kc-foot" style={{ color: s.fg }}>
-          K-CARE 시니어 케어 프리미엄 멤버십
+          K-CARE 멤버십
         </div>
       </div>
     </>
