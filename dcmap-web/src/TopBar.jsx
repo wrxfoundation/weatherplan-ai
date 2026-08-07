@@ -7,7 +7,7 @@ import { useMapLang, setMapLang } from './i18n/mapLang.js'
 // 라우트 → GNB 섹션(색상 톤). 페이지 전체 accent가 섹션 톤을 따른다.
 const SECTION_PREFIX = [
   ['/calc', 'data'], ['/dashboard', 'data'], ['/data', 'data'], ['/stats', 'data'], ['/land', 'data'], ['/compare', 'data'], ['/pricing', 'data'],
-  ['/insights', 'knowledge'], ['/roadmap', 'knowledge'], ['/glossary', 'glossary'], ['/about', 'about'],
+  ['/insights', 'knowledge'], ['/roadmap', 'knowledge'], ['/benchmark', 'knowledge'], ['/glossary', 'glossary'], ['/about', 'about'],
   ['/map3d', 'explore'], ['/power', 'explore'], ['/dc', 'explore'], ['/region', 'explore'],
 ]
 function sectionForPath(pathname) {
@@ -256,6 +256,9 @@ export default function TopBar() {
         </NavLink>
         <NavLink to="/roadmap" data-nav="knowledge" className={({ isActive }) => (isActive ? 'active' : '')}>
           {en ? 'Roadmap' : '로드맵'}
+        </NavLink>
+        <NavLink to="/benchmark" data-nav="knowledge" className={({ isActive }) => (isActive ? 'active' : '')}>
+          {en ? 'Benchmark' : '벤치마크'}
         </NavLink>
         <NavLink to="/glossary" data-nav="glossary" className={({ isActive }) => (isActive ? 'active' : '')}>
           {en ? 'Glossary' : '용어집'}
