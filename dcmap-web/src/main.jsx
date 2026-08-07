@@ -30,6 +30,7 @@ const PricingPage = lazy(() => import('./lead/PricingPage.jsx'))
 const SampleReportPage = lazy(() => import('./lead/SampleReportPage.jsx'))
 const GlobalPage = lazy(() => import('./lead/GlobalPage.jsx'))
 const MethodologyPage = lazy(() => import('./lead/MethodologyPage.jsx'))
+const BenchmarkPage = lazy(() => import('./bench/BenchmarkPage.jsx'))
 const AboutPage = lazy(() => import('./about/AboutPage.jsx'))
 
 /* SPA 라우트 전환 시 스크롤 최상단 — 긴 페이지에서 이전 스크롤 위치가 남는 UX 문제 방지 */
@@ -71,6 +72,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/data" element={<DataExplorerPage />} />
           <Route path="/roadmap" element={<RoadmapPage />} />
           <Route path="/compare" element={<ComparePage />} />
+          <Route path="/benchmark" element={<BenchmarkPage />} />
           <Route path="/insights" element={<InsightsIndexPage />} />
           <Route path="/insights/:slug" element={<InsightPage />} />
           <Route path="/pricing" element={<PricingPage />} />

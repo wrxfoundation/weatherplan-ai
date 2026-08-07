@@ -16,6 +16,7 @@ const { facilities } = JSON.parse(readFileSync(join(ROOT, 'data/dc_centers.json'
 const { GLOSSARY } = await import(join(ROOT, 'src/content/glossary.js'))
 const { SIDO_SLUGS } = await import(join(ROOT, 'src/content/sido_slugs.js'))
 const { INSIGHTS } = await import(join(ROOT, 'src/content/insights_meta.js'))
+const { GLOBAL_CASES } = await import(join(ROOT, 'src/data/globalCases.js'))
 const shell = readFileSync(join(DIST, 'index.html'), 'utf8')
 
 const STATUS_LABEL = { operating: '운영', construction: '건설', planned: '계획', delayed: '지연' }
@@ -59,6 +60,9 @@ function prerender(relPath, title, desc, jsonLd) {
   ].join('\n    ')
 
   const html = shell
+    // 셸(index.html)에 이미 박힌 canonical('/')을 제거하고 라우트별 canonical만 남긴다.
+    // 남겨두면 페이지마다 canonical이 2개가 되어 크롤러가 어느 쪽도 신뢰하지 않는다.
+    .replace(/\s*<link rel="canonical"[^>]*>/g, '')
     .replace(/<title>.*?<\/title>/, `<title>${esc(title)}</title>`)
     .replace(/(<meta name="description" content=")[^"]*(")/, `$1${esc(desc)}$2`)
     .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
@@ -239,6 +243,12 @@ prerender('/methodology', 'Methodology — AI InfraMap Korea DC Site Intelligenc
   name: 'AI InfraMap Methodology',
   inLanguage: 'en',
 })
+prerender('/benchmark', '글로벌 AI 인프라 벤치마크 — 해외 사례 라이브러리 | AI InfraMap', '해외 AI 인프라·기상 AI 사업자를 같은 틀로 해부한다. 계층별 구조(플랫폼·컴퓨트·모델·관측·국가기관), 정량 지표, 검증된 것과 아직 검증되지 않은 것을 분리한 사례 라이브러리.', {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: '글로벌 AI 인프라 벤치마크',
+  about: GLOBAL_CASES.map((c) => ({ '@type': 'Organization', name: c.name })),
+})
 prerender('/data', '데이터 탐색기 — AI InfraMap', '발전 허가대장·집단에너지·계통 공급여유·계통영향평가·변전소·산업단지·시설 시드 — 축적 원천 자료 검색·CSV 다운로드.', {
   '@context': 'https://schema.org',
   '@type': 'Dataset',
@@ -260,6 +270,7 @@ const urls = [
   '/stats',
   '/dashboard',
   '/insights',
+  '/benchmark',
   ...INSIGHTS.map((a) => `/insights/${a.slug}`),
   ...regionSlugs.map((s) => `/region/${s}`),
   ...facilities.map((f) => `/dc/${slugOf(f)}`),
@@ -320,6 +331,7 @@ writeFileSync(
 - [통계](${ORIGIN}/stats) · [대시보드](${ORIGIN}/dashboard) · [데이터 탐색기](${ORIGIN}/data)
 - [GPU→전력 계산기](${ORIGIN}/calc): GPU 수 → MW·PUE·전력비·탄소·RE100 + AIDC 면제 시나리오
 - [인사이트](${ORIGIN}/insights): ${INSIGHTS.length}편 — 입지·전력·규제 분석
+- [글로벌 벤치마크](${ORIGIN}/benchmark): 해외 AI 인프라·기상 AI 사업자 ${GLOBAL_CASES.length}건 — 계층별 구조 비교, 검증된 것과 미검증을 분리 표기
 - [요금·문의](${ORIGIN}/pricing): 무료(베타) · 정밀 리포트·제휴 문의
 
 ## 인용 안내
