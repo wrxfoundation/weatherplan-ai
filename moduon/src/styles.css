@@ -88,6 +88,7 @@
    기본은 흰색 스윕(파란 버튼용). 밝은/흰 버튼에는 .shimmer-ink 를 더해 파란톤 스윕으로. */
 .shimmer-cta { position: relative; overflow: hidden; isolation: isolate; --shimmer: rgba(255, 255, 255, 0.55); }
 .shimmer-ink { --shimmer: rgba(83, 119, 214, 0.22); }
+.shimmer-green { --shimmer: rgba(23, 178, 106, 0.42); }
 .shimmer-cta::after {
   content: '';
   position: absolute; top: 0; left: -75%; height: 100%; width: 50%;

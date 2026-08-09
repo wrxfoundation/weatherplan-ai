@@ -47,8 +47,8 @@ export default function Home({ tenant }) {
               </div>
             )}
             <h1 className="text-[32px] font-extrabold leading-[1.3] tracking-[-0.8px] text-ink sm:text-[44px] sm:leading-[58px] sm:tracking-[-1.2px]">
-              아끼는 것도, 왕창 돌려받는 것도<br />
-              <span className="text-orange-text">{tenant ? tenant.name : '모두온'}</span>에서 한 번에
+              왕창 아끼고, 돌려받는 곳<br />
+              바로 <span className="text-orange-text">{tenant ? tenant.name : '모두온'}</span>
             </h1>
             <p className="mt-4 max-w-md text-[15px] leading-[26px] text-body sm:text-[16.5px] sm:leading-[28px]">
               {tenant?.greeting ?? '인터넷·휴대폰·이사·정수기… 흩어진 생활서비스를 한 곳에서 비교하고, 남들 몰라서 못 받은 지원금까지 왕창 돌려받으세요.'}
@@ -156,7 +156,7 @@ export default function Home({ tenant }) {
               <div className="mt-1 text-[14px] font-medium text-[#37694F]">30초면 끝 · 평균 10분 안에 전문 상담사가 전화드려요</div>
             </div>
           </div>
-          <Link to={consultTo} className="shimmer-cta shimmer-ink glass-btn inline-flex h-[52px] shrink-0 items-center rounded-btn bg-white px-7 text-[15px] font-bold text-[#0C7D48] transition-transform hover:-translate-y-px">
+          <Link to={consultTo} className="shimmer-cta shimmer-green glass-btn inline-flex h-[52px] shrink-0 items-center rounded-btn bg-white px-7 text-[15px] font-bold text-[#0C7D48] transition-transform hover:-translate-y-px">
             무료 상담 신청 →
           </Link>
         </div>
