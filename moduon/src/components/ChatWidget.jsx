@@ -43,20 +43,21 @@ export default function ChatWidget({ tenant }) {
 
   return (
     <>
-      {/* 플로팅 버튼 */}
+      {/* 플로팅 버튼 — 볼륨 글라스 */}
       <button
         onClick={() => setOpen(!open)}
         aria-label="AI 상담"
-        className={`glass-btn-cta fixed right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white transition-transform hover:scale-105 sm:right-5 ${hasBottomBar ? 'bottom-[152px] lg:bottom-5' : 'bottom-5'}`}
+        className={`glass-fab fixed right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white transition-transform hover:scale-105 sm:right-5 ${hasBottomBar ? 'bottom-[152px] lg:bottom-5' : 'bottom-5'}`}
         style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
       >
-        {open ? <CloseIcon /> : <AiStarsIcon />}
+        <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full" style={{ background: 'radial-gradient(58% 42% at 34% 24%, rgba(255,255,255,0.62), rgba(255,255,255,0) 62%)' }} />
+        <span className="relative z-10 flex">{open ? <CloseIcon /> : <AiStarsIcon />}</span>
       </button>
 
       {open && (
-        <div className="fixed bottom-[86px] right-4 z-50 flex h-[min(560px,calc(100dvh-110px))] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-section bg-white shadow-panel animate-rise">
+        <div className="fixed bottom-[86px] right-4 z-50 flex h-[min(560px,calc(100dvh-110px))] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-section border border-white/55 bg-white/72 shadow-panel backdrop-blur-2xl animate-rise">
           {/* 헤더 */}
-          <div className="flex items-center gap-3 bg-primary px-4 py-3.5">
+          <div className="flex items-center gap-3 bg-primary/90 px-4 py-3.5 backdrop-blur-sm">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white"><AiStarsIcon size={23} /></div>
             <div className="flex-1">
               <div className="text-[14px] font-extrabold text-white">AI 상담사 모비</div>
@@ -70,7 +71,7 @@ export default function ChatWidget({ tenant }) {
           </div>
 
           {/* 메시지 */}
-          <div ref={bodyRef} className="flex-1 overflow-y-auto bg-cream/60 px-3.5 py-4">
+          <div ref={bodyRef} className="flex-1 overflow-y-auto bg-white/25 px-3.5 py-4">
             {msgs.map((m, i) => (
               <div key={i} className={`mb-3 flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] whitespace-pre-line rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-[1.55] ${
@@ -103,7 +104,7 @@ export default function ChatWidget({ tenant }) {
           </div>
 
           {/* 퀵리플라이 + 입력 */}
-          <div className="border-t border-line-card bg-white px-3 pb-3 pt-2">
+          <div className="border-t border-white/55 bg-white/45 px-3 pb-3 pt-2 backdrop-blur-md">
             <div className="scrollbar-none mb-2 flex gap-1.5 overflow-x-auto">
               {QUICK_REPLIES.map((q) => (
                 <button key={q} onClick={() => send(q)} className="shrink-0 rounded-full border border-line bg-white px-3 py-1.5 text-[12px] font-semibold text-label hover:border-primary hover:text-primary-text">
@@ -117,7 +118,7 @@ export default function ChatWidget({ tenant }) {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && send()}
                 placeholder="궁금한 서비스를 물어보세요"
-                className="h-11 flex-1 rounded-full border border-line bg-cream/60 px-4 text-[13.5px] placeholder:text-disabled focus:border-primary"
+                className="h-11 flex-1 rounded-full border border-white/70 bg-white/70 px-4 text-[13.5px] placeholder:text-disabled focus:border-primary"
               />
               <button onClick={() => send()} disabled={busy} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary-hover disabled:opacity-40" aria-label="전송">
                 <SendIcon />
