@@ -26,12 +26,12 @@ export default function Home({ tenant }) {
           <HeroScene />
           {/* 좌측 텍스트 가독 스크림 */}
           <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/85 to-cream/5 sm:via-cream/70" />
-          {/* 절약 카운터 — 씬 위에 실제 숫자로 '계산되며 아껴지는' 연출 (AI 영상 속 글자는 뭉개지므로 DOM으로) */}
-          {!tenant && <SavingsTicker />}
         </div>
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-cream" />
 
         <div className="relative mx-auto max-w-6xl px-5 sm:px-10">
+          {/* 절약 말풍선 2종 — 씬 위 중앙(우측 텍스트단 밖)에 부유. AI 영상 속 글자는 뭉개지므로 DOM으로 */}
+          {!tenant && <SavingsBubbles />}
           <div className="flex min-h-[480px] max-w-xl flex-col justify-center py-14 sm:min-h-[600px] sm:py-20">
             {tenant && (
               <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12px] font-bold text-primary-text shadow-card">
@@ -206,34 +206,51 @@ function HeroScene() {
   return <img src="/assets/hero-scene.jpg" alt="" aria-hidden className={cls} loading="eager" fetchPriority="high" />
 }
 
-// 절약 카운터 칩 — 44,000원이 32,900원으로 계산되어 내려가는 루프
-function SavingsTicker() {
-  const START = 44000, END = 32900
+// 절약 카운터 루프 — START→END로 계산되며 내려가는 값(여러 말풍선이 공유). 끝에서 잠깐 멈췄다 리셋 반복
+function useSavingLoop(START, END, { dur = 1400, hold = 2600, gap = 800, delay = 900 } = {}) {
   const [v, setV] = useState(START)
   useEffect(() => {
     let timer, raf
     const count = () => {
       const t0 = performance.now()
       const step = (now) => {
-        const p = Math.min(1, (now - t0) / 1400)
+        const p = Math.min(1, (now - t0) / dur)
         setV(Math.round(START + (END - START) * (1 - Math.pow(1 - p, 3))))
         if (p < 1) raf = requestAnimationFrame(step)
-        else timer = setTimeout(() => { setV(START); timer = setTimeout(count, 800) }, 2600)
+        else timer = setTimeout(() => { setV(START); timer = setTimeout(count, gap) }, hold)
       }
       raf = requestAnimationFrame(step)
     }
-    timer = setTimeout(count, 900)
+    timer = setTimeout(count, delay)
     return () => { clearTimeout(timer); cancelAnimationFrame(raf) }
   }, [])
-  const saving = START - v
+  return v
+}
+
+// 가격 절약 말풍선(꼬리 달린) — 히어로 위 부유
+function PriceBubble({ tag, value, save, hint, tail = 'left' }) {
   return (
-    <div className="animate-floaty pointer-events-none absolute bottom-[15%] right-[6%] hidden lg:block">
-      <div className="rounded-card bg-white/95 px-5 py-4 shadow-panel backdrop-blur-0">
-        <div className="text-[11.5px] font-bold text-faint">인터넷/TV 월 요금 계산 중…</div>
-        <div className="tnum mt-0.5 text-[26px] font-extrabold tracking-tight text-ink">{won(v)}</div>
-        <div className={`tnum mt-0.5 text-[12.5px] font-extrabold ${saving > 0 ? 'text-ok' : 'text-disabled'}`}>
-          {saving > 0 ? `↓ ${won(saving)} 아끼는 중` : '결합 할인 적용하면?'}
-        </div>
+    <div className={`price-bubble tail-${tail} rounded-card px-5 py-4`}>
+      <div className="text-[11.5px] font-bold text-faint">{tag}</div>
+      <div className="tnum mt-0.5 text-[26px] font-extrabold tracking-tight text-ink">{value}</div>
+      <div className={`tnum mt-0.5 text-[12.5px] font-extrabold ${save > 0 ? 'text-ok' : 'text-disabled'}`}>
+        {save > 0 ? `↓ ${won(save)} 아끼는 중` : hint}
+      </div>
+    </div>
+  )
+}
+
+// 히어로 중앙 절약 말풍선 2종 — 인터넷/TV · 휴대폰 (좌측 텍스트단 밖, 중앙~우측에 스태거 배치)
+function SavingsBubbles() {
+  const net = useSavingLoop(44000, 32900, { delay: 900 })
+  const phone = useSavingLoop(78000, 45000, { delay: 1700, dur: 1600 })
+  return (
+    <div className="pointer-events-none absolute inset-0 z-10 hidden lg:block">
+      <div className="animate-floaty absolute left-[50%] top-[18%]">
+        <PriceBubble tail="left" tag="인터넷/TV 월 요금 계산 중…" value={won(net)} save={44000 - net} hint="결합 할인 적용하면?" />
+      </div>
+      <div className="animate-floaty absolute left-[62%] top-[49%]" style={{ animationDelay: '1.1s' }}>
+        <PriceBubble tail="right" tag="휴대폰 통신비 비교 중…" value={won(phone)} save={78000 - phone} hint="선택약정 적용하면?" />
       </div>
     </div>
   )

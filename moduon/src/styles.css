@@ -103,3 +103,22 @@
   .shimmer-cta::after { display: none; animation: none; }
   .glass-tile { transition: none; }
 }
+
+/* ─── 히어로 가격 절약 말풍선 — 꼬리 달린 speech bubble (부유 애니메이션은 .animate-floaty) ─── */
+.price-bubble {
+  position: relative;
+  background: #fff;
+  filter: drop-shadow(0 14px 30px rgba(83, 119, 214, 0.20));
+}
+.price-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  width: 15px;
+  height: 15px;
+  background: inherit;               /* 카드와 동일한 흰색 — drop-shadow가 꼬리까지 감싼다 */
+  transform: rotate(45deg);
+  border-bottom-right-radius: 3px;
+}
+.price-bubble.tail-left::after { left: 26px; }
+.price-bubble.tail-right::after { right: 26px; }
