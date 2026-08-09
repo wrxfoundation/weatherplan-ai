@@ -34,10 +34,10 @@ export function ConsumerHeader({ tenant }) {
           </nav>
         )}
         <div className="hidden items-center gap-2.5 md:flex">
-          <button onClick={() => nav('/login')} className="h-10 rounded-full border border-line-soft bg-white px-5 text-[14px] font-semibold text-body transition-colors hover:border-primary hover:text-primary-text">
+          <button onClick={() => nav('/login')} className="glass-btn h-10 rounded-full border border-line-soft bg-white px-5 text-[14px] font-semibold text-body transition-colors hover:border-primary hover:text-primary-text">
             로그인
           </button>
-          <button onClick={() => nav(tenant ? `/consult?src=${tenant.slug}` : '/consult')} className="shimmer-cta h-10 rounded-full bg-primary px-5 text-[14px] font-bold text-white transition-colors hover:bg-primary-hover">
+          <button onClick={() => nav(tenant ? `/consult?src=${tenant.slug}` : '/consult')} className="shimmer-cta glass-btn-cta h-10 rounded-full bg-primary px-5 text-[14px] font-bold text-white transition-colors hover:bg-primary-hover">
             무료 상담
           </button>
         </div>

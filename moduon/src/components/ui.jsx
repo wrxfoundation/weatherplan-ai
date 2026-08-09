@@ -5,15 +5,15 @@ import { STATUS_COLOR } from '../lib/constants'
 // 버튼 — 높이: 대 52 / 중 48 / 소 40 (모바일 히트타깃 44 유지)
 export function Btn({ variant = 'primary', size = 'md', className = '', children, ...rest }) {
   const v = {
-    primary: 'bg-primary text-white hover:bg-primary-hover shadow-cta',
-    solid: 'bg-primary text-white hover:bg-primary-hover',
-    outline: 'bg-white text-body border border-line-soft hover:border-primary hover:text-primary-text',
-    boutline: 'bg-white text-bbody border border-bline hover:border-primary hover:text-primary-text',
-    white: 'bg-white text-primary-text hover:-translate-y-px',
-    dark: 'bg-bink text-white hover:opacity-90',
+    primary: 'bg-primary text-white hover:bg-primary-hover glass-btn-cta',
+    solid: 'bg-primary text-white hover:bg-primary-hover glass-btn-cta',
+    outline: 'bg-white text-body border border-line-soft hover:border-primary hover:text-primary-text glass-btn',
+    boutline: 'bg-white text-bbody border border-bline hover:border-primary hover:text-primary-text glass-btn',
+    white: 'bg-white text-primary-text hover:-translate-y-px glass-btn',
+    dark: 'bg-bink text-white hover:opacity-90 glass-btn',
     ghost: 'text-label hover:text-primary-text',
-    danger: 'bg-danger/10 text-danger hover:bg-danger/20',
-    ok: 'bg-ok/10 text-ok hover:bg-ok/20',
+    danger: 'bg-danger/10 text-danger hover:bg-danger/20 glass-btn',
+    ok: 'bg-ok/10 text-ok hover:bg-ok/20 glass-btn',
   }[variant]
   const s = { lg: 'h-[52px] px-7 text-[16px]', md: 'h-12 px-6 text-[15px]', sm: 'h-10 px-4 text-[14px]', xs: 'h-8 px-3 text-[13px]' }[size]
   return (
@@ -47,7 +47,7 @@ export function Chip({ active, onClick, children, className = '' }) {
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex h-10 items-center rounded-full border px-4 text-[14px] font-semibold transition-colors ${
+      className={`glass-btn inline-flex h-10 items-center rounded-full border px-4 text-[14px] font-semibold transition-colors ${
         active ? 'border-primary bg-primary text-white' : 'border-line bg-white text-label hover:border-primary hover:text-primary-text'
       } ${className}`}
     >

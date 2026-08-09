@@ -142,10 +142,10 @@ export default function Calculator() {
           {hint && <div className="mt-2 rounded-field bg-tint px-3.5 py-2.5 text-[12px] font-semibold leading-4 text-primary-text">💡 {hint}</div>}
           <div className="mt-2 text-center text-[12px] text-faint">약정 3년 · 설치비 무료</div>
 
-          <button onClick={goConsult} className="mt-5 h-[52px] w-full rounded-btn bg-primary text-[15px] font-bold text-white shadow-cta transition-colors hover:bg-primary-hover">
+          <button onClick={goConsult} className="shimmer-cta glass-btn-cta mt-5 h-[52px] w-full rounded-btn bg-primary text-[15px] font-bold text-white transition-colors hover:bg-primary-hover">
             상담 신청하고 혜택 확정하기
           </button>
-          <button onClick={share} className="mt-2 h-11 w-full rounded-btn border border-line bg-white text-[13.5px] font-bold text-label transition-colors hover:border-primary hover:text-primary-text">
+          <button onClick={share} className="glass-btn mt-2 h-11 w-full rounded-btn border border-line bg-white text-[13.5px] font-bold text-label transition-colors hover:border-primary hover:text-primary-text">
             {copied ? '✓ 복사됐어요 — 카톡에 붙여넣으세요' : '견적 공유하기'}
           </button>
           <p className="mt-3 text-center text-[11.5px] leading-4 text-disabled">{LEGAL.quote}</p>
@@ -168,7 +168,7 @@ export default function Calculator() {
           <button onClick={share} aria-label="견적 공유" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-btn border border-line bg-white text-[17px]">
             {copied ? '✓' : '📤'}
           </button>
-          <button onClick={goConsult} className="h-12 flex-1 rounded-btn bg-primary text-[15px] font-bold text-white">
+          <button onClick={goConsult} className="shimmer-cta glass-btn-cta h-12 flex-1 rounded-btn bg-primary text-[15px] font-bold text-white">
             상담 신청하고 혜택 확정하기
           </button>
         </div>

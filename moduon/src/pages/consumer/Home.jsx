@@ -26,8 +26,11 @@ export default function Home({ tenant }) {
           <HeroScene />
           {/* 좌측 텍스트 가독 스크림 */}
           <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/85 to-cream/5 sm:via-cream/70" />
+          {/* 영상 하단·좌하단 끝선을 크림으로 용해 — 타 영역과 이음새 없이 연결 */}
+          <div className="absolute inset-x-0 bottom-0 h-[46%] bg-gradient-to-t from-cream via-cream/55 to-transparent" />
+          <div className="absolute bottom-0 left-0 h-[64%] w-[56%] bg-gradient-to-tr from-cream via-cream/45 to-transparent" />
         </div>
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-cream" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-cream sm:h-32" />
 
         <div className="relative mx-auto max-w-6xl px-5 sm:px-10">
           {/* 절약 말풍선 2종 — 씬 위 중앙(우측 텍스트단 밖)에 부유. AI 영상 속 글자는 뭉개지므로 DOM으로 */}
@@ -54,7 +57,7 @@ export default function Home({ tenant }) {
                 placeholder="찾고 있는 서비스를 검색해보세요"
                 className="h-full flex-1 text-[16px] placeholder:text-disabled sm:text-[15px]"
               />
-              <button onClick={search} aria-label="검색" className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white transition-colors hover:bg-primary-hover">
+              <button onClick={search} aria-label="검색" className="glass-btn-cta flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white transition-colors hover:bg-primary-hover">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
               </button>
             </div>
@@ -141,7 +144,7 @@ export default function Home({ tenant }) {
               <div className="mt-1 text-[14px] font-medium text-white/75">30초 신청, 평균 10분 내 전문 상담사 연결</div>
             </div>
           </div>
-          <Link to={consultTo} className="shimmer-cta shimmer-ink inline-flex h-[52px] shrink-0 items-center rounded-btn bg-white px-7 text-[15px] font-bold text-primary-text transition-transform hover:-translate-y-px">
+          <Link to={consultTo} className="shimmer-cta shimmer-ink glass-btn inline-flex h-[52px] shrink-0 items-center rounded-btn bg-white px-7 text-[15px] font-bold text-primary-text transition-transform hover:-translate-y-px">
             무료 상담 신청 →
           </Link>
         </div>

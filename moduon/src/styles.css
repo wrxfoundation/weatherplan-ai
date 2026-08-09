@@ -122,3 +122,19 @@
 }
 .price-bubble.tail-left::after { left: 26px; }
 .price-bubble.tail-right::after { right: 26px; }
+
+/* ─── 버튼 유리 두께감 — 모든 버튼요소 공용 (약간의 glassmorphism) ───
+   상단 하이라이트 림(유리 윗면) + 하단 인셋(단면 두께) + 은은한 외부 그림자.
+   단일 box-shadow라 적용 시 기존 shadow-* 유틸을 대체한다(중복 지정 금지). */
+.glass-btn {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 2px rgba(36, 39, 46, 0.05),
+    0 2px 8px rgba(36, 39, 46, 0.07);
+}
+.glass-btn-cta {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.10),
+    0 8px 20px rgba(83, 119, 214, 0.30);
+}
