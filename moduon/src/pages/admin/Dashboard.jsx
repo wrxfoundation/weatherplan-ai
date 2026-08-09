@@ -271,9 +271,9 @@ export default function AdminDashboard() {
           <div className="hidden items-center text-[18px] text-bfaint lg:flex">→</div>
           <div className="rounded-card border border-bline p-4">
             <div className="text-[12px] font-bold text-bmuted">파트너 수익 예시</div>
-            <div className="mt-1.5 text-[11.5px] text-bfaint">월 매출 1,000만원 기준</div>
-            <div className="tnum text-[12px] text-bbody">수수료 −{Math.round(10000000 * db.policies.feeRate / 10000)}만 · 이용료 −{Math.round(db.policies.monthlyFee / 10000)}만</div>
-            <div className="tnum mt-1 text-[17px] font-extrabold text-primary-text">순수익 {Math.round((10000000 * (1 - db.policies.feeRate) - db.policies.monthlyFee) / 10000)}만원</div>
+            <div className="mt-1.5 text-[11.5px] text-bfaint">월 24건 × 건당 수수료 36만원 기준</div>
+            <div className="tnum text-[12px] text-bbody">운영 수수료 −{Math.round(8640000 * db.policies.feeRate / 10000)}만 · 이용료 −{Math.round(db.policies.monthlyFee / 10000)}만</div>
+            <div className="tnum mt-1 text-[17px] font-extrabold text-primary-text">순수익 {Math.round((8640000 * (1 - db.policies.feeRate) - db.policies.monthlyFee) / 10000)}만원</div>
           </div>
         </div>
         <p className="mt-3 text-[11px] text-bfaint">수익 예시는 실제 수익을 보장하지 않습니다. 수익 구조: 수수료 {Math.round(db.policies.feeRate * 100)}% · 광고 · 기타.</p>

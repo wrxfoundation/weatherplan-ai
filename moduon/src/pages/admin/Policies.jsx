@@ -57,7 +57,7 @@ export default function AdminPolicies() {
 
       <div className="mt-4 flex items-center justify-between rounded-card bg-tint px-5 py-4">
         <div className="text-[13px] font-semibold text-primary-text">
-          현재 정책 <strong className="font-extrabold">v{p.version}</strong> · {fmtDate(p.appliedAt)} 적용 — 시뮬레이션: 월 매출 1,000만 → 순수익 {won(10000000 - 10000000 * p.feeRate - p.monthlyFee)}
+          현재 정책 <strong className="font-extrabold">v{p.version}</strong> · {fmtDate(p.appliedAt)} 적용 — 시뮬레이션: 월 수수료 수입 864만(24건) → 파트너 순수익 {won(8640000 - Math.round(8640000 * p.feeRate) - p.monthlyFee)}
         </div>
         <Btn size="sm" onClick={() => setOpen(true)}>정책 변경</Btn>
       </div>

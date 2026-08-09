@@ -2,7 +2,7 @@
 // 분양비·이용료·수수료율은 어드민 정책값(db.policies)을 실시간 반영(A-03 AC)
 import { Link } from 'react-router-dom'
 import { useStore, adminStats } from '../../lib/store'
-import { calcSettlement, won } from '../../lib/engine'
+import { won } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { Logo, LiveDot } from '../../components/ui'
 import ChatWidget from '../../components/ChatWidget'
@@ -10,8 +10,14 @@ import ChatWidget from '../../components/ChatWidget'
 export default function PartnerLanding() {
   const { db } = useStore()
   const { policies } = db
-  const sim = calcSettlement(10000000, policies)
   const stats = adminStats(db)
+  // 수익 예시 — 계약 총액이 아니라 건당 개통·성사 수수료 기준(현실 모델).
+  // 건당 수수료는 카테고리·통신사 정책에 따라 15만~55만원 — 예시는 믹스 평균 36만원.
+  const SIM_DEALS = 24
+  const SIM_DEAL_FEE = 360000
+  const simGross = SIM_DEALS * SIM_DEAL_FEE
+  const simFee = Math.round(simGross * policies.feeRate)
+  const simNet = simGross - simFee - policies.monthlyFee
 
   return (
     <div className="min-h-screen bg-cream">
@@ -61,20 +67,25 @@ export default function PartnerLanding() {
             </div>
           </div>
 
-          {/* 수익 예시 카드 */}
+          {/* 수익 예시 카드 — 건수 × 건당 수수료 메커니즘 표출 */}
           <aside className="rounded-section bg-white p-6 shadow-panel">
-            <span className="rounded-full bg-tint px-3 py-1 text-[12px] font-bold text-primary-text">월 매출 1,000만원 기준 예시</span>
+            <span className="rounded-full bg-tint px-3 py-1 text-[12px] font-bold text-primary-text">하루 1건 페이스 — 월 {SIM_DEALS}건 완료 기준 예시</span>
             <div className="mt-5 flex flex-col gap-3 text-[14.5px]">
-              <div className="flex justify-between"><span className="text-label">몰 매출</span><span className="tnum font-bold text-ink">{won(sim.gross)}</span></div>
-              <div className="flex justify-between"><span className="text-label">운영 수수료 ({Math.round(policies.feeRate * 100)}%)</span><span className="tnum font-bold text-danger">−{won(sim.fee)}</span></div>
-              <div className="flex justify-between"><span className="text-label">월 이용료</span><span className="tnum font-bold text-danger">−{won(sim.monthlyFee)}</span></div>
+              <div className="flex justify-between gap-3">
+                <span className="text-label">개통·성사 수수료 <span className="tnum text-[12.5px]">({SIM_DEALS}건 × 평균 {won(SIM_DEAL_FEE)})</span></span>
+                <span className="tnum font-bold text-ink">{won(simGross)}</span>
+              </div>
+              <p className="-mt-2 text-[11.5px] leading-4 text-faint">건당 수수료: 인터넷 25~40만 · 휴대폰 35~55만 · 렌탈 20~35만 — 상품·통신사 정책에 따라 달라요</p>
+              <div className="flex justify-between"><span className="text-label">플랫폼 운영 수수료 ({Math.round(policies.feeRate * 100)}%)</span><span className="tnum font-bold text-danger">−{won(simFee)}</span></div>
+              <div className="flex justify-between"><span className="text-label">월 이용료</span><span className="tnum font-bold text-danger">−{won(policies.monthlyFee)}</span></div>
             </div>
             <div className="my-4 border-t border-dashed border-line" />
             <div className="flex items-baseline justify-between">
               <span className="text-[15px] font-bold text-ink">파트너 순수익</span>
-              <span className="tnum text-[30px] font-extrabold tracking-[-1px] text-primary-text">{won(sim.net)}</span>
+              <span className="tnum text-[30px] font-extrabold tracking-[-1px] text-primary-text">{won(simNet)}</span>
             </div>
-            <div className="mt-5 flex items-center gap-2.5 rounded-field bg-brow px-4 py-3">
+            <p className="mt-2 text-[12px] leading-[18px] text-muted">렌탈·결합 고객은 만기 재상담으로 이어져 단골 자산이 돼요 — 건수가 쌓일수록 다음 달이 더 커집니다.</p>
+            <div className="mt-4 flex items-center gap-2.5 rounded-field bg-brow px-4 py-3">
               <LiveDot />
               <span className="text-[13px] font-semibold text-bbody">정산은 <strong className="font-extrabold text-bink">월말이 아니라, 매일</strong> 마이오피스에서 확인</span>
             </div>
