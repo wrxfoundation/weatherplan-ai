@@ -36,9 +36,14 @@ export function calcQuote({ speed = '500M', bundle = 'water', promo = false, car
   const promoDc = promo ? PROMO_DISCOUNT : 0
   const total = base - bundleDc - promoDc
   const p = products?.find((x) => x.cat === 'internet' && x.name.includes(speed))
-  const baseGift = p ? p.support - (p.name.includes('+') ? 50000 : 0) : (GIFT_MAP[speed] ?? 0)
-  const gift = baseGift + (bundle !== 'none' ? 50000 : 0) + (CARRIER_GIFT_ADD[carrier] ?? 0)
-  return { carrier, base, bundleDc, promoDc, total, gift }
+  const giftBase = p ? p.support - (p.name.includes('+') ? 50000 : 0) : (GIFT_MAP[speed] ?? 0)
+  const giftBundle = bundle !== 'none' ? 50000 : 0
+  const giftCarrier = CARRIER_GIFT_ADD[carrier] ?? 0
+  const gift = giftBase + giftBundle + giftCarrier
+  // 3년 약정 기준 실질 지표 — 비교·혜택 표출의 단일 소스
+  const savings36 = (bundleDc + promoDc) * 36 // 약정기간 요금 절감 총액
+  const real36 = total * 36 - gift            // 실질 부담 = 3년 납부 총액 − 돌려받는 돈
+  return { carrier, base, bundleDc, promoDc, total, gift, giftBase, giftBundle, giftCarrier, savings36, real36 }
 }
 
 // ─── 사은품 지급 방식 (아정당·다쏜다식 '현금 극대화') ─────────────

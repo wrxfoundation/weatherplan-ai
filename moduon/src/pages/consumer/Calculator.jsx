@@ -28,6 +28,10 @@ export default function Calculator() {
   const q = useMemo(() => calcQuote({ carrier, speed, bundle, promo }, db.products), [carrier, speed, bundle, promo, db.products])
   const pay = payout(q.gift, payoutM)
   const payLabel = PAYOUTS.find((p) => p.key === payoutM)?.label ?? '현금'
+  // 같은 조건 3사 비교 — 실질 부담(3년 납부 − 돌려받는 돈) 오름차순, 최저가 1위
+  const compare = useMemo(() => CARRIERS
+    .map((c) => calcQuote({ carrier: c, speed, bundle, promo }, db.products))
+    .sort((a, b) => a.real36 - b.real36), [speed, bundle, promo, db.products])
   // 다음 행동 + 기대 효과 힌트 (axion 델타 문장 패턴)
   const hint = bundle === 'none' ? `정수기 결합을 추가하면 월 ${won(11100)} 더 내려가요`
     : !promo ? `신규가입 프로모션을 켜면 월 ${won(3000)} 더 내려가요` : null
@@ -38,7 +42,7 @@ export default function Calculator() {
   const share = async () => {
     const url = `${window.location.origin}/calculator?carrier=${encodeURIComponent(carrier)}&speed=${speed}&bundle=${bundle}${promo ? '&promo=1' : ''}`
     const payTxt = pay.kind === 'monthly' ? `월 ${won(pay.monthly)} 요금할인` : `${payLabel} ${won(pay.lump)}`
-    const text = `[모두온 인터넷 견적]\n${carrier} 인터넷 ${speed}${bundle !== 'none' ? ` + ${BUNDLE_LABEL[bundle]}` : ''}\n월 납부금 ${won(q.total)} · 사은품 ${payTxt}\n같은 조건으로 계산해 보기 → ${url}\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
+    const text = `[모두온 인터넷 견적]\n${carrier} 인터넷 ${speed}${bundle !== 'none' ? ` + ${BUNDLE_LABEL[bundle]}` : ''}\n월 납부금 ${won(q.total)} · 사은품 ${payTxt}\n3년 실질 부담 ${won(q.real36)} (납부 총액 − 돌려받는 돈)\n같은 조건으로 계산해 보기 → ${url}\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
     if (await copyText(text)) {
       setCopied(true)
       setTimeout(() => setCopied(false), 1600)
@@ -151,6 +155,48 @@ export default function Calculator() {
             </div>
           </StepCard>
 
+          {/* 같은 조건 3사 실질 부담 비교 — 돌려받는 돈 차이가 실질가를 가른다 */}
+          <section className="rounded-card bg-white p-5 shadow-card sm:p-6 animate-rise">
+            <div className="flex flex-wrap items-baseline justify-between gap-1.5">
+              <h2 className="text-[16px] font-bold text-ink">같은 조건, 3사 실질 부담 비교</h2>
+              <span className="text-[11.5px] text-faint">3년 실질 부담 = 월 납부금×36 − 돌려받는 돈</span>
+            </div>
+            <div className="mt-3.5 flex flex-col gap-2">
+              {compare.map((row, i) => {
+                const active = row.carrier === carrier
+                return (
+                  <button
+                    key={row.carrier}
+                    onClick={() => { setCarrier(row.carrier); toast(`${row.carrier} 조건으로 견적을 바꿨어요`) }}
+                    className={`grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 rounded-btn border p-3.5 text-left transition-all sm:grid-cols-[1.3fr_1fr_1fr_1.2fr] ${
+                      active ? 'border-[1.5px] border-primary bg-tint' : 'border-line bg-white hover:border-primary/50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className={`h-[16px] w-[16px] shrink-0 rounded-full ${active ? 'border-[5px] border-primary bg-white' : 'border border-line bg-white'}`} />
+                      <span className="text-[13.5px] font-bold text-ink">{row.carrier}</span>
+                      {i === 0 && <span className="rounded-full bg-ok/10 px-2 py-0.5 text-[10.5px] font-bold text-ok">실질가 최저</span>}
+                    </span>
+                    <span className="hidden sm:block">
+                      <span className="block text-[10.5px] text-faint">월 납부금</span>
+                      <span className="tnum text-[13px] font-bold text-ink">{won(row.total)}</span>
+                    </span>
+                    <span className="hidden sm:block">
+                      <span className="block text-[10.5px] text-faint">돌려받는 돈</span>
+                      <span className="tnum text-[13px] font-bold text-orange-text">{won(row.gift)}</span>
+                    </span>
+                    <span className="text-right sm:justify-self-end">
+                      <span className="block text-[10.5px] text-faint">3년 실질 부담</span>
+                      <span className={`tnum text-[14.5px] font-extrabold ${i === 0 ? 'text-ok' : 'text-ink'}`}>{won(row.real36)}</span>
+                    </span>
+                    <span className="tnum col-span-2 text-[11.5px] text-muted sm:hidden">월 {won(row.total)} · 돌려받는 돈 {won(row.gift)}</span>
+                  </button>
+                )
+              })}
+            </div>
+            <p className="mt-2.5 text-[11.5px] leading-4 text-faint">월 요금이 같아도 통신사별 사은품 가산이 달라 실질 부담이 갈려요. 행을 누르면 해당 통신사로 견적이 바뀝니다.</p>
+          </section>
+
           {/* 모바일 전용 — 합계 상세 분해 (데스크톱은 우측 스티키 카드) */}
           <section className="rounded-card bg-white p-5 shadow-card lg:hidden">
             <div className="text-[13px] font-bold text-ink">나의 구성 상세</div>
@@ -159,7 +205,11 @@ export default function Calculator() {
               <Row label="결합 할인" value={q.bundleDc ? `−${won(q.bundleDc)}` : '미선택'} accent={q.bundleDc ? 'text-ok' : 'text-disabled'} />
               <Row label="프로모션 할인" value={q.promoDc ? `−${won(q.promoDc)}` : '미선택'} accent={q.promoDc ? 'text-ok' : 'text-disabled'} />
             </div>
-            {hint && <div className="mt-3 rounded-field bg-tint px-3.5 py-2.5 text-[12px] font-semibold leading-4 text-primary-text"><IcBulb size={13} className="inline -mt-0.5 mr-1" />{hint}</div>}
+            <div className="mt-3 flex items-center justify-between rounded-field bg-orange-tint px-3.5 py-2.5">
+              <span className="text-[12px] font-bold text-orange-text">돌려받는 돈{q.savings36 > 0 ? ' · 3년 총 혜택' : ''}</span>
+              <span className="tnum text-[13px] font-extrabold text-orange-text">{won(q.gift)}{q.savings36 > 0 ? ` · ${won(q.gift + q.savings36)}` : ''}</span>
+            </div>
+            {hint && <div className="mt-2 rounded-field bg-tint px-3.5 py-2.5 text-[12px] font-semibold leading-4 text-primary-text"><IcBulb size={13} className="inline -mt-0.5 mr-1" />{hint}</div>}
             <div className="mt-2.5 border-t border-dashed border-line pt-2.5 text-[11.5px] text-faint">약정 3년 · 설치비 무료 — {LEGAL.quote}</div>
           </section>
         </div>
@@ -183,15 +233,24 @@ export default function Calculator() {
 
           <div className="mt-4 rounded-field bg-orange-tint px-4 py-3.5">
             <div className="flex items-center justify-between">
-              <span className="text-[13px] font-bold text-orange-text"><IcGift size={13} className="inline -mt-0.5 mr-1" />{payLabel} 사은품</span>
+              <span className="text-[13px] font-bold text-orange-text"><IcGift size={13} className="inline -mt-0.5 mr-1" />돌려받는 돈 ({payLabel})</span>
               <span className="tnum text-[20px] font-extrabold text-orange-text">
                 {pay.kind === 'monthly' ? `월 ${won(pay.monthly)}` : won(pay.lump)}
               </span>
             </div>
-            <div className="mt-1 text-[11px] leading-4 text-orange-text/80">
+            <div className="tnum mt-1.5 text-[11px] leading-4 text-orange-text/80">
+              기본 {won(q.giftBase)}{q.giftBundle ? ` + 결합 ${won(q.giftBundle)}` : ''}{q.giftCarrier ? ` + ${carrier} 가산 ${won(q.giftCarrier)}` : ''}
+            </div>
+            <div className="text-[11px] leading-4 text-orange-text/80">
               {pay.kind === 'monthly' ? `${pay.months}개월 자동 차감 · 총 ${won(pay.total)} 상당` : PAYOUTS.find((p) => p.key === payoutM)?.sub}
             </div>
           </div>
+          {q.savings36 > 0 && (
+            <div className="mt-2 flex items-center justify-between rounded-field bg-tint px-4 py-3">
+              <span className="text-[12px] font-bold leading-4 text-primary-text">3년 총 혜택<span className="block text-[10.5px] font-semibold text-primary-text/70">사은품 + 약정기간 요금 절감 {won(q.savings36)}</span></span>
+              <span className="tnum text-[17px] font-extrabold text-primary-text">{won(q.gift + q.savings36)}</span>
+            </div>
+          )}
           {hint && <div className="mt-2 rounded-field bg-tint px-3.5 py-2.5 text-[12px] font-semibold leading-4 text-primary-text"><IcBulb size={13} className="inline -mt-0.5 mr-1" />{hint}</div>}
           <div className="mt-2 text-center text-[12px] text-faint">약정 3년 · 설치비 무료</div>
 
