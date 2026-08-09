@@ -194,7 +194,7 @@ function SupportBand() {
             <span className="h-1.5 w-1.5 rounded-full bg-orange" /> 남들 받는 그 이상, 모두온이 돌려드려요
           </div>
           <h2 className="mt-3 text-[25px] font-extrabold leading-[1.32] tracking-[-0.6px] text-ink sm:text-[32px]">
-            몰라서 못 받은 지원금,<br />최대 <span className="tnum text-primary-text">152만원+</span> 왕창 돌려드려요
+            몰라서 못 받은 지원금,<br />최대 <span className="tnum text-orange-text">152만원+</span> 왕창 돌려드려요
           </h2>
           <p className="mt-3 max-w-lg text-[14px] leading-[23px] text-muted sm:text-[15px]">
             모두온은 <strong className="font-bold text-ink">유통 단계를 줄인 직접 판매 구조</strong>예요. 중간 마진을 덜어낸 만큼, 조건이 맞으면 <strong className="font-bold text-primary-text">다른 곳에선 처음 보는 혜택</strong>까지 그대로 돌려드립니다.

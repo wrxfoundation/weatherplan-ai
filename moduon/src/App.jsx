@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import ConsumerLayout from './components/layout/ConsumerLayout'
 import OfficeLayout from './components/layout/OfficeLayout'
 import AdminLayout from './components/layout/AdminLayout'
@@ -32,7 +32,14 @@ import AdminAudit from './pages/admin/Audit'
 
 function ScrollTop() {
   const { pathname } = useLocation()
-  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  // 라우트 전환 시 항상 최상단부터 — 페인트 전(useLayoutEffect)에 이동해 깜빡임 없음.
+  // 브라우저 스크롤 복원을 끄고 window·document 양쪽을 리셋한다.
+  useLayoutEffect(() => {
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual'
+    window.scrollTo(0, 0)
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+  }, [pathname])
   return null
 }
 
