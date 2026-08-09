@@ -27,11 +27,11 @@ export default function Home({ tenant }) {
           <HeroScene />
           {/* 좌측 텍스트 가독 스크림 */}
           <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/85 to-cream/5 sm:via-cream/70" />
-          {/* 영상 하단·좌하단 끝선을 크림으로 용해 — 타 영역과 이음새 없이 연결 */}
-          <div className="absolute inset-x-0 bottom-0 h-[46%] bg-gradient-to-t from-cream via-cream/55 to-transparent" />
-          <div className="absolute bottom-0 left-0 h-[64%] w-[56%] bg-gradient-to-tr from-cream via-cream/45 to-transparent" />
+          {/* 영상 하단·좌하단 끝선을 크림으로 용해 — 범위는 낮게(이미지 가림 최소) */}
+          <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-cream via-cream/45 to-transparent" />
+          <div className="absolute bottom-0 left-0 h-[44%] w-[50%] bg-gradient-to-tr from-cream via-cream/35 to-transparent" />
         </div>
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-cream sm:h-32" />
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent to-cream sm:h-24" />
 
         <div className="relative mx-auto max-w-6xl px-5 sm:px-10">
           {/* 절약 말풍선 2종 — 씬 위 중앙(우측 텍스트단 밖)에 부유. AI 영상 속 글자는 뭉개지므로 DOM으로 */}

@@ -47,17 +47,17 @@ export default function ChatWidget({ tenant }) {
       <button
         onClick={() => setOpen(!open)}
         aria-label="AI 상담"
-        className={`fixed right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-cta transition-transform hover:scale-105 sm:right-5 ${hasBottomBar ? 'bottom-[152px] lg:bottom-5' : 'bottom-5'}`}
+        className={`glass-btn-cta fixed right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white transition-transform hover:scale-105 sm:right-5 ${hasBottomBar ? 'bottom-[152px] lg:bottom-5' : 'bottom-5'}`}
         style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
       >
-        {open ? <CloseIcon /> : <BotIcon />}
+        {open ? <CloseIcon /> : <AiStarsIcon />}
       </button>
 
       {open && (
         <div className="fixed bottom-[86px] right-4 z-50 flex h-[min(560px,calc(100dvh-110px))] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-section bg-white shadow-panel animate-rise">
           {/* 헤더 */}
           <div className="flex items-center gap-3 bg-primary px-4 py-3.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white"><BotIcon size={19} /></div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white"><AiStarsIcon size={19} /></div>
             <div className="flex-1">
               <div className="text-[14px] font-extrabold text-white">AI 상담사 모비</div>
               <div className="flex items-center gap-1.5 text-[11px] text-white/75">
@@ -131,17 +131,14 @@ export default function ChatWidget({ tenant }) {
   )
 }
 
-// ─── 라인 아이콘 (stroke 기반) — 이모지 대체 ────────────────
-function BotIcon({ size = 26 }) {
+// ─── AI 아이콘 — 별 2개(스파클) 모티프 ──────────────────────
+function AiStarsIcon({ size = 26 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <rect x="4" y="8" width="16" height="11" rx="3.2" />
-      <path d="M12 8V4.9" />
-      <circle cx="12" cy="3.5" r="1.1" />
-      <circle cx="9.2" cy="13" r="1.15" />
-      <circle cx="14.8" cy="13" r="1.15" />
-      <path d="M9.6 16.2h4.8" />
-      <path d="M2 12v3M22 12v3" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      {/* 큰 별 */}
+      <path d="M14 3c.55 3.6 1.85 4.9 5.5 5.45C15.85 9 14.55 10.3 14 13.9c-.55-3.6-1.85-4.9-5.5-5.45C12.15 7.9 13.45 6.6 14 3Z" />
+      {/* 작은 별 */}
+      <path d="M7 13.5c.3 2 1 2.7 3 3-2 .3-2.7 1-3 3-.3-2-1-2.7-3-3 2-.3 2.7-1 3-3Z" />
     </svg>
   )
 }
