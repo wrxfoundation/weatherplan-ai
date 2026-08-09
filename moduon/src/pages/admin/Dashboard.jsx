@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore, adminStats } from '../../lib/store'
-import { won, num, minutesAgo } from '../../lib/engine'
+import { won, minutesAgo, monthKey } from '../../lib/engine'
 import { UNITS, catBySlug } from '../../lib/constants'
 import { adminBrief } from '../../lib/ai'
 import { KpiCard, Card, DeltaChip, useToast, Btn } from '../../components/ui'
@@ -29,6 +29,11 @@ export default function AdminDashboard() {
     const topCat = Object.entries(cc).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([c, n]) => ({ name: catBySlug(c)?.name ?? c, n }))
     return { totalSales: s.totalSales, feeIncome: s.feeIncome, monthlyFees: s.monthlyFees, leadsToday: s.leadsToday.length, conv, overdue, activeCount: s.active.length, pendingApps: s.pendingApps.length, vacant, topCat }
   }, [db, s])
+
+  // 이번 달 분양 매출 — 실데이터: 이달 개설 몰 × 분양비 + 활성 몰 × 월 이용료 (승인 즉시 반영)
+  const newThisMonth = db.tenants.filter((t) => monthKey(t.openedAt) === monthKey()).length
+  const joinRev = newThisMonth * db.policies.joinFee
+  const feeRev = s.active.length * db.policies.monthlyFee
 
   const salesSeries = [86, 92, 104, 98, 118, 124, 129]
   const orderSeries = [2100, 2350, 2600, 2480, 2950, 3120, 3248]
@@ -139,10 +144,11 @@ export default function AdminDashboard() {
           <Card track="b" className="p-5">
             <h2 className="text-[15.5px] font-extrabold text-bink">이번 달 분양 매출</h2>
             <div className="mt-3 flex flex-col gap-2 text-[13px]">
-              <div className="flex justify-between"><span className="text-bmuted">신규 분양비 (24건)</span><span className="tnum font-bold text-bink">{won(24 * db.policies.joinFee)}</span></div>
-              <div className="flex justify-between"><span className="text-bmuted">월 이용료 ({num(1004)}몰)</span><span className="tnum font-bold text-bink">{won(1004 * db.policies.monthlyFee)}</span></div>
-              <div className="mt-1 flex justify-between border-t border-brow pt-2"><span className="font-bold text-bink">분양 부문 합계</span><span className="tnum font-extrabold text-primary-text">{won(24 * db.policies.joinFee + 1004 * db.policies.monthlyFee)}</span></div>
+              <div className="flex justify-between"><span className="text-bmuted">신규 분양비 ({newThisMonth}건)</span><span className="tnum font-bold text-bink">{won(joinRev)}</span></div>
+              <div className="flex justify-between"><span className="text-bmuted">월 이용료 ({s.active.length}몰)</span><span className="tnum font-bold text-bink">{won(feeRev)}</span></div>
+              <div className="mt-1 flex justify-between border-t border-brow pt-2"><span className="font-bold text-bink">분양 부문 합계</span><span className="tnum font-extrabold text-primary-text">{won(joinRev + feeRev)}</span></div>
             </div>
+            <p className="mt-2 text-[11px] text-bfaint">실데이터 기준 · 데모 규모 아님</p>
           </Card>
         </div>
       </div>

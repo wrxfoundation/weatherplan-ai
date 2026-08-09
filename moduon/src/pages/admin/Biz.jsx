@@ -3,7 +3,7 @@
 // 한 화면에 모아 본사 경영진이 사업 로드맵을 관제한다.
 import { useStore, adminStats } from '../../lib/store'
 import { won, num, SAUP_TIERS } from '../../lib/engine'
-import { UNITS } from '../../lib/constants'
+import { UNITS, unitName } from '../../lib/constants'
 import { Card } from '../../components/ui'
 
 const STATUS = {
@@ -42,7 +42,7 @@ export default function AdminBiz() {
   const { db } = useStore()
   const s = adminStats(db)
   const p = db.policies
-  const activeUnits = new Set(db.tenants.filter((t) => t.status === '활성').map((t) => t.unit)).size
+  const distributors = db.distributors ?? [] // 실 총판 계약 현황
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -60,7 +60,7 @@ export default function AdminBiz() {
         <div className="mt-4 grid items-stretch gap-3 lg:grid-cols-[1fr_auto_1fr_auto_1fr]">
           <Layer title="본사 (플랫폼)" tone="text-primary-text" lines={['상품 공급 · AI 운영 · 마케팅 · 정산', '리드 배정 엔진 · 관제']} foot={`수익: 사업권 분양 + 수수료 ${Math.round(p.feeRate * 100)}% + 월 이용료`} />
           <Arrow />
-          <Layer title="총판 (영업단)" tone="text-bindigo" lines={['권역 총괄 · 셀러 모집 · 1차 배정', `전국 ${UNITS.length}개 영업단`]} foot={`현황: ${activeUnits}/${UNITS.length} 권역 운영 중`} badge={`${activeUnits}/${UNITS.length}`} />
+          <Layer title="총판 (영업단)" tone="text-bindigo" lines={['권역 총괄 · 셀러 모집 · 1차 배정', `전국 ${UNITS.length}개 영업단`]} foot={`현황: ${distributors.length}개 권역 총판 계약 · 나머지 모집 중`} badge={`${distributors.length}/${UNITS.length}`} />
           <Arrow />
           <Layer title="셀러 (대리점)" tone="text-ok" lines={['비교 판매 · 고객 상담 · 개통 관리', '내 브랜드 분양몰 운영']} foot={`가입비 ${won(p.joinFee)} + 월 ${won(p.monthlyFee)}`} />
         </div>
@@ -77,6 +77,9 @@ export default function AdminBiz() {
             ))}
           </div>
         </div>
+        <p className="mt-2 text-[11px] text-bfaint">
+          계약 완료: {distributors.length ? distributors.map((d) => unitName(d.unit)).join('·') : '없음'} · 나머지 {UNITS.length - distributors.length}개 권역 모집 중
+        </p>
       </Card>
 
       {/* 2. AI 등급제 메뉴판 */}

@@ -1,8 +1,69 @@
 // ─── 트랙 B 파트너 마이오피스 레이아웃 (사이드바 224px / 모바일 하단 탭) ──
 import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useStore, getSession, tenantLeads } from '../../lib/store'
 import { unitName, BRAND_PRESETS } from '../../lib/constants'
+
+// 파생 알림(셀러) — AdminLayout의 NotifBell과 동일 패턴: 저장 없이 현재 상태에서 매번 계산,
+// 읽음 처리는 내용 시그니처를 localStorage(moduon_office_notif_sig)에 비교 저장.
+function buildOfficeNotifs(db, tenant) {
+  const now = Date.now()
+  const n = []
+  const mine = db.leads.filter((l) => l.tenantId === tenant.id)
+  const sla = mine.filter((l) => l.status === '접수' && now - l.createdAt > 10 * 60000).length
+  if (sla) n.push({ icon: '⏰', text: `SLA 10분 초과 접수 리드 ${sla}건`, to: '/office/leads' })
+  const expiring = (db.contracts ?? []).filter((c) => c.tenantId === tenant.id && c.expiry > now && c.expiry - now < 14 * 86400000).length
+  if (expiring) n.push({ icon: '📅', text: `14일 내 만기 계약 ${expiring}건`, to: '/office/customers' })
+  const notice = (db.notices ?? []).filter((x) => x.target === 'office').sort((a, b) => b.at - a.at)[0]
+  if (notice) n.push({ icon: '📢', text: notice.title.length > 36 ? `${notice.title.slice(0, 36)}…` : notice.title, to: '/office/resources' })
+  return n
+}
+
+function OfficeNotifBell({ db, tenant }) {
+  const [open, setOpen] = useState(false)
+  const items = buildOfficeNotifs(db, tenant)
+  const sig = items.map((i) => i.text).join('|')
+  const [seen, setSeen] = useState(() => { try { return localStorage.getItem('moduon_office_notif_sig') ?? '' } catch { return '' } })
+  const unseen = items.length > 0 && sig !== seen
+  const toggle = () => {
+    const next = !open
+    setOpen(next)
+    if (next) {
+      try { localStorage.setItem('moduon_office_notif_sig', sig) } catch { /* noop */ }
+      setSeen(sig)
+    }
+  }
+  return (
+    <div className="relative">
+      <button onClick={toggle} aria-label="알림" className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-card transition-colors hover:bg-brow">
+        <span className="text-[16px]">🔔</span>
+        {unseen && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-warn" />}
+        {items.length > 0 && (
+          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-bink px-1 text-[10.5px] font-bold text-white">{items.length}</span>
+        )}
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-12 z-40 w-[300px] overflow-hidden rounded-card bg-white shadow-panel">
+            <div className="border-b border-bline px-4 py-3 text-[13px] font-bold text-bink">내 몰 알림</div>
+            {items.length === 0 ? (
+              <div className="px-4 py-6 text-center text-[12.5px] text-bfaint">처리할 알림이 없어요 ✨</div>
+            ) : (
+              items.map((i) => (
+                <NavLink key={i.text} to={i.to} onClick={() => setOpen(false)} className="flex items-center gap-3 border-b border-bline px-4 py-3 text-[13px] font-semibold text-bbody last:border-0 hover:bg-brow">
+                  <span>{i.icon}</span>
+                  <span className="flex-1">{i.text}</span>
+                  <span className="text-bfaint">→</span>
+                </NavLink>
+              ))
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
 
 const MENU = [
   { to: '/office', label: '대시보드', icon: '▦', end: true },
@@ -79,6 +140,9 @@ export default function OfficeLayout() {
       </aside>
 
       <main className="px-4 pb-24 pt-5 sm:px-6 lg:ml-[224px] lg:pb-10">
+        <div className="relative z-30 mb-2 flex justify-end lg:-mb-8">
+          <OfficeNotifBell db={db} tenant={tenant} />
+        </div>
         <Outlet context={{ tenant }} />
       </main>
 

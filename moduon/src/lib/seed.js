@@ -6,16 +6,24 @@ const minAgo = (m) => now() - m * 60000
 const dayAgo = (d) => now() - d * 86400000
 const dayAfter = (d) => now() + d * 86400000
 
-export const SEED_VERSION = 9
+export const SEED_VERSION = 10
 
 export function buildSeed() {
   const tenants = [
-    { id: 'T1', slug: 'happynet', name: '해피넷 통신', owner: '박정우', unit: 'SD2', sigungu: '서울 강남구', status: '활성', brand: 'blue',   greeting: '강남 최다 개통, 해피넷이 다 해드려요!', cats: ['phone', 'internet', 'water', 'rental'], openedAt: dayAgo(142), monthlySales: 12400000, phone: '010-2311-4821' },
-    { id: 'T2', slug: 'onlife',   name: '온라이프몰',   owner: '김서연', unit: 'SD1', sigungu: '서울 노원구', status: '활성', brand: 'coral',  greeting: '생활서비스, 온라이프에서 한 번에!', cats: ['internet', 'water', 'rental', 'move'], openedAt: dayAgo(96),  monthlySales: 10000000, phone: '010-8842-1030' },
-    { id: 'T3', slug: 'smartin',  name: '스마트인 인천', owner: '이도현', unit: 'SD3', sigungu: '인천 부평구', status: '활성', brand: 'teal',   greeting: '인천·부천 전 지역 당일 상담!', cats: ['phone', 'internet', 'appliance'], openedAt: dayAgo(70),  monthlySales: 8200000,  phone: '010-5567-2214' },
-    { id: 'T4', slug: 'busanjeil', name: '부산제일통신', owner: '최민준', unit: 'GN',  sigungu: '부산 해운대구', status: '활성', brand: 'navy', greeting: '부산·경남 1등 생활서비스 파트너', cats: ['phone', 'internet', 'move', 'insurance'], openedAt: dayAgo(55), monthlySales: 6900000, phone: '010-9210-7745' },
-    { id: 'T5', slug: 'daejeonon', name: '대전온', owner: '정수빈', unit: 'CC2', sigungu: '대전 서구', status: '활성', brand: 'green', greeting: '충청권 생활비 절감 전문가', cats: ['internet', 'water', 'rental'], openedAt: dayAgo(33), monthlySales: 4100000, phone: '010-3345-8890' },
-    { id: 'T6', slug: 'jejuhome',  name: '제주홈케어', owner: '강지은', unit: 'JJ', sigungu: '제주 제주시', status: '정지', brand: 'purple', greeting: '제주 전 지역 홈서비스', cats: ['water', 'rental', 'etc'], openedAt: dayAgo(120), monthlySales: 0, phone: '010-7788-1123' },
+    { id: 'T1', slug: 'happynet', name: '해피넷 통신', owner: '박정우', unit: 'SD2', sigungu: '서울 강남구', status: '활성', brand: 'blue',   greeting: '강남 최다 개통, 해피넷이 다 해드려요!', cats: ['phone', 'internet', 'water', 'rental'], openedAt: dayAgo(142), monthlySales: 12400000, leadCount: 0, phone: '010-2311-4821' },
+    { id: 'T2', slug: 'onlife',   name: '온라이프몰',   owner: '김서연', unit: 'SD1', sigungu: '서울 노원구', status: '활성', brand: 'coral',  greeting: '생활서비스, 온라이프에서 한 번에!', cats: ['internet', 'water', 'rental', 'move'], openedAt: dayAgo(96),  monthlySales: 10000000, leadCount: 0, phone: '010-8842-1030' },
+    { id: 'T3', slug: 'smartin',  name: '스마트인 인천', owner: '이도현', unit: 'SD3', sigungu: '인천 부평구', status: '활성', brand: 'teal',   greeting: '인천·부천 전 지역 당일 상담!', cats: ['phone', 'internet', 'appliance'], openedAt: dayAgo(70),  monthlySales: 8200000,  leadCount: 0, phone: '010-5567-2214' },
+    { id: 'T4', slug: 'busanjeil', name: '부산제일통신', owner: '최민준', unit: 'GN',  sigungu: '부산 해운대구', status: '활성', brand: 'navy', greeting: '부산·경남 1등 생활서비스 파트너', cats: ['phone', 'internet', 'move', 'insurance'], openedAt: dayAgo(55), monthlySales: 6900000, leadCount: 0, phone: '010-9210-7745' },
+    { id: 'T5', slug: 'daejeonon', name: '대전온', owner: '정수빈', unit: 'CC2', sigungu: '대전 서구', status: '활성', brand: 'green', greeting: '충청권 생활비 절감 전문가', cats: ['internet', 'water', 'rental'], openedAt: dayAgo(33), monthlySales: 4100000, leadCount: 0, phone: '010-3345-8890' },
+    { id: 'T6', slug: 'jejuhome',  name: '제주홈케어', owner: '강지은', unit: 'JJ', sigungu: '제주 제주시', status: '정지', brand: 'purple', greeting: '제주 전 지역 홈서비스', cats: ['water', 'rental', 'etc'], openedAt: dayAgo(120), monthlySales: 0, leadCount: 0, phone: '010-7788-1123' },
+  ]
+
+  // 총판(영업단 사업권) 계약 현황 — 오픈맵·경영전략 화면의 실데이터 소스
+  // fee = 사업권 분양가(engine.SAUP_TIERS 기준), sharePct = 권역 매출 배분율
+  const distributors = [
+    { id: 'D1', unit: 'SD2', name: '수도2단 총판', owner: '김태성', fee: 15000000, sharePct: 0.03, openedAt: dayAgo(120), phone: '010-5551-2001' },
+    { id: 'D2', unit: 'CC2', name: '충청2단 총판', owner: '박미란', fee: 15000000, sharePct: 0.03, openedAt: dayAgo(85), phone: '010-5551-2002' },
+    { id: 'D3', unit: 'GN', name: '경남단 총판', owner: '조성필', fee: 50000000, sharePct: 0.03, openedAt: dayAgo(60), phone: '010-5551-2003', note: '지방 8개 단 일괄 보유자' },
   ]
 
   const applications = [
@@ -32,7 +40,7 @@ export function buildSeed() {
     { id: 'L3',  name: '박준혁', phone: '010-9987-1123', sigungu: '서울 송파구', cat: 'phone',    wish: '지금 바로', status: '상담대기', tenantId: 'T1', source: 'main', createdAt: minAgo(47), read: true, memo: '갤럭시 최신기종 희망, 가족결합 문의', history: [{ at: minAgo(47), to: '접수', by: 'system' }, { at: minAgo(31), to: '상담대기', by: 'T1' }] },
     { id: 'L4',  name: '최유진', phone: '010-4432-7789', sigungu: '경기 성남시', cat: 'move',     wish: '저녁(18~21시)', status: '상담완료', tenantId: 'T1', source: 'happynet', createdAt: minAgo(125), read: true, memo: '3월 말 입주, 포장이사 견적 발송', history: [{ at: minAgo(125), to: '접수', by: 'system' }, { at: minAgo(100), to: '상담대기', by: 'T1' }, { at: minAgo(64), to: '상담완료', by: 'T1' }] },
     { id: 'L5',  name: '정다은', phone: '010-6673-2214', sigungu: '서울 강남구', cat: 'internet', wish: '오전(9~12시)', status: '개통대기', tenantId: 'T1', source: 'happynet', createdAt: dayAgo(1), read: true, memo: '500M+정수기 결합 확정, 수요일 설치', history: [{ at: dayAgo(1), to: '접수', by: 'system' }, { at: dayAgo(1) + 600000, to: '상담대기', by: 'T1' }, { at: dayAgo(1) + 3600000, to: '상담완료', by: 'T1' }, { at: minAgo(300), to: '개통대기', by: 'T1' }] },
-    { id: 'L6',  name: '강현우', phone: '010-1123-9987', sigungu: '서울 관악구', cat: 'internet', wish: '지금 바로', status: '완료', tenantId: 'T1', source: 'main', createdAt: dayAgo(3), read: true, memo: '1G 단독, 사은품 40만 지급 완료', history: [{ at: dayAgo(3), to: '접수', by: 'system' }, { at: dayAgo(3) + 900000, to: '상담대기', by: 'T1' }, { at: dayAgo(2), to: '상담완료', by: 'T1' }, { at: dayAgo(1), to: '완료', by: 'T1' }] },
+    { id: 'L6',  name: '강현우', phone: '010-1123-9987', sigungu: '서울 관악구', cat: 'internet', wish: '지금 바로', status: '완료', tenantId: 'T1', source: 'main', createdAt: dayAgo(3), completedAt: dayAgo(1), read: true, memo: '1G 단독, 사은품 40만 지급 완료', history: [{ at: dayAgo(3), to: '접수', by: 'system' }, { at: dayAgo(3) + 900000, to: '상담대기', by: 'T1' }, { at: dayAgo(2), to: '상담완료', by: 'T1' }, { at: dayAgo(1), to: '완료', by: 'T1' }] },
     { id: 'L7',  name: '윤서아', phone: '010-8842-4432', sigungu: '경기 용인시', cat: 'rental',   wish: '오후(12~18시)', status: '취소', tenantId: 'T1', source: 'main', createdAt: dayAgo(2), read: true, memo: '', cancelReason: '타사 기존 약정 잔여 8개월', history: [{ at: dayAgo(2), to: '접수', by: 'system' }, { at: dayAgo(2) + 1200000, to: '상담대기', by: 'T1' }, { at: dayAgo(1), to: '취소', by: 'T1', note: '타사 기존 약정 잔여 8개월' }] },
     { id: 'L8',  name: '조은비', phone: '010-5567-6673', sigungu: '서울 노원구', cat: 'water',    wish: '오전(9~12시)', status: '상담대기', tenantId: 'T2', source: 'onlife', createdAt: minAgo(75), read: true, memo: '', history: [{ at: minAgo(75), to: '접수', by: 'system' }, { at: minAgo(60), to: '상담대기', by: 'T2' }] },
     { id: 'L9',  name: '한지민', phone: '010-3345-1123', sigungu: '경기 고양시', cat: 'internet', wish: '지금 바로', status: '접수', tenantId: 'T2', source: 'main', createdAt: minAgo(18), read: false, memo: '', history: [{ at: minAgo(18), to: '접수', by: 'system', note: '권역 배정(SD1)' }] },
@@ -40,7 +48,7 @@ export function buildSeed() {
     { id: 'L11', name: '문채원', phone: '010-2214-5567', sigungu: '부산 해운대구', cat: 'move',   wish: '오전(9~12시)', status: '접수', tenantId: 'T4', source: 'main', createdAt: minAgo(28), read: false, memo: '', history: [{ at: minAgo(28), to: '접수', by: 'system', note: '권역 배정(GN)' }] },
     { id: 'L12', name: '배성민', phone: '010-9931-3345', sigungu: '대전 서구', cat: 'water',      wish: '오후(12~18시)', status: '개통대기', tenantId: 'T5', source: 'daejeonon', createdAt: dayAgo(2), read: true, memo: '', history: [{ at: dayAgo(2), to: '접수', by: 'system' }, { at: dayAgo(1), to: '개통대기', by: 'T5' }] },
     { id: 'L13', name: '노유나', phone: '010-4432-2214', sigungu: '강원 춘천시', cat: 'internet', wish: '지금 바로', status: '접수', tenantId: null, source: 'main', createdAt: minAgo(9), read: false, memo: '', via: '관리단 폴백(GW)', history: [{ at: minAgo(9), to: '접수', by: 'system', note: '관리단 폴백(GW) — 권역 파트너 공석' }] },
-    { id: 'L14', name: '홍석천', phone: '010-6673-8842', sigungu: '서울 강남구', cat: 'appliance', wish: '오후(12~18시)', status: '완료', tenantId: 'T1', source: 'happynet', createdAt: dayAgo(6), read: true, memo: 'TV 75인치 제휴가 구매', history: [{ at: dayAgo(6), to: '접수', by: 'system' }, { at: dayAgo(5), to: '완료', by: 'T1' }] },
+    { id: 'L14', name: '홍석천', phone: '010-6673-8842', sigungu: '서울 강남구', cat: 'appliance', wish: '오후(12~18시)', status: '완료', tenantId: 'T1', source: 'happynet', createdAt: dayAgo(6), completedAt: dayAgo(5), read: true, memo: 'TV 75인치 제휴가 구매', history: [{ at: dayAgo(6), to: '접수', by: 'system' }, { at: dayAgo(5), to: '완료', by: 'T1' }] },
     { id: 'L15', name: '임수정', phone: '010-1123-4432', sigungu: '서울 강남구', cat: 'insurance', wish: '오전(9~12시)', status: '상담대기', tenantId: 'T1', source: 'main', createdAt: minAgo(140), read: true, memo: '실손 전환 검토', history: [{ at: minAgo(140), to: '접수', by: 'system' }, { at: minAgo(120), to: '상담대기', by: 'T1' }] },
   ]
 
@@ -91,9 +99,11 @@ export function buildSeed() {
       ],
     },
     tenants,
+    distributors,
     applications,
     leads,
     contracts,
+    settleConfirms: {}, // 지급 확정 영속 상태 — { [period|period:tenantId]: { at, detail } }
     notices: [
       { id: 'N1', title: '3월 정산이 확정되었습니다. 마이오피스 > 정산에서 명세를 확인하세요.', target: 'office', at: dayAgo(1) },
       { id: 'N2', title: '이사 카테고리 봄 프로모션: 성사 수수료 +10% (4/30까지)', target: 'office', at: dayAgo(2) },

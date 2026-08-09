@@ -29,7 +29,14 @@ const DEMO_LOG = [
 
 export default function AdminAiOps() {
   const { db } = useStore()
-  const recentAi = db.aiEvents.slice(0, 4)
+  // 실 AI 텔레메트리 — 소비자몰 챗/진단이 쌓는 aiEvents 집계. 5건부터 데모 수치 대신 실측 사용
+  const events = db.aiEvents ?? []
+  const total = events.length
+  const chats = events.filter((e) => e.kind === 'chat').length
+  const autoRate = total ? Math.round((events.filter((e) => e.auto === true).length / total) * 1000) / 10 : 0
+  const useReal = total >= 5
+  const recentAi = events.slice(0, 8)
+  const demoLog = DEMO_LOG.slice(0, Math.max(0, 8 - recentAi.length)) // 실이벤트가 쌓일수록 데모 행 대체
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -48,8 +55,8 @@ export default function AdminAiOps() {
       {/* KPI 4 */}
       <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <KpiCard label="이번 달 전체 매출" value={1248560000} suffix="원" delta={22.5} />
-        <KpiCard label="신규 상담 (오늘)" value={1248} suffix="건" delta={8.1} caption={`실 데모 이벤트 ${db.aiEvents.length}건 수집됨`} />
-        <KpiCard label="AI 자동 처리율" value={85.3} format={(n) => n} suffix="%" accent="text-ok" delta={2.4} caption="목표 85% 달성 · 다음 목표 90%" />
+        <KpiCard label="신규 상담 (오늘)" value={1248} suffix="건" delta={8.1} caption={`실 이벤트 ${total}건 수집 (챗 ${chats}건)`} />
+        <KpiCard label="AI 자동 처리율" value={useReal ? autoRate : 85.3} format={(n) => Math.round(n * 10) / 10} suffix="%" accent="text-ok" delta={useReal ? undefined : 2.4} caption={useReal ? `실이벤트 ${total}건 기준` : '데모 기준 · 실이벤트 5건부터 실측 전환'} />
         <KpiCard label="고객 만족도" value={4.8} format={() => '4.8'} suffix="점" caption="상담 후 설문 기준" />
       </div>
 
@@ -127,7 +134,7 @@ export default function AdminAiOps() {
               {recentAi.map((e) => (
                 <LogRow key={e.id} at={timeAgo(e.at)} text={e.kind === 'chat' ? `챗봇 응답(${e.source === 'claude' ? 'Claude' : '데모 브레인'}): "${String(e.q).slice(0, 24)}…"` : e.kind === 'diagnosis' ? `생활비 진단 완료 — ${e.label}` : `자동 분류 — ${e.label ?? e.q}`} live />
               ))}
-              {DEMO_LOG.map((l) => <LogRow key={l.text} at={l.at} text={l.text} />)}
+              {demoLog.map((l) => <LogRow key={l.text} at={l.at} text={l.text} />)}
             </div>
           </Card>
         </div>

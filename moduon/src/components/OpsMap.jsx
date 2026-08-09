@@ -2,7 +2,7 @@
 // 11개 영업단을 지리적 위치로 배치하고, 실데이터(테넌트·리드·매출)를 노드에 집계.
 import { useMemo, useState } from 'react'
 import { useStore } from '../lib/store'
-import { UNITS } from '../lib/constants'
+import { UNITS, unitBySigungu } from '../lib/constants'
 import { won, num } from '../lib/engine'
 
 // 대략적 지리 좌표(컨테이너 % — 수도권 상단, 제주 하단)
@@ -18,15 +18,18 @@ export default function OpsMap() {
 
   const byUnit = useMemo(() => {
     const m = {}
-    for (const u of UNITS) m[u.code] = { ...u, dealers: 0, active: 0, sales: 0, leads: 0 }
+    for (const u of UNITS) m[u.code] = { ...u, dealers: 0, active: 0, sales: 0, leads: 0, unassigned: 0, dist: null }
+    for (const d of db.distributors ?? []) if (m[d.unit]) m[d.unit].dist = d // 실 총판 계약
     for (const t of db.tenants) {
       const e = m[t.unit]
       if (e) { e.dealers++; if (t.status === '활성') e.active++; e.sales += t.monthlySales || 0 }
     }
     for (const l of db.leads) {
-      const t = db.tenants.find((x) => x.id === l.tenantId)
-      const code = t?.unit
-      if (code && m[code]) m[code].leads++
+      // 리드는 고객 주소지 권역으로 귀속 — 공석 권역의 수요(모집 신호)도 드러난다. 실패 시 배정 파트너 권역 폴백
+      const code = unitBySigungu(l.sigungu) ?? db.tenants.find((x) => x.id === l.tenantId)?.unit
+      if (!code || !m[code]) continue
+      m[code].leads++
+      if (!l.tenantId && !['완료', '취소'].includes(l.status)) m[code].unassigned++
     }
     return m
   }, [db])
@@ -38,12 +41,13 @@ export default function OpsMap() {
       staffed: list.filter((u) => u.active > 0).length,
       dealers: list.reduce((s, u) => s + u.dealers, 0),
       sales: list.reduce((s, u) => s + u.sales, 0),
-      vacant: list.filter((u) => u.active === 0).length,
+      // 모집 필요 = 총판 계약도, 활성 대리점도 없는 완전 공석 권역
+      vacant: list.filter((u) => u.active === 0 && !u.dist).length,
     }
   }, [byUnit])
 
   const s = byUnit[sel]
-  const nodeColor = (u) => (u.active === 0 ? 'vacant' : u.active >= 2 ? 'hot' : 'on')
+  const nodeColor = (u) => (u.active === 0 && !u.dist ? 'vacant' : u.active >= 2 ? 'hot' : 'on')
 
   return (
     <div className="rounded-card bg-white p-5 shadow-bcard">
@@ -91,14 +95,16 @@ export default function OpsMap() {
           <div className="rounded-field border border-bline bg-brow/40 p-4">
             <div className="flex items-center justify-between">
               <div className="text-[15px] font-extrabold text-bink">{s.name}</div>
-              <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${s.active > 0 ? 'bg-ok/10 text-ok' : 'bg-warn/10 text-warn'}`}>{s.active > 0 ? '운영 중' : '모집 필요'}</span>
+              <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${s.active > 0 || s.dist ? 'bg-ok/10 text-ok' : 'bg-warn/10 text-warn'}`}>{s.active > 0 || s.dist ? '운영 중' : '모집 필요'}</span>
             </div>
             <div className="mt-1 text-[12px] text-bmuted">{s.cover}</div>
             <div className="mt-3 grid grid-cols-2 gap-2">
-              <Cell k="총판" v={s.active > 0 ? '배정' : '공석'} accent={s.active > 0 ? 'text-primary-text' : 'text-warn'} />
+              <Cell k="총판" v={s.dist ? s.dist.owner : '공석'} accent={s.dist ? 'text-primary-text' : 'text-warn'} />
               <Cell k="대리점" v={`${s.dealers}개`} />
               <Cell k="이번달 매출" v={won(s.sales)} />
-              <Cell k="배정 리드" v={`${s.leads}건`} />
+              <Cell k="유입 리드" v={`${s.leads}건`} />
+              {/* 미배정 리드 = 이 권역 주소지 수요인데 받을 파트너가 없는 건 — 모집 우선순위 신호 */}
+              <Cell className="col-span-2" k="미배정 리드 (모집 신호)" v={s.unassigned > 0 ? `${s.unassigned}건 · 파트너 필요` : '0건'} accent={s.unassigned > 0 ? 'text-warn' : 'text-bink'} />
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-field border border-bline p-3 text-[11.5px]">
@@ -120,9 +126,9 @@ function Stat({ k, v, warn }) {
     </div>
   )
 }
-function Cell({ k, v, accent = 'text-bink' }) {
+function Cell({ k, v, accent = 'text-bink', className = '' }) {
   return (
-    <div className="rounded-md bg-white px-3 py-2">
+    <div className={`rounded-md bg-white px-3 py-2 ${className}`}>
       <div className="text-[10.5px] font-semibold text-bfaint">{k}</div>
       <div className={`tnum text-[14px] font-extrabold ${accent}`}>{v}</div>
     </div>
