@@ -38,6 +38,11 @@ export default function AdminAiOps() {
   const useReal = total >= 5
   const recentAi = events.slice(0, 8)
   const demoLog = DEMO_LOG.slice(0, Math.max(0, 8 - recentAi.length)) // 실이벤트가 쌓일수록 데모 행 대체
+  // 피드백 플라이휠 — 챗 답변 도움됨/아쉬움 평가 집계, 아쉬운 질문은 개선 큐로
+  const fb = events.filter((e) => e.kind === 'feedback')
+  const fbHelp = fb.filter((e) => e.helpful === true).length
+  const fbRate = fb.length ? Math.round((fbHelp / fb.length) * 100) : 0
+  const improveQ = fb.filter((e) => e.helpful === false && e.q).slice(0, 4)
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -112,6 +117,41 @@ export default function AdminAiOps() {
               <Legend data={AUTO_BREAKDOWN} className="flex-1" />
             </div>
             <p className="mt-3 text-[11px] leading-4 text-bfaint">플라이휠: 모든 AI 응답·분류 결과는 피드백 라벨과 함께 저장 → 프롬프트·정책 개선에 재사용 (내부 고도화 전용).</p>
+          </Card>
+
+          {/* 피드백 플라이휠 — 챗 썸 평가 실측 */}
+          <Card track="b" className="p-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[15.5px] font-extrabold text-bink">응답 피드백 플라이휠</h2>
+              {fb.length > 0 && <span className="tnum rounded-full bg-ok/10 px-2.5 py-0.5 text-[11.5px] font-bold text-ok">도움됨 {fbRate}%</span>}
+            </div>
+            {fb.length === 0 ? (
+              <p className="mt-3 text-[12px] leading-5 text-bfaint">아직 수집된 평가가 없어요 — 소비자몰 챗봇 답변의 "도움이 됐나요?" 평가가 여기로 실시간 집계됩니다.</p>
+            ) : (
+              <>
+                <div className="mt-3 flex items-center gap-2.5">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-brow">
+                    <div className="h-full rounded-full bg-ok transition-all" style={{ width: `${fbRate}%` }} />
+                  </div>
+                  <span className="tnum text-[11.5px] font-bold text-bmuted">{fbHelp}/{fb.length}건</span>
+                </div>
+                {improveQ.length > 0 && (
+                  <>
+                    <div className="mt-3.5 text-[12px] font-bold text-bink">개선 큐 — 아쉬웠던 질문</div>
+                    <div className="mt-1.5 flex flex-col gap-1.5">
+                      {improveQ.map((e) => (
+                        <div key={e.id ?? e.at} className="flex items-center gap-2 rounded-field bg-warn/[0.07] px-2.5 py-2">
+                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-warn" />
+                          <span className="min-w-0 flex-1 truncate text-[12px] font-semibold text-bbody">"{e.q}"</span>
+                          <span className="shrink-0 text-[10.5px] text-bfaint">{timeAgo(e.at)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+                <p className="mt-3 text-[11px] leading-4 text-bfaint">평가 라벨은 프롬프트·정책 개선 재료로 저장돼요 — 아쉬운 질문부터 지식베이스를 보강하세요.</p>
+              </>
+            )}
           </Card>
 
           {/* 인기 문의 TOP5 */}

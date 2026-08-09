@@ -2,7 +2,8 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { CATEGORIES } from '../../lib/constants'
-import { won } from '../../lib/engine'
+import { won, calcQuote, CARRIERS } from '../../lib/engine'
+import { useStore } from '../../lib/store'
 import { useCountUp } from '../../components/ui'
 import Reviews from '../../components/Reviews'
 
@@ -113,6 +114,8 @@ export default function Home({ tenant }) {
       </section>
 
       <SupportBand />
+
+      <RealCostTeaser />
 
       {/* ── 혜택 섹션 ── */}
       <section className="mt-6 rounded-section bg-white p-5 shadow-card sm:p-9">
@@ -259,6 +262,49 @@ function SupportBand() {
           </div>
         </div>
       </div>
+    </section>
+  )
+}
+
+// 3사 실질 부담 미리보기 — 계산기와 같은 엔진(calcQuote)으로 기본 구성 실측
+function RealCostTeaser() {
+  const { db } = useStore()
+  const rows = CARRIERS
+    .map((c) => calcQuote({ carrier: c, speed: '500M', bundle: 'water', promo: false }, db.products))
+    .sort((a, b) => a.real36 - b.real36)
+  return (
+    <section className="mt-6 rounded-section bg-white p-5 shadow-card sm:p-9">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 className="text-[20px] font-extrabold tracking-[-0.5px] text-ink sm:text-[24px]">월 요금이 같아도, <span className="text-primary-text">돌려받는 돈</span>은 다릅니다</h2>
+          <p className="mt-1 text-[13px] text-muted sm:text-[14px]">인기 구성(500M + 정수기 결합) 기준 — 3년 실질 부담 = 납부 총액 − 돌려받는 돈</p>
+        </div>
+        <Link to="/calculator" className="text-[13.5px] font-bold text-primary-text hover:underline">내 조건으로 비교하기 →</Link>
+      </div>
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        {rows.map((r, i) => (
+          <Link
+            key={r.carrier}
+            to="/calculator"
+            state={{ preset: { carrier: r.carrier, speed: '500M', bundle: 'water' } }}
+            className={`group rounded-card border p-4 transition-all hover:-translate-y-[3px] ${i === 0 ? 'border-[1.5px] border-ok/60 bg-ok/[0.04]' : 'border-line bg-white hover:border-primary/50'}`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[14px] font-extrabold text-ink">{r.carrier}</span>
+              {i === 0 && <span className="rounded-full bg-ok/10 px-2 py-0.5 text-[10.5px] font-bold text-ok">실질가 최저</span>}
+            </div>
+            <div className="tnum mt-2 flex items-baseline justify-between text-[12.5px] text-muted">
+              <span>월 {won(r.total)}</span>
+              <span className="font-bold text-orange-text">+{won(r.gift)} 돌려받기</span>
+            </div>
+            <div className="mt-2 border-t border-dashed border-line pt-2">
+              <span className="text-[11px] text-faint">3년 실질 부담</span>
+              <div className={`tnum text-[19px] font-extrabold tracking-[-0.5px] ${i === 0 ? 'text-ok' : 'text-ink'}`}>{won(r.real36)}</div>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <p className="mt-3 text-[11px] leading-4 text-label">예상 금액이며 통신사·약정·지역 조건에 따라 달라질 수 있어요. 카드를 누르면 해당 통신사 조건으로 계산기가 열립니다.</p>
     </section>
   )
 }

@@ -35,8 +35,8 @@
   50% { transform: translateY(-9px); }
 }
 .animate-floaty { animation: floaty 4.2s ease-in-out infinite; }
-/* 돈주머니 — 더 천천히 둥둥(느린 상하 부유) */
-.animate-bagfloat { animation: floaty 5.6s ease-in-out infinite; }
+/* 돈주머니 — 경쾌하게 둥둥(상하 부유) */
+.animate-bagfloat { animation: floaty 3s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .animate-floaty, .animate-bagfloat { animation: none; }
 }

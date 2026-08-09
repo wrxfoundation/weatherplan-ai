@@ -40,7 +40,13 @@ export default function AdminTenants() {
           <span className="tnum rounded-full bg-warn/10 px-2.5 py-0.5 text-[11.5px] font-bold text-warn">{pending.length}건</span>
         </div>
         <div className="mt-3 flex flex-col gap-2.5">
-          {pending.map((a) => (
+          {pending.map((a) => {
+            // 승인 판단 근거 — 신청 권역의 공급(활성 몰·총판)과 수요(미배정 리드)를 함께 보여준다
+            const unit = unitBySigungu(a.sigungu)
+            const activeInUnit = db.tenants.filter((t) => t.unit === unit && t.status === '활성').length
+            const dist = (db.distributors ?? []).find((d) => d.unit === unit)
+            const unassigned = db.leads.filter((l) => !l.tenantId && !['완료', '취소'].includes(l.status) && unitBySigungu(l.sigungu) === unit).length
+            return (
             <div key={a.id} className="flex flex-wrap items-center gap-3 rounded-field border border-bline p-3.5">
               <div className="min-w-0 flex-1">
                 <div className="text-[13.5px] font-bold text-bink">
@@ -50,13 +56,18 @@ export default function AdminTenants() {
                   {a.name} · {a.type} · {a.sigungu} → <strong className="font-bold text-primary-text">{unitName(unitBySigungu(a.sigungu))}</strong> · 신청 {timeAgo(a.appliedAt)}
                 </div>
                 {a.memo && <div className="mt-0.5 text-[11.5px] text-bfaint"><IcChat size={12} className="inline -mt-0.5 mr-1" />{a.memo}</div>}
+                <div className="mt-1.5 flex flex-wrap gap-1.5 text-[10.5px] font-bold">
+                  <span className={`rounded-full px-2 py-0.5 ${activeInUnit === 0 ? 'bg-ok/10 text-ok' : 'bg-brow text-bmuted'}`}>권역 활성 몰 {activeInUnit}개{activeInUnit === 0 ? ' — 공백 권역' : ''}</span>
+                  <span className={`rounded-full px-2 py-0.5 ${dist ? 'bg-tint text-primary-text' : 'bg-warn/10 text-warn'}`}>총판 {dist ? dist.owner : '공석'}</span>
+                  {unassigned > 0 && <span className="rounded-full bg-warn/10 px-2 py-0.5 text-warn">미배정 리드 {unassigned}건 — 수요 신호</span>}
+                </div>
               </div>
               <div className="flex gap-2">
                 <Btn size="xs" onClick={() => approve(a)}>승인</Btn>
                 <Btn size="xs" variant="danger" onClick={() => setRejectTarget(a)}>반려</Btn>
               </div>
             </div>
-          ))}
+          )})}
           {pending.length === 0 && <div className="py-3 text-center text-[12.5px] text-bfaint">대기 중인 신청이 없어요 — 새 신청은 /partner/apply 에서 들어옵니다</div>}
         </div>
       </Card>
