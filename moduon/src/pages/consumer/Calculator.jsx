@@ -3,14 +3,17 @@ import { useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { calcQuote, won, copyText, CARRIERS, SPEED_MAP, BUNDLE_MAP, BUNDLE_LABEL, PAYOUTS, payout } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
+import { useToast } from '../../components/ui'
 import { CalcTabs } from './PhoneCalculator'
 import InstallCheck from '../../components/InstallCheck'
 
 export default function Calculator() {
   const nav = useNavigate()
+  const toast = useToast()
   const [sp] = useSearchParams()
-  // 프리셋: 요금표에서 넘어온 state > 공유 링크 쿼리(?carrier=&speed=&bundle=&promo=1) > 기본값
-  const preset = useLocation().state?.preset ?? { carrier: sp.get('carrier'), speed: sp.get('speed'), bundle: sp.get('bundle'), promo: sp.get('promo') === '1' }
+  const loc = useLocation()
+  // 프리셋: 요금표(state.preset)·설치조회(state 직접 {carrier,speed,sigungu}) > 공유 링크 쿼리(?carrier=&speed=&bundle=&promo=1) > 기본값
+  const preset = loc.state?.preset ?? loc.state ?? { carrier: sp.get('carrier'), speed: sp.get('speed'), bundle: sp.get('bundle'), promo: sp.get('promo') === '1' }
   // 기본 상태: KT · 500M · 정수기 결합 · 프로모션 off → 32,900원 / 사은품 350,000원 (PRD 인수 기준)
   const [carrier, setCarrier] = useState(CARRIERS.includes(preset?.carrier) ? preset.carrier : 'KT')
   const [speed, setSpeed] = useState(SPEED_MAP[preset?.speed] ? preset.speed : '500M')
@@ -19,7 +22,7 @@ export default function Calculator() {
   const [payoutM, setPayoutM] = useState('cash')
   const [copied, setCopied] = useState(false)
 
-  const q = useMemo(() => calcQuote({ speed, bundle, promo }), [speed, bundle, promo])
+  const q = useMemo(() => calcQuote({ carrier, speed, bundle, promo }), [carrier, speed, bundle, promo])
   const pay = payout(q.gift, payoutM)
   const payLabel = PAYOUTS.find((p) => p.key === payoutM)?.label ?? '현금'
   // 다음 행동 + 기대 효과 힌트 (axion 델타 문장 패턴)
@@ -48,7 +51,14 @@ export default function Calculator() {
       </div>
 
       <div className="mt-5">
-        <InstallCheck />
+        {/* 조회 결과를 이동 없이 현재 견적에 바로 반영 (가능 통신사 중 첫 번째 + 최대 속도) */}
+        <InstallCheck onPrefill={(res) => {
+          const best = res?.carriers?.find((c) => c.ok)
+          if (!best) return
+          setCarrier(best.name)
+          if (SPEED_MAP[best.max]) setSpeed(best.max)
+          toast('조회 결과를 견적에 반영했어요')
+        }} />
       </div>
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_400px]">

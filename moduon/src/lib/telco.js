@@ -1,7 +1,7 @@
 // ─── 인터넷/TV 요금표 데이터 (탐라몰 벤치마크 — S-02 internet 전용) ──
 // 기준 구성 = 인터넷 + TV 베이직(SPEED_MAP과 동일 기준). 단독/프리미엄은 가감.
 // 수치는 3년 약정·부가세 포함 데모 기준가 — 실제 조건은 상담 시 확정(LEGAL.policy).
-import { SPEED_MAP, GIFT_MAP } from './engine'
+import { SPEED_MAP, GIFT_MAP, CARRIER_GIFT_ADD } from './engine'
 
 export const TV_OPTIONS = [
   { key: 'solo',    label: '인터넷 단독',   add: -11000, desc: 'TV 없이 인터넷만' },
@@ -9,11 +9,11 @@ export const TV_OPTIONS = [
   { key: 'premium', label: '+ TV 프리미엄', add: 6600,   desc: '235채널 + 영화 프리미엄관' },
 ]
 
-// 통신사별 프로모션(데모): 요금은 공통 기준가, 사은품·부가 혜택만 차등
+// 통신사별 프로모션(데모): 요금은 공통 기준가, 사은품·부가 혜택만 차등 (가산액은 engine과 단일 출처)
 export const CARRIER_PROMO = {
-  KT:            { giftAdd: 0,     note: '기가 와이파이 공유기 무료 임대' },
-  'SK브로드밴드': { giftAdd: 30000, note: 'B tv 스마트 셋톱 무료 업그레이드' },
-  'LG U+':       { giftAdd: 20000, note: '유튜브 프리미엄 3개월 이용권' },
+  KT:            { giftAdd: CARRIER_GIFT_ADD.KT,             note: '기가 와이파이 공유기 무료 임대' },
+  'SK브로드밴드': { giftAdd: CARRIER_GIFT_ADD['SK브로드밴드'], note: 'B tv 스마트 셋톱 무료 업그레이드' },
+  'LG U+':       { giftAdd: CARRIER_GIFT_ADD['LG U+'],        note: '유튜브 프리미엄 3개월 이용권' },
 }
 
 export const SPEED_DESC = { '100M': '1~2인 · 웹서핑/OTT', '500M': '가장 인기 · 가족형', '1G': '4K·게임·재택 최적' }

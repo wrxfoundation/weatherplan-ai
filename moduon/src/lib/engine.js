@@ -24,19 +24,21 @@ export const BUNDLE_LABEL = { none: '결합 없음', water: '정수기 렌탈 �
 export const PROMO_DISCOUNT = 3000
 export const GIFT_MAP = { '100M': 200000, '500M': 300000, '1G': 400000 }
 export const CARRIERS = ['KT', 'SK브로드밴드', 'LG U+']
+// 통신사별 사은품 가산 — telco.js CARRIER_PROMO.giftAdd의 단일 출처 (telco가 이 맵을 참조)
+export const CARRIER_GIFT_ADD = { KT: 0, 'SK브로드밴드': 30000, 'LG U+': 20000 }
 
-export function calcQuote({ speed = '500M', bundle = 'water', promo = false } = {}) {
+export function calcQuote({ speed = '500M', bundle = 'water', promo = false, carrier = 'KT' } = {}) {
   const base = SPEED_MAP[speed] ?? 0
   const bundleDc = BUNDLE_MAP[bundle] ?? 0
   const promoDc = promo ? PROMO_DISCOUNT : 0
   const total = base - bundleDc - promoDc
-  const gift = (GIFT_MAP[speed] ?? 0) + (bundle !== 'none' ? 50000 : 0)
-  return { base, bundleDc, promoDc, total, gift }
+  const gift = (GIFT_MAP[speed] ?? 0) + (bundle !== 'none' ? 50000 : 0) + (CARRIER_GIFT_ADD[carrier] ?? 0)
+  return { carrier, base, bundleDc, promoDc, total, gift }
 }
 
 // ─── 사은품 지급 방식 (아정당·다쏜다식 '현금 극대화') ─────────────
 export const PAYOUTS = [
-  { key: 'cash',    label: '현금',     sub: '설치 확인 후 3영업일 내 계좌 입금', badge: '가장 인기' },
+  { key: 'cash',    label: '현금',     sub: '설치 확인 후 영업일 7일 내 계좌 입금', badge: '가장 인기' },
   { key: 'voucher', label: '상품권',   sub: '백화점·신세계 상품권으로 지급' },
   { key: 'bill',    label: '요금할인', sub: '24개월 매월 통신비에서 자동 차감' },
 ]
@@ -84,7 +86,6 @@ export function saUpGwonFee(sigungu) {
   }
   return 50000000                                     // 지방 8단 = 단당 5,000만
 }
-export const SAUP_RANGE = { min: 5000000, max: 50000000 } // 500만 ~ 5,000만
 export const SAUP_TIERS = [
   { label: '서울 자치구 (25개)', price: 20000000 },
   { label: '경기·인천 시·구', price: 15000000 },

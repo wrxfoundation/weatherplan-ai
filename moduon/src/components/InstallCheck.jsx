@@ -76,7 +76,12 @@ export default function InstallCheck({ onPrefill }) {
           <div className="mt-2.5 text-[12px] leading-4 text-muted">{res.note}</div>
           <div className="mt-3 flex gap-2">
             <button
-              onClick={() => { onPrefill?.(res); nav('/calculator') }}
+              onClick={() => {
+                // 임베드(계산기 내부)면 이동 없이 부모 상태에 반영, 아니면 조회 결과를 계산기로 들고 이동
+                if (onPrefill) { onPrefill({ ...res, sigungu: q.trim() }); return }
+                const best = res.carriers?.find((c) => c.ok)
+                nav('/calculator', { state: { carrier: best?.name, speed: best?.max, sigungu: q.trim() } })
+              }}
               className="glass-btn-cta h-10 flex-1 rounded-field bg-primary text-[13.5px] font-bold text-white transition-colors hover:bg-primary-hover"
             >
               이 지역 현금 사은품 계산하기
