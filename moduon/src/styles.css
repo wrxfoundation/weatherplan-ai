@@ -155,18 +155,3 @@
     0 3px 8px rgba(48, 72, 158, 0.4);
 }
 
-/* ─── 인조가죽 질감 — 촘촘한 펠블 그레인(색감 유지). 부모는 relative+overflow-hidden ───
-   feTurbulence 범프 → feDiffuseLighting으로 요철에 하이라이트/그림자를 만들어 가죽
-   펠블을 표현. soft-light로 얹어 밑색은 유지하고 결만 입힌다. z-2(텍스트 z-10 아래). */
-.leather::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  border-radius: inherit;
-  opacity: 0.6;
-  mix-blend-mode: soft-light;
-  background-size: 168px 168px;
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='168' height='168'%3E%3Cfilter id='l'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='2' seed='6' stitchTiles='stitch' result='n'/%3E%3CfeDiffuseLighting in='n' lighting-color='%23ffffff' surfaceScale='2.4' diffuseConstant='1.1'%3E%3CfeDistantLight azimuth='225' elevation='55'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23l)'/%3E%3C/svg%3E");
-}
