@@ -141,7 +141,7 @@ export default function Home({ tenant }) {
               <div className="mt-1 text-[14px] font-medium text-white/75">30초 신청, 평균 10분 내 전문 상담사 연결</div>
             </div>
           </div>
-          <Link to={consultTo} className="inline-flex h-[52px] shrink-0 items-center rounded-btn bg-white px-7 text-[15px] font-bold text-primary-text transition-transform hover:-translate-y-px">
+          <Link to={consultTo} className="shimmer-cta shimmer-ink inline-flex h-[52px] shrink-0 items-center rounded-btn bg-white px-7 text-[15px] font-bold text-primary-text transition-transform hover:-translate-y-px">
             무료 상담 신청 →
           </Link>
         </div>
@@ -164,7 +164,7 @@ function BenefitCard({ style, light, label, amountNum, obj, onClick }) {
     <button
       onClick={onClick}
       style={style}
-      className="group relative flex min-h-[150px] flex-col overflow-hidden rounded-card p-5 text-left transition-transform duration-200 hover:-translate-y-[3px] sm:min-h-[296px] sm:p-6"
+      className="glass-sheen group relative flex min-h-[150px] flex-col overflow-hidden rounded-card p-5 text-left transition-transform duration-200 hover:-translate-y-[3px] sm:min-h-[296px] sm:p-6"
     >
       <div className={`text-[14px] font-bold ${light ? 'text-white/85' : 'text-primary-text/80'}`}>{label}</div>
       <div className={`mt-1 text-[15px] font-bold leading-6 ${light ? 'text-white' : 'text-primary-text'}`}>

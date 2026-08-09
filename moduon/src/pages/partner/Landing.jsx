@@ -16,7 +16,7 @@ export default function PartnerLanding() {
   return (
     <div className="min-h-screen bg-cream">
       {/* 헤더 */}
-      <header className="sticky top-0 z-40 border-b border-line-card/70 bg-cream/90 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-line-card/50 bg-cream/60 backdrop-blur-md">
         <div className="mx-auto flex h-[64px] max-w-6xl items-center justify-between px-5 sm:h-[76px] sm:px-10">
           <Link to="/" className="flex items-center gap-2">
             <Logo />
@@ -87,13 +87,15 @@ export default function PartnerLanding() {
           <h2 className="text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">개설만 하세요,<br className="sm:hidden" /> 운영은 모두온이 합니다</h2>
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: '🏪', t: '내 브랜드 몰', d: '로고·컬러·인사말을 입힌 나만의 비교판매 사이트. 상품·가격·콘텐츠는 본사가 중앙 관리해요.' },
-              { icon: '⚡', t: '리드 자동 배정', d: '내 몰 유입은 물론, 본진 유입 고객도 주소지 권역 기준으로 실시간 배정됩니다.' },
-              { icon: '🤖', t: 'AI 업무 자동화', d: '상담봇 1차 응대, 문의 자동 분류, 견적 자동 계산. 사장님은 클로징에만 집중하세요.' },
-              { icon: '₩', t: '투명한 정산', d: '건별 수수료 명세와 예정 수익이 매일 갱신돼요. 월 정산은 익월 20일 자동 지급.' },
+              { icon: 'store', t: '내 브랜드 몰', d: '로고·컬러·인사말을 입힌 나만의 비교판매 사이트. 상품·가격·콘텐츠는 본사가 중앙 관리해요.' },
+              { icon: 'bolt', t: '리드 자동 배정', d: '내 몰 유입은 물론, 본진 유입 고객도 주소지 권역 기준으로 실시간 배정됩니다.' },
+              { icon: 'cpu', t: 'AI 업무 자동화', d: '상담봇 1차 응대, 문의 자동 분류, 견적 자동 계산. 사장님은 클로징에만 집중하세요.' },
+              { icon: 'wallet', t: '투명한 정산', d: '건별 수수료 명세와 예정 수익이 매일 갱신돼요. 월 정산은 익월 20일 자동 지급.' },
             ].map((c) => (
-              <div key={c.t} className="rounded-card bg-warm p-5 transition-transform duration-200 hover:-translate-y-[3px]">
-                <span className="flex h-[46px] w-[46px] items-center justify-center rounded-xl bg-white text-[20px] shadow-card">{c.icon}</span>
+              <div key={c.t} className="glass-tile rounded-card p-5 hover:-translate-y-[3px]">
+                <span className="flex h-[46px] w-[46px] items-center justify-center rounded-xl bg-white text-primary-text shadow-card">
+                  <PartnerIcon kind={c.icon} />
+                </span>
                 <div className="mt-3.5 text-[15.5px] font-bold text-ink">{c.t}</div>
                 <p className="mt-1.5 text-[13px] leading-[21px] text-muted">{c.d}</p>
               </div>
@@ -114,7 +116,7 @@ export default function PartnerLanding() {
               { t: '결제 · 몰 개설', d: `분양비 ${won(policies.joinFee)} + 월 이용료 ${won(policies.monthlyFee)}. 브랜딩 마법사로 1시간 안에 개설.` },
               { t: '판매 시작', d: '리드가 실시간으로 도착하고, 정산은 매일 갱신됩니다.' },
             ].map((s, i) => (
-              <div key={s.t} className="rounded-card border border-line-card p-5">
+              <div key={s.t} className="glass-tile rounded-card p-5">
                 <span className={`flex h-9 w-9 items-center justify-center rounded-full text-[15px] font-extrabold ${i === 3 ? 'bg-primary text-white' : 'bg-tint text-primary-text'}`}>{i + 1}</span>
                 <div className="mt-3.5 text-[15.5px] font-bold text-ink">{s.t}</div>
                 <p className="mt-1.5 text-[13px] leading-[21px] text-muted">{s.d}</p>
@@ -141,5 +143,39 @@ export default function PartnerLanding() {
       </footer>
       <ChatWidget />
     </div>
+  )
+}
+
+// 제공가치 라인 아이콘 (stroke 기반) — 이모지 대체
+function PartnerIcon({ kind }) {
+  const paths = {
+    store: (
+      <>
+        <path d="M3.5 9 5 4.2h14L20.5 9" />
+        <path d="M4.5 9v9.8a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1V9" />
+        <path d="M3.5 9h17" />
+        <path d="M9 19.8V15h6v4.8" />
+      </>
+    ),
+    bolt: <path d="M13 2.5 4.5 13.5H10l-1 8 8.5-11H12l1-8Z" />,
+    cpu: (
+      <>
+        <rect x="6.5" y="6.5" width="11" height="11" rx="2.2" />
+        <rect x="10" y="10" width="4" height="4" rx="1" />
+        <path d="M9.5 2.5v3M14.5 2.5v3M9.5 18.5v3M14.5 18.5v3M2.5 9.5h3M2.5 14.5h3M18.5 9.5h3M18.5 14.5h3" />
+      </>
+    ),
+    wallet: (
+      <>
+        <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h10.5v3" />
+        <path d="M4 6.5v11A2.5 2.5 0 0 0 6.5 20h13a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-13A2.5 2.5 0 0 1 4 6.5Z" />
+        <circle cx="16.5" cy="14" r="1.2" />
+      </>
+    ),
+  }
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      {paths[kind]}
+    </svg>
   )
 }

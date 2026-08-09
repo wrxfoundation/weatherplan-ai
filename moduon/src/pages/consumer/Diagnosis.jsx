@@ -131,7 +131,7 @@ function Result({ result, nav, toast, onRetry }) {
         </p>
       )}
 
-      <Btn size="lg" className="mt-6 w-full" onClick={() => nav('/consult')}>이 결과로 무료 상담 받기</Btn>
+      <Btn size="lg" className="mt-6 w-full shimmer-cta" onClick={() => nav('/consult')}>이 결과로 무료 상담 받기</Btn>
       <Btn variant="outline" size="sm" className="mt-2.5 w-full" onClick={() => { downloadText(`모두온_절감실행서_${monthKey()}.md`, buildDiagnosisPlan(result)); toast('절감 실행서를 내려받았어요') }}>
         📄 절감 실행서 다운로드
       </Btn>

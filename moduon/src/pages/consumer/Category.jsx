@@ -29,7 +29,7 @@ export default function Category() {
           </div>
           <p className="mt-2 max-w-xl text-[14.5px] leading-6 text-muted">{cat.desc}</p>
         </div>
-        <Btn onClick={() => nav(`/consult?cat=${slug}`)} className="shrink-0">무료 상담 신청</Btn>
+        <Btn onClick={() => nav(`/consult?cat=${slug}`)} className="shrink-0 shimmer-cta">무료 상담 신청</Btn>
       </section>
 
       {/* 비교 포인트 */}

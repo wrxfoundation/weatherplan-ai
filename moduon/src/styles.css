@@ -44,3 +44,62 @@
 .smooth-open { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.24s ease, opacity 0.24s ease; }
 .smooth-open > * { min-height: 0; overflow: hidden; }
 .smooth-open.is-open { grid-template-rows: 1fr; opacity: 1; }
+
+/* ─── 유리 두께감 글라스모피즘 — 버튼 역할 카드/타일 공용 ─────────────
+   반투명 배경 + 배경 블러 + 다층 인셋 그림자로 '유리판 두께'를 연출.
+   상단 인셋 하이라이트=유리 윗면, 하단 인셋 그림자=단면 두께, 외부 그림자=부유감. */
+.glass-tile {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 1px rgba(36, 39, 46, 0.05),
+    0 6px 20px rgba(36, 39, 46, 0.07);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.glass-tile:hover {
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px rgba(36, 39, 46, 0.06),
+    0 12px 30px rgba(83, 119, 214, 0.16);
+}
+/* 색이 있는 버튼(그라디언트) 위 유리 두께감 — 상단 하이라이트 림 + 하단 인셋 + 외부 그림자.
+   오버레이가 아닌 box-shadow라 버튼 안 텍스트를 가리지 않는다. */
+.glass-sheen {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.06),
+    0 8px 22px rgba(36, 39, 46, 0.10);
+}
+/* backdrop-filter 미지원 브라우저 폴백 — 불투명에 가깝게 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-tile { background: rgba(255, 255, 255, 0.92); }
+}
+/* 투명도 축소 선호 사용자 — 유리효과 대신 불투명 카드로 */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-tile { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* ─── 무료상담 CTA 주기적 반짝임 — 대각 하이라이트가 주기적으로 스쳐 지나감 ───
+   기본은 흰색 스윕(파란 버튼용). 밝은/흰 버튼에는 .shimmer-ink 를 더해 파란톤 스윕으로. */
+.shimmer-cta { position: relative; overflow: hidden; isolation: isolate; --shimmer: rgba(255, 255, 255, 0.55); }
+.shimmer-ink { --shimmer: rgba(83, 119, 214, 0.22); }
+.shimmer-cta::after {
+  content: '';
+  position: absolute; top: 0; left: -75%; height: 100%; width: 50%;
+  background: linear-gradient(100deg, transparent 0%, var(--shimmer) 50%, transparent 100%);
+  transform: skewX(-18deg);
+  pointer-events: none;
+  animation: shimmerSweep 5.5s ease-in-out infinite;
+}
+@keyframes shimmerSweep {
+  0%, 68%   { left: -75%; }
+  85%, 100% { left: 150%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-cta::after { display: none; animation: none; }
+  .glass-tile { transition: none; }
+}

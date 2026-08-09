@@ -18,7 +18,7 @@ export function ConsumerHeader({ tenant }) {
   const nav = useNavigate()
   const [open, setOpen] = useState(false)
   return (
-    <header className="sticky top-0 z-40 border-b border-line-card/70 bg-cream/90 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-line-card/50 bg-cream/60 backdrop-blur-md">
       <div className="mx-auto flex h-[64px] max-w-6xl items-center justify-between px-5 sm:h-[76px] sm:px-10">
         <Link to={tenant ? `/m/${tenant.slug}` : '/'} className="flex items-center gap-2">
           <Logo name={tenant ? tenant.name : '모두온'} />
@@ -37,7 +37,7 @@ export function ConsumerHeader({ tenant }) {
           <button onClick={() => nav('/login')} className="h-10 rounded-full border border-line-soft bg-white px-5 text-[14px] font-semibold text-body transition-colors hover:border-primary hover:text-primary-text">
             로그인
           </button>
-          <button onClick={() => nav(tenant ? `/consult?src=${tenant.slug}` : '/consult')} className="h-10 rounded-full bg-primary px-5 text-[14px] font-bold text-white transition-colors hover:bg-primary-hover">
+          <button onClick={() => nav(tenant ? `/consult?src=${tenant.slug}` : '/consult')} className="shimmer-cta h-10 rounded-full bg-primary px-5 text-[14px] font-bold text-white transition-colors hover:bg-primary-hover">
             무료 상담
           </button>
         </div>
@@ -48,7 +48,7 @@ export function ConsumerHeader({ tenant }) {
           {(tenant ? [] : NAV).map((n) => (
             <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="block py-2.5 text-[15px] font-semibold text-body">{n.label}</Link>
           ))}
-          <Btn className="mt-2 w-full" onClick={() => { setOpen(false); nav(tenant ? `/consult?src=${tenant.slug}` : '/consult') }}>무료 상담 신청</Btn>
+          <Btn className="mt-2 w-full shimmer-cta" onClick={() => { setOpen(false); nav(tenant ? `/consult?src=${tenant.slug}` : '/consult') }}>무료 상담 신청</Btn>
         </div>
       )}
     </header>
