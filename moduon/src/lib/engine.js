@@ -71,16 +71,26 @@ export function calcSettlement(gross, policies) {
   return { gross, fee, monthlyFee: policies.monthlyFee, net }
 }
 
-// ─── 권역별 분양비 (권역 미지정·미매핑 시 대표값 폴백) ──────────
-export function joinFeeOf(policies, unit) {
-  return policies?.joinFeeByUnit?.[unit] ?? policies?.joinFee ?? 0
+// ─── 사업권(권역) 판매가 — 사업기획서 v4 §5 ────────────────────
+// 하이브리드: 수도권(수도1·2·3단)은 행정구역별 개별 판매, 지방 8단은 단 단위 일괄(단당 5,000만).
+// ⚠ 상세 per-구 가격표는 "별도 구글시트" — 아래는 기획서 요약 규칙. 시트 수신 시 정밀화.
+export function saUpGwonFee(sigungu) {
+  if (!sigungu) return null
+  const metro = ['SD1', 'SD2', 'SD3'].includes(unitBySigungu(sigungu))
+  if (metro) {
+    if (/군$/.test(sigungu)) return 5000000         // 수도권 군 500만
+    if (sigungu.startsWith('서울')) return 20000000  // 서울 자치구 2,000만
+    return 15000000                                   // 경기·인천 시·구 1,500만
+  }
+  return 50000000                                     // 지방 8단 = 단당 5,000만
 }
-export function joinFeeRange(policies) {
-  const vals = Object.values(policies?.joinFeeByUnit ?? {})
-  if (!vals.length) { const f = policies?.joinFee ?? 0; return { min: f, max: f, varies: false } }
-  const min = Math.min(...vals), max = Math.max(...vals)
-  return { min, max, varies: min !== max }
-}
+export const SAUP_RANGE = { min: 5000000, max: 50000000 } // 500만 ~ 5,000만
+export const SAUP_TIERS = [
+  { label: '서울 자치구 (25개)', price: 20000000 },
+  { label: '경기·인천 시·구', price: 15000000 },
+  { label: '수도권 군', price: 5000000 },
+  { label: '지방 8개 단(일괄)', price: 50000000 },
+]
 
 // ─── L-02 리드 라우팅 ──────────────────────────────────────────
 // ① 파트너몰 유입 → 해당 파트너  ② 본진 유입 → 고객 주소지 권역의 파트너

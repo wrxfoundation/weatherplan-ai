@@ -78,21 +78,16 @@ export function buildSeed() {
     seedVersion: SEED_VERSION,
     products,
     policies: {
-      joinFee: 1000000,        // 대표 분양비(권역 미지정·미매핑 시 폴백)
-      // 권역별 분양비 — ⚠ 임시 tier 기본값(사업계획서 표 수신 후 실값 교체). 11개 영업단.
-      joinFeeByUnit: {
-        SD1: 1500000, SD2: 1500000, SD3: 1500000,             // 수도권
-        GB: 1200000, GN: 1200000, CC2: 1200000, JN: 1200000,  // 광역시 포함(대구·부산·대전·광주)
-        GW: 900000, CC1: 900000, JB: 900000, JJ: 900000,      // 도지역·세종·제주
-      },
-      monthlyFee: 100000,      // 월 이용료
+      joinFee: 2000000,        // 대리점 분양몰 가입비(초기 세팅비) — 사업기획서 v4 축③(30개=초기 6,000만)
+      monthlyFee: 300000,      // 월 이용료 (30개=월 900만)
       feeRate: 0.1,            // 운영 수수료율(몰 매출 기준)
-      version: 3,
-      appliedAt: dayAgo(30),
+      version: 4,
+      appliedAt: dayAgo(7),
       history: [
         { version: 1, joinFee: 1500000, monthlyFee: 150000, feeRate: 0.12, appliedAt: dayAgo(180), by: '본사 관리자', note: '론칭 정책' },
         { version: 2, joinFee: 1200000, monthlyFee: 120000, feeRate: 0.1, appliedAt: dayAgo(90), by: '본사 관리자', note: '오픈 프로모션 1차 조정' },
-        { version: 3, joinFee: 1000000, monthlyFee: 100000, feeRate: 0.1, appliedAt: dayAgo(30), by: '본사 관리자', note: '표준 분양 정책 확정' },
+        { version: 3, joinFee: 1000000, monthlyFee: 100000, feeRate: 0.1, appliedAt: dayAgo(30), by: '본사 관리자', note: '표준 분양 정책' },
+        { version: 4, joinFee: 2000000, monthlyFee: 300000, feeRate: 0.1, appliedAt: dayAgo(7), by: '본사 관리자', note: '사업기획서 v4 반영 — 대리점 가입비 200만·월 30만' },
       ],
     },
     tenants,

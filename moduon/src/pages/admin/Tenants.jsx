@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore } from '../../lib/store'
 import { unitName, unitBySigungu } from '../../lib/constants'
-import { fmtDate, timeAgo, won, joinFeeRange } from '../../lib/engine'
+import { fmtDate, timeAgo, won } from '../../lib/engine'
 import { Card, Btn, Modal, useToast, EmptyState } from '../../components/ui'
 
 export default function AdminTenants() {
@@ -27,7 +27,7 @@ export default function AdminTenants() {
   return (
     <div className="mx-auto max-w-6xl">
       <h1 className="text-[20px] font-extrabold text-bink">분양 관리</h1>
-      <p className="mt-0.5 text-[12.5px] text-bmuted">신청 승인/반려 · 몰 상태 · 권역 매핑 — 분양비 권역별 {won(joinFeeRange(db.policies).min)}~{won(joinFeeRange(db.policies).max)} / 월 {won(db.policies.monthlyFee)} (정책 v{db.policies.version})</p>
+      <p className="mt-0.5 text-[12.5px] text-bmuted">신청 승인/반려 · 몰 상태 · 권역 매핑 — 대리점 가입비 {won(db.policies.joinFee)} / 월 {won(db.policies.monthlyFee)} (정책 v{db.policies.version})</p>
 
       {/* 승인 대기 큐 (상단 고정) */}
       <Card track="b" className="mt-4 border-l-4 border-l-warn p-5">

@@ -1,8 +1,7 @@
 // ─── S-23 정책 관리 — 분양비·이용료·수수료율 (버전·이력·영향 고지) ──
 import { useState } from 'react'
 import { useStore } from '../../lib/store'
-import { won, fmtDate } from '../../lib/engine'
-import { unitName } from '../../lib/constants'
+import { won, fmtDate, SAUP_TIERS } from '../../lib/engine'
 import { Card, Btn, Modal, Field, binputCls, useToast } from '../../components/ui'
 
 export default function AdminPolicies() {
@@ -28,7 +27,7 @@ export default function AdminPolicies() {
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         {[
-          { label: '초기 분양비(대표)', value: won(p.joinFee), sub: '권역 미지정 시 폴백 · 권역별은 아래 표' },
+          { label: '대리점 가입비', value: won(p.joinFee), sub: '분양몰 개설 1회 (정액)' },
           { label: '월 이용료', value: won(p.monthlyFee), sub: '매월 정산 시 차감' },
           { label: '운영 수수료율', value: `${Math.round(p.feeRate * 100)}%`, sub: '몰 매출 기준' },
         ].map((c) => (
@@ -40,23 +39,21 @@ export default function AdminPolicies() {
         ))}
       </div>
 
-      {p.joinFeeByUnit && (
-        <Card track="b" className="mt-4 p-5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="text-[15.5px] font-extrabold text-bink">권역별 분양비 <span className="text-[12.5px] font-semibold text-bmuted">· 11개 영업단</span></div>
-            <span className="rounded-full bg-warn/10 px-2.5 py-0.5 text-[11px] font-bold text-warn">사업계획서 표 반영 대기 — 임시 tier값</span>
-          </div>
-          <div className="mt-3.5 grid grid-cols-1 gap-x-8 gap-y-0 sm:grid-cols-2 lg:grid-cols-3">
-            {Object.entries(p.joinFeeByUnit).map(([code, fee]) => (
-              <div key={code} className="flex items-center justify-between border-b border-brow py-2 text-[13px]">
-                <span className="font-semibold text-bbody">{unitName(code)}</span>
-                <span className="tnum font-bold text-bink">{won(fee)}</span>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 text-[11.5px] text-bfaint">분양 신청 화면은 소재지 권역에 해당하는 위 금액을 자동 표시합니다. 실제 표를 전달주시면 값만 교체돼요.</p>
-        </Card>
-      )}
+      <Card track="b" className="mt-4 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="text-[15.5px] font-extrabold text-bink">사업권(권역) 판매가 <span className="text-[12.5px] font-semibold text-bmuted">· 총판 · 사업기획서 v4</span></div>
+          <span className="rounded-full bg-tint px-2.5 py-0.5 text-[11px] font-bold text-primary-text">총 75개 판매단위 · 완판 ~14.8억</span>
+        </div>
+        <div className="mt-3.5 grid grid-cols-1 gap-x-8 sm:grid-cols-2">
+          {SAUP_TIERS.map((t) => (
+            <div key={t.label} className="flex items-center justify-between border-b border-brow py-2 text-[13px]">
+              <span className="font-semibold text-bbody">{t.label}</span>
+              <span className="tnum font-bold text-bink">{won(t.price)}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-[11.5px] text-bfaint">수도권(수도1·2·3단)은 관리단 유지 · 행정구역 단위 개별 판매, 지방 8단은 단 단위 일괄. 상세 per-구 표는 별도 시트 반영 예정.</p>
+      </Card>
 
       <div className="mt-4 flex items-center justify-between rounded-card bg-tint px-5 py-4">
         <div className="text-[13px] font-semibold text-primary-text">
