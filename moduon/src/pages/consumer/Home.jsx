@@ -142,8 +142,8 @@ export default function Home({ tenant }) {
         </div>
       </section>
 
-      {/* ── CTA 밴드 (파스텔 그린 · 좌상단 진한 엣지 + 유리 두께감) ── */}
-      <section className="relative mt-6 overflow-hidden rounded-section" style={{ background: 'linear-gradient(135deg,#DFF3E8 0%,#C2E7D2 100%)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 1px rgba(23,120,70,0.10), 0 12px 34px rgba(23,178,106,0.20)' }}>
+      {/* ── CTA 밴드 (파스텔 그린 · 좌상단 진한 엣지 + 유리 두께감 + 필름 그레인) ── */}
+      <section className="grain relative mt-6 overflow-hidden rounded-section" style={{ background: 'linear-gradient(135deg,#DFF3E8 0%,#C2E7D2 100%)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 1px rgba(23,120,70,0.10), 0 12px 34px rgba(23,178,106,0.20)' }}>
         {/* 좌상단 진한 동색 엣지(시선 유도) + 유리 엣지 하이라이트 */}
         <span aria-hidden className="pointer-events-none absolute inset-0 z-0 rounded-section" style={{ background: 'linear-gradient(135deg, rgba(17,138,80,0.62) 0%, rgba(17,138,80,0.18) 26%, transparent 50%)', boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.38)' }} />
         <div className="relative z-10 flex flex-col items-center gap-5 px-6 py-9 text-center sm:flex-row sm:justify-between sm:px-10 sm:text-left">
@@ -247,7 +247,7 @@ function BenefitCard({ style, edge, light, label, amountNum, obj, onClick }) {
     <button
       onClick={onClick}
       style={style}
-      className="glass-sheen group relative flex min-h-[150px] flex-col overflow-hidden rounded-card p-5 text-left transition-transform duration-200 hover:-translate-y-[3px] sm:min-h-[296px] sm:p-6"
+      className="grain glass-sheen group relative flex min-h-[150px] flex-col overflow-hidden rounded-card p-5 text-left transition-transform duration-200 hover:-translate-y-[3px] sm:min-h-[296px] sm:p-6"
     >
       {/* 좌측상단 진한 톤(동색 채도↑) 엣지 — 시선 유도, 하단 우측은 원톤 유지 */}
       <span aria-hidden className="pointer-events-none absolute inset-0 z-0 rounded-card" style={{ background: `linear-gradient(135deg, ${edge} 0%, transparent 55%)`, boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.25)' }} />

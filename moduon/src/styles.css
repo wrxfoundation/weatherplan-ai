@@ -154,3 +154,17 @@
     0 10px 24px rgba(83, 119, 214, 0.5),
     0 3px 8px rgba(48, 72, 158, 0.4);
 }
+
+/* ─── 필름 그레인 — 은은한 모노 노이즈 오버레이(약간). 부모는 relative+overflow-hidden ───
+   z-2로 배경·장식 위, 텍스트(z-10) 아래에 깔려 가독성은 유지하고 질감만 더한다. */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.42;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
