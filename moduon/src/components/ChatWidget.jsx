@@ -57,7 +57,7 @@ export default function ChatWidget({ tenant }) {
         <div className="fixed bottom-[86px] right-4 z-50 flex h-[min(560px,calc(100dvh-110px))] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-section bg-white shadow-panel animate-rise">
           {/* 헤더 */}
           <div className="flex items-center gap-3 bg-primary px-4 py-3.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white"><AiStarsIcon size={19} /></div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white"><AiStarsIcon size={23} /></div>
             <div className="flex-1">
               <div className="text-[14px] font-extrabold text-white">AI 상담사 모비</div>
               <div className="flex items-center gap-1.5 text-[11px] text-white/75">
@@ -131,14 +131,14 @@ export default function ChatWidget({ tenant }) {
   )
 }
 
-// ─── AI 아이콘 — 별 2개(스파클) 모티프 ──────────────────────
-function AiStarsIcon({ size = 26 }) {
+// ─── AI 아이콘 — 별 2개(스파클) 모티프 (크게) ────────────────
+function AiStarsIcon({ size = 32 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      {/* 큰 별 */}
-      <path d="M14 3c.55 3.6 1.85 4.9 5.5 5.45C15.85 9 14.55 10.3 14 13.9c-.55-3.6-1.85-4.9-5.5-5.45C12.15 7.9 13.45 6.6 14 3Z" />
+      {/* 큰 별 — 아이콘을 크게 채움 */}
+      <path d="M13.5 1c.85 5.8 2.9 7.85 8.7 8.7-5.8.85-7.85 2.9-8.7 8.7-.85-5.8-2.9-7.85-8.7-8.7C10.6 8.85 12.65 6.8 13.5 1Z" />
       {/* 작은 별 */}
-      <path d="M7 13.5c.3 2 1 2.7 3 3-2 .3-2.7 1-3 3-.3-2-1-2.7-3-3 2-.3 2.7-1 3-3Z" />
+      <path d="M6 15.2c.45 2.85 1.45 3.85 4.3 4.3-2.85.45-3.85 1.45-4.3 4.3-.45-2.85-1.45-3.85-4.3-4.3 2.85-.45 3.85-1.45 4.3-4.3Z" />
     </svg>
   )
 }

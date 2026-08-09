@@ -176,13 +176,15 @@ function BenefitCard({ style, light, label, amountNum, obj, onClick }) {
       style={style}
       className="glass-sheen group relative flex min-h-[150px] flex-col overflow-hidden rounded-card p-5 text-left transition-transform duration-200 hover:-translate-y-[3px] sm:min-h-[296px] sm:p-6"
     >
-      <div className={`text-[14px] font-bold ${light ? 'text-white/85' : 'text-primary-text/80'}`}>{label}</div>
-      <div className={`mt-1 text-[15px] font-bold leading-6 ${light ? 'text-white' : 'text-primary-text'}`}>
+      {/* 좌측상단 짙은 반투명 엣지 — 시선 유도(하단 우측은 원톤 유지) */}
+      <span aria-hidden className="pointer-events-none absolute inset-0 z-0 rounded-card" style={{ background: 'linear-gradient(135deg, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.13) 28%, rgba(0,0,0,0) 56%)', boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.22)' }} />
+      <div className={`relative z-10 text-[14px] font-bold ${light ? 'text-white/85' : 'text-primary-text/90'}`}>{label}</div>
+      <div className={`relative z-10 mt-1 text-[15px] font-bold leading-6 ${light ? 'text-white' : 'text-primary-text'}`}>
         최대 <span className="tnum text-[34px] font-extrabold tracking-[-1px] sm:text-[38px]">{amountNum}</span>
         <span className="text-[17px] font-bold sm:text-[19px]">만원</span><br />혜택 제공
       </div>
-      <img src={obj} alt="" className="pointer-events-none absolute -bottom-2 -right-2 h-[96px] w-[96px] object-contain sm:h-[128px] sm:w-[128px]" loading="lazy" />
-      <span className={`mt-auto flex h-[34px] w-[34px] items-center justify-center rounded-full transition-transform group-hover:translate-x-0.5 ${light ? 'border border-white/70 text-white' : 'bg-primary text-white'}`}>
+      <img src={obj} alt="" className="pointer-events-none absolute -bottom-2 -right-2 z-[1] h-[96px] w-[96px] object-contain sm:h-[128px] sm:w-[128px]" loading="lazy" />
+      <span className={`relative z-10 mt-auto flex h-[34px] w-[34px] items-center justify-center rounded-full transition-transform group-hover:translate-x-0.5 ${light ? 'border border-white/70 text-white' : 'bg-primary text-white'}`}>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
       </span>
     </button>
