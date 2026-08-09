@@ -10,11 +10,12 @@ const ASSETS = [
   ['cat-phone.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/11673aeb-580f-4224-b96d-e148856b4374.webp'],
   ['cat-internet.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/fcc6498f-03cb-4a93-98b5-c2d23eff04b9.webp'],
   ['cat-move.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/81150f22-a83b-446e-8174-3e696ec2d452.webp'],
-  ['cat-water.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/3f03a64c-d785-4f83-9f19-6989b98f7f2c.webp'],
+  // 정수기·가전·생활기타 — 그림자 일관성 위해 동일 템플릿(recraft_v4_1·C4D soft·soft shadow below)으로 재생성(2026-08-09)
+  ['cat-water.webp', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260809_132302_fe3e04df-2fc3-41d7-8845-d4059f728855_min.webp'],
   ['cat-rental.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/4ed737e2-e175-412e-bfd9-7214df5b7997.webp'],
   ['cat-insurance.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/d3462d86-2f6d-44c6-b89a-ca5f2f4b8886.webp'],
-  ['cat-appliance.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/1ecb7cfa-41b4-47ec-aaef-e44f9ba89a4b.webp'],
-  ['cat-etc.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/bc8f7a41-bfda-41f6-901d-d96d8665197d.webp'],
+  ['cat-appliance.webp', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260809_132313_dae5b617-7d97-4c2a-8df1-97d86319f00d_min.webp'],
+  ['cat-etc.webp', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260809_132321_677cf175-fd35-46a8-8d52-8a9859e07967_min.webp'],
   // 오브제 4종 — 배경 제거(투명 webp) 버전. 카드 그라데이션 위에 오브젝트만 얹힌다.
   ['obj-truck.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/90e21cc7-d3e9-4686-9b9d-5b0562ded06a.webp'],
   ['obj-wifi.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/33a9a1ff-4f6d-42b1-a55c-a48e0be83a31.webp'],
