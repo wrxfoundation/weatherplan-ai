@@ -81,12 +81,12 @@ export default function Consult() {
           <button onClick={() => nav('/calculator')} className="relative overflow-hidden rounded-card p-4 text-left text-white transition-transform hover:-translate-y-[3px]" style={{ background: 'linear-gradient(180deg,#5B80D9,#5174CD)' }}>
             <div className="text-[12px] font-bold text-white/80">인터넷/TV</div>
             <div className="mt-0.5 text-[14px] font-extrabold leading-5">결합하면 월 11,100원 절약</div>
-            <img src="/assets/obj-wifi.png" alt="" className="obj-mask absolute -bottom-2 -right-2 h-16 w-16 object-contain" />
+            <img src="/assets/obj-wifi.webp" alt="" className="obj-mask absolute -bottom-2 -right-2 h-16 w-16 object-contain" />
           </button>
           <button onClick={() => nav('/diagnosis')} className="relative overflow-hidden rounded-card p-4 text-left text-white transition-transform hover:-translate-y-[3px]" style={{ background: 'linear-gradient(180deg,#F98974,#F7745F)' }}>
             <div className="text-[12px] font-bold text-white/80">AI 진단</div>
             <div className="mt-0.5 text-[14px] font-extrabold leading-5">1분 만에 생활비 새는 곳 찾기</div>
-            <img src="/assets/obj-purifier.png" alt="" className="obj-mask absolute -bottom-2 -right-2 h-16 w-16 object-contain" />
+            <img src="/assets/obj-purifier.webp" alt="" className="obj-mask absolute -bottom-2 -right-2 h-16 w-16 object-contain" />
           </button>
         </div>
 

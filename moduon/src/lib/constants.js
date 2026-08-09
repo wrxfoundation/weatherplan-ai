@@ -2,14 +2,14 @@
 // 카테고리 순서 고정: 휴대폰 · 인터넷/TV · 이사 · 정수기 · 렌탈 · 보험 · 가전 · 생활/기타 (디자인 핸드오프 기준)
 
 export const CATEGORIES = [
-  { slug: 'phone',     name: '휴대폰',     icon: '/assets/cat-phone.png',     benefit: '최대 45만원 혜택', desc: '통신 3사 요금제 비교와 기기 지원금, 카드 결합 혜택까지 한 번에 설계해 드려요.' },
-  { slug: 'internet',  name: '인터넷/TV',  icon: '/assets/cat-internet.png',  benefit: '최대 47만원 혜택', desc: '설치 가능한 통신사 확인부터 결합 할인 설계, 사은품까지 비교해 드려요.' },
-  { slug: 'move',      name: '이사',       icon: '/assets/cat-move.png',      benefit: '최대 40만원 혜택', desc: '포장이사·반포장·원룸이사 견적을 무료로 비교하고 입주 청소까지 연결해 드려요.' },
-  { slug: 'water',     name: '정수기',     icon: '/assets/cat-water.png',     benefit: '최대 30만원 혜택', desc: '브랜드별 렌탈료·의무약정·제휴 혜택을 비교해 우리 집에 맞는 정수기를 찾아 드려요.' },
-  { slug: 'rental',    name: '렌탈',       icon: '/assets/cat-rental.png',    benefit: '최대 30만원 혜택', desc: '안마의자·매트리스·비데·공기청정기 등 생활가전 렌탈을 최저 조건으로 비교해요.' },
-  { slug: 'insurance', name: '보험',       icon: '/assets/cat-insurance.png', benefit: '무료 보장 분석',   desc: '실손·암·운전자·화재보험까지, 갖고 있는 보험 전체를 무료로 진단해 드려요.' },
-  { slug: 'appliance', name: '가전',       icon: '/assets/cat-appliance.png', benefit: '제휴가 구매 지원', desc: 'TV·세탁기·냉장고 등 대형가전을 제휴 특가로, 설치 일정까지 맞춰 드려요.' },
-  { slug: 'etc',       name: '생활/기타',  icon: '/assets/cat-etc.png',       benefit: '맞춤 상담 지원',   desc: '입주청소·중고폰 매입·상조·인력 서비스 등 생활에 필요한 모든 서비스를 연결해요.' },
+  { slug: 'phone',     name: '휴대폰',     icon: '/assets/cat-phone.webp',     benefit: '최대 45만원 혜택', desc: '통신 3사 요금제 비교와 기기 지원금, 카드 결합 혜택까지 한 번에 설계해 드려요.' },
+  { slug: 'internet',  name: '인터넷/TV',  icon: '/assets/cat-internet.webp',  benefit: '최대 47만원 혜택', desc: '설치 가능한 통신사 확인부터 결합 할인 설계, 사은품까지 비교해 드려요.' },
+  { slug: 'move',      name: '이사',       icon: '/assets/cat-move.webp',      benefit: '최대 40만원 혜택', desc: '포장이사·반포장·원룸이사 견적을 무료로 비교하고 입주 청소까지 연결해 드려요.' },
+  { slug: 'water',     name: '정수기',     icon: '/assets/cat-water.webp',     benefit: '최대 30만원 혜택', desc: '브랜드별 렌탈료·의무약정·제휴 혜택을 비교해 우리 집에 맞는 정수기를 찾아 드려요.' },
+  { slug: 'rental',    name: '렌탈',       icon: '/assets/cat-rental.webp',    benefit: '최대 30만원 혜택', desc: '안마의자·매트리스·비데·공기청정기 등 생활가전 렌탈을 최저 조건으로 비교해요.' },
+  { slug: 'insurance', name: '보험',       icon: '/assets/cat-insurance.webp', benefit: '무료 보장 분석',   desc: '실손·암·운전자·화재보험까지, 갖고 있는 보험 전체를 무료로 진단해 드려요.' },
+  { slug: 'appliance', name: '가전',       icon: '/assets/cat-appliance.webp', benefit: '제휴가 구매 지원', desc: 'TV·세탁기·냉장고 등 대형가전을 제휴 특가로, 설치 일정까지 맞춰 드려요.' },
+  { slug: 'etc',       name: '생활/기타',  icon: '/assets/cat-etc.webp',       benefit: '맞춤 상담 지원',   desc: '입주청소·중고폰 매입·상조·인력 서비스 등 생활에 필요한 모든 서비스를 연결해요.' },
 ]
 
 export const catBySlug = (slug) => CATEGORIES.find((c) => c.slug === slug)

@@ -16,46 +16,58 @@ export default function Home({ tenant }) {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-5 sm:px-10">
-      {/* ── 히어로 ── */}
-      <section className="grid items-center gap-8 pb-10 pt-8 sm:pt-14 lg:grid-cols-[1fr_520px]">
-        <div>
-          {tenant && (
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12px] font-bold text-primary-text shadow-card">
-              <span className="h-1.5 w-1.5 rounded-full bg-ok animate-live" /> 모두온 공식 파트너 · {tenant.owner} 사장님이 직접 상담해요
+    <main>
+      {/* ── 히어로 — 풀블리드 배경 (Higgsfield C4D 씬이 섹션 전체를 덮는다) ── */}
+      <section className="relative overflow-hidden bg-cream">
+        <img
+          src="/assets/hero-scene.jpg"
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover object-[68%_center] lg:object-right"
+          loading="eager"
+          fetchPriority="high"
+        />
+        {/* 좌측 텍스트 가독 스크림 + 하단 크림 페이드 */}
+        <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/85 to-cream/5 sm:via-cream/70" />
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-cream" />
+
+        <div className="relative mx-auto max-w-6xl px-5 sm:px-10">
+          <div className="flex min-h-[480px] max-w-xl flex-col justify-center py-14 sm:min-h-[600px] sm:py-20">
+            {tenant && (
+              <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12px] font-bold text-primary-text shadow-card">
+                <span className="h-1.5 w-1.5 rounded-full bg-ok animate-live" /> 모두온 공식 파트너 · {tenant.owner} 사장님이 직접 상담해요
+              </div>
+            )}
+            <h1 className="text-[32px] font-extrabold leading-[1.3] tracking-[-0.8px] text-ink sm:text-[44px] sm:leading-[58px] sm:tracking-[-1.2px]">
+              모든 서비스,<br />
+              <span className="text-orange-text">{tenant ? tenant.name : '모두온'}</span>에서 한 번에
+            </h1>
+            <p className="mt-4 max-w-md text-[15px] leading-[26px] text-body sm:text-[16.5px] sm:leading-[28px]">
+              {tenant?.greeting ?? '생활의 모든 순간, 필요한 모든 서비스를 가장 합리적인 가격으로 만나보세요.'}
+            </p>
+            {/* 검색 바 */}
+            <div className="mt-7 flex h-14 items-center overflow-hidden rounded-2xl bg-white pl-5 pr-2 shadow-panel">
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && search()}
+                placeholder="찾고 있는 서비스를 검색해보세요"
+                className="h-full flex-1 text-[16px] placeholder:text-disabled sm:text-[15px]"
+              />
+              <button onClick={search} aria-label="검색" className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white transition-colors hover:bg-primary-hover">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+              </button>
             </div>
-          )}
-          <h1 className="text-[30px] font-extrabold leading-[1.32] tracking-[-0.8px] text-ink sm:text-[42px] sm:leading-[56px] sm:tracking-[-1.2px]">
-            모든 서비스,<br />
-            <span className="text-orange-text">{tenant ? tenant.name : '모두온'}</span>에서 한 번에
-          </h1>
-          <p className="mt-4 max-w-md text-[15px] leading-[26px] text-muted sm:text-[16px] sm:leading-[27px]">
-            {tenant?.greeting ?? '생활의 모든 순간, 필요한 모든 서비스를 가장 합리적인 가격으로 만나보세요.'}
-          </p>
-          {/* 검색 바 */}
-          <div className="mt-6 flex h-14 items-center overflow-hidden rounded-2xl bg-white pl-5 pr-2 shadow-card">
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && search()}
-              placeholder="찾고 있는 서비스를 검색해보세요"
-              className="h-full flex-1 text-[15px] placeholder:text-disabled"
-            />
-            <button onClick={search} aria-label="검색" className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white transition-colors hover:bg-primary-hover">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
-            </button>
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[13.5px] font-semibold text-label">
+              {['#이사', '#인터넷', '#정수기', '#렌탈', '#보험'].map((t) => (
+                <button key={t} onClick={() => setQ(t.slice(1))} className="hover:text-primary-text">{t}</button>
+              ))}
+            </div>
           </div>
-          <div className="mt-3.5 flex flex-wrap gap-x-4 gap-y-1 text-[13.5px] font-medium text-faint">
-            {['#이사', '#인터넷', '#정수기', '#렌탈', '#보험'].map((t) => (
-              <button key={t} onClick={() => setQ(t.slice(1))} className="hover:text-primary-text">{t}</button>
-            ))}
-          </div>
-        </div>
-        {/* 핸드오프 #2b: 모바일에선 히어로 이미지가 검색 바 아래 전폭 */}
-        <div>
-          <img src="/assets/hero-scene.png" alt="모두온 3D 혜택 무대" className="w-full rounded-[22px] shadow-panel sm:rounded-[28px]" loading="eager" />
         </div>
       </section>
+
+      <div className="mx-auto max-w-6xl px-5 sm:px-10">
 
       {/* ── 카테고리 그리드 8 ── */}
       <section className="rounded-section bg-white px-5 py-7 shadow-card sm:px-9 sm:py-9">
@@ -100,17 +112,17 @@ export default function Home({ tenant }) {
           <div className="grid gap-4 sm:grid-cols-3">
             <BenefitCard
               style={{ background: 'linear-gradient(180deg,#5B80D9,#5174CD)' }}
-              light label="이사 서비스" amountNum={40} obj="/assets/obj-truck.png"
+              light label="이사 서비스" amountNum={40} obj="/assets/obj-truck.webp"
               onClick={() => nav(tenant ? consultTo + '&cat=move' : '/category/move')}
             />
             <BenefitCard
               style={{ background: 'linear-gradient(180deg,#F7F3EF,#F2EDE7)' }}
-              label="인터넷/TV" amountNum={47} obj="/assets/obj-wifi.png"
+              label="인터넷/TV" amountNum={47} obj="/assets/obj-wifi.webp"
               onClick={() => nav(tenant ? consultTo + '&cat=internet' : '/category/internet')}
             />
             <BenefitCard
               style={{ background: 'linear-gradient(180deg,#F98974,#F7745F)' }}
-              light label="정수기 렌탈" amountNum={30} obj="/assets/obj-purifier.png"
+              light label="정수기 렌탈" amountNum={30} obj="/assets/obj-purifier.webp"
               onClick={() => nav(tenant ? consultTo + '&cat=water' : '/category/water')}
             />
           </div>
@@ -121,7 +133,7 @@ export default function Home({ tenant }) {
       <section className="mt-6 overflow-hidden rounded-section bg-band shadow-panel">
         <div className="flex flex-col items-center gap-5 px-6 py-9 text-center sm:flex-row sm:justify-between sm:px-10 sm:text-left">
           <div className="flex flex-col items-center gap-4 sm:flex-row">
-            <img src="/assets/cta-chat.png" alt="" className="obj-mask h-[88px] w-[88px] object-contain sm:h-[112px] sm:w-[112px]" loading="lazy" />
+            <img src="/assets/cta-chat.webp" alt="" className="obj-mask h-[88px] w-[88px] object-contain sm:h-[112px] sm:w-[112px]" loading="lazy" />
             <div>
               <div className="text-[19px] font-extrabold leading-7 text-white sm:text-[21px]">
                 {tenant ? `${tenant.name}에서 상담받고` : '모두온에서 상담받고'} 최대 혜택 받아가세요!
@@ -137,11 +149,12 @@ export default function Home({ tenant }) {
 
       {/* ── 신뢰 지표 바 4 ── */}
       <section className="mt-6 grid grid-cols-2 rounded-section bg-white py-2 shadow-card lg:grid-cols-4">
-        <TrustItem icon="/assets/tr-thumb.png" label="누적 고객 만족도" value={98} suffix="%" />
-        <TrustItem icon="/assets/tr-shield.png" label="제휴 브랜드" value={250} suffix="+" divider />
-        <TrustItem icon="/assets/tr-gift.png" label="연간 혜택 금액" value={120} suffix="억원+" divider="lg" />
-        <TrustItem icon="/assets/tr-person.png" label="전문 상담사" value={500} suffix="+" divider />
+        <TrustItem icon="/assets/tr-thumb.webp" label="누적 고객 만족도" value={98} suffix="%" />
+        <TrustItem icon="/assets/tr-shield.webp" label="제휴 브랜드" value={250} suffix="+" divider />
+        <TrustItem icon="/assets/tr-gift.webp" label="연간 혜택 금액" value={120} suffix="억원+" divider="lg" />
+        <TrustItem icon="/assets/tr-person.webp" label="전문 상담사" value={500} suffix="+" divider />
       </section>
+      </div>
     </main>
   )
 }

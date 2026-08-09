@@ -5,6 +5,9 @@
   "description": "모두온(MODUON) — 소비자몰 · 분양몰 마이오피스 · 본사 어드민 관제 3면 통합 플랫폼",
   "type": "module",
   "scripts": {
+    "fetch-assets": "node scripts/fetch-assets.mjs",
+    "predev": "node scripts/fetch-assets.mjs",
+    "prebuild": "node scripts/fetch-assets.mjs",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"

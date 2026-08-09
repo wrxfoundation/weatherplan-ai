@@ -62,6 +62,7 @@ Vercel 프로젝트 → **Settings → Environment Variables**:
 moduon/
 ├── api/claude.js          # Vercel Function — Anthropic Messages API 프록시 (캐시 규약 준수)
 ├── vercel.json            # region icn1 · SPA rewrite · maxDuration 30s
+├── scripts/fetch-assets.mjs # 빌드 전 브랜드 3D 에셋(17종) 자동 다운로드 → public/assets/
 ├── src/
 │   ├── lib/
 │   │   ├── constants.js   # 카테고리 8종·리드 상태 6단계·11개 영업단 권역·브랜딩 프리셋
@@ -78,6 +79,13 @@ moduon/
 - **디자인**: `design_handoff_moduon` 확정 토큰 — 트랙 A(웜 크림 커머스) / 트랙 B(쿨그레이 SaaS), Pretendard Variable, tabular-nums
 - **데이터**: 데모는 localStorage(`moduon_db_v1`). `/login`에서 "데모 데이터 초기화" 가능
 - **프로덕션 전환 지점**: `store.jsx`의 액션들을 Supabase(Postgres+RLS+Realtime) 호출로 교체 — 인터페이스 동일하게 설계됨
+
+## 🎨 브랜드 에셋 (Higgsfield C4D 재제작본)
+
+- 카테고리 아이콘 8종 · 신뢰지표 4종 · 혜택 오브제 3종 · CTA 캐릭터 · 히어로 씬(풀블리드) = **총 17종**을 C4D 소프트 3D 스타일로 재제작 (팔레트·배경색은 디자인 토큰과 1:1 일치)
+- 에셋 원본은 CDN에 상시 호스팅되며, `npm run dev`/`npm run build` 직전에 `scripts/fetch-assets.mjs`가 **자동으로 `public/assets/`에 내려받아** 최종 배포물에는 자체 호스팅 정적 파일로 포함됩니다 (외부 의존 없음)
+- 수동 실행: `npm run fetch-assets` · 이미 받은 파일은 건너뜀 · URL 목록은 `scripts/fetch-assets.mjs`에서 관리
+- 다운로드가 막힌 네트워크에서는 경고만 남기고 빌드를 계속합니다 (레이아웃 정상, 이미지 영역만 비어 보임 — Vercel 빌드에서는 정상 포함)
 
 ## 📐 구현된 비즈니스 규칙 (PRD 매핑)
 
