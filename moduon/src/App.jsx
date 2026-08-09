@@ -21,6 +21,7 @@ import OfficeCustomers from './pages/office/Customers'
 import OfficeResources from './pages/office/Resources'
 import OfficeSetup from './pages/office/Setup'
 import AdminDashboard from './pages/admin/Dashboard'
+import AdminBiz from './pages/admin/Biz'
 import AdminTenants from './pages/admin/Tenants'
 import AdminProducts from './pages/admin/Products'
 import AdminPolicies from './pages/admin/Policies'
@@ -74,6 +75,7 @@ export default function App() {
         {/* 트랙 B — 본사 어드민(관제) */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
+          <Route path="biz" element={<AdminBiz />} />
           <Route path="tenants" element={<AdminTenants />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="policies" element={<AdminPolicies />} />

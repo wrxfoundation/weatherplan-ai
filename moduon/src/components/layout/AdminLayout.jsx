@@ -66,6 +66,7 @@ function NotifBell({ db }) {
 
 const GROUPS = [
   { label: null, items: [{ to: '/admin', label: '통합 대시보드', icon: '▦', end: true }] },
+  { label: '경영', items: [{ to: '/admin/biz', label: '경영 전략', icon: '🧭' }] },
   { label: '서비스 관리', items: [
     { to: '/admin/tenants', label: '분양몰 관리', icon: '🏪' },
     { to: '/admin/products', label: '상품 관리', icon: '📦' },
