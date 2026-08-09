@@ -1,6 +1,6 @@
 // ─── S-24 정산·지급 — 파트너별 테이블 · 일괄 확정 · CSV (멱등 AC) ──
 import { useMemo } from 'react'
-import { useStore, tenantSettlement } from '../../lib/store'
+import { useStore, tenantSettlement, distributorSettlement } from '../../lib/store'
 import { won, downloadCSV, monthKey } from '../../lib/engine'
 import { unitName } from '../../lib/constants'
 import { Card, Btn, KpiCard, useToast } from '../../components/ui'
@@ -17,6 +17,9 @@ export default function AdminSettlements() {
   const rows = useMemo(() =>
     db.tenants.filter((t) => t.status === '활성').map((t) => ({ tenant: t, s: tenantSettlement(db, t.id) })),
   [db])
+  // 총판 배분 — 본사 수수료 수입에서 지급 (셀러 순지급액 불변, 3계층 수익 구조)
+  const dists = useMemo(() => distributorSettlement(db), [db])
+  const distTotal = dists.reduce((s, d) => s + d.share, 0)
 
   // 음수 정산(이용료 미달 = 미수)은 숨기지 않는다 — 지급 합계(양수)와 미수 합계(음수)를 분리 집계
   const totals = rows.reduce((acc, r) => ({
@@ -56,7 +59,7 @@ export default function AdminSettlements() {
 
       <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <KpiCard label="수수료 대상 매출 합계" value={totals.gross} suffix="원" />
-        <KpiCard label={`운영 수수료 수입 (${Math.round(db.policies.feeRate * 100)}%)`} value={totals.fee} suffix="원" accent="text-ok" />
+        <KpiCard label={`운영 수수료 수입 (${Math.round(db.policies.feeRate * 100)}%)`} value={totals.fee} suffix="원" accent="text-ok" caption={distTotal > 0 ? `총판 배분 ${won(distTotal)} 차감 전` : undefined} />
         <KpiCard label="월 이용료 수입" value={totals.monthly} suffix="원" accent="text-ok" />
         <KpiCard label="파트너 순지급 총액" value={totals.net} suffix="원" accent="text-primary-text" caption={totals.owed < 0 ? `미수 ${won(-totals.owed)} 별도 청구` : undefined} />
       </div>
@@ -110,8 +113,33 @@ export default function AdminSettlements() {
         )}
       </Card>
 
+      {/* 총판 배분 — 3계층 수익 구조의 가운데 층 */}
+      {dists.length > 0 && (
+        <Card track="b" className="mt-4 overflow-hidden">
+          <div className="flex items-center justify-between px-5 pt-4">
+            <h2 className="text-[15.5px] font-extrabold text-bink">총판 배분 <span className="text-[12px] font-semibold text-bmuted">· 본사 수수료 수입에서 지급</span></h2>
+            <span className="tnum text-[12.5px] font-extrabold text-bindigo">합계 {won(distTotal)}</span>
+          </div>
+          <div className="mt-3 border-t border-brow">
+            {dists.map((d) => (
+              <div key={d.id} className="grid grid-cols-[1.4fr_auto] items-center gap-2 border-b border-brow px-5 py-3 last:border-0 sm:grid-cols-[1.4fr_0.8fr_1fr_0.9fr_1fr]">
+                <div>
+                  <div className="text-[13.5px] font-bold text-bink">{d.name}</div>
+                  <div className="text-[11.5px] text-bfaint">{d.owner} · {unitName(d.unit)}</div>
+                </div>
+                <span className="tnum hidden text-[12px] text-bfaint sm:block">셀러 {d.sellerCount}곳</span>
+                <span className="tnum hidden text-[12.5px] text-bbody sm:block">{won(d.gross)}</span>
+                <span className="tnum hidden text-[12px] text-bfaint sm:block">× {((d.sharePct ?? 0) * 100).toFixed(0)}%</span>
+                <span className="tnum justify-self-end text-[13.5px] font-extrabold text-bindigo sm:justify-self-start">{won(d.share)}</span>
+              </div>
+            ))}
+          </div>
+          <p className="px-5 py-3 text-[11px] text-bfaint">총판 배분은 권역 활성 셀러 매출 × 배분율로 산정하며 본사 운영 수수료에서 지급됩니다 — 셀러 순지급액에는 영향이 없습니다.</p>
+        </Card>
+      )}
+
       <p className="mt-3 text-[11.5px] leading-5 text-bfaint">
-        정산 산식: 순지급액 = 몰 매출 − 운영 수수료({Math.round(db.policies.feeRate * 100)}%) − 월 이용료({won(db.policies.monthlyFee)}). 이용료가 매출을 넘는 몰은 음수(미수)로 표기하고 익월 청구합니다. 취소·환불은 익월 차감, 조정 이력 전수 보존. 파트너 화면·어드민·CSV 3자 원단위 일치(AC).
+        정산 산식: 순지급액 = 몰 매출 − 운영 수수료({Math.round(db.policies.feeRate * 100)}%) − 월 이용료({won(db.policies.monthlyFee)}). 이용료가 매출을 넘는 몰은 음수(미수)로 표기하고 익월 청구합니다. 취소·환불은 익월 차감, 조정 이력 전수 보존. 파트너 화면·어드민·CSV 3자 원단위 일치(AC). 총판 배분은 본사 수수료 수입에서 별도 지급.
       </p>
     </div>
   )

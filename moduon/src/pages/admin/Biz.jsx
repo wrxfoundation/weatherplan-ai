@@ -20,7 +20,7 @@ const AI_MENU = [
   { area: '소비자 진단 심화', role: '절감 우선순위 내러티브', tier: 'Claude Opus 5', s: '운영중' },
   { area: '셀러 설계 어시스턴트', role: '최적 구성·상담 스크립트', tier: 'Claude Opus 5', s: '운영중' },
   { area: '본사 경영 브리핑', role: '우선 조치·이상 신호', tier: 'Claude Opus 5', s: '운영중' },
-  { area: '총판 지역수요 예측', role: '권역 수요·셀러 코칭', tier: 'Claude Opus 5', s: '준비' },
+  { area: '총판 지역수요 예측', role: '권역 수요·셀러 코칭', tier: 'Claude Opus 5', s: '운영중' },
   { area: '리드 스코어링·이상거래', role: '전환확률·부정 탐지', tier: 'Sonnet ↔ Opus', s: '기획' },
 ]
 

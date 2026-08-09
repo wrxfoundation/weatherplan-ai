@@ -237,6 +237,28 @@ function localSellerCoach(a) {
   return [l1, l2, l3].join('\n')
 }
 
+// 총판(관리단) — 권역 브리핑 (권역 수요·셀러 코칭·모집 신호)
+export function distributorBrief(a) {
+  const facts = [
+    `권역: ${a.unitName}(${a.cover}) · 배분율 ${(a.sharePct * 100).toFixed(0)}%`,
+    `셀러 ${a.sellers}곳(활성 ${a.active}) · 이번 달 권역 매출 ${won(a.gross)} · 내 배분 수익 ${won(a.share)}`,
+    `권역 유입 리드 ${a.leads}건 · 미배정 ${a.unassigned}건`,
+    `수요 상위: ${a.topCat.map((t) => `${t.name} ${t.n}건`).join(', ') || '-'}`,
+  ].join('\n')
+  const prompt = `당신은 모두온 총판(권역 관리단)의 AI 운영 참모입니다. 아래 내 권역 실데이터만 근거로 세 줄 브리핑을 작성하세요. 형식: "① 권역 진단 — ...", "② 셀러 코칭 — ...", "③ 모집·수요 — ...". 데이터에 없는 수치 금지, 과장 금지.\n\n[내 권역]\n${facts}`
+  return { prompt, task: 'distributor-brief', local: localDistributorBrief(a) }
+}
+function localDistributorBrief(a) {
+  const l1 = `① 권역 진단 — 이번 달 권역 매출 ${won(a.gross)}, 내 배분 수익 ${won(a.share)}. 활성 셀러 ${a.active}곳이 만든 실적입니다.`
+  const l2 = a.active > 0
+    ? `② 셀러 코칭 — ${a.topCat[0] ? `수요 상위 "${a.topCat[0].name}"(${a.topCat[0].n}건) 결합 제안을 셀러 스크립트에 반영하세요.` : '셀러 상담 메모·SLA 응대 속도를 점검하세요.'}`
+    : '② 셀러 코칭 — 활성 셀러가 없습니다. 분양 영업이 최우선입니다.'
+  const l3 = a.unassigned > 0
+    ? `③ 모집·수요 — 미배정 리드 ${a.unassigned}건이 새고 있어요. 셀러 증원(분양)으로 받을 손이 필요합니다.`
+    : `③ 모집·수요 — 유입 ${a.leads}건 전량 배정 중. 다음 분양은 수요 상위 카테고리 전문 셀러로 뽑으면 전환이 좋습니다.`
+  return [l1, l2, l3].join('\n')
+}
+
 // 소비자 프론트 — 진단 심화 분석 (진단 결과 → 우선순위·실행 팁 내러티브)
 export function diagnosisNarrative(result) {
   const items = result.items.map((i) => `${i.label} 월 ${won(i.save)}`).join(' · ')

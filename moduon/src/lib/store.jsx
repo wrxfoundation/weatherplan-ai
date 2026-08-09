@@ -292,3 +292,13 @@ export function adminStats(db) {
   const pendingApps = db.applications.filter((a) => a.status === '대기')
   return { active, totalSales, leadsToday, done, feeIncome, monthlyFees, pendingApps }
 }
+
+// 총판 배분 정산 — 권역 활성 셀러 gross × sharePct.
+// 배분은 본사 운영 수수료 수입에서 지급한다(셀러 순지급액 불변) — 3계층 수익 구조의 실체.
+export function distributorSettlement(db) {
+  return (db.distributors ?? []).map((d) => {
+    const units = db.tenants.filter((t) => t.unit === d.unit && t.status === '활성')
+    const gross = units.reduce((s, t) => s + tenantSettlement(db, t.id).gross, 0)
+    return { ...d, sellerCount: units.length, gross, share: Math.round(gross * (d.sharePct ?? 0)) }
+  })
+}

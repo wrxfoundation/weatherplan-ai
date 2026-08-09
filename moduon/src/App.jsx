@@ -21,6 +21,7 @@ import OfficeCustomers from './pages/office/Customers'
 import OfficeResources from './pages/office/Resources'
 import OfficeSetup from './pages/office/Setup'
 import AdminDashboard from './pages/admin/Dashboard'
+import RegionalDashboard from './pages/regional/Dashboard'
 import AdminBiz from './pages/admin/Biz'
 import AdminTenants from './pages/admin/Tenants'
 import AdminProducts from './pages/admin/Products'
@@ -78,6 +79,9 @@ export default function App() {
           <Route path="resources" element={<OfficeResources />} />
           <Route path="setup" element={<OfficeSetup />} />
         </Route>
+
+        {/* 트랙 B' — 총판(관리단) 콘솔 */}
+        <Route path="/regional" element={<RegionalDashboard />} />
 
         {/* 트랙 B — 본사 어드민(관제) */}
         <Route path="/admin" element={<AdminLayout />}>

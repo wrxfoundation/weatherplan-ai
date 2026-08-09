@@ -23,7 +23,7 @@ export default function Login() {
       <Link to="/"><Logo size="lg" /></Link>
       <p className="mt-2 text-[14px] text-bmuted">데모 계정으로 3면 플랫폼을 체험해 보세요</p>
 
-      <div className="mt-8 grid w-full max-w-3xl gap-4 sm:grid-cols-3">
+      <div className="mt-8 grid w-full max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* 소비자 */}
         <Card track="b" hover role="button" tabIndex={0} onKeyDown={keyAct(goConsumer)} className="cursor-pointer p-6 text-center outline-none focus-visible:ring-2 ring-primary/40" onClick={goConsumer}>
           <div className="text-[34px]">🛒</div>
@@ -45,6 +45,24 @@ export default function Login() {
                 className="rounded-field border border-bline px-3 py-2 text-[12.5px] font-semibold text-bbody transition-colors hover:border-primary hover:text-primary-text"
               >
                 {t.name} <span className="text-bfaint">· {unitName(t.unit)}</span>
+              </button>
+            ))}
+          </div>
+        </Card>
+
+        {/* 총판(관리단) */}
+        <Card track="b" className="p-6 text-center">
+          <div className="text-[34px]">🗺️</div>
+          <div className="mt-2 text-[16px] font-extrabold text-bink">총판 관리단</div>
+          <p className="mt-1 text-[12px] leading-5 text-bmuted">권역 셀러·리드 관제<br />배분 수익 확인</p>
+          <div className="mt-3 flex flex-col gap-1.5">
+            {(db.distributors ?? []).map((d) => (
+              <button
+                key={d.id}
+                onClick={() => { setSession({ role: 'regional', distributorId: d.id }); toast(`${d.name} ${d.owner} 총판으로 로그인했어요`); nav('/regional') }}
+                className="rounded-field border border-bline px-3 py-2 text-[12.5px] font-semibold text-bbody transition-colors hover:border-primary hover:text-primary-text"
+              >
+                {unitName(d.unit)} <span className="text-bfaint">· {d.owner}</span>
               </button>
             ))}
           </div>
