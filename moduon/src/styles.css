@@ -155,18 +155,18 @@
     0 3px 8px rgba(48, 72, 158, 0.4);
 }
 
-/* ─── 대리석 마블링 — 은은한 결(약간, 그러나 보이게). 부모는 relative+overflow-hidden ───
-   저주파 turbulence(큰 흐름) + 주기적 전이함수(feFunc table)로 대리석 베인을 만든다.
-   z-2로 배경·장식 위, 텍스트(z-10) 아래에 깔려 가독성은 유지하고 무늬만 더한다. */
-.marble::after {
+/* ─── 인조가죽 질감 — 촘촘한 펠블 그레인(색감 유지). 부모는 relative+overflow-hidden ───
+   feTurbulence 범프 → feDiffuseLighting으로 요철에 하이라이트/그림자를 만들어 가죽
+   펠블을 표현. soft-light로 얹어 밑색은 유지하고 결만 입힌다. z-2(텍스트 z-10 아래). */
+.leather::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
   border-radius: inherit;
-  opacity: 0.5;
-  mix-blend-mode: overlay;
-  background-size: 340px 340px;
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='340'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.013' numOctaves='4' seed='12' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0.92 0.18 1 0.34 0.9 0.24 0.86'/%3E%3CfeFuncG type='table' tableValues='0.92 0.18 1 0.34 0.9 0.24 0.86'/%3E%3CfeFuncB type='table' tableValues='0.92 0.18 1 0.34 0.9 0.24 0.86'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
+  opacity: 0.6;
+  mix-blend-mode: soft-light;
+  background-size: 168px 168px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='168' height='168'%3E%3Cfilter id='l'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='2' seed='6' stitchTiles='stitch' result='n'/%3E%3CfeDiffuseLighting in='n' lighting-color='%23ffffff' surfaceScale='2.4' diffuseConstant='1.1'%3E%3CfeDistantLight azimuth='225' elevation='55'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23l)'/%3E%3C/svg%3E");
 }
