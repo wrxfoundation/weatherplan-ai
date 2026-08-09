@@ -1,9 +1,8 @@
 node_modules
 dist
-# 빌드 시 scripts/fetch-assets.mjs 가 자동 다운로드하는 브랜드 에셋
+# 빌드 시 scripts/fetch-assets.mjs 가 자동 다운로드하는 브랜드 에셋(카테고리·오브제 webp)
 public/assets/*.webp
-public/assets/hero-scene.jpg
-public/assets/hero-video.mp4
+# 히어로 영상·포스터는 자체 호스팅(레포에 커밋) — fetch 목록에서 제외
 .env
 .env.local
 .vercel
