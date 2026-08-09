@@ -203,10 +203,10 @@ export const useToast = () => useContext(ToastCtx)
 // 모두온 로고 — 오렌지 ₩ 원형 뱃지 + 워드마크
 export function Logo({ size = 'md', dark = false, name = '모두온' }) {
   const s = size === 'lg' ? 'text-[22px]' : size === 'sm' ? 'text-[17px]' : 'text-[19px]'
-  const badge = size === 'sm' ? 'h-[22px] w-[22px] text-[12px]' : 'h-[26px] w-[26px] text-[13px]'
+  const mark = size === 'lg' ? 'h-[30px] w-[30px]' : size === 'sm' ? 'h-[24px] w-[24px]' : 'h-[27px] w-[27px]'
   return (
     <span className="inline-flex items-center gap-1.5 select-none">
-      <span className={`inline-flex items-center justify-center rounded-full bg-orange font-extrabold text-white ${badge}`}>₩</span>
+      <img src="/assets/logo-mark.png" alt="" aria-hidden className={`${mark} shrink-0 object-contain`} />
       <span className={`font-extrabold tracking-tight ${dark ? 'text-white' : 'text-ink'} ${s}`}>{name}</span>
     </span>
   )
