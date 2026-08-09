@@ -175,25 +175,47 @@ export default function Home({ tenant }) {
 }
 
 // ─── 지원금 소구 밴드 — "최대 지원금 왕창 돌려드린다"(직접 판매 구조·조건부·표시광고법 안전) ──
+// 아정당식 돈주머니 + 점선 커넥터 + 코인 칩. 합계 152만원+ = 4개 카테고리 최대치 합과 일치.
+function MoneyBag() {
+  return (
+    <svg viewBox="0 0 128 142" className="h-full w-full" style={{ filter: 'drop-shadow(0 14px 22px rgba(56,84,180,0.34))' }} aria-hidden>
+      <defs>
+        <linearGradient id="mbBody" x1="0" y1="0" x2="0.2" y2="1">
+          <stop offset="0" stopColor="#6E90E0" /><stop offset="1" stopColor="#3E5AC0" />
+        </linearGradient>
+      </defs>
+      {/* 주둥이 프릴 */}
+      <path d="M44 12 C52 23 76 23 84 12 C86 23 80 32 75 35 L53 35 C48 32 42 23 44 12 Z" fill="#5A7AD0" />
+      {/* 묶음 밴드 */}
+      <rect x="49" y="31" width="30" height="9.5" rx="4.75" fill="#31489E" />
+      {/* 몸통 */}
+      <path d="M53 39 C39 46 22 64 22 91 C22 118 41 134 64 134 C87 134 106 118 106 91 C106 64 89 46 75 39 Z" fill="url(#mbBody)" />
+      {/* 하이라이트 */}
+      <ellipse cx="47" cy="75" rx="11" ry="17" fill="#ffffff" opacity="0.16" />
+      <text x="64.5" y="101" textAnchor="middle" fontSize="40" fontWeight="900" fill="#fff" style={{ fontFamily: 'system-ui, sans-serif' }}>₩</text>
+    </svg>
+  )
+}
 function SupportBand() {
+  // 칩 = 카테고리별 최대 혜택(혜택카드·constants와 정합). 합 45+47+30+30 = 152만원+
   const chips = [
-    { pos: 'left-0 top-1', c: '휴대폰', v: '45만원+' },
-    { pos: 'right-0 top-9', c: '인터넷/TV', v: '47만원+' },
-    { pos: 'left-2 bottom-6', c: '정수기', v: '30만원+' },
-    { pos: 'right-0 bottom-1', c: '가전렌탈', v: '30만원+' },
+    { c: '휴대폰', v: '45만원+', left: '24%', top: '31%' },
+    { c: '인터넷/TV', v: '47만원+', left: '77%', top: '30%' },
+    { c: '정수기', v: '30만원+', left: '23%', top: '72%' },
+    { c: '가전렌탈', v: '30만원+', left: '77%', top: '71%' },
   ]
   return (
-    <section className="mt-6 overflow-hidden rounded-section bg-gradient-to-b from-[#EAF1FE] to-[#F5F8FF] px-6 py-8 shadow-card sm:px-10 sm:py-10">
+    <section className="mt-6 overflow-hidden rounded-section bg-gradient-to-b from-[#E9F0FE] to-[#F5F8FF] px-6 py-8 shadow-card sm:px-10 sm:py-10">
       <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_1fr]">
         <div>
           <div className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1 text-[12.5px] font-bold text-primary-text">
-            <span className="h-1.5 w-1.5 rounded-full bg-orange" /> 비교는 쉽게, 돌려받는 건 더 크게
+            <span className="h-1.5 w-1.5 rounded-full bg-orange" /> 남들 받는 그 이상, 모두온이 돌려드려요
           </div>
           <h2 className="mt-3 text-[25px] font-extrabold leading-[1.32] tracking-[-0.6px] text-ink sm:text-[32px]">
-            몰라서 못 받은 지원금,<br />최대 <span className="tnum text-primary-text">152만원+</span> 그대로 돌려드려요
+            몰라서 못 받은 지원금,<br />최대 <span className="tnum text-primary-text">152만원+</span> 왕창 돌려드려요
           </h2>
           <p className="mt-3 max-w-lg text-[14px] leading-[23px] text-muted sm:text-[15px]">
-            모두온은 <strong className="font-bold text-ink">유통 단계를 줄인 직접 판매 구조</strong>예요. 최대 지원금을 중간에서 떼지 않고, 조건이 맞으면 처음 보는 혜택까지 그대로 챙겨드립니다.
+            모두온은 <strong className="font-bold text-ink">유통 단계를 줄인 직접 판매 구조</strong>예요. 중간 마진을 덜어낸 만큼, 조건이 맞으면 <strong className="font-bold text-primary-text">다른 곳에선 처음 보는 혜택</strong>까지 그대로 돌려드립니다.
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
             <Link to="/consult" className="shimmer-cta glass-btn-cta inline-flex h-[50px] items-center rounded-btn bg-primary px-7 text-[15px] font-bold text-white transition-colors hover:bg-primary-hover">내 지원금 확인하기 →</Link>
@@ -202,19 +224,36 @@ function SupportBand() {
           <p className="mt-3 text-[11px] leading-4 text-disabled">지원금·사은품은 통신사·요금제·약정·기간·재고·지역·심사 결과에 따라 달라지며, 최대 금액은 조건 충족 시 기준입니다.</p>
         </div>
 
-        {/* 지원금 주머니 + 카테고리 칩 */}
-        <div className="relative mx-auto h-[230px] w-full max-w-[360px]">
-          <div className="absolute left-1/2 top-1/2 flex h-[128px] w-[128px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-[38px] text-white shadow-panel" style={{ background: 'linear-gradient(150deg,#5B80D9,#4460C6)' }}>
-            <span className="text-[34px] font-black leading-none">₩</span>
-            <span className="mt-1 text-[10.5px] font-bold text-white/80">총 최대 지원금</span>
-            <span className="tnum text-[15px] font-extrabold">152만원+</span>
-          </div>
-          {chips.map((ch) => (
-            <div key={ch.c} className={`animate-floaty absolute ${ch.pos} flex items-center gap-1.5 rounded-full bg-white px-3 py-2 shadow-card`}>
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange text-[10px] font-black text-white">₩</span>
-              <span className="whitespace-nowrap text-[12.5px] font-bold text-ink">{ch.c} <span className="text-primary-text">{ch.v}</span></span>
+        {/* 지원금 주머니 + 점선 커넥터 + 카테고리 칩 */}
+        <div className="relative mx-auto w-full max-w-[440px]">
+          <div className="relative w-full" style={{ paddingBottom: '68%' }}>
+            {/* 점선 커넥터 (칩 중심 좌표와 정렬) */}
+            <svg viewBox="0 0 440 300" className="absolute inset-0 h-full w-full" aria-hidden>
+              <g stroke="#9DB0E8" strokeWidth="2" strokeDasharray="2 6" strokeLinecap="round" fill="none">
+                <path d="M188 128 L128 104" /><path d="M256 126 L318 100" />
+                <path d="M188 178 L124 214" /><path d="M254 180 L318 210" />
+              </g>
+              <g fill="#7E95DD">
+                <circle cx="188" cy="128" r="3" /><circle cx="256" cy="126" r="3" />
+                <circle cx="188" cy="178" r="3" /><circle cx="254" cy="180" r="3" />
+              </g>
+            </svg>
+            {/* 돈주머니 */}
+            <div className="absolute left-1/2 top-1/2 h-[46%] -translate-x-1/2 -translate-y-1/2" style={{ aspectRatio: '128 / 142' }}>
+              <MoneyBag />
             </div>
-          ))}
+            {/* 카테고리 칩 */}
+            {chips.map((ch) => (
+              <div
+                key={ch.c}
+                className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full bg-white px-3 py-2 shadow-card ring-1 ring-black/[0.03]"
+                style={{ left: ch.left, top: ch.top }}
+              >
+                <span className="flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-full text-[10px] font-black text-white shadow-sm" style={{ background: 'linear-gradient(150deg,#FBD34D,#F0A81E)' }}>₩</span>
+                <span className="whitespace-nowrap text-[12.5px] font-bold text-ink">{ch.c} <span className="text-primary-text">{ch.v}</span></span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
