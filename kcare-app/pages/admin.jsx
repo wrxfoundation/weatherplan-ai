@@ -7,6 +7,7 @@ import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
 import Icon from "../components/icons";
 import RosterTable from "../components/RosterTable";
+import StoreImageManager from "../components/StoreImageManager";
 import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
 import { ROSTERS, ROSTER_CHECKS, ROSTER_ACCESS, searchAll } from "../lib/rosters";
@@ -2622,6 +2623,9 @@ export default function AdminConsole() {
                   </Panel>
                 ))}
               </div>
+
+              {/* 스토어 썸네일 관리 — 여기서 올리면 보호자 스토어에 즉시 반영 (실무자 요청) */}
+              <StoreImageManager />
 
               <Panel className="min-w-0">
                 <PanelHead title="확정 상품 구조" right={<span className="text-[12px] font-bold text-green">2026-08-01 방향성 회의 확정</span>} />

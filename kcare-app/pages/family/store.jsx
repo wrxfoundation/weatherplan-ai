@@ -8,16 +8,22 @@ import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 
 // 보호자 스토어 — 실무자 피드백 (2026-08-09) '쇼핑몰 제안' 시트 구조 그대로.
-// 아이콘 카테고리: 약국(구매대행 표기) · 영양제 · 일상용품 · 생활안전용품.
-// 약국은 판매가 아니라 구매대행이다 — 약사법 경계라 배지로 명시한다.
-// 보호자 결제는 승인 절차 없이 바로 주문 (자기 결제 · 회의 6).
+// 썸네일 2열 그리드 (실무자 UI 샘플 반영): 카테고리 큰 버튼 → 하위분류 칩 →
+// 상품 카드(썸네일 · 이름 · 가격). 썸네일은 경영 콘솔에서 올린 이미지가 있으면
+// 그 이미지, 없으면 카테고리 아이콘이다 (state.productImages — 콘솔 연동).
+//
+// 가격은 navy 로 쓴다 — 샘플은 빨간 가격이지만 이 앱에서 빨강은 위험 신호
+// 전용이다 (SOS · 낙상). 상거래 숫자에 쓰면 그 원칙이 무너진다.
+// 약국은 판매가 아니라 구매대행 — 약사법 경계라 배지로 명시한다.
 
 export default function StorePage() {
   const { state, dispatch } = useAppState();
+  const images = state.productImages || {};
   // 첫 방문 안전진단(컨시어지)이 담아 둔 생활안전용품 — 자동으로 선택된 채 시작
   const safetyCart = state.demo.safetyCart || [];
   const [sel, setSel] = useState(() => Object.fromEntries(safetyCart.map((id) => [id, true])));
   const [cat, setCat] = useState(safetyCart.length > 0 ? "safety" : "pharmacy");
+  const [groupIdx, setGroupIdx] = useState(0);
   const [ordered, setOrdered] = useState(false);
 
   const items = Object.keys(sel)
@@ -26,6 +32,7 @@ export default function StorePage() {
     .filter(Boolean);
   const total = items.reduce((s, i) => s + (i.price || 0) + (i.ship || 0), 0);
   const active = STORE_CATALOG.find((c) => c.id === cat);
+  const group = active.groups[Math.min(groupIdx, active.groups.length - 1)];
 
   const order = () => {
     if (items.length === 0 || ordered) return;
@@ -81,26 +88,31 @@ export default function StorePage() {
           </Card>
         )}
 
-        {/* 카테고리 — 아이콘으로 직관 분류 (실무자 시트의 설계) */}
+        {/* 카테고리 — 큰 버튼 (실무자 UI 샘플: 활성은 채움, 비활성은 옅게) */}
         <div className="grid grid-cols-4 gap-2">
           {STORE_CATALOG.map((c) => {
             const on = cat === c.id;
             return (
               <button
                 key={c.id}
-                onClick={() => setCat(c.id)}
+                onClick={() => {
+                  setCat(c.id);
+                  setGroupIdx(0);
+                }}
                 className={`btn-press flex flex-col items-center gap-1.5 rounded-2xl border px-1 py-3 ${
-                  on ? "border-gold bg-gold/10" : "border-navy/12 bg-white/70"
+                  on ? "border-navy bg-navy text-white" : "border-navy/12 bg-white/70 text-muted"
                 }`}
               >
-                <span className={on ? "text-gold" : "text-muted"}>
-                  <Icon name={c.icon} size={22} />
-                </span>
-                <span className={`text-[12px] font-bold leading-tight ${on ? "text-navy" : "text-muted"}`}>
+                <Icon name={c.icon} size={22} />
+                <span className={`text-[11.5px] font-bold leading-tight ${on ? "text-white" : "text-muted"}`}>
                   {c.name}
                 </span>
                 {c.badge && (
-                  <span className="rounded-full bg-navy/[.07] px-1.5 py-[2px] text-[9px] font-bold text-muted">
+                  <span
+                    className={`rounded-full px-1.5 py-[2px] text-[9px] font-bold ${
+                      on ? "bg-white/15 text-gold-soft" : "bg-navy/[.07] text-muted"
+                    }`}
+                  >
                     {c.badge}
                   </span>
                 )}
@@ -109,70 +121,105 @@ export default function StorePage() {
           })}
         </div>
 
+        {/* 하위분류 칩 — 약국처럼 그룹이 여럿일 때만 */}
+        {active.groups.length > 1 && (
+          <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+            {active.groups.map((g, i) => {
+              const on = i === Math.min(groupIdx, active.groups.length - 1);
+              return (
+                <button
+                  key={g.name}
+                  onClick={() => setGroupIdx(i)}
+                  className={`btn-press shrink-0 whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-bold ${
+                    on ? "border-navy bg-navy text-white" : "border-navy/15 bg-white/70 text-muted"
+                  }`}
+                >
+                  {g.name}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         {active.note && (
           <p className="rounded-xl bg-navy/[.045] px-3.5 py-2.5 text-[12.5px] leading-[1.7] text-muted">
             {active.note}
           </p>
         )}
 
-        {active.groups.map((g) => (
-          <Card key={g.name} className="p-4">
-            <div className="flex items-center gap-2">
-              <SectionLabel>{g.name}</SectionLabel>
-              {active.id === "pharmacy" && (
-                <Badge fg="#8A5D12" bg="rgba(176,141,87,.16)">
-                  구매대행
-                </Badge>
-              )}
-            </div>
-            <div className="mt-3 space-y-2">
-              {g.items.map((i) => {
-                const on = !!sel[i.id];
-                const disabled = !i.price; // 가격 확정 전 — 담기지 않는다
-                return (
+        {/* 상품 썸네일 그리드 — 2열 */}
+        <div>
+          <div className="flex items-center gap-2 px-1">
+            <span className="h-[7px] w-[7px] rounded-full bg-navy" />
+            <SectionLabel>{group.name}</SectionLabel>
+            {active.id === "pharmacy" && (
+              <Badge fg="#8A5D12" bg="rgba(176,141,87,.16)">
+                구매대행
+              </Badge>
+            )}
+          </div>
+          <ul className="mt-2.5 grid grid-cols-2 gap-2.5">
+            {group.items.map((i) => {
+              const on = !!sel[i.id];
+              const disabled = !i.price; // 가격 확정 전 — 담기지 않는다
+              const img = images[i.id];
+              return (
+                <li key={i.id}>
                   <button
-                    key={i.id}
                     disabled={disabled}
                     onClick={() => !ordered && setSel((s) => ({ ...s, [i.id]: !s[i.id] }))}
-                    className={`btn-press flex w-full items-start gap-3 rounded-xl border p-3 text-left ${
+                    className={`btn-press w-full overflow-hidden rounded-2xl border text-left ${
                       disabled
-                        ? "cursor-not-allowed border-dashed border-navy/12 opacity-70"
+                        ? "cursor-not-allowed border-dashed border-navy/15 opacity-70"
                         : on
-                        ? "border-gold bg-gold/10"
+                        ? "border-gold ring-2 ring-gold/50"
                         : "border-navy/12"
-                    }`}
+                    } bg-white`}
                   >
-                    <span
-                      className={`mt-[2px] inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border text-[12px] font-bold ${
-                        on ? "border-gold bg-gold text-white" : "border-navy/25 text-transparent"
-                      }`}
-                    >
-                      ✓
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-[15px] font-bold leading-[1.4] text-ink">{i.name}</span>
-                      {i.note && (
-                        <span className="mt-0.5 block text-[11.5px] leading-[1.55] text-muted">{i.note}</span>
+                    {/* 썸네일 — 콘솔 업로드 이미지가 있으면 그 이미지, 없으면 아이콘 */}
+                    <span className="relative block aspect-square w-full bg-[#EDF1EA]">
+                      {img ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                      ) : (
+                        <span className="absolute inset-0 flex items-center justify-center text-navy/30">
+                          <Icon name={active.icon} size={44} strokeWidth={1.4} />
+                        </span>
+                      )}
+                      {on && (
+                        <span className="absolute right-2 top-2 inline-flex h-[24px] w-[24px] items-center justify-center rounded-full bg-gold text-[13px] font-bold text-white shadow">
+                          ✓
+                        </span>
                       )}
                     </span>
-                    <span className="shrink-0 text-right">
+                    <span className="block px-3 pb-3 pt-2.5">
+                      <span className="block min-h-[38px] text-[14px] font-bold leading-[1.4] text-ink">
+                        {i.name}
+                      </span>
                       {i.price ? (
                         <>
-                          <span className="block font-num text-[15px] font-bold text-navy">{fmtWon(i.price)}</span>
+                          <span className="mt-1 block font-num text-[17px] font-bold text-navy">
+                            {fmtWon(i.price)}
+                          </span>
                           {i.ship ? (
-                            <span className="block font-num text-[10.5px] text-muted">배송 {fmtWon(i.ship)}</span>
+                            <span className="block font-num text-[10.5px] text-muted">
+                              배송 {fmtWon(i.ship)}
+                            </span>
                           ) : null}
                         </>
                       ) : (
-                        <span className="block text-[11.5px] font-bold text-muted">{i.pending}</span>
+                        <span className="mt-1 block text-[12px] font-bold text-muted">{i.pending}</span>
+                      )}
+                      {i.note && (
+                        <span className="mt-1 block text-[11px] leading-[1.5] text-muted">{i.note}</span>
                       )}
                     </span>
                   </button>
-                );
-              })}
-            </div>
-          </Card>
-        ))}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
 
         {items.length > 0 && !ordered && (
           <Card className="p-4">

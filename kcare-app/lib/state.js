@@ -37,6 +37,9 @@ const DEFAULT = {
   // 컨시어지 방문 수행 상태 + 감사 타임라인 (REQ-12 골격)
   visit: { checkedIn: false, kitDone: false, reportSent: false, audit: [] },
   kit: INITIAL_KIT,
+  // 스토어 상품 이미지 — 경영 콘솔에서 올리면 스토어 썸네일이 바뀐다 (실무자 요청).
+  // { [상품id]: dataURL }. 업로드 시 320px 로 줄여 저장한다 — localStorage 5MB 한도.
+  productImages: {},
 };
 
 function reducer(state, action) {
@@ -61,6 +64,10 @@ function reducer(state, action) {
         events: arr(p.events, state.events),
         reports: arr(p.reports, state.reports),
         requests: arr(p.requests, state.requests),
+        productImages:
+          p.productImages && typeof p.productImages === "object" && !Array.isArray(p.productImages)
+            ? p.productImages
+            : state.productImages,
       };
     }
     case "completeOnboarding":
@@ -123,6 +130,13 @@ function reducer(state, action) {
       };
     case "kitUpdate":
       return { ...state, kit: action.items };
+    case "setProductImage": {
+      // null 이면 삭제 — 기본 아이콘 썸네일로 돌아간다
+      const next = { ...state.productImages };
+      if (action.dataUrl) next[action.id] = action.dataUrl;
+      else delete next[action.id];
+      return { ...state, productImages: next };
+    }
     case "reset":
       return DEFAULT;
     default:
