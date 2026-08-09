@@ -43,15 +43,15 @@ export default function Home({ tenant }) {
               </div>
             ) : (
               <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12px] font-bold text-primary-text shadow-card">
-                <span className="h-1.5 w-1.5 rounded-full bg-ok animate-live" /> 생활비 절감 플랫폼 · 이번 달 아낄 돈부터 확인하세요
+                <span className="h-1.5 w-1.5 rounded-full bg-ok animate-live" /> 이번 달 아낄 돈 + 놓친 지원금까지 한 번에
               </div>
             )}
             <h1 className="text-[32px] font-extrabold leading-[1.3] tracking-[-0.8px] text-ink sm:text-[44px] sm:leading-[58px] sm:tracking-[-1.2px]">
-              새는 생활비,<br />
-              <span className="text-orange-text">{tenant ? tenant.name : '모두온'}</span>이 잡아드려요
+              아끼는 것도, 왕창 돌려받는 것도<br />
+              <span className="text-orange-text">{tenant ? tenant.name : '모두온'}</span>에서 한 번에
             </h1>
             <p className="mt-4 max-w-md text-[15px] leading-[26px] text-body sm:text-[16.5px] sm:leading-[28px]">
-              {tenant?.greeting ?? '인터넷·휴대폰·이사·정수기… 흩어진 생활서비스를 한 곳에서 비교하고, 30초 상담 한 번으로 매달 나가던 돈을 줄이세요.'}
+              {tenant?.greeting ?? '인터넷·휴대폰·이사·정수기… 흩어진 생활서비스를 한 곳에서 비교하고, 남들 몰라서 못 받은 지원금까지 왕창 돌려받으세요.'}
             </p>
             {/* 검색 바 */}
             <div className="mt-7 flex h-14 items-center overflow-hidden rounded-2xl bg-white pl-5 pr-2 shadow-panel">
