@@ -37,6 +37,22 @@ export async function askMobi(history, ctx = {}) {
   return { ...localBrain(history, ctx), source: 'local' }
 }
 
+// ─── 범용 Claude 호출 (Opus 5 서버리스) — 셀러/본사 AI 어시스턴트 공용 ──
+// 성공 시 응답 텍스트, 실패(키 미설정·오류) 시 null → 호출측이 로컬 폴백.
+export async function callClaude(prompt, task = 'general') {
+  if (apiDead) return null
+  try {
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', content: prompt }], context: { task } }),
+    })
+    if (res.ok) { const d = await res.json(); return d.reply ?? null }
+    if (res.status === 503 || res.status === 404) apiDead = true
+  } catch { /* 일시 오류 — 이번 턴만 폴백 */ }
+  return null
+}
+
 // ─── 로컬 데모 브레인 (규칙 기반) ────────────────────────────────
 function localBrain(history, ctx) {
   const last = history[history.length - 1]?.text ?? ''

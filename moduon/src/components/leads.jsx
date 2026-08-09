@@ -4,6 +4,7 @@ import { useStore } from '../lib/store'
 import { maskName, maskPhone, timeAgo, minutesAgo, fmtDateTime, won } from '../lib/engine'
 import { catBySlug, LEAD_STATUS, LEAD_TRANSITIONS, STATUS_COLOR, unitName, unitBySigungu } from '../lib/constants'
 import { StatusChip, Drawer, Btn, useToast, Modal } from './ui'
+import { callClaude } from '../lib/ai'
 
 export function LeadRow({ lead, onOpen, showTenant, tenants }) {
   const overdue = lead.status === '접수' && minutesAgo(lead.createdAt) >= 10
@@ -108,6 +109,8 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
         </div>
       </div>
 
+      <AiDesignPanel lead={lead} />
+
       {/* 상태 변경 */}
       {NEXT[lead.status].length > 0 && (
         <div className="mt-4">
@@ -188,5 +191,62 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
         </div>
       </Modal>
     </Drawer>
+  )
+}
+
+// ─── 셀러 AI 설계 어시스턴트 (기획서 표2 셀러 AI · Opus 5) ──────────
+function AiSpark({ size = 15 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M13.5 2c.7 4.7 2.3 6.3 7 7-4.7.7-6.3 2.3-7 7-.7-4.7-2.3-6.3-7-7 4.7-.7 6.3-2.3 7-7Z" />
+      <path d="M6 14c.35 2.2 1.15 3 3.3 3.3-2.15.3-2.95 1.1-3.3 3.3-.35-2.2-1.15-3-3.3-3.3C4.85 17 5.65 16.2 6 14Z" />
+    </svg>
+  )
+}
+function localDesign(lead) {
+  const cat = catBySlug(lead.cat)?.name ?? '생활서비스'
+  const M = {
+    '인터넷/TV': { plan: 'KT 500M + 정수기 결합 + 신규 프로모션', save: '월 32,900원 · 현금 사은품 35만원', script: '지금 쓰시는 인터넷 약정 만기부터 확인해 드릴게요. 결합만 잡아도 월 만 원 이상 빠집니다.' },
+    '휴대폰': { plan: '선택약정 25% + 요금제 1단계 하향', save: '월 약 33,000원 절감', script: '기기값과 요금을 따로 봐야 진짜 통신비가 보여요. 지금 요금제부터 점검해 드릴게요.' },
+    '이사': { plan: '포장이사 3사 비교 + 입주청소 결합', save: '평균 20만원 절약', script: '이사일과 짐 규모만 알려주시면 3곳 견적을 오늘 안에 비교해 드릴게요.' },
+    '정수기': { plan: '의무약정 짧은 렌탈 + 제휴 사은품', save: '월 렌탈료 최저 + 사은품', script: '지금 쓰시는 정수기 약정 만기와 관리주기부터 확인해 드릴게요.' },
+  }
+  const d = M[cat] ?? { plan: `${cat} 맞춤 비교 설계`, save: '조건별 최대 혜택 안내', script: `${cat} 관련 지금 조건부터 확인하고 가장 큰 혜택으로 잡아드릴게요.` }
+  return `추천 구성 — ${d.plan}\n예상 혜택 — ${d.save}\n상담 스크립트 — "${d.script}"`
+}
+function AiDesignPanel({ lead }) {
+  const [state, setState] = useState('idle')
+  const [text, setText] = useState('')
+  const [src, setSrc] = useState('local')
+  const run = async () => {
+    setState('loading')
+    const cat = catBySlug(lead.cat)?.name ?? '생활서비스'
+    const q = lead.quote ? ` 계산기견적: ${lead.quote.label ?? `월 ${won(lead.quote.total)}·사은품 ${won(lead.quote.gift)}`}.` : ''
+    const prompt = `당신은 모두온 셀러의 AI 설계 어시스턴트입니다. 아래 고객에게 최적 상품 구성과 상담 스크립트를 한국어로 간결히 제안하세요. 과장·수익보장 표현 금지.\n고객: 지역 ${lead.sigungu} · 관심 ${cat} · 희망상담 ${lead.wish}.${q}\n형식(각 1줄):\n추천 구성 — ...\n예상 혜택 — 숫자 포함\n상담 스크립트 — "..."`
+    const reply = await callClaude(prompt, 'seller-design')
+    setText(reply ?? localDesign(lead))
+    setSrc(reply ? 'claude' : 'local')
+    setState('done')
+  }
+  return (
+    <div className="mt-4 rounded-card border border-primary/25 bg-tint/40 p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-[13px] font-extrabold text-primary-text"><AiSpark /> AI 설계 어시스턴트</div>
+        {state === 'done' && <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-bfaint">{src === 'claude' ? 'Claude Opus 5' : '데모 브레인'}</span>}
+      </div>
+      {state === 'idle' && (
+        <>
+          <p className="mt-1 text-[12px] leading-4 text-bmuted">고객 조건으로 최적 요금제·결합·상담 스크립트를 자동 설계합니다.</p>
+          <button onClick={run} className="glass-btn-cta mt-2.5 h-10 w-full rounded-field bg-primary text-[13.5px] font-bold text-white transition-colors hover:bg-primary-hover">AI 설계 제안 받기</button>
+        </>
+      )}
+      {state === 'loading' && <div className="mt-3 flex items-center gap-2 text-[13px] font-semibold text-bmuted"><span className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" /> 최적 구성 설계 중…</div>}
+      {state === 'done' && (
+        <>
+          <div className="mt-2.5 whitespace-pre-line rounded-field bg-white p-3.5 text-[13px] leading-[22px] text-bbody">{text}</div>
+          <button onClick={run} className="mt-2 text-[12px] font-bold text-primary-text hover:underline">다시 제안</button>
+        </>
+      )}
+    </div>
   )
 }
