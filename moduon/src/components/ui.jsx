@@ -1,0 +1,226 @@
+// ─── 공용 UI 프리미티브 (디자인 핸드오프 토큰 준수) ──────────────
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { STATUS_COLOR } from '../lib/constants'
+
+// 버튼 — 높이: 대 52 / 중 48 / 소 40 (모바일 히트타깃 44 유지)
+export function Btn({ variant = 'primary', size = 'md', className = '', children, ...rest }) {
+  const v = {
+    primary: 'bg-primary text-white hover:bg-primary-hover shadow-cta',
+    solid: 'bg-primary text-white hover:bg-primary-hover',
+    outline: 'bg-white text-body border border-line-soft hover:border-primary hover:text-primary-text',
+    boutline: 'bg-white text-bbody border border-bline hover:border-primary hover:text-primary-text',
+    white: 'bg-white text-primary-text hover:-translate-y-px',
+    dark: 'bg-bink text-white hover:opacity-90',
+    ghost: 'text-label hover:text-primary-text',
+    danger: 'bg-danger/10 text-danger hover:bg-danger/20',
+    ok: 'bg-ok/10 text-ok hover:bg-ok/20',
+  }[variant]
+  const s = { lg: 'h-[52px] px-7 text-[16px]', md: 'h-12 px-6 text-[15px]', sm: 'h-10 px-4 text-[14px]', xs: 'h-8 px-3 text-[13px]' }[size]
+  return (
+    <button className={`inline-flex items-center justify-center gap-1.5 rounded-btn font-bold transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none ${v} ${s} ${className}`} {...rest}>
+      {children}
+    </button>
+  )
+}
+
+export function Card({ className = '', hover = false, track = 'a', children, ...rest }) {
+  const base = track === 'a' ? 'bg-white rounded-card shadow-card' : 'bg-white rounded-card shadow-bcard'
+  return (
+    <div className={`${base} ${hover ? 'transition-all duration-200 hover:-translate-y-[3px] hover:shadow-panel' : ''} ${className}`} {...rest}>
+      {children}
+    </div>
+  )
+}
+
+// 리드 상태 칩 — 각 색 10% 배경 + 본색 텍스트
+export function StatusChip({ status, className = '' }) {
+  const c = STATUS_COLOR[status] ?? '#8C93A5'
+  return (
+    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[12px] font-semibold whitespace-nowrap ${className}`} style={{ color: c, backgroundColor: c + '1A' }}>
+      {status}
+    </span>
+  )
+}
+
+export function Chip({ active, onClick, children, className = '' }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`inline-flex h-10 items-center rounded-full border px-4 text-[14px] font-semibold transition-colors ${
+        active ? 'border-primary bg-primary text-white' : 'border-line bg-white text-label hover:border-primary hover:text-primary-text'
+      } ${className}`}
+    >
+      {children}
+    </button>
+  )
+}
+
+export function DeltaChip({ value, suffix = '', good = true }) {
+  const up = value >= 0
+  const color = up === good ? 'text-ok bg-ok/10' : 'text-danger bg-danger/10'
+  return (
+    <span className={`tnum inline-flex items-center rounded-full px-2 py-0.5 text-[12px] font-bold ${color}`}>
+      {up ? '▲' : '▼'} {Math.abs(value)}{suffix}
+    </span>
+  )
+}
+
+// KPI 숫자 카운트업 600ms
+export function useCountUp(target, duration = 600) {
+  const [v, setV] = useState(0)
+  const started = useRef(false)
+  useEffect(() => {
+    if (started.current && v === target) return
+    started.current = true
+    const from = 0
+    const t0 = performance.now()
+    let raf
+    const tick = (t) => {
+      const p = Math.min(1, (t - t0) / duration)
+      const eased = 1 - Math.pow(1 - p, 3)
+      setV(Math.round(from + (target - from) * eased))
+      if (p < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [target, duration])
+  return v
+}
+
+export function KpiCard({ label, value, format = (n) => n.toLocaleString('ko-KR'), suffix = '', delta, deltaSuffix = '%', caption, accent, spark, track = 'b' }) {
+  const n = useCountUp(typeof value === 'number' ? value : 0)
+  return (
+    <Card track={track} className="p-5 animate-rise">
+      <div className="flex items-center justify-between gap-2">
+        <div className={`text-[13px] font-medium ${track === 'b' ? 'text-bmuted' : 'text-muted'}`}>{label}</div>
+        {delta !== undefined && <DeltaChip value={delta} suffix={deltaSuffix} />}
+      </div>
+      <div className="mt-2 flex items-end justify-between gap-2">
+        <div className={`tnum whitespace-nowrap text-[26px] font-extrabold leading-9 tracking-tight ${accent ?? (track === 'b' ? 'text-bink' : 'text-ink')}`}>
+          {typeof value === 'number' ? format(n) : value}
+          {suffix && <span className="ml-0.5 text-[15px] font-bold">{suffix}</span>}
+        </div>
+        {spark}
+      </div>
+      {caption && <div className={`mt-1.5 text-[12px] ${track === 'b' ? 'text-bfaint' : 'text-faint'}`}>{caption}</div>}
+    </Card>
+  )
+}
+
+export function LiveDot({ className = '' }) {
+  return <span className={`inline-block h-2 w-2 rounded-full bg-ok animate-live ${className}`} />
+}
+
+export function Field({ label, required, hint, children }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-[13px] font-semibold text-label">
+        {label} {required && <em className="not-italic text-primary-text">*</em>}
+      </span>
+      {children}
+      {hint && <span className="mt-1 block text-[12px] text-faint">{hint}</span>}
+    </label>
+  )
+}
+
+export const inputCls = 'h-12 w-full rounded-field border border-line bg-white px-4 text-[15px] text-ink placeholder:text-disabled focus:border-primary transition-colors'
+export const binputCls = 'h-10 w-full rounded-field border border-bline bg-white px-3 text-[14px] text-bink placeholder:text-bfaint focus:border-primary transition-colors'
+
+export function Modal({ open, onClose, title, children, wide = false }) {
+  if (!open) return null
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-bink/40 p-0 sm:items-center sm:p-6" onClick={onClose}>
+      <div
+        className={`max-h-[92vh] w-full overflow-y-auto rounded-t-section bg-white p-6 shadow-panel animate-rise sm:rounded-section ${wide ? 'sm:max-w-2xl' : 'sm:max-w-md'}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {title && (
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-[17px] font-extrabold text-ink">{title}</h3>
+            <button onClick={onClose} className="text-[20px] leading-none text-faint hover:text-ink">×</button>
+          </div>
+        )}
+        {children}
+      </div>
+    </div>
+  )
+}
+
+export function Drawer({ open, onClose, title, children }) {
+  return (
+    <div className={`fixed inset-0 z-50 ${open ? '' : 'pointer-events-none'}`}>
+      <div className={`absolute inset-0 bg-bink/40 transition-opacity ${open ? 'opacity-100' : 'opacity-0'}`} onClick={onClose} />
+      <aside className={`absolute right-0 top-0 h-full w-full max-w-md overflow-y-auto bg-white shadow-panel transition-transform duration-200 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-bline bg-white px-5 py-4">
+          <h3 className="text-[16px] font-extrabold text-bink">{title}</h3>
+          <button onClick={onClose} className="text-[22px] leading-none text-bfaint hover:text-bink">×</button>
+        </div>
+        <div className="p-5">{children}</div>
+      </aside>
+    </div>
+  )
+}
+
+export function EmptyState({ icon = '📭', text, sub }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-12 text-center">
+      <div className="text-[32px]">{icon}</div>
+      <div className="mt-2 text-[14px] font-semibold text-bbody">{text}</div>
+      {sub && <div className="mt-1 text-[12px] text-bfaint">{sub}</div>}
+    </div>
+  )
+}
+
+// ─── 토스트 ─────────────────────────────────────────
+const ToastCtx = createContext(() => {})
+export function ToastProvider({ children }) {
+  const [toasts, setToasts] = useState([])
+  const push = (msg, type = 'ok') => {
+    const id = Date.now() + Math.random()
+    setToasts((t) => [...t, { id, msg, type }])
+    setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 2800)
+  }
+  return (
+    <ToastCtx.Provider value={push}>
+      {children}
+      <div className="pointer-events-none fixed bottom-6 left-1/2 z-[70] flex w-full max-w-sm -translate-x-1/2 flex-col items-center gap-2 px-4">
+        {toasts.map((t) => (
+          <div key={t.id} className={`animate-rise rounded-full px-5 py-3 text-[14px] font-semibold text-white shadow-panel ${t.type === 'err' ? 'bg-danger' : 'bg-bink'}`}>
+            {t.msg}
+          </div>
+        ))}
+      </div>
+    </ToastCtx.Provider>
+  )
+}
+export const useToast = () => useContext(ToastCtx)
+
+// 모두온 로고 — 오렌지 ₩ 원형 뱃지 + 워드마크
+export function Logo({ size = 'md', dark = false, name = '모두온' }) {
+  const s = size === 'lg' ? 'text-[22px]' : size === 'sm' ? 'text-[17px]' : 'text-[19px]'
+  const badge = size === 'sm' ? 'h-[22px] w-[22px] text-[12px]' : 'h-[26px] w-[26px] text-[13px]'
+  return (
+    <span className="inline-flex items-center gap-1.5 select-none">
+      <span className={`inline-flex items-center justify-center rounded-full bg-orange font-extrabold text-white ${badge}`}>₩</span>
+      <span className={`font-extrabold tracking-tight ${dark ? 'text-white' : 'text-ink'} ${s}`}>{name}</span>
+    </span>
+  )
+}
+
+// 진행 스텝 (마법사·랜딩 절차)
+export function Steps({ items, current }) {
+  return (
+    <div className="flex items-center gap-2">
+      {items.map((label, i) => (
+        <div key={label} className="flex items-center gap-2">
+          <div className={`flex h-7 w-7 items-center justify-center rounded-full text-[13px] font-bold ${i < current ? 'bg-ok text-white' : i === current ? 'bg-primary text-white' : 'bg-tint text-primary-text'}`}>
+            {i < current ? '✓' : i + 1}
+          </div>
+          <span className={`hidden text-[13px] font-semibold sm:block ${i === current ? 'text-ink' : 'text-faint'}`}>{label}</span>
+          {i < items.length - 1 && <div className="h-px w-6 bg-line" />}
+        </div>
+      ))}
+    </div>
+  )
+}

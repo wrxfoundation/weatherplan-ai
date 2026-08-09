@@ -1,0 +1,102 @@
+// ─── 모두온 계산 엔진: 견적 · 정산 · 라우팅 · 포맷 ───────────────
+import { unitBySigungu } from './constants'
+
+// 금액 포맷 (천단위 콤마 + 원, tabular-nums는 CSS에서)
+export const won = (n) => `${Math.round(n).toLocaleString('ko-KR')}원`
+export const num = (n) => Math.round(n).toLocaleString('ko-KR')
+
+// 이름 마스킹: 김철수 → 김*수 / 두 글자는 김* / 상호는 그대로
+export const maskName = (name = '') => {
+  if (name.length <= 1) return name
+  if (name.length === 2) return name[0] + '*'
+  return name[0] + '*'.repeat(name.length - 2) + name[name.length - 1]
+}
+// 연락처 마스킹: 010-1234-5678 → 010-****-5678
+export const maskPhone = (phone = '') => phone.replace(/(\d{3})-?(\d{3,4})-?(\d{4})/, '$1-****-$3')
+
+export const phoneValid = (phone = '') => /^01[016789]-?\d{3,4}-?\d{4}$/.test(phone.trim())
+
+// ─── S-03 견적 계산기 (핸드오프 확정 로직) ─────────────────────
+// 기본 상태: KT · 500M · 정수기 결합 · 프로모션 off → 월 32,900원 / 사은품 350,000원
+export const SPEED_MAP = { '100M': 33000, '500M': 44000, '1G': 55000 }
+export const BUNDLE_MAP = { none: 0, water: 11100, phone: 8800 }
+export const BUNDLE_LABEL = { none: '결합 없음', water: '정수기 렌탈 결합', phone: '휴대폰 결합' }
+export const PROMO_DISCOUNT = 3000
+export const GIFT_MAP = { '100M': 200000, '500M': 300000, '1G': 400000 }
+export const CARRIERS = ['KT', 'SK브로드밴드', 'LG U+']
+
+export function calcQuote({ speed = '500M', bundle = 'water', promo = false } = {}) {
+  const base = SPEED_MAP[speed] ?? 0
+  const bundleDc = BUNDLE_MAP[bundle] ?? 0
+  const promoDc = promo ? PROMO_DISCOUNT : 0
+  const total = base - bundleDc - promoDc
+  const gift = (GIFT_MAP[speed] ?? 0) + (bundle !== 'none' ? 50000 : 0)
+  return { base, bundleDc, promoDc, total, gift }
+}
+
+// ─── 5.6 정산 로직 (정책값은 policies 테이블에서 주입) ──────────
+// 파트너 순수익 = 몰 매출 − 운영 수수료(10%) − 월 이용료(10만)
+// 예) 월 매출 10,000,000 → −1,000,000 −100,000 = 8,900,000원
+export function calcSettlement(gross, policies) {
+  const fee = Math.round(gross * policies.feeRate)
+  const net = gross - fee - policies.monthlyFee
+  return { gross, fee, monthlyFee: policies.monthlyFee, net }
+}
+
+// ─── L-02 리드 라우팅 ──────────────────────────────────────────
+// ① 파트너몰 유입 → 해당 파트너  ② 본진 유입 → 고객 주소지 권역의 파트너
+// ③ 권역 공석 → 관리단 → 본사 폴백
+export function routeLead({ sourceSlug, sigungu }, tenants) {
+  const active = tenants.filter((t) => t.status === '활성')
+  if (sourceSlug) {
+    const t = active.find((t) => t.slug === sourceSlug)
+    if (t) return { tenantId: t.id, via: '파트너몰 유입' }
+  }
+  const unit = unitBySigungu(sigungu)
+  if (unit) {
+    const regional = active.filter((t) => t.unit === unit)
+    if (regional.length) {
+      // 권역 내 리드 적은 파트너 우선(간이 로드밸런싱)
+      const pick = [...regional].sort((a, b) => (a.leadCount ?? 0) - (b.leadCount ?? 0))[0]
+      return { tenantId: pick.id, via: `권역 배정(${unit})` }
+    }
+    return { tenantId: null, via: `관리단 폴백(${unit})` }
+  }
+  return { tenantId: null, via: '본사 폴백' }
+}
+
+// ─── 시간 유틸 ─────────────────────────────────────────────────
+export const minutesAgo = (ts) => Math.max(0, Math.floor((Date.now() - ts) / 60000))
+export function timeAgo(ts) {
+  const m = minutesAgo(ts)
+  if (m < 1) return '방금 전'
+  if (m < 60) return `${m}분 전`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `${h}시간 전`
+  return `${Math.floor(h / 24)}일 전`
+}
+export const monthKey = (ts = Date.now()) => {
+  const d = new Date(ts)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+export const fmtDate = (ts) => {
+  const d = new Date(ts)
+  return `${d.getMonth() + 1}월 ${d.getDate()}일`
+}
+export const fmtDateTime = (ts) => {
+  const d = new Date(ts)
+  return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+export const dday = (ts) => Math.ceil((ts - Date.now()) / 86400000)
+
+// CSV 내보내기
+export function downloadCSV(filename, rows) {
+  const bom = '﻿'
+  const csv = rows.map((r) => r.map((c) => `"${String(c ?? '').replace(/"/g, '""')}"`).join(',')).join('\n')
+  const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(a.href)
+}

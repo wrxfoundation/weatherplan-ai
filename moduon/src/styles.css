@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply font-sans text-body antialiased;
+    letter-spacing: -0.01em;
+  }
+  button { @apply cursor-pointer; }
+  input, select, textarea { @apply outline-none; }
+}
+
+@layer utilities {
+  .tnum { font-variant-numeric: tabular-nums; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* 트랙 A 히어로 오브젝트 페이드 마스크 (핸드오프 지침 — 정식 누끼 에셋 교체 시 제거) */
+.obj-mask {
+  -webkit-mask-image: linear-gradient(135deg, transparent 3%, #000 26%);
+  mask-image: linear-gradient(135deg, transparent 3%, #000 26%);
+}

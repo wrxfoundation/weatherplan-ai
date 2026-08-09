@@ -1,0 +1,25 @@
+{
+  "name": "moduon-platform",
+  "private": true,
+  "version": "1.0.0",
+  "description": "모두온(MODUON) — 소비자몰 · 분양몰 마이오피스 · 본사 어드민 관제 3면 통합 플랫폼",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.74.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.5.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.0",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.3.5"
+  }
+}
