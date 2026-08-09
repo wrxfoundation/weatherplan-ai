@@ -5,6 +5,7 @@ import { useStore } from '../../lib/store'
 import { won } from '../../lib/engine'
 import { Btn, Card, EmptyState } from '../../components/ui'
 import TelcoCompare from '../../components/TelcoCompare'
+import InstallCheck from '../../components/InstallCheck'
 
 export default function Category() {
   const { slug } = useParams()
@@ -31,6 +32,12 @@ export default function Category() {
         </div>
         <Btn onClick={() => nav(`/consult?cat=${slug}`)} className="shrink-0 shimmer-cta">무료 상담 신청</Btn>
       </section>
+
+      {slug === 'internet' && (
+        <div className="mt-6">
+          <InstallCheck />
+        </div>
+      )}
 
       {/* 비교 포인트 */}
       <section className="mt-8 grid gap-3 sm:grid-cols-3">

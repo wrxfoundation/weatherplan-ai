@@ -34,6 +34,34 @@ export function calcQuote({ speed = '500M', bundle = 'water', promo = false } = 
   return { base, bundleDc, promoDc, total, gift }
 }
 
+// ─── 사은품 지급 방식 (아정당·다쏜다식 '현금 극대화') ─────────────
+export const PAYOUTS = [
+  { key: 'cash',    label: '현금',     sub: '설치 확인 후 3영업일 내 계좌 입금', badge: '가장 인기' },
+  { key: 'voucher', label: '상품권',   sub: '백화점·신세계 상품권으로 지급' },
+  { key: 'bill',    label: '요금할인', sub: '24개월 매월 통신비에서 자동 차감' },
+]
+// 기준 사은품가(gift) → 방식별 실수령. 현금·상품권은 동일 총액, 요금할인은 24개월 분할.
+export function payout(gift, method = 'cash') {
+  if (method === 'bill') return { kind: 'monthly', monthly: Math.round(gift / 24), months: 24, total: gift }
+  return { kind: 'lump', lump: gift, total: gift }
+}
+
+// ─── 설치 가능 지역 조회 (아정당·다쏜다식 즉시조회 시뮬레이션) ─────
+// 실서비스에서는 통신사 커버리지 API로 대체. 데모는 권역 매핑으로 '가능/제한'을 결정적으로 산출.
+export function installCheck(sigungu) {
+  const unit = unitBySigungu(sigungu)
+  if (!sigungu) return null
+  if (!unit) return { ok: false, unit: null, carriers: [], note: '입력하신 지역을 찾지 못했어요 — 상담사가 직접 확인해 드릴게요.' }
+  // 권역 코드로 결정적 가용성(데모): 도서·산간 일부만 특정 통신사 제한
+  const limited = ['JJ', 'GW'].includes(unit) // 제주·강원 일부는 광랜 제한 예시
+  const carriers = CARRIERS.map((c, i) => ({
+    name: c,
+    ok: !(limited && i === 2), // 제한 권역은 3번째 통신사 미지원 예시
+    max: c === 'KT' ? '1G' : c === 'SK브로드밴드' ? '1G' : '500M',
+  }))
+  return { ok: true, unit, carriers, note: '설치 가능! 결합 조건에 따라 현금 사은품이 더 커질 수 있어요.' }
+}
+
 // ─── 5.6 정산 로직 (정책값은 policies 테이블에서 주입) ──────────
 // 파트너 순수익 = 몰 매출 − 운영 수수료(10%) − 월 이용료(10만)
 // 예) 월 매출 10,000,000 → −1,000,000 −100,000 = 8,900,000원

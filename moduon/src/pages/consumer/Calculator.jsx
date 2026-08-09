@@ -1,9 +1,10 @@
 // ─── S-03 견적 계산기 (목업 #4a/#4b) — "고를수록 월 납부금이 보인다" ──
 import { useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { calcQuote, won, copyText, CARRIERS, SPEED_MAP, BUNDLE_MAP, BUNDLE_LABEL } from '../../lib/engine'
+import { calcQuote, won, copyText, CARRIERS, SPEED_MAP, BUNDLE_MAP, BUNDLE_LABEL, PAYOUTS, payout } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { CalcTabs } from './PhoneCalculator'
+import InstallCheck from '../../components/InstallCheck'
 
 export default function Calculator() {
   const nav = useNavigate()
@@ -15,19 +16,23 @@ export default function Calculator() {
   const [speed, setSpeed] = useState(SPEED_MAP[preset?.speed] ? preset.speed : '500M')
   const [bundle, setBundle] = useState(BUNDLE_MAP[preset?.bundle] !== undefined ? preset.bundle : 'water')
   const [promo, setPromo] = useState(preset?.promo === true)
+  const [payoutM, setPayoutM] = useState('cash')
   const [copied, setCopied] = useState(false)
 
   const q = useMemo(() => calcQuote({ speed, bundle, promo }), [speed, bundle, promo])
+  const pay = payout(q.gift, payoutM)
+  const payLabel = PAYOUTS.find((p) => p.key === payoutM)?.label ?? '현금'
   // 다음 행동 + 기대 효과 힌트 (axion 델타 문장 패턴)
   const hint = bundle === 'none' ? `정수기 결합을 추가하면 월 ${won(11100)} 더 내려가요`
     : !promo ? `신규가입 프로모션을 켜면 월 ${won(3000)} 더 내려가요` : null
 
-  const goConsult = () => nav('/consult?cat=internet', { state: { quote: { carrier, speed, bundle: BUNDLE_LABEL[bundle], promo, ...q } } })
+  const goConsult = () => nav('/consult?cat=internet', { state: { quote: { carrier, speed, bundle: BUNDLE_LABEL[bundle], promo, payout: payLabel, ...q } } })
 
   // 결과 공유 — 같은 조건으로 열리는 링크 + 면책 문구를 카톡용 텍스트로 (axion 흡수)
   const share = async () => {
     const url = `${window.location.origin}/calculator?carrier=${encodeURIComponent(carrier)}&speed=${speed}&bundle=${bundle}${promo ? '&promo=1' : ''}`
-    const text = `[모두온 인터넷 견적]\n${carrier} 인터넷 ${speed}${bundle !== 'none' ? ` + ${BUNDLE_LABEL[bundle]}` : ''}\n월 납부금 ${won(q.total)} · 사은품 ${won(q.gift)}\n같은 조건으로 계산해 보기 → ${url}\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
+    const payTxt = pay.kind === 'monthly' ? `월 ${won(pay.monthly)} 요금할인` : `${payLabel} ${won(pay.lump)}`
+    const text = `[모두온 인터넷 견적]\n${carrier} 인터넷 ${speed}${bundle !== 'none' ? ` + ${BUNDLE_LABEL[bundle]}` : ''}\n월 납부금 ${won(q.total)} · 사은품 ${payTxt}\n같은 조건으로 계산해 보기 → ${url}\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
     if (await copyText(text)) {
       setCopied(true)
       setTimeout(() => setCopied(false), 1600)
@@ -42,7 +47,11 @@ export default function Calculator() {
         <p className="mt-1.5 text-[14px] text-muted sm:text-[15px]">조건을 고를 때마다 월 납부금이 실시간으로 계산돼요.</p>
       </div>
 
-      <div className="mt-7 grid items-start gap-6 lg:grid-cols-[1fr_400px]">
+      <div className="mt-5">
+        <InstallCheck />
+      </div>
+
+      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_400px]">
         {/* ── 좌: 스텝 카드 4 ── */}
         <div className="flex flex-col gap-4">
           <StepCard no={1} title="통신사를 선택하세요">
@@ -105,6 +114,30 @@ export default function Calculator() {
             </button>
           </StepCard>
 
+          <StepCard no={5} title="사은품 받는 방식 — 현금이 제일 커요">
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+              {PAYOUTS.map((p) => {
+                const pv = payout(q.gift, p.key)
+                return (
+                  <button
+                    key={p.key}
+                    onClick={() => setPayoutM(p.key)}
+                    className={`relative flex flex-col items-start rounded-btn border p-4 text-left transition-all ${payoutM === p.key ? 'border-[1.5px] border-primary bg-tint' : 'border-line bg-white hover:border-primary/50'}`}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-[13.5px] font-bold text-ink">{p.label}</span>
+                      {p.badge && <span className="rounded-full bg-orange-tint px-1.5 py-0.5 text-[10px] font-bold text-orange-text">{p.badge}</span>}
+                    </span>
+                    <span className="tnum mt-1 text-[16px] font-extrabold text-primary-text">
+                      {pv.kind === 'monthly' ? `월 ${won(pv.monthly)}` : won(pv.lump)}
+                    </span>
+                    <span className="mt-0.5 text-[11px] leading-4 text-faint">{p.sub}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </StepCard>
+
           {/* 모바일 전용 — 합계 상세 분해 (데스크톱은 우측 스티키 카드) */}
           <section className="rounded-card bg-white p-5 shadow-card lg:hidden">
             <div className="text-[13px] font-bold text-ink">나의 구성 상세</div>
@@ -135,9 +168,16 @@ export default function Calculator() {
             <span className="tnum text-[34px] font-extrabold tracking-[-1px] text-primary-text">{won(q.total)}</span>
           </div>
 
-          <div className="mt-4 flex items-center justify-between rounded-field bg-orange-tint px-4 py-3">
-            <span className="text-[13px] font-bold text-orange-text">🎁 사은품 혜택</span>
-            <span className="tnum text-[16px] font-extrabold text-orange-text">{won(q.gift)}</span>
+          <div className="mt-4 rounded-field bg-orange-tint px-4 py-3.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] font-bold text-orange-text">🎁 {payLabel} 사은품</span>
+              <span className="tnum text-[20px] font-extrabold text-orange-text">
+                {pay.kind === 'monthly' ? `월 ${won(pay.monthly)}` : won(pay.lump)}
+              </span>
+            </div>
+            <div className="mt-1 text-[11px] leading-4 text-orange-text/80">
+              {pay.kind === 'monthly' ? `${pay.months}개월 자동 차감 · 총 ${won(pay.total)} 상당` : PAYOUTS.find((p) => p.key === payoutM)?.sub}
+            </div>
           </div>
           {hint && <div className="mt-2 rounded-field bg-tint px-3.5 py-2.5 text-[12px] font-semibold leading-4 text-primary-text">💡 {hint}</div>}
           <div className="mt-2 text-center text-[12px] text-faint">약정 3년 · 설치비 무료</div>
@@ -160,8 +200,8 @@ export default function Calculator() {
             <div className="tnum text-[24px] font-extrabold tracking-tight text-primary-text">{won(q.total)}</div>
           </div>
           <div className="text-right">
-            <div className="text-[11px] font-semibold text-faint">사은품</div>
-            <div className="tnum text-[15px] font-extrabold text-orange-text">{won(q.gift)}</div>
+            <div className="text-[11px] font-semibold text-faint">{payLabel} 사은품</div>
+            <div className="tnum text-[15px] font-extrabold text-orange-text">{pay.kind === 'monthly' ? `월 ${won(pay.monthly)}` : won(pay.lump)}</div>
           </div>
         </div>
         <div className="mt-3 flex gap-2">
