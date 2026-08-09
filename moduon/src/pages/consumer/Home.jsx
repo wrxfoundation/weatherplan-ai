@@ -176,26 +176,6 @@ export default function Home({ tenant }) {
 
 // ─── 지원금 소구 밴드 — "최대 지원금 왕창 돌려드린다"(직접 판매 구조·조건부·표시광고법 안전) ──
 // 아정당식 돈주머니 + 점선 커넥터 + 코인 칩. 합계 152만원+ = 4개 카테고리 최대치 합과 일치.
-function MoneyBag() {
-  return (
-    <svg viewBox="0 0 128 142" className="h-full w-full" style={{ filter: 'drop-shadow(0 14px 22px rgba(56,84,180,0.34))' }} aria-hidden>
-      <defs>
-        <linearGradient id="mbBody" x1="0" y1="0" x2="0.2" y2="1">
-          <stop offset="0" stopColor="#6E90E0" /><stop offset="1" stopColor="#3E5AC0" />
-        </linearGradient>
-      </defs>
-      {/* 주둥이 프릴 */}
-      <path d="M44 12 C52 23 76 23 84 12 C86 23 80 32 75 35 L53 35 C48 32 42 23 44 12 Z" fill="#5A7AD0" />
-      {/* 묶음 밴드 */}
-      <rect x="49" y="31" width="30" height="9.5" rx="4.75" fill="#31489E" />
-      {/* 몸통 */}
-      <path d="M53 39 C39 46 22 64 22 91 C22 118 41 134 64 134 C87 134 106 118 106 91 C106 64 89 46 75 39 Z" fill="url(#mbBody)" />
-      {/* 하이라이트 */}
-      <ellipse cx="47" cy="75" rx="11" ry="17" fill="#ffffff" opacity="0.16" />
-      <text x="64.5" y="101" textAnchor="middle" fontSize="40" fontWeight="900" fill="#fff" style={{ fontFamily: 'system-ui, sans-serif' }}>₩</text>
-    </svg>
-  )
-}
 function SupportBand() {
   // 칩 = 카테고리별 최대 혜택(혜택카드·constants와 정합). 합 45+47+30+30 = 152만원+
   const chips = [
@@ -238,9 +218,9 @@ function SupportBand() {
                 <circle cx="188" cy="178" r="3" /><circle cx="254" cy="180" r="3" />
               </g>
             </svg>
-            {/* 돈주머니 */}
-            <div className="absolute left-1/2 top-1/2 h-[46%] -translate-x-1/2 -translate-y-1/2" style={{ aspectRatio: '128 / 142' }}>
-              <MoneyBag />
+            {/* 돈주머니 (파란 가죽 3D · 배경 제거 이미지) */}
+            <div className="absolute left-1/2 top-1/2 h-[58%] aspect-square -translate-x-1/2 -translate-y-1/2">
+              <img src="/assets/obj-moneybag.png" alt="지원금 주머니" className="h-full w-full object-contain" style={{ filter: 'drop-shadow(0 14px 22px rgba(56,84,180,0.30))' }} loading="lazy" />
             </div>
             {/* 카테고리 칩 */}
             {chips.map((ch) => (
