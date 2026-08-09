@@ -55,17 +55,17 @@ export default function ChatWidget({ tenant }) {
       </button>
 
       {open && (
-        <div className="fixed bottom-[86px] right-4 z-50 flex h-[min(560px,calc(100dvh-110px))] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-section border border-white/55 bg-white/72 shadow-panel backdrop-blur-2xl animate-rise">
+        <div className="fixed bottom-[86px] right-4 z-50 flex h-[min(560px,calc(100dvh-110px))] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-section border border-[rgba(44,56,120,0.32)] bg-white/72 shadow-panel backdrop-blur-2xl animate-rise">
           {/* 헤더 */}
           <div className="flex items-center gap-3 bg-primary/90 px-4 py-3.5 backdrop-blur-sm">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white"><AiStarsIcon size={23} /></div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white ring-1 ring-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] backdrop-blur-sm"><AiStarsIcon size={23} /></div>
             <div className="flex-1">
               <div className="text-[14px] font-extrabold text-white">AI 상담사 모비</div>
-              <div className="flex items-center gap-1.5 text-[11px] text-white/75">
+              <div className="mt-0.5 inline-flex items-center gap-1.5 rounded-full bg-white/12 px-2 py-0.5 text-[11px] text-white/85 ring-1 ring-white/15">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-ok animate-live" /> 실시간 응답 · 평균 18초
               </div>
             </div>
-            <button onClick={() => nav('/consult')} className="rounded-full bg-white/15 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-white/25">
+            <button onClick={() => nav('/consult')} className="rounded-full bg-white/18 px-3 py-1.5 text-[11px] font-bold text-white ring-1 ring-white/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-sm hover:bg-white/28">
               상담원 연결
             </button>
           </div>
@@ -120,7 +120,7 @@ export default function ChatWidget({ tenant }) {
                 placeholder="궁금한 서비스를 물어보세요"
                 className="h-11 flex-1 rounded-full border border-white/70 bg-white/70 px-4 text-[13.5px] placeholder:text-disabled focus:border-primary"
               />
-              <button onClick={() => send()} disabled={busy} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary-hover disabled:opacity-40" aria-label="전송">
+              <button onClick={() => send()} disabled={busy} className="glass-btn-cta flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary-hover disabled:opacity-40" aria-label="전송">
                 <SendIcon />
               </button>
             </div>
