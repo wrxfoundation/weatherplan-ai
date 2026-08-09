@@ -20,8 +20,8 @@ const ASSETS = [
   ['obj-truck.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/90e21cc7-d3e9-4686-9b9d-5b0562ded06a.webp'],
   ['obj-wifi.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/33a9a1ff-4f6d-42b1-a55c-a48e0be83a31.webp'],
   ['obj-purifier.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/8ec01fae-7f2e-4433-86d3-35ae49c4f5a2.webp'],
-  // 지원금 밴드 돈주머니 — 다홍색(브랜드 오렌지/코럴) 가죽 질감 3D, 배경 제거(투명 PNG)
-  ['obj-moneybag.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260809_144749_8bb068cd-a071-4dd8-9342-380f21737524.png'],
+  // 지원금 밴드 돈주머니 — 다홍색 가죽 + ₩ 음각 + 매듭 풀려 금색 동전 노출, 배경 제거(투명 PNG)
+  ['obj-moneybag.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260809_145422_bf4edf86-9476-4b1c-929c-6d6d04a6dfba.png'],
   ['cta-chat.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/790310b0-d472-469b-b6d5-38eedd45e68e.webp'],
   // 히어로 영상(hero-video.mp4)·포스터(hero-scene.jpg)는 레포에 커밋된 자체 호스팅 에셋 — 여기서 받지 않음
 ]
