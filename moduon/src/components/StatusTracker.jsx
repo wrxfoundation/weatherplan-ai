@@ -32,7 +32,7 @@ export default function StatusTracker({ current = 0 }) {
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="mt-px shrink-0" aria-hidden>
           <path d="M4 5h16v12H8l-4 3z" /><path d="M8 9h8M8 13h5" />
         </svg>
-        진행 상황은 문자로 실시간 안내 · 현금 사은품 예상 입금: <strong className="font-extrabold">개통 확인 후 3영업일 내</strong>
+        진행 상황은 문자로 실시간 안내 · 현금 사은품 예상 입금: <strong className="font-extrabold">개통 확인 후 영업일 7일 이내</strong>
       </div>
     </section>
   )

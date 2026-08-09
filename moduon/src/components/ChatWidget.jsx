@@ -11,9 +11,12 @@ const HELLO = {
   text: '안녕하세요! 모두온 AI 상담사 모비예요 🙌\n인터넷·이사·정수기·휴대폰… 생활서비스 뭐든 물어보세요. 견적은 바로 계산해 드려요!',
 }
 
+const CHAT_KEY = 'moduon_chat_v1'
+
 export default function ChatWidget({ tenant }) {
   const [open, setOpen] = useState(false)
-  const [msgs, setMsgs] = useState([HELLO])
+  // 세션 내 대화 유지 — sessionStorage 미러 (파싱 실패 시 인사말로 초기화)
+  const [msgs, setMsgs] = useState(() => { try { return JSON.parse(sessionStorage.getItem(CHAT_KEY)) ?? [HELLO] } catch { return [HELLO] } })
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
   const bodyRef = useRef(null)
@@ -24,6 +27,21 @@ export default function ChatWidget({ tenant }) {
   useEffect(() => {
     bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: 'smooth' })
   }, [msgs, open, busy])
+
+  useEffect(() => {
+    try { sessionStorage.setItem(CHAT_KEY, JSON.stringify(msgs)) } catch { /* 저장 불가 환경 무시 */ }
+  }, [msgs])
+
+  // 열려 있을 때 Esc로 닫기
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => e.key === 'Escape' && setOpen(false)
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [open])
+
+  // 파트너몰에서 열렸으면 상담 이동 경로에 src 슬러그를 붙여 리드 귀속 유지
+  const withSrc = (to) => (tenant && to.startsWith('/consult') ? to + (to.includes('?') ? '&' : '?') + 'src=' + tenant.slug : to)
 
   async function send(text) {
     const t = (text ?? input).trim()
@@ -47,6 +65,7 @@ export default function ChatWidget({ tenant }) {
       <button
         onClick={() => setOpen(!open)}
         aria-label="AI 상담"
+        aria-expanded={open}
         className={`glass-fab fixed right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white transition-transform hover:scale-105 sm:right-5 ${hasBottomBar ? 'bottom-[152px] lg:bottom-5' : 'bottom-5'}`}
         style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
       >
@@ -55,7 +74,7 @@ export default function ChatWidget({ tenant }) {
       </button>
 
       {open && (
-        <div className="fixed bottom-[86px] right-4 z-50 flex h-[min(560px,calc(100dvh-110px))] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-section border border-[rgba(44,56,120,0.32)] bg-white/72 shadow-panel backdrop-blur-2xl animate-rise">
+        <div role="dialog" aria-modal="true" aria-label="AI 상담사 모비" className="fixed bottom-[86px] right-4 z-50 flex h-[min(560px,calc(100dvh-110px))] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-section border border-[rgba(44,56,120,0.32)] bg-white/72 shadow-panel backdrop-blur-2xl animate-rise">
           {/* 헤더 */}
           <div className="flex items-center gap-3 bg-primary/90 px-4 py-3.5 backdrop-blur-sm">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white ring-1 ring-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] backdrop-blur-sm"><AiStarsIcon size={23} /></div>
@@ -65,13 +84,13 @@ export default function ChatWidget({ tenant }) {
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-ok animate-live" /> 실시간 응답 · 평균 18초
               </div>
             </div>
-            <button onClick={() => nav('/consult')} className="rounded-full bg-white/18 px-3 py-1.5 text-[11px] font-bold text-white ring-1 ring-white/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-sm hover:bg-white/28">
+            <button onClick={() => nav(tenant ? `/consult?src=${tenant.slug}` : '/consult')} className="rounded-full bg-white/18 px-3 py-1.5 text-[11px] font-bold text-white ring-1 ring-white/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-sm hover:bg-white/28">
               상담원 연결
             </button>
           </div>
 
           {/* 메시지 */}
-          <div ref={bodyRef} className="flex-1 overflow-y-auto bg-white/25 px-3.5 py-4">
+          <div ref={bodyRef} aria-live="polite" className="flex-1 overflow-y-auto bg-white/25 px-3.5 py-4">
             {msgs.map((m, i) => (
               <div key={i} className={`mb-3 flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] whitespace-pre-line rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-[1.55] ${
@@ -81,7 +100,7 @@ export default function ChatWidget({ tenant }) {
                   {m.action?.type === 'quote' && <QuoteCard quote={m.action.quote} />}
                   {m.action && (
                     <button
-                      onClick={() => { setOpen(false); nav(m.action.to) }}
+                      onClick={() => { setOpen(false); nav(withSrc(m.action.to)) }}
                       className="mt-2.5 flex w-full items-center justify-center rounded-field bg-tint px-3 py-2.5 text-[13px] font-bold text-primary-text hover:bg-primary hover:text-white transition-colors"
                     >
                       {m.action.label} →

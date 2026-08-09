@@ -1,19 +1,24 @@
 // ─── 리드 행 + 상세 드로어 (마이오피스·어드민 관제 공용) ─────────
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useStore } from '../lib/store'
 import { maskName, maskPhone, timeAgo, minutesAgo, fmtDateTime, won } from '../lib/engine'
 import { catBySlug, LEAD_STATUS, LEAD_TRANSITIONS, STATUS_COLOR, unitName, unitBySigungu } from '../lib/constants'
 import { StatusChip, Drawer, Btn, useToast, Modal } from './ui'
 import { callClaude } from '../lib/ai'
+import { AiSpark } from './AiPanel'
 
 export function LeadRow({ lead, onOpen, showTenant, tenants }) {
   const overdue = lead.status === '접수' && minutesAgo(lead.createdAt) >= 10
   const cat = catBySlug(lead.cat)
   const tenant = showTenant ? tenants?.find((t) => t.id === lead.tenantId) : null
   return (
-    <button
+    // 행 안에 tel 링크·알림톡 버튼이 있어 button 중첩 금지 — div[role=button]으로 키보드 동작 유지
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onOpen}
-      className={`grid w-full items-center gap-2 border-b border-brow px-3 py-3 text-left transition-colors hover:bg-brow/60 ${!lead.read ? 'bg-primary/5' : ''} grid-cols-[1fr_auto] sm:grid-cols-[110px_92px_1fr_80px_88px_auto] sm:px-4`}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { if (e.key === ' ') e.preventDefault(); onOpen() } }}
+      className={`grid w-full cursor-pointer items-center gap-2 border-b border-brow px-3 py-3 text-left outline-none transition-colors hover:bg-brow/60 focus-visible:ring-2 ring-primary/40 ${!lead.read ? 'bg-primary/5' : ''} grid-cols-[1fr_auto] sm:grid-cols-[110px_92px_1fr_80px_88px_auto] sm:px-4`}
     >
       <span className="flex items-center gap-1.5 text-[13.5px] font-bold text-bink">
         {!lead.read && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />}
@@ -33,12 +38,13 @@ export function LeadRow({ lead, onOpen, showTenant, tenants }) {
         <a
           href={`tel:${lead.phone}`}
           onClick={(e) => e.stopPropagation()}
-          className="ml-auto flex h-[30px] w-[30px] items-center justify-center rounded-full bg-tint text-[13px] text-primary-text hover:bg-primary hover:text-white"
+          className="ml-auto flex h-9 w-9 items-center justify-center rounded-full bg-tint text-[13px] text-primary-text hover:bg-primary hover:text-white"
           title="전화 걸기"
+          aria-label="전화 걸기"
         >📞</a>
         <AlimBtn lead={lead} />
       </span>
-    </button>
+    </div>
   )
 }
 
@@ -47,8 +53,9 @@ function AlimBtn({ lead }) {
   return (
     <button
       onClick={(e) => { e.stopPropagation(); toast(`${maskName(lead.name)} 고객에게 알림톡을 보냈어요`) }}
-      className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-ok/10 text-[13px] text-ok hover:bg-ok hover:text-white"
+      className="flex h-9 w-9 items-center justify-center rounded-full bg-ok/10 text-[13px] text-ok hover:bg-ok hover:text-white"
       title="알림톡 보내기"
+      aria-label="알림톡 보내기"
     >💬</button>
   )
 }
@@ -62,6 +69,9 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
   const [memo, setMemo] = useState(lead?.memo ?? '')
   const [cancelOpen, setCancelOpen] = useState(false)
   const [reason, setReason] = useState('')
+
+  // 드로어는 상시 마운트 — 리드가 바뀔 때 로컬 상태를 재동기화 (이전 메모/사유 이월·소실 방지)
+  useEffect(() => { setMemo(lead?.memo ?? ''); setReason(''); setCancelOpen(false) }, [lead?.id])
 
   if (!lead) return <Drawer open={false} onClose={onClose} title="" />
   const cat = catBySlug(lead.cat)
@@ -89,7 +99,11 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
         <div className="mt-3 grid grid-cols-2 gap-y-2 text-[13px]">
           <span className="text-bfaint">연락처</span><span className="tnum font-semibold text-bink">{maskPhone(lead.phone)}</span>
           <span className="text-bfaint">지역</span><span className="font-semibold text-bink">{lead.sigungu}</span>
-          <span className="text-bfaint">관심 서비스</span><span className="font-semibold text-primary-text">{cat?.name}</span>
+          <span className="text-bfaint">관심 서비스</span>
+          {/* 복수 관심 카테고리(cats) 지원 — 있으면 전부 표시 */}
+          <span className="font-semibold text-primary-text">
+            {lead.cats?.length > 1 ? lead.cats.map((slug) => catBySlug(slug)?.name).filter(Boolean).join(' · ') : cat?.name}
+          </span>
           <span className="text-bfaint">희망 시간</span><span className="font-semibold text-bink">{lead.wish}</span>
           <span className="text-bfaint">유입 경로</span>
           <span className="font-semibold text-bink">
@@ -153,7 +167,7 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
         <textarea
           value={memo}
           onChange={(e) => setMemo(e.target.value)}
-          onBlur={() => dispatch({ type: 'LEAD_MEMO', id: lead.id, memo })}
+          onBlur={() => { if (lead && memo !== lead.memo) dispatch({ type: 'LEAD_MEMO', id: lead.id, memo }) }}
           placeholder="상담 내용, 고객 요청사항을 남겨두세요"
           className="mt-2 min-h-[76px] w-full rounded-field border border-bline bg-white p-3 text-[13.5px] text-bink placeholder:text-bfaint focus:border-primary"
         />
@@ -195,14 +209,7 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
 }
 
 // ─── 셀러 AI 설계 어시스턴트 (기획서 표2 셀러 AI · Opus 5) ──────────
-function AiSpark({ size = 15 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M13.5 2c.7 4.7 2.3 6.3 7 7-4.7.7-6.3 2.3-7 7-.7-4.7-2.3-6.3-7-7 4.7-.7 6.3-2.3 7-7Z" />
-      <path d="M6 14c.35 2.2 1.15 3 3.3 3.3-2.15.3-2.95 1.1-3.3 3.3-.35-2.2-1.15-3-3.3-3.3C4.85 17 5.65 16.2 6 14Z" />
-    </svg>
-  )
-}
+// AiSpark 아이콘은 ./AiPanel 단일 소스에서 import (중복 정의 제거)
 function localDesign(lead) {
   const cat = catBySlug(lead.cat)?.name ?? '생활서비스'
   const M = {
@@ -223,9 +230,15 @@ function AiDesignPanel({ lead }) {
     const cat = catBySlug(lead.cat)?.name ?? '생활서비스'
     const q = lead.quote ? ` 계산기견적: ${lead.quote.label ?? `월 ${won(lead.quote.total)}·사은품 ${won(lead.quote.gift)}`}.` : ''
     const prompt = `당신은 모두온 셀러의 AI 설계 어시스턴트입니다. 아래 고객에게 최적 상품 구성과 상담 스크립트를 한국어로 간결히 제안하세요. 과장·수익보장 표현 금지.\n고객: 지역 ${lead.sigungu} · 관심 ${cat} · 희망상담 ${lead.wish}.${q}\n형식(각 1줄):\n추천 구성 — ...\n예상 혜택 — 숫자 포함\n상담 스크립트 — "..."`
-    const reply = await callClaude(prompt, 'seller-design')
-    setText(reply ?? localDesign(lead))
-    setSrc(reply ? 'claude' : 'local')
+    try {
+      const reply = await callClaude(prompt, 'seller-design')
+      setText(reply ?? localDesign(lead))
+      setSrc(reply ? 'claude' : 'local')
+    } catch {
+      // 호출 실패 시 스피너에 갇히지 않게 로컬 브레인으로 폴백
+      setText(localDesign(lead))
+      setSrc('local')
+    }
     setState('done')
   }
   return (

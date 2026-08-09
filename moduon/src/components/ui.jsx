@@ -71,6 +71,8 @@ export function useCountUp(target, duration = 600) {
   const [v, setV] = useState(0)
   const started = useRef(false)
   useEffect(() => {
+    // 모션 축소 선호 시 애니메이션 생략, 목표값 즉시 표시 (SSR 안전 가드)
+    if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { setV(target); return }
     if (started.current && v === target) return
     started.current = true
     const from = 0
@@ -131,18 +133,60 @@ export function Field({ label, required, hint, children }) {
 export const inputCls = 'h-12 w-full rounded-field border border-line bg-white px-4 text-[16px] sm:text-[15px] text-ink placeholder:text-disabled focus:border-primary transition-colors'
 export const binputCls = 'h-11 sm:h-10 w-full rounded-field border border-bline bg-white px-3 text-[16px] sm:text-[14px] text-bink placeholder:text-bfaint focus:border-primary transition-colors'
 
+// ─── 다이얼로그 공통 훅 — 포커스 이동/복원 + 바디 스크롤 잠금 + Esc 닫기 + 경량 포커스 트랩 ───
+// 중첩(드로어 위 모달) 시 최상단 다이얼로그만 Esc/Tab을 처리하도록 스택 관리. open일 때만 동작.
+const FOCUSABLE = 'a[href],button:not([disabled]),textarea,input,select,[tabindex]:not([tabindex="-1"])'
+const dialogStack = []
+function useDialog(open, onClose) {
+  const ref = useRef(null)
+  const closeRef = useRef(onClose)
+  closeRef.current = onClose
+  useEffect(() => {
+    if (!open) return
+    const prevFocus = document.activeElement
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    dialogStack.push(ref)
+    ref.current?.focus()
+    const onKey = (e) => {
+      if (dialogStack[dialogStack.length - 1] !== ref) return // 최상단 다이얼로그만 반응
+      if (e.key === 'Escape') { closeRef.current?.(); return }
+      if (e.key !== 'Tab' || !ref.current) return
+      const els = ref.current.querySelectorAll(FOCUSABLE)
+      if (!els.length) return
+      const first = els[0], last = els[els.length - 1]
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      dialogStack.splice(dialogStack.indexOf(ref), 1)
+      document.body.style.overflow = prevOverflow
+      prevFocus?.focus?.()
+    }
+  }, [open])
+  return ref
+}
+
 export function Modal({ open, onClose, title, children, wide = false }) {
+  const ref = useDialog(open, onClose)
   if (!open) return null
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-bink/40 p-0 sm:items-center sm:p-6" onClick={onClose}>
       <div
+        ref={ref}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        tabIndex={-1}
         className={`safe-b max-h-[88dvh] w-full overflow-y-auto rounded-t-section bg-white p-6 shadow-panel animate-rise sm:max-h-[92dvh] sm:rounded-section ${wide ? 'sm:max-w-2xl' : 'sm:max-w-md'}`}
         onClick={(e) => e.stopPropagation()}
       >
         {title && (
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-[17px] font-extrabold text-ink">{title}</h3>
-            <button onClick={onClose} className="text-[20px] leading-none text-faint hover:text-ink">×</button>
+            <button onClick={onClose} aria-label="닫기" className="text-[20px] leading-none text-faint hover:text-ink">×</button>
           </div>
         )}
         {children}
@@ -152,13 +196,19 @@ export function Modal({ open, onClose, title, children, wide = false }) {
 }
 
 export function Drawer({ open, onClose, title, children }) {
+  const ref = useDialog(open, onClose)
   return (
     <div className={`fixed inset-0 z-50 ${open ? '' : 'pointer-events-none'}`}>
       <div className={`absolute inset-0 bg-bink/40 transition-opacity ${open ? 'opacity-100' : 'opacity-0'}`} onClick={onClose} />
-      <aside className={`absolute right-0 top-0 h-full w-full max-w-md overflow-y-auto bg-white shadow-panel transition-transform duration-200 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+      {/* 닫힘 상태로도 마운트되므로 다이얼로그 속성은 open일 때만 부여 */}
+      <aside
+        ref={ref}
+        {...(open ? { role: 'dialog', 'aria-modal': 'true', 'aria-label': title, tabIndex: -1 } : {})}
+        className={`absolute right-0 top-0 h-full w-full max-w-md overflow-y-auto bg-white shadow-panel transition-transform duration-200 ${open ? 'translate-x-0' : 'translate-x-full'}`}
+      >
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-bline bg-white px-5 py-4">
           <h3 className="text-[16px] font-extrabold text-bink">{title}</h3>
-          <button onClick={onClose} className="text-[22px] leading-none text-bfaint hover:text-bink">×</button>
+          <button onClick={onClose} aria-label="닫기" className="text-[22px] leading-none text-bfaint hover:text-bink">×</button>
         </div>
         <div className="p-5">{children}</div>
       </aside>
@@ -188,7 +238,7 @@ export function ToastProvider({ children }) {
   return (
     <ToastCtx.Provider value={push}>
       {children}
-      <div className="pointer-events-none fixed bottom-6 left-1/2 z-[70] flex w-full max-w-sm -translate-x-1/2 flex-col items-center gap-2 px-4">
+      <div role="status" aria-live="polite" className="pointer-events-none fixed bottom-6 left-1/2 z-[70] flex w-full max-w-sm -translate-x-1/2 flex-col items-center gap-2 px-4">
         {toasts.map((t) => (
           <div key={t.id} className={`animate-rise rounded-full px-5 py-3 text-[14px] font-semibold text-white shadow-panel ${t.type === 'err' ? 'bg-danger' : 'bg-bink'}`}>
             {t.msg}
