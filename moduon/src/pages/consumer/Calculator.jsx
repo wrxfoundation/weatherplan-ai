@@ -54,7 +54,7 @@ export default function Calculator() {
         {/* 조회 결과를 이동 없이 현재 견적에 바로 반영 (가능 통신사 중 첫 번째 + 최대 속도) */}
         <InstallCheck onPrefill={(res) => {
           const best = res?.carriers?.find((c) => c.ok)
-          if (!best) return
+          if (!best) { toast('설치 가능 통신사가 없어 상담 확인이 필요해요', 'err'); return }
           setCarrier(best.name)
           if (SPEED_MAP[best.max]) setSpeed(best.max)
           toast('조회 결과를 견적에 반영했어요')

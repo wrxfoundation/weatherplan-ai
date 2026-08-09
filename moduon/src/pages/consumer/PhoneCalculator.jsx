@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { PHONE_DEVICES, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, calcPhoneQuote, compareMethods } from '../../lib/phones'
-import { won } from '../../lib/engine'
+import { won, copyText } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 
 export default function PhoneCalculator() {
@@ -14,6 +14,7 @@ export default function PhoneCalculator() {
   const [method, setMethod] = useState('support')
   const [months, setMonths] = useState(24)
   const [extra15, setExtra15] = useState(true)
+  const [copied, setCopied] = useState(false)
 
   const q = useMemo(() => calcPhoneQuote({ deviceId, planId, join, method, months, extra15 }), [deviceId, planId, join, method, months, extra15])
   const cmp = useMemo(() => compareMethods({ deviceId, planId, join, months, extra15 }), [deviceId, planId, join, months, extra15])
@@ -24,6 +25,15 @@ export default function PhoneCalculator() {
       label: `${q.device.short} · ${JOIN_TYPES.find((j) => j.key === join)?.label} · ${q.plan.name}${q.months ? ` · ${q.months}개월` : ' · 일시불'} → 월 ${won(q.total)}`,
     } },
   })
+
+  // 결과 공유 — 인터넷 계산기와 동일한 카톡용 텍스트 패턴
+  const share = async () => {
+    const text = `[모두온 휴대폰 견적]\n${q.device.short} · ${JOIN_TYPES.find((j) => j.key === join)?.label} · ${q.plan.name}${q.months ? ` · ${q.months}개월 할부` : ' · 일시불'}\n월 납부금(A+B) ${won(q.total)}\n직접 계산해 보기 → ${window.location.origin}/calculator/phone\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
+    if (await copyText(text)) {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1600)
+    }
+  }
 
   return (
     <main className="mx-auto max-w-6xl px-5 pb-32 sm:px-10 lg:pb-0">
@@ -206,6 +216,9 @@ export default function PhoneCalculator() {
           <button onClick={goConsult} className="mt-4 h-[52px] w-full rounded-btn bg-primary text-[15px] font-bold text-white shadow-cta transition-colors hover:bg-primary-hover">
             이 조건으로 상담 신청하기
           </button>
+          <button onClick={share} className="glass-btn mt-2 h-11 w-full rounded-btn border border-line bg-white text-[13.5px] font-bold text-label transition-colors hover:border-primary hover:text-primary-text">
+            {copied ? '✓ 복사됐어요 — 카톡에 붙여넣으세요' : '견적 공유하기'}
+          </button>
           <p className="mt-3 text-center text-[11.5px] leading-4 text-disabled">{LEGAL.quote} 공시일 기준 지원금은 변동될 수 있습니다.</p>
         </aside>
       </div>
@@ -221,7 +234,12 @@ export default function PhoneCalculator() {
             단말 {q.months > 0 ? won(q.deviceMonthly) : '일시불'}<br />요금 {won(q.planMonthly)}
           </div>
         </div>
-        <button onClick={goConsult} className="mt-3 h-12 w-full rounded-btn bg-primary text-[15px] font-bold text-white">이 조건으로 상담 신청하기</button>
+        <div className="mt-3 flex gap-2">
+          <button onClick={share} aria-label="견적 공유" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-btn border border-line bg-white text-[17px]">
+            {copied ? '✓' : '📤'}
+          </button>
+          <button onClick={goConsult} className="h-12 flex-1 rounded-btn bg-primary text-[15px] font-bold text-white">이 조건으로 상담 신청하기</button>
+        </div>
       </div>
     </main>
   )

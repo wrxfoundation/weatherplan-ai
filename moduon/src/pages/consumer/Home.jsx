@@ -6,14 +6,24 @@ import { won } from '../../lib/engine'
 import { useCountUp } from '../../components/ui'
 import Reviews from '../../components/Reviews'
 
+// 검색 동의어 — 흔히 치는 말을 카테고리 슬러그로 정규화 (이름 스캔보다 먼저 본다)
+const SYNONYM = {
+  tv: 'internet', 티비: 'internet', 와이파이: 'internet', 인터넷: 'internet',
+  핸드폰: 'phone', 휴대전화: 'phone', 폰: 'phone', 요금제: 'phone',
+  청소: 'etc', 에어컨: 'appliance', 냉장고: 'appliance', 세탁기: 'appliance',
+  안마의자: 'rental', 매트리스: 'rental', 비데: 'rental',
+}
+
 export default function Home({ tenant }) {
   const nav = useNavigate()
   const [q, setQ] = useState('')
   const cats = tenant ? CATEGORIES.filter((c) => tenant.cats.includes(c.slug)) : CATEGORIES
   const consultTo = tenant ? `/consult?src=${tenant.slug}` : '/consult'
 
-  const search = () => {
-    const hit = CATEGORIES.find((c) => q && (c.name.includes(q) || q.includes(c.name)))
+  const search = (term = q) => {
+    const s = String(term).trim().toLowerCase()
+    const hit = (SYNONYM[s] && CATEGORIES.find((c) => c.slug === SYNONYM[s]))
+      || CATEGORIES.find((c) => s && (c.name.includes(s) || s.includes(c.name)))
     nav(hit ? `/category/${hit.slug}` : consultTo)
   }
 
@@ -62,14 +72,25 @@ export default function Home({ tenant }) {
                 placeholder="찾고 있는 서비스를 검색해보세요"
                 className="h-full flex-1 text-[16px] placeholder:text-disabled sm:text-[15px]"
               />
-              <button onClick={search} aria-label="검색" className="glass-btn-cta flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white transition-colors hover:bg-primary-hover">
+              <button onClick={() => search()} aria-label="검색" className="glass-btn-cta flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white transition-colors hover:bg-primary-hover">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
               </button>
             </div>
             <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[13.5px] font-semibold text-label">
+              {/* 해시태그 = 즉시 검색 실행 (입력만 채우고 끝나지 않는다) */}
               {['#이사', '#인터넷', '#정수기', '#렌탈', '#보험'].map((t) => (
-                <button key={t} onClick={() => setQ(t.slice(1))} className="hover:text-primary-text">{t}</button>
+                <button key={t} onClick={() => { setQ(t.slice(1)); search(t.slice(1)) }} className="hover:text-primary-text">{t}</button>
               ))}
+            </div>
+            {/* 히어로 CTA — 검색을 건너뛰는 방문자용 직행 경로 */}
+            <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2.5">
+              <Link to={consultTo} className="shimmer-cta glass-btn-cta inline-flex h-[50px] items-center rounded-btn bg-primary px-7 text-[15px] font-bold text-white transition-colors hover:bg-primary-hover">무료 상담 신청</Link>
+              <Link to="/payouts" className="text-[13.5px] font-bold text-primary-text hover:underline">실제 지급내역 보기 →</Link>
+            </div>
+            {/* 모바일 절약 증거 — 데스크톱 말풍선(SavingsBubbles) 대응 한 줄 칩 (점만 살아있게) */}
+            <div className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-2 shadow-card lg:hidden">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-ok animate-live" />
+              <span className="tnum whitespace-nowrap text-[12px] font-bold text-ink">인터넷/TV 월 32,900원 · <span className="text-ok">↓11,100원 아끼는 중</span></span>
             </div>
           </div>
         </div>

@@ -13,7 +13,20 @@ export default function Category() {
   const nav = useNavigate()
   const { db } = useStore()
   const cat = catBySlug(slug)
-  if (!cat) return null
+  // 잘못된 슬러그 — 빈 화면 대신 갈 곳을 준다
+  if (!cat) {
+    return (
+      <main className="mx-auto max-w-6xl px-5 sm:px-10">
+        <Card className="mt-8 p-8 sm:mt-12">
+          <EmptyState icon="🔍" text="찾으시는 서비스가 없어요" sub="주소가 잘못되었거나 준비 중인 카테고리예요" />
+          <div className="flex flex-wrap justify-center gap-2.5">
+            <Btn variant="outline" onClick={() => nav('/')}>전체 서비스 보기</Btn>
+            <Btn onClick={() => nav('/consult')}>무료 상담</Btn>
+          </div>
+        </Card>
+      </main>
+    )
+  }
   const products = db.products.filter((p) => p.cat === slug)
   const maxSupport = Math.max(0, ...products.map((p) => p.support))
 

@@ -15,9 +15,16 @@ const NAV = [
   { to: '/login', label: '고객센터' },
 ]
 
+// 즉시통화 — 파트너몰은 매장 직통, 본진은 대표번호
+const telOf = (tenant) => {
+  const num = tenant?.phone ?? '1660-0000'
+  return { num, href: `tel:${num.replace(/-/g, '')}`, name: tenant?.phone ? '매장 직통' : '대표번호' }
+}
+
 export function ConsumerHeader({ tenant }) {
   const nav = useNavigate()
   const [open, setOpen] = useState(false)
+  const tel = telOf(tenant)
   return (
     <header className="sticky top-0 z-40 border-b border-line-card/50 bg-cream/60 backdrop-blur-md">
       <div className="mx-auto flex h-[64px] max-w-6xl items-center justify-between px-5 sm:h-[76px] sm:px-10">
@@ -35,6 +42,12 @@ export function ConsumerHeader({ tenant }) {
           </nav>
         )}
         <div className="hidden items-center gap-2.5 md:flex">
+          <a href={tel.href} className="hidden items-center gap-1.5 pr-1.5 text-[13px] font-semibold text-body transition-colors hover:text-primary-text lg:flex">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+            {tel.name} <span className="tnum">{tel.num}</span>
+          </a>
           <button onClick={() => nav('/login')} className="glass-btn h-10 rounded-full border border-line-soft bg-white px-5 text-[14px] font-semibold text-body transition-colors hover:border-primary hover:text-primary-text">
             로그인
           </button>
@@ -50,6 +63,9 @@ export function ConsumerHeader({ tenant }) {
             <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="block py-2.5 text-[15px] font-semibold text-body">{n.label}</Link>
           ))}
           <Btn className="mt-2 w-full shimmer-cta" onClick={() => { setOpen(false); nav(tenant ? `/consult?src=${tenant.slug}` : '/consult') }}>무료 상담 신청</Btn>
+          <a href={tel.href} onClick={() => setOpen(false)} className="glass-btn mt-2 flex h-12 w-full items-center justify-center gap-1.5 rounded-btn border border-line-soft bg-white text-[15px] font-bold text-body">
+            📞 {tel.name} <span className="tnum">{tel.num}</span>
+          </a>
         </div>
       )}
     </header>
@@ -57,6 +73,7 @@ export function ConsumerHeader({ tenant }) {
 }
 
 export function ConsumerFooter({ tenant }) {
+  const tel = telOf(tenant)
   return (
     <footer className="mt-16 border-t border-line-card bg-cream pb-24 pt-10">
       <div className="mx-auto max-w-6xl px-5 sm:px-10">
@@ -74,6 +91,7 @@ export function ConsumerFooter({ tenant }) {
               <Link to="/diagnosis" className="hover:text-primary-text">AI 생활비 진단</Link>
               <Link to="/payouts" className="hover:text-primary-text">사은품 지급 명단</Link>
               <Link to="/consult" className="hover:text-primary-text">무료 상담</Link>
+              <a href={tel.href} className="tnum hover:text-primary-text">{tenant?.phone ? `매장 직통 ${tel.num}` : `전화 상담 ${tel.num}`}</a>
             </div>
             <div className="flex flex-col gap-2">
               <span className="font-bold text-ink">파트너</span>
