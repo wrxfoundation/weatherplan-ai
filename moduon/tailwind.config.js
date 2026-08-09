@@ -68,7 +68,7 @@ export default {
       },
       animation: {
         live: 'livePulse 1.6s ease-in-out infinite',
-        rise: 'riseIn .2s ease-out both',
+        rise: 'riseIn .28s cubic-bezier(0.23, 1, 0.32, 1) both',
         rowflash: 'rowFlash 1.5s ease-out both',
       },
     },
