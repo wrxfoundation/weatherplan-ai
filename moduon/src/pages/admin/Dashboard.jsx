@@ -1,16 +1,34 @@
 // ─── S-21 본사 어드민 통합 대시보드 (목업 1 구조 재현) ────────────
 // 규모 지표는 목업 기준 데모 수치, 승인 큐·리드·정책값은 실데이터 연동.
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore, adminStats } from '../../lib/store'
-import { won, num } from '../../lib/engine'
+import { won, num, minutesAgo } from '../../lib/engine'
+import { UNITS, catBySlug } from '../../lib/constants'
+import { adminBrief } from '../../lib/ai'
 import { KpiCard, Card, DeltaChip, useToast, Btn } from '../../components/ui'
 import { Donut, Legend, LineChart, HBars } from '../../components/charts'
+import { AiInsight } from '../../components/AiPanel'
 import OpsMap from '../../components/OpsMap'
 
 export default function AdminDashboard() {
   const { db, dispatch } = useStore()
   const toast = useToast()
   const s = adminStats(db)
+
+  // AI 경영 브리핑용 실데이터 집계 (권역 공석·SLA·전환·수요)
+  const brief = useMemo(() => {
+    const byUnit = {}
+    for (const u of UNITS) byUnit[u.code] = { name: u.name, active: 0 }
+    for (const t of db.tenants) { const e = byUnit[t.unit]; if (e && t.status === '활성') e.active++ }
+    const vacant = Object.values(byUnit).filter((u) => u.active === 0).map((u) => u.name)
+    const overdue = db.leads.filter((l) => l.status === '접수' && minutesAgo(l.createdAt) >= 10).length
+    const conv = db.leads.length ? Math.round((s.done.length / db.leads.length) * 100) : 0
+    const cc = {}
+    db.leads.forEach((l) => { cc[l.cat] = (cc[l.cat] ?? 0) + 1 })
+    const topCat = Object.entries(cc).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([c, n]) => ({ name: catBySlug(c)?.name ?? c, n }))
+    return { totalSales: s.totalSales, feeIncome: s.feeIncome, monthlyFees: s.monthlyFees, leadsToday: s.leadsToday.length, conv, overdue, activeCount: s.active.length, pendingApps: s.pendingApps.length, vacant, topCat }
+  }, [db, s])
 
   const salesSeries = [86, 92, 104, 98, 118, 124, 129]
   const orderSeries = [2100, 2350, 2600, 2480, 2950, 3120, 3248]
@@ -53,6 +71,15 @@ export default function AdminDashboard() {
         </Card>
         <KpiCard label="이번 달 총 매출" value={1248560000} suffix="원" delta={22.5} caption={`실 테넌트 합산 ${won(s.totalSales)}`} />
         <KpiCard label="총 누적 수익" value={12485600000} suffix="원" delta={31.2} caption="분양비+이용료+수수료 누계" />
+      </div>
+
+      <div className="mt-4">
+        <AiInsight
+          title="AI 경영 브리핑"
+          desc="오늘의 매출·리드·SLA·권역 공석·수요를 읽고 본사가 바로 실행할 우선 조치를 제안합니다."
+          cta="오늘의 브리핑 생성"
+          build={() => adminBrief(brief)}
+        />
       </div>
 
       <div className="mt-4">
@@ -238,8 +265,8 @@ export default function AdminDashboard() {
           <div className="rounded-card border border-bline p-4">
             <div className="text-[12px] font-bold text-bmuted">파트너 수익 예시</div>
             <div className="mt-1.5 text-[11.5px] text-bfaint">월 매출 1,000만원 기준</div>
-            <div className="tnum text-[12px] text-bbody">수수료 −100만 · 이용료 −10만</div>
-            <div className="tnum mt-1 text-[17px] font-extrabold text-primary-text">순수익 890만원</div>
+            <div className="tnum text-[12px] text-bbody">수수료 −{Math.round(10000000 * db.policies.feeRate / 10000)}만 · 이용료 −{Math.round(db.policies.monthlyFee / 10000)}만</div>
+            <div className="tnum mt-1 text-[17px] font-extrabold text-primary-text">순수익 {Math.round((10000000 * (1 - db.policies.feeRate) - db.policies.monthlyFee) / 10000)}만원</div>
           </div>
         </div>
         <p className="mt-3 text-[11px] text-bfaint">수익 예시는 실제 수익을 보장하지 않습니다. 수익 구조: 수수료 {Math.round(db.policies.feeRate * 100)}% · 광고 · 기타.</p>

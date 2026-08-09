@@ -5,8 +5,10 @@ import { Link, useNavigate, useOutletContext } from 'react-router-dom'
 import { useStore, tenantLeads, tenantSettlement } from '../../lib/store'
 import { won, minutesAgo, fmtDate, dday } from '../../lib/engine'
 import { LEAD_STATUS, STATUS_COLOR, catBySlug } from '../../lib/constants'
+import { sellerCoach } from '../../lib/ai'
 import { KpiCard, Card, LiveDot, useToast, useCountUp } from '../../components/ui'
 import { Donut, Legend, Spark } from '../../components/charts'
+import { AiInsight } from '../../components/AiPanel'
 import { LeadRow, LeadDrawer } from '../../components/leads'
 
 const CHART_COLORS = ['#5377D6', '#7D8EE8', '#F79009', '#DDE1EC']
@@ -74,6 +76,24 @@ export default function OfficeDashboard() {
         <KpiCard
           label="확정 수익" value={Math.max(0, settle.net)} suffix="원" accent="text-primary-text"
           caption={`${new Date(new Date().getFullYear(), new Date().getMonth() + 1, 20).getMonth() + 1}월 20일 지급 예정`}
+        />
+      </div>
+
+      {/* 오늘의 AI 코칭 — 내 리드 현황 → 지금 할 일 (Opus 5 · 로컬 폴백) */}
+      <div className="mt-4">
+        <AiInsight
+          title="오늘의 AI 코칭"
+          desc="내 리드·대기·만기 현황을 읽고 지금 바로 할 일을 우선순위로 짚어드려요."
+          cta="오늘 할 일 코칭 받기"
+          build={() => sellerCoach({
+            today: today.length,
+            waiting: waiting.length,
+            overdue: overdue.length,
+            expected: settle.expected,
+            net: settle.net,
+            topCat: catAgg.slice(0, 3).map((c) => ({ name: c.label, n: c.value })),
+            expiring: expiring.map((c) => ({ customer: c.customer, dd: dday(c.expiry) })),
+          })}
         />
       </div>
 

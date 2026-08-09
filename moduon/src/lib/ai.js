@@ -182,6 +182,78 @@ export function diagnose(answers) {
   return { items, wins, pending, total, yearly: total * 12, pct }
 }
 
+// ─── AI 브리핑 빌더 (Opus 5 · 로컬 폴백 동봉) ───────────────────
+// ai.js는 스토어에 의존하지 않는다(순수 유지) — 페이지가 db에서 집계한
+// 순수 객체를 넘기면 {prompt, task, local}을 반환. 실패 시 local이 표시된다.
+
+// 본사 어드민 — AI 경영 브리핑 (오늘의 실데이터 → 우선 조치 3)
+export function adminBrief(a) {
+  const facts = [
+    `이번 달 총 매출 ${won(a.totalSales)} · 수수료 수익 ${won(a.feeIncome)} · 월 이용료 수익 ${won(a.monthlyFees)}`,
+    `오늘 신규 리드 ${a.leadsToday}건 · 누적 전환율 ${a.conv}%`,
+    `SLA 10분 초과 미응대 ${a.overdue}건`,
+    `활성 대리점 ${a.activeCount}곳 · 분양 심사 대기 ${a.pendingApps}건`,
+    `모집 필요(총판 공석) 권역: ${a.vacant.length ? a.vacant.join(', ') : '없음'}`,
+    `수요 상위: ${a.topCat.map((t) => `${t.name} ${t.n}건`).join(', ') || '-'}`,
+  ].join('\n')
+  const prompt = `당신은 모두온 본사 운영을 돕는 AI 경영 애널리스트입니다. 아래 오늘의 실데이터만 근거로, 본사 관리자가 바로 실행할 우선 조치 3가지를 제안하세요. 각 줄은 "1. 조치 — 근거 수치" 형식으로 한 줄씩. 데이터에 없는 수치·추측 금지, 과장 금지. 마지막 줄에 "총평 —" 한 줄.\n\n[오늘의 데이터]\n${facts}`
+  return { prompt, task: 'admin-brief', local: localAdminBrief(a) }
+}
+function localAdminBrief(a) {
+  const cand = []
+  if (a.overdue > 0) cand.push(`SLA 초과 ${a.overdue}건 즉시 재배정·재알림 — 10분 초과는 전환율이 가파르게 떨어집니다.`)
+  if (a.vacant.length) cand.push(`공석 권역 총판 모집 — ${a.vacant.slice(0, 3).join(', ')}${a.vacant.length > 3 ? ' 외' : ''}. 배정할 대리점이 없으면 리드가 샙니다.`)
+  if (a.pendingApps > 0) cand.push(`분양 심사 대기 ${a.pendingApps}건 처리 — 승인 지연은 신규 매출 개시를 늦춥니다.`)
+  if (a.topCat[0]) cand.push(`수요 상위 "${a.topCat[0].name}"(${a.topCat[0].n}건) 메인 노출·번들 CTA 강화로 전환 극대화.`)
+  cand.push(`반복 수익 방어 — 수수료 ${won(a.feeIncome)} + 월 이용료 ${won(a.monthlyFees)}. 활성 대리점 ${a.activeCount}곳 리텐션 관리.`)
+  const top = cand.slice(0, 3).map((c, i) => `${i + 1}. ${c}`)
+  const bottleneck = a.overdue > 0 ? '초기 응대 속도' : a.vacant.length ? '권역 커버리지' : '노출·수요 전환'
+  top.push(`총평 — 오늘 리드 ${a.leadsToday}건 · 전환율 ${a.conv}%. 지금 병목은 ${bottleneck}입니다.`)
+  return top.join('\n')
+}
+
+// 셀러 마이오피스 — 오늘의 AI 코칭 (내 리드 현황 → 지금 할 일 3)
+export function sellerCoach(a) {
+  const facts = [
+    `오늘 새 리드 ${a.today}건 · 처리 대기 ${a.waiting}건 · SLA 10분 초과 ${a.overdue}건`,
+    `이번 달 예상 수익 ${won(a.expected)} · 확정 ${won(a.net)}`,
+    `주력 카테고리: ${a.topCat.map((t) => `${t.name} ${t.n}건`).join(', ') || '-'}`,
+    `임박 만기(재계약 기회): ${a.expiring.map((e) => `${e.customer} D-${e.dd}`).join(', ') || '없음'}`,
+  ].join('\n')
+  const prompt = `당신은 모두온 셀러(대리점 사장)의 AI 코치입니다. 아래 오늘 내 리드 현황만 근거로, 지금 바로 할 일 우선순위 3가지를 짧고 실행 중심으로 코칭하세요. 과장·수익보장 금지. 형식은 "① 지금 바로 — ...", "② 오늘 안에 — ...", "③ 놓치지 말 것 — ..." 세 줄.\n\n[내 현황]\n${facts}`
+  return { prompt, task: 'seller-coach', local: localSellerCoach(a) }
+}
+function localSellerCoach(a) {
+  const l1 = a.overdue > 0
+    ? `① 지금 바로 — 10분 초과 미응대 ${a.overdue}건부터 전화. 첫 연락이 빠를수록 계약 확률이 올라갑니다.`
+    : a.waiting > 0 ? `① 지금 바로 — 대기 ${a.waiting}건 접수 순서대로 연락.`
+    : `① 지금 바로 — 신규 리드가 없어요. 임박 만기 고객 재상담으로 매출을 방어하세요.`
+  const l2 = a.today > 0
+    ? `② 오늘 안에 — 오늘 유입 ${a.today}건 상담 메모 남기고 다음 액션 지정.${a.topCat[0] ? ` "${a.topCat[0].name}" 문의가 많아 결합 제안이 잘 먹힙니다.` : ''}`
+    : `② 오늘 안에 — 내 몰 링크를 공유해 신규 리드 유입을 만드세요.`
+  const l3 = a.expiring.length
+    ? `③ 놓치지 말 것 — 만기 임박 ${a.expiring[0].customer}(D-${a.expiring[0].dd}) 재계약 콜. 만기 직전이 락인 적기입니다.`
+    : `③ 놓치지 말 것 — 상담완료 리드의 개통 확인으로 정산 확정을 앞당기세요.`
+  return [l1, l2, l3].join('\n')
+}
+
+// 소비자 프론트 — 진단 심화 분석 (진단 결과 → 우선순위·실행 팁 내러티브)
+export function diagnosisNarrative(result) {
+  const items = result.items.map((i) => `${i.label} 월 ${won(i.save)}`).join(' · ')
+  const prompt = `당신은 모두온 AI 생활비 코치입니다. 아래 진단 결과만 근거로, 고객에게 우선순위와 실행 팁을 따뜻하고 구체적으로 한국어 3~4문장으로 조언하세요. 금액은 결과 안 수치만 사용하고 새 수치를 지어내지 마세요. 마지막 문장은 "정확한 절감액은 무료 상담에서 확정" 안내.\n\n[진단] 월 절감 여지 ${won(result.total)}(연 ${won(result.yearly)}) · 항목: ${items || '큰 낭비 없음'} · 잘 유지: ${result.wins.join(', ') || '-'} · 미평가: ${result.pending.map((p) => p.label).join(', ') || '없음'}`
+  return { prompt, task: 'diagnosis-narrative', local: localNarrative(result) }
+}
+function localNarrative(result) {
+  if (!result.items.length) return '지금은 눈에 띄는 낭비가 거의 없어요. 잘 유지하고 계신 항목을 그대로 지키시고, 약정 만기 시점마다 조건만 재점검하시면 됩니다. 정확한 절감액은 무료 상담에서 확정해 드려요.'
+  const top = result.items[0]
+  const parts = [`가장 먼저 "${top.label}"부터 잡으면 월 ${won(top.save)}이 바로 빠져요 — ${top.why}.`]
+  if (result.items[1]) parts.push(`그다음은 "${result.items[1].label}"(월 ${won(result.items[1].save)})예요.`)
+  parts.push(`제안을 모두 실행하면 월 ${won(result.total)}, 1년이면 ${won(result.yearly)}까지 아낄 수 있어요.`)
+  if (result.items.some((i) => i.manual)) parts.push('보험 항목은 설계사 검토 후 절감액이 확정돼요.')
+  parts.push('정확한 절감액은 무료 상담에서 확정해 드려요.')
+  return parts.join(' ')
+}
+
 // 진단 결과 → "절감 실행서" 마크다운 (pickai AI 명령서 구조 — 진단·지시·유지 항목·완료 기준)
 export function buildDiagnosisPlan(result) {
   const L = ['# 우리 집 생활비 절감 실행서', '', `- 작성: 모두온 AI 생활비 진단 (규칙 기반 추정)`, `- 예상 절감: 월 ${won(result.total)} · 연 ${won(result.yearly)}`, '']

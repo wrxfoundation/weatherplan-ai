@@ -1,11 +1,12 @@
 // ─── C-05 / AI-04 AI 생활비 진단기 — 1분 문답 → 절감 추정 → 상담 유도 ──
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { diagnose, buildDiagnosisPlan } from '../../lib/ai'
+import { diagnose, buildDiagnosisPlan, diagnosisNarrative } from '../../lib/ai'
 import { useStore } from '../../lib/store'
 import { won, downloadText, monthKey } from '../../lib/engine'
 import { catBySlug, LEGAL } from '../../lib/constants'
 import { Btn, Card, useCountUp, useToast } from '../../components/ui'
+import { AiInsight } from '../../components/AiPanel'
 
 const QUESTIONS = [
   { key: 'telecom', q: '한 달 휴대폰 요금은 얼마쯤인가요?', opts: [{ l: '5만원 미만', v: 40000 }, { l: '5~8만원', v: 65000 }, { l: '8만원 이상', v: 95000 }] },
@@ -130,6 +131,15 @@ function Result({ result, nav, toast, onRetry }) {
           미평가 {result.pending.length}항목({result.pending.map((p) => p.label).join(' · ')})은 0점으로 치지 않고 상담에서 확인해요.
         </p>
       )}
+
+      <AiInsight
+        className="mt-4"
+        consumer
+        title="AI 심화 분석"
+        desc="진단 결과를 바탕으로 무엇부터 잡을지, 숨은 절감 포인트까지 짚어드려요."
+        cta="AI 심화 분석 받기"
+        build={() => diagnosisNarrative(result)}
+      />
 
       <Btn size="lg" className="mt-6 w-full shimmer-cta" onClick={() => nav('/consult')}>이 결과로 무료 상담 받기</Btn>
       <Btn variant="outline" size="sm" className="mt-2.5 w-full" onClick={() => { downloadText(`모두온_절감실행서_${monthKey()}.md`, buildDiagnosisPlan(result)); toast('절감 실행서를 내려받았어요') }}>
