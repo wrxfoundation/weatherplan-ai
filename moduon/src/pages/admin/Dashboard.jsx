@@ -5,6 +5,7 @@ import { useStore, adminStats } from '../../lib/store'
 import { won, num } from '../../lib/engine'
 import { KpiCard, Card, DeltaChip, useToast, Btn } from '../../components/ui'
 import { Donut, Legend, LineChart, HBars } from '../../components/charts'
+import OpsMap from '../../components/OpsMap'
 
 export default function AdminDashboard() {
   const { db, dispatch } = useStore()
@@ -52,6 +53,10 @@ export default function AdminDashboard() {
         </Card>
         <KpiCard label="이번 달 총 매출" value={1248560000} suffix="원" delta={22.5} caption={`실 테넌트 합산 ${won(s.totalSales)}`} />
         <KpiCard label="총 누적 수익" value={12485600000} suffix="원" delta={31.2} caption="분양비+이용료+수수료 누계" />
+      </div>
+
+      <div className="mt-4">
+        <OpsMap />
       </div>
 
       {/* 분양 및 운영 현황 */}
