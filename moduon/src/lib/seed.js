@@ -123,7 +123,6 @@ export function buildSeed() {
       { id: 'G3', at: dayAgo(2), actor: 'AI 엔진', action: '리드 재배정', target: 'L-0812', detail: 'SLA 60분 초과 → 관리단 에스컬레이션' },
       { id: 'G4', at: dayAgo(30), actor: '본사 관리자', action: '정책 변경', target: '분양 정책 v3', detail: '분양비 100만 / 월 이용료 10만 / 수수료 10%' },
     ],
-    chatLog: [],
     demoFeed: true,
     lastSpawn: 0,
   }

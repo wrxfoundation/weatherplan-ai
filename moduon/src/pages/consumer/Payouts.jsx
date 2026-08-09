@@ -80,7 +80,7 @@ export default function Payouts() {
         </>
       )}
 
-      <p className="mt-4 text-[11.5px] leading-[17px] text-disabled">
+      <p className="mt-4 text-[11.5px] leading-[17px] text-label">
         개인정보 보호를 위해 이름은 마스킹 처리되며, 본인 동의를 받은 지급 건만 게시됩니다. 사은품 금액은 통신사·요금제·약정·상품·재고·지역·심사 결과에 따라 달라지며 표시 금액은 최대치가 아닙니다. 게시 내역은 데모 표본입니다.
       </p>
 
@@ -114,7 +114,7 @@ export default function Payouts() {
                 </tbody>
               </table>
             </div>
-            <p className="mt-3 text-[11px] leading-4 text-disabled">현금 사은품은 설치·개통 확인 후 영업일 7일 이내 신청인 명의 계좌로 지급됩니다. 금액은 조건별 상이하며 최대치가 아닙니다.</p>
+            <p className="mt-3 text-[11px] leading-4 text-label">현금 사은품은 설치·개통 확인 후 영업일 7일 이내 신청인 명의 계좌로 지급됩니다. 금액은 조건별 상이하며 최대치가 아닙니다.</p>
           </>
         )}
       </Modal>

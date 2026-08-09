@@ -92,7 +92,7 @@ function Result({ result, answers, nav, toast, onRetry }) {
   const monthly = useCountUp(result.total, 900)
   const share = async () => {
     // 답변을 링크에 실어 받는 사람도 같은 결과 화면을 바로 본다 (답변은 ASCII라 btoa 안전)
-    const url = `${location.origin}/diagnosis?r=${encodeURIComponent(btoa(JSON.stringify(answers)))}`
+    const url = `${window.location.origin}/diagnosis?r=${encodeURIComponent(btoa(JSON.stringify(answers)))}`
     const text = `모두온 AI 진단 결과: 월 ${won(result.total)} · 연 ${won(result.yearly)} 절감 가능! ${url}`
     try { await navigator.clipboard.writeText(text); toast('결과 링크를 복사했어요') } catch { toast('복사에 실패했어요', 'err') }
   }
@@ -162,7 +162,7 @@ function Result({ result, answers, nav, toast, onRetry }) {
         <Btn variant="outline" size="sm" onClick={share}>결과 공유하기</Btn>
         <Btn variant="outline" size="sm" onClick={onRetry}>다시 진단하기</Btn>
       </div>
-      <p className="mt-4 text-center text-[11.5px] leading-4 text-disabled">추정치는 평균 사례 기반이며 실제 절감액과 다를 수 있어요. {LEGAL.quote}</p>
+      <p className="mt-4 text-center text-[11.5px] leading-4 text-label">추정치는 평균 사례 기반이며 실제 절감액과 다를 수 있어요. {LEGAL.quote}</p>
     </main>
   )
 }

@@ -226,7 +226,7 @@ export default function Consult() {
       >
         무료 상담 신청하기
       </button>
-      <p className="mt-3 text-center text-[11.5px] leading-4 text-disabled">{LEGAL.privacy} {LEGAL.policy}</p>
+      <p className="mt-3 text-center text-[11.5px] leading-4 text-label">{LEGAL.privacy} {LEGAL.policy}</p>
 
       {/* 약관 전문 — 필수·선택 두 섹션을 한 모달로 */}
       <Modal open={termsOpen} onClose={() => setTermsOpen(false)} title="약관 전문">

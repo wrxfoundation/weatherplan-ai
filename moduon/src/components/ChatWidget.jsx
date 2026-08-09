@@ -143,7 +143,7 @@ export default function ChatWidget({ tenant }) {
                 <SendIcon />
               </button>
             </div>
-            <p className="mt-1.5 text-center text-[10.5px] text-disabled">{LEGAL.quote}</p>
+            <p className="mt-1.5 text-center text-[10.5px] text-label">{LEGAL.quote}</p>
           </div>
         </div>
       )}

@@ -1,5 +1,8 @@
 // ─── 경량 차트 (외부 라이브러리 없이 — 핸드오프 스펙: 라인 2px, 도넛 18px, 그리드 #EFF2F7) ──
 
+// 차트 공용 팔레트 — 화면마다 산재하던 인라인 hex의 단일 소스 (브랜드 변경 시 여기만)
+export const CHART = { primary: '#5377D6', indigo: '#7D8EE8', purple: '#8B7BFF', warn: '#F79009', ok: '#17B26A', danger: '#F04438', rest: '#DDE1EC' }
+
 // 도넛: conic-gradient + 중앙 라벨
 export function Donut({ data, size = 118, thickness = 18, centerTop, centerSub }) {
   const total = data.reduce((s, d) => s + d.value, 0) || 1

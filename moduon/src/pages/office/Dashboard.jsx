@@ -7,11 +7,11 @@ import { won, minutesAgo, fmtDate, dday } from '../../lib/engine'
 import { LEAD_STATUS, STATUS_COLOR, catBySlug } from '../../lib/constants'
 import { sellerCoach } from '../../lib/ai'
 import { KpiCard, Card, LiveDot, useToast, useCountUp } from '../../components/ui'
-import { Donut, Legend, Spark } from '../../components/charts'
+import { Donut, Legend, Spark, CHART } from '../../components/charts'
 import { AiInsight } from '../../components/AiPanel'
 import { LeadRow, LeadDrawer } from '../../components/leads'
 
-const CHART_COLORS = ['#5377D6', '#7D8EE8', '#F79009', '#DDE1EC']
+const CHART_COLORS = [CHART.primary, CHART.indigo, CHART.warn, CHART.rest]
 
 export default function OfficeDashboard() {
   const { tenant } = useOutletContext()
@@ -23,6 +23,8 @@ export default function OfficeDashboard() {
 
   const leads = useMemo(() => tenantLeads(db, tenant.id).sort((a, b) => b.createdAt - a.createdAt), [db, tenant.id])
   const today = leads.filter((l) => Date.now() - l.createdAt < 86400000)
+  // 어제 대비 델타 — 가공값이 아니라 실제 타임스탬프 비교 (투명정산 화면의 신뢰 원칙)
+  const yesterday = leads.filter((l) => { const age = Date.now() - l.createdAt; return age >= 86400000 && age < 172800000 })
   const waiting = leads.filter((l) => ['접수', '상담대기'].includes(l.status))
   const overdue = waiting.filter((l) => l.status === '접수' && minutesAgo(l.createdAt) >= 10)
   const settle = useMemo(() => tenantSettlement(db, tenant.id), [db, tenant.id])
@@ -42,7 +44,7 @@ export default function OfficeDashboard() {
   const d = new Date()
 
   const copyUrl = async () => {
-    try { await navigator.clipboard.writeText(`${location.origin}/m/${tenant.slug}`); toast('내 몰 주소를 복사했어요') } catch { toast('복사 실패', 'err') }
+    try { await navigator.clipboard.writeText(`${window.location.origin}/m/${tenant.slug}`); toast('내 몰 주소를 복사했어요') } catch { toast('복사 실패', 'err') }
   }
 
   return (
@@ -63,7 +65,7 @@ export default function OfficeDashboard() {
 
       {/* KPI 4 */}
       <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <KpiCard label="오늘 새 리드" value={today.length} suffix="건" delta={Math.max(1, Math.floor(today.length / 2))} deltaSuffix="건" caption="어제 대비" />
+        <KpiCard label="오늘 새 리드" value={today.length} suffix="건" delta={today.length - yesterday.length} deltaSuffix="건" caption="어제 대비" />
         <KpiCard
           label="처리 대기" value={waiting.length} suffix="건"
           accent={overdue.length ? 'text-warn' : undefined}
@@ -148,7 +150,7 @@ export default function OfficeDashboard() {
             <div className="mt-4 flex items-center gap-4">
               {catAgg.length > 0
                 ? <Donut data={catAgg} centerTop={`${leads.length}건`} centerSub="카테고리 비중" />
-                : <Donut data={[{ label: '-', value: 1, color: '#DDE1EC' }]} centerTop="0건" centerSub="리드 없음" />}
+                : <Donut data={[{ label: '-', value: 1, color: CHART.rest }]} centerTop="0건" centerSub="리드 없음" />}
               <Legend data={catAgg} className="flex-1" />
             </div>
             <Link to="/office/settlement" className="mt-4 flex h-10 items-center justify-center rounded-field border border-bline text-[13px] font-bold text-bbody hover:border-primary hover:text-primary-text">

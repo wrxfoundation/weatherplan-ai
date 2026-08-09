@@ -171,7 +171,7 @@ export default function PhoneCalculator() {
               <Row l={q.plan.name} v={won(q.plan.monthly)} />
               {q.planDiscount > 0 && <Row l="선택약정 할인(25%)" v={`−${won(q.planDiscount)}`} accent="text-ok" />}
             </div>
-            <p className="mt-2.5 text-[11px] leading-4 text-disabled">{LEGAL.quote} 공시일 기준 지원금은 변동될 수 있습니다.</p>
+            <p className="mt-2.5 text-[11px] leading-4 text-label">{LEGAL.quote} 공시일 기준 지원금은 변동될 수 있습니다.</p>
           </section>
         </div>
 
@@ -219,7 +219,7 @@ export default function PhoneCalculator() {
           <button onClick={share} className="glass-btn mt-2 h-11 w-full rounded-btn border border-line bg-white text-[13.5px] font-bold text-label transition-colors hover:border-primary hover:text-primary-text">
             {copied ? '✓ 복사됐어요 — 카톡에 붙여넣으세요' : '견적 공유하기'}
           </button>
-          <p className="mt-3 text-center text-[11.5px] leading-4 text-disabled">{LEGAL.quote} 공시일 기준 지원금은 변동될 수 있습니다.</p>
+          <p className="mt-3 text-center text-[11.5px] leading-4 text-label">{LEGAL.quote} 공시일 기준 지원금은 변동될 수 있습니다.</p>
         </aside>
       </div>
 

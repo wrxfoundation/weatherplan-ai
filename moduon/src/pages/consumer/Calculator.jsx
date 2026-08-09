@@ -198,7 +198,7 @@ export default function Calculator() {
           <button onClick={share} className="glass-btn mt-2 h-11 w-full rounded-btn border border-line bg-white text-[13.5px] font-bold text-label transition-colors hover:border-primary hover:text-primary-text">
             {copied ? '✓ 복사됐어요 — 카톡에 붙여넣으세요' : '견적 공유하기'}
           </button>
-          <p className="mt-3 text-center text-[11.5px] leading-4 text-disabled">{LEGAL.quote}</p>
+          <p className="mt-3 text-center text-[11.5px] leading-4 text-label">{LEGAL.quote}</p>
         </aside>
       </div>
 

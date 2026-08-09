@@ -2,13 +2,13 @@
 import { useStore } from '../../lib/store'
 import { won, timeAgo } from '../../lib/engine'
 import { Card, KpiCard, LiveDot } from '../../components/ui'
-import { Donut, Legend, LineChart } from '../../components/charts'
+import { Donut, Legend, LineChart, CHART } from '../../components/charts'
 
 const AUTO_BREAKDOWN = [
-  { label: '완전 자동 처리', value: 38542, color: '#17B26A' },
-  { label: '부분 자동(사람 확인)', value: 12847, color: '#5377D6' },
-  { label: '상담원 연결', value: 6892, color: '#F79009' },
-  { label: '대기', value: 1008, color: '#DDE1EC' },
+  { label: '완전 자동 처리', value: 38542, color: CHART.ok },
+  { label: '부분 자동(사람 확인)', value: 12847, color: CHART.primary },
+  { label: '상담원 연결', value: 6892, color: CHART.warn },
+  { label: '대기', value: 1008, color: CHART.rest },
 ]
 
 const TOP5 = [
@@ -69,9 +69,9 @@ export default function AdminAiOps() {
               <LineChart
                 labels={['월', '화', '수', '목', '금', '토', '일']}
                 series={[
-                  { label: '정상 처리', color: '#17B26A', values: [5200, 5480, 5910, 5740, 6220, 6480, 6120], fill: true },
-                  { label: '경고(지연)', color: '#F79009', values: [180, 140, 210, 160, 190, 150, 130] },
-                  { label: '오류(개입)', color: '#F04438', values: [24, 18, 31, 22, 19, 15, 12] },
+                  { label: '정상 처리', color: CHART.ok, values: [5200, 5480, 5910, 5740, 6220, 6480, 6120], fill: true },
+                  { label: '경고(지연)', color: CHART.warn, values: [180, 140, 210, 160, 190, 150, 130] },
+                  { label: '오류(개입)', color: CHART.danger, values: [24, 18, 31, 22, 19, 15, 12] },
                 ]}
               />
             </div>

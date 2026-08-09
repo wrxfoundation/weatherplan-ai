@@ -7,7 +7,7 @@ import { won, minutesAgo, monthKey } from '../../lib/engine'
 import { UNITS, catBySlug } from '../../lib/constants'
 import { adminBrief } from '../../lib/ai'
 import { KpiCard, Card, DeltaChip, useToast, Btn } from '../../components/ui'
-import { Donut, Legend, LineChart, HBars } from '../../components/charts'
+import { Donut, Legend, LineChart, HBars, CHART } from '../../components/charts'
 import { AiInsight } from '../../components/AiPanel'
 import OpsMap from '../../components/OpsMap'
 
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
               <div className="tnum text-[26px] font-extrabold text-bink">1,063<span className="text-[15px]">개</span></div>
               <div className="tnum mt-1 text-[12px] text-bfaint">분양률 85.3%</div>
             </div>
-            <Donut size={64} thickness={9} data={[{ label: '완료', value: 85.3, color: '#5377D6' }, { label: '잔여', value: 14.7, color: '#DDE1EC' }]} />
+            <Donut size={64} thickness={9} data={[{ label: '완료', value: 85.3, color: CHART.primary }, { label: '잔여', value: 14.7, color: CHART.rest }]} />
           </div>
         </Card>
         <KpiCard label="이번 달 총 매출" value={1248560000} suffix="원" delta={22.5} caption={`실 테넌트 합산 ${won(s.totalSales)}`} />
@@ -97,24 +97,24 @@ export default function AdminDashboard() {
           <h2 className="text-[15.5px] font-extrabold text-bink">분양 및 운영 현황 — 권역별</h2>
           <div className="mt-4">
             <HBars data={[
-              { label: '경기', value: 312, color: '#5377D6' },
-              { label: '경상', value: 244, color: '#7D8EE8' },
-              { label: '서울', value: 238, color: '#5377D6' },
-              { label: '전라', value: 198, color: '#7D8EE8' },
-              { label: '충청', value: 156, color: '#8B7BFF' },
-              { label: '기타', value: 100, color: '#DDE1EC' },
+              { label: '경기', value: 312, color: CHART.primary },
+              { label: '경상', value: 244, color: CHART.indigo },
+              { label: '서울', value: 238, color: CHART.primary },
+              { label: '전라', value: 198, color: CHART.indigo },
+              { label: '충청', value: 156, color: CHART.purple },
+              { label: '기타', value: 100, color: CHART.rest },
             ]} format={(v) => `${v}개`} />
           </div>
           <div className="mt-5 flex items-center gap-5 border-t border-brow pt-4">
             <Donut data={[
-              { label: '분양 완료', value: 1063, color: '#5377D6' },
-              { label: '상담 대기', value: 128, color: '#F79009' },
-              { label: '분양 가능', value: 57, color: '#DDE1EC' },
+              { label: '분양 완료', value: 1063, color: CHART.primary },
+              { label: '상담 대기', value: 128, color: CHART.warn },
+              { label: '분양 가능', value: 57, color: CHART.rest },
             ]} centerTop="85.3%" centerSub="분양률" />
             <Legend data={[
-              { label: '분양 완료', value: 1063, color: '#5377D6' },
-              { label: '상담 대기', value: 128, color: '#F79009' },
-              { label: '분양 가능', value: 57, color: '#DDE1EC' },
+              { label: '분양 완료', value: 1063, color: CHART.primary },
+              { label: '상담 대기', value: 128, color: CHART.warn },
+              { label: '분양 가능', value: 57, color: CHART.rest },
             ]} className="flex-1" />
           </div>
         </Card>
@@ -174,8 +174,8 @@ export default function AdminDashboard() {
             <LineChart
               labels={labels}
               series={[
-                { label: '매출(백만원)', color: '#5377D6', values: salesSeries, fill: true },
-                { label: '주문(건)', color: '#F79009', values: orderSeries.map((v) => v / 30) },
+                { label: '매출(백만원)', color: CHART.primary, values: salesSeries, fill: true },
+                { label: '주문(건)', color: CHART.warn, values: orderSeries.map((v) => v / 30) },
               ]}
             />
           </div>
@@ -202,14 +202,14 @@ export default function AdminDashboard() {
             </div>
             <div className="mt-3 flex items-center gap-4">
               <Donut size={96} thickness={14} data={[
-                { label: '지급 완료', value: 832, color: '#17B26A' },
-                { label: '지급 대기', value: 156, color: '#F79009' },
-                { label: '지급 예정', value: 72, color: '#DDE1EC' },
+                { label: '지급 완료', value: 832, color: CHART.ok },
+                { label: '지급 대기', value: 156, color: CHART.warn },
+                { label: '지급 예정', value: 72, color: CHART.rest },
               ]} centerTop="1,060" centerSub="전체 건" />
               <Legend data={[
-                { label: '지급 완료', value: 832, color: '#17B26A' },
-                { label: '지급 대기', value: 156, color: '#F79009' },
-                { label: '지급 예정', value: 72, color: '#DDE1EC' },
+                { label: '지급 완료', value: 832, color: CHART.ok },
+                { label: '지급 대기', value: 156, color: CHART.warn },
+                { label: '지급 예정', value: 72, color: CHART.rest },
               ]} className="flex-1" />
             </div>
           </Card>
@@ -226,7 +226,7 @@ export default function AdminDashboard() {
           <Card track="b" className="p-4">
             <div className="text-[12.5px] font-bold text-bmuted">자동화 운영률</div>
             <div className="mt-2 flex items-center gap-3">
-              <Donut size={62} thickness={9} data={[{ label: 'auto', value: 92.5, color: '#17B26A' }, { label: 'rest', value: 7.5, color: '#DDE1EC' }]} centerTop="92.5%" />
+              <Donut size={62} thickness={9} data={[{ label: 'auto', value: 92.5, color: CHART.ok }, { label: 'rest', value: 7.5, color: CHART.rest }]} centerTop="92.5%" />
               <ul className="text-[11px] leading-4 text-bbody">
                 <li>✓ 리드 배정</li><li>✓ 상담 1차 응대</li><li>✓ 정산 집계</li>
               </ul>
