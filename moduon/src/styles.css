@@ -29,6 +29,16 @@
   input, select, textarea { font-size: max(16px, 1em); }
 }
 
+/* 히어로 절약 칩 부유 애니메이션 */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+.animate-floaty { animation: floaty 4.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .animate-floaty { animation: none; }
+}
+
 /* 높이를 모르는 영역의 아코디언 — max-height 어림값 없이 grid-rows 전환.
    클래스명을 'collapse'로 쓰면 Tailwind 내장 유틸과 충돌하므로 금지. */
 .smooth-open { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.24s ease, opacity 0.24s ease; }

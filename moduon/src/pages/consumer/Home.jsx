@@ -1,7 +1,8 @@
 // ─── S-01 소비자 홈 (트랙 A · 목업 #2a/#2b 재현) ─────────────────
 import { Link, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CATEGORIES } from '../../lib/constants'
+import { won } from '../../lib/engine'
 import { useCountUp } from '../../components/ui'
 
 export default function Home({ tenant }) {
@@ -22,16 +23,11 @@ export default function Home({ tenant }) {
         {/* 와이드 PC 과확대 방지: 씬을 1760px 상한 박스에 두고 lg부터는 원본 비율 그대로(contain)
             우측 정렬 — 씬 배경이 크림이라 박스 밖 여백과 이음새 없이 이어진다 */}
         <div className="absolute inset-0 mx-auto max-w-[1760px]">
-          <img
-            src="/assets/hero-scene.jpg"
-            alt=""
-            aria-hidden
-            className="h-full w-full object-cover object-[68%_center] lg:object-contain lg:object-right"
-            loading="eager"
-            fetchPriority="high"
-          />
+          <HeroScene />
           {/* 좌측 텍스트 가독 스크림 */}
           <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/85 to-cream/5 sm:via-cream/70" />
+          {/* 절약 카운터 — 씬 위에 실제 숫자로 '계산되며 아껴지는' 연출 (AI 영상 속 글자는 뭉개지므로 DOM으로) */}
+          {!tenant && <SavingsTicker />}
         </div>
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-cream" />
 
@@ -180,6 +176,66 @@ function BenefitCard({ style, light, label, amountNum, obj, onClick }) {
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
       </span>
     </button>
+  )
+}
+
+// 히어로 씬 — 배경 루프 영상 + 정지 이미지 폴백.
+// 배경 장식에 사용자 데이터·배터리를 쓰지 않는다: 모션 최소화 설정·데이터 절약·2G면 영상 생략 (kcare 흡수)
+function HeroScene() {
+  const [video, setVideo] = useState(false)
+  useEffect(() => {
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    const c = navigator.connection
+    const slow = c?.saveData === true || /^(slow-)?2g$/.test(c?.effectiveType || '')
+    if (!reduce && !slow) setVideo(true)
+  }, [])
+  const cls = 'h-full w-full object-cover object-[68%_center] lg:object-contain lg:object-right'
+  if (video) {
+    return (
+      <video
+        className={cls}
+        autoPlay muted loop playsInline
+        poster="/assets/hero-scene.jpg"
+        aria-hidden
+        onError={() => setVideo(false)}
+      >
+        <source src="/assets/hero-video.mp4" type="video/mp4" />
+      </video>
+    )
+  }
+  return <img src="/assets/hero-scene.jpg" alt="" aria-hidden className={cls} loading="eager" fetchPriority="high" />
+}
+
+// 절약 카운터 칩 — 44,000원이 32,900원으로 계산되어 내려가는 루프
+function SavingsTicker() {
+  const START = 44000, END = 32900
+  const [v, setV] = useState(START)
+  useEffect(() => {
+    let timer, raf
+    const count = () => {
+      const t0 = performance.now()
+      const step = (now) => {
+        const p = Math.min(1, (now - t0) / 1400)
+        setV(Math.round(START + (END - START) * (1 - Math.pow(1 - p, 3))))
+        if (p < 1) raf = requestAnimationFrame(step)
+        else timer = setTimeout(() => { setV(START); timer = setTimeout(count, 800) }, 2600)
+      }
+      raf = requestAnimationFrame(step)
+    }
+    timer = setTimeout(count, 900)
+    return () => { clearTimeout(timer); cancelAnimationFrame(raf) }
+  }, [])
+  const saving = START - v
+  return (
+    <div className="animate-floaty pointer-events-none absolute bottom-[15%] right-[6%] hidden lg:block">
+      <div className="rounded-card bg-white/95 px-5 py-4 shadow-panel backdrop-blur-0">
+        <div className="text-[11.5px] font-bold text-faint">인터넷/TV 월 요금 계산 중…</div>
+        <div className="tnum mt-0.5 text-[26px] font-extrabold tracking-tight text-ink">{won(v)}</div>
+        <div className={`tnum mt-0.5 text-[12.5px] font-extrabold ${saving > 0 ? 'text-ok' : 'text-disabled'}`}>
+          {saving > 0 ? `↓ ${won(saving)} 아끼는 중` : '결합 할인 적용하면?'}
+        </div>
+      </div>
+    </div>
   )
 }
 

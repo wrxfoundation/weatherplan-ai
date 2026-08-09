@@ -3,6 +3,7 @@ dist
 # 빌드 시 scripts/fetch-assets.mjs 가 자동 다운로드하는 브랜드 에셋
 public/assets/*.webp
 public/assets/hero-scene.jpg
+public/assets/hero-video.mp4
 .env
 .env.local
 .vercel

@@ -21,6 +21,8 @@ const ASSETS = [
   ['obj-purifier.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/8ec01fae-7f2e-4433-86d3-35ae49c4f5a2.webp'],
   ['cta-chat.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/790310b0-d472-469b-b6d5-38eedd45e68e.webp'],
   ['hero-scene.jpg', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/c9df5fd4-df02-49a3-9795-c4346a4fc2ca.jpg'],
+  // 히어로 루프 영상 (씬 이미지가 시작·끝 프레임 — 이음새 없는 루프, 1600px·무음·453KB)
+  ['hero-video.mp4', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/4fa887ea-3e23-46f4-a09d-127659864b13.mp4'],
 ]
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
