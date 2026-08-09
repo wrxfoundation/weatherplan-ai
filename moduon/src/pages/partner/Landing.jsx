@@ -126,12 +126,16 @@ export default function PartnerLanding() {
         </section>
 
         {/* ── CTA 밴드 ── */}
-        <section className="mt-6 overflow-hidden rounded-section bg-band px-6 py-10 text-center shadow-panel sm:px-10">
-          <h2 className="text-[22px] font-extrabold leading-8 text-white sm:text-[24px]">권역은 선착순으로 마감됩니다</h2>
-          <p className="mt-2 text-[14px] font-medium text-white/75">서울 25개 구 · 전국 시군구 단위 사업권 — 내 지역이 남아있는지 확인해 보세요.</p>
-          <Link to="/partner/apply" className="glass-btn shimmer-cta shimmer-ink mt-6 inline-flex h-[52px] items-center rounded-btn bg-white px-8 text-[15.5px] font-bold text-primary-text transition-transform hover:-translate-y-px">
-            내 권역 확인하고 분양 신청 →
-          </Link>
+        <section className="relative mt-6 overflow-hidden rounded-section bg-band px-6 py-10 text-center sm:px-10" style={{ boxShadow: 'inset 0 1.5px 0 rgba(255,255,255,0.35), inset 0 -2px 5px rgba(20,36,90,0.35), 0 16px 44px rgba(83,119,214,0.28)' }}>
+          {/* 좌상단 진한 동색 엣지(시선 유도) + 유리 엣지 하이라이트 */}
+          <span aria-hidden className="pointer-events-none absolute inset-0 z-0 rounded-section" style={{ background: 'linear-gradient(135deg, rgba(28,48,132,0.55) 0%, rgba(28,48,132,0.16) 26%, transparent 52%)', boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.28)' }} />
+          <div className="relative z-10">
+            <h2 className="text-[22px] font-extrabold leading-8 text-white sm:text-[24px]">권역은 선착순으로 마감됩니다</h2>
+            <p className="mt-2 text-[14px] font-medium text-white/75">서울 25개 구 · 전국 시군구 단위 사업권 — 내 지역이 남아있는지 확인해 보세요.</p>
+            <Link to="/partner/apply" className="glass-btn shimmer-cta shimmer-ink mt-6 inline-flex h-[52px] items-center rounded-btn bg-white px-8 text-[15.5px] font-bold text-primary-text transition-transform hover:-translate-y-px">
+              내 권역 확인하고 분양 신청 →
+            </Link>
+          </div>
         </section>
       </main>
 
