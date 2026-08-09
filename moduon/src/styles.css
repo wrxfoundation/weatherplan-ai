@@ -35,8 +35,10 @@
   50% { transform: translateY(-9px); }
 }
 .animate-floaty { animation: floaty 4.2s ease-in-out infinite; }
+/* 돈주머니 — 더 천천히 둥둥(느린 상하 부유) */
+.animate-bagfloat { animation: floaty 5.6s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
-  .animate-floaty { animation: none; }
+  .animate-floaty, .animate-bagfloat { animation: none; }
 }
 
 /* 높이를 모르는 영역의 아코디언 — max-height 어림값 없이 grid-rows 전환.

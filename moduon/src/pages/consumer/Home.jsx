@@ -220,9 +220,9 @@ function SupportBand() {
                 <circle cx="188" cy="178" r="3" /><circle cx="254" cy="180" r="3" />
               </g>
             </svg>
-            {/* 돈주머니 (다홍색 가죽 3D · 배경 제거 이미지) */}
+            {/* 돈주머니 (다홍색 가죽 3D · 배경 제거 이미지 · 천천히 둥둥) */}
             <div className="absolute left-1/2 top-1/2 h-[58%] aspect-square -translate-x-1/2 -translate-y-1/2">
-              <img src="/assets/obj-moneybag.png" alt="지원금 주머니" className="h-full w-full object-contain" style={{ filter: 'drop-shadow(0 14px 22px rgba(214,74,38,0.28))' }} loading="lazy" />
+              <img src="/assets/obj-moneybag.png" alt="지원금 주머니" className="animate-bagfloat h-full w-full object-contain" style={{ filter: 'drop-shadow(0 14px 22px rgba(214,74,38,0.28))' }} loading="lazy" />
             </div>
             {/* 카테고리 칩 */}
             {chips.map((ch) => (
