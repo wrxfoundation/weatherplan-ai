@@ -134,13 +134,13 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.55),
     inset 0 -2px 2px rgba(36, 39, 46, 0.05),
-    0 2px 8px rgba(36, 39, 46, 0.07);
+    0 1px 2.5px rgba(36, 39, 46, 0.07);
 }
 .glass-btn-cta {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.38),
     inset 0 -2px 3px rgba(0, 0, 0, 0.10),
-    0 8px 20px rgba(83, 119, 214, 0.30);
+    0 2.5px 6px rgba(83, 119, 214, 0.30);
 }
 
 /* AI FAB — 볼륨감 있는 글라스(유리 구슬): 상단 광택림 + 하단 깊은 인셋 + 외부 글로우 */
@@ -151,7 +151,7 @@
     inset 0 3px 4px rgba(255, 255, 255, 0.6),
     inset 0 -5px 9px rgba(28, 46, 110, 0.5),
     inset 0 0 0 1px rgba(255, 255, 255, 0.10),
-    0 10px 24px rgba(83, 119, 214, 0.5),
-    0 3px 8px rgba(48, 72, 158, 0.4);
+    0 3px 7px rgba(83, 119, 214, 0.5),
+    0 1px 2.5px rgba(48, 72, 158, 0.4);
 }
 
