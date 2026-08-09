@@ -7,7 +7,9 @@
   body {
     @apply font-sans text-body antialiased;
     letter-spacing: -0.01em;
+    -webkit-tap-highlight-color: transparent;
   }
+  button, a, select, input[type='checkbox'] { touch-action: manipulation; }
   button { @apply cursor-pointer; }
   input, select, textarea { @apply outline-none; }
 }
@@ -16,6 +18,8 @@
   .tnum { font-variant-numeric: tabular-nums; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
   .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+  /* iOS 홈 인디케이터 안전영역 — 하단 고정 바·탭바 공용 */
+  .safe-b { padding-bottom: max(env(safe-area-inset-bottom), 0px); }
 }
 
 /* 트랙 A 히어로 오브젝트 페이드 마스크 (핸드오프 지침 — 정식 누끼 에셋 교체 시 제거) */

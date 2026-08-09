@@ -90,20 +90,23 @@ export function useCountUp(target, duration = 600) {
 
 export function KpiCard({ label, value, format = (n) => n.toLocaleString('ko-KR'), suffix = '', delta, deltaSuffix = '%', caption, accent, spark, track = 'b' }) {
   const n = useCountUp(typeof value === 'number' ? value : 0)
+  const str = typeof value === 'number' ? String(format(value)) : String(value)
+  // 모바일 반폭 카드에서 긴 금액이 줄바꿈·클리핑되지 않도록 자릿수 기준 폰트 축소 (금액 줄바꿈 금지 규칙 유지)
+  const sizeCls = str.length > 12 ? 'text-[16px] sm:text-[24px]' : str.length > 9 ? 'text-[19px] sm:text-[26px]' : 'text-[22px] sm:text-[26px]'
   return (
-    <Card track={track} className="p-5 animate-rise">
+    <Card track={track} className="p-4 sm:p-5 animate-rise">
       <div className="flex items-center justify-between gap-2">
-        <div className={`text-[13px] font-medium ${track === 'b' ? 'text-bmuted' : 'text-muted'}`}>{label}</div>
+        <div className={`text-[12px] font-medium sm:text-[13px] ${track === 'b' ? 'text-bmuted' : 'text-muted'}`}>{label}</div>
         {delta !== undefined && <DeltaChip value={delta} suffix={deltaSuffix} />}
       </div>
       <div className="mt-2 flex items-end justify-between gap-2">
-        <div className={`tnum whitespace-nowrap text-[26px] font-extrabold leading-9 tracking-tight ${accent ?? (track === 'b' ? 'text-bink' : 'text-ink')}`}>
+        <div className={`tnum whitespace-nowrap font-extrabold leading-8 tracking-tight sm:leading-9 ${sizeCls} ${accent ?? (track === 'b' ? 'text-bink' : 'text-ink')}`}>
           {typeof value === 'number' ? format(n) : value}
-          {suffix && <span className="ml-0.5 text-[15px] font-bold">{suffix}</span>}
+          {suffix && <span className="ml-0.5 text-[13px] font-bold sm:text-[15px]">{suffix}</span>}
         </div>
-        {spark}
+        {spark && <span className="hidden sm:block">{spark}</span>}
       </div>
-      {caption && <div className={`mt-1.5 text-[12px] ${track === 'b' ? 'text-bfaint' : 'text-faint'}`}>{caption}</div>}
+      {caption && <div className={`mt-1.5 text-[11px] sm:text-[12px] ${track === 'b' ? 'text-bfaint' : 'text-faint'}`}>{caption}</div>}
     </Card>
   )
 }
@@ -124,15 +127,16 @@ export function Field({ label, required, hint, children }) {
   )
 }
 
-export const inputCls = 'h-12 w-full rounded-field border border-line bg-white px-4 text-[15px] text-ink placeholder:text-disabled focus:border-primary transition-colors'
-export const binputCls = 'h-10 w-full rounded-field border border-bline bg-white px-3 text-[14px] text-bink placeholder:text-bfaint focus:border-primary transition-colors'
+// 모바일 입력은 16px — iOS 사파리 포커스 자동 확대 방지
+export const inputCls = 'h-12 w-full rounded-field border border-line bg-white px-4 text-[16px] sm:text-[15px] text-ink placeholder:text-disabled focus:border-primary transition-colors'
+export const binputCls = 'h-11 sm:h-10 w-full rounded-field border border-bline bg-white px-3 text-[16px] sm:text-[14px] text-bink placeholder:text-bfaint focus:border-primary transition-colors'
 
 export function Modal({ open, onClose, title, children, wide = false }) {
   if (!open) return null
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-bink/40 p-0 sm:items-center sm:p-6" onClick={onClose}>
       <div
-        className={`max-h-[92vh] w-full overflow-y-auto rounded-t-section bg-white p-6 shadow-panel animate-rise sm:rounded-section ${wide ? 'sm:max-w-2xl' : 'sm:max-w-md'}`}
+        className={`safe-b max-h-[88dvh] w-full overflow-y-auto rounded-t-section bg-white p-6 shadow-panel animate-rise sm:max-h-[92dvh] sm:rounded-section ${wide ? 'sm:max-w-2xl' : 'sm:max-w-md'}`}
         onClick={(e) => e.stopPropagation()}
       >
         {title && (

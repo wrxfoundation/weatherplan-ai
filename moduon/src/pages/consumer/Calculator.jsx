@@ -52,12 +52,22 @@ export default function Calculator() {
           </StepCard>
 
           <StepCard no={3} title="결합 상품을 선택하세요">
-            <div className="grid grid-cols-3 gap-3">
+            {/* 핸드오프 #4b: 모바일에서는 행형 리스트 */}
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:gap-3">
               {Object.entries(BUNDLE_MAP).map(([b, dc]) => (
-                <OptionCard key={b} active={bundle === b} onClick={() => setBundle(b)}>
-                  <span className="text-[13.5px] font-bold text-ink">{BUNDLE_LABEL[b]}</span>
-                  <span className={`tnum mt-1 text-[12.5px] font-bold ${dc ? 'text-ok' : 'text-faint'}`}>{dc ? `월 −${won(dc)}` : '할인 없음'}</span>
-                </OptionCard>
+                <button
+                  key={b}
+                  onClick={() => setBundle(b)}
+                  className={`relative flex items-center justify-between gap-2 rounded-btn border p-3.5 text-left transition-all sm:flex-col sm:items-start sm:justify-start sm:p-4 ${
+                    bundle === b ? 'border-[1.5px] border-primary bg-tint' : 'border-line bg-white hover:border-primary/50'
+                  }`}
+                >
+                  <span className="flex items-center gap-2.5 sm:block">
+                    <span className={`h-[18px] w-[18px] shrink-0 rounded-full sm:absolute sm:right-3 sm:top-3 ${bundle === b ? 'border-[6px] border-primary bg-white' : 'border border-line bg-white'}`} />
+                    <span className="text-[13.5px] font-bold text-ink">{BUNDLE_LABEL[b]}</span>
+                  </span>
+                  <span className={`tnum text-[12.5px] font-bold sm:mt-1 ${dc ? 'text-ok' : 'text-faint'}`}>{dc ? `월 −${won(dc)}` : '할인 없음'}</span>
+                </button>
               ))}
             </div>
           </StepCard>
@@ -77,6 +87,17 @@ export default function Calculator() {
               <span className="tnum text-[13.5px] font-bold text-ok">월 −{won(3000)}</span>
             </button>
           </StepCard>
+
+          {/* 모바일 전용 — 합계 상세 분해 (데스크톱은 우측 스티키 카드) */}
+          <section className="rounded-card bg-white p-5 shadow-card lg:hidden">
+            <div className="text-[13px] font-bold text-ink">나의 구성 상세</div>
+            <div className="mt-3 flex flex-col gap-2 text-[13.5px]">
+              <Row label="월 기본요금" value={won(q.base)} />
+              <Row label="결합 할인" value={q.bundleDc ? `−${won(q.bundleDc)}` : '미선택'} accent={q.bundleDc ? 'text-ok' : 'text-disabled'} />
+              <Row label="프로모션 할인" value={q.promoDc ? `−${won(q.promoDc)}` : '미선택'} accent={q.promoDc ? 'text-ok' : 'text-disabled'} />
+            </div>
+            <div className="mt-2.5 border-t border-dashed border-line pt-2.5 text-[11.5px] text-faint">약정 3년 · 설치비 무료 — {LEGAL.quote}</div>
+          </section>
         </div>
 
         {/* ── 우: 스티키 합계 카드 (데스크톱) ── */}
@@ -110,7 +131,7 @@ export default function Calculator() {
       </div>
 
       {/* ── 모바일 하단 고정 바 ── */}
-      <div className="fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-5 pt-4 shadow-bottombar lg:hidden">
+      <div className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-4 shadow-bottombar lg:hidden">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-[11px] font-semibold text-faint">월 납부금</div>

@@ -83,7 +83,7 @@ export default function OfficeLayout() {
       </main>
 
       {/* 모바일 하단 탭바 */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-bline bg-white shadow-bottombar lg:hidden">
+      <nav className="safe-b fixed inset-x-0 bottom-0 z-30 flex border-t border-bline bg-white shadow-bottombar lg:hidden">
         {MENU.slice(0, 4).map((m) => (
           <NavLink key={m.to} to={m.to} end={m.end} className={({ isActive }) => `relative flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-semibold ${isActive ? 'text-primary-text' : 'text-bfaint'}`}>
             <span className="text-[17px] leading-5">{m.icon}</span>

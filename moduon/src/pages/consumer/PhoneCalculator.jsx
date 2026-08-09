@@ -136,6 +136,33 @@ export default function PhoneCalculator() {
               ))}
             </div>
           </section>
+
+          {/* 모바일 전용 — A+B 분해 (데스크톱은 우측 스티키 카드) */}
+          <section className="rounded-card bg-white p-5 shadow-card lg:hidden">
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] font-bold text-ink">월 납부요금정보 (A+B)</span>
+              <span className="rounded-full bg-brow px-2 py-0.5 text-[10.5px] font-bold text-bmuted">VAT 포함</span>
+            </div>
+            <div className="mt-3 rounded-field bg-cream/70 p-3.5 text-[13px]">
+              <div className="mb-1 text-[11.5px] font-extrabold text-primary-text">A. 단말 할부금</div>
+              <Row l="출고가" v={won(q.device.price)} />
+              <Row l="공통지원금" v={q.publicSupport ? `−${won(q.publicSupport)}` : '미적용'} accent={q.publicSupport ? 'text-ok' : 'text-disabled'} />
+              <Row l="추가지원금(15%)" v={q.extraSupport ? `−${won(q.extraSupport)}` : '미적용'} accent={q.extraSupport ? 'text-ok' : 'text-disabled'} />
+              <Row l="할부원금" v={won(q.principal)} bold />
+              {q.months > 0 && <Row l={`할부수수료(${q.months}개월)`} v={`+${won(q.interest)}`} accent="text-orange-text" />}
+              {q.upfront > 0 && <Row l="일시불 결제액" v={won(q.upfront)} bold />}
+              <div className="mt-1.5 flex justify-between border-t border-line pt-1.5">
+                <span className="font-bold text-ink">월 단말 할부금</span>
+                <span className="tnum font-extrabold text-ink">{q.months > 0 ? won(q.deviceMonthly) : '일시불'}</span>
+              </div>
+            </div>
+            <div className="mt-2 rounded-field bg-cream/70 p-3.5 text-[13px]">
+              <div className="mb-1 text-[11.5px] font-extrabold text-primary-text">B. 월 요금</div>
+              <Row l={q.plan.name} v={won(q.plan.monthly)} />
+              {q.planDiscount > 0 && <Row l="선택약정 할인(25%)" v={`−${won(q.planDiscount)}`} accent="text-ok" />}
+            </div>
+            <p className="mt-2.5 text-[11px] leading-4 text-disabled">{LEGAL.quote} 공시일 기준 지원금은 변동될 수 있습니다.</p>
+          </section>
         </div>
 
         {/* 우: 스티키 A+B 합계 */}
@@ -184,7 +211,7 @@ export default function PhoneCalculator() {
       </div>
 
       {/* 모바일 하단 고정 바 */}
-      <div className="fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-5 pt-4 shadow-bottombar lg:hidden">
+      <div className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-4 shadow-bottombar lg:hidden">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-[11px] font-semibold text-faint">월 납부금 (A+B)</div>

@@ -81,7 +81,7 @@ export default function AdminLayout() {
       </main>
 
       {/* 모바일 하단 탭 */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-bline bg-white shadow-bottombar lg:hidden">
+      <nav className="safe-b fixed inset-x-0 bottom-0 z-30 flex border-t border-bline bg-white shadow-bottombar lg:hidden">
         {[
           { to: '/admin', label: '대시보드', icon: '▦', end: true },
           { to: '/admin/leads', label: '관제', icon: '⚡' },

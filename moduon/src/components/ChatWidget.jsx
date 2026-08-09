@@ -38,19 +38,23 @@ export default function ChatWidget({ tenant }) {
     setBusy(false)
   }
 
+  // 계산기 화면은 모바일 하단 고정 합계 바가 있어 FAB를 그 위로 올린다
+  const hasBottomBar = loc.pathname.startsWith('/calculator')
+
   return (
     <>
       {/* 플로팅 버튼 */}
       <button
         onClick={() => setOpen(!open)}
         aria-label="AI 상담"
-        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-[24px] shadow-cta transition-transform hover:scale-105"
+        className={`fixed right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-[24px] shadow-cta transition-transform hover:scale-105 sm:right-5 ${hasBottomBar ? 'bottom-[152px] lg:bottom-5' : 'bottom-5'}`}
+        style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
       >
         {open ? <span className="text-white">×</span> : <span>🤖</span>}
       </button>
 
       {open && (
-        <div className="fixed bottom-[86px] right-4 z-50 flex h-[560px] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-section bg-white shadow-panel animate-rise">
+        <div className="fixed bottom-[86px] right-4 z-50 flex h-[min(560px,calc(100dvh-110px))] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-section bg-white shadow-panel animate-rise">
           {/* 헤더 */}
           <div className="flex items-center gap-3 bg-primary px-4 py-3.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-[18px]">🤖</div>

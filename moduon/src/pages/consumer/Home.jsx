@@ -51,8 +51,9 @@ export default function Home({ tenant }) {
             ))}
           </div>
         </div>
-        <div className="order-first lg:order-none">
-          <img src="/assets/hero-scene.png" alt="모두온 3D 혜택 무대" className="w-full rounded-[28px] shadow-panel" loading="eager" />
+        {/* 핸드오프 #2b: 모바일에선 히어로 이미지가 검색 바 아래 전폭 */}
+        <div>
+          <img src="/assets/hero-scene.png" alt="모두온 3D 혜택 무대" className="w-full rounded-[22px] shadow-panel sm:rounded-[28px]" loading="eager" />
         </div>
       </section>
 
