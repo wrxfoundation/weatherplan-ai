@@ -219,7 +219,7 @@ function SupportBand() {
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
             <Link to="/consult" className="shimmer-cta glass-btn-cta inline-flex h-[50px] items-center rounded-btn bg-primary px-7 text-[15px] font-bold text-white transition-colors hover:bg-primary-hover">내 지원금 확인하기 →</Link>
-            <Link to="/diagnosis" className="text-[13.5px] font-bold text-primary-text hover:underline">1분 AI 진단으로 새는 돈 찾기</Link>
+            <Link to="/payouts" className="text-[13.5px] font-bold text-primary-text hover:underline">실제 지급내역 보기 →</Link>
           </div>
           <p className="mt-3 text-[11px] leading-4 text-disabled">지원금·사은품은 통신사·요금제·약정·기간·재고·지역·심사 결과에 따라 달라지며, 최대 금액은 조건 충족 시 기준입니다.</p>
         </div>

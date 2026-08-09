@@ -10,6 +10,7 @@ const NAV = [
   { to: '/', label: '서비스' },
   { to: '/calculator', label: '견적 계산기' },
   { to: '/diagnosis', label: 'AI 진단' },
+  { to: '/payouts', label: '지급 명단' },
   { to: '/partner', label: '분양 안내' },
   { to: '/login', label: '고객센터' },
 ]
@@ -71,6 +72,7 @@ export function ConsumerFooter({ tenant }) {
               <span className="font-bold text-ink">서비스</span>
               <Link to="/calculator" className="hover:text-primary-text">견적 계산기</Link>
               <Link to="/diagnosis" className="hover:text-primary-text">AI 생활비 진단</Link>
+              <Link to="/payouts" className="hover:text-primary-text">사은품 지급 명단</Link>
               <Link to="/consult" className="hover:text-primary-text">무료 상담</Link>
             </div>
             <div className="flex flex-col gap-2">
