@@ -2,7 +2,7 @@
 // 분양비·이용료·수수료율은 어드민 정책값(db.policies)을 실시간 반영(A-03 AC)
 import { Link } from 'react-router-dom'
 import { useStore, adminStats } from '../../lib/store'
-import { calcSettlement, won } from '../../lib/engine'
+import { calcSettlement, won, joinFeeRange } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { Logo, LiveDot } from '../../components/ui'
 import ChatWidget from '../../components/ChatWidget'
@@ -11,6 +11,7 @@ export default function PartnerLanding() {
   const { db } = useStore()
   const { policies } = db
   const sim = calcSettlement(10000000, policies)
+  const range = joinFeeRange(policies)
   const stats = adminStats(db)
 
   return (
@@ -113,7 +114,7 @@ export default function PartnerLanding() {
             {[
               { t: '분양 신청', d: '소재지 기준 권역이 자동 판정돼요. 신청은 1분이면 충분해요.' },
               { t: '심사 · 계약', d: '본사가 신청 내용을 검토하고 공동사업 계약을 안내해 드려요.' },
-              { t: '결제 · 몰 개설', d: `분양비 ${won(policies.joinFee)} + 월 이용료 ${won(policies.monthlyFee)}. 브랜딩 마법사로 1시간 안에 개설.` },
+              { t: '결제 · 몰 개설', d: `분양비 권역별 ${won(range.min)}~${won(range.max)} + 월 이용료 ${won(policies.monthlyFee)}. 브랜딩 마법사로 1시간 안에 개설.` },
               { t: '판매 시작', d: '리드가 실시간으로 도착하고, 정산은 매일 갱신됩니다.' },
             ].map((s, i) => (
               <div key={s.t} className="glass-tile rounded-card p-5">

@@ -78,7 +78,13 @@ export function buildSeed() {
     seedVersion: SEED_VERSION,
     products,
     policies: {
-      joinFee: 1000000,        // 초기 분양비
+      joinFee: 1000000,        // 대표 분양비(권역 미지정·미매핑 시 폴백)
+      // 권역별 분양비 — ⚠ 임시 tier 기본값(사업계획서 표 수신 후 실값 교체). 11개 영업단.
+      joinFeeByUnit: {
+        SD1: 1500000, SD2: 1500000, SD3: 1500000,             // 수도권
+        GB: 1200000, GN: 1200000, CC2: 1200000, JN: 1200000,  // 광역시 포함(대구·부산·대전·광주)
+        GW: 900000, CC1: 900000, JB: 900000, JJ: 900000,      // 도지역·세종·제주
+      },
       monthlyFee: 100000,      // 월 이용료
       feeRate: 0.1,            // 운영 수수료율(몰 매출 기준)
       version: 3,

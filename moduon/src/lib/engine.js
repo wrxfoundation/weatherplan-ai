@@ -71,6 +71,17 @@ export function calcSettlement(gross, policies) {
   return { gross, fee, monthlyFee: policies.monthlyFee, net }
 }
 
+// ─── 권역별 분양비 (권역 미지정·미매핑 시 대표값 폴백) ──────────
+export function joinFeeOf(policies, unit) {
+  return policies?.joinFeeByUnit?.[unit] ?? policies?.joinFee ?? 0
+}
+export function joinFeeRange(policies) {
+  const vals = Object.values(policies?.joinFeeByUnit ?? {})
+  if (!vals.length) { const f = policies?.joinFee ?? 0; return { min: f, max: f, varies: false } }
+  const min = Math.min(...vals), max = Math.max(...vals)
+  return { min, max, varies: min !== max }
+}
+
 // ─── L-02 리드 라우팅 ──────────────────────────────────────────
 // ① 파트너몰 유입 → 해당 파트너  ② 본진 유입 → 고객 주소지 권역의 파트너
 // ③ 권역 공석 → 관리단 → 본사 폴백

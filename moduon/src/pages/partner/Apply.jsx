@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useStore } from '../../lib/store'
 import { REGIONS, unitBySigungu, unitName, LEGAL } from '../../lib/constants'
-import { phoneValid, won } from '../../lib/engine'
+import { phoneValid, won, joinFeeOf, joinFeeRange } from '../../lib/engine'
 import { Field, inputCls, Logo, useToast } from '../../components/ui'
 
 export default function PartnerApply() {
@@ -21,6 +21,7 @@ export default function PartnerApply() {
   const [done, setDone] = useState(false)
 
   const unit = useMemo(() => (sigungu ? unitBySigungu(sigungu) : null), [sigungu])
+  const range = joinFeeRange(db.policies)
   const slugTaken = wantSlug && db.tenants.some((t) => t.slug === wantSlug)
   const slugValid = /^[a-z0-9-]{3,20}$/.test(wantSlug)
   const valid = name.trim().length >= 2 && phoneValid(phone) && sigungu && wantName.trim().length >= 2 && slugValid && !slugTaken && agree
@@ -62,7 +63,10 @@ export default function PartnerApply() {
       <main className="mx-auto max-w-md px-5">
         <h1 className="text-[24px] font-extrabold tracking-tight text-ink">분양 신청</h1>
         <p className="mt-1.5 text-[14px] text-muted">
-          초기 분양비 <strong className="tnum font-bold text-ink">{won(db.policies.joinFee)}</strong> · 월 이용료 <strong className="tnum font-bold text-ink">{won(db.policies.monthlyFee)}</strong> — 결제는 승인 후 안내돼요.
+          {unit
+            ? <>이 권역(<strong className="font-bold text-primary-text">{unitName(unit)}</strong>) 분양비 <strong className="tnum font-bold text-primary-text">{won(joinFeeOf(db.policies, unit))}</strong></>
+            : <>초기 분양비 <strong className="tnum font-bold text-ink">권역별 {won(range.min)}~{won(range.max)}</strong></>}
+          {' · '}월 이용료 <strong className="tnum font-bold text-ink">{won(db.policies.monthlyFee)}</strong> — 결제는 승인 후 안내돼요.
         </p>
 
         <div className="mt-6 flex flex-col gap-4 rounded-card bg-white p-5 shadow-card">
@@ -81,7 +85,7 @@ export default function PartnerApply() {
           <Field label="연락처" required>
             <input className={inputCls} placeholder="010-0000-0000" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
           </Field>
-          <Field label="소재지 (권역 결정 기준)" required hint={unit ? `이 지역은 ${unitName(unit)} 관할 권역이에요` : '사업자등록증 주소지 기준으로 권역이 배정돼요'}>
+          <Field label="소재지 (권역 결정 기준)" required hint={unit ? `${unitName(unit)} 관할 · 이 권역 분양비 ${won(joinFeeOf(db.policies, unit))}` : '사업자등록증 주소지 기준으로 권역·분양비가 배정돼요'}>
             <select className={`${inputCls} appearance-none ${sigungu ? '' : 'text-disabled'}`} value={sigungu} onChange={(e) => setSigungu(e.target.value)}>
               <option value="" disabled>시·군·구를 선택하세요</option>
               {REGIONS.map((r) => <option key={r.sigungu} value={r.sigungu}>{r.sigungu}</option>)}

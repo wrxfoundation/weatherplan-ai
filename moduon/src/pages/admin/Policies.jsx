@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useStore } from '../../lib/store'
 import { won, fmtDate } from '../../lib/engine'
+import { unitName } from '../../lib/constants'
 import { Card, Btn, Modal, Field, binputCls, useToast } from '../../components/ui'
 
 export default function AdminPolicies() {
@@ -27,7 +28,7 @@ export default function AdminPolicies() {
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         {[
-          { label: '초기 분양비', value: won(p.joinFee), sub: '분양 계약 시 1회' },
+          { label: '초기 분양비(대표)', value: won(p.joinFee), sub: '권역 미지정 시 폴백 · 권역별은 아래 표' },
           { label: '월 이용료', value: won(p.monthlyFee), sub: '매월 정산 시 차감' },
           { label: '운영 수수료율', value: `${Math.round(p.feeRate * 100)}%`, sub: '몰 매출 기준' },
         ].map((c) => (
@@ -38,6 +39,24 @@ export default function AdminPolicies() {
           </Card>
         ))}
       </div>
+
+      {p.joinFeeByUnit && (
+        <Card track="b" className="mt-4 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="text-[15.5px] font-extrabold text-bink">권역별 분양비 <span className="text-[12.5px] font-semibold text-bmuted">· 11개 영업단</span></div>
+            <span className="rounded-full bg-warn/10 px-2.5 py-0.5 text-[11px] font-bold text-warn">사업계획서 표 반영 대기 — 임시 tier값</span>
+          </div>
+          <div className="mt-3.5 grid grid-cols-1 gap-x-8 gap-y-0 sm:grid-cols-2 lg:grid-cols-3">
+            {Object.entries(p.joinFeeByUnit).map(([code, fee]) => (
+              <div key={code} className="flex items-center justify-between border-b border-brow py-2 text-[13px]">
+                <span className="font-semibold text-bbody">{unitName(code)}</span>
+                <span className="tnum font-bold text-bink">{won(fee)}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-[11.5px] text-bfaint">분양 신청 화면은 소재지 권역에 해당하는 위 금액을 자동 표시합니다. 실제 표를 전달주시면 값만 교체돼요.</p>
+        </Card>
+      )}
 
       <div className="mt-4 flex items-center justify-between rounded-card bg-tint px-5 py-4">
         <div className="text-[13px] font-semibold text-primary-text">
