@@ -142,9 +142,11 @@ export default function Home({ tenant }) {
         </div>
       </section>
 
-      {/* ── CTA 밴드 (파스텔 그린) ── */}
-      <section className="mt-6 overflow-hidden rounded-section" style={{ background: 'linear-gradient(135deg,#DFF3E8 0%,#C2E7D2 100%)', boxShadow: '0 16px 44px rgba(23,178,106,0.18)' }}>
-        <div className="flex flex-col items-center gap-5 px-6 py-9 text-center sm:flex-row sm:justify-between sm:px-10 sm:text-left">
+      {/* ── CTA 밴드 (파스텔 그린 · 좌상단 진한 엣지 + 유리 두께감) ── */}
+      <section className="relative mt-6 overflow-hidden rounded-section" style={{ background: 'linear-gradient(135deg,#DFF3E8 0%,#C2E7D2 100%)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 1px rgba(23,120,70,0.10), 0 12px 34px rgba(23,178,106,0.20)' }}>
+        {/* 좌상단 진한 동색 엣지(시선 유도) + 유리 엣지 하이라이트 */}
+        <span aria-hidden className="pointer-events-none absolute inset-0 z-0 rounded-section" style={{ background: 'linear-gradient(135deg, rgba(17,138,80,0.62) 0%, rgba(17,138,80,0.18) 26%, transparent 50%)', boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.38)' }} />
+        <div className="relative z-10 flex flex-col items-center gap-5 px-6 py-9 text-center sm:flex-row sm:justify-between sm:px-10 sm:text-left">
           <div className="flex flex-col items-center gap-4 sm:flex-row">
             <img src="/assets/cta-chat.webp" alt="" className="h-[88px] w-[88px] object-contain sm:h-[112px] sm:w-[112px]" loading="lazy" />
             <div>
