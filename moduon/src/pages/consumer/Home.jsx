@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { CATEGORIES } from '../../lib/constants'
 import { won } from '../../lib/engine'
 import { useCountUp } from '../../components/ui'
+import Reviews from '../../components/Reviews'
 
 export default function Home({ tenant }) {
   const nav = useNavigate()
@@ -161,6 +162,8 @@ export default function Home({ tenant }) {
         <TrustItem kind="gift" label="연간 혜택 금액" value={120} suffix="억원+" divider="lg" />
         <TrustItem kind="headset" label="전문 상담사" value={500} suffix="+" divider />
       </section>
+
+      <Reviews />
       </div>
     </main>
   )

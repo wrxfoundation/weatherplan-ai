@@ -6,6 +6,7 @@ import { won } from '../../lib/engine'
 import { Btn, Card, EmptyState } from '../../components/ui'
 import TelcoCompare from '../../components/TelcoCompare'
 import InstallCheck from '../../components/InstallCheck'
+import Reviews from '../../components/Reviews'
 
 export default function Category() {
   const { slug } = useParams()
@@ -116,6 +117,8 @@ export default function Category() {
         )}
         <p className="mt-6 text-[11.5px] text-disabled">{LEGAL.policy}</p>
       </section>
+
+      <Reviews cat={cat.name} />
 
       {/* 인터넷/TV — 요금표·절차·FAQ (탐라몰 벤치마크) */}
       {slug === 'internet' && <TelcoCompare />}

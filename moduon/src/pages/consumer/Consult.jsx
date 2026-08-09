@@ -5,6 +5,7 @@ import { useStore } from '../../lib/store'
 import { CATEGORIES, CONSULT_TIMES, REGIONS, LEGAL } from '../../lib/constants'
 import { maskPhone, phoneValid, won, captureRef } from '../../lib/engine'
 import { Field, inputCls, useToast } from '../../components/ui'
+import StatusTracker from '../../components/StatusTracker'
 
 export default function Consult() {
   const { db, dispatch } = useStore()
@@ -82,6 +83,8 @@ export default function Consult() {
             {quote && <SummaryRow k="구성 견적" v={quote.label ?? `월 ${won(quote.total)} · 사은품 ${won(quote.gift)}`} accent />}
           </div>
         </div>
+
+        <StatusTracker current={0} />
 
         <div className="mt-7 text-[13px] font-semibold text-faint">기다리는 동안 이런 혜택은 어때요?</div>
         <div className="mt-3 grid grid-cols-2 gap-3">
@@ -193,7 +196,7 @@ export default function Consult() {
       <button
         onClick={submit}
         disabled={!valid}
-        className="mt-5 h-[54px] w-full rounded-btn bg-primary text-[16px] font-bold text-white shadow-cta transition-colors hover:bg-primary-hover disabled:shadow-none"
+        className="glass-btn-cta mt-5 h-[54px] w-full rounded-btn bg-primary text-[16px] font-bold text-white transition-colors hover:bg-primary-hover disabled:shadow-none"
       >
         무료 상담 신청하기
       </button>
