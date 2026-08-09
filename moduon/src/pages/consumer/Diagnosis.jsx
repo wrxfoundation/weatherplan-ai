@@ -1,5 +1,5 @@
 // ─── C-05 / AI-04 AI 생활비 진단기 — 1분 문답 → 절감 추정 → 상담 유도 ──
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { diagnose, buildDiagnosisPlan, diagnosisNarrative } from '../../lib/ai'
 import { useStore } from '../../lib/store'
@@ -24,6 +24,16 @@ export default function Diagnosis() {
   const [answers, setAnswers] = useState({})
   const [result, setResult] = useState(null)
 
+  // 공유 딥링크(?r=base64 답변) — 유효하면 문답 없이 결과부터 보여준다 (잘못된 값은 무시)
+  useEffect(() => {
+    try {
+      const r = new URLSearchParams(window.location.search).get('r')
+      if (!r) return
+      const a = JSON.parse(atob(r))
+      if (a && typeof a === 'object' && !Array.isArray(a)) { setAnswers(a); setResult(diagnose(a)) }
+    } catch { /* noop */ }
+  }, [])
+
   const pick = (key, v) => {
     const next = { ...answers, [key]: v }
     setAnswers(next)
@@ -35,7 +45,7 @@ export default function Diagnosis() {
     }
   }
 
-  if (result) return <Result result={result} nav={nav} toast={toast} onRetry={() => { setStep(0); setAnswers({}); setResult(null) }} />
+  if (result) return <Result result={result} answers={answers} nav={nav} toast={toast} onRetry={() => { setStep(0); setAnswers({}); setResult(null) }} />
 
   const cur = QUESTIONS[step]
   return (
@@ -78,10 +88,12 @@ export default function Diagnosis() {
   )
 }
 
-function Result({ result, nav, toast, onRetry }) {
+function Result({ result, answers, nav, toast, onRetry }) {
   const monthly = useCountUp(result.total, 900)
   const share = async () => {
-    const text = `모두온 AI 진단 결과: 월 ${won(result.total)} · 연 ${won(result.yearly)} 절감 가능! ${location.origin}/diagnosis`
+    // 답변을 링크에 실어 받는 사람도 같은 결과 화면을 바로 본다 (답변은 ASCII라 btoa 안전)
+    const url = `${location.origin}/diagnosis?r=${encodeURIComponent(btoa(JSON.stringify(answers)))}`
+    const text = `모두온 AI 진단 결과: 월 ${won(result.total)} · 연 ${won(result.yearly)} 절감 가능! ${url}`
     try { await navigator.clipboard.writeText(text); toast('결과 링크를 복사했어요') } catch { toast('복사에 실패했어요', 'err') }
   }
   return (
@@ -141,7 +153,8 @@ function Result({ result, nav, toast, onRetry }) {
         build={() => diagnosisNarrative(result)}
       />
 
-      <Btn size="lg" className="mt-6 w-full shimmer-cta" onClick={() => nav('/consult')}>이 결과로 무료 상담 받기</Btn>
+      {/* 진단 컨텍스트를 상담 폼으로 — 카테고리 프리셀렉트 + 리드에 AI진단 라벨 부착 */}
+      <Btn size="lg" className="mt-6 w-full shimmer-cta" onClick={() => nav('/consult', { state: { diagnosis: { total: result.total, cats: result.items.map((i) => i.cat), label: `AI진단 · 월 ${won(result.total)} 절감 여지` } } })}>이 결과로 무료 상담 받기</Btn>
       <Btn variant="outline" size="sm" className="mt-2.5 w-full" onClick={() => { downloadText(`모두온_절감실행서_${monthKey()}.md`, buildDiagnosisPlan(result)); toast('절감 실행서를 내려받았어요') }}>
         📄 절감 실행서 다운로드
       </Btn>

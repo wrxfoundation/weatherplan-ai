@@ -1,10 +1,10 @@
 // ─── S-04 상담 신청 + 완료 (목업 #3a/#3b) — 30초 완성 리드 폼 ────
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useStore } from '../../lib/store'
 import { CATEGORIES, CONSULT_TIMES, REGIONS, LEGAL } from '../../lib/constants'
 import { maskPhone, phoneValid, won, captureRef } from '../../lib/engine'
-import { Field, inputCls, useToast } from '../../components/ui'
+import { Btn, Field, inputCls, Modal, useToast } from '../../components/ui'
 import StatusTracker from '../../components/StatusTracker'
 
 export default function Consult() {
@@ -16,23 +16,40 @@ export default function Consult() {
 
   const src = params.get('src') // 파트너몰 slug
   const tenant = src ? db.tenants.find((t) => t.slug === src) : null
-  const quote = loc.state?.quote ?? null
+  // AI 진단에서 넘어온 컨텍스트 — 계산기 견적이 없으면 진단 라벨을 견적 자리에 붙여 판매자에게 보여준다
+  const diagnosis = loc.state?.diagnosis ?? null
+  const fromDiag = !loc.state?.quote && !!diagnosis
+  const quote = loc.state?.quote ?? (diagnosis ? { label: diagnosis.label } : null)
+  const diagCats = [...new Set(diagnosis?.cats?.filter((s) => CATEGORIES.some((c) => c.slug === s)) ?? [])]
 
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
-  const [sigungu, setSigungu] = useState('')
-  const [cats, setCats] = useState(params.get('cat') ? [params.get('cat')] : quote ? ['internet'] : [])
+  const [sigunguSel, setSigunguSel] = useState('') // '__custom'이면 직접 입력
+  const [customSigungu, setCustomSigungu] = useState('')
+  const [cats, setCats] = useState(params.get('cat') ? [params.get('cat')] : diagCats.length ? diagCats : quote ? ['internet'] : [])
   const [time, setTime] = useState('지금 바로')
   const [agreePrivacy, setAgreePrivacy] = useState(false)
   const [agreeMkt, setAgreeMkt] = useState(false)
+  const [termsOpen, setTermsOpen] = useState(false)
   const [done, setDone] = useState(null)
 
-  const valid = name.trim().length >= 2 && phoneValid(phone) && sigungu && cats.length > 0 && agreePrivacy
+  const sigungu = sigunguSel === '__custom' ? customSigungu.trim() : sigunguSel
 
   const toggleCat = (slug) => setCats((c) => (c.includes(slug) ? c.filter((x) => x !== slug) : [...c, slug]))
 
+  // 비활성 버튼 대신, 누르면 비어 있는 첫 항목을 짚어준다
+  const firstMissing = () => {
+    if (name.trim().length < 2) return '이름을 입력해 주세요'
+    if (!phoneValid(phone)) return '연락처를 010-0000-0000 형식으로 입력해 주세요'
+    if (!sigungu) return sigunguSel === '__custom' ? '기타 지역명을 입력해 주세요' : '지역을 선택해 주세요'
+    if (cats.length === 0) return '관심 서비스를 1개 이상 선택해 주세요'
+    if (!agreePrivacy) return '개인정보 수집·이용에 동의해 주세요'
+    return null
+  }
+
   const submit = () => {
-    if (!valid) return
+    const missing = firstMissing()
+    if (missing) { toast(missing, 'err'); return }
     // 중복 제출 가드 — 10분 내 동일 연락처·카테고리 접수가 있으면 리드를 새로 만들지 않는다 (idempotency)
     const dup = db.leads.find((l) => l.phone === phone.trim() && l.cat === cats[0] && Date.now() - l.createdAt < 10 * 60000 && l.status !== '취소')
     if (dup) {
@@ -42,7 +59,8 @@ export default function Consult() {
     }
     dispatch({
       type: 'CREATE_LEAD',
-      payload: { name: name.trim(), phone: phone.trim(), sigungu, cat: cats[0], wish: time, source: src ?? 'main', quote, ref: captureRef() },
+      // cat: 대표(라우팅용) / cats: 선택 전체 — "복수 선택" UI 약속대로 전부 저장한다
+      payload: { name: name.trim(), phone: phone.trim(), sigungu, cat: cats[0], cats: [...cats], wish: time, source: src ?? 'main', quote, ref: captureRef() },
     })
     dispatch({ type: 'AI_EVENT', payload: { kind: 'classify', q: cats.join(','), source: 'engine', label: '상담 신청', auto: true } })
     setDone({ name: name.trim(), phone: phone.trim(), sigungu, cats: [...cats], time })
@@ -103,6 +121,10 @@ export default function Consult() {
         <button onClick={() => nav(tenant ? `/m/${tenant.slug}` : '/')} className="mt-8 h-[52px] w-full rounded-btn bg-primary text-[15px] font-bold text-white shadow-cta hover:bg-primary-hover">
           확인
         </button>
+        {/* 기다리기 싫은 고객용 즉시통화 — 콜백 대기 이탈 방지 */}
+        <a href="tel:16600000" className="glass-btn mt-2.5 flex h-12 w-full items-center justify-center rounded-btn border border-line-soft bg-white text-[14px] font-bold text-body transition-colors hover:border-primary hover:text-primary-text">
+          지금 바로 전화하기 (대표번호 1660-0000)
+        </a>
       </main>
     )
   }
@@ -125,8 +147,8 @@ export default function Consult() {
       {quote && (
         <div className="mt-5 rounded-card border border-tint bg-white p-4 shadow-card">
           <div className="flex items-center justify-between text-[13px]">
-            <span className="font-bold text-ink">📄 계산기에서 가져온 구성</span>
-            <Link to="/calculator" className="font-semibold text-primary-text">수정</Link>
+            <span className="font-bold text-ink">{fromDiag ? '🤖 AI 진단에서 가져온 결과' : '📄 계산기에서 가져온 구성'}</span>
+            <Link to={fromDiag ? '/diagnosis' : '/calculator'} className="font-semibold text-primary-text">수정</Link>
           </div>
           <div className="tnum mt-1.5 text-[13.5px] text-label">
             {quote.label ?? <>{quote.carrier} {quote.speed} + {quote.bundle} → 월 <strong className="font-extrabold text-primary-text">{won(quote.total)}</strong> · 사은품 {won(quote.gift)}</>}
@@ -142,10 +164,14 @@ export default function Consult() {
           <input className={inputCls} placeholder="010-0000-0000" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
         </Field>
         <Field label="지역" required hint="상담 배정을 위해 시·군·구까지만 수집해요">
-          <select className={`${inputCls} appearance-none ${sigungu ? '' : 'text-disabled'}`} value={sigungu} onChange={(e) => setSigungu(e.target.value)}>
+          <select className={`${inputCls} appearance-none ${sigunguSel ? '' : 'text-disabled'}`} value={sigunguSel} onChange={(e) => setSigunguSel(e.target.value)}>
             <option value="" disabled>시·군·구를 선택하세요</option>
             {REGIONS.map((r) => <option key={r.sigungu} value={r.sigungu}>{r.sigungu}</option>)}
+            <option value="__custom">기타 지역(직접 입력)</option>
           </select>
+          {sigunguSel === '__custom' && (
+            <input className={`${inputCls} mt-2`} placeholder="예) 경남 진주시" value={customSigungu} onChange={(e) => setCustomSigungu(e.target.value)} />
+          )}
         </Field>
         <Field label="관심 서비스 (복수 선택)" required>
           <div className="flex flex-wrap gap-2">
@@ -184,35 +210,56 @@ export default function Consult() {
       {/* 동의 (분리 체크) */}
       <div className="mt-4 flex flex-col gap-3 rounded-card bg-white p-5 shadow-card">
         <Consent
-          checked={agreePrivacy} onChange={setAgreePrivacy}
+          checked={agreePrivacy} onChange={setAgreePrivacy} onDetail={() => setTermsOpen(true)}
           label={<><em className="not-italic font-bold text-primary-text">[필수]</em> 개인정보 수집·이용 동의</>}
         />
         <Consent
-          checked={agreeMkt} onChange={setAgreeMkt}
+          checked={agreeMkt} onChange={setAgreeMkt} onDetail={() => setTermsOpen(true)}
           label={<><em className="not-italic font-semibold text-faint">[선택]</em> 혜택 정보 마케팅 수신 동의</>}
         />
       </div>
 
+      {/* 항상 활성 — 누락 시 토스트로 첫 번째 빈 항목을 안내 */}
       <button
         onClick={submit}
-        disabled={!valid}
-        className="glass-btn-cta mt-5 h-[54px] w-full rounded-btn bg-primary text-[16px] font-bold text-white transition-colors hover:bg-primary-hover disabled:shadow-none"
+        className="glass-btn-cta mt-5 h-[54px] w-full rounded-btn bg-primary text-[16px] font-bold text-white transition-colors hover:bg-primary-hover"
       >
         무료 상담 신청하기
       </button>
       <p className="mt-3 text-center text-[11.5px] leading-4 text-disabled">{LEGAL.privacy} {LEGAL.policy}</p>
+
+      {/* 약관 전문 — 필수·선택 두 섹션을 한 모달로 */}
+      <Modal open={termsOpen} onClose={() => setTermsOpen(false)} title="약관 전문">
+        <div className="flex flex-col gap-5 text-[13px] leading-6">
+          <section>
+            <div className="font-bold text-ink">[필수] 개인정보 수집·이용 동의</div>
+            <ul className="mt-1.5 flex flex-col gap-1 text-muted">
+              <li>· 수집 항목: 이름, 연락처, 지역(시·군·구)</li>
+              <li>· 이용 목적: 상담 연결 및 상담 파트너 배정</li>
+              <li>· 보유 기간: 상담 완료 후 1년 또는 동의 철회 시까지</li>
+              <li>· 제3자 제공: 배정된 상담 파트너에 한해 제공됩니다</li>
+            </ul>
+            <p className="mt-1.5 text-[12px] text-faint">동의를 거부하실 수 있으나, 거부 시 상담 신청이 제한됩니다.</p>
+          </section>
+          <section>
+            <div className="font-bold text-ink">[선택] 혜택 정보 마케팅 수신 동의</div>
+            <p className="mt-1.5 text-muted">할인·프로모션 등 혜택 정보를 문자·알림톡으로 받아보실 수 있어요. 동의하지 않아도 상담 이용에는 제한이 없으며, 언제든 수신 거부할 수 있습니다.</p>
+          </section>
+        </div>
+        <Btn className="mt-5 w-full" onClick={() => setTermsOpen(false)}>확인</Btn>
+      </Modal>
     </main>
   )
 }
 
-function Consent({ checked, onChange, label }) {
+function Consent({ checked, onChange, label, onDetail }) {
   return (
     <div className="flex items-center justify-between">
       <button type="button" onClick={() => onChange(!checked)} className="flex items-center gap-3 text-left">
         <span className={`flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-md border text-[13px] text-white transition-colors ${checked ? 'border-primary bg-primary' : 'border-line bg-white'}`}>✓</span>
         <span className="text-[13.5px] text-body">{label}</span>
       </button>
-      <button type="button" className="text-[12px] text-faint underline hover:text-label">전문 보기</button>
+      <button type="button" onClick={onDetail} className="text-[12px] text-faint underline hover:text-label">전문 보기</button>
     </div>
   )
 }

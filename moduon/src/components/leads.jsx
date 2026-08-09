@@ -17,7 +17,7 @@ export function LeadRow({ lead, onOpen, showTenant, tenants }) {
       role="button"
       tabIndex={0}
       onClick={onOpen}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { if (e.key === ' ') e.preventDefault(); onOpen() } }}
+      onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'Enter' || e.key === ' ') { if (e.key === ' ') e.preventDefault(); onOpen() } }}
       className={`grid w-full cursor-pointer items-center gap-2 border-b border-brow px-3 py-3 text-left outline-none transition-colors hover:bg-brow/60 focus-visible:ring-2 ring-primary/40 ${!lead.read ? 'bg-primary/5' : ''} grid-cols-[1fr_auto] sm:grid-cols-[110px_92px_1fr_80px_88px_auto] sm:px-4`}
     >
       <span className="flex items-center gap-1.5 text-[13.5px] font-bold text-bink">

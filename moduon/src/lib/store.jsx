@@ -29,6 +29,11 @@ const uid = (p) => `${p}${Date.now().toString(36)}${(idSeq++).toString(36)}`
 const DEMO_NAMES = ['김도윤', '이서준', '박하은', '최지우', '정시우', '한예린', '오주원', '신아윤', '장민재', '윤채영']
 const DEMO_WISH = ['지금 바로', '오전(9~12시)', '오후(12~18시)', '저녁(18~21시)']
 
+// 권역 로드밸런싱 카운터 유지 — engine.routeLead가 leadCount 낮은 파트너를 우선하므로
+// 배정/재배정 시 여기서 증감해야 분산이 실제로 동작한다.
+const bumpLeadCount = (tenants, tid, delta) =>
+  tenants.map((t) => (t.id === tid ? { ...t, leadCount: Math.max(0, (t.leadCount ?? 0) + delta) } : t))
+
 function reducer(db, action) {
   const log = (entry) => [{ id: uid('G'), at: Date.now(), ...entry }, ...db.auditLog].slice(0, 200)
 
@@ -38,19 +43,25 @@ function reducer(db, action) {
 
     // ── 리드 파이프라인 ──────────────────────────────
     case 'CREATE_LEAD': {
-      const { name, phone, sigungu, cat, wish, source, quote, ref } = action.payload
+      const { name, phone, sigungu, cat, cats, wish, source, quote, ref } = action.payload
       // 귀속 우선순위: 파트너몰 유입(src) > 추천 링크(?ref=) > 권역 배정 (axion 흡수)
       const refSlug = source === 'main' && ref && db.tenants.some((t) => t.slug === ref && t.status === '활성') ? ref : null
       const routed = routeLead({ sourceSlug: source !== 'main' ? source : refSlug, sigungu }, db.tenants)
       const via = refSlug ? '추천 링크 유입' : routed.via
       const lead = {
-        id: uid('L'), name, phone, sigungu, cat, wish,
+        id: uid('L'), name, phone, sigungu, cat,
+        cats: cats?.length ? cats : [cat], // 다중 카테고리 상담 — cat은 대표값으로 유지
+        wish,
         status: '접수', tenantId: routed.tenantId, source: source || 'main', via,
         ref: ref || null,
         quote: quote || null, createdAt: Date.now(), read: false, memo: '',
         history: [{ at: Date.now(), to: '접수', by: 'system', note: via }],
       }
-      return { ...db, leads: [lead, ...db.leads] }
+      return {
+        ...db,
+        leads: [lead, ...db.leads],
+        tenants: routed.tenantId ? bumpLeadCount(db.tenants, routed.tenantId, +1) : db.tenants,
+      }
     }
     case 'SPAWN_DEMO_LEAD': {
       const cats = CATEGORIES.map((c) => c.slug)
@@ -58,35 +69,70 @@ function reducer(db, action) {
       const name = DEMO_NAMES[Math.floor(Math.random() * DEMO_NAMES.length)]
       const phone = `010-${String(Math.floor(1000 + Math.random() * 9000))}-${String(Math.floor(1000 + Math.random() * 9000))}`
       const routed = routeLead({ sourceSlug: null, sigungu: region.sigungu }, db.tenants)
+      const tenantId = action.tenantId ?? routed.tenantId
       const lead = {
         id: uid('L'), name, phone, sigungu: region.sigungu,
         cat: cats[Math.floor(Math.random() * cats.length)],
         wish: DEMO_WISH[Math.floor(Math.random() * DEMO_WISH.length)],
-        status: '접수', tenantId: action.tenantId ?? routed.tenantId, source: 'main', via: action.tenantId ? '데모 생성' : routed.via,
+        status: '접수', tenantId, source: 'main', via: action.tenantId ? '데모 생성' : routed.via,
         createdAt: Date.now(), read: false, memo: '', demo: true,
         history: [{ at: Date.now(), to: '접수', by: 'system', note: '실시간 데모 리드' }],
       }
-      return { ...db, leads: [lead, ...db.leads], lastSpawn: Date.now() }
+      // 데모 리드 상한 60건 — 최신 60개만 유지, 실 리드는 전량 보존 (localStorage 비대화 방지)
+      let leads = [lead, ...db.leads]
+      const demoLeads = leads.filter((l) => l.demo)
+      if (demoLeads.length > 60) {
+        const keep = new Set(demoLeads.slice(0, 60).map((l) => l.id)) // 배열은 최신순 — 앞 60개 유지
+        leads = leads.filter((l) => !l.demo || keep.has(l.id))
+      }
+      return {
+        ...db,
+        leads,
+        tenants: tenantId ? bumpLeadCount(db.tenants, tenantId, +1) : db.tenants,
+        lastSpawn: Date.now(),
+      }
     }
     case 'LEAD_STATUS': {
       const { id, to, by, note } = action.payload
+      // 전이는 LEAD_TRANSITIONS 테이블만 경유 — 불법 전이는 조용히 무시 (kcare 상태머신 패턴)
+      const lead = db.leads.find((l) => l.id === id)
+      if (!lead || !canTransition(lead.status, to)) return db
       return {
         ...db,
-        // 전이는 LEAD_TRANSITIONS 테이블만 경유 — 불법 전이는 조용히 무시 (kcare 상태머신 패턴)
-        leads: db.leads.map((l) => l.id === id && canTransition(l.status, to)
-          ? { ...l, status: to, read: true, cancelReason: to === '취소' ? note : l.cancelReason, history: [...l.history, { at: Date.now(), to, by, note }] }
+        leads: db.leads.map((l) => l.id === id
+          ? {
+              ...l, status: to, read: true,
+              cancelReason: to === '취소' ? note : l.cancelReason,
+              // 완료 시각 기록 — 정산 월 귀속의 기준 (tenantSettlement 참조)
+              completedAt: to === '완료' ? Date.now() : l.completedAt,
+              history: [...l.history, { at: Date.now(), to, by, note }],
+            }
           : l),
+        auditLog: log({ actor: by, action: '리드 상태변경', target: id, detail: `${lead.status}→${to}${note ? ` · ${note}` : ''}` }),
       }
     }
     case 'LEAD_READ':
       return { ...db, leads: db.leads.map((l) => (l.id === action.id ? { ...l, read: true } : l)) }
-    case 'LEAD_MEMO':
-      return { ...db, leads: db.leads.map((l) => (l.id === action.id ? { ...l, memo: action.memo } : l)) }
+    case 'LEAD_MEMO': {
+      const lead = db.leads.find((l) => l.id === action.id)
+      if (!lead || lead.memo === action.memo) return db // 변경 없는 blur 저장은 무시 (감사 로그 중복 방지)
+      const t = db.tenants.find((x) => x.id === lead.tenantId)
+      return {
+        ...db,
+        leads: db.leads.map((l) => (l.id === action.id ? { ...l, memo: action.memo } : l)),
+        auditLog: log({ actor: t?.name ?? '파트너', action: '상담 메모 수정', target: action.id, detail: String(action.memo ?? '').slice(0, 40) }),
+      }
+    }
     case 'LEAD_REASSIGN': {
       const { id, tenantId, by } = action.payload
       const t = db.tenants.find((x) => x.id === tenantId)
+      const prevId = db.leads.find((l) => l.id === id)?.tenantId ?? null
+      // 로드밸런싱 카운터 이관: 이전 파트너 −1(하한 0), 새 파트너 +1
+      let tenants = prevId ? bumpLeadCount(db.tenants, prevId, -1) : db.tenants
+      if (tenantId) tenants = bumpLeadCount(tenants, tenantId, +1)
       return {
         ...db,
+        tenants,
         leads: db.leads.map((l) => l.id === id
           ? { ...l, tenantId, via: '수동 재배정', history: [...l.history, { at: Date.now(), to: l.status, by, note: `수동 재배정 → ${t?.name ?? '본사'}` }] }
           : l),
@@ -106,7 +152,7 @@ function reducer(db, action) {
         id: uid('T'), slug: app.wantSlug, name: app.wantName, owner: app.name,
         unit: unitBySigungu(app.sigungu) ?? 'SD1', sigungu: app.sigungu, status: '활성',
         brand: 'blue', greeting: `${app.wantName}에 오신 것을 환영합니다!`,
-        cats: ['phone', 'internet', 'water', 'rental'], openedAt: Date.now(), monthlySales: 0, phone: app.phone,
+        cats: ['phone', 'internet', 'water', 'rental'], openedAt: Date.now(), monthlySales: 0, leadCount: 0, phone: app.phone,
       }
       return {
         ...db,
@@ -133,7 +179,14 @@ function reducer(db, action) {
     }
     case 'TENANT_BRANDING': {
       const { id, patch } = action.payload
-      return { ...db, tenants: db.tenants.map((t) => (t.id === id ? { ...t, ...patch } : t)) }
+      const t = db.tenants.find((x) => x.id === id)
+      // 실제로 값이 바뀐 키만 감사 대상 (cats 배열 비교 위해 JSON 비교)
+      const changed = t ? Object.keys(patch).filter((k) => JSON.stringify(t[k]) !== JSON.stringify(patch[k])) : []
+      return {
+        ...db,
+        tenants: db.tenants.map((x) => (x.id === id ? { ...x, ...patch } : x)),
+        auditLog: changed.length ? log({ actor: t?.owner ?? '파트너', action: '몰 브랜딩 변경', target: t?.name ?? id, detail: changed.join(', ') }) : db.auditLog,
+      }
     }
 
     case 'PRODUCT_UPDATE': {
@@ -168,7 +221,12 @@ function reducer(db, action) {
     case 'DEMO_FEED':
       return { ...db, demoFeed: action.on }
     case 'SETTLE_CONFIRM':
-      return { ...db, auditLog: log({ actor: '본사 관리자', action: '지급 확정', target: action.period, detail: action.detail }) }
+      return {
+        ...db,
+        // 확정 상태를 기간 키로 영속 — 새로고침에도 유지. 구버전 DB엔 필드가 없을 수 있어 ?? {}
+        settleConfirms: { ...(db.settleConfirms ?? {}), [action.period]: { at: Date.now(), detail: action.detail } },
+        auditLog: log({ actor: '본사 관리자', action: '지급 확정', target: action.period, detail: action.detail }),
+      }
     default:
       return db
   }
@@ -213,13 +271,15 @@ export const leadAmount = (cat) => CAT_AMOUNT[cat] ?? 500000
 
 export function tenantSettlement(db, tenantId) {
   const t = db.tenants.find((x) => x.id === tenantId)
-  const done = tenantLeads(db, tenantId).filter((l) => l.status === '완료' && monthKey(l.createdAt) === monthKey())
+  // 이중계상 방지: monthlySales는 시드 기준치(몰 자체 매출), 리드 완료분은 leadGross로만 가산.
+  // 월 귀속은 완료 시각(completedAt) 기준 — 리드를 완료 처리하는 즉시 이번 달 정산에 반영된다.
+  const done = tenantLeads(db, tenantId).filter((l) => l.status === '완료' && monthKey(l.completedAt ?? l.createdAt) === monthKey())
   const leadGross = done.reduce((s, l) => s + leadAmount(l.cat), 0)
   const gross = (t?.monthlySales ?? 0) + leadGross
   const s = calcSettlement(gross, db.policies)
   const pending = tenantLeads(db, tenantId).filter((l) => ['상담완료', '개통대기'].includes(l.status))
   const expected = pending.reduce((sum, l) => sum + leadAmount(l.cat) * db.policies.feeRate, 0)
-  return { ...s, doneCount: done.length, pendingCount: pending.length, expected, lines: done.map((l) => ({ id: l.id, name: l.name, cat: l.cat, amount: leadAmount(l.cat), fee: Math.round(leadAmount(l.cat) * db.policies.feeRate), at: l.createdAt })) }
+  return { ...s, doneCount: done.length, pendingCount: pending.length, expected, lines: done.map((l) => ({ id: l.id, name: l.name, cat: l.cat, amount: leadAmount(l.cat), fee: Math.round(leadAmount(l.cat) * db.policies.feeRate), at: l.completedAt ?? l.createdAt })) }
 }
 
 export function adminStats(db) {
