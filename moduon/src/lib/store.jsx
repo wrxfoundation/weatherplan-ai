@@ -123,6 +123,29 @@ function reducer(db, action) {
         auditLog: log({ actor: t?.name ?? '파트너', action: '상담 메모 수정', target: action.id, detail: String(action.memo ?? '').slice(0, 40) }),
       }
     }
+    // 아웃바운드 터치(알림톡·재상담 제안·전화) — 토스트로 끝나지 않고 이력·감사에 남는다
+    case 'LEAD_TOUCH': {
+      const { id, kind, by } = action.payload
+      const lead = db.leads.find((l) => l.id === id)
+      if (!lead) return db
+      return {
+        ...db,
+        leads: db.leads.map((l) => l.id === id
+          ? { ...l, history: [...l.history, { at: Date.now(), to: l.status, by, note: `${kind} 발송` }] }
+          : l),
+        auditLog: log({ actor: by, action: '아웃바운드 발송', target: id, detail: kind }),
+      }
+    }
+    case 'CONTRACT_TOUCH': {
+      const { id, kind, by } = action.payload
+      const c = db.contracts.find((x) => x.id === id)
+      if (!c) return db
+      return {
+        ...db,
+        contracts: db.contracts.map((x) => (x.id === id ? { ...x, lastTouch: { at: Date.now(), kind } } : x)),
+        auditLog: log({ actor: by, action: '아웃바운드 발송', target: `${c.customer}(${id})`, detail: kind }),
+      }
+    }
     case 'LEAD_REASSIGN': {
       const { id, tenantId, by } = action.payload
       const t = db.tenants.find((x) => x.id === tenantId)

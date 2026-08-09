@@ -10,6 +10,7 @@ import PhoneCalculator from './pages/consumer/PhoneCalculator'
 import Consult from './pages/consumer/Consult'
 import Diagnosis from './pages/consumer/Diagnosis'
 import Payouts from './pages/consumer/Payouts'
+import Support from './pages/consumer/Support'
 import TenantMall from './pages/consumer/TenantMall'
 import PartnerLanding from './pages/partner/Landing'
 import PartnerApply from './pages/partner/Apply'
@@ -58,6 +59,7 @@ export default function App() {
           <Route path="/consult" element={<Consult />} />
           <Route path="/diagnosis" element={<Diagnosis />} />
           <Route path="/payouts" element={<Payouts />} />
+          <Route path="/support" element={<Support />} />
         </Route>
 
         {/* 멀티테넌시 — 파트너 분양몰 (moduon.com/m/{slug}) */}

@@ -5,6 +5,7 @@ import { askMobi, QUICK_REPLIES } from '../lib/ai'
 import { useStore } from '../lib/store'
 import { won } from '../lib/engine'
 import { LEGAL } from '../lib/constants'
+import { IcThumbUp, IcThumbDown } from './icons'
 
 const HELLO = {
   role: 'assistant',
@@ -12,9 +13,14 @@ const HELLO = {
 }
 
 const CHAT_KEY = 'moduon_chat_v1'
+const NUDGE_KEY = 'moduon_chat_nudge_v1'
 
 export default function ChatWidget({ tenant }) {
   const [open, setOpen] = useState(false)
+  // 응답 피드백(플라이휠) — 메시지 인덱스별 helpful 기록. AI 응답·라벨은 AiOps 개선 재료.
+  const [fb, setFb] = useState({})
+  // 선제 넛지 — 세션당 1회, 6초 유휴 후 노출 (챗을 연 적 없을 때만)
+  const [nudge, setNudge] = useState(false)
   // 세션 내 대화 유지 — sessionStorage 미러 (파싱 실패 시 인사말로 초기화)
   const [msgs, setMsgs] = useState(() => { try { return JSON.parse(sessionStorage.getItem(CHAT_KEY)) ?? [HELLO] } catch { return [HELLO] } })
   const [input, setInput] = useState('')
@@ -40,6 +46,24 @@ export default function ChatWidget({ tenant }) {
     return () => document.removeEventListener('keydown', onKey)
   }, [open])
 
+  // 선제 넛지 — 6초 유휴 후 1회 (이미 봤거나 챗을 연 적 있으면 생략)
+  useEffect(() => {
+    try { if (sessionStorage.getItem(NUDGE_KEY)) return } catch { /* noop */ }
+    const t = setTimeout(() => { if (!open) setNudge(true) }, 6000)
+    return () => clearTimeout(t)
+  }, []) // eslint-disable-line
+  const dismissNudge = () => {
+    setNudge(false)
+    try { sessionStorage.setItem(NUDGE_KEY, '1') } catch { /* noop */ }
+  }
+
+  // 응답 피드백 — 저장 + AI 이벤트(라벨은 직전 사용자 질문). 재클릭으로 정정 가능.
+  const feedback = (i, helpful) => {
+    setFb((f) => ({ ...f, [i]: helpful }))
+    const lastQ = [...msgs.slice(0, i)].reverse().find((m) => m.role === 'user')?.text ?? ''
+    dispatch({ type: 'AI_EVENT', payload: { kind: 'feedback', helpful, q: lastQ.slice(0, 60), source: msgs[i]?.source ?? 'local', auto: true } })
+  }
+
   // 파트너몰에서 열렸으면 상담 이동 경로에 src 슬러그를 붙여 리드 귀속 유지
   const withSrc = (to) => (tenant && to.startsWith('/consult') ? to + (to.includes('?') ? '&' : '?') + 'src=' + tenant.slug : to)
 
@@ -61,9 +85,19 @@ export default function ChatWidget({ tenant }) {
 
   return (
     <>
+      {/* 선제 넛지 — 세션 1회, 클릭 시 챗 오픈 */}
+      {nudge && !open && (
+        <div className={`fixed right-4 z-50 flex items-center gap-2 rounded-2xl rounded-br-md border border-line-card bg-white py-2.5 pl-4 pr-2 shadow-panel animate-rise sm:right-5 ${hasBottomBar ? 'bottom-[218px] lg:bottom-[86px]' : 'bottom-[86px]'}`}>
+          <button onClick={() => { dismissNudge(); setOpen(true) }} className="text-left text-[12.5px] font-bold text-ink">
+            인터넷 견적, 30초면 계산해드려요 <span className="text-primary-text">→</span>
+          </button>
+          <button onClick={dismissNudge} aria-label="닫기" className="flex h-6 w-6 items-center justify-center rounded-full text-[13px] text-faint hover:bg-cream">×</button>
+        </div>
+      )}
+
       {/* 플로팅 버튼 — 볼륨 글라스 */}
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => { dismissNudge(); setOpen(!open) }}
         aria-label="AI 상담"
         aria-expanded={open}
         className={`glass-fab fixed right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white transition-transform hover:scale-105 sm:right-5 ${hasBottomBar ? 'bottom-[152px] lg:bottom-5' : 'bottom-5'}`}
@@ -105,6 +139,20 @@ export default function ChatWidget({ tenant }) {
                     >
                       {m.action.label} →
                     </button>
+                  )}
+                  {/* 응답 피드백 — 라벨과 함께 저장돼 프롬프트·정책 개선에 재사용 (플라이휠) */}
+                  {m.role === 'assistant' && i > 0 && (
+                    <div className="mt-2 flex items-center gap-1 border-t border-line-card/70 pt-1.5">
+                      {fb[i] === undefined ? (
+                        <>
+                          <span className="mr-0.5 text-[10.5px] text-faint">도움이 됐나요?</span>
+                          <button onClick={() => feedback(i, true)} aria-label="도움이 됐어요" className="flex h-6 w-6 items-center justify-center rounded-full text-faint hover:bg-tint hover:text-primary-text"><IcThumbUp size={12} /></button>
+                          <button onClick={() => feedback(i, false)} aria-label="아쉬워요" className="flex h-6 w-6 items-center justify-center rounded-full text-faint hover:bg-cream hover:text-orange-text"><IcThumbDown size={12} /></button>
+                        </>
+                      ) : (
+                        <span className="text-[10.5px] font-semibold text-faint">{fb[i] ? '도움이 됐다니 기뻐요! 🙌' : '더 나은 답변으로 개선할게요.'}</span>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
