@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../components/ui";
 import Icon from "../components/icons";
-import { PRICING, BASE_BENEFITS, PAYMENT_MODES, fmtWon } from "../lib/config";
+import { PRICING, BASE_BENEFITS, HOSPITAL_BENEFITS, CARE_LOCATIONS, PAYMENT_MODES, fmtWon } from "../lib/config";
 import { TIER1_DISTRICTS, TIER2_DISTRICTS, SCREENING_ITEMS, screenRegion } from "../lib/region";
 import { CORE, CORE_NOTE, TRACKS, STEP_LABELS, trackOf } from "../lib/tracks";
 import { useAppState } from "../lib/state";
@@ -25,6 +25,7 @@ export default function Onboarding() {
   const [form, setForm] = useState({
     track: null, // lib/tracks.js 의 id
     forSelf: null, // 정기 케어 외 트랙 — 본인 이용인지 대신 신청인지
+    careLocation: null, // 정기 케어 — 자택(home) / 요양병원(hospital) · 실무자 피드백 2026-08-09
     rel: null,
     relDetail: "", // 관계 '기타' 상세 — 누구인지 기재
     res: null,
@@ -50,11 +51,18 @@ export default function Onboarding() {
   const restricted = result && result.tier === 0;
   const phoneDigits = form.phone.replace(/\D/g, "");
   const subjectReady = track?.needsRelation
-    ? form.rel && form.res && phoneDigits.length >= 10 && (form.rel !== "기타" || form.relDetail.trim())
+    ? form.rel &&
+      form.res &&
+      form.careLocation &&
+      phoneDigits.length >= 10 &&
+      (form.rel !== "기타" || form.relDetail.trim())
     : form.forSelf !== null && phoneDigits.length >= 10;
 
   const who = track?.subject || "이용하실 분";
   const priced = track?.billing?.confirmed;
+  const hospital = form.careLocation === "hospital";
+  // 거주 형태에 따라 기본상품이 갈린다 — 실무자 피드백 시트의 표 그대로
+  const benefits = hospital ? HOSPITAL_BENEFITS : BASE_BENEFITS;
 
   const finish = () => {
     dispatch({
@@ -62,6 +70,7 @@ export default function Onboarding() {
       payload: {
         track: form.track,
         forSelf: form.forSelf,
+        careLocation: track?.needsRelation ? form.careLocation : null, // DB: care_location_type
         rel: form.rel,
         relDetail: form.rel === "기타" ? form.relDetail.trim() : null,
         phone: form.phone,
@@ -223,8 +232,45 @@ export default function Onboarding() {
                         className="animate-tickIn mt-2 w-full rounded-xl border border-gold/60 bg-white px-3.5 py-3 text-[16px] outline-none focus:border-gold"
                       />
                     )}
+                    {/* 어르신 거주 형태 — 자택 / 요양병원 (실무자 피드백: 요양병원
+                        장기 입원 부모님까지 대상 확대 · 기본상품이 여기서 갈린다) */}
                     <div className="mt-5">
-                      <SectionLabel>거주지</SectionLabel>
+                      <SectionLabel>어르신은 지금 어디에 계세요?</SectionLabel>
+                      <div className="mt-3 space-y-2">
+                        {CARE_LOCATIONS.map((c) => {
+                          const on = form.careLocation === c.key;
+                          return (
+                            <button
+                              key={c.key}
+                              onClick={() => set({ careLocation: c.key })}
+                              className={`btn-press flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left ${
+                                on ? "border-gold bg-gold/10" : "border-navy/15"
+                              }`}
+                            >
+                              <span className={`shrink-0 ${on ? "text-gold" : "text-muted"}`}>
+                                <Icon name={c.icon} size={19} />
+                              </span>
+                              <span className="min-w-0">
+                                <span className={`block text-[15.5px] font-bold ${on ? "text-navy" : "text-ink"}`}>
+                                  {c.label}
+                                </span>
+                                <span className="block text-[12px] leading-[1.5] text-muted">{c.desc}</span>
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {form.careLocation === "hospital" && (
+                        <p className="animate-tickIn mt-2.5 rounded-xl bg-navy/5 p-3 text-[13px] leading-[1.7] text-muted">
+                          요양병원에 계신 부모님께는 병원 생활에 맞는 물품(저자극 물티슈 ·
+                          가족사진 액자)과 <b className="text-navy">요양병원 21항목 점검</b>으로
+                          바뀌어 제공됩니다. 워치 착용이 어려우면 상태를 확인하고 맞는 물품으로
+                          대체합니다.
+                        </p>
+                      )}
+                    </div>
+                    <div className="mt-5">
+                      <SectionLabel>보호자 거주지</SectionLabel>
                       <div className="mt-3 grid grid-cols-2 gap-2">
                         {["국내", "해외"].map((r) => (
                           <button
@@ -520,7 +566,7 @@ export default function Onboarding() {
                     </div>
                   </div>
                   <ul className="space-y-2.5 p-5">
-                    {BASE_BENEFITS.map((b) => (
+                    {benefits.map((b) => (
                       <li key={b.name} className="flex items-start gap-2.5">
                         <span className="mt-[3px] inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-full bg-green/15 text-[11px] font-bold text-green">
                           ✓
@@ -670,6 +716,9 @@ export default function Onboarding() {
                 <div className="mt-3 space-y-2 text-[14px]">
                   {[
                     ["신청 서비스", track.short],
+                    ...(track.needsRelation
+                      ? [["거주 형태", hospital ? "요양병원" : "자택"]]
+                      : []),
                     [who, `${form.elderName || (track.needsRelation ? "김순자" : "본인")}님 · ${form.district}`],
                     track.needsRelation
                       ? [
@@ -709,7 +758,14 @@ export default function Onboarding() {
               <Card className="p-5">
                 <SectionLabel>다음 단계</SectionLabel>
                 <ol className="mt-3 space-y-4">
-                  {track.next.map(([tt, d], i) => (
+                  {(hospital
+                    ? [
+                        track.next[0],
+                        track.next[1],
+                        ["첫 병원 방문", "물티슈 · 가족사진 액자 전달 · 요양병원 21항목 확인"],
+                      ]
+                    : track.next
+                  ).map(([tt, d], i) => (
                     <li key={tt} className="flex items-start gap-3">
                       <span className="mt-[1px] inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-navy font-num text-[12px] font-bold text-white">
                         {i + 1}

@@ -13,12 +13,12 @@ import {
   INDOOR,
   MED_DOSES,
   OUTING,
-  STORE_ITEMS,
   VOICE_MSG,
   VOICE_TO,
   ASK_SERVICES,
 } from "../lib/mock";
 import { PRICING, fmtWon } from "../lib/config";
+import { ELDER_STORE_PICKS } from "../lib/store";
 import { needsGuardianApproval, useAppState } from "../lib/state";
 import Icon from "../components/icons";
 import Splash from "../components/Splash";
@@ -873,7 +873,7 @@ export default function ElderHome() {
             <ElderCard show={tab === "family"} order={8}>
               <CardHead title="필요한 물건" right="담아두면 배송으로 옵니다" />
               <div className="mt-2 space-y-2">
-                {STORE_ITEMS.slice(0, 5).map((i) => {
+                {ELDER_STORE_PICKS.map((i) => {
                   const on = !!storeSel[i.id];
                   return (
                     <button
@@ -907,7 +907,7 @@ export default function ElderHome() {
                 })}
               </div>
               {(() => {
-                const items = STORE_ITEMS.filter((i) => storeSel[i.id]);
+                const items = ELDER_STORE_PICKS.filter((i) => storeSel[i.id]);
                 const total = items.reduce((s, i) => s + i.price, 0);
                 const needApproval = needsGuardianApproval(state.onboarding, total);
                 if (storeSent) {

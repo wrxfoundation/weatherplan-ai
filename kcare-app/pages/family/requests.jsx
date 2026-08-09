@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../../components/ui";
-import { STATUS, GUARDIAN_PRESETS, URGENCY } from "../../lib/requests";
+import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, URGENCY } from "../../lib/requests";
 import { fmtWon, PRICING } from "../../lib/config";
 import { useAppState, needsGuardianApproval } from "../../lib/state";
 
@@ -15,8 +15,9 @@ const fmtD = (t) =>
 export default function RequestsPage() {
   const { state, dispatch } = useAppState();
   const isPrimary = (state.demo.guardianRole || "primary") === "primary";
-  const [creating, setCreating] = useState(false);
+  const [creating, setCreating] = useState(false); // false | true | 서비스 메뉴 항목
   const [openId, setOpenId] = useState(null);
+  const [wanted, setWanted] = useState({}); // 미개시 서비스 수요 신호 — no 별 1회
   const ob = state.onboarding;
 
   const active = state.requests.filter(
@@ -41,6 +42,67 @@ export default function RequestsPage() {
           채팅이 아니라 처리 상태가 남는 업무형 요청입니다. 모든 요청은 사진·금액·완료증빙과
           함께 기록됩니다.{limitLabel && ` 결제권한: ${limitLabel}.`}
         </p>
+
+        {/* 서비스 메뉴 — 실무자 피드백 (2026-08-09): no1~6 활성 · no7~11 예고 · no12 응급 */}
+        <Card className="p-4">
+          <SectionLabel>지금 요청할 수 있는 서비스</SectionLabel>
+          <div className="mt-2.5 space-y-2">
+            {SERVICE_MENU.filter((s) => s.active).map((s) => (
+              <button
+                key={s.no}
+                onClick={() => setCreating(s)}
+                className="btn-press w-full rounded-xl border border-navy/12 p-3 text-left"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-[15px] font-bold text-navy">{s.name}</span>
+                  <span className="ml-auto shrink-0 rounded-full bg-navy/[.06] px-2 py-[3px] text-[11px] font-bold text-muted">
+                    {s.cat}
+                  </span>
+                </div>
+                <div className="mt-1 font-num text-[12.5px] font-bold text-gold">{s.priceLabel}</div>
+                <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{s.scope}</div>
+                {s.point && <div className="mt-0.5 text-[12px] leading-[1.6] text-green">{s.point}</div>}
+              </button>
+            ))}
+          </div>
+
+          {/* 미개시 서비스 — 표기만 하고 비활성. "이런 서비스도 앞으로 이용할 수
+              있구나"를 보여주고, 필요 신호로 수요를 잰다 (실무자 요청 그대로) */}
+          <div className="mt-4 border-t border-navy/[.08] pt-3">
+            <SectionLabel>준비 중인 서비스 — 곧 열립니다</SectionLabel>
+            <div className="mt-2.5 space-y-2">
+              {SERVICE_MENU.filter((s) => !s.active).map((s) => {
+                const sent = !!wanted[s.no];
+                return (
+                  <div key={s.no} className="rounded-xl border border-dashed border-navy/15 bg-navy/[.025] p-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[14.5px] font-bold text-muted">{s.name}</span>
+                      <span className="ml-auto shrink-0 rounded-full bg-navy/[.05] px-2 py-[3px] text-[10.5px] font-bold text-muted/70">
+                        추후 서비스 개시
+                      </span>
+                    </div>
+                    <div className="mt-0.5 text-[12px] leading-[1.6] text-muted/80">{s.scope}</div>
+                    <button
+                      onClick={() => {
+                        if (sent) return;
+                        setWanted((w) => ({ ...w, [s.no]: true }));
+                        dispatch({
+                          type: "pushEvent",
+                          payload: { kind: "수요", text: `미개시 서비스 수요 신호 — ${s.name}`, color: "#8FA9CC" },
+                        });
+                      }}
+                      className={`btn-press mt-2 rounded-lg border px-3 py-1.5 text-[12px] font-bold ${
+                        sent ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
+                      }`}
+                    >
+                      {sent ? "✓ 알려주셔서 감사합니다 — 열리면 먼저 안내드릴게요" : "이 서비스가 필요하신가요?"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Card>
 
         {active.length === 0 && (
           <Card className="p-5 text-center text-[15px] text-muted">진행 중인 요청이 없습니다.</Card>
@@ -79,6 +141,7 @@ export default function RequestsPage() {
 
         {creating && (
           <CreateRequestSheet
+            preset={typeof creating === "object" ? creating : null}
             onClose={() => setCreating(false)}
             onCreate={(req) => {
               dispatch({ type: "addRequest", payload: req });
@@ -288,10 +351,10 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
   );
 }
 
-function CreateRequestSheet({ onClose, onCreate }) {
-  const [type, setType] = useState(GUARDIAN_PRESETS[0]);
+function CreateRequestSheet({ preset, onClose, onCreate }) {
+  const [type, setType] = useState(preset ? preset.name : GUARDIAN_PRESETS[0]);
   const [detail, setDetail] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(preset?.amount ? String(preset.amount) : "");
   const [preferredDate, setPreferredDate] = useState("");
   const [urgency, setUrgency] = useState("normal");
   const [photo, setPhoto] = useState(false);
@@ -300,15 +363,20 @@ function CreateRequestSheet({ onClose, onCreate }) {
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(8,23,45,.45)]">
       <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-3xl bg-white p-6 pb-8">
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
-        <div className="text-[19px] font-black text-navy">해주세요 요청</div>
+        <div className="text-[19px] font-black text-navy">{preset ? preset.name : "해주세요 요청"}</div>
         <p className="mt-1 text-[12px] text-muted">
           담당 컨시어지에게 전달되고, 처리 상태가 단계별로 기록됩니다.
         </p>
+        {preset?.priceLabel && (
+          <p className="mt-2 rounded-xl bg-gold/[.08] px-3 py-2 font-num text-[12.5px] font-bold text-gold">
+            {preset.priceLabel}
+          </p>
+        )}
 
         <div className="mt-4">
           <SectionLabel>요청 종류</SectionLabel>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {GUARDIAN_PRESETS.map((p) => (
+            {(preset ? [preset.name, ...GUARDIAN_PRESETS] : GUARDIAN_PRESETS).map((p) => (
               <button
                 key={p}
                 onClick={() => setType(p)}

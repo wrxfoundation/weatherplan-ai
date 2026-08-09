@@ -28,7 +28,7 @@ const ROUTES = [
   "/", "/service", "/onboarding", "/elder", "/care-profile",
   "/family", "/family/calendar", "/family/requests", "/family/my",
   "/family/store", "/family/watch", "/family/hospitals",
-  "/concierge", "/concierge-onboarding", "/dispatch", "/admin",
+  "/concierge", "/concierge-onboarding", "/safety-check", "/dispatch", "/admin",
   "/report/verify",
 ];
 

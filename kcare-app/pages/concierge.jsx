@@ -30,6 +30,7 @@ import {
   VIDEO_SEGMENTS,
 } from "../lib/console";;
 import { CONCIERGE_PRESETS } from "../lib/requests";
+import { checkupFor, REPORT_HEADLINE } from "../lib/checkup";
 import { fmtWon } from "../lib/config";
 import { useAppState } from "../lib/state";
 import Splash from "../components/Splash";
@@ -69,6 +70,9 @@ export default function ConciergePage() {
   const [pdfIssued, setPdfIssued] = useState(false);
   const [suggested, setSuggested] = useState({});
   const [earlyPay, setEarlyPay] = useState(false);
+  // 거주 형태 토글 — 기본값은 가입 때 저장한 값 (DB: care_location_type · 실무자 피드백)
+  const [careLoc, setCareLoc] = useState(state.onboarding?.careLocation || "home");
+  const [checkDone, setCheckDone] = useState({}); // 21항목 체크 — {"몸-혈압": true}
   const v = state.visit;
   const videoConsent = state.onboarding ? !!state.onboarding.videoConsent : true; // 데모 기본 동의
 
@@ -603,6 +607,105 @@ export default function ConciergePage() {
             {/* ════ 리포트 탭 ════ */}
             {tab === "report" && (
               <>
+                {/* 방문 리포트 작성 — 거주 형태 토글이 체크리스트와 리포트 카피를
+                    실시간으로 바꾼다 (실무자 피드백 2026-08-09 · 이원화 개발 명세) */}
+                <Card className="p-[18px]">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[17px] font-black text-navy">방문 리포트 작성</span>
+                    {/* 토글 — 어르신 프로필의 저장값이 기본, 현장에서 바꿀 수 있다 */}
+                    <div className="flex rounded-full border border-navy/15 p-1" role="group" aria-label="거주 형태">
+                      {[
+                        ["home", "🏠 자택"],
+                        ["hospital", "🏥 요양병원"],
+                      ].map(([k, label]) => (
+                        <button
+                          key={k}
+                          onClick={() => setCareLoc(k)}
+                          aria-pressed={careLoc === k}
+                          className={`btn-press btn-inline rounded-full px-3 py-1.5 text-[12.5px] font-bold ${
+                            careLoc === k ? "bg-navy text-white" : "text-muted"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 리포트 상단 카피 미리보기 — 보호자 앱 · 알림톡에 나가는 문장 */}
+                  <div className="mt-3 rounded-xl bg-navy p-3.5 text-[14.5px] font-bold leading-[1.6] text-white">
+                    {REPORT_HEADLINE[careLoc](state.onboarding?.elderName || "김순자")}
+                    <span className="mt-1 block text-[11px] font-normal text-white/55">
+                      리포트 상단 문장 — 체크가 끝나면 사진 · 15초 영상 메시지와 함께 나갑니다
+                    </span>
+                  </div>
+
+                  {/* 21항목 — 토글에 따라 자택/요양병원 목록이 즉시 바뀐다 */}
+                  <div className="mt-3.5 space-y-3">
+                    {checkupFor(careLoc).map((ax) => {
+                      const done = ax.items.filter((i) => checkDone[`${ax.axis}-${i.k}`]).length;
+                      return (
+                        <div key={ax.axis} className="rounded-xl border border-navy/10 p-3.5">
+                          <div className="flex items-center justify-between">
+                            <span className="flex items-center gap-1.5 text-[14.5px] font-bold text-navy">
+                              <Icon name={ax.icon} size={15} /> {ax.axis} 7가지
+                            </span>
+                            <span className="font-num text-[12px] font-bold text-muted">
+                              {done} / 7
+                            </span>
+                          </div>
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            {ax.items.map((i) => {
+                              const key = `${ax.axis}-${i.k}`;
+                              const on = !!checkDone[key];
+                              return (
+                                <button
+                                  key={key}
+                                  onClick={() => setCheckDone((s) => ({ ...s, [key]: !s[key] }))}
+                                  className={`btn-press btn-inline rounded-full border px-2.5 py-1.5 text-[12px] font-bold ${
+                                    on
+                                      ? "border-green/40 bg-green/10 text-green"
+                                      : "border-navy/15 text-muted"
+                                  }`}
+                                >
+                                  {on ? "✓ " : ""}
+                                  {i.k}
+                                </button>
+                              );
+                            })}
+                          </div>
+                          <p className="mt-2 text-[11px] leading-[1.6] text-muted/80">{ax.note}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-2.5 text-[12px] leading-[1.65] text-muted">
+                    21항목을 모두 체크하면 사진과 함께 리포트가 자동 발행됩니다 — 점수가
+                    아니라 지난달과 달라진 것을 적습니다.
+                  </p>
+                </Card>
+
+                {/* 첫 방문이면 — 홈 안전진단 (자택 전용 · 30항목 100점) */}
+                {careLoc === "home" && (
+                  <Link href="/safety-check" className="block">
+                    <Card className="btn-press border-gold/40 p-4" style={{ background: "linear-gradient(180deg,#FBF6EC,#F6EFDE)" }}>
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[11px] bg-gold/15 text-gold">
+                          <Icon name="shield" size={20} />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[15px] font-bold text-navy">첫 방문 홈 안전진단 — 30항목 · 100점</div>
+                          <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">
+                            첫 방문 리포트에 실리고, 부족한 곳의 안전용품이 스토어 장바구니에
+                            자동으로 담깁니다
+                          </div>
+                        </div>
+                        <span className="text-[18px] text-muted">›</span>
+                      </div>
+                    </Card>
+                  </Link>
+                )}
+
                 {/* 동행 완료 리포트 — AI 초안 + 2인 서명 (디자인 콘솔) */}
                 <Card className="p-[18px]">
                   <div className="flex flex-wrap items-center gap-2">
