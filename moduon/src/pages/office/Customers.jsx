@@ -3,13 +3,13 @@
 import { useMemo, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { useStore } from '../../lib/store'
-import { won, maskPhone, dday, fmtDate } from '../../lib/engine'
+import { won, maskPhone, dday, fmtDate, timeAgo } from '../../lib/engine'
 import { Card, useToast, EmptyState } from '../../components/ui'
 import { IcPhone, IcFolder } from '../../components/icons'
 
 export default function OfficeCustomers() {
   const { tenant } = useOutletContext()
-  const { db } = useStore()
+  const { db, dispatch } = useStore()
   const toast = useToast()
   const [sortBy, setSortBy] = useState('remain') // remain=잔여개월수 | penalty=위약금
 
@@ -59,13 +59,14 @@ export default function OfficeCustomers() {
               <div>
                 <div className="text-[13.5px] font-bold text-bink">{c.customer}</div>
                 <div className="tnum text-[11.5px] text-bfaint">{maskPhone(c.phone)}</div>
+                {c.lastTouch && <div className="mt-0.5 text-[10.5px] font-semibold text-ok">{c.lastTouch.kind} 발송 · {timeAgo(c.lastTouch.at)}</div>}
               </div>
               <span className="col-span-2 text-[12.5px] text-bbody lg:col-span-1">{c.product}</span>
               <span className="tnum hidden text-[12.5px] font-bold text-bink lg:block">{c.remain}개월</span>
               <span className={`tnum hidden text-[12.5px] font-bold lg:block ${penaltyTone}`}>{(c.penalty ?? 0) === 0 ? '없음' : won(c.penalty)}</span>
               <span className="hidden text-[12.5px] text-bmuted lg:block">{fmtDate(c.expiry)}</span>
               <div className="col-span-2 flex gap-1.5 lg:col-span-1">
-                <button onClick={() => toast(`${c.customer} 고객에게 재상담 알림톡을 보냈어요`)} className="h-8 flex-1 rounded-full bg-tint px-3 text-[11.5px] font-bold text-primary-text hover:bg-primary hover:text-white lg:flex-none">
+                <button onClick={() => { dispatch({ type: 'CONTRACT_TOUCH', payload: { id: c.id, kind: '재상담 제안', by: tenant.id } }); toast(`${c.customer} 고객에게 재상담 알림톡을 보냈어요`) }} className="h-8 flex-1 rounded-full bg-tint px-3 text-[11.5px] font-bold text-primary-text hover:bg-primary hover:text-white lg:flex-none">
                   재상담 제안
                 </button>
                 <a href={`tel:${c.phone}`} className="flex h-8 w-8 items-center justify-center rounded-full bg-brow text-bbody hover:bg-bline"><IcPhone size={14} /></a>

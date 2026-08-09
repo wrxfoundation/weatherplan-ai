@@ -51,9 +51,10 @@ export function LeadRow({ lead, onOpen, showTenant, tenants }) {
 
 function AlimBtn({ lead }) {
   const toast = useToast()
+  const { dispatch } = useStore()
   return (
     <button
-      onClick={(e) => { e.stopPropagation(); toast(`${maskName(lead.name)} 고객에게 알림톡을 보냈어요`) }}
+      onClick={(e) => { e.stopPropagation(); dispatch({ type: 'LEAD_TOUCH', payload: { id: lead.id, kind: '알림톡', by: lead.tenantId ?? 'partner' } }); toast(`${maskName(lead.name)} 고객에게 알림톡을 보냈어요`) }}
       className="flex h-9 w-9 items-center justify-center rounded-full bg-ok/10 text-[13px] text-ok hover:bg-ok hover:text-white"
       title="알림톡 보내기"
       aria-label="알림톡 보내기"
@@ -120,7 +121,7 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
         )}
         <div className="mt-3 flex gap-2">
           <a href={`tel:${lead.phone}`} className="flex h-10 flex-1 items-center justify-center rounded-field bg-primary text-[13.5px] font-bold text-white hover:bg-primary-hover"><IcPhone size={15} className="mr-1.5" />전화 걸기</a>
-          <button onClick={() => toast('알림톡을 보냈어요')} className="flex h-10 flex-1 items-center justify-center rounded-field bg-ok/10 text-[13.5px] font-bold text-ok hover:bg-ok hover:text-white"><IcChat size={15} className="mr-1.5" />알림톡</button>
+          <button onClick={() => { dispatch({ type: 'LEAD_TOUCH', payload: { id: lead.id, kind: '알림톡', by } }); toast('알림톡을 보냈어요 — 이력에 기록됩니다') }} className="flex h-10 flex-1 items-center justify-center rounded-field bg-ok/10 text-[13.5px] font-bold text-ok hover:bg-ok hover:text-white"><IcChat size={15} className="mr-1.5" />알림톡</button>
         </div>
       </div>
 
