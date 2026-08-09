@@ -13,6 +13,11 @@ export default function Login() {
   const next = params.get('next')
   const activeTenants = db.tenants.filter((t) => t.status === '활성')
 
+  // 클릭형 롤 카드 공용 — 키보드(Enter/Space) 동작 부여
+  const goConsumer = () => { setSession(null); nav('/') }
+  const goAdmin = () => { setSession({ role: 'admin' }); toast('본사 관리자로 로그인했어요'); nav(next?.startsWith('/admin') ? next : '/admin') }
+  const keyAct = (fn) => (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn() } }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-bbg px-5 py-10">
       <Link to="/"><Logo size="lg" /></Link>
@@ -20,7 +25,7 @@ export default function Login() {
 
       <div className="mt-8 grid w-full max-w-3xl gap-4 sm:grid-cols-3">
         {/* 소비자 */}
-        <Card track="b" hover className="cursor-pointer p-6 text-center" onClick={() => { setSession(null); nav('/') }}>
+        <Card track="b" hover role="button" tabIndex={0} onKeyDown={keyAct(goConsumer)} className="cursor-pointer p-6 text-center outline-none focus-visible:ring-2 ring-primary/40" onClick={goConsumer}>
           <div className="text-[34px]">🛒</div>
           <div className="mt-2 text-[16px] font-extrabold text-bink">소비자몰</div>
           <p className="mt-1 text-[12px] leading-5 text-bmuted">비교·견적·상담 신청<br />AI 상담봇 모비</p>
@@ -46,7 +51,7 @@ export default function Login() {
         </Card>
 
         {/* 본사 */}
-        <Card track="b" hover className="cursor-pointer p-6 text-center" onClick={() => { setSession({ role: 'admin' }); toast('본사 관리자로 로그인했어요'); nav(next?.startsWith('/admin') ? next : '/admin') }}>
+        <Card track="b" hover role="button" tabIndex={0} onKeyDown={keyAct(goAdmin)} className="cursor-pointer p-6 text-center outline-none focus-visible:ring-2 ring-primary/40" onClick={goAdmin}>
           <div className="text-[34px]">🛰️</div>
           <div className="mt-2 text-[16px] font-extrabold text-bink">본사 어드민 · 관제</div>
           <p className="mt-1 text-[12px] leading-5 text-bmuted">분양 승인 · 리드 관제<br />정산 실행 · AI 운영</p>

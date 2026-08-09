@@ -53,7 +53,7 @@ export default function Payouts() {
         <Card className="mt-4 overflow-hidden p-0">
           <div className="border-b border-line px-4 py-3 text-[13px] font-bold text-ink">검색 결과 <span className="text-primary-text">{matches.length}건</span>{matches.length === 60 && <span className="font-medium text-faint"> (상위 60건)</span>}</div>
           {matches.length === 0 && <div className="py-12 text-center text-[13.5px] text-faint">해당하는 지급 내역이 없어요. 다른 이름·지역으로 검색해 보세요.</div>}
-          {matches.map((x, i) => <PayRow key={i} x={x} showDate />)}
+          {matches.map((x, i) => <PayRow key={`${x.name}-${x.sigungu}-${x.amount}-${x.date ?? i}`} x={x} showDate />)}
         </Card>
       )}
 
@@ -104,7 +104,7 @@ export default function Payouts() {
                 </thead>
                 <tbody className="divide-y divide-line">
                   {open.recipients.map((x, i) => (
-                    <tr key={i}>
+                    <tr key={`${x.name}-${x.sigungu}-${x.amount}-${i}`}>
                       <td className="px-3 py-2.5 font-bold text-ink">{x.name}</td>
                       <td className="px-3 py-2.5 text-muted">{x.sigungu}</td>
                       <td className="px-3 py-2.5"><span className="rounded bg-tint px-1.5 py-0.5 text-[11.5px] font-semibold text-primary-text">{x.catLabel}</span></td>
