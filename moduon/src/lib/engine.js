@@ -27,12 +27,17 @@ export const CARRIERS = ['KT', 'SK브로드밴드', 'LG U+']
 // 통신사별 사은품 가산 — telco.js CARRIER_PROMO.giftAdd의 단일 출처 (telco가 이 맵을 참조)
 export const CARRIER_GIFT_ADD = { KT: 0, 'SK브로드밴드': 30000, 'LG U+': 20000 }
 
-export function calcQuote({ speed = '500M', bundle = 'water', promo = false, carrier = 'KT' } = {}) {
+// products(상품 정책)가 주어지면 사은품 기준가를 상품에서 읽는다 — 어드민 상품 수정이
+// 계산기에 즉시 반영(가격 단일 소스). 상품명에 '+'가 있으면 결합 포함 기준가로 보고
+// 결합 가산분(5만)을 분리해 동일 산식으로 합성한다. 미등록 구성은 GIFT_MAP 폴백.
+export function calcQuote({ speed = '500M', bundle = 'water', promo = false, carrier = 'KT' } = {}, products) {
   const base = SPEED_MAP[speed] ?? 0
   const bundleDc = BUNDLE_MAP[bundle] ?? 0
   const promoDc = promo ? PROMO_DISCOUNT : 0
   const total = base - bundleDc - promoDc
-  const gift = (GIFT_MAP[speed] ?? 0) + (bundle !== 'none' ? 50000 : 0) + (CARRIER_GIFT_ADD[carrier] ?? 0)
+  const p = products?.find((x) => x.cat === 'internet' && x.name.includes(speed))
+  const baseGift = p ? p.support - (p.name.includes('+') ? 50000 : 0) : (GIFT_MAP[speed] ?? 0)
+  const gift = baseGift + (bundle !== 'none' ? 50000 : 0) + (CARRIER_GIFT_ADD[carrier] ?? 0)
   return { carrier, base, bundleDc, promoDc, total, gift }
 }
 

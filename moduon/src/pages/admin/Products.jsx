@@ -55,7 +55,7 @@ export default function AdminProducts() {
           </div>
         ))}
       </Card>
-      <p className="mt-3 text-[11.5px] text-bfaint">AC: 정책 변경이 견적 계산기·정산·소비자몰에 즉시 반영됩니다. 프로모션 기간·버전 관리는 정책 관리 메뉴에서.</p>
+      <p className="mt-3 text-[11.5px] text-bfaint">AC: 지원금(support) 수정은 소비자 견적 계산기(동일 구성)에, 수수료(commission) 수정은 파트너·어드민 정산의 건별 수수료에 즉시 반영됩니다(실배선). 미등록 구성은 기본 요율표 폴백. 프로모션 기간·버전 관리는 정책 관리 메뉴에서.</p>
     </div>
   )
 }

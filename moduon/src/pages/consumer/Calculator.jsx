@@ -3,12 +3,14 @@ import { useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { calcQuote, won, copyText, CARRIERS, SPEED_MAP, BUNDLE_MAP, BUNDLE_LABEL, PAYOUTS, payout } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
+import { useStore } from '../../lib/store'
 import { useToast } from '../../components/ui'
 import { CalcTabs } from './PhoneCalculator'
 import InstallCheck from '../../components/InstallCheck'
 
 export default function Calculator() {
   const nav = useNavigate()
+  const { db } = useStore() // 상품 정책(db.products) — 사은품 기준가의 단일 소스
   const toast = useToast()
   const [sp] = useSearchParams()
   const loc = useLocation()
@@ -22,7 +24,7 @@ export default function Calculator() {
   const [payoutM, setPayoutM] = useState('cash')
   const [copied, setCopied] = useState(false)
 
-  const q = useMemo(() => calcQuote({ carrier, speed, bundle, promo }), [carrier, speed, bundle, promo])
+  const q = useMemo(() => calcQuote({ carrier, speed, bundle, promo }, db.products), [carrier, speed, bundle, promo, db.products])
   const pay = payout(q.gift, payoutM)
   const payLabel = PAYOUTS.find((p) => p.key === payoutM)?.label ?? '현금'
   // 다음 행동 + 기대 효과 힌트 (axion 델타 문장 패턴)

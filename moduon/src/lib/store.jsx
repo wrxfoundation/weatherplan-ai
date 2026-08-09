@@ -3,7 +3,7 @@
 // 실서비스에서는 Supabase(Postgres+RLS+Realtime)로 대체 — 인터페이스를 동일하게 유지.
 import { createContext, useContext, useEffect, useMemo, useReducer } from 'react'
 import { buildSeed, SEED_VERSION } from './seed'
-import { routeLead, calcSettlement, monthKey } from './engine'
+import { routeLead, monthKey } from './engine'
 import { CATEGORIES, REGIONS, unitBySigungu, canTransition } from './constants'
 
 const KEY = 'moduon_db_v1'
@@ -273,13 +273,22 @@ export function tenantSettlement(db, tenantId) {
   const t = db.tenants.find((x) => x.id === tenantId)
   // 이중계상 방지: monthlySales는 시드 기준치(몰 자체 매출), 리드 완료분은 leadGross로만 가산.
   // 월 귀속은 완료 시각(completedAt) 기준 — 리드를 완료 처리하는 즉시 이번 달 정산에 반영된다.
+  // 리드 건별 수수료는 상품 정책(카테고리 대표 상품의 commission)이 단일 소스 —
+  // 어드민 상품 수정이 정산에 즉시 반영된다. 미등록 카테고리는 요율(feeRate) 폴백.
+  const commissionOf = (cat, amount) => {
+    const p = db.products.find((x) => x.cat === cat)
+    return p ? p.commission : Math.round(amount * db.policies.feeRate)
+  }
   const done = tenantLeads(db, tenantId).filter((l) => l.status === '완료' && monthKey(l.completedAt ?? l.createdAt) === monthKey())
   const leadGross = done.reduce((s, l) => s + leadAmount(l.cat), 0)
   const gross = (t?.monthlySales ?? 0) + leadGross
-  const s = calcSettlement(gross, db.policies)
+  const lines = done.map((l) => ({ id: l.id, name: l.name, cat: l.cat, amount: leadAmount(l.cat), fee: commissionOf(l.cat, leadAmount(l.cat)), at: l.completedAt ?? l.createdAt }))
+  // 총 수수료 = 몰 자체 매출 요율분 + 리드 건별 상품 commission 합 (시드 기준 기존 산식과 원단위 일치)
+  const fee = Math.round((t?.monthlySales ?? 0) * db.policies.feeRate) + lines.reduce((s, l) => s + l.fee, 0)
+  const net = gross - fee - db.policies.monthlyFee
   const pending = tenantLeads(db, tenantId).filter((l) => ['상담완료', '개통대기'].includes(l.status))
-  const expected = pending.reduce((sum, l) => sum + leadAmount(l.cat) * db.policies.feeRate, 0)
-  return { ...s, doneCount: done.length, pendingCount: pending.length, expected, lines: done.map((l) => ({ id: l.id, name: l.name, cat: l.cat, amount: leadAmount(l.cat), fee: Math.round(leadAmount(l.cat) * db.policies.feeRate), at: l.completedAt ?? l.createdAt })) }
+  const expected = pending.reduce((sum, l) => sum + commissionOf(l.cat, leadAmount(l.cat)), 0)
+  return { gross, fee, monthlyFee: db.policies.monthlyFee, net, doneCount: done.length, pendingCount: pending.length, expected, lines }
 }
 
 export function adminStats(db) {
