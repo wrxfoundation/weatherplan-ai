@@ -101,6 +101,11 @@ export default function Category() {
             <Link to="/calculator" className="text-[13.5px] font-bold text-primary-text underline underline-offset-4">직접 조건을 바꿔가며 계산해 보고 싶다면 → 견적 계산기</Link>
           </div>
         )}
+        {slug === 'phone' && (
+          <div className="mt-4 text-center">
+            <Link to="/calculator/phone" className="text-[13.5px] font-bold text-primary-text underline underline-offset-4">단말 할부금 + 요금까지 직접 계산해 보려면 → 휴대폰 견적 계산기</Link>
+          </div>
+        )}
         <p className="mt-6 text-[11.5px] text-disabled">{LEGAL.policy}</p>
       </section>
     </main>

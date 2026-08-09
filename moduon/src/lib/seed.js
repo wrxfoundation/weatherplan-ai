@@ -6,7 +6,7 @@ const minAgo = (m) => now() - m * 60000
 const dayAgo = (d) => now() - d * 86400000
 const dayAfter = (d) => now() + d * 86400000
 
-export const SEED_VERSION = 8
+export const SEED_VERSION = 9
 
 export function buildSeed() {
   const tenants = [
@@ -45,12 +45,13 @@ export function buildSeed() {
   ]
 
   // 계약(만기 D-day 관리용) — T1 중심
+  // penalty = 잔여 약정 위약금(지원금 반환금) 추정 — 가망고객 우선순위 판단용(주다 벤치마크)
   const contracts = [
-    { id: 'C1', tenantId: 'T1', customer: '강현우', phone: '010-1123-9987', product: '인터넷 1G + TV', amount: 990000, commission: 99000, expiry: dayAfter(14), startedAt: dayAgo(3) },
-    { id: 'C2', tenantId: 'T1', customer: '홍석천', phone: '010-6673-8842', product: '가전 제휴 구매', amount: 1890000, commission: 132000, expiry: dayAfter(30), startedAt: dayAgo(6) },
-    { id: 'C3', tenantId: 'T1', customer: '민경훈', phone: '010-5544-2211', product: '정수기 렌탈 36개월', amount: 1188000, commission: 118000, expiry: dayAfter(45), startedAt: dayAgo(300) },
-    { id: 'C4', tenantId: 'T1', customer: '유아름', phone: '010-9988-7766', product: '휴대폰 + 카드결합', amount: 1450000, commission: 145000, expiry: dayAfter(92), startedAt: dayAgo(500) },
-    { id: 'C5', tenantId: 'T2', customer: '박세리', phone: '010-3311-2299', product: '인터넷 500M', amount: 660000, commission: 66000, expiry: dayAfter(21), startedAt: dayAgo(200) },
+    { id: 'C1', tenantId: 'T1', customer: '강현우', phone: '010-1123-9987', product: '인터넷 1G + TV', amount: 990000, commission: 99000, expiry: dayAfter(14), startedAt: dayAgo(3), penalty: 48000 },
+    { id: 'C2', tenantId: 'T1', customer: '홍석천', phone: '010-6673-8842', product: '가전 제휴 구매', amount: 1890000, commission: 132000, expiry: dayAfter(30), startedAt: dayAgo(6), penalty: 0 },
+    { id: 'C3', tenantId: 'T1', customer: '민경훈', phone: '010-5544-2211', product: '정수기 렌탈 36개월', amount: 1188000, commission: 118000, expiry: dayAfter(45), startedAt: dayAgo(300), penalty: 132000 },
+    { id: 'C4', tenantId: 'T1', customer: '유아름', phone: '010-9988-7766', product: '휴대폰 + 카드결합', amount: 1450000, commission: 145000, expiry: dayAfter(92), startedAt: dayAgo(500), penalty: 214000 },
+    { id: 'C5', tenantId: 'T2', customer: '박세리', phone: '010-3311-2299', product: '인터넷 500M', amount: 660000, commission: 66000, expiry: dayAfter(21), startedAt: dayAgo(200), penalty: 39000 },
   ]
 
   // 상품 카탈로그 — 본사 중앙 관리(A-03). support=지원금, commission=성사 수수료

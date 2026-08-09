@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { calcQuote, won, CARRIERS, SPEED_MAP, BUNDLE_MAP, BUNDLE_LABEL } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
+import { CalcTabs } from './PhoneCalculator'
 
 export default function Calculator() {
   const nav = useNavigate()
@@ -19,7 +20,8 @@ export default function Calculator() {
   return (
     <main className="mx-auto max-w-6xl px-5 pb-28 sm:px-10 lg:pb-0">
       <div className="pt-8 sm:pt-12">
-        <h1 className="text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">인터넷 견적 계산기</h1>
+        <CalcTabs active="internet" />
+        <h1 className="mt-4 text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">인터넷 견적 계산기</h1>
         <p className="mt-1.5 text-[14px] text-muted sm:text-[15px]">조건을 고를 때마다 월 납부금이 실시간으로 계산돼요.</p>
       </div>
 

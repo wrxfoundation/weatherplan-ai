@@ -6,6 +6,7 @@ import AdminLayout from './components/layout/AdminLayout'
 import Home from './pages/consumer/Home'
 import Category from './pages/consumer/Category'
 import Calculator from './pages/consumer/Calculator'
+import PhoneCalculator from './pages/consumer/PhoneCalculator'
 import Consult from './pages/consumer/Consult'
 import Diagnosis from './pages/consumer/Diagnosis'
 import TenantMall from './pages/consumer/TenantMall'
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/category/:slug" element={<Category />} />
           <Route path="/calculator" element={<Calculator />} />
+          <Route path="/calculator/phone" element={<PhoneCalculator />} />
           <Route path="/consult" element={<Consult />} />
           <Route path="/diagnosis" element={<Diagnosis />} />
         </Route>

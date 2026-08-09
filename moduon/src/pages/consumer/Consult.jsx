@@ -72,7 +72,7 @@ export default function Consult() {
             <SummaryRow k="지역" v={done.sigungu} />
             <SummaryRow k="관심 서비스" v={catNames} accent />
             <SummaryRow k="희망 시간" v={done.time} />
-            {quote && <SummaryRow k="구성 견적" v={`월 ${won(quote.total)} · 사은품 ${won(quote.gift)}`} accent />}
+            {quote && <SummaryRow k="구성 견적" v={quote.label ?? `월 ${won(quote.total)} · 사은품 ${won(quote.gift)}`} accent />}
           </div>
         </div>
 
@@ -119,7 +119,7 @@ export default function Consult() {
             <Link to="/calculator" className="font-semibold text-primary-text">수정</Link>
           </div>
           <div className="tnum mt-1.5 text-[13.5px] text-label">
-            {quote.carrier} {quote.speed} + {quote.bundle} → 월 <strong className="font-extrabold text-primary-text">{won(quote.total)}</strong> · 사은품 {won(quote.gift)}
+            {quote.label ?? <>{quote.carrier} {quote.speed} + {quote.bundle} → 월 <strong className="font-extrabold text-primary-text">{won(quote.total)}</strong> · 사은품 {won(quote.gift)}</>}
           </div>
         </div>
       )}

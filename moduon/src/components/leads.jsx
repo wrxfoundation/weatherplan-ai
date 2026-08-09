@@ -102,7 +102,7 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
         {lead.quote && (
           <div className="mt-3 rounded-field bg-tint/60 px-3 py-2.5 text-[12.5px]">
             <strong className="font-bold text-primary-text">계산기 견적</strong>{' '}
-            <span className="tnum text-bbody">{lead.quote.carrier} {lead.quote.speed} + {lead.quote.bundle} · 월 {won(lead.quote.total)} · 사은품 {won(lead.quote.gift)}</span>
+            <span className="tnum text-bbody">{lead.quote.label ?? `${lead.quote.carrier} ${lead.quote.speed} + ${lead.quote.bundle} · 월 ${won(lead.quote.total)} · 사은품 ${won(lead.quote.gift)}`}</span>
           </div>
         )}
         <div className="mt-3 flex gap-2">
