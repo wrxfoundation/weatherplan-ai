@@ -36,17 +36,21 @@ export default function Home({ tenant }) {
           {/* 절약 말풍선 2종 — 씬 위 중앙(우측 텍스트단 밖)에 부유. AI 영상 속 글자는 뭉개지므로 DOM으로 */}
           {!tenant && <SavingsBubbles />}
           <div className="flex min-h-[480px] max-w-xl flex-col justify-center py-14 sm:min-h-[600px] sm:py-20">
-            {tenant && (
+            {tenant ? (
               <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12px] font-bold text-primary-text shadow-card">
                 <span className="h-1.5 w-1.5 rounded-full bg-ok animate-live" /> 모두온 공식 파트너 · {tenant.owner} 사장님이 직접 상담해요
               </div>
+            ) : (
+              <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12px] font-bold text-primary-text shadow-card">
+                <span className="h-1.5 w-1.5 rounded-full bg-ok animate-live" /> 생활비 절감 플랫폼 · 이번 달 아낄 돈부터 확인하세요
+              </div>
             )}
             <h1 className="text-[32px] font-extrabold leading-[1.3] tracking-[-0.8px] text-ink sm:text-[44px] sm:leading-[58px] sm:tracking-[-1.2px]">
-              모든 서비스,<br />
-              <span className="text-orange-text">{tenant ? tenant.name : '모두온'}</span>에서 한 번에
+              새는 생활비,<br />
+              <span className="text-orange-text">{tenant ? tenant.name : '모두온'}</span>이 잡아드려요
             </h1>
             <p className="mt-4 max-w-md text-[15px] leading-[26px] text-body sm:text-[16.5px] sm:leading-[28px]">
-              {tenant?.greeting ?? '생활의 모든 순간, 필요한 모든 서비스를 가장 합리적인 가격으로 만나보세요.'}
+              {tenant?.greeting ?? '인터넷·휴대폰·이사·정수기… 흩어진 생활서비스를 한 곳에서 비교하고, 30초 상담 한 번으로 매달 나가던 돈을 줄이세요.'}
             </p>
             {/* 검색 바 */}
             <div className="mt-7 flex h-14 items-center overflow-hidden rounded-2xl bg-white pl-5 pr-2 shadow-panel">
@@ -91,13 +95,13 @@ export default function Home({ tenant }) {
         <div className="grid gap-8 lg:grid-cols-[300px_1fr]">
           <div>
             <h2 className="text-[22px] font-extrabold leading-9 tracking-[-0.6px] text-ink sm:text-[26px]">
-              {tenant ? tenant.name : '모두온'}이 드리는<br />특별한 혜택
+              몰라서 못 챙긴 혜택,<br />모두온이 다 찾아드려요
             </h2>
             <div className="mt-6 flex flex-col gap-5">
               {[
-                { t: '최대 혜택 보장', d: '같은 조건이면 더 큰 혜택으로, 숨은 지원금까지 챙겨드려요.' },
-                { t: '전문 상담 지원', d: '카테고리별 전문 상담사가 평균 10분 내에 연락드려요.' },
-                { t: '안전한 거래', d: '정식 등록 파트너와 본사 이중 검수로 안심하고 맡기세요.' },
+                { t: '같은 조건, 더 큰 혜택', d: '어차피 가입할 거, 숨은 지원금까지 끝까지 비교해 챙겨드려요.' },
+                { t: '10분 안에 전문가 콜백', d: '카테고리별 전문 상담사가 평균 10분 내 직접 전화드려요.' },
+                { t: '본사 이중검수로 안심', d: '정식 등록 파트너 + 본사 검수로 계약부터 설치까지 책임집니다.' },
               ].map((b) => (
                 <div key={b.t} className="flex gap-3.5">
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-tint text-primary-text">
@@ -139,9 +143,9 @@ export default function Home({ tenant }) {
             <img src="/assets/cta-chat.webp" alt="" className="h-[88px] w-[88px] object-contain sm:h-[112px] sm:w-[112px]" loading="lazy" />
             <div>
               <div className="text-[19px] font-extrabold leading-7 text-white sm:text-[21px]">
-                {tenant ? `${tenant.name}에서 상담받고` : '모두온에서 상담받고'} 최대 혜택 받아가세요!
+                지금 신청하면, 이번 달부터 아낍니다
               </div>
-              <div className="mt-1 text-[14px] font-medium text-white/75">30초 신청, 평균 10분 내 전문 상담사 연결</div>
+              <div className="mt-1 text-[14px] font-medium text-white/75">30초면 끝 · 평균 10분 안에 전문 상담사가 전화드려요</div>
             </div>
           </div>
           <Link to={consultTo} className="shimmer-cta shimmer-ink glass-btn inline-flex h-[52px] shrink-0 items-center rounded-btn bg-white px-7 text-[15px] font-bold text-primary-text transition-transform hover:-translate-y-px">

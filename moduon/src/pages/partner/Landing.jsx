@@ -28,7 +28,7 @@ export default function PartnerLanding() {
             <a href="#steps" className="hover:text-primary-text">시작 절차</a>
             <Link to="/login" className="hover:text-primary-text">파트너 로그인</Link>
           </nav>
-          <Link to="/partner/apply" className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-[14px] font-bold text-white hover:bg-primary-hover">
+          <Link to="/partner/apply" className="glass-btn-cta inline-flex h-10 items-center rounded-full bg-primary px-5 text-[14px] font-bold text-white hover:bg-primary-hover">
             분양 신청
           </Link>
         </div>
@@ -45,13 +45,13 @@ export default function PartnerLanding() {
               내 브랜드 분양몰로<br /><span className="text-orange-text">온라인 건물주</span> 되기
             </h1>
             <p className="mt-4 max-w-lg text-[15.5px] leading-[27px] text-muted">
-              사무실도, 경력도 필요 없어요. 비교판매 사이트를 분양받으면 상품 공급·리드 배정·AI 운영·정산까지 모두온이 대신합니다. 판매를 시작하게 하는 플랫폼에서, <strong className="font-bold text-ink">판매가 지속되게 하는 운영 시스템</strong>으로.
+              사무실도, 재고도, 경력도 필요 없어요. 비교판매 몰 하나 분양받으면 상품 공급·리드 배정·AI 상담·정산까지 전부 본사가 대신합니다. 당신은 <strong className="font-bold text-ink">월세 받듯</strong> 수익만 확인하세요.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link to="/partner/apply" className="inline-flex h-[52px] items-center rounded-btn bg-primary px-7 text-[15.5px] font-bold text-white shadow-cta hover:bg-primary-hover">
+              <Link to="/partner/apply" className="shimmer-cta glass-btn-cta inline-flex h-[52px] items-center rounded-btn bg-primary px-7 text-[15.5px] font-bold text-white hover:bg-primary-hover">
                 분양 신청하기
               </Link>
-              <a href="#steps" className="inline-flex h-[52px] items-center rounded-btn border border-line-soft bg-white px-7 text-[15.5px] font-bold text-body hover:border-primary hover:text-primary-text">
+              <a href="#steps" className="glass-btn inline-flex h-[52px] items-center rounded-btn border border-line-soft bg-white px-7 text-[15.5px] font-bold text-body hover:border-primary hover:text-primary-text">
                 시작 절차 보기
               </a>
             </div>
@@ -88,9 +88,9 @@ export default function PartnerLanding() {
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { icon: 'store', t: '내 브랜드 몰', d: '로고·컬러·인사말을 입힌 나만의 비교판매 사이트. 상품·가격·콘텐츠는 본사가 중앙 관리해요.' },
-              { icon: 'bolt', t: '리드 자동 배정', d: '내 몰 유입은 물론, 본진 유입 고객도 주소지 권역 기준으로 실시간 배정됩니다.' },
-              { icon: 'cpu', t: 'AI 업무 자동화', d: '상담봇 1차 응대, 문의 자동 분류, 견적 자동 계산. 사장님은 클로징에만 집중하세요.' },
-              { icon: 'wallet', t: '투명한 정산', d: '건별 수수료 명세와 예정 수익이 매일 갱신돼요. 월 정산은 익월 20일 자동 지급.' },
+              { icon: 'bolt', t: '권역 오토매칭', d: '내 몰 유입은 물론, 본진 유입 고객도 주소지 권역 기준으로 실시간 자동 배정됩니다.' },
+              { icon: 'cpu', t: 'AI 상담비서 모비', d: '1차 응대·문의 분류·견적 계산을 모비가 자동으로. 사장님은 클로징에만 집중하세요.' },
+              { icon: 'wallet', t: '데일리 투명정산', d: '건별 수수료 명세와 예정 수익이 매일 갱신돼요. 월 정산은 익월 20일 자동 지급.' },
             ].map((c) => (
               <div key={c.t} className="glass-tile rounded-card p-5 hover:-translate-y-[3px]">
                 <span className="flex h-[46px] w-[46px] items-center justify-center rounded-xl bg-white text-primary-text shadow-card">
@@ -129,7 +129,7 @@ export default function PartnerLanding() {
         <section className="mt-6 overflow-hidden rounded-section bg-band px-6 py-10 text-center shadow-panel sm:px-10">
           <h2 className="text-[22px] font-extrabold leading-8 text-white sm:text-[24px]">권역은 선착순으로 마감됩니다</h2>
           <p className="mt-2 text-[14px] font-medium text-white/75">서울 25개 구 · 전국 시군구 단위 사업권 — 내 지역이 남아있는지 확인해 보세요.</p>
-          <Link to="/partner/apply" className="mt-6 inline-flex h-[52px] items-center rounded-btn bg-white px-8 text-[15.5px] font-bold text-primary-text transition-transform hover:-translate-y-px">
+          <Link to="/partner/apply" className="glass-btn shimmer-cta shimmer-ink mt-6 inline-flex h-[52px] items-center rounded-btn bg-white px-8 text-[15.5px] font-bold text-primary-text transition-transform hover:-translate-y-px">
             내 권역 확인하고 분양 신청 →
           </Link>
         </section>
