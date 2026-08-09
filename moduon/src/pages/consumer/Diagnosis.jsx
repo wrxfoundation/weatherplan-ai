@@ -6,6 +6,7 @@ import { useStore } from '../../lib/store'
 import { won, downloadText, monthKey } from '../../lib/engine'
 import { catBySlug, LEGAL } from '../../lib/constants'
 import { Btn, Card, useCountUp, useToast } from '../../components/ui'
+import { IcRobot, IcDoc } from '../../components/icons'
 import { AiInsight } from '../../components/AiPanel'
 
 const QUESTIONS = [
@@ -51,7 +52,7 @@ export default function Diagnosis() {
   return (
     <main className="mx-auto max-w-md px-5 pb-16">
       <div className="pt-8 text-center">
-        <span className="rounded-full bg-tint px-3.5 py-1.5 text-[12px] font-bold text-primary-text">🤖 AI 생활비 진단</span>
+        <span className="rounded-full bg-tint px-3.5 py-1.5 text-[12px] font-bold text-primary-text"><IcRobot size={13} className="inline -mt-0.5 mr-1" />AI 생활비 진단</span>
         <h1 className="mt-4 text-[22px] font-extrabold leading-8 tracking-tight text-ink">1분이면 끝나요.<br />새는 생활비를 찾아드릴게요</h1>
       </div>
 
@@ -156,7 +157,7 @@ function Result({ result, answers, nav, toast, onRetry }) {
       {/* 진단 컨텍스트를 상담 폼으로 — 카테고리 프리셀렉트 + 리드에 AI진단 라벨 부착 */}
       <Btn size="lg" className="mt-6 w-full shimmer-cta" onClick={() => nav('/consult', { state: { diagnosis: { total: result.total, cats: result.items.map((i) => i.cat), label: `AI진단 · 월 ${won(result.total)} 절감 여지` } } })}>이 결과로 무료 상담 받기</Btn>
       <Btn variant="outline" size="sm" className="mt-2.5 w-full" onClick={() => { downloadText(`모두온_절감실행서_${monthKey()}.md`, buildDiagnosisPlan(result)); toast('절감 실행서를 내려받았어요') }}>
-        📄 절감 실행서 다운로드
+        <IcDoc size={15} />절감 실행서 다운로드
       </Btn>
       <div className="mt-2.5 grid grid-cols-2 gap-2.5">
         <Btn variant="outline" size="sm" onClick={share}>결과 공유하기</Btn>

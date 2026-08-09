@@ -3,6 +3,7 @@
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useStore, setSession } from '../lib/store'
 import { Logo, Card, useToast } from '../components/ui'
+import { IcCart, IcBriefcase, IcRadar, IcMap } from '../components/icons'
 import { unitName } from '../lib/constants'
 
 export default function Login() {
@@ -26,7 +27,7 @@ export default function Login() {
       <div className="mt-8 grid w-full max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* 소비자 */}
         <Card track="b" hover role="button" tabIndex={0} onKeyDown={keyAct(goConsumer)} className="cursor-pointer p-6 text-center outline-none focus-visible:ring-2 ring-primary/40" onClick={goConsumer}>
-          <div className="text-[34px]">🛒</div>
+          <div className="flex justify-center text-primary-text"><IcCart size={34} sw={1.6} /></div>
           <div className="mt-2 text-[16px] font-extrabold text-bink">소비자몰</div>
           <p className="mt-1 text-[12px] leading-5 text-bmuted">비교·견적·상담 신청<br />AI 상담봇 모비</p>
           <div className="mt-3 text-[12px] font-bold text-primary-text">로그인 없이 둘러보기 →</div>
@@ -34,7 +35,7 @@ export default function Login() {
 
         {/* 파트너 */}
         <Card track="b" className="p-6 text-center">
-          <div className="text-[34px]">💼</div>
+          <div className="flex justify-center text-primary-text"><IcBriefcase size={34} sw={1.6} /></div>
           <div className="mt-2 text-[16px] font-extrabold text-bink">파트너 마이오피스</div>
           <p className="mt-1 text-[12px] leading-5 text-bmuted">리드 인박스 · 매일 정산<br />내 몰 브랜딩</p>
           <div className="mt-3 flex flex-col gap-1.5">
@@ -52,7 +53,7 @@ export default function Login() {
 
         {/* 총판(관리단) */}
         <Card track="b" className="p-6 text-center">
-          <div className="text-[34px]">🗺️</div>
+          <div className="flex justify-center text-primary-text"><IcMap size={34} sw={1.6} /></div>
           <div className="mt-2 text-[16px] font-extrabold text-bink">총판 관리단</div>
           <p className="mt-1 text-[12px] leading-5 text-bmuted">권역 셀러·리드 관제<br />배분 수익 확인</p>
           <div className="mt-3 flex flex-col gap-1.5">
@@ -70,7 +71,7 @@ export default function Login() {
 
         {/* 본사 */}
         <Card track="b" hover role="button" tabIndex={0} onKeyDown={keyAct(goAdmin)} className="cursor-pointer p-6 text-center outline-none focus-visible:ring-2 ring-primary/40" onClick={goAdmin}>
-          <div className="text-[34px]">🛰️</div>
+          <div className="flex justify-center text-primary-text"><IcRadar size={34} sw={1.6} /></div>
           <div className="mt-2 text-[16px] font-extrabold text-bink">본사 어드민 · 관제</div>
           <p className="mt-1 text-[12px] leading-5 text-bmuted">분양 승인 · 리드 관제<br />정산 실행 · AI 운영</p>
           <div className="mt-3 text-[12px] font-bold text-primary-text">hq_admin으로 입장 →</div>

@@ -2,6 +2,7 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Logo, Btn } from '../ui'
+import { IcMenu, IcPhone } from '../icons'
 import { LEGAL } from '../../lib/constants'
 import { captureRef } from '../../lib/engine'
 import ChatWidget from '../ChatWidget'
@@ -12,7 +13,7 @@ const NAV = [
   { to: '/diagnosis', label: 'AI 진단' },
   { to: '/payouts', label: '지급 명단' },
   { to: '/partner', label: '분양 안내' },
-  { to: '/login', label: '고객센터' },
+  { to: '/support', label: '고객센터' },
 ]
 
 // 즉시통화 — 파트너몰은 매장 직통, 본진은 대표번호
@@ -55,7 +56,7 @@ export function ConsumerHeader({ tenant }) {
             무료 상담
           </button>
         </div>
-        <button className="text-[22px] md:hidden" onClick={() => setOpen(!open)} aria-label="메뉴">☰</button>
+        <button className="md:hidden" onClick={() => setOpen(!open)} aria-label="메뉴"><IcMenu size={22} /></button>
       </div>
       {open && (
         <div className="border-t border-line-card bg-white px-5 py-3 md:hidden">
@@ -64,7 +65,7 @@ export function ConsumerHeader({ tenant }) {
           ))}
           <Btn className="mt-2 w-full shimmer-cta" onClick={() => { setOpen(false); nav(tenant ? `/consult?src=${tenant.slug}` : '/consult') }}>무료 상담 신청</Btn>
           <a href={tel.href} onClick={() => setOpen(false)} className="glass-btn mt-2 flex h-12 w-full items-center justify-center gap-1.5 rounded-btn border border-line-soft bg-white text-[15px] font-bold text-body">
-            📞 {tel.name} <span className="tnum">{tel.num}</span>
+            <IcPhone size={16} /> {tel.name} <span className="tnum">{tel.num}</span>
           </a>
         </div>
       )}

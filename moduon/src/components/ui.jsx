@@ -1,6 +1,7 @@
 // ─── 공용 UI 프리미티브 (디자인 핸드오프 토큰 준수) ──────────────
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { STATUS_COLOR } from '../lib/constants'
+import { IcInbox } from './icons'
 
 // 버튼 — 높이: 대 52 / 중 48 / 소 40 (모바일 히트타깃 44 유지)
 export function Btn({ variant = 'primary', size = 'md', className = '', children, ...rest }) {
@@ -216,10 +217,12 @@ export function Drawer({ open, onClose, title, children }) {
   )
 }
 
-export function EmptyState({ icon = '📭', text, sub }) {
+// icon: 라인 아이콘 컴포넌트(권장) 또는 레거시 이모지 문자열 둘 다 허용
+export function EmptyState({ icon = IcInbox, text, sub }) {
+  const Icon = typeof icon === 'function' ? icon : null
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="text-[32px]">{icon}</div>
+      {Icon ? <Icon size={34} className="text-faint" /> : <div className="text-[32px]">{icon}</div>}
       <div className="mt-2 text-[14px] font-semibold text-bbody">{text}</div>
       {sub && <div className="mt-1 text-[12px] text-bfaint">{sub}</div>}
     </div>

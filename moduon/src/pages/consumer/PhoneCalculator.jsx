@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { PHONE_DEVICES, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, calcPhoneQuote, compareMethods } from '../../lib/phones'
 import { won, copyText } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
+import { IcShare, IcCheck } from '../../components/icons'
 
 export default function PhoneCalculator() {
   const nav = useNavigate()
@@ -235,8 +236,8 @@ export default function PhoneCalculator() {
           </div>
         </div>
         <div className="mt-3 flex gap-2">
-          <button onClick={share} aria-label="견적 공유" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-btn border border-line bg-white text-[17px]">
-            {copied ? '✓' : '📤'}
+          <button onClick={share} aria-label="견적 공유" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-btn border border-line bg-white text-label">
+            {copied ? <IcCheck size={18} className="text-ok" /> : <IcShare size={18} />}
           </button>
           <button onClick={goConsult} className="h-12 flex-1 rounded-btn bg-primary text-[15px] font-bold text-white">이 조건으로 상담 신청하기</button>
         </div>

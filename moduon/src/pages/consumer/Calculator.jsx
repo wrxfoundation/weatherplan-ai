@@ -5,6 +5,7 @@ import { calcQuote, won, copyText, CARRIERS, SPEED_MAP, BUNDLE_MAP, BUNDLE_LABEL
 import { LEGAL } from '../../lib/constants'
 import { useStore } from '../../lib/store'
 import { useToast } from '../../components/ui'
+import { IcBulb, IcGift, IcShare, IcCheck } from '../../components/icons'
 import { CalcTabs } from './PhoneCalculator'
 import InstallCheck from '../../components/InstallCheck'
 
@@ -158,7 +159,7 @@ export default function Calculator() {
               <Row label="결합 할인" value={q.bundleDc ? `−${won(q.bundleDc)}` : '미선택'} accent={q.bundleDc ? 'text-ok' : 'text-disabled'} />
               <Row label="프로모션 할인" value={q.promoDc ? `−${won(q.promoDc)}` : '미선택'} accent={q.promoDc ? 'text-ok' : 'text-disabled'} />
             </div>
-            {hint && <div className="mt-3 rounded-field bg-tint px-3.5 py-2.5 text-[12px] font-semibold leading-4 text-primary-text">💡 {hint}</div>}
+            {hint && <div className="mt-3 rounded-field bg-tint px-3.5 py-2.5 text-[12px] font-semibold leading-4 text-primary-text"><IcBulb size={13} className="inline -mt-0.5 mr-1" />{hint}</div>}
             <div className="mt-2.5 border-t border-dashed border-line pt-2.5 text-[11.5px] text-faint">약정 3년 · 설치비 무료 — {LEGAL.quote}</div>
           </section>
         </div>
@@ -182,7 +183,7 @@ export default function Calculator() {
 
           <div className="mt-4 rounded-field bg-orange-tint px-4 py-3.5">
             <div className="flex items-center justify-between">
-              <span className="text-[13px] font-bold text-orange-text">🎁 {payLabel} 사은품</span>
+              <span className="text-[13px] font-bold text-orange-text"><IcGift size={13} className="inline -mt-0.5 mr-1" />{payLabel} 사은품</span>
               <span className="tnum text-[20px] font-extrabold text-orange-text">
                 {pay.kind === 'monthly' ? `월 ${won(pay.monthly)}` : won(pay.lump)}
               </span>
@@ -191,7 +192,7 @@ export default function Calculator() {
               {pay.kind === 'monthly' ? `${pay.months}개월 자동 차감 · 총 ${won(pay.total)} 상당` : PAYOUTS.find((p) => p.key === payoutM)?.sub}
             </div>
           </div>
-          {hint && <div className="mt-2 rounded-field bg-tint px-3.5 py-2.5 text-[12px] font-semibold leading-4 text-primary-text">💡 {hint}</div>}
+          {hint && <div className="mt-2 rounded-field bg-tint px-3.5 py-2.5 text-[12px] font-semibold leading-4 text-primary-text"><IcBulb size={13} className="inline -mt-0.5 mr-1" />{hint}</div>}
           <div className="mt-2 text-center text-[12px] text-faint">약정 3년 · 설치비 무료</div>
 
           <button onClick={goConsult} className="shimmer-cta glass-btn-cta mt-5 h-[52px] w-full rounded-btn bg-primary text-[15px] font-bold text-white transition-colors hover:bg-primary-hover">
@@ -217,8 +218,8 @@ export default function Calculator() {
           </div>
         </div>
         <div className="mt-3 flex gap-2">
-          <button onClick={share} aria-label="견적 공유" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-btn border border-line bg-white text-[17px]">
-            {copied ? '✓' : '📤'}
+          <button onClick={share} aria-label="견적 공유" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-btn border border-line bg-white text-label">
+            {copied ? <IcCheck size={18} className="text-ok" /> : <IcShare size={18} />}
           </button>
           <button onClick={goConsult} className="shimmer-cta glass-btn-cta h-12 flex-1 rounded-btn bg-primary text-[15px] font-bold text-white">
             상담 신청하고 혜택 확정하기

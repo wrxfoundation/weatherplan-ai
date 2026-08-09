@@ -4,6 +4,7 @@ import { catBySlug, LEGAL } from '../../lib/constants'
 import { useStore } from '../../lib/store'
 import { won } from '../../lib/engine'
 import { Btn, Card, EmptyState } from '../../components/ui'
+import { IcSearch, IcBell } from '../../components/icons'
 import TelcoCompare from '../../components/TelcoCompare'
 import InstallCheck from '../../components/InstallCheck'
 import Reviews from '../../components/Reviews'
@@ -18,7 +19,7 @@ export default function Category() {
     return (
       <main className="mx-auto max-w-6xl px-5 sm:px-10">
         <Card className="mt-8 p-8 sm:mt-12">
-          <EmptyState icon="🔍" text="찾으시는 서비스가 없어요" sub="주소가 잘못되었거나 준비 중인 카테고리예요" />
+          <EmptyState icon={IcSearch} text="찾으시는 서비스가 없어요" sub="주소가 잘못되었거나 준비 중인 카테고리예요" />
           <div className="flex flex-wrap justify-center gap-2.5">
             <Btn variant="outline" onClick={() => nav('/')}>전체 서비스 보기</Btn>
             <Btn onClick={() => nav('/consult')}>무료 상담</Btn>
@@ -79,7 +80,7 @@ export default function Category() {
 
         {products.length === 0 ? (
           <Card className="p-8">
-            <EmptyState icon="🛎️" text="상담사가 조건에 맞는 상품을 직접 찾아드려요" sub="이 카테고리는 맞춤 견적으로만 안내되고 있어요" />
+            <EmptyState icon={IcBell} text="상담사가 조건에 맞는 상품을 직접 찾아드려요" sub="이 카테고리는 맞춤 견적으로만 안내되고 있어요" />
             <Btn className="mx-auto flex" onClick={() => nav(`/consult?cat=${slug}`)}>무료 상담으로 견적 받기</Btn>
           </Card>
         ) : (

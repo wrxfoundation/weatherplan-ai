@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { won, CARRIERS, SPEED_MAP } from '../lib/engine'
 import { TV_OPTIONS, CARRIER_PROMO, SPEED_DESC, telcoCell, INSTALL_STEPS, GIFT_POLICY, TELCO_FAQ } from '../lib/telco'
+import { IcGift } from './icons'
 
 export default function TelcoCompare() {
   const nav = useNavigate()
@@ -66,7 +67,7 @@ export default function TelcoCompare() {
                         >
                           {hot && <span className="mb-1 inline-block rounded-full bg-primary px-2 py-0.5 text-[10.5px] font-bold text-white">가장 인기</span>}
                           <div className="tnum text-[16px] font-extrabold tracking-tight text-ink">월 {won(cell.monthly)}</div>
-                          <div className="tnum mt-0.5 text-[12px] font-bold text-orange-text">🎁 {won(cell.gift)}</div>
+                          <div className="tnum mt-0.5 text-[12px] font-bold text-orange-text"><IcGift size={13} className="inline -mt-0.5 mr-1" />{won(cell.gift)}</div>
                         </button>
                       </td>
                     )

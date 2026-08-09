@@ -5,6 +5,7 @@ import { useStore } from '../../lib/store'
 import { CATEGORIES, CONSULT_TIMES, REGIONS, LEGAL } from '../../lib/constants'
 import { maskPhone, phoneValid, won, captureRef } from '../../lib/engine'
 import { Btn, Field, inputCls, Modal, useToast } from '../../components/ui'
+import { IcStore, IcRobot, IcDoc } from '../../components/icons'
 import StatusTracker from '../../components/StatusTracker'
 
 export default function Consult() {
@@ -135,7 +136,7 @@ export default function Consult() {
       <div className="pt-6">
         {tenant && (
           <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[12px] font-bold text-primary-text shadow-card">
-            🏪 {tenant.name} 파트너몰 상담
+            <IcStore size={13} /> {tenant.name} 파트너몰 상담
           </div>
         )}
         <h1 className="text-[24px] font-extrabold tracking-tight text-ink">30초면 신청 완료!</h1>
@@ -147,7 +148,7 @@ export default function Consult() {
       {quote && (
         <div className="mt-5 rounded-card border border-tint bg-white p-4 shadow-card">
           <div className="flex items-center justify-between text-[13px]">
-            <span className="font-bold text-ink">{fromDiag ? '🤖 AI 진단에서 가져온 결과' : '📄 계산기에서 가져온 구성'}</span>
+            <span className="font-bold text-ink">{fromDiag ? <><IcRobot size={13} className="inline -mt-0.5 mr-1" />AI 진단에서 가져온 결과</> : <><IcDoc size={13} className="inline -mt-0.5 mr-1" />계산기에서 가져온 구성</>}</span>
             <Link to={fromDiag ? '/diagnosis' : '/calculator'} className="font-semibold text-primary-text">수정</Link>
           </div>
           <div className="tnum mt-1.5 text-[13.5px] text-label">
