@@ -10,6 +10,7 @@ import { KpiCard, Card, DeltaChip, useToast, Btn } from '../../components/ui'
 import { Donut, Legend, LineChart, HBars, CHART } from '../../components/charts'
 import { AiInsight } from '../../components/AiPanel'
 import OpsMap from '../../components/OpsMap'
+import { IcStore } from '../../components/icons'
 
 export default function AdminDashboard() {
   const { db, dispatch } = useStore()
@@ -55,7 +56,7 @@ export default function AdminDashboard() {
           <h1 className="text-[22px] font-extrabold tracking-[-0.4px] text-bink">분양몰 사업 현황 대시보드</h1>
           <p className="mt-1 text-[13px] text-bmuted">전국 분양·운영·수익·AI 현황을 한눈에 — 데모 수치 포함</p>
         </div>
-        <span className="hidden rounded-card bg-tint px-4 py-3 text-[28px] lg:block">🏪</span>
+        <span className="hidden rounded-card bg-tint p-3.5 text-primary-text lg:block"><IcStore size={30} sw={1.6} /></span>
       </div>
 
       {/* KPI 4 */}

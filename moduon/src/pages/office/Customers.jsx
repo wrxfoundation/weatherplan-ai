@@ -5,6 +5,7 @@ import { useOutletContext } from 'react-router-dom'
 import { useStore } from '../../lib/store'
 import { won, maskPhone, dday, fmtDate } from '../../lib/engine'
 import { Card, useToast, EmptyState } from '../../components/ui'
+import { IcPhone, IcFolder } from '../../components/icons'
 
 export default function OfficeCustomers() {
   const { tenant } = useOutletContext()
@@ -67,12 +68,12 @@ export default function OfficeCustomers() {
                 <button onClick={() => toast(`${c.customer} 고객에게 재상담 알림톡을 보냈어요`)} className="h-8 flex-1 rounded-full bg-tint px-3 text-[11.5px] font-bold text-primary-text hover:bg-primary hover:text-white lg:flex-none">
                   재상담 제안
                 </button>
-                <a href={`tel:${c.phone}`} className="flex h-8 w-8 items-center justify-center rounded-full bg-brow text-[12px] hover:bg-bline">📞</a>
+                <a href={`tel:${c.phone}`} className="flex h-8 w-8 items-center justify-center rounded-full bg-brow text-bbody hover:bg-bline"><IcPhone size={14} /></a>
               </div>
             </div>
           )
         })}
-        {contracts.length === 0 && <EmptyState icon="🗂️" text="아직 계약 고객이 없어요" sub="리드를 완료 처리하면 고객 목록이 쌓입니다" />}
+        {contracts.length === 0 && <EmptyState icon={<IcFolder size={30} className="text-bfaint" />} text="아직 계약 고객이 없어요" sub="리드를 완료 처리하면 고객 목록이 쌓입니다" />}
       </Card>
 
       <p className="mt-3 text-[11.5px] text-bfaint">위약금은 지원금 반환금 기준 추정치로, 정확한 금액은 통신사 확인이 필요합니다. 위약금이 낮고 만기가 가까운 고객부터 제안하면 전환율이 높아요.</p>

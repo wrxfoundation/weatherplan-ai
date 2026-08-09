@@ -3,6 +3,7 @@ import { useStore } from '../../lib/store'
 import { won, timeAgo } from '../../lib/engine'
 import { Card, KpiCard, LiveDot } from '../../components/ui'
 import { Donut, Legend, LineChart, CHART } from '../../components/charts'
+import { IcRobot, IcBulb } from '../../components/icons'
 
 const AUTO_BREAKDOWN = [
   { label: '완전 자동 처리', value: 38542, color: CHART.ok },
@@ -49,7 +50,7 @@ export default function AdminAiOps() {
           </div>
           <p className="mt-1 text-[13px] text-bmuted">AI가 일하고, 사람은 예외만 봅니다 — 상담·분류·배정·정산 자동화 현황</p>
         </div>
-        <span className="hidden text-[40px] lg:block">🤖</span>
+        <span className="hidden text-primary-text lg:block"><IcRobot size={40} sw={1.5} /></span>
       </Card>
 
       {/* KPI 4 */}
@@ -148,7 +149,7 @@ export default function AdminAiOps() {
           { t: '수도3단 파트너 증설', d: '인천·부천 권역 리드가 처리 용량 대비 1.8배 — 분양 영업 우선 배치', ref: '권역별 리드/파트너 비율' },
         ].map((c) => (
           <Card key={c.t} track="b" className="p-5">
-            <div className="flex items-center gap-2 text-[12px] font-bold text-primary-text">💡 AI 추천 인사이트</div>
+            <div className="flex items-center gap-2 text-[12px] font-bold text-primary-text"><IcBulb size={14} />AI 추천 인사이트</div>
             <div className="mt-2 text-[14.5px] font-bold text-bink">{c.t}</div>
             <p className="mt-1 text-[12.5px] leading-5 text-bbody">{c.d}</p>
             <button className="mt-2.5 text-[11.5px] font-bold text-primary-text underline underline-offset-2">근거 데이터: {c.ref} →</button>

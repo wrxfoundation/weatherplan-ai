@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useStore, getSession } from '../../lib/store'
 import { Logo } from '../ui'
+import { IcGrid, IcCompass, IcStore, IcBox, IcClipboard, IcBolt, IcRobot, IcCoins, IcLock, IcBell, IcClock, IcAlert } from '../icons'
 
 // 파생 알림 — 알림을 저장하지 않고 현재 상태에서 매번 계산한다 (axion 패턴).
 // 읽음 처리는 내용 시그니처를 localStorage에 비교 저장 — 알림 테이블 없이 배지가 동작.
@@ -10,11 +11,11 @@ function buildNotifs(db) {
   const now = Date.now()
   const n = []
   const sla = db.leads.filter((l) => l.status === '접수' && now - l.createdAt > 10 * 60000).length
-  if (sla) n.push({ icon: '⏰', text: `SLA 10분 초과 접수 리드 ${sla}건`, to: '/admin/leads' })
+  if (sla) n.push({ icon: IcClock, cls: 'text-warn', text: `SLA 10분 초과 접수 리드 ${sla}건`, to: '/admin/leads' })
   const unassigned = db.leads.filter((l) => !l.tenantId && !['완료', '취소'].includes(l.status)).length
-  if (unassigned) n.push({ icon: '🚨', text: `미배정 리드 ${unassigned}건 — 재배정 필요`, to: '/admin/leads' })
+  if (unassigned) n.push({ icon: IcAlert, cls: 'text-warn', text: `미배정 리드 ${unassigned}건 — 재배정 필요`, to: '/admin/leads' })
   const apps = db.applications.filter((a) => a.status === '대기').length
-  if (apps) n.push({ icon: '🏪', text: `분양 신청 승인 대기 ${apps}건`, to: '/admin/tenants' })
+  if (apps) n.push({ icon: IcStore, cls: 'text-primary-text', text: `분양 신청 승인 대기 ${apps}건`, to: '/admin/tenants' })
   return n
 }
 
@@ -35,7 +36,7 @@ function NotifBell({ db }) {
   return (
     <div className="relative">
       <button onClick={toggle} aria-label="알림" className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-card transition-colors hover:bg-brow">
-        <span className="text-[16px]">🔔</span>
+        <IcBell size={16} />
         {unseen && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-warn" />}
         {items.length > 0 && (
           <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-bink px-1 text-[10.5px] font-bold text-white">{items.length}</span>
@@ -51,7 +52,7 @@ function NotifBell({ db }) {
             ) : (
               items.map((i) => (
                 <NavLink key={i.text} to={i.to} onClick={() => setOpen(false)} className="flex items-center gap-3 border-b border-bline px-4 py-3 text-[13px] font-semibold text-bbody last:border-0 hover:bg-brow">
-                  <span>{i.icon}</span>
+                  <i.icon size={15} className={`shrink-0 ${i.cls}`} />
                   <span className="flex-1">{i.text}</span>
                   <span className="text-bfaint">→</span>
                 </NavLink>
@@ -65,17 +66,17 @@ function NotifBell({ db }) {
 }
 
 const GROUPS = [
-  { label: null, items: [{ to: '/admin', label: '통합 대시보드', icon: '▦', end: true }] },
-  { label: '경영', items: [{ to: '/admin/biz', label: '경영 전략', icon: '🧭' }] },
+  { label: null, items: [{ to: '/admin', label: '통합 대시보드', icon: IcGrid, end: true }] },
+  { label: '경영', items: [{ to: '/admin/biz', label: '경영 전략', icon: IcCompass }] },
   { label: '서비스 관리', items: [
-    { to: '/admin/tenants', label: '분양몰 관리', icon: '🏪' },
-    { to: '/admin/products', label: '상품 관리', icon: '📦' },
-    { to: '/admin/policies', label: '정책 관리', icon: '📋' },
+    { to: '/admin/tenants', label: '분양몰 관리', icon: IcStore },
+    { to: '/admin/products', label: '상품 관리', icon: IcBox },
+    { to: '/admin/policies', label: '정책 관리', icon: IcClipboard },
   ]},
-  { label: '리드 관제', items: [{ to: '/admin/leads', label: '리드 콘솔', icon: '⚡' }] },
-  { label: 'AI 관리', items: [{ to: '/admin/ai', label: 'AI 운영 현황', icon: '🤖' }] },
-  { label: '정산·수익', items: [{ to: '/admin/settlements', label: '정산·지급', icon: '₩' }] },
-  { label: '시스템', items: [{ to: '/admin/audit', label: '권한·감사 로그', icon: '🔒' }] },
+  { label: '리드 관제', items: [{ to: '/admin/leads', label: '리드 콘솔', icon: IcBolt }] },
+  { label: 'AI 관리', items: [{ to: '/admin/ai', label: 'AI 운영 현황', icon: IcRobot }] },
+  { label: '정산·수익', items: [{ to: '/admin/settlements', label: '정산·지급', icon: IcCoins }] },
+  { label: '시스템', items: [{ to: '/admin/audit', label: '권한·감사 로그', icon: IcLock }] },
 ]
 
 export default function AdminLayout() {
@@ -117,7 +118,7 @@ export default function AdminLayout() {
                   end={m.end}
                   className={({ isActive }) => `mb-0.5 flex items-center gap-3 rounded-field px-3 py-2.5 text-[14px] font-semibold transition-colors ${isActive ? 'bg-tint text-primary-text' : 'text-bbody hover:bg-brow'}`}
                 >
-                  <span className="w-5 text-center text-[13px]">{m.icon}</span>
+                  <span className="flex w-5 justify-center"><m.icon size={15} /></span>
                   {m.label}
                   {m.to === '/admin/tenants' && pendingApps > 0 && (
                     <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-warn px-1.5 text-[11px] font-bold text-white">{pendingApps}</span>
@@ -128,7 +129,7 @@ export default function AdminLayout() {
           ))}
         </nav>
         <div className="m-3 rounded-card bg-brow p-4">
-          <div className="text-[12px] font-bold text-bink">🤖 AI 비서 모비</div>
+          <div className="text-[12px] font-bold text-bink"><IcRobot size={14} className="inline -mt-0.5 mr-1" />AI 비서 모비</div>
           <p className="mt-1 text-[11px] leading-4 text-bmuted">자동 분류·인사이트가 실시간 반영 중입니다.</p>
           <NavLink to="/admin/ai" className="mt-2 inline-block text-[11px] font-bold text-primary-text">AI 운영 현황 →</NavLink>
         </div>
@@ -147,14 +148,14 @@ export default function AdminLayout() {
       {/* 모바일 하단 탭 */}
       <nav className="safe-b fixed inset-x-0 bottom-0 z-30 flex border-t border-bline bg-white shadow-bottombar lg:hidden">
         {[
-          { to: '/admin', label: '대시보드', icon: '▦', end: true },
-          { to: '/admin/leads', label: '관제', icon: '⚡' },
-          { to: '/admin/tenants', label: '분양', icon: '🏪' },
-          { to: '/admin/settlements', label: '정산', icon: '₩' },
-          { to: '/admin/ai', label: 'AI', icon: '🤖' },
+          { to: '/admin', label: '대시보드', icon: IcGrid, end: true },
+          { to: '/admin/leads', label: '관제', icon: IcBolt },
+          { to: '/admin/tenants', label: '분양', icon: IcStore },
+          { to: '/admin/settlements', label: '정산', icon: IcCoins },
+          { to: '/admin/ai', label: 'AI', icon: IcRobot },
         ].map((m) => (
           <NavLink key={m.to} to={m.to} end={m.end} className={({ isActive }) => `flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-semibold ${isActive ? 'text-primary-text' : 'text-bfaint'}`}>
-            <span className="text-[17px] leading-5">{m.icon}</span>
+            <span className="flex h-5 items-center"><m.icon size={17} /></span>
             {m.label}
           </NavLink>
         ))}

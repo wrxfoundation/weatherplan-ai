@@ -3,8 +3,10 @@ import { useOutletContext } from 'react-router-dom'
 import { useStore } from '../../lib/store'
 import { timeAgo } from '../../lib/engine'
 import { Card, useToast } from '../../components/ui'
+import { IcDoc, IcChart, IcBox, IcFolder } from '../../components/icons'
 
-const TYPE_ICON = { PDF: '📄', XLSX: '📊', ZIP: '🗜️' }
+const TYPE_ICON = { PDF: IcDoc, XLSX: IcChart, ZIP: IcBox }
+const FileIcon = ({ type }) => { const Icon = TYPE_ICON[type] ?? IcFolder; return <Icon size={18} /> }
 
 export default function OfficeResources() {
   useOutletContext()
@@ -29,7 +31,7 @@ export default function OfficeResources() {
       <Card track="b" className="mt-4 overflow-hidden">
         {db.resources.map((r) => (
           <div key={r.id} className="flex items-center gap-3.5 border-b border-brow px-4 py-4 sm:px-5">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brow text-[18px]">{TYPE_ICON[r.type] ?? '📁'}</span>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brow text-bbody"><FileIcon type={r.type} /></span>
             <div className="min-w-0 flex-1">
               <div className="truncate text-[13.5px] font-bold text-bink">{r.name}</div>
               <div className="tnum text-[11.5px] text-bfaint">{r.type} · {r.size} · 업데이트 {timeAgo(r.at)} · 다운로드 {r.downloads}회</div>

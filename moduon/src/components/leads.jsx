@@ -6,6 +6,7 @@ import { catBySlug, LEAD_STATUS, LEAD_TRANSITIONS, STATUS_COLOR, unitName, unitB
 import { StatusChip, Drawer, Btn, useToast, Modal } from './ui'
 import { callClaude } from '../lib/ai'
 import { AiSpark } from './AiPanel'
+import { IcPhone, IcChat } from './icons'
 
 export function LeadRow({ lead, onOpen, showTenant, tenants }) {
   const overdue = lead.status === '접수' && minutesAgo(lead.createdAt) >= 10
@@ -41,7 +42,7 @@ export function LeadRow({ lead, onOpen, showTenant, tenants }) {
           className="ml-auto flex h-9 w-9 items-center justify-center rounded-full bg-tint text-[13px] text-primary-text hover:bg-primary hover:text-white"
           title="전화 걸기"
           aria-label="전화 걸기"
-        >📞</a>
+        ><IcPhone size={15} /></a>
         <AlimBtn lead={lead} />
       </span>
     </div>
@@ -56,7 +57,7 @@ function AlimBtn({ lead }) {
       className="flex h-9 w-9 items-center justify-center rounded-full bg-ok/10 text-[13px] text-ok hover:bg-ok hover:text-white"
       title="알림톡 보내기"
       aria-label="알림톡 보내기"
-    >💬</button>
+    ><IcChat size={15} /></button>
   )
 }
 
@@ -118,8 +119,8 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
           </div>
         )}
         <div className="mt-3 flex gap-2">
-          <a href={`tel:${lead.phone}`} className="flex h-10 flex-1 items-center justify-center rounded-field bg-primary text-[13.5px] font-bold text-white hover:bg-primary-hover">📞 전화 걸기</a>
-          <button onClick={() => toast('알림톡을 보냈어요')} className="flex h-10 flex-1 items-center justify-center rounded-field bg-ok/10 text-[13.5px] font-bold text-ok hover:bg-ok hover:text-white">💬 알림톡</button>
+          <a href={`tel:${lead.phone}`} className="flex h-10 flex-1 items-center justify-center rounded-field bg-primary text-[13.5px] font-bold text-white hover:bg-primary-hover"><IcPhone size={15} className="mr-1.5" />전화 걸기</a>
+          <button onClick={() => toast('알림톡을 보냈어요')} className="flex h-10 flex-1 items-center justify-center rounded-field bg-ok/10 text-[13.5px] font-bold text-ok hover:bg-ok hover:text-white"><IcChat size={15} className="mr-1.5" />알림톡</button>
         </div>
       </div>
 

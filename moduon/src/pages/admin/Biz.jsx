@@ -5,6 +5,7 @@ import { useStore, adminStats } from '../../lib/store'
 import { won, num, SAUP_TIERS } from '../../lib/engine'
 import { UNITS, unitName } from '../../lib/constants'
 import { Card } from '../../components/ui'
+import { IcCompass } from '../../components/icons'
 
 const STATUS = {
   운영중: 'bg-ok/10 text-ok',
@@ -51,7 +52,7 @@ export default function AdminBiz() {
           <h1 className="text-[22px] font-extrabold tracking-[-0.4px] text-bink">경영 전략 · 사업 로드맵</h1>
           <p className="mt-1 text-[13px] text-bmuted">사업기획서 v4 기반 — 3계층 구조 · AI 등급제 · 수익 다각화 · 데이터 플라이휠</p>
         </div>
-        <span className="hidden rounded-card bg-tint px-4 py-3 text-[26px] lg:block">🧭</span>
+        <span className="hidden rounded-card bg-tint p-3.5 text-primary-text lg:block"><IcCompass size={30} sw={1.6} /></span>
       </div>
 
       {/* 1. 3계층 사업 구조 */}

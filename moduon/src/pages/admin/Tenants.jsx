@@ -5,6 +5,7 @@ import { useStore } from '../../lib/store'
 import { unitName, unitBySigungu } from '../../lib/constants'
 import { fmtDate, timeAgo, won } from '../../lib/engine'
 import { Card, Btn, Modal, useToast, EmptyState } from '../../components/ui'
+import { IcChat, IcStore } from '../../components/icons'
 
 export default function AdminTenants() {
   const { db, dispatch } = useStore()
@@ -45,7 +46,7 @@ export default function AdminTenants() {
                 <div className="mt-0.5 text-[12px] text-bmuted">
                   {a.name} · {a.type} · {a.sigungu} → <strong className="font-bold text-primary-text">{unitName(unitBySigungu(a.sigungu))}</strong> · 신청 {timeAgo(a.appliedAt)}
                 </div>
-                {a.memo && <div className="mt-0.5 text-[11.5px] text-bfaint">💬 {a.memo}</div>}
+                {a.memo && <div className="mt-0.5 text-[11.5px] text-bfaint"><IcChat size={12} className="inline -mt-0.5 mr-1" />{a.memo}</div>}
               </div>
               <div className="flex gap-2">
                 <Btn size="xs" onClick={() => approve(a)}>승인</Btn>
@@ -91,7 +92,7 @@ export default function AdminTenants() {
             </div>
           </div>
         ))}
-        {tenants.length === 0 && <EmptyState icon="🏪" text="조건에 맞는 몰이 없어요" />}
+        {tenants.length === 0 && <EmptyState icon={<IcStore size={30} className="text-bfaint" />} text="조건에 맞는 몰이 없어요" />}
       </Card>
 
       <Modal open={!!rejectTarget} onClose={() => setRejectTarget(null)} title={`반려 사유 — ${rejectTarget?.wantName}`}>
