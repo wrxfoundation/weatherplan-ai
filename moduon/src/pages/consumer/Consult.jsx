@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useStore } from '../../lib/store'
 import { CATEGORIES, CONSULT_TIMES, REGIONS, LEGAL } from '../../lib/constants'
-import { maskPhone, phoneValid, won } from '../../lib/engine'
+import { maskPhone, phoneValid, won, captureRef } from '../../lib/engine'
 import { Field, inputCls, useToast } from '../../components/ui'
 
 export default function Consult() {
@@ -32,9 +32,16 @@ export default function Consult() {
 
   const submit = () => {
     if (!valid) return
+    // 중복 제출 가드 — 10분 내 동일 연락처·카테고리 접수가 있으면 리드를 새로 만들지 않는다 (idempotency)
+    const dup = db.leads.find((l) => l.phone === phone.trim() && l.cat === cats[0] && Date.now() - l.createdAt < 10 * 60000 && l.status !== '취소')
+    if (dup) {
+      setDone({ name: name.trim(), phone: phone.trim(), sigungu, cats: [...cats], time })
+      toast('이미 접수된 신청이 있어요 — 담당 상담사가 곧 연락드려요!')
+      return
+    }
     dispatch({
       type: 'CREATE_LEAD',
-      payload: { name: name.trim(), phone: phone.trim(), sigungu, cat: cats[0], wish: time, source: src ?? 'main', quote },
+      payload: { name: name.trim(), phone: phone.trim(), sigungu, cat: cats[0], wish: time, source: src ?? 'main', quote, ref: captureRef() },
     })
     dispatch({ type: 'AI_EVENT', payload: { kind: 'classify', q: cats.join(','), source: 'engine', label: '상담 신청', auto: true } })
     setDone({ name: name.trim(), phone: phone.trim(), sigungu, cats: [...cats], time })

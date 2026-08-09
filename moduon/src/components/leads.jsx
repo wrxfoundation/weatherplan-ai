@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useStore } from '../lib/store'
 import { maskName, maskPhone, timeAgo, minutesAgo, fmtDateTime, won } from '../lib/engine'
-import { catBySlug, LEAD_STATUS, STATUS_COLOR, unitName, unitBySigungu } from '../lib/constants'
+import { catBySlug, LEAD_STATUS, LEAD_TRANSITIONS, STATUS_COLOR, unitName, unitBySigungu } from '../lib/constants'
 import { StatusChip, Drawer, Btn, useToast, Modal } from './ui'
 
 export function LeadRow({ lead, onOpen, showTenant, tenants }) {
@@ -52,15 +52,8 @@ function AlimBtn({ lead }) {
   )
 }
 
-// 상태 전환 가능 규칙(단순 전진 + 취소)
-const NEXT = {
-  접수: ['상담대기', '취소'],
-  상담대기: ['상담완료', '취소'],
-  상담완료: ['개통대기', '취소'],
-  개통대기: ['완료', '취소'],
-  완료: [],
-  취소: [],
-}
+// 상태 전환 규칙은 constants의 LEAD_TRANSITIONS 단일 소스를 사용
+const NEXT = LEAD_TRANSITIONS
 
 export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassign }) {
   const { dispatch } = useStore()
@@ -97,7 +90,11 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
           <span className="text-bfaint">지역</span><span className="font-semibold text-bink">{lead.sigungu}</span>
           <span className="text-bfaint">관심 서비스</span><span className="font-semibold text-primary-text">{cat?.name}</span>
           <span className="text-bfaint">희망 시간</span><span className="font-semibold text-bink">{lead.wish}</span>
-          <span className="text-bfaint">유입 경로</span><span className="font-semibold text-bink">{lead.source === 'main' ? '모두온 본진' : `파트너몰(${lead.source})`}</span>
+          <span className="text-bfaint">유입 경로</span>
+          <span className="font-semibold text-bink">
+            {lead.source === 'main' ? '모두온 본진' : `파트너몰(${lead.source})`}
+            {lead.ref && <span className="ml-1.5 rounded-full bg-orange-tint px-2 py-0.5 text-[10.5px] font-bold text-orange-text">추천 {lead.ref}</span>}
+          </span>
         </div>
         {lead.quote && (
           <div className="mt-3 rounded-field bg-tint/60 px-3 py-2.5 text-[12.5px]">

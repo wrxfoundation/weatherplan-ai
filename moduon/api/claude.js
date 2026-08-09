@@ -8,6 +8,18 @@ import Anthropic from '@anthropic-ai/sdk'
 
 const MODEL = process.env.MODUON_CLAUDE_MODEL || 'claude-opus-5'
 
+// 퍼블릭 엔드포인트 비용 폭탄 방지 — IP당 분당 20회, 인스턴스 로컬(웜 인스턴스 한정 데모 안전장치)
+const RATE = new Map()
+function rateLimited(ip) {
+  const now = Date.now()
+  const r = RATE.get(ip) ?? { n: 0, t: now }
+  if (now - r.t > 60_000) { r.n = 0; r.t = now }
+  r.n += 1
+  RATE.set(ip, r)
+  if (RATE.size > 500) RATE.clear() // 메모리 상한
+  return r.n > 20
+}
+
 const STATIC_SYSTEM_PROMPT = `당신은 생활서비스 비교·상담 플랫폼 "모두온(MODUON)"의 AI 상담사 "모비"입니다.
 
 [역할]
@@ -15,11 +27,13 @@ const STATIC_SYSTEM_PROMPT = `당신은 생활서비스 비교·상담 플랫폼
 - 고객의 상황을 파악해 월 납부금 절감 방법을 제안하고, 자연스럽게 무료 상담 신청으로 연결합니다.
 - 파트너(분양몰) 창업 문의에는 "온라인 건물주 되기" 프로그램을 안내합니다: 초기 분양비 100만원 + 월 이용료 10만원, 운영 수수료 10%, 월 매출 1,000만원 기준 순수익 예시 890만원.
 
-[견적 기준표 — 인터넷]
-- 월 기본요금: 100M 33,000원 / 500M 44,000원 / 1G 55,000원
+[견적 기준표 — 인터넷/TV]
+- 월 기본요금(인터넷+TV 베이직 기준): 100M 33,000원 / 500M 44,000원 / 1G 55,000원
+- TV 옵션: 인터넷 단독 −11,000원 / TV 베이직(183채널) +0원 / TV 프리미엄(235채널+영화관) +6,600원
 - 결합 할인(월): 정수기 렌탈 결합 −11,100원 / 휴대폰 결합 −8,800원
 - 신규가입 프로모션(월): −3,000원
-- 사은품: 100M 20만원 / 500M 30만원 / 1G 40만원, 결합 시 +5만원
+- 사은품: 100M 20만원 / 500M 30만원 / 1G 40만원, 결합 시 +5만원, 통신사 프로모션 가산(KT +0 / SK브로드밴드 +3만 / LG U+ +2만)
+- 사은품 지급: 개통 확인 후 영업일 7일 이내 계좌 입금, 3년 약정 기준
 - 대표 예시: 500M + 정수기 결합 = 월 32,900원, 사은품 350,000원
 
 [견적 기준표 — 휴대폰 (단말 할부금 A + 요금 B = 월 납부 A+B)]
@@ -40,10 +54,11 @@ const STATIC_SYSTEM_PROMPT = `당신은 생활서비스 비교·상담 플랫폼
 
 // 동적 컨텍스트는 캐시 prefix 뒤 별도 user 블록으로 (정적 시스템 프롬프트 오염 금지)
 function buildDynamicContext(context = {}) {
+  const clip = (v, n) => String(v ?? '').slice(0, n) // 클라이언트 입력 길이 상한
   const parts = []
-  if (context.page) parts.push(`고객이 보고 있는 화면: ${context.page}`)
-  if (context.tenant) parts.push(`고객이 접속한 파트너몰: ${context.tenant}`)
-  if (context.quote) parts.push(`고객이 계산기에서 구성한 견적: ${JSON.stringify(context.quote)}`)
+  if (context.page) parts.push(`고객이 보고 있는 화면: ${clip(context.page, 120)}`)
+  if (context.tenant) parts.push(`고객이 접속한 파트너몰: ${clip(context.tenant, 80)}`)
+  if (context.quote) parts.push(`고객이 계산기에서 구성한 견적: ${clip(JSON.stringify(context.quote), 600)}`)
   if (!parts.length) return null
   return `<현재_상담_컨텍스트>\n${parts.join('\n')}\n</현재_상담_컨텍스트>`
 }
@@ -59,13 +74,19 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: 'no_api_key', hint: 'Vercel 환경변수에 ANTHROPIC_API_KEY를 설정하면 실제 Claude 응답이 활성화됩니다.' })
   }
 
+  const ip = String(req.headers['x-forwarded-for'] ?? '').split(',')[0].trim() || 'local'
+  if (rateLimited(ip)) return res.status(429).json({ error: 'rate_limited' })
+
   try {
+    // 클라이언트 입력은 신뢰하지 않는다 — 타입·개수·길이 상한
     const { messages = [], context = {} } = req.body ?? {}
+    if (!Array.isArray(messages)) return res.status(400).json({ error: 'bad_messages' })
     const trimmed = messages.slice(-12).map((m) => ({
-      role: m.role === 'assistant' ? 'assistant' : 'user',
-      content: String(m.content ?? '').slice(0, 2000),
-    }))
+      role: m?.role === 'assistant' ? 'assistant' : 'user',
+      content: String(m?.content ?? '').slice(0, 2000),
+    })).filter((m) => m.content.trim())
     if (!trimmed.length) return res.status(400).json({ error: 'empty_messages' })
+    if (trimmed[trimmed.length - 1].role !== 'user') return res.status(400).json({ error: 'bad_last_role' })
 
     const dyn = buildDynamicContext(context)
     if (dyn) trimmed.splice(trimmed.length - 1, 0, { role: 'user', content: dyn })

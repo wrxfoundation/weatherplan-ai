@@ -17,6 +17,17 @@ export const catBySlug = (slug) => CATEGORIES.find((c) => c.slug === slug)
 // ─── 리드 상태 6단계 (전 화면 공통 단일 enum — 동의어 금지) ───
 export const LEAD_STATUS = ['접수', '상담대기', '상담완료', '개통대기', '완료', '취소']
 
+// 허용 전이 테이블 — 전이는 반드시 이 테이블을 경유(스토어가 불법 전이를 무시)
+export const LEAD_TRANSITIONS = {
+  접수: ['상담대기', '취소'],
+  상담대기: ['상담완료', '취소'],
+  상담완료: ['개통대기', '취소'],
+  개통대기: ['완료', '취소'],
+  완료: [],
+  취소: [],
+}
+export const canTransition = (from, to) => (LEAD_TRANSITIONS[from] ?? []).includes(to)
+
 export const STATUS_COLOR = {
   접수: '#5377D6',
   상담대기: '#8B7BFF',

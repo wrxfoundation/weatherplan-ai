@@ -1,8 +1,9 @@
 // ─── 트랙 A 소비자몰 레이아웃: 헤더 76px + 푸터 + AI 상담봇 ─────
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Logo, Btn } from '../ui'
 import { LEGAL } from '../../lib/constants'
+import { captureRef } from '../../lib/engine'
 import ChatWidget from '../ChatWidget'
 
 const NAV = [
@@ -90,6 +91,8 @@ export function ConsumerFooter({ tenant }) {
 }
 
 export default function ConsumerLayout() {
+  // 추천 링크(?ref=) 최초 진입 시 귀속 각인 — 이후 어느 화면에서 신청해도 유지
+  useEffect(() => { captureRef() }, [])
   return (
     <div className="min-h-screen bg-cream">
       <ConsumerHeader />

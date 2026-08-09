@@ -4,7 +4,7 @@
 import { createContext, useContext, useEffect, useMemo, useReducer } from 'react'
 import { buildSeed, SEED_VERSION } from './seed'
 import { routeLead, calcSettlement, monthKey } from './engine'
-import { CATEGORIES, REGIONS, unitBySigungu } from './constants'
+import { CATEGORIES, REGIONS, unitBySigungu, canTransition } from './constants'
 
 const KEY = 'moduon_db_v1'
 const SESSION_KEY = 'moduon_session_v1'
@@ -14,7 +14,9 @@ function load() {
     const raw = localStorage.getItem(KEY)
     if (raw) {
       const db = JSON.parse(raw)
-      if (db.seedVersion === SEED_VERSION) return db
+      // localStorage는 신뢰할 수 없는 입력 — 핵심 컬렉션이 배열이 아니면 재시드 (흰 화면 사고 방지)
+      const sane = ['leads', 'tenants', 'applications', 'products', 'auditLog'].every((k) => Array.isArray(db?.[k]))
+      if (db.seedVersion === SEED_VERSION && sane) return db
     }
   } catch { /* 손상 시 재시드 */ }
   return buildSeed()
@@ -36,13 +38,17 @@ function reducer(db, action) {
 
     // ── 리드 파이프라인 ──────────────────────────────
     case 'CREATE_LEAD': {
-      const { name, phone, sigungu, cat, wish, source, quote } = action.payload
-      const routed = routeLead({ sourceSlug: source !== 'main' ? source : null, sigungu }, db.tenants)
+      const { name, phone, sigungu, cat, wish, source, quote, ref } = action.payload
+      // 귀속 우선순위: 파트너몰 유입(src) > 추천 링크(?ref=) > 권역 배정 (axion 흡수)
+      const refSlug = source === 'main' && ref && db.tenants.some((t) => t.slug === ref && t.status === '활성') ? ref : null
+      const routed = routeLead({ sourceSlug: source !== 'main' ? source : refSlug, sigungu }, db.tenants)
+      const via = refSlug ? '추천 링크 유입' : routed.via
       const lead = {
         id: uid('L'), name, phone, sigungu, cat, wish,
-        status: '접수', tenantId: routed.tenantId, source: source || 'main', via: routed.via,
+        status: '접수', tenantId: routed.tenantId, source: source || 'main', via,
+        ref: ref || null,
         quote: quote || null, createdAt: Date.now(), read: false, memo: '',
-        history: [{ at: Date.now(), to: '접수', by: 'system', note: routed.via }],
+        history: [{ at: Date.now(), to: '접수', by: 'system', note: via }],
       }
       return { ...db, leads: [lead, ...db.leads] }
     }
@@ -66,7 +72,8 @@ function reducer(db, action) {
       const { id, to, by, note } = action.payload
       return {
         ...db,
-        leads: db.leads.map((l) => l.id === id
+        // 전이는 LEAD_TRANSITIONS 테이블만 경유 — 불법 전이는 조용히 무시 (kcare 상태머신 패턴)
+        leads: db.leads.map((l) => l.id === id && canTransition(l.status, to)
           ? { ...l, status: to, read: true, cancelReason: to === '취소' ? note : l.cancelReason, history: [...l.history, { at: Date.now(), to, by, note }] }
           : l),
       }

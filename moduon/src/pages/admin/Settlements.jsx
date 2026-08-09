@@ -28,6 +28,8 @@ export default function AdminSettlements() {
 
   const exportCsv = () => {
     downloadCSV(`모두온_월정산_${monthKey()}.csv`, [
+      // 펌뱅킹 실연동 전 안전장치 — 파일만 보고 이체하는 사고 방지 (axion 흡수)
+      ['※ 실연동 전 검증용 파일입니다 — 실제 이체 아님', '', '', '', '', '', '', ''],
       ['파트너', 'slug', '권역', '몰 매출', `수수료(${Math.round(db.policies.feeRate * 100)}%)`, '월 이용료', '순지급액', '상태'],
       ...rows.map((r) => [r.tenant.name, r.tenant.slug, unitName(r.tenant.unit), r.s.gross, r.s.fee, r.s.monthlyFee, Math.max(0, r.s.net), confirmed[r.tenant.id] ? '지급 확정' : '대기']),
       ['합계', '', '', totals.gross, totals.fee, totals.monthly, totals.net, ''],

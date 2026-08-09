@@ -1,8 +1,68 @@
 // ─── 트랙 B 본사 어드민(관제) 레이아웃 — 그룹형 IA 사이드바 ──────
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useStore, getSession } from '../../lib/store'
 import { Logo } from '../ui'
+
+// 파생 알림 — 알림을 저장하지 않고 현재 상태에서 매번 계산한다 (axion 패턴).
+// 읽음 처리는 내용 시그니처를 localStorage에 비교 저장 — 알림 테이블 없이 배지가 동작.
+function buildNotifs(db) {
+  const now = Date.now()
+  const n = []
+  const sla = db.leads.filter((l) => l.status === '접수' && now - l.createdAt > 10 * 60000).length
+  if (sla) n.push({ icon: '⏰', text: `SLA 10분 초과 접수 리드 ${sla}건`, to: '/admin/leads' })
+  const unassigned = db.leads.filter((l) => !l.tenantId && !['완료', '취소'].includes(l.status)).length
+  if (unassigned) n.push({ icon: '🚨', text: `미배정 리드 ${unassigned}건 — 재배정 필요`, to: '/admin/leads' })
+  const apps = db.applications.filter((a) => a.status === '대기').length
+  if (apps) n.push({ icon: '🏪', text: `분양 신청 승인 대기 ${apps}건`, to: '/admin/tenants' })
+  return n
+}
+
+function NotifBell({ db }) {
+  const [open, setOpen] = useState(false)
+  const items = buildNotifs(db)
+  const sig = items.map((i) => i.text).join('|')
+  const [seen, setSeen] = useState(() => { try { return localStorage.getItem('moduon_notif_sig') ?? '' } catch { return '' } })
+  const unseen = items.length > 0 && sig !== seen
+  const toggle = () => {
+    const next = !open
+    setOpen(next)
+    if (next) {
+      try { localStorage.setItem('moduon_notif_sig', sig) } catch { /* noop */ }
+      setSeen(sig)
+    }
+  }
+  return (
+    <div className="relative">
+      <button onClick={toggle} aria-label="알림" className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-card transition-colors hover:bg-brow">
+        <span className="text-[16px]">🔔</span>
+        {unseen && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-warn" />}
+        {items.length > 0 && (
+          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-bink px-1 text-[10.5px] font-bold text-white">{items.length}</span>
+        )}
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-12 z-40 w-[300px] overflow-hidden rounded-card bg-white shadow-panel">
+            <div className="border-b border-bline px-4 py-3 text-[13px] font-bold text-bink">관제 알림</div>
+            {items.length === 0 ? (
+              <div className="px-4 py-6 text-center text-[12.5px] text-bfaint">처리할 알림이 없어요 ✨</div>
+            ) : (
+              items.map((i) => (
+                <NavLink key={i.text} to={i.to} onClick={() => setOpen(false)} className="flex items-center gap-3 border-b border-bline px-4 py-3 text-[13px] font-semibold text-bbody last:border-0 hover:bg-brow">
+                  <span>{i.icon}</span>
+                  <span className="flex-1">{i.text}</span>
+                  <span className="text-bfaint">→</span>
+                </NavLink>
+              ))
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
 
 const GROUPS = [
   { label: null, items: [{ to: '/admin', label: '통합 대시보드', icon: '▦', end: true }] },
@@ -77,6 +137,9 @@ export default function AdminLayout() {
       </aside>
 
       <main className="px-4 pb-24 pt-5 sm:px-6 lg:ml-[224px] lg:pb-10">
+        <div className="relative z-30 mb-2 flex justify-end lg:-mb-8">
+          <NotifBell db={db} />
+        </div>
         <Outlet />
       </main>
 

@@ -1,9 +1,9 @@
 // ─── C-05 / AI-04 AI 생활비 진단기 — 1분 문답 → 절감 추정 → 상담 유도 ──
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { diagnose } from '../../lib/ai'
+import { diagnose, buildDiagnosisPlan } from '../../lib/ai'
 import { useStore } from '../../lib/store'
-import { won } from '../../lib/engine'
+import { won, downloadText, monthKey } from '../../lib/engine'
 import { catBySlug, LEGAL } from '../../lib/constants'
 import { Btn, Card, useCountUp, useToast } from '../../components/ui'
 
@@ -65,9 +65,13 @@ export default function Diagnosis() {
             </button>
           ))}
         </div>
-        {step > 0 && (
-          <button onClick={() => setStep(step - 1)} className="mt-4 text-[12.5px] font-semibold text-faint hover:text-label">← 이전 질문</button>
-        )}
+        <div className="mt-4 flex items-center justify-between">
+          {step > 0 ? (
+            <button onClick={() => setStep(step - 1)} className="tap text-[12.5px] font-semibold text-faint hover:text-label">← 이전 질문</button>
+          ) : <span />}
+          {/* 모르면 0점 처리하지 않고 '미평가'로 남긴다 (pickai na 원칙) */}
+          <button onClick={() => pick(cur.key, undefined)} className="tap text-[12.5px] font-semibold text-faint underline underline-offset-2 hover:text-label">잘 모르겠어요 — 건너뛰기</button>
+        </div>
       </Card>
     </main>
   )
@@ -86,28 +90,52 @@ function Result({ result, nav, toast, onRetry }) {
         <h1 className="mt-2 text-[20px] font-extrabold text-ink">지금 구조라면, 매달</h1>
         <div className="tnum mt-1 text-[44px] font-extrabold tracking-[-1.5px] text-primary-text">{won(monthly)}</div>
         <p className="text-[14px] text-muted">아낄 수 있어요 <span className="tnum font-bold text-orange-text">(연간 {won(result.yearly)})</span></p>
+        <p className="mt-1.5 text-[12px] text-faint">같은 문답 기준 알뜰 순위 <strong className="tnum font-bold text-primary-text">상위 {result.pct}%</strong> <span className="text-disabled">(데모 표본)</span></p>
       </div>
 
       <Card className="mt-7 p-5">
         <div className="text-[13px] font-bold text-ink">절감 포인트 {result.items.length}가지</div>
-        <div className="mt-3 flex flex-col gap-3">
+        <div className="mt-3 flex flex-col gap-3.5">
           {result.items.length === 0 && (
             <p className="py-4 text-center text-[13.5px] text-muted">이미 아주 알뜰하게 쓰고 계세요! 👏<br />이사·신규 가입 시점에 다시 진단해 보세요.</p>
           )}
           {result.items.map((i) => (
-            <div key={i.label} className="flex items-center gap-3">
+            <div key={i.label} className="flex items-start gap-3">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-warm">
                 <img src={catBySlug(i.cat)?.icon} alt="" className="h-full w-full object-cover" />
               </span>
-              <span className="flex-1 text-[13.5px] font-semibold text-body">{i.label}</span>
-              <span className="tnum text-[13.5px] font-extrabold text-ok">월 −{won(i.save)}</span>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-1.5 text-[13.5px] font-semibold text-body">
+                  {i.label}
+                  {i.manual && <span className="rounded-full bg-tint px-1.5 py-0.5 text-[10px] font-bold text-primary-text">상담 확정</span>}
+                </div>
+                <div className="mt-0.5 text-[11.5px] leading-4 text-faint">{i.why}</div>
+              </div>
+              <span className="tnum shrink-0 text-[13.5px] font-extrabold text-ok">월 −{won(i.save)}</span>
             </div>
           ))}
         </div>
       </Card>
 
+      {result.wins.length > 0 && (
+        <Card className="mt-3 p-5">
+          <div className="text-[13px] font-bold text-ink">잘 유지하고 있는 것 <span className="font-semibold text-faint">— 무너뜨리지 마세요</span></div>
+          <ul className="mt-2 flex flex-col gap-1.5 text-[12.5px] leading-5 text-muted">
+            {result.wins.map((w) => <li key={w}>✓ {w}</li>)}
+          </ul>
+        </Card>
+      )}
+      {result.pending.length > 0 && (
+        <p className="mt-3 text-[12px] leading-5 text-faint">
+          미평가 {result.pending.length}항목({result.pending.map((p) => p.label).join(' · ')})은 0점으로 치지 않고 상담에서 확인해요.
+        </p>
+      )}
+
       <Btn size="lg" className="mt-6 w-full" onClick={() => nav('/consult')}>이 결과로 무료 상담 받기</Btn>
-      <div className="mt-3 grid grid-cols-2 gap-2.5">
+      <Btn variant="outline" size="sm" className="mt-2.5 w-full" onClick={() => { downloadText(`모두온_절감실행서_${monthKey()}.md`, buildDiagnosisPlan(result)); toast('절감 실행서를 내려받았어요') }}>
+        📄 절감 실행서 다운로드
+      </Btn>
+      <div className="mt-2.5 grid grid-cols-2 gap-2.5">
         <Btn variant="outline" size="sm" onClick={share}>결과 공유하기</Btn>
         <Btn variant="outline" size="sm" onClick={onRetry}>다시 진단하기</Btn>
       </div>

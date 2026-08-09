@@ -1,21 +1,38 @@
 // ─── S-03 견적 계산기 (목업 #4a/#4b) — "고를수록 월 납부금이 보인다" ──
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { calcQuote, won, CARRIERS, SPEED_MAP, BUNDLE_MAP, BUNDLE_LABEL } from '../../lib/engine'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { calcQuote, won, copyText, CARRIERS, SPEED_MAP, BUNDLE_MAP, BUNDLE_LABEL } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { CalcTabs } from './PhoneCalculator'
 
 export default function Calculator() {
   const nav = useNavigate()
+  const [sp] = useSearchParams()
+  // 프리셋: 요금표에서 넘어온 state > 공유 링크 쿼리(?carrier=&speed=&bundle=&promo=1) > 기본값
+  const preset = useLocation().state?.preset ?? { carrier: sp.get('carrier'), speed: sp.get('speed'), bundle: sp.get('bundle'), promo: sp.get('promo') === '1' }
   // 기본 상태: KT · 500M · 정수기 결합 · 프로모션 off → 32,900원 / 사은품 350,000원 (PRD 인수 기준)
-  const [carrier, setCarrier] = useState('KT')
-  const [speed, setSpeed] = useState('500M')
-  const [bundle, setBundle] = useState('water')
-  const [promo, setPromo] = useState(false)
+  const [carrier, setCarrier] = useState(CARRIERS.includes(preset?.carrier) ? preset.carrier : 'KT')
+  const [speed, setSpeed] = useState(SPEED_MAP[preset?.speed] ? preset.speed : '500M')
+  const [bundle, setBundle] = useState(BUNDLE_MAP[preset?.bundle] !== undefined ? preset.bundle : 'water')
+  const [promo, setPromo] = useState(preset?.promo === true)
+  const [copied, setCopied] = useState(false)
 
   const q = useMemo(() => calcQuote({ speed, bundle, promo }), [speed, bundle, promo])
+  // 다음 행동 + 기대 효과 힌트 (axion 델타 문장 패턴)
+  const hint = bundle === 'none' ? `정수기 결합을 추가하면 월 ${won(11100)} 더 내려가요`
+    : !promo ? `신규가입 프로모션을 켜면 월 ${won(3000)} 더 내려가요` : null
 
   const goConsult = () => nav('/consult?cat=internet', { state: { quote: { carrier, speed, bundle: BUNDLE_LABEL[bundle], promo, ...q } } })
+
+  // 결과 공유 — 같은 조건으로 열리는 링크 + 면책 문구를 카톡용 텍스트로 (axion 흡수)
+  const share = async () => {
+    const url = `${window.location.origin}/calculator?carrier=${encodeURIComponent(carrier)}&speed=${speed}&bundle=${bundle}${promo ? '&promo=1' : ''}`
+    const text = `[모두온 인터넷 견적]\n${carrier} 인터넷 ${speed}${bundle !== 'none' ? ` + ${BUNDLE_LABEL[bundle]}` : ''}\n월 납부금 ${won(q.total)} · 사은품 ${won(q.gift)}\n같은 조건으로 계산해 보기 → ${url}\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
+    if (await copyText(text)) {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1600)
+    }
+  }
 
   return (
     <main className="mx-auto max-w-6xl px-5 pb-28 sm:px-10 lg:pb-0">
@@ -96,6 +113,7 @@ export default function Calculator() {
               <Row label="결합 할인" value={q.bundleDc ? `−${won(q.bundleDc)}` : '미선택'} accent={q.bundleDc ? 'text-ok' : 'text-disabled'} />
               <Row label="프로모션 할인" value={q.promoDc ? `−${won(q.promoDc)}` : '미선택'} accent={q.promoDc ? 'text-ok' : 'text-disabled'} />
             </div>
+            {hint && <div className="mt-3 rounded-field bg-tint px-3.5 py-2.5 text-[12px] font-semibold leading-4 text-primary-text">💡 {hint}</div>}
             <div className="mt-2.5 border-t border-dashed border-line pt-2.5 text-[11.5px] text-faint">약정 3년 · 설치비 무료 — {LEGAL.quote}</div>
           </section>
         </div>
@@ -121,10 +139,14 @@ export default function Calculator() {
             <span className="text-[13px] font-bold text-orange-text">🎁 사은품 혜택</span>
             <span className="tnum text-[16px] font-extrabold text-orange-text">{won(q.gift)}</span>
           </div>
+          {hint && <div className="mt-2 rounded-field bg-tint px-3.5 py-2.5 text-[12px] font-semibold leading-4 text-primary-text">💡 {hint}</div>}
           <div className="mt-2 text-center text-[12px] text-faint">약정 3년 · 설치비 무료</div>
 
           <button onClick={goConsult} className="mt-5 h-[52px] w-full rounded-btn bg-primary text-[15px] font-bold text-white shadow-cta transition-colors hover:bg-primary-hover">
             상담 신청하고 혜택 확정하기
+          </button>
+          <button onClick={share} className="mt-2 h-11 w-full rounded-btn border border-line bg-white text-[13.5px] font-bold text-label transition-colors hover:border-primary hover:text-primary-text">
+            {copied ? '✓ 복사됐어요 — 카톡에 붙여넣으세요' : '견적 공유하기'}
           </button>
           <p className="mt-3 text-center text-[11.5px] leading-4 text-disabled">{LEGAL.quote}</p>
         </aside>
@@ -142,9 +164,14 @@ export default function Calculator() {
             <div className="tnum text-[15px] font-extrabold text-orange-text">{won(q.gift)}</div>
           </div>
         </div>
-        <button onClick={goConsult} className="mt-3 h-12 w-full rounded-btn bg-primary text-[15px] font-bold text-white">
-          상담 신청하고 혜택 확정하기
-        </button>
+        <div className="mt-3 flex gap-2">
+          <button onClick={share} aria-label="견적 공유" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-btn border border-line bg-white text-[17px]">
+            {copied ? '✓' : '📤'}
+          </button>
+          <button onClick={goConsult} className="h-12 flex-1 rounded-btn bg-primary text-[15px] font-bold text-white">
+            상담 신청하고 혜택 확정하기
+          </button>
+        </div>
       </div>
     </main>
   )

@@ -89,10 +89,46 @@ export const fmtDateTime = (ts) => {
 }
 export const dday = (ts) => Math.ceil((ts - Date.now()) / 86400000)
 
+// ─── 추천 링크 귀속 (axion 흡수) ────────────────────────────────
+// ?ref=파트너슬러그 를 최초 1회 localStorage에 각인 — 세션을 넘어 유지되어
+// 나중에 상담을 신청해도 추천 파트너에게 귀속된다.
+export function captureRef() {
+  try {
+    const ref = new URLSearchParams(window.location.search).get('ref')
+    if (ref) localStorage.setItem('moduon_ref', ref.slice(0, 40))
+  } catch { /* noop */ }
+  try { return localStorage.getItem('moduon_ref') } catch { return null }
+}
+
+// 클립보드 복사 — clipboard API 실패 시 textarea 폴백 (인앱 브라우저 대응)
+export async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true } catch { /* fallthrough */ }
+  try {
+    const ta = document.createElement('textarea')
+    ta.value = text
+    document.body.appendChild(ta)
+    ta.select()
+    document.execCommand('copy')
+    ta.remove()
+    return true
+  } catch { return false }
+}
+
+// 텍스트 파일 내보내기 (마크다운 실행서 등)
+export function downloadText(filename, text, mime = 'text/markdown;charset=utf-8') {
+  const blob = new Blob([text], { type: mime })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(a.href)
+}
+
 // CSV 내보내기
 export function downloadCSV(filename, rows) {
   const bom = '﻿'
-  const csv = rows.map((r) => r.map((c) => `"${String(c ?? '').replace(/"/g, '""')}"`).join(',')).join('\n')
+  // 한국어 엑셀 호환: BOM + CRLF (LF만 쓰면 일부 엑셀 버전에서 줄바꿈이 깨진다)
+  const csv = rows.map((r) => r.map((c) => `"${String(c ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n')
   const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8' })
   const a = document.createElement('a')
   a.href = URL.createObjectURL(blob)
