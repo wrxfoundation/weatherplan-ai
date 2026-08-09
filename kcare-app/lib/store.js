@@ -8,6 +8,11 @@
 // 가격은 시트의 판매가만 싣는다. 원가는 내부 정보라 데이터에 넣지 않는다
 // (화면에 실수로 노출되는 사고를 원천 차단). 시트에 가격이 없는 항목은
 // pending 으로 표기만 하고 담기지 않게 한다 — 없는 숫자를 지어내지 않는다.
+//
+// 두 시트 대조 기준: 같은 제품이 용량·가격이 다르게 실린 5건(베나치오 ·
+// 판피린 · 겔포스 · 카베진 · 알레그라)은 '쇼핑몰 제안'(나중에 만든 큐레이션
+// 시트) 쪽을 실었다. '메가스토어'에만 있는 제품(용각산 · 훼스탈 2종 ·
+// 포비돈/알콜 스왑)은 그 시트 가격으로 추가했다. 두 시트 모두 반영 완료.
 
 // ── 생활안전용품 — 첫 방문 안전진단(lib/safety.js)의 fix 가 이 id 를 가리킨다 ──
 export const SAFETY_GOODS = [
@@ -75,6 +80,7 @@ export const STORE_CATALOG = [
           { id: "ph6", name: "동의갈근탕액 ×10", price: 8000 },
           { id: "ph7", name: "목앤 스프레이 20ml", price: 6000 },
           { id: "ph8", name: "스트렙실 허니앤레몬 12정", price: 4200 },
+          { id: "ph9", name: "용각산 쿨 (기침 · 가래)", price: 5500 },
         ],
       },
       {
@@ -97,6 +103,8 @@ export const STORE_CATALOG = [
           { id: "di6", name: "겔포스 엠 ×6포", price: 5000 },
           { id: "di7", name: "개비스콘 더블액션 10ml ×4", price: 5200 },
           { id: "di8", name: "부스코판 플러스 20정", price: 5900 },
+          { id: "di9", name: "훼스탈 플러스 20정 (과식 후 답답)", price: 4200 },
+          { id: "di10", name: "훼스탈 골드 30정 (가스 · 더부룩)", price: 7000 },
         ],
       },
       {
@@ -122,7 +130,9 @@ export const STORE_CATALOG = [
           { id: "al8", name: "메디폼 리퀴드", price: 6000 },
           { id: "al9", name: "누보클렌 (뿌리는 소독약)", price: 2500 },
           { id: "al10", name: "네오드레싱 거즈밴드", price: 2000 },
-          { id: "al11", name: "듀오덤", price: null, pending: "가격 확정 전" },
+          { id: "al11", name: "포비돈 스킨스왑", price: 15000 },
+          { id: "al12", name: "알콜스왑", price: 2000 },
+          { id: "al13", name: "듀오덤", price: null, pending: "가격 확정 전" },
         ],
       },
     ],
