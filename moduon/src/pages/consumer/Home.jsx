@@ -19,16 +19,20 @@ export default function Home({ tenant }) {
     <main>
       {/* ── 히어로 — 풀블리드 배경 (Higgsfield C4D 씬이 섹션 전체를 덮는다) ── */}
       <section className="relative overflow-hidden bg-cream">
-        <img
-          src="/assets/hero-scene.jpg"
-          alt=""
-          aria-hidden
-          className="absolute inset-0 h-full w-full object-cover object-[68%_center] lg:object-right"
-          loading="eager"
-          fetchPriority="high"
-        />
-        {/* 좌측 텍스트 가독 스크림 + 하단 크림 페이드 */}
-        <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/85 to-cream/5 sm:via-cream/70" />
+        {/* 와이드 PC 과확대 방지: 씬을 1760px 상한 박스에 두고 lg부터는 원본 비율 그대로(contain)
+            우측 정렬 — 씬 배경이 크림이라 박스 밖 여백과 이음새 없이 이어진다 */}
+        <div className="absolute inset-0 mx-auto max-w-[1760px]">
+          <img
+            src="/assets/hero-scene.jpg"
+            alt=""
+            aria-hidden
+            className="h-full w-full object-cover object-[68%_center] lg:object-contain lg:object-right"
+            loading="eager"
+            fetchPriority="high"
+          />
+          {/* 좌측 텍스트 가독 스크림 */}
+          <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/85 to-cream/5 sm:via-cream/70" />
+        </div>
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-cream" />
 
         <div className="relative mx-auto max-w-6xl px-5 sm:px-10">
@@ -133,7 +137,7 @@ export default function Home({ tenant }) {
       <section className="mt-6 overflow-hidden rounded-section bg-band shadow-panel">
         <div className="flex flex-col items-center gap-5 px-6 py-9 text-center sm:flex-row sm:justify-between sm:px-10 sm:text-left">
           <div className="flex flex-col items-center gap-4 sm:flex-row">
-            <img src="/assets/cta-chat.webp" alt="" className="obj-mask h-[88px] w-[88px] object-contain sm:h-[112px] sm:w-[112px]" loading="lazy" />
+            <img src="/assets/cta-chat.webp" alt="" className="h-[88px] w-[88px] object-contain sm:h-[112px] sm:w-[112px]" loading="lazy" />
             <div>
               <div className="text-[19px] font-extrabold leading-7 text-white sm:text-[21px]">
                 {tenant ? `${tenant.name}에서 상담받고` : '모두온에서 상담받고'} 최대 혜택 받아가세요!
@@ -147,12 +151,12 @@ export default function Home({ tenant }) {
         </div>
       </section>
 
-      {/* ── 신뢰 지표 바 4 ── */}
+      {/* ── 신뢰 지표 바 4 — 소형 아이콘은 SVG 라인으로 단순화 ── */}
       <section className="mt-6 grid grid-cols-2 rounded-section bg-white py-2 shadow-card lg:grid-cols-4">
-        <TrustItem icon="/assets/tr-thumb.webp" label="누적 고객 만족도" value={98} suffix="%" />
-        <TrustItem icon="/assets/tr-shield.webp" label="제휴 브랜드" value={250} suffix="+" divider />
-        <TrustItem icon="/assets/tr-gift.webp" label="연간 혜택 금액" value={120} suffix="억원+" divider="lg" />
-        <TrustItem icon="/assets/tr-person.webp" label="전문 상담사" value={500} suffix="+" divider />
+        <TrustItem kind="thumb" label="누적 고객 만족도" value={98} suffix="%" />
+        <TrustItem kind="shield" label="제휴 브랜드" value={250} suffix="+" divider />
+        <TrustItem kind="gift" label="연간 혜택 금액" value={120} suffix="억원+" divider="lg" />
+        <TrustItem kind="headset" label="전문 상담사" value={500} suffix="+" divider />
       </section>
       </div>
     </main>
@@ -171,7 +175,7 @@ function BenefitCard({ style, light, label, amountNum, obj, onClick }) {
         최대 <span className="tnum text-[34px] font-extrabold tracking-[-1px] sm:text-[38px]">{amountNum}</span>
         <span className="text-[17px] font-bold sm:text-[19px]">만원</span><br />혜택 제공
       </div>
-      <img src={obj} alt="" className="obj-mask pointer-events-none absolute -bottom-2 -right-2 h-[96px] w-[96px] object-contain sm:h-[128px] sm:w-[128px]" loading="lazy" />
+      <img src={obj} alt="" className="pointer-events-none absolute -bottom-2 -right-2 h-[96px] w-[96px] object-contain sm:h-[128px] sm:w-[128px]" loading="lazy" />
       <span className={`mt-auto flex h-[34px] w-[34px] items-center justify-center rounded-full transition-transform group-hover:translate-x-0.5 ${light ? 'border border-white/70 text-white' : 'bg-primary text-white'}`}>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
       </span>
@@ -179,12 +183,49 @@ function BenefitCard({ style, light, label, amountNum, obj, onClick }) {
   )
 }
 
-function TrustItem({ icon, label, value, suffix, divider }) {
+function TrustIcon({ kind }) {
+  const paths = {
+    thumb: (
+      <>
+        <path d="M7 10v12" />
+        <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+      </>
+    ),
+    shield: (
+      <>
+        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1 1 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+        <path d="m9 12 2 2 4-4" />
+      </>
+    ),
+    gift: (
+      <>
+        <rect x="3" y="8" width="18" height="4" rx="1" />
+        <path d="M12 8v13" />
+        <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+        <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" />
+      </>
+    ),
+    headset: (
+      <>
+        <path d="M3 14v-3a9 9 0 0 1 18 0v3" />
+        <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Z" />
+        <path d="M21 14h-3a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-5Z" />
+      </>
+    ),
+  }
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      {paths[kind]}
+    </svg>
+  )
+}
+
+function TrustItem({ kind, label, value, suffix, divider }) {
   const n = useCountUp(value, 800)
   return (
     <div className={`flex flex-col items-center gap-2 px-4 py-6 ${divider ? 'border-l border-line-card' : ''} ${divider === 'lg' ? 'border-l-0 lg:border-l' : ''}`}>
-      <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-warm">
-        <img src={icon} alt="" className="h-full w-full object-cover" loading="lazy" />
+      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-tint text-primary-text">
+        <TrustIcon kind={kind} />
       </span>
       <span className="text-[12.5px] font-medium text-faint">{label}</span>
       <span className="tnum text-[21px] font-extrabold tracking-tight text-ink">{n}{suffix}</span>

@@ -15,14 +15,11 @@ const ASSETS = [
   ['cat-insurance.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/d3462d86-2f6d-44c6-b89a-ca5f2f4b8886.webp'],
   ['cat-appliance.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/1ecb7cfa-41b4-47ec-aaef-e44f9ba89a4b.webp'],
   ['cat-etc.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/bc8f7a41-bfda-41f6-901d-d96d8665197d.webp'],
-  ['tr-thumb.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/c41a78fe-5d0f-42d0-b6d0-b6fb3d9e1618.webp'],
-  ['tr-shield.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/17eb7b9e-83ed-4ed7-92b2-d37029ce6923.webp'],
-  ['tr-gift.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/8974d640-14ea-443b-8f8d-131b85a8aa13.webp'],
-  ['tr-person.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/34ca1b2d-d9ba-4218-8317-f16e036d1449.webp'],
-  ['obj-truck.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/c61a62c5-4c8c-432b-97b6-df1234ceda3a.webp'],
-  ['obj-wifi.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/cb612cbf-685e-41f3-8db2-a26b4567844b.webp'],
-  ['obj-purifier.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/f81876c0-1511-437d-af60-139512e8936d.webp'],
-  ['cta-chat.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/c11577c3-5071-4ce6-a2f7-d4d2d0956c02.webp'],
+  // 오브제 4종 — 배경 제거(투명 webp) 버전. 카드 그라데이션 위에 오브젝트만 얹힌다.
+  ['obj-truck.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/90e21cc7-d3e9-4686-9b9d-5b0562ded06a.webp'],
+  ['obj-wifi.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/33a9a1ff-4f6d-42b1-a55c-a48e0be83a31.webp'],
+  ['obj-purifier.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/8ec01fae-7f2e-4433-86d3-35ae49c4f5a2.webp'],
+  ['cta-chat.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/790310b0-d472-469b-b6d5-38eedd45e68e.webp'],
   ['hero-scene.jpg', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/c9df5fd4-df02-49a3-9795-c4346a4fc2ca.jpg'],
 ]
 
