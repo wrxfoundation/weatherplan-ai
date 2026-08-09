@@ -142,19 +142,19 @@ export default function Home({ tenant }) {
         </div>
       </section>
 
-      {/* ── CTA 밴드 ── */}
-      <section className="mt-6 overflow-hidden rounded-section bg-band shadow-panel">
+      {/* ── CTA 밴드 (파스텔 그린) ── */}
+      <section className="mt-6 overflow-hidden rounded-section" style={{ background: 'linear-gradient(135deg,#DFF3E8 0%,#C2E7D2 100%)', boxShadow: '0 16px 44px rgba(23,178,106,0.18)' }}>
         <div className="flex flex-col items-center gap-5 px-6 py-9 text-center sm:flex-row sm:justify-between sm:px-10 sm:text-left">
           <div className="flex flex-col items-center gap-4 sm:flex-row">
             <img src="/assets/cta-chat.webp" alt="" className="h-[88px] w-[88px] object-contain sm:h-[112px] sm:w-[112px]" loading="lazy" />
             <div>
-              <div className="text-[19px] font-extrabold leading-7 text-white sm:text-[21px]">
+              <div className="text-[19px] font-extrabold leading-7 text-[#15613D] sm:text-[21px]">
                 지금 신청하면, 이번 달부터 아낍니다
               </div>
-              <div className="mt-1 text-[14px] font-medium text-white/75">30초면 끝 · 평균 10분 안에 전문 상담사가 전화드려요</div>
+              <div className="mt-1 text-[14px] font-medium text-[#37694F]">30초면 끝 · 평균 10분 안에 전문 상담사가 전화드려요</div>
             </div>
           </div>
-          <Link to={consultTo} className="shimmer-cta shimmer-ink glass-btn inline-flex h-[52px] shrink-0 items-center rounded-btn bg-white px-7 text-[15px] font-bold text-primary-text transition-transform hover:-translate-y-px">
+          <Link to={consultTo} className="shimmer-cta shimmer-ink glass-btn inline-flex h-[52px] shrink-0 items-center rounded-btn bg-white px-7 text-[15px] font-bold text-[#0C7D48] transition-transform hover:-translate-y-px">
             무료 상담 신청 →
           </Link>
         </div>
