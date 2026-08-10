@@ -10,13 +10,13 @@ const ASSETS = [
   ['cat-phone.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/11673aeb-580f-4224-b96d-e148856b4374.webp'],
   ['cat-internet.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/fcc6498f-03cb-4a93-98b5-c2d23eff04b9.webp'],
   ['cat-move.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/81150f22-a83b-446e-8174-3e696ec2d452.webp'],
-  // 정수기·생활기타 — 그림자 방향 표준화 재제작(2026-08-10): 우하단 단일 타원 그림자 명시
-  // (대안 후보: water 54d08c03-7962-493b-aba3-e9e8b8224836 / etc 50865ed0-dd0e-4295-8047-73e39a3a823f)
-  ['cat-water.webp', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260810_000223_eed2e6a1-e68a-410e-b3dc-8f8da15aeb73_min.webp'],
+  // 정수기·생활기타 — 톤앤매너 정합 재제작(2026-08-10 2차): 통통한 볼륨·콘플라워 블루(네이비 금지)·우하단 단일 그림자
+  // (대안 후보: water 0e2b7b64-31e6-48d6-84ed-ed55e105a632 / etc 082de41a-bf41-45df-8ca6-bcd9bd010684)
+  ['cat-water.webp', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260810_054701_a566fdec-d119-479f-a618-01e34a9d083c_min.webp'],
   ['cat-rental.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/4ed737e2-e175-412e-bfd9-7214df5b7997.webp'],
   ['cat-insurance.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/d3462d86-2f6d-44c6-b89a-ca5f2f4b8886.webp'],
   ['cat-appliance.webp', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260809_132313_dae5b617-7d97-4c2a-8df1-97d86319f00d_min.webp'],
-  ['cat-etc.webp', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260810_000223_70af96f4-0418-43ce-a6e1-ec85b4cf88db_min.webp'],
+  ['cat-etc.webp', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260810_054701_6ffb459d-107a-428b-9ae2-b56d1911b298_min.webp'],
   // 오브제 4종 — 배경 제거(투명 webp) 버전. 카드 그라데이션 위에 오브젝트만 얹힌다.
   ['obj-truck.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/90e21cc7-d3e9-4686-9b9d-5b0562ded06a.webp'],
   ['obj-wifi.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/33a9a1ff-4f6d-42b1-a55c-a48e0be83a31.webp'],

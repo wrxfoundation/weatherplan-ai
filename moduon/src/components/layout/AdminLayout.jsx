@@ -1,9 +1,11 @@
-// ─── 트랙 B 본사 어드민(관제) 레이아웃 — 그룹형 IA 사이드바 ──────
+// ─── 트랙 B 본사 어드민(관제) 레이아웃 — 그룹형 IA 사이드바 + ⌘K 팔레트 ──
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useStore, getSession } from '../../lib/store'
-import { Logo } from '../ui'
-import { IcGrid, IcCompass, IcStore, IcBox, IcClipboard, IcBolt, IcRobot, IcCoins, IcLock, IcBell, IcClock, IcAlert } from '../icons'
+import { maskName } from '../../lib/engine'
+import { unitName } from '../../lib/constants'
+import { Logo, useToast } from '../ui'
+import { IcGrid, IcCompass, IcStore, IcBox, IcClipboard, IcBolt, IcRobot, IcCoins, IcLock, IcBell, IcClock, IcAlert, IcSearch } from '../icons'
 
 // 파생 알림 — 알림을 저장하지 않고 현재 상태에서 매번 계산한다 (axion 패턴).
 // 읽음 처리는 내용 시그니처를 localStorage에 비교 저장 — 알림 테이블 없이 배지가 동작.
@@ -65,6 +67,82 @@ function NotifBell({ db }) {
   )
 }
 
+// ⌘K 커맨드 팔레트 — 메뉴·분양몰·리드·액션을 한 입력으로 (세계급 SaaS 관제 UX)
+function CommandPalette({ db, dispatch, open, onClose }) {
+  const nav = useNavigate()
+  const toast = useToast()
+  const inputRef = useRef(null)
+  const [q, setQ] = useState('')
+  const [sel, setSel] = useState(0)
+
+  useEffect(() => {
+    if (open) { setQ(''); setSel(0); setTimeout(() => inputRef.current?.focus(), 30) }
+  }, [open])
+
+  const items = useMemo(() => {
+    const menu = GROUPS.flatMap((g) => g.items).map((m) => ({ type: '메뉴', label: m.label, hint: m.to, run: () => nav(m.to) }))
+    const tenants = db.tenants.map((t) => ({ type: '분양몰', label: t.name, hint: `${unitName(t.unit)} · ${t.status}`, run: () => nav('/admin/tenants') }))
+    const leads = db.leads.slice(0, 40).map((l) => ({ type: '리드', label: `${maskName(l.name)} · ${l.status}`, hint: l.sigungu, run: () => nav('/admin/leads') }))
+    const actions = [
+      { type: '액션', label: '데모 리드 1건 생성', hint: '관제 데모 피드', run: () => { dispatch({ type: 'SPAWN_DEMO_LEAD' }); toast('데모 리드를 생성했어요') } },
+      { type: '액션', label: '오늘의 브리핑으로 이동', hint: 'AI 경영 브리핑', run: () => nav('/admin') },
+    ]
+    return [...menu, ...actions, ...tenants, ...leads]
+  }, [db.tenants, db.leads]) // eslint-disable-line
+
+  const list = useMemo(() => {
+    const s = q.trim().toLowerCase()
+    const hit = s ? items.filter((i) => (i.label + i.hint).toLowerCase().includes(s)) : items
+    return hit.slice(0, 10)
+  }, [q, items])
+
+  const run = (i) => { const it = list[i]; if (!it) return; onClose(); it.run() }
+
+  if (!open) return null
+  return (
+    <div className="fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-label="빠른 검색">
+      <div className="absolute inset-0 bg-bink/50 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="absolute left-1/2 top-[16%] w-[min(560px,calc(100vw-32px))] -translate-x-1/2 overflow-hidden rounded-card bg-white shadow-panel">
+        <div className="flex items-center gap-2.5 border-b border-bline px-4 py-3.5">
+          <IcSearch size={16} className="shrink-0 text-bfaint" />
+          <input
+            ref={inputRef}
+            value={q}
+            onChange={(e) => { setQ(e.target.value); setSel(0) }}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') onClose()
+              if (e.key === 'ArrowDown') { e.preventDefault(); setSel((v) => Math.min(v + 1, list.length - 1)) }
+              if (e.key === 'ArrowUp') { e.preventDefault(); setSel((v) => Math.max(v - 1, 0)) }
+              if (e.key === 'Enter') run(sel)
+            }}
+            placeholder="메뉴·분양몰·리드·액션 검색…"
+            className="w-full bg-transparent text-[14.5px] font-semibold text-bink outline-none placeholder:text-bfaint"
+          />
+          <kbd className="rounded border border-bline px-1.5 py-0.5 text-[10px] font-bold text-bfaint">ESC</kbd>
+        </div>
+        <div className="max-h-[340px] overflow-y-auto py-1.5">
+          {list.map((it, i) => (
+            <button
+              key={`${it.type}-${it.label}-${i}`}
+              onClick={() => run(i)}
+              onMouseEnter={() => setSel(i)}
+              className={`flex w-full items-center gap-3 px-4 py-2.5 text-left ${i === sel ? 'bg-tint' : ''}`}
+            >
+              <span className={`w-[46px] shrink-0 rounded-md px-1.5 py-0.5 text-center text-[10px] font-extrabold ${it.type === '액션' ? 'bg-orange-tint text-orange-text' : it.type === '메뉴' ? 'bg-brow text-bmuted' : 'bg-tint text-primary-text'}`}>{it.type}</span>
+              <span className="min-w-0 flex-1 truncate text-[13.5px] font-bold text-bink">{it.label}</span>
+              <span className="shrink-0 text-[11px] text-bfaint">{it.hint}</span>
+            </button>
+          ))}
+          {list.length === 0 && <div className="px-4 py-6 text-center text-[12.5px] text-bfaint">"{q}" 검색 결과가 없어요</div>}
+        </div>
+        <div className="flex items-center justify-between border-t border-bline bg-brow/40 px-4 py-2 text-[10.5px] font-semibold text-bfaint">
+          <span>↑↓ 이동 · Enter 실행</span><span>모두온 관제 커맨드</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const GROUPS = [
   { label: null, items: [{ to: '/admin', label: '통합 대시보드', icon: IcGrid, end: true }] },
   { label: '경영', items: [{ to: '/admin/biz', label: '경영 전략', icon: IcCompass }] },
@@ -83,10 +161,20 @@ export default function AdminLayout() {
   const { db, dispatch } = useStore()
   const nav = useNavigate()
   const session = getSession()
+  const [paletteOpen, setPaletteOpen] = useState(false)
 
   useEffect(() => {
     if (!session || session.role !== 'admin') nav('/login?next=/admin', { replace: true })
   }, []) // eslint-disable-line
+
+  // ⌘K / Ctrl+K — 어디서든 커맨드 팔레트
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setPaletteOpen((v) => !v) }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   // 관제 데모 피드: 전체 권역으로 리드 유입
   useEffect(() => {
@@ -139,11 +227,20 @@ export default function AdminLayout() {
       </aside>
 
       <main className="px-4 pb-24 pt-5 sm:px-6 lg:ml-[224px] lg:pb-10">
-        <div className="relative z-30 mb-2 flex justify-end lg:-mb-8">
+        <div className="relative z-30 mb-2 flex items-center justify-end gap-2 lg:-mb-8">
+          <button
+            onClick={() => setPaletteOpen(true)}
+            className="flex h-10 items-center gap-2 rounded-full bg-white px-3.5 text-[12px] font-bold text-bmuted shadow-card transition-colors hover:bg-brow hover:text-bink"
+            aria-label="빠른 검색 열기"
+          >
+            <IcSearch size={14} /> 검색 <kbd className="rounded border border-bline px-1.5 py-0.5 text-[9.5px] font-extrabold text-bfaint">⌘K</kbd>
+          </button>
           <NotifBell db={db} />
         </div>
         <Outlet />
       </main>
+
+      <CommandPalette db={db} dispatch={dispatch} open={paletteOpen} onClose={() => setPaletteOpen(false)} />
 
       {/* 모바일 하단 탭 */}
       <nav className="safe-b fixed inset-x-0 bottom-0 z-30 flex border-t border-bline bg-white shadow-bottombar lg:hidden">

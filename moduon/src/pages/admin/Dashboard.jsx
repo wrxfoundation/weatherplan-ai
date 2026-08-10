@@ -79,6 +79,32 @@ export default function AdminDashboard() {
         <KpiCard label="총 누적 수익" value={12485600000} suffix="원" delta={31.2} caption="분양비+이용료+수수료 누계" />
       </div>
 
+      {/* 오늘의 관제 우선순위 — 예외만 사람이 본다 */}
+      <Card track="b" className="mt-4 p-4">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <span className="text-[13px] font-extrabold text-bink">오늘의 관제 우선순위</span>
+          {brief.overdue + brief.pendingApps + brief.vacant.length === 0 && (db.leads.filter((l) => !l.tenantId && !['완료', '취소'].includes(l.status)).length === 0) ? (
+            <span className="rounded-full bg-ok/10 px-3 py-1 text-[12px] font-bold text-ok">모두 클리어 — 예외 없음, AI가 정상 운영 중입니다</span>
+          ) : (
+            <>
+              {brief.overdue > 0 && (
+                <Link to="/admin/leads" className="tnum flex items-center gap-1.5 rounded-full bg-danger/10 px-3 py-1.5 text-[12px] font-bold text-danger hover:bg-danger hover:text-white">SLA 초과 {brief.overdue}건 → 재배정</Link>
+              )}
+              {db.leads.filter((l) => !l.tenantId && !['완료', '취소'].includes(l.status)).length > 0 && (
+                <Link to="/admin/leads" className="tnum flex items-center gap-1.5 rounded-full bg-warn/10 px-3 py-1.5 text-[12px] font-bold text-warn hover:bg-warn hover:text-white">미배정 {db.leads.filter((l) => !l.tenantId && !['완료', '취소'].includes(l.status)).length}건 → 배정</Link>
+              )}
+              {brief.pendingApps > 0 && (
+                <Link to="/admin/tenants" className="tnum flex items-center gap-1.5 rounded-full bg-tint px-3 py-1.5 text-[12px] font-bold text-primary-text hover:bg-primary hover:text-white">분양 심사 {brief.pendingApps}건 → 승인</Link>
+              )}
+              {brief.vacant.length > 0 && (
+                <Link to="/admin/biz" className="tnum flex items-center gap-1.5 rounded-full bg-brow px-3 py-1.5 text-[12px] font-bold text-bbody hover:bg-bink hover:text-white">총판 공석 {brief.vacant.length}곳 → 모집</Link>
+              )}
+            </>
+          )}
+          <span className="ml-auto hidden text-[11px] text-bfaint sm:block">⌘K 로 어디든 이동</span>
+        </div>
+      </Card>
+
       <div className="mt-4">
         <AiInsight
           title="AI 경영 브리핑"
