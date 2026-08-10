@@ -1,7 +1,9 @@
 // ─── A-08 권한·감사 로그 — 정책 변경·지급·재배정 등 주요 행위 전수 기록 ──
+import { useMemo, useState } from 'react'
 import { useStore } from '../../lib/store'
-import { fmtDateTime } from '../../lib/engine'
-import { Card } from '../../components/ui'
+import { fmtDateTime, downloadCSV } from '../../lib/engine'
+import { Card, Btn, useToast, EmptyState } from '../../components/ui'
+import { IcSearch } from '../../components/icons'
 
 const ROLES = [
   { role: 'hq_admin', scope: '전체 (본사) — 정책·지급 실행 포함', color: '#5377D6' },
@@ -20,6 +22,31 @@ const ACTION_TONE = {
 
 export default function AdminAudit() {
   const { db } = useStore()
+  const toast = useToast()
+  const [q, setQ] = useState('')
+  const [actionF, setActionF] = useState('전체')
+
+  // 액션 칩 — 실제 로그에 존재하는 행위만, 빈도순 상위 6종
+  const actionChips = useMemo(() => {
+    const m = {}
+    db.auditLog.forEach((g) => { m[g.action] = (m[g.action] ?? 0) + 1 })
+    return ['전체', ...Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([a]) => a)]
+  }, [db.auditLog])
+
+  const filtered = useMemo(() => {
+    const s = q.trim().toLowerCase()
+    return db.auditLog.filter((g) =>
+      (actionF === '전체' || g.action === actionF) &&
+      (!s || `${g.actor}${g.action}${g.target}${g.detail}`.toLowerCase().includes(s)))
+  }, [db.auditLog, q, actionF])
+
+  const exportCsv = () => {
+    downloadCSV(`모두온_감사로그_${new Date().toISOString().slice(0, 10)}.csv`, [
+      ['일시', '행위자', '행위', '대상', '상세'],
+      ...filtered.map((g) => [fmtDateTime(g.at), g.actor, g.action, g.target, g.detail]),
+    ])
+    toast(`감사 로그 ${filtered.length}건을 CSV로 내려받았어요`)
+  }
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -37,11 +64,33 @@ export default function AdminAudit() {
       </div>
 
       {/* 감사 로그 */}
+      {/* 검색·필터 바 — 로그가 쌓여도 3초 안에 찾는다 */}
+      <Card track="b" className="mt-4 flex flex-wrap items-center gap-2 p-3.5">
+        <div className="flex h-9 min-w-[220px] flex-1 items-center gap-2 rounded-full border border-bline bg-white px-3.5">
+          <IcSearch size={14} className="shrink-0 text-bfaint" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="행위자·대상·상세 검색…"
+            aria-label="감사 로그 검색"
+            className="w-full bg-transparent text-[13px] font-semibold text-bink outline-none placeholder:text-bfaint"
+          />
+        </div>
+        <div className="scrollbar-none flex gap-1.5 overflow-x-auto">
+          {actionChips.map((a) => (
+            <button key={a} onClick={() => setActionF(a)} className={`h-8 shrink-0 rounded-full px-3 text-[12px] font-bold transition-colors ${actionF === a ? 'bg-bink text-white' : 'bg-brow text-bbody hover:text-bink'}`}>{a}</button>
+          ))}
+        </div>
+        <span className="tnum text-[11.5px] font-bold text-bfaint">{filtered.length}/{db.auditLog.length}건</span>
+        <Btn variant="boutline" size="xs" onClick={exportCsv}>CSV</Btn>
+      </Card>
+
       <Card track="b" className="mt-4 overflow-hidden">
         <div className="hidden grid-cols-[130px_120px_130px_1fr_1.2fr] gap-2 border-b border-brow bg-brow/50 px-5 py-2.5 text-[11.5px] font-bold text-bmuted sm:grid">
           <span>일시</span><span>행위자</span><span>행위</span><span>대상</span><span>상세</span>
         </div>
-        {db.auditLog.map((g) => (
+        {filtered.length === 0 && <EmptyState text="조건에 맞는 로그가 없어요" sub="검색어나 행위 필터를 바꿔보세요" />}
+        {filtered.map((g) => (
           <div key={g.id} className="grid grid-cols-[1fr_auto] items-center gap-2 border-b border-brow px-4 py-3 sm:grid-cols-[130px_120px_130px_1fr_1.2fr] sm:px-5">
             <span className="tnum order-2 text-[11.5px] text-bfaint sm:order-none sm:text-[12px]">{fmtDateTime(g.at)}</span>
             <span className="hidden text-[12.5px] font-semibold text-bbody sm:block">{g.actor}</span>
