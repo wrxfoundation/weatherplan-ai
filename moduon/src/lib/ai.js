@@ -73,6 +73,27 @@ function localBrain(history, ctx) {
       action: { type: 'link', label: '인터넷/TV 요금표 보기', to: '/category/internet' },
     }
   }
+  if (has('이사')) {
+    return {
+      text: '이사는 지역·짐량·날짜에 따라 견적 차이가 커요. 모두온에서는 포장이사 기준 최대 40만원 혜택과 함께 입주 청소, 인터넷 이전 설치까지 한 번에 연결해 드려요.\n\n30초 상담 신청을 남겨주시면 평균 10분 내에 전문 상담사가 연락드립니다. 인터넷을 함께 신청하시면 결합 혜택으로 월 납부금도 낮출 수 있어요!',
+      action: { type: 'link', label: '이사 + 인터넷 상담 신청', to: '/consult?cat=move' },
+    }
+  }
+  if (has('휴대폰', '폰', '기기변경', '번호이동', '폴드', '갤럭시', '아이폰')) {
+    const deviceId = has('아이폰') ? 'ip17' : has('s26', 'S26', '울트라') ? 's26u' : has('a56', 'A56', '가성비', '저렴') ? 'a56' : 'fold8'
+    const join = has('기기변경', '기변') ? 'chg' : has('신규') ? 'new' : 'mnp'
+    const pq = calcPhoneQuote({ deviceId, join, planId: 'choice110', method: 'support', months: 24, extra15: true })
+    return {
+      text: `${pq.device.name}, ${join === 'mnp' ? '번호이동' : join === 'chg' ? '기기변경' : '010신규'} 기준으로 바로 계산해 드렸어요!\n\n· 출고가 ${won(pq.device.price)}\n· 공통지원금 −${won(pq.publicSupport)} + 추가지원금 −${won(pq.extraSupport)}\n· 월 단말 할부금(24개월) ${won(pq.deviceMonthly)}\n· ${pq.plan.name} ${won(pq.planMonthly)}\n· 월 납부금(A+B) **${won(pq.total)}**\n\n요금제·할부개월·선택약정까지 직접 바꿔보시겠어요? AI 견적은 참고용이며 최종 조건은 상담에서 확정됩니다.\n\n근거 — 모두온 단말·요금 기준표(할부수수료 연 5.9% 원리금균등)`,
+      action: { type: 'link', label: '휴대폰 견적 계산기 열기', to: '/calculator/phone' },
+    }
+  }
+  if (has('분양', '파트너', '창업', '건물주')) {
+    return {
+      text: '"온라인 건물주 되기" — 모두온 분양몰에 관심 있으시군요! 대리점 가입비 200만원 + 월 이용료 30만원으로 내 브랜드 비교판매 사이트를 개설하고, 리드 자동 배정과 AI 업무 자동화, 매일 보이는 투명 정산까지 제공받아요.\n\n하루 1건 페이스(월 24건 × 건당 평균 수수료 36만원) 기준 순수익 예시는 약 747만원입니다(운영 수수료 10%·이용료 차감 후 — 실제 수익 보장 아님). 개설 후 90일은 본사 정착지원 패키지(최대 500만원 상당)도 함께 제공돼요.',
+      action: { type: 'link', label: '분양 안내 보기', to: '/partner' },
+    }
+  }
   // 견적 문의 → 실제 견적 엔진 호출
   if (has('인터넷', '월', '얼마', '요금', '견적')) {
     const speed = has('1g', '기가') ? '1G' : has('100') ? '100M' : '500M'
@@ -83,25 +104,10 @@ function localBrain(history, ctx) {
       action: { type: 'quote', quote, label: '견적 계산기 열기', to: '/calculator' },
     }
   }
-  if (has('이사')) {
-    return {
-      text: '이사는 지역·짐량·날짜에 따라 견적 차이가 커요. 모두온에서는 포장이사 기준 최대 40만원 혜택과 함께 입주 청소, 인터넷 이전 설치까지 한 번에 연결해 드려요.\n\n30초 상담 신청을 남겨주시면 평균 10분 내에 전문 상담사가 연락드립니다. 인터넷을 함께 신청하시면 결합 혜택으로 월 납부금도 낮출 수 있어요!',
-      action: { type: 'link', label: '이사 + 인터넷 상담 신청', to: '/consult?cat=move' },
-    }
-  }
   if (has('정수기', '렌탈')) {
     return {
       text: '정수기는 냉온정 기능, 관리 주기, 의무약정에 따라 월 렌탈료가 15,900원~45,900원까지 다양해요. 모두온 제휴 조건으로는 최대 30만원 혜택 + 설치비 무료가 가능합니다.\n\n인터넷과 결합하면 통신 요금에서 월 11,100원이 추가로 할인돼요. 어떤 조합이 유리한지 계산기로 보여드릴까요?',
       action: { type: 'link', label: '결합 견적 계산해보기', to: '/calculator' },
-    }
-  }
-  if (has('휴대폰', '폰', '기기변경', '번호이동', '폴드', '갤럭시', '아이폰')) {
-    const deviceId = has('아이폰') ? 'ip17' : has('s26', 'S26', '울트라') ? 's26u' : has('a56', 'A56', '가성비', '저렴') ? 'a56' : 'fold8'
-    const join = has('기기변경', '기변') ? 'chg' : has('신규') ? 'new' : 'mnp'
-    const pq = calcPhoneQuote({ deviceId, join, planId: 'choice110', method: 'support', months: 24, extra15: true })
-    return {
-      text: `${pq.device.name}, ${join === 'mnp' ? '번호이동' : join === 'chg' ? '기기변경' : '010신규'} 기준으로 바로 계산해 드렸어요!\n\n· 출고가 ${won(pq.device.price)}\n· 공통지원금 −${won(pq.publicSupport)} + 추가지원금 −${won(pq.extraSupport)}\n· 월 단말 할부금(24개월) ${won(pq.deviceMonthly)}\n· ${pq.plan.name} ${won(pq.planMonthly)}\n· 월 납부금(A+B) **${won(pq.total)}**\n\n요금제·할부개월·선택약정까지 직접 바꿔보시겠어요? AI 견적은 참고용이며 최종 조건은 상담에서 확정됩니다.\n\n근거 — 모두온 단말·요금 기준표(할부수수료 연 5.9% 원리금균등)`,
-      action: { type: 'link', label: '휴대폰 견적 계산기 열기', to: '/calculator/phone' },
     }
   }
   if (has('보험')) {
@@ -114,12 +120,6 @@ function localBrain(history, ctx) {
     return {
       text: '상담 신청은 딱 30초면 끝나요!\n\n1. 이름·연락처·지역(시·군·구까지만) 입력\n2. 관심 서비스 선택\n3. 편한 상담 시간 선택\n\n신청 즉시 지역 전담 파트너에게 실시간 배정되고, 평균 10분 안에 전화드려요. 개인정보는 상담 목적으로만 사용됩니다.',
       action: { type: 'link', label: '무료 상담 신청하기', to: '/consult' },
-    }
-  }
-  if (has('분양', '파트너', '창업', '건물주')) {
-    return {
-      text: '"온라인 건물주 되기" — 모두온 분양몰에 관심 있으시군요! 대리점 가입비 200만원 + 월 이용료 30만원으로 내 브랜드 비교판매 사이트를 개설하고, 리드 자동 배정과 AI 업무 자동화, 매일 보이는 투명 정산까지 제공받아요.\n\n월 매출 1,000만원 기준 순수익 예시는 870만원입니다(수수료 10%, 이용료 차감 후 — 실제 수익 보장 아님).',
-      action: { type: 'link', label: '분양 안내 보기', to: '/partner' },
     }
   }
   if (has('절감', '진단', '생활비')) {
