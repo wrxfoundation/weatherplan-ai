@@ -131,6 +131,38 @@ export default function AdminBiz() {
         </div>
       </div>
 
+      {/* 3.5 신시장 확장 스코어보드 — TAM×전환×자산 재활용×페인 종합점수 */}
+      <Card track="b" className="mt-4 p-5 sm:p-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-[15.5px] font-extrabold text-bink">신시장 확장 스코어보드 <span className="text-[12.5px] font-semibold text-bmuted">· 다음 진출 우선순위</span></h2>
+          <span className="text-[11.5px] text-bfaint">기준: 시장 규모 × 전환 용이성 × 기존 자산 재활용률 × 고객 페인 강도 (각 25점)</span>
+        </div>
+        <div className="mt-3 flex flex-col gap-2">
+          {[
+            { name: '외국인 개통 시장', score: 88, tam: '체류 외국인 260만 · 결합 침투 낮음', why: '다국어 모비·지급명단·로컬 분양몰 재활용 — 90일 파일럿 공략안 수립 완료', badge: '공략안 v1.0', hot: true },
+            { name: '에어컨 설치·이전', score: 79, tam: '여름 성수기 집중 · 이사 리드 연계', why: '이사철 트리거·기사 네트워크 필요 — 시즌 한정 파일럿 적합' },
+            { name: '보안·CCTV (소상공인)', score: 74, tam: '자영업 580만 · B2B 반복 수익', why: '분양몰 로컬 영업망 재활용, 월 구독 모델로 정산 엔진 그대로' },
+            { name: '자동차보험 갱신', score: 68, tam: '연 단위 갱신 전원 대상', why: '진단·비교 UX 재활용 크지만 설계사 제휴·라이선스 확인 필요' },
+            { name: '상조·라이프플랜', score: 55, tam: '고LTV · 장기 납입', why: '신뢰 자산 필요 — 후기·지급명단 축적 후 재평가' },
+          ].map((m, i) => (
+            <div key={m.name} className={`flex flex-wrap items-center gap-x-3 gap-y-1 rounded-field border p-3.5 ${m.hot ? 'border-primary/40 bg-tint/30' : 'border-bline'}`}>
+              <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[12.5px] font-extrabold ${i === 0 ? 'bg-primary text-white' : 'bg-brow text-bmuted'}`}>{i + 1}</span>
+              <div className="min-w-[150px]">
+                <span className="text-[13.5px] font-bold text-bink">{m.name}</span>
+                {m.badge && <span className="ml-1.5 rounded-full bg-orange-tint px-2 py-0.5 text-[10px] font-bold text-orange-text">{m.badge}</span>}
+                <div className="text-[11px] text-bfaint">{m.tam}</div>
+              </div>
+              <div className="min-w-0 flex-1 text-[11.5px] leading-4 text-bmuted">{m.why}</div>
+              <div className="flex items-center gap-2">
+                <div className="h-1.5 w-24 overflow-hidden rounded-full bg-brow"><div className={`h-full rounded-full ${i === 0 ? 'bg-primary' : 'bg-bline'}`} style={{ width: `${m.score}%` }} /></div>
+                <span className={`tnum text-[13px] font-extrabold ${i === 0 ? 'text-primary-text' : 'text-bmuted'}`}>{m.score}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-2.5 text-[11px] text-bfaint">점수는 내부 평가 기준의 데모 예시입니다. 1순위 외국인 시장은 「외국인 개통 유치 공략안」의 90일 파일럿 게이트(개통 300건)를 통과하면 상위 10개 밀집 권역으로 확대합니다.</p>
+      </Card>
+
       {/* 4. 데이터 플라이휠 */}
       <Card track="b" className="mt-4 p-5 sm:p-6">
         <h2 className="text-[15.5px] font-extrabold text-bink">데이터 플라이휠 <span className="text-[12.5px] font-semibold text-bmuted">· 쌓일수록 강해지는 해자</span></h2>
