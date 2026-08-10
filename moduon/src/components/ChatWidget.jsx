@@ -67,6 +67,26 @@ export default function ChatWidget({ tenant }) {
   // 파트너몰에서 열렸으면 상담 이동 경로에 src 슬러그를 붙여 리드 귀속 유지
   const withSrc = (to) => (tenant && to.startsWith('/consult') ? to + (to.includes('?') ? '&' : '?') + 'src=' + tenant.slug : to)
 
+  // 퀵칩 트렌딩 — 클릭수 누적으로 인기순 재정렬 (Wellbian 칩 롤링 흡수)
+  const [chipHits, setChipHits] = useState(() => { try { return JSON.parse(localStorage.getItem('moduon_chip_hits_v1')) ?? {} } catch { return {} } })
+  const quicks = [...QUICK_REPLIES].sort((a, b) => (chipHits[b] ?? 0) - (chipHits[a] ?? 0))
+  const hitChip = (q) => {
+    const next = { ...chipHits, [q]: (chipHits[q] ?? 0) + 1 }
+    setChipHits(next)
+    try { localStorage.setItem('moduon_chip_hits_v1', JSON.stringify(next)) } catch { /* noop */ }
+  }
+
+  // 컨텍스트 바로가기 — 직전 질문 키워드와 매칭될 때만 최대 2개 노출(매칭 필수 룰)
+  const CTX_LINKS = [
+    { k: ['인터넷', '와이파이', 'tv', '결합'], label: '인터넷 견적 계산기 →', to: '/calculator' },
+    { k: ['휴대폰', '폰', '번호이동', '요금제'], label: '휴대폰 계산기 →', to: '/calculator/phone' },
+    { k: ['정수기', '렌탈'], label: '정수기 렌탈 보기 →', to: '/category/water' },
+    { k: ['이사'], label: '이사 서비스 →', to: '/category/move' },
+    { k: ['사은품', '지급', '현금'], label: '사은품 지급 명단 →', to: '/payouts' },
+  ]
+  const lastUserQ = ([...msgs].reverse().find((m) => m.role === 'user')?.text ?? '').toLowerCase()
+  const ctxChips = !busy && msgs.length > 1 ? CTX_LINKS.filter((c) => c.k.some((w) => lastUserQ.includes(w))).slice(0, 2) : []
+
   async function send(text) {
     const t = (text ?? input).trim()
     if (!t || busy) return
@@ -173,9 +193,14 @@ export default function ChatWidget({ tenant }) {
           {/* 퀵리플라이 + 입력 */}
           <div className="border-t border-white/55 bg-white/45 px-3 pb-3 pt-2 backdrop-blur-md">
             <div className="scrollbar-none mb-2 flex gap-1.5 overflow-x-auto">
-              {QUICK_REPLIES.map((q) => (
-                <button key={q} onClick={() => send(q)} className="shrink-0 rounded-full border border-line bg-white px-3 py-1.5 text-[12px] font-semibold text-label hover:border-primary hover:text-primary-text">
-                  {q}
+              {ctxChips.map((c) => (
+                <button key={c.to} onClick={() => { setOpen(false); nav(withSrc(c.to)) }} className="shrink-0 rounded-full border border-primary/40 bg-tint px-3 py-1.5 text-[12px] font-bold text-primary-text hover:bg-primary hover:text-white">
+                  {c.label}
+                </button>
+              ))}
+              {quicks.map((q, i) => (
+                <button key={q} onClick={() => { hitChip(q); send(q) }} className="shrink-0 rounded-full border border-line bg-white px-3 py-1.5 text-[12px] font-semibold text-label hover:border-primary hover:text-primary-text">
+                  {i === 0 && (chipHits[q] ?? 0) > 0 && <span className="mr-1 font-extrabold text-orange-text">인기</span>}{q}
                 </button>
               ))}
             </div>
