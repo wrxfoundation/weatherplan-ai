@@ -47,11 +47,14 @@ export default function ChatWidget({ tenant }) {
   }, [open])
 
   // 선제 넛지 — 6초 유휴 후 1회 (이미 봤거나 챗을 연 적 있으면 생략)
+  // 계산기·상담처럼 이미 전환 동선에 들어온 화면에서는 띄우지 않는다(모바일 겹침 방지 겸)
+  const engaged = loc.pathname.startsWith('/calculator') || loc.pathname.startsWith('/consult')
   useEffect(() => {
+    if (engaged) { setNudge(false); return }
     try { if (sessionStorage.getItem(NUDGE_KEY)) return } catch { /* noop */ }
     const t = setTimeout(() => { if (!open) setNudge(true) }, 6000)
     return () => clearTimeout(t)
-  }, []) // eslint-disable-line
+  }, [engaged]) // eslint-disable-line
   const dismissNudge = () => {
     setNudge(false)
     try { sessionStorage.setItem(NUDGE_KEY, '1') } catch { /* noop */ }
@@ -106,7 +109,7 @@ export default function ChatWidget({ tenant }) {
   return (
     <>
       {/* 선제 넛지 — 세션 1회, 클릭 시 챗 오픈 */}
-      {nudge && !open && (
+      {nudge && !open && !engaged && (
         <div className={`fixed right-4 z-50 flex items-center gap-2 rounded-2xl rounded-br-md border border-line-card bg-white py-2.5 pl-4 pr-2 shadow-panel animate-rise sm:right-5 ${hasBottomBar ? 'bottom-[218px] lg:bottom-[86px]' : 'bottom-[86px]'}`}>
           <button onClick={() => { dismissNudge(); setOpen(true) }} className="text-left text-[12.5px] font-bold text-ink">
             인터넷 견적, 30초면 계산해드려요 <span className="text-primary-text">→</span>

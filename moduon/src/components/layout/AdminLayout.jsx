@@ -5,7 +5,7 @@ import { useStore, getSession } from '../../lib/store'
 import { maskName } from '../../lib/engine'
 import { unitName } from '../../lib/constants'
 import { Logo, useToast } from '../ui'
-import { IcGrid, IcCompass, IcStore, IcBox, IcClipboard, IcBolt, IcRobot, IcCoins, IcLock, IcBell, IcClock, IcAlert, IcSearch } from '../icons'
+import { IcGrid, IcCompass, IcStore, IcBox, IcClipboard, IcBolt, IcRobot, IcCoins, IcLock, IcBell, IcClock, IcAlert, IcSearch, IcUsers } from '../icons'
 
 // 파생 알림 — 알림을 저장하지 않고 현재 상태에서 매번 계산한다 (axion 패턴).
 // 읽음 처리는 내용 시그니처를 localStorage에 비교 저장 — 알림 테이블 없이 배지가 동작.
@@ -152,7 +152,10 @@ const GROUPS = [
     { to: '/admin/policies', label: '정책 관리', icon: IcClipboard },
   ]},
   { label: '리드 관제', items: [{ to: '/admin/leads', label: '리드 콘솔', icon: IcBolt }] },
-  { label: 'AI 관리', items: [{ to: '/admin/ai', label: 'AI 운영 현황', icon: IcRobot }] },
+  { label: 'AI 관리', items: [
+    { to: '/admin/ai', label: 'AI 운영 현황', icon: IcRobot },
+    { to: '/admin/persona-lab', label: '페르소나 랩', icon: IcUsers },
+  ]},
   { label: '정산·수익', items: [{ to: '/admin/settlements', label: '정산·지급', icon: IcCoins }] },
   { label: '시스템', items: [{ to: '/admin/audit', label: '권한·감사 로그', icon: IcLock }] },
 ]

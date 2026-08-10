@@ -31,6 +31,7 @@ import AdminPolicies from './pages/admin/Policies'
 import AdminLeadsConsole from './pages/admin/LeadsConsole'
 import AdminSettlements from './pages/admin/Settlements'
 import AdminAiOps from './pages/admin/AiOps'
+import AdminPersonaLab from './pages/admin/PersonaLab'
 import AdminAudit from './pages/admin/Audit'
 
 function ScrollTop() {
@@ -97,6 +98,7 @@ export default function App() {
           <Route path="leads" element={<AdminLeadsConsole />} />
           <Route path="settlements" element={<AdminSettlements />} />
           <Route path="ai" element={<AdminAiOps />} />
+          <Route path="persona-lab" element={<AdminPersonaLab />} />
           <Route path="audit" element={<AdminAudit />} />
         </Route>
 

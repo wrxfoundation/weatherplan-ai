@@ -421,3 +421,51 @@ function localForeignPanel() {
     '종합 → 소구점 1순위는 체류기간 연동 약정, 2순위 동일 가격 공개입니다. 보완 1가지: 유학생 구간엔 "보증금·설치비 0원" 문구를 오퍼에 명시하세요.',
   ].join('\n')
 }
+
+// ─── 페르소나 랩 (범용) — 속성 조합 패널 × 임의 텍스트 반응 시뮬레이션 ──
+// 연령·가구·민감축·권역 조합으로 패널을 구성하고, 카피/오퍼/정책 등
+// 어떤 텍스트든 반응을 사전 탐색한다. 로컬 폴백은 민감축별 키워드 룰.
+export const LAB_AXES = {
+  age: ['20대', '30대', '40대', '50·60대'],
+  house: ['1인 가구', '신혼·맞벌이', '자녀 가구', '시니어'],
+  lean: ['가격 민감', '신뢰 중시', '속도·간편', '위험 회피'],
+  region: ['수도권', '지방'],
+}
+const LAB_NAMES = ['김서준', '이하윤', '박도현', '최지아', '정시우', '한아린', '조은우', '윤채원', '임준서', '오다은', '강현우', '송유나']
+
+export function buildLabPanel(sel, size) {
+  // 선택된 속성값들을 라운드로빈으로 조합 — 같은 선택이면 항상 같은 패널(결정적)
+  const pick = (arr, i) => arr[i % arr.length]
+  return Array.from({ length: size }, (_, i) => ({
+    name: `${pick(LAB_NAMES, i)} (${pick(sel.age, i)})`,
+    age: pick(sel.age, i),
+    house: pick(sel.house, i + 1),
+    lean: pick(sel.lean, i),
+    region: pick(sel.region, i + 1),
+  }))
+}
+
+export function personaLab(a) {
+  const roster = a.personas.map((p) => `- ${p.name}: ${p.house} · ${p.region} · ${p.lean}`).join('\n')
+  const prompt = `당신은 가상 소비자 패널 시뮬레이터입니다. 아래 패널이 [대상 텍스트]를 읽었다고 가정하고 각자의 성향에 충실한 반응을 시뮬레이션하세요.\n\n[패널]\n${roster}\n\n[대상 텍스트]\n${a.text}\n\n출력: 각 줄 "이름 → 반응 상/중/하 — 한 문장 이유" ${a.personas.length}줄, 마지막 줄 "종합 → 상 n·중 m·하 k — 가장 약한 세그먼트와 보완 1가지". 성향 모순 금지, 과장 금지.`
+  return { prompt, task: 'persona-lab', local: localPersonaLab(a) }
+}
+function localPersonaLab(a) {
+  const RULES = {
+    '가격 민감': { re: /\d|원|환산|할인|무료|돌려/g, hi: '숫자가 먼저 보여요 — 조건 계산해보고 움직일 것 같아요', lo: '얼마가 이득인지 안 보여서 스크롤을 내릴 것 같아요' },
+    '신뢰 중시': { re: /명단|공개|고지|본사|인증|후기|보장 아님|조건/g, hi: '근거와 조건 고지가 있어서 의심이 줄어요', lo: '증거가 없어서 광고처럼 느껴져요' },
+    '속도·간편': { re: /30초|1분|바로|즉시|간편|→|원클릭|10분/g, hi: '지금 바로 끝낼 수 있다는 게 좋아요 — 버튼 누를게요', lo: '절차가 얼마나 걸리는지 몰라 망설여져요' },
+    '위험 회피': { re: /위약금|약정|해지|유예|환불|철회|조건 충족/g, hi: '빠져나갈 길이 보여서 안심돼요', lo: '묶이는 조건부터 확인하고 싶어요 — 바로는 안 눌러요' },
+  }
+  const counts = { 상: 0, 중: 0, 하: 0 }
+  const lines = a.personas.map((p) => {
+    const r = RULES[p.lean]
+    const hits = (a.text.match(r.re) ?? []).length
+    const grade = hits >= 3 ? '상' : hits >= 1 ? '중' : '하'
+    counts[grade]++
+    return `${p.name} → ${grade} — ${grade === '하' ? r.lo : r.hi}${grade === '중' ? ' (근거가 한 개뿐이라 확신은 부족해요)' : ''}`
+  })
+  const weak = Object.entries(RULES).map(([lean, r]) => [lean, (a.text.match(r.re) ?? []).length]).sort((x, y) => x[1] - y[1])[0]
+  lines.push(`종합 → 상 ${counts.상}·중 ${counts.중}·하 ${counts.하} — 가장 약한 축은 "${weak[0]}"입니다. 해당 축이 반응할 단서(${weak[0] === '가격 민감' ? '금액·환산' : weak[0] === '신뢰 중시' ? '지급 명단·조건 고지' : weak[0] === '속도·간편' ? '소요 시간·즉시 CTA' : '약정·위약금 안내'})를 한 줄 보강하세요.`)
+  return lines.join('\n')
+}

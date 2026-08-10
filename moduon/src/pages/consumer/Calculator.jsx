@@ -74,12 +74,15 @@ export default function Calculator() {
         <div className="flex flex-col gap-4">
           <StepCard no={1} title="통신사를 선택하세요">
             <div className="grid grid-cols-3 gap-3">
-              {CARRIERS.map((c) => (
-                <OptionCard key={c} active={carrier === c} onClick={() => setCarrier(c)}>
-                  <span className="flex h-[30px] w-[46px] items-center justify-center rounded bg-brow text-[10px] font-bold text-bfaint">LOGO</span>
-                  <span className="mt-2 text-[13.5px] font-bold text-ink">{c}</span>
-                </OptionCard>
-              ))}
+              {CARRIERS.map((c) => {
+                const mark = { KT: { m: 'kt', col: '#E60012' }, 'SK브로드밴드': { m: 'SKB', col: '#EA1917' }, 'LG U+': { m: 'U+', col: '#ED008C' } }[c]
+                return (
+                  <OptionCard key={c} active={carrier === c} onClick={() => setCarrier(c)}>
+                    <span className="flex h-[28px] items-center text-[18px] font-black tracking-tight" style={{ color: mark.col }}>{mark.m}</span>
+                    <span className="mt-1.5 break-keep text-[12.5px] font-bold leading-4 text-ink">{c}</span>
+                  </OptionCard>
+                )
+              })}
             </div>
           </StepCard>
 
