@@ -43,6 +43,9 @@ export default function AdminAiOps() {
   const fbHelp = fb.filter((e) => e.helpful === true).length
   const fbRate = fb.length ? Math.round((fbHelp / fb.length) * 100) : 0
   const improveQ = fb.filter((e) => e.helpful === false && e.q).slice(0, 4)
+  // 파이프라인 보드 파생치 — 발송(감사 로그)·자동화 ON(전 테넌트)
+  const outboundCount = (db.auditLog ?? []).filter((a) => a.action === '아웃바운드 발송').length
+  const autoOnCount = db.tenants.reduce((s, t) => s + Object.values(t.automations ?? {}).filter(Boolean).length, 0)
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -180,6 +183,39 @@ export default function AdminAiOps() {
           </Card>
         </div>
       </div>
+
+      {/* 마케팅 파이프라인 9단계 — "이긴 구조만 자동화한다" (AI 마케팅 OS 흡수) */}
+      <Card track="b" className="mt-4 p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-[15.5px] font-extrabold text-bink">마케팅 파이프라인 — 수집부터 자동화까지</h2>
+          <span className="text-[11.5px] text-bfaint">AI는 콘텐츠 생성기가 아니라 운영 부품 — 이긴 구조만 자동화합니다</span>
+        </div>
+        <div className="mt-3 overflow-x-auto scrollbar-none">
+          <div className="flex min-w-[900px] items-stretch gap-1.5">
+            {[
+              { n: '신호 수집', v: total, unit: '건', d: '챗·진단·피드백 이벤트' },
+              { n: '페르소나', v: 3, unit: '군', d: '신규·만기·프로모 세그먼트' },
+              { n: '메시지', v: 12, unit: '종', d: '채널 4 × 목적 3 템플릿' },
+              { n: '생산', v: chats, unit: '건', d: 'AI 응답·카피 생성' },
+              { n: '배포', v: outboundCount, unit: '건', d: '알림톡·재상담 발송' },
+              { n: '피드백', v: fb.length, unit: '건', d: '도움됨/아쉬움 평가' },
+              { n: '학습', v: improveQ.length, unit: '건', d: '개선 큐 반영 대상' },
+              { n: '자산화', v: 8, unit: '종', d: '시즌 룰 4 + 시나리오 4' },
+              { n: '자동화', v: autoOnCount, unit: '개', d: '켜진 자동화 (이긴 구조만)' },
+            ].map((s, i, arr) => (
+              <div key={s.n} className="flex items-center gap-1.5">
+                <div className={`w-[104px] rounded-field border p-2.5 text-center ${s.v > 0 ? 'border-primary/30 bg-tint/30' : 'border-bline'}`}>
+                  <div className="text-[10px] font-bold text-bfaint">{i + 1}. {s.n}</div>
+                  <div className={`tnum mt-0.5 text-[16px] font-extrabold ${s.v > 0 ? 'text-primary-text' : 'text-bfaint'}`}>{s.v}<span className="text-[10.5px] font-bold">{s.unit}</span></div>
+                  <div className="mt-0.5 text-[9.5px] leading-3 text-bfaint">{s.d}</div>
+                </div>
+                {i < arr.length - 1 && <span className="text-[12px] text-bfaint">→</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+        <p className="mt-2.5 text-[11px] leading-4 text-bfaint">각 단계 수치는 실데이터(이벤트·감사 로그·자동화 설정)에서 파생됩니다. 피드백→학습으로 검증된 문구만 자산화·자동화 단계로 승격돼요.</p>
+      </Card>
 
       {/* 인사이트 3카드 */}
       <div className="mt-4 grid gap-3 lg:grid-cols-3">

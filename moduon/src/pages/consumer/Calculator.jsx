@@ -8,6 +8,7 @@ import { useToast } from '../../components/ui'
 import { IcBulb, IcGift, IcShare, IcCheck } from '../../components/icons'
 import { CalcTabs } from './PhoneCalculator'
 import InstallCheck from '../../components/InstallCheck'
+import BillScan from '../../components/BillScan'
 
 export default function Calculator() {
   const nav = useNavigate()
@@ -196,6 +197,9 @@ export default function Calculator() {
             </div>
             <p className="mt-2.5 text-[11.5px] leading-4 text-faint">월 요금이 같아도 통신사별 사은품 가산이 달라 실질 부담이 갈려요. 행을 누르면 해당 통신사로 견적이 바뀝니다.</p>
           </section>
+
+          {/* 타사 명세서 스캔 → 절감 비교 (리드 훅) */}
+          <BillScan />
 
           {/* 모바일 전용 — 합계 상세 분해 (데스크톱은 우측 스티키 카드) */}
           <section className="rounded-card bg-white p-5 shadow-card lg:hidden">

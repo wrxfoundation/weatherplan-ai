@@ -184,6 +184,9 @@ export default function OfficeDashboard() {
         </div>
       </div>
 
+      {/* 사장님 케어 — 실적 하이라이트 + 격려 (OWNER_CARE: 전문가의 눈, 단짝의 입) */}
+      <CareStrip leads={leads} />
+
       {/* 정착·성장 트로피 — 정착지원 정책과 연동된 파생 배지 (저장 없음, 실데이터 파생) */}
       <TrophyBoard tenant={tenant} db={db} leads={leads} />
 
@@ -197,6 +200,29 @@ export default function OfficeDashboard() {
       )}
 
       <LeadDrawer lead={live} onClose={() => setOpenLead(null)} by={tenant.id} />
+    </div>
+  )
+}
+
+// 사장님 케어 — 이번 주 실적을 단짝의 입으로 말한다 (강요·책임전가 금지 톤)
+function CareStrip({ leads }) {
+  const week = leads.filter((l) => l.status === '완료' && Date.now() - (l.completedAt ?? l.createdAt) < 7 * 86400000).length
+  const handled = leads.filter((l) => !['접수', '상담대기'].includes(l.status)).length
+  const CHEER = [
+    '오래 가는 사장님이 이깁니다 — 물 한 잔 마시고 가볍게 어깨 스트레칭 어때요?',
+    '전화 목소리는 컨디션에서 나와요. 점심 거르지 마세요!',
+    '오늘의 한 건이 다음 달 단골이 됩니다. 서두르지 않아도 괜찮아요.',
+    '잘 안 풀리는 날도 있죠. 내일의 리드는 내일 옵니다 — 오늘은 마무리 잘하세요.',
+    '기록이 쌓이면 감이 됩니다. 상담 메모 한 줄이 내일의 무기예요.',
+  ]
+  const cheer = CHEER[new Date().getDay() % CHEER.length]
+  const head = week > 0
+    ? `이번 주 개통 ${week}건 — 수고하셨어요! 처리 누적 ${handled}건이 만든 결과예요.`
+    : `이번 주는 아직 개통 전 — 처리 중 ${handled}건이 곧 결실이 됩니다.`
+  return (
+    <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-card border border-primary/20 bg-tint/30 px-4 py-3">
+      <span className="text-[12.5px] font-extrabold text-primary-text">사장님 케어</span>
+      <span className="min-w-0 flex-1 text-[12.5px] font-semibold text-bbody">{head} <span className="text-bmuted">{cheer}</span></span>
     </div>
   )
 }
