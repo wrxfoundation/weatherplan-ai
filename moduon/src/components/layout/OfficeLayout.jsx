@@ -70,6 +70,7 @@ const MENU = [
   { to: '/office', label: '대시보드', icon: IcGrid, end: true },
   { to: '/office/leads', label: '리드', icon: IcBolt, badge: true },
   { to: '/office/customers', label: '고객', icon: IcUsers },
+  { to: '/office/marketing', label: '마케팅', icon: IcMegaphone },
   { to: '/office/settlement', label: '정산', icon: IcCoins },
   { to: '/office/resources', label: '자료실', icon: IcFolder },
   { to: '/office/setup', label: '내 몰 설정', icon: IcGear },

@@ -19,6 +19,7 @@ import OfficeDashboard from './pages/office/Dashboard'
 import OfficeLeads from './pages/office/Leads'
 import OfficeSettlement from './pages/office/Settlement'
 import OfficeCustomers from './pages/office/Customers'
+import OfficeMarketing from './pages/office/Marketing'
 import OfficeResources from './pages/office/Resources'
 import OfficeSetup from './pages/office/Setup'
 import AdminDashboard from './pages/admin/Dashboard'
@@ -78,6 +79,7 @@ export default function App() {
           <Route path="leads" element={<OfficeLeads />} />
           <Route path="settlement" element={<OfficeSettlement />} />
           <Route path="customers" element={<OfficeCustomers />} />
+          <Route path="marketing" element={<OfficeMarketing />} />
           <Route path="resources" element={<OfficeResources />} />
           <Route path="setup" element={<OfficeSetup />} />
         </Route>

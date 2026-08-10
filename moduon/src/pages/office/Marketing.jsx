@@ -1,0 +1,223 @@
+// ─── P-07 마케팅 스튜디오 — "상품언어는 24시간 일하는 직원" ─────────
+// 첨부 문서 흡수: 상품언어×AI(채널 카피·환산 프레이밍), WeatherPlan(날씨
+// 트리거 룰·신뢰도 게이트), 22업종 매트릭스(시즌 플레이북), 미라클 톤
+// ("숫자가 말하게 한다" 라이프사이클 템플릿). 데모: 발송은 기록만 남긴다.
+import { useMemo, useState } from 'react'
+import { useOutletContext } from 'react-router-dom'
+import { useStore, tenantLeads } from '../../lib/store'
+import { marketingCopy } from '../../lib/ai'
+import { won, dday, copyText } from '../../lib/engine'
+import { unitName, catBySlug } from '../../lib/constants'
+import { Card, useToast } from '../../components/ui'
+import { AiInsight } from '../../components/AiPanel'
+import { IcMegaphone, IcBolt, IcGift, IcShare, IcClock } from '../../components/icons'
+
+const CHANNELS = [
+  { key: 'kakao', label: '카톡' },
+  { key: 'sms', label: '문자' },
+  { key: 'blog', label: '블로그' },
+  { key: 'sns', label: 'SNS' },
+]
+const GOALS = [
+  { key: 'acquire', label: '신규 모객' },
+  { key: 'renewal', label: '만기 재상담' },
+  { key: 'promo', label: '사은품 프로모션' },
+]
+
+// 시즌·날씨 트리거 룰 — "트리거 → 자동 대응 → 예상 효과" (수치는 데모 예시)
+const WEATHER_RULES = [
+  { key: 'wx-rain', name: '장마 · 습도 트리거', trigger: '장마 예보 D-3 · 습도 80%+', action: '제습기·공기청정 렌탈 배너 강화 + 정수기 결합 카피 전환', effect: '렌탈 문의 +40%', score: 92, rule: '"장마 예보 뜨면 제습 결합 배너 키워줘"' },
+  { key: 'wx-heat', name: '폭염 트리거', trigger: '최고기온 33℃+ D-7', action: '에어컨·냉장고 제휴 카드 상단 고정, 야간 발송 전환', effect: '가전 문의 +150%', score: 90, rule: '"폭염특보면 에어컨 카드 맨 위로 올려줘"' },
+  { key: 'wx-cold', name: '한파 트리거', trigger: '최저기온 −10℃ D-3', action: '보일러·온수매트 프로모션 + 이사 고객 인터넷 이전 안내', effect: '난방 문의 +200%', score: 88, rule: '"한파 D-3이면 보일러 프로모 발송해줘"' },
+  { key: 'wx-move', name: '이사철 트리거', trigger: '2·3월 / 8·9월 성수기', action: '인터넷 이전+정수기 이전 설치 번들 캠페인', effect: '이사 리드 41%가 인터넷 동반 문의', score: 93, rule: '"이사철엔 이전설치 번들로 묶어줘"' },
+]
+
+// 라이프사이클 자동 발송 — 미라클 톤: 구체 수치가 말하게 한다
+const LIFECYCLE = [
+  { key: 'welcome', name: '신규 접수 환영', when: '리드 접수 즉시', tmpl: '{고객명}님, 접수 확인! 평균 10분 내 전문 상담사가 전화드려요.', def: true },
+  { key: 'remind', name: '미응대 리마인드', when: 'SLA 10분 초과 시', tmpl: '놓친 상담 1건 — {고객명}님이 기다리고 있어요. 지금 연락하세요.', def: true },
+  { key: 'expiry', name: '만기 재상담 (D-90)', when: '약정 만기 90일 전', tmpl: '{고객명}님 만기까지 D-{일수} · 위약금이 가장 낮아지는 구간입니다.', def: true },
+  { key: 'review', name: '설치 완료 후기 요청', when: '개통 완료 +3일', tmpl: '{고객명}님, 설치는 만족스러우셨나요? 후기 남기면 다음 혜택 우선 안내.', def: false },
+]
+
+export default function OfficeMarketing() {
+  const { tenant } = useOutletContext()
+  const { db, dispatch } = useStore()
+  const toast = useToast()
+  const [channel, setChannel] = useState('kakao')
+  const [goal, setGoal] = useState('acquire')
+  const [copied, setCopied] = useState(false)
+
+  const auto = tenant.automations ?? {}
+  const isOn = (key, def = false) => auto[key] ?? def
+
+  const refLink = `${window.location.origin}/?ref=${tenant.slug}`
+  const leads = tenantLeads(db, tenant.id)
+  const stats = useMemo(() => {
+    const sent = (db.auditLog ?? []).filter((a) => a.action === '아웃바운드 발송' && (a.actor === tenant.id || a.actor === tenant.owner)).length
+    const inbound = leads.filter((l) => l.source === tenant.slug).length
+    const expiring = db.contracts.filter((c) => c.tenantId === tenant.id && dday(c.expiry) <= 90).length
+    return { sent, inbound, expiring }
+  }, [db.auditLog, db.contracts, leads, tenant])
+
+  const buildCopy = () => marketingCopy({
+    tenantName: tenant.name,
+    unitName: unitName(tenant.unit),
+    sigungu: tenant.sigungu ?? '우리 동네',
+    cats: (tenant.cats ?? []).map((s) => catBySlug(s)?.name ?? s),
+    giftMax: '152만원+',
+    refLink,
+    channel,
+    goal,
+    expiringCount: stats.expiring,
+  })
+
+  const toggle = (key, label, def) => {
+    dispatch({ type: 'TENANT_AUTOMATION', payload: { id: tenant.id, key, on: !isOn(key, def), label } })
+    toast(!isOn(key, def) ? `${label} 자동화를 켰어요 — 감사 로그에 기록됩니다` : `${label} 자동화를 껐어요`)
+  }
+
+  const copyRef = async () => {
+    if (await copyText(refLink)) { setCopied(true); toast('추천 링크를 복사했어요 — 어디에 붙여도 내 몰로 귀속됩니다'); setTimeout(() => setCopied(false), 1600) }
+  }
+
+  return (
+    <div className="mx-auto max-w-6xl">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-[20px] font-extrabold text-bink">마케팅 스튜디오</h1>
+          <p className="mt-0.5 text-[12.5px] text-bmuted">상품언어는 24시간 일하는 직원입니다 — 카피 생성부터 시즌 트리거·자동 발송까지 한 곳에서.</p>
+        </div>
+        <button onClick={copyRef} className="glass-btn flex h-9 items-center gap-1.5 rounded-full border border-bline bg-white px-3.5 text-[12.5px] font-bold text-bbody hover:border-primary hover:text-primary-text">
+          <IcShare size={14} /> {copied ? '복사됐어요!' : '내 추천 링크 복사'}
+        </button>
+      </div>
+
+      {/* 성과 KPI */}
+      <div className="mt-4 grid grid-cols-3 gap-3">
+        <Card track="b" className="p-4"><div className="text-[12px] text-bmuted">이번 달 아웃바운드</div><div className="tnum mt-1 text-[22px] font-extrabold text-bink">{stats.sent}<span className="text-[13px]">건</span></div><div className="text-[11px] text-bfaint">알림톡·재상담 발송 기록</div></Card>
+        <Card track="b" className="p-4"><div className="text-[12px] text-bmuted">내 몰 링크 유입 리드</div><div className="tnum mt-1 text-[22px] font-extrabold text-primary-text">{stats.inbound}<span className="text-[13px]">건</span></div><div className="text-[11px] text-bfaint">?ref={tenant.slug} 귀속</div></Card>
+        <Card track="b" className="p-4"><div className="text-[12px] text-bmuted">만기 캠페인 대상</div><div className="tnum mt-1 text-[22px] font-extrabold text-warn">{stats.expiring}<span className="text-[13px]">명</span></div><div className="text-[11px] text-bfaint">90일 내 만기 — 재상담 골든타임</div></Card>
+      </div>
+
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
+        {/* ── 좌: AI 카피 생성기 ── */}
+        <Card track="b" className="p-5">
+          <div className="flex items-center gap-2">
+            <IcMegaphone size={16} className="text-primary-text" />
+            <h2 className="text-[15.5px] font-extrabold text-bink">AI 카피 생성기</h2>
+          </div>
+          <p className="mt-1 text-[12px] text-bmuted">채널·목적을 고르면 내 몰 브랜딩(상호·권역·추천링크)이 반영된 카피가 나옵니다. 숫자가 말하게 — 과장 없이.</p>
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            {CHANNELS.map((c) => (
+              <button key={c.key} onClick={() => setChannel(c.key)} className={`h-8 rounded-full px-3.5 text-[12px] font-bold transition-colors ${channel === c.key ? 'bg-bink text-white' : 'bg-brow text-bbody hover:text-bink'}`}>{c.label}</button>
+            ))}
+            <span className="mx-1 h-4 w-px bg-bline" />
+            {GOALS.map((g) => (
+              <button key={g.key} onClick={() => setGoal(g.key)} className={`h-8 rounded-full px-3.5 text-[12px] font-bold transition-colors ${goal === g.key ? 'bg-primary text-white' : 'bg-tint text-primary-text hover:bg-primary/20'}`}>{g.label}</button>
+            ))}
+          </div>
+          <AiInsight
+            key={`${channel}-${goal}`}
+            className="mt-3"
+            title={`${CHANNELS.find((c) => c.key === channel).label} · ${GOALS.find((g) => g.key === goal).label} 카피`}
+            desc="(광고) 표기·수신거부·조건 고지가 포함된 준수형 초안이 생성돼요. {고객명}, D-{일수}는 발송 시 자동 치환됩니다."
+            cta="카피 생성하기"
+            build={buildCopy}
+          />
+          <p className="mt-2.5 text-[11px] leading-4 text-bfaint">생성된 카피는 초안입니다. 표시광고법·정보통신망법 준수 여부를 확인 후 사용하세요. 발송은 데모에서 기록만 남습니다.</p>
+        </Card>
+
+        {/* ── 우: 자동 발송 시나리오 ── */}
+        <Card track="b" className="p-5">
+          <div className="flex items-center gap-2">
+            <IcClock size={15} className="text-primary-text" />
+            <h2 className="text-[15.5px] font-extrabold text-bink">자동 발송 시나리오</h2>
+          </div>
+          <p className="mt-1 text-[12px] text-bmuted">라이프사이클 이벤트에 맞춰 자동 발송 — 이긴 문구만 자동화하세요.</p>
+          <div className="mt-3 flex flex-col gap-2">
+            {LIFECYCLE.map((s) => {
+              const on = isOn(s.key, s.def)
+              return (
+                <div key={s.key} className={`rounded-field border p-3 transition-colors ${on ? 'border-primary/40 bg-tint/40' : 'border-bline'}`}>
+                  <div className="flex items-center justify-between gap-2">
+                    <div>
+                      <div className="text-[13px] font-bold text-bink">{s.name}</div>
+                      <div className="text-[11px] text-bfaint">{s.when}</div>
+                    </div>
+                    <button
+                      role="switch"
+                      aria-checked={on}
+                      aria-label={`${s.name} 자동화`}
+                      onClick={() => toggle(s.key, s.name, s.def)}
+                      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? 'bg-primary' : 'bg-bline'}`}
+                    >
+                      <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${on ? 'left-[22px]' : 'left-0.5'}`} />
+                    </button>
+                  </div>
+                  <div className="mt-2 rounded bg-white px-2.5 py-2 text-[11.5px] leading-4 text-bbody">{s.tmpl}</div>
+                </div>
+              )
+            })}
+          </div>
+          <p className="mt-2.5 text-[11px] leading-4 text-bfaint">안전장치: 일일 발송 50건 초과 시 자동 정지 · 야간(21시~08시) 발송 보류. 모든 ON/OFF는 감사 로그에 남아요.</p>
+        </Card>
+      </div>
+
+      {/* ── 시즌·날씨 트리거 캠페인 ── */}
+      <Card track="b" className="mt-4 p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <IcBolt size={16} className="text-warn" />
+            <h2 className="text-[15.5px] font-extrabold text-bink">시즌·날씨 트리거 캠페인</h2>
+          </div>
+          <span className="text-[11.5px] text-bfaint">"누구에게"만큼 "언제"가 전환을 가릅니다 — 날씨 영향 업종 70%+</span>
+        </div>
+        <div className="mt-3 grid gap-3 lg:grid-cols-2">
+          {WEATHER_RULES.map((r) => {
+            const on = isOn(r.key)
+            const gate = r.score >= 90 ? '자동 실행' : '승인 후 실행'
+            return (
+              <div key={r.key} className={`rounded-field border p-4 transition-colors ${on ? 'border-primary/40 bg-tint/30' : 'border-bline'}`}>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[13.5px] font-extrabold text-bink">{r.name}</span>
+                    <span className={`tnum rounded-full px-2 py-0.5 text-[10.5px] font-bold ${r.score >= 90 ? 'bg-ok/10 text-ok' : 'bg-warn/10 text-warn'}`}>신뢰도 {r.score} · {gate}</span>
+                  </div>
+                  <button
+                    role="switch"
+                    aria-checked={on}
+                    aria-label={`${r.name} 캠페인`}
+                    onClick={() => toggle(r.key, r.name)}
+                    className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? 'bg-primary' : 'bg-bline'}`}
+                  >
+                    <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${on ? 'left-[22px]' : 'left-0.5'}`} />
+                  </button>
+                </div>
+                <div className="mt-2.5 grid gap-1 text-[12px] leading-[18px]">
+                  <div><span className="font-bold text-bmuted">트리거</span> <span className="text-bbody">{r.trigger}</span></div>
+                  <div><span className="font-bold text-bmuted">자동 대응</span> <span className="text-bbody">{r.action}</span></div>
+                  <div><span className="font-bold text-bmuted">예상 효과</span> <span className="font-bold text-ok">{r.effect}</span> <span className="text-bfaint">(과거 시즌 데모 추정)</span></div>
+                </div>
+                <div className="mt-2 rounded bg-brow px-2.5 py-1.5 text-[11.5px] text-bmuted">자연어 룰: {r.rule}</div>
+              </div>
+            )
+          })}
+        </div>
+        <p className="mt-3 text-[11px] leading-4 text-bfaint">날씨 트리거는 데모 시나리오입니다. 실서비스는 기상 데이터 연동으로 신뢰도 90+ 룰만 자동 실행, 나머지는 승인 큐로 들어갑니다. 예상 효과는 보장 수치가 아닙니다.</p>
+      </Card>
+
+      {/* 추천 링크 안내 */}
+      <Card track="b" className="mt-4 flex flex-wrap items-center justify-between gap-3 p-5">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-tint text-orange-text"><IcGift size={18} /></span>
+          <div>
+            <div className="text-[13.5px] font-bold text-bink">추천 링크로 어디서든 모객하세요</div>
+            <div className="tnum text-[12px] text-bmuted">{refLink} — 이 링크로 들어온 고객은 어느 화면에서 신청해도 내 몰로 귀속됩니다.</div>
+          </div>
+        </div>
+        <button onClick={copyRef} className="glass-btn-cta h-10 rounded-full bg-primary px-5 text-[13px] font-bold text-white hover:bg-primary-hover">링크 복사</button>
+      </Card>
+    </div>
+  )
+}

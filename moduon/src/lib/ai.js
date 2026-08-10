@@ -294,3 +294,46 @@ export function buildDiagnosisPlan(result) {
   L.push(`> 추정치는 평균 사례 기반이며 실제 절감액과 다를 수 있어요. 무료 상담: ${typeof window !== 'undefined' ? window.location.origin : ''}/consult`)
   return L.join('\n')
 }
+
+// ─── 파트너 마케팅 스튜디오 — AI 카피 생성 (채널×목적, 로컬 폴백 동봉) ──
+// "상품언어는 24시간 일하는 직원" — 구체 수치가 말하게 하고, 과장·수익보장은 금지.
+// 카톡/문자는 (광고) 표기 + 수신거부 안내를 반드시 포함(정보통신망법 준수 데모).
+const CH_LABEL = { kakao: '카카오톡 알림', sms: '문자(SMS)', blog: '블로그 포스트', sns: 'SNS 캡션' }
+const GOAL_LABEL = { acquire: '신규 모객', renewal: '만기 재상담', promo: '사은품 프로모션' }
+
+export function marketingCopy(a) {
+  const facts = [
+    `몰 이름: ${a.tenantName} (${a.unitName} · ${a.sigungu})`,
+    `주력 카테고리: ${a.cats.join(', ') || '-'}`,
+    `대표 상품 예시: 인터넷 500M+정수기 결합 월 32,900원(하루 1,097원꼴), 현금 사은품 최대 ${a.giftMax}`,
+    `추천 링크: ${a.refLink}`,
+    a.expiringCount ? `만기 임박(90일 내) 고객 ${a.expiringCount}명` : null,
+  ].filter(Boolean).join('\n')
+  const prompt = `당신은 모두온 파트너몰의 마케팅 카피라이터입니다. 아래 몰 정보만 근거로 ${CH_LABEL[a.channel]} 1건을 작성하세요. 목적: ${GOAL_LABEL[a.goal]}.\n\n규칙:\n- 숫자가 말하게: 구체 수치(월 요금·하루 환산·사은품 상한·D-일수)를 카피에 녹일 것\n- 과장·수익보장·확정 표현 금지. 혜택엔 "최대/조건 충족 시"를 붙일 것\n- 카톡·문자는 첫 줄 "(광고)" 표기 + 마지막 줄 무료 수신거부 안내 필수\n- 블로그는 제목+소제목 2개+본문 개요, SNS는 3줄 캡션+해시태그 4개\n- 고객 이름·만기일은 {고객명}, D-{일수} 변수로 남길 것\n\n[몰 정보]\n${facts}`
+  return { prompt, task: `marketing-${a.channel}-${a.goal}`, local: localMarketingCopy(a) }
+}
+
+function localMarketingCopy(a) {
+  const opt = '무료 수신거부: 마이페이지 > 알림 설정'
+  const K = {
+    acquire: `(광고) ${a.tenantName}\n남들 몰라서 못 받은 지원금, 최대 ${a.giftMax} 돌려받으세요.\n인터넷 500M+정수기 결합이 월 32,900원 — 하루 1,097원꼴이에요.\n우리 동네(${a.sigungu}) 설치 가능 여부 30초 확인 →\n${a.refLink}\n${opt}`,
+    renewal: `(광고) ${a.tenantName}\n{고객명}님, 약정 만기까지 D-{일수} — 위약금 부담이 가장 낮아지는 골든타임이에요.\n지금 갈아타면 현금 사은품 최대 ${a.giftMax} (조건 충족 시).\n재상담 신청 →\n${a.refLink}\n${opt}`,
+    promo: `(광고) ${a.tenantName}\n이번 달 사은품 지급 명단, 홈페이지에 실명(마스킹) 공개 중입니다.\n설치 확인 후 영업일 7일 내 계좌 입금 — 최대 ${a.giftMax} (조건 충족 시).\n내 사은품 확인 →\n${a.refLink}\n${opt}`,
+  }
+  const S = {
+    acquire: `(광고)[${a.tenantName}] 인터넷 갈아타고 최대 ${a.giftMax} 환급(조건부). 월 32,900원~ 30초 견적 ${a.refLink} ${opt}`,
+    renewal: `(광고)[${a.tenantName}] {고객명}님 약정 만기 D-{일수}. 위약금 최소 구간 재상담 예약 ${a.refLink} ${opt}`,
+    promo: `(광고)[${a.tenantName}] 사은품 실지급 명단 공개중. 설치 후 7일 내 입금(조건부) ${a.refLink} ${opt}`,
+  }
+  const B = {
+    acquire: `제목: ${a.sigungu} 인터넷 신규·이전, 하루 1,097원에 정수기까지 쓰는 법\n\n소제목1) 월 32,900원의 계산법 — 요금표 그대로 공개\n소제목2) 현금 사은품 최대 ${a.giftMax}, 조건은 이것만 보면 됩니다\n\n본문 개요: ① 3사 실질 부담 비교(월 요금×36 − 돌려받는 돈) ② 결합 할인 구조 ③ 지급 명단으로 확인하는 실지급 증거 ④ 상담 신청 절차(평균 10분 콜백). 마지막에 ${a.refLink} 안내.`,
+    renewal: `제목: 약정 만기 90일 전이 통신비 아끼는 마지노선인 이유\n\n소제목1) 위약금 곡선 — D-90부터 부담이 꺾입니다\n소제목2) 갈아타기 전 확인할 3가지(위약금·결합·사은품)\n\n본문 개요: 만기 시점별 위약금 추이, 재상담으로 아끼는 평균 금액, {고객명} 변수로 개인화 발송하는 법. CTA: ${a.refLink}`,
+    promo: `제목: "사은품 준다더니 안 주더라"가 불가능한 구조 — 지급 명단 공개\n\n소제목1) 설치 확인 → 영업일 7일 입금, 절차 그대로\n소제목2) 이번 달 지급 명단(마스킹) 보는 법\n\n본문 개요: 지급 약속 3원칙, 명단 확인 경로, 조건 고지. CTA: ${a.refLink}`,
+  }
+  const N = {
+    acquire: `하루 1,097원으로 인터넷+정수기 해결.\n남들 몰라서 못 받는 지원금, 최대 ${a.giftMax} (조건 충족 시).\n30초 견적은 프로필 링크에서.\n#${a.sigungu.replace(/\s/g, '')} #인터넷설치 #통신비절약 #사은품`,
+    renewal: `약정 만기 D-{일수}가 통신비 리셋 타이밍.\n위약금 가장 낮은 구간, 놓치지 마세요.\n재상담은 프로필 링크로.\n#약정만기 #통신비 #갈아타기 #${a.sigungu.replace(/\s/g, '')}`,
+    promo: `사은품 "준다"가 아니라 "줬다"를 공개합니다.\n이번 달 지급 명단, 마스킹 실명으로 확인하세요.\n최대 ${a.giftMax} (조건 충족 시).\n#사은품 #현금지원 #지급명단 #인터넷가입`,
+  }
+  return ({ kakao: K, sms: S, blog: B, sns: N })[a.channel]?.[a.goal] ?? K.acquire
+}

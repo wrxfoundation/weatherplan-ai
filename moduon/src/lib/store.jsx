@@ -212,6 +212,18 @@ function reducer(db, action) {
       }
     }
 
+    // 마케팅 자동화 시나리오 토글 — tenant.automations{key:bool}, 감사 기록
+    case 'TENANT_AUTOMATION': {
+      const { id, key, on, label } = action.payload
+      const t = db.tenants.find((x) => x.id === id)
+      if (!t) return db
+      return {
+        ...db,
+        tenants: db.tenants.map((x) => (x.id === id ? { ...x, automations: { ...(x.automations ?? {}), [key]: on } } : x)),
+        auditLog: log({ actor: t.owner ?? '파트너', action: `자동화 ${on ? 'ON' : 'OFF'}`, target: t.name, detail: label ?? key }),
+      }
+    }
+
     case 'PRODUCT_UPDATE': {
       const { id, patch } = action.payload
       const p = db.products.find((x) => x.id === id)
