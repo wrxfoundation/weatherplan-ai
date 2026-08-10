@@ -181,7 +181,7 @@ export function Modal({ open, onClose, title, children, wide = false }) {
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className={`safe-b max-h-[88dvh] w-full overflow-y-auto rounded-t-section bg-white p-6 shadow-panel animate-rise sm:max-h-[92dvh] sm:rounded-section ${wide ? 'sm:max-w-2xl' : 'sm:max-w-md'}`}
+        className={`max-h-[88dvh] w-full overflow-y-auto rounded-t-section bg-white p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-panel animate-rise sm:max-h-[92dvh] sm:rounded-section ${wide ? 'sm:max-w-2xl' : 'sm:max-w-md'}`}
         onClick={(e) => e.stopPropagation()}
       >
         {title && (
