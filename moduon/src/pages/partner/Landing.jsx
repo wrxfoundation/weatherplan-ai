@@ -114,6 +114,30 @@ export default function PartnerLanding() {
           </div>
         </section>
 
+        {/* ── 정착지원 프로그램 — 분양비 명목 20% 재투자 기금 ── */}
+        <section className="mt-6 rounded-section bg-white p-6 shadow-card sm:p-9">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">개설이 끝이 아니라,<br className="sm:hidden" /> 정착까지 본사가 밉니다</h2>
+            <span className="text-[13px] font-bold text-orange-text">권역 분양 수익의 20%를 정착지원 기금으로 재투자</span>
+          </div>
+          <p className="mt-2 max-w-2xl text-[13.5px] leading-[22px] text-muted">분양몰은 로컬 사업입니다 — 그래서 지원도 지역 안에서 쓰이게 설계했어요. 개설 후 90일, 몰당 <strong className="font-bold text-ink">최대 500만원 상당</strong> 정착 패키지가 성과 연동으로 제공됩니다.</p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { t: '개설 정착금 100만원', d: '첫 30일 내 개통 5건 달성 시 지급 — 오픈 프로모션 사은품 재원으로 쓰세요.' },
+              { t: '로컬 마케팅 50% 매칭', d: '당근·지역 맘카페·아파트 게시판·전단 집행액의 절반을 본사가 부담 (월 50만 × 3개월).' },
+              { t: '디지털 개설 대행', d: '네이버 플레이스·지도 등록, 지역 키워드 블로그 3편, 카톡 채널까지 본사가 일괄 세팅.' },
+              { t: 'AI 크레딧 + 리드 부스터', d: '알림톡 월 1,000건 × 3개월 + AI 카피 무제한, 첫 30일 본진 리드 배정 가중치 +30%.' },
+            ].map((c, i) => (
+              <div key={c.t} className="glass-tile rounded-card p-5">
+                <span className={`flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-extrabold ${i === 0 ? 'bg-orange-tint text-orange-text' : 'bg-tint text-primary-text'}`}>{i + 1}</span>
+                <div className="mt-3 text-[15px] font-bold text-ink">{c.t}</div>
+                <p className="mt-1.5 text-[12.5px] leading-[20px] text-muted">{c.d}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-[11.5px] leading-4 text-disabled">정착 패키지는 성과 연동형(2단 지급)이며 증빙 기반으로 집행됩니다. 세부 조건은 「분양몰 정착지원 정책」을 따르고, 상담 시 안내드려요.</p>
+        </section>
+
         {/* ── 시작 절차 4단계 ── */}
         <section id="steps" className="mt-6 rounded-section bg-white p-6 shadow-card sm:p-9">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
