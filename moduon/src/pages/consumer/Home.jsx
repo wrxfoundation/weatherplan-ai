@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { CATEGORIES } from '../../lib/constants'
 import { won, calcQuote, CARRIERS } from '../../lib/engine'
 import { useStore } from '../../lib/store'
-import { useCountUp } from '../../components/ui'
+import { useCountUp, LiveDot } from '../../components/ui'
 import Reviews from '../../components/Reviews'
 
 // 검색 동의어 — 흔히 치는 말을 카테고리 슬러그로 정규화 (이름 스캔보다 먼저 본다)
@@ -112,6 +112,8 @@ export default function Home({ tenant }) {
           ))}
         </div>
       </section>
+
+      <PayoutTicker />
 
       <SupportBand />
 
@@ -262,6 +264,22 @@ function SupportBand() {
           </div>
         </div>
       </div>
+    </section>
+  )
+}
+
+// 오늘의 지급 티커 — "준다"가 아니라 "줬다"를 보여준다 (날짜 시드 결정적 데모 수치)
+function PayoutTicker() {
+  const d = new Date()
+  const n = 8 + (d.getDate() % 6)
+  const total = n * 341000 + d.getDay() * 47000
+  return (
+    <section className="mt-6 flex flex-wrap items-center justify-between gap-2 rounded-card bg-white px-5 py-3.5 shadow-card">
+      <span className="flex items-center gap-2.5 text-[13.5px] font-bold text-ink">
+        <LiveDot /> 오늘 사은품 지급 <span className="tnum text-orange-text">{n}건 · {won(total)}</span>
+        <span className="hidden text-[12px] font-semibold text-muted sm:inline">— 설치 확인 후 영업일 7일 내 계좌 입금</span>
+      </span>
+      <Link to="/payouts" className="text-[12.5px] font-bold text-primary-text hover:underline">실명(마스킹) 명단 확인 →</Link>
     </section>
   )
 }

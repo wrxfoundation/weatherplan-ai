@@ -195,6 +195,27 @@ export default function AdminBiz() {
         </div>
         <p className="mt-3 text-[11px] text-bfaint">모든 AI 응답·분류·정산 결과는 피드백 라벨과 함께 저장되어 프롬프트·정책 개선에 재사용됩니다(내부 고도화 전용).</p>
       </Card>
+
+      {/* 5. 운영 알고리즘 — 5단계: 의심→삭제→단순화→가속→자동화 (순서가 규율) */}
+      <Card track="b" className="mt-4 p-5 sm:p-6">
+        <h2 className="text-[15.5px] font-extrabold text-bink">운영 알고리즘 <span className="text-[12.5px] font-semibold text-bmuted">· 다섯 번 묻고, 자동화는 마지막에</span></h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {[
+            { n: '요구사항을 의심한다', d: '상담 신청은 이름·연락처·지역 3필드뿐. "더 받을까"가 아니라 "왜 받는가"부터 묻는다.' },
+            { n: '과감히 삭제한다', d: '지점·재고·직영 영업조직 없이 분양몰 네트워크로 대체 — 최고의 비용은 없는 비용이다.' },
+            { n: '단순화한다', d: '가격·수수료·사은품은 상품 정책 단일 소스. 화면마다 다른 숫자를 금지한다.' },
+            { n: '사이클을 가속한다', d: '접수→배정→콜백 10분 SLA. 정산은 월말이 아니라 매일 보인다.' },
+            { n: '그 다음에야 자동화한다', d: '검증된 루틴만 AI로 — 이긴 구조만 자동화한다(피드백 플라이휠).' },
+          ].map((s, i) => (
+            <div key={s.n} className="rounded-field border border-bline p-3.5">
+              <span className={`flex h-7 w-7 items-center justify-center rounded-full text-[13px] font-extrabold ${i === 4 ? 'bg-primary text-white' : 'bg-tint text-primary-text'}`}>{i + 1}</span>
+              <div className="mt-2 text-[13px] font-extrabold leading-4 text-bink">{s.n}</div>
+              <p className="mt-1 text-[11.5px] leading-4 text-bmuted">{s.d}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-[11px] leading-4 text-bfaint">순서가 핵심입니다 — 삭제·단순화 전에 자동화하면 낭비를 자동화하게 됩니다. 신규 기능·정책은 이 다섯 질문을 통과한 뒤에 올립니다.</p>
+      </Card>
     </div>
   )
 }

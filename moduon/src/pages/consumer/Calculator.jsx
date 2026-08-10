@@ -237,6 +237,7 @@ export default function Calculator() {
             <span className="text-[14px] font-bold text-ink">월 납부금</span>
             <span className="tnum text-[34px] font-extrabold tracking-[-1px] text-primary-text">{won(q.total)}</span>
           </div>
+          <div className="tnum -mt-0.5 text-right text-[12px] font-bold text-orange-text">하루 {won(Math.round(q.total / 30))}꼴</div>
 
           <div className="mt-4 rounded-field bg-orange-tint px-4 py-3.5">
             <div className="flex items-center justify-between">
@@ -275,7 +276,7 @@ export default function Calculator() {
       <div className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-4 shadow-bottombar lg:hidden">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-semibold text-faint">월 납부금</div>
+            <div className="text-[11px] font-semibold text-faint">월 납부금 <span className="tnum font-bold text-orange-text">하루 {won(Math.round(q.total / 30))}꼴</span></div>
             <div className="tnum text-[24px] font-extrabold tracking-tight text-primary-text">{won(q.total)}</div>
           </div>
           <div className="text-right">
