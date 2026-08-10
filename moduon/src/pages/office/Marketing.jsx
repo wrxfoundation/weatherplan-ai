@@ -5,7 +5,7 @@
 import { useMemo, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { useStore, tenantLeads } from '../../lib/store'
-import { marketingCopy } from '../../lib/ai'
+import { marketingCopy, personaPanel, PANEL_PERSONAS } from '../../lib/ai'
 import { won, dday, copyText } from '../../lib/engine'
 import { unitName, catBySlug } from '../../lib/constants'
 import { Card, useToast } from '../../components/ui'
@@ -328,6 +328,21 @@ function AbLab({ tenant, auto, dispatch, toast }) {
       ) : (
         <p className="mt-3 text-[12px] font-semibold text-ok">만기 D-90 자동 발송이 B안(사은품 각도)으로 나갑니다 — 다음 실험은 카피 생성기에서 새 안을 만들어 보세요.</p>
       )}
+      {/* AI 페르소나 패널 — 발송 전 가상 소비자 6인 사전 테스트 (MatrAIx 컨셉) */}
+      <div className="mt-3 border-t border-dashed border-bline pt-3">
+        <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
+          {PANEL_PERSONAS.map((p) => (
+            <span key={p.id} title={p.seg} className="rounded-full bg-brow px-2 py-0.5 text-[10.5px] font-bold text-bmuted">{p.name}</span>
+          ))}
+        </div>
+        <AiInsight
+          title="AI 페르소나 패널 사전 테스트"
+          desc="세그먼트가 다른 가상 소비자 6인이 A/B에 어떻게 반응할지 발송 전에 시뮬레이션해요."
+          cta="패널 반응 시뮬레이션"
+          build={() => personaPanel({ copyA: V[0].copy, copyB: V[1].copy })}
+        />
+        <p className="mt-1.5 text-[10.5px] leading-4 text-bfaint">시뮬레이션은 가설 탐색용이며 실제 고객 반응을 대체하지 않아요 — 최종 판단은 실발송 성과로.</p>
+      </div>
       <p className="mt-2 text-[11px] leading-4 text-bfaint">발송·클릭 수치는 데모 시뮬레이션입니다. 실서비스는 실제 발송 성과로 자동 판정돼요.</p>
     </Card>
   )

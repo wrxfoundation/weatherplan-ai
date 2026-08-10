@@ -337,3 +337,35 @@ function localMarketingCopy(a) {
   }
   return ({ kakao: K, sms: S, blog: B, sns: N })[a.channel]?.[a.goal] ?? K.acquire
 }
+
+// ─── AI 페르소나 패널 (MatrAIx 컨셉 흡수) — 카피 A/B 사전 테스트 ────
+// 세그먼트가 다른 가상 소비자 6인이 두 카피에 반응한다. 데모 원칙:
+// 시뮬레이션은 가설 탐색용이며 실제 사용자 증거를 대체하지 않는다.
+export const PANEL_PERSONAS = [
+  { id: 'p1', name: '김지현 (34)', seg: '맞벌이 신혼 · 시간 빈곤 · 가격 민감', lean: 'price' },
+  { id: 'p2', name: '박순자 (63)', seg: '은퇴 부부 · 전화 선호 · 신뢰 중시', lean: 'trust' },
+  { id: 'p3', name: '이준 (27)', seg: '1인 가구 · 셀프서빙 · 속도 중시', lean: 'speed' },
+  { id: 'p4', name: '티 흐엉 (29)', seg: '외국인 근로자 · 약정 부담 · 다국어 필요', lean: 'risk' },
+  { id: 'p5', name: '최성호 (46)', seg: '자영업 사장 · 비용 최우선 · 바쁨', lean: 'price' },
+  { id: 'p6', name: '한서연 (38)', seg: '초등맘 · 후기·안전 중시', lean: 'trust' },
+]
+
+export function personaPanel(a) {
+  const roster = PANEL_PERSONAS.map((p) => `- ${p.name}: ${p.seg}`).join('\n')
+  const prompt = `당신은 가상 소비자 패널 시뮬레이터입니다. 아래 6명의 페르소나가 두 마케팅 카피(A/B)를 각각 읽었다고 가정하고, 각자의 성향에 충실하게 반응을 시뮬레이션하세요.\n\n[페르소나]\n${roster}\n\n[카피 A — 위약금 각도]\n${a.copyA}\n\n[카피 B — 사은품 각도]\n${a.copyB}\n\n출력 형식(정확히 지킬 것):\n각 줄 "이름 → A 또는 B — 한 문장 이유" 6줄, 마지막 줄 "종합 → A n : B m — 한 문장 해석". 과장 금지, 페르소나 성향과 모순 금지.`
+  return { prompt, task: 'persona-panel', local: localPersonaPanel() }
+}
+function localPersonaPanel() {
+  // 결정적 폴백 — 성향 규칙: price/speed → B(사은품·환산 즉효), trust/risk → A(위약금·조건 투명)
+  const pick = { price: 'B', speed: 'B', trust: 'A', risk: 'A' }
+  const why = {
+    price: '돌려받는 금액이 크고 하루 환산이 바로 와닿아요',
+    speed: '혜택이 명확해서 고민 없이 신청 버튼을 누를 것 같아요',
+    trust: '조건 고지가 또렷한 쪽이 덜 의심스러워요',
+    risk: '위약금 걱정부터 풀어주는 쪽이 안심돼요',
+  }
+  const lines = PANEL_PERSONAS.map((p) => `${p.name} → ${pick[p.lean]} — ${why[p.lean]}`)
+  const b = PANEL_PERSONAS.filter((p) => pick[p.lean] === 'B').length
+  lines.push(`종합 → A ${PANEL_PERSONAS.length - b} : B ${b} — 가격 민감층은 B, 신뢰·약정 부담층은 A로 갈립니다. 세그먼트별로 다른 안을 보내는 게 정답이에요.`)
+  return lines.join('\n')
+}
