@@ -184,6 +184,9 @@ export default function OfficeDashboard() {
         </div>
       </div>
 
+      {/* 정착·성장 트로피 — 정착지원 정책과 연동된 파생 배지 (저장 없음, 실데이터 파생) */}
+      <TrophyBoard tenant={tenant} db={db} leads={leads} />
+
       {/* 공지 스트립 */}
       {notice && (
         <button onClick={() => nav('/office/resources')} className="mt-4 flex w-full items-center gap-3 rounded-card border border-bline bg-white px-4 py-3.5 text-left transition-colors hover:border-primary">
@@ -195,6 +198,42 @@ export default function OfficeDashboard() {
 
       <LeadDrawer lead={live} onClose={() => setOpenLead(null)} by={tenant.id} />
     </div>
+  )
+}
+
+// 트로피 보드 — 달성 조건은 전부 스토어 실데이터에서 파생 (정착지원 정책 KPI와 동일 기준)
+function TrophyBoard({ tenant, db, leads }) {
+  const doneAll = leads.filter((l) => l.status === '완료')
+  const doneMonth = doneAll.filter((l) => Date.now() - (l.completedAt ?? l.createdAt) < 30 * 86400000).length
+  const outbound = (db.auditLog ?? []).filter((a) => a.action === '아웃바운드 발송' && (a.actor === tenant.id || a.actor === tenant.owner)).length
+  const openedDays = Math.floor((Date.now() - tenant.openedAt) / 86400000)
+  const TROPHIES = [
+    { key: 'first', name: '첫 개통', desc: '첫 완료 처리 달성', ok: doneAll.length >= 1 },
+    { key: 'settle5', name: '정착 수료', desc: '누적 개통 5건 — 정착 패키지 2차 지급 기준', ok: doneAll.length >= 5 },
+    { key: 'pace10', name: '월 10건 페이스', desc: '최근 30일 완료 10건', ok: doneMonth >= 10 },
+    { key: 'outreach', name: '아웃바운드 첫 발송', desc: '알림톡·재상담 제안 발송', ok: outbound >= 1 },
+    { key: 'local90', name: '로컬 90일', desc: '개설 후 90일 운영 지속', ok: openedDays >= 90 },
+    { key: 'master', name: '월 24건 마스터', desc: '하루 1건 페이스 도달', ok: doneMonth >= 24 },
+  ]
+  const got = TROPHIES.filter((t) => t.ok).length
+  return (
+    <Card track="b" className="mt-4 p-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="text-[15.5px] font-extrabold text-bink">정착·성장 트로피</h2>
+        <span className="tnum text-[12px] font-bold text-bmuted">{got}/{TROPHIES.length} 달성 · 정착지원 프로그램 KPI 연동</span>
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
+        {TROPHIES.map((t) => (
+          <div key={t.key} className={`rounded-field border p-3 text-center transition-colors ${t.ok ? 'border-primary/40 bg-tint/40' : 'border-bline opacity-60'}`}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden className={`mx-auto ${t.ok ? 'text-primary-text' : 'text-bfaint'}`}>
+              <path d="M7 4h10v4a5 5 0 0 1-10 0V4Z" /><path d="M7 5H4.5a0 0 0 0 0 0 0c0 2.8 1 4.2 2.9 4.6M17 5h2.5c0 2.8-1 4.2-2.9 4.6" /><path d="M12 13v3M8.5 20h7M10 20v-2.2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1V20" />
+            </svg>
+            <div className={`mt-1.5 text-[12px] font-extrabold ${t.ok ? 'text-bink' : 'text-bmuted'}`}>{t.name}</div>
+            <div className="mt-0.5 text-[10.5px] leading-[14px] text-bfaint">{t.desc}</div>
+          </div>
+        ))}
+      </div>
+    </Card>
   )
 }
 
