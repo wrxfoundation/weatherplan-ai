@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { useStore } from '../../lib/store'
 import { won, fmtDate, SAUP_TIERS } from '../../lib/engine'
 import { Card, Btn, Modal, Field, binputCls, useToast } from '../../components/ui'
+import { AiInsight } from '../../components/AiPanel'
+import { policyPanel } from '../../lib/ai'
 
 export default function AdminPolicies() {
   const { db, dispatch } = useStore()
@@ -60,6 +62,17 @@ export default function AdminPolicies() {
           현재 정책 <strong className="font-extrabold">v{p.version}</strong> · {fmtDate(p.appliedAt)} 적용 — 시뮬레이션: 월 수수료 수입 864만(24건) → 파트너 순수익 {won(8640000 - Math.round(8640000 * p.feeRate) - p.monthlyFee)}
         </div>
         <Btn size="sm" onClick={() => setOpen(true)}>정책 변경</Btn>
+      </div>
+
+      {/* 정책 인상 페르소나 시뮬레이션 — 변경 전 세그먼트 반응 사전 탐색 */}
+      <div className="mt-4">
+        <AiInsight
+          title="정책 인상 시뮬레이션 — 파트너 세그먼트 패널"
+          desc="수수료 +1%p · 이용료 +5만원 시나리오에 파트너 4세그먼트(신규/저매출/표준/고매출)가 어떻게 반응할지 실제 정산 산식으로 사전 탐색해요."
+          cta="세그먼트 반응 시뮬레이션"
+          build={() => policyPanel({ feeRate: p.feeRate, monthlyFee: p.monthlyFee })}
+        />
+        <p className="mt-1.5 text-[10.5px] leading-4 text-bfaint">시뮬레이션은 가설 탐색용이며 실제 파트너 반응을 대체하지 않아요 — 인상은 파트너 협의체 의견 수렴 후 결정하세요.</p>
       </div>
 
       <Card track="b" className="mt-4 overflow-hidden">

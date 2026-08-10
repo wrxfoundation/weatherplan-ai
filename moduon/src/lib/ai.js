@@ -369,3 +369,55 @@ function localPersonaPanel() {
   lines.push(`종합 → A ${PANEL_PERSONAS.length - b} : B ${b} — 가격 민감층은 B, 신뢰·약정 부담층은 A로 갈립니다. 세그먼트별로 다른 안을 보내는 게 정답이에요.`)
   return lines.join('\n')
 }
+
+// ─── 정책 변경 파트너 패널 (MatrAIx ⑤ 가격·정책 시뮬레이션) ─────────
+// 파트너 세그먼트 4군이 정책 변경(수수료 +1%p · 이용료 +5만) 시나리오에
+// 어떻게 반응할지 사전 탐색한다. 로컬 폴백은 실제 정산 산식으로 계산한다.
+const PARTNER_SEGS = [
+  { name: '신규 파트너 (개설 2개월)', deals: 8 },
+  { name: '저매출 파트너', deals: 12 },
+  { name: '표준 파트너 (하루 1건)', deals: 24 },
+  { name: '고매출 파트너', deals: 45 },
+]
+export function policyPanel(a) {
+  const roster = PARTNER_SEGS.map((s) => `- ${s.name}: 월 완료 ${s.deals}건`).join('\n')
+  const prompt = `당신은 플랫폼 정책 시뮬레이터입니다. 현재 정책(운영 수수료 ${Math.round(a.feeRate * 100)}% · 월 이용료 ${won(a.monthlyFee)})에서 [수수료 +1%p, 이용료 +5만원] 인상 시나리오를 가정하고, 아래 파트너 세그먼트별 반응과 이탈 위험을 시뮬레이션하세요. 건당 평균 수수료 수입은 36만원으로 가정.\n\n[세그먼트]\n${roster}\n\n출력: 각 줄 "세그먼트 → 월 순수익 변화 — 반응 한 문장" 4줄, 마지막 줄 "종합 → 이탈 위험 순위와 권고 한 문장". 수치는 산식대로, 과장 금지.`
+  return { prompt, task: 'policy-panel', local: localPolicyPanel(a) }
+}
+function localPolicyPanel(a) {
+  const F = 360000
+  const calc = (deals, feeRate, monthly) => deals * F - Math.round(deals * F * feeRate) - monthly
+  const lines = PARTNER_SEGS.map((s) => {
+    const now = calc(s.deals, a.feeRate, a.monthlyFee)
+    const next = calc(s.deals, a.feeRate + 0.01, a.monthlyFee + 50000)
+    const d = next - now
+    const pct = now > 0 ? Math.round((Math.abs(d) / now) * 1000) / 10 : 0
+    const mood = s.deals <= 8 ? '고정비 비중이 커서 인상 체감이 가장 큽니다 — 이탈 위험' : s.deals <= 12 ? '수익성 방어선에 근접 — 재상담·자동화 지원 병행 필요' : s.deals <= 24 ? '감내 가능하나 커뮤니케이션 없이는 불만 축적' : '절대액은 크지만 매출 대비 미미 — 유지'
+    return `${s.name} → 월 ${won(now)} → ${won(next)} (−${won(Math.abs(d))}, −${pct}%) — ${mood}`
+  })
+  lines.push(`종합 → 이탈 위험은 신규·저매출 구간에 집중됩니다. 인상하려면 월 ${won(a.monthlyFee + 50000)} 이용료에 정착지원·마케팅 크레딧을 묶거나, 완료 12건 미만 구간 이용료 유예를 권고합니다.`)
+  return lines.join('\n')
+}
+
+// ─── 외국인 오퍼 패널 (MatrAIx ③ 공략안 사전 검증) ─────────────────
+const FOREIGN_SEGS = [
+  { name: '응우옌 (E-9 근로자·5년차)', lean: '약정 유연성' },
+  { name: '리웨이 (D-2 유학생·2년 체류)', lean: '보증금·단기' },
+  { name: '김알렉스 (F-4 재외동포·가족)', lean: '가족 결합' },
+  { name: '마리아 (결혼이민·정착 7년)', lean: '생활 결합' },
+]
+export function foreignPanel() {
+  const roster = FOREIGN_SEGS.map((s) => `- ${s.name}: 관심축 ${s.lean}`).join('\n')
+  const offer = '오퍼: ① 체류기간 연동 약정(12/24/36개월) ② 현금 사은품 계좌 지급(계좌 없으면 상품권) ③ 다국어 AI 상담+통역 3자 통화 ④ 내·외국인 동일 가격 공개'
+  const prompt = `당신은 가상 소비자 패널 시뮬레이터입니다. 외국인 개통 파일럿 오퍼에 대해 아래 4명의 반응을 세그먼트 성향에 충실하게 시뮬레이션하세요.\n\n[패널]\n${roster}\n\n[${offer}]\n\n출력: 각 줄 "이름 → 가입 의향 상/중/하 — 결정 요인 한 문장" 4줄, 마지막 줄 "종합 → 소구점 우선순위와 보완 1가지". 과장 금지.`
+  return { prompt, task: 'foreign-panel', local: localForeignPanel() }
+}
+function localForeignPanel() {
+  return [
+    '응우옌 (E-9 근로자·5년차) → 상 — 체류기간 연동 약정이 위약금 공포를 없애줘서 결정타예요.',
+    '리웨이 (D-2 유학생·2년 체류) → 중 — 12개월 약정은 좋지만 초기 설치비·보증금이 없는지부터 확인하고 싶어요.',
+    '김알렉스 (F-4 재외동포·가족) → 상 — 가족 결합 할인과 동일 가격 공개가 신뢰를 줘요. 인터넷+TV+휴대폰 묶음 문의 예정.',
+    '마리아 (결혼이민·정착 7년) → 상 — 다국어 상담보다 정수기·보험까지 한 번에 정리해주는 게 더 끌려요.',
+    '종합 → 소구점 1순위는 체류기간 연동 약정, 2순위 동일 가격 공개입니다. 보완 1가지: 유학생 구간엔 "보증금·설치비 0원" 문구를 오퍼에 명시하세요.',
+  ].join('\n')
+}

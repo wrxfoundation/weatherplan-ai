@@ -6,6 +6,8 @@ import { won, num, SAUP_TIERS } from '../../lib/engine'
 import { UNITS, unitName } from '../../lib/constants'
 import { Card } from '../../components/ui'
 import { IcCompass } from '../../components/icons'
+import { AiInsight } from '../../components/AiPanel'
+import { foreignPanel } from '../../lib/ai'
 
 const STATUS = {
   운영중: 'bg-ok/10 text-ok',
@@ -161,6 +163,17 @@ export default function AdminBiz() {
           ))}
         </div>
         <p className="mt-2.5 text-[11px] text-bfaint">점수는 내부 평가 기준의 데모 예시입니다. 1순위 외국인 시장은 「외국인 개통 유치 공략안」의 90일 파일럿 게이트(개통 300건)를 통과하면 상위 10개 밀집 권역으로 확대합니다.</p>
+
+        {/* 외국인 오퍼 사전 검증 — 공략안 4세그먼트 페르소나 패널 */}
+        <div className="mt-3 border-t border-dashed border-bline pt-3">
+          <AiInsight
+            title="외국인 파일럿 오퍼 — 페르소나 패널 검증"
+            desc="공략안의 4세그먼트(E-9·유학생·재외동포·결혼이민) 가상 패널이 파일럿 오퍼(체류기간 연동 약정·현금 사은품·다국어 상담·동일 가격)에 어떻게 반응할지 사전 검증해요."
+            cta="오퍼 반응 시뮬레이션"
+            build={() => foreignPanel()}
+          />
+          <p className="mt-1.5 text-[10.5px] leading-4 text-bfaint">시뮬레이션은 가설 탐색용 — 파일럿 실측(개통 300건 게이트)이 최종 판단 기준입니다.</p>
+        </div>
       </Card>
 
       {/* 4. 데이터 플라이휠 */}
