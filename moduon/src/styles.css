@@ -159,3 +159,6 @@
     0 1px 2.5px rgba(48, 72, 158, 0.4);
 }
 
+
+/* ─── 개인정보 가림 모드 (Ctrl+Shift+H 전역 토글 — 시연·화면공유용) ─── */
+html.pmask .pii { filter: blur(5px); user-select: none; pointer-events: none; }

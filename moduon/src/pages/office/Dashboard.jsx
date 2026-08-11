@@ -172,7 +172,7 @@ export default function OfficeDashboard() {
                   <div key={c.id} className="flex items-center gap-3">
                     <span className={`tnum shrink-0 rounded-full px-2.5 py-1 text-[11.5px] font-extrabold ${tone}`}>D-{dd}</span>
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-[13px] font-bold text-bink">{c.customer} · {c.product}</div>
+                      <div className="pii truncate text-[13px] font-bold text-bink">{c.customer} · {c.product}</div>
                       <div className="text-[11.5px] text-bfaint">만기 {fmtDate(c.expiry)} — 재상담으로 락인하세요</div>
                     </div>
                   </div>

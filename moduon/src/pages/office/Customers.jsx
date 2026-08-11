@@ -57,8 +57,8 @@ export default function OfficeCustomers() {
             <div key={c.id} className="grid grid-cols-[auto_1fr] items-center gap-2 border-b border-brow px-4 py-3.5 lg:grid-cols-[80px_1fr_1.2fr_90px_100px_100px_130px] lg:px-5">
               <span className={`tnum w-fit rounded-full px-2.5 py-1 text-[11.5px] font-extrabold ${tone}`}>D-{c.dd}</span>
               <div>
-                <div className="text-[13.5px] font-bold text-bink">{c.customer}</div>
-                <div className="tnum text-[11.5px] text-bfaint">{maskPhone(c.phone)}</div>
+                <div className="pii text-[13.5px] font-bold text-bink">{c.customer}</div>
+                <div className="pii tnum text-[11.5px] text-bfaint">{maskPhone(c.phone)}</div>
                 {c.lastTouch && <div className="mt-0.5 text-[10.5px] font-semibold text-ok">{c.lastTouch.kind} 발송 · {timeAgo(c.lastTouch.at)}</div>}
               </div>
               <span className="col-span-2 text-[12.5px] text-bbody lg:col-span-1">{c.product}</span>
@@ -69,7 +69,7 @@ export default function OfficeCustomers() {
                 <button onClick={() => { dispatch({ type: 'CONTRACT_TOUCH', payload: { id: c.id, kind: '재상담 제안', by: tenant.id } }); toast(`${c.customer} 고객에게 재상담 알림톡을 보냈어요`) }} className="h-8 flex-1 rounded-full bg-tint px-3 text-[11.5px] font-bold text-primary-text hover:bg-primary hover:text-white lg:flex-none">
                   재상담 제안
                 </button>
-                <a href={`tel:${c.phone}`} className="flex h-8 w-8 items-center justify-center rounded-full bg-brow text-bbody hover:bg-bline"><IcPhone size={14} /></a>
+                <a href={`tel:${c.phone}`} className="pii flex h-8 w-8 items-center justify-center rounded-full bg-brow text-bbody hover:bg-bline"><IcPhone size={14} /></a>
               </div>
             </div>
           )

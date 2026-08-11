@@ -125,7 +125,7 @@ export default function AdminSettlements() {
               <div key={d.id} className="grid grid-cols-[1.4fr_auto] items-center gap-2 border-b border-brow px-5 py-3 last:border-0 sm:grid-cols-[1.4fr_0.8fr_1fr_0.9fr_1fr]">
                 <div>
                   <div className="text-[13.5px] font-bold text-bink">{d.name}</div>
-                  <div className="text-[11.5px] text-bfaint">{d.owner} · {unitName(d.unit)}</div>
+                  <div className="pii text-[11.5px] text-bfaint">{d.owner} · {unitName(d.unit)}</div>
                 </div>
                 <span className="tnum hidden text-[12px] text-bfaint sm:block">셀러 {d.sellerCount}곳</span>
                 <span className="tnum hidden text-[12.5px] text-bbody sm:block">{won(d.gross)}</span>

@@ -48,7 +48,7 @@ export default function RegionalDashboard() {
             <span className="rounded-full bg-bindigo px-2 py-0.5 text-[10px] font-bold text-white">총판 관제</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="hidden text-[12.5px] text-bmuted sm:block">{dist.name} · {dist.owner}</span>
+            <span className="pii hidden text-[12.5px] text-bmuted sm:block">{dist.name} · {dist.owner}</span>
             <Link to="/login" className="rounded-field border border-bline px-3 py-1.5 text-[12px] font-semibold text-bmuted hover:text-bink">역할 전환</Link>
           </div>
         </div>
@@ -100,7 +100,7 @@ export default function RegionalDashboard() {
                   <div key={t.id} className="grid grid-cols-[1.4fr_auto] items-center gap-2 border-b border-brow px-5 py-3 sm:grid-cols-[1.4fr_0.9fr_1fr_0.8fr]">
                     <div>
                       <div className="text-[13.5px] font-bold text-bink">{t.name}</div>
-                      <div className="text-[11.5px] text-bfaint">{t.owner} · /m/{t.slug}</div>
+                      <div className="pii text-[11.5px] text-bfaint">{t.owner} · /m/{t.slug}</div>
                     </div>
                     <span className={`justify-self-end rounded-full px-2 py-0.5 text-[11px] font-bold sm:justify-self-start ${t.status === '활성' ? 'bg-ok/10 text-ok' : 'bg-warn/10 text-warn'}`}>{t.status}</span>
                     <span className="tnum hidden text-[12.5px] font-bold text-bbody sm:block">{won(s.gross)}</span>

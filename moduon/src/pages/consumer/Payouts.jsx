@@ -105,7 +105,7 @@ export default function Payouts() {
                 <tbody className="divide-y divide-line">
                   {open.recipients.map((x, i) => (
                     <tr key={`${x.name}-${x.sigungu}-${x.amount}-${i}`}>
-                      <td className="px-3 py-2.5 font-bold text-ink">{x.name}</td>
+                      <td className="pii px-3 py-2.5 font-bold text-ink">{x.name}</td>
                       <td className="px-3 py-2.5 text-muted">{x.sigungu}</td>
                       <td className="px-3 py-2.5"><span className="rounded bg-tint px-1.5 py-0.5 text-[11.5px] font-semibold text-primary-text">{x.catLabel}</span></td>
                       <td className="px-3 py-2.5 text-right"><span className="tnum font-extrabold text-ok">{won(x.amount)}</span><div className="text-[10.5px] text-faint">{x.via}</div></td>
@@ -126,7 +126,7 @@ function PayRow({ x, showDate }) {
   return (
     <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3 last:border-0">
       <div className="min-w-0">
-        <div className="text-[13.5px] font-bold text-ink">{x.name} <span className="ml-1 font-medium text-faint">{x.sigungu}</span></div>
+        <div className="pii text-[13.5px] font-bold text-ink">{x.name} <span className="ml-1 font-medium text-faint">{x.sigungu}</span></div>
         <div className="mt-0.5 flex items-center gap-1.5 text-[11.5px] text-faint">
           <span className="rounded bg-tint px-1.5 py-0.5 font-semibold text-primary-text">{x.catLabel}</span>
           {showDate && <span>{ymd(x.date)} 지급</span>}

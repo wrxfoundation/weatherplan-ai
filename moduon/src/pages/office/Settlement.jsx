@@ -75,7 +75,7 @@ export default function OfficeSettlement() {
                   <img src={catBySlug(l.cat)?.icon} alt="" className="h-full w-full object-cover" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-[13px] font-bold text-bink">{l.name} · {catBySlug(l.cat)?.name}</div>
+                  <div className="pii truncate text-[13px] font-bold text-bink">{l.name} · {catBySlug(l.cat)?.name}</div>
                   <div className="tnum text-[11.5px] text-bfaint">매출 {won(l.amount)} · {fmtDateTime(l.at)}</div>
                 </div>
                 <span className="tnum text-[13.5px] font-extrabold text-ok">+{won(l.fee)}</span>

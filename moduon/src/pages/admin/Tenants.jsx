@@ -98,7 +98,7 @@ export default function AdminTenants() {
               <span className="text-[13.5px] font-bold text-bink">{t.name}</span>
               <div className="text-[11.5px] text-bfaint">/m/{t.slug}</div>
             </div>
-            <div className="hidden text-[12.5px] text-bbody lg:block">{t.owner}<div className="tnum text-[11px] text-bfaint">{t.phone}</div></div>
+            <div className="pii hidden text-[12.5px] text-bbody lg:block">{t.owner}<div className="tnum text-[11px] text-bfaint">{t.phone}</div></div>
             <span className="hidden text-[12.5px] text-bbody lg:block">{unitName(t.unit)}</span>
             <span className="tnum hidden text-[12.5px] font-bold text-bink lg:block">{won(t.monthlySales)}</span>
             <span className="hidden text-[12px] text-bmuted lg:block">{fmtDate(t.openedAt)}</span>
@@ -151,7 +151,7 @@ function TenantDetail({ t, db, dispatch, toast, onClose }) {
             <span className={`rounded-full px-2.5 py-1 text-[11.5px] font-bold ${t.status === '활성' ? 'bg-ok/10 text-ok' : 'bg-danger/10 text-danger'}`}>{t.status}</span>
             <span className="text-[12.5px] font-semibold text-bmuted">{unitName(t.unit)} · {t.sigungu}</span>
           </div>
-          <div className="mt-1.5 text-[13px] text-bbody">{t.owner} 사장님 · <span className="tnum">{t.phone}</span></div>
+          <div className="pii mt-1.5 text-[13px] text-bbody">{t.owner} 사장님 · <span className="tnum">{t.phone}</span></div>
           <div className="text-[12px] text-bfaint">개설 {fmtDate(t.openedAt)} · moduon.com/m/{t.slug}</div>
         </div>
         <Link to={`/m/${t.slug}`} onClick={onClose} className="shrink-0 rounded-full border border-bline px-3 py-1.5 text-[12px] font-bold text-bbody hover:border-primary hover:text-primary-text">
@@ -193,7 +193,7 @@ function TenantDetail({ t, db, dispatch, toast, onClose }) {
         <div className="mt-2 overflow-hidden rounded-field border border-bline">
           {recent.map((l) => (
             <div key={l.id} className="flex items-center justify-between gap-2 border-b border-bline px-3 py-2.5 text-[12.5px] last:border-0">
-              <span className="font-bold text-bink">{maskName(l.name)}</span>
+              <span className="pii font-bold text-bink">{maskName(l.name)}</span>
               <span className="min-w-0 flex-1 truncate text-bmuted">{catBySlug(l.cat)?.name ?? l.cat} · {timeAgo(l.createdAt)}</span>
               <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-bold ${STATUS_TONE[l.status] ?? 'bg-brow text-bmuted'}`}>{l.status}</span>
             </div>

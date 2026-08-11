@@ -21,7 +21,7 @@ export function LeadRow({ lead, onOpen, showTenant, tenants }) {
       onKeyDown={(e) => { if (e.target !== e.currentTarget) return; if (e.key === 'Enter' || e.key === ' ') { if (e.key === ' ') e.preventDefault(); onOpen() } }}
       className={`grid w-full cursor-pointer items-center gap-2 border-b border-brow px-3 py-3 text-left outline-none transition-colors hover:bg-brow/60 focus-visible:ring-2 ring-primary/40 ${!lead.read ? 'bg-primary/5' : ''} grid-cols-[1fr_auto] sm:grid-cols-[110px_92px_1fr_80px_88px_auto] sm:px-4`}
     >
-      <span className="flex items-center gap-1.5 text-[13.5px] font-bold text-bink">
+      <span className="pii flex items-center gap-1.5 text-[13.5px] font-bold text-bink">
         {!lead.read && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />}
         {maskName(lead.name)}
         <span className="text-[11px] font-medium text-bfaint sm:hidden">· {cat?.name}</span>
@@ -39,7 +39,7 @@ export function LeadRow({ lead, onOpen, showTenant, tenants }) {
         <a
           href={`tel:${lead.phone}`}
           onClick={(e) => e.stopPropagation()}
-          className="ml-auto flex h-9 w-9 items-center justify-center rounded-full bg-tint text-[13px] text-primary-text hover:bg-primary hover:text-white"
+          className="pii ml-auto flex h-9 w-9 items-center justify-center rounded-full bg-tint text-[13px] text-primary-text hover:bg-primary hover:text-white"
           title="전화 걸기"
           aria-label="전화 걸기"
         ><IcPhone size={15} /></a>
@@ -95,11 +95,11 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
       {/* 고객 정보 */}
       <div className="rounded-card border border-bline p-4">
         <div className="flex items-center justify-between">
-          <div className="text-[17px] font-extrabold text-bink">{maskName(lead.name)} 고객</div>
+          <div className="pii text-[17px] font-extrabold text-bink">{maskName(lead.name)} 고객</div>
           <StatusChip status={lead.status} />
         </div>
         <div className="mt-3 grid grid-cols-2 gap-y-2 text-[13px]">
-          <span className="text-bfaint">연락처</span><span className="tnum font-semibold text-bink">{maskPhone(lead.phone)}</span>
+          <span className="text-bfaint">연락처</span><span className="pii tnum font-semibold text-bink">{maskPhone(lead.phone)}</span>
           <span className="text-bfaint">지역</span><span className="font-semibold text-bink">{lead.sigungu}</span>
           <span className="text-bfaint">관심 서비스</span>
           {/* 복수 관심 카테고리(cats) 지원 — 있으면 전부 표시 */}
@@ -120,7 +120,7 @@ export function LeadDrawer({ lead, onClose, by = 'partner', tenants, allowReassi
           </div>
         )}
         <div className="mt-3 flex gap-2">
-          <a href={`tel:${lead.phone}`} className="flex h-10 flex-1 items-center justify-center rounded-field bg-primary text-[13.5px] font-bold text-white hover:bg-primary-hover"><IcPhone size={15} className="mr-1.5" />전화 걸기</a>
+          <a href={`tel:${lead.phone}`} className="pii flex h-10 flex-1 items-center justify-center rounded-field bg-primary text-[13.5px] font-bold text-white hover:bg-primary-hover"><IcPhone size={15} className="mr-1.5" />전화 걸기</a>
           <button onClick={() => { dispatch({ type: 'LEAD_TOUCH', payload: { id: lead.id, kind: '알림톡', by } }); toast('알림톡을 보냈어요 — 이력에 기록됩니다') }} className="flex h-10 flex-1 items-center justify-center rounded-field bg-ok/10 text-[13.5px] font-bold text-ok hover:bg-ok hover:text-white"><IcChat size={15} className="mr-1.5" />알림톡</button>
         </div>
       </div>
