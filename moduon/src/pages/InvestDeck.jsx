@@ -1,8 +1,16 @@
 // ─── /ir/deck — MODU ON 사업 소개 (비공개 하위 페이지) ──────────────
 // 첨부 문서(구독경제 프레임·BEST 근거·리워드·상품 구조)를 주 콘텐츠로 구성.
 // 외부 노출 금지: 어떤 메뉴·푸터에도 링크하지 않으며, robots noindex를 건다.
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+
+// 정식 로고(투명 PNG) 우선 — 파일이 아직 없으면 SVG 근사 마크로 폴백.
+// 원본은 public/assets/brand/logo-moduon-src.png(.jpg) 로 넣으면 빌드가 자동 투명화한다.
+function BrandLogo({ h = 40, fallback = null, className = '' }) {
+  const [ok, setOk] = useState(true)
+  if (!ok) return fallback
+  return <img src="/assets/brand/logo-moduon.png" alt="MODU ON" style={{ height: h }} className={`w-auto object-contain ${className}`} onError={() => setOk(false)} />
+}
 
 const BIZ_POINTS = [
   { n: 1, t: '인건비 1원도 나가지 않는 AI 비서', d: '똑똑한 나의 비서 AI모비 컨설턴트가 고객들의 니즈를 파악하고 상담해줍니다.' },
@@ -69,10 +77,15 @@ export default function InvestDeck() {
       {/* 헤더 — 내부 자료 표시 */}
       <header className="sticky top-0 z-40 border-b border-line-card/60 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex h-[60px] max-w-5xl items-center justify-between px-5">
-          <div className="flex items-center gap-2.5">
-            <ModuonMark size={64} />
-            <span className="text-[17px] font-black tracking-tight text-ink">MODU <span className="text-[#1B8BEA]">ON</span></span>
-          </div>
+          <BrandLogo
+            h={46}
+            fallback={
+              <div className="flex items-center gap-2.5">
+                <ModuonMark size={64} />
+                <span className="text-[17px] font-black tracking-tight text-ink">MODU <span className="text-[#1B8BEA]">ON</span></span>
+              </div>
+            }
+          />
           <span className="rounded-full bg-bink px-2.5 py-1 text-[10.5px] font-bold text-white">내부 검토용</span>
         </div>
       </header>
@@ -142,9 +155,18 @@ export default function InvestDeck() {
         {/* ── 3. 브랜드 ── */}
         <section className="mt-16 rounded-section bg-cream/70 px-6 py-12 text-center">
           <h2 className="text-[20px] font-extrabold tracking-[-0.5px] text-ink sm:text-[24px]">생활밀착형 MODU ON 플랫폼</h2>
-          <div className="mt-6 flex justify-center"><ModuonMark size={230} /></div>
-          <div className="mt-4 text-[26px] font-black tracking-tight text-ink">MODU <span className="text-[#1B8BEA]">ON</span></div>
-          <div className="mt-1 text-[11.5px] font-bold tracking-[0.35em] text-muted">CONNECT · ALL · LIFE</div>
+          <div className="mt-6 flex justify-center">
+            <BrandLogo
+              h={280}
+              fallback={
+                <div>
+                  <div className="flex justify-center"><ModuonMark size={230} /></div>
+                  <div className="mt-4 text-[26px] font-black tracking-tight text-ink">MODU <span className="text-[#1B8BEA]">ON</span></div>
+                  <div className="mt-1 text-[11.5px] font-bold tracking-[0.35em] text-muted">CONNECT · ALL · LIFE</div>
+                </div>
+              }
+            />
+          </div>
         </section>
 
         {/* ── 4. 상품 구조 ── */}
