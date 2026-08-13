@@ -23,6 +23,8 @@ const ASSETS = [
   ['obj-purifier.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/8ec01fae-7f2e-4433-86d3-35ae49c4f5a2.webp'],
   // 지원금 밴드 돈주머니 — 다홍색 가죽 + ₩ 음각 + 매듭 풀려 금색 동전 노출, 배경 제거(투명 PNG)
   ['obj-moneybag.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260809_145422_bf4edf86-9476-4b1c-929c-6d6d04a6dfba.png'],
+  // IR 히어로 타워 — "온라인 건물주" 오브제 (크림 배경 일체형, 대안: 08e8aaf0-ed8f-4a2d-ad7c-966311314168)
+  ['obj-tower.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260813_044545_d477c7cd-3093-49e5-ae49-4701e28ef682_min.webp'],
   // 브랜드 로고 마크 — 후보 B(오렌지·블루 듀오톤 루프), 배경 제거(투명 PNG). GNB·푸터·파비콘 공용
   ['logo-mark.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260809_150901_0e2cd36d-5984-4e56-a494-1b7a8c1590af.png'],
   ['cta-chat.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/790310b0-d472-469b-b6d5-38eedd45e68e.webp'],

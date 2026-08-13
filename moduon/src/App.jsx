@@ -15,6 +15,7 @@ import TenantMall from './pages/consumer/TenantMall'
 import PartnerLanding from './pages/partner/Landing'
 import PartnerApply from './pages/partner/Apply'
 import Login from './pages/Login'
+import Invest from './pages/Invest'
 import OfficeDashboard from './pages/office/Dashboard'
 import OfficeLeads from './pages/office/Leads'
 import OfficeSettlement from './pages/office/Settlement'
@@ -91,6 +92,9 @@ export default function App() {
         {/* 파트너 모집 */}
         <Route path="/partner" element={<PartnerLanding />} />
         <Route path="/partner/apply" element={<PartnerApply />} />
+
+        {/* IR 원페이지 */}
+        <Route path="/ir" element={<Invest />} />
 
         {/* 데모 로그인 */}
         <Route path="/login" element={<Login />} />
