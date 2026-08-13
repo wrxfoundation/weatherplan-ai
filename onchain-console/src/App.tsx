@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Layout } from '@/app/Layout'
 import { ModeProvider } from '@/app/ModeProvider'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
-import { Placeholder } from '@/modules/Placeholder'
 
 // 모듈 lazy 로딩 — 첫 화면 FCP 단축 (PRD §10 코드 스플릿)
 const DashboardPage = lazy(() => import('@/modules/dashboard/DashboardPage').then(m => ({ default: m.DashboardPage })))
@@ -15,6 +14,12 @@ const M5Page = lazy(() => import('@/modules/m5/M5Page').then(m => ({ default: m.
 const M6Page = lazy(() => import('@/modules/m6/M6Page').then(m => ({ default: m.M6Page })))
 const M7Page = lazy(() => import('@/modules/m7/M7Page').then(m => ({ default: m.M7Page })))
 const M8Page = lazy(() => import('@/modules/m8/M8Page').then(m => ({ default: m.M8Page })))
+const M9Page = lazy(() => import('@/modules/m9/M9Page').then(m => ({ default: m.M9Page })))
+const ModesPage = lazy(() => import('@/modules/settings/ModesPage').then(m => ({ default: m.ModesPage })))
+const RegistryPage = lazy(() => import('@/modules/settings/RegistryPage').then(m => ({ default: m.RegistryPage })))
+const AlertRulesPage = lazy(() => import('@/modules/settings/AlertRulesPage').then(m => ({ default: m.AlertRulesPage })))
+const UsersPage = lazy(() => import('@/modules/settings/UsersPage').then(m => ({ default: m.UsersPage })))
+const AuditPage = lazy(() => import('@/modules/settings/AuditPage').then(m => ({ default: m.AuditPage })))
 
 const modulePages: [string, string, ReactNode][] = [
   ['/', '대시보드', <DashboardPage />],
@@ -26,15 +31,12 @@ const modulePages: [string, string, ReactNode][] = [
   ['/m6', 'M6 파트너 정산', <M6Page />],
   ['/m7', 'M7 소셜 & 미디어', <M7Page />],
   ['/m8', 'M8 토큰 홀더', <M8Page />],
-]
-
-const placeholders: [string, string, string][] = [
-  ['/m9', 'M9 리포트 & 알림', '리포트·알림 모듈'],
-  ['/settings/modes', '모듈 모드 관리', 'DEMO/LIVE 모듈별 전환 설정'],
-  ['/settings/wallets', '지갑 레지스트리', '지갑 주소·라벨·종류 관리'],
-  ['/settings/alerts', '알림 규칙', '알림 규칙 편집'],
-  ['/settings/users', '사용자 관리', '이메일 allowlist·역할 관리'],
-  ['/settings/audit', '감사 로그', '운영 액션 감사 이력'],
+  ['/m9', 'M9 리포트 & 알림', <M9Page />],
+  ['/settings/modes', '모듈 모드 관리', <ModesPage />],
+  ['/settings/wallets', '지갑 레지스트리', <RegistryPage />],
+  ['/settings/alerts', '알림 규칙', <AlertRulesPage />],
+  ['/settings/users', '사용자 관리', <UsersPage />],
+  ['/settings/audit', '감사 로그', <AuditPage />],
 ]
 
 function PageFallback() {
@@ -57,9 +59,6 @@ export default function App() {
             <Routes>
               {modulePages.map(([path, label, el]) => (
                 <Route key={path} path={path} element={<ErrorBoundary label={label}>{el}</ErrorBoundary>} />
-              ))}
-              {placeholders.map(([path, title, desc]) => (
-                <Route key={path} path={path} element={<Placeholder title={title} description={desc} />} />
               ))}
             </Routes>
           </Suspense>
