@@ -1,6 +1,7 @@
-import { ReactNode } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { ReactNode, useEffect, useState } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { Icon, IconName } from '@/components/Icon'
+import { HelpDrawer } from '@/components/HelpDrawer'
 
 const modules: { to: string; icon: IconName | string; label: string }[] = [
   { to: '/m1', icon: 'wallet', label: 'M1 활성 지갑' },
@@ -39,7 +40,7 @@ function NavItem({ to, icon, label }: { to: string; icon: IconName | string; lab
 
 function Sidebar() {
   return (
-    <aside className="fixed inset-y-0 left-0 z-20 flex w-[236px] flex-col border-r border-line bg-panel">
+    <aside className="fixed inset-y-0 left-0 z-20 hidden w-[236px] flex-col border-r border-line bg-panel lg:flex">
       <div className="flex items-center gap-2.5 px-5 pb-5 pt-5">
         <span className="relative grid h-9 w-9 place-items-center rounded-full bg-navy-soft">
           <span className="absolute h-4 w-4 -translate-x-1 rounded-full bg-navy-deep/90" />
@@ -75,22 +76,43 @@ function Sidebar() {
   )
 }
 
-function TopBar() {
+// 모바일: 사이드바 대신 상단 가로 스크롤 칩 내비게이션 (PRD §9)
+function MobileNav() {
+  const items: { to: string; label: string }[] = [
+    { to: '/', label: '대시보드' },
+    ...modules.map(m => ({ to: m.to, label: m.label.replace(' (VWI)', '') })),
+    ...settings.map(s => ({ to: s.to, label: s.label })),
+  ]
+  return (
+    <nav className="sticky top-[64px] z-10 flex gap-1.5 overflow-x-auto border-b border-line bg-panel/95 px-4 py-2 backdrop-blur lg:hidden scrollbar-thin">
+      {items.map(i => (
+        <NavLink key={i.to} to={i.to} end
+          className={({ isActive }) =>
+            `shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-meta font-semibold transition-colors ${
+              isActive ? 'border-navy bg-navy text-white' : 'border-line text-body hover:border-navy/40'}`}>
+          {i.label}
+        </NavLink>
+      ))}
+    </nav>
+  )
+}
+
+function TopBar({ onHelp }: { onHelp: () => void }) {
   const { pathname } = useLocation()
   return (
     <header className="sticky top-0 z-10 flex h-[64px] items-center gap-4 border-b border-line bg-panel/95 px-6 backdrop-blur">
       {pathname === '/' && (
         <button type="button"
-          className="flex items-center gap-6 rounded-lg border border-line px-3.5 py-2 text-label font-medium text-ink hover:border-navy/40 transition-colors">
+          className="hidden items-center gap-6 whitespace-nowrap rounded-lg border border-line px-3.5 py-2 text-label font-medium text-ink hover:border-navy/40 transition-colors md:flex">
           전체 모듈 <Icon name="chevronDown" size={14} className="text-mute" />
         </button>
       )}
       <div className="flex min-w-0 flex-1 justify-center">
         <div className="flex items-center gap-2.5 truncate rounded-lg bg-navy-tint px-4 py-2 text-label">
-          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-navy" />
-          <b className="shrink-0 font-bold text-navy">DEMO MODE</b>
-          <span className="text-line">│</span>
-          <span className="truncate text-body">회사 지갑 주소 연결 시 XRPL 공개 원장 라이브 집계로 전환됩니다.</span>
+          <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-navy" />
+          <b className="shrink-0 whitespace-nowrap font-bold text-navy">DEMO<span className="hidden sm:inline"> MODE</span></b>
+          <span className="hidden text-line md:inline">│</span>
+          <span className="hidden truncate text-body md:inline">회사 지갑 주소 연결 시 XRPL 공개 원장 라이브 집계로 전환됩니다.</span>
         </div>
       </div>
       <div className="flex items-center gap-1.5">
@@ -98,7 +120,7 @@ function TopBar() {
           <Icon name="bell" size={17} />
           <span className="num absolute -top-0.5 -right-0.5 grid h-[17px] min-w-[17px] place-items-center rounded-full bg-navy px-1 text-[10px] font-bold text-white">12</span>
         </button>
-        <button type="button" className="grid h-9 w-9 place-items-center rounded-lg text-body hover:bg-line-soft transition-colors" aria-label="도움말">
+        <button type="button" onClick={onHelp} className="grid h-9 w-9 place-items-center rounded-lg text-body hover:bg-line-soft transition-colors" aria-label="도움말" title="이 화면 도움말">
           <Icon name="help" size={17} />
         </button>
         <button type="button" className="ml-1 flex items-center gap-2.5 rounded-xl border border-line px-2.5 py-1.5 hover:border-navy/40 transition-colors">
@@ -120,22 +142,33 @@ function Footer() {
       <span>KWeather On-Chain Console</span>
       <span>© 2026 KWeather Inc. All rights reserved.</span>
       <span className="flex items-center gap-4">
+        <Link to="/methodology" className="hover:text-navy hover:underline">산식·방법론</Link>
+        <Link to="/transparency" className="hover:text-navy hover:underline">RLUSD 투명성</Link>
         <span>데이터 출처:&nbsp; <b className="font-medium text-body">XRPL Public Ledger</b></span>
-        <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-ok" /> 상태:&nbsp;<b className="font-medium text-body">정상</b></span>
+        <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ok" /> 상태:&nbsp;<b className="font-medium text-body">정상</b></span>
       </span>
     </footer>
   )
 }
 
 export function Layout({ children }: { children: ReactNode }) {
+  const [helpOpen, setHelpOpen] = useState(false)
+  // 페이지 헤더의 (?) 버튼에서도 열 수 있게 커스텀 이벤트 수신
+  useEffect(() => {
+    const open = () => setHelpOpen(true)
+    window.addEventListener('kw:open-help', open)
+    return () => window.removeEventListener('kw:open-help', open)
+  }, [])
   return (
     <div className="min-h-screen">
       <Sidebar />
-      <div className="flex min-h-screen flex-col pl-[236px]">
-        <TopBar />
-        <main className="flex-1 px-6 py-6">{children}</main>
+      <div className="flex min-h-screen flex-col pl-0 lg:pl-[236px]">
+        <TopBar onHelp={() => setHelpOpen(true)} />
+        <MobileNav />
+        <main className="flex-1 px-4 py-5 sm:px-6 sm:py-6">{children}</main>
         <Footer />
       </div>
+      <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   )
 }
