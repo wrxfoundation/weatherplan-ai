@@ -93,10 +93,10 @@ export function M2Page() {
 
         <Card>
           <CardHeader title={<>지수 구성 현황 <span className="font-medium text-mute">(금일)</span></>} />
-          <div className="flex items-center gap-5 px-5 pb-3">
+          <div className="flex flex-col items-center gap-4 px-5 sm:flex-row sm:gap-5 pb-3">
             <Donut size={150} thickness={26} centerTop="총 관측소" centerBottom={`${d.composition.total}`}
               segments={d.composition.segments.map(s => ({ value: s.value, color: s.color }))} />
-            <div className="flex-1 space-y-2.5">
+            <div className="w-full flex-1 space-y-2.5">
               {d.composition.segments.map(s => (
                 <div key={s.label} className="flex items-center justify-between gap-2 whitespace-nowrap text-tiny font-normal">
                   <span className="flex items-center gap-1.5 text-body">
@@ -114,8 +114,8 @@ export function M2Page() {
 
         <Card>
           <CardHeader title={<>오늘 스냅샷 목록 <span className="font-medium text-mute">(최신 5건)</span></>} />
-          <div className="px-4">
-            <table className="w-full">
+          <div className="overflow-x-auto px-4">
+            <table className="w-full min-w-[380px]">
               <thead>
                 <tr className="border-b border-line text-left text-meta font-medium text-mute">
                   <th className="px-2 py-2 font-medium">시간 (KST)</th>

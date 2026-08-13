@@ -18,10 +18,10 @@ function DonutBlock({ title, formula, total, sub, segments, action }: {
   return (
     <Card>
       <CardHeader title={title} formula={formula} />
-      <div className="flex items-center gap-5 px-5 pb-4">
+      <div className="flex flex-col items-center gap-4 px-5 sm:flex-row sm:gap-5 pb-4">
         <Donut size={168} thickness={30} centerTop="TOTAL" centerBottom={total} centerSub={sub}
           segments={segments.map(s => ({ value: Math.max(s.value, 0.001), color: s.color }))} />
-        <div className="flex-1 space-y-2.5">
+        <div className="w-full flex-1 space-y-2.5">
           {segments.map(s => (
             <div key={s.label} className="flex items-center justify-between gap-2 whitespace-nowrap text-meta">
               <span className="flex items-center gap-1.5 text-body">
@@ -72,7 +72,7 @@ export function M6Page() {
             title={<>정산 추이 <span className="font-medium text-mute">(최근 6개월)</span></>}
             action={<GhostButton>USD <Icon name="chevronDown" size={13} className="text-mute" /></GhostButton>}
           />
-          <div className="flex items-center justify-end gap-3 whitespace-nowrap px-5 pb-1 text-tiny text-mute">
+          <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 px-5 pb-1 text-tiny text-mute">
             <span className="flex items-center gap-1"><span className="h-0.5 w-3.5 rounded bg-navy" /> 수익 금액</span>
             <span className="flex items-center gap-1"><span className="h-0.5 w-3.5 rounded bg-ok" /> 정산 금액</span>
           </div>

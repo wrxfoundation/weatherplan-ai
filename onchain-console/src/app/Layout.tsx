@@ -125,11 +125,11 @@ function TopBar({ onHelp }: { onHelp: () => void }) {
         </button>
         <button type="button" className="ml-1 flex items-center gap-2.5 rounded-xl border border-line px-2.5 py-1.5 hover:border-navy/40 transition-colors">
           <span className="grid h-7 w-7 place-items-center rounded-full bg-navy-soft text-navy"><Icon name="user" size={15} /></span>
-          <span className="text-left leading-tight">
+          <span className="hidden text-left leading-tight sm:block">
             <span className="block text-label font-semibold text-ink">박서우</span>
             <span className="block text-tiny font-medium text-mute">operator</span>
           </span>
-          <Icon name="chevronDown" size={14} className="text-mute" />
+          <Icon name="chevronDown" size={14} className="hidden text-mute sm:block" />
         </button>
       </div>
     </header>
@@ -138,10 +138,10 @@ function TopBar({ onHelp }: { onHelp: () => void }) {
 
 function Footer() {
   return (
-    <footer className="mt-auto flex items-center justify-between gap-4 border-t border-line px-6 py-4 text-meta text-mute">
+    <footer className="mt-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-line px-4 py-4 text-meta text-mute sm:justify-between sm:px-6">
       <span>KWeather On-Chain Console</span>
       <span>© 2026 KWeather Inc. All rights reserved.</span>
-      <span className="flex items-center gap-4">
+      <span className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
         <Link to="/methodology" className="hover:text-navy hover:underline">산식·방법론</Link>
         <Link to="/transparency" className="hover:text-navy hover:underline">RLUSD 투명성</Link>
         <span>데이터 출처:&nbsp; <b className="font-medium text-body">XRPL Public Ledger</b></span>

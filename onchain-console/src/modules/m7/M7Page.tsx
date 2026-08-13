@@ -35,10 +35,10 @@ export function M7Page() {
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[1.2fr_1.35fr_1.25fr]">
         <Card>
           <CardHeader title="채널별 팔로워 현황" formula={'채널별 팔로워 수 / 총 팔로워\n일 1회 스냅샷'} />
-          <div className="flex items-center gap-5 px-5 pb-5">
+          <div className="flex flex-col items-center gap-4 px-5 sm:flex-row sm:gap-5 pb-5">
             <Donut size={168} thickness={30} centerTop="TOTAL" centerBottom={d.channels.total} centerSub="Followers"
               segments={d.channels.segments.map(s => ({ value: s.value, color: s.color }))} />
-            <div className="flex-1 space-y-2">
+            <div className="w-full flex-1 space-y-2">
               {d.channels.segments.map(s => (
                 <div key={s.key} className="flex items-center justify-between gap-2 whitespace-nowrap text-tiny font-normal">
                   <span className="flex items-center gap-1.5 text-body">
@@ -56,7 +56,7 @@ export function M7Page() {
 
         <Card>
           <CardHeader title={<>참여 트렌드 <span className="font-medium text-mute">(최근 7일)</span></>} />
-          <div className="flex items-center justify-end gap-3 whitespace-nowrap px-5 pb-1 text-tiny text-mute">
+          <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 px-5 pb-1 text-tiny text-mute">
             <span className="flex items-center gap-1"><span className="h-0.5 w-3.5 rounded bg-navy" /> 참여 수</span>
             <span className="flex items-center gap-1"><span className="h-0.5 w-3.5 rounded bg-ok" /> 조회 수</span>
             <span className="flex items-center gap-1"><span className="h-0.5 w-3.5 rounded bg-[#8F7BE8]" /> 공유 수</span>
@@ -77,8 +77,8 @@ export function M7Page() {
         <Card>
           <CardHeader title="인기 게시물 TOP 5"
             action={<GhostButton>7일 <Icon name="chevronDown" size={13} className="text-mute" /></GhostButton>} />
-          <div className="px-4">
-            <table className="w-full">
+          <div className="overflow-x-auto px-4">
+            <table className="w-full min-w-[400px]">
               <thead>
                 <tr className="whitespace-nowrap border-b border-line text-left text-meta font-medium text-mute">
                   <th className="px-2 py-2 font-medium">순위</th>
@@ -110,8 +110,8 @@ export function M7Page() {
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[1.2fr_1.35fr_1.25fr]">
         <Card>
           <CardHeader title={<>채널별 성과 요약 <span className="font-medium text-mute">(최근 7일)</span></>} />
-          <div className="px-4">
-            <table className="w-full">
+          <div className="overflow-x-auto px-4">
+            <table className="w-full min-w-[400px]">
               <thead>
                 <tr className="whitespace-nowrap border-b border-line text-left text-meta font-medium text-mute">
                   <th className="px-2 py-2 font-medium">채널</th>
@@ -144,8 +144,8 @@ export function M7Page() {
         <Card>
           <CardHeader title="해시태그 성과 TOP 5"
             action={<GhostButton>7일 <Icon name="chevronDown" size={13} className="text-mute" /></GhostButton>} />
-          <div className="px-4">
-            <table className="w-full">
+          <div className="overflow-x-auto px-4">
+            <table className="w-full min-w-[400px]">
               <thead>
                 <tr className="whitespace-nowrap border-b border-line text-left text-meta font-medium text-mute">
                   <th className="px-2 py-2 font-medium">순위</th>

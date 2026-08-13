@@ -28,7 +28,8 @@ export function Sparkline({ data, color = '#3E6FE0', w = 84, h = 28 }: {
 }) {
   const pts = scale(data, w, h, 2)
   return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="overflow-visible" aria-hidden>
+    // 고정 width 대신 max-width — 좁은 KPI 카드에서 비율 유지하며 축소 (모바일)
+    <svg viewBox={`0 0 ${w} ${h}`} style={{ maxWidth: w, height: h }} className="w-full min-w-0 shrink overflow-visible" aria-hidden preserveAspectRatio="xMaxYMid meet">
       <path d={smoothPath(pts)} fill="none" stroke={color} strokeWidth={1.6} strokeLinecap="round" />
       <circle cx={pts[pts.length - 1][0]} cy={pts[pts.length - 1][1]} r={2.2} fill={color} />
     </svg>

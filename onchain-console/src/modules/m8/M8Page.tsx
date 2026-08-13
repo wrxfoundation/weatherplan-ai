@@ -38,10 +38,10 @@ export function M8Page() {
 
         <Card>
           <CardHeader title="보유 분포" formula={'홀더 수 group by 잔고 구간\n/ 총 홀더 수 (일 1회 스냅샷)'} />
-          <div className="flex items-center gap-5 px-5 pb-3">
+          <div className="flex flex-col items-center gap-4 px-5 sm:flex-row sm:gap-5 pb-3">
             <Donut size={172} thickness={30} centerTop="TOTAL" centerBottom={d.distribution.total} centerSub="Holders"
               segments={d.distribution.segments.map(s => ({ value: s.value, color: s.color }))} />
-            <div className="flex-1 space-y-2">
+            <div className="w-full flex-1 space-y-2">
               {d.distribution.segments.map(s => (
                 <div key={s.label} className="flex items-center justify-between gap-2 whitespace-nowrap text-tiny font-normal">
                   <span className="flex min-w-0 items-center gap-1.5 truncate text-body">

@@ -35,7 +35,7 @@ export function TamperCalc() {
           </p>
         </div>
         <div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="rounded-lg border border-line-soft p-4 text-center">
               <div className="text-meta font-medium text-body">지수 영향</div>
               <div className="num mt-1.5 text-[24px] font-bold tracking-tight text-ink">+{impact.toFixed(4)}<span className="text-[15px] font-semibold text-mute">°C</span></div>

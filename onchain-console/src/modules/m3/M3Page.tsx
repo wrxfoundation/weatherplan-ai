@@ -23,10 +23,10 @@ function DonutLegend({ total, unit, segments }: {
   segments: { label: string; text: string; value: number; color: string }[]
 }) {
   return (
-    <div className="flex items-center gap-5 px-5 pb-5">
+    <div className="flex flex-col items-center gap-4 px-5 sm:flex-row sm:gap-5 pb-5">
       <Donut size={140} thickness={24} centerTop={unit} centerBottom={total}
         segments={segments.map(s => ({ value: Math.max(s.value, 0.001), color: s.color }))} />
-      <div className="flex-1 space-y-2.5">
+      <div className="w-full flex-1 space-y-2.5">
         {segments.map(s => (
           <div key={s.label} className="text-meta">
             <span className="flex items-center gap-1.5 text-body">

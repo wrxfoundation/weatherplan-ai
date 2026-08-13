@@ -44,7 +44,7 @@ export function AlertRulesPage() {
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
         <Card>
           <div className="flex flex-wrap items-center justify-between gap-3 px-5 pt-3">
-            <div className="flex gap-1">
+            <div className="flex min-w-0 max-w-full gap-1 overflow-x-auto scrollbar-thin">
               {['전체 규칙', '활성 규칙', '비활성 규칙'].map(t => (
                 <button key={t} type="button" onClick={() => setTab(t)}
                   className={`relative whitespace-nowrap px-3 pb-2.5 pt-1.5 text-label transition-colors ${
@@ -111,7 +111,7 @@ export function AlertRulesPage() {
               </tbody>
             </table>
           </div>
-          <div className="flex items-center justify-between gap-3 border-t border-line px-5 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-3">
             <span className="num text-meta text-mute">전체 23개 중 1-{rules.length} 표시</span>
             <div className="flex items-center gap-1">
               <button type="button" className="grid h-7 w-7 place-items-center rounded-md border border-line text-mute" aria-label="이전"><Icon name="chevronLeft" size={13} /></button>

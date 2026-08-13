@@ -86,10 +86,10 @@ export function M4Page() {
         <Card>
           <CardHeader title={<>권역별 보상 분포 <span className="font-medium text-mute">(금일)</span></>}
             formula={'sum(보상) group by 디바이스 설치 권역\n/ 오늘 지급 예정 총액'} />
-          <div className="flex items-center gap-5 px-5 pb-4">
+          <div className="flex flex-col items-center gap-4 px-5 sm:flex-row sm:gap-5 pb-4">
             <Donut size={168} thickness={30} centerTop="TOTAL" centerBottom={d.regions.total} centerSub="RLUSD"
               segments={d.regions.segments.map(s => ({ value: s.value, color: s.color }))} />
-            <div className="flex-1 space-y-3">
+            <div className="w-full flex-1 space-y-3">
               {d.regions.segments.map(s => (
                 <div key={s.label} className="flex items-center justify-between gap-2 whitespace-nowrap text-meta">
                   <span className="flex items-center gap-1.5 text-body">

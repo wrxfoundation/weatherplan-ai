@@ -94,7 +94,7 @@ export function UsersPage() {
               </tbody>
             </table>
           </div>
-          <div className="flex items-center justify-between gap-3 border-t border-line px-5 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-3">
             <span className="num text-meta text-mute">전체 28명 중 1-8 표시</span>
             <div className="flex items-center gap-1">
               <button type="button" className="grid h-7 w-7 place-items-center rounded-md border border-line text-mute" aria-label="이전"><Icon name="chevronLeft" size={13} /></button>
