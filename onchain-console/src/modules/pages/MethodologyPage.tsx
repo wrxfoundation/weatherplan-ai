@@ -110,6 +110,43 @@ export function MethodologyPage() {
       </div>
 
       <Card className="mt-4">
+        <CardHeader title="용어 정리 — XRPL · XRP · RLUSD · WLBN"
+          action={<span className="text-meta text-mute">원장(플랫폼)과 자산(통화)을 구분해 표기합니다</span>} />
+        <div className="overflow-x-auto px-4 pb-2">
+          <table className="w-full min-w-[640px]">
+            <thead>
+              <tr className="whitespace-nowrap border-b border-line text-left text-meta font-medium text-mute">
+                <th className="px-2 py-2 font-medium">용어</th>
+                <th className="px-2 py-2 font-medium">구분</th>
+                <th className="px-2 py-2 font-medium">설명</th>
+                <th className="px-2 py-2 font-medium">콘솔에서의 쓰임</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ['XRPL', '원장 · 플랫폼', '3~5초 내 결제가 확정되는 퍼블릭 원장(전송 레이어). 저비용·수천 TPS의 기관급 인프라', '데이터 출처 · 앵커링 대상 · "XRPL Mainnet" 네트워크 표기'],
+                ['XRP', '기축 자산', 'XRPL의 네이티브 자산. 수수료·리저브·유동성 브릿지에 사용', '지갑 잔액·수취 금액의 통화 단위 "(XRP)"'],
+                ['RLUSD', '스테이블코인', 'Ripple이 NYDFS 신탁 인가 하에 발행하는 1 USD 연동 스테이블코인(준비금 파산 절연)', '데이터 상점 결제·DePIN 보상·파트너 정산 통화'],
+                ['WLBN', '자사 토큰', 'KWeather 생태계 토큰. XRPL 단일 발행', 'M8 홀더 분석 · 소각 집계 · 토크노믹스 시뮬레이션'],
+              ].map(r => (
+                <tr key={r[0]} className="border-b border-line-soft last:border-0 align-top">
+                  <td className="num whitespace-nowrap px-2 py-2.5 text-label font-bold text-navy">{r[0]}</td>
+                  <td className="whitespace-nowrap px-2 py-2.5 text-label text-body">{r[1]}</td>
+                  <td className="px-2 py-2.5 text-label leading-relaxed text-body">{r[2]}</td>
+                  <td className="px-2 py-2.5 text-label leading-relaxed text-mute">{r[3]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="mx-5 mb-5 rounded-lg border border-line bg-navy-tint px-4 py-3 text-meta leading-relaxed text-body">
+          XRPL은 값을 옮기는 전송 레이어에 그치지 않습니다. 트랜잭션의 <b className="font-semibold text-ink">Memo·DestinationTag 필드</b>에
+          구조화 데이터를 실어 맥락을 함께 전송할 수 있고(ISO 20022 지향 커뮤니케이션 레이어),
+          이 콘솔의 <b className="font-semibold text-ink">SKU 태깅(1001~1003)</b>과 <b className="font-semibold text-ink">VWI 앵커링</b>이 바로 이 구조를 활용합니다.
+        </div>
+      </Card>
+
+      <Card className="mt-4">
         <CardHeader title="VWI 산출 파이프라인" formula={'수집 → 검증 → 산출·확정 → 앵커링\n확정 주기 60분, 70분 무기록 시 경보'} />
         <div className="grid grid-cols-1 gap-3 px-5 pb-5 md:grid-cols-4">
           {pipeline.map((s, i) => (

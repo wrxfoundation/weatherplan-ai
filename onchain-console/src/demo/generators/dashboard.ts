@@ -3,7 +3,7 @@ import { series } from '../rand'
 export const dashboardDemo = {
   updatedAgo: '2분 전',
   kpis: [
-    { icon: 'snow', label: '오늘 총 수취 (XRPL)', value: '12,451.7', delta: { text: '+18.3%', tone: 'ok' as const }, spark: series(101, 14, 8, 20, 3), formula: 'sum(amount)\nwhere direction=in and closed_at::date=today' },
+    { icon: 'snow', label: '오늘 총 수취 (XRP)', value: '12,451.7', delta: { text: '+18.3%', tone: 'ok' as const }, spark: series(101, 14, 8, 20, 3), formula: 'sum(amount)\nwhere direction=in and closed_at::date=today' },
     { icon: 'trendUp', label: '오늘 총 지급 (RLUSD)', value: '8,214.3', delta: { text: '−6.7%', tone: 'bad' as const }, spark: series(102, 14, 14, 9, 2.5), formula: 'sum(amount)\nwhere currency=RLUSD and direction=out\nand closed_at::date=today' },
     { icon: 'thermo', label: 'VWI 지수 (서울-기온)', value: '23.48 °C', delta: { text: '+0.62', tone: 'ok' as const }, spark: series(103, 14, 21.8, 23.5, 0.6), formula: 'VWI = Σ(wᵢ·Tᵢ) / Σwᵢ\n활성 관측소 가중 평균 (이상치 제거 후)' },
     { icon: 'cpu', label: 'DePIN 활성 디바이스', value: '12,842', delta: { text: '+7.3%', tone: 'ok' as const }, spark: series(104, 14, 10500, 12842, 500), formula: 'count(distinct device)\nwhere last_seen > now()−24h' },
@@ -11,7 +11,7 @@ export const dashboardDemo = {
     { icon: 'coins', label: '홀더 수 (WLBN)', value: '23,541', delta: { text: '+5.2%', tone: 'ok' as const }, spark: series(106, 14, 21000, 23541, 600), formula: 'count(account_lines)\nwhere balance > 0 (일 1회 스냅샷)' },
   ],
   flow: {
-    left: [{ label: '수취 (XRPL)', value: '84,312', sub: '+18.3%', subTone: 'ok' as const, weight: 84312 }],
+    left: [{ label: '수취 (XRP)', value: '84,312', sub: '+18.3%', subTone: 'ok' as const, weight: 84312 }],
     center: { title: '우리 지갑', items: [{ label: 'Shop Wallet', value: '82,126' }, { label: 'Payout Wallet', value: '2,186' }] },
     right: [
       { label: '지급 (RLUSD)', value: '57,498', sub: '−6.7%', subTone: 'bad' as const, weight: 57498 },

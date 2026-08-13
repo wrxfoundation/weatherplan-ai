@@ -3,7 +3,7 @@ import { series } from '../rand'
 export const m3Demo = {
   updatedAgo: '2분 전',
   kpis: [
-    { icon: 'snow', label: '수취 (XRPL)', value: '84,312.6', unit: 'XRP', delta: { text: '+18.3%', tone: 'ok' as const }, spark: series(131, 14, 8, 20, 3), formula: 'sum(amount) where direction=in\nand wallet_kind like ours_% (7D)' },
+    { icon: 'snow', label: '수취 (XRP)', value: '84,312.6', unit: 'XRP', delta: { text: '+18.3%', tone: 'ok' as const }, spark: series(131, 14, 8, 20, 3), formula: 'sum(amount) where direction=in\nand wallet_kind like ours_% (7D)' },
     { icon: 'exchange', label: '지급 (정산)', value: '57,498.2', unit: 'XRP', delta: { text: '−6.7%', tone: 'bad' as const }, spark: series(132, 14, 15, 9, 2.5), formula: 'sum(amount) where direction=out (7D)' },
     { icon: 'snow', label: '순 유입', value: '26,814.4', unit: 'XRP', delta: { text: '+35.7%', tone: 'ok' as const }, spark: series(133, 14, 5, 15, 3), formula: '수취 − 지급 (7D)' },
     { icon: 'exchange', label: '트랜잭션 수', value: '1,248', unit: '건', delta: { text: '+4.2%', tone: 'ok' as const }, spark: series(134, 14, 900, 1250, 130), formula: 'count(tx_events) (7D)' },

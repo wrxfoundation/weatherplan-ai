@@ -97,7 +97,7 @@ export function M3Page() {
                   <th className="px-2 py-2 font-medium">방향</th>
                   <th className="px-2 py-2 font-medium">거래 해시</th>
                   <th className="px-2 py-2 font-medium">상대 지갑 / 메모</th>
-                  <th className="px-2 py-2 text-right font-medium">금액 (XRPL)</th>
+                  <th className="px-2 py-2 text-right font-medium">금액 (XRP)</th>
                   <th className="px-2 py-2 font-medium">상태</th>
                 </tr>
               </thead>

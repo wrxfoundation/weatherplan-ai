@@ -58,9 +58,9 @@ export function M1Page() {
             </div>
           }
         />
-        <KpiCard icon="inbound" label="오늘 수신 (XRPL)" formula={'sum(amount) where direction=in\nand closed_at::date=today'}
+        <KpiCard icon="inbound" label="오늘 수신 (XRP)" formula={'sum(amount) where direction=in\nand closed_at::date=today'}
           value={d.kpis.inToday.value} delta={d.kpis.inToday.delta} spark={d.kpis.inToday.spark} />
-        <KpiCard icon="outbound" label="오늘 송신 (XRPL)" formula={'sum(amount) where direction=out\nand closed_at::date=today'}
+        <KpiCard icon="outbound" label="오늘 송신 (XRP)" formula={'sum(amount) where direction=out\nand closed_at::date=today'}
           value={d.kpis.outToday.value} delta={d.kpis.outToday.delta} spark={d.kpis.outToday.spark} />
         <KpiCard icon="exchange" label="자체 이체" formula={'count(tx) where direction=self\n(우리 지갑 간 이동)'}
           value={d.kpis.selfTransfer.value} delta={d.kpis.selfTransfer.delta} spark={d.kpis.selfTransfer.spark} />
@@ -102,9 +102,9 @@ export function M1Page() {
                     <th className="px-3 py-2.5 font-medium">종류</th>
                     <th className="px-3 py-2.5 font-medium">상태</th>
                     <th className="px-3 py-2.5 font-medium">마지막 활동 <Icon name="chevronDown" size={11} className="inline" /></th>
-                    <th className="px-3 py-2.5 text-right font-medium">오늘 수신 (XRPL)</th>
-                    <th className="px-3 py-2.5 text-right font-medium">오늘 송신 (XRPL)</th>
-                    <th className="px-3 py-2.5 font-medium">잔액 (XRPL)</th>
+                    <th className="px-3 py-2.5 text-right font-medium">오늘 수신 (XRP)</th>
+                    <th className="px-3 py-2.5 text-right font-medium">오늘 송신 (XRP)</th>
+                    <th className="px-3 py-2.5 font-medium">잔액 (XRP)</th>
                     <th className="py-2.5 pl-3 pr-4" />
                   </tr>
                 </thead>
@@ -172,7 +172,7 @@ export function M1Page() {
                 </span>
               }
             />
-            <div className="px-2 pb-1 pl-4 text-meta text-mute">(XRPL)</div>
+            <div className="px-2 pb-1 pl-4 text-meta text-mute">(XRP)</div>
             <div className="px-4 pb-4">
               <MultiLineChart height={180}
                 yTicks={[0, 10000, 20000]} yFmt={v => (v === 0 ? '0' : `${Math.round(v / 1000)}K`)}

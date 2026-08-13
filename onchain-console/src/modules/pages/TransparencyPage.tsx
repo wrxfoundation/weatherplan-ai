@@ -27,13 +27,13 @@ export function TransparencyPage() {
           <span className={`grid h-9 w-9 place-items-center rounded-xl ${kpiTones.navy.chip}`}><Icon name="coins" size={17} /></span>
           <div className="mt-3 text-label font-medium text-body">결제 화폐</div>
           <div className="mt-1 text-[22px] font-bold tracking-tight text-ink">RLUSD</div>
-          <div className="mt-1 text-meta leading-relaxed text-mute">1 USD 연동 스테이블코인 — 가격 변동 없이 결제에 사용합니다.</div>
+          <div className="mt-1 text-meta leading-relaxed text-mute">1 USD 연동 스테이블코인. XRPL 원장에서 3~5초 내 결제가 확정됩니다.</div>
         </Card>
         <Card className="p-5">
           <span className={`grid h-9 w-9 place-items-center rounded-xl ${kpiTones.green.chip}`}><Icon name="badge" size={17} /></span>
           <div className="mt-3 text-label font-medium text-body">발행사</div>
           <div className="mt-1 text-[22px] font-bold tracking-tight text-ink">Ripple</div>
-          <div className="mt-1 text-meta leading-relaxed text-mute">NYDFS 규제 하에 발행되는 기관용 스테이블코인입니다.</div>
+          <div className="mt-1 text-meta leading-relaxed text-mute">뉴욕 금융감독청(NYDFS) 신탁 인가 하에 발행되며, 준비금은 파산 절연 구조로 보관됩니다.</div>
         </Card>
         <Card className="p-5">
           <span className={`grid h-9 w-9 place-items-center rounded-xl ${kpiTones.purple.chip}`}><Icon name="exchange" size={17} /></span>

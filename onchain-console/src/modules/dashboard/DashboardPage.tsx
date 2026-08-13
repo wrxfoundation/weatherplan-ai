@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Card, CardHeader, GhostButton, FooterLinkButton } from '@/components/Card'
 import { KpiCard } from '@/components/KpiCard'
+import { GovernanceStrip } from './GovernanceStrip'
 import { PageHeader, UpdatedMeta, DownloadButton } from '@/components/PageHeader'
 import { FlowSankey } from '@/components/FlowSankey'
 import { LineChart, AreaChart, Donut } from '@/components/charts'
@@ -26,6 +27,8 @@ export function DashboardPage() {
             value={k.value} delta={k.delta} deltaLabel={k.deltaLabel ?? 'vs 어제'} spark={k.spark} />
         ))}
       </div>
+
+      <GovernanceStrip />
 
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[1.55fr_1.4fr_1fr]">
         <Card>
