@@ -20,6 +20,8 @@ const RegistryPage = lazy(() => import('@/modules/settings/RegistryPage').then(m
 const AlertRulesPage = lazy(() => import('@/modules/settings/AlertRulesPage').then(m => ({ default: m.AlertRulesPage })))
 const UsersPage = lazy(() => import('@/modules/settings/UsersPage').then(m => ({ default: m.UsersPage })))
 const AuditPage = lazy(() => import('@/modules/settings/AuditPage').then(m => ({ default: m.AuditPage })))
+const TransparencyPage = lazy(() => import('@/modules/pages/TransparencyPage').then(m => ({ default: m.TransparencyPage })))
+const MethodologyPage = lazy(() => import('@/modules/pages/MethodologyPage').then(m => ({ default: m.MethodologyPage })))
 
 const modulePages: [string, string, ReactNode][] = [
   ['/', '대시보드', <DashboardPage />],
@@ -37,6 +39,8 @@ const modulePages: [string, string, ReactNode][] = [
   ['/settings/alerts', '알림 규칙', <AlertRulesPage />],
   ['/settings/users', '사용자 관리', <UsersPage />],
   ['/settings/audit', '감사 로그', <AuditPage />],
+  ['/transparency', 'RLUSD 투명성', <TransparencyPage />],
+  ['/methodology', '산식·방법론', <MethodologyPage />],
 ]
 
 function PageFallback() {

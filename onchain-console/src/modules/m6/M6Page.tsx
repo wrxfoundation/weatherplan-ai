@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Card, CardHeader, GhostButton, FooterLinkButton } from '@/components/Card'
 import { KpiCard, KpiTone } from '@/components/KpiCard'
 import { PageHeader, UpdatedMeta } from '@/components/PageHeader'
@@ -45,6 +46,7 @@ export function M6Page() {
         meta={<UpdatedMeta text={`최근 업데이트 ${d.updatedAgo}`} />}
         actions={
           <>
+            <Link to="/transparency"><GhostButton>공개 페이지 보기 <Icon name="external" size={12} /></GhostButton></Link>
             <button type="button" className="inline-flex items-center gap-2 rounded-lg bg-navy px-3.5 py-2 text-label font-semibold text-white hover:bg-navy-deep transition-colors">
               <Icon name="download" size={14} /> 정산 내역 다운로드 <Icon name="chevronDown" size={13} className="opacity-80" />
             </button>
