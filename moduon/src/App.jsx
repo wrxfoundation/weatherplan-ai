@@ -16,6 +16,7 @@ import PartnerLanding from './pages/partner/Landing'
 import PartnerApply from './pages/partner/Apply'
 import Login from './pages/Login'
 import Invest from './pages/Invest'
+import InvestDeck from './pages/InvestDeck'
 import OfficeDashboard from './pages/office/Dashboard'
 import OfficeLeads from './pages/office/Leads'
 import OfficeSettlement from './pages/office/Settlement'
@@ -95,6 +96,7 @@ export default function App() {
 
         {/* IR 원페이지 */}
         <Route path="/ir" element={<Invest />} />
+        <Route path="/ir/deck" element={<InvestDeck />} />
 
         {/* 데모 로그인 */}
         <Route path="/login" element={<Login />} />
