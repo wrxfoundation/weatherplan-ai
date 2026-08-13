@@ -5,6 +5,7 @@ import { Donut, MultiLineChart, WaterfallChart } from '@/components/charts'
 import { Pill } from '@/components/Pill'
 import { Icon } from '@/components/Icon'
 import { m5Demo as d } from '@/demo/generators/m5'
+import { TokenomicsSim } from './TokenomicsSim'
 
 export function M5Page() {
   return (
@@ -191,6 +192,8 @@ export function M5Page() {
           </div>
         </Card>
       </div>
+
+      <TokenomicsSim />
     </>
   )
 }
