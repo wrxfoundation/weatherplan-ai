@@ -131,7 +131,7 @@ export function AreaChart({ data, height = 150, color = '#3E6FE0', yTicks, xLabe
 }
 
 export function MultiLineChart({ seriesList, height = 170, yTicks, xLabels, yFmt, w = 860 }: {
-  seriesList: { data: number[]; color: string; dashed?: boolean }[]
+  seriesList: { data: number[]; color: string; dashed?: boolean; dots?: boolean }[]
   height?: number
   yTicks: number[]
   xLabels: string[]
@@ -162,12 +162,120 @@ export function MultiLineChart({ seriesList, height = 170, yTicks, xLabels, yFmt
           padL + (i / (s.data.length - 1)) * iw,
           padT + ih - ((Math.max(min, Math.min(max, v)) - min) / range) * ih,
         ] as const)
-        return <path key={si} d={smoothPath(pts)} fill="none" stroke={s.color} strokeWidth={1.7}
-          strokeLinecap="round" strokeDasharray={s.dashed ? '5 4' : undefined} />
+        return (
+          <g key={si}>
+            <path d={smoothPath(pts)} fill="none" stroke={s.color} strokeWidth={1.7}
+              strokeLinecap="round" strokeDasharray={s.dashed ? '5 4' : undefined} />
+            {s.dots && pts.map((p, i) => (
+              <circle key={i} cx={p[0]} cy={p[1]} r={2.6} fill="#FFFFFF" stroke={s.color} strokeWidth={1.6} />
+            ))}
+          </g>
+        )
       })}
       {xLabels.map((l, i) => (
         <text key={i} x={padL + (i / (xLabels.length - 1)) * iw} y={height - 4} textAnchor="middle" fontSize={10} fill="#8593AB" className="num">{l}</text>
       ))}
+    </svg>
+  )
+}
+
+export function BarChart({ data, xLabels, yTicks, height = 200, w = 620, yFmt, color = '#3E6FE0' }: {
+  data: number[]
+  xLabels: string[]
+  yTicks: number[]
+  height?: number
+  w?: number
+  yFmt?: (v: number) => string
+  color?: string
+}) {
+  const padL = 44
+  const padB = 20
+  const padT = 8
+  const min = Math.min(...yTicks)
+  const max = Math.max(...yTicks)
+  const range = max - min || 1
+  const iw = w - padL - 10
+  const ih = height - padT - padB
+  const slot = iw / data.length
+  const barW = Math.min(26, slot * 0.42)
+  return (
+    <svg viewBox={`0 0 ${w} ${height}`} className="w-full" aria-hidden>
+      {yTicks.map(t => {
+        const y = padT + ih - ((t - min) / range) * ih
+        return (
+          <g key={t}>
+            <line x1={padL} x2={w - 10} y1={y} y2={y} stroke="#EFF2F8" strokeWidth={1} />
+            <text x={padL - 6} y={y + 3.5} textAnchor="end" fontSize={10} fill="#8593AB" className="num">{yFmt ? yFmt(t) : t}</text>
+          </g>
+        )
+      })}
+      {data.map((v, i) => {
+        const h = ((v - min) / range) * ih
+        return <rect key={i} x={padL + slot * i + slot / 2 - barW / 2} y={padT + ih - h} width={barW} height={h} rx={4} fill={color} opacity={0.85} />
+      })}
+      {xLabels.map((l, i) => (
+        <text key={i} x={padL + slot * i + slot / 2} y={height - 4} textAnchor="middle" fontSize={10} fill="#8593AB" className="num">{l}</text>
+      ))}
+    </svg>
+  )
+}
+
+export type WaterfallStep = { label: string; value: number; kind: 'base' | 'delta' | 'total' }
+
+export function WaterfallChart({ steps, height = 210, w = 560, yTicks, yFmt, deltaFmt }: {
+  steps: WaterfallStep[]
+  height?: number
+  w?: number
+  yTicks: number[]
+  yFmt?: (v: number) => string
+  deltaFmt?: (v: number) => string
+}) {
+  const padL = 44
+  const padB = 20
+  const padT = 18
+  const min = Math.min(...yTicks)
+  const max = Math.max(...yTicks)
+  const range = max - min || 1
+  const iw = w - padL - 10
+  const ih = height - padT - padB
+  const slot = iw / steps.length
+  const barW = Math.min(46, slot * 0.56)
+  const yOf = (v: number) => padT + ih - ((v - min) / range) * ih
+  let cum = 0
+  return (
+    <svg viewBox={`0 0 ${w} ${height}`} className="w-full" aria-hidden>
+      {yTicks.map(t => (
+        <g key={t}>
+          <line x1={padL} x2={w - 10} y1={yOf(t)} y2={yOf(t)} stroke="#EFF2F8" strokeWidth={1} />
+          <text x={padL - 6} y={yOf(t) + 3.5} textAnchor="end" fontSize={10} fill="#8593AB" className="num">{yFmt ? yFmt(t) : t}</text>
+        </g>
+      ))}
+      {steps.map((s, i) => {
+        const x = padL + slot * i + slot / 2 - barW / 2
+        const cx = padL + slot * i + slot / 2
+        let top: number, bottom: number, fill: string, labelText: string
+        if (s.kind === 'base' || s.kind === 'total') {
+          top = yOf(s.value)
+          bottom = yOf(Math.max(min, 0))
+          fill = s.kind === 'base' ? '#C9D2E2' : '#3E6FE0'
+          labelText = yFmt ? yFmt(s.value) : String(s.value)
+          cum = s.value
+        } else {
+          const from = cum
+          cum += s.value
+          top = yOf(Math.max(from, cum))
+          bottom = yOf(Math.min(from, cum))
+          fill = s.value >= 0 ? '#5B8DEE' : '#E8768F'
+          labelText = deltaFmt ? deltaFmt(s.value) : String(s.value)
+        }
+        return (
+          <g key={i}>
+            <rect x={x} y={top} width={barW} height={Math.max(bottom - top, 2)} rx={4} fill={fill} />
+            <text x={cx} y={top - 6} textAnchor="middle" fontSize={10.5} fontWeight={600} fill="#3D4A63" className="num">{labelText}</text>
+            <text x={cx} y={height - 4} textAnchor="middle" fontSize={10} fill="#8593AB">{s.label}</text>
+          </g>
+        )
+      })}
     </svg>
   )
 }
@@ -223,12 +331,13 @@ export function BarLineChart({ bars, line, xLabels, yTicks, height = 200, yFmt }
   )
 }
 
-export function Donut({ segments, size = 150, thickness = 26, centerTop, centerBottom }: {
+export function Donut({ segments, size = 150, thickness = 26, centerTop, centerBottom, centerSub }: {
   segments: { value: number; color: string }[]
   size?: number
   thickness?: number
   centerTop?: string
   centerBottom?: string
+  centerSub?: string
 }) {
   const total = segments.reduce((a, s) => a + s.value, 0)
   const r = (size - thickness) / 2
@@ -249,8 +358,9 @@ export function Donut({ segments, size = 150, thickness = 26, centerTop, centerB
             strokeDasharray={dash} strokeDashoffset={offset} strokeLinecap="butt" />
         )
       })}
-      {centerTop && <text x={c} y={centerBottom ? c - 4 : c + 1} textAnchor="middle" fontSize={12} fill="#8593AB">{centerTop}</text>}
-      {centerBottom && <text x={c} y={c + 15} textAnchor="middle" fontSize={19} fontWeight={700} fill="#111C33" className="num">{centerBottom}</text>}
+      {centerTop && <text x={c} y={centerSub ? c - 15 : centerBottom ? c - 4 : c + 1} textAnchor="middle" fontSize={centerSub ? 10.5 : 12} letterSpacing={centerSub ? '0.08em' : undefined} fill="#8593AB">{centerTop}</text>}
+      {centerBottom && <text x={c} y={centerSub ? c + 4 : c + 15} textAnchor="middle" fontSize={centerSub ? 16.5 : 19} fontWeight={700} fill="#111C33" className="num">{centerBottom}</text>}
+      {centerSub && <text x={c} y={c + 21} textAnchor="middle" fontSize={10.5} fill="#8593AB">{centerSub}</text>}
     </svg>
   )
 }

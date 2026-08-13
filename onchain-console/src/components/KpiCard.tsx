@@ -5,7 +5,19 @@ import { FormulaTip } from './FormulaTip'
 
 const deltaTone = { ok: 'text-ok', bad: 'text-bad', navy: 'text-navy' } as const
 
-export function KpiCard({ icon, label, formula, value, unit, sub, delta, deltaLabel = 'vs 어제', spark, sparkColor = '#3E6FE0', footer }: {
+/** KPI 아이콘·스파크라인 색 톤 — 시안의 지표별 색 위계 */
+export const kpiTones = {
+  navy: { chip: 'bg-navy-soft text-navy', spark: '#3E6FE0' },
+  green: { chip: 'bg-ok-soft text-ok', spark: '#2FA870' },
+  purple: { chip: 'bg-[#F0EDFB] text-[#7059CE]', spark: '#8F7BE8' },
+  orange: { chip: 'bg-warn-soft text-warn', spark: '#E08A2E' },
+  teal: { chip: 'bg-[#E4F6F9] text-[#2E9AAC]', spark: '#3AB6C9' },
+  pink: { chip: 'bg-[#FCEBF2] text-[#D1568F]', spark: '#E0568F' },
+} as const
+
+export type KpiTone = keyof typeof kpiTones
+
+export function KpiCard({ icon, label, formula, value, unit, sub, delta, deltaLabel = 'vs 어제', spark, sparkColor, tone = 'navy', footer }: {
   icon: IconName | string
   label: ReactNode
   formula?: string
@@ -16,13 +28,14 @@ export function KpiCard({ icon, label, formula, value, unit, sub, delta, deltaLa
   deltaLabel?: string
   spark?: number[]
   sparkColor?: string
+  tone?: KpiTone
   footer?: ReactNode
 }) {
   return (
     <div className="rounded-card border border-line bg-panel p-4 shadow-card">
       <div className="flex items-center justify-between gap-1.5">
         <div className="flex min-w-0 items-center gap-1.5">
-          <span className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-lg bg-navy-soft text-navy">
+          <span className={`grid h-[26px] w-[26px] shrink-0 place-items-center rounded-lg ${kpiTones[tone].chip}`}>
             <Icon name={icon} size={14} />
           </span>
           <span className="truncate whitespace-nowrap text-[12.5px] font-medium leading-tight text-body">{label}</span>
@@ -40,7 +53,7 @@ export function KpiCard({ icon, label, formula, value, unit, sub, delta, deltaLa
             {delta && <b className={`font-semibold ${deltaTone[delta.tone]}`}>{delta.text}</b>}
             {delta && deltaLabel && <span className="text-mute"> {deltaLabel}</span>}
           </span>
-          {spark && <Sparkline data={spark} color={sparkColor} w={66} h={26} />}
+          {spark && <Sparkline data={spark} color={sparkColor ?? kpiTones[tone].spark} w={66} h={26} />}
         </div>
       )}
       {footer && <div className="mt-2.5">{footer}</div>}
