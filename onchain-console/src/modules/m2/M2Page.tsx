@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Card, CardHeader, GhostButton, FooterLinkButton } from '@/components/Card'
 import { KpiCard, ProgressBar } from '@/components/KpiCard'
 import { PageHeader, UpdatedMeta, DownloadButton } from '@/components/PageHeader'
@@ -6,6 +7,7 @@ import { AreaChart, Donut } from '@/components/charts'
 import { Icon } from '@/components/Icon'
 import { FormulaTip } from '@/components/FormulaTip'
 import { m2Demo as d } from '@/demo/generators/m2'
+import { TamperCalc } from './TamperCalc'
 
 function HashLink({ text }: { text: string }) {
   return (
@@ -140,6 +142,8 @@ export function M2Page() {
         </Card>
       </div>
 
+      <TamperCalc />
+
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[2.1fr_1fr]">
         <Card>
           <CardHeader title={<>최근 앵커 이력 <span className="font-medium text-mute">(XRPL Mainnet)</span></>} />
@@ -214,7 +218,7 @@ export function M2Page() {
             <li className="flex gap-2"><span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-navy" /><span><i>n</i> : 활성 관측소 수 (이상치 제거 후)</span></li>
           </ul>
           <div className="px-4 pb-4">
-            <FooterLinkButton>산식 및 방법론 보기 →</FooterLinkButton>
+            <Link to="/methodology"><FooterLinkButton>산식 및 방법론 보기 →</FooterLinkButton></Link>
           </div>
         </Card>
       </div>

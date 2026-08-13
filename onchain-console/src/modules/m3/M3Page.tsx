@@ -7,6 +7,7 @@ import { Pill } from '@/components/Pill'
 import { Icon } from '@/components/Icon'
 import { FormulaTip } from '@/components/FormulaTip'
 import { m3Demo as d } from '@/demo/generators/m3'
+import { X402Demo } from './X402Demo'
 
 function HashLink({ text }: { text: string }) {
   return (
@@ -56,6 +57,8 @@ export function M3Page() {
             delta={k.delta} spark={k.spark} />
         ))}
       </div>
+
+      <X402Demo />
 
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[1.5fr_1.55fr_1fr]">
         <Card>
