@@ -1,0 +1,197 @@
+import { useState } from 'react'
+import { Card, CardHeader, FooterLinkButton } from '@/components/Card'
+import { Pill } from '@/components/Pill'
+import { Icon } from '@/components/Icon'
+import { nodeMapDemo as d, NodeHub } from '@/demo/generators/m4'
+import { landDots } from '@/demo/worldDots'
+
+// 글로벌 노드 관리 맵 — 오픈맵 데이터(Natural Earth) 기반 도트 월드맵 + 거점 점 마커 + 라이브 티커.
+// 지도는 빌드 타임에 구운 정적 좌표(등장방형 투영)로 자체 렌더링 — 런타임 외부 지도 서비스 미사용.
+const fmt = (n: number) => n.toLocaleString('ko-KR')
+const W = 360
+const VB_Y = 16
+const VB_H = 130
+const px = (lon: number) => (lon + 180) / 360 * W
+const py = (lat: number) => 90 - lat
+
+const flag: Record<string, string> = { KR: '🇰🇷', JP: '🇯🇵', SG: '🇸🇬', GR: '🇬🇷', DE: '🇩🇪', GB: '🇬🇧', US: '🇺🇸', AU: '🇦🇺' }
+const toneOf = (u: number) => (u >= 98 ? 'ok' : u >= 95 ? 'warn' : 'bad') as 'ok' | 'warn' | 'bad'
+const toneColor = { ok: '#2FA870', warn: '#E0A63E', bad: '#E0574F' }
+const toneLabel = { ok: '정상', warn: '주의', bad: '점검 필요' }
+
+export function NodeMap() {
+  const [sel, setSel] = useState<NodeHub | null>(null)
+  const t = d.totals
+
+  return (
+    <Card className="mt-4">
+      <CardHeader
+        title={<>글로벌 노드 관리 맵 <span className="font-medium text-mute">(거점별)</span></>}
+        formula={'등록 디바이스의 글로벌 거점 분포·상태\n마커 크기 = 디바이스 수, 색 = 가동률(7D)'}
+        action={
+          <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-tiny text-mute">
+            <span className="num">{t.countries}개국 · {fmt(t.registered)}대</span>
+            <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-ok" /> ≥98%</span>
+            <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-amber" /> 95~98%</span>
+            <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-bad" /> &lt;95%</span>
+          </span>
+        }
+      />
+      <div className="grid grid-cols-1 gap-4 px-5 pb-4 xl:grid-cols-[1.7fr_1fr]">
+        <div className="min-w-0">
+          <svg viewBox={`0 ${VB_Y} ${W} ${VB_H}`} className="w-full rounded-lg border border-line-soft bg-bg/70" aria-label="글로벌 노드 분포 지도">
+            {landDots.map(([lon, lat], i) => (
+              <circle key={i} cx={px(lon)} cy={py(lat)} r={0.55} fill="#C3CCDC" />
+            ))}
+            {d.hubs.map(h => {
+              const tone = toneOf(h.uptime)
+              const r = 1.6 + Math.sqrt(h.count) / 22
+              const isSel = sel?.name === h.name
+              return (
+                <g key={h.name} className="cursor-pointer" onClick={() => setSel(isSel ? null : h)}>
+                  <circle cx={px(h.lon)} cy={py(h.lat)} r={r + 2.2} fill={toneColor[tone]} opacity={0.18} className="kw-pulse" />
+                  <circle cx={px(h.lon)} cy={py(h.lat)} r={r} fill={toneColor[tone]}
+                    stroke={isSel ? '#111C33' : '#FFFFFF'} strokeWidth={isSel ? 1 : 0.7} />
+                </g>
+              )
+            })}
+          </svg>
+
+          <div className="mt-2 overflow-hidden rounded-lg border border-line bg-[#0B1220]">
+            <div className="kw-ticker flex w-max items-center whitespace-nowrap py-1.5 font-mono text-[11.5px] text-[#B9C4DA]">
+              {[...d.ticker, ...d.ticker].map((m, i) => (
+                <span key={i} className="flex items-center">
+                  <span className="mx-3 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3FBF7F]" />
+                  <span className="num">{m}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="min-w-0">
+          {sel ? (
+            <div className="rounded-lg border border-line p-4">
+              <div className="flex items-center justify-between">
+                <span className="flex items-center gap-2 text-h3 text-ink">
+                  <span aria-hidden>{flag[sel.country]}</span> {sel.name}
+                  <Pill tone={toneOf(sel.uptime)}>{toneLabel[toneOf(sel.uptime)]}</Pill>
+                </span>
+                <button type="button" onClick={() => setSel(null)} className="text-tiny font-semibold text-mute hover:text-navy">전체 ✕</button>
+              </div>
+              <div className="num mt-2 flex items-baseline gap-1.5">
+                <b className="text-[25px] font-bold tracking-tight text-ink">{fmt(sel.count)}</b>
+                <span className="text-meta text-mute">대 등록 · 가동률 {sel.uptime.toFixed(1)}%</span>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {([['활성', sel.active, 'text-ok'], ['유휴', sel.idle, 'text-mute'],
+                  ['오프라인', sel.offline, 'text-bad'], ['점검 중', sel.maint, 'text-warn']] as const).map(([l, v, c]) => (
+                  <div key={l} className="rounded-lg border border-line-soft px-3 py-2">
+                    <span className="block text-tiny font-medium text-mute">{l}</span>
+                    <b className={`num text-[16px] font-bold ${c}`}>{fmt(v)}</b>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-line-soft">
+                <div className="flex h-full">
+                  <span className="bg-ok" style={{ width: `${(sel.active / sel.count) * 100}%` }} />
+                  <span className="bg-line" style={{ width: `${(sel.idle / sel.count) * 100}%` }} />
+                  <span className="bg-bad" style={{ width: `${(sel.offline / sel.count) * 100}%` }} />
+                  <span className="bg-amber" style={{ width: `${(sel.maint / sel.count) * 100}%` }} />
+                </div>
+              </div>
+              <p className="mt-2 text-tiny font-normal leading-relaxed text-mute">
+                전체 대비 {(sel.count / t.registered * 100).toFixed(1)}% · 오프라인 = 30분 이상 무응답
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-lg border border-line p-4">
+              <div className="text-h3 text-ink">글로벌 요약</div>
+              <div className="num mt-2 flex items-baseline gap-1.5">
+                <b className="text-[25px] font-bold tracking-tight text-ink">{fmt(t.registered)}</b>
+                <span className="text-meta text-mute">대 · {t.countries}개국 · 평균 가동률 {t.uptime}</span>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {([['활성', t.active, 'text-ok'], ['유휴', t.idle, 'text-mute'],
+                  ['오프라인', t.offline, 'text-bad'], ['점검 중', t.maint, 'text-warn']] as const).map(([l, v, c]) => (
+                  <div key={l} className="rounded-lg border border-line-soft px-3 py-2">
+                    <span className="block text-tiny font-medium text-mute">{l}</span>
+                    <b className={`num text-[16px] font-bold ${c}`}>{fmt(v)}</b>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-tiny font-normal leading-relaxed text-mute">
+                지도 마커를 클릭하면 거점 상세가 표시됩니다. 활성 12,842대는 상단 KPI·대시보드와 동일 집계입니다.
+              </p>
+            </div>
+          )}
+
+          <div className="mt-3 space-y-1.5">
+            {d.events.slice(0, 3).map(e => (
+              <div key={e.title} className="flex items-center gap-2.5 rounded-lg border border-line-soft px-3 py-2">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md text-white" style={{ background: e.color }}>
+                  <Icon name={e.icon} size={12} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-label font-semibold text-ink">{e.title}</span>
+                  <span className="block truncate text-tiny font-normal text-mute">{e.sub}</span>
+                </span>
+                <span className="shrink-0 text-tiny font-normal text-mute">{e.ago}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+export function NodeRegionTable() {
+  return (
+    <Card className="mt-4">
+      <CardHeader
+        title="거점별 관리 현황"
+        formula={'상태 = 가동률(7D) 구간\n오프라인 = 30분 이상 무응답'}
+        action={<span className="num text-meta text-mute">등록 {fmt(d.totals.registered)}대 · {d.hubs.length}개 거점</span>}
+      />
+      <div className="overflow-x-auto px-4">
+        <table className="w-full min-w-[720px]">
+          <thead>
+            <tr className="whitespace-nowrap border-b border-line text-left text-meta font-medium text-mute">
+              <th className="px-2 py-2 font-medium">거점</th>
+              <th className="px-2 py-2 text-right font-medium">등록</th>
+              <th className="px-2 py-2 text-right font-medium">활성</th>
+              <th className="px-2 py-2 text-right font-medium">유휴</th>
+              <th className="px-2 py-2 text-right font-medium">오프라인</th>
+              <th className="px-2 py-2 text-right font-medium">점검 중</th>
+              <th className="px-2 py-2 text-right font-medium">가동률 (7D)</th>
+              <th className="px-2 py-2 font-medium">상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            {d.hubs.map(h => {
+              const tone = toneOf(h.uptime)
+              return (
+                <tr key={h.name} className="whitespace-nowrap border-b border-line-soft last:border-0">
+                  <td className="px-2 py-2.5 text-label font-semibold text-ink">
+                    <span aria-hidden className="mr-1.5">{flag[h.country]}</span>{h.name}
+                  </td>
+                  <td className="num px-2 py-2.5 text-right text-label font-medium text-ink">{fmt(h.count)}</td>
+                  <td className="num px-2 py-2.5 text-right text-label text-body">{fmt(h.active)}</td>
+                  <td className="num px-2 py-2.5 text-right text-label text-body">{fmt(h.idle)}</td>
+                  <td className={`num px-2 py-2.5 text-right text-label font-semibold ${h.offline > 50 ? 'text-bad' : 'text-body'}`}>{fmt(h.offline)}</td>
+                  <td className="num px-2 py-2.5 text-right text-label text-body">{fmt(h.maint)}</td>
+                  <td className="num px-2 py-2.5 text-right text-label font-semibold text-ink">{h.uptime.toFixed(1)}%</td>
+                  <td className="px-2 py-2.5"><Pill tone={tone}>{toneLabel[tone]}</Pill></td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div className="px-4 pb-4 pt-3">
+        <FooterLinkButton>거점·디바이스 상세 관리 →</FooterLinkButton>
+      </div>
+    </Card>
+  )
+}

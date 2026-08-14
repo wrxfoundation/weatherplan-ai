@@ -6,6 +6,7 @@ import { Pill } from '@/components/Pill'
 import { Icon } from '@/components/Icon'
 import { FormulaTip } from '@/components/FormulaTip'
 import { m4Demo as d } from '@/demo/generators/m4'
+import { NodeMap, NodeRegionTable } from './NodeMap'
 
 export function M4Page() {
   return (
@@ -69,6 +70,9 @@ export function M4Page() {
           </div>
         </div>
       </Card>
+
+      <NodeMap />
+      <NodeRegionTable />
 
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[1.5fr_1.35fr_1fr]">
         <Card>

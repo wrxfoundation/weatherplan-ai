@@ -61,3 +61,54 @@ export const m4Demo = {
   ],
   fraudTotal: 15,
 }
+
+// 노드(공기질 디바이스) 글로벌 관리 맵 — 도트 월드맵 + 거점 마커용.
+// 등록 14,120 = 활성 12,842(KPI 정합) + 유휴 618 + 오프라인 412 + 점검 248.
+// 국내 4개 권역 12,480(권역 비중은 M4 보상 분포와 정합) + 해외 파일럿 거점 1,640.
+export type NodeHub = {
+  name: string
+  country: string
+  lat: number
+  lon: number
+  count: number
+  active: number
+  idle: number
+  offline: number
+  maint: number
+  uptime: number
+}
+
+export const nodeMapDemo = {
+  totals: { registered: 14120, active: 12842, idle: 618, offline: 412, maint: 248, uptime: '97.4%', countries: 8 },
+  hubs: [
+    { name: '서울·수도권', country: 'KR', lat: 37.55, lon: 126.98, count: 5301, active: 4892, idle: 232, offline: 84, maint: 93, uptime: 98.6 },
+    { name: '부산·영남권', country: 'KR', lat: 35.18, lon: 129.08, count: 3545, active: 3104, idle: 155, offline: 224, maint: 62, uptime: 94.8 },
+    { name: '광주·호남권', country: 'KR', lat: 35.16, lon: 126.85, count: 2333, active: 2153, idle: 102, offline: 37, maint: 41, uptime: 97.9 },
+    { name: '대전·충청·강원', country: 'KR', lat: 36.35, lon: 127.38, count: 1301, active: 1180, idle: 57, offline: 41, maint: 23, uptime: 96.7 },
+    { name: '도쿄', country: 'JP', lat: 35.68, lon: 139.69, count: 384, active: 354, idle: 17, offline: 6, maint: 7, uptime: 98.8 },
+    { name: '싱가포르', country: 'SG', lat: 1.35, lon: 103.82, count: 296, active: 273, idle: 13, offline: 5, maint: 5, uptime: 99.0 },
+    { name: '아테네', country: 'GR', lat: 37.98, lon: 23.73, count: 248, active: 229, idle: 11, offline: 4, maint: 4, uptime: 97.6 },
+    { name: '베를린', country: 'DE', lat: 52.52, lon: 13.4, count: 212, active: 196, idle: 9, offline: 3, maint: 4, uptime: 98.3 },
+    { name: '런던', country: 'GB', lat: 51.51, lon: -0.13, count: 185, active: 171, idle: 8, offline: 3, maint: 3, uptime: 98.1 },
+    { name: '뉴욕', country: 'US', lat: 40.71, lon: -74.01, count: 165, active: 152, idle: 7, offline: 3, maint: 3, uptime: 97.2 },
+    { name: '시드니', country: 'AU', lat: -33.87, lon: 151.21, count: 150, active: 138, idle: 7, offline: 2, maint: 3, uptime: 98.5 },
+  ] satisfies NodeHub[],
+  // 하단 티커 (라이브 피드 연출)
+  ticker: [
+    '서울·수도권 신규 설치 +12대',
+    '부산·영남권 오프라인 8대 복구 완료',
+    '도쿄 가동률 98.8% · 파일럿 안정 운영',
+    '펌웨어 v2.4.1 배포 1,240대 완료 (실패 0건)',
+    '아테네 WeatherXM 연계 248대 데이터 수신 정상',
+    '오늘 보상 지급 예정 8,214.3 RLUSD · 배치 09:00',
+    '싱가포르 가동률 99.0% 전 거점 최고',
+    '부정 탐지 큐 15건 검토 대기 (M4)',
+  ],
+  events: [
+    { icon: 'cpu', color: '#3E6FE0', title: '신규 설치 12대', sub: '경기 화성 산업단지 인근', ago: '2시간 전' },
+    { icon: 'refresh', color: '#8F7BE8', title: '펌웨어 v2.4.1 배포 완료', sub: '전 거점 1,240대 · 실패 0건', ago: '5시간 전' },
+    { icon: 'power', color: '#2FA870', title: '오프라인 복구 8대', sub: '부산 해운대 통신 장애 해소', ago: '어제' },
+    { icon: 'gauge', color: '#E08A2E', title: '센서 교정 점검', sub: '서울 마포 외 24대 정기 교정', ago: '어제' },
+    { icon: 'globe', color: '#3AB6C9', title: '시드니 파일럿 확장 +30대', sub: '남반구 계절 데이터 확보', ago: '2일 전' },
+  ],
+}

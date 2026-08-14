@@ -52,3 +52,11 @@
 - 모듈 화면 React.lazy 코드 스플릿(PRD §10 FCP), 모듈별 에러 바운더리(장애 고립).
 - KPI 카드 아이콘·스파크라인 색 톤 6종(navy·green·purple·orange·teal·pink) — 시안의 지표별 색 위계.
 - 차트 추가: 도트 멀티라인·막대 전용·현금흐름 워터폴·도넛 3줄 센터 라벨.
+
+## 2026-08-14 · 글로벌 노드 관리 맵 (M4)
+- 사용자 확인: 글로벌 프로젝트이므로 노드 맵은 전 지구 기준. 오픈맵 데이터(world-atlas ← Natural Earth)를
+  빌드 타임 스크립트(scripts/gen-worldmap.mjs)로 도트 좌표(src/demo/worldDots.ts)로 변환해 자체 SVG 렌더링.
+  world-atlas·topojson-client는 devDependency(데이터 생성 전용) — 런타임 외부 지도 서비스·라이브러리 없음 (PRD §2 예외 사유 기록).
+- 거점 마커(크기=디바이스 수, 색=가동률) + 클릭 상세 + 라이브 티커(호버 시 일시정지, reduced-motion 존중).
+- 수치 정합: 등록 14,120 = 활성 12,842(KPI·대시보드 동일) + 유휴 618 + 오프라인 412 + 점검 248.
+  국내 4개 권역 12,480(권역 비중은 M4 보상 분포와 동일) + 해외 파일럿 7거점 1,640(아테네 = WeatherXM 연계).

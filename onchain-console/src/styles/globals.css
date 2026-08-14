@@ -56,3 +56,19 @@
   border: 2px solid #3e6fe0;
   box-shadow: 0 1px 4px rgba(17, 28, 51, 0.18);
 }
+
+/* 글로벌 노드 맵 — 라이브 티커 & 마커 펄스 */
+@keyframes kw-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.kw-ticker { animation: kw-ticker 36s linear infinite; }
+.kw-ticker:hover { animation-play-state: paused; }
+@keyframes kw-pulse {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.32; }
+}
+.kw-pulse { animation: kw-pulse 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .kw-ticker, .kw-pulse { animation: none; }
+}
