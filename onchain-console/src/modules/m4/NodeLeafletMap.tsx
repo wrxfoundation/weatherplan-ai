@@ -21,8 +21,28 @@ export function NodeLeafletMap({ hubs, view, onSelect }: {
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const mapRef = useRef<L.Map | null>(null)
+  const clusterRef = useRef<any>(null)
   const onSelectRef = useRef(onSelect)
   onSelectRef.current = onSelect
+
+  const buildMarkers = (list: NodeHub[]) => {
+    const cluster = clusterRef.current
+    if (!cluster) return
+    cluster.clearLayers()
+    for (const h of list) {
+      const size = Math.round(13 + Math.sqrt(h.count) / 5.5)
+      const marker = L.marker([h.lat, h.lon], {
+        icon: L.divIcon({ className: `kw-node ${toneOf(h.uptime)}`, iconSize: [size, size] }),
+        ...({ count: h.count } as object),
+      })
+      marker.bindTooltip(
+        `<b>${h.name}</b> · ${h.count.toLocaleString('ko-KR')}대 · 가동률 ${h.uptime.toFixed(1)}%<br/><span style="opacity:.65">도시 중심점 근사 좌표 — 클릭 시 상세</span>`,
+        { direction: 'top', offset: [0, -6] },
+      )
+      marker.on('click', () => onSelectRef.current(h))
+      cluster.addLayer(marker)
+    }
+  }
 
   useEffect(() => {
     if (!ref.current || mapRef.current) return
@@ -42,25 +62,20 @@ export function NodeLeafletMap({ hubs, view, onSelect }: {
         })
       },
     })
-    for (const h of hubs) {
-      const size = Math.round(13 + Math.sqrt(h.count) / 5.5)
-      const marker = L.marker([h.lat, h.lon], {
-        icon: L.divIcon({ className: `kw-node ${toneOf(h.uptime)}`, iconSize: [size, size] }),
-        ...({ count: h.count } as object),
-      })
-      marker.bindTooltip(
-        `<b>${h.name}</b> · ${h.count.toLocaleString('ko-KR')}대 · 가동률 ${h.uptime.toFixed(1)}%<br/><span style="opacity:.65">도시 중심점 근사 좌표 — 클릭 시 상세</span>`,
-        { direction: 'top', offset: [0, -6] },
-      )
-      marker.on('click', () => onSelectRef.current(h))
-      cluster.addLayer(marker)
-    }
+    clusterRef.current = cluster
+    buildMarkers(hubs)
     map.addLayer(cluster)
     map.fitBounds(L.latLngBounds(hubs.map(h => [h.lat, h.lon] as [number, number])), { padding: [28, 28] })
     mapRef.current = map
-    return () => { map.remove(); mapRef.current = null }
+    return () => { map.remove(); mapRef.current = null; clusterRef.current = null }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // 필터 변경 시 마커 재구성 (dcmap FilterBar 패턴 — 뷰 이동 없이 마커만 갱신)
+  useEffect(() => {
+    buildMarkers(hubs)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hubs])
 
   useEffect(() => {
     const map = mapRef.current

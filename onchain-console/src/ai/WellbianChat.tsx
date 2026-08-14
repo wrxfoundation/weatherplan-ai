@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Icon } from '@/components/Icon'
 import { Pill } from '@/components/Pill'
-import { knowledge, suggestions, fallback } from './wellbianKnowledge'
+import { knowledge, suggestions, fallback, briefFor } from './wellbianKnowledge'
 
 // wellbian AI — 우측 하단 플로팅 챗봇 (dcmap AiAssistant 포인트 흡수).
 // 데모: 규칙 기반 응답(콘솔 수치와 정합). 라이브: EF 경유 Claude API로 교체 예정.
@@ -25,6 +25,7 @@ function answerFor(q: string): Msg {
 }
 
 export function WellbianChat() {
+  const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const [msgs, setMsgs] = useState<Msg[]>([HELLO])
   const [input, setInput] = useState('')
@@ -36,6 +37,16 @@ export function WellbianChat() {
   useEffect(() => {
     if (listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight
   }, [msgs, typing, open])
+
+  const brief = () => {
+    if (typing) return
+    setMsgs(prev => [...prev, { role: 'user', text: '이 화면 브리핑해줘' }])
+    setTyping(true)
+    timer.current = window.setTimeout(() => {
+      setMsgs(prev => [...prev, { role: 'ai', text: briefFor(pathname) }])
+      setTyping(false)
+    }, 650)
+  }
 
   const ask = (q: string) => {
     const text = q.trim()
@@ -107,6 +118,10 @@ export function WellbianChat() {
 
           <form className="flex items-center gap-2 border-t border-line px-3 py-2.5"
             onSubmit={e => { e.preventDefault(); ask(input) }}>
+            <button type="button" onClick={brief} title="현재 화면 AI 브리핑" aria-label="현재 화면 AI 브리핑"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-line text-body transition-colors hover:border-navy/50 hover:text-navy">
+              <Icon name="doc" size={15} />
+            </button>
             <input value={input} onChange={e => setInput(e.target.value)} placeholder="콘솔에 대해 물어보세요…"
               className="min-w-0 flex-1 rounded-lg border border-line px-3 py-2 text-label text-ink outline-none placeholder:text-mute focus:border-navy/50" />
             <button type="submit" disabled={!input.trim() || typing} aria-label="전송"

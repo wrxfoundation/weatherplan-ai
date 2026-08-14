@@ -137,10 +137,27 @@ function TopBar({ onHelp }: { onHelp: () => void }) {
   )
 }
 
+// 맨 위로 (dcmap ScrollTopFab 포인트) — 긴 관제 화면용, 챗 FAB 왼쪽
+function ScrollTopFab() {
+  const [show, setShow] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 600)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  if (!show) return null
+  return (
+    <button type="button" aria-label="맨 위로" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      className="fixed bottom-5 right-[84px] z-30 grid h-10 w-10 place-items-center rounded-full border border-line bg-panel text-body shadow-lg transition-colors hover:border-navy/50 hover:text-navy">
+      <Icon name="chevronDown" size={16} className="rotate-180" />
+    </button>
+  )
+}
+
 function Footer() {
   return (
     <footer className="mt-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-line px-4 py-4 text-meta text-mute sm:justify-between sm:px-6">
-      <span>KWeather On-Chain Console</span>
+      <span>KWeather On-Chain Console <span className="num text-mute/80">· 데이터 기준 2026-08-14 · 데모 v1.2</span></span>
       <span>© 2026 KWeather Inc. All rights reserved.</span>
       <span className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
         <Link to="/methodology" className="hover:text-navy hover:underline">산식·방법론</Link>
@@ -171,6 +188,7 @@ export function Layout({ children }: { children: ReactNode }) {
       </div>
       <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} />
       <WellbianChat />
+      <ScrollTopFab />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Card, CardHeader } from '@/components/Card'
 import { Pill } from '@/components/Pill'
 import { Icon } from '@/components/Icon'
@@ -13,10 +13,10 @@ const flag: Record<string, string> = { KR: '🇰🇷', JP: '🇯🇵', SG: '🇸
 const toneOf = (u: number) => (u >= 98 ? 'ok' : u >= 95 ? 'warn' : 'bad') as 'ok' | 'warn' | 'bad'
 const toneLabel = { ok: '정상', warn: '주의', bad: '점검 필요' }
 
-export function NodeMap() {
+export function NodeMap({ hubs = d.hubs, filterBar }: { hubs?: NodeHub[]; filterBar?: ReactNode } = {}) {
   const [sel, setSel] = useState<NodeHub | null>(null)
   const [view, setView] = useState<'world' | 'kr'>('world')
-  const krHubs = d.hubs.filter(h => h.country === 'KR')
+  const krHubs = hubs.filter(h => h.country === 'KR')
   const krCount = krHubs.reduce((a, h) => a + h.count, 0)
   const t = d.totals
 
@@ -36,7 +36,7 @@ export function NodeMap() {
       />
       <div className="grid grid-cols-1 gap-4 px-5 pb-4 xl:grid-cols-[1.7fr_1fr]">
         <div className="min-w-0">
-          <div className="mb-2 flex items-center justify-between gap-2">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
             <div className="flex overflow-hidden rounded-lg border border-line">
               {(['world', 'kr'] as const).map(v => (
                 <button key={v} type="button" onClick={() => setView(v)}
@@ -46,11 +46,12 @@ export function NodeMap() {
                 </button>
               ))}
             </div>
-            <span className="num text-tiny font-normal text-mute">
-              {view === 'world' ? `휠 줌·드래그 가능 · 클러스터 클릭 시 확대` : `국내 ${krHubs.length}개 도시 · ${fmt(krCount)}대`}
+            {filterBar}
+            <span className="num hidden text-tiny font-normal text-mute md:block">
+              {view === 'world' ? `휠 줌·드래그 · 클러스터 클릭 시 확대` : `국내 ${krHubs.length}개 도시 · ${fmt(krCount)}대`}
             </span>
           </div>
-          <NodeLeafletMap hubs={d.hubs} view={view} onSelect={h => setSel(cur => (cur?.name === h.name ? null : h))} />
+          <NodeLeafletMap hubs={hubs} view={view} onSelect={h => setSel(cur => (cur?.name === h.name ? null : h))} />
 
           <div className="mt-2 overflow-hidden rounded-lg border border-line bg-[#0B1220]">
             <div className="kw-ticker flex w-max items-center whitespace-nowrap py-1.5 font-mono text-[11.5px] text-[#B9C4DA]">
@@ -204,18 +205,23 @@ export function IntegrityRewardStrip() {
   )
 }
 
-export function NodeRegionTable() {
+export function NodeRegionTable({ rows = d.hubs, compare = [], onToggleCompare }: {
+  rows?: NodeHub[]
+  compare?: string[]
+  onToggleCompare?: (name: string) => void
+} = {}) {
   return (
     <Card className="mt-4">
       <CardHeader
         title="거점별 관리 현황"
         formula={'상태 = 가동률(7D) 구간 · 정결성 = 검증 통과 데이터 비율\n보상(7D)은 활성 대수·품질 점수 비례 배분'}
-        action={<span className="num text-meta text-mute">등록 {fmt(d.totals.registered)}대 · {d.hubs.length}개 거점</span>}
+        action={<span className="num text-meta text-mute">표시 {rows.length}개 거점 · 비교 최대 3개</span>}
       />
       <div className="overflow-x-auto px-4">
         <table className="w-full min-w-[900px]">
           <thead>
             <tr className="whitespace-nowrap border-b border-line text-left text-meta font-medium text-mute">
+              <th className="px-2 py-2 font-medium">비교</th>
               <th className="px-2 py-2 font-medium">거점</th>
               <th className="px-2 py-2 text-right font-medium">등록</th>
               <th className="px-2 py-2 text-right font-medium">활성</th>
@@ -228,10 +234,20 @@ export function NodeRegionTable() {
             </tr>
           </thead>
           <tbody>
-            {d.hubs.map(h => {
+            {rows.map(h => {
               const tone = toneOf(h.uptime)
+              const checked = compare.includes(h.name)
               return (
-                <tr key={h.name} className="whitespace-nowrap border-b border-line-soft last:border-0">
+                <tr key={h.name} className={`whitespace-nowrap border-b border-line-soft last:border-0 ${checked ? 'bg-navy-tint/60' : ''}`}>
+                  <td className="px-2 py-2.5">
+                    <button type="button" aria-label={`${h.name} 비교 ${checked ? '해제' : '추가'}`}
+                      onClick={() => onToggleCompare?.(h.name)}
+                      disabled={!checked && compare.length >= 3}
+                      className={`grid h-[18px] w-[18px] place-items-center rounded border text-[11px] font-bold transition-colors ${
+                        checked ? 'border-navy bg-navy text-white' : compare.length >= 3 ? 'cursor-not-allowed border-line text-line' : 'border-line text-transparent hover:border-navy/50'}`}>
+                      ✓
+                    </button>
+                  </td>
                   <td className="px-2 py-2.5 text-label font-semibold text-ink">
                     <span aria-hidden className="mr-1.5">{flag[h.country]}</span>{h.name}
                   </td>
@@ -256,5 +272,82 @@ export function NodeRegionTable() {
         <button type="button" className="text-meta font-medium text-navy hover:underline">거점·디바이스 상세 관리 →</button>
       </div>
     </Card>
+  )
+}
+
+
+// 비교 트레이 (dcmap CompareTray 포인트) — 최대 3개 도시를 나란히 비교
+function CompareTray({ hubs, onRemove, onClear }: {
+  hubs: NodeHub[]
+  onRemove: (name: string) => void
+  onClear: () => void
+}) {
+  if (hubs.length === 0) return null
+  return (
+    <div className="fixed bottom-4 left-1/2 z-20 w-[min(860px,calc(100vw-32px))] -translate-x-1/2 rounded-2xl border border-line bg-panel shadow-2xl">
+      <div className="flex items-center justify-between border-b border-line px-4 py-2">
+        <span className="text-label font-bold text-ink">거점 비교 <span className="num font-semibold text-mute">({hubs.length}/3)</span></span>
+        <button type="button" onClick={onClear} className="text-meta font-semibold text-mute hover:text-bad">모두 지우기 ✕</button>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[640px]">
+          <tbody>
+            {([
+              ['거점', (h: NodeHub) => <span className="font-semibold text-ink">{flag[h.country]} {h.name} <button type="button" onClick={() => onRemove(h.name)} className="ml-1 text-mute hover:text-bad">✕</button></span>],
+              ['등록 / 활성', (h: NodeHub) => <span className="num">{fmt(h.count)} / {fmt(h.active)}</span>],
+              ['가동률 (7D)', (h: NodeHub) => <b className={`num font-bold ${toneOf(h.uptime) === 'ok' ? 'text-ok' : toneOf(h.uptime) === 'warn' ? 'text-warn' : 'text-bad'}`}>{h.uptime.toFixed(1)}%</b>],
+              ['데이터 정결성', (h: NodeHub) => <span className="num font-semibold text-ink">{h.purity.toFixed(1)}%</span>],
+              ['오프라인', (h: NodeHub) => <span className={`num font-semibold ${h.offline > 50 ? 'text-bad' : 'text-body'}`}>{fmt(h.offline)}대</span>],
+              ['보상 (7D)', (h: NodeHub) => <span className="num">{h.reward7d.toLocaleString('ko-KR', { maximumFractionDigits: 1 })} RLUSD <span className="text-navy">≈ {h.rewardXrp.toLocaleString('ko-KR', { maximumFractionDigits: 1 })} XRP</span></span>],
+            ] as [string, (h: NodeHub) => ReactNode][]).map(([label, cell]) => (
+              <tr key={label} className="whitespace-nowrap border-b border-line-soft last:border-0">
+                <td className="w-[110px] px-4 py-2 text-meta font-medium text-mute">{label}</td>
+                {hubs.map(h => <td key={h.name} className="px-3 py-2 text-label text-body">{cell(h)}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+// 노드 섹션 통합 — 필터 상태를 지도·테이블이 공유 (dcmap FilterBar 패턴)
+export function NodesSection() {
+  const [status, setStatus] = useState<'all' | 'ok' | 'warn' | 'bad'>('all')
+  const [region, setRegion] = useState<'all' | 'kr' | 'global'>('all')
+  const [compare, setCompare] = useState<string[]>([])
+
+  const filtered = d.hubs.filter(h =>
+    (status === 'all' || toneOf(h.uptime) === status) &&
+    (region === 'all' || (region === 'kr' ? h.country === 'KR' : h.country !== 'KR')))
+
+  const toggleCompare = (name: string) =>
+    setCompare(prev => prev.includes(name) ? prev.filter(n => n !== name) : prev.length >= 3 ? prev : [...prev, name])
+
+  const chip = (active: boolean, disabled = false) =>
+    `rounded-full border px-2.5 py-1 text-tiny font-semibold transition-colors ${
+      active ? 'border-navy bg-navy text-white' : disabled ? 'border-line text-line' : 'border-line text-body hover:border-navy/40'}`
+
+  const filterBar = (
+    <span className="flex flex-wrap items-center gap-1">
+      {([['all', '전체'], ['ok', '정상'], ['warn', '주의'], ['bad', '점검']] as const).map(([v, l]) => (
+        <button key={v} type="button" onClick={() => setStatus(v)} className={chip(status === v)}>{l}</button>
+      ))}
+      <span className="mx-1 h-4 w-px bg-line" />
+      {([['all', '전 지역'], ['kr', '국내'], ['global', '해외']] as const).map(([v, l]) => (
+        <button key={v} type="button" onClick={() => setRegion(v)} className={chip(region === v)}>{l}</button>
+      ))}
+    </span>
+  )
+
+  return (
+    <>
+      <NodeMap hubs={filtered} filterBar={filterBar} />
+      <IntegrityRewardStrip />
+      <NodeRegionTable rows={filtered} compare={compare} onToggleCompare={toggleCompare} />
+      <CompareTray hubs={d.hubs.filter(h => compare.includes(h.name))}
+        onRemove={toggleCompare} onClear={() => setCompare([])} />
+    </>
   )
 }

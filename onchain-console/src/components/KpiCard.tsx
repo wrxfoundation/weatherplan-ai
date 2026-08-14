@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import { Icon, IconName } from './Icon'
 import { Sparkline } from './charts'
+import { SpringNumber } from './SpringNumber'
 import { FormulaTip } from './FormulaTip'
 
 const deltaTone = { ok: 'text-ok', bad: 'text-bad', navy: 'text-navy' } as const
@@ -43,7 +44,7 @@ export function KpiCard({ icon, label, formula, value, unit, sub, delta, deltaLa
         {formula && <FormulaTip formula={formula} />}
       </div>
       <div className="mt-2.5 flex items-baseline gap-1.5">
-        <span className="num text-display text-ink">{value}</span>
+        <span className="num text-display text-ink">{typeof value === 'string' ? <SpringNumber text={value} /> : value}</span>
         {unit && <span className="text-h3 text-mute">{unit}</span>}
       </div>
       {sub && <div className="mt-0.5 text-meta text-mute">{sub}</div>}
