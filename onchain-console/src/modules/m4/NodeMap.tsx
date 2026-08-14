@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, CardHeader, FooterLinkButton } from '@/components/Card'
+import { Card, CardHeader } from '@/components/Card'
 import { Pill } from '@/components/Pill'
 import { Icon } from '@/components/Icon'
 import { nodeMapDemo as d, NodeHub } from '@/demo/generators/m4'
@@ -146,25 +146,89 @@ export function NodeMap() {
   )
 }
 
+// 데이터 정결성 & 보상 제공량 — 검증 품질과 지급량(XRP 병기)을 한 스트립에서 표시
+export function IntegrityRewardStrip() {
+  const t = d.totals
+  const todayXrp = (8214.3 / t.xrpRate).toLocaleString('ko-KR', { maximumFractionDigits: 1 })
+  return (
+    <Card className="mt-4">
+      <div className="grid grid-cols-1 divide-y divide-line xl:grid-cols-2 xl:divide-x xl:divide-y-0">
+        <div className="px-5 py-4">
+          <div className="flex items-center justify-between gap-2">
+            <span className="flex items-center gap-2 text-label font-semibold text-ink">
+              <span className="grid h-7 w-7 place-items-center rounded-lg bg-ok-soft text-ok"><Icon name="audit" size={14} /></span>
+              데이터 정결성 (7D)
+            </span>
+            <Pill tone="ok">무결성 해시 정상</Pill>
+          </div>
+          <div className="mt-3 grid grid-cols-3 gap-2.5">
+            {([
+              ['유효 데이터 비율', t.purity, 0.992, 'bg-ok'],
+              ['검증 통과율', t.validPass, 0.984, 'bg-navy'],
+              ['이상치 제거', t.outlierCut, 0.016, 'bg-bad'],
+            ] as const).map(([l, v, r, c]) => (
+              <div key={l} className="rounded-lg border border-line-soft px-3 py-2.5">
+                <span className="block text-tiny font-medium text-mute">{l}</span>
+                <b className="num text-[17px] font-bold text-ink">{v}</b>
+                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-line-soft">
+                  <div className={`h-full rounded-full ${c}`} style={{ width: `${r * 100}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-2.5 text-tiny font-normal leading-relaxed text-mute">
+            검증 = 3σ 이상치 제거 · 인근 센서 교차대조 · 위치 검증 · 무결성 해시(일 1회 XRPL 기록). 검증 통과 데이터만 보상 대상입니다.
+          </p>
+        </div>
+        <div className="px-5 py-4">
+          <div className="flex items-center justify-between gap-2">
+            <span className="flex items-center gap-2 text-label font-semibold text-ink">
+              <span className="grid h-7 w-7 place-items-center rounded-lg bg-navy-soft text-navy"><Icon name="coins" size={14} /></span>
+              보상 제공량
+            </span>
+            <span className="num text-tiny font-normal text-mute">1 XRP = ${t.xrpRate.toFixed(2)} (데모 환산)</span>
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-2.5">
+            <div className="rounded-lg border border-line-soft px-3 py-2.5">
+              <span className="block text-tiny font-medium text-mute">오늘 지급 예정</span>
+              <b className="num block text-[17px] font-bold text-ink">8,214.3 <span className="text-[12px] font-semibold text-mute">RLUSD</span></b>
+              <span className="num block text-meta font-semibold text-navy">≈ {todayXrp} XRP</span>
+            </div>
+            <div className="rounded-lg border border-line-soft px-3 py-2.5">
+              <span className="block text-tiny font-medium text-mute">최근 7일 지급 실적</span>
+              <b className="num block text-[17px] font-bold text-ink">{t.reward7dRlusd.toLocaleString('ko-KR', { maximumFractionDigits: 1 })} <span className="text-[12px] font-semibold text-mute">RLUSD</span></b>
+              <span className="num block text-meta font-semibold text-navy">≈ {t.reward7dXrp.toLocaleString('ko-KR', { maximumFractionDigits: 1 })} XRP</span>
+            </div>
+          </div>
+          <p className="mt-2.5 text-tiny font-normal leading-relaxed text-mute">
+            지급 통화는 RLUSD(XRPL)이며, XRP 환산량은 참고용 병기입니다. 상단 KPI·대시보드 지급액과 동일 집계입니다.
+          </p>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
 export function NodeRegionTable() {
   return (
     <Card className="mt-4">
       <CardHeader
         title="거점별 관리 현황"
-        formula={'상태 = 가동률(7D) 구간\n오프라인 = 30분 이상 무응답'}
+        formula={'상태 = 가동률(7D) 구간 · 정결성 = 검증 통과 데이터 비율\n보상(7D)은 활성 대수·품질 점수 비례 배분'}
         action={<span className="num text-meta text-mute">등록 {fmt(d.totals.registered)}대 · {d.hubs.length}개 거점</span>}
       />
       <div className="overflow-x-auto px-4">
-        <table className="w-full min-w-[720px]">
+        <table className="w-full min-w-[900px]">
           <thead>
             <tr className="whitespace-nowrap border-b border-line text-left text-meta font-medium text-mute">
               <th className="px-2 py-2 font-medium">거점</th>
               <th className="px-2 py-2 text-right font-medium">등록</th>
               <th className="px-2 py-2 text-right font-medium">활성</th>
-              <th className="px-2 py-2 text-right font-medium">유휴</th>
               <th className="px-2 py-2 text-right font-medium">오프라인</th>
-              <th className="px-2 py-2 text-right font-medium">점검 중</th>
               <th className="px-2 py-2 text-right font-medium">가동률 (7D)</th>
+              <th className="px-2 py-2 text-right font-medium">데이터 정결성</th>
+              <th className="px-2 py-2 text-right font-medium">보상 (7D, RLUSD)</th>
+              <th className="px-2 py-2 text-right font-medium">≈ XRP</th>
               <th className="px-2 py-2 font-medium">상태</th>
             </tr>
           </thead>
@@ -178,10 +242,11 @@ export function NodeRegionTable() {
                   </td>
                   <td className="num px-2 py-2.5 text-right text-label font-medium text-ink">{fmt(h.count)}</td>
                   <td className="num px-2 py-2.5 text-right text-label text-body">{fmt(h.active)}</td>
-                  <td className="num px-2 py-2.5 text-right text-label text-body">{fmt(h.idle)}</td>
                   <td className={`num px-2 py-2.5 text-right text-label font-semibold ${h.offline > 50 ? 'text-bad' : 'text-body'}`}>{fmt(h.offline)}</td>
-                  <td className="num px-2 py-2.5 text-right text-label text-body">{fmt(h.maint)}</td>
                   <td className="num px-2 py-2.5 text-right text-label font-semibold text-ink">{h.uptime.toFixed(1)}%</td>
+                  <td className={`num px-2 py-2.5 text-right text-label font-semibold ${h.purity >= 99 ? 'text-ok' : h.purity >= 98 ? 'text-ink' : 'text-warn'}`}>{h.purity.toFixed(1)}%</td>
+                  <td className="num px-2 py-2.5 text-right text-label font-semibold text-ink">{h.reward7d.toLocaleString('ko-KR', { maximumFractionDigits: 1 })}</td>
+                  <td className="num px-2 py-2.5 text-right text-label font-medium text-navy">{h.rewardXrp.toLocaleString('ko-KR', { maximumFractionDigits: 1 })}</td>
                   <td className="px-2 py-2.5"><Pill tone={tone}>{toneLabel[tone]}</Pill></td>
                 </tr>
               )
@@ -189,8 +254,11 @@ export function NodeRegionTable() {
           </tbody>
         </table>
       </div>
-      <div className="px-4 pb-4 pt-3">
-        <FooterLinkButton>거점·디바이스 상세 관리 →</FooterLinkButton>
+      <div className="flex flex-wrap items-center justify-between gap-2 px-6 pb-4 pt-3">
+        <span className="num text-tiny font-normal text-mute">
+          합계 보상(7D) {d.totals.reward7dRlusd.toLocaleString('ko-KR', { maximumFractionDigits: 1 })} RLUSD ≈ {d.totals.reward7dXrp.toLocaleString('ko-KR', { maximumFractionDigits: 1 })} XRP · 1 XRP = ${d.totals.xrpRate.toFixed(2)} (데모 환산)
+        </span>
+        <button type="button" className="text-meta font-medium text-navy hover:underline">거점·디바이스 상세 관리 →</button>
       </div>
     </Card>
   )

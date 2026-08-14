@@ -8,7 +8,7 @@ export const registryDemo = {
   kpis: [
     { icon: 'wallet', tone: 'navy' as const, label: '총 등록 지갑', value: '18', sub: '운영 14 · 보조 4', formula: 'count(wallets)\n자사 지갑만 — M1(24)은 관찰 대상 전체' },
     { icon: 'dollar', tone: 'green' as const, label: '총 보유 잔액 (RLUSD)', value: '$1,564,581.85', sub: '≈ 1,564,582 RLUSD', formula: 'sum(balance) where currency=RLUSD\n(1 RLUSD ≈ 1 USD 페그)' },
-    { icon: 'snow', tone: 'purple' as const, label: '총 보유 잔액 (XRP)', value: '12,450.92', unit: 'XRP', sub: '≈ $7,832.10', formula: 'sum(balance) where currency=XRP\n리저브·수수료 운용분' },
+    { icon: 'snow', tone: 'purple' as const, label: '총 보유 잔액 (XRP)', value: '12,450.92', unit: 'XRP', sub: '≈ $39,220.40 (1 XRP = $3.15 데모 환산)', formula: 'sum(balance) where currency=XRP\n리저브·수수료 운용분' },
     { icon: 'inbound', tone: 'teal' as const, label: '24시간 수신 (RLUSD)', value: '$3,247.90', delta: { text: '+18.6%', tone: 'ok' as const }, deltaLabel: '', spark: series(191, 14, 2.4, 3.3, 0.3), formula: 'sum(in) 24h — 데이터 상점·파트너 입금' },
     { icon: 'outbound', tone: 'orange' as const, label: '24시간 지출 (RLUSD)', value: '$8,214.30', delta: { text: '−6.7%', tone: 'bad' as const }, deltaLabel: '', spark: series(192, 14, 9.2, 8.2, 0.4), formula: 'sum(out) 24h — DePIN 보상 배치 포함\n(M4 오늘 지급과 동일)' },
     { icon: 'audit', tone: 'green' as const, label: '지갑 상태 정상', value: '16', sub: '88.9%', formula: 'count(status=정상) / 총 등록 지갑' },

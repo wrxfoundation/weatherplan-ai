@@ -76,22 +76,25 @@ export type NodeHub = {
   offline: number
   maint: number
   uptime: number
+  purity: number
+  reward7d: number
+  rewardXrp: number
 }
 
 export const nodeMapDemo = {
-  totals: { registered: 14120, active: 12842, idle: 618, offline: 412, maint: 248, uptime: '97.4%', countries: 8 },
+  totals: { registered: 14120, active: 12842, idle: 618, offline: 412, maint: 248, uptime: '97.4%', countries: 8, purity: '99.2%', validPass: '98.4%', outlierCut: '1.6%', reward7dRlusd: 57842.6, reward7dXrp: 18362.7, xrpRate: 3.15 },
   hubs: [
-    { name: '서울·수도권', country: 'KR', lat: 37.55, lon: 126.98, count: 5301, active: 4892, idle: 232, offline: 84, maint: 93, uptime: 98.6 },
-    { name: '부산·영남권', country: 'KR', lat: 35.18, lon: 129.08, count: 3545, active: 3104, idle: 155, offline: 224, maint: 62, uptime: 94.8 },
-    { name: '광주·호남권', country: 'KR', lat: 35.16, lon: 126.85, count: 2333, active: 2153, idle: 102, offline: 37, maint: 41, uptime: 97.9 },
-    { name: '대전·충청·강원', country: 'KR', lat: 36.35, lon: 127.38, count: 1301, active: 1180, idle: 57, offline: 41, maint: 23, uptime: 96.7 },
-    { name: '도쿄', country: 'JP', lat: 35.68, lon: 139.69, count: 384, active: 354, idle: 17, offline: 6, maint: 7, uptime: 98.8 },
-    { name: '싱가포르', country: 'SG', lat: 1.35, lon: 103.82, count: 296, active: 273, idle: 13, offline: 5, maint: 5, uptime: 99.0 },
-    { name: '아테네', country: 'GR', lat: 37.98, lon: 23.73, count: 248, active: 229, idle: 11, offline: 4, maint: 4, uptime: 97.6 },
-    { name: '베를린', country: 'DE', lat: 52.52, lon: 13.4, count: 212, active: 196, idle: 9, offline: 3, maint: 4, uptime: 98.3 },
-    { name: '런던', country: 'GB', lat: 51.51, lon: -0.13, count: 185, active: 171, idle: 8, offline: 3, maint: 3, uptime: 98.1 },
-    { name: '뉴욕', country: 'US', lat: 40.71, lon: -74.01, count: 165, active: 152, idle: 7, offline: 3, maint: 3, uptime: 97.2 },
-    { name: '시드니', country: 'AU', lat: -33.87, lon: 151.21, count: 150, active: 138, idle: 7, offline: 2, maint: 3, uptime: 98.5 },
+    { name: '서울·수도권', country: 'KR', lat: 37.55, lon: 126.98, count: 5301, active: 4892, idle: 232, offline: 84, maint: 93, uptime: 98.6, purity: 99.4, reward7d: 22034.4, rewardXrp: 6995.0 },
+    { name: '부산·영남권', country: 'KR', lat: 35.18, lon: 129.08, count: 3545, active: 3104, idle: 155, offline: 224, maint: 62, uptime: 94.8, purity: 97.8, reward7d: 13981.0, rewardXrp: 4438.4 },
+    { name: '광주·호남권', country: 'KR', lat: 35.16, lon: 126.85, count: 2333, active: 2153, idle: 102, offline: 37, maint: 41, uptime: 97.9, purity: 99.1, reward7d: 9697.5, rewardXrp: 3078.6 },
+    { name: '대전·충청·강원', country: 'KR', lat: 36.35, lon: 127.38, count: 1301, active: 1180, idle: 57, offline: 41, maint: 23, uptime: 96.7, purity: 98.6, reward7d: 5314.9, rewardXrp: 1687.3 },
+    { name: '도쿄', country: 'JP', lat: 35.68, lon: 139.69, count: 384, active: 354, idle: 17, offline: 6, maint: 7, uptime: 98.8, purity: 99.5, reward7d: 1594.5, rewardXrp: 506.2 },
+    { name: '싱가포르', country: 'SG', lat: 1.35, lon: 103.82, count: 296, active: 273, idle: 13, offline: 5, maint: 5, uptime: 99.0, purity: 99.6, reward7d: 1229.6, rewardXrp: 390.3 },
+    { name: '아테네', country: 'GR', lat: 37.98, lon: 23.73, count: 248, active: 229, idle: 11, offline: 4, maint: 4, uptime: 97.6, purity: 98.9, reward7d: 1031.5, rewardXrp: 327.5 },
+    { name: '베를린', country: 'DE', lat: 52.52, lon: 13.4, count: 212, active: 196, idle: 9, offline: 3, maint: 4, uptime: 98.3, purity: 99.3, reward7d: 882.8, rewardXrp: 280.3 },
+    { name: '런던', country: 'GB', lat: 51.51, lon: -0.13, count: 185, active: 171, idle: 8, offline: 3, maint: 3, uptime: 98.1, purity: 99.2, reward7d: 770.2, rewardXrp: 244.5 },
+    { name: '뉴욕', country: 'US', lat: 40.71, lon: -74.01, count: 165, active: 152, idle: 7, offline: 3, maint: 3, uptime: 97.2, purity: 98.7, reward7d: 684.6, rewardXrp: 217.3 },
+    { name: '시드니', country: 'AU', lat: -33.87, lon: 151.21, count: 150, active: 138, idle: 7, offline: 2, maint: 3, uptime: 98.5, purity: 99.4, reward7d: 621.6, rewardXrp: 197.3 },
   ] satisfies NodeHub[],
   // 하단 티커 (라이브 피드 연출)
   ticker: [
