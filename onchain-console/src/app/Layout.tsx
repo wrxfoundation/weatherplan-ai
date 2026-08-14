@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { Icon, IconName } from '@/components/Icon'
 import { HelpDrawer } from '@/components/HelpDrawer'
+import { WellbianChat } from '@/ai/WellbianChat'
 
 const modules: { to: string; icon: IconName | string; label: string }[] = [
   { to: '/m1', icon: 'wallet', label: 'M1 활성 지갑' },
@@ -169,6 +170,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <Footer />
       </div>
       <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} />
+      <WellbianChat />
     </div>
   )
 }
