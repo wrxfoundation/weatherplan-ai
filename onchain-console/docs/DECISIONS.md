@@ -60,3 +60,14 @@
 - 거점 마커(크기=디바이스 수, 색=가동률) + 클릭 상세 + 라이브 티커(호버 시 일시정지, reduced-motion 존중).
 - 수치 정합: 등록 14,120 = 활성 12,842(KPI·대시보드 동일) + 유휴 618 + 오프라인 412 + 점검 248.
   국내 4개 권역 12,480(권역 비중은 M4 보상 분포와 동일) + 해외 파일럿 7거점 1,640(아테네 = WeatherXM 연계).
+
+## 2026-08-14 · dcmap 지도 스택 흡수 (M4 노드 맵 교체)
+- 사용자 제공 dcmap(명당 AI) 소스의 검증된 지도 스택을 채택: **Leaflet + CARTO 무료 타일
+  (light_all, 키 불요) + leaflet.markercluster + CSS divIcon 마커**. 자체 SVG 도트맵을 대체.
+- 흡수 포인트: ① 근사 좌표(도시 중심점)는 점선 링으로 정직 표기(dcmap 'approx' 패턴)
+  ② 클러스터 아이콘에 하위 노드 합계 대수 표시 ③ 상태색 마커(점검 필요는 펄스)
+  ④ OSM·CARTO 어트리뷰션 준수. 줌·드래그·클러스터 확대는 Leaflet 기본 UX.
+- PRD §2 "외부 차트 라이브러리 금지"는 차트에 대한 규정이며, 지도는 사용자 지시로
+  dcmap 스택을 채택(런타임 의존성 leaflet·leaflet.markercluster 추가).
+  타일은 사용자 브라우저가 CARTO CDN에서 직접 로드 — 서버·키·비용 없음.
+- 기존 도트맵 산출물(worldDots.ts·gen-worldmap.mjs·world-atlas devDeps) 제거.
