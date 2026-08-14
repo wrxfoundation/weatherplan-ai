@@ -3,7 +3,7 @@ import { Card, CardHeader } from '@/components/Card'
 import { Pill } from '@/components/Pill'
 import { Icon } from '@/components/Icon'
 import { nodeMapDemo as d, NodeHub } from '@/demo/generators/m4'
-import { landDots } from '@/demo/worldDots'
+import { landDots, koreaDots } from '@/demo/worldDots'
 
 // 글로벌 노드 관리 맵 — 오픈맵 데이터(Natural Earth) 기반 도트 월드맵 + 거점 점 마커 + 라이브 티커.
 // 지도는 빌드 타임에 구운 정적 좌표(등장방형 투영)로 자체 렌더링 — 런타임 외부 지도 서비스 미사용.
@@ -21,13 +21,17 @@ const toneLabel = { ok: '정상', warn: '주의', bad: '점검 필요' }
 
 export function NodeMap() {
   const [sel, setSel] = useState<NodeHub | null>(null)
+  const [view, setView] = useState<'world' | 'kr'>('world')
+  const krHubs = d.hubs.filter(h => h.country === 'KR')
+  const glHubs = d.hubs.filter(h => h.country !== 'KR')
+  const krCount = krHubs.reduce((a, h) => a + h.count, 0)
   const t = d.totals
 
   return (
     <Card className="mt-4">
       <CardHeader
-        title={<>글로벌 노드 관리 맵 <span className="font-medium text-mute">(거점별)</span></>}
-        formula={'등록 디바이스의 글로벌 거점 분포·상태\n마커 크기 = 디바이스 수, 색 = 가동률(7D)'}
+        title={<>글로벌 노드 관리 맵 <span className="font-medium text-mute">(도시별)</span></>}
+        formula={'등록 디바이스의 도시별 분포·상태\n마커 크기 = 디바이스 수, 색 = 가동률(7D)'}
         action={
           <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-tiny text-mute">
             <span className="num">{t.countries}개국 · {fmt(t.registered)}대</span>
@@ -39,23 +43,76 @@ export function NodeMap() {
       />
       <div className="grid grid-cols-1 gap-4 px-5 pb-4 xl:grid-cols-[1.7fr_1fr]">
         <div className="min-w-0">
-          <svg viewBox={`0 ${VB_Y} ${W} ${VB_H}`} className="w-full rounded-lg border border-line-soft bg-bg/70" aria-label="글로벌 노드 분포 지도">
-            {landDots.map(([lon, lat], i) => (
-              <circle key={i} cx={px(lon)} cy={py(lat)} r={0.55} fill="#C3CCDC" />
-            ))}
-            {d.hubs.map(h => {
-              const tone = toneOf(h.uptime)
-              const r = 1.6 + Math.sqrt(h.count) / 22
-              const isSel = sel?.name === h.name
-              return (
-                <g key={h.name} className="cursor-pointer" onClick={() => setSel(isSel ? null : h)}>
-                  <circle cx={px(h.lon)} cy={py(h.lat)} r={r + 2.2} fill={toneColor[tone]} opacity={0.18} className="kw-pulse" />
-                  <circle cx={px(h.lon)} cy={py(h.lat)} r={r} fill={toneColor[tone]}
-                    stroke={isSel ? '#111C33' : '#FFFFFF'} strokeWidth={isSel ? 1 : 0.7} />
-                </g>
-              )
-            })}
-          </svg>
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <div className="flex overflow-hidden rounded-lg border border-line">
+              {(['world', 'kr'] as const).map(v => (
+                <button key={v} type="button" onClick={() => setView(v)}
+                  className={`px-3 py-1 text-meta font-semibold transition-colors ${
+                    view === v ? 'bg-navy-soft text-navy-deep' : 'text-mute hover:text-body'}`}>
+                  {v === 'world' ? '전 세계' : '한국 (도시별)'}
+                </button>
+              ))}
+            </div>
+            <span className="num text-tiny font-normal text-mute">
+              {view === 'world' ? `한국 ${krHubs.length}개 도시는 [한국] 뷰에서 확대됩니다` : `국내 ${krHubs.length}개 도시 · ${fmt(krCount)}대`}
+            </span>
+          </div>
+          {view === 'world' ? (
+            <svg viewBox={`0 ${VB_Y} ${W} ${VB_H}`} className="w-full rounded-lg border border-line-soft bg-bg/70" aria-label="글로벌 노드 분포 지도">
+              {landDots.map(([lon, lat], i) => (
+                <circle key={i} cx={px(lon)} cy={py(lat)} r={0.55} fill="#C3CCDC" />
+              ))}
+              {glHubs.map(h => {
+                const tone = toneOf(h.uptime)
+                const r = 1.6 + Math.sqrt(h.count) / 22
+                const isSel = sel?.name === h.name
+                return (
+                  <g key={h.name} className="cursor-pointer" onClick={() => setSel(isSel ? null : h)}>
+                    <title>{h.name} · {fmt(h.count)}대</title>
+                    <circle cx={px(h.lon)} cy={py(h.lat)} r={r + 2.2} fill={toneColor[tone]} opacity={0.18} className="kw-pulse" />
+                    <circle cx={px(h.lon)} cy={py(h.lat)} r={r} fill={toneColor[tone]}
+                      stroke={isSel ? '#111C33' : '#FFFFFF'} strokeWidth={isSel ? 1 : 0.7} />
+                  </g>
+                )
+              })}
+              <g className="cursor-pointer" onClick={() => setView('kr')}>
+                <title>대한민국 {krHubs.length}개 도시 · {fmt(krCount)}대 — 클릭하여 확대</title>
+                <circle cx={px(127.6)} cy={py(36.3)} r={9} fill="#3E6FE0" opacity={0.16} className="kw-pulse" />
+                <circle cx={px(127.6)} cy={py(36.3)} r={6.2} fill="#3E6FE0" stroke="#FFFFFF" strokeWidth={0.8} />
+                <text x={px(127.6)} y={py(36.3) + 1.3} textAnchor="middle" fontSize={3.4} fontWeight={700} fill="#FFFFFF">KR</text>
+              </g>
+            </svg>
+          ) : (
+            <svg viewBox={`${px(124.2)} ${py(38.95)} ${px(130.7) - px(124.2)} ${py(32.95) - py(38.95)}`}
+              className="w-full rounded-lg border border-line-soft bg-bg/70" aria-label="한국 도시별 노드 분포 지도">
+              {koreaDots.map(([lon, lat], i) => (
+                <circle key={i} cx={px(lon)} cy={py(lat)} r={0.062} fill="#C3CCDC" />
+              ))}
+              {krHubs.map(h => {
+                const tone = toneOf(h.uptime)
+                const r = 0.07 + Math.sqrt(h.count) / 640
+                const isSel = sel?.name === h.name
+                // 밀집 지역(수도권·동남권) 라벨 겹침 방지용 배치
+                const lp = ({
+                  서울: { dy: -0.2, end: false }, 성남: { dy: 0.06, end: false },
+                  수원: { dy: 0.3, end: true }, 인천: { dy: -0.06, end: true },
+                  창원: { dy: 0.12, end: true }, 부산: { dy: 0.02, end: false },
+                  울산: { dy: -0.12, end: false }, 광주: { dy: 0.02, end: true },
+                } as Record<string, { dy: number; end: boolean }>)[h.name] ?? { dy: 0.02, end: false }
+                return (
+                  <g key={h.name} className="cursor-pointer" onClick={() => setSel(isSel ? null : h)}>
+                    <title>{h.name} · {fmt(h.count)}대 · 가동률 {h.uptime.toFixed(1)}%</title>
+                    <circle cx={px(h.lon)} cy={py(h.lat)} r={r + 0.09} fill={toneColor[tone]} opacity={0.18} className="kw-pulse" />
+                    <circle cx={px(h.lon)} cy={py(h.lat)} r={r} fill={toneColor[tone]}
+                      stroke={isSel ? '#111C33' : '#FFFFFF'} strokeWidth={isSel ? 0.045 : 0.028} />
+                    <text x={px(h.lon) + (lp.end ? -(r + 0.1) : r + 0.1)} y={py(h.lat) + lp.dy + 0.07}
+                      textAnchor={lp.end ? 'end' : 'start'} fontSize={0.22}
+                      fontWeight={isSel ? 700 : 500} fill={isSel ? '#111C33' : '#3D4A63'}>{h.name}</text>
+                  </g>
+                )
+              })}
+            </svg>
+          )}
 
           <div className="mt-2 overflow-hidden rounded-lg border border-line bg-[#0B1220]">
             <div className="kw-ticker flex w-max items-center whitespace-nowrap py-1.5 font-mono text-[11.5px] text-[#B9C4DA]">

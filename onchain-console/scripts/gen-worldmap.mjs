@@ -40,3 +40,30 @@ export const landDots: [number, number][] = ${JSON.stringify(dots)}
 `
 writeFileSync('src/demo/worldDots.ts', out)
 console.log('dots:', dots.length)
+
+// 한국 확대 뷰용 고해상 도트 (land-50m, 0.22° 간격)
+const topo50 = JSON.parse(readFileSync('node_modules/world-atlas/land-50m.json', 'utf8'))
+const land50 = feature(topo50, topo50.objects.land)
+const geoms50 = (land50.features ?? [land50]).map(f => f.geometry)
+function inLand50(lon, lat) {
+  for (const g of geoms50) {
+    const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates
+    for (const poly of polys) {
+      let inside = false
+      for (const ring of poly) if (inRing(lon, lat, ring)) inside = !inside
+      if (inside) return true
+    }
+  }
+  return false
+}
+const KSTEP = 0.22
+const kdots = []
+for (let lat = 38.9; lat > 33.0; lat -= KSTEP) {
+  for (let lon = 124.4; lon < 130.6; lon += KSTEP) {
+    if (inLand50(lon, lat)) kdots.push([+lon.toFixed(2), +lat.toFixed(2)])
+  }
+}
+writeFileSync('src/demo/worldDots.ts',
+  readFileSync('src/demo/worldDots.ts', 'utf8') +
+  `\n// 한국 확대 뷰 (land-50m · ${KSTEP}° 간격, ${kdots.length}점)\nexport const koreaDots: [number, number][] = ${JSON.stringify(kdots)}\n`)
+console.log('korea dots:', kdots.length)

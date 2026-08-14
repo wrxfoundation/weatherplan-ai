@@ -25,10 +25,11 @@ export const m4Demo = {
   regions: {
     total: '8,214.3',
     segments: [
-      { label: '수도권', pct: '42.5%', text: '3,491.1 RLUSD', value: 3491, color: '#3E6FE0' },
-      { label: '영남권', pct: '28.4%', text: '2,332.9 RLUSD', value: 2333, color: '#8F7BE8' },
-      { label: '호남권', pct: '18.7%', text: '1,536.1 RLUSD', value: 1536, color: '#2FA870' },
-      { label: '충청·강원', pct: '10.4%', text: '854.2 RLUSD', value: 854, color: '#5BC8D8' },
+      { label: '서울', pct: '27.2%', text: '2,235.1 RLUSD', value: 2235, color: '#3E6FE0' },
+      { label: '부산', pct: '8.4%', text: '688.8 RLUSD', value: 689, color: '#8F7BE8' },
+      { label: '수원', pct: '7.2%', text: '587.6 RLUSD', value: 588, color: '#2FA870' },
+      { label: '대구', pct: '6.3%', text: '518.9 RLUSD', value: 519, color: '#5BC8D8' },
+      { label: '기타 18개 도시', pct: '50.9%', text: '4,183.9 RLUSD', value: 4184, color: '#C9D2E2' },
     ],
   },
   batches: [
@@ -64,7 +65,7 @@ export const m4Demo = {
 
 // 노드(공기질 디바이스) 글로벌 관리 맵 — 도트 월드맵 + 거점 마커용.
 // 등록 14,120 = 활성 12,842(KPI 정합) + 유휴 618 + 오프라인 412 + 점검 248.
-// 국내 4개 권역 12,480(권역 비중은 M4 보상 분포와 정합) + 해외 파일럿 거점 1,640.
+// 국내 15개 도시 12,480 + 해외 파일럿 7개 도시 1,640 (도시 단위 관리).
 export type NodeHub = {
   name: string
   country: string
@@ -84,22 +85,33 @@ export type NodeHub = {
 export const nodeMapDemo = {
   totals: { registered: 14120, active: 12842, idle: 618, offline: 412, maint: 248, uptime: '97.4%', countries: 8, purity: '99.2%', validPass: '98.4%', outlierCut: '1.6%', reward7dRlusd: 57842.6, reward7dXrp: 18362.7, xrpRate: 3.15 },
   hubs: [
-    { name: '서울·수도권', country: 'KR', lat: 37.55, lon: 126.98, count: 5301, active: 4892, idle: 232, offline: 84, maint: 93, uptime: 98.6, purity: 99.4, reward7d: 22034.4, rewardXrp: 6995.0 },
-    { name: '부산·영남권', country: 'KR', lat: 35.18, lon: 129.08, count: 3545, active: 3104, idle: 155, offline: 224, maint: 62, uptime: 94.8, purity: 97.8, reward7d: 13981.0, rewardXrp: 4438.4 },
-    { name: '광주·호남권', country: 'KR', lat: 35.16, lon: 126.85, count: 2333, active: 2153, idle: 102, offline: 37, maint: 41, uptime: 97.9, purity: 99.1, reward7d: 9697.5, rewardXrp: 3078.6 },
-    { name: '대전·충청·강원', country: 'KR', lat: 36.35, lon: 127.38, count: 1301, active: 1180, idle: 57, offline: 41, maint: 23, uptime: 96.7, purity: 98.6, reward7d: 5314.9, rewardXrp: 1687.3 },
-    { name: '도쿄', country: 'JP', lat: 35.68, lon: 139.69, count: 384, active: 354, idle: 17, offline: 6, maint: 7, uptime: 98.8, purity: 99.5, reward7d: 1594.5, rewardXrp: 506.2 },
-    { name: '싱가포르', country: 'SG', lat: 1.35, lon: 103.82, count: 296, active: 273, idle: 13, offline: 5, maint: 5, uptime: 99.0, purity: 99.6, reward7d: 1229.6, rewardXrp: 390.3 },
-    { name: '아테네', country: 'GR', lat: 37.98, lon: 23.73, count: 248, active: 229, idle: 11, offline: 4, maint: 4, uptime: 97.6, purity: 98.9, reward7d: 1031.5, rewardXrp: 327.5 },
-    { name: '베를린', country: 'DE', lat: 52.52, lon: 13.4, count: 212, active: 196, idle: 9, offline: 3, maint: 4, uptime: 98.3, purity: 99.3, reward7d: 882.8, rewardXrp: 280.3 },
-    { name: '런던', country: 'GB', lat: 51.51, lon: -0.13, count: 185, active: 171, idle: 8, offline: 3, maint: 3, uptime: 98.1, purity: 99.2, reward7d: 770.2, rewardXrp: 244.5 },
-    { name: '뉴욕', country: 'US', lat: 40.71, lon: -74.01, count: 165, active: 152, idle: 7, offline: 3, maint: 3, uptime: 97.2, purity: 98.7, reward7d: 684.6, rewardXrp: 217.3 },
-    { name: '시드니', country: 'AU', lat: -33.87, lon: 151.21, count: 150, active: 138, idle: 7, offline: 2, maint: 3, uptime: 98.5, purity: 99.4, reward7d: 621.6, rewardXrp: 197.3 },
+    { name: '서울', country: 'KR', lat: 37.57, lon: 126.98, count: 3842, active: 3523, idle: 168, offline: 84, maint: 67, uptime: 98.9, purity: 99.4, reward7d: 15868.2, rewardXrp: 5037.5 },
+    { name: '수원', country: 'KR', lat: 37.26, lon: 127.03, count: 1010, active: 926, idle: 44, offline: 22, maint: 18, uptime: 98.4, purity: 99.2, reward7d: 4170.9, rewardXrp: 1324.1 },
+    { name: '성남', country: 'KR', lat: 37.42, lon: 127.13, count: 806, active: 739, idle: 35, offline: 18, maint: 14, uptime: 98.5, purity: 99.3, reward7d: 3328.6, rewardXrp: 1056.7 },
+    { name: '인천', country: 'KR', lat: 37.46, lon: 126.71, count: 704, active: 646, idle: 31, offline: 15, maint: 12, uptime: 98.1, purity: 99.0, reward7d: 2909.7, rewardXrp: 923.7 },
+    { name: '부산', country: 'KR', lat: 35.18, lon: 129.08, count: 1184, active: 1007, idle: 52, offline: 104, maint: 21, uptime: 94.2, purity: 97.8, reward7d: 4535.7, rewardXrp: 1439.9 },
+    { name: '대구', country: 'KR', lat: 35.87, lon: 128.6, count: 892, active: 817, idle: 39, offline: 20, maint: 16, uptime: 97.8, purity: 99.0, reward7d: 3679.9, rewardXrp: 1168.2 },
+    { name: '창원', country: 'KR', lat: 35.23, lon: 128.68, count: 646, active: 579, idle: 28, offline: 28, maint: 11, uptime: 96.9, purity: 98.4, reward7d: 2607.9, rewardXrp: 827.9 },
+    { name: '울산', country: 'KR', lat: 35.54, lon: 129.31, count: 421, active: 387, idle: 18, offline: 9, maint: 7, uptime: 97.2, purity: 98.6, reward7d: 1743.1, rewardXrp: 553.4 },
+    { name: '광주', country: 'KR', lat: 35.16, lon: 126.85, count: 612, active: 561, idle: 27, offline: 13, maint: 11, uptime: 98.2, purity: 99.2, reward7d: 2526.8, rewardXrp: 802.2 },
+    { name: '전주', country: 'KR', lat: 35.82, lon: 127.15, count: 508, active: 466, idle: 22, offline: 11, maint: 9, uptime: 97.7, purity: 99.0, reward7d: 2098.9, rewardXrp: 666.3 },
+    { name: '제주', country: 'KR', lat: 33.5, lon: 126.53, count: 588, active: 539, idle: 26, offline: 13, maint: 10, uptime: 98.8, purity: 99.5, reward7d: 2427.7, rewardXrp: 770.7 },
+    { name: '대전', country: 'KR', lat: 36.35, lon: 127.38, count: 412, active: 378, idle: 18, offline: 9, maint: 7, uptime: 98.0, purity: 99.1, reward7d: 1702.6, rewardXrp: 540.5 },
+    { name: '청주', country: 'KR', lat: 36.64, lon: 127.49, count: 289, active: 265, idle: 13, offline: 6, maint: 5, uptime: 97.3, purity: 98.8, reward7d: 1193.6, rewardXrp: 378.9 },
+    { name: '천안', country: 'KR', lat: 36.82, lon: 127.11, count: 342, active: 313, idle: 15, offline: 8, maint: 6, uptime: 96.8, purity: 98.3, reward7d: 1409.8, rewardXrp: 447.6 },
+    { name: '강릉', country: 'KR', lat: 37.75, lon: 128.9, count: 224, active: 195, idle: 10, offline: 15, maint: 4, uptime: 95.8, purity: 98.0, reward7d: 878.3, rewardXrp: 278.8 },
+    { name: '도쿄', country: 'JP', lat: 35.68, lon: 139.69, count: 384, active: 352, idle: 17, offline: 8, maint: 7, uptime: 98.8, purity: 99.5, reward7d: 1585.5, rewardXrp: 503.3 },
+    { name: '싱가포르', country: 'SG', lat: 1.35, lon: 103.82, count: 296, active: 272, idle: 13, offline: 6, maint: 5, uptime: 99.0, purity: 99.6, reward7d: 1225.1, rewardXrp: 388.9 },
+    { name: '아테네', country: 'GR', lat: 37.98, lon: 23.73, count: 248, active: 228, idle: 11, offline: 5, maint: 4, uptime: 97.6, purity: 98.9, reward7d: 1027.0, rewardXrp: 326.0 },
+    { name: '베를린', country: 'DE', lat: 52.52, lon: 13.4, count: 212, active: 194, idle: 9, offline: 5, maint: 4, uptime: 98.3, purity: 99.3, reward7d: 873.8, rewardXrp: 277.4 },
+    { name: '런던', country: 'GB', lat: 51.51, lon: -0.13, count: 185, active: 170, idle: 8, offline: 4, maint: 3, uptime: 98.1, purity: 99.2, reward7d: 765.7, rewardXrp: 243.1 },
+    { name: '뉴욕', country: 'US', lat: 40.71, lon: -74.01, count: 165, active: 151, idle: 7, offline: 4, maint: 3, uptime: 97.2, purity: 98.7, reward7d: 680.1, rewardXrp: 215.9 },
+    { name: '시드니', country: 'AU', lat: -33.87, lon: 151.21, count: 150, active: 134, idle: 7, offline: 5, maint: 4, uptime: 98.5, purity: 99.4, reward7d: 603.7, rewardXrp: 191.7 },
   ] satisfies NodeHub[],
   // 하단 티커 (라이브 피드 연출)
   ticker: [
-    '서울·수도권 신규 설치 +12대',
-    '부산·영남권 오프라인 8대 복구 완료',
+    '서울 신규 설치 +12대',
+    '부산 오프라인 8대 복구 완료',
     '도쿄 가동률 98.8% · 파일럿 안정 운영',
     '펌웨어 v2.4.1 배포 1,240대 완료 (실패 0건)',
     '아테네 WeatherXM 연계 248대 데이터 수신 정상',
