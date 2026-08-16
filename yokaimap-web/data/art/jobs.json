@@ -2,7 +2,7 @@
   "direction": "minhwa-v2",
   "generated_at": "2026-08-16",
   "provider": "higgsfield / recraft_v4_1 (2k, standard) · 팔레트·배경색 파라미터 강제",
-  "note": "v1(minhwa-v1) 시안은 한국화 재료·한복 고증이 프롬프트에 없어 동아시아 평균값으로 떨어질 여지가 컸다. v2는 한복·한옥·경물 앵커를 강제하고 일본·중국 시각 마커를 명시 배제한 재생성분이다. 검수는 docs/ART_REVIEW.md 체크리스트로 하고, 통과 전에는 art.status를 final로 올리지 않는다. 생성은 완료됐으나 생성 세션의 egress 정책이 CDN 호스트를 차단해 리포 반입은 scripts/fetch-art.mjs로 분리했다.",
+  "note": "시드 120체 전부의 도판을 minhwa-v2로 생성한 매니페스트다. 빌드(scripts/build-data.mjs)가 이 파일에서 art.status를 계산하므로, review.result를 pass로 올리기 전에는 사이트에 도판이 나오지 않고 인장 폴백으로 떨어진다. 검수는 docs/ART_REVIEW.md 체크리스트로 한다. 이미지 파일 반입은 CDN 접근이 되는 환경에서 node scripts/fetch-art.mjs로 실행한다 — 생성 세션의 egress 정책이 CDN 호스트를 차단했다.",
   "review_checklist": "docs/ART_REVIEW.md",
   "items": [
     {

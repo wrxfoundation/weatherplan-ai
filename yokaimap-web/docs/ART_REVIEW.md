@@ -70,6 +70,46 @@
 | 도깨비에 뿔이 남 | `art_hint` 자체에 뿔 서술 | `art_hint`에서 뿔 제거 + "hornless" 명시 |
 | 색이 형광·금박 | 팔레트 미적용 | 생성 요청에 `colors`/`background_color` 파라미터 전달 확인 |
 | 배경이 일본식 신사 | 경물 앵커 부재 | `landscape` 앵커(서낭당·장승·솟대) 추가 |
+| 여성 개체에 갓·바지 | 분류 앵커가 개체와 어긋남 | 개체에 `art_anchors` 지정(분류 기본값을 이긴다) |
+| 불꽃·그림자 컷에 사람이 낌 | 앵커·수식어가 인물을 단정 | `art_anchors`에서 복식 제거 + `art_hint`에 "no figure" |
+
+## 개체별로 직접 배제해야 하는 일본·중국 도상
+
+분류 배제문만으로는 안 잡히고, 해당 개체에서만 강하게 끌려가는 것들이다.
+120체를 돌리며 실제로 걸렸거나 걸릴 자리였던 목록.
+
+| 개체 | 끌려가는 도상 | 배제문 |
+|---|---|---|
+| 묘귀 | 마네키네코, 두 꼬리 바케네코 | `no maneki-neko`, `no two-tailed bakeneko` |
+| 노구화호·여우누이 | 이나리 신사 기쓰네 | `no kitsune shrine fox statue` |
+| 삽살개 | 고마이누, 중국 사자 | `no komainu`, `no Chinese temple guardian lions` |
+| 해태 | 공을 밟은 중국 사자 | `no Chinese temple guardian lion with a ball under its paw` |
+| 빗자루·절굿공이 | 쓰쿠모가미(외눈·혀) | `no tsukumogami with a single eye and tongue` |
+| 짚신 도깨비 | 게타·조리 | `no geta or zori sandal` |
+| 물귀신·물도깨비 | 갓파 | `no kappa with a head dish` |
+| 사천왕·야차 | 니오(인왕) | `no nio temple guardian` |
+| 마을미륵·성모천왕 | 지장보살 턱받이·뜨개모자 | `no jizo bib or red cap` |
+| 빨간마스크 | 구치사케온나 가위 | `no kuchisake-onna scissors` |
+| 분신사바 | 콧쿠리상 | `no kokkuri-san board` |
+| 화장실귀신 | 하나코상 | `no Hanako-san imagery` |
+| 손돌·신직끼 | 가나가와 파도, 중국 정크 돛 | `no great wave woodblock motif`, `no junk sail with battens` |
+| 임경업 | 사무라이 갑주·투구 | `no samurai armour or kabuto helmet` |
+| 영산·삼승할망 | 무녀(미코) 붉은 하카마 | `no miko red hakama` |
+| 달걀귀신 | 놋페라보 | `no noppera-bo` |
+| 선녀 | 덴뇨 하고로모 | `no tennyo hagoromo` |
+
+## 생성 운영 메모
+
+- **실패는 대부분 내용 문제가 아니다.** 12건 동시 제출은 공급자 rate limit(429)에 걸려
+  절반이 실패한다. **6건 단위로 제출한다.** 같은 프롬프트가 재시도에서 그대로 성공하면
+  프롬프트를 고치지 말고 배치 크기를 줄일 것.
+- **NSFW 오탐**이 있다. "stone mother goddess"(성모천왕), "bathing"(선녀)이 걸렸다.
+  도감 도판이므로 서사를 잃지 않는 선에서 표현을 바꾼다 —
+  "carved granite statue of an elderly goddess in Korean robes",
+  "standing fully dressed at the edge of a mountain pool".
+  인물 컷에는 `fully clothed`, 유혈 소재에는 `no gore and no blood`를 미리 넣어 둔다.
+- 생성 결과 URL은 만료될 수 있다. 리포 반입은 `node scripts/fetch-art.mjs`로,
+  CDN 접근이 되는 환경에서 되도록 빨리 실행한다.
 
 ## 통과 기록
 
@@ -80,3 +120,13 @@
 ```
 
 `result: reject`이면 `reason`에 걸린 체크 항목 번호를 적고 재생성한다.
+
+빌드는 이 기록에서 `art.status`를 계산한다(`scripts/build-data.mjs`).
+시드의 `art.status`를 손으로 올려도 무시된다 — 매니페스트에 없는 그림을
+있다고 주장하는 레코드가 배포되는 경로를 막기 위해서다.
+
+| 매니페스트 상태 | `art.status` | `art.file` | 화면 |
+|---|---|---|---|
+| `review.result: pass` | `final` | `/img/yokai/…png` | 도판 |
+| 생성됨, 검수 전 | `generated` | `null` | 인장 폴백 |
+| 없음 | `pending` | `null` | 인장 폴백 |
