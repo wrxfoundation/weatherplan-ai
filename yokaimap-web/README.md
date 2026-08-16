@@ -15,6 +15,12 @@ yokai.jp의 4축 구조(도감·지도·진단·다국어 SEO)를 한국 자료 
 4. **실존 신앙을 존중한다.** `sensitivity` 필드로 표시하고 상세페이지에 고지한다.
 5. **없는 값을 만들지 않는다.** 날씨 API가 없으면 없다고 표시하고, 리드 저장소가 없으면 접수 성공을 가장하지 않는다.
 
+## 배포
+
+Vercel. **Root Directory를 `yokaimap-web`으로 설정**해야 한다(리포 루트는 다른 앱이다).
+`VITE_SITE_ORIGIN`은 빌드 시점에 프리렌더 156페이지의 canonical에 구워지므로
+**도메인을 먼저 정하고 넣은 뒤 배포한다.** 전체 절차: **[DEPLOY.md](./DEPLOY.md)**
+
 ## 로컬 실행
 
 ```bash
@@ -86,10 +92,25 @@ data/art/direction.json     아트디렉션 minhwa-v2
 data/yokai/*.json           개체별 art_hint(영문 시각 서술) ← 프롬프트의 주어
   ↓ scripts/art-prompts.mjs   주어 → 한국성 앵커 → 스타일 → 배제문 → 분류 수식어 → 구도
 힉스필드 recraft_v4_1 2k      생성 (팔레트·배경색을 파라미터로도 강제)
-  ↓ docs/ART_REVIEW.md        사람 검수 — 통과 전에는 art.status를 final로 올리지 않는다
-  ↓ data/art/jobs.json        job_id · 결과 URL · 목표 경로 · 검수 결과
-  ↓ scripts/fetch-art.mjs     public/img/yokai/<slug>.png 로 반입
+  ↓ data/art/jobs.json        job_id · 결과 URL · 목표 경로 · 검수 결과 ← 상태의 유일한 원천
+  ↓ docs/ART_REVIEW.md        사람 검수 (scripts/review-art.mjs로 기록)
+  ↓ scripts/fetch-art.mjs     내려받아 축소·WebP 변환 → public/img/yokai/<slug>.webp
+     .github/workflows/yokai-art.yml — 생성 세션은 CDN이 막혀 있어 GitHub 러너에서 돌린다
 ```
+
+**현황: 120체 생성 완료 · 검수 통과 10 / 대기 110 · 파일 반입 대기.**
+반입과 검수 절차는 [DEPLOY.md](./DEPLOY.md) 3절 참고.
+
+`art.status`는 시드가 아니라 `jobs.json`에서 계산된다(`scripts/build-data.mjs`).
+시드의 값을 손으로 올려도 무시된다 — 매니페스트에 없거나 파일이 리포에 없는 그림을
+있다고 주장하는 레코드가 배포되는 경로를 막기 위해서다.
+
+| 매니페스트 | 파일 | `art.status` | `art.file` | 화면 |
+|---|---|---|---|---|
+| `review: pass` | 있음 | `final` | 경로 | 도판 |
+| `review: pass` | 없음 | `final` | `null` | 인장 폴백 (빌드가 경고) |
+| 생성만 됨 | — | `generated` | `null` | 인장 폴백 |
+| 없음 | — | `pending` | `null` | 인장 폴백 |
 
 원칙:
 
