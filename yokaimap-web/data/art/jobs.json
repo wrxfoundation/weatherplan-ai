@@ -1482,6 +1482,123 @@
         "result": "pending",
         "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
       }
+    },
+    {
+      "index": 112,
+      "kind": "plate",
+      "id": "kr-jayuro-gwisin",
+      "target": "public/img/yokai/jayuro-gwisin.png",
+      "aspect": "4:5",
+      "job_id": "bd3b17d7-4c51-4b7a-9276-6df679d3517f",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053644_bd3b17d7-4c51-4b7a-9276-6df679d3517f.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 113,
+      "kind": "plate",
+      "id": "kr-jihacheol-gwisin",
+      "target": "public/img/yokai/jihacheol-gwisin.png",
+      "aspect": "4:5",
+      "job_id": "2dd9bd07-44ca-4292-80a8-622fc499c071",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053644_2dd9bd07-44ca-4292-80a8-622fc499c071.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 114,
+      "kind": "plate",
+      "id": "kr-kongkong-gwisin",
+      "target": "public/img/yokai/kongkong-gwisin.png",
+      "aspect": "4:5",
+      "job_id": "b6b4f990-86dc-4f12-b8ea-f4eb8d44aa10",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053644_b6b4f990-86dc-4f12-b8ea-f4eb8d44aa10.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 115,
+      "kind": "plate",
+      "id": "kr-ppalgan-mask",
+      "target": "public/img/yokai/ppalgan-mask.png",
+      "aspect": "4:5",
+      "job_id": "8fdf0f8f-a865-4a80-9836-587c3e62f68a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053644_8fdf0f8f-a865-4a80-9836-587c3e62f68a.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 116,
+      "kind": "plate",
+      "id": "kr-teoneol-goedam",
+      "target": "public/img/yokai/teoneol-goedam.png",
+      "aspect": "4:5",
+      "job_id": "56c81209-b5c1-4ee0-a78a-0d7aa6a9b071",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053644_56c81209-b5c1-4ee0-a78a-0d7aa6a9b071.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 117,
+      "kind": "plate",
+      "id": "kr-hwajangsil-gwisin",
+      "target": "public/img/yokai/hwajangsil-gwisin.png",
+      "aspect": "4:5",
+      "job_id": "b2d8caf3-6938-40e6-9b23-288111a96cc9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053644_b2d8caf3-6938-40e6-9b23-288111a96cc9.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 118,
+      "kind": "plate",
+      "id": "kr-bunsinsaba",
+      "target": "public/img/yokai/bunsinsaba.png",
+      "aspect": "4:5",
+      "job_id": "c0519c93-c543-451b-af00-2286202eac06",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053735_c0519c93-c543-451b-af00-2286202eac06.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 119,
+      "kind": "plate",
+      "id": "kr-dokkaebi-sillang",
+      "target": "public/img/yokai/dokkaebi-sillang.png",
+      "aspect": "4:5",
+      "job_id": "9ba640fd-c9d8-433f-b77e-833ff6ac6de9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053830_9ba640fd-c9d8-433f-b77e-833ff6ac6de9.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 120,
+      "kind": "plate",
+      "id": "kr-yeoubi",
+      "target": "public/img/yokai/yeoubi.png",
+      "aspect": "4:5",
+      "job_id": "acbe7b36-46ad-4432-9947-07cdaa72fa56",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053830_acbe7b36-46ad-4432-9947-07cdaa72fa56.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
     }
   ],
   "approved_direction": "minhwa-v2 (2026-08-16 승인)"

@@ -25,6 +25,32 @@ if (errors.length) {
 const categories = JSON.parse(readFileSync(join(ROOT, 'data/categories.json'), 'utf8'))
 const regions = JSON.parse(readFileSync(join(ROOT, 'data/regions.json'), 'utf8'))
 
+/**
+ * 도상 매니페스트 — 생성 기록의 유일한 원천.
+ *
+ * 이미지 파일은 생성 세션에서 리포로 못 들어온다(CDN 차단). 그래서 시드의 art.status를
+ * 손으로 final로 올려 두면, 매니페스트에 없는 그림을 있다고 주장하는 레코드가 배포된다.
+ * 상태는 시드가 아니라 매니페스트에서 계산한다. 검수를 통과한 것만 final이다.
+ */
+const jobs = JSON.parse(readFileSync(join(ROOT, 'data/art/jobs.json'), 'utf8'))
+const artById = new Map(jobs.items.filter((i) => i.kind === 'plate').map((i) => [i.id, i]))
+
+function artFor(entry) {
+  const seed = entry.art ?? {}
+  const job = artById.get(entry.id)
+  if (!job) return { ...ART_DEFAULT, ...seed, status: 'pending', file: null }
+  const passed = job.review?.result === 'pass'
+  return {
+    ...ART_DEFAULT,
+    ...seed,
+    direction: jobs.direction ?? seed.direction ?? ART_DEFAULT.direction,
+    // 검수 전에는 generated — 앱은 final만 그리고 나머지는 인장으로 떨어진다.
+    status: passed ? 'final' : 'generated',
+    file: passed ? `/img/yokai/${entry.id.replace(/^kr-/, '')}.png` : null,
+    job_id: job.job_id,
+  }
+}
+
 const normalized = entries
   .map(({ _file, ...e }) => ({
     ...e,
@@ -36,7 +62,7 @@ const normalized = entries
     sites: e.sites ?? [],
     related: e.related ?? [],
     sensitivity: e.sensitivity ?? null,
-    art: { ...ART_DEFAULT, ...(e.art ?? {}) },
+    art: artFor(e),
   }))
   .sort((a, b) => a.id.localeCompare(b.id))
 
