@@ -322,6 +322,10 @@
         "갈등"
       ],
       "art_hint": "a hunting god in hide-trimmed Jeju clothing standing in a barley field with a bow, an unyoked ox beside him, volcanic oreum cones behind",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
       "habitat": [
         "알송당",
         "오름"
@@ -383,6 +387,10 @@
         "용왕국"
       ],
       "art_hint": "a young god returning by sea, standing on an iron chest washed onto black basalt rock, a shrine grove ahead, pork offerings set on a stone",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
       "habitat": [
         "김녕 궤네깃당",
         "바다"
@@ -518,6 +526,10 @@
         "임무"
       ],
       "art_hint": "a living man in a Korean constable's uniform walking the road to the underworld, a bundle of rice cakes his wife packed, a flowering path and dark gate ahead",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
       "habitat": [
         "저승길",
         "관아"
@@ -768,6 +780,10 @@
         "꽃 내기"
       ],
       "art_hint": "a creator god drawing a bow at two suns and two moons in the sky, two young sons below holding flower pots, cloud scroll motifs",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
       "habitat": [
         "하늘",
         "이승·저승"

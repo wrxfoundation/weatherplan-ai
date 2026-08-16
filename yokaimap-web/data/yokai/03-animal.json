@@ -164,6 +164,9 @@
         "호식총"
       ],
       "art_hint": "a pale spirit walking ahead of a great tiger on a snowy mountain path, calling with an open mouth, a stone cairn grave with an iron skewer at the edge",
+      "art_anchors": [
+        "landscape"
+      ],
       "habitat": [
         "산길",
         "고개"
@@ -298,6 +301,9 @@
         "금기"
       ],
       "art_hint": "a cat with fixed staring eyes on a mourning house rafter at night, white funeral cloth below, a bowl of rice with an upright spoon",
+      "art_anchors": [
+        "architecture"
+      ],
       "habitat": [
         "상가",
         "빈집"
@@ -353,6 +359,10 @@
         "진가쟁주"
       ],
       "art_hint": "two identical men in the same hanbok facing each other in a hanok courtyard, one subtly rat-featured, a cat held in a woman's arms at the side",
+      "art_anchors": [
+        "costume_male",
+        "architecture"
+      ],
       "habitat": [
         "집",
         "곳간"
@@ -412,6 +422,9 @@
         "활"
       ],
       "art_hint": "an old fox unmasked on a rocky sea island at dawn, a discarded monk's robe beside it, an archer lowering his bow, waves and wind-bent pine",
+      "art_anchors": [
+        "landscape"
+      ],
       "habitat": [
         "서해 섬",
         "바다"
@@ -474,6 +487,9 @@
         "재물"
       ],
       "art_hint": "a white snake coiled on a mossy granite boulder beside a country shrine, a bowl of water and rice set before it, villagers bowing at a distance",
+      "art_anchors": [
+        "landscape"
+      ],
       "habitat": [
         "집 주변",
         "바위",
@@ -538,6 +554,9 @@
         "수호"
       ],
       "art_hint": "a shaggy Korean sapsaree dog planted at a village gate at night barking at a dark shape, straw rope and a paper charm on the post behind",
+      "art_anchors": [
+        "landscape"
+      ],
       "habitat": [
         "집",
         "마을"
@@ -599,6 +618,9 @@
         "후회"
       ],
       "art_hint": "a small green tree frog crying on a reed at the edge of a rain-swollen stream, a low grave mound at the water's edge, heavy rain lines",
+      "art_anchors": [
+        "landscape"
+      ],
       "habitat": [
         "개울",
         "물가"
@@ -656,6 +678,9 @@
         "지명"
       ],
       "art_hint": "a winged horse bursting from a mountain pool crying to the sky, an empty saddle, granite ridge and pines, a small burial mound at the pool's edge",
+      "art_anchors": [
+        "landscape"
+      ],
       "habitat": [
         "못",
         "산"

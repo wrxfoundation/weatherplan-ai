@@ -25,6 +25,11 @@
         "가장"
       ],
       "art_hint": "a dignified house deity seated on the crossbeam of a hanok main hall, a white paper packet of rice tied to the beam as his body, open lattice doors",
+      "art_anchors": [
+        "costume_male",
+        "architecture",
+        "objects"
+      ],
       "habitat": [
         "마루",
         "대들보"
@@ -144,6 +149,10 @@
         "짚주저리"
       ],
       "art_hint": "an earthen jar wrapped in a straw cone standing in a back yard, new grain inside, low stone wall and a bare persimmon tree, a presence suggested in the straw",
+      "art_anchors": [
+        "architecture",
+        "objects"
+      ],
       "habitat": [
         "뒤뜰",
         "장독대"
@@ -204,6 +213,10 @@
         "금기"
       ],
       "art_hint": "a large pale rat snake coiled calmly on a grain storehouse beam, sacks of grain and an earthen jar below, warm ochre light",
+      "art_anchors": [
+        "architecture",
+        "objects"
+      ],
       "habitat": [
         "곳간",
         "뒤뜰",
@@ -316,6 +329,10 @@
         "본풀이"
       ],
       "art_hint": "a young guardian deity standing squarely in a hanok gateway with both arms out, straw rope across the lintel, dark shapes held back outside",
+      "art_anchors": [
+        "costume_male",
+        "architecture"
+      ],
       "habitat": [
         "대문",
         "문턱"
@@ -448,6 +465,10 @@
         "정화수"
       ],
       "art_hint": "a back-yard deity presence above a jangdokdae terrace of earthen jars, a bowl of clear water on the tallest jar, low stone wall and bamboo behind",
+      "art_anchors": [
+        "architecture",
+        "objects"
+      ],
       "habitat": [
         "뒤란",
         "장독대"
@@ -508,6 +529,10 @@
         "정월"
       ],
       "art_hint": "a broad earth deity pressed beneath a house yard with flattening hands, a pungmul band with small gong and drum stamping above, dust rising",
+      "art_anchors": [
+        "architecture",
+        "objects"
+      ],
       "habitat": [
         "마당",
         "집터"

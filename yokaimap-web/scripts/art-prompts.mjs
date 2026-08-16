@@ -28,8 +28,11 @@ export function promptFor(entry) {
   const name = entry.names?.en || entry.names?.roman || null
   const subject = [name, entry.art_hint].filter(Boolean).join(' — ')
 
-  // 한국성 앵커 — 분류별로 지정된 것만 넣는다. 이게 빠지면 모델이 동아시아 평균값(왜색·중국풍)으로 떨어진다.
-  const anchors = (dir.category_anchors?.[entry.category] ?? [])
+  // 한국성 앵커 — 이게 빠지면 모델이 동아시아 평균값(왜색·중국풍)으로 떨어진다.
+  // 기본값은 분류 단위라 뭉툭하다. 각시도깨비(여성)에 갓·바지가 붙고 도깨비불(불꽃뿐)에
+  // 사람이 끼어드는 사고가 실제로 났으므로, 개체가 art_anchors를 선언했으면 그쪽이 이긴다.
+  const keys = entry.art_anchors ?? dir.category_anchors?.[entry.category] ?? []
+  const anchors = keys
     .map((k) => dir.korean_anchors[k])
     .filter(Boolean)
     .join('. ')

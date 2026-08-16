@@ -88,6 +88,10 @@
         "붙음"
       ],
       "art_hint": "a young man spirit in pale hanbok with a topknot standing at a village lane corner at night, one sleeve raised, unable to leave",
+      "art_anchors": [
+        "costume_male",
+        "architecture"
+      ],
       "habitat": [
         "골목",
         "빈집"
@@ -264,6 +268,10 @@
         "억울한 죽음"
       ],
       "art_hint": "a boatman spirit at the tiller in a narrow strait, wind tearing at his hemp clothes and sail, a stone cairn grave on the headland behind, cold grey water",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
       "habitat": [
         "염하수로",
         "포구"
@@ -407,6 +415,9 @@
         "제사"
       ],
       "art_hint": "a crowd of faint wandering spirits gathered outside a city wall at dusk, a low state altar with offerings before them, no faces distinct",
+      "art_anchors": [
+        "architecture"
+      ],
       "habitat": [
         "성 밖",
         "길가"
@@ -473,6 +484,10 @@
         "상문풀이"
       ],
       "art_hint": "a cold shadow following a man home from a funeral house, mourning cloth at the gate behind, salt and red beans scattered on the threshold",
+      "art_anchors": [
+        "costume_male",
+        "architecture"
+      ],
       "habitat": [
         "상가",
         "집"
@@ -521,6 +536,10 @@
         "부적"
       ],
       "art_hint": "a young man asleep at the foot of a stone pagoda, fire rising from his chest and wrapping the pagoda, a royal procession departing, a paper charm on a nearby door",
+      "art_anchors": [
+        "costume_male",
+        "architecture"
+      ],
       "habitat": [
         "절",
         "탑"
@@ -585,6 +604,9 @@
         "대처법"
       ],
       "art_hint": "a sleeper on an ondol floor pressed by a heavy dark shape, arms unable to move, a folded quilt and low pillow, blue night light through a lattice door",
+      "art_anchors": [
+        "architecture"
+      ],
       "habitat": [
         "침소",
         "빈방"

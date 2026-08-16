@@ -131,6 +131,9 @@
         "유인"
       ],
       "art_hint": "clusters of small pale blue flames drifting over a night field and a low burial mound, no figure, reeds and a stone wall beneath, faint reflection on wet ground",
+      "art_anchors": [
+        "landscape"
+      ],
       "habitat": [
         "묘지",
         "습지",
@@ -205,6 +208,9 @@
         "메밀묵"
       ],
       "art_hint": "a water spirit rising from a tidal flat at dusk beside a moored wooden fishing boat, seaweed-tangled hair, a bowl of buckwheat jelly set on a flat stone as offering",
+      "art_anchors": [
+        "landscape"
+      ],
       "habitat": [
         "갯벌",
         "포구",
@@ -281,6 +287,9 @@
         "시선"
       ],
       "art_hint": "a towering formless shadow in a dark alley between earthen walls, growing taller the higher one looks, only a suggestion of eyes, a small figure below looking up",
+      "art_anchors": [
+        "architecture"
+      ],
       "habitat": [
         "골목",
         "빈방",
@@ -339,6 +348,9 @@
         "불"
       ],
       "art_hint": "a small child-shaped shadow on a night mountain path swelling enormous when looked at, a laughing mouth, a lone traveler's lantern light at the lower edge",
+      "art_anchors": [
+        "landscape"
+      ],
       "habitat": [
         "밤길",
         "산길"
@@ -387,6 +399,10 @@
         "억누름"
       ],
       "art_hint": "a squat fierce spirit with a heavy brow pressing down on a sleeper's head in a dark ondol room, coarse hemp clothing, clenched fists",
+      "art_anchors": [
+        "costume_male",
+        "architecture"
+      ],
       "habitat": [
         "밤길",
         "폐가"
@@ -496,6 +512,10 @@
         "여인 형상"
       ],
       "art_hint": "a young woman spirit in hanbok standing at a night crossroads smiling, a small wooden club half hidden in her chima, a blue flame at her feet",
+      "art_anchors": [
+        "costume_female",
+        "landscape"
+      ],
       "habitat": [
         "밤길",
         "주막"
@@ -545,6 +565,10 @@
         "터"
       ],
       "art_hint": "an old thatched house at night with coins and grain heaped in the yard while the roof beam sags, a blue flame on the ridge, magpie on a bare tree",
+      "art_anchors": [
+        "architecture",
+        "landscape"
+      ],
       "habitat": [
         "집터",
         "폐가"

@@ -607,6 +607,9 @@
     "재물"
    ],
    "art_hint": "a white snake coiled on a mossy granite boulder beside a country shrine, a bowl of water and rice set before it, villagers bowing at a distance",
+   "art_anchors": [
+    "landscape"
+   ],
    "habitat": [
     "집 주변",
     "바위",
@@ -845,6 +848,9 @@
     "호식총"
    ],
    "art_hint": "a pale spirit walking ahead of a great tiger on a snowy mountain path, calling with an open mouth, a stone cairn grave with an iron skewer at the edge",
+   "art_anchors": [
+    "landscape"
+   ],
    "habitat": [
     "산길",
     "고개"
@@ -918,6 +924,10 @@
     "정화수"
    ],
    "art_hint": "a back-yard deity presence above a jangdokdae terrace of earthen jars, a bowl of clear water on the tallest jar, low stone wall and bamboo behind",
+   "art_anchors": [
+    "architecture",
+    "objects"
+   ],
    "habitat": [
     "뒤란",
     "장독대"
@@ -980,6 +990,9 @@
     "후회"
    ],
    "art_hint": "a small green tree frog crying on a reed at the edge of a rain-swollen stream, a low grave mound at the water's edge, heavy rain lines",
+   "art_anchors": [
+    "landscape"
+   ],
    "habitat": [
     "개울",
     "물가"
@@ -1040,6 +1053,10 @@
     "꽃 내기"
    ],
    "art_hint": "a creator god drawing a bow at two suns and two moons in the sky, two young sons below holding flower pots, cloud scroll motifs",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
    "habitat": [
     "하늘",
     "이승·저승"
@@ -1540,6 +1557,9 @@
     "유인"
    ],
    "art_hint": "clusters of small pale blue flames drifting over a night field and a low burial mound, no figure, reeds and a stone wall beneath, faint reflection on wet ground",
+   "art_anchors": [
+    "landscape"
+   ],
    "habitat": [
     "묘지",
     "습지",
@@ -1730,6 +1750,10 @@
     "터"
    ],
    "art_hint": "an old thatched house at night with coins and grain heaped in the yard while the roof beam sags, a blue flame on the ridge, magpie on a bare tree",
+   "art_anchors": [
+    "architecture",
+    "landscape"
+   ],
    "habitat": [
     "집터",
     "폐가"
@@ -1788,6 +1812,10 @@
     "억누름"
    ],
    "art_hint": "a squat fierce spirit with a heavy brow pressing down on a sleeper's head in a dark ondol room, coarse hemp clothing, clenched fists",
+   "art_anchors": [
+    "costume_male",
+    "architecture"
+   ],
    "habitat": [
     "밤길",
     "폐가"
@@ -1961,6 +1989,9 @@
     "시선"
    ],
    "art_hint": "a towering formless shadow in a dark alley between earthen walls, growing taller the higher one looks, only a suggestion of eyes, a small figure below looking up",
+   "art_anchors": [
+    "architecture"
+   ],
    "habitat": [
     "골목",
     "빈방",
@@ -2028,6 +2059,10 @@
     "금기"
    ],
    "art_hint": "a large pale rat snake coiled calmly on a grain storehouse beam, sacks of grain and an earthen jar below, warm ochre light",
+   "art_anchors": [
+    "architecture",
+    "objects"
+   ],
    "habitat": [
     "곳간",
     "뒤뜰",
@@ -2264,6 +2299,10 @@
     "여인 형상"
    ],
    "art_hint": "a young woman spirit in hanbok standing at a night crossroads smiling, a small wooden club half hidden in her chima, a blue flame at her feet",
+   "art_anchors": [
+    "costume_female",
+    "landscape"
+   ],
    "habitat": [
     "밤길",
     "주막"
@@ -2467,6 +2506,10 @@
     "임무"
    ],
    "art_hint": "a living man in a Korean constable's uniform walking the road to the underworld, a bundle of rice cakes his wife packed, a flowering path and dark gate ahead",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
    "habitat": [
     "저승길",
     "관아"
@@ -2590,6 +2633,9 @@
     "대처법"
    ],
    "art_hint": "a sleeper on an ondol floor pressed by a heavy dark shape, arms unable to move, a folded quilt and low pillow, blue night light through a lattice door",
+   "art_anchors": [
+    "architecture"
+   ],
    "habitat": [
     "침소",
     "빈방"
@@ -2770,6 +2816,9 @@
     "불"
    ],
    "art_hint": "a small child-shaped shadow on a night mountain path swelling enormous when looked at, a laughing mouth, a lone traveler's lantern light at the lower edge",
+   "art_anchors": [
+    "landscape"
+   ],
    "habitat": [
     "밤길",
     "산길"
@@ -3100,6 +3149,10 @@
     "용왕국"
    ],
    "art_hint": "a young god returning by sea, standing on an iron chest washed onto black basalt rock, a shrine grove ahead, pork offerings set on a stone",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
    "habitat": [
     "김녕 궤네깃당",
     "바다"
@@ -4421,6 +4474,10 @@
     "부적"
    ],
    "art_hint": "a young man asleep at the foot of a stone pagoda, fire rising from his chest and wrapping the pagoda, a royal procession departing, a paper charm on a nearby door",
+   "art_anchors": [
+    "costume_male",
+    "architecture"
+   ],
    "habitat": [
     "절",
     "탑"
@@ -4672,6 +4729,10 @@
     "정월"
    ],
    "art_hint": "a broad earth deity pressed beneath a house yard with flattening hands, a pungmul band with small gong and drum stamping above, dust rising",
+   "art_anchors": [
+    "architecture",
+    "objects"
+   ],
    "habitat": [
     "마당",
     "집터"
@@ -4794,6 +4855,10 @@
     "진가쟁주"
    ],
    "art_hint": "two identical men in the same hanbok facing each other in a hanok courtyard, one subtly rat-featured, a cat held in a woman's arms at the side",
+   "art_anchors": [
+    "costume_male",
+    "architecture"
+   ],
    "habitat": [
     "집",
     "곳간"
@@ -5124,6 +5189,10 @@
     "붙음"
    ],
    "art_hint": "a young man spirit in pale hanbok with a topknot standing at a village lane corner at night, one sleeve raised, unable to leave",
+   "art_anchors": [
+    "costume_male",
+    "architecture"
+   ],
    "habitat": [
     "골목",
     "빈집"
@@ -5177,6 +5246,9 @@
     "제사"
    ],
    "art_hint": "a crowd of faint wandering spirits gathered outside a city wall at dusk, a low state altar with offerings before them, no faces distinct",
+   "art_anchors": [
+    "architecture"
+   ],
    "habitat": [
     "성 밖",
     "길가"
@@ -5248,6 +5320,9 @@
     "메밀묵"
    ],
    "art_hint": "a water spirit rising from a tidal flat at dusk beside a moored wooden fishing boat, seaweed-tangled hair, a bowl of buckwheat jelly set on a flat stone as offering",
+   "art_anchors": [
+    "landscape"
+   ],
    "habitat": [
     "갯벌",
     "포구",
@@ -5396,6 +5471,10 @@
     "본풀이"
    ],
    "art_hint": "a young guardian deity standing squarely in a hanok gateway with both arms out, straw rope across the lintel, dark shapes held back outside",
+   "art_anchors": [
+    "costume_male",
+    "architecture"
+   ],
    "habitat": [
     "대문",
     "문턱"
@@ -5469,6 +5548,9 @@
     "금기"
    ],
    "art_hint": "a cat with fixed staring eyes on a mourning house rafter at night, white funeral cloth below, a bowl of rice with an upright spoon",
+   "art_anchors": [
+    "architecture"
+   ],
    "habitat": [
     "상가",
     "빈집"
@@ -5579,6 +5661,9 @@
     "활"
    ],
    "art_hint": "an old fox unmasked on a rocky sea island at dawn, a discarded monk's robe beside it, an archer lowering his bow, waves and wind-bent pine",
+   "art_anchors": [
+    "landscape"
+   ],
    "habitat": [
     "서해 섬",
     "바다"
@@ -6092,6 +6177,10 @@
     "상문풀이"
    ],
    "art_hint": "a cold shadow following a man home from a funeral house, mourning cloth at the gate behind, salt and red beans scattered on the threshold",
+   "art_anchors": [
+    "costume_male",
+    "architecture"
+   ],
    "habitat": [
     "상가",
     "집"
@@ -6394,6 +6483,9 @@
     "수호"
    ],
    "art_hint": "a shaggy Korean sapsaree dog planted at a village gate at night barking at a dark shape, straw rope and a paper charm on the post behind",
+   "art_anchors": [
+    "landscape"
+   ],
    "habitat": [
     "집",
     "마을"
@@ -6626,6 +6718,11 @@
     "가장"
    ],
    "art_hint": "a dignified house deity seated on the crossbeam of a hanok main hall, a white paper packet of rice tied to the beam as his body, open lattice doors",
+   "art_anchors": [
+    "costume_male",
+    "architecture",
+    "objects"
+   ],
    "habitat": [
     "마루",
     "대들보"
@@ -6981,6 +7078,10 @@
     "갈등"
    ],
    "art_hint": "a hunting god in hide-trimmed Jeju clothing standing in a barley field with a bow, an unyoked ox beside him, volcanic oreum cones behind",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
    "habitat": [
     "알송당",
     "오름"
@@ -7046,6 +7147,10 @@
     "억울한 죽음"
    ],
    "art_hint": "a boatman spirit at the tiller in a narrow strait, wind tearing at his hemp clothes and sail, a stone cairn grave on the headland behind, cold grey water",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
    "habitat": [
     "염하수로",
     "포구"
@@ -7481,6 +7586,10 @@
     "짚주저리"
    ],
    "art_hint": "an earthen jar wrapped in a straw cone standing in a back yard, new grain inside, low stone wall and a bare persimmon tree, a presence suggested in the straw",
+   "art_anchors": [
+    "architecture",
+    "objects"
+   ],
    "habitat": [
     "뒤뜰",
     "장독대"
@@ -8196,6 +8305,9 @@
     "지명"
    ],
    "art_hint": "a winged horse bursting from a mountain pool crying to the sky, an empty saddle, granite ridge and pines, a small burial mound at the pool's edge",
+   "art_anchors": [
+    "landscape"
+   ],
    "habitat": [
     "못",
     "산"
