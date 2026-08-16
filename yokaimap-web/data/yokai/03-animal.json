@@ -101,6 +101,7 @@
         "세 개의 병",
         "가축"
       ],
+      "art_hint": "a young girl in hanbok standing serene in a night byre, a fox shadow cast on the wall behind her, three small bottles red blue and white tucked at her waist",
       "habitat": [
         "외양간",
         "집"
@@ -135,7 +136,11 @@
       "related": [
         "kr-gumiho"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-changgwi",
@@ -158,6 +163,7 @@
         "이름 부르기",
         "호식총"
       ],
+      "art_hint": "a pale spirit walking ahead of a great tiger on a snowy mountain path, calling with an open mouth, a stone cairn grave with an iron skewer at the edge",
       "habitat": [
         "산길",
         "고개"
@@ -204,7 +210,11 @@
         "kr-sangun",
         "kr-sansillyeong"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-jinegaksi",
@@ -223,6 +233,7 @@
         "승천",
         "은혜"
       ],
+      "art_hint": "a woman in hanbok in a lamplit mountain house, a hundred-legged centipede form faintly overlaid on her, an old man watching from the doorway",
       "habitat": [
         "산속 집",
         "폐가"
@@ -262,7 +273,11 @@
         "kr-imugi",
         "kr-baeksa"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-myogwi",
@@ -282,6 +297,7 @@
         "시신",
         "금기"
       ],
+      "art_hint": "a cat with fixed staring eyes on a mourning house rafter at night, white funeral cloth below, a bowl of rice with an upright spoon",
       "habitat": [
         "상가",
         "빈집"
@@ -312,7 +328,11 @@
       "related": [
         "kr-sangmun"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-jwi-dungap",
@@ -332,6 +352,7 @@
         "손톱",
         "진가쟁주"
       ],
+      "art_hint": "two identical men in the same hanbok facing each other in a hanok courtyard, one subtly rat-featured, a cat held in a woman's arms at the side",
       "habitat": [
         "집",
         "곳간"
@@ -366,7 +387,11 @@
       "related": [
         "kr-myogwi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-nogu-hwaho",
@@ -386,6 +411,7 @@
         "승려 형상",
         "활"
       ],
+      "art_hint": "an old fox unmasked on a rocky sea island at dawn, a discarded monk's robe beside it, an archer lowering his bow, waves and wind-bent pine",
       "habitat": [
         "서해 섬",
         "바다"
@@ -423,7 +449,11 @@
         "kr-gumiho",
         "kr-yongwang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-baeksa",
@@ -443,6 +473,7 @@
         "보복",
         "재물"
       ],
+      "art_hint": "a white snake coiled on a mossy granite boulder beside a country shrine, a bowl of water and rice set before it, villagers bowing at a distance",
       "habitat": [
         "집 주변",
         "바위",
@@ -479,7 +510,11 @@
         "kr-eop",
         "kr-imugi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-sapsalgae",
@@ -502,6 +537,7 @@
         "퇴치",
         "수호"
       ],
+      "art_hint": "a shaggy Korean sapsaree dog planted at a village gate at night barking at a dark shape, straw rope and a paper charm on the post behind",
       "habitat": [
         "집",
         "마을"
@@ -540,7 +576,11 @@
         "kr-jangseung",
         "kr-jeung"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-cheonggaeguri",
@@ -558,6 +598,7 @@
         "울음",
         "후회"
       ],
+      "art_hint": "a small green tree frog crying on a reed at the edge of a rain-swollen stream, a low grave mound at the water's edge, heavy rain lines",
       "habitat": [
         "개울",
         "물가"
@@ -590,7 +631,11 @@
       "related": [
         "kr-yeoubi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-yongma",
@@ -610,6 +655,7 @@
         "울음",
         "지명"
       ],
+      "art_hint": "a winged horse bursting from a mountain pool crying to the sky, an empty saddle, granite ridge and pines, a small burial mound at the pool's edge",
       "habitat": [
         "못",
         "산"
@@ -649,7 +695,11 @@
       "related": [
         "kr-agijangsu"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     }
   ]
 }

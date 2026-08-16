@@ -24,6 +24,7 @@
         "신목",
         "경계"
       ],
+      "art_hint": "a guardian presence over a mountain pass shrine, a heap of prayer stones and an old tree hung with five-colour cloth, a traveler adding a stone",
       "habitat": [
         "고갯마루",
         "마을 입구"
@@ -72,7 +73,11 @@
         "kr-sotdae",
         "kr-golmaegi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-jangseung",
@@ -175,6 +180,7 @@
         "장대",
         "경계"
       ],
+      "art_hint": "tall wooden poles topped with carved wooden ducks at a village entrance, rice paddies behind, a low granite ridge and a magpie",
       "habitat": [
         "마을 입구",
         "논둑"
@@ -210,7 +216,11 @@
         "kr-jangseung",
         "kr-seonang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-golmaegi",
@@ -230,6 +240,7 @@
         "동신",
         "별신굿"
       ],
+      "art_hint": "a village founding ancestor deity in Korean robes seated in a small shrine above a fishing village, boats and drying nets below, cloth strips at the door",
       "habitat": [
         "마을 당",
         "동해안 어촌"
@@ -272,7 +283,11 @@
         "kr-seonang",
         "kr-dangsan-halmeoni"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-dangsan-halmeoni",
@@ -292,6 +307,7 @@
         "금줄",
         "당산제"
       ],
+      "art_hint": "an old goddess presence within a huge village tree at the hamlet entrance, straw rope with paper strips around the trunk, an offering table at the roots",
       "habitat": [
         "마을 어귀",
         "노거수"
@@ -345,7 +361,11 @@
         "kr-seonang",
         "kr-golmaegi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-imgyeongeop",
@@ -364,6 +384,7 @@
         "조기",
         "풍어"
       ],
+      "art_hint": "a general deity in Korean armour enshrined in an island shrine, croaker fish hung as offerings, fishing boats crowding the harbour behind",
       "habitat": [
         "연평도",
         "당집"
@@ -410,7 +431,11 @@
         "kr-yongwang",
         "kr-golmaegi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-mireuk",
@@ -430,6 +455,7 @@
         "돌부처",
         "수호"
       ],
+      "art_hint": "a rough stone Maitreya figure standing at a field edge, a woman placing rice and water at its base, rice paddies and a low ridge behind",
       "habitat": [
         "마을 어귀",
         "논둑"
@@ -472,7 +498,11 @@
         "kr-jangseung",
         "kr-sacheonwang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     }
   ]
 }

@@ -23,6 +23,7 @@
         "추격",
         "고양이"
       ],
+      "art_hint": "an old woman figure with animal legs crouched at the end of a 1980s Korean school corridor at dusk, dropped satchels, rendered in the same hanji technique",
       "habitat": [
         "학교",
         "골목",
@@ -49,7 +50,11 @@
         "kr-ppalgan-mask",
         "kr-hwajangsil-gwisin"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-jayuro-gwisin",
@@ -68,6 +73,7 @@
         "심야",
         "도로"
       ],
+      "art_hint": "a woman in a white dress standing on the shoulder of an empty night motorway in fog, headlights washing past, no identifiable place",
       "habitat": [
         "자유로",
         "고속화도로"
@@ -109,7 +115,11 @@
       "related": [
         "kr-teoneol-goedam"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-jangsanbeom",
@@ -195,6 +205,7 @@
         "질문",
         "추격"
       ],
+      "art_hint": "a tall woman in a long coat and a red mask standing under a streetlamp in a Korean alley at night, one hand raised",
       "habitat": [
         "학교",
         "골목"
@@ -220,7 +231,11 @@
       "related": [
         "kr-hongkong-halmae"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-kongkong-gwisin",
@@ -239,6 +254,7 @@
         "소리",
         "계단"
       ],
+      "art_hint": "a one-legged figure hopping up a concrete school stairwell at dusk, its motion shown by repeated faint outlines",
       "habitat": [
         "학교",
         "계단"
@@ -265,7 +281,11 @@
         "kr-dokgakgwi",
         "kr-hwajangsil-gwisin"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-elevator-goedam",
@@ -284,6 +304,7 @@
         "거울",
         "밀실"
       ],
+      "art_hint": "an apartment elevator door open onto a floor that should not exist, a dim corridor beyond, a mirrored wall reflecting no one",
       "habitat": [
         "아파트",
         "엘리베이터"
@@ -308,7 +329,11 @@
       "related": [
         "kr-jihacheol-gwisin"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-bunsinsaba",
@@ -327,6 +352,7 @@
         "규칙",
         "참여형"
       ],
+      "art_hint": "two students' hands together on a pen over a sheet of paper on a school desk at dusk, the pen drawn by nothing, chairs stacked behind",
       "habitat": [
         "교실",
         "빈 방"
@@ -351,7 +377,11 @@
       "related": [
         "kr-hwajangsil-gwisin"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-hwajangsil-gwisin",
@@ -370,6 +400,7 @@
         "마지막 칸",
         "학교"
       ],
+      "art_hint": "a school toilet corridor with the last stall door ajar, a red and a blue roll of paper on the floor, evening light through frosted glass",
       "habitat": [
         "학교 화장실"
       ],
@@ -395,7 +426,11 @@
         "kr-kongkong-gwisin",
         "kr-bunsinsaba"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-geomeun-bonggo",
@@ -414,6 +449,7 @@
         "하굣길",
         "사회불안"
       ],
+      "art_hint": "a dark windowless van idling at the end of a school lane at dusk, children's shadows walking away, no faces and no licence plate",
       "habitat": [
         "학교 앞",
         "골목"
@@ -442,7 +478,11 @@
       "related": [
         "kr-hongkong-halmae"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-jihacheol-gwisin",
@@ -461,6 +501,7 @@
         "빈 칸",
         "창문"
       ],
+      "art_hint": "an empty late-night subway carriage, one seated passenger reflected wrongly in the dark window glass, fluorescent light",
       "habitat": [
         "지하철",
         "역사"
@@ -495,7 +536,11 @@
       "related": [
         "kr-elevator-goedam"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-teoneol-goedam",
@@ -514,6 +559,7 @@
         "백미러",
         "어둠"
       ],
+      "art_hint": "a long unlit road tunnel with a car's tail lights receding, a faint shape in the side mirror, no signage identifying the place",
       "habitat": [
         "터널",
         "국도"
@@ -546,7 +592,11 @@
       "related": [
         "kr-jayuro-gwisin"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     }
   ]
 }

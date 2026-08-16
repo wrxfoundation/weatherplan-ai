@@ -130,6 +130,7 @@
         "무리",
         "유인"
       ],
+      "art_hint": "clusters of small pale blue flames drifting over a night field and a low burial mound, no figure, reeds and a stone wall beneath, faint reflection on wet ground",
       "habitat": [
         "묘지",
         "습지",
@@ -179,7 +180,11 @@
         "kr-dokkaebi",
         "kr-gumiho"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-mul-dokkaebi",
@@ -199,6 +204,7 @@
         "고사",
         "메밀묵"
       ],
+      "art_hint": "a water spirit rising from a tidal flat at dusk beside a moored wooden fishing boat, seaweed-tangled hair, a bowl of buckwheat jelly set on a flat stone as offering",
       "habitat": [
         "갯벌",
         "포구",
@@ -247,7 +253,11 @@
         "kr-dokkaebi",
         "kr-subu"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-eoduksini",
@@ -270,6 +280,7 @@
         "커짐",
         "시선"
       ],
+      "art_hint": "a towering formless shadow in a dark alley between earthen walls, growing taller the higher one looks, only a suggestion of eyes, a small figure below looking up",
       "habitat": [
         "골목",
         "빈방",
@@ -304,7 +315,11 @@
         "kr-dokkaebi",
         "kr-geuseundae"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-geuseundae",
@@ -323,6 +338,7 @@
         "거대화",
         "불"
       ],
+      "art_hint": "a small child-shaped shadow on a night mountain path swelling enormous when looked at, a laughing mouth, a lone traveler's lantern light at the lower edge",
       "habitat": [
         "밤길",
         "산길"
@@ -348,7 +364,11 @@
       "related": [
         "kr-eoduksini"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-dueoksini",
@@ -366,6 +386,7 @@
         "폭력",
         "억누름"
       ],
+      "art_hint": "a squat fierce spirit with a heavy brow pressing down on a sleeper's head in a dark ondol room, coarse hemp clothing, clenched fists",
       "habitat": [
         "밤길",
         "폐가"
@@ -397,7 +418,11 @@
         "kr-yacha",
         "kr-dokkaebi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-dokgakgwi",
@@ -416,6 +441,7 @@
         "외다리",
         "씨름"
       ],
+      "art_hint": "a one-legged spirit hopping on a night country road, coarse hemp jeogori, leaning on a knotted stick, taking a wrestling stance",
       "habitat": [
         "밤길",
         "다리"
@@ -447,7 +473,11 @@
       "related": [
         "kr-dokkaebi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-gaksi-dokkaebi",
@@ -465,6 +495,7 @@
         "홀림",
         "여인 형상"
       ],
+      "art_hint": "a young woman spirit in hanbok standing at a night crossroads smiling, a small wooden club half hidden in her chima, a blue flame at her feet",
       "habitat": [
         "밤길",
         "주막"
@@ -490,7 +521,11 @@
         "kr-dokkaebi",
         "kr-songaksi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-dokkaebi-teo",
@@ -509,6 +544,7 @@
         "흥망",
         "터"
       ],
+      "art_hint": "an old thatched house at night with coins and grain heaped in the yard while the roof beam sags, a blue flame on the ridge, magpie on a bare tree",
       "habitat": [
         "집터",
         "폐가"
@@ -540,7 +576,11 @@
         "kr-teoju",
         "kr-eop"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-gae-dokkaebi",
@@ -558,6 +598,7 @@
         "해코지",
         "홀림"
       ],
+      "art_hint": "a scruffy mean spirit in torn hemp clothing tipping over an ox trough in a night byre, cattle startled, straw scattered",
       "habitat": [
         "밤길",
         "외양간"
@@ -582,7 +623,11 @@
       "related": [
         "kr-dokkaebi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     }
   ]
 }

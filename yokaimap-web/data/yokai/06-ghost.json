@@ -87,6 +87,7 @@
         "해원",
         "붙음"
       ],
+      "art_hint": "a young man spirit in pale hanbok with a topknot standing at a village lane corner at night, one sleeve raised, unable to leave",
       "habitat": [
         "골목",
         "빈집"
@@ -111,7 +112,11 @@
       "related": [
         "kr-songaksi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-dalgyal-gwisin",
@@ -134,6 +139,7 @@
         "공포",
         "학교 괴담"
       ],
+      "art_hint": "a figure in plain white hanbok whose face is entirely smooth and featureless, standing at the end of a dark alley between earthen walls",
       "habitat": [
         "학교",
         "골목",
@@ -165,7 +171,11 @@
       "related": [
         "kr-hwajangsil-gwisin"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-arang",
@@ -188,6 +198,7 @@
         "관아",
         "첫날밤"
       ],
+      "art_hint": "a young woman spirit in hanbok appearing before a newly arrived magistrate in a lamplit government hall, pointing toward a bamboo grove, calm rather than vengeful",
       "habitat": [
         "관아",
         "대숲"
@@ -228,7 +239,11 @@
         "kr-songaksi",
         "kr-sinrip-wongwi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-sondol",
@@ -248,6 +263,7 @@
         "추위",
         "억울한 죽음"
       ],
+      "art_hint": "a boatman spirit at the tiller in a narrow strait, wind tearing at his hemp clothes and sail, a stone cairn grave on the headland behind, cold grey water",
       "habitat": [
         "염하수로",
         "포구"
@@ -301,7 +317,11 @@
         "kr-hoeorib",
         "kr-mulgwisin"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-sinrip-wongwi",
@@ -320,6 +340,7 @@
         "복수",
         "야담"
       ],
+      "art_hint": "a woman spirit standing on a river bluff above a bend, army banners small on the sandbar below, mist rising through autumn reeds",
       "habitat": [
         "탄금대",
         "강변"
@@ -361,7 +382,11 @@
       "related": [
         "kr-arang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-mujugohon",
@@ -381,6 +406,7 @@
         "뒷전",
         "제사"
       ],
+      "art_hint": "a crowd of faint wandering spirits gathered outside a city wall at dusk, a low state altar with offerings before them, no faces distinct",
       "habitat": [
         "성 밖",
         "길가"
@@ -423,7 +449,11 @@
         "kr-gaekgwi",
         "kr-subu"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-sangmun",
@@ -442,6 +472,7 @@
         "소금",
         "상문풀이"
       ],
+      "art_hint": "a cold shadow following a man home from a funeral house, mourning cloth at the gate behind, salt and red beans scattered on the threshold",
       "habitat": [
         "상가",
         "집"
@@ -465,7 +496,11 @@
         "kr-myogwi",
         "kr-gaekgwi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-jigwi",
@@ -485,6 +520,7 @@
         "짝사랑",
         "부적"
       ],
+      "art_hint": "a young man asleep at the foot of a stone pagoda, fire rising from his chest and wrapping the pagoda, a royal procession departing, a paper charm on a nearby door",
       "habitat": [
         "절",
         "탑"
@@ -524,7 +560,11 @@
       "related": [
         "kr-hwagwang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-gawi",
@@ -544,6 +584,7 @@
         "압박",
         "대처법"
       ],
+      "art_hint": "a sleeper on an ondol floor pressed by a heavy dark shape, arms unable to move, a folded quilt and low pillow, blue night light through a lattice door",
       "habitat": [
         "침소",
         "빈방"
@@ -574,7 +615,11 @@
       "related": [
         "kr-dueoksini"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-yeongsan",
@@ -593,6 +638,7 @@
         "씻김굿",
         "해원"
       ],
+      "art_hint": "a shaman in white ritual hanbok calling a drowned spirit at a riverside, a long cloth path laid over the water, mourners kneeling with paper lanterns",
       "habitat": [
         "굿청",
         "사고 현장"
@@ -635,7 +681,11 @@
         "kr-mujugohon",
         "kr-subu"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     }
   ]
 }

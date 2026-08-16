@@ -401,6 +401,7 @@
     "좌절",
     "용마"
    ],
+   "art_hint": "a newborn with small feathered wings under the arms lying on an ondol floor, parents kneeling with a heavy grain sack, a winged horse beyond the open door",
    "habitat": [
     "마을",
     "바위",
@@ -440,13 +441,13 @@
     "kr-yongma"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-arang",
@@ -469,6 +470,7 @@
     "관아",
     "첫날밤"
    ],
+   "art_hint": "a young woman spirit in hanbok appearing before a newly arrived magistrate in a lamplit government hall, pointing toward a bamboo grove, calm rather than vengeful",
    "habitat": [
     "관아",
     "대숲"
@@ -510,13 +512,13 @@
     "kr-sinrip-wongwi"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-baekjutto",
@@ -535,6 +537,7 @@
     "계보",
     "농경"
    ],
+   "art_hint": "a village mother goddess seated in a Jeju shrine grove, cloth strips tied to the tree, many small child figures suggested around her, basalt wall",
    "habitat": [
     "송당 본향당"
    ],
@@ -577,13 +580,13 @@
     "kr-gwenegitto"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-baeksa",
@@ -603,6 +606,7 @@
     "보복",
     "재물"
    ],
+   "art_hint": "a white snake coiled on a mossy granite boulder beside a country shrine, a bowl of water and rice set before it, villagers bowing at a distance",
    "habitat": [
     "집 주변",
     "바위",
@@ -640,14 +644,14 @@
     "kr-imugi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-bitjaru-gwisin",
@@ -666,6 +670,7 @@
     "피",
     "밤"
    ],
+   "art_hint": "a worn straw broom standing by itself in a moonlit courtyard, faintly limbed, sweeping marks in the dust, a dark shed doorway behind",
    "habitat": [
     "마당",
     "헛간"
@@ -698,14 +703,14 @@
     "kr-jeolgutgongi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-bulgasari",
@@ -729,6 +734,7 @@
     "거대화",
     "불"
    ],
+   "art_hint": "a bristling beast made of iron scraps grown huge, chewing needles and blades in a burning capital street, soldiers falling back, sparks and smoke",
    "habitat": [
     "도성",
     "대장간"
@@ -757,13 +763,13 @@
     "kr-gangcheori"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-bunsinsaba",
@@ -782,6 +788,7 @@
     "규칙",
     "참여형"
    ],
+   "art_hint": "two students' hands together on a pen over a sheet of paper on a school desk at dusk, the pen drawn by nothing, chairs stacked behind",
    "habitat": [
     "교실",
     "빈 방"
@@ -807,14 +814,14 @@
     "kr-hwajangsil-gwisin"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-changgwi",
@@ -837,6 +844,7 @@
     "이름 부르기",
     "호식총"
    ],
+   "art_hint": "a pale spirit walking ahead of a great tiger on a snowy mountain path, calling with an open mouth, a stone cairn grave with an iron skewer at the edge",
    "habitat": [
     "산길",
     "고개"
@@ -884,13 +892,13 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-cheollyung",
@@ -909,6 +917,7 @@
     "장독대",
     "정화수"
    ],
+   "art_hint": "a back-yard deity presence above a jangdokdae terrace of earthen jars, a bowl of clear water on the tallest jar, low stone wall and bamboo behind",
    "habitat": [
     "뒤란",
     "장독대"
@@ -946,13 +955,13 @@
     "kr-teoju"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-cheonggaeguri",
@@ -970,6 +979,7 @@
     "울음",
     "후회"
    ],
+   "art_hint": "a small green tree frog crying on a reed at the edge of a rain-swollen stream, a low grave mound at the water's edge, heavy rain lines",
    "habitat": [
     "개울",
     "물가"
@@ -1003,14 +1013,14 @@
     "kr-yeoubi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-cheonjiwang",
@@ -1029,6 +1039,7 @@
     "해와 달",
     "꽃 내기"
    ],
+   "art_hint": "a creator god drawing a bow at two suns and two moons in the sky, two young sons below holding flower pots, cloud scroll motifs",
    "habitat": [
     "하늘",
     "이승·저승"
@@ -1066,13 +1077,13 @@
     "kr-gangnim"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-cheuksin",
@@ -1093,6 +1104,7 @@
     "기침 세 번",
     "동티"
    ],
+   "art_hint": "a fierce woman spirit with very long loose hair seated in a thatched outhouse counting her hair strands, a narrow wooden door ajar, cold blue tone",
    "habitat": [
     "뒷간"
    ],
@@ -1127,13 +1139,13 @@
     "kr-jowang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-dalgyal-gwisin",
@@ -1156,6 +1168,7 @@
     "공포",
     "학교 괴담"
    ],
+   "art_hint": "a figure in plain white hanbok whose face is entirely smooth and featureless, standing at the end of a dark alley between earthen walls",
    "habitat": [
     "학교",
     "골목",
@@ -1188,13 +1201,13 @@
     "kr-hwajangsil-gwisin"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-dangsan-halmeoni",
@@ -1214,6 +1227,7 @@
     "금줄",
     "당산제"
    ],
+   "art_hint": "an old goddess presence within a huge village tree at the hamlet entrance, straw rope with paper strips around the trunk, an offering table at the roots",
    "habitat": [
     "마을 어귀",
     "노거수"
@@ -1268,13 +1282,13 @@
     "kr-golmaegi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-dokgakgwi",
@@ -1293,6 +1307,7 @@
     "외다리",
     "씨름"
    ],
+   "art_hint": "a one-legged spirit hopping on a night country road, coarse hemp jeogori, leaning on a knotted stick, taking a wrestling stance",
    "habitat": [
     "밤길",
     "다리"
@@ -1325,14 +1340,14 @@
     "kr-dokkaebi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-dokkaebi",
@@ -1461,6 +1476,7 @@
     "재물",
     "두드림"
    ],
+   "art_hint": "a knotted wooden club standing upright on a straw mat, coins and rice pouring from the spot it struck, a poor man's hands drawing back, plain room",
    "habitat": [
     "산길",
     "폐가"
@@ -1492,13 +1508,13 @@
     "kr-dokkaebi-gamtu"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-dokkaebi-bul",
@@ -1523,6 +1539,7 @@
     "무리",
     "유인"
    ],
+   "art_hint": "clusters of small pale blue flames drifting over a night field and a low burial mound, no figure, reeds and a stone wall beneath, faint reflection on wet ground",
    "habitat": [
     "묘지",
     "습지",
@@ -1573,13 +1590,13 @@
     "kr-gumiho"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-dokkaebi-gamtu",
@@ -1598,6 +1615,7 @@
     "욕심",
     "발각"
    ],
+   "art_hint": "a worn horsehair hat hovering above a market stall, the wearer beneath it invisible, merchants looking around confused, half-faded hanbok sleeves",
    "habitat": [
     "장터",
     "마을"
@@ -1624,14 +1642,14 @@
     "kr-dokkaebi-bangmangi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-dokkaebi-sillang",
@@ -1650,6 +1668,7 @@
     "말피",
     "떼어 내기"
    ],
+   "art_hint": "a widow in hanbok in a lonely thatched house at night, a shadowy suitor bringing grain sacks, horse blood smeared on the door frame",
    "habitat": [
     "외딴집"
    ],
@@ -1684,14 +1703,14 @@
     "kr-gaksi-dokkaebi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-dokkaebi-teo",
@@ -1710,6 +1729,7 @@
     "흥망",
     "터"
    ],
+   "art_hint": "an old thatched house at night with coins and grain heaped in the yard while the roof beam sags, a blue flame on the ridge, magpie on a bare tree",
    "habitat": [
     "집터",
     "폐가"
@@ -1742,14 +1762,14 @@
     "kr-eop"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-dueoksini",
@@ -1767,6 +1787,7 @@
     "폭력",
     "억누름"
    ],
+   "art_hint": "a squat fierce spirit with a heavy brow pressing down on a sleeper's head in a dark ondol room, coarse hemp clothing, clenched fists",
    "habitat": [
     "밤길",
     "폐가"
@@ -1799,14 +1820,14 @@
     "kr-dokkaebi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-dukkeobi-sillang",
@@ -1825,6 +1846,7 @@
     "보은",
     "혼인"
    ],
+   "art_hint": "a large toad seated at a wedding table beside a bride in hanbok, wooden wedding geese and a low table of food, family watching from the yard",
    "habitat": [
     "집",
     "우물가"
@@ -1856,14 +1878,14 @@
     "kr-jinegaksi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-elevator-goedam",
@@ -1882,6 +1904,7 @@
     "거울",
     "밀실"
    ],
+   "art_hint": "an apartment elevator door open onto a floor that should not exist, a dim corridor beyond, a mirrored wall reflecting no one",
    "habitat": [
     "아파트",
     "엘리베이터"
@@ -1907,14 +1930,14 @@
     "kr-jihacheol-gwisin"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-eoduksini",
@@ -1937,6 +1960,7 @@
     "커짐",
     "시선"
    ],
+   "art_hint": "a towering formless shadow in a dark alley between earthen walls, growing taller the higher one looks, only a suggestion of eyes, a small figure below looking up",
    "habitat": [
     "골목",
     "빈방",
@@ -1972,13 +1996,13 @@
     "kr-geuseundae"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-eop",
@@ -2003,6 +2027,7 @@
     "구렁이",
     "금기"
    ],
+   "art_hint": "a large pale rat snake coiled calmly on a grain storehouse beam, sacks of grain and an earthen jar below, warm ochre light",
    "habitat": [
     "곳간",
     "뒤뜰",
@@ -2034,7 +2059,7 @@
    "updated_at": "2026-08-16",
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
@@ -2055,6 +2080,7 @@
     "해코지",
     "홀림"
    ],
+   "art_hint": "a scruffy mean spirit in torn hemp clothing tipping over an ox trough in a night byre, cattle startled, straw scattered",
    "habitat": [
     "밤길",
     "외양간"
@@ -2080,14 +2106,14 @@
     "kr-dokkaebi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-gaekgwi",
@@ -2107,6 +2133,7 @@
     "바가지",
     "칼"
    ],
+   "art_hint": "a wandering spirit driven from a threshold, a gourd bowl of rice and greens thrown out the gate, a kitchen knife stuck point-outward in the yard",
    "habitat": [
     "문밖",
     "길"
@@ -2138,13 +2165,13 @@
     "kr-subu"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-gaeyang-halmi",
@@ -2163,6 +2190,7 @@
     "수심",
     "여덟 딸"
    ],
+   "art_hint": "a giant grandmother goddess wading the west sea with water only to her knees, measuring depth with a long pole, a small cliff shrine behind her",
    "habitat": [
     "서해",
     "수성당"
@@ -2211,13 +2239,13 @@
     "kr-magohalmi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-gaksi-dokkaebi",
@@ -2235,6 +2263,7 @@
     "홀림",
     "여인 형상"
    ],
+   "art_hint": "a young woman spirit in hanbok standing at a night crossroads smiling, a small wooden club half hidden in her chima, a blue flame at her feet",
    "habitat": [
     "밤길",
     "주막"
@@ -2261,14 +2290,14 @@
     "kr-songaksi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-gameunjang",
@@ -2287,6 +2316,7 @@
     "전상",
     "자립"
    ],
+   "art_hint": "a young woman in plain hanbok walking away from a thatched house with a bundle, her blind parents at the gate behind, a path opening ahead",
    "habitat": [
     "집",
     "길"
@@ -2330,13 +2360,13 @@
     "kr-oneuri"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-gangcheori",
@@ -2436,6 +2466,7 @@
     "차사",
     "임무"
    ],
+   "art_hint": "a living man in a Korean constable's uniform walking the road to the underworld, a bundle of rice cakes his wife packed, a flowering path and dark gate ahead",
    "habitat": [
     "저승길",
     "관아"
@@ -2483,7 +2514,7 @@
    "updated_at": "2026-08-16",
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
@@ -2505,6 +2536,7 @@
     "도약",
     "시체"
    ],
+   "art_hint": "a stiff corpse figure with a paper charm on its forehead, arms extended, moving in hops through a night graveyard, plain dark robe",
    "habitat": [
     "무덤",
     "폐가"
@@ -2530,14 +2562,14 @@
     "kr-myogwi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-gawi",
@@ -2557,6 +2589,7 @@
     "압박",
     "대처법"
    ],
+   "art_hint": "a sleeper on an ondol floor pressed by a heavy dark shape, arms unable to move, a folded quilt and low pillow, blue night light through a lattice door",
    "habitat": [
     "침소",
     "빈방"
@@ -2588,14 +2621,14 @@
     "kr-dueoksini"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-geomeun-bonggo",
@@ -2614,6 +2647,7 @@
     "하굣길",
     "사회불안"
    ],
+   "art_hint": "a dark windowless van idling at the end of a school lane at dusk, children's shadows walking away, no faces and no licence plate",
    "habitat": [
     "학교 앞",
     "골목"
@@ -2643,13 +2677,13 @@
     "kr-hongkong-halmae"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-geumdwaeji",
@@ -2668,6 +2702,7 @@
     "사슴 가죽",
     "굴"
    ],
+   "art_hint": "a great boar with gilded bristles at a mountain cave mouth, a captive noblewoman in hanbok behind it, a strip of deer hide held out at the entrance",
    "habitat": [
     "산굴",
     "바닷가 절벽"
@@ -2708,14 +2743,14 @@
     "kr-sangun"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-geuseundae",
@@ -2734,6 +2769,7 @@
     "거대화",
     "불"
    ],
+   "art_hint": "a small child-shaped shadow on a night mountain path swelling enormous when looked at, a laughing mouth, a lone traveler's lantern light at the lower edge",
    "habitat": [
     "밤길",
     "산길"
@@ -2760,14 +2796,14 @@
     "kr-eoduksini"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-golmaegi",
@@ -2787,6 +2823,7 @@
     "동신",
     "별신굿"
    ],
+   "art_hint": "a village founding ancestor deity in Korean robes seated in a small shrine above a fishing village, boats and drying nets below, cloth strips at the door",
    "habitat": [
     "마을 당",
     "동해안 어촌"
@@ -2830,13 +2867,13 @@
     "kr-dangsan-halmeoni"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-gu-samseung-halmang",
@@ -2855,6 +2892,7 @@
     "꽃 시합",
     "몫"
    ],
+   "art_hint": "a stern goddess in dark hanbok holding a withered flower branch at the edge of a shrine yard, offerings set out for her first",
    "habitat": [
     "저승",
     "굿청"
@@ -2882,13 +2920,13 @@
     "kr-samseung-halmang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-gumiho",
@@ -2994,6 +3032,7 @@
     "금기",
     "탐색"
    ],
+   "art_hint": "a young man half emerged from a shed snake skin in a lamplit hanok room, his wife in hanbok holding the skin, an open lattice door to the night",
    "habitat": [
     "집",
     "먼 길"
@@ -3035,13 +3074,13 @@
     "kr-ureonggaksi"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-gwenegitto",
@@ -3060,6 +3099,7 @@
     "귀환",
     "용왕국"
    ],
+   "art_hint": "a young god returning by sea, standing on an iron chest washed onto black basalt rock, a shrine grove ahead, pork offerings set on a stone",
    "habitat": [
     "김녕 궤네깃당",
     "바다"
@@ -3101,13 +3141,13 @@
     "kr-yongwang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-gyeryong",
@@ -3127,6 +3167,7 @@
     "탄생",
     "왕비"
    ],
+   "art_hint": "a dragon with a rooster's head rising from a stone well, a newborn girl at its side, an old woman reaching in, low stone wall and pines",
    "habitat": [
     "우물"
    ],
@@ -3167,14 +3208,14 @@
     "kr-jeongsin"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-haerang",
@@ -3193,6 +3234,7 @@
     "풍어",
     "신당"
    ],
+   "art_hint": "a young woman deity enshrined on a coastal cliff, carved wooden effigies and rice cake set as offerings, fishing boats returning full below",
    "habitat": [
     "해신당",
     "갯바위"
@@ -3241,13 +3283,13 @@
     "kr-seonang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-haeryong",
@@ -3266,6 +3308,7 @@
     "해가",
     "동해"
    ],
+   "art_hint": "a great four-clawed sea dragon carrying a noblewoman in hanbok down into the waves, villagers on the shore striking the ground with sticks and singing",
    "habitat": [
     "동해안",
     "임해 절벽"
@@ -3301,14 +3344,14 @@
     "kr-yongwang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-haetae",
@@ -3331,6 +3374,7 @@
     "벽사",
     "화재"
    ],
+   "art_hint": "a maned lion-like beast with a single horn and scaled body carved in granite, seated before a palace gate, Korean stone-sculpture proportions",
    "habitat": [
     "궁궐",
     "관아"
@@ -3372,13 +3416,13 @@
     "kr-jangseung"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-hoeorib",
@@ -3398,6 +3442,7 @@
     "금기",
     "먼지"
    ],
+   "art_hint": "a sudden whirlwind spinning dust and dry leaves along a village road, a straw hat lifted away, people turning aside, clear sky above",
    "habitat": [
     "들판",
     "길"
@@ -3434,14 +3479,14 @@
     "kr-yeongdeung-halmang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-hongkong-halmae",
@@ -3464,6 +3509,7 @@
     "추격",
     "고양이"
    ],
+   "art_hint": "an old woman figure with animal legs crouched at the end of a 1980s Korean school corridor at dusk, dropped satchels, rendered in the same hanji technique",
    "habitat": [
     "학교",
     "골목",
@@ -3491,13 +3537,13 @@
     "kr-hwajangsil-gwisin"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-hongyeoksin",
@@ -3516,6 +3562,7 @@
     "작은손님",
     "금기"
    ],
+   "art_hint": "a smaller travelling deity at a house door, a child with flushed cheeks resting on the ondol floor inside, a simple offering bowl on a low table",
    "habitat": [
     "집"
    ],
@@ -3542,14 +3589,14 @@
     "kr-sonnim"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-hwagwang",
@@ -3569,6 +3616,7 @@
     "관측 기록",
     "하늘"
    ],
+   "art_hint": "a great fireball crossing the night sky above a walled town, officials on a terrace recording it, a watchtower silhouette",
    "habitat": [
     "하늘"
    ],
@@ -3601,14 +3649,14 @@
     "kr-jigwi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-hwajangsil-gwisin",
@@ -3627,6 +3675,7 @@
     "마지막 칸",
     "학교"
    ],
+   "art_hint": "a school toilet corridor with the last stall door ajar, a red and a blue roll of paper on the floor, evening light through frosted glass",
    "habitat": [
     "학교 화장실"
    ],
@@ -3653,14 +3702,14 @@
     "kr-bunsinsaba"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-imgyeongeop",
@@ -3679,6 +3728,7 @@
     "조기",
     "풍어"
    ],
+   "art_hint": "a general deity in Korean armour enshrined in an island shrine, croaker fish hung as offerings, fishing boats crowding the harbour behind",
    "habitat": [
     "연평도",
     "당집"
@@ -3726,13 +3776,13 @@
     "kr-golmaegi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-imugi",
@@ -3843,6 +3893,7 @@
     "남장",
     "오곡 씨앗"
    ],
+   "art_hint": "a young woman in men's Korean scholar clothes with a book bundle on a Jeju field path, five grain seeds in her palm, basalt field walls and a thatched Jeju house",
    "habitat": [
     "밭",
     "하늘"
@@ -3893,7 +3944,7 @@
    "updated_at": "2026-08-16",
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
@@ -4063,6 +4114,7 @@
     "심야",
     "도로"
    ],
+   "art_hint": "a woman in a white dress standing on the shoulder of an empty night motorway in fog, headlights washing past, no identifiable place",
    "habitat": [
     "자유로",
     "고속화도로"
@@ -4105,13 +4157,13 @@
     "kr-teoneol-goedam"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-jeolgutgongi",
@@ -4129,6 +4181,7 @@
     "방아 소리",
     "기물 변화"
    ],
+   "art_hint": "an old wooden pestle standing upright beside a stone mortar in a night mill shed, pounding by itself, grain dust in the air",
    "habitat": [
     "방앗간",
     "헛간"
@@ -4155,14 +4208,14 @@
     "kr-dokkaebi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-jeongsin",
@@ -4182,6 +4235,7 @@
     "금줄",
     "금기"
    ],
+   "art_hint": "a well deity presence over a village stone well at dawn, straw rope around the rim, a bowl of first-drawn water, women waiting with jars",
    "habitat": [
     "마을 우물"
    ],
@@ -4215,13 +4269,13 @@
     "kr-seonang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-jeoseung-saja",
@@ -4245,6 +4299,7 @@
     "검은 도포",
     "셋"
    ],
+   "art_hint": "three messengers in black Korean robes and black gat hats standing at a house gate at night, a small table of rice bowls set outside for them",
    "habitat": [
     "문밖",
     "상가"
@@ -4277,13 +4332,13 @@
     "kr-yeomna"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-jeung",
@@ -4303,6 +4358,7 @@
     "대역",
     "정월 대보름"
    ],
+   "art_hint": "a life-size straw effigy of a man lying on a night road, coins tucked in its belly, children with sticks approaching, the first full moon overhead",
    "habitat": [
     "길가",
     "집 앞"
@@ -4337,14 +4393,14 @@
     "kr-sapsalgae"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-jigwi",
@@ -4364,6 +4420,7 @@
     "짝사랑",
     "부적"
    ],
+   "art_hint": "a young man asleep at the foot of a stone pagoda, fire rising from his chest and wrapping the pagoda, a royal procession departing, a paper charm on a nearby door",
    "habitat": [
     "절",
     "탑"
@@ -4404,14 +4461,14 @@
     "kr-hwagwang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-jihacheol-gwisin",
@@ -4430,6 +4487,7 @@
     "빈 칸",
     "창문"
    ],
+   "art_hint": "an empty late-night subway carriage, one seated passenger reflected wrongly in the dark window glass, fluorescent light",
    "habitat": [
     "지하철",
     "역사"
@@ -4465,14 +4523,14 @@
     "kr-elevator-goedam"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-jinegaksi",
@@ -4491,6 +4549,7 @@
     "승천",
     "은혜"
    ],
+   "art_hint": "a woman in hanbok in a lamplit mountain house, a hundred-legged centipede form faintly overlaid on her, an old man watching from the doorway",
    "habitat": [
     "산속 집",
     "폐가"
@@ -4531,14 +4590,14 @@
     "kr-baeksa"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-jipsin-dokkaebi",
@@ -4557,6 +4616,7 @@
     "기물 변화",
     "금기"
    ],
+   "art_hint": "a discarded straw sandal on a dark road, faintly footed and walking, faint prints behind it, a traveler looking back",
    "habitat": [
     "밤길",
     "쓰레기 더미"
@@ -4585,14 +4645,14 @@
     "kr-dokkaebi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-jisin",
@@ -4611,6 +4671,7 @@
     "풍물",
     "정월"
    ],
+   "art_hint": "a broad earth deity pressed beneath a house yard with flattening hands, a pungmul band with small gong and drum stamping above, dust rising",
    "habitat": [
     "마당",
     "집터"
@@ -4646,13 +4707,13 @@
     "kr-seonang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-jowang",
@@ -4676,6 +4737,7 @@
     "불",
     "금기"
    ],
+   "art_hint": "an elderly kitchen goddess in hanbok beside a clay stove, a single brass bowl of clear water on the ledge, firewood glow, hanging iron pots",
    "habitat": [
     "부엌",
     "부뚜막"
@@ -4708,7 +4770,7 @@
    "updated_at": "2026-08-16",
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
@@ -4731,6 +4793,7 @@
     "손톱",
     "진가쟁주"
    ],
+   "art_hint": "two identical men in the same hanbok facing each other in a hanok courtyard, one subtly rat-featured, a cat held in a woman's arms at the side",
    "habitat": [
     "집",
     "곳간"
@@ -4766,14 +4829,14 @@
     "kr-myogwi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-kongkong-gwisin",
@@ -4792,6 +4855,7 @@
     "소리",
     "계단"
    ],
+   "art_hint": "a one-legged figure hopping up a concrete school stairwell at dusk, its motion shown by repeated faint outlines",
    "habitat": [
     "학교",
     "계단"
@@ -4819,14 +4883,14 @@
     "kr-hwajangsil-gwisin"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-magohalmi",
@@ -4850,6 +4914,7 @@
     "지형 창조",
     "바위"
    ],
+   "art_hint": "a giant grandmother striding across ridgelines, boulders spilling from her chima to form a hill, an unfinished stone wall trailing behind her",
    "habitat": [
     "산",
     "고인돌",
@@ -4900,13 +4965,13 @@
     "kr-seongmo-cheonwang"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-mayago",
@@ -4924,6 +4989,7 @@
     "철쭉",
     "지명 유래"
    ],
+   "art_hint": "a mountain goddess weaving on a high alpine meadow, torn cloth scattering into azalea shrubs, waiting toward an empty peak",
    "habitat": [
     "지리산 세석평전"
    ],
@@ -4960,14 +5026,14 @@
     "kr-seongmo-cheonwang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-mireuk",
@@ -4987,6 +5053,7 @@
     "돌부처",
     "수호"
    ],
+   "art_hint": "a rough stone Maitreya figure standing at a field edge, a woman placing rice and water at its base, rice paddies and a low ridge behind",
    "habitat": [
     "마을 어귀",
     "논둑"
@@ -5030,13 +5097,13 @@
     "kr-sacheonwang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-mongdal",
@@ -5056,6 +5123,7 @@
     "해원",
     "붙음"
    ],
+   "art_hint": "a young man spirit in pale hanbok with a topknot standing at a village lane corner at night, one sleeve raised, unable to leave",
    "habitat": [
     "골목",
     "빈집"
@@ -5081,14 +5149,14 @@
     "kr-songaksi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-mujugohon",
@@ -5108,6 +5176,7 @@
     "뒷전",
     "제사"
    ],
+   "art_hint": "a crowd of faint wandering spirits gathered outside a city wall at dusk, a low state altar with offerings before them, no faces distinct",
    "habitat": [
     "성 밖",
     "길가"
@@ -5151,14 +5220,14 @@
     "kr-subu"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-mul-dokkaebi",
@@ -5178,6 +5247,7 @@
     "고사",
     "메밀묵"
    ],
+   "art_hint": "a water spirit rising from a tidal flat at dusk beside a moored wooden fishing boat, seaweed-tangled hair, a bowl of buckwheat jelly set on a flat stone as offering",
    "habitat": [
     "갯벌",
     "포구",
@@ -5227,14 +5297,14 @@
     "kr-subu"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-mulgwisin",
@@ -5258,6 +5328,7 @@
     "익사",
     "발목"
    ],
+   "art_hint": "a pale figure just beneath the surface of a dark pool reaching up for an ankle, reeds and a flat washing stone at the bank, summer green",
    "habitat": [
     "못",
     "강",
@@ -5298,13 +5369,13 @@
     "kr-imugi"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-munjeon",
@@ -5324,6 +5395,7 @@
     "액막이",
     "본풀이"
    ],
+   "art_hint": "a young guardian deity standing squarely in a hanok gateway with both arms out, straw rope across the lintel, dark shapes held back outside",
    "habitat": [
     "대문",
     "문턱"
@@ -5370,13 +5442,13 @@
     "kr-seongju"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-myogwi",
@@ -5396,6 +5468,7 @@
     "시신",
     "금기"
    ],
+   "art_hint": "a cat with fixed staring eyes on a mourning house rafter at night, white funeral cloth below, a bowl of rice with an upright spoon",
    "habitat": [
     "상가",
     "빈집"
@@ -5427,14 +5500,14 @@
     "kr-sangmun"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-nachal",
@@ -5452,6 +5525,7 @@
     "식인",
     "지옥도"
    ],
+   "art_hint": "a devouring demon figure from a Korean temple hell mural, ochre and vermilion, among flames with small figures fleeing",
    "habitat": [
     "지옥",
     "사찰 벽화"
@@ -5477,14 +5551,14 @@
     "kr-yacha"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-nogu-hwaho",
@@ -5504,6 +5578,7 @@
     "승려 형상",
     "활"
    ],
+   "art_hint": "an old fox unmasked on a rocky sea island at dawn, a discarded monk's robe beside it, an archer lowering his bow, waves and wind-bent pine",
    "habitat": [
     "서해 섬",
     "바다"
@@ -5542,14 +5617,14 @@
     "kr-yongwang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-oneuri",
@@ -5572,6 +5647,7 @@
     "사계절",
     "구제"
    ],
+   "art_hint": "a girl walking a long road where four seasons meet at once, blossoming and snow-laden trees on either side, a great serpent and a lotus tree by the wayside",
    "habitat": [
     "원천강",
     "길"
@@ -5612,7 +5688,7 @@
    "updated_at": "2026-08-16",
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
@@ -5634,6 +5710,7 @@
     "중악",
     "소원"
    ],
+   "art_hint": "an elderly mountain deity seated before a granite rock-face shrine, a tiger resting behind, candles and rice offerings on the ledge",
    "habitat": [
     "팔공산"
    ],
@@ -5680,13 +5757,13 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-ppalgan-mask",
@@ -5705,6 +5782,7 @@
     "질문",
     "추격"
    ],
+   "art_hint": "a tall woman in a long coat and a red mask standing under a streetlamp in a Korean alley at night, one hand raised",
    "habitat": [
     "학교",
     "골목"
@@ -5731,14 +5809,14 @@
     "kr-hongkong-halmae"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-sacheonwang",
@@ -5758,6 +5836,7 @@
     "천왕문",
     "네 방위"
    ],
+   "art_hint": "four temple gate guardian kings in Korean temple sculpture manner holding a lute, a sword, a dragon and a pagoda, small demons trodden underfoot",
    "habitat": [
     "사찰 천왕문"
    ],
@@ -5801,13 +5880,13 @@
     "kr-mireuk"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-samjaesin",
@@ -5827,6 +5906,7 @@
     "부적",
     "삼재풀이"
    ],
+   "art_hint": "three shadowy calamity figures circling a house, a paper charm of a three-headed hawk pasted on the gate, a family at a low table inside",
    "habitat": [
     "집",
     "사람"
@@ -5852,14 +5932,14 @@
     "kr-jeung"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-samseung-halmang",
@@ -5879,6 +5959,7 @@
     "꽃 시합",
     "생명"
    ],
+   "art_hint": "a birth goddess in hanbok holding a blooming flower branch with a newborn cradled in cloth, a rival goddess with a withered branch stepping back",
    "habitat": [
     "집",
     "불도맞이 굿청"
@@ -5922,13 +6003,13 @@
     "kr-samsin"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-samsin",
@@ -6010,6 +6091,7 @@
     "소금",
     "상문풀이"
    ],
+   "art_hint": "a cold shadow following a man home from a funeral house, mourning cloth at the gate behind, salt and red beans scattered on the threshold",
    "habitat": [
     "상가",
     "집"
@@ -6034,14 +6116,14 @@
     "kr-gaekgwi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-sangun",
@@ -6061,6 +6143,7 @@
     "둔갑",
     "산신 사자"
    ],
+   "art_hint": "a great tiger with rounded minhwa features seated on a granite ridge at dusk, a magpie on the pine above, village lights far below",
    "habitat": [
     "산",
     "고갯길"
@@ -6108,14 +6191,14 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-sansam-dongja",
@@ -6135,6 +6218,7 @@
     "심마니",
     "금기"
    ],
+   "art_hint": "a small child in a plain hemp jacket standing among deep-mountain undergrowth, red ginseng berries at his feet, a ginseng digger kneeling in mist",
    "habitat": [
     "깊은 산",
     "삼밭"
@@ -6179,14 +6263,14 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-sansillyeong",
@@ -6210,6 +6294,7 @@
     "호랑이",
     "노인"
    ],
+   "art_hint": "a white-bearded mountain god in Korean robes seated with a great tiger at his knee and a boy attendant holding a gnarled staff, pines and a waterfall",
    "habitat": [
     "산",
     "산신각"
@@ -6282,7 +6367,7 @@
    "updated_at": "2026-08-16",
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
@@ -6308,6 +6393,7 @@
     "퇴치",
     "수호"
    ],
+   "art_hint": "a shaggy Korean sapsaree dog planted at a village gate at night barking at a dark shape, straw rope and a paper charm on the post behind",
    "habitat": [
     "집",
     "마을"
@@ -6347,13 +6433,13 @@
     "kr-jeung"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-seolmundae",
@@ -6460,6 +6546,7 @@
     "신목",
     "경계"
    ],
+   "art_hint": "a guardian presence over a mountain pass shrine, a heap of prayer stones and an old tree hung with five-colour cloth, a traveler adding a stone",
    "habitat": [
     "고갯마루",
     "마을 입구"
@@ -6511,7 +6598,7 @@
    "updated_at": "2026-08-16",
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
@@ -6538,6 +6625,7 @@
     "성주풀이",
     "가장"
    ],
+   "art_hint": "a dignified house deity seated on the crossbeam of a hanok main hall, a white paper packet of rice tied to the beam as his body, open lattice doors",
    "habitat": [
     "마루",
     "대들보"
@@ -6577,7 +6665,7 @@
    "updated_at": "2026-08-16",
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
@@ -6600,6 +6688,7 @@
     "천왕봉",
     "석상"
    ],
+   "art_hint": "a stone mother goddess enshrined on a high mountain peak, offerings of cloth and rice before her, a sea of cloud below, worshippers small at the base",
    "habitat": [
     "지리산",
     "성모사"
@@ -6649,13 +6738,13 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-seonnyeo",
@@ -6679,6 +6768,7 @@
     "금기",
     "상실"
    ],
+   "art_hint": "a heavenly woman in flowing Korean robes bathing in a mountain pool with her sisters, her feathered robe gone from the rock, a deer slipping into the pines",
    "habitat": [
     "산속 못",
     "폭포"
@@ -6723,13 +6813,13 @@
     "kr-ureonggaksi"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-sinjikki",
@@ -6749,6 +6839,7 @@
     "인어",
     "경고"
    ],
+   "art_hint": "a mermaid-like sea being surfacing beside a rocky island at dusk, half fish, tossing a pebble toward a small wooden fishing boat as warning, storm building",
    "habitat": [
     "거문도 앞바다",
     "갯바위"
@@ -6794,14 +6885,14 @@
     "kr-yongwang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-sinrip-wongwi",
@@ -6820,6 +6911,7 @@
     "복수",
     "야담"
    ],
+   "art_hint": "a woman spirit standing on a river bluff above a bend, army banners small on the sandbar below, mist rising through autumn reeds",
    "habitat": [
     "탄금대",
     "강변"
@@ -6862,14 +6954,14 @@
     "kr-arang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-socheonguk",
@@ -6888,6 +6980,7 @@
     "소",
     "갈등"
    ],
+   "art_hint": "a hunting god in hide-trimmed Jeju clothing standing in a barley field with a bow, an unyoked ox beside him, volcanic oreum cones behind",
    "habitat": [
     "알송당",
     "오름"
@@ -6926,13 +7019,13 @@
     "kr-gwenegitto"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-sondol",
@@ -6952,6 +7045,7 @@
     "추위",
     "억울한 죽음"
    ],
+   "art_hint": "a boatman spirit at the tiller in a narrow strait, wind tearing at his hemp clothes and sail, a stone cairn grave on the headland behind, cold grey water",
    "habitat": [
     "염하수로",
     "포구"
@@ -7006,14 +7100,14 @@
     "kr-mulgwisin"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-songaksi",
@@ -7107,6 +7201,7 @@
     "금기",
     "대접"
    ],
+   "art_hint": "three travelling deities in Korean robes arriving at a village gate on horseback, a household setting out an offering table of rice cake and clear water, straw rope on the door",
    "habitat": [
     "집",
     "마을"
@@ -7159,7 +7254,7 @@
    "updated_at": "2026-08-16",
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
@@ -7186,6 +7281,7 @@
     "장대",
     "경계"
    ],
+   "art_hint": "tall wooden poles topped with carved wooden ducks at a village entrance, rice paddies behind, a low granite ridge and a magpie",
    "habitat": [
     "마을 입구",
     "논둑"
@@ -7222,13 +7318,13 @@
     "kr-seonang"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-subu",
@@ -7248,6 +7344,7 @@
     "잡귀",
     "대접"
    ],
+   "art_hint": "a crowd of small ragged wandering spirits gathering at a shore for the last share of an offering, a low table of rice and greens set on the sand, dusk",
    "habitat": [
     "갯가",
     "굿청 밖"
@@ -7281,13 +7378,13 @@
     "kr-mul-dokkaebi"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-taebaek-sansin",
@@ -7306,6 +7403,7 @@
     "제천",
     "기도처"
    ],
+   "art_hint": "a mountain deity above a stone altar of piled granite on a bare winter summit, an offering table with brass bowls, wind-driven snow",
    "habitat": [
     "태백산",
     "천제단"
@@ -7356,13 +7454,13 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-teoju",
@@ -7382,6 +7480,7 @@
     "동티",
     "짚주저리"
    ],
+   "art_hint": "an earthen jar wrapped in a straw cone standing in a back yard, new grain inside, low stone wall and a bare persimmon tree, a presence suggested in the straw",
    "habitat": [
     "뒤뜰",
     "장독대"
@@ -7413,13 +7512,13 @@
     "kr-dokkaebi-teo"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-teoneol-goedam",
@@ -7438,6 +7537,7 @@
     "백미러",
     "어둠"
    ],
+   "art_hint": "a long unlit road tunnel with a car's tail lights receding, a faint shape in the side mirror, no signage identifying the place",
    "habitat": [
     "터널",
     "국도"
@@ -7471,13 +7571,13 @@
     "kr-jayuro-gwisin"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-ureonggaksi",
@@ -7500,6 +7600,7 @@
     "혼인",
     "비극"
    ],
+   "art_hint": "a young woman in hanbok stepping out of a large freshwater snail shell beside a rice paddy, a low table of prepared food in the thatched house behind",
    "habitat": [
     "논",
     "물가"
@@ -7541,13 +7642,13 @@
     "kr-seonnyeo"
    ],
    "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "sensitivity": null
   },
   {
    "id": "kr-yacha",
@@ -7566,6 +7667,7 @@
     "수호",
     "속도"
    ],
+   "art_hint": "a fierce guardian spirit with bulging eyes and a muscular frame in the manner of Korean temple wall painting, standing among rocks",
    "habitat": [
     "사찰",
     "산"
@@ -7598,14 +7700,14 @@
     "kr-sacheonwang"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-yaraeja",
@@ -7625,6 +7727,7 @@
     "정체",
     "영웅 탄생"
    ],
+   "art_hint": "a woman in hanbok following a thread from her needle out of the inner room to a pond at dawn, a great earthworm at the thread's end among reeds",
    "habitat": [
     "규방",
     "못"
@@ -7666,14 +7769,14 @@
     "kr-agijangsu"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-yeoksin",
@@ -7693,6 +7796,7 @@
     "부적",
     "액막이"
    ],
+   "art_hint": "a plague spirit kneeling in submission before a man in Korean court robes who dances and sings, a painted face on the door paper behind, moonlit courtyard",
    "habitat": [
     "집 문",
     "마을"
@@ -7729,14 +7833,14 @@
     "kr-jeung"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-yeomna",
@@ -7756,6 +7860,7 @@
     "업경",
     "시왕"
    ],
+   "art_hint": "a judge king enthroned in a Korean temple underworld hall, Korean official robes and crown, a karma mirror at his side showing a scene, scribes below",
    "habitat": [
     "명부전",
     "저승"
@@ -7789,13 +7894,13 @@
     "kr-gangnim"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-yeongdeung-halmang",
@@ -7894,6 +7999,7 @@
     "씻김굿",
     "해원"
    ],
+   "art_hint": "a shaman in white ritual hanbok calling a drowned spirit at a riverside, a long cloth path laid over the water, mourners kneeling with paper lanterns",
    "habitat": [
     "굿청",
     "사고 현장"
@@ -7937,13 +8043,13 @@
     "kr-subu"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {}
   },
   {
    "id": "kr-yeou-nui",
@@ -7962,6 +8068,7 @@
     "세 개의 병",
     "가축"
    ],
+   "art_hint": "a young girl in hanbok standing serene in a night byre, a fox shadow cast on the wall behind her, three small bottles red blue and white tucked at her waist",
    "habitat": [
     "외양간",
     "집"
@@ -7997,14 +8104,14 @@
     "kr-gumiho"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-yeoubi",
@@ -8023,6 +8130,7 @@
     "혼례",
     "홀림"
    ],
+   "art_hint": "sunlit rain falling on a hillside while the sun still shines, a fox slipping between grave mounds, a faint wedding procession in the mist",
    "habitat": [
     "들",
     "산"
@@ -8060,14 +8168,14 @@
     "kr-sangun"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-yongma",
@@ -8087,6 +8195,7 @@
     "울음",
     "지명"
    ],
+   "art_hint": "a winged horse bursting from a mountain pool crying to the sky, an empty saddle, granite ridge and pines, a small burial mound at the pool's edge",
    "habitat": [
     "못",
     "산"
@@ -8127,14 +8236,14 @@
     "kr-agijangsu"
    ],
    "updated_at": "2026-08-16",
-   "names": {},
-   "sensitivity": null,
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "names": {},
+   "sensitivity": null
   },
   {
    "id": "kr-yongwang",
@@ -8158,6 +8267,7 @@
     "용왕제",
     "바다"
    ],
+   "art_hint": "a sea king enthroned beneath the waves, long beard and a Korean-style crown, four-clawed dragon attendants, offerings of rice cake drifting above",
    "habitat": [
     "바다",
     "포구",
@@ -8213,7 +8323,7 @@
    "updated_at": "2026-08-16",
    "art": {
     "status": "pending",
-    "direction": "minhwa-v1",
+    "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }

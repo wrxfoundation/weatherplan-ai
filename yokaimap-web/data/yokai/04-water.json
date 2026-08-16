@@ -111,6 +111,7 @@
         "용왕제",
         "바다"
       ],
+      "art_hint": "a sea king enthroned beneath the waves, long beard and a Korean-style crown, four-clawed dragon attendants, offerings of rice cake drifting above",
       "habitat": [
         "바다",
         "포구",
@@ -163,7 +164,11 @@
         "kr-nogu-hwaho",
         "kr-subu"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-mulgwisin",
@@ -187,6 +192,7 @@
         "익사",
         "발목"
       ],
+      "art_hint": "a pale figure just beneath the surface of a dark pool reaching up for an ankle, reeds and a flat washing stone at the bank, summer green",
       "habitat": [
         "못",
         "강",
@@ -226,7 +232,11 @@
         "kr-mujugohon",
         "kr-imugi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-sinjikki",
@@ -246,6 +256,7 @@
         "인어",
         "경고"
       ],
+      "art_hint": "a mermaid-like sea being surfacing beside a rocky island at dusk, half fish, tossing a pebble toward a small wooden fishing boat as warning, storm building",
       "habitat": [
         "거문도 앞바다",
         "갯바위"
@@ -290,7 +301,11 @@
       "related": [
         "kr-yongwang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-gaeyang-halmi",
@@ -309,6 +324,7 @@
         "수심",
         "여덟 딸"
       ],
+      "art_hint": "a giant grandmother goddess wading the west sea with water only to her knees, measuring depth with a long pole, a small cliff shrine behind her",
       "habitat": [
         "서해",
         "수성당"
@@ -356,7 +372,11 @@
         "kr-seolmundae",
         "kr-magohalmi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-haerang",
@@ -375,6 +395,7 @@
         "풍어",
         "신당"
       ],
+      "art_hint": "a young woman deity enshrined on a coastal cliff, carved wooden effigies and rice cake set as offerings, fishing boats returning full below",
       "habitat": [
         "해신당",
         "갯바위"
@@ -422,7 +443,11 @@
         "kr-songaksi",
         "kr-seonang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-haeryong",
@@ -441,6 +466,7 @@
         "해가",
         "동해"
       ],
+      "art_hint": "a great four-clawed sea dragon carrying a noblewoman in hanbok down into the waves, villagers on the shore striking the ground with sticks and singing",
       "habitat": [
         "동해안",
         "임해 절벽"
@@ -475,7 +501,11 @@
       "related": [
         "kr-yongwang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-gyeryong",
@@ -495,6 +525,7 @@
         "탄생",
         "왕비"
       ],
+      "art_hint": "a dragon with a rooster's head rising from a stone well, a newborn girl at its side, an old woman reaching in, low stone wall and pines",
       "habitat": [
         "우물"
       ],
@@ -534,7 +565,11 @@
         "kr-yongwang",
         "kr-jeongsin"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-jeongsin",
@@ -554,6 +589,7 @@
         "금줄",
         "금기"
       ],
+      "art_hint": "a well deity presence over a village stone well at dawn, straw rope around the rim, a bowl of first-drawn water, women waiting with jars",
       "habitat": [
         "마을 우물"
       ],
@@ -586,7 +622,11 @@
         "kr-gyeryong",
         "kr-seonang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-subu",
@@ -606,6 +646,7 @@
         "잡귀",
         "대접"
       ],
+      "art_hint": "a crowd of small ragged wandering spirits gathering at a shore for the last share of an offering, a low table of rice and greens set on the sand, dusk",
       "habitat": [
         "갯가",
         "굿청 밖"
@@ -638,7 +679,11 @@
         "kr-gaekgwi",
         "kr-mul-dokkaebi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     }
   ]
 }

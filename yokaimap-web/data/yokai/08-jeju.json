@@ -185,6 +185,7 @@
         "남장",
         "오곡 씨앗"
       ],
+      "art_hint": "a young woman in men's Korean scholar clothes with a book bundle on a Jeju field path, five grain seeds in her palm, basalt field walls and a thatched Jeju house",
       "habitat": [
         "밭",
         "하늘"
@@ -232,7 +233,11 @@
         "kr-gameunjang",
         "kr-cheonjiwang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-baekjutto",
@@ -251,6 +256,7 @@
         "계보",
         "농경"
       ],
+      "art_hint": "a village mother goddess seated in a Jeju shrine grove, cloth strips tied to the tree, many small child figures suggested around her, basalt wall",
       "habitat": [
         "송당 본향당"
       ],
@@ -292,7 +298,11 @@
         "kr-socheonguk",
         "kr-gwenegitto"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-socheonguk",
@@ -311,6 +321,7 @@
         "소",
         "갈등"
       ],
+      "art_hint": "a hunting god in hide-trimmed Jeju clothing standing in a barley field with a bow, an unyoked ox beside him, volcanic oreum cones behind",
       "habitat": [
         "알송당",
         "오름"
@@ -348,7 +359,11 @@
         "kr-baekjutto",
         "kr-gwenegitto"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-gwenegitto",
@@ -367,6 +382,7 @@
         "귀환",
         "용왕국"
       ],
+      "art_hint": "a young god returning by sea, standing on an iron chest washed onto black basalt rock, a shrine grove ahead, pork offerings set on a stone",
       "habitat": [
         "김녕 궤네깃당",
         "바다"
@@ -407,7 +423,11 @@
         "kr-socheonguk",
         "kr-yongwang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-gameunjang",
@@ -426,6 +446,7 @@
         "전상",
         "자립"
       ],
+      "art_hint": "a young woman in plain hanbok walking away from a thatched house with a bundle, her blind parents at the gate behind, a path opening ahead",
       "habitat": [
         "집",
         "길"
@@ -468,7 +489,11 @@
         "kr-jacheongbi",
         "kr-oneuri"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-gangnim",
@@ -492,6 +517,7 @@
         "차사",
         "임무"
       ],
+      "art_hint": "a living man in a Korean constable's uniform walking the road to the underworld, a bundle of rice cakes his wife packed, a flowering path and dark gate ahead",
       "habitat": [
         "저승길",
         "관아"
@@ -536,7 +562,11 @@
         "kr-jeoseung-saja",
         "kr-yeomna"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-samseung-halmang",
@@ -556,6 +586,7 @@
         "꽃 시합",
         "생명"
       ],
+      "art_hint": "a birth goddess in hanbok holding a blooming flower branch with a newborn cradled in cloth, a rival goddess with a withered branch stepping back",
       "habitat": [
         "집",
         "불도맞이 굿청"
@@ -598,7 +629,11 @@
         "kr-gu-samseung-halmang",
         "kr-samsin"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-gu-samseung-halmang",
@@ -617,6 +652,7 @@
         "꽃 시합",
         "몫"
       ],
+      "art_hint": "a stern goddess in dark hanbok holding a withered flower branch at the edge of a shrine yard, offerings set out for her first",
       "habitat": [
         "저승",
         "굿청"
@@ -643,7 +679,11 @@
       "related": [
         "kr-samseung-halmang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-oneuri",
@@ -666,6 +706,7 @@
         "사계절",
         "구제"
       ],
+      "art_hint": "a girl walking a long road where four seasons meet at once, blossoming and snow-laden trees on either side, a great serpent and a lotus tree by the wayside",
       "habitat": [
         "원천강",
         "길"
@@ -703,7 +744,11 @@
         "kr-gameunjang",
         "kr-imugi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-cheonjiwang",
@@ -722,6 +767,7 @@
         "해와 달",
         "꽃 내기"
       ],
+      "art_hint": "a creator god drawing a bow at two suns and two moons in the sky, two young sons below holding flower pots, cloud scroll motifs",
       "habitat": [
         "하늘",
         "이승·저승"
@@ -758,7 +804,11 @@
         "kr-jacheongbi",
         "kr-gangnim"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     }
   ]
 }

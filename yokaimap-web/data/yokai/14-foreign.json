@@ -5,158 +5,404 @@
     {
       "id": "kr-jeoseung-saja",
       "canonical": "저승사자",
-      "aliases": ["사자", "차사", "검은 갓 사자"],
-      "names": { "en": "Jeoseung Saja", "roman": "jeoseungsaja" },
+      "aliases": [
+        "사자",
+        "차사",
+        "검은 갓 사자"
+      ],
+      "names": {
+        "en": "Jeoseung Saja",
+        "roman": "jeoseungsaja"
+      },
       "category": "foreign",
       "rarity": "common",
       "distribution": "nationwide",
       "summary": "죽은 이를 저승으로 데려가는 관리. 검은 도포에 갓을 쓴 모습으로 정착했다.",
       "body": "불교의 명부(冥府) 관념과 도교의 사자(使者) 관념이 들어와, 조선의 관리 복식을 입은 한국형 이미지로 굳었다. 대개 셋이 한 조로 오며, 사잣밥을 문밖에 차려 대접하면 망자를 험하게 다루지 않는다고 했다. 제주 차사본풀이의 강림도령이 이 관념의 서사적 원형에 해당한다.",
-      "traits": ["사잣밥", "검은 도포", "셋"],
-      "habitat": ["문밖", "상가"],
-      "omens": { "time": ["midnight", "dawn"], "weather": [], "season": [] },
+      "traits": [
+        "사잣밥",
+        "검은 도포",
+        "셋"
+      ],
+      "art_hint": "three messengers in black Korean robes and black gat hats standing at a house gate at night, a small table of rice bowls set outside for them",
+      "habitat": [
+        "문밖",
+        "상가"
+      ],
+      "omens": {
+        "time": [
+          "midnight",
+          "dawn"
+        ],
+        "weather": [],
+        "season": []
+      },
       "sites": [],
       "sources": [
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "저승사자·사잣밥" },
-        { "type": "field", "title": "차사본풀이", "ref": "제주 무가" }
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "저승사자·사잣밥"
+        },
+        {
+          "type": "field",
+          "title": "차사본풀이",
+          "ref": "제주 무가"
+        }
       ],
       "verification": "public_encyclopedia",
       "confidence": "high",
-      "related": ["kr-gangnim", "kr-yeomna"],
-      "updated_at": "2026-08-16"
+      "related": [
+        "kr-gangnim",
+        "kr-yeomna"
+      ],
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-yeomna",
       "canonical": "염라대왕",
-      "aliases": ["염라", "시왕", "閻羅"],
+      "aliases": [
+        "염라",
+        "시왕",
+        "閻羅"
+      ],
       "category": "foreign",
       "rarity": "common",
       "distribution": "nationwide",
       "summary": "저승에서 죄를 심판하는 왕. 시왕(十王) 가운데 다섯째로 가장 널리 알려졌다.",
       "body": "인도 야마(Yama)에서 출발해 중국을 거쳐 들어왔고, 한국에서는 사찰의 명부전·시왕도로 시각화돼 도상 근거가 남아 있다. 업경(業鏡)에 생전의 행실이 비친다는 설정이 널리 알려져 있다. 명부전은 전국 사찰에 실재해 좌표 확보가 가능하다.",
-      "traits": ["심판", "업경", "시왕"],
-      "habitat": ["명부전", "저승"],
-      "omens": { "time": [], "weather": [], "season": [] },
+      "traits": [
+        "심판",
+        "업경",
+        "시왕"
+      ],
+      "art_hint": "a judge king enthroned in a Korean temple underworld hall, Korean official robes and crown, a karma mirror at his side showing a scene, scribes below",
+      "habitat": [
+        "명부전",
+        "저승"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
       "sites": [],
       "sources": [
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "시왕·명부신앙" },
-        { "type": "heritage", "title": "국가유산포털", "ref": "시왕도·명부전 지정 종목" }
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "시왕·명부신앙"
+        },
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "시왕도·명부전 지정 종목"
+        }
       ],
       "verification": "public_encyclopedia",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현행 불교 신앙의 대상" },
-      "related": ["kr-jeoseung-saja", "kr-gangnim"],
-      "updated_at": "2026-08-16"
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 불교 신앙의 대상"
+      },
+      "related": [
+        "kr-jeoseung-saja",
+        "kr-gangnim"
+      ],
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-yacha",
       "canonical": "야차",
-      "aliases": ["약차", "夜叉"],
+      "aliases": [
+        "약차",
+        "夜叉"
+      ],
       "category": "foreign",
       "rarity": "uncommon",
       "distribution": "nationwide",
       "summary": "사납고 빠른 귀신. 불법을 지키는 수호신이 되기도 하고 사람을 해치기도 한다.",
       "body": "인도 야크샤(Yakṣa)에서 유래해 불교와 함께 들어왔으며, 우리말 '두억시니'로도 옮겨졌다. 사찰 조각과 탱화에 형상이 남아 있어 한국 요괴 가운데 드물게 도상 근거가 확보된다. 선악이 고정되지 않은 존재라 분류 설계의 참고가 된다.",
-      "traits": ["사나움", "수호", "속도"],
-      "habitat": ["사찰", "산"],
-      "omens": { "time": ["night"], "weather": [], "season": [] },
+      "traits": [
+        "사나움",
+        "수호",
+        "속도"
+      ],
+      "art_hint": "a fierce guardian spirit with bulging eyes and a muscular frame in the manner of Korean temple wall painting, standing among rocks",
+      "habitat": [
+        "사찰",
+        "산"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
       "sites": [],
       "sources": [
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "야차" },
-        { "type": "heritage", "title": "국가유산포털", "ref": "팔부중상 관련 지정 종목" }
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "야차"
+        },
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "팔부중상 관련 지정 종목"
+        }
       ],
       "verification": "public_encyclopedia",
       "confidence": "high",
-      "related": ["kr-dueoksini", "kr-nachal", "kr-sacheonwang"],
-      "updated_at": "2026-08-16"
+      "related": [
+        "kr-dueoksini",
+        "kr-nachal",
+        "kr-sacheonwang"
+      ],
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-nachal",
       "canonical": "나찰",
-      "aliases": ["나찰귀", "羅刹"],
+      "aliases": [
+        "나찰귀",
+        "羅刹"
+      ],
       "category": "foreign",
       "rarity": "rare",
       "distribution": "nationwide",
       "summary": "사람을 잡아먹는다는 귀신. 불교 설화에서 야차와 짝으로 등장한다.",
       "body": "라크샤사(Rākṣasa)의 음차로, 경전 설화를 통해 들어와 지옥도와 변상도에 형상이 그려졌다. 한국 민간 설화에서는 독립 항목으로 자라지 못하고 주로 불교 서사 안에 머물렀다. 외래 요괴가 토착화에 실패한 사례로서 비교 가치가 있다.",
-      "traits": ["식인", "지옥도"],
-      "habitat": ["지옥", "사찰 벽화"],
-      "omens": { "time": ["night"], "weather": [], "season": [] },
+      "traits": [
+        "식인",
+        "지옥도"
+      ],
+      "art_hint": "a devouring demon figure from a Korean temple hell mural, ochre and vermilion, among flames with small figures fleeing",
+      "habitat": [
+        "지옥",
+        "사찰 벽화"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
       "sites": [],
-      "sources": [{ "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "나찰" }],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "나찰"
+        }
+      ],
       "verification": "public_encyclopedia",
       "confidence": "medium",
-      "related": ["kr-yacha"],
-      "updated_at": "2026-08-16"
+      "related": [
+        "kr-yacha"
+      ],
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-haetae",
       "canonical": "해태",
-      "aliases": ["해치", "獬豸"],
-      "names": { "en": "Haetae", "roman": "haetae" },
+      "aliases": [
+        "해치",
+        "獬豸"
+      ],
+      "names": {
+        "en": "Haetae",
+        "roman": "haetae"
+      },
       "category": "foreign",
       "rarity": "uncommon",
       "distribution": "nationwide",
       "summary": "옳고 그름을 가리는 상상의 짐승. 불을 막는다고 하여 궁궐 앞에 세웠다.",
       "body": "중국 문헌의 해치 관념이 들어와 조선에서는 사헌부의 상징이자 화재를 막는 벽사 동물로 쓰였다. 광화문 앞 해치 석상은 실물 좌표가 있고 서울시 상징으로도 채택돼 현대적 활용 선례가 뚜렷하다. 요괴를 막는 쪽에 선 항목으로 도감의 방어 축을 이룬다.",
-      "traits": ["시비 판별", "벽사", "화재"],
-      "habitat": ["궁궐", "관아"],
-      "omens": { "time": [], "weather": ["dry"], "season": [] },
+      "traits": [
+        "시비 판별",
+        "벽사",
+        "화재"
+      ],
+      "art_hint": "a maned lion-like beast with a single horn and scaled body carved in granite, seated before a palace gate, Korean stone-sculpture proportions",
+      "habitat": [
+        "궁궐",
+        "관아"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "dry"
+        ],
+        "season": []
+      },
       "sites": [
-        { "name": "광화문 해치 석상", "sido": "서울", "sigungu": "종로구", "lat": 37.5759, "lng": 126.9769, "precision": "dong", "note": "경복궁 광화문 앞" }
+        {
+          "name": "광화문 해치 석상",
+          "sido": "서울",
+          "sigungu": "종로구",
+          "lat": 37.5759,
+          "lng": 126.9769,
+          "precision": "dong",
+          "note": "경복궁 광화문 앞"
+        }
       ],
       "sources": [
-        { "type": "heritage", "title": "국가유산포털", "ref": "경복궁 해치상" },
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "해치" }
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "경복궁 해치상"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "해치"
+        }
       ],
       "verification": "public_encyclopedia",
       "confidence": "high",
-      "related": ["kr-sacheonwang", "kr-jangseung"],
-      "updated_at": "2026-08-16"
+      "related": [
+        "kr-sacheonwang",
+        "kr-jangseung"
+      ],
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-gangsi",
       "canonical": "강시",
-      "aliases": ["殭屍", "뻣뻣한 시체"],
+      "aliases": [
+        "殭屍",
+        "뻣뻣한 시체"
+      ],
       "category": "foreign",
       "rarity": "rare",
       "distribution": "online",
       "summary": "굳은 채 뛰어다니는 시체. 중국에서 들어와 1980년대 홍콩 영화로 한국에 널리 알려졌다.",
       "body": "부적을 이마에 붙여 멈추게 한다는 설정까지 통째로 수입된 사례로, 한국 전통 전승에는 대응 항목이 희박하다. 매체를 통한 요괴 유입이 얼마나 빠른지 보여 주는 근거라 계보를 명시해 등재한다. 한국 고유 항목과 섞이지 않도록 카테고리를 분리했다.",
-      "traits": ["부적", "도약", "시체"],
-      "habitat": ["무덤", "폐가"],
-      "omens": { "time": ["midnight"], "weather": [], "season": [] },
+      "traits": [
+        "부적",
+        "도약",
+        "시체"
+      ],
+      "art_hint": "a stiff corpse figure with a paper charm on its forehead, arms extended, moving in hops through a night graveyard, plain dark robe",
+      "habitat": [
+        "무덤",
+        "폐가"
+      ],
+      "omens": {
+        "time": [
+          "midnight"
+        ],
+        "weather": [],
+        "season": []
+      },
       "sites": [],
-      "sources": [{ "type": "modern", "title": "1980년대 홍콩 영화 유입", "ref": "강시 소재 확산" }],
+      "sources": [
+        {
+          "type": "modern",
+          "title": "1980년대 홍콩 영화 유입",
+          "ref": "강시 소재 확산"
+        }
+      ],
       "verification": "modern_online",
       "confidence": "high",
-      "related": ["kr-myogwi"],
-      "updated_at": "2026-08-16"
+      "related": [
+        "kr-myogwi"
+      ],
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-sacheonwang",
       "canonical": "사천왕",
-      "aliases": ["사대천왕", "천왕문 신장", "四天王"],
+      "aliases": [
+        "사대천왕",
+        "천왕문 신장",
+        "四天王"
+      ],
       "category": "foreign",
       "rarity": "uncommon",
       "distribution": "nationwide",
       "summary": "사찰 천왕문을 지키는 네 수호신. 발밑에 잡귀를 밟고 서 있다.",
       "body": "동서남북을 각각 맡아 절 안으로 들어오는 잡귀와 악을 막으며, 비파·검·용·탑을 든 모습으로 정형화됐다. 전국 사찰의 천왕문에 실물이 있어 좌표와 지정정보가 확보되는 항목이다. 장승이 마을 입구를 지킨다면 사천왕은 절 입구를 지킨다는 대비로 읽으면 좋다.",
-      "traits": ["수호", "천왕문", "네 방위"],
-      "habitat": ["사찰 천왕문"],
-      "omens": { "time": [], "weather": [], "season": [] },
+      "traits": [
+        "수호",
+        "천왕문",
+        "네 방위"
+      ],
+      "art_hint": "four temple gate guardian kings in Korean temple sculpture manner holding a lute, a sword, a dragon and a pagoda, small demons trodden underfoot",
+      "habitat": [
+        "사찰 천왕문"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
       "sites": [
-        { "name": "보은 법주사 천왕문", "sido": "충북", "sigungu": "보은군", "lat": 36.5417, "lng": 127.8339, "precision": "dong", "note": "사찰 천왕문 사례 — 전국 사찰로 확장 예정" }
+        {
+          "name": "보은 법주사 천왕문",
+          "sido": "충북",
+          "sigungu": "보은군",
+          "lat": 36.5417,
+          "lng": 127.8339,
+          "precision": "dong",
+          "note": "사찰 천왕문 사례 — 전국 사찰로 확장 예정"
+        }
       ],
       "sources": [
-        { "type": "heritage", "title": "국가유산포털", "ref": "사천왕상 지정 종목" },
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "사천왕" }
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "사천왕상 지정 종목"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "사천왕"
+        }
       ],
       "verification": "public_encyclopedia",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현행 불교 신앙의 대상" },
-      "related": ["kr-yacha", "kr-jangseung", "kr-mireuk"],
-      "updated_at": "2026-08-16"
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 불교 신앙의 대상"
+      },
+      "related": [
+        "kr-yacha",
+        "kr-jangseung",
+        "kr-mireuk"
+      ],
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     }
   ]
 }

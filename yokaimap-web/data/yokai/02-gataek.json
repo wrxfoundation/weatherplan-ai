@@ -24,6 +24,7 @@
         "성주풀이",
         "가장"
       ],
+      "art_hint": "a dignified house deity seated on the crossbeam of a hanok main hall, a white paper packet of rice tied to the beam as his body, open lattice doors",
       "habitat": [
         "마루",
         "대들보"
@@ -60,7 +61,11 @@
         "kr-eop",
         "kr-samsin"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-jowang",
@@ -84,6 +89,7 @@
         "불",
         "금기"
       ],
+      "art_hint": "an elderly kitchen goddess in hanbok beside a clay stove, a single brass bowl of clear water on the ledge, firewood glow, hanging iron pots",
       "habitat": [
         "부엌",
         "부뚜막"
@@ -113,7 +119,11 @@
         "kr-seongju",
         "kr-munjeon"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-teoju",
@@ -133,6 +143,7 @@
         "동티",
         "짚주저리"
       ],
+      "art_hint": "an earthen jar wrapped in a straw cone standing in a back yard, new grain inside, low stone wall and a bare persimmon tree, a presence suggested in the straw",
       "habitat": [
         "뒤뜰",
         "장독대"
@@ -163,7 +174,11 @@
         "kr-jisin",
         "kr-dokkaebi-teo"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-eop",
@@ -188,6 +203,7 @@
         "구렁이",
         "금기"
       ],
+      "art_hint": "a large pale rat snake coiled calmly on a grain storehouse beam, sacks of grain and an earthen jar below, warm ochre light",
       "habitat": [
         "곳간",
         "뒤뜰",
@@ -216,7 +232,11 @@
         "kr-baeksa",
         "kr-teoju"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-cheuksin",
@@ -237,6 +257,7 @@
         "기침 세 번",
         "동티"
       ],
+      "art_hint": "a fierce woman spirit with very long loose hair seated in a thatched outhouse counting her hair strands, a narrow wooden door ajar, cold blue tone",
       "habitat": [
         "뒷간"
       ],
@@ -270,7 +291,11 @@
         "kr-munjeon",
         "kr-jowang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-munjeon",
@@ -290,6 +315,7 @@
         "액막이",
         "본풀이"
       ],
+      "art_hint": "a young guardian deity standing squarely in a hanok gateway with both arms out, straw rope across the lintel, dark shapes held back outside",
       "habitat": [
         "대문",
         "문턱"
@@ -335,7 +361,11 @@
         "kr-jowang",
         "kr-seongju"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-samsin",
@@ -417,6 +447,7 @@
         "장독대",
         "정화수"
       ],
+      "art_hint": "a back-yard deity presence above a jangdokdae terrace of earthen jars, a bowl of clear water on the tallest jar, low stone wall and bamboo behind",
       "habitat": [
         "뒤란",
         "장독대"
@@ -453,7 +484,11 @@
       "related": [
         "kr-teoju"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-jisin",
@@ -472,6 +507,7 @@
         "풍물",
         "정월"
       ],
+      "art_hint": "a broad earth deity pressed beneath a house yard with flattening hands, a pungmul band with small gong and drum stamping above, dust rising",
       "habitat": [
         "마당",
         "집터"
@@ -506,7 +542,11 @@
         "kr-teoju",
         "kr-seonang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     }
   ]
 }

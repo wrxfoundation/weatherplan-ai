@@ -99,6 +99,7 @@
         "거대화",
         "불"
       ],
+      "art_hint": "a bristling beast made of iron scraps grown huge, chewing needles and blades in a burning capital street, soldiers falling back, sparks and smoke",
       "habitat": [
         "도성",
         "대장간"
@@ -126,7 +127,11 @@
       "related": [
         "kr-gangcheori"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-agijangsu",
@@ -149,6 +154,7 @@
         "좌절",
         "용마"
       ],
+      "art_hint": "a newborn with small feathered wings under the arms lying on an ondol floor, parents kneeling with a heavy grain sack, a winged horse beyond the open door",
       "habitat": [
         "마을",
         "바위",
@@ -187,7 +193,11 @@
       "related": [
         "kr-yongma"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-hoeorib",
@@ -207,6 +217,7 @@
         "금기",
         "먼지"
       ],
+      "art_hint": "a sudden whirlwind spinning dust and dry leaves along a village road, a straw hat lifted away, people turning aside, clear sky above",
       "habitat": [
         "들판",
         "길"
@@ -242,7 +253,11 @@
         "kr-sondol",
         "kr-yeongdeung-halmang"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-yeoubi",
@@ -261,6 +276,7 @@
         "혼례",
         "홀림"
       ],
+      "art_hint": "sunlit rain falling on a hillside while the sun still shines, a fox slipping between grave mounds, a faint wedding procession in the mist",
       "habitat": [
         "들",
         "산"
@@ -297,7 +313,11 @@
         "kr-cheonggaeguri",
         "kr-sangun"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     },
     {
       "id": "kr-hwagwang",
@@ -317,6 +337,7 @@
         "관측 기록",
         "하늘"
       ],
+      "art_hint": "a great fireball crossing the night sky above a walled town, officials on a terrace recording it, a watchtower silhouette",
       "habitat": [
         "하늘"
       ],
@@ -348,7 +369,11 @@
         "kr-dokkaebi-bul",
         "kr-jigwi"
       ],
-      "updated_at": "2026-08-16"
+      "updated_at": "2026-08-16",
+      "art": {
+        "status": "pending",
+        "direction": "minhwa-v2"
+      }
     }
   ]
 }
