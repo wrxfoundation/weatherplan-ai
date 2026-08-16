@@ -65,7 +65,9 @@ sitemap.xml·llms.txt에 절대 URL로 박힌다.**
 한자 인장 폴백으로 정상 동작한다.** 다만 그림은 안 나온다.
 
 생성 세션의 egress 정책이 CDN(cloudfront)을 403으로 막아서 거기서는 받을 수 없다.
-GitHub 러너는 열린 네트워크라 거기서 받는다.
+받는 방법은 두 가지이고, **어느 쪽으로 배포하느냐에 따라 갈린다.**
+
+### (a) GitHub에서 배포하는 경우
 
 ```
 Actions 탭 → yokai-art → Run workflow
@@ -73,6 +75,23 @@ Actions 탭 → yokai-art → Run workflow
 
 받으면서 표시 크기로 줄이고 WebP로 바꾼 뒤(장당 100KB 아래) 자동 커밋한다.
 `jobs.json`이 바뀔 때도 자동으로 돈다.
+
+### (b) zip으로 직접 배포하는 경우
+
+**이때는 위 워크플로가 돌지 않는다.** 내 PC에서 직접 받아야 한다.
+
+```bash
+cd yokaimap-web
+npm install
+npm i --no-save sharp    # 축소·WebP 변환용. 이것만 별도로 받는다
+node scripts/fetch-art.mjs
+npm run build            # 반입 결과 확인 — "파일 반입 121/120"이 나와야 한다
+```
+
+`sharp`를 `package.json`에 넣지 않은 이유는, 넣으면 Vercel 빌드가 쓰지도 않을
+네이티브 바이너리를 매번 설치하기 때문이다. 반입은 배포 전 1회성 작업이다.
+
+받은 파일은 `public/img/`에 들어간다. 그대로 두고 배포하면 된다.
 
 **생성 URL은 만료된다.** 403/404가 뜨면 프롬프트 문제가 아니라 URL이 죽은 것이고,
 그때는 힉스필드에서 재생성해야 한다. 되도록 빨리 한 번 돌려 두는 게 좋다.
