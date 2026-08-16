@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useReducer, useState } from "reac
 import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS, SEED_REPORTS } from "./seed";
 import { PRICING } from "./config";
 import { transition } from "./requests";
+import { SEED_VISIT, advance } from "./workflow";
 
 // 앱 전역 상태 — 데모 단계에서는 클라이언트 보관(localStorage).
 // 실제 구현에서 이 상태는 전부 서버 소유가 된다 (핸드오프 04 §4).
@@ -40,6 +41,9 @@ const DEFAULT = {
   // 스토어 상품 이미지 — 경영 콘솔에서 올리면 스토어 썸네일이 바뀐다 (실무자 요청).
   // { [상품id]: dataURL }. 업로드 시 320px 로 줄여 저장한다 — localStorage 5MB 한도.
   productImages: {},
+  // 방문 업무흐름 8단계 (lib/workflow.js) — 관제·컨시어지·보호자가 같은 건을 본다.
+  // 승인(approved) 전에는 어느 캘린더에도 뜨지 않는다는 것이 이 상태의 요점.
+  visitPlan: SEED_VISIT,
 };
 
 function reducer(state, action) {
@@ -68,6 +72,7 @@ function reducer(state, action) {
           p.productImages && typeof p.productImages === "object" && !Array.isArray(p.productImages)
             ? p.productImages
             : state.productImages,
+        visitPlan: { ...state.visitPlan, ...(p.visitPlan || {}) },
       };
     }
     case "completeOnboarding":
@@ -130,6 +135,11 @@ function reducer(state, action) {
       };
     case "kitUpdate":
       return { ...state, kit: action.items };
+    case "advanceVisit":
+      // 8단계 전이 — 단계를 건너뛰면 workflow.advance 가 그대로 돌려보낸다
+      return { ...state, visitPlan: advance(state.visitPlan, action.to, action.note, action.actor) };
+    case "patchVisit":
+      return { ...state, visitPlan: { ...state.visitPlan, ...action.patch } };
     case "setProductImage": {
       // null 이면 삭제 — 기본 아이콘 썸네일로 돌아간다
       const next = { ...state.productImages };

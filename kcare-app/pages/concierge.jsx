@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../components/ui";
 import Icon from "../components/icons";
+import VisitFlow from "../components/VisitFlow";
 import {
   AI_REPORT,
   OUTING,
@@ -129,6 +130,9 @@ export default function ConciergePage() {
             {/* ════ 오늘 탭 ════ */}
             {tab === "today" && (
               <>
+                {/* 방문 업무흐름 — 관제와 같은 건을 본다 (2026-08-13 미팅 8단계) */}
+                <VisitFlow role="concierge" />
+
                 {/* 관제 급파 → 컨시어지 긴급 배너 — 역할 간 실시간 연동 (SOS + 급파 지시 시) */}
                 {state.demo.sos && state.ops.sosDispatched && (
                   <div className="animate-sosPulse rounded-2xl bg-danger p-4 text-white">
@@ -182,7 +186,7 @@ export default function ConciergePage() {
                     {a1.meta2}
                   </div>
 
-                  {/* 오늘의 짝 — 2인 1조 실행 UI */}
+                  {/* 오늘의 짝 — 2인 지정 방문의 실행 UI */}
                   <div
                     className="card-navy border-grad-dark mt-3.5 rounded-[14px] bg-navy p-4 text-white"
                     style={{

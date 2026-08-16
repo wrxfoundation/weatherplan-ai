@@ -72,6 +72,7 @@ import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
 import Icon from "../components/icons";
 import RosterTable from "../components/RosterTable";
+import VisitFlow from "../components/VisitFlow";
 import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
 import { ROSTERS } from "../lib/rosters";
@@ -881,6 +882,11 @@ export default function DispatchConsole() {
           <StaggerIn trigger={menu}>
           {menu === "dash" && (
             <>
+          {/* ── 방문 업무흐름 8단계 — 일정 수립 알람이 여기로 온다 (2026-08-13 미팅) ── */}
+          <section className="mt-[18px]">
+            <VisitFlow role="ops" />
+          </section>
+
           {/* ── 액션 큐 — 지금 처리할 일. 우선순위순, 클릭 즉시 해당 화면 (고도화) ── */}
           <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
             <div className="flex items-baseline justify-between">
@@ -2030,7 +2036,7 @@ export default function DispatchConsole() {
                       className="btn-press rounded-[10px] px-4 py-2 text-[13px] font-bold text-white disabled:opacity-60"
                       style={{ background: "#C0392B" }}
                     >
-                      {sosDispatched ? "급파 중 · 박지현 + 서다인" : "급파 지시 (2인 1조)"}
+                      {sosDispatched ? "급파 중 · 박지현 + 서다인" : "급파 지시 (응급 2인)"}
                     </button>
                     <button
                       onClick={() => {

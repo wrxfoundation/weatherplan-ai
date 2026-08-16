@@ -85,7 +85,7 @@ export const SERVICE_MENU = [
   },
   {
     no: 5,
-    name: "자택 안심케어 추가 방문 (2인 1조)",
+    name: "자택 안심케어 추가 방문",
     priceLabel: "1회 1시간 60,000원",
     amount: 60000,
     cat: "생활 지원",

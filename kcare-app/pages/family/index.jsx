@@ -364,11 +364,11 @@ export default function FamilyHome() {
           />
         )}
 
-        {/* 담당 컨시어지 · 2인 1조 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}
+        {/* 담당 컨시어지 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}
         <div className="card-navy rounded-card bg-navy p-[18px] text-white">
           <div className="flex items-center justify-between">
             <span className="text-[12px] font-bold tracking-[.14em] text-gold-soft">
-              담당 컨시어지 · 2인 1조
+              담당 컨시어지
             </span>
             <span className="font-num text-[12px] text-white/60">{CARE_TEAM.dateLabel}</span>
           </div>

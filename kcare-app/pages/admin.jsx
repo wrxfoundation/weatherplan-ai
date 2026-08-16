@@ -864,7 +864,7 @@ export default function AdminConsole() {
                     ))}
                   </div>
                   <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                    크로스 지원도 2인 1조 · 페어 순환 규칙을 그대로 따릅니다 — 장거리 지원자의 피로 누적은 이탈 위험 예측(인원 관리)과 연동해 상한을 겁니다.
+                    크로스 지원도 배차 규칙 · 페어 순환을 그대로 따릅니다 — 장거리 지원자의 피로 누적은 이탈 위험 예측(인원 관리)과 연동해 상한을 겁니다.
                   </p>
                 </Panel>
               </div>
@@ -1505,7 +1505,7 @@ export default function AdminConsole() {
             </div>
           )}
 
-          {/* ════ 인원 관리 — 인력·자격·프로필 · 2인 1조 · 채용 · 처우 (운영) ════ */}
+          {/* ════ 인원 관리 — 인력·자격·프로필 · 배차 규칙 · 채용 · 처우 (운영) ════ */}
           {tab === "staffmgmt" && (
             <div className="space-y-4">
               <div>
@@ -1719,11 +1719,11 @@ export default function AdminConsole() {
                   </Panel>
                 )}
 
-                {/* 2인 1조 원칙 */}
+                {/* 배차 인원 규칙 — 개편안 V2 (위험도 기반) */}
                 <Panel className="min-w-0">
-                  <PanelHead title="2인 1조 페어 배차 — 예외 없는 운영 원칙" right={<span className="text-[12px] font-bold text-danger">단독 배차 불가</span>} />
+                  <PanelHead title="배차 인원 규칙 — 위험도 기반" right={<span className="text-[12px] font-bold text-danger">2인 지정 방문은 단독 배차 불가</span>} />
                   <p className="mt-2 text-[12px] leading-[1.7] text-muted">
-                    어르신 단독 가구에 성인 1명이 들어가는 구조는 양쪽 모두에게 위험합니다. 2인 1조는 비용이 아니라 이 사업을 계속하기 위한 조건입니다.
+                    모든 방문을 2인으로 묶으면 원가가 두 배가 되어 지역을 넓힐 수 없습니다. 대신 위험이 큰 자리를 규칙으로 못 박고 그 자리는 예외를 두지 않습니다 — 첫 방문 · 할아버지 1인가구 · 종합평가 · 동행 프리미엄 (2026-08-13 개편안 V2).
                   </p>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
                     {PAIR_WHY.map(([cat, k, v]) => (
@@ -1872,7 +1872,7 @@ export default function AdminConsole() {
 
               {/* ── 등급 체계 ── */}
               <Panel className="min-w-0">
-                <PanelHead title="등급 체계 — 단가 · 권한 · 승급 조건" right={<span className="text-[12px] text-muted">2인 1조 기준 주/부 두 요율 · 평가 기준은 판매액이 아니라 케어 품질</span>} />
+                <PanelHead title="등급 체계 — 단가 · 권한 · 승급 조건" right={<span className="text-[12px] text-muted">2인 배차 기준 주/부 두 요율 · 평가 기준은 판매액이 아니라 케어 품질</span>} />
                 <div className="mt-3 overflow-x-auto">
                   <table className="w-full min-w-[720px] text-left text-[12px]">
                     <thead>
@@ -1939,7 +1939,7 @@ export default function AdminConsole() {
                 </div>
                 {/* 실수령 시뮬레이션 */}
                 <div className="mt-4 border-t border-navy/[.08] pt-3">
-                  <div className="text-[12px] font-bold text-navy">등급별 월 실수령 시뮬레이션 <span className="ml-1 font-medium text-muted">2인 1조 기준 · 모집 공고에 그대로 쓰는 숫자</span></div>
+                  <div className="text-[12px] font-bold text-navy">등급별 월 실수령 시뮬레이션 <span className="ml-1 font-medium text-muted">2인 배차 기준 · 모집 공고에 그대로 쓰는 숫자</span></div>
                   <div className="mt-2.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
                     {PAY_SIM.map((g) => (
                       <div key={g.g} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
@@ -1953,7 +1953,7 @@ export default function AdminConsole() {
                     ))}
                   </div>
                   <p className="mt-2.5 text-[11px] leading-[1.7] text-muted">
-                    3.3% 원천징수 전 금액 · 주 동행 142,800 / 부 동행 48,000 기준. 2인 1조라 배차 슬롯이 두 배로 열려 하위 등급도 일할 기회가 늘고, 지분과 수당은 배차량과 무관해 비수기 변동 폭이 건별 매칭의 절반 수준입니다.
+                    3.3% 원천징수 전 금액 · 주 동행 142,800 / 부 동행 48,000 기준. 2인 지정 방문에서 배차 슬롯이 두 배로 열려 하위 등급도 일할 기회가 늘고, 지분과 수당은 배차량과 무관해 비수기 변동 폭이 건별 매칭의 절반 수준입니다.
                   </p>
                 </div>
               </Panel>
