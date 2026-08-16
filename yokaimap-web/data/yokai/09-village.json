@@ -73,11 +73,7 @@
         "kr-sotdae",
         "kr-golmaegi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-jangseung",
@@ -150,12 +146,6 @@
         "kr-seonang",
         "kr-sonnim"
       ],
-      "art": {
-        "status": "final",
-        "direction": "minhwa-v2",
-        "file": "/img/yokai/jangseung.png",
-        "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-      },
       "updated_at": "2026-08-16"
     },
     {
@@ -216,11 +206,7 @@
         "kr-jangseung",
         "kr-seonang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-golmaegi",
@@ -283,11 +269,7 @@
         "kr-seonang",
         "kr-dangsan-halmeoni"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-dangsan-halmeoni",
@@ -361,11 +343,7 @@
         "kr-seonang",
         "kr-golmaegi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-imgyeongeop",
@@ -431,11 +409,7 @@
         "kr-yongwang",
         "kr-golmaegi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-mireuk",
@@ -498,11 +472,7 @@
         "kr-jangseung",
         "kr-sacheonwang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     }
   ]
 }

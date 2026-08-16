@@ -81,12 +81,6 @@
         "kr-gangcheori",
         "kr-baeksa"
       ],
-      "art": {
-        "status": "final",
-        "direction": "minhwa-v2",
-        "file": "/img/yokai/imugi.png",
-        "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-      },
       "updated_at": "2026-08-16"
     },
     {
@@ -164,11 +158,7 @@
         "kr-nogu-hwaho",
         "kr-subu"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-mulgwisin",
@@ -232,11 +222,7 @@
         "kr-mujugohon",
         "kr-imugi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-sinjikki",
@@ -301,11 +287,7 @@
       "related": [
         "kr-yongwang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gaeyang-halmi",
@@ -372,11 +354,7 @@
         "kr-seolmundae",
         "kr-magohalmi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-haerang",
@@ -443,11 +421,7 @@
         "kr-songaksi",
         "kr-seonang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-haeryong",
@@ -501,11 +475,7 @@
       "related": [
         "kr-yongwang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gyeryong",
@@ -565,11 +535,7 @@
         "kr-yongwang",
         "kr-jeongsin"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-jeongsin",
@@ -622,11 +588,7 @@
         "kr-gyeryong",
         "kr-seonang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-subu",
@@ -679,11 +641,7 @@
         "kr-gaekgwi",
         "kr-mul-dokkaebi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     }
   ]
 }

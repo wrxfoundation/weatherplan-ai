@@ -32,7 +32,8 @@ for (const arg of process.argv.slice(2)) {
     index: j.items.length,
     kind: 'plate',
     id,
-    target: `public/img/yokai/${id.replace(/^kr-/, '')}.png`,
+    // .webp — fetch-art가 받으면서 변환한다. 여기서 .png로 적으면 webp 내용이 png 이름으로 저장된다.
+    target: `public/img/yokai/${id.replace(/^kr-/, '')}.webp`,
     aspect: '4:5',
     job_id: job,
     url: `${BASE}/hf_20260816_${ts}_${job}.png`,

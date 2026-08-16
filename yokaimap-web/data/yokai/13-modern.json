@@ -50,11 +50,7 @@
         "kr-ppalgan-mask",
         "kr-hwajangsil-gwisin"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-jayuro-gwisin",
@@ -115,11 +111,7 @@
       "related": [
         "kr-teoneol-goedam"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-jangsanbeom",
@@ -180,12 +172,6 @@
         "kr-changgwi",
         "kr-sangun"
       ],
-      "art": {
-        "status": "final",
-        "direction": "minhwa-v2",
-        "file": "/img/yokai/jangsanbeom.png",
-        "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-      },
       "updated_at": "2026-08-16"
     },
     {
@@ -231,11 +217,7 @@
       "related": [
         "kr-hongkong-halmae"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-kongkong-gwisin",
@@ -281,11 +263,7 @@
         "kr-dokgakgwi",
         "kr-hwajangsil-gwisin"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-elevator-goedam",
@@ -329,11 +307,7 @@
       "related": [
         "kr-jihacheol-gwisin"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-bunsinsaba",
@@ -377,11 +351,7 @@
       "related": [
         "kr-hwajangsil-gwisin"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-hwajangsil-gwisin",
@@ -426,11 +396,7 @@
         "kr-kongkong-gwisin",
         "kr-bunsinsaba"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-geomeun-bonggo",
@@ -478,11 +444,7 @@
       "related": [
         "kr-hongkong-halmae"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-jihacheol-gwisin",
@@ -536,11 +498,7 @@
       "related": [
         "kr-elevator-goedam"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-teoneol-goedam",
@@ -592,11 +550,7 @@
       "related": [
         "kr-jayuro-gwisin"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     }
   ]
 }

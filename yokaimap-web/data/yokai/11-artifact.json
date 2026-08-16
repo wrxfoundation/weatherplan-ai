@@ -54,11 +54,7 @@
         "kr-dokkaebi",
         "kr-dokkaebi-gamtu"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-dokkaebi-gamtu",
@@ -103,11 +99,7 @@
         "kr-dokkaebi",
         "kr-dokkaebi-bangmangi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-bitjaru-gwisin",
@@ -158,11 +150,7 @@
         "kr-dokkaebi",
         "kr-jeolgutgongi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-jeolgutgongi",
@@ -206,11 +194,7 @@
         "kr-bitjaru-gwisin",
         "kr-dokkaebi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-jipsin-dokkaebi",
@@ -257,11 +241,7 @@
         "kr-bitjaru-gwisin",
         "kr-dokkaebi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     }
   ]
 }

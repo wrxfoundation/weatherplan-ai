@@ -76,11 +76,7 @@
         "kr-yeoksin",
         "kr-jeung"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-hongyeoksin",
@@ -125,11 +121,7 @@
       "related": [
         "kr-sonnim"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-yeoksin",
@@ -185,11 +177,7 @@
         "kr-sonnim",
         "kr-jeung"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-jeung",
@@ -243,11 +231,7 @@
         "kr-yeoksin",
         "kr-sapsalgae"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gaekgwi",
@@ -298,11 +282,7 @@
         "kr-sangmun",
         "kr-subu"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-samjaesin",
@@ -347,11 +327,7 @@
       "related": [
         "kr-jeung"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     }
   ]
 }

@@ -64,11 +64,7 @@
         "kr-baeksa",
         "kr-ureonggaksi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-ureonggaksi",
@@ -132,11 +128,7 @@
         "kr-gureongdeongdeong",
         "kr-seonnyeo"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-yaraeja",
@@ -197,11 +189,7 @@
         "kr-imugi",
         "kr-agijangsu"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-seonnyeo",
@@ -269,11 +257,7 @@
       "related": [
         "kr-ureonggaksi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-dukkeobi-sillang",
@@ -323,11 +307,7 @@
         "kr-eop",
         "kr-jinegaksi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-dokkaebi-sillang",
@@ -380,11 +360,7 @@
         "kr-dokkaebi-teo",
         "kr-gaksi-dokkaebi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     }
   ]
 }

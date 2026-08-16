@@ -69,12 +69,6 @@
         "kr-imugi",
         "kr-yongwang"
       ],
-      "art": {
-        "status": "final",
-        "direction": "minhwa-v2",
-        "file": "/img/yokai/gangcheori.png",
-        "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-      },
       "updated_at": "2026-08-16"
     },
     {
@@ -127,11 +121,7 @@
       "related": [
         "kr-gangcheori"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-agijangsu",
@@ -193,11 +183,7 @@
       "related": [
         "kr-yongma"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-hoeorib",
@@ -253,11 +239,7 @@
         "kr-sondol",
         "kr-yeongdeung-halmang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-yeoubi",
@@ -313,11 +295,7 @@
         "kr-cheonggaeguri",
         "kr-sangun"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-hwagwang",
@@ -369,11 +347,7 @@
         "kr-dokkaebi-bul",
         "kr-jigwi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     }
   ]
 }

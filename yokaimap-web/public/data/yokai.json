@@ -441,14 +441,14 @@
     "kr-yongma"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "1821f7f2-1e4d-4880-887c-62c8b723d238"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-arang",
@@ -513,14 +513,14 @@
     "kr-sinrip-wongwi"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "4e4f9afd-15e0-47c5-8393-a7a9db843d9d"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-baekjutto",
@@ -582,14 +582,14 @@
     "kr-gwenegitto"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8a08cace-b18e-4306-a429-c29ecf1bec1c"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-baeksa",
@@ -650,15 +650,15 @@
     "kr-imugi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "578bc7b3-ffa6-4264-9aab-74d0183eb674"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-bitjaru-gwisin",
@@ -710,15 +710,15 @@
     "kr-jeolgutgongi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "d3c8c537-cc4c-4b73-9fdd-47cb02c03cc1"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-bulgasari",
@@ -771,14 +771,14 @@
     "kr-gangcheori"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "00e29afc-e1ce-4c7b-b2cf-cea2ba1be59c"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-bunsinsaba",
@@ -823,15 +823,15 @@
     "kr-hwajangsil-gwisin"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "c0519c93-c543-451b-af00-2286202eac06"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-changgwi",
@@ -905,14 +905,14 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3605e5bc-5495-46ba-822b-fea6c3a69953"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-cheollyung",
@@ -973,14 +973,14 @@
     "kr-teoju"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "bf29bad7-e465-456a-8345-fb1afd1951b5"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-cheonggaeguri",
@@ -1035,15 +1035,15 @@
     "kr-yeoubi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "744442ad-0db4-465e-b607-160f911ba763"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-cheonjiwang",
@@ -1104,14 +1104,14 @@
     "kr-gangnim"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "0836b4ca-cc0a-4ced-bea3-bc4c54da8cc9"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-cheuksin",
@@ -1167,14 +1167,14 @@
     "kr-jowang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "448edd14-0a43-4665-a05a-31a93c832c09"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-dalgyal-gwisin",
@@ -1230,14 +1230,14 @@
     "kr-hwajangsil-gwisin"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "5a36e3da-e829-4b87-a1ba-716a45cd8e46"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-dangsan-halmeoni",
@@ -1312,14 +1312,14 @@
     "kr-golmaegi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3135779c-9b5b-4890-a714-4646e0262094"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-dokgakgwi",
@@ -1371,15 +1371,15 @@
     "kr-dokkaebi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3ef379f7-8a7f-4724-b116-42b75c569a05"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-dokkaebi",
@@ -1478,15 +1478,15 @@
     "kr-dokkaebi-bangmangi",
     "kr-dokkaebi-gamtu"
    ],
+   "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "25017161-7a8b-49c0-82ce-19b41865e008"
-   },
-   "updated_at": "2026-08-16",
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-dokkaebi-bangmangi",
@@ -1541,14 +1541,14 @@
     "kr-dokkaebi-gamtu"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "970203f8-8037-4a4a-9f75-48c2e3eb203f"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-dokkaebi-bul",
@@ -1627,14 +1627,14 @@
     "kr-gumiho"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "22173bed-4ed6-49f4-9a79-1e4401106e67"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-dokkaebi-gamtu",
@@ -1680,15 +1680,15 @@
     "kr-dokkaebi-bangmangi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "31d5ea8e-e258-44a4-9738-7f3b17520ac8"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-dokkaebi-sillang",
@@ -1742,15 +1742,15 @@
     "kr-gaksi-dokkaebi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9ba640fd-c9d8-433f-b77e-833ff6ac6de9"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-dokkaebi-teo",
@@ -1806,15 +1806,15 @@
     "kr-eop"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "6f20ef08-f4a3-4cd8-bc1c-665bc107e1a2"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-dueoksini",
@@ -1869,15 +1869,15 @@
     "kr-dokkaebi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "396ca41e-bc52-4e44-a776-848a23c8798e"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-dukkeobi-sillang",
@@ -1928,15 +1928,15 @@
     "kr-jinegaksi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "1c9ac961-4ab0-49b3-ab60-9cce29565528"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-elevator-goedam",
@@ -1981,15 +1981,15 @@
     "kr-jihacheol-gwisin"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "6781ae91-c293-4cef-adce-6f72762f1713"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-eoduksini",
@@ -2051,14 +2051,14 @@
     "kr-geuseundae"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b42407ba-3960-44c0-9a79-7af45628c0be"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-eop",
@@ -2167,15 +2167,15 @@
     "kr-dokkaebi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "292d1c44-5555-4689-b9e8-2f7731b5efb1"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-gaekgwi",
@@ -2227,14 +2227,14 @@
     "kr-subu"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "334d1cf3-8407-4499-b31b-8034c079f58d"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-gaeyang-halmi",
@@ -2302,14 +2302,14 @@
     "kr-magohalmi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "d6015caf-29a0-4f4a-ac53-2c8bebfe9512"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-gaksi-dokkaebi",
@@ -2358,15 +2358,15 @@
     "kr-songaksi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b2826afb-bed5-4e94-a4ec-2408e3d44b01"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-gameunjang",
@@ -2429,14 +2429,14 @@
     "kr-oneuri"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "517775bd-6514-49d8-827d-844fbbd6e695"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-gangcheori",
@@ -2505,15 +2505,15 @@
     "kr-imugi",
     "kr-yongwang"
    ],
+   "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "248d94d2-dbc7-4979-8bd3-0fa62ed64e63"
-   },
-   "updated_at": "2026-08-16",
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-gangnim",
@@ -2638,15 +2638,15 @@
     "kr-myogwi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8fe57b4d-fc41-4f6e-ab2b-2e70084999a2"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-gawi",
@@ -2701,15 +2701,15 @@
     "kr-dueoksini"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3a3701d5-7fd7-4892-9b06-57a5d2b1e306"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-geomeun-bonggo",
@@ -2758,14 +2758,14 @@
     "kr-hongkong-halmae"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "c432df46-0d76-4dbe-a9ae-3b529a96a8fd"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-geumdwaeji",
@@ -2825,15 +2825,15 @@
     "kr-sangun"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e25424a3-9ba3-4763-923c-153aeaaa347f"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-geuseundae",
@@ -2882,15 +2882,15 @@
     "kr-eoduksini"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e810bb89-2d13-4049-abac-bbbd20c88907"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-golmaegi",
@@ -2954,14 +2954,14 @@
     "kr-dangsan-halmeoni"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8e276d96-b2a8-4661-b323-5c1cc970144c"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-gu-samseung-halmang",
@@ -3008,14 +3008,14 @@
     "kr-samseung-halmang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "1f8683a6-40ec-455e-adee-0bd7f32a00e2"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-gumiho",
@@ -3091,15 +3091,15 @@
     "kr-nogu-hwaho",
     "kr-dokkaebi-bul"
    ],
+   "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9c7e6ea1-97a3-4cb1-962f-dd2c4b031d6d"
-   },
-   "updated_at": "2026-08-16",
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-gureongdeongdeong",
@@ -3164,14 +3164,14 @@
     "kr-ureonggaksi"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "64845365-590f-4247-bdf9-e54f2daadca9"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-gwenegitto",
@@ -3236,14 +3236,14 @@
     "kr-yongwang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "a92235aa-4ff9-45a0-b74a-966ceedf82cb"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-gyeryong",
@@ -3304,15 +3304,15 @@
     "kr-jeongsin"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9948fe6b-de21-435b-bb0f-d75745c021f8"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-haerang",
@@ -3380,14 +3380,14 @@
     "kr-seonang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "98957f90-d4b7-4e4f-87f0-3e6c3688f886"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-haeryong",
@@ -3442,15 +3442,15 @@
     "kr-yongwang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "82a0db66-5786-4fb7-815a-f96e875d959f"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-haetae",
@@ -3515,14 +3515,14 @@
     "kr-jangseung"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "64820136-c5bc-4c1a-b630-8ae378e53965"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-hoeorib",
@@ -3579,15 +3579,15 @@
     "kr-yeongdeung-halmang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "963bdc39-7453-45c2-b887-2d6627fe6ab4"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-hongkong-halmae",
@@ -3638,14 +3638,14 @@
     "kr-hwajangsil-gwisin"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "f0ea5f07-4e6e-4214-a916-eb0b731615d0"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-hongyeoksin",
@@ -3691,15 +3691,15 @@
     "kr-sonnim"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "482872bc-ec25-4586-b6d0-f23a1b0677d4"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-hwagwang",
@@ -3752,15 +3752,15 @@
     "kr-jigwi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "a3ab04d7-204b-46f3-8869-cd3e790bb96c"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-hwajangsil-gwisin",
@@ -3806,15 +3806,15 @@
     "kr-bunsinsaba"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b2d8caf3-6938-40e6-9b23-288111a96cc9"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-imgyeongeop",
@@ -3881,14 +3881,14 @@
     "kr-golmaegi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3c00c04d-3173-4198-8284-617817d4e95e"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-imugi",
@@ -3969,15 +3969,15 @@
     "kr-gangcheori",
     "kr-baeksa"
    ],
+   "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "276c310f-65a7-423c-a36a-84c09ff13848"
-   },
-   "updated_at": "2026-08-16",
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-jacheongbi",
@@ -4116,15 +4116,15 @@
     "kr-changgwi",
     "kr-sangun"
    ],
+   "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3507460f-0ba3-4d09-be91-e4b554650724"
-   },
-   "updated_at": "2026-08-16",
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-jangseung",
@@ -4197,15 +4197,15 @@
     "kr-seonang",
     "kr-sonnim"
    ],
+   "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "be849370-9733-4213-8037-9cf7854e19dc"
-   },
-   "updated_at": "2026-08-16",
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-jayuro-gwisin",
@@ -4267,14 +4267,14 @@
     "kr-teoneol-goedam"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "bd3b17d7-4c51-4b7a-9276-6df679d3517f"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-jeolgutgongi",
@@ -4319,15 +4319,15 @@
     "kr-dokkaebi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "5d4793c7-f790-4f81-969d-e3393b3d4c03"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-jeongsin",
@@ -4381,14 +4381,14 @@
     "kr-seonang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "4ce1645f-367c-4627-9dfb-7748648a34e8"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-jeoseung-saja",
@@ -4445,14 +4445,14 @@
     "kr-yeomna"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "a8f2aa6b-cdc3-47a9-b880-db9ff9addb15"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-jeung",
@@ -4507,15 +4507,15 @@
     "kr-sapsalgae"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e274d7ab-b578-4bb8-ae2c-5fb1a02d32c9"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-jigwi",
@@ -4580,15 +4580,15 @@
     "kr-hwagwang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8f513aa1-3817-4d9e-a1ba-269762b1ec94"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-jihacheol-gwisin",
@@ -4643,15 +4643,15 @@
     "kr-elevator-goedam"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "2dd9bd07-44ca-4292-80a8-622fc499c071"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-jinegaksi",
@@ -4711,15 +4711,15 @@
     "kr-baeksa"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "4e9f1dce-26b4-4841-a6eb-e940e6da407d"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-jipsin-dokkaebi",
@@ -4767,15 +4767,15 @@
     "kr-dokkaebi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "7f219d11-67fb-4da0-b511-38df261d50a0"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-jisin",
@@ -4834,14 +4834,14 @@
     "kr-seonang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "ec6ee5dd-5794-475f-9e3c-9920c0f54586"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-jowang",
@@ -4962,15 +4962,15 @@
     "kr-myogwi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b359ceb3-8687-4846-8ca2-426f8e47e501"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-kongkong-gwisin",
@@ -5017,15 +5017,15 @@
     "kr-hwajangsil-gwisin"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b6b4f990-86dc-4f12-b8ea-f4eb8d44aa10"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-magohalmi",
@@ -5100,14 +5100,14 @@
     "kr-seongmo-cheonwang"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9f25149d-e616-4c5c-a66f-678d62b2e289"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-mayago",
@@ -5162,15 +5162,15 @@
     "kr-seongmo-cheonwang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "305511dd-d5dc-46dd-885c-0a4d88b5869b"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-mireuk",
@@ -5234,14 +5234,14 @@
     "kr-sacheonwang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8096032a-f29e-4c6c-8db9-807fe134f333"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-mongdal",
@@ -5291,15 +5291,15 @@
     "kr-songaksi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b311090a-0f4a-48f0-8470-81ad9c8e8c95"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-mujugohon",
@@ -5366,15 +5366,15 @@
     "kr-subu"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "a4d7b6b8-a48d-45ca-8e7e-5be7f2239e65"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-mul-dokkaebi",
@@ -5447,15 +5447,15 @@
     "kr-subu"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8907afb1-4977-452e-ada3-f05b48b85996"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-mulgwisin",
@@ -5520,14 +5520,14 @@
     "kr-imugi"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9e0f6687-31b8-4838-a073-2671b88ad2a3"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-munjeon",
@@ -5598,14 +5598,14 @@
     "kr-seongju"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "0dfb1efe-f815-4e90-b053-f7769a7500b8"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-myogwi",
@@ -5660,15 +5660,15 @@
     "kr-sangmun"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "dc07318f-6025-4627-9f99-13b48598bed2"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-nachal",
@@ -5712,15 +5712,15 @@
     "kr-yacha"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "aa85e573-146b-481f-a42f-21cfefda770b"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-nogu-hwaho",
@@ -5782,15 +5782,15 @@
     "kr-yongwang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "ddd0838a-29d4-4737-98b6-7dd2be074181"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-oneuri",
@@ -5924,14 +5924,14 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "4c70b895-45a5-44ee-bf0f-52925d43892c"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-ppalgan-mask",
@@ -5977,15 +5977,15 @@
     "kr-hongkong-halmae"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8fdf0f8f-a865-4a80-9836-587c3e62f68a"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-sacheonwang",
@@ -6049,14 +6049,14 @@
     "kr-mireuk"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e5a0fb81-7e4f-4585-b86a-f6367152939c"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-samjaesin",
@@ -6102,15 +6102,15 @@
     "kr-jeung"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b83d623e-40ba-4962-9083-ad8a301e58aa"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-samseung-halmang",
@@ -6174,14 +6174,14 @@
     "kr-samsin"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "49470cbd-5a2b-4afd-818f-7f742f5bb3af"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-samsin",
@@ -6238,14 +6238,14 @@
     "kr-samseung-halmang",
     "kr-seongju"
    ],
+   "updated_at": "2026-08-16",
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "2cc97c79-1f52-447e-91d0-f77611c960f9"
-   },
-   "updated_at": "2026-08-16"
+   }
   },
   {
    "id": "kr-sangmun",
@@ -6293,15 +6293,15 @@
     "kr-gaekgwi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "12455b70-6e4d-4ffb-bfa9-50796639152b"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-sangun",
@@ -6369,15 +6369,15 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "879162ca-16ca-4df1-bf11-019daf866303"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-sansam-dongja",
@@ -6442,15 +6442,15 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "25a3eb57-d211-48f0-b690-fa8e1fd20840"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-sansillyeong",
@@ -6617,14 +6617,14 @@
     "kr-jeung"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "0b0e6a7a-d2d0-400c-8b37-50e2f8f6043b"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-seolmundae",
@@ -6700,15 +6700,15 @@
     "kr-magohalmi",
     "kr-gaeyang-halmi"
    ],
+   "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "f978199c-a516-4b66-ae6d-3ab732f5fd01"
-   },
-   "updated_at": "2026-08-16",
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-seonang",
@@ -6931,14 +6931,14 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "6d91e93b-d3c7-4972-8dd7-292f5c86b532"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-seonnyeo",
@@ -7007,14 +7007,14 @@
     "kr-ureonggaksi"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3c23d07d-2e1f-4ff9-9a4f-57b014b66bc7"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-sinjikki",
@@ -7080,15 +7080,15 @@
     "kr-yongwang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "46661dba-fedb-4b2c-af89-bbf22a572b81"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-sinrip-wongwi",
@@ -7150,15 +7150,15 @@
     "kr-arang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "40686751-dea2-4dd8-9a97-97edae8f11e0"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-socheonguk",
@@ -7220,14 +7220,14 @@
     "kr-gwenegitto"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "04ccba9b-1a04-4681-8a1c-6437aa77a528"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-sondol",
@@ -7306,15 +7306,15 @@
     "kr-mulgwisin"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "7ad55ae2-af49-431d-9695-d788cd09b739"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-songaksi",
@@ -7375,15 +7375,15 @@
     "kr-arang",
     "kr-haerang"
    ],
+   "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "63a70b75-1096-4c62-8cd7-a6276d911529"
-   },
-   "updated_at": "2026-08-16",
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-sonnim",
@@ -7527,14 +7527,14 @@
     "kr-seonang"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "7fb2ee18-9bbc-452d-aa15-5699b7bed1f0"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-subu",
@@ -7588,14 +7588,14 @@
     "kr-mul-dokkaebi"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9378b62b-ceda-49ed-8c4d-8fef05b0c1c4"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-taebaek-sansin",
@@ -7665,14 +7665,14 @@
     "kr-sansillyeong"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "bb9b2e1e-c9db-4ead-a8ec-c7b73a816c84"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-teoju",
@@ -7728,14 +7728,14 @@
     "kr-dokkaebi-teo"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "019a4896-2991-46e5-b6af-107dc2dac870"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-teoneol-goedam",
@@ -7788,14 +7788,14 @@
     "kr-jayuro-gwisin"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "56c81209-b5c1-4ee0-a78a-0d7aa6a9b071"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-ureonggaksi",
@@ -7860,14 +7860,14 @@
     "kr-seonnyeo"
    ],
    "updated_at": "2026-08-16",
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8932bb97-f249-4298-8545-37e2b658ab89"
-   },
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-yacha",
@@ -7919,15 +7919,15 @@
     "kr-sacheonwang"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "4bbeec77-7697-48d9-84a8-ac4c19bcabf6"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-yaraeja",
@@ -7989,15 +7989,15 @@
     "kr-agijangsu"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "54b9951e-d485-4890-b894-452ef0493d4b"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-yeoksin",
@@ -8054,15 +8054,15 @@
     "kr-jeung"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8d14eb8d-47dd-43c0-9b15-d78b1dda9297"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-yeomna",
@@ -8116,14 +8116,14 @@
     "kr-gangnim"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9cc78a04-6821-4bcb-8ab5-9e829d696826"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-yeongdeung-halmang",
@@ -8197,14 +8197,14 @@
     "kr-yongwang",
     "kr-hoeorib"
    ],
+   "updated_at": "2026-08-16",
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8d654691-47a9-4744-ab2d-c5846a891725"
-   },
-   "updated_at": "2026-08-16"
+   }
   },
   {
    "id": "kr-yeongsan",
@@ -8267,14 +8267,14 @@
     "kr-subu"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8db9f7c7-d401-4aa4-869d-d0f1b7258e2f"
-   },
-   "names": {}
+   }
   },
   {
    "id": "kr-yeou-nui",
@@ -8329,15 +8329,15 @@
     "kr-gumiho"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "7c95ae03-1b20-435e-87de-baf458085d9a"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-yeoubi",
@@ -8394,15 +8394,15 @@
     "kr-sangun"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "acbe7b36-46ad-4432-9947-07cdaa72fa56"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-yongma",
@@ -8466,15 +8466,15 @@
     "kr-agijangsu"
    ],
    "updated_at": "2026-08-16",
+   "names": {},
+   "sensitivity": null,
    "art": {
     "status": "generated",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "ecd1a66a-ba9b-4006-bf1e-97fba1423d7a"
-   },
-   "names": {},
-   "sensitivity": null
+   }
   },
   {
    "id": "kr-yongwang",

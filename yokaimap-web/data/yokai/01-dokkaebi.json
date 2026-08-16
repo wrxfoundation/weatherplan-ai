@@ -99,12 +99,6 @@
         "kr-dokkaebi-bangmangi",
         "kr-dokkaebi-gamtu"
       ],
-      "art": {
-        "status": "final",
-        "direction": "minhwa-v2",
-        "file": "/img/yokai/dokkaebi.png",
-        "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-      },
       "updated_at": "2026-08-16"
     },
     {
@@ -183,11 +177,7 @@
         "kr-dokkaebi",
         "kr-gumiho"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-mul-dokkaebi",
@@ -259,11 +249,7 @@
         "kr-dokkaebi",
         "kr-subu"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-eoduksini",
@@ -324,11 +310,7 @@
         "kr-dokkaebi",
         "kr-geuseundae"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-geuseundae",
@@ -376,11 +358,7 @@
       "related": [
         "kr-eoduksini"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-dueoksini",
@@ -434,11 +412,7 @@
         "kr-yacha",
         "kr-dokkaebi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-dokgakgwi",
@@ -489,11 +463,7 @@
       "related": [
         "kr-dokkaebi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gaksi-dokkaebi",
@@ -541,11 +511,7 @@
         "kr-dokkaebi",
         "kr-songaksi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-dokkaebi-teo",
@@ -600,11 +566,7 @@
         "kr-teoju",
         "kr-eop"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gae-dokkaebi",
@@ -647,11 +609,7 @@
       "related": [
         "kr-dokkaebi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     }
   ]
 }

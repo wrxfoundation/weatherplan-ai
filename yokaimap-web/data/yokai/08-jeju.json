@@ -76,12 +76,6 @@
         "kr-magohalmi",
         "kr-gaeyang-halmi"
       ],
-      "art": {
-        "status": "final",
-        "direction": "minhwa-v2",
-        "file": "/img/yokai/seolmundae.png",
-        "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-      },
       "updated_at": "2026-08-16"
     },
     {
@@ -156,12 +150,6 @@
         "kr-yongwang",
         "kr-hoeorib"
       ],
-      "art": {
-        "status": "final",
-        "direction": "minhwa-v2",
-        "file": "/img/yokai/yeongdeung-halmang.png",
-        "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-      },
       "updated_at": "2026-08-16"
     },
     {
@@ -233,11 +221,7 @@
         "kr-gameunjang",
         "kr-cheonjiwang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-baekjutto",
@@ -298,11 +282,7 @@
         "kr-socheonguk",
         "kr-gwenegitto"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-socheonguk",
@@ -363,11 +343,7 @@
         "kr-baekjutto",
         "kr-gwenegitto"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gwenegitto",
@@ -431,11 +407,7 @@
         "kr-socheonguk",
         "kr-yongwang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gameunjang",
@@ -497,11 +469,7 @@
         "kr-jacheongbi",
         "kr-oneuri"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gangnim",
@@ -574,11 +542,7 @@
         "kr-jeoseung-saja",
         "kr-yeomna"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-samseung-halmang",
@@ -641,11 +605,7 @@
         "kr-gu-samseung-halmang",
         "kr-samsin"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gu-samseung-halmang",
@@ -691,11 +651,7 @@
       "related": [
         "kr-samseung-halmang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-oneuri",
@@ -756,11 +712,7 @@
         "kr-gameunjang",
         "kr-imugi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-cheonjiwang",
@@ -820,11 +772,7 @@
         "kr-jacheongbi",
         "kr-gangnim"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     }
   ]
 }

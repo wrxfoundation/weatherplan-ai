@@ -56,11 +56,7 @@
         "kr-gangnim",
         "kr-yeomna"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-yeomna",
@@ -113,11 +109,7 @@
         "kr-jeoseung-saja",
         "kr-gangnim"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-yacha",
@@ -168,11 +160,7 @@
         "kr-nachal",
         "kr-sacheonwang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-nachal",
@@ -215,11 +203,7 @@
       "related": [
         "kr-yacha"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-haetae",
@@ -283,11 +267,7 @@
         "kr-sacheonwang",
         "kr-jangseung"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gangsi",
@@ -331,11 +311,7 @@
       "related": [
         "kr-myogwi"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-sacheonwang",
@@ -398,11 +374,7 @@
         "kr-jangseung",
         "kr-mireuk"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     }
   ]
 }

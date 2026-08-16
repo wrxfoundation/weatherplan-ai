@@ -57,7 +57,7 @@
           "sido": "광주",
           "sigungu": "동구",
           "lat": 35.1342,
-          "lng": 127.0,
+          "lng": 127,
           "precision": "sigungu",
           "note": "무등산 일원 산신 신앙 권역"
         },
@@ -94,11 +94,7 @@
         "kr-seongmo-cheonwang",
         "kr-taebaek-sansin"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-sangun",
@@ -165,11 +161,7 @@
         "kr-changgwi",
         "kr-sansillyeong"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-magohalmi",
@@ -243,11 +235,7 @@
         "kr-gaeyang-halmi",
         "kr-seongmo-cheonwang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-seongmo-cheonwang",
@@ -316,11 +304,7 @@
         "kr-mayago",
         "kr-sansillyeong"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-taebaek-sansin",
@@ -389,11 +373,7 @@
       "related": [
         "kr-sansillyeong"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-sansam-dongja",
@@ -457,11 +437,7 @@
       "related": [
         "kr-sansillyeong"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-geumdwaeji",
@@ -520,11 +496,7 @@
       "related": [
         "kr-sangun"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-mayago",
@@ -578,11 +550,7 @@
       "related": [
         "kr-seongmo-cheonwang"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     },
     {
       "id": "kr-palgongsan-sansin",
@@ -647,11 +615,7 @@
       "related": [
         "kr-sansillyeong"
       ],
-      "updated_at": "2026-08-16",
-      "art": {
-        "status": "pending",
-        "direction": "minhwa-v2"
-      }
+      "updated_at": "2026-08-16"
     }
   ]
 }
