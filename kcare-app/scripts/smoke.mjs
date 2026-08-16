@@ -40,8 +40,9 @@ const MUST_BE_ZERO = [
   "page-has-heading-one", "region", "aria-required-attr", "aria-valid-attr-value",
 ];
 
-// 샌드박스/외부 의존으로 어쩔 수 없는 것 — 실패로 세지 않는다
-const IGNORE_ERR = /favicon|fonts\.googleapis|ERR_CONNECTION_RESET|ERR_TUNNEL_CONNECTION_FAILED|tile\.openstreetmap|basemaps\.cartocdn/;
+// 샌드박스/외부 의존으로 어쩔 수 없는 것 — 실패로 세지 않는다.
+// 콘솔 문구와 요청 주소 양쪽에 쓴다 (아래 console·response 훅).
+const IGNORE_ERR = /favicon|fonts\.googleapis|fonts\.gstatic|ERR_CONNECTION_RESET|ERR_TUNNEL_CONNECTION_FAILED|tile\.openstreetmap|basemaps\.cartocdn/;
 
 const fails = [];
 const note = (m) => console.log(m);
@@ -57,7 +58,24 @@ for (const route of ROUTES) {
   const errors = [];
   page.on("pageerror", (e) => errors.push(`JS: ${String(e).slice(0, 140)}`));
   page.on("console", (m) => {
-    if (m.type() === "error" && !IGNORE_ERR.test(m.text())) errors.push(`console: ${m.text().slice(0, 140)}`);
+    if (m.type() !== "error") return;
+    const t = m.text();
+    if (IGNORE_ERR.test(t)) return;
+    // 리소스 로드 실패의 콘솔 문구에는 주소가 없다 —
+    // "Failed to load resource: the server responded with a status of 404 ()".
+    // 그래서 IGNORE_ERR 로 걸러지지 않는다. 주소가 있는 response 훅에서 따로 세고,
+    // 여기서는 중복으로 담지 않는다.
+    if (/Failed to load resource/.test(t)) return;
+    errors.push(`console: ${t.slice(0, 140)}`);
+  });
+  // 실패한 요청은 주소와 함께 기록한다 — 무엇이 깨졌는지 알아야 고칠 수 있다
+  page.on("response", (r) => {
+    const s = r.status();
+    if (s < 400) return;
+    const url = r.url();
+    if (IGNORE_ERR.test(url)) return;
+    if (url === BASE + route) return; // 문서 자체의 상태는 아래에서 따로 본다
+    errors.push(`HTTP ${s} ${url.replace(BASE, "")}`);
   });
 
   let status = 0;
