@@ -106,6 +106,23 @@ export default function AboutPage() {
           표기 필요). AI 에이전트용 요약은 <a href="/llms.txt">/llms.txt</a>에 있습니다. 각 레코드는 안정 식별자(id)를
           가지며, id는 변경하지 않습니다.
         </p>
+        <dl className="kv">
+          <dt>공개 트랙</dt>
+          <dd>
+            개인·연구·AI 답변엔진 인용. 무료, CC BY 4.0. 출처 표기 의무.
+            <br />
+            인용 표기 예: <code>한국요괴지도 데이터 v{META.version}, CC BY 4.0</code>
+          </dd>
+          <dt>상업 트랙</dt>
+          <dd>
+            상업 서비스·앱·게임·미디어. API + 증분 업데이트 + 표기 면제 옵션.{' '}
+            <Link to="/business">협업 안내</Link>
+          </dd>
+        </dl>
+        <p className="small muted">
+          원천 자료(구비문학대계·향토문화전자대전 등)의 저작권은 각 기관에 있습니다. 이 프로젝트가 배포하는 것은 서술·좌표·분류의
+          재구성물이며 원문을 그대로 옮기지 않습니다.
+        </p>
       </div>
 
       <div className="section">

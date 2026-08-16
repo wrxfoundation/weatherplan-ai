@@ -2,9 +2,11 @@ import { Link, NavLink } from 'react-router-dom'
 import { META } from '../data/yokai.js'
 
 const NAV = [
-  { to: '/', label: '지도', end: true },
+  { to: '/', label: '홈', end: true },
+  { to: '/map', label: '지도' },
   { to: '/dogam', label: '도감' },
   { to: '/quiz', label: '체질진단' },
+  { to: '/business', label: '기관·기업' },
   { to: '/about', label: '데이터 원칙' },
 ]
 
@@ -12,7 +14,7 @@ export default function TopBar() {
   return (
     <header className="topbar">
       <Link to="/" className="brand">
-        <span className="seal" aria-hidden="true">
+        <span className="brand-seal" aria-hidden="true">
           怪
         </span>
         <span>한국요괴지도</span>
@@ -25,7 +27,7 @@ export default function TopBar() {
         ))}
       </nav>
       <span className="spacer" />
-      <span className="small muted" title={`데이터 v${META.version} · ${META.generated_at}`}>
+      <span className="small muted num" title={`데이터 v${META.version} · ${META.generated_at}`}>
         {META.count}체 · 전승지 {META.siteCount}곳
       </span>
     </header>

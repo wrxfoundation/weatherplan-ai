@@ -2,6 +2,8 @@ import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { YOKAI, CAT, CATEGORIES } from '../data/yokai.js'
 import YokaiCard from '../ui/YokaiCard.jsx'
+import Seal from '../ui/Seal.jsx'
+import AdSlot from '../ui/AdSlot.jsx'
 import { useHead, SITE_ORIGIN } from '../ui/useHead.js'
 import { categoryJsonLd } from '../seo.js'
 
@@ -25,43 +27,53 @@ export default function CategoryPage() {
     return (
       <main className="page">
         <h1>없는 분류입니다</h1>
-        <Link to="/dogam">도감으로</Link>
+        <p>
+          <Link to="/dogam">도감으로</Link>
+        </p>
       </main>
     )
   }
 
   return (
-    <main className="page">
-      <p className="small muted" style={{ margin: 0 }}>
+    <main className="page" style={{ '--cat': category.color }}>
+      <p className="crumbs">
         <Link to="/dogam">도감</Link>
       </p>
-      <h1 style={{ margin: '4px 0', fontSize: 'var(--text-h1)', color: category.color }}>
-        {category.glyph} {category.name}
-      </h1>
-      <p className="muted" style={{ marginTop: 0 }}>
-        {category.blurb}
-      </p>
-      <p className="small muted">
-        일본 요괴 분류 대응: {category.jp_counterpart} · 수록 {list.length}체
-      </p>
 
-      <div className="card-grid" style={{ marginTop: 'var(--sp-4)' }}>
+      <div className="detail-hero">
+        <Seal category={category.id} size="xl" />
+        <div>
+          <h1 style={{ fontSize: 'var(--text-h1)' }}>{category.name}</h1>
+          <p className="body-text" style={{ margin: '4px 0 0', maxWidth: 'var(--read-max)' }}>
+            {category.blurb}
+          </p>
+          <div className="small muted" style={{ marginTop: 6 }}>
+            일본 요괴 분류 대응: {category.jp_counterpart} · 수록 {list.length}체
+          </div>
+        </div>
+      </div>
+
+      <div className="card-grid" style={{ marginTop: 'var(--sp-5)' }}>
         {list.map((e) => (
           <YokaiCard key={e.id} entry={e} />
         ))}
       </div>
 
-      <div className="section">
-        <h2>다른 분류</h2>
+      <AdSlot slot="category-footer" />
+
+      <section className="section">
+        <div className="section-head">
+          <h2>다른 분류</h2>
+        </div>
         <div className="row">
           {CATEGORIES.filter((c) => c.id !== id).map((c) => (
-            <Link key={c.id} className="chip" style={{ '--chip-color': c.color }} to={`/category/${c.id}`}>
-              <span className="dot" />
+            <Link key={c.id} className="chip" style={{ '--cat': c.color }} to={`/category/${c.id}`}>
+              <Seal category={c.id} size="sm" />
               {c.name}
             </Link>
           ))}
         </div>
-      </div>
+      </section>
     </main>
   )
 }

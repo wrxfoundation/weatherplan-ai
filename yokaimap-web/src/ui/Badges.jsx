@@ -5,7 +5,6 @@ export function CategoryBadge({ id }) {
   if (!c) return null
   return (
     <span className="badge" style={{ color: c.color }}>
-      <span aria-hidden="true">{c.glyph}</span>
       {c.name}
     </span>
   )
@@ -37,7 +36,7 @@ export function DistributionBadge({ id }) {
   const label = DISTRIBUTION_LABEL[id]
   if (!label) return null
   return (
-    <span className="badge" style={{ color: 'var(--grey)' }}>
+    <span className="badge" style={{ color: 'var(--text-3)' }}>
       {label}
     </span>
   )

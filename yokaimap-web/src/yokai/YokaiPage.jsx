@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
+  YOKAI,
   bySlug,
   byId,
   slugOf,
@@ -11,7 +12,10 @@ import {
   SIDO_BY_NAME,
   DISTRIBUTION_LABEL,
 } from '../data/yokai.js'
-import { CategoryBadge, RarityBadge, VerificationBadge, DistributionBadge } from '../ui/Badges.jsx'
+import Seal from '../ui/Seal.jsx'
+import { RarityBadge, VerificationBadge, DistributionBadge } from '../ui/Badges.jsx'
+import ShareRow from '../ui/ShareRow.jsx'
+import AdSlot from '../ui/AdSlot.jsx'
 import { useHead, SITE_ORIGIN } from '../ui/useHead.js'
 import { titleOf, descriptionOf, entryJsonLd } from '../seo.js'
 import { WEATHER_LABEL, TIME_LABEL, SEASON_LABEL } from '../engine/omen.js'
@@ -39,11 +43,16 @@ export default function YokaiPage() {
   }, [entry])
   useHead(head)
 
+  const siblings = useMemo(
+    () => (entry ? YOKAI.filter((e) => e.category === entry.category).sort((a, b) => a.id.localeCompare(b.id)) : []),
+    [entry],
+  )
+
   if (!entry) {
     return (
       <main className="page page-narrow">
         <h1>찾을 수 없는 항목입니다</h1>
-        <p className="muted">
+        <p>
           <Link to="/dogam">도감으로 돌아가기</Link>
         </p>
       </main>
@@ -53,26 +62,30 @@ export default function YokaiPage() {
   const cat = CAT[entry.category]
   const ver = VER[entry.verification]
   const related = entry.related.map(byId).filter(Boolean)
+  const idx = siblings.findIndex((e) => e.id === entry.id)
+  const prev = siblings[idx - 1]
+  const next = siblings[idx + 1]
 
   return (
-    <main className="page page-narrow">
-      <p className="small muted" style={{ margin: 0 }}>
+    <main className="page page-narrow" style={{ '--cat': cat?.color }}>
+      <p className="crumbs">
         <Link to="/dogam">도감</Link> · <Link to={`/category/${cat.id}`}>{cat.name}</Link>
       </p>
 
-      <div className="detail-head">
-        <h1>{entry.canonical}</h1>
-        <div className="row" style={{ gap: 6 }}>
-          <CategoryBadge id={entry.category} />
-          <RarityBadge id={entry.rarity} />
-          <DistributionBadge id={entry.distribution} />
-          <VerificationBadge id={entry.verification} confidence={entry.confidence} />
+      <div className="detail-hero">
+        <Seal category={entry.category} size="xl" />
+        <div style={{ minWidth: 0 }}>
+          <h1>{entry.canonical}</h1>
+          {entry.aliases.length > 0 && <div className="muted small">{entry.aliases.join(' · ')}</div>}
+          <div className="row" style={{ gap: 5, marginTop: 'var(--sp-2)' }}>
+            <RarityBadge id={entry.rarity} />
+            <DistributionBadge id={entry.distribution} />
+            <VerificationBadge id={entry.verification} confidence={entry.confidence} />
+          </div>
         </div>
       </div>
 
-      <p className="body-text" style={{ fontSize: 'var(--text-title)', marginTop: 'var(--sp-4)' }}>
-        {entry.summary}
-      </p>
+      <p className="lede">{entry.summary}</p>
       <p className="body-text">{entry.body}</p>
 
       {entry.sensitivity && (
@@ -87,14 +100,10 @@ export default function YokaiPage() {
       )}
 
       <div className="section">
-        <h2>기본 정보</h2>
+        <div className="section-head">
+          <h2>기본 정보</h2>
+        </div>
         <dl className="kv">
-          {entry.aliases.length > 0 && (
-            <>
-              <dt>이표기</dt>
-              <dd>{entry.aliases.join(' · ')}</dd>
-            </>
-          )}
           {entry.names?.en && (
             <>
               <dt>표기(영문)</dt>
@@ -119,48 +128,55 @@ export default function YokaiPage() {
             </>
           )}
           <dt>도상</dt>
-          <dd className="muted">
+          <dd>
             {entry.art.status === 'final' ? '제작 완료' : '제작 예정'} · 아트디렉션 {entry.art.direction}
-            {entry.art.status !== 'final' && ' (한국에는 대응 도감 판화가 없어 신규 제작합니다)'}
+            {entry.art.status !== 'final' && (
+              <span className="muted"> — 한국에는 대응 도감 판화가 없어 신규 제작합니다</span>
+            )}
           </dd>
         </dl>
       </div>
 
       {(entry.omens.weather.length > 0 || entry.omens.time.length > 0 || entry.omens.season.length > 0) && (
         <div className="section">
-          <h2>출몰 조건</h2>
-          <div className="row" style={{ gap: 6 }}>
+          <div className="section-head">
+            <h2>출몰 조건</h2>
+          </div>
+          <div className="row" style={{ gap: 5 }}>
             {entry.omens.weather.map((w) => (
-              <span key={w} className="badge" style={{ color: 'var(--dancheong-indigo)' }}>
+              <span key={w} className="badge" style={{ color: 'var(--indigo)' }}>
                 {WEATHER_LABEL[w]}
               </span>
             ))}
             {entry.omens.time.map((t) => (
-              <span key={t} className="badge" style={{ color: 'var(--dancheong-violet)' }}>
+              <span key={t} className="badge" style={{ color: 'var(--violet)' }}>
                 {TIME_LABEL[t]}
               </span>
             ))}
             {entry.omens.season.map((s) => (
-              <span key={s} className="badge" style={{ color: 'var(--dancheong-jade)' }}>
+              <span key={s} className="badge" style={{ color: 'var(--jade)' }}>
                 {SEASON_LABEL[s]}
               </span>
             ))}
           </div>
           <p className="small muted" style={{ marginBottom: 0 }}>
-            전승 기록에 조건이 명시된 경우에만 표시합니다. 이 값이 날씨 연동(괴담지수) 계산에 그대로 쓰입니다.
+            전승 기록에 조건이 명시된 경우에만 표시합니다. 이 값이 <Link to="/map">지도의 괴담지수</Link> 계산에 그대로
+            쓰입니다.
           </p>
         </div>
       )}
 
       {entry.sites.length > 0 && (
         <div className="section">
-          <h2>전승지</h2>
+          <div className="section-head">
+            <h2>전승지</h2>
+          </div>
           <ul className="src-list">
             {entry.sites.map((s, i) => (
               <li key={i}>
-                <strong style={{ color: 'var(--text)' }}>{s.name}</strong> — {s.sido}
+                <strong>{s.name}</strong> — {s.sido}
                 {s.sigungu ? ` ${s.sigungu}` : ''} · {PRECISION_LABEL[s.precision]}
-                {isApprox(s.precision) && <span style={{ color: 'var(--warn)' }}> (근사 좌표 — 실제 지점 아님)</span>}
+                {isApprox(s.precision) && <span style={{ color: 'var(--gold)' }}> (근사 좌표 — 실제 지점 아님)</span>}
                 {s.note ? ` · ${s.note}` : ''}
                 {SIDO_BY_NAME[s.sido] && (
                   <>
@@ -175,7 +191,9 @@ export default function YokaiPage() {
       )}
 
       <div className="section">
-        <h2>출처</h2>
+        <div className="section-head">
+          <h2>출처</h2>
+        </div>
         <ul className="src-list">
           {entry.sources.map((s, i) => (
             <li key={i}>
@@ -197,19 +215,50 @@ export default function YokaiPage() {
         </p>
       </div>
 
+      <div className="section">
+        <ShareRow path={`/yokai/${slugOf(entry)}`} text={`${entry.canonical} — ${entry.summary}`} />
+      </div>
+
       {related.length > 0 && (
         <div className="section">
-          <h2>관련 항목</h2>
+          <div className="section-head">
+            <h2>관련 항목</h2>
+          </div>
           <div className="card-grid">
             {related.map((r) => (
-              <Link key={r.id} className="card" to={`/yokai/${slugOf(r)}`}>
-                <h3>{r.canonical}</h3>
+              <Link key={r.id} className="card" to={`/yokai/${slugOf(r)}`} style={{ '--cat': CAT[r.category]?.color }}>
+                <div className="card-head">
+                  <Seal category={r.category} />
+                  <h3>{r.canonical}</h3>
+                </div>
                 <p>{r.summary}</p>
               </Link>
             ))}
           </div>
         </div>
       )}
+
+      <nav className="pager">
+        {prev ? (
+          <Link to={`/yokai/${slugOf(prev)}`}>
+            <div className="dir">← 이전 · {cat.name}</div>
+            <div className="nm">{prev.canonical}</div>
+          </Link>
+        ) : (
+          <span style={{ flex: 1 }} />
+        )}
+        {next ? (
+          <Link to={`/yokai/${slugOf(next)}`} style={{ textAlign: 'right' }}>
+            <div className="dir">다음 · {cat.name} →</div>
+            <div className="nm">{next.canonical}</div>
+          </Link>
+        ) : (
+          <span style={{ flex: 1 }} />
+        )}
+      </nav>
+
+      {/* 광고는 본문·출처를 다 읽은 뒤에만 — MONETIZATION.md §1-A 배치 원칙 */}
+      <AdSlot slot="yokai-footer" />
     </main>
   )
 }

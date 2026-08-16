@@ -1,14 +1,14 @@
 {
   "version": "0.1",
-  "note": "yokai.jp의 14대분류(付喪神·住居·動物変化·神格·現代怪異 등)에 대응하는 한국 전승 분류. 일본 분류를 번역한 것이 아니라, 한국 자료(구비문학대계·민속대백과·향토문화전자대전)의 실제 항목 분포에 맞춰 재설계했다.",
+  "note": "yokai.jp의 14대분류(付喪神·住居·動物変化·神格·現代怪異 등)에 대응하는 한국 전승 분류. 일본 분류를 번역한 것이 아니라, 한국 자료(구비문학대계·민속대백과·향토문화전자대전)의 실제 항목 분포에 맞춰 재설계했다. 각 분류의 인장(印) 글자는 도상이 없는 상태에서도 시각 식별자가 되도록 명조 한자 1자로 통일했다.",
   "categories": [
     {
       "id": "dokkaebi",
       "name": "도깨비",
       "name_en": "Dokkaebi",
       "jp_counterpart": "付喪神·妖怪",
-      "color": "#f0a640",
-      "glyph": "▲",
+      "color": "#c2701a",
+      "glyph": "鬼",
       "blurb": "오래된 기물·자연물이 변한 존재. 씨름을 걸고 재물을 주고 장난을 친다. 한국 요괴의 최대 계열이며 지역별 이름이 가장 심하게 갈린다."
     },
     {
@@ -16,8 +16,8 @@
       "name": "가택신",
       "name_en": "House deities",
       "jp_counterpart": "住居",
-      "color": "#8fd694",
-      "glyph": "⌂",
+      "color": "#3f7a5a",
+      "glyph": "宅",
       "blurb": "집과 터를 나눠 맡은 신들. 성주(마루)·조왕(부엌)·터주(뒤뜰)·업(재물)·측신(뒷간)·문전(문). 집 한 채가 곧 신들의 행정구역이다."
     },
     {
@@ -25,8 +25,8 @@
       "name": "동물변화",
       "name_en": "Animal transformations",
       "jp_counterpart": "動物変化",
-      "color": "#e8748a",
-      "glyph": "◈",
+      "color": "#b4425c",
+      "glyph": "獸",
       "blurb": "여우·뱀·지네·고양이·호랑이가 사람으로 둔갑하거나 사람에 붙는 계열. 구미호와 창귀가 대표."
     },
     {
@@ -34,8 +34,8 @@
       "name": "수신·수괴",
       "name_en": "Water spirits",
       "jp_counterpart": "水",
-      "color": "#4fb3e8",
-      "glyph": "≈",
+      "color": "#2f6f9e",
+      "glyph": "水",
       "blurb": "강·못·바다·우물의 존재. 이무기와 용, 물귀신, 인어(신지끼), 용왕과 용궁 계열."
     },
     {
@@ -43,8 +43,8 @@
       "name": "산괴",
       "name_en": "Mountain beings",
       "jp_counterpart": "山",
-      "color": "#7bc98a",
-      "glyph": "⛰",
+      "color": "#5a7f3a",
+      "glyph": "山",
       "blurb": "산신과 산의 괴이. 고갯길·산길·묘터에서 만나는 존재들."
     },
     {
@@ -52,8 +52,8 @@
       "name": "귀신·원귀",
       "name_en": "Ghosts and vengeful spirits",
       "jp_counterpart": "幽霊",
-      "color": "#b39ddb",
-      "glyph": "◍",
+      "color": "#6a5aa3",
+      "glyph": "魂",
       "blurb": "죽은 사람이 남은 존재. 처녀귀신·몽달귀신·달걀귀신·객귀. 원한의 해원(解冤) 구조가 서사의 핵심."
     },
     {
@@ -61,8 +61,8 @@
       "name": "역병·재액",
       "name_en": "Plague and calamity",
       "jp_counterpart": "疫病",
-      "color": "#d98383",
-      "glyph": "✳",
+      "color": "#a8403c",
+      "glyph": "疫",
       "blurb": "마마(천연두)를 손님으로 모신 손님신 계열과 역귀·재액. 쫓는 것이 아니라 '대접해서 보내는' 것이 한국식 대응이다."
     },
     {
@@ -70,8 +70,8 @@
       "name": "제주신격",
       "name_en": "Jeju myth deities",
       "jp_counterpart": "神格",
-      "color": "#f2b544",
-      "glyph": "❋",
+      "color": "#b8862b",
+      "glyph": "濟",
       "blurb": "제주 무속 본풀이의 신격. 창세·농경·생명·저승을 서사시로 갖춘, 세계적으로도 희소한 신화 자산."
     },
     {
@@ -79,8 +79,8 @@
       "name": "마을신",
       "name_en": "Village guardians",
       "jp_counterpart": "神格·祠",
-      "color": "#a3b18a",
-      "glyph": "⚲",
+      "color": "#6b7f6a",
+      "glyph": "堂",
       "blurb": "서낭·당신·장승·솟대·골매기. 마을 경계에 서서 밖에서 오는 것을 막는 존재. 실좌표(민속문화재)가 가장 많이 남아 있는 계열."
     },
     {
@@ -88,8 +88,8 @@
       "name": "천지괴이",
       "name_en": "Sky and land omens",
       "jp_counterpart": "天変地異",
-      "color": "#93a7f2",
-      "glyph": "✦",
+      "color": "#4b5fa8",
+      "glyph": "天",
       "blurb": "하늘과 땅에서 일어나는 괴이. 강철이가 지나간 자리의 흉년, 불덩이, 무지개 우물, 실록에 기록된 괴이 기사."
     },
     {
@@ -97,8 +97,8 @@
       "name": "기물괴",
       "name_en": "Object spirits",
       "jp_counterpart": "付喪神",
-      "color": "#c9a227",
-      "glyph": "◆",
+      "color": "#9a7d24",
+      "glyph": "器",
       "blurb": "빗자루·절굿공이·짚신처럼 오래 쓴 물건이 변한 존재. 일본 쓰쿠모가미와 가장 직접 대응하는 계열."
     },
     {
@@ -106,8 +106,8 @@
       "name": "이류혼",
       "name_en": "Cross-species unions",
       "jp_counterpart": "異類婚姻譚",
-      "color": "#dd9be8",
-      "glyph": "⧗",
+      "color": "#9a4a8f",
+      "glyph": "婚",
       "blurb": "사람과 다른 종이 혼인하는 설화군. 뱀신랑·우렁각시·지렁이 아들. 한국 구비문학에서 채록량이 가장 많은 유형 중 하나."
     },
     {
@@ -115,8 +115,8 @@
       "name": "현대괴이",
       "name_en": "Modern legends",
       "jp_counterpart": "現代怪異",
-      "color": "#8ea9c1",
-      "glyph": "▣",
+      "color": "#55677a",
+      "glyph": "街",
       "blurb": "1970년대 이후 도시전설. 홍콩할매·자유로귀신·엘리베이터 괴담. 발생 시점과 매체 경로가 특정되는 것이 전승 요괴와의 결정적 차이."
     },
     {
@@ -124,23 +124,73 @@
       "name": "외래·습합",
       "name_en": "Imported and syncretic",
       "jp_counterpart": "外来",
-      "color": "#9c8fc4",
-      "glyph": "卍",
+      "color": "#6b5aa0",
+      "glyph": "外",
       "blurb": "불교·도교에서 들어와 한국식으로 굳은 존재. 저승사자·야차·나찰·명부시왕."
     }
   ],
   "rarity": [
-    { "id": "common", "name": "흔함", "desc": "전국 다수 지역에서 채록", "color": "#9aa5b1" },
-    { "id": "uncommon", "name": "드묾", "desc": "복수 권역에서 채록", "color": "#5fb3d4" },
-    { "id": "rare", "name": "희귀", "desc": "단일 권역 중심", "color": "#8b6fd1" },
-    { "id": "epic", "name": "극희귀", "desc": "단일 시군구·소수 문헌", "color": "#d4823a" },
-    { "id": "legendary", "name": "전설", "desc": "단일 기록·단일 마을 한정", "color": "#e0b13a" }
+    {
+      "id": "common",
+      "name": "흔함",
+      "desc": "전국 다수 지역에서 채록",
+      "color": "#7d7666"
+    },
+    {
+      "id": "uncommon",
+      "name": "드묾",
+      "desc": "복수 권역에서 채록",
+      "color": "#3f7a8f"
+    },
+    {
+      "id": "rare",
+      "name": "희귀",
+      "desc": "단일 권역 중심",
+      "color": "#7a5aa3"
+    },
+    {
+      "id": "epic",
+      "name": "극희귀",
+      "desc": "단일 시군구·소수 문헌",
+      "color": "#b06a24"
+    },
+    {
+      "id": "legendary",
+      "name": "전설",
+      "desc": "단일 기록·단일 마을 한정",
+      "color": "#a8862b"
+    }
   ],
   "verification": [
-    { "id": "primary_text", "name": "고전 원전", "desc": "삼국유사·어우야담·용재총화·청구야담·실록 등 원전에 해당 기록이 있음", "weight": 5 },
-    { "id": "field_record", "name": "채록 기록", "desc": "한국구비문학대계 등 현장 채록 자료 기반", "weight": 4 },
-    { "id": "public_encyclopedia", "name": "공공 백과", "desc": "한국민속대백과사전·향토문화전자대전 등 공공기관 편찬 항목", "weight": 4 },
-    { "id": "secondary_compilation", "name": "2차 정리물", "desc": "근현대 요괴 정리서·연구서에서 정착한 서술. 원전 대조 미완", "weight": 2 },
-    { "id": "modern_online", "name": "현대·온라인", "desc": "매체·온라인에서 발생·확산. 전승 요괴와 구분해 표기", "weight": 1 }
+    {
+      "id": "primary_text",
+      "name": "고전 원전",
+      "desc": "삼국유사·어우야담·용재총화·청구야담·실록 등 원전에 해당 기록이 있음",
+      "weight": 5
+    },
+    {
+      "id": "field_record",
+      "name": "채록 기록",
+      "desc": "한국구비문학대계 등 현장 채록 자료 기반",
+      "weight": 4
+    },
+    {
+      "id": "public_encyclopedia",
+      "name": "공공 백과",
+      "desc": "한국민속대백과사전·향토문화전자대전 등 공공기관 편찬 항목",
+      "weight": 4
+    },
+    {
+      "id": "secondary_compilation",
+      "name": "2차 정리물",
+      "desc": "근현대 요괴 정리서·연구서에서 정착한 서술. 원전 대조 미완",
+      "weight": 2
+    },
+    {
+      "id": "modern_online",
+      "name": "현대·온라인",
+      "desc": "매체·온라인에서 발생·확산. 전승 요괴와 구분해 표기",
+      "weight": 1
+    }
   ]
 }

@@ -1,9 +1,10 @@
 # 한국요괴지도 (Korean Yokai Map)
 
 한국 구비전승·문헌 기록의 요괴와 신격을 **출처와 검증등급을 붙여** 정리한 공개 데이터셋과 전승지 지도.
-yokai.jp의 4축 구조(도감·지도·진단·다국어 SEO)를 한국 자료 환경에 맞게 재설계한 W1 구현체다.
+yokai.jp의 4축 구조(도감·지도·진단·다국어 SEO)를 한국 자료 환경에 맞게 재설계한 구현체다.
 
 - 전략과 배경: **[STRATEGY.md](./STRATEGY.md)**
+- 수익 모델: **[MONETIZATION.md](./MONETIZATION.md)**
 - 데이터 v0.1.0 — **120체 / 전승지 73곳 / 17개 시도 전체 커버**
 
 ## 이 프로젝트의 규칙
@@ -12,7 +13,7 @@ yokai.jp의 4축 구조(도감·지도·진단·다국어 SEO)를 한국 자료 
 2. **검증등급을 숨기지 않는다.** 근거가 약한 항목은 지우는 대신 등급을 낮춰 표시한다.
 3. **좌표 정밀도를 정직하게 표기한다.** 시군구·시도 중심점은 근사 좌표로 구분하고 지도에서 점선으로 그린다.
 4. **실존 신앙을 존중한다.** `sensitivity` 필드로 표시하고 상세페이지에 고지한다.
-5. **없는 값을 만들지 않는다.** 날씨 API가 없으면 없다고 표시한다.
+5. **없는 값을 만들지 않는다.** 날씨 API가 없으면 없다고 표시하고, 리드 저장소가 없으면 접수 성공을 가장하지 않는다.
 
 ## 로컬 실행
 
@@ -26,15 +27,47 @@ npm run dev                  # http://localhost:5173
 |---|---|
 | `npm run validate` | 시드 검증만 실행(스키마 + 도메인 무결성) |
 | `npm run data` | 시드 병합 → `public/data/yokai.json` 생성 (검증 실패 시 중단) |
-| `npm run build` | 데이터 빌드 + vite build + AEO 자산 생성(프리렌더·sitemap·robots·llms.txt) |
+| `npm run build` | 데이터 빌드 + vite build + AEO 자산 생성(프리렌더 156p·sitemap·robots·llms.txt) |
+| `node scripts/make-og.mjs` | OG 카드 16장 재생성 — **로컬 크로미움 필요, 결과 PNG는 커밋한다**(Vercel 빌드엔 크로미움이 없다) |
 
-환경변수는 전부 선택이다.
+환경변수는 전부 선택이다. 없으면 해당 기능만 정직하게 꺼진다.
 
 | 변수 | 없으면 |
 |---|---|
-| `VITE_SITE_ORIGIN` | `https://yokaimap.kr` 기준으로 canonical·sitemap이 생성된다 |
-| `VITE_VWORLD_KEY` | 한글·위성 베이스맵이 빠지고 다크 타일만 노출 |
+| `VITE_SITE_ORIGIN` | `https://yokaimap.kr` 기준으로 canonical·sitemap·OG URL 생성 |
+| `VITE_VWORLD_KEY` | 한글·위성 배경지도가 빠지고 다크 타일만 노출 |
 | `KWEATHER_API_KEY` | 괴담지수가 시각·계절만 반영하고 화면에 그 사실을 표시 |
+| `VITE_ADSENSE_CLIENT` | 광고 슬롯이 **아무것도 렌더하지 않는다**(빈 테두리도 없음) |
+| `VITE_CONTACT_EMAIL` | B2B 폼 실패 시 이메일 폴백 안내를 노출하지 않음 |
+| `SUPABASE_URL` / `SUPABASE_SERVICE_KEY` | `/api/lead`가 접수 실패를 그대로 알림(성공을 가장하지 않음) |
+
+## 화면 구성
+
+| 경로 | 역할 |
+|---|---|
+| `/` | 홈 — 히어로, 오늘의 요괴, 괴담지수, 분류·지역 진입, B2B 배너 |
+| `/map` | 전승지 지도 (밤 서피스, 필터 드로어, 괴담지수 패널) |
+| `/dogam` | 도감 전체 목록 + 검색·분류·희귀도·지역 필터 |
+| `/yokai/:slug` | 개체 상세 — 출처·검증등급·전승지·출몰 조건·공유·이전/다음 |
+| `/category/:id` · `/region/:slug` | 분류별 · 시도별 목록 (지역 페이지에 B2B 리드 배너) |
+| `/quiz` | 요괴 체질진단 (결과 URL 공유) |
+| `/business` | 기관·기업 협업 — 협업 형태, 이중 라이선스, 문의 폼 |
+| `/about` | 데이터 원칙과 출처 |
+
+## 디자인 시스템 — "한지 위의 인장(印章)"
+
+도상(그림)이 아직 0장이라는 전제에서 출발했다. 그림 없이도 완성돼 보이려면 세 가지가 필요하다.
+
+1. **이중 서피스** — 도감·상세·홈은 밝은 한지(긴 글을 읽고 광고가 붙는 면), 지도는 밤의 먹빛.
+   `data-surface="night"`로 전환하고 컴포넌트는 의미 토큰(`--bg`/`--surface`/`--text`)만 쓴다.
+2. **인장(印)** — 14개 분류마다 명조 한자 1자(鬼宅獸水山魂疫濟堂天器婚街外)를 색 타일에 넣어
+   카드·지도 마커·상세 히어로·OG 카드에서 같은 식별자로 반복한다. 도상이 들어오기 전까지의 시각적 앵커.
+3. **명조 × 고딕 대비** — 요괴 이름과 제목은 Nanum Myeongjo, 본문·UI는 Pretendard. 둘 다 셀프호스팅.
+
+색은 `src/styles/tokens.css`가 진실 원천이다. 분류색은 `--cat` 하나만 인라인으로 주입하고,
+배경·테두리는 서피스별 혼합 비율(`--cat-bg`, `--cat-line`)로 `color-mix()`에서 계산한다.
+(주의: `:root`에서 `var(--cat)`을 참조하는 파생 변수를 만들면 안 된다 — 커스텀 프로퍼티는 선언된
+요소에서 값이 해석되므로 전부 폴백 색으로 굳어 버린다.)
 
 ## 구조
 
@@ -42,21 +75,26 @@ npm run dev                  # http://localhost:5173
 yokaimap-web/
 ├── data/
 │   ├── schema/yokai.schema.json   # 레코드 스키마(JSON Schema 2020-12) — 진실 원천
-│   ├── categories.json            # 14개 대분류 · 희귀도 · 검증등급 정의
+│   ├── categories.json            # 14개 대분류(색·인장 글자) · 희귀도 · 검증등급
 │   ├── regions.json               # 17개 시도 슬러그·중심점
 │   └── yokai/01~14-*.json         # 시드 120체 (카테고리별 분할)
 ├── scripts/
 │   ├── validate.mjs               # 스키마 검증기(의존성 0) + 도메인 무결성 8종
 │   ├── build-data.mjs             # 병합 → public/data/yokai.json
-│   └── postbuild.mjs              # 프리렌더 154p · sitemap · robots · llms.txt
+│   ├── postbuild.mjs              # 프리렌더 156p · sitemap · robots · llms.txt
+│   ├── make-og.mjs                # OG 카드 생성(로컬 크로미움)
+│   └── lib/png.mjs                # PNG 크롭(헤드리스 뷰포트 보정용, 의존성 0)
 ├── src/
 │   ├── engine/omen.js             # 날씨 × 괴담 엔진 (결정론)
 │   ├── engine/quiz.js             # 요괴 체질진단 (결정론)
 │   ├── seo.js                     # 프론트·빌드 공유 SEO/JSON-LD 빌더
-│   ├── map/                       # Leaflet 지도 + 괴담지수 패널
-│   ├── dogam/ yokai/ category/ region/ quiz/ about/
-│   └── styles/tokens.css          # 배색 진실 원천(단청 5색 기반)
-└── api/weather.js                 # 케이웨더 프록시(키 서버 보관)
+│   ├── home/ map/ dogam/ yokai/ category/ region/ quiz/ business/ about/
+│   ├── ui/                        # Seal · Badges · YokaiCard · AdSlot · ShareRow · TopBar · Footer
+│   └── styles/tokens.css          # 배색·타이포 진실 원천 (한지/밤 이중 서피스)
+├── api/
+│   ├── weather.js                 # 케이웨더 프록시(키 서버 보관)
+│   └── lead.js                    # B2B 리드 접수(Supabase REST, SDK 없음)
+└── public/og/                     # OG 카드 16장(사이트·진단·분류 14) — 커밋된 산출물
 ```
 
 ## 데이터 스키마 요약
@@ -83,6 +121,7 @@ yokaimap-web/
 
 `/data/yokai.json` (CC BY 4.0). AI 에이전트용 요약은 `/llms.txt`.
 인용 표기 예: `한국요괴지도(https://yokaimap.kr) 데이터 v0.1.0, CC BY 4.0`
+상업 이용·API·표기 면제는 별도 트랙이다 — `/business` 참조.
 
 원천 자료의 저작권은 각 기관(한국학중앙연구원·국립민속박물관·국가유산청 등)에 있으며, 이 프로젝트가 배포하는 것은
 서술·좌표·분류의 재구성물이다.

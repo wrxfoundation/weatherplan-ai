@@ -1,71 +1,123 @@
-/* 한국요괴지도 디자인 토큰 v0.1
- * 진실원천은 이 파일. 컴포넌트는 CSS 변수만 쓰고 hex 하드코딩을 금지한다.
- * 배색 근거: 밤(먹빛 배경) + 한지(본문 잉크) + 단청 5색 중 적·황·청·녹을 의미색으로 배정.
+/* 한국요괴지도 디자인 토큰 v2 — "한지 위의 인장(印章)"
+ *
+ * 설계 전제: 도상(그림)이 아직 0장이다. 그림 없이도 완성돼 보이는 시각 체계가 필요하다.
+ * 그래서 세 가지에 기댄다 — ① 한지 종이 질감 ② 명조 대비 ③ 분류별 인장(한자 1자).
+ *
+ * 이중 서피스:
+ *   기본(paper) — 도감·상세·홈. 밝은 한지. 긴 글을 읽는 면이고 광고가 붙는 면이다.
+ *   night       — 지도. 밤의 먹빛. data-surface="night"로 전환한다.
+ * 컴포넌트는 --bg/--surface/--text 같은 의미 토큰만 쓰고 두 서피스를 구분하지 않는다.
  */
+
 :root {
-  /* 베이스 — 먹빛 밤 */
-  --bg: #12100f;
-  --bg-deep: #0a0908;
-  --surface: #1b1815;
-  --surface-2: #241f1a;
-  --line: #322b23;
-  --line-strong: #4a4034;
+  /* ── 한지(paper) ── */
+  --bg: #f4efe3;
+  --bg-2: #ece4d3;
+  --surface: #faf6ec;
+  --surface-2: #f0e9da;
+  --surface-sunken: #e8dfcc;
+  --line: #ddd1b8;
+  --line-strong: #c6b697;
+  --text: #211d18;
+  --text-2: #4d453a;
+  --text-3: #7a7060;
 
-  /* 한지 잉크 */
-  --text: #f2ece1;
-  --ink: var(--text);
-  --grey: #a99e8d; /* 소형 텍스트 WCAG AA 충족 */
-  --grey-dim: #7d7365;
+  /* 인주(印朱) — 강조는 이 색 하나로만 */
+  --seal: #b23b26;
+  --seal-ink: #8f2d1c;
+  --seal-soft: #e8d3cb;
 
-  /* 단청 의미색 */
-  --dancheong-red: #d94f36; /* 주칠 — 액센트·CTA */
-  --dancheong-gold: #d9a441; /* 황 — 희귀도·강조 수치 */
-  --dancheong-jade: #4f9d8b; /* 녹 — 검증·안전 */
-  --dancheong-indigo: #5b82bd; /* 청 — 물·정보 */
-  --dancheong-violet: #9b7fc4; /* 보조 — 신격 */
+  /* 보조 의미색 (단청 계열, 한지 위에서 읽히는 채도) */
+  --gold: #a97c2f;
+  --jade: #3f7a67;
+  --indigo: #3c5f8f;
+  --violet: #6f5aa3;
 
-  --accent: var(--dancheong-red);
-  --accent-soft: #f0765c;
-  --ok: var(--dancheong-jade);
-  --warn: var(--dancheong-gold);
+  /* 분류색 혼합 비율.
+   * 색 자체를 여기서 계산하면 안 된다 — 커스텀 프로퍼티는 '선언된 요소'에서 값이 해석되므로
+   * :root에서 var(--cat)을 쓰면 전부 폴백(인주색)으로 굳어 버린다. 비율만 넘기고
+   * 실제 color-mix()는 --cat을 가진 요소(.seal/.chip.on 등)에서 수행한다. */
+  --cat-bg: 12%;
+  --cat-line: 34%;
 
-  /* 타이포 */
+  /* 종이 질감 강도 */
+  --grain-opacity: 0.5;
+  --shadow-1: 0 1px 2px rgba(60, 45, 25, 0.09);
+  --shadow-2: 0 6px 18px rgba(60, 45, 25, 0.12);
+  --shadow-3: 0 16px 44px rgba(40, 30, 15, 0.18);
+
+  /* ── 타이포 ── */
   --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
-  --font-serif: 'Pretendard Variable', Pretendard, 'Nanum Myeongjo', serif;
+  --font-serif: 'Nanum Myeongjo', 'Nanum Myeongjo Fallback', 'Apple SD Gothic Neo', serif;
 
   --text-xs: 11px;
-  --text-sm: 12px;
-  --text-body: 13px;
-  --text-md: 14px;
-  --text-title: 17px;
-  --text-h2: 21px;
-  --text-h1: 27px;
-  --text-display: 38px;
+  --text-sm: 12.5px;
+  --text-body: 14px;
+  --text-md: 15px;
+  --text-lg: 17px;
+  --text-title: 20px;
+  --text-h2: 25px;
+  --text-h1: 33px;
+  --text-display: 46px;
+  --text-hero: 60px;
 
-  /* 간격·반경 */
+  --leading-tight: 1.25;
+  --leading-body: 1.8;
+
+  /* ── 간격·형태 ── */
   --sp-1: 4px;
   --sp-2: 8px;
   --sp-3: 12px;
-  --sp-4: 16px;
-  --sp-5: 24px;
-  --sp-6: 36px;
-  --radius: 10px;
-  --radius-sm: 6px;
-  --radius-lg: 16px;
+  --sp-4: 18px;
+  --sp-5: 28px;
+  --sp-6: 44px;
+  --sp-7: 68px;
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 14px;
 
-  /* 고도 */
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-2: 0 6px 20px rgba(0, 0, 0, 0.45);
-  --shadow-3: 0 14px 44px rgba(0, 0, 0, 0.55);
-
-  --header-h: 52px;
+  --header-h: 58px;
+  --page-max: 1120px;
+  --read-max: 720px;
 }
 
-/* 검증등급 색 — 상세페이지·배지에서 공유 */
+/* ── 밤(night) — 지도 전용 ── */
+[data-surface='night'] {
+  --bg: #100e0c;
+  --bg-2: #0a0908;
+  --surface: #1a1713;
+  --surface-2: #221d18;
+  --surface-sunken: #0d0b0a;
+  --line: #322a22;
+  --line-strong: #4b3f33;
+  --text: #f3ede1;
+  --text-2: #c3b8a6;
+  --text-3: #8d8272;
+
+  --seal: #d9583c;
+  --seal-ink: #f0765c;
+  --seal-soft: #3a221c;
+
+  --gold: #d9a441;
+  --jade: #4f9d8b;
+  --indigo: #6a93cd;
+  --violet: #a78bfa;
+
+  /* 밤에는 분류색을 띄워야 보인다 */
+  --cat-bg: 22%;
+  --cat-line: 48%;
+
+  --grain-opacity: 0.28;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --shadow-3: 0 16px 44px rgba(0, 0, 0, 0.6);
+}
+
+/* 검증등급 색 — 서피스별로 다시 정의 */
 :root {
-  --ver-primary_text: var(--dancheong-jade);
-  --ver-field_record: var(--dancheong-indigo);
-  --ver-public_encyclopedia: var(--dancheong-indigo);
-  --ver-secondary_compilation: var(--dancheong-gold);
-  --ver-modern_online: var(--grey);
+  --ver-primary_text: var(--jade);
+  --ver-field_record: var(--indigo);
+  --ver-public_encyclopedia: var(--indigo);
+  --ver-secondary_compilation: var(--gold);
+  --ver-modern_online: var(--text-3);
 }

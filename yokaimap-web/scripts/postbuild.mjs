@@ -36,7 +36,7 @@ const esc = (s) =>
 
 const urls = [{ loc: '/', priority: '1.0' }]
 
-function prerender(relPath, { title, description, jsonLd, body, priority = '0.6' }) {
+function prerender(relPath, { title, description, jsonLd, body, priority = '0.6', ogImage = '/og/default.png' }) {
   const canonical = `${ORIGIN}${relPath}`
   const head = [
     `<link rel="canonical" href="${esc(canonical)}" />`,
@@ -51,6 +51,7 @@ function prerender(relPath, { title, description, jsonLd, body, priority = '0.6'
     .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
     .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(description)}$2`)
     .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${esc(canonical)}$2`)
+    .replace(/(<meta property="og:image" content=")[^"]*(")/, `$1${ORIGIN}${ogImage}$2`)
     .replace(/<noscript>[\s\S]*?<\/noscript>/, `<noscript>${body}</noscript>`)
     .replace('</head>', `  ${head}\n  </head>`)
 
@@ -90,6 +91,8 @@ for (const e of entries) {
     jsonLd: entryJsonLd(e, ORIGIN),
     body,
     priority: '0.8',
+    // 개체별 카드는 W2에서. 그 전까지 분류 카드를 쓴다(공유 시 최소한 계열은 드러난다)
+    ogImage: `/og/cat-${e.category}.png`,
   })
 }
 
@@ -100,6 +103,7 @@ for (const c of categories) {
     title: `${c.name} — 한국요괴도감`,
     description: `${c.blurb} 공개 자료 기반 ${list.length}체 수록.`,
     jsonLd: categoryJsonLd(c, list, ORIGIN),
+    ogImage: `/og/cat-${c.id}.png`,
     body: `<h1>${esc(c.name)}</h1><p>${esc(c.blurb)}</p><ul>${list
       .map((e) => `<li><a href="/yokai/${slugOf(e)}">${esc(e.canonical)}</a> — ${esc(e.summary)}</li>`)
       .join('')}</ul>`,
@@ -161,6 +165,32 @@ prerender('/quiz', {
   jsonLd: { '@context': 'https://schema.org', '@type': 'WebApplication', name: '요괴 체질진단', url: `${ORIGIN}/quiz`, applicationCategory: 'EntertainmentApplication', inLanguage: 'ko' },
   body: '<h1>요괴 체질진단</h1><p>8문항으로 나와 가장 가까운 한국 요괴를 찾습니다.</p>',
   priority: '0.6',
+  ogImage: '/og/quiz.png',
+})
+
+prerender('/map', {
+  title: '전승지 지도 — 한국요괴지도',
+  description: `요괴 ${bundle.count}체의 전승지 ${bundle.site_count}곳을 지도 위에. 분류·희귀도로 걸러 보고, 오늘 날씨에 맞는 요괴를 확인할 수 있습니다.`,
+  jsonLd: { '@context': 'https://schema.org', '@type': 'WebApplication', name: '한국요괴 전승지 지도', url: `${ORIGIN}/map`, applicationCategory: 'ReferenceApplication', inLanguage: 'ko' },
+  body: `<h1>전승지 지도</h1><p>요괴 ${bundle.count}체 · 전승지 ${bundle.site_count}곳. 시군구·시도 중심점으로 표시된 항목은 실제 지점이 아니라 권역 근사입니다.</p>`,
+  priority: '0.9',
+})
+
+prerender('/business', {
+  title: '기관·기업 협업 — 한국요괴지도',
+  description:
+    '지자체 권역 콘텐츠 팩, 데이터 라이선스·API, 웹툰·게임 원안 자문. 조달 심사가 요구하는 근거(출처·검증등급·좌표 정밀도)를 레코드 단위로 제시합니다.',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: '한국요괴지도 기관·기업 협업',
+    provider: { '@type': 'Organization', name: '한국요괴지도', url: ORIGIN },
+    areaServed: 'KR',
+    serviceType: ['문화 콘텐츠 개발', '데이터 라이선스', 'IP 자문'],
+    url: `${ORIGIN}/business`,
+  },
+  body: '<h1>기관·기업 협업</h1><p>권역 요괴 콘텐츠 팩, 스탬프 투어 코스 설계, 데이터 라이선스·API, IP 원안 자문. 모든 레코드에 출처·검증등급·좌표 정밀도가 붙어 있어 조달 제출 자료에 근거표를 그대로 첨부할 수 있습니다.</p>',
+  priority: '0.7',
 })
 
 /* ─── sitemap · robots ─── */
@@ -223,12 +253,15 @@ writeFileSync(
 ${topCategories}
 
 ## 주요 경로
-- 지도: ${ORIGIN}/
+- 홈: ${ORIGIN}/
+- 전승지 지도: ${ORIGIN}/map
 - 도감 전체: ${ORIGIN}/dogam
 - 분류별: ${ORIGIN}/category/<category_id>
 - 지역별(17개 시도): ${ORIGIN}/region/<slug>
 - 개체 상세: ${ORIGIN}/yokai/<id에서 'kr-' 제외한 슬러그>
+- 요괴 체질진단: ${ORIGIN}/quiz
 - 데이터 원칙·출처: ${ORIGIN}/about
+- 기관·기업 협업(데이터 라이선스 상업 트랙): ${ORIGIN}/business
 
 ## 인용 시 유의
 - 검증등급이 '2차 정리물' 또는 confidence=low인 항목은 근현대 정리 과정에서 정착했을 수 있으므로, 사실 단정 대신 그 사실을 함께 밝혀 주기 바란다.
