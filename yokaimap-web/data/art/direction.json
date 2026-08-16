@@ -51,7 +51,8 @@
       "도리이·시메나와·석등롱·장지문·다다미 금지",
       "지붕 끝이 위로 크게 솟은 처마(당파풍) 금지 — 한옥은 완만한 곡선",
       "벚꽃 대신 소나무·모란·매화",
-      "우키요에식 굵은 검정 윤곽 + 인쇄 평면색 금지"
+      "우키요에식 굵은 검정 윤곽 + 인쇄 평면색 금지",
+      "돌부처·미륵에 붉은 턱받이·뜨개모자 금지 — 일본 지장보살(지조) 관습. 한국 미륵은 맨 돌에 백지·오색천"
     ]
   },
   "exclude_chinese": {
@@ -74,9 +75,9 @@
     "ghost": "white mourning hanbok, pale ink wash, thin even brush lines, long unbound hair",
     "plague": "muted vermilion, ritual offering table with brass bowls and straw rope",
     "jeju": "gold ochre and basalt grey, Jeju volcanic stone walls, persimmon-dyed galot cloth, shaman textile patterns",
-    "village": "moss green and weathered wood, jangseung and sotdae, seonangdang stones with five-colour cloth",
+    "village": "moss green and weathered wood, jangseung and sotdae, seonangdang stones with five-colour cloth, bare stone figures with no red bib and no knitted cap",
     "sky": "deep azurite ground, Korean cloud scroll motif and flame motif",
-    "artifact": "aged ochre and brown, worn Korean household tool as the figure",
+    "artifact": "aged ochre and brown, worn Korean household tool as the figure, knobbed wooden club never a studded iron kanabo",
     "hybrid": "vermilion and malachite, two natures in one figure, hanbok on the human side",
     "modern": "cool slate grey, contemporary Korean silhouette rendered in the same hanji-and-mineral-pigment technique",
     "foreign": "violet and gold, Korean Buddhist temple guardian conventions from siwangdo and taenghwa"

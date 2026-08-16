@@ -1447,7 +1447,7 @@
     "kr-dokkaebi-gamtu"
    ],
    "art": {
-    "status": "drafted",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": "/img/yokai/dokkaebi.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
@@ -2436,7 +2436,7 @@
     "kr-yongwang"
    ],
    "art": {
-    "status": "drafted",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": "/img/yokai/gangcheori.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
@@ -3003,7 +3003,7 @@
     "kr-dokkaebi-bul"
    ],
    "art": {
-    "status": "drafted",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": "/img/yokai/gumiho.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
@@ -3864,7 +3864,7 @@
     "kr-baeksa"
    ],
    "art": {
-    "status": "drafted",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": "/img/yokai/imugi.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
@@ -4009,7 +4009,7 @@
     "kr-sangun"
    ],
    "art": {
-    "status": "drafted",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": "/img/yokai/jangsanbeom.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
@@ -4089,7 +4089,7 @@
     "kr-sonnim"
    ],
    "art": {
-    "status": "drafted",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": "/img/yokai/jangseung.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
@@ -6067,7 +6067,7 @@
     "kr-seongju"
    ],
    "art": {
-    "status": "drafted",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": "/img/yokai/samsin.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
@@ -6516,7 +6516,7 @@
     "kr-gaeyang-halmi"
    ],
    "art": {
-    "status": "drafted",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": "/img/yokai/seolmundae.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
@@ -7169,7 +7169,7 @@
     "kr-haerang"
    ],
    "art": {
-    "status": "drafted",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": "/img/yokai/songaksi.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
@@ -7975,7 +7975,7 @@
     "kr-hoeorib"
    ],
    "art": {
-    "status": "drafted",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": "/img/yokai/yeongdeung-halmang.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
