@@ -5,291 +5,759 @@
     {
       "id": "kr-seolmundae",
       "canonical": "설문대할망",
-      "aliases": ["선문대할망", "설명두할망", "세명뒤할망"],
-      "names": { "en": "Seolmundae Halmang", "roman": "seolmundaehalmang" },
+      "aliases": [
+        "선문대할망",
+        "설명두할망",
+        "세명뒤할망"
+      ],
+      "names": {
+        "en": "Seolmundae Halmang",
+        "roman": "seolmundaehalmang"
+      },
       "category": "jeju",
       "rarity": "common",
       "distribution": "regional",
       "summary": "제주도를 만든 거인 여신. 치마로 흙을 나르다 흘린 것이 오름이 되었다고 전한다.",
       "body": "한라산을 베개 삼고 다리를 바다에 뻗을 만큼 컸으며, 물장오리에 빠져 죽었다는 결말이 널리 전한다. 육지의 마고할미 계열과 짝을 이루는 제주판 창조 여신으로, 오름 368개라는 제주 지형이 곧 신화의 물증이 된다. 제주 관광·트레킹 콘텐츠와 결합도가 가장 높은 항목이다.",
-      "traits": ["거인", "오름", "창조"],
-      "habitat": ["한라산", "오름", "물장오리"],
-      "omens": { "time": [], "weather": ["fog", "wind"], "season": [] },
+      "traits": [
+        "거인",
+        "오름",
+        "창조"
+      ],
+      "art_hint": "a colossal grandmother goddess seated across a volcanic island, soil spilling from her skirt and forming small cinder cones, the sea reaching only to her knees",
+      "habitat": [
+        "한라산",
+        "오름",
+        "물장오리"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "fog",
+          "wind"
+        ],
+        "season": []
+      },
       "sites": [
-        { "name": "한라산", "sido": "제주", "sigungu": "제주시", "lat": 33.3617, "lng": 126.5292, "precision": "dong", "note": "백록담 일원" },
-        { "name": "물장오리오름", "sido": "제주", "sigungu": "제주시", "lat": 33.4014, "lng": 126.6114, "precision": "dong", "note": "설문대할망 최후 전승지" }
+        {
+          "name": "한라산",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.3617,
+          "lng": 126.5292,
+          "precision": "dong",
+          "note": "백록담 일원"
+        },
+        {
+          "name": "물장오리오름",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.4014,
+          "lng": 126.6114,
+          "precision": "dong",
+          "note": "설문대할망 최후 전승지"
+        }
       ],
       "sources": [
-        { "type": "field", "title": "제주 구전·본풀이 채록", "ref": "설문대할망 전승" },
-        { "type": "encyclopedia", "title": "한국민족문화대백과사전", "ref": "설문대할망" }
+        {
+          "type": "field",
+          "title": "제주 구전·본풀이 채록",
+          "ref": "설문대할망 전승"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "설문대할망"
+        }
       ],
       "verification": "field_record",
       "confidence": "high",
-      "related": ["kr-magohalmi", "kr-gaeyang-halmi"],
+      "related": [
+        "kr-magohalmi",
+        "kr-gaeyang-halmi"
+      ],
+      "art": {
+        "status": "drafted",
+        "direction": "minhwa-v1",
+        "file": "/img/yokai/seolmundae.png",
+        "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+      },
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-yeongdeung-halmang",
       "canonical": "영등할망",
-      "aliases": ["영등할머니", "영등신", "바람신"],
-      "names": { "en": "Yeongdeung Halmang", "roman": "yeongdeunghalmang" },
+      "aliases": [
+        "영등할머니",
+        "영등신",
+        "바람신"
+      ],
+      "names": {
+        "en": "Yeongdeung Halmang",
+        "roman": "yeongdeunghalmang"
+      },
       "category": "jeju",
       "rarity": "common",
       "distribution": "regional",
       "summary": "음력 2월에 찾아와 바다에 씨를 뿌리고 떠나는 바람의 여신. 머무는 보름 동안 바람이 거세다.",
       "body": "영등할망이 들어오는 초하루부터 나가는 보름까지를 영등철이라 하여 배를 띄우지 않고 영등굿을 올린다. 제주칠머리당영등굿은 국가무형유산이자 유네스코 인류무형문화유산으로, 실좌표와 공식 지정정보가 모두 있는 최상급 항목이다. 특정 기간의 바람과 신격이 정확히 맞물려 날씨 엔진의 대표 사례가 된다.",
-      "traits": ["바람", "영등굿", "해산물 씨"],
-      "habitat": ["바다", "포구", "당"],
-      "omens": { "time": [], "weather": ["wind", "storm", "cold"], "season": ["spring"] },
+      "traits": [
+        "바람",
+        "영등굿",
+        "해산물 씨"
+      ],
+      "art_hint": "an old sea goddess striding ashore on the wind, robes and long grey hair blown horizontal, scattering shellfish seed across the tidal flats, small fishing boats moored behind her",
+      "habitat": [
+        "바다",
+        "포구",
+        "당"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "wind",
+          "storm",
+          "cold"
+        ],
+        "season": [
+          "spring"
+        ]
+      },
       "sites": [
-        { "name": "제주 칠머리당", "sido": "제주", "sigungu": "제주시", "lat": 33.5178, "lng": 126.5325, "precision": "dong", "note": "건입동 칠머리당 — 영등굿 전승지" }
+        {
+          "name": "제주 칠머리당",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.5178,
+          "lng": 126.5325,
+          "precision": "dong",
+          "note": "건입동 칠머리당 — 영등굿 전승지"
+        }
       ],
       "sources": [
-        { "type": "heritage", "title": "국가유산포털", "ref": "제주칠머리당영등굿(국가무형유산)" },
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "영등신" }
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "제주칠머리당영등굿(국가무형유산)"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "영등신"
+        }
       ],
       "verification": "public_encyclopedia",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현행 무형유산 의례의 신격" },
-      "related": ["kr-yongwang", "kr-hoeorib"],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 무형유산 의례의 신격"
+      },
+      "related": [
+        "kr-yongwang",
+        "kr-hoeorib"
+      ],
+      "art": {
+        "status": "drafted",
+        "direction": "minhwa-v1",
+        "file": "/img/yokai/yeongdeung-halmang.png",
+        "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+      },
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-jacheongbi",
       "canonical": "자청비",
-      "aliases": ["세경할망", "농경신 자청비"],
-      "names": { "en": "Jacheongbi", "roman": "jacheongbi" },
+      "aliases": [
+        "세경할망",
+        "농경신 자청비"
+      ],
+      "names": {
+        "en": "Jacheongbi",
+        "roman": "jacheongbi"
+      },
       "category": "jeju",
       "rarity": "uncommon",
       "distribution": "regional",
       "summary": "세경본풀이의 주인공. 남장을 하고 글공부를 떠나 사랑과 시련을 겪은 끝에 농경신이 된 여신.",
       "body": "문도령을 따라 하늘에 올라 시험을 이겨 내고, 난을 평정한 대가로 오곡 씨앗을 얻어 지상에 내려온다. 여성이 주체적으로 움직여 신의 자리에 오르는 서사라 현대적 재해석 여지가 크다. 제주 본풀이 가운데 문학성이 가장 높다는 평가를 받는 편이다.",
-      "traits": ["농경", "남장", "오곡 씨앗"],
-      "habitat": ["밭", "하늘"],
-      "omens": { "time": [], "weather": ["rain"], "season": ["spring", "autumn"] },
+      "traits": [
+        "농경",
+        "남장",
+        "오곡 씨앗"
+      ],
+      "habitat": [
+        "밭",
+        "하늘"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "rain"
+        ],
+        "season": [
+          "spring",
+          "autumn"
+        ]
+      },
       "sites": [
-        { "name": "제주 세경본풀이 전승권", "sido": "제주", "sigungu": "서귀포시", "lat": 33.2541, "lng": 126.56, "precision": "sido", "note": "제주 전역 무속 전승" }
+        {
+          "name": "제주 세경본풀이 전승권",
+          "sido": "제주",
+          "sigungu": "서귀포시",
+          "lat": 33.2541,
+          "lng": 126.56,
+          "precision": "sido",
+          "note": "제주 전역 무속 전승"
+        }
       ],
       "sources": [
-        { "type": "field", "title": "세경본풀이", "ref": "제주 무가" },
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "세경본풀이" }
+        {
+          "type": "field",
+          "title": "세경본풀이",
+          "ref": "제주 무가"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "세경본풀이"
+        }
       ],
       "verification": "field_record",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현행 무속 의례의 신격" },
-      "related": ["kr-gameunjang", "kr-cheonjiwang"],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 무속 의례의 신격"
+      },
+      "related": [
+        "kr-gameunjang",
+        "kr-cheonjiwang"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-baekjutto",
       "canonical": "백주또",
-      "aliases": ["백주할망", "송당 본향신"],
+      "aliases": [
+        "백주할망",
+        "송당 본향신"
+      ],
       "category": "jeju",
       "rarity": "rare",
       "distribution": "local",
       "summary": "송당 본향당의 여신. 제주 당신(堂神) 계보의 어머니로 불린다.",
       "body": "사냥꾼 소천국과 혼인해 아들 열여덟을 낳았고, 그 자손들이 제주 각 마을의 당신으로 흩어졌다는 계보가 전한다. 농경을 하려는 백주또와 사냥을 고집하는 소천국의 갈등은 생업 전환기의 기억으로 읽힌다. 송당리 본향당은 실좌표가 있는 제주 당신앙의 중심지다.",
-      "traits": ["당신", "계보", "농경"],
-      "habitat": ["송당 본향당"],
-      "omens": { "time": [], "weather": [], "season": [] },
+      "traits": [
+        "당신",
+        "계보",
+        "농경"
+      ],
+      "habitat": [
+        "송당 본향당"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
       "sites": [
-        { "name": "송당리 본향당", "sido": "제주", "sigungu": "제주시", "lat": 33.4667, "lng": 126.7639, "precision": "dong", "note": "구좌읍 송당리 — 제주 당신앙 중심지" }
+        {
+          "name": "송당리 본향당",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.4667,
+          "lng": 126.7639,
+          "precision": "dong",
+          "note": "구좌읍 송당리 — 제주 당신앙 중심지"
+        }
       ],
       "sources": [
-        { "type": "field", "title": "송당본향당 본풀이", "ref": "제주 무가" },
-        { "type": "heritage", "title": "국가유산포털", "ref": "제주 송당리 본향당 관련 지정정보" }
+        {
+          "type": "field",
+          "title": "송당본향당 본풀이",
+          "ref": "제주 무가"
+        },
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "제주 송당리 본향당 관련 지정정보"
+        }
       ],
       "verification": "field_record",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현재도 제의가 이어지는 당. 방문 시 예의 안내 필요" },
-      "related": ["kr-socheonguk", "kr-gwenegitto"],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 제의가 이어지는 당. 방문 시 예의 안내 필요"
+      },
+      "related": [
+        "kr-socheonguk",
+        "kr-gwenegitto"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-socheonguk",
       "canonical": "소천국",
-      "aliases": ["소로소천국", "알송당 당신"],
+      "aliases": [
+        "소로소천국",
+        "알송당 당신"
+      ],
       "category": "jeju",
       "rarity": "rare",
       "distribution": "local",
       "summary": "사냥으로 살던 제주의 남신. 백주또의 남편이자 제주 당신 계보의 아버지.",
       "body": "소 아홉 마리와 밭을 갈다 배가 고파 소를 잡아먹었다는 삽화로 유명하며, 이 일로 백주또와 갈라선다. 수렵에서 농경으로 넘어가는 생업 갈등이 부부 서사로 압축돼 있다. 백주또와 짝으로 등재해 계보 시각화의 기준점을 만든다.",
-      "traits": ["사냥", "소", "갈등"],
-      "habitat": ["알송당", "오름"],
-      "omens": { "time": [], "weather": [], "season": [] },
-      "sites": [
-        { "name": "알송당 일원", "sido": "제주", "sigungu": "제주시", "lat": 33.4611, "lng": 126.7708, "precision": "dong", "note": "구좌읍 송당리 알송당" }
+      "traits": [
+        "사냥",
+        "소",
+        "갈등"
       ],
-      "sources": [{ "type": "field", "title": "송당본향당 본풀이", "ref": "제주 무가" }],
+      "habitat": [
+        "알송당",
+        "오름"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "알송당 일원",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.4611,
+          "lng": 126.7708,
+          "precision": "dong",
+          "note": "구좌읍 송당리 알송당"
+        }
+      ],
+      "sources": [
+        {
+          "type": "field",
+          "title": "송당본향당 본풀이",
+          "ref": "제주 무가"
+        }
+      ],
       "verification": "field_record",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현재도 제의가 이어지는 당" },
-      "related": ["kr-baekjutto", "kr-gwenegitto"],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 제의가 이어지는 당"
+      },
+      "related": [
+        "kr-baekjutto",
+        "kr-gwenegitto"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gwenegitto",
       "canonical": "궤네깃또",
-      "aliases": ["궤네깃한집", "김녕 궤네깃당신"],
+      "aliases": [
+        "궤네깃한집",
+        "김녕 궤네깃당신"
+      ],
       "category": "jeju",
       "rarity": "epic",
       "distribution": "local",
       "summary": "백주또와 소천국의 아들. 무쇠 궤에 담겨 바다에 버려졌다가 용왕국을 거쳐 신으로 돌아온다.",
       "body": "부모에게 버림받은 아이가 바다 건너에서 힘을 얻어 귀환해 당신으로 좌정하는 영웅 서사의 제주판이다. 김녕의 궤네깃당이 좌정처로 전하며, 돼지고기를 바치는 독특한 제물 관행이 함께 남아 있다. 서사 구조가 뚜렷해 게임·웹툰 IP 소싱 1순위로 꼽을 만하다.",
-      "traits": ["버려짐", "귀환", "용왕국"],
-      "habitat": ["김녕 궤네깃당", "바다"],
-      "omens": { "time": [], "weather": ["storm"], "season": [] },
-      "sites": [
-        { "name": "김녕 궤네깃당", "sido": "제주", "sigungu": "제주시", "lat": 33.5578, "lng": 126.7594, "precision": "dong", "note": "구좌읍 김녕리 일원" }
+      "traits": [
+        "버려짐",
+        "귀환",
+        "용왕국"
       ],
-      "sources": [{ "type": "field", "title": "궤네깃당 본풀이", "ref": "제주 무가" }],
+      "habitat": [
+        "김녕 궤네깃당",
+        "바다"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "storm"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "김녕 궤네깃당",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.5578,
+          "lng": 126.7594,
+          "precision": "dong",
+          "note": "구좌읍 김녕리 일원"
+        }
+      ],
+      "sources": [
+        {
+          "type": "field",
+          "title": "궤네깃당 본풀이",
+          "ref": "제주 무가"
+        }
+      ],
       "verification": "field_record",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현재도 제의가 이어지는 당" },
-      "related": ["kr-baekjutto", "kr-socheonguk", "kr-yongwang"],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 제의가 이어지는 당"
+      },
+      "related": [
+        "kr-baekjutto",
+        "kr-socheonguk",
+        "kr-yongwang"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gameunjang",
       "canonical": "감은장아기",
-      "aliases": ["가믄장아기", "삼공본풀이 막내딸"],
+      "aliases": [
+        "가믄장아기",
+        "삼공본풀이 막내딸"
+      ],
       "category": "jeju",
       "rarity": "rare",
       "distribution": "regional",
       "summary": "삼공본풀이의 주인공. \"내 배꼽 아래 선그믓 덕에 산다\"고 답했다가 쫓겨나 스스로 운명을 여는 전상신.",
       "body": "부모 덕에 산다고 답한 두 언니와 달리 자기 덕에 산다고 답해 집에서 쫓겨나지만, 결국 부자가 되어 눈먼 부모를 되찾는다. 사람의 운수와 팔자를 관장하는 전상신이 되며, '내 팔자는 내가 만든다'는 주제를 정면으로 다룬다. 진단 콘텐츠(운세·팔자)와 서사적으로 가장 잘 붙는 신격이다.",
-      "traits": ["운명", "전상", "자립"],
-      "habitat": ["집", "길"],
-      "omens": { "time": [], "weather": [], "season": [] },
+      "traits": [
+        "운명",
+        "전상",
+        "자립"
+      ],
+      "habitat": [
+        "집",
+        "길"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
       "sites": [
-        { "name": "제주 삼공본풀이 전승권", "sido": "제주", "sigungu": "서귀포시", "lat": 33.2541, "lng": 126.56, "precision": "sido", "note": "제주 전역 무속 전승" }
+        {
+          "name": "제주 삼공본풀이 전승권",
+          "sido": "제주",
+          "sigungu": "서귀포시",
+          "lat": 33.2541,
+          "lng": 126.56,
+          "precision": "sido",
+          "note": "제주 전역 무속 전승"
+        }
       ],
       "sources": [
-        { "type": "field", "title": "삼공본풀이", "ref": "제주 무가" },
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "삼공본풀이" }
+        {
+          "type": "field",
+          "title": "삼공본풀이",
+          "ref": "제주 무가"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "삼공본풀이"
+        }
       ],
       "verification": "field_record",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현행 무속 의례의 신격" },
-      "related": ["kr-jacheongbi", "kr-oneuri"],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 무속 의례의 신격"
+      },
+      "related": [
+        "kr-jacheongbi",
+        "kr-oneuri"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gangnim",
       "canonical": "강림도령",
-      "aliases": ["강님", "차사 강림", "저승차사"],
-      "names": { "en": "Gangnim", "roman": "gangnimdoryeong" },
+      "aliases": [
+        "강님",
+        "차사 강림",
+        "저승차사"
+      ],
+      "names": {
+        "en": "Gangnim",
+        "roman": "gangnimdoryeong"
+      },
       "category": "jeju",
       "rarity": "uncommon",
       "distribution": "regional",
       "summary": "차사본풀이의 주인공. 산 사람으로 저승에 다녀와 염라대왕을 데려온 뒤 저승차사가 됐다.",
       "body": "과양생이 부부 사건의 진상을 밝히기 위해 저승에 가서 염라대왕을 잡아 오는 임무를 맡고, 아내가 준비한 떡과 옷 덕에 길을 찾는다. 이승과 저승을 잇는 실무자라는 설정이 뚜렷해 저승사자 관념의 제주판 원형으로 읽힌다. 서사 완결성이 높아 영상 IP 각색 사례가 이미 있다.",
-      "traits": ["저승", "차사", "임무"],
-      "habitat": ["저승길", "관아"],
-      "omens": { "time": ["midnight"], "weather": [], "season": [] },
+      "traits": [
+        "저승",
+        "차사",
+        "임무"
+      ],
+      "habitat": [
+        "저승길",
+        "관아"
+      ],
+      "omens": {
+        "time": [
+          "midnight"
+        ],
+        "weather": [],
+        "season": []
+      },
       "sites": [
-        { "name": "제주 차사본풀이 전승권", "sido": "제주", "sigungu": "제주시", "lat": 33.4996, "lng": 126.5312, "precision": "sido", "note": "제주 전역 무속 전승" }
+        {
+          "name": "제주 차사본풀이 전승권",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.4996,
+          "lng": 126.5312,
+          "precision": "sido",
+          "note": "제주 전역 무속 전승"
+        }
       ],
       "sources": [
-        { "type": "field", "title": "차사본풀이", "ref": "제주 무가" },
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "차사본풀이" }
+        {
+          "type": "field",
+          "title": "차사본풀이",
+          "ref": "제주 무가"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "차사본풀이"
+        }
       ],
       "verification": "field_record",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현행 무속 의례의 신격" },
-      "related": ["kr-jeoseung-saja", "kr-yeomna"],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 무속 의례의 신격"
+      },
+      "related": [
+        "kr-jeoseung-saja",
+        "kr-yeomna"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-samseung-halmang",
       "canonical": "삼승할망",
-      "aliases": ["생불할망", "불도할망", "산육신"],
+      "aliases": [
+        "생불할망",
+        "불도할망",
+        "산육신"
+      ],
       "category": "jeju",
       "rarity": "uncommon",
       "distribution": "regional",
       "summary": "아이를 점지하고 열다섯까지 키워 주는 제주의 생명 여신. 육지 삼신할머니에 대응한다.",
       "body": "명진국 따님으로 태어나 꽃 피우기 시합에서 이겨 이승의 산육신이 되었다는 본풀이가 전한다. 시합에서 진 동해용궁 따님은 저승할망(구삼승할망)이 되어 아이를 데려가는 쪽을 맡는다. 생과 사가 한 쌍의 여신으로 갈라지는 구조가 선명하다.",
-      "traits": ["출산", "꽃 시합", "생명"],
-      "habitat": ["집", "불도맞이 굿청"],
-      "omens": { "time": [], "weather": [], "season": [] },
+      "traits": [
+        "출산",
+        "꽃 시합",
+        "생명"
+      ],
+      "habitat": [
+        "집",
+        "불도맞이 굿청"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
       "sites": [
-        { "name": "제주 불도맞이 전승권", "sido": "제주", "sigungu": "제주시", "lat": 33.4996, "lng": 126.5312, "precision": "sido", "note": "제주 전역 무속 전승" }
+        {
+          "name": "제주 불도맞이 전승권",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.4996,
+          "lng": 126.5312,
+          "precision": "sido",
+          "note": "제주 전역 무속 전승"
+        }
       ],
       "sources": [
-        { "type": "field", "title": "삼승할망본풀이", "ref": "제주 무가" },
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "삼승할망" }
+        {
+          "type": "field",
+          "title": "삼승할망본풀이",
+          "ref": "제주 무가"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "삼승할망"
+        }
       ],
       "verification": "field_record",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현행 무속 의례의 신격" },
-      "related": ["kr-gu-samseung-halmang", "kr-samsin"],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 무속 의례의 신격"
+      },
+      "related": [
+        "kr-gu-samseung-halmang",
+        "kr-samsin"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-gu-samseung-halmang",
       "canonical": "구삼승할망",
-      "aliases": ["저승할망", "동해용궁 따님애기"],
+      "aliases": [
+        "저승할망",
+        "동해용궁 따님애기"
+      ],
       "category": "jeju",
       "rarity": "rare",
       "distribution": "regional",
       "summary": "꽃 시합에서 져 저승을 맡게 된 여신. 아이를 데려가는 쪽에 선다.",
       "body": "삼승할망과 한 쌍으로, 원망을 달래기 위해 아이 죽음에 앞서 먼저 대접받는 몫을 얻는다. 악역이 아니라 체계 안에서 몫을 배분받는 존재라는 점이 한국 신관의 특징을 보여 준다. 도감에서 선악 이분법을 쓰지 않는 이유를 설명하는 대표 항목이다.",
-      "traits": ["저승", "꽃 시합", "몫"],
-      "habitat": ["저승", "굿청"],
-      "omens": { "time": [], "weather": [], "season": [] },
+      "traits": [
+        "저승",
+        "꽃 시합",
+        "몫"
+      ],
+      "habitat": [
+        "저승",
+        "굿청"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
       "sites": [],
-      "sources": [{ "type": "field", "title": "삼승할망본풀이", "ref": "제주 무가" }],
+      "sources": [
+        {
+          "type": "field",
+          "title": "삼승할망본풀이",
+          "ref": "제주 무가"
+        }
+      ],
       "verification": "field_record",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현행 무속 의례의 신격" },
-      "related": ["kr-samseung-halmang"],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 무속 의례의 신격"
+      },
+      "related": [
+        "kr-samseung-halmang"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-oneuri",
       "canonical": "원천강 오늘이",
-      "aliases": ["오늘이", "원천강본풀이 주인공"],
-      "names": { "en": "Oneuri", "roman": "oneuri" },
+      "aliases": [
+        "오늘이",
+        "원천강본풀이 주인공"
+      ],
+      "names": {
+        "en": "Oneuri",
+        "roman": "oneuri"
+      },
       "category": "jeju",
       "rarity": "rare",
       "distribution": "regional",
       "summary": "부모를 찾아 원천강으로 떠난 아이. 길에서 만난 이들의 물음을 풀어 주며 사계절의 이치를 배운다.",
       "body": "혼자 남은 아이 오늘이가 장상이·연꽃나무·이무기를 차례로 만나 각자의 결핍을 듣고, 원천강에서 답을 얻어 돌아오며 모두를 구제한다. 원천강은 사계절이 한자리에 있는 곳으로 그려져 시간과 계절의 신화로 읽힌다. 애니메이션·그림책으로 여러 차례 각색된 대표적 제주 서사다.",
-      "traits": ["여정", "사계절", "구제"],
-      "habitat": ["원천강", "길"],
-      "omens": { "time": [], "weather": [], "season": ["spring", "summer", "autumn", "winter"] },
+      "traits": [
+        "여정",
+        "사계절",
+        "구제"
+      ],
+      "habitat": [
+        "원천강",
+        "길"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": [
+          "spring",
+          "summer",
+          "autumn",
+          "winter"
+        ]
+      },
       "sites": [],
       "sources": [
-        { "type": "field", "title": "원천강본풀이", "ref": "제주 무가" },
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "원천강본풀이" }
+        {
+          "type": "field",
+          "title": "원천강본풀이",
+          "ref": "제주 무가"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "원천강본풀이"
+        }
       ],
       "verification": "field_record",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현행 무속 의례의 본풀이" },
-      "related": ["kr-gameunjang", "kr-imugi"],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 무속 의례의 본풀이"
+      },
+      "related": [
+        "kr-gameunjang",
+        "kr-imugi"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-cheonjiwang",
       "canonical": "천지왕",
-      "aliases": ["천지왕본풀이", "대별왕·소별왕의 아버지"],
+      "aliases": [
+        "천지왕본풀이",
+        "대별왕·소별왕의 아버지"
+      ],
       "category": "jeju",
       "rarity": "uncommon",
       "distribution": "regional",
       "summary": "하늘과 땅이 갈라진 뒤 세상의 질서를 세운 창세 신격. 두 아들 대별왕과 소별왕이 이승과 저승을 나눠 맡는다.",
       "body": "해와 달이 둘씩 떠 있던 혼돈을 활로 쏘아 하나씩 남기고, 형제가 꽃 피우기 내기로 이승과 저승을 나눈다. 소별왕이 속임수로 이승을 차지한 탓에 이승에 도둑과 거짓이 남았다는 설명이 붙는다. 한국에 남은 몇 안 되는 창세 신화로, 도감의 세계관 최상단에 놓인다.",
-      "traits": ["창세", "해와 달", "꽃 내기"],
-      "habitat": ["하늘", "이승·저승"],
-      "omens": { "time": ["dawn"], "weather": ["clear"], "season": [] },
+      "traits": [
+        "창세",
+        "해와 달",
+        "꽃 내기"
+      ],
+      "habitat": [
+        "하늘",
+        "이승·저승"
+      ],
+      "omens": {
+        "time": [
+          "dawn"
+        ],
+        "weather": [
+          "clear"
+        ],
+        "season": []
+      },
       "sites": [],
       "sources": [
-        { "type": "field", "title": "천지왕본풀이", "ref": "제주 무가 초감제" },
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "천지왕본풀이" }
+        {
+          "type": "field",
+          "title": "천지왕본풀이",
+          "ref": "제주 무가 초감제"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "천지왕본풀이"
+        }
       ],
       "verification": "field_record",
       "confidence": "high",
-      "sensitivity": { "kind": "living_faith", "note": "현행 무속 의례의 본풀이" },
-      "related": ["kr-jacheongbi", "kr-gangnim"],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 무속 의례의 본풀이"
+      },
+      "related": [
+        "kr-jacheongbi",
+        "kr-gangnim"
+      ],
       "updated_at": "2026-08-16"
     }
   ]

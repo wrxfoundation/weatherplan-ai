@@ -194,6 +194,62 @@ h3 {
   color: var(--bg);
 }
 
+/* ── 도상(圖版) ── */
+.art-plate {
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--cat, var(--seal)) var(--cat-line), var(--surface));
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--cat, var(--seal)) 7%, var(--surface));
+}
+.art-plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.art-plate figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 5px 9px;
+  font-size: var(--text-xs);
+  color: var(--text-3);
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid var(--line);
+}
+.art-fallback {
+  display: grid;
+  place-items: center;
+  border: 1px dashed color-mix(in srgb, var(--cat, var(--seal)) var(--cat-line), var(--surface));
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--cat, var(--seal)) 6%, var(--surface));
+}
+
+/* 히어로 배경 도상 — 파일이 없으면 아무것도 그리지 않는다(깨진 이미지 없음) */
+.hero {
+  overflow: hidden;
+}
+.hero-art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url('/img/hero/night-pass.png');
+  background-size: cover;
+  background-position: center 38%;
+  opacity: 0.5;
+  mask-image: linear-gradient(100deg, transparent 8%, #000 62%);
+  -webkit-mask-image: linear-gradient(100deg, transparent 8%, #000 62%);
+}
+.hero > *:not(.hero-art) {
+  position: relative;
+  z-index: 1;
+}
+
 /* ── 상단바 ── */
 .topbar {
   position: sticky;
@@ -241,6 +297,9 @@ h3 {
   display: none;
 }
 .topnav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 6px 11px;
   border-radius: var(--radius-sm);
   font-size: var(--text-body);

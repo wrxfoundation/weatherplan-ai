@@ -5,140 +5,349 @@
     {
       "id": "kr-gangcheori",
       "canonical": "강철이",
-      "aliases": ["강철", "꽝철이", "깡철이", "強鐵"],
-      "names": { "en": "Gangcheori", "roman": "gangcheori" },
+      "aliases": [
+        "강철",
+        "꽝철이",
+        "깡철이",
+        "強鐵"
+      ],
+      "names": {
+        "en": "Gangcheori",
+        "roman": "gangcheori"
+      },
       "category": "sky",
       "rarity": "uncommon",
       "distribution": "regional",
       "summary": "지나간 자리를 모조리 말려 버리는 가뭄의 용. \"강철이 간 데는 가을도 봄\"이라는 속담이 남았다.",
       "body": "승천에 실패한 이무기가 변한 것으로 보며, 지나가면 곡식이 타 죽고 못이 마른다고 했다. 가뭄이 들면 강철이가 숨은 못에 개나 돼지의 피를 부어 용을 노하게 해서 비를 부르는 기우 의례가 영남 곳곳에 전한다. 재해를 존재로 인격화하고 의례로 대응한 구조라 기상 데이터와 직접 연결된다.",
-      "traits": ["가뭄", "기우", "이무기"],
-      "habitat": ["못", "하늘"],
-      "omens": { "time": [], "weather": ["dry", "heat"], "season": ["summer"] },
+      "traits": [
+        "가뭄",
+        "기우",
+        "이무기"
+      ],
+      "art_hint": "a drought dragon with dull iron-grey scales flying low over cracked farmland, crops withering to ash grey in its wake, an empty cloudless sky",
+      "habitat": [
+        "못",
+        "하늘"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "dry",
+          "heat"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
       "sites": [
-        { "name": "영남 기우 전승권", "sido": "경남", "sigungu": "밀양시", "lat": 35.5038, "lng": 128.7469, "precision": "sigungu", "note": "꽝철이 기우 전승 권역 예시" }
+        {
+          "name": "영남 기우 전승권",
+          "sido": "경남",
+          "sigungu": "밀양시",
+          "lat": 35.5038,
+          "lng": 128.7469,
+          "precision": "sigungu",
+          "note": "꽝철이 기우 전승 권역 예시"
+        }
       ],
       "sources": [
-        { "type": "field", "title": "한국구비문학대계", "ref": "강철이·기우 설화" },
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "기우제" }
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "강철이·기우 설화"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "기우제"
+        }
       ],
       "verification": "field_record",
       "confidence": "high",
-      "related": ["kr-imugi", "kr-yongwang"],
+      "related": [
+        "kr-imugi",
+        "kr-yongwang"
+      ],
+      "art": {
+        "status": "drafted",
+        "direction": "minhwa-v1",
+        "file": "/img/yokai/gangcheori.png",
+        "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+      },
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-bulgasari",
       "canonical": "불가사리",
-      "aliases": ["불가살이", "쇠먹는 짐승", "不可殺伊"],
-      "names": { "en": "Bulgasari", "roman": "bulgasari" },
+      "aliases": [
+        "불가살이",
+        "쇠먹는 짐승",
+        "不可殺伊"
+      ],
+      "names": {
+        "en": "Bulgasari",
+        "roman": "bulgasari"
+      },
       "category": "sky",
       "rarity": "uncommon",
       "distribution": "regional",
       "summary": "쇠를 먹고 자라 죽일 수 없게 된 짐승. 불로만 죽는다 하여 '불가살(不可殺)'이라 불렸다.",
       "body": "밥풀로 빚은 작은 것이 바늘과 쇠붙이를 먹으며 집채만큼 커져 나라의 병기를 다 삼켰다는 이야기로, 고려 말 송도의 멸망을 설명하는 결말이 붙는 경우가 많다. 왕조 교체기의 불안을 담은 정치 알레고리로 읽히며, 20세기 이후 영화로 여러 차례 만들어졌다. 이름의 뜻과 약점(불)이 명확해 도감 항목으로 완결성이 높다.",
-      "traits": ["쇠", "거대화", "불"],
-      "habitat": ["도성", "대장간"],
-      "omens": { "time": [], "weather": [], "season": [] },
+      "traits": [
+        "쇠",
+        "거대화",
+        "불"
+      ],
+      "habitat": [
+        "도성",
+        "대장간"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
       "sites": [],
       "sources": [
-        { "type": "field", "title": "한국구비문학대계", "ref": "불가살이 설화" },
-        { "type": "encyclopedia", "title": "한국민족문화대백과사전", "ref": "불가살이" }
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "불가살이 설화"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "불가살이"
+        }
       ],
       "verification": "field_record",
       "confidence": "medium",
-      "related": ["kr-gangcheori"],
+      "related": [
+        "kr-gangcheori"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-agijangsu",
       "canonical": "아기장수",
-      "aliases": ["아기장사", "겨드랑이 날개 아기"],
-      "names": { "en": "Agi Jangsu", "roman": "agijangsu" },
+      "aliases": [
+        "아기장사",
+        "겨드랑이 날개 아기"
+      ],
+      "names": {
+        "en": "Agi Jangsu",
+        "roman": "agijangsu"
+      },
       "category": "sky",
       "rarity": "common",
       "distribution": "nationwide",
       "summary": "겨드랑이에 날개를 달고 태어난 아이. 역적이 될까 두려워한 부모 손에 죽는다.",
       "body": "태어나자마자 시렁 위로 날아오르는 아이를 보고 부모가 곡식 섬으로 눌러 죽이고, 뒤이어 용마가 나와 울다 못에 빠지는 결말이 전국에서 거의 동일하게 채록된다. 좌절된 영웅 서사의 원형으로, 민중의 억눌린 기대를 담은 이야기로 해석된다. 관련 지명(장수바위·용마못)이 전국에 남아 지도화 가치가 크다.",
-      "traits": ["날개", "좌절", "용마"],
-      "habitat": ["마을", "바위", "못"],
-      "omens": { "time": [], "weather": [], "season": [] },
+      "traits": [
+        "날개",
+        "좌절",
+        "용마"
+      ],
+      "habitat": [
+        "마을",
+        "바위",
+        "못"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
       "sites": [
-        { "name": "아기장수 전승 지명 분포권", "sido": "전남", "sigungu": "장성군", "lat": 35.3018, "lng": 126.7847, "precision": "sigungu", "note": "장수 관련 지명 분포 예시 — 전국 지명 데이터와 조인 예정" }
+        {
+          "name": "아기장수 전승 지명 분포권",
+          "sido": "전남",
+          "sigungu": "장성군",
+          "lat": 35.3018,
+          "lng": 126.7847,
+          "precision": "sigungu",
+          "note": "장수 관련 지명 분포 예시 — 전국 지명 데이터와 조인 예정"
+        }
       ],
       "sources": [
-        { "type": "field", "title": "한국구비문학대계", "ref": "아기장수 설화" },
-        { "type": "encyclopedia", "title": "한국민족문화대백과사전", "ref": "아기장수설화" }
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "아기장수 설화"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "아기장수설화"
+        }
       ],
       "verification": "field_record",
       "confidence": "high",
-      "related": ["kr-yongma"],
+      "related": [
+        "kr-yongma"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-hoeorib",
       "canonical": "도깨비바람",
-      "aliases": ["회오리바람", "돌개바람", "귀신바람"],
+      "aliases": [
+        "회오리바람",
+        "돌개바람",
+        "귀신바람"
+      ],
       "category": "sky",
       "rarity": "uncommon",
       "distribution": "nationwide",
       "summary": "갑자기 일어나 먼지와 검불을 감아올리는 회오리. 귀신이 지나가는 자리로 여겼다.",
       "body": "회오리를 만나면 침을 뱉거나 길을 비켜 주고, 그 안에 들면 병이 든다는 금기가 전한다. 국지적 돌풍이라는 기상 현상에 이름과 대처법이 붙은 사례로, 실시간 풍속 데이터와 그대로 이어진다. 손돌바람과 함께 '이름 붙은 바람' 축을 이룬다.",
-      "traits": ["회오리", "금기", "먼지"],
-      "habitat": ["들판", "길"],
-      "omens": { "time": ["day"], "weather": ["wind", "dry"], "season": ["spring"] },
+      "traits": [
+        "회오리",
+        "금기",
+        "먼지"
+      ],
+      "habitat": [
+        "들판",
+        "길"
+      ],
+      "omens": {
+        "time": [
+          "day"
+        ],
+        "weather": [
+          "wind",
+          "dry"
+        ],
+        "season": [
+          "spring"
+        ]
+      },
       "sites": [],
       "sources": [
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "바람 관련 민속" },
-        { "type": "field", "title": "한국구비문학대계", "ref": "회오리 관련 금기담" }
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "바람 관련 민속"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "회오리 관련 금기담"
+        }
       ],
       "verification": "public_encyclopedia",
       "confidence": "medium",
-      "related": ["kr-sondol", "kr-yeongdeung-halmang"],
+      "related": [
+        "kr-sondol",
+        "kr-yeongdeung-halmang"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-yeoubi",
       "canonical": "여우비",
-      "aliases": ["호랑이 장가가는 날", "볕비"],
+      "aliases": [
+        "호랑이 장가가는 날",
+        "볕비"
+      ],
       "category": "sky",
       "rarity": "common",
       "distribution": "nationwide",
       "summary": "해가 난 채로 잠깐 내리는 비. 여우가 시집가거나 호랑이가 장가가는 날이라 했다.",
       "body": "구름과 볕이 어긋나 생기는 기상 현상에 혼례라는 서사를 입힌 사례로, 지역에 따라 여우와 호랑이가 바뀐다. 이런 날 산에 가면 여우에게 홀린다는 금기가 함께 전하기도 한다. 기상 조건이 곧 콘텐츠 트리거가 되는 가장 단순하고 강력한 항목이다.",
-      "traits": ["볕비", "혼례", "홀림"],
-      "habitat": ["들", "산"],
-      "omens": { "time": ["day"], "weather": ["rain", "clear"], "season": ["summer"] },
+      "traits": [
+        "볕비",
+        "혼례",
+        "홀림"
+      ],
+      "habitat": [
+        "들",
+        "산"
+      ],
+      "omens": {
+        "time": [
+          "day"
+        ],
+        "weather": [
+          "rain",
+          "clear"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
       "sites": [],
       "sources": [
-        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "날씨 관련 속신" },
-        { "type": "field", "title": "한국구비문학대계", "ref": "여우비 관련 구전" }
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "날씨 관련 속신"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "여우비 관련 구전"
+        }
       ],
       "verification": "public_encyclopedia",
       "confidence": "high",
-      "related": ["kr-gumiho", "kr-cheonggaeguri", "kr-sangun"],
+      "related": [
+        "kr-gumiho",
+        "kr-cheonggaeguri",
+        "kr-sangun"
+      ],
       "updated_at": "2026-08-16"
     },
     {
       "id": "kr-hwagwang",
       "canonical": "화광",
-      "aliases": ["불덩이", "괴화", "火光"],
+      "aliases": [
+        "불덩이",
+        "괴화",
+        "火光"
+      ],
       "category": "sky",
       "rarity": "rare",
       "distribution": "nationwide",
       "summary": "하늘을 가로지르는 불덩이. 실록과 관찬 기록에 재이(災異)로 여러 차례 올랐다.",
       "body": "조선왕조실록에는 하늘에 불빛이 지나가거나 흰 무지개가 해를 꿰뚫는 등의 관측이 재이 기사로 기록돼 있고, 이는 정치적 해석과 함께 다뤄졌다. 날짜와 지명이 붙어 있어 연표·지도 소재로서 가치가 매우 높다. 도깨비불이 지상의 불빛이라면 화광은 하늘의 불빛이라는 점에서 구분해 등재한다.",
-      "traits": ["재이", "관측 기록", "하늘"],
-      "habitat": ["하늘"],
-      "omens": { "time": ["night"], "weather": ["clear"], "season": [] },
+      "traits": [
+        "재이",
+        "관측 기록",
+        "하늘"
+      ],
+      "habitat": [
+        "하늘"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [
+          "clear"
+        ],
+        "season": []
+      },
       "sites": [],
       "sources": [
-        { "type": "classic", "title": "조선왕조실록", "ref": "천변·재이 기사" },
-        { "type": "classic", "title": "고려사", "ref": "오행지 재이 기록" }
+        {
+          "type": "classic",
+          "title": "조선왕조실록",
+          "ref": "천변·재이 기사"
+        },
+        {
+          "type": "classic",
+          "title": "고려사",
+          "ref": "오행지 재이 기록"
+        }
       ],
       "verification": "primary_text",
       "confidence": "high",
-      "related": ["kr-dokkaebi-bul", "kr-jigwi"],
+      "related": [
+        "kr-dokkaebi-bul",
+        "kr-jigwi"
+      ],
       "updated_at": "2026-08-16"
     }
   ]

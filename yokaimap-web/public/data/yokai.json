@@ -1364,6 +1364,7 @@
     "재물",
     "장난"
    ],
+   "art_hint": "a stocky trickster spirit in a ragged hemp robe with a single blunt horn, gripping a knobbed wooden club, wide mischievous grin, standing on a dark country road with one small blue flame floating beside him",
    "habitat": [
     "밤길",
     "폐가",
@@ -1430,14 +1431,14 @@
     "kr-dokkaebi-bangmangi",
     "kr-dokkaebi-gamtu"
    ],
-   "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
-    "status": "pending",
+    "status": "drafted",
     "direction": "minhwa-v1",
-    "file": null,
+    "file": "/img/yokai/dokkaebi.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "updated_at": "2026-08-16",
+   "sensitivity": null
   },
   {
    "id": "kr-dokkaebi-bangmangi",
@@ -2360,6 +2361,7 @@
     "기우",
     "이무기"
    ],
+   "art_hint": "a drought dragon with dull iron-grey scales flying low over cracked farmland, crops withering to ash grey in its wake, an empty cloudless sky",
    "habitat": [
     "못",
     "하늘"
@@ -2403,14 +2405,14 @@
     "kr-imugi",
     "kr-yongwang"
    ],
-   "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
-    "status": "pending",
+    "status": "drafted",
     "direction": "minhwa-v1",
-    "file": null,
+    "file": "/img/yokai/gangcheori.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "updated_at": "2026-08-16",
+   "sensitivity": null
   },
   {
    "id": "kr-gangnim",
@@ -2913,6 +2915,7 @@
     "간",
     "아홉 꼬리"
    ],
+   "art_hint": "a woman in a white robe caught mid-transformation into a fox, nine fox tails fanning out behind her, a small luminous pearl at her lips, one half of the face already vulpine",
    "habitat": [
     "묘지",
     "고갯길",
@@ -2961,14 +2964,14 @@
     "kr-nogu-hwaho",
     "kr-dokkaebi-bul"
    ],
-   "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
-    "status": "pending",
+    "status": "drafted",
     "direction": "minhwa-v1",
-    "file": null,
+    "file": "/img/yokai/gumiho.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "updated_at": "2026-08-16",
+   "sensitivity": null
   },
   {
    "id": "kr-gureongdeongdeong",
@@ -3754,6 +3757,7 @@
     "여의주",
     "금기"
    ],
+   "art_hint": "an enormous hornless serpent coiled in a deep mountain pool, straining upward toward storm clouds, a bright pearl hovering just beyond its jaws",
    "habitat": [
     "용소",
     "깊은 못",
@@ -3809,14 +3813,14 @@
     "kr-gangcheori",
     "kr-baeksa"
    ],
-   "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
-    "status": "pending",
+    "status": "drafted",
     "direction": "minhwa-v1",
-    "file": null,
+    "file": "/img/yokai/imugi.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "updated_at": "2026-08-16",
+   "sensitivity": null
   },
   {
    "id": "kr-jacheongbi",
@@ -3915,6 +3919,7 @@
     "흰 털",
     "산"
    ],
+   "art_hint": "a long pale-furred beast crouched low among night pines on a coastal mountain, only its silhouette and white fur legible in the dark, mouth opening as if to speak in a human voice",
    "habitat": [
     "장산",
     "산길"
@@ -3952,14 +3957,14 @@
     "kr-changgwi",
     "kr-sangun"
    ],
-   "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
-    "status": "pending",
+    "status": "drafted",
     "direction": "minhwa-v1",
-    "file": null,
+    "file": "/img/yokai/jangsanbeom.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "updated_at": "2026-08-16",
+   "sensitivity": null
   },
   {
    "id": "kr-jangseung",
@@ -3983,6 +3988,7 @@
     "역병 차단",
     "쌍"
    ],
+   "art_hint": "a pair of carved wooden village guardian posts with bulging round eyes and bared teeth, planted at a village entrance path, one crowned male and one plain female post",
    "habitat": [
     "마을 입구",
     "절 입구"
@@ -4031,14 +4037,14 @@
     "kr-seonang",
     "kr-sonnim"
    ],
-   "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
-    "status": "pending",
+    "status": "drafted",
     "direction": "minhwa-v1",
-    "file": null,
+    "file": "/img/yokai/jangseung.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "updated_at": "2026-08-16",
+   "sensitivity": null
   },
   {
    "id": "kr-jayuro-gwisin",
@@ -5947,6 +5953,7 @@
     "금줄",
     "삼신상"
    ],
+   "art_hint": "a kindly grandmother deity kneeling in a warm inner room beside a newborn, an earthen jar of rice and a bowl of seaweed soup set before her, a straw taboo rope strung across the doorway",
    "habitat": [
     "안방"
    ],
@@ -5978,13 +5985,13 @@
     "kr-samseung-halmang",
     "kr-seongju"
    ],
-   "updated_at": "2026-08-16",
    "art": {
-    "status": "pending",
+    "status": "drafted",
     "direction": "minhwa-v1",
-    "file": null,
+    "file": "/img/yokai/samsin.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "updated_at": "2026-08-16"
   },
   {
    "id": "kr-sangmun",
@@ -6370,6 +6377,7 @@
     "오름",
     "창조"
    ],
+   "art_hint": "a colossal grandmother goddess seated across a volcanic island, soil spilling from her skirt and forming small cinder cones, the sea reaching only to her knees",
    "habitat": [
     "한라산",
     "오름",
@@ -6421,14 +6429,14 @@
     "kr-magohalmi",
     "kr-gaeyang-halmi"
    ],
-   "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
-    "status": "pending",
+    "status": "drafted",
     "direction": "minhwa-v1",
-    "file": null,
+    "file": "/img/yokai/seolmundae.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "updated_at": "2026-08-16",
+   "sensitivity": null
   },
   {
    "id": "kr-seonang",
@@ -7029,6 +7037,7 @@
     "혼인",
     "해원"
    ],
+   "art_hint": "a young woman ghost in a white mourning robe, long black hair falling over her hidden face, hem trailing just above the floor of an empty room at night",
    "habitat": [
     "빈방",
     "마을",
@@ -7065,14 +7074,14 @@
     "kr-arang",
     "kr-haerang"
    ],
-   "updated_at": "2026-08-16",
-   "sensitivity": null,
    "art": {
-    "status": "pending",
+    "status": "drafted",
     "direction": "minhwa-v1",
-    "file": null,
+    "file": "/img/yokai/songaksi.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "updated_at": "2026-08-16",
+   "sensitivity": null
   },
   {
    "id": "kr-sonnim",
@@ -7810,6 +7819,7 @@
     "영등굿",
     "해산물 씨"
    ],
+   "art_hint": "an old sea goddess striding ashore on the wind, robes and long grey hair blown horizontal, scattering shellfish seed across the tidal flats, small fishing boats moored behind her",
    "habitat": [
     "바다",
     "포구",
@@ -7859,13 +7869,13 @@
     "kr-yongwang",
     "kr-hoeorib"
    ],
-   "updated_at": "2026-08-16",
    "art": {
-    "status": "pending",
+    "status": "drafted",
     "direction": "minhwa-v1",
-    "file": null,
+    "file": "/img/yokai/yeongdeung-halmang.png",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
-   }
+   },
+   "updated_at": "2026-08-16"
   },
   {
    "id": "kr-yeongsan",

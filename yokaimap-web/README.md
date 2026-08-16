@@ -29,6 +29,8 @@ npm run dev                  # http://localhost:5173
 | `npm run data` | 시드 병합 → `public/data/yokai.json` 생성 (검증 실패 시 중단) |
 | `npm run build` | 데이터 빌드 + vite build + AEO 자산 생성(프리렌더 156p·sitemap·robots·llms.txt) |
 | `node scripts/make-og.mjs` | OG 카드 16장 재생성 — **로컬 크로미움 필요, 결과 PNG는 커밋한다**(Vercel 빌드엔 크로미움이 없다) |
+| `node scripts/art-prompts.mjs` | 도상 생성 프롬프트 출력(`--json`으로 요청 객체, `--pending`으로 미제작분만) |
+| `node scripts/fetch-art.mjs` | `data/art/jobs.json`의 생성 결과를 `public/img/`로 내려받기 |
 
 환경변수는 전부 선택이다. 없으면 해당 기능만 정직하게 꺼진다.
 
@@ -69,6 +71,31 @@ npm run dev                  # http://localhost:5173
 (주의: `:root`에서 `var(--cat)`을 참조하는 파생 변수를 만들면 안 된다 — 커스텀 프로퍼티는 선언된
 요소에서 값이 해석되므로 전부 폴백 색으로 굳어 버린다.)
 
+## 도상(圖版) 파이프라인
+
+한국에는 도리야마 세키엔 같은 퍼블릭도메인 요괴 도감이 없어 도상을 전량 새로 만든다.
+600장을 찍어도 화풍이 흔들리지 않도록 **프롬프트를 손으로 쓰지 않고 데이터에서 생성**한다.
+
+```
+data/art/direction.json     아트디렉션 minhwa-v1 — 스타일 블록·팔레트·분류별 수식어·금지어 (문자 그대로 고정)
+data/yokai/*.json           개체별 art_hint(영문 시각 서술 1문장) ← 프롬프트의 주어
+  ↓ scripts/art-prompts.mjs (스타일 고정 + 개체 서술 결합)
+힉스필드 recraft_v4_1 2k     생성 (팔레트·배경색을 파라미터로 강제)
+  ↓ data/art/jobs.json      job_id · 결과 URL · 목표 경로 매니페스트
+  ↓ scripts/fetch-art.mjs   public/img/yokai/<slug>.png 로 반입
+```
+
+- `art_hint`가 없는 개체는 **생성 대상에서 제외**된다. 한국어 traits를 그대로 넣으면 이미지 모델이 해석하지 못해
+  엉뚱한 도상이 나오기 때문이다.
+- 도상 파일이 아직 없으면 `ArtPlate`가 **조용히 인장 폴백**으로 돌아간다. 깨진 이미지 아이콘은 절대 보이지 않는다.
+- 생성물임을 상세페이지 캡션과 데이터(`art.license`)에 명시한다. 특정 작가의 화풍은 모사하지 않는다.
+
+## 아이콘
+
+`src/ui/Icon.jsx` — 24px 그리드 stroke 아이콘을 직접 그려 넣었다(외부 아이콘 패키지 0).
+`<Icon name="pin" size={16} />`처럼 쓰고, 색은 `currentColor`를 따른다.
+날씨·시간 조건은 `WEATHER_ICON` / `TIME_ICON` 매핑으로 괴담지수 근거 배지에 그대로 붙는다.
+
 ## 구조
 
 ```
@@ -89,7 +116,7 @@ yokaimap-web/
 │   ├── engine/quiz.js             # 요괴 체질진단 (결정론)
 │   ├── seo.js                     # 프론트·빌드 공유 SEO/JSON-LD 빌더
 │   ├── home/ map/ dogam/ yokai/ category/ region/ quiz/ business/ about/
-│   ├── ui/                        # Seal · Badges · YokaiCard · AdSlot · ShareRow · TopBar · Footer
+│   ├── ui/                        # Seal · Icon · ArtPlate · Badges · YokaiCard · AdSlot · ShareRow · TopBar
 │   └── styles/tokens.css          # 배색·타이포 진실 원천 (한지/밤 이중 서피스)
 ├── api/
 │   ├── weather.js                 # 케이웨더 프록시(키 서버 보관)

@@ -13,6 +13,8 @@ import {
   DISTRIBUTION_LABEL,
 } from '../data/yokai.js'
 import Seal from '../ui/Seal.jsx'
+import ArtPlate from '../ui/ArtPlate.jsx'
+import Icon, { WEATHER_ICON, TIME_ICON } from '../ui/Icon.jsx'
 import { RarityBadge, VerificationBadge, DistributionBadge } from '../ui/Badges.jsx'
 import ShareRow from '../ui/ShareRow.jsx'
 import AdSlot from '../ui/AdSlot.jsx'
@@ -73,7 +75,13 @@ export default function YokaiPage() {
       </p>
 
       <div className="detail-hero">
-        <Seal category={entry.category} size="xl" />
+        {entry.art?.file ? (
+          <div style={{ width: 168, flex: 'none' }}>
+            <ArtPlate entry={entry} />
+          </div>
+        ) : (
+          <Seal category={entry.category} size="xl" />
+        )}
         <div style={{ minWidth: 0 }}>
           <h1>{entry.canonical}</h1>
           {entry.aliases.length > 0 && <div className="muted small">{entry.aliases.join(' · ')}</div>}
@@ -140,16 +148,19 @@ export default function YokaiPage() {
       {(entry.omens.weather.length > 0 || entry.omens.time.length > 0 || entry.omens.season.length > 0) && (
         <div className="section">
           <div className="section-head">
+            <Icon name="moon" size={17} />
             <h2>출몰 조건</h2>
           </div>
           <div className="row" style={{ gap: 5 }}>
             {entry.omens.weather.map((w) => (
               <span key={w} className="badge" style={{ color: 'var(--indigo)' }}>
+                <Icon name={WEATHER_ICON[w] ?? 'cloud'} size={13} />
                 {WEATHER_LABEL[w]}
               </span>
             ))}
             {entry.omens.time.map((t) => (
               <span key={t} className="badge" style={{ color: 'var(--violet)' }}>
+                <Icon name={TIME_ICON[t] ?? 'moon'} size={13} />
                 {TIME_LABEL[t]}
               </span>
             ))}
@@ -169,6 +180,7 @@ export default function YokaiPage() {
       {entry.sites.length > 0 && (
         <div className="section">
           <div className="section-head">
+            <Icon name="pin" size={17} />
             <h2>전승지</h2>
           </div>
           <ul className="src-list">
@@ -192,6 +204,7 @@ export default function YokaiPage() {
 
       <div className="section">
         <div className="section-head">
+          <Icon name="quote" size={17} />
           <h2>출처</h2>
         </div>
         <ul className="src-list">
@@ -241,7 +254,10 @@ export default function YokaiPage() {
       <nav className="pager">
         {prev ? (
           <Link to={`/yokai/${slugOf(prev)}`}>
-            <div className="dir">← 이전 · {cat.name}</div>
+            <div className="dir row" style={{ gap: 4 }}>
+              <Icon name="arrowLeft" size={13} />
+              이전 · {cat.name}
+            </div>
             <div className="nm">{prev.canonical}</div>
           </Link>
         ) : (
@@ -249,7 +265,10 @@ export default function YokaiPage() {
         )}
         {next ? (
           <Link to={`/yokai/${slugOf(next)}`} style={{ textAlign: 'right' }}>
-            <div className="dir">다음 · {cat.name} →</div>
+            <div className="dir row" style={{ gap: 4, justifyContent: 'flex-end' }}>
+              다음 · {cat.name}
+              <Icon name="arrowRight" size={13} />
+            </div>
             <div className="nm">{next.canonical}</div>
           </Link>
         ) : (

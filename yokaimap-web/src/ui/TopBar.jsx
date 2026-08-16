@@ -1,13 +1,14 @@
 import { Link, NavLink } from 'react-router-dom'
 import { META } from '../data/yokai.js'
+import Icon from './Icon.jsx'
 
 const NAV = [
-  { to: '/', label: '홈', end: true },
-  { to: '/map', label: '지도' },
-  { to: '/dogam', label: '도감' },
-  { to: '/quiz', label: '체질진단' },
-  { to: '/business', label: '기관·기업' },
-  { to: '/about', label: '데이터 원칙' },
+  { to: '/', label: '홈', icon: 'home', end: true },
+  { to: '/map', label: '지도', icon: 'map' },
+  { to: '/dogam', label: '도감', icon: 'book' },
+  { to: '/quiz', label: '체질진단', icon: 'compass' },
+  { to: '/business', label: '기관·기업', icon: 'building' },
+  { to: '/about', label: '데이터 원칙', icon: 'shield' },
 ]
 
 export default function TopBar() {
@@ -22,7 +23,8 @@ export default function TopBar() {
       <nav className="topnav">
         {NAV.map((n) => (
           <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => (isActive ? 'on' : undefined)}>
-            {n.label}
+            <Icon name={n.icon} size={15} />
+            <span>{n.label}</span>
           </NavLink>
         ))}
       </nav>

@@ -103,12 +103,12 @@ export function omenIndex(ctx) {
 
   let score = 12 // 기저값 — 아무 조건이 없어도 도감은 열려 있다
   const t = TIME_WEIGHT[tb] ?? 0
-  if (t > 0) factors.push({ kind: 'time', label: TIME_LABEL[tb], points: t })
+  if (t > 0) factors.push({ kind: 'time', code: tb, label: TIME_LABEL[tb], points: t })
   score += t
 
   for (const c of cond) {
     const w = OMEN_WEIGHT[c] ?? 0
-    if (w > 0) factors.push({ kind: 'weather', label: WEATHER_LABEL[c], points: w })
+    if (w > 0) factors.push({ kind: 'weather', code: c, label: WEATHER_LABEL[c], points: w })
     score += w
   }
 

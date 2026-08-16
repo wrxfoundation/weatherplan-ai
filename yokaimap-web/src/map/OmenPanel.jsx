@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { YOKAI } from '../data/yokai.js'
 import { useWeather } from '../data/useWeather.js'
 import { omenIndex, rankYokai, WEATHER_LABEL } from '../engine/omen.js'
+import Icon, { WEATHER_ICON } from '../ui/Icon.jsx'
 
 /**
  * 날씨 × 괴담 위젯 — 일본판이 붙일 수 없는 축.
@@ -21,7 +22,10 @@ export default function OmenPanel({ lat, lng, sido, now = new Date() }) {
   return (
     <div className="panel omen">
       <div className="row" style={{ justifyContent: 'space-between' }}>
-        <strong className="small">오늘의 괴담지수</strong>
+        <strong className="small row" style={{ gap: 5 }}>
+          <Icon name="flame" size={15} style={{ color: 'var(--gold)' }} />
+          오늘의 괴담지수
+        </strong>
         <span className="small muted">{data?.place ?? (sido ? `${sido} 일원` : '현재 지점')}</span>
       </div>
 
@@ -51,7 +55,8 @@ export default function OmenPanel({ lat, lng, sido, now = new Date() }) {
       {index.factors.length > 0 && (
         <div className="row small" style={{ marginTop: 6, gap: 4 }}>
           {index.factors.map((f) => (
-            <span key={f.kind + f.label} className="badge" style={{ color: 'var(--dancheong-gold)' }}>
+            <span key={f.kind + f.label} className="badge" style={{ color: 'var(--gold)' }}>
+              <Icon name={f.kind === 'time' ? 'moon' : (WEATHER_ICON[f.code] ?? 'cloud')} size={12} />
               {f.label} +{f.points}
             </span>
           ))}

@@ -1,0 +1,30 @@
+{
+  "id": "minhwa-v1",
+  "version": "1.0",
+  "note": "도상 아트디렉션 v1. 한국에는 도리야마 세키엔 같은 퍼블릭도메인 요괴 도감 판화가 없어 전량 신규 제작한다. 600장을 찍어도 화풍이 흔들리지 않도록 스타일 블록을 문자 그대로 고정하고, 개체별 서술만 갈아 끼운다. 특정 작가의 화풍을 모사하지 않으며, 생성물임을 사이트에 명시한다.",
+  "model": { "id": "recraft_v4_1", "model_type": "standard", "resolution": "2k" },
+  "palette": ["#f4efe3", "#211d18", "#b23b26", "#a97c2f", "#3f7a67", "#3c5f8f"],
+  "background_color": "#f4efe3",
+  "style": "Korean traditional minhwa folk painting, brush ink outline with mineral pigment wash on aged hanji mulberry paper, flat frontal perspective, visible paper fiber texture, muted dancheong palette of vermilion ochre jade-green indigo and ink black on warm off-white paper, generous negative space",
+  "composition": {
+    "plate": "single subject centered, full figure, plain hanji background, soft edge vignette, museum encyclopedia plate",
+    "scene": "wide landscape band, horizon low, layered mist planes, small figures for scale"
+  },
+  "constraints": "no text, no letters, no calligraphy, no signature, no seal stamp, no watermark, no border frame, not Japanese ukiyo-e, not anime, not photorealistic, not 3d render",
+  "category_modifiers": {
+    "dokkaebi": "earthy ochre and vermilion accents, playful posture",
+    "gataek": "warm domestic tones, household objects as attributes",
+    "animal": "deep crimson accents, animal form mid-transformation",
+    "water": "indigo and jade wash, flowing water motifs",
+    "mountain": "green and ink wash, layered mountain silhouettes",
+    "ghost": "pale violet-grey wash, white mourning robe, thin ink lines",
+    "plague": "muted red ochre, ritual offering objects",
+    "jeju": "gold ochre and basalt grey, volcanic island motifs, shamanic textile patterns",
+    "village": "moss green and weathered wood tones, roadside shrine motifs",
+    "sky": "deep indigo night ground, cloud and flame motifs",
+    "artifact": "aged gold and brown, worn household tool as the figure",
+    "hybrid": "magenta and jade, two natures in one figure",
+    "modern": "cool slate grey, contemporary silhouette rendered in the same minhwa technique",
+    "foreign": "violet and gold, Buddhist temple guardian conventions"
+  }
+}

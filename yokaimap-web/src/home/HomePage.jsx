@@ -5,6 +5,8 @@ import Seal from '../ui/Seal.jsx'
 import YokaiCard from '../ui/YokaiCard.jsx'
 import AdSlot from '../ui/AdSlot.jsx'
 import OmenPanel from '../map/OmenPanel.jsx'
+import ArtPlate from '../ui/ArtPlate.jsx'
+import Icon from '../ui/Icon.jsx'
 import { useHead, SITE_ORIGIN } from '../ui/useHead.js'
 
 /* 날짜 기반 결정론 선택 — 하루 동안 모두에게 같은 '오늘의 요괴'가 보인다(공유 가능). */
@@ -45,6 +47,7 @@ export default function HomePage() {
   return (
     <main>
       <section className="hero">
+        <div className="hero-art" aria-hidden="true" />
         <p className="eyebrow">출처와 검증등급을 붙인 한국 요괴 데이터베이스</p>
         <h1>
           밤이 되면
@@ -58,12 +61,15 @@ export default function HomePage() {
 
         <div className="row" style={{ gap: 'var(--sp-2)' }}>
           <Link className="btn primary lg" to="/map">
+            <Icon name="map" size={17} />
             전승지 지도 열기
           </Link>
           <Link className="btn lg" to="/quiz">
+            <Icon name="compass" size={17} />
             요괴 체질진단
           </Link>
           <Link className="btn ghost lg" to="/dogam">
+            <Icon name="book" size={17} />
             도감 {META.count}체
           </Link>
         </div>
@@ -109,14 +115,20 @@ export default function HomePage() {
               to={`/yokai/${slugOf(today)}`}
               style={{ flex: '1 1 380px', '--cat': CAT[today.category]?.color }}
             >
-              <div className="card-head">
-                <Seal category={today.category} size="lg" />
-                <div>
+              <div className="row" style={{ alignItems: 'flex-start', gap: 'var(--sp-4)', flexWrap: 'nowrap' }}>
+                {today.art?.file ? (
+                  <div style={{ width: 128, flex: 'none' }}>
+                    <ArtPlate entry={today} size="sm" />
+                  </div>
+                ) : (
+                  <Seal category={today.category} size="lg" />
+                )}
+                <div style={{ minWidth: 0 }}>
                   <h3 style={{ fontSize: 'var(--text-h2)' }}>{today.canonical}</h3>
                   <div className="small muted">{today.aliases.slice(0, 3).join(' · ')}</div>
+                  <p style={{ marginTop: 'var(--sp-2)' }}>{today.summary}</p>
                 </div>
               </div>
-              <p style={{ marginTop: 'var(--sp-3)' }}>{today.summary}</p>
             </Link>
             <OmenPanel lat={36.5} lng={127.8} sido={null} />
           </div>

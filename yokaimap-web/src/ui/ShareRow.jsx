@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { SITE_ORIGIN } from './useHead.js'
+import Icon from './Icon.jsx'
 
 /**
  * 공유 줄 — 진단 결과와 요괴 상세의 재유입 루프.
@@ -31,9 +32,11 @@ export default function ShareRow({ path, text }) {
   return (
     <div className="row" style={{ gap: 'var(--sp-2)' }}>
       <button className="btn ghost" onClick={native}>
+        <Icon name="share" size={16} />
         공유하기
       </button>
       <button className="btn ghost" onClick={copy}>
+        <Icon name={copied ? 'badge' : 'copy'} size={16} />
         {copied ? '링크 복사됨' : '링크 복사'}
       </button>
       <a
@@ -42,6 +45,7 @@ export default function ShareRow({ path, text }) {
         target="_blank"
         rel="noreferrer"
       >
+        <Icon name="external" size={16} />
         X에 공유
       </a>
     </div>

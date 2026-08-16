@@ -17,6 +17,7 @@ import {
   META,
 } from '../data/yokai.js'
 import OmenPanel from './OmenPanel.jsx'
+import Icon from '../ui/Icon.jsx'
 
 const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 const TILE_ATTR =
@@ -161,6 +162,7 @@ export default function MapPage() {
 
       <div className="map-ui map-topleft">
         <div className="panel map-search">
+          <Icon name="search" size={16} style={{ color: 'var(--text-3)' }} />
           <input
             placeholder="요괴 이름·이표기·특징 검색"
             value={q}
@@ -168,6 +170,7 @@ export default function MapPage() {
             aria-label="요괴 검색"
           />
           <button className={`chip${open || activeCount ? ' on' : ''}`} onClick={() => setOpen((v) => !v)}>
+            <Icon name={open ? 'close' : 'filter'} size={14} />
             필터{activeCount ? ` ${activeCount}` : ''}
           </button>
         </div>
@@ -223,7 +226,10 @@ export default function MapPage() {
             </section>
 
             <section>
-              <h3>지역으로 이동</h3>
+              <h3 className="row" style={{ gap: 6 }}>
+                <Icon name="pin" size={14} />
+                지역으로 이동
+              </h3>
               <div className="row" style={{ gap: 4 }}>
                 {REGIONS.map((r) => (
                   <button key={r.slug} className="chip" onClick={() => flyTo(r)}>
@@ -234,7 +240,10 @@ export default function MapPage() {
             </section>
 
             <section>
-              <h3>배경 지도</h3>
+              <h3 className="row" style={{ gap: 6 }}>
+                <Icon name="layers" size={14} />
+                배경 지도
+              </h3>
               <div className="row" style={{ gap: 5 }}>
                 {BASE_KEYS.map((k) => (
                   <button key={k} className={`chip${base === k ? ' on' : ''}`} onClick={() => setBase(k)}>
