@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yokaimap.kr/schema/yokai.schema.json",
+  "title": "한국요괴지도 요괴 레코드 v0.1",
+  "description": "한국 구비전승·문헌 기록의 요괴/신격/괴이 1개체를 기술하는 레코드. 출처와 검증등급이 필수이며, 미검증 서술을 사실로 배포하지 않는다.",
+  "type": "object",
+  "required": ["id", "canonical", "category", "rarity", "distribution", "summary", "body", "sources", "verification", "confidence", "updated_at"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^kr-[a-z0-9-]+$",
+      "description": "안정 식별자. 변경 금지(URL·데이터셋 조인 키). 예: kr-dokkaebi"
+    },
+    "canonical": {
+      "type": "string",
+      "minLength": 1,
+      "description": "대표 표기 1개. 지역별 이표기는 aliases로 흡수한다."
+    },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "이표기·지역명·한자표기. 검색 매칭과 중복 등재 방지에 사용."
+    },
+    "names": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "en": { "type": "string" },
+        "ja": { "type": "string" },
+        "zh": { "type": "string" },
+        "roman": { "type": "string", "description": "국어의 로마자 표기법 기준" }
+      }
+    },
+    "category": {
+      "enum": ["dokkaebi", "gataek", "animal", "water", "mountain", "ghost", "plague", "jeju", "village", "sky", "artifact", "hybrid", "modern", "foreign"],
+      "description": "categories.json의 14개 대분류"
+    },
+    "rarity": {
+      "enum": ["common", "uncommon", "rare", "epic", "legendary"],
+      "description": "전승 밀도 기준 등급. 인기도가 아니라 '기록·채록 분포의 넓이'로 매긴다. common=전국 광포, legendary=단일 문헌/단일 마을 한정."
+    },
+    "distribution": {
+      "enum": ["nationwide", "regional", "local", "online"],
+      "description": "nationwide=광포설화(전국 마커 대신 대표 전승지만 표시) · regional=권역 · local=단일 마을/장소 · online=인터넷 발생 현대괴이"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 200,
+      "description": "AEO용 답변 우선 1문장. '무엇인가'에 첫 문장에서 바로 답한다."
+    },
+    "body": {
+      "type": "string",
+      "minLength": 40,
+      "description": "3~6문장 해설. 추정과 기록을 문장 안에서 구분해 쓴다."
+    },
+    "traits": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "행동·표지 키워드(씨름, 방망이, 메밀묵 등). 필터·진단 축에 사용."
+    },
+    "habitat": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "출몰 장소 유형(폐가, 다리, 우물, 고갯길 등)"
+    },
+    "omens": {
+      "type": "object",
+      "description": "출몰 조건. 날씨×괴담 엔진(engine/omen.js)의 입력이 된다.",
+      "additionalProperties": false,
+      "properties": {
+        "time": {
+          "type": "array",
+          "items": { "enum": ["dawn", "day", "dusk", "night", "midnight"] },
+          "default": []
+        },
+        "weather": {
+          "type": "array",
+          "items": { "enum": ["rain", "heavy_rain", "fog", "snow", "wind", "storm", "heat", "cold", "humid", "dry", "clear"] },
+          "default": [],
+          "description": "전승에 실제로 등장하는 기상 조건만. 없으면 빈 배열(임의 부여 금지)."
+        },
+        "season": {
+          "type": "array",
+          "items": { "enum": ["spring", "summer", "autumn", "winter"] },
+          "default": []
+        }
+      }
+    },
+    "sites": {
+      "type": "array",
+      "default": [],
+      "description": "전승지. 광포설화는 대표 채록지만 남긴다. 좌표 정밀도를 반드시 표기해 '실제 지점'으로 오인되지 않게 한다.",
+      "items": {
+        "type": "object",
+        "required": ["name", "sido", "lat", "lng", "precision"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "sido": {
+            "enum": ["서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종", "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주"]
+          },
+          "sigungu": { "type": "string" },
+          "lat": { "type": "number", "minimum": 33.0, "maximum": 38.65 },
+          "lng": { "type": "number", "minimum": 124.6, "maximum": 131.0 },
+          "precision": {
+            "enum": ["parcel", "dong", "sigungu", "sido"],
+            "description": "parcel=필지/지점 · dong=읍면동 · sigungu=시군구 중심점 · sido=시도 중심점. sigungu 이하는 지도에서 점선 링으로 근사 표기."
+          },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "description": "최소 1개 필수. 출처 없는 레코드는 배포하지 않는다.",
+      "items": {
+        "type": "object",
+        "required": ["type", "title"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "enum": ["classic", "field", "encyclopedia", "heritage", "press", "modern"],
+            "description": "classic=고전 원전(삼국유사·어우야담 등) · field=구비문학 채록 · encyclopedia=공공 백과(향토문화전자대전·민속대백과) · heritage=국가유산 지정정보 · press=보도 · modern=근현대 정리물/온라인"
+          },
+          "title": { "type": "string" },
+          "ref": { "type": "string", "description": "권·조·항목명 등 세부 위치" },
+          "url": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "verification": {
+      "enum": ["primary_text", "field_record", "public_encyclopedia", "secondary_compilation", "modern_online"],
+      "description": "이 레코드 서술의 최강 근거 등급. secondary_compilation 이하는 상세페이지에 '2차 정리물 기반' 배지를 노출한다."
+    },
+    "confidence": {
+      "enum": ["high", "medium", "low"],
+      "description": "출처 일치도. low는 지도 기본 레이어에서 제외하고 '이설·미검증' 필터에서만 노출한다."
+    },
+    "sensitivity": {
+      "type": ["object", "null"],
+      "default": null,
+      "description": "실존 신앙·사유지 등 취급 주의 표시. null이면 주의사항 없음.",
+      "additionalProperties": false,
+      "required": ["kind", "note"],
+      "properties": {
+        "kind": { "enum": ["living_faith", "private_property", "tragedy_linked", "ethnic_slur_risk"] },
+        "note": { "type": "string" }
+      }
+    },
+    "art": {
+      "type": "object",
+      "description": "도상 자산 상태. 한국은 세키엔 판화 같은 퍼블릭도메인 도감이 없어 전량 신규 제작이며, 아트디렉션 ID를 고정해 화풍을 통일한다.",
+      "additionalProperties": false,
+      "properties": {
+        "status": { "enum": ["pending", "drafted", "final"], "default": "pending" },
+        "direction": { "type": "string", "description": "아트디렉션 ID (기본 minhwa-v1)" },
+        "file": { "type": ["string", "null"] },
+        "license": { "type": "string", "description": "예: CC BY 4.0 (AI 생성, 원본 도상 없음)" }
+      }
+    },
+    "related": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^kr-[a-z0-9-]+$" },
+      "default": [],
+      "description": "관련 개체 id. 상세페이지 내부링크(SEO) + 진단 결과 추천에 사용."
+    },
+    "updated_at": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+  }
+}

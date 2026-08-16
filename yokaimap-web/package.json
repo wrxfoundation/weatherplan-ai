@@ -1,0 +1,29 @@
+{
+  "name": "yokaimap-web",
+  "version": "0.1.0",
+  "description": "한국요괴지도 — 공개 자료 기반 한국 요괴·신격 데이터베이스와 전승지 지도",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run data && vite",
+    "data": "node scripts/build-data.mjs",
+    "validate": "node scripts/validate.mjs",
+    "build": "npm run data && vite build && node scripts/postbuild.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
+    "pretendard": "^1.3.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  }
+}

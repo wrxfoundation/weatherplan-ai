@@ -1,0 +1,228 @@
+{
+  "category": "mountain",
+  "note": "산괴·산신. 산신각·산신제 실좌표가 다수 남아 있어 지도화가 쉬운 계열.",
+  "entries": [
+    {
+      "id": "kr-sansillyeong",
+      "canonical": "산신령",
+      "aliases": ["산신", "산군님", "山神"],
+      "names": { "en": "Sansin", "roman": "sansillyeong" },
+      "category": "mountain",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "산을 다스리는 신. 흰 수염의 노인 또는 호랑이의 모습으로 나타난다.",
+      "body": "마을마다 산신제를 지내 한 해의 무사를 빌었고, 사찰에도 산신각을 두어 토착 산신을 함께 모셨다. 산신도에는 노인과 호랑이, 동자가 한 화면에 그려지는 것이 정형이라 도상 근거가 남아 있는 드문 항목이다. 전국의 산신각·산신제는 국가유산 지정 정보로 실좌표 확보가 가능하다.",
+      "traits": ["산신제", "호랑이", "노인"],
+      "habitat": ["산", "산신각"],
+      "omens": { "time": ["dawn"], "weather": ["fog", "snow"], "season": ["autumn", "winter"] },
+      "sites": [
+        { "name": "계룡산 산신 신앙권", "sido": "충남", "sigungu": "공주시", "lat": 36.3421, "lng": 127.2073, "precision": "sigungu", "note": "계룡산 일원 산신 신앙 권역" },
+        { "name": "무등산 산신 신앙권", "sido": "광주", "sigungu": "동구", "lat": 35.1342, "lng": 127.0, "precision": "sigungu", "note": "무등산 일원 산신 신앙 권역" },
+        { "name": "대둔산·내포 산신 신앙권", "sido": "대전", "sigungu": "서구", "lat": 36.3504, "lng": 127.3845, "precision": "sido", "note": "대전권 산신 신앙 예시" }
+      ],
+      "sources": [
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "산신·산신제" },
+        { "type": "heritage", "title": "국가유산포털", "ref": "산신제 관련 지정 종목" }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": { "kind": "living_faith", "note": "현재도 지내는 마을·사찰 의례" },
+      "related": ["kr-sangun", "kr-seongmo-cheonwang", "kr-taebaek-sansin"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-sangun",
+      "canonical": "산군",
+      "aliases": ["호랑이", "산신 호랑이", "山君"],
+      "category": "mountain",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "호랑이를 신으로 높여 부른 이름. 산신의 사자이자 산신 자신으로 여겨졌다.",
+      "body": "호랑이를 함부로 이름 부르지 않고 '산군님'이라 높인 것은 두려움과 경외가 함께 있었기 때문이다. 『삼국유사』 김현감호 조에는 호랑이가 처녀로 변해 김현과 인연을 맺고 스스로 목숨을 던지는 이야기가 실려 있다. 호환이 실제 재난이던 시기의 기록이라 창귀·호식총과 한 묶음으로 읽어야 한다.",
+      "traits": ["호환", "둔갑", "산신 사자"],
+      "habitat": ["산", "고갯길"],
+      "omens": { "time": ["dusk", "night"], "weather": ["snow", "fog"], "season": ["winter"] },
+      "sites": [
+        { "name": "경주 김현감호 전승지", "sido": "경북", "sigungu": "경주시", "lat": 35.8562, "lng": 129.2247, "precision": "sigungu", "note": "흥륜사 탑돌이 배경 — 삼국유사 감통편" }
+      ],
+      "sources": [
+        { "type": "classic", "title": "삼국유사", "ref": "감통편 김현감호" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "호랑이 신앙" }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": ["kr-changgwi", "kr-sansillyeong"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-magohalmi",
+      "canonical": "마고할미",
+      "aliases": ["노고할미", "마귀할멈", "선문대할망 계열"],
+      "names": { "en": "Mago Halmi", "roman": "magohalmi" },
+      "category": "mountain",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "산과 바위를 만들었다는 거인 여신. 치마로 흙을 나르다 흘린 것이 산이 되었다고 한다.",
+      "body": "전국의 큰 바위·고인돌·성벽에 '마고할미가 놓았다'는 유래담이 붙어 있어, 지형 자체가 신화의 흔적으로 읽히는 구조다. 지리산 노고단의 '노고'가 이 계열 이름에서 왔다는 설명이 널리 통용된다. 후대에 '마귀할멈'으로 뜻이 낮아지면서 요괴화된 사례이기도 하다.",
+      "traits": ["거인", "지형 창조", "바위"],
+      "habitat": ["산", "고인돌", "성벽"],
+      "omens": { "time": [], "weather": [], "season": [] },
+      "sites": [
+        { "name": "지리산 노고단", "sido": "전남", "sigungu": "구례군", "lat": 35.2794, "lng": 127.5, "precision": "dong", "note": "노고단 일원" },
+        { "name": "마고할미 지명 분포권", "sido": "경기", "sigungu": "포천시", "lat": 37.8949, "lng": 127.2003, "precision": "sigungu", "note": "중부권 마고 지명 예시" }
+      ],
+      "sources": [
+        { "type": "field", "title": "한국구비문학대계", "ref": "마고할미 지형 유래담" },
+        { "type": "encyclopedia", "title": "한국민족문화대백과사전", "ref": "마고할미" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["kr-seolmundae", "kr-gaeyang-halmi", "kr-seongmo-cheonwang"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-seongmo-cheonwang",
+      "canonical": "성모천왕",
+      "aliases": ["지리산 성모", "천왕할매", "聖母天王"],
+      "category": "mountain",
+      "rarity": "rare",
+      "distribution": "regional",
+      "summary": "지리산 천왕봉에 좌정한 여산신. 고려·조선 문헌에 국가 제사의 대상으로 기록됐다.",
+      "body": "지리산 정상에 성모사(聖母祠)를 두고 석상을 모셨다는 기록이 여러 문헌에 남아 있으며, 남해안 어민들까지 이 산신에게 빌었다고 전한다. 여성 산신이 국가 제사 대상이 된 드문 사례로, 마고할미 계열과 겹쳐 읽힌다. 영·호남 세 도가 맞닿은 산이라 광역 전승 구조 분석에 좋다.",
+      "traits": ["여산신", "천왕봉", "석상"],
+      "habitat": ["지리산", "성모사"],
+      "omens": { "time": ["dawn"], "weather": ["fog", "wind"], "season": [] },
+      "sites": [
+        { "name": "지리산 천왕봉", "sido": "경남", "sigungu": "산청군", "lat": 35.3372, "lng": 127.7306, "precision": "dong", "note": "천왕봉 정상부" }
+      ],
+      "sources": [
+        { "type": "classic", "title": "신증동국여지승람", "ref": "지리산 성모사 관련 기록" },
+        { "type": "encyclopedia", "title": "한국민족문화대백과사전", "ref": "지리산 성모" }
+      ],
+      "verification": "primary_text",
+      "confidence": "medium",
+      "sensitivity": { "kind": "living_faith", "note": "현재도 기도처로 쓰이는 산악 신앙지" },
+      "related": ["kr-magohalmi", "kr-mayago", "kr-sansillyeong"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-taebaek-sansin",
+      "canonical": "태백산신",
+      "aliases": ["천왕단 신령", "태백산 천제 신격"],
+      "category": "mountain",
+      "rarity": "rare",
+      "distribution": "regional",
+      "summary": "태백산 천제단에 모시는 하늘·산 신격. 지금도 개천절 천제가 이어진다.",
+      "body": "태백산 정상의 천제단은 국가유산으로 지정된 제천 유적이며, 무속인들의 기도처로도 오래 기능해 왔다. 단군 신화의 태백산 관념과 결합해 하늘 제사와 산신 신앙이 겹치는 자리가 되었다. 산신 계열 중 국가 지정 유산으로 좌표가 확정된 대표 사례다.",
+      "traits": ["천제단", "제천", "기도처"],
+      "habitat": ["태백산", "천제단"],
+      "omens": { "time": ["dawn"], "weather": ["snow", "wind", "cold"], "season": ["winter"] },
+      "sites": [
+        { "name": "태백산 천제단", "sido": "강원", "sigungu": "태백시", "lat": 37.0967, "lng": 128.9153, "precision": "dong", "note": "태백산 천제단(국가지정 유산)" }
+      ],
+      "sources": [
+        { "type": "heritage", "title": "국가유산포털", "ref": "태백산 천제단" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "천제단·산신제" }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": { "kind": "living_faith", "note": "현재도 제의가 이어지는 기도처" },
+      "related": ["kr-sansillyeong"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-sansam-dongja",
+      "canonical": "산삼동자",
+      "aliases": ["동삼", "삼동자", "童蔘"],
+      "category": "mountain",
+      "rarity": "rare",
+      "distribution": "regional",
+      "summary": "오래 묵은 산삼이 아이로 변해 사람 앞에 나타난다는 존재. 심마니 전승의 핵심이다.",
+      "body": "산에서 낯선 아이를 만나 따라갔더니 그 자리에 산삼이 있었다는 유형과, 삼을 캐기 전 산신에게 고하지 않으면 삼이 달아난다는 금기가 함께 전한다. 심마니의 은어와 금기 체계는 국가무형유산으로 지정될 만큼 독자적인 문화로 남았다. 산신 신앙과 생업 규범이 결합한 사례다.",
+      "traits": ["둔갑", "심마니", "금기"],
+      "habitat": ["깊은 산", "삼밭"],
+      "omens": { "time": ["dawn"], "weather": ["fog"], "season": ["autumn"] },
+      "sites": [
+        { "name": "강원 내륙 심마니 전승권", "sido": "강원", "sigungu": "인제군", "lat": 38.0697, "lng": 128.1704, "precision": "sigungu", "note": "심마니 전승 분포 예시" }
+      ],
+      "sources": [
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "심마니 신앙·산삼 설화" },
+        { "type": "field", "title": "한국구비문학대계", "ref": "산삼 동자 설화" }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": ["kr-sansillyeong"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-geumdwaeji",
+      "canonical": "금돼지",
+      "aliases": ["금돼지 요괴", "금저(金猪)"],
+      "category": "mountain",
+      "rarity": "rare",
+      "distribution": "regional",
+      "summary": "산속 굴에 살며 고을 수령의 부인을 납치했다는 요괴. 최치원 탄생담과 붙어 전한다.",
+      "body": "사슴 가죽을 무서워한다는 약점이 밝혀져 퇴치되고, 납치됐던 부인이 낳은 아이가 최치원이라는 결말이 널리 채록됐다. 금돼지굴로 불리는 지명이 여러 지역에 남아 있어 지명-설화 조인 대상이 된다. 약점이 명시된 몇 안 되는 퇴치형 요괴다.",
+      "traits": ["납치", "사슴 가죽", "굴"],
+      "habitat": ["산굴", "바닷가 절벽"],
+      "omens": { "time": ["night"], "weather": [], "season": [] },
+      "sites": [
+        { "name": "금돼지굴 전승 권역", "sido": "경북", "sigungu": "울진군", "lat": 36.993, "lng": 129.4005, "precision": "sigungu", "note": "금돼지굴 지명 전승 권역 예시" }
+      ],
+      "sources": [
+        { "type": "field", "title": "한국구비문학대계", "ref": "금돼지 설화·최치원 탄생담" },
+        { "type": "encyclopedia", "title": "한국민족문화대백과사전", "ref": "최치원설화" }
+      ],
+      "verification": "field_record",
+      "confidence": "medium",
+      "related": ["kr-sangun"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-mayago",
+      "canonical": "마야고",
+      "aliases": ["지리산 마야고"],
+      "category": "mountain",
+      "rarity": "epic",
+      "distribution": "local",
+      "summary": "지리산의 여신. 반야를 기다리다 옷을 찢어 던진 것이 세석평전의 철쭉이 되었다고 전한다.",
+      "body": "반야봉·세석평전 같은 지리산 지명의 유래를 설명하는 지역 전설로 자리 잡았다. 다만 현재 유통되는 서사는 근현대 정리 과정에서 다듬어진 형태가 많아, 채록 원자료 대조가 필요한 항목으로 표시한다. 지명과 식생까지 설명하는 구조라 트레킹 콘텐츠 연계 가치가 높다.",
+      "traits": ["기다림", "철쭉", "지명 유래"],
+      "habitat": ["지리산 세석평전"],
+      "omens": { "time": [], "weather": ["fog"], "season": ["spring"] },
+      "sites": [
+        { "name": "지리산 세석평전", "sido": "경남", "sigungu": "산청군", "lat": 35.3208, "lng": 127.6789, "precision": "dong", "note": "세석평전 일원" }
+      ],
+      "sources": [{ "type": "encyclopedia", "title": "한국향토문화전자대전", "ref": "지리산 지명 전설" }],
+      "verification": "secondary_compilation",
+      "confidence": "low",
+      "related": ["kr-seongmo-cheonwang"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-palgongsan-sansin",
+      "canonical": "팔공산 산신",
+      "aliases": ["팔공산 산신할매", "공산 산신"],
+      "category": "mountain",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "대구·경북 팔공산 일대에서 모셔 온 산신. 소원 한 가지를 들어준다는 기도처 신앙과 결합했다.",
+      "body": "팔공산은 신라 오악 가운데 중악으로 국가 제사의 대상이었고, 오늘날에도 기도처로 사람이 끊이지 않는다. 산신 신앙이 불교 기도처와 겹쳐 남은 대표 지역 사례다. 대구 권역 전승 대표 항목으로 도감의 지역 균형을 맞춘다.",
+      "traits": ["기도처", "중악", "소원"],
+      "habitat": ["팔공산"],
+      "omens": { "time": ["dawn"], "weather": ["fog", "snow"], "season": [] },
+      "sites": [
+        { "name": "팔공산 일원", "sido": "대구", "sigungu": "동구", "lat": 35.9944, "lng": 128.6947, "precision": "sigungu", "note": "팔공산 산신 신앙권" }
+      ],
+      "sources": [
+        { "type": "encyclopedia", "title": "한국향토문화전자대전", "ref": "팔공산 산신 신앙" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "오악 신앙" }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "sensitivity": { "kind": "living_faith", "note": "현재도 이용되는 기도처" },
+      "related": ["kr-sansillyeong"],
+      "updated_at": "2026-08-16"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+/* 한국요괴지도 디자인 토큰 v0.1
+ * 진실원천은 이 파일. 컴포넌트는 CSS 변수만 쓰고 hex 하드코딩을 금지한다.
+ * 배색 근거: 밤(먹빛 배경) + 한지(본문 잉크) + 단청 5색 중 적·황·청·녹을 의미색으로 배정.
+ */
+:root {
+  /* 베이스 — 먹빛 밤 */
+  --bg: #12100f;
+  --bg-deep: #0a0908;
+  --surface: #1b1815;
+  --surface-2: #241f1a;
+  --line: #322b23;
+  --line-strong: #4a4034;
+
+  /* 한지 잉크 */
+  --text: #f2ece1;
+  --ink: var(--text);
+  --grey: #a99e8d; /* 소형 텍스트 WCAG AA 충족 */
+  --grey-dim: #7d7365;
+
+  /* 단청 의미색 */
+  --dancheong-red: #d94f36; /* 주칠 — 액센트·CTA */
+  --dancheong-gold: #d9a441; /* 황 — 희귀도·강조 수치 */
+  --dancheong-jade: #4f9d8b; /* 녹 — 검증·안전 */
+  --dancheong-indigo: #5b82bd; /* 청 — 물·정보 */
+  --dancheong-violet: #9b7fc4; /* 보조 — 신격 */
+
+  --accent: var(--dancheong-red);
+  --accent-soft: #f0765c;
+  --ok: var(--dancheong-jade);
+  --warn: var(--dancheong-gold);
+
+  /* 타이포 */
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+  --font-serif: 'Pretendard Variable', Pretendard, 'Nanum Myeongjo', serif;
+
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-body: 13px;
+  --text-md: 14px;
+  --text-title: 17px;
+  --text-h2: 21px;
+  --text-h1: 27px;
+  --text-display: 38px;
+
+  /* 간격·반경 */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 36px;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-lg: 16px;
+
+  /* 고도 */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --shadow-3: 0 14px 44px rgba(0, 0, 0, 0.55);
+
+  --header-h: 52px;
+}
+
+/* 검증등급 색 — 상세페이지·배지에서 공유 */
+:root {
+  --ver-primary_text: var(--dancheong-jade);
+  --ver-field_record: var(--dancheong-indigo);
+  --ver-public_encyclopedia: var(--dancheong-indigo);
+  --ver-secondary_compilation: var(--dancheong-gold);
+  --ver-modern_online: var(--grey);
+}

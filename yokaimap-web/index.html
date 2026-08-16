@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#12100f" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>한국요괴지도 — 전국 요괴·신격 전승지 지도</title>
+    <!-- 아래 메타는 scripts/postbuild.mjs가 라우트별로 치환한다 — 반드시 한 줄로 유지할 것(정규식 치환) -->
+    <meta name="description" content="도깨비·구미호·이무기부터 제주 본풀이 신격까지, 한국 요괴 120체와 전승지 좌표를 공개 자료 기반으로 정리한 지도형 도감. 모든 항목에 출처와 검증등급을 표기합니다." />
+    <meta property="og:title" content="한국요괴지도 — 전국 요괴·신격 전승지 지도" />
+    <meta property="og:description" content="한국 요괴 120체와 전승지 좌표를 공개 자료 기반으로 정리한 지도형 도감. 출처·검증등급 전면 표기." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="한국요괴지도" />
+    <meta property="og:url" content="https://yokaimap.kr/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://yokaimap.kr/" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://yokaimap.kr/#org",
+            "name": "한국요괴지도",
+            "url": "https://yokaimap.kr/",
+            "description": "한국 구비전승·문헌 기록의 요괴와 신격을 공개 자료 기반으로 정리하는 오픈 데이터 프로젝트"
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://yokaimap.kr/#site",
+            "name": "한국요괴지도",
+            "url": "https://yokaimap.kr/",
+            "inLanguage": "ko",
+            "publisher": { "@id": "https://yokaimap.kr/#org" }
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <h1>한국요괴지도</h1>
+      <p>
+        한국 구비전승과 문헌 기록에 남은 요괴·신격 120체를 전승지 좌표와 함께 정리한 지도형 도감입니다.
+        모든 항목에 출처와 검증등급을 표기하며, 데이터셋은 CC BY 4.0으로 공개합니다.
+        이 서비스는 JavaScript가 필요합니다.
+      </p>
+      <p>
+        <a href="/dogam">요괴도감</a> · <a href="/about">데이터 원칙</a> ·
+        <a href="/data/yokai.json">공개 데이터셋(JSON)</a> · <a href="/llms.txt">llms.txt</a>
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

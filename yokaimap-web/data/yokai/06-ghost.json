@@ -1,0 +1,253 @@
+{
+  "category": "ghost",
+  "note": "귀신·원귀. 한국 귀신담의 축은 공포가 아니라 해원(解冤)이다 — 원한을 풀면 신으로 승격되기도 한다.",
+  "entries": [
+    {
+      "id": "kr-songaksi",
+      "canonical": "손각시",
+      "aliases": ["손말명", "처녀귀신", "손각씨"],
+      "names": { "en": "Songaksi", "roman": "songaksi" },
+      "category": "ghost",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "혼인하지 못하고 죽은 처녀의 넋. 흰 소복에 긴 머리로 그려지는 한국 귀신의 표준형이다.",
+      "body": "혼인을 마치지 못한 한이 남아 저승으로 가지 못한다고 보아, 죽은 처녀와 총각을 짝지어 주는 사혼(死婚)굿으로 달랬다. 산 사람의 혼사를 방해한다는 관념이 있어 혼례 전후에 특히 조심했다. 이 원한을 풀어 주면 마을을 지키는 신으로 좌정하기도 해, 삼척 해랑신 같은 사례로 이어진다.",
+      "traits": ["소복", "혼인", "해원"],
+      "habitat": ["빈방", "마을", "무덤"],
+      "omens": { "time": ["night", "midnight"], "weather": ["fog", "rain"], "season": [] },
+      "sites": [],
+      "sources": [
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "손말명·처녀귀신" },
+        { "type": "field", "title": "한국구비문학대계", "ref": "처녀귀신 설화" }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": ["kr-mongdal", "kr-arang", "kr-haerang"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-mongdal",
+      "canonical": "몽달귀신",
+      "aliases": ["몽달귀", "총각귀신", "도령귀신"],
+      "category": "ghost",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "장가들지 못하고 죽은 총각의 넋. 손각시와 짝을 이루는 남성형 원귀다.",
+      "body": "손각시와 마찬가지로 혼인의 결핍이 원한의 원인이며, 사혼굿으로 짝을 맺어 주면 저승으로 간다고 보았다. 사람을 해치기보다 붙어 다니며 훼방을 놓는 쪽으로 그려지는 경우가 많다. 관용어 '몽달귀신 같다'로 지금도 어휘가 살아 있다.",
+      "traits": ["혼인", "해원", "붙음"],
+      "habitat": ["골목", "빈집"],
+      "omens": { "time": ["night"], "weather": [], "season": [] },
+      "sites": [],
+      "sources": [{ "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "몽달귀신·사혼" }],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": ["kr-songaksi"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-dalgyal-gwisin",
+      "canonical": "달걀귀신",
+      "aliases": ["달걀귀", "얼굴 없는 귀신"],
+      "names": { "en": "Dalgyal Gwisin", "roman": "dalgyalgwisin" },
+      "category": "ghost",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "눈·코·입이 없는 달걀 같은 얼굴의 귀신. 마주친 사람은 놀라 정신을 잃는다.",
+      "body": "이목구비가 없다는 단 하나의 특징만으로 성립하는 귀신이라 서사가 짧고 이미지가 강하다. 20세기 학교 괴담과 어린이 잡지를 통해 크게 퍼졌고, 그 이전 채록은 상대적으로 희박하다. 근현대 매체가 요괴 유통 경로를 바꾼 사례로 도감에 남길 가치가 있다.",
+      "traits": ["무면", "공포", "학교 괴담"],
+      "habitat": ["학교", "골목", "화장실"],
+      "omens": { "time": ["night", "dusk"], "weather": [], "season": [] },
+      "sites": [],
+      "sources": [
+        { "type": "modern", "title": "20세기 아동잡지·학교 괴담", "ref": "달걀귀신 유형" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "귀신 유형" }
+      ],
+      "verification": "secondary_compilation",
+      "confidence": "medium",
+      "related": ["kr-hwajangsil-gwisin"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-arang",
+      "canonical": "아랑",
+      "aliases": ["아랑각시", "밀양 아랑"],
+      "names": { "en": "Arang", "roman": "arang" },
+      "category": "ghost",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "밀양 부사의 딸로 억울하게 죽은 뒤, 새로 부임한 부사에게 나타나 원한을 밝혔다는 원귀.",
+      "body": "부임하는 부사마다 첫날밤에 죽어 나가던 관아에 담대한 부사가 와서 아랑의 말을 듣고 범인을 잡아 원한을 풀어 준다는 구조로, 원귀 서사의 표준형이 됐다. 밀양 영남루 옆에 아랑각이 있어 좌표가 확정되고 지역 축제로도 이어진다. 신원(伸冤)형 귀신담의 대표 사례다.",
+      "traits": ["신원", "관아", "첫날밤"],
+      "habitat": ["관아", "대숲"],
+      "omens": { "time": ["midnight"], "weather": [], "season": [] },
+      "sites": [
+        { "name": "밀양 아랑각", "sido": "경남", "sigungu": "밀양시", "lat": 35.4924, "lng": 128.7487, "precision": "dong", "note": "영남루 인근 아랑사(아랑각)" }
+      ],
+      "sources": [
+        { "type": "classic", "title": "조선 후기 야담류", "ref": "아랑형 신원 설화" },
+        { "type": "encyclopedia", "title": "한국향토문화전자대전", "ref": "밀양 아랑 전설" }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": ["kr-songaksi", "kr-sinrip-wongwi"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-sondol",
+      "canonical": "손돌",
+      "aliases": ["손돌목 뱃사공", "손돌바람", "손돌추위"],
+      "category": "ghost",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "억울하게 처형된 뱃사공. 그가 죽은 음력 시월 스무날께 부는 매서운 바람을 손돌바람이라 한다.",
+      "body": "피란길의 왕을 태우고 좁은 물길을 지나던 사공이 의심을 받아 목이 베였고, 그 뒤 해마다 그 날 강한 바람과 추위가 온다는 이야기다. 특정 날짜의 기상 현상에 이름이 붙은 사례라, 날씨×전승 엔진의 교과서적 자산이다. 김포 덕포진의 손돌묘와 강화 염하수로의 손돌목이 실좌표로 남아 있다.",
+      "traits": ["바람", "추위", "억울한 죽음"],
+      "habitat": ["염하수로", "포구"],
+      "omens": { "time": [], "weather": ["wind", "cold"], "season": ["autumn", "winter"] },
+      "sites": [
+        { "name": "김포 덕포진 손돌묘", "sido": "경기", "sigungu": "김포시", "lat": 37.6653, "lng": 126.5581, "precision": "dong", "note": "덕포진 일원 손돌 묘역" },
+        { "name": "강화 손돌목(염하수로)", "sido": "인천", "sigungu": "강화군", "lat": 37.6786, "lng": 126.5231, "precision": "dong", "note": "광성보 앞 물길" }
+      ],
+      "sources": [
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "손돌바람" },
+        { "type": "encyclopedia", "title": "한국향토문화전자대전", "ref": "손돌 전설(김포·강화)" }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": ["kr-hoeorib", "kr-mulgwisin"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-sinrip-wongwi",
+      "canonical": "탄금대 원귀",
+      "aliases": ["신립과 처녀 귀신", "탄금대 원혼"],
+      "category": "ghost",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "신립 장군에게 원한을 품은 처녀의 넋이 배수진을 부추겨 패전을 불렀다는 야담 속 원귀.",
+      "body": "젊은 시절 신립이 구해 주지 않았거나 청혼을 물리쳤던 처녀가 원귀가 되어, 임진왜란 때 험한 고개 대신 강을 등지고 싸우도록 꾀었다는 이야기다. 실제 전투와 지형(탄금대·달천)이 붙어 있어 역사 답사 콘텐츠와 곧바로 연결된다. 역사적 패인 해석과 설화가 겹친 사례라 서술에 주의 표기를 둔다.",
+      "traits": ["배수진", "복수", "야담"],
+      "habitat": ["탄금대", "강변"],
+      "omens": { "time": ["night"], "weather": ["fog"], "season": [] },
+      "sites": [
+        { "name": "충주 탄금대", "sido": "충북", "sigungu": "충주시", "lat": 36.9707, "lng": 127.9083, "precision": "dong", "note": "탄금대 일원" }
+      ],
+      "sources": [
+        { "type": "classic", "title": "조선 후기 야담류", "ref": "신립 원귀담" },
+        { "type": "encyclopedia", "title": "한국향토문화전자대전", "ref": "탄금대 전설" }
+      ],
+      "verification": "secondary_compilation",
+      "confidence": "medium",
+      "related": ["kr-arang"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-mujugohon",
+      "canonical": "무주고혼",
+      "aliases": ["무주귀신", "떠돌이 귀신", "無主孤魂"],
+      "category": "ghost",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "제사 지내 줄 사람이 없어 떠도는 넋. 나라에서 여제(厲祭)를 지내 달랬다.",
+      "body": "조선은 각 고을에 여단(厲壇)을 두고 주인 없는 넋을 국가가 공식으로 제사했는데, 이는 귀신을 쫓는 대신 먹여 보내는 한국식 대응의 제도적 형태다. 굿의 마지막 뒷전에서 잡귀를 풀어 먹이는 절차와 같은 논리 위에 있다. 개별 귀신이 아니라 집합 범주라는 점에서 도감의 '무리' 유형으로 다룬다.",
+      "traits": ["여제", "뒷전", "제사"],
+      "habitat": ["성 밖", "길가"],
+      "omens": { "time": ["dusk"], "weather": [], "season": ["autumn"] },
+      "sites": [
+        { "name": "한양 여단 전승권", "sido": "서울", "sigungu": "종로구", "lat": 37.5759, "lng": 126.9769, "precision": "sido", "note": "조선 한양의 여단 위치는 비정 단계 — 문헌 대조 예정" }
+      ],
+      "sources": [
+        { "type": "classic", "title": "조선왕조실록", "ref": "여제·여단 관련 기사" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "여제·무주고혼" }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": ["kr-gaekgwi", "kr-subu"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-sangmun",
+      "canonical": "상문",
+      "aliases": ["상문살", "喪門"],
+      "category": "ghost",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "상갓집에서 따라붙는 부정(不淨). 이유 없이 앓아눕는 병의 원인으로 지목됐다.",
+      "body": "문상을 다녀온 뒤 갑자기 아프면 상문이 들었다 하여 소금·팥을 뿌리거나 상문풀이를 했다. 귀신이라기보다 '옮는 부정'에 가까운 개념이라, 감염 관념과 의례가 결합한 흥미로운 사례다. 상가 출입 금기의 근거로 지금도 회자된다.",
+      "traits": ["부정", "소금", "상문풀이"],
+      "habitat": ["상가", "집"],
+      "omens": { "time": [], "weather": [], "season": [] },
+      "sites": [],
+      "sources": [{ "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "상문살·부정" }],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": ["kr-myogwi", "kr-gaekgwi"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-jigwi",
+      "canonical": "지귀",
+      "aliases": ["화귀", "불귀신 지귀", "志鬼"],
+      "category": "ghost",
+      "rarity": "epic",
+      "distribution": "local",
+      "summary": "선덕여왕을 사모하다 가슴의 불로 타 죽어 불귀신이 된 사내.",
+      "body": "여왕이 절에 행차했을 때 잠들어 만나지 못한 지귀가 깨어나 애가 타 불이 되었고, 여왕이 지어 준 주문을 문에 붙여 그 불을 막았다는 이야기다. 사랑의 감정이 그대로 재앙이 되는 드문 구조이며, 화재를 막는 부적의 유래담으로도 기능했다. 『대동운부군옥』의 「심화요탑(心火繞塔)」으로 전한다.",
+      "traits": ["불", "짝사랑", "부적"],
+      "habitat": ["절", "탑"],
+      "omens": { "time": ["day"], "weather": ["heat", "dry"], "season": ["summer"] },
+      "sites": [
+        { "name": "경주 영묘사 터 일원", "sido": "경북", "sigungu": "경주시", "lat": 35.8341, "lng": 129.2202, "precision": "sigungu", "note": "영묘사 위치는 비정 단계" }
+      ],
+      "sources": [{ "type": "classic", "title": "대동운부군옥", "ref": "심화요탑" }],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": ["kr-hwagwang"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-gawi",
+      "canonical": "가위",
+      "aliases": ["가위눌림", "눌린다", "夢魘"],
+      "category": "ghost",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "잠든 몸을 눌러 움직이지 못하게 하는 존재. '가위에 눌렸다'는 말이 여기서 왔다.",
+      "body": "몸은 깨어 있는데 움직이지 못하고 누군가 위에 앉은 듯한 감각을 실체로 설명한 것이다. 베개를 돌려 베거나 신발을 가지런히 두면 낫는다는 대처법이 지역마다 전한다. 의학적으로는 수면마비로 설명되며, 이 데이터셋은 전승 서술과 현대 설명을 함께 표기한다.",
+      "traits": ["수면", "압박", "대처법"],
+      "habitat": ["침소", "빈방"],
+      "omens": { "time": ["midnight", "dawn"], "weather": ["humid", "heat"], "season": ["summer"] },
+      "sites": [],
+      "sources": [{ "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "가위눌림" }],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": ["kr-dueoksini"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-yeongsan",
+      "canonical": "영산",
+      "aliases": ["영산맞이", "횡사한 넋"],
+      "category": "ghost",
+      "rarity": "uncommon",
+      "distribution": "regional",
+      "summary": "제 명대로 살지 못하고 갑자기 죽은 사람의 넋. 굿에서 따로 불러 달래는 대상이다.",
+      "body": "물에 빠져 죽거나 사고로 죽은 넋은 저승으로 곧장 가지 못한다고 보아, 씻김굿·오구굿에서 이름을 불러 원한을 씻어 보냈다. 죽음의 방식으로 넋을 분류하는 한국 무속의 체계를 보여 주는 항목이다. 개별 요괴가 아니라 의례상의 범주라는 점을 상세페이지에 명시한다.",
+      "traits": ["횡사", "씻김굿", "해원"],
+      "habitat": ["굿청", "사고 현장"],
+      "omens": { "time": [], "weather": [], "season": [] },
+      "sites": [
+        { "name": "진도 씻김굿 전승권", "sido": "전남", "sigungu": "진도군", "lat": 34.4867, "lng": 126.2634, "precision": "sigungu", "note": "국가무형유산 진도씻김굿 전승권" }
+      ],
+      "sources": [
+        { "type": "heritage", "title": "국가유산포털", "ref": "진도씻김굿" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "영산·씻김굿" }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "sensitivity": { "kind": "living_faith", "note": "현행 무속 의례 절차" },
+      "related": ["kr-mujugohon", "kr-subu"],
+      "updated_at": "2026-08-16"
+    }
+  ]
+}

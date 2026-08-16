@@ -1,0 +1,146 @@
+{
+  "category": "hybrid",
+  "note": "이류혼담. 한국구비문학대계 채록량이 가장 두꺼운 유형군이라 지역 변이 비교 콘텐츠의 주력이 된다.",
+  "entries": [
+    {
+      "id": "kr-gureongdeongdeong",
+      "canonical": "구렁덩덩 신선비",
+      "aliases": ["뱀신랑", "구렁이 신랑"],
+      "names": { "en": "Gureongdeongdeong Sinseonbi", "roman": "gureongdeongdeong" },
+      "category": "hybrid",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "구렁이로 태어난 아들이 사람으로 허물을 벗고, 금기를 어긴 아내가 그를 찾아 먼 길을 떠나는 설화.",
+      "body": "셋째 딸만이 구렁이와 혼인하겠다고 나서고, 신랑은 밤에 허물을 벗어 미남자가 된다. 허물을 태우지 말라는 금기를 언니들의 훼방으로 어기면서 신랑이 사라지고, 아내가 시련을 거쳐 되찾는 탐색 서사가 이어진다. 그리스의 에로스와 프시케 유형과 비교되는 한국의 대표 이류혼담이다.",
+      "traits": ["허물", "금기", "탐색"],
+      "habitat": ["집", "먼 길"],
+      "omens": { "time": ["night"], "weather": [], "season": [] },
+      "sites": [
+        { "name": "구렁덩덩 설화 채록 권역", "sido": "충북", "sigungu": "제천시", "lat": 37.1326, "lng": 128.191, "precision": "sigungu", "note": "광포설화 — 대표 채록 권역 예시" }
+      ],
+      "sources": [
+        { "type": "field", "title": "한국구비문학대계", "ref": "구렁덩덩 신선비" },
+        { "type": "encyclopedia", "title": "한국민족문화대백과사전", "ref": "구렁덩덩신선비" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["kr-baeksa", "kr-ureonggaksi"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-ureonggaksi",
+      "canonical": "우렁각시",
+      "aliases": ["우렁이 각시", "우렁색시"],
+      "names": { "en": "Ureong Gaksi", "roman": "ureonggaksi" },
+      "category": "hybrid",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "우렁이에서 나온 여인이 몰래 밥상을 차려 주다 남자와 부부가 되는 설화.",
+      "body": "\"이 농사 지어 누구랑 먹나\" 하는 혼잣말에 \"나랑 먹지\" 하고 답하는 장면이 널리 알려져 있다. 대개 원님이 아내를 빼앗아 가는 비극으로 이어져, 아내는 새가 되고 남자는 죽어 새가 된다는 결말이 붙는다. 밝고 낭만적인 도입과 참혹한 결말의 낙차가 커서 재해석 여지가 크다.",
+      "traits": ["보은", "혼인", "비극"],
+      "habitat": ["논", "물가"],
+      "omens": { "time": [], "weather": [], "season": ["summer"] },
+      "sites": [
+        { "name": "우렁각시 설화 채록 권역", "sido": "충남", "sigungu": "서산시", "lat": 36.7848, "lng": 126.4503, "precision": "sigungu", "note": "광포설화 — 대표 채록 권역 예시" }
+      ],
+      "sources": [
+        { "type": "field", "title": "한국구비문학대계", "ref": "우렁각시 설화" },
+        { "type": "encyclopedia", "title": "한국민족문화대백과사전", "ref": "우렁각시설화" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["kr-gureongdeongdeong", "kr-seonnyeo"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-yaraeja",
+      "canonical": "야래자",
+      "aliases": ["밤에 오는 남자", "지렁이 아들", "夜來者"],
+      "category": "hybrid",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "밤마다 찾아오는 정체 모를 남자에게 실을 꿴 바늘을 꽂아 따라가 보니 큰 지렁이였다는 설화.",
+      "body": "그 사이에서 태어난 아이가 영웅이 되는 구조로, 『삼국유사』 후백제 견훤 조에 같은 유형이 실려 있어 원전 근거가 확실하다. 지렁이 대신 구렁이·수달로 바뀌는 지역 변이가 많다. 왕조 창건자의 신이한 혈통을 설명하는 정치 신화이기도 하다.",
+      "traits": ["실과 바늘", "정체", "영웅 탄생"],
+      "habitat": ["규방", "못"],
+      "omens": { "time": ["midnight"], "weather": [], "season": [] },
+      "sites": [
+        { "name": "견훤 탄생 전승권", "sido": "경북", "sigungu": "문경시", "lat": 36.5866, "lng": 128.1867, "precision": "sigungu", "note": "견훤 출생 전승지 비정 권역 — 상주·문경 설이 병존" }
+      ],
+      "sources": [
+        { "type": "classic", "title": "삼국유사", "ref": "기이편 후백제 견훤" },
+        { "type": "field", "title": "한국구비문학대계", "ref": "야래자 설화" }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": ["kr-imugi", "kr-agijangsu"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-seonnyeo",
+      "canonical": "선녀",
+      "aliases": ["나무꾼과 선녀", "천녀", "날개옷 선녀"],
+      "names": { "en": "Seonnyeo", "roman": "seonnyeo" },
+      "category": "hybrid",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "날개옷을 잃고 하늘로 돌아가지 못한 하늘의 여인. 사슴의 조언이 사건을 시작한다.",
+      "body": "아이 셋을 낳기 전에는 날개옷을 보여 주지 말라는 금기를 어겨 선녀가 아이들을 안고 하늘로 올라가는 결말이 표준형이다. 뒤이어 나무꾼이 두레박을 타고 올라갔다가 어머니를 그리워하다 지상으로 떨어져 수탉이 되는 이야기가 붙기도 한다. 금기-위반-상실이라는 한국 설화의 기본 문법이 가장 선명하게 드러난다.",
+      "traits": ["날개옷", "금기", "상실"],
+      "habitat": ["산속 못", "폭포"],
+      "omens": { "time": ["day"], "weather": ["clear"], "season": ["summer"] },
+      "sites": [
+        { "name": "금강산·설악 선녀탕 지명 분포권", "sido": "강원", "sigungu": "속초시", "lat": 38.207, "lng": 128.5918, "precision": "sigungu", "note": "선녀탕 지명 분포 예시" }
+      ],
+      "sources": [
+        { "type": "field", "title": "한국구비문학대계", "ref": "나무꾼과 선녀" },
+        { "type": "encyclopedia", "title": "한국민족문화대백과사전", "ref": "선녀와나무꾼" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["kr-ureonggaksi"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-dukkeobi-sillang",
+      "canonical": "두꺼비 신랑",
+      "aliases": ["두껍이 신랑", "두꺼비 아들"],
+      "category": "hybrid",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "두꺼비로 태어난 아들이 사람 신부를 맞아 허물을 벗고 사람이 되는 설화.",
+      "body": "구렁덩덩 신선비와 같은 골격이되 동물이 두꺼비로 바뀐 유형으로, 두꺼비가 지네와 싸워 은혜를 갚는 「두꺼비의 보은」과 겹쳐 전하기도 한다. 두꺼비는 업신의 몸으로도 여겨져 재물 관념과 이어진다. 동일 구조의 동물 치환을 보여 주는 비교 사례다.",
+      "traits": ["허물", "보은", "혼인"],
+      "habitat": ["집", "우물가"],
+      "omens": { "time": ["night"], "weather": ["rain"], "season": ["summer"] },
+      "sites": [],
+      "sources": [{ "type": "field", "title": "한국구비문학대계", "ref": "두꺼비 신랑·두꺼비 보은 설화" }],
+      "verification": "field_record",
+      "confidence": "medium",
+      "related": ["kr-gureongdeongdeong", "kr-eop", "kr-jinegaksi"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-dokkaebi-sillang",
+      "canonical": "도깨비 신랑",
+      "aliases": ["과부와 도깨비", "도깨비 서방"],
+      "category": "hybrid",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "과부의 집을 밤마다 찾아오는 도깨비. 재물을 가져다주지만 떼어 내기가 더 어렵다.",
+      "body": "처음에는 돈과 곡식을 날라 주지만 점점 여자가 여위어 가고, 결국 말피를 뿌리거나 집을 옮겨 떼어 낸다는 결말이 정형이다. 도깨비가 재물의 원천이자 착취자라는 양면성이 가장 극명하게 드러나는 유형이다. 도깨비 계열과 이류혼 계열이 겹치는 교차 항목으로 등재한다.",
+      "traits": ["재물", "말피", "떼어 내기"],
+      "habitat": ["외딴집"],
+      "omens": { "time": ["night", "midnight"], "weather": ["rain"], "season": [] },
+      "sites": [],
+      "sources": [
+        { "type": "field", "title": "한국구비문학대계", "ref": "과부와 도깨비 설화" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "도깨비 설화 유형" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["kr-dokkaebi", "kr-dokkaebi-teo", "kr-gaksi-dokkaebi"],
+      "updated_at": "2026-08-16"
+    }
+  ]
+}

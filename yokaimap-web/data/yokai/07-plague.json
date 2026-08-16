@@ -1,0 +1,133 @@
+{
+  "category": "plague",
+  "note": "역병·재액. 한국식 대응의 핵심은 '쫓기'가 아니라 '대접해서 보내기'다.",
+  "entries": [
+    {
+      "id": "kr-sonnim",
+      "canonical": "손님네",
+      "aliases": ["마마신", "호구별성", "큰손님", "별상"],
+      "names": { "en": "Sonnim", "roman": "sonnim" },
+      "category": "plague",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "천연두를 옮기는 신. 무서운 존재를 '손님'이라 높여 부르며 정성껏 대접해 보냈다.",
+      "body": "아이가 마마를 앓으면 열사흘 동안 금기를 지키고, 다 나으면 배송(拜送)굿으로 손님을 정중히 배웅했다. 손님굿 무가에는 강남에서 조선으로 건너온 손님 일행이 대접의 정성에 따라 아이를 살리거나 죽이는 서사가 있다. 병을 신으로 인격화하고 협상 대상으로 삼은, 한국 역병 관념의 정수다.",
+      "traits": ["마마", "배송굿", "금기", "대접"],
+      "habitat": ["집", "마을"],
+      "omens": { "time": [], "weather": ["dry", "cold"], "season": ["winter", "spring"] },
+      "sites": [
+        { "name": "동해안 손님굿 전승권", "sido": "경북", "sigungu": "포항시", "lat": 36.019, "lng": 129.3435, "precision": "sigungu", "note": "동해안별신굿 손님굿 전승권" }
+      ],
+      "sources": [
+        { "type": "field", "title": "손님굿 무가", "ref": "전국 무가 채록" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "손님굿·마마신" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "sensitivity": { "kind": "living_faith", "note": "현행 무속 의례에 포함된 신격" },
+      "related": ["kr-hongyeoksin", "kr-yeoksin", "kr-jeung"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-hongyeoksin",
+      "canonical": "홍역신",
+      "aliases": ["작은손님", "홍진 손님"],
+      "category": "plague",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "홍역을 옮기는 신. 천연두의 '큰손님'에 대비해 '작은손님'이라 불렀다.",
+      "body": "천연두보다 치명률이 낮다고 보아 대접의 규모도 작았지만, 금기와 배송의 구조는 같았다. 병의 경중에 따라 신격의 위계를 나눈 셈이라, 민간 의학 지식이 신앙 체계 안에 정리돼 있었음을 보여 준다. 손님 계열을 하나로 뭉뚱그리지 않고 분리 등재하는 근거다.",
+      "traits": ["홍역", "작은손님", "금기"],
+      "habitat": ["집"],
+      "omens": { "time": [], "weather": ["dry"], "season": ["spring"] },
+      "sites": [],
+      "sources": [{ "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "손님·역신 계열" }],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": ["kr-sonnim"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-yeoksin",
+      "canonical": "역신",
+      "aliases": ["역귀", "처용 설화의 역신", "疫神"],
+      "category": "plague",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "『삼국유사』 처용랑 조에서 처용의 아내를 범했다가, 노래와 춤 앞에 무릎 꿇고 물러난 역병의 신.",
+      "body": "역신은 처용의 얼굴을 그린 그림만 보아도 문 안에 들지 않겠다고 맹세했고, 이로써 처용 그림이 문에 붙이는 액막이 부적이 되었다. 처용의 무대인 개운포는 울산에 실지명으로 남아 있어 좌표가 확정된다. 폭력이 아니라 노래와 관용으로 역병을 물리치는 서사는 세계적으로도 독특하다.",
+      "traits": ["처용가", "부적", "액막이"],
+      "habitat": ["집 문", "마을"],
+      "omens": { "time": ["night"], "weather": [], "season": [] },
+      "sites": [
+        { "name": "울산 개운포 성지", "sido": "울산", "sigungu": "남구", "lat": 35.4886, "lng": 129.3517, "precision": "dong", "note": "처용 설화의 개운포 전승지" }
+      ],
+      "sources": [{ "type": "classic", "title": "삼국유사", "ref": "기이편 처용랑 망해사" }],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": ["kr-sonnim", "kr-jeung"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-jeung",
+      "canonical": "제웅",
+      "aliases": ["처용 인형", "제웅치기", "추령"],
+      "category": "plague",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "짚으로 만든 사람 인형. 액이 든 사람을 대신해 맞고 버려지는 대역이다.",
+      "body": "정월 대보름 전날 나이에 든 액을 제웅에 옮겨 길에 버리면, 아이들이 그 안의 동전을 꺼내며 제웅을 두들겼다. 사람 대신 맞는 대역이라는 점에서 액막이 도구이자 요괴 대응 장비에 해당한다. 도감에서 '퇴치 수단' 축의 대표 항목으로 쓴다.",
+      "traits": ["짚인형", "대역", "정월 대보름"],
+      "habitat": ["길가", "집 앞"],
+      "omens": { "time": ["night"], "weather": [], "season": ["winter"] },
+      "sites": [],
+      "sources": [
+        { "type": "classic", "title": "동국세시기", "ref": "상원 제웅치기" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "제웅" }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": ["kr-samjaesin", "kr-yeoksin", "kr-sapsalgae"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-gaekgwi",
+      "canonical": "객귀",
+      "aliases": ["뜬귀신", "객귀물림의 객귀", "客鬼"],
+      "category": "plague",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "밖에서 따라 들어온 떠돌이 귀신. 갑자기 체하거나 앓아누우면 객귀가 들었다고 했다.",
+      "body": "바가지에 밥과 나물을 담아 문밖에서 칼로 내치며 '물러가라' 외치는 객귀물림이 표준 처방이었고, 칼을 던져 칼끝이 밖을 향하면 나간 것으로 보았다. 병의 원인을 밖에서 온 존재로 돌리고 문턱에서 처리한다는 공간 논리가 뚜렷하다. 지금도 시골에서 드물게 행해진다는 보고가 있다.",
+      "traits": ["객귀물림", "바가지", "칼"],
+      "habitat": ["문밖", "길"],
+      "omens": { "time": ["dusk"], "weather": [], "season": [] },
+      "sites": [],
+      "sources": [{ "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "객귀물림" }],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": { "kind": "living_faith", "note": "일부 지역에서 현재도 행해지는 처방 의례" },
+      "related": ["kr-mujugohon", "kr-sangmun", "kr-subu"],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-samjaesin",
+      "canonical": "삼재신",
+      "aliases": ["삼재", "三災", "삼재팔난"],
+      "category": "plague",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "9년마다 3년씩 든다는 재액. 들삼재·눌삼재·날삼재로 나뉘어 사람을 따라다닌다.",
+      "body": "띠에 따라 삼재 해가 정해지며, 그 해에는 이사·혼인·창업을 피하고 삼재풀이나 부적으로 막았다. 매의 그림(삼두매) 부적을 문에 붙이는 처방이 널리 쓰였다. 개체가 아니라 주기적으로 찾아오는 재액이라는 점에서 시간형 요괴로 다룰 수 있다.",
+      "traits": ["주기", "부적", "삼재풀이"],
+      "habitat": ["집", "사람"],
+      "omens": { "time": [], "weather": [], "season": ["winter"] },
+      "sites": [],
+      "sources": [{ "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "삼재·삼재풀이" }],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": ["kr-jeung"],
+      "updated_at": "2026-08-16"
+    }
+  ]
+}

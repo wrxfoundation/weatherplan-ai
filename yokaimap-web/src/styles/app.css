@@ -1,0 +1,501 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 2px;
+}
+
+/* ─── 레이아웃 ─── */
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--sp-5) var(--sp-4) var(--sp-6);
+}
+.page-narrow {
+  max-width: 760px;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+.spacer {
+  flex: 1;
+}
+.muted {
+  color: var(--grey);
+}
+.small {
+  font-size: var(--text-sm);
+}
+
+/* ─── 상단바 ─── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: 0 var(--sp-4);
+  background: color-mix(in srgb, var(--bg-deep) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.brand .seal {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  background: var(--dancheong-red);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: 800;
+}
+.topnav {
+  display: flex;
+  gap: var(--sp-1);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.topnav::-webkit-scrollbar {
+  display: none;
+}
+.topnav a {
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-body);
+  color: var(--grey);
+  white-space: nowrap;
+}
+.topnav a:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+.topnav a.on {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+/* ─── 지도 ─── */
+.map-shell {
+  position: relative;
+  height: calc(100dvh - var(--header-h));
+}
+.map-canvas {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-deep);
+}
+.leaflet-container {
+  background: var(--bg-deep);
+  font-family: var(--font-sans);
+}
+.leaflet-control-attribution {
+  background: rgba(10, 9, 8, 0.72) !important;
+  color: var(--grey-dim) !important;
+  font-size: 10px !important;
+}
+.leaflet-control-attribution a {
+  color: var(--grey) !important;
+}
+
+.filterbar {
+  position: absolute;
+  top: var(--sp-3);
+  left: var(--sp-3);
+  right: var(--sp-3);
+  z-index: 500;
+  display: flex;
+  gap: var(--sp-2);
+  align-items: flex-start;
+  pointer-events: none;
+}
+.filterbar > * {
+  pointer-events: auto;
+}
+.panel {
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-2);
+}
+.filter-main {
+  padding: var(--sp-2) var(--sp-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+  max-width: 720px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--grey);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.chip:hover {
+  color: var(--text);
+  border-color: var(--grey-dim);
+}
+.chip.on {
+  color: var(--bg-deep);
+  background: var(--chip-color, var(--accent));
+  border-color: transparent;
+  font-weight: 600;
+}
+.chip .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--chip-color, var(--accent));
+}
+.chip.on .dot {
+  background: var(--bg-deep);
+}
+.search {
+  flex: 1;
+  min-width: 150px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-deep);
+  color: var(--text);
+  font-size: var(--text-body);
+}
+.search::placeholder {
+  color: var(--grey-dim);
+}
+
+/* 마커 */
+.yk-marker {
+  border-radius: 50%;
+  border: 2px solid var(--bg-deep);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18), 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.yk-marker.approx {
+  border-style: dashed;
+  opacity: 0.85;
+}
+/* 클러스터 — markercluster의 기본 테마 CSS(MarkerCluster.Default.css)는 쓰지 않고
+ * 여기서 직접 그린다(기본 테마의 초록/노랑 배색이 카테고리 색과 충돌하기 때문). */
+.marker-cluster {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(217, 79, 54, 0.28);
+  display: grid;
+  place-items: center;
+}
+.marker-cluster div {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(217, 79, 54, 0.92);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.marker-cluster div span {
+  line-height: 1;
+}
+.marker-cluster-large {
+  width: 42px;
+  height: 42px;
+}
+.marker-cluster-large div {
+  width: 34px;
+  height: 34px;
+  font-size: var(--text-body);
+}
+
+.hovercard {
+  min-width: 190px;
+  font-size: var(--text-sm);
+}
+.hovercard strong {
+  font-size: var(--text-body);
+}
+.leaflet-popup-content-wrapper {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.leaflet-popup-tip {
+  background: var(--surface);
+}
+.leaflet-popup-content {
+  margin: 10px 12px;
+}
+
+/* ─── 카드 ─── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--sp-3);
+}
+.card {
+  display: block;
+  padding: var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color 0.15s, transform 0.15s;
+}
+.card:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+}
+.card h3 {
+  margin: 0 0 4px;
+  font-size: var(--text-title);
+}
+.card p {
+  margin: 0;
+  color: var(--grey);
+  font-size: var(--text-body);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  border: 1px solid currentColor;
+  line-height: 1.7;
+}
+.badge.solid {
+  border-color: transparent;
+  color: var(--bg-deep);
+  font-weight: 700;
+}
+
+/* ─── 상세 ─── */
+.detail-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--line);
+}
+.detail-head h1 {
+  margin: 0;
+  font-size: var(--text-display);
+  letter-spacing: -0.02em;
+}
+.section {
+  margin-top: var(--sp-5);
+}
+.section > h2 {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--text-title);
+  color: var(--grey);
+  font-weight: 600;
+}
+.body-text {
+  font-size: var(--text-md);
+  line-height: 1.85;
+}
+.kv {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 6px var(--sp-3);
+  font-size: var(--text-body);
+}
+.kv dt {
+  color: var(--grey);
+}
+.kv dd {
+  margin: 0;
+}
+.notice {
+  padding: var(--sp-3);
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  font-size: var(--text-body);
+  color: var(--grey);
+}
+.notice.warn {
+  border-color: color-mix(in srgb, var(--warn) 45%, transparent);
+}
+.src-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: var(--text-body);
+  color: var(--grey);
+}
+.src-list li {
+  margin-bottom: 3px;
+}
+
+/* ─── 날씨 위젯 ─── */
+.omen {
+  padding: var(--sp-3);
+  min-width: 230px;
+  max-width: 280px;
+}
+.omen-score {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+}
+.omen-score b {
+  font-size: var(--text-h1);
+  color: var(--dancheong-gold);
+  font-variant-numeric: tabular-nums;
+}
+.omen-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+  margin: 6px 0 var(--sp-2);
+}
+.omen-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--dancheong-indigo), var(--dancheong-red));
+}
+.omen ul {
+  margin: var(--sp-2) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+}
+.omen li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: 3px 0;
+  border-top: 1px solid var(--line);
+}
+
+/* ─── 진단 ─── */
+.quiz-q {
+  padding: var(--sp-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.quiz-q h2 {
+  margin: 0 0 var(--sp-3);
+  font-size: var(--text-h2);
+}
+.quiz-opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px var(--sp-3);
+  margin-bottom: var(--sp-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  transition: background 0.12s, border-color 0.12s;
+}
+.quiz-opt:hover {
+  background: var(--surface-2);
+  border-color: var(--accent);
+}
+.progress {
+  height: 3px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.25s;
+}
+
+/* ─── 푸터 ─── */
+.footer {
+  border-top: 1px solid var(--line);
+  padding: var(--sp-5) var(--sp-4);
+  color: var(--grey-dim);
+  font-size: var(--text-sm);
+}
+.footer a {
+  color: var(--grey);
+}
+.footer a:hover {
+  color: var(--text);
+}
+
+.loader {
+  display: grid;
+  place-items: center;
+  min-height: 40dvh;
+  color: var(--grey);
+}
+
+@media (max-width: 720px) {
+  .filterbar {
+    flex-direction: column;
+  }
+  .omen {
+    max-width: none;
+  }
+  .detail-head h1 {
+    font-size: var(--text-h1);
+  }
+}
