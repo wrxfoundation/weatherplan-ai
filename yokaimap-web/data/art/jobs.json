@@ -1417,6 +1417,71 @@
         "result": "pending",
         "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
       }
+    },
+    {
+      "index": 107,
+      "kind": "plate",
+      "id": "kr-yeou-nui",
+      "target": "public/img/yokai/yeou-nui.png",
+      "aspect": "4:5",
+      "job_id": "7c95ae03-1b20-435e-87de-baf458085d9a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053532_7c95ae03-1b20-435e-87de-baf458085d9a.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 108,
+      "kind": "plate",
+      "id": "kr-yacha",
+      "target": "public/img/yokai/yacha.png",
+      "aspect": "4:5",
+      "job_id": "4bbeec77-7697-48d9-84a8-ac4c19bcabf6",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053532_4bbeec77-7697-48d9-84a8-ac4c19bcabf6.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 109,
+      "kind": "plate",
+      "id": "kr-yeomna",
+      "target": "public/img/yokai/yeomna.png",
+      "aspect": "4:5",
+      "job_id": "9cc78a04-6821-4bcb-8ab5-9e829d696826",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053532_9cc78a04-6821-4bcb-8ab5-9e829d696826.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 110,
+      "kind": "plate",
+      "id": "kr-elevator-goedam",
+      "target": "public/img/yokai/elevator-goedam.png",
+      "aspect": "4:5",
+      "job_id": "6781ae91-c293-4cef-adce-6f72762f1713",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053532_6781ae91-c293-4cef-adce-6f72762f1713.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 111,
+      "kind": "plate",
+      "id": "kr-geomeun-bonggo",
+      "target": "public/img/yokai/geomeun-bonggo.png",
+      "aspect": "4:5",
+      "job_id": "c432df46-0d76-4dbe-a9ae-3b529a96a8fd",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053532_c432df46-0d76-4dbe-a9ae-3b529a96a8fd.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
     }
   ],
   "approved_direction": "minhwa-v2 (2026-08-16 승인)"
