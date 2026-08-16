@@ -6,6 +6,7 @@ import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, PendingTag } fro
 import { ACCESS_LOG, CONSENTS, ELDER, GUARDIANS, INVITE, PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
+import { honorific } from "../../lib/tracks";
 
 // 마이 — 멤버십 · 우선 날씨 설정(REQ-01) · 케어 리포트
 // 옵션 서비스와 협력병원 찾기는 2026-08-12 요청으로 뺐다 (홈에서 진입).
@@ -19,6 +20,7 @@ export default function MyPage() {
   const [pdfRequested, setPdfRequested] = useState(false);
   const [invited, setInvited] = useState(false);
   const isPrimary = (state.demo.guardianRole || "primary") === "primary";
+  const honor = honorific(ob); // 고객 호칭 — 전부 "~~님" (2026-08-12 시트)
 
   const sharedReports = state.reports.filter((r) => r.shared);
 
@@ -108,8 +110,8 @@ export default function MyPage() {
             ))}
           </div>
           <p className="mt-2.5 text-[12px] leading-[1.7] text-muted">
-            어르신 화면의 &lsquo;지금 우리 동네&rsquo;에서 설정한 요소가 먼저 보입니다. 병력에
-            맞춰 보호자·컨시어지·어르신이 직접 설정합니다 — 건강정보로 자동 추천하지 않습니다.
+            {honor} 화면의 &lsquo;지금 우리 동네&rsquo;에서 설정한 요소가 먼저 보입니다. 병력에
+            맞춰 보호자·컨시어지·{honor}이 직접 설정합니다 — 건강정보로 자동 추천하지 않습니다.
           </p>
           {isPrimary ? (
             <GhostButton className="mt-3" onClick={() => setSettingOpen(true)}>
@@ -182,7 +184,7 @@ export default function MyPage() {
               k="결제권한"
               v={
                 !ob || ob.paymentMode === "limit"
-                  ? `${fmtWon(ob?.limitAmount ?? 50000)} 이하 어르신 직접 결제`
+                  ? `${fmtWon(ob?.limitAmount ?? 50000)} 이하 ${honor} 직접 결제`
                   : { both: "양쪽 모두 결제", guardianOnly: "보호자만 결제", elderOnly: "어르신만 결제" }[ob.paymentMode]
               }
             />
@@ -256,6 +258,7 @@ export default function MyPage() {
 
         {settingOpen && (
           <PrioritySheet
+            honor={honor}
             current={state.priority}
             rel={ob?.rel}
             onClose={() => setSettingOpen(false)}
@@ -287,7 +290,7 @@ function Row({ k, v }) {
 }
 
 // 우선 날씨 설정 시트 — 병력 프리셋 또는 직접 선택
-function PrioritySheet({ current, onClose, onSave }) {
+function PrioritySheet({ current, onClose, onSave, honor }) {
   const [factors, setFactors] = useState(current.factors);
 
   const toggle = (f) =>
@@ -299,7 +302,7 @@ function PrioritySheet({ current, onClose, onSave }) {
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
         <div className="text-[19px] font-black text-navy">우선 확인 날씨 설정</div>
         <p className="mt-1 text-[12px] leading-[1.7] text-muted">
-          어르신 병력에 맞는 날씨 요소를 먼저 보여줍니다. 설정 주체와 시각이 기록됩니다.
+          {honor} 병력에 맞는 날씨 요소를 먼저 보여줍니다. 설정 주체와 시각이 기록됩니다.
         </p>
 
         <div className="mt-4">

@@ -121,12 +121,12 @@ function CareReport() {
     <DocShell title="월간 케어 리포트" period="2026년 7월 · 김순자 (78) 가구" backHref="/family/my" backLabel="마이로" docType="care">
       {/* 상단 카피 — 실무자 지정 문구 (자택 거주 · lib/checkup.js REPORT_HEADLINE) */}
       <p className="mt-4 rounded-lg px-4 py-3 text-[15px] font-bold" style={{ background: "rgba(10,31,60,.05)", color: NAVY }}>
-        오늘 김순자 어르신의 자택은 안전하고 건강합니다.
+        오늘 김순자 님의 자택은 안전하고 건강합니다.
       </p>
       <div className="avoid-break">
         <SectionTitle>가구 정보</SectionTitle>
         <div className="grid grid-cols-2 gap-x-8">
-          <KV k="어르신" v="김순자 (78) · 강남구 대치동" />
+          <KV k="고객" v="김순자 님 (78) · 강남구 대치동" />
           <KV k="주 보호자" v="김민수 (아들)" />
           <KV k="담당 컨시어지" v="박지현 (주) · 서다인 (부)" />
           <KV k="멤버십" v="티어 1 · 가입 14개월" />
@@ -201,7 +201,7 @@ function VisitReport() {
       <div className="avoid-break">
         <SectionTitle>방문 개요</SectionTitle>
         <div className="grid grid-cols-2 gap-x-8">
-          <KV k="어르신" v="김순자 (78)" />
+          <KV k="고객" v="김순자 님 (78)" />
           <KV k="일정" v="13:50 – 16:10 순환기내과 외래" />
           <KV k="주 동행" v="박지현 (간호사 출신 · 14년)" />
           <KV k="부 동행" v="서다인 (차량 · 접수 · 수납)" />

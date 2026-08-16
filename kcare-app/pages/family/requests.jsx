@@ -5,6 +5,7 @@ import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../../com
 import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY } from "../../lib/requests";
 import { fmtWon, PRICING } from "../../lib/config";
 import { useAppState, needsGuardianApproval } from "../../lib/state";
+import { honorific } from "../../lib/tracks";
 
 // 양방향 "해주세요" — REQ-03 (상태 8종 · 첨부 6종) + REQ-07 (결제 한도 승인)
 // 보호자 화면: 내 요청 생성 + 컨시어지 발신 요청의 결제 승인.
@@ -200,6 +201,7 @@ const STEP_ORDER = ["requested", "confirmed", "awaitingPayment", "inProgress", "
 const STEP_LABELS = ["접수", "확정", "결제", "진행", "완료"];
 
 function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
+  const honor = honorific(onboarding); // 고객 호칭 — 전부 "~~님" (2026-08-12 시트)
   const [notified, setNotified] = useState(false); // 부 보호자 → 주 보호자 승인 알림
   const st = STATUS[req.status];
   const needApproval = needsGuardianApproval(onboarding, req.amount);
@@ -221,7 +223,7 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
             {
               {
                 fromConcierge: "컨시어지 → 보호자",
-                fromElder: "어르신 → 보호자",
+                fromElder: `${honor} → 보호자`,
                 fromGuardian: "보호자 → 컨시어지",
               }[req.dir]
             }
@@ -316,7 +318,7 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
                 ) : (
                   <>
                     결제 금액 <b className="font-num">{fmtWon(req.amount)}</b> — 설정 한도
-                    이내로 어르신 직접 결제도 가능합니다. 지금 승인하면 바로 진행됩니다.
+                    이내로 {honor} 직접 결제도 가능합니다. 지금 승인하면 바로 진행됩니다.
                   </>
                 )}
               </div>

@@ -5,6 +5,7 @@ import { Card, SectionLabel, PrimaryButton, GhostButton } from "../../components
 import Link from "next/link";
 import { EVENT_KINDS, MOU_HOSPITALS } from "../../lib/mock";
 import { useAppState } from "../../lib/state";
+import { honorific } from "../../lib/tracks";
 
 // 공유 캘린더 — REQ-02
 // 보호자 권한: 조회·등록·수정·결제. 컨시어지 등록 일정은 source로 구분 표시.
@@ -15,6 +16,7 @@ const DOW = ["일", "월", "화", "수", "목", "금", "토"];
 export default function CalendarPage() {
   const { state, dispatch } = useAppState();
   const isPrimary = (state.demo.guardianRole || "primary") === "primary";
+  const honor = honorific(state.onboarding); // 고객 호칭 — 전부 "~~님" (2026-08-12 시트)
   const today = new Date();
   const [ym, setYm] = useState({ y: today.getFullYear(), m: today.getMonth() });
   // 첫 진입 시 빈 날짜 대신 가장 가까운 일정이 있는 날을 보여준다 (홈 "다음 일정" 동선)
@@ -276,7 +278,7 @@ export default function CalendarPage() {
             ))}
           </div>
           <p className="mt-3 border-t border-navy/10 pt-2.5 text-[12px] leading-[1.7] text-muted">
-            컨시어지가 병원에서 다음 예약을 등록하면 이 캘린더에 즉시 공유됩니다. 어르신
+            컨시어지가 병원에서 다음 예약을 등록하면 이 캘린더에 즉시 공유됩니다. {honor}
             화면에는 같은 일정이 큰 글씨로 표시됩니다.
           </p>
         </Card>
@@ -289,6 +291,7 @@ export default function CalendarPage() {
 
         {creating && (
           <CreateEventSheet
+            honor={honor}
             defaultDate={new Date(ym.y, ym.m, selected, 10, 0)}
             onClose={() => setCreating(false)}
             onCreate={(ev) => {
@@ -314,6 +317,7 @@ export default function CalendarPage() {
 
         {editing && (
           <CreateEventSheet
+            honor={honor}
             initial={editing}
             defaultDate={new Date(editing.at)}
             onClose={() => setEditing(null)}
@@ -335,7 +339,7 @@ export default function CalendarPage() {
   );
 }
 
-function CreateEventSheet({ defaultDate, initial, onClose, onCreate }) {
+function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
   const [kind, setKind] = useState(initial?.kind || "family");
   const [title, setTitle] = useState(initial?.title || "");
   // 일정은 두 가지다 (2026-08-12 대표 피드백): 가족끼리 쓰는 일정관리와
@@ -358,7 +362,7 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate }) {
         </div>
         <p className="mt-1 text-[12px] leading-[1.6] text-muted">
           {initial
-            ? "수정 내용은 어르신·컨시어지 캘린더에 즉시 반영됩니다."
+            ? `수정 내용은 ${honor}·컨시어지 캘린더에 즉시 반영됩니다.`
             : needsApproval
             ? "관제가 팀 배정과 배차를 검토한 뒤 승인하면 모든 화면의 캘린더에 올라갑니다."
             : "가족끼리 보는 일정입니다 — 승인 없이 바로 등록됩니다."}
