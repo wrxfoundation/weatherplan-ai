@@ -1053,6 +1053,71 @@
         "result": "pending",
         "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
       }
+    },
+    {
+      "index": 79,
+      "kind": "plate",
+      "id": "kr-sinjikki",
+      "target": "public/img/yokai/sinjikki.png",
+      "aspect": "4:5",
+      "job_id": "46661dba-fedb-4b2c-af89-bbf22a572b81",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052854_46661dba-fedb-4b2c-af89-bbf22a572b81.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 80,
+      "kind": "plate",
+      "id": "kr-subu",
+      "target": "public/img/yokai/subu.png",
+      "aspect": "4:5",
+      "job_id": "9378b62b-ceda-49ed-8c4d-8fef05b0c1c4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052854_9378b62b-ceda-49ed-8c4d-8fef05b0c1c4.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 81,
+      "kind": "plate",
+      "id": "kr-cheonjiwang",
+      "target": "public/img/yokai/cheonjiwang.png",
+      "aspect": "4:5",
+      "job_id": "0836b4ca-cc0a-4ced-bea3-bc4c54da8cc9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052854_0836b4ca-cc0a-4ced-bea3-bc4c54da8cc9.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 82,
+      "kind": "plate",
+      "id": "kr-gameunjang",
+      "target": "public/img/yokai/gameunjang.png",
+      "aspect": "4:5",
+      "job_id": "517775bd-6514-49d8-827d-844fbbd6e695",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052854_517775bd-6514-49d8-827d-844fbbd6e695.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 83,
+      "kind": "plate",
+      "id": "kr-gu-samseung-halmang",
+      "target": "public/img/yokai/gu-samseung-halmang.png",
+      "aspect": "4:5",
+      "job_id": "1f8683a6-40ec-455e-adee-0bd7f32a00e2",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052854_1f8683a6-40ec-455e-adee-0bd7f32a00e2.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
     }
   ],
   "approved_direction": "minhwa-v2 (2026-08-16 승인)"
