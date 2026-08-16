@@ -238,7 +238,7 @@ h3 {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url('/img/hero/night-pass.png');
+  background-image: url('/img/hero/night-pass.webp');
   background-size: cover;
   background-position: center 38%;
   opacity: 0.5;

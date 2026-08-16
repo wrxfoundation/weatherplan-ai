@@ -6,7 +6,7 @@
  *
  * 검증을 통과하지 못하면 빌드가 실패한다 — 출처 없는 레코드가 배포되는 경로를 원천 차단.
  */
-import { writeFileSync, mkdirSync, readFileSync } from 'node:fs'
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { ROOT, runValidation } from './validate.mjs'
 
@@ -35,18 +35,26 @@ const regions = JSON.parse(readFileSync(join(ROOT, 'data/regions.json'), 'utf8')
 const jobs = JSON.parse(readFileSync(join(ROOT, 'data/art/jobs.json'), 'utf8'))
 const artById = new Map(jobs.items.filter((i) => i.kind === 'plate').map((i) => [i.id, i]))
 
+const missingArt = []
+
 function artFor(entry) {
   const seed = entry.art ?? {}
   const job = artById.get(entry.id)
   if (!job) return { ...ART_DEFAULT, ...seed, status: 'pending', file: null }
   const passed = job.review?.result === 'pass'
+  // 파일이 실제로 리포에 있어야 경로를 낸다. 도상 반입은 별도 단계(GitHub Actions)라
+  // 검수를 통과했어도 아직 안 들어와 있을 수 있고, 그때 경로를 내면 깨진 이미지가 배포된다.
+  const onDisk = existsSync(join(ROOT, job.target))
+  if (passed && !onDisk) missingArt.push(entry.id)
   return {
     ...ART_DEFAULT,
     ...seed,
     direction: jobs.direction ?? seed.direction ?? ART_DEFAULT.direction,
-    // 검수 전에는 generated — 앱은 final만 그리고 나머지는 인장으로 떨어진다.
+    // 검수 전에는 generated — 앱은 file이 있는 것만 그리고 나머지는 인장으로 떨어진다.
     status: passed ? 'final' : 'generated',
-    file: passed ? `/img/yokai/${entry.id.replace(/^kr-/, '')}.png` : null,
+    // 경로는 매니페스트의 target에서 그대로 끌어온다 — 여기서 확장자를 다시 조립하면
+    // fetch-art가 쓰는 경로와 어긋나서, 있는 파일을 못 찾는 사고가 난다.
+    file: passed && onDisk ? '/' + job.target.replace(/^public\//, '') : null,
     job_id: job.job_id,
   }
 }
@@ -97,3 +105,18 @@ writeFileSync(join(ROOT, 'public/data/yokai.min.json'), JSON.stringify(bundle))
 console.log(`✅ 빌드 완료 — ${normalized.length}체 / 전승지 ${siteCount}곳 / 시도 커버리지 ${stats.sidoCovered}/17`)
 console.log(`   카테고리: ${Object.entries(byCategory).map(([k, v]) => `${k}:${v}`).join(' ')}`)
 console.log(`   검증등급: ${Object.entries(byVerification).map(([k, v]) => `${k}:${v}`).join(' ')}`)
+
+const artStat = normalized.reduce((a, e) => ({ ...a, [e.art.status]: (a[e.art.status] ?? 0) + 1 }), {})
+console.log(
+  `   도상: ${Object.entries(artStat).map(([k, v]) => `${k}:${v}`).join(' ')}` +
+    ` · 파일 반입 ${normalized.filter((e) => e.art.file).length}/${normalized.length}`,
+)
+if (missingArt.length) {
+  // 검수는 통과했는데 파일이 없다 = 반입이 안 끝났다. 배포는 인장 폴백으로 정상 동작하므로
+  // 빌드를 세우지는 않지만, 조용히 넘어가면 "왜 그림이 안 나오지"로 시간을 버린다.
+  console.warn(
+    `⚠️  검수 통과했으나 파일이 없는 도상 ${missingArt.length}건 — 인장 폴백으로 표시됩니다.\n` +
+      `   반입: Actions 탭 → yokai-art 실행 (또는 CDN 접근 가능한 곳에서 node scripts/fetch-art.mjs)\n` +
+      `   ${missingArt.slice(0, 8).join(' ')}${missingArt.length > 8 ? ` 외 ${missingArt.length - 8}건` : ''}`,
+  )
+}
