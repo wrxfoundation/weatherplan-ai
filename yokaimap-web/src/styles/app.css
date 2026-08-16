@@ -296,6 +296,32 @@ h3 {
 .topnav::-webkit-scrollbar {
   display: none;
 }
+
+/* 화면 밝기 전환 — 44px 터치 타깃(iOS 권장 최소)을 지킨다 */
+.theme-toggle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text-2);
+  cursor: pointer;
+}
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--seal);
+  outline-offset: 2px;
+}
+.topnav::-webkit-scrollbar {
+  display: none;
+}
 .topnav a {
   display: inline-flex;
   align-items: center;
@@ -404,6 +430,9 @@ h3 {
 
 /* ── 입력 ── */
 .input {
+  /* flex 항목의 min-width 기본값은 auto라 input의 min-content(기본 size≈20자, 약 300px)
+     아래로 줄지 않는다. 좁은 화면에서 검색창이 컨테이너를 뚫고 나가던 원인. */
+  min-width: 0;
   padding: 9px 12px;
   border-radius: var(--radius);
   border: 1px solid var(--line-strong);
@@ -490,7 +519,9 @@ label.field {
 .notice.warn {
   border-left-color: var(--gold);
 }
-.notice.seal {
+/* .seal은 30×30 고정 배지 컴포넌트다. 색상 수식어로 쓰면 notice 박스가 30px로 붕괴한다
+   (실제로 홈·비즈니스·지역 3곳에서 한 글자씩 줄바꿈되고 있었다). 수식어는 .accent를 쓴다. */
+.notice.accent {
   border-left-color: var(--seal);
 }
 
@@ -1007,5 +1038,71 @@ label.field {
   }
   .pager {
     flex-direction: column;
+  }
+}
+
+/* ── 모바일 ──
+   상단바가 한 줄일 때 flex 항목들이 내용보다 작게 눌린다. 실제로 .topnav가 81px로
+   찌그러져 493px짜리 메뉴를 그 안에서 스크롤하게 하고, 통계 텍스트는 34px 폭에
+   90px 높이로 쌓여 58px 헤더를 뚫고 나갔다. 좁은 화면에서는 두 줄로 나눈다. */
+@media (max-width: 720px) {
+  :root {
+    /* 두 줄 실측: 터치 타깃 44px(토글) + gap 4 + 메뉴 44 = 92. 상하 여백 2px씩 더해 96.
+       지도 전체높이가 이 값으로 계산되므로(calc(100dvh - var(--header-h)))
+       실제 높이와 어긋나면 지도가 넘치거나 잘린다. */
+    --header-h: 96px;
+  }
+  .topbar {
+    height: var(--header-h);
+    flex-wrap: wrap;
+    align-content: center;
+    gap: var(--sp-1) var(--sp-3);
+    padding: 0 var(--sp-3);
+  }
+  .brand {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  /* 데이터 규모는 신뢰 신호지만 내비게이션이 아니다. 홈 통계와 푸터에 그대로 있으므로
+     좁은 화면에서는 접는다 — 눌려서 세로로 쌓이느니 안 보이는 편이 낫다. */
+  .topbar-stat {
+    display: none;
+  }
+  .topbar .spacer {
+    display: none;
+  }
+  .topnav {
+    order: 3;
+    flex: 1 0 100%;
+    /* 스크롤 영역을 화면 끝까지 넓혀 잘린 항목이 "더 있다"고 보이게 한다 */
+    margin: 0 calc(-1 * var(--sp-3));
+    padding: 0 var(--sp-3);
+    scroll-padding-inline: var(--sp-3);
+    overscroll-behavior-x: contain;
+  }
+  .page {
+    padding: var(--sp-5) var(--sp-3) var(--sp-6);
+  }
+  .section {
+    margin-top: var(--sp-5);
+  }
+  /* .card-grid·.trust-row·.tier-grid는 auto-fit minmax라 저절로 1단이 된다 — 건드리지 않는다 */
+}
+
+/* 터치 입력에서는 폭이 아니라 포인터 정밀도가 기준이다.
+   칩·버튼이 31px여서 iOS 권장 최소(44px)에 못 미쳤다. */
+@media (pointer: coarse) {
+  .chip,
+  .btn,
+  .topnav a {
+    min-height: 44px;
+  }
+  .theme-toggle {
+    width: 44px;
+    height: 44px;
+  }
+  .cat-row,
+  .quiz-opt {
+    min-height: 44px;
   }
 }

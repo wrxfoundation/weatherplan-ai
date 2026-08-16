@@ -185,7 +185,7 @@ export default function BusinessPage() {
         </div>
 
         {state.status === 'sent' ? (
-          <div className="notice seal">
+          <div className="notice accent">
             문의가 접수되었습니다. 영업일 기준 2~3일 안에 회신드리겠습니다.
           </div>
         ) : (

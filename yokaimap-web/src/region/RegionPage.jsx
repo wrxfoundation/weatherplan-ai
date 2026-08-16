@@ -83,7 +83,7 @@ export default function RegionPage() {
 
       {/* 지역 페이지는 담당 공무원·기관 유입 경로 — B2B 리드를 여기서 잡는다(MONETIZATION.md §2) */}
       <section className="section">
-        <div className="notice seal">
+        <div className="notice accent">
           <strong>{region.full} 관련 기관이신가요?</strong> 권역 요괴 콘텐츠 팩, 스탬프 투어 코스 설계, 안내판·리플릿
           원고를 근거표와 함께 납품합니다. <Link to="/business">협업 안내 보기 →</Link>
         </div>

@@ -3,7 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#12100f" />
+    <meta name="theme-color" content="#f4efe3" />
+    <!--
+      첫 페인트 전에 표면을 확정한다. React가 붙은 뒤 바꾸면 어두운 화면을 쓰는 사람에게
+      흰 화면이 한 번 번쩍인다(FOUC). 스토리지 키와 판정 규칙은 src/theme.js와 같아야 하며,
+      한쪽만 바꾸면 깜빡임으로 드러난다. 인라인이라 import를 쓸 수 없어 생기는 중복이다.
+    -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('yokaimap:theme')
+          if (t !== 'light' && t !== 'dark' && t !== 'system') t = 'system'
+          var night =
+            location.pathname === '/map' ||
+            t === 'dark' ||
+            (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          if (night) document.documentElement.dataset.surface = 'night'
+          var m = document.querySelector('meta[name="theme-color"]')
+          if (m) m.setAttribute('content', night ? '#100e0c' : '#f4efe3')
+        } catch (e) {
+          /* 스토리지 차단 환경에서도 앱은 떠야 한다 — 기본(밝은 화면)으로 둔다 */
+        }
+      })()
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>한국요괴지도 — 전국 요괴·신격 전승지 지도</title>
     <!-- 아래 메타는 scripts/postbuild.mjs가 라우트별로 치환한다 — 반드시 한 줄로 유지할 것(정규식 치환) -->

@@ -180,7 +180,7 @@ export default function HomePage() {
         </section>
 
         <section className="section">
-          <div className="notice seal">
+          <div className="notice accent">
             <strong>지자체·기관·스튜디오와 협업합니다.</strong> 권역 요괴 콘텐츠 팩, 스탬프 투어 코스, 데이터
             라이선스·API, 웹툰·게임 원안 자문. 조달 심사에서 요구하는 근거(출처·검증등급·좌표 정밀도)를 레코드 단위로
             제시할 수 있습니다. <Link to="/business">협업 안내 보기 →</Link>

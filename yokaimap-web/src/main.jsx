@@ -1,6 +1,7 @@
-import React, { Suspense, lazy, useEffect } from 'react'
+import React, { Suspense, lazy, useEffect, useState, createContext, useContext, useCallback } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { readTheme, writeTheme, resolveSurface, applySurface } from './theme.js'
 import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css'
 import '@fontsource/nanum-myeongjo/400.css'
 import '@fontsource/nanum-myeongjo/700.css'
@@ -20,18 +21,37 @@ const QuizPage = lazy(() => import('./quiz/QuizPage.jsx'))
 const BusinessPage = lazy(() => import('./business/BusinessPage.jsx'))
 const AboutPage = lazy(() => import('./about/AboutPage.jsx'))
 
+/* 지도는 어두운 타일 위에 UI가 얹히므로 테마와 무관하게 항상 밤 서피스다. */
 const NIGHT_ROUTES = new Set(['/map'])
 
-/** 지도는 밤(어두운) 서피스, 나머지는 한지(밝은) 서피스 — tokens.css의 data-surface로 전환 */
+export const ThemeContext = createContext({ theme: 'system', setTheme: () => {} })
+export const useTheme = () => useContext(ThemeContext)
+
+/** 사용자 테마 × 라우트 → data-surface. 표면 계산은 theme.js 한 곳에서만 한다. */
 function useSurface(pathname) {
-  const night = NIGHT_ROUTES.has(pathname)
+  const [theme, setThemeState] = useState(readTheme)
+  const routeNight = NIGHT_ROUTES.has(pathname)
+  const surface = resolveSurface(theme, routeNight)
+
   useEffect(() => {
-    const root = document.documentElement
-    if (night) root.dataset.surface = 'night'
-    else delete root.dataset.surface
-    document.head.querySelector('meta[name="theme-color"]')?.setAttribute('content', night ? '#100e0c' : '#f4efe3')
-  }, [night])
-  return night
+    applySurface(surface)
+  }, [surface])
+
+  // 시스템 테마를 따르는 동안에는 OS 설정 변경에 즉시 반응해야 한다.
+  useEffect(() => {
+    if (theme !== 'system' || typeof matchMedia !== 'function') return
+    const mq = matchMedia('(prefers-color-scheme: dark)')
+    const onChange = () => applySurface(resolveSurface('system', routeNight))
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [theme, routeNight])
+
+  const setTheme = useCallback((next) => {
+    writeTheme(next)
+    setThemeState(next)
+  }, [])
+
+  return { night: surface === 'night', routeNight, theme, setTheme }
 }
 
 function ScrollToTop() {
@@ -46,9 +66,9 @@ const Loader = () => <div className="loader">불러오는 중…</div>
 
 function App() {
   const { pathname } = useLocation()
-  const night = useSurface(pathname)
+  const { routeNight, theme, setTheme } = useSurface(pathname)
   return (
-    <>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
       <TopBar />
       <ScrollToTop />
       <Suspense fallback={<Loader />}>
@@ -65,8 +85,9 @@ function App() {
           <Route path="*" element={<DogamPage />} />
         </Routes>
       </Suspense>
-      {!night && <SiteFooter />}
-    </>
+      {/* 지도는 전체화면 캔버스라 푸터를 붙이지 않는다. 다크 테마에서는 붙인다. */}
+      {!routeNight && <SiteFooter />}
+    </ThemeContext.Provider>
   )
 }
 
