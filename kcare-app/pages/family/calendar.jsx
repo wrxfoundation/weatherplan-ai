@@ -86,11 +86,13 @@ export default function CalendarPage() {
           </Card>
         )}
 
-        {/* 제휴 병원 진입점 — 예약하러 온 동선에서 병원부터 찾는다 */}
+        {/* 제휴 병원 진입점 — 예약하러 온 동선에서 병원부터 찾는다.
+            패스트트랙 문구는 2026-08-12 요청으로 삭제. 대신 이미 다니시던 병원을
+            등록하는 길을 같은 카드에 둔다 — 제휴 병원이 아니어도 동행은 간다. */}
         <Link href="/family/hospitals" className="block">
           <Card className="btn-press p-4">
             <div className="flex items-center justify-between">
-              <div className="text-[16px] font-bold text-navy">제휴 병원 찾기</div>
+              <div className="text-[16px] font-bold text-navy">제휴병원 예약 및 상담</div>
               <span className="text-[20px] text-muted/50">›</span>
             </div>
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -103,8 +105,9 @@ export default function CalendarPage() {
                 전체 보기
               </span>
             </div>
-            <p className="mt-2 text-[12px] text-muted">
-              MOU 병원 · 패스트트랙 · 동행 예약 요청까지 한 번에
+            <p className="mt-2 text-[12px] leading-[1.7] text-muted">
+              제휴 병원 예약·상담과 동행 요청 · 기존에 다니시던 병원 등록하기
+              {state.myHospitals.length > 0 && ` (등록 ${state.myHospitals.length}곳)`}
             </p>
           </Card>
         </Link>
@@ -221,11 +224,22 @@ export default function CalendarPage() {
                     <div className="mt-0.5 text-[12px] text-muted">
                       {EVENT_KINDS[e.kind].label} · {e.source}
                     </div>
+                    {/* 승인 상태 — 승인 전에는 확정된 일정처럼 보이면 안 된다 */}
+                    {e.approval === "pending" && (
+                      <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-[#FFF7E8] px-2 py-0.5 text-[11px] font-bold text-amber">
+                        관제 승인 대기 {e.escort ? "· 동행 필요" : "· 동행 불필요"}
+                      </div>
+                    )}
+                    {e.approval === "rejected" && (
+                      <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-bold text-danger">
+                        관제 반려 — 해주세요로 사유가 전달됩니다
+                      </div>
+                    )}
                     {e.note && (
                       <div className="mt-1 text-[13px] leading-[1.6] text-muted">{e.note}</div>
                     )}
                     {/* 병원 일정 — 외출 컨디션 · 동행 편성 상태 (날씨 × 배차 연동) */}
-                    {e.kind === "hospital" && (
+                    {e.kind === "hospital" && !e.approval && (
                       <div className="mt-1.5 flex flex-wrap gap-1.5">
                         <span className="rounded-full border border-amber/30 bg-[#FFF7E8] px-2 py-0.5 text-[11px] font-bold text-amber">
                           외출지수 52 주의 · 차량 권장
@@ -267,7 +281,11 @@ export default function CalendarPage() {
           </p>
         </Card>
 
-        <PrimaryButton onClick={() => setCreating(true)}>일정 등록 (보호자)</PrimaryButton>
+        <PrimaryButton onClick={() => setCreating(true)}>일정 등록 요청</PrimaryButton>
+        <p className="-mt-1 px-1 text-[12px] leading-[1.7] text-muted">
+          가족끼리 보는 일정은 바로 등록되고, K-CARE 방문·동행이 필요한 일정은 관제 승인을
+          거쳐 캘린더에 올라갑니다.
+        </p>
 
         {creating && (
           <CreateEventSheet
@@ -275,6 +293,17 @@ export default function CalendarPage() {
             onClose={() => setCreating(false)}
             onCreate={(ev) => {
               dispatch({ type: "addEvent", payload: ev });
+              dispatch({
+                type: "pushEvent",
+                payload:
+                  ev.approval === "pending"
+                    ? {
+                        kind: "일정",
+                        text: `보호자 일정등록 요청 — ${ev.title}${ev.escort ? " · 동행 필요" : " · 동행 불필요"} · 관제 검토 대기`,
+                        color: "#B08D57",
+                      }
+                    : { kind: "일정", text: `가족 일정 등록 — ${ev.title}`, color: "#8FA9CC" },
+              });
               const d = new Date(ev.at);
               setYm({ y: d.getFullYear(), m: d.getMonth() });
               setSelected(d.getDate());
@@ -309,21 +338,87 @@ export default function CalendarPage() {
 function CreateEventSheet({ defaultDate, initial, onClose, onCreate }) {
   const [kind, setKind] = useState(initial?.kind || "family");
   const [title, setTitle] = useState(initial?.title || "");
+  // 일정은 두 가지다 (2026-08-12 대표 피드백): 가족끼리 쓰는 일정관리와
+  // K-CARE 가 사람을 보내야 하는 일정. 후자만 관제 승인을 거친다.
+  const [mode, setMode] = useState(initial?.approval ? "kcare" : "family");
+  // 동행 필요 유무 — 컨시어지가 필요하면 등록요청, 가족 행사면 그냥 등록 (시트 예약 2번)
+  const [escort, setEscort] = useState(initial?.escort ?? true);
   const [dt, setDt] = useState(() => {
     const d = new Date(defaultDate.getTime() - defaultDate.getTimezoneOffset() * 60000);
     return d.toISOString().slice(0, 16);
   });
+  const needsApproval = mode === "kcare";
 
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(8,23,45,.45)]">
-      <div className="w-full max-w-[430px] rounded-t-3xl bg-white p-6 pb-8">
+      <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-3xl bg-white p-6 pb-8">
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
-        <div className="text-[19px] font-black text-navy">{initial ? "일정 수정" : "일정 등록"}</div>
-        <p className="mt-1 text-[12px] text-muted">
+        <div className="text-[19px] font-black text-navy">
+          {initial ? "일정 수정" : needsApproval ? "일정 등록 요청" : "일정 등록"}
+        </div>
+        <p className="mt-1 text-[12px] leading-[1.6] text-muted">
           {initial
             ? "수정 내용은 어르신·컨시어지 캘린더에 즉시 반영됩니다."
-            : "등록한 일정은 어르신·컨시어지 캘린더에 즉시 공유됩니다."}
+            : needsApproval
+            ? "관제가 팀 배정과 배차를 검토한 뒤 승인하면 모든 화면의 캘린더에 올라갑니다."
+            : "가족끼리 보는 일정입니다 — 승인 없이 바로 등록됩니다."}
         </p>
+
+        {/* 어떤 일정인가 — 이걸 먼저 고르면 아래 폼의 의미가 달라진다 */}
+        <div className="mt-4">
+          <SectionLabel>일정 종류</SectionLabel>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {[
+              ["family", "가족 일정", "생일 · 방문 · 모임", false],
+              ["kcare", "K-CARE 일정", "방문 · 동행 · 병원", true],
+            ].map(([k, label, desc, approve]) => (
+              <button
+                key={k}
+                onClick={() => setMode(k)}
+                aria-pressed={mode === k}
+                className={`btn-press rounded-xl border p-3 text-left ${
+                  mode === k ? "border-gold bg-gold/10" : "border-navy/15"
+                }`}
+              >
+                <div className={`text-[15px] font-bold ${mode === k ? "text-navy" : "text-muted"}`}>
+                  {label}
+                </div>
+                <div className="mt-0.5 text-[11px] leading-[1.5] text-muted">{desc}</div>
+                <div className={`mt-1 text-[11px] font-bold ${approve ? "text-amber" : "text-green"}`}>
+                  {approve ? "관제 승인 필요" : "바로 등록"}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 동행 서비스 필요 유무 — K-CARE 일정일 때만 의미가 있다 */}
+        {needsApproval && (
+          <div className="mt-4">
+            <SectionLabel>동행 서비스</SectionLabel>
+            <div className="mt-2 flex gap-2">
+              {[
+                [true, "필요합니다", "컨시어지 배정 · 배차까지 검토합니다"],
+                [false, "필요 없습니다", "일정만 공유합니다"],
+              ].map(([v, label, desc]) => (
+                <button
+                  key={String(v)}
+                  onClick={() => setEscort(v)}
+                  aria-pressed={escort === v}
+                  className={`btn-press flex-1 rounded-xl border p-3 text-left ${
+                    escort === v ? "border-navy bg-navy/[.05]" : "border-navy/15"
+                  }`}
+                >
+                  <div className={`text-[14px] font-bold ${escort === v ? "text-navy" : "text-muted"}`}>
+                    {label}
+                  </div>
+                  <div className="mt-0.5 text-[11px] leading-[1.5] text-muted">{desc}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="mt-4">
           <SectionLabel>종류</SectionLabel>
           <div className="mt-2 flex flex-wrap gap-1.5">
@@ -371,12 +466,14 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate }) {
                 kind,
                 title: title.trim(),
                 at: new Date(dt).getTime(),
-                source: "보호자 등록",
-                note: "",
+                source: needsApproval ? "보호자 요청" : "보호자 등록",
+                note: needsApproval ? (escort ? "동행 필요" : "동행 불필요") : "",
+                // approval 이 있는 일정만 관제 승인 큐에 뜬다
+                ...(needsApproval ? { approval: "pending", escort } : {}),
               })
             }
           >
-            {initial ? "저장" : "등록"}
+            {initial ? "저장" : needsApproval ? "등록 요청" : "등록"}
           </PrimaryButton>
         </div>
       </div>

@@ -887,6 +887,10 @@ export default function DispatchConsole() {
             <VisitFlow role="ops" />
           </section>
 
+          {/* ── 보호자 일정등록 요청 승인 (2026-08-12 보호자화면 시트 예약 1번) ──
+              보호자가 K-CARE 일정을 '요청'하면 여기서만 캘린더로 올라간다. */}
+          <EventApprovals />
+
           {/* ── 액션 큐 — 지금 처리할 일. 우선순위순, 클릭 즉시 해당 화면 (고도화) ── */}
           <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
             <div className="flex items-baseline justify-between">
@@ -2933,6 +2937,89 @@ export default function DispatchConsole() {
         />
       </div>
     </>
+  );
+}
+
+// 보호자 일정등록 요청 승인 큐 — 2026-08-12 보호자화면 시트 예약 1번.
+//
+// 보호자가 K-CARE 일정을 등록하면 바로 캘린더에 뜨지 않는다. 관제가 팀 배정과
+// 배차가 가능한지 보고 승인해야 어르신·컨시어지 화면에 올라간다. 승인 없이
+// 캘린더에 뜨면 아무도 안 가는 일정이 확정된 것처럼 보인다 — 그게 이 큐의 이유다.
+function EventApprovals() {
+  const { state, dispatch } = useAppState();
+  const pending = state.events
+    .filter((e) => e.approval === "pending")
+    .sort((a, b) => a.at - b.at);
+
+  const decide = (e, approval) => {
+    dispatch({ type: "decideEvent", id: e.id, approval });
+    dispatch({
+      type: "pushEvent",
+      payload: {
+        kind: "일정",
+        text:
+          approval === "approved"
+            ? `일정등록 요청 승인 — ${e.title} · 어르신·보호자·컨시어지 캘린더 반영`
+            : `일정등록 요청 반려 — ${e.title} · 사유는 해주세요로 전달`,
+        color: approval === "approved" ? "#8FE3C0" : "#FF8A80",
+      },
+    });
+  };
+
+  if (pending.length === 0) return null;
+
+  return (
+    <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-[15px] font-bold tracking-[.02em] text-navy">보호자 일정등록 요청</h2>
+        <span className="font-num text-[12px] text-muted">{pending.length}건 · 승인 대기</span>
+      </div>
+      <p className="mt-1 text-[12px] leading-[1.7] text-muted">
+        승인해야 어르신 · 보호자 · 컨시어지 캘린더에 올라갑니다. 동행이 필요한 건은 팀 배정과
+        배차가 가능한지 먼저 확인하세요.
+      </p>
+      <div className="mt-3 space-y-2">
+        {pending.map((e) => (
+          <div
+            key={e.id}
+            className="flex flex-wrap items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3"
+          >
+            <span className="w-[92px] shrink-0 font-num text-[13px] font-bold text-navy">
+              {new Date(e.at).toLocaleString("ko-KR", {
+                month: "numeric",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })}
+            </span>
+            <div className="min-w-[160px] flex-1">
+              <div className="text-[15px] font-bold text-navy">{e.title}</div>
+              <div className="text-[12px] text-muted">
+                {e.source} ·{" "}
+                <span className={e.escort ? "font-bold text-amber" : ""}>
+                  {e.escort ? "동행 필요 — 배차 검토" : "동행 불필요 — 일정 공유만"}
+                </span>
+              </div>
+            </div>
+            <div className="flex shrink-0 gap-2">
+              <button
+                onClick={() => decide(e, "rejected")}
+                className="btn-press min-h-[40px] rounded-lg border border-navy/15 px-3.5 text-[13px] font-bold text-muted"
+              >
+                반려
+              </button>
+              <button
+                onClick={() => decide(e, "approved")}
+                className="btn-press btn-dark min-h-[40px] rounded-lg bg-navy px-4 text-[13px] font-bold text-white"
+              >
+                승인
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 

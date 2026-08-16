@@ -2,10 +2,11 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
-import { Card, SectionLabel, Badge, Avatar } from "../../components/ui";
+import { Card, SectionLabel, Badge, Avatar, PendingTag } from "../../components/ui";
 import Icon from "../../components/icons";
 import { AI_ASSISTANT_QA, CARE_TEAM, EVENT_KINDS, FEED_TONE, GUARDIANS, NEIGHBORHOOD_FEED, NPS_REASONS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
-import { trackOf, subjectLabel } from "../../lib/tracks";
+import { trackOf, subjectLabel, honorific } from "../../lib/tracks";
+import VoiceNote from "../../components/VoiceNote";
 
 import { useAppState } from "../../lib/state";
 
@@ -22,13 +23,13 @@ export default function FamilyHome() {
   const track = trackOf(ob?.track);
   const has = (b) => track.home.blocks.includes(b);
   const subj = subjectLabel(track, ob); // 화면에서 이용자를 부르는 말 — 트랙마다 다르다
+  const honor = honorific(ob); // 고객 호칭 — 전부 "~~님" 으로 통일 (2026-08-12 시트)
   const anomaly = state.demo.anomaly;
 
   const upcoming = [...state.events]
     .sort((a, b) => a.at - b.at)
     .filter((e) => e.at > Date.now())
     .slice(0, 3);
-  const [aiBooked, setAiBooked] = useState(false);
   const [askAi, setAskAi] = useState(null); // AI 케어 어시스턴트 — 선택한 질문
 
   // AI 어시스턴트 — /api/ai (기본 모델: Claude Sonnet, 외부 표기는 'AI').
@@ -83,6 +84,24 @@ export default function FamilyHome() {
             >
               확인했습니다
             </button>
+            {/* 긴급 화면에서도 목소리를 남긴다 — 도착 전에 닿는 것이 이 버튼의 이유 */}
+            <div className="mt-2 border-t border-white/25 pt-2.5">
+              <VoiceNote
+                to={honor}
+                tone="dark"
+                compact
+                onSend={(secs) => {
+                  dispatch({ type: "addVoice", payload: { from: "보호자", to: honor, secs, context: "긴급" } });
+                  dispatch({
+                    type: "pushEvent",
+                    payload: { kind: "음성", text: `보호자 긴급 안부 음성 ${secs}초 — 컨시어지 단말로 전달`, color: "#FF8A80" },
+                  });
+                }}
+              />
+              <p className="mt-1.5 text-[11px] leading-[1.6] text-white/70">
+                도착 전까지 급파 중인 컨시어지 단말로도 함께 재생됩니다.
+              </p>
+            </div>
           </div>
         )}
 
@@ -114,7 +133,7 @@ export default function FamilyHome() {
               새벽 3시 12분, 거실에서 5초간 급격한 움직임 후 정지
             </div>
             <p className="mt-1 text-[13px] leading-[1.7] text-[#5A4A22]">
-              낙상 의심 패턴입니다. 이후 심박 108bpm(평소 72), 오전 복약 미기록. 어르신은
+              낙상 의심 패턴입니다. 이후 심박 108bpm(평소 72), 오전 복약 미기록. {honor}은
               아직 SOS를 누르지 않았습니다.
             </p>
             <div className="mt-3 space-y-1.5">
@@ -215,6 +234,8 @@ export default function FamilyHome() {
           onDetractor={(score, reason) =>
             dispatch({ type: "opsPatch", patch: { npsDetractor: { score, reason } } })
           }
+          onReview={(score, text) => dispatch({ type: "addReview", payload: { by: "김민수", score, text } })}
+          reviews={state.reviews}
         />
 
         {/* 승인 대기 배지 — REQ-03/07 연결 */}
@@ -402,41 +423,12 @@ export default function FamilyHome() {
             ))}
           </div>
           <p className="mt-3 text-[12px] leading-[1.7] text-white/60">{CARE_TEAM.trust}</p>
-          <button
-            onClick={() => {
-              if (aiBooked) return;
-              setAiBooked(true);
-              const at = new Date();
-              at.setDate(at.getDate() + 24);
-              at.setHours(10, 0, 0, 0);
-              dispatch({
-                type: "addEvent",
-                payload: {
-                  id: `ev-${Date.now()}`,
-                  kind: "nextAppt",
-                  title: "순환기내과 정기 외래 · 서울아산병원",
-                  at: at.getTime(),
-                  source: "AI 컨시어지 접수",
-                  note: "AI 컨시어지 접수 완료 · 차량 동행",
-                },
-              });
-              dispatch({
-                type: "pushEvent",
-                payload: { kind: "예약", text: "AI 컨시어지 예약 접수 · 순환기내과 정기 외래", color: "#B08D57" },
-              });
-            }}
-            className={`btn-press btn-dark mt-3.5 w-full rounded-xl py-3.5 text-[16px] font-bold ${
-              aiBooked ? "bg-green text-white" : "bg-gold text-navy"
-            }`}
-          >
-            {aiBooked ? "✓ 예약 접수됨 · 다가오는 일정에서 확인" : "AI로 예약하기"}
-          </button>
-          {/* 제휴 병원 진입점 — 동행 예약 흐름과 같은 맥락 */}
+          {/* 제휴병원 예약 및 상담 — AI 예약 버튼과 패스트트랙 문구는 2026-08-12 요청으로 삭제 */}
           <Link
             href="/family/hospitals"
             className="btn-press mt-2 block w-full rounded-xl border border-white/25 bg-white/[.06] py-3 text-center text-[15px] font-bold text-white/85"
           >
-            제휴 병원 찾기 · 과목별 MOU · 패스트트랙
+            제휴병원 예약 및 상담
           </Link>
         </div>
 
@@ -548,11 +540,57 @@ export default function FamilyHome() {
                 </div>
               ))}
             </div>
-            <p className="mt-3.5 border-t border-navy/10 pt-3 text-[12px] leading-[1.7] text-muted">
-              연락 담당은 한 명으로 고정하고 결과는 세 분 모두에게 동시에 전달됩니다.
+            {/* 권한 가족 1명 · 등록 가족 전원 (2026-08-12 대표 피드백 3번).
+                등록과 권한을 한 줄로 구분해 둔다 — 결제·동의는 한 사람만 누른다. */}
+            <div className="mt-3.5 space-y-1.5 border-t border-navy/10 pt-3">
+              <div className="flex items-baseline gap-2 text-[12px]">
+                <span className="w-[62px] shrink-0 font-bold text-gold">권한 가족</span>
+                <span className="flex-1 leading-[1.7] text-muted">
+                  1명만 지정합니다 — 결제 승인 · 동의 갱신 · 일정 등록 요청
+                </span>
+              </div>
+              <div className="flex items-baseline gap-2 text-[12px]">
+                <span className="w-[62px] shrink-0 font-bold text-navy">등록 가족</span>
+                <span className="flex-1 leading-[1.7] text-muted">
+                  전원 등록합니다 — 리포트 열람 · 음성 남기기. 가입은 필수입니다
+                </span>
+              </div>
+            </div>
+            <p className="mt-2.5 text-[12px] leading-[1.7] text-muted">
+              결과는 등록된 가족 {GUARDIANS.length}분 모두에게 동시에 전달됩니다.
             </p>
           </Card>
         )}
+
+        {/* 안부 음성 남기기 — 첫 화면 아랫부분 (2026-08-12 시트 홈 1번) */}
+        <Card className="p-[18px]">
+          <div className="text-[17px] font-black text-navy">안부 음성 남기기</div>
+          <VoiceNote
+            to={honor}
+            onSend={(secs) => {
+              dispatch({ type: "addVoice", payload: { from: "보호자", to: honor, secs, context: "안부" } });
+              dispatch({
+                type: "pushEvent",
+                payload: { kind: "음성", text: `보호자 안부 음성 ${secs}초 — 어르신 화면 가족 탭으로 전달`, color: "#8FE3C0" },
+              });
+            }}
+          />
+          {state.voices.length > 0 && (
+            <div className="mt-3 space-y-1.5 border-t border-navy/[.08] pt-3">
+              {state.voices.slice(0, 3).map((v) => (
+                <div key={v.id} className="flex items-center gap-2 text-[12px]">
+                  <span className="font-num font-bold text-navy">
+                    {new Date(v.at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })}
+                  </span>
+                  <span className="flex-1 text-muted">
+                    {v.from} → {v.to} · {v.secs}초{v.context === "긴급" ? " · 긴급" : ""}
+                  </span>
+                  <span className="font-bold text-green">전달됨</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
 
         {/* 시연 컨트롤 — 데모 전용 */}
         <div className="pt-1 text-center">
@@ -585,10 +623,59 @@ export default function FamilyHome() {
 }
 
 // 동행 후 만족도 — NPS 루프: 0–10 선택 → 비추천(≤6)은 사유 + 24h 회복 안내
-function NpsCard({ onEvent, onDetractor }) {
+function NpsCard({ onEvent, onDetractor, onReview, reviews = [] }) {
   const [score, setScore] = useState(null);
   const [reason, setReason] = useState(null);
   const [done, setDone] = useState(false);
+  const [memo, setMemo] = useState("");
+  const [memoSent, setMemoSent] = useState(false);
+
+  // 동행 점수 아래 코멘트·후기 메모란 (2026-08-12 시트 홈 5번).
+  // 점수만으로는 무엇을 고쳐야 하는지 알 수 없다 — 문장이 남아야 컨시어지에게 전달된다.
+  const memoBox = (
+    <div className="mt-3.5 border-t border-navy/[.08] pt-3.5">
+      <SectionLabel>코멘트 · 후기</SectionLabel>
+      {memoSent ? (
+        <p className="mt-2 rounded-xl bg-green/10 px-3.5 py-3 text-[14px] font-bold text-green">
+          후기를 남겼습니다 — 담당 컨시어지와 관제에 함께 전달됩니다
+        </p>
+      ) : (
+        <>
+          <textarea
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
+            rows={3}
+            placeholder="예: 어머니가 박지현 선생님 오시는 날을 기다리십니다. 다음엔 무릎 이야기도 여쭤봐 주세요."
+            className="mt-2 w-full resize-none rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] leading-[1.7] outline-none focus:border-gold"
+          />
+          <button
+            onClick={() => {
+              setMemoSent(true);
+              onReview?.(score, memo.trim());
+              onEvent(`보호자 후기 등록 — ${memo.trim().slice(0, 24)}…`, "#C9A46B");
+            }}
+            disabled={!memo.trim()}
+            className="btn-press mt-2 w-full rounded-xl border border-navy/20 py-3 text-[15px] font-bold text-navy disabled:opacity-40"
+          >
+            후기 남기기
+          </button>
+        </>
+      )}
+      {reviews.length > 0 && (
+        <div className="mt-3 space-y-2 border-t border-navy/[.07] pt-3">
+          {reviews.slice(0, 3).map((r) => (
+            <div key={r.id}>
+              <div className="text-[12px] font-bold text-muted">
+                {r.by} · {new Date(r.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
+                {r.score != null && ` · ${r.score}점`}
+              </div>
+              <p className="mt-0.5 text-[14px] leading-[1.7] text-ink">{r.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 
   if (done)
     return (
@@ -605,6 +692,7 @@ function NpsCard({ onEvent, onDetractor }) {
             ? "주변에 비슷한 고민을 하는 가족이 있다면 마이 탭의 초대 링크로 소개해 주세요."
             : "의견은 서비스 개선에 반영됩니다."}
         </p>
+        {memoBox}
       </Card>
     );
 
@@ -673,6 +761,7 @@ function NpsCard({ onEvent, onDetractor }) {
           제출
         </button>
       )}
+      {memoBox}
     </Card>
   );
 }
@@ -685,6 +774,14 @@ function NeighborhoodFeed({ onApply }) {
       <div className="flex items-baseline justify-between">
         <div className="text-[17px] font-black text-navy">우리 동네 소식</div>
         <span className="text-[12px] text-muted">대치동 · 강남구</span>
+      </div>
+      {/* "자동 업데이트인가요?" (2026-08-12 대표 질문) — 지금 상태를 그대로 적는다.
+          자동 수집 연동은 아직 붙지 않았다. 되는 것처럼 쓰면 나중에 신뢰를 잃는다. */}
+      <div className="mt-2 flex items-center gap-1.5">
+        <PendingTag>자동 수집 연동 대기</PendingTag>
+        <span className="text-[11px] leading-[1.6] text-muted">
+          현재는 관제가 확인한 공고만 게시합니다
+        </span>
       </div>
       <div className="mt-3 space-y-3">
         {NEIGHBORHOOD_FEED.map((n) => (
@@ -720,6 +817,7 @@ function NeighborhoodFeed({ onApply }) {
       </div>
       <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
         행정안전부 재난문자 · 구청 복지 공고 기준 — 해당하는 것만 골라 알려드립니다.
+        자동 수집이 붙으면 게시까지 걸리는 시간이 사라집니다.
       </p>
     </Card>
   );

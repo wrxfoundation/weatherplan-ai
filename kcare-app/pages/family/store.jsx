@@ -6,6 +6,7 @@ import Icon from "../../components/icons";
 import { STORE_CATALOG, STORE_INDEX } from "../../lib/store";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
+import { honorific } from "../../lib/tracks";
 
 // 보호자 스토어 — 실무자 피드백 (2026-08-09) '쇼핑몰 제안' 시트 구조 그대로.
 // 썸네일 2열 그리드 (실무자 UI 샘플 반영): 카테고리 큰 버튼 → 하위분류 칩 →
@@ -25,6 +26,8 @@ export default function StorePage() {
   const [cat, setCat] = useState(safetyCart.length > 0 ? "safety" : "pharmacy");
   const [groupIdx, setGroupIdx] = useState(0);
   const [ordered, setOrdered] = useState(false);
+  const [tab, setTab] = useState("shop"); // shop | orders — 구매내역 조회 (2026-08-12 시트)
+  const orders = state.orders || [];
 
   const items = Object.keys(sel)
     .filter((id) => sel[id])
@@ -63,6 +66,25 @@ export default function StorePage() {
       type: "pushEvent",
       payload: { kind: "스토어", text: `보호자 주문 ${items.length}건 · ${fmtWon(total)}`, color: "#B08D57" },
     });
+    // 구매내역에도 같은 주문이 남는다 — 조회 탭이 별도 데이터를 보면 안 된다
+    dispatch({
+      type: "addOrder",
+      payload: {
+        by: "김민수",
+        channel: safetyCart.length > 0 ? "안전진단 자동 담기" : "보호자 스토어",
+        items: items.map((i) => ({ id: i.id, name: i.name, qty: 1, price: i.price })),
+        ship: items.reduce((s, i) => s + (i.ship || 0), 0),
+        status: "preparing",
+        receipt: null,
+        note: "",
+      },
+    });
+  };
+
+  const ORDER_STATUS = {
+    preparing: { label: "준비 중", fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
+    shipping: { label: "배송 중", fg: "#3B5C8A", bg: "rgba(59,92,138,.12)" },
+    delivered: { label: "전달 완료", fg: "#1E7A5A", bg: "rgba(30,122,90,.12)" },
   };
 
   return (
@@ -71,9 +93,32 @@ export default function StorePage() {
         <title>스토어 — K-CARE</title>
       </Head>
       <FamilyLayout title="스토어">
+        {/* 담기 / 구매내역 조회 (2026-08-12 시트 스토어 2번) */}
+        <div className="flex gap-1.5">
+          {[
+            ["shop", "물품 담기"],
+            ["orders", `구매내역 조회${orders.length ? ` (${orders.length})` : ""}`],
+          ].map(([k, label]) => (
+            <button
+              key={k}
+              onClick={() => setTab(k)}
+              aria-pressed={tab === k}
+              className={`btn-press min-h-[44px] flex-1 rounded-xl border text-[14px] font-bold ${
+                tab === k ? "border-navy bg-navy text-white" : "border-navy/15 bg-white/70 text-muted"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "orders" ? (
+          <OrderHistory orders={orders} status={ORDER_STATUS} />
+        ) : (
+          <>
         <p className="px-1 text-[13px] leading-[1.7] text-muted">
-          어르신 화면과 같은 카탈로그입니다. 어르신이 담은 물품은 결제권한 설정에 따라 승인
-          요청으로 도착하고, 보호자 주문은 바로 결제됩니다.
+          {honorific()} 화면과 같은 카탈로그입니다. {honorific()}이 담은 물품은 결제권한 설정에 따라
+          승인 요청으로 도착하고, 보호자 주문은 바로 결제됩니다.
         </p>
 
         {/* 안전진단 자동 담기 — 컨시어지 첫 방문 진단과 연동 (실무자 요청) */}
@@ -233,15 +278,76 @@ export default function StorePage() {
 
         {ordered ? (
           <Card className="border-green/30 bg-[#F1FAF6] p-4 text-[15px] font-bold text-green">
-            주문이 접수되었습니다 — 다음 배송일에 전달됩니다. 어르신 화면의 배송 안내도
-            갱신되었습니다.
+            주문이 접수되었습니다 — 다음 배송일에 전달됩니다. 구매내역 조회에서 진행 상태를 볼 수
+            있습니다.
           </Card>
         ) : (
           <PrimaryButton disabled={items.length === 0} onClick={order}>
             {items.length === 0 ? "물품을 선택해 주세요" : `바로 결제 (보호자) · ${fmtWon(total)}`}
           </PrimaryButton>
         )}
+          </>
+        )}
       </FamilyLayout>
+    </>
+  );
+}
+
+// 구매내역 조회 — 누가 · 어떤 경로로 · 무엇을 · 얼마에 샀는지.
+// 약국 물품은 구매대행이라 영수증 번호를 같이 보여준다 (우리가 판 게 아니다).
+function OrderHistory({ orders, status }) {
+  if (orders.length === 0)
+    return (
+      <Card className="p-[18px]">
+        <p className="text-[15px] leading-[1.7] text-muted">아직 구매내역이 없습니다.</p>
+      </Card>
+    );
+
+  return (
+    <>
+      {orders.map((o) => {
+        const goods = o.items.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
+        const st = status[o.status] || status.preparing;
+        return (
+          <Card key={o.id} className="p-[18px]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="font-num text-[13px] font-bold text-navy">
+                  {new Date(o.at).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}
+                </div>
+                <div className="mt-0.5 truncate text-[12px] text-muted">
+                  {o.by} · {o.channel}
+                </div>
+              </div>
+              <Badge fg={st.fg} bg={st.bg}>
+                {st.label}
+              </Badge>
+            </div>
+            <ul className="mt-3 space-y-1.5 border-t border-navy/[.08] pt-3">
+              {o.items.map((i) => (
+                <li key={i.id} className="flex items-baseline gap-2 text-[14px]">
+                  <span className="min-w-0 flex-1 truncate text-ink">{i.name}</span>
+                  <span className="font-num text-[12px] text-muted">×{i.qty || 1}</span>
+                  <span className="font-num font-bold text-navy">{fmtWon((i.price || 0) * (i.qty || 1))}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-2.5 flex items-baseline justify-between border-t border-navy/[.08] pt-2.5">
+              <span className="text-[12px] text-muted">물품 {fmtWon(goods)} + 배송 {fmtWon(o.ship || 0)}</span>
+              <span className="font-num text-[17px] font-bold text-navy">{fmtWon(goods + (o.ship || 0))}</span>
+            </div>
+            {o.receipt && (
+              <p className="mt-2 rounded-xl bg-navy/[.045] px-3 py-2 text-[12px] leading-[1.6] text-muted">
+                구매대행 영수증 — {o.receipt}
+              </p>
+            )}
+            {o.note && <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">{o.note}</p>}
+          </Card>
+        );
+      })}
+      <p className="px-1 text-[11px] leading-[1.7] text-muted">
+        약국 물품은 K-CARE가 판매하지 않습니다 — 약국에서 대신 구매하고 영수증을 남깁니다.
+      </p>
     </>
   );
 }

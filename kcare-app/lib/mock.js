@@ -144,6 +144,47 @@ export const ELDER_NOW = {
   ],
 };
 
+// 오늘 나는 — 2026-08-12 어르신화면 시트 '오늘' 2번.
+// 보호자 홈의 "오늘 어머니는"과 같은 내용을 어르신 화면에서는 1인칭으로 보여주되,
+// 어제와 비교할 수 있게 한다. 좋다/나쁘다로 판정하지 않고 어제 숫자를 나란히 둔다 —
+// 어르신 화면에서 '나빠졌다'는 판정은 불안만 남긴다 (06 §7).
+export const TODAY_ME = {
+  line: "어제보다 조금 더 걸으셨습니다.",
+  rows: [
+    { name: "걸음", today: "3,140", yesterday: "2,880", unit: "걸음", dir: "up" },
+    { name: "잠", today: "6.2", yesterday: "6.6", unit: "시간", dir: "down" },
+    { name: "약", today: "2", yesterday: "3", unit: "번 드심", dir: "down" },
+  ],
+  foot: "잰 것을 그대로 보여드립니다. 좋고 나쁨은 선생님이 보고 말씀드립니다.",
+};
+
+// 안심환경 팝업 — 2026-08-12 어르신화면 시트 '건강' 2번.
+// "날씨가 좋으니 환기해주세요" 같은 한 문장. 판단(에어컨을 켜라)이 아니라 권유다.
+// 에어컨을 켜고 가족에게 알리는 버튼은 같은 시트 대표 피드백으로 삭제했다.
+export const AMBIENT_TIPS = [
+  {
+    id: "air",
+    when: "지금",
+    title: "창문을 열어 두기 좋은 때입니다",
+    body: "바깥 미세먼지가 보통이고 바람이 붑니다. 30분만 열어 두셔도 공기가 바뀝니다.",
+    tone: "ok",
+  },
+  {
+    id: "heat",
+    when: "오후 1시~4시",
+    title: "가장 더운 시간입니다",
+    body: "이 시간엔 바깥일을 미루시고, 물을 자주 드세요.",
+    tone: "caution",
+  },
+  {
+    id: "night",
+    when: "밤",
+    title: "화장실 가실 때 불을 켜세요",
+    body: "밤에 어두운 채로 움직이시면 발을 헛디디기 쉽습니다.",
+    tone: "caution",
+  },
+];
+
 // 오늘 여쭤볼 것 — 출처 3종(elder|family|concierge)이 요점. 데이터 방화벽 원칙 (06 §3.3)
 export const ASK_DOCTOR = [
   { seq: 1, text: "어지러운 게 약 때문인지 여쭤보기", source: "elder", sourceLabel: "어르신이 말씀하신 것" },
@@ -254,11 +295,15 @@ export const STORE_ITEMS = [
 ];
 
 // MOU 병원 — 진료 과목마다 한 곳 이상 (회의 8)
+//
+// note 는 보호자 화면에 그대로 노출된다. 2026-08-12 요청으로 고객 화면에서
+// '패스트트랙' 표기를 뺐으므로 여기 문구도 우선 진료를 약속하지 않는 말로 바꿨다.
+// fast 플래그는 관제·경영 콘솔의 제휴 관리(협의 상태)용으로 그대로 둔다.
 export const MOU_HOSPITALS = [
-  { dept: "내과", name: "강남세브란스", note: "패스트트랙 · 예약 API 부분 연동", fast: true },
-  { dept: "정형외과", name: "분당서울대병원", note: "재진 패스트트랙 대기 2일", fast: true },
+  { dept: "내과", name: "강남세브란스", note: "예약 API 부분 연동", fast: true },
+  { dept: "정형외과", name: "분당서울대병원", note: "재진 예약 대기 2일", fast: true },
   { dept: "재활의학과", name: "고대구로병원", note: "휠체어 동선 확인 완료", fast: false },
-  { dept: "순환기내과", name: "서울아산병원", note: "패스트트랙 슬롯 운영", fast: true },
+  { dept: "순환기내과", name: "서울아산병원", note: "예약 슬롯 협의 완료", fast: true },
   { dept: "안과", name: "삼성서울병원", note: "백내장 수술 연계", fast: false },
   { dept: "치과", name: "강남 미소치과의원", note: "방문 진료 협의 중", fast: false },
 ];
@@ -291,11 +336,15 @@ export const OPTION_SERVICES = [
 ];
 
 // 실시간 건강 요약 5지표 — 지표별 상태 라벨 병행 (색만으로 상태 전달 금지)
+// 2026-08-12 대표 피드백 — 혈압을 빼고 혈중 산소와 스트레스를 넣었다.
+// 혈압은 워치가 재는 값이 아니라 별도 측정이 필요해 "실시간 요약"에 두면
+// 오해를 부른다 (방문 때 측정해 21항목에 기록한다).
 export const VITALS = [
   { name: "심박수", value: "72", unit: "bpm", status: "정상 범위", level: "ok" },
+  { name: "혈중 산소", value: "97", unit: "%", status: "정상 범위", level: "ok" },
   { name: "걸음 수", value: "3,140", unit: "걸음", status: "목표의 62%", level: "neutral" },
   { name: "수면", value: "6.2", unit: "시간", status: "3일 평균 하락", level: "caution" },
-  { name: "혈압", value: "128/82", unit: "mmHg", status: "경계", level: "caution" },
+  { name: "스트레스", value: "58", unit: "", status: "다소 높음 · 주중 평균 44", level: "caution" },
   { name: "복약 준수율", value: "86", unit: "%", status: "미이행 2회 · 저녁 대기", level: "caution" },
 ];
 

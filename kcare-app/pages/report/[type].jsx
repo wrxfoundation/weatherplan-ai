@@ -134,7 +134,7 @@ function CareReport() {
       </div>
 
       <div className="avoid-break">
-        <SectionTitle>이번 주 핵심 지표</SectionTitle>
+        <SectionTitle>이번 달 핵심 지표</SectionTitle>
         <div className="grid grid-cols-3 gap-3">
           {WEEKLY.map((w) => (
             <div key={w.name} className="rounded-lg border border-navy/15 px-3 py-2.5">

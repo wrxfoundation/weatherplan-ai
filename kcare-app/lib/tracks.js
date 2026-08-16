@@ -171,6 +171,13 @@ export const trackOf = (id) => TRACKS.find((t) => t.id === id) || TRACKS[0];
 
 // 화면에서 이용자를 뭐라고 부를지. 정기 케어는 보호자가 보는 화면이라 "어머니"
 // 같은 호칭이 맞지만, 본인이 신청한 병원 동행에서 "어머니"가 뜨면 그건 오류다.
+// 고객 호칭 — "어르신" 대신 "성함 + 님" 으로 통일한다 (2026-08-12 시트 전체 요청사항).
+// 데모 기본 가구는 김순자 님. 온보딩에서 성함을 받으면 그 이름을 쓴다.
+export function honorific(ob) {
+  const name = (ob?.elderName || "").trim();
+  return `${name || "김순자"} 님`;
+}
+
 export function subjectLabel(track, ob) {
   if (track.id !== "elder") return ob?.forSelf === false ? "이용자" : "본인";
   if (ob?.rel === "배우자") return "배우자";

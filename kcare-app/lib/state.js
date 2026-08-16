@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useState } from "react";
 // mock.js 가 아니라 seed.js 에서 가져온다 — state 는 _app 에서 import 되므로
 // 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
-import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS, SEED_REPORTS } from "./seed";
+import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
 import { PRICING } from "./config";
 import { transition } from "./requests";
 import { SEED_VISIT, advance } from "./workflow";
@@ -44,6 +44,15 @@ const DEFAULT = {
   // 방문 업무흐름 8단계 (lib/workflow.js) — 관제·컨시어지·보호자가 같은 건을 본다.
   // 승인(approved) 전에는 어느 캘린더에도 뜨지 않는다는 것이 이 상태의 요점.
   visitPlan: SEED_VISIT,
+  // 안부 음성 — 보호자 ↔ 어르신 양방향 (2026-08-12 시트).
+  // 데모에서는 오디오를 저장하지 않고 길이·발신자만 기록한다. 실제 구현은 서버 업로드.
+  voices: [],
+  // 동행 후기 — 동행 점수 아래 보호자가 남기는 코멘트 (2026-08-12 시트 홈 5번)
+  reviews: [],
+  // 스토어 구매내역 — 보호자 스토어 '구매내역 조회' (2026-08-12 시트 스토어 2번)
+  orders: SEED_ORDERS.map((o) => ({ ...o, at: Date.now() - o.daysAgo * 86400000 })),
+  // 기존에 다니시던 병원 — 제휴 병원이 아니어도 등록해 둔다 (2026-08-12 시트 예약 3번)
+  myHospitals: [],
 };
 
 function reducer(state, action) {
@@ -73,6 +82,10 @@ function reducer(state, action) {
             ? p.productImages
             : state.productImages,
         visitPlan: { ...state.visitPlan, ...(p.visitPlan || {}) },
+        voices: arr(p.voices, state.voices),
+        reviews: arr(p.reviews, state.reviews),
+        orders: arr(p.orders, state.orders),
+        myHospitals: arr(p.myHospitals, state.myHospitals),
       };
     }
     case "completeOnboarding":
@@ -140,6 +153,25 @@ function reducer(state, action) {
       return { ...state, visitPlan: advance(state.visitPlan, action.to, action.note, action.actor) };
     case "patchVisit":
       return { ...state, visitPlan: { ...state.visitPlan, ...action.patch } };
+    // 보호자 일정등록 '요청' 승인 — 관제만 할 수 있다 (2026-08-12 시트 예약 1번).
+    // approval 이 "pending" 인 동안에는 어르신·컨시어지 캘린더에 뜨지 않는다.
+    case "decideEvent":
+      return {
+        ...state,
+        events: state.events.map((e) =>
+          e.id === action.id
+            ? { ...e, approval: action.approval, source: action.approval === "approved" ? "관제 승인" : "관제 반려", note: action.note ?? e.note }
+            : e
+        ),
+      };
+    case "addVoice":
+      return { ...state, voices: [{ id: `vo${Date.now()}`, at: Date.now(), ...action.payload }, ...state.voices].slice(0, 30) };
+    case "addReview":
+      return { ...state, reviews: [{ id: `rv${Date.now()}`, at: Date.now(), ...action.payload }, ...state.reviews] };
+    case "addOrder":
+      return { ...state, orders: [{ id: `od${Date.now()}`, at: Date.now(), ...action.payload }, ...state.orders] };
+    case "addMyHospital":
+      return { ...state, myHospitals: [...state.myHospitals, action.payload] };
     case "setProductImage": {
       // null 이면 삭제 — 기본 아이콘 썸네일로 돌아간다
       const next = { ...state.productImages };

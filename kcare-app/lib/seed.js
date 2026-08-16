@@ -149,3 +149,47 @@ export const SEED_REPORTS = [
     shared: true,
   },
 ];
+
+// 스토어 구매내역 시드 — 보호자 스토어 '구매내역 조회' (2026-08-12 시트).
+// 약국 품목은 우리가 파는 게 아니라 구매대행이므로 영수증 번호를 함께 남긴다.
+export const SEED_ORDERS = [
+  {
+    id: "od-2026-0731",
+    daysAgo: 16,
+    by: "김민수",
+    channel: "보호자 스토어",
+    items: [
+      { id: "pa1", name: "안티푸라민 쿨파워 10매 ×4", qty: 1, price: 9500 },
+      { id: "dr2", name: "박카스 디 (10병)", qty: 2, price: 5700 },
+    ],
+    ship: 3000,
+    status: "delivered",
+    receipt: "대치온누리약국 · 영수증 #A-7731",
+    note: "8/1 안심방문 때 함께 전달",
+  },
+  {
+    id: "od-2026-0808",
+    daysAgo: 8,
+    by: "김민수",
+    channel: "안전진단 자동 담기",
+    items: [
+      { id: "mat", name: "논슬립 욕실 미끄럼 방지 매트 (2.3m)", qty: 1, price: 80000 },
+      { id: "sensorLight", name: "동작 인식 LED 센서등 (1m)", qty: 2, price: 20000 },
+    ],
+    ship: 3500,
+    status: "delivered",
+    receipt: null,
+    note: "첫 방문 안전진단 '아니오' 항목에서 자동으로 담긴 용품",
+  },
+  {
+    id: "od-2026-0814",
+    daysAgo: 2,
+    by: "김지영",
+    channel: "보호자 스토어",
+    items: [{ id: "vt2", name: "비타민씨 골드", qty: 1, price: 11000 }],
+    ship: 3000,
+    status: "shipping",
+    receipt: null,
+    note: "",
+  },
+];

@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../components/ui";
+import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, Avatar } from "../components/ui";
 import Icon from "../components/icons";
 import VisitFlow from "../components/VisitFlow";
 import {
@@ -27,10 +27,10 @@ import {
   PAIR_TODAY,
   TODAY_ROUTE,
   VIDEO_MODES,
+  MY_CLIENTS,
   VIDEO_POLICY,
   VIDEO_SEGMENTS,
 } from "../lib/console";;
-import { CONCIERGE_PRESETS } from "../lib/requests";
 import { checkupFor, REPORT_HEADLINE } from "../lib/checkup";
 import { fmtWon } from "../lib/config";
 import { useAppState } from "../lib/state";
@@ -45,7 +45,9 @@ const TABS = [
   { key: "today", label: "오늘", icon: "home" },
   { key: "report", label: "리포트", icon: "doc" },
   { key: "suggest", label: "제안", icon: "diamond" },
-  { key: "pay", label: "정산", icon: "coin" },
+  // 정산 탭은 숨겼다 (2026-08-12 실무진 "내용 숨기기") — 수익 정보가 시연 화면에
+  // 노출되면 곤란하다는 판단. 코드는 남겨 두고 메뉴에서만 뺀다.
+  // { key: "pay", label: "정산", icon: "coin" },
 ];
 
 export default function ConciergePage() {
@@ -56,6 +58,9 @@ export default function ConciergePage() {
   const [shopSel, setShopSel] = useState({});
   const [shopSent, setShopSent] = useState(false);
   const [apptDone, setApptDone] = useState(false);
+  const [apptEscort, setApptEscort] = useState(true); // 다음 진료에 컨시어지 동행 여부
+  const [reqText, setReqText] = useState(""); // 컨시어지 요청 본문
+  const [reqSent, setReqSent] = useState(false);
   const [pairCalled, setPairCalled] = useState(false);
   const [sosAck, setSosAck] = useState(false); // 관제 급파 수락 원샷
   const [voiceMood, setVoiceMood] = useState(null); // 현장의 소리 — 마음 체크인
@@ -66,7 +71,6 @@ export default function ConciergePage() {
   const [eapBooked, setEapBooked] = useState(false); // 심리상담 예약 — 감사 로그에 남기지 않는다
   const [prefAdded, setPrefAdded] = useState(false); // 선호 카드 — 오늘 기록 원샷
   const [detailDone, setDetailDone] = useState(false); // 오늘의 한 끗 완료
-  const [pairSigned, setPairSigned] = useState(false); // 서다인 서명 (데모)
   const [aiSent, setAiSent] = useState(false);
   const [pdfIssued, setPdfIssued] = useState(false);
   const [suggested, setSuggested] = useState({});
@@ -74,6 +78,11 @@ export default function ConciergePage() {
   // 거주 형태 토글 — 기본값은 가입 때 저장한 값 (DB: care_location_type · 실무자 피드백)
   const [careLoc, setCareLoc] = useState(state.onboarding?.careLocation || "home");
   const [checkDone, setCheckDone] = useState({}); // 21항목 체크 — {"몸-혈압": true}
+  const [openItem, setOpenItem] = useState(null); // 항목별 내용 입력 열림
+  const [itemNote, setItemNote] = useState({}); // 항목별 기록
+  const [summaryNote, setSummaryNote] = useState(""); // 총평 메모
+  const [photos, setPhotos] = useState([]); // 현장 사진 (데모)
+  const [preview, setPreview] = useState(false); // 증빙 보고서 발행 전 미리보기
   const v = state.visit;
   const videoConsent = state.onboarding ? !!state.onboarding.videoConsent : true; // 데모 기본 동의
 
@@ -336,7 +345,7 @@ export default function ConciergePage() {
                   </div>
                 </Card>
 
-                {/* 선호 카드 — 개인화 기억 (세계 최고 컨시어지: 좋은 동행은 기억에서 나온다) */}
+                {/* 선호 카드 + AI 동행 브리핑 — 방문 전 30초 (2026-08-12 대표 피드백으로 합침) */}
                 <Card className="p-[18px]">
                   <div className="flex items-center justify-between">
                     <span className="text-[17px] font-black text-navy">김순자님 선호 카드</span>
@@ -374,10 +383,9 @@ export default function ConciergePage() {
                   <p className="mt-2 text-[11px] leading-[1.6] text-muted">
                     선호 카드는 담당 페어와 관제만 봅니다 · 다음 동행 브리핑에 자동 반영됩니다.
                   </p>
-                </Card>
-
-                {/* AI 동행 브리핑 — 케어 프로필 자동 주입. 확정/미확정 구분 (03 profile) */}
-                <Card className="p-4">
+                  {/* AI 동행 브리핑 — 선호 카드와 합쳤다 (2026-08-12 대표 피드백).
+                      둘 다 "방문 전에 30초 읽는 것"이라 화면을 나눌 이유가 없었다. */}
+                  <div className="mt-4 border-t border-navy/[.08] pt-3.5">
                   <div className="flex items-center gap-2">
                     <span className="text-[16px] font-black text-navy">AI 동행 브리핑</span>
                     <span className="chip-gold rounded-full px-2 py-[3px] text-[10px] font-bold">
@@ -408,6 +416,7 @@ export default function ConciergePage() {
                     관찰·발언 기록에서 AI가 추렸습니다 — 진단·판단 없음. 새 관찰은 리포트로
                     쌓이고 다음 브리핑에 반영됩니다.
                   </p>
+                  </div>
                 </Card>
 
                 {/* 방문 수행 — 체크인 후 진행 (감사 타임라인) */}
@@ -453,7 +462,7 @@ export default function ConciergePage() {
                   )}
                 </Card>
 
-                {/* 영상 3모드 — REQ-12 */}
+                {/* 영상 2모드 — REQ-12 (원격상담 모드는 2026-08-12 요청으로 삭제) */}
                 <SectionLabel>영상</SectionLabel>
                 <Card className="p-4">
                   <div className="space-y-2.5">
@@ -494,11 +503,6 @@ export default function ConciergePage() {
                             ))}
                           </div>
                         )}
-                        {m.key === "tele" && (
-                          <p className="mt-1.5 text-[12px] font-bold text-muted/70">
-                            고객·보호자 요청 대기 중 — 요청 없이는 연결하지 않습니다
-                          </p>
-                        )}
                         {m.key === "sos" && state.demo.sos && (
                           <button
                             onClick={() =>
@@ -527,6 +531,24 @@ export default function ConciergePage() {
                     병원에서 다음 예약을 잡으면 여기서 등록합니다. 보호자·어르신 캘린더에 즉시
                     공유됩니다.
                   </p>
+                  {/* 동행 여부 구분 — 컨시어지 동행이면 배차가 걸리고, 아니면 일정만 (실무진 2026-08-12) */}
+                  <div className="mt-2.5 flex gap-1.5">
+                    {[
+                      [true, "컨시어지 동행"],
+                      [false, "동행 없음 · 일정만"],
+                    ].map(([v, label]) => (
+                      <button
+                        key={label}
+                        disabled={apptDone}
+                        onClick={() => setApptEscort(v)}
+                        className={`btn-press flex-1 rounded-lg border py-2 text-[12.5px] font-bold ${
+                          apptEscort === v ? "border-gold bg-gold/10 text-navy" : "border-navy/15 text-muted"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                   <button
                     onClick={() => {
                       if (apptDone) return;
@@ -539,10 +561,12 @@ export default function ConciergePage() {
                         payload: {
                           id: `ev-${Date.now()}`,
                           kind: "nextAppt",
-                          title: "정형외과 재진 · 분당서울대병원",
+                          title: `정형외과 재진 · 분당서울대병원${apptEscort ? " (컨시어지 동행)" : ""}`,
                           at: at.getTime(),
                           source: "컨시어지 등록",
-                          note: "병원 접수처에서 예약 확정 · 자동 공유됨",
+                          note: apptEscort
+                            ? "병원 접수처에서 예약 확정 · 동행 배차 요청됨"
+                            : "병원 접수처에서 예약 확정 · 일정 공유만 (동행 없음)",
                         },
                       });
                       dispatch({
@@ -611,6 +635,53 @@ export default function ConciergePage() {
             {/* ════ 리포트 탭 ════ */}
             {tab === "report" && (
               <>
+                {/* 담당 고객 리스트 — 이름을 누르면 케어 프로필로 (실무진 2026-08-12) */}
+                <Card className="p-4">
+                  <SectionLabel>내가 담당하는 고객</SectionLabel>
+                  <div className="mt-2.5 space-y-1.5">
+                    {MY_CLIENTS.map((c) => (
+                      <Link
+                        key={c.name}
+                        href="/care-profile"
+                        className="btn-press flex items-center gap-3 rounded-xl border border-navy/[.08] bg-white/70 px-3 py-2.5"
+                      >
+                        <Avatar name={c.name} size={34} />
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[14.5px] font-bold text-ink">
+                            {c.name} <span className="font-num text-[12px] text-muted">({c.age})</span>
+                          </span>
+                          <span className="block text-[11.5px] text-muted">{c.where} · {c.note}</span>
+                        </span>
+                        <span className="shrink-0 rounded-full bg-navy/[.06] px-2 py-[3px] text-[10.5px] font-bold text-muted">
+                          {c.loc}
+                        </span>
+                        <span className="shrink-0 text-[17px] text-muted">›</span>
+                      </Link>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* 첫 방문이면 — 홈 안전진단 (자택 전용 · 30항목 100점) */}
+                {careLoc === "home" && (
+                  <Link href="/safety-check" className="block">
+                    <Card className="btn-press border-gold/40 p-4" style={{ background: "linear-gradient(180deg,#FBF6EC,#F6EFDE)" }}>
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[11px] bg-gold/15 text-gold">
+                          <Icon name="shield" size={20} />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[15px] font-bold text-navy">첫 방문 홈 안전진단 — 30항목 · 100점</div>
+                          <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">
+                            첫 방문 리포트에 실리고, 부족한 곳의 안전용품이 스토어 장바구니에
+                            자동으로 담깁니다
+                          </div>
+                        </div>
+                        <span className="text-[18px] text-muted">›</span>
+                      </div>
+                    </Card>
+                  </Link>
+                )}
+
                 {/* 방문 리포트 작성 — 거주 형태 토글이 체크리스트와 리포트 카피를
                     실시간으로 바꾼다 (실무자 피드백 2026-08-09 · 이원화 개발 명세) */}
                 <Card className="p-[18px]">
@@ -658,23 +729,44 @@ export default function ConciergePage() {
                               {done} / 7
                             </span>
                           </div>
-                          <div className="mt-2 flex flex-wrap gap-1.5">
+                          <div className="mt-2 space-y-1.5">
                             {ax.items.map((i) => {
                               const key = `${ax.axis}-${i.k}`;
                               const on = !!checkDone[key];
+                              const open = openItem === key;
                               return (
-                                <button
-                                  key={key}
-                                  onClick={() => setCheckDone((s) => ({ ...s, [key]: !s[key] }))}
-                                  className={`btn-press btn-inline rounded-full border px-2.5 py-1.5 text-[12px] font-bold ${
-                                    on
-                                      ? "border-green/40 bg-green/10 text-green"
-                                      : "border-navy/15 text-muted"
-                                  }`}
-                                >
-                                  {on ? "✓ " : ""}
-                                  {i.k}
-                                </button>
+                                <div key={key}>
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      onClick={() => setCheckDone((s) => ({ ...s, [key]: !s[key] }))}
+                                      className={`btn-press btn-inline shrink-0 rounded-full border px-2.5 py-1.5 text-[12px] font-bold ${
+                                        on ? "border-green/40 bg-green/10 text-green" : "border-navy/15 text-muted"
+                                      }`}
+                                    >
+                                      {on ? "✓ " : ""}
+                                      {i.k}
+                                    </button>
+                                    <button
+                                      onClick={() => setOpenItem(open ? null : key)}
+                                      aria-expanded={open}
+                                      className={`btn-press btn-inline flex-1 rounded-lg border border-navy/10 px-2.5 py-1.5 text-left text-[11.5px] ${
+                                        itemNote[key] ? "text-ink" : "text-muted/70"
+                                      }`}
+                                    >
+                                      {itemNote[key] || "내용 적기"}
+                                    </button>
+                                  </div>
+                                  {open && (
+                                    <textarea
+                                      autoFocus
+                                      rows={2}
+                                      value={itemNote[key] || ""}
+                                      onChange={(e) => setItemNote((s) => ({ ...s, [key]: e.target.value }))}
+                                      placeholder={`${i.k} — ${i.w}`}
+                                      className="animate-tickIn mt-1.5 w-full resize-none rounded-lg border border-gold/50 px-2.5 py-2 text-[13px] leading-[1.6] outline-none"
+                                    />
+                                  )}
+                                </div>
                               );
                             })}
                           </div>
@@ -683,34 +775,38 @@ export default function ConciergePage() {
                       );
                     })}
                   </div>
+                  {/* 총평 메모 + 사진 — 항목별 기록 아래에 전체를 본 소감 (실무진 2026-08-12) */}
+                  <div className="mt-3.5 rounded-xl border border-navy/12 p-3.5">
+                    <SectionLabel>총평 — 전체적으로 본 것</SectionLabel>
+                    <textarea
+                      rows={3}
+                      value={summaryNote}
+                      onChange={(e) => setSummaryNote(e.target.value)}
+                      placeholder="항목으로 나눠 적기 어려운 것, 지난달과 달라진 인상, 보호자께 꼭 전할 말을 적습니다."
+                      className="mt-2 w-full resize-none rounded-lg border border-navy/15 px-3 py-2.5 text-[13.5px] leading-[1.7] outline-none focus:border-gold"
+                    />
+                    <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                      <span className="text-[12px] font-bold text-muted">사진</span>
+                      {photos.map((ph) => (
+                        <span key={ph} className="rounded-lg bg-green/10 px-2.5 py-1.5 text-[11.5px] font-bold text-green">
+                          ✓ {ph}
+                        </span>
+                      ))}
+                      <button
+                        onClick={() => setPhotos((v) => [...v, `현장사진_${v.length + 1}.jpg`])}
+                        className="btn-press btn-inline rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11.5px] font-bold text-navy"
+                      >
+                        + 사진 첨부 (데모)
+                      </button>
+                    </div>
+                  </div>
                   <p className="mt-2.5 text-[12px] leading-[1.65] text-muted">
                     21항목을 모두 체크하면 사진과 함께 리포트가 자동 발행됩니다 — 점수가
                     아니라 지난달과 달라진 것을 적습니다.
                   </p>
                 </Card>
 
-                {/* 첫 방문이면 — 홈 안전진단 (자택 전용 · 30항목 100점) */}
-                {careLoc === "home" && (
-                  <Link href="/safety-check" className="block">
-                    <Card className="btn-press border-gold/40 p-4" style={{ background: "linear-gradient(180deg,#FBF6EC,#F6EFDE)" }}>
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[11px] bg-gold/15 text-gold">
-                          <Icon name="shield" size={20} />
-                        </span>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-[15px] font-bold text-navy">첫 방문 홈 안전진단 — 30항목 · 100점</div>
-                          <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">
-                            첫 방문 리포트에 실리고, 부족한 곳의 안전용품이 스토어 장바구니에
-                            자동으로 담깁니다
-                          </div>
-                        </div>
-                        <span className="text-[18px] text-muted">›</span>
-                      </div>
-                    </Card>
-                  </Link>
-                )}
-
-                {/* 동행 완료 리포트 — AI 초안 + 2인 서명 (디자인 콘솔) */}
+                {/* 동행 완료 리포트 — AI 초안 + 발행 전 미리보기 (2인 서명은 2026-08-12 삭제) */}
                 <Card className="p-[18px]">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[17px] font-black text-navy">동행 완료 리포트</span>
@@ -735,39 +831,57 @@ export default function ConciergePage() {
                   </div>
                   <p className="mt-2 text-[12px] leading-[1.65] text-muted">{AI_REPORT.hitl}</p>
 
-                  {/* 2인 확인 서명 — 각자의 기록이 각자의 증언 */}
+                  {/* 2인 확인 서명은 삭제했다 (2026-08-12 대표 피드백).
+                      배차가 위험도 기반으로 바뀌어 1인 방문이 생겼고, 1인 방문에는
+                      애초에 두 번째 서명이 존재하지 않는다. 대신 발행 전 미리보기로
+                      본인이 직접 확인하고 고치는 절차를 둔다. */}
                   <div className="mt-3.5 rounded-xl border border-navy/10 p-3.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[15px] font-bold text-navy">2인 확인 서명</span>
-                      <span className="font-num text-[12px] font-bold text-muted">
-                        {pairSigned ? "2 / 2 서명" : "1 / 2 서명"}
-                      </span>
-                    </div>
-                    <div className="mt-2.5 space-y-2">
-                      <div className="flex items-center gap-2.5">
-                        <span className="flex h-[18px] w-[18px] items-center justify-center rounded-md bg-green text-[12px] font-bold text-white">
-                          ✓
-                        </span>
-                        <span className="flex-1 text-[15px] font-bold text-ink">박지현 · 주 동행</span>
-                        <span className="font-num text-[12px] text-muted">15:52</span>
-                      </div>
+                      <span className="text-[15px] font-bold text-navy">발행 전 미리보기</span>
                       <button
-                        onClick={() => !pairSigned && setPairSigned(true)}
-                        className="flex w-full items-center gap-2.5 text-left"
+                        onClick={() => setPreview((v) => !v)}
+                        aria-expanded={preview}
+                        className="btn-press btn-inline rounded-lg border border-navy/20 px-2.5 py-1.5 text-[12px] font-bold text-navy"
                       >
-                        <span
-                          className={`flex h-[18px] w-[18px] items-center justify-center rounded-md border text-[12px] font-bold ${
-                            pairSigned ? "border-green bg-green text-white" : "border-navy/25 text-transparent"
-                          }`}
-                        >
-                          ✓
-                        </span>
-                        <span className="flex-1 text-[15px] font-bold text-ink">서다인 · 부 동행</span>
-                        <span className="font-num text-[12px] text-muted">
-                          {pairSigned ? "15:58 (데모)" : "대기 — 눌러서 서명 시연"}
-                        </span>
+                        {preview ? "닫기" : "보호자에게 갈 화면 보기"}
                       </button>
                     </div>
+                    {preview && (
+                      <div className="animate-tickIn mt-2.5 rounded-xl border border-gold/40 bg-paper p-3.5">
+                        <div className="text-[13px] font-bold text-navy">
+                          {REPORT_HEADLINE[careLoc](state.onboarding?.elderName || "김순자")}
+                        </div>
+                        <div className="mt-2 space-y-1">
+                          {checkupFor(careLoc).flatMap((ax) =>
+                            ax.items
+                              .filter((i) => itemNote[`${ax.axis}-${i.k}`])
+                              .map((i) => (
+                                <div key={`${ax.axis}-${i.k}`} className="flex gap-2 text-[12px] leading-[1.6]">
+                                  <span className="w-[74px] shrink-0 font-bold text-muted">{i.k}</span>
+                                  <span className="min-w-0 flex-1 text-ink">{itemNote[`${ax.axis}-${i.k}`]}</span>
+                                </div>
+                              ))
+                          )}
+                          {Object.keys(itemNote).filter((k) => itemNote[k]).length === 0 && (
+                            <div className="text-[12px] text-muted">아직 적은 항목이 없습니다.</div>
+                          )}
+                        </div>
+                        {summaryNote && (
+                          <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[12.5px] leading-[1.7] text-ink">
+                            {summaryNote}
+                          </p>
+                        )}
+                        {photos.length > 0 && (
+                          <div className="mt-2 text-[11.5px] font-bold text-green">
+                            사진 {photos.length}장 첨부됨
+                          </div>
+                        )}
+                        <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.6] text-muted">
+                          내용을 고치려면 위 21항목에서 해당 항목을 다시 눌러 수정하세요. 발행하면
+                          보호자 앱과 알림톡으로 이 화면 그대로 나갑니다.
+                        </p>
+                      </div>
+                    )}
                     <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
                       {AI_REPORT.signRule}
                     </p>
@@ -787,7 +901,7 @@ export default function ConciergePage() {
                   </button>
                   <button
                     onClick={() => {
-                      if (!pairSigned || aiSent) return;
+                      if (aiSent) return;
                       setAiSent(true);
                       dispatch({
                         type: "addReport",
@@ -802,16 +916,12 @@ export default function ConciergePage() {
                       });
                       push("리포트", "동행 리포트 검수 확정 · 가족 앱 전달", "#8FA9CC");
                     }}
-                    disabled={!pairSigned || aiSent}
+                    disabled={aiSent}
                     className={`btn-press btn-dark mt-2 w-full rounded-xl py-3.5 text-[16px] font-bold text-white ${
                       aiSent ? "bg-muted" : "bg-green"
                     } disabled:opacity-50`}
                   >
-                    {aiSent
-                      ? "✓ 가족에게 전달됨"
-                      : pairSigned
-                      ? "검수 확정 후 가족에게 전달"
-                      : "검수 확정 후 가족에게 전달 (2인 서명 필요)"}
+                    {aiSent ? "✓ 가족에게 전달됨" : "검수 확정 후 가족에게 전달"}
                   </button>
                 </Card>
 
@@ -1021,52 +1131,55 @@ export default function ConciergePage() {
                   )}
                 </Card>
 
-                {/* 해주세요 발신 */}
-                <SectionLabel>보호자에게 요청</SectionLabel>
+                {/* 컨시어지 요청 — 해주세요와 스토어를 하나로 묶어 보호자 홈에
+                    "컨시어지 요청"으로 뜬다 (2026-08-12 실무진). 프리셋 칩(요청 예시)은
+                    같은 요청으로 삭제했다 — 현장에서 직접 쓰는 편이 정확하다. */}
+                <SectionLabel>컨시어지 요청 — 보호자 홈에 표시</SectionLabel>
                 <Card className="p-4">
-                  <div className="flex flex-wrap gap-1.5">
-                    {CONCIERGE_PRESETS.map((p) => (
-                      <button
-                        key={p}
-                        onClick={() => {
-                          dispatch({
-                            type: "addRequest",
-                            payload: {
-                              id: `rq-${Date.now()}`,
-                              dir: "fromConcierge",
-                              type: p,
-                              detail: "현장 확인 후 등록된 요청입니다. 세부 내용은 방문 기록을 참조해 주세요.",
-                              amount: null,
-                              preferredDate: null,
-                              urgency: "normal",
-                              assignee: "박지현",
-                              photos: [],
-                              status: "requested",
-                              history: [{ at: Date.now(), status: "requested", note: "컨시어지 현장 등록" }],
-                              proof: null,
-                            },
-                          });
-                          dispatch({
-                            type: "audit",
-                            event: { kind: "request", label: `보호자 요청 등록 · ${p}` },
-                          });
-                        }}
-                        className="btn-press rounded-full border border-navy/15 px-3 py-1.5 text-[13px] font-bold text-muted"
-                      >
-                        {p}
-                      </button>
-                    ))}
-                  </div>
+                  <textarea
+                    rows={3}
+                    value={reqText}
+                    onChange={(e) => setReqText(e.target.value)}
+                    placeholder="현장에서 확인한 내용을 그대로 적습니다. 물품이 필요하면 품목과 수량까지 함께 적어 주세요."
+                    className="w-full resize-none rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] leading-[1.65] outline-none focus:border-gold"
+                  />
+                  <button
+                    disabled={!reqText.trim() || reqSent}
+                    onClick={() => {
+                      dispatch({
+                        type: "addRequest",
+                        payload: {
+                          id: `rq-${Date.now()}`,
+                          dir: "fromConcierge",
+                          type: "컨시어지 요청",
+                          detail: reqText.trim(),
+                          amount: null,
+                          preferredDate: null,
+                          urgency: "normal",
+                          assignee: "박지현",
+                          photos: [],
+                          status: "requested",
+                          history: [{ at: Date.now(), status: "requested", note: "컨시어지 현장 등록" }],
+                          proof: null,
+                        },
+                      });
+                      dispatch({ type: "audit", event: { kind: "request", label: "컨시어지 요청 등록" } });
+                      setReqSent(true);
+                    }}
+                    className="btn-press mt-2.5 w-full rounded-xl bg-navy py-3 text-[15px] font-bold text-white disabled:opacity-40"
+                  >
+                    {reqSent ? "✓ 보호자에게 전달됨" : "보호자에게 요청 보내기"}
+                  </button>
                   <p className="mt-3 text-[11px] leading-[1.6] text-muted">
-                    등록한 요청은 보호자 &lsquo;해주세요&rsquo; 화면에 상태와 함께 표시됩니다. 성과
-                    지표에 판매액은 기록되지 않습니다.
+                    등록한 요청은 보호자 홈에 &lsquo;컨시어지 요청&rsquo;으로 뜨고, 상태가 함께
+                    표시됩니다. 성과 지표에 판매액은 기록되지 않습니다.
                   </p>
                 </Card>
               </>
             )}
 
             {/* ════ 정산 탭 — MY EARNINGS (원칙 준수 버전) ════ */}
-            {tab === "pay" && (
+            {false && tab === "pay" && (
               <>
                 <div className="px-1">
                   <div className="font-num text-[11px] font-bold tracking-[.18em] text-gold">

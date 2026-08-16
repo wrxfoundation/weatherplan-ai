@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../../components/ui";
-import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, URGENCY } from "../../lib/requests";
+import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY } from "../../lib/requests";
 import { fmtWon, PRICING } from "../../lib/config";
 import { useAppState, needsGuardianApproval } from "../../lib/state";
 
@@ -64,6 +64,48 @@ export default function RequestsPage() {
                 {s.point && <div className="mt-0.5 text-[12px] leading-[1.6] text-green">{s.point}</div>}
               </button>
             ))}
+          </div>
+
+          {/* 해주세요 PLUS — 외주 파트너 연계 (개편안 V2 ONE STOP 축) */}
+          <div className="mt-4 border-t border-navy/[.08] pt-3">
+            <div className="flex items-center gap-2">
+              <SectionLabel>해주세요 PLUS — 전문업체 연결</SectionLabel>
+              <Badge fg="#8A5D12" bg="rgba(176,141,87,.16)">
+                외주 연계
+              </Badge>
+            </div>
+            <p className="mt-1.5 text-[12px] leading-[1.65] text-muted">
+              저희가 직접 못 하는 일은 전문업체로 연결해 드리고 진행 상황을 보고합니다.
+              공사·수리의 책임은 시공 업체에 있습니다.
+            </p>
+            <div className="mt-2.5 space-y-2">
+              {SERVICE_PLUS.map((s) => (
+                <button
+                  key={s.key}
+                  onClick={() =>
+                    setCreating({
+                      no: `plus-${s.key}`,
+                      name: s.name,
+                      priceLabel: s.priceLabel,
+                      amount: s.amount,
+                    })
+                  }
+                  className="btn-press w-full rounded-xl border border-gold/25 bg-gold/[.05] p-3 text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-[15px] font-bold text-navy">{s.name}</span>
+                    <span className="ml-auto shrink-0 rounded-full bg-white px-2 py-[3px] text-[11px] font-bold text-muted">
+                      {s.tag}
+                    </span>
+                  </div>
+                  <div className={`mt-1 font-num text-[12.5px] font-bold ${s.confirmed ? "text-gold" : "text-muted"}`}>
+                    {s.priceLabel}
+                  </div>
+                  <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{s.scope}</div>
+                  <div className="mt-0.5 text-[11.5px] leading-[1.55] text-amber">{s.note}</div>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* 미개시 서비스 — 표기만 하고 비활성. "이런 서비스도 앞으로 이용할 수

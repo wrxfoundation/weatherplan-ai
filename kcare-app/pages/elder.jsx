@@ -2,23 +2,23 @@ import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
-  AI_CALL,
+  AMBIENT_TIPS,
   ASK_DOCTOR,
-  DELIVERY,
   ELDER,
   ELDER_NOW,
   ELDER_VISITORS,
   EVENT_KINDS,
   FAMILY_SEEN,
   INDOOR,
-  MED_DOSES,
   OUTING,
+  TODAY_ME,
   VOICE_MSG,
   VOICE_TO,
-  ASK_SERVICES,
 } from "../lib/mock";
 import { PRICING, fmtWon } from "../lib/config";
-import { ELDER_STORE_PICKS } from "../lib/store";
+import { STORE_CATALOG } from "../lib/store";
+import { SERVICE_MENU, SERVICE_PLUS } from "../lib/requests";
+import { MED_PLAN, MED_REGISTRY, SUPPLEMENTS, daysLeft, medProgress, needsReorder } from "../lib/meds";
 import { needsGuardianApproval, useAppState } from "../lib/state";
 import Icon from "../components/icons";
 import Splash from "../components/Splash";
@@ -50,13 +50,16 @@ const SUB_CARD = {
   boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
 };
 
-// 해주세요 — 그룹 순서 (ASK_SERVICES의 g 값)
-const ASK_GROUPS = ["약 · 병원", "장보기", "집안일", "바깥일", "말동무"];
+// 해주세요 — 보호자 화면과 같은 메뉴를 쓴다 (2026-08-12 어르신화면 시트 해주세요 1번:
+// "기존 내용 전체 삭제하고 보호자 해주세요내용과 동일하게 넣어주세요").
+// 어르신 화면은 활자만 크고, 목록·단가·순서는 lib/requests.js 한 곳에서 온다.
+const ASK_CATS = ["의료 지원", "생활 지원", "주거 관리", "행정 지원", "돌봄 지원", "응급 관리"];
 
 const TABS = [
   { key: "today", label: "오늘", glyph: "home" },
   { key: "health", label: "건강", glyph: "heart" },
   { key: "ask", label: "해주세요", glyph: "hand" },
+  { key: "store", label: "스토어", glyph: "bag" },
   { key: "family", label: "가족", glyph: "users" },
 ];
 
@@ -155,8 +158,12 @@ export default function ElderHome() {
     scrollRef.current?.scrollTo({ top: 0 });
   };
   const [sosPhase, setSosPhase] = useState("idle"); // idle | confirm | sent
+  const [visitAsked, setVisitAsked] = useState(false); // 즉시 방문 요청 (SOS 자리를 대신한다)
   const [calling, setCalling] = useState(false);
   const [voiceReplied, setVoiceReplied] = useState(false);
+  const [askSpoken, setAskSpoken] = useState(false); // '선생님께 말로 요청하기'
+  const [medSlots, setMedSlots] = useState({}); // 오늘 복용 체크 — { 아침: true, ... }
+  const [reordered, setReordered] = useState({}); // 건기식 재구매 요청
   const [eventSheet, setEventSheet] = useState(false); // 간단등록 (REQ-02 권한표)
   const [speaking, setSpeaking] = useState(false); // 일정 음성 안내 (접근성)
 
@@ -179,14 +186,14 @@ export default function ElderHome() {
   };
   const [storeSel, setStoreSel] = useState({});
   const [storeSent, setStoreSent] = useState(null); // 'approval' | 'ordered'
+  const [storeCat, setStoreCat] = useState("pharmacy"); // 스토어 탭 분류
   const [voiceTo, setVoiceTo] = useState(null); // 음성 메시지 수신자 (null이면 미선택)
   const [voiceSent, setVoiceSent] = useState([]); // 보낸 목소리 목록 (최근 순)
   const [askSel, setAskSel] = useState(null); // '해주세요' 선택 항목
   const [askSent, setAskSent] = useState(null); // { name, mode, amount }
   const callTimer = useRef(null);
 
-  const { medTaken, cooled, voicePlayed, askAdded } = state.elder;
-  const cart = state.demo.cart;
+  const { voicePlayed, askAdded } = state.elder;
 
   // ── 해주세요: 결제권한(REQ-07)을 어르신 말로 옮긴다 ──
   // 결제 모드는 온보딩에서 정해진 값을 그대로 따른다. 여기서 바꾸지 않는다.
@@ -203,13 +210,18 @@ export default function ElderHome() {
     }[payMode],
     sub: "약 타다 주기 · 장보기 · 은행 동행 같은 것을 부탁하시면 선생님이 대신 해드립니다.",
   };
-  // 선택 항목의 결제 분기 — 무료(멤버십 포함) / 본인 결제 / 보호자 승인
+  // 선택 항목의 결제 분기 — 무료(멤버십 포함) / 본인 결제 / 보호자 승인.
+  // 보호자 메뉴(SERVICE_MENU)는 amount 가 null 인 것도 있다 — 요금 확정 전이라
+  // 금액을 지어내지 않고 "요금은 확인 후 알려드립니다"로 간다.
   const askPlan = (() => {
     if (!askSel) return { mode: null, approval: false, notice: "", cta: "" };
-    if (askSel.est === 0) {
+    if (askSel.amount === 0) {
       return { mode: "free", approval: false, notice: "멤버십에 포함된 것이라 따로 내실 돈이 없습니다.", cta: "부탁하기" };
     }
-    const approval = needsGuardianApproval(state.onboarding, askSel.est);
+    if (askSel.amount == null) {
+      return { mode: "quote", approval: false, notice: "요금이 아직 정해지지 않은 것이라, 선생님이 확인해서 먼저 알려드립니다.", cta: "부탁하기" };
+    }
+    const approval = needsGuardianApproval(state.onboarding, askSel.amount);
     return approval
       ? { mode: "approval", approval: true, notice: `${approver} 님에게 확인을 부탁드립니다. 승인되면 바로 시작합니다.`, cta: "가족에게 부탁하기" }
       : { mode: "self", approval: false, notice: `${fmtWon(payLimit)} 안이라 바로 진행됩니다.`, cta: "바로 부탁하기" };
@@ -236,14 +248,36 @@ export default function ElderHome() {
       (priority.factors.includes(b.label) ? 1 : 0) - (priority.factors.includes(a.label) ? 1 : 0)
   );
 
-  // 오늘 약 — 저녁 1건만 상태 의존 (done: null → medTaken)
-  const doses = MED_DOSES.map((d) => ({ ...d, done: d.done === null ? medTaken : d.done }));
-  const doneCount = doses.filter((d) => d.done).length;
-  const medProgress = `${doses.length}회 중 ${doneCount}회 완료`;
+  // 오늘 약 — 첫 안심방문에서 등록한 복약 계획(lib/meds.js)을 어르신이 직접 체크한다.
+  // 진행바는 '몇 번 중 몇 번'을 그대로 센다 (시트: 전체 횟수에서 복용 횟수).
+  const med = medProgress(medSlots);
+  // 건기식 — 용량이 부족하거나 유통기한이 다가온 것만 위로 올린다
+  const supplements = SUPPLEMENTS.map((s) => ({ ...s, alert: needsReorder(s) }));
+  const supAlerts = supplements.filter((s) => s.alert);
 
-  const indoor = cooled ? INDOOR.cooled : INDOOR.hot;
+  const indoor = INDOOR.hot;
+
+  // 스토어 탭 — 보호자 스토어와 같은 카탈로그. 가격 없는 항목은 담기지 않는다.
+  const storeCatalog = STORE_CATALOG.find((c) => c.id === storeCat) || STORE_CATALOG[0];
+  const storeItems = STORE_CATALOG.flatMap((c) => c.groups.flatMap((g) => g.items)).filter(
+    (i) => storeSel[i.id] && i.price
+  );
+  const storeTotal = storeItems.reduce((s, i) => s + i.price + (i.ship || 0), 0);
+  const storeApproval = needsGuardianApproval(state.onboarding, storeTotal);
+
+  // 오늘이 방문일인가 — 오늘 오시는 분에게만 전화를 열어 준다 (시트 '오늘' 1번)
+  const visitToday = upcoming.some((e) => e.kind === "visit" && isToday(e.at));
 
   useEffect(() => () => clearTimeout(callTimer.current), []);
+
+  // 바탕화면 SOS 바로가기 — /elder?sos=1 로 열리면 5초 취소 유예 화면이 바로 뜬다.
+  // (public/manifest.webmanifest 의 shortcuts 가 이 주소를 가리킨다)
+  // 안드로이드 크롬은 아이콘을 길게 눌러 나오는 바로가기, iOS 사파리는 이 주소 자체를
+  // 홈 화면에 추가하면 같은 동작이 된다.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (new URLSearchParams(window.location.search).get("sos") === "1") setSosPhase("confirm");
+  }, []);
 
   const callTeacher = () => {
     if (calling) return;
@@ -254,7 +288,7 @@ export default function ElderHome() {
   return (
     <>
       <Head>
-        <title>어르신 홈 — K-CARE</title>
+        <title>K-CARE</title>
       </Head>
       <Splash service="elder" />
       <div className="min-h-screen bg-nav">
@@ -271,22 +305,46 @@ export default function ElderHome() {
               </Link>
             </div>
             <div className="mt-2 text-[19px] font-medium text-muted">{dateLong}</div>
+            {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번) */}
             <h1 className="text-[30px] font-black leading-[1.3] text-navy">
-              {name} 어르신, 안녕하세요
+              {name} 님, 안녕하세요
             </h1>
-            {/* SOS는 화면 최상단 고정 — 카드가 어디까지 내려가 있든 항상 처음 보이는 자리 (REQ-06) */}
-            <div className="mt-3.5">
-              <SosButton
-                phase={sosPhase}
-                setPhase={setSosPhase}
-                onDispatch={() => {
-                  dispatch({ type: "demo", payload: { sos: true } });
+            {/* 화면 안 SOS 버튼은 뺐다 (시트 전체 요청 3·4번).
+                SOS 는 바탕화면 바로가기로 옮기고, 이 자리에는 즉시방문요청 원형 버튼을 둔다.
+                두 개를 한 화면에 두면 급할 때 무엇을 눌러야 할지 고르게 된다. */}
+            <div className="mt-3.5 flex items-center gap-4">
+              <VisitNowButton
+                done={visitAsked}
+                onAsk={() => {
+                  setVisitAsked(true);
+                  dispatch({
+                    type: "addRequest",
+                    payload: {
+                      id: `rq-${Date.now()}`,
+                      dir: "fromElder",
+                      type: "즉시 방문 요청",
+                      detail: "지금 와 주셨으면 합니다 (어르신 화면 즉시방문요청)",
+                      amount: null,
+                      preferredDate: null,
+                      urgency: "urgent",
+                      assignee: "박지현",
+                      photos: [],
+                      status: "requested",
+                      history: [{ at: Date.now(), status: "requested", note: "어르신 즉시방문요청" }],
+                      proof: null,
+                    },
+                  });
                   dispatch({
                     type: "pushEvent",
-                    payload: { kind: "SOS", text: "김순자(78) SOS 발신 · 가족·관제 동시 점등", color: "#FF8A80" },
+                    payload: { kind: "방문", text: `${ELDER.name}(${ELDER.age}) 즉시 방문 요청 · 관제 배정 대기`, color: "#B08D57" },
                   });
                 }}
               />
+              <p className="flex-1 text-[19px] leading-[1.5] text-muted">
+                {visitAsked
+                  ? "요청을 보냈습니다. 선생님이 곧 출발합니다."
+                  : "지금 와 주셨으면 할 때 누르세요."}
+              </p>
             </div>
           </header>
 
@@ -322,10 +380,78 @@ export default function ElderHome() {
                   </div>
                 ))}
               </div>
-              {/* "노란 버튼" 카피 → 빨간 SOS로 수정 (06 §10-7 미해결 항목 해소) */}
-              <p className="mt-4 text-[19px] leading-[1.6] text-muted">
-                두 분 다 목에 K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지 마시고 맨 위
-                빨간 SOS 버튼을 누르세요.
+              {/* 오늘 오시는 분에게만 전화 — 시트 '오늘' 1번.
+                  방문일이 아닌 날에 전화 버튼이 열려 있으면 아무 때나 걸게 된다.
+                  푸터의 '선생님께 전화'는 같은 시트 요청으로 삭제했고, 이것만 남는다. */}
+              {visitToday ? (
+                <ElderBtn
+                  onClick={callTeacher}
+                  variant={calling ? "done" : "primary"}
+                  className="mt-4"
+                  lines={
+                    calling
+                      ? ["박지현 선생님께", "연결 중입니다"]
+                      : ["오늘 오시는", "박지현 선생님께 전화"]
+                  }
+                />
+              ) : (
+                <p className="mt-4 rounded-2xl px-4 py-3.5 text-[19px] leading-[1.6] text-muted" style={SUB_CARD}>
+                  전화는 오시는 날에만 열립니다. 급하시면 위의 즉시 방문 요청을 눌러 주세요.
+                </p>
+              )}
+              <p className="mt-3 text-[19px] leading-[1.6] text-muted">
+                두 분 다 목에 K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지 마시고 바탕화면의
+                빨간 SOS 바로가기를 누르세요.
+              </p>
+            </ElderCard>
+
+            {/* order 2 · 오늘 나는 — 보호자 홈의 "오늘 어머니는"과 같은 내용을
+                1인칭으로. 어제 숫자를 나란히 둔다 (시트 '오늘' 2번).
+                안부 전화 카드는 같은 시트 대표 피드백으로 삭제. */}
+            <ElderCard show={tab === "today"} order={2}>
+              <CardHead title="오늘 나는" right="어제와 비교" />
+              <p className="mt-2 text-[20px] leading-[1.6] text-ink">{TODAY_ME.line}</p>
+              <div className="mt-1">
+                {TODAY_ME.rows.map((r) => (
+                  <div
+                    key={r.name}
+                    className="flex items-baseline gap-3 border-t border-navy/[.07] py-[14px] first:border-t-0"
+                  >
+                    <span className="w-[62px] shrink-0 text-[19px] font-bold text-navy">{r.name}</span>
+                    <span className="flex-1">
+                      <span className="font-num text-[24px] font-bold text-navy">{r.today}</span>
+                      <span className="ml-1 text-[19px] text-muted">{r.unit}</span>
+                    </span>
+                    <span className="text-[19px] text-muted">
+                      어제 <span className="font-num font-bold">{r.yesterday}</span>
+                    </span>
+                    <span
+                      aria-hidden
+                      className="w-[18px] shrink-0 text-center text-[19px] font-bold"
+                      style={{ color: r.dir === "up" ? "#1E7A5A" : "#5C5A54" }}
+                    >
+                      {r.dir === "up" ? "▲" : "▼"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-[19px] leading-[1.6] text-muted">{TODAY_ME.foot}</p>
+            </ElderCard>
+
+            {/* order 7 · 바탕화면 SOS 바로가기 안내 — 화면 안 SOS 버튼을 뺐으니
+                어디를 눌러야 하는지는 반드시 말해 줘야 한다 (시트 전체 요청 3번) */}
+            <ElderCard show={tab === "today"} order={7}>
+              <CardHead title="급할 때 누르는 곳" right="바탕화면" />
+              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
+                휴대폰 바탕화면에 있는
+                <br />
+                빨간 <b>SOS</b> 그림을 누르시면
+                <br />
+                바로 도움을 부릅니다.
+              </p>
+              <p className="mt-3 text-[19px] leading-[1.6] text-muted">
+                첫 안심방문 때 선생님이 바탕화면에 만들어 드립니다. 실수로 눌러도 5초 안에 취소할 수
+                있습니다.
               </p>
             </ElderCard>
 
@@ -398,79 +524,171 @@ export default function ElderHome() {
               </ElderBtn>
             </ElderCard>
 
-            {/* order 2 · 안부 전화 — 앰비언트 AI. 어르신은 받기만 하면 된다.
-                버튼 없음 · 시스템 주어(AI가~) 없음 (06 §7). 발언은 질문·리포트에 자동 반영 */}
-            <ElderCard show={tab === "today"} order={2}>
-              <CardHead title="안부 전화" right={AI_CALL.timeLabel} />
-              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
-                {AI_CALL.body.split("\n").map((line, i) => (
-                  <span key={i} className="block">
-                    {line}
-                  </span>
-                ))}
-              </p>
-              <div className="mt-3" style={SUB_CARD}>
-                <p className="text-[19px] leading-[1.6] text-ink">{AI_CALL.yesterday}</p>
-              </div>
-              <p className="mt-3 text-[19px] leading-[1.6] text-muted">{AI_CALL.autoNote}</p>
-            </ElderCard>
-
-            {/* order 2 · 오늘 약 — 카드 전체가 미완료 상태 표현. 미완료는 호박색 (원칙 4) */}
+            {/* order 2 · 오늘 약 — 첫 안심방문에서 등록한 계획을 직접 체크한다.
+                진행바는 '전체 횟수 중 복용 횟수' (시트 '건강' 1번). */}
             <ElderCard
               show={tab === "health"}
               order={2}
               style={{
-                background: medTaken
-                  ? LIGHT_CARD.background
-                  : "linear-gradient(180deg,#FFF7E8,#FBEFD8)",
-                border: medTaken ? LIGHT_CARD.border : "1px solid rgba(138,93,18,.3)",
+                background:
+                  med.done === med.total
+                    ? LIGHT_CARD.background
+                    : "linear-gradient(180deg,#FFF7E8,#FBEFD8)",
+                border: med.done === med.total ? LIGHT_CARD.border : "1px solid rgba(138,93,18,.3)",
                 boxShadow: LIGHT_CARD.boxShadow,
               }}
             >
-              <CardHead title="오늘 약" right={medProgress} />
-              <div className="mt-1">
-                {doses.map((d) => (
-                  <div
-                    key={d.slotLabel}
-                    className="flex items-center gap-3 border-t border-navy/[.07] py-[14px] first:border-t-0"
-                  >
-                    <span className="w-[62px] shrink-0 font-num text-[19px] font-bold text-navy">
-                      {d.slotLabel}
-                    </span>
-                    <span className="flex-1 text-[19px] text-ink">{d.drugs}</span>
-                    <span
-                      className="text-[18px] font-bold"
-                      style={{ color: d.done ? LEVEL_COLOR.ok : LEVEL_COLOR.caution }}
-                    >
-                      {d.done ? "완료" : "남음"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <ElderBtn
-                onClick={() => {
-                  if (medTaken) return; // 1회성 — undo 없음
-                  dispatch({ type: "medTaken" });
-                  dispatch({
-                    type: "pushEvent",
-                    payload: { kind: "복약", text: "김순자 저녁 복약 완료 · 가족 앱 준수율 갱신", color: "#4ADE80" },
-                  });
-                }}
-                disabled={medTaken}
-                variant={medTaken ? "done" : "success"}
-                className="mt-2"
+              <CardHead title="오늘 약" right={`${med.total}번 중 ${med.done}번 드셨습니다`} />
+              {/* 진행바 — 숫자만으로는 얼마나 남았는지 한눈에 안 들어온다 */}
+              <div
+                className="mt-3 h-[18px] w-full overflow-hidden rounded-full"
+                role="progressbar"
+                aria-valuenow={med.done}
+                aria-valuemin={0}
+                aria-valuemax={med.total}
+                aria-label={`오늘 복약 ${med.total}번 중 ${med.done}번 완료`}
+                style={{ background: "rgba(10,31,60,.09)" }}
               >
-                {medTaken ? "오늘 약 모두 드셨습니다" : "저녁 약 먹었어요"}
-              </ElderBtn>
+                <div
+                  className="h-full rounded-full transition-[width] duration-500"
+                  style={{ width: `${med.pct}%`, background: med.pct === 100 ? "#1E7A5A" : "#B08D57" }}
+                />
+              </div>
+              <div className="mt-2">
+                {MED_PLAN.map((d) => {
+                  const on = !!medSlots[d.slot];
+                  return (
+                    <div
+                      key={d.slot}
+                      className="flex items-center gap-3 border-t border-navy/[.07] py-[14px] first:border-t-0"
+                    >
+                      <span className="w-[62px] shrink-0 text-[19px] font-bold text-navy">{d.slot}</span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[19px] leading-[1.4] text-ink">
+                          {d.items.map((i) => i.name).join(" · ")}
+                        </span>
+                        <span className="block font-num text-[17px] text-muted">{d.time}</span>
+                      </span>
+                      <button
+                        onClick={() => {
+                          if (on) return; // 체크는 되돌리지 않는다 (06 §5)
+                          setMedSlots((s) => ({ ...s, [d.slot]: true }));
+                          dispatch({
+                            type: "pushEvent",
+                            payload: {
+                              kind: "복약",
+                              text: `${ELDER.name} ${d.slot} 복약 완료 · 가족 앱 준수율 갱신`,
+                              color: "#4ADE80",
+                            },
+                          });
+                        }}
+                        aria-label={`${d.slot} 약 먹었어요`}
+                        aria-pressed={on}
+                        className="btn-press shrink-0 rounded-2xl px-4 py-3 text-[18px] font-bold"
+                        style={
+                          on
+                            ? { background: "rgba(30,122,90,.12)", color: "#1E7A5A" }
+                            : { background: "#1E7A5A", color: "#FFFFFF" }
+                        }
+                      >
+                        {on ? "먹었어요 ✓" : "먹었어요"}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-3 text-[19px] leading-[1.6] text-muted">
+                {MED_REGISTRY.registeredAt}에 {MED_REGISTRY.registeredBy}이 약봉투를 보고 등록했습니다.
+              </p>
             </ElderCard>
 
-            {/* order 3 · 지금 집 안 — 위험을 직접 말하는 유일한 카드. 버튼은 청색(빨강은 SOS 전용) */}
+            {/* order 3 · 건강기능식품 — 남은 양과 유통기한. 떨어질 때쯤 알려 드린다
+                (시트 '건강' 1번 뒷부분: 종류·유통기간 관리 + 재구매 알림) */}
             <ElderCard show={tab === "health"} order={3}>
+              <CardHead
+                title="드시는 건강식품"
+                right={supAlerts.length ? `${supAlerts.length}가지 챙기실 것` : "넉넉합니다"}
+                rightColor={supAlerts.length ? "#8A5D12" : "#5C5A54"}
+              />
+              <div className="mt-2 space-y-2.5">
+                {supplements.map((s) => {
+                  const left = daysLeft(s);
+                  const pct = Math.round((s.remain / Math.max(1, s.total)) * 100);
+                  const done = !!reordered[s.id];
+                  return (
+                    <div key={s.id} style={SUB_CARD}>
+                      <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
+                        <span className="text-[20px] font-bold text-navy">{s.name}</span>
+                        {s.alert && (
+                          <span className="text-[18px] font-bold text-amber">{s.alert}</span>
+                        )}
+                      </div>
+                      <div className="mt-1 text-[19px] text-muted">
+                        {s.remain}
+                        {s.unit} 남음 · <b className="text-ink">{left}일치</b> · 유통기한 {s.expiry}
+                      </div>
+                      <div
+                        className="mt-2 h-[12px] w-full overflow-hidden rounded-full"
+                        style={{ background: "rgba(10,31,60,.09)" }}
+                      >
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${pct}%`, background: s.alert ? "#B08D57" : "#1E7A5A" }}
+                        />
+                      </div>
+                      {s.alert && (
+                        <button
+                          onClick={() => {
+                            if (done) return;
+                            setReordered((r) => ({ ...r, [s.id]: true }));
+                            dispatch({
+                              type: "addRequest",
+                              payload: {
+                                id: `rq-${Date.now()}`,
+                                dir: "fromElder",
+                                type: "건강식품 재구매",
+                                detail: `${s.name} — ${s.alert} (${left}일치 남음 · 유통기한 ${s.expiry})`,
+                                amount: null,
+                                preferredDate: null,
+                                urgency: "normal",
+                                assignee: "박지현",
+                                photos: [],
+                                status: "requested",
+                                history: [{ at: Date.now(), status: "requested", note: "재구매 알림에서 요청" }],
+                                proof: null,
+                              },
+                            });
+                            dispatch({
+                              type: "pushEvent",
+                              payload: { kind: "구매", text: `${ELDER.name} 건강식품 재구매 요청 — ${s.name}`, color: "#B08D57" },
+                            });
+                          }}
+                          disabled={done}
+                          className="btn-press mt-3 w-full rounded-2xl py-4 text-[20px] font-bold"
+                          style={
+                            done
+                              ? { background: "rgba(30,122,90,.12)", color: "#1E7A5A" }
+                              : { background: "#0A1F3C", color: "#FFFFFF" }
+                          }
+                        >
+                          {done ? "부탁드렸습니다" : "다시 사다 주세요"}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </ElderCard>
+
+            {/* order 4 · 지금 집 안 — 상태를 보여주고, 무엇을 하면 좋은지 한 문장으로 권한다.
+                "에어컨 켜고 가족에게 알리기" 버튼은 삭제 (시트 '건강' 대표 피드백).
+                기기를 대신 켜 주지 못하면서 켜 준 것처럼 보이는 버튼이었다. */}
+            <ElderCard show={tab === "health"} order={4}>
               <CardHead title="지금 집 안" right="실내 · 거실 센서" />
               <div className="mt-2 flex items-end gap-3">
                 <span
                   className="font-num text-[44px] font-bold leading-none"
-                  style={{ color: cooled ? "#0A1F3C" : "#C0392B" }}
+                  style={{ color: LEVEL_COLOR[indoor.level] }}
                 >
                   {indoor.tempLabel}
                 </span>
@@ -479,35 +697,32 @@ export default function ElderHome() {
               <div
                 className="mt-4 rounded-[14px] px-[17px] py-4"
                 style={{
-                  background: cooled ? "rgba(30,122,90,.08)" : "rgba(192,57,43,.07)",
-                  border: cooled
-                    ? "1px solid rgba(30,122,90,.26)"
-                    : "1px solid rgba(192,57,43,.25)",
+                  background: "rgba(192,57,43,.07)",
+                  border: "1px solid rgba(192,57,43,.25)",
                 }}
               >
-                <div
-                  className="text-[19px] font-bold"
-                  style={{ color: LEVEL_COLOR[indoor.level] }}
-                >
+                <div className="text-[19px] font-bold" style={{ color: LEVEL_COLOR[indoor.level] }}>
                   {indoor.alertTitle}
                 </div>
                 <p className="mt-1 text-[19px] leading-[1.6] text-ink">{indoor.alertBody}</p>
               </div>
-              {/* 냉방 + 가족 알림을 한 버튼이 동시에 — 선택지를 늘리지 않는다 (2행 레이블) */}
-              <ElderBtn
-                onClick={() => {
-                  if (cooled) return; // 1회성
-                  dispatch({ type: "elderPatch", patch: { cooled: true } });
-                  dispatch({
-                    type: "pushEvent",
-                    payload: { kind: "환경", text: "김순자 자택 실내 31° → 냉방 가동 · 가족 알림", color: "#FF8A80" },
-                  });
-                }}
-                disabled={cooled}
-                variant={cooled ? "done" : "cool"}
-                className="mt-4"
-                lines={indoor.btnLines}
-              />
+              {/* 안심환경 메시지 — 시트 '건강' 2번. 때마다 한 문장씩 알려 드린다 */}
+              <div className="mt-3 space-y-2">
+                {AMBIENT_TIPS.map((t) => (
+                  <div key={t.id} style={SUB_CARD}>
+                    <div className="flex flex-wrap items-baseline gap-x-2.5">
+                      <span className="text-[20px] font-bold" style={{ color: LEVEL_COLOR[t.tone] }}>
+                        {t.title}
+                      </span>
+                      <span className="text-[18px] text-muted">{t.when}</span>
+                    </div>
+                    <p className="mt-1 text-[19px] leading-[1.6] text-ink">{t.body}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-[19px] leading-[1.6] text-muted">
+                이 메시지는 알림으로도 갑니다. 창문·에어컨은 직접 여닫으셔야 합니다.
+              </p>
             </ElderCard>
 
             {/* order 4 · 오늘 여쭤볼 것 — 인지 부담 면제. 출처 3종 투명 표기 */}
@@ -643,45 +858,113 @@ export default function ElderHome() {
               <p className="mt-2 text-[19px] leading-[1.6] text-muted">{payRule.sub}</p>
             </ElderCard>
 
-            {/* order 1 · 무엇을 부탁할지 고르기 — 한 번에 하나만 (저인지부하) */}
-            {ASK_GROUPS.map((g, gi) => (
-              <ElderCard key={g} show={tab === "ask"} order={1 + gi} style={LIGHT_CARD}>
-                <CardHead title={g} right={gi === 0 ? "하나만 골라 주세요" : ""} />
-                <div className="mt-2 space-y-2">
-                  {ASK_SERVICES.filter((a) => a.g === g).map((a) => {
-                    const on = askSel?.id === a.id;
-                    return (
-                      <button
-                        key={a.id}
-                        onClick={() => {
-                          setAskSent(null);
-                          setAskSel(on ? null : a);
-                        }}
-                        className="btn-press flex w-full items-start gap-3 text-left"
-                        style={{ ...SUB_CARD, outline: on ? "3px solid #B08D57" : "none" }}
-                      >
-                        <span
-                          className="mt-[2px] flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
-                          style={{ background: on ? "#1E7A5A" : "rgba(10,31,60,.08)", color: on ? "#fff" : "transparent" }}
+            {/* order 0.5 · 선생님께 말로 요청하기 — 시트 '해주세요' 대표 피드백.
+                목록에서 못 찾으시면 말로 남기면 된다. 전화 버튼을 대신하는 자리다. */}
+            <ElderCard show={tab === "ask"} order={1} style={LIGHT_CARD}>
+              <CardHead title="말로 부탁하기" right="목록에 없어도 됩니다" />
+              <ElderBtn
+                onClick={() => {
+                  if (askSpoken) return;
+                  setAskSpoken(true);
+                  dispatch({
+                    type: "addRequest",
+                    payload: {
+                      id: `rq-${Date.now()}`,
+                      dir: "fromElder",
+                      type: "말로 남기신 부탁",
+                      detail: "어르신이 음성으로 남긴 요청 — 컨시어지가 듣고 정리합니다",
+                      amount: null,
+                      preferredDate: null,
+                      urgency: "normal",
+                      assignee: "박지현",
+                      photos: [],
+                      status: "requested",
+                      history: [{ at: Date.now(), status: "requested", note: "음성 요청" }],
+                      proof: null,
+                    },
+                  });
+                  dispatch({
+                    type: "pushEvent",
+                    payload: { kind: "부탁", text: `${ELDER.name} 음성 요청 접수 — 컨시어지 확인 대기`, color: "#B08D57" },
+                  });
+                }}
+                variant={askSpoken ? "done" : "primary"}
+                className="mt-3"
+              >
+                {askSpoken ? "말씀하신 내용을 전달했습니다" : "선생님께 말로 요청하기"}
+              </ElderBtn>
+              <p className="mt-3 text-[19px] leading-[1.6] text-muted">
+                말씀만 남기시면 선생님이 듣고 정리해서 알려드립니다.
+              </p>
+            </ElderCard>
+
+            {/* order 1~ · 무엇을 부탁할지 고르기 — 보호자 화면과 같은 메뉴·같은 단가.
+                시작 예정인 서비스(no7~11)는 눌리지 않게 두고 "곧 시작합니다"만 표시한다. */}
+            {ASK_CATS.map((cat, ci) => {
+              const rows = SERVICE_MENU.filter((s) => s.cat === cat);
+              if (rows.length === 0) return null;
+              return (
+                <ElderCard key={cat} show={tab === "ask"} order={2 + ci} style={LIGHT_CARD}>
+                  <CardHead title={cat} right={ci === 0 ? "하나만 골라 주세요" : ""} />
+                  <div className="mt-2 space-y-2">
+                    {rows.map((a) => {
+                      const on = askSel?.no === a.no;
+                      return (
+                        <button
+                          key={a.no}
+                          disabled={!a.active}
+                          onClick={() => {
+                            setAskSent(null);
+                            setAskSel(on ? null : a);
+                          }}
+                          className="btn-press flex w-full items-start gap-3 text-left disabled:opacity-60"
+                          style={{
+                            ...SUB_CARD,
+                            outline: on ? "3px solid #B08D57" : "none",
+                            border: a.active ? undefined : "1px dashed rgba(10,31,60,.22)",
+                          }}
                         >
-                          ✓
-                        </span>
-                        {/* 이름은 한 줄을 다 쓰고, 금액은 아래로 — 좁은 화면에서 이름이 어색하게 끊기지 않게 */}
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-[19px] font-bold leading-[1.35] text-ink">{a.name}</span>
-                          <span className="mt-0.5 flex flex-wrap items-baseline gap-x-2">
-                            <span className="font-num text-[18px] font-bold text-navy">
-                              {a.est === 0 ? "무료" : fmtWon(a.est)}
-                            </span>
-                            <span className="text-[17px] leading-[1.35] text-muted">{a.note}</span>
+                          <span
+                            className="mt-[2px] flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
+                            style={{
+                              background: on ? "#1E7A5A" : "rgba(10,31,60,.08)",
+                              color: on ? "#fff" : "transparent",
+                            }}
+                          >
+                            ✓
                           </span>
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </ElderCard>
-            ))}
+                          <span className="min-w-0 flex-1">
+                            <span className="block text-[19px] font-bold leading-[1.35] text-ink">{a.name}</span>
+                            <span className="mt-0.5 block text-[18px] font-bold text-navy">
+                              {a.active ? a.priceLabel : "곧 시작합니다"}
+                            </span>
+                            <span className="mt-0.5 block text-[17px] leading-[1.4] text-muted">{a.scope}</span>
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </ElderCard>
+              );
+            })}
+
+            {/* order 7 · 해주세요 PLUS — 집수리·공사·렌탈은 바깥 업체를 연결한다.
+                책임 경계를 어르신 화면에도 그대로 쓴다 (공사 책임은 그 업체에 있다). */}
+            <ElderCard show={tab === "ask"} order={7} style={LIGHT_CARD}>
+              <CardHead title="집 고칠 일" right="바깥 업체 연결" />
+              <div className="mt-2 space-y-2">
+                {SERVICE_PLUS.map((p) => (
+                  <div key={p.key} style={SUB_CARD}>
+                    <div className="text-[20px] font-bold text-navy">{p.name}</div>
+                    <div className="mt-0.5 text-[18px] font-bold text-[#7A5C28]">{p.priceLabel}</div>
+                    <p className="mt-1 text-[18px] leading-[1.5] text-muted">{p.scope}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-[19px] leading-[1.6] text-muted">
+                알아보고 진행 상황을 알려드립니다. 공사 자체의 책임은 그 업체에 있습니다.
+              </p>
+            </ElderCard>
 
             {/* order 8 · 확인 · 보내기 — 결제권한대로 문구와 결과가 갈린다 */}
             <ElderCard show={tab === "ask"} order={8} style={LIGHT_CARD}>
@@ -709,9 +992,12 @@ export default function ElderHome() {
                 </>
               ) : (
                 <>
-                  <CardHead title="이렇게 부탁할까요" right={askSel.est === 0 ? "비용 없음" : fmtWon(askSel.est)} />
+                  <CardHead
+                    title="이렇게 부탁할까요"
+                    right={askSel.amount === 0 ? "비용 없음" : askSel.amount == null ? "요금 확인 후 안내" : fmtWon(askSel.amount)}
+                  />
                   <p className="mt-2 text-[22px] font-bold leading-[1.5] text-navy">{askSel.name}</p>
-                  <p className="mt-1 text-[19px] leading-[1.6] text-muted">{askSel.note}</p>
+                  <p className="mt-1 text-[19px] leading-[1.6] text-muted">{askSel.scope}</p>
                   <p className="mt-3 rounded-2xl p-4 text-[19px] font-bold leading-[1.5]"
                      style={askPlan.approval
                        ? { background: "rgba(138,93,18,.1)", color: "#8A5D12" }
@@ -720,7 +1006,7 @@ export default function ElderHome() {
                   </p>
                   <ElderBtn
                     onClick={() => {
-                      const amount = askSel.est;
+                      const amount = askSel.amount;
                       setAskSent({ name: askSel.name, mode: askPlan.mode, amount });
                       dispatch({
                         type: "addRequest",
@@ -728,7 +1014,7 @@ export default function ElderHome() {
                           id: `rq-${Date.now()}`,
                           dir: "fromElder",
                           type: askPlan.approval ? "부탁 · 승인 필요" : "부탁",
-                          detail: `${askSel.name} (${askSel.note})`,
+                          detail: `${askSel.name} (${askSel.scope})`,
                           amount,
                           preferredDate: null,
                           urgency: "normal",
@@ -740,7 +1026,16 @@ export default function ElderHome() {
                             { at: Date.now(), status: "confirmed", note: "" },
                             askPlan.approval
                               ? { at: Date.now(), status: "awaitingPayment", note: `보호자 승인 대기 · ${fmtWon(amount)}` }
-                              : { at: Date.now(), status: "inProgress", note: amount === 0 ? "멤버십 포함" : `어르신 직접 결제 ${fmtWon(amount)} (한도 내 · 데모)` },
+                              : {
+                                  at: Date.now(),
+                                  status: "inProgress",
+                                  note:
+                                    amount === 0
+                                      ? "멤버십 포함"
+                                      : amount == null
+                                      ? "요금 확인 후 안내"
+                                      : `어르신 직접 결제 ${fmtWon(amount)} (한도 내 · 데모)`,
+                                },
                           ],
                           proof: null,
                         },
@@ -750,8 +1045,10 @@ export default function ElderHome() {
                         payload: {
                           kind: "부탁",
                           text: askPlan.approval
-                            ? `김순자 해주세요 — ${askSel.name} · 보호자 승인 요청 (${fmtWon(amount)})`
-                            : `김순자 해주세요 — ${askSel.name} · ${amount === 0 ? "멤버십 포함" : `직접 결제 ${fmtWon(amount)}`}`,
+                            ? `${ELDER.name} 해주세요 — ${askSel.name} · 보호자 승인 요청 (${fmtWon(amount)})`
+                            : `${ELDER.name} 해주세요 — ${askSel.name} · ${
+                                amount === 0 ? "멤버십 포함" : amount == null ? "요금 확인 후 안내" : `직접 결제 ${fmtWon(amount)}`
+                              }`,
                           color: "#B08D57",
                         },
                       });
@@ -760,7 +1057,7 @@ export default function ElderHome() {
                   >
                     <span className="block leading-[1.35]">{askPlan.cta}</span>
                     <span className="block text-[19px] leading-[1.35] text-white/85">
-                      {askSel.est === 0 ? "비용 없음" : fmtWon(askSel.est)}
+                      {askSel.amount === 0 ? "비용 없음" : askSel.amount == null ? "요금 확인 후 안내" : fmtWon(askSel.amount)}
                     </span>
                   </ElderBtn>
                 </>
@@ -786,7 +1083,200 @@ export default function ElderHome() {
               )}
             </ElderCard>
 
-            {/* order 5 · 목소리 보내기 — 받는 사람 고르고 꾹 눌러 말하면 끝 */}
+            {/* ══ 스토어 탭 — 2026-08-12 어르신화면 시트 전체 요청 5번 "스토어 탭 추가" ══
+                보호자 스토어와 같은 카탈로그(lib/store.js)를 쓰되, 활자를 키우고
+                한 화면에 한 분류만 보여준다. 담으면 결제권한(REQ-07)대로 갈린다. */}
+            <ElderCard show={tab === "store"} order={0} style={LIGHT_CARD}>
+              <CardHead title="무엇을 사드릴까요" right="담으면 배송으로 옵니다" />
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {STORE_CATALOG.map((c) => {
+                  const on = storeCat === c.id;
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => setStoreCat(c.id)}
+                      aria-pressed={on}
+                      className="btn-press flex items-center gap-2.5 rounded-2xl border-2 px-3 py-4 text-left"
+                      style={
+                        on
+                          ? { borderColor: "#0A1F3C", background: "#0A1F3C", color: "#FFFFFF" }
+                          : { borderColor: "rgba(10,31,60,.15)", color: "#40413F" }
+                      }
+                    >
+                      <Icon name={c.icon} size={26} strokeWidth={1.8} />
+                      <span className="text-[19px] font-bold leading-[1.25]">{c.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {storeCatalog.note && (
+                <p className="mt-3 rounded-2xl px-4 py-3.5 text-[19px] leading-[1.6] text-muted" style={SUB_CARD}>
+                  {storeCatalog.note}
+                </p>
+              )}
+            </ElderCard>
+
+            {storeCatalog.groups.map((g, gi) => (
+              <ElderCard key={`${storeCatalog.id}-${g.name}`} show={tab === "store"} order={1 + gi}>
+                <CardHead title={g.name} />
+                <div className="mt-2 space-y-2">
+                  {g.items.map((i) => {
+                    const on = !!storeSel[i.id];
+                    const off = !i.price; // 가격 확정 전 — 담기지 않는다
+                    return (
+                      <button
+                        key={i.id}
+                        disabled={off}
+                        onClick={() => {
+                          setStoreSent(null);
+                          setStoreSel((s) => ({ ...s, [i.id]: !s[i.id] }));
+                        }}
+                        className="btn-press flex w-full items-center gap-3 text-left disabled:opacity-60"
+                        style={{
+                          ...SUB_CARD,
+                          outline: on ? "3px solid #B08D57" : "none",
+                          border: off ? "1px dashed rgba(10,31,60,.22)" : undefined,
+                        }}
+                      >
+                        <span
+                          className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
+                          style={{
+                            background: on ? "#1E7A5A" : "rgba(10,31,60,.08)",
+                            color: on ? "#fff" : "transparent",
+                          }}
+                        >
+                          ✓
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[19px] font-bold leading-[1.35] text-ink">{i.name}</span>
+                          {i.note && (
+                            <span className="mt-0.5 block text-[17px] leading-[1.4] text-muted">{i.note}</span>
+                          )}
+                        </span>
+                        <span className="shrink-0 text-right">
+                          {i.price ? (
+                            <span className="font-num text-[20px] font-bold text-navy">{fmtWon(i.price)}</span>
+                          ) : (
+                            <span className="text-[17px] font-bold text-muted">{i.pending}</span>
+                          )}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </ElderCard>
+            ))}
+
+            {/* 담은 것 확인 · 주문 — 결제권한대로 문구가 갈린다 */}
+            <ElderCard show={tab === "store"} order={9} style={LIGHT_CARD}>
+              {storeSent ? (
+                <>
+                  <CardHead title="보냈습니다" right={storeSent === "approval" ? "승인 기다리는 중" : "주문됨"} />
+                  <p className="mt-2 rounded-2xl bg-green/10 p-4 text-[19px] font-bold leading-[1.5] text-green">
+                    {storeSent === "approval"
+                      ? "가족에게 전달했습니다. 승인되면 배송으로 옵니다."
+                      : "주문했습니다. 다음 배송 때 함께 옵니다."}
+                  </p>
+                  <ElderBtn onClick={() => setStoreSent(null)} variant="done" className="mt-4">
+                    더 담기
+                  </ElderBtn>
+                </>
+              ) : storeItems.length === 0 ? (
+                <>
+                  <CardHead title="담으시면 여기에 보입니다" />
+                  <p className="mt-2 text-[20px] leading-[1.6] text-muted">
+                    위에서 필요한 것을 눌러 주세요.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <CardHead title="담으신 것" right={`${storeItems.length}가지`} />
+                  <div className="mt-2">
+                    {storeItems.map((i) => (
+                      <div
+                        key={i.id}
+                        className="flex items-baseline gap-3 border-t border-navy/[.07] py-3 first:border-t-0"
+                      >
+                        <span className="min-w-0 flex-1 text-[19px] text-ink">{i.name}</span>
+                        <span className="font-num text-[19px] font-bold text-navy">{fmtWon(i.price)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-2 flex items-baseline justify-between border-t-2 border-navy/[.12] pt-3">
+                    <span className="text-[20px] font-bold text-navy">모두</span>
+                    <span className="font-num text-[26px] font-bold text-navy">{fmtWon(storeTotal)}</span>
+                  </div>
+                  <ElderBtn
+                    onClick={() => {
+                      const mode = storeApproval ? "approval" : "ordered";
+                      setStoreSent(mode);
+                      setStoreSel({});
+                      dispatch({ type: "demo", payload: { cart: true } });
+                      dispatch({
+                        type: "addRequest",
+                        payload: {
+                          id: `rq-${Date.now()}`,
+                          dir: "fromElder",
+                          type: storeApproval ? "물건 승인 부탁해요" : "물건을 담았어요",
+                          detail: `스토어에서 담으신 물품: ${storeItems.map((i) => i.name).join(", ")}`,
+                          amount: storeTotal,
+                          preferredDate: null,
+                          urgency: "normal",
+                          assignee: "박지현",
+                          photos: [],
+                          status: storeApproval ? "awaitingPayment" : "inProgress",
+                          history: [
+                            { at: Date.now(), status: "requested", note: "어르신 스토어" },
+                            { at: Date.now(), status: "confirmed", note: "" },
+                            storeApproval
+                              ? { at: Date.now(), status: "awaitingPayment", note: `한도 초과 · ${fmtWon(storeTotal)}` }
+                              : { at: Date.now(), status: "inProgress", note: `어르신 직접 결제 ${fmtWon(storeTotal)} (한도 내 · 데모)` },
+                          ],
+                          proof: null,
+                        },
+                      });
+                      if (!storeApproval) {
+                        dispatch({
+                          type: "addOrder",
+                          payload: {
+                            by: `${ELDER.name} 님`,
+                            channel: "어르신 스토어",
+                            items: storeItems.map((i) => ({ id: i.id, name: i.name, qty: 1, price: i.price })),
+                            ship: storeItems.reduce((s, i) => s + (i.ship || 0), 0),
+                            status: "preparing",
+                            receipt: null,
+                            note: "",
+                          },
+                        });
+                      }
+                      dispatch({
+                        type: "pushEvent",
+                        payload: {
+                          kind: "장바구니",
+                          text: storeApproval
+                            ? `${ELDER.name} 스토어 ${storeItems.length}건 · 보호자 승인 요청 (${fmtWon(storeTotal)})`
+                            : `${ELDER.name} 직접 주문 ${storeItems.length}건 · ${fmtWon(storeTotal)} (한도 내)`,
+                          color: "#B08D57",
+                        },
+                      });
+                    }}
+                    variant={storeApproval ? "primary" : "success"}
+                    className="mt-4"
+                  >
+                    <span className="block leading-[1.35]">
+                      {storeApproval ? "가족에게 부탁하기" : "바로 주문하기"}
+                    </span>
+                    <span className="block text-[19px] leading-[1.35] text-white/85">
+                      {storeItems.length}가지 · {fmtWon(storeTotal)}
+                    </span>
+                  </ElderBtn>
+                </>
+              )}
+            </ElderCard>
+
+            {/* order 5 · 목소리 보내기 — 이름을 누르면 바로 녹음이 시작된다.
+                '꾹 누르고 말하기' 버튼은 삭제 (시트 '가족' 1번). 누르고 있는 동안만
+                녹음되는 방식은 손 떨림이 있으면 중간에 끊긴다 — 눌렀다 떼는 방식으로 바꿨다. */}
             <ElderCard
               show={tab === "family"}
               order={5}
@@ -798,21 +1288,25 @@ export default function ElderHome() {
             >
               <CardHead title="목소리 보내기" right="글자 안 써도 됩니다" />
               <p className="mt-2 text-[20px] leading-[1.6] text-ink">
-                받을 사람을 고르고
+                보낼 사람 이름을 누르면
                 <br />
-                아래 버튼을 꾹 누른 채 말씀하세요.
+                바로 말씀하실 수 있습니다.
               </p>
               <VoiceRecorder
                 to={voiceTo}
                 onPick={setVoiceTo}
                 sent={voiceSent}
-                onSend={(sec) => {
-                  setVoiceSent((v) => [{ to: voiceTo.name, sec }, ...v]);
+                onSend={(sec, target) => {
+                  setVoiceSent((v) => [{ to: target.name, sec }, ...v]);
+                  dispatch({
+                    type: "addVoice",
+                    payload: { from: `${ELDER.name} 님`, to: target.name, secs: sec, context: "안부" },
+                  });
                   dispatch({
                     type: "pushEvent",
                     payload: {
                       kind: "메시지",
-                      text: `김순자(78) → ${voiceTo.name} 목소리 메시지 ${sec}초 전송`,
+                      text: `${ELDER.name}(${ELDER.age}) → ${target.name} 목소리 메시지 ${sec}초 전송`,
                       color: "#8FA9CC",
                     },
                   });
@@ -868,129 +1362,8 @@ export default function ElderHome() {
               )}
             </ElderCard>
 
-            {/* order 7 · 필요한 물건 담기 — 부모가 담고 결제권한대로 분기 (회의 6 · REQ-07).
-                직접 결제 상거래 화면이라 금액 표기는 예외적으로 허용 */}
-            <ElderCard show={tab === "family"} order={8}>
-              <CardHead title="필요한 물건" right="담아두면 배송으로 옵니다" />
-              <div className="mt-2 space-y-2">
-                {ELDER_STORE_PICKS.map((i) => {
-                  const on = !!storeSel[i.id];
-                  return (
-                    <button
-                      key={i.id}
-                      onClick={() => {
-                        setStoreSent(null);
-                        setStoreSel((s) => ({ ...s, [i.id]: !s[i.id] }));
-                      }}
-                      className="btn-press flex w-full items-center gap-3 rounded-[14px] p-4 text-left"
-                      style={{
-                        ...SUB_CARD,
-                        padding: "14px 15px",
-                        outline: on ? "2px solid #B08D57" : "none",
-                      }}
-                    >
-                      <span
-                        className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
-                        style={{
-                          background: on ? "#1E7A5A" : "rgba(10,31,60,.08)",
-                          color: on ? "#fff" : "transparent",
-                        }}
-                      >
-                        ✓
-                      </span>
-                      <span className="flex-1 text-[19px] font-bold text-ink">{i.name}</span>
-                      <span className="font-num text-[19px] font-bold text-navy">
-                        {fmtWon(i.price)}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-              {(() => {
-                const items = ELDER_STORE_PICKS.filter((i) => storeSel[i.id]);
-                const total = items.reduce((s, i) => s + i.price, 0);
-                const needApproval = needsGuardianApproval(state.onboarding, total);
-                if (storeSent) {
-                  return (
-                    <p className="mt-4 rounded-2xl bg-green/10 p-4 text-[19px] font-bold leading-[1.5] text-green">
-                      {storeSent === "approval"
-                        ? "가족에게 전달했습니다. 승인되면 배송으로 옵니다."
-                        : "주문했습니다. 다음 배송 때 함께 옵니다."}
-                    </p>
-                  );
-                }
-                if (items.length === 0) return null;
-                return (
-                  <ElderBtn
-                    onClick={() => {
-                      const mode = needApproval ? "approval" : "ordered";
-                      setStoreSent(mode);
-                      setStoreSel({});
-                      dispatch({ type: "demo", payload: { cart: true } });
-                      dispatch({
-                        type: "addRequest",
-                        payload: {
-                          id: `rq-${Date.now()}`,
-                          dir: "fromElder",
-                          type: needApproval ? "물건 승인 부탁해요" : "물건을 담았어요",
-                          detail: `어르신 담은 물품: ${items.map((i) => i.name).join(", ")}`,
-                          amount: total,
-                          preferredDate: null,
-                          urgency: "normal",
-                          assignee: "박지현",
-                          photos: [],
-                          status: needApproval ? "awaitingPayment" : "inProgress",
-                          history: needApproval
-                            ? [
-                                { at: Date.now(), status: "requested", note: "어르신 장바구니" },
-                                { at: Date.now(), status: "confirmed", note: "" },
-                                { at: Date.now(), status: "awaitingPayment", note: `한도 초과 · ${fmtWon(total)}` },
-                              ]
-                            : [
-                                { at: Date.now(), status: "requested", note: "어르신 장바구니" },
-                                { at: Date.now(), status: "confirmed", note: "" },
-                                { at: Date.now(), status: "inProgress", note: `어르신 직접 결제 ${fmtWon(total)} (한도 내 · 데모)` },
-                              ],
-                          proof: null,
-                        },
-                      });
-                      dispatch({
-                        type: "pushEvent",
-                        payload: {
-                          kind: "장바구니",
-                          text: needApproval
-                            ? `김순자 장바구니 ${items.length}건 · 보호자 승인 요청 (${fmtWon(total)})`
-                            : `김순자 직접 주문 ${items.length}건 · ${fmtWon(total)} (한도 내)`,
-                          color: "#B08D57",
-                        },
-                      });
-                    }}
-                    variant={needApproval ? "primary" : "success"}
-                    className="mt-4"
-                  >
-                    <span className="block leading-[1.35]">
-                      {needApproval ? "가족에게 부탁하기" : "바로 주문하기"}
-                    </span>
-                    <span className="block text-[19px] leading-[1.35] text-white/85">
-                      {items.length}가지 · {fmtWon(total)}
-                    </span>
-                  </ElderBtn>
-                );
-              })()}
-            </ElderCard>
-
-            {/* order 7 · 토요일 배송 — 금액 없음. 품목·수량만 (정보 비대칭의 최소 예) */}
-            <ElderCard show={tab === "family"} order={7}>
-              <CardHead title={`${DELIVERY.dayLabel} 배송`} right={DELIVERY.timeLabel} />
-              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
-                약과 필요한 물건이
-                <br />
-                집으로 옵니다
-              </p>
-              <p className="mt-2 text-[19px] leading-[1.6] text-muted">
-                {cart ? DELIVERY.itemsWithCart : DELIVERY.itemsBase}
-              </p>
-            </ElderCard>
+            {/* 필요한 물건 · 토요일 배송 카드는 삭제 (2026-08-12 어르신화면 시트 가족 2번).
+                물건은 새로 만든 스토어 탭에서 본다 — 가족 탭에 상거래를 섞지 않는다. */}
 
             {/* order 8 · 자녀들이 보고 있습니다 — 고립감 해소. 상대 시간만, 부정 표현 금지 */}
             <ElderCard
@@ -1037,25 +1410,12 @@ export default function ElderHome() {
             </ElderCard>
           </main>
 
-          {/* ── 고정 푸터: 전화 · 탭 (스크롤 밖 — 06 원칙 5). SOS는 최상단으로 분리 ── */}
+          {/* ── 고정 푸터: 탭 (스크롤 밖 — 06 원칙 5) ──
+              '선생님께 전화'는 전체 탭에서 삭제 (2026-08-12 시트 전체 요청 2번).
+              전화는 오늘 오시는 분에게만, '오늘 찾아뵙는 분' 카드 안에서 연다. */}
           <footer className="shrink-0 pb-3 pt-4">
-            {/* SOS(응급)는 위, 전화(문의)는 아래 — 화면 양 끝으로 갈라 오작동을 막는다 (06 §4.2) */}
-            <button
-              onClick={callTeacher}
-              className="btn-press w-full rounded-2xl p-6 text-[22px] font-bold text-navy"
-              style={{
-                background: "linear-gradient(180deg, rgba(255,255,255,.92), rgba(240,238,232,.78))",
-                backdropFilter: "blur(10px)",
-                WebkitBackdropFilter: "blur(10px)",
-                border: "1px solid rgba(255,255,255,.9)",
-                boxShadow:
-                  "inset 0 1px 0 #FFFFFF, inset 0 -3px 0 rgba(10,31,60,.13), inset 0 0 0 1px rgba(10,31,60,.14), 0 10px 20px -12px rgba(10,31,60,.45)",
-              }}
-            >
-              {calling ? "박지현 선생님께 연결 중입니다" : "선생님께 전화"}
-            </button>
-            {/* 하단 탭 3개 — 아이콘+라벨 병행 (아이콘 전용 금지) */}
-            <nav className="mt-3 flex border-t border-navy/[.12] pt-2">
+            {/* 하단 탭 5개 — 아이콘+라벨 병행 (아이콘 전용 금지) */}
+            <nav className="flex border-t border-navy/[.12] pt-2">
               {TABS.map((t) => {
                 const active = tab === t.key;
                 const color = active ? "#0A1F3C" : "#5C5A54";
@@ -1096,6 +1456,24 @@ export default function ElderHome() {
             }}
           />
         )}
+
+        {/* SOS — 화면 안 버튼은 없앴고(시트 전체 요청 3번), 바탕화면 바로가기로만 들어온다.
+            /elder?sos=1 로 열리면 5초 취소 유예 화면이 바로 뜬다. */}
+        <SosButton
+          phase={sosPhase}
+          setPhase={setSosPhase}
+          onDispatch={() => {
+            dispatch({ type: "demo", payload: { sos: true } });
+            dispatch({
+              type: "pushEvent",
+              payload: {
+                kind: "SOS",
+                text: `${ELDER.name}(${ELDER.age}) SOS 발신 · 가족·관제 동시 점등`,
+                color: "#FF8A80",
+              },
+            });
+          }}
+        />
       </div>
     </>
   );
@@ -1213,107 +1591,103 @@ function ElderEventSheet({ onClose, onCreate }) {
   );
 }
 
-// 목소리 보내기 — 어르신에게 타이핑은 장벽이다. 받는 사람 고르고 꾹 눌러 말하면 끝.
+// 목소리 보내기 — 이름을 누르면 그 자리에서 녹음이 시작되고, 다시 누르면 보낸다.
+// 2026-08-12 어르신화면 시트 가족 1번: "꾹 누르고 말하기 버튼 삭제하고 가족 이름을
+// 바로 눌러서 메시지를 보낼 수 있게". 누르고 있는 동안만 녹음되는 방식은 손 떨림이
+// 있으면 중간에 끊긴다 — 눌렀다 떼는 토글로 바꿨다.
 // 빨강은 SOS 전용이므로 녹음 중 색은 금색 계열을 쓴다 (06 §4.2).
 function VoiceRecorder({ to, onPick, onSend, sent }) {
-  const [rec, setRec] = useState(false);
   const [sec, setSec] = useState(0);
   const [tooShort, setTooShort] = useState(false);
   const timer = useRef(null);
 
-  const start = () => {
-    if (!to || rec) return;
+  const start = (v) => {
     setTooShort(false);
     setSec(0);
-    setRec(true);
-    timer.current = setInterval(() => setSec((v) => Math.min(60, v + 1)), 1000);
-  };
-  const stop = () => {
-    if (!rec) return;
+    onPick(v);
     clearInterval(timer.current);
-    setRec(false);
+    timer.current = setInterval(() => setSec((n) => Math.min(60, n + 1)), 1000);
+  };
+  const finish = (v) => {
+    clearInterval(timer.current);
+    onPick(null);
     if (sec < 1) {
       setTooShort(true); // 스치듯 눌린 것은 보내지 않는다
+      setSec(0);
       return;
     }
-    onSend(sec);
+    onSend(sec, v);
     setSec(0);
   };
   useEffect(() => () => clearInterval(timer.current), []);
 
   return (
     <>
-      <div className="mt-2 grid grid-cols-1 gap-2.5 min-[400px]:grid-cols-2">
+      <div className="mt-3 space-y-2.5">
         {VOICE_TO.map((v) => {
           const on = to?.id === v.id;
           return (
             <button
               key={v.id}
-              onClick={() => onPick(v)}
-              className="btn-press flex items-center gap-3 rounded-[14px] p-3.5 text-left"
-              style={{ ...SUB_CARD, padding: "12px 13px", outline: on ? "3px solid #B08D57" : "none" }}
+              onClick={() => (on ? finish(v) : start(v))}
+              aria-label={on ? `${v.name}에게 보내기` : `${v.name}에게 목소리 남기기`}
+              className="btn-press flex w-full items-center gap-3.5 rounded-[14px] p-4 text-left"
+              style={
+                on
+                  ? {
+                      borderRadius: 14,
+                      padding: "16px 15px",
+                      background:
+                        "linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.04) 55%), rgba(176,141,87,.92)",
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,.45), 0 12px 24px -10px rgba(176,141,87,.6)",
+                    }
+                  : { ...SUB_CARD, padding: "16px 15px" }
+              }
             >
               <span
-                className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full text-[15px] font-bold"
-                style={{ background: v.avBg, color: v.avFg }}
+                className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full text-[16px] font-bold"
+                style={on ? { background: "rgba(255,255,255,.9)", color: "#7A5C28" } : { background: v.avBg, color: v.avFg }}
               >
                 {v.initials}
               </span>
-              <span className="min-w-0">
-                <span className="block text-[18px] font-bold leading-[1.3] text-navy">{v.name}</span>
-                <span className="block text-[15px] leading-[1.3] text-muted">{v.sub}</span>
+              <span className="min-w-0 flex-1">
+                <span
+                  className="block text-[21px] font-bold leading-[1.3]"
+                  style={{ color: on ? "#FFFFFF" : "#0A1F3C" }}
+                >
+                  {v.name}
+                </span>
+                <span
+                  className="block text-[18px] leading-[1.35]"
+                  style={{ color: on ? "rgba(255,255,255,.88)" : "#5C5A54" }}
+                >
+                  {on ? `말씀하세요  ${sec}초 · 다시 누르면 보냅니다` : v.sub}
+                </span>
+              </span>
+              <span className="shrink-0" style={{ color: on ? "#FFFFFF" : "#0A1F3C" }}>
+                <Icon name="mic" size={28} strokeWidth={2} />
               </span>
             </button>
           );
         })}
       </div>
 
-      <button
-        aria-label="꾹 누르고 말하기"
-        disabled={!to}
-        onPointerDown={start}
-        onPointerUp={stop}
-        onPointerLeave={stop}
-        onContextMenu={(e) => e.preventDefault()}
-        className="btn-press mt-3.5 w-full select-none rounded-2xl px-5 py-[26px] disabled:opacity-45"
-        style={{
-          touchAction: "none",
-          background: rec
-            ? "linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.04) 55%), rgba(176,141,87,.92)"
-            : "linear-gradient(180deg, rgba(255,255,255,.94), rgba(240,238,232,.8))",
-          color: rec ? "#FFFFFF" : "#0A1F3C",
-          border: rec ? "1px solid rgba(255,255,255,.5)" : "1px solid rgba(255,255,255,.9)",
-          boxShadow: rec
-            ? "inset 0 1px 0 rgba(255,255,255,.45), 0 12px 24px -10px rgba(176,141,87,.6)"
-            : "inset 0 1px 0 #FFFFFF, inset 0 -3px 0 rgba(10,31,60,.13), inset 0 0 0 1px rgba(10,31,60,.14)",
-        }}
-      >
-        <span className="flex items-center justify-center gap-2.5">
-          <Icon name="mic" size={30} strokeWidth={2} />
-          <span className="text-[26px] font-black leading-none">
-            {rec ? `말씀하세요  ${sec}초` : "꾹 누르고 말하기"}
-          </span>
+      {/* 녹음 중 파형 — 소리가 들어가고 있다는 것을 눈으로 확인 */}
+      {to && (
+        <span className="mt-3 flex items-end justify-center gap-[3px]" aria-hidden>
+          {[10, 20, 14, 26, 16, 30, 12, 22, 18, 28, 13, 24].map((h, i) => (
+            <span
+              key={i}
+              className="w-[5px] rounded-full bg-gold/80"
+              style={{ height: h, animation: `sosPulse 1s ease-in-out ${i * 0.08}s infinite` }}
+            />
+          ))}
         </span>
-        <span className="mt-2 block text-[17px] font-bold" style={{ color: rec ? "rgba(255,255,255,.85)" : "#5C5A54" }}>
-          {!to ? "위에서 받을 사람을 먼저 고르세요" : rec ? "손을 떼면 바로 보냅니다" : `${to.name}에게 보냅니다`}
-        </span>
-        {/* 녹음 중 파형 — 소리가 들어가고 있다는 것을 눈으로 확인 */}
-        {rec && (
-          <span className="mt-3 flex items-end justify-center gap-[3px]" aria-hidden>
-            {[10, 20, 14, 26, 16, 30, 12, 22, 18, 28, 13, 24].map((h, i) => (
-              <span
-                key={i}
-                className="w-[5px] rounded-full bg-white/85"
-                style={{ height: h, animation: `sosPulse 1s ease-in-out ${i * 0.08}s infinite` }}
-              />
-            ))}
-          </span>
-        )}
-      </button>
+      )}
 
       {tooShort && (
         <p className="mt-3 text-[19px] font-bold leading-[1.5] text-amber">
-          너무 짧습니다. 조금 더 길게 눌러 주세요.
+          너무 짧습니다. 조금 더 길게 말씀해 주세요.
         </p>
       )}
       {sent.length > 0 && (
@@ -1333,33 +1707,58 @@ function VoiceRecorder({ to, onPick, onSend, sent }) {
   );
 }
 
-// SOS — REQ-06 확정: 2초 길게 누르기(진행 표시) → 5초 취소 카운트다운 → 자동 접수.
-// 스타일: 붉은 배경·흰 텍스트 기본의 글라스모피즘 (블러 + 반투명 + 광택 하이라이트).
-function SosButton({ phase, setPhase, onDispatch }) {
-  const [hold, setHold] = useState(0); // 0~100 길게 누르기 진행
-  const [count, setCount] = useState(5);
-  const holdTimer = useRef(null);
-  const countTimer = useRef(null);
-
-  const HOLD_MS = 2000;
-
-  const startHold = () => {
-    if (phase !== "idle") return;
-    const t0 = Date.now();
-    holdTimer.current = setInterval(() => {
-      const p = Math.min(100, ((Date.now() - t0) / HOLD_MS) * 100);
-      setHold(p);
-      if (p >= 100) {
-        clearInterval(holdTimer.current);
-        setHold(0);
-        setPhase("confirm");
+// 즉시 방문 요청 — 화면 안 SOS 버튼을 대신하는 원형 버튼 (2026-08-12 시트 전체 요청 4번).
+// SOS 는 "지금 위험하다"이고 이것은 "지금 와 주셨으면 한다"다. 둘을 색으로 가른다 —
+// 빨강은 SOS 전용이므로 이 버튼은 네이비다.
+function VisitNowButton({ done, onAsk }) {
+  return (
+    <button
+      onClick={() => !done && onAsk()}
+      aria-label={done ? "즉시 방문을 요청했습니다" : "지금 와 주세요 — 즉시 방문 요청"}
+      className="btn-press flex h-[128px] w-[128px] shrink-0 select-none flex-col items-center justify-center gap-1 rounded-full text-center"
+      style={
+        done
+          ? {
+              background: "rgba(30,122,90,.12)",
+              color: "#1E7A5A",
+              border: "2px solid rgba(30,122,90,.35)",
+            }
+          : {
+              background:
+                "linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.03) 55%), #0A1F3C",
+              color: "#FFFFFF",
+              border: "1px solid rgba(255,255,255,.35)",
+              boxShadow:
+                "inset 0 1px 0 rgba(255,255,255,.4), inset 0 -4px 0 rgba(0,0,0,.28), 0 14px 26px -12px rgba(10,31,60,.6)",
+            }
       }
-    }, 50);
-  };
-  const endHold = () => {
-    clearInterval(holdTimer.current);
-    setHold(0);
-  };
+    >
+      <span aria-hidden style={{ color: done ? "#1E7A5A" : "#C9A46B" }}>
+        <Icon name={done ? "clock" : "door"} size={30} strokeWidth={2} />
+      </span>
+      <span className="text-[21px] font-black leading-[1.2]">
+        {done ? (
+          "요청됨"
+        ) : (
+          <>
+            지금
+            <br />
+            와 주세요
+          </>
+        )}
+      </span>
+    </button>
+  );
+}
+
+// SOS — REQ-06 확정: 5초 취소 카운트다운 → 자동 접수.
+//
+// 2026-08-12 시트로 화면 안 트리거 버튼은 없앴다. 이제 진입점은 바탕화면 바로가기
+// (/elder?sos=1) 하나뿐이라, 이 컴포넌트는 취소 유예 화면과 접수 화면만 그린다.
+// 화면 안에 SOS 와 즉시방문요청이 나란히 있으면 급할 때 무엇을 눌러야 할지 고르게 된다.
+function SosButton({ phase, setPhase, onDispatch }) {
+  const [count, setCount] = useState(5);
+  const countTimer = useRef(null);
 
   // 5초 취소 유예 — 미취소 시 자동 접수
   useEffect(() => {
@@ -1381,39 +1780,6 @@ function SosButton({ phase, setPhase, onDispatch }) {
 
   return (
     <>
-      <button
-        aria-label="긴급 도움 요청"
-        onPointerDown={startHold}
-        onPointerUp={endHold}
-        onPointerLeave={endHold}
-        onContextMenu={(e) => e.preventDefault()}
-        className="btn-press animate-sosPulse relative w-full select-none overflow-hidden rounded-2xl px-5 py-[26px] text-white"
-        style={{
-          animationDuration: "2.4s", // prefers-reduced-motion 시 globals.css에서 정지
-          touchAction: "none",
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.04) 55%), rgba(192,57,43,.86)",
-          backdropFilter: "blur(14px) saturate(1.5)",
-          WebkitBackdropFilter: "blur(14px) saturate(1.5)",
-          border: "1px solid rgba(255,255,255,.42)",
-          boxShadow:
-            "inset 0 1px 0 rgba(255,255,255,.45), inset 0 -4px 0 rgba(96,20,14,.35), 0 12px 24px -10px rgba(192,57,43,.55)",
-        }}
-      >
-        {/* 길게 누르기 진행 표시 (REQ-06) */}
-        <span
-          aria-hidden
-          className="absolute inset-y-0 left-0 bg-[#8E2417]/70"
-          style={{ width: `${hold}%` }}
-        />
-        <span className="relative block text-[32px] font-black leading-none tracking-[.02em]">
-          SOS 도움 요청
-        </span>
-        <span className="relative mt-2 block text-[17px] font-bold text-white/85">
-          2초 꾹 누르시면 접수됩니다
-        </span>
-      </button>
-
       {/* 5초 취소 유예 화면 */}
       {phase === "confirm" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(8,23,45,.92)] px-6">

@@ -3,11 +3,12 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, PendingTag } from "../../components/ui";
-import { ACCESS_LOG, CONSENTS, ELDER, GUARDIANS, INVITE, OPTION_SERVICES, PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
+import { ACCESS_LOG, CONSENTS, ELDER, GUARDIANS, INVITE, PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 
-// 마이 — 멤버십 · 우선 날씨 설정(REQ-01) · 옵션 서비스(회의 9) · 케어 리포트 · 병원 찾기
+// 마이 — 멤버십 · 우선 날씨 설정(REQ-01) · 케어 리포트
+// 옵션 서비스와 협력병원 찾기는 2026-08-12 요청으로 뺐다 (홈에서 진입).
 // 우선 날씨는 자동 추론이 아니라 사람이 설정한다 — 설정 주체·시각을 기록한다.
 
 export default function MyPage() {
@@ -15,38 +16,11 @@ export default function MyPage() {
   const ob = state.onboarding;
   const [settingOpen, setSettingOpen] = useState(false);
   const [consentRenewed, setConsentRenewed] = useState(false); // 동의 갱신 원탭
-  const [applied, setApplied] = useState({}); // 옵션 신청 상태 (데모)
   const [pdfRequested, setPdfRequested] = useState(false);
   const [invited, setInvited] = useState(false);
   const isPrimary = (state.demo.guardianRole || "primary") === "primary";
 
   const sharedReports = state.reports.filter((r) => r.shared);
-
-  const applyOption = (o) => {
-    if (!isPrimary || o.locked || applied[o.key]) return; // 결제 수반 — 주 보호자 전용
-    setApplied((a) => ({ ...a, [o.key]: true }));
-    dispatch({
-      type: "addRequest",
-      payload: {
-        id: `rq-${Date.now()}`,
-        dir: "fromGuardian",
-        type: `옵션 신청 · ${o.name}`,
-        detail: `${o.desc} — 접수 후 결제요청이 전달됩니다. (${o.price})`,
-        amount: null,
-        preferredDate: null,
-        urgency: "normal",
-        assignee: "박지현",
-        photos: [],
-        status: "requested",
-        history: [{ at: Date.now(), status: "requested", note: "옵션 판매 접수" }],
-        proof: null,
-      },
-    });
-    dispatch({
-      type: "pushEvent",
-      payload: { kind: "옵션", text: `${o.name} 신청 접수 · 결제요청 예정`, color: "#B08D57" },
-    });
-  };
 
   return (
     <>
@@ -116,18 +90,7 @@ export default function MyPage() {
           </p>
         </Card>
 
-        {/* MOU 병원 찾기 */}
-        <Link href="/family/hospitals" className="block">
-          <Card className="btn-press flex items-center justify-between p-4">
-            <div>
-              <div className="text-[16px] font-bold text-navy">제휴 병원 찾기</div>
-              <div className="mt-0.5 text-[12px] text-muted">
-                진료 과목별 MOU 병원 · 패스트트랙 · 동행 예약 요청
-              </div>
-            </div>
-            <span className="text-[20px] text-muted/50">›</span>
-          </Card>
-        </Link>
+        {/* 제휴 병원 찾기 · 옵션 서비스는 2026-08-12 요청으로 삭제 (홈에서 진입) */}
 
         {/* 우선 확인 날씨 — REQ-01 (사람이 설정 · 주체 기록) */}
         <Card className="p-[18px]">
@@ -157,47 +120,6 @@ export default function MyPage() {
               설정 변경은 주 보호자만 할 수 있습니다
             </p>
           )}
-        </Card>
-
-        {/* 옵션 서비스 — 접수 → 결제요청 (보험은 GA 등록 전 잠금) */}
-        <Card className="p-[18px]">
-          <SectionLabel>옵션 서비스</SectionLabel>
-          <div className="mt-3 space-y-3">
-            {OPTION_SERVICES.map((o) => (
-              <div key={o.key} className="border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
-                <div className="flex items-center gap-2">
-                  <span className={`text-[15px] font-bold ${o.locked ? "text-muted/60" : "text-navy"}`}>
-                    {o.name}
-                  </span>
-                  <span className="ml-auto font-num text-[12px] font-bold text-muted">{o.price}</span>
-                </div>
-                <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{o.desc}</div>
-                {o.locked ? (
-                  <div className="mt-2 rounded-lg bg-navy/[.05] px-3 py-2 text-[11px] font-bold text-muted/70">
-                    🔒 {o.lockNote}
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => applyOption(o)}
-                    disabled={!isPrimary || !!applied[o.key]}
-                    className={`btn-press mt-2 rounded-lg border px-3.5 py-2 text-[13px] font-bold ${
-                      applied[o.key]
-                        ? "border-green/30 bg-green/10 text-green"
-                        : isPrimary
-                        ? "border-navy/20 text-navy"
-                        : "border-navy/10 text-muted/50"
-                    }`}
-                  >
-                    {applied[o.key]
-                      ? "접수됨 · 해주세요에서 확인"
-                      : isPrimary
-                      ? "신청 (접수 → 결제요청)"
-                      : "주 보호자만 신청할 수 있습니다"}
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
         </Card>
 
         {/* 가족 구성원 · 초대 — 주 보호자가 초대 링크 발급, 부 보호자는 조회만 */}
