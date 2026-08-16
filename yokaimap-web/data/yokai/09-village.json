@@ -96,7 +96,7 @@
         "역병 차단",
         "쌍"
       ],
-      "art_hint": "a pair of carved wooden village guardian posts with bulging round eyes and bared teeth, planted at a village entrance path, one crowned male and one plain female post",
+      "art_hint": "a pair of carved wooden Korean village guardian posts, a crowned male and a plain female, bulging round eyes and bared teeth, at a village entrance path beside a sotdae bird pole",
       "habitat": [
         "마을 입구",
         "절 입구"
@@ -147,7 +147,7 @@
       ],
       "art": {
         "status": "drafted",
-        "direction": "minhwa-v1",
+        "direction": "minhwa-v2",
         "file": "/img/yokai/jangseung.png",
         "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
       },

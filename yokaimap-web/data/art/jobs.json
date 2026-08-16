@@ -1,8 +1,9 @@
 {
-  "direction": "minhwa-v1",
+  "direction": "minhwa-v2",
   "generated_at": "2026-08-16",
-  "provider": "higgsfield / recraft_v4_1 (2k, standard)",
-  "note": "생성은 완료됐으나 생성 세션의 egress 정책이 CDN 호스트(d8j0ntlcm91z4.cloudfront.net)를 차단해 리포에 내려받지 못했다. CDN에 접근 가능한 환경에서 `node scripts/fetch-art.mjs`를 실행하면 target 경로로 저장되고, 그 순간부터 사이트에 자동으로 표시된다(파일이 없으면 이미지 레이어는 조용히 숨는다).",
+  "provider": "higgsfield / recraft_v4_1 (2k, standard) · 팔레트·배경색 파라미터 강제",
+  "note": "v1(minhwa-v1) 시안은 한국화 재료·한복 고증이 프롬프트에 없어 동아시아 평균값으로 떨어질 여지가 컸다. v2는 한복·한옥·경물 앵커를 강제하고 일본·중국 시각 마커를 명시 배제한 재생성분이다. 검수는 docs/ART_REVIEW.md 체크리스트로 하고, 통과 전에는 art.status를 final로 올리지 않는다. 생성은 완료됐으나 생성 세션의 egress 정책이 CDN 호스트를 차단해 리포 반입은 scripts/fetch-art.mjs로 분리했다.",
+  "review_checklist": "docs/ART_REVIEW.md",
   "items": [
     {
       "index": 0,
@@ -10,107 +11,131 @@
       "id": "hero-night-pass",
       "target": "public/img/hero/night-pass.png",
       "aspect": "16:9",
-      "job_id": "e806a3a5-80a4-4e6f-8045-576fbd893c6e",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035000_e806a3a5-80a4-4e6f-8045-576fbd893c6e.png"
+      "job_id": "6c683965-a9ce-45db-a981-b957bf0bfac8",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_6c683965-a9ce-45db-a981-b957bf0bfac8.png",
+      "review": {
+        "result": "pending"
+      }
     },
     {
       "index": 1,
-      "kind": "hero",
-      "id": "hero-river-valley",
-      "target": "public/img/hero/river-valley.png",
-      "aspect": "16:9",
-      "job_id": "b3575655-dcb6-4751-b4c8-3f739f492062",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035000_b3575655-dcb6-4751-b4c8-3f739f492062.png"
-    },
-    {
-      "index": 2,
       "kind": "plate",
       "id": "kr-dokkaebi",
       "target": "public/img/yokai/dokkaebi.png",
       "aspect": "4:5",
-      "job_id": "cf3f0ba7-f0b6-4320-bfc7-b6c140ddb43c",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035000_cf3f0ba7-f0b6-4320-bfc7-b6c140ddb43c.png"
+      "job_id": "25017161-7a8b-49c0-82ce-19b41865e008",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_25017161-7a8b-49c0-82ce-19b41865e008.png",
+      "review": {
+        "result": "pending"
+      }
     },
     {
-      "index": 3,
+      "index": 2,
       "kind": "plate",
       "id": "kr-gumiho",
       "target": "public/img/yokai/gumiho.png",
       "aspect": "4:5",
-      "job_id": "66b2b9d0-138b-4768-b398-276b5143e74f",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035000_66b2b9d0-138b-4768-b398-276b5143e74f.png"
+      "job_id": "9c7e6ea1-97a3-4cb1-962f-dd2c4b031d6d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041833_9c7e6ea1-97a3-4cb1-962f-dd2c4b031d6d.png",
+      "review": {
+        "result": "pending"
+      }
     },
     {
-      "index": 4,
+      "index": 3,
       "kind": "plate",
       "id": "kr-imugi",
       "target": "public/img/yokai/imugi.png",
       "aspect": "4:5",
-      "job_id": "eac1f32a-b162-4c74-b5b8-ffd69e148d91",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035249_eac1f32a-b162-4c74-b5b8-ffd69e148d91.png"
+      "job_id": "276c310f-65a7-423c-a36a-84c09ff13848",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_276c310f-65a7-423c-a36a-84c09ff13848.png",
+      "review": {
+        "result": "pending"
+      }
     },
     {
-      "index": 5,
+      "index": 4,
       "kind": "plate",
       "id": "kr-seolmundae",
       "target": "public/img/yokai/seolmundae.png",
       "aspect": "4:5",
-      "job_id": "62495b9f-ab2a-4886-b4e4-7ff3d41f9c5c",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035250_62495b9f-ab2a-4886-b4e4-7ff3d41f9c5c.png"
+      "job_id": "f978199c-a516-4b66-ae6d-3ab732f5fd01",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_f978199c-a516-4b66-ae6d-3ab732f5fd01.png",
+      "review": {
+        "result": "pending"
+      }
     },
     {
-      "index": 6,
+      "index": 5,
       "kind": "plate",
       "id": "kr-yeongdeung-halmang",
       "target": "public/img/yokai/yeongdeung-halmang.png",
       "aspect": "4:5",
-      "job_id": "1a6b5799-e48b-4dd3-8963-101fb6563a8b",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035000_1a6b5799-e48b-4dd3-8963-101fb6563a8b.png"
+      "job_id": "8d654691-47a9-4744-ab2d-c5846a891725",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_8d654691-47a9-4744-ab2d-c5846a891725.png",
+      "review": {
+        "result": "pending"
+      }
     },
     {
-      "index": 7,
+      "index": 6,
       "kind": "plate",
       "id": "kr-samsin",
       "target": "public/img/yokai/samsin.png",
       "aspect": "4:5",
-      "job_id": "8cfee0fb-1c60-442b-a95b-fb37fdd6f4b3",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035000_8cfee0fb-1c60-442b-a95b-fb37fdd6f4b3.png"
+      "job_id": "2cc97c79-1f52-447e-91d0-f77611c960f9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_2cc97c79-1f52-447e-91d0-f77611c960f9.png",
+      "review": {
+        "result": "pending"
+      }
     },
     {
-      "index": 8,
+      "index": 7,
       "kind": "plate",
       "id": "kr-songaksi",
       "target": "public/img/yokai/songaksi.png",
       "aspect": "4:5",
-      "job_id": "2b173998-8bdf-4815-b05c-1e0c35cc2a20",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035250_2b173998-8bdf-4815-b05c-1e0c35cc2a20.png"
+      "job_id": "63a70b75-1096-4c62-8cd7-a6276d911529",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041833_63a70b75-1096-4c62-8cd7-a6276d911529.png",
+      "review": {
+        "result": "pending"
+      }
     },
     {
-      "index": 9,
+      "index": 8,
       "kind": "plate",
       "id": "kr-gangcheori",
       "target": "public/img/yokai/gangcheori.png",
       "aspect": "4:5",
-      "job_id": "9b31eb60-96af-4d1a-a4f2-dde1d58e2280",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035000_9b31eb60-96af-4d1a-a4f2-dde1d58e2280.png"
+      "job_id": "248d94d2-dbc7-4979-8bd3-0fa62ed64e63",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041833_248d94d2-dbc7-4979-8bd3-0fa62ed64e63.png",
+      "review": {
+        "result": "pending"
+      }
     },
     {
-      "index": 10,
+      "index": 9,
       "kind": "plate",
       "id": "kr-jangsanbeom",
       "target": "public/img/yokai/jangsanbeom.png",
       "aspect": "4:5",
-      "job_id": "8bfa40d4-06e0-434e-ba63-2d0fba2234ef",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035000_8bfa40d4-06e0-434e-ba63-2d0fba2234ef.png"
+      "job_id": "3507460f-0ba3-4d09-be91-e4b554650724",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_3507460f-0ba3-4d09-be91-e4b554650724.png",
+      "review": {
+        "result": "pending"
+      }
     },
     {
-      "index": 11,
+      "index": 10,
       "kind": "plate",
       "id": "kr-jangseung",
       "target": "public/img/yokai/jangseung.png",
       "aspect": "4:5",
-      "job_id": "145b3f79-20b2-4cf8-9f08-56b77b03d73e",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_035250_145b3f79-20b2-4cf8-9f08-56b77b03d73e.png"
+      "job_id": "be849370-9733-4213-8037-9cf7854e19dc",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_be849370-9733-4213-8037-9cf7854e19dc.png",
+      "review": {
+        "result": "pending"
+      }
     }
   ]
 }

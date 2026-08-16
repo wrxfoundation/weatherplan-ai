@@ -27,7 +27,7 @@
         "간",
         "아홉 꼬리"
       ],
-      "art_hint": "a woman in a white robe caught mid-transformation into a fox, nine fox tails fanning out behind her, a small luminous pearl at her lips, one half of the face already vulpine",
+      "art_hint": "a woman in white hanbok jeogori and chima caught mid-transformation into a fox, nine tails fanning behind her, a luminous pearl at her lips, half the face already vulpine",
       "habitat": [
         "묘지",
         "고갯길",
@@ -78,7 +78,7 @@
       ],
       "art": {
         "status": "drafted",
-        "direction": "minhwa-v1",
+        "direction": "minhwa-v2",
         "file": "/img/yokai/gumiho.png",
         "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
       },

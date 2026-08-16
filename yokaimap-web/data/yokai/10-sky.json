@@ -25,7 +25,7 @@
         "기우",
         "이무기"
       ],
-      "art_hint": "a drought dragon with dull iron-grey scales flying low over cracked farmland, crops withering to ash grey in its wake, an empty cloudless sky",
+      "art_hint": "a drought dragon of dull iron-grey four-clawed scales flying low over cracked paddy fields, crops withering grey in its wake, empty cloudless sky over granite ridgelines",
       "habitat": [
         "못",
         "하늘"
@@ -71,7 +71,7 @@
       ],
       "art": {
         "status": "drafted",
-        "direction": "minhwa-v1",
+        "direction": "minhwa-v2",
         "file": "/img/yokai/gangcheori.png",
         "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
       },

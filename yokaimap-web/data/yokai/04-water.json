@@ -25,7 +25,7 @@
         "여의주",
         "금기"
       ],
-      "art_hint": "an enormous hornless serpent coiled in a deep mountain pool, straining upward toward storm clouds, a bright pearl hovering just beyond its jaws",
+      "art_hint": "an enormous hornless four-clawed serpent not yet ascended, coiled in a deep mountain pool below red pines, straining upward toward storm clouds, a pearl just beyond its jaws",
       "habitat": [
         "용소",
         "깊은 못",
@@ -83,7 +83,7 @@
       ],
       "art": {
         "status": "drafted",
-        "direction": "minhwa-v1",
+        "direction": "minhwa-v2",
         "file": "/img/yokai/imugi.png",
         "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
       },

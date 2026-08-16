@@ -24,7 +24,7 @@
         "오름",
         "창조"
       ],
-      "art_hint": "a colossal grandmother goddess seated across a volcanic island, soil spilling from her skirt and forming small cinder cones, the sea reaching only to her knees",
+      "art_hint": "a colossal grandmother goddess in persimmon-dyed galot cloth seated across a volcanic island, soil spilling from her chima and forming cinder cones, basalt field walls, sea only to her knees",
       "habitat": [
         "한라산",
         "오름",
@@ -78,7 +78,7 @@
       ],
       "art": {
         "status": "drafted",
-        "direction": "minhwa-v1",
+        "direction": "minhwa-v2",
         "file": "/img/yokai/seolmundae.png",
         "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
       },
@@ -106,7 +106,7 @@
         "영등굿",
         "해산물 씨"
       ],
-      "art_hint": "an old sea goddess striding ashore on the wind, robes and long grey hair blown horizontal, scattering shellfish seed across the tidal flats, small fishing boats moored behind her",
+      "art_hint": "an old sea goddess in wind-blown hanbok striding ashore, long grey hair blown horizontal, scattering shellfish seed over the tidal flats, basalt shore and small wooden fishing boats behind her",
       "habitat": [
         "바다",
         "포구",
@@ -158,7 +158,7 @@
       ],
       "art": {
         "status": "drafted",
-        "direction": "minhwa-v1",
+        "direction": "minhwa-v2",
         "file": "/img/yokai/yeongdeung-halmang.png",
         "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
       },

@@ -1,30 +1,146 @@
 {
-  "id": "minhwa-v1",
-  "version": "1.0",
-  "note": "도상 아트디렉션 v1. 한국에는 도리야마 세키엔 같은 퍼블릭도메인 요괴 도감 판화가 없어 전량 신규 제작한다. 600장을 찍어도 화풍이 흔들리지 않도록 스타일 블록을 문자 그대로 고정하고, 개체별 서술만 갈아 끼운다. 특정 작가의 화풍을 모사하지 않으며, 생성물임을 사이트에 명시한다.",
-  "model": { "id": "recraft_v4_1", "model_type": "standard", "resolution": "2k" },
-  "palette": ["#f4efe3", "#211d18", "#b23b26", "#a97c2f", "#3f7a67", "#3c5f8f"],
-  "background_color": "#f4efe3",
-  "style": "Korean traditional minhwa folk painting, brush ink outline with mineral pigment wash on aged hanji mulberry paper, flat frontal perspective, visible paper fiber texture, muted dancheong palette of vermilion ochre jade-green indigo and ink black on warm off-white paper, generous negative space",
-  "composition": {
-    "plate": "single subject centered, full figure, plain hanji background, soft edge vignette, museum encyclopedia plate",
-    "scene": "wide landscape band, horizon low, layered mist planes, small figures for scale"
+  "id": "minhwa-v2",
+  "version": "2.0",
+  "note": "도상 아트디렉션 v2 — 한국화 고증판. v1은 'Korean minhwa'라는 말만 넣었을 뿐 재료·기법·복식을 지정하지 않아, 모델이 알아서 동아시아 평균값(왜색·중국풍)으로 떨어질 여지가 컸다. v2는 ① 한국 안료·기법 명시 ② 한복·한옥 고증 앵커를 매 컷에 강제 ③ 일본·중국 시각 마커를 항목별로 배제한다. 왜색·중국색은 이 프로젝트에서 품질 문제가 아니라 존폐 리스크다.",
+  "model": {
+    "id": "recraft_v4_1",
+    "model_type": "standard",
+    "resolution": "2k"
   },
-  "constraints": "no text, no letters, no calligraphy, no signature, no seal stamp, no watermark, no border frame, not Japanese ukiyo-e, not anime, not photorealistic, not 3d render",
+  "palette_note": "오방색(청·백·적·흑·황) 계열의 전통 안료색을 채도만 낮춰 쓴다. 중국 년화(年畵)의 고채도 원색+금색, 일본 우키요에의 인쇄 평면색과 구분되는 지점이 '아교로 갠 석채의 무광 질감'이다.",
+  "palette": [
+    "#f2ece0",
+    "#1f1b16",
+    "#b8402c",
+    "#4a7a5c",
+    "#35597f",
+    "#c2922f",
+    "#f7f4ec"
+  ],
+  "pigments": {
+    "주사(朱砂)": "#b8402c — 주홍. 무신도·단청의 적",
+    "석록(石綠)": "#4a7a5c — 말라카이트 녹",
+    "석청(石靑)": "#35597f — 아주라이트 청",
+    "자황(雌黃)": "#c2922f — 치자·황토 계열 황",
+    "호분(胡粉)": "#f7f4ec — 조개껍질 백, 불투명",
+    "먹(墨)": "#1f1b16 — 송연먹 흑",
+    "한지": "#f2ece0 — 닥종이 미색 바탕"
+  },
+  "background_color": "#f2ece0",
+  "style": "Korean traditional painting on hanji mulberry paper, opaque mineral pigment in animal glue, matte non-glossy, even iron-wire brush outline, flat frontal Joseon minhwa and musindo manner, visible paper fiber",
+  "korean_anchors": {
+    "note": "매 컷에 최소 1개 이상 강제로 들어가는 한국성 앵커. 이것이 빠지면 모델이 동아시아 평균값으로 떨어진다.",
+    "costume_female": "Korean hanbok: short jeogori jacket with a white dongjeong collar strip and long goreum ribbon tie, full chima skirt gathered high at the chest, beoseon socks",
+    "costume_male": "Korean hanbok: jeogori jacket with dongjeong collar and goreum tie, baji trousers tied at the ankle, durumagi overcoat, black horsehair gat hat or topknot with manggeon band, straw jipsin sandals",
+    "architecture": "Korean hanok: gentle straight roof ridge, hanji lattice door, ondol room, earthen wall on stone base",
+    "landscape": "Korean red pine and granite ridgeline, a seonangdang shrine of piled stones with five-colour cloth on a spirit tree, jangseung posts, magpie",
+    "objects": "moon jar, brass bowl, low soban table, straw geumjul rope, jangdokdae jars"
+  },
+  "composition": {
+    "plate": "single subject centered, full figure, plain hanji ground, soft edge vignette, encyclopedia plate",
+    "scene": "wide landscape band, low horizon, layered mist planes, small figures for scale"
+  },
+  "constraints_general": "no text, no letters, no calligraphy, no signature, no seal stamp, no watermark, no border frame, not photorealistic, not 3d render, not anime",
+  "exclude_japanese": {
+    "note": "왜색 배제 — 일본 요괴 도상이 한국 도깨비 이미지를 오염시킨 역사가 실제로 있다(근대 학습물의 뿔 달린 도깨비). 되풀이하지 않는다.",
+    "prompt": "NOT Japanese: no kimono or obi sash, no two-horned oni with tiger-skin loincloth, no torii gate, no shimenawa paper streamers, no ukiyo-e woodblock look, no shoji or tatami, no upturned pagoda eaves, no cherry blossom, no Japanese stone lantern",
+    "checklist": [
+      "뿔 2개 + 호피 무늬 하의 = 일본 오니. 도깨비에 절대 금지",
+      "가나보(철퇴 방망이) 형태 금지 — 도깨비방망이는 옹이 있는 나무 방망이",
+      "허리에 넓은 띠(오비) 금지 — 한복은 가슴 위 치마말기와 옷고름",
+      "도리이·시메나와·석등롱·장지문·다다미 금지",
+      "지붕 끝이 위로 크게 솟은 처마(당파풍) 금지 — 한옥은 완만한 곡선",
+      "벚꽃 대신 소나무·모란·매화",
+      "우키요에식 굵은 검정 윤곽 + 인쇄 평면색 금지"
+    ]
+  },
+  "exclude_chinese": {
+    "note": "중국풍 배제 — 특히 용·복식·채색에서 갈린다.",
+    "prompt": "NOT Chinese: no qipao or wide-sleeved hanfu, no Manchu queue, no five-clawed imperial dragon, no red cylindrical lantern, no nianhua gold-heavy saturated primaries, no taihu rock",
+    "checklist": [
+      "오조룡(발톱 5개) 금지 — 조선 용은 통상 사조(四爪)",
+      "치파오·교령우임 한푸·변발 금지",
+      "붉은 원통 홍등롱·중국결 매듭 금지",
+      "년화(年畵)식 고채도 원색 + 금박 남발 금지",
+      "태호석·중국식 정원 요소 금지"
+    ]
+  },
   "category_modifiers": {
-    "dokkaebi": "earthy ochre and vermilion accents, playful posture",
-    "gataek": "warm domestic tones, household objects as attributes",
-    "animal": "deep crimson accents, animal form mid-transformation",
-    "water": "indigo and jade wash, flowing water motifs",
-    "mountain": "green and ink wash, layered mountain silhouettes",
-    "ghost": "pale violet-grey wash, white mourning robe, thin ink lines",
-    "plague": "muted red ochre, ritual offering objects",
-    "jeju": "gold ochre and basalt grey, volcanic island motifs, shamanic textile patterns",
-    "village": "moss green and weathered wood tones, roadside shrine motifs",
-    "sky": "deep indigo night ground, cloud and flame motifs",
-    "artifact": "aged gold and brown, worn household tool as the figure",
-    "hybrid": "magenta and jade, two natures in one figure",
-    "modern": "cool slate grey, contemporary silhouette rendered in the same minhwa technique",
-    "foreign": "violet and gold, Buddhist temple guardian conventions"
+    "dokkaebi": "hornless — a rough countryman figure in coarse hemp jeogori and baji, unkempt topknot, knobbed wooden club, ochre and vermilion accents",
+    "gataek": "warm domestic ochre, inside a hanok room with hanji lattice door, household objects as attributes",
+    "animal": "deep vermilion accents, animal form mid-transformation, Korean minhwa animal painting conventions",
+    "water": "azurite and malachite wash, Korean four-clawed dragon or great serpent, no imperial Chinese dragon",
+    "mountain": "malachite green and ink wash, Korean red pine and granite ridgelines",
+    "ghost": "white mourning hanbok, pale ink wash, thin even brush lines, long unbound hair",
+    "plague": "muted vermilion, ritual offering table with brass bowls and straw rope",
+    "jeju": "gold ochre and basalt grey, Jeju volcanic stone walls, persimmon-dyed galot cloth, shaman textile patterns",
+    "village": "moss green and weathered wood, jangseung and sotdae, seonangdang stones with five-colour cloth",
+    "sky": "deep azurite ground, Korean cloud scroll motif and flame motif",
+    "artifact": "aged ochre and brown, worn Korean household tool as the figure",
+    "hybrid": "vermilion and malachite, two natures in one figure, hanbok on the human side",
+    "modern": "cool slate grey, contemporary Korean silhouette rendered in the same hanji-and-mineral-pigment technique",
+    "foreign": "violet and gold, Korean Buddhist temple guardian conventions from siwangdo and taenghwa"
+  },
+  "review": {
+    "note": "생성 후 사람이 반드시 확인한다. 하나라도 걸리면 재생성하고, 통과 전에는 art.status를 final로 올리지 않는다.",
+    "pass_requires": [
+      "복식이 한복인가 — 동정(흰 깃)과 옷고름이 보이는가",
+      "머리·모자가 갓/망건/상투/댕기인가",
+      "건축·소품이 한옥·서낭당·장승·놋그릇·달항아리 계열인가",
+      "색이 아교 갠 석채의 무광 질감인가(인쇄 평면색·금박 광택 아님)",
+      "exclude_japanese·exclude_chinese 체크리스트에 걸리는 요소가 하나도 없는가",
+      "특정 실존 작가의 화풍을 모사하지 않았는가"
+    ]
+  },
+  "category_anchors": {
+    "dokkaebi": [
+      "costume_male",
+      "landscape"
+    ],
+    "gataek": [
+      "costume_female",
+      "architecture",
+      "objects"
+    ],
+    "animal": [
+      "costume_female",
+      "landscape"
+    ],
+    "water": [
+      "landscape"
+    ],
+    "mountain": [
+      "landscape"
+    ],
+    "ghost": [
+      "costume_female",
+      "architecture"
+    ],
+    "plague": [
+      "objects",
+      "architecture"
+    ],
+    "jeju": [
+      "costume_female",
+      "landscape"
+    ],
+    "village": [
+      "landscape"
+    ],
+    "sky": [
+      "landscape"
+    ],
+    "artifact": [
+      "objects",
+      "architecture"
+    ],
+    "hybrid": [
+      "costume_female",
+      "architecture"
+    ],
+    "modern": [],
+    "foreign": [
+      "architecture"
+    ]
   }
 }

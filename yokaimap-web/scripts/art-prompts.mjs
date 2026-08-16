@@ -28,15 +28,39 @@ export function promptFor(entry) {
   const name = entry.names?.en || entry.names?.roman || null
   const subject = [name, entry.art_hint].filter(Boolean).join(' — ')
 
+  // 한국성 앵커 — 분류별로 지정된 것만 넣는다. 이게 빠지면 모델이 동아시아 평균값(왜색·중국풍)으로 떨어진다.
+  const anchors = (dir.category_anchors?.[entry.category] ?? [])
+    .map((k) => dir.korean_anchors[k])
+    .filter(Boolean)
+    .join('. ')
+
+  // 배제 문구는 스타일 바로 뒤에 둔다 — 프롬프트가 잘리더라도 왜색·중국색 배제가 먼저 살아남게.
   return [
     `Korean folklore being — ${subject}`,
+    anchors,
     dir.style,
+    dir.exclude_japanese.prompt,
+    dir.exclude_chinese.prompt,
     dir.category_modifiers[entry.category] ?? '',
     dir.composition.plate,
-    dir.constraints,
+    dir.constraints_general,
   ]
     .filter(Boolean)
     .join('. ')
+}
+
+/** 히어로 등 풍경 컷 프롬프트 — 개체가 아니라 장면이다. */
+export function scenePrompt(sceneText) {
+  return [
+    `Korean folklore night landscape — ${sceneText}`,
+    dir.korean_anchors.landscape,
+    dir.korean_anchors.architecture,
+    dir.style,
+    dir.exclude_japanese.prompt,
+    dir.exclude_chinese.prompt,
+    dir.composition.scene,
+    dir.constraints_general,
+  ].join('. ')
 }
 
 export function requestFor(entry, aspect = '4:5') {
