@@ -754,6 +754,84 @@
         "result": "pending",
         "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
       }
+    },
+    {
+      "index": 56,
+      "kind": "plate",
+      "id": "kr-bitjaru-gwisin",
+      "target": "public/img/yokai/bitjaru-gwisin.png",
+      "aspect": "4:5",
+      "job_id": "d3c8c537-cc4c-4b73-9fdd-47cb02c03cc1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052336_d3c8c537-cc4c-4b73-9fdd-47cb02c03cc1.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 57,
+      "kind": "plate",
+      "id": "kr-dokkaebi-gamtu",
+      "target": "public/img/yokai/dokkaebi-gamtu.png",
+      "aspect": "4:5",
+      "job_id": "31d5ea8e-e258-44a4-9738-7f3b17520ac8",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052337_31d5ea8e-e258-44a4-9738-7f3b17520ac8.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 58,
+      "kind": "plate",
+      "id": "kr-jeolgutgongi",
+      "target": "public/img/yokai/jeolgutgongi.png",
+      "aspect": "4:5",
+      "job_id": "5d4793c7-f790-4f81-969d-e3393b3d4c03",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052336_5d4793c7-f790-4f81-969d-e3393b3d4c03.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 59,
+      "kind": "plate",
+      "id": "kr-jipsin-dokkaebi",
+      "target": "public/img/yokai/jipsin-dokkaebi.png",
+      "aspect": "4:5",
+      "job_id": "7f219d11-67fb-4da0-b511-38df261d50a0",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052336_7f219d11-67fb-4da0-b511-38df261d50a0.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 60,
+      "kind": "plate",
+      "id": "kr-jigwi",
+      "target": "public/img/yokai/jigwi.png",
+      "aspect": "4:5",
+      "job_id": "8f513aa1-3817-4d9e-a1ba-269762b1ec94",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052336_8f513aa1-3817-4d9e-a1ba-269762b1ec94.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
+    },
+    {
+      "index": 61,
+      "kind": "plate",
+      "id": "kr-teoju",
+      "target": "public/img/yokai/teoju.png",
+      "aspect": "4:5",
+      "job_id": "019a4896-2991-46e5-b6af-107dc2dac870",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052336_019a4896-2991-46e5-b6af-107dc2dac870.png",
+      "review": {
+        "result": "pending",
+        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+      }
     }
   ],
   "approved_direction": "minhwa-v2 (2026-08-16 승인)"
