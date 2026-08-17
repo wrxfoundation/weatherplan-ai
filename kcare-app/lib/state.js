@@ -18,7 +18,16 @@ const DEFAULT = {
   requests: INITIAL_REQUESTS,
   // cart: 가족 앱(REQ-07 장바구니)에서 변경 — 어르신 화면은 읽기만 (핸드오프 06 §3.9)
   // guardianRole: 주(primary)/부(secondary) 보호자 — 권한 분기 시연용. 초대 정책 문서 참조
-  demo: { sos: false, anomaly: "open", offline: false, cart: false, guardianRole: "primary" },
+  // nightOption: 야간 출동(외주) 옵션 가입 여부 — REQ-04. 기본 상품의 보증 범위는
+  //   접수 + 119 연계까지라, 이 플래그가 관제의 조치 버튼 구성을 바꾼다.
+  demo: {
+    sos: false,
+    anomaly: "open",
+    offline: false,
+    cart: false,
+    guardianRole: "primary",
+    nightOption: false,
+  },
   // REQ-01 — 병력 기반 우선 표시는 자동 추론이 아니라 사람이 설정한다 (설정 주체 기록)
   priority: { factors: ["기온"], source: "보호자 설정", setAt: null },
   // 관찰 리포트 누적 — 본인 작성 전체 열람 · 타인 작성은 공유분만 (회의 7)
@@ -86,6 +95,13 @@ function reducer(state, action) {
           reordered: obj(p.elder && p.elder.reordered, state.elder.reordered),
         },
         ops: { ...state.ops, ...(p.ops || {}) },
+        // 우선 날씨는 어르신 홈 정렬과 마이 탭 칩이 factors 를 배열로 전제한다.
+        // 저장값이 구버전이거나 손상되면 두 화면이 같이 죽으므로 형태를 지킨다.
+        priority: {
+          ...state.priority,
+          ...obj(p.priority, {}),
+          factors: arr(p.priority && p.priority.factors, state.priority.factors),
+        },
         visit: {
           ...state.visit,
           ...(p.visit || {}),

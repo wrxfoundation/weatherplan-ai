@@ -8,6 +8,7 @@ import {
   MOU_HOSPITALS,
   CRM_TIMELINE,
   HOSPITAL_PARTNERS,
+  OPTION_SERVICES,
   ELDER_TAGS,
   TAG_TONE,
 } from "../lib/mock";
@@ -357,7 +358,7 @@ function WeatherMap() {
 
 export default function DispatchConsole() {
   const { state, dispatch } = useAppState();
-  const { sos } = state.demo;
+  const { sos, nightOption } = state.demo;
   const { sosDispatched, sos119, assign, unmatchFixed, npsDetractor } = state.ops;
   const checkedIn = state.visit.checkedIn;
   const { label: elapsed, sec: elapsedSec } = useElapsed(sos);
@@ -514,6 +515,7 @@ export default function DispatchConsole() {
   const [handled, setHandled] = useState({});
   const [watchCalled, setWatchCalled] = useState(false);
   const [guardianPinged, setGuardianPinged] = useState(false);
+  const [nightCalled, setNightCalled] = useState(false); // 야간 출동(외주) 호출 — REQ-04
   const actions = [];
   if (sos)
     actions.push({
@@ -879,11 +881,28 @@ export default function DispatchConsole() {
                 >
                   {guardianPinged ? "보호자 알림 발송됨" : "보호자 알림"}
                 </button>
+                {/* REQ-04 — 야간 출동은 기본 상품 밖이라 가입 가구에서만 조치로 뜬다.
+                    미가입 가구에 이 버튼이 보이면 관제가 없는 자원을 부르게 된다. */}
+                {nightOption && (
+                  <button
+                    onClick={() => {
+                      if (nightCalled) return;
+                      setNightCalled(true);
+                      push("대응", "야간 출동(외주) 파트너 호출 — 옵션 가입 가구", "#F0D9A8");
+                    }}
+                    disabled={nightCalled}
+                    className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[15px] font-medium disabled:opacity-70"
+                  >
+                    {nightCalled ? "야간 출동 요청됨" : "야간 출동 요청 (외주)"}
+                  </button>
+                )}
               </div>
               {/* REQ-04 — 서비스 경계 고지 (회의 확정) */}
               <div className="w-full border-t border-white/25 pt-2 text-[12px] opacity-80">
-                기본 상품 보증 범위: 긴급신호 접수 + 119 연계까지 · 현장 도착 SLA 아님 · 이 가구는 야간
-                출동(외주) 옵션 미가입
+                기본 상품 보증 범위: 긴급신호 접수 + 119 연계까지 · 현장 도착 SLA 아님 ·{" "}
+                {nightOption
+                  ? "이 가구는 야간 출동(외주) 옵션 가입 — 파트너 호출 가능"
+                  : "이 가구는 야간 출동(외주) 옵션 미가입"}
               </div>
             </section>
           )}
@@ -2081,6 +2100,68 @@ export default function DispatchConsole() {
                 </p>
               </div>
 
+              {/* ── 보증 범위와 그 밖의 옵션 — REQ-04 ──
+                  기본 상품이 어디까지 책임지는지를 관제가 먼저 알아야 한다. 야간 출동은
+                  가입 가구에서만 조치로 뜨므로, 가입 상태를 여기서 바꿔 보여 준다. */}
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="보증 범위 · 옵션 상품"
+                  right={<span className="text-[12px] text-muted">기본은 접수 + 119 연계까지</span>}
+                />
+                <p className="mt-2.5 rounded-xl border border-navy/[.08] bg-white/50 px-4 py-2.5 text-[12px] leading-[1.7] text-muted">
+                  기본 상품의 보증 범위는 <b className="text-navy">긴급신호 접수와 119 연계</b>까지입니다.
+                  컨시어지 급파는 주간·가용 시에 한하고, 현장 도착 시각을 약속하지 않습니다 —
+                  60초는 접수·연계 목표이지 도착 SLA가 아닙니다.
+                </p>
+                <div
+                  className="mt-3 grid gap-2"
+                  style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))" }}
+                >
+                  {OPTION_SERVICES.map((o) => {
+                    const on = o.key === "night" && nightOption;
+                    return (
+                      <div key={o.key} className="min-w-0 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[13px] font-bold text-navy">{o.name}</span>
+                          <span
+                            className="ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
+                            style={
+                              o.locked
+                                ? { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
+                                : on
+                                ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
+                                : { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
+                            }
+                          >
+                            {o.locked ? "잠금" : on ? "가입" : "미가입"}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-[12px] leading-[1.6] text-muted">{o.desc}</p>
+                        <div className="mt-1.5 font-num text-[12px] font-bold text-muted">{o.price}</div>
+                        {o.lockNote && (
+                          <p className="mt-1.5 border-t border-navy/[.08] pt-1.5 text-[11px] leading-[1.6] text-muted">
+                            {o.lockNote}
+                          </p>
+                        )}
+                        {o.gatesDispatch && (
+                          <button
+                            onClick={() => dispatch({ type: "demo", payload: { nightOption: !nightOption } })}
+                            className="btn-press mt-2.5 w-full rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
+                          >
+                            {on ? "미가입 가구로 보기" : "가입 가구로 보기"}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  가입 여부가 조치 버튼을 바꿉니다 — 아래 대응 섹션과 다른 메뉴의 SOS 배너 양쪽에서,
+                  미가입 가구에는 야간 출동 버튼이 뜨지 않습니다. 없는 자원을 부르지 않기 위해서입니다.
+                  단가가 확정된 상품은 해주세요 카탈로그가 유일한 출처입니다.
+                </p>
+              </Panel>
+
               {/* ── 119 신고 프로토콜 (2026-08-01 회의 확정) ── */}
               <Panel className="min-w-0">
                 <PanelHead
@@ -2160,6 +2241,21 @@ export default function DispatchConsole() {
                     >
                       {sos119 ? "119 연계 기록됨" : "119 연계"}
                     </button>
+                    {/* REQ-04 — 야간 출동은 기본 보증 범위 밖. 가입 가구에서만 조치가 된다.
+                        가입 상태는 이 화면 위 "보증 범위 · 옵션 상품" 패널에서 바꾼다. */}
+                    {nightOption && (
+                      <button
+                        onClick={() => {
+                          if (nightCalled) return;
+                          setNightCalled(true);
+                          push("긴급", "야간 출동(외주) 파트너 호출 — 옵션 가입 가구", "#F0D9A8");
+                        }}
+                        disabled={nightCalled}
+                        className="btn-press rounded-[10px] border border-navy/25 px-4 py-2 text-[13px] font-bold text-navy disabled:opacity-50"
+                      >
+                        {nightCalled ? "야간 출동 요청됨" : "야간 출동 요청 (외주)"}
+                      </button>
+                    )}
                     <button
                       onClick={() => {
                         dispatch({ type: "ackSos" });
