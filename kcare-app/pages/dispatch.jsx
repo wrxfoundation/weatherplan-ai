@@ -76,10 +76,14 @@ import VisitFlow from "../components/VisitFlow";
 import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
 import { ROSTERS } from "../lib/rosters";
+import { CREW_RULES } from "../lib/dispatch-policy";
 
 // 배치관리자(관제) — 핸드오프 09 상세 명세 + REQ-04(긴급 대응 범위, 회의 확정 우선).
 // 데스크톱 전용 · 정보 밀도가 정당한 유일한 화면 (10~13px 활자가 정답 — 09 §0).
-// 핵심 원칙: ① AI는 제안, 사람이 승인 (L4) ② 짝 없으면 확정 불가 (1인 배차 없음)
+// 핵심 원칙: ① AI는 제안, 사람이 승인 (L4)
+//            ② 2인이 필요한 자리에서 짝이 없으면 확정 불가 (lib/dispatch-policy.js)
+//               — "1인 배차 없음"은 2026-08-13 개편으로 폐기됐다. 정기 재방문 ·
+//                 요양병원 · 부부 가구 · 동행 베이직 · 물품 전달은 1인이 원칙이다.
 // ③ 피로도 상한은 시스템이 강제. JOBS 단일 원본에서 그리드·페어보드·KPI가 파생된다.
 
 const NAVY = "#0A1F3C";
@@ -1295,9 +1299,48 @@ export default function DispatchConsole() {
                 ))}
               </div>
 
+              {/* 배차 규칙 — 2026-08-13 개편안. 관제가 판단의 근거를 화면에서 바로 봐야
+                  한다. 규칙이 코드(lib/dispatch-policy.js)에만 있고 화면에 없으면
+                  "왜 이건 1인인가"를 매번 물어보게 된다. 사유를 함께 적는 이유다. */}
+              <Panel>
+                <PanelHead title="배차 규칙" right="위험도 기준 · 2026-08-13 개편" />
+                <div className="mt-3 grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
+                  <div className="rounded-xl border border-navy/10 bg-white/60 p-3.5">
+                    <div className="text-[13px] font-bold text-navy">
+                      2인 1조 <span className="font-num text-[12px] text-muted">{CREW_RULES.two.length}가지</span>
+                    </div>
+                    <ul className="mt-2 space-y-1.5">
+                      {CREW_RULES.two.map((r) => (
+                        <li key={r.key} className="text-[12px] leading-[1.6]">
+                          <b className="text-ink">{r.label}</b>
+                          <span className="text-muted"> — {r.why}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="rounded-xl border border-navy/10 bg-white/60 p-3.5">
+                    <div className="text-[13px] font-bold text-navy">
+                      1인 방문 <span className="font-num text-[12px] text-muted">{CREW_RULES.one.length}가지</span>
+                    </div>
+                    <ul className="mt-2 space-y-1.5">
+                      {CREW_RULES.one.map((r) => (
+                        <li key={r.key} className="text-[12px] leading-[1.6]">
+                          <b className="text-ink">{r.label}</b>
+                          <span className="text-muted"> — {r.why}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <p className="mt-3 text-[11px] leading-[1.7] text-muted">
+                  모든 방문을 2인으로 묶으면 원가가 두 배가 되어 지역을 넓힐 수 없습니다.
+                  원칙을 버린 것이 아니라 두 사람이 꼭 필요한 자리를 규칙으로 못 박은 것입니다.
+                </p>
+              </Panel>
+
               {/* 페어 편성 보드 (09 §8.2) */}
               <Panel>
-                <PanelHead title="오늘 페어 편성 보드" right="주 동행 + 부 동행 · 짝이 비면 배차 확정 불가" />
+                <PanelHead title="오늘 페어 편성 보드" right="2인 지정 건은 짝이 비면 확정 불가 · 1인 건은 단독 확정" />
                 <div className="mt-3 overflow-x-auto">
                   <div className="min-w-[700px]">
                     <div className="flex gap-2 border-b border-navy/10 pb-2 text-[11px] font-bold tracking-[.06em] text-muted">
@@ -1341,7 +1384,7 @@ export default function DispatchConsole() {
               </Panel>
 
               <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(330px, 100%), 1fr))" }}>
-                {/* 짝 미매칭 (09 §8.3) — 1인 배차 금지의 실행 UI */}
+                {/* 짝 미매칭 (09 §8.3) — 2인 지정 건에서만 뜬다 (lib/dispatch-policy.js CREW_RULES.two) */}
                 <section
                   className="rounded-[14px] border p-[18px]"
                   style={{
@@ -1380,8 +1423,10 @@ export default function DispatchConsole() {
                     {unmatchFixed ? "서다인 재배치 승인 · 18:10 건 재편성 완료" : "송파 권역 서다인 재배치 승인"}
                   </button>
                   <p className="mt-2.5 text-[11px] leading-[1.6] text-[#7A241C]">
-                    짝을 못 찾았다고 1인 배차로 내리지 않습니다. 재배치 · 시니어 투입 · 일정 조정
-                    중에서만 고릅니다.
+                    이 건은 2인 지정(투석 동행)이라 짝을 못 찾았다고 1인으로 내리지 않습니다 —
+                    재배치 · 시니어 투입 · 일정 조정 중에서만 고릅니다. 1인이 원칙인 방문
+                    (정기 재방문 · 요양병원 · 부부 가구 · 동행 베이직 · 물품 전달)은 여기 오지
+                    않습니다.
                   </p>
                 </section>
 

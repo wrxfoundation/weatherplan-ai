@@ -41,8 +41,13 @@ import Splash from "../components/Splash";
 // 절대 규칙(원칙 유지): 평가·보상에 판매액 없음 (업셀링 인센티브 → 케어 품질 인센티브로 대체)
 // · 의료 측정값 입력 없음 · 소견/진단 기재 금지 · 1인 진입 금지(2인 체크인) · 제안은 근거 동반.
 
+// 탭은 컨시어지의 하루 순서다 — 출근해서 오늘 볼 것 → 방문 전 고객 파악 →
+// 현장에서 누르는 것 → 끝나고 쓰는 리포트 → 발견한 것 제안.
+// 3개였을 때는 오늘 3.8화면 · 리포트 3.7화면이 몰려 있었고 GNB 는 휑했다.
 const TABS = [
   { key: "today", label: "오늘", icon: "home" },
+  { key: "client", label: "고객", icon: "user" },
+  { key: "visit", label: "방문", icon: "door" },
   { key: "report", label: "리포트", icon: "doc" },
   { key: "suggest", label: "제안", icon: "diamond" },
   // 정산 탭은 숨겼다 (2026-08-12 실무진 "내용 숨기기") — 수익 정보가 시연 화면에
@@ -108,39 +113,40 @@ export default function ConciergePage() {
       <div className="min-h-screen bg-nav">
         <div className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-paper">
           <header className="sticky top-0 z-20 border-b border-navy/10 bg-paper/95 px-5 pb-3 pt-4 backdrop-blur">
-            <div className="flex items-center justify-between">
-              <div>
+            {/* 이름·등급과 시연 버튼을 한 줄에 욱여넣으니 390px 에서 둘 다 두 줄로
+                접혔다. 이름은 한 줄로 붙들고(줄바꿈 금지), 시연 컨트롤은 아래 줄로 뺀다. */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
                 <div className="font-num text-[11px] font-bold tracking-[.18em] text-gold">
                   CONCIERGE
                 </div>
                 <div className="mt-0.5 flex items-center gap-2">
                   {/* 이 화면의 h1 — 없으면 문서에 제목 계층이 아예 없다 */}
-                  <h1 className="text-[21px] font-black text-navy">박지현 · 주 동행</h1>
-                  <span className="chip-gold rounded-full px-2 py-[3px] font-num text-[10px] font-bold">
+                  <h1 className="whitespace-nowrap text-[21px] font-black text-navy">박지현 · 주 동행</h1>
+                  <span className="chip-gold shrink-0 rounded-full px-2 py-[3px] font-num text-[10px] font-bold">
                     {EARNINGS.grade}
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Link href="/" className="tap text-[12px] font-bold text-muted/50">
-                  데모 홈
-                </Link>
-                <button
-                  onClick={() => dispatch({ type: "demo", payload: { offline: !state.demo.offline } })}
-                  className="btn-press rounded-lg border border-navy/20 px-2.5 py-1.5 text-[12px] font-bold text-muted"
-                >
-                  {state.demo.offline ? "온라인 전환" : "오프라인 시연"}
-                </button>
-              </div>
+              <Link href="/" className="tap shrink-0 text-[12px] font-bold text-muted/50">
+                데모 홈
+              </Link>
             </div>
+            <button
+              onClick={() => dispatch({ type: "demo", payload: { offline: !state.demo.offline } })}
+              className="btn-press mt-2 w-full rounded-lg border border-navy/20 py-1.5 text-[12px] font-bold text-muted"
+            >
+              {state.demo.offline ? "온라인 전환" : "오프라인 시연"}
+            </button>
           </header>
 
           <main className="flex-1 space-y-3.5 overflow-y-auto px-4 pb-28 pt-4">
-            {/* ════ 오늘 탭 ════ */}
+            {/* ════ 오늘 — 출근해서 제일 먼저 보는 것 ════ */}
             {tab === "today" && (
               <>
                 {/* 방문 업무흐름 — 관제와 같은 건을 본다 (2026-08-13 미팅 8단계) */}
                 <VisitFlow role="concierge" />
+
 
                 {/* 관제 급파 → 컨시어지 긴급 배너 — 역할 간 실시간 연동 (SOS + 급파 지시 시) */}
                 {state.demo.sos && state.ops.sosDispatched && (
@@ -177,6 +183,7 @@ export default function ConciergePage() {
                     </p>
                   </div>
                 )}
+
 
                 {/* 오늘 동행 — 디자인 콘솔 (시간범위 · 케어 메타 · 짝 · 컨디션 · 출근 체크인) */}
                 <Card className="p-[18px]">
@@ -320,6 +327,34 @@ export default function ConciergePage() {
                   </button>
                 </Card>
 
+
+                {/* 내일 일정 — 오늘 업무 뒤에 확인 · 주소 게이팅 유지 (REQ-09) */}
+                <Card className="p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="font-num text-[16px] font-bold text-navy">{a2.time}</span>
+                    <span className="text-[15px] font-bold text-ink">{a2.customer}</span>
+                    <span className="ml-auto">
+                      <Badge fg="#8A5D12" bg="rgba(138,93,18,.12)">
+                        배정 대기
+                      </Badge>
+                    </span>
+                  </div>
+                  <div className="mt-1 text-[13px] text-muted">{a2.purpose}</div>
+                  <div className="mt-2 border-t border-navy/10 pt-2 text-[13px]">
+                    <span className="font-bold text-gold">고객 </span>
+                    <span className="text-muted">
+                      {a2.dong} — <span className="text-amber">담당 확정 후 상세 주소 표시</span>
+                    </span>
+                    {a2.hospital && (
+                      <>
+                        <br />
+                        <span className="font-bold text-gold">병원 </span>
+                        <span className="text-ink">{a2.hospital}</span>
+                      </>
+                    )}
+                  </div>
+                </Card>
+
                 {/* 오늘의 한 끗 — 선제 케어 한 가지 (세계 최고 컨시어지: anticipation) */}
                 <Card className="border border-gold/30 p-4">
                   <div className="flex items-center gap-2">
@@ -344,6 +379,60 @@ export default function ConciergePage() {
                     </button>
                   </div>
                 </Card>
+
+              </>
+            )}
+
+            {/* ════ 고객 — 방문 전 30초, 이 분이 누구신지 ════ */}
+            {tab === "client" && (
+              <>
+                {/* 담당 고객 리스트 — 이름을 누르면 케어 프로필로 (실무진 2026-08-12) */}
+                <Card className="p-4">
+                  <SectionLabel>내가 담당하는 고객</SectionLabel>
+                  <div className="mt-2.5 space-y-1.5">
+                    {MY_CLIENTS.map((c) => (
+                      <Link
+                        key={c.name}
+                        href="/care-profile"
+                        className="btn-press flex items-center gap-3 rounded-xl border border-navy/[.08] bg-white/70 px-3 py-2.5"
+                      >
+                        <Avatar name={c.name} size={34} />
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[14.5px] font-bold text-ink">
+                            {c.name} <span className="font-num text-[12px] text-muted">({c.age})</span>
+                          </span>
+                          <span className="block text-[11.5px] text-muted">{c.where} · {c.note}</span>
+                        </span>
+                        <span className="shrink-0 rounded-full bg-navy/[.06] px-2 py-[3px] text-[10.5px] font-bold text-muted">
+                          {c.loc}
+                        </span>
+                        <span className="shrink-0 text-[17px] text-muted">›</span>
+                      </Link>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* 첫 방문이면 — 홈 안전진단 (자택 전용 · 30항목 100점) */}
+                {careLoc === "home" && (
+                  <Link href="/safety-check" className="block">
+                    <Card className="btn-press border-gold/40 p-4" style={{ background: "linear-gradient(180deg,#FBF6EC,#F6EFDE)" }}>
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[11px] bg-gold/15 text-gold">
+                          <Icon name="shield" size={20} />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[15px] font-bold text-navy">첫 방문 홈 안전진단 — 30항목 · 100점</div>
+                          <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">
+                            첫 방문 리포트에 실리고, 부족한 곳의 안전용품이 스토어 장바구니에
+                            자동으로 담깁니다
+                          </div>
+                        </div>
+                        <span className="text-[18px] text-muted">›</span>
+                      </div>
+                    </Card>
+                  </Link>
+                )}
+
 
                 {/* 선호 카드 + AI 동행 브리핑 — 방문 전 30초 (2026-08-12 대표 피드백으로 합침) */}
                 <Card className="p-[18px]">
@@ -419,6 +508,12 @@ export default function ConciergePage() {
                   </div>
                 </Card>
 
+              </>
+            )}
+
+            {/* ════ 방문 — 현장에서 누르는 것들 ════ */}
+            {tab === "visit" && (
+              <>
                 {/* 방문 수행 — 체크인 후 진행 (감사 타임라인) */}
                 <SectionLabel>방문 수행</SectionLabel>
                 <Card className="p-4">
@@ -461,6 +556,7 @@ export default function ConciergePage() {
                     </div>
                   )}
                 </Card>
+
 
                 {/* 영상 2모드 — REQ-12 (원격상담 모드는 2026-08-12 요청으로 삭제) */}
                 <SectionLabel>영상</SectionLabel>
@@ -524,6 +620,7 @@ export default function ConciergePage() {
                   </p>
                 </Card>
 
+
                 {/* 다음 진료 예약 — 공유 캘린더 즉시 반영 (REQ-02) */}
                 <SectionLabel>다음 진료 예약</SectionLabel>
                 <Card className="p-4">
@@ -584,32 +681,7 @@ export default function ConciergePage() {
                   </button>
                 </Card>
 
-                {/* 내일 일정 — 오늘 업무 뒤에 확인 · 주소 게이팅 유지 (REQ-09) */}
-                <Card className="p-4">
-                  <div className="flex items-center gap-2">
-                    <span className="font-num text-[16px] font-bold text-navy">{a2.time}</span>
-                    <span className="text-[15px] font-bold text-ink">{a2.customer}</span>
-                    <span className="ml-auto">
-                      <Badge fg="#8A5D12" bg="rgba(138,93,18,.12)">
-                        배정 대기
-                      </Badge>
-                    </span>
-                  </div>
-                  <div className="mt-1 text-[13px] text-muted">{a2.purpose}</div>
-                  <div className="mt-2 border-t border-navy/10 pt-2 text-[13px]">
-                    <span className="font-bold text-gold">고객 </span>
-                    <span className="text-muted">
-                      {a2.dong} — <span className="text-amber">담당 확정 후 상세 주소 표시</span>
-                    </span>
-                    {a2.hospital && (
-                      <>
-                        <br />
-                        <span className="font-bold text-gold">병원 </span>
-                        <span className="text-ink">{a2.hospital}</span>
-                      </>
-                    )}
-                  </div>
-                </Card>
+
                 {/* 서비스 리커버리 — 실수는 숨기지 않고 회복한다 */}
                 <Card className="p-[18px]">
                   <div className="flex items-center justify-between">
@@ -635,53 +707,6 @@ export default function ConciergePage() {
             {/* ════ 리포트 탭 ════ */}
             {tab === "report" && (
               <>
-                {/* 담당 고객 리스트 — 이름을 누르면 케어 프로필로 (실무진 2026-08-12) */}
-                <Card className="p-4">
-                  <SectionLabel>내가 담당하는 고객</SectionLabel>
-                  <div className="mt-2.5 space-y-1.5">
-                    {MY_CLIENTS.map((c) => (
-                      <Link
-                        key={c.name}
-                        href="/care-profile"
-                        className="btn-press flex items-center gap-3 rounded-xl border border-navy/[.08] bg-white/70 px-3 py-2.5"
-                      >
-                        <Avatar name={c.name} size={34} />
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-[14.5px] font-bold text-ink">
-                            {c.name} <span className="font-num text-[12px] text-muted">({c.age})</span>
-                          </span>
-                          <span className="block text-[11.5px] text-muted">{c.where} · {c.note}</span>
-                        </span>
-                        <span className="shrink-0 rounded-full bg-navy/[.06] px-2 py-[3px] text-[10.5px] font-bold text-muted">
-                          {c.loc}
-                        </span>
-                        <span className="shrink-0 text-[17px] text-muted">›</span>
-                      </Link>
-                    ))}
-                  </div>
-                </Card>
-
-                {/* 첫 방문이면 — 홈 안전진단 (자택 전용 · 30항목 100점) */}
-                {careLoc === "home" && (
-                  <Link href="/safety-check" className="block">
-                    <Card className="btn-press border-gold/40 p-4" style={{ background: "linear-gradient(180deg,#FBF6EC,#F6EFDE)" }}>
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[11px] bg-gold/15 text-gold">
-                          <Icon name="shield" size={20} />
-                        </span>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-[15px] font-bold text-navy">첫 방문 홈 안전진단 — 30항목 · 100점</div>
-                          <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">
-                            첫 방문 리포트에 실리고, 부족한 곳의 안전용품이 스토어 장바구니에
-                            자동으로 담깁니다
-                          </div>
-                        </div>
-                        <span className="text-[18px] text-muted">›</span>
-                      </div>
-                    </Card>
-                  </Link>
-                )}
-
                 {/* 방문 리포트 작성 — 거주 형태 토글이 체크리스트와 리포트 카피를
                     실시간으로 바꾼다 (실무자 피드백 2026-08-09 · 이원화 개발 명세) */}
                 <Card className="p-[18px]">
@@ -1178,6 +1203,7 @@ export default function ConciergePage() {
               </>
             )}
 
+
             {/* ════ 정산 탭 — MY EARNINGS (원칙 준수 버전) ════ */}
             {false && tab === "pay" && (
               <>
@@ -1517,9 +1543,11 @@ export default function ConciergePage() {
             )}
           </main>
 
-          {/* 하단 탭 4개 — 오늘 · 리포트 · 제안 · 정산 (디자인 콘솔) */}
+          {/* 하단 탭 — 컨시어지 하루 순서 5개.
+              grid-cols-4 로 고정돼 있어서 탭이 5개가 되자 마지막 하나가 다음 줄로
+              접혔다. 개수에 맞춰 나눈다. */}
           <nav className="fixed bottom-0 left-1/2 z-30 w-full max-w-[430px] -translate-x-1/2 border-t border-navy/10 bg-white/95 backdrop-blur">
-            <div className="grid grid-cols-4">
+            <div className="grid" style={{ gridTemplateColumns: `repeat(${TABS.length}, minmax(0, 1fr))` }}>
               {TABS.map((t) => {
                 const active = tab === t.key;
                 return (

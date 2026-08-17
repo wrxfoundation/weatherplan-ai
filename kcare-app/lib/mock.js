@@ -4,6 +4,12 @@
 // 상태 시드는 lib/seed.js 로 분리 — _app 공용 청크가 이 파일을 끌어오지 않게 한다.
 export { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS, SEED_REPORTS } from "./seed";
 
+// 복약·건기식은 lib/meds.js 한 곳에서만 정의한다 (케어 프로필이 이걸 파생해 쓴다)
+import { MED_PLAN, SUPPLEMENTS } from "./meds";
+const MED_DRUGS = [
+  ...new Set(MED_PLAN.flatMap((d) => d.items.map((i) => i.name.split(" (")[0]))),
+];
+
 export const ELDER = {
   name: "김순자",
   age: 78,
@@ -553,7 +559,20 @@ export const CP_ATTRS = [
   { k: "거동 수준", v: "실내 보행 가능 · 외출 시 휠체어", src: "컨시어지 리포트", conf: "높음" },
   { k: "청력", v: "좌측 저하 · 우측 정상", src: "동행 중 대화 관측", conf: "높음" },
   { k: "선호 컨시어지", v: "박지현 (3회 연속 지정)", src: "예약 이력", conf: "높음" },
-  { k: "복약", v: "혈압·콜레스테롤·아스피린 3종", src: "처방전 · 복약 기록", conf: "높음" },
+  // 복약·건기식은 lib/meds.js 가 단일 출처다. 여기에 문자열로 또 적으면 갈린다 —
+  // 실제로 "3종"으로 적혀 있었는데 복약 계획은 4종(당뇨약 누락)이었다.
+  {
+    k: "복약",
+    v: `${MED_DRUGS.join(" · ")} ${MED_DRUGS.length}종`,
+    src: "처방전 · 복약 기록",
+    conf: "높음",
+  },
+  {
+    k: "건강기능식품",
+    v: `${SUPPLEMENTS.map((x) => x.name).join(" · ")} ${SUPPLEMENTS.length}종`,
+    src: "첫 안심방문 등록",
+    conf: "높음",
+  },
   { k: "정서 상태", v: "주말 고립감 경향", src: "AI 안부콜 대화 분석", conf: "보통" },
   { k: "식이 제한", v: "저염 권고 (확인 필요)", src: "가족 발화 1회", conf: "낮음" },
 ];
