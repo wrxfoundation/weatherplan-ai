@@ -17,6 +17,7 @@ export type NavEntry = { to: string; icon: IconName | string; label: string }
 
 export const communityNav: NavEntry[] = [
   { to: '/community', icon: 'users', label: '커뮤니티 운영' },
+  { to: '/community/preorder', icon: 'gauge', label: '사전신청 · 판매 퍼널' },
   { to: '/community/content', icon: 'doc', label: '콘텐츠 · 일정' },
 ]
 

@@ -24,6 +24,7 @@ const AuditPage = lazy(() => import('@/modules/settings/AuditPage').then(m => ({
 const TransparencyPage = lazy(() => import('@/modules/pages/TransparencyPage').then(m => ({ default: m.TransparencyPage })))
 const MethodologyPage = lazy(() => import('@/modules/pages/MethodologyPage').then(m => ({ default: m.MethodologyPage })))
 const CommunityPage = lazy(() => import('@/modules/community/CommunityPage').then(m => ({ default: m.CommunityPage })))
+const PreorderPage = lazy(() => import('@/modules/community/PreorderPage').then(m => ({ default: m.PreorderPage })))
 const ContentPage = lazy(() => import('@/modules/community/ContentPage').then(m => ({ default: m.ContentPage })))
 
 // 온체인 감춤 모드에서도 라우트는 유지(URL 직접 접근·기존 링크 보존). 사이드바에서만 감춘다.
@@ -46,6 +47,7 @@ const modulePages: [string, string, ReactNode][] = [
   ['/transparency', 'RLUSD 투명성', <TransparencyPage />],
   ['/methodology', '산식·방법론', <MethodologyPage />],
   ['/community', 'WELLBIAN 커뮤니티 운영', <CommunityPage />],
+  ['/community/preorder', '사전신청 · 판매 퍼널', <PreorderPage />],
   ['/community/content', '콘텐츠·일정', <ContentPage />],
 ]
 

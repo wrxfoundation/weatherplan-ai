@@ -60,6 +60,7 @@ export function CommunityPage() {
         meta={<UpdatedMeta />}
         actions={
           <>
+            <Link to="/community/preorder"><GhostButton>사전신청·판매 퍼널 <Icon name="chevronRight" size={13} /></GhostButton></Link>
             <Link to="/community/content"><GhostButton>콘텐츠·일정 <Icon name="chevronRight" size={13} /></GhostButton></Link>
             <button type="button" className="inline-flex items-center gap-2 rounded-lg bg-navy px-3.5 py-2 text-label font-semibold text-white hover:bg-navy-deep transition-colors">
               <Icon name="download" size={14} /> 운영 리포트
@@ -180,9 +181,11 @@ export function CommunityPage() {
                 </div>
               )
             })}
-            <div className="mt-1 rounded-lg border border-line-soft px-3 py-2 text-meta leading-relaxed text-mute">
-              구매 불발 시 재신청 없이 <b className="font-semibold text-body">2차 물량 우선 대상</b>으로 자동 대기됩니다.
-            </div>
+            <Link to="/community/preorder"
+              className="mt-1 flex items-center justify-between gap-2 rounded-lg border border-line-soft px-3 py-2 text-meta leading-relaxed text-mute transition-colors hover:border-navy/40 hover:text-navy">
+              <span>판매일 그룹별 소진·완판 시나리오는 <b className="font-semibold text-body">사전신청·판매 퍼널</b>에서 확인</span>
+              <Icon name="chevronRight" size={13} className="shrink-0" />
+            </Link>
           </div>
         </Card>
 

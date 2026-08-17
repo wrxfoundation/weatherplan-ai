@@ -69,7 +69,7 @@ function Sidebar() {
         <div className="m-3 rounded-card border border-line p-3">
           <div className="text-tiny font-semibold text-mute">운영 대상</div>
           <div className="mt-1.5 text-meta leading-relaxed text-body">
-            WELLBIAN 커뮤니티 채널 운영 <b className="font-semibold text-navy">2개 화면</b>
+            WELLBIAN 커뮤니티 채널 운영 <b className="font-semibold text-navy">3개 화면</b>
           </div>
           <div className="mt-2 border-t border-line pt-2 text-tiny leading-relaxed text-mute">
             온체인 모듈(M1~M9)·설정은 현재 담당 범위가 아니라 감춰 두었습니다.
