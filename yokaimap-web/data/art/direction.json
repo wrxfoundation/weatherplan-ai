@@ -40,10 +40,10 @@
     "plate": "single subject centered, full figure, plain hanji ground, soft edge vignette, encyclopedia plate",
     "scene": "wide landscape band, low horizon, layered mist planes, small figures for scale"
   },
-  "constraints_general": "no text, no letters, no calligraphy, no signature, no seal stamp, no watermark, no border frame, not photorealistic, not 3d render, not anime",
+  "constraints_general": "no text, no letters, no calligraphy, no signature, no seal stamp, no watermark, no border frame, no Greco-Roman columns or pediment, no pegasus, not photorealistic, not 3d render, not anime",
   "exclude_japanese": {
     "note": "왜색 배제 — 일본 요괴 도상이 한국 도깨비 이미지를 오염시킨 역사가 실제로 있다(근대 학습물의 뿔 달린 도깨비). 되풀이하지 않는다.",
-    "prompt": "NOT Japanese: no kimono or obi sash, no two-horned oni with tiger-skin loincloth, no thonged zori or geta sandals, no split-toe tabi socks, no torii gate, no vermilion two-post gate with a straight lintel, no shimenawa paper streamers, no ukiyo-e woodblock look, no shoji or tatami, no upturned pagoda eaves, no cherry blossom, no Japanese stone lantern",
+    "prompt": "NOT Japanese: no kimono or obi sash, no circular family crest on sleeve or chest, no conical sedge hat, no two-horned oni with tiger-skin loincloth, no thonged zori or geta sandals, no split-toe tabi socks, no torii gate, no vermilion two-post gate with a straight lintel, no shimenawa paper streamers, no ukiyo-e woodblock look, no shoji or tatami, no upturned pagoda eaves, no cherry blossom, no Japanese stone lantern",
     "checklist": [
       "뿔 2개 + 호피 무늬 하의 = 일본 오니. 도깨비에 절대 금지",
       "가나보(철퇴 방망이) 형태 금지 — 도깨비방망이는 옹이 있는 나무 방망이",
@@ -55,7 +55,9 @@
       "돌부처·미륵에 붉은 턱받이·뜨개모자 금지 — 일본 지장보살(지조) 관습. 한국 미륵은 맨 돌에 백지·오색천",
       "엄지발가락 사이 끈이 있는 신발(조리·게타) 금지 — 짚신·미투리는 발가락을 덮는 엮음 신이다. 1차 생성에서 실제로 조리가 나왔다",
       "발가락이 갈라진 버선(다비) 금지 — 한국 버선은 코가 하나로 모인다",
-      "주칠 기둥 2개 + 곧은 상인방 = 도리이. 홍살문은 상단에 화살 모양 살이 서 있고 태극이 붙는다 — 살이 없으면 그리지 말 것"
+      "주칠 기둥 2개 + 곧은 상인방 = 도리이. 홍살문은 상단에 화살 모양 살이 서 있고 태극이 붙는다 — 살이 없으면 그리지 말 것",
+      "소매·가슴의 원형 문장(가몬) 금지 — 강림도령에서 실제로 나왔다",
+      "삿갓형 원뿔 밀짚모자 금지 — 현대괴이에 마쓰리 복장으로 나왔다(콩콩귀신)"
     ]
   },
   "exclude_chinese": {
@@ -66,7 +68,8 @@
       "치파오·교령우임 한푸·변발 금지",
       "붉은 원통 홍등롱·중국결 매듭 금지",
       "년화(年畵)식 고채도 원색 + 금박 남발 금지",
-      "태호석·중국식 정원 요소 금지"
+      "태호석·중국식 정원 요소 금지",
+      "용왕·수부에 중국 황제 도상(면류관·용포 원보문·고채도 금박) 금지 — 조선 무신도 용왕은 관복에 사조룡"
     ]
   },
   "category_modifiers": {
@@ -82,7 +85,7 @@
     "sky": "deep azurite ground, Korean cloud scroll motif and flame motif",
     "artifact": "aged ochre and brown, worn Korean household tool as the figure, knobbed wooden club never a studded iron kanabo",
     "hybrid": "vermilion and malachite, two natures in one figure, hanbok on the human side",
-    "modern": "cool slate grey, contemporary Korean silhouette rendered in the same hanji-and-mineral-pigment technique",
+    "modern": "cool slate grey, present-day Korean clothing and setting — no hanbok, no traditional headgear, no straw hat, no historical costume — rendered in the same hanji-and-mineral-pigment technique",
     "foreign": "violet and gold, Korean Buddhist temple guardian conventions from siwangdo and taenghwa"
   },
   "review": {
