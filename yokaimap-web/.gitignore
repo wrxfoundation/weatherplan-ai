@@ -5,3 +5,6 @@ dist/
 .vercel
 *.log
 public/data/yokai.min.json
+
+# 검수용 컨택트 시트 — 배포물이 아니다
+.review/
