@@ -16,6 +16,12 @@ const modules: { to: string; icon: IconName | string; label: string }[] = [
   { to: '/m9', icon: 'doc', label: 'M9 리포트 & 알림' },
 ]
 
+// 스핀오프 섹션 — 커뮤니티 채널 운영(박서우 단독 관리)
+const community: { to: string; icon: IconName | string; label: string }[] = [
+  { to: '/community', icon: 'users', label: '커뮤니티 운영' },
+  { to: '/community/content', icon: 'doc', label: '콘텐츠 · 일정' },
+]
+
 const settings: { to: string; icon: IconName | string; label: string }[] = [
   { to: '/settings/modes', icon: 'sliders', label: '모듈 모드 관리' },
   { to: '/settings/wallets', icon: 'registry', label: '지갑 레지스트리' },
@@ -55,7 +61,11 @@ function Sidebar() {
 
       <nav className="flex-1 overflow-y-auto px-3 pb-4 scrollbar-thin">
         <NavItem to="/" icon="home" label="대시보드" />
-        <div className="mt-4 mb-1.5 px-3 text-tiny font-semibold text-mute">모듈</div>
+        <div className="mt-4 mb-1.5 flex items-center gap-1.5 px-3 text-tiny font-semibold text-mute">
+          WELLBIAN 커뮤니티 <span className="rounded bg-amber-soft px-1 py-px text-[9px] font-bold text-amber">NEW</span>
+        </div>
+        <div className="space-y-0.5">{community.map(m => <NavItem key={m.to} {...m} />)}</div>
+        <div className="mt-5 mb-1.5 px-3 text-tiny font-semibold text-mute">온체인 모듈</div>
         <div className="space-y-0.5">{modules.map(m => <NavItem key={m.to} {...m} />)}</div>
         <div className="mt-5 mb-1.5 px-3 text-tiny font-semibold text-mute">설정</div>
         <div className="space-y-0.5">{settings.map(m => <NavItem key={m.to} {...m} />)}</div>
@@ -81,6 +91,7 @@ function Sidebar() {
 function MobileNav() {
   const items: { to: string; label: string }[] = [
     { to: '/', label: '대시보드' },
+    ...community.map(c => ({ to: c.to, label: c.label })),
     ...modules.map(m => ({ to: m.to, label: m.label.replace(' (VWI)', '') })),
     ...settings.map(s => ({ to: s.to, label: s.label })),
   ]

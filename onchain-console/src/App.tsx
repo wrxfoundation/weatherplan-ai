@@ -22,6 +22,8 @@ const UsersPage = lazy(() => import('@/modules/settings/UsersPage').then(m => ({
 const AuditPage = lazy(() => import('@/modules/settings/AuditPage').then(m => ({ default: m.AuditPage })))
 const TransparencyPage = lazy(() => import('@/modules/pages/TransparencyPage').then(m => ({ default: m.TransparencyPage })))
 const MethodologyPage = lazy(() => import('@/modules/pages/MethodologyPage').then(m => ({ default: m.MethodologyPage })))
+const CommunityPage = lazy(() => import('@/modules/community/CommunityPage').then(m => ({ default: m.CommunityPage })))
+const ContentPage = lazy(() => import('@/modules/community/ContentPage').then(m => ({ default: m.ContentPage })))
 
 const modulePages: [string, string, ReactNode][] = [
   ['/', '대시보드', <DashboardPage />],
@@ -41,6 +43,8 @@ const modulePages: [string, string, ReactNode][] = [
   ['/settings/audit', '감사 로그', <AuditPage />],
   ['/transparency', 'RLUSD 투명성', <TransparencyPage />],
   ['/methodology', '산식·방법론', <MethodologyPage />],
+  ['/community', 'WELLBIAN 커뮤니티 운영', <CommunityPage />],
+  ['/community/content', '콘텐츠·일정', <ContentPage />],
 ]
 
 function PageFallback() {
