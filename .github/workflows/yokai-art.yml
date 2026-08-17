@@ -38,6 +38,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
+          # rebase로 커밋을 얹으려면 얕은 클론으로는 안 된다(아래 커밋 단계 참고).
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -58,6 +60,8 @@ jobs:
         run: npm run build
 
       - name: 커밋
+        env:
+          BRANCH: ${{ github.ref_name }}
         run: |
           cd "$GITHUB_WORKSPACE"
           if [ -z "$(git status --porcelain yokaimap-web/public/img)" ]; then
@@ -68,4 +72,16 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add yokaimap-web/public/img
           git commit -m "chore(yokaimap): 도상 반입 (WebP 변환)"
-          git push
+          # 121장을 받아 변환하는 데 몇 분 걸리는 동안 브랜치에 다른 커밋이 올라오면
+          # push가 거부된다(실제로 1차 실행이 여기서 죽었다). 이미지 커밋은 다른 변경과
+          # 겹치지 않으므로 rebase로 얹고 재시도한다.
+          for i in 1 2 3; do
+            if git pull --rebase origin "$BRANCH" && git push origin "HEAD:$BRANCH"; then
+              echo "푸시 성공"
+              exit 0
+            fi
+            echo "푸시 재시도 $i"
+            sleep $((i * 5))
+          done
+          echo "::error::3회 재시도 후에도 푸시 실패"
+          exit 1
