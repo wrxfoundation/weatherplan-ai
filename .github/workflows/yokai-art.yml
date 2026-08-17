@@ -70,13 +70,15 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add yokaimap-web/public/img
+          # 이미지와 함께, 빌드가 재생성한 배포 데이터도 넣는다. yokai.json은 추적 대상이라
+          # 빼놓으면 작업트리가 더러운 채 남아 rebase가 거부된다(2차 실행이 여기서 죽었다).
+          git add yokaimap-web/public/img yokaimap-web/public/data/yokai.json
           git commit -m "chore(yokaimap): 도상 반입 (WebP 변환)"
           # 121장을 받아 변환하는 데 몇 분 걸리는 동안 브랜치에 다른 커밋이 올라오면
-          # push가 거부된다(실제로 1차 실행이 여기서 죽었다). 이미지 커밋은 다른 변경과
-          # 겹치지 않으므로 rebase로 얹고 재시도한다.
+          # push가 거부된다(1차 실행이 여기서 죽었다). 이미지 커밋은 다른 변경과
+          # 겹치지 않으므로 rebase로 얹고 재시도한다. 남은 잡다한 변경은 autoStash로 치운다.
           for i in 1 2 3; do
-            if git pull --rebase origin "$BRANCH" && git push origin "HEAD:$BRANCH"; then
+            if git -c rebase.autoStash=true pull --rebase origin "$BRANCH" && git push origin "HEAD:$BRANCH"; then
               echo "푸시 성공"
               exit 0
             fi
