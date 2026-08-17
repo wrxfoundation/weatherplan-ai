@@ -1378,7 +1378,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "3ef379f7-8a7f-4724-b116-42b75c569a05"
+    "job_id": "33a37ff8-b78b-427e-965b-e537f14caae5"
    }
   },
   {
@@ -1481,11 +1481,11 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "final",
+    "status": "generated",
     "direction": "minhwa-v2",
-    "file": "/img/yokai/dokkaebi.webp",
+    "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "25017161-7a8b-49c0-82ce-19b41865e008"
+    "job_id": "9f954676-7887-4f9e-af6e-b565b97ddda6"
    }
   },
   {
@@ -2174,7 +2174,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "292d1c44-5555-4689-b9e8-2f7731b5efb1"
+    "job_id": "f8c2b38c-867d-4c50-9d6e-5a65c7ee1a87"
    }
   },
   {
@@ -4969,7 +4969,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "b359ceb3-8687-4846-8ca2-426f8e47e501"
+    "job_id": "12ea8c24-c9d2-4038-aabd-34b5b67770b9"
    }
   },
   {
@@ -8336,7 +8336,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "7c95ae03-1b20-435e-87de-baf458085d9a"
+    "job_id": "8d4c0306-fbc6-4a9d-ba2b-81612d589b4d"
    }
   },
   {

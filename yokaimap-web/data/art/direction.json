@@ -31,7 +31,7 @@
   "korean_anchors": {
     "note": "매 컷에 최소 1개 이상 강제로 들어가는 한국성 앵커. 이것이 빠지면 모델이 동아시아 평균값으로 떨어진다.",
     "costume_female": "Korean hanbok: short jeogori jacket with a white dongjeong collar strip and long goreum ribbon tie, full chima skirt gathered high at the chest, beoseon socks",
-    "costume_male": "Korean hanbok: jeogori jacket with dongjeong collar and goreum tie, baji trousers tied at the ankle, durumagi overcoat, black horsehair gat hat or topknot with manggeon band, straw jipsin sandals",
+    "costume_male": "Korean hanbok: jeogori jacket with dongjeong collar and goreum tie, baji trousers tied at the ankle, durumagi overcoat, black horsehair gat hat or topknot with manggeon band, woven straw jipsin shoes that enclose the toes with no thong between the toes",
     "architecture": "Korean hanok: gentle straight roof ridge, hanji lattice door, ondol room, earthen wall on stone base",
     "landscape": "Korean red pine and granite ridgeline, a seonangdang shrine of piled stones with five-colour cloth on a spirit tree, jangseung posts, magpie",
     "objects": "moon jar, brass bowl, low soban table, straw geumjul rope, jangdokdae jars"
@@ -43,7 +43,7 @@
   "constraints_general": "no text, no letters, no calligraphy, no signature, no seal stamp, no watermark, no border frame, not photorealistic, not 3d render, not anime",
   "exclude_japanese": {
     "note": "왜색 배제 — 일본 요괴 도상이 한국 도깨비 이미지를 오염시킨 역사가 실제로 있다(근대 학습물의 뿔 달린 도깨비). 되풀이하지 않는다.",
-    "prompt": "NOT Japanese: no kimono or obi sash, no two-horned oni with tiger-skin loincloth, no torii gate, no shimenawa paper streamers, no ukiyo-e woodblock look, no shoji or tatami, no upturned pagoda eaves, no cherry blossom, no Japanese stone lantern",
+    "prompt": "NOT Japanese: no kimono or obi sash, no two-horned oni with tiger-skin loincloth, no thonged zori or geta sandals, no split-toe tabi socks, no torii gate, no vermilion two-post gate with a straight lintel, no shimenawa paper streamers, no ukiyo-e woodblock look, no shoji or tatami, no upturned pagoda eaves, no cherry blossom, no Japanese stone lantern",
     "checklist": [
       "뿔 2개 + 호피 무늬 하의 = 일본 오니. 도깨비에 절대 금지",
       "가나보(철퇴 방망이) 형태 금지 — 도깨비방망이는 옹이 있는 나무 방망이",
@@ -52,7 +52,10 @@
       "지붕 끝이 위로 크게 솟은 처마(당파풍) 금지 — 한옥은 완만한 곡선",
       "벚꽃 대신 소나무·모란·매화",
       "우키요에식 굵은 검정 윤곽 + 인쇄 평면색 금지",
-      "돌부처·미륵에 붉은 턱받이·뜨개모자 금지 — 일본 지장보살(지조) 관습. 한국 미륵은 맨 돌에 백지·오색천"
+      "돌부처·미륵에 붉은 턱받이·뜨개모자 금지 — 일본 지장보살(지조) 관습. 한국 미륵은 맨 돌에 백지·오색천",
+      "엄지발가락 사이 끈이 있는 신발(조리·게타) 금지 — 짚신·미투리는 발가락을 덮는 엮음 신이다. 1차 생성에서 실제로 조리가 나왔다",
+      "발가락이 갈라진 버선(다비) 금지 — 한국 버선은 코가 하나로 모인다",
+      "주칠 기둥 2개 + 곧은 상인방 = 도리이. 홍살문은 상단에 화살 모양 살이 서 있고 태극이 붙는다 — 살이 없으면 그리지 말 것"
     ]
   },
   "exclude_chinese": {

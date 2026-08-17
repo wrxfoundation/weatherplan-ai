@@ -26,13 +26,11 @@
       "id": "kr-dokkaebi",
       "target": "public/img/yokai/dokkaebi.webp",
       "aspect": "4:5",
-      "job_id": "25017161-7a8b-49c0-82ce-19b41865e008",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_25017161-7a8b-49c0-82ce-19b41865e008.png",
+      "job_id": "9f954676-7887-4f9e-af6e-b565b97ddda6",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_012949_9f954676-7887-4f9e-af6e-b565b97ddda6.png",
       "review": {
-        "by": "프로젝트 오너",
-        "date": "2026-08-16",
-        "result": "pass",
-        "note": "도깨비 뿔 없음 / 한복 동정·옷고름 확인 / 용 사조 확인 — 왜색·중국풍 지적 없음"
+        "result": "pending",
+        "note": "재생성 — 검수 대기"
       }
     },
     {
@@ -332,11 +330,11 @@
       "id": "kr-dokgakgwi",
       "target": "public/img/yokai/dokgakgwi.webp",
       "aspect": "4:5",
-      "job_id": "3ef379f7-8a7f-4724-b116-42b75c569a05",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051606_3ef379f7-8a7f-4724-b116-42b75c569a05.png",
+      "job_id": "33a37ff8-b78b-427e-965b-e537f14caae5",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_012949_33a37ff8-b78b-427e-965b-e537f14caae5.png",
       "review": {
         "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "note": "재생성 — 검수 대기"
       }
     },
     {
@@ -384,11 +382,11 @@
       "id": "kr-gae-dokkaebi",
       "target": "public/img/yokai/gae-dokkaebi.webp",
       "aspect": "4:5",
-      "job_id": "292d1c44-5555-4689-b9e8-2f7731b5efb1",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051410_292d1c44-5555-4689-b9e8-2f7731b5efb1.png",
+      "job_id": "f8c2b38c-867d-4c50-9d6e-5a65c7ee1a87",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_012949_f8c2b38c-867d-4c50-9d6e-5a65c7ee1a87.png",
       "review": {
         "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "note": "재생성 — 검수 대기"
       }
     },
     {
@@ -1307,11 +1305,11 @@
       "id": "kr-jwi-dungap",
       "target": "public/img/yokai/jwi-dungap.webp",
       "aspect": "4:5",
-      "job_id": "b359ceb3-8687-4846-8ca2-426f8e47e501",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053251_b359ceb3-8687-4846-8ca2-426f8e47e501.png",
+      "job_id": "12ea8c24-c9d2-4038-aabd-34b5b67770b9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_012949_12ea8c24-c9d2-4038-aabd-34b5b67770b9.png",
       "review": {
         "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "note": "재생성 — 검수 대기"
       }
     },
     {
@@ -1424,11 +1422,11 @@
       "id": "kr-yeou-nui",
       "target": "public/img/yokai/yeou-nui.webp",
       "aspect": "4:5",
-      "job_id": "7c95ae03-1b20-435e-87de-baf458085d9a",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053532_7c95ae03-1b20-435e-87de-baf458085d9a.png",
+      "job_id": "8d4c0306-fbc6-4a9d-ba2b-81612d589b4d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_012949_8d4c0306-fbc6-4a9d-ba2b-81612d589b4d.png",
       "review": {
         "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "note": "재생성 — 검수 대기"
       }
     },
     {
