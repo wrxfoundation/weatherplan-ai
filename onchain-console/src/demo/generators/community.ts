@@ -345,7 +345,7 @@ export const scoreRules = [
   { item: '초대 상한', score: '최대 10명 · 300점', note: '상한이 없으면 상위권 고착 → 나머지 포기', auto: true },
   { item: '초성 퀴즈 정답', score: '+20점', note: '1회 한정. 자료를 읽게 만드는 것이 목적', auto: true },
   { item: '최대 점수', score: '460점', note: '이론상 상한', auto: false },
-  { item: 'X 팔로우 · 좋아요', score: '점수 없음', note: '자동 확인 불가·위조 용이 → 추첨 응모권으로만 처리', auto: false },
+  { item: 'X 팔로우 · 좋아요', score: '점수 없음', note: '팔로워·좋아요 조회 API는 엔터프라이즈 전용(Free·Basic·Pro 불가) + 신청자와 X 핸들을 연결할 방법 없음 → 추첨 응모권으로만 처리', auto: false },
 ]
 
 /** ② 물량 배분과 그룹 — 앞 그룹 잔여는 뒤 그룹이 아니라 오후 일반 공개로 이월 */
