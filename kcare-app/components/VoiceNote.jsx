@@ -21,8 +21,16 @@ export default function VoiceNote({ to, tone = "light", compact = false, onSend 
   }, [rec]);
 
   const dark = tone === "dark";
+  const [tooShort, setTooShort] = useState(false);
+  // 스치듯 눌린 것은 보내지 않는다 — 0초짜리 음성이 "전달됨"으로 남으면
+  // 받는 쪽에서는 빈 메시지를 듣게 된다. (어르신 화면 VoiceRecorder 와 같은 규칙)
   const send = () => {
     setRec(false);
+    if (secs < 1) {
+      setTooShort(true);
+      setSecs(0);
+      return;
+    }
     setSent(true);
     onSend?.(secs);
   };
@@ -47,7 +55,7 @@ export default function VoiceNote({ to, tone = "light", compact = false, onSend 
       )}
       <div className={`flex items-center gap-2 ${compact ? "" : "mt-2.5"}`}>
         <button
-          onClick={() => (rec ? send() : (setSecs(0), setRec(true)))}
+          onClick={() => (rec ? send() : (setTooShort(false), setSecs(0), setRec(true)))}
           aria-label={rec ? "녹음 마치고 보내기" : `${to}께 안부 음성 남기기`}
           className={`btn-press flex min-h-[52px] flex-1 items-center justify-center gap-2 rounded-xl text-[16px] font-bold ${
             rec
@@ -62,7 +70,7 @@ export default function VoiceNote({ to, tone = "light", compact = false, onSend 
               rec ? "animate-livePing bg-white" : dark ? "bg-white/70" : "bg-gold-soft"
             }`}
           />
-          {rec ? `녹음 중 ${secs}초 · 눌러서 보내기` : "안부 음성 남기기"}
+          {rec ? `녹음 중 ${secs}초 · 눌러서 보내기` : "눌러서 녹음"}
         </button>
         {rec && (
           <button
@@ -78,6 +86,11 @@ export default function VoiceNote({ to, tone = "light", compact = false, onSend 
           </button>
         )}
       </div>
+      {tooShort && (
+        <p className={`mt-2 text-[13px] font-bold ${dark ? "text-white" : "text-amber"}`}>
+          너무 짧습니다. 한 마디만 더 말씀해 주세요.
+        </p>
+      )}
     </div>
   );
 }

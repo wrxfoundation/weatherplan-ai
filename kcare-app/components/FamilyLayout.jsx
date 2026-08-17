@@ -3,7 +3,7 @@ import Icon from "./icons";
 import { useRouter } from "next/router";
 import { Avatar } from "./ui";
 import { ELDER } from "../lib/mock";
-import { trackOf, subjectLabel } from "../lib/tracks";
+import { trackOf, honorific } from "../lib/tracks";
 import { useAppState } from "../lib/state";
 import Splash from "./Splash";
 
@@ -20,13 +20,14 @@ export default function FamilyLayout({ children, title }) {
   const { state, dispatch } = useAppState();
   const elderName = state.onboarding?.elderName || ELDER.name;
   const role = state.demo.guardianRole || "primary";
-  // 정기 케어는 "어머니 · 김순자", 나머지 트랙은 "병원 동행 · 이정민" 처럼
+  // 정기 케어는 "김순자 님", 나머지 트랙은 "병원 동행 · 이정민" 처럼
   // 무엇으로 쓰고 있는지가 제목에 드러나야 한다.
+  //
+  // 정기 케어에서 subjectLabel 을 쓰면 온보딩 전 데모에서 "어르신 · 김순자"가 된다.
+  // 2026-08-12 시트가 고객 호칭을 전부 "~~님"으로 통일하라고 해서 honorific 을 쓴다.
   const track = trackOf(state.onboarding?.track);
   const heading =
-    track.id === "elder"
-      ? `${subjectLabel(track, state.onboarding)} · ${elderName}`
-      : `${track.short} · ${elderName}`;
+    track.id === "elder" ? honorific(state.onboarding) : `${track.short} · ${elderName}`;
 
   return (
     <>

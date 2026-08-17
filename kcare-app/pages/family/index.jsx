@@ -2,9 +2,9 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
-import { Card, SectionLabel, Badge, Avatar, PendingTag } from "../../components/ui";
+import { Card, SectionLabel, Badge, Avatar, PendingTag, Collapse } from "../../components/ui";
 import Icon from "../../components/icons";
-import { AI_ASSISTANT_QA, CARE_TEAM, EVENT_KINDS, FEED_TONE, GUARDIANS, NEIGHBORHOOD_FEED, NPS_REASONS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
+import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_KINDS, FEED_TONE, GUARDIANS, NEIGHBORHOOD_FEED, NPS_REASONS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
 import { trackOf, subjectLabel, honorific } from "../../lib/tracks";
 import VoiceNote from "../../components/VoiceNote";
 
@@ -373,16 +373,22 @@ export default function FamilyHome() {
           </Card>
         )}
 
-        {/* 우리 동네 소식 — 동·구 단위 재난·안전·정책·바우처 (디자인 콘솔 복원) */}
+        {/* 우리 동네 소식 — 동·구 단위 재난·안전·정책·바우처 (디자인 콘솔 복원).
+            홈에서 가장 긴 블록(627px)이라 접어 둔다. 지금 당장 할 일이 아니라
+            "있으면 챙기는" 정보다 — 제목줄의 건수만 봐도 새 소식이 있는지 안다. */}
         {has("feed") && (
-          <NeighborhoodFeed
-            onApply={(item) =>
-              dispatch({
-                type: "pushEvent",
-                payload: { kind: "정책", text: `${item.title} — 신청 대행 요청 접수`, color: "#F0D9A8" },
-              })
-            }
-          />
+          <Card className="p-0">
+            <Collapse title="우리 동네 소식" count={`${NEIGHBORHOOD_FEED.length}건`} note={`대치동 · ${ELDER.district}`}>
+              <NeighborhoodFeed
+                onApply={(item) =>
+                  dispatch({
+                    type: "pushEvent",
+                    payload: { kind: "정책", text: `${item.title} — 신청 대행 요청 접수`, color: "#F0D9A8" },
+                  })
+                }
+              />
+            </Collapse>
+          </Card>
         )}
 
         {/* 담당 컨시어지 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}
@@ -472,12 +478,13 @@ export default function FamilyHome() {
 
         {/* AI 케어 어시스턴트 — 답변은 항상 근거 동반 · 의료 판단 아님 */}
         {has("assistant") && (
-          <Card className="p-[18px]">
-            <div className="flex items-center gap-2">
-              <span className="text-[17px] font-black text-navy">AI 케어 어시스턴트</span>
-              <span className="chip-gold rounded-full px-2 py-[3px] text-[10px] font-bold">근거 동반 답변</span>
-            </div>
-            <div className="mt-2.5 flex flex-wrap gap-1.5">
+          <Card className="p-0">
+            <Collapse
+              title="AI 케어 어시스턴트"
+              count={`${AI_ASSISTANT_QA.length}가지 질문`}
+              note="수집된 기록에서만 답합니다 · 의료 판단이 아닙니다"
+            >
+            <div className="flex flex-wrap gap-1.5">
               {AI_ASSISTANT_QA.map((qa) => (
                 <button
                   key={qa.q}
@@ -511,17 +518,17 @@ export default function FamilyHome() {
               </div>
             )}
             <p className="mt-2.5 text-[11px] leading-[1.6] text-muted">
-              수집된 기록에서만 답합니다 · 의료 판단이 아니며, 이상 징후는 사람이 확인 후
-              알립니다 (8.4)
+              이상 징후는 사람이 확인 후 알립니다 (8.4)
             </p>
+          </Collapse>
           </Card>
         )}
 
         {/* 형제 공동 관리 — 순위 없음, 사실만 */}
         {has("siblings") && (
-          <Card className="p-[18px]">
-            <SectionLabel>가족 공동 관리</SectionLabel>
-            <div className="mt-3 space-y-3">
+          <Card className="p-0">
+            <Collapse title="가족 공동 관리" count={`${GUARDIANS.length}명`} note="권한 가족 1명 · 등록 가족 전원">
+            <div className="space-y-3">
               {GUARDIANS.map((g) => (
                 <div key={g.name} className="flex items-center gap-3">
                   <Avatar name={g.name} size={30} />
@@ -559,6 +566,7 @@ export default function FamilyHome() {
             <p className="mt-2.5 text-[12px] leading-[1.7] text-muted">
               결과는 등록된 가족 {GUARDIANS.length}분 모두에게 동시에 전달됩니다.
             </p>
+          </Collapse>
           </Card>
         )}
 
@@ -769,15 +777,12 @@ function NpsCard({ onEvent, onDetractor, onReview, reviews = [] }) {
 // 우리 동네 소식 — 대치동 · 강남구. 재난/안전은 정보, 바우처는 신청 대행까지 (해주세요 연계)
 function NeighborhoodFeed({ onApply }) {
   const [applied, setApplied] = useState({});
+  // 제목줄·카드는 바깥 Collapse 가 그린다 — 여기서는 내용만 그린다
   return (
-    <Card className="p-[18px]">
-      <div className="flex items-baseline justify-between">
-        <div className="text-[17px] font-black text-navy">우리 동네 소식</div>
-        <span className="text-[12px] text-muted">대치동 · 강남구</span>
-      </div>
+    <div>
       {/* "자동 업데이트인가요?" (2026-08-12 대표 질문) — 지금 상태를 그대로 적는다.
           자동 수집 연동은 아직 붙지 않았다. 되는 것처럼 쓰면 나중에 신뢰를 잃는다. */}
-      <div className="mt-2 flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5">
         <PendingTag>자동 수집 연동 대기</PendingTag>
         <span className="text-[11px] leading-[1.6] text-muted">
           현재는 관제가 확인한 공고만 게시합니다
@@ -819,6 +824,6 @@ function NeighborhoodFeed({ onApply }) {
         행정안전부 재난문자 · 구청 복지 공고 기준 — 해당하는 것만 골라 알려드립니다.
         자동 수집이 붙으면 게시까지 걸리는 시간이 사라집니다.
       </p>
-    </Card>
+    </div>
   );
 }

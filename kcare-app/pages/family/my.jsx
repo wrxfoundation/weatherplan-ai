@@ -185,7 +185,7 @@ export default function MyPage() {
               v={
                 !ob || ob.paymentMode === "limit"
                   ? `${fmtWon(ob?.limitAmount ?? 50000)} 이하 ${honor} 직접 결제`
-                  : { both: "양쪽 모두 결제", guardianOnly: "보호자만 결제", elderOnly: "어르신만 결제" }[ob.paymentMode]
+                  : { both: "양쪽 모두 결제", guardianOnly: "보호자만 결제", elderOnly: `${honor}만 결제` }[ob.paymentMode]
               }
             />
             <Row k="방문기록 영상 동의" v={ob?.videoConsent ? "동의함" : "미동의 (가입 시 선택)"} />

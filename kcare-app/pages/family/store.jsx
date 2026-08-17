@@ -149,27 +149,20 @@ export default function StorePage() {
                   on ? "border-navy bg-navy text-white" : "border-navy/12 bg-white/70 text-muted"
                 }`}
               >
-                <Icon name={c.icon} size={22} />
-                <span className={`text-[11.5px] font-bold leading-tight ${on ? "text-white" : "text-muted"}`}>
+                <Icon name={c.icon} size={24} />
+                <span className={`text-[12px] font-bold leading-tight ${on ? "text-white" : "text-muted"}`}>
                   {c.name}
                 </span>
-                {c.badge && (
-                  <span
-                    className={`rounded-full px-1.5 py-[2px] text-[9px] font-bold ${
-                      on ? "bg-white/15 text-gold-soft" : "bg-navy/[.07] text-muted"
-                    }`}
-                  >
-                    {c.badge}
-                  </span>
-                )}
               </button>
             );
           })}
         </div>
 
-        {/* 하위분류 칩 — 약국처럼 그룹이 여럿일 때만 */}
+        {/* 하위분류 칩 — 약국처럼 그룹이 여럿일 때만. 가로 스크롤. 그냥 두면 오른쪽이 잘린 것처럼 보여서
+            더 있는 줄 모른다. 오른쪽 끝을 흐리게 덮어 "이어진다"를 보여 준다. */}
         {active.groups.length > 1 && (
-          <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+          <div className="relative -mx-1">
+            <div className="flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
             {active.groups.map((g, i) => {
               const on = i === Math.min(groupIdx, active.groups.length - 1);
               return (
@@ -184,13 +177,30 @@ export default function StorePage() {
                 </button>
               );
             })}
+            </div>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 w-10"
+              style={{ background: "linear-gradient(90deg, rgba(241,239,232,0), rgba(241,239,232,.95))" }}
+            />
           </div>
         )}
 
-        {active.note && (
-          <p className="rounded-xl bg-navy/[.045] px-3.5 py-2.5 text-[12.5px] leading-[1.7] text-muted">
-            {active.note}
-          </p>
+        {/* 분류 배지(구매대행 · 안전진단 연동)는 버튼 안이 아니라 여기 둔다 —
+            9px 배지를 좁은 버튼에 욱여넣으면 읽히지도 않고 버튼만 옹졸해진다. */}
+        {(active.note || active.badge) && (
+          <div className="rounded-xl bg-navy/[.045] px-3.5 py-2.5">
+            {active.badge && (
+              <Badge fg="#8A5D12" bg="rgba(176,141,87,.16)">
+                {active.badge}
+              </Badge>
+            )}
+            {active.note && (
+              <p className={`text-[12.5px] leading-[1.7] text-muted ${active.badge ? "mt-1.5" : ""}`}>
+                {active.note}
+              </p>
+            )}
+          </div>
         )}
 
         {/* 상품 썸네일 그리드 — 2열 */}
@@ -198,11 +208,6 @@ export default function StorePage() {
           <div className="flex items-center gap-2 px-1">
             <span className="h-[7px] w-[7px] rounded-full bg-navy" />
             <SectionLabel>{group.name}</SectionLabel>
-            {active.id === "pharmacy" && (
-              <Badge fg="#8A5D12" bg="rgba(176,141,87,.16)">
-                구매대행
-              </Badge>
-            )}
           </div>
           <ul className="mt-2.5 grid grid-cols-2 gap-2.5">
             {group.items.map((i) => {
@@ -228,8 +233,12 @@ export default function StorePage() {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
                       ) : (
-                        <span className="absolute inset-0 flex items-center justify-center text-navy/30">
-                          <Icon name={active.icon} size={44} strokeWidth={1.4} />
+                        /* 사진 없음 — 콘솔에서 올리기 전 상태.
+                           분류 아이콘을 쓰면 약국(+)이 업로드 버튼처럼 보여서 글자만 둔다. */
+                        <span className="absolute inset-0 flex items-center justify-center">
+                          <span className="rounded-full bg-white/70 px-2.5 py-1 text-[10.5px] font-bold text-navy/35">
+                            사진 준비 중
+                          </span>
                         </span>
                       )}
                       {on && (

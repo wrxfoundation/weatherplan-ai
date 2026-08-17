@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
-import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../../components/ui";
+import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, Collapse } from "../../components/ui";
 import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY } from "../../lib/requests";
 import { fmtWon, PRICING } from "../../lib/config";
 import { useAppState, needsGuardianApproval } from "../../lib/state";
@@ -9,6 +9,10 @@ import { honorific } from "../../lib/tracks";
 
 // 양방향 "해주세요" — REQ-03 (상태 8종 · 첨부 6종) + REQ-07 (결제 한도 승인)
 // 보호자 화면: 내 요청 생성 + 컨시어지 발신 요청의 결제 승인.
+
+// 활성 서비스 분류 순서 — 급한 것부터. lib/requests.js 의 cat 값과 같아야 한다.
+const ACTIVE_CATS = ["의료 지원", "생활 지원", "응급 관리", "주거 관리", "행정 지원", "돌봄 지원"];
+const INACTIVE = SERVICE_MENU.filter((s) => !s.active);
 
 const fmtD = (t) =>
   new Date(t).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric", weekday: "short" });
@@ -44,106 +48,106 @@ export default function RequestsPage() {
           함께 기록됩니다.{limitLabel && ` 결제권한: ${limitLabel}.`}
         </p>
 
-        {/* 서비스 메뉴 — 실무자 피드백 (2026-08-09): no1~6 활성 · no7~11 예고 · no12 응급 */}
+        {/* 서비스 메뉴 — 실무자 피드백 (2026-08-09): no1~6 활성 · no7~11 예고 · no12 응급
+            메뉴가 15개까지 늘어 한 장에 다 펼치면 3.8화면 분량이 된다. 분류로 묶고
+            접어 둔다 — 제목줄의 개수만 봐도 안에 뭐가 몇 개 있는지 알 수 있게. */}
         <Card className="p-4">
-          <SectionLabel>지금 요청할 수 있는 서비스</SectionLabel>
+          <SectionLabel>무엇을 부탁드릴까요</SectionLabel>
           <div className="mt-2.5 space-y-2">
-            {SERVICE_MENU.filter((s) => s.active).map((s) => (
-              <button
-                key={s.no}
-                onClick={() => setCreating(s)}
-                className="btn-press w-full rounded-xl border border-navy/12 p-3 text-left"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-[15px] font-bold text-navy">{s.name}</span>
-                  <span className="ml-auto shrink-0 rounded-full bg-navy/[.06] px-2 py-[3px] text-[11px] font-bold text-muted">
-                    {s.cat}
-                  </span>
-                </div>
-                <div className="mt-1 font-num text-[12.5px] font-bold text-gold">{s.priceLabel}</div>
-                <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{s.scope}</div>
-                {s.point && <div className="mt-0.5 text-[12px] leading-[1.6] text-green">{s.point}</div>}
-              </button>
-            ))}
-          </div>
-
-          {/* 해주세요 PLUS — 외주 파트너 연계 (개편안 V2 ONE STOP 축) */}
-          <div className="mt-4 border-t border-navy/[.08] pt-3">
-            <div className="flex items-center gap-2">
-              <SectionLabel>해주세요 PLUS — 전문업체 연결</SectionLabel>
-              <Badge fg="#8A5D12" bg="rgba(176,141,87,.16)">
-                외주 연계
-              </Badge>
-            </div>
-            <p className="mt-1.5 text-[12px] leading-[1.65] text-muted">
-              저희가 직접 못 하는 일은 전문업체로 연결해 드리고 진행 상황을 보고합니다.
-              공사·수리의 책임은 시공 업체에 있습니다.
-            </p>
-            <div className="mt-2.5 space-y-2">
-              {SERVICE_PLUS.map((s) => (
-                <button
-                  key={s.key}
-                  onClick={() =>
-                    setCreating({
-                      no: `plus-${s.key}`,
-                      name: s.name,
-                      priceLabel: s.priceLabel,
-                      amount: s.amount,
-                    })
-                  }
-                  className="btn-press w-full rounded-xl border border-gold/25 bg-gold/[.05] p-3 text-left"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-[15px] font-bold text-navy">{s.name}</span>
-                    <span className="ml-auto shrink-0 rounded-full bg-white px-2 py-[3px] text-[11px] font-bold text-muted">
-                      {s.tag}
-                    </span>
+            {ACTIVE_CATS.map((cat) => {
+              const rows = SERVICE_MENU.filter((x) => x.active && x.cat === cat);
+              if (!rows.length) return null;
+              return (
+                <Collapse key={cat} title={cat} count={`${rows.length}가지`}>
+                  <div className="space-y-2">
+                    {rows.map((s) => (
+                      <button
+                        key={s.no}
+                        onClick={() => setCreating(s)}
+                        className="btn-press w-full rounded-xl border border-navy/12 p-3 text-left"
+                      >
+                        <div className="text-[15px] font-bold text-navy">{s.name}</div>
+                        <div className="mt-1 font-num text-[12.5px] font-bold text-gold">{s.priceLabel}</div>
+                        <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{s.scope}</div>
+                        {s.point && <div className="mt-0.5 text-[12px] leading-[1.6] text-green">{s.point}</div>}
+                      </button>
+                    ))}
                   </div>
-                  <div className={`mt-1 font-num text-[12.5px] font-bold ${s.confirmed ? "text-gold" : "text-muted"}`}>
-                    {s.priceLabel}
-                  </div>
-                  <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{s.scope}</div>
-                  <div className="mt-0.5 text-[11.5px] leading-[1.55] text-amber">{s.note}</div>
-                </button>
-              ))}
-            </div>
-          </div>
+                </Collapse>
+              );
+            })}
 
-          {/* 미개시 서비스 — 표기만 하고 비활성. "이런 서비스도 앞으로 이용할 수
-              있구나"를 보여주고, 필요 신호로 수요를 잰다 (실무자 요청 그대로) */}
-          <div className="mt-4 border-t border-navy/[.08] pt-3">
-            <SectionLabel>준비 중인 서비스 — 곧 열립니다</SectionLabel>
-            <div className="mt-2.5 space-y-2">
-              {SERVICE_MENU.filter((s) => !s.active).map((s) => {
-                const sent = !!wanted[s.no];
-                return (
-                  <div key={s.no} className="rounded-xl border border-dashed border-navy/15 bg-navy/[.025] p-3">
+            {/* 해주세요 PLUS — 외주 파트너 연계 (개편안 V2 ONE STOP 축) */}
+            <Collapse
+              title="해주세요 PLUS — 전문업체 연결"
+              count={`${SERVICE_PLUS.length}가지`}
+              note="저희가 직접 못 하는 일은 전문업체로 연결하고 진행 상황을 보고합니다. 공사·수리의 책임은 시공 업체에 있습니다."
+              tone="gold"
+            >
+              <div className="space-y-2">
+                {SERVICE_PLUS.map((s) => (
+                  <button
+                    key={s.key}
+                    onClick={() =>
+                      setCreating({
+                        no: `plus-${s.key}`,
+                        name: s.name,
+                        priceLabel: s.priceLabel,
+                        amount: s.amount,
+                      })
+                    }
+                    className="btn-press w-full rounded-xl border border-gold/25 bg-white/70 p-3 text-left"
+                  >
                     <div className="flex items-center gap-2">
-                      <span className="text-[14.5px] font-bold text-muted">{s.name}</span>
-                      <span className="ml-auto shrink-0 rounded-full bg-navy/[.05] px-2 py-[3px] text-[10.5px] font-bold text-muted/70">
-                        추후 서비스 개시
+                      <span className="text-[15px] font-bold text-navy">{s.name}</span>
+                      <span className="ml-auto shrink-0 rounded-full bg-navy/[.06] px-2 py-[3px] text-[11px] font-bold text-muted">
+                        {s.tag}
                       </span>
                     </div>
-                    <div className="mt-0.5 text-[12px] leading-[1.6] text-muted/80">{s.scope}</div>
-                    <button
-                      onClick={() => {
-                        if (sent) return;
-                        setWanted((w) => ({ ...w, [s.no]: true }));
-                        dispatch({
-                          type: "pushEvent",
-                          payload: { kind: "수요", text: `미개시 서비스 수요 신호 — ${s.name}`, color: "#8FA9CC" },
-                        });
-                      }}
-                      className={`btn-press mt-2 rounded-lg border px-3 py-1.5 text-[12px] font-bold ${
-                        sent ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
-                      }`}
-                    >
-                      {sent ? "✓ 알려주셔서 감사합니다 — 열리면 먼저 안내드릴게요" : "이 서비스가 필요하신가요?"}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
+                    <div className={`mt-1 font-num text-[12.5px] font-bold ${s.confirmed ? "text-gold" : "text-muted"}`}>
+                      {s.priceLabel}
+                    </div>
+                    <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{s.scope}</div>
+                    <div className="mt-0.5 text-[11.5px] leading-[1.55] text-amber">{s.note}</div>
+                  </button>
+                ))}
+              </div>
+            </Collapse>
+
+            {/* 미개시 서비스 — 표기만 하고 비활성. "이런 서비스도 앞으로 이용할 수
+                있구나"를 보여주고, 필요 신호로 수요를 잰다 (실무자 요청 그대로) */}
+            <Collapse
+              title="준비 중인 서비스"
+              count={`${INACTIVE.length}가지`}
+              note="곧 열립니다 — 필요하시면 알려 주세요"
+            >
+              <div className="space-y-2">
+                {INACTIVE.map((s) => {
+                  const sent = !!wanted[s.no];
+                  return (
+                    <div key={s.no} className="rounded-xl border border-dashed border-navy/15 bg-navy/[.025] p-3">
+                      <div className="text-[14.5px] font-bold text-muted">{s.name}</div>
+                      <div className="mt-0.5 text-[12px] leading-[1.6] text-muted/80">{s.scope}</div>
+                      <button
+                        onClick={() => {
+                          if (sent) return;
+                          setWanted((w) => ({ ...w, [s.no]: true }));
+                          dispatch({
+                            type: "pushEvent",
+                            payload: { kind: "수요", text: `미개시 서비스 수요 신호 — ${s.name}`, color: "#8FA9CC" },
+                          });
+                        }}
+                        className={`btn-press mt-2 w-full rounded-lg border px-3 py-2 text-[12px] font-bold ${
+                          sent ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
+                        }`}
+                      >
+                        {sent ? "✓ 알려주셔서 감사합니다 — 열리면 먼저 안내드릴게요" : "이 서비스가 필요하신가요?"}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </Collapse>
           </div>
         </Card>
 
