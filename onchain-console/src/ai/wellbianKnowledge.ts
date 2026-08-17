@@ -1,12 +1,14 @@
 // wellbian AI 데모 지식 — 콘솔 데모 데이터와 정합하는 규칙 기반 응답.
 // 라이브 전환 시 Edge Function 경유 Claude API(claude-sonnet-4-6)로 교체 (PRD §2).
+import { SHOW_ONCHAIN } from '@/app/nav'
+
 export type AiAnswer = {
   match: RegExp
   answer: string
   link?: { label: string; to: string }
 }
 
-export const knowledge: AiAnswer[] = [
+const allKnowledge: AiAnswer[] = [
   {
     match: /(오늘|금일).*(지급|보상)|지급.*(얼마|예정)|보상.*(얼마|제공량)/,
     answer: '오늘 DePIN 보상 지급 예정액은 8,214.3 RLUSD(≈ 2,607.7 XRP)입니다. 배치는 09:00에 실행되며, 1일 한도 20,000 RLUSD 중 41.1%를 사용합니다. 최근 7일 지급 실적은 57,842.6 RLUSD(≈ 18,362.7 XRP)입니다.',
@@ -63,6 +65,21 @@ export const knowledge: AiAnswer[] = [
     link: { label: 'M5 재무 현황 보기', to: '/m5' },
   },
   {
+    match: /콘텐츠|게시물|발행|일정|기획|계획 ?대비|3축/,
+    answer: '3주차 계획 비중(측정 30 · 기대효과 25 · 판매 45) 대비 실제는 33 / 22 / 45로, 기대효과 축이 3p 부족합니다. 저장·퍼감은 ⑤ 데이터 카드(1,120)와 ③ 측정 결과 비교(940)가 견인 중이고, 발행 리듬(사진 5 · 영상 2)은 규칙을 지키고 있습니다.',
+    link: { label: '콘텐츠 · 일정 보기', to: '/community/content' },
+  },
+  {
+    match: /유입원|초대 ?링크|어디서 (들어|유입)|경로별/,
+    answer: '텔레그램 유입원 1위는 신청 완료 화면 안내 링크(41.2%)이고, X 프로필·링크트리가 뒤를 잇습니다. 유입원 분해는 채널별 초대 링크(createChatInviteLink)로만 정확히 집계되며, 링크를 미리 나눠 두지 않으면 사후 복원이 불가능합니다.',
+    link: { label: '커뮤니티 운영 보기', to: '/community' },
+  },
+  {
+    match: /주의 ?검색어|사칭|에어드랍|투자 ?오인/,
+    answer: '"케이웨더 코인" · "웰비안 에어드랍" 같은 투자 오인 검색 유입이 늘고 있습니다. 공지 카드에 프로젝트 성격(측정 데이터 기반) 고지를 넣고, 사칭 주의 공지를 정기 편성하는 것이 권장 대응입니다. 현재 사칭 신고 1건이 처리 대기입니다.',
+    link: { label: '커뮤니티 운영 보기', to: '/community' },
+  },
+  {
     match: /커뮤니티|채널|텔레그램|사전신청|팔로워|검색어|웰비안|wellbian/i,
     answer: '커뮤니티 3개 채널(X·텔레그램·링크트리) 현황입니다. 사전신청 6,240명(목표 10,000의 62.4%), 텔레그램 3,240명, X 2,840명. 텔레그램 최대 유입원은 신청 완료 화면 안내 링크(41.2%)입니다. 주의: 투자 오인 검색어 유입이 늘고 있어 공지 카드에 프로젝트 성격 고지가 필요합니다.',
     link: { label: '커뮤니티 운영 보기', to: '/community' },
@@ -74,17 +91,32 @@ export const knowledge: AiAnswer[] = [
   },
 ]
 
-export const suggestions = [
-  '커뮤니티 채널 현황 알려줘',
-  '오늘 보상 지급 얼마야?',
-  '부정 탐지 큐 상황은?',
-  '홀더 집중도 알려줘',
-  '부산 노드 왜 주의 상태야?',
-  'XRPL이랑 XRP 차이가 뭐야?',
-]
+// 감춰진 화면으로 가는 바로가기는 노출하지 않는다(답변 내용 자체는 유지).
+export const knowledge: AiAnswer[] = allKnowledge.map(k =>
+  !SHOW_ONCHAIN && k.link && !k.link.to.startsWith('/community') ? { match: k.match, answer: k.answer } : k
+)
 
-export const fallback =
-  '아직 데모 지식에 없는 질문이에요. 보상·부정 탐지·홀더·지수(VWI)·노드 현황·결제·파트너 정산·지갑·알림·재무·용어에 대해 물어보시면 콘솔 수치로 답해 드립니다. 라이브 전환 후에는 Claude가 실데이터 기반으로 답변합니다.'
+export const suggestions = SHOW_ONCHAIN
+  ? [
+      '커뮤니티 채널 현황 알려줘',
+      '오늘 보상 지급 얼마야?',
+      '부정 탐지 큐 상황은?',
+      '홀더 집중도 알려줘',
+      '부산 노드 왜 주의 상태야?',
+      'XRPL이랑 XRP 차이가 뭐야?',
+    ]
+  : [
+      '커뮤니티 채널 현황 알려줘',
+      '사전신청 목표 대비 어때?',
+      '텔레그램 유입원 어디가 제일 커?',
+      '주의 검색어 뭐가 올라왔어?',
+      '이번 주 콘텐츠 계획 대비 실제는?',
+      'XRPL이랑 XRP 차이가 뭐야?',
+    ]
+
+export const fallback = SHOW_ONCHAIN
+  ? '아직 데모 지식에 없는 질문이에요. 보상·부정 탐지·홀더·지수(VWI)·노드 현황·결제·파트너 정산·지갑·알림·재무·용어에 대해 물어보시면 콘솔 수치로 답해 드립니다. 라이브 전환 후에는 Claude가 실데이터 기반으로 답변합니다.'
+  : '아직 데모 지식에 없는 질문이에요. 커뮤니티 채널 현황·사전신청·텔레그램 유입원·검색어·콘텐츠 일정·용어에 대해 물어보시면 콘솔 수치로 답해 드립니다. 실데이터 연동 후에는 Claude가 실제 수치 기반으로 답변합니다.'
 
 // 화면별 AI 브리핑 (dcmap AiBrief 포인트) — 현재 라우트 기준 요약
 export const briefs: Record<string, string> = {
@@ -105,5 +137,7 @@ export const briefs: Record<string, string> = {
 }
 
 export function briefFor(pathname: string): string {
-  return briefs[pathname] ?? '이 화면의 상세 브리핑은 아직 준비 중입니다. 대시보드·M1~M9·지갑 레지스트리·감사 로그 화면에서 브리핑을 제공합니다.'
+  return briefs[pathname] ?? (SHOW_ONCHAIN
+    ? '이 화면의 상세 브리핑은 아직 준비 중입니다. 대시보드·M1~M9·지갑 레지스트리·감사 로그 화면에서 브리핑을 제공합니다.'
+    : '이 화면의 상세 브리핑은 아직 준비 중입니다. 커뮤니티 운영·콘텐츠 일정 화면에서 브리핑을 제공합니다.')
 }

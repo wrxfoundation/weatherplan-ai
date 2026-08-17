@@ -3,32 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { Icon, IconName } from '@/components/Icon'
 import { HelpDrawer } from '@/components/HelpDrawer'
 import { WellbianChat } from '@/ai/WellbianChat'
-
-const modules: { to: string; icon: IconName | string; label: string }[] = [
-  { to: '/m1', icon: 'wallet', label: 'M1 활성 지갑' },
-  { to: '/m2', icon: 'thermo', label: 'M2 정산 지수 (VWI)' },
-  { to: '/m3', icon: 'exchange', label: 'M3 결제/정산' },
-  { to: '/m4', icon: 'cpu', label: 'M4 DePIN 보상' },
-  { to: '/m5', icon: 'gauge', label: 'M5 재무 현황' },
-  { to: '/m6', icon: 'handshake', label: 'M6 파트너 정산' },
-  { to: '/m7', icon: 'chat', label: 'M7 소셜 & 미디어' },
-  { to: '/m8', icon: 'coins', label: 'M8 토큰 홀더' },
-  { to: '/m9', icon: 'doc', label: 'M9 리포트 & 알림' },
-]
-
-// 스핀오프 섹션 — 커뮤니티 채널 운영(박서우 단독 관리)
-const community: { to: string; icon: IconName | string; label: string }[] = [
-  { to: '/community', icon: 'users', label: '커뮤니티 운영' },
-  { to: '/community/content', icon: 'doc', label: '콘텐츠 · 일정' },
-]
-
-const settings: { to: string; icon: IconName | string; label: string }[] = [
-  { to: '/settings/modes', icon: 'sliders', label: '모듈 모드 관리' },
-  { to: '/settings/wallets', icon: 'registry', label: '지갑 레지스트리' },
-  { to: '/settings/alerts', icon: 'bell', label: '알림 규칙' },
-  { to: '/settings/users', icon: 'users', label: '사용자 관리' },
-  { to: '/settings/audit', icon: 'audit', label: '감사 로그' },
-]
+import { SHOW_ONCHAIN, HOME_PATH, DATA_DATE, communityNav as community, moduleNav as modules, settingsNav as settings } from '@/app/nav'
 
 function NavItem({ to, icon, label }: { to: string; icon: IconName | string; label: string }) {
   return (
@@ -48,53 +23,73 @@ function NavItem({ to, icon, label }: { to: string; icon: IconName | string; lab
 function Sidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-20 hidden w-[236px] flex-col border-r border-line bg-panel lg:flex">
-      <div className="flex items-center gap-2.5 px-5 pb-5 pt-5">
+      <Link to={HOME_PATH} className="flex items-center gap-2.5 px-5 pb-5 pt-5">
         <span className="relative grid h-9 w-9 place-items-center rounded-full bg-navy-soft">
           <span className="absolute h-4 w-4 -translate-x-1 rounded-full bg-navy-deep/90" />
           <span className="absolute h-3 w-3 translate-x-1.5 translate-y-1 rounded-full bg-navy/70" />
         </span>
         <div className="leading-tight">
           <div className="text-[17px] font-extrabold tracking-tight text-ink">KWeather</div>
-          <div className="text-[10px] font-semibold tracking-[0.12em] text-mute">ON-CHAIN CONSOLE</div>
+          <div className="text-[10px] font-semibold tracking-[0.12em] text-mute">
+            {SHOW_ONCHAIN ? 'ON-CHAIN CONSOLE' : 'COMMUNITY CONSOLE'}
+          </div>
         </div>
-      </div>
+      </Link>
 
       <nav className="flex-1 overflow-y-auto px-3 pb-4 scrollbar-thin">
-        <NavItem to="/" icon="home" label="대시보드" />
-        <div className="mt-4 mb-1.5 flex items-center gap-1.5 px-3 text-tiny font-semibold text-mute">
+        {SHOW_ONCHAIN && <NavItem to="/" icon="home" label="대시보드" />}
+        <div className={`mb-1.5 flex items-center gap-1.5 px-3 text-tiny font-semibold text-mute ${SHOW_ONCHAIN ? 'mt-4' : ''}`}>
           WELLBIAN 커뮤니티 <span className="rounded bg-amber-soft px-1 py-px text-[9px] font-bold text-amber">NEW</span>
         </div>
         <div className="space-y-0.5">{community.map(m => <NavItem key={m.to} {...m} />)}</div>
-        <div className="mt-5 mb-1.5 px-3 text-tiny font-semibold text-mute">온체인 모듈</div>
-        <div className="space-y-0.5">{modules.map(m => <NavItem key={m.to} {...m} />)}</div>
-        <div className="mt-5 mb-1.5 px-3 text-tiny font-semibold text-mute">설정</div>
-        <div className="space-y-0.5">{settings.map(m => <NavItem key={m.to} {...m} />)}</div>
+        {SHOW_ONCHAIN && (
+          <>
+            <div className="mt-5 mb-1.5 px-3 text-tiny font-semibold text-mute">온체인 모듈</div>
+            <div className="space-y-0.5">{modules.map(m => <NavItem key={m.to} {...m} />)}</div>
+            <div className="mt-5 mb-1.5 px-3 text-tiny font-semibold text-mute">설정</div>
+            <div className="space-y-0.5">{settings.map(m => <NavItem key={m.to} {...m} />)}</div>
+          </>
+        )}
       </nav>
 
-      <div className="m-3 rounded-card border border-line p-3">
-        <div className="text-tiny font-semibold text-mute">모드 요약</div>
-        <div className="mt-2 grid grid-cols-2 overflow-hidden rounded-lg border border-line text-center text-label font-semibold">
-          <button type="button" className="bg-navy py-1.5 text-white">DEMO</button>
-          <button type="button" className="bg-panel py-1.5 text-mute" title="라이브 전환 조건 미충족">LIVE</button>
+      {SHOW_ONCHAIN ? (
+        <div className="m-3 rounded-card border border-line p-3">
+          <div className="text-tiny font-semibold text-mute">모드 요약</div>
+          <div className="mt-2 grid grid-cols-2 overflow-hidden rounded-lg border border-line text-center text-label font-semibold">
+            <button type="button" className="bg-navy py-1.5 text-white">DEMO</button>
+            <button type="button" className="bg-panel py-1.5 text-mute" title="라이브 전환 조건 미충족">LIVE</button>
+          </div>
+          <div className="mt-2 text-meta text-body"><b className="num font-semibold text-navy">9 / 9</b> 모듈 데모 모드</div>
+          <button type="button"
+            className="mt-2 flex w-full items-center justify-between rounded-lg border border-line px-2.5 py-1.5 text-meta font-medium text-body hover:border-navy/40 hover:text-navy transition-colors">
+            라이브 전환 조건 확인 <Icon name="chevronRight" size={13} />
+          </button>
         </div>
-        <div className="mt-2 text-meta text-body"><b className="num font-semibold text-navy">9 / 9</b> 모듈 데모 모드</div>
-        <button type="button"
-          className="mt-2 flex w-full items-center justify-between rounded-lg border border-line px-2.5 py-1.5 text-meta font-medium text-body hover:border-navy/40 hover:text-navy transition-colors">
-          라이브 전환 조건 확인 <Icon name="chevronRight" size={13} />
-        </button>
-      </div>
+      ) : (
+        <div className="m-3 rounded-card border border-line p-3">
+          <div className="text-tiny font-semibold text-mute">운영 대상</div>
+          <div className="mt-1.5 text-meta leading-relaxed text-body">
+            WELLBIAN 커뮤니티 채널 운영 <b className="font-semibold text-navy">2개 화면</b>
+          </div>
+          <div className="mt-2 border-t border-line pt-2 text-tiny leading-relaxed text-mute">
+            온체인 모듈(M1~M9)·설정은 현재 담당 범위가 아니라 감춰 두었습니다.
+          </div>
+        </div>
+      )}
     </aside>
   )
 }
 
 // 모바일: 사이드바 대신 상단 가로 스크롤 칩 내비게이션 (PRD §9)
 function MobileNav() {
-  const items: { to: string; label: string }[] = [
-    { to: '/', label: '대시보드' },
-    ...community.map(c => ({ to: c.to, label: c.label })),
-    ...modules.map(m => ({ to: m.to, label: m.label.replace(' (VWI)', '') })),
-    ...settings.map(s => ({ to: s.to, label: s.label })),
-  ]
+  const items: { to: string; label: string }[] = SHOW_ONCHAIN
+    ? [
+        { to: '/', label: '대시보드' },
+        ...community.map(c => ({ to: c.to, label: c.label })),
+        ...modules.map(m => ({ to: m.to, label: m.label.replace(' (VWI)', '') })),
+        ...settings.map(s => ({ to: s.to, label: s.label })),
+      ]
+    : community.map(c => ({ to: c.to, label: c.label }))
   return (
     <nav className="sticky top-[64px] z-10 flex gap-1.5 overflow-x-auto border-b border-line bg-panel/95 px-4 py-2 backdrop-blur lg:hidden scrollbar-thin">
       {items.map(i => (
@@ -113,7 +108,7 @@ function TopBar({ onHelp }: { onHelp: () => void }) {
   const { pathname } = useLocation()
   return (
     <header className="sticky top-0 z-10 flex h-[64px] items-center gap-4 border-b border-line bg-panel/95 px-6 backdrop-blur">
-      {pathname === '/' && (
+      {SHOW_ONCHAIN && pathname === '/' && (
         <button type="button"
           className="hidden items-center gap-6 whitespace-nowrap rounded-lg border border-line px-3.5 py-2 text-label font-medium text-ink hover:border-navy/40 transition-colors md:flex">
           전체 모듈 <Icon name="chevronDown" size={14} className="text-mute" />
@@ -124,7 +119,11 @@ function TopBar({ onHelp }: { onHelp: () => void }) {
           <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-navy" />
           <b className="shrink-0 whitespace-nowrap font-bold text-navy">DEMO<span className="hidden sm:inline"> MODE</span></b>
           <span className="hidden text-line md:inline">│</span>
-          <span className="hidden truncate text-body md:inline">회사 지갑 주소 연결 시 XRPL 공개 원장 라이브 집계로 전환됩니다.</span>
+          <span className="hidden truncate text-body md:inline">
+            {SHOW_ONCHAIN
+              ? '회사 지갑 주소 연결 시 XRPL 공개 원장 라이브 집계로 전환됩니다.'
+              : '텔레그램 Bot API·GA4·서치콘솔 연동 시 실데이터 집계로 전환됩니다.'}
+          </span>
         </div>
       </div>
       <div className="flex items-center gap-1.5">
@@ -168,12 +167,17 @@ function ScrollTopFab() {
 function Footer() {
   return (
     <footer className="mt-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-line px-4 py-4 text-meta text-mute sm:justify-between sm:px-6">
-      <span>KWeather On-Chain Console <span className="num text-mute/80">· 데이터 기준 2026-08-14 · 데모 v1.2</span></span>
+      <span>
+        {SHOW_ONCHAIN ? 'KWeather On-Chain Console' : 'KWeather WELLBIAN Community Console'}
+        <span className="num text-mute/80"> · 데이터 기준 {DATA_DATE} · 데모 v1.3</span>
+      </span>
       <span>© 2026 KWeather Inc. All rights reserved.</span>
       <span className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5">
-        <Link to="/methodology" className="hover:text-navy hover:underline">산식·방법론</Link>
-        <Link to="/transparency" className="hover:text-navy hover:underline">RLUSD 투명성</Link>
-        <span>데이터 출처:&nbsp; <b className="font-medium text-body">XRPL Public Ledger</b></span>
+        {SHOW_ONCHAIN && <>
+          <Link to="/methodology" className="hover:text-navy hover:underline">산식·방법론</Link>
+          <Link to="/transparency" className="hover:text-navy hover:underline">RLUSD 투명성</Link>
+        </>}
+        <span>데이터 출처:&nbsp; <b className="font-medium text-body">{SHOW_ONCHAIN ? 'XRPL Public Ledger' : '텔레그램 · X · GA4 · 서치콘솔 (연동 예정)'}</b></span>
         <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ok" /> 상태:&nbsp;<b className="font-medium text-body">정상</b></span>
       </span>
     </footer>

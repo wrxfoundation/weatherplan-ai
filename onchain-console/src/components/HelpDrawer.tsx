@@ -2,10 +2,13 @@ import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Icon } from './Icon'
 import { helpForPath } from '@/help/helpContent'
+import { SHOW_ONCHAIN } from '@/app/nav'
 
 export function HelpDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { pathname } = useLocation()
   const h = helpForPath(pathname)
+  // 감춰진 화면으로 가는 바로가기는 노출하지 않는다
+  const related = (h.related ?? []).filter(r => SHOW_ONCHAIN || r.to.startsWith('/community'))
 
   // 라우트 이동·ESC 시 닫기
   useEffect(() => { onClose() }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -64,11 +67,11 @@ export function HelpDrawer({ open, onClose }: { open: boolean; onClose: () => vo
             </ul>
           </section>
 
-          {h.related && (
+          {related.length > 0 && (
             <section className="mt-5">
               <h3 className="text-label font-bold text-navy">함께 보면 좋은 화면</h3>
               <div className="mt-2 flex flex-wrap gap-1.5">
-                {h.related.map(r => (
+                {related.map(r => (
                   <Link key={r.to} to={r.to}
                     className="inline-flex items-center gap-1 rounded-full border border-line px-3 py-1 text-meta font-semibold text-body hover:border-navy/50 hover:text-navy transition-colors">
                     {r.label} <Icon name="chevronRight" size={11} />
@@ -83,12 +86,18 @@ export function HelpDrawer({ open, onClose }: { open: boolean; onClose: () => vo
           </div>
         </div>
 
-        <div className="border-t border-line px-5 py-3.5">
-          <Link to="/methodology" onClick={onClose}
-            className="flex items-center justify-between text-label font-semibold text-navy hover:underline">
-            전체 산식·방법론 문서 보기 <Icon name="chevronRight" size={14} />
-          </Link>
-        </div>
+        {SHOW_ONCHAIN ? (
+          <div className="border-t border-line px-5 py-3.5">
+            <Link to="/methodology" onClick={onClose}
+              className="flex items-center justify-between text-label font-semibold text-navy hover:underline">
+              전체 산식·방법론 문서 보기 <Icon name="chevronRight" size={14} />
+            </Link>
+          </div>
+        ) : (
+          <div className="border-t border-line px-5 py-3.5 text-meta leading-relaxed text-mute">
+            현재 화면은 데모 데이터입니다. 지표별 수집 가능 여부는 「데이터 연동 현황」 카드에서 자동 / 준비 필요 / 수동으로 구분해 표기합니다.
+          </div>
+        )}
       </aside>
     </div>
   )

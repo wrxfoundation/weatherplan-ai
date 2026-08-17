@@ -1,6 +1,7 @@
 import { Suspense, lazy, ReactNode } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from '@/app/Layout'
+import { SHOW_ONCHAIN, HOME_PATH } from '@/app/nav'
 import { ModeProvider } from '@/app/ModeProvider'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 
@@ -25,8 +26,9 @@ const MethodologyPage = lazy(() => import('@/modules/pages/MethodologyPage').the
 const CommunityPage = lazy(() => import('@/modules/community/CommunityPage').then(m => ({ default: m.CommunityPage })))
 const ContentPage = lazy(() => import('@/modules/community/ContentPage').then(m => ({ default: m.ContentPage })))
 
+// 온체인 감춤 모드에서도 라우트는 유지(URL 직접 접근·기존 링크 보존). 사이드바에서만 감춘다.
 const modulePages: [string, string, ReactNode][] = [
-  ['/', '대시보드', <DashboardPage />],
+  ...(SHOW_ONCHAIN ? ([['/', '대시보드', <DashboardPage />]] as [string, string, ReactNode][]) : []),
   ['/m1', 'M1 활성 지갑', <M1Page />],
   ['/m2', 'M2 정산 지수', <M2Page />],
   ['/m3', 'M3 결제/정산', <M3Page />],
@@ -68,6 +70,7 @@ export default function App() {
               {modulePages.map(([path, label, el]) => (
                 <Route key={path} path={path} element={<ErrorBoundary label={label}>{el}</ErrorBoundary>} />
               ))}
+              <Route path="*" element={<Navigate to={HOME_PATH} replace />} />
             </Routes>
           </Suspense>
         </Layout>
