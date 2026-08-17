@@ -77,6 +77,7 @@ import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
 import { ROSTERS } from "../lib/rosters";
 import { CREW_RULES } from "../lib/dispatch-policy";
+import { SERVICE_PLUS, STATUS } from "../lib/requests";
 
 // 배치관리자(관제) — 핸드오프 09 상세 명세 + REQ-04(긴급 대응 범위, 회의 확정 우선).
 // 데스크톱 전용 · 정보 밀도가 정당한 유일한 화면 (10~13px 활자가 정답 — 09 §0).
@@ -382,6 +383,12 @@ export default function DispatchConsole() {
   const [sosNotified, setSosNotified] = useState({}); // SOS 인력·가족 통보 원샷
   const elders = DIRECTORY_ALL.filter((d) => d.type === "elder");
   const guardians = DIRECTORY_ALL.filter((d) => d.type === "guardian");
+  // 해주세요 PLUS 요청 — 보호자 화면이 상품명을 type 에 넣어 저장하므로 이름으로 잇는다.
+  // 종결된 건(완료·취소·처리불가)은 관제가 더 할 일이 없어 뺀다.
+  const PLUS_NAMES = new Set(SERVICE_PLUS.map((x) => x.name));
+  const plusJobs = (state.requests || []).filter(
+    (r) => PLUS_NAMES.has(r.type) && !["done", "cancelled", "rejected"].includes(r.status)
+  );
   const concierges = DIRECTORY_ALL.filter((d) => d.type === "concierge");
   // 사이드바 배지 카운트 — 메뉴별 관리 대상 수 (명부가 단일 출처 · 상세 프로필 보유 수와 다름)
   const MENU_COUNTS = {
@@ -1789,6 +1796,61 @@ export default function DispatchConsole() {
               <p className="mt-4 rounded-xl border border-navy/[.08] bg-white/50 px-4 py-2.5 text-[12px] leading-[1.6] text-muted">
                 가입 정책 — 주 보호자 가입 후 초대 링크로 부 보호자 참여 · 결제 승인 권한은 주 보호자에게만
               </p>
+
+              {/* 해주세요 PLUS 외주 연계 — 관제가 호출 주체다 (개편안 V2).
+                  보호자가 PLUS 를 요청하면 state.requests 에 상품명으로 들어오므로
+                  여기서 같은 건을 본다. 지어낸 실적이 아니라 실제 요청을 잇는다. */}
+              <Panel className="mt-3">
+                <PanelHead
+                  title="해주세요 PLUS — 외주 연계"
+                  right={<span className="font-num text-[12px] text-muted">{plusJobs.length}건 진행</span>}
+                />
+                <p className="mt-2 text-[12px] leading-[1.7] text-muted">
+                  공사·수리의 책임은 시공 업체에 있고, 관제는 업체를 붙이고 진행 상황을 보호자에게
+                  보고합니다. 이 경계를 흐리면 시공 하자까지 우리가 뒤집어씁니다.
+                </p>
+                {plusJobs.length === 0 ? (
+                  <div className="mt-3 rounded-xl bg-navy/[.04] px-4 py-3 text-[13px] text-muted">
+                    지금 진행 중인 외주 연계가 없습니다. 보호자가 아래 항목을 요청하면 여기로 옵니다.
+                  </div>
+                ) : (
+                  <div className="mt-3 space-y-2">
+                    {plusJobs.map((r) => {
+                      const st = STATUS[r.status] || STATUS.requested;
+                      return (
+                        <div
+                          key={r.id}
+                          className="flex flex-wrap items-center gap-3 rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3"
+                        >
+                          <span
+                            className="shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold"
+                            style={{ color: st.fg, background: st.bg }}
+                          >
+                            {st.label}
+                          </span>
+                          <div className="min-w-[180px] flex-1">
+                            <div className="text-[14px] font-bold text-navy">{r.type}</div>
+                            <div className="text-[12px] leading-[1.6] text-muted">{r.detail}</div>
+                          </div>
+                          <span className="shrink-0 text-[12px] font-bold text-amber">
+                            {r.status === "requested" ? "업체 호출 필요" : "진행 보고 필요"}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                <div className="mt-3 grid gap-2 border-t border-navy/[.08] pt-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))" }}>
+                  {SERVICE_PLUS.map((x) => (
+                    <div key={x.key} className="rounded-xl bg-navy/[.03] px-3 py-2.5">
+                      <div className="text-[13px] font-bold text-navy">{x.name}</div>
+                      <div className={`mt-0.5 font-num text-[12px] font-bold ${x.confirmed ? "text-gold" : "text-muted"}`}>
+                        {x.priceLabel}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
               <div className="mt-3 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
                 {guardians.map((d) => (
                   <Panel key={d.name} className="min-w-0">

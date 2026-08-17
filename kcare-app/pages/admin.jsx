@@ -11,6 +11,7 @@ import StoreImageManager from "../components/StoreImageManager";
 import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
 import { ROSTERS, ROSTER_CHECKS, ROSTER_ACCESS, searchAll } from "../lib/rosters";
+import { SERVICE_PLUS } from "../lib/requests";
 import {
   LIFECYCLE_STAGES,
   EXEC_BRIEF,
@@ -2659,6 +2660,81 @@ export default function AdminConsole() {
                   ))}
                 </div>
                 <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[12px] leading-[1.75] text-muted">{PRICING_UNIT.note}</p>
+              </Panel>
+
+              {/* 해주세요 PLUS — 개편안 V2 의 새 수익 축 (외주 연계).
+                  실적(건수·매출)은 아직 없다. 부착률처럼 숫자를 만들어 넣으면 없는 실적이
+                  생기므로 카탈로그와 단가 확정 여부만 싣고 실적은 연동 대기로 둔다. */}
+              <Panel className="min-w-0">
+                <PanelHead
+                  title="해주세요 PLUS — 외주 연계 수익"
+                  right={
+                    <span className="font-num text-[12px] text-muted">
+                      단가 확정 {SERVICE_PLUS.filter((x) => x.confirmed).length} / {SERVICE_PLUS.length}
+                    </span>
+                  }
+                />
+                <p className="mt-2 text-[12px] leading-[1.7] text-muted">
+                  우리가 직접 하지 않고 업체를 붙여 수수료·출장비를 받는 축입니다. 원가가 우리
+                  인건비가 아니라 외주 단가라, 기본 구독의 역마진 구조와 손익이 분리됩니다.
+                </p>
+                <div className="mt-3 space-y-2">
+                  {SERVICE_PLUS.map((x) => (
+                    <div key={x.key} className="rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3">
+                      <div className="flex flex-wrap items-baseline gap-x-2">
+                        <span className="text-[14px] font-bold text-navy">{x.name}</span>
+                        <span className="rounded-full bg-navy/[.06] px-2 py-[2px] text-[11px] font-bold text-muted">
+                          {x.tag}
+                        </span>
+                        {!x.confirmed && (
+                          <span className="ml-auto rounded-md border border-muted/30 px-1.5 py-[1px] text-[11px] font-bold text-muted">
+                            단가 확정 전
+                          </span>
+                        )}
+                      </div>
+                      <div className={`mt-1 font-num text-[13px] font-bold ${x.confirmed ? "text-gold" : "text-muted"}`}>
+                        {x.priceLabel}
+                      </div>
+                      <div className="mt-0.5 text-[11.5px] leading-[1.6] text-muted">{x.note}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  건수 · 매출 · 업체별 정산은 실운영 데이터 연동 후 채웁니다 — 지금 추정치를
+                  넣으면 없는 실적이 지표가 됩니다. 렌탈은 제휴사 확정 전이라 단가가 비어 있습니다.
+                </p>
+              </Panel>
+
+              {/* 거주 형태별 PMF 검증 — 2026-08-09 '가입상담 전달내용' 시트의
+                  '데이터 트래킹' 요청 그대로. 지표를 먼저 정의해 두고 값은 연동 후 채운다.
+                  정의가 없으면 나중에 무엇을 비교할지부터 다시 논의하게 된다. */}
+              <Panel className="min-w-0">
+                <PanelHead title="거주 형태별 PMF 검증" right={<span className="text-[12px] text-muted">자택 vs 요양병원</span>} />
+                <p className="mt-2 text-[12px] leading-[1.7] text-muted">
+                  타깃을 요양병원 거주까지 넓히면서 두 집단을 같은 지표로 비교해야 합니다.
+                  어느 쪽이 붙는지 모르면 확장 방향을 정할 수 없습니다.
+                </p>
+                <div className="mt-3 space-y-2">
+                  {[
+                    ["신규 가입률", "상담 → 가입 전환", "care_location_type 별"],
+                    ["리포트 열람률", "발송 대비 열람", "보호자 앱 · 알림톡"],
+                    ["보호자 만족도", "NPS · 후기", "동행 점수 · 코멘트"],
+                    ["옵션 전환율", "해주세요 · 스토어 부착", "가구당 추가 결제"],
+                  ].map(([k, v, src]) => (
+                    <div key={k} className="flex flex-wrap items-center gap-2 rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-2.5">
+                      <span className="min-w-[104px] text-[13px] font-bold text-navy">{k}</span>
+                      <span className="flex-1 text-[12px] text-muted">{v}</span>
+                      <span className="font-num text-[12px] font-bold text-muted/70">{src}</span>
+                      <span className="rounded-md border border-muted/30 px-1.5 py-[1px] text-[11px] font-bold text-muted">
+                        연동 대기
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                  DB 는 care_location_type (HOME / HOSPITAL) 으로 구분합니다 — 온보딩에서 받고
+                  컨시어지 리포트 토글의 기본값이 됩니다.
+                </p>
               </Panel>
 
               <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>

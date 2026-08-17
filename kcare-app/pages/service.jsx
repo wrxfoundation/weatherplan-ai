@@ -3,10 +3,13 @@ import Logo from "../components/Logo";
 import Link from "next/link";
 import { useState } from "react";
 import { FAQ, FAQ_NOTE, LANDING, LANDING_AI_QA } from "../lib/faq";
-import { PRICING, BASE_BENEFITS, fmtWon } from "../lib/config";
+import { PRICING, BASE_BENEFITS, HOSPITAL_BENEFITS, fmtWon } from "../lib/config";
 import { WITHDRAWAL } from "../lib/lifecycle";
 import { TRUST, FIT_FOR, PARTNERS, PARTNERS_NOTE } from "../lib/trust";
 import { CHECKUP, CHECKUP_HEAD, CHECKUP_RULE, CHECKUP_CASE } from "../lib/checkup";
+import { FLOW_STEPS } from "../lib/workflow";
+import { SAFETY_SECTIONS, SAFETY_GRADES } from "../lib/safety";
+import { STORE_CATALOG } from "../lib/store";
 import Icon from "../components/icons";
 import ScrollTop from "../components/ScrollTop";
 import AiChat from "../components/AiChat";
@@ -25,6 +28,9 @@ import BgVideo from "../components/BgVideo";
 
 // tone="navy" 섹션은 배경에 미세 점 격자 패턴이 깔린다 (CSS 전용 · 추가 파일 없음).
 // 자세한 것은 globals.css 의 .sec-navy 참고.
+// 안전진단 항목 수는 데이터에서 센다 — 숫자를 문구에 박아 두면 항목이 바뀔 때 갈린다
+const SAFETY_TOTAL = SAFETY_SECTIONS.reduce((n, x) => n + x.items.length, 0);
+
 function Section({ id, eyebrow, title, desc, children, tone = "paper" }) {
   const navy = tone === "navy";
   const bg = navy ? "bg-navy text-white" : tone === "white" ? "bg-white" : "bg-paper";
@@ -248,6 +254,65 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
         </Section>
 
 
+        {/* ── 방문 한 번의 과정 — 2026-08-13 미팅에서 클라이언트가 직접 적어 준 8단계.
+               가족이 가장 궁금해하는 것은 "정말 가는가 · 제대로 하는가"다. 여기에
+               대한 답이 이 8단계다 (GPS 체크인 · 초인종 전 녹화). lib/workflow.js
+               한 곳에서 온다 — 앱의 관제·컨시어지 화면과 같은 데이터다. ── */}
+        <Section
+          eyebrow="방문 한 번의 과정"
+          title="방문 한 번에 여덟 단계를 거칩니다"
+          desc="일정을 잡는 것부터 업무를 마치는 것까지, 누가 무엇을 확인하는지 정해져 있습니다. 단계를 건너뛸 수 없게 만들어 두었습니다."
+        >
+          <ol className="space-y-2.5">
+            {FLOW_STEPS.map((f) => (
+              <li key={f.n} className="flex gap-3.5 rounded-[14px] border border-navy/[.09] bg-white/70 px-5 py-4">
+                <span className="flex h-[27px] w-[27px] shrink-0 items-center justify-center rounded-full bg-navy font-num text-[14.5px] font-bold text-white">
+                  {f.n}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline gap-x-2.5">
+                    <span className="text-[17px] font-bold text-navy">{f.title}</span>
+                    <span className="text-[13px] font-bold text-gold">{f.who}</span>
+                  </div>
+                  <div className="mt-1 text-[14.5px] leading-[1.8] text-muted">{f.detail}</div>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-5 rounded-[14px] border border-navy/[.09] bg-white/70 px-5 py-4 text-[14.5px] leading-[1.85] text-muted">
+            방문 도착은 GPS 로 찍히고, 초인종을 누르기 전부터 녹화가 시작됩니다. 촬영 기록은
+            분쟁 대응 목적으로만 열람하며 열람에도 승인이 필요합니다 — 화장실·탈의공간·침실은
+            촬영하지 않습니다.
+          </p>
+        </Section>
+
+        {/* ── 첫 방문 홈 안전진단 — 매월 21항목과 다른 것이라 따로 설명한다 ── */}
+        <Section
+          tone="white"
+          eyebrow="첫 방문"
+          title={`집이 안전한지 ${SAFETY_TOTAL}가지로 먼저 봅니다`}
+          desc="처음 뵙는 날, 집 안을 현관부터 주방까지 한 번 훑습니다. 낙상은 대부분 집 안에서 나기 때문입니다."
+        >
+          <div className="grid gap-3 sm:grid-cols-2">
+            {SAFETY_SECTIONS.map((sec) => (
+              <div key={sec.name} className="rounded-[14px] border border-navy/[.09] bg-paper/60 px-5 py-4">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-[17px] font-bold text-navy">{sec.name}</span>
+                  <span className="font-num text-[13px] font-bold text-gold">{sec.items.length}가지</span>
+                </div>
+                <div className="mt-1.5 text-[14.5px] leading-[1.8] text-muted">
+                  {sec.items.slice(0, 2).map((i) => i.q).join(" · ")} 등
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 rounded-[14px] border border-navy/[.09] bg-paper/60 px-5 py-4 text-[14.5px] leading-[1.85] text-muted">
+            점수는 등급으로만 알려 드립니다 ({SAFETY_GRADES.map((g) => g.label).join(" · ")}).
+            &lsquo;아니오&rsquo;가 나온 항목에는 그에 맞는 생활안전용품을 장바구니에 담아 드립니다 —
+            사실지 말지는 가족이 고르십니다. 진단이 판매로 이어지지 않게 하는 선입니다.
+          </p>
+        </Section>
+
         {/* ── 21항목 — "무엇을 보는가"의 실체 ── */}
         <Section
           id="checkup"
@@ -315,6 +380,80 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
               {CHECKUP_CASE.body}
             </p>
           </div>
+        </Section>
+
+        {/* ── 거주 형태 두 갈래 — 2026-08-09 '가입상담 전달내용' 시트의 타깃 확대.
+               요양병원에 부모님이 계신 분이 이 페이지에서 자기 얘기를 찾을 수 있어야
+               한다. 기본제공품은 lib/config.js 의 두 배열에서 그대로 온다. ── */}
+        <Section
+          tone="white"
+          eyebrow="거주 형태"
+          title="자택에 계셔도, 요양병원에 계셔도"
+          desc="집에 계신 부모님과 병원에 계신 부모님은 봐야 할 것이 다릅니다. 같은 멤버십 안에서 점검 항목과 기본 제공 물품이 갈립니다."
+        >
+          <div className="grid gap-3 sm:grid-cols-2">
+            {[
+              ["자택에 계신 경우", BASE_BENEFITS, "집 안 21항목 — 냉장고 · 문턱 · 조명 · 가스", "home"],
+              ["요양병원에 계신 경우", HOSPITAL_BENEFITS, "병실 21항목 — 욕창 · 생필품 · 간병인 소통", "plus"],
+            ].map(([label, list, note, icon]) => (
+              <div key={label} className="rounded-[14px] border border-navy/[.09] bg-paper/60 px-5 py-4">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-gold">
+                    <Icon name={icon} size={21} />
+                  </span>
+                  <span className="text-[17px] font-bold text-navy">{label}</span>
+                </div>
+                <div className="mt-1 text-[13.5px] font-bold text-gold">{note}</div>
+                <ul className="mt-3 space-y-1.5">
+                  {list.map((b) => (
+                    <li key={b.name} className="flex gap-2 text-[14.5px] leading-[1.8]">
+                      <span className="mt-[9px] h-[4px] w-[4px] shrink-0 rounded-full bg-gold" />
+                      <span className="text-ink">
+                        {b.name}
+                        <span className="text-muted"> — {b.note}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 rounded-[14px] border border-navy/[.09] bg-paper/60 px-5 py-4 text-[14.5px] leading-[1.85] text-muted">
+            거주 형태는 가입 상담에서 확인하고, 나중에 바뀌면 (집 → 병원, 병원 → 집) 점검
+            항목과 리포트가 함께 따라 바뀝니다. 옮기실 때 멤버십을 새로 드는 일은 없습니다.
+          </p>
+        </Section>
+
+        {/* ── 스토어 — 약국은 판매가 아니라 구매대행이다. 이 경계를 대외 페이지에도 쓴다 ── */}
+        <Section
+          eyebrow="필요한 물건"
+          title="사다 드리고, 영수증을 남깁니다"
+          desc="장보기와 약 심부름이 가장 자주 오는 부탁입니다. 앱에서 고르시면 방문 때 함께 가져다 드립니다."
+        >
+          <div className="grid gap-3 sm:grid-cols-2">
+            {STORE_CATALOG.map((c) => (
+              <div key={c.id} className="rounded-[14px] border border-navy/[.09] bg-white/70 px-5 py-4">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-gold">
+                    <Icon name={c.icon} size={21} />
+                  </span>
+                  <span className="text-[17px] font-bold text-navy">{c.name}</span>
+                  {c.badge && (
+                    <span className="ml-auto rounded-full bg-navy/[.06] px-2 py-[3px] text-[12px] font-bold text-muted">
+                      {c.badge}
+                    </span>
+                  )}
+                </div>
+                <div className="mt-1.5 text-[14.5px] leading-[1.8] text-muted">
+                  {c.note || c.groups.flatMap((g) => g.items).slice(0, 3).map((i) => i.name).join(" · ")}
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 rounded-[14px] border border-navy/[.09] bg-white/70 px-5 py-4 text-[14.5px] leading-[1.85] text-muted">
+            약은 저희가 팔지 않습니다 — 약국에서 대신 구매하고 영수증을 남깁니다 (약사법 경계).
+            물건값에 얹는 마진은 없고, 대행 수수료는 부탁 종류에 따라 상담에서 안내드립니다.
+          </p>
         </Section>
 
         {/* ── 요금 ── */}
