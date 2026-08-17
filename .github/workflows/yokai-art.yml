@@ -31,6 +31,8 @@ concurrency:
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    # 매달리면 러너 시간을 6시간까지 태운다. 정상 실행은 3분이면 끝난다.
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: yokaimap-web

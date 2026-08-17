@@ -26,6 +26,7 @@ const force = process.argv.includes('--force')
 // 표시 크기 기준 — 도판은 상세 페이지에서 400px 안팎, 히어로는 전폭. 각각 2배수까지만.
 const WIDTH = { plate: 900, hero: 1600 }
 const QUALITY = 82
+const TIMEOUT_MS = 30_000
 
 let sharp
 try {
@@ -50,7 +51,9 @@ for (const item of manifest.items) {
     continue
   }
   try {
-    const r = await fetch(item.url)
+    // 타임아웃이 없으면 한 URL이 응답을 안 줄 때 전체가 매달린다. CI에서 다운로드 단계가
+    // 끝나지 않는 사고가 실제로 났다. 죽은 URL 하나 때문에 나머지 120장을 못 받으면 안 된다.
+    const r = await fetch(item.url, { signal: AbortSignal.timeout(TIMEOUT_MS) })
     // 생성 URL은 만료된다. 404/403이면 프롬프트가 아니라 URL이 죽은 것이므로 재생성이 답이다.
     if (!r.ok) throw new Error(`HTTP ${r.status}${r.status === 403 || r.status === 404 ? ' (URL 만료 의심 — 재생성 필요)' : ''}`)
     const buf = Buffer.from(await r.arrayBuffer())
