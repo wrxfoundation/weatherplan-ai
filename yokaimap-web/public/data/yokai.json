@@ -1,6 +1,6 @@
 {
  "version": "0.1.0",
- "generated_at": "2026-08-16",
+ "generated_at": "2026-08-17",
  "license": "CC BY 4.0",
  "attribution": "한국요괴지도 (Korean Yokai Map)",
  "count": 120,
@@ -1483,7 +1483,7 @@
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/dokkaebi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "25017161-7a8b-49c0-82ce-19b41865e008"
    }
@@ -2510,7 +2510,7 @@
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gangcheori.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "248d94d2-dbc7-4979-8bd3-0fa62ed64e63"
    }
@@ -3096,7 +3096,7 @@
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gumiho.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9c7e6ea1-97a3-4cb1-962f-dd2c4b031d6d"
    }
@@ -3974,7 +3974,7 @@
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/imugi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "276c310f-65a7-423c-a36a-84c09ff13848"
    }
@@ -4121,7 +4121,7 @@
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jangsanbeom.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3507460f-0ba3-4d09-be91-e4b554650724"
    }
@@ -4202,7 +4202,7 @@
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jangseung.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "be849370-9733-4213-8037-9cf7854e19dc"
    }
@@ -6242,7 +6242,7 @@
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/samsin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "2cc97c79-1f52-447e-91d0-f77611c960f9"
    }
@@ -6705,7 +6705,7 @@
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/seolmundae.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "f978199c-a516-4b66-ae6d-3ab732f5fd01"
    }
@@ -7380,7 +7380,7 @@
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/songaksi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "63a70b75-1096-4c62-8cd7-a6276d911529"
    }
@@ -8201,7 +8201,7 @@
    "art": {
     "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/yeongdeung-halmang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8d654691-47a9-4744-ab2d-c5846a891725"
    }
