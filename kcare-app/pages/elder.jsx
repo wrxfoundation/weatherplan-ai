@@ -27,7 +27,7 @@ import Splash from "../components/Splash";
 // 구조: 헤더(날짜·인사)·푸터(SOS·전화·탭) 고정, 카드 스택만 스크롤 (06 §1).
 // 카드는 언마운트 없이 display 전환 + CSS order 정렬 (06 §2).
 // 접근성(타협 불가): 본문 19px 하한(예외 18px 3곳), 버튼 패딩 24~30px, 탭 60px, 색+텍스트 병행.
-// 1회성 잠금(med·cooled·askAdded)에 undo 없음 — 의도된 설계, "버그"로 고치지 말 것 (06 §5).
+// 1회성 잠금(복약 체크·재구매·askAdded)에 undo 없음 — 의도된 설계, "버그"로 고치지 말 것 (06 §5).
 
 const LEVEL_COLOR = {
   ok: "#1E7A5A",
@@ -158,12 +158,8 @@ export default function ElderHome() {
     scrollRef.current?.scrollTo({ top: 0 });
   };
   const [sosPhase, setSosPhase] = useState("idle"); // idle | confirm | sent
-  const [visitAsked, setVisitAsked] = useState(false); // 즉시 방문 요청 (SOS 자리를 대신한다)
   const [calling, setCalling] = useState(false);
   const [voiceReplied, setVoiceReplied] = useState(false);
-  const [askSpoken, setAskSpoken] = useState(false); // '선생님께 말로 요청하기'
-  const [medSlots, setMedSlots] = useState({}); // 오늘 복용 체크 — { 아침: true, ... }
-  const [reordered, setReordered] = useState({}); // 건기식 재구매 요청
   const [eventSheet, setEventSheet] = useState(false); // 간단등록 (REQ-02 권한표)
   const [speaking, setSpeaking] = useState(false); // 일정 음성 안내 (접근성)
 
@@ -193,7 +189,10 @@ export default function ElderHome() {
   const [askSent, setAskSent] = useState(null); // { name, mode, amount }
   const callTimer = useRef(null);
 
-  const { voicePlayed, askAdded } = state.elder;
+  // 새로고침을 견뎌야 하는 것들은 전부 state.elder 에 있다 (lib/state.js 주석 참고).
+  // 로컬 useState 로 두면 시연 중 새로고침 한 번에 복약 체크가 사라지고,
+  // 이미 보낸 요청을 다시 보낼 수 있게 된다.
+  const { voicePlayed, askAdded, medSlots, reordered, visitAsked, askSpoken } = state.elder;
 
   // ── 해주세요: 결제권한(REQ-07)을 어르신 말로 옮긴다 ──
   // 결제 모드는 온보딩에서 정해진 값을 그대로 따른다. 여기서 바꾸지 않는다.
@@ -208,7 +207,9 @@ export default function ElderHome() {
       guardianOnly: `${approver} 님이 확인해 주면 바로 시작합니다.`,
       elderOnly: "어르신이 직접 결제하십니다.",
     }[payMode],
-    sub: "약 타다 주기 · 장보기 · 은행 동행 같은 것을 부탁하시면 선생님이 대신 해드립니다.",
+    // 아래 목록(lib/requests.js SERVICE_MENU)과 같은 것을 말한다.
+    // 예시를 목록과 다르게 쓰면 없는 서비스를 기대하시게 된다.
+    sub: "병원 예약 · 병원 동행 · 안심방문 · 생활 대행을 부탁하시면 선생님이 대신 해드립니다.",
   };
   // 선택 항목의 결제 분기 — 무료(멤버십 포함) / 본인 결제 / 보호자 승인.
   // 보호자 메뉴(SERVICE_MENU)는 amount 가 null 인 것도 있다 — 요금 확정 전이라
@@ -295,7 +296,7 @@ export default function ElderHome() {
         {/* break-keep: 한국어 어절 단위 줄바꿈 — 카피 개행(<br/>)과 병용 (06 §6) */}
         <div className="mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-4 min-[380px]:px-[22px]">
           {/* ── 고정 헤더: 날짜 · 인사 ── */}
-          <header className="shrink-0 pt-6">
+          <header className="shrink-0 pt-5">
             <div className="flex items-center justify-between">
               <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
                 K-CARE
@@ -304,19 +305,24 @@ export default function ElderHome() {
                 데모 홈
               </Link>
             </div>
-            <div className="mt-2 text-[19px] font-medium text-muted">{dateLong}</div>
-            {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번) */}
-            <h1 className="text-[30px] font-black leading-[1.3] text-navy">
-              {name} 님, 안녕하세요
-            </h1>
-            {/* 화면 안 SOS 버튼은 뺐다 (시트 전체 요청 3·4번).
-                SOS 는 바탕화면 바로가기로 옮기고, 이 자리에는 즉시방문요청 원형 버튼을 둔다.
-                두 개를 한 화면에 두면 급할 때 무엇을 눌러야 할지 고르게 된다. */}
-            <div className="mt-3.5 flex items-center gap-4">
+            {/* 인사말 옆에 버튼을 둔다 — 아래로 쌓으면 375x667 화면에서 헤더가 286px(43%)를
+                먹고 카드에 40% 밖에 안 남는다. 어르신 폰이 최신이 아닐 수 있으니 작은 화면
+                기준으로 맞춘다. 화면 안 SOS 버튼은 뺐고(시트 전체 요청 3·4번) 이 자리를
+                즉시방문요청이 대신한다 — 둘을 같이 두면 급할 때 무엇을 누를지 고르게 된다. */}
+            <div className="mt-2 flex items-center gap-3.5">
+              <div className="min-w-0 flex-1">
+                <div className="text-[19px] font-medium text-muted">{dateLong}</div>
+                {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번) */}
+                <h1 className="text-[27px] font-black leading-[1.3] text-navy">
+                  {name} 님,
+                  <br />
+                  안녕하세요
+                </h1>
+              </div>
               <VisitNowButton
                 done={visitAsked}
                 onAsk={() => {
-                  setVisitAsked(true);
+                  dispatch({ type: "elderPatch", patch: { visitAsked: true } });
                   dispatch({
                     type: "addRequest",
                     payload: {
@@ -340,12 +346,13 @@ export default function ElderHome() {
                   });
                 }}
               />
-              <p className="flex-1 text-[19px] leading-[1.5] text-muted">
-                {visitAsked
-                  ? "요청을 보냈습니다. 선생님이 곧 출발합니다."
-                  : "지금 와 주셨으면 할 때 누르세요."}
-              </p>
             </div>
+            {/* 버튼 글자만으로 부족한 설명은 한 줄로 — 요청 후에는 상태를 말해 준다 */}
+            <p className="mt-2 text-[19px] leading-[1.5] text-muted">
+              {visitAsked
+                ? "요청을 보냈습니다. 선생님이 곧 출발합니다."
+                : "지금 와 주셨으면 할 때 누르세요."}
+            </p>
           </header>
 
           {/* ── 카드 스택 (유일한 스크롤 영역) ── */}
@@ -572,7 +579,7 @@ export default function ElderHome() {
                       <button
                         onClick={() => {
                           if (on) return; // 체크는 되돌리지 않는다 (06 §5)
-                          setMedSlots((s) => ({ ...s, [d.slot]: true }));
+                          dispatch({ type: "elderMark", key: "medSlots", id: d.slot });
                           dispatch({
                             type: "pushEvent",
                             payload: {
@@ -640,7 +647,7 @@ export default function ElderHome() {
                         <button
                           onClick={() => {
                             if (done) return;
-                            setReordered((r) => ({ ...r, [s.id]: true }));
+                            dispatch({ type: "elderMark", key: "reordered", id: s.id });
                             dispatch({
                               type: "addRequest",
                               payload: {
@@ -865,7 +872,7 @@ export default function ElderHome() {
               <ElderBtn
                 onClick={() => {
                   if (askSpoken) return;
-                  setAskSpoken(true);
+                  dispatch({ type: "elderPatch", patch: { askSpoken: true } });
                   dispatch({
                     type: "addRequest",
                     payload: {
@@ -1715,7 +1722,7 @@ function VisitNowButton({ done, onAsk }) {
     <button
       onClick={() => !done && onAsk()}
       aria-label={done ? "즉시 방문을 요청했습니다" : "지금 와 주세요 — 즉시 방문 요청"}
-      className="btn-press flex h-[128px] w-[128px] shrink-0 select-none flex-col items-center justify-center gap-1 rounded-full text-center"
+      className="btn-press flex h-[104px] w-[104px] shrink-0 select-none flex-col items-center justify-center gap-0.5 rounded-full text-center"
       style={
         done
           ? {
@@ -1734,9 +1741,9 @@ function VisitNowButton({ done, onAsk }) {
       }
     >
       <span aria-hidden style={{ color: done ? "#1E7A5A" : "#C9A46B" }}>
-        <Icon name={done ? "clock" : "door"} size={30} strokeWidth={2} />
+        <Icon name={done ? "clock" : "door"} size={26} strokeWidth={2} />
       </span>
-      <span className="text-[21px] font-black leading-[1.2]">
+      <span className="text-[19px] font-black leading-[1.2]">
         {done ? (
           "요청됨"
         ) : (

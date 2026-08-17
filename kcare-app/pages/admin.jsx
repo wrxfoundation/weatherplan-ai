@@ -550,7 +550,7 @@ export default function AdminConsole() {
               </Panel>
 
           {/* 사람 KPI — 대시보드 전용 (섹션 반복 제거) */}
-          <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+          <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(160px, 100%), 1fr))" }}>
             {PEOPLE_KPIS.map((k) => (
               <Panel key={k.k} className="!p-4">
                 <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -583,7 +583,7 @@ export default function AdminConsole() {
               </button>
             </div>
             <p className="mt-2 text-[14px] font-bold leading-[1.6] text-ink">{EXEC_BRIEF.summary}</p>
-            <div className="mt-2.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+            <div className="mt-2.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))" }}>
               {EXEC_BRIEF.items.map((b) => (
                 <div key={b.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                   <div className="text-[11px] font-bold text-gold">{b.k}</div>
@@ -596,7 +596,7 @@ export default function AdminConsole() {
               {/* 섹션 요약 — 전 메뉴 한눈에 · 클릭 이동 */}
               <Panel className="min-w-0">
                 <PanelHead title="섹션 요약" right={<span className="text-[12px] text-muted">각 카드를 클릭하면 해당 섹션으로 이동합니다</span>} />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(230px, 100%), 1fr))" }}>
                   {EXEC_OVERVIEW.map((o) => (
                     <button
                       key={o.menu}
@@ -623,7 +623,7 @@ export default function AdminConsole() {
                   지점 비교는 케어 품질 · 안전 · 수급 지표만 봅니다 — 판매액 순위를 만들지 않습니다 (원칙 1).
                 </p>
               </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))" }}>
                 {BRANCH_TOTALS.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -639,7 +639,7 @@ export default function AdminConsole() {
                   title={<><span className="mr-2 rounded-md bg-gold px-1.5 py-0.5 text-[11px] font-bold tracking-[.1em] text-navy">AI</span>사람 신호 — 교차 감지</>}
                   right={<span className="text-[12px] text-muted">AI는 신호 교차·제안까지 · 면담·배정·징계는 항상 사람 (L4 인사)</span>}
                 />
-                <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
                   {AI_PEOPLE_SIGNALS.map((sg) => (
                     <div key={sg.id} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
                       <div className="text-[13px] font-bold text-navy">{sg.who}</div>
@@ -686,7 +686,7 @@ export default function AdminConsole() {
               {/* 사람 관리 체계 맵 — 흩어진 사람 기능의 단계별 정돈 (메뉴 점프) */}
               <Panel className="min-w-0">
                 <PanelHead title="사람 관리 체계 맵" right={<span className="text-[12px] text-muted">채용 → 온보딩 → 운영 → 성장 → 보호 · 클릭하면 담당 화면으로</span>} />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))" }}>
                   {PEOPLE_MAP.map((m, i) => (
                     <button
                       key={m.stage}
@@ -708,7 +708,7 @@ export default function AdminConsole() {
               </Panel>
 
               {/* 지점 카드 */}
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))" }}>
                 {BRANCHES.map((b) => (
                   <Panel key={b.name} className="min-w-0 !p-4">
                     <div className="flex items-center gap-2">
@@ -798,7 +798,7 @@ export default function AdminConsole() {
                 </p>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
                 {/* 지점 이슈 · 액션 */}
                 <Panel className="min-w-0">
                   <PanelHead title="지점 이슈 · 액션" right={<span className="text-[12px] text-muted">이번 주 집계</span>} />
@@ -872,7 +872,7 @@ export default function AdminConsole() {
               {/* ── 지점장 보드 — 지점을 맡은 사람을 관리한다 ── */}
               <Panel className="min-w-0">
                 <PanelHead title="지점장 보드" right={<span className="text-[12px] text-muted">지점장 평가도 사람 지표만 — 팀 유지율 · 팀 평점 · 소리 응답 SLA · 페어 준수</span>} />
-                <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+                <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))" }}>
                   {BRANCH_MANAGERS.map((m) => (
                     <div key={m.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
                       <div className="flex items-center gap-2">
@@ -912,7 +912,7 @@ export default function AdminConsole() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-3 grid gap-2.5 border-t border-navy/[.08] pt-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                <div className="mt-3 grid gap-2.5 border-t border-navy/[.08] pt-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))" }}>
                   <div>
                     <div className="text-[12px] font-bold text-navy">지점장 운영 리듬</div>
                     <div className="mt-2 space-y-1.5">
@@ -958,7 +958,7 @@ export default function AdminConsole() {
                   목표는 4개까지만 둡니다 — 다 하려다 아무것도 못 하는 것이 스케일업의 첫 실패입니다.
                 </p>
               </div>
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>
                 {OKRS.map((o, i) => (
                   <Panel key={o.o} className="min-w-0">
                     <div className="flex items-start gap-2.5">
@@ -1020,7 +1020,7 @@ export default function AdminConsole() {
                   {IR_METRICS.map(([group, items]) => (
                     <div key={group}>
                       <div className="text-[11px] font-bold tracking-[.12em] text-muted">{group}</div>
-                      <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                      <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
                         {items.map((m) => {
                           const st = IR_STATE[m.state];
                           const pr = IR_PROOF[m.proof];
@@ -1060,7 +1060,7 @@ export default function AdminConsole() {
                 </div>
                 <div className="mt-3.5 rounded-xl border border-navy/[.08] bg-white/50 p-3">
                   <div className="text-[12px] font-bold text-navy">지표 정의 — LTV는 두 값이 있고, IR에서는 하나만 씁니다</div>
-                  <div className="mt-2 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                  <div className="mt-2 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))" }}>
                     {IR_LTV_DEF.map((d) => (
                       <div key={d.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                         <div className="flex items-baseline gap-2">
@@ -1079,7 +1079,7 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
-              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>
                 {/* 우리만 증명 가능한 것 — 어필의 실체 */}
                 <Panel className="min-w-0">
                   <PanelHead
@@ -1149,7 +1149,7 @@ export default function AdminConsole() {
                 </Panel>
               </div>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead title="시장 규모 — TAM · SAM · SOM" right={<span className="text-[12px] text-muted">3년 목표 기준</span>} />
                   <div className="mt-3 space-y-3">
@@ -1219,7 +1219,7 @@ export default function AdminConsole() {
                   케어 품질이 곧 획득 채널입니다 — 좋은 동행이 추천을 만들고, 추천이 CAC를 0으로 만듭니다.
                 </p>
               </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(160px, 100%), 1fr))" }}>
                 {GROWTH_KPIS.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -1232,7 +1232,7 @@ export default function AdminConsole() {
               {/* 바이럴 루프 */}
               <Panel className="min-w-0">
                 <PanelHead title="바이럴 루프 — 케어 경험이 다음 가구를 데려온다" right={<span className="text-[12px] text-muted">단계별 전환율 · 최근 90일</span>} />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(190px, 100%), 1fr))" }}>
                   {VIRAL_LOOP.map((v, i) => (
                     <div
                       key={v.k}
@@ -1275,7 +1275,7 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead title="채널별 CAC · LTV · 회수" right={<span className="text-[12px] text-muted">비중 · 최근 90일 가입</span>} />
                   <div className="mt-3 overflow-x-auto">
@@ -1354,7 +1354,7 @@ export default function AdminConsole() {
 
           {/* ════ 컨시어지 분석 — 품질 · 파이프라인 · HR 워치 ════ */}
           {tab === "staff" && (
-            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead title="케어 품질 분포" right={<span className="text-[12px] text-muted">평점 출처: 가족 만족도</span>} />
                 <div className="mt-3 space-y-3">
@@ -1512,7 +1512,7 @@ export default function AdminConsole() {
                 <div className="text-[11px] font-bold tracking-[.14em] text-muted">운영 / 인력 · 자격 · 프로필</div>
                 <h2 className="mt-0.5 text-[17px] font-bold text-navy">컨시어지 인원 관리</h2>
               </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(150px, 100%), 1fr))" }}>
                 {SM_KPIS.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -1540,7 +1540,7 @@ export default function AdminConsole() {
                   title="채용 → 현장 투입 정체"
                   right={<span className="text-[12px] text-muted">단계를 클릭하면 멈춰 있는 사람이 열립니다 · 지연은 곧 수급 갭</span>}
                 />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))" }}>
                   {HIRE_STUCK_STAGES.map((h, i) => {
                     const on = hireStage === h.id;
                     const tone = h.stuckN >= 5 ? "#C0392B" : h.stuckN >= 3 ? "#8A5D12" : "#1E7A5A";
@@ -1617,7 +1617,7 @@ export default function AdminConsole() {
                 </p>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
                 {/* 인력 명부 */}
                 <Panel className="min-w-0">
                   <PanelHead title="인력 명부" right={<span className="text-[12px] text-muted">클릭해 프로필 열기</span>} />
@@ -1902,7 +1902,7 @@ export default function AdminConsole() {
               {/* ── 처우 설계 · 리텐션 ── */}
               <Panel className="min-w-0">
                 <PanelHead title="처우 설계 · 리텐션 — 좋은 동행자를 뺏기지 않는 구조" right={<span className="text-[12px] text-muted">방어선은 시급이 아니라 끊기지 않는 소득과 회사가 내 편이라는 경험</span>} />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))" }}>
                   {RETENTION_KPIS.map((k) => (
                     <StatTile key={k.k} k={k.k} v={k.v} note={k.note} />
                   ))}
@@ -1920,7 +1920,7 @@ export default function AdminConsole() {
                   </p>
                 </div>
                 {/* 8개 제도 */}
-                <div className="mt-4 grid gap-2.5 border-t border-navy/[.08] pt-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                <div className="mt-4 grid gap-2.5 border-t border-navy/[.08] pt-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))" }}>
                   {RETENTION_ITEMS.map((r) => (
                     <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
                       <div className="flex items-center gap-2">
@@ -1940,7 +1940,7 @@ export default function AdminConsole() {
                 {/* 실수령 시뮬레이션 */}
                 <div className="mt-4 border-t border-navy/[.08] pt-3">
                   <div className="text-[12px] font-bold text-navy">등급별 월 실수령 시뮬레이션 <span className="ml-1 font-medium text-muted">2인 배차 기준 · 모집 공고에 그대로 쓰는 숫자</span></div>
-                  <div className="mt-2.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+                  <div className="mt-2.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}>
                     {PAY_SIM.map((g) => (
                       <div key={g.g} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
                         <div className="flex items-baseline gap-2">
@@ -1958,7 +1958,7 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
                 {/* 성장 경로 */}
                 <Panel className="min-w-0">
                   <PanelHead title="성장 경로 — 현장을 떠나지 않고 올라간다" />
@@ -1996,7 +1996,7 @@ export default function AdminConsole() {
 
           {/* ════ 보호자 · 가구 — 퍼널 · 참여도 · 이탈 세그먼트 ════ */}
           {tab === "family" && (
-            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead title="가입 퍼널 (최근 90일)" right={<span className="text-[12px] text-muted">주보호자 가입 → 초대 링크 → 부보호자</span>} />
                 <div className="mt-3 space-y-3">
@@ -2079,7 +2079,7 @@ export default function AdminConsole() {
                 title="퍼널 정체 보드"
                 right={<span className="text-[12px] text-muted">최근 90일 코호트 · 단계를 클릭하면 정체 가구가 열립니다</span>}
               />
-              <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
+              <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(190px, 100%), 1fr))" }}>
                 {CRM_FUNNEL.map((f, i) => {
                   const on = funnelStage === f.id;
                   const stuckTone = f.stuckN >= 6 ? "#C0392B" : f.stuckN >= 4 ? "#8A5D12" : "#1E7A5A";
@@ -2167,7 +2167,7 @@ export default function AdminConsole() {
               </p>
             </Panel>
 
-            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead title={<>라이프사이클 스테이지<HelpTip term="라이프사이클" /></>} right={<span className="text-[12px] text-muted">전체 128가구 · 세그먼트 집계</span>} />
                 <div className="mt-3 space-y-3">
@@ -2269,7 +2269,7 @@ export default function AdminConsole() {
 
           {/* ════ CS · 마케팅 — 베타 단계: 별도 콘솔 대신 경영 집계 (개별 응대는 CS 도구) ════ */}
           {tab === "cs" && (
-            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead title="CS 운영 지표" right={<span className="text-[12px] text-muted">개별 응대는 CS 도구 · 여기는 집계</span>} />
                 <div className="mt-3 grid grid-cols-2 gap-2">
@@ -2397,7 +2397,7 @@ export default function AdminConsole() {
                     </p>
                   </Panel>
 
-                  <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+                  <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(160px, 100%), 1fr))" }}>
                     {[
                       ["활성 어르신", "132", `명부 표시 ${ROSTERS.elders.rows.length}건`],
                       ["보호자", "241", `명부 표시 ${ROSTERS.guardians.rows.length}건 · 주 128 · 부 113`],
@@ -2412,7 +2412,7 @@ export default function AdminConsole() {
                     ))}
                   </div>
 
-                  <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))" }}>
+                  <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))" }}>
                     {/* 명부 품질 점검 — 방대해질수록 사람이 못 보는 "빠진 것"을 규칙으로 잡는다 */}
                     <Panel className="min-w-0">
                       <PanelHead
@@ -2534,7 +2534,7 @@ export default function AdminConsole() {
 
           {/* ════ 케어 성과 — 어르신 결과 지표 · 안전 집계 · 구성 ════ */}
           {tab === "care" && (
-            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead title="케어 성과 지표 (월)" right={<span className="text-[12px] text-muted">서비스의 결과 — 사람 지표의 합</span>} />
                 <div className="mt-3 grid grid-cols-2 gap-2">
@@ -2614,7 +2614,7 @@ export default function AdminConsole() {
                   가격은 마케팅이 아니라 약속입니다 — 케어 원가를 감당하지 못하는 가격은 결국 사람을 갈아 넣게 됩니다.
                 </p>
               </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))" }}>
                 {PRICING_KPIS.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -2629,7 +2629,7 @@ export default function AdminConsole() {
 
               <Panel className="min-w-0">
                 <PanelHead title="확정 상품 구조" right={<span className="text-[12px] font-bold text-green">2026-08-01 방향성 회의 확정</span>} />
-                <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+                <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))" }}>
                   {PLANS.map((pl) => (
                     <div key={pl.k} className="rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3">
                       <div className="flex items-center gap-2">
@@ -2661,7 +2661,7 @@ export default function AdminConsole() {
                 <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[12px] leading-[1.75] text-muted">{PRICING_UNIT.note}</p>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead title="옵션 카탈로그 · 부착률" right={<span className="text-[12px] text-muted">확장은 가구 수보다 부착률</span>} />
                   <div className="mt-3 space-y-3">
@@ -2706,7 +2706,7 @@ export default function AdminConsole() {
                     </span>
                   }
                 />
-                <div className="mt-3 grid gap-1.5" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
+                <div className="mt-3 grid gap-1.5" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(min(180px, 100%), 1fr))" }}>
                   {REVENUE_STREAMS.map((s) => (
                     <div
                       key={s.no}
@@ -2764,7 +2764,7 @@ export default function AdminConsole() {
                   제휴는 매출 다각화이자 리스크 유입 경로입니다 — 제휴사 부실은 우리 고객의 피해가 됩니다.
                 </p>
               </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))" }}>
                 {PARTNER_KPIS.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -2791,7 +2791,7 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead title="B2G · 공공사업 파이프라인" right={<span className="text-[12px] text-muted">지자체 장기 계약 = 대기업 방어선</span>} />
                   <div className="mt-3 space-y-2">
@@ -2837,7 +2837,7 @@ export default function AdminConsole() {
                   무엇을 매출로 볼지부터 못 박았습니다 — 나중에 서로 다른 숫자를 들고 오면 그때부터 오해가 시작되기 때문입니다.
                   {" "}{REV_DEF.base}
                 </p>
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))" }}>
                   <div className="rounded-xl border border-green/25 bg-green/[.06] px-3.5 py-3">
                     <div className="text-[12px] font-bold text-green">매출로 잡는 것</div>
                     <div className="mt-1.5 space-y-1.5">
@@ -2862,7 +2862,7 @@ export default function AdminConsole() {
                   </div>
                 </div>
 
-                <div className="mt-3.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                <div className="mt-3.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
                   <div>
                     <div className="text-[12px] font-bold text-navy">배분 구조</div>
                     <div className="mt-1.5 space-y-1">
@@ -2891,7 +2891,7 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))" }}>
                 {PL_KPIS.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -2929,7 +2929,7 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead title="예산 경보" right={<span className="text-[12px] text-muted">이번 달 이슈</span>} />
                   <div className="mt-3 space-y-2">
@@ -2982,7 +2982,7 @@ export default function AdminConsole() {
                   운영 원칙이 곧 제품 스펙입니다 — 방침이 바뀌면 릴리스가 따라갑니다(반대 방향은 없습니다).
                 </p>
               </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))" }}>
                 {PRODUCT_KPIS.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -3005,7 +3005,7 @@ export default function AdminConsole() {
                 </p>
 
                 <div className="mt-3 text-[12px] font-bold text-navy">기기 4안</div>
-                <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
                   {REC_DEVICES.map((d) => (
                     <div
                       key={d.id}
@@ -3053,7 +3053,7 @@ export default function AdminConsole() {
                 </p>
 
                 <div className="mt-4 text-[12px] font-bold text-navy">바디캠 vs 글래스 — 항목별로 누가 이기나</div>
-                <div className="mt-1.5 grid gap-1.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))" }}>
+                <div className="mt-1.5 grid gap-1.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))" }}>
                   {REC_COMPARE.map((c) => (
                     <div key={c.k} className="flex items-center gap-2 rounded-xl border border-navy/[.06] bg-white/60 px-3 py-2">
                       <span className="w-[92px] shrink-0 text-[11px] font-bold text-navy">{c.k}</span>
@@ -3077,7 +3077,7 @@ export default function AdminConsole() {
                 </p>
 
                 <div className="mt-4 text-[12px] font-bold text-navy">규모별 총비용 — 두 안 나란히 (구간 녹화 8분 · 30일 보관 공통)</div>
-                <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+                <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))" }}>
                   {REC_SCALE.map((sc) => (
                     <div key={sc.n} className="rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3">
                       <div className="flex items-baseline gap-2">
@@ -3124,7 +3124,7 @@ export default function AdminConsole() {
                 </p>
 
                 <div className="mt-4 text-[12px] font-bold text-navy">단계 전략 — 무리 없이</div>
-                <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                <div className="mt-1.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))" }}>
                   {REC_HYBRID.map((h) => (
                     <div
                       key={h.d}
@@ -3178,7 +3178,7 @@ export default function AdminConsole() {
                 </p>
               </Panel>
 
-              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead title="보관 · 파기" right={<span className="text-[12px] text-muted">우리는 의료기관이 아니다 — 10년 보존 대상 아님</span>} />
                   <div className="mt-3 space-y-2">
@@ -3218,7 +3218,7 @@ export default function AdminConsole() {
                 </Panel>
               </div>
 
-              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead title="현장 운영 규칙" right={<span className="text-[12px] text-muted">거부감은 설계로 관리한다</span>} />
                   <div className="mt-3 space-y-1.5">
@@ -3254,7 +3254,7 @@ export default function AdminConsole() {
 
               <Panel className="min-w-0">
                 <PanelHead title="도입 단계 · 회귀 기준" right={<span className="text-[12px] text-muted">바디캠 기준 · 중단 기준을 먼저 정하고 시작한다</span>} />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))" }}>
                   {REC_PHASES.map((x) => (
                     <div key={x.d} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                       <div className="flex items-baseline gap-2">
@@ -3284,7 +3284,7 @@ export default function AdminConsole() {
                   다만 모델 상승분은 경쟁사도 같은 날 같이 받고, <b className="text-navy">기록 상승분은 우리만 받습니다</b>.
                   아래 단계는 그 기록 축의 진도이며, 단계마다 무엇이 얼마나 쌓여야 열리는지를 숨기지 않고 적습니다.
                 </p>
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(212px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(212px, 100%), 1fr))" }}>
                   {AI_STAGES.map((st) => {
                     const done = st.state === "완료";
                     const live = st.id === AI_STAGE_NOW;
@@ -3331,7 +3331,7 @@ export default function AdminConsole() {
                   title="성능의 두 축 — 모델 × 기록"
                   right={<span className="text-[12px] text-muted">둘 다 필요하고, 둘의 성격이 다르다</span>}
                 />
-                <div className="mt-3 grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+                <div className="mt-3 grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))" }}>
                   {AI_AXES.map((ax) => (
                     <div
                       key={ax.k}
@@ -3367,7 +3367,7 @@ export default function AdminConsole() {
 
                 <div className="mt-3.5">
                   <div className="text-[12px] font-bold text-navy">모델이 좋아질수록 기록의 가치가 함께 커집니다</div>
-                  <div className="mt-2 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                  <div className="mt-2 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))" }}>
                     {AI_MULTIPLY.map((m) => (
                       <div key={m.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                         <div className="text-[12px] font-bold text-navy">{m.k}</div>
@@ -3389,7 +3389,7 @@ export default function AdminConsole() {
                   title="모델 교체 정책"
                   right={<span className="text-[12px] text-muted">좋은 모델이 나오면 바꾼다 · 검증 없이는 바꾸지 않는다</span>}
                 />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
                   {AI_MODEL_POLICY.map((r, i) => (
                     <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                       <div className="flex items-start gap-2">
@@ -3404,7 +3404,7 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
-              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <div className="grid items-start gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead
                     title="데이터 자산 축적"
@@ -3465,7 +3465,7 @@ export default function AdminConsole() {
                   title="잠긴 기능 · 해금 조건"
                   right={<span className="text-[12px] text-muted">무엇이 쌓이면 켜지는지 · 눌러서 해당 섹션으로</span>}
                 />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))" }}>
                   {AI_LOCKED.map((f) => {
                     const tone = f.pct >= 100 ? "ok" : f.pct >= 60 ? "warn" : "bad";
                     return (
@@ -3505,7 +3505,7 @@ export default function AdminConsole() {
                   title="진화 원칙"
                   right={<span className="text-[12px] text-muted">능력이 올라가도 바뀌지 않는 것</span>}
                 />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
                   {AI_RULES.map((r, i) => (
                     <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                       <div className="flex items-start gap-2">
@@ -3534,7 +3534,7 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead title="영역별 기능 커버리지" right={<span className="text-[12px] text-muted">데모 v1.0 기준</span>} />
                   <div className="mt-3 space-y-3">
@@ -3578,7 +3578,7 @@ export default function AdminConsole() {
                   사람 평가에는 판매액을 쓰지 않지만, 회사의 돈은 끝까지 추적합니다 — 고객 결제부터 현장 지급까지.
                 </p>
               </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(170px, 100%), 1fr))" }}>
                 {CASH_KPIS.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -3591,7 +3591,7 @@ export default function AdminConsole() {
               {/* 자금 흐름도 — 결제에서 잔여 현금까지 */}
               <Panel className="min-w-0">
                 <PanelHead title="자금 흐름도" right={<span className="text-[12px] text-muted">고객 결제 → 회사 수취 → 현장 지급 → 운영 → 잔여</span>} />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(190px, 100%), 1fr))" }}>
                   {CASH_FLOW_STEPS.map((f, i) => (
                     <div key={f.k} className="relative rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3">
                       <div className="flex items-center gap-1.5">
@@ -3610,7 +3610,7 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>
                 {/* 유입 */}
                 <Panel className="min-w-0">
                   <PanelHead title="유입 — 수익원별 (월)" right={<span className="text-[12px] font-bold text-green">1.42억</span>} />
@@ -3724,7 +3724,7 @@ export default function AdminConsole() {
                 </p>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>
                 {/* 정산 사이클 */}
                 <Panel className="min-w-0">
                   <PanelHead title="정산 사이클" right={<span className="text-[12px] text-muted">사람에게 나가는 돈은 늦으면 신뢰가 깨진다</span>} />
@@ -3778,7 +3778,7 @@ export default function AdminConsole() {
                   투자자에게 보여줄 숫자를 따로 만들지 않습니다 — 운영에서 쓰는 지표를 그대로 씁니다.
                 </p>
               </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(170px, 100%), 1fr))" }}>
                 {IR_KPIS.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -3788,7 +3788,7 @@ export default function AdminConsole() {
                 ))}
               </div>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))" }}>
                 <Panel className="min-w-0">
                   <PanelHead title="캡테이블" right={<span className="text-[12px] text-muted">베스팅 2년 · 1년 클리프 적용</span>} />
                   <div className="mt-3 space-y-3">
@@ -3860,7 +3860,7 @@ export default function AdminConsole() {
                   발생확률 × 영향도로 정렬하고, 완화되지 않은 항목은 착수를 막습니다.
                 </p>
               </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(160px, 100%), 1fr))" }}>
                 {RC_KPIS.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -4027,7 +4027,7 @@ export default function AdminConsole() {
                 </p>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
                 {/* 보험 · 배상 */}
                 <Panel className="min-w-0">
                   <PanelHead title="보험 · 배상 체계" />
@@ -4080,7 +4080,7 @@ export default function AdminConsole() {
                   질병 · 민감 프로필을 다루는 서비스의 원칙 — 덜 모으고 · 짧게 두고 · 좁게 열고 · 전부 기록한다.
                 </p>
               </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))" }}>
                 {SEC_KPIS.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -4121,7 +4121,7 @@ export default function AdminConsole() {
                 </div>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
                 {/* 접근 매트릭스 */}
                 <Panel className="min-w-0">
                   <PanelHead title="역할 × 데이터 접근 매트릭스" right={<span className="text-[12px] text-muted">S1 건강 · S2 식별 · S3 운영 — ● 열람 · ◐ 제한 · ✕ 차단</span>} />
@@ -4250,7 +4250,7 @@ export default function AdminConsole() {
                 <p className="mt-1 max-w-[760px] text-[13px] leading-[1.75] text-muted">{LIFECYCLE_HEAD.desc}</p>
               </div>
 
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(170px, 100%), 1fr))" }}>
                 {LIFECYCLE_HEAD.gaps.map((g) => (
                   <Panel key={g.k} className="!p-4">
                     <div className="text-[11px] font-bold text-muted">{g.k}</div>

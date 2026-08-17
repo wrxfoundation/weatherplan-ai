@@ -80,7 +80,7 @@ export default function CareProfile() {
             <div className="flex items-center gap-3">
               <span className="text-[12px] font-bold tracking-[.16em] text-muted">확장 / F7 진화형 케어 프로필 · F11-1 AI 안부콜</span>
               <Link href="/" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">데모 홈</Link>
-              <Link href="/dispatch?menu=elder" className="text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">관제 · 어르신</Link>
+              <Link href="/dispatch?menu=elder" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">관제 · 어르신</Link>
             </div>
             <h1 className="mt-0.5 text-[29px] font-bold tracking-[-.01em] text-navy">쓸수록 깊어지는 프로필</h1>
             <p className="mt-1.5 max-w-[84ch] text-[15px] leading-[1.75] text-muted">
@@ -89,7 +89,7 @@ export default function CareProfile() {
           </div>
 
           {/* KPI */}
-          <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+          <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(160px, 100%), 1fr))" }}>
             {CP_KPIS.map((k) => (
               <Panel key={k.k} className="!p-4">
                 <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -101,7 +101,7 @@ export default function CareProfile() {
 
           {/* 5단계 루프 */}
           <Panel>
-            <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+            <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))" }}>
               {CP_LOOP.map(([n, k, text]) => (
                 <div key={n} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
                   <div className="flex items-center gap-2">
@@ -114,7 +114,7 @@ export default function CareProfile() {
             </div>
           </Panel>
 
-          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
             {/* 케어 프로필 테이블 */}
             <Panel className="min-w-0">
               <PanelHead title="김순자 (78) 케어 프로필" right="자동 병합 · 출처 표기" />
@@ -375,7 +375,7 @@ export default function CareProfile() {
           {/* 쉬운 말 사전 */}
           <Panel>
             <PanelHead title="쉬운 말 사전" right="리포트·안내문에 이 용어가 나오면 자동으로 쉬운 말이 붙습니다" />
-            <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+            <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
               {CP_GLOSSARY.map((g) => (
                 <div key={g.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
                   <div className="flex items-baseline gap-2">

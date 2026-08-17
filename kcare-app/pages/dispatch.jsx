@@ -949,7 +949,7 @@ export default function DispatchConsole() {
               <h2 className="text-[15px] font-bold tracking-[.02em] text-navy">역할 간 핸드오프 정체</h2>
               <span className="text-[12px] text-muted">보호자 → 관제 → 컨시어지 → 관제 → 보호자 · 단계를 클릭하면 멈춘 건이 열립니다</span>
             </div>
-            <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+            <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))" }}>
               {HANDOFF_CHAIN.map((h, i) => {
                 const on = hoStage === h.id;
                 const tone = h.stuckN >= 3 ? "#C0392B" : h.stuckN >= 2 ? "#8A5D12" : "#1E7A5A";
@@ -1047,7 +1047,7 @@ export default function DispatchConsole() {
               </button>
             </div>
             <p className="mt-2 text-[14px] font-bold leading-[1.6] text-ink">{MORNING_BRIEF.summary}</p>
-            <div className="mt-2.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}>
+            <div className="mt-2.5 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(250px, 100%), 1fr))" }}>
               {MORNING_BRIEF.items.map((b) => (
                 <div key={b.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                   <div className="text-[11px] font-bold text-gold">{b.k}</div>
@@ -1077,7 +1077,7 @@ export default function DispatchConsole() {
                 </div>
                 <span className="text-[12px] text-white/60">승인 없이는 실행되지 않습니다 · 8.5 자율성 등급</span>
               </div>
-              <div className="mt-4 grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+              <div className="mt-4 grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))" }}>
                 {/* why(근거) 없는 배정안은 렌더 금지 — 블랙박스 금지 (규제 요건) */}
                 {AI_ASSIGN.filter((a) => a.why).map((a) => (
                   <div
@@ -1197,7 +1197,7 @@ export default function DispatchConsole() {
 
           {/* ════ live 탭 — 배차 그리드 + 실시간 접수 티커 ════ */}
           {tab === "live" && (
-            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead title="배차 그리드" right={<span className="font-num text-[12px]">08:00 — 20:00 KST</span>} />
                 {/* 시간축 — 모바일에선 그리드 전체 가로 스크롤 */}
@@ -1283,7 +1283,7 @@ export default function DispatchConsole() {
           {tab === "pair" && (
             <div className="mt-4 space-y-4">
               {/* 페어 KPI (09 §8.1) */}
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(196px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(196px, 100%), 1fr))" }}>
                 {pairKpis.map((k) => (
                   <Panel key={k.k} className="!p-4">
                     <div className="text-[12px] font-bold text-muted">{k.k}</div>
@@ -1340,7 +1340,7 @@ export default function DispatchConsole() {
                 </div>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(330px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(330px, 100%), 1fr))" }}>
                 {/* 짝 미매칭 (09 §8.3) — 1인 배차 금지의 실행 UI */}
                 <section
                   className="rounded-[14px] border p-[18px]"
@@ -1568,7 +1568,7 @@ export default function DispatchConsole() {
                 </p>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))" }}>
                 {/* 감점 내역 (09 §9.2) — 룰 엔진 L0 */}
                 <Panel>
                   <PanelHead title="감점 내역 · 김순자 (78) 도착 구간" right="100점 감점식 · 룰 엔진(L0) · 커버리지 100%" />
@@ -1659,7 +1659,7 @@ export default function DispatchConsole() {
 
           {/* ════ 어르신 관리 — 명부 + 리스크 워치 ════ */}
           {menu === "elder" && (
-            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead
                   title="오늘 챙길 어르신"
@@ -1744,7 +1744,7 @@ export default function DispatchConsole() {
               <p className="mt-4 rounded-xl border border-navy/[.08] bg-white/50 px-4 py-2.5 text-[12px] leading-[1.6] text-muted">
                 가입 정책 — 주 보호자 가입 후 초대 링크로 부 보호자 참여 · 결제 승인 권한은 주 보호자에게만
               </p>
-              <div className="mt-3 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+              <div className="mt-3 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
                 {guardians.map((d) => (
                   <Panel key={d.name} className="min-w-0">
                     <div className="flex items-center gap-2">
@@ -1803,7 +1803,7 @@ export default function DispatchConsole() {
 
           {/* ════ 컨시어지 관리 — 명부 + 피로도 게이트 ════ */}
           {menu === "concierge" && (
-            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead title="오늘 가동 컨시어지" right={`상세 프로필 ${concierges.length}명 · 평점 출처: 가족 만족도 · 전체는 아래 명부`} />
                 <div className="mt-3 space-y-2">
@@ -1881,7 +1881,7 @@ export default function DispatchConsole() {
           {menu === "hospital" && (
             <Panel className="mt-4">
               <PanelHead title="제휴 (MOU) 병원" right="진료 과목마다 한 곳 이상 · 회의 8" />
-              <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+              <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
                 {MOU_HOSPITALS.map((h) => (
                   <div key={h.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
                     <div className="flex items-center gap-2">
@@ -1980,7 +1980,7 @@ export default function DispatchConsole() {
                   title="119 신고 프로토콜"
                   right={<span className="text-[12px] text-muted">신고는 하되 흔적을 남긴다</span>}
                 />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(232px, 1fr))" }}>
+                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(232px, 100%), 1fr))" }}>
                   {SOS_119.map((x) => (
                     <div
                       key={x.s}
@@ -2077,7 +2077,7 @@ export default function DispatchConsole() {
               )}
 
               {/* KPI */}
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))" }}>
                 {SOS_KPIS.map((k) => (
                   <div key={k.k} className="card-glass rounded-[14px] p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -2087,7 +2087,7 @@ export default function DispatchConsole() {
                 ))}
               </div>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(400px, 100%), 1fr))" }}>
                 {/* 대응 인력 */}
                 <Panel className="min-w-0">
                   <PanelHead title="대응 인력" right="누가 어디까지 됐는지 — 공백과 중복을 동시에 막는다" />
@@ -2304,7 +2304,7 @@ export default function DispatchConsole() {
                   (밴드에 앱을 올릴 수 없어 감지는 우리 영역이 아닙니다).
                 </p>
               </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(150px, 100%), 1fr))" }}>
                 {WEAR_KPIS.map((k) => (
                   <div key={k.k} className="card-glass rounded-[14px] p-4">
                     <div className="text-[11px] font-bold text-muted">{k.k}</div>
@@ -2351,7 +2351,7 @@ export default function DispatchConsole() {
                 </div>
               </Panel>
 
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(470px, 1fr))" }}>
+              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(470px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead
                   title="실시간 수신 보드"
@@ -2468,7 +2468,7 @@ export default function DispatchConsole() {
                     수신 API도 없습니다. 실현 가능한 유일한 경로는 폰의 긴급 SOS가 우리에게 닿게 하는 것이고,
                     거기서부터 30초 안에 티켓을 만들어 대응하는 것이 우리 서비스입니다.
                   </p>
-                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(232px, 1fr))" }}>
+                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(232px, 100%), 1fr))" }}>
                     {FALL_CHAIN.map((c) => {
                       const ours = c.who === "K-CARE";
                       return (
@@ -2498,7 +2498,7 @@ export default function DispatchConsole() {
                     })}
                   </div>
 
-                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
                     <div className="rounded-xl border border-green/25 bg-green/[.06] px-3.5 py-3">
                       <div className="text-[12px] font-bold text-green">우리가 할 수 있는 것</div>
                       <ul className="mt-1.5 space-y-1">
@@ -2586,7 +2586,7 @@ export default function DispatchConsole() {
                 {/* 2주 실증 + 측정 지표 */}
                 <Panel className="col-span-full min-w-0">
                   <PanelHead title="2주 실증 계획" right={<span className="text-[12px] text-muted">문서로는 안 나오는 것부터 실물로</span>} />
-                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))" }}>
                     {FALL_PLAN.map((x) => (
                       <div key={x.d} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
                         <div className="flex items-baseline gap-2">
@@ -2718,7 +2718,7 @@ export default function DispatchConsole() {
 
           {/* ════ 날씨 — 현재 기상 · 대기질 · 권역 지도 · 이슈 → 케어 연계 ════ */}
           {menu === "weather" && (
-            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead title="현재 기상 — 강남지점 권역" right={WEATHER_NOW.updated} />
                 {/* 특보 배너 — 빨강은 위험 신호 전용 원칙과 일치 */}
@@ -2850,7 +2850,7 @@ export default function DispatchConsole() {
 
           {/* ════ 커뮤니케이션 — 발송 센터 + 감사 로그 ════ */}
           {menu === "comms" && (
-            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))" }}>
+            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead title="발송 센터" right="보호자 · 어르신 · 컨시어지 일괄 커뮤니케이션" />
                 <div className="mt-3 space-y-2">

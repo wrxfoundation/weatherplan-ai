@@ -442,6 +442,7 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
         <div className="mt-4">
           <SectionLabel>내용</SectionLabel>
           <input
+            aria-label="일정 내용"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="예: 주말 방문 · 점심 함께"
@@ -451,6 +452,7 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
         <div className="mt-4">
           <SectionLabel>일시</SectionLabel>
           <input
+            aria-label="일정 일시"
             type="datetime-local"
             value={dt}
             onChange={(e) => setDt(e.target.value)}

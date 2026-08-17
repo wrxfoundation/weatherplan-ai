@@ -21,7 +21,10 @@ import {
 // 화면에서는 종이 시트 미리보기, 인쇄 시 시트만 남는다. 진단어 없음 · 검수 원칙 문구 포함.
 
 const NAVY = "#0A1F3C";
-const GOLD = "#B08D57";
+// 작은 글자용 금색 — 브랜드 골드(#B08D57)는 흰 배경에서 3.09:1 이라 본문 기준(4.5:1)에
+// 못 미친다. 큰 글자·장식에는 그대로 쓰고, 12px 이하 라벨은 이 색으로 쓴다 (5.75:1).
+// 리포트는 고객에게 인쇄되어 나가는 문서라 여기서만큼은 읽히는 쪽이 먼저다.
+const GOLD_TEXT = "#8A5D12";
 
 // 문서 정본 데이터 — 지문(SHA-256)의 입력. 렌더 내용과 같은 원본 mock에서 파생 (단일 출처)
 export function canonicalDoc(type) {
@@ -39,9 +42,17 @@ function DocShell({ title, period, backHref, backLabel, docType, glossary = [], 
         <title>{title} — K-CARE</title>
       </Head>
       <div className="min-h-screen bg-paper py-8 print:bg-white print:py-0">
-        {/* 화면 전용 컨트롤 */}
-        <div className="print-hide mx-auto mb-4 flex w-full max-w-[794px] items-center gap-2 px-4">
-          <Link href={backHref} className="text-[13px] font-bold text-muted underline underline-offset-2">
+        {/* 화면 전용 컨트롤 — 랜드마크 밖에 두면 스크린리더가 "본문 외 콘텐츠"로 흘린다.
+            돌아가기·인쇄는 문서 도구라 nav 로 이름을 준다 (axe: region) */}
+        <nav
+          aria-label="문서 도구"
+          className="print-hide mx-auto mb-4 flex w-full max-w-[794px] items-center gap-2 px-4"
+        >
+          {/* 터치 타깃 24px 하한 (WCAG 2.2 AA 2.5.8) — 글자만 있으면 20px 밖에 안 된다 */}
+          <Link
+            href={backHref}
+            className="inline-flex min-h-[24px] items-center py-1 text-[13px] font-bold text-muted underline underline-offset-2"
+          >
             ← {backLabel}
           </Link>
           <button
@@ -51,14 +62,15 @@ function DocShell({ title, period, backHref, backLabel, docType, glossary = [], 
           >
             PDF로 저장 (A4)
           </button>
-        </div>
+        </nav>
 
-        {/* A4 시트 */}
-        <div className="report-sheet mx-auto w-full max-w-[794px] bg-white px-[15mm] py-[13mm] shadow-[0_18px_44px_-24px_rgba(10,31,60,.4)] print:max-w-none print:shadow-none">
+        {/* A4 시트 — 문서 본문이라 <main> 이다.
+            div 로 두면 스크린리더에 본문 랜드마크가 없어 처음부터 훑어야 한다. */}
+        <main className="report-sheet mx-auto w-full max-w-[794px] bg-white px-[15mm] py-[13mm] shadow-[0_18px_44px_-24px_rgba(10,31,60,.4)] print:max-w-none print:shadow-none">
           <header className="flex items-end justify-between border-b-2 pb-3" style={{ borderColor: NAVY }}>
             <div>
               <div className="font-num text-[15px] font-extrabold tracking-[.06em]" style={{ color: NAVY }}>
-                K-CARE <span className="align-top text-[9px] font-bold" style={{ color: GOLD }}>BETA</span>
+                K-CARE <span className="align-top text-[9px] font-bold" style={{ color: GOLD_TEXT }}>BETA</span>
               </div>
               <h1 className="mt-1 text-[22px] font-black" style={{ color: NAVY }}>
                 {title}
@@ -92,7 +104,7 @@ function DocShell({ title, period, backHref, backLabel, docType, glossary = [], 
               </div>
             </div>
           </footer>
-        </div>
+        </main>
       </div>
     </>
   );
@@ -175,7 +187,7 @@ function CareReport() {
         {(CRM_TIMELINE["김순자"] || []).map((t, i) => (
           <div key={i} className="flex gap-3 border-b border-navy/[.08] py-[7px] text-[12px]">
             <span className="w-[44px] shrink-0 font-num font-bold text-muted">{t.at}</span>
-            <span className="w-[52px] shrink-0 font-bold" style={{ color: GOLD }}>{t.kind}</span>
+            <span className="w-[52px] shrink-0 font-bold" style={{ color: GOLD_TEXT }}>{t.kind}</span>
             <span className="flex-1 text-ink">{t.text}</span>
           </div>
         ))}
@@ -270,7 +282,7 @@ function ExecReport() {
         <p className="text-[12px] font-bold leading-[1.7] text-ink">{EXEC_BRIEF.summary}</p>
         {EXEC_BRIEF.items.map((b) => (
           <div key={b.k} className="flex gap-3 border-b border-navy/[.08] py-[7px] text-[12px]">
-            <span className="w-[52px] shrink-0 font-bold" style={{ color: GOLD }}>{b.k}</span>
+            <span className="w-[52px] shrink-0 font-bold" style={{ color: GOLD_TEXT }}>{b.k}</span>
             <span className="flex-1 text-ink">{b.text}</span>
           </div>
         ))}

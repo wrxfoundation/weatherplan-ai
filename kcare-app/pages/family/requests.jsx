@@ -449,6 +449,7 @@ function CreateRequestSheet({ preset, onClose, onCreate }) {
           <div>
             <SectionLabel>예상 금액 (선택)</SectionLabel>
             <input
+              aria-label="예상 금액 (선택)"
               type="number"
               inputMode="numeric"
               value={amount}
@@ -460,6 +461,7 @@ function CreateRequestSheet({ preset, onClose, onCreate }) {
           <div>
             <SectionLabel>희망일 (선택)</SectionLabel>
             <input
+              aria-label="희망일 (선택)"
               type="date"
               value={preferredDate}
               onChange={(e) => setPreferredDate(e.target.value)}

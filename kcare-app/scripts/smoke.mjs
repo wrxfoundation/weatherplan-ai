@@ -29,7 +29,16 @@ const ROUTES = [
   "/family", "/family/calendar", "/family/requests", "/family/my",
   "/family/store", "/family/watch", "/family/hospitals",
   "/concierge", "/concierge-onboarding", "/safety-check", "/dispatch", "/admin",
-  "/report/verify",
+  // 리포트 3종은 고객에게 나가는 문서다 — 화면보다 오히려 더 봐야 한다.
+  // 그동안 verify 만 돌고 있어서 본문 리포트의 회귀를 못 잡았다.
+  "/report/verify", "/report/care", "/report/visit", "/report/exec",
+];
+
+// 뷰포트 — 모바일만 돌면 데스크톱 콘솔(관제·경영)의 회귀를 못 잡는다.
+// 실제로 24px 미만 터치 타깃이 데스크톱에만 남아 있었다.
+const VIEWPORTS = [
+  { name: "mobile", width: 390, height: 844 },
+  { name: "desktop", width: 1440, height: 900 },
 ];
 
 // 이 규칙들은 한 번 고쳐 놓은 것이라 다시 늘어나면 실패로 본다.
@@ -52,8 +61,10 @@ const browser = await chromium.launch({
   args: ["--no-sandbox", "--autoplay-policy=no-user-gesture-required"],
 });
 
+for (const vp of VIEWPORTS) {
 for (const route of ROUTES) {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const where = `${route} (${vp.name})`;
+  const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
   const page = await ctx.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(`JS: ${String(e).slice(0, 140)}`));
@@ -84,24 +95,24 @@ for (const route of ROUTES) {
     status = res ? res.status() : 0;
     await page.waitForTimeout(700);
   } catch (e) {
-    fails.push(`${route} — 열리지 않음: ${String(e).slice(0, 100)}`);
+    fails.push(`${where} — 열리지 않음: ${String(e).slice(0, 100)}`);
     await ctx.close();
     continue;
   }
 
-  if (status >= 400) fails.push(`${route} — HTTP ${status}`);
-  for (const e of errors) fails.push(`${route} — ${e}`);
+  if (status >= 400) fails.push(`${where} — HTTP ${status}`);
+  for (const e of errors) fails.push(`${where} — ${e}`);
 
   // 화면에 실제로 내용이 그려졌는가 (클래스 충돌로 통째로 사라지는 경우를 잡는다)
   const text = await page.evaluate(() => document.body.innerText.replace(/\s+/g, " ").trim().length);
-  if (text < 60) fails.push(`${route} — 본문이 비어 있음 (보이는 글자 ${text}자)`);
+  if (text < 60) fails.push(`${where} — 본문이 비어 있음 (보이는 글자 ${text}자)`);
 
   // 접근성
   await page.addScriptTag({ content: AXE });
   const { violations } = await page.evaluate(async () => window.axe.run(document, { resultTypes: ["violations"] }));
   for (const v of violations) {
-    if (MUST_BE_ZERO.includes(v.id)) fails.push(`${route} — a11y ${v.id} (${v.impact}) ${v.nodes.length}건`);
-    if (v.impact === "critical") fails.push(`${route} — a11y critical ${v.id} ${v.nodes.length}건`);
+    if (MUST_BE_ZERO.includes(v.id)) fails.push(`${where} — a11y ${v.id} (${v.impact}) ${v.nodes.length}건`);
+    if (v.impact === "critical") fails.push(`${where} — a11y critical ${v.id} ${v.nodes.length}건`);
   }
 
   // 터치 타깃 — WCAG 2.2 AA(2.5.8) 최소 24x24.
@@ -116,10 +127,42 @@ for (const route of ROUTES) {
     }
     return out;
   });
-  for (const t of tiny) fails.push(`${route} — 터치 타깃 24px 미만: ${t}`);
+  for (const t of tiny) fails.push(`${where} — 터치 타깃 24px 미만: ${t}`);
 
-  note(`  ${status === 200 ? "OK " : "!! "} ${route}`);
+  // 바텀시트·모달은 눌러야 열린다 — 안 열면 그 안의 접근성은 한 번도 검사되지 않는다.
+  // 실제로 시트 안 입력에 라벨 연결이 빠진 채로 오래 있었다.
+  const SHEET_OPENERS = {
+    "/family/calendar": "일정 등록 요청",
+    "/family/requests": "해주세요 요청하기",
+    "/family/my": "우선 요소 설정",
+  };
+  const opener = SHEET_OPENERS[route];
+  if (opener) {
+    try {
+      await page.getByRole("button", { name: opener, exact: true }).first().click({ timeout: 3000 });
+      await page.waitForTimeout(400);
+      const sheet = await page.evaluate(async () => {
+        const r = await window.axe.run(document, { resultTypes: ["violations"] });
+        return r.violations.map((v) => ({ id: v.id, impact: v.impact, n: v.nodes.length }));
+      });
+      for (const v of sheet) {
+        if (MUST_BE_ZERO.includes(v.id)) fails.push(`${where} [시트] — a11y ${v.id} (${v.impact}) ${v.n}건`);
+        if (v.impact === "critical") fails.push(`${where} [시트] — a11y critical ${v.id} ${v.n}건`);
+      }
+    } catch (_) {
+      fails.push(`${where} — 시트를 여는 버튼("${opener}")을 못 찾음`);
+    }
+  }
+
+  // 가로 스크롤 — 좁은 화면에서 화면이 옆으로 밀리면 UI 가 깨진 것이다
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
+  if (overflow > 1) fails.push(`${where} — 가로 넘침 ${overflow}px`);
+
+  note(`  ${status === 200 ? "OK " : "!! "} ${where}`);
   await ctx.close();
+}
 }
 
 await browser.close();
@@ -129,4 +172,4 @@ if (fails.length) {
   for (const f of fails) console.error("  ✗ " + f);
   process.exit(1);
 }
-console.log(`\n스모크 통과 — ${ROUTES.length}개 화면`);
+console.log(`\n스모크 통과 — ${ROUTES.length}개 화면 × ${VIEWPORTS.length}개 폭 = ${ROUTES.length * VIEWPORTS.length}회`);

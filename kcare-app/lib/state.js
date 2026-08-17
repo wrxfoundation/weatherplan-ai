@@ -24,7 +24,18 @@ const DEFAULT = {
   // 관찰 리포트 누적 — 본인 작성 전체 열람 · 타인 작성은 공유분만 (회의 7)
   reports: SEED_REPORTS.map((r) => ({ ...r, at: Date.now() - r.daysAgo * 86400000 })),
   // 어르신 1회성 잠금 상태 (undo 없음이 의도 — 핸드오프 06 §5). voicePlayed만 재클릭 가능.
-  elder: { medTaken: false, cooled: false, voicePlayed: false, askAdded: false },
+  //
+  // medSlots·reordered·visitAsked·askSpoken 도 여기 있어야 한다. 화면 로컬 state 로
+  // 두면 새로고침 한 번에 "오늘 약 먹었어요" 체크가 사라지고, 이미 보낸 즉시방문요청·
+  // 재구매 부탁을 다시 보낼 수 있게 된다 (중복 접수). 시연 중에 실제로 그렇게 된다.
+  elder: {
+    voicePlayed: false,
+    askAdded: false,
+    medSlots: {}, // { 아침: true, 점심: true, ... } — 오늘 복약 체크
+    reordered: {}, // { sp1: true } — 건기식 재구매 부탁
+    visitAsked: false, // 즉시 방문 요청
+    askSpoken: false, // 선생님께 말로 요청하기
+  },
   // 관제 콘솔 상태 — sos 해제는 관제(ackSos)만 가능 (핸드오프 06 §5 · 09 §10)
   ops: { sosDispatched: false, sos119: false, assign: "pending", unmatchFixed: false },
   // 실시간 접수 티커 = 감사 로그의 실시간 뷰 (09 §7.2). 전 화면 액션이 여기로 push
@@ -62,11 +73,18 @@ function reducer(state, action) {
       // localStorage는 신뢰할 수 없는 입력: 객체·배열 형태를 검증하고 아니면 기본값을 지킨다.
       const p = action.payload && typeof action.payload === "object" ? action.payload : {};
       const arr = (v, fallback) => (Array.isArray(v) ? v : fallback);
+      const obj = (v, fallback) => (v && typeof v === "object" && !Array.isArray(v) ? v : fallback);
       return {
         ...state,
         ...p,
         demo: { ...state.demo, ...(p.demo || {}) },
-        elder: { ...state.elder, ...(p.elder || {}) },
+        elder: {
+          ...state.elder,
+          ...(p.elder || {}),
+          // 저장값이 객체가 아니면(구버전·손상) 기본값을 지킨다
+          medSlots: obj(p.elder && p.elder.medSlots, state.elder.medSlots),
+          reordered: obj(p.elder && p.elder.reordered, state.elder.reordered),
+        },
         ops: { ...state.ops, ...(p.ops || {}) },
         visit: {
           ...state.visit,
@@ -77,10 +95,7 @@ function reducer(state, action) {
         events: arr(p.events, state.events),
         reports: arr(p.reports, state.reports),
         requests: arr(p.requests, state.requests),
-        productImages:
-          p.productImages && typeof p.productImages === "object" && !Array.isArray(p.productImages)
-            ? p.productImages
-            : state.productImages,
+        productImages: obj(p.productImages, state.productImages),
         visitPlan: { ...state.visitPlan, ...(p.visitPlan || {}) },
         voices: arr(p.voices, state.voices),
         reviews: arr(p.reviews, state.reviews),
@@ -115,10 +130,14 @@ function reducer(state, action) {
       };
     case "demo":
       return { ...state, demo: { ...state.demo, ...action.payload } };
-    case "medTaken":
-      return { ...state, elder: { ...state.elder, medTaken: true } };
     case "elderPatch":
       return { ...state, elder: { ...state.elder, ...action.patch } };
+    // 오늘 복약 체크 · 건기식 재구매 — 되돌리지 않는다 (06 §5). 키만 켜 준다.
+    case "elderMark":
+      return {
+        ...state,
+        elder: { ...state.elder, [action.key]: { ...state.elder[action.key], [action.id]: true } },
+      };
     case "opsPatch":
       return { ...state, ops: { ...state.ops, ...action.patch } };
     case "pushEvent":

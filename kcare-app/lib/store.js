@@ -223,13 +223,3 @@ export const STORE_INDEX = Object.fromEntries(
   STORE_CATALOG.flatMap((c) => c.groups.flatMap((g) => g.items.map((i) => [i.id, i])))
 );
 
-// 어르신 화면용 축약 목록 — 활자 큰 단일 리스트라 6개까지만.
-// 자주 찾는 것 3 + 생활안전용품 3 (실무자: 스토어 3종 공통으로 생활안전용품 노출)
-export const ELDER_STORE_PICKS = [
-  { id: "pa1", name: "안티푸라민 파스", price: 9500 },
-  { id: "dr2", name: "박카스 디 (10병)", price: 5700 },
-  { id: "vt2", name: "비타민씨 골드", price: 11000 },
-  { id: "slippers", name: "미끄럼 안 나는 슬리퍼", price: 25000 },
-  { id: "sensorLight", name: "밤에 켜지는 자동 불", price: 20000 },
-  { id: "magnifier", name: "글씨 크게 보는 확대경", price: 40000 },
-];

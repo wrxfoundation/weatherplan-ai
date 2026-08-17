@@ -27,6 +27,7 @@ export default function StorePage() {
   const [groupIdx, setGroupIdx] = useState(0);
   const [ordered, setOrdered] = useState(false);
   const [tab, setTab] = useState("shop"); // shop | orders — 구매내역 조회 (2026-08-12 시트)
+  const honor = honorific(state.onboarding); // 온보딩에서 받은 성함을 쓴다 — 인자 없이 부르면 기본값(김순자)으로 굳는다
   const orders = state.orders || [];
 
   const items = Object.keys(sel)
@@ -117,7 +118,7 @@ export default function StorePage() {
         ) : (
           <>
         <p className="px-1 text-[13px] leading-[1.7] text-muted">
-          {honorific()} 화면과 같은 카탈로그입니다. {honorific()}이 담은 물품은 결제권한 설정에 따라
+          {honor} 화면과 같은 카탈로그입니다. {honor}이 담은 물품은 결제권한 설정에 따라
           승인 요청으로 도착하고, 보호자 주문은 바로 결제됩니다.
         </p>
 

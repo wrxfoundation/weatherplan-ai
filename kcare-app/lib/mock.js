@@ -105,14 +105,9 @@ export const ELDER_VISITORS = [
   },
 ];
 
-// done: null → 상태(state.elder.medTaken) 의존. 미완료는 1건만 (실패 목록 금지 — 06 §3.6)
-export const MED_DOSES = [
-  { slotLabel: "아침", drugs: "혈압약 · 아스피린", done: true },
-  { slotLabel: "점심", drugs: "당뇨약", done: true },
-  { slotLabel: "저녁 7시", drugs: "혈압약 · 콜레스테롤약", done: null },
-];
-
-// 실내 센서 카드 — cooled 상태별 표현 (06 §3.7). 데모 목 값: 센서 실연동 전.
+// 실내 센서 카드 — 데모 목 값 (센서 실연동 전).
+// 2026-08-12 시트로 "에어컨 켜고 가족에게 알리기" 버튼을 뺐고, 그와 함께 냉방 후 상태
+// (cooled)도 화면에서 사라졌다. 기기를 대신 켜 주지 못하니 켜진 상태를 그릴 근거가 없다.
 export const INDOOR = {
   hot: {
     tempLabel: "31°",
@@ -120,15 +115,6 @@ export const INDOOR = {
     level: "danger",
     alertTitle: "집 안이 너무 덥습니다",
     alertBody: "실외보다 2도 낮지만 온열질환 주의 구간입니다. 에어컨을 켜고 물을 드세요.",
-    btnLines: ["에어컨 켜고", "가족에게 알리기"],
-  },
-  cooled: {
-    tempLabel: "28°",
-    sub: "습도 58% · 에어컨 가동 중",
-    level: "ok",
-    alertTitle: "적정 온도로 내려갔습니다",
-    alertBody: "가족과 컨시어지에게도 알렸습니다. 물을 한 잔 드시고 쉬세요.",
-    btnLines: ["가족에게", "알림 완료"],
   },
 };
 
@@ -207,33 +193,6 @@ export const VOICE_TO = [
   { id: "all", initials: "가족", name: "가족 모두", sub: "세 자녀에게 함께", avBg: "#1E7A5A", avFg: "#FFFFFF" },
 ];
 
-// 어르신 "해주세요" — 대행 · 구매 요청 프리셋 (GNB 4번째 탭)
-// est 0 = 멤버십 포함 (결제 없음) · 그 외는 결제권한(REQ-07)에 따라 본인 결제 또는 보호자 승인
-export const ASK_SERVICES = [
-  { id: "a1", g: "약 · 병원", name: "약국에서 약 타다 주세요", est: 15000, note: "처방전 · 상비약 구매대행" },
-  { id: "a2", g: "약 · 병원", name: "병원 예약해 주세요", est: 0, note: "멤버십 포함 · 비용 없음" },
-  { id: "a3", g: "약 · 병원", name: "병원에 같이 가 주세요", est: 0, note: "연 4회 포함분 사용" },
-  { id: "a4", g: "장보기", name: "장 봐다 주세요", est: 40000, note: "생필품 · 먹을 것 · 영수증 사진" },
-  { id: "a5", g: "장보기", name: "반찬 사다 주세요", est: 25000, note: "단골 반찬가게" },
-  { id: "a6", g: "장보기", name: "세탁물 맡기고 찾아 주세요", est: 12000, note: "왕복 대행" },
-  { id: "a12", g: "장보기", name: "큰 장보기 (제사 · 명절)", est: 80000, note: "부피 큰 물건 · 차량 이용" },
-  { id: "a13", g: "약 · 병원", name: "무릎 보호대 사다 주세요", est: 62000, note: "의료용 · 사이즈 확인 후 구매" },
-  { id: "a7", g: "집안일", name: "전구 · 건전지 갈아 주세요", est: 0, note: "안심방문 때 함께 · 부품비 별도" },
-  { id: "a8", g: "집안일", name: "무거운 것 옮겨 주세요", est: 0, note: "멤버십 포함" },
-  { id: "a9", g: "바깥일", name: "은행에 같이 가 주세요", est: 0, note: "동행만 · 대리 인출은 하지 않습니다" },
-  { id: "a10", g: "바깥일", name: "주민센터 서류 떼다 주세요", est: 3000, note: "수수료 실비" },
-  { id: "a11", g: "말동무", name: "잠깐 얘기하러 와 주세요", est: 0, note: "멤버십 포함 · 30분" },
-  { id: "a14", g: "약 · 병원", name: "병원에 보호자로 와 주세요", est: 90000, note: "자녀 도착 전까지 보호자 역할 대행" },
-  { id: "a15", g: "바깥일", name: "차로 데려다 주세요", est: 35000, note: "대리운전 제휴 · 거리에 따라 변동" },
-];
-
-// 배송 — 금액 필드 없음(스키마 방어선). cart는 가족 앱(REQ-07)에서 바뀌고 여기선 읽기만.
-export const DELIVERY = {
-  dayLabel: "토요일",
-  timeLabel: "오전 10시",
-  itemsBase: "혈압약 · 시험지 · 위생용품 (3가지)",
-  itemsWithCart: "혈압약 · 시험지 · 위생용품 · 파스 · 커프 (5가지)",
-};
 
 // 자녀 확인 기록 — 상대 시간만, 미확인 카운트 금지 (06 §3.10). GUARDIANS 페르소나와 동일 인물.
 export const FAMILY_SEEN = [
