@@ -407,8 +407,8 @@ export default function ElderHome() {
                 </p>
               )}
               <p className="mt-3 text-[19px] leading-[1.6] text-muted">
-                두 분 다 목에 K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지 마시고 바탕화면의
-                빨간 SOS 바로가기를 누르세요.
+                두 분 다 K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지 마시고 바탕화면의
+                빨간 SOS를 누르세요.
               </p>
             </ElderCard>
 
@@ -457,8 +457,8 @@ export default function ElderHome() {
                 바로 도움을 부릅니다.
               </p>
               <p className="mt-3 text-[19px] leading-[1.6] text-muted">
-                첫 안심방문 때 선생님이 바탕화면에 만들어 드립니다. 실수로 눌러도 5초 안에 취소할 수
-                있습니다.
+                첫 안심방문 때 선생님이 바탕화면에 만들어 드립니다. 실수로 눌러도 5초 안에
+                취소됩니다.
               </p>
             </ElderCard>
 

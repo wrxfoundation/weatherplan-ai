@@ -34,8 +34,8 @@ export default function MyPage() {
         <Card className="p-[18px]">
           <div className="text-[17px] font-black text-navy">케어 리포트</div>
           <p className="mt-1.5 text-[13px] leading-[1.7] text-muted">
-            동행이 완료되면 컨시어지가 검수한 리포트가 도착합니다. 월간 리포트는 방문 관찰과
-            워치 데이터를 함께 정리해 매월 첫 주에 전달됩니다.
+            동행이 끝나면 컨시어지가 검수한 리포트가 옵니다. 월간 리포트는 방문 관찰과 워치
+            데이터를 함께 정리해 매월 첫 주에 전달됩니다.
           </p>
           <button
             onClick={() => {
@@ -87,8 +87,8 @@ export default function MyPage() {
             </div>
           )}
           <p className="mt-3 border-t border-navy/[.07] pt-2.5 text-[11px] leading-[1.6] text-muted">
-            컨시어지가 공유로 설정한 리포트만 표시됩니다. 판단·진단이 아니라 관찰 사실과 직접
-            발언만 기록됩니다 (의료법 17조).
+            공유로 설정한 리포트만 표시됩니다. 판단·진단이 아니라 관찰 사실과 직접 발언만
+            기록됩니다 (의료법 17조).
           </p>
         </Card>
 
@@ -110,8 +110,8 @@ export default function MyPage() {
             ))}
           </div>
           <p className="mt-2.5 text-[12px] leading-[1.7] text-muted">
-            {honor} 화면의 &lsquo;지금 우리 동네&rsquo;에서 설정한 요소가 먼저 보입니다. 병력에
-            맞춰 보호자·컨시어지·{honor}이 직접 설정합니다 — 건강정보로 자동 추천하지 않습니다.
+            여기서 고른 요소가 {honor} 화면 &lsquo;지금 우리 동네&rsquo;에 먼저 보입니다. 병력에
+            맞춰 보호자·컨시어지·본인이 직접 설정하며, 건강정보로 자동 추천하지 않습니다.
           </p>
           {isPrimary ? (
             <GhostButton className="mt-3" onClick={() => setSettingOpen(true)}>
@@ -162,8 +162,8 @@ export default function MyPage() {
                 {invited ? `✓ 초대 링크 생성됨 — ${INVITE.link}` : "부 보호자 초대 링크 만들기"}
               </button>
               <p className="mt-2 text-[11px] leading-[1.6] text-muted">
-                {INVITE.rule}. 참여자는 이름·관계·연락처만 입력하면 됩니다 — 결제수단은 필요
-                없습니다. 구성원 제거는 주 보호자만 할 수 있습니다.
+                {INVITE.rule}. 참여자는 이름·관계·연락처만 입력하고 결제수단은 필요 없습니다.
+                구성원 제거는 주 보호자만 가능합니다.
               </p>
             </>
           ) : (

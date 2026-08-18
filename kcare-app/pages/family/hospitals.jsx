@@ -77,8 +77,8 @@ export default function HospitalsPage() {
         <Card className="p-[18px]">
           <div className="text-[17px] font-black text-navy">다니시던 병원 등록하기</div>
           <p className="mt-1 text-[13px] leading-[1.7] text-muted">
-            오래 다니신 병원이 있다면 등록해 주세요. 제휴 병원이 아니어도 동행은 갑니다 — 등록해
-            두시면 진료 이력과 다음 예약을 같은 자리에서 관리합니다.
+            오래 다니신 병원도 등록해 주세요. 제휴 병원이 아니어도 동행은 가고, 진료 이력과
+            다음 예약을 같은 자리에서 관리합니다.
           </p>
           {state.myHospitals.length > 0 && (
             <div className="mt-3 space-y-2">
@@ -178,7 +178,7 @@ export default function HospitalsPage() {
         <Card className="p-4">
           <SectionLabel>안내</SectionLabel>
           <p className="mt-2 text-[12px] leading-[1.7] text-muted">
-            목록에 없는 병원도 동행은 가능합니다. 제휴 병원은 진료 과목별로 계속 추가됩니다.
+            목록에 없는 병원도 동행은 가능하며, 제휴 병원은 진료 과목별로 계속 추가됩니다.
           </p>
         </Card>
       </FamilyLayout>

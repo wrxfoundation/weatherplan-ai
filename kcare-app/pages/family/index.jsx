@@ -708,7 +708,7 @@ function NpsCard({ onEvent, onDetractor, onReview, reviews = [] }) {
     <Card className="p-[18px]">
       <SectionLabel>오늘 동행은 어떠셨나요?</SectionLabel>
       <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">
-        13:50 서울아산 동행이 끝났습니다. 가족의 점수가 케어 품질 평가와 개선의 기준이 됩니다.
+        13:50 서울아산 동행이 끝났습니다. 남겨 주신 점수가 케어 품질 평가 기준이 됩니다.
       </p>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {Array.from({ length: 11 }, (_, i) => (

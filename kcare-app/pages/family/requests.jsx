@@ -44,8 +44,8 @@ export default function RequestsPage() {
       </Head>
       <FamilyLayout title="해주세요">
         <p className="px-1 text-[13px] leading-[1.7] text-muted">
-          채팅이 아니라 처리 상태가 남는 업무형 요청입니다. 모든 요청은 사진·금액·완료증빙과
-          함께 기록됩니다.{limitLabel && ` 결제권한: ${limitLabel}.`}
+          채팅이 아니라 처리 상태가 남는 업무형 요청입니다. 사진·금액·완료증빙이 함께
+          기록됩니다.{limitLabel && ` 결제권한: ${limitLabel}.`}
         </p>
 
         {/* 서비스 메뉴 — 실무자 피드백 (2026-08-09): no1~6 활성 · no7~11 예고 · no12 응급
@@ -81,7 +81,7 @@ export default function RequestsPage() {
             <Collapse
               title="해주세요 PLUS — 전문업체 연결"
               count={`${SERVICE_PLUS.length}가지`}
-              note="저희가 직접 못 하는 일은 전문업체로 연결하고 진행 상황을 보고합니다. 공사·수리의 책임은 시공 업체에 있습니다."
+              note="직접 못 하는 일은 전문업체로 연결하고 진행 상황을 보고합니다. 공사·수리의 책임은 시공 업체에 있습니다."
               tone="gold"
             >
               <div className="space-y-2">

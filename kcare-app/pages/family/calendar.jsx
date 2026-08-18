@@ -278,8 +278,9 @@ export default function CalendarPage() {
             ))}
           </div>
           <p className="mt-3 border-t border-navy/10 pt-2.5 text-[12px] leading-[1.7] text-muted">
-            컨시어지가 병원에서 다음 예약을 등록하면 이 캘린더에 즉시 공유됩니다. {honor}
-            화면에는 같은 일정이 큰 글씨로 표시됩니다.
+            {/* {honor} 뒤에서 줄을 바꾸면 JSX 가 공백을 삼켜 "김순자 님화면"으로 붙는다 */}
+            컨시어지가 병원에서 다음 예약을 등록하면 즉시 공유됩니다. {honor} 화면에는 같은
+            일정이 큰 글씨로 표시됩니다.
           </p>
         </Card>
 

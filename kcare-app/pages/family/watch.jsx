@@ -95,8 +95,8 @@ export default function WatchPage() {
             ))}
           </ol>
           <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-            단독 충격은 알림하지 않습니다 — 충격 + 무움직임 복합 신호만 알립니다 (오탐 관리) ·
-            워치 6시간 무수집 시에도 가족에게 알립니다
+            단독 충격은 알리지 않고 충격 + 무움직임 복합 신호만 알립니다 (오탐 관리) · 워치
+            6시간 무수집 시에도 가족에게 알립니다
           </p>
         </Card>
       </FamilyLayout>
