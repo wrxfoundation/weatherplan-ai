@@ -1714,15 +1714,24 @@ function VoiceRecorder({ to, onPick, onSend, sent }) {
   );
 }
 
-// 즉시 방문 요청 — 화면 안 SOS 버튼을 대신하는 원형 버튼 (2026-08-12 시트 전체 요청 4번).
+// 즉시 방문 요청 — 화면 안 SOS 버튼을 대신한다 (2026-08-12 시트 전체 요청 4번).
 // SOS 는 "지금 위험하다"이고 이것은 "지금 와 주셨으면 한다"다. 둘을 색으로 가른다 —
 // 빨강은 SOS 전용이므로 이 버튼은 네이비다.
+//
+// 원형이었으나 라운드 사각으로 바꿨다. 원 안에서 글자가 쓸 수 있는 가로폭은 지름보다
+// 훨씬 좁아서 "와 주세요"가 테두리를 넘었다. 글씨를 줄이는 선택지도 있었지만 어르신
+// 화면의 본문이 19~20px 이라 여기만 작게 하면 제일 중요한 버튼이 제일 안 읽힌다.
+//
+// 폭 112px 는 임의값이 아니다. 375px 화면에서 헤더 행이 343px 이고 날짜를 한 줄로 두려면
+// 217px 이 필요하다 (343 − 14 gap − 217 = 112). 더 넓히면 날짜가 두 줄이 되고 헤더가
+// 23px 자라서, 작은 화면에서 카드에 남는 자리를 그만큼 잡아먹는다.
+// 안쪽 96px 에 글자 81px — 실측값이다. 문구를 바꾸면 다시 재야 한다.
 function VisitNowButton({ done, onAsk }) {
   return (
     <button
       onClick={() => !done && onAsk()}
       aria-label={done ? "즉시 방문을 요청했습니다" : "지금 와 주세요 — 즉시 방문 요청"}
-      className="btn-press flex h-[104px] w-[104px] shrink-0 select-none flex-col items-center justify-center gap-0.5 rounded-full text-center"
+      className="btn-press flex h-[98px] w-[112px] shrink-0 select-none flex-col items-center justify-center gap-1 rounded-[22px] px-2 text-center"
       style={
         done
           ? {
@@ -1743,7 +1752,9 @@ function VisitNowButton({ done, onAsk }) {
       <span aria-hidden style={{ color: done ? "#1E7A5A" : "#C9A46B" }}>
         <Icon name={done ? "clock" : "door"} size={26} strokeWidth={2} />
       </span>
-      <span className="text-[19px] font-black leading-[1.2]">
+      {/* whitespace-nowrap — 폭이 모자라면 줄을 더 쪼개지 말고 넘치게 두어
+          시연 전에 눈에 띄게 한다. 조용히 세 줄이 되면 못 보고 지나친다. */}
+      <span className="whitespace-nowrap text-[19px] font-black leading-[1.25] tracking-[-.02em]">
         {done ? (
           "요청됨"
         ) : (
