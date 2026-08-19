@@ -1,11 +1,10 @@
-# Korea Rising — verified K-pop snapshot (2026-08-18)
+# Korea Rising — verified K-pop snapshot (2026-08-19)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **NMIXX** — 🕷️🕸️ #NMIXX #엔믹스 #배이 #BAE
-- **aespa** — See you in London! | WINTER at The Championships, Wimbledon 2026 | Wintering Vlog
-- **BTS** — BTS WORLD TOUR ‘ARIRANG’ IN BUSAN Sketch
+- **Mamamoo** — 마마무(MAMAMOO) 2026 WORLD TOUR [4WARD] Practice Behind
+- **BTS** — A Love Letter to New York | THE CITY ARIRANG NEW YORK
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
