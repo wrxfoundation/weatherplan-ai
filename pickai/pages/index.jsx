@@ -687,6 +687,12 @@ const FRAMEWORK_GUIDES = {
   "Squarespace": "Marketing > SEO 패널과 페이지별 SEO 탭을 사용하고, 코드 삽입은 Settings > Advanced > Code Injection을 쓴다.",
 };
 const DEFAULT_GUIDE = "정적/커스텀 사이트로 보인다 — HTML 템플릿의 <head>와 서버 설정(nginx 등)을 직접 수정하면 된다. 아래 수정안 코드를 해당 템플릿 위치에 그대로 적용하라.";
+/* 프레임워크 시그니처는 못 잡았지만 빈 SPA 셸인 경우 —
+   "HTML 템플릿을 직접 고쳐라"는 안내가 오히려 틀린 지시가 된다. */
+const SPA_GUIDE = "특정 프레임워크 시그니처는 잡히지 않았으나 raw HTML이 빈 셸이라 클라이언트에서 그리는 SPA(React/Vue 등)로 보인다. "
+  + "index.html을 직접 고치는 것으로는 본문 문제가 해결되지 않는다. 빌드 도구에 맞는 SSR·프리렌더(예: Vite면 vite-plugin-ssr·prerender, "
+  + "CRA면 react-snap, Vue면 Nuxt 전환)를 적용해 핵심 본문이 응답 HTML에 담기게 하라. "
+  + "메타·canonical·JSON-LD는 index.html의 <head>에 정적으로 넣어도 즉시 효과가 있다.";
 
 /* 역량 프로필 자동 해석 — 레이더 값 기반 결정론 코멘트 */
 const AXIS_ADVICE = {
@@ -1107,6 +1113,10 @@ function buildAiDirective(result, deepResult, comparison) {
   r.checks.forEach((c) => { byId[c.id] = c; });
   const issues = r.issues.map((id) => byId[id]).filter(Boolean);
   const passes = r.checks.filter((c) => c.status === "pass");
+  /* 빈 셸 안내에 쓸 실측 단어 수 — 리포트에 이미 담겨 있는 값을 그대로 인용한다 */
+  const rawWords = byId["js-render-gap"]?.details?.find((d) => d.k === "raw 단어 수")?.v ?? "0";
+  /* JSON-LD 삽입을 지시하는 항목 수 — 여러 개면 합치라고 안내한다 */
+  const jsonldCount = issues.filter((c) => c.fix?.code?.includes("application/ld+json")).length;
 
   const lines = [];
   lines.push(`# AI 실행 명령서 — ${t.host} AI 검색 최적화 (SEO·AEO·GEO·확산)`);
@@ -1126,10 +1136,42 @@ function buildAiDirective(result, deepResult, comparison) {
   lines.push(`- 원칙 3: 예시 코드의 자리표시자(브랜드명·URL 등)는 실제 값으로 치환한다`);
   lines.push(`- 원칙 4: 작업 완료 후 항목별 변경 내역을 표로 보고한다`);
   lines.push("");
-  lines.push(`## 사이트 환경${t.framework ? ` — ${t.framework} 감지됨` : ""}`);
-  lines.push(FRAMEWORK_GUIDES[t.framework] || DEFAULT_GUIDE);
+  const envLabel = t.framework ? ` — ${t.framework} 감지됨`
+    : r.contentBlind ? " — 클라이언트 렌더링 SPA로 보임" : "";
+  lines.push(`## 사이트 환경${envLabel}`);
+  lines.push(FRAMEWORK_GUIDES[t.framework] || (r.contentBlind ? SPA_GUIDE : DEFAULT_GUIDE));
   lines.push("");
+
+  /* 빈 셸이면 콘텐츠 항목 대부분이 "사이트에 없다"가 아니라 "크롤러 눈에 안 보인다"다.
+     이걸 먼저 말하지 않으면 명령서를 받은 쪽이 빈 셸에 내용을 채우려 든다. */
+  if (r.contentBlind) {
+    lines.push(`## ⚠ 선행 조치 — 이것부터 처리할 것`);
+    lines.push("");
+    lines.push(`이 사이트의 raw HTML(자바스크립트 실행 전 원본)에는 본문이 **${rawWords}단어**밖에 없다.`);
+    lines.push(`화면에는 내용이 보이더라도 자바스크립트를 실행하지 않는 크롤러·AI 봇에게는 사실상 빈 페이지다.`);
+    lines.push("");
+    lines.push(`그래서 아래 "수정 작업" 중 헤딩·본문·통계·이미지·내부 링크처럼 **콘텐츠를 보는 항목들은`);
+    lines.push(`콘텐츠가 없어서가 아니라 크롤러에게 안 보여서 실패로 잡힌 것**일 수 있다.`);
+    lines.push("");
+    lines.push(`**순서를 지켜라:**`);
+    lines.push(`1. 먼저 SSR(서버 렌더링) 또는 프리렌더를 적용해 핵심 본문이 raw HTML에 담기게 한다.`);
+    lines.push(`2. 그 상태로 Pick AI 성적표에서 **재진단**한다.`);
+    lines.push(`3. 재진단 결과에 여전히 남아 있는 콘텐츠 항목만 손댄다.`);
+    lines.push("");
+    lines.push(`1번을 건너뛰고 빈 셸에 헤딩·문단을 추가하는 방식으로 대응하지 마라 —`);
+    lines.push(`실제 페이지와 어긋난 중복 마크업이 생기고 문제는 그대로 남는다.`);
+    lines.push("");
+    lines.push(`반면 <head> 안에서 끝나는 항목(canonical·메타·JSON-LD·검증 태그·favicon·hreflang)은`);
+    lines.push(`렌더링 방식과 무관하므로 지금 바로 처리해도 된다.`);
+    lines.push("");
+  }
+
   lines.push(`## 수정 작업 (우선순위 순 · ${issues.length}건)`);
+  if (jsonldCount > 1) {
+    lines.push("");
+    lines.push(`> JSON-LD 삽입을 지시하는 항목이 ${jsonldCount}개 있다. 블록을 여러 개로 나누지 말고`);
+    lines.push(`> **하나의 \`<script type="application/ld+json">\`에 @graph로 합치거나**, 타입별로 정리해 중복 선언이 생기지 않게 하라.`);
+  }
 
   issues.forEach((c, i) => {
     const st = c.status === "fail" ? "실패" : "주의";
@@ -2219,6 +2261,23 @@ export default function Home() {
                             {" "}— 콘텐츠 관련 항목이 전부 실패로 표시됩니다. 우선순위 1번(HTTP 상태 코드)의
                             수정안을 사이트에 적용한 뒤 재진단하세요.
                             {result.target.redirectLoop ? " 참고로 www 유무 등 주소 표기에 따라 결과가 다를 수 있습니다." : ""}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {siteReachable && report.contentBlind && (
+                      <div className="mt-3 flex justify-center lg:justify-start">
+                        <div style={{
+                          background: "rgba(255,176,32,0.12)", border: "1px solid rgba(255,176,32,0.4)",
+                          borderRadius: R.lg, padding: "9px 16px",
+                          maxWidth: 560, width: "fit-content", textAlign: "left",
+                        }}>
+                          <p style={{ color: T.charcoal, fontSize: 12.5, lineHeight: 1.65 }}>
+                            <strong style={{ fontWeight: 600 }}>자바스크립트 실행 전 원본에 본문이 거의 없습니다</strong>
+                            {" "}— 화면에는 내용이 보여도 JS를 실행하지 않는 AI 봇에게는 빈 페이지입니다.
+                            아래 콘텐츠 관련 항목들은 <strong style={{ fontWeight: 600 }}>내용이 없어서가 아니라
+                            크롤러에게 안 보여서</strong> 실패로 잡힌 것일 수 있습니다.
+                            {" "}<strong style={{ fontWeight: 600 }}>SSR·프리렌더를 먼저 적용한 뒤 재진단</strong>하세요.
                           </p>
                         </div>
                       </div>

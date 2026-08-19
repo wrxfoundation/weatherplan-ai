@@ -1156,7 +1156,15 @@ export function runScorecard(a) {
         { k: "레벨 스킵", v: skip ? "있음" : "없음" },
       ],
       passRule: "H1이 있고 레벨 스킵이 없을 때 통과",
-      fix: null,
+      /* SEO의 "헤딩 구조"와 같은 원인을 보지만, 조치가 비어 있으면
+         명령서를 받은 쪽이 이 항목만 손댈 방법이 없어 안내를 붙인다. */
+      fix: hasH1 && !skip ? null : {
+        title: "헤딩 위계 정리 (SEO '헤딩 구조'와 함께 처리)",
+        action: "정리",
+        note: "H1을 하나 두고 레벨을 건너뛰지 않게 정리하면 이 항목도 함께 해소됩니다. "
+          + "AEO 관점에서는 각 H2가 '하나의 질문 = 하나의 답변 블록'이 되도록 끊는 것이 핵심입니다.",
+        code: `<h1>페이지 핵심 주제</h1>\n  <h2>질문형 소제목 1</h2>\n  <p>바로 이어지는 직접 답변.</p>\n  <h2>질문형 소제목 2</h2>`,
+      },
     });
   }
 
@@ -1179,12 +1187,18 @@ export function runScorecard(a) {
         { k: "본문 단어 수", v: String(p.wordCount || 0) },
       ],
       passRule: "평균 문장 길이 25단어 이하일 때 통과",
-      fix: avg > 25 && enough ? {
+      fix: avg <= 25 && enough ? null : !enough ? {
+        title: "판정할 본문부터 확보",
+        action: "추가",
+        note: "본문이 너무 짧아 가독성을 잴 수 없습니다. 문장을 고치기 전에 raw HTML에 실제 본문이 담기게 하는 것이 먼저입니다 "
+          + "(JS로만 그려지는 페이지라면 'JS 렌더링 콘텐츠 갭' 항목을 먼저 처리하세요).",
+        code: null,
+      } : {
         title: "문장 분할",
         action: "재작성",
         note: "한 문장 = 한 주장. 접속사로 이어진 긴 문장을 마침표로 끊으세요.",
         code: null,
-      } : null,
+      },
     });
   }
 
@@ -1792,9 +1806,15 @@ export function runScorecard(a) {
     )
     .map((c) => c.id);
 
+  /* raw HTML에 본문이 거의 없으면 콘텐츠 계열 체크는 "사이트에 없다"가 아니라
+     "크롤러 눈에 안 보인다"를 재고 있는 것이다. 점수는 그대로 두되(AI 봇이 실제로
+     빈 페이지를 보는 것은 사실이므로) 근본 원인을 앞세울 수 있게 표시만 남긴다. */
+  const contentBlind = (p.wordCount || 0) < 60 && !!p.spaMarkers;
+
   return {
     engine: ENGINE_ID,
     pageType,
+    contentBlind,
     overall,
     grade: gradeOf(overall),
     areas,
