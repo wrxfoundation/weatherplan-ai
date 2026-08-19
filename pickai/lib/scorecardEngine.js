@@ -1493,10 +1493,13 @@ export function runScorecard(a) {
           ? `이미지 ${total - withAlt}개에 alt 텍스트가 없습니다 — AI가 이미지 내용을 이해하지 못합니다.`
           : status === "warn"
             ? `alt 커버리지 ${Math.round(ratio * 100)}% — 누락 이미지에 alt를 채우세요.`
-            : `이미지 ${total}개 · alt 커버리지 ${Math.round(ratio * 100)}%${p.hasVideo ? " · 영상 있음" : ""} — 양호합니다.`,
+            : total === 0
+              ? "영상이 있어 멀티모달 인용 기회는 있습니다 — 이미지를 더하면 폭이 넓어집니다."
+              : `이미지 ${total}개 · alt 커버리지 ${Math.round(ratio * 100)}%${p.hasVideo ? " · 영상 있음" : ""} — 양호합니다.`,
       details: [
         { k: "이미지", v: `${total}개` },
-        { k: "alt 보유", v: `${withAlt}개 (${total ? Math.round(ratio * 100) : 100}%)` },
+        /* 이미지가 0개면 커버리지 100%는 의미가 없다 — "0개 (100%)"로 보이면 오히려 오해를 준다 */
+        { k: "alt 보유", v: total > 0 ? `${withAlt}개 (${Math.round(ratio * 100)}%)` : "해당 없음 (이미지 없음)" },
         { k: "영상", v: p.hasVideo ? "있음" : "없음" },
       ],
       passRule: "alt 커버리지 70% 이상일 때 통과",
