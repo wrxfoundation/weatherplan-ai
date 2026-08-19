@@ -2673,7 +2673,8 @@ export default function Home() {
                       fontSize: 13, fontWeight: 500, padding: "7px 16px", borderRadius: R.full,
                       border: `1px solid ${showPassed ? T.brandTeal : T.hairline}`,
                     }}>
-                    통과 항목 {showPassed ? "숨기기" : "보기"}
+                    {/* 이 토글은 통과 항목과 비해당(판정 보류) 항목을 함께 여닫는다 */}
+                    통과·비해당 항목 {showPassed ? "숨기기" : "보기"}
                   </button>
                 </div>
               </Reveal>
@@ -2701,7 +2702,16 @@ export default function Home() {
                       <div key={a} className="flex flex-col gap-2.5">
                         <GroupHeader
                           title={AREA_META[a].label}
-                          counts={`표시 ${items.length}건 · 통과 ${all.filter((c) => c.status === "pass").length} · 주의 ${all.filter((c) => c.status === "warn").length} · 실패 ${all.filter((c) => c.status === "fail").length}`}
+                          /* 비해당(판정 보류)도 숫자에 넣는다 — 빠뜨리면 영역 합계가 실제 체크 수와 안 맞아
+                             "9개인데 8건"처럼 보인다 */
+                          counts={[
+                            `표시 ${items.length}건`,
+                            `통과 ${all.filter((c) => c.status === "pass").length}`,
+                            `주의 ${all.filter((c) => c.status === "warn").length}`,
+                            `실패 ${all.filter((c) => c.status === "fail").length}`,
+                            ...(all.some((c) => c.status === "na")
+                              ? [`비해당 ${all.filter((c) => c.status === "na").length}`] : []),
+                          ].join(" · ")}
                           collapsed={!!collapsedGroups[gKey]}
                           onToggle={() => setCollapsedGroups((p) => ({ ...p, [gKey]: !p[gKey] }))}
                         />
