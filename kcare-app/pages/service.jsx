@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Logo from "../components/Logo";
 import Link from "next/link";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { FAQ, FAQ_NOTE, LANDING, LANDING_AI_QA } from "../lib/faq";
 import { PRICING, BASE_BENEFITS, HOSPITAL_BENEFITS, fmtWon } from "../lib/config";
 import { WITHDRAWAL } from "../lib/lifecycle";
@@ -31,9 +31,19 @@ import BgVideo from "../components/BgVideo";
 // 안전진단 항목 수는 데이터에서 센다 — 숫자를 문구에 박아 두면 항목이 바뀔 때 갈린다
 const SAFETY_TOTAL = SAFETY_SECTIONS.reduce((n, x) => n + x.items.length, 0);
 
-function Section({ id, eyebrow, title, desc, children, tone = "paper" }) {
+// 상세 섹션은 접어 둔다 (2026-08-18). 펼쳐 두면 이 페이지가 21.8화면(18,416px)이라
+// 끝까지 내려가는 사람이 거의 없다. 화면당 글자는 314자로 오히려 옅어서, 문장을
+// 줄이는 것으로는 해결되지 않는 길이 문제였다.
+//
+// 접는 것은 본문뿐이다 — 제목과 한 줄 설명은 항상 보인다. 그래야 스크롤만 해도
+// 무엇을 하는 회사인지 다 읽히고, 궁금한 것만 열어 보게 된다. 내용은 하나도
+// 없어지지 않는다.
+function Section({ id, eyebrow, title, desc, children, tone = "paper", collapsible = false, defaultOpen = false }) {
   const navy = tone === "navy";
   const bg = navy ? "bg-navy text-white" : tone === "white" ? "bg-white" : "bg-paper";
+  const [open, setOpen] = useState(defaultOpen);
+  const bodyId = useId();
+  const shown = !collapsible || open;
   return (
     <section id={id} className={`${bg} ${navy ? "sec-navy " : ""}px-5 py-14 sm:py-20`}>
       <div className="mx-auto w-full max-w-[880px]">
@@ -52,7 +62,25 @@ function Section({ id, eyebrow, title, desc, children, tone = "paper" }) {
             {desc}
           </p>
         )}
-        <div className="mt-8">{children}</div>
+        {collapsible && (
+          <button
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls={bodyId}
+            className={`btn-press mt-5 inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-[15px] font-bold ${
+              navy ? "border-white/30 text-white" : "border-navy/20 text-navy"
+            }`}
+          >
+            {open ? "접기" : "자세히 보기"}
+            <span className={`transition-transform ${open ? "rotate-180" : ""}`}>
+              <Icon name="chev" size={18} />
+            </span>
+          </button>
+        )}
+        {/* 접혔을 때 안쪽 버튼·링크로 탭이 들어가면 화면 밖으로 초점이 사라진다 */}
+        <div id={bodyId} className={collapsible ? `smooth-open mt-6 ${open ? "is-open" : ""}` : "mt-8"} {...(shown ? {} : { inert: "" })}>
+          {collapsible ? <div>{children}</div> : children}
+        </div>
       </div>
     </section>
   );
@@ -259,6 +287,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
                대한 답이 이 8단계다 (GPS 체크인 · 초인종 전 녹화). lib/workflow.js
                한 곳에서 온다 — 앱의 관제·컨시어지 화면과 같은 데이터다. ── */}
         <Section
+          collapsible
           eyebrow="방문 한 번의 과정"
           title="방문 한 번에 여덟 단계를 거칩니다"
           desc="일정을 잡는 것부터 업무를 마치는 것까지, 누가 무엇을 확인하는지 정해져 있습니다. 단계를 건너뛸 수 없게 만들어 두었습니다."
@@ -288,6 +317,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
 
         {/* ── 첫 방문 홈 안전진단 — 매월 21항목과 다른 것이라 따로 설명한다 ── */}
         <Section
+          collapsible
           tone="white"
           eyebrow="첫 방문"
           title={`집이 안전한지 ${SAFETY_TOTAL}가지로 먼저 봅니다`}
@@ -315,6 +345,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
 
         {/* ── 21항목 — "무엇을 보는가"의 실체 ── */}
         <Section
+          collapsible
           id="checkup"
           eyebrow="점검 항목"
           title={CHECKUP_HEAD.title}
@@ -386,6 +417,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
                요양병원에 부모님이 계신 분이 이 페이지에서 자기 얘기를 찾을 수 있어야
                한다. 기본제공품은 lib/config.js 의 두 배열에서 그대로 온다. ── */}
         <Section
+          collapsible
           tone="white"
           eyebrow="거주 형태"
           title="자택에 계셔도, 요양병원에 계셔도"
@@ -426,6 +458,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
 
         {/* ── 스토어 — 약국은 판매가 아니라 구매대행이다. 이 경계를 대외 페이지에도 쓴다 ── */}
         <Section
+          collapsible
           eyebrow="필요한 물건"
           title="사다 드리고, 영수증을 남깁니다"
           desc="장보기와 약 심부름이 가장 자주 오는 부탁입니다. 앱에서 고르시면 방문 때 함께 가져다 드립니다."
@@ -555,6 +588,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
 
         {/* ── 믿을 수 있는 K-CARE ── */}
         <Section
+          collapsible
           id="trust"
           tone="navy"
           eyebrow="믿을 수 있는 이유"
@@ -611,7 +645,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
 
         {/* ── 파트너사 — 확정된 곳이 없으면 통째로 안 그린다 (lib/trust.js) ── */}
         {PARTNERS.length > 0 && (
-          <Section tone="white" eyebrow="파트너" title="함께하는 곳" desc={PARTNERS_NOTE}>
+          <Section collapsible tone="white" eyebrow="파트너" title="함께하는 곳" desc={PARTNERS_NOTE}>
             <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
               {PARTNERS.map((p) => (
                 <li
@@ -628,6 +662,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
 
         {/* ── FAQ ── */}
         <Section
+          collapsible
           id="faq"
           tone="white"
           eyebrow="자주 묻는 질문"
