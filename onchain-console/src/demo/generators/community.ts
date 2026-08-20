@@ -1,5 +1,6 @@
 // WELLBIAN 커뮤니티 운영 — 「커뮤니티 채널 운영」·「컨텐츠 기획안」(2026-08-17, 박서우) 스핀오프.
-// 채널 3곳(X·텔레그램·링크트리), KPI 목표, 콘텐츠 3축·7형식, 외부 파급, 사칭 대응을 데이터화.
+// 실제 운영 채널은 X·텔레그램 2곳(링크트리는 링크 허브). KPI 목표, 콘텐츠 축, 외부 파급, 사칭 대응을 데이터화.
+// 실데이터 전환: server/collect.mjs → public/live/community.json (src/data/liveSource.ts)
 // 데모 기준일: 2026-09-08 (운영 3주차 · 1차 판매 D-7) — 화면에 명시 표기.
 
 export const DEMO_TODAY = '2026-09-08'
@@ -182,17 +183,18 @@ export function searchRanking(k: PeriodKey) {
 
 // ── 데이터 연동 현황 (정직 표기: 자동 수집 / 준비 필요 / 수동) ──
 export const integrations = [
-  { ch: '텔레그램', metric: '구독자 수', how: 'Bot API · getChatMemberCount', cycle: '5분', status: '자동' as const },
-  { ch: '텔레그램', metric: '가입·이탈 이벤트', how: 'Bot API · chat_member 업데이트', cycle: '실시간', status: '자동' as const },
-  { ch: '텔레그램', metric: '유입원 분해', how: '초대 링크별 createChatInviteLink', cycle: '실시간', status: '자동' as const },
+  { ch: '텔레그램', metric: '구독자 수', how: 'Bot API · getChatMemberCount — server/collect.mjs 구현 완료', cycle: '1시간', status: '자동' as const },
+  { ch: '텔레그램', metric: '가입·이탈 이벤트', how: 'Bot API · chat_member — server/webhook.mjs (공개 URL 필요)', cycle: '실시간', status: '자동' as const },
+  { ch: '텔레그램', metric: '유입원 분해', how: '초대 링크 12종 — server/bootstrap-invites.mjs 로 선생성 (사후 복원 불가)', cycle: '실시간', status: '자동' as const },
   { ch: '텔레그램', metric: '대화방 메시지·응대', how: 'Bot API · Webhook', cycle: '실시간', status: '자동' as const },
   { ch: '텔레그램', metric: '게시물 조회수', how: 'Bot API 미지원 → MTProto(TDLib) 필요', cycle: '일 1회', status: '준비 필요' as const },
   { ch: '텔레그램', metric: '채널 통계 그래프', how: 'stats.getBroadcastStats (구독자 조건)', cycle: '일 1회', status: '준비 필요' as const },
-  { ch: 'X', metric: '팔로워·노출·참여', how: '무료 티어 읽기 제한 → 유료 티어 검토', cycle: '일 1회', status: '수동' as const },
+  { ch: 'X', metric: '팔로워·노출·참여', how: '집계 읽기는 유료 티어, 개별 관계 조회는 엔터프라이즈 전용 → 수동 입력', cycle: '일 1회', status: '수동' as const },
   { ch: '링크트리', metric: '링크별 클릭', how: '공개 API 없음 → UTM + GA4 대체', cycle: '일 1회', status: '자동' as const },
   { ch: '검색어', metric: '검색량 트렌드', how: '네이버 데이터랩 API', cycle: '일 1회', status: '자동' as const },
   { ch: '검색어', metric: '유입 검색어·노출', how: '구글 서치콘솔 API', cycle: '일 1회', status: '자동' as const },
   { ch: '사전신청', metric: '신청·초대·순번', how: '신청 페이지 DB 직결', cycle: '실시간', status: '자동' as const },
+  { ch: 'X', metric: '유입 기여', how: 'x_profile 초대 링크 + UTM — 팔로워가 아니라 실제 유입으로 측정', cycle: '실시간', status: '자동' as const },
 ]
 
 // ── 콘텐츠 3축 계획 비중 (주차별) vs 실제 ──
@@ -441,14 +443,15 @@ export const preorderDecisions = [
 /** ④ 1차 · 2차 판매 비교와 두 판매를 잇는 장치 */
 export const salePhases = {
   rows: [
-    { label: '물량', first: '5,000대', second: '미정 (1차 실적 보고 결정)' },
-    { label: '주 대상', first: '사전신청자 + 당일 유입', second: '1차 미구매 대기자 + 신규' },
+    { label: '물량', first: '5,000대 — 상위 100대(600 RLUSD) + 일반 4,900대(400 RLUSD)', second: '10,000대 (10/3 리플 서울 행사 당일 개시)' },
+    { label: '주 대상', first: '사전신청자 + 당일 유입', second: '1차 미구매 대기자 + 신규 + 행사 현장' },
     { label: '대기 수요', first: '없음 (처음)', second: `약 ${salePlan.waitlist.toLocaleString('ko-KR')}명 (신청 10,000 − 오전 결제 ${salePlan.morningSold.toLocaleString('ko-KR')})` },
     { label: '판매 방식', first: '그룹 순차 개방 + 오후 일반 공개', second: '1차 대기자 우선 → 일반 공개' },
     { label: '가장 큰 과제', first: '완판', second: '1차 구매자가 아직 못 받은 상태에서의 신뢰 관리' },
     { label: '콘텐츠 축', first: '측정 이야기 → 판매 안내로 이동', second: '제작 진행 상황 + 1차 완판 실적' },
-    { label: '강점', first: '희소성 · 첫 물량 · 시리얼 앞번호', second: '1차 완판 사실 자체가 근거 · 대기 수요 확보' },
-    { label: '위험', first: '전환율 미달로 미완판', second: '"나는 아직 못 받았는데 또 파느냐"' },
+    { label: '강점', first: '희소성 · 첫 물량 · 제네시스 번호(#0001~#0100)', second: '1차 완판 사실 자체가 근거 · 대기 수요 확보 · 행사 노출' },
+    { label: '결제', first: 'RLUSD 단독 (원화 없음) · 트러스트라인 선행 필요', second: '동일' },
+    { label: '위험', first: '전환율 미달로 미완판 · 트러스트라인 미설정 이탈', second: '"나는 아직 못 받았는데 또 파느냐"' },
   ],
   bridges: [
     { name: '자동 대기 전환', detail: '1차 미구매 신청자는 재신청 없이 2차 우선 대상. 완판 공지에 함께 안내', state: '개발 완료' as const },

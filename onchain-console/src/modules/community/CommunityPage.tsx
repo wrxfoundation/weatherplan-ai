@@ -7,6 +7,7 @@ import { MultiLineChart, Donut } from '@/components/charts'
 import { Pill, PillTone } from '@/components/Pill'
 import { Icon } from '@/components/Icon'
 import { PeriodBar, DeltaText } from './PeriodBar'
+import { LiveStatus } from './LiveStatus'
 import {
   DEMO_TODAY, PeriodKey, agg, seriesWindow, daily, totals, kpiTargets, at2WeeksBefore,
   telegramSources, telegramOps, funnel, searchRanking, integrations, opsAlerts,
@@ -56,7 +57,7 @@ export function CommunityPage() {
     <>
       <PageHeader
         title={<span className="inline-flex flex-wrap items-center gap-2">WELLBIAN 커뮤니티 운영 <Pill tone="demo">데모 기준일 {DEMO_TODAY}</Pill></span>}
-        subtitle="X · 텔레그램 · 링크트리 3개 채널과 사전신청 현황을 한 화면에서 관리합니다. (운영 3주차 · 1차 판매 D-7)"
+        subtitle="실제 운영 채널은 X · 텔레그램 2곳이고, 링크트리는 링크 허브입니다. 채널 현황과 사전신청을 한 화면에서 관리합니다. (운영 3주차 · 1차 판매 D-7)"
         meta={<UpdatedMeta />}
         actions={
           <>
@@ -71,6 +72,8 @@ export function CommunityPage() {
 
       <PeriodBar value={period} onChange={setPeriod}
         right={<span className="num text-tiny font-normal text-mute">채널 개설 08-19 · 사전신청 개시 08-26 · 1차 판매 09-15</span>} />
+
+      <LiveStatus />
 
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-3 2xl:grid-cols-6">
         {kpis.map(k => (
