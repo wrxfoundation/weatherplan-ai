@@ -142,18 +142,16 @@
 
   /* ---------- finder ---------- */
   .search-list { display: flex; flex-direction: column; gap: 8px; }
-  .search-list a {
+  .search-row {
     display: flex; justify-content: space-between; align-items: center; gap: 10px;
-    padding: 9px 12px;
+    padding: 8px 12px;
     border: 1px solid var(--line);
     border-radius: 8px;
-    color: var(--text);
-    text-decoration: none;
     background: var(--panel-2);
   }
-  .search-list a:hover { border-color: var(--accent); }
-  .search-list .q { font-size: 13px; font-weight: 500; }
-  .search-list .hint { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+  .search-row .q { font-size: 13px; font-weight: 500; }
+  .search-row .ops { display: flex; gap: 6px; flex-shrink: 0; }
+  .search-row .ops a { font-size: 11.5px; padding: 4px 9px; }
 
   /* ---------- roster ---------- */
   .roster { display: flex; flex-direction: column; gap: 6px; }
@@ -267,7 +265,7 @@
       <h2><span class="num">01</span>화제 트윗 파인더</h2>
       <p class="muted small" style="margin:0 0 10px">X 검색 연산자로 지금 붙을 만한 대형 트윗을 찾습니다. API·스크래핑 없이 약관 안전.</p>
       <div class="search-list" id="finder"></div>
-      <div class="footnote">min_faves = 최소 좋아요 수. 결과가 적으면 숫자를 낮추고, 스팸이 많으면 올리세요.</div>
+      <div class="footnote">「인기 · 7일」은 최근 7일 내 글만(since: 자동 적용), 「실시간」은 최신순입니다. min_faves = 최소 좋아요 수 — 결과가 적으면 낮추고, 스팸이 많으면 올리세요.</div>
     </section>
 
     <section class="card">
@@ -465,18 +463,29 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
     });
   }
-  function xSearch(q) { return "https://x.com/search?q=" + encodeURIComponent(q) + "&f=top"; }
+  function sinceStr(days) {
+    return new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
+  }
+  function xSearch(q, opts) {
+    opts = opts || {};
+    var query = opts.sinceDays ? q + " since:" + sinceStr(opts.sinceDays) : q;
+    return "https://x.com/search?q=" + encodeURIComponent(query) + "&f=" + (opts.live ? "live" : "top");
+  }
 
   /* ---------------- finder ---------------- */
   el("finder").innerHTML = FINDERS.map(function (f) {
-    return '<a href="' + xSearch(f.q) + '" target="_blank" rel="noopener">' +
-      '<span class="q">' + esc(f.label) + '</span><span class="hint">' + esc(f.hint) + '</span></a>';
+    return '<div class="search-row">' +
+      '<span class="q">' + esc(f.label) + ' <span style="color:var(--muted);font-size:11px">(' + esc(f.hint) + ')</span></span>' +
+      '<span class="ops">' +
+        '<a class="btn" target="_blank" rel="noopener" href="' + xSearch(f.q, { sinceDays: 7 }) + '">인기 · 7일</a>' +
+        '<a class="btn" target="_blank" rel="noopener" href="' + xSearch(f.q, { live: true }) + '">실시간</a>' +
+      '</span></div>';
   }).join("");
 
   /* ---------------- roster ---------------- */
   function rosterHotUrl() {
     var froms = roster.slice(0, 15).map(function (a) { return "from:" + a.h; }).join(" OR ");
-    return xSearch("(" + froms + ") min_faves:500");
+    return xSearch("(" + froms + ") min_faves:500", { sinceDays: 7 });
   }
 
   function renderCatFilter() {
@@ -495,7 +504,7 @@
         '<div class="handle">@' + esc(a.h) + '<span class="cat">' + esc(CATS[a.c] || a.c) + "</span></div>" +
         '<div class="ops">' +
           '<a class="btn" target="_blank" rel="noopener" href="https://x.com/' + encodeURIComponent(a.h) + '">프로필</a>' +
-          '<a class="btn" target="_blank" rel="noopener" href="' + xSearch("from:" + a.h + " min_faves:1000") + '">인기 트윗</a>' +
+          '<a class="btn" target="_blank" rel="noopener" href="' + xSearch("from:" + a.h + " min_faves:1000", { sinceDays: 30 }) + '">인기 트윗</a>' +
           '<button data-del="' + i + '" title="삭제">✕</button>' +
         "</div>" +
         '<div class="note">' + esc(a.n) + " — " + esc(a.note) + "</div>" +
