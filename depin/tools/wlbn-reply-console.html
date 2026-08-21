@@ -1,0 +1,660 @@
+<title>WLBN Reply Console</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #0A1120;
+    --panel: #101A30;
+    --panel-2: #0D1628;
+    --line: #22314F;
+    --text: #E8EEF8;
+    --muted: #8CA0C0;
+    --accent: #3D7BFF;
+    --accent-soft: rgba(61,123,255,.14);
+    --accent-glow: #6FA8FF;
+    --ok: #3FBF8A;
+    --warn: #E8A24A;
+    --warn-soft: rgba(232,162,74,.12);
+    --bad: #E05B4D;
+    --bad-soft: rgba(224,91,77,.12);
+    --chip: #16233E;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #F2F5FB;
+      --panel: #FFFFFF;
+      --panel-2: #E9EEF8;
+      --line: #D5DEF0;
+      --text: #14213B;
+      --muted: #5A6B8C;
+      --accent: #2458D8;
+      --accent-soft: rgba(36,88,216,.10);
+      --accent-glow: #2458D8;
+      --ok: #178A5C;
+      --warn: #B06A14;
+      --warn-soft: rgba(176,106,20,.10);
+      --bad: #C03A2E;
+      --bad-soft: rgba(192,58,46,.09);
+      --chip: #EDF1FA;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #F2F5FB;
+    --panel: #FFFFFF;
+    --panel-2: #E9EEF8;
+    --line: #D5DEF0;
+    --text: #14213B;
+    --muted: #5A6B8C;
+    --accent: #2458D8;
+    --accent-soft: rgba(36,88,216,.10);
+    --accent-glow: #2458D8;
+    --ok: #178A5C;
+    --warn: #B06A14;
+    --warn-soft: rgba(176,106,20,.10);
+    --bad: #C03A2E;
+    --bad-soft: rgba(192,58,46,.09);
+    --chip: #EDF1FA;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  header {
+    border-bottom: 1px solid var(--line);
+    padding: 20px 24px 18px;
+    background:
+      radial-gradient(ellipse 60% 120% at 85% -20%, var(--accent-soft), transparent 70%),
+      var(--panel-2);
+  }
+  .wordmark {
+    font-family: "Sora", "IBM Plex Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+  }
+  .wordmark em { font-style: normal; color: var(--accent-glow); }
+  .tagline { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  main {
+    display: grid;
+    grid-template-columns: minmax(300px, 5fr) minmax(380px, 7fr);
+    gap: 20px;
+    padding: 20px 24px 60px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  @media (max-width: 880px) { main { grid-template-columns: 1fr; } }
+  section.card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+  h2 {
+    font-family: "Sora", "IBM Plex Sans KR", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  h2 .num { color: var(--accent-glow); margin-right: 6px; }
+
+  /* ---------- buttons & chips ---------- */
+  button, .btn {
+    font-family: inherit;
+    font-size: 13px;
+    border: 1px solid var(--line);
+    background: var(--chip);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 7px 12px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  button:hover, .btn:hover { border-color: var(--accent); }
+  button:focus-visible, .btn:focus-visible, a:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-primary[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+  .chiprow { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-size: 12.5px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--chip);
+    border: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-glow); }
+
+  /* ---------- finder ---------- */
+  .search-list { display: flex; flex-direction: column; gap: 8px; }
+  .search-list a {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    background: var(--panel-2);
+  }
+  .search-list a:hover { border-color: var(--accent); }
+  .search-list .q { font-size: 13px; font-weight: 500; }
+  .search-list .hint { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+
+  /* ---------- roster ---------- */
+  .roster { display: flex; flex-direction: column; gap: 6px; }
+  .acct {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel-2);
+  }
+  .acct .handle { font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 500; }
+  .acct .handle .cat {
+    font-family: "IBM Plex Sans KR", sans-serif;
+    font-size: 10.5px; font-weight: 500;
+    color: var(--accent-glow);
+    background: var(--accent-soft);
+    padding: 1px 7px; border-radius: 999px;
+    margin-left: 7px; vertical-align: 1px;
+  }
+  .acct .note { grid-column: 1 / -1; color: var(--muted); font-size: 12px; line-height: 1.45; }
+  .acct .ops { display: flex; gap: 4px; align-items: start; }
+  .acct .ops a, .acct .ops button {
+    font-size: 11px; padding: 3px 8px; border-radius: 6px;
+  }
+  .addform { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .addform input, .addform select { grid-column: span 1; }
+  .addform input.wide, .addform button { grid-column: 1 / -1; }
+  input, select, textarea {
+    font-family: inherit; font-size: 13.5px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 8px 10px;
+    width: 100%;
+  }
+  ::placeholder { color: var(--muted); opacity: .75; }
+
+  /* ---------- composer ---------- */
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; letter-spacing: .02em; }
+  textarea#draft {
+    font-family: "IBM Plex Mono", "IBM Plex Sans KR", monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    min-height: 130px;
+    resize: vertical;
+  }
+  .counter { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 12px; color: var(--muted); }
+  .counter.over { color: var(--bad); font-weight: 600; }
+  .tmpl {
+    border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 8px;
+    background: var(--panel-2);
+    cursor: pointer;
+  }
+  .tmpl:hover { border-color: var(--accent); }
+  .tmpl .t-label { font-size: 12px; font-weight: 700; color: var(--accent-glow); margin-bottom: 3px; }
+  .tmpl .t-body { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted); line-height: 1.55; white-space: pre-wrap; }
+  .lint { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .lint-item {
+    display: flex; gap: 9px; align-items: baseline;
+    font-size: 12.5px;
+    border-left: 3px solid var(--warn);
+    background: var(--warn-soft);
+    padding: 7px 10px;
+    border-radius: 0 7px 7px 0;
+  }
+  .lint-item.bad { border-left-color: var(--bad); background: var(--bad-soft); }
+  .lint-item .tag { font-family: "IBM Plex Mono", monospace; font-size: 11px; white-space: nowrap; color: var(--warn); font-weight: 600; }
+  .lint-item.bad .tag { color: var(--bad); }
+  .lint-ok { font-size: 12.5px; color: var(--ok); padding: 4px 0; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; }
+  .toast { font-size: 12px; color: var(--ok); min-height: 18px; margin-top: 6px; }
+
+  /* ---------- rules ---------- */
+  details.rules { border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); }
+  details.rules summary {
+    cursor: pointer; padding: 10px 12px; font-size: 12.5px; font-weight: 600; color: var(--warn);
+    list-style: none;
+  }
+  details.rules summary::-webkit-details-marker { display: none; }
+  details.rules ol { margin: 0; padding: 0 16px 12px 32px; color: var(--muted); font-size: 12.5px; }
+  details.rules li { margin-bottom: 4px; }
+  .selfreply {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px; color: var(--muted);
+    background: var(--panel-2);
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    white-space: pre-wrap;
+    margin-top: 8px;
+  }
+  .footnote { color: var(--muted); font-size: 11.5px; margin-top: 14px; line-height: 1.5; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12px; }
+</style>
+
+<header>
+  <div class="wordmark">wlbn <em>reply console</em></div>
+  <div class="tagline">유력 계정 타깃 탐색 → 앵글 선택 → 규정 검사 → 답글창 프리필. 게시는 항상 사람이 합니다.</div>
+</header>
+
+<main>
+  <!-- ============ LEFT: finder + roster ============ -->
+  <div class="col">
+    <section class="card">
+      <h2><span class="num">01</span>화제 트윗 파인더</h2>
+      <p class="muted small" style="margin:0 0 10px">X 검색 연산자로 지금 붙을 만한 대형 트윗을 찾습니다. API·스크래핑 없이 약관 안전.</p>
+      <div class="search-list" id="finder"></div>
+      <div class="footnote">min_faves = 최소 좋아요 수. 결과가 적으면 숫자를 낮추고, 스팸이 많으면 올리세요.</div>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">02</span>타깃 로스터</h2>
+      <div class="chiprow" id="catFilter" style="margin-bottom:10px"></div>
+      <div class="roster" id="roster"></div>
+      <div class="addform">
+        <input id="addHandle" placeholder="핸들 (@ 제외)" aria-label="핸들">
+        <select id="addCat" aria-label="카테고리"></select>
+        <input id="addName" class="wide" placeholder="표시 이름" aria-label="표시 이름">
+        <input id="addNote" class="wide" placeholder="앵글 메모 (이 계정엔 어떤 각도로 붙는지)" aria-label="앵글 메모">
+        <button id="addBtn">로스터에 추가</button>
+      </div>
+      <div class="actions" style="margin-top:10px">
+        <a class="btn" id="rosterHot" target="_blank" rel="noopener">로스터 전체 인기 트윗 한 번에 보기</a>
+        <button id="rosterReset">기본값 복원</button>
+      </div>
+      <div class="footnote">팁: X에서 이 계정들로 리스트(예: wlbn-targets)를 만들어 X Pro 컬럼에 걸어두면 실시간 모니터링이 됩니다.</div>
+    </section>
+  </div>
+
+  <!-- ============ RIGHT: composer ============ -->
+  <div class="col">
+    <section class="card">
+      <h2><span class="num">03</span>리플라이 컴포저</h2>
+
+      <details class="rules">
+        <summary>운영 수칙 5 — 게시 전 확인</summary>
+        <ol>
+          <li>첫 댓글에 링크 금지. 반응이 붙으면 셀프 리플라이로 링크.</li>
+          <li>본문에 체인·파트너 이름 금지 (협의·공표 확정 전).</li>
+          <li>판매일·가격·수량 등 미확정 정보 공표 금지.</li>
+          <li>반박·조롱 금지 — 원 트윗 논지에 기여하는 관점만.</li>
+          <li>같은 문구 복붙 금지 (계정 제재 사유). 계정마다 변형.</li>
+        </ol>
+      </details>
+
+      <div class="field" style="margin-top:14px">
+        <label for="tweetUrl">대상 트윗 URL</label>
+        <input id="tweetUrl" placeholder="https://x.com/cz_binance/status/…">
+      </div>
+
+      <div class="field">
+        <label>계정 유형 → 앵글 템플릿</label>
+        <div class="chiprow" id="typeChips" style="margin-bottom:10px"></div>
+        <div id="tmplList"></div>
+      </div>
+
+      <div class="field">
+        <label>공인 팩트 삽입 (내러티브 문서 기준 — 이 수치만 사용)</label>
+        <div class="chiprow" id="factChips"></div>
+      </div>
+
+      <div class="field">
+        <label for="draft">초안 <span class="counter" id="counter">0 / 280</span></label>
+        <textarea id="draft" placeholder="템플릿을 클릭해 시작하거나 직접 작성…"></textarea>
+        <div class="lint" id="lint"></div>
+      </div>
+
+      <div class="actions">
+        <a class="btn btn-primary" id="openReply" target="_blank" rel="noopener" aria-disabled="true">답글창 열기 (X)</a>
+        <button id="copyDraft">본문 복사</button>
+        <button id="copySelf">셀프 리플라이 복사</button>
+        <button id="clearDraft">비우기</button>
+      </div>
+      <div class="toast" id="toast" role="status"></div>
+
+      <div class="selfreply" id="selfreplyBox"></div>
+      <div class="footnote">
+        「답글창 열기」는 X 웹 인텐트로 답글 작성창을 프리필합니다 — 자동 게시가 아니라 사람이 Post를 눌러야 올라갑니다.
+        초안·로스터는 이 브라우저에만 저장됩니다.
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------- data ---------------- */
+  var CATS = {
+    crypto: "크립토·RWA",
+    ai:     "AI·테크",
+    media:  "뉴스·바이럴",
+    xrp:    "XRP 생태계",
+    health: "헬스·환경",
+    depin:  "DePIN"
+  };
+
+  var SEED = [
+    { h: "cz_binance",      n: "CZ",               c: "crypto", note: "토큰화·FDI 논지에 실물 데이터 사례로 기여" },
+    { h: "VitalikButerin",  n: "Vitalik Buterin",  c: "crypto", note: "공공재·인프라 프레임. 기술적 정확성 필수" },
+    { h: "brian_armstrong", n: "Brian Armstrong",  c: "crypto", note: "온체인 경제 확장 프레임" },
+    { h: "saylor",          n: "Michael Saylor",   c: "crypto", note: "자산화 담론. BTC 맥시 톤 주의 — 체인 얘기 금지" },
+    { h: "WatcherGuru",     n: "Watcher.Guru",     c: "media",  note: "바이럴 속보. 짧은 훅(C형)이 잘 붙음" },
+    { h: "Cointelegraph",   n: "Cointelegraph",    c: "media",  note: "뉴스 인용에 관점 한 줄" },
+    { h: "MessariCrypto",   n: "Messari",          c: "media",  note: "리서치 톤. DePIN 리포트에 데이터로 반응" },
+    { h: "elonmusk",        n: "Elon Musk",        c: "ai",     note: "AI·로봇 담론에 upstream 데이터 앵글. 반박 금지" },
+    { h: "sama",            n: "Sam Altman",       c: "ai",     note: "AI 인프라·데이터셋 프레임" },
+    { h: "naval",           n: "Naval",            c: "ai",     note: "아포리즘 톤에 맞춰 한 문장으로만" },
+    { h: "bgarlinghouse",   n: "Brad Garlinghouse", c: "xrp",   note: "모니터링용. 파트너십 뉘앙스 절대 금지" },
+    { h: "Ripple",          n: "Ripple",           c: "xrp",    note: "공식 발표 모니터링. 반응은 관점 기여만" }
+  ];
+
+  var FINDERS = [
+    { label: "토큰화·RWA 대형 화제",  hint: "min_faves:2000", q: '(tokenization OR tokenize OR RWA) min_faves:2000 lang:en -filter:replies' },
+    { label: "DePIN 화제",            hint: "min_faves:500",  q: 'DePIN min_faves:500 lang:en -filter:replies' },
+    { label: "공기질·대기오염 화제",   hint: "min_faves:1000", q: '("air quality" OR "air pollution") min_faves:1000 lang:en -filter:replies' },
+    { label: "AI × 헬스 화제",        hint: "min_faves:2000", q: '(AI (health OR medical OR medicine)) min_faves:2000 lang:en -filter:replies' },
+    { label: "데이터 경제·데이터 자산", hint: "min_faves:1000", q: '("data economy" OR "own your data" OR "data asset") min_faves:1000 lang:en -filter:replies' }
+  ];
+
+  var TEMPLATES = {
+    crypto: [
+      { label: "A · FDI 논지 직결", body: 'The quieter half of "tokenize everything": records of the physical world. Outdoor air is measured hourly; indoor air has no record — yet enterprises already pay for that data. Personally owned sensors can write it, space by space. That\'s DePIN: FDI at household scale.' },
+      { label: "B · 발행자 호환성 논점", body: 'Fungibility across issuers matters even more for data. An uncertified sensor\'s reading isn\'t interchangeable with a certified one — standardized hardware is what makes physical-world data worth buying. The boring layer under "tokenize everything."' },
+      { label: "D · 가구 단위 FDI 위트", body: 'Countries tokenize equity to attract capital. Households can tokenize what they already produce every day: data. Indoor air has no public record, and enterprises already pay for it. The smallest unit of FDI is a sensor on a shelf.' }
+    ],
+    ai: [
+      { label: "업스트림 데이터셋", body: 'Medicine, however amazing, treats what already went wrong. The upstream data is still missing: people spend 90%+ of their time indoors, breathing 18 kg of air a day — and indoor air has no public record. Health AI will want that dataset. We\'re building it, space by space.' },
+      { label: "예방 프레임 (짧게)", body: 'The best medical care starts before the doctor: in the air people breathe 90% of their day. Indoor air is still unrecorded — the missing dataset of preventive health. Mapping it, space by space.' },
+      { label: "위트 훅 · Yet.", body: 'AI will still need one input no model can guess: what\'s in the room\'s air. We breathe 18 kg of it a day, indoors 90% of the time, and there\'s no record of it. Yet.' }
+    ],
+    media: [
+      { label: "짧은 훅 (만능 C형)", body: 'Everything includes the air you breathe. Indoor air has no public record — enterprises already pay for that data. We\'re mapping it, space by space.' },
+      { label: "질문형 (답글 유도)", body: 'Tokenized equity brings global buyers to companies. What brings global buyers to a household? The data it produces. Indoor air is unrecorded and already in demand — we\'re mapping it, space by space.' }
+    ],
+    xrp: [
+      { label: "체인 무언급 기여형", body: 'Real-world data is the quiet half of this story. Indoor air has no public record, yet enterprises already pay for that data. Personally owned sensors can write it, space by space — and the value flows back to the people who record it.' }
+    ],
+    health: [
+      { label: "현관에서 끊긴 데이터", body: 'Climate data ends at the front door. Outdoor air is measured every hour; indoor air — where people spend 90%+ of their time — has no record at all. The next environmental dataset is indoors, space by space.' }
+    ],
+    depin: [
+      { label: "수요 우선 DePIN", body: 'Most DePIN starts with supply and hopes demand shows up. Air data is the reverse: enterprises already pay for it, and the indoor half of the map is simply missing. Personally owned certified sensors fill that gap, space by space.' }
+    ]
+  };
+
+  var FACTS = [
+    "Outdoor air is measured hourly; indoor air has no public record.",
+    "People spend 90%+ of their time indoors.",
+    "We drink 1.2 kg of water a day — and breathe 18 kg of air.",
+    "Enterprises already pay for air data.",
+    "Mapped space by space.",
+    "Value shared with the people who record it."
+  ];
+
+  var SELF_REPLY = 'Building it now: personally owned air-quality nodes, indoor air mapped space by space, data sold to the enterprises that need it — value shared with the people who record it. → [링크]';
+
+  /* [regex, 심각도(bad|warn), 사유] */
+  var LINT = [
+    [/world'?s first|\bfirst[- ]ever\b|최초/i, "bad", "'최초' 주장 금지 — Ambient 선례 있음"],
+    [/guarante+e?d?|보장/i, "bad", "수익·성과 보장 표현 금지"],
+    [/\broi\b|payback|회수/i, "bad", "회수 기간 언급 금지 — 백서 수치는 원가 기준"],
+    [/passive income|monthly (income|earnings|rewards)|월 ?수익/i, "bad", "월 수익·패시브 인컴 표현 금지"],
+    [/\bmoon\b|\bpump\b|\b\d+x\b/i, "bad", "시세 조장 표현 금지"],
+    [/get in (early|now)|don'?t miss|before it'?s too late|선점|지금 사/i, "bad", "선점 이익 조장 금지"],
+    [/mining|miner|채굴/i, "bad", "'채굴기' 프레임 금지 — 보상은 자체 토큰"],
+    [/nationwide|(national|global|full) coverage|전국/i, "bad", "커버리지 약속 금지 — 백서: 토크노믹스에 독"],
+    [/massive|huge|explosive|엄청난/i, "warn", "데이터 매출 과장 주의 — 백서가 '가장 불확실' 명시"],
+    [/ripple|리플\b/i, "warn", "파트너 실명 — 협업 범위 확정(8/26) 전 언급 금지"],
+    [/d'?cent|디센트/i, "warn", "파트너 실명 — 협업 범위 확정(8/26) 전 언급 금지"],
+    [/kweather|케이웨더/i, "warn", "관계사 표기 — 대외 공표 범위(8/22)·주체 표기(8/29) 확정 전"],
+    [/xrpl?|\bbnb\b|ethereum|solana/i, "warn", "체인 이름 — 리플라이 본문에서는 빼는 게 안전 (진영 논쟁 방지)"],
+    [/sept(ember)?\.? ?15|9[\/\.]15/i, "warn", "판매일 미확정 (9/4 전 내부 확정 예정) — 공표 금지"],
+    [/oct(ober)?\.? ?3|10[\/\.]3/i, "warn", "2차 일정 — 대외 공표 가능 범위 확인 후 사용"],
+    [/고등어/, "warn", "정치적 소지 — '생선'으로 표기"],
+    [/https?:\/\/|www\./i, "warn", "첫 댓글에 링크 금지 — 반응이 붙으면 셀프 리플라이로"]
+  ];
+
+  /* ---------------- storage ---------------- */
+  function load(key, fallback) {
+    try {
+      var v = localStorage.getItem(key);
+      return v ? JSON.parse(v) : fallback;
+    } catch (e) { return fallback; }
+  }
+  function save(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { /* 저장 불가 환경 */ }
+  }
+
+  var roster = load("wlbn_roster_v1", null) || SEED.slice();
+  var activeCat = "all";
+  var activeType = "crypto";
+
+  /* ---------------- helpers ---------------- */
+  function el(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (ch) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
+    });
+  }
+  function xSearch(q) { return "https://x.com/search?q=" + encodeURIComponent(q) + "&f=top"; }
+
+  /* ---------------- finder ---------------- */
+  el("finder").innerHTML = FINDERS.map(function (f) {
+    return '<a href="' + xSearch(f.q) + '" target="_blank" rel="noopener">' +
+      '<span class="q">' + esc(f.label) + '</span><span class="hint">' + esc(f.hint) + '</span></a>';
+  }).join("");
+
+  /* ---------------- roster ---------------- */
+  function rosterHotUrl() {
+    var froms = roster.slice(0, 15).map(function (a) { return "from:" + a.h; }).join(" OR ");
+    return xSearch("(" + froms + ") min_faves:500");
+  }
+
+  function renderCatFilter() {
+    var keys = ["all"].concat(Object.keys(CATS));
+    el("catFilter").innerHTML = keys.map(function (k) {
+      var label = k === "all" ? "전체" : CATS[k];
+      return '<button class="chip' + (activeCat === k ? " on" : "") + '" data-cat="' + k + '">' + esc(label) + "</button>";
+    }).join("");
+  }
+
+  function renderRoster() {
+    var list = roster.filter(function (a) { return activeCat === "all" || a.c === activeCat; });
+    el("roster").innerHTML = list.length ? list.map(function (a) {
+      var i = roster.indexOf(a);
+      return '<div class="acct">' +
+        '<div class="handle">@' + esc(a.h) + '<span class="cat">' + esc(CATS[a.c] || a.c) + "</span></div>" +
+        '<div class="ops">' +
+          '<a class="btn" target="_blank" rel="noopener" href="https://x.com/' + encodeURIComponent(a.h) + '">프로필</a>' +
+          '<a class="btn" target="_blank" rel="noopener" href="' + xSearch("from:" + a.h + " min_faves:1000") + '">인기 트윗</a>' +
+          '<button data-del="' + i + '" title="삭제">✕</button>' +
+        "</div>" +
+        '<div class="note">' + esc(a.n) + " — " + esc(a.note) + "</div>" +
+      "</div>";
+    }).join("") : '<div class="muted small" style="padding:6px 2px">이 분류에 계정이 없습니다.</div>';
+    el("rosterHot").href = rosterHotUrl();
+  }
+
+  el("catFilter").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-cat]");
+    if (!b) return;
+    activeCat = b.getAttribute("data-cat");
+    renderCatFilter(); renderRoster();
+  });
+
+  el("roster").addEventListener("click", function (e) {
+    var d = e.target.closest("[data-del]");
+    if (!d) return;
+    roster.splice(Number(d.getAttribute("data-del")), 1);
+    save("wlbn_roster_v1", roster);
+    renderRoster();
+  });
+
+  var catSel = el("addCat");
+  catSel.innerHTML = Object.keys(CATS).map(function (k) {
+    return '<option value="' + k + '">' + esc(CATS[k]) + "</option>";
+  }).join("");
+
+  el("addBtn").addEventListener("click", function () {
+    var h = el("addHandle").value.trim().replace(/^@/, "");
+    if (!h) { el("addHandle").focus(); return; }
+    roster.unshift({
+      h: h,
+      n: el("addName").value.trim() || h,
+      c: catSel.value,
+      note: el("addNote").value.trim() || "앵글 메모 없음"
+    });
+    save("wlbn_roster_v1", roster);
+    el("addHandle").value = ""; el("addName").value = ""; el("addNote").value = "";
+    renderRoster();
+  });
+
+  el("rosterReset").addEventListener("click", function () {
+    roster = SEED.slice();
+    save("wlbn_roster_v1", roster);
+    renderCatFilter(); renderRoster();
+  });
+
+  /* ---------------- composer: templates ---------------- */
+  function renderTypeChips() {
+    el("typeChips").innerHTML = Object.keys(TEMPLATES).map(function (k) {
+      return '<button class="chip' + (activeType === k ? " on" : "") + '" data-type="' + k + '">' + esc(CATS[k] || k) + "</button>";
+    }).join("");
+  }
+  function renderTmpls() {
+    el("tmplList").innerHTML = TEMPLATES[activeType].map(function (t, i) {
+      return '<div class="tmpl" data-t="' + i + '" role="button" tabindex="0">' +
+        '<div class="t-label">' + esc(t.label) + "</div>" +
+        '<div class="t-body">' + esc(t.body) + "</div></div>";
+    }).join("");
+  }
+  el("typeChips").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-type]");
+    if (!b) return;
+    activeType = b.getAttribute("data-type");
+    renderTypeChips(); renderTmpls();
+  });
+  function useTmpl(node) {
+    var t = TEMPLATES[activeType][Number(node.getAttribute("data-t"))];
+    el("draft").value = t.body;
+    onDraft();
+    el("draft").focus();
+  }
+  el("tmplList").addEventListener("click", function (e) {
+    var n = e.target.closest("[data-t]");
+    if (n) useTmpl(n);
+  });
+  el("tmplList").addEventListener("keydown", function (e) {
+    var n = e.target.closest("[data-t]");
+    if (n && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); useTmpl(n); }
+  });
+
+  /* ---------------- composer: facts ---------------- */
+  el("factChips").innerHTML = FACTS.map(function (f, i) {
+    return '<button class="chip" data-f="' + i + '">' + esc(f) + "</button>";
+  }).join("");
+  el("factChips").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-f]");
+    if (!b) return;
+    var d = el("draft");
+    var add = FACTS[Number(b.getAttribute("data-f"))];
+    d.value = d.value ? d.value.replace(/\s*$/, "") + " " + add : add;
+    onDraft();
+    d.focus();
+  });
+
+  /* ---------------- composer: draft + lint ---------------- */
+  function statusId(url) {
+    var m = String(url).match(/status(?:es)?\/(\d+)/);
+    return m ? m[1] : null;
+  }
+
+  function onDraft() {
+    var text = el("draft").value;
+    save("wlbn_draft", text);
+
+    var len = text.length;
+    var c = el("counter");
+    c.textContent = len + " / 280";
+    c.classList.toggle("over", len > 280);
+
+    var hits = [];
+    LINT.forEach(function (rule) {
+      if (rule[0].test(text)) hits.push(rule);
+    });
+    el("lint").innerHTML = text.trim()
+      ? (hits.length
+          ? hits.map(function (r) {
+              return '<div class="lint-item ' + (r[1] === "bad" ? "bad" : "") + '">' +
+                '<span class="tag">' + (r[1] === "bad" ? "금지" : "주의") + "</span>" +
+                "<span>" + esc(r[2]) + "</span></div>";
+            }).join("")
+          : '<div class="lint-ok">✓ 금지 표현 검사 통과</div>')
+      : "";
+
+    updateIntent();
+  }
+
+  function updateIntent() {
+    var id = statusId(el("tweetUrl").value);
+    var text = el("draft").value.trim();
+    var a = el("openReply");
+    if (id && text) {
+      a.href = "https://x.com/intent/post?in_reply_to=" + id + "&text=" + encodeURIComponent(text);
+      a.setAttribute("aria-disabled", "false");
+    } else {
+      a.removeAttribute("href");
+      a.setAttribute("aria-disabled", "true");
+    }
+  }
+
+  el("draft").addEventListener("input", onDraft);
+  el("tweetUrl").addEventListener("input", updateIntent);
+
+  function toast(msg) {
+    el("toast").textContent = msg;
+    setTimeout(function () { el("toast").textContent = ""; }, 2500);
+  }
+  function copyText(t, doneMsg) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () { toast(doneMsg); }, function () { toast("복사 실패 — 직접 선택해 복사하세요"); });
+    } else { toast("복사 실패 — 직접 선택해 복사하세요"); }
+  }
+  el("copyDraft").addEventListener("click", function () { copyText(el("draft").value, "본문 복사됨"); });
+  el("copySelf").addEventListener("click", function () { copyText(SELF_REPLY, "셀프 리플라이 복사됨 — [링크] 자리를 채우세요"); });
+  el("clearDraft").addEventListener("click", function () { el("draft").value = ""; onDraft(); });
+
+  el("selfreplyBox").textContent = "셀프 리플라이(반응이 붙은 뒤에만): " + SELF_REPLY;
+
+  /* ---------------- init ---------------- */
+  renderCatFilter(); renderRoster(); renderTypeChips(); renderTmpls();
+  var savedDraft = load("wlbn_draft", "");
+  if (savedDraft && typeof savedDraft === "string") el("draft").value = savedDraft;
+  onDraft();
+})();
+</script>
