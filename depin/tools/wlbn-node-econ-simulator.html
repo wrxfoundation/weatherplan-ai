@@ -196,6 +196,11 @@ body:not(.simple) .simpleview{display:none}
 }
 .s-how b{color:var(--ink)}
 .s-note{font-size:12px; color:var(--faint); margin-top:14px}
+.s-verdict{
+  margin:-2px 0 16px; padding:10px 14px; font-size:13px; line-height:1.6; color:var(--ink);
+  border-left:3px solid var(--c4) !important;
+}
+.s-verdict .v-tag{font-weight:700; color:var(--c4); margin-right:6px}
 
 /* ---- glass layer (subtle) ---- */
 body{background:var(--bgfx); background-attachment:fixed}
@@ -203,7 +208,7 @@ header.top{
   background:var(--glass); border-bottom:1px solid var(--glass-brd);
   backdrop-filter:blur(14px) saturate(1.25); -webkit-backdrop-filter:blur(14px) saturate(1.25);
 }
-.card,.kpi,.s-how,.principles,.notice,.tbl-scroll{
+.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.s-verdict{
   background:var(--glass); border:1px solid var(--glass-brd); border-radius:10px;
   backdrop-filter:blur(12px) saturate(1.25); -webkit-backdrop-filter:blur(12px) saturate(1.25);
   box-shadow:inset 0 1px 0 var(--glass-hi), var(--shadow);
@@ -223,11 +228,11 @@ aside.panel{
 .ctl select,.ctl input[type=number]{border-radius:8px}
 th{background:var(--glass-panel)}
 @supports not (backdrop-filter: blur(1px)){
-  header.top,.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.qchip,.chip,.btn,.mode-btn{background:var(--surface)}
+  header.top,.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.qchip,.chip,.btn,.mode-btn,.s-verdict{background:var(--surface)}
   aside.panel{background:var(--panel)}
 }
 @media (prefers-reduced-transparency: reduce){
-  header.top,.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.qchip,.chip,.btn,.mode-btn{background:var(--surface); backdrop-filter:none; -webkit-backdrop-filter:none}
+  header.top,.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.qchip,.chip,.btn,.mode-btn,.s-verdict{background:var(--surface); backdrop-filter:none; -webkit-backdrop-filter:none}
   aside.panel{background:var(--panel); backdrop-filter:none; -webkit-backdrop-filter:none}
 }
 </style>
@@ -283,6 +288,8 @@ th{background:var(--glass-panel)}
     <div class="kpi"><div class="k-label">기업 수요 효과 — 월평균 보상</div><div class="k-val mono" id="s-month">–</div><div class="k-sub" id="s-month-w">–</div></div>
     <div class="kpi"><div class="k-label">기기값 대비 배수</div><div class="k-val mono" id="s-payback">–</div><div class="k-sub" id="s-payback-sub">–</div></div>
   </div>
+
+  <div class="s-verdict" id="s-verdict"></div>
 
   <div class="card">
     <h2>누적 보상 곡선</h2>
@@ -699,14 +706,29 @@ function renderSimple(){
   }
 
   const hit=rows.find(r=>r.cumR>=p.price);
-  {
-    const mult=tot/p.price;
-    const disp=(!hit&&+mult.toFixed(1)>=1)?mult.toFixed(2):(mult>=10?mult.toFixed(0):mult.toFixed(1));
-    $("s-payback").textContent=disp+"배";
-    $("s-payback-sub").textContent=hit
-      ?hit.t+"개월차에 1배(기기값 "+fmt0(p.price)+" R) 도달"
-      :"이 가정으로는 기간 내 1배(기기값) 미도달";
-  }
+  const mult=tot/p.price;
+  const disp=(!hit&&+mult.toFixed(1)>=1)?mult.toFixed(2):(mult>=10?mult.toFixed(0):mult.toFixed(1));
+  $("s-payback").textContent=disp+"배";
+  $("s-payback-sub").textContent=hit
+    ?hit.t+"개월차에 1배(기기값 "+fmt0(p.price)+" R) 도달"
+    :"이 가정으로는 기간 내 1배(기기값) 미도달";
+
+  /* one-line verdict on the final numbers */
+  const annual=capSum*12*p.fx/1e8;
+  const STGNAME={kr:"1단계(한국)",usjp:"2단계(한국+미·일)",glb:"3단계(전세계)",custom:"직접 설정 수요",none:"수요 없음"};
+  const sn=STGNAME[SIMPLE.demand]||"선택 수요";
+  let v;
+  if(capSum<=0)
+    v="수요 0의 기준선 — 운영 예산만으로는 "+SIMPLE.months+"개월에 "+disp+"배. 이 구조에서 보상의 엔진이 기업 수요라는 걸 보여주는 대조군입니다.";
+  else if(!hit)
+    v=sn+" 가정으로 "+SIMPLE.months+"개월에 기기값의 "+Math.round(mult*100)+"% — 아직 측정기 실사용 가치가 중심인 구간이고, 배수는 다음 확장 단계가 열어줍니다.";
+  else if(mult<2)
+    v=hit.t+"개월차에 기기값을 회복하고 "+SIMPLE.months+"개월 "+disp+"배 — 완만하지만 자생 구간에 들어선 그림입니다 (연 ~"+annual.toFixed(0)+"억 원 매출 이행 전제).";
+  else if(mult<4)
+    v=hit.t+"개월차 회복 후 "+SIMPLE.months+"개월 "+disp+"배 — 매력적인 구간이지만, 연 ~"+annual.toFixed(0)+"억 원 데이터 매출("+sn+")이 실제로 이행돼야 나오는 숫자입니다.";
+  else
+    v=SIMPLE.months+"개월 "+disp+"배 — 숫자가 큰 만큼 전제도 큽니다: "+sn+" 확장과 연 ~"+annual.toFixed(0)+"억 원 매출이 실현될 때의 상단 시나리오입니다.";
+  $("s-verdict").innerHTML='<span class="v-tag">해석</span>'+v;
 
   /* goal inversion */
   {
