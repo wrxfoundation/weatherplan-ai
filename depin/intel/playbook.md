@@ -16,6 +16,9 @@
 | 정치·재난·출처불명 스터디 | ❌ 패스, 소재만 자체 원글로 | "공화당 주 최악" 바이럴 |
 | 쉴링 (티커 나열+스왑 링크+긴급 훅) | ❌ 존재 자체가 배서 | @RWA_XRPL wSPCX (비상장사 토큰 = 결정적 경고등) |
 
+**원칙: 계정 등급 < 글 유형.** 최상급 관계 계정이라도 펌프 당일 홀더 정서 프레임 글이면 좋아요+북마크만 —
+하루 1회 슬롯은 그 계정의 검증·인프라 글에 쓴다. (사례: @mrcauliman 8/22 3연속 글 중 루머 점검 글에만 답글)
+
 ## 검증된 앵글 공식
 
 1. **1막→2막**: "금융이 1막, 실물 데이터가 2막" — RLUSD 뉴스 전반에 재사용 가능. 변주 필수(복붙 금지).
@@ -37,6 +40,7 @@
 - "The map ends at the front door."
 - "Consumer onboarding lives or dies on exactly that."
 - (커뮤니티발, 재인용 시 크레딧) "You can verify the transactions. You can't verify someone's imagination." — @mrcauliman
+- (미사용 후보 — 홀더 정서 글 대응용) "Markets are weather. Infrastructure is climate."
 
 ## 성과 로그 (게시 후 기입)
 
