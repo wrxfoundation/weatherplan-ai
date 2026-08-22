@@ -148,14 +148,95 @@ td:first-child{font-family:"IBM Plex Sans KR",sans-serif}
 .notice ul{margin:6px 0 0; padding-left:18px}
 .notice li{margin:2px 0}
 @media (prefers-reduced-motion: no-preference){
-  .chip,.btn{transition:background .15s,color .15s,border-color .15s}
+  .chip,.btn,.qchip,.mode-btn{transition:background .15s,color .15s,border-color .15s}
 }
+
+/* ---- mode bar & simple view ---- */
+.modebar{display:flex; gap:8px; max-width:1240px; margin:0 auto; padding:14px 22px 0}
+.mode-btn{
+  font:inherit; font-size:13px; font-weight:600; padding:7px 16px; cursor:pointer;
+  border:1px solid var(--line); background:var(--surface); color:var(--muted); border-radius:2px;
+}
+.mode-btn.on{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+body.simple .wrap{display:none}
+body:not(.simple) .simpleview{display:none}
+.simpleview{max-width:820px; margin:0 auto; padding:10px 22px 60px}
+.simpleview h1{font-size:21px; font-weight:700; margin:16px 0 4px; letter-spacing:-.01em}
+.simpleview .lead{font-size:13.5px; color:var(--muted); margin:0 0 20px}
+.qrow{margin-bottom:16px}
+.qrow .q-label{font-size:13px; font-weight:700; margin-bottom:7px}
+.qchips{display:flex; gap:8px; flex-wrap:wrap}
+.qchip{
+  font:inherit; font-size:14px; padding:9px 16px; cursor:pointer; border-radius:2px;
+  border:1px solid var(--line); background:var(--surface); color:var(--ink);
+}
+.qchip small{display:block; font-size:11px; color:var(--muted)}
+.qchip.on{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.qchip.on small{color:var(--accent-ink); opacity:.75}
+.s-how{
+  border:1px solid var(--line); border-radius:2px; background:var(--surface);
+  padding:12px 16px; font-size:12.5px; color:var(--muted); margin:16px 0;
+}
+.s-how b{color:var(--ink)}
+.s-note{font-size:12px; color:var(--faint); margin-top:14px}
 </style>
 
 <header class="top">
   <div class="wordmark">WLBN Node Econ Lab <small>노드 경제성 시뮬레이터 · v0</small></div>
   <div class="badge-internal">Internal — 보상 설계 검증용 · 대외 공유 금지</div>
 </header>
+
+<div class="modebar">
+  <button class="mode-btn on" id="m-simple">간단 모드 — 구매자 화면</button>
+  <button class="mode-btn" id="m-design">설계 모드 — 전체 변수</button>
+</div>
+
+<section class="simpleview">
+  <h1>내 노드, 켜두면 얼마나 쌓일까</h1>
+  <p class="lead">세 가지만 고르면 됩니다. 나머지 가정(네트워크 규모·예산)은 기본 설계값 — 설계 모드에서 바꿀 수 있습니다.</p>
+
+  <div class="qrow"><div class="q-label">① 기기를 얼마에 샀나요?</div>
+    <div class="qchips" id="sq-price">
+      <button class="qchip" data-v="400">400 RLUSD<small>얼리버드 #0101~1000</small></button>
+      <button class="qchip on" data-v="600">600 RLUSD<small>기본 #1001~5000</small></button>
+      <button class="qchip" data-v="0">증정<small>#0001~0100</small></button>
+    </div></div>
+
+  <div class="qrow"><div class="q-label">② 얼마나 계속 켜둘 건가요? <span style="font-weight:400;color:var(--muted)">(계속 연결·정상 관리 가정)</span></div>
+    <div class="qchips" id="sq-months">
+      <button class="qchip" data-v="6">6개월</button>
+      <button class="qchip" data-v="12">12개월</button>
+      <button class="qchip on" data-v="24">24개월</button>
+      <button class="qchip" data-v="36">36개월</button>
+    </div></div>
+
+  <div class="qrow"><div class="q-label">③ 데이터를 사가는 기업 수요는?</div>
+    <div class="qchips" id="sq-demand">
+      <button class="qchip" data-v="none">아직 없음<small>초기 운영 예산만</small></button>
+      <button class="qchip on" data-v="base">보통<small>4개월차 첫 공고, 완만한 증가</small></button>
+      <button class="qchip" data-v="opt">활발<small>3개월차 시작, 빠른 증가</small></button>
+    </div></div>
+
+  <div class="kpis" style="margin-top:20px">
+    <div class="kpi"><div class="k-label">이 기간 총 보상</div><div class="k-val mono" id="s-total">–</div><div class="k-sub" id="s-total-w">–</div></div>
+    <div class="kpi"><div class="k-label">기업 수요 효과 — 월평균 보상</div><div class="k-val mono" id="s-month">–</div><div class="k-sub" id="s-month-w">–</div></div>
+    <div class="kpi"><div class="k-label">기기값 대비</div><div class="k-val mono" id="s-payback">–</div><div class="k-sub" id="s-payback-sub">–</div></div>
+  </div>
+
+  <div class="card">
+    <h2>누적 보상 곡선</h2>
+    <p class="sub">가로 점선 = 기기값. 세로선 = 기업 수요 시작(가정). 파란 선과 점선 비교선의 벌어짐이 곧 기업 수요의 효과입니다.</p>
+    <div class="legend" id="s-legend"></div>
+    <div class="chart-box" id="chartS"></div>
+  </div>
+
+  <div class="s-how"><b>보상이 나오는 방식 (백서 구조)</b><br>
+    ① 데이터가 필요한 기업이 돈을 <b>먼저 예치</b>하면 그것이 보상 예산이 됩니다.
+    ② 예산을 그달의 참여자들이 나눠 갖습니다 — 참여자가 늘면 1대 몫은 줄고, 사가는 기업이 늘면 예산이 커집니다.
+    ③ 제대로 켜두고 보내야 받습니다 (연속성·정합성 등 품질 기준). 같은 공간의 여러 대는 1대로 칩니다.</div>
+
+  <div class="s-note">모든 수치는 가정값 기반 시뮬레이션이며 확정·약속이 아닙니다 · 전기료(월 2~3천 원 수준)는 별도 · <b style="color:var(--crit)">내부 검토용 — 대외 공유 금지</b></div>
+</section>
 
 <div class="wrap">
 <aside class="panel">
@@ -316,7 +397,7 @@ function simulate(p){
   const Qme=(p.q1+p.q2+p.q3+p.q4)/400;
   const eligible=Qme*100>=p.qmin, negEligible=QNEG*100>=p.qmin;
   const rows=[];
-  let cum=0, cumNeg=0, payback=null, selfrun=null;
+  let cum=0, cumNeg=0, cumR=0, payback=null, selfrun=null;
   for(let t=1;t<=MONTHS;t++){
     const N=Math.max(1,p.n0+(p.n24-p.n0)*Math.min(t,24)/24);
     const seed=t<=p.seedm?p.seed:0;
@@ -327,10 +408,10 @@ function simulate(p){
     const R=eligible?budget*Qme/denom:0;
     const Rneg=negEligible?budget*QNEG/denom:0;
     const net=R-p.cost, netNeg=Rneg-p.cost;
-    cum+=net; cumNeg+=netNeg;
+    cum+=net; cumNeg+=netNeg; cumR+=R;
     if(payback===null&&p.price>0&&cum>=p.price) payback=t;
     if(selfrun===null&&entNode>0&&entNode>=p.seed) selfrun=t;
-    rows.push({t,N,seed,entNode,budget,R,net,cum,Rneg,netNeg,cumNeg});
+    rows.push({t,N,seed,entNode,budget,R,net,cum,cumR,Rneg,netNeg,cumNeg});
   }
   return {rows,Qme,eligible,payback,selfrun};
 }
@@ -342,21 +423,23 @@ function niceMax(v){ if(v<=0)return 1; const p=Math.pow(10,Math.floor(Math.log10
   const s=d<=1?1:d<=2?2:d<=2.5?2.5:d<=5?5:10; return s*p; }
 const CH={W:860,H:270,L:58,R:96,T:14,B:30};
 
-function baseChart(box,ymin,ymax,fmt){
+function baseChart(box,ymin,ymax,fmt,nm){
+  nm=nm||MONTHS;
   box.innerHTML="";
   const svg=el("svg",{viewBox:`0 0 ${CH.W} ${CH.H}`,role:"img"});
   const iw=CH.W-CH.L-CH.R, ih=CH.H-CH.T-CH.B;
-  const x=t=>CH.L+iw*(t-1)/(MONTHS-1);
+  const x=t=>CH.L+iw*(t-1)/Math.max(1,nm-1);
   const y=v=>CH.T+ih*(1-(v-ymin)/(ymax-ymin));
   const g=el("g",{class:"axis"});
   const steps=4;
   for(let i=0;i<=steps;i++){
     const v=ymin+(ymax-ymin)*i/steps, yy=y(v);
-    g.appendChild(el("line",{x1:CH.L,x2:CH.W-CH.R,y1:yy,y2:yy,class:Math.abs(v)<1e-9&&ymin<0?"zeroline":"gridline"}));
+    g.appendChild(el("line",{x1:CH.L,x2:CH.W-CH.R,y1:yy,y2:yy,class:"gridline"}));
     const tx=el("text",{x:CH.L-8,y:yy+3.5,"text-anchor":"end"}); tx.textContent=fmt(v); g.appendChild(tx);
   }
-  for(let m=6;m<=MONTHS;m+=6){
-    const tx=el("text",{x:x(m),y:CH.H-10,"text-anchor":"middle"}); tx.textContent=m+"м".replace("м","개월"); g.appendChild(tx);
+  const tickStep=nm<=12?3:6;
+  for(let m=tickStep;m<=nm;m+=tickStep){
+    const tx=el("text",{x:x(m),y:CH.H-10,"text-anchor":"middle"}); tx.textContent=m+"개월"; g.appendChild(tx);
   }
   if(ymin<0&&ymax>0) g.appendChild(el("line",{x1:CH.L,x2:CH.W-CH.R,y1:y(0),y2:y(0),class:"zeroline"}));
   svg.appendChild(g); box.appendChild(svg);
@@ -376,8 +459,8 @@ function attachHover(box,chart,rows,build){
   function move(ev){
     const r=svg.getBoundingClientRect();
     const px=(ev.clientX-r.left)*CH.W/r.width;
-    let m=Math.round(1+(px-CH.L)*(MONTHS-1)/(CH.W-CH.L-CH.R));
-    m=Math.max(1,Math.min(MONTHS,m));
+    let m=Math.round(1+(px-CH.L)*(rows.length-1)/(CH.W-CH.L-CH.R));
+    m=Math.max(1,Math.min(rows.length,m));
     const row=rows[m-1], cx=x(m);
     cross.setAttribute("x1",cx); cross.setAttribute("x2",cx);
     tip.innerHTML=build(row);
@@ -477,7 +560,96 @@ function render(){
   try{ localStorage.setItem("wlbn-econ", JSON.stringify(p)); }catch(e){}
 }
 
-/* wiring */
+/* ---------- simple mode ---------- */
+const SIMPLE={price:600,months:24,demand:"base"};
+function simpleParams(){
+  const p={};
+  for(const c of CTRLS) p[c.id]=c.def;
+  p.price=SIMPLE.price;
+  if(SIMPLE.demand==="none"){ p.e0=0; p.estart=999; }
+  else Object.assign(p,SCEN[SIMPLE.demand]);
+  return p;
+}
+function renderSimple(){
+  const p=simpleParams();
+  const rows=simulate(p).rows.slice(0,SIMPLE.months);
+  const pNone={...p,e0:0,estart:999};
+  const rowsNone=simulate(pNone).rows.slice(0,SIMPLE.months);
+  const tot=rows[rows.length-1].cumR, totNone=rowsNone[rowsNone.length-1].cumR;
+  $("s-total").textContent=fmt0(tot)+" RLUSD";
+  $("s-total-w").textContent=fmtW(tot*p.fx)+" · "+SIMPLE.months+"개월 합계";
+
+  const avgSel=tot/SIMPLE.months, avgNone=totNone/SIMPLE.months;
+  if(SIMPLE.demand==="none"){
+    $("s-month").textContent=fmt1(avgSel)+" RLUSD";
+    $("s-month-w").textContent=fmtW(avgSel*p.fx)+"/월 · 기업 공고가 열리면 예산이 커져 여기서 올라갑니다";
+  }else{
+    const up=avgNone>0?Math.round((avgSel/avgNone-1)*100):0;
+    $("s-month").textContent=fmt1(avgNone)+" → "+fmt1(avgSel)+" R";
+    $("s-month-w").textContent="수요 없음 가정 → 선택 시나리오 (+"+up+"%) · "+fmtW(avgSel*p.fx)+"/월";
+  }
+
+  const hit=rows.find(r=>r.cumR>=p.price);
+  if(p.price===0){ $("s-payback").textContent="해당 없음"; $("s-payback-sub").textContent="증정 기기 — 기기값 없음"; }
+  else if(hit){ $("s-payback").textContent=hit.t+"개월차 도달"; $("s-payback-sub").textContent="누적 보상이 기기값("+fmt0(p.price)+" R)을 넘는 달"; }
+  else{ $("s-payback").textContent=Math.round(tot/p.price*100)+"%";
+    $("s-payback-sub").textContent="기간 내 누적 보상 ÷ 기기값 — 이 가정으로는 미도달"; }
+
+  const mxRaw=Math.max(tot,totNone,p.price,10);
+  const unit=mxRaw>400?200:mxRaw>100?50:10;
+  const mx=Math.ceil(mxRaw*1.05/unit)*unit;
+  const S=baseChart($("chartS"),0,mx,v=>fmt0(v),SIMPLE.months);
+  if(p.price>0){
+    const yy=S.y(p.price);
+    S.svg.appendChild(el("line",{x1:CH.L,x2:CH.W-CH.R,y1:yy,y2:yy,stroke:"var(--faint)","stroke-width":1.2,"stroke-dasharray":"7 5"}));
+    const t=el("text",{x:CH.W-CH.R-4,y:yy-5,"text-anchor":"end",class:"anno"}); t.textContent="기기값 "+fmt0(p.price); S.svg.appendChild(t);
+  }
+  if(SIMPLE.demand!=="none"&&p.estart<=SIMPLE.months){
+    const xx=S.x(p.estart);
+    S.svg.appendChild(el("line",{x1:xx,x2:xx,y1:CH.T,y2:CH.H-CH.B,stroke:"var(--c4)","stroke-width":1.2,"stroke-dasharray":"3 3"}));
+    const t=el("text",{x:xx+5,y:CH.T+12,class:"anno",style:"fill:var(--c4)"}); t.textContent="기업 수요 시작"; S.svg.appendChild(t);
+  }
+  const area=linePath(rows,S.x,S.y,"cumR")+`L ${S.x(rows.length)} ${S.y(0)} L ${S.x(1)} ${S.y(0)} Z`;
+  S.svg.appendChild(el("path",{d:area,style:"fill:var(--c1)",opacity:.08,stroke:"none"}));
+  const showNone=SIMPLE.demand!=="none";
+  if(showNone)
+    S.svg.appendChild(el("path",{d:linePath(rowsNone,S.x,S.y,"cumR"),fill:"none",style:"stroke:var(--c2)","stroke-width":2,"stroke-dasharray":"6 5"}));
+  S.svg.appendChild(el("path",{d:linePath(rows,S.x,S.y,"cumR"),fill:"none",style:"stroke:var(--c1)","stroke-width":2.5}));
+  if(hit){
+    S.svg.appendChild(el("circle",{cx:S.x(hit.t),cy:S.y(hit.cumR),r:5,style:"fill:var(--surface);stroke:var(--c1)","stroke-width":2.5}));
+  }
+  endLabel(S.svg,S.x,S.y,rows,"cumR","선택 시나리오","var(--c1)");
+  if(showNone) endLabel(S.svg,S.x,S.y,rowsNone,"cumR","수요 없음","var(--c2)");
+  $("s-legend").innerHTML='<span><span class="sw" style="border-color:var(--c1)"></span>선택 시나리오 누적 보상</span>'+
+    (showNone?'<span><span class="sw dash" style="border-color:var(--c2)"></span>기업 수요가 없다면 (비교선)</span>':'');
+  attachHover($("chartS"),S,rows,r=>`<div class="t-h">${r.t}개월차</div>
+    <div class="row"><span>그달 보상</span><b>${fmt1(r.R)} R</b></div>
+    <div class="row"><span>누적</span><b>${fmt0(r.cumR)} R</b></div>`+
+    (showNone?`<div class="row"><span>수요 없음 누적</span><b>${fmt0(rowsNone[r.t-1].cumR)} R</b></div>`:""));
+
+  try{ localStorage.setItem("wlbn-econ-simple", JSON.stringify(SIMPLE)); }catch(e){}
+}
+function wireQ(id,key,parse){
+  document.querySelectorAll("#"+id+" .qchip").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll("#"+id+" .qchip").forEach(c=>c.classList.remove("on")); b.classList.add("on");
+    SIMPLE[key]=parse(b.dataset.v); renderSimple();
+  }));
+}
+wireQ("sq-price","price",v=>parseFloat(v));
+wireQ("sq-months","months",v=>parseInt(v,10));
+wireQ("sq-demand","demand",v=>v);
+
+/* ---------- mode switch & wiring ---------- */
+function setMode(m){
+  document.body.classList.toggle("simple",m==="simple");
+  $("m-simple").classList.toggle("on",m==="simple");
+  $("m-design").classList.toggle("on",m!=="simple");
+  try{ localStorage.setItem("wlbn-econ-mode",m); }catch(e){}
+  if(m==="simple") renderSimple(); else render();
+}
+$("m-simple").addEventListener("click",()=>setMode("simple"));
+$("m-design").addEventListener("click",()=>setMode("design"));
+
 document.querySelectorAll("input[type=range]").forEach(i=>i.addEventListener("input",render));
 $("price").addEventListener("change",render);
 document.querySelectorAll(".chip").forEach(ch=>ch.addEventListener("click",()=>{
@@ -496,5 +668,15 @@ try{
   if(saved){ for(const c of CTRLS) if(saved[c.id]!=null) setVal(c.id,saved[c.id]);
     if(saved.price!=null) $("price").value=String(saved.price); }
 }catch(e){}
+try{
+  const ss=JSON.parse(localStorage.getItem("wlbn-econ-simple")||"null");
+  if(ss){ Object.assign(SIMPLE,ss);
+    for(const [id,key] of [["sq-price","price"],["sq-months","months"],["sq-demand","demand"]])
+      document.querySelectorAll("#"+id+" .qchip").forEach(c=>c.classList.toggle("on",String(c.dataset.v)===String(SIMPLE[key])));
+  }
+}catch(e){}
+let initMode="simple";
+try{ initMode=localStorage.getItem("wlbn-econ-mode")||"simple"; }catch(e){}
 render();
+setMode(initMode);
 </script>
