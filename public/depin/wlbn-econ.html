@@ -68,9 +68,15 @@ header.top{
 .wordmark{font-weight:800; font-size:18px; letter-spacing:-.02em}
 .wordmark small{font-weight:500; color:var(--muted); margin-left:8px; letter-spacing:0}
 .badge-internal{
-  margin-left:auto; font-size:11.5px; font-weight:700; letter-spacing:.08em;
+  font-size:11.5px; font-weight:700; letter-spacing:.08em;
   color:var(--crit); border:1.5px solid var(--crit); background:var(--crit-bg);
   padding:4px 10px; border-radius:2px; text-transform:uppercase;
+}
+.theme-btn{
+  margin-left:auto; width:36px; height:36px; border-radius:50%; cursor:pointer;
+  font-size:16px; line-height:1; color:var(--ink);
+  border:1px solid var(--glass-brd); background:var(--glass);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
 }
 .wrap{display:grid; grid-template-columns:330px 1fr; gap:0; max-width:1240px; margin:0 auto}
 @media(max-width:920px){ .wrap{grid-template-columns:1fr} aside.panel{border-right:none; border-bottom:1px solid var(--line)} }
@@ -239,10 +245,34 @@ th{background:var(--glass-panel)}
   header.top,.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.qchip,.chip,.btn,.mode-btn,.s-verdict{background:var(--surface); backdrop-filter:none; -webkit-backdrop-filter:none}
   aside.panel{background:var(--panel); backdrop-filter:none; -webkit-backdrop-filter:none}
 }
+
+/* ---- mobile ---- */
+@media(max-width:640px){
+  header.top{padding:10px 14px; gap:10px}
+  .wordmark{font-size:16px}
+  .wordmark small{display:block; margin-left:0; font-size:11px}
+  .theme-btn{width:32px; height:32px; font-size:14px}
+  .badge-internal{font-size:9.5px; padding:3px 7px; letter-spacing:.04em}
+  .modebar{padding:10px 14px 0}
+  .mode-btn{flex:1; padding:9px 6px; font-size:12.5px}
+  .simpleview{padding:4px 14px 48px}
+  .simpleview h1{font-size:22px}
+  .simpleview .lead{font-size:13px}
+  .results{padding:16px 14px 48px}
+  .qchips{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .qchip{padding:10px 8px; font-size:13.5px}
+  .kpis{grid-template-columns:1fr; gap:8px}
+  .kpi .k-val{font-size:26px}
+  .card{padding:14px 14px 10px; border-radius:14px}
+  .legend{gap:10px; font-size:12px}
+  .ctl select,.ctl input[type=number]{font-size:16px}
+  .s-how{padding:11px 13px}
+}
 </style>
 
 <header class="top">
   <div class="wordmark">WLBN Node Econ Lab <small>노드 경제성 시뮬레이터 · v0</small></div>
+  <button class="theme-btn" id="themeToggle" aria-label="라이트/다크 전환">☾</button>
   <div class="badge-internal">Internal — 보상 설계 검증용 · 대외 공유 금지</div>
 </header>
 
@@ -509,7 +539,9 @@ const NS="http://www.w3.org/2000/svg";
 function el(n,at){ const e=document.createElementNS(NS,n); for(const k in at)e.setAttribute(k,at[k]); return e; }
 function niceMax(v){ if(v<=0)return 1; const p=Math.pow(10,Math.floor(Math.log10(v))); const d=v/p;
   const s=d<=1?1:d<=2?2:d<=2.5?2.5:d<=5?5:10; return s*p; }
-const CH={W:860,H:270,L:58,R:96,T:14,B:30};
+const mq640=window.matchMedia("(max-width:640px)");
+function chDims(){ return mq640.matches?{W:440,H:260,L:46,R:16,T:14,B:26}:{W:860,H:270,L:58,R:96,T:14,B:30}; }
+let CH=chDims();
 
 function baseChart(box,ymin,ymax,fmt,nm){
   nm=nm||MONTHS;
@@ -525,7 +557,7 @@ function baseChart(box,ymin,ymax,fmt,nm){
     g.appendChild(el("line",{x1:CH.L,x2:CH.W-CH.R,y1:yy,y2:yy,class:"gridline"}));
     const tx=el("text",{x:CH.L-8,y:yy+3.5,"text-anchor":"end"}); tx.textContent=fmt(v); g.appendChild(tx);
   }
-  const tickStep=nm<=12?3:6;
+  const tickStep=nm<=12?3:(mq640.matches?12:6);
   for(let m=tickStep;m<=nm;m+=tickStep){
     const tx=el("text",{x:x(m),y:CH.H-10,"text-anchor":"middle"}); tx.textContent=m+"개월"; g.appendChild(tx);
   }
@@ -535,6 +567,7 @@ function baseChart(box,ymin,ymax,fmt,nm){
 }
 function linePath(rows,x,y,key){ return rows.map((r,i)=>(i?"L":"M")+x(r.t).toFixed(1)+" "+y(r[key]).toFixed(1)).join(" "); }
 function endLabel(svg,x,y,rows,key,text,color){
+  if(mq640.matches) return;
   const last=rows[rows.length-1];
   const t=el("text",{x:x(last.t)+8,y:y(last[key])+4,class:"dlabel",style:`fill:${color}`});
   t.textContent=text; svg.appendChild(t);
@@ -557,9 +590,14 @@ function attachHover(box,chart,rows,build){
     tip.style.left=left+"px";
     tip.style.top=(ev.clientY-10)+"px";
   }
-  function leave(){ tip.style.display="none"; cross.setAttribute("x1",-9); cross.setAttribute("x2",-9); }
-  svg.addEventListener("mousemove",move); svg.addEventListener("mouseleave",leave);
+  function leave(ev){ if(ev&&ev.pointerType==="touch") return;
+    tip.style.display="none"; cross.setAttribute("x1",-9); cross.setAttribute("x2",-9); }
+  svg.addEventListener("pointermove",move); svg.addEventListener("pointerdown",move);
+  svg.addEventListener("pointerleave",leave);
 }
+document.addEventListener("pointerdown",ev=>{
+  if(!ev.target.closest(".chart-box")) tip.style.display="none";
+});
 
 function render(){
   const p=readInputs();
@@ -591,8 +629,8 @@ function render(){
   endLabel(A.svg,A.x,A.y,rows,"net","내 노드","var(--c1)");
   endLabel(A.svg,A.x,A.y,rows,"netNeg","방치","var(--c2)");
   attachHover($("chartA"),A,rows,r=>`<div class="t-h">${r.t}개월차</div>
-    <div class="row"><span>내 순수익</span><b>${fmt1(r.net)} R</b></div>
-    <div class="row"><span>방치 노드</span><b>${fmt1(r.netNeg)} R</b></div>
+    <div class="row"><span>내 순수익</span><b>${fmt1(r.net)} RLUSD</b></div>
+    <div class="row"><span>방치 노드</span><b>${fmt1(r.netNeg)} RLUSD</b></div>
     <div class="row"><span>참여 노드</span><b>${fmt0(r.N)}대</b></div>`);
 
   /* chart B — cumulative + payback */
@@ -617,8 +655,8 @@ function render(){
   endLabel(B.svg,B.x,B.y,rows,"cum","내 노드","var(--c1)");
   endLabel(B.svg,B.x,B.y,rows,"cumNeg","방치","var(--c2)");
   attachHover($("chartB"),B,rows,r=>`<div class="t-h">${r.t}개월차 누적</div>
-    <div class="row"><span>내 노드</span><b>${fmt0(r.cum)} R</b></div>
-    <div class="row"><span>방치 노드</span><b>${fmt0(r.cumNeg)} R</b></div>`);
+    <div class="row"><span>내 노드</span><b>${fmt0(r.cum)} RLUSD</b></div>
+    <div class="row"><span>방치 노드</span><b>${fmt0(r.cumNeg)} RLUSD</b></div>`);
 
   /* chart C — budget stack (seed + enterprise) */
   const cMax=niceMax(Math.max(...rows.map(r=>r.budget),1));
@@ -635,9 +673,9 @@ function render(){
     const t=el("text",{x:xx+5,y:CH.T+12,class:"anno"}); t.textContent="자립 교차 "+sim.selfrun+"개월"; C.svg.appendChild(t);
   }
   attachHover($("chartC"),C,rows,r=>`<div class="t-h">${r.t}개월차 예산</div>
-    <div class="row"><span>시드</span><b>${fmt0(r.seed)} R</b></div>
-    <div class="row"><span>기업 예치분</span><b>${fmt0(r.entNode)} R</b></div>
-    <div class="row"><span>대당 평균</span><b>${fmt1(r.budget/r.N)} R</b></div>`);
+    <div class="row"><span>시드</span><b>${fmt0(r.seed)} RLUSD</b></div>
+    <div class="row"><span>기업 예치분</span><b>${fmt0(r.entNode)} RLUSD</b></div>
+    <div class="row"><span>대당 평균</span><b>${fmt1(r.budget/r.N)} RLUSD</b></div>`);
 
   /* table */
   const tb=$("dtable");
@@ -690,7 +728,7 @@ function renderSimple(){
   const staged=!!(SIMPLE.stages&&SIMPLE.stages.length);
   const capSum=staged?SIMPLE.stages.reduce((s,st)=>s+st.cap,0):SIMPLE.ecap;
   $("sq-ecap").value=capSum;
-  $("sq-ecap-v").textContent=fmt0(capSum)+" R/월";
+  $("sq-ecap-v").textContent=fmt0(capSum)+" RLUSD/월";
   $("sq-ecap-y").textContent=capSum>0
     ?"연 데이터 매출 환산(도달 시) ≈ "+(capSum*12*p.fx/1e8).toFixed(1)+"억 원"
       +(staged?" — "+SIMPLE.stages.map(st=>st.name+" "+st.start+"개월차").join(" · ")+" 누적 확장 가정":" — 이 수준까지 성장한다는 가정")
@@ -705,7 +743,7 @@ function renderSimple(){
     $("s-month-w").textContent=fmtW(avgSel*p.fx)+"/월 · 기업 공고가 열리면 예산이 커져 여기서 올라갑니다";
   }else{
     const up=avgNone>0?Math.round((avgSel/avgNone-1)*100):0;
-    $("s-month").textContent=fmt1(avgNone)+" → "+fmt1(avgSel)+" R";
+    $("s-month").textContent=fmt1(avgNone)+" → "+fmt1(avgSel)+" RLUSD";
     $("s-month-w").textContent="수요 없음 가정 → 선택 시나리오 (+"+up+"%) · "+fmtW(avgSel*p.fx)+"/월";
   }
 
@@ -714,7 +752,7 @@ function renderSimple(){
   const disp=(!hit&&+mult.toFixed(1)>=1)?mult.toFixed(2):(mult>=10?mult.toFixed(0):mult.toFixed(1));
   $("s-payback").textContent=disp+"배";
   $("s-payback-sub").textContent=hit
-    ?hit.t+"개월차에 1배(기기값 "+fmt0(p.price)+" R) 도달"
+    ?hit.t+"개월차에 1배(기기값 "+fmt0(p.price)+" RLUSD) 도달"
     :"이 가정으로는 기간 내 1배(기기값) 미도달";
 
   /* one-line verdict on the final numbers */
@@ -740,7 +778,7 @@ function renderSimple(){
     $("s-goal-sub").textContent="선택 기간 "+SIMPLE.months+"개월 · 공고 시작 "+stageStart()+"개월차 · 노드 분배율 70% 가정.";
     $("s-goal-body").innerHTML=[2,3,4].map(k=>{
       const U=Math.round(need(k)/1000)*1000;
-      return "<b>기기값 "+k+"배</b> ("+fmt0(k*p.price)+" R) → 월 평균 기업 예치 <b class='mono'>"
+      return "<b>기기값 "+k+"배</b> ("+fmt0(k*p.price)+" RLUSD) → 월 평균 기업 예치 <b class='mono'>"
         +fmt0(U)+" RLUSD</b> <span style='color:var(--muted)'>· 연 데이터 매출 환산 ~"
         +(U*12*p.fx/1e8).toFixed(1)+"억 원</span>";
     }).join("<br>");
@@ -778,9 +816,9 @@ function renderSimple(){
   $("s-legend").innerHTML='<span><span class="sw" style="border-color:var(--c1)"></span>선택 시나리오 누적 보상</span>'+
     (showNone?'<span><span class="sw dash" style="border-color:var(--c2)"></span>기업 수요가 없다면 (비교선)</span>':'');
   attachHover($("chartS"),S,rows,r=>`<div class="t-h">${r.t}개월차</div>
-    <div class="row"><span>그달 보상</span><b>${fmt1(r.R)} R</b></div>
-    <div class="row"><span>누적</span><b>${fmt0(r.cumR)} R</b></div>`+
-    (showNone?`<div class="row"><span>수요 없음 누적</span><b>${fmt0(rowsNone[r.t-1].cumR)} R</b></div>`:""));
+    <div class="row"><span>그달 보상</span><b>${fmt1(r.R)} RLUSD</b></div>
+    <div class="row"><span>누적</span><b>${fmt0(r.cumR)} RLUSD</b></div>`+
+    (showNone?`<div class="row"><span>수요 없음 누적</span><b>${fmt0(rowsNone[r.t-1].cumR)} RLUSD</b></div>`:""));
 
   try{ localStorage.setItem("wlbn-econ-simple", JSON.stringify(SIMPLE)); }catch(e){}
 }
@@ -848,6 +886,24 @@ try{
       document.querySelectorAll("#"+id+" .qchip").forEach(c=>c.classList.toggle("on",String(c.dataset.v)===String(SIMPLE[key])));
   }
 }catch(e){}
+/* theme toggle (manual override; remembers) */
+const rootEl=document.documentElement;
+function curDark(){ const a=rootEl.getAttribute("data-theme");
+  return a? a==="dark" : window.matchMedia("(prefers-color-scheme: dark)").matches; }
+function applyTheme(t){ if(t) rootEl.setAttribute("data-theme",t); else rootEl.removeAttribute("data-theme");
+  $("themeToggle").textContent=curDark()?"☀":"☾"; }
+$("themeToggle").addEventListener("click",()=>{
+  const next=curDark()?"light":"dark";
+  try{ localStorage.setItem("wlbn-econ-theme",next); }catch(e){}
+  applyTheme(next);
+});
+let savedTheme=null; try{ savedTheme=localStorage.getItem("wlbn-econ-theme"); }catch(e){}
+applyTheme(savedTheme);
+
+/* responsive chart dims */
+mq640.addEventListener("change",()=>{ CH=chDims();
+  if(document.body.classList.contains("simple")) renderSimple(); else render(); });
+
 let initMode="simple";
 try{ initMode=localStorage.getItem("wlbn-econ-mode")||"simple"; }catch(e){}
 render();
