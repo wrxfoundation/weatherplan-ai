@@ -12,6 +12,12 @@
   --c1:#2457E6; --c2:#C13D8C; --c3:#4E63BD; --c4:#0AA08C;
   --good:#178A50; --warn:#8A6116; --crit:#C2413B;
   --crit-bg:#FBEDEC; --grid:#EBEFF5; --tip-bg:#16233B; --tip-ink:#F2F6FC;
+  --bgfx:radial-gradient(1000px 560px at 12% -8%,#DCE7FA 0%,rgba(220,231,250,0) 62%),
+         radial-gradient(880px 520px at 108% 14%,#DFF0EC 0%,rgba(223,240,236,0) 58%),
+         radial-gradient(760px 480px at 50% 115%,#E7E4F8 0%,rgba(231,228,248,0) 55%),#F4F7FC;
+  --glass:rgba(255,255,255,.6); --glass-panel:rgba(244,247,252,.55);
+  --glass-brd:rgba(116,140,180,.26); --glass-hi:rgba(255,255,255,.9);
+  --shadow:0 10px 26px rgba(27,42,74,.08);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -22,6 +28,12 @@
     --c1:#4E7FF2; --c2:#D45BA4; --c3:#6D86DD; --c4:#10A48F;
     --good:#3FBF7F; --warn:#D9A544; --crit:#E4726A;
     --crit-bg:#3A2226; --grid:#1D2A44; --tip-bg:#E8EEF9; --tip-ink:#16233B;
+    --bgfx:radial-gradient(1000px 560px at 12% -8%,#16294F 0%,rgba(22,41,79,0) 62%),
+           radial-gradient(880px 520px at 108% 14%,#0F2E38 0%,rgba(15,46,56,0) 58%),
+           radial-gradient(760px 480px at 50% 115%,#221E45 0%,rgba(34,30,69,0) 55%),#0D1526;
+    --glass:rgba(23,35,60,.55); --glass-panel:rgba(17,26,45,.5);
+    --glass-brd:rgba(140,168,220,.16); --glass-hi:rgba(255,255,255,.06);
+    --shadow:0 12px 30px rgba(0,0,0,.4);
   }
 }
 :root[data-theme="dark"]{
@@ -32,6 +44,12 @@
   --c1:#4E7FF2; --c2:#D45BA4; --c3:#6D86DD; --c4:#10A48F;
   --good:#3FBF7F; --warn:#D9A544; --crit:#E4726A;
   --crit-bg:#3A2226; --grid:#1D2A44; --tip-bg:#E8EEF9; --tip-ink:#16233B;
+  --bgfx:radial-gradient(1000px 560px at 12% -8%,#16294F 0%,rgba(22,41,79,0) 62%),
+         radial-gradient(880px 520px at 108% 14%,#0F2E38 0%,rgba(15,46,56,0) 58%),
+         radial-gradient(760px 480px at 50% 115%,#221E45 0%,rgba(34,30,69,0) 55%),#0D1526;
+  --glass:rgba(23,35,60,.55); --glass-panel:rgba(17,26,45,.5);
+  --glass-brd:rgba(140,168,220,.16); --glass-hi:rgba(255,255,255,.06);
+  --shadow:0 12px 30px rgba(0,0,0,.4);
 }
 *{box-sizing:border-box}
 body{
@@ -178,6 +196,40 @@ body:not(.simple) .simpleview{display:none}
 }
 .s-how b{color:var(--ink)}
 .s-note{font-size:12px; color:var(--faint); margin-top:14px}
+
+/* ---- glass layer (subtle) ---- */
+body{background:var(--bgfx); background-attachment:fixed}
+header.top{
+  background:var(--glass); border-bottom:1px solid var(--glass-brd);
+  backdrop-filter:blur(14px) saturate(1.25); -webkit-backdrop-filter:blur(14px) saturate(1.25);
+}
+.card,.kpi,.s-how,.principles,.notice,.tbl-scroll{
+  background:var(--glass); border:1px solid var(--glass-brd); border-radius:10px;
+  backdrop-filter:blur(12px) saturate(1.25); -webkit-backdrop-filter:blur(12px) saturate(1.25);
+  box-shadow:inset 0 1px 0 var(--glass-hi), var(--shadow);
+}
+.notice{border-left:3px solid var(--crit)}
+aside.panel{
+  background:var(--glass-panel); border-right:1px solid var(--glass-brd);
+  backdrop-filter:blur(14px) saturate(1.2); -webkit-backdrop-filter:blur(14px) saturate(1.2);
+}
+.qchip,.chip,.btn,.mode-btn{
+  background:var(--glass); border-color:var(--glass-brd); border-radius:8px;
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  box-shadow:inset 0 1px 0 var(--glass-hi);
+}
+.qchip.on,.chip.on{background:var(--accent); border-color:var(--accent); box-shadow:none}
+.mode-btn.on{background:var(--ink); border-color:var(--ink); box-shadow:none}
+.ctl select,.ctl input[type=number]{border-radius:8px}
+th{background:var(--glass-panel)}
+@supports not (backdrop-filter: blur(1px)){
+  header.top,.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.qchip,.chip,.btn,.mode-btn{background:var(--surface)}
+  aside.panel{background:var(--panel)}
+}
+@media (prefers-reduced-transparency: reduce){
+  header.top,.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.qchip,.chip,.btn,.mode-btn{background:var(--surface); backdrop-filter:none; -webkit-backdrop-filter:none}
+  aside.panel{background:var(--panel); backdrop-filter:none; -webkit-backdrop-filter:none}
+}
 </style>
 
 <header class="top">
@@ -203,7 +255,6 @@ body:not(.simple) .simpleview{display:none}
     <div class="qchips" id="sq-price">
       <button class="qchip" data-v="400">400 RLUSD<small>얼리버드 #0101~1000</small></button>
       <button class="qchip on" data-v="600">600 RLUSD<small>기본 #1001~5000</small></button>
-      <button class="qchip" data-v="0">증정<small>#0001~0100</small></button>
     </div></div>
 
   <div class="qrow"><div class="q-label">② 얼마나 계속 켜둘 건가요? <span style="font-weight:400;color:var(--muted)">(계속 연결·정상 관리 가정)</span></div>
@@ -282,7 +333,6 @@ body:not(.simple) .simpleview{display:none}
       <select id="price">
         <option value="600" selected>기본 600 RLUSD (#1001~5000)</option>
         <option value="400">얼리버드 400 RLUSD (#0101~1000)</option>
-        <option value="0">증정 (#0001~0100 · 회수 개념 없음)</option>
       </select>
       <div class="hint">보상은 서로 다른 공간 1곳 = 노드 1대 기준 (같은 공간 중복분은 무보상 — 백서)</div>
     </div>
@@ -515,8 +565,7 @@ function render(){
   $("k-net").textContent=fmt1(mN)+" RLUSD";
   $("k-net-w").textContent=fmtW(mN*p.fx)+" · 유지비 "+fmt1(p.cost)+" 차감";
   const pb=$("k-payback"), pbs=$("k-payback-sub");
-  if(p.price===0){ pb.textContent="해당 없음"; pbs.innerHTML='증정분 <span class="k-chip k-good">회수 개념 없음</span>'; }
-  else if(sim.payback){ const cls=sim.payback<=18?"k-good":"k-warn";
+  if(sim.payback){ const cls=sim.payback<=18?"k-good":"k-warn";
     pb.textContent=sim.payback+"개월";
     pbs.innerHTML=`구매가 ${fmt0(p.price)} RLUSD <span class="k-chip ${cls}">${sim.payback<=18?"양호":"장기"}</span>`; }
   else { pb.textContent="36개월+"; pbs.innerHTML='<span class="k-chip k-crit">기간 내 미회수</span> 예산·수요 가정 재검토'; }
@@ -650,8 +699,7 @@ function renderSimple(){
   }
 
   const hit=rows.find(r=>r.cumR>=p.price);
-  if(p.price===0){ $("s-payback").textContent="해당 없음"; $("s-payback-sub").textContent="증정 기기 — 기기값 없음"; }
-  else{
+  {
     const mult=tot/p.price;
     const disp=(!hit&&+mult.toFixed(1)>=1)?mult.toFixed(2):(mult>=10?mult.toFixed(0):mult.toFixed(1));
     $("s-payback").textContent=disp+"배";
@@ -661,10 +709,7 @@ function renderSimple(){
   }
 
   /* goal inversion */
-  if(p.price===0){
-    $("s-goal-sub").textContent="증정 기기 — 기기값 기준이 없습니다. 400/600 선택 시 역산이 표시됩니다.";
-    $("s-goal-body").innerHTML=""; $("s-goal-note").textContent="";
-  }else{
+  {
     const need=goalNeeds(p);
     $("s-goal-sub").textContent="선택 기간 "+SIMPLE.months+"개월 · 공고 시작 "+stageStart()+"개월차 · 노드 분배율 70% 가정.";
     $("s-goal-body").innerHTML=[2,3,4].map(k=>{
@@ -766,11 +811,12 @@ $("reset").addEventListener("click",()=>{
 try{
   const saved=JSON.parse(localStorage.getItem("wlbn-econ")||"null");
   if(saved){ for(const c of CTRLS) if(saved[c.id]!=null) setVal(c.id,saved[c.id]);
-    if(saved.price!=null) $("price").value=String(saved.price); }
+    if(saved.price==400||saved.price==600) $("price").value=String(saved.price); }
 }catch(e){}
 try{
   const ss=JSON.parse(localStorage.getItem("wlbn-econ-simple")||"null");
   if(ss){ Object.assign(SIMPLE,ss);
+    if(SIMPLE.price!==400&&SIMPLE.price!==600) SIMPLE.price=600;
     if(SIMPLE.demand!=="custom"&&!DPRE[SIMPLE.demand]){ SIMPLE.demand="kr"; Object.assign(SIMPLE,DPRE.kr); }
     for(const [id,key] of [["sq-price","price"],["sq-months","months"],["sq-demand","demand"]])
       document.querySelectorAll("#"+id+" .qchip").forEach(c=>c.classList.toggle("on",String(c.dataset.v)===String(SIMPLE[key])));
