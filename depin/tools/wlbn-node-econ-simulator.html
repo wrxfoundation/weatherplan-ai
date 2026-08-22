@@ -214,16 +214,16 @@ body:not(.simple) .simpleview{display:none}
       <button class="qchip" data-v="36">36개월</button>
     </div></div>
 
-  <div class="qrow"><div class="q-label">③ 데이터를 사가는 기업 수요는?</div>
+  <div class="qrow"><div class="q-label">③ 데이터 수요 — 시장 확장 단계</div>
     <div class="qchips" id="sq-demand">
       <button class="qchip" data-v="none">아직 없음<small>초기 운영 예산만</small></button>
-      <button class="qchip on" data-v="base">보통<small>4개월차 첫 공고, 완만한 증가</small></button>
-      <button class="qchip" data-v="opt">활발<small>3개월차 시작, 빠른 증가</small></button>
-      <button class="qchip" data-v="max">도전 목표<small>연 300억 도달</small></button>
+      <button class="qchip on" data-v="kr">1단계 · 한국<small>4개월차 공고 시작 · 연 ~67억</small></button>
+      <button class="qchip" data-v="usjp">2단계 · +미국·일본<small>13개월차 진출 · 연 ~300억</small></button>
+      <button class="qchip" data-v="glb">3단계 · 전세계<small>25개월차 확장 · 연 ~600억</small></button>
     </div>
     <div style="margin-top:12px">
       <div class="ctl-head"><label for="sq-ecap" style="font-size:13px">수요 도달 규모 — 직접 조정 (월 기업 예치 상한)</label><span class="val mono" id="sq-ecap-v"></span></div>
-      <input type="range" id="sq-ecap" min="0" max="1800000" step="20000" value="80000" style="width:100%;accent-color:var(--accent)" aria-label="월 기업 예치 상한">
+      <input type="range" id="sq-ecap" min="0" max="3600000" step="50000" value="400000" style="width:100%;accent-color:var(--accent)" aria-label="월 기업 예치 상한">
       <div class="hint" id="sq-ecap-y"></div>
     </div></div>
 
@@ -426,7 +426,9 @@ function simulate(p){
   for(let t=1;t<=MONTHS;t++){
     const N=Math.max(1,p.n0+(p.n24-p.n0)*Math.min(t,24)/24);
     const seed=t<=p.seedm?p.seed:0;
-    const ent=t>=p.estart?Math.min(p.e0*Math.pow(1+p.eg/100,t-p.estart),p.ecap):0;
+    const ent=p.stages
+      ?p.stages.reduce((s,st)=>t>=st.start?s+Math.min(st.e0*Math.pow(1+st.g/100,t-st.start),st.cap):s,0)
+      :(t>=p.estart?Math.min(p.e0*Math.pow(1+p.eg/100,t-p.estart),p.ecap):0);
     const entNode=ent*p.rho/100;
     const budget=seed+entNode;
     const denom=N*(p.qavg/100);
@@ -586,12 +588,20 @@ function render(){
 }
 
 /* ---------- simple mode ---------- */
-const SIMPLE={price:600,months:24,demand:"base",estart:4,eg:15,ecap:80000};
+const mkStage=(name,start,cap,g)=>({name,start,cap,g,e0:Math.max(2000,Math.round(cap*0.08))});
+const STG_KR=mkStage("한국 공고",4,400000,15),
+      STG_USJP=mkStage("미·일 진출",13,1400000,18),
+      STG_GLB=mkStage("전세계 확장",25,1800000,20);
+const SIMPLE={price:600,months:24,demand:"kr",estart:4,eg:15,ecap:400000,stages:[STG_KR]};
+function stageStart(){ return SIMPLE.stages&&SIMPLE.stages.length?SIMPLE.stages[0].start:(SIMPLE.estart<900?SIMPLE.estart:4); }
 function simpleParams(){
   const p={};
   for(const c of CTRLS) p[c.id]=c.def;
   p.price=SIMPLE.price;
-  if(SIMPLE.ecap<=0){ p.e0=0; p.estart=999; p.ecap=0; }
+  if(SIMPLE.stages&&SIMPLE.stages.length){
+    p.stages=SIMPLE.stages; p.estart=SIMPLE.stages[0].start;
+    p.ecap=SIMPLE.stages.reduce((s,st)=>s+st.cap,0);
+  }else if(SIMPLE.ecap<=0){ p.e0=0; p.estart=999; p.ecap=0; }
   else{
     p.estart=SIMPLE.estart; p.eg=SIMPLE.eg; p.ecap=SIMPLE.ecap;
     p.e0=Math.max(2000,Math.round(SIMPLE.ecap*0.08));
@@ -600,9 +610,9 @@ function simpleParams(){
 }
 function goalNeeds(p0){
   function tot(U){
-    const p={...p0};
+    const p={...p0}; p.stages=null;
     if(U<=0){ p.e0=0; p.estart=999; p.ecap=0; }
-    else{ p.e0=U; p.eg=0; p.ecap=U; p.estart=SIMPLE.estart<900?SIMPLE.estart:4; }
+    else{ p.e0=U; p.eg=0; p.ecap=U; p.estart=stageStart(); }
     return simulate(p).rows[SIMPLE.months-1].cumR;
   }
   const t0=tot(0), slope=(tot(10000)-t0)/10000;
@@ -611,19 +621,22 @@ function goalNeeds(p0){
 function renderSimple(){
   const p=simpleParams();
   const rows=simulate(p).rows.slice(0,SIMPLE.months);
-  const pNone={...p,e0:0,estart:999};
+  const pNone={...p,e0:0,estart:999,ecap:0,stages:null};
   const rowsNone=simulate(pNone).rows.slice(0,SIMPLE.months);
   const tot=rows[rows.length-1].cumR, totNone=rowsNone[rowsNone.length-1].cumR;
   $("s-total").textContent=fmt0(tot)+" RLUSD";
   $("s-total-w").textContent=fmtW(tot*p.fx)+" · "+SIMPLE.months+"개월 합계";
 
-  $("sq-ecap").value=SIMPLE.ecap;
-  $("sq-ecap-v").textContent=fmt0(SIMPLE.ecap)+" R/월";
-  $("sq-ecap-y").textContent=SIMPLE.ecap>0
-    ?"연 데이터 매출 환산 ≈ "+(SIMPLE.ecap*12*p.fx/1e8).toFixed(1)+"억 원 — 이 수준까지 성장한다는 가정"
+  const staged=!!(SIMPLE.stages&&SIMPLE.stages.length);
+  const capSum=staged?SIMPLE.stages.reduce((s,st)=>s+st.cap,0):SIMPLE.ecap;
+  $("sq-ecap").value=capSum;
+  $("sq-ecap-v").textContent=fmt0(capSum)+" R/월";
+  $("sq-ecap-y").textContent=capSum>0
+    ?"연 데이터 매출 환산(도달 시) ≈ "+(capSum*12*p.fx/1e8).toFixed(1)+"억 원"
+      +(staged?" — "+SIMPLE.stages.map(st=>st.name+" "+st.start+"개월차").join(" · ")+" 누적 확장 가정":" — 이 수준까지 성장한다는 가정")
     :"0 — 기업 수요 없음 (운영 예산만)";
 
-  const hasDemand=SIMPLE.ecap>0;
+  const hasDemand=capSum>0;
   const avgBudget=rows.reduce((s,r)=>s+r.budget,0)/rows.length;
   $("s-buyflow").textContent=fmt0(avgBudget)+" RLUSD";
   const avgSel=tot/SIMPLE.months, avgNone=totNone/SIMPLE.months;
@@ -653,7 +666,7 @@ function renderSimple(){
     $("s-goal-body").innerHTML=""; $("s-goal-note").textContent="";
   }else{
     const need=goalNeeds(p);
-    $("s-goal-sub").textContent="선택 기간 "+SIMPLE.months+"개월 · 공고 시작 "+(SIMPLE.estart<900?SIMPLE.estart:4)+"개월차 · 노드 분배율 70% 가정.";
+    $("s-goal-sub").textContent="선택 기간 "+SIMPLE.months+"개월 · 공고 시작 "+stageStart()+"개월차 · 노드 분배율 70% 가정.";
     $("s-goal-body").innerHTML=[2,3,4].map(k=>{
       const U=Math.round(need(k)/1000)*1000;
       return "<b>기기값 "+k+"배</b> ("+fmt0(k*p.price)+" R) → 월 평균 기업 예치 <b class='mono'>"
@@ -672,14 +685,17 @@ function renderSimple(){
     S.svg.appendChild(el("line",{x1:CH.L,x2:CH.W-CH.R,y1:yy,y2:yy,stroke:"var(--faint)","stroke-width":1.2,"stroke-dasharray":"7 5"}));
     const t=el("text",{x:CH.W-CH.R-4,y:yy-5,"text-anchor":"end",class:"anno"}); t.textContent="기기값 "+fmt0(p.price); S.svg.appendChild(t);
   }
-  if(SIMPLE.ecap>0&&p.estart<=SIMPLE.months){
-    const xx=S.x(p.estart);
+  const marks=staged
+    ?SIMPLE.stages.filter(st=>st.start<=SIMPLE.months).map(st=>({at:st.start,label:st.name}))
+    :(capSum>0&&p.estart<=SIMPLE.months?[{at:p.estart,label:"기업 수요 시작"}]:[]);
+  marks.forEach(mk2=>{
+    const xx=S.x(mk2.at);
     S.svg.appendChild(el("line",{x1:xx,x2:xx,y1:CH.T,y2:CH.H-CH.B,stroke:"var(--c4)","stroke-width":1.2,"stroke-dasharray":"3 3"}));
-    const t=el("text",{x:xx+5,y:CH.T+12,class:"anno",style:"fill:var(--c4)"}); t.textContent="기업 수요 시작"; S.svg.appendChild(t);
-  }
+    const t=el("text",{x:xx+5,y:CH.T+12,class:"anno",style:"fill:var(--c4)"}); t.textContent=mk2.label; S.svg.appendChild(t);
+  });
   const area=linePath(rows,S.x,S.y,"cumR")+`L ${S.x(rows.length)} ${S.y(0)} L ${S.x(1)} ${S.y(0)} Z`;
   S.svg.appendChild(el("path",{d:area,style:"fill:var(--c1)",opacity:.08,stroke:"none"}));
-  const showNone=SIMPLE.ecap>0;
+  const showNone=hasDemand;
   if(showNone)
     S.svg.appendChild(el("path",{d:linePath(rowsNone,S.x,S.y,"cumR"),fill:"none",style:"stroke:var(--c2)","stroke-width":2,"stroke-dasharray":"6 5"}));
   S.svg.appendChild(el("path",{d:linePath(rows,S.x,S.y,"cumR"),fill:"none",style:"stroke:var(--c1)","stroke-width":2.5}));
@@ -705,13 +721,19 @@ function wireQ(id,key,parse){
 }
 wireQ("sq-price","price",v=>parseFloat(v));
 wireQ("sq-months","months",v=>parseInt(v,10));
-const DPRE={none:{estart:4,eg:15,ecap:0},base:{estart:4,eg:15,ecap:80000},opt:{estart:3,eg:22,ecap:150000},max:{estart:4,eg:20,ecap:1800000}};
+const DPRE={
+  none:{ecap:0,stages:null,estart:4,eg:15},
+  kr:{stages:[STG_KR],ecap:400000},
+  usjp:{stages:[STG_KR,STG_USJP],ecap:1800000},
+  glb:{stages:[STG_KR,STG_USJP,STG_GLB],ecap:3600000},
+};
 document.querySelectorAll("#sq-demand .qchip").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("#sq-demand .qchip").forEach(c=>c.classList.remove("on")); b.classList.add("on");
   SIMPLE.demand=b.dataset.v; Object.assign(SIMPLE,DPRE[b.dataset.v]); renderSimple();
 }));
 $("sq-ecap").addEventListener("input",()=>{
   SIMPLE.ecap=parseFloat($("sq-ecap").value);
+  SIMPLE.stages=null;
   SIMPLE.demand=SIMPLE.ecap<=0?"none":"custom";
   document.querySelectorAll("#sq-demand .qchip").forEach(c=>c.classList.toggle("on",SIMPLE.ecap<=0&&c.dataset.v==="none"));
   renderSimple();
@@ -749,6 +771,7 @@ try{
 try{
   const ss=JSON.parse(localStorage.getItem("wlbn-econ-simple")||"null");
   if(ss){ Object.assign(SIMPLE,ss);
+    if(SIMPLE.demand!=="custom"&&!DPRE[SIMPLE.demand]){ SIMPLE.demand="kr"; Object.assign(SIMPLE,DPRE.kr); }
     for(const [id,key] of [["sq-price","price"],["sq-months","months"],["sq-demand","demand"]])
       document.querySelectorAll("#"+id+" .qchip").forEach(c=>c.classList.toggle("on",String(c.dataset.v)===String(SIMPLE[key])));
   }
