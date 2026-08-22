@@ -36,6 +36,7 @@
 - "Rails win when they're boring enough for a regional bank's back office."
 - "The map ends at the front door."
 - "Consumer onboarding lives or dies on exactly that."
+- (커뮤니티발, 재인용 시 크레딧) "You can verify the transactions. You can't verify someone's imagination." — @mrcauliman
 
 ## 성과 로그 (게시 후 기입)
 
