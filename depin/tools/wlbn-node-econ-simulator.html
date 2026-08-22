@@ -215,10 +215,11 @@ body:not(.simple) .simpleview{display:none}
       <button class="qchip" data-v="none">아직 없음<small>초기 운영 예산만</small></button>
       <button class="qchip on" data-v="base">보통<small>4개월차 첫 공고, 완만한 증가</small></button>
       <button class="qchip" data-v="opt">활발<small>3개월차 시작, 빠른 증가</small></button>
+      <button class="qchip" data-v="max">도전 목표<small>연 300억 도달</small></button>
     </div>
     <div style="margin-top:12px">
       <div class="ctl-head"><label for="sq-ecap" style="font-size:13px">수요 도달 규모 — 직접 조정 (월 기업 예치 상한)</label><span class="val mono" id="sq-ecap-v"></span></div>
-      <input type="range" id="sq-ecap" min="0" max="500000" step="10000" value="80000" style="width:100%;accent-color:var(--accent)" aria-label="월 기업 예치 상한">
+      <input type="range" id="sq-ecap" min="0" max="1800000" step="20000" value="80000" style="width:100%;accent-color:var(--accent)" aria-label="월 기업 예치 상한">
       <div class="hint" id="sq-ecap-y"></div>
     </div></div>
 
@@ -635,7 +636,8 @@ function renderSimple(){
   if(p.price===0){ $("s-payback").textContent="해당 없음"; $("s-payback-sub").textContent="증정 기기 — 기기값 없음"; }
   else{
     const mult=tot/p.price;
-    $("s-payback").textContent=(mult>=10?mult.toFixed(0):mult.toFixed(1))+"배";
+    const disp=(!hit&&+mult.toFixed(1)>=1)?mult.toFixed(2):(mult>=10?mult.toFixed(0):mult.toFixed(1));
+    $("s-payback").textContent=disp+"배";
     $("s-payback-sub").textContent=hit
       ?hit.t+"개월차에 1배(기기값 "+fmt0(p.price)+" R) 도달"
       :"이 가정으로는 기간 내 1배(기기값) 미도달";
@@ -699,7 +701,7 @@ function wireQ(id,key,parse){
 }
 wireQ("sq-price","price",v=>parseFloat(v));
 wireQ("sq-months","months",v=>parseInt(v,10));
-const DPRE={none:{estart:4,eg:15,ecap:0},base:{estart:4,eg:15,ecap:80000},opt:{estart:3,eg:22,ecap:150000}};
+const DPRE={none:{estart:4,eg:15,ecap:0},base:{estart:4,eg:15,ecap:80000},opt:{estart:3,eg:22,ecap:150000},max:{estart:4,eg:20,ecap:1800000}};
 document.querySelectorAll("#sq-demand .qchip").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("#sq-demand .qchip").forEach(c=>c.classList.remove("on")); b.classList.add("on");
   SIMPLE.demand=b.dataset.v; Object.assign(SIMPLE,DPRE[b.dataset.v]); renderSimple();
