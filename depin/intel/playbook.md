@@ -45,6 +45,7 @@
 - (커뮤니티발, 재인용 시 크레딧) "You can verify the transactions. You can't verify someone's imagination." — @mrcauliman
 - (미사용 후보 — 홀더 정서 글 대응용) "Markets are weather. Infrastructure is climate."
 - "Credit follows evidence." — 기관 신용·RWA 글 대응용 (검증 가능한 매출 = 신용의 근거)
+- "Multi-source attestation is how reality gets on-chain." — 오라클·검증 인프라 글 대응용
 
 ## 성과 로그 (게시 후 기입)
 
