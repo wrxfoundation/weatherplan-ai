@@ -243,8 +243,10 @@ body:not(.simple) .simpleview{display:none}
   </div>
 
   <div class="s-how"><b>이 계산에 안 들어간 것 (상방 요인 — 설계 과제)</b><br>
-    ① <b>보상 토큰의 가치</b> — 전 항목 RLUSD 고정 기준. 기업 예치로 토큰을 시장에서 매입해 나누는 구조(매입-분배)로 설계되면
-    수요 증가가 토큰 가치로도 전달됩니다. 시세는 약속 불가 — 여기선 계산하지 않습니다.
+    ① <b>WLBN 토큰의 가치</b> — 전 항목 RLUSD 고정 기준. 방향 결정(8/22): WLBN 전환(스왑) 가능하게 설계.
+    <b>매입-분배형</b>(예치금으로 WLBN을 시장에서 매입해 지급)으로 확정되면, 지금 가정 기준
+    <b>월평균 <span class="mono" id="s-buyflow">–</span></b>이 매달 WLBN 매수 유입이 됩니다 — 구조 지표일 뿐,
+    시세는 여기서 계산하지 않습니다(약속 불가).
     ② <b>기기 자체의 가치</b> — 환경부 성능인증 1등급 측정기. 보상과 무관하게 남는 실물.
     ③ <b>초기 참여 우위</b> — 참여 노드가 적은 초기일수록 같은 예산에서 1대 몫이 큽니다. 제네시스 넘버링 희소성 별도.</div>
 
@@ -617,6 +619,8 @@ function renderSimple(){
     :"0 — 기업 수요 없음 (운영 예산만)";
 
   const hasDemand=SIMPLE.ecap>0;
+  const avgBudget=rows.reduce((s,r)=>s+r.budget,0)/rows.length;
+  $("s-buyflow").textContent=fmt0(avgBudget)+" RLUSD";
   const avgSel=tot/SIMPLE.months, avgNone=totNone/SIMPLE.months;
   if(!hasDemand){
     $("s-month").textContent=fmt1(avgSel)+" RLUSD";
