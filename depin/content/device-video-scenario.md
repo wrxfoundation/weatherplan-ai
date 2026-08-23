@@ -23,3 +23,12 @@ shallow DOF, slow camera, matte surfaces, negative space. 블루(#1B2A4A/#2E6BFF
 전체 프롬프트 원문은 세션 기록 참조 (Claude 재생성 가능).
 
 EN 카피 후보: "It doesn't change your air. It knows it. Changing it — that's yours."
+
+## 제작 파이프라인 v2.1 — 키프레임 방식 (생략 방지, 2026-08-24)
+
+멀티샷 통합 생성은 비트 생략이 잦음 → **키프레임 우선**으로 전환:
+1. **실물 촬영** (스마트폰 가능): 흰 배경·측면 확산광 · 5각도(정면/좌¾/우측면/부감¾/그릴 클로즈업) + LED 점등 1장
+2. **스튜디오 레퍼런스 세트**: 실물 사진 입력 편집 모드 — "Keep this exact device completely unchanged... re-shoot in premium product studio" (형태 변형 시 폐기)
+3. **키프레임 6장**: 레퍼런스 입력 + v2 스타일 블록 + KF1~6 (분해 부유/결합 직전/링 점등/거실 주황 관찰/창문 열림·남색 복귀·그래프/엔드 여백)
+4. **image-to-video 4~5s × 6**: 키프레임 첫 프레임 + 모션 한 줄(V1~V6) → 편집 조립 = 25~28s
+장점: 생략 불가능 · 기기 일관성 · 컷 단위 리롤로 실패 비용 최소화.
