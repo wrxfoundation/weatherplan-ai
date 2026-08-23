@@ -5,7 +5,7 @@ import { useStore, getSession } from '../../lib/store'
 import { maskName } from '../../lib/engine'
 import { unitName } from '../../lib/constants'
 import { Logo, useToast } from '../ui'
-import { IcGrid, IcCompass, IcStore, IcBox, IcClipboard, IcBolt, IcRobot, IcCoins, IcLock, IcBell, IcClock, IcAlert, IcSearch, IcUsers } from '../icons'
+import { IcGrid, IcCompass, IcStore, IcBox, IcClipboard, IcBolt, IcRobot, IcCoins, IcLock, IcBell, IcClock, IcAlert, IcSearch, IcUsers, IcMegaphone } from '../icons'
 
 // 파생 알림 — 알림을 저장하지 않고 현재 상태에서 매번 계산한다 (axion 패턴).
 // 읽음 처리는 내용 시그니처를 localStorage에 비교 저장 — 알림 테이블 없이 배지가 동작.
@@ -145,7 +145,10 @@ function CommandPalette({ db, dispatch, open, onClose }) {
 
 const GROUPS = [
   { label: null, items: [{ to: '/admin', label: '통합 대시보드', icon: IcGrid, end: true }] },
-  { label: '경영', items: [{ to: '/admin/biz', label: '경영 전략', icon: IcCompass }] },
+  { label: '경영', items: [
+    { to: '/admin/biz', label: '경영 전략', icon: IcCompass },
+    { to: '/admin/press', label: '프레스룸', icon: IcMegaphone },
+  ] },
   { label: '서비스 관리', items: [
     { to: '/admin/tenants', label: '분양몰 관리', icon: IcStore },
     { to: '/admin/products', label: '상품 관리', icon: IcBox },
