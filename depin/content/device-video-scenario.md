@@ -24,3 +24,16 @@ navy-blue (good) to red-orange (bad), smooth precise camera, photoreal, 16:9, no
 
 제작 팁: 컷별 생성 + 앞 컷 마지막 프레임을 다음 컷 첫 프레임으로(3→4 전환 중요) · 텍스트 생성 금지(후반 삽입) ·
 컴플라이언스: 수익/코인/케이웨더/체인 로고 없음.
+
+---
+
+## 통합 1회 생성 프롬프트 (Seedance 멀티샷) — 2026-08-24 추가
+
+- **A. 풀 시퀀스(30s+ 지원 시)**: 위 8컷을 [Shot 1]~[Shot 8] 비트로 한 프롬프트에 기술.
+  공통: photoreal · 16:9 · no text/logos · 그린(#006655)+민트 액센트 · 데이터색 남색↔붉은주황 ·
+  "Use the attached product photos as the exact device — do not invent a different device."
+  페이싱: 1~3 confident/precise → 4~8 serene/expansive. no faces.
+- **B. 10~12s 압축판(트레일러)**: 4비트 — 조립 스냅 → 그린 링 점화+거실 매치컷(공기 가시화) →
+  빛 실이 도시 지도로 → 지구 풀백 후 기기 엔드프레임(타이틀 여백).
+- 운용: B로 톤 확정 → A 확장 또는 8컷 개별 제작. 기기 형태 변형 시 폐기(가짜 기기 금지 규칙).
+  전체 프롬프트 원문은 세션 대화 기록 참조 (Claude가 재생성 가능).
