@@ -42,3 +42,12 @@ EN 카피 후보: "It doesn't change your air. It knows it. Changing it — that
 VO: 90% 실내→공기는 변한다→보이지 않을 뿐→알면 바꾸기 쉽다→앎이 기록·지도가 된다→한 방에서 도시 지도까지.
 스타일 블록에 "No devices, no gadgets, no electronics visible anywhere" 필수.
 KF1~6·V1~6 프롬프트 원문은 세션 기록 참조.
+
+## 톤 규칙 v3 (2026-08-24, 서우 피드백): 하이키·경쾌 강제
+
+- 어두운 네이비 공간 금지 — 케이웨더 블루 = **밝은 화이트·아이스블루 바탕 + 블루는 얇은 선·액센트만**
+- 나쁜 공기(주황) = 환한 방에 뜬 반투명 온기(빛처럼) — 어두운 연기·먹구름 연출 절대 금지
+- 도시 컷 = 밝은 새벽(pale sky), 야경 금지 · 스타일 블록에 "Strictly avoid: night scenes,
+  low-key lighting, heavy shadows, moody darkness" 필수
+- 기준컷 = 침실 그라데이션 곡선 이미지(주황↔블루가 '빛'으로 얹힌 밝은 방) — 신규 컷은 이 밝기와 대조 판정
+- 음악: 가볍고 상승감(어쿠스틱+미니멀 일렉), 경쾌한 리듬
