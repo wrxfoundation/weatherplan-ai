@@ -29,6 +29,8 @@
 | 8/22(토) | 답글 | @Xfinancebull — 일본 SBI 인프라 | A안 (Japan–Korea corridor) | 제안 → 게시 여부 미기입 | | |
 | 8/22(토) | 답글 | @bgarlinghouse — CFTC 자문위 | A안 (Watching from Asia) | 제안 → 게시 여부 미기입 | | |
 | 8/23(일) | 원글 스레드 | 침실 CO₂와 아침 컨디션 | T1/T2 + 연구 링크 답글, #AirQuality #DePIN | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/23(일) | 답글 | @Ripple — x402 프리미어 멤버 발표 | 기계 고객 안 ("We're building for them on XRPL from the physical-data side") | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/23(일) | 답글 | @rootveg444 — Permission Delegation 스레드 | 질문형 (delegation × signer lists) | **게시됨** | (기입 대기) | (기입 대기) |
 
 ## 패스 기록 (8/22)
 
@@ -42,10 +44,10 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | 2 | @WKahneman Fordefi 글 답글 — 기관 커스터디 A안 | 일(8/23) — 계정당 하루 1회 준수 (8/22 신용딜 답글과 분리) |
 | 3 | ~~침실 CO₂ 스레드~~ → **게시 완료 (8/23)** | — |
 | 3b | (예비) "매일 마시는 14kg" — 지도 편과 계열 중복이라 보류, 주중 간격 두고 재사용 가능 | 보류 |
-| **0** | **@Ripple x402 프리미어 멤버 답글 — 기계 고객 테제, 최우선** (공식 계정 = 답글 홍수, 골든타임 필수) | **즉시 (8/23 오늘)** |
+| ~~0~~ | ~~@Ripple x402 답글~~ → **게시 완료 (8/23)** | — |
 | ~~2b~~ | ~~@WuBlockchain CZ AI-결제 답글~~ — **폐기: 동일 앵글의 상위 무대(리플 원출처) 등장으로 대체** | — |
 | 2c | 답글 예비 3건(안 확정, 세션 기록): BSCN CZ FDI · @JakeClaver 온보딩 · 기후에너지환경부 국문 | 슬롯 여유일 분산 — **CZ 인용 2건(2b·BSCN)은 같은 날 금지, 1일+ 간격** |
-| 2d | @rootveg444 Permission Delegation 스레드 답글 — 질문형(멀티시그와의 조합), 관계 자산 후보 첫 접촉 | 우선순위 높음 — 투표 진행 중 뉴스 페그 살아있을 때 (일 저녁~월) |
+| ~~2d~~ | ~~@rootveg444 PD 답글~~ → **게시 완료 (8/23)** — 답글 오는지 알림 관찰 (오면 상호작용 기회) | — |
 | 2e | x402 주간 집계 계정(@0xPia류, 핸들 원문 확인) 답글 — "rails first, shelves next" 앵글(리플 답글과 분리) + 팔로우 | 월(8/24) 낮 — 같은 날 x402 2건 금지라 일요일 불가 |
 | 2f | @MITSloan 기술-노동 프레임워크 답글 — occupancy sensing 지목형("It mints new ones"), 크립토 밖 신뢰층 첫 학술 접촉 | 월~화 유연 (에버그린, 페그 소멸 없음) |
 | 4 | 원글: "The enterprise stack assembles quietly" (집계형, 뉴스 페그) | 월(8/24) 저녁 |
