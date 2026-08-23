@@ -27,10 +27,14 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 |---|---|---|
 | 1 | @TheCryptoSquire 답글 — 에너지 효율 A안 ("shouldn't cost the air") | 일(8/23) 오전 |
 | 2 | @WKahneman Fordefi 글 답글 — 기관 커스터디 A안 | 일(8/23) — 계정당 하루 1회 준수 (8/22 신용딜 답글과 분리) |
-| 3 | **원글: "The enterprise stack assembles quietly"** (Fordefi·Ankr·Clearpool·RLUSD 집계형, 뉴스 페그) | 일(8/23) 저녁 20~21시 |
-| 4 | 원글: ① 18kg 공기 스레드 | 화(8/25) 저녁 |
+| 3 | **원글: "매일 마시는 14kg" 스레드** (가벼운 생활 훅 — 11,000L/14kg, Know what you breathe) | 일(8/23) 저녁 20~21시 |
+| 4 | 원글: "The enterprise stack assembles quietly" (집계형, 뉴스 페그) | 월(8/24) 저녁 |
 | 5 | 원글: 손그림 인포그래픽 "Why WELLBIAN Is Different" | 이미지 완성 후, 수~목 |
 | 6 | 원글: "왜 RLUSD인가" | 9/8 주간 (예약분) |
+
+### 패스 추가 (8/23)
+
+@Xfinancebull CFTC 홀더 정서 글 — 동일 뉴스 3탕 + 홀더 정서 + 정치 귀속 (좋아요도 생략)
 
 ## 메모
 
