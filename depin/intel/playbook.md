@@ -110,7 +110,8 @@
   후보 공식선, 표기 확인) · @emy_wng(요시카와 에미, 전 리플 VP — 일영 다리, 표기 확인)
 - 미디어(리스트용): @coin_post(일본 최대 크립토 미디어) · @NewEconomyJp(기관 결, 표기 확인)
 - 웨더·생활: **@wni_jp(웨더뉴스 — 참여형 관측 문화의 일본 원조, 동종 관찰 겸)** · @tenkijp
-- 빌더(관찰만): @YuzoKano(bitFlyer) · @WatanabeSota(Astar — **타 체인: 팔로우까지만, 관여 금지**)
+- 빌더(관찰만): @YuzoKano(bitFlyer) · @SotaOnchain(와타나베 소타, Startale/Astar — **타 체인:
+  팔로우까지만, 관여 금지**. 8/23 실핸들 확인: @WatanabeSota 아님)
 - 규칙: ① @sbixdc 팔로우 금지(XDC 인상) ② 답글은 영어 유지(키타오 스레드 = 영어 커뮤니티 문화)
   ③ 판단표 필터는 동일 적용
 
