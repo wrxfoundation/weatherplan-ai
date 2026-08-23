@@ -47,7 +47,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | 2d | @rootveg444 Permission Delegation 스레드 답글 — 질문형(멀티시그와의 조합), 관계 자산 후보 첫 접촉 | 우선순위 높음 — 투표 진행 중 뉴스 페그 살아있을 때 (일 저녁~월) |
 | 4 | 원글: "The enterprise stack assembles quietly" (집계형, 뉴스 페그) | 월(8/24) 저녁 |
 | 5 | 원글: 손그림 인포그래픽 "Why WELLBIAN Is Different" | 이미지 완성 후, 수~목 |
-| 5b | 원글: "래퍼 vs 원장 — 두바이 등기 토큰화가 세운 기준" (테제형, 뉴스 페그 아님 — 초안 세션 기록) | 화~수 (월 enterprise stack과 분리) |
+| 5b | 원글: "래퍼 vs 원장 — 두바이 등기 토큰화가 세운 기준" — **원고 확정(8/23 서우 승인)**, T1/T2+소스 답글+이미지 프롬프트 준비 완료(세션 기록) | 화(8/25) 저녁 권장 (월 enterprise stack과 분리) |
 | 6 | 원글: "왜 RLUSD인가" | 9/8 주간 (예약분) |
 
 ### 패스 추가 (8/23)
