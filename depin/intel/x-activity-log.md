@@ -56,6 +56,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | 5 | 원글: 손그림 인포그래픽 "Why WELLBIAN Is Different" | 이미지 완성 후, 수~목 |
 | 5b | 원글: "래퍼 vs 원장 — 두바이 등기 토큰화가 세운 기준" — **원고 확정(8/23 서우 승인)**, T1/T2+소스 답글+이미지 프롬프트 준비 완료(세션 기록) | 화(8/25) 저녁 권장 (월 enterprise stack과 분리) |
 | 5c | 원글: "기계 고객(Machine Customers)" — x402·에이전트 결제 테제 완결판, **원고 확정(8/23, T1/T2+소스 답글 세션 기록)**. 시그니처 신규: "Ads don't work on agents. Attestations do." | 목(8/28) 저녁 (인포그래픽이 목으로 밀리면 금) |
+| 5d | 원글(생활): "실내 열중증 — 더위 지도가 끊기는 곳" — CO₂ 후속 계열, 시즌 페그(늦더위). 훅: "Most heatstroke doesn't happen under the sun. It happens indoors — where nobody measures." #AirQuality #DePIN | 차주 월~화 (8/31~9/1) — 늦더위 윈도우 내 |
 | 6 | 원글: "왜 RLUSD인가" | 9/8 주간 (예약분) |
 
 ### 패스 추가 (8/23)
