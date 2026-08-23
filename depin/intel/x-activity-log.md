@@ -3,7 +3,9 @@
 ## 계정 기준 상태 (2026-08-23 사용자 제공 스냅샷)
 
 - 팔로워 **30** · 팔로잉 82 · 가입 2026-06 · 위치 Seoul · 링크 wellbianlabs.io + t.me/wellbianlabs
-- 바이오(구버전 — 날씨·RWD 토큰·기후행동): 갱신안 전달됨(실내 공기질+슬로건 통합) — 적용 대기
+- 바이오 확정안(8/23): "The weather-data generator. Measure your space — indoors & out — manage a
+  healthier environment, and verified data becomes rewards on XRPL. We Air You." — 적용 대기
+  (coin 단어 제거 확정 — 어휘 규칙 참조)
 - **6월 게시 6건 = 날씨 DePIN 정체성** (예보 정확도·에너지 트레이더·"Weather isn't data. It's alpha.")
   → 운영 프레임: "실외 날씨(기존 관측망) → 실내 공기(우리가 만드는 지도)" 브릿지로 연결, 소급 수정 없음
 - ⚠️ **6/22 글에 케이웨더 실명 공개됨** ("KWeather's 30,000 stations") — 삭제 비권장(신호 커짐),

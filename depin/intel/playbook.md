@@ -53,6 +53,11 @@
 - "An air-quality network shouldn't cost the air." — 에너지 효율·ESG 글 대응용 (우리만 쓸 수 있는 라인)
 - "Tokenization moves exactly as fast as verification does." — RWA·토큰화 전망 글 대응용
 
+## 어휘 규칙 (대외 채널)
+
+- **"coin/코인" 지양 (2026-08-23, 서우)** — 바이오·게시물에서 "rewards/데이터 보상"으로 치환.
+  내부 개념 명칭 '날씨데이터코인'은 유지하되 대외 노출 시 치환. (투기 연상·규제 민감 회피)
+
 ## 태그 세트 규칙 (2개 상한 유지, 세트 교체)
 
 - 크립토 담론 글: `#DePIN #XRPL` / 생활 콘텐츠(CO₂·14kg·요리 등): `#AirQuality #DePIN`
