@@ -28,6 +28,7 @@
 | 8/22(토) | 답글 | @0xQuantic — 플레어 아키텍처 | A안 (reality on-chain) | 제안 → 게시 여부 미기입 | | |
 | 8/22(토) | 답글 | @Xfinancebull — 일본 SBI 인프라 | A안 (Japan–Korea corridor) | 제안 → 게시 여부 미기입 | | |
 | 8/22(토) | 답글 | @bgarlinghouse — CFTC 자문위 | A안 (Watching from Asia) | 제안 → 게시 여부 미기입 | | |
+| 8/23(일) | 원글 스레드 | 침실 CO₂와 아침 컨디션 | T1/T2 + 연구 링크 답글, #AirQuality #DePIN | **게시됨** | (기입 대기) | (기입 대기) |
 
 ## 패스 기록 (8/22)
 
@@ -39,7 +40,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 |---|---|---|
 | 1 | @TheCryptoSquire 답글 — 에너지 효율 A안 ("shouldn't cost the air") | 일(8/23) 오전 |
 | 2 | @WKahneman Fordefi 글 답글 — 기관 커스터디 A안 | 일(8/23) — 계정당 하루 1회 준수 (8/22 신용딜 답글과 분리) |
-| 3 | **원글: "침실 CO₂와 아침 컨디션" 스레드** (개인 경험 훅 — 2,000ppm/5배, Measure the night) | 일(8/23) 저녁 20~21시 |
+| 3 | ~~침실 CO₂ 스레드~~ → **게시 완료 (8/23)** | — |
 | 3b | (예비) "매일 마시는 14kg" — 지도 편과 계열 중복이라 보류, 주중 간격 두고 재사용 가능 | 보류 |
 | 4 | 원글: "The enterprise stack assembles quietly" (집계형, 뉴스 페그) | 월(8/24) 저녁 |
 | 5 | 원글: 손그림 인포그래픽 "Why WELLBIAN Is Different" | 이미지 완성 후, 수~목 |
