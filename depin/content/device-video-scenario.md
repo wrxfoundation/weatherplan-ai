@@ -3,15 +3,17 @@
 32~38초 · 8컷 · 아크: 조립(아이언맨/SC2) → 전원 → 공기 가시화 → 데이터 상승 → 기업 → 지구 → 엔드.
 **필수**: 기기 컷(1~3, 8)은 ARC-600DA 실물 사진(3~4각도)을 레퍼런스 입력 — 가짜 기기 생성 금지 규칙.
 
-공통 스타일 블록: Cinematic product film, ultra-detailed macro, volumetric light,
-deep green (#006655) and mint (#D9ECC8) brand accents, air-quality data colored
-navy-blue (good) to red-orange (bad), smooth precise camera, photoreal, 16:9, no text, no logos
+공통 스타일 블록 (2026-08-24 블루 전환): Cinematic product film, ultra-detailed macro, volumetric
+light, KWeather blue family — deep navy (#1B2A4A) · signal blue (#2E6BFF) · ice blue (#DCEAF7) —
+air-quality data colored navy-blue (good) to red-orange (bad), device glow cool blue (never green),
+smooth precise camera, photoreal, 16:9, no text, no logos
+※ 톤 결정 보류 중: 브랜드보드(그린) vs 그룹 블루 — 8/26 왕인정 브랜드가이드 협의에서 확정
 
 | # | 길이 | 장면 | 프롬프트 요지 |
 |---|---|---|---|
 | 1 | 4s | 부유 파츠 | dark void, exploded device parts rotating, holographic guide lines (실물 레퍼런스) |
 | 2 | 5s | 조립 | parts snap together along holographic assembly rings, HUD ticks, orbiting camera (리롤 예산 집중) |
-| 3 | 4s | 전원 온 | darkness → green status ring ignites, breathes once, light ripple |
+| 3 | 4s | 전원 온 | darkness → cool signal-blue status ring ignites, breathes once, light ripple |
 | 4 | 5s | 공기 가시화 | bright living room, invisible air becomes drifting particles, navy↔orange flows resolve to calm |
 | 5 | 5s | 데이터 상승 | light threads rise, join city map at dawn, indoor map filling in (지도 스레드 모티프 재사용) |
 | 6 | 4s | 기업 | office, floating glass dashboards with air-map layers, no readable text |
@@ -30,7 +32,7 @@ navy-blue (good) to red-orange (bad), smooth precise camera, photoreal, 16:9, no
 ## 통합 1회 생성 프롬프트 (Seedance 멀티샷) — 2026-08-24 추가
 
 - **A. 풀 시퀀스(30s+ 지원 시)**: 위 8컷을 [Shot 1]~[Shot 8] 비트로 한 프롬프트에 기술.
-  공통: photoreal · 16:9 · no text/logos · 그린(#006655)+민트 액센트 · 데이터색 남색↔붉은주황 ·
+  공통: photoreal · 16:9 · no text/logos · 케이웨더 블루(#1B2A4A/#2E6BFF/#DCEAF7) 액센트 · 데이터색 남색↔붉은주황 ·
   "Use the attached product photos as the exact device — do not invent a different device."
   페이싱: 1~3 confident/precise → 4~8 serene/expansive. no faces.
 - **B. 10~12s 압축판(트레일러)**: 4비트 — 조립 스냅 → 그린 링 점화+거실 매치컷(공기 가시화) →
