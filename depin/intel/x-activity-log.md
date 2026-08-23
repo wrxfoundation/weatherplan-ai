@@ -50,6 +50,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | ~~2d~~ | ~~@rootveg444 PD 답글~~ → **게시 완료 (8/23)** — 답글 오는지 알림 관찰 (오면 상호작용 기회) | — |
 | 2e | x402 주간 집계 계정(@0xPia류, 핸들 원문 확인) 답글 — "rails first, shelves next" 앵글(리플 답글과 분리) + 팔로우 | 월(8/24) 낮 — 같은 날 x402 2건 금지라 일요일 불가 |
 | 2j | @Archie_XRPL 슈워츠 기관-우선 시퀀스 답글 — "retail arrives for products, not rails" 보론 + "Invisible infrastructure is the end state of adoption." **주의: 5신호 리스트 미공개(월 저녁 원글용 아껴두기)** — 답글=예열, 원글=완결 동선 | 월 낮 (오늘은 좋아요만 — BankXRP가 오늘 3번째) |
+| 2k | @XRPLOperations 3.3.0 답글 — 릴리스 구성 지목형(엔터프라이즈 프리미티브 4종 일괄) + "the quiet vote before the vote" | 화 낮 (MIT·세계은행과 병행 가능 — 상한 내) |
 | 2f | @MITSloan 기술-노동 프레임워크 답글 — occupancy sensing 지목형("It mints new ones"), 크립토 밖 신뢰층 첫 학술 접촉 | 월~화 유연 (에버그린, 페그 소멸 없음) |
 | 2g | @IOV_OWL Ripple Treasury 문서 답글 — 디테일 지목형(SFTP 병행·한도 거버넌스 = "CFO 데스크톱"), 관계 자산 후보 | 월~화 — **월 원글에 5번째 신호 편입과 세트** |
 | 2h | @WorldBank Small AI/4C 답글 — "context는 수입 불가" 앵글, 크립토 어휘 0(기관 레인) | 화 이후 (에버그린, MIT와 같은 날 무방 — 둘 다 비크립토) |
