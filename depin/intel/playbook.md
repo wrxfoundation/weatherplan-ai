@@ -37,6 +37,17 @@
 6. **기계 고객**: "에이전트는 돈만 옮기지 않는다, 입력을 산다 — Machine customers are still customers."
 7. **질문형**: 작은 계정엔 진짜 질문 (검증 어떻게 하나?) — 답글 오면 상호관계 75배.
 8. **셀프 증언**: "can confirm from the builder side" — 팬덤 글에 빌더로 등장하는 신선함.
+9. **실체 대조 (2026-08-24, 서우)**: 타 프로젝트 비전·로드맵 뉴스가 화제일 때 반박 대신 실물(기기 사진·
+   인증·가동 화면)로 조용히 대비. 셀럽 언박싱 = 이 공식의 실행.
+
+## 시제 규칙 (문안 전체 적용)
+
+- **실물·측정·인증·고객 = 현재형/완료형** ("measures", "is certified", "has been selling for 30 years").
+  미래형("will build") 금지 — 우리의 최대 차별점은 시제 자체.
+- **온체인 보상·데이터 공고 = "테스트 중" 진행형** ("in testing") — 이 부분까지 현재형으로 과장하면
+  실체 포지션이 무너짐. 정직한 진행형이 신뢰를 더함.
+- 시그니처: "Most DePIN sells a roadmap. We ship a device." · "Not a promise. A product." ·
+  "We built the sensors first, then wrote the whitepaper."
 
 ## 인용문 제조법 — 마지막 문장을 독립 인용구로
 
