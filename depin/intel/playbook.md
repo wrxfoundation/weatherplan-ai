@@ -64,6 +64,7 @@
 - "Multi-source attestation is how reality gets on-chain." — 오라클·검증 인프라 글 대응용
 - "An air-quality network shouldn't cost the air." — 에너지 효율·ESG 글 대응용 (우리만 쓸 수 있는 라인)
 - "Tokenization moves exactly as fast as verification does." — RWA·토큰화 전망 글 대응용
+- "Account economics is onboarding economics." — 리저브·수수료·온보딩 글 대응용 (Sponsor 복선 페어)
 
 ## 어휘 규칙 (대외 채널)
 
