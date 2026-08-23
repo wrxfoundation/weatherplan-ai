@@ -205,6 +205,16 @@ body:not(.simple) .simpleview{display:none}
 }
 .s-how b{color:var(--ink)}
 .s-note{font-size:12px; color:var(--faint); margin-top:14px}
+details.fold{padding:0 16px; margin:10px 0}
+details.fold>summary{
+  cursor:pointer; padding:13px 0; font-size:14px; font-weight:700; color:var(--ink);
+  list-style:none; display:flex; align-items:center; gap:8px;
+}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"▸"; color:var(--accent); font-size:13px}
+details.fold[open]>summary::before{content:"▾"}
+details.fold>summary .sum-sub{font-weight:400; font-size:12.5px; color:var(--muted)}
+details.fold>.fold-body{padding:2px 0 16px}
 .s-verdict{
   margin:-2px 0 16px; padding:10px 14px; font-size:13.5px; font-weight:500; line-height:1.6; color:var(--ink);
   border-left:3px solid var(--accent) !important;
@@ -217,7 +227,7 @@ header.top{
   background:var(--glass); border-bottom:1px solid var(--glass-brd);
   backdrop-filter:blur(14px) saturate(1.25); -webkit-backdrop-filter:blur(14px) saturate(1.25);
 }
-.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.s-verdict{
+.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.s-verdict,details.fold{
   background:var(--glass); border:1px solid var(--glass-brd); border-radius:16px;
   backdrop-filter:blur(12px) saturate(1.25); -webkit-backdrop-filter:blur(12px) saturate(1.25);
   box-shadow:inset 0 1px 0 var(--glass-hi), var(--shadow);
@@ -282,13 +292,11 @@ th{background:var(--glass-panel)}
 </div>
 
 <section class="simpleview">
-  <div class="s-how" style="border:1.5px solid var(--accent); margin:14px 0 4px; font-size:13.5px; color:var(--ink)">
-    <b>한 줄 요약</b> — 내 노드의 수익은 딱 세 가지가 정합니다: <b>① 기기를 얼마에 샀나 ② 얼마나 켜뒀나 ③ 데이터를 사가는 기업이 얼마나 있나</b>.
-    보상은 정해진 예산을 참여자끼리 나누는 구조라, <b>기업 수요가 커질수록 내 몫도 커집니다</b> —
-    그리고 매입-분배 구조에서는 그 예산이 매달 WLBN을 사는 돈이 됩니다. 아래에서 세 가지를 골라 직접 확인해 보세요.
-  </div>
   <h1>내 노드, 켜두면 얼마나 쌓일까</h1>
-  <p class="lead">세 가지만 고르면 됩니다. 나머지 가정(네트워크 규모·예산)은 기본 설계값 — 설계 모드에서 바꿀 수 있습니다.</p>
+  <div class="s-how" style="border:1.5px solid var(--accent); margin:8px 0 18px; font-size:13.5px; color:var(--ink)">
+    <b>한 줄 요약</b> — 수익은 세 가지가 정합니다: <b>기기값 · 켜둔 기간 · 데이터를 사가는 기업 수요</b>.
+    수요가 커질수록 내 몫도 커집니다. 아래에서 골라 확인해 보세요.
+  </div>
 
   <div class="qrow"><div class="q-label">① 기기를 얼마에 샀나요?</div>
     <div class="qchips" id="sq-price">
@@ -311,11 +319,13 @@ th{background:var(--glass-panel)}
       <button class="qchip" data-v="usjp">2단계 · +미국·일본<small>13개월차 진출 · 연 ~300억</small></button>
       <button class="qchip" data-v="glb">3단계 · 전세계<small>25개월차 확장 · 연 ~600억</small></button>
     </div>
-    <div style="margin-top:12px">
-      <div class="ctl-head"><label for="sq-ecap" style="font-size:13px">수요 도달 규모 — 직접 조정 (월 기업 예치 상한)</label><span class="val mono" id="sq-ecap-v"></span></div>
-      <input type="range" id="sq-ecap" min="0" max="3600000" step="50000" value="400000" style="width:100%;accent-color:var(--accent)" aria-label="월 기업 예치 상한">
-      <div class="hint" id="sq-ecap-y"></div>
-    </div></div>
+    <details class="fold" style="margin-top:12px">
+      <summary>수요 규모 직접 조정 <span class="sum-sub" id="sq-ecap-v"></span></summary>
+      <div class="fold-body">
+        <input type="range" id="sq-ecap" min="0" max="3600000" step="50000" value="400000" style="width:100%;accent-color:var(--accent)" aria-label="월 기업 예치 상한">
+        <div class="hint" id="sq-ecap-y"></div>
+      </div>
+    </details></div>
 
   <div class="kpis" style="margin-top:20px">
     <div class="kpi"><div class="k-label">이 기간 총 보상</div><div class="k-val mono" id="s-total">–</div><div class="k-sub" id="s-total-w">–</div></div>
@@ -332,38 +342,44 @@ th{background:var(--glass-panel)}
     <div class="chart-box" id="chartS"></div>
   </div>
 
-  <div class="card">
-    <h2>목표 역산 — 몇 배를 주려면 얼마가 팔려야 하나</h2>
-    <p class="sub" id="s-goal-sub">선택 기간 기준, 공고 시작 후 월 기업 예치가 평균 이 수준으로 유지된다는 가정.</p>
-    <div id="s-goal-body" style="font-size:13.5px;line-height:2"></div>
-    <p class="sub" id="s-goal-note" style="margin-top:6px"></p>
-  </div>
+  <details class="fold">
+    <summary>목표 역산 <span class="sum-sub">— 몇 배를 주려면 얼마가 팔려야 하나</span></summary>
+    <div class="fold-body">
+      <p class="sub" id="s-goal-sub">선택 기간 기준, 공고 시작 후 월 기업 예치가 평균 이 수준으로 유지된다는 가정.</p>
+      <div id="s-goal-body" style="font-size:13.5px;line-height:2"></div>
+      <p class="sub" id="s-goal-note" style="margin-top:6px"></p>
+    </div>
+  </details>
 
-  <div class="card">
-    <h2>WLBN 보유 시나리오 <span style="font-size:12px;font-weight:700;color:var(--crit)">가정 실험 — 예측 아님</span></h2>
-    <p class="sub">보상을 받는 즉시 일부를 WLBN으로 바꿔 기간 끝까지 보유한다고 가정할 때의 실현 가치.
-      배율은 임의 가정값이며 <b>하락도 동일하게 가능</b>합니다 — 그래서 0.5×를 항상 함께 표시합니다.</p>
-    <div class="ctl-head"><label for="sh-pct" style="font-size:13px">보상 중 WLBN 보유 비율 (나머지는 즉시 RLUSD 스왑)</label><span class="val mono" id="sh-pct-v"></span></div>
-    <input type="range" id="sh-pct" min="0" max="100" step="5" value="50" style="width:100%;accent-color:var(--accent)" aria-label="WLBN 보유 비율">
-    <div class="ctl-head" style="margin-top:8px"><label for="sh-mult" style="font-size:13px">기간 말 가치 배율 — 임의 가정</label><span class="val mono" id="sh-mult-v"></span></div>
-    <input type="range" id="sh-mult" min="0.25" max="5" step="0.25" value="1" style="width:100%;accent-color:var(--accent)" aria-label="가치 배율 가정">
-    <div id="sh-body" style="font-size:13.5px;line-height:2;margin-top:8px"></div>
-    <p class="sub" style="margin-top:6px">토큰 가치는 수요·유동성·설계에 따라 오르내리며 이 도구는 그것을 예측하지 않습니다.
-      구조적 사실은 하나뿐: 매입-분배 확정 시 데이터 매출이 매달 WLBN 매수 유입이 된다는 것 (아래 ① 참조).</p>
-  </div>
+  <details class="fold">
+    <summary>WLBN 보유 시나리오 <span class="sum-sub" style="color:var(--crit);font-weight:700">가정 실험 — 예측 아님</span></summary>
+    <div class="fold-body">
+      <p class="sub">보상 일부를 WLBN으로 바꿔 기간 끝까지 보유한다고 가정할 때의 실현 가치.
+        배율은 임의 가정이며 <b>하락도 동일하게 가능</b>합니다 — 그래서 0.5×를 항상 함께 표시합니다.</p>
+      <div class="ctl-head"><label for="sh-pct" style="font-size:13px">보상 중 WLBN 보유 비율 (나머지는 즉시 RLUSD 스왑)</label><span class="val mono" id="sh-pct-v"></span></div>
+      <input type="range" id="sh-pct" min="0" max="100" step="5" value="50" style="width:100%;accent-color:var(--accent)" aria-label="WLBN 보유 비율">
+      <div class="ctl-head" style="margin-top:8px"><label for="sh-mult" style="font-size:13px">기간 말 가치 배율 — 임의 가정</label><span class="val mono" id="sh-mult-v"></span></div>
+      <input type="range" id="sh-mult" min="0.25" max="5" step="0.25" value="1" style="width:100%;accent-color:var(--accent)" aria-label="가치 배율 가정">
+      <div id="sh-body" style="font-size:13.5px;line-height:2;margin-top:8px"></div>
+      <p class="sub" style="margin-top:6px">토큰 가치는 수요·유동성·설계에 따라 오르내리며 이 도구는 예측하지 않습니다.
+        구조적 사실은 하나: 매입-분배 확정 시 데이터 매출이 매달 WLBN 매수 유입이 된다는 것.</p>
+    </div>
+  </details>
 
-  <div class="s-how"><b>이 계산에 안 들어간 것 (상방 요인 — 설계 과제)</b><br>
-    ① <b>WLBN 토큰의 가치</b> — 전 항목 RLUSD 고정 기준. 방향 결정(8/22): WLBN 전환(스왑) 가능하게 설계.
-    <b>매입-분배형</b>(예치금으로 WLBN을 시장에서 매입해 지급)으로 확정되면, 지금 가정 기준
-    <b>월평균 <span class="mono" id="s-buyflow">–</span></b>이 매달 WLBN 매수 유입이 됩니다 — 구조 지표일 뿐,
-    가치 예측은 하지 않으며 위 「보유 시나리오」 카드는 임의 가정 실험입니다.
-    ② <b>기기 자체의 가치</b> — 환경부 성능인증 1등급 측정기. 보상과 무관하게 남는 실물.
-    ③ <b>초기 참여 우위</b> — 참여 노드가 적은 초기일수록 같은 예산에서 1대 몫이 큽니다. 제네시스 넘버링 희소성 별도.</div>
-
-  <div class="s-how"><b>보상이 나오는 방식 (백서 구조)</b><br>
-    ① 데이터가 필요한 기업이 돈을 <b>먼저 예치</b>하면 그것이 보상 예산이 됩니다.
-    ② 예산을 그달의 참여자들이 나눠 갖습니다 — 참여자가 늘면 1대 몫은 줄고, 사가는 기업이 늘면 예산이 커집니다.
-    ③ 제대로 켜두고 보내야 받습니다 (연속성·정합성 등 품질 기준). 같은 공간의 여러 대는 1대로 칩니다.</div>
+  <details class="fold">
+    <summary>보상 구조 설명 <span class="sum-sub">— 어디서 나오고, 무엇이 빠져 있나</span></summary>
+    <div class="fold-body" style="font-size:12.5px;color:var(--muted);line-height:1.7">
+      <b style="color:var(--ink)">보상이 나오는 방식 (백서 구조)</b><br>
+      ① 데이터가 필요한 기업이 돈을 <b>먼저 예치</b>하면 그것이 보상 예산이 됩니다.
+      ② 예산을 그달의 참여자들이 나눠 갖습니다 — 참여자가 늘면 1대 몫은 줄고, 사가는 기업이 늘면 예산이 커집니다.
+      ③ 제대로 켜두고 보내야 받습니다 (연속성·정합성 등 품질 기준). 같은 공간의 여러 대는 1대로 칩니다.
+      <br><br><b style="color:var(--ink)">이 계산에 안 들어간 것</b><br>
+      ① <b>WLBN 토큰의 가치</b> — 전 항목 RLUSD 고정. 매입-분배형 확정 시 지금 가정 기준
+      <b>월평균 <span class="mono" id="s-buyflow">–</span></b>이 매달 WLBN 매수 유입이 됩니다(구조 지표일 뿐, 가치 예측 아님).
+      ② <b>기기 자체의 가치</b> — 성능인증 1등급 측정기, 보상과 무관하게 남는 실물.
+      ③ <b>초기 참여 우위</b> — 초기일수록 같은 예산에서 1대 몫이 큼. 제네시스 넘버링 희소성 별도.
+    </div>
+  </details>
 
   <div class="s-note">모든 수치는 가정값 기반 시뮬레이션이며 확정·약속이 아닙니다 · 전기료(월 2~3천 원 수준)는 별도 · <b style="color:var(--crit)">내부 검토용 — 대외 공유 금지</b></div>
 </section>
@@ -752,12 +768,12 @@ function renderSimple(){
   $("s-buyflow").textContent=fmt0(avgBudget)+" RLUSD";
   const avgSel=tot/SIMPLE.months, avgNone=totNone/SIMPLE.months;
   if(!hasDemand){
-    $("s-month").textContent=fmt1(avgSel)+" RLUSD";
-    $("s-month-w").textContent=fmtW(avgSel*p.fx)+"/월 · 기업 공고가 열리면 예산이 커져 여기서 올라갑니다";
+    $("s-month").textContent=fmt1(avgSel);
+    $("s-month-w").textContent="RLUSD/월 · "+fmtW(avgSel*p.fx)+" · 기업 공고가 열리면 여기서 올라갑니다";
   }else{
     const up=avgNone>0?Math.round((avgSel/avgNone-1)*100):0;
-    $("s-month").textContent=fmt1(avgNone)+" → "+fmt1(avgSel)+" RLUSD";
-    $("s-month-w").textContent="수요 없음 가정 → 선택 시나리오 (+"+up+"%) · "+fmtW(avgSel*p.fx)+"/월";
+    $("s-month").textContent=fmt1(avgNone)+" → "+fmt1(avgSel);
+    $("s-month-w").textContent="RLUSD/월 · 수요 없음 → 선택 시나리오 (+"+up+"%) · "+fmtW(avgSel*p.fx);
   }
 
   const hit=rows.find(r=>r.cumR>=p.price);
