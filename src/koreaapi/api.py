@@ -305,6 +305,8 @@ async def index(request: Request) -> JSONResponse:
             "GET /v1/metrics": "how much agents have consumed KoreaAPI (usage totals + most-requested signals)",
             "GET /v1/answer": "Answer Products catalog; ?product=&q= runs one decision, ?q= runs all",
             "GET /openapi.json": "OpenAPI 3.1 spec — auto-generate a client (ChatGPT Actions, LangChain, …)",
+            "GET /.well-known/agent.json": "the agent manifest for THIS deployment (also /agents.json) — capabilities, terms, and the live MCP URL",
+            "POST /mcp": "the MCP server itself, over Streamable HTTP — point any MCP client at <host>/mcp (same tools, no install)",
         },
         "premium_x402": {
             "endpoint": "GET /v1/korea-rising",
@@ -322,6 +324,32 @@ async def openapi(request: Request) -> JSONResponse:
     return JSONResponse(openapi_spec())
 
 
+async def agent_manifest(request: Request) -> JSONResponse:
+    """`/.well-known/agent.json` + `/agents.json` — the discovery front door, served by the host that
+    ACTUALLY implements the endpoints. The Pages copy is the canonical published manifest, but an
+    agent platform probing the LIVE API host got a 404 there — so serve it here too, with the MCP and
+    REST URLs resolved to THIS deployment (the static copy can only name a documented pattern).
+    `admin` is imported lazily: it imports `openapi_spec` from this module."""
+    from .admin import _agents_manifest  # noqa: PLC0415 — deferred: breaks the api<->admin cycle
+
+    man = dict(_agents_manifest())
+    base = str(request.base_url).rstrip("/")
+    mcp_block = dict(man.get("mcp") or {})
+    http_block = dict(mcp_block.get("http") or {})
+    http_block["url"] = f"{base}/mcp"           # a REAL connectable URL, not a documented pattern
+    mcp_block["http"] = http_block
+    man["mcp"] = mcp_block
+    man["api"] = {                              # this host's live REST surface, machine-readable
+        "base_url": base,
+        "openapi": f"{base}/openapi.json",
+        "health": f"{base}/healthz",
+        "answer": f"{base}/v1/answer",
+        "note": "the live HTTP face; the static open data + crawlable pages stay on the canonical site",
+    }
+    man["served_by"] = "koreaapi-api"           # tells a client this is the endpoint, not the mirror
+    return JSONResponse(man)
+
+
 # The MCP server mounted INSIDE the HTTP app (Streamable HTTP): one deployment serves REST *and*
 # MCP — an agent (Cursor / Claude Desktop / any MCP client) just points at https://<host>/mcp with
 # no install, no API key. Same read-only tools over the same verified store.
@@ -333,6 +361,8 @@ routes = [
     Route("/", index),
     Route("/healthz", health),
     Route("/openapi.json", openapi),
+    Route("/agents.json", agent_manifest),
+    Route("/.well-known/agent.json", agent_manifest),  # the path agent platforms probe FIRST
     Route("/v1/verified/{entity_id}", verified),
     Route("/v1/artist/{artist_id}", artist),
     Route("/v1/person/{name}", person),

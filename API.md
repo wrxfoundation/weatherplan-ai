@@ -21,7 +21,22 @@ HTTP/JSON, with the premium endpoint gated by **x402** (agents pay per call in U
 - `GET /v1/korea-rising` — the proprietary demand signal (queries + buy-intent). The one
   thing not re-derivable from Wikipedia, so it's the one thing worth charging for.
 
-**Meta:** `GET /` (index), `GET /healthz` (rail status), `POST /billing/stripe/checkout` (skeleton).
+**Meta:** `GET /` (index), `GET /healthz` (rail status), `GET /openapi.json` (spec),
+`POST /billing/stripe/checkout` (skeleton).
+
+## The same deployment is also an MCP server
+
+`POST /mcp` — the MCP server is **mounted inside this app** (Streamable HTTP), so one deployment
+answers both protocols. Point any MCP client (Claude Desktop · Cursor · an agent framework) at
+`https://<host>/mcp`: same tools, same verified store, no install and no API key.
+
+## Discovery — what to hand an agent platform
+
+`GET /.well-known/agent.json` (also `GET /agents.json`) returns **this deployment's** manifest:
+capabilities, tools, licence/attribution terms, autonomous-use terms, the premium x402 block — and,
+unlike the static copy on the Pages site, the live URLs resolved to this host (a connectable
+`mcp.http.url`, `api.base_url`, `api.openapi`). When a marketplace, registry, or agent platform asks
+for "your endpoint", that manifest URL is the answer.
 
 ## Run locally
 

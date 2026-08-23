@@ -1,6 +1,10 @@
-# Render.com Blueprint — one-click deploy of the KoreaAPI HTTP API as a web service.
+# Render.com Blueprint — one-click deploy of the KoreaAPI agent endpoint as a web service.
 # (Other hosts — Railway / Fly / Cloud Run — use the Dockerfile directly.)
-# After it's live, point agents at https://<your-service>.onrender.com (see API.md / /agents.json).
+# Once live, ONE URL carries both protocols:
+#   REST      https://<your-service>.onrender.com/            (catalog; spec at /openapi.json)
+#   MCP       https://<your-service>.onrender.com/mcp         (Streamable HTTP — any MCP client)
+#   manifest  https://<your-service>.onrender.com/.well-known/agent.json
+# That manifest URL is what an agent platform / marketplace listing should point at.
 services:
   - type: web
     name: koreaapi
