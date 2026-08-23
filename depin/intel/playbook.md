@@ -53,6 +53,18 @@
 - "An air-quality network shouldn't cost the air." — 에너지 효율·ESG 글 대응용 (우리만 쓸 수 있는 라인)
 - "Tokenization moves exactly as fast as verification does." — RWA·토큰화 전망 글 대응용
 
+## 태그 세트 규칙 (2개 상한 유지, 세트 교체)
+
+- 크립토 담론 글: `#DePIN #XRPL` / 생활 콘텐츠(CO₂·14kg·요리 등): `#AirQuality #DePIN`
+- `#weather`는 케이웨더 관계 명문화 후 날씨 데이터 확장 시점에 투입
+
+## 공기질 축 팔로우·답글 대상 (2026-08-23 선정 — 팔로우 전 실계정 검색 확인)
+
+- 기관: @IQAir · @openaq(파트너십 후보급) · @EPAair · @WHO · @CleanAirFund
+- 연구자: @j_g_allen(CO₂·인지 COGfx) · @CorsIAQ · @jljcolorado · @linseymarr
+- 동종 DePIN: @WeatherXM (회사 대 회사 답글 유형)
+- 목적: 크립토 밖 신뢰층 — 공기질 커뮤니티에서의 제3자 검증층 구축. 콘솔 로스터 「헬스·환경」에 등록.
+
 ## 비주얼 규칙 (이미지 프롬프트 공통)
 
 - **공기질 색 규칙 고정 (8/23, 서우)**: 좋음 = 남색(navy) · 나쁨 절정 = 붉은 주황 — 국내 대기지수 색 관행 정합.
