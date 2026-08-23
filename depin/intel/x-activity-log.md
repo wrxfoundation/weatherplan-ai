@@ -27,7 +27,8 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 |---|---|---|
 | 1 | @TheCryptoSquire 답글 — 에너지 효율 A안 ("shouldn't cost the air") | 일(8/23) 오전 |
 | 2 | @WKahneman Fordefi 글 답글 — 기관 커스터디 A안 | 일(8/23) — 계정당 하루 1회 준수 (8/22 신용딜 답글과 분리) |
-| 3 | **원글: "매일 마시는 14kg" 스레드** (가벼운 생활 훅 — 11,000L/14kg, Know what you breathe) | 일(8/23) 저녁 20~21시 |
+| 3 | **원글: "침실 CO₂와 아침 컨디션" 스레드** (개인 경험 훅 — 2,000ppm/5배, Measure the night) | 일(8/23) 저녁 20~21시 |
+| 3b | (예비) "매일 마시는 14kg" — 지도 편과 계열 중복이라 보류, 주중 간격 두고 재사용 가능 | 보류 |
 | 4 | 원글: "The enterprise stack assembles quietly" (집계형, 뉴스 페그) | 월(8/24) 저녁 |
 | 5 | 원글: 손그림 인포그래픽 "Why WELLBIAN Is Different" | 이미지 완성 후, 수~목 |
 | 6 | 원글: "왜 RLUSD인가" | 9/8 주간 (예약분) |
