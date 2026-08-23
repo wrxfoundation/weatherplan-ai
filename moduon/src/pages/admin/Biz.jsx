@@ -41,11 +41,40 @@ const FLYWHEEL = [
   { n: '데이터량 ↑', d: '표본 확대·정밀도' },
 ]
 
+// 포트폴리오 4-아레나 — 성장 포착력 × 점유 변동성 2축으로 사업 카테고리를
+// 네 가지 자본 배치 태세로 분류한다(MGI '아레나' 프레임 응용). 예산을 어디에
+// 더 쓰고 어디서 뺄지가 관건 — 규모가 아니라 방향이 생산성을 만든다.
+const ARENA_CATS = {
+  accelerate: ['phone'],
+  sustain: ['internet', 'water', 'rental'],
+  participate: ['insurance', 'move', 'appliance', 'etc'],
+}
+
 export default function AdminBiz() {
   const { db } = useStore()
   const s = adminStats(db)
   const p = db.policies
   const distributors = db.distributors ?? [] // 실 총판 계약 현황
+
+  // 아레나별 라이브 리드 분포 — 권고 배분과의 괴리가 재배치 신호
+  const leadTotal = db.leads.length
+  const arenaShare = (slugs) => {
+    const n = db.leads.filter((l) => slugs.includes(l.cat)).length
+    return { n, pct: leadTotal ? Math.round((n / leadTotal) * 100) : 0 }
+  }
+  const acc = arenaShare(ARENA_CATS.accelerate)
+  const sus = arenaShare(ARENA_CATS.sustain)
+  const par = arenaShare(ARENA_CATS.participate)
+  const ARENAS = [
+    { en: 'Shape', ko: '판을 만든다', tone: 'bg-tint text-primary-text', alloc: 25, def: '시장 규칙을 우리가 정의 — 자본보다 조직·기술을 투입', chips: ['분양몰 사업권 네트워크', 'AI 마케팅 자동화'], live: `활성 분양몰 ${s.active.length}곳 · 총판 ${distributors.length}권역` },
+    { en: 'Accelerate', ko: '자본 집중', tone: 'bg-orange-tint text-orange-text', alloc: 45, def: '고성장 + 점유 변동 큼 — 마케팅 예산 최우선 투입', chips: ['휴대폰(번호이동 결합)', '외국인 개통(공략안 v1.0)'], live: `리드 ${acc.n}건 · 비중 ${acc.pct}%`, hot: true },
+    { en: 'Sustain', ko: '수성·수익화', tone: 'bg-ok/10 text-ok', alloc: 25, def: '성숙 캐시카우 — 효율 운영으로 마진을 방어', chips: ['인터넷/TV 결합', '정수기·렌탈'], live: `리드 ${sus.n}건 · 비중 ${sus.pct}%` },
+    { en: 'Participate', ko: '선택 참여', tone: 'bg-brow text-bmuted', alloc: 5, def: '고정비 없이 제휴로만 — 리드 송출 마진 수취', chips: ['보험', '이사', '가전·생활/기타'], live: `리드 ${par.n}건 · 비중 ${par.pct}%` },
+  ]
+  const arenaSignals = []
+  if (par.pct > 25) arenaSignals.push(`참여 아레나 리드 비중 ${par.pct}% — 권고 배분(5%)을 크게 웃돕니다. 제휴 송출로 소화하고, 마케팅 예산은 가속 아레나로 재배치하세요.`)
+  if (acc.pct < 20) arenaSignals.push(`가속 아레나(휴대폰·외국인) 리드 비중 ${acc.pct}% — 자본 집중 대상인데 유입이 얇습니다. 캠페인 예산 상향과 외국인 파일럿 조기 착수를 검토하세요.`)
+  if (!arenaSignals.length) arenaSignals.push('현재 리드 분포가 권고 배분과 크게 어긋나지 않습니다 — 배분 유지, 월간 리뷰에서 재점검하세요.')
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -132,6 +161,37 @@ export default function AdminBiz() {
           ))}
         </div>
       </div>
+
+      {/* 3.4 포트폴리오 재배치 관제 — 4-아레나(성장 포착×점유 변동) 자본 배치 태세 */}
+      <Card track="b" className="mt-4 p-5 sm:p-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-[15.5px] font-extrabold text-bink">포트폴리오 재배치 관제 <span className="text-[12.5px] font-semibold text-bmuted">· 4-아레나 자본 배치</span></h2>
+          <span className="text-[11.5px] text-bfaint">투자 과제는 규모가 아니라 방향 — 어디에 더 쓰고, 어디서 뺄 것인가</span>
+        </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {ARENAS.map((a) => (
+            <div key={a.en} className={`flex flex-col rounded-field border p-3.5 ${a.hot ? 'border-orange/40 bg-orange-tint/30' : 'border-bline'}`}>
+              <div className="flex items-center justify-between">
+                <span className={`rounded-full px-2 py-0.5 text-[10.5px] font-extrabold ${a.tone}`}>{a.en}</span>
+                <span className="tnum text-[15px] font-extrabold text-bink">{a.alloc}<span className="text-[11px] font-bold text-bfaint">%</span></span>
+              </div>
+              <div className="mt-1.5 text-[13.5px] font-extrabold text-bink">{a.ko}</div>
+              <p className="mt-0.5 text-[11.5px] leading-4 text-bmuted">{a.def}</p>
+              <div className="mt-2 flex flex-wrap gap-1">
+                {a.chips.map((c) => <span key={c} className="rounded bg-brow/70 px-1.5 py-0.5 text-[10.5px] font-semibold text-bbody">{c}</span>)}
+              </div>
+              <div className="tnum mt-auto border-t border-bline pt-2 text-[11px] text-bfaint">{a.live}</div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 rounded-field bg-brow/60 p-3.5">
+          <div className="text-[11.5px] font-extrabold text-bink">재배치 신호</div>
+          <ul className="mt-1 flex flex-col gap-1">
+            {arenaSignals.map((sig) => <li key={sig} className="text-[12px] leading-[18px] text-bbody">· {sig}</li>)}
+          </ul>
+        </div>
+        <p className="mt-2 text-[11px] leading-4 text-bfaint">% 는 마케팅·확장 예산의 권고 배분(데모 기준값), 리드 비중은 실데이터입니다. 분류 축은 "성장 포착력 × 점유 변동성"(MGI '아레나' 프레임 응용) — 실제 집행은 월간 경영회의에서 확정합니다.</p>
+      </Card>
 
       {/* 3.5 신시장 확장 스코어보드 — TAM×전환×자산 재활용×페인 종합점수 */}
       <Card track="b" className="mt-4 p-5 sm:p-6">
