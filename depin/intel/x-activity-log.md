@@ -52,7 +52,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | 2f | @MITSloan 기술-노동 프레임워크 답글 — occupancy sensing 지목형("It mints new ones"), 크립토 밖 신뢰층 첫 학술 접촉 | 월~화 유연 (에버그린, 페그 소멸 없음) |
 | 2g | @IOV_OWL Ripple Treasury 문서 답글 — 디테일 지목형(SFTP 병행·한도 거버넌스 = "CFO 데스크톱"), 관계 자산 후보 | 월~화 — **월 원글에 5번째 신호 편입과 세트** |
 | 2h | @WorldBank Small AI/4C 답글 — "context는 수입 불가" 앵글, 크립토 어휘 0(기관 레인) | 화 이후 (에버그린, MIT와 같은 날 무방 — 둘 다 비크립토) |
-| 2i | 리플 프라임 $275M IG 채권 글 답글 — **조건부: 게시 계정 확인 필요**(분석가 계정이면 ✅ "credit follows evidence" 변주 / 애그리게이터·하이프면 패스). 팩트는 검증·축적 완료 | 월, 계정 확인 후 |
+| ~~2i~~ | @BankXRP 리플 프라임 IG 채권 답글 — **계정 확인 → ✅ 확정**(신선·정확·증거 첨부·무CTA), "credit follows evidence" 변주 + 매출채권 복선 라인. 오늘 3번째 답글 슬롯(상한 내) | **즉시 (8/23)** — 게시 시 완료 마킹 |
 | 4 | 원글: "The enterprise stack assembles quietly" (집계형, 뉴스 페그) | 월(8/24) 저녁 |
 | 5 | 원글: 손그림 인포그래픽 "Why WELLBIAN Is Different" | 이미지 완성 후, 수~목 |
 | 5b | 원글: "래퍼 vs 원장 — 두바이 등기 토큰화가 세운 기준" — **원고 확정(8/23 서우 승인)**, T1/T2+소스 답글+이미지 프롬프트 준비 완료(세션 기록) | 화(8/25) 저녁 권장 (월 enterprise stack과 분리) |
