@@ -157,6 +157,11 @@ MIT(occupancy sensing)·세계은행(context=데이터) ✅ vs 맥킨지(구멍 
 무반응. 단 $3T(Ripple Prime)·$13T(Ripple Treasury) 수치는 독립 검증되어 축적(ecosystem-log ★) —
 오늘 저녁 원글 5번째 신호에 $13T 반영 권장. 0.1%·75라이선스·워런 항목은 미검증이라 재사용 금지.
 
+@Crypt0Senseii McClurg ETF+가격전망 재탕("$3~4/12개월") — **가격 전망 명시 = 자동 실격**
+(금지표현 최상위) + Xaif_Crypto가 이틀 전 이미 거른 동일 McClurg 소스 재포장 + 🚨·태그 3개
+하이프 문법. 무반응. Franklin Templeton·DBS·Guggenheim 토큰화 연계는 소재 후보로만 메모
+(미검증, 발화 시 원출처 확인 필요).
+
 @okx "토큰화 TradFi 5배 성장" — 구멍 테스트 실패(측정·데이터 언급 0, 맥킨지 Omniscalers와 동일
 실패 유형) + 거래소 계정(레인 밖) + 출처 없는 자체 마케팅 수치. 무반응. 앵글만 보관: "대부분의
 RWA는 기존 자산 재포장, 데이터는 애초에 종이 자산이 아니었던 프런티어" — 구멍 있는 RWA 글 등장 시 재사용.
