@@ -147,6 +147,9 @@ MIT(occupancy sensing)·세계은행(context=데이터) ✅ vs 맥킨지(구멍 
 결제 건과 인접해 보이나 다른 주제(모델 구동 비용 vs 실물 데이터 구매). 크립토·측정 언급 0,
 헤지펀드 투자 담론. 무반응.
 
+@ZenithFdn Canton Network DeFi 인프라(Zenith) 자기 홍보 — 완전 타 체인·타 카테고리(기관
+DeFi·토큰화 국채), 자사 토큰 티커(Zth) 언급, 구멍 테스트 실패. 무반응, 레인 완전 밖.
+
 @sentosumosaba Fasset/SBI 재확산(2탕째, 8/24) — 어제 이미 검증·발화 완료된 동일 뉴스, 원출처 아님
 + 🚨📢🦄 하이프. "Own Network" 제품명은 검증됨(팩트 카드 보강), 나머지 과장 수치는 미검증. 무반응.
 
