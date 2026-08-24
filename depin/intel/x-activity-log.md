@@ -58,6 +58,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | 2j | @Archie_XRPL 슈워츠 기관-우선 시퀀스 답글 — "retail arrives for products, not rails" 보론 + "Invisible infrastructure is the end state of adoption." **주의: 5신호 리스트 미공개(월 저녁 원글용 아껴두기)** — 답글=예열, 원글=완결 동선 | 월 낮 (오늘은 좋아요만 — BankXRP가 오늘 3번째) |
 | 2k | @XRPLOperations 3.3.0 답글 — 릴리스 구성 지목형(엔터프라이즈 프리미티브 4종 일괄) + "the quiet vote before the vote" | 화 낮 (MIT·세계은행과 병행 가능 — 상한 내) |
 | ~~2m~~ | ~~@ankr XRPL 기관 RPC 공식 발표 답글~~ → **게시 완료 (8/24)** | — |
+| **2n** | **@XRPLLabs (Xaman) Xaman Swap 발표 답글 — 최상급 계정 최우선**. "네이티브 깊이 vs 래핑" 프레임 — 신규 시그니처 "Depth beats wrapping."(오늘 코인뷰로우 래퍼 소재와 테마 연결). 초안 A(추천, 빌더 포지셔닝): "Most swap tools route around a ledger's complexity. Building the logic into the structure instead is a different tier of native — and it's exactly why teams like ours build on XRPL in the first place. Depth beats wrapping." / 초안 B(질문형, 저위험): 씬 IOU 페어까지 유동성 탐색이 확장되는지 질문. **주의: 내부 미확정 보상설계(WLBN AMM 매입-분배)는 언급 금지** — "우리도 XRPL 네이티브로 짓는다" 수준까지만, 구체 메커니즘 노출 금지 | 화(8/25) 오전 최우선 — 오늘 답글 4건 이미 게시로 슬롯 소진(상한 3~4) |
 | **2l** | **에이전트 자율 x402 결제 1인칭 후기 답글 — 최고 우선순위**("what got bought, not the wallet" 앵글). 체인 특정 금지(Base/USDC 원사례, 우리 발화는 패턴만). 목요 5c 원글의 실증 인용 근거이기도 함 | **오늘 슬롯 남으면 즉시, 없으면 화(8/25) 최우선** — 오늘 3건(2e·2g·2j)이 저녁 원글 예열용이라 우선순위 유지, 이 건은 별도 축(기계 고객)이라 순서 무관 |
 | 2f | @MITSloan 기술-노동 프레임워크 답글 — occupancy sensing 지목형("It mints new ones"), 크립토 밖 신뢰층 첫 학술 접촉 | 월~화 유연 (에버그린, 페그 소멸 없음) |
 | 2g | @IOV_OWL Ripple Treasury 문서 답글 — 디테일 지목형(SFTP 병행·한도 거버넌스 = "CFO 데스크톱"), 관계 자산 후보 | 월~화 — **월 원글에 5번째 신호 편입과 세트** |
