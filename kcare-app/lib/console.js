@@ -286,11 +286,20 @@ export const VIDEO_MODES = [
 ];
 
 // 컨시어지 담당 고객 리스트 — 이름을 누르면 케어 프로필로 (실무진 2026-08-12)
+// 2026-08-21 시트 컨시어지 고객 1·2번 —
+//   proposed/accepted: 이 고객에게 보낸 제안과 수락 건수. 판매 실적이 아니라
+//     "이분께 제안이 맞았는가"를 보는 값이다 (평가 지표로 쓰지 않는다 · 원칙 1).
+//   referredBy: 누가 소개했는지. 소개로 들어온 가구는 관계가 이미 있어서
+//     첫 방문의 경계심이 낮다 — 배차와 인사말이 달라진다.
 export const MY_CLIENTS = [
-  { name: "김순자", age: 78, where: "대치동", loc: "자택", note: "이번 달 방문 8/22 · 12번째" },
-  { name: "오태식", age: 77, where: "역삼동", loc: "자택", note: "이번 달 방문 8/25 · 5번째" },
-  { name: "정말순", age: 84, where: "청담동", loc: "요양병원", note: "면회 8/24 · 3번째" },
-  { name: "박영자", age: 81, where: "삼성동", loc: "자택", note: "첫 방문 예정 8/28" },
+  { name: "김순자", age: 78, where: "대치동", loc: "자택", note: "이번 달 방문 8/22 · 12번째",
+    proposed: 6, accepted: 5, referredBy: null },
+  { name: "오태식", age: 77, where: "역삼동", loc: "자택", note: "이번 달 방문 8/25 · 5번째",
+    proposed: 4, accepted: 1, referredBy: null },
+  { name: "정말순", age: 84, where: "청담동", loc: "요양병원", note: "면회 8/24 · 3번째",
+    proposed: 3, accepted: 2, referredBy: "김순자 (같은 성당)" },
+  { name: "박영자", age: 81, where: "삼성동", loc: "자택", note: "첫 방문 예정 8/28",
+    proposed: 0, accepted: 0, referredBy: "김순자 (이웃)" },
 ];
 
 export const VIDEO_SEGMENTS = ["현관 진입 · 본인 확인", "케어박스 점검", "생활환경 확인", "서비스 종료 확인"];
