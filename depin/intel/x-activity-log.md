@@ -157,6 +157,11 @@ MIT(occupancy sensing)·세계은행(context=데이터) ✅ vs 맥킨지(구멍 
 무반응. 단 $3T(Ripple Prime)·$13T(Ripple Treasury) 수치는 독립 검증되어 축적(ecosystem-log ★) —
 오늘 저녁 원글 5번째 신호에 $13T 반영 권장. 0.1%·75라이선스·워런 항목은 미검증이라 재사용 금지.
 
+@InvestWithD 리플 프라임 $275M 채권 재탕(3번째 계정, 이미 BankXRP로 발화 완료된 뉴스) —
+🚨🤯🔥 하이프 이모지 + **"Ripple Bank 곧... 🤫" = 근거 없는 은행인가 임박 루머**(8/24 검증: 실제는
+OCC 예비 조건부 승인일 뿐, stoneiland 트윗에서 이미 과장으로 확인한 그 클레임의 반복). 무반응.
+⚠️ "Ripple Bank 곧" 루머가 확산되면 FedNow 카드처럼 팩트체크 카드 ② 후보로 준비.
+
 @Crypt0Senseii McClurg ETF+가격전망 재탕("$3~4/12개월") — **가격 전망 명시 = 자동 실격**
 (금지표현 최상위) + Xaif_Crypto가 이틀 전 이미 거른 동일 McClurg 소스 재포장 + 🚨·태그 3개
 하이프 문법. 무반응. Franklin Templeton·DBS·Guggenheim 토큰화 연계는 소재 후보로만 메모
