@@ -30,7 +30,9 @@ import {
   MY_CLIENTS,
   VIDEO_POLICY,
   VIDEO_SEGMENTS,
-} from "../lib/console";;
+  CALL_CHECKS,
+  OPS_MESSAGE_PRESETS,
+} from "../lib/console";
 import { checkupFor, REPORT_HEADLINE } from "../lib/checkup";
 import { fmtWon } from "../lib/config";
 import { useAppState } from "../lib/state";
@@ -44,11 +46,12 @@ import Splash from "../components/Splash";
 // 탭은 컨시어지의 하루 순서다 — 출근해서 오늘 볼 것 → 방문 전 고객 파악 →
 // 현장에서 누르는 것 → 끝나고 쓰는 리포트 → 발견한 것 제안.
 // 3개였을 때는 오늘 3.8화면 · 리포트 3.7화면이 몰려 있었고 GNB 는 휑했다.
+// 방문과 리포트를 한 탭으로 합쳤다 (2026-08-21 시트 컨시어지 전체 1번).
+// 한 번의 방문에서 수행과 리포트 작성이 이어지는데 탭이 갈려 있으면 오가야 했다.
 const TABS = [
   { key: "today", label: "오늘", icon: "home" },
   { key: "client", label: "고객", icon: "user" },
-  { key: "visit", label: "방문", icon: "door" },
-  { key: "report", label: "리포트", icon: "doc" },
+  { key: "visit", label: "방문 · 리포트", icon: "door" },
   { key: "suggest", label: "제안", icon: "diamond" },
   // 정산 탭은 숨겼다 (2026-08-12 실무진 "내용 숨기기") — 수익 정보가 시연 화면에
   // 노출되면 곤란하다는 판단. 코드는 남겨 두고 메뉴에서만 뺀다.
@@ -60,6 +63,10 @@ export default function ConciergePage() {
   const [tab, setTab] = useState("today");
   const [kitOpen, setKitOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [calOpen, setCalOpen] = useState(false); // 오늘 탭 일정 달력
+  const [calDay, setCalDay] = useState(null); // 달력에서 고른 날 — 시트로 뜬다
+  const [callDone, setCallDone] = useState({}); // 확인전화 체크 (id-단계)
+  const [opsMsgOpen, setOpsMsgOpen] = useState(false); // 관제에 알리기 시트
   const [shopSel, setShopSel] = useState({});
   const [shopSent, setShopSent] = useState(false);
   const [apptDone, setApptDone] = useState(false);
@@ -104,6 +111,32 @@ export default function ConciergePage() {
   const a1 = TODAY_ROUTE[0];
   const a2 = TODAY_ROUTE[1];
 
+  // 일정 달력 (시트 오늘 1번) — 공유 일정(state.events)을 날짜별로 본다.
+  const cNow = new Date();
+  const calMonthLabel = `${cNow.getFullYear()}년 ${cNow.getMonth() + 1}월`;
+  const calCells = (() => {
+    const first = new Date(cNow.getFullYear(), cNow.getMonth(), 1);
+    const last = new Date(cNow.getFullYear(), cNow.getMonth() + 1, 0).getDate();
+    const cells = Array.from({ length: first.getDay() }, () => null);
+    for (let d = 1; d <= last; d++) {
+      cells.push({
+        day: d,
+        today: d === cNow.getDate(),
+        jobs: state.events.filter((e) => {
+          const x = new Date(e.at);
+          return x.getMonth() === cNow.getMonth() && x.getDate() === d;
+        }),
+      });
+    }
+    return cells;
+  })();
+  const calDayJobs = calDay == null ? [] : calCells.find((c) => c && c.day === calDay)?.jobs || [];
+  // 확인전화 — 아직 안 한 것 (시트 오늘 3번)
+  const callsLeft = CALL_CHECKS.reduce(
+    (n, c) => n + c.steps.filter((s) => !(callDone[`${c.id}-${s.k}`] ?? s.done)).length,
+    0
+  );
+
   return (
     <>
       <Head>
@@ -128,6 +161,14 @@ export default function ConciergePage() {
                   </span>
                 </div>
               </div>
+              {/* 관제에 말 걸기 — 어르신의 즉시방문요청과 같은 자리·같은 성격이다
+                  (2026-08-21 시트 컨시어지 오늘 2번). 현장에서 관제를 부르는 버튼. */}
+              <button
+                onClick={() => setOpsMsgOpen(true)}
+                className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-2.5 py-1.5 text-[12px] font-bold text-navy"
+              >
+                관제에 알리기
+              </button>
               <Link href="/" className="tap shrink-0 text-[12px] font-bold text-muted/50">
                 데모 홈
               </Link>
@@ -144,6 +185,55 @@ export default function ConciergePage() {
             {/* ════ 오늘 — 출근해서 제일 먼저 보는 것 ════ */}
             {tab === "today" && (
               <>
+                {/* 일정 달력 — 오늘 탭 최상단 (2026-08-21 시트 컨시어지 오늘 1번).
+                    접었다 펴고, 날짜를 누르면 그 날 일정이 시트로 뜬다. */}
+                <Card className="p-4">
+                  <button
+                    onClick={() => setCalOpen((v) => !v)}
+                    aria-expanded={calOpen}
+                    className="btn-press flex w-full items-center gap-2 text-left"
+                  >
+                    <span className="text-[15px] font-black text-navy">일정 달력</span>
+                    <span className="font-num text-[12px] text-muted">{calMonthLabel}</span>
+                    <span
+                      aria-hidden
+                      className="ml-auto text-muted transition-transform duration-200"
+                      style={{ transform: calOpen ? "rotate(180deg)" : "none" }}
+                    >
+                      <Icon name="chev" size={18} strokeWidth={2} />
+                    </span>
+                  </button>
+                  {calOpen && (
+                    <div className="mt-3 grid grid-cols-7 gap-1 text-center">
+                      {["일", "월", "화", "수", "목", "금", "토"].map((d) => (
+                        <div key={d} className="py-1 text-[11px] font-bold text-muted">
+                          {d}
+                        </div>
+                      ))}
+                      {calCells.map((c, i) =>
+                        c === null ? (
+                          <div key={`b${i}`} />
+                        ) : (
+                          <button
+                            key={c.day}
+                            onClick={() => setCalDay(c.day)}
+                            aria-label={`${c.day}일${c.jobs.length ? ` · 일정 ${c.jobs.length}건` : ""}`}
+                            className="btn-press flex min-h-[38px] flex-col items-center justify-center rounded-lg font-num text-[13px] font-bold"
+                            style={{ color: c.today ? "#B08D57" : "#40413F" }}
+                          >
+                            {c.day}
+                            <span
+                              aria-hidden
+                              className="mt-0.5 h-[5px] w-[5px] rounded-full"
+                              style={{ background: c.jobs.length ? "#B08D57" : "transparent" }}
+                            />
+                          </button>
+                        )
+                      )}
+                    </div>
+                  )}
+                </Card>
+
                 {/* 방문 업무흐름 — 관제와 같은 건을 본다 (2026-08-13 미팅 8단계) */}
                 <VisitFlow role="concierge" />
 
@@ -355,6 +445,57 @@ export default function ConciergePage() {
                   </div>
                 </Card>
 
+                {/* 방문 전 확인전화 — 7일·3일·1일 전 (2026-08-21 시트 컨시어지 오늘 3번).
+                    체크하면 관제로 넘어간다. 노쇼의 절반은 "그날인 줄 몰랐다"라서,
+                    안 한 것이 남아 있으면 관제가 먼저 알아야 한다. */}
+                <Card className="p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[15px] font-black text-navy">방문 전 확인전화</span>
+                    <span className="ml-auto font-num text-[12px] font-bold text-amber">
+                      남은 {callsLeft}건
+                    </span>
+                  </div>
+                  <div className="mt-3 space-y-2.5">
+                    {CALL_CHECKS.map((c) => (
+                      <div key={c.id} className="rounded-xl border border-navy/[.07] bg-white/60 p-3">
+                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                          <span className="text-[14px] font-bold text-navy">{c.customer}</span>
+                          <span className="font-num text-[12px] font-bold text-gold">{c.visitAt}</span>
+                        </div>
+                        <div className="mt-0.5 text-[12px] text-muted">{c.purpose}</div>
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {c.steps.map((s) => {
+                            const on = callDone[`${c.id}-${s.k}`] ?? s.done;
+                            return (
+                              <button
+                                key={s.k}
+                                onClick={() => {
+                                  if (on) return;
+                                  setCallDone((m) => ({ ...m, [`${c.id}-${s.k}`]: true }));
+                                  push("확인전화", `${c.customer} ${s.label} 확인전화 완료 — 관제 전달`, "#8FE3C0");
+                                }}
+                                disabled={on}
+                                className="btn-press min-h-[34px] rounded-[10px] border px-2.5 text-[12px] font-bold disabled:opacity-100"
+                                style={
+                                  on
+                                    ? { background: "rgba(30,122,90,.1)", color: "#1E7A5A", borderColor: "rgba(30,122,90,.3)" }
+                                    : { color: "#8A5D12", borderColor: "rgba(138,93,18,.35)" }
+                                }
+                              >
+                                {on ? `✓ ${s.label}` : `${s.label} · ${s.due}`}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                    체크하면 관제 화면에 바로 반영됩니다. 통화가 안 되면 체크하지 마세요 — 안 된
+                    것도 관제가 알아야 할 정보입니다.
+                  </p>
+                </Card>
+
                 {/* 오늘의 한 끗 — 선제 케어 한 가지 (세계 최고 컨시어지: anticipation) */}
                 <Card className="border border-gold/30 p-4">
                   <div className="flex items-center gap-2">
@@ -517,18 +658,15 @@ export default function ConciergePage() {
                 {/* 방문 수행 — 체크인 후 진행 (감사 타임라인) */}
                 <SectionLabel>방문 수행</SectionLabel>
                 <Card className="p-4">
-                  <div className="grid grid-cols-2 gap-2">
+                  {/* 관찰 리포트 버튼은 뺐다 (2026-08-21 시트 컨시어지 전체 2번).
+                      리포트 작성은 아래 '리포트' 구역 한 곳에서만 한다 — 같은 일을
+                      두 자리에서 시작할 수 있으면 어디까지 썼는지 알 수 없다. */}
+                  <div className="grid grid-cols-1 gap-2">
                     <StepBtn
                       done={v.kitDone}
                       disabled={!v.checkedIn}
                       label={v.kitDone ? "케어박스 완료" : "케어박스 점검"}
                       onClick={() => v.checkedIn && !v.kitDone && setKitOpen(true)}
-                    />
-                    <StepBtn
-                      done={v.reportSent}
-                      disabled={!v.checkedIn}
-                      label={v.reportSent ? "관찰 리포트 발송됨" : "관찰 리포트"}
-                      onClick={() => v.checkedIn && !v.reportSent && setReportOpen(true)}
                     />
                   </div>
                   {v.audit.length > 0 && (
@@ -704,8 +842,8 @@ export default function ConciergePage() {
               </>
             )}
 
-            {/* ════ 리포트 탭 ════ */}
-            {tab === "report" && (
+            {/* ════ 리포트 — 방문 탭 안으로 들어왔다 (2026-08-21 시트 전체 1번) ════ */}
+            {tab === "visit" && (
               <>
                 {/* 방문 리포트 작성 — 거주 형태 토글이 체크리스트와 리포트 카피를
                     실시간으로 바꾼다 (실무자 피드백 2026-08-09 · 이원화 개발 명세) */}
@@ -1567,6 +1705,58 @@ export default function ConciergePage() {
             </div>
           </nav>
 
+          {/* 달력에서 고른 날 — 그 날 일정을 시트로 (2026-08-21 시트 오늘 1번) */}
+          {calDay != null && (
+            <Sheet title={`${calMonthLabel} ${calDay}일`} onClose={() => setCalDay(null)}>
+              {calDayJobs.length === 0 ? (
+                <p className="text-[14px] leading-[1.7] text-muted">이 날에는 잡힌 일정이 없습니다.</p>
+              ) : (
+                <div className="space-y-2">
+                  {calDayJobs
+                    .slice()
+                    .sort((a, b) => a.at - b.at)
+                    .map((e) => (
+                      <div key={e.id} className="rounded-xl border border-navy/[.07] bg-white/60 p-3">
+                        <div className="flex items-center gap-2">
+                          <span className="font-num text-[14px] font-bold text-navy">{fmtT(e.at)}</span>
+                          <span className="text-[14px] font-bold text-ink">{e.title}</span>
+                        </div>
+                        {e.note && <div className="mt-1 text-[12px] leading-[1.6] text-muted">{e.note}</div>}
+                        {e.source && <div className="mt-1 text-[11px] text-muted">등록 {e.source}</div>}
+                      </div>
+                    ))}
+                </div>
+              )}
+              <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
+                어르신·보호자와 같은 달력입니다. 담당 확정 전에는 상세 주소가 보이지 않습니다.
+              </p>
+            </Sheet>
+          )}
+
+          {/* 관제에 알리기 (2026-08-21 시트 오늘 2번) */}
+          {opsMsgOpen && (
+            <Sheet title="관제에 알리기" onClose={() => setOpsMsgOpen(false)}>
+              <p className="text-[13px] leading-[1.7] text-muted">
+                현장에서 관제에 바로 전합니다. 급한 것은 전화가 빠릅니다 — 이 창은 기록이 남는
+                연락입니다.
+              </p>
+              <div className="mt-3 space-y-2">
+                {OPS_MESSAGE_PRESETS.map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => {
+                      push("관제 연락", `컨시어지 박지현 — ${m}`, "#8FA9CC");
+                      setOpsMsgOpen(false);
+                    }}
+                    className="btn-press w-full rounded-xl border border-navy/15 px-3.5 py-3 text-left text-[14px] font-bold text-navy"
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+            </Sheet>
+          )}
+
           {kitOpen && (
             <KitSheet
               items={state.kit}
@@ -1664,6 +1854,28 @@ function StepBtn({ done, disabled, label, onClick }) {
 
 // 케어박스 점검 시트 — REQ-10
 // 의약품(isMedicine)은 수량 확인만. 보충은 보호자 승인 → 구매대행.
+// 공통 바텀시트 — 이 화면의 시트들이 같은 껍데기를 쓰도록 뽑아 두었다.
+// 닫기 버튼은 제목 줄 오른쪽에 둔다 (시트가 길어지면 아래 버튼까지 못 내려간다).
+function Sheet({ title, onClose, children }) {
+  return (
+    <div className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(8,23,45,.45)]">
+      <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-3xl bg-white p-6 pb-8">
+        <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
+        <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1 text-[19px] font-black text-navy">{title}</div>
+          <button
+            onClick={onClose}
+            className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[13px] font-bold text-muted"
+          >
+            닫기
+          </button>
+        </div>
+        <div className="mt-3">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 function KitSheet({ items, _onboarding, onClose, onDone }) {
   const [rows, setRows] = useState(items);
   const [photoTaken, setPhotoTaken] = useState(false);
