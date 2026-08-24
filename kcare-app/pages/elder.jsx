@@ -187,6 +187,8 @@ export default function ElderHome() {
   const [storeGroup, setStoreGroup] = useState(0); // 소분류 — 분류를 바꾸면 첫 칸으로 돌아간다
   const [askOpen, setAskOpen] = useState(null); // 해주세요 — 펼친 항목 하나 (아코디언)
   const [vitalsOpen, setVitalsOpen] = useState(false); // 건강 탭 — 몸 상태 세부
+  const [calOpen, setCalOpen] = useState(false); // 오늘 탭 — 이번 달 달력
+  const [calSel, setCalSel] = useState(new Date().getDate()); // 고른 날짜 (이번 달 기준)
   const [voiceTo, setVoiceTo] = useState(null); // 음성 메시지 수신자 (null이면 미선택)
   const [voiceSent, setVoiceSent] = useState([]); // 보낸 목소리 목록 (최근 순)
   const [askSel, setAskSel] = useState(null); // '해주세요' 선택 항목
@@ -245,6 +247,31 @@ export default function ElderHome() {
   // REQ-02 공유 캘린더에서 다음 일정 바인딩
   const upcoming = [...state.events].sort((a, b) => a.at - b.at).filter((e) => e.at > Date.now());
   const next = upcoming[0];
+
+  // 이번 달 달력 — 공유 일정(state.events)을 날짜별로 센다 (시트 어르신 오늘 1번).
+  // 지난 일정도 달력에는 남긴다. "그날 뭐였더라"를 확인하는 것이 달력의 쓸모다.
+  // now 는 위에서 인사말 날짜에 쓰려고 이미 만들어 둔 것을 그대로 쓴다.
+  const monthLabel = `${now.getMonth() + 1}월`;
+  const monthEvents = state.events.filter((e) => {
+    const d = new Date(e.at);
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  });
+  const monthCells = (() => {
+    const first = new Date(now.getFullYear(), now.getMonth(), 1);
+    const last = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const cells = Array.from({ length: first.getDay() }, () => null);
+    for (let d = 1; d <= last; d++) {
+      cells.push({
+        day: d,
+        today: d === now.getDate(),
+        count: monthEvents.filter((e) => new Date(e.at).getDate() === d).length,
+      });
+    }
+    return cells;
+  })();
+  const selDayEvents = monthEvents
+    .filter((e) => new Date(e.at).getDate() === calSel)
+    .sort((a, b) => a.at - b.at);
 
   // REQ-01 — 보호자가 설정한 우선 요소를 그리드 앞으로 (자동 추론 아님)
   const priority = state.priority;
@@ -333,7 +360,8 @@ export default function ElderHome() {
                       id: `rq-${Date.now()}`,
                       dir: "fromElder",
                       type: "즉시 방문 요청",
-                      detail: "지금 와 주셨으면 합니다 (어르신 화면 즉시방문요청)",
+                      detail:
+                        "지금 와 주셨으면 합니다 (어르신 화면 즉시방문요청) — 관제가 먼저 전화로 확인합니다",
                       amount: null,
                       preferredDate: null,
                       urgency: "urgent",
@@ -346,15 +374,18 @@ export default function ElderHome() {
                   });
                   dispatch({
                     type: "pushEvent",
-                    payload: { kind: "방문", text: `${ELDER.name}(${ELDER.age}) 즉시 방문 요청 · 관제 배정 대기`, color: "#B08D57" },
+                    payload: { kind: "방문", text: `${ELDER.name}(${ELDER.age}) 즉시 방문 요청 · 관제 확인 전화 발신`, color: "#B08D57" },
                   });
                 }}
               />
             </div>
-            {/* 버튼 글자만으로 부족한 설명은 한 줄로 — 요청 후에는 상태를 말해 준다 */}
+            {/* 버튼 글자만으로 부족한 설명은 한 줄로 — 요청 후에는 상태를 말해 준다.
+                요청이 곧 방문은 아니다. 관제가 먼저 전화로 무엇이 필요한지 여쭙고
+                그다음 배차한다 (2026-08-21 시트 어르신 전체 2번). 바로 출발한다고
+                적어 두면 전화가 왔을 때 "왜 안 오고 전화만 하나"가 된다. */}
             <p className="mt-2 text-[19px] leading-[1.5] text-muted">
               {visitAsked
-                ? "요청을 보냈습니다. 선생님이 곧 출발합니다."
+                ? "요청을 보냈습니다. 관제에서 곧 전화를 드립니다."
                 : "지금 와 주셨으면 할 때 누르세요."}
             </p>
           </header>
@@ -479,6 +510,123 @@ export default function ElderHome() {
                 첫 안심방문 때 선생님이 바탕화면에 만들어 드립니다. 실수로 눌러도 5초 안에
                 취소됩니다.
               </p>
+            </ElderCard>
+
+            {/* 즉시방문 요청 뒤 — 관제 확인 전화 대기 (2026-08-21 시트 어르신 전체 2번).
+                요청하면 바로 배차가 아니라 관제가 먼저 전화로 상황을 여쭙는다.
+                기다리는 동안 화면이 아무 말도 하지 않으면 다시 누르게 된다. */}
+            {visitAsked && (
+              <ElderCard
+                show={tab === "today"}
+                order={0.5}
+                style={{
+                  background: "#0A1F3C",
+                  backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0))",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,.22), 0 24px 48px -30px rgba(10,31,60,.85)",
+                }}
+                className="text-white"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span aria-hidden className="h-[11px] w-[11px] animate-livePing rounded-full bg-gold-soft" />
+                  <span className="text-[19px] font-bold text-gold">관제에서 전화를 드립니다</span>
+                </div>
+                <p className="mt-2 text-[22px] font-bold leading-[1.45]">
+                  전화를 받으시면
+                  <br />
+                  무엇이 필요하신지 여쭙습니다
+                </p>
+                <p className="mt-2 text-[19px] leading-[1.6] text-white/[.86]">
+                  통화를 마치면 선생님이 출발합니다. 급하시면 바탕화면의 빨간 SOS를 누르세요.
+                </p>
+              </ElderCard>
+            )}
+
+            {/* order 0 · 이번 달 — 가족·컨시어지와 함께 보는 일정 (2026-08-21 시트 어르신 오늘 1번).
+                접힌 채로도 오늘 날짜와 일정 있는 날 수가 보인다. 펼치면 달력이 나오고,
+                날짜를 누르면 그 날 일정이 아래에 뜬다. 같은 일정을 보호자 캘린더와
+                공유한다 (REQ-02) — 여기서 새 일정을 만들지는 않는다. 간단등록은
+                '다가오는 일정' 카드에 이미 있고, 두 자리에 두면 어디서 넣었는지 헷갈린다. */}
+            <ElderCard show={tab === "today"} order={0} style={LIGHT_CARD}>
+              <CardHead title="이번 달" right={`${monthLabel} · 일정 ${monthEvents.length}건`} />
+              <button
+                onClick={() => setCalOpen((v) => !v)}
+                aria-expanded={calOpen}
+                className="btn-press mt-2.5 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border-2 text-[19px] font-bold text-navy"
+                style={{ borderColor: "rgba(10,31,60,.15)" }}
+              >
+                {calOpen ? "달력 접기" : "달력 보기"}
+                <span
+                  aria-hidden
+                  className="transition-transform duration-200"
+                  style={{ transform: calOpen ? "rotate(180deg)" : "none" }}
+                >
+                  <Icon name="chev" size={22} strokeWidth={2} />
+                </span>
+              </button>
+              {calOpen && (
+                <>
+                  <div className="mt-3 grid grid-cols-7 gap-1 text-center">
+                    {["일", "월", "화", "수", "목", "금", "토"].map((d) => (
+                      <div key={d} className="py-1 text-[17px] font-bold text-muted">
+                        {d}
+                      </div>
+                    ))}
+                    {monthCells.map((c, i) =>
+                      c === null ? (
+                        <div key={`b${i}`} />
+                      ) : (
+                        <button
+                          key={c.day}
+                          onClick={() => setCalSel(c.day)}
+                          aria-pressed={calSel === c.day}
+                          aria-label={`${c.day}일${c.count ? ` · 일정 ${c.count}건` : ""}`}
+                          className="btn-press flex min-h-[46px] flex-col items-center justify-center rounded-xl font-num text-[19px] font-bold"
+                          style={
+                            calSel === c.day
+                              ? { background: "#0A1F3C", color: "#FFFFFF" }
+                              : { color: c.today ? "#B08D57" : "#40413F" }
+                          }
+                        >
+                          {c.day}
+                          <span
+                            aria-hidden
+                            className="mt-0.5 h-[6px] w-[6px] rounded-full"
+                            style={{
+                              background: c.count
+                                ? calSel === c.day
+                                  ? "#C9A46B"
+                                  : "#B08D57"
+                                : "transparent",
+                            }}
+                          />
+                        </button>
+                      )
+                    )}
+                  </div>
+                  <div className="mt-3 border-t border-navy/[.08] pt-3">
+                    {selDayEvents.length === 0 ? (
+                      <p className="text-[19px] leading-[1.6] text-muted">
+                        {calSel}일에는 잡힌 일정이 없습니다.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {selDayEvents.map((e) => (
+                          <div key={e.id} style={SUB_CARD}>
+                            <div className="text-[20px] font-bold text-navy">{spokenTime(e.at)}</div>
+                            <div className="mt-0.5 text-[19px] leading-[1.45] text-ink">{e.title}</div>
+                            {e.note && (
+                              <div className="mt-0.5 text-[18px] leading-[1.45] text-muted">{e.note}</div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <p className="mt-2.5 text-[18px] leading-[1.55] text-muted">
+                      가족과 선생님이 같은 달력을 봅니다.
+                    </p>
+                  </div>
+                </>
+              )}
             </ElderCard>
 
             {/* order 1 · 오늘 일정 — 유일한 네이비 다크 카드 */}
