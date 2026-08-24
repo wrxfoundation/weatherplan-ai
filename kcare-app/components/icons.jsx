@@ -190,6 +190,18 @@ const PATHS = {
       <path d="M8.2 10.6V7.7a3.8 3.8 0 0 1 7.3-1.4" />
     </>
   ),
+  pill: (
+    <>
+      <rect x="4.8" y="9.5" width="14.4" height="7" rx="3.5" transform="rotate(-38 12 13)" />
+      <path d="M11 8.6 8.6 11" />
+    </>
+  ),
+  sun: (
+    <>
+      <circle cx="12" cy="12" r="4.2" />
+      <path d="M12 3v2.3M12 18.7V21M21 12h-2.3M5.3 12H3M18.1 5.9l-1.6 1.6M7.5 16.5l-1.6 1.6M18.1 18.1l-1.6-1.6M7.5 7.5 5.9 5.9" />
+    </>
+  ),
 };
 
 export default function Icon({ name, size = 18, strokeWidth = 1.8, className = "" }) {

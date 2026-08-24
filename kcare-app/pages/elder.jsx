@@ -55,6 +55,15 @@ const SUB_CARD = {
 // "기존 내용 전체 삭제하고 보호자 해주세요내용과 동일하게 넣어주세요").
 // 어르신 화면은 활자만 크고, 목록·단가·순서는 lib/requests.js 한 곳에서 온다.
 const ASK_CATS = ["의료 지원", "생활 지원", "주거 관리", "행정 지원", "돌봄 지원", "응급 관리"];
+// 분류 아이콘 — 이름을 읽기 전에 모양으로 먼저 구분하게 한다
+const ASK_CAT_ICON = {
+  "의료 지원": "plus",
+  "생활 지원": "bag",
+  "주거 관리": "home",
+  "행정 지원": "doc",
+  "돌봄 지원": "heart",
+  "응급 관리": "alert",
+};
 
 const TABS = [
   { key: "today", label: "오늘", glyph: "home" },
@@ -112,10 +121,10 @@ function ElderCard({ show, order, style, className = "", children }) {
 //
 // 우리 디자인 토큰(ElderCard·CardHead·19px 본문·btn-press)은 그대로 쓰고, 시안의
 // 상호작용 패턴(제목+한 줄 요약 → 탭하면 세부)만 가져왔다.
-function ElderExpand({ show, order, style, title, right, rightColor, summary, open, onToggle, children }) {
+function ElderExpand({ show, order, style, title, right, rightColor, icon, iconColor, summary, open, onToggle, children }) {
   return (
     <ElderCard show={show} order={order} style={style}>
-      <CardHead title={title} right={right} rightColor={rightColor} />
+      <CardHead title={title} right={right} rightColor={rightColor} icon={icon} iconColor={iconColor} />
       {summary && <p className="mt-2 text-[20px] leading-[1.6] text-ink">{summary}</p>}
       <button
         onClick={onToggle}
@@ -164,13 +173,24 @@ function ElderBtn({ variant = "primary", lines, className = "", children, ...pro
   );
 }
 
-function CardHead({ title, titleColor = "#0A1F3C", right, rightColor = "#5C5A54" }) {
+// icon — 카드 제목마다 다른 모양을 붙여 스캔 속도를 올린다 (2026-08-24
+// "아직도 복잡해 보인다" 검수). 뜻을 읽어서 구분하는 대신 모양으로 먼저
+// 구분하게 한다 — 접기 요약을 넣은 것과 같은 목적, 다른 수단이다.
+// 없으면 예전처럼 텍스트만 나온다 (하위 호환 — 모든 CardHead 를 바꿀 필요는 없다).
+function CardHead({ title, titleColor = "#0A1F3C", right, rightColor = "#5C5A54", icon, iconColor = "#B08D57" }) {
   // 제목과 보조 라벨이 한 줄에 안 들어가면 보조 라벨을 아래로 내린다.
   // 붙여 두면 좁은 화면에서 제목이 "부탁하시면 저희가 / 합니다"처럼 어색하게 끊긴다.
   return (
     <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-      <div className="min-w-0 text-[19px] font-bold" style={{ color: titleColor }}>
-        {title}
+      <div className="flex min-w-0 items-center gap-2">
+        {icon && (
+          <span aria-hidden className="shrink-0" style={{ color: iconColor }}>
+            <Icon name={icon} size={22} strokeWidth={1.9} />
+          </span>
+        )}
+        <span className="min-w-0 text-[19px] font-bold" style={{ color: titleColor }}>
+          {title}
+        </span>
       </div>
       {right && (
         <div className="text-[19px] font-medium leading-[1.4]" style={{ color: rightColor }}>
@@ -447,6 +467,7 @@ export default function ElderHome() {
               order={0}
               style={{ ...LIGHT_CARD, border: "2px solid #B08D57" }}
               title="오늘 찾아뵙는 분"
+              icon="users"
               summary={
                 visitToday
                   ? `${ELDER_VISITORS.map((v) => v.displayName).join(" · ")}이 옵니다`
@@ -507,7 +528,7 @@ export default function ElderHome() {
                 1인칭으로. 어제 숫자를 나란히 둔다 (시트 '오늘' 2번).
                 안부 전화 카드는 같은 시트 대표 피드백으로 삭제. */}
             <ElderCard show={tab === "today"} order={2}>
-              <CardHead title="오늘 나는" right="어제와 비교" />
+              <CardHead title="오늘 나는" right="어제와 비교" icon="activity" />
               <p className="mt-2 text-[20px] leading-[1.6] text-ink">{TODAY_ME.line}</p>
               <div className="mt-1">
                 {TODAY_ME.rows.map((r) => (
@@ -554,7 +575,7 @@ export default function ElderHome() {
             {/* order 7 · 바탕화면 SOS 바로가기 안내 — 화면 안 SOS 버튼을 뺐으니
                 어디를 눌러야 하는지는 반드시 말해 줘야 한다 (시트 전체 요청 3번) */}
             <ElderCard show={tab === "today"} order={7}>
-              <CardHead title="급할 때 누르는 곳" right="바탕화면" />
+              <CardHead title="급할 때 누르는 곳" right="바탕화면" icon="alert" />
               <p className="mt-2 text-[20px] leading-[1.6] text-ink">
                 휴대폰 바탕화면에 있는
                 <br />
@@ -603,7 +624,7 @@ export default function ElderHome() {
                 공유한다 (REQ-02) — 여기서 새 일정을 만들지는 않는다. 간단등록은
                 '다가오는 일정' 카드에 이미 있고, 두 자리에 두면 어디서 넣었는지 헷갈린다. */}
             <ElderCard show={tab === "today"} order={0} style={LIGHT_CARD}>
-              <CardHead title="이번 달" right={`${monthLabel} · 일정 ${monthEvents.length}건`} />
+              <CardHead title="이번 달" right={`${monthLabel} · 일정 ${monthEvents.length}건`} icon="calendar" />
               <button
                 onClick={() => setCalOpen((v) => !v)}
                 aria-expanded={calOpen}
@@ -703,7 +724,8 @@ export default function ElderHome() {
                 }}
                 className="text-white"
               >
-                <div className="text-[19px] font-bold text-gold">
+                <div className="flex items-center gap-2 text-[19px] font-bold text-gold">
+                  <Icon name="clock" size={20} strokeWidth={1.9} />
                   {isToday(next.at) ? "오늘 일정" : "다음 일정"}
                 </div>
                 <div className="mt-1 text-[26px] font-bold leading-[1.4]">
@@ -777,7 +799,7 @@ export default function ElderHome() {
                 요약 세 줄은 접지 않는다. 접힌 채로도 걸음·잠·맥박이 보여야 하고, 세부만
                 펼친다 — 매일 보는 숫자를 두 번 눌러야 나오면 접은 것이 손해다. */}
             <ElderCard show={tab === "health"} order={0}>
-              <CardHead title="오늘 몸 상태" right="갤럭시 핏" />
+              <CardHead title="오늘 몸 상태" right="갤럭시 핏" icon="activity" />
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[20px] leading-[1.5] text-ink">
                 {TODAY_ME.rows.map((r) => {
                   // 이름과 단위가 같으면(걸음/걸음) 단위를 뺀다 — "걸음 3,140걸음"이 된다
@@ -841,7 +863,7 @@ export default function ElderHome() {
                 boxShadow: LIGHT_CARD.boxShadow,
               }}
             >
-              <CardHead title="오늘 약" right={`${med.total}번 중 ${med.done}번 드셨습니다`} />
+              <CardHead title="오늘 약" right={`${med.total}번 중 ${med.done}번 드셨습니다`} icon="pill" />
               {/* 진행바 — 숫자만으로는 얼마나 남았는지 한눈에 안 들어온다 */}
               <div
                 className="mt-3 h-[18px] w-full overflow-hidden rounded-full"
@@ -911,6 +933,7 @@ export default function ElderHome() {
               show={tab === "health"}
               order={3}
               title="드시는 건강식품"
+              icon="drop"
               right={supAlerts.length ? `${supAlerts.length}가지 챙기실 것` : "넉넉합니다"}
               rightColor={supAlerts.length ? "#8A5D12" : "#5C5A54"}
               open={supOpen}
@@ -995,6 +1018,7 @@ export default function ElderHome() {
               show={tab === "health"}
               order={4}
               title="지금 집 안"
+              icon="home"
               right="실내 · 거실 센서"
               summary={`${indoor.tempLabel} · ${indoor.sub}`}
               open={indoorOpen}
@@ -1045,6 +1069,7 @@ export default function ElderHome() {
               show={tab === "today"}
               order={4}
               title="오늘 여쭤볼 것"
+              icon="chat"
               summary={`${ASK_DOCTOR.length}가지 · 잊으셔도 됩니다, 선생님이 대신 여쭤봅니다`}
               open={askDoctorOpen}
               onToggle={() => setAskDoctorOpen((v) => !v)}
@@ -1090,6 +1115,7 @@ export default function ElderHome() {
               show={tab === "today"}
               order={3}
               title="병원 가는 길"
+              icon="pin"
               summary={OUTING.adviceElder}
               open={outingOpen}
               onToggle={() => setOutingOpen((v) => !v)}
@@ -1146,7 +1172,7 @@ export default function ElderHome() {
             >
               {/* #5C7799 는 흰 카드 위에서 4.49:1 — WCAG AA 4.5:1 에 0.01 모자랐다.
                   같은 파란 계열이면서 이미 다른 화면에서 쓰는 #3B5C8A 로 바꿨다. */}
-              <CardHead title="지금 우리 동네" right={`실외 · ${ELDER.dong}`} rightColor="#3B5C8A" />
+              <CardHead title="지금 우리 동네" right={`실외 · ${ELDER.dong}`} rightColor="#3B5C8A" icon="sun" iconColor="#3B5C8A" />
               <div className="mt-2 flex items-end gap-3">
                 <span className="font-num text-[44px] font-bold leading-none text-navy">
                   {ELDER_NOW.tempLabel}
@@ -1227,7 +1253,7 @@ export default function ElderHome() {
               if (rows.length === 0) return null;
               return (
                 <ElderCard key={cat} show={tab === "ask"} order={2 + ci} style={LIGHT_CARD}>
-                  <CardHead title={cat} right={ci === 0 ? "하나만 골라 주세요" : ""} />
+                  <CardHead title={cat} right={ci === 0 ? "하나만 골라 주세요" : ""} icon={ASK_CAT_ICON[cat]} />
                   <div className="mt-2 space-y-2">
                     {rows.map((a) => (
                       <AskItem
@@ -1250,7 +1276,7 @@ export default function ElderHome() {
             {/* order 7 · 해주세요 PLUS — 집수리·공사·렌탈은 바깥 업체를 연결한다.
                 책임 경계를 어르신 화면에도 그대로 쓴다 (공사 책임은 그 업체에 있다). */}
             <ElderCard show={tab === "ask"} order={7} style={LIGHT_CARD}>
-              <CardHead title="집 고칠 일" right="바깥 업체 연결" />
+              <CardHead title="집 고칠 일" right="바깥 업체 연결" icon="box" />
               <div className="mt-2 space-y-2">
                 {SERVICE_PLUS.map((p) => (
                   <div key={p.key} style={SUB_CARD}>
