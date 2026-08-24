@@ -154,10 +154,13 @@ MIT(occupancy sensing)·세계은행(context=데이터) ✅ vs 맥킨지(구멍 
 서사) + Big Brother 이념 프레임 — 주제(에이전트×블록체인)는 인접하나 포장이 독성 이념·음모론·
 범죄 프레임. 무반응, 좋아요도 생략. 소재 가치 없음.
 
-@virtuals_io 에이전트 작업 투명성·가치 소유 미션 발화 — ✅ 동종 프로젝트 공식 계정(쉴링 아님),
-기계 고객 테제와 인접 무대. "산출물 투명성"(그들) vs "입력 투명성"(우리)로 보완 각도 — "visible
-work is half the picture, the other half is visible inputs" 답글. 회사 대 회사 격, 자사 언급 없이
-관찰만. 답글 큐에 추가 — 오늘 슬롯(x402 집계·IOV_OWL·Archie·에이전트x402후기) 소화 후 순서.
+@virtuals_io 에이전트 작업 투명성·가치 소유 미션 발화 — ✅ 판정 유지하나 **아래 @alina_creates
+스레드로 대체 권장**(같은 프로젝트 답글 2건 = 밀도 과다, 이쪽이 앵글 약함). 보류.
+
+@alina_creates Virtuals 2024~2026 타임라인 분석 스레드(고품질 분석가 — 하이프 아닌 팩트 정리형)
+— ✅ **로봇 간 상거래 ACP+x402 온체인 정산 + "물리 세계로 진입" 구체 언급** = 오늘 최상급 훅.
+"machines paying machines still needs someone measuring the room" 답글. Virtuals 공식계정 답글과
+양자택일 — 이쪽 우선 권장.
 
 @SakanaAILabs 일본 방위성 AI 계약(정보분석 실증) — 국방·안보 영역 = 절대 무관여(카테고리 자체가
 리스크, 일본 진출 앞두고 특히). 구멍 없음(정보분석 ≠ 측정). 무반응, 소재 가치도 없음.
