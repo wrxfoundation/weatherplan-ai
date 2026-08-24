@@ -105,6 +105,38 @@ function ElderCard({ show, order, style, className = "", children }) {
   );
 }
 
+// 요약 + 접기 카드 (2026-08-24 실무진 참고 시안 — "접기 펴고 요약 형태로 심플하게").
+// 제목 옆 배지와 summary 는 접힌 채로도 항상 보인다 — 자세히 보기는 세부를 위한 것이지
+// 무슨 내용인지 알기 위한 것이 아니다. 세부는 열 때만 DOM에 붙는다(스크린리더가
+// 접힌 내용을 계속 읽지 않도록).
+//
+// 우리 디자인 토큰(ElderCard·CardHead·19px 본문·btn-press)은 그대로 쓰고, 시안의
+// 상호작용 패턴(제목+한 줄 요약 → 탭하면 세부)만 가져왔다.
+function ElderExpand({ show, order, style, title, right, rightColor, summary, open, onToggle, children }) {
+  return (
+    <ElderCard show={show} order={order} style={style}>
+      <CardHead title={title} right={right} rightColor={rightColor} />
+      {summary && <p className="mt-2 text-[20px] leading-[1.6] text-ink">{summary}</p>}
+      <button
+        onClick={onToggle}
+        aria-expanded={open}
+        className="btn-press mt-3 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border-2 text-[19px] font-bold text-navy"
+        style={{ borderColor: "rgba(10,31,60,.15)" }}
+      >
+        {open ? "접기" : "자세히 보기"}
+        <span
+          aria-hidden
+          className="transition-transform duration-200"
+          style={{ transform: open ? "rotate(180deg)" : "none" }}
+        >
+          <Icon name="chev" size={22} strokeWidth={2} />
+        </span>
+      </button>
+      {open && <div className="mt-3">{children}</div>}
+    </ElderCard>
+  );
+}
+
 // 표준 어르신 액션 버튼 — 톤앤매너 통일: p-7(28px) · 22px/700 · rounded-2xl · btn-elder 그림자.
 // 색은 의미 3종만 쓴다: primary(네이비 · 기본 행동) / success(초록 · 복약·주문) /
 // cool(청색 · 냉방 전용 — 빨강은 SOS 전용). 완료 후엔 전부 done(흰 바탕·회색 글자)으로 감쇠.
@@ -188,6 +220,12 @@ export default function ElderHome() {
   const [askOpen, setAskOpen] = useState(null); // 해주세요 — 펼친 항목 하나 (아코디언)
   const [vitalsOpen, setVitalsOpen] = useState(false); // 건강 탭 — 몸 상태 세부
   const [calOpen, setCalOpen] = useState(false); // 오늘 탭 — 이번 달 달력
+  const [visitorOpen, setVisitorOpen] = useState(false); // 오늘 찾아뵙는 분 세부
+  const [outingOpen, setOutingOpen] = useState(false); // 병원 가는 길 세부
+  const [askDoctorOpen, setAskDoctorOpen] = useState(false); // 오늘 여쭤볼 것 세부
+  const [supOpen, setSupOpen] = useState(false); // 드시는 건강식품 세부
+  // 지금 집 안 — 경고가 있는 날은 펼친 채로 시작한다 (중요한 건 접지 않는다)
+  const [indoorOpen, setIndoorOpen] = useState(() => INDOOR.hot.level !== "ok");
   const [calSel, setCalSel] = useState(new Date().getDate()); // 고른 날짜 (이번 달 기준)
   const [voiceTo, setVoiceTo] = useState(null); // 음성 메시지 수신자 (null이면 미선택)
   const [voiceSent, setVoiceSent] = useState([]); // 보낸 목소리 목록 (최근 순)
@@ -400,17 +438,26 @@ export default function ElderHome() {
                 방문일에만 이름·사진을 보여준다 (2026-08-24 검수에서 발견한 오류를 고쳤다).
                 전에는 방문이 없는 날에도 "두 분이 함께 옵니다"가 그대로 떠서, 오늘
                 방문이 없다는 것을 이 카드 안에서만 봐서는 알 수 없었다 — 안전 확인
-                카드가 틀린 안내를 하고 있었다. 방문 없는 날은 짧게 줄어 카드 높이도
-                677px → 200px대로 준다. */}
-            <ElderCard
+                카드가 틀린 안내를 하고 있었다.
+                접어도 요지(누가 오는지 · 아무도 안 오는지)는 요약 줄에 그대로 남는다
+                — 자세히 보기는 사진·전화를 위한 것이지, 사실을 감추는 자리가 아니다
+                (2026-08-24 실무진 참고 시안). */}
+            <ElderExpand
               show={tab === "today"}
               order={0}
               style={{ ...LIGHT_CARD, border: "2px solid #B08D57" }}
+              title="오늘 찾아뵙는 분"
+              summary={
+                visitToday
+                  ? `${ELDER_VISITORS.map((v) => v.displayName).join(" · ")}이 옵니다`
+                  : `오늘은 없습니다${nextVisit ? ` · 다음 방문 ${spokenDay(nextVisit.at)}` : ""}`
+              }
+              open={visitorOpen}
+              onToggle={() => setVisitorOpen((v) => !v)}
             >
-              <div className="text-[19px] font-bold text-[#7A5C28]">오늘 찾아뵙는 분</div>
               {visitToday ? (
                 <>
-                  <p className="mt-2 text-[20px] leading-[1.6] text-ink">
+                  <p className="text-[20px] leading-[1.6] text-ink">
                     두 분이 함께 옵니다.
                     <br />문 열기 전에 얼굴을 확인하세요.
                   </p>
@@ -449,23 +496,12 @@ export default function ElderHome() {
                   </p>
                 </>
               ) : (
-                <>
-                  <p className="mt-2 text-[20px] leading-[1.6] text-ink">
-                    오늘은 찾아뵙는 분이 없습니다.
-                    {nextVisit && (
-                      <>
-                        <br />
-                        다음 방문은 {spokenDay(nextVisit.at)}입니다.
-                      </>
-                    )}
-                  </p>
-                  <p className="mt-3 text-[19px] leading-[1.6] text-muted">
-                    오늘 K-CARE라며 찾아오시는 분이 있다면 문을 열지 마시고 바탕화면의 빨간
-                    SOS를 누르세요. 급한 일이 있으시면 위의 즉시 방문 요청을 눌러 주세요.
-                  </p>
-                </>
+                <p className="text-[19px] leading-[1.6] text-muted">
+                  오늘 K-CARE라며 찾아오시는 분이 있다면 문을 열지 마시고 바탕화면의 빨간 SOS를
+                  누르세요. 급한 일이 있으시면 위의 즉시 방문 요청을 눌러 주세요.
+                </p>
               )}
-            </ElderCard>
+            </ElderExpand>
 
             {/* order 2 · 오늘 나는 — 보호자 홈의 "오늘 어머니는"과 같은 내용을
                 1인칭으로. 어제 숫자를 나란히 둔다 (시트 '오늘' 2번).
@@ -871,13 +907,16 @@ export default function ElderHome() {
 
             {/* order 3 · 건강기능식품 — 남은 양과 유통기한. 떨어질 때쯤 알려 드린다
                 (시트 '건강' 1번 뒷부분: 종류·유통기간 관리 + 재구매 알림) */}
-            <ElderCard show={tab === "health"} order={3}>
-              <CardHead
-                title="드시는 건강식품"
-                right={supAlerts.length ? `${supAlerts.length}가지 챙기실 것` : "넉넉합니다"}
-                rightColor={supAlerts.length ? "#8A5D12" : "#5C5A54"}
-              />
-              <div className="mt-2 space-y-2.5">
+            <ElderExpand
+              show={tab === "health"}
+              order={3}
+              title="드시는 건강식품"
+              right={supAlerts.length ? `${supAlerts.length}가지 챙기실 것` : "넉넉합니다"}
+              rightColor={supAlerts.length ? "#8A5D12" : "#5C5A54"}
+              open={supOpen}
+              onToggle={() => setSupOpen((v) => !v)}
+            >
+              <div className="space-y-2.5">
                 {supplements.map((s) => {
                   const left = daysLeft(s);
                   const pct = Math.round((s.remain / Math.max(1, s.total)) * 100);
@@ -945,14 +984,23 @@ export default function ElderHome() {
                   );
                 })}
               </div>
-            </ElderCard>
+            </ElderExpand>
 
             {/* order 4 · 지금 집 안 — 상태를 보여주고, 무엇을 하면 좋은지 한 문장으로 권한다.
                 "에어컨 켜고 가족에게 알리기" 버튼은 삭제 (시트 '건강' 대표 피드백).
-                기기를 대신 켜 주지 못하면서 켜 준 것처럼 보이는 버튼이었다. */}
-            <ElderCard show={tab === "health"} order={4}>
-              <CardHead title="지금 집 안" right="실내 · 거실 센서" />
-              <div className="mt-2 flex items-end gap-3">
+                기기를 대신 켜 주지 못하면서 켜 준 것처럼 보이는 버튼이었다.
+                경고가 있는 날은 펼친 채로 시작한다 — 온열질환 경고를 접어 두면
+                안 된다. 경고가 없는 날은 접혀 시작하되 온도는 요약 줄에 남는다. */}
+            <ElderExpand
+              show={tab === "health"}
+              order={4}
+              title="지금 집 안"
+              right="실내 · 거실 센서"
+              summary={`${indoor.tempLabel} · ${indoor.sub}`}
+              open={indoorOpen}
+              onToggle={() => setIndoorOpen((v) => !v)}
+            >
+              <div className="flex items-end gap-3">
                 <span
                   className="font-num text-[44px] font-bold leading-none"
                   style={{ color: LEVEL_COLOR[indoor.level] }}
@@ -990,17 +1038,18 @@ export default function ElderHome() {
               <p className="mt-3 text-[19px] leading-[1.6] text-muted">
                 이 메시지는 알림으로도 갑니다. 창문·에어컨은 직접 여닫으셔야 합니다.
               </p>
-            </ElderCard>
+            </ElderExpand>
 
             {/* order 4 · 오늘 여쭤볼 것 — 인지 부담 면제. 출처 3종 투명 표기 */}
-            <ElderCard show={tab === "today"} order={4}>
-              <div className="text-[19px] font-bold text-navy">오늘 여쭤볼 것</div>
-              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
-                잊으셔도 됩니다.
-                <br />
-                선생님이 대신 여쭤봅니다.
-              </p>
-              <div className="mt-1">
+            <ElderExpand
+              show={tab === "today"}
+              order={4}
+              title="오늘 여쭤볼 것"
+              summary={`${ASK_DOCTOR.length}가지 · 잊으셔도 됩니다, 선생님이 대신 여쭤봅니다`}
+              open={askDoctorOpen}
+              onToggle={() => setAskDoctorOpen((v) => !v)}
+            >
+              <div>
                 {ASK_DOCTOR.map((q) => (
                   <div
                     key={q.seq}
@@ -1032,12 +1081,20 @@ export default function ElderHome() {
               >
                 {askAdded ? "말씀하신 내용이 담겼습니다" : "말로 하나 더 남기기"}
               </ElderBtn>
-            </ElderCard>
+            </ElderExpand>
 
-            {/* order 4 · 병원 가는 길 — F8 2구간. 점수를 문장으로 번역하는 유일한 화면 */}
-            <ElderCard show={tab === "today"} order={3}>
-              <div className="text-[19px] font-bold text-navy">병원 가는 길</div>
-              <div className="mt-3 space-y-2.5">
+            {/* order 4 · 병원 가는 길 — F8 2구간. 점수를 문장으로 번역하는 유일한 화면.
+                요약 줄에 오늘의 조언을 그대로 둔다 — 준비물·주의사항은 접혀 있어도
+                놓치면 안 되는 내용이라, 열어야만 보이게 하지 않는다. */}
+            <ElderExpand
+              show={tab === "today"}
+              order={3}
+              title="병원 가는 길"
+              summary={OUTING.adviceElder}
+              open={outingOpen}
+              onToggle={() => setOutingOpen((v) => !v)}
+            >
+              <div className="space-y-2.5">
                 {OUTING.legs.map((l) => (
                   <div key={l.tag} style={SUB_CARD}>
                     <div className="flex items-baseline gap-2.5">
@@ -1057,12 +1114,8 @@ export default function ElderHome() {
                   </div>
                 ))}
               </div>
-              <div className="mt-3 rounded-[14px] border border-[#EFE0BF] bg-[#FDF6E8] px-4 py-[15px]">
-                <div className="text-[19px] font-bold text-[#7A6231]">오늘은 이렇게 하세요</div>
-                <p className="mt-1 text-[20px] leading-[1.65] text-[#5A4A22]">
-                  {OUTING.adviceElder}
-                </p>
-              </div>
+              {/* "오늘은 이렇게 하세요" 문구는 위 요약 줄에 이미 있다(접혀도 보인다) —
+                  펼친 화면에서 같은 문장을 두 번 두지 않는다. */}
               <div className="mt-3 flex flex-wrap gap-2">
                 {OUTING.kit.map((k) => (
                   <span
@@ -1079,7 +1132,7 @@ export default function ElderHome() {
                 ))}
               </div>
               <div className="mt-3 text-[19px] text-muted">{OUTING.source}</div>
-            </ElderCard>
+            </ElderExpand>
 
             {/* order 5 · 지금 우리 동네 — 실외(청색조). 실내 카드와 색으로 구분 */}
             <ElderCard
