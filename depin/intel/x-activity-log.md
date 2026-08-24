@@ -2,7 +2,9 @@
 
 ## 계정 기준 상태 (2026-08-23 사용자 제공 스냅샷)
 
-- 팔로워 **30** · 팔로잉 82 · 가입 2026-06 · 위치 Seoul · 링크 wellbianlabs.io + t.me/wellbianlabs
+- 팔로워 **30** · 팔로잉 82 · 가입 2026-06 · 위치 Seoul ·
+  링크 **linktr.ee/wellbian_official** (8/24 갱신 — 이전 wellbianlabs.io + t.me/wellbianlabs.
+  Claude egress 차단으로 Linktree 내부 구성은 미확인, 값만 반영)
 - 바이오 확정안(8/23): "The weather-data generator. Measure your space — indoors & out — manage a
   healthier environment, and verified data becomes rewards on XRPL. We Air You." — 적용 대기
   (coin 단어 제거 확정 — 어휘 규칙 참조)
