@@ -637,6 +637,8 @@ function NpsCard({ onEvent, onDetractor, onReview, reviews = [] }) {
   const [done, setDone] = useState(false);
   const [memo, setMemo] = useState("");
   const [memoSent, setMemoSent] = useState(false);
+  // 색은 NPS 3구간 그대로 — 비추천 빨강은 여기서만 쓴다 (상거래 숫자가 아니라 경고 신호)
+  const scoreColor = score == null ? "#5C5A54" : score <= 6 ? "#C0392B" : score <= 8 ? "#B08D57" : "#1E7A5A";
 
   // 동행 점수 아래 코멘트·후기 메모란 (2026-08-12 시트 홈 5번).
   // 점수만으로는 무엇을 고쳐야 하는지 알 수 없다 — 문장이 남아야 컨시어지에게 전달된다.
@@ -710,25 +712,40 @@ function NpsCard({ onEvent, onDetractor, onReview, reviews = [] }) {
       <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">
         13:50 서울아산 동행이 끝났습니다. 남겨 주신 점수가 케어 품질 평가 기준이 됩니다.
       </p>
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {Array.from({ length: 11 }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setScore(i)}
-            className="btn-press h-[34px] w-[34px] rounded-[10px] border font-num text-[15px] font-bold"
-            style={
-              score === i
-                ? {
-                    background: i <= 6 ? "#C0392B" : i <= 8 ? "#B08D57" : "#1E7A5A",
-                    color: "#FFFFFF",
-                    borderColor: "transparent",
-                  }
-                : { background: "rgba(255,255,255,.7)", color: "#0A1F3C", borderColor: "rgba(10,31,60,.14)" }
-            }
-          >
-            {i}
-          </button>
-        ))}
+      {/* 점수 — 슬라이더 (2026-08-21 시안). step=1 로 정수에만 멈춘다.
+          NPS 는 정수 0~10 이라야 추천(9·10) / 중립(7·8) / 비추천(0~6) 분류가 성립하고,
+          아래 score <= 6 분기도 그 위에 서 있다. 8.5 를 허용하면 이 경계가 무너진다.
+          숫자를 크게 띄우는 것은 손을 떼기 전에 무엇이 선택됐는지 보이게 하려는 것이다. */}
+      <div className="mt-3">
+        <div className="text-center">
+          {/* 고르기 전에도 손잡이가 가리키는 숫자를 보여 준다 — 빈 칸이나 대시를 두면
+              막대를 움직이기 전까지 무엇이 선택될지 알 수 없다. 색으로 구분한다:
+              고르기 전 회색, 고른 뒤 NPS 구간색. */}
+          <span className="font-num text-[38px] font-black leading-none" style={{ color: scoreColor }}>
+            {score ?? 8}
+          </span>
+          <span className="ml-1 text-[17px] font-bold text-muted">/ 10</span>
+        </div>
+        <input
+          type="range"
+          min={0}
+          max={10}
+          step={1}
+          value={score ?? 8}
+          onChange={(e) => setScore(Number(e.target.value))}
+          aria-label="오늘 동행 점수 (0점에서 10점)"
+          aria-valuetext={score == null ? "선택 전" : `${score}점`}
+          className="nps-range mt-2.5 w-full"
+          style={{ "--nps": scoreColor, "--nps-pct": `${((score ?? 8) / 10) * 100}%` }}
+        />
+        <div className="mt-1 flex justify-between font-num text-[12px] font-bold text-muted">
+          <span>0</span>
+          <span>5</span>
+          <span>10</span>
+        </div>
+        {score == null && (
+          <p className="mt-1.5 text-center text-[12px] text-muted">막대를 움직이면 점수가 정해집니다</p>
+        )}
       </div>
       {score != null && score <= 6 && (
         <div className="mt-3 border-t border-navy/[.08] pt-3">

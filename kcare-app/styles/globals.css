@@ -727,3 +727,62 @@ a.btn-press {
     );
   }
 }
+
+/* 동행 점수 슬라이더 (2026-08-21 시안) — step=1 로 정수에만 멈춘다.
+   기본 range 는 크롬·사파리·파이어폭스가 서로 다르게 그리므로 트랙과 손잡이를
+   양쪽 접두사로 모두 지정한다. 한쪽만 쓰면 어느 브라우저에서는 회색 막대가 된다.
+   손잡이는 26px — 24px 터치 하한(WCAG 2.5.8)을 넘긴다. */
+.nps-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 26px; /* 손가락이 닿는 높이 — 보이는 막대는 아래 트랙이다 */
+  background: transparent;
+  cursor: pointer;
+}
+.nps-range:focus-visible {
+  outline: 2px solid var(--nps, #0a1f3c);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+/* 트랙 — 채워진 부분은 점수 색, 나머지는 연한 네이비 */
+.nps-range::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--nps, #b08d57) 0%,
+    var(--nps, #b08d57) var(--nps-pct, 80%),
+    rgba(10, 31, 60, 0.12) var(--nps-pct, 80%),
+    rgba(10, 31, 60, 0.12) 100%
+  );
+}
+.nps-range::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(10, 31, 60, 0.12);
+}
+.nps-range::-moz-range-progress {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--nps, #b08d57);
+}
+/* 손잡이 */
+.nps-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -9px; /* (26 − 8) / 2 — 트랙 가운데에 맞춘다 */
+  border-radius: 999px;
+  background: #ffffff;
+  border: 3px solid var(--nps, #b08d57);
+  box-shadow: 0 2px 6px rgba(10, 31, 60, 0.28);
+}
+.nps-range::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 3px solid var(--nps, #b08d57);
+  box-shadow: 0 2px 6px rgba(10, 31, 60, 0.28);
+}

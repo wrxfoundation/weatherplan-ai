@@ -12,6 +12,7 @@ import {
   INDOOR,
   OUTING,
   TODAY_ME,
+  VITALS,
   VOICE_MSG,
   VOICE_TO,
 } from "../lib/mock";
@@ -183,6 +184,9 @@ export default function ElderHome() {
   const [storeSel, setStoreSel] = useState({});
   const [storeSent, setStoreSent] = useState(null); // 'approval' | 'ordered'
   const [storeCat, setStoreCat] = useState("pharmacy"); // 스토어 탭 분류
+  const [storeGroup, setStoreGroup] = useState(0); // 소분류 — 분류를 바꾸면 첫 칸으로 돌아간다
+  const [askOpen, setAskOpen] = useState(null); // 해주세요 — 펼친 항목 하나 (아코디언)
+  const [vitalsOpen, setVitalsOpen] = useState(false); // 건강 탭 — 몸 상태 세부
   const [voiceTo, setVoiceTo] = useState(null); // 음성 메시지 수신자 (null이면 미선택)
   const [voiceSent, setVoiceSent] = useState([]); // 보낸 목소리 목록 (최근 순)
   const [askSel, setAskSel] = useState(null); // '해주세요' 선택 항목
@@ -443,6 +447,21 @@ export default function ElderHome() {
                 ))}
               </div>
               <p className="mt-3 text-[19px] leading-[1.6] text-muted">{TODAY_ME.foot}</p>
+              {/* 오늘에서 누르면 건강 탭의 몸 상태가 펼쳐진 채로 열린다 (2026-08-21 시안).
+                  같은 숫자를 두 탭에 늘어놓지 않고, 더 보고 싶을 때만 넘어가게 한다. */}
+              <button
+                onClick={() => {
+                  setVitalsOpen(true);
+                  setTab("health");
+                }}
+                className="btn-press mt-3 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border-2 text-[19px] font-bold text-navy"
+                style={{ borderColor: "rgba(10,31,60,.15)" }}
+              >
+                건강에서 더 보기
+                <span aria-hidden className="-rotate-90">
+                  <Icon name="chev" size={22} strokeWidth={2} />
+                </span>
+              </button>
             </ElderCard>
 
             {/* order 7 · 바탕화면 SOS 바로가기 안내 — 화면 안 SOS 버튼을 뺐으니
@@ -533,6 +552,62 @@ export default function ElderHome() {
 
             {/* order 2 · 오늘 약 — 첫 안심방문에서 등록한 계획을 직접 체크한다.
                 진행바는 '전체 횟수 중 복용 횟수' (시트 '건강' 1번). */}
+            {/* order 0 · 오늘 몸 상태 — 건강 탭 최상단 실시간 요약 (2026-08-21 시트 건강 1번).
+                요약 세 줄은 접지 않는다. 접힌 채로도 걸음·잠·맥박이 보여야 하고, 세부만
+                펼친다 — 매일 보는 숫자를 두 번 눌러야 나오면 접은 것이 손해다. */}
+            <ElderCard show={tab === "health"} order={0}>
+              <CardHead title="오늘 몸 상태" right="갤럭시 핏" />
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[20px] leading-[1.5] text-ink">
+                {TODAY_ME.rows.map((r) => {
+                  // 이름과 단위가 같으면(걸음/걸음) 단위를 뺀다 — "걸음 3,140걸음"이 된다
+                  const unit = r.unit === "번 드심" ? "번" : r.unit === r.name ? "" : r.unit;
+                  return (
+                    <span key={r.name}>
+                      {r.name} <b className="font-num text-navy">{r.today}</b>
+                      {unit && <span className="text-muted">{unit}</span>}
+                    </span>
+                  );
+                })}
+                <span>
+                  맥박 <b className="font-num text-navy">{VITALS[0].value}</b>
+                  <span className="text-muted">{VITALS[0].unit}</span>
+                </span>
+              </div>
+              <button
+                onClick={() => setVitalsOpen((v) => !v)}
+                aria-expanded={vitalsOpen}
+                className="btn-press mt-3 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border-2 text-[19px] font-bold text-navy"
+                style={{ borderColor: "rgba(10,31,60,.15)" }}
+              >
+                {vitalsOpen ? "접기" : "자세히 보기"}
+                <span
+                  aria-hidden
+                  className="transition-transform duration-200"
+                  style={{ transform: vitalsOpen ? "rotate(180deg)" : "none" }}
+                >
+                  <Icon name="chev" size={22} strokeWidth={2} />
+                </span>
+              </button>
+              {vitalsOpen && (
+                <div className="mt-2.5">
+                  {VITALS.map((v) => (
+                    <div
+                      key={v.name}
+                      className="flex items-baseline gap-3 border-t border-navy/[.07] py-3.5 first:border-t-0"
+                    >
+                      <span className="w-[104px] shrink-0 text-[19px] font-bold text-navy">{v.name}</span>
+                      <span className="flex-1">
+                        <span className="font-num text-[24px] font-bold text-navy">{v.value}</span>
+                        <span className="ml-1 text-[19px] text-muted">{v.unit}</span>
+                      </span>
+                      <span className="text-right text-[18px] leading-[1.4] text-muted">{v.status}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <p className="mt-3 text-[19px] leading-[1.6] text-muted">{TODAY_ME.foot}</p>
+            </ElderCard>
+
             <ElderCard
               show={tab === "health"}
               order={2}
@@ -914,42 +989,19 @@ export default function ElderHome() {
                 <ElderCard key={cat} show={tab === "ask"} order={2 + ci} style={LIGHT_CARD}>
                   <CardHead title={cat} right={ci === 0 ? "하나만 골라 주세요" : ""} />
                   <div className="mt-2 space-y-2">
-                    {rows.map((a) => {
-                      const on = askSel?.no === a.no;
-                      return (
-                        <button
-                          key={a.no}
-                          disabled={!a.active}
-                          onClick={() => {
-                            setAskSent(null);
-                            setAskSel(on ? null : a);
-                          }}
-                          className="btn-press flex w-full items-start gap-3 text-left disabled:opacity-60"
-                          style={{
-                            ...SUB_CARD,
-                            outline: on ? "3px solid #B08D57" : "none",
-                            border: a.active ? undefined : "1px dashed rgba(10,31,60,.22)",
-                          }}
-                        >
-                          <span
-                            className="mt-[2px] flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
-                            style={{
-                              background: on ? "#1E7A5A" : "rgba(10,31,60,.08)",
-                              color: on ? "#fff" : "transparent",
-                            }}
-                          >
-                            ✓
-                          </span>
-                          <span className="min-w-0 flex-1">
-                            <span className="block text-[19px] font-bold leading-[1.35] text-ink">{a.name}</span>
-                            <span className="mt-0.5 block text-[18px] font-bold text-navy">
-                              {a.active ? a.priceLabel : "곧 시작합니다"}
-                            </span>
-                            <span className="mt-0.5 block text-[17px] leading-[1.4] text-muted">{a.scope}</span>
-                          </span>
-                        </button>
-                      );
-                    })}
+                    {rows.map((a) => (
+                      <AskItem
+                        key={a.no}
+                        item={a}
+                        selected={askSel?.no === a.no}
+                        open={askOpen === a.no}
+                        onToggle={() => setAskOpen((v) => (v === a.no ? null : a.no))}
+                        onPick={() => {
+                          setAskSent(null);
+                          setAskSel((s) => (s?.no === a.no ? null : a));
+                        }}
+                      />
+                    ))}
                   </div>
                 </ElderCard>
               );
@@ -1101,7 +1153,10 @@ export default function ElderHome() {
                   return (
                     <button
                       key={c.id}
-                      onClick={() => setStoreCat(c.id)}
+                      onClick={() => {
+                        setStoreCat(c.id);
+                        setStoreGroup(0);
+                      }}
                       aria-pressed={on}
                       className="btn-press flex items-center gap-2.5 rounded-2xl border-2 px-3 py-4 text-left"
                       style={
@@ -1121,11 +1176,46 @@ export default function ElderHome() {
                   {storeCatalog.note}
                 </p>
               )}
+              {/* 소분류 — 보호자 스토어와 같은 구조로 맞췄다 (2026-08-21 시트 어르신 스토어 1번).
+                  전에는 분류를 고르면 그 안의 모든 그룹이 한 줄로 쭉 나열돼 목록이 길었다.
+                  칩만 가져오고 크기는 어르신 규격(19px · 높이 52px)을 지킨다. */}
+              {/* 한 줄 가로 스크롤 — 줄바꿈으로 두면 칩 다섯 개가 네 줄을 먹어서
+                  첫 화면에 상품이 하나도 안 보인다 (보호자 스토어와 같은 방식).
+                  오른쪽 끝을 흐리게 덮어 "더 있다"를 알린다. */}
+              {storeCatalog.groups.length > 1 && (
+                <div className="relative mt-3 -mx-1">
+                  <div className="flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+                    {storeCatalog.groups.map((g, gi) => {
+                      const on = storeGroup === gi;
+                      return (
+                        <button
+                          key={g.name}
+                          onClick={() => setStoreGroup(gi)}
+                          aria-pressed={on}
+                          className="btn-press min-h-[52px] shrink-0 whitespace-nowrap rounded-2xl border-2 px-4 text-[19px] font-bold"
+                          style={
+                            on
+                              ? { borderColor: "#0A1F3C", background: "#0A1F3C", color: "#FFFFFF" }
+                              : { borderColor: "rgba(10,31,60,.15)", color: "#40413F" }
+                          }
+                        >
+                          {g.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-y-0 right-0 w-10"
+                    style={{ background: "linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95))" }}
+                  />
+                </div>
+              )}
             </ElderCard>
 
-            {storeCatalog.groups.map((g, gi) => (
-              <ElderCard key={`${storeCatalog.id}-${g.name}`} show={tab === "store"} order={1 + gi}>
-                <CardHead title={g.name} />
+            {[storeCatalog.groups[storeGroup] || storeCatalog.groups[0]].filter(Boolean).map((g) => (
+              <ElderCard key={`${storeCatalog.id}-${g.name}`} show={tab === "store"} order={1}>
+                <CardHead title={g.name} right={`${g.items.length}가지`} />
                 <div className="mt-2 space-y-2">
                   {g.items.map((i) => {
                     const on = !!storeSel[i.id];
@@ -1711,6 +1801,72 @@ function VoiceRecorder({ to, onPick, onSend, sent }) {
         </div>
       )}
     </>
+  );
+}
+
+// 해주세요 한 줄 — 접히면 이름과 가격만, 펼치면 설명과 "이걸로 부탁하기"
+// (2026-08-21 시안). 12개를 설명까지 펼쳐 두면 목록이 화면 네 장이 된다.
+//
+// 가격은 접힌 상태에 남긴다. 이름만 두면 무엇이 얼마인지 비교하려고 열두 개를
+// 전부 열어 봐야 한다 — 접는 목적과 반대가 된다.
+//
+// 고르는 것은 펼친 뒤 버튼으로만 한다. 줄을 누르면 펼쳐지고, 고르는 것은 한 번 더
+// 누르는 것 — 한 번의 누름에 한 가지 일만 일어나야 잘못 고르지 않는다.
+function AskItem({ item, selected, open, onToggle, onPick }) {
+  const off = !item.active;
+  return (
+    <div
+      style={{
+        ...SUB_CARD,
+        outline: selected ? "3px solid #B08D57" : "none",
+        border: off ? "1px dashed rgba(10,31,60,.22)" : undefined,
+      }}
+    >
+      <button
+        onClick={onToggle}
+        aria-expanded={open}
+        className="btn-press flex w-full items-center gap-3 text-left"
+      >
+        <span
+          aria-hidden
+          className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
+          style={{
+            background: selected ? "#1E7A5A" : "rgba(10,31,60,.08)",
+            color: selected ? "#fff" : "transparent",
+          }}
+        >
+          ✓
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[19px] font-bold leading-[1.35] text-ink">{item.name}</span>
+          <span className="mt-0.5 block text-[18px] font-bold text-navy">
+            {off ? "곧 시작합니다" : item.priceLabel}
+          </span>
+        </span>
+        <span
+          aria-hidden
+          className="shrink-0 text-muted transition-transform duration-200"
+          style={{ transform: open ? "rotate(180deg)" : "none" }}
+        >
+          <Icon name="chev" size={22} strokeWidth={2} />
+        </span>
+      </button>
+      {open && (
+        <div className="mt-2 border-t border-navy/[.08] pt-2.5">
+          <p className="text-[18px] leading-[1.5] text-muted">{item.scope}</p>
+          {item.point && <p className="mt-1 text-[17px] leading-[1.5] text-muted">{item.point}</p>}
+          {item.note && <p className="mt-1 text-[17px] leading-[1.5] text-muted">{item.note}</p>}
+          {!off && (
+            <button
+              onClick={onPick}
+              className="btn-press btn-dark mt-2.5 w-full rounded-2xl bg-navy py-3.5 text-[19px] font-bold text-white"
+            >
+              {selected ? "고른 것 취소" : "이걸로 부탁하기"}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
