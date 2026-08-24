@@ -65,7 +65,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | 2h | @WorldBank Small AI/4C 답글 — "context는 수입 불가" 앵글, 크립토 어휘 0(기관 레인) | 화 이후 (에버그린, MIT와 같은 날 무방 — 둘 다 비크립토) |
 | ~~2i~~ | @BankXRP 리플 프라임 IG 채권 답글 — **계정 확인 → ✅ 확정**(신선·정확·증거 첨부·무CTA), "credit follows evidence" 변주 + 매출채권 복선 라인. 오늘 3번째 답글 슬롯(상한 내) | **즉시 (8/23)** — 게시 시 완료 마킹 |
 | 4 | 원글: "The enterprise stack assembles quietly" (집계형, 뉴스 페그) | 월(8/24) 저녁 |
-| 5 | 원글: 손그림 인포그래픽 "Why WELLBIAN Is Different" — 콘텐츠 설계+힉스필드 프롬프트(블루판 최종) `depin/content/why-wellbian-different.md`에 영구 저장(8/24) | 이미지 완성 후, 수~목 |
+| 5 | 원글: 컨셉 다이어그램 "검증 루프" (구 손그림 "Why WELLBIAN Is Different" — 8/24 스타일 전면 개정: 글라스모피즘+로우폴리, 제품명 비공개 방침으로 브랜드명 제거) `depin/content/why-wellbian-different.md`에 영구 저장 | 이미지 완성 후, 수~목 (제품명 없어 시점 유연) |
 | 5b | 원글: "래퍼 vs 원장 — 두바이 등기 토큰화가 세운 기준" — **원고 확정(8/23 서우 승인)**, 전체 게시 패키지(T1/T2+소스 답글+이미지 프롬프트+게시 노트) `depin/content/wrapper-vs-ledger.md`에 영구 저장(8/24) | 화(8/25) 저녁 권장 (월 enterprise stack과 분리) |
 | 5c | 원글: "기계 고객(Machine Customers)" — x402·에이전트 결제 테제 완결판, **원고 확정(8/23)**, 전체 게시 패키지(T1/T2+소스 답글+설계 의도) `depin/content/machine-customers.md`에 영구 저장(8/24). 시그니처 신규: "Ads don't work on agents. Attestations do." | 목(8/28) 저녁 (인포그래픽이 목으로 밀리면 금) |
 | 5d | 원글(생활): "실내 열중증 — 더위 지도가 끊기는 곳" — CO₂ 후속 계열, 시즌 페그(늦더위). 훅: "Most heatstroke doesn't happen under the sun. It happens indoors — where nobody measures." #AirQuality #DePIN | 차주 월~화 (8/31~9/1) — 늦더위 윈도우 내 |
