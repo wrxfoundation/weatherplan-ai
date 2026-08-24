@@ -1,88 +1,90 @@
 # 원글 5 — 컨셉 다이어그램 "검증 루프" (구 "Why WELLBIAN Is Different")
 
-**상태**: **스타일 전면 개정 (8/24, 서우 피드백)** — 손그림 doodle 톤이 "너무 캐주얼"하다는 판단으로
-폐기. **다각형(로우폴리) 실사 렌더 + 글라스모피즘 + 클린 도형/전개도 + 폰트 위계질서**로 전환.
-동시에 **제품명 비공개 방침** 반영 — WELLBIAN 브랜드명·ARC-600DA·Genesis 배지 전부 제거하고
-순수 개념도(컨셉 다이어그램)로만 구성. 콘텐츠 설계 표는 구버전 참고용으로 하단에 남겨둠.
+**상태**: **v2 개정 (8/24, 서우 피드백: 1차 생성본 리뷰 후)** — 1차 생성 결과 확인, 아이콘을
+유리알(투명 글래스 비즈) 재질로, 전체 톤은 블루 과다 대신 절제된 다크 뉴트럴 + 무지개 반사광(분산광)로
+조정. 손그림 doodle → 글라스모피즘 전환(v1) 자체는 유지, 재질·색 배합만 보정.
 
-**게시 예정: 이미지 완성 후, 수~목** (여전히 유효). 제품명이 빠졌으므로 게시 시점은 브랜드 공개
-전이라도 무방 — 오히려 티저 성격으로 더 이르게 써도 되는 자산.
+**게시 예정: 이미지 완성 후, 수~목**. 제품명·브랜드명 없음(제품 비공개 방침) — 하단 구버전 설계는
+공개 후 재사용 후보로 유지.
 
-## 힉스필드 프롬프트 (신규 — 글라스모피즘/로우폴리, 브랜드명 없음)
+## 힉스필드 프롬프트 (v2 — 유리알 재질 + 무지개 분산광, 블루 절제)
 
 ```
-Premium fintech concept diagram, glassmorphism UI aesthetic: frosted
-translucent glass panels with soft blur, subtle 1px light borders, gentle
-drop shadows, floating above a deep navy #1B2A4A background with soft
-signal-blue #2E6BFF glow gradients and ice-blue #DCEAF7 accent light. All
-icons rendered as faceted low-poly 3D objects with realistic material
-shading and soft specular highlights (not flat, not doodle). Clean thin
-geometric line connectors between elements, precise and technical —
-exploded-view schematic style, not illustrative. Strict typographic
-hierarchy: large bold clean sans-serif headline, medium-weight subheading,
-small tracked uppercase labels — no hand-lettering, no script, no doodle
-linework anywhere. Layout top to bottom:
+Premium fintech concept diagram. Background: deep charcoal-navy #12182A,
+mostly neutral and understated — NOT a heavy blue wash, blue appears only
+as thin restrained accent light (panel edges, connector lines, small
+glows), so it never dominates the frame. Panels are frosted glassmorphism:
+translucent, softly blurred, subtle thin white/silver edge light (not
+strongly blue-tinted), gentle drop shadows.
+
+All icons throughout (sensor, shield, ledger, and the six benefit icons)
+are rendered as clear transparent glass beads/orbs — like polished glass
+marbles or blown-glass ornaments, NOT metallic, NOT opaque, NOT flat.
+Each glass form catches light with realistic refraction: internal light
+bending, crisp glossy specular highlights, and iridescent rainbow
+dispersion — thin prismatic streaks of red, orange, violet and cyan
+breaking off the highlight edges and inner facets, like light through a
+crystal prism. Faint soft caustic light pooling beneath each glass form.
+The rainbow dispersion on the glass is the main color interest of the
+image, set against the restrained dark neutral background. Clean thin
+line connectors between elements (soft white, not heavy blue). Strict
+typographic hierarchy: large bold clean sans-serif headline, medium-weight
+subheading, small tracked uppercase labels — no hand-lettering, no doodle
+linework. Layout top to bottom:
 1) Large bold sans-serif headline "Turning A Reading Into A Verified
-   Record", medium subheading below in ice-blue: "what happens between a
-   sensor and a ledger"
-2) Two glass comparison panels side by side: left panel muted and slightly
-   dim, small uppercase label "MOST AIR MONITORS", one faceted low-poly
+   Record", medium subheading below in soft ice-blue: "what happens
+   between a sensor and a ledger"
+2) Two glass comparison panels side by side: left panel muted and
+   slightly dim, small uppercase label "MOST AIR MONITORS", one glass-bead
    sensor icon sitting alone with no connections, caption "reading stays
-   on the device"; right panel brighter with a thin glowing signal-blue
-   edge, small uppercase label "A VERIFIED NETWORK", a faceted sensor icon
-   linked by clean glowing lines to a small cluster of network nodes,
+   on the device"; right panel brighter with a thin glowing edge, small
+   uppercase label "A VERIFIED NETWORK", a glass-bead sensor icon linked
+   by clean glowing lines to a small cluster of glass-bead network nodes,
    caption "each reading joins a shared, checked record"
 3) Horizontal row of three glass hexagonal badges connected by clean
-   directional arrow lines, each containing a faceted low-poly icon:
-   sensor icon labeled "MEASURE", double-check shield icon labeled
-   "CROSS-VERIFY", ledger/document icon labeled "RECORD"
+   directional arrow lines, each containing a glass-bead icon with
+   rainbow dispersion highlights: sensor orb labeled "MEASURE",
+   shield-with-check labeled "CROSS-VERIFY", ledger/document labeled
+   "RECORD"
 4) Row of six small glass pill chips in a grid, each with a minimal
-   faceted geometric icon and short uppercase label: "REAL-TIME READINGS"
-   / "CROSS-CHECKED ACCURACY" / "LICENSED ACCESS" / "INSTANT SETTLEMENT"
-   / "SHARED VALUE" / "ENTERPRISE-READY"
-5) Bottom centered line, medium-large weight, ice-blue: "Making invisible
-   air visible. Turning it into valuable data assets."
+   glass-bead icon (same rainbow-refraction treatment, smaller scale) and
+   short uppercase label: "REAL-TIME READINGS" / "CROSS-CHECKED ACCURACY"
+   / "LICENSED ACCESS" / "INSTANT SETTLEMENT" / "SHARED VALUE" /
+   "ENTERPRISE-READY"
+5) Bottom centered line, medium-large weight, soft ice-blue: "Making
+   invisible air visible. Turning it into valuable data assets."
 No brand wordmarks, no company name, no product name, no logos, no device
 model numbers or batch numbers anywhere in the composition. No people.
 Generous negative space, no photorealistic background clutter, 4:5 portrait
 ```
 
-## 이 개정에서 바뀐 것 (구버전 대비)
+## v1 → v2 변경 요약
 
-| 항목 | 구버전 (손그림) | 신버전 (글라스모피즘/로우폴리) |
+| 항목 | v1 (1차 생성) | v2 (이번 수정) |
 |---|---|---|
-| 톤 | cream paper, black ink doodle, 손그림 | 딥네이비 배경, 글라스 패널, 로우폴리 실사 렌더 |
-| 타이포 | 손글씨체 단일 위계 | 볼드 헤드라인 → 서브헤드 → 트래킹된 소문자 라벨, 3단 위계 |
-| 아이콘 | doodle 일러스트 | 다각형(로우폴리) 3D 페이싯, 리얼리스틱 셰이딩 |
-| 제목 | "Why WELLBIAN Is Different" (브랜드명 노출) | "Turning A Reading Into A Verified Record" (브랜드명 없음) |
-| 우측 비교 패널 라벨 | "wellbian" (브랜드명) | "A VERIFIED NETWORK" (개념만) |
-| Foundation 배지 | "ARC-600DA" · "Genesis #0001–5000" (제품 식별정보) | **섹션 자체 삭제** — 제품 공개 전이라 배지 불가 |
-| 네트워크 혜택 6종 | 서술형 캡션(문장) | 짧은 대문자 라벨(칩 형태) — 위계질서상 하위 레벨이라 축약 |
-| 종횡비 | 4:5 | 4:5 유지 |
+| 아이콘 재질 | 로우폴리 페이싯, 메탈릭/크롬 느낌 | **투명 유리알(글래스 비즈)** — 굴절·글로시 하이라이트 |
+| 색감 | 화면 전체 시그널블루 과다(배경·글로우·패널 전부 블루 워시) | **다크 뉴트럴 절제 배경**, 블루는 얇은 액센트로만 |
+| 컬러 포인트 | 블루 단색 | **유리알의 무지개 분산광(프리즘 효과)**이 메인 컬러 포인트 |
+| 레이아웃/카피/구조 | — | **변경 없음** (1차안 그대로 유효, 재질·색만 조정) |
 
-## 실무 팁 (갱신)
+## 실무 팁
 
-- **온이미지 텍스트가 크게 줄었습니다**(문장형 캡션 → 짧은 라벨 위주) — 구버전의 최대 리스크였던
-  철자 깨짐 확률이 자연히 낮아집니다. 그래도 라벨 6종+헤드라인은 생성 후 돋보기 검수 권장.
-  브랜드명이 아예 프롬프트에 없으므로 "AI가 실수로 브랜드명을 잘못 써넣을 리스크"도 원천 차단.
-- 글라스모피즘+로우폴리 조합은 일반 사실적 렌더 모델(예: 힉스필드 기본 실사 계열)이 doodle
-  스타일보다 오히려 더 안정적으로 뽑는 경향 — nano-banana 계열 고집 없이 실사 렌더 우수 모델로
-  테스트해도 무방.
-- 배경이 어두운 네이비라 X 다크모드·라이트모드 양쪽에서 카드 경계가 뭉개지지 않는지 확인 필요
-  (썸네일 축소 시 미리보기 체크).
+- "무지개 분산광"은 유리·크리스탈 특유의 물리 현상(프리즘 분산)이라 배경이 다크해도 자연스럽게
+  화면의 유일한 유채색 포인트가 됩니다 — 브랜드 블루 사용 자체를 버리는 게 아니라 "액센트로 절제"
+  방향이라 플레이북의 "액센트·글로우는 블루" 규칙과 상충하지 않습니다.
+- 유리 재질 렌더는 로우폴리보다 실패 시 결과가 더 갈릴 수 있어(반사·굴절이 과하게 뭉개지는 경우) —
+  1~2회 재생성 후 유리알이 탁하게 나오면 "clear glass, high transparency, sharp specular highlight"
+  구문을 강조해서 재시도 권장.
 
 ## 활용처
 
-X 단독 포스트(제품 공개 전 티저로도 가능, 브랜드명 없어 시점 유연) → 이후 제품 공개 시점에
-브랜드명·Foundation 배지 넣은 **후속 버전**(구버전 설계 재활용, 하단 참고)으로 업그레이드 게시
-검토 → 텔레그램 고정 자료 → 판매 페이지 "How it works" 섹션.
+X 단독 포스트(제품 공개 전 티저로도 가능) → 텔레그램 고정 자료 → 판매 페이지 "How it works" 섹션.
 
 ---
 
-## 참고: 구버전 콘텐츠 설계 (제품 공개 후 재사용 후보)
+## 참고: 구버전 콘텐츠 설계 (제품 공개 후 브랜드명 재도입 시 재사용 후보)
 
-브랜드명 공개 가능 시점에 아래 표 기준으로 되살릴 수 있음 (플레어 인포그래픽 포맷을 레이아웃만
-빌려 우리 서사로 치환한 설계, 2026-08-22 확정):
+플레어 인포그래픽 포맷을 레이아웃만 빌려 우리 서사로 치환한 설계 (2026-08-22 확정, 당시 손그림 톤):
 
 | 플레어 원본 | wellbian 버전 |
 |---|---|
