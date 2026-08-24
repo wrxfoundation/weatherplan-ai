@@ -139,6 +139,9 @@ MIT(occupancy sensing)·세계은행(context=데이터) ✅ vs 맥킨지(구멍 
 @RayDalio 인류 진화·전지성 사변(#principleoftheday) — 철학·사변 = 레인 밖 전형, 인프라 문장 0.
 무반응, 소재 없음.
 
+@AndrewYNg Marin 오픈소스 AI 모델 훈련 개방성 논쟁(Percy Liang 인용) — 순수 AI 연구·학술 문화
+무대, 구멍 테스트 실패(측정·데이터·센싱 언급 없음). 레인 완전 밖. 무반응.
+
 @Xfinancebull XRP ETF 인플로우 스레드(8/23, 3번째 판정) — 수치 나열이어도 프레임이 홀더 정서
 응원전("ARMY 🚨·We are SO back") + ETF 플로우 = 시세 인접 지표. 인프라 문장 부재 → 무반응.
 같은 계정 유형별 3연속 사례 확정: 인프라 정리 ✅ / 정서 프레임 ❌ — 계정 등급 < 글 유형의 교본.
