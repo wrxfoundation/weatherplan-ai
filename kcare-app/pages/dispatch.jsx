@@ -67,7 +67,7 @@ import {
   WEATHER_DISTRICTS,
   WEATHER_ISSUES,
   mapPeople,
-} from "../lib/console";;
+} from "../lib/console";
 import { useAppState } from "../lib/state";
 import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";

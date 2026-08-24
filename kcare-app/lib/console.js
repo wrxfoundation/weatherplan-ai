@@ -46,26 +46,15 @@ export const TODAY_ROUTE = [
   },
 ];
 
-// 관찰 리포트 12항목 — REQ-11 (판단이 아니라 관찰)
-export const OBSERVATION_ITEMS = [
-  "집안 정리 상태", "냄새·환기", "식품 보관상태", "낙상 위험물",
-  "조명", "냉난방 상태", "의복 상태", "대화 반응",
-  "식사 여부", "외로움 호소", "수면 호소", "반복되는 불안 표현",
-];
-
-// 진단성 어휘 — 입력 단계 경고 (의료법 17조 · REQ-11)
-export const DIAGNOSIS_WORDS = ["우울증", "치매", "정신질환", "자살", "조현", "진단"];
+// OBSERVATION_ITEMS(관찰 12항목)·DIAGNOSIS_WORDS(진단성 어휘 차단)는 여기 있었다.
+// 컨시어지 방문·리포트 탭 병합(2026-08-21 시트) 때 관찰 리포트 시트를 지우면서
+// 같이 뺐다 — 21항목 리포트의 마음·집 축이 이미 같은 것을 본다. REQ-11 의
+// "판단 아닌 관찰"·"진단 어휘 차단" 원칙 자체는 checkupFor()/REPORT_HEADLINE
+// 쪽에 남아 있다.
 
 // ─── 관제(dispatch) 목 데이터 — 핸드오프 09 상세 명세 + REQ-04 ─────────────────
 // 서비스 경계(REQ-04): 기본 상품 보증 범위는 "긴급신호 접수 + 119 연계"까지.
 // 컨시어지 급파는 주간·가용 시. 야간 출동은 외주 옵션 상품(가구별 플래그).
-
-// KPI (09 §1) — SOS 값은 화면에서 상태로 계산
-export const DISPATCH_KPIS = [
-  { k: "진행중", v: "2", color: "#0A1F3C" },
-  { k: "오늘 배차", v: "6", color: "#0A1F3C" },
-  { k: "가동률", v: "82%", color: "#1E7A5A" },
-];
 
 // 인력 명부 8명 (09 §6). 매출·판매 지표 필드 금지 (원칙 1)
 export const STAFF = [
@@ -219,23 +208,6 @@ export const REVENUE_STREAMS = [
   { no: "22", name: "원격 진료 연계 (행정)", status: "todo" },
 ];
 
-// 수익 예측 — 목 수치. 실데이터 연동 대기 표기 필수
-export const REVENUE_FORECAST = [
-  { name: "월 구독 (03)", amount: "₩ 48,450,000", pct: 72, phase: "P0" },
-  { name: "병원동행 건별 (01)", amount: "₩ 21,300,000", pct: 54, phase: "P0" },
-  { name: "가입비 (02)", amount: "₩ 12,600,000", pct: 41, phase: "P0" },
-  { name: "커머스 · 케어박스 (06 · 11)", amount: "₩ 6,180,000", pct: 23, phase: "P1" },
-  { name: "재가급여 (12)", amount: "₩ 0", pct: 0, phase: "P2 · 지정 심사 대기" },
-];
-
-// 규칙 성능 — 오탐률 30% 초과 단독 규칙은 발송 금지 (핸드오프 02 §5 · 03 device)
-export const RULE_PERF = [
-  { name: "낙상 복합 (충격 3G + 모션 정지 + 통화 실패)", fired: 12, real: 11, falseRate: "8.3%", policy: "발송" },
-  { name: "낙상 충격 단독", fired: 36, real: 22, falseRate: "38.9%", policy: "발송 금지 · 로그만" },
-  { name: "6시간 무수집", fired: 16, real: 13, falseRate: "18.8%", policy: "배터리 분리 후 발송" },
-  { name: "실내 고온 (31° · 30분)", fired: 41, real: 39, falseRate: "4.9%", policy: "발송" },
-];
-
 // SLA 집계 — 관제와 같은 수치의 집계 뷰 (개별 사건 비노출)
 export const ADMIN_SLA = [
   { name: "SOS 초동 응답", target: "60초", current: "41초", note: "오늘 2건 · 최장 52초" },
@@ -243,19 +215,6 @@ export const ADMIN_SLA = [
   { name: "방문 리포트", target: "24시간", current: "9시간", note: "지연 0건" },
   { name: "CS 콜백", target: "4시간", current: "1.8시간", note: "NPS 디텍터 24시간 내 전화 별도" },
 ];
-
-// 리스크 요약 — 01-domain-rules.md와 단일 출처 유지 (요약만 노출)
-export const ADMIN_RISKS = {
-  critical: 4,
-  high: 13,
-  top: [
-    { grade: "C", name: "의료법 17조 — 진단성 기록", action: "관찰 12항목 고정 + 금칙어 필터 (REQ-11 구현)" },
-    { grade: "C", name: "의료법 27조 — 무면허 의료행위", action: "케어박스 의약품 경계 (REQ-10 구현)" },
-    { grade: "C", name: "병원 건별 수수료 (C4)", action: "건별 수수료 UI 부재 확인" },
-    { grade: "H", name: "GA 등록 전 보험 모집 (H4)", action: "기능 플래그 잠금" },
-    { grade: "H", name: "재가급여 부당청구 환수 (H8)", action: "청구 배치 전 자격·한도 검증 필수 경로" },
-  ],
-};
 
 // 코호트 리텐션 — 목 수치. LTV는 산정 방식 미확정
 export const ADMIN_COHORTS = [
@@ -267,16 +226,8 @@ export const ADMIN_COHORTS = [
 
 // ─── 회의 요구 전면 반영분 (더미 우선) ──────────────────────────────────────────
 
-// 컨시어지 구매대행 품목 — 쇼핑탭 (회의 7.1). 예상금액 → 보호자 승인 → 구매 → 완료사진
-export const CONCIERGE_SHOP_ITEMS = [
-  { id: "c1", name: "해열제 (고객 요청)", est: 6500 },
-  { id: "c2", name: "파스", est: 12000 },
-  { id: "c3", name: "소독약 · 거즈", est: 8000 },
-  { id: "c4", name: "밴드 리필", est: 4500 },
-  // 생활안전용품 — 스토어 3종 공통 노출 (실무자 피드백 2026-08-09) · lib/store.js 판매가와 동일
-  { id: "c5", name: "[생활안전] 논슬립 실내 안전 슬리퍼", est: 25000 },
-  { id: "c6", name: "[생활안전] 동작 인식 LED 센서등", est: 20000 },
-];
+// CONCIERGE_SHOP_ITEMS(여섯 개 하드코딩)는 여기 있었다. 제안 탭을 스토어 카탈로그
+// 전 품목으로 바꾸면서(2026-08-21 시트 제안 1번) STORE_CATALOG 로 대체했다.
 
 // 방문 영상 3모드 — REQ-12 (회의 확정). 항상 녹화 금지, 필요한 순간 세그먼트만.
 // 원격상담 모드는 뺐다 (2026-08-12 실무진 요청) — 우리가 하는 일이 아니다.
@@ -390,10 +341,6 @@ export const AI_BRIEFING = {
   ],
   unconfirmed: ["낙상 이력 상세 — 가족 진술과 본인 진술이 다름 · 캐묻지 말고 관찰만"],
 };
-
-// 관찰 리포트 음성 초안 — AI가 녹음을 관찰 문장으로 정리 (진단 표현은 금칙어 필터가 차단)
-export const AI_VOICE_DRAFT =
-  '거실 정리 상태 양호. 점심 식사는 절반 정도 드심. "요즘 밤에 두 번씩 깬다"고 말씀하심. 현관 앞 신문 3일치 쌓여 있음.';
 
 // ─── 관제 통합 디렉터리 — 검색·플로팅 프로필 카드 공용 (더미) ─────────────────────
 // rows: [라벨, 값] · alert: 챙겨야 할 것(강조). 주소 상세는 담당 확정 게이팅 원칙 유지.
@@ -528,17 +475,6 @@ export const CHURN_SEGMENTS = [
   { seg: "리포트 2주 미열람", n: "6가구", action: "CS 아웃바운드 + 발송 시간 재설정", level: "중간" },
   { seg: "결제 실패 · 갱신 임박", n: "2가구", action: "결제 수단 교체 안내 (D-5)", level: "높음" },
   { seg: "요청 무응답 3회 이상", n: "3가구", action: "주보호자 유선 확인", level: "중간" },
-];
-
-export const MEMBERSHIP_MIX = [
-  { k: "티어 1 (월 57,000)", n: 84, w: 66 },
-  { k: "티어 2", n: 32, w: 25 },
-  { k: "티어 3", n: 12, w: 9 },
-];
-
-export const OPTION_ATTACH = [
-  { k: "야간 출동 (외주)", v: "22%", note: "SOS 야간 공백 보완" },
-  { k: "간병보험 (GA)", v: "출시 대기", note: "라이선스 확보 후 오픈" },
 ];
 
 export const SAFETY_MONTHLY = [
@@ -733,13 +669,6 @@ export const CS_TOPICS = [
   { k: "리포트 발송 시간", n: 4, w: 57 },
   { k: "일정 변경 · 취소", n: 4, w: 57 },
   { k: "워치 착용 불편", n: 3, w: 43 },
-];
-
-export const MKT_CHANNELS = [
-  { k: "가족 추천 (초대 링크)", v: "42%", note: "CAC 0원 — NPS 추천군 연동", color: "#1E7A5A" },
-  { k: "검색 · 블로그", v: "27%", note: "\"부모님 병원 동행\" 키워드", color: "#0A1F3C" },
-  { k: "제휴 병원 안내", v: "19%", note: "MOU 6곳 원내 안내", color: "#B08D57" },
-  { k: "지역 커뮤니티", v: "12%", note: "강남구 맘카페 · 경로당", color: "#8A5D12" },
 ];
 
 export const MKT_RULES = "의료 효능 · 치료 표현 광고 금지 (의료법 56조) · 후기는 동의받은 실제 가족 사례만 사용";

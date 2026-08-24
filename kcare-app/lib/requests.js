@@ -168,15 +168,6 @@ export const SERVICE_PLUS = [
   // 해주세요 '응급 관리'(no12)와 같은 서비스였다. 통합처는 SERVICE_MENU no12.
 ];
 
-// 개편안 V2 의 5개 축 — 랜딩·콘솔에서 서비스 구조를 설명할 때 쓴다
-export const BIZ_PILLARS = [
-  { k: "AI · 앱", v: "건강 · 생활 데이터 수집과 변화 감지", icon: "activity" },
-  { k: "K-CARE 방문", v: "실제 생활환경과 상태 확인 — 21가지 체크 후 리포트", icon: "home" },
-  { k: "해주세요", v: "방문 직원이 즉시 해결 가능한 문제 처리", icon: "hand" },
-  { k: "해주세요 PLUS", v: "전문업체가 필요한 문제를 외부 파트너에게 연결", icon: "diamond" },
-  { k: "Care Membership", v: "여러 서비스를 하나의 구독료 안에서 이용", icon: "heart" },
-];
-
 // 요청 유형 프리셋 (회의 예시 그대로)
 export const GUARDIAN_PRESETS = [
   "약 구매해 주세요",
@@ -184,14 +175,6 @@ export const GUARDIAN_PRESETS = [
   "집 상태 확인해 주세요",
   "물품 전달해 주세요",
   "다음 방문 때 확인해 주세요",
-];
-
-export const CONCIERGE_PRESETS = [
-  "결제가 필요합니다",
-  "약이 부족합니다",
-  "병원 예약 확인이 필요합니다",
-  "추가 동행이 필요합니다",
-  "집안 안전조치가 필요합니다",
 ];
 
 export const URGENCY = {

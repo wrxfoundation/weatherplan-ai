@@ -165,8 +165,6 @@ export const TRACKS = [
     ],
   },
 ];
-
-export const DEFAULT_TRACK = "elder";
 export const trackOf = (id) => TRACKS.find((t) => t.id === id) || TRACKS[0];
 
 // 화면에서 이용자를 뭐라고 부를지. 정기 케어는 보호자가 보는 화면이라 "어머니"

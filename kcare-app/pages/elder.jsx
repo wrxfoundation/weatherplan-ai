@@ -299,6 +299,7 @@ export default function ElderHome() {
 
   // 오늘이 방문일인가 — 오늘 오시는 분에게만 전화를 열어 준다 (시트 '오늘' 1번)
   const visitToday = upcoming.some((e) => e.kind === "visit" && isToday(e.at));
+  const nextVisit = upcoming.find((e) => e.kind === "visit"); // 방문 아닌 날 안내용
 
   useEffect(() => () => clearTimeout(callTimer.current), []);
 
@@ -395,56 +396,75 @@ export default function ElderHome() {
             ref={scrollRef}
             className="elder-scroll -mx-2 mt-4 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto px-2 pb-5"
           >
-            {/* order 0 · 오늘 찾아뵙는 분 — 방문 사기 방어. 유일한 2px 테두리 */}
+            {/* order 0 · 오늘 찾아뵙는 분 — 방문 사기 방어. 유일한 2px 테두리.
+                방문일에만 이름·사진을 보여준다 (2026-08-24 검수에서 발견한 오류를 고쳤다).
+                전에는 방문이 없는 날에도 "두 분이 함께 옵니다"가 그대로 떠서, 오늘
+                방문이 없다는 것을 이 카드 안에서만 봐서는 알 수 없었다 — 안전 확인
+                카드가 틀린 안내를 하고 있었다. 방문 없는 날은 짧게 줄어 카드 높이도
+                677px → 200px대로 준다. */}
             <ElderCard
               show={tab === "today"}
               order={0}
               style={{ ...LIGHT_CARD, border: "2px solid #B08D57" }}
             >
               <div className="text-[19px] font-bold text-[#7A5C28]">오늘 찾아뵙는 분</div>
-              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
-                두 분이 함께 옵니다.
-                <br />문 열기 전에 얼굴을 확인하세요.
-              </p>
-              <div className="mt-3 space-y-2.5">
-                {ELDER_VISITORS.map((v) => (
-                  <div key={v.displayName} className="flex items-center gap-4" style={SUB_CARD}>
-                    <span
-                      className="flex h-[56px] w-[56px] shrink-0 items-center justify-center whitespace-nowrap rounded-full text-[15px] font-bold"
-                      style={{ background: v.avBg, color: v.avFg }}
-                    >
-                      {v.initials}
-                    </span>
-                    <div>
-                      <div className="text-[22px] font-bold text-navy">{v.displayName}</div>
-                      <div className="mt-[3px] text-[19px] text-muted">{v.relationLabel}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {/* 오늘 오시는 분에게만 전화 — 시트 '오늘' 1번.
-                  방문일이 아닌 날에 전화 버튼이 열려 있으면 아무 때나 걸게 된다.
-                  푸터의 '선생님께 전화'는 같은 시트 요청으로 삭제했고, 이것만 남는다. */}
               {visitToday ? (
-                <ElderBtn
-                  onClick={callTeacher}
-                  variant={calling ? "done" : "primary"}
-                  className="mt-4"
-                  lines={
-                    calling
-                      ? ["박지현 선생님께", "연결 중입니다"]
-                      : ["오늘 오시는", "박지현 선생님께 전화"]
-                  }
-                />
+                <>
+                  <p className="mt-2 text-[20px] leading-[1.6] text-ink">
+                    두 분이 함께 옵니다.
+                    <br />문 열기 전에 얼굴을 확인하세요.
+                  </p>
+                  <div className="mt-3 space-y-2.5">
+                    {ELDER_VISITORS.map((v) => (
+                      <div key={v.displayName} className="flex items-center gap-4" style={SUB_CARD}>
+                        <span
+                          className="flex h-[56px] w-[56px] shrink-0 items-center justify-center whitespace-nowrap rounded-full text-[15px] font-bold"
+                          style={{ background: v.avBg, color: v.avFg }}
+                        >
+                          {v.initials}
+                        </span>
+                        <div>
+                          <div className="text-[22px] font-bold text-navy">{v.displayName}</div>
+                          <div className="mt-[3px] text-[19px] text-muted">{v.relationLabel}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* 오늘 오시는 분에게만 전화 — 시트 '오늘' 1번.
+                      방문일이 아닌 날에 전화 버튼이 열려 있으면 아무 때나 걸게 된다.
+                      푸터의 '선생님께 전화'는 같은 시트 요청으로 삭제했고, 이것만 남는다. */}
+                  <ElderBtn
+                    onClick={callTeacher}
+                    variant={calling ? "done" : "primary"}
+                    className="mt-4"
+                    lines={
+                      calling
+                        ? ["박지현 선생님께", "연결 중입니다"]
+                        : ["오늘 오시는", "박지현 선생님께 전화"]
+                    }
+                  />
+                  <p className="mt-3 text-[19px] leading-[1.6] text-muted">
+                    두 분 다 K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지 마시고 바탕화면의
+                    빨간 SOS를 누르세요.
+                  </p>
+                </>
               ) : (
-                <p className="mt-4 rounded-2xl px-4 py-3.5 text-[19px] leading-[1.6] text-muted" style={SUB_CARD}>
-                  전화는 오시는 날에만 열립니다. 급하시면 위의 즉시 방문 요청을 눌러 주세요.
-                </p>
+                <>
+                  <p className="mt-2 text-[20px] leading-[1.6] text-ink">
+                    오늘은 찾아뵙는 분이 없습니다.
+                    {nextVisit && (
+                      <>
+                        <br />
+                        다음 방문은 {spokenDay(nextVisit.at)}입니다.
+                      </>
+                    )}
+                  </p>
+                  <p className="mt-3 text-[19px] leading-[1.6] text-muted">
+                    오늘 K-CARE라며 찾아오시는 분이 있다면 문을 열지 마시고 바탕화면의 빨간
+                    SOS를 누르세요. 급한 일이 있으시면 위의 즉시 방문 요청을 눌러 주세요.
+                  </p>
+                </>
               )}
-              <p className="mt-3 text-[19px] leading-[1.6] text-muted">
-                두 분 다 K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지 마시고 바탕화면의
-                빨간 SOS를 누르세요.
-              </p>
             </ElderCard>
 
             {/* order 2 · 오늘 나는 — 보호자 홈의 "오늘 어머니는"과 같은 내용을
@@ -629,7 +649,11 @@ export default function ElderHome() {
               )}
             </ElderCard>
 
-            {/* order 1 · 오늘 일정 — 유일한 네이비 다크 카드 */}
+            {/* order 1 · 오늘 일정 — 유일한 네이비 다크 카드.
+                전에는 "다음 일정"(여기)과 "다가오는 일정"(그 다음 목록 + 등록)이
+                탭 안에서 네 장 떨어진 채 따로 있었다. 같은 주제가 두 곳에 있으면
+                "일정이 왜 두 군데 있지"가 된다. 그 다음 일정과 등록 버튼을 여기로
+                옮겨 한 장으로 합쳤다 (2026-08-24 검수 — "아직 복잡하다"). */}
             {next && (
               <ElderCard
                 show={tab === "today"}
@@ -672,31 +696,44 @@ export default function ElderHome() {
                   <Icon name="speaker" size={26} strokeWidth={2} />
                   {speaking ? "그만 듣기" : "소리로 듣기"}
                 </button>
+
+                {/* 그 다음 일정 — 조회 + 간단등록 (REQ-02 어르신 권한: 조회·알림확인·간단등록) */}
+                {upcoming.length > 1 && (
+                  <div className="mt-4 border-t border-white/15 pt-3.5">
+                    <div className="text-[17px] font-bold text-white/70">그 다음</div>
+                    {upcoming.slice(1, 3).map((e) => (
+                      <div key={e.id} className="border-t border-white/10 py-3 first:border-t-0 first:pt-2">
+                        <div className="text-[19px] font-bold">
+                          {spokenDay(e.at)} {spokenTime(e.at)}
+                        </div>
+                        <div className="mt-[3px] text-[18px] text-white/70">
+                          {e.title} · {EVENT_KINDS[e.kind].label}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <button
+                  onClick={() => setEventSheet(true)}
+                  className="btn-press mt-3 flex min-h-[52px] w-full items-center justify-center rounded-2xl border text-[19px] font-bold text-white"
+                  style={{ borderColor: "rgba(255,255,255,.3)" }}
+                >
+                  일정 하나 남기기
+                </button>
               </ElderCard>
             )}
-
-            {/* order 1 · 다가오는 일정 — 조회 + 간단등록 (REQ-02 어르신 권한: 조회·알림확인·간단등록) */}
-            <ElderCard show={tab === "today"} order={6}>
-              <CardHead title="다가오는 일정" />
-              <div className="mt-1">
-                {upcoming.slice(1, 3).map((e) => (
-                  <div key={e.id} className="border-t border-navy/[.07] py-[14px] first:border-t-0">
-                    <div className="text-[20px] font-bold text-navy">
-                      {spokenDay(e.at)} {spokenTime(e.at)}
-                    </div>
-                    <div className="mt-[3px] text-[19px] text-muted">
-                      {e.title} · {EVENT_KINDS[e.kind].label}
-                    </div>
-                  </div>
-                ))}
-                {upcoming.length <= 1 && (
-                  <p className="py-3 text-[19px] text-muted">더 잡힌 일정이 없습니다.</p>
-                )}
-              </div>
-              <ElderBtn className="mt-2" onClick={() => setEventSheet(true)}>
-                일정 하나 남기기
-              </ElderBtn>
-            </ElderCard>
+            {/* next 가 없을 때(잡힌 일정 0건)의 등록 자리 — 위 네이비 카드가 next 를
+                전제로 하므로, 없을 때도 "일정 하나 남기기"가 사라지지 않게 둔다.
+                지금 시드 데이터로는 일어나지 않지만 없앨 이유는 아니다. */}
+            {!next && (
+              <ElderCard show={tab === "today"} order={1}>
+                <CardHead title="다가오는 일정" />
+                <p className="text-[19px] leading-[1.6] text-muted">잡힌 일정이 없습니다.</p>
+                <ElderBtn className="mt-2" onClick={() => setEventSheet(true)}>
+                  일정 하나 남기기
+                </ElderBtn>
+              </ElderCard>
+            )}
 
             {/* order 2 · 오늘 약 — 첫 안심방문에서 등록한 계획을 직접 체크한다.
                 진행바는 '전체 횟수 중 복용 횟수' (시트 '건강' 1번). */}
@@ -1054,7 +1091,9 @@ export default function ElderHome() {
                 boxShadow: LIGHT_CARD.boxShadow,
               }}
             >
-              <CardHead title="지금 우리 동네" right={`실외 · ${ELDER.dong}`} rightColor="#5C7799" />
+              {/* #5C7799 는 흰 카드 위에서 4.49:1 — WCAG AA 4.5:1 에 0.01 모자랐다.
+                  같은 파란 계열이면서 이미 다른 화면에서 쓰는 #3B5C8A 로 바꿨다. */}
+              <CardHead title="지금 우리 동네" right={`실외 · ${ELDER.dong}`} rightColor="#3B5C8A" />
               <div className="mt-2 flex items-end gap-3">
                 <span className="font-num text-[44px] font-bold leading-none text-navy">
                   {ELDER_NOW.tempLabel}
