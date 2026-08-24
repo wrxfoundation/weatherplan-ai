@@ -86,6 +86,14 @@ Montserrat풍 지오메트릭 산세리프·미디엄·넓은 자간·소프트 
 적용 범위 커브 패널 한정 — 엔드 카드는 "NOT glass" 명시. 판정 기준 7종: 기기 동일성·상시 유지·
 창문 열림·창문→커브 순서·CO2 철자·엔드 철자+2초+무효과·유리 과잉 여부(SF HUD화 시 폐기).
 
+**v4.5 (8/24, 서우 — 창문 생략 반복 + CO2 소멸 모션)**: 원인 진단 = 구 Beat 3에 빛변화·그라데이션·
+창문·커브반응이 동시에 몰려 미묘한 서브액션(창문)이 생략됨. **대응: 창문 열림을 독립 비트로 분리**
+(6비트 재구성) — 신 Beat3 = "ISOLATED ACTION, contains nothing else" + "not a cutaway, not implied,
+not skipped, not rushed" 3중 명시, 커브는 이 비트 동안 불변 고정. 신 Beat4 = 커브 반응 + **CO2 라벨·
+커브꼬리가 우측 가장자리로 흡입되듯 당겨져 얇아지며 소멸**("pulled by a gentle suction... dissolving
+as they exit off the right edge"). 인과 순서가 이제 별개 비트라 구조적으로 강제됨. 2회 실패 시
+Beat 3만 단독 5초 클립 생성 후 편집 삽입. 원문은 세션 기록 참조.
+
 **v4 트러블슈팅 (8/24): 기기 오생성 발생 — 원인 ① 레퍼런스 희석(환경 가중 > 피사체) ② "unbranded"
 수정 지시 = 재디자인 허가로 오독. 대응 확정: 수정 지시 삭제 → 복제 지시("Reproduce exactly as
 photographed... do not redesign")로 교체, 로고는 "각도·아웃포커스로 회피(제품 변경 금지)".
