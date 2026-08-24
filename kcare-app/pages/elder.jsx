@@ -388,32 +388,34 @@ export default function ElderHome() {
       <div className="min-h-screen bg-nav">
         {/* break-keep: 한국어 어절 단위 줄바꿈 — 카피 개행(<br/>)과 병용 (06 §6) */}
         <div className="relative mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-4 min-[380px]:px-[22px]">
-          {/* ── 고정 헤더: 날짜 · 인사 ── */}
-          <header className="shrink-0 pt-5">
-            <div className="flex items-center justify-between">
-              <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
-                K-CARE
-              </span>
-              <Link href="/" className="tap text-[13px] font-bold text-muted/50">
-                데모 홈
-              </Link>
-            </div>
-            {/* 즉시방문요청은 헤더가 아니라 플로팅 버튼이다 (2026-08-24 피드백 —
-                "인사말 옆에 고정으로 박힐 필요가 없음"). 헤더가 날짜·인사만 남아
-                작은 화면에서 카드에 자리가 더 남고, 버튼은 어느 탭에서나 스크롤과
-                무관하게 오른쪽 아래에 떠 있다. */}
-            <div className="mt-2">
-              <div className="text-[19px] font-medium text-muted">{dateLong}</div>
+          {/* ── 카드 스택 (유일한 스크롤 영역) ──
+              헤더(날짜·인사)도 고정을 풀었다 (2026-08-24 피드백 — "이거 자체도
+              고정 풀어버리고"). 이제 화면에 붙박이는 오른쪽 위 플로팅 버튼과
+              하단 탭바뿐이고, 나머지는 전부 카드와 함께 스크롤되어 올라간다. */}
+          <main
+            ref={scrollRef}
+            className="elder-scroll -mx-2 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto px-2 pb-6"
+          >
+            {/* 인사 블록 — 스크롤 첫 요소 (모든 탭 공통, order -10).
+                데모 홈 링크는 오른쪽 위가 플로팅 버튼 자리가 되면서 K-CARE 옆으로
+                옮겼다 — 버튼 아래 깔리면 시연 때 못 누른다. 날짜 위 여백(mt-8)은
+                오른쪽 위 버튼과 날짜 글줄이 겹치지 않기 위한 것 — 탭 전환 시
+                스크롤이 맨 위로 돌아오므로(setTab) 인사도 늘 다시 보인다. */}
+            <div className="shrink-0" style={{ order: -10 }}>
+              {/* gap-2.5·구분점 없음 — 375px 화면에서 오른쪽 위 버튼(왼쪽 끝 x≈153)과
+                  겹치지 않으려면 이 줄이 140px 안에 끝나야 한다 (실측). */}
+              <div className="flex items-center gap-2.5 pt-5">
+                <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
+                  K-CARE
+                </span>
+                <Link href="/" className="tap text-[13px] font-bold text-muted/50">
+                  데모 홈
+                </Link>
+              </div>
+              <div className="mt-8 text-[19px] font-medium text-muted">{dateLong}</div>
               {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번) */}
               <h1 className="text-[27px] font-black leading-[1.3] text-navy">{name} 님, 안녕하세요</h1>
             </div>
-          </header>
-
-          {/* ── 카드 스택 (유일한 스크롤 영역) ── */}
-          <main
-            ref={scrollRef}
-            className="elder-scroll -mx-2 mt-4 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto px-2 pb-[88px]"
-          >
             {/* order 0 · 오늘 찾아뵙는 분 — 방문 사기 방어. 유일한 2px 테두리.
                 방문일에만 이름·사진을 보여준다 (2026-08-24 검수에서 발견한 오류를 고쳤다).
                 전에는 방문이 없는 날에도 "두 분이 함께 옵니다"가 그대로 떠서, 오늘
@@ -1764,8 +1766,8 @@ export default function ElderHome() {
             </nav>
           </footer>
 
-          {/* 즉시방문요청 플로팅 버튼 — 탭·스크롤과 무관하게 항상 같은 자리.
-              bottom-[104px]는 푸터(탭바) 높이 위로 12px 띄운 값이다. */}
+          {/* 즉시방문요청 플로팅 버튼 — 탭·스크롤과 무관하게 항상 같은 자리(오른쪽 위).
+              하단은 탭바와 붙어 눌림 실수가 나기 쉬워 위로 올렸다 (2026-08-24 피드백). */}
           <VisitNowButton
             done={visitAsked}
             onAsk={() => {
@@ -2131,17 +2133,18 @@ function AskItem({ item, selected, open, onToggle, onPick }) {
 // SOS 는 "지금 위험하다"이고 이것은 "지금 와 주셨으면 한다"다. 둘을 색으로 가른다 —
 // 빨강은 SOS 전용이므로 이 버튼은 네이비다.
 //
-// 헤더 옆 고정칸이었으나 플로팅으로 바꿨다 (2026-08-24 피드백 — "플로팅 버튼인데
-// 인사말 옆에 고정으로 박힐 필요가 없음"). 오른쪽 아래, 탭바 위 12px. 어느 탭에서
-// 스크롤 중이든 같은 자리라서 급할 때 찾아 헤매지 않는다. 카드 위에 뜨는 물건이라
-// 요청 완료 상태도 반투명이 아니라 흰 바탕(불투명)이어야 아래 글자가 비쳐 보이지
-// 않는다.
+// 헤더 옆 고정칸 → 오른쪽 아래 플로팅 → 오른쪽 위 플로팅 (2026-08-24 피드백 두 번 —
+// "인사말 옆에 고정으로 박힐 필요가 없음", "하단 말고 위에"). 어느 탭에서 스크롤
+// 중이든 같은 자리라서 급할 때 찾아 헤매지 않는다. 카드 위에 뜨는 물건이라 요청
+// 완료 상태도 반투명이 아니라 흰 바탕(불투명)이어야 아래 글자가 비쳐 보이지 않는다.
+// 완료 라벨은 "요청됨" 한 단어 — 위 자리에서는 길면 데모 홈 링크를 덮는다.
+// 전화 대기 설명은 오늘 탭의 '관제에서 전화를 드립니다' 카드가 한다.
 function VisitNowButton({ done, onAsk }) {
   return (
     <button
       onClick={() => !done && onAsk()}
       aria-label={done ? "즉시 방문을 요청했습니다" : "지금 와 주세요 — 즉시 방문 요청"}
-      className="btn-press absolute bottom-[104px] right-4 z-40 flex min-h-[60px] select-none items-center gap-2.5 whitespace-nowrap rounded-full py-3 pl-5 pr-6 text-[20px] font-black tracking-[-.01em]"
+      className="btn-press absolute right-4 top-3 z-40 flex min-h-[60px] select-none items-center gap-2.5 whitespace-nowrap rounded-full py-3 pl-4 pr-5 text-[20px] font-black tracking-[-.01em]"
       style={
         done
           ? {
@@ -2164,7 +2167,7 @@ function VisitNowButton({ done, onAsk }) {
       <span aria-hidden style={{ color: done ? "#1E7A5A" : "#C9A46B" }}>
         <Icon name={done ? "clock" : "door"} size={26} strokeWidth={2} />
       </span>
-      {done ? "요청됨 · 전화 대기" : "지금 와 주세요"}
+      {done ? "요청됨" : "지금 와 주세요"}
     </button>
   );
 }
