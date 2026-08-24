@@ -124,11 +124,15 @@ function ElderCard({ show, order, style, className = "", children }) {
 }
 
 // 접기/펴기·더 보기 공용 버튼 스타일 — 처음에는 2px 회색 테두리 상자였는데
-// "테두리가 짜쳐 보인다"는 피드백(2026-08-24)로 채움형 알약로 바꿨다.
+// "테두리가 짜쳐 보인다"는 피드백(2026-08-24)로 채움형으로 바꿨다.
 // 테두리 대신 옅은 남색 채움이 눌리는 자리임을 말하고, 셰브론만 골드로 짚는다.
-// 52px 높이·19px 글자는 어르신 규격 그대로다.
+// 완전 알약(rounded-full · 52px)은 "위아래가 좁아 이상하다"는 후속 피드백(같은 날
+// 시안)으로 위아래가 넉넉한 라운드 사각(64px · radius 18)으로 다시 잡았다 —
+// 타일 그리드(rounded-[18px])와 같은 곡률이라 화면 안에서 한 가족으로 보인다.
+// 주의: 높이는 min-h 가 아니라 py 로 만든다 — globals.css 의 .btn-press{min-height:44px}
+// (레이어 밖 CSS)가 min-h 유틸리티를 이겨서, min-h-[64px]를 줘도 44px 로 눌린다.
 const QUIET_BTN =
-  "btn-press flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full text-[19px] font-bold text-navy";
+  "btn-press flex w-full items-center justify-center gap-2 rounded-[18px] py-[19px] text-[19px] font-bold text-navy";
 const QUIET_BG = { background: "rgba(10,31,60,.06)" };
 
 // 요약 + 접기 카드 (2026-08-24 실무진 참고 시안 — "접기 펴고 요약 형태로 심플하게").
@@ -744,7 +748,7 @@ export default function ElderHome() {
                 )}
                 <button
                   onClick={() => setEventSheet(true)}
-                  className="btn-press mt-3 flex min-h-[52px] w-full items-center justify-center rounded-full text-[19px] font-bold text-white"
+                  className="btn-press mt-3 flex w-full items-center justify-center rounded-[18px] py-[19px] text-[19px] font-bold text-white"
                   style={{ background: "rgba(255,255,255,.13)" }}
                 >
                   일정 하나 남기기
