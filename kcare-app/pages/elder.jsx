@@ -114,6 +114,14 @@ function ElderCard({ show, order, style, className = "", children }) {
   );
 }
 
+// 접기/펴기·더 보기 공용 버튼 스타일 — 처음에는 2px 회색 테두리 상자였는데
+// "테두리가 짜쳐 보인다"는 피드백(2026-08-24)로 채움형 알약로 바꿨다.
+// 테두리 대신 옅은 남색 채움이 눌리는 자리임을 말하고, 셰브론만 골드로 짚는다.
+// 52px 높이·19px 글자는 어르신 규격 그대로다.
+const QUIET_BTN =
+  "btn-press flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full text-[19px] font-bold text-navy";
+const QUIET_BG = { background: "rgba(10,31,60,.06)" };
+
 // 요약 + 접기 카드 (2026-08-24 실무진 참고 시안 — "접기 펴고 요약 형태로 심플하게").
 // 제목 옆 배지와 summary 는 접힌 채로도 항상 보인다 — 자세히 보기는 세부를 위한 것이지
 // 무슨 내용인지 알기 위한 것이 아니다. 세부는 열 때만 DOM에 붙는다(스크린리더가
@@ -126,17 +134,12 @@ function ElderExpand({ show, order, style, title, right, rightColor, icon, iconC
     <ElderCard show={show} order={order} style={style}>
       <CardHead title={title} right={right} rightColor={rightColor} icon={icon} iconColor={iconColor} />
       {summary && <p className="mt-2 text-[20px] leading-[1.6] text-ink">{summary}</p>}
-      <button
-        onClick={onToggle}
-        aria-expanded={open}
-        className="btn-press mt-3 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border-2 text-[19px] font-bold text-navy"
-        style={{ borderColor: "rgba(10,31,60,.15)" }}
-      >
+      <button onClick={onToggle} aria-expanded={open} className={`${QUIET_BTN} mt-3`} style={QUIET_BG}>
         {open ? "접기" : "자세히 보기"}
         <span
           aria-hidden
           className="transition-transform duration-200"
-          style={{ transform: open ? "rotate(180deg)" : "none" }}
+          style={{ transform: open ? "rotate(180deg)" : "none", color: "#B08D57" }}
         >
           <Icon name="chev" size={22} strokeWidth={2} />
         </span>
@@ -384,7 +387,7 @@ export default function ElderHome() {
       <Splash service="elder" />
       <div className="min-h-screen bg-nav">
         {/* break-keep: 한국어 어절 단위 줄바꿈 — 카피 개행(<br/>)과 병용 (06 §6) */}
-        <div className="mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-4 min-[380px]:px-[22px]">
+        <div className="relative mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-4 min-[380px]:px-[22px]">
           {/* ── 고정 헤더: 날짜 · 인사 ── */}
           <header className="shrink-0 pt-5">
             <div className="flex items-center justify-between">
@@ -395,64 +398,21 @@ export default function ElderHome() {
                 데모 홈
               </Link>
             </div>
-            {/* 인사말 옆에 버튼을 둔다 — 아래로 쌓으면 375x667 화면에서 헤더가 286px(43%)를
-                먹고 카드에 40% 밖에 안 남는다. 어르신 폰이 최신이 아닐 수 있으니 작은 화면
-                기준으로 맞춘다. 화면 안 SOS 버튼은 뺐고(시트 전체 요청 3·4번) 이 자리를
-                즉시방문요청이 대신한다 — 둘을 같이 두면 급할 때 무엇을 누를지 고르게 된다. */}
-            <div className="mt-2 flex items-center gap-3.5">
-              <div className="min-w-0 flex-1">
-                <div className="text-[19px] font-medium text-muted">{dateLong}</div>
-                {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번) */}
-                <h1 className="text-[27px] font-black leading-[1.3] text-navy">
-                  {name} 님,
-                  <br />
-                  안녕하세요
-                </h1>
-              </div>
-              <VisitNowButton
-                done={visitAsked}
-                onAsk={() => {
-                  dispatch({ type: "elderPatch", patch: { visitAsked: true } });
-                  dispatch({
-                    type: "addRequest",
-                    payload: {
-                      id: `rq-${Date.now()}`,
-                      dir: "fromElder",
-                      type: "즉시 방문 요청",
-                      detail:
-                        "지금 와 주셨으면 합니다 (어르신 화면 즉시방문요청) — 관제가 먼저 전화로 확인합니다",
-                      amount: null,
-                      preferredDate: null,
-                      urgency: "urgent",
-                      assignee: "박지현",
-                      photos: [],
-                      status: "requested",
-                      history: [{ at: Date.now(), status: "requested", note: "어르신 즉시방문요청" }],
-                      proof: null,
-                    },
-                  });
-                  dispatch({
-                    type: "pushEvent",
-                    payload: { kind: "방문", text: `${ELDER.name}(${ELDER.age}) 즉시 방문 요청 · 관제 확인 전화 발신`, color: "#B08D57" },
-                  });
-                }}
-              />
+            {/* 즉시방문요청은 헤더가 아니라 플로팅 버튼이다 (2026-08-24 피드백 —
+                "인사말 옆에 고정으로 박힐 필요가 없음"). 헤더가 날짜·인사만 남아
+                작은 화면에서 카드에 자리가 더 남고, 버튼은 어느 탭에서나 스크롤과
+                무관하게 오른쪽 아래에 떠 있다. */}
+            <div className="mt-2">
+              <div className="text-[19px] font-medium text-muted">{dateLong}</div>
+              {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번) */}
+              <h1 className="text-[27px] font-black leading-[1.3] text-navy">{name} 님, 안녕하세요</h1>
             </div>
-            {/* 버튼 글자만으로 부족한 설명은 한 줄로 — 요청 후에는 상태를 말해 준다.
-                요청이 곧 방문은 아니다. 관제가 먼저 전화로 무엇이 필요한지 여쭙고
-                그다음 배차한다 (2026-08-21 시트 어르신 전체 2번). 바로 출발한다고
-                적어 두면 전화가 왔을 때 "왜 안 오고 전화만 하나"가 된다. */}
-            <p className="mt-2 text-[19px] leading-[1.5] text-muted">
-              {visitAsked
-                ? "요청을 보냈습니다. 관제에서 곧 전화를 드립니다."
-                : "지금 와 주셨으면 할 때 누르세요."}
-            </p>
           </header>
 
           {/* ── 카드 스택 (유일한 스크롤 영역) ── */}
           <main
             ref={scrollRef}
-            className="elder-scroll -mx-2 mt-4 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto px-2 pb-5"
+            className="elder-scroll -mx-2 mt-4 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto px-2 pb-[88px]"
           >
             {/* order 0 · 오늘 찾아뵙는 분 — 방문 사기 방어. 유일한 2px 테두리.
                 방문일에만 이름·사진을 보여준다 (2026-08-24 검수에서 발견한 오류를 고쳤다).
@@ -562,11 +522,11 @@ export default function ElderHome() {
                   setVitalsOpen(true);
                   setTab("health");
                 }}
-                className="btn-press mt-3 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border-2 text-[19px] font-bold text-navy"
-                style={{ borderColor: "rgba(10,31,60,.15)" }}
+                className={`${QUIET_BTN} mt-3`}
+                style={QUIET_BG}
               >
                 건강에서 더 보기
-                <span aria-hidden className="-rotate-90">
+                <span aria-hidden className="-rotate-90" style={{ color: "#B08D57" }}>
                   <Icon name="chev" size={22} strokeWidth={2} />
                 </span>
               </button>
@@ -628,14 +588,14 @@ export default function ElderHome() {
               <button
                 onClick={() => setCalOpen((v) => !v)}
                 aria-expanded={calOpen}
-                className="btn-press mt-2.5 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border-2 text-[19px] font-bold text-navy"
-                style={{ borderColor: "rgba(10,31,60,.15)" }}
+                className={`${QUIET_BTN} mt-2.5`}
+                style={QUIET_BG}
               >
                 {calOpen ? "달력 접기" : "달력 보기"}
                 <span
                   aria-hidden
                   className="transition-transform duration-200"
-                  style={{ transform: calOpen ? "rotate(180deg)" : "none" }}
+                  style={{ transform: calOpen ? "rotate(180deg)" : "none", color: "#B08D57" }}
                 >
                   <Icon name="chev" size={22} strokeWidth={2} />
                 </span>
@@ -773,8 +733,8 @@ export default function ElderHome() {
                 )}
                 <button
                   onClick={() => setEventSheet(true)}
-                  className="btn-press mt-3 flex min-h-[52px] w-full items-center justify-center rounded-2xl border text-[19px] font-bold text-white"
-                  style={{ borderColor: "rgba(255,255,255,.3)" }}
+                  className="btn-press mt-3 flex min-h-[52px] w-full items-center justify-center rounded-full text-[19px] font-bold text-white"
+                  style={{ background: "rgba(255,255,255,.13)" }}
                 >
                   일정 하나 남기기
                 </button>
@@ -819,14 +779,14 @@ export default function ElderHome() {
               <button
                 onClick={() => setVitalsOpen((v) => !v)}
                 aria-expanded={vitalsOpen}
-                className="btn-press mt-3 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border-2 text-[19px] font-bold text-navy"
-                style={{ borderColor: "rgba(10,31,60,.15)" }}
+                className={`${QUIET_BTN} mt-3`}
+                style={QUIET_BG}
               >
                 {vitalsOpen ? "접기" : "자세히 보기"}
                 <span
                   aria-hidden
                   className="transition-transform duration-200"
-                  style={{ transform: vitalsOpen ? "rotate(180deg)" : "none" }}
+                  style={{ transform: vitalsOpen ? "rotate(180deg)" : "none", color: "#B08D57" }}
                 >
                   <Icon name="chev" size={22} strokeWidth={2} />
                 </span>
@@ -1803,6 +1763,37 @@ export default function ElderHome() {
               })}
             </nav>
           </footer>
+
+          {/* 즉시방문요청 플로팅 버튼 — 탭·스크롤과 무관하게 항상 같은 자리.
+              bottom-[104px]는 푸터(탭바) 높이 위로 12px 띄운 값이다. */}
+          <VisitNowButton
+            done={visitAsked}
+            onAsk={() => {
+              dispatch({ type: "elderPatch", patch: { visitAsked: true } });
+              dispatch({
+                type: "addRequest",
+                payload: {
+                  id: `rq-${Date.now()}`,
+                  dir: "fromElder",
+                  type: "즉시 방문 요청",
+                  detail:
+                    "지금 와 주셨으면 합니다 (어르신 화면 즉시방문요청) — 관제가 먼저 전화로 확인합니다",
+                  amount: null,
+                  preferredDate: null,
+                  urgency: "urgent",
+                  assignee: "박지현",
+                  photos: [],
+                  status: "requested",
+                  history: [{ at: Date.now(), status: "requested", note: "어르신 즉시방문요청" }],
+                  proof: null,
+                },
+              });
+              dispatch({
+                type: "pushEvent",
+                payload: { kind: "방문", text: `${ELDER.name}(${ELDER.age}) 즉시 방문 요청 · 관제 확인 전화 발신`, color: "#B08D57" },
+              });
+            }}
+          />
         </div>
 
         {/* 간단등록 시트 — 큰 활자 · 프리셋만. 자유 입력 없음 (저인지부하) */}
@@ -2140,53 +2131,40 @@ function AskItem({ item, selected, open, onToggle, onPick }) {
 // SOS 는 "지금 위험하다"이고 이것은 "지금 와 주셨으면 한다"다. 둘을 색으로 가른다 —
 // 빨강은 SOS 전용이므로 이 버튼은 네이비다.
 //
-// 원형이었으나 라운드 사각으로 바꿨다. 원 안에서 글자가 쓸 수 있는 가로폭은 지름보다
-// 훨씬 좁아서 "와 주세요"가 테두리를 넘었다. 글씨를 줄이는 선택지도 있었지만 어르신
-// 화면의 본문이 19~20px 이라 여기만 작게 하면 제일 중요한 버튼이 제일 안 읽힌다.
-//
-// 폭 112px 는 임의값이 아니다. 375px 화면에서 헤더 행이 343px 이고 날짜를 한 줄로 두려면
-// 217px 이 필요하다 (343 − 14 gap − 217 = 112). 더 넓히면 날짜가 두 줄이 되고 헤더가
-// 23px 자라서, 작은 화면에서 카드에 남는 자리를 그만큼 잡아먹는다.
-// 안쪽 96px 에 글자 81px — 실측값이다. 문구를 바꾸면 다시 재야 한다.
+// 헤더 옆 고정칸이었으나 플로팅으로 바꿨다 (2026-08-24 피드백 — "플로팅 버튼인데
+// 인사말 옆에 고정으로 박힐 필요가 없음"). 오른쪽 아래, 탭바 위 12px. 어느 탭에서
+// 스크롤 중이든 같은 자리라서 급할 때 찾아 헤매지 않는다. 카드 위에 뜨는 물건이라
+// 요청 완료 상태도 반투명이 아니라 흰 바탕(불투명)이어야 아래 글자가 비쳐 보이지
+// 않는다.
 function VisitNowButton({ done, onAsk }) {
   return (
     <button
       onClick={() => !done && onAsk()}
       aria-label={done ? "즉시 방문을 요청했습니다" : "지금 와 주세요 — 즉시 방문 요청"}
-      className="btn-press flex h-[98px] w-[112px] shrink-0 select-none flex-col items-center justify-center gap-1 rounded-[22px] px-2 text-center"
+      className="btn-press absolute bottom-[104px] right-4 z-40 flex min-h-[60px] select-none items-center gap-2.5 whitespace-nowrap rounded-full py-3 pl-5 pr-6 text-[20px] font-black tracking-[-.01em]"
       style={
         done
           ? {
-              background: "rgba(30,122,90,.12)",
+              background: "#FFFFFF",
               color: "#1E7A5A",
-              border: "2px solid rgba(30,122,90,.35)",
+              border: "2px solid rgba(30,122,90,.4)",
+              boxShadow: "0 14px 26px -14px rgba(10,31,60,.45)",
             }
           : {
               background:
                 "linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.03) 55%), #0A1F3C",
               color: "#FFFFFF",
+              // 흰 헤어라인 — 네이비 카드(다음 일정) 위를 지날 때 경계가 필요하다
               border: "1px solid rgba(255,255,255,.35)",
               boxShadow:
-                "inset 0 1px 0 rgba(255,255,255,.4), inset 0 -4px 0 rgba(0,0,0,.28), 0 14px 26px -12px rgba(10,31,60,.6)",
+                "inset 0 1px 0 rgba(255,255,255,.4), inset 0 -3px 0 rgba(0,0,0,.25), 0 18px 32px -14px rgba(10,31,60,.65)",
             }
       }
     >
       <span aria-hidden style={{ color: done ? "#1E7A5A" : "#C9A46B" }}>
         <Icon name={done ? "clock" : "door"} size={26} strokeWidth={2} />
       </span>
-      {/* whitespace-nowrap — 폭이 모자라면 줄을 더 쪼개지 말고 넘치게 두어
-          시연 전에 눈에 띄게 한다. 조용히 세 줄이 되면 못 보고 지나친다. */}
-      <span className="whitespace-nowrap text-[19px] font-black leading-[1.25] tracking-[-.02em]">
-        {done ? (
-          "요청됨"
-        ) : (
-          <>
-            지금
-            <br />
-            와 주세요
-          </>
-        )}
-      </span>
+      {done ? "요청됨 · 전화 대기" : "지금 와 주세요"}
     </button>
   );
 }
