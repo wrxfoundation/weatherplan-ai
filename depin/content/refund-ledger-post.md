@@ -31,35 +31,40 @@ end.
 
 시그니처 후보: "The ledger is where disagreements end." (반응 시 승격)
 
-## 이미지 프롬프트 v3 (8/25 확정 — 클레이 모델 + Wellbian Violet 프로스티드 글라스)
+## 이미지 프롬프트 v4 (8/25 확정 — 다이내믹 개정)
 
-계보: v1 일러스트풍(밋밋 폐기) → v2 클레이+블루 포인트(브랜드 가이드 수령으로 컬러 교체) →
-**v3 = 클레이 + 반투명 바이올렛 글라스 빌딩**(서우 레퍼런스 2 문법 + 가이드 시안01 컬러
-#4d4dce 적용).
+계보: v1 일러스트풍(밋밋 폐기) → v2 클레이+블루 포인트 → v3 클레이+바이올렛 글라스(렌더 결과
+**너무 정적** 판정) → **v4 = 종이 기류에 운동 전부 몰아주기, 글라스 빌딩만 부동·선명**(원장은
+흔들리지 않는다 모티프 — 카오스가 들어와 질서로 나가는 장면).
 
 ```
 Soft white architectural clay-model diorama, clean physically-based
-3D render, bright even studio daylight, gentle tilt-shift depth of
-field, pale lavender-white sky. A calm grid of miniature matte white
-model buildings and streets seen from a high three-quarter aerial
-angle. Above the city, loose sheets of blank white paper drift in
-the air — scattered, weightless, unanchored, slightly blurred, like
-unsettled arguments. At the center, one slim building is different:
-built of frosted translucent blue-violet glass (#4d4dce), glowing
-softly from within like a lit archive, with a single thin thread of
-violet light rising from its rooftop, anchored at one small intense
-node — a timestamp. At the base of the glass building, the drifting
-papers settle into one neat, aligned stack. Everything else stays
-matte white; the violet glass building is the only color in the
-scene. Minimal premium fintech-editorial mood, generous negative
-space in the sky, no text, no writing on the papers, no logos, no
-people, no devices, 16:9
+3D render, dramatic low aerial angle sweeping diagonally across the
+city, wide-angle depth, bright studio daylight with long soft
+shadows, pale lavender-white sky. A grid of miniature matte white
+model buildings — and caught in a visible gust, dozens of blank
+white paper sheets stream through the streets in one curving
+current, tumbling mid-air with slight motion blur, a few large
+sheets passing close to the camera in the foreground. The current
+converges on one slim building unlike the rest: frosted translucent
+blue-violet glass (#4d4dce), glowing from within, a thin beam of
+violet light shooting straight up from its rooftop with tiny sparks
+spiraling around it. The glass building itself stays perfectly
+sharp, still and unshaken — the papers carry all the motion. Where
+they reach it, the sheets fall into a neat, aligned stack at its
+base: chaos entering, order leaving. The violet glass building is
+the only color in the scene; everything else stays matte white.
+Premium fintech-editorial energy, generous sky negative space, no
+text, no writing on the papers, no logos, no people, no devices,
+16:9
 ```
 
-- 스토리 독해: 떠도는 백지 = 정리 안 된 분쟁 · 안에서 빛나는 바이올렛 글라스 빌딩 = 원장(불 켜진
-  기록보관소) · 옥상의 실+노드 = 타임스탬프 · 그 발치에서만 종이가 정돈 = "분쟁이 끝나는 곳".
-- 리롤 체크: ① 글라스 빌딩이 **정확히 1동**인지(모델이 여러 동을 물들이는 실패 잦음 — 단일
-  포인트가 생명) ② 종이에 글자 생김 ③ 바이올렛이 하늘·바닥으로 번짐 ④ 기기/사람 침입.
+- 스토리 독해: 도시를 휩쓰는 종이 기류 = 사방의 분쟁이 몰려오는 중 · 부동의 바이올렛 글라스
+  빌딩 = 원장 · 발치의 정돈된 종이단 = 끝난 분쟁. "chaos entering, order leaving"이 연출 지시의
+  핵심. T1/T2와 1:1 대응 유지.
+- 리롤 체크: ① 글라스 빌딩 **정확히 1동 + 모션블러 침범 금지**(빌딩은 선명·정지, 종이만 흐림 —
+  뭉개지면 리롤) ② 종이에 글자 ③ 바이올렛 번짐 ④ 기기/사람 침입 ⑤ 기류가 두 갈래 이상으로
+  갈라져 산만하면 리롤(단일 커브 곡선이 정답).
 
 오버레이(편집 단계 실폰트): 타이틀 `Where Disagreements End` — **페이퍼로지 · Deep Navy #1b1b48**,
 하늘 여백 · wellbian 단독 워터마크 우하단(네이비 버전). 브랜드 가이드(Basic_0825) 기준.
