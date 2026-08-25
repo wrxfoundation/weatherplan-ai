@@ -65,7 +65,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | 2g | @IOV_OWL Ripple Treasury 문서 답글 — 디테일 지목형(SFTP 병행·한도 거버넌스 = "CFO 데스크톱"), 관계 자산 후보 | 월~화 — **월 원글에 5번째 신호 편입과 세트** |
 | 2h | @WorldBank Small AI/4C 답글 — "context는 수입 불가" 앵글, 크립토 어휘 0(기관 레인) | 화 이후 (에버그린, MIT와 같은 날 무방 — 둘 다 비크립토) |
 | ~~2i~~ | @BankXRP 리플 프라임 IG 채권 답글 — **계정 확인 → ✅ 확정**(신선·정확·증거 첨부·무CTA), "credit follows evidence" 변주 + 매출채권 복선 라인. 오늘 3번째 답글 슬롯(상한 내) | **즉시 (8/23)** — 게시 시 완료 마킹 |
-| **2n** | **@dazzlingxrpl 수정안 프로세스 교육 글(XRPScan PD 대시보드 소개) 답글 — ✅ 제안(8/25)**: 셀프 증언 앵글("xrpscan is the explorer our node wallet links to by default" — 플랫폼 실구현 사실) + PD 추적 보론 + "slow on purpose. That's the feature." 마무리. rootveg444 PD 답글(8/23) 후속 축, XRPScan 중립 익스플로러라 배서 리스크 없음 | 화(8/25) 낮 — 2k와 병행 가능, 게시 시 완료 마킹 |
+| **2o** | **@dazzlingxrpl 수정안 프로세스 교육 글(XRPScan PD 대시보드 소개) 답글 — ✅ 제안(8/25)**: 셀프 증언 앵글("xrpscan is the explorer our node wallet links to by default" — 플랫폼 실구현 사실) + PD 추적 보론 + "slow on purpose. That's the feature." 마무리. rootveg444 PD 답글(8/23) 후속 축, XRPScan 중립 익스플로러라 배서 리스크 없음 | 화(8/25) 낮 — 2k와 병행 가능, 게시 시 완료 마킹 |
 | 4 | 원글: "The enterprise stack assembles quietly" (집계형, 뉴스 페그) | 월(8/24) 저녁 |
 | 5 | 원글: 컨셉 다이어그램 "검증 루프" (구 손그림 "Why WELLBIAN Is Different" — 8/24 스타일 전면 개정: 글라스모피즘+로우폴리, 제품명 비공개 방침으로 브랜드명 제거) `depin/content/why-wellbian-different.md`에 영구 저장 | 이미지 완성 후, 수~목 (제품명 없어 시점 유연) |
 | ~~5b~~ | ~~원글: "래퍼 vs 원장"~~ → **게시 완료 (8/25)** — 반응 관찰: "a story with a ticker" 시그니처 승격 후보, 포켓몬 RWA 후속 답글 소재 대기 | — |
