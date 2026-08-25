@@ -301,6 +301,12 @@ NVIDIA 인용은 우리 무대가 아님).
 ecosystem-log ★ 축적 + 기회 파이프라인에 트리거 항목 신설. ⚠️ 현 시점 **XRP 한정, RLUSD 아님** —
 구매 가이드에 쓰려면 RLUSD(XRPL판) 지원 확인 필수, 확대 전 인용 금지.
 
+@RealQuadJacks "CMC는 왜 XRPL DEX 집계 안 하나" 불만 글(8/25) — 소재는 인프라 인접(DEX 데이터
+커버리지)이나 프레임이 음모론 운 + 커뮤니티 그리번스 = 답글은 CMC 저격 대열 합류. 무반응.
+**실무 텍스처 ★후보: XRPL 네이티브 DEX/AMM의 집계 사이트 커버리지 공백은 사실 이슈 — WLBN이
+XLS-30 AMM 거래인데 외부 집계 부재 시 유동성·가격 가시성 0. 11월 상장 트랙 전 CMC·CoinGecko
+XRPL 지원 현황 확인 + 등록 절차를 체크리스트化(business-directions 업비트 트랙 연계).**
+
 @vladtenev(Robinhood CEO) Bloomberg 인터뷰 홍보(CLARITY·예측시장·AI 에이전트, 8/25) — ① 미 규제
 담론 지형(무관여 원칙) ② "자산 소유권=번영" 이념 발화(Saylor 온건판) ③ 브로커리지 CEO 무대 =
 레인 밖(Armstrong 판정 동형) ④ 구멍 없음. 무반응. 텍스처 1건만: CFTC에서 "예측 시장은 대법원
