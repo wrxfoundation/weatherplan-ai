@@ -186,3 +186,79 @@ no props, no graphics. The boxes are the only subjects.
 ```
 
 단독 컷(1·2번)에 오라 무드를 입히려면 3a의 Background & atmosphere 문단을 그대로 삽입.
+
+### 3c. 보타닉 살롱 씬 (박스 2 + 기기 실물, 레퍼런스 3장: 1=앞면, 2=바닥면, 3=기기 실물 사진)
+
+**기기 실물 사진(3번 레퍼런스) 필수** — 없으면 가짜 기기 창작됨(형태 변형 시 폐기 원칙).
+잎·그림자가 인쇄면 겹치면 `foliage further away from the table` 추가.
+
+```
+Photorealistic product packaging mockup — STRICT REFERENCE-COPY task.
+Three reference images are attached: the FIRST is the exact printed
+artwork of the box's FRONT face; the SECOND is the exact printed
+artwork of the box's BOTTOM face; the THIRD is a photo of the actual
+white air-quality device. They are the ONLY sources for the printed
+faces and the device's physical form. Copy each from its reference
+exactly — same elements, same positions, same alignment, same
+proportions — as if transferred like a texture. Do not re-typeset,
+re-write, or rearrange anything, EXCEPT the deliberate revisions
+listed below, which override the references.
+
+The box is a rectangular rigid box whose front face has 4:3
+proportions (wider than tall). Matte deep-black cardboard, metallic
+gold foil print, subtle premium paper texture, crisp clean fold edges.
+
+Setting: a luxurious, mysterious botanical salon interior, dark and
+atmospheric — lush deep-green foliage (monstera, palms, trailing
+plants) surrounding the scene in soft shadow, hints of dark wood and
+aged brass salon details deep in the blurred background. At the
+center, a round white marble pedestal table with elegant grey veining,
+polished surface catching soft reflections.
+
+Composition on the marble table: THREE subjects. Center-back: one box
+standing upright, FRONT face toward camera, matching the first
+reference — top to bottom: the gold headline "Weather Data Token
+Generator™" with its small superscript TM (deliberate revision:
+include the TM even if the reference lacks it); the centered image of
+the white air-quality device with its six colored screen tiles exactly
+as printed — same numbers, same labels — and on the device's lower
+bezel a small "wellbian × XRP LEDGER" horizontal lockup (deliberate
+revision: co-brand lockup on the device); below the device, the small
+gold "wellbian × XRP LEDGER" brand lockup. Nothing else on this face —
+no QR codes, no "We Air You", no certification marks. Front-right: the
+ACTUAL white device standing on its kickstand, matching the third
+reference's physical form exactly — screen on, showing the same six
+colored tiles as the box artwork, same small co-brand lockup on the
+lower bezel; do not alter its shape, ports, or proportions.
+Front-left: a second box lying flat, rotated about 20 degrees, BOTTOM
+face turned up toward the camera, matching the second reference
+exactly and only: the "wellbian × XRP LEDGER" gold lockup, two gold QR
+codes at the upper right, "Weather Data Token Generator™" with
+"(Weather Data Node)" beneath it, the recycling mark, the
+certification marks row, and the small info text box. If fine print is
+too small to read, render it as the same faint small text block —
+NEVER replace it with different invented words, numbers, company names
+or country names. Visible side faces show only the vertical
+"wellbian × XRP LEDGER" gold lockup; top faces plain matte black.
+
+Atmosphere: a soft warm-gold radial aura glows behind the standing
+box, like a spotlight seen through haze, fading into the dark foliage
+at the frame edges. Fine gold dust particles drift sparsely in the
+air, catching the light as tiny warm bokeh sparks among the leaves.
+A few micro gold flecks rest on the marble near the boxes. All
+effects and all foliage stay strictly in the background and air:
+no leaf, shadow, or particle overlaps or obscures the box faces or
+the device screen — every printed element stays fully readable. The
+mood is restrained, botanical and premium — mysterious salon, not
+jungle, not glittery.
+
+STRICT PROHIBITIONS: do not invent or add any text, logo, number,
+certification code, address, or icon not present in the references.
+
+Camera: three-quarter angle from slightly above so the standing front
+face, the device screen, and the lying box's bottom face all read
+clearly. Warm key light from upper left matching the aura, soft
+contact shadows and gentle reflections on the marble, shallow depth
+of field — premium luxury-tech editorial photography. 16:9 landscape,
+high detail.
+```
