@@ -66,6 +66,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | 2h | @WorldBank Small AI/4C 답글 — "context는 수입 불가" 앵글, 크립토 어휘 0(기관 레인) | 화 이후 (에버그린, MIT와 같은 날 무방 — 둘 다 비크립토) |
 | ~~2i~~ | @BankXRP 리플 프라임 IG 채권 답글 — **계정 확인 → ✅ 확정**(신선·정확·증거 첨부·무CTA), "credit follows evidence" 변주 + 매출채권 복선 라인. 오늘 3번째 답글 슬롯(상한 내) | **즉시 (8/23)** — 게시 시 완료 마킹 |
 | **2o** | **@dazzlingxrpl 수정안 프로세스 교육 글(XRPScan PD 대시보드 소개) 답글 — ✅ 제안(8/25)**: 셀프 증언 앵글("xrpscan is the explorer our node wallet links to by default" — 플랫폼 실구현 사실) + PD 추적 보론 + "slow on purpose. That's the feature." 마무리. rootveg444 PD 답글(8/23) 후속 축, XRPScan 중립 익스플로러라 배서 리스크 없음 | 화(8/25) 낮 — 2k와 병행 가능, 게시 시 완료 마킹 |
+| **2p** | **@Ripple RLUSD $2B 마일스톤 공식 글 답글 — ✅ 최우선(8/25)**. 원출처 공식 계정 + "real-world utility / enterprise use cases" 문구 = 구멍 정통(우리가 실사례). 시세 아님(스테이블 공급 = 채택 지표). **A안(추천, 판매자 증언)**: "이번 주 환불 약관 작성" 앵글 — RLUSD 정산 사실 첫 소프트 공개, 금 5e와 예열→완결 세트(답글 = 통화 안정성 축 / 5e = 사용 증거 축으로 분리, 중복 아님). **B안(무공개 예비)**: XRPL 네이티브 $1B 유동성 관찰형. 금지: 가격 숫자(450/650)·제품명·날짜·"stablecoin/coin" 단어. 9/8 원글(대기열 6)의 예열 — 시그니처("주차하지 않는다")는 원글용 온존, 답글에서 소진 금지 | 화(8/25) 즉시 — 리플 직전 답글 8/23이라 계정당 1일 1답글 충족, 오늘 답글 상한 내 최우선 배치 |
 | 4 | 원글: "The enterprise stack assembles quietly" (집계형, 뉴스 페그) | 월(8/24) 저녁 |
 | 5 | 원글: 컨셉 다이어그램 "검증 루프" (구 손그림 "Why WELLBIAN Is Different" — 8/24 스타일 전면 개정: 글라스모피즘+로우폴리, 제품명 비공개 방침으로 브랜드명 제거) `depin/content/why-wellbian-different.md`에 영구 저장 | 이미지 완성 후, 수~목 (제품명 없어 시점 유연) |
 | ~~5b~~ | ~~원글: "래퍼 vs 원장"~~ → **게시 완료 (8/25)** — 반응 관찰: "a story with a ticker" 시그니처 승격 후보, 포켓몬 RWA 후속 답글 소재 대기 | — |
