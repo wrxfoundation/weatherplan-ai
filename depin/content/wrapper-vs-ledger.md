@@ -65,3 +65,12 @@ negative space, no text, no logos, no people, no devices, 16:9
   답글·인용 소재로.
 - $3T Ripple Prime 수치(8/23 stoneiland 검증분) — 이 원글 이후 여유 생기면 "신용은 증거를 따른다,
   이제 그 증거엔 처리 규모까지 붙었다" 후속 코멘트 소재로 축적.
+
+## 이미지 오버레이 확정 (8/25)
+
+- 타이틀: **`Wrappers vs the Ledger`** (vs 마침표 없음 — 디스플레이 표기)
+- 서브라인(선택): `Verification at the source, not a promise about it.` (제목 대비 40~50% 크기)
+- 배치: 제목 상단 좌측 하늘 여백, Montserrat류 지오메트릭 산세리프 미디엄·넓은 자간,
+  소프트 화이트(밝은 하늘이면 딥네이비 #1B2A4A)
+- 로고: **wellbian 단독** 우하단 소형 워터마크 (락업 금지 — 에디토리얼 콘텐츠 규칙, 플레이북 참조)
+- 텍스트·로고는 생성 후 편집 단계 실폰트 오버레이 (생성 내 텍스트 금지)
