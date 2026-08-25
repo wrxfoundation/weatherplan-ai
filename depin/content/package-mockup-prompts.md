@@ -397,3 +397,10 @@ shadow.
 
 화이트 필드 색 지정: `soft pearl-white and ice-white light only — slightly cooler than the warm
 sunlight — no blue, no purple, no rainbow, no readable text labels`.
+
+### 4c. 히어로 연출컷 — 주방판 (기기 단독 + 화이트 홀로그램, 박스 없음, 레퍼런스 1장: 기기 실물)
+
+아침 주방, 조리 중(냄비 수증기 블러, 사람 없음), 기기는 조리 구역 옆 카운터(화기와 안전 거리).
+서사 디테일: 등고선이 수증기 쪽으로 미세하게 밀집 — "요리로 공기가 변하고 기기가 측정한다"를
+그림으로 설명(과하면 `grow subtly denser` 문장 삭제). PHYSICAL GROUNDING 조항 유지. 화이트 필드
+(블루 복귀 시 색 지정만 4번 원본으로). NO box 명시. 금지: 가전·캐비닛 브랜드 마크, 사람·손.
