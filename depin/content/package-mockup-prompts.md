@@ -357,3 +357,22 @@ behind: it never overlaps, tints, or reflects on the box faces or the
 device screen — every printed element stays fully readable in clean
 neutral light. No rainbow, no purple, no beams.
 ```
+
+### 3f. 블러 오피스판 (3d와 동일 배치, 배경 = 깊게 블러된 브라이트 오피스 — B2B 톤)
+
+Setting 교체: 블러 보케(유리 파티션·백월·데스크·식물), 사람·판독 가능 화면·간판 금지, 피사체는
+새틴 다크그레이 데스크 위 탁 샤프. 블러 얕으면 `deeply blurred` → `extremely blurred, almost
+abstract bokeh`:
+
+```
+Setting: a bright contemporary office, rendered as a deeply blurred
+background — soft bokeh of glass partitions, white walls, warm-neutral
+daylight from large windows, indistinct shapes of desks, monitors and
+green office plants far out of focus. No people, no readable screens,
+no readable signage or logos anywhere in the blur. The subjects sit in
+sharp focus on a clean modern desk surface in muted dark grey with a
+soft satin sheen, giving a faint reflection beneath each object.
+```
+
+Camera 말미는 `strong background bokeh with the subjects tack-sharp — premium corporate product
+photography`로.
