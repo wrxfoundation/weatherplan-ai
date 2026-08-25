@@ -323,3 +323,19 @@ bright uplifting luxury-tech editorial. 16:9 landscape, high detail.
 
 조절 노브: 더 밝게 `abundant late-morning sunlight` / 홀로그램 강조 `brightly luminous` /
 필드가 박스·화면 침범 시 `the data field stays behind and above the products` 추가.
+
+
+### 3d. 담백 블랙판 (3c와 동일 배치·레퍼런스 3장, 배경만 미니멀 블랙+바닥 반사)
+
+3c에서 살롱·대리석·오라·금가루 제거. Setting 문단을 아래로 교체하고 Atmosphere 문단 삭제,
+Camera의 키라이트를 `Gentle neutral key light from upper left with a soft warm tint so the gold
+foil reads` + `the subtle floor reflection under each object`로:
+
+```
+Setting: a pure minimal black studio — seamless deep-black background
+with no visible horizon line, completely empty. The subjects stand on
+a smooth glossy black surface that gives a soft, subtle mirror
+reflection beneath each object, fading quickly. No props, no plants,
+no table, no particles, no aura, no glow effects — the products and
+their faint reflections are the only things in frame.
+```
