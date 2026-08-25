@@ -31,21 +31,37 @@ end.
 
 시그니처 후보: "The ledger is where disagreements end." (반응 시 승격)
 
-## 이미지 프롬프트 (5b 에디토리얼 계열 — 시리즈 연속성)
+## 이미지 프롬프트 v2 (8/25 스타일 개정 — 무채색 클레이 모델 + 단일 포인트 컬러)
+
+v1(일러스트풍 종이 더미 vs 실)은 밋밋 피드백으로 폐기. 서우 제공 레퍼런스(화이트 클레이 시티 +
+보라 포인트)의 문법 채택, 포인트 컬러만 브랜드 규칙(8/24 블루 확정)에 맞춰 시그널블루로 치환.
 
 ```
-Editorial-style wide illustration, bright dawn sky in pale ice-blue.
-Left half: a soft hazy stack of paper documents and rubber stamps,
-slightly blurred and untethered, floating loose above a deep navy
-ground. Right half: a single slim thread of signal-blue light rising
-from the ground, anchored at one glowing node like a timestamp,
-weaving into a calm structured lattice high above — order against the
-paperwork's haze. Minimal premium fintech-editorial aesthetic,
-generous negative space, no text, no logos, no people, no devices,
+Soft white architectural clay-model aesthetic, clean physically-based
+3D render, bright even daylight, everything monochrome white — a calm
+grid of miniature white model buildings and streets seen from a high
+three-quarter aerial angle, gentle tilt-shift depth of field, pale
+ice-blue sky. Above most of the city, loose sheets of blank white
+paper drift in the air — scattered, weightless, unanchored, slightly
+blurred, like unsettled arguments. At the center, one rooftop holds
+the only color in the scene: a single thin thread of vivid
+signal-blue light rising straight up from one small, intensely
+glowing node — a timestamp anchored in place. Around the glowing node
+the drifting papers settle into one neat, aligned stack. Minimal
+premium fintech-editorial mood, generous negative space in the sky,
+no text, no writing on the papers, no logos, no people, no devices,
 16:9
 ```
 
-오버레이(편집 단계 실폰트): 타이틀 후보 `Where Disagreements End` · wellbian 단독 워터마크 우하단.
+- 스토리 독해: 도시 전체에 떠도는 백지 = 정리 안 된 분쟁, 앵커된 파란 노드 = 온체인 타임스탬프,
+  그 옆에서만 종이가 가지런히 정돈 = "분쟁이 끝나는 곳". T1/T2와 1:1 대응.
+- 포인트 컬러를 레퍼런스처럼 보라로 원하면 `signal-blue` → `deep indigo-violet` 한 단어 치환
+  (단 브랜드 규칙상 기본은 블루).
+- 리롤 체크: 종이에 글자 생기면 리롤(`blank/no writing` 명시했으나 재발 잦은 유형) · 기기/사람
+  침입 여부 · 포인트 컬러가 2곳 이상 번지면 리롤(단일 포인트가 생명).
+
+오버레이(편집 단계 실폰트): 타이틀 `Where Disagreements End` — 하늘 여백에 **딥네이비 #1B2A4A**
+(밝은 배경이라 5b와 달리 어두운 글자) · wellbian 단독 워터마크 우하단(네이비/다크 버전).
 
 ## 린트
 
