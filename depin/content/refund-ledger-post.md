@@ -31,37 +31,38 @@ end.
 
 시그니처 후보: "The ledger is where disagreements end." (반응 시 승격)
 
-## 이미지 프롬프트 v2 (8/25 스타일 개정 — 무채색 클레이 모델 + 단일 포인트 컬러)
+## 이미지 프롬프트 v3 (8/25 확정 — 클레이 모델 + Wellbian Violet 프로스티드 글라스)
 
-v1(일러스트풍 종이 더미 vs 실)은 밋밋 피드백으로 폐기. 서우 제공 레퍼런스(화이트 클레이 시티 +
-보라 포인트)의 문법 채택, 포인트 컬러만 브랜드 규칙(8/24 블루 확정)에 맞춰 시그널블루로 치환.
+계보: v1 일러스트풍(밋밋 폐기) → v2 클레이+블루 포인트(브랜드 가이드 수령으로 컬러 교체) →
+**v3 = 클레이 + 반투명 바이올렛 글라스 빌딩**(서우 레퍼런스 2 문법 + 가이드 시안01 컬러
+#4d4dce 적용).
 
 ```
-Soft white architectural clay-model aesthetic, clean physically-based
-3D render, bright even daylight, everything monochrome white — a calm
-grid of miniature white model buildings and streets seen from a high
-three-quarter aerial angle, gentle tilt-shift depth of field, pale
-ice-blue sky. Above most of the city, loose sheets of blank white
-paper drift in the air — scattered, weightless, unanchored, slightly
-blurred, like unsettled arguments. At the center, one rooftop holds
-the only color in the scene: a single thin thread of vivid
-signal-blue light rising straight up from one small, intensely
-glowing node — a timestamp anchored in place. Around the glowing node
-the drifting papers settle into one neat, aligned stack. Minimal
-premium fintech-editorial mood, generous negative space in the sky,
-no text, no writing on the papers, no logos, no people, no devices,
-16:9
+Soft white architectural clay-model diorama, clean physically-based
+3D render, bright even studio daylight, gentle tilt-shift depth of
+field, pale lavender-white sky. A calm grid of miniature matte white
+model buildings and streets seen from a high three-quarter aerial
+angle. Above the city, loose sheets of blank white paper drift in
+the air — scattered, weightless, unanchored, slightly blurred, like
+unsettled arguments. At the center, one slim building is different:
+built of frosted translucent blue-violet glass (#4d4dce), glowing
+softly from within like a lit archive, with a single thin thread of
+violet light rising from its rooftop, anchored at one small intense
+node — a timestamp. At the base of the glass building, the drifting
+papers settle into one neat, aligned stack. Everything else stays
+matte white; the violet glass building is the only color in the
+scene. Minimal premium fintech-editorial mood, generous negative
+space in the sky, no text, no writing on the papers, no logos, no
+people, no devices, 16:9
 ```
 
-- 스토리 독해: 도시 전체에 떠도는 백지 = 정리 안 된 분쟁, 앵커된 파란 노드 = 온체인 타임스탬프,
-  그 옆에서만 종이가 가지런히 정돈 = "분쟁이 끝나는 곳". T1/T2와 1:1 대응.
-- 포인트 컬러를 레퍼런스처럼 보라로 원하면 `signal-blue` → `deep indigo-violet` 한 단어 치환
-  (단 브랜드 규칙상 기본은 블루).
-- 리롤 체크: 종이에 글자 생기면 리롤(`blank/no writing` 명시했으나 재발 잦은 유형) · 기기/사람
-  침입 여부 · 포인트 컬러가 2곳 이상 번지면 리롤(단일 포인트가 생명).
+- 스토리 독해: 떠도는 백지 = 정리 안 된 분쟁 · 안에서 빛나는 바이올렛 글라스 빌딩 = 원장(불 켜진
+  기록보관소) · 옥상의 실+노드 = 타임스탬프 · 그 발치에서만 종이가 정돈 = "분쟁이 끝나는 곳".
+- 리롤 체크: ① 글라스 빌딩이 **정확히 1동**인지(모델이 여러 동을 물들이는 실패 잦음 — 단일
+  포인트가 생명) ② 종이에 글자 생김 ③ 바이올렛이 하늘·바닥으로 번짐 ④ 기기/사람 침입.
 
-오버레이(편집 단계 실폰트): 타이틀 `Where Disagreements End` — 하늘 여백에 **딥네이비 #1B2A4A**
-(밝은 배경이라 5b와 달리 어두운 글자) · wellbian 단독 워터마크 우하단(네이비/다크 버전).
+오버레이(편집 단계 실폰트): 타이틀 `Where Disagreements End` — **페이퍼로지 · Deep Navy #1b1b48**,
+하늘 여백 · wellbian 단독 워터마크 우하단(네이비 버전). 브랜드 가이드(Basic_0825) 기준.
 
 ## 린트
 
