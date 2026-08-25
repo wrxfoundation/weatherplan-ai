@@ -339,3 +339,21 @@ reflection beneath each object, fading quickly. No props, no plants,
 no table, no particles, no aura, no glow effects — the products and
 their faint reflections are the only things in frame.
 ```
+
+### 3e. 오로라 미니멀판 (3d + 상단 옅은 오로라 베일)
+
+3d의 Setting에서 particles 금지는 유지하되 aura 금지 문구 제거, 아래 Atmosphere 문단 삽입.
+과하면 `Very low opacity` → `barely visible, extremely low opacity`, 안 보이면
+`a hint of mystery` → `clearly visible but soft`:
+
+```
+Atmosphere: high in the upper background, a faint aurora veil — soft
+translucent curtains of deep-navy, signal-blue and a whisper of teal
+light drifting slowly across the darkness, like northern lights seen
+through black glass. Very low opacity, smooth and calm — a hint of
+mystery, not a light show. The glossy floor catches only the faintest
+cool tint of it at the far edges. The aurora stays strictly high and
+behind: it never overlaps, tints, or reflects on the box faces or the
+device screen — every printed element stays fully readable in clean
+neutral light. No rainbow, no purple, no beams.
+```
