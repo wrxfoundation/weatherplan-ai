@@ -376,3 +376,24 @@ soft satin sheen, giving a faint reflection beneath each object.
 
 Camera 말미는 `strong background bokeh with the subjects tack-sharp — premium corporate product
 photography`로.
+
+### 4b. 히어로 연출컷 — 거실판 + 화이트 데이터 필드 + 접지 보정 (레퍼런스 2장: 1=앞면, 2=기기 실물)
+
+4번에서 세 가지 변경: ① 배경 = 밝은 아침 거실(소파·셔커튼·책장·화분 블러) ② PHYSICAL GROUNDING
+조항 신설 — 킥스탠드 하단까지 테이블 완전 접지 + 연속 접촉 그림자 (4번 생성 시 거치대 부양 실패
+사례 보정) ③ 데이터 필드 = 펄/아이스 화이트 (no blue). 화이트가 묻히면 `soft pearl-white` →
+`bright luminous white`, 그래도 약하면 `slightly dimmer window light` 추가.
+
+핵심 신규 문단:
+
+```
+PHYSICAL GROUNDING: the device sits firmly ON the table — both its
+front base and the bottom edge of its rear kickstand are in full
+contact with the table surface, with a correct continuous contact
+shadow along both; nothing floats, hovers, or tilts off the surface.
+The box likewise sits flat on the table with a grounded contact
+shadow.
+```
+
+화이트 필드 색 지정: `soft pearl-white and ice-white light only — slightly cooler than the warm
+sunlight — no blue, no purple, no rainbow, no readable text labels`.
