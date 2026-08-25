@@ -262,3 +262,64 @@ contact shadows and gentle reflections on the marble, shallow depth
 of field — premium luxury-tech editorial photography. 16:9 landscape,
 high detail.
 ```
+
+## 4. 히어로 연출컷 — 밝은 한옥 모던 인테리어 + 기기발 측정 데이터 필드 (레퍼런스 2장: 1=앞면, 2=기기 실물)
+
+기존 시네마틱 히어로(황혼·블루 홀로그램)를 밝은 아침 무드로 개정 + 박스·기기 실물 배치 + 측정이
+기기에서 시작되는 연출. 바닥면 박스는 의도적 제외(연출컷에 정보박스 잔글씨 = 창작 리스크·노이즈).
+텍스트 오버레이 영역 = 좌하단 (우하단 원하면 기기·박스 좌우 스왑 + lower-left → lower-right).
+
+```
+Wide cinematic hero image, 16:9 — STRICT REFERENCE-COPY task for the
+products. Two reference images are attached: the FIRST is the exact
+printed artwork of the product box's FRONT face; the SECOND is a photo
+of the actual white air-quality device. They are the ONLY sources for
+the box face and the device's physical form. Copy them exactly — do
+not re-typeset, re-write, or rearrange anything on the box, and do not
+alter the device's shape, ports, or proportions — EXCEPT the deliberate
+revisions below.
+
+Setting: a warm modern Korean interior with wooden beams, bright and
+airy — soft morning sunlight streaming in from large windows, gentle
+light shafts in clean air, warm pale wood tones, an uplifting calm
+morning mood (not dusk, not moody). Shot from a low angle.
+
+Subjects on a clean light-wood table in the lower third: left of
+center, the product box standing upright, FRONT face toward camera —
+matte deep-black rigid box with metallic gold foil print, 4:3
+proportions (wider than tall): the gold headline "Weather Data Token
+Generator™" with its small superscript TM (deliberate revision:
+include the TM even if the reference lacks it), the centered printed
+image of the white device with its six colored screen tiles exactly as
+in the reference — same numbers, same labels — with a small
+"wellbian × XRP LEDGER" lockup on the printed device's lower bezel
+(deliberate revision), and the small gold "wellbian × XRP LEDGER"
+lockup below. No QR codes, no certification marks on this face.
+Right of center: the ACTUAL white device standing on its kickstand,
+matching the second reference exactly, screen on with the same six
+colored tiles, the same small co-brand lockup on its lower bezel.
+
+The measurement begins at the device: from the device's vents and
+screen, a rich layered holographic data field rises and unfolds into
+the upper and right two thirds of the frame — thin luminous blue
+topographic contour lines mapping the air of the room, floating
+glass-like data chips with tiny glowing readouts, small hexagonal
+cells, delicate particle mist, and a faint volumetric grid, all
+visibly emanating outward from the device as if the room's air is
+being measured into data in real time. Layers differ in depth and
+opacity so the field is dense but airy. The hologram uses deep navy
+and royal blue light only — no purple, no rainbow, no readable text
+labels. The field must not overlap or obscure the box's printed face
+or the device's screen.
+
+Leave the lower-left area relatively calm and clean for text overlay.
+
+STRICT PROHIBITIONS: do not invent or add any text, logo, number,
+certification code, or icon not present in the references.
+
+Photographic realism, volumetric morning light, premium and calm —
+bright uplifting luxury-tech editorial. 16:9 landscape, high detail.
+```
+
+조절 노브: 더 밝게 `abundant late-morning sunlight` / 홀로그램 강조 `brightly luminous` /
+필드가 박스·화면 침범 시 `the data field stays behind and above the products` 추가.
