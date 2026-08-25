@@ -404,3 +404,8 @@ sunlight — no blue, no purple, no rainbow, no readable text labels`.
 서사 디테일: 등고선이 수증기 쪽으로 미세하게 밀집 — "요리로 공기가 변하고 기기가 측정한다"를
 그림으로 설명(과하면 `grow subtly denser` 문장 삭제). PHYSICAL GROUNDING 조항 유지. 화이트 필드
 (블루 복귀 시 색 지정만 4번 원본으로). NO box 명시. 금지: 가전·캐비닛 브랜드 마크, 사람·손.
+
+### 4번 원본 정정 (8/25): PHYSICAL GROUNDING 조항 추가 확정
+
+4번(한옥 모던·블루 필드) 리롤 시에도 기기 문단 뒤에 4b의 PHYSICAL GROUNDING 문단을 반드시 포함
+— 킥스탠드 부양 실패가 재현되는 지점이라 이후 모든 기기 등장 프롬프트(3c~3f·4~4c)의 표준 조항으로 승격.
