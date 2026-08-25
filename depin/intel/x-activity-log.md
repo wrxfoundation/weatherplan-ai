@@ -70,6 +70,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | 5 | 원글: 컨셉 다이어그램 "검증 루프" (구 손그림 "Why WELLBIAN Is Different" — 8/24 스타일 전면 개정: 글라스모피즘+로우폴리, 제품명 비공개 방침으로 브랜드명 제거) `depin/content/why-wellbian-different.md`에 영구 저장 | 이미지 완성 후, 수~목 (제품명 없어 시점 유연) |
 | ~~5b~~ | ~~원글: "래퍼 vs 원장"~~ → **게시 완료 (8/25)** — 반응 관찰: "a story with a ticker" 시그니처 승격 후보, 포켓몬 RWA 후속 답글 소재 대기 | — |
 | 5c | 원글: "기계 고객(Machine Customers)" — x402·에이전트 결제 테제 완결판, **원고 확정(8/23)**, 전체 게시 패키지(T1/T2+소스 답글+설계 의도) `depin/content/machine-customers.md`에 영구 저장(8/24). 시그니처 신규: "Ads don't work on agents. Attestations do." | 목(8/28) 저녁 (인포그래픽이 목으로 밀리면 금) |
+| **5e** | 원글: "분쟁이 끝나는 곳" — 환불 증거 = 온체인 NFT 발급 기록(8/25 실무 소재), 5b 후속 실행 사례. 원고·이미지 프롬프트 `depin/content/refund-ledger-post.md` | 금(8/28) 저녁 — 주간 4부작 마무리 (수=enterprise stack 페그 마지막 창, 목=5c) |
 | 5d | 원글(생활): "실내 열중증 — 더위 지도가 끊기는 곳" — CO₂ 후속 계열, 시즌 페그(늦더위). 훅: "Most heatstroke doesn't happen under the sun. It happens indoors — where nobody measures." #AirQuality #DePIN | 차주 월~화 (8/31~9/1) — 늦더위 윈도우 내 |
 | 6 | 원글: "왜 RLUSD인가" | 9/8 주간 (예약분) |
 
