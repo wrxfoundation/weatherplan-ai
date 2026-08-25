@@ -300,8 +300,8 @@ th{background:var(--glass-panel)}
 
   <div class="qrow"><div class="q-label">① 기기를 얼마에 샀나요?</div>
     <div class="qchips" id="sq-price">
-      <button class="qchip" data-v="400">400 RLUSD<small>얼리버드 #0101~1000</small></button>
-      <button class="qchip on" data-v="600">600 RLUSD<small>기본 #1001~5000</small></button>
+      <button class="qchip" data-v="450">450 RLUSD<small>얼리버드 #0101~1000</small></button>
+      <button class="qchip on" data-v="650">650 RLUSD<small>기본 #1001~5000</small></button>
     </div></div>
 
   <div class="qrow"><div class="q-label">② 얼마나 계속 켜둘 건가요? <span style="font-weight:400;color:var(--muted)">(계속 연결·정상 관리 가정)</span></div>
@@ -401,8 +401,8 @@ th{background:var(--glass-panel)}
     <div class="ctl">
       <div class="ctl-head"><label for="price">구매 구간</label></div>
       <select id="price">
-        <option value="600" selected>기본 600 RLUSD (#1001~5000)</option>
-        <option value="400">얼리버드 400 RLUSD (#0101~1000)</option>
+        <option value="650" selected>기본 650 RLUSD (#1001~5000)</option>
+        <option value="450">얼리버드 450 RLUSD (#0101~1000)</option>
       </select>
       <div class="hint">보상은 서로 다른 공간 1곳 = 노드 1대 기준 (같은 공간 중복분은 무보상 — 백서)</div>
     </div>
@@ -719,7 +719,7 @@ const mkStage=(name,start,cap,g)=>({name,start,cap,g,e0:Math.max(2000,Math.round
 const STG_KR=mkStage("한국 공고",4,400000,15),
       STG_USJP=mkStage("미·일 진출",13,1400000,18),
       STG_GLB=mkStage("전세계 확장",25,1800000,20);
-const SIMPLE={price:600,months:24,demand:"kr",estart:4,eg:15,ecap:400000,stages:[STG_KR]};
+const SIMPLE={price:650,months:24,demand:"kr",estart:4,eg:15,ecap:400000,stages:[STG_KR]};
 function stageStart(){ return SIMPLE.stages&&SIMPLE.stages.length?SIMPLE.stages[0].start:(SIMPLE.estart<900?SIMPLE.estart:4); }
 function simpleParams(){
   const p={};
@@ -915,7 +915,7 @@ document.querySelectorAll(".chip").forEach(ch=>ch.addEventListener("click",()=>{
 }));
 $("reset").addEventListener("click",()=>{
   for(const c of CTRLS) setVal(c.id,c.def);
-  $("price").value="600";
+  $("price").value="650";
   document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.dataset.scen==="base"));
   try{ localStorage.removeItem("wlbn-econ"); }catch(e){}
   render();
@@ -923,12 +923,12 @@ $("reset").addEventListener("click",()=>{
 try{
   const saved=JSON.parse(localStorage.getItem("wlbn-econ")||"null");
   if(saved){ for(const c of CTRLS) if(saved[c.id]!=null) setVal(c.id,saved[c.id]);
-    if(saved.price==400||saved.price==600) $("price").value=String(saved.price); }
+    if(saved.price==450||saved.price==650) $("price").value=String(saved.price); }
 }catch(e){}
 try{
   const ss=JSON.parse(localStorage.getItem("wlbn-econ-simple")||"null");
   if(ss){ Object.assign(SIMPLE,ss);
-    if(SIMPLE.price!==400&&SIMPLE.price!==600) SIMPLE.price=600;
+    if(SIMPLE.price!==450&&SIMPLE.price!==650) SIMPLE.price=650;
     if(SIMPLE.demand!=="custom"&&!DPRE[SIMPLE.demand]){ SIMPLE.demand="kr"; Object.assign(SIMPLE,DPRE.kr); }
     for(const [id,key] of [["sq-price","price"],["sq-months","months"],["sq-demand","demand"]])
       document.querySelectorAll("#"+id+" .qchip").forEach(c=>c.classList.toggle("on",String(c.dataset.v)===String(SIMPLE[key])));
