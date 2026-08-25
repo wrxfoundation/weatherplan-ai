@@ -409,3 +409,10 @@ sunlight — no blue, no purple, no rainbow, no readable text labels`.
 
 4번(한옥 모던·블루 필드) 리롤 시에도 기기 문단 뒤에 4b의 PHYSICAL GROUNDING 문단을 반드시 포함
 — 킥스탠드 부양 실패가 재현되는 지점이라 이후 모든 기기 등장 프롬프트(3c~3f·4~4c)의 표준 조항으로 승격.
+
+### 3g. 파스텔 포디엄판 (레퍼런스 4장: 1=포디엄 스타일ref, 2=앞면, 3=바닥면, 4=기기 실물)
+
+높이 다른 네이비 원형 조형물 3개(톨=앞면 박스 / 미드=기기 / 로우와이드=바닥면 박스)로 입체 배치.
+배경 = 아이보리피치→스카이블루 그라데이션(스타일 레퍼런스 무드 차용, 콘텐츠는 미차용 명시).
+PHYSICAL GROUNDING 포함, 바닥 반사 없음(포디엄 위 소프트 섀도). 높이 차 약하면
+`clearly DIFFERENT heights` → `dramatically different heights — tall, medium, low`.
