@@ -416,3 +416,30 @@ sunlight — no blue, no purple, no rainbow, no readable text labels`.
 배경 = 아이보리피치→스카이블루 그라데이션(스타일 레퍼런스 무드 차용, 콘텐츠는 미차용 명시).
 PHYSICAL GROUNDING 포함, 바닥 반사 없음(포디엄 위 소프트 섀도). 높이 차 약하면
 `clearly DIFFERENT heights` → `dramatically different heights — tall, medium, low`.
+
+### 3g 보정 (8/25, 생성 리뷰 후): 박스 사이즈 통일 + 접지 v2
+
+실패 2종 — 두 박스 크기 상이 / 킥스탠드 부양 재발(기존 grounding 문단 무시됨). 보정:
+
+```
+SIZE CONSISTENCY: the two boxes are the SAME product box — identical
+physical dimensions, identical thickness, identical proportions. The
+standing box and the lying box must read as two copies of one box,
+differing only by pose and perspective — never as a large box and a
+small box.
+```
+
+```
+PHYSICAL GROUNDING (critical): the device's rear kickstand folds out
+and DOWN until its bottom edge rests flat on the pedestal surface —
+the device body and the kickstand form a stable triangle with the
+surface, like a picture frame stand. The gap between the kickstand's
+bottom edge and the surface is ZERO. Both the device's front base and
+the kickstand's bottom edge press into the surface with one
+continuous contact shadow. A floating, hovering, or raised kickstand
+is a defect — reject that pose.
+```
+
+근본 회피책(2~3회 리롤에도 부양 시): 기기 문단에 `The device is viewed nearly straight-on so its
+rear kickstand is mostly hidden behind the body.` 추가 — 스탠드를 화면에서 제거. 이 두 조항은
+기기·박스 복수 등장 프롬프트의 표준으로 승격(SIZE CONSISTENCY는 박스 2개 이상일 때).
