@@ -443,3 +443,11 @@ is a defect — reject that pose.
 근본 회피책(2~3회 리롤에도 부양 시): 기기 문단에 `The device is viewed nearly straight-on so its
 rear kickstand is mostly hidden behind the body.` 추가 — 스탠드를 화면에서 제거. 이 두 조항은
 기기·박스 복수 등장 프롬프트의 표준으로 승격(SIZE CONSISTENCY는 박스 2개 이상일 때).
+
+### 3g v3 (8/25): FACE PROPORTIONS 강제 + 출력 4:3 전환
+
+원인 확인: 바닥면 크롭이 ~16:9 비율이라 눕힌 박스가 와이드로 끌려감. 보정 2종:
+① FACE PROPORTIONS 조항 — 앞면·바닥면 모두 동일 4:3 사각형, 레퍼런스는 콘텐츠로만 취급(비율
+전이 금지, "never appear wide and thin like a 16:9 panel") ② 출력 프레임 16:9 → 4:3.
+**근본 해법: 바닥면 크롭을 4:3 캔버스에 패딩해서 레퍼런스 자체를 4:3으로 만들어 첨부** + 생성
+도구의 출력 비율 설정도 4:3으로(문구만으론 캔버스 비율 안 바뀌는 도구 많음).
