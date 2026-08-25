@@ -37,6 +37,7 @@
 | 8/24(월) | 답글 | @DCENTWALLETS — 신형 S+R3covery 카드 키트 | 파트너 축하 톤 (상품 언급 배제) | **게시됨** | (기입 대기) | (기입 대기) |
 | 8/24(월) | 답글 | @0xHanMoon — KBW 서울 방문 가이드 스레드 | 지역 정보 곁들이기 (공기질 팁, 제품 언급 없음) | **게시됨** | (기입 대기) | (기입 대기) |
 | 8/24(월) | 답글 | @alina_creates — Virtuals 타임라인 분석 스레드 | "machines paying machines still needs someone measuring the room" | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/25(화) | 원글 스레드 | 래퍼 vs 원장 — 두바이 등기 토큰화 (이미지: "Wrappers vs the Ledger" 타이틀 오버레이) | 5b 확정안 T1/T2+소스 답글 | **게시됨** | (기입 대기) | (기입 대기) |
 
 ## 패스 기록 (8/22)
 
@@ -67,7 +68,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | **2n** | **@dazzlingxrpl 수정안 프로세스 교육 글(XRPScan PD 대시보드 소개) 답글 — ✅ 제안(8/25)**: 셀프 증언 앵글("xrpscan is the explorer our node wallet links to by default" — 플랫폼 실구현 사실) + PD 추적 보론 + "slow on purpose. That's the feature." 마무리. rootveg444 PD 답글(8/23) 후속 축, XRPScan 중립 익스플로러라 배서 리스크 없음 | 화(8/25) 낮 — 2k와 병행 가능, 게시 시 완료 마킹 |
 | 4 | 원글: "The enterprise stack assembles quietly" (집계형, 뉴스 페그) | 월(8/24) 저녁 |
 | 5 | 원글: 컨셉 다이어그램 "검증 루프" (구 손그림 "Why WELLBIAN Is Different" — 8/24 스타일 전면 개정: 글라스모피즘+로우폴리, 제품명 비공개 방침으로 브랜드명 제거) `depin/content/why-wellbian-different.md`에 영구 저장 | 이미지 완성 후, 수~목 (제품명 없어 시점 유연) |
-| 5b | 원글: "래퍼 vs 원장 — 두바이 등기 토큰화가 세운 기준" — **원고 확정(8/23 서우 승인)**, 전체 게시 패키지(T1/T2+소스 답글+이미지 프롬프트+게시 노트) `depin/content/wrapper-vs-ledger.md`에 영구 저장(8/24) | 화(8/25) 저녁 권장 (월 enterprise stack과 분리) |
+| ~~5b~~ | ~~원글: "래퍼 vs 원장"~~ → **게시 완료 (8/25)** — 반응 관찰: "a story with a ticker" 시그니처 승격 후보, 포켓몬 RWA 후속 답글 소재 대기 | — |
 | 5c | 원글: "기계 고객(Machine Customers)" — x402·에이전트 결제 테제 완결판, **원고 확정(8/23)**, 전체 게시 패키지(T1/T2+소스 답글+설계 의도) `depin/content/machine-customers.md`에 영구 저장(8/24). 시그니처 신규: "Ads don't work on agents. Attestations do." | 목(8/28) 저녁 (인포그래픽이 목으로 밀리면 금) |
 | 5d | 원글(생활): "실내 열중증 — 더위 지도가 끊기는 곳" — CO₂ 후속 계열, 시즌 페그(늦더위). 훅: "Most heatstroke doesn't happen under the sun. It happens indoors — where nobody measures." #AirQuality #DePIN | 차주 월~화 (8/31~9/1) — 늦더위 윈도우 내 |
 | 6 | 원글: "왜 RLUSD인가" | 9/8 주간 (예약분) |
