@@ -5,21 +5,23 @@
    개인정보(주소·연락처·이메일)는 사이트에서 받지 않음 — 배송 접수는 발송 2주 전부터
    공지되는 별도 접수 폼(구글폼)에서 지갑 주소·주문번호·성함·연락처·배송지만 받고 배송 후 파기
    (확인 2요소 = 결제 지갑 주소 + 난수 주문번호). 동의는 환불 고지+배송 접수 방식 확인 2건만
-   (포괄 이용약관 동의 없음 — 전체 약관은 푸터/메인에서 열람).
+   (포괄 이용약관 동의 없음 — 전체 약관은 푸터/메인에서 열람). KO/EN 토글 지원.
    전부 mock — mismatch 분기는 ?demo=mismatch로 재현(첫 서명만 불일치). */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PRICE, RECEIVE_ADDRESS, DEST_TAG, MOCK_ORDER, fmt } from "@/lib/data";
 import { WALLETS, WalletAdapter } from "@/lib/wallet";
+import { useI18n } from "@/lib/i18n";
 import { Check, ChevR, Clock, Warn } from "./icons";
 
-const STEP_NAMES = ["수량", "지갑", "동의", "결제"] as const;
 const HOLD_SECONDS = 20 * 60;
 
 export default function BuyModal({
   ebLeft, onClose, demoMismatch = false,
 }: { ebLeft: number; onClose: () => void; demoMismatch?: boolean }) {
   const router = useRouter();
+  const { en } = useI18n();
+  const stepNames = en ? ["Qty", "Wallet", "Consent", "Pay"] : ["수량", "지갑", "동의", "결제"];
   const [step, setStep] = useState(0); // 0..3
   const [qty, setQty] = useState(1);
   const [wallet, setWallet] = useState<WalletAdapter | null>(null);
@@ -36,6 +38,7 @@ export default function BuyModal({
   const tier = ebLeft > 0 ? "eb" : "gen";
   const unit = tier === "eb" ? PRICE.eb : PRICE.gen;
   const total = unit * qty;
+  const tierLabel = tier === "eb" ? (en ? "Early Bird" : "얼리버드") : (en ? "Regular" : "일반");
 
   /* 홀드 타이머: 결제 단계 진입 시 시작 (POST /api/checkout/hold 대응 지점) */
   useEffect(() => {
@@ -49,10 +52,12 @@ export default function BuyModal({
   /* 홀드 만료 → 수량 단계 복귀 + 재고 반환 (PRD 상태 머신) */
   useEffect(() => {
     if (step === 3 && hold <= 0 && !signing) {
-      alert("재고 홀드가 만료되었습니다. 수량 선택부터 다시 진행해 주세요.");
+      alert(en
+        ? "Your stock hold expired. Please start again from quantity selection."
+        : "재고 홀드가 만료되었습니다. 수량 선택부터 다시 진행해 주세요.");
       setStep(0);
     }
-  }, [hold, step, signing]);
+  }, [hold, step, signing, en]);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -92,43 +97,57 @@ export default function BuyModal({
       /* ── ① 수량 (1b) ── */
       case 0: return (
         <>
-          <h3 style={h3}>수량을 선택하세요</h3>
+          <h3 style={h3}>{en ? "Choose quantity" : "수량을 선택하세요"}</h3>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "18px 20px", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
               <span style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>
-                Weather Data Token Generator™ · {tier === "eb" ? "얼리버드" : "일반"}
+                Weather Data Token Generator™ · {tierLabel}
               </span>
-              <span style={{ fontSize: 12.5, color: "var(--cap)" }}>{unit} RLUSD / 대{tier === "eb" ? ` · 잔여 ${fmt(ebLeft)}대` : ""}</span>
+              <span style={{ fontSize: 12.5, color: "var(--cap)" }}>
+                {en
+                  ? `${unit} RLUSD each${tier === "eb" ? ` · ${fmt(ebLeft)} left` : ""}`
+                  : `${unit} RLUSD / 대${tier === "eb" ? ` · 잔여 ${fmt(ebLeft)}대` : ""}`}
+              </span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <button aria-label="수량 감소" onClick={() => setQty((q) => Math.max(1, q - 1))}
+              <button aria-label={en ? "Decrease quantity" : "수량 감소"} onClick={() => setQty((q) => Math.max(1, q - 1))}
                 style={{ ...qtyBtn, borderColor: "var(--bd-input)", color: "var(--hint)" }}>−</button>
               <input
                 value={qty}
                 onChange={(e) => { const v = parseInt(e.target.value.replace(/\D/g, "") || "1", 10); setQty(Math.max(1, Math.min(9999, v))); }}
-                inputMode="numeric" aria-label="수량"
+                inputMode="numeric" aria-label={en ? "Quantity" : "수량"}
                 style={{ width: 76, height: 38, border: "1.5px solid var(--w-main)", borderRadius: 10, textAlign: "center", fontSize: 17, fontWeight: 800, color: "var(--w-deep)", background: "#fff", boxShadow: "0 0 0 3px var(--w-tint)", outline: "none" }}
               />
-              <button aria-label="수량 증가" onClick={() => setQty((q) => Math.min(9999, q + 1))}
+              <button aria-label={en ? "Increase quantity" : "수량 증가"} onClick={() => setQty((q) => Math.min(9999, q + 1))}
                 style={{ ...qtyBtn, borderColor: "var(--w-main)", color: "var(--w-main)" }}>+</button>
             </div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--sec-alt)", borderRadius: 12, padding: "14px 20px" }}>
-            <span style={{ fontSize: 13.5, color: "var(--ink-4)" }}>합계 · {fmt(qty)}대</span>
+            <span style={{ fontSize: 13.5, color: "var(--ink-4)" }}>{en ? `Total · ${fmt(qty)} units` : `합계 · ${fmt(qty)}대`}</span>
             <span style={{ fontSize: 20, fontWeight: 800, color: "var(--w-deep)" }}>{fmt(total)} RLUSD</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, lineHeight: 1.6, color: "var(--cap)" }}>
-            <span>· − / + 버튼 또는 <b style={{ color: "var(--ink-2)" }}>숫자를 직접 입력</b>하세요 — 대량 구매 가능</span>
-            <span>· 한정 수량 — <b style={{ color: "var(--ink-2)" }}>결제 확정 순</b>으로 제네시스 넘버가 배정됩니다</span>
-            <span>· 지갑당 구매 수량 제한: 현재 없음 (정책 확정 시 변경될 수 있음)</span>
+            {en ? (
+              <>
+                <span>· Use − / + or <b style={{ color: "var(--ink-2)" }}>type a number</b> — bulk orders welcome</span>
+                <span>· Limited supply — <b style={{ color: "var(--ink-2)" }}>Genesis Numbers</b> are assigned in payment-confirmation order</span>
+                <span>· Per-wallet purchase limit: none at the moment (subject to policy)</span>
+              </>
+            ) : (
+              <>
+                <span>· − / + 버튼 또는 <b style={{ color: "var(--ink-2)" }}>숫자를 직접 입력</b>하세요 — 대량 구매 가능</span>
+                <span>· 한정 수량 — <b style={{ color: "var(--ink-2)" }}>결제 확정 순</b>으로 제네시스 넘버가 배정됩니다</span>
+                <span>· 지갑당 구매 수량 제한: 현재 없음 (정책 확정 시 변경될 수 있음)</span>
+              </>
+            )}
           </div>
-          <button className="btn-main" style={cta} onClick={() => setStep(1)}>다음 — 지갑 연결</button>
+          <button className="btn-main" style={cta} onClick={() => setStep(1)}>{en ? "Next — connect wallet" : "다음 — 지갑 연결"}</button>
         </>
       );
       /* ── ② 지갑 (1c) ── */
       case 1: return (
         <>
-          <h3 style={h3}>지갑을 연결하세요</h3>
+          <h3 style={h3}>{en ? "Connect your wallet" : "지갑을 연결하세요"}</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {WALLETS.map((w) => {
               const sel = wallet?.id === w.id;
@@ -144,93 +163,120 @@ export default function BuyModal({
                   </span>
                   <span style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
                     <span style={{ fontSize: 15, fontWeight: 800, color: "var(--w-deep)" }}>{w.name}</span>
-                    <span style={{ fontSize: 12, color: sel ? "var(--ink-4)" : "var(--cap)" }}>{w.desc}</span>
+                    <span style={{ fontSize: 12, color: sel ? "var(--ink-4)" : "var(--cap)" }}>{en ? w.descEn : w.desc}</span>
                   </span>
                   {w.detected
-                    ? <span className="pill" style={{ fontSize: 11, color: "var(--w-main)", background: "#fff", border: "1px solid var(--w-main)", padding: "4px 10px" }}>감지됨</span>
+                    ? <span className="pill" style={{ fontSize: 11, color: "var(--w-main)", background: "#fff", border: "1px solid var(--w-main)", padding: "4px 10px" }}>{en ? "Detected" : "감지됨"}</span>
                     : <ChevR size={16} color="var(--dis)" />}
                 </button>
               );
             })}
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12.5, flexWrap: "wrap", gap: 6 }}>
-            <a href="#" onClick={(e) => e.preventDefault()}>지갑이 없나요? 지갑 만들기 안내 →</a>
-            <span style={{ color: "var(--cap)" }}>활성화(1 XRP) 1회 지원</span>
+            <a href="#" onClick={(e) => e.preventDefault()}>{en ? "No wallet yet? See the guide →" : "지갑이 없나요? 지갑 만들기 안내 →"}</a>
+            <span style={{ color: "var(--cap)" }}>{en ? "One-time activation (1 XRP) covered" : "활성화(1 XRP) 1회 지원"}</span>
           </div>
           {address && (
             <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, fontWeight: 700, color: "var(--ok-text)" }}>
-              <Check size={13} color="var(--ok-text)" /> {wallet?.name} 연결됨 — <span className="mono">{address}</span>
+              <Check size={13} color="var(--ok-text)" /> {wallet?.name} {en ? "connected" : "연결됨"} — <span className="mono">{address}</span>
             </div>
           )}
           <button className="btn-main" style={cta} disabled={!wallet || connecting}
             onClick={async () => { if (!wallet) return; if (!address) await connect(wallet); setStep(2); }}>
-            {connecting ? "연결 중…" : wallet ? `${wallet.name}로 연결하기` : "지갑을 선택하세요"}
+            {connecting
+              ? (en ? "Connecting…" : "연결 중…")
+              : wallet
+                ? (en ? `Connect with ${wallet.name}` : `${wallet.name}로 연결하기`)
+                : (en ? "Select a wallet" : "지갑을 선택하세요")}
           </button>
         </>
       );
       /* ── ③ 동의 — 환불 고지 + 배송 접수 안내, 2건만 (1d) ── */
       case 2: return (
         <>
-          <h3 style={h3}>환불·배송 안내를 확인해 주세요</h3>
+          <h3 style={h3}>{en ? "Review the refund & shipping notices" : "환불·배송 안내를 확인해 주세요"}</h3>
           <div style={{ display: "flex", gap: 12, border: "1px solid color-mix(in oklab, var(--w-main) 30%, white)", background: "var(--w-tint)", borderRadius: 12, padding: "15px 18px", fontSize: 13.5, lineHeight: 1.6, color: "var(--ink-2)" }}>
             <span style={{ flex: "none", marginTop: 2 }}><Clock /></span>
             <span>
-              <b style={{ color: "var(--w-deep)" }}>이 사이트는 주소·연락처를 받지 않습니다.</b><br />
-              구매 확인은 <b style={{ color: "var(--w-deep)" }}>결제한 지갑 주소 + 결제 후 발급되는 주문번호</b> 두 가지로 합니다. 디바이스 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 알려드립니다 — 폼에 지갑 주소·주문번호·성함·연락처·배송지를 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
+              {en ? (
+                <>
+                  <b style={{ color: "var(--w-deep)" }}>This site never collects your address or contact info.</b><br />
+                  Purchases are verified by two things: <b style={{ color: "var(--w-deep)" }}>the wallet you paid from + the order number issued after payment</b>. Starting 2 weeks before devices ship, the shipping form will be announced on our official Telegram and X — enter your wallet address, order number, name, phone, and shipping address there, and everything is deleted once delivery is complete.
+                </>
+              ) : (
+                <>
+                  <b style={{ color: "var(--w-deep)" }}>이 사이트는 주소·연락처를 받지 않습니다.</b><br />
+                  구매 확인은 <b style={{ color: "var(--w-deep)" }}>결제한 지갑 주소 + 결제 후 발급되는 주문번호</b> 두 가지로 합니다. 디바이스 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 알려드립니다 — 폼에 지갑 주소·주문번호·성함·연락처·배송지를 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
+                </>
+              )}
             </span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <TermCard checked={terms1} onToggle={() => setTerms1(!terms1)}
-              title="[필수] 환불 제한 사유 고지"
-              desc="리딤코드 사용 또는 노드 연동 시 환불이 제한됩니다 (전자상거래법 제17조 제6항)" />
+              title={en ? "[Required] Refund restriction notice" : "[필수] 환불 제한 사유 고지"}
+              desc={en ? "Refunds are restricted once the redeem code is used or the node is linked (Korean E-Commerce Act, Art. 17-6)" : "리딤코드 사용 또는 노드 연동 시 환불이 제한됩니다 (전자상거래법 제17조 제6항)"}
+              view={en ? "View" : "보기"} />
             <TermCard checked={terms2} onToggle={() => setTerms2(!terms2)}
-              title="[필수] 배송 접수 방식 확인"
-              desc="배송 정보는 이 사이트가 아닌 별도 접수 폼에서 받는다는 안내를 확인했습니다" />
+              title={en ? "[Required] Shipping intake acknowledgment" : "[필수] 배송 접수 방식 확인"}
+              desc={en ? "I understand shipping details are collected via a separate form, not on this site" : "배송 정보는 이 사이트가 아닌 별도 접수 폼에서 받는다는 안내를 확인했습니다"}
+              view={en ? "View" : "보기"} />
           </div>
-          <div style={{ fontSize: 12, color: "var(--cap)" }}>환불: 제품 수령일부터 7일 이내 가능 (리딤코드 사용 전)</div>
-          <button className="btn-main" style={cta} disabled={!(terms1 && terms2)} onClick={() => setStep(3)}>동의하고 결제하기</button>
+          <div style={{ fontSize: 12, color: "var(--cap)" }}>
+            {en ? "Refunds: within 7 days of delivery (before the redeem code is used)" : "환불: 제품 수령일부터 7일 이내 가능 (리딤코드 사용 전)"}
+          </div>
+          <button className="btn-main" style={cta} disabled={!(terms1 && terms2)} onClick={() => setStep(3)}>
+            {en ? "Agree & continue to payment" : "동의하고 결제하기"}
+          </button>
         </>
       );
       /* ── ④ 결제 (1f) ── */
       case 3: return (
         <>
-          <h3 style={h3}>RLUSD로 결제하세요</h3>
+          <h3 style={h3}>{en ? "Pay with RLUSD" : "RLUSD로 결제하세요"}</h3>
           <div style={{ display: "flex", flexDirection: "column", border: "1px solid var(--bd-card)", borderRadius: 14, overflow: "hidden" }}>
-            <PayRow k="주문" v={<b style={{ color: "var(--w-deep)" }}>Weather Data Token Generator™ × {fmt(qty)} · {tier === "eb" ? "얼리버드" : "일반"}</b>} />
-            <PayRow k="결제 금액" v={<b style={{ fontSize: 16, color: "var(--w-deep)" }}>{fmt(total)} RLUSD</b>} />
-            <PayRow k="받는 주소" v={<span className="mono" style={{ fontSize: 12.5, color: "var(--ink-2)" }}>{RECEIVE_ADDRESS} <span style={{ color: "var(--hint)" }}>(자동 입력)</span></span>} />
-            <PayRow k="목적지 태그" v={<span className="mono" style={{ fontSize: 12.5, color: "var(--ink-2)" }}>{DEST_TAG} <span style={{ color: "var(--hint)" }}>(자동 입력)</span></span>} />
-            <PayRow k="트러스트라인" last v={<span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontWeight: 700, color: "var(--ok-text)" }}><Check size={14} color="var(--ok-text)" w={3} />점검 완료</span>} />
+            <PayRow k={en ? "Order" : "주문"} v={<b style={{ color: "var(--w-deep)" }}>Weather Data Token Generator™ × {fmt(qty)} · {tierLabel}</b>} />
+            <PayRow k={en ? "Amount" : "결제 금액"} v={<b style={{ fontSize: 16, color: "var(--w-deep)" }}>{fmt(total)} RLUSD</b>} />
+            <PayRow k={en ? "Receiving address" : "받는 주소"} v={<span className="mono" style={{ fontSize: 12.5, color: "var(--ink-2)" }}>{RECEIVE_ADDRESS} <span style={{ color: "var(--hint)" }}>{en ? "(auto-filled)" : "(자동 입력)"}</span></span>} />
+            <PayRow k={en ? "Destination tag" : "목적지 태그"} v={<span className="mono" style={{ fontSize: 12.5, color: "var(--ink-2)" }}>{DEST_TAG} <span style={{ color: "var(--hint)" }}>{en ? "(auto-filled)" : "(자동 입력)"}</span></span>} />
+            <PayRow k={en ? "Trust line" : "트러스트라인"} last v={<span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontWeight: 700, color: "var(--ok-text)" }}><Check size={14} color="var(--ok-text)" w={3} />{en ? "Checked" : "점검 완료"}</span>} />
           </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "var(--sec-alt)", borderRadius: 12, padding: "12px 18px" }}>
-            <span style={{ fontSize: 12.5, color: "var(--ink-4)" }}>재고 홀드 — 남은 시간</span>
+            <span style={{ fontSize: 12.5, color: "var(--ink-4)" }}>{en ? "Stock hold — time left" : "재고 홀드 — 남은 시간"}</span>
             <span className="mono" aria-live="polite" style={{ fontSize: 15, fontWeight: 800, color: hold < 180 ? "#c0392b" : "var(--w-deep)" }}>{holdMMSS}</span>
           </div>
           {mismatch && (
             <div role="alert" style={{ display: "flex", gap: 10, border: "1px solid var(--warn-bd)", background: "var(--warn-bg)", borderRadius: 12, padding: "13px 16px", fontSize: 12.5, lineHeight: 1.6, color: "var(--warn-text)" }}>
               <span style={{ flex: "none", marginTop: 2 }}><Warn size={15} /></span>
-              <span><b>서명 내용이 주문과 일치하지 않습니다.</b> 지갑에 표시된 금액·받는 주소·목적지 태그를 위 표와 대조한 뒤 다시 서명해 주세요. 결제는 진행되지 않았습니다.</span>
+              <span>
+                {en
+                  ? <><b>Your signature doesn&apos;t match the order.</b> Compare the amount, receiving address, and destination tag shown in your wallet against the table above, then sign again. No payment has been made.</>
+                  : <><b>서명 내용이 주문과 일치하지 않습니다.</b> 지갑에 표시된 금액·받는 주소·목적지 태그를 위 표와 대조한 뒤 다시 서명해 주세요. 결제는 진행되지 않았습니다.</>}
+              </span>
             </div>
           )}
           <button className="btn-main" style={cta} disabled={signing} onClick={sign}>
-            {signing ? "서명 확인 중…" : mismatch ? "다시 서명하기" : "지갑에서 서명하기"}
+            {signing
+              ? (en ? "Verifying signature…" : "서명 확인 중…")
+              : mismatch
+                ? (en ? "Sign again" : "다시 서명하기")
+                : (en ? "Sign in your wallet" : "지갑에서 서명하기")}
           </button>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 12.5, color: "var(--cap)" }}>
             <span className="pulse" style={{ width: 8, height: 8, borderRadius: 99, background: mismatch ? "var(--warn-icon)" : "var(--w-main)" }} />
-            서명 대기 중… 금액·주소가 일치하지 않으면 자동으로 안내합니다
+            {en ? "Waiting for signature… we'll alert you if the amount or address doesn't match" : "서명 대기 중… 금액·주소가 일치하지 않으면 자동으로 안내합니다"}
           </div>
         </>
       );
     }
-  }, [step, qty, tier, unit, total, ebLeft, wallet, connecting, address, terms1, terms2, hold, holdMMSS, signing, mismatch, connect, sign]);
+  }, [step, qty, tier, tierLabel, unit, total, ebLeft, wallet, connecting, address, terms1, terms2, hold, holdMMSS, signing, mismatch, connect, sign, en]);
 
   return (
     <div className="overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal-card" role="dialog" aria-modal="true" aria-label="구매하기">
+      <div className="modal-card" role="dialog" aria-modal="true" aria-label={en ? "Buy" : "구매하기"}>
         <div className="sheet-handle" />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div className="mstep-ind">
-            {STEP_NAMES.map((name, i) => (
+            {stepNames.map((name, i) => (
               <span key={name} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
                 {i > 0 && <span className={`mstep-line${i <= step ? " done" : ""}`} />}
                 <span className={`mstep-dot ${i < step ? "done" : i === step ? "cur" : "todo"}`} aria-current={i === step ? "step" : undefined}>
@@ -240,21 +286,23 @@ export default function BuyModal({
               </span>
             ))}
           </div>
-          <button onClick={onClose} aria-label="닫기" style={{ color: "var(--dis)", fontSize: 18, lineHeight: 1 }}>✕</button>
+          <button onClick={onClose} aria-label={en ? "Close" : "닫기"} style={{ color: "var(--dis)", fontSize: 18, lineHeight: 1 }}>✕</button>
         </div>
         {/* 스텝 전환 크로스페이드 150ms (PRD §8) — key로 재마운트 */}
         <div key={step} className="step-in" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {stepBody}
         </div>
         {step > 0 && (
-          <button onClick={() => setStep(step - 1)} style={{ fontSize: 12.5, color: "var(--cap)", alignSelf: "flex-start" }}>← 이전 단계</button>
+          <button onClick={() => setStep(step - 1)} style={{ fontSize: 12.5, color: "var(--cap)", alignSelf: "flex-start" }}>
+            {en ? "← Back" : "← 이전 단계"}
+          </button>
         )}
       </div>
     </div>
   );
 }
 
-function TermCard({ checked, onToggle, title, desc }: { checked: boolean; onToggle: () => void; title: string; desc: string }) {
+function TermCard({ checked, onToggle, title, desc, view }: { checked: boolean; onToggle: () => void; title: string; desc: string; view: string }) {
   return (
     <button onClick={onToggle} style={{ display: "flex", gap: 12, border: checked ? "1px solid var(--w-main)" : "1px solid var(--bd-card)", background: checked ? "var(--panel)" : "#fff", borderRadius: 14, padding: "16px 18px", alignItems: "flex-start", textAlign: "left" }}>
       <span style={{ width: 22, height: 22, borderRadius: 7, background: checked ? "var(--w-main)" : "#fff", border: checked ? "none" : "1.5px solid var(--bd-input)", display: "inline-flex", alignItems: "center", justifyContent: "center", flex: "none", marginTop: 1 }}>
@@ -264,7 +312,7 @@ function TermCard({ checked, onToggle, title, desc }: { checked: boolean; onTogg
         <span style={{ fontSize: 14, fontWeight: 700, color: "var(--w-deep)" }}>{title}</span>
         <span style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</span>
       </span>
-      <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} style={{ fontSize: 12, whiteSpace: "nowrap" }}>보기</a>
+      <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} style={{ fontSize: 12, whiteSpace: "nowrap" }}>{view}</a>
     </button>
   );
 }

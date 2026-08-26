@@ -3,10 +3,36 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LINKS } from "@/lib/data";
+import { useI18n, type Lang } from "@/lib/i18n";
 import { TgIcon, XIcon } from "./icons";
 
-/* GNB: 로고 + 「제품」 1항목 + KO/EN 토글 (§5.4) + 상태형 우측 슬롯(완판 → 2차 대기 CTA) */
+/* KO/EN 토글 (§5.4) — 전 페이지 공용, localStorage 유지 */
+export function LangToggle() {
+  const { lang, setLang } = useI18n();
+  const seg = (l: Lang, label: string) => (
+    <button
+      key={l}
+      onClick={() => setLang(l)}
+      aria-pressed={lang === l}
+      style={{
+        padding: "6px 10px", fontSize: 12, fontWeight: 700,
+        ...(lang === l ? { background: "var(--w-deep)", color: "#fff" } : { color: "var(--hint)", background: "transparent" }),
+      }}
+    >
+      {label}
+    </button>
+  );
+  return (
+    <div style={{ display: "flex", border: "1px solid var(--bd-btn)", borderRadius: 8, overflow: "hidden" }}>
+      {seg("ko", "KO")}
+      {seg("en", "EN")}
+    </div>
+  );
+}
+
+/* GNB: 로고 + 「제품」 1항목 + KO/EN 토글 (§5.4) + 상태형 우측 슬롯(완판 → 소식 CTA) */
 export function Gnb({ dday, right }: { dday?: string; right?: React.ReactNode }) {
+  const { en } = useI18n();
   return (
     <header
       style={{
@@ -21,7 +47,7 @@ export function Gnb({ dday, right }: { dday?: string; right?: React.ReactNode })
           <Image src="/assets/wb-black.png" alt="wellbian" width={110} height={22} style={{ height: 22, width: "auto" }} priority />
         </Link>
         <nav style={{ display: "flex", gap: 26, fontSize: 14, fontWeight: 600, color: "var(--ink-2)" }} className="desk-only">
-          <Link href="/" style={{ color: "inherit" }}>제품</Link>
+          <Link href="/" style={{ color: "inherit" }}>{en ? "Product" : "제품"}</Link>
         </nav>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -31,43 +57,48 @@ export function Gnb({ dday, right }: { dday?: string; right?: React.ReactNode })
             {dday}
           </span>
         )}
-        <div style={{ display: "flex", fontSize: 12, fontWeight: 700, border: "1px solid var(--bd-btn)", borderRadius: 8, overflow: "hidden" }}>
-          <span style={{ padding: "6px 10px", background: "var(--w-deep)", color: "#fff" }}>KO</span>
-          <span style={{ padding: "6px 10px", color: "var(--hint)", cursor: "default" }} title="EN 번역은 추후 제공">EN</span>
-        </div>
+        <LangToggle />
       </div>
     </header>
   );
 }
 
-/* 서브 페이지 헤더 (로고 + 우측 슬롯) */
+/* 서브 페이지 헤더 (로고 + 우측 슬롯 + 토글) */
 export function SubHeader({ right }: { right?: React.ReactNode }) {
   return (
     <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 60, padding: "0 36px", borderBottom: "1px solid var(--line)", background: "#fff" }}>
       <Link href="/" style={{ display: "inline-flex" }}>
         <Image src="/assets/wb-black.png" alt="wellbian" width={100} height={20} style={{ height: 20, width: "auto" }} />
       </Link>
-      {right}
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {right}
+        <LangToggle />
+      </div>
     </header>
   );
 }
 
 /* 커뮤니티 패널 + 다크 푸터 (S9) */
 export function CommunityFooter() {
+  const { en } = useI18n();
   return (
     <div style={{ background: "var(--w-deep)", color: "#fff", padding: "72px 64px 40px" }} className="s9-root">
       <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 40 }}>
         <div className="s9-invite" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, border: "1px solid rgba(255,255,255,.14)", borderRadius: 18, padding: "32px 36px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <div style={{ fontSize: 21, fontWeight: 800 }}>Official 커뮤니티에서 소식을 받아보세요</div>
-            <div style={{ fontSize: 13.5, color: "rgba(255,255,255,.6)" }}>발송 일정 · 연동 가이드 · 네트워크 업데이트를 가장 먼저 전합니다</div>
+            <div style={{ fontSize: 21, fontWeight: 800 }}>
+              {en ? "Get updates in the official community" : "Official 커뮤니티에서 소식을 받아보세요"}
+            </div>
+            <div style={{ fontSize: 13.5, color: "rgba(255,255,255,.6)" }}>
+              {en ? "Shipping schedules, setup guides, and network updates — delivered first" : "발송 일정 · 연동 가이드 · 네트워크 업데이트를 가장 먼저 전합니다"}
+            </div>
           </div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main" style={{ fontSize: 14, borderRadius: 10, padding: "13px 20px", color: "#fff", textDecoration: "none" }}>
-              <TgIcon size={15} /> 텔레그램 입장
+              <TgIcon size={15} /> {en ? "Join Telegram" : "텔레그램 입장"}
             </a>
             <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 800, borderRadius: 10, padding: "13px 20px", textDecoration: "none" }}>
-              <XIcon size={14} /> X 팔로우
+              <XIcon size={14} /> {en ? "Follow on X" : "X 팔로우"}
             </a>
           </div>
         </div>
@@ -80,11 +111,13 @@ export function CommunityFooter() {
             <span style={{ fontSize: 14, fontWeight: 800, letterSpacing: ".1em", color: "rgba(255,255,255,.78)" }}>KWEATHER</span>
           </div>
           <nav style={{ display: "flex", gap: 20, fontSize: 12.5, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
-            <span>이용약관</span><span>환불 약관</span><span>개인정보처리방침</span><span>이용자 보호 센터</span>
+            {en
+              ? <><span>Terms of Service</span><span>Refund Policy</span><span>Privacy Policy</span><span>User Protection Center</span></>
+              : <><span>이용약관</span><span>환불 약관</span><span>개인정보처리방침</span><span>이용자 보호 센터</span></>}
           </nav>
         </div>
         <div style={{ fontSize: 11.5, color: "rgba(255,255,255,.35)" }}>
-          © 2026 WELLBIAN. All rights reserved. · 날씨데이터토큰생성기™ (실내공기측정기) · 모델명 ARC-600DA
+          © 2026 WELLBIAN. All rights reserved. · {en ? "Weather Data Token Generator™ (Indoor Air Quality Monitor) · Model ARC-600DA" : "날씨데이터토큰생성기™ (실내공기측정기) · 모델명 ARC-600DA"}
         </div>
       </div>
     </div>

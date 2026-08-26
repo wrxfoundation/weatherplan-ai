@@ -215,3 +215,49 @@ export const NOTICE_ABUSE =
 export const NOTICE_REWARD = "지급량·가치는 보장되지 않습니다";
 export const NOTICE_TICKET_CAP = "한 사람이 모을 수 있는 응모권에는 총량 상한이 있습니다.";
 export const NOTICE_INVITE_VERIFY = "초대받은 분의 본인확인 완료 시 인정됩니다.";
+
+/* ── EN 카피 (KO/EN 토글, PRD §5.4) — 배열 구조는 KO와 1:1 대응 ── */
+
+export const NOTICE_REWARD_EN = "Amounts and value are not guaranteed";
+
+export const SPECS_EN = [
+  { k: "Measurements", v: "PM2.5 · PM10 · CO₂ · TVOC · Temperature · Humidity · Feels-like temp" },
+  { k: "Model", v: "ARC-600DA" },
+  { k: "Display", v: "5-inch full-touch color LCD" },
+  { k: "Power", v: "12VDC · 300mA — under ₩1,000/month in electricity" },
+  { k: "Connectivity", v: "Wi-Fi · Bluetooth (802.11a/b/g/n)" },
+  { k: "Certified accuracy", v: "CO₂ Grade 1 · PM2.5 Grade 1" },
+  { k: "Range / resolution", v: "0–1,000㎍/m³ (PM2.5) / 1㎍/m³" },
+  { k: "Flow rate", v: "0.1 L/min" },
+  { k: "Method", v: "Light-scattering laser photometer" },
+  { k: "Fan life", v: "32,000 hours (typical use)" },
+  { k: "Operating temp", v: "−10 to 60°C" },
+  { k: "Dimensions / weight", v: "120(W) × 118(H) × 36(D) mm / under 260 g" },
+  { k: "Housing", v: "ABS" },
+  { k: "Mounting", v: "Wall or desktop" },
+  { k: "Certifications", v: "KC · Performance certification" },
+];
+
+export const FAQS_EN = [
+  { q: "How much does it cost?", a: "450 RLUSD early bird (limited quantity), then 650 RLUSD at the regular price. Batch 1 is limited to 5,000 units, and payment is in RLUSD only." },
+  { q: "Where do I get RLUSD?", a: "Buy RLUSD on a domestic or global exchange, then withdraw it to your personal wallet over the XRPL network. Always select the XRPL version of RLUSD when withdrawing." },
+  { q: "What is the refund policy?", a: "Refunds are available within 7 days of receiving the product. Refunds are restricted once the redeem code is used or the node is linked (Korean E-Commerce Act, Art. 17-6)." },
+  { q: "Is setup difficult?", a: "Start with the QR on the redeem card in the box — wallet connection, code entry, and Wi-Fi setup take about 3 minutes. Wall and desktop mounting are both supported." },
+  { q: "I've never used a wallet. Is that okay?", a: "Yes. One-time wallet activation (1 XRP) is covered (Terms, Art. 5), and the guide walks you from wallet creation to node linking." },
+  { q: "How are rewards paid?", a: "When your measurements are verified, WLBN is paid under network rules. Amounts and value are not guaranteed." },
+  { q: "How much electricity does it use?", a: "Running around the clock costs under ₩1,000 a month." },
+  { q: "What about warranty?", a: "One year of free warranty from the purchase date. See the Terms of Service for details." },
+];
+
+export const LINK_STEPS_EN: { n: string; t: string; d: string; d2?: string }[] = [
+  { n: "1", t: "Scan the redeem card QR", d: "The card inside the box opens the registration page" },
+  { n: "2", t: "Connect your wallet", d: "First time? The guide walks you through" },
+  { n: "3", t: "Enter the code & mint your NFT", d: "The redeem code verifies authenticity", d2: "Your Genesis Number is recorded permanently" },
+  { n: "4", t: "Connect the device to Wi-Fi", d: "Your node goes live — done" },
+];
+
+export const RL_STEPS_EN = [
+  { n: "1", t: "Buy RLUSD on an exchange", d: "Purchase RLUSD on a domestic or global exchange" },
+  { n: "2", t: "Withdraw to your own wallet", d: "Choose the XRPL network and withdraw to your personal wallet" },
+  { n: "3", t: "Pay on this page", d: "Connect your wallet and sign the Payment to check out" },
+];

@@ -4,6 +4,7 @@ export interface WalletAdapter {
   id: "dcent" | "xaman" | "gemwallet";
   name: string;
   desc: string;
+  descEn: string;
   detected: boolean;
   connect(): Promise<{ address: string }>;
   sign(tx: { amount: number; to: string; tag: string }): Promise<{ txHash: string }>;
@@ -15,10 +16,11 @@ function mockAdapter(
   id: WalletAdapter["id"],
   name: string,
   desc: string,
+  descEn: string,
   detected: boolean
 ): WalletAdapter {
   return {
-    id, name, desc, detected,
+    id, name, desc, descEn, detected,
     async connect() {
       await delay(700);
       return { address: "rWLB9…kQ2f" };
@@ -31,7 +33,7 @@ function mockAdapter(
 }
 
 export const WALLETS: WalletAdapter[] = [
-  mockAdapter("dcent", "D'CENT", "인앱 브라우저에서 자동 감지됨", true),
-  mockAdapter("xaman", "Xaman", "간편 웹3 지갑 · QR 연결", false),
-  mockAdapter("gemwallet", "GemWallet", "브라우저 확장", false),
+  mockAdapter("dcent", "D'CENT", "인앱 브라우저에서 자동 감지됨", "Auto-detected in the in-app browser", true),
+  mockAdapter("xaman", "Xaman", "간편 웹3 지갑 · QR 연결", "Easy web3 wallet · QR connect", false),
+  mockAdapter("gemwallet", "GemWallet", "브라우저 확장", "Browser extension", false),
 ];

@@ -1,19 +1,22 @@
 "use client";
-/* 판매 랜딩 S0~S9 (PRD §6.1) + 엣지 상태 1h/1i (§6.4) */
+/* 판매 랜딩 S0~S9 (PRD §6.1) + 엣지 상태 1h/1i (§6.4) — KO/EN 토글 지원 (§5.4)
+   EN 히어로 헤드라인은 상표 확정 슬로건 문자열("Turn your weather into value") 사용 */
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
-  SPECS, FAQS, LINK_STEPS, RL_STEPS, LINKS, MOCK_INVENTORY, PRICE,
-  calc, fmt, NOTICE_REWARD, type SalePhase,
+  SPECS, SPECS_EN, FAQS, FAQS_EN, LINK_STEPS, LINK_STEPS_EN, RL_STEPS, RL_STEPS_EN,
+  LINKS, MOCK_INVENTORY, PRICE, calc, fmt, NOTICE_REWARD, NOTICE_REWARD_EN, type SalePhase,
 } from "@/lib/data";
+import { useI18n } from "@/lib/i18n";
 import { Gnb, CommunityFooter } from "./chrome";
 import BuyModal from "./BuyModal";
-import { XIcon, TgIcon, ChevD, Shield, ShieldCheck, Gauge, Coin, Warn, ChevR } from "./icons";
+import { XIcon, TgIcon, ChevD, Shield, ShieldCheck, Gauge, Coin, Warn } from "./icons";
 
 export default function Landing() {
   const sp = useSearchParams();
+  const { en } = useI18n();
   const stateParam = sp.get("state");
   const demoMismatch = sp.get("demo") === "mismatch"; // 결제 mismatch 분기 재현용 (내부 데모)
   const phase: SalePhase =
@@ -24,6 +27,11 @@ export default function Landing() {
   const soldOut = phase === "sold_out";
   const ebClosed = phase !== "early_bird";
   const curPrice = ebClosed ? PRICE.gen : PRICE.eb;
+
+  const specs = en ? SPECS_EN : SPECS;
+  const faqs = en ? FAQS_EN : FAQS;
+  const linkSteps = en ? LINK_STEPS_EN : LINK_STEPS;
+  const rlSteps = en ? RL_STEPS_EN : RL_STEPS;
 
   const [modal, setModal] = useState(false);
   const [banner, setBanner] = useState(false);
@@ -53,29 +61,29 @@ export default function Landing() {
 
   return (
     <div style={{ background: "#fff" }}>
-      {/* GNB 우측 상태형 슬롯: 판매 중 = 완판 화면 미리보기 칩 / 완판 = 2차 대기 CTA */}
+      {/* GNB 우측 상태형 슬롯: 판매 중 = 완판 화면 미리보기 칩 / 완판 = 소식 CTA */}
       <Gnb
         dday={soldOut ? undefined : "D-12"}
         right={<>
           {soldOut ? (
             <>
-              <Link href="/" className="desk-only" style={previewChip}>판매 화면 보기</Link>
+              <Link href="/" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
               <a
                 href={LINKS.telegram} target="_blank" rel="noopener"
                 style={{ display: "inline-flex", background: "var(--w-main)", color: "#fff", fontSize: 12.5, fontWeight: 800, borderRadius: 9, padding: "8px 14px", textDecoration: "none" }}
               >
-                소식 받기
+                {en ? "Get updates" : "소식 받기"}
               </a>
             </>
           ) : ebClosed ? (
             <>
-              <Link href="/" className="desk-only" style={previewChip}>판매 화면 보기</Link>
-              <Link href="/?state=sold_out" style={previewChip}>완판 화면 보기</Link>
+              <Link href="/" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
+              <Link href="/?state=sold_out" style={previewChip}>{en ? "Sold-out view" : "완판 화면 보기"}</Link>
             </>
           ) : (
             <>
-              <Link href="/?state=eb_closed" className="desk-only" style={previewChip}>얼리버드 마감 보기</Link>
-              <Link href="/?state=sold_out" style={previewChip}>완판 화면 보기</Link>
+              <Link href="/?state=eb_closed" className="desk-only" style={previewChip}>{en ? "EB-closed view" : "얼리버드 마감 보기"}</Link>
+              <Link href="/?state=sold_out" style={previewChip}>{en ? "Sold-out view" : "완판 화면 보기"}</Link>
             </>
           )}
         </>}
@@ -84,39 +92,41 @@ export default function Landing() {
       {/* 1h 얼리버드 마감 배너 (1회성) */}
       {ebClosed && !soldOut && banner && (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: "var(--w-deep)", color: "#fff", padding: 11, fontSize: 13, fontWeight: 700 }}>
-          얼리버드 마감 — 일반가 650 RLUSD로 판매 중입니다
-          <button onClick={dismissBanner} aria-label="배너 닫기" style={{ opacity: 0.5, fontSize: 15, marginLeft: 8, color: "#fff" }}>✕</button>
+          {en ? "Early bird closed — now selling at the regular price, 650 RLUSD" : "얼리버드 마감 — 일반가 650 RLUSD로 판매 중입니다"}
+          <button onClick={dismissBanner} aria-label={en ? "Dismiss banner" : "배너 닫기"} style={{ opacity: 0.5, fontSize: 15, marginLeft: 8, color: "#fff" }}>✕</button>
         </div>
       )}
 
       {/* ── S1 히어로 ── */}
-      <section style={{ background: "var(--w-deep)", color: "#fff" }} className="sec-pad" aria-label="히어로">
+      <section style={{ background: "var(--w-deep)", color: "#fff" }} className="sec-pad" aria-label={en ? "Hero" : "히어로"}>
         {soldOut ? (
           /* 1i 완판 히어로 */
           <div className="hero-grid" style={{ alignItems: "center" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                 <span className="pill" style={{ fontSize: 11, letterSpacing: ".1em", background: "rgba(255,255,255,.14)", padding: "5px 12px", color: "#fff" }}>SOLD OUT</span>
-                <span style={{ fontSize: 13, color: "rgba(255,255,255,.6)" }}>총 5,000대가 모두 판매되었습니다</span>
+                <span style={{ fontSize: 13, color: "rgba(255,255,255,.6)" }}>{en ? "All 5,000 units have been sold" : "총 5,000대가 모두 판매되었습니다"}</span>
               </div>
               <h1 style={{ fontSize: "clamp(27px, 3.4vw, 34px)", lineHeight: 1.3, fontWeight: 800 }}>
-                완판되었습니다 —<br />2차 판매 소식을 가장 먼저 받아보세요
+                {en ? <>Sold out —<br />be the first to hear about Batch 2</> : <>완판되었습니다 —<br />2차 판매 소식을 가장 먼저 받아보세요</>}
               </h1>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "rgba(255,255,255,.65)" }}>
-                  <span>총 5,000대 한정</span><span>잔여 0대 · 100% 판매</span>
+                  <span>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span><span>{en ? "0 left · 100% sold" : "잔여 0대 · 100% 판매"}</span>
                 </div>
                 <div className="track on-dark" style={{ height: 8 }}><i style={{ width: "100%" }} /></div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                 <a href={LINKS.telegram} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, background: "#fff", color: "var(--w-deep)", fontSize: 15, fontWeight: 800, borderRadius: 12, padding: "16px 24px", textDecoration: "none" }}>
-                  <TgIcon size={15} /> 텔레그램 소식 받기
+                  <TgIcon size={15} /> {en ? "Get updates on Telegram" : "텔레그램 소식 받기"}
                 </a>
                 <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 700, borderRadius: 12, padding: "15px 20px", textDecoration: "none" }}>
-                  <XIcon size={14} /> X 소식 받기
+                  <XIcon size={14} /> {en ? "Get updates on X" : "X 소식 받기"}
                 </a>
               </div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,.45)" }}>공식 텔레그램과 X에서 2차 판매 소식을 가장 먼저 알려드립니다</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,.45)" }}>
+                {en ? "Batch 2 news lands first on our official Telegram and X" : "공식 텔레그램과 X에서 2차 판매 소식을 가장 먼저 알려드립니다"}
+              </div>
             </div>
             <DeviceRender />
           </div>
@@ -127,26 +137,30 @@ export default function Landing() {
                 WEATHER DATA ECONOMY
               </div>
               <h1 style={{ fontSize: "clamp(27px, 4vw, 46px)", lineHeight: 1.25, fontWeight: 800, letterSpacing: "-.01em" }}>
-                당신의 날씨 데이터를<br />가치로 바꾸세요
+                {en ? <>Turn your weather<br />into value</> : <>당신의 날씨 데이터를<br />가치로 바꾸세요</>}
               </h1>
               <p style={{ fontSize: 16, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
                 <b style={{ color: "#fff" }}>Weather Data Token Generator™</b>
                 <br />
-                실내 공기를 측정하고, 검증된 데이터로 네트워크에 기여하는 가장 쉬운 방법.
+                {en
+                  ? "The easiest way to measure your indoor air and contribute verified data to the network."
+                  : "실내 공기를 측정하고, 검증된 데이터로 네트워크에 기여하는 가장 쉬운 방법."}
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440, marginTop: 6 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                  <span style={{ fontSize: 14, fontWeight: 700 }}>총 5,000대 한정</span>
-                  <span style={{ fontSize: 12.5, color: "rgba(255,255,255,.65)" }}>잔여 <b style={{ color: "#fff" }}>{fmt(remain)}</b>대 · {pct}% 판매</span>
+                  <span style={{ fontSize: 14, fontWeight: 700 }}>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span>
+                  <span style={{ fontSize: 12.5, color: "rgba(255,255,255,.65)" }}>
+                    {en ? <><b style={{ color: "#fff" }}>{fmt(remain)}</b> left · {pct}% sold</> : <>잔여 <b style={{ color: "#fff" }}>{fmt(remain)}</b>대 · {pct}% 판매</>}
+                  </span>
                 </div>
                 <div className="track on-dark" style={{ height: 8 }}><i style={{ width: `${Math.max(2, pct)}%` }} /></div>
               </div>
               <div ref={heroCtaRef} style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
                 <button onClick={buy} className="btn-main" style={{ fontSize: 16, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
-                  지금 구매하기 · RLUSD
+                  {en ? "Buy now · RLUSD" : "지금 구매하기 · RLUSD"}
                 </button>
                 <a href={LINKS.x} target="_blank" rel="noopener" aria-label="X" style={heroIcon}><XIcon size={18} /></a>
-                <a href={LINKS.telegram} target="_blank" rel="noopener" aria-label="텔레그램" style={heroIcon}><TgIcon size={18} /></a>
+                <a href={LINKS.telegram} target="_blank" rel="noopener" aria-label={en ? "Telegram" : "텔레그램"} style={heroIcon}><TgIcon size={18} /></a>
               </div>
             </div>
             <DeviceRender />
@@ -158,8 +172,8 @@ export default function Landing() {
       <section className="sec-pad" style={{ background: "#fff" }} id="price">
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
-            <h2 style={h2}>가격 · 수량</h2>
-            <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>결제는 RLUSD로 진행됩니다 · 총 5,000대 한정</p>
+            <h2 style={h2}>{en ? "Price & Supply" : "가격 · 수량"}</h2>
+            <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>{en ? "Payment in RLUSD · limited to 5,000 units" : "결제는 RLUSD로 진행됩니다 · 총 5,000대 한정"}</p>
           </div>
           <div className="price-grid">
             {/* 얼리버드 카드 */}
@@ -170,9 +184,9 @@ export default function Landing() {
                 : { border: "2px solid var(--w-main)", background: "var(--w-tint)" }),
             }}>
               <span className="pill" style={{ position: "absolute", top: -12, left: 28, background: ebClosed ? "var(--cap)" : "var(--w-main)", color: "#fff", fontSize: 11.5, padding: "5px 12px" }}>
-                {ebClosed ? "얼리버드 마감" : "얼리버드 · 소진 임박"}
+                {ebClosed ? (en ? "Early bird closed" : "얼리버드 마감") : (en ? "Early bird · almost gone" : "얼리버드 · 소진 임박")}
               </span>
-              <div style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>얼리버드</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Early Bird" : "얼리버드"}</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
                 <span style={{ fontSize: 38, fontWeight: 800, color: "var(--w-deep)", textDecoration: ebClosed ? "line-through" : "none" }}>450</span>
                 <span style={{ fontSize: 16, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
@@ -180,15 +194,19 @@ export default function Landing() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "var(--ink-4)" }}>
-                  <span>잔여 <b style={{ color: ebClosed ? "var(--ink-4)" : "var(--w-main)" }}>{fmt(inv.ebLeft)}</b> / 1,000대</span>
-                  <span>{ebPct}% 소진</span>
+                  <span>
+                    {en
+                      ? <><b style={{ color: ebClosed ? "var(--ink-4)" : "var(--w-main)" }}>{fmt(inv.ebLeft)}</b> of 1,000 left</>
+                      : <>잔여 <b style={{ color: ebClosed ? "var(--ink-4)" : "var(--w-main)" }}>{fmt(inv.ebLeft)}</b> / 1,000대</>}
+                  </span>
+                  <span>{ebPct}% {en ? "sold" : "소진"}</span>
                 </div>
                 <div className={`track on-light${ebClosed ? " gray" : ""}`} style={{ height: 6 }}><i style={{ width: `${ebPct}%` }} /></div>
               </div>
               {ebClosed
-                ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 15, fontWeight: 800, borderRadius: 10, padding: 14 }}>마감되었습니다</span>
-                : <button onClick={buy} className="btn-main" style={{ fontSize: 15, borderRadius: 10, padding: 14 }}>구매하기</button>}
-              {!ebClosed && <div style={{ fontSize: 12, color: "var(--cap)" }}>소진 시 일반가로 자동 전환됩니다</div>}
+                ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 15, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Closed" : "마감되었습니다"}</span>
+                : <button onClick={buy} className="btn-main" style={{ fontSize: 15, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}
+              {!ebClosed && <div style={{ fontSize: 12, color: "var(--cap)" }}>{en ? "Switches to the regular price automatically when sold out" : "소진 시 일반가로 자동 전환됩니다"}</div>}
             </div>
             {/* 일반 카드 */}
             <div style={{
@@ -198,34 +216,40 @@ export default function Landing() {
                 : { border: "1px solid var(--bd-card)", background: "#fff" }),
             }}>
               {ebClosed && !soldOut && (
-                <span className="pill" style={{ position: "absolute", top: -12, left: 28, background: "var(--w-main)", color: "#fff", fontSize: 11.5, padding: "5px 12px" }}>현재 판매가</span>
+                <span className="pill" style={{ position: "absolute", top: -12, left: 28, background: "var(--w-main)", color: "#fff", fontSize: 11.5, padding: "5px 12px" }}>{en ? "Current price" : "현재 판매가"}</span>
               )}
-              <div style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>일반</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Regular" : "일반"}</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
                 <span style={{ fontSize: 38, fontWeight: 800, color: "var(--w-deep)" }}>650</span>
                 <span style={{ fontSize: 16, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "var(--ink-4)" }}>
-                  <span>잔여 <b style={{ color: ebClosed && !soldOut ? "var(--w-main)" : "var(--w-deep)" }}>{fmt(inv.genLeft)}</b> / 4,000대</span>
-                  <span>{genPct}% 소진</span>
+                  <span>
+                    {en
+                      ? <><b style={{ color: ebClosed && !soldOut ? "var(--w-main)" : "var(--w-deep)" }}>{fmt(inv.genLeft)}</b> of 4,000 left</>
+                      : <>잔여 <b style={{ color: ebClosed && !soldOut ? "var(--w-main)" : "var(--w-deep)" }}>{fmt(inv.genLeft)}</b> / 4,000대</>}
+                  </span>
+                  <span>{genPct}% {en ? "sold" : "소진"}</span>
                 </div>
                 <div className="track on-light" style={{ height: 6 }}>
                   <i style={{ width: `${Math.max(2, genPct)}%`, background: ebClosed && !soldOut ? "var(--w-main)" : "var(--arrow)" }} />
                 </div>
               </div>
               {soldOut
-                ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 15, fontWeight: 800, borderRadius: 10, padding: 14 }}>완판되었습니다</span>
+                ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 15, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Sold out" : "완판되었습니다"}</span>
                 : ebClosed
-                  ? <button onClick={buy} className="btn-main" style={{ fontSize: 15, borderRadius: 10, padding: 14 }}>구매하기</button>
-                  : <button onClick={buy} className="btn-outline-deep" style={{ fontSize: 15, padding: 14 }}>구매하기</button>}
-              <div style={{ fontSize: 12, color: "var(--cap)" }}>{ebClosed ? "" : "얼리버드 마감 후 판매가"}</div>
+                  ? <button onClick={buy} className="btn-main" style={{ fontSize: 15, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>
+                  : <button onClick={buy} className="btn-outline-deep" style={{ fontSize: 15, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}
+              <div style={{ fontSize: 12, color: "var(--cap)" }}>{ebClosed ? "" : en ? "Price after early bird closes" : "얼리버드 마감 후 판매가"}</div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1px solid var(--bd-card)", borderRadius: 12, padding: "16px 20px", background: "var(--panel)" }}>
             <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: 9, background: "var(--w-tint)", color: "var(--w-main)", fontWeight: 800, fontSize: 13, flex: "none" }}>#</span>
             <div style={{ fontSize: 13.5, lineHeight: 1.6, color: "var(--ink-2)" }}>
-              <b style={{ color: "var(--w-deep)" }}>제네시스 넘버</b> — 결제 확정 순서대로 배정되며, 라이선스 NFT에 영구 기록됩니다.
+              {en
+                ? <><b style={{ color: "var(--w-deep)" }}>Genesis Number</b> — assigned in payment-confirmation order and permanently recorded on your license NFT.</>
+                : <><b style={{ color: "var(--w-deep)" }}>제네시스 넘버</b> — 결제 확정 순서대로 배정되며, 라이선스 NFT에 영구 기록됩니다.</>}
             </div>
           </div>
         </div>
@@ -237,22 +261,24 @@ export default function Landing() {
           {/* 제품 이미지 좌측 · 스펙 테이블 우측 */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div style={{ width: "100%", height: 380, borderRadius: 14, border: "1px solid var(--bd-card)", overflow: "hidden" }}>
-              <Image src="/assets/spec-package.jpg" alt="Weather Data Token Generator 패키지 및 제품" width={1000} height={749} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              <Image src="/assets/spec-package.jpg" alt={en ? "Weather Data Token Generator package and product" : "Weather Data Token Generator 패키지 및 제품"} width={1000} height={749} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
             <div style={{ border: "1px solid var(--bd-card)", borderRadius: 12, background: "#fff", padding: "18px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--w-deep)" }}>날씨데이터토큰생성기™ (실내공기측정기)</div>
-              <div style={{ fontSize: 13, color: "var(--ink-4)" }}>모델명: ARC-600DA</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--w-deep)" }}>
+                {en ? "Weather Data Token Generator™ (Indoor Air Quality Monitor)" : "날씨데이터토큰생성기™ (실내공기측정기)"}
+              </div>
+              <div style={{ fontSize: 13, color: "var(--ink-4)" }}>{en ? "Model: ARC-600DA" : "모델명: ARC-600DA"}</div>
               <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                <span style={certChip}>KC 인증</span>
-                <span style={certChip}>성능인증</span>
+                <span style={certChip}>{en ? "KC Certified" : "KC 인증"}</span>
+                <span style={certChip}>{en ? "Performance Certified" : "성능인증"}</span>
               </div>
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <h2 style={h2}>제품 스펙</h2>
+            <h2 style={h2}>{en ? "Specifications" : "제품 스펙"}</h2>
             {/* 15행 — 행 간격 압축 */}
             <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid var(--w-deep)" }}>
-              {SPECS.map((s, i) => (
+              {specs.map((s, i) => (
                 /* 모바일: 5행 축약 (PRD §6.1) */
                 <div key={s.k} className={i >= 5 ? "desk-only" : undefined} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "7px 4px", borderBottom: "1px solid var(--line)", fontSize: 13.5, lineHeight: 1.45 }}>
                   <span style={{ fontWeight: 700, color: "var(--w-deep)" }}>{s.k}</span>
@@ -260,7 +286,7 @@ export default function Landing() {
                 </div>
               ))}
             </div>
-            <div style={{ fontSize: 12, color: "var(--hint)" }}>제조사 공식 사양표 기준입니다.</div>
+            <div style={{ fontSize: 12, color: "var(--hint)" }}>{en ? "Based on the manufacturer's official specification sheet." : "제조사 공식 사양표 기준입니다."}</div>
           </div>
         </div>
       </section>
@@ -268,15 +294,17 @@ export default function Landing() {
       {/* ── S4 작동 원리 ── */}
       <section className="sec-pad" style={{ background: "#fff" }} id="how">
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 32, textAlign: "center" }}>
-          <h2 style={h2}>작동 원리, 3단계</h2>
+          <h2 style={h2}>{en ? "How it works — 3 steps" : "작동 원리, 3단계"}</h2>
           <div className="how-grid">
-            <HowCard icon={<Gauge />} title="① 측정" desc={<>CO₂·미세먼지·온습도 등<br />실내 공기 데이터를 측정합니다</>} />
+            <HowCard icon={<Gauge />} title={en ? "① Measure" : "① 측정"} desc={en ? <>Measures indoor air —<br />CO₂, particulates, temperature & humidity</> : <>CO₂·미세먼지·온습도 등<br />실내 공기 데이터를 측정합니다</>} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 20, fontWeight: 800 }}>→</div>
-            <HowCard icon={<ShieldCheck />} title="② 검증" desc={<>네트워크가 데이터의<br />무결성을 검증합니다</>} />
+            <HowCard icon={<ShieldCheck />} title={en ? "② Verify" : "② 검증"} desc={en ? <>The network verifies<br />the integrity of your data</> : <>네트워크가 데이터의<br />무결성을 검증합니다</>} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 20, fontWeight: 800 }}>→</div>
-            <HowCard icon={<Coin />} title="③ 보상" desc={<>검증된 데이터에 네트워크 원칙에<br />따라 WLBN이 지급됩니다</>} />
+            <HowCard icon={<Coin />} title={en ? "③ Reward" : "③ 보상"} desc={en ? <>Verified data earns WLBN<br />under network rules</> : <>검증된 데이터에 네트워크 원칙에<br />따라 WLBN이 지급됩니다</>} />
           </div>
-          <div style={{ fontSize: 12, color: "var(--hint)" }}>{NOTICE_REWARD} · 자세한 원칙은 FAQ를 참고하세요</div>
+          <div style={{ fontSize: 12, color: "var(--hint)" }}>
+            {en ? `${NOTICE_REWARD_EN} · See the FAQ for details` : `${NOTICE_REWARD} · 자세한 원칙은 FAQ를 참고하세요`}
+          </div>
         </div>
       </section>
 
@@ -284,11 +312,11 @@ export default function Landing() {
       <section className="sec-pad" style={{ background: "var(--sec-alt)" }} id="setup">
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
-            <h2 style={h2}>디바이스 도착 후 3분이면 노드가 됩니다</h2>
-            <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝.</p>
+            <h2 style={h2}>{en ? "Your device becomes a node 3 minutes after it arrives" : "디바이스 도착 후 3분이면 노드가 됩니다"}</h2>
+            <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>{en ? "Setup is easy — open the box and follow four steps." : "등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝."}</p>
           </div>
           <div className="link-grid">
-            {LINK_STEPS.map((st) => (
+            {linkSteps.map((st) => (
               <div key={st.n} style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "22px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
                 <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 99, background: "var(--w-deep)", color: "#fff", fontSize: 13, fontWeight: 800 }}>{st.n}</span>
                 <div style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>{st.t}</div>
@@ -302,9 +330,13 @@ export default function Landing() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, border: "1px solid color-mix(in oklab, var(--w-main) 30%, white)", background: "var(--w-tint)", borderRadius: 12, padding: "16px 20px", flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 13.5, color: "var(--ink-2)" }}>
               <Shield />
-              <span><b style={{ color: "var(--w-deep)" }}>지갑이 처음이어도 됩니다</b> — 등록 지갑 활성화(1 XRP)는 1회 지원됩니다 <span style={{ color: "var(--cap)" }}>(약관 제5조)</span></span>
+              <span>
+                {en
+                  ? <><b style={{ color: "var(--w-deep)" }}>New to wallets? No problem</b> — one-time wallet activation (1 XRP) is covered <span style={{ color: "var(--cap)" }}>(Terms, Art. 5)</span></>
+                  : <><b style={{ color: "var(--w-deep)" }}>지갑이 처음이어도 됩니다</b> — 등록 지갑 활성화(1 XRP)는 1회 지원됩니다 <span style={{ color: "var(--cap)" }}>(약관 제5조)</span></>}
+              </span>
             </div>
-            <a href="#" onClick={(e) => e.preventDefault()} style={{ fontSize: 13.5, fontWeight: 700, whiteSpace: "nowrap" }}>상세 연동 가이드 보기 →</a>
+            <a href="#" onClick={(e) => e.preventDefault()} style={{ fontSize: 13.5, fontWeight: 700, whiteSpace: "nowrap" }}>{en ? "See the full setup guide →" : "상세 연동 가이드 보기 →"}</a>
           </div>
         </div>
       </section>
@@ -313,11 +345,13 @@ export default function Landing() {
       <section className="sec-pad" style={{ background: "#fff" }} id="rlusd">
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 26 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <h2 style={h2}>RLUSD가 없다면</h2>
-            <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>RLUSD — 미국 달러 1:1 연동 · NYDFS 규제 · 리플(Ripple) 발행 스테이블코인</p>
+            <h2 style={h2}>{en ? "Don't have RLUSD yet?" : "RLUSD가 없다면"}</h2>
+            <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>
+              {en ? "RLUSD — a USD-pegged stablecoin issued by Ripple, regulated by the NYDFS" : "RLUSD — 미국 달러 1:1 연동 · NYDFS 규제 · 리플(Ripple) 발행 스테이블코인"}
+            </p>
           </div>
           <div className="rl-grid">
-            {RL_STEPS.map((r) => (
+            {rlSteps.map((r) => (
               <div key={r.n} style={{ border: "1px solid var(--bd-card)", borderRadius: 14, padding: 24, display: "flex", flexDirection: "column", gap: 10 }}>
                 <span style={{ fontSize: 12, fontWeight: 800, color: "var(--w-main)" }}>STEP {r.n}</span>
                 <div style={{ fontSize: 16, fontWeight: 800, color: "var(--w-deep)" }}>{r.t}</div>
@@ -327,10 +361,14 @@ export default function Landing() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1px solid var(--warn-bd)", background: "var(--warn-bg)", borderRadius: 12, padding: "15px 20px", fontSize: 13.5, color: "var(--warn-text)" }}>
             <Warn />
-            <span><b>출금 네트워크는 반드시 XRPL을 선택하세요.</b> 다른 네트워크로 출금하면 자산을 잃을 수 있습니다.</span>
+            <span>
+              {en
+                ? <><b>Always select XRPL as the withdrawal network.</b> Withdrawing over any other network may result in loss of funds.</>
+                : <><b>출금 네트워크는 반드시 XRPL을 선택하세요.</b> 다른 네트워크로 출금하면 자산을 잃을 수 있습니다.</>}
+            </span>
           </div>
           <button style={{ display: "flex", alignItems: "center", justifyContent: "space-between", border: "1px solid var(--bd-card)", borderRadius: 12, padding: "16px 20px", fontSize: 14, fontWeight: 700, color: "var(--w-deep)", background: "#fff", width: "100%" }}>
-            <span>RLUSD 구매 가이드 전체 보기</span>
+            <span>{en ? "See the full RLUSD guide" : "RLUSD 구매 가이드 전체 보기"}</span>
             <ChevD size={16} color="var(--cap)" />
           </button>
         </div>
@@ -339,13 +377,13 @@ export default function Landing() {
       {/* ── S7 FAQ ── */}
       <section className="sec-pad" style={{ background: "var(--sec-alt)" }} id="faq">
         <div style={{ maxWidth: 840, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
-          <h2 style={{ ...h2, textAlign: "center" }}>자주 묻는 질문</h2>
+          <h2 style={{ ...h2, textAlign: "center" }}>{en ? "FAQ" : "자주 묻는 질문"}</h2>
           <div style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 16, padding: "8px 28px", display: "flex", flexDirection: "column" }}>
-            {FAQS.map((f, i) => {
+            {faqs.map((f, i) => {
               const open = faqOpen === i;
               return (
                 /* 모바일: 3문항 축약 (PRD §6.1) — 전체는 "전체 FAQ 보기"로 */
-                <div key={f.q} style={{ borderBottom: i < FAQS.length - 1 ? "1px solid var(--line)" : "none" }} className={`${open ? "acc-open" : ""}${i >= 3 ? " desk-only" : ""}`}>
+                <div key={f.q} style={{ borderBottom: i < faqs.length - 1 ? "1px solid var(--line)" : "none" }} className={`${open ? "acc-open" : ""}${i >= 3 ? " desk-only" : ""}`}>
                   <button onClick={() => setFaqOpen(open ? -1 : i)} aria-expanded={open}
                     style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, padding: "18px 2px", width: "100%", textAlign: "left" }}>
                     <span style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)" }}>{f.q}</span>
@@ -359,7 +397,7 @@ export default function Landing() {
             })}
           </div>
           <div style={{ textAlign: "center" }}>
-            <a href="#" onClick={(e) => e.preventDefault()} style={{ fontSize: 14, fontWeight: 700 }}>전체 FAQ 23문항 보기 →</a>
+            <a href="#" onClick={(e) => e.preventDefault()} style={{ fontSize: 14, fontWeight: 700 }}>{en ? "See all 23 FAQs →" : "전체 FAQ 23문항 보기 →"}</a>
           </div>
         </div>
       </section>
@@ -380,20 +418,24 @@ export default function Landing() {
           <div className="stickybar-in">
             <div className="desk-only" style={{ display: "flex", flexDirection: "column", gap: 4, width: 190 }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11.5, color: "var(--ink-4)" }}>
-                <span>잔여 <b style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b> / 5,000대</span><span>{pct}%</span>
+                <span>
+                  {en ? <><b style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b> of 5,000 left</> : <>잔여 <b style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b> / 5,000대</>}
+                </span><span>{pct}%</span>
               </div>
               <div className="track" style={{ height: 5, background: "var(--line)" }}><i style={{ width: `${Math.max(2, pct)}%` }} /></div>
             </div>
             <span className="desk-only" style={{ width: 1, height: 30, background: "var(--line)" }} />
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <span className="mob-only" style={{ fontSize: 11, color: "var(--cap)" }}>잔여 {fmt(remain)}대 · {ebClosed ? "일반" : "얼리버드"}</span>
+              <span className="mob-only" style={{ fontSize: 11, color: "var(--cap)" }}>
+                {en ? `${fmt(remain)} left · ${ebClosed ? "Regular" : "Early bird"}` : `잔여 ${fmt(remain)}대 · ${ebClosed ? "일반" : "얼리버드"}`}
+              </span>
               <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                <span className="desk-only" style={{ fontSize: 12, color: "var(--cap)" }}>현재 가격</span>
+                <span className="desk-only" style={{ fontSize: 12, color: "var(--cap)" }}>{en ? "Price" : "현재 가격"}</span>
                 <span style={{ fontSize: 18, fontWeight: 800, color: "var(--w-deep)" }}>{curPrice} RLUSD</span>
-                <span className="desk-only" style={{ fontSize: 12, color: "var(--hint)" }}>{ebClosed ? "일반" : "얼리버드"}</span>
+                <span className="desk-only" style={{ fontSize: 12, color: "var(--hint)" }}>{ebClosed ? (en ? "Regular" : "일반") : (en ? "Early bird" : "얼리버드")}</span>
               </div>
             </div>
-            <button onClick={buy} className="btn-main" style={{ fontSize: 15, borderRadius: 10, padding: "13px 34px" }}>구매하기</button>
+            <button onClick={buy} className="btn-main" style={{ fontSize: 15, borderRadius: 10, padding: "13px 34px" }}>{en ? "Buy" : "구매하기"}</button>
           </div>
         </div>
       )}
