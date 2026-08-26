@@ -139,7 +139,8 @@ h1, h2, h3, p { margin: 0; }
 /* 히어로 컨테이너 = .wrap(1080)과 동일 폭 — S2 가격 카드 좌우 라인과 끝 정렬 */
 .hero-grid { display: grid; grid-template-columns: 1fr 480px; gap: 56px; align-items: center; max-width: 1080px; margin: 0 auto; }
 .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.spec-grid { display: grid; grid-template-columns: 380px 1fr; gap: 48px; align-items: start; }
+/* 제품 이미지가 주인공 — 좌측 절반(가운데선)까지 확장 */
+.spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
 .how-grid { display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr; gap: 0; align-items: center; }
 .link-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .rl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
