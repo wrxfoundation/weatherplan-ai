@@ -114,7 +114,7 @@ export const RL_STEPS = [
 export const TIERS = [
   { n: "S", t: "응모권이 많을수록 잘 뽑히는 추첨 · 1,000명", d: "10/3 가장 먼저 구매 — 1인 최대 5대", hot: true },
   { n: "A", t: "순번 점수 140점 이상", d: "등록 + 구매 의사 + 커뮤니티면 도달 — 기준은 바뀌지 않습니다", hot: false },
-  { n: "B", t: "140점 미만 등록자", d: "등록 안 한 방문자보다 먼저 기회가 열립니다", hot: false },
+  { n: "B", t: "140점 미만 등록자", d: "B 몫 최소 1,000대를 남겨 둡니다 — 그룹 안 선착순", hot: false },
   { n: "일반", t: "대기 등록을 하지 않은 방문자", d: "10/3 마지막 순서로 열립니다", hot: false },
 ];
 
@@ -185,6 +185,9 @@ export const DEST_TAG = process.env.NEXT_PUBLIC_DEST_TAG ?? "908211";
 export const XRPL_NETWORK = process.env.NEXT_PUBLIC_XRPL_NETWORK ?? "testnet"; // 실지갑 어댑터 연결 시 사용
 
 /* 확정 설명 카피 (기획서 「화면에 쓰는 설명 문구」) */
+/* B그룹 리저브 — 그룹 몫 최소 보장 물량 (부스 물량 연동 조정은 내부 정책, 공표 후 하향 금지) */
+export const B_RESERVE = 1000;
+
 /* A그룹 컷라인 — 사전 고정 공표, 마감까지 불변 (분쟁 차단) */
 export const A_CUTLINE = 140;
 

@@ -86,7 +86,7 @@ export default function WaitlistGuidePage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <div style={{ fontSize: 15, fontWeight: 800, color: "var(--w-deep)" }}>응모권 — S그룹(1,000명) 추첨</div>
                 <div style={p13}>미션으로 모은 응모권이 {COPY_TICKETS}. 추첨 방식은 접수 마감 전에 미리 공개되어 누구나 같은 결과를 다시 확인할 수 있고, 발표는 9/30 마감 직후입니다.</div>
-                <div style={p13}>S그룹에서는 <b style={{ color: "var(--w-deep)" }}>1인당 최대 5대</b>까지 구매할 수 있습니다. 더 필요한 물량은 이어지는 A/B 순서에서 다시 구매할 수 있습니다.</div>
+                <div style={p13}>구매 상한은 각 순서마다 <b style={{ color: "var(--w-deep)" }}>1인 5대</b>로 모두 같습니다(마지막 일반 순서부터는 상한 없음). 더 필요한 물량은 이어지는 순서에서 다시 구매할 수 있습니다.</div>
                 <div style={{ fontSize: 11.5, color: "var(--cap)" }}>{NOTICE_TICKET_CAP}</div>
               </div>
             </div>
@@ -112,7 +112,8 @@ export default function WaitlistGuidePage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <div style={{ fontSize: 15, fontWeight: 800, color: "var(--w-deep)" }}>구매는 S → A → B → 일반 순서로 열립니다 (10/3)</div>
                 <div style={p13}>{COPY_DUAL}</div>
-                <div style={p13}><b style={{ color: "var(--w-deep)" }}>순서는 보장되지만, 재고는 보장되지 않습니다.</b> 앞 그룹에서 물량이 소진되면 다음 그룹 차례에는 구매하지 못할 수 있습니다. 앞 그룹일수록 안전한 이유입니다.</div>
+                <div style={p13}><b style={{ color: "var(--w-deep)" }}>순서는 보장되지만, 재고는 보장되지 않습니다.</b> 앞 그룹에서 물량이 줄어들 수 있고, 앞 그룹일수록 안전합니다.</div>
+                <div style={p13}>다만 <b style={{ color: "var(--w-deep)" }}>B그룹 몫으로 최소 1,000대는 따로 남겨 둡니다</b> — 그룹 몫 보장이며, 그룹 안에서는 선착순입니다. 등록하지 않은 일반 방문자 몫으로 남겨 두는 물량은 없습니다.</div>
               </div>
             </div>
           </section>
@@ -147,7 +148,7 @@ export default function WaitlistGuidePage() {
                 steps={[
                   { when: "9/30 마감 직후", what: "미당첨. 하지만 140점 이상이라 A그룹은 이미 확정되어 있습니다 — 점수는 사라지지 않습니다." },
                   { when: "10/3", what: "S그룹 다음 순서로 구매가 열립니다. S는 1인 5대 상한이 있어 물량이 남아 있습니다." },
-                  { when: "구매", what: "남은 물량에서 구매합니다 — 그룹 안에서는 선착순입니다." },
+                  { when: "구매", what: "남은 물량에서 1인 5대까지 구매합니다 — 그룹 안에서는 선착순입니다." },
                 ]}
                 point="떨어져도 잃지 않습니다 — 이게 A그룹입니다. 등록 + 구매 의사 + 커뮤니티, 세 가지면 누구나 140점입니다."
               />
@@ -160,10 +161,10 @@ export default function WaitlistGuidePage() {
                 steps={[
                   { when: "9/30", what: "140점 미만이라 B그룹으로 확정됩니다." },
                   { when: "10/3", what: "S·A 다음 순서로 열립니다. 그래도 등록하지 않은 방문자보다는 먼저입니다." },
-                  { when: "주의", what: "앞 순서(S·A)에서 물량이 소진되면 B 차례에는 구매하지 못할 수 있습니다." },
+                  { when: "10/3 B 오픈", what: "B 몫으로 남겨 둔 최소 1,000대에서 1인 5대까지, 선착순으로 구매합니다." },
                   { when: "지금 할 수 있는 것", what: "마감 전에 구매 의사(+20점)와 커뮤니티 참여(+20점)만 해도 140점 — A그룹으로 올라가 더 안전해집니다." },
                 ]}
-                point="등록만으로도 자리는 생깁니다. 두 가지만 더 하면 A그룹입니다."
+                point="등록만 해도 B 몫 최소 1,000대의 기회가 생깁니다. 두 가지만 더 하면 A그룹입니다."
               />
 
               <PersonaCard
@@ -173,7 +174,7 @@ export default function WaitlistGuidePage() {
                 intro="대기 등록을 하지 않고 10/3에 처음 방문했습니다."
                 steps={[
                   { when: "10/3", what: "모든 그룹 다음, 마지막 순서에 구매가 열립니다." },
-                  { when: "구매", what: "남은 물량이 있을 때만 구매할 수 있습니다. 매진이면 기회가 없습니다." },
+                  { when: "구매", what: "남은 물량이 있을 때만 구매할 수 있습니다. 일반 몫으로 남겨 두는 물량은 없어, 매진이면 기회가 없습니다." },
                   { when: "지금 할 수 있는 것", what: "지금 등록만 해도 응모권 +10장, 100점으로 B그룹부터 시작합니다." },
                 ]}
                 point="등록에는 비용이 없습니다 — 순서만 달라집니다."
