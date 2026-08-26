@@ -147,7 +147,7 @@ export default function WaitlistPage() {
               {SCORE_CHIPS.map(([l, v]) => <Chip key={l} label={l} value={v} />)}
             </div>
             <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--ink-3)" }}>저희가 확인할 수 있는 활동만 점수에 넣습니다 — 팔로우·구독은 응모권에만 반영됩니다</div>
-            <div style={{ fontSize: 11.5, color: "var(--cap)" }}>추첨에서 떨어져도 점수 순서대로 A 또는 B 그룹에 들어갑니다</div>
+            <div style={{ fontSize: 11.5, color: "var(--cap)" }}>140점 이상이면 A그룹 — 기준은 미리 공개되고 마감까지 바뀌지 않습니다</div>
           </div>
         </div>
 

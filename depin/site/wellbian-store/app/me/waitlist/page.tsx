@@ -91,18 +91,18 @@ export default function MissionDashboard() {
           </div>
 
           <div style={{ background: "var(--w-deep)", color: "#fff", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 10 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,.6)" }}>예상 그룹 — 순번 점수 기준</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,.6)" }}>내 그룹 — 기준 140점 (고정)</span>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span style={{ width: 44, height: 44, borderRadius: 12, background: "#fff", color: "var(--w-deep)", fontSize: 21, fontWeight: 800, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{me.expectedGroup}</span>
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <span style={{ fontSize: 15, fontWeight: 800 }}>{me.expectedGroup}그룹 구간 — 상위 {me.percentile}%</span>
-                <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)" }}>추첨 결과와 상관없이 그대로 유지됩니다</span>
+                <span style={{ fontSize: 15, fontWeight: 800 }}>{me.expectedGroup}그룹 확정 — {me.score}점 (기준 140점 이상)</span>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)" }}>점수는 내려가지 않아 확정이 유지됩니다 · 추첨 결과와도 무관합니다</span>
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 5, marginTop: 2 }}>
               <div className="track on-dark" style={{ height: 7 }}><i style={{ width: "78%" }} /></div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "rgba(255,255,255,.5)" }}>
-                <span>B 구간</span><span>A 구간 140점+</span><span>재계산 반영</span>
+                <span>B 구간</span><span>A 기준 140점</span><span>기준 고정</span>
               </div>
             </div>
           </div>

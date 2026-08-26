@@ -113,8 +113,8 @@ export const RL_STEPS = [
 
 export const TIERS = [
   { n: "S", t: "응모권이 많을수록 잘 뽑히는 추첨 · 1,000명", d: "10/3 가장 먼저 구매 — 1인 최대 5대", hot: true },
-  { n: "A", t: "순번 점수가 높은 그룹", d: "추첨에서 떨어져도 점수 순서로 들어갑니다", hot: false },
-  { n: "B", t: "순번 점수 일반 그룹", d: "대기 등록만 해도 등록 안 한 방문자보다 먼저 구매합니다", hot: false },
+  { n: "A", t: "순번 점수 140점 이상", d: "등록 + 구매 의사 + 커뮤니티면 도달 — 기준은 바뀌지 않습니다", hot: false },
+  { n: "B", t: "140점 미만 등록자", d: "대기 등록만 해도 등록 안 한 방문자보다 먼저 구매합니다", hot: false },
   { n: "일반", t: "대기 등록을 하지 않은 방문자", d: "10/3 마지막 순서로 열립니다", hot: false },
 ];
 
@@ -185,6 +185,9 @@ export const DEST_TAG = process.env.NEXT_PUBLIC_DEST_TAG ?? "908211";
 export const XRPL_NETWORK = process.env.NEXT_PUBLIC_XRPL_NETWORK ?? "testnet"; // 실지갑 어댑터 연결 시 사용
 
 /* 확정 설명 카피 (기획서 「화면에 쓰는 설명 문구」) */
+/* A그룹 컷라인 — 사전 고정 공표, 마감까지 불변 (분쟁 차단) */
+export const A_CUTLINE = 140;
+
 export const COPY_TICKETS = "많을수록 가장 먼저 구매하는 그룹에 뽑힐 확률이 올라갑니다";
 export const COPY_SCORE = "점수가 높을수록 먼저 구매하는 그룹에 들어갑니다";
 export const COPY_DUAL =

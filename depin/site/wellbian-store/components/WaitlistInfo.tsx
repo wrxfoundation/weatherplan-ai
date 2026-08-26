@@ -69,6 +69,12 @@ function InfoModal({ onClose }: { onClose: () => void }) {
               <b style={{ color: "var(--w-deep)" }}>순번이 바뀌는 경우</b> — 내가 미션을 완료하거나 초대가 성사되면 오르고, 다른 참가자의 점수에 따라 상대 순위도 움직입니다. 9월 중 1회 중간 재계산으로 반영되고, 최종 순번은 9/30 마감 때 확정됩니다.
             </div>
             <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-3)" }}>
+              <b style={{ color: "var(--w-deep)" }}>A그룹 기준은 미리 정해져 있습니다 — 140점 이상.</b> 대기 등록(100점)에 구매 의사(20점)와 커뮤니티 참여(20점)만 더해도 140점, A그룹이 확정됩니다.
+            </div>
+            <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-3)" }}>
+              기준 점수는 마감까지 바뀌지 않고, 점수는 내려가는 일이 없습니다 — <b style={{ color: "var(--w-deep)" }}>한 번 넘으면 그대로 확정</b>입니다. 내 점수와 적립 내역은 미션 대시보드에서 언제든 확인할 수 있습니다.
+            </div>
+            <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-3)" }}>
               선착순이 아닙니다 — <b style={{ color: "var(--w-deep)" }}>같은 점수면 같은 그룹</b>이고, 등록 순서는 배정에 영향을 주지 않습니다. 각 그룹 안에서의 구매만 오픈 후 선착순입니다.
             </div>
           </div>
