@@ -111,6 +111,12 @@ h1, h2, h3, p { margin: 0; }
 @media (min-width: 721px) { .sheet-handle { display: none; } }
 .pulse { animation: pulse-dot 1.2s ease-in-out infinite; }
 
+/* 라이브 인디케이터 — 초록 도트 + 퍼지는 링 */
+@keyframes live-ping { 0% { transform: scale(1); opacity: .65; } 75%, 100% { transform: scale(2.6); opacity: 0; } }
+.live-dot { position: relative; display: inline-flex; width: 8px; height: 8px; flex: none; }
+.live-dot::before { content: ""; position: absolute; inset: 0; border-radius: 99px; background: var(--ok-dot); animation: live-ping 1.6s cubic-bezier(0, 0, .2, 1) infinite; }
+.live-dot::after { content: ""; position: absolute; inset: 0; border-radius: 99px; background: var(--ok-dot); }
+
 /* 모달 스텝 전환 크로스페이드 150ms (PRD §8) */
 @keyframes step-in { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
 .step-in { animation: step-in .15s ease; }
@@ -133,7 +139,7 @@ h1, h2, h3, p { margin: 0; }
 /* 히어로 컨테이너 = .wrap(1080)과 동일 폭 — S2 가격 카드 좌우 라인과 끝 정렬 */
 .hero-grid { display: grid; grid-template-columns: 1fr 480px; gap: 56px; align-items: center; max-width: 1080px; margin: 0 auto; }
 .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.spec-grid { display: grid; grid-template-columns: 1fr 380px; gap: 48px; align-items: start; }
+.spec-grid { display: grid; grid-template-columns: 380px 1fr; gap: 48px; align-items: start; }
 .how-grid { display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr; gap: 0; align-items: center; }
 .link-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
 .rl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }

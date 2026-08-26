@@ -232,19 +232,7 @@ export default function Landing() {
       {/* ── S3 제품 스펙 ── */}
       <section className="sec-pad" style={{ background: "var(--sec-alt)" }} id="spec">
         <div className="wrap spec-grid">
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <h2 style={h2}>제품 스펙</h2>
-            <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid var(--w-deep)" }}>
-              {SPECS.map((s, i) => (
-                /* 모바일: 5행 축약 (PRD §6.1) */
-                <div key={s.k} className={i >= 5 ? "desk-only" : undefined} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 16, padding: "14px 4px", borderBottom: "1px solid var(--bd-card)", fontSize: 14 }}>
-                  <span style={{ fontWeight: 700, color: "var(--w-deep)" }}>{s.k}</span>
-                  <span style={{ color: "var(--ink-2)" }}>{s.v}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{ fontSize: 12, color: "var(--hint)" }}>＊ 표기 값은 샘플이며, 확정 스펙은 인증서 기준으로 반영 예정입니다.</div>
-          </div>
+          {/* 제품 이미지 좌측 · 스펙 테이블 우측 */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div style={{ width: "100%", height: 280, borderRadius: 14, background: "#fff", border: "1px solid var(--bd-card)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
               <Image src="/assets/device.webp" alt="Weather Data Token Generator 상세 컷" width={300} height={250} style={{ maxHeight: 240, width: "auto", objectFit: "contain" }} />
@@ -257,6 +245,19 @@ export default function Landing() {
                 <span style={certChip}>성능인증</span>
               </div>
             </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            <h2 style={h2}>제품 스펙</h2>
+            <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid var(--w-deep)" }}>
+              {SPECS.map((s, i) => (
+                /* 모바일: 5행 축약 (PRD §6.1) */
+                <div key={s.k} className={i >= 5 ? "desk-only" : undefined} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 16, padding: "14px 4px", borderBottom: "1px solid var(--bd-card)", fontSize: 14 }}>
+                  <span style={{ fontWeight: 700, color: "var(--w-deep)" }}>{s.k}</span>
+                  <span style={{ color: "var(--ink-2)" }}>{s.v}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: 12, color: "var(--hint)" }}>＊ 표기 값은 샘플이며, 확정 스펙은 인증서 기준으로 반영 예정입니다.</div>
           </div>
         </div>
       </section>

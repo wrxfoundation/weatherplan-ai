@@ -76,7 +76,7 @@ export default function WaitlistPage() {
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 4, flexWrap: "wrap" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, color: "rgba(255,255,255,.75)" }}>
-                <span style={{ width: 8, height: 8, borderRadius: 99, background: "var(--ok-dot)" }} />
+                <span className="live-dot" aria-hidden />
                 현재 <b style={{ color: "#fff" }}>12,847명</b> 대기 중
               </span>
               <span style={{ fontSize: 12, color: "rgba(255,255,255,.45)" }}>추첨 방식은 마감 전에 미리 공개합니다 — 누구나 같은 결과를 다시 확인할 수 있어요</span>
@@ -170,7 +170,7 @@ export default function WaitlistPage() {
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 13, fontWeight: 700, color: "var(--ink-4)", flexWrap: "wrap" }}>
           오픈 순서<span style={{ color: "var(--w-main)" }}>S</span>→<span>A</span>→<span>B</span>→<span>일반</span>
-          <span style={{ color: "var(--hint)", fontWeight: 500 }}>· 10/3 차례대로 열립니다 · 현장 판매 500대(10/2~3 부스)</span>
+          <span style={{ color: "var(--hint)", fontWeight: 500 }}>· 10/3 차례대로 열립니다 · 현장 판매 1,000대(10/3 부스)</span>
         </div>
 
         {/* 고지 3건 — 한 문단 대신 항목별 분리 (혼동 방지) */}

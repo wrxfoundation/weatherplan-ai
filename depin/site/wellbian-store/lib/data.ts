@@ -107,7 +107,7 @@ export const RL_STEPS = [
 export const TIERS = [
   { n: "S", t: "응모권이 많을수록 잘 뽑히는 추첨 · 1,000명", d: "10/3 가장 먼저 구매하는 그룹 — 정원 고정", hot: true },
   { n: "A", t: "순번 점수가 높은 그룹", d: "추첨에서 떨어져도 점수 순서로 들어갑니다", hot: false },
-  { n: "B", t: "순번 점수 일반 그룹", d: "떨어져도 완전히 잃지 않습니다", hot: false },
+  { n: "B", t: "순번 점수 일반 그룹", d: "대기 등록만 해도 등록 안 한 방문자보다 먼저 구매합니다", hot: false },
   { n: "일반", t: "대기 등록을 하지 않은 방문자", d: "10/3 마지막 순서로 열립니다", hot: false },
 ];
 
@@ -189,7 +189,7 @@ export const NOTICE_SELF_CHECK =
 export const NOTICE_ABUSE =
   "같은 기기나 같은 인터넷망에서 한 초대는 인정되지 않으며, 짧은 시간에 초대가 몰리면 잠시 보류 후 확인합니다.";
 export const NOTICE_CARRYOVER =
-  "1차 사전신청에서 모은 점수·응모권은 그대로 이어집니다. (1차에서 이미 구매하신 분께는 따로 안내드립니다.)";
+  "지난 1차 판매 전 사전신청에 참여하셨나요? 그때 모은 점수·응모권은 이번 2차 대기에서도 그대로 인정됩니다. 1차에서 이미 제품을 구매하신 분은 대기 등록이 필요 없으며, 별도로 안내드립니다.";
 export const NOTICE_REWARD = "지급량·가치는 보장되지 않습니다";
 export const NOTICE_TICKET_CAP = "한 사람이 모을 수 있는 응모권에는 총량 상한이 있습니다.";
 export const NOTICE_INVITE_VERIFY = "초대받은 분의 본인확인 완료 시 인정됩니다.";
