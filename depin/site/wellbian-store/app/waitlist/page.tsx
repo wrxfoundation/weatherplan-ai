@@ -8,7 +8,7 @@ import { ChevR } from "@/components/icons";
 import WaitlistInfoChip from "@/components/WaitlistInfo";
 import {
   COPY_DUAL, COPY_SCORE, COPY_TICKETS,
-  NOTICE_CARRYOVER, NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, TIERS,
+  NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, TIERS,
 } from "@/lib/data";
 
 /* 배점 칩 — 줄글 나열 대신 스캔 가능한 형태 (모바일 가독) */
@@ -177,7 +177,7 @@ export default function WaitlistPage() {
 
         {/* 고지 3건 — 한 문단 대신 항목별 분리 (혼동 방지) */}
         <div style={{ display: "flex", flexDirection: "column", gap: 9, border: "1px solid var(--bd-card)", background: "var(--panel)", borderRadius: 12, padding: "16px 18px", fontSize: 12.5, lineHeight: 1.6, color: "var(--cap)", maxWidth: 1080, margin: "0 auto", width: "100%" }}>
-          {[NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, NOTICE_CARRYOVER].map((t) => (
+          {[NOTICE_SELF_CHECK, NOTICE_TICKET_CAP].map((t) => (
             <span key={t} style={{ display: "flex", gap: 9, alignItems: "flex-start" }}>
               <span style={{ flex: "none", width: 5, height: 5, borderRadius: 99, background: "var(--hint)", marginTop: 7 }} />
               {t}

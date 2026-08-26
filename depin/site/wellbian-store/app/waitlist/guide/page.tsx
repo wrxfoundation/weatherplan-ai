@@ -2,7 +2,7 @@ import Link from "next/link";
 import { SubHeader } from "@/components/chrome";
 import {
   A_CUTLINE, COPY_DUAL, COPY_SCORE, COPY_TICKETS,
-  NOTICE_CARRYOVER, NOTICE_SELF_CHECK, NOTICE_TICKET_CAP,
+  NOTICE_SELF_CHECK, NOTICE_TICKET_CAP,
 } from "@/lib/data";
 
 /* 2차 응모·순번 안내 서브페이지 — 로직 3단 + 그룹별 참여 예시 4종 (가상 인물) */
@@ -112,6 +112,7 @@ export default function WaitlistGuidePage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <div style={{ fontSize: 15, fontWeight: 800, color: "var(--w-deep)" }}>구매는 S → A → B → 일반 순서로 열립니다 (10/3)</div>
                 <div style={p13}>{COPY_DUAL}</div>
+                <div style={p13}><b style={{ color: "var(--w-deep)" }}>순서는 보장되지만, 재고는 보장되지 않습니다.</b> 앞 그룹에서 물량이 소진되면 다음 그룹 차례에는 구매하지 못할 수 있습니다. 앞 그룹일수록 안전한 이유입니다.</div>
               </div>
             </div>
           </section>
@@ -146,7 +147,7 @@ export default function WaitlistGuidePage() {
                 steps={[
                   { when: "9/30 마감 직후", what: "미당첨. 하지만 140점 이상이라 A그룹은 이미 확정되어 있습니다 — 점수는 사라지지 않습니다." },
                   { when: "10/3", what: "S그룹 다음 순서로 구매가 열립니다. S는 1인 5대 상한이 있어 물량이 남아 있습니다." },
-                  { when: "구매", what: "남은 물량에서 원하는 수량을 구매합니다." },
+                  { when: "구매", what: "남은 물량에서 구매합니다 — 그룹 안에서는 선착순입니다." },
                 ]}
                 point="떨어져도 잃지 않습니다 — 이게 A그룹입니다. 등록 + 구매 의사 + 커뮤니티, 세 가지면 누구나 140점입니다."
               />
@@ -159,7 +160,8 @@ export default function WaitlistGuidePage() {
                 steps={[
                   { when: "9/30", what: "140점 미만이라 B그룹으로 확정됩니다." },
                   { when: "10/3", what: "S·A 다음 순서로 열립니다. 그래도 등록하지 않은 방문자보다는 먼저입니다." },
-                  { when: "지금 할 수 있는 것", what: "마감 전에 구매 의사(+20점)와 커뮤니티 참여(+20점)만 해도 140점 — A그룹으로 올라갑니다." },
+                  { when: "주의", what: "앞 순서(S·A)에서 물량이 소진되면 B 차례에는 구매하지 못할 수 있습니다." },
+                  { when: "지금 할 수 있는 것", what: "마감 전에 구매 의사(+20점)와 커뮤니티 참여(+20점)만 해도 140점 — A그룹으로 올라가 더 안전해집니다." },
                 ]}
                 point="등록만으로도 자리는 생깁니다. 두 가지만 더 하면 A그룹입니다."
               />
@@ -181,7 +183,7 @@ export default function WaitlistGuidePage() {
 
           {/* 고지 + CTA */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8, border: "1px solid var(--bd-card)", background: "#fff", borderRadius: 12, padding: "16px 18px", fontSize: 12, lineHeight: 1.6, color: "var(--cap)" }}>
-            {[NOTICE_SELF_CHECK, NOTICE_CARRYOVER].map((t) => (
+            {[NOTICE_SELF_CHECK, NOTICE_TICKET_CAP].map((t) => (
               <span key={t} style={{ display: "flex", gap: 9, alignItems: "flex-start" }}>
                 <span style={{ flex: "none", width: 4, height: 4, borderRadius: 99, background: "var(--hint)", marginTop: 7 }} />
                 {t}
