@@ -60,6 +60,14 @@ Korean-surface parity, a self-healing freshness engine, and deploy safety.
   skill-supporting agent with no server and no key; a sync test pins the standalone fingerprint
   to `integrity.record_fingerprint`.
 
+### Content safety
+- **Prompt-injection guard** (`sanitize.py`) on all served text — EN + KO instruction patterns,
+  chat-control tokens, zero-width/bidi characters — run at **ingest**, so served bytes still match
+  the published `content_hash`. Flagged fields are **dropped, never rewritten**; an injected name
+  refuses the record; removals are disclosed in `content_flags`. `admin scancontent` audits
+  records that predate the guard (refresh re-cleans them on its own cycle). Declared in
+  `agents.json → autonomous_use.content_safety`.
+
 ### Data engine & ops
 - **refresh** — re-verifies the stalest discovered entities every collect tick (half-TTL threshold,
   oldest-first, stride-sampled against starvation, a no-downgrade ≥2-source floor, verified-geo

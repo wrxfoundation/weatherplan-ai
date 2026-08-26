@@ -10,6 +10,7 @@ CLI:
   python -m koreaapi.admin pull     # LIVE: pull real Wikidata snapshots (needs network egress)
   python -m koreaapi.admin chart    # LIVE: Circle Chart weekly + LLM-extract (needs egress + key)
   python -m koreaapi.admin boxoffice # LIVE: KOFIC/KOBIS film box office (dormant until KOBIS_API_KEY)
+  python -m koreaapi.admin scancontent # audit the STORED corpus for prompt-injection-shaped text
   python -m koreaapi.admin youtube  # LIVE: official-channel release snapshots (needs YOUTUBE_API_KEY)
   python -m koreaapi.admin sweep    # LIVE: discover labelmates from each anchored agency (SPARQL)
   python -m koreaapi.admin discover # LIVE: bulk-discover each vertical's Korean entities (SPARQL) -> 10x
@@ -44,7 +45,7 @@ import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 
-from . import answers, certify, integrity
+from . import answers, certify, integrity, sanitize
 from .badge import badge_svg, tier_of
 from .license import LICENSE
 from .models import Record
@@ -359,6 +360,32 @@ _PRUNE_DENYLIST = {
     "animation:streetfighter",  # Capcom (Japan) IP — a Wikidata origin mis-tag, not a Korean animation
     "animation:burningstage",   # no verifiable Korean animation by this name — likely an origin mis-tag
 }
+
+
+async def scan_content(db_path: str | None = None) -> dict:
+    """Audit the STORED corpus for injection-shaped text (`admin scancontent`).
+
+    The injection guard runs at ingest, so anything collected after it is clean — but the store is
+    append-only and predates the guard, and `refresh` only re-cleans an entity when it comes round
+    (the whole store cycles inside the freshness TTL). This reports the gap in between: which live
+    records still carry flagged text, so an operator can prune or force-refresh instead of waiting.
+    Read-only — it never edits the store (that is refresh's job, through the same guarded path).
+    """
+    records = list((await store.latest_all(None, db_path=db_path)).values())
+    hits: list[dict] = []
+    for r in records:
+        reasons: list[str] = []
+        for field in ("summary_en", "summary_ko"):
+            reasons += [f"{field}: {x}" for x in sanitize.scan(getattr(r, field, None))]
+        for field in ("abstract_en", "abstract_ko"):
+            reasons += [f"{field}: {x}" for x in sanitize.scan(r.data.get(field))]
+        for a in (r.data.get("aliases") or []):
+            reasons += [f"alias: {x}" for x in sanitize.scan(a)]
+        for k, v in (r.data.get("attrs") or {}).items():
+            reasons += [f"attr {k}: {x}" for x in (sanitize.scan(k) or sanitize.scan(v))]
+        if reasons:
+            hits.append({"entity_id": r.entity_id, "kind": r.kind, "reasons": reasons[:4]})
+    return {"scanned": len(records), "flagged": len(hits), "hits": hits[:50]}
 
 
 async def prune(db_path: str | None = None) -> dict:
@@ -3189,6 +3216,14 @@ def _agents_manifest() -> dict:
             "physical_ai": ("geo verticals carry verified coordinates (Wikidata P625): nearby graph, "
                             "walkable clusters, map-ready trip plans — grounded spatial data for "
                             "embodied agents planning real-world movement"),
+            # The guarantee an agent with trading / payment / tool scopes actually needs from a data
+            # supplier: our text will not carry instructions into your context.
+            "content_safety": ("served text is screened for prompt-injection (EN + KO) at ingest and "
+                               "flagged text is DROPPED, never rewritten — a record shows what was "
+                               "removed in content_flags. Screening happens before the record is "
+                               "written, so served bytes still match the published content_hash. "
+                               "Sources are open and editable: treat this as a hardened supply "
+                               "chain, not a guarantee, and keep your own tool-scope limits"),
         },
         "mcp": {
             "transport": "stdio",
@@ -5177,6 +5212,12 @@ def _main(argv: list[str]) -> int:
         out = asyncio.run(prune())
         print(f"prune: removed {len(out['removed'])} mis-discovered entit(ies)"
               + (f" -> {', '.join(out['removed'])}" if out["removed"] else ""))
+    elif cmd == "scancontent":
+        out = asyncio.run(scan_content())
+        print(f"scancontent: {out['flagged']}/{out['scanned']} live record(s) carry "
+              "injection-shaped text (ingested before the guard; refresh re-cleans them)")
+        for h in out["hits"]:
+            print(f"  {h['entity_id']} [{h['kind']}] — {'; '.join(h['reasons'])}")
     elif cmd == "monitor":
         print("wrote", asyncio.run(monitor_html()))
     elif cmd == "pull":

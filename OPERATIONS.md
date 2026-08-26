@@ -98,6 +98,25 @@ rails. A missing key is a graceful skip, never an error.
   a **Claude Skill** (`skills/koreaapi/`, served at `/skill/`): SKILL.md + a stdlib lookup script
   that independently re-verifies `content_hash` — for agents with no MCP client at all.
 
+## Content safety (prompt-injection guard)
+
+Our substance comes from editable sources, and the grounding gate proves a value is IN its source,
+not that the source is benign — an injected Wikipedia lead grounds perfectly. Agents consuming us
+increasingly hold trading/payment tool scopes, so:
+
+- `sanitize.py` screens served text (EN **and** KO patterns, plus chat-control tokens, zero-width
+  and bidi characters) and runs at **ingest**, the last gate before a record exists.
+- A flagged field is **dropped, never rewritten** (a doctored abstract is the wrong-record failure
+  every other guard prevents); an injection-carrying **name refuses the whole record** (a miss).
+  What was dropped is recorded on the record as `content_flags` — shown, not hidden.
+- Guarding at ingest (not at serve) keeps served bytes identical to what the published
+  `content_hash` covers — scrubbing on the way out would break re-verification.
+- Records collected **before** the guard are re-cleaned as `refresh` re-ingests them (~3-day cycle).
+  `admin scancontent` audits the gap read-only and lists any live record still carrying flagged
+  text. Measured against the live 645-record corpus (2,398 text fields): **0 false positives**.
+- Stated machine-readably in `agents.json → autonomous_use.content_safety`, including the honest
+  limit: open sources mean a hardened supply chain, not a guarantee — callers keep their own scopes.
+
 ## Verification layers (what protects a deploy)
 
 1. `test.yml` — full offline suite (~350) + ruff on every push.

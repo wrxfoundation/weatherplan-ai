@@ -355,3 +355,46 @@ PR to `dev`, README table + `docs/features/` entry) — our SKILL.md is drop-in 
 ⛔ **Not absorbed:** real-time booking/automation lanes (SRT/KTX/카톡 — out of lane) ·
 scraping-backed surfaces (anti-doctrine: fragile, gray) · hosted key-proxy (nothing to hide —
 keyless by design).
+
+---
+
+## Absorbed from Binance Agent OS — agent-demand platform review, 2026-08-26
+
+Source: Binance Academy, *How Binance Agent OS Is Changing Crypto Trading* (updated 2026-08-25);
+platform launched 2026-08-20. It connects AI agents (ChatGPT, Claude Code, Codex, Cursor) to
+Binance via an **MCP endpoint**, plus Binance APIs, the Agentic Wallet, a **Skill Hub**, and
+**x402 payments**. Agents run in an isolated sub-account with no withdrawal scope; the Agentic
+Wallet caps swaps at $50k/day, DeFi at $100k/day, and **x402 payments at $20/day**.
+
+**Why it matters to us:** this is the demand side of the rail we already built. Agents there are
+(a) MCP-native, (b) x402-funded, and (c) explicitly making decisions on external information. We
+sell exactly that input. We are a DATA/ORACLE supplier to such agents — never a trading agent, an
+operator, or a token issuer (the Phase-2 guardrails above stand unchanged).
+
+**The finding that mattered (and what we shipped):** the article names the failure mode —
+"if an agent receives faulty information or is targeted by a prompt-injection attack … it might act
+on it" — and concedes Binance "has limited visibility into why a decision was made." Their controls
+bound the **blast radius** (sub-account isolation, blocked withdrawals, per-order approval); nobody
+bounds the **input**. That is a data layer's job, and we had **no guard at all**: our substance is
+the Wikipedia lead and the aliases/attrs an LLM grounds in it, all editable by anyone, and the
+grounding gate proves a value is IN its source, not that the source is benign. So an editor could
+plant instruction text that our provenance would carry into an agent's context.
+→ ✅ **SHIPPED**: `sanitize.py` (EN + KO patterns, control tokens, zero-width/bidi), enforced at
+ingest, drop-never-rewrite, name-carrying-instructions refuses the record, `content_flags`
+disclosure, `admin scancontent` audit, `agents.json → autonomous_use.content_safety`. Zero false
+positives across the live corpus (645 records / 2,398 text fields).
+
+**Confirms (no action):** MCP-over-URL is the integration currency (we mounted `/mcp` and the live
+host now serves its own manifest) · x402/USDC is the agent payment rail (ours is built, dormant
+pending a wallet) · our default price `X402_PRICE_USD=0.01` sits ~2000 calls inside their $20/day
+x402 ceiling, so per-call verified data is economically usable there.
+
+**Deferred (needs the actual spec, not the article):**
+1. **Skill Hub listing** — they ship one; we now have `skills/koreaapi`. Requirements unknown;
+   get the Skill Hub docs before claiming compatibility.
+2. **Agent-to-agent settlement posture** — their x402 lane is agent→agent. If we ever price
+   per-call there, revisit the $20/day ceiling as the practical budget envelope.
+
+⛔ **Not absorbed:** trading, order routing, custody, wallet integration, or anything that makes
+KoreaAPI an actor rather than a source · registering on any external platform (an outward-facing
+action — owner's call, not the agent's) · token issuance (permanent guardrail).
