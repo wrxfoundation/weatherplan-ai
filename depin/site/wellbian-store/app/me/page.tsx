@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Check, ChevR } from "@/components/icons";
 import { MOCK_DEVICE, MOCK_ORDER, fmt } from "@/lib/data";
 
-const STEPS = ["결제 확인", "배송 준비 중", "발송 · 송장", "완료"];
+const STEPS = ["결제 확인", "배송 접수", "발송 · 송장", "완료"];
 
 function StepDot({ i, size = 22 }: { i: number; size?: number }) {
   if (i === 0)
@@ -66,7 +66,7 @@ export default function MePage() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "18px 24px", borderBottom: "1px solid var(--line)", flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>제네시스 <span style={{ color: "var(--w-main)" }}>#{order.genesisNo}</span></span>
-              <span className="pill" style={{ fontSize: 11, color: "var(--w-main)", background: "var(--w-tint)", padding: "4px 11px" }}>배송 준비 중</span>
+              <span className="pill" style={{ fontSize: 11, color: "var(--w-main)", background: "var(--w-tint)", padding: "4px 11px" }}>배송 접수 대기</span>
             </div>
             <div className="desk-only" style={{ display: "flex", gap: 16, fontSize: 12.5, color: "var(--cap)" }}>
               <span>{order.id}</span>
@@ -100,7 +100,7 @@ export default function MePage() {
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "var(--hint)", marginTop: 8 }}>
               <span style={{ fontWeight: 700, color: "var(--w-deep)" }}>결제 확인</span>
-              <span style={{ fontWeight: 700, color: "var(--w-main)" }}>배송 준비</span>
+              <span style={{ fontWeight: 700, color: "var(--w-main)" }}>배송 접수</span>
               <span>발송</span>
               <span>완료</span>
             </div>
@@ -108,7 +108,7 @@ export default function MePage() {
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "16px 24px", background: "var(--panel)", flexWrap: "wrap" }}>
             <span style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--cap)" }}>
-              예상 배송 <b style={{ color: "var(--ink-2)" }}>10월 순차 발송</b> · 배송 시작 2주 전 주소 확인 연락 · <b style={{ color: "var(--ink-2)" }}>리딤코드는 박스 안 카드</b>
+              배송 접수 코드 <b className="mono" style={{ color: "var(--w-main)" }}>{order.claimCode}</b> · 발송 전 텔레그램·X로 접수 폼 공지 · 예상 배송 <b style={{ color: "var(--ink-2)" }}>10월 순차 발송</b>
             </span>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <button style={{ fontSize: 12, fontWeight: 700, color: "var(--cap)", border: "1px solid var(--bd-btn)", borderRadius: 8, padding: "8px 14px", background: "#fff" }}>환불 신청</button>
@@ -165,26 +165,20 @@ export default function MePage() {
             <span style={{ fontSize: 14, fontWeight: 800, color: "var(--w-deep)" }}>계정</span>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--hint)" }}>이메일 (필수)</span>
-                <span style={{ fontWeight: 700, color: "var(--ink-2)" }}>you@example.com</span>
+                <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--hint)" }}>로그인 수단</span>
+                <span style={{ fontWeight: 700, color: "var(--ink-2)" }}>지갑 연결 <span className="mono" style={{ color: "var(--cap)", fontWeight: 500 }}>rWLB9…kQ2f</span></span>
               </div>
-              <button style={{ fontSize: 12, fontWeight: 700, color: "var(--w-main)" }}>변경</button>
+              <span className="pill" style={{ fontSize: 11, fontWeight: 800, color: "var(--ok-text)", background: "var(--ok-bg)", padding: "4px 11px" }}>연결됨</span>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--hint)" }}>전화번호 (선택)</span>
-                <span style={{ fontWeight: 700, color: "var(--dis)" }}>미등록</span>
-              </div>
-              <button style={{ fontSize: 12, fontWeight: 700, color: "var(--w-main)" }}>등록</button>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--hint)" }}>알림</span>
-                <span style={{ fontWeight: 700, color: "var(--ink-2)" }}>배송·등록 안내 이메일 수신</span>
-              </div>
-              <span style={{ display: "inline-flex", width: 40, height: 22, borderRadius: 99, background: "var(--w-main)", position: "relative" }}>
-                <span style={{ position: "absolute", right: 2, top: 2, width: 18, height: 18, borderRadius: 99, background: "#fff" }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 2, fontSize: 13 }}>
+              <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--hint)" }}>개인정보</span>
+              <span style={{ fontWeight: 700, color: "var(--ink-2)", lineHeight: 1.55 }}>
+                저장하지 않습니다 — 배송지는 접수 폼에서만 받고 <b style={{ color: "var(--w-main)" }}>배송 후 파기</b>
               </span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 2, fontSize: 13 }}>
+              <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--hint)" }}>소식·공지</span>
+              <span style={{ fontWeight: 700, color: "var(--ink-2)" }}>공식 텔레그램 · X — 배송 접수 폼도 여기로 공지</span>
             </div>
           </div>
 

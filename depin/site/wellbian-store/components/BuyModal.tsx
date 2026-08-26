@@ -1,7 +1,9 @@
 "use client";
-/* 구매 모달 5스텝 (PRD §6.2) — 상태 머신:
-   qty → wallet → contact → terms → pay(hold 20m) → signing → confirmed | expired | mismatch
+/* 구매 모달 4스텝 (PRD §6.2 개정 8/26) — 상태 머신:
+   qty → wallet → terms → pay(hold 20m) → signing → confirmed | expired | mismatch
    confirmed 시 /orders/[id] 이동. 홀드 만료 시 qty 복귀(재고 반환). mismatch는 안내 후 재서명.
+   개인정보(주소·연락처·이메일)는 사이트에서 받지 않음 — 배송 접수는 발송 전 공지되는
+   별도 접수 폼(구글폼)에서 배송 접수 코드+배송지만 받고 배송 후 파기.
    전부 mock — mismatch 분기는 ?demo=mismatch로 재현(첫 서명만 불일치). */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -9,20 +11,18 @@ import { PRICE, RECEIVE_ADDRESS, DEST_TAG, fmt } from "@/lib/data";
 import { WALLETS, WalletAdapter } from "@/lib/wallet";
 import { Check, ChevR, Clock, Warn } from "./icons";
 
-const STEP_NAMES = ["수량", "지갑", "배송", "약관", "결제"] as const;
+const STEP_NAMES = ["수량", "지갑", "약관", "결제"] as const;
 const HOLD_SECONDS = 20 * 60;
 
 export default function BuyModal({
   ebLeft, onClose, demoMismatch = false,
 }: { ebLeft: number; onClose: () => void; demoMismatch?: boolean }) {
   const router = useRouter();
-  const [step, setStep] = useState(0); // 0..4
+  const [step, setStep] = useState(0); // 0..3
   const [qty, setQty] = useState(1);
   const [wallet, setWallet] = useState<WalletAdapter | null>(null);
   const [connecting, setConnecting] = useState(false);
   const [address, setAddress] = useState<string | null>(null);
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
   const [terms1, setTerms1] = useState(false);
   const [terms2, setTerms2] = useState(false);
   const [hold, setHold] = useState(HOLD_SECONDS);
@@ -34,11 +34,10 @@ export default function BuyModal({
   const tier = ebLeft > 0 ? "eb" : "gen";
   const unit = tier === "eb" ? PRICE.eb : PRICE.gen;
   const total = unit * qty;
-  const emailOk = /.+@.+\..+/.test(email);
 
   /* 홀드 타이머: 결제 단계 진입 시 시작 (POST /api/checkout/hold 대응 지점) */
   useEffect(() => {
-    if (step === 4) {
+    if (step === 3) {
       setHold(HOLD_SECONDS);
       holdRef.current = setInterval(() => setHold((s) => s - 1), 1000);
       return () => { if (holdRef.current) clearInterval(holdRef.current); };
@@ -47,7 +46,7 @@ export default function BuyModal({
 
   /* 홀드 만료 → 수량 단계 복귀 + 재고 반환 (PRD 상태 머신) */
   useEffect(() => {
-    if (step === 4 && hold <= 0 && !signing) {
+    if (step === 3 && hold <= 0 && !signing) {
       alert("재고 홀드가 만료되었습니다. 수량 선택부터 다시 진행해 주세요.");
       setStep(0);
     }
@@ -82,7 +81,7 @@ export default function BuyModal({
   }, [wallet, total, router, demoMismatch]);
 
   /* 결제 단계 이탈 시 mismatch 안내 해제 */
-  useEffect(() => { if (step !== 4) setMismatch(false); }, [step]);
+  useEffect(() => { if (step !== 3) setMismatch(false); }, [step]);
 
   const holdMMSS = `${String(Math.max(0, Math.floor(hold / 60))).padStart(2, "0")}:${String(Math.max(0, hold % 60)).padStart(2, "0")}`;
 
@@ -167,51 +166,31 @@ export default function BuyModal({
           </button>
         </>
       );
-      /* ── ③ 배송 고지 (1d) ── */
+      /* ── ③ 약관 + 배송 접수 안내 (1d) ── */
       case 2: return (
         <>
-          <h3 style={h3}>배송 안내</h3>
+          <h3 style={h3}>약관에 동의해 주세요</h3>
           <div style={{ display: "flex", gap: 12, border: "1px solid color-mix(in oklab, var(--w-main) 30%, white)", background: "var(--w-tint)", borderRadius: 12, padding: "15px 18px", fontSize: 13.5, lineHeight: 1.6, color: "var(--ink-2)" }}>
             <span style={{ flex: "none", marginTop: 2 }}><Clock /></span>
-            <span><b style={{ color: "var(--w-deep)" }}>배송 시작 2주 전, 배송 주소 파악을 위해 연락을 드립니다.</b><br />지금은 연락처만 남겨 주세요 — 주소는 나중에 받습니다.</span>
+            <span>
+              <b style={{ color: "var(--w-deep)" }}>이 사이트는 주소·연락처를 받지 않습니다.</b><br />
+              발송 전에 공식 텔레그램·X로 배송 접수 폼을 알려드립니다. 폼에 <b style={{ color: "var(--w-deep)" }}>배송 접수 코드</b>(결제 후 발급)와 배송지만 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
+            </span>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: "var(--ink-2)" }}>전화번호 <span style={{ color: "var(--hint)", fontWeight: 500 }}>(선택)</span></span>
-              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="010-0000-0000"
-                style={{ border: "1px solid var(--bd-input)", borderRadius: 10, padding: "13px 14px", fontSize: 14, outline: "none" }} />
-            </label>
-            <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: "var(--ink-2)" }}>이메일 <span style={{ color: "var(--w-main)", fontWeight: 700 }}>(필수)</span></span>
-              <div style={{ position: "relative" }}>
-                <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" type="email"
-                  style={{ width: "100%", border: emailOk ? "1px solid var(--w-main)" : "1px solid var(--bd-input)", borderRadius: 10, padding: "13px 40px 13px 14px", fontSize: 14, outline: "none" }} />
-                {emailOk && <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)" }}><Check size={15} color="var(--w-main)" w={2.5} /></span>}
-              </div>
-              <span style={{ fontSize: 11.5, color: "var(--cap)" }}>주문 확인·등록 안내가 이 주소로 발송됩니다</span>
-            </label>
-          </div>
-          <button className="btn-main" style={cta} disabled={!emailOk} onClick={() => setStep(3)}>다음 — 약관 동의</button>
-        </>
-      );
-      /* ── ④ 약관 (1e) ── */
-      case 3: return (
-        <>
-          <h3 style={h3}>약관에 동의해 주세요</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <TermCard checked={terms1} onToggle={() => setTerms1(!terms1)}
               title="[필수] 환불 제한 사유 고지"
               desc="리딤코드 사용 또는 노드 연동 시 환불이 제한됩니다 (전자상거래법 제17조 제6항)" />
             <TermCard checked={terms2} onToggle={() => setTerms2(!terms2)}
-              title="[필수] 이용약관 · 개인정보 수집 동의"
-              desc="제품 배송을 위한 정보 수집에 동의합니다" />
+              title="[필수] 이용약관 · 배송 접수 방식 확인"
+              desc="배송 정보는 이 사이트가 아닌 별도 접수 폼에서 받는다는 안내를 확인했습니다" />
           </div>
           <div style={{ fontSize: 12, color: "var(--cap)" }}>환불: 제품 수령일부터 7일 이내 가능 (리딤코드 사용 전)</div>
-          <button className="btn-main" style={cta} disabled={!(terms1 && terms2)} onClick={() => setStep(4)}>동의하고 결제하기</button>
+          <button className="btn-main" style={cta} disabled={!(terms1 && terms2)} onClick={() => setStep(3)}>동의하고 결제하기</button>
         </>
       );
-      /* ── ⑤ 결제 (1f) ── */
-      case 4: return (
+      /* ── ④ 결제 (1f) ── */
+      case 3: return (
         <>
           <h3 style={h3}>RLUSD로 결제하세요</h3>
           <div style={{ display: "flex", flexDirection: "column", border: "1px solid var(--bd-card)", borderRadius: 14, overflow: "hidden" }}>
@@ -241,7 +220,7 @@ export default function BuyModal({
         </>
       );
     }
-  }, [step, qty, tier, unit, total, ebLeft, wallet, connecting, address, phone, email, emailOk, terms1, terms2, hold, holdMMSS, signing, mismatch, connect, sign]);
+  }, [step, qty, tier, unit, total, ebLeft, wallet, connecting, address, terms1, terms2, hold, holdMMSS, signing, mismatch, connect, sign]);
 
   return (
     <div className="overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>

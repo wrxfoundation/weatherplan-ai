@@ -9,5 +9,7 @@ export async function POST(request: Request) {
     genesisNo: MOCK_ORDER.genesisNo,
     txHash: body?.txHash ?? MOCK_ORDER.txHash,
     status: "paid",
+    /* 구매자 확인 수단 — 배송 접수 폼에서 이 코드+배송지만 접수, 배송 후 파기 */
+    claimCode: MOCK_ORDER.claimCode,
   });
 }

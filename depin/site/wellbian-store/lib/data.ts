@@ -16,6 +16,9 @@ export interface Order {
   txHash: string;
   status: "paid" | "preparing" | "shipped" | "done";
   paidAt: string;
+  /* 배송 접수 코드 — 구매자 확인 수단. 사이트는 주소·연락처를 저장하지 않고,
+     발송 전 공지되는 접수 폼(구글폼)에서 이 코드+배송지만 받아 배송 후 파기 */
+  claimCode: string;
 }
 
 export interface Device {
@@ -163,6 +166,7 @@ export const MOCK_ORDER: Order = {
   txHash: "A3F8…C21E",
   status: "preparing",
   paidAt: "2026-08-26",
+  claimCode: "WB-7K2Q-9X4D",
 };
 
 export const MOCK_DEVICE: Device = {
