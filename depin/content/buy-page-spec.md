@@ -116,6 +116,62 @@
 | 5 | 재고 홀드 시간(제안 20분) · 초과 송금 반환 절차 | 개발·CS |
 | 6 | 예상 배송 문구("결제 후 N일 내 발송") — 물류 일정 확정 후 | 서우 |
 
+## 6-A. 웹 목업 이미지 프롬프트 (8/25 — 레이아웃·무드 시안용)
+
+원칙: 생성 텍스트는 반드시 깨지므로 **전 텍스트 = 회색 플레이스홀더 바 강제**(글자·숫자·로고
+생성 금지). 제품은 첨부 레퍼런스 원본 복제. 용도 = 디자이너·내부 공유용 방향 시안(실카피·로고는
+실구현/후보정).
+
+**A. 데스크톱 히어로 (기본, 16:9 — 제품 이미지 첨부)**
+
+```
+Premium e-commerce landing page UI design mockup, shown inside a
+clean desktop browser window, light theme. Background near-white
+with a very subtle lavender tint (#ededfa). Top navigation bar:
+minimal, small abstract logo placeholder at left, a few grey menu
+placeholder bars, and one rounded pill button filled in vivid
+blue-violet (#4d4dce) placed at the front of the menu. Hero section:
+on the left, bold dark navy headline placeholder bars (#1b1b48) of
+varying width, a thin subtitle bar, a large blue-violet CTA pill,
+and a slim horizontal progress bar about one-third filled in violet
+with tiny placeholder tick bars. On the right, the attached product
+photo on a soft pedestal with a gentle violet glow and soft shadow —
+reproduce the attached device exactly, do not redesign it. Below the
+fold, a hint of the next section: two pricing cards side by side,
+one with a violet outline highlight, both with placeholder text bars
+and a small badge shape. All text rendered as clean grey placeholder
+bars only — no readable words, no letters, no numbers, no real
+logos. Generous white space, soft rounded corners, subtle
+glassmorphism on cards, modern fintech premium aesthetic, crisp UI
+design portfolio quality, 16:9
+```
+
+**B. 풀페이지 스크롤 목업 (세로 3:4)** — A의 스타일 문장 유지, 구성만 교체:
+
+```
+...same style... A tall full-page scroll mockup of the landing page,
+vertical composition: hero with the attached product photo → two
+pricing cards → a specification table block of thin placeholder
+rows → a horizontal 5-step stepper with small rounded icons → three
+accordion FAQ rows → a dark navy footer band with placeholder
+columns. All text as grey placeholder bars only, no readable words,
+no logos, 3:4
+```
+
+**C. 모바일 (9:16)** — 하단 스티키 구매 바 포함:
+
+```
+...same style... A single mobile screen mockup, narrow 9:16: compact
+top bar with violet pill, hero with the attached product photo and
+violet progress bar, one pricing card, and a sticky bottom purchase
+bar with a full-width blue-violet CTA pill. All text as grey
+placeholder bars, no readable words, no logos, 9:16
+```
+
+- 리롤 기준: ① 읽을 수 있는 글자/숫자/로고가 생기면 리롤(플레이스홀더 강제 실패) ② 제품이
+  레퍼런스와 다르게 재설계되면 리롤 ③ 바이올렛이 배경까지 번지면 리롤(CTA·포인트에만) ④ 다크
+  테마로 뒤집히면 리롤(라이트가 기본).
+
 ## 6. 수량 표기 정책 (내부 메모)
 
 - 대외 = "총 4,900대 한정"만. 증정 100대(#0001~0100) 비공표 원칙 유지(8/22 확정).
