@@ -43,9 +43,12 @@ function InfoModal({ onClose }: { onClose: () => void }) {
         <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
           <Num n="1" />
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <div style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>응모권 — S그룹(2,000명) 추첨</div>
+            <div style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>응모권 — S그룹(1,000명) 추첨</div>
             <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-3)" }}>
               미션으로 모은 응모권이 {COPY_TICKETS}. 추첨 방식은 접수 마감 전에 미리 공개되어 누구나 같은 결과를 다시 확인할 수 있고, 발표는 9/30 마감 직후입니다.
+            </div>
+            <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-3)" }}>
+              S그룹에서는 <b style={{ color: "var(--w-deep)" }}>1인당 최대 5대</b>까지 구매할 수 있습니다. 더 필요한 물량은 이어지는 A/B 순서에서 다시 구매할 수 있습니다.
             </div>
             <div style={{ fontSize: 11.5, color: "var(--cap)" }}>{NOTICE_TICKET_CAP}</div>
           </div>
@@ -64,6 +67,9 @@ function InfoModal({ onClose }: { onClose: () => void }) {
             </div>
             <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-3)" }}>
               <b style={{ color: "var(--w-deep)" }}>순번이 바뀌는 경우</b> — 내가 미션을 완료하거나 초대가 성사되면 오르고, 다른 참가자의 점수에 따라 상대 순위도 움직입니다. 9월 중 1회 중간 재계산으로 반영되고, 최종 순번은 9/30 마감 때 확정됩니다.
+            </div>
+            <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-3)" }}>
+              선착순이 아닙니다 — <b style={{ color: "var(--w-deep)" }}>같은 점수면 같은 그룹</b>이고, 등록 순서는 배정에 영향을 주지 않습니다. 각 그룹 안에서의 구매만 오픈 후 선착순입니다.
             </div>
           </div>
         </div>
