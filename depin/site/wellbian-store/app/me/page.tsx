@@ -108,7 +108,7 @@ export default function MePage() {
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "16px 24px", background: "var(--panel)", flexWrap: "wrap" }}>
             <span style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--cap)" }}>
-              구매 증명 = <b style={{ color: "var(--w-main)" }}>지갑 주소</b> · 발송 2주 전부터 텔레그램·X로 접수 폼 공지 · 예상 배송 <b style={{ color: "var(--ink-2)" }}>10월 순차 발송</b>
+              구매 확인 = <b style={{ color: "var(--w-main)" }}>지갑 주소 + 주문번호</b> · 발송 2주 전부터 텔레그램·X로 접수 폼 공지 · 예상 배송 <b style={{ color: "var(--ink-2)" }}>10월 순차 발송</b>
             </span>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <button style={{ fontSize: 12, fontWeight: 700, color: "var(--cap)", border: "1px solid var(--bd-btn)", borderRadius: 8, padding: "8px 14px", background: "#fff" }}>환불 신청</button>
@@ -127,7 +127,7 @@ export default function MePage() {
               </span>
             </div>
             <div className="desk-only" style={{ display: "flex", gap: 16, fontSize: 12.5, color: "var(--cap)" }}>
-              <span>WB-260818-00812</span>
+              <span>WB-3F8D-K21P</span>
               <span>450 RLUSD · 얼리버드</span>
               <span>등록 8/24</span>
               <a href="#nft" className="mono" style={{ fontSize: 12 }}>라이선스 NFT ↗</a>

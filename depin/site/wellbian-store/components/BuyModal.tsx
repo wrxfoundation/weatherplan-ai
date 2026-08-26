@@ -3,13 +3,13 @@
    qty → wallet → terms → pay(hold 20m) → signing → confirmed | expired | mismatch
    confirmed 시 /orders/[id] 이동. 홀드 만료 시 qty 복귀(재고 반환). mismatch는 안내 후 재서명.
    개인정보(주소·연락처·이메일)는 사이트에서 받지 않음 — 배송 접수는 발송 2주 전부터
-   공지되는 별도 접수 폼(구글폼)에서 구매 지갑 주소·성함·연락처·배송지만 받고 배송 후 파기
-   (지갑 주소 = 구매 증명, 별도 주문 코드 없음). 동의는 환불 고지+배송 접수 방식 확인 2건만
+   공지되는 별도 접수 폼(구글폼)에서 지갑 주소·주문번호·성함·연락처·배송지만 받고 배송 후 파기
+   (확인 2요소 = 결제 지갑 주소 + 난수 주문번호). 동의는 환불 고지+배송 접수 방식 확인 2건만
    (포괄 이용약관 동의 없음 — 전체 약관은 푸터/메인에서 열람).
    전부 mock — mismatch 분기는 ?demo=mismatch로 재현(첫 서명만 불일치). */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PRICE, RECEIVE_ADDRESS, DEST_TAG, fmt } from "@/lib/data";
+import { PRICE, RECEIVE_ADDRESS, DEST_TAG, MOCK_ORDER, fmt } from "@/lib/data";
 import { WALLETS, WalletAdapter } from "@/lib/wallet";
 import { Check, ChevR, Clock, Warn } from "./icons";
 
@@ -78,8 +78,8 @@ export default function BuyModal({
       setMismatch(true);
       return;
     }
-    /* POST /api/checkout/confirm 대응 지점 — mock 주문 생성 */
-    router.push("/orders/WB-260826-01234");
+    /* POST /api/checkout/confirm 대응 지점 — mock 주문 생성 (주문번호는 서버 난수 발급) */
+    router.push(`/orders/${MOCK_ORDER.id}`);
   }, [wallet, total, router, demoMismatch]);
 
   /* 결제 단계 이탈 시 mismatch 안내 해제 */
@@ -176,7 +176,7 @@ export default function BuyModal({
             <span style={{ flex: "none", marginTop: 2 }}><Clock /></span>
             <span>
               <b style={{ color: "var(--w-deep)" }}>이 사이트는 주소·연락처를 받지 않습니다.</b><br />
-              결제에 쓴 <b style={{ color: "var(--w-deep)" }}>지갑 주소가 곧 구매 증명</b>입니다. 디바이스 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 알려드립니다 — 폼에 지갑 주소·성함·연락처·배송지를 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
+              구매 확인은 <b style={{ color: "var(--w-deep)" }}>결제한 지갑 주소 + 결제 후 발급되는 주문번호</b> 두 가지로 합니다. 디바이스 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 알려드립니다 — 폼에 지갑 주소·주문번호·성함·연락처·배송지를 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
             </span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>

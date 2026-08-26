@@ -159,7 +159,9 @@ export const MOCK_WAITLIST_ME: WaitlistMe = {
 };
 
 export const MOCK_ORDER: Order = {
-  id: "WB-260826-01234",
+  /* 주문번호 = 결제 확정 시 난수 발급(연번 금지) — 지갑 주소와 함께 배송 접수 2요소.
+     실서버는 무DB 파생 가능: HMAC(비밀키, txHash) 절단 */
+  id: "WB-9X4K-Q72M",
   genesisNo: 1234,
   qty: 20,
   unitPrice: 450,
