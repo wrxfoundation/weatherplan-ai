@@ -121,13 +121,13 @@ export const TIERS = [
 export const MISSIONS: Mission[] = [
   { key: "join", title: "대기 등록 완료", tickets: "+10장", note: "필수 · 가장 큰 배점", verify: "system", done: true },
   { key: "share", title: "소식 공유 — 공유 카드 발행", tickets: "+6장", note: "공유 링크로 자동 확인", verify: "system", done: true },
-  { key: "community", title: "커뮤니티 참여 (텔레그램)", tickets: "+5장", note: "순번 점수 +20점 함께", verify: "system", done: true },
+  { key: "community", title: "wellbian 커뮤니티 참여 (텔레그램)", tickets: "+5장", note: "순번 점수 +20점 함께", verify: "system", done: true },
   { key: "invite", title: "친구 초대 — 성사 2명", tickets: "+10장", note: "5장/명 · 상한 10명 · 순번 점수 함께", verify: "system", done: true },
   { key: "daily", title: "매일 방문 — 오늘 출석", tickets: "+1장", note: "1장/일", verify: "system", done: true },
-  { key: "x_follow", title: "X 팔로우", tickets: "+3장", note: "", verify: "self", done: true },
-  { key: "kw_app", title: "케이웨더 앱 설치", tickets: "+5장", note: "", verify: "match", done: false },
-  { key: "kw_youtube", title: "케이웨더 유튜브 구독", tickets: "+3장", note: "", verify: "self", done: false },
-  { key: "kw_insta", title: "인스타그램 팔로우", tickets: "+2장", note: "", verify: "self", done: false },
+  { key: "x_follow", title: "wellbian X 팔로우", tickets: "+3장", note: "", verify: "self", done: true },
+  { key: "kw_app", title: "KWEATHER 앱 설치", tickets: "+5장", note: "", verify: "match", done: false },
+  { key: "kw_youtube", title: "KWEATHER 유튜브 구독", tickets: "+3장", note: "", verify: "self", done: false },
+  { key: "kw_insta", title: "KWEATHER 인스타그램 팔로우", tickets: "+2장", note: "", verify: "self", done: false },
 ];
 
 export const VERIFY_LABEL: Record<Mission["verify"], string> = {
@@ -139,7 +139,7 @@ export const VERIFY_LABEL: Record<Mission["verify"], string> = {
 export const SCORE_ROWS = [
   { t: "대기 등록", p: "100점" },
   { t: "구매 의사 표시", p: "20점" },
-  { t: "커뮤니티 참여", p: "20점" },
+  { t: "wellbian 커뮤니티 참여", p: "20점" },
   { t: "친구 초대 성사", p: "30점" },
 ];
 
