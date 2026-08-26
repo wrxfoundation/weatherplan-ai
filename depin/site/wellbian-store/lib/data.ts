@@ -1,6 +1,6 @@
 /* 목데이터 + 타입 (PRD §7) — 실서버 연동 시 이 파일의 값을 API로 대체 */
 
-export type SalePhase = "teaser" | "early_bird" | "general" | "sold_out";
+export type SalePhase = "teaser" | "early_bird" | "general" | "sold_out" | "waitlist_open";
 
 export interface Inventory {
   ebLeft: number;   // 표기 분모 1,000
@@ -53,6 +53,7 @@ export const MOCK_INVENTORY: Record<SalePhase, Inventory> = {
   early_bird: { ebLeft: 187, genLeft: 4000 },
   general: { ebLeft: 0, genLeft: 3412 },
   sold_out: { ebLeft: 0, genLeft: 0 },
+  waitlist_open: { ebLeft: 0, genLeft: 0 },
 };
 
 export const PRICE = { eb: 450, gen: 650 } as const;
@@ -171,8 +172,10 @@ export const LINKS = {
   telegram: "https://t.me/wellbianlabs",
 };
 
-export const RECEIVE_ADDRESS = "rWLB9…kQ2f";
-export const DEST_TAG = "908211";
+/* 결제 파라미터 — Vercel 환경 변수로 교체 가능 (PRD §11), 미설정 시 목값 */
+export const RECEIVE_ADDRESS = process.env.NEXT_PUBLIC_RECEIVE_ADDRESS ?? "rWLB9…kQ2f";
+export const DEST_TAG = process.env.NEXT_PUBLIC_DEST_TAG ?? "908211";
+export const XRPL_NETWORK = process.env.NEXT_PUBLIC_XRPL_NETWORK ?? "testnet"; // 실지갑 어댑터 연결 시 사용
 
 /* 고지 문구 (필수 노출, PRD §6.5) */
 export const NOTICE_SELF_CHECK =

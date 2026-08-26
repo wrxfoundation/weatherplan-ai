@@ -1,19 +1,20 @@
 "use client";
 /* 구매 모달 5스텝 (PRD §6.2) — 상태 머신:
-   qty → wallet → contact → terms → pay(hold 20m) → signing → confirmed
-   confirmed 시 /orders/[id] 이동. 홀드 만료 시 qty 복귀(재고 반환). 전부 mock. */
+   qty → wallet → contact → terms → pay(hold 20m) → signing → confirmed | expired | mismatch
+   confirmed 시 /orders/[id] 이동. 홀드 만료 시 qty 복귀(재고 반환). mismatch는 안내 후 재서명.
+   전부 mock — mismatch 분기는 ?demo=mismatch로 재현(첫 서명만 불일치). */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PRICE, RECEIVE_ADDRESS, DEST_TAG, fmt } from "@/lib/data";
 import { WALLETS, WalletAdapter } from "@/lib/wallet";
-import { Check, ChevR, Clock } from "./icons";
+import { Check, ChevR, Clock, Warn } from "./icons";
 
 const STEP_NAMES = ["수량", "지갑", "배송", "약관", "결제"] as const;
 const HOLD_SECONDS = 20 * 60;
 
 export default function BuyModal({
-  ebLeft, onClose,
-}: { ebLeft: number; onClose: () => void }) {
+  ebLeft, onClose, demoMismatch = false,
+}: { ebLeft: number; onClose: () => void; demoMismatch?: boolean }) {
   const router = useRouter();
   const [step, setStep] = useState(0); // 0..4
   const [qty, setQty] = useState(1);
@@ -26,6 +27,8 @@ export default function BuyModal({
   const [terms2, setTerms2] = useState(false);
   const [hold, setHold] = useState(HOLD_SECONDS);
   const [signing, setSigning] = useState(false);
+  const [mismatch, setMismatch] = useState(false);
+  const mismatchOnce = useRef(false);
   const holdRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const tier = ebLeft > 0 ? "eb" : "gen";
@@ -67,9 +70,19 @@ export default function BuyModal({
     if (!wallet) return;
     setSigning(true);
     await wallet.sign({ amount: total, to: RECEIVE_ADDRESS, tag: DEST_TAG });
+    /* mismatch 분기: 서명 내용이 주문과 불일치 → 안내 후 재서명 (목 재현: ?demo=mismatch 첫 시도) */
+    if (demoMismatch && !mismatchOnce.current) {
+      mismatchOnce.current = true;
+      setSigning(false);
+      setMismatch(true);
+      return;
+    }
     /* POST /api/checkout/confirm 대응 지점 — mock 주문 생성 */
     router.push("/orders/WB-260826-01234");
-  }, [wallet, total, router]);
+  }, [wallet, total, router, demoMismatch]);
+
+  /* 결제 단계 이탈 시 mismatch 안내 해제 */
+  useEffect(() => { if (step !== 4) setMismatch(false); }, [step]);
 
   const holdMMSS = `${String(Math.max(0, Math.floor(hold / 60))).padStart(2, "0")}:${String(Math.max(0, hold % 60)).padStart(2, "0")}`;
 
@@ -212,17 +225,23 @@ export default function BuyModal({
             <span style={{ fontSize: 12.5, color: "var(--ink-4)" }}>재고 홀드 — 남은 시간</span>
             <span className="mono" aria-live="polite" style={{ fontSize: 15, fontWeight: 800, color: hold < 180 ? "#c0392b" : "var(--w-deep)" }}>{holdMMSS}</span>
           </div>
+          {mismatch && (
+            <div role="alert" style={{ display: "flex", gap: 10, border: "1px solid var(--warn-bd)", background: "var(--warn-bg)", borderRadius: 12, padding: "13px 16px", fontSize: 12.5, lineHeight: 1.6, color: "var(--warn-text)" }}>
+              <span style={{ flex: "none", marginTop: 2 }}><Warn size={15} /></span>
+              <span><b>서명 내용이 주문과 일치하지 않습니다.</b> 지갑에 표시된 금액·받는 주소·목적지 태그를 위 표와 대조한 뒤 다시 서명해 주세요. 결제는 진행되지 않았습니다.</span>
+            </div>
+          )}
           <button className="btn-main" style={cta} disabled={signing} onClick={sign}>
-            {signing ? "서명 확인 중…" : "지갑에서 서명하기"}
+            {signing ? "서명 확인 중…" : mismatch ? "다시 서명하기" : "지갑에서 서명하기"}
           </button>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 12.5, color: "var(--cap)" }}>
-            <span className="pulse" style={{ width: 8, height: 8, borderRadius: 99, background: "var(--w-main)" }} />
+            <span className="pulse" style={{ width: 8, height: 8, borderRadius: 99, background: mismatch ? "var(--warn-icon)" : "var(--w-main)" }} />
             서명 대기 중… 금액·주소가 일치하지 않으면 자동으로 안내합니다
           </div>
         </>
       );
     }
-  }, [step, qty, tier, unit, total, ebLeft, wallet, connecting, address, phone, email, emailOk, terms1, terms2, hold, holdMMSS, signing, connect, sign]);
+  }, [step, qty, tier, unit, total, ebLeft, wallet, connecting, address, phone, email, emailOk, terms1, terms2, hold, holdMMSS, signing, mismatch, connect, sign]);
 
   return (
     <div className="overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
@@ -242,7 +261,10 @@ export default function BuyModal({
           </div>
           <button onClick={onClose} aria-label="닫기" style={{ color: "var(--dis)", fontSize: 18, lineHeight: 1 }}>✕</button>
         </div>
-        {stepBody}
+        {/* 스텝 전환 크로스페이드 150ms (PRD §8) — key로 재마운트 */}
+        <div key={step} className="step-in" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          {stepBody}
+        </div>
         {step > 0 && (
           <button onClick={() => setStep(step - 1)} style={{ fontSize: 12.5, color: "var(--cap)", alignSelf: "flex-start" }}>← 이전 단계</button>
         )}

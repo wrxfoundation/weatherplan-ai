@@ -15,6 +15,7 @@ import { XIcon, TgIcon, ChevD, Shield, ShieldCheck, Gauge, Coin, Warn, ChevR } f
 export default function Landing() {
   const sp = useSearchParams();
   const stateParam = sp.get("state");
+  const demoMismatch = sp.get("demo") === "mismatch"; // 결제 mismatch 분기 재현용 (내부 데모)
   const phase: SalePhase =
     stateParam === "eb_closed" ? "general" : stateParam === "sold_out" ? "sold_out" : "early_bird";
 
@@ -25,7 +26,7 @@ export default function Landing() {
   const curPrice = ebClosed ? PRICE.gen : PRICE.eb;
 
   const [modal, setModal] = useState(false);
-  const [banner, setBanner] = useState(true);
+  const [banner, setBanner] = useState(false);
   const [sticky, setSticky] = useState(false);
   const [faqOpen, setFaqOpen] = useState(0);
   const heroCtaRef = useRef<HTMLDivElement>(null);
@@ -40,6 +41,15 @@ export default function Landing() {
   }, []);
 
   const buy = () => setModal(true);
+
+  /* 1h 배너 1회성: 닫으면 세션 동안 다시 띄우지 않음 (PRD §6.4) */
+  useEffect(() => {
+    try { if (!sessionStorage.getItem("wb-eb-banner-closed")) setBanner(true); } catch { setBanner(true); }
+  }, []);
+  const dismissBanner = () => {
+    setBanner(false);
+    try { sessionStorage.setItem("wb-eb-banner-closed", "1"); } catch {}
+  };
 
   return (
     <div style={{ background: "#fff" }}>
@@ -57,8 +67,16 @@ export default function Landing() {
                 2차 대기 등록
               </Link>
             </>
+          ) : ebClosed ? (
+            <>
+              <Link href="/" className="desk-only" style={previewChip}>판매 화면 보기</Link>
+              <Link href="/?state=sold_out" style={previewChip}>완판 화면 보기</Link>
+            </>
           ) : (
-            <Link href="/?state=sold_out" style={previewChip}>완판 화면 보기</Link>
+            <>
+              <Link href="/?state=eb_closed" className="desk-only" style={previewChip}>얼리버드 마감 보기</Link>
+              <Link href="/?state=sold_out" style={previewChip}>완판 화면 보기</Link>
+            </>
           )
         }
       />
@@ -67,7 +85,7 @@ export default function Landing() {
       {ebClosed && !soldOut && banner && (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: "var(--w-deep)", color: "#fff", padding: 11, fontSize: 13, fontWeight: 700 }}>
           얼리버드 마감 — 일반가 650 RLUSD로 판매 중입니다
-          <button onClick={() => setBanner(false)} aria-label="배너 닫기" style={{ opacity: 0.5, fontSize: 15, marginLeft: 8, color: "#fff" }}>✕</button>
+          <button onClick={dismissBanner} aria-label="배너 닫기" style={{ opacity: 0.5, fontSize: 15, marginLeft: 8, color: "#fff" }}>✕</button>
         </div>
       )}
 
@@ -217,8 +235,9 @@ export default function Landing() {
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             <h2 style={h2}>제품 스펙</h2>
             <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid var(--w-deep)" }}>
-              {SPECS.map((s) => (
-                <div key={s.k} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 16, padding: "14px 4px", borderBottom: "1px solid var(--bd-card)", fontSize: 14 }}>
+              {SPECS.map((s, i) => (
+                /* 모바일: 5행 축약 (PRD §6.1) */
+                <div key={s.k} className={i >= 5 ? "desk-only" : undefined} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 16, padding: "14px 4px", borderBottom: "1px solid var(--bd-card)", fontSize: 14 }}>
                   <span style={{ fontWeight: 700, color: "var(--w-deep)" }}>{s.k}</span>
                   <span style={{ color: "var(--ink-2)" }}>{s.v}</span>
                 </div>
@@ -318,7 +337,8 @@ export default function Landing() {
             {FAQS.map((f, i) => {
               const open = faqOpen === i;
               return (
-                <div key={f.q} style={{ borderBottom: i < FAQS.length - 1 ? "1px solid var(--line)" : "none" }} className={open ? "acc-open" : ""}>
+                /* 모바일: 3문항 축약 (PRD §6.1) — 전체는 "전체 FAQ 보기"로 */
+                <div key={f.q} style={{ borderBottom: i < FAQS.length - 1 ? "1px solid var(--line)" : "none" }} className={`${open ? "acc-open" : ""}${i >= 3 ? " desk-only" : ""}`}>
                   <button onClick={() => setFaqOpen(open ? -1 : i)} aria-expanded={open}
                     style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, padding: "18px 2px", width: "100%", textAlign: "left" }}>
                     <span style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)" }}>{f.q}</span>
@@ -371,7 +391,7 @@ export default function Landing() {
         </div>
       )}
 
-      {modal && <BuyModal ebLeft={inv.ebLeft} onClose={() => setModal(false)} />}
+      {modal && <BuyModal ebLeft={inv.ebLeft} demoMismatch={demoMismatch} onClose={() => setModal(false)} />}
     </div>
   );
 }

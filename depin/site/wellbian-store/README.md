@@ -19,8 +19,12 @@ npm run build && npm start
 | `/?state=eb_closed` | 1h 얼리버드 마감 | S2 카드 전환 + 상단 배너 1회 |
 | `/?state=sold_out` | 1i 완판 | 히어로 전환 + 2차 대기 CTA · GNB 우측 「2차 대기 등록」 필 |
 
-GNB 우측은 상태형 슬롯입니다: 판매 중엔 점선 「완판 화면 보기」 미리보기 칩(데모 컨트롤 —
-실배포 시 판매 상태 머신이 대체), 완판 상태에선 `/waitlist`로 가는 「2차 대기 등록」 필 버튼.
+GNB 우측은 상태형 슬롯입니다: 판매 중엔 점선 미리보기 칩 「얼리버드 마감 보기」(데스크톱)·
+「완판 화면 보기」(데모 컨트롤 — 실배포 시 판매 상태 머신이 대체), 완판 상태에선 `/waitlist`로
+가는 「2차 대기 등록」 필 버튼.
+
+내부 데모 파라미터: `/?demo=mismatch` — 결제 스텝의 첫 서명이 mismatch(금액·주소 불일치 안내)로
+떨어지고, 재서명 시 정상 진행됩니다 (상태 머신 §6.2 mismatch 분기 재현용).
 | `/orders/[orderId]` | 1g 배송 대기 + 1l 모바일 | 결제(서명) 완료 후 이동 |
 | `/waitlist` | 2a 대기 등록 랜딩 | 이메일+지갑만 수집 |
 | `/waitlist/complete` | 2c 등록 완료 | 공유 카드(초대 코드 내장) |
@@ -61,4 +65,14 @@ GNB 우측은 상태형 슬롯입니다: 판매 중엔 점선 「완판 화면 �
 vercel --prod
 ```
 
-루트 디렉터리를 `depin/site/wellbian-store`로 지정. 환경 변수 불필요(전부 목).
+루트 디렉터리를 `depin/site/wellbian-store`로 지정. 환경 변수 없이 동작(전부 목값)하며,
+설정 시 다음이 화면·어댑터에 반영됩니다: `NEXT_PUBLIC_RECEIVE_ADDRESS` `NEXT_PUBLIC_DEST_TAG`
+`NEXT_PUBLIC_XRPL_NETWORK=mainnet|testnet`.
+
+## 의도적으로 남긴 항목 (PRD 대비)
+
+- **i18n 키 분리(§9)**: KO/EN 토글 UI만 존재. 카피가 컴포넌트에 한국어로 인라인되어 있어
+  EN 착수 시 키 추출 작업 필요 — PRD도 "EN 번역은 추후"로 명시.
+- **Pretendard self-host(§11 권장)**: 현재 CDN 로드. 배포 안정화 시 `next/font/local` 전환 권장.
+- **teaser / waitlist_open 화면**: enum·목데이터에는 존재하나 전용 화면은 디자인 레퍼런스에
+  없어 미제작 (?state=로도 진입 불가).
