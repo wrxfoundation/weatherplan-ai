@@ -115,7 +115,7 @@ export default async function OrderPage({ params }: { params: Promise<{ orderId:
           <div style={{ display: "flex", gap: 12, border: "1px solid var(--bd-card)", borderRadius: 12, padding: "14px 18px", fontSize: 13, lineHeight: 1.7, color: "var(--ink-4)", alignItems: "flex-start" }}>
             <span style={{ flex: "none", marginTop: 2 }}><Mail size={16} /></span>
             <span>
-              <b style={{ color: "var(--ink-2)" }}>배송 접수는 이렇게 진행됩니다.</b> 발송 전에 공식 텔레그램·X로 접수 폼을 알려드립니다 → 폼에 <b style={{ color: "var(--ink-2)" }}>배송 접수 코드와 배송지</b>를 입력하면 순서대로 발송합니다. 배송에 필요한 정보만 받고, <b style={{ color: "var(--ink-2)" }}>배송이 끝나면 파기</b>합니다. 정품 등록용 리딤코드는 박스 안 카드에 있습니다.
+              <b style={{ color: "var(--ink-2)" }}>배송 접수는 이렇게 진행됩니다.</b> 디바이스 발송 2주 전부터 공식 텔레그램·X로 접수 폼을 알려드립니다 → 폼에 <b style={{ color: "var(--ink-2)" }}>배송 접수 코드와 배송지</b>를 입력하면 순서대로 발송합니다. 배송에 필요한 정보만 받고, <b style={{ color: "var(--ink-2)" }}>배송이 끝나면 파기</b>합니다. 정품 등록용 리딤코드는 박스 안 카드에 있습니다.
             </span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, border: "1px solid var(--bd-card)", borderRadius: 12, padding: "14px 18px", fontSize: 13, color: "var(--ink-4)", flexWrap: "wrap" }}>

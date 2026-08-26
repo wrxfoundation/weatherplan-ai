@@ -174,7 +174,7 @@ export default function BuyModal({
             <span style={{ flex: "none", marginTop: 2 }}><Clock /></span>
             <span>
               <b style={{ color: "var(--w-deep)" }}>이 사이트는 주소·연락처를 받지 않습니다.</b><br />
-              발송 전에 공식 텔레그램·X로 배송 접수 폼을 알려드립니다. 폼에 <b style={{ color: "var(--w-deep)" }}>배송 접수 코드</b>(결제 후 발급)와 배송지만 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
+              디바이스 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 알려드립니다. 폼에 <b style={{ color: "var(--w-deep)" }}>배송 접수 코드</b>(결제 후 발급)와 배송지만 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
             </span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
