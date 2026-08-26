@@ -112,10 +112,10 @@ export const TIERS = [
 ];
 
 export const MISSIONS: Mission[] = [
-  { key: "join", title: "대기 등록 완료", tickets: "+10장", note: "필수 미션", verify: "system", done: true },
-  { key: "share", title: "소식 공유 — 공유 카드 발행", tickets: "+6장", note: "", verify: "system", done: true },
-  { key: "community", title: "커뮤니티 참여 (텔레그램)", tickets: "+5장", note: "", verify: "system", done: true },
-  { key: "invite", title: "친구 초대 — 성사 2명", tickets: "+10장", note: "5장/명 · 상한 10명", verify: "system", done: true },
+  { key: "join", title: "대기 등록 완료", tickets: "+10장", note: "필수 · 가장 큰 배점", verify: "system", done: true },
+  { key: "share", title: "소식 공유 — 공유 카드 발행", tickets: "+6장", note: "공유 링크로 유입 추적", verify: "system", done: true },
+  { key: "community", title: "커뮤니티 참여 (텔레그램)", tickets: "+5장", note: "순번 점수 +20점 함께", verify: "system", done: true },
+  { key: "invite", title: "친구 초대 — 성사 2명", tickets: "+10장", note: "5장/명 · 상한 10명 · 순번 점수 함께", verify: "system", done: true },
   { key: "daily", title: "매일 방문 — 오늘 출석", tickets: "+1장", note: "1장/일", verify: "system", done: true },
   { key: "x_follow", title: "X 팔로우", tickets: "+3장", note: "", verify: "self", done: true },
   { key: "kw_app", title: "케이웨더 앱 설치", tickets: "+5장", note: "", verify: "match", done: false },
@@ -177,6 +177,12 @@ export const RECEIVE_ADDRESS = process.env.NEXT_PUBLIC_RECEIVE_ADDRESS ?? "rWLB9
 export const DEST_TAG = process.env.NEXT_PUBLIC_DEST_TAG ?? "908211";
 export const XRPL_NETWORK = process.env.NEXT_PUBLIC_XRPL_NETWORK ?? "testnet"; // 실지갑 어댑터 연결 시 사용
 
+/* 확정 설명 카피 (기획서 「화면에 쓰는 설명 문구」) */
+export const COPY_TICKETS = "많을수록 가장 먼저 구매하는 그룹에 뽑힐 확률이 올라갑니다";
+export const COPY_SCORE = "점수가 높을수록 먼저 구매하는 그룹에 들어갑니다";
+export const COPY_DUAL =
+  "점수는 확실하게 자리를 정하고, 응모권은 확률을 올립니다 — 추첨에서 떨어지셔도 점수는 그대로 남아 A 또는 B 그룹으로 이어집니다.";
+
 /* 고지 문구 (필수 노출, PRD §6.5) */
 export const NOTICE_SELF_CHECK =
   "팔로우·구독 미션의 완료 여부는 직접 체크하시는 방식이며, 사실과 다른 경우 해당 응모권은 인정되지 않습니다.";
@@ -185,3 +191,5 @@ export const NOTICE_ABUSE =
 export const NOTICE_CARRYOVER =
   "1차 사전신청 점수·응모권은 이월됩니다(1차 구매 완료자는 별도 트랙).";
 export const NOTICE_REWARD = "지급량·가치는 보장되지 않습니다";
+export const NOTICE_TICKET_CAP = "한 사람이 모을 수 있는 응모권에는 총량 상한이 있습니다.";
+export const NOTICE_INVITE_VERIFY = "초대받은 분의 본인확인 완료 시 인정됩니다.";

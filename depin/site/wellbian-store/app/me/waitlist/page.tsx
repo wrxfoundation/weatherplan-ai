@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Check } from "@/components/icons";
 import {
-  MISSIONS, MOCK_WAITLIST_ME, NOTICE_ABUSE, NOTICE_SELF_CHECK, VERIFY_LABEL, SCORE_ROWS, fmt,
+  MISSIONS, MOCK_WAITLIST_ME, NOTICE_ABUSE, NOTICE_INVITE_VERIFY, NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, VERIFY_LABEL, SCORE_ROWS, fmt,
 } from "@/lib/data";
 import type { Mission } from "@/lib/data";
 
@@ -65,7 +65,7 @@ export default function MissionDashboard() {
               <span style={{ fontSize: 34, fontWeight: 800, color: "var(--w-main)" }}>{tickets}</span>
               <span style={{ fontSize: 14, fontWeight: 700, color: "var(--ink-4)" }}>장</span>
             </div>
-            <span style={{ fontSize: 12, color: "var(--hint)" }}>추첨 1,000명 · 응모권 가중</span>
+            <span style={{ fontSize: 12, color: "var(--hint)" }}>추첨 1,000명 · 응모권 가중 · 1인 총량 상한</span>
           </div>
 
           <div style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 6 }}>
@@ -138,7 +138,7 @@ export default function MissionDashboard() {
                 )}
               </div>
             ))}
-            <div style={{ padding: "13px 2px", fontSize: 11.5, lineHeight: 1.6, color: "var(--hint)" }}>{NOTICE_SELF_CHECK}</div>
+            <div style={{ padding: "13px 2px", fontSize: 11.5, lineHeight: 1.6, color: "var(--hint)" }}>{NOTICE_SELF_CHECK} {NOTICE_TICKET_CAP}</div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -153,7 +153,7 @@ export default function MissionDashboard() {
               <span style={{ fontSize: 12, lineHeight: 1.6, color: "var(--ink-4)" }}>
                 성사 1명 = 응모권 +5장 · 순번 점수 반영 · <b style={{ color: "var(--ink-2)" }}>초대 {10 - me.invitedOk}명 남음</b>
               </span>
-              <span style={{ fontSize: 11, lineHeight: 1.6, color: "var(--hint)" }}>{NOTICE_ABUSE}</span>
+              <span style={{ fontSize: 11, lineHeight: 1.6, color: "var(--hint)" }}>{NOTICE_INVITE_VERIFY} {NOTICE_ABUSE}</span>
             </div>
 
             {/* 일정 */}
