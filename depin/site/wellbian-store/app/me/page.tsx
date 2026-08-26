@@ -48,7 +48,8 @@ export default function MePage() {
         </div>
       </header>
 
-      <main className="dash-pad" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <main className="dash-pad">
+        <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         {/* 타이틀 행 */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 12, flexWrap: "wrap" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -199,6 +200,7 @@ export default function MePage() {
               이용자 보호 센터 · 1:1 문의<ChevR size={14} color="var(--dis)" />
             </div>
           </div>
+        </div>
         </div>
       </main>
     </div>

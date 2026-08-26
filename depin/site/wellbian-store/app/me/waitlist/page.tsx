@@ -52,11 +52,15 @@ export default function MissionDashboard() {
 
       {/* 재산정 스트립 */}
       <div className="tint-strip" style={{ background: "var(--w-tint)", fontSize: 12.5, color: "var(--ink-2)" }}>
-        <span><b style={{ color: "var(--w-main)" }}>중간 점수 재계산 완료(9월 중 1회)</b> — 지금 순위가 반영되어 있습니다 · 최종 확정은 9/30 마감 때</span>
-        <span style={{ color: "var(--cap)" }}>추첨 방식 공개: 9/30 마감 전</span>
+        <div className="strip-in">
+          <span><b style={{ color: "var(--w-main)" }}>중간 점수 재계산 완료(9월 중 1회)</b> — 지금 순위가 반영되어 있습니다 · 최종 확정은 9/30 마감 때</span>
+          <span style={{ color: "var(--cap)" }}>추첨 방식 공개: 9/30 마감 전</span>
+        </div>
       </div>
 
-      <main className="dash-pad" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* PC: 메인과 동일하게 1080px 중앙 컨테이너 */}
+      <main className="dash-pad">
+        <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         {/* 상단 3카드 */}
         <div className="dash-top">
           <div style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 6 }}>
@@ -163,6 +167,7 @@ export default function MissionDashboard() {
               <div style={{ display: "flex", justifyContent: "space-between" }}><span>2차 판매 오픈</span><b style={{ color: "var(--w-main)" }}>10/3 S→A→B→일반</b></div>
             </div>
           </div>
+        </div>
         </div>
       </main>
     </div>
