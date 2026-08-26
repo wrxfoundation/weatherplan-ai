@@ -257,7 +257,7 @@ export default function Landing() {
                 </div>
               ))}
             </div>
-            <div style={{ fontSize: 12, color: "var(--hint)" }}>＊ 표기 값은 샘플이며, 확정 스펙은 인증서 기준으로 반영 예정입니다.</div>
+            <div style={{ fontSize: 12, color: "var(--hint)" }}>제조사 공식 사양표 기준입니다.</div>
           </div>
         </div>
       </section>
