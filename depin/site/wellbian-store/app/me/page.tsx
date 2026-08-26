@@ -206,7 +206,7 @@ export default function MePage() {
               {en ? "Setup guide · FAQ" : "연동 가이드 · FAQ"}<ChevR size={14} color="var(--dis)" />
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 700, color: "var(--ink-2)" }}>
-              {en ? "User protection center · Contact us" : "이용자 보호 센터 · 1:1 문의"}<ChevR size={14} color="var(--dis)" />
+              {en ? "Contact us" : "1:1 문의"}<ChevR size={14} color="var(--dis)" />
             </div>
           </div>
         </div>

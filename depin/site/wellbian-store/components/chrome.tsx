@@ -112,8 +112,8 @@ export function CommunityFooter() {
           </div>
           <nav style={{ display: "flex", gap: 20, fontSize: 12.5, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
             {en
-              ? <><span>Terms of Service</span><span>Refund Policy</span><span>Privacy Policy</span><span>User Protection Center</span></>
-              : <><span>이용약관</span><span>환불 약관</span><span>개인정보처리방침</span><span>이용자 보호 센터</span></>}
+              ? <><span>Terms of Service</span><span>Refund Policy</span><span>Privacy Policy</span></>
+              : <><span>이용약관</span><span>환불 약관</span><span>개인정보처리방침</span></>}
           </nav>
         </div>
         <div style={{ fontSize: 11.5, color: "rgba(255,255,255,.35)" }}>
