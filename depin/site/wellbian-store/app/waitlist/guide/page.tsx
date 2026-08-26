@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { SubHeader } from "@/components/chrome";
 import {
   A_CUTLINE, COPY_DUAL, COPY_SCORE, COPY_TICKETS,
-  NOTICE_SELF_CHECK, NOTICE_TICKET_CAP,
+  NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, WAITLIST_ENABLED,
 } from "@/lib/data";
 
 /* 2차 응모·순번 안내 서브페이지 — 로직 3단 + 그룹별 참여 예시 4종 (가상 인물) */
@@ -63,6 +64,7 @@ function PersonaCard({
 }
 
 export default function WaitlistGuidePage() {
+  if (!WAITLIST_ENABLED) redirect("/");
   return (
     <div style={{ minHeight: "100vh", background: "var(--panel)" }}>
       <SubHeader right={<span style={{ fontSize: 12.5, color: "var(--cap)" }}>2차 응모·순번 안내</span>} />

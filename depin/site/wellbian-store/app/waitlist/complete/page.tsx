@@ -3,11 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { redirect } from "next/navigation";
 import { SubHeader } from "@/components/chrome";
 import { Check, TgIcon, XIcon } from "@/components/icons";
-import { LINKS, MOCK_WAITLIST_ME } from "@/lib/data";
+import { LINKS, MOCK_WAITLIST_ME, WAITLIST_ENABLED } from "@/lib/data";
 
 export default function WaitlistCompletePage() {
+  if (!WAITLIST_ENABLED) redirect("/");
   const [copied, setCopied] = useState(false);
   const code = MOCK_WAITLIST_ME.inviteCode;
 

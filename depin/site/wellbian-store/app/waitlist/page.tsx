@@ -2,13 +2,13 @@
 /* 2a 2차 대기 등록 랜딩 — 이메일 + 지갑만 (개인정보 최소화, PRD §6.4) */
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 import { ChevR } from "@/components/icons";
 import WaitlistInfoChip from "@/components/WaitlistInfo";
 import {
   COPY_DUAL, COPY_SCORE, COPY_TICKETS,
-  NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, TIERS,
+  NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, TIERS, WAITLIST_ENABLED,
 } from "@/lib/data";
 
 /* 배점 칩 — 줄글 나열 대신 스캔 가능한 형태 (모바일 가독) */
@@ -30,6 +30,7 @@ function Chip({ label, value, accent }: { label: string; value: string; accent?:
 }
 
 export default function WaitlistPage() {
+  if (!WAITLIST_ENABLED) redirect("/");
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [wallet, setWallet] = useState(false);

@@ -185,6 +185,10 @@ export const DEST_TAG = process.env.NEXT_PUBLIC_DEST_TAG ?? "908211";
 export const XRPL_NETWORK = process.env.NEXT_PUBLIC_XRPL_NETWORK ?? "testnet"; // 실지갑 어댑터 연결 시 사용
 
 /* 확정 설명 카피 (기획서 「화면에 쓰는 설명 문구」) */
+/* 2차 이벤트(대기·미션·응모권) 전체 HIDE — 소식 채널만 운영 (8/26 내부 결정).
+   코드·설계는 보존: 재개 시 이 플래그만 true로. */
+export const WAITLIST_ENABLED = false;
+
 /* B그룹 리저브 — 그룹 몫 최소 보장 물량 (부스 물량 연동 조정은 내부 정책, 공표 후 하향 금지) */
 export const B_RESERVE = 1000;
 

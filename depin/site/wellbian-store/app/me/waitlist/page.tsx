@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { redirect } from "next/navigation";
 import { Check } from "@/components/icons";
 import WaitlistInfoChip from "@/components/WaitlistInfo";
 import {
-  MISSIONS, MOCK_WAITLIST_ME, NOTICE_ABUSE, NOTICE_INVITE_VERIFY, NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, VERIFY_LABEL, SCORE_ROWS, fmt,
+  MISSIONS, MOCK_WAITLIST_ME, NOTICE_ABUSE, NOTICE_INVITE_VERIFY, NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, VERIFY_LABEL, SCORE_ROWS, WAITLIST_ENABLED, fmt,
 } from "@/lib/data";
 import type { Mission } from "@/lib/data";
 
@@ -16,6 +17,7 @@ const TICKET_VALUE: Record<string, number> = {
 };
 
 export default function MissionDashboard() {
+  if (!WAITLIST_ENABLED) redirect("/");
   const me = MOCK_WAITLIST_ME;
   const [missions, setMissions] = useState<Mission[]>(MISSIONS);
   const [copied, setCopied] = useState(false);

@@ -10,7 +10,6 @@ import {
 } from "@/lib/data";
 import { Gnb, CommunityFooter } from "./chrome";
 import BuyModal from "./BuyModal";
-import WaitlistInfoChip from "./WaitlistInfo";
 import { XIcon, TgIcon, ChevD, Shield, ShieldCheck, Gauge, Coin, Warn, ChevR } from "./icons";
 
 export default function Landing() {
@@ -58,16 +57,15 @@ export default function Landing() {
       <Gnb
         dday={soldOut ? undefined : "D-12"}
         right={<>
-          <WaitlistInfoChip deskOnly />
           {soldOut ? (
             <>
               <Link href="/" className="desk-only" style={previewChip}>판매 화면 보기</Link>
-              <Link
-                href="/waitlist"
+              <a
+                href={LINKS.telegram} target="_blank" rel="noopener"
                 style={{ display: "inline-flex", background: "var(--w-main)", color: "#fff", fontSize: 12.5, fontWeight: 800, borderRadius: 9, padding: "8px 14px", textDecoration: "none" }}
               >
-                2차 대기 등록
-              </Link>
+                소식 받기
+              </a>
             </>
           ) : ebClosed ? (
             <>
@@ -111,17 +109,14 @@ export default function Landing() {
                 <div className="track on-dark" style={{ height: 8 }}><i style={{ width: "100%" }} /></div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                <Link href="/waitlist" style={{ display: "inline-flex", background: "#fff", color: "var(--w-deep)", fontSize: 15.5, fontWeight: 800, borderRadius: 12, padding: "16px 28px", textDecoration: "none" }}>
-                  2차 대기 등록
-                </Link>
-                <a href={LINKS.telegram} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 700, borderRadius: 12, padding: "15px 18px", textDecoration: "none" }}>
+                <a href={LINKS.telegram} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, background: "#fff", color: "var(--w-deep)", fontSize: 15, fontWeight: 800, borderRadius: 12, padding: "16px 24px", textDecoration: "none" }}>
                   <TgIcon size={15} /> 텔레그램 소식 받기
                 </a>
                 <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 700, borderRadius: 12, padding: "15px 20px", textDecoration: "none" }}>
                   <XIcon size={14} /> X 소식 받기
                 </a>
               </div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,.45)" }}>대기 등록 시 다음 회차 오픈을 이메일로 안내드립니다</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,.45)" }}>공식 텔레그램과 X에서 2차 판매 소식을 가장 먼저 알려드립니다</div>
             </div>
             <DeviceRender />
           </div>
