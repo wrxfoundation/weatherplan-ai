@@ -26,7 +26,7 @@
 |---|---|---|---|---|---|---|
 | 8/22(토) | 원글 스레드 | 파리 CDG 센서 조작 — 검증이 가치 | T1/T2+소스답글 | **게시됨** | (기입 대기) | (기입 대기) |
 | 8/22(토) | 원글 스레드 | 지도는 현관에서 끊긴다 | T1/T2+체인답글 | **게시됨** | (기입 대기) | (기입 대기) |
-| 8/22(토) | 답글 | @WrathofKahneman — 신용 딜 스레드 | A안 (Credit follows evidence) | 제안 → 게시 여부 미기입 | | |
+| 8/22(토) | 답글 | @WrathofKahneman — 신용 딜 스레드 | A안 (Credit follows evidence) | **게시됨 (8/25 서우 일괄 확인)** | (기입 대기) | (기입 대기) |
 | 8/22(토) | 답글 | @0xQuantic — 플레어 아키텍처 | A안 (reality on-chain) | 제안 → 게시 여부 미기입 | | |
 | 8/22(토) | 답글 | @Xfinancebull — 일본 SBI 인프라 | A안 (Japan–Korea corridor) | 제안 → 게시 여부 미기입 | | |
 | 8/22(토) | 답글 | @bgarlinghouse — CFTC 자문위 | A안 (Watching from Asia) | 제안 → 게시 여부 미기입 | | |
@@ -48,7 +48,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | 우선순위 | 항목 | 권장 시점 |
 |---|---|---|
 | 1 | @TheCryptoSquire 답글 — 에너지 효율 A안 ("shouldn't cost the air") | 일(8/23) 오전 |
-| 2 | @WKahneman Fordefi 글 답글 — 기관 커스터디 A안 | 일(8/23) — 계정당 하루 1회 준수 (8/22 신용딜 답글과 분리) |
+| ~~2~~ | ~~@WKahneman Fordefi 글 답글~~ → **게시 완료 (8/25 서우 일괄 확인 — "WKahneman 댓글 완료", 신용딜과 함께 소급 기입. URL 기입 대기)** | — |
 | 3 | ~~침실 CO₂ 스레드~~ → **게시 완료 (8/23)** | — |
 | 3b | (예비) "매일 마시는 14kg" — 지도 편과 계열 중복이라 보류, 주중 간격 두고 재사용 가능 | 보류 |
 | ~~0~~ | ~~@Ripple x402 답글~~ → **게시 완료 (8/23)** | — |
@@ -67,7 +67,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | ~~2i~~ | @BankXRP 리플 프라임 IG 채권 답글 — **계정 확인 → ✅ 확정**(신선·정확·증거 첨부·무CTA), "credit follows evidence" 변주 + 매출채권 복선 라인. 오늘 3번째 답글 슬롯(상한 내) | **즉시 (8/23)** — 게시 시 완료 마킹 |
 | **2o** | **@dazzlingxrpl 수정안 프로세스 교육 글(XRPScan PD 대시보드 소개) 답글 — ✅ 제안(8/25)**: 셀프 증언 앵글("xrpscan is the explorer our node wallet links to by default" — 플랫폼 실구현 사실) + PD 추적 보론 + "slow on purpose. That's the feature." 마무리. rootveg444 PD 답글(8/23) 후속 축, XRPScan 중립 익스플로러라 배서 리스크 없음 | 화(8/25) 낮 — 2k와 병행 가능, 게시 시 완료 마킹 |
 | **2p** | **@Ripple RLUSD $2B 마일스톤 공식 글 답글 — ✅ 최우선(8/25)**. 원출처 공식 계정 + "real-world utility / enterprise use cases" 문구 = 구멍 정통(우리가 실사례). 시세 아님(스테이블 공급 = 채택 지표). **A안(추천, 판매자 증언)**: "이번 주 환불 약관 작성" 앵글 — RLUSD 정산 사실 첫 소프트 공개, 금 5e와 예열→완결 세트(답글 = 통화 안정성 축 / 5e = 사용 증거 축으로 분리, 중복 아님). **B안(무공개 예비)**: XRPL 네이티브 $1B 유동성 관찰형. **8/25 스크립트 재구성 v2(서우 지시): A-1 = ①마일스톤 인정 ②환불 조항 증언 ③클로징 "Real-world utility shows up as shorter paperwork"(시그니처 승격 후보) + T2 타래 확장(구매자 쪽 대구 — FX 리스크 무부담, "every clause downstream gets shorter") — T1+T2 타래로 게시.** 금지: 가격 숫자(450/650)·제품명·날짜·"stablecoin/coin" 단어. 9/8 원글(대기열 6)의 예열 — 시그니처("주차하지 않는다")는 원글용 온존, 답글에서 소진 금지. 5e 소재(NFT 발급=증거)도 미소진 확인 | 화(8/25) 즉시 — 리플 직전 답글 8/23이라 계정당 1일 1답글 충족, 오늘 답글 상한 내 최우선 배치 |
-| **2q** | **@WKahneman Xago×OpenPayd 답글 — ✅ 제안(8/25)**: 남아공 XRPL 게이트웨이 Xago가 OpenPayd(BaaS)와 파트너십 — 신흥시장 코리도어 기관 유동성. 검증된 분석가 계정(신용딜·Fordefi 기제안 이력, 둘 다 게시 미기입 — 서우 확인), 하이프 0. 앵글: **시퀀싱 지목형** — "수년 운영한 오퍼레이터에게 뱅킹 레일이 찾아온 것"(트윗 내 사실만 사용, 독립 검증 불가 단서). 클로징 "Quiet compounding beats loud launches."(시그니처 후보). **원글 4 제목구("assembles quietly")·페그 리스트는 미소진 유지** | **수(8/26) 낮** — 수 저녁 원글 4의 예열→완결 세트(2j 패턴). 오늘은 2p 리플 최우선이라 슬롯 양보 |
+| **2q** | **@WKahneman Xago×OpenPayd 답글 — ✅ 제안(8/25)**: 남아공 XRPL 게이트웨이 Xago가 OpenPayd(BaaS)와 파트너십 — 신흥시장 코리도어 기관 유동성. 검증된 분석가 계정, 하이프 0. **기제안 2건(신용딜·Fordefi) 게시 확인됨(8/25) → 2q는 3번째 접점 = 관계 자산 진행 중인 계정.** 앵글: **시퀀싱 지목형** — "수년 운영한 오퍼레이터에게 뱅킹 레일이 찾아온 것"(트윗 내 사실만 사용, 독립 검증 불가 단서). 클로징 "Quiet compounding beats loud launches."(시그니처 후보). **원글 4 제목구("assembles quietly")·페그 리스트는 미소진 유지** | **수(8/26) 낮** — 수 저녁 원글 4의 예열→완결 세트(2j 패턴). 오늘은 2p 리플 최우선이라 슬롯 양보 |
 | 4 | 원글: "The enterprise stack assembles quietly" (집계형, 뉴스 페그) — **최신 페그 편입(8/25): Xago×OpenPayd 신흥시장 코리도어**(ecosystem-log). 기존 축적 페그: 전북은행·Ripple Prime IG채권·Ripple Treasury $13T·ankr 기관 RPC·3.3.0 엔터프라이즈 프리미티브 4종·JPM XRPL 토큰화국채 실증(5월)·업비트 RLUSD — 원고 작성 시 ecosystem-log에서 재구성 | **수(8/26) 저녁 — 페그 마지막 신선 창** |
 | 5 | 원글: 컨셉 다이어그램 "검증 루프" (구 손그림 "Why WELLBIAN Is Different" — 8/24 스타일 전면 개정: 글라스모피즘+로우폴리, 제품명 비공개 방침으로 브랜드명 제거) `depin/content/why-wellbian-different.md`에 영구 저장 | 이미지 완성 후, 수~목 (제품명 없어 시점 유연) |
 | ~~5b~~ | ~~원글: "래퍼 vs 원장"~~ → **게시 완료 (8/25)** — 반응 관찰: "a story with a ticker" 시그니처 승격 후보, 포켓몬 RWA 후속 답글 소재 대기 | — |
