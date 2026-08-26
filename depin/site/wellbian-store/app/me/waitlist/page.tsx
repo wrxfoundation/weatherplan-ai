@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Check } from "@/components/icons";
+import WaitlistInfoChip from "@/components/WaitlistInfo";
 import {
   MISSIONS, MOCK_WAITLIST_ME, NOTICE_ABUSE, NOTICE_INVITE_VERIFY, NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, VERIFY_LABEL, SCORE_ROWS, fmt,
 } from "@/lib/data";
@@ -45,6 +46,7 @@ export default function MissionDashboard() {
           <Image src="/assets/wb-black.png" alt="wellbian" width={100} height={20} style={{ height: 20, width: "auto" }} />
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12.5, color: "var(--ink-4)" }}>
+          <WaitlistInfoChip />
           <span className="mono desk-only" style={{ background: "var(--sec-alt)", borderRadius: 8, padding: "6px 10px" }}>rWLB9…kQ2f</span>
           <span>대기번호 <b style={{ color: "var(--w-deep)" }}>#{fmt(me.queueNo)}</b></span>
         </div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ChevR } from "@/components/icons";
+import WaitlistInfoChip from "@/components/WaitlistInfo";
 import {
   COPY_DUAL, COPY_SCORE, COPY_TICKETS,
   NOTICE_CARRYOVER, NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, TIERS,
@@ -56,6 +57,7 @@ export default function WaitlistPage() {
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 12, color: "var(--cap)" }} className="desk-only">2차 판매 10/3 오픈</span>
+          <WaitlistInfoChip />
           <a href="#register" className="btn-main" style={{ fontSize: 13, borderRadius: 9, padding: "9px 16px", color: "#fff", textDecoration: "none" }}>대기 등록</a>
         </div>
       </header>

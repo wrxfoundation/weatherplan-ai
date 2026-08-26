@@ -10,6 +10,7 @@ import {
 } from "@/lib/data";
 import { Gnb, CommunityFooter } from "./chrome";
 import BuyModal from "./BuyModal";
+import WaitlistInfoChip from "./WaitlistInfo";
 import { XIcon, TgIcon, ChevD, Shield, ShieldCheck, Gauge, Coin, Warn, ChevR } from "./icons";
 
 export default function Landing() {
@@ -56,8 +57,9 @@ export default function Landing() {
       {/* GNB 우측 상태형 슬롯: 판매 중 = 완판 화면 미리보기 칩 / 완판 = 2차 대기 CTA */}
       <Gnb
         dday={soldOut ? undefined : "D-12"}
-        right={
-          soldOut ? (
+        right={<>
+          <WaitlistInfoChip deskOnly />
+          {soldOut ? (
             <>
               <Link href="/" className="desk-only" style={previewChip}>판매 화면 보기</Link>
               <Link
@@ -77,8 +79,8 @@ export default function Landing() {
               <Link href="/?state=eb_closed" className="desk-only" style={previewChip}>얼리버드 마감 보기</Link>
               <Link href="/?state=sold_out" style={previewChip}>완판 화면 보기</Link>
             </>
-          )
-        }
+          )}
+        </>}
       />
 
       {/* 1h 얼리버드 마감 배너 (1회성) */}
