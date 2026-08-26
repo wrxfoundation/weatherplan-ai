@@ -225,6 +225,18 @@
   계승 — 케이웨더 유튜브 3·인스타 2·앱 5 낙수 미션 포함)**, S/A·B/일반 우선권 3카드("떨어져도
   잃지 않음"·시드 공개), 일정 타임라인(~9/30 마감 → 10/1 추첨 → 10/3 오픈), 마감 실시간 D-day.
   Playwright QA로 [hidden] 전역 충돌 수정. zip v0.2 + 캡처 2장 전달
+- **★ Next.js 풀 구현 v1.0 (8/26, 서우 "README대로 Next.js로 구현") — `depin/site/wellbian-store/`** —
+  디자이너 핸드오프 번들(UI_mockups_project_1.zip: PRD §0~13 + 디자인 HTML 1327줄 + 스크린샷
+  18장)을 소스 오브 트루스로 픽셀 이식. Next.js 16(App Router·React 19·Tailwind v4·TS), 라우트
+  7개(`/` 판매 랜딩 S0~S9 + `?state=eb_closed|sold_out` 엣지 · `/orders/[orderId]` 배송 대기 ·
+  `/waitlist`+`/waitlist/complete` 2차 대기 · `/me/waitlist` 미션 대시보드 · `/me` 마이페이지)
+  + 구매 모달 5스텝 상태머신(수량→지갑 목 어댑터 3종→배송·이메일→약관→RLUSD 결제, 20분 홀드
+  타이머·서명→주문 페이지 이동) + 목 API 8종(route.ts — 재고/홀드/확정/주문/대기/미션/me).
+  디자인 토큰 CSS 변수화(시안02 Teal = `data-theme` 한 줄 전환), 공식 렌더 webp, 표기 규칙
+  §5 준수(4,900 비공표·구매하기 통일·보상 비보장 문구). `npm run build` 통과(13 라우트) +
+  Playwright 실캡처 QA 18장 레퍼런스 대조 — 결함 2건 수정(desk/mob-only 토글이 인라인 display에
+  패배 → 미디어쿼리 !important 방식 교체 · QA 중 구서버 잔존이 리빌드 청크 500 유발 → fuser 정리).
+  zip 전달. 배포 = Vercel 루트 `depin/site/wellbian-store`, 실서버 연동 지점은 README 표기
 
 ### 법무·재무 — 차주 보고 대상
 - **변리사 전달용 사업계획서(Weather Data Economy, 팀원 작성) 검토 (8/25, 서우 의뢰)** — 골격
