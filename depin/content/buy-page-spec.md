@@ -146,17 +146,40 @@ glassmorphism on cards, modern fintech premium aesthetic, crisp UI
 design portfolio quality, 16:9
 ```
 
-**B. 풀페이지 스크롤 목업 (세로 3:4)** — A의 스타일 문장 유지, 구성만 교체:
+**B. 풀페이지 스크롤 목업 (완전판, 9:16 — 잘리면 3:4로)**
 
 ```
-...same style... A tall full-page scroll mockup of the landing page,
-vertical composition: hero with the attached product photo → two
-pricing cards → a specification table block of thin placeholder
-rows → a horizontal 5-step stepper with small rounded icons → three
-accordion FAQ rows → a dark navy footer band with placeholder
-columns. All text as grey placeholder bars only, no readable words,
-no logos, 3:4
+Premium e-commerce landing page UI design mockup, a tall full-page
+scroll view of one website laid out top to bottom as a single flat
+design sheet, light theme. Background near-white with a very subtle
+lavender tint (#ededfa); accent used sparingly: vivid blue-violet
+(#4d4dce) for buttons and highlights, dark navy (#1b1b48) for
+placeholder headline bars. From top to bottom:
+(1) minimal navigation bar with a small abstract logo placeholder,
+grey menu bars and one violet pill button at the front;
+(2) hero — bold navy headline placeholder bars, a violet CTA pill,
+a slim violet progress bar about one-third filled, and the attached
+product photo on a soft glowing pedestal at the right — reproduce
+the attached device exactly, do not redesign it;
+(3) two pricing cards side by side, the left one with a violet
+outline highlight and a small badge shape;
+(4) a specification block: a clean table of thin grey placeholder
+rows with a small product thumbnail;
+(5) a horizontal 5-step stepper with small rounded icon circles
+connected by a thin line;
+(6) three stacked accordion rows with chevron marks;
+(7) a community block with two small social-post cards and one
+violet outline button;
+(8) a dark navy footer band with three columns of placeholder bars.
+All text rendered as clean grey placeholder bars only — no readable
+words, no letters, no numbers, no real logos. Generous white space,
+soft rounded corners, subtle glassmorphism on cards, modern fintech
+premium aesthetic, crisp UI design portfolio quality, tall vertical
+composition, 9:16
 ```
+
+- B 전용 리롤: ① 섹션 6개 미만 병합·중복 생성 시 리롤(세로 구도 흔한 실패) ② 제품 사진은
+  히어로 1회만(스펙 썸네일 허용) — 반복 등장 시 리롤.
 
 **C. 모바일 (9:16)** — 하단 스티키 구매 바 포함:
 
