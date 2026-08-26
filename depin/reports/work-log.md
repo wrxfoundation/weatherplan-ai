@@ -82,6 +82,13 @@
   ① 시안01·02 메인/서브 스와치의 "RGB : R00 G174 B239" 표기가 전부 동일 = 템플릿 오기(Web Color
   값이 정답) ② 시안02 설명문이 시안01 문구 복붙("메인 컬러 Wellbian Violet은..."). 시안01/02 최종
   선택 공식 확인 1건(대화 맥락상 01 적용 중)
+- **★ 슬로건 확정 (8/25, 서우 — 시안 2안 중 우측 채택)**: 메인 라인 **"Weather Data Economy"** +
+  서브 **"Turn Your Weather into Value"** (+ wellbian 로고). 좌측안 "Your Weather Data Becomes
+  Your Asset."은 **탈락 + 대외 재사용 금지 등재** — "Asset"이 금융자산·투자 뉘앙스로 수익 프레임
+  인접(스피치 규칙 충돌), "Value"는 유틸리티 결이라 안전하고 동사형("Turn ... into")이라 능동적.
+  적용 위치 = 패키지 측면 패널(시안 레이아웃 추정 — 인쇄 8/28 확정과 연동). 기존 "We Air You"
+  (엔드 타이포)·"Making invisible air visible"(1차 시범)과의 위계 정리 1건: Weather Data Economy
+  = 카테고리 선언(패키지·대외), We Air You = 클로징 시그니처로 병존 권장
 
 ### 차주(W35) 예정 큐
 - (완료 8/24) **투자자용 1페이저 「출발점의 차이」 docx** — 8행 대조표(약속 vs 현존), 용어 각주,
