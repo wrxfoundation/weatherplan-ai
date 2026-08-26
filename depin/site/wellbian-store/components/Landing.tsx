@@ -284,7 +284,7 @@ export default function Landing() {
       <section className="sec-pad" style={{ background: "var(--sec-alt)" }} id="setup">
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
-            <h2 style={h2}>도착 후 3분이면 노드가 됩니다</h2>
+            <h2 style={h2}>디바이스 도착 후 3분이면 노드가 됩니다</h2>
             <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝.</p>
           </div>
           <div className="link-grid">
