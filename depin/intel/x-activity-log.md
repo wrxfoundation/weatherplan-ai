@@ -390,6 +390,18 @@ XRPL 지원 현황 확인 + 등록 절차를 체크리스트化(business-directi
 감점(투자 비히클 브랜드 아래 발화). **좋아요+북마크만, 답글 무반응.** 단 데이터는 ★급 축적 —
 30일 양방향 플로우(XRPL 발행≈상환 ~$450M)는 9/8 원글(대기열 6)의 고급 텍스처(ecosystem-log 참조).
 
+@nhk_news 후쿠오카 공항 40.4°C 관측·열사병 경고 속보(8/26, 일본어) — ① **재난·인명 경고
+뉴스 아래 브랜드 답글 = 앰뷸런스 체이싱 톤 리스크**(안전 경보는 어떤 브랜드 발화에도 무대 아님)
+② 일본어 공영방송 청중과 언어·맥락 불일치 + 계정 등급 < 글 유형(속보 뉴스는 관여 무대 아님,
+NHK 무반응 계정) ③ XRPL 레인 무관. **답글 무반응, 좋아요도 생략(재난 뉴스).** 단 소재는 ★급:
+"공항에는 인증 관측소가 있고, 침실에는 없다" — 파리 CDG 원글과 동형의 공항 관측 페그 + 실내
+열사병 각도(측정 항목 온도·습도·체감온도 정중앙) + 일본 확장 서사 배경. **원글 후보 5f 등재
+(폭염 시즌 내 유효, ~9월 초)**: "Fukuoka Airport recorded 40.4°C today. The airport has a
+certified weather station. Your bedroom doesn't. Most heatstroke happens indoors — in rooms no
+official sensor is watching. Weather data shouldn't stop at the airport fence." ⚠️ 게시 전 체크
+2건: 일본 열사병 실내 발생 통계 1차 출처(소방청) 확인 후 수치 인용 여부 결정 · 사망 사례 직접
+언급은 배제(관측 공백 프레임만).
+
 ## 팔로우 실행 기록
 
 - 8/23: **일본 축 로스터 팔로우 실행 완료** (서우 보고 "다 대응함" — 기관·미디어·웨더·빌더 축 일괄).
