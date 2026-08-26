@@ -74,7 +74,7 @@ export default function WaitlistPage() {
               활동할수록 앞자리 —<br />2차 구매 우선권을 확보하세요
             </h1>
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 480 }}>
-              미션에 참여하면 <b style={{ color: "#fff" }}>응모권</b>이 쌓여 S그룹(1,000명) 추첨에 뽑힐 확률이 올라가고, <b style={{ color: "#fff" }}>순번 점수</b>가 높으면 추첨에서 떨어져도 A/B 그룹에 들어갑니다 — 완전히 잃는 것은 없습니다.
+              미션에 참여하면 <b style={{ color: "#fff" }}>응모권</b>이 쌓여 S그룹(2,000명) 추첨에 뽑힐 확률이 올라가고, <b style={{ color: "#fff" }}>순번 점수</b>가 높으면 추첨에서 떨어져도 A/B 그룹에 들어갑니다 — 완전히 잃는 것은 없습니다.
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 4, flexWrap: "wrap" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, color: "rgba(255,255,255,.75)" }}>

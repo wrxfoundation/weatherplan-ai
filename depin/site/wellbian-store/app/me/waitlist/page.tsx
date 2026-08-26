@@ -71,7 +71,7 @@ export default function MissionDashboard() {
               <span style={{ fontSize: 34, fontWeight: 800, color: "var(--w-main)" }}>{tickets}</span>
               <span style={{ fontSize: 14, fontWeight: 700, color: "var(--ink-4)" }}>장</span>
             </div>
-            <span style={{ fontSize: 12, color: "var(--hint)" }}>1,000명 추첨 · 많을수록 잘 뽑힙니다 · 1인 상한 있음</span>
+            <span style={{ fontSize: 12, color: "var(--hint)" }}>2,000명 추첨 · 많을수록 잘 뽑힙니다 · 1인 상한 있음</span>
           </div>
 
           <div style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 6 }}>

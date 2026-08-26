@@ -43,7 +43,7 @@ function InfoModal({ onClose }: { onClose: () => void }) {
         <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
           <Num n="1" />
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <div style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>응모권 — S그룹(1,000명) 추첨</div>
+            <div style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>응모권 — S그룹(2,000명) 추첨</div>
             <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-3)" }}>
               미션으로 모은 응모권이 {COPY_TICKETS}. 추첨 방식은 접수 마감 전에 미리 공개되어 누구나 같은 결과를 다시 확인할 수 있고, 발표는 9/30 마감 직후입니다.
             </div>
