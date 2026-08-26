@@ -234,8 +234,8 @@ export default function Landing() {
         <div className="wrap spec-grid">
           {/* 제품 이미지 좌측 · 스펙 테이블 우측 */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ width: "100%", height: 380, borderRadius: 14, background: "#fff", border: "1px solid var(--bd-card)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-              <Image src="/assets/device.webp" alt="Weather Data Token Generator 상세 컷" width={430} height={340} style={{ maxHeight: 332, width: "auto", maxWidth: "100%", objectFit: "contain" }} />
+            <div style={{ width: "100%", height: 380, borderRadius: 14, border: "1px solid var(--bd-card)", overflow: "hidden" }}>
+              <Image src="/assets/spec-package.jpg" alt="Weather Data Token Generator 패키지 및 제품" width={1000} height={749} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
             <div style={{ border: "1px solid var(--bd-card)", borderRadius: 12, background: "#fff", padding: "18px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
               <div style={{ fontSize: 14, fontWeight: 800, color: "var(--w-deep)" }}>날씨데이터토큰생성기™ (실내공기측정기)</div>
