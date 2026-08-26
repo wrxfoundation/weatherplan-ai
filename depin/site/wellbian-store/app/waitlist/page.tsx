@@ -4,8 +4,29 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ChevR, Clock } from "@/components/icons";
-import { COPY_DUAL, COPY_SCORE, COPY_TICKETS, NOTICE_TICKET_CAP, TIERS } from "@/lib/data";
+import { ChevR } from "@/components/icons";
+import {
+  COPY_DUAL, COPY_SCORE, COPY_TICKETS,
+  NOTICE_CARRYOVER, NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, TIERS,
+} from "@/lib/data";
+
+/* 배점 칩 — 줄글 나열 대신 스캔 가능한 형태 (모바일 가독) */
+const TICKET_CHIPS: [string, string][] = [
+  ["대기 등록", "+10장"], ["소식 공유", "+6장"], ["커뮤니티", "+5장"], ["케이웨더 앱", "+5장"],
+  ["친구 초대", "+5장/명"], ["X 팔로우", "+3장"], ["유튜브 구독", "+3장"], ["인스타", "+2장"], ["매일 방문", "+1장"],
+];
+const SCORE_CHIPS: [string, string][] = [
+  ["대기 등록", "100점"], ["구매 의사", "20점"], ["커뮤니티", "20점"], ["친구 초대", "30점"],
+];
+
+function Chip({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "baseline", gap: 5, background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 99, padding: "5px 11px", fontSize: 12, whiteSpace: "nowrap" }}>
+      <span style={{ color: "var(--ink-3)" }}>{label}</span>
+      <b style={{ color: accent ? "var(--w-main)" : "var(--w-deep)" }}>{value}</b>
+    </span>
+  );
+}
 
 export default function WaitlistPage() {
   const router = useRouter();
@@ -112,23 +133,24 @@ export default function WaitlistPage() {
           <div style={{ border: "2px solid var(--w-main)", background: "var(--w-tint)", borderRadius: 16, padding: 26, display: "flex", flexDirection: "column", gap: 8 }}>
             <span style={{ fontSize: 12, fontWeight: 800, color: "var(--w-main)", letterSpacing: ".06em" }}>응모권 — 추첨 확률</span>
             <div style={{ fontSize: 18, fontWeight: 800, color: "var(--w-deep)" }}>{COPY_TICKETS}</div>
-            <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-3)" }}>
-              등록 +10 · 공유 +6 · 커뮤니티 +5 · 케이웨더 앱 +5 · 초대 +5/명(상한 10명) · X 팔로우 +3 · 유튜브 +3 · 인스타 +2 · 매일 방문 +1
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 2 }}>
+              {TICKET_CHIPS.map(([l, v]) => <Chip key={l} label={l} value={v} accent />)}
             </div>
-            <div style={{ fontSize: 11.5, color: "var(--cap)" }}>1인 총량 상한 있음 — 소수 독식 방지</div>
+            <div style={{ fontSize: 11.5, color: "var(--cap)" }}>친구 초대 상한 10명 · 1인 총량 상한 있음 — 소수 독식 방지</div>
           </div>
           <div style={{ border: "1px solid var(--bd-card)", borderRadius: 16, padding: 26, display: "flex", flexDirection: "column", gap: 8 }}>
             <span style={{ fontSize: 12, fontWeight: 800, color: "var(--w-deep)", letterSpacing: ".06em" }}>순번 점수 — 그룹 확정</span>
             <div style={{ fontSize: 18, fontWeight: 800, color: "var(--w-deep)" }}>{COPY_SCORE}</div>
-            <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-3)" }}>
-              등록 100 · 구매 의사 20 · 커뮤니티 20 · 초대 30 — 검증 가능한 항목만 반영됩니다 (팔로우·구독은 응모권 전용)
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 2 }}>
+              {SCORE_CHIPS.map(([l, v]) => <Chip key={l} label={l} value={v} />)}
             </div>
+            <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--ink-3)" }}>검증 가능한 항목만 반영됩니다 — 팔로우·구독은 응모권 전용</div>
             <div style={{ fontSize: 11.5, color: "var(--cap)" }}>미당첨이어도 A/B 그룹으로 자동 편입 — 이의가 와도 기록으로 답합니다</div>
           </div>
         </div>
 
-        {/* 이원 구조 한 줄 정리 (확정 카피) */}
-        <div style={{ textAlign: "center", fontSize: 13.5, lineHeight: 1.7, color: "var(--ink-4)", maxWidth: 1080, margin: "0 auto", width: "100%" }}>
+        {/* 이원 구조 한 줄 정리 (확정 카피) — 핵심 요약이므로 강조 박스 */}
+        <div style={{ background: "var(--w-tint)", borderRadius: 12, padding: "16px 22px", textAlign: "center", fontSize: 13.5, lineHeight: 1.7, fontWeight: 600, color: "var(--w-deep)", maxWidth: 1080, margin: "0 auto", width: "100%" }}>
           {COPY_DUAL}
         </div>
 
@@ -151,11 +173,14 @@ export default function WaitlistPage() {
           <span style={{ color: "var(--hint)", fontWeight: 500 }}>· 10/3 순차 오픈 · 현장 배분 500대(10/2~3 부스)</span>
         </div>
 
-        <div style={{ display: "flex", gap: 10, border: "1px solid var(--bd-card)", background: "var(--panel)", borderRadius: 12, padding: "14px 18px", fontSize: 12.5, lineHeight: 1.6, color: "var(--cap)", maxWidth: 1080, margin: "0 auto", width: "100%" }}>
-          <span style={{ flex: "none", marginTop: 2 }}><Clock size={15} color="var(--hint)" /></span>
-          <span>
-            팔로우·구독 미션의 완료 여부는 직접 체크하시는 방식이며, 사실과 다른 경우 해당 응모권은 인정되지 않습니다. · {NOTICE_TICKET_CAP} · 1차 사전신청 점수·응모권은 이월됩니다(1차 구매 완료자는 별도 트랙).
-          </span>
+        {/* 고지 3건 — 한 문단 대신 항목별 분리 (혼동 방지) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 9, border: "1px solid var(--bd-card)", background: "var(--panel)", borderRadius: 12, padding: "16px 18px", fontSize: 12.5, lineHeight: 1.6, color: "var(--cap)", maxWidth: 1080, margin: "0 auto", width: "100%" }}>
+          {[NOTICE_SELF_CHECK, NOTICE_TICKET_CAP, NOTICE_CARRYOVER].map((t) => (
+            <span key={t} style={{ display: "flex", gap: 9, alignItems: "flex-start" }}>
+              <span style={{ flex: "none", width: 5, height: 5, borderRadius: 99, background: "var(--hint)", marginTop: 7 }} />
+              {t}
+            </span>
+          ))}
         </div>
       </section>
     </div>
