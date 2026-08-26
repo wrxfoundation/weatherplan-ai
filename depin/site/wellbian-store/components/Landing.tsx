@@ -246,12 +246,13 @@ export default function Landing() {
               </div>
             </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <h2 style={h2}>제품 스펙</h2>
+            {/* 15행 — 행 간격 압축 */}
             <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid var(--w-deep)" }}>
               {SPECS.map((s, i) => (
                 /* 모바일: 5행 축약 (PRD §6.1) */
-                <div key={s.k} className={i >= 5 ? "desk-only" : undefined} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 16, padding: "14px 4px", borderBottom: "1px solid var(--bd-card)", fontSize: 14 }}>
+                <div key={s.k} className={i >= 5 ? "desk-only" : undefined} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "7px 4px", borderBottom: "1px solid var(--line)", fontSize: 13.5, lineHeight: 1.45 }}>
                   <span style={{ fontWeight: 700, color: "var(--w-deep)" }}>{s.k}</span>
                   <span style={{ color: "var(--ink-2)" }}>{s.v}</span>
                 </div>
