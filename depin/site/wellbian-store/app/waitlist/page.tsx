@@ -72,14 +72,14 @@ export default function WaitlistPage() {
               활동할수록 앞자리 —<br />2차 구매 우선권을 확보하세요
             </h1>
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 480 }}>
-              미션 참여로 <b style={{ color: "#fff" }}>응모권</b>을 모으면 S그룹(1,000명) 추첨 확률이 오르고, <b style={{ color: "#fff" }}>순번 점수</b>는 미당첨이어도 A/B 그룹을 확정합니다 — 떨어져도 완전히 잃지 않습니다.
+              미션에 참여하면 <b style={{ color: "#fff" }}>응모권</b>이 쌓여 S그룹(1,000명) 추첨에 뽑힐 확률이 올라가고, <b style={{ color: "#fff" }}>순번 점수</b>가 높으면 추첨에서 떨어져도 A/B 그룹에 들어갑니다 — 완전히 잃는 것은 없습니다.
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 4, flexWrap: "wrap" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, color: "rgba(255,255,255,.75)" }}>
                 <span style={{ width: 8, height: 8, borderRadius: 99, background: "var(--ok-dot)" }} />
                 현재 <b style={{ color: "#fff" }}>12,847명</b> 대기 중
               </span>
-              <span style={{ fontSize: 12, color: "rgba(255,255,255,.45)" }}>추첨 시드는 마감 전 공개 — 같은 시드는 같은 결과, 재현 가능한 공정성</span>
+              <span style={{ fontSize: 12, color: "rgba(255,255,255,.45)" }}>추첨 방식은 마감 전에 미리 공개합니다 — 누구나 같은 결과를 다시 확인할 수 있어요</span>
             </div>
           </div>
 
@@ -136,7 +136,7 @@ export default function WaitlistPage() {
             <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 2 }}>
               {TICKET_CHIPS.map(([l, v]) => <Chip key={l} label={l} value={v} accent />)}
             </div>
-            <div style={{ fontSize: 11.5, color: "var(--cap)" }}>친구 초대 상한 10명 · 1인 총량 상한 있음 — 소수 독식 방지</div>
+            <div style={{ fontSize: 11.5, color: "var(--cap)" }}>친구 초대는 10명까지 · 한 사람이 모을 수 있는 응모권에도 상한이 있습니다</div>
           </div>
           <div style={{ border: "1px solid var(--bd-card)", borderRadius: 16, padding: 26, display: "flex", flexDirection: "column", gap: 8 }}>
             <span style={{ fontSize: 12, fontWeight: 800, color: "var(--w-deep)", letterSpacing: ".06em" }}>순번 점수 — 그룹 확정</span>
@@ -144,8 +144,8 @@ export default function WaitlistPage() {
             <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 2 }}>
               {SCORE_CHIPS.map(([l, v]) => <Chip key={l} label={l} value={v} />)}
             </div>
-            <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--ink-3)" }}>검증 가능한 항목만 반영됩니다 — 팔로우·구독은 응모권 전용</div>
-            <div style={{ fontSize: 11.5, color: "var(--cap)" }}>미당첨이어도 A/B 그룹으로 자동 편입 — 이의가 와도 기록으로 답합니다</div>
+            <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--ink-3)" }}>저희가 확인할 수 있는 활동만 점수에 넣습니다 — 팔로우·구독은 응모권에만 반영됩니다</div>
+            <div style={{ fontSize: 11.5, color: "var(--cap)" }}>추첨에서 떨어져도 점수 순서대로 A 또는 B 그룹에 들어갑니다</div>
           </div>
         </div>
 
@@ -170,7 +170,7 @@ export default function WaitlistPage() {
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 13, fontWeight: 700, color: "var(--ink-4)", flexWrap: "wrap" }}>
           오픈 순서<span style={{ color: "var(--w-main)" }}>S</span>→<span>A</span>→<span>B</span>→<span>일반</span>
-          <span style={{ color: "var(--hint)", fontWeight: 500 }}>· 10/3 순차 오픈 · 현장 배분 500대(10/2~3 부스)</span>
+          <span style={{ color: "var(--hint)", fontWeight: 500 }}>· 10/3 차례대로 열립니다 · 현장 판매 500대(10/2~3 부스)</span>
         </div>
 
         {/* 고지 3건 — 한 문단 대신 항목별 분리 (혼동 방지) */}

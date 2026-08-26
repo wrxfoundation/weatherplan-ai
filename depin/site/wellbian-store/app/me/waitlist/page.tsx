@@ -52,8 +52,8 @@ export default function MissionDashboard() {
 
       {/* 재산정 스트립 */}
       <div className="tint-strip" style={{ background: "var(--w-tint)", fontSize: 12.5, color: "var(--ink-2)" }}>
-        <span><b style={{ color: "var(--w-main)" }}>중간 재산정 완료(9월 중 1회)</b> — 현재 순위가 반영되었습니다 · 다음 확정은 9/30 마감 시</span>
-        <span style={{ color: "var(--cap)" }}>추첨 시드 공개: 9/30 마감 전</span>
+        <span><b style={{ color: "var(--w-main)" }}>중간 점수 재계산 완료(9월 중 1회)</b> — 지금 순위가 반영되어 있습니다 · 최종 확정은 9/30 마감 때</span>
+        <span style={{ color: "var(--cap)" }}>추첨 방식 공개: 9/30 마감 전</span>
       </div>
 
       <main className="dash-pad" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -65,7 +65,7 @@ export default function MissionDashboard() {
               <span style={{ fontSize: 34, fontWeight: 800, color: "var(--w-main)" }}>{tickets}</span>
               <span style={{ fontSize: 14, fontWeight: 700, color: "var(--ink-4)" }}>장</span>
             </div>
-            <span style={{ fontSize: 12, color: "var(--hint)" }}>추첨 1,000명 · 응모권 가중 · 1인 총량 상한</span>
+            <span style={{ fontSize: 12, color: "var(--hint)" }}>1,000명 추첨 · 많을수록 잘 뽑힙니다 · 1인 상한 있음</span>
           </div>
 
           <div style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 6 }}>
@@ -90,13 +90,13 @@ export default function MissionDashboard() {
               <span style={{ width: 44, height: 44, borderRadius: 12, background: "#fff", color: "var(--w-deep)", fontSize: 21, fontWeight: 800, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{me.expectedGroup}</span>
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <span style={{ fontSize: 15, fontWeight: 800 }}>{me.expectedGroup}그룹 구간 — 상위 {me.percentile}%</span>
-                <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)" }}>S그룹 추첨 결과와 무관하게 유지됩니다</span>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)" }}>추첨 결과와 상관없이 그대로 유지됩니다</span>
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 5, marginTop: 2 }}>
               <div className="track on-dark" style={{ height: 7 }}><i style={{ width: "78%" }} /></div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "rgba(255,255,255,.5)" }}>
-                <span>B 구간</span><span>A 구간 140점+</span><span>재산정 반영</span>
+                <span>B 구간</span><span>A 구간 140점+</span><span>재계산 반영</span>
               </div>
             </div>
           </div>
