@@ -130,7 +130,9 @@ export default function Landing() {
                 당신의 날씨 데이터를<br />가치로 바꾸세요
               </h1>
               <p style={{ fontSize: 16, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
-                <b style={{ color: "#fff" }}>Weather Data Token Generator™</b> — 실내 공기를 측정하고, 검증된 데이터로 네트워크에 기여하는 가장 쉬운 방법.
+                <b style={{ color: "#fff" }}>Weather Data Token Generator™</b>
+                <br />
+                실내 공기를 측정하고, 검증된 데이터로 네트워크에 기여하는 가장 쉬운 방법.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440, marginTop: 6 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
