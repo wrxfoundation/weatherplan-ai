@@ -178,6 +178,16 @@ h1, h2, h3, p { margin: 0; }
 @media (max-width: 720px) { .desk-only { display: none !important; } }
 @media (min-width: 721px) { .mob-only { display: none !important; } }
 
+/* ── S0 스티키 바: PC 중앙 클러스터 / 모바일 좌우 유지 ── */
+.stickybar-in {
+  display: flex; align-items: center;
+  width: 100%; justify-content: space-between; gap: 12px;
+  padding: 12px 16px;
+}
+@media (min-width: 721px) {
+  .stickybar-in { width: auto; justify-content: center; gap: 26px; padding: 14px 40px; }
+}
+
 /* ── 크롬 반응형 (chrome.tsx) ── */
 @media (max-width: 720px) {
   .gnb-root { height: 54px !important; padding: 0 16px !important; }

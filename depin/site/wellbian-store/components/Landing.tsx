@@ -327,17 +327,19 @@ export default function Landing() {
         <div aria-hidden={!sticky} style={{
           position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 60,
           transform: sticky ? "none" : "translateY(110%)", transition: "transform .3s ease",
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
-          padding: "14px 40px", background: "#fff", borderTop: "1px solid var(--bd-card)",
+          display: "flex", justifyContent: "center",
+          background: "#fff", borderTop: "1px solid var(--bd-card)",
           boxShadow: "0 -8px 24px rgba(27,27,72,.1)",
         }} className="stickybar">
-          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <div className="desk-only" style={{ display: "flex", flexDirection: "column", gap: 4, width: 220 }}>
+          {/* PC: 중앙 한 덩어리(진행 | 가격 | CTA), 모바일: 기존 좌우 배치 유지 */}
+          <div className="stickybar-in">
+            <div className="desk-only" style={{ display: "flex", flexDirection: "column", gap: 4, width: 190 }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11.5, color: "var(--ink-4)" }}>
                 <span>잔여 <b style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b> / 5,000대</span><span>{pct}%</span>
               </div>
               <div className="track" style={{ height: 5, background: "var(--line)" }}><i style={{ width: `${Math.max(2, pct)}%` }} /></div>
             </div>
+            <span className="desk-only" style={{ width: 1, height: 30, background: "var(--line)" }} />
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <span className="mob-only" style={{ fontSize: 11, color: "var(--cap)" }}>잔여 {fmt(remain)}대 · {ebClosed ? "일반" : "얼리버드"}</span>
               <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
@@ -346,8 +348,8 @@ export default function Landing() {
                 <span className="desk-only" style={{ fontSize: 12, color: "var(--hint)" }}>{ebClosed ? "일반" : "얼리버드"}</span>
               </div>
             </div>
+            <button onClick={buy} className="btn-main" style={{ fontSize: 15, borderRadius: 10, padding: "13px 34px" }}>구매하기</button>
           </div>
-          <button onClick={buy} className="btn-main" style={{ fontSize: 15, borderRadius: 10, padding: "13px 34px" }}>구매하기</button>
         </div>
       )}
 
@@ -358,11 +360,9 @@ export default function Landing() {
 
 function DeviceRender() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
-      <div style={{ width: "100%", maxWidth: 480, height: "auto", minHeight: 240, borderRadius: 18, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", display: "flex", alignItems: "center", justifyContent: "center", padding: 28 }}>
-        <Image src="/assets/device.webp" alt="Weather Data Token Generator" width={420} height={350} priority
-          style={{ width: "100%", maxWidth: 420, height: "auto", filter: "drop-shadow(0 24px 40px rgba(0,0,0,.4))" }} />
-      </div>
+    <div style={{ width: "100%", maxWidth: 480, margin: "0 auto", borderRadius: 20, overflow: "hidden", boxShadow: "0 28px 60px rgba(0,0,0,.45)" }}>
+      <Image src="/assets/hero-life.webp" alt="Weather Data Token Generator — 실내 설치 컷" width={1000} height={749} priority
+        style={{ width: "100%", height: "auto", display: "block" }} />
     </div>
   );
 }
