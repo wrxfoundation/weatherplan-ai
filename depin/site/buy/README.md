@@ -15,7 +15,9 @@ npx serve public
 ## 3. 구성
 | 파일 | 내용 |
 |---|---|
-| public/index.html | 전체 페이지 (S0 스티키 바 ~ S9 푸터 + 구매 모달 6스텝) |
+| public/index.html | 구매 페이지 `/` (S0 스티키 바 ~ S9 푸터 + 구매 모달 6스텝) |
+| public/wave2.html | **2차 대기 페이지 `/wave2`** — 등록 폼(2필드)·내 현황(응모권/순번/초대 코드)·미션 자진 체크 9종(케이웨더 유튜브·인스타 포함)·S/A·B/일반 우선권 3카드·일정 타임라인·마감 카운트다운 |
+| public/app-wave2.js | /wave2 데모 로직 (등록·미션 체크·초대 코드 복사·D-day) |
 | public/assets.css | Basic_0825 브랜드 시스템 (Violet #4D4DCE · Navy #1B1B48 · Pretendard) |
 | public/app.js | 카운터·리빌·스티키·구매 플로우 (전부 데모 로직) |
 | public/img/device.webp | 공식 기기 렌더 (압축본) |
@@ -25,6 +27,7 @@ npx serve public
 | 항목 | 위치 | 현재 |
 |---|---|---|
 | **잔여 수량 (실데이터)** | `app.js` CONF.earlyLeft / baseLeft | 데모 값 184 / 3,126 — 서버 API 연동 필요 |
+| /wave2 등록자 수·응모권·순번 | app-wave2.js CONF + 데모 상태 | 서버 연동 필요 (1차 wb.js 백엔드와 공통) |
 | 지갑 연결·결제 서명 | app.js step2/step5 | 목 동작 (1.2초 후 성공) — 실제 지갑 SDK 연동 필요 |
 | 이메일 인증 | app.js step3 | 코드 자동 입력 데모 |
 | 로고 | index.html `.brand-mark` | 태양 마크 근사 SVG — **가이드 원본 SVG로 교체** |

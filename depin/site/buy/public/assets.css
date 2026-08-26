@@ -12,6 +12,7 @@
   --wrap:1120px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{
   font-family:"Pretendard Variable",Pretendard,-apple-system,"Malgun Gothic",sans-serif;
@@ -310,10 +311,52 @@ em{font-style:normal}
 .done-btns{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
 .mnav{display:flex;justify-content:space-between;margin-top:26px;gap:10px}
 
+/* ── 2차 대기 (/wave2) ── */
+.soldout-badge{display:inline-block;background:var(--navy);color:#fff;font-size:12.5px;
+  font-weight:800;letter-spacing:.06em;border-radius:999px;padding:6px 16px;margin-bottom:6px}
+.w2-hero{padding-bottom:64px}
+.w2-grid{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+.w2 .hero h1{font-size:clamp(28px,3.8vw,44px)}
+.joincard{background:var(--card);border:1px solid var(--line2);border-radius:var(--r);
+  box-shadow:var(--sh);padding:30px;display:grid;gap:12px}
+.joincard h2{font-size:20px;font-weight:800;color:var(--navy)}
+.join-sub{font-size:13.5px;color:var(--mut);margin-top:-6px}
+.joincard input{border:1.5px solid var(--line);border-radius:10px;padding:14px;font:inherit;font-size:14.5px}
+.joincard input:focus{outline:none;border-color:var(--violet)}
+.join-note{font-size:12.5px;color:var(--mut)}
+.mycard{border:2px solid var(--violet)}
+.my-head{display:flex;justify-content:space-between;align-items:center}
+.my-ok{font-size:12.5px;font-weight:800;color:#0B7A4B}
+.my-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center}
+.my-stats div{background:var(--light);border-radius:12px;padding:14px}
+.my-stats b{display:block;font-size:30px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums}
+.my-stats span{font-size:12px;color:var(--mut)}
+.invite{display:flex;align-items:center;gap:10px;background:var(--light);
+  border-radius:10px;padding:10px 14px;font-size:13px}
+.invite span{color:var(--mut);font-weight:700}
+.invite code{font-family:ui-monospace,monospace;font-weight:800;color:var(--navy);flex:1}
+.s-card{border:2px solid var(--violet);background:linear-gradient(180deg,#FDFDFF,#F6F6FE)}
+.mlist{list-style:none;margin-top:26px;display:grid;gap:10px}
+.mlist li{display:flex;align-items:center;gap:12px;background:var(--card);
+  border:1px solid var(--line2);border-radius:var(--r-s);padding:14px 18px;box-shadow:var(--sh)}
+.mlist label{display:flex;align-items:center;gap:12px;flex:1;cursor:pointer}
+.mlist input{accent-color:var(--violet);width:18px;height:18px}
+.m-name{font-weight:600;color:var(--navy);font-size:14.5px;flex:1}
+.m-name em{font-size:11.5px;color:var(--violet);font-weight:700;margin-left:6px}
+.m-tag{font-size:11.5px;color:var(--mut);background:var(--light);border-radius:999px;padding:3px 10px}
+.mlist b{color:var(--violet);font-size:15px;font-variant-numeric:tabular-nums;margin-left:auto}
+.m-auto{opacity:.92}
+.sched{list-style:none;margin-top:26px;display:grid;gap:0;border-left:2px solid var(--light2);padding-left:26px}
+.sched li{position:relative;padding:14px 0}
+.sched li::before{content:"";position:absolute;left:-33px;top:22px;width:12px;height:12px;
+  border-radius:50%;background:var(--violet);box-shadow:0 0 0 4px rgba(77,77,206,.15)}
+.sched b{display:block;color:var(--navy);font-size:15.5px}
+.sched span{font-size:13.5px;color:var(--mut)}
+
 /* ── 반응형 ── */
 @media (max-width:920px){
   .gnb-nav{display:none}
-  .hero-grid,.spec-grid,.comm{grid-template-columns:1fr}
+  .hero-grid,.spec-grid,.comm,.w2-grid{grid-template-columns:1fr}
   .hero{padding-top:44px}
   .hero-device{order:-1}
   .hero-device img{width:min(320px,80%)}
