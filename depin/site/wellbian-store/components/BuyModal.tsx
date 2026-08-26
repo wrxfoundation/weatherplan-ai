@@ -2,8 +2,10 @@
 /* 구매 모달 4스텝 (PRD §6.2 개정 8/26) — 상태 머신:
    qty → wallet → terms → pay(hold 20m) → signing → confirmed | expired | mismatch
    confirmed 시 /orders/[id] 이동. 홀드 만료 시 qty 복귀(재고 반환). mismatch는 안내 후 재서명.
-   개인정보(주소·연락처·이메일)는 사이트에서 받지 않음 — 배송 접수는 발송 전 공지되는
-   별도 접수 폼(구글폼)에서 배송 접수 코드+배송지만 받고 배송 후 파기.
+   개인정보(주소·연락처·이메일)는 사이트에서 받지 않음 — 배송 접수는 발송 2주 전부터
+   공지되는 별도 접수 폼(구글폼)에서 구매 지갑 주소·성함·연락처·배송지만 받고 배송 후 파기
+   (지갑 주소 = 구매 증명, 별도 주문 코드 없음). 동의는 환불 고지+배송 접수 방식 확인 2건만
+   (포괄 이용약관 동의 없음 — 전체 약관은 푸터/메인에서 열람).
    전부 mock — mismatch 분기는 ?demo=mismatch로 재현(첫 서명만 불일치). */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -11,7 +13,7 @@ import { PRICE, RECEIVE_ADDRESS, DEST_TAG, fmt } from "@/lib/data";
 import { WALLETS, WalletAdapter } from "@/lib/wallet";
 import { Check, ChevR, Clock, Warn } from "./icons";
 
-const STEP_NAMES = ["수량", "지갑", "약관", "결제"] as const;
+const STEP_NAMES = ["수량", "지갑", "동의", "결제"] as const;
 const HOLD_SECONDS = 20 * 60;
 
 export default function BuyModal({
@@ -166,15 +168,15 @@ export default function BuyModal({
           </button>
         </>
       );
-      /* ── ③ 약관 + 배송 접수 안내 (1d) ── */
+      /* ── ③ 동의 — 환불 고지 + 배송 접수 안내, 2건만 (1d) ── */
       case 2: return (
         <>
-          <h3 style={h3}>약관에 동의해 주세요</h3>
+          <h3 style={h3}>환불·배송 안내를 확인해 주세요</h3>
           <div style={{ display: "flex", gap: 12, border: "1px solid color-mix(in oklab, var(--w-main) 30%, white)", background: "var(--w-tint)", borderRadius: 12, padding: "15px 18px", fontSize: 13.5, lineHeight: 1.6, color: "var(--ink-2)" }}>
             <span style={{ flex: "none", marginTop: 2 }}><Clock /></span>
             <span>
               <b style={{ color: "var(--w-deep)" }}>이 사이트는 주소·연락처를 받지 않습니다.</b><br />
-              디바이스 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 알려드립니다. 폼에 <b style={{ color: "var(--w-deep)" }}>배송 접수 코드</b>(결제 후 발급)와 배송지만 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
+              결제에 쓴 <b style={{ color: "var(--w-deep)" }}>지갑 주소가 곧 구매 증명</b>입니다. 디바이스 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 알려드립니다 — 폼에 지갑 주소·성함·연락처·배송지를 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
             </span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -182,7 +184,7 @@ export default function BuyModal({
               title="[필수] 환불 제한 사유 고지"
               desc="리딤코드 사용 또는 노드 연동 시 환불이 제한됩니다 (전자상거래법 제17조 제6항)" />
             <TermCard checked={terms2} onToggle={() => setTerms2(!terms2)}
-              title="[필수] 이용약관 · 배송 접수 방식 확인"
+              title="[필수] 배송 접수 방식 확인"
               desc="배송 정보는 이 사이트가 아닌 별도 접수 폼에서 받는다는 안내를 확인했습니다" />
           </div>
           <div style={{ fontSize: 12, color: "var(--cap)" }}>환불: 제품 수령일부터 7일 이내 가능 (리딤코드 사용 전)</div>

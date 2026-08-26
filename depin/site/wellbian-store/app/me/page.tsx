@@ -108,7 +108,7 @@ export default function MePage() {
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "16px 24px", background: "var(--panel)", flexWrap: "wrap" }}>
             <span style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--cap)" }}>
-              배송 접수 코드 <b className="mono" style={{ color: "var(--w-main)" }}>{order.claimCode}</b> · 발송 2주 전부터 텔레그램·X로 접수 폼 공지 · 예상 배송 <b style={{ color: "var(--ink-2)" }}>10월 순차 발송</b>
+              구매 증명 = <b style={{ color: "var(--w-main)" }}>지갑 주소</b> · 발송 2주 전부터 텔레그램·X로 접수 폼 공지 · 예상 배송 <b style={{ color: "var(--ink-2)" }}>10월 순차 발송</b>
             </span>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <button style={{ fontSize: 12, fontWeight: 700, color: "var(--cap)", border: "1px solid var(--bd-btn)", borderRadius: 8, padding: "8px 14px", background: "#fff" }}>환불 신청</button>

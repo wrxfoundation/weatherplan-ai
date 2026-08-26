@@ -16,9 +16,10 @@ export interface Order {
   txHash: string;
   status: "paid" | "preparing" | "shipped" | "done";
   paidAt: string;
-  /* 배송 접수 코드 — 구매자 확인 수단. 사이트는 주소·연락처를 저장하지 않고,
-     발송 전 공지되는 접수 폼(구글폼)에서 이 코드+배송지만 받아 배송 후 파기 */
-  claimCode: string;
+  /* 구매에 사용한 지갑 주소 = 구매 증명(온체인 결제 기록과 대조, 별도 주문 코드 없음).
+     사이트는 개인정보를 저장하지 않고, 발송 2주 전부터 공지되는 접수 폼(구글폼)에서
+     지갑 주소·성함·연락처·배송지만 받아 배송 후 파기 */
+  wallet: string;
 }
 
 export interface Device {
@@ -166,7 +167,7 @@ export const MOCK_ORDER: Order = {
   txHash: "A3F8…C21E",
   status: "preparing",
   paidAt: "2026-08-26",
-  claimCode: "WB-7K2Q-9X4D",
+  wallet: "rWLB9…kQ2f",
 };
 
 export const MOCK_DEVICE: Device = {
