@@ -130,7 +130,8 @@ h1, h2, h3, p { margin: 0; }
 .mstep-label.cur { font-weight: 700; color: var(--w-deep); }
 
 /* ── 랜딩 반응형 그리드 ── */
-.hero-grid { display: grid; grid-template-columns: 1fr 480px; gap: 56px; align-items: center; max-width: 1240px; margin: 0 auto; }
+/* 히어로 컨테이너 = .wrap(1080)과 동일 폭 — S2 가격 카드 좌우 라인과 끝 정렬 */
+.hero-grid { display: grid; grid-template-columns: 1fr 480px; gap: 56px; align-items: center; max-width: 1080px; margin: 0 auto; }
 .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .spec-grid { display: grid; grid-template-columns: 1fr 380px; gap: 48px; align-items: start; }
 .how-grid { display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr; gap: 0; align-items: center; }

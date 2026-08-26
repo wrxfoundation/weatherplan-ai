@@ -93,8 +93,12 @@ export default function WaitlistPage() {
             <button className="btn-main" style={{ fontSize: 15, borderRadius: 11, padding: 15 }} disabled={!email.includes("@") || busy} onClick={submit}>
               {busy ? "등록 중…" : "대기 등록 — 응모권 +10장"}
             </button>
+            {/* 프로모션 직행 — 등록 완료 화면 경유 없이 미션 대시보드로 (서우 요청: 단계 태우지 않기) */}
+            <Link href="/me/waitlist" className="btn-outline-deep" style={{ fontSize: 14, borderRadius: 11, padding: 13, textDecoration: "none" }}>
+              우선권 프로모션 참여 →
+            </Link>
             <div style={{ fontSize: 11.5, lineHeight: 1.6, color: "var(--cap)" }}>
-              수집은 이메일·지갑 주소 2가지뿐입니다 · 배송 정보는 구매 확정 시에만 받습니다
+              이미 등록하셨다면 바로 미션에 참여해 응모권을 모을 수 있습니다 · 수집은 이메일·지갑 주소 2가지뿐입니다
             </div>
           </div>
         </div>
@@ -104,7 +108,7 @@ export default function WaitlistPage() {
       <section className="wl-sec-pad" style={{ background: "#fff", display: "flex", flexDirection: "column", gap: 20 }}>
         <h2 style={{ fontSize: 24, fontWeight: 800, color: "var(--w-deep)", textAlign: "center" }}>두 가지를 동시에 모읍니다</h2>
 
-        <div className="price-grid" style={{ gap: 20, maxWidth: 980, margin: "0 auto", width: "100%" }}>
+        <div className="price-grid" style={{ gap: 20, maxWidth: 1080, margin: "0 auto", width: "100%" }}>
           <div style={{ border: "2px solid var(--w-main)", background: "var(--w-tint)", borderRadius: 16, padding: 26, display: "flex", flexDirection: "column", gap: 8 }}>
             <span style={{ fontSize: 12, fontWeight: 800, color: "var(--w-main)", letterSpacing: ".06em" }}>응모권 — 추첨 확률</span>
             <div style={{ fontSize: 18, fontWeight: 800, color: "var(--w-deep)" }}>모을수록 S그룹 당첨 확률이 오릅니다</div>
@@ -121,7 +125,7 @@ export default function WaitlistPage() {
           </div>
         </div>
 
-        <div className="tier-grid" style={{ maxWidth: 980, margin: "0 auto", width: "100%" }}>
+        <div className="tier-grid" style={{ maxWidth: 1080, margin: "0 auto", width: "100%" }}>
           {TIERS.map((g) => (
             <div key={g.n} style={{ border: "1px solid var(--bd-card)", borderRadius: 14, padding: 20, display: "flex", flexDirection: "column", gap: 8 }}>
               {g.hot ? (
@@ -140,7 +144,7 @@ export default function WaitlistPage() {
           <span style={{ color: "var(--hint)", fontWeight: 500 }}>· 10/3 순차 오픈 · 현장 배분 500대(10/2~3 부스)</span>
         </div>
 
-        <div style={{ display: "flex", gap: 10, border: "1px solid var(--bd-card)", background: "var(--panel)", borderRadius: 12, padding: "14px 18px", fontSize: 12.5, lineHeight: 1.6, color: "var(--cap)", maxWidth: 980, margin: "0 auto", width: "100%" }}>
+        <div style={{ display: "flex", gap: 10, border: "1px solid var(--bd-card)", background: "var(--panel)", borderRadius: 12, padding: "14px 18px", fontSize: 12.5, lineHeight: 1.6, color: "var(--cap)", maxWidth: 1080, margin: "0 auto", width: "100%" }}>
           <span style={{ flex: "none", marginTop: 2 }}><Clock size={15} color="var(--hint)" /></span>
           <span>
             팔로우·구독 미션의 완료 여부는 직접 체크하시는 방식이며, 사실과 다른 경우 해당 응모권은 인정되지 않습니다. · 1차 사전신청 점수·응모권은 이월됩니다(1차 구매 완료자는 별도 트랙).
