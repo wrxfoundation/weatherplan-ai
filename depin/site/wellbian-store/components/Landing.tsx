@@ -282,14 +282,17 @@ export default function Landing() {
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
             <h2 style={h2}>도착 후 3분이면 노드가 됩니다</h2>
-            <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>등록은 어렵지 않습니다 — 박스를 열고 다섯 단계면 끝.</p>
+            <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝.</p>
           </div>
           <div className="link-grid">
             {LINK_STEPS.map((st) => (
               <div key={st.n} style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "22px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
                 <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 99, background: "var(--w-deep)", color: "#fff", fontSize: 13, fontWeight: 800 }}>{st.n}</span>
                 <div style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>{st.t}</div>
-                <div style={{ fontSize: 12.5, lineHeight: 1.55, color: "var(--ink-4)" }}>{st.d}</div>
+                <div style={{ fontSize: 12.5, lineHeight: 1.55, color: "var(--ink-4)" }}>
+                  {st.d}
+                  {st.d2 && <><br />{st.d2}</>}
+                </div>
               </div>
             ))}
           </div>
