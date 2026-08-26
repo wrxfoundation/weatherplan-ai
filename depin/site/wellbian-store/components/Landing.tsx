@@ -114,8 +114,11 @@ export default function Landing() {
                 <Link href="/waitlist" style={{ display: "inline-flex", background: "#fff", color: "var(--w-deep)", fontSize: 15.5, fontWeight: 800, borderRadius: 12, padding: "16px 28px", textDecoration: "none" }}>
                   2차 대기 등록
                 </Link>
-                <a href={LINKS.telegram} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 700, borderRadius: 12, padding: "15px 20px", textDecoration: "none" }}>
-                  <TgIcon size={15} /> 텔레그램에서 소식 받기
+                <a href={LINKS.telegram} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 700, borderRadius: 12, padding: "15px 18px", textDecoration: "none" }}>
+                  <TgIcon size={15} /> 텔레그램 소식 받기
+                </a>
+                <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 700, borderRadius: 12, padding: "15px 20px", textDecoration: "none" }}>
+                  <XIcon size={14} /> X 소식 받기
                 </a>
               </div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,.45)" }}>대기 등록 시 다음 회차 오픈을 이메일로 안내드립니다</div>
