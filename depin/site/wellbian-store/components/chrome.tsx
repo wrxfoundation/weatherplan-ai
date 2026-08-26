@@ -5,8 +5,8 @@ import Link from "next/link";
 import { LINKS } from "@/lib/data";
 import { TgIcon, XIcon } from "./icons";
 
-/* GNB: 로고 + 「제품」 1항목 + KO/EN 토글만 (구매 CTA·SNS 없음 — §5.4) */
-export function Gnb({ dday }: { dday?: string }) {
+/* GNB: 로고 + 「제품」 1항목 + KO/EN 토글 (§5.4) + 상태형 우측 슬롯(완판 → 2차 대기 CTA) */
+export function Gnb({ dday, right }: { dday?: string; right?: React.ReactNode }) {
   return (
     <header
       style={{
@@ -25,6 +25,7 @@ export function Gnb({ dday }: { dday?: string }) {
         </nav>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        {right}
         {dday && (
           <span className="mob-only pill" style={{ fontSize: 10.5, fontWeight: 800, color: "var(--w-main)", background: "var(--w-tint)", borderRadius: 6, padding: "4px 7px" }}>
             {dday}

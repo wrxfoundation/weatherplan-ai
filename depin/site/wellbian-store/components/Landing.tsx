@@ -43,7 +43,25 @@ export default function Landing() {
 
   return (
     <div style={{ background: "#fff" }}>
-      <Gnb dday="D-12" />
+      {/* GNB 우측 상태형 슬롯: 판매 중 = 완판 화면 미리보기 칩 / 완판 = 2차 대기 CTA */}
+      <Gnb
+        dday={soldOut ? undefined : "D-12"}
+        right={
+          soldOut ? (
+            <>
+              <Link href="/" className="desk-only" style={previewChip}>판매 화면 보기</Link>
+              <Link
+                href="/waitlist"
+                style={{ display: "inline-flex", background: "var(--w-main)", color: "#fff", fontSize: 12.5, fontWeight: 800, borderRadius: 9, padding: "8px 14px", textDecoration: "none" }}
+              >
+                2차 대기 등록
+              </Link>
+            </>
+          ) : (
+            <Link href="/?state=sold_out" style={previewChip}>완판 화면 보기</Link>
+          )
+        }
+      />
 
       {/* 1h 얼리버드 마감 배너 (1회성) */}
       {ebClosed && !soldOut && banner && (
@@ -379,4 +397,7 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
 
 const h2: React.CSSProperties = { fontSize: "clamp(21px, 2.6vw, 30px)", fontWeight: 800, color: "var(--w-deep)" };
 const heroIcon: React.CSSProperties = { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, border: "1px solid rgba(255,255,255,.28)", borderRadius: 12, color: "#fff" };
+
+/* GNB 미리보기 칩 — 점선 보더 = 데모 컨트롤 시그널 (실배포 시 상태 머신이 대체) */
+const previewChip: React.CSSProperties = { display: "inline-flex", fontSize: 11.5, fontWeight: 700, color: "var(--cap)", border: "1px dashed var(--bd-input)", borderRadius: 8, padding: "6px 10px", textDecoration: "none", whiteSpace: "nowrap" };
 const certChip: React.CSSProperties = { fontSize: 11, fontWeight: 700, border: "1px solid var(--bd-input)", borderRadius: 6, padding: "4px 8px", color: "var(--ink-2)" };
