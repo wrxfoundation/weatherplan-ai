@@ -99,7 +99,7 @@ export default function Landing() {
       )}
 
       {/* ── S1 히어로 ── */}
-      <section style={{ background: "var(--w-deep)", color: "#fff" }} className="sec-pad" aria-label={en ? "Hero" : "히어로"}>
+      <section style={{ color: "#fff" }} className="sec-pad hero-photo" aria-label={en ? "Hero" : "히어로"}>
         {soldOut ? (
           /* 1i 완판 히어로 */
           <div className="hero-grid" style={{ alignItems: "center" }}>
@@ -129,7 +129,6 @@ export default function Landing() {
                 {en ? "Batch 2 news lands first on our official Telegram and X" : "공식 텔레그램과 X에서 2차 판매 소식을 가장 먼저 알려드립니다"}
               </div>
             </div>
-            <DeviceRender />
           </div>
         ) : (
           <div className="hero-grid">
@@ -164,7 +163,6 @@ export default function Landing() {
                 <a href={LINKS.telegram} target="_blank" rel="noopener" aria-label={en ? "Telegram" : "텔레그램"} style={heroIcon}><TgIcon size={18} /></a>
               </div>
             </div>
-            <DeviceRender />
           </div>
         )}
       </section>
@@ -442,15 +440,6 @@ export default function Landing() {
       )}
 
       {modal && <BuyModal ebLeft={inv.ebLeft} demoMismatch={demoMismatch} onClose={() => setModal(false)} />}
-    </div>
-  );
-}
-
-function DeviceRender() {
-  return (
-    <div style={{ width: "100%", maxWidth: 480, margin: "0 auto", borderRadius: 20, overflow: "hidden", boxShadow: "0 28px 60px rgba(0,0,0,.45)" }}>
-      <Image src="/assets/hero-life.webp" alt="Weather Data Token Generator — 실내 설치 컷" width={1000} height={749} priority
-        style={{ width: "100%", height: "auto", display: "block" }} />
     </div>
   );
 }
