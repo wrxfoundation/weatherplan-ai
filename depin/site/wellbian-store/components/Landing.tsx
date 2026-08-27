@@ -119,10 +119,10 @@ export default function Landing() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                 <a href={LINKS.telegram} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, background: "#fff", color: "var(--w-deep)", fontSize: 15, fontWeight: 800, borderRadius: 12, padding: "16px 24px", textDecoration: "none" }}>
-                  <TgIcon size={15} /> {en ? "Get updates on Telegram" : "텔레그램 소식 받기"}
+                  <TgIcon size={15} /> {en ? "Join the community" : "커뮤니티 입장"}
                 </a>
                 <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 700, borderRadius: 12, padding: "15px 20px", textDecoration: "none" }}>
-                  <XIcon size={14} /> {en ? "Get updates on X" : "X 소식 받기"}
+                  <XIcon size={14} /> {en ? "Get updates" : "소식 받기"}
                 </a>
               </div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,.45)" }}>
