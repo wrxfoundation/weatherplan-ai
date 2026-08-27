@@ -1,0 +1,138 @@
+"use client";
+/* 사전예약 온보딩 모달 (8/27 서우: 가격·수량 창 없이 "구매 온보딩 과정"만 표현)
+   개념: 사전예약 = 수요 파악·자리 확보, 결제 아님. 구글 로그인 → 내 기본 지갑 자동 생성 → 예약 완료.
+   완료 화면에서 9/15 오픈 알림 안내 + 커뮤니티(텔레그램)·소식(X) 버튼 유도.
+   실구현 대응 지점: 구글 OAuth(POST /api/auth/google) · 지갑 생성(POST /api/wallet) · 예약 등록(POST /api/preorder) */
+import { useState } from "react";
+import { LINKS, MOCK_ORDER } from "@/lib/data";
+import { useI18n } from "@/lib/i18n";
+import { TgIcon, XIcon, Check } from "./icons";
+
+/* 구글 사인인 버튼용 G 마크 (브랜드 가이드 표준 4색) */
+const GoogleG = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden>
+    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+  </svg>
+);
+
+export default function PreOrderModal({ onClose }: { onClose: () => void }) {
+  const { en } = useI18n();
+  const [step, setStep] = useState(0);
+  const [connecting, setConnecting] = useState(false);
+
+  const stepNames = en ? ["Google sign-in", "Wallet created", "Reserved"] : ["구글 로그인", "내 지갑 생성", "예약 완료"];
+
+  /* 데모: 구글 OAuth 왕복을 0.9s 목동작으로 표현 */
+  const googleSignIn = () => {
+    if (connecting) return;
+    setConnecting(true);
+    setTimeout(() => { setConnecting(false); setStep(1); }, 900);
+  };
+
+  return (
+    <div className="overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="modal-card" role="dialog" aria-modal="true" aria-label={en ? "Pre-order" : "사전예약"}>
+        <div className="sheet-handle" />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="mstep-ind">
+            {stepNames.map((name, i) => (
+              <span key={name} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                {i > 0 && <span className={`mstep-line${i <= step ? " done" : ""}`} />}
+                <span className={`mstep-dot ${i < step ? "done" : i === step ? "cur" : "todo"}`} aria-current={i === step ? "step" : undefined}>
+                  {i < step ? "✓" : i + 1}
+                </span>
+                <span className={`mstep-label${i === step ? " cur" : ""}`}>{name}</span>
+              </span>
+            ))}
+          </div>
+          <button onClick={onClose} aria-label={en ? "Close" : "닫기"} style={{ color: "var(--dis)", fontSize: 23.5, lineHeight: 1 }}>✕</button>
+        </div>
+
+        <div key={step} className="step-in" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          {step === 0 && (
+            <>
+              <h3 style={h3}>{en ? "Start with Google" : "구글 로그인으로 시작"}</h3>
+              <p style={pStyle}>
+                {en
+                  ? "Pre-ordering takes only a Google sign-in. It is not a payment — it secures your spot so you can buy calmly when sales open."
+                  : "사전예약은 구글 로그인만으로 진행됩니다. 결제가 아니며, 오픈 때 선착순 걱정 없이 구매할 수 있는 자리를 확보합니다."}
+              </p>
+              <button
+                onClick={googleSignIn}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+                  border: "1px solid var(--bd-input)", borderRadius: 12, padding: "15px 20px",
+                  background: "#fff", fontSize: 18.5, fontWeight: 700, color: "var(--ink-1)", cursor: "pointer",
+                }}
+              >
+                <GoogleG size={21} />
+                {connecting ? (en ? "Connecting…" : "연결 중…") : (en ? "Continue with Google" : "구글로 계속하기")}
+              </button>
+              <div style={capStyle}>
+                {en
+                  ? "Your basic wallet (address) is created automatically the moment you sign up."
+                  : "가입과 동시에 나의 기본 지갑(주소)이 자동으로 만들어집니다."}
+              </div>
+            </>
+          )}
+
+          {step === 1 && (
+            <>
+              <h3 style={h3}>{en ? "Your wallet is ready" : "내 지갑이 만들어졌습니다"}</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, border: "1px solid var(--bd-card)", borderRadius: 14, padding: "18px 20px", background: "var(--panel)" }}>
+                <span className="mono" style={{ fontSize: 13.5, fontWeight: 700, letterSpacing: ".12em", color: "var(--cap)" }}>MY WALLET</span>
+                <span className="mono" style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>{MOCK_ORDER.wallet}</span>
+              </div>
+              <p style={pStyle}>
+                {en
+                  ? "A non-custodial wallet linked to your Google account. It will be used to confirm your purchase and receive rewards."
+                  : "구글 계정에 연결된 비수탁 간편지갑입니다. 구매 확인과 보상 수령에 사용됩니다."}
+              </p>
+              <button onClick={() => setStep(2)} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>
+                {en ? "Complete pre-order" : "사전예약 완료하기"}
+              </button>
+            </>
+          )}
+
+          {step === 2 && (
+            <>
+              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, borderRadius: 99, background: "var(--w-main)", flex: "none" }}>
+                  <Check size={20} w={3} />
+                </span>
+                <h3 style={h3}>{en ? "Pre-order complete" : "사전예약이 완료되었습니다"}</h3>
+              </div>
+              <p style={pStyle}>
+                {en
+                  ? "We'll send you an opening alert on Sept 15. A pre-order is not a payment — you can buy calmly, with no first-come rush, the moment sales open."
+                  : "9월 15일 오픈 알림을 보내드립니다. 사전예약은 결제가 아니며, 오픈과 동시에 선착순 걱정 없이 구매할 수 있습니다."}
+              </p>
+              <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main btn-shine" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontSize: 19.5, borderRadius: 10, padding: 14, color: "#fff", textDecoration: "none" }}>
+                <TgIcon size={16} /> {en ? "Join the community" : "텔레그램 커뮤니티 입장"}
+              </a>
+              <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, border: "1px solid var(--bd-input)", borderRadius: 10, padding: 13, fontSize: 18, fontWeight: 700, color: "var(--w-deep)", textDecoration: "none" }}>
+                <XIcon size={14} /> {en ? "Follow updates on X" : "X에서 소식 보기"}
+              </a>
+              <button onClick={onClose} style={{ fontSize: 16, color: "var(--cap)", alignSelf: "center" }}>
+                {en ? "Close" : "닫기"}
+              </button>
+            </>
+          )}
+        </div>
+
+        {step === 1 && (
+          <button onClick={() => setStep(0)} style={{ fontSize: 16, color: "var(--cap)", alignSelf: "flex-start" }}>
+            {en ? "← Back" : "← 이전 단계"}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const h3: React.CSSProperties = { fontSize: 28.5, fontWeight: 800, color: "var(--w-deep)" };
+const pStyle: React.CSSProperties = { fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-3)" };
+const capStyle: React.CSSProperties = { fontSize: 15.5, lineHeight: 1.6, color: "var(--cap)" };

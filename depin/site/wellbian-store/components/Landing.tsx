@@ -14,6 +14,7 @@ import {
 import { useI18n } from "@/lib/i18n";
 import { Gnb, CommunityFooter } from "./chrome";
 import BuyModal from "./BuyModal";
+import PreOrderModal from "./PreOrderModal";
 import { XIcon, TgIcon, ChevD, Shield, ShieldCheck, Gauge, Coin, Chart, Warn, Check, LinkIcon } from "./icons";
 
 export default function Landing() {
@@ -96,7 +97,9 @@ export default function Landing() {
     return () => io.disconnect();
   }, []);
 
-  const buy = () => setModal(true);
+  /* 사전예약 기간 CTA = 온보딩 모달(결제·수량 없음), 판매 기간 = 구매 모달 (8/27 서우) */
+  const [preModal, setPreModal] = useState(false);
+  const buy = () => (preMode === "pre" ? setPreModal(true) : setModal(true));
 
   /* 링크 복사 버튼 (8/27 서우: CTA 옆 링크 → X → 텔레그램 순) */
   const [linkCopied, setLinkCopied] = useState(false);
@@ -310,7 +313,8 @@ export default function Landing() {
         </section>
       )}
 
-      {/* ── S2 가격·수량 ── */}
+      {/* ── S2 가격·수량 — 사전예약 기간엔 섹션 자체 숨김 (8/27 서우: 온보딩 과정만 표현) ── */}
+      {!preMode && (
       <section className="sec-pad" style={{ background: "#fff" }} id="price">
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
@@ -347,6 +351,7 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── S3 제품 — 타이틀·스펙은 갤러리 밖(짙은 폰트), 갤러리는 풀폭 이미지 밴드 (8/27 3차) ── */}
       <section id="spec" style={{ background: "var(--sec-alt)" }}>
@@ -641,6 +646,7 @@ export default function Landing() {
       )}
 
       {modal && <BuyModal demoMismatch={demoMismatch} onClose={() => setModal(false)} />}
+      {preModal && <PreOrderModal onClose={() => setPreModal(false)} />}
     </div>
   );
 }
@@ -657,7 +663,8 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
 
 /* 히어로 배경 — 블루+퍼플 확정 (8/27 서우). 나머지 후보(hero-bg.jpg·-3·-4)는 hide, 파일 유지 —
    재비교 시 배열에 다시 넣으면 롤링 복원 */
-const HERO_BGS = ["/assets/hero-bg-2.jpg"];
+/* 8/27 서우: 열화 지적 → 재업로드 원본(webp)로 교체 — 재인코딩 없이 그대로 서빙 (구 jpg는 보관) */
+const HERO_BGS = ["/assets/hero-bg-2.webp"];
 
 /* 제품 갤러리 5컷 (8/27 2차 — 서우 신규 렌더: 받침대·주방·거실·골드·블랙) — 히어로형 풀블리드 배경 */
 const SPEC_GALLERY = [
