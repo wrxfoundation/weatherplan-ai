@@ -62,6 +62,14 @@ export default function Landing() {
   const faqList = faqAllOpen ? [...faqs, ...(en ? FAQS_EXTRA_EN : FAQS_EXTRA)] : faqs;
   const heroCtaRef = useRef<HTMLDivElement>(null);
 
+  /* 히어로 배경 롤링 (8/27 후보 4장 비교) — 6초 크로스페이드, reduced-motion 시 고정 */
+  const [heroBg, setHeroBg] = useState(0);
+  useEffect(() => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(() => setHeroBg((i) => (i + 1) % HERO_BGS.length), 6000);
+    return () => clearInterval(t);
+  }, []);
+
   /* 스티키 바: 히어로 CTA가 뷰포트를 벗어나면 표시 (PRD §8) */
   useEffect(() => {
     const el = heroCtaRef.current;
@@ -133,6 +141,12 @@ export default function Landing() {
 
       {/* ── S1 히어로 ── */}
       <section style={{ color: "#fff" }} className="sec-pad hero-photo" aria-label={en ? "Hero" : "히어로"}>
+        <div aria-hidden>
+          {HERO_BGS.map((src, i) => (
+            <div key={src} className={`hero-bg-slide${i === heroBg ? " on" : ""}`} style={{ backgroundImage: `url(${src})` }} />
+          ))}
+          <div className="hero-scrim" />
+        </div>
         {soldOut ? (
           /* 1i 완판 히어로 */
           <div className="hero-grid" style={{ alignItems: "center" }}>
@@ -581,6 +595,9 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
     </div>
   );
 }
+
+/* 히어로 배경 후보 4장 (8/27 롤링 비교: 원본 블루 / 블루+퍼플 / 풀 퍼플 / 그린→퍼플) */
+const HERO_BGS = ["/assets/hero-bg.jpg", "/assets/hero-bg-2.jpg", "/assets/hero-bg-3.jpg", "/assets/hero-bg-4.jpg"];
 
 /* ── 인라인 확장 가이드 콘텐츠 (8/27) — 약관 5조·구매 플로우·확정 정책 기준 ── */
 const WALLET_GUIDE = [
