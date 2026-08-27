@@ -28,7 +28,7 @@ export default function Landing() {
     stateParam === "teaser" ? "pre" : stateParam === "dday" ? "dday" : null;
 
   const inv = MOCK_INVENTORY[phase]; // GET /api/inventory 대응 지점
-  const { remain, pct, ebPct, genPct } = calc(inv);
+  const { remain } = calc(inv);
   const sold = 5000 - remain; // 내부 계산용 (대외 표기는 판매 대수만, 8/27)
   const soldOut = phase === "sold_out";
   const ebClosed = phase !== "early_bird";
@@ -41,22 +41,6 @@ export default function Landing() {
 
   const [modal, setModal] = useState(false);
   const [banner, setBanner] = useState(false);
-  /* 1h 배너 잔여 수량 카운트업 (0 → genLeft, 1.2s ease-out) */
-  const [bannerCount, setBannerCount] = useState(0);
-  useEffect(() => {
-    if (!(phase !== "early_bird" && phase !== "sold_out")) return;
-    const target = inv.genLeft;
-    const t0 = performance.now();
-    const dur = 1200;
-    let raf = 0;
-    const tick = (t: number) => {
-      const k = Math.min(1, (t - t0) / dur);
-      setBannerCount(Math.round(target * (1 - Math.pow(1 - k, 3))));
-      if (k < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [phase, inv.genLeft]);
   const [sticky, setSticky] = useState(false);
   const [faqOpen, setFaqOpen] = useState(0);
   /* 접기/펴기 인라인 확장 3종 (8/27) — 연동 가이드 · RLUSD 가이드 · 전체 FAQ */
@@ -162,7 +146,7 @@ export default function Landing() {
         </>}
       />
 
-      {/* 1h 얼리버드 마감 배너 (1회성) — 밝은 톤 띠배너 + 일반 잔여 수량 카운트업 동시 노출 */}
+      {/* 1h 얼리버드 마감 배너 (1회성) — 밝은 톤 띠배너, 수량 비공개(8/27 서우) */}
       {ebClosed && !soldOut && banner && (
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap",
@@ -174,8 +158,8 @@ export default function Landing() {
           <span style={{ width: 1, height: 12, background: "color-mix(in oklab, var(--w-main) 32%, white)" }} />
           <span>
             {en
-              ? <>only <b className="mono" style={{ color: "var(--w-main)", fontSize: 19 }}>{fmt(bannerCount)}</b> regular-price units left</>
-              : <>일반 잔여 <b className="mono" style={{ color: "var(--w-main)", fontSize: 19 }}>{fmt(bannerCount)}</b>대 남았습니다</>}
+              ? <>now selling at the regular price · <b className="mono" style={{ color: "var(--w-main)", fontSize: 19 }}>650</b> RLUSD</>
+              : <>지금은 일반가 <b className="mono" style={{ color: "var(--w-main)", fontSize: 19 }}>650</b> RLUSD로 판매됩니다</>}
           </span>
           <button onClick={dismissBanner} aria-label={en ? "Dismiss banner" : "배너 닫기"} style={{ opacity: 0.45, fontSize: 19.5, marginLeft: 6, color: "var(--w-deep)" }}>✕</button>
         </div>
@@ -261,7 +245,7 @@ export default function Landing() {
                 /* 사전예약 중 (8/27 개정): 수요 파악·룸 확보 — 5,000 게이지 없음, 짧은 가격 + 우선 구매 안내 */
                 <div style={{ display: "flex", flexDirection: "column", gap: 6, maxWidth: 520, marginTop: 6 }}>
                   <div style={{ fontSize: 18, fontWeight: 700 }}>
-                    {en ? <>Early bird <b>1,000 units · 450 RLUSD</b> · then 650 RLUSD</> : <>얼리버드 <b>1,000대 450 RLUSD</b> · 이후 650 RLUSD</>}
+                    {en ? <>Early bird <b>450 RLUSD</b> · Regular 650 RLUSD</> : <>얼리버드 <b>450 RLUSD</b> · 일반 650 RLUSD</>}
                   </div>
                   <div style={{ fontSize: 16, color: "rgba(255,255,255,.72)" }}>
                     {en
@@ -313,8 +297,8 @@ export default function Landing() {
       {/* ── S1b 사전예약 실시간 현황판 (teaser 전용, 8/27) — 크레딧 롤: 아래→위 + 상단 페이드아웃 ── */}
       {preMode === "pre" && (
         <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--w-deep)", color: "#fff", paddingTop: 48, paddingBottom: 48 }} aria-label={en ? "Live pre-order board" : "실시간 사전예약 현황"}>
-          {/* 등고선 마블링 패턴 — 아주 옅게 (8/27 서우) */}
-          <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/contour.svg)", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
+          {/* 대리석 마블링 텍스처 — 힉스필드 생성, 브랜드 딥네이비 톤 (8/27 서우: 등고선 → 대리석. contour.svg는 보관) */}
+          <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/marble.jpg)", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
           <div className="wrap" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 18 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 19.5, fontWeight: 800 }}>
@@ -373,17 +357,12 @@ export default function Landing() {
                 <span style={{ fontSize: 21, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
                 {!ebClosed && <span style={{ fontSize: 17, color: "var(--hint)", textDecoration: "line-through", marginLeft: 4 }}>650 RLUSD</span>}
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, color: "var(--ink-4)" }}>
-                  <span>
-                    {en
-                      ? <><b style={{ color: ebClosed ? "var(--ink-4)" : "var(--w-main)" }}>{fmt(inv.ebLeft)}</b> of 1,000 left</>
-                      : <>잔여 <b style={{ color: ebClosed ? "var(--ink-4)" : "var(--w-main)" }}>{fmt(inv.ebLeft)}</b> / 1,000대</>}
-                  </span>
-                  <span>{ebPct}% {en ? "sold" : "소진"}</span>
+              {/* 수량 비공개 (8/27 서우: 얼리버드 1,000대 표기 제거, 오픈 임박 시 공개) */}
+              {!ebClosed && (
+                <div style={{ fontSize: 16, color: "var(--ink-4)" }}>
+                  {en ? "Quantity revealed as open day nears" : "수량은 오픈 임박 시 공개됩니다"}
                 </div>
-                <div className={`track on-light${ebClosed ? " gray" : ""}`} style={{ height: 6 }}><i style={{ width: `${ebPct}%` }} /></div>
-              </div>
+              )}
               {ebClosed
                 ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 19.5, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Closed" : "마감되었습니다"}</span>
                 : <button onClick={buy} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}
@@ -404,19 +383,12 @@ export default function Landing() {
                 <span className="mono" style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)" }}>650</span>
                 <span style={{ fontSize: 21, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, color: "var(--ink-4)" }}>
-                  <span>
-                    {en
-                      ? <><b style={{ color: ebClosed && !soldOut ? "var(--w-main)" : "var(--w-deep)" }}>{fmt(inv.genLeft)}</b> of 4,000 left</>
-                      : <>잔여 <b style={{ color: ebClosed && !soldOut ? "var(--w-main)" : "var(--w-deep)" }}>{fmt(inv.genLeft)}</b> / 4,000대</>}
-                  </span>
-                  <span>{genPct}% {en ? "sold" : "소진"}</span>
+              {/* 수량 비공개 (8/27 서우: 총량·잔여 미표기, 오픈 임박 시 공개) */}
+              {!soldOut && (
+                <div style={{ fontSize: 16, color: "var(--ink-4)" }}>
+                  {en ? "Quantity revealed as open day nears" : "수량은 오픈 임박 시 공개됩니다"}
                 </div>
-                <div className="track on-light" style={{ height: 6 }}>
-                  <i style={{ width: `${Math.max(2, genPct)}%`, background: ebClosed && !soldOut ? "var(--w-main)" : "var(--arrow)" }} />
-                </div>
-              </div>
+              )}
               {soldOut
                 ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 19.5, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Sold out" : "완판되었습니다"}</span>
                 : ebClosed
