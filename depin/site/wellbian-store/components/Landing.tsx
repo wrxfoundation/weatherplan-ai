@@ -36,6 +36,22 @@ export default function Landing() {
 
   const [modal, setModal] = useState(false);
   const [banner, setBanner] = useState(false);
+  /* 1h 배너 잔여 수량 카운트업 (0 → genLeft, 1.2s ease-out) */
+  const [bannerCount, setBannerCount] = useState(0);
+  useEffect(() => {
+    if (!(phase !== "early_bird" && phase !== "sold_out")) return;
+    const target = inv.genLeft;
+    const t0 = performance.now();
+    const dur = 1200;
+    let raf = 0;
+    const tick = (t: number) => {
+      const k = Math.min(1, (t - t0) / dur);
+      setBannerCount(Math.round(target * (1 - Math.pow(1 - k, 3))));
+      if (k < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [phase, inv.genLeft]);
   const [sticky, setSticky] = useState(false);
   const [faqOpen, setFaqOpen] = useState(0);
   const heroCtaRef = useRef<HTMLDivElement>(null);
@@ -90,11 +106,22 @@ export default function Landing() {
         </>}
       />
 
-      {/* 1h 얼리버드 마감 배너 (1회성) */}
+      {/* 1h 얼리버드 마감 배너 (1회성) — 밝은 톤 띠배너 + 일반 잔여 수량 카운트업 동시 노출 */}
       {ebClosed && !soldOut && banner && (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: "var(--w-deep)", color: "#fff", padding: 11, fontSize: 13, fontWeight: 700 }}>
-          {en ? "Early bird closed — now selling at the regular price, 650 RLUSD" : "얼리버드 마감 — 일반가 650 RLUSD로 판매 중입니다"}
-          <button onClick={dismissBanner} aria-label={en ? "Dismiss banner" : "배너 닫기"} style={{ opacity: 0.5, fontSize: 15, marginLeft: 8, color: "#fff" }}>✕</button>
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap",
+          background: "linear-gradient(90deg, var(--w-tint), #fff 50%, var(--w-tint))",
+          borderBottom: "1px solid color-mix(in oklab, var(--w-main) 24%, white)",
+          color: "var(--w-deep)", padding: "11px 16px", fontSize: 13, fontWeight: 700,
+        }}>
+          <span>{en ? "Early bird closed" : "얼리버드 마감"}</span>
+          <span style={{ width: 1, height: 12, background: "color-mix(in oklab, var(--w-main) 32%, white)" }} />
+          <span>
+            {en
+              ? <>only <b className="mono" style={{ color: "var(--w-main)", fontSize: 14.5 }}>{fmt(bannerCount)}</b> regular-price units left</>
+              : <>일반 잔여 <b className="mono" style={{ color: "var(--w-main)", fontSize: 14.5 }}>{fmt(bannerCount)}</b>대 남았습니다</>}
+          </span>
+          <button onClick={dismissBanner} aria-label={en ? "Dismiss banner" : "배너 닫기"} style={{ opacity: 0.45, fontSize: 15, marginLeft: 6, color: "var(--w-deep)" }}>✕</button>
         </div>
       )}
 
@@ -434,7 +461,7 @@ export default function Landing() {
                 <span className="desk-only" style={{ fontSize: 12, color: "var(--hint)" }}>{ebClosed ? (en ? "Regular" : "일반") : (en ? "Early bird" : "얼리버드")}</span>
               </div>
             </div>
-            <button onClick={buy} className="btn-main" style={{ fontSize: 15, borderRadius: 10, padding: "13px 34px" }}>{en ? "Buy" : "구매하기"}</button>
+            <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 15, borderRadius: 10, padding: "13px 34px" }}>{en ? "Buy" : "구매하기"}</button>
           </div>
         </div>
       )}
