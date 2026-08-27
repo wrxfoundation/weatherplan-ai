@@ -336,43 +336,35 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── S3 제품 — 제품명 + 갤러리 롤링 + 스펙 더보기 (8/27 개편) ── */}
-      <section className="sec-pad" style={{ background: "var(--sec-alt)" }} id="spec">
-        <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 26 }}>
+      {/* ── S3 제품 — 히어로형 풀블리드 갤러리 롤링 + 스펙 더보기 (8/27 2차: 배경 덮기 + 흰 폰트) ── */}
+      <section className="sec-pad spec-hero" id="spec" style={{ color: "#fff" }}>
+        <div aria-hidden>
+          {SPEC_GALLERY.map((g, i) => (
+            <div key={g.src} className={`spec-bg${i === specImg ? " on" : ""}`} style={{ backgroundImage: `url(${g.src})` }} role="img" aria-label={en ? g.altEn : g.alt} />
+          ))}
+          <div className="spec-hero-scrim" />
+        </div>
+        <div className="wrap" style={{ position: "relative", zIndex: 2, minHeight: 520, display: "flex", flexDirection: "column", gap: 18 }}>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 10 }}>
-            <h2 style={h2}>{en ? "Weather Data Token Generator™" : "날씨데이터토큰생성기™"}</h2>
-            <p style={{ fontSize: 19, color: "var(--ink-4)" }}>
+            <h2 style={{ ...h2, color: "#fff", textShadow: "0 2px 14px rgba(0,0,0,.35)" }}>{en ? "Weather Data Token Generator™" : "날씨데이터토큰생성기™"}</h2>
+            <p style={{ fontSize: 19, fontWeight: 600, color: "rgba(255,255,255,.85)", textShadow: "0 1px 10px rgba(0,0,0,.35)" }}>
               {en ? "Indoor Air Quality Monitor · Model ARC-600DA" : "실내공기측정기 · 모델명 ARC-600DA"}
             </p>
             <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
-              <span style={certChip}>{en ? "KC Certified" : "KC 인증"}</span>
-              <span style={certChip}>{en ? "Performance Certified" : "성능인증"}</span>
+              <span style={certChipDark}>{en ? "KC Certified" : "KC 인증"}</span>
+              <span style={certChipDark}>{en ? "Performance Certified" : "성능인증"}</span>
             </div>
           </div>
-          <div className="spec-gallery">
-            {SPEC_GALLERY.map((g, i) => (
-              <div key={g.src} className={`spec-slide${g.contain ? " fit-contain" : ""}${i === specImg ? " on" : ""}`}>
-                <Image src={g.src} alt={en ? g.altEn : g.alt} width={1600} height={900} />
-              </div>
-            ))}
-            <button className="spec-nav prev" aria-label={en ? "Previous image" : "이전 이미지"} onClick={() => setSpecImg((i) => (i - 1 + SPEC_GALLERY.length) % SPEC_GALLERY.length)}>‹</button>
-            <button className="spec-nav next" aria-label={en ? "Next image" : "다음 이미지"} onClick={() => setSpecImg((i) => (i + 1) % SPEC_GALLERY.length)}>›</button>
-            <div className="spec-dots">
-              {SPEC_GALLERY.map((g, i) => (
-                <button key={g.src} className={`spec-dot${i === specImg ? " on" : ""}`} aria-label={`${en ? "Image" : "이미지"} ${i + 1}`} onClick={() => setSpecImg(i)} />
-              ))}
-            </div>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "center" }}>
-            <button onClick={() => setSpecOpen(!specOpen)} aria-expanded={specOpen} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 18, fontWeight: 700, color: "var(--w-main)" }}>
+          <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
+            <button onClick={() => setSpecOpen(!specOpen)} aria-expanded={specOpen} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 18, fontWeight: 800, color: "#fff", background: "rgba(27,27,72,.45)", border: "1px solid rgba(255,255,255,.35)", borderRadius: 99, padding: "12px 22px", backdropFilter: "blur(4px)" }}>
               {specOpen ? (en ? "Hide specifications" : "제품 스펙 접기") : (en ? "See full specifications" : "제품 스펙 더보기")}
               <span style={{ display: "inline-flex", transform: specOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
-                <ChevD size={15} color="var(--w-main)" />
+                <ChevD size={15} color="#fff" />
               </span>
             </button>
             {specOpen && (
-              <div className="step-in" style={{ width: "100%", maxWidth: 760, display: "flex", flexDirection: "column", gap: 12 }}>
-                <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid var(--w-deep)", background: "#fff", borderRadius: "0 0 12px 12px", padding: "0 16px" }}>
+              <div className="step-in" style={{ width: "100%", maxWidth: 760, background: "#fff", borderRadius: 14, padding: "6px 20px 14px", display: "flex", flexDirection: "column", gap: 12, color: "var(--ink-1)" }}>
+                <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid var(--w-deep)" }}>
                   {specs.map((s) => (
                     <div key={s.k} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "9px 4px", borderBottom: "1px solid var(--line)", fontSize: 17.5, lineHeight: 1.45 }}>
                       <span style={{ fontWeight: 700, color: "var(--w-deep)" }}>{s.k}</span>
@@ -383,8 +375,16 @@ export default function Landing() {
                 <div style={{ fontSize: 15.5, color: "var(--hint)", textAlign: "center" }}>{en ? "Based on the manufacturer's official specification sheet." : "제조사 공식 사양표 기준입니다."}</div>
               </div>
             )}
+            <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
+              {SPEC_GALLERY.map((g, i) => (
+                <button key={g.src} onClick={() => setSpecImg(i)} aria-label={`${en ? "Image" : "이미지"} ${i + 1}`}
+                  style={{ width: 9, height: 9, borderRadius: 99, background: i === specImg ? "#fff" : "rgba(255,255,255,.42)", transform: i === specImg ? "scale(1.25)" : "none", transition: "background .15s, transform .15s" }} />
+              ))}
+            </div>
           </div>
         </div>
+        <button className="spec-nav prev" style={{ zIndex: 2 }} aria-label={en ? "Previous image" : "이전 이미지"} onClick={() => setSpecImg((i) => (i - 1 + SPEC_GALLERY.length) % SPEC_GALLERY.length)}>‹</button>
+        <button className="spec-nav next" style={{ zIndex: 2 }} aria-label={en ? "Next image" : "다음 이미지"} onClick={() => setSpecImg((i) => (i + 1) % SPEC_GALLERY.length)}>›</button>
       </section>
 
       {/* ── S6 RLUSD 준비 ── */}
@@ -639,12 +639,13 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
    재비교 시 배열에 다시 넣으면 롤링 복원 */
 const HERO_BGS = ["/assets/hero-bg-2.jpg"];
 
-/* 제품 스펙 갤러리 4컷 (8/27) — 패키지 · 제품 단독 · 라이프스타일 · 데이터 연출 */
+/* 제품 갤러리 5컷 (8/27 2차 — 서우 신규 렌더: 받침대·주방·거실·골드·블랙) — 히어로형 풀블리드 배경 */
 const SPEC_GALLERY = [
-  { src: "/assets/spec-package.jpg", alt: "패키지와 제품", altEn: "Package and product", contain: false },
-  { src: "/assets/device.webp", alt: "제품 단독 컷", altEn: "Product", contain: true },
-  { src: "/assets/hero-life.webp", alt: "설치 라이프스타일 컷", altEn: "In-home lifestyle", contain: false },
-  { src: "/assets/hero-bg-2.jpg", alt: "데이터 연출 컷", altEn: "Data visual", contain: false },
+  { src: "/assets/product-1.jpg", alt: "패키지 앞뒷면과 제품", altEn: "Package front, back, and product" },
+  { src: "/assets/product-2.jpg", alt: "주방 설치 연출", altEn: "In the kitchen" },
+  { src: "/assets/product-3.jpg", alt: "거실 설치 연출", altEn: "In the living room" },
+  { src: "/assets/product-4.jpg", alt: "패키지 앞뒷면 (골드)", altEn: "Package set (gold)" },
+  { src: "/assets/product-5.jpg", alt: "패키지 앞면", altEn: "Package front" },
 ];
 
 /* ── 인라인 확장 가이드 콘텐츠 (8/27) — 약관 5조·구매 플로우·확정 정책 기준 ── */
@@ -689,3 +690,5 @@ const heroIcon: React.CSSProperties = { display: "inline-flex", alignItems: "cen
 /* GNB 미리보기 칩 — 점선 보더 = 데모 컨트롤 시그널 (실배포 시 상태 머신이 대체) */
 const previewChip: React.CSSProperties = { display: "inline-flex", fontSize: 15, fontWeight: 700, color: "var(--cap)", border: "1px dashed var(--bd-input)", borderRadius: 8, padding: "6px 10px", textDecoration: "none", whiteSpace: "nowrap" };
 const certChip: React.CSSProperties = { fontSize: 14.5, fontWeight: 700, border: "1px solid var(--bd-input)", borderRadius: 6, padding: "4px 8px", color: "var(--ink-2)" };
+/* 다크(사진 배경) 위 인증 칩 — S3 히어로형 갤러리용 */
+const certChipDark: React.CSSProperties = { fontSize: 15, fontWeight: 700, border: "1px solid rgba(255,255,255,.45)", background: "rgba(27,27,72,.35)", borderRadius: 99, padding: "6px 14px", color: "#fff", backdropFilter: "blur(3px)" };

@@ -179,7 +179,23 @@ h1, h2, h3, p { margin: 0; }
   .hero-lockup .lk-xrpl { height: 18px; }
 }
 
-/* 제품 스펙 갤러리 캐러셀 (8/27) — 페이드 롤링 + 도트 + 좌우 버튼 */
+/* 제품 갤러리 — 히어로형 풀블리드 롤링 (8/27 2차: 섹션 전체를 사진이 덮고 텍스트는 흰색) */
+.spec-hero { position: relative; overflow: hidden; background: var(--w-deep); }
+.spec-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-position: center; background-size: cover; background-repeat: no-repeat;
+  opacity: 0; transition: opacity 1.2s ease;
+}
+.spec-bg.on { opacity: 1; }
+.spec-hero-scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(27, 27, 72, .72) 0%, rgba(27, 27, 72, .2) 30%, rgba(27, 27, 72, .16) 62%, rgba(27, 27, 72, .74) 100%);
+}
+.spec-hero .spec-nav { position: absolute; top: 50%; transform: translateY(-50%); }
+@media (max-width: 720px) { .spec-hero .wrap { min-height: 400px !important; } }
+@media (prefers-reduced-motion: reduce) { .spec-bg { transition: none; } }
+
+/* 제품 스펙 갤러리 캐러셀 (8/27, 구판 카드형 — spec-hero로 대체, 클래스 보존) */
 .spec-gallery { position: relative; width: 100%; max-width: 880px; margin: 0 auto; height: 430px; border-radius: 16px; overflow: hidden; border: 1px solid var(--bd-card); background: #fff; }
 .spec-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease; }
 .spec-slide.on { opacity: 1; }
