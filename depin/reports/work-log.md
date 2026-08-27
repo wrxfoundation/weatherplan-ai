@@ -647,7 +647,14 @@
   화이트 CI 드디어 수급**(3번째 시도, 328×82 PNG) → 다크 배경 투명화 추출(휘도→알파,
   283×39) → `kw-white.png`. 푸터의 임시 처리(흰 칩+kw-black)를 걷어내고 wellbian·XRPL과
   동일한 직접 배치(높이 16px·투명도 .92)로 교체 — **대기 항목 "정식 CI 파일 수급" 해소**
-  (kw-black.png 보관). QA: preorder2 13·preonboard 21·salescount 21·nolimit 18 ALL PASS — 페르소나 추출·콘텐츠 파이프라인 시스템
+  (kw-black.png 보관). QA: preorder2 13·preonboard 21·salescount 21·nolimit 18 ALL PASS
+- **v3.27 (8/27 밤) — KO 헤드라인 2줄 고정 + 락업 색 통일 (서우 지시 2건, 커밋 a60774b)** —
+  ① 데스크톱에서 "당신의 날씨 / 데이터를 / 가치로" 3줄로 감기던 문제: `.hero-h1-ko`
+  (min-721px nowrap + clamp(29px,3.95vw,54px) !important — 컬럼 544px 실측 기반, 60px 줄폭
+  567px가 원인) → 1380·1024·800·721·390 전 폭 2줄·오버플로 0 실측 ② 히어로 락업(wellbian X
+  XRP LEDGER)을 WEATHER DATA ECONOMY 아이브로우 색으로 통일 — oklab 계산으로 #A7B1EE 도출,
+  흰 로고 PNG를 휘도 보존 틴트한 wb-lav/xrpl-lav.png 신설 + .lk-x 동일 토큰(color-mix).
+  푸터·화이트 원본은 유지. QA: salescount 21·preonboard 21·noeb 16·nolimit 18 ALL PASS — 페르소나 추출·콘텐츠 파이프라인 시스템
   (87파일, MIT). 원본 스킬은 자기 저장소 구조에 결박돼 원문 설치 불가 → **각색 2종 + 원문
   참고문헌 3종** 흡수: ① **`/xqa` 신설** — virtual-follower 패턴의 wellbian판: X 초안 게시 전
   발화 규칙 게이트(위반 1건 = FAIL) → 실청중 5프로필(빌더·분석가·국내 커뮤니티·생태계 관계자·
