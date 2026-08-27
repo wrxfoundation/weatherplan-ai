@@ -380,6 +380,61 @@ export default function Landing() {
       </section>
       )}
 
+      {/* ── S4 비전 — Weather Data Economy (8/27 사업계획서 함축) + 작동 원리 4단계 ── */}
+      {/* 8/28 서우: 시티 렌더(vision-city) 풀블리드 배경 + 카드 글래스(반투명·backdrop blur) */}
+      <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--sec-alt)" }} id="how">
+        <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/vision-city.webp)", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
+        {/* 화이트 스크림 — 상·하단 진하게(타이틀·면책 가독), 중단 옅게(도시가 비치게) */}
+        {/* 8/28 서우: 배경 더 밝게 — 중단 스크림 상향 */}
+        <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.68) 26%, rgba(255,255,255,.56) 62%, rgba(255,255,255,.9) 100%)", pointerEvents: "none" }} />
+        <div className="wrap" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 34, textAlign: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ fontSize: 15.5, fontWeight: 800, letterSpacing: ".14em", color: "var(--w-main)" }}>WEATHER DATA ECONOMY</div>
+            <h2 style={h2}>{en ? "What we're building" : "우리가 만드는 것"}</h2>
+            <p style={{ fontSize: 19.5, lineHeight: 1.72, color: "var(--ink-4)", maxWidth: 780, margin: "0 auto" }}>
+              {en
+                ? "Air differs building by building, street by street — beyond the reach of public weather stations. Data measured where you actually live comes back as rewards after verification, and as it accumulates, it builds an economy of services."
+                : "공기는 건물마다, 골목마다 다릅니다 — 기존 관측망이 닿지 않는 곳이죠. 내가 생활하는 공간에서 측정한 데이터가 검증을 거쳐 보상으로 돌아오고, 쌓인 데이터는 서비스가 되는 경제를 구축해 나갑니다."}
+            </p>
+          </div>
+          <div className="how-grid">
+            <HowCard icon={<Gauge />} title={en ? "① Measure" : "① 측정"} desc={en ? "Measures indoor air — CO₂, particulates, temperature & humidity" : "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정합니다"} />
+            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
+            <HowCard icon={<ShieldCheck />} title={en ? "② Verify" : "② 검증"} desc={en ? "The network verifies the integrity of your data" : "네트워크가 데이터의 무결성을 검증합니다"} />
+            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
+            <HowCard icon={<Coin />} title={en ? "③ Reward" : "③ 보상"} desc={en ? "Verified data earns WLBN under network rules" : "검증된 데이터에 네트워크 원칙에 따라 WLBN이 지급됩니다"} />
+            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
+            <HowCard icon={<Chart />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
+          </div>
+          {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
+          {/* 8/28 서우 2차: 비전·선순환 카드 테두리 원복 (히어로 스탯 테이블만 보더리스 유지) */}
+          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
+            <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
+              {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap", fontSize: 16.5, fontWeight: 700 }}>
+              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Verified air data" : "검증된 공기질 데이터"}</span>
+              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
+              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Real demand — enterprises · APIs · AI" : "실제 수요처 유통 — 기업 · API · AI"}</span>
+              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
+              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Revenue → the network keeps running" : "수익 → 네트워크 지속"}</span>
+              <span style={{ color: "var(--w-main)", fontSize: 21, fontWeight: 800 }}>↻</span>
+            </div>
+            <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
+              {en
+                ? <>The verified air-quality data our nodes produce flows to real buyers — enterprises, APIs, AI services.<br />The more it is used, the stronger the demand, and that demand is what keeps the network running.</>
+                : <>노드가 모은 검증된 공기질 데이터는 기업·API·AI 서비스 같은 실제 수요처로 유통됩니다.<br />데이터가 쓰일수록 수요가 커지고, 그 수요가 다시 네트워크를 지속시키는 힘이 됩니다.</>}
+            </p>
+          </div>
+          <div style={{ fontSize: "clamp(23px, 2.8vw, 31px)", fontWeight: 800, color: "var(--w-main)", letterSpacing: "-.01em" }}>
+            Turn Your Weather Data into Value.
+          </div>
+          <div style={{ fontSize: 15.5, color: "var(--hint)" }}>
+            {en ? `${NOTICE_REWARD_EN} · See the FAQ for details` : `${NOTICE_REWARD} · 자세한 원칙은 FAQ를 참고하세요`}
+          </div>
+        </div>
+      </section>
+
       {/* ── S3 제품 — 타이틀·스펙은 갤러리 밖(짙은 폰트), 갤러리는 풀폭 이미지 밴드 (8/27 3차) ── */}
       <section id="spec" style={{ background: "var(--sec-alt)" }}>
         <div className="sec-pad" style={{ paddingBottom: 26 }}>
@@ -487,61 +542,6 @@ export default function Landing() {
               </div>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* ── S4 비전 — Weather Data Economy (8/27 사업계획서 함축) + 작동 원리 4단계 ── */}
-      {/* 8/28 서우: 시티 렌더(vision-city) 풀블리드 배경 + 카드 글래스(반투명·backdrop blur) */}
-      <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--sec-alt)" }} id="how">
-        <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/vision-city.webp)", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
-        {/* 화이트 스크림 — 상·하단 진하게(타이틀·면책 가독), 중단 옅게(도시가 비치게) */}
-        {/* 8/28 서우: 배경 더 밝게 — 중단 스크림 상향 */}
-        <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.68) 26%, rgba(255,255,255,.56) 62%, rgba(255,255,255,.9) 100%)", pointerEvents: "none" }} />
-        <div className="wrap" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 34, textAlign: "center" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ fontSize: 15.5, fontWeight: 800, letterSpacing: ".14em", color: "var(--w-main)" }}>WEATHER DATA ECONOMY</div>
-            <h2 style={h2}>{en ? "What we're building" : "우리가 만드는 것"}</h2>
-            <p style={{ fontSize: 19.5, lineHeight: 1.72, color: "var(--ink-4)", maxWidth: 780, margin: "0 auto" }}>
-              {en
-                ? "Air differs building by building, street by street — beyond the reach of public weather stations. Data measured where you actually live comes back as rewards after verification, and as it accumulates, it builds an economy of services."
-                : "공기는 건물마다, 골목마다 다릅니다 — 기존 관측망이 닿지 않는 곳이죠. 내가 생활하는 공간에서 측정한 데이터가 검증을 거쳐 보상으로 돌아오고, 쌓인 데이터는 서비스가 되는 경제를 구축해 나갑니다."}
-            </p>
-          </div>
-          <div className="how-grid">
-            <HowCard icon={<Gauge />} title={en ? "① Measure" : "① 측정"} desc={en ? "Measures indoor air — CO₂, particulates, temperature & humidity" : "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정합니다"} />
-            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<ShieldCheck />} title={en ? "② Verify" : "② 검증"} desc={en ? "The network verifies the integrity of your data" : "네트워크가 데이터의 무결성을 검증합니다"} />
-            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<Coin />} title={en ? "③ Reward" : "③ 보상"} desc={en ? "Verified data earns WLBN under network rules" : "검증된 데이터에 네트워크 원칙에 따라 WLBN이 지급됩니다"} />
-            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<Chart />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
-          </div>
-          {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
-          {/* 8/28 서우 2차: 비전·선순환 카드 테두리 원복 (히어로 스탯 테이블만 보더리스 유지) */}
-          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
-            <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
-              {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
-            </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap", fontSize: 16.5, fontWeight: 700 }}>
-              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Verified air data" : "검증된 공기질 데이터"}</span>
-              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
-              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Real demand — enterprises · APIs · AI" : "실제 수요처 유통 — 기업 · API · AI"}</span>
-              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
-              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Revenue → the network keeps running" : "수익 → 네트워크 지속"}</span>
-              <span style={{ color: "var(--w-main)", fontSize: 21, fontWeight: 800 }}>↻</span>
-            </div>
-            <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
-              {en
-                ? <>The verified air-quality data our nodes produce flows to real buyers — enterprises, APIs, AI services.<br />The more it is used, the stronger the demand, and that demand is what keeps the network running.</>
-                : <>노드가 모은 검증된 공기질 데이터는 기업·API·AI 서비스 같은 실제 수요처로 유통됩니다.<br />데이터가 쓰일수록 수요가 커지고, 그 수요가 다시 네트워크를 지속시키는 힘이 됩니다.</>}
-            </p>
-          </div>
-          <div style={{ fontSize: "clamp(23px, 2.8vw, 31px)", fontWeight: 800, color: "var(--w-main)", letterSpacing: "-.01em" }}>
-            Turn Your Weather Data into Value.
-          </div>
-          <div style={{ fontSize: 15.5, color: "var(--hint)" }}>
-            {en ? `${NOTICE_REWARD_EN} · See the FAQ for details` : `${NOTICE_REWARD} · 자세한 원칙은 FAQ를 참고하세요`}
-          </div>
         </div>
       </section>
 
