@@ -394,7 +394,7 @@ export default function Landing() {
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
             <h2 style={h2}>{en ? "Don't have RLUSD yet?" : "RLUSD가 없다면"}</h2>
             <p style={{ fontSize: 19, color: "var(--ink-4)" }}>
-              {en ? "RLUSD — a USD-pegged stablecoin issued by Ripple, regulated by the NYDFS" : "RLUSD — 미국 달러 1:1 연동 · NYDFS 규제 · 리플(Ripple) 발행 스테이블코인"}
+              {en ? "RLUSD — a USD-pegged stablecoin issued by Ripple" : "RLUSD — 미국 달러 1:1 연동 · 리플(Ripple) 발행 스테이블코인"}
             </p>
           </div>
           <div className="rl-grid">
