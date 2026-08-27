@@ -270,7 +270,7 @@ export default function Landing() {
                 /* 누적·D-day 글래스 스탯 테이블 (8/28 서우: 줄글 → "현재 N대 사전예약 | 판매 오픈 D-n",
                    글래스 = 비전 카드와 동일 rgba .3 + blur 14px) */
                 <div className="pre-stat" style={{
-                  border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)",
+                  /* 8/28 서우: 글래스 테두리 제거 */ background: "rgba(255,255,255,.3)",
                   backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
                   borderRadius: 14, padding: "14px 22px", marginTop: 4, boxShadow: "0 8px 32px rgba(0,0,0,.18)",
                 }}>
@@ -514,7 +514,7 @@ export default function Landing() {
             <HowCard icon={<Chart />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
           </div>
           {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
-          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
+          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", /* 8/28 서우: 글래스 테두리 제거 */ background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
             <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
               {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
             </div>
@@ -685,7 +685,7 @@ export default function Landing() {
 function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: React.ReactNode }) {
   return (
     /* 글래스 카드 (8/28 서우: 비전 배경 위 반투명 — 뒤 도시가 블러로 비침) */
-    <div style={{ border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
+    <div style={{ /* 8/28 서우: 글래스 테두리 제거 */ background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
       <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 14, background: "var(--w-tint)", color: "var(--w-main)" }}>{icon}</span>
       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
       <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
