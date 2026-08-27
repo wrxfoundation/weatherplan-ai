@@ -111,9 +111,9 @@ export function CommunityFooter() {
             <span style={{ fontSize: 14, fontWeight: 800, letterSpacing: ".1em", color: "rgba(255,255,255,.78)" }}>KWEATHER</span>
           </div>
           <nav style={{ display: "flex", gap: 20, fontSize: 12.5, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
-            {en
-              ? <><span>Terms of Service</span><span>Refund Policy</span><span>Privacy Policy</span></>
-              : <><span>이용약관</span><span>환불 약관</span><span>개인정보처리방침</span></>}
+            <a href={LINKS.terms} target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none" }}>
+              {en ? "Terms of Service (TERMS)" : "이용약관 (TERMS)"}
+            </a>
           </nav>
         </div>
         <div style={{ fontSize: 11.5, color: "rgba(255,255,255,.35)" }}>

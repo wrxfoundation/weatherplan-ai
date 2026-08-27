@@ -9,7 +9,7 @@
    전부 mock — mismatch 분기는 ?demo=mismatch로 재현(첫 서명만 불일치). */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PRICE, RECEIVE_ADDRESS, DEST_TAG, MOCK_ORDER, fmt } from "@/lib/data";
+import { PRICE, RECEIVE_ADDRESS, DEST_TAG, MOCK_ORDER, LINKS, fmt } from "@/lib/data";
 import { WALLETS, WalletAdapter } from "@/lib/wallet";
 import { useI18n } from "@/lib/i18n";
 import { Check, ChevR, Clock, Warn } from "./icons";
@@ -312,7 +312,8 @@ function TermCard({ checked, onToggle, title, desc, view }: { checked: boolean; 
         <span style={{ fontSize: 14, fontWeight: 700, color: "var(--w-deep)" }}>{title}</span>
         <span style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</span>
       </span>
-      <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} style={{ fontSize: 12, whiteSpace: "nowrap" }}>{view}</a>
+      {/* 전문은 플랫폼 메인 사이트 TERMS — 체크 토글과 분리 (stopPropagation) */}
+      <a href={LINKS.terms} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ fontSize: 12, whiteSpace: "nowrap" }}>{view}</a>
     </button>
   );
 }

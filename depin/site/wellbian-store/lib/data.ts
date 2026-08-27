@@ -184,6 +184,8 @@ export const MOCK_DEVICE: Device = {
 export const LINKS = {
   x: "https://x.com/wellbianlabs",
   telegram: "https://t.me/wellbianlabs",
+  /* 약관은 플랫폼 메인 사이트 TERMS로 통합 (8/27 서우 결정 — 별도 문서 없이 단일 링크) */
+  terms: "https://wlbn.wellbianlabs.io/terms",
 };
 
 /* 결제 파라미터 — Vercel 환경 변수로 교체 가능 (PRD §11), 미설정 시 목값 */
