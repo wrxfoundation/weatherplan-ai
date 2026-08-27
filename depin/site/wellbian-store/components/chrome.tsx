@@ -15,7 +15,7 @@ export function LangToggle() {
       onClick={() => setLang(l)}
       aria-pressed={lang === l}
       style={{
-        padding: "6px 10px", fontSize: 12, fontWeight: 700,
+        padding: "6px 10px", fontSize: 15.5, fontWeight: 700,
         ...(lang === l ? { background: "var(--w-deep)", color: "#fff" } : { color: "var(--hint)", background: "transparent" }),
       }}
     >
@@ -46,14 +46,14 @@ export function Gnb({ dday, right }: { dday?: string; right?: React.ReactNode })
         <Link href="/" style={{ display: "inline-flex" }}>
           <Image src="/assets/wb-black.png" alt="wellbian" width={110} height={22} style={{ height: 22, width: "auto" }} priority />
         </Link>
-        <nav style={{ display: "flex", gap: 26, fontSize: 14, fontWeight: 600, color: "var(--ink-2)" }} className="desk-only">
+        <nav style={{ display: "flex", gap: 26, fontSize: 18, fontWeight: 600, color: "var(--ink-2)" }} className="desk-only">
           <Link href="/" style={{ color: "inherit" }}>{en ? "Product" : "제품"}</Link>
         </nav>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         {right}
         {dday && (
-          <span className="mob-only pill" style={{ fontSize: 10.5, fontWeight: 800, color: "var(--w-main)", background: "var(--w-tint)", borderRadius: 6, padding: "4px 7px" }}>
+          <span className="mob-only pill" style={{ fontSize: 13.5, fontWeight: 800, color: "var(--w-main)", background: "var(--w-tint)", borderRadius: 6, padding: "4px 7px" }}>
             {dday}
           </span>
         )}
@@ -86,18 +86,18 @@ export function CommunityFooter() {
       <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 40 }}>
         <div className="s9-invite" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, border: "1px solid rgba(255,255,255,.14)", borderRadius: 18, padding: "32px 36px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <div style={{ fontSize: 21, fontWeight: 800 }}>
+            <div style={{ fontSize: 27.5, fontWeight: 800 }}>
               {en ? "Get updates in the official community" : "Official 커뮤니티에서 소식을 받아보세요"}
             </div>
-            <div style={{ fontSize: 13.5, color: "rgba(255,255,255,.6)" }}>
+            <div style={{ fontSize: 17.5, color: "rgba(255,255,255,.6)" }}>
               {en ? "Shipping schedules, setup guides, and network updates — delivered first" : "발송 일정 · 연동 가이드 · 네트워크 업데이트를 가장 먼저 전합니다"}
             </div>
           </div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main" style={{ fontSize: 14, borderRadius: 10, padding: "13px 20px", color: "#fff", textDecoration: "none" }}>
+            <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main" style={{ fontSize: 18, borderRadius: 10, padding: "13px 20px", color: "#fff", textDecoration: "none" }}>
               <TgIcon size={15} /> {en ? "Join the community" : "커뮤니티 입장"}
             </a>
-            <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 800, borderRadius: 10, padding: "13px 20px", textDecoration: "none" }}>
+            <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 18, fontWeight: 800, borderRadius: 10, padding: "13px 20px", textDecoration: "none" }}>
               <XIcon size={14} /> {en ? "Follow for updates" : "소식 팔로우"}
             </a>
           </div>
@@ -105,7 +105,7 @@ export function CommunityFooter() {
         <div className="s9-brands" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, borderTop: "1px solid rgba(255,255,255,.12)", paddingTop: 28, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
             <Image src="/assets/wb-white.png" alt="wellbian" width={90} height={18} style={{ height: 18, width: "auto", opacity: 0.9 }} />
-            <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>POWERED BY</span>
+            <span style={{ fontSize: 14.5, color: "rgba(255,255,255,.4)" }}>POWERED BY</span>
             <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={80} height={15} style={{ height: 15, width: "auto", opacity: 0.75 }} />
             <span style={{ width: 1, height: 14, background: "rgba(255,255,255,.25)" }} />
             {/* 케이웨더 워드마크 — 검은 로고를 흰 칩 위에 (8/27 서우: "검은색으로 제대로"). 정식 CI 파일 수급 시 kw-black.png만 교체 */}
@@ -113,13 +113,13 @@ export function CommunityFooter() {
               <Image src="/assets/kw-black.png" alt="KWEATHER" width={445} height={44} style={{ height: 14, width: "auto" }} />
             </span>
           </div>
-          <nav style={{ display: "flex", gap: 20, fontSize: 12.5, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
+          <nav style={{ display: "flex", gap: 20, fontSize: 16, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
             <a href={LINKS.terms} target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none" }}>
               {en ? "Terms of Service (TERMS)" : "이용약관 (TERMS)"}
             </a>
           </nav>
         </div>
-        <div style={{ fontSize: 11.5, color: "rgba(255,255,255,.35)" }}>
+        <div style={{ fontSize: 15, color: "rgba(255,255,255,.35)" }}>
           © 2026 WELLBIAN. All rights reserved. · {en ? "Weather Data Token Generator™ (Indoor Air Quality Monitor) · Model ARC-600DA" : "날씨데이터토큰생성기™ (실내공기측정기) · 모델명 ARC-600DA"}
         </div>
       </div>
@@ -136,7 +136,7 @@ export function ImageSlot({ w, h, r = 18, label = "제품 렌더 이미지" }: {
         background: "linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03))",
         border: "1.5px dashed rgba(140,140,180,.4)",
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 12.5, color: "var(--hint)", textAlign: "center", padding: 16,
+        fontSize: 16, color: "var(--hint)", textAlign: "center", padding: 16,
       }}
     >
       {label} (에셋 수급 시 교체)

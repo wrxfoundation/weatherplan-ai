@@ -156,7 +156,7 @@ h1, h2, h3, p { margin: 0; }
 /* ── 스텝 인디케이터 (모달 상단) ── */
 .mstep-ind { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .mstep-dot {
-  width: 22px; height: 22px; border-radius: 99px; font-size: 11px; font-weight: 800;
+  width: 28px; height: 28px; border-radius: 99px; font-size: 14px; font-weight: 800;
   display: inline-flex; align-items: center; justify-content: center; flex: none;
 }
 .mstep-dot.cur { background: var(--w-main); color: #fff; }
@@ -164,7 +164,7 @@ h1, h2, h3, p { margin: 0; }
 .mstep-dot.todo { background: var(--chip); color: var(--dis); }
 .mstep-line { width: 22px; height: 2px; background: var(--bd-card); flex: none; }
 .mstep-line.done { background: var(--w-main); }
-.mstep-label { font-size: 12px; color: var(--dis); }
+.mstep-label { font-size: 15.5px; color: var(--dis); }
 .mstep-label.cur { font-weight: 700; color: var(--w-deep); }
 
 /* ── 랜딩 반응형 그리드 ── */
@@ -211,7 +211,8 @@ h1, h2, h3, p { margin: 0; }
 .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 /* 제품 이미지가 주인공 — 좌측 절반(가운데선)까지 확장 */
 .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-.how-grid { display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr; gap: 0; align-items: center; }
+/* 4스텝(측정→검증→보상→활용, 8/27) — 카드 4 + 화살표 3 = 7열 */
+.how-grid { display: grid; grid-template-columns: 1fr 34px 1fr 34px 1fr 34px 1fr; gap: 0; align-items: center; }
 .link-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .rl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
@@ -238,7 +239,7 @@ h1, h2, h3, p { margin: 0; }
 /* ── 주문·대기 페이지 유틸 ── */
 .w720 { width: 720px; max-width: 100%; }
 .w440 { width: 440px; max-width: 100%; }
-.big-title { font-size: 30px; }
+.big-title { font-size: 39px; }
 .wl-hero-pad { padding: 60px 64px; }
 .wl-sec-pad { padding: 56px 64px; }
 .dash-pad { padding: 36px; }
@@ -248,7 +249,7 @@ h1, h2, h3, p { margin: 0; }
 .stat4 > div { border-right: 1px solid var(--line-2); }
 .stat4 > div:last-child { border-right: 0; }
 @media (max-width: 720px) {
-  .big-title { font-size: 21px; line-height: 1.35; }
+  .big-title { font-size: 27px; line-height: 1.35; }
   .wl-hero-pad { padding: 36px 20px; }
   .wl-sec-pad { padding: 36px 20px; }
   .dash-pad { padding: 20px 16px; }

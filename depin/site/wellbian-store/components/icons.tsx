@@ -53,6 +53,13 @@ export const Gauge = ({ size = 24, color = "currentColor" }: P) => (
   </svg>
 );
 
+export const Chart = ({ size = 24, color = "currentColor" }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
+    <path d="M4 4v16h16" />
+    <path d="M8.5 15.5v-4M13 15.5V8M17.5 15.5v-6.5" />
+  </svg>
+);
+
 export const Coin = ({ size = 24, color = "currentColor" }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
     <circle cx="12" cy="12" r="9" />

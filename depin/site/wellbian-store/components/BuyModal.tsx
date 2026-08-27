@@ -100,10 +100,10 @@ export default function BuyModal({
           <h3 style={h3}>{en ? "Choose quantity" : "수량을 선택하세요"}</h3>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "18px 20px", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <span style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>
+              <span style={{ fontSize: 19, fontWeight: 800, color: "var(--w-deep)" }}>
                 Weather Data Token Generator™ · {tierLabel}
               </span>
-              <span style={{ fontSize: 12.5, color: "var(--cap)" }}>
+              <span style={{ fontSize: 16, color: "var(--cap)" }}>
                 {en
                   ? `${unit} RLUSD each${tier === "eb" ? ` · ${fmt(ebLeft)} left` : ""}`
                   : `${unit} RLUSD / 대${tier === "eb" ? ` · 잔여 ${fmt(ebLeft)}대` : ""}`}
@@ -116,17 +116,17 @@ export default function BuyModal({
                 value={qty}
                 onChange={(e) => { const v = parseInt(e.target.value.replace(/\D/g, "") || "1", 10); setQty(Math.max(1, Math.min(9999, v))); }}
                 inputMode="numeric" aria-label={en ? "Quantity" : "수량"}
-                style={{ width: 76, height: 38, border: "1.5px solid var(--w-main)", borderRadius: 10, textAlign: "center", fontSize: 17, fontWeight: 800, color: "var(--w-deep)", background: "#fff", boxShadow: "0 0 0 3px var(--w-tint)", outline: "none" }}
+                style={{ width: 76, height: 38, border: "1.5px solid var(--w-main)", borderRadius: 10, textAlign: "center", fontSize: 22, fontWeight: 800, color: "var(--w-deep)", background: "#fff", boxShadow: "0 0 0 3px var(--w-tint)", outline: "none" }}
               />
               <button aria-label={en ? "Increase quantity" : "수량 증가"} onClick={() => setQty((q) => Math.min(9999, q + 1))}
                 style={{ ...qtyBtn, borderColor: "var(--w-main)", color: "var(--w-main)" }}>+</button>
             </div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--sec-alt)", borderRadius: 12, padding: "14px 20px" }}>
-            <span style={{ fontSize: 13.5, color: "var(--ink-4)" }}>{en ? `Total · ${fmt(qty)} units` : `합계 · ${fmt(qty)}대`}</span>
-            <span style={{ fontSize: 20, fontWeight: 800, color: "var(--w-deep)" }}>{fmt(total)} RLUSD</span>
+            <span style={{ fontSize: 17.5, color: "var(--ink-4)" }}>{en ? `Total · ${fmt(qty)} units` : `합계 · ${fmt(qty)}대`}</span>
+            <span style={{ fontSize: 26, fontWeight: 800, color: "var(--w-deep)" }}>{fmt(total)} RLUSD</span>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, lineHeight: 1.6, color: "var(--cap)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 16, lineHeight: 1.6, color: "var(--cap)" }}>
             {en ? (
               <>
                 <span>· Use − / + or <b style={{ color: "var(--ink-2)" }}>type a number</b> — bulk orders welcome</span>
@@ -158,26 +158,26 @@ export default function BuyModal({
                   background: sel ? "var(--w-tint)" : "#fff",
                   borderRadius: 14, padding: sel ? "15px 17px" : "16px 18px",
                 }}>
-                  <span style={{ width: 40, height: 40, borderRadius: 11, background: sel ? "var(--w-deep)" : "var(--chip)", color: sel ? "#fff" : "var(--ink-4)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, flex: "none" }}>
+                  <span style={{ width: 40, height: 40, borderRadius: 11, background: sel ? "var(--w-deep)" : "var(--chip)", color: sel ? "#fff" : "var(--ink-4)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 15.5, fontWeight: 800, flex: "none" }}>
                     {w.name[0]}
                   </span>
                   <span style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
-                    <span style={{ fontSize: 15, fontWeight: 800, color: "var(--w-deep)" }}>{w.name}</span>
-                    <span style={{ fontSize: 12, color: sel ? "var(--ink-4)" : "var(--cap)" }}>{en ? w.descEn : w.desc}</span>
+                    <span style={{ fontSize: 19.5, fontWeight: 800, color: "var(--w-deep)" }}>{w.name}</span>
+                    <span style={{ fontSize: 15.5, color: sel ? "var(--ink-4)" : "var(--cap)" }}>{en ? w.descEn : w.desc}</span>
                   </span>
                   {w.detected
-                    ? <span className="pill" style={{ fontSize: 11, color: "var(--w-main)", background: "#fff", border: "1px solid var(--w-main)", padding: "4px 10px" }}>{en ? "Detected" : "감지됨"}</span>
+                    ? <span className="pill" style={{ fontSize: 14.5, color: "var(--w-main)", background: "#fff", border: "1px solid var(--w-main)", padding: "4px 10px" }}>{en ? "Detected" : "감지됨"}</span>
                     : <ChevR size={16} color="var(--dis)" />}
                 </button>
               );
             })}
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12.5, flexWrap: "wrap", gap: 6 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 16, flexWrap: "wrap", gap: 6 }}>
             <a href="#" onClick={(e) => e.preventDefault()}>{en ? "No wallet yet? See the guide →" : "지갑이 없나요? 지갑 만들기 안내 →"}</a>
             <span style={{ color: "var(--cap)" }}>{en ? "One-time activation (1 XRP) covered" : "활성화(1 XRP) 1회 지원"}</span>
           </div>
           {address && (
-            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, fontWeight: 700, color: "var(--ok-text)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 16, fontWeight: 700, color: "var(--ok-text)" }}>
               <Check size={13} color="var(--ok-text)" /> {wallet?.name} {en ? "connected" : "연결됨"} — <span className="mono">{address}</span>
             </div>
           )}
@@ -195,7 +195,7 @@ export default function BuyModal({
       case 2: return (
         <>
           <h3 style={h3}>{en ? "Review the refund & shipping notices" : "환불·배송 안내를 확인해 주세요"}</h3>
-          <div style={{ display: "flex", gap: 12, border: "1px solid color-mix(in oklab, var(--w-main) 30%, white)", background: "var(--w-tint)", borderRadius: 12, padding: "15px 18px", fontSize: 13.5, lineHeight: 1.6, color: "var(--ink-2)" }}>
+          <div style={{ display: "flex", gap: 12, border: "1px solid color-mix(in oklab, var(--w-main) 30%, white)", background: "var(--w-tint)", borderRadius: 12, padding: "15px 18px", fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-2)" }}>
             <span style={{ flex: "none", marginTop: 2 }}><Clock /></span>
             <span>
               {en ? (
@@ -221,7 +221,7 @@ export default function BuyModal({
               desc={en ? "I understand shipping details are collected via a separate form, not on this site" : "배송 정보는 이 사이트가 아닌 별도 접수 폼에서 받는다는 안내를 확인했습니다"}
               view={en ? "View" : "보기"} />
           </div>
-          <div style={{ fontSize: 12, color: "var(--cap)" }}>
+          <div style={{ fontSize: 15.5, color: "var(--cap)" }}>
             {en ? "Refunds: within 7 days of delivery (before the redeem code is used)" : "환불: 제품 수령일부터 7일 이내 가능 (리딤코드 사용 전)"}
           </div>
           <button className="btn-main" style={cta} disabled={!(terms1 && terms2)} onClick={() => setStep(3)}>
@@ -235,17 +235,17 @@ export default function BuyModal({
           <h3 style={h3}>{en ? "Pay with RLUSD" : "RLUSD로 결제하세요"}</h3>
           <div style={{ display: "flex", flexDirection: "column", border: "1px solid var(--bd-card)", borderRadius: 14, overflow: "hidden" }}>
             <PayRow k={en ? "Order" : "주문"} v={<b style={{ color: "var(--w-deep)" }}>Weather Data Token Generator™ × {fmt(qty)} · {tierLabel}</b>} />
-            <PayRow k={en ? "Amount" : "결제 금액"} v={<b style={{ fontSize: 16, color: "var(--w-deep)" }}>{fmt(total)} RLUSD</b>} />
-            <PayRow k={en ? "Receiving address" : "받는 주소"} v={<span className="mono" style={{ fontSize: 12.5, color: "var(--ink-2)" }}>{RECEIVE_ADDRESS} <span style={{ color: "var(--hint)" }}>{en ? "(auto-filled)" : "(자동 입력)"}</span></span>} />
-            <PayRow k={en ? "Destination tag" : "목적지 태그"} v={<span className="mono" style={{ fontSize: 12.5, color: "var(--ink-2)" }}>{DEST_TAG} <span style={{ color: "var(--hint)" }}>{en ? "(auto-filled)" : "(자동 입력)"}</span></span>} />
+            <PayRow k={en ? "Amount" : "결제 금액"} v={<b style={{ fontSize: 21, color: "var(--w-deep)" }}>{fmt(total)} RLUSD</b>} />
+            <PayRow k={en ? "Receiving address" : "받는 주소"} v={<span className="mono" style={{ fontSize: 16, color: "var(--ink-2)" }}>{RECEIVE_ADDRESS} <span style={{ color: "var(--hint)" }}>{en ? "(auto-filled)" : "(자동 입력)"}</span></span>} />
+            <PayRow k={en ? "Destination tag" : "목적지 태그"} v={<span className="mono" style={{ fontSize: 16, color: "var(--ink-2)" }}>{DEST_TAG} <span style={{ color: "var(--hint)" }}>{en ? "(auto-filled)" : "(자동 입력)"}</span></span>} />
             <PayRow k={en ? "Trust line" : "트러스트라인"} last v={<span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontWeight: 700, color: "var(--ok-text)" }}><Check size={14} color="var(--ok-text)" w={3} />{en ? "Checked" : "점검 완료"}</span>} />
           </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "var(--sec-alt)", borderRadius: 12, padding: "12px 18px" }}>
-            <span style={{ fontSize: 12.5, color: "var(--ink-4)" }}>{en ? "Stock hold — time left" : "재고 홀드 — 남은 시간"}</span>
-            <span className="mono" aria-live="polite" style={{ fontSize: 15, fontWeight: 800, color: hold < 180 ? "#c0392b" : "var(--w-deep)" }}>{holdMMSS}</span>
+            <span style={{ fontSize: 16, color: "var(--ink-4)" }}>{en ? "Stock hold — time left" : "재고 홀드 — 남은 시간"}</span>
+            <span className="mono" aria-live="polite" style={{ fontSize: 19.5, fontWeight: 800, color: hold < 180 ? "#c0392b" : "var(--w-deep)" }}>{holdMMSS}</span>
           </div>
           {mismatch && (
-            <div role="alert" style={{ display: "flex", gap: 10, border: "1px solid var(--warn-bd)", background: "var(--warn-bg)", borderRadius: 12, padding: "13px 16px", fontSize: 12.5, lineHeight: 1.6, color: "var(--warn-text)" }}>
+            <div role="alert" style={{ display: "flex", gap: 10, border: "1px solid var(--warn-bd)", background: "var(--warn-bg)", borderRadius: 12, padding: "13px 16px", fontSize: 16, lineHeight: 1.6, color: "var(--warn-text)" }}>
               <span style={{ flex: "none", marginTop: 2 }}><Warn size={15} /></span>
               <span>
                 {en
@@ -261,7 +261,7 @@ export default function BuyModal({
                 ? (en ? "Sign again" : "다시 서명하기")
                 : (en ? "Sign in your wallet" : "지갑에서 서명하기")}
           </button>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 12.5, color: "var(--cap)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 16, color: "var(--cap)" }}>
             <span className="pulse" style={{ width: 8, height: 8, borderRadius: 99, background: mismatch ? "var(--warn-icon)" : "var(--w-main)" }} />
             {en ? "Waiting for signature… we'll alert you if the amount or address doesn't match" : "서명 대기 중… 금액·주소가 일치하지 않으면 자동으로 안내합니다"}
           </div>
@@ -286,14 +286,14 @@ export default function BuyModal({
               </span>
             ))}
           </div>
-          <button onClick={onClose} aria-label={en ? "Close" : "닫기"} style={{ color: "var(--dis)", fontSize: 18, lineHeight: 1 }}>✕</button>
+          <button onClick={onClose} aria-label={en ? "Close" : "닫기"} style={{ color: "var(--dis)", fontSize: 23.5, lineHeight: 1 }}>✕</button>
         </div>
         {/* 스텝 전환 크로스페이드 150ms (PRD §8) — key로 재마운트 */}
         <div key={step} className="step-in" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {stepBody}
         </div>
         {step > 0 && (
-          <button onClick={() => setStep(step - 1)} style={{ fontSize: 12.5, color: "var(--cap)", alignSelf: "flex-start" }}>
+          <button onClick={() => setStep(step - 1)} style={{ fontSize: 16, color: "var(--cap)", alignSelf: "flex-start" }}>
             {en ? "← Back" : "← 이전 단계"}
           </button>
         )}
@@ -309,24 +309,24 @@ function TermCard({ checked, onToggle, title, desc, view }: { checked: boolean; 
         {checked && <Check size={13} />}
       </span>
       <span style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
-        <span style={{ fontSize: 14, fontWeight: 700, color: "var(--w-deep)" }}>{title}</span>
-        <span style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</span>
+        <span style={{ fontSize: 18, fontWeight: 700, color: "var(--w-deep)" }}>{title}</span>
+        <span style={{ fontSize: 16, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</span>
       </span>
       {/* 전문은 플랫폼 메인 사이트 TERMS — 체크 토글과 분리 (stopPropagation) */}
-      <a href={LINKS.terms} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ fontSize: 12, whiteSpace: "nowrap" }}>{view}</a>
+      <a href={LINKS.terms} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ fontSize: 15.5, whiteSpace: "nowrap" }}>{view}</a>
     </button>
   );
 }
 
 function PayRow({ k, v, last }: { k: string; v: React.ReactNode; last?: boolean }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "14px 18px", fontSize: 13.5, borderBottom: last ? "none" : "1px solid var(--line)" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "14px 18px", fontSize: 17.5, borderBottom: last ? "none" : "1px solid var(--line)" }}>
       <span style={{ color: "var(--ink-4)", flex: "none" }}>{k}</span>
       <span style={{ textAlign: "right" }}>{v}</span>
     </div>
   );
 }
 
-const h3: React.CSSProperties = { fontSize: 22, fontWeight: 800, color: "var(--w-deep)" };
-const cta: React.CSSProperties = { fontSize: 15.5, padding: 16, width: "100%" };
-const qtyBtn: React.CSSProperties = { width: 44, height: 44, border: "1px solid", borderRadius: 10, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 18, background: "#fff" };
+const h3: React.CSSProperties = { fontSize: 28.5, fontWeight: 800, color: "var(--w-deep)" };
+const cta: React.CSSProperties = { fontSize: 20, padding: 16, width: "100%" };
+const qtyBtn: React.CSSProperties = { width: 44, height: 44, border: "1px solid", borderRadius: 10, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 23.5, background: "#fff" };

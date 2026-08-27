@@ -14,7 +14,7 @@ import {
 import { useI18n } from "@/lib/i18n";
 import { Gnb, CommunityFooter } from "./chrome";
 import BuyModal from "./BuyModal";
-import { XIcon, TgIcon, ChevD, Shield, ShieldCheck, Gauge, Coin, Warn } from "./icons";
+import { XIcon, TgIcon, ChevD, Shield, ShieldCheck, Gauge, Coin, Chart, Warn } from "./icons";
 
 export default function Landing() {
   const sp = useSearchParams();
@@ -93,7 +93,7 @@ export default function Landing() {
               <Link href="/" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
               <a
                 href={LINKS.telegram} target="_blank" rel="noopener"
-                style={{ display: "inline-flex", background: "var(--w-main)", color: "#fff", fontSize: 12.5, fontWeight: 800, borderRadius: 9, padding: "8px 14px", textDecoration: "none" }}
+                style={{ display: "inline-flex", background: "var(--w-main)", color: "#fff", fontSize: 16, fontWeight: 800, borderRadius: 9, padding: "8px 14px", textDecoration: "none" }}
               >
                 {en ? "Get updates" : "소식 받기"}
               </a>
@@ -118,16 +118,16 @@ export default function Landing() {
           display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap",
           background: "linear-gradient(90deg, var(--w-tint), #fff 50%, var(--w-tint))",
           borderBottom: "1px solid color-mix(in oklab, var(--w-main) 24%, white)",
-          color: "var(--w-deep)", padding: "11px 16px", fontSize: 13, fontWeight: 700,
+          color: "var(--w-deep)", padding: "11px 16px", fontSize: 17, fontWeight: 700,
         }}>
           <span>{en ? "Early bird closed" : "얼리버드 마감"}</span>
           <span style={{ width: 1, height: 12, background: "color-mix(in oklab, var(--w-main) 32%, white)" }} />
           <span>
             {en
-              ? <>only <b className="mono" style={{ color: "var(--w-main)", fontSize: 14.5 }}>{fmt(bannerCount)}</b> regular-price units left</>
-              : <>일반 잔여 <b className="mono" style={{ color: "var(--w-main)", fontSize: 14.5 }}>{fmt(bannerCount)}</b>대 남았습니다</>}
+              ? <>only <b className="mono" style={{ color: "var(--w-main)", fontSize: 19 }}>{fmt(bannerCount)}</b> regular-price units left</>
+              : <>일반 잔여 <b className="mono" style={{ color: "var(--w-main)", fontSize: 19 }}>{fmt(bannerCount)}</b>대 남았습니다</>}
           </span>
-          <button onClick={dismissBanner} aria-label={en ? "Dismiss banner" : "배너 닫기"} style={{ opacity: 0.45, fontSize: 15, marginLeft: 6, color: "var(--w-deep)" }}>✕</button>
+          <button onClick={dismissBanner} aria-label={en ? "Dismiss banner" : "배너 닫기"} style={{ opacity: 0.45, fontSize: 19.5, marginLeft: 6, color: "var(--w-deep)" }}>✕</button>
         </div>
       )}
 
@@ -137,17 +137,23 @@ export default function Landing() {
           /* 1i 완판 히어로 */
           <div className="hero-grid" style={{ alignItems: "center" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
+              {/* wellbian X XRP LEDGER 락업 (8/27 서우) */}
+              <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
+                <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} style={{ height: 24, width: "auto" }} />
+                <span style={{ fontSize: 15, fontWeight: 700, color: "rgba(255,255,255,.5)" }}>X</span>
+                <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} style={{ height: 18, width: "auto", opacity: 0.92 }} />
+              </div>
+              <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
                 WEATHER DATA ECONOMY
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                <span className="pill" style={{ fontSize: 11, letterSpacing: ".1em", background: "rgba(255,255,255,.14)", padding: "5px 12px", color: "#fff" }}>SOLD OUT</span>
-                <span style={{ fontSize: 13, color: "rgba(255,255,255,.6)" }}>{en ? "All 5,000 units have been sold" : "총 5,000대가 모두 판매되었습니다"}</span>
+                <span className="pill" style={{ fontSize: 14.5, letterSpacing: ".1em", background: "rgba(255,255,255,.14)", padding: "5px 12px", color: "#fff" }}>SOLD OUT</span>
+                <span style={{ fontSize: 17, color: "rgba(255,255,255,.6)" }}>{en ? "All 5,000 units have been sold" : "총 5,000대가 모두 판매되었습니다"}</span>
               </div>
-              <h1 style={{ fontSize: "clamp(27px, 3.4vw, 34px)", lineHeight: 1.3, fontWeight: 800 }}>
+              <h1 style={{ fontSize: "clamp(35px, 4.4vw, 44px)", lineHeight: 1.3, fontWeight: 800 }}>
                 {en ? <>Sold out —<br />be the first to hear about Batch 2</> : <>완판되었습니다 —<br />2차 판매 소식을 가장 먼저 받아보세요</>}
               </h1>
-              <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
+              <p style={{ fontSize: 19.5, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
                 <b style={{ color: "#fff" }}>Weather Data Token Generator™</b>
                 <br />
                 {en
@@ -155,20 +161,20 @@ export default function Landing() {
                   : "실내 공기를 측정하는 것만으로, 검증된 내 데이터가 가치가 되어 돌아옵니다."}
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "rgba(255,255,255,.65)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, color: "rgba(255,255,255,.65)" }}>
                   <span>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span><span>{en ? "0 left · 100% sold" : "잔여 0대 · 100% 판매"}</span>
                 </div>
                 <div className="track on-dark" style={{ height: 8 }}><i style={{ width: "100%" }} /></div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                <a href={LINKS.telegram} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, background: "#fff", color: "var(--w-deep)", fontSize: 15, fontWeight: 800, borderRadius: 12, padding: "16px 24px", textDecoration: "none" }}>
+                <a href={LINKS.telegram} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, background: "#fff", color: "var(--w-deep)", fontSize: 19.5, fontWeight: 800, borderRadius: 12, padding: "16px 24px", textDecoration: "none" }}>
                   <TgIcon size={15} /> {en ? "Join the community" : "커뮤니티 입장"}
                 </a>
-                <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 700, borderRadius: 12, padding: "15px 20px", textDecoration: "none" }}>
+                <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 18, fontWeight: 700, borderRadius: 12, padding: "15px 20px", textDecoration: "none" }}>
                   <XIcon size={14} /> {en ? "Follow for updates" : "소식 팔로우"}
                 </a>
               </div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,.45)" }}>
+              <div style={{ fontSize: 15.5, color: "rgba(255,255,255,.45)" }}>
                 {en ? "Batch 2 news lands first on our official Telegram and X" : "공식 텔레그램과 X에서 2차 판매 소식을 가장 먼저 알려드립니다"}
               </div>
             </div>
@@ -176,13 +182,19 @@ export default function Landing() {
         ) : (
           <div className="hero-grid">
             <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
+              {/* wellbian X XRP LEDGER 락업 (8/27 서우) */}
+              <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
+                <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} style={{ height: 24, width: "auto" }} />
+                <span style={{ fontSize: 15, fontWeight: 700, color: "rgba(255,255,255,.5)" }}>X</span>
+                <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} style={{ height: 18, width: "auto", opacity: 0.92 }} />
+              </div>
+              <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
                 WEATHER DATA ECONOMY
               </div>
-              <h1 style={{ fontSize: "clamp(27px, 4vw, 46px)", lineHeight: 1.25, fontWeight: 800, letterSpacing: "-.01em" }}>
+              <h1 style={{ fontSize: "clamp(35px, 5.2vw, 60px)", lineHeight: 1.25, fontWeight: 800, letterSpacing: "-.01em" }}>
                 {en ? <>Turn your weather data<br />into value</> : <>당신의 날씨 데이터를<br />가치로 바꾸세요</>}
               </h1>
-              <p style={{ fontSize: 16, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
+              <p style={{ fontSize: 21, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
                 <b style={{ color: "#fff" }}>Weather Data Token Generator™</b>
                 <br />
                 {en
@@ -191,15 +203,15 @@ export default function Landing() {
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440, marginTop: 6 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                  <span style={{ fontSize: 14, fontWeight: 700 }}>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span>
-                  <span style={{ fontSize: 12.5, color: "rgba(255,255,255,.65)" }}>
+                  <span style={{ fontSize: 18, fontWeight: 700 }}>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span>
+                  <span style={{ fontSize: 16, color: "rgba(255,255,255,.65)" }}>
                     {en ? <><b style={{ color: "#fff" }}>{fmt(remain)}</b> left · {pct}% sold</> : <>잔여 <b style={{ color: "#fff" }}>{fmt(remain)}</b>대 · {pct}% 판매</>}
                   </span>
                 </div>
                 <div className="track on-dark" style={{ height: 8 }}><i style={{ width: `${Math.max(2, pct)}%` }} /></div>
               </div>
               <div ref={heroCtaRef} style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
-                <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 16, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
+                <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
                   {en ? "Buy now · RLUSD" : "지금 구매하기 · RLUSD"}
                 </button>
                 <a href={LINKS.x} target="_blank" rel="noopener" aria-label="X" style={heroIcon}><XIcon size={18} /></a>
@@ -215,7 +227,7 @@ export default function Landing() {
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
             <h2 style={h2}>{en ? "Price & Supply" : "가격 · 수량"}</h2>
-            <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>{en ? "Payment in RLUSD · limited to 5,000 units" : "결제는 RLUSD로 진행됩니다 · 총 5,000대 한정"}</p>
+            <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Payment in RLUSD · limited to 5,000 units" : "결제는 RLUSD로 진행됩니다 · 총 5,000대 한정"}</p>
           </div>
           <div className="price-grid">
             {/* 얼리버드 카드 */}
@@ -225,17 +237,17 @@ export default function Landing() {
                 ? { border: "1px solid var(--bd-card)", background: "var(--card-dis)", filter: "grayscale(1)", opacity: 0.6 }
                 : { border: "2px solid var(--w-main)", background: "var(--w-tint)" }),
             }}>
-              <span className="pill" style={{ position: "absolute", top: -12, left: 28, background: ebClosed ? "var(--cap)" : "var(--w-main)", color: "#fff", fontSize: 11.5, padding: "5px 12px" }}>
+              <span className="pill" style={{ position: "absolute", top: -12, left: 28, background: ebClosed ? "var(--cap)" : "var(--w-main)", color: "#fff", fontSize: 15, padding: "5px 12px" }}>
                 {ebClosed ? (en ? "Early bird closed" : "얼리버드 마감") : (en ? "Early bird · almost gone" : "얼리버드 · 소진 임박")}
               </span>
-              <div style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Early Bird" : "얼리버드"}</div>
+              <div style={{ fontSize: 19.5, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Early Bird" : "얼리버드"}</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span style={{ fontSize: 38, fontWeight: 800, color: "var(--w-deep)", textDecoration: ebClosed ? "line-through" : "none" }}>450</span>
-                <span style={{ fontSize: 16, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
-                {!ebClosed && <span style={{ fontSize: 13, color: "var(--hint)", textDecoration: "line-through", marginLeft: 4 }}>650 RLUSD</span>}
+                <span style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)", textDecoration: ebClosed ? "line-through" : "none" }}>450</span>
+                <span style={{ fontSize: 21, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
+                {!ebClosed && <span style={{ fontSize: 17, color: "var(--hint)", textDecoration: "line-through", marginLeft: 4 }}>650 RLUSD</span>}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "var(--ink-4)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, color: "var(--ink-4)" }}>
                   <span>
                     {en
                       ? <><b style={{ color: ebClosed ? "var(--ink-4)" : "var(--w-main)" }}>{fmt(inv.ebLeft)}</b> of 1,000 left</>
@@ -246,9 +258,9 @@ export default function Landing() {
                 <div className={`track on-light${ebClosed ? " gray" : ""}`} style={{ height: 6 }}><i style={{ width: `${ebPct}%` }} /></div>
               </div>
               {ebClosed
-                ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 15, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Closed" : "마감되었습니다"}</span>
-                : <button onClick={buy} className="btn-main" style={{ fontSize: 15, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}
-              {!ebClosed && <div style={{ fontSize: 12, color: "var(--cap)" }}>{en ? "Switches to the regular price automatically when sold out" : "소진 시 일반가로 자동 전환됩니다"}</div>}
+                ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 19.5, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Closed" : "마감되었습니다"}</span>
+                : <button onClick={buy} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}
+              {!ebClosed && <div style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "Switches to the regular price automatically when sold out" : "소진 시 일반가로 자동 전환됩니다"}</div>}
             </div>
             {/* 일반 카드 */}
             <div style={{
@@ -258,15 +270,15 @@ export default function Landing() {
                 : { border: "1px solid var(--bd-card)", background: "#fff" }),
             }}>
               {ebClosed && !soldOut && (
-                <span className="pill" style={{ position: "absolute", top: -12, left: 28, background: "var(--w-main)", color: "#fff", fontSize: 11.5, padding: "5px 12px" }}>{en ? "Current price" : "현재 판매가"}</span>
+                <span className="pill" style={{ position: "absolute", top: -12, left: 28, background: "var(--w-main)", color: "#fff", fontSize: 15, padding: "5px 12px" }}>{en ? "Current price" : "현재 판매가"}</span>
               )}
-              <div style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Regular" : "일반"}</div>
+              <div style={{ fontSize: 19.5, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Regular" : "일반"}</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span style={{ fontSize: 38, fontWeight: 800, color: "var(--w-deep)" }}>650</span>
-                <span style={{ fontSize: 16, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
+                <span style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)" }}>650</span>
+                <span style={{ fontSize: 21, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "var(--ink-4)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, color: "var(--ink-4)" }}>
                   <span>
                     {en
                       ? <><b style={{ color: ebClosed && !soldOut ? "var(--w-main)" : "var(--w-deep)" }}>{fmt(inv.genLeft)}</b> of 4,000 left</>
@@ -279,16 +291,16 @@ export default function Landing() {
                 </div>
               </div>
               {soldOut
-                ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 15, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Sold out" : "완판되었습니다"}</span>
+                ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 19.5, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Sold out" : "완판되었습니다"}</span>
                 : ebClosed
-                  ? <button onClick={buy} className="btn-main" style={{ fontSize: 15, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>
-                  : <button onClick={buy} className="btn-outline-deep" style={{ fontSize: 15, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}
-              <div style={{ fontSize: 12, color: "var(--cap)" }}>{ebClosed ? "" : en ? "Price after early bird closes" : "얼리버드 마감 후 판매가"}</div>
+                  ? <button onClick={buy} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>
+                  : <button onClick={buy} className="btn-outline-deep" style={{ fontSize: 19.5, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}
+              <div style={{ fontSize: 15.5, color: "var(--cap)" }}>{ebClosed ? "" : en ? "Price after early bird closes" : "얼리버드 마감 후 판매가"}</div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1px solid var(--bd-card)", borderRadius: 12, padding: "16px 20px", background: "var(--panel)" }}>
-            <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: 9, background: "var(--w-tint)", color: "var(--w-main)", fontWeight: 800, fontSize: 13, flex: "none" }}>#</span>
-            <div style={{ fontSize: 13.5, lineHeight: 1.6, color: "var(--ink-2)" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: 9, background: "var(--w-tint)", color: "var(--w-main)", fontWeight: 800, fontSize: 17, flex: "none" }}>#</span>
+            <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-2)" }}>
               {en
                 ? <><b style={{ color: "var(--w-deep)" }}>Genesis Number</b> — randomly assigned within the 5,000-unit run and permanently recorded on your license NFT.</>
                 : <><b style={{ color: "var(--w-deep)" }}>제네시스 넘버</b> — 5,000대 한정 수량 안에서 무작위로 배정되며, 라이선스 NFT에 영구 기록됩니다.</>}
@@ -306,10 +318,10 @@ export default function Landing() {
               <Image src="/assets/spec-package.jpg" alt={en ? "Weather Data Token Generator package and product" : "Weather Data Token Generator 패키지 및 제품"} width={1000} height={749} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
             <div style={{ border: "1px solid var(--bd-card)", borderRadius: 12, background: "#fff", padding: "18px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--w-deep)" }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "var(--w-deep)" }}>
                 {en ? "Weather Data Token Generator™ (Indoor Air Quality Monitor)" : "날씨데이터토큰생성기™ (실내공기측정기)"}
               </div>
-              <div style={{ fontSize: 13, color: "var(--ink-4)" }}>{en ? "Model: ARC-600DA" : "모델명: ARC-600DA"}</div>
+              <div style={{ fontSize: 17, color: "var(--ink-4)" }}>{en ? "Model: ARC-600DA" : "모델명: ARC-600DA"}</div>
               <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
                 <span style={certChip}>{en ? "KC Certified" : "KC 인증"}</span>
                 <span style={certChip}>{en ? "Performance Certified" : "성능인증"}</span>
@@ -322,47 +334,126 @@ export default function Landing() {
             <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid var(--w-deep)" }}>
               {specs.map((s, i) => (
                 /* 모바일: 5행 축약 (PRD §6.1) */
-                <div key={s.k} className={i >= 5 ? "desk-only" : undefined} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "7px 4px", borderBottom: "1px solid var(--line)", fontSize: 13.5, lineHeight: 1.45 }}>
+                <div key={s.k} className={i >= 5 ? "desk-only" : undefined} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "7px 4px", borderBottom: "1px solid var(--line)", fontSize: 17.5, lineHeight: 1.45 }}>
                   <span style={{ fontWeight: 700, color: "var(--w-deep)" }}>{s.k}</span>
                   <span style={{ color: "var(--ink-2)" }}>{s.v}</span>
                 </div>
               ))}
             </div>
-            <div style={{ fontSize: 12, color: "var(--hint)" }}>{en ? "Based on the manufacturer's official specification sheet." : "제조사 공식 사양표 기준입니다."}</div>
+            <div style={{ fontSize: 15.5, color: "var(--hint)" }}>{en ? "Based on the manufacturer's official specification sheet." : "제조사 공식 사양표 기준입니다."}</div>
           </div>
         </div>
       </section>
 
-      {/* ── S4 작동 원리 ── */}
-      <section className="sec-pad" style={{ background: "#fff" }} id="how">
-        <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 32, textAlign: "center" }}>
-          <h2 style={h2}>{en ? "How it works — 3 steps" : "작동 원리, 3단계"}</h2>
+      {/* ── S6 RLUSD 준비 ── */}
+      <section className="sec-pad" style={{ background: "#fff" }} id="rlusd">
+        <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 26 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <h2 style={h2}>{en ? "Don't have RLUSD yet?" : "RLUSD가 없다면"}</h2>
+            <p style={{ fontSize: 19, color: "var(--ink-4)" }}>
+              {en ? "RLUSD — a USD-pegged stablecoin issued by Ripple, regulated by the NYDFS" : "RLUSD — 미국 달러 1:1 연동 · NYDFS 규제 · 리플(Ripple) 발행 스테이블코인"}
+            </p>
+          </div>
+          <div className="rl-grid">
+            {rlSteps.map((r) => (
+              <div key={r.n} style={{ border: "1px solid var(--bd-card)", borderRadius: 14, padding: 24, display: "flex", flexDirection: "column", gap: 10 }}>
+                <span style={{ fontSize: 15.5, fontWeight: 800, color: "var(--w-main)" }}>STEP {r.n}</span>
+                <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>{r.t}</div>
+                <div style={{ fontSize: 17, lineHeight: 1.6, color: "var(--ink-4)" }}>{r.d}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1px solid var(--warn-bd)", background: "var(--warn-bg)", borderRadius: 12, padding: "15px 20px", fontSize: 17.5, color: "var(--warn-text)" }}>
+            <Warn />
+            <span>
+              {en
+                ? <><b>Always select XRPL as the withdrawal network.</b> Withdrawing over any other network may result in loss of funds.</>
+                : <><b>출금 네트워크는 반드시 XRPL을 선택하세요.</b> 다른 네트워크로 출금하면 자산을 잃을 수 있습니다.</>}
+            </span>
+          </div>
+          <button onClick={() => setRlGuideOpen(!rlGuideOpen)} aria-expanded={rlGuideOpen} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", border: rlGuideOpen ? "1px solid var(--w-main)" : "1px solid var(--bd-card)", borderRadius: 12, padding: "16px 20px", fontSize: 18, fontWeight: 700, color: "var(--w-deep)", background: rlGuideOpen ? "var(--w-tint)" : "#fff", width: "100%" }}>
+            <span>{rlGuideOpen ? (en ? "Collapse the RLUSD guide" : "RLUSD 구매 가이드 접기") : (en ? "See the full RLUSD guide" : "RLUSD 구매 가이드 전체 보기")}</span>
+            <span style={{ display: "inline-flex", transform: rlGuideOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
+              <ChevD size={16} color={rlGuideOpen ? "var(--w-main)" : "var(--cap)"} />
+            </span>
+          </button>
+          {rlGuideOpen && (
+            <div className="step-in" style={{ border: "1px solid var(--bd-card)", borderRadius: 14, padding: "24px 26px", display: "flex", flexDirection: "column", gap: 18, background: "var(--panel)" }}>
+              {(en ? RL_GUIDE_EN : RL_GUIDE).map((g, i) => (
+                <div key={g.t} style={{ display: "flex", gap: 13, alignItems: "flex-start" }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 99, background: "var(--w-deep)", color: "#fff", fontSize: 15.5, fontWeight: 800, flex: "none", marginTop: 1 }}>{i + 1}</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <div style={{ fontSize: 17.5, fontWeight: 800, color: "var(--w-deep)" }}>{g.t}</div>
+                    <div style={{ fontSize: 17, lineHeight: 1.65, color: "var(--ink-4)" }}>{g.d}</div>
+                  </div>
+                </div>
+              ))}
+              <div style={{ display: "flex", flexDirection: "column", gap: 7, borderTop: "1px solid var(--line)", paddingTop: 14 }}>
+                {(en ? RL_TIPS_EN : RL_TIPS).map((t) => (
+                  <div key={t} style={{ display: "flex", gap: 8, alignItems: "flex-start", fontSize: 16, lineHeight: 1.6, color: "var(--ink-4)" }}>
+                    <span style={{ color: "var(--w-main)", fontWeight: 800, flex: "none" }}>·</span>{t}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── S4 비전 — Weather Data Economy (8/27 사업계획서 함축) + 작동 원리 4단계 ── */}
+      <section className="sec-pad" style={{ background: "var(--sec-alt)" }} id="how">
+        <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 34, textAlign: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ fontSize: 15.5, fontWeight: 800, letterSpacing: ".14em", color: "var(--w-main)" }}>WEATHER DATA ECONOMY</div>
+            <h2 style={h2}>{en ? "What we're building" : "우리가 만드는 것"}</h2>
+            <p style={{ fontSize: 19.5, lineHeight: 1.72, color: "var(--ink-4)", maxWidth: 780, margin: "0 auto" }}>
+              {en
+                ? "Air differs building by building, street by street — beyond the reach of public weather stations. We turn the data measured where you actually live into an economy: measured by you, verified by the network, rewarded for contribution, and put to work as services."
+                : "공기는 건물마다, 골목마다 다릅니다 — 기존 관측망이 닿지 않는 곳이죠. 내가 생활하는 공간에서 측정한 데이터가 검증을 거쳐 보상으로 돌아오고, 쌓인 데이터는 서비스가 되는 경제. 그것이 우리가 만드는 Weather Data Economy입니다."}
+            </p>
+          </div>
           <div className="how-grid">
             <HowCard icon={<Gauge />} title={en ? "① Measure" : "① 측정"} desc={en ? <>Measures indoor air —<br />CO₂, particulates, temperature & humidity</> : <>CO₂·미세먼지·온습도 등<br />실내 공기 데이터를 측정합니다</>} />
-            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 20, fontWeight: 800 }}>→</div>
+            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
             <HowCard icon={<ShieldCheck />} title={en ? "② Verify" : "② 검증"} desc={en ? <>The network verifies<br />the integrity of your data</> : <>네트워크가 데이터의<br />무결성을 검증합니다</>} />
-            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 20, fontWeight: 800 }}>→</div>
+            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
             <HowCard icon={<Coin />} title={en ? "③ Reward" : "③ 보상"} desc={en ? <>Verified data earns WLBN<br />under network rules</> : <>검증된 데이터에 네트워크 원칙에<br />따라 WLBN이 지급됩니다</>} />
+            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
+            <HowCard icon={<Chart />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? <>Accumulated data powers<br />APIs, AI, and weather services</> : <>축적된 데이터는 API·AI·<br />기상 서비스로 활용됩니다</>} />
           </div>
-          <div style={{ fontSize: 12, color: "var(--hint)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, flexWrap: "wrap", fontSize: 18, color: "var(--ink-2)" }}>
+            <span style={{ fontWeight: 800, color: "var(--w-deep)" }}>5,000</span>
+            <span style={{ color: "var(--arrow)" }}>→</span>
+            <span style={{ fontWeight: 800, color: "var(--w-deep)" }}>50,000</span>
+            <span style={{ color: "var(--arrow)" }}>→</span>
+            <span style={{ fontWeight: 800, color: "var(--w-deep)" }}>500,000+ nodes</span>
+            <span>{en ? "— the first 5,000 units start the network" : "— 첫 5,000대가 네트워크의 시작입니다"}</span>
+          </div>
+          <div style={{ fontSize: 16.5, fontWeight: 700, color: "var(--cap)" }}>
+            K-WEATHER = Weather Data Technology · WELLBIAN = Weather Data Economy
+          </div>
+          <div style={{ fontSize: "clamp(23px, 2.8vw, 31px)", fontWeight: 800, color: "var(--w-main)", letterSpacing: "-.01em" }}>
+            Turn Your Weather Data into Value.
+          </div>
+          <div style={{ fontSize: 15.5, color: "var(--hint)" }}>
             {en ? `${NOTICE_REWARD_EN} · See the FAQ for details` : `${NOTICE_REWARD} · 자세한 원칙은 FAQ를 참고하세요`}
           </div>
         </div>
       </section>
 
-      {/* ── S5 연동 안내 ── */}
-      <section className="sec-pad" style={{ background: "var(--sec-alt)" }} id="setup">
+      {/* ── S5 연동 안내 (8/27 후순위 이동 — 비전 다음) ── */}
+      <section className="sec-pad" style={{ background: "#fff" }} id="setup">
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
             <h2 style={h2}>{en ? "Your device becomes a node 3 minutes after it arrives" : "디바이스 도착 후 3분이면 노드가 됩니다"}</h2>
-            <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>{en ? "Setup is easy — open the box and follow four steps." : "등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝."}</p>
+            <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Setup is easy — open the box and follow four steps." : "등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝."}</p>
           </div>
           <div className="link-grid">
             {linkSteps.map((st) => (
               <div key={st.n} style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "22px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
-                <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 99, background: "var(--w-deep)", color: "#fff", fontSize: 13, fontWeight: 800 }}>{st.n}</span>
-                <div style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>{st.t}</div>
-                <div style={{ fontSize: 12.5, lineHeight: 1.55, color: "var(--ink-4)" }}>
+                <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 99, background: "var(--w-deep)", color: "#fff", fontSize: 17, fontWeight: 800 }}>{st.n}</span>
+                <div style={{ fontSize: 19, fontWeight: 800, color: "var(--w-deep)" }}>{st.t}</div>
+                <div style={{ fontSize: 16, lineHeight: 1.55, color: "var(--ink-4)" }}>
                   {st.d}
                   {st.d2 && <><br />{st.d2}</>}
                 </div>
@@ -370,7 +461,7 @@ export default function Landing() {
             ))}
           </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, border: "1px solid color-mix(in oklab, var(--w-main) 30%, white)", background: "var(--w-tint)", borderRadius: 12, padding: "16px 20px", flexWrap: "wrap" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 13.5, color: "var(--ink-2)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 17.5, color: "var(--ink-2)" }}>
               <Shield />
               <span>
                 {en
@@ -378,7 +469,7 @@ export default function Landing() {
                   : <><b style={{ color: "var(--w-deep)" }}>지갑이 처음이어도 됩니다</b> — 등록 지갑 활성화(1 XRP)는 1회 지원됩니다 <span style={{ color: "var(--cap)" }}>(약관 제5조)</span></>}
               </span>
             </div>
-            <button onClick={() => setWalletGuideOpen(!walletGuideOpen)} aria-expanded={walletGuideOpen} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13.5, fontWeight: 700, whiteSpace: "nowrap", color: "var(--w-main)" }}>
+            <button onClick={() => setWalletGuideOpen(!walletGuideOpen)} aria-expanded={walletGuideOpen} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 17.5, fontWeight: 700, whiteSpace: "nowrap", color: "var(--w-main)" }}>
               {walletGuideOpen ? (en ? "Collapse the guide" : "가이드 접기") : (en ? "See the full setup guide" : "상세 연동 가이드 보기")}
               <span style={{ display: "inline-flex", transform: walletGuideOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
                 <ChevD size={14} color="var(--w-main)" />
@@ -389,68 +480,13 @@ export default function Landing() {
             <div className="step-in" style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "24px 26px", display: "flex", flexDirection: "column", gap: 16 }}>
               {(en ? WALLET_GUIDE_EN : WALLET_GUIDE).map((g, i) => (
                 <div key={g.t} style={{ display: "flex", gap: 13, alignItems: "flex-start" }}>
-                  <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 99, background: "var(--w-tint)", color: "var(--w-main)", fontSize: 12, fontWeight: 800, flex: "none", marginTop: 1 }}>{i + 1}</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 99, background: "var(--w-tint)", color: "var(--w-main)", fontSize: 15.5, fontWeight: 800, flex: "none", marginTop: 1 }}>{i + 1}</span>
                   <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                    <div style={{ fontSize: 13.5, fontWeight: 800, color: "var(--w-deep)" }}>{g.t}</div>
-                    <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-4)" }}>{g.d}</div>
+                    <div style={{ fontSize: 17.5, fontWeight: 800, color: "var(--w-deep)" }}>{g.t}</div>
+                    <div style={{ fontSize: 17, lineHeight: 1.65, color: "var(--ink-4)" }}>{g.d}</div>
                   </div>
                 </div>
               ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ── S6 RLUSD 준비 ── */}
-      <section className="sec-pad" style={{ background: "#fff" }} id="rlusd">
-        <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 26 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <h2 style={h2}>{en ? "Don't have RLUSD yet?" : "RLUSD가 없다면"}</h2>
-            <p style={{ fontSize: 14.5, color: "var(--ink-4)" }}>
-              {en ? "RLUSD — a USD-pegged stablecoin issued by Ripple, regulated by the NYDFS" : "RLUSD — 미국 달러 1:1 연동 · NYDFS 규제 · 리플(Ripple) 발행 스테이블코인"}
-            </p>
-          </div>
-          <div className="rl-grid">
-            {rlSteps.map((r) => (
-              <div key={r.n} style={{ border: "1px solid var(--bd-card)", borderRadius: 14, padding: 24, display: "flex", flexDirection: "column", gap: 10 }}>
-                <span style={{ fontSize: 12, fontWeight: 800, color: "var(--w-main)" }}>STEP {r.n}</span>
-                <div style={{ fontSize: 16, fontWeight: 800, color: "var(--w-deep)" }}>{r.t}</div>
-                <div style={{ fontSize: 13, lineHeight: 1.6, color: "var(--ink-4)" }}>{r.d}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1px solid var(--warn-bd)", background: "var(--warn-bg)", borderRadius: 12, padding: "15px 20px", fontSize: 13.5, color: "var(--warn-text)" }}>
-            <Warn />
-            <span>
-              {en
-                ? <><b>Always select XRPL as the withdrawal network.</b> Withdrawing over any other network may result in loss of funds.</>
-                : <><b>출금 네트워크는 반드시 XRPL을 선택하세요.</b> 다른 네트워크로 출금하면 자산을 잃을 수 있습니다.</>}
-            </span>
-          </div>
-          <button onClick={() => setRlGuideOpen(!rlGuideOpen)} aria-expanded={rlGuideOpen} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", border: rlGuideOpen ? "1px solid var(--w-main)" : "1px solid var(--bd-card)", borderRadius: 12, padding: "16px 20px", fontSize: 14, fontWeight: 700, color: "var(--w-deep)", background: rlGuideOpen ? "var(--w-tint)" : "#fff", width: "100%" }}>
-            <span>{rlGuideOpen ? (en ? "Collapse the RLUSD guide" : "RLUSD 구매 가이드 접기") : (en ? "See the full RLUSD guide" : "RLUSD 구매 가이드 전체 보기")}</span>
-            <span style={{ display: "inline-flex", transform: rlGuideOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
-              <ChevD size={16} color={rlGuideOpen ? "var(--w-main)" : "var(--cap)"} />
-            </span>
-          </button>
-          {rlGuideOpen && (
-            <div className="step-in" style={{ border: "1px solid var(--bd-card)", borderRadius: 14, padding: "24px 26px", display: "flex", flexDirection: "column", gap: 18, background: "var(--panel)" }}>
-              {(en ? RL_GUIDE_EN : RL_GUIDE).map((g, i) => (
-                <div key={g.t} style={{ display: "flex", gap: 13, alignItems: "flex-start" }}>
-                  <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 99, background: "var(--w-deep)", color: "#fff", fontSize: 12, fontWeight: 800, flex: "none", marginTop: 1 }}>{i + 1}</span>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                    <div style={{ fontSize: 13.5, fontWeight: 800, color: "var(--w-deep)" }}>{g.t}</div>
-                    <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-4)" }}>{g.d}</div>
-                  </div>
-                </div>
-              ))}
-              <div style={{ display: "flex", flexDirection: "column", gap: 7, borderTop: "1px solid var(--line)", paddingTop: 14 }}>
-                {(en ? RL_TIPS_EN : RL_TIPS).map((t) => (
-                  <div key={t} style={{ display: "flex", gap: 8, alignItems: "flex-start", fontSize: 12.5, lineHeight: 1.6, color: "var(--ink-4)" }}>
-                    <span style={{ color: "var(--w-main)", fontWeight: 800, flex: "none" }}>·</span>{t}
-                  </div>
-                ))}
-              </div>
             </div>
           )}
         </div>
@@ -468,18 +504,18 @@ export default function Landing() {
                 <div key={f.q} style={{ borderBottom: i < faqList.length - 1 ? "1px solid var(--line)" : "none" }} className={`${open ? "acc-open" : ""}${i >= 3 && !faqAllOpen ? " desk-only" : ""}`}>
                   <button onClick={() => setFaqOpen(open ? -1 : i)} aria-expanded={open}
                     style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, padding: "18px 2px", width: "100%", textAlign: "left" }}>
-                    <span style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)" }}>{f.q}</span>
+                    <span style={{ fontSize: 19.5, fontWeight: 700, color: "var(--w-deep)" }}>{f.q}</span>
                     <ChevD className="acc-chev" />
                   </button>
                   {open && (
-                    <div style={{ padding: "0 2px 20px", fontSize: 14, lineHeight: 1.7, color: "var(--ink-3)", maxWidth: 680 }}>{f.a}</div>
+                    <div style={{ padding: "0 2px 20px", fontSize: 18, lineHeight: 1.7, color: "var(--ink-3)", maxWidth: 680 }}>{f.a}</div>
                   )}
                 </div>
               );
             })}
           </div>
           <div style={{ textAlign: "center" }}>
-            <button onClick={() => { setFaqAllOpen(!faqAllOpen); if (faqAllOpen) setFaqOpen(-1); }} aria-expanded={faqAllOpen} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 14, fontWeight: 700, color: "var(--w-main)" }}>
+            <button onClick={() => { setFaqAllOpen(!faqAllOpen); if (faqAllOpen) setFaqOpen(-1); }} aria-expanded={faqAllOpen} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 18, fontWeight: 700, color: "var(--w-main)" }}>
               {faqAllOpen ? (en ? "Collapse FAQs" : "FAQ 접기") : (en ? "See all 23 FAQs" : "전체 FAQ 23문항 보기")}
               <span style={{ display: "inline-flex", transform: faqAllOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
                 <ChevD size={15} color="var(--w-main)" />
@@ -504,7 +540,7 @@ export default function Landing() {
           {/* PC: 중앙 한 덩어리(진행 | 가격 | CTA), 모바일: 기존 좌우 배치 유지 */}
           <div className="stickybar-in">
             <div className="desk-only" style={{ display: "flex", flexDirection: "column", gap: 4, width: 190 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11.5, color: "var(--ink-4)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15, color: "var(--ink-4)" }}>
                 <span>
                   {en ? <><b style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b> of 5,000 left</> : <>잔여 <b style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b> / 5,000대</>}
                 </span><span>{pct}%</span>
@@ -513,16 +549,16 @@ export default function Landing() {
             </div>
             <span className="desk-only" style={{ width: 1, height: 30, background: "var(--line)" }} />
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <span className="mob-only" style={{ fontSize: 11, color: "var(--cap)" }}>
+              <span className="mob-only" style={{ fontSize: 14.5, color: "var(--cap)" }}>
                 {en ? `${fmt(remain)} left · ${ebClosed ? "Regular" : "Early bird"}` : `잔여 ${fmt(remain)}대 · ${ebClosed ? "일반" : "얼리버드"}`}
               </span>
               <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                <span className="desk-only" style={{ fontSize: 12, color: "var(--cap)" }}>{en ? "Price" : "현재 가격"}</span>
-                <span style={{ fontSize: 18, fontWeight: 800, color: "var(--w-deep)" }}>{curPrice} RLUSD</span>
-                <span className="desk-only" style={{ fontSize: 12, color: "var(--hint)" }}>{ebClosed ? (en ? "Regular" : "일반") : (en ? "Early bird" : "얼리버드")}</span>
+                <span className="desk-only" style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "Price" : "현재 가격"}</span>
+                <span style={{ fontSize: 23.5, fontWeight: 800, color: "var(--w-deep)" }}>{curPrice} RLUSD</span>
+                <span className="desk-only" style={{ fontSize: 15.5, color: "var(--hint)" }}>{ebClosed ? (en ? "Regular" : "일반") : (en ? "Early bird" : "얼리버드")}</span>
               </div>
             </div>
-            <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 15, borderRadius: 10, padding: "13px 34px" }}>{en ? "Buy" : "구매하기"}</button>
+            <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px" }}>{en ? "Buy" : "구매하기"}</button>
           </div>
         </div>
       )}
@@ -536,8 +572,8 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
   return (
     <div style={{ border: "1px solid var(--bd-card)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
       <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 14, background: "var(--w-tint)", color: "var(--w-main)" }}>{icon}</span>
-      <div style={{ fontSize: 17, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
-      <div style={{ fontSize: 13.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
+      <div style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
+      <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
     </div>
   );
 }
@@ -578,9 +614,9 @@ const RL_TIPS_EN = [
   "One-time wallet activation (1 XRP) is covered (Terms, Art. 5)",
 ];
 
-const h2: React.CSSProperties = { fontSize: "clamp(21px, 2.6vw, 30px)", fontWeight: 800, color: "var(--w-deep)" };
+const h2: React.CSSProperties = { fontSize: "clamp(27px, 3.4vw, 39px)", fontWeight: 800, color: "var(--w-deep)" };
 const heroIcon: React.CSSProperties = { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, border: "1px solid rgba(255,255,255,.28)", borderRadius: 12, color: "#fff" };
 
 /* GNB 미리보기 칩 — 점선 보더 = 데모 컨트롤 시그널 (실배포 시 상태 머신이 대체) */
-const previewChip: React.CSSProperties = { display: "inline-flex", fontSize: 11.5, fontWeight: 700, color: "var(--cap)", border: "1px dashed var(--bd-input)", borderRadius: 8, padding: "6px 10px", textDecoration: "none", whiteSpace: "nowrap" };
-const certChip: React.CSSProperties = { fontSize: 11, fontWeight: 700, border: "1px solid var(--bd-input)", borderRadius: 6, padding: "4px 8px", color: "var(--ink-2)" };
+const previewChip: React.CSSProperties = { display: "inline-flex", fontSize: 15, fontWeight: 700, color: "var(--cap)", border: "1px dashed var(--bd-input)", borderRadius: 8, padding: "6px 10px", textDecoration: "none", whiteSpace: "nowrap" };
+const certChip: React.CSSProperties = { fontSize: 14.5, fontWeight: 700, border: "1px solid var(--bd-input)", borderRadius: 6, padding: "4px 8px", color: "var(--ink-2)" };
