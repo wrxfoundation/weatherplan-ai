@@ -251,6 +251,43 @@ export const FAQS_EN = [
   { q: "What about warranty?", a: "One year of free warranty from the purchase date. See the Terms of Service for details." },
 ];
 
+/* 전체 FAQ 확장분 15문항 — 기본 8문항과 합쳐 23문항 (8/27, 접기/펴기 인라인 확장) */
+export const FAQS_EXTRA = [
+  { q: "결제는 왜 RLUSD로만 하나요?", a: "RLUSD는 미국 달러와 1:1로 연동되는 스테이블코인이라 가격 변동 걱정 없이 결제할 수 있습니다. 리플(Ripple)이 발행하고 뉴욕 금융감독청(NYDFS)의 규제를 받습니다." },
+  { q: "한 지갑으로 몇 대까지 살 수 있나요?", a: "현재 제한이 없습니다. 정책이 확정되면 변경될 수 있으며, 변경 시 공지합니다." },
+  { q: "제네시스 넘버가 뭔가요?", a: "결제가 확정된 순서대로 배정되는 고유 번호입니다. 라이선스 NFT에 영구 기록되며, 빠른 번호일수록 초기 참여자라는 표시가 됩니다." },
+  { q: "라이선스 NFT는 뭔가요?", a: "기기의 정품과 참여 자격을 증명하는 XRPL 기반 증서입니다. 박스 안 리딤코드로 발급받으며, 이 NFT를 보유한 기기만 보상 대상이 됩니다." },
+  { q: "배송은 언제, 어떻게 받나요?", a: "10월부터 순차 발송됩니다. 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 안내하며, 폼에 지갑 주소·주문번호·성함·연락처·배송지를 입력하면 순서대로 발송됩니다." },
+  { q: "주문번호를 잃어버렸어요.", a: "결제한 지갑을 다시 연결하면 주문 페이지에서 언제든 확인할 수 있습니다." },
+  { q: "사이트가 저장하는 개인정보는 뭔가요?", a: "없습니다. 회원가입도 이메일도 받지 않습니다. 배송에 필요한 정보만 접수 폼에서 받고, 배송이 끝나면 파기합니다." },
+  { q: "리딤코드는 어디에 있나요?", a: "박스 안 카드에 인쇄되어 있습니다. 1개 코드는 1개 지갑에만 등록되며, 사용한 뒤에는 환불이 제한되니 등록 전에 결정해 주세요." },
+  { q: "보상은 어떻게 계산되나요?", a: "매일 데이터 품질(가동률·이상치·주변 기기와의 일치 등)을 검증해 다음 날 적립되고, 클레임하면 지갑으로 지급됩니다. 지급량과 가치는 보장되지 않습니다." },
+  { q: "기기를 꺼두면 어떻게 되나요?", a: "데이터가 없으면 그 시간만큼 보상 산정에서 빠집니다. 전기료가 월 1,000원 미만이라 상시 가동을 권장합니다." },
+  { q: "인터넷이 잠시 끊기면요?", a: "다시 연결되면 자동으로 재개됩니다. 끊긴 기간만 산정에서 제외될 뿐 불이익이 쌓이지는 않습니다." },
+  { q: "어떤 데이터가 수집되나요?", a: "공기질 측정값(미세먼지·CO₂·온습도 등)입니다. 외부에 제공될 때는 개별 가정을 알아볼 수 없도록 비식별 처리를 거칩니다." },
+  { q: "A/S와 수리는 어디서 받나요?", a: "국내 설치·A/S·고객지원은 기기 파트너인 케이웨더가 담당합니다. 보증은 구매일로부터 1년입니다." },
+  { q: "여러 대를 한 지갑으로 운영할 수 있나요?", a: "가능합니다. 기기마다 각각의 라이선스 NFT가 발급되고 보상도 기기별로 산정됩니다." },
+  { q: "해외 배송이 되나요?", a: "1차 판매는 국내 배송만 지원합니다." },
+];
+
+export const FAQS_EXTRA_EN = [
+  { q: "Why is payment RLUSD-only?", a: "RLUSD is a stablecoin pegged 1:1 to the US dollar, so you can pay without worrying about price swings. It is issued by Ripple and regulated by the NYDFS." },
+  { q: "How many units can one wallet buy?", a: "No limit at the moment. This may change once the policy is finalized, and any change will be announced." },
+  { q: "What is a Genesis Number?", a: "A unique number assigned in payment-confirmation order and permanently recorded on your license NFT. A lower number marks you as an earlier participant." },
+  { q: "What is the license NFT?", a: "An XRPL-based certificate proving your device is genuine and eligible to participate. It is minted with the redeem code inside the box, and only devices holding this NFT earn rewards." },
+  { q: "When and how does shipping work?", a: "Units ship sequentially from October. Starting 2 weeks before dispatch, we announce the shipping form on our official Telegram and X — enter your wallet address, order number, name, phone, and shipping address, and units ship in order." },
+  { q: "I lost my order number.", a: "Reconnect the wallet you paid with and you can see it on your order page anytime." },
+  { q: "What personal data does this site store?", a: "None. No sign-up, no email. Only what delivery requires is collected via the shipping form, and it is deleted after delivery." },
+  { q: "Where is the redeem code?", a: "Printed on the card inside the box. One code registers to one wallet only, and refunds are restricted once it is used — decide before you register." },
+  { q: "How are rewards calculated?", a: "Data quality (uptime, outliers, agreement with nearby devices) is verified daily, rewards accrue the next day, and are paid on-chain when you claim. Amounts and value are not guaranteed." },
+  { q: "What if I turn the device off?", a: "Time without data is simply excluded from reward calculation. Electricity costs under ₩1,000 a month, so we recommend keeping it running." },
+  { q: "What if my internet drops briefly?", a: "It resumes automatically when reconnected. The offline period is excluded from calculation — no penalties accumulate." },
+  { q: "What data is collected?", a: "Air-quality readings (particulates, CO₂, temperature, humidity, etc.). Before any external use, data is de-identified so individual homes cannot be recognized." },
+  { q: "Where do I get repairs and support?", a: "Domestic installation, A/S, and customer support are handled by KWeather, our device partner. Warranty is one year from purchase." },
+  { q: "Can one wallet run multiple devices?", a: "Yes. Each device gets its own license NFT and rewards are calculated per device." },
+  { q: "Do you ship internationally?", a: "Batch 1 ships within Korea only." },
+];
+
 export const LINK_STEPS_EN: { n: string; t: string; d: string; d2?: string }[] = [
   { n: "1", t: "Scan the redeem card QR", d: "The card inside the box opens the registration page" },
   { n: "2", t: "Connect your wallet", d: "First time? The guide walks you through" },

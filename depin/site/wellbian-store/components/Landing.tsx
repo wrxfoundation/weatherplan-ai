@@ -7,8 +7,9 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
-  SPECS, SPECS_EN, FAQS, FAQS_EN, LINK_STEPS, LINK_STEPS_EN, RL_STEPS, RL_STEPS_EN,
-  LINKS, MOCK_INVENTORY, PRICE, calc, fmt, NOTICE_REWARD, NOTICE_REWARD_EN, type SalePhase,
+  SPECS, SPECS_EN, FAQS, FAQS_EN, FAQS_EXTRA, FAQS_EXTRA_EN, LINK_STEPS, LINK_STEPS_EN,
+  RL_STEPS, RL_STEPS_EN, LINKS, MOCK_INVENTORY, PRICE, calc, fmt,
+  NOTICE_REWARD, NOTICE_REWARD_EN, type SalePhase,
 } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
 import { Gnb, CommunityFooter } from "./chrome";
@@ -54,6 +55,11 @@ export default function Landing() {
   }, [phase, inv.genLeft]);
   const [sticky, setSticky] = useState(false);
   const [faqOpen, setFaqOpen] = useState(0);
+  /* 접기/펴기 인라인 확장 3종 (8/27) — 연동 가이드 · RLUSD 가이드 · 전체 FAQ */
+  const [walletGuideOpen, setWalletGuideOpen] = useState(false);
+  const [rlGuideOpen, setRlGuideOpen] = useState(false);
+  const [faqAllOpen, setFaqAllOpen] = useState(false);
+  const faqList = faqAllOpen ? [...faqs, ...(en ? FAQS_EXTRA_EN : FAQS_EXTRA)] : faqs;
   const heroCtaRef = useRef<HTMLDivElement>(null);
 
   /* 스티키 바: 히어로 CTA가 뷰포트를 벗어나면 표시 (PRD §8) */
@@ -170,8 +176,8 @@ export default function Landing() {
                 <b style={{ color: "#fff" }}>Weather Data Token Generator™</b>
                 <br />
                 {en
-                  ? "The easiest way to measure your indoor air and contribute verified data to the network."
-                  : "실내 공기를 측정하고, 검증된 데이터로 네트워크에 기여하는 가장 쉬운 방법."}
+                  ? "Just measure your indoor air — your verified data turns into value that comes back to you."
+                  : "실내 공기를 측정하는 것만으로, 검증된 내 데이터가 가치가 되어 돌아옵니다."}
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440, marginTop: 6 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
@@ -362,8 +368,23 @@ export default function Landing() {
                   : <><b style={{ color: "var(--w-deep)" }}>지갑이 처음이어도 됩니다</b> — 등록 지갑 활성화(1 XRP)는 1회 지원됩니다 <span style={{ color: "var(--cap)" }}>(약관 제5조)</span></>}
               </span>
             </div>
-            <a href="#" onClick={(e) => e.preventDefault()} style={{ fontSize: 13.5, fontWeight: 700, whiteSpace: "nowrap" }}>{en ? "See the full setup guide →" : "상세 연동 가이드 보기 →"}</a>
+            <button onClick={() => setWalletGuideOpen(!walletGuideOpen)} aria-expanded={walletGuideOpen} style={{ fontSize: 13.5, fontWeight: 700, whiteSpace: "nowrap", color: "var(--w-main)" }}>
+              {walletGuideOpen ? (en ? "Collapse the guide ↑" : "가이드 접기 ↑") : (en ? "See the full setup guide →" : "상세 연동 가이드 보기 →")}
+            </button>
           </div>
+          {walletGuideOpen && (
+            <div className="step-in" style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "24px 26px", display: "flex", flexDirection: "column", gap: 16 }}>
+              {(en ? WALLET_GUIDE_EN : WALLET_GUIDE).map((g, i) => (
+                <div key={g.t} style={{ display: "flex", gap: 13, alignItems: "flex-start" }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 99, background: "var(--w-tint)", color: "var(--w-main)", fontSize: 12, fontWeight: 800, flex: "none", marginTop: 1 }}>{i + 1}</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <div style={{ fontSize: 13.5, fontWeight: 800, color: "var(--w-deep)" }}>{g.t}</div>
+                    <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-4)" }}>{g.d}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -393,10 +414,32 @@ export default function Landing() {
                 : <><b>출금 네트워크는 반드시 XRPL을 선택하세요.</b> 다른 네트워크로 출금하면 자산을 잃을 수 있습니다.</>}
             </span>
           </div>
-          <button style={{ display: "flex", alignItems: "center", justifyContent: "space-between", border: "1px solid var(--bd-card)", borderRadius: 12, padding: "16px 20px", fontSize: 14, fontWeight: 700, color: "var(--w-deep)", background: "#fff", width: "100%" }}>
-            <span>{en ? "See the full RLUSD guide" : "RLUSD 구매 가이드 전체 보기"}</span>
-            <ChevD size={16} color="var(--cap)" />
+          <button onClick={() => setRlGuideOpen(!rlGuideOpen)} aria-expanded={rlGuideOpen} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", border: rlGuideOpen ? "1px solid var(--w-main)" : "1px solid var(--bd-card)", borderRadius: 12, padding: "16px 20px", fontSize: 14, fontWeight: 700, color: "var(--w-deep)", background: rlGuideOpen ? "var(--w-tint)" : "#fff", width: "100%" }}>
+            <span>{rlGuideOpen ? (en ? "Collapse the RLUSD guide" : "RLUSD 구매 가이드 접기") : (en ? "See the full RLUSD guide" : "RLUSD 구매 가이드 전체 보기")}</span>
+            <span style={{ display: "inline-flex", transform: rlGuideOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
+              <ChevD size={16} color={rlGuideOpen ? "var(--w-main)" : "var(--cap)"} />
+            </span>
           </button>
+          {rlGuideOpen && (
+            <div className="step-in" style={{ border: "1px solid var(--bd-card)", borderRadius: 14, padding: "24px 26px", display: "flex", flexDirection: "column", gap: 18, background: "var(--panel)" }}>
+              {(en ? RL_GUIDE_EN : RL_GUIDE).map((g, i) => (
+                <div key={g.t} style={{ display: "flex", gap: 13, alignItems: "flex-start" }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 99, background: "var(--w-deep)", color: "#fff", fontSize: 12, fontWeight: 800, flex: "none", marginTop: 1 }}>{i + 1}</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <div style={{ fontSize: 13.5, fontWeight: 800, color: "var(--w-deep)" }}>{g.t}</div>
+                    <div style={{ fontSize: 13, lineHeight: 1.65, color: "var(--ink-4)" }}>{g.d}</div>
+                  </div>
+                </div>
+              ))}
+              <div style={{ display: "flex", flexDirection: "column", gap: 7, borderTop: "1px solid var(--line)", paddingTop: 14 }}>
+                {(en ? RL_TIPS_EN : RL_TIPS).map((t) => (
+                  <div key={t} style={{ display: "flex", gap: 8, alignItems: "flex-start", fontSize: 12.5, lineHeight: 1.6, color: "var(--ink-4)" }}>
+                    <span style={{ color: "var(--w-main)", fontWeight: 800, flex: "none" }}>·</span>{t}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -405,11 +448,11 @@ export default function Landing() {
         <div style={{ maxWidth: 840, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
           <h2 style={{ ...h2, textAlign: "center" }}>{en ? "FAQ" : "자주 묻는 질문"}</h2>
           <div style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 16, padding: "8px 28px", display: "flex", flexDirection: "column" }}>
-            {faqs.map((f, i) => {
+            {faqList.map((f, i) => {
               const open = faqOpen === i;
               return (
-                /* 모바일: 3문항 축약 (PRD §6.1) — 전체는 "전체 FAQ 보기"로 */
-                <div key={f.q} style={{ borderBottom: i < faqs.length - 1 ? "1px solid var(--line)" : "none" }} className={`${open ? "acc-open" : ""}${i >= 3 ? " desk-only" : ""}`}>
+                /* 모바일: 3문항 축약 (PRD §6.1) — 전체 펼침 시 23문항 전부 노출 */
+                <div key={f.q} style={{ borderBottom: i < faqList.length - 1 ? "1px solid var(--line)" : "none" }} className={`${open ? "acc-open" : ""}${i >= 3 && !faqAllOpen ? " desk-only" : ""}`}>
                   <button onClick={() => setFaqOpen(open ? -1 : i)} aria-expanded={open}
                     style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, padding: "18px 2px", width: "100%", textAlign: "left" }}>
                     <span style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)" }}>{f.q}</span>
@@ -423,7 +466,9 @@ export default function Landing() {
             })}
           </div>
           <div style={{ textAlign: "center" }}>
-            <a href="#" onClick={(e) => e.preventDefault()} style={{ fontSize: 14, fontWeight: 700 }}>{en ? "See all 23 FAQs →" : "전체 FAQ 23문항 보기 →"}</a>
+            <button onClick={() => { setFaqAllOpen(!faqAllOpen); if (faqAllOpen) setFaqOpen(-1); }} aria-expanded={faqAllOpen} style={{ fontSize: 14, fontWeight: 700, color: "var(--w-main)" }}>
+              {faqAllOpen ? (en ? "Collapse FAQs ↑" : "FAQ 접기 ↑") : (en ? "See all 23 FAQs →" : "전체 FAQ 23문항 보기 →")}
+            </button>
           </div>
         </div>
       </section>
@@ -480,6 +525,42 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
     </div>
   );
 }
+
+/* ── 인라인 확장 가이드 콘텐츠 (8/27) — 약관 5조·구매 플로우·확정 정책 기준 ── */
+const WALLET_GUIDE = [
+  { t: "지갑이 없어도 시작할 수 있습니다", d: "기기 등록은 아이디·비밀번호나 소셜 계정으로 만드는 간편 지갑으로도 가능합니다. 지갑 키는 내 브라우저에서 만들어지는 비수탁 방식이라 회사도 열어볼 수 없습니다." },
+  { t: "구매는 외부 지갑으로", d: "D'CENT(앱에서 자동 감지) · Xaman(QR 연결) · GemWallet(브라우저 확장)을 지원합니다. 구매 단계에서 지갑을 고르면 연결까지 안내합니다." },
+  { t: "활성화 걱정은 하지 않아도 됩니다", d: "XRPL 지갑은 처음 쓸 때 1 XRP가 필요합니다. 기기 등록을 시작한 지갑에 한해 1회 지원됩니다 (약관 제5조)." },
+  { t: "리딤코드 1개 = 지갑 1개", d: "박스 안 리딤코드는 한 지갑에만 등록됩니다. 등록한 뒤에는 환불이 제한되니, 쓸 지갑을 정한 다음 사용하세요." },
+  { t: "비밀번호는 꼭 보관하세요", d: "비수탁 지갑은 비밀번호나 시드를 잃으면 누구도 복구해 줄 수 없습니다. 안전한 곳에 따로 적어 두세요." },
+];
+const WALLET_GUIDE_EN = [
+  { t: "You can start without a wallet", d: "Device registration also works with an easy wallet created from an ID/password or social login. Keys are generated in your own browser (non-custodial) — even we can't open it." },
+  { t: "Buy with an external wallet", d: "D'CENT (auto-detected in its app), Xaman (QR connect), and GemWallet (browser extension) are supported. Pick one at checkout and we walk you through connecting." },
+  { t: "Don't worry about activation", d: "An XRPL wallet needs 1 XRP to start. It is covered once for the wallet that begins device registration (Terms, Art. 5)." },
+  { t: "One redeem code = one wallet", d: "The code inside the box registers to a single wallet, and refunds are restricted once it is used — pick your wallet first, then redeem." },
+  { t: "Keep your password safe", d: "With a non-custodial wallet, no one can recover a lost password or seed. Write it down and store it somewhere safe." },
+];
+const RL_GUIDE = [
+  { t: "거래소에서 RLUSD 구매", d: "RLUSD를 지원하는 국내·해외 거래소에 원화(또는 달러)를 입금하고 RLUSD를 구매합니다." },
+  { t: "개인 지갑으로 출금", d: "출금 화면에서 네트워크를 반드시 XRPL로 선택하고 내 지갑 주소로 보냅니다. 거래소가 태그 입력을 요구하면 안내대로 입력하세요. 처음이라면 소액으로 먼저 테스트 전송을 해보는 것이 안전합니다." },
+  { t: "이 페이지에서 결제", d: "구매하기를 누르고 지갑을 연결하면 금액·받는 주소·태그가 자동으로 채워집니다. 지갑에 뜬 내용이 화면과 같은지 확인하고 서명하면 끝 — 다르면 결제가 진행되지 않고 자동으로 안내합니다." },
+];
+const RL_GUIDE_EN = [
+  { t: "Buy RLUSD on an exchange", d: "Deposit KRW (or USD) on an exchange that supports RLUSD and purchase RLUSD." },
+  { t: "Withdraw to your own wallet", d: "On the withdrawal screen, always select XRPL as the network and send to your wallet address. If the exchange asks for a tag, enter it as instructed. First time? A small test transfer is the safe way." },
+  { t: "Pay on this page", d: "Hit Buy and connect your wallet — the amount, receiving address, and tag are filled in automatically. Check that what your wallet shows matches the screen, sign, and you're done. If anything differs, the payment stops and we alert you." },
+];
+const RL_TIPS = [
+  "지갑이 RLUSD를 받을 준비(트러스트라인)는 결제 단계에서 자동 점검됩니다",
+  "네트워크 수수료는 XRP로 아주 소액이 듭니다 — 지갑에 약간의 XRP를 남겨 두세요",
+  "등록 지갑 활성화(1 XRP)는 1회 지원됩니다 (약관 제5조)",
+];
+const RL_TIPS_EN = [
+  "Your wallet's readiness to receive RLUSD (the trust line) is checked automatically at payment",
+  "Network fees cost a tiny amount of XRP — keep a little XRP in your wallet",
+  "One-time wallet activation (1 XRP) is covered (Terms, Art. 5)",
+];
 
 const h2: React.CSSProperties = { fontSize: "clamp(21px, 2.6vw, 30px)", fontWeight: 800, color: "var(--w-deep)" };
 const heroIcon: React.CSSProperties = { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, border: "1px solid rgba(255,255,255,.28)", borderRadius: 12, color: "#fff" };
