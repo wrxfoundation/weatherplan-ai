@@ -184,8 +184,20 @@ export const MOCK_DEVICE: Device = {
   wifi: true,
 };
 
-/* 사전 알림 누적 목값 (8/27 — teaser/dday 시뮬레이션용) */
+/* 사전예약 누적 목값 (8/27 — teaser/dday 시뮬레이션용) */
 export const MOCK_PRENOTIFY = 3847;
+
+/* 사전예약 실시간 현황 mock 피드 (8/27) — 내부 지갑 앞자리+마스킹 · 예약 시각 · 대수.
+   사전예약은 수요 파악·룸 확보 단계라 5,000 캡·제네시스 넘버와 무관 (넘버는 정식 구매 시 배정) */
+export const PREORDER_FEED: { w: string; t: string; q: number }[] = [
+  { w: "r9fK", t: "21:04:32", q: 3 }, { w: "rB2x", t: "21:03:58", q: 10 }, { w: "rQm7", t: "21:03:41", q: 1 },
+  { w: "rXw3", t: "21:02:55", q: 5 }, { w: "rL8d", t: "21:02:19", q: 2 }, { w: "rTn6", t: "21:01:47", q: 20 },
+  { w: "rHs2", t: "21:01:12", q: 1 }, { w: "rGp9", t: "21:00:36", q: 8 }, { w: "rVz5", t: "20:59:54", q: 3 },
+  { w: "rJc4", t: "20:59:21", q: 100 }, { w: "rNe8", t: "20:58:47", q: 2 }, { w: "rDf1", t: "20:58:03", q: 5 },
+  { w: "rPk6", t: "20:57:29", q: 1 }, { w: "rZy7", t: "20:56:50", q: 15 }, { w: "rMw2", t: "20:56:08", q: 4 },
+  { w: "rCq3", t: "20:55:33", q: 2 }, { w: "rEb9", t: "20:54:57", q: 30 }, { w: "rUj5", t: "20:54:14", q: 1 },
+  { w: "rAh8", t: "20:53:39", q: 6 }, { w: "rSx4", t: "20:52:51", q: 2 },
+];
 
 export const LINKS = {
   x: "https://x.com/wellbianlabs",

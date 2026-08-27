@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   SPECS, SPECS_EN, FAQS, FAQS_EN, FAQS_EXTRA, FAQS_EXTRA_EN, LINK_STEPS, LINK_STEPS_EN,
-  RL_STEPS, RL_STEPS_EN, LINKS, MOCK_INVENTORY, MOCK_PRENOTIFY, PRICE, calc, fmt,
+  RL_STEPS, RL_STEPS_EN, LINKS, MOCK_INVENTORY, MOCK_PRENOTIFY, PREORDER_FEED, PRICE, calc, fmt,
   NOTICE_REWARD, NOTICE_REWARD_EN, type SalePhase,
 } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
@@ -23,7 +23,7 @@ export default function Landing() {
   const demoMismatch = sp.get("demo") === "mismatch"; // 결제 mismatch 분기 재현용 (내부 데모)
   const phase: SalePhase =
     stateParam === "eb_closed" ? "general" : stateParam === "sold_out" ? "sold_out" : "early_bird";
-  /* 사전 알림 시뮬레이션 (8/27 서우): ?state=teaser = D-07 사전 알림 / ?state=dday = 당일 카운트다운 */
+  /* 사전예약(PRE-ORDER) 시뮬레이션 (8/27 서우 개정: 알림 아니라 예약구매, 9/5 오픈): ?state=teaser = 사전예약 진행 중 / ?state=dday = 오픈 전 카운트다운 */
   const preMode: "pre" | "dday" | null =
     stateParam === "teaser" ? "pre" : stateParam === "dday" ? "dday" : null;
 
@@ -134,7 +134,7 @@ export default function Landing() {
               <Link href="/" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
               {preMode === "pre"
                 ? <Link href="/?state=dday" style={previewChip}>{en ? "D-day view" : "오픈 당일 보기"}</Link>
-                : <Link href="/?state=teaser" style={previewChip}>{en ? "Pre-launch view" : "사전 알림 보기"}</Link>}
+                : <Link href="/?state=teaser" style={previewChip}>{en ? "Pre-order view" : "사전예약 보기"}</Link>}
             </>
           ) : soldOut ? (
             <>
@@ -153,7 +153,7 @@ export default function Landing() {
             </>
           ) : (
             <>
-              <Link href="/?state=teaser" style={previewChip}>{en ? "Pre-launch view" : "사전 알림 보기"}</Link>
+              <Link href="/?state=teaser" style={previewChip}>{en ? "Pre-order view" : "사전예약 보기"}</Link>
               <Link href="/?state=eb_closed" className="desk-only" style={previewChip}>{en ? "EB-closed view" : "얼리버드 마감 보기"}</Link>
               <Link href="/?state=sold_out" className="desk-only" style={previewChip}>{en ? "Sold-out view" : "완판 화면 보기"}</Link>
             </>
@@ -256,11 +256,23 @@ export default function Landing() {
                   ? "Just measure your indoor air — your verified data turns into value that comes back to you."
                   : "실내 공기를 측정하는 것만으로, 검증된 내 데이터가 가치가 되어 돌아옵니다."}
               </p>
-              {preMode ? (
-                /* 사전 알림 모드: 게이지 대신 오픈 정보 한 줄 */
-                <div style={{ display: "flex", alignItems: "baseline", gap: 12, maxWidth: 440, marginTop: 6, fontSize: 18, fontWeight: 700, flexWrap: "wrap" }}>
-                  <span>{en ? "First sale opens Sept 15" : "1차 판매 9월 15일 오픈"}</span>
-                  <span style={{ fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,.65)" }}>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span>
+              {preMode === "dday" ? (
+                /* 사전예약 오픈 전: 오픈 정보 한 줄 */
+                <div style={{ display: "flex", alignItems: "baseline", gap: 12, maxWidth: 480, marginTop: 6, fontSize: 18, fontWeight: 700, flexWrap: "wrap" }}>
+                  <span>{en ? "Pre-orders open Sept 5" : "9월 5일 사전예약 오픈"}</span>
+                  <span style={{ fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,.65)" }}>{en ? "Book now, buy calmly on Sept 15" : "예약하면 9월 15일에 여유 있게 구매"}</span>
+                </div>
+              ) : preMode === "pre" ? (
+                /* 사전예약 중 (8/27 개정): 수요 파악·룸 확보 — 5,000 게이지 없음, 짧은 가격 + 우선 구매 안내 */
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, maxWidth: 520, marginTop: 6 }}>
+                  <div style={{ fontSize: 18, fontWeight: 700 }}>
+                    {en ? <>Early bird <b>1,000 units · 450 RLUSD</b> · then 650 RLUSD</> : <>얼리버드 <b>1,000대 450 RLUSD</b> · 이후 650 RLUSD</>}
+                  </div>
+                  <div style={{ fontSize: 16, color: "rgba(255,255,255,.72)" }}>
+                    {en
+                      ? "Pre-order now and buy calmly on Sept 15 — no first-come rush. Genesis Numbers are assigned at purchase."
+                      : "사전예약하면 9월 15일 오픈 때 선착순 걱정 없이 구매할 수 있습니다 · 제네시스 넘버는 정식 구매 시 배정"}
+                  </div>
                 </div>
               ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440, marginTop: 6 }}>
@@ -277,14 +289,14 @@ export default function Landing() {
               {/* 모바일: 구매 버튼 전폭 → 아랫줄에 X·텔레그램 나란히 (8/27 서우) */}
               <div ref={heroCtaRef} className="hero-cta-row" style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
                 {preMode === "pre" ? (
-                  /* D-07 사전 알림받기 — 알림 신청 = 공식 텔레그램 (8/27 서우) */
-                  <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)", color: "#fff", textDecoration: "none" }}>
-                    🔔 {en ? "D-07 · Get launch alerts" : "D-07 사전 알림받기"}
-                  </a>
+                  /* PRE-ORDER — 사전예약 = 실구매 (8/27 서우: 9/5부터 바로), 구매 모달 연결 */
+                  <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
+                    {en ? "PRE-ORDER · RLUSD" : "PRE-ORDER · 사전예약 구매"}
+                  </button>
                 ) : preMode === "dday" ? (
-                  /* 오픈 당일: 실시간 카운트다운 버튼 */
+                  /* 사전예약 오픈 카운트다운 (9/5) */
                   <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)", color: "#fff", textDecoration: "none" }}>
-                    <span className="mono" style={{ fontWeight: 800 }}>{cd}</span>&nbsp;{en ? "until open" : "후 오픈"}
+                    <span className="mono" style={{ fontWeight: 800 }}>{cd}</span>&nbsp;{en ? "until pre-orders open" : "후 사전예약 오픈"}
                   </a>
                 ) : (
                   <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
@@ -297,17 +309,54 @@ export default function Landing() {
                 </div>
               </div>
               {preMode && (
-                /* 사전 알림 누적 (목값 카운트업) */
+                /* 사전예약 누적 (목값 카운트업) */
                 <div style={{ fontSize: 17, color: "rgba(255,255,255,.75)" }}>
                   {en
-                    ? <>So far <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> people signed up for launch alerts</>
-                    : <>지금까지 <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>명이 사전 알림을 신청했습니다</>}
+                    ? <>So far <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> units pre-ordered</>
+                    : <>지금까지 <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>대가 사전예약되었습니다</>}
                 </div>
               )}
             </div>
           </div>
         )}
       </section>
+
+      {/* ── S1b 사전예약 실시간 현황판 (teaser 전용, 8/27) — 크레딧 롤: 아래→위 + 상단 페이드아웃 ── */}
+      {preMode === "pre" && (
+        <section className="sec-pad" style={{ background: "var(--w-deep)", color: "#fff", paddingTop: 48, paddingBottom: 48 }} aria-label={en ? "Live pre-order board" : "실시간 사전예약 현황"}>
+          <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 19.5, fontWeight: 800 }}>
+                <span className="live-dot" />
+                {en ? "Live pre-order board" : "실시간 사전예약 현황"}
+              </div>
+              <div style={{ fontSize: 16.5, color: "rgba(255,255,255,.7)" }}>
+                {en
+                  ? <>Total <b className="mono" style={{ color: "#fff" }}>{fmt(MOCK_PRENOTIFY)}</b> units · up to 100 per account</>
+                  : <>누적 <b className="mono" style={{ color: "#fff" }}>{fmt(MOCK_PRENOTIFY)}</b>대 · 1계정 최대 100대</>}
+              </div>
+            </div>
+            <div className="feed-roll" aria-hidden>
+              <div className="feed-track">
+                {[...PREORDER_FEED, ...PREORDER_FEED].map((f, i) => (
+                  <div key={i} className="feed-row">
+                    <span className="mono" style={{ color: "#fff", fontWeight: 700 }}>{f.w}****</span>
+                    <span style={{ color: "rgba(255,255,255,.55)" }}>{f.t}</span>
+                    <span className="mono" style={{ color: "color-mix(in oklab, var(--w-main) 40%, white)", fontWeight: 800 }}>
+                      {f.q}{en ? ` unit${f.q > 1 ? "s" : ""}` : "대"} {en ? "pre-ordered" : "사전예약"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ fontSize: 14.5, color: "rgba(255,255,255,.45)" }}>
+              {en
+                ? "Wallet prefixes are masked. Pre-orders gauge demand and hold your room — they are not capped at 5,000 and numbers are assigned at purchase."
+                : "지갑 주소는 앞자리만 표시됩니다. 사전예약은 수요 파악과 자리 확보 단계로, 5,000대 한정·제네시스 넘버 배정과 무관합니다."}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── S2 가격·수량 ── */}
       <section className="sec-pad" style={{ background: "#fff" }} id="price">
@@ -646,8 +695,8 @@ export default function Landing() {
       {/* ── S9 커뮤니티 + 푸터 ── */}
       <CommunityFooter />
 
-      {/* ── S0 스티키 구매 바 (사전 알림 모드에선 숨김) ── */}
-      {!soldOut && !preMode && (
+      {/* ── S0 스티키 구매 바 (오픈 전 카운트다운에서만 숨김 — 사전예약 중엔 구매 가능) ── */}
+      {!soldOut && preMode !== "dday" && (
         <div aria-hidden={!sticky} style={{
           position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 60,
           transform: sticky ? "none" : "translateY(110%)", transition: "transform .3s ease",
