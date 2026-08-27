@@ -198,7 +198,16 @@ h1, h2, h3, p { margin: 0; }
 @media (max-width: 720px) { .feed-roll { height: 220px; } .feed-row { gap: 10px; font-size: 15px; } }
 @media (prefers-reduced-motion: reduce) { .feed-track { animation: none; } }
 
-/* 제품 갤러리 — 히어로형 풀블리드 롤링 (8/27 2차: 섹션 전체를 사진이 덮고 텍스트는 흰색) */
+/* 제품 갤러리 밴드 (8/27 3차) — 텍스트 없는 풀폭 이미지 롤링, 타이틀·스펙은 섹션 밖 */
+.spec-band { position: relative; overflow: hidden; height: 480px; background: var(--w-deep); }
+.spec-band .spec-bg { transition: opacity 1.2s ease; }
+.spec-band-shade { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, transparent 78%, rgba(0, 0, 0, .22) 100%); }
+.spec-band .spec-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; }
+.spec-band .spec-dots { position: absolute; bottom: 16px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; }
+@media (max-width: 720px) { .spec-band { height: 260px; } }
+
+/* 제품 갤러리 — 히어로형 풀블리드 롤링 (8/27 2차: 섹션 전체를 사진이 덮고 텍스트는 흰색 — 3차에서 밴드형으로 대체) */
 .spec-hero { position: relative; overflow: hidden; background: var(--w-deep); }
 .spec-bg {
   position: absolute; inset: 0; z-index: 0;

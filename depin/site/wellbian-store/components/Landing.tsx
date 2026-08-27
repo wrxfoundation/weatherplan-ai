@@ -446,56 +446,58 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── S3 제품 — 히어로형 풀블리드 갤러리 롤링 + 스펙 더보기 (8/27 2차: 배경 덮기 + 흰 폰트) ── */}
-      <section className="sec-pad spec-hero" id="spec" style={{ color: "#fff" }}>
-        <div aria-hidden>
-          {SPEC_GALLERY.map((g, i) => (
-            <div key={g.src} className={`spec-bg${i === specImg ? " on" : ""}`} style={{ backgroundImage: `url(${g.src})` }} role="img" aria-label={en ? g.altEn : g.alt} />
-          ))}
-          <div className="spec-hero-scrim" />
-        </div>
-        <div className="wrap" style={{ position: "relative", zIndex: 2, minHeight: 520, display: "flex", flexDirection: "column", gap: 18 }}>
-          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 10 }}>
-            <h2 style={{ ...h2, color: "#fff", textShadow: "0 2px 14px rgba(0,0,0,.35)" }}>{en ? "Weather Data Token Generator™" : "날씨데이터토큰생성기™"}</h2>
-            <p style={{ fontSize: 19, fontWeight: 600, color: "rgba(255,255,255,.85)", textShadow: "0 1px 10px rgba(0,0,0,.35)" }}>
+      {/* ── S3 제품 — 타이틀·스펙은 갤러리 밖(짙은 폰트), 갤러리는 풀폭 이미지 밴드 (8/27 3차) ── */}
+      <section id="spec" style={{ background: "var(--sec-alt)" }}>
+        <div className="sec-pad" style={{ paddingBottom: 26 }}>
+          <div className="wrap" style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 10 }}>
+            <h2 style={h2}>{en ? "Weather Data Token Generator™" : "날씨데이터토큰생성기™"}</h2>
+            <p style={{ fontSize: 19, fontWeight: 600, color: "var(--ink-2)" }}>
               {en ? "Indoor Air Quality Monitor · Model ARC-600DA" : "실내공기측정기 · 모델명 ARC-600DA"}
             </p>
             <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
-              <span style={certChipDark}>{en ? "KC Certified" : "KC 인증"}</span>
-              <span style={certChipDark}>{en ? "Performance Certified" : "성능인증"}</span>
-            </div>
-          </div>
-          <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
-            <button onClick={() => setSpecOpen(!specOpen)} aria-expanded={specOpen} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 18, fontWeight: 800, color: "#fff", background: "rgba(27,27,72,.45)", border: "1px solid rgba(255,255,255,.35)", borderRadius: 99, padding: "12px 22px", backdropFilter: "blur(4px)" }}>
-              {specOpen ? (en ? "Hide specifications" : "제품 스펙 접기") : (en ? "See full specifications" : "제품 스펙 더보기")}
-              <span style={{ display: "inline-flex", transform: specOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
-                <ChevD size={15} color="#fff" />
-              </span>
-            </button>
-            {specOpen && (
-              /* 글래스 테이블 (8/27 서우: 흰 카드 → 블러 글래스 + 흰 폰트) */
-              <div className="step-in" style={{ width: "100%", maxWidth: 760, background: "rgba(27,27,72,.38)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: "1px solid rgba(255,255,255,.28)", borderRadius: 16, padding: "8px 22px 16px", display: "flex", flexDirection: "column", gap: 12, color: "#fff", boxShadow: "0 12px 40px rgba(0,0,0,.25)" }}>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  {specs.map((s) => (
-                    <div key={s.k} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "9px 4px", borderBottom: "1px solid rgba(255,255,255,.18)", fontSize: 17.5, lineHeight: 1.45 }}>
-                      <span style={{ fontWeight: 800, color: "#fff" }}>{s.k}</span>
-                      <span style={{ color: "rgba(255,255,255,.88)" }}>{s.v}</span>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ fontSize: 15.5, color: "rgba(255,255,255,.62)", textAlign: "center" }}>{en ? "Based on the manufacturer's official specification sheet." : "제조사 공식 사양표 기준입니다."}</div>
-              </div>
-            )}
-            <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
-              {SPEC_GALLERY.map((g, i) => (
-                <button key={g.src} onClick={() => setSpecImg(i)} aria-label={`${en ? "Image" : "이미지"} ${i + 1}`}
-                  style={{ width: 9, height: 9, borderRadius: 99, background: i === specImg ? "#fff" : "rgba(255,255,255,.42)", transform: i === specImg ? "scale(1.25)" : "none", transition: "background .15s, transform .15s" }} />
-              ))}
+              <span style={certChip}>{en ? "KC Certified" : "KC 인증"}</span>
+              <span style={certChip}>{en ? "Performance Certified" : "성능인증"}</span>
             </div>
           </div>
         </div>
-        <button className="spec-nav prev" style={{ zIndex: 2 }} aria-label={en ? "Previous image" : "이전 이미지"} onClick={() => setSpecImg((i) => (i - 1 + SPEC_GALLERY.length) % SPEC_GALLERY.length)}>‹</button>
-        <button className="spec-nav next" style={{ zIndex: 2 }} aria-label={en ? "Next image" : "다음 이미지"} onClick={() => setSpecImg((i) => (i + 1) % SPEC_GALLERY.length)}>›</button>
+        {/* 풀폭 갤러리 밴드 — 텍스트 없음, 롤링 + 도트 + 화살표 */}
+        <div className="spec-band">
+          {SPEC_GALLERY.map((g, i) => (
+            <div key={g.src} className={`spec-bg${i === specImg ? " on" : ""}`} style={{ backgroundImage: `url(${g.src})` }} role="img" aria-label={en ? g.altEn : g.alt} />
+          ))}
+          <div className="spec-band-shade" aria-hidden />
+          <button className="spec-nav prev" aria-label={en ? "Previous image" : "이전 이미지"} onClick={() => setSpecImg((i) => (i - 1 + SPEC_GALLERY.length) % SPEC_GALLERY.length)}>‹</button>
+          <button className="spec-nav next" aria-label={en ? "Next image" : "다음 이미지"} onClick={() => setSpecImg((i) => (i + 1) % SPEC_GALLERY.length)}>›</button>
+          <div className="spec-dots" style={{ zIndex: 2 }}>
+            {SPEC_GALLERY.map((g, i) => (
+              <button key={g.src} onClick={() => setSpecImg(i)} aria-label={`${en ? "Image" : "이미지"} ${i + 1}`}
+                style={{ width: 9, height: 9, borderRadius: 99, background: i === specImg ? "#fff" : "rgba(255,255,255,.5)", transform: i === specImg ? "scale(1.25)" : "none", transition: "background .15s, transform .15s", boxShadow: "0 1px 4px rgba(0,0,0,.35)" }} />
+            ))}
+          </div>
+        </div>
+        <div className="sec-pad" style={{ paddingTop: 26 }}>
+          <div className="wrap" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
+            <button onClick={() => setSpecOpen(!specOpen)} aria-expanded={specOpen} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 18, fontWeight: 800, color: "var(--w-main)" }}>
+              {specOpen ? (en ? "Hide specifications" : "제품 스펙 접기") : (en ? "See full specifications" : "제품 스펙 더보기")}
+              <span style={{ display: "inline-flex", transform: specOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
+                <ChevD size={15} color="var(--w-main)" />
+              </span>
+            </button>
+            {specOpen && (
+              <div className="step-in" style={{ width: "100%", maxWidth: 760, background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 16, padding: "8px 22px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {specs.map((s) => (
+                    <div key={s.k} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "9px 4px", borderBottom: "1px solid var(--line)", fontSize: 17.5, lineHeight: 1.45 }}>
+                      <span style={{ fontWeight: 800, color: "var(--w-deep)" }}>{s.k}</span>
+                      <span style={{ color: "var(--ink-2)" }}>{s.v}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ fontSize: 15.5, color: "var(--hint)", textAlign: "center" }}>{en ? "Based on the manufacturer's official specification sheet." : "제조사 공식 사양표 기준입니다."}</div>
+              </div>
+            )}
+          </div>
+        </div>
       </section>
 
       {/* ── S6 RLUSD 준비 ── */}
@@ -618,10 +620,10 @@ export default function Landing() {
           </div>
           <div className="link-grid">
             {linkSteps.map((st) => (
-              <div key={st.n} style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "22px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
+              <div key={st.n} style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "22px 14px", display: "flex", flexDirection: "column", gap: 10 }}>
                 <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 99, background: "var(--w-deep)", color: "#fff", fontSize: 17, fontWeight: 800 }}>{st.n}</span>
                 <div style={{ fontSize: 19, fontWeight: 800, color: "var(--w-deep)" }}>{st.t}</div>
-                <div style={{ fontSize: 16, lineHeight: 1.55, color: "var(--ink-4)" }}>
+                <div style={{ fontSize: 15, lineHeight: 1.55, color: "var(--ink-4)" }}>
                   {st.d}
                   {st.d2 && <><br />{st.d2}</>}
                 </div>
