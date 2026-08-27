@@ -1,10 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-08-26)
+# Korea Rising — verified K-pop snapshot (2026-08-27)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **PSY** — Die Sprache der Musik - Story of Light & Orkaia  [HQ]
-- **NewJeans** — [Light Jeans] 2026 Summer of NewJeans BehindㅣNewJeans
+- **BoA** — You still our No.1 BoA
+- **QWER** — What sound does the band make?🎧 지금 바로 칠성몰에서 QWER x 마운틴듀 한정판 사전예약을 만나보세요! 🎸
+- **Xdinary Heroes** — [Xdinary Heroes : Xtra Files] Ep.93 〈ACON 2026〉 Behind
+- **NCT Dream** — i love you baby #NCTDREAM #JEJUDREAM #NCT_10TH_ANNIVERSARY
+- **AKMU** — 'Paradise of Rumors... begins...'
+- **BOYNEXTDOOR** — 미용실 작명 #BOYNEXTDOOR #보이넥스트도어 #BND #운명의명리학 #명리학
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
