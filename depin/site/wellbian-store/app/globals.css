@@ -171,6 +171,24 @@ h1, h2, h3, p { margin: 0; }
 /* 히어로 컨테이너 = .wrap(1080)과 동일 폭 — S2 가격 카드 좌우 라인과 끝 정렬 */
 .hero-grid { display: grid; grid-template-columns: 1fr 480px; gap: 56px; align-items: center; max-width: 1080px; margin: 0 auto; }
 
+/* CTA 샤인 스윕 (8/27) — 히어로 구매 버튼 반짝임. 3.2초 주기, 모션 최소화 설정 시 정지 */
+.btn-shine { position: relative; overflow: hidden; }
+.btn-shine::after {
+  content: "";
+  position: absolute; top: -4px; bottom: -4px; left: -70%;
+  width: 45%;
+  background: linear-gradient(105deg, transparent 15%, rgba(255, 255, 255, .5) 50%, transparent 85%);
+  transform: skewX(-18deg);
+  animation: btn-shine-sweep 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes btn-shine-sweep {
+  0% { left: -70%; }
+  45% { left: 130%; }
+  100% { left: 130%; }
+}
+@media (prefers-reduced-motion: reduce) { .btn-shine::after { animation: none; display: none; } }
+
 /* 히어로 풀블리드 배경 (8/27) — 액자형 썸네일 제거, 제품 실사 + 딥 바이올렛 스크림.
    텍스트 존(좌측)은 진하게, 우측은 제품이 비치게. 모바일은 세로 그라데이션로 전면 확보 */
 .hero-photo {

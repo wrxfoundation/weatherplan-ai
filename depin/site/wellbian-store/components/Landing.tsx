@@ -156,7 +156,7 @@ export default function Landing() {
                 <div className="track on-dark" style={{ height: 8 }}><i style={{ width: `${Math.max(2, pct)}%` }} /></div>
               </div>
               <div ref={heroCtaRef} style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
-                <button onClick={buy} className="btn-main" style={{ fontSize: 16, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
+                <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 16, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
                   {en ? "Buy now · RLUSD" : "지금 구매하기 · RLUSD"}
                 </button>
                 <a href={LINKS.x} target="_blank" rel="noopener" aria-label="X" style={heroIcon}><XIcon size={18} /></a>
