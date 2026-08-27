@@ -378,8 +378,11 @@ export default function Landing() {
                   : <><b style={{ color: "var(--w-deep)" }}>지갑이 처음이어도 됩니다</b> — 등록 지갑 활성화(1 XRP)는 1회 지원됩니다 <span style={{ color: "var(--cap)" }}>(약관 제5조)</span></>}
               </span>
             </div>
-            <button onClick={() => setWalletGuideOpen(!walletGuideOpen)} aria-expanded={walletGuideOpen} style={{ fontSize: 13.5, fontWeight: 700, whiteSpace: "nowrap", color: "var(--w-main)" }}>
-              {walletGuideOpen ? (en ? "Collapse the guide ↑" : "가이드 접기 ↑") : (en ? "See the full setup guide →" : "상세 연동 가이드 보기 →")}
+            <button onClick={() => setWalletGuideOpen(!walletGuideOpen)} aria-expanded={walletGuideOpen} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13.5, fontWeight: 700, whiteSpace: "nowrap", color: "var(--w-main)" }}>
+              {walletGuideOpen ? (en ? "Collapse the guide" : "가이드 접기") : (en ? "See the full setup guide" : "상세 연동 가이드 보기")}
+              <span style={{ display: "inline-flex", transform: walletGuideOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
+                <ChevD size={14} color="var(--w-main)" />
+              </span>
             </button>
           </div>
           {walletGuideOpen && (
@@ -476,8 +479,11 @@ export default function Landing() {
             })}
           </div>
           <div style={{ textAlign: "center" }}>
-            <button onClick={() => { setFaqAllOpen(!faqAllOpen); if (faqAllOpen) setFaqOpen(-1); }} aria-expanded={faqAllOpen} style={{ fontSize: 14, fontWeight: 700, color: "var(--w-main)" }}>
-              {faqAllOpen ? (en ? "Collapse FAQs ↑" : "FAQ 접기 ↑") : (en ? "See all 23 FAQs →" : "전체 FAQ 23문항 보기 →")}
+            <button onClick={() => { setFaqAllOpen(!faqAllOpen); if (faqAllOpen) setFaqOpen(-1); }} aria-expanded={faqAllOpen} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 14, fontWeight: 700, color: "var(--w-main)" }}>
+              {faqAllOpen ? (en ? "Collapse FAQs" : "FAQ 접기") : (en ? "See all 23 FAQs" : "전체 FAQ 23문항 보기")}
+              <span style={{ display: "inline-flex", transform: faqAllOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
+                <ChevD size={15} color="var(--w-main)" />
+              </span>
             </button>
           </div>
         </div>
