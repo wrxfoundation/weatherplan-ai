@@ -330,8 +330,8 @@ export default function Landing() {
             </div>
             <div style={{ fontSize: 14.5, color: "rgba(255,255,255,.45)", textAlign: "center" }}>
               {en
-                ? "Wallet prefixes are masked. Pre-orders gauge demand and hold your room — Genesis Numbers are assigned at purchase."
-                : "지갑 주소는 앞자리만 표시됩니다. 사전예약은 수요 파악과 자리 확보 단계이며, 제네시스 넘버는 정식 구매 시 배정됩니다."}
+                ? "Wallet prefixes are masked. Pre-orders gauge demand and hold your room — Genesis Numbers are randomly assigned at purchase."
+                : "지갑 주소는 앞자리만 표시됩니다. 사전예약은 수요 파악과 자리 확보 단계이며, 제네시스 넘버는 정식 구매 시 무작위로 배정됩니다."}
             </div>
           </div>
         </section>
@@ -500,8 +500,8 @@ export default function Landing() {
             <h2 style={h2}>{en ? "What we're building" : "우리가 만드는 것"}</h2>
             <p style={{ fontSize: 19.5, lineHeight: 1.72, color: "var(--ink-4)", maxWidth: 780, margin: "0 auto" }}>
               {en
-                ? "Air differs building by building, street by street — beyond the reach of public weather stations. We turn the data measured where you actually live into an economy: measured by you, verified by the network, rewarded for contribution, and put to work as services."
-                : "공기는 건물마다, 골목마다 다릅니다 — 기존 관측망이 닿지 않는 곳이죠. 내가 생활하는 공간에서 측정한 데이터가 검증을 거쳐 보상으로 돌아오고, 쌓인 데이터는 서비스가 되는 경제. 그것이 우리가 만드는 Weather Data Economy입니다."}
+                ? "Air differs building by building, street by street — beyond the reach of public weather stations. Data measured where you actually live comes back as rewards after verification, and as it accumulates, it builds an economy of services."
+                : "공기는 건물마다, 골목마다 다릅니다 — 기존 관측망이 닿지 않는 곳이죠. 내가 생활하는 공간에서 측정한 데이터가 검증을 거쳐 보상으로 돌아오고, 쌓인 데이터는 서비스가 되는 경제를 구축해 나갑니다."}
             </p>
           </div>
           <div className="how-grid">
