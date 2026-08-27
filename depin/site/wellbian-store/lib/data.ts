@@ -255,7 +255,7 @@ export const FAQS_EN = [
 export const FAQS_EXTRA = [
   { q: "결제는 왜 RLUSD로만 하나요?", a: "RLUSD는 미국 달러와 1:1로 연동되는 스테이블코인이라 가격 변동 걱정 없이 결제할 수 있습니다. 리플(Ripple)이 발행하고 뉴욕 금융감독청(NYDFS)의 규제를 받습니다." },
   { q: "한 지갑으로 몇 대까지 살 수 있나요?", a: "현재 제한이 없습니다. 정책이 확정되면 변경될 수 있으며, 변경 시 공지합니다." },
-  { q: "제네시스 넘버가 뭔가요?", a: "결제가 확정된 순서대로 배정되는 고유 번호입니다. 라이선스 NFT에 영구 기록되며, 빠른 번호일수록 초기 참여자라는 표시가 됩니다." },
+  { q: "제네시스 넘버가 뭔가요?", a: "총 5,000대 한정 수량 안에서 무작위로 배정되는 고유 번호입니다. 라이선스 NFT에 영구 기록되며, 어떤 번호든 5,000개뿐인 제네시스 노드 중 하나라는 표시입니다." },
   { q: "라이선스 NFT는 뭔가요?", a: "기기의 정품과 참여 자격을 증명하는 XRPL 기반 증서입니다. 박스 안 리딤코드로 발급받으며, 이 NFT를 보유한 기기만 보상 대상이 됩니다." },
   { q: "배송은 언제, 어떻게 받나요?", a: "10월부터 순차 발송됩니다. 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 안내하며, 폼에 지갑 주소·주문번호·성함·연락처·배송지를 입력하면 순서대로 발송됩니다." },
   { q: "주문번호를 잃어버렸어요.", a: "결제한 지갑을 다시 연결하면 주문 페이지에서 언제든 확인할 수 있습니다." },
@@ -273,7 +273,7 @@ export const FAQS_EXTRA = [
 export const FAQS_EXTRA_EN = [
   { q: "Why is payment RLUSD-only?", a: "RLUSD is a stablecoin pegged 1:1 to the US dollar, so you can pay without worrying about price swings. It is issued by Ripple and regulated by the NYDFS." },
   { q: "How many units can one wallet buy?", a: "No limit at the moment. This may change once the policy is finalized, and any change will be announced." },
-  { q: "What is a Genesis Number?", a: "A unique number assigned in payment-confirmation order and permanently recorded on your license NFT. A lower number marks you as an earlier participant." },
+  { q: "What is a Genesis Number?", a: "A unique number randomly assigned within the 5,000-unit limited run, permanently recorded on your license NFT. Whatever the number, it marks one of only 5,000 genesis nodes." },
   { q: "What is the license NFT?", a: "An XRPL-based certificate proving your device is genuine and eligible to participate. It is minted with the redeem code inside the box, and only devices holding this NFT earn rewards." },
   { q: "When and how does shipping work?", a: "Units ship sequentially from October. Starting 2 weeks before dispatch, we announce the shipping form on our official Telegram and X — enter your wallet address, order number, name, phone, and shipping address, and units ship in order." },
   { q: "I lost my order number.", a: "Reconnect the wallet you paid with and you can see it on your order page anytime." },

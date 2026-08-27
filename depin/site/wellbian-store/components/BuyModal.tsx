@@ -130,13 +130,13 @@ export default function BuyModal({
             {en ? (
               <>
                 <span>· Use − / + or <b style={{ color: "var(--ink-2)" }}>type a number</b> — bulk orders welcome</span>
-                <span>· Limited supply — <b style={{ color: "var(--ink-2)" }}>Genesis Numbers</b> are assigned in payment-confirmation order</span>
+                <span>· Limited supply — <b style={{ color: "var(--ink-2)" }}>Genesis Numbers</b> are randomly assigned within the 5,000-unit run</span>
                 <span>· Per-wallet purchase limit: none at the moment (subject to policy)</span>
               </>
             ) : (
               <>
                 <span>· − / + 버튼 또는 <b style={{ color: "var(--ink-2)" }}>숫자를 직접 입력</b>하세요 — 대량 구매 가능</span>
-                <span>· 한정 수량 — <b style={{ color: "var(--ink-2)" }}>결제 확정 순</b>으로 제네시스 넘버가 배정됩니다</span>
+                <span>· 한정 수량 — <b style={{ color: "var(--ink-2)" }}>제네시스 넘버</b>는 5,000대 안에서 무작위 배정됩니다</span>
                 <span>· 지갑당 구매 수량 제한: 현재 없음 (정책 확정 시 변경될 수 있음)</span>
               </>
             )}

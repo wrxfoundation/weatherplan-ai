@@ -290,8 +290,8 @@ export default function Landing() {
             <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: 9, background: "var(--w-tint)", color: "var(--w-main)", fontWeight: 800, fontSize: 13, flex: "none" }}>#</span>
             <div style={{ fontSize: 13.5, lineHeight: 1.6, color: "var(--ink-2)" }}>
               {en
-                ? <><b style={{ color: "var(--w-deep)" }}>Genesis Number</b> — assigned in payment-confirmation order and permanently recorded on your license NFT.</>
-                : <><b style={{ color: "var(--w-deep)" }}>제네시스 넘버</b> — 결제 확정 순서대로 배정되며, 라이선스 NFT에 영구 기록됩니다.</>}
+                ? <><b style={{ color: "var(--w-deep)" }}>Genesis Number</b> — randomly assigned within the 5,000-unit run and permanently recorded on your license NFT.</>
+                : <><b style={{ color: "var(--w-deep)" }}>제네시스 넘버</b> — 5,000대 한정 수량 안에서 무작위로 배정되며, 라이선스 NFT에 영구 기록됩니다.</>}
             </div>
           </div>
         </div>
