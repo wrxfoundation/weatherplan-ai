@@ -62,7 +62,7 @@ export default function MePage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <h2 style={{ fontSize: 24, fontWeight: 800, color: "var(--w-deep)" }}>{en ? "My Page" : "마이페이지"}</h2>
             <span style={{ fontSize: 13, color: "var(--cap)" }}>
-              {en ? "2 devices" : "보유 기기 2대"} · {en ? "Genesis" : "제네시스"} <b style={{ color: "var(--w-main)" }}>{g(device.genesisNo)}</b> · <b style={{ color: "var(--w-main)" }}>#{order.genesisNo}</b>
+              {en ? "2 devices" : "보유 기기 2대"} · {en ? "Genesis" : "제네시스"} <b style={{ color: "var(--w-main)" }}>{g(device.genesisNo)}</b> · <b style={{ color: "var(--w-main)" }}>#{order.genesisNos[0]}{order.qty > 1 ? (en ? ` +${order.qty - 1}` : ` 외 ${order.qty - 1}`) : ""}</b>
             </span>
           </div>
           <Link href="/#setup" style={{ fontSize: 12.5, fontWeight: 700, color: "var(--w-main)" }}>{en ? "Setup guide →" : "연동 가이드 보기 →"}</Link>
@@ -72,7 +72,7 @@ export default function MePage() {
         <div style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 16, overflow: "hidden" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "18px 24px", borderBottom: "1px solid var(--line)", flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>{en ? "Genesis" : "제네시스"} <span style={{ color: "var(--w-main)" }}>#{order.genesisNo}</span></span>
+              <span style={{ fontSize: 14.5, fontWeight: 800, color: "var(--w-deep)" }}>{en ? "Genesis" : "제네시스"} <span style={{ color: "var(--w-main)" }}>#{order.genesisNos[0]}{order.qty > 1 ? (en ? ` +${order.qty - 1} more` : ` 외 ${order.qty - 1}대`) : ""}</span></span>
               <span className="pill" style={{ fontSize: 11, color: "var(--w-main)", background: "var(--w-tint)", padding: "4px 11px" }}>{en ? "Awaiting shipping intake" : "배송 접수 대기"}</span>
             </div>
             <div className="desk-only" style={{ display: "flex", gap: 16, fontSize: 12.5, color: "var(--cap)" }}>
@@ -116,8 +116,8 @@ export default function MePage() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "16px 24px", background: "var(--panel)", flexWrap: "wrap" }}>
             <span style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--cap)" }}>
               {en
-                ? <>Proof of purchase = <b style={{ color: "var(--w-main)" }}>wallet address + order number</b> · Intake form announced on Telegram/X from 2 weeks before dispatch · Est. shipping <b style={{ color: "var(--ink-2)" }}>sequentially from November</b></>
-                : <>구매 확인 = <b style={{ color: "var(--w-main)" }}>지갑 주소 + 주문번호</b> · 발송 2주 전부터 텔레그램·X로 접수 폼 공지 · 예상 배송 <b style={{ color: "var(--ink-2)" }}>11월 순차 발송</b></>}
+                ? <>Proof of purchase = <b style={{ color: "var(--w-main)" }}>your Genesis Numbers + your wallet address</b> · Intake form announced on Telegram/X from 2 weeks before dispatch · Est. shipping <b style={{ color: "var(--ink-2)" }}>sequentially from November</b></>
+                : <>구매 확인 = <b style={{ color: "var(--w-main)" }}>제네시스 넘버 + 내 지갑 주소</b> · 발송 2주 전부터 텔레그램·X로 접수 폼 공지 · 예상 배송 <b style={{ color: "var(--ink-2)" }}>11월 순차 발송</b></>}
             </span>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <button style={{ fontSize: 12, fontWeight: 700, color: "var(--cap)", border: "1px solid var(--bd-btn)", borderRadius: 8, padding: "8px 14px", background: "#fff" }}>{en ? "Request refund" : "환불 신청"}</button>
@@ -177,7 +177,7 @@ export default function MePage() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--hint)" }}>{en ? "Sign-in method" : "로그인 수단"}</span>
-                <span style={{ fontWeight: 700, color: "var(--ink-2)" }}>{en ? "Wallet connect" : "지갑 연결"} <span className="mono" style={{ color: "var(--cap)", fontWeight: 500 }}>rWLB9…kQ2f</span></span>
+                <span style={{ fontWeight: 700, color: "var(--ink-2)" }}>{en ? "Google account · wallet auto-created" : "구글 계정 · 내 지갑 자동 생성"} <span className="mono" style={{ color: "var(--cap)", fontWeight: 500 }}>rWLB9…kQ2f</span></span>
               </div>
               <span className="pill" style={{ fontSize: 11, fontWeight: 800, color: "var(--ok-text)", background: "var(--ok-bg)", padding: "4px 11px" }}>{en ? "Connected" : "연결됨"}</span>
             </div>
@@ -185,8 +185,8 @@ export default function MePage() {
               <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--hint)" }}>{en ? "Personal data" : "개인정보"}</span>
               <span style={{ fontWeight: 700, color: "var(--ink-2)", lineHeight: 1.55 }}>
                 {en
-                  ? <>Never stored — shipping details are collected only via the intake form and <b style={{ color: "var(--w-main)" }}>deleted after delivery</b></>
-                  : <>저장하지 않습니다 — 배송지는 접수 폼에서만 받고 <b style={{ color: "var(--w-main)" }}>배송 후 파기</b></>}
+                  ? <>Google sign-in only — shipping details are collected via the intake form and <b style={{ color: "var(--w-main)" }}>deleted after delivery</b></>
+                  : <>구글 로그인 외 저장하지 않습니다 — 배송지는 접수 폼에서만 받고 <b style={{ color: "var(--w-main)" }}>배송 후 파기</b></>}
               </span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 2, fontSize: 13 }}>

@@ -8,17 +8,19 @@ export interface Inventory {
 }
 
 export interface Order {
-  id: string;
-  genesisNo: number;
+  id: string;              /* 내부 참조용 주문 ID — 구매자 확인 요소 아님 (8/27 개정) */
+  /* 구매 확정 시 #1~5000 풀에서 수량만큼 무작위 배정, 오름차순 정렬 저장 (8/27 확정).
+     1 구글 계정당 최대 100대 — 대량 구매 시에도 기기마다 1개씩 배정 */
+  genesisNos: number[];
   qty: number;
   unitPrice: number;
   tier: "eb" | "gen";
   txHash: string;
   status: "paid" | "preparing" | "shipped" | "done";
   paidAt: string;
-  /* 구매에 사용한 지갑 주소 = 구매 증명(온체인 결제 기록과 대조, 별도 주문 코드 없음).
-     사이트는 개인정보를 저장하지 않고, 발송 2주 전부터 공지되는 접수 폼(구글폼)에서
-     지갑 주소·성함·연락처·배송지만 받아 배송 후 파기 */
+  /* 확인 2요소(8/27 개정) = 랜덤 배정된 제네시스 넘버(구매 내역) + 내 지갑 주소.
+     내 지갑 = 구글 계정 가입 시 자동 생성되는 간편 지갑(비수탁, 약관 제5조).
+     접수 폼 항목: 제네시스 넘버 · 내 지갑 주소 · 성함 · 연락처 · 배송지 — 배송 후 파기 */
   wallet: string;
 }
 
@@ -96,7 +98,7 @@ export const FAQS = [
   { q: "RLUSD는 어디서 구하나요?", a: "국내·해외 거래소에서 RLUSD를 구매한 뒤 XRPL 네트워크로 개인 지갑에 출금하면 됩니다. 출금 시 반드시 XRPL판 RLUSD를 선택하세요." },
   { q: "환불은 어떻게 되나요?", a: "제품 수령일부터 7일 이내 환불 가능합니다. 단, 리딤코드 사용 또는 노드 연동 시 환불이 제한됩니다(전자상거래법 제17조 제6항)." },
   { q: "설치가 어렵지 않나요?", a: "전원을 켠 뒤 스마트폰 블루투스로 기기를 연결해 집 Wi-Fi를 설정하는 것이 첫 순서입니다. 그다음 박스 안 리딤카드 QR로 지갑 연결·코드 입력까지 약 3분이면 완료됩니다. 벽걸이·탁상 모두 지원합니다." },
-  { q: "지갑이 처음인데 괜찮나요?", a: "네. 등록 지갑 활성화(1 XRP)는 1회 지원됩니다(약관 제5조). 지갑 생성부터 연동까지 가이드를 제공합니다." },
+  { q: "지갑이 처음인데 괜찮나요?", a: "네. 구글 계정으로 가입하면 내 지갑이 자동으로 만들어집니다. 지갑 활성화(1 XRP)는 1회 지원되며(약관 제5조), 연동까지 가이드를 제공합니다." },
   { q: "보상은 어떻게 지급되나요?", a: "측정 데이터가 검증되면 네트워크 원칙에 따라 WLBN이 지급됩니다. 지급량과 가치는 보장되지 않습니다." },
   { q: "전기료가 많이 나오나요?", a: "상시 가동 기준 월 전기료는 1,000원 미만입니다." },
   { q: "제품 보증 기간은요?", a: "구매일로부터 1년 무상 보증입니다. 자세한 조건은 이용약관을 참고하세요." },
@@ -160,10 +162,9 @@ export const MOCK_WAITLIST_ME: WaitlistMe = {
 };
 
 export const MOCK_ORDER: Order = {
-  /* 주문번호 = 결제 확정 시 난수 발급(연번 금지) — 지갑 주소와 함께 배송 접수 2요소.
-     실서버는 무DB 파생 가능: HMAC(비밀키, txHash) 절단 */
+  /* 주문 ID = 내부 참조·URL 키 (확인 요소 아님 — 확인은 제네시스 넘버 + 내 지갑 주소) */
   id: "WB-9X4K-Q72M",
-  genesisNo: 1234,
+  genesisNos: [214, 387, 559, 823, 1041, 1288, 1476, 1690, 1923, 2205, 2531, 2764, 2988, 3217, 3444, 3671, 3856, 4102, 4388, 4677],
   qty: 20,
   unitPrice: 450,
   tier: "eb",
@@ -246,7 +247,7 @@ export const FAQS_EN = [
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on a domestic or global exchange, then withdraw it to your personal wallet over the XRPL network. Always select the XRPL version of RLUSD when withdrawing." },
   { q: "What is the refund policy?", a: "Refunds are available within 7 days of receiving the product. Refunds are restricted once the redeem code is used or the node is linked (Korean E-Commerce Act, Art. 17-6)." },
   { q: "Is setup difficult?", a: "First, power on and pair the device via Bluetooth to set up your home Wi-Fi. Then scan the redeem card QR in the box for wallet connection and code entry — about 3 minutes in total. Wall and desktop mounting are both supported." },
-  { q: "I've never used a wallet. Is that okay?", a: "Yes. One-time wallet activation (1 XRP) is covered (Terms, Art. 5), and the guide walks you from wallet creation to node linking." },
+  { q: "I've never used a wallet. Is that okay?", a: "Yes. Signing up with your Google account creates your wallet automatically. One-time activation (1 XRP) is covered (Terms, Art. 5), and the guide walks you through node linking." },
   { q: "How are rewards paid?", a: "When your measurements are verified, WLBN is paid under network rules. Amounts and value are not guaranteed." },
   { q: "How much electricity does it use?", a: "Running around the clock costs under ₩1,000 a month." },
   { q: "What about warranty?", a: "One year of free warranty from the purchase date. See the Terms of Service for details." },
@@ -255,12 +256,12 @@ export const FAQS_EN = [
 /* 전체 FAQ 확장분 15문항 — 기본 8문항과 합쳐 23문항 (8/27, 접기/펴기 인라인 확장) */
 export const FAQS_EXTRA = [
   { q: "결제는 왜 RLUSD로만 하나요?", a: "RLUSD는 미국 달러와 1:1로 연동되는 스테이블코인이라 가격 변동 걱정 없이 결제할 수 있습니다. 리플(Ripple)이 발행하고 뉴욕 금융감독청(NYDFS)의 규제를 받습니다." },
-  { q: "한 지갑으로 몇 대까지 살 수 있나요?", a: "현재 제한이 없습니다. 정책이 확정되면 변경될 수 있으며, 변경 시 공지합니다." },
-  { q: "제네시스 넘버가 뭔가요?", a: "총 5,000대 한정 수량 안에서 무작위로 배정되는 고유 번호입니다. 라이선스 NFT에 영구 기록되며, 어떤 번호든 5,000개뿐인 제네시스 노드 중 하나라는 표시입니다." },
+  { q: "몇 대까지 구매할 수 있나요?", a: "구글 계정 1개당 최대 100대까지 구매할 수 있습니다. 대량 구매 시에도 기기마다 제네시스 넘버가 하나씩 배정됩니다." },
+  { q: "제네시스 넘버가 뭔가요?", a: "구매가 확정될 때 총 5,000개 한정 수량 안에서 무작위로 배정되는 고유 번호입니다. 여러 대를 구매하면 수량만큼 배정되고, 주문 내역에서 정렬된 목록으로 확인·복사할 수 있습니다. 라이선스 NFT에 영구 기록되며, 어떤 번호든 5,000개뿐인 제네시스 노드 중 하나라는 표시입니다." },
   { q: "라이선스 NFT는 뭔가요?", a: "기기의 정품과 참여 자격을 증명하는 XRPL 기반 증서입니다. 박스 안 리딤코드로 발급받으며, 이 NFT를 보유한 기기만 보상 대상이 됩니다." },
-  { q: "배송은 언제, 어떻게 받나요?", a: "11월부터 순차 발송됩니다. 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 안내하며, 폼에 지갑 주소·주문번호·성함·연락처·배송지를 입력하면 순서대로 발송됩니다." },
-  { q: "주문번호를 잃어버렸어요.", a: "결제한 지갑을 다시 연결하면 주문 페이지에서 언제든 확인할 수 있습니다." },
-  { q: "사이트가 저장하는 개인정보는 뭔가요?", a: "없습니다. 회원가입도 이메일도 받지 않습니다. 배송에 필요한 정보만 접수 폼에서 받고, 배송이 끝나면 파기합니다." },
+  { q: "배송은 언제, 어떻게 받나요?", a: "11월부터 순차 발송됩니다. 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 안내하며, 폼에 제네시스 넘버·내 지갑 주소·성함·연락처·배송지를 입력하면 순서대로 발송됩니다." },
+  { q: "배정된 제네시스 넘버는 어디서 확인하나요?", a: "구글 계정으로 로그인하면 주문 내역에서 정렬된 넘버 목록을 언제든 확인하고 복사할 수 있습니다." },
+  { q: "사이트가 저장하는 개인정보는 뭔가요?", a: "구글 계정 로그인만 사용하며, 별도의 개인정보는 저장하지 않습니다. 가입하면 내 지갑이 자동으로 만들어지고, 배송 정보는 발송 전 접수 폼에서만 받아 배송이 끝나면 파기합니다." },
   { q: "리딤코드는 어디에 있나요?", a: "박스 안 카드에 인쇄되어 있습니다. 1개 코드는 1개 지갑에만 등록되며, 사용한 뒤에는 환불이 제한되니 등록 전에 결정해 주세요." },
   { q: "보상은 어떻게 계산되나요?", a: "매일 데이터 품질(가동률·이상치·주변 기기와의 일치 등)을 검증해 다음 날 적립되고, 클레임하면 지갑으로 지급됩니다. 지급량과 가치는 보장되지 않습니다." },
   { q: "기기를 꺼두면 어떻게 되나요?", a: "데이터가 없으면 그 시간만큼 보상 산정에서 빠집니다. 전기료가 월 1,000원 미만이라 상시 가동을 권장합니다." },
@@ -273,12 +274,12 @@ export const FAQS_EXTRA = [
 
 export const FAQS_EXTRA_EN = [
   { q: "Why is payment RLUSD-only?", a: "RLUSD is a stablecoin pegged 1:1 to the US dollar, so you can pay without worrying about price swings. It is issued by Ripple and regulated by the NYDFS." },
-  { q: "How many units can one wallet buy?", a: "No limit at the moment. This may change once the policy is finalized, and any change will be announced." },
-  { q: "What is a Genesis Number?", a: "A unique number randomly assigned within the 5,000-unit limited run, permanently recorded on your license NFT. Whatever the number, it marks one of only 5,000 genesis nodes." },
+  { q: "How many units can I buy?", a: "Up to 100 units per Google account. Even on bulk orders, each device gets its own Genesis Number." },
+  { q: "What is a Genesis Number?", a: "A unique number randomly assigned from the 5,000-unit pool when your purchase is confirmed. Buy multiple units and you get one per device — viewable as a sorted, copyable list in your order history. Permanently recorded on your license NFT; whatever the number, it marks one of only 5,000 genesis nodes." },
   { q: "What is the license NFT?", a: "An XRPL-based certificate proving your device is genuine and eligible to participate. It is minted with the redeem code inside the box, and only devices holding this NFT earn rewards." },
-  { q: "When and how does shipping work?", a: "Units ship sequentially from November. Starting 2 weeks before dispatch, we announce the shipping form on our official Telegram and X — enter your wallet address, order number, name, phone, and shipping address, and units ship in order." },
-  { q: "I lost my order number.", a: "Reconnect the wallet you paid with and you can see it on your order page anytime." },
-  { q: "What personal data does this site store?", a: "None. No sign-up, no email. Only what delivery requires is collected via the shipping form, and it is deleted after delivery." },
+  { q: "When and how does shipping work?", a: "Units ship sequentially from November. Starting 2 weeks before dispatch, we announce the shipping form on our official Telegram and X — enter your Genesis Numbers, your wallet address, name, phone, and shipping address, and units ship in order." },
+  { q: "Where do I find my assigned Genesis Numbers?", a: "Sign in with your Google account — your order history shows the sorted list, ready to copy, anytime." },
+  { q: "What personal data does this site store?", a: "Only Google sign-in — nothing else is stored. Signing up creates your wallet automatically, and delivery details are collected only via the pre-shipping form, then deleted after delivery." },
   { q: "Where is the redeem code?", a: "Printed on the card inside the box. One code registers to one wallet only, and refunds are restricted once it is used — decide before you register." },
   { q: "How are rewards calculated?", a: "Data quality (uptime, outliers, agreement with nearby devices) is verified daily, rewards accrue the next day, and are paid on-chain when you claim. Amounts and value are not guaranteed." },
   { q: "What if I turn the device off?", a: "Time without data is simply excluded from reward calculation. Electricity costs under ₩1,000 a month, so we recommend keeping it running." },

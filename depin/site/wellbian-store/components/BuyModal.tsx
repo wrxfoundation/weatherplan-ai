@@ -4,7 +4,7 @@
    confirmed 시 /orders/[id] 이동. 홀드 만료 시 qty 복귀(재고 반환). mismatch는 안내 후 재서명.
    개인정보(주소·연락처·이메일)는 사이트에서 받지 않음 — 배송 접수는 발송 2주 전부터
    공지되는 별도 접수 폼(구글폼)에서 지갑 주소·주문번호·성함·연락처·배송지만 받고 배송 후 파기
-   (확인 2요소 = 결제 지갑 주소 + 난수 주문번호). 동의는 환불 고지+배송 접수 방식 확인 2건만
+   (확인 2요소 = 랜덤 배정 제네시스 넘버 + 내 지갑 주소, 8/27 개정 — 구글 계정당 100대 한도). 동의는 환불 고지+배송 접수 방식 확인 2건만
    (포괄 이용약관 동의 없음 — 전체 약관은 푸터/메인에서 열람). KO/EN 토글 지원.
    전부 mock — mismatch 분기는 ?demo=mismatch로 재현(첫 서명만 불일치). */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -114,11 +114,11 @@ export default function BuyModal({
                 style={{ ...qtyBtn, borderColor: "var(--bd-input)", color: "var(--hint)" }}>−</button>
               <input
                 value={qty}
-                onChange={(e) => { const v = parseInt(e.target.value.replace(/\D/g, "") || "1", 10); setQty(Math.max(1, Math.min(9999, v))); }}
+                onChange={(e) => { const v = parseInt(e.target.value.replace(/\D/g, "") || "1", 10); setQty(Math.max(1, Math.min(100, v))); }}
                 inputMode="numeric" aria-label={en ? "Quantity" : "수량"}
                 style={{ width: 76, height: 38, border: "1.5px solid var(--w-main)", borderRadius: 10, textAlign: "center", fontSize: 22, fontWeight: 800, color: "var(--w-deep)", background: "#fff", boxShadow: "0 0 0 3px var(--w-tint)", outline: "none" }}
               />
-              <button aria-label={en ? "Increase quantity" : "수량 증가"} onClick={() => setQty((q) => Math.min(9999, q + 1))}
+              <button aria-label={en ? "Increase quantity" : "수량 증가"} onClick={() => setQty((q) => Math.min(100, q + 1))}
                 style={{ ...qtyBtn, borderColor: "var(--w-main)", color: "var(--w-main)" }}>+</button>
             </div>
           </div>
@@ -131,13 +131,13 @@ export default function BuyModal({
               <>
                 <span>· Use − / + or <b style={{ color: "var(--ink-2)" }}>type a number</b> — bulk orders welcome</span>
                 <span>· Limited supply — <b style={{ color: "var(--ink-2)" }}>Genesis Numbers</b> are randomly assigned within the 5,000-unit run</span>
-                <span>· Per-wallet purchase limit: none at the moment (subject to policy)</span>
+                <span>· Purchase limit: <b style={{ color: "var(--ink-2)" }}>up to 100 units per Google account</b></span>
               </>
             ) : (
               <>
                 <span>· − / + 버튼 또는 <b style={{ color: "var(--ink-2)" }}>숫자를 직접 입력</b>하세요 — 대량 구매 가능</span>
                 <span>· 한정 수량 — <b style={{ color: "var(--ink-2)" }}>제네시스 넘버</b>는 5,000대 안에서 무작위 배정됩니다</span>
-                <span>· 지갑당 구매 수량 제한: 현재 없음 (정책 확정 시 변경될 수 있음)</span>
+                <span>· 구매 한도: <b style={{ color: "var(--ink-2)" }}>구글 계정 1개당 최대 100대</b></span>
               </>
             )}
           </div>
@@ -201,12 +201,12 @@ export default function BuyModal({
               {en ? (
                 <>
                   <b style={{ color: "var(--w-deep)" }}>This site never collects your address or contact info.</b><br />
-                  Purchases are verified by two things: <b style={{ color: "var(--w-deep)" }}>the wallet you paid from + the order number issued after payment</b>. Starting 2 weeks before devices ship, the shipping form will be announced on our official Telegram and X — enter your wallet address, order number, name, phone, and shipping address there, and everything is deleted once delivery is complete.
+                  Purchases are verified by two things: <b style={{ color: "var(--w-deep)" }}>your randomly assigned Genesis Numbers + your wallet address</b> (created automatically with your Google account). Starting 2 weeks before devices ship, the shipping form will be announced on our official Telegram and X — enter your Genesis Numbers, wallet address, name, phone, and shipping address there, and everything is deleted once delivery is complete.
                 </>
               ) : (
                 <>
                   <b style={{ color: "var(--w-deep)" }}>이 사이트는 주소·연락처를 받지 않습니다.</b><br />
-                  구매 확인은 <b style={{ color: "var(--w-deep)" }}>결제한 지갑 주소 + 결제 후 발급되는 주문번호</b> 두 가지로 합니다. 디바이스 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 알려드립니다 — 폼에 지갑 주소·주문번호·성함·연락처·배송지를 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
+                  구매 확인은 <b style={{ color: "var(--w-deep)" }}>무작위 배정된 제네시스 넘버 + 내 지갑 주소</b>(구글 계정 가입 시 자동 생성) 두 가지로 합니다. 디바이스 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 알려드립니다 — 폼에 제네시스 넘버·내 지갑 주소·성함·연락처·배송지를 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
                 </>
               )}
             </span>
