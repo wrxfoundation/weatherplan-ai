@@ -167,6 +167,12 @@ h1, h2, h3, p { margin: 0; }
 .mstep-label { font-size: 15.5px; color: var(--dis); }
 .mstep-label.cur { font-weight: 700; color: var(--w-deep); }
 
+/* 모바일 히어로 CTA: 구매 버튼 전폭 → X·텔레그램은 확실히 다음 줄에 나란히 */
+@media (max-width: 720px) {
+  .hero-cta-row .hero-buy-btn { width: 100%; }
+  .hero-cta-row .hero-social { flex-basis: 100%; }
+}
+
 /* ── 랜딩 반응형 그리드 ── */
 /* 히어로 컨테이너 = .wrap(1080)과 동일 폭 — S2 가격 카드 좌우 라인과 끝 정렬 */
 .hero-grid { display: grid; grid-template-columns: 1fr 480px; gap: 56px; align-items: center; max-width: 1080px; margin: 0 auto; }

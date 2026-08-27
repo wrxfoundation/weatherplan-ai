@@ -162,7 +162,7 @@ export default function Landing() {
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, color: "rgba(255,255,255,.65)" }}>
-                  <span>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span><span>{en ? "0 left · 100% sold" : "잔여 0대 · 100% 판매"}</span>
+                  <span>{en ? "0 left · 100% sold" : "잔여 0대 · 100% 판매"}</span><span>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span>
                 </div>
                 <div className="track on-dark" style={{ height: 8 }}><i style={{ width: "100%" }} /></div>
               </div>
@@ -202,20 +202,24 @@ export default function Landing() {
                   : "실내 공기를 측정하는 것만으로, 검증된 내 데이터가 가치가 되어 돌아옵니다."}
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440, marginTop: 6 }}>
+                {/* 잔여·판매율을 좌측 선두로, 총량은 우측 보조로 (8/27 서우) */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                  <span style={{ fontSize: 18, fontWeight: 700 }}>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span>
-                  <span style={{ fontSize: 16, color: "rgba(255,255,255,.65)" }}>
+                  <span style={{ fontSize: 18, fontWeight: 700 }}>
                     {en ? <><b style={{ color: "#fff" }}>{fmt(remain)}</b> left · {pct}% sold</> : <>잔여 <b style={{ color: "#fff" }}>{fmt(remain)}</b>대 · {pct}% 판매</>}
                   </span>
+                  <span style={{ fontSize: 16, color: "rgba(255,255,255,.65)" }}>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span>
                 </div>
                 <div className="track on-dark" style={{ height: 8 }}><i style={{ width: `${Math.max(2, pct)}%` }} /></div>
               </div>
-              <div ref={heroCtaRef} style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
-                <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
+              {/* 모바일: 구매 버튼 전폭 → 아랫줄에 X·텔레그램 나란히 (8/27 서우) */}
+              <div ref={heroCtaRef} className="hero-cta-row" style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
+                <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
                   {en ? "Buy now · RLUSD" : "지금 구매하기 · RLUSD"}
                 </button>
-                <a href={LINKS.x} target="_blank" rel="noopener" aria-label="X" style={heroIcon}><XIcon size={18} /></a>
-                <a href={LINKS.telegram} target="_blank" rel="noopener" aria-label={en ? "Telegram" : "텔레그램"} style={heroIcon}><TgIcon size={18} /></a>
+                <div className="hero-social" style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <a href={LINKS.x} target="_blank" rel="noopener" aria-label="X" style={heroIcon}><XIcon size={18} /></a>
+                  <a href={LINKS.telegram} target="_blank" rel="noopener" aria-label={en ? "Telegram" : "텔레그램"} style={heroIcon}><TgIcon size={18} /></a>
+                </div>
               </div>
             </div>
           </div>
