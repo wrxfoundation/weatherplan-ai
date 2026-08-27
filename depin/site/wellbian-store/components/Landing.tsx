@@ -224,9 +224,10 @@ export default function Landing() {
                     {en ? <><b>650 RLUSD</b> per unit</> : <>대당 <b>650 RLUSD</b></>}
                   </div>
                   <div style={{ fontSize: 16, color: "rgba(255,255,255,.72)" }}>
+                    {/* "제네시스"부터 줄바꿈 (8/27 서우) — 구분점 · 은 줄바꿈이 대신하므로 제거 */}
                     {en
-                      ? "Pre-order now and buy calmly on Sept 15 — no first-come rush. Genesis Numbers are randomly assigned at purchase."
-                      : "사전예약하면 9월 15일 오픈 때 선착순 걱정 없이 구매할 수 있습니다 · 제네시스 넘버는 정식 구매 시 랜덤배정"}
+                      ? <>Pre-order now and buy calmly on Sept 15 — no first-come rush.<br />Genesis Numbers are randomly assigned at purchase.</>
+                      : <>사전예약하면 9월 15일 오픈 때 선착순 걱정 없이 구매할 수 있습니다<br />제네시스 넘버는 정식 구매 시 랜덤배정</>}
                   </div>
                 </div>
               ) : (
