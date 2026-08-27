@@ -641,7 +641,13 @@
   5%(12줄마다 악센트 8.5%) — 딥네이비 위 옅은 결로 크레딧 롤 가독성 유지. marble.jpg·
   contour.svg는 보관, 렌더만 교체. 패턴 3대째 이력: 등고선(contour) → 대리석(marble, 힉스필드)
   → 물결(wave, 절차 생성 — 기하 패턴이라 SVG가 밀도·옅기 제어에 유리). QA: qa-nolimit 18
-  (wave 검증으로 현행화)·qa-preonboard 21·qa-preorder2 13 ALL PASS — 페르소나 추출·콘텐츠 파이프라인 시스템
+  (wave 검증으로 현행화)·qa-preonboard 21·qa-preorder2 13 ALL PASS
+- **v3.26 (8/27 밤) — 안내문 개행 + 케이웨더 정식 CI 수급·적용 (서우 지시 2건, 커밋 252a04c)** —
+  ① 사전예약 안내문 "제네시스"부터 2줄 개행(구분점 · 제거, EN 동일 처리) ② **케이웨더 정식
+  화이트 CI 드디어 수급**(3번째 시도, 328×82 PNG) → 다크 배경 투명화 추출(휘도→알파,
+  283×39) → `kw-white.png`. 푸터의 임시 처리(흰 칩+kw-black)를 걷어내고 wellbian·XRPL과
+  동일한 직접 배치(높이 16px·투명도 .92)로 교체 — **대기 항목 "정식 CI 파일 수급" 해소**
+  (kw-black.png 보관). QA: preorder2 13·preonboard 21·salescount 21·nolimit 18 ALL PASS — 페르소나 추출·콘텐츠 파이프라인 시스템
   (87파일, MIT). 원본 스킬은 자기 저장소 구조에 결박돼 원문 설치 불가 → **각색 2종 + 원문
   참고문헌 3종** 흡수: ① **`/xqa` 신설** — virtual-follower 패턴의 wellbian판: X 초안 게시 전
   발화 규칙 게이트(위반 1건 = FAIL) → 실청중 5프로필(빌더·분석가·국내 커뮤니티·생태계 관계자·
