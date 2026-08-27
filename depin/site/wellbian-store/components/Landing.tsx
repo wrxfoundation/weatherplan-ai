@@ -277,8 +277,8 @@ export default function Landing() {
       {/* ── S1b 사전예약 실시간 현황판 (teaser 전용, 8/27) — 크레딧 롤: 아래→위 + 상단 페이드아웃 ── */}
       {preMode === "pre" && (
         <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--w-deep)", color: "#fff", paddingTop: 48, paddingBottom: 48 }} aria-label={en ? "Live pre-order board" : "실시간 사전예약 현황"}>
-          {/* 대리석 마블링 텍스처 — 힉스필드 생성, 브랜드 딥네이비 톤 (8/27 서우: 등고선 → 대리석. contour.svg는 보관) */}
-          <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/marble.jpg)", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
+          {/* 조밀한 물결 무늬 패턴 — 옅은 흰 스트로크 62줄 (8/27 서우: 대리석 → 물결. marble.jpg·contour.svg는 보관) */}
+          <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/wave.svg)", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
           <div className="wrap" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 18 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 19.5, fontWeight: 800 }}>
