@@ -155,9 +155,9 @@ export default function Landing() {
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               {/* wellbian X XRP LEDGER 락업 — 3배 확대 (8/27 서우), 크기는 CSS .hero-lockup */}
               <div className="hero-lockup">
-                <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} className="lk-wb" />
+                <Image src="/assets/wb-lav.png" alt="wellbian" width={593} height={215} className="lk-wb" />
                 <span className="lk-x">X</span>
-                <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} className="lk-xrpl" />
+                <Image src="/assets/xrpl-lav.png" alt="XRP Ledger" width={609} height={154} className="lk-xrpl" />
               </div>
               <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
                 WEATHER DATA ECONOMY
@@ -194,14 +194,14 @@ export default function Landing() {
             <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
               {/* wellbian X XRP LEDGER 락업 — 3배 확대 (8/27 서우), 크기는 CSS .hero-lockup */}
               <div className="hero-lockup">
-                <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} className="lk-wb" />
+                <Image src="/assets/wb-lav.png" alt="wellbian" width={593} height={215} className="lk-wb" />
                 <span className="lk-x">X</span>
-                <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} className="lk-xrpl" />
+                <Image src="/assets/xrpl-lav.png" alt="XRP Ledger" width={609} height={154} className="lk-xrpl" />
               </div>
               <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
                 WEATHER DATA ECONOMY
               </div>
-              <h1 className={en ? "hero-h1-en" : undefined} style={{ fontSize: en ? "clamp(31px, 3.7vw, 48px)" : "clamp(35px, 5.2vw, 60px)", lineHeight: 1.25, fontWeight: 800, letterSpacing: "-.01em" }}>
+              <h1 className={en ? "hero-h1-en" : "hero-h1-ko"} style={{ fontSize: en ? "clamp(31px, 3.7vw, 48px)" : "clamp(35px, 5.2vw, 60px)", lineHeight: 1.25, fontWeight: 800, letterSpacing: "-.01em" }}>
                 {en ? <>Turn your weather data<br />into value</> : <>당신의 날씨 데이터를<br />가치로 바꾸세요</>}
               </h1>
               <p style={{ fontSize: 21, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>

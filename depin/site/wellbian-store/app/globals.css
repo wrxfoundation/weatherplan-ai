@@ -170,11 +170,15 @@ h1, h2, h3, p { margin: 0; }
 
 /* EN 히어로 h1 — PC에서 의도한 2줄 고정 (8/27 서우: 추가 랩 금지) */
 @media (min-width: 721px) { .hero-h1-en { white-space: nowrap; } }
+/* KO 헤드라인 2줄 고정 (8/27 서우) — 데스크톱에서 "당신의 날씨 데이터를"이 3줄로 감기지 않게
+   nowrap + 컬럼(≈39vw)에 맞춘 축소 클램프. 인라인 fontSize를 이겨야 해서 !important */
+@media (min-width: 721px) { .hero-h1-ko { white-space: nowrap; font-size: clamp(29px, 3.95vw, 54px) !important; } }
 
 /* 히어로 wellbian X XRP LEDGER 락업 — 1.5배 규모 (8/27 2차: 3배가 과대 → 1/2 축소) */
 .hero-lockup { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .hero-lockup .lk-wb { height: 36px; width: auto; }
-.hero-lockup .lk-x { font-size: 22px; font-weight: 700; color: rgba(255, 255, 255, .5); line-height: 1; }
+/* 락업 색 = WEATHER DATA ECONOMY 아이브로우와 동일 톤 (8/27 서우, 로고 PNG는 wb-lav/xrpl-lav 틴트본) */
+.hero-lockup .lk-x { font-size: 22px; font-weight: 700; color: color-mix(in oklab, var(--w-main) 45%, white); line-height: 1; }
 .hero-lockup .lk-xrpl { height: 27px; width: auto; opacity: .92; }
 @media (max-width: 720px) {
   .hero-lockup { gap: 9px; }
