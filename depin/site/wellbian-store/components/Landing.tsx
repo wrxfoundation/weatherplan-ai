@@ -408,7 +408,7 @@ export default function Landing() {
           </div>
           {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
           {/* 8/28 서우 2차: 비전·선순환 카드 테두리 원복 (히어로 스탯 테이블만 보더리스 유지) */}
-          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
+          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.25)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
             <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
               {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
             </div>
@@ -690,7 +690,7 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
   return (
     /* 글래스 카드 (8/28 서우: 비전 배경 위 반투명 — 뒤 도시가 블러로 비침) */
     /* 8/28 서우 2차: 카드 테두리 원복 + 아이콘 타일 옅은 1px 그림자 테두리 */
-    <div style={{ border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
+    <div style={{ border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.25)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
       <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 14, background: "var(--w-tint)", color: "var(--w-main)", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 2px 8px rgba(27,27,72,.1)" }}>{icon}</span>
       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
       <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
