@@ -654,7 +654,13 @@
   567px가 원인) → 1380·1024·800·721·390 전 폭 2줄·오버플로 0 실측 ② 히어로 락업(wellbian X
   XRP LEDGER)을 WEATHER DATA ECONOMY 아이브로우 색으로 통일 — oklab 계산으로 #A7B1EE 도출,
   흰 로고 PNG를 휘도 보존 틴트한 wb-lav/xrpl-lav.png 신설 + .lk-x 동일 토큰(color-mix).
-  푸터·화이트 원본은 유지. QA: salescount 21·preonboard 21·noeb 16·nolimit 18 ALL PASS — 페르소나 추출·콘텐츠 파이프라인 시스템
+  푸터·화이트 원본은 유지. QA: salescount 21·preonboard 21·noeb 16·nolimit 18 ALL PASS
+- **v3.28 (8/28 새벽) — 사전예약하기 D-day 배지 (서우 지시 1건, 커밋 a50cf49)** — 히어로·스티키
+  [사전예약하기] 버튼 안에 판매 오픈(9/15)까지 D-n 필 배지 병기 + pre GNB 칩 동일 값 동기화.
+  서우 예상치는 "D-17"이었으나 **하드코딩 대신 KST 기준 자동 계산**(dDaysTo)으로 구현 — 현재
+  KST 8/28이라 D-18, 8/29부터 D-17, 매일 자동 감소, 당일 "D-DAY". dday 시뮬 GNB 칩은 사전예약
+  오픈(9/5) 기준 계산으로 분리. QA: preonboard 23(배지·동기화 검증 추가, match g플래그 함정
+  1건 수정)·presticky 7·noeb 16·prelaunch 14 ALL PASS — 페르소나 추출·콘텐츠 파이프라인 시스템
   (87파일, MIT). 원본 스킬은 자기 저장소 구조에 결박돼 원문 설치 불가 → **각색 2종 + 원문
   참고문헌 3종** 흡수: ① **`/xqa` 신설** — virtual-follower 패턴의 wellbian판: X 초안 게시 전
   발화 규칙 게이트(위반 1건 = FAIL) → 실청중 5프로필(빌더·분석가·국내 커뮤니티·생태계 관계자·
