@@ -109,8 +109,8 @@ export function CommunityFooter() {
             <span style={{ fontSize: 14.5, color: "rgba(255,255,255,.4)" }}>POWERED BY</span>
             <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} style={{ height: 18, width: "auto", opacity: 0.9 }} />
             <span style={{ width: 1, height: 18, background: "rgba(255,255,255,.25)" }} />
-            {/* 케이웨더 정식 CI(화이트) — 8/27 서우 수급, 흰 칩 제거하고 wb·xrpl과 동일한 직접 배치 */}
-            <Image src="/assets/kw-white.png" alt="KWEATHER" width={283} height={39} style={{ height: 16, width: "auto", opacity: 0.92 }} />
+            {/* 케이웨더 정식 CI(화이트) — 8/27 서우 수급. 헤비 대문자 워드마크라 광학 보정으로 축소 (8/28: 16→11px) */}
+            <Image src="/assets/kw-white.png" alt="KWEATHER" width={283} height={39} style={{ height: 11, width: "auto", opacity: 0.9 }} />
           </div>
           <nav style={{ display: "flex", gap: 20, fontSize: 16, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
             <a href={LINKS.terms} target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none" }}>

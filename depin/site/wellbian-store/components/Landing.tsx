@@ -269,8 +269,7 @@ export default function Landing() {
               {preMode && (
                 /* 누적·D-day 글래스 스탯 테이블 (8/28 서우: 줄글 → "현재 N대 사전예약 | 판매 오픈 D-n",
                    글래스 = 비전 카드와 동일 rgba .3 + blur 14px) */
-                <div style={{
-                  display: "inline-flex", alignItems: "center", gap: 18, flexWrap: "wrap", alignSelf: "flex-start",
+                <div className="pre-stat" style={{
                   border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)",
                   backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
                   borderRadius: 14, padding: "14px 22px", marginTop: 4, boxShadow: "0 8px 32px rgba(0,0,0,.18)",
@@ -280,7 +279,7 @@ export default function Landing() {
                       ? <><b className="mono" style={{ fontSize: 21 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> units pre-ordered</>
                       : <>현재 <b className="mono" style={{ fontSize: 21 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>대 사전예약</>}
                   </span>
-                  <span aria-hidden style={{ width: 1, height: 22, background: "rgba(255,255,255,.45)" }} />
+                  <span aria-hidden className="ps-div" />
                   <span style={{ fontSize: 16.5, fontWeight: 700, color: "#fff" }}>
                     {en ? <>Sales open <b className="mono" style={{ fontSize: 21 }}>{dSaleBadge}</b></> : <>판매 오픈 <b className="mono" style={{ fontSize: 21 }}>{dSaleBadge}</b></>}
                   </span>
