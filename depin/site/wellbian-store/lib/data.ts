@@ -95,7 +95,7 @@ export const SPECS = [
 ];
 
 export const FAQS = [
-  { q: "가격이 어떻게 되나요?", a: "얼리버드 450 RLUSD(한정 수량), 이후 기본가 650 RLUSD입니다. 결제는 RLUSD로만 진행됩니다." },
+  { q: "가격이 어떻게 되나요?", a: "대당 650 RLUSD입니다. 결제는 RLUSD로만 진행됩니다." },
   { q: "RLUSD는 어디서 구하나요?", a: "국내·해외 거래소에서 RLUSD를 구매한 뒤 XRPL 네트워크로 개인 지갑에 출금하면 됩니다. 출금 시 반드시 XRPL판 RLUSD를 선택하세요." },
   { q: "환불은 어떻게 되나요?", a: "제품 수령일부터 7일 이내 환불 가능합니다. 단, 리딤코드 사용 또는 노드 연동 시 환불이 제한됩니다(전자상거래법 제17조 제6항)." },
   { q: "설치가 어렵지 않나요?", a: "전원을 켠 뒤 스마트폰 블루투스로 기기를 연결해 집 Wi-Fi를 설정하는 것이 첫 순서입니다. 그다음 박스 안 리딤카드 QR로 지갑 연결·코드 입력까지 약 3분이면 완료됩니다. 벽걸이·탁상 모두 지원합니다." },
@@ -167,8 +167,8 @@ export const MOCK_ORDER: Order = {
   id: "WB-9X4K-Q72M",
   genesisNos: [214, 387, 559, 823, 1041, 1288, 1476, 1690, 1923, 2205, 2531, 2764, 2988, 3217, 3444, 3671, 3856, 4102, 4388, 4677],
   qty: 20,
-  unitPrice: 450,
-  tier: "eb",
+  unitPrice: 650,
+  tier: "gen",
   txHash: "A3F8…C21E",
   status: "preparing",
   paidAt: "2026-08-26",
@@ -259,7 +259,7 @@ export const SPECS_EN = [
 ];
 
 export const FAQS_EN = [
-  { q: "How much does it cost?", a: "450 RLUSD early bird (limited quantity), then 650 RLUSD at the regular price. Payment is in RLUSD only." },
+  { q: "How much does it cost?", a: "650 RLUSD per unit. Payment is in RLUSD only." },
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on a domestic or global exchange, then withdraw it to your personal wallet over the XRPL network. Always select the XRPL version of RLUSD when withdrawing." },
   { q: "What is the refund policy?", a: "Refunds are available within 7 days of receiving the product. Refunds are restricted once the redeem code is used or the node is linked (Korean E-Commerce Act, Art. 17-6)." },
   { q: "Is setup difficult?", a: "First, power on and pair the device via Bluetooth to set up your home Wi-Fi. Then scan the redeem card QR in the box for wallet connection and code entry — about 3 minutes in total. Wall and desktop mounting are both supported." },

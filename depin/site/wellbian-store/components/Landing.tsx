@@ -14,7 +14,7 @@ import {
 import { useI18n } from "@/lib/i18n";
 import { Gnb, CommunityFooter } from "./chrome";
 import BuyModal from "./BuyModal";
-import { XIcon, TgIcon, ChevD, Shield, ShieldCheck, Gauge, Coin, Chart, Warn } from "./icons";
+import { XIcon, TgIcon, ChevD, Shield, ShieldCheck, Gauge, Coin, Chart, Warn, Check, LinkIcon } from "./icons";
 
 export default function Landing() {
   const sp = useSearchParams();
@@ -31,8 +31,8 @@ export default function Landing() {
   const { remain } = calc(inv);
   const sold = 5000 - remain; // 내부 계산용 (대외 표기는 판매 대수만, 8/27)
   const soldOut = phase === "sold_out";
-  const ebClosed = phase !== "early_bird";
-  const curPrice = ebClosed ? PRICE.gen : PRICE.eb;
+  /* 단일가 (8/27 서우: 얼리버드 폐지 — 대외 가격은 650 하나) */
+  const curPrice = PRICE.gen;
 
   const specs = en ? SPECS_EN : SPECS;
   const faqs = en ? FAQS_EN : FAQS;
@@ -40,7 +40,6 @@ export default function Landing() {
   const rlSteps = en ? RL_STEPS_EN : RL_STEPS;
 
   const [modal, setModal] = useState(false);
-  const [banner, setBanner] = useState(false);
   const [sticky, setSticky] = useState(false);
   const [faqOpen, setFaqOpen] = useState(0);
   /* 접기/펴기 인라인 확장 3종 (8/27) — 연동 가이드 · RLUSD 가이드 · 전체 FAQ */
@@ -99,13 +98,12 @@ export default function Landing() {
 
   const buy = () => setModal(true);
 
-  /* 1h 배너 1회성: 닫으면 세션 동안 다시 띄우지 않음 (PRD §6.4) */
-  useEffect(() => {
-    try { if (!sessionStorage.getItem("wb-eb-banner-closed")) setBanner(true); } catch { setBanner(true); }
-  }, []);
-  const dismissBanner = () => {
-    setBanner(false);
-    try { sessionStorage.setItem("wb-eb-banner-closed", "1"); } catch {}
+  /* 링크 복사 버튼 (8/27 서우: CTA 옆 링크 → X → 텔레그램 순) */
+  const [linkCopied, setLinkCopied] = useState(false);
+  const copyLink = async () => {
+    try { await navigator.clipboard.writeText(window.location.origin + "/"); } catch { /* 클립보드 미허용 환경 무시 */ }
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 1600);
   };
 
   return (
@@ -131,39 +129,14 @@ export default function Landing() {
                 {en ? "Get updates" : "소식 받기"}
               </a>
             </>
-          ) : ebClosed ? (
-            <>
-              <Link href="/" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
-              <Link href="/?state=sold_out" style={previewChip}>{en ? "Sold-out view" : "완판 화면 보기"}</Link>
-            </>
           ) : (
             <>
               <Link href="/?state=teaser" style={previewChip}>{en ? "Pre-order view" : "사전예약 보기"}</Link>
-              <Link href="/?state=eb_closed" className="desk-only" style={previewChip}>{en ? "EB-closed view" : "얼리버드 마감 보기"}</Link>
               <Link href="/?state=sold_out" className="desk-only" style={previewChip}>{en ? "Sold-out view" : "완판 화면 보기"}</Link>
             </>
           )}
         </>}
       />
-
-      {/* 1h 얼리버드 마감 배너 (1회성) — 밝은 톤 띠배너, 수량 비공개(8/27 서우) */}
-      {ebClosed && !soldOut && banner && (
-        <div style={{
-          display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap",
-          background: "linear-gradient(90deg, var(--w-tint), #fff 50%, var(--w-tint))",
-          borderBottom: "1px solid color-mix(in oklab, var(--w-main) 24%, white)",
-          color: "var(--w-deep)", padding: "11px 16px", fontSize: 17, fontWeight: 700,
-        }}>
-          <span>{en ? "Early bird closed" : "얼리버드 마감"}</span>
-          <span style={{ width: 1, height: 12, background: "color-mix(in oklab, var(--w-main) 32%, white)" }} />
-          <span>
-            {en
-              ? <>now selling at the regular price · <b className="mono" style={{ color: "var(--w-main)", fontSize: 19 }}>650</b> RLUSD</>
-              : <>지금은 일반가 <b className="mono" style={{ color: "var(--w-main)", fontSize: 19 }}>650</b> RLUSD로 판매됩니다</>}
-          </span>
-          <button onClick={dismissBanner} aria-label={en ? "Dismiss banner" : "배너 닫기"} style={{ opacity: 0.45, fontSize: 19.5, marginLeft: 6, color: "var(--w-deep)" }}>✕</button>
-        </div>
-      )}
 
       {/* ── S1 히어로 ── */}
       <section style={{ color: "#fff" }} className="sec-pad hero-photo" aria-label={en ? "Hero" : "히어로"}>
@@ -245,7 +218,7 @@ export default function Landing() {
                 /* 사전예약 중 (8/27 개정): 수요 파악·룸 확보 — 5,000 게이지 없음, 짧은 가격 + 우선 구매 안내 */
                 <div style={{ display: "flex", flexDirection: "column", gap: 6, maxWidth: 520, marginTop: 6 }}>
                   <div style={{ fontSize: 18, fontWeight: 700 }}>
-                    {en ? <>Early bird <b>450 RLUSD</b> · Regular 650 RLUSD</> : <>얼리버드 <b>450 RLUSD</b> · 일반 650 RLUSD</>}
+                    {en ? <><b>650 RLUSD</b> per unit</> : <>대당 <b>650 RLUSD</b></>}
                   </div>
                   <div style={{ fontSize: 16, color: "rgba(255,255,255,.72)" }}>
                     {en
@@ -277,6 +250,10 @@ export default function Landing() {
                   </button>
                 )}
                 <div className="hero-social" style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  {/* 링크 → X → 텔레그램 순 (8/27 서우) */}
+                  <button onClick={copyLink} aria-label={en ? "Copy link" : "링크 복사"} title={en ? "Copy link" : "링크 복사"} style={{ ...heroIcon, background: "transparent", cursor: "pointer" }}>
+                    {linkCopied ? <Check size={16} color="#8ef0b6" w={3} /> : <LinkIcon size={17} />}
+                  </button>
                   <a href={LINKS.x} target="_blank" rel="noopener" aria-label="X" style={heroIcon}><XIcon size={18} /></a>
                   <a href={LINKS.telegram} target="_blank" rel="noopener" aria-label={en ? "Telegram" : "텔레그램"} style={heroIcon}><TgIcon size={18} /></a>
                 </div>
@@ -340,62 +317,25 @@ export default function Landing() {
             <h2 style={h2}>{en ? "Price & Supply" : "가격 · 수량"}</h2>
             <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Payment in RLUSD" : "결제는 RLUSD로 진행됩니다"}</p>
           </div>
-          <div className="price-grid">
-            {/* 얼리버드 카드 */}
-            <div style={{
-              position: "relative", borderRadius: 16, padding: 32, display: "flex", flexDirection: "column", gap: 14,
-              ...(ebClosed
-                ? { border: "1px solid var(--bd-card)", background: "var(--card-dis)", filter: "grayscale(1)", opacity: 0.6 }
-                : { border: "2px solid var(--w-main)", background: "var(--w-tint)" }),
-            }}>
-              <span className="pill" style={{ position: "absolute", top: -12, left: 28, background: ebClosed ? "var(--cap)" : "var(--w-main)", color: "#fff", fontSize: 15, padding: "5px 12px" }}>
-                {ebClosed ? (en ? "Early bird closed" : "얼리버드 마감") : (en ? "Early bird · almost gone" : "얼리버드 · 소진 임박")}
-              </span>
-              <div style={{ fontSize: 19.5, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Early Bird" : "얼리버드"}</div>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span className="mono" style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)", textDecoration: ebClosed ? "line-through" : "none" }}>450</span>
-                <span style={{ fontSize: 21, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
-                {!ebClosed && <span style={{ fontSize: 17, color: "var(--hint)", textDecoration: "line-through", marginLeft: 4 }}>650 RLUSD</span>}
-              </div>
-              {/* 수량 비공개 (8/27 서우: 얼리버드 1,000대 표기 제거, 오픈 임박 시 공개) */}
-              {!ebClosed && (
-                <div style={{ fontSize: 16, color: "var(--ink-4)" }}>
-                  {en ? "Quantity revealed as open day nears" : "수량은 오픈 임박 시 공개됩니다"}
-                </div>
-              )}
-              {ebClosed
-                ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 19.5, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Closed" : "마감되었습니다"}</span>
-                : <button onClick={buy} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}
-              {!ebClosed && <div style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "Switches to the regular price automatically when sold out" : "소진 시 일반가로 자동 전환됩니다"}</div>}
+          {/* 단일가 카드 (8/27 서우: 얼리버드 폐지 — 650 RLUSD 하나) */}
+          <div style={{
+            position: "relative", borderRadius: 16, padding: 32, display: "flex", flexDirection: "column", gap: 14,
+            border: "2px solid var(--w-main)", background: "var(--w-tint)", width: "100%", maxWidth: 520, margin: "0 auto",
+          }}>
+            <div style={{ fontSize: 19.5, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Price" : "판매가"}</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 8, justifyContent: "center" }}>
+              <span className="mono" style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)" }}>650</span>
+              <span style={{ fontSize: 21, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
             </div>
-            {/* 일반 카드 */}
-            <div style={{
-              position: "relative", borderRadius: 16, padding: 32, display: "flex", flexDirection: "column", gap: 14,
-              ...(ebClosed && !soldOut
-                ? { border: "2px solid var(--w-main)", background: "var(--w-tint)" }
-                : { border: "1px solid var(--bd-card)", background: "#fff" }),
-            }}>
-              {ebClosed && !soldOut && (
-                <span className="pill" style={{ position: "absolute", top: -12, left: 28, background: "var(--w-main)", color: "#fff", fontSize: 15, padding: "5px 12px" }}>{en ? "Current price" : "현재 판매가"}</span>
-              )}
-              <div style={{ fontSize: 19.5, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Regular" : "일반"}</div>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span className="mono" style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)" }}>650</span>
-                <span style={{ fontSize: 21, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
+            {/* 수량 비공개 (8/27 서우: 오픈 임박 시 공개) */}
+            {!soldOut && (
+              <div style={{ fontSize: 16, color: "var(--ink-4)" }}>
+                {en ? "Quantity revealed as open day nears" : "수량은 오픈 임박 시 공개됩니다"}
               </div>
-              {/* 수량 비공개 (8/27 서우: 총량·잔여 미표기, 오픈 임박 시 공개) */}
-              {!soldOut && (
-                <div style={{ fontSize: 16, color: "var(--ink-4)" }}>
-                  {en ? "Quantity revealed as open day nears" : "수량은 오픈 임박 시 공개됩니다"}
-                </div>
-              )}
-              {soldOut
-                ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 19.5, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Sold out" : "완판되었습니다"}</span>
-                : ebClosed
-                  ? <button onClick={buy} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>
-                  : <button onClick={buy} className="btn-outline-deep" style={{ fontSize: 19.5, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}
-              <div style={{ fontSize: 15.5, color: "var(--cap)" }}>{ebClosed ? "" : en ? "Price after early bird closes" : "얼리버드 마감 후 판매가"}</div>
-            </div>
+            )}
+            {soldOut
+              ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 19.5, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Sold out" : "완판되었습니다"}</span>
+              : <button onClick={buy} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1px solid var(--bd-card)", borderRadius: 12, padding: "16px 20px", background: "var(--panel)" }}>
             <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: 9, background: "var(--w-tint)", color: "var(--w-main)", fontWeight: 800, fontSize: 17, flex: "none" }}>#</span>
@@ -687,12 +627,11 @@ export default function Landing() {
             <span className="desk-only" style={{ width: 1, height: 30, background: "var(--line)" }} />
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <span className="mob-only" style={{ fontSize: 14.5, color: "var(--cap)" }}>
-                {en ? `${fmt(sold)} sold · ${ebClosed ? "Regular" : "Early bird"}` : `판매 ${fmt(sold)}대 · ${ebClosed ? "일반" : "얼리버드"}`}
+                {en ? `${fmt(sold)} sold` : `판매 ${fmt(sold)}대`}
               </span>
               <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                 <span className="desk-only" style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "Price" : "현재 가격"}</span>
                 <span style={{ fontSize: 23.5, fontWeight: 800, color: "var(--w-deep)" }}>{curPrice} RLUSD</span>
-                <span className="desk-only" style={{ fontSize: 15.5, color: "var(--hint)" }}>{ebClosed ? (en ? "Regular" : "일반") : (en ? "Early bird" : "얼리버드")}</span>
               </div>
             </div>
             <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px" }}>{en ? "Buy" : "구매하기"}</button>
@@ -701,7 +640,7 @@ export default function Landing() {
         </div>
       )}
 
-      {modal && <BuyModal ebLeft={inv.ebLeft} demoMismatch={demoMismatch} onClose={() => setModal(false)} />}
+      {modal && <BuyModal demoMismatch={demoMismatch} onClose={() => setModal(false)} />}
     </div>
   );
 }

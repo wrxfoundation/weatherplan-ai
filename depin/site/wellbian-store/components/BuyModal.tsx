@@ -17,8 +17,8 @@ import { Check, ChevR, Clock, Warn } from "./icons";
 const HOLD_SECONDS = 20 * 60;
 
 export default function BuyModal({
-  ebLeft, onClose, demoMismatch = false,
-}: { ebLeft: number; onClose: () => void; demoMismatch?: boolean }) {
+  onClose, demoMismatch = false,
+}: { onClose: () => void; demoMismatch?: boolean }) {
   const router = useRouter();
   const { en } = useI18n();
   const stepNames = en ? ["Qty", "Wallet", "Consent", "Pay"] : ["수량", "지갑", "동의", "결제"];
@@ -35,10 +35,9 @@ export default function BuyModal({
   const mismatchOnce = useRef(false);
   const holdRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const tier = ebLeft > 0 ? "eb" : "gen";
-  const unit = tier === "eb" ? PRICE.eb : PRICE.gen;
+  /* 단일가 (8/27 서우: 얼리버드 폐지) */
+  const unit = PRICE.gen;
   const total = unit * qty;
-  const tierLabel = tier === "eb" ? (en ? "Early Bird" : "얼리버드") : (en ? "Regular" : "일반");
 
   /* 홀드 타이머: 결제 단계 진입 시 시작 (POST /api/checkout/hold 대응 지점) */
   useEffect(() => {
@@ -101,12 +100,10 @@ export default function BuyModal({
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "18px 20px", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
               <span style={{ fontSize: 19, fontWeight: 800, color: "var(--w-deep)" }}>
-                Weather Data Token Generator™ · {tierLabel}
+                Weather Data Token Generator™
               </span>
               <span style={{ fontSize: 16, color: "var(--cap)" }}>
-                {en
-                  ? `${unit} RLUSD each${tier === "eb" ? ` · ${fmt(ebLeft)} left` : ""}`
-                  : `${unit} RLUSD / 대${tier === "eb" ? ` · 잔여 ${fmt(ebLeft)}대` : ""}`}
+                {en ? `${unit} RLUSD each` : `${unit} RLUSD / 대`}
               </span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -234,7 +231,7 @@ export default function BuyModal({
         <>
           <h3 style={h3}>{en ? "Pay with RLUSD" : "RLUSD로 결제하세요"}</h3>
           <div style={{ display: "flex", flexDirection: "column", border: "1px solid var(--bd-card)", borderRadius: 14, overflow: "hidden" }}>
-            <PayRow k={en ? "Order" : "주문"} v={<b style={{ color: "var(--w-deep)" }}>Weather Data Token Generator™ × {fmt(qty)} · {tierLabel}</b>} />
+            <PayRow k={en ? "Order" : "주문"} v={<b style={{ color: "var(--w-deep)" }}>Weather Data Token Generator™ × {fmt(qty)}</b>} />
             <PayRow k={en ? "Amount" : "결제 금액"} v={<b style={{ fontSize: 21, color: "var(--w-deep)" }}>{fmt(total)} RLUSD</b>} />
             <PayRow k={en ? "Receiving address" : "받는 주소"} v={<span className="mono" style={{ fontSize: 16, color: "var(--ink-2)" }}>{RECEIVE_ADDRESS} <span style={{ color: "var(--hint)" }}>{en ? "(auto-filled)" : "(자동 입력)"}</span></span>} />
             <PayRow k={en ? "Destination tag" : "목적지 태그"} v={<span className="mono" style={{ fontSize: 16, color: "var(--ink-2)" }}>{DEST_TAG} <span style={{ color: "var(--hint)" }}>{en ? "(auto-filled)" : "(자동 입력)"}</span></span>} />
@@ -268,7 +265,7 @@ export default function BuyModal({
         </>
       );
     }
-  }, [step, qty, tier, tierLabel, unit, total, ebLeft, wallet, connecting, address, terms1, terms2, hold, holdMMSS, signing, mismatch, connect, sign, en]);
+  }, [step, qty, unit, total, wallet, connecting, address, terms1, terms2, hold, holdMMSS, signing, mismatch, connect, sign, en]);
 
   return (
     <div className="overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>

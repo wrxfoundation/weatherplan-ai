@@ -77,7 +77,7 @@ export default function MePage() {
             </div>
             <div className="desk-only" style={{ display: "flex", gap: 16, fontSize: 12.5, color: "var(--cap)" }}>
               <span>{order.id}</span>
-              <span>{order.unitPrice} RLUSD · {en ? "Early bird" : "얼리버드"}</span>
+              <span>{order.unitPrice} RLUSD</span>
               <span>{en ? "Paid 8/26" : "결제 8/26"}</span>
               <Link href={`/orders/${order.id}`} className="mono" style={{ fontSize: 12 }}>{order.txHash} ↗</Link>
             </div>
@@ -137,7 +137,7 @@ export default function MePage() {
             </div>
             <div className="desk-only" style={{ display: "flex", gap: 16, fontSize: 12.5, color: "var(--cap)" }}>
               <span>WB-3F8D-K21P</span>
-              <span>450 RLUSD · {en ? "Early bird" : "얼리버드"}</span>
+              <span>650 RLUSD</span>
               <span>{en ? "Registered 8/24" : "등록 8/24"}</span>
               <a href="#nft" className="mono" style={{ fontSize: 12 }}>{en ? "License NFT ↗" : "라이선스 NFT ↗"}</a>
             </div>
