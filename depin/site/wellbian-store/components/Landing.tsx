@@ -101,6 +101,16 @@ export default function Landing() {
   const [preModal, setPreModal] = useState(false);
   const buy = () => (preMode === "pre" ? setPreModal(true) : setModal(true));
 
+  /* D-day 자동 계산 (8/27 서우: "사전예약하기 D-n" 병기) — KST 날짜 기준, 하드코딩 금지 */
+  const dDaysTo = (y: number, m: number, d: number) => {
+    const kst = new Date(Date.now() + 9 * 3600 * 1000);
+    const today = Date.UTC(kst.getUTCFullYear(), kst.getUTCMonth(), kst.getUTCDate());
+    return Math.max(0, Math.round((Date.UTC(y, m - 1, d) - today) / 86400000));
+  };
+  const dSale = dDaysTo(2026, 9, 15); // 판매 오픈
+  const dPre = dDaysTo(2026, 9, 5);   // 사전예약 오픈
+  const dSaleBadge = dSale === 0 ? "D-DAY" : `D-${dSale}`;
+
   /* 링크 복사 버튼 (8/27 서우: CTA 옆 링크 → X → 텔레그램 순) */
   const [linkCopied, setLinkCopied] = useState(false);
   const copyLink = async () => {
@@ -113,7 +123,7 @@ export default function Landing() {
     <div style={{ background: "#fff" }}>
       {/* GNB 우측 상태형 슬롯: 판매 중 = 완판 화면 미리보기 칩 / 완판 = 소식 CTA */}
       <Gnb
-        dday={preMode ? "D-07" : soldOut ? undefined : "D-12"}
+        dday={preMode === "pre" ? dSaleBadge : preMode === "dday" ? `D-${dPre}` : soldOut ? undefined : "D-12"}
         right={<>
           {preMode ? (
             <>
@@ -240,8 +250,10 @@ export default function Landing() {
               <div ref={heroCtaRef} className="hero-cta-row" style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
                 {preMode === "pre" ? (
                   /* PRE-ORDER — 사전예약 = 실구매 (8/27 서우: 9/5부터 바로), 구매 모달 연결 */
-                  <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
+                  <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
                     {en ? "Pre-order now" : "사전예약하기"}
+                    {/* 판매 오픈(9/15)까지 D-day 병기 (8/27 서우) */}
+                    <span className="mono" style={{ padding: "3px 10px", borderRadius: 99, background: "rgba(255,255,255,.2)", fontSize: 15.5, fontWeight: 800, letterSpacing: ".03em" }}>{dSaleBadge}</span>
                   </button>
                 ) : preMode === "dday" ? (
                   /* 사전예약 오픈 카운트다운 (9/5) */
@@ -623,7 +635,10 @@ export default function Landing() {
                 <span className="mono" style={{ fontSize: 23.5, fontWeight: 800, color: "var(--w-deep)" }}>{fmt(MOCK_PRENOTIFY)}</span>
                 <span style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "units" : "대"}</span>
               </div>
-              <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px" }}>{en ? "Pre-order now" : "사전예약하기"}</button>
+              <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px", display: "inline-flex", alignItems: "center", gap: 10 }}>
+                {en ? "Pre-order now" : "사전예약하기"}
+                <span className="mono" style={{ padding: "2px 9px", borderRadius: 99, background: "rgba(255,255,255,.2)", fontSize: 14, fontWeight: 800, letterSpacing: ".03em" }}>{dSaleBadge}</span>
+              </button>
             </div>
           ) : (
           <div className="stickybar-in">
