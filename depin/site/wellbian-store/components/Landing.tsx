@@ -213,7 +213,7 @@ export default function Landing() {
                 <br />
                 {en
                   ? "Just measure your indoor air — your verified data turns into value that comes back to you."
-                  : "실내 공기를 측정하는 것만으로, 검증된 내 데이터가 가치가 되어 돌아옵니다."}
+                  : <>실내 공기를 측정하는 것만으로,<br />검증된 내 데이터가 가치가 되어 돌아옵니다.</>}
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, color: "rgba(255,255,255,.65)" }}>
@@ -254,7 +254,7 @@ export default function Landing() {
                 <br />
                 {en
                   ? "Just measure your indoor air — your verified data turns into value that comes back to you."
-                  : "실내 공기를 측정하는 것만으로, 검증된 내 데이터가 가치가 되어 돌아옵니다."}
+                  : <>실내 공기를 측정하는 것만으로,<br />검증된 내 데이터가 가치가 되어 돌아옵니다.</>}
               </p>
               {preMode === "dday" ? (
                 /* 사전예약 오픈 전: 오픈 정보 한 줄 */
