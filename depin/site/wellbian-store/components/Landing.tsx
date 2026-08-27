@@ -290,7 +290,7 @@ export default function Landing() {
                 {preMode === "pre" ? (
                   /* PRE-ORDER — 사전예약 = 실구매 (8/27 서우: 9/5부터 바로), 구매 모달 연결 */
                   <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
-                    {en ? "PRE-ORDER · RLUSD" : "PRE-ORDER · 사전예약 구매"}
+                    {en ? "Pre-order now" : "사전예약하기"}
                   </button>
                 ) : preMode === "dday" ? (
                   /* 사전예약 오픈 카운트다운 (9/5) */
@@ -707,7 +707,17 @@ export default function Landing() {
           background: "#fff", borderTop: "1px solid var(--bd-card)",
           boxShadow: "0 -8px 24px rgba(27,27,72,.1)",
         }} className="stickybar">
-          {/* PC: 중앙 한 덩어리(진행 | 가격 | CTA), 모바일: 기존 좌우 배치 유지 */}
+          {/* PC: 중앙 한 덩어리 — 사전예약 중엔 예약 대수 + CTA만 (게이지·%·얼리버드·가격 없음, 8/27 서우) */}
+          {preMode === "pre" ? (
+            <div className="stickybar-in">
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                <span style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "Pre-ordered so far" : "사전예약 누적"}</span>
+                <span className="mono" style={{ fontSize: 23.5, fontWeight: 800, color: "var(--w-deep)" }}>{fmt(MOCK_PRENOTIFY)}</span>
+                <span style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "units" : "대"}</span>
+              </div>
+              <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px" }}>{en ? "Pre-order now" : "사전예약하기"}</button>
+            </div>
+          ) : (
           <div className="stickybar-in">
             <div className="desk-only" style={{ display: "flex", flexDirection: "column", gap: 4, width: 190 }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15, color: "var(--ink-4)" }}>
@@ -730,6 +740,7 @@ export default function Landing() {
             </div>
             <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px" }}>{en ? "Buy" : "구매하기"}</button>
           </div>
+          )}
         </div>
       )}
 
