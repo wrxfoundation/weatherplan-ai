@@ -29,6 +29,7 @@ export default function Landing() {
 
   const inv = MOCK_INVENTORY[phase]; // GET /api/inventory 대응 지점
   const { remain, pct, ebPct, genPct } = calc(inv);
+  const sold = 5000 - remain; // 내부 계산용 (대외 표기는 판매 대수만, 8/27)
   const soldOut = phase === "sold_out";
   const ebClosed = phase !== "early_bird";
   const curPrice = ebClosed ? PRICE.gen : PRICE.eb;
@@ -215,12 +216,6 @@ export default function Landing() {
                   ? "Just measure your indoor air — your verified data turns into value that comes back to you."
                   : <>실내 공기를 측정하는 것만으로,<br />검증된 내 데이터가 가치가 되어 돌아옵니다.</>}
               </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, color: "rgba(255,255,255,.65)" }}>
-                  <span>{en ? "0 left · 100% sold" : "잔여 0대 · 100% 판매"}</span>
-                </div>
-                <div className="track on-dark" style={{ height: 8 }}><i style={{ width: "100%" }} /></div>
-              </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                 <a href={LINKS.telegram} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, background: "#fff", color: "var(--w-deep)", fontSize: 19.5, fontWeight: 800, borderRadius: 12, padding: "16px 24px", textDecoration: "none" }}>
                   <TgIcon size={15} /> {en ? "Join the community" : "커뮤니티 입장"}
@@ -275,15 +270,10 @@ export default function Landing() {
                   </div>
                 </div>
               ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440, marginTop: 6 }}>
-                {/* 잔여·판매율을 좌측 선두로, 총량은 우측 보조로 (8/27 서우) */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                  <span style={{ fontSize: 18, fontWeight: 700 }}>
-                    {en ? <><b className="mono" style={{ color: "#fff" }}>{fmt(remain)}</b> left · {pct}% sold</> : <>잔여 <b className="mono" style={{ color: "#fff" }}>{fmt(remain)}</b>대 · {pct}% 판매</>}
-                  </span>
+                /* 판매 표기 = 판매 대수만 (8/27 서우: 잔여·%·게이지 제거) — flex 금지: 텍스트가 flex item으로 쪼개져 "대"가 벌어짐 */
+                <div style={{ marginTop: 6, fontSize: 18, fontWeight: 700 }}>
+                  {en ? <><b className="mono" style={{ color: "#fff", fontSize: 21 }}>{fmt(sold)}</b> units sold</> : <>판매 <b className="mono" style={{ color: "#fff", fontSize: 21 }}>{fmt(sold)}</b>대</>}
                 </div>
-                <div className="track on-dark" style={{ height: 8 }}><i style={{ width: `${Math.max(2, pct)}%` }} /></div>
-              </div>
               )}
               {/* 모바일: 구매 버튼 전폭 → 아랫줄에 X·텔레그램 나란히 (8/27 서우) */}
               <div ref={heroCtaRef} className="hero-cta-row" style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
@@ -350,7 +340,7 @@ export default function Landing() {
                 ))}
               </div>
             </div>
-            <div style={{ fontSize: 14.5, color: "rgba(255,255,255,.45)" }}>
+            <div style={{ fontSize: 14.5, color: "rgba(255,255,255,.45)", textAlign: "center" }}>
               {en
                 ? "Wallet prefixes are masked. Pre-orders gauge demand and hold your room — Genesis Numbers are assigned at purchase."
                 : "지갑 주소는 앞자리만 표시됩니다. 사전예약은 수요 파악과 자리 확보 단계이며, 제네시스 넘버는 정식 구매 시 배정됩니다."}
@@ -719,18 +709,13 @@ export default function Landing() {
             </div>
           ) : (
           <div className="stickybar-in">
-            <div className="desk-only" style={{ display: "flex", flexDirection: "column", gap: 4, width: 190 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15, color: "var(--ink-4)" }}>
-                <span>
-                  {en ? <><b className="mono" style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b> left</> : <>잔여 <b className="mono" style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b>대</>}
-                </span><span>{pct}%</span>
-              </div>
-              <div className="track" style={{ height: 5, background: "var(--line)" }}><i style={{ width: `${Math.max(2, pct)}%` }} /></div>
+            <div className="desk-only" style={{ fontSize: 15, color: "var(--ink-4)" }}>
+              {en ? <><b className="mono" style={{ color: "var(--w-deep)", fontSize: 19 }}>{fmt(sold)}</b> units sold</> : <>판매 <b className="mono" style={{ color: "var(--w-deep)", fontSize: 19 }}>{fmt(sold)}</b>대</>}
             </div>
             <span className="desk-only" style={{ width: 1, height: 30, background: "var(--line)" }} />
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <span className="mob-only" style={{ fontSize: 14.5, color: "var(--cap)" }}>
-                {en ? `${fmt(remain)} left · ${ebClosed ? "Regular" : "Early bird"}` : `잔여 ${fmt(remain)}대 · ${ebClosed ? "일반" : "얼리버드"}`}
+                {en ? `${fmt(sold)} sold · ${ebClosed ? "Regular" : "Early bird"}` : `판매 ${fmt(sold)}대 · ${ebClosed ? "일반" : "얼리버드"}`}
               </span>
               <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                 <span className="desk-only" style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "Price" : "현재 가격"}</span>
