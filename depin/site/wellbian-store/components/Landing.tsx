@@ -270,8 +270,8 @@ export default function Landing() {
                   </div>
                   <div style={{ fontSize: 16, color: "rgba(255,255,255,.72)" }}>
                     {en
-                      ? "Pre-ordering secures your right to buy on Sept 15, opening day — no first-come rush."
-                      : "사전예약하면 9월 15일 판매 당일 구매할 수 있는 권한을 받습니다 · 선착순 걱정 없이"}
+                      ? "Pre-order now and buy calmly on Sept 15 — no first-come rush. Genesis Numbers are randomly assigned at purchase."
+                      : "사전예약하면 9월 15일 오픈 때 선착순 걱정 없이 구매할 수 있습니다 · 제네시스 넘버는 정식 구매 시 랜덤배정"}
                   </div>
                 </div>
               ) : (
@@ -322,8 +322,10 @@ export default function Landing() {
 
       {/* ── S1b 사전예약 실시간 현황판 (teaser 전용, 8/27) — 크레딧 롤: 아래→위 + 상단 페이드아웃 ── */}
       {preMode === "pre" && (
-        <section className="sec-pad" style={{ background: "var(--w-deep)", color: "#fff", paddingTop: 48, paddingBottom: 48 }} aria-label={en ? "Live pre-order board" : "실시간 사전예약 현황"}>
-          <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--w-deep)", color: "#fff", paddingTop: 48, paddingBottom: 48 }} aria-label={en ? "Live pre-order board" : "실시간 사전예약 현황"}>
+          {/* 등고선 마블링 패턴 — 아주 옅게 (8/27 서우) */}
+          <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/contour.svg)", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
+          <div className="wrap" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 18 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 19.5, fontWeight: 800 }}>
                 <span className="live-dot" />
