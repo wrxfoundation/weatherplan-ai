@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   SPECS, SPECS_EN, FAQS, FAQS_EN, FAQS_EXTRA, FAQS_EXTRA_EN, LINK_STEPS, LINK_STEPS_EN,
-  RL_STEPS, RL_STEPS_EN, LINKS, MOCK_INVENTORY, PRICE, calc, fmt,
+  RL_STEPS, RL_STEPS_EN, LINKS, MOCK_INVENTORY, MOCK_PRENOTIFY, PRICE, calc, fmt,
   NOTICE_REWARD, NOTICE_REWARD_EN, type SalePhase,
 } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
@@ -23,6 +23,9 @@ export default function Landing() {
   const demoMismatch = sp.get("demo") === "mismatch"; // 결제 mismatch 분기 재현용 (내부 데모)
   const phase: SalePhase =
     stateParam === "eb_closed" ? "general" : stateParam === "sold_out" ? "sold_out" : "early_bird";
+  /* 사전 알림 시뮬레이션 (8/27 서우): ?state=teaser = D-07 사전 알림 / ?state=dday = 당일 카운트다운 */
+  const preMode: "pre" | "dday" | null =
+    stateParam === "teaser" ? "pre" : stateParam === "dday" ? "dday" : null;
 
   const inv = MOCK_INVENTORY[phase]; // GET /api/inventory 대응 지점
   const { remain, pct, ebPct, genPct } = calc(inv);
@@ -79,6 +82,27 @@ export default function Landing() {
     return () => clearInterval(t);
   }, []);
 
+  /* 사전 알림 누적 카운트업 (teaser) + 오픈 카운트다운 (dday) — 목값 */
+  const [notifyCount, setNotifyCount] = useState(0);
+  useEffect(() => {
+    if (preMode !== "pre") return;
+    const t0 = performance.now(); const dur = 1200; let raf = 0;
+    const tick = (t: number) => {
+      const k = Math.min(1, (t - t0) / dur);
+      setNotifyCount(Math.round(MOCK_PRENOTIFY * (1 - Math.pow(1 - k, 3))));
+      if (k < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [preMode]);
+  const [countdown, setCountdown] = useState(7 * 3600 + 23 * 60 + 45); // 데모: 오픈까지 07:23:45
+  useEffect(() => {
+    if (preMode !== "dday") return;
+    const t = setInterval(() => setCountdown((s) => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(t);
+  }, [preMode]);
+  const cd = `${String(Math.floor(countdown / 3600)).padStart(2, "0")}:${String(Math.floor((countdown % 3600) / 60)).padStart(2, "0")}:${String(countdown % 60).padStart(2, "0")}`;
+
   /* 스티키 바: 히어로 CTA가 뷰포트를 벗어나면 표시 (PRD §8) */
   useEffect(() => {
     const el = heroCtaRef.current;
@@ -103,9 +127,16 @@ export default function Landing() {
     <div style={{ background: "#fff" }}>
       {/* GNB 우측 상태형 슬롯: 판매 중 = 완판 화면 미리보기 칩 / 완판 = 소식 CTA */}
       <Gnb
-        dday={soldOut ? undefined : "D-12"}
+        dday={preMode ? "D-07" : soldOut ? undefined : "D-12"}
         right={<>
-          {soldOut ? (
+          {preMode ? (
+            <>
+              <Link href="/" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
+              {preMode === "pre"
+                ? <Link href="/?state=dday" style={previewChip}>{en ? "D-day view" : "오픈 당일 보기"}</Link>
+                : <Link href="/?state=teaser" style={previewChip}>{en ? "Pre-launch view" : "사전 알림 보기"}</Link>}
+            </>
+          ) : soldOut ? (
             <>
               <Link href="/" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
               <a
@@ -122,8 +153,9 @@ export default function Landing() {
             </>
           ) : (
             <>
+              <Link href="/?state=teaser" style={previewChip}>{en ? "Pre-launch view" : "사전 알림 보기"}</Link>
               <Link href="/?state=eb_closed" className="desk-only" style={previewChip}>{en ? "EB-closed view" : "얼리버드 마감 보기"}</Link>
-              <Link href="/?state=sold_out" style={previewChip}>{en ? "Sold-out view" : "완판 화면 보기"}</Link>
+              <Link href="/?state=sold_out" className="desk-only" style={previewChip}>{en ? "Sold-out view" : "완판 화면 보기"}</Link>
             </>
           )}
         </>}
@@ -224,6 +256,13 @@ export default function Landing() {
                   ? "Just measure your indoor air — your verified data turns into value that comes back to you."
                   : "실내 공기를 측정하는 것만으로, 검증된 내 데이터가 가치가 되어 돌아옵니다."}
               </p>
+              {preMode ? (
+                /* 사전 알림 모드: 게이지 대신 오픈 정보 한 줄 */
+                <div style={{ display: "flex", alignItems: "baseline", gap: 12, maxWidth: 440, marginTop: 6, fontSize: 18, fontWeight: 700, flexWrap: "wrap" }}>
+                  <span>{en ? "First sale opens Sept 15" : "1차 판매 9월 15일 오픈"}</span>
+                  <span style={{ fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,.65)" }}>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span>
+                </div>
+              ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440, marginTop: 6 }}>
                 {/* 잔여·판매율을 좌측 선두로, 총량은 우측 보조로 (8/27 서우) */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
@@ -234,16 +273,37 @@ export default function Landing() {
                 </div>
                 <div className="track on-dark" style={{ height: 8 }}><i style={{ width: `${Math.max(2, pct)}%` }} /></div>
               </div>
+              )}
               {/* 모바일: 구매 버튼 전폭 → 아랫줄에 X·텔레그램 나란히 (8/27 서우) */}
               <div ref={heroCtaRef} className="hero-cta-row" style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
-                <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
-                  {en ? "Buy now · RLUSD" : "지금 구매하기 · RLUSD"}
-                </button>
+                {preMode === "pre" ? (
+                  /* D-07 사전 알림받기 — 알림 신청 = 공식 텔레그램 (8/27 서우) */
+                  <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)", color: "#fff", textDecoration: "none" }}>
+                    🔔 {en ? "D-07 · Get launch alerts" : "D-07 사전 알림받기"}
+                  </a>
+                ) : preMode === "dday" ? (
+                  /* 오픈 당일: 실시간 카운트다운 버튼 */
+                  <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)", color: "#fff", textDecoration: "none" }}>
+                    <span className="mono" style={{ fontWeight: 800 }}>{cd}</span>&nbsp;{en ? "until open" : "후 오픈"}
+                  </a>
+                ) : (
+                  <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
+                    {en ? "Buy now · RLUSD" : "지금 구매하기 · RLUSD"}
+                  </button>
+                )}
                 <div className="hero-social" style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <a href={LINKS.x} target="_blank" rel="noopener" aria-label="X" style={heroIcon}><XIcon size={18} /></a>
                   <a href={LINKS.telegram} target="_blank" rel="noopener" aria-label={en ? "Telegram" : "텔레그램"} style={heroIcon}><TgIcon size={18} /></a>
                 </div>
               </div>
+              {preMode && (
+                /* 사전 알림 누적 (목값 카운트업) */
+                <div style={{ fontSize: 17, color: "rgba(255,255,255,.75)" }}>
+                  {en
+                    ? <>So far <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> people signed up for launch alerts</>
+                    : <>지금까지 <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>명이 사전 알림을 신청했습니다</>}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -363,16 +423,17 @@ export default function Landing() {
               </span>
             </button>
             {specOpen && (
-              <div className="step-in" style={{ width: "100%", maxWidth: 760, background: "#fff", borderRadius: 14, padding: "6px 20px 14px", display: "flex", flexDirection: "column", gap: 12, color: "var(--ink-1)" }}>
-                <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid var(--w-deep)" }}>
+              /* 글래스 테이블 (8/27 서우: 흰 카드 → 블러 글래스 + 흰 폰트) */
+              <div className="step-in" style={{ width: "100%", maxWidth: 760, background: "rgba(27,27,72,.38)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: "1px solid rgba(255,255,255,.28)", borderRadius: 16, padding: "8px 22px 16px", display: "flex", flexDirection: "column", gap: 12, color: "#fff", boxShadow: "0 12px 40px rgba(0,0,0,.25)" }}>
+                <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid rgba(255,255,255,.85)" }}>
                   {specs.map((s) => (
-                    <div key={s.k} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "9px 4px", borderBottom: "1px solid var(--line)", fontSize: 17.5, lineHeight: 1.45 }}>
-                      <span style={{ fontWeight: 700, color: "var(--w-deep)" }}>{s.k}</span>
-                      <span style={{ color: "var(--ink-2)" }}>{s.v}</span>
+                    <div key={s.k} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "9px 4px", borderBottom: "1px solid rgba(255,255,255,.18)", fontSize: 17.5, lineHeight: 1.45 }}>
+                      <span style={{ fontWeight: 800, color: "#fff" }}>{s.k}</span>
+                      <span style={{ color: "rgba(255,255,255,.88)" }}>{s.v}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{ fontSize: 15.5, color: "var(--hint)", textAlign: "center" }}>{en ? "Based on the manufacturer's official specification sheet." : "제조사 공식 사양표 기준입니다."}</div>
+                <div style={{ fontSize: 15.5, color: "rgba(255,255,255,.62)", textAlign: "center" }}>{en ? "Based on the manufacturer's official specification sheet." : "제조사 공식 사양표 기준입니다."}</div>
               </div>
             )}
             <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
@@ -585,8 +646,8 @@ export default function Landing() {
       {/* ── S9 커뮤니티 + 푸터 ── */}
       <CommunityFooter />
 
-      {/* ── S0 스티키 구매 바 ── */}
-      {!soldOut && (
+      {/* ── S0 스티키 구매 바 (사전 알림 모드에선 숨김) ── */}
+      {!soldOut && !preMode && (
         <div aria-hidden={!sticky} style={{
           position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 60,
           transform: sticky ? "none" : "translateY(110%)", transition: "transform .3s ease",

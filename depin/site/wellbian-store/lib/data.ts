@@ -184,6 +184,9 @@ export const MOCK_DEVICE: Device = {
   wifi: true,
 };
 
+/* 사전 알림 누적 목값 (8/27 — teaser/dday 시뮬레이션용) */
+export const MOCK_PRENOTIFY = 3847;
+
 export const LINKS = {
   x: "https://x.com/wellbianlabs",
   telegram: "https://t.me/wellbianlabs",
