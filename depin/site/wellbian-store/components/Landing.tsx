@@ -474,7 +474,7 @@ export default function Landing() {
             {specOpen && (
               /* 글래스 테이블 (8/27 서우: 흰 카드 → 블러 글래스 + 흰 폰트) */
               <div className="step-in" style={{ width: "100%", maxWidth: 760, background: "rgba(27,27,72,.38)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: "1px solid rgba(255,255,255,.28)", borderRadius: 16, padding: "8px 22px 16px", display: "flex", flexDirection: "column", gap: 12, color: "#fff", boxShadow: "0 12px 40px rgba(0,0,0,.25)" }}>
-                <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid rgba(255,255,255,.85)" }}>
+                <div style={{ display: "flex", flexDirection: "column" }}>
                   {specs.map((s) => (
                     <div key={s.k} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "9px 4px", borderBottom: "1px solid rgba(255,255,255,.18)", fontSize: 17.5, lineHeight: 1.45 }}>
                       <span style={{ fontWeight: 800, color: "#fff" }}>{s.k}</span>
