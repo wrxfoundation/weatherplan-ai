@@ -9,6 +9,12 @@ Luma 공개·무료. 우리 관련 아젠다: **KWeather × Flare 파트너십 �
 
 게시 후 절차: 「올림 + URL」 한 줄 → x-activity-log 기입.
 
+**⚠️ 개정 대기 (8/27 밤 — 캘린더 변경)**: 서우 확정 "**사전예약(PRE-ORDER) 9/5 오픈**"
+(수요 파악·룸 확보 개념, 9/15 정식 오픈 유지). 사후 원글의 판매일 라인(T2 A안 "First sale
+opens Sept 15. Ten days.")은 **"Pre-orders open today — first sale Sept 15"** 계열로 개정
+검토 필요. 9/5 당일 = 워크숍 무대 + 사전예약 오픈이 겹치는 더블 이벤트가 됨 — 게시 전
+서우와 라인 확정.
+
 ## 공통 발화 프레임 (전 초안 강제)
 
 - **KWeather = "our device partner"** — 기기 파트너·국내 수탁까지만. 토큰 발행·보상 주체로
