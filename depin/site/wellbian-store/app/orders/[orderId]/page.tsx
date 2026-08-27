@@ -54,7 +54,7 @@ export default function OrderPage() {
           <div style={{ display: "flex", gap: 18, fontSize: 13, color: "var(--ink-4)", flexWrap: "wrap", justifyContent: "center" }}>
             <span>{en ? "Order no." : "주문번호"} <b style={{ color: "var(--ink-2)" }}>{order.id}</b></span>
             <span>{en ? "Transaction" : "트랜잭션"} <a href="#tx" className="mono" style={{ fontSize: 12 }}>{order.txHash} ↗</a></span>
-            <span>{en ? "Est. shipping" : "예상 배송"} <b style={{ color: "var(--ink-2)" }}>{en ? "sequentially from Oct 2026" : "2026년 10월 순차 발송"}</b></span>
+            <span>{en ? "Est. shipping" : "예상 배송"} <b style={{ color: "var(--ink-2)" }}>{en ? "sequentially from Nov 2026" : "2026년 11월 순차 발송"}</b></span>
           </div>
         </div>
 
