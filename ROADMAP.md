@@ -438,3 +438,27 @@ not for maintainers.
 cycle (our loop is the collect→verify→deploy pipeline, already instrumented) · `re0-git`/`re0-release`
 (our release rail is the branch-bridge flow in OPERATIONS) · vendoring the skills themselves (they
 are agent-install artifacts, not a library this repo depends on).
+
+---
+
+## Reviewed and DECLINED — LilMGenius/polysona, 2026-08-26
+
+polysona is a multi-persona **content** engine: a 10-framework psychology interview builds
+`persona.md`, then a five-agent loop runs trend scan → platform draft → virtual-follower QA →
+publish/track, with a local dashboard and its own compact text format (PLOON). Logged here so the
+call isn't re-litigated: **no code absorbed** — it is a different product class. It carries no
+verification, provenance, citation, or integrity mechanics (checked: nothing in the repo touches
+those concepts), and KoreaAPI's open questions are a deployed HTTP host, a payment wallet, and
+live-log tuning — none of which a persona pipeline addresses. Forcing a fit would be exactly the
+slop the paperthin review just taught us to refuse.
+
+**Confirms two habits we already hold** (doctrine, no files): QA runs in a FORKED context so the
+generator never grades its own output (our independent-reviewer QA passes), and a tool write is
+followed by a read-back with honest failure reporting — "do not pretend storage succeeded".
+
+⛔ **PLOON specifically rejected**: adopting a second structured format for our records would
+create a second data path, violating design invariant #7. Our records are one JSON shape, hashed
+and re-verifiable; a parallel format could only drift from it.
+
+*(If it fits anywhere in this org it is a personal-brand content workflow, not KoreaAPI and not
+the weather product.)*
