@@ -103,14 +103,15 @@ export function CommunityFooter() {
           </div>
         </div>
         <div className="s9-brands" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, borderTop: "1px solid rgba(255,255,255,.12)", paddingTop: 28, flexWrap: "wrap" }}>
+          {/* 브랜드 행 — 로고 3종 크기 광학 통일 (8/27 서우): wellbian 22 / xrpl 18 / kw 16 */}
           <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
-            <Image src="/assets/wb-white.png" alt="wellbian" width={90} height={18} style={{ height: 18, width: "auto", opacity: 0.9 }} />
+            <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} style={{ height: 22, width: "auto", opacity: 0.95 }} />
             <span style={{ fontSize: 14.5, color: "rgba(255,255,255,.4)" }}>POWERED BY</span>
-            <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={80} height={15} style={{ height: 15, width: "auto", opacity: 0.75 }} />
-            <span style={{ width: 1, height: 14, background: "rgba(255,255,255,.25)" }} />
-            {/* 케이웨더 워드마크 — 검은 로고를 흰 칩 위에 (8/27 서우: "검은색으로 제대로"). 정식 CI 파일 수급 시 kw-black.png만 교체 */}
-            <span style={{ display: "inline-flex", alignItems: "center", background: "#fff", borderRadius: 7, padding: "6px 12px" }}>
-              <Image src="/assets/kw-black.png" alt="KWEATHER" width={445} height={44} style={{ height: 14, width: "auto" }} />
+            <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} style={{ height: 18, width: "auto", opacity: 0.9 }} />
+            <span style={{ width: 1, height: 18, background: "rgba(255,255,255,.25)" }} />
+            {/* 케이웨더 워드마크 — 검은 로고를 흰 칩 위에. 정식 CI 파일 수급 시 kw-black.png만 교체 */}
+            <span style={{ display: "inline-flex", alignItems: "center", background: "#fff", borderRadius: 8, padding: "8px 15px" }}>
+              <Image src="/assets/kw-black.png" alt="KWEATHER" width={445} height={44} style={{ height: 16, width: "auto" }} />
             </span>
           </div>
           <nav style={{ display: "flex", gap: 20, fontSize: 16, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
