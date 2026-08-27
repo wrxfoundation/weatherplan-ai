@@ -24,9 +24,12 @@ export default function Landing() {
   const demoMismatch = sp.get("demo") === "mismatch"; // 결제 mismatch 분기 재현용 (내부 데모)
   const phase: SalePhase =
     stateParam === "eb_closed" ? "general" : stateParam === "sold_out" ? "sold_out" : "early_bird";
-  /* 사전예약(PRE-ORDER) 시뮬레이션 (8/27 서우 개정: 알림 아니라 예약구매, 9/5 오픈): ?state=teaser = 사전예약 진행 중 / ?state=dday = 오픈 전 카운트다운 */
+  /* 8/28 서우: 기본 진입 = 사전예약 화면. 판매 화면은 ?state=sale (eb_closed·sold_out은 판매 계열 렌더,
+     ?state=teaser는 레거시 URL로 동일 동작, ?state=dday = 오픈 전 카운트다운) */
   const preMode: "pre" | "dday" | null =
-    stateParam === "teaser" ? "pre" : stateParam === "dday" ? "dday" : null;
+    stateParam === "dday" ? "dday"
+    : stateParam === "sale" || stateParam === "eb_closed" || stateParam === "sold_out" ? null
+    : "pre";
 
   const inv = MOCK_INVENTORY[phase]; // GET /api/inventory 대응 지점
   const { remain } = calc(inv);
@@ -128,14 +131,14 @@ export default function Landing() {
         right={<>
           {preMode ? (
             <>
-              <Link href="/" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
+              <Link href="/?state=sale" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
               {preMode === "pre"
                 ? <Link href="/?state=dday" style={previewChip}>{en ? "D-day view" : "오픈 당일 보기"}</Link>
-                : <Link href="/?state=teaser" style={previewChip}>{en ? "Pre-order view" : "사전예약 보기"}</Link>}
+                : <Link href="/" style={previewChip}>{en ? "Pre-order view" : "사전예약 보기"}</Link>}
             </>
           ) : soldOut ? (
             <>
-              <Link href="/" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
+              <Link href="/?state=sale" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
               <a
                 href={LINKS.telegram} target="_blank" rel="noopener"
                 style={{ display: "inline-flex", background: "var(--w-main)", color: "#fff", fontSize: 16, fontWeight: 800, borderRadius: 9, padding: "8px 14px", textDecoration: "none" }}
@@ -145,7 +148,7 @@ export default function Landing() {
             </>
           ) : (
             <>
-              <Link href="/?state=teaser" style={previewChip}>{en ? "Pre-order view" : "사전예약 보기"}</Link>
+              <Link href="/" style={previewChip}>{en ? "Pre-order view" : "사전예약 보기"}</Link>
               <Link href="/?state=sold_out" className="desk-only" style={previewChip}>{en ? "Sold-out view" : "완판 화면 보기"}</Link>
             </>
           )}
@@ -270,7 +273,7 @@ export default function Landing() {
                 /* 누적·D-day 글래스 스탯 테이블 (8/28 서우: 줄글 → "현재 N대 사전예약 | 판매 오픈 D-n",
                    글래스 = 비전 카드와 동일 rgba .3 + blur 14px) */
                 <div className="pre-stat" style={{
-                  /* 8/28 서우: 글래스 테두리 제거 */ background: "rgba(255,255,255,.3)",
+                  /* 8/28 서우: 테두리 제거 + 흰 배경 30% 추가 약화(.3→.21), 블러는 유지 */ background: "rgba(255,255,255,.21)",
                   backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
                   borderRadius: 14, padding: "14px 22px", marginTop: 4, boxShadow: "0 8px 32px rgba(0,0,0,.18)",
                 }}>
