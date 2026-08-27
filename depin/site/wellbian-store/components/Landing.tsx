@@ -65,8 +65,17 @@ export default function Landing() {
   /* 히어로 배경 롤링 (8/27 후보 4장 비교) — 6초 크로스페이드, reduced-motion 시 고정 */
   const [heroBg, setHeroBg] = useState(0);
   useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (HERO_BGS.length < 2 || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const t = setInterval(() => setHeroBg((i) => (i + 1) % HERO_BGS.length), 6000);
+    return () => clearInterval(t);
+  }, []);
+
+  /* 제품 스펙 갤러리 (8/27) — 5초 자동 롤링 + 수동 내비, 스펙 표는 더보기로 감춤 */
+  const [specImg, setSpecImg] = useState(0);
+  const [specOpen, setSpecOpen] = useState(false);
+  useEffect(() => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(() => setSpecImg((i) => (i + 1) % SPEC_GALLERY.length), 5000);
     return () => clearInterval(t);
   }, []);
 
@@ -151,11 +160,11 @@ export default function Landing() {
           /* 1i 완판 히어로 */
           <div className="hero-grid" style={{ alignItems: "center" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              {/* wellbian X XRP LEDGER 락업 (8/27 서우) */}
-              <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
-                <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} style={{ height: 24, width: "auto" }} />
-                <span style={{ fontSize: 15, fontWeight: 700, color: "rgba(255,255,255,.5)" }}>X</span>
-                <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} style={{ height: 18, width: "auto", opacity: 0.92 }} />
+              {/* wellbian X XRP LEDGER 락업 — 3배 확대 (8/27 서우), 크기는 CSS .hero-lockup */}
+              <div className="hero-lockup">
+                <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} className="lk-wb" />
+                <span className="lk-x">X</span>
+                <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} className="lk-xrpl" />
               </div>
               <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
                 WEATHER DATA ECONOMY
@@ -196,11 +205,11 @@ export default function Landing() {
         ) : (
           <div className="hero-grid">
             <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-              {/* wellbian X XRP LEDGER 락업 (8/27 서우) */}
-              <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
-                <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} style={{ height: 24, width: "auto" }} />
-                <span style={{ fontSize: 15, fontWeight: 700, color: "rgba(255,255,255,.5)" }}>X</span>
-                <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} style={{ height: 18, width: "auto", opacity: 0.92 }} />
+              {/* wellbian X XRP LEDGER 락업 — 3배 확대 (8/27 서우), 크기는 CSS .hero-lockup */}
+              <div className="hero-lockup">
+                <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} className="lk-wb" />
+                <span className="lk-x">X</span>
+                <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} className="lk-xrpl" />
               </div>
               <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
                 WEATHER DATA ECONOMY
@@ -327,38 +336,53 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── S3 제품 스펙 ── */}
+      {/* ── S3 제품 — 제품명 + 갤러리 롤링 + 스펙 더보기 (8/27 개편) ── */}
       <section className="sec-pad" style={{ background: "var(--sec-alt)" }} id="spec">
-        <div className="wrap spec-grid">
-          {/* 제품 이미지 좌측 · 스펙 테이블 우측 */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ width: "100%", height: 380, borderRadius: 14, border: "1px solid var(--bd-card)", overflow: "hidden" }}>
-              <Image src="/assets/spec-package.jpg" alt={en ? "Weather Data Token Generator package and product" : "Weather Data Token Generator 패키지 및 제품"} width={1000} height={749} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-            </div>
-            <div style={{ border: "1px solid var(--bd-card)", borderRadius: 12, background: "#fff", padding: "18px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
-              <div style={{ fontSize: 18, fontWeight: 800, color: "var(--w-deep)" }}>
-                {en ? "Weather Data Token Generator™ (Indoor Air Quality Monitor)" : "날씨데이터토큰생성기™ (실내공기측정기)"}
-              </div>
-              <div style={{ fontSize: 17, color: "var(--ink-4)" }}>{en ? "Model: ARC-600DA" : "모델명: ARC-600DA"}</div>
-              <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                <span style={certChip}>{en ? "KC Certified" : "KC 인증"}</span>
-                <span style={certChip}>{en ? "Performance Certified" : "성능인증"}</span>
-              </div>
+        <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 26 }}>
+          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 10 }}>
+            <h2 style={h2}>{en ? "Weather Data Token Generator™" : "날씨데이터토큰생성기™"}</h2>
+            <p style={{ fontSize: 19, color: "var(--ink-4)" }}>
+              {en ? "Indoor Air Quality Monitor · Model ARC-600DA" : "실내공기측정기 · 모델명 ARC-600DA"}
+            </p>
+            <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+              <span style={certChip}>{en ? "KC Certified" : "KC 인증"}</span>
+              <span style={certChip}>{en ? "Performance Certified" : "성능인증"}</span>
             </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <h2 style={h2}>{en ? "Specifications" : "제품 스펙"}</h2>
-            {/* 15행 — 행 간격 압축 */}
-            <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid var(--w-deep)" }}>
-              {specs.map((s, i) => (
-                /* 모바일: 5행 축약 (PRD §6.1) */
-                <div key={s.k} className={i >= 5 ? "desk-only" : undefined} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "7px 4px", borderBottom: "1px solid var(--line)", fontSize: 17.5, lineHeight: 1.45 }}>
-                  <span style={{ fontWeight: 700, color: "var(--w-deep)" }}>{s.k}</span>
-                  <span style={{ color: "var(--ink-2)" }}>{s.v}</span>
-                </div>
+          <div className="spec-gallery">
+            {SPEC_GALLERY.map((g, i) => (
+              <div key={g.src} className={`spec-slide${g.contain ? " fit-contain" : ""}${i === specImg ? " on" : ""}`}>
+                <Image src={g.src} alt={en ? g.altEn : g.alt} width={1600} height={900} />
+              </div>
+            ))}
+            <button className="spec-nav prev" aria-label={en ? "Previous image" : "이전 이미지"} onClick={() => setSpecImg((i) => (i - 1 + SPEC_GALLERY.length) % SPEC_GALLERY.length)}>‹</button>
+            <button className="spec-nav next" aria-label={en ? "Next image" : "다음 이미지"} onClick={() => setSpecImg((i) => (i + 1) % SPEC_GALLERY.length)}>›</button>
+            <div className="spec-dots">
+              {SPEC_GALLERY.map((g, i) => (
+                <button key={g.src} className={`spec-dot${i === specImg ? " on" : ""}`} aria-label={`${en ? "Image" : "이미지"} ${i + 1}`} onClick={() => setSpecImg(i)} />
               ))}
             </div>
-            <div style={{ fontSize: 15.5, color: "var(--hint)" }}>{en ? "Based on the manufacturer's official specification sheet." : "제조사 공식 사양표 기준입니다."}</div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "center" }}>
+            <button onClick={() => setSpecOpen(!specOpen)} aria-expanded={specOpen} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 18, fontWeight: 700, color: "var(--w-main)" }}>
+              {specOpen ? (en ? "Hide specifications" : "제품 스펙 접기") : (en ? "See full specifications" : "제품 스펙 더보기")}
+              <span style={{ display: "inline-flex", transform: specOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
+                <ChevD size={15} color="var(--w-main)" />
+              </span>
+            </button>
+            {specOpen && (
+              <div className="step-in" style={{ width: "100%", maxWidth: 760, display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid var(--w-deep)", background: "#fff", borderRadius: "0 0 12px 12px", padding: "0 16px" }}>
+                  {specs.map((s) => (
+                    <div key={s.k} style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 14, padding: "9px 4px", borderBottom: "1px solid var(--line)", fontSize: 17.5, lineHeight: 1.45 }}>
+                      <span style={{ fontWeight: 700, color: "var(--w-deep)" }}>{s.k}</span>
+                      <span style={{ color: "var(--ink-2)" }}>{s.v}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ fontSize: 15.5, color: "var(--hint)", textAlign: "center" }}>{en ? "Based on the manufacturer's official specification sheet." : "제조사 공식 사양표 기준입니다."}</div>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -596,8 +620,17 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
   );
 }
 
-/* 히어로 배경 후보 4장 (8/27 롤링 비교: 원본 블루 / 블루+퍼플 / 풀 퍼플 / 그린→퍼플) */
-const HERO_BGS = ["/assets/hero-bg.jpg", "/assets/hero-bg-2.jpg", "/assets/hero-bg-3.jpg", "/assets/hero-bg-4.jpg"];
+/* 히어로 배경 — 블루+퍼플 확정 (8/27 서우). 나머지 후보(hero-bg.jpg·-3·-4)는 hide, 파일 유지 —
+   재비교 시 배열에 다시 넣으면 롤링 복원 */
+const HERO_BGS = ["/assets/hero-bg-2.jpg"];
+
+/* 제품 스펙 갤러리 4컷 (8/27) — 패키지 · 제품 단독 · 라이프스타일 · 데이터 연출 */
+const SPEC_GALLERY = [
+  { src: "/assets/spec-package.jpg", alt: "패키지와 제품", altEn: "Package and product", contain: false },
+  { src: "/assets/device.webp", alt: "제품 단독 컷", altEn: "Product", contain: true },
+  { src: "/assets/hero-life.webp", alt: "설치 라이프스타일 컷", altEn: "In-home lifestyle", contain: false },
+  { src: "/assets/hero-bg-2.jpg", alt: "데이터 연출 컷", altEn: "Data visual", contain: false },
+];
 
 /* ── 인라인 확장 가이드 콘텐츠 (8/27) — 약관 5조·구매 플로우·확정 정책 기준 ── */
 const WALLET_GUIDE = [

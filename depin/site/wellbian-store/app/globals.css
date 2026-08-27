@@ -167,6 +167,39 @@ h1, h2, h3, p { margin: 0; }
 .mstep-label { font-size: 15.5px; color: var(--dis); }
 .mstep-label.cur { font-weight: 700; color: var(--w-deep); }
 
+/* 히어로 wellbian X XRP LEDGER 락업 — 3배 확대 (8/27), 모바일은 폭 맞춰 축소 */
+.hero-lockup { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.hero-lockup .lk-wb { height: 72px; width: auto; }
+.hero-lockup .lk-x { font-size: 44px; font-weight: 700; color: rgba(255, 255, 255, .5); line-height: 1; }
+.hero-lockup .lk-xrpl { height: 54px; width: auto; opacity: .92; }
+@media (max-width: 720px) {
+  .hero-lockup { gap: 12px; }
+  .hero-lockup .lk-wb { height: 44px; }
+  .hero-lockup .lk-x { font-size: 27px; }
+  .hero-lockup .lk-xrpl { height: 33px; }
+}
+
+/* 제품 스펙 갤러리 캐러셀 (8/27) — 페이드 롤링 + 도트 + 좌우 버튼 */
+.spec-gallery { position: relative; width: 100%; max-width: 880px; margin: 0 auto; height: 430px; border-radius: 16px; overflow: hidden; border: 1px solid var(--bd-card); background: #fff; }
+.spec-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease; }
+.spec-slide.on { opacity: 1; }
+.spec-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.spec-slide.fit-contain img { object-fit: contain; padding: 24px; }
+.spec-nav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+  width: 42px; height: 42px; border-radius: 99px; background: rgba(27, 27, 72, .55); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 21px; font-weight: 800;
+  transition: background .15s;
+}
+.spec-nav:hover { background: rgba(27, 27, 72, .8); }
+.spec-nav.prev { left: 14px; }
+.spec-nav.next { right: 14px; }
+.spec-dots { position: absolute; bottom: 14px; left: 0; right: 0; z-index: 2; display: flex; justify-content: center; gap: 8px; }
+.spec-dot { width: 9px; height: 9px; border-radius: 99px; background: rgba(27, 27, 72, .25); transition: background .15s, transform .15s; }
+.spec-dot.on { background: var(--w-main); transform: scale(1.25); }
+@media (max-width: 720px) { .spec-gallery { height: 250px; } .spec-nav { width: 36px; height: 36px; } }
+@media (prefers-reduced-motion: reduce) { .spec-slide { transition: none; } }
+
 /* 모바일 히어로 CTA: 구매 버튼 전폭 → X·텔레그램은 확실히 다음 줄에 나란히 */
 @media (max-width: 720px) {
   .hero-cta-row .hero-buy-btn { width: 100%; }
