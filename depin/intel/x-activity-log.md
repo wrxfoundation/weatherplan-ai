@@ -81,6 +81,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | **5e** | 원글: "분쟁이 끝나는 곳" — 환불 증거 = 온체인 NFT 발급 기록(8/25 실무 소재), 5b 후속 실행 사례. 원고·이미지 프롬프트 `depin/content/refund-ledger-post.md` | 금(8/28) 저녁 — 주간 4부작 마무리 (수=enterprise stack 페그 마지막 창, 목=5c) |
 | 5d | 원글(생활): "실내 열중증 — 더위 지도가 끊기는 곳" — CO₂ 후속 계열, 시즌 페그(늦더위). 훅: "Most heatstroke doesn't happen under the sun. It happens indoors — where nobody measures." #AirQuality #DePIN | 차주 월~화 (8/31~9/1) — 늦더위 윈도우 내 |
 | 6 | 원글: "왜 RLUSD인가" | 9/8 주간 (예약분) |
+| **8** | **9/5 Flare 워크숍 (케이웨더×Flare 파트너십 공개 무대)** — ⓐ **사전**: Flare 공식·타임레버리지·디센트가 행사 공지 글 올리면 인용 검토(파트너 결 — "우리 기기 파트너와 생태계 파트너들이 한 무대에" 프레임, 주최 행세 금지·Luma 직링크 원글 비권장) ⓑ **사후(9/5 저녁~9/6)**: 파트너십 발표 = 원글급 소재 — 공개 무대 발표 이후라 KWeather×Flare 자유 발화, 9/15 D-10 예열로 최적. 이미지 = 현장 사진(서우 수급) | 사전 = 트리거 대기 · 사후 = 9/5 저녁 |
 
 ### 패스 추가 (8/23)
 
