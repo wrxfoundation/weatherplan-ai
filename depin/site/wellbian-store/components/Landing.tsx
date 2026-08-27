@@ -514,16 +514,17 @@ export default function Landing() {
             <HowCard icon={<Chart />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
           </div>
           {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
-          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", /* 8/28 서우: 글래스 테두리 제거 */ background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
+          {/* 8/28 서우 2차: 비전·선순환 카드 테두리 원복 (히어로 스탯 테이블만 보더리스 유지) */}
+          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
             <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
               {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
             </div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap", fontSize: 16.5, fontWeight: 700 }}>
-              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px" }}>{en ? "Verified air data" : "검증된 공기질 데이터"}</span>
+              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Verified air data" : "검증된 공기질 데이터"}</span>
               <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
-              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px" }}>{en ? "Real demand — enterprises · APIs · AI" : "실제 수요처 유통 — 기업 · API · AI"}</span>
+              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Real demand — enterprises · APIs · AI" : "실제 수요처 유통 — 기업 · API · AI"}</span>
               <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
-              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px" }}>{en ? "Revenue → the network keeps running" : "수익 → 네트워크 지속"}</span>
+              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Revenue → the network keeps running" : "수익 → 네트워크 지속"}</span>
               <span style={{ color: "var(--w-main)", fontSize: 21, fontWeight: 800 }}>↻</span>
             </div>
             <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
@@ -685,8 +686,9 @@ export default function Landing() {
 function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: React.ReactNode }) {
   return (
     /* 글래스 카드 (8/28 서우: 비전 배경 위 반투명 — 뒤 도시가 블러로 비침) */
-    <div style={{ /* 8/28 서우: 글래스 테두리 제거 */ background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
-      <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 14, background: "var(--w-tint)", color: "var(--w-main)" }}>{icon}</span>
+    /* 8/28 서우 2차: 카드 테두리 원복 + 아이콘 타일 옅은 1px 그림자 테두리 */
+    <div style={{ border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
+      <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 14, background: "var(--w-tint)", color: "var(--w-main)", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 2px 8px rgba(27,27,72,.1)" }}>{icon}</span>
       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
       <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
     </div>

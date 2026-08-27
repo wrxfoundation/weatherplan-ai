@@ -3,7 +3,7 @@ import "./globals.css";
 import { LangProvider } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: "WELLBIAN — Weather Data Token Generator™",
+  title: "wellbian — Weather Data Token Generator™",
   description:
     "당신의 날씨 데이터를 가치로 바꾸세요. Weather Data Token Generator™ — RLUSD 결제.",
 };
