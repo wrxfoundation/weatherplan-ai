@@ -1,6 +1,7 @@
 "use client";
 /* 판매 랜딩 S0~S9 (PRD §6.1) + 엣지 상태 1h/1i (§6.4) — KO/EN 토글 지원 (§5.4)
-   EN 히어로 헤드라인은 상표 확정 슬로건 문자열("Turn your weather into value") 사용 */
+   EN 히어로 헤드라인 = 확정 슬로건 "Turn Your Weather Data into Value" (8/27 진행보고 기준,
+   Data 포함으로 재확정 — 상표 출원 문자열과 일치 여부는 변리사 트랙에서 재확인) */
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -137,7 +138,7 @@ export default function Landing() {
                 WEATHER DATA ECONOMY
               </div>
               <h1 style={{ fontSize: "clamp(27px, 4vw, 46px)", lineHeight: 1.25, fontWeight: 800, letterSpacing: "-.01em" }}>
-                {en ? <>Turn your weather<br />into value</> : <>당신의 날씨 데이터를<br />가치로 바꾸세요</>}
+                {en ? <>Turn your weather data<br />into value</> : <>당신의 날씨 데이터를<br />가치로 바꾸세요</>}
               </h1>
               <p style={{ fontSize: 16, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
                 <b style={{ color: "#fff" }}>Weather Data Token Generator™</b>
