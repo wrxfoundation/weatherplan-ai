@@ -251,10 +251,9 @@ export default function Landing() {
               <div ref={heroCtaRef} className="hero-cta-row" style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
                 {preMode === "pre" ? (
                   /* PRE-ORDER — 사전예약 = 실구매 (8/27 서우: 9/5부터 바로), 구매 모달 연결 */
-                  <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+                  /* 8/28 서우: 버튼은 "사전예약하기"만 — D-day는 아래 누적 라인으로 이동 */
+                  <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
                     {en ? "Pre-order now" : "사전예약하기"}
-                    {/* 판매 오픈(9/15)까지 D-day 병기 (8/27 서우) */}
-                    <span className="mono" style={{ padding: "3px 10px", borderRadius: 99, background: "rgba(255,255,255,.2)", fontSize: 15.5, fontWeight: 800, letterSpacing: ".03em" }}>{dSaleBadge}</span>
                   </button>
                 ) : preMode === "dday" ? (
                   /* 사전예약 오픈 카운트다운 (9/5) */
@@ -278,9 +277,10 @@ export default function Landing() {
               {preMode && (
                 /* 사전예약 누적 (목값 카운트업) */
                 <div style={{ fontSize: 17, color: "rgba(255,255,255,.75)" }}>
+                  {/* 8/28 서우: D-day "남았습니다" 표기 — 사회적 증거(누적)와 한 시야에 */}
                   {en
-                    ? <>So far <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> units pre-ordered</>
-                    : <>지금까지 <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>대가 사전예약되었습니다</>}
+                    ? <>So far <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> units pre-ordered · <b className="mono" style={{ color: "#fff" }}>{dSaleBadge}</b> until sales open</>
+                    : <>지금까지 <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>대가 사전예약되었습니다 · 판매 오픈까지 <b className="mono" style={{ color: "#fff" }}>{dSaleBadge}</b> 남았습니다</>}
                 </div>
               )}
             </div>
@@ -482,7 +482,8 @@ export default function Landing() {
       <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--sec-alt)" }} id="how">
         <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/vision-city.webp)", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
         {/* 화이트 스크림 — 상·하단 진하게(타이틀·면책 가독), 중단 옅게(도시가 비치게) */}
-        <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(255,255,255,.88) 0%, rgba(255,255,255,.5) 26%, rgba(255,255,255,.36) 62%, rgba(255,255,255,.86) 100%)", pointerEvents: "none" }} />
+        {/* 8/28 서우: 배경 더 밝게 — 중단 스크림 상향 */}
+        <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.68) 26%, rgba(255,255,255,.56) 62%, rgba(255,255,255,.9) 100%)", pointerEvents: "none" }} />
         <div className="wrap" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 34, textAlign: "center" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ fontSize: 15.5, fontWeight: 800, letterSpacing: ".14em", color: "var(--w-main)" }}>WEATHER DATA ECONOMY</div>
@@ -503,7 +504,7 @@ export default function Landing() {
             <HowCard icon={<Chart />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
           </div>
           {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
-          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid rgba(255,255,255,.75)", background: "rgba(255,255,255,.55)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
+          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
             <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
               {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
             </div>
@@ -639,11 +640,10 @@ export default function Landing() {
                 <span style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "Pre-ordered so far" : "사전예약 누적"}</span>
                 <span className="mono" style={{ fontSize: 23.5, fontWeight: 800, color: "var(--w-deep)" }}>{fmt(MOCK_PRENOTIFY)}</span>
                 <span style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "units" : "대"}</span>
+                <span style={{ fontSize: 15.5, color: "var(--cap)" }}>·</span>
+                <span className="mono" style={{ fontSize: 16.5, fontWeight: 800, color: "var(--w-main)" }}>{dSaleBadge}</span>
               </div>
-              <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px", display: "inline-flex", alignItems: "center", gap: 10 }}>
-                {en ? "Pre-order now" : "사전예약하기"}
-                <span className="mono" style={{ padding: "2px 9px", borderRadius: 99, background: "rgba(255,255,255,.2)", fontSize: 14, fontWeight: 800, letterSpacing: ".03em" }}>{dSaleBadge}</span>
-              </button>
+              <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px" }}>{en ? "Pre-order now" : "사전예약하기"}</button>
             </div>
           ) : (
           <div className="stickybar-in">
@@ -675,7 +675,7 @@ export default function Landing() {
 function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: React.ReactNode }) {
   return (
     /* 글래스 카드 (8/28 서우: 비전 배경 위 반투명 — 뒤 도시가 블러로 비침) */
-    <div style={{ border: "1px solid rgba(255,255,255,.75)", background: "rgba(255,255,255,.55)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
+    <div style={{ border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
       <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 14, background: "var(--w-tint)", color: "var(--w-main)" }}>{icon}</span>
       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
       <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
