@@ -167,6 +167,9 @@ h1, h2, h3, p { margin: 0; }
 .mstep-label { font-size: 15.5px; color: var(--dis); }
 .mstep-label.cur { font-weight: 700; color: var(--w-deep); }
 
+/* EN 히어로 h1 — PC에서 의도한 2줄 고정 (8/27 서우: 추가 랩 금지) */
+@media (min-width: 721px) { .hero-h1-en { white-space: nowrap; } }
+
 /* 히어로 wellbian X XRP LEDGER 락업 — 1.5배 규모 (8/27 2차: 3배가 과대 → 1/2 축소) */
 .hero-lockup { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .hero-lockup .lk-wb { height: 36px; width: auto; }

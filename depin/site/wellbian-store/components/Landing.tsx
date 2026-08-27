@@ -214,7 +214,7 @@ export default function Landing() {
               <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
                 WEATHER DATA ECONOMY
               </div>
-              <h1 style={{ fontSize: "clamp(35px, 5.2vw, 60px)", lineHeight: 1.25, fontWeight: 800, letterSpacing: "-.01em" }}>
+              <h1 className={en ? "hero-h1-en" : undefined} style={{ fontSize: en ? "clamp(31px, 3.7vw, 48px)" : "clamp(35px, 5.2vw, 60px)", lineHeight: 1.25, fontWeight: 800, letterSpacing: "-.01em" }}>
                 {en ? <>Turn your weather data<br />into value</> : <>당신의 날씨 데이터를<br />가치로 바꾸세요</>}
               </h1>
               <p style={{ fontSize: 21, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
@@ -479,8 +479,8 @@ export default function Landing() {
             </div>
             <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
               {en
-                ? "The verified air-quality data our nodes produce flows to real buyers — enterprises, APIs, AI services. The more it is used, the stronger the demand, and that demand is what keeps the network running."
-                : "노드가 모은 검증된 공기질 데이터는 기업·API·AI 서비스 같은 실제 수요처로 유통됩니다. 데이터가 쓰일수록 수요가 커지고, 그 수요가 다시 네트워크를 지속시키는 힘이 됩니다."}
+                ? <>The verified air-quality data our nodes produce flows to real buyers — enterprises, APIs, AI services.<br />The more it is used, the stronger the demand, and that demand is what keeps the network running.</>
+                : <>노드가 모은 검증된 공기질 데이터는 기업·API·AI 서비스 같은 실제 수요처로 유통됩니다.<br />데이터가 쓰일수록 수요가 커지고, 그 수요가 다시 네트워크를 지속시키는 힘이 됩니다.</>}
             </p>
           </div>
           <div style={{ fontSize: "clamp(23px, 2.8vw, 31px)", fontWeight: 800, color: "var(--w-main)", letterSpacing: "-.01em" }}>
