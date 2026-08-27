@@ -17,7 +17,7 @@ decide whether to trust and cite it — verification, not brand.
 
 ## What's live (as of 2026-07)
 
-- **5,000+ verified entities across 40 vertical hubs** — K-pop artists · dramas · films · webtoons ·
+- **5,000+ verified entities across 39 vertical hubs** — K-pop artists · dramas · films · webtoons ·
   places · food · companies · brands · books · history · heritage · folklore · hospitals · regions ·
   games · shows · animation · universities · classics · fashion · festivals · awards · holidays ·
   liquor · parks · museums · temples · stadiums · airports · theaters · theme parks · ski resorts ·

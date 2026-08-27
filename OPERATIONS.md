@@ -75,7 +75,7 @@ rails. A missing key is a graceful skip, never an error.
   nearby ≤30 km from verified P625, region-guide backlink, label-hub link, source-reconciliation note,
   Also-known-as, badge SVG, JSON-LD: typed node + sameAs + alternateName + dateModified + isPartOf +
   license + identifier + FAQPage + Breadcrumb).
-- **Hubs**: 40 vertical hubs (+/ko/), `/people.html`, `/label/<slug>.html` (+/ko/), region guides
+- **Hubs**: 39 vertical hubs (+/ko/), `/people.html`, `/label/<slug>.html` (+/ko/), region guides
   `/guide-<region>.html` (+/ko/, walkable clusters + TouristTrip), food guides `/food-<diet>.html`
   (+/ko/), `/guides.html` index (+/ko/), `/whats-new.html` (+/ko/), `/search.html` (+/ko/, ?q= deep
   links) over `search-index.json` (entities + people + labels), `/verify.html` (+/ko/, the trustless
@@ -119,7 +119,12 @@ increasingly hold trading/payment tool scopes, so:
 
 ## Verification layers (what protects a deploy)
 
-1. `test.yml` — full offline suite (~350) + ruff on every push.
+0. `tests/test_doc_drift.py` — every countable claim these docs make (endpoint lists, CLI commands,
+   tool/hub/product counts, key-gated rails, the roster/gate relationship, the surfaces inventory)
+   is DERIVED from the code that owns it. An audit found every pinned claim true and every unpinned
+   one drifted, so the rule is now an invariant (PRINCIPLES #8): never fix drift without adding the
+   pin that catches it next time.
+1. `test.yml` — full offline suite (~445) + ruff on every push.
 2. `tests/test_frontend_integrity.py` — builds the real site, validates every JSON-LD block, link,
    badge SVG, placeholder/None leak.
 3. Adversarial-data QA (session scratch scripts) — naive datetimes, junk aliases, string coords,

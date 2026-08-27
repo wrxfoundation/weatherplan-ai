@@ -46,6 +46,14 @@ Demand ↑ + our cost ↓ + history compounding = the flywheel **accelerates** w
 5. **Prefer transaction-attached revenue** (commission) over pure read fees.
 6. **Use cheap AI as collection labor;** collection cost should fall as models improve.
 7. **One source of truth, two faces** (agent MCP + human console) — never a second data path.
+8. **A doc claim the code owns must be pinned by a test.** Any number, list, or name a doc asserts
+   about the system (endpoint lists, CLI commands, tool/hub/product counts, key-gated rails,
+   workflow wiring) gets a guard in `tests/test_doc_drift.py` that DERIVES it from the code. An
+   audit of this repo found every pinned claim still true and every unpinned one drifted — the pin
+   is the mechanism, not the discipline. Never fix drift without adding the pin that catches it.
+9. **Degrade to a miss, never to a wrong record.** Every gate — identity, type, grounding,
+   injection — drops the value instead of repairing it. A missing field is honest; a silently
+   corrected one is the exact failure this product exists to prevent.
 
 ## The main long-term risk (and the answer)
 Disintermediation by a model/platform building the Korean layer themselves. Answer:

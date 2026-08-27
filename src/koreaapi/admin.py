@@ -7,7 +7,9 @@ agents read - never a second data path.
 
 CLI:
   python -m koreaapi.admin seed     # populate koreaapi.db with sample snapshots (offline)
+  python -m koreaapi.admin bootstrap # SELF-HEAL: re-seed from the LIVE /latest.json if the store reset
   python -m koreaapi.admin pull     # LIVE: pull real Wikidata snapshots (needs network egress)
+  python -m koreaapi.admin refresh [n] # LIVE: re-verify the n stalest discovered entities (oldest first)
   python -m koreaapi.admin chart    # LIVE: Circle Chart weekly + LLM-extract (needs egress + key)
   python -m koreaapi.admin boxoffice # LIVE: KOFIC/KOBIS film box office (dormant until KOBIS_API_KEY)
   python -m koreaapi.admin scancontent # audit the STORED corpus for prompt-injection-shaped text
@@ -29,6 +31,11 @@ CLI:
   python -m koreaapi.admin entitypages  # write per-entity + per-person citable pages (site/)
   python -m koreaapi.admin sitemap  # write sitemap.xml (every entity + person page)
   python -m koreaapi.admin monitor  # write monitor.html (human data-quality cockpit)
+  python -m koreaapi.admin verifysite [dir] [min] # PRE-DEPLOY GATE: validate the assembled site
+  python -m koreaapi.admin audit [fix] # store-wide P31 type re-check (fix removes same-name impostors)
+  python -m koreaapi.admin prune    # remove mis-discovered entities (hard delete; refresh can't resurrect)
+  python -m koreaapi.admin answer <product> <query> # run one Answer Product from the CLI
+  python -m koreaapi.admin certifyclaim <entity_id> <domain> [org] # gate an official certification claim
 
 For zero-code interactive browse / query / JSON API:  datasette koreaapi.db
 """

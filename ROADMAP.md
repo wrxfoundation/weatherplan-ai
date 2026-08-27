@@ -398,3 +398,43 @@ x402 ceiling, so per-call verified data is economically usable there.
 ⛔ **Not absorbed:** trading, order routing, custody, wallet integration, or anything that makes
 KoreaAPI an actor rather than a source · registering on any external platform (an outward-facing
 action — owner's call, not the agent's) · token issuance (permanent guardrail).
+
+---
+
+## Absorbed from LilMGenius/paperthin — agentic engineering discipline, 2026-08-26
+
+paperthin ships ~28 plain-Markdown skills that make old engineering wisdom reflexive for an agent,
+organized on a cardinality × time grid (`depth` one artifact now · `breadth` many artifacts now ·
+`coil` one project across iterations · `mesh` many minds). Its thesis: agents ADD, nothing makes
+them go back and delete, so every skill in the suite *removes* — "restraint is the product".
+
+**The absorbable insight — `ssotize` + `sip`, applied to us.** We had already been doing this ad
+hoc: hand-writing a guard test each time doc/code drift bit us (KOPIS/KHERITAGE secrets documented
+as wired but unmapped; the workflow `cp` lines; the install doc's tool list; the CI absolute paths;
+the stale Dockerfile comment). Running the audit as a *systematic* pass proved the pattern exactly:
+
+> **Every claim a test pinned was still true. Every unpinned claim had drifted.**
+
+Found and fixed: API.md documented only 8 of 15 live `/v1` endpoints (missing `/v1/answer`, the
+flagship, plus batch/certified/changes/history/metrics/resolve); the CLI help omitted 7 implemented
+commands, including the entire ops safety trio (`bootstrap`, `refresh`, `verifysite`); the vertical
+hub count was 40 in both README and OPERATIONS against 39 real (the new guard caught the second copy
+immediately). Verified-clean by the same pass: version, MCP tool count, roster/gate relationship,
+Answer Product count, payment-var docs.
+
+→ ✅ **SHIPPED**: `tests/test_doc_drift.py` — one home for the reflex, deriving each claim from the
+code that owns it (live routes, dispatcher branches, `_VERTICALS`, `list_products`, `NAMES`, env-gated
+keys, the surfaces inventory against a real build). PRINCIPLES gains invariants **8** (a doc claim the
+code owns must be pinned; never fix drift without adding the pin) and **9** (degrade to a miss, never
+to a wrong record — the rule every pipeline gate already followed, now stated).
+
+**Adopted as practice, not as files:** `sip` (run the repo's own checks on your own output before
+calling it done — ruff + pytest + a real build, already our habit) and `factchk` (verify an assertion
+against the source both ways). We keep them as doctrine here rather than vendoring the skills: this
+repo ships a *data* product, and its own agent-facing skill lane (`skills/koreaapi`) is for callers,
+not for maintainers.
+
+⛔ **Not absorbed:** the `.re0/` iteration-casebook filesystem and the `re0-plan/loop/memo/work`
+cycle (our loop is the collect→verify→deploy pipeline, already instrumented) · `re0-git`/`re0-release`
+(our release rail is the branch-bridge flow in OPERATIONS) · vendoring the skills themselves (they
+are agent-install artifacts, not a library this repo depends on).

@@ -12,10 +12,18 @@ HTTP/JSON, with the premium endpoint gated by **x402** (agents pay per call in U
 - `GET /v1/verified/{entity_id}` — cross-verification status + Skill Score
 - `GET /v1/artist/{artist_id}` — latest verified artist status
 - `GET /v1/person/{name}` — verified credits for a person
-- `GET /v1/related/{entity_id}` — entities sharing a 소속사 / network
+- `GET /v1/related/{entity_id}` — entities sharing a 소속사 / network (+ `nearby` for geo entities)
 - `GET /v1/agency/{name}` — artists under an agency
 - `GET /v1/calendar` — recent verified K-culture events
 - `GET /v1/buy-options/{item}` — where-to-buy (logs buy-intent)
+- `GET /v1/resolve/{query}` — a name, alias, or external ID → the canonical verified entity
+- `GET /v1/history/{entity_id}` — the append-only verified timeline + change events (the time moat)
+- `GET /v1/changes` — recent verified changes (소속사 moves, renames); `?since=` for the delta
+- `GET /v1/batch` — verify or resolve up to 100 ids/names in one round-trip (`?ids=a,b,c&op=`)
+- `GET /v1/certified` — entities an official rights-holder has certified
+- `GET /v1/metrics` — agent-consumption totals + the most-requested signals
+- `GET /v1/answer` — **Answer Products**: no params → the catalog; `?product=&q=` runs one;
+  `?q=` runs all; `?product=auto&q=` routes a free-text question (the `ask` front door)
 
 **Premium (x402-gated):**
 - `GET /v1/korea-rising` — the proprietary demand signal (queries + buy-intent). The one
