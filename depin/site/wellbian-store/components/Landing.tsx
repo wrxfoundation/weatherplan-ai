@@ -137,6 +137,9 @@ export default function Landing() {
           /* 1i 완판 히어로 */
           <div className="hero-grid" style={{ alignItems: "center" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
+                WEATHER DATA ECONOMY
+              </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                 <span className="pill" style={{ fontSize: 11, letterSpacing: ".1em", background: "rgba(255,255,255,.14)", padding: "5px 12px", color: "#fff" }}>SOLD OUT</span>
                 <span style={{ fontSize: 13, color: "rgba(255,255,255,.6)" }}>{en ? "All 5,000 units have been sold" : "총 5,000대가 모두 판매되었습니다"}</span>
@@ -144,6 +147,13 @@ export default function Landing() {
               <h1 style={{ fontSize: "clamp(27px, 3.4vw, 34px)", lineHeight: 1.3, fontWeight: 800 }}>
                 {en ? <>Sold out —<br />be the first to hear about Batch 2</> : <>완판되었습니다 —<br />2차 판매 소식을 가장 먼저 받아보세요</>}
               </h1>
+              <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
+                <b style={{ color: "#fff" }}>Weather Data Token Generator™</b>
+                <br />
+                {en
+                  ? "Just measure your indoor air — your verified data turns into value that comes back to you."
+                  : "실내 공기를 측정하는 것만으로, 검증된 내 데이터가 가치가 되어 돌아옵니다."}
+              </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, color: "rgba(255,255,255,.65)" }}>
                   <span>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span><span>{en ? "0 left · 100% sold" : "잔여 0대 · 100% 판매"}</span>
@@ -155,7 +165,7 @@ export default function Landing() {
                   <TgIcon size={15} /> {en ? "Join the community" : "커뮤니티 입장"}
                 </a>
                 <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 700, borderRadius: 12, padding: "15px 20px", textDecoration: "none" }}>
-                  <XIcon size={14} /> {en ? "Get updates" : "소식 받기"}
+                  <XIcon size={14} /> {en ? "Follow for updates" : "소식 팔로우"}
                 </a>
               </div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,.45)" }}>

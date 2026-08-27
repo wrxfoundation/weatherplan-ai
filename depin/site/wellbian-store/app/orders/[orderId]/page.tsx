@@ -97,10 +97,10 @@ export default function OrderPage() {
           <div style={{ fontSize: 14, fontWeight: 800, color: "var(--w-deep)", textAlign: "center" }}>{en ? "While you wait" : "기다리는 동안"}</div>
           <div className="rl-grid" style={{ gap: 12 }}>
             <a href={LINKS.x} target="_blank" rel="noopener" className="btn-ghost" style={{ padding: 15, fontSize: 13.5, textDecoration: "none" }}>
-              <XIcon size={14} /> {en ? "Follow on X" : "X 팔로우"}
+              <XIcon size={14} /> {en ? "Follow for updates" : "소식 팔로우"}
             </a>
             <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main" style={{ padding: 15, fontSize: 13.5, textDecoration: "none", color: "#fff" }}>
-              <TgIcon size={15} /> {en ? "Join Telegram" : "텔레그램 입장"}
+              <TgIcon size={15} /> {en ? "Join the community" : "커뮤니티 입장"}
             </a>
             <a href="/#setup" className="btn-ghost" style={{ padding: 15, fontSize: 13.5, textDecoration: "none" }}>
               <Book size={15} /> {en ? "Preview the setup guide" : "연동 가이드 미리보기"}

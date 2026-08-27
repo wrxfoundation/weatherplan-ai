@@ -95,10 +95,10 @@ export function CommunityFooter() {
           </div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main" style={{ fontSize: 14, borderRadius: 10, padding: "13px 20px", color: "#fff", textDecoration: "none" }}>
-              <TgIcon size={15} /> {en ? "Join Telegram" : "텔레그램 입장"}
+              <TgIcon size={15} /> {en ? "Join the community" : "커뮤니티 입장"}
             </a>
             <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 14, fontWeight: 800, borderRadius: 10, padding: "13px 20px", textDecoration: "none" }}>
-              <XIcon size={14} /> {en ? "Follow on X" : "X 팔로우"}
+              <XIcon size={14} /> {en ? "Follow for updates" : "소식 팔로우"}
             </a>
           </div>
         </div>
@@ -108,7 +108,8 @@ export function CommunityFooter() {
             <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>POWERED BY</span>
             <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={80} height={15} style={{ height: 15, width: "auto", opacity: 0.75 }} />
             <span style={{ width: 1, height: 14, background: "rgba(255,255,255,.25)" }} />
-            <span style={{ fontSize: 14, fontWeight: 800, letterSpacing: ".1em", color: "rgba(255,255,255,.78)" }}>KWEATHER</span>
+            {/* 케이웨더 워드마크 — 정식 CI 파일 수급 시 kw-white.png만 교체 */}
+            <Image src="/assets/kw-white.png" alt="KWEATHER" width={445} height={44} style={{ height: 13, width: "auto", opacity: 0.82 }} />
           </div>
           <nav style={{ display: "flex", gap: 20, fontSize: 12.5, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
             <a href={LINKS.terms} target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none" }}>
