@@ -95,18 +95,19 @@ export const FAQS = [
   { q: "가격이 어떻게 되나요?", a: "얼리버드 450 RLUSD(한정 수량), 이후 기본가 650 RLUSD입니다. 총 5,000대 한정 판매이며, 결제는 RLUSD로만 진행됩니다." },
   { q: "RLUSD는 어디서 구하나요?", a: "국내·해외 거래소에서 RLUSD를 구매한 뒤 XRPL 네트워크로 개인 지갑에 출금하면 됩니다. 출금 시 반드시 XRPL판 RLUSD를 선택하세요." },
   { q: "환불은 어떻게 되나요?", a: "제품 수령일부터 7일 이내 환불 가능합니다. 단, 리딤코드 사용 또는 노드 연동 시 환불이 제한됩니다(전자상거래법 제17조 제6항)." },
-  { q: "설치가 어렵지 않나요?", a: "박스 안 리딤카드 QR로 시작해 지갑 연결, 코드 입력, Wi-Fi 연결까지 약 3분이면 완료됩니다. 벽걸이·탁상 모두 지원합니다." },
+  { q: "설치가 어렵지 않나요?", a: "전원을 켠 뒤 스마트폰 블루투스로 기기를 연결해 집 Wi-Fi를 설정하는 것이 첫 순서입니다. 그다음 박스 안 리딤카드 QR로 지갑 연결·코드 입력까지 약 3분이면 완료됩니다. 벽걸이·탁상 모두 지원합니다." },
   { q: "지갑이 처음인데 괜찮나요?", a: "네. 등록 지갑 활성화(1 XRP)는 1회 지원됩니다(약관 제5조). 지갑 생성부터 연동까지 가이드를 제공합니다." },
   { q: "보상은 어떻게 지급되나요?", a: "측정 데이터가 검증되면 네트워크 원칙에 따라 WLBN이 지급됩니다. 지급량과 가치는 보장되지 않습니다." },
   { q: "전기료가 많이 나오나요?", a: "상시 가동 기준 월 전기료는 1,000원 미만입니다." },
   { q: "제품 보증 기간은요?", a: "구매일로부터 1년 무상 보증입니다. 자세한 조건은 이용약관을 참고하세요." },
 ];
 
+/* 기본 순서(8/27 서우 확정): 수령 → 블루투스 페어링 → 집 Wi-Fi 연동이 선행, 그다음 리딤·NFT */
 export const LINK_STEPS: { n: string; t: string; d: string; d2?: string }[] = [
-  { n: "1", t: "리딤카드 QR 스캔", d: "박스 안 카드의 QR로 등록 페이지 진입" },
-  { n: "2", t: "지갑 연결", d: "처음이어도 가이드가 안내합니다" },
-  { n: "3", t: "코드 입력 & NFT 발급", d: "리딤코드로 정품 확인", d2: "제네시스 넘버가 영구 기록됩니다" },
-  { n: "4", t: "기기 Wi-Fi 연결", d: "노드 가동 시작 — 완료" },
+  { n: "1", t: "블루투스로 기기 연결", d: "전원을 켜고 스마트폰 블루투스로 기기를 인식합니다" },
+  { n: "2", t: "집 Wi-Fi 연동", d: "연결된 기기에 집 Wi-Fi를 설정합니다 — 측정 시작" },
+  { n: "3", t: "리딤카드 QR & 지갑 연결", d: "박스 안 카드의 QR로 등록 페이지 진입 — 처음이어도 안내합니다" },
+  { n: "4", t: "코드 입력 & NFT 발급", d: "리딤코드로 정품 확인 — 노드 가동 완료", d2: "제네시스 넘버가 영구 기록됩니다" },
 ];
 
 export const RL_STEPS = [
@@ -244,7 +245,7 @@ export const FAQS_EN = [
   { q: "How much does it cost?", a: "450 RLUSD early bird (limited quantity), then 650 RLUSD at the regular price. Batch 1 is limited to 5,000 units, and payment is in RLUSD only." },
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on a domestic or global exchange, then withdraw it to your personal wallet over the XRPL network. Always select the XRPL version of RLUSD when withdrawing." },
   { q: "What is the refund policy?", a: "Refunds are available within 7 days of receiving the product. Refunds are restricted once the redeem code is used or the node is linked (Korean E-Commerce Act, Art. 17-6)." },
-  { q: "Is setup difficult?", a: "Start with the QR on the redeem card in the box — wallet connection, code entry, and Wi-Fi setup take about 3 minutes. Wall and desktop mounting are both supported." },
+  { q: "Is setup difficult?", a: "First, power on and pair the device via Bluetooth to set up your home Wi-Fi. Then scan the redeem card QR in the box for wallet connection and code entry — about 3 minutes in total. Wall and desktop mounting are both supported." },
   { q: "I've never used a wallet. Is that okay?", a: "Yes. One-time wallet activation (1 XRP) is covered (Terms, Art. 5), and the guide walks you from wallet creation to node linking." },
   { q: "How are rewards paid?", a: "When your measurements are verified, WLBN is paid under network rules. Amounts and value are not guaranteed." },
   { q: "How much electricity does it use?", a: "Running around the clock costs under ₩1,000 a month." },
@@ -289,10 +290,10 @@ export const FAQS_EXTRA_EN = [
 ];
 
 export const LINK_STEPS_EN: { n: string; t: string; d: string; d2?: string }[] = [
-  { n: "1", t: "Scan the redeem card QR", d: "The card inside the box opens the registration page" },
-  { n: "2", t: "Connect your wallet", d: "First time? The guide walks you through" },
-  { n: "3", t: "Enter the code & mint your NFT", d: "The redeem code verifies authenticity", d2: "Your Genesis Number is recorded permanently" },
-  { n: "4", t: "Connect the device to Wi-Fi", d: "Your node goes live — done" },
+  { n: "1", t: "Pair the device via Bluetooth", d: "Power on and detect the device with your phone's Bluetooth" },
+  { n: "2", t: "Connect it to your home Wi-Fi", d: "Set up home Wi-Fi on the paired device — measurement starts" },
+  { n: "3", t: "Scan the redeem card QR & connect a wallet", d: "The card inside the box opens the registration page — guided even for first-timers" },
+  { n: "4", t: "Enter the code & mint your NFT", d: "The redeem code verifies authenticity — your node goes live", d2: "Your Genesis Number is recorded permanently" },
 ];
 
 export const RL_STEPS_EN = [

@@ -108,8 +108,10 @@ export function CommunityFooter() {
             <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>POWERED BY</span>
             <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={80} height={15} style={{ height: 15, width: "auto", opacity: 0.75 }} />
             <span style={{ width: 1, height: 14, background: "rgba(255,255,255,.25)" }} />
-            {/* 케이웨더 워드마크 — 정식 CI 파일 수급 시 kw-white.png만 교체 */}
-            <Image src="/assets/kw-white.png" alt="KWEATHER" width={445} height={44} style={{ height: 13, width: "auto", opacity: 0.82 }} />
+            {/* 케이웨더 워드마크 — 검은 로고를 흰 칩 위에 (8/27 서우: "검은색으로 제대로"). 정식 CI 파일 수급 시 kw-black.png만 교체 */}
+            <span style={{ display: "inline-flex", alignItems: "center", background: "#fff", borderRadius: 7, padding: "6px 12px" }}>
+              <Image src="/assets/kw-black.png" alt="KWEATHER" width={445} height={44} style={{ height: 14, width: "auto" }} />
+            </span>
           </div>
           <nav style={{ display: "flex", gap: 20, fontSize: 12.5, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
             <a href={LINKS.terms} target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none" }}>
