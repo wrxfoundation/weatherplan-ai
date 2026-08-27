@@ -423,6 +423,16 @@ official sensor is watching. Weather data shouldn't stop at the airport fence." 
 BNB 진영에서도 조직화 — 규제 스택 완비 스테이블(NYDFS RLUSD)의 우위 논거 배경(9/8 원글 6
 텍스처, 인용 없이 개념만).
 
+@_RichardTeng(바이낸스 CEO) bStocks 한 달 성과 자랑 글(8/27, Delphi Digital 인용) — ① 바이낸스
+진영 최고위 = heyibinance(8/25)·@BNBCHAIN(8/27) 확정 계열, 9/30까지 XRPL 단일 포지션상 관여
+금지 ② 거래소 자사 프로덕트 마일스톤($147억·30만 = 자사 발표 미검증 수치) = 3주째 자동 패스
+패턴(Bitrue·OKX·Bitget·heyibinance) ③ 구멍 테스트 실패(측정·데이터 0) + 토큰화 주식 = 래퍼
+무대. **무반응, 좋아요도 생략(진영 신호).** 텍스처 1건(Delphi 귀속 단서 필수): "동일 주식
+다중 발행 가능 → 래퍼보다 유통이 승부처" = **래퍼 코모디티화의 업계 자인** — 5b(래퍼 vs 원장)
+후속 반 발짝("차별화는 원장 연동·검증뿐") 재료. 메모: Teng "깊이(depth)" 어휘가 2n 시그니처
+후보 "Depth beats wrapping."과 표면 겹침 — 문맥 상이(유동성 깊이 vs 네이티브 통합 깊이)라
+사용 지장 없음.
+
 @evernorthxrp "Built In Nº 04" 노스트로/보스트로 교육 카드(8/26, 면책 문구 동반 시리즈물) —
 ① 구멍 테스트 실패: 코레스 뱅킹 유동성 주제라 측정·데이터 접점 0 — 보탤 발화가 일반론 칭찬
 (MBA 코멘트 계열)뿐 ② 투자 비히클 무대 감점 유지(8/25 판정 계승) ③ 시리즈 카드 = 뉴스 페그
