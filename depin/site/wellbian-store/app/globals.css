@@ -18,7 +18,8 @@
   --ok-text: #1e8e5a; --ok-dot: #4ade80; --ok-bg: #e9f7f0;
   --warn-text: #8a3535; --warn-icon: #c0392b; --warn-bg: #fdf3f2; --warn-bd: #f2c9c9;
 
-  --mono: ui-monospace, Menlo, monospace;
+  /* 숫자·코드 표기 = Montserrat (8/27 서우: 숫자 폰트 통일) · 본문 = Pretendard 일원화 */
+  --mono: "Montserrat", "Pretendard Variable", Pretendard, sans-serif;
 }
 html[data-theme="teal"] {
   --w-main: #00a991; --w-deep: #003b33; --w-tint: #e7f5f1;
@@ -39,7 +40,7 @@ a:hover { color: var(--w-deep); text-decoration: underline; }
 button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; padding: 0; }
 input { font: inherit; }
 h1, h2, h3, p { margin: 0; }
-.mono { font-family: var(--mono); }
+.mono { font-family: var(--mono); font-weight: 700; letter-spacing: .01em; }
 
 /* ── 공통 버튼 ── */
 .btn-main {

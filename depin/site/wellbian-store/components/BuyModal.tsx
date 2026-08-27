@@ -130,13 +130,13 @@ export default function BuyModal({
             {en ? (
               <>
                 <span>· Use − / + or <b style={{ color: "var(--ink-2)" }}>type a number</b> — bulk orders welcome</span>
-                <span>· Limited supply — <b style={{ color: "var(--ink-2)" }}>Genesis Numbers</b> are randomly assigned within the 5,000-unit run</span>
+                <span>· Limited supply — <b style={{ color: "var(--ink-2)" }}>Genesis Numbers</b> are randomly assigned at purchase</span>
                 <span>· Purchase limit: <b style={{ color: "var(--ink-2)" }}>up to 100 units per Google account</b></span>
               </>
             ) : (
               <>
                 <span>· − / + 버튼 또는 <b style={{ color: "var(--ink-2)" }}>숫자를 직접 입력</b>하세요 — 대량 구매 가능</span>
-                <span>· 한정 수량 — <b style={{ color: "var(--ink-2)" }}>제네시스 넘버</b>는 5,000대 안에서 무작위 배정됩니다</span>
+                <span>· 한정 수량 — <b style={{ color: "var(--ink-2)" }}>제네시스 넘버</b>는 구매 시 무작위 배정됩니다</span>
                 <span>· 구매 한도: <b style={{ color: "var(--ink-2)" }}>구글 계정 1개당 최대 100대</b></span>
               </>
             )}

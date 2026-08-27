@@ -203,7 +203,7 @@ export default function Landing() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                 <span className="pill" style={{ fontSize: 14.5, letterSpacing: ".1em", background: "rgba(255,255,255,.14)", padding: "5px 12px", color: "#fff" }}>SOLD OUT</span>
-                <span style={{ fontSize: 17, color: "rgba(255,255,255,.6)" }}>{en ? "All 5,000 units have been sold" : "총 5,000대가 모두 판매되었습니다"}</span>
+                <span style={{ fontSize: 17, color: "rgba(255,255,255,.6)" }}>{en ? "Batch 1 has sold out" : "1차 물량이 모두 판매되었습니다"}</span>
               </div>
               <h1 style={{ fontSize: "clamp(35px, 4.4vw, 44px)", lineHeight: 1.3, fontWeight: 800 }}>
                 {en ? <>Sold out —<br />be the first to hear about Batch 2</> : <>완판되었습니다 —<br />2차 판매 소식을 가장 먼저 받아보세요</>}
@@ -217,7 +217,7 @@ export default function Landing() {
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 440 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, color: "rgba(255,255,255,.65)" }}>
-                  <span>{en ? "0 left · 100% sold" : "잔여 0대 · 100% 판매"}</span><span>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span>
+                  <span>{en ? "0 left · 100% sold" : "잔여 0대 · 100% 판매"}</span>
                 </div>
                 <div className="track on-dark" style={{ height: 8 }}><i style={{ width: "100%" }} /></div>
               </div>
@@ -270,8 +270,8 @@ export default function Landing() {
                   </div>
                   <div style={{ fontSize: 16, color: "rgba(255,255,255,.72)" }}>
                     {en
-                      ? "Pre-order now and buy calmly on Sept 15 — no first-come rush. Genesis Numbers are assigned at purchase."
-                      : "사전예약하면 9월 15일 오픈 때 선착순 걱정 없이 구매할 수 있습니다 · 제네시스 넘버는 정식 구매 시 배정"}
+                      ? "Pre-ordering secures your right to buy on Sept 15, opening day — no first-come rush."
+                      : "사전예약하면 9월 15일 판매 당일 구매할 수 있는 권한을 받습니다 · 선착순 걱정 없이"}
                   </div>
                 </div>
               ) : (
@@ -279,9 +279,8 @@ export default function Landing() {
                 {/* 잔여·판매율을 좌측 선두로, 총량은 우측 보조로 (8/27 서우) */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                   <span style={{ fontSize: 18, fontWeight: 700 }}>
-                    {en ? <><b style={{ color: "#fff" }}>{fmt(remain)}</b> left · {pct}% sold</> : <>잔여 <b style={{ color: "#fff" }}>{fmt(remain)}</b>대 · {pct}% 판매</>}
+                    {en ? <><b className="mono" style={{ color: "#fff" }}>{fmt(remain)}</b> left · {pct}% sold</> : <>잔여 <b className="mono" style={{ color: "#fff" }}>{fmt(remain)}</b>대 · {pct}% 판매</>}
                   </span>
-                  <span style={{ fontSize: 16, color: "rgba(255,255,255,.65)" }}>{en ? "Limited to 5,000 units" : "총 5,000대 한정"}</span>
                 </div>
                 <div className="track on-dark" style={{ height: 8 }}><i style={{ width: `${Math.max(2, pct)}%` }} /></div>
               </div>
@@ -351,8 +350,8 @@ export default function Landing() {
             </div>
             <div style={{ fontSize: 14.5, color: "rgba(255,255,255,.45)" }}>
               {en
-                ? "Wallet prefixes are masked. Pre-orders gauge demand and hold your room — they are not capped at 5,000 and numbers are assigned at purchase."
-                : "지갑 주소는 앞자리만 표시됩니다. 사전예약은 수요 파악과 자리 확보 단계로, 5,000대 한정·제네시스 넘버 배정과 무관합니다."}
+                ? "Wallet prefixes are masked. Pre-orders gauge demand and hold your room — Genesis Numbers are assigned at purchase."
+                : "지갑 주소는 앞자리만 표시됩니다. 사전예약은 수요 파악과 자리 확보 단계이며, 제네시스 넘버는 정식 구매 시 배정됩니다."}
             </div>
           </div>
         </section>
@@ -363,7 +362,7 @@ export default function Landing() {
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
             <h2 style={h2}>{en ? "Price & Supply" : "가격 · 수량"}</h2>
-            <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Payment in RLUSD · limited to 5,000 units" : "결제는 RLUSD로 진행됩니다 · 총 5,000대 한정"}</p>
+            <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Payment in RLUSD" : "결제는 RLUSD로 진행됩니다"}</p>
           </div>
           <div className="price-grid">
             {/* 얼리버드 카드 */}
@@ -378,7 +377,7 @@ export default function Landing() {
               </span>
               <div style={{ fontSize: 19.5, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Early Bird" : "얼리버드"}</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)", textDecoration: ebClosed ? "line-through" : "none" }}>450</span>
+                <span className="mono" style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)", textDecoration: ebClosed ? "line-through" : "none" }}>450</span>
                 <span style={{ fontSize: 21, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
                 {!ebClosed && <span style={{ fontSize: 17, color: "var(--hint)", textDecoration: "line-through", marginLeft: 4 }}>650 RLUSD</span>}
               </div>
@@ -410,7 +409,7 @@ export default function Landing() {
               )}
               <div style={{ fontSize: 19.5, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Regular" : "일반"}</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)" }}>650</span>
+                <span className="mono" style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)" }}>650</span>
                 <span style={{ fontSize: 21, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -438,8 +437,8 @@ export default function Landing() {
             <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: 9, background: "var(--w-tint)", color: "var(--w-main)", fontWeight: 800, fontSize: 17, flex: "none" }}>#</span>
             <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-2)" }}>
               {en
-                ? <><b style={{ color: "var(--w-deep)" }}>Genesis Number</b> — randomly assigned within the 5,000-unit run and permanently recorded on your license NFT.</>
-                : <><b style={{ color: "var(--w-deep)" }}>제네시스 넘버</b> — 5,000대 한정 수량 안에서 무작위로 배정되며, 라이선스 NFT에 영구 기록됩니다.</>}
+                ? <><b style={{ color: "var(--w-deep)" }}>Genesis Number</b> — randomly assigned at purchase and permanently recorded on your license NFT.</>
+                : <><b style={{ color: "var(--w-deep)" }}>제네시스 넘버</b> — 구매 시 무작위로 배정되며, 라이선스 NFT에 영구 기록됩니다.</>}
             </div>
           </div>
         </div>
@@ -502,7 +501,7 @@ export default function Landing() {
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 26 }}>
           {/* 헤더 중앙 정렬 통일 (8/27 서우) */}
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
-            <h2 style={h2}>{en ? "Don't have RLUSD yet?" : "RLUSD가 없다면"}</h2>
+            <h2 style={h2}>{preMode ? (en ? "Pay with RLUSD on opening day" : "오픈 당일 RLUSD로 구매 가능합니다") : (en ? "Don't have RLUSD yet?" : "RLUSD가 없다면")}</h2>
             <p style={{ fontSize: 19, color: "var(--ink-4)" }}>
               {en ? "RLUSD — a USD-pegged stablecoin issued by Ripple" : "RLUSD — 미국 달러 1:1 연동 · 리플(Ripple) 발행 스테이블코인"}
             </p>
@@ -709,7 +708,7 @@ export default function Landing() {
             <div className="desk-only" style={{ display: "flex", flexDirection: "column", gap: 4, width: 190 }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15, color: "var(--ink-4)" }}>
                 <span>
-                  {en ? <><b style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b> of 5,000 left</> : <>잔여 <b style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b> / 5,000대</>}
+                  {en ? <><b className="mono" style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b> left</> : <>잔여 <b className="mono" style={{ color: "var(--w-deep)" }}>{fmt(remain)}</b>대</>}
                 </span><span>{pct}%</span>
               </div>
               <div className="track" style={{ height: 5, background: "var(--line)" }}><i style={{ width: `${Math.max(2, pct)}%` }} /></div>

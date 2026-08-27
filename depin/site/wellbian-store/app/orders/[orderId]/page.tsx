@@ -97,8 +97,8 @@ export default function OrderPage() {
           </div>
           <span style={{ fontSize: 12, lineHeight: 1.6, color: "var(--ink-4)" }}>
             {en
-              ? "Randomly assigned from the 5,000-unit pool at purchase — one per device. You'll enter these numbers on the shipping form, so keep a copy."
-              : "구매 시 총 5,000개 풀에서 무작위로 배정된 번호입니다 — 기기마다 1개. 배송 접수 폼에 이 번호를 입력하니 복사해 보관하세요."}
+              ? "Randomly assigned at purchase — one per device. You'll enter these numbers on the shipping form, so keep a copy."
+              : "구매 시 무작위로 배정된 번호입니다 — 기기마다 1개. 배송 접수 폼에 이 번호를 입력하니 복사해 보관하세요."}
           </span>
         </div>
 
