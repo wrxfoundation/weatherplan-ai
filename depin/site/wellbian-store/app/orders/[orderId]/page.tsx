@@ -2,7 +2,7 @@
 /* 1g 배송 대기 (데스크톱) + 1l (모바일 세로 타임라인) — PRD §3, §6.3 (8/27 개정:
    구매 확인 2요소 = 랜덤 배정 제네시스 넘버(구매 시 #1~5000 풀에서 수량만큼, 정렬·복사 지원)
    + 내 지갑 주소(구글 가입 시 자동 생성). 주문 ID는 내부 참조용. 배송 접수는 발송 2주 전부터
-   공지되는 폼에서 제네시스 넘버·내 지갑 주소·성함·연락처·배송지만 접수, 배송 후 파기) */
+   공지되는 폼에서 제네시스 넘버·내 지갑 주소·배송 정보만 접수, 배송 후 파기 — '배송 정보' = 성함·연락처·배송지 뭉뚱 표기, 8/27) */
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { SubHeader } from "@/components/chrome";
@@ -178,11 +178,11 @@ export default function OrderPage() {
             <span>
               {en ? (
                 <>
-                  <b style={{ color: "var(--ink-2)" }}>How shipping intake works.</b> Starting 2 weeks before devices ship, we announce the intake form on our official Telegram and X → enter your <b style={{ color: "var(--ink-2)" }}>Genesis Numbers · wallet address · name · phone · shipping address</b>, and units ship in order. We collect only what delivery requires and <b style={{ color: "var(--ink-2)" }}>delete it after delivery</b>. Your redeem code for product registration is on the card inside the box.
+                  <b style={{ color: "var(--ink-2)" }}>How shipping intake works.</b> Starting 2 weeks before devices ship, we announce the intake form on our official Telegram and X → enter your <b style={{ color: "var(--ink-2)" }}>Genesis Numbers · wallet address · shipping details</b>, and units ship in order. We collect only what delivery requires and <b style={{ color: "var(--ink-2)" }}>delete it after delivery</b>. Your redeem code for product registration is on the card inside the box.
                 </>
               ) : (
                 <>
-                  <b style={{ color: "var(--ink-2)" }}>배송 접수는 이렇게 진행됩니다.</b> 디바이스 발송 2주 전부터 공식 텔레그램·X로 접수 폼을 알려드립니다 → 폼에 <b style={{ color: "var(--ink-2)" }}>제네시스 넘버 · 내 지갑 주소 · 성함 · 연락처 · 배송지</b>를 입력하면 순서대로 발송합니다. 배송에 필요한 정보만 받고, <b style={{ color: "var(--ink-2)" }}>배송이 끝나면 파기</b>합니다. 정품 등록용 리딤코드는 박스 안 카드에 있습니다.
+                  <b style={{ color: "var(--ink-2)" }}>배송 접수는 이렇게 진행됩니다.</b> 디바이스 발송 2주 전부터 공식 텔레그램·X로 접수 폼을 알려드립니다 → 폼에 <b style={{ color: "var(--ink-2)" }}>제네시스 넘버 · 내 지갑 주소 · 배송 정보</b>를 입력하면 순서대로 발송합니다. 배송에 필요한 정보만 받고, <b style={{ color: "var(--ink-2)" }}>배송이 끝나면 파기</b>합니다. 정품 등록용 리딤코드는 박스 안 카드에 있습니다.
                 </>
               )}
             </span>

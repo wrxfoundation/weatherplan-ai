@@ -455,24 +455,32 @@ export default function Landing() {
             </p>
           </div>
           <div className="how-grid">
-            <HowCard icon={<Gauge />} title={en ? "① Measure" : "① 측정"} desc={en ? <>Measures indoor air —<br />CO₂, particulates, temperature & humidity</> : <>CO₂·미세먼지·온습도 등<br />실내 공기 데이터를 측정합니다</>} />
+            <HowCard icon={<Gauge />} title={en ? "① Measure" : "① 측정"} desc={en ? "Measures indoor air — CO₂, particulates, temperature & humidity" : "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정합니다"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<ShieldCheck />} title={en ? "② Verify" : "② 검증"} desc={en ? <>The network verifies<br />the integrity of your data</> : <>네트워크가 데이터의<br />무결성을 검증합니다</>} />
+            <HowCard icon={<ShieldCheck />} title={en ? "② Verify" : "② 검증"} desc={en ? "The network verifies the integrity of your data" : "네트워크가 데이터의 무결성을 검증합니다"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<Coin />} title={en ? "③ Reward" : "③ 보상"} desc={en ? <>Verified data earns WLBN<br />under network rules</> : <>검증된 데이터에 네트워크 원칙에<br />따라 WLBN이 지급됩니다</>} />
+            <HowCard icon={<Coin />} title={en ? "③ Reward" : "③ 보상"} desc={en ? "Verified data earns WLBN under network rules" : "검증된 데이터에 네트워크 원칙에 따라 WLBN이 지급됩니다"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<Chart />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? <>Accumulated data powers<br />APIs, AI, and weather services</> : <>축적된 데이터는 API·AI·<br />기상 서비스로 활용됩니다</>} />
+            <HowCard icon={<Chart />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
           </div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, flexWrap: "wrap", fontSize: 18, color: "var(--ink-2)" }}>
-            <span style={{ fontWeight: 800, color: "var(--w-deep)" }}>5,000</span>
-            <span style={{ color: "var(--arrow)" }}>→</span>
-            <span style={{ fontWeight: 800, color: "var(--w-deep)" }}>50,000</span>
-            <span style={{ color: "var(--arrow)" }}>→</span>
-            <span style={{ fontWeight: 800, color: "var(--w-deep)" }}>500,000+ nodes</span>
-            <span>{en ? "— the first 5,000 units start the network" : "— 첫 5,000대가 네트워크의 시작입니다"}</span>
-          </div>
-          <div style={{ fontSize: 16.5, fontWeight: 700, color: "var(--cap)" }}>
-            K-WEATHER = Weather Data Technology · WELLBIAN = Weather Data Economy
+          {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
+          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid var(--bd-card)", background: "#fff", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
+              {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap", fontSize: 16.5, fontWeight: 700 }}>
+              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px" }}>{en ? "Verified air data" : "검증된 공기질 데이터"}</span>
+              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
+              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px" }}>{en ? "Real demand — enterprises · APIs · AI" : "실제 수요처 유통 — 기업 · API · AI"}</span>
+              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
+              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px" }}>{en ? "Revenue → the network keeps running" : "수익 → 네트워크 지속"}</span>
+              <span style={{ color: "var(--w-main)", fontSize: 21, fontWeight: 800 }}>↻</span>
+            </div>
+            <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
+              {en
+                ? "The verified air-quality data our nodes produce flows to real buyers — enterprises, APIs, AI services. The more it is used, the stronger the demand, and that demand is what keeps the network running."
+                : "노드가 모은 검증된 공기질 데이터는 기업·API·AI 서비스 같은 실제 수요처로 유통됩니다. 데이터가 쓰일수록 수요가 커지고, 그 수요가 다시 네트워크를 지속시키는 힘이 됩니다."}
+            </p>
           </div>
           <div style={{ fontSize: "clamp(23px, 2.8vw, 31px)", fontWeight: 800, color: "var(--w-main)", letterSpacing: "-.01em" }}>
             Turn Your Weather Data into Value.

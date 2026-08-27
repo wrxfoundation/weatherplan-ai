@@ -3,7 +3,7 @@
    qty → wallet → terms → pay(hold 20m) → signing → confirmed | expired | mismatch
    confirmed 시 /orders/[id] 이동. 홀드 만료 시 qty 복귀(재고 반환). mismatch는 안내 후 재서명.
    개인정보(주소·연락처·이메일)는 사이트에서 받지 않음 — 배송 접수는 발송 2주 전부터
-   공지되는 별도 접수 폼(구글폼)에서 지갑 주소·주문번호·성함·연락처·배송지만 받고 배송 후 파기
+   공지되는 별도 접수 폼(구글폼)에서 제네시스 넘버·내 지갑 주소·배송 정보만 받고 배송 후 파기(대외 표기 '배송 정보' = 성함·연락처·배송지 뭉뚱, 8/27)
    (확인 2요소 = 랜덤 배정 제네시스 넘버 + 내 지갑 주소, 8/27 개정 — 구글 계정당 100대 한도). 동의는 환불 고지+배송 접수 방식 확인 2건만
    (포괄 이용약관 동의 없음 — 전체 약관은 푸터/메인에서 열람). KO/EN 토글 지원.
    전부 mock — mismatch 분기는 ?demo=mismatch로 재현(첫 서명만 불일치). */
@@ -201,12 +201,12 @@ export default function BuyModal({
               {en ? (
                 <>
                   <b style={{ color: "var(--w-deep)" }}>This site never collects your address or contact info.</b><br />
-                  Purchases are verified by two things: <b style={{ color: "var(--w-deep)" }}>your randomly assigned Genesis Numbers + your wallet address</b> (created automatically with your Google account). Starting 2 weeks before devices ship, the shipping form will be announced on our official Telegram and X — enter your Genesis Numbers, wallet address, name, phone, and shipping address there, and everything is deleted once delivery is complete.
+                  Purchases are verified by two things: <b style={{ color: "var(--w-deep)" }}>your randomly assigned Genesis Numbers + your wallet address</b> (created automatically with your Google account). Starting 2 weeks before devices ship, the shipping form will be announced on our official Telegram and X — enter your Genesis Numbers, wallet address, and shipping details there, and everything is deleted once delivery is complete.
                 </>
               ) : (
                 <>
                   <b style={{ color: "var(--w-deep)" }}>이 사이트는 주소·연락처를 받지 않습니다.</b><br />
-                  구매 확인은 <b style={{ color: "var(--w-deep)" }}>무작위 배정된 제네시스 넘버 + 내 지갑 주소</b>(구글 계정 가입 시 자동 생성) 두 가지로 합니다. 디바이스 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 알려드립니다 — 폼에 제네시스 넘버·내 지갑 주소·성함·연락처·배송지를 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
+                  구매 확인은 <b style={{ color: "var(--w-deep)" }}>무작위 배정된 제네시스 넘버 + 내 지갑 주소</b>(구글 계정 가입 시 자동 생성) 두 가지로 합니다. 디바이스 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 알려드립니다 — 폼에 제네시스 넘버·내 지갑 주소·배송 정보를 입력하면 되고, 배송이 끝나면 정보는 바로 파기됩니다.
                 </>
               )}
             </span>

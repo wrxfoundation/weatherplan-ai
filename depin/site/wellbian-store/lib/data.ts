@@ -20,7 +20,8 @@ export interface Order {
   paidAt: string;
   /* 확인 2요소(8/27 개정) = 랜덤 배정된 제네시스 넘버(구매 내역) + 내 지갑 주소.
      내 지갑 = 구글 계정 가입 시 자동 생성되는 간편 지갑(비수탁, 약관 제5조).
-     접수 폼 항목: 제네시스 넘버 · 내 지갑 주소 · 성함 · 연락처 · 배송지 — 배송 후 파기 */
+     접수 폼 항목(대외 표기): 제네시스 넘버 · 내 지갑 주소 · 배송 정보('배송 정보' = 성함·연락처·
+     배송지 뭉뚱 표기, 8/27 — web3 개인정보 거부감 완화. 실수집 항목은 폼에서만) — 배송 후 파기 */
   wallet: string;
 }
 
@@ -259,7 +260,7 @@ export const FAQS_EXTRA = [
   { q: "몇 대까지 구매할 수 있나요?", a: "구글 계정 1개당 최대 100대까지 구매할 수 있습니다. 대량 구매 시에도 기기마다 제네시스 넘버가 하나씩 배정됩니다." },
   { q: "제네시스 넘버가 뭔가요?", a: "구매가 확정될 때 총 5,000개 한정 수량 안에서 무작위로 배정되는 고유 번호입니다. 여러 대를 구매하면 수량만큼 배정되고, 주문 내역에서 정렬된 목록으로 확인·복사할 수 있습니다. 라이선스 NFT에 영구 기록되며, 어떤 번호든 5,000개뿐인 제네시스 노드 중 하나라는 표시입니다." },
   { q: "라이선스 NFT는 뭔가요?", a: "기기의 정품과 참여 자격을 증명하는 XRPL 기반 증서입니다. 박스 안 리딤코드로 발급받으며, 이 NFT를 보유한 기기만 보상 대상이 됩니다." },
-  { q: "배송은 언제, 어떻게 받나요?", a: "11월부터 순차 발송됩니다. 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 안내하며, 폼에 제네시스 넘버·내 지갑 주소·성함·연락처·배송지를 입력하면 순서대로 발송됩니다." },
+  { q: "배송은 언제, 어떻게 받나요?", a: "11월부터 순차 발송됩니다. 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 안내하며, 폼에 제네시스 넘버·내 지갑 주소·배송 정보를 입력하면 순서대로 발송됩니다." },
   { q: "배정된 제네시스 넘버는 어디서 확인하나요?", a: "구글 계정으로 로그인하면 주문 내역에서 정렬된 넘버 목록을 언제든 확인하고 복사할 수 있습니다." },
   { q: "사이트가 저장하는 개인정보는 뭔가요?", a: "구글 계정 로그인만 사용하며, 별도의 개인정보는 저장하지 않습니다. 가입하면 내 지갑이 자동으로 만들어지고, 배송 정보는 발송 전 접수 폼에서만 받아 배송이 끝나면 파기합니다." },
   { q: "리딤코드는 어디에 있나요?", a: "박스 안 카드에 인쇄되어 있습니다. 1개 코드는 1개 지갑에만 등록되며, 사용한 뒤에는 환불이 제한되니 등록 전에 결정해 주세요." },
@@ -277,7 +278,7 @@ export const FAQS_EXTRA_EN = [
   { q: "How many units can I buy?", a: "Up to 100 units per Google account. Even on bulk orders, each device gets its own Genesis Number." },
   { q: "What is a Genesis Number?", a: "A unique number randomly assigned from the 5,000-unit pool when your purchase is confirmed. Buy multiple units and you get one per device — viewable as a sorted, copyable list in your order history. Permanently recorded on your license NFT; whatever the number, it marks one of only 5,000 genesis nodes." },
   { q: "What is the license NFT?", a: "An XRPL-based certificate proving your device is genuine and eligible to participate. It is minted with the redeem code inside the box, and only devices holding this NFT earn rewards." },
-  { q: "When and how does shipping work?", a: "Units ship sequentially from November. Starting 2 weeks before dispatch, we announce the shipping form on our official Telegram and X — enter your Genesis Numbers, your wallet address, name, phone, and shipping address, and units ship in order." },
+  { q: "When and how does shipping work?", a: "Units ship sequentially from November. Starting 2 weeks before dispatch, we announce the shipping form on our official Telegram and X — enter your Genesis Numbers, your wallet address, and shipping details, and units ship in order." },
   { q: "Where do I find my assigned Genesis Numbers?", a: "Sign in with your Google account — your order history shows the sorted list, ready to copy, anytime." },
   { q: "What personal data does this site store?", a: "Only Google sign-in — nothing else is stored. Signing up creates your wallet automatically, and delivery details are collected only via the pre-shipping form, then deleted after delivery." },
   { q: "Where is the redeem code?", a: "Printed on the card inside the box. One code registers to one wallet only, and refunds are restricted once it is used — decide before you register." },
