@@ -229,17 +229,9 @@ export default function Landing() {
                   <span style={{ fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,.65)" }}>{en ? "Book now, buy calmly on Sept 15" : "예약하면 9월 15일에 여유 있게 구매"}</span>
                 </div>
               ) : preMode === "pre" ? (
-                /* 사전예약 중 (8/27 개정): 수요 파악·룸 확보 — 5,000 게이지 없음, 짧은 가격 + 우선 구매 안내 */
-                <div style={{ display: "flex", flexDirection: "column", gap: 6, maxWidth: 520, marginTop: 6 }}>
-                  <div style={{ fontSize: 18, fontWeight: 700 }}>
-                    {en ? <><b>650 RLUSD</b> per unit</> : <>대당 <b>650 RLUSD</b></>}
-                  </div>
-                  <div style={{ fontSize: 16, color: "rgba(255,255,255,.72)" }}>
-                    {/* "제네시스"부터 줄바꿈 (8/27 서우) — 구분점 · 은 줄바꿈이 대신하므로 제거 */}
-                    {en
-                      ? <>Pre-order now and buy calmly on Sept 15 — no first-come rush.<br />Genesis Numbers are randomly assigned at purchase.</>
-                      : <>사전예약하면 9월 15일 오픈 때 선착순 걱정 없이 구매할 수 있습니다<br />제네시스 넘버는 정식 구매 시 랜덤배정</>}
-                  </div>
+                /* 사전예약 중 (8/28 개정): 짧은 가격만 — 안내문은 보조 개념이라 히어로 맨하단 * 주석으로 이동 */
+                <div style={{ fontSize: 18, fontWeight: 700, maxWidth: 520, marginTop: 6 }}>
+                  {en ? <><b>650 RLUSD</b> per unit</> : <>대당 <b>650 RLUSD</b></>}
                 </div>
               ) : (
                 /* 판매 표기 = 판매 대수만 (8/27 서우: 잔여·%·게이지 제거) — flex 금지: 텍스트가 flex item으로 쪼개져 "대"가 벌어짐 */
@@ -275,12 +267,31 @@ export default function Landing() {
                 </div>
               </div>
               {preMode && (
-                /* 사전예약 누적 (목값 카운트업) */
-                <div style={{ fontSize: 17, color: "rgba(255,255,255,.75)" }}>
-                  {/* 8/28 서우: D-day "남았습니다" 표기 — 사회적 증거(누적)와 한 시야에 */}
+                /* 누적·D-day 글래스 스탯 테이블 (8/28 서우: 줄글 → "현재 N대 사전예약 | 판매 오픈 D-n",
+                   글래스 = 비전 카드와 동일 rgba .3 + blur 14px) */
+                <div style={{
+                  display: "inline-flex", alignItems: "center", gap: 18, flexWrap: "wrap", alignSelf: "flex-start",
+                  border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.3)",
+                  backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
+                  borderRadius: 14, padding: "14px 22px", marginTop: 4, boxShadow: "0 8px 32px rgba(0,0,0,.18)",
+                }}>
+                  <span style={{ fontSize: 16.5, fontWeight: 700, color: "#fff" }}>
+                    {en
+                      ? <><b className="mono" style={{ fontSize: 21 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> units pre-ordered</>
+                      : <>현재 <b className="mono" style={{ fontSize: 21 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>대 사전예약</>}
+                  </span>
+                  <span aria-hidden style={{ width: 1, height: 22, background: "rgba(255,255,255,.45)" }} />
+                  <span style={{ fontSize: 16.5, fontWeight: 700, color: "#fff" }}>
+                    {en ? <>Sales open <b className="mono" style={{ fontSize: 21 }}>{dSaleBadge}</b></> : <>판매 오픈 <b className="mono" style={{ fontSize: 21 }}>{dSaleBadge}</b></>}
+                  </span>
+                </div>
+              )}
+              {preMode === "pre" && (
+                /* 보조 개념 * 주석 — 히어로 맨하단, 작게 (8/28 서우 문구 개정) */
+                <div style={{ fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,.55)", maxWidth: 560 }}>
                   {en
-                    ? <>So far <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> units pre-ordered · <b className="mono" style={{ color: "#fff" }}>{dSaleBadge}</b> until sales open</>
-                    : <>지금까지 <b className="mono" style={{ color: "#fff", fontSize: 19 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>대가 사전예약되었습니다 · 판매 오픈까지 <b className="mono" style={{ color: "#fff" }}>{dSaleBadge}</b> 남았습니다</>}
+                    ? <>* Pre-order now and you can buy when sales open on Sept 15.<br />* Genesis Numbers are randomly assigned at purchase.</>
+                    : <>* 사전예약하면 9월 15일 오픈 때 구매 가능합니다.<br />* 제네시스 넘버는 구매 시 랜덤 배정됩니다.</>}
                 </div>
               )}
             </div>
