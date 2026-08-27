@@ -107,9 +107,10 @@ export default function Landing() {
     const today = Date.UTC(kst.getUTCFullYear(), kst.getUTCMonth(), kst.getUTCDate());
     return Math.max(0, Math.round((Date.UTC(y, m - 1, d) - today) / 86400000));
   };
-  const dSale = dDaysTo(2026, 9, 15); // 판매 오픈
-  const dPre = dDaysTo(2026, 9, 5);   // 사전예약 오픈
-  const dSaleBadge = dSale === 0 ? "D-DAY" : `D-${dSale}`;
+  const dPre = dDaysTo(2026, 9, 5); // 사전예약 오픈 (dday 시뮬 GNB용)
+  /* 8/28 서우: 사전예약 즉시 오픈 전제 — 자동 계산(현재 D-18) 대신 D-17 고정 표기.
+     실배포 시 `dDaysTo(2026, 9, 15)` 기반 자동 계산으로 복귀 */
+  const dSaleBadge = "D-17";
 
   /* 링크 복사 버튼 (8/27 서우: CTA 옆 링크 → X → 텔레그램 순) */
   const [linkCopied, setLinkCopied] = useState(false);
@@ -290,8 +291,8 @@ export default function Landing() {
       {/* ── S1b 사전예약 실시간 현황판 (teaser 전용, 8/27) — 크레딧 롤: 아래→위 + 상단 페이드아웃 ── */}
       {preMode === "pre" && (
         <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--w-deep)", color: "#fff", paddingTop: 48, paddingBottom: 48 }} aria-label={en ? "Live pre-order board" : "실시간 사전예약 현황"}>
-          {/* 조밀한 물결 무늬 패턴 — 옅은 흰 스트로크 62줄 (8/27 서우: 대리석 → 물결. marble.jpg·contour.svg는 보관) */}
-          <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/wave.svg)", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
+          {/* 노이즈 그레인 텍스처 — 256px 필름 그레인 타일 반복 (8/28 서우: 물결 → 그레인. wave·marble·contour는 보관) */}
+          <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/grain.png)", backgroundRepeat: "repeat", pointerEvents: "none" }} />
           <div className="wrap" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 18 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 19.5, fontWeight: 800 }}>
@@ -477,8 +478,12 @@ export default function Landing() {
       </section>
 
       {/* ── S4 비전 — Weather Data Economy (8/27 사업계획서 함축) + 작동 원리 4단계 ── */}
-      <section className="sec-pad" style={{ background: "var(--sec-alt)" }} id="how">
-        <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 34, textAlign: "center" }}>
+      {/* 8/28 서우: 시티 렌더(vision-city) 풀블리드 배경 + 카드 글래스(반투명·backdrop blur) */}
+      <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--sec-alt)" }} id="how">
+        <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/vision-city.webp)", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
+        {/* 화이트 스크림 — 상·하단 진하게(타이틀·면책 가독), 중단 옅게(도시가 비치게) */}
+        <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(255,255,255,.88) 0%, rgba(255,255,255,.5) 26%, rgba(255,255,255,.36) 62%, rgba(255,255,255,.86) 100%)", pointerEvents: "none" }} />
+        <div className="wrap" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 34, textAlign: "center" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ fontSize: 15.5, fontWeight: 800, letterSpacing: ".14em", color: "var(--w-main)" }}>WEATHER DATA ECONOMY</div>
             <h2 style={h2}>{en ? "What we're building" : "우리가 만드는 것"}</h2>
@@ -498,7 +503,7 @@ export default function Landing() {
             <HowCard icon={<Chart />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
           </div>
           {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
-          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid var(--bd-card)", background: "#fff", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid rgba(255,255,255,.75)", background: "rgba(255,255,255,.55)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
             <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
               {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
             </div>
@@ -669,7 +674,8 @@ export default function Landing() {
 
 function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: React.ReactNode }) {
   return (
-    <div style={{ border: "1px solid var(--bd-card)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
+    /* 글래스 카드 (8/28 서우: 비전 배경 위 반투명 — 뒤 도시가 블러로 비침) */
+    <div style={{ border: "1px solid rgba(255,255,255,.75)", background: "rgba(255,255,255,.55)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
       <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 14, background: "var(--w-tint)", color: "var(--w-main)" }}>{icon}</span>
       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
       <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
