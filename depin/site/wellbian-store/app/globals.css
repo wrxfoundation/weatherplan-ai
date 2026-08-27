@@ -167,16 +167,16 @@ h1, h2, h3, p { margin: 0; }
 .mstep-label { font-size: 15.5px; color: var(--dis); }
 .mstep-label.cur { font-weight: 700; color: var(--w-deep); }
 
-/* 히어로 wellbian X XRP LEDGER 락업 — 3배 확대 (8/27), 모바일은 폭 맞춰 축소 */
-.hero-lockup { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-.hero-lockup .lk-wb { height: 72px; width: auto; }
-.hero-lockup .lk-x { font-size: 44px; font-weight: 700; color: rgba(255, 255, 255, .5); line-height: 1; }
-.hero-lockup .lk-xrpl { height: 54px; width: auto; opacity: .92; }
+/* 히어로 wellbian X XRP LEDGER 락업 — 1.5배 규모 (8/27 2차: 3배가 과대 → 1/2 축소) */
+.hero-lockup { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.hero-lockup .lk-wb { height: 36px; width: auto; }
+.hero-lockup .lk-x { font-size: 22px; font-weight: 700; color: rgba(255, 255, 255, .5); line-height: 1; }
+.hero-lockup .lk-xrpl { height: 27px; width: auto; opacity: .92; }
 @media (max-width: 720px) {
-  .hero-lockup { gap: 12px; }
-  .hero-lockup .lk-wb { height: 44px; }
-  .hero-lockup .lk-x { font-size: 27px; }
-  .hero-lockup .lk-xrpl { height: 33px; }
+  .hero-lockup { gap: 9px; }
+  .hero-lockup .lk-wb { height: 24px; }
+  .hero-lockup .lk-x { font-size: 15px; }
+  .hero-lockup .lk-xrpl { height: 18px; }
 }
 
 /* 제품 스펙 갤러리 캐러셀 (8/27) — 페이드 롤링 + 도트 + 좌우 버튼 */

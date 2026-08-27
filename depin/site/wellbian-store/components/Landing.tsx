@@ -390,7 +390,8 @@ export default function Landing() {
       {/* ── S6 RLUSD 준비 ── */}
       <section className="sec-pad" style={{ background: "#fff" }} id="rlusd">
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 26 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {/* 헤더 중앙 정렬 통일 (8/27 서우) */}
+          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
             <h2 style={h2}>{en ? "Don't have RLUSD yet?" : "RLUSD가 없다면"}</h2>
             <p style={{ fontSize: 19, color: "var(--ink-4)" }}>
               {en ? "RLUSD — a USD-pegged stablecoin issued by Ripple, regulated by the NYDFS" : "RLUSD — 미국 달러 1:1 연동 · NYDFS 규제 · 리플(Ripple) 발행 스테이블코인"}
@@ -494,7 +495,13 @@ export default function Landing() {
       {/* ── S5 연동 안내 (8/27 후순위 이동 — 비전 다음) ── */}
       <section className="sec-pad" style={{ background: "#fff" }} id="setup">
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
+            {/* 배송 안내 캡션 (8/27 서우) — 2주 전 공지 채널 + 11월 순차 배송 */}
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "center", fontSize: 15.5, fontWeight: 700, color: "var(--w-main)", background: "var(--w-tint)", borderRadius: 99, padding: "9px 18px", marginBottom: 6 }}>
+              {en
+                ? <>Shipping is announced 2 weeks ahead in the community (Telegram) · updates on X <span style={{ color: "color-mix(in oklab, var(--w-main) 45%, var(--ink-4))" }}>· Est. shipping — sequentially from November</span></>
+                : <>배송 2주 전에 커뮤니티(텔레그램) · 공지(X)로 안내드립니다 <span style={{ color: "color-mix(in oklab, var(--w-main) 45%, var(--ink-4))" }}>· 배송 시작 예상 — 11월 중 순차 배송</span></>}
+            </div>
             <h2 style={h2}>{en ? "Your device becomes a node 3 minutes after it arrives" : "디바이스 도착 후 3분이면 노드가 됩니다"}</h2>
             <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Setup is easy — open the box and follow four steps." : "등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝."}</p>
           </div>
