@@ -268,7 +268,7 @@ export default function Landing() {
                 /* 누적·D-day 글래스 스탯 테이블 (8/28 서우: 줄글 → "현재 N대 사전예약 | 판매 오픈 D-n",
                    글래스 = 비전 카드와 동일 rgba .3 + blur 14px) */
                 <div className="pre-stat" style={{
-                  /* 8/28 서우: 테두리 제거 + 흰 배경 30% 추가 약화(.3→.21), 블러는 유지 */ background: "rgba(255,255,255,.21)",
+                  /* 8/28 서우: 테두리 제거 + 흰 배경 단계적 약화(.3→.21→.15), 블러는 유지 */ background: "rgba(255,255,255,.15)",
                   backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
                   borderRadius: 14, padding: "14px 22px", marginTop: 4, boxShadow: "0 8px 32px rgba(0,0,0,.18)",
                 }}>
@@ -378,10 +378,10 @@ export default function Landing() {
       {/* ── S4 비전 — Weather Data Economy (8/27 사업계획서 함축) + 작동 원리 4단계 ── */}
       {/* 8/28 서우: 시티 렌더(vision-city) 풀블리드 배경 + 카드 글래스(반투명·backdrop blur) */}
       <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--sec-alt)" }} id="how">
-        <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/vision-city.webp)", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
-        {/* 화이트 스크림 — 상·하단 진하게(타이틀·면책 가독), 중단 옅게(도시가 비치게) */}
-        {/* 8/28 서우: 배경 더 밝게 — 중단 스크림 상향 */}
-        <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.68) 26%, rgba(255,255,255,.56) 62%, rgba(255,255,255,.9) 100%)", pointerEvents: "none" }} />
+        {/* 8/28 서우 6차: 도시 사진 배경 제거. 사진 + 화이트 스크림 2겹을 걷어내고 옅은 그라디언트만 남긴다.
+            글래스 카드는 backdrop-filter로 뒤를 비추므로 완전 단색이면 카드가 사라져 보인다 — 아주 옅은
+            바이올렛 그라디언트를 깔아 카드 경계가 살아 있게 한다. */}
+        <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(124,107,240,.05) 0%, rgba(124,107,240,.09) 45%, rgba(124,107,240,.04) 100%)", pointerEvents: "none" }} />
         <div className="wrap" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 34, textAlign: "center" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ fontSize: 15.5, fontWeight: 800, letterSpacing: ".14em", color: "var(--w-main)" }}>WEATHER DATA ECONOMY</div>
