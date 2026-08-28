@@ -18,7 +18,7 @@ import {
   VITALS,
   VOICE_MSG,
   VOICE_TO,
-  todayTopic,
+  rollingTopics,
 } from "../lib/mock";
 import { PRICING, fmtWon } from "../lib/config";
 import { STORE_CATALOG } from "../lib/store";
@@ -398,8 +398,9 @@ export default function ElderHome() {
   const supAlerts = supplements.filter((s) => s.alert);
 
   const indoor = INDOOR.hot;
-  // 오늘의 세대공감 — 날짜로 고른다 (하루 안에서는 바뀌지 않는다)
-  const genTopic = todayTopic(now);
+  // 세대공감 — 옆으로 밀어 보는 5장 (2026-08-28 요청 "하루 1개 말고 롤링 5개").
+  // 첫 장이 오늘 것이고 날짜가 바뀌면 목록 전체가 한 칸 돈다.
+  const genTopics = rollingTopics(5, now);
 
   // 스토어 탭 — 보호자 스토어와 같은 카탈로그. 가격 없는 항목은 담기지 않는다.
   // 상품 사진도 보호자 스토어와 같은 것(콘솔 업로드 state.productImages)을 쓴다.
@@ -434,7 +435,7 @@ export default function ElderHome() {
   // 컨시어지 음성 메시지 — 성함 옆 원형 버튼 (전체 요청 2번).
   // 라벨은 '메시지 보내기' 고정이다 (2026-08-28 피드백). 시간대별로 바꿔 봤지만
   // (아침 인사 · 심심함 · 잠이 안 옴) 버튼이 무엇을 하는 것인지가 가려졌다 —
-  // 말 걸 거리는 가족 탭의 '오늘의 세대공감'이 이미 맡고 있다.
+  // 말 걸 거리는 가족 탭의 '세대공감'이 이미 맡고 있다.
   const [concMsg, setConcMsg] = useState(null); // null | "rec" | "sent"
   const recStart = useRef(0);
   // 홈에서 보낸 목소리는 '선생님' 탭 메시지함에 그대로 쌓인다 (2026-08-28 요청:
@@ -515,7 +516,9 @@ export default function ElderHome() {
               들어가면서 없앴다 (화이트보드 시안 2026-08-28). */}
           <main
             ref={scrollRef}
-            className="elder-scroll -mx-2 flex min-h-0 flex-1 flex-col gap-[10px] overflow-y-auto px-2 pb-2"
+            className={`elder-scroll -mx-2 flex min-h-0 flex-1 flex-col gap-[10px] overflow-y-auto px-2 pb-2 ${
+              tab === "home" ? "elder-home" : ""
+            }`}
           >
             {/* 인사 블록 — 스크롤 첫 요소 (모든 탭 공통, order -10).
                 탭 전환 시 스크롤이 맨 위로 돌아오므로(setTab) 인사도 늘 다시 보인다. */}
@@ -638,7 +641,7 @@ export default function ElderHome() {
 
             {/* order -7 · 사분면 — 각 상세 화면 진입. 돌아오는 길은 GNB '홈' */}
             <div
-              className="grid shrink-0 grid-cols-2 gap-2"
+              className="elder-hub grid shrink-0 grid-cols-2 gap-2"
               style={{ order: -7, display: tab === "home" ? undefined : "none" }}
             >
               {HOME_TILES.map((t) => (
@@ -1993,19 +1996,40 @@ export default function ElderHome() {
               }}
             >
               <CardHead
-                title="오늘의 세대공감"
-                right={genTopic.kind}
+                title="세대공감"
+                right="옆으로 밀어 보세요"
                 rightColor="#3B5C8A"
                 icon="chat"
                 iconColor="#3B5C8A"
               />
-              <p className="mt-2 text-[21px] font-bold leading-[1.45] text-navy">{genTopic.title}</p>
-              <p className="mt-1.5 text-[20px] leading-[1.6] text-ink">{genTopic.body}</p>
-              <p className="mt-3 rounded-[16px] px-4 py-3.5 text-[19px] leading-[1.55] text-[#33507A]" style={{ background: "rgba(59,92,138,.08)" }}>
-                {genTopic.prompt}
-              </p>
-              <p className="mt-2.5 text-[18px] leading-[1.55] text-muted">
-                내일은 다른 이야기가 올라옵니다.
+              {/* 5장을 옆으로 민다 — 한 장만 두면 오늘 것이 마음에 안 들 때
+                  다음 날까지 기다려야 했다. scroll-snap 으로 한 장씩 딱 선다. */}
+              <div className="-mx-1 mt-2.5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+                {genTopics.map((t, i) => (
+                  <div
+                    key={`${t.title}-${i}`}
+                    className="w-[86%] shrink-0 snap-start rounded-[18px] p-4"
+                    style={{ background: "rgba(255,255,255,.72)", boxShadow: "inset 0 0 0 1px rgba(59,92,138,.16)" }}
+                  >
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="text-[18px] font-bold text-[#33507A]">{t.kind}</span>
+                      <span className="font-num text-[17px] text-muted">
+                        {i + 1} / {genTopics.length}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-[21px] font-bold leading-[1.4] text-navy">{t.title}</p>
+                    <p className="mt-1.5 text-[19px] leading-[1.55] text-ink">{t.body}</p>
+                    <p
+                      className="mt-2.5 rounded-[14px] px-3.5 py-3 text-[18px] leading-[1.5] text-[#33507A]"
+                      style={{ background: "rgba(59,92,138,.09)" }}
+                    >
+                      {t.prompt}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-2 text-[18px] leading-[1.55] text-muted">
+                날마다 새 이야기가 앞에 하나씩 올라옵니다.
               </p>
             </ElderCard>
 

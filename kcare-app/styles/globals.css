@@ -824,3 +824,26 @@ a.btn-press {
     padding-bottom: 4px;
   }
 }
+
+/* 어르신 홈 — 큰 화면에서 위로 몰리지 않게 (2026-08-28 "갤럭시 S25 기준으로").
+   기본 여백은 375x667 에 맞춰 조여 놨는데, 그대로 두면 S25(360x780)에서 115px,
+   S25 Ultra(412x883)에서 218px 이 아래에 그냥 비었다 — 내용이 화면 위쪽에
+   몰려 보인다. 700px 이상에서는 여백을 조금 넓히고, 남는 세로 공간은 사분면
+   타일이 가져가 버튼이 커지게 한다 (어르신 화면에서 큰 버튼은 그 자체로 이득).
+   max-height 로 상한을 둬서 아주 긴 화면에서 타일만 기괴하게 커지지 않게 한다.
+   홈 탭에서만 적용된다 — 다른 탭은 카드가 많아 어차피 스크롤된다. */
+@media screen and (min-height: 700px) {
+  .elder-home {
+    gap: 14px;
+    padding-bottom: 10px;
+  }
+  .elder-home .elder-hub {
+    flex: 1 1 auto;
+    max-height: 360px;
+    grid-auto-rows: 1fr;
+  }
+  .elder-home .elder-tile {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
