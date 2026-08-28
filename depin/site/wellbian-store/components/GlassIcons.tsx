@@ -11,6 +11,46 @@
 
 import React from "react";
 
+/* ── PNG 교체 슬롯 (8/28 서우) ───────────────────────────────────────────────
+   아래 SVG는 프로스티드 글래스를 그라디언트로 흉내 낸 것이라, 시안이 가진 굴절
+   (두꺼운 유리 너머로 뒷면이 비치고 가장자리에서 빛이 휘는 것)은 재현할 수 없다.
+   그건 3D 렌더러가 광선을 추적해 만드는 결과물이고 SVG에는 그 수단이 없다.
+   그래서 생성 이미지로 교체할 수 있는 자리를 뒀다.
+
+   생성 프롬프트: depin/content/icon-prompt.md
+   파일 넣는 곳:  public/assets/icons/  (그 폴더의 README.txt 참고)
+
+   교체한 아이콘만 아래에서 주석을 지우면 된다. 적지 않은 것은 SVG가 그대로 쓰인다.
+   존재하지 않는 파일을 매번 요청하는 낭비를 막으려 자동 감지는 넣지 않았다. */
+export type IconKey = "measure" | "verify" | "reward" | "use" | "data" | "flow" | "coins" | "nodes";
+
+const ICON_PNG: Partial<Record<IconKey, string>> = {
+  // measure: "/assets/icons/measure.png",
+  // verify:  "/assets/icons/verify.png",
+  // reward:  "/assets/icons/reward.png",
+  // use:     "/assets/icons/use.png",
+  // data:    "/assets/icons/data.png",
+  // flow:    "/assets/icons/flow.png",
+  // coins:   "/assets/icons/coins.png",
+  // nodes:   "/assets/icons/nodes.png",
+};
+
+/* PNG가 지정돼 있으면 그걸, 아니면 인라인 SVG를 그린다. */
+function pngOr(key: IconKey, size: number, className: string | undefined, svg: () => React.ReactElement) {
+  const src = ICON_PNG[key];
+  if (!src) return svg();
+  return (
+    <img
+      src={src}
+      alt=""
+      width={size}
+      height={size}
+      className={className}
+      style={{ width: size, height: size, display: "block", flexShrink: 0, objectFit: "contain" }}
+    />
+  );
+}
+
 const V = "124,107,240"; /* 브랜드 바이올렛 */
 
 /* 두께 방향 — 위·오른쪽으로 밀어 3/4 뷰를 만든다 */
@@ -85,6 +125,7 @@ function Slab({
 
 /* ① 측정 — 유리 디스플레이(측정기) + 받침 */
 export function IconMeasure({ size = 120, className }: IconProps) {
+  return pngOr("measure", size, className, () => {
   const p = "gm";
   return (
     <svg viewBox="0 0 96 96" style={box(size)} className={className} aria-hidden focusable="false">
@@ -106,10 +147,12 @@ export function IconMeasure({ size = 120, className }: IconProps) {
       </g>
     </svg>
   );
+  });
 }
 
 /* ② 검증 — 유리 방패 + 체크 */
 export function IconVerify({ size = 120, className }: IconProps) {
+  return pngOr("verify", size, className, () => {
   const p = "gv";
   /* 두께(DX)가 오른쪽으로 붙어 시각 중심이 밀리므로 형상을 미리 왼쪽으로 3 당겨 둔다 */
   const shield = "M45 16 L71 26 V48 C71 63 59 73 45 78 C31 73 19 63 19 48 V26 Z";
@@ -129,11 +172,13 @@ export function IconVerify({ size = 120, className }: IconProps) {
       </g>
     </svg>
   );
+  });
 }
 
 /* ③ 보상 — 유리 토큰이 쌓인 스택
    (통화 기호 없음: 보상은 현금이 아니고 지급량·가치가 보장되지 않는다) */
 export function IconReward({ size = 120, className }: IconProps) {
+  return pngOr("reward", size, className, () => {
   const p = "gr";
   return (
     <svg viewBox="0 0 96 96" style={box(size)} className={className} aria-hidden focusable="false">
@@ -148,10 +193,12 @@ export function IconReward({ size = 120, className }: IconProps) {
       </g>
     </svg>
   );
+  });
 }
 
 /* ④ 활용 — 유리 막대 차트 (시안 2행 3열과 같은 구성: 왼쪽은 프로스티드, 오른쪽으로 갈수록 채도) */
 export function IconUse({ size = 120, className }: IconProps) {
+  return pngOr("use", size, className, () => {
   const p = "gu";
   return (
     <svg viewBox="0 0 96 96" style={box(size)} className={className} aria-hidden focusable="false">
@@ -166,12 +213,14 @@ export function IconUse({ size = 120, className }: IconProps) {
       </g>
     </svg>
   );
+  });
 }
 
 /* ───────── 선순환 칩 행 아이콘 (같은 재질, 작은 사이즈) ───────── */
 
 /* 데이터 — 유리 슬래브 3장 */
 export function IconData({ size = 34, className }: IconProps) {
+  return pngOr("data", size, className, () => {
   const p = "cd";
   return (
     <svg viewBox="0 0 48 48" style={box(size)} className={className} aria-hidden focusable="false">
@@ -183,10 +232,12 @@ export function IconData({ size = 34, className }: IconProps) {
       </g>
     </svg>
   );
+  });
 }
 
 /* 유통 — 유리 타일에서 빠져나가는 화살표 */
 export function IconFlow({ size = 34, className }: IconProps) {
+  return pngOr("flow", size, className, () => {
   const p = "cf";
   return (
     <svg viewBox="0 0 48 48" style={box(size)} className={className} aria-hidden focusable="false">
@@ -198,12 +249,14 @@ export function IconFlow({ size = 34, className }: IconProps) {
       </g>
     </svg>
   );
+  });
 }
 
 /* 수익 — 원형 유리 토큰 스택.
    데이터(IconData)가 가로 슬래브라 사각으로 그리면 실루엣이 겹쳐 두 칩이 같은 아이콘으로 보인다.
    여기는 원형 디스크로 구분한다. */
 export function IconCoins({ size = 34, className }: IconProps) {
+  return pngOr("coins", size, className, () => {
   const p = "cc";
   const coin = (cy: number, solid: boolean) => (
     <g key={cy}>
@@ -222,10 +275,12 @@ export function IconCoins({ size = 34, className }: IconProps) {
       </g>
     </svg>
   );
+  });
 }
 
 /* 측정망 — 유리 노드 넷이 선으로 연결 */
 export function IconNodes({ size = 34, className }: IconProps) {
+  return pngOr("nodes", size, className, () => {
   const p = "cn";
   const node = (cx: number, cy: number, r: number, solid = false) => (
     <g key={`${cx}-${cy}`}>
@@ -250,4 +305,5 @@ export function IconNodes({ size = 34, className }: IconProps) {
       </g>
     </svg>
   );
+  });
 }
