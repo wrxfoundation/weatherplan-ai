@@ -4,7 +4,7 @@
    완료 화면에서 9/15 오픈 알림 안내 + 커뮤니티(텔레그램)·소식(X) 버튼 유도.
    8/28 서우: 지갑 생성 뒤 "예약 대수 설정" 단계 추가 (1계정 최대 100대 — 현황판 표기와 동일).
    실구현 대응 지점: 구글 OAuth(POST /api/auth/google) · 지갑 생성(POST /api/wallet) · 예약 등록(POST /api/preorder { qty }) */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LINKS, MOCK_ORDER } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
 import { TgIcon, XIcon, Check } from "./icons";
@@ -19,9 +19,23 @@ const GoogleG = ({ size = 20 }: { size?: number }) => (
   </svg>
 );
 
+/* 로그인 여부는 데모용 플래그. 실구현에서는 세션/토큰으로 대체된다. */
+const SIGNED_IN_KEY = "wb-signed-in";
+
 export default function PreOrderModal({ onClose }: { onClose: () => void }) {
   const { en } = useI18n();
+  /* 8/28 서우: 메인에서 이미 구글 로그인이 되어 있으면 로그인·지갑 단계를 건너뛰고
+     '예약 대수'(step 2)로 바로 진입한다. 지갑은 가입 시 자동 생성되므로 두 단계가 함께 끝나 있다.
+     SSR/CSR 하이드레이션이 어긋나지 않도록 초기값은 0으로 두고 마운트 후에 옮긴다. */
   const [step, setStep] = useState(0);
+  const [signedIn, setSignedIn] = useState(false);
+  const [enteredSignedIn, setEnteredSignedIn] = useState(false);
+  useEffect(() => {
+    let already = false;
+    try { already = !!localStorage.getItem(SIGNED_IN_KEY); } catch { /* 사파리 프라이빗 등 */ }
+    if (already) { setSignedIn(true); setEnteredSignedIn(true); setStep(2); }
+  }, []);
+
   const [connecting, setConnecting] = useState(false);
   const [qty, setQty] = useState(1);
 
@@ -32,7 +46,12 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
   const googleSignIn = () => {
     if (connecting) return;
     setConnecting(true);
-    setTimeout(() => { setConnecting(false); setStep(1); }, 900);
+    setTimeout(() => {
+      setConnecting(false);
+      setSignedIn(true);
+      try { localStorage.setItem(SIGNED_IN_KEY, "1"); } catch { /* 저장 실패해도 이번 세션은 진행된다 */ }
+      setStep(1);
+    }, 900);
   };
 
   return (
@@ -124,6 +143,15 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                   <button key={n} onClick={() => setQty(n)} style={{ border: `1px solid ${qty === n ? "var(--w-main)" : "var(--bd-input)"}`, color: qty === n ? "var(--w-main)" : "var(--cap)", background: qty === n ? "var(--w-tint)" : "#fff", borderRadius: 8, padding: "7px 14px", fontSize: 15.5, fontWeight: 700 }}>{n}</button>
                 ))}
               </div>
+              {/* 8/28 서우: 정식 판매 오픈 후 구매 시 XRP SEOUL 2026 티켓 증정 */}
+              <div style={perkStyle}>
+                <span aria-hidden style={{ fontSize: 19 }}>🎟️</span>
+                <span>
+                  {en
+                    ? <>Buy after sales open and get a free <b>XRP SEOUL 2026</b> ticket <span style={{ color: "var(--cap)", fontWeight: 600 }}>(₩100,000 value)</span></>
+                    : <>정식 판매 오픈 후 구매하시면 <b>XRP SEOUL 2026</b> 티켓을 무료로 드립니다 <span style={{ color: "var(--cap)", fontWeight: 600 }}>(10만원 상당)</span></>}
+                </span>
+              </div>
               <button onClick={() => setStep(3)} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>
                 {en ? `Reserve ${qty} unit${qty > 1 ? "s" : ""}` : `${qty}대 사전예약 완료하기`}
               </button>
@@ -146,6 +174,14 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                   ? `Your spot for ${qty} unit${qty > 1 ? "s" : ""} is held. We'll send you an opening alert on Sept 15. A pre-order is not a payment — you can buy calmly, with no first-come rush, the moment sales open.`
                   : `${qty}대 자리를 확보했습니다. 9월 15일 오픈 알림을 보내드립니다. 사전예약은 결제가 아니며, 오픈과 동시에 선착순 걱정 없이 구매할 수 있습니다.`}
               </p>
+                <div style={perkStyle}>
+                  <span aria-hidden style={{ fontSize: 19 }}>🎟️</span>
+                  <span>
+                    {en
+                      ? <>Buy after sales open and get a free <b>XRP SEOUL 2026</b> ticket <span style={{ color: "var(--cap)", fontWeight: 600 }}>(₩100,000 value)</span></>
+                      : <>정식 판매 오픈 후 구매하시면 <b>XRP SEOUL 2026</b> 티켓을 무료로 드립니다 <span style={{ color: "var(--cap)", fontWeight: 600 }}>(10만원 상당)</span></>}
+                  </span>
+                </div>
               <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main btn-shine" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontSize: 19.5, borderRadius: 10, padding: 14, color: "#fff", textDecoration: "none" }}>
                 <TgIcon size={16} /> {en ? "Community (Telegram)" : "커뮤니티(텔레그램)"}
               </a>
@@ -159,7 +195,8 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
           )}
         </div>
 
-        {(step === 1 || step === 2) && (
+        {/* 이미 로그인된 상태로 대수 단계에 바로 들어온 경우엔 되돌아갈 단계가 없다 */}
+        {(step === 1 || (step === 2 && !enteredSignedIn)) && (
           <button onClick={() => setStep(step - 1)} style={{ fontSize: 16, color: "var(--cap)", alignSelf: "flex-start" }}>
             {en ? "← Back" : "← 이전 단계"}
           </button>
@@ -170,6 +207,14 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
 }
 
 const h3: React.CSSProperties = { fontSize: 28.5, fontWeight: 800, color: "var(--w-deep)" };
+/* 혜택 스트립 — 본문과 구분되게 옅은 브랜드 틴트 */
+const perkStyle: React.CSSProperties = {
+  display: "flex", alignItems: "center", gap: 10, textAlign: "left",
+  background: "var(--w-tint)", border: "1px solid rgba(27,27,72,.08)",
+  borderRadius: 11, padding: "12px 14px", fontSize: 15.5, fontWeight: 700,
+  color: "var(--w-deep)", lineHeight: 1.5,
+};
+
 const stepBtn: React.CSSProperties = { width: 46, height: 46, borderRadius: 99, border: "1px solid var(--bd-input)", background: "#fff", fontSize: 25, fontWeight: 700, color: "var(--w-deep)", lineHeight: 1, display: "inline-flex", alignItems: "center", justifyContent: "center" };
 const pStyle: React.CSSProperties = { fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-3)" };
 const capStyle: React.CSSProperties = { fontSize: 15.5, lineHeight: 1.6, color: "var(--cap)" };

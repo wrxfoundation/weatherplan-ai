@@ -311,7 +311,10 @@ h1, h2, h3, p { margin: 0; }
 }
 .hero-photo .hero-grid { position: relative; z-index: 2; min-height: 440px; }
 @media (max-width: 720px) {
-  .hero-bg-slide { background-position: center 30%; }
+  /* 8/28 서우: 모바일에서 제품이 아예 안 보였다. 히어로 원본은 좌측 패키지 · 우측 기기 구도이고
+     기기 중심이 x≈70%인데 cover 크롭이 원본의 32~68%만 보여줘 기기가 잘려 나갔다.
+     78%로 옮기면 51~87% 구간이 노출돼 기기가 화면 중앙 뒤편에 들어온다(실측). */
+  .hero-bg-slide { background-position: 78% center; }
   .hero-scrim { background: linear-gradient(180deg, rgba(27, 27, 72, .94) 0%, rgba(27, 27, 72, .82) 52%, rgba(27, 27, 72, .42) 100%); }
   .hero-photo .hero-grid { min-height: 0; }
 }
@@ -389,8 +392,14 @@ h1, h2, h3, p { margin: 0; }
      모바일은 우측 그룹(상태 칩 + KO/EN)이 253px을 쓰고 가용폭이 358px뿐이라 2배(폭 160)가
      들어가지 않는다. 억지로 넣으면 flex가 이미지를 가로로 찌그러뜨린다(58px 실험 시 160 → 106).
      비율이 깨지지 않는 최대치인 36px(폭 99)로 잡는다 — 기존 29px 대비 1.24배. */
-  .gnb-root { height: 60px !important; padding: 0 16px !important; }
+  .gnb-root { height: 60px !important; padding: 0 14px !important; }
   .gnb-logo { height: 36px !important; }
+  /* 로고를 키운 만큼 우측 그룹이 들어갈 자리가 모자라 로고와 겹쳤다(390px에서 간격 0px) →
+     상태 칩·프리뷰 칩의 여백과 글자를 모바일에서만 조인다. 로고를 다시 줄이지 않기 위한 선택. */
+  .gnb-root .pill { font-size: 12.5px !important; padding: 3px 6px !important; }
+  .gnb-root > div:last-child { gap: 6px !important; }
+  .gnb-root > div:last-child > a,
+  .gnb-root > div:last-child > button { font-size: 13.5px !important; padding: 6px 10px !important; }
   .s9-root { padding: 32px 20px 90px !important; }
   .s9-invite { flex-direction: column; align-items: flex-start !important; padding: 22px !important; }
 }
@@ -475,4 +484,14 @@ h1, h2, h3, p { margin: 0; }
   /* 세로 스택에서는 되돌아가는 곡선이 의미가 없다 — 화살표를 감추고 문구만 남긴다 */
   .loop-return svg { display: none; }
   .loop-return { margin-top: 6px; }
+}
+
+/* 360px대 소형 폰(갤럭시 S8 등) — 위 치수로도 우측 그룹이 2px 넘친다. 한 단계 더 조인다.
+   (기존 max-width:720px 블록을 쪼개면 그 안의 다른 규칙이 딸려 나가므로 독립 블록으로 둔다) */
+@media (max-width: 380px) {
+  .gnb-logo { height: 32px !important; }
+  .gnb-root .pill { font-size: 12px !important; padding: 3px 5px !important; }
+  .gnb-root > div:last-child { gap: 5px !important; }
+  .gnb-root > div:last-child > a,
+  .gnb-root > div:last-child > button { font-size: 12.5px !important; padding: 5px 8px !important; }
 }

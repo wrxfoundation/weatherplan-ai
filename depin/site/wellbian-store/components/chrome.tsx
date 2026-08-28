@@ -38,12 +38,13 @@ export function Gnb({ dday, right }: { dday?: string; right?: React.ReactNode })
       style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
         /* 8/28 서우: GNB 로고 2배(29→58px) — 64px 헤더에는 안 들어가 88px로 올린다 */
-        height: 88, padding: "0 40px", borderBottom: "1px solid var(--line)",
+        height: 88, padding: "0 40px", gap: 14, borderBottom: "1px solid var(--line)",
         background: "#fff", position: "sticky", top: 0, zIndex: 50,
       }}
       className="gnb-root"
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 36 }}>
+      {/* flexShrink: 0 — 이게 없으면 좁은 폭에서 이 그룹이 줄어들며 로고가 우측 그룹 위로 겹친다 */}
+      <div style={{ display: "flex", alignItems: "center", gap: 36, flexShrink: 0 }}>
         <Link href="/" style={{ display: "inline-flex", flexShrink: 0 }}>
           {/* width/height는 실제 픽셀(593x215)로 — 기존 110x22는 비율이 어긋나 레이아웃 예약 공간이 틀렸다 */}
           <Image src="/assets/wb-black.png" alt="wellbian" width={593} height={215} className="gnb-logo" priority />

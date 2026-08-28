@@ -170,12 +170,6 @@ export default function Landing() {
           /* 1i 완판 히어로 */
           <div className="hero-grid" style={{ alignItems: "center" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              {/* wellbian X XRP LEDGER 락업 — 3배 확대 (8/27 서우), 크기는 CSS .hero-lockup */}
-              <div className="hero-lockup">
-                <Image src="/assets/wb-lav.png" alt="wellbian" width={593} height={215} className="lk-wb" />
-                <span className="lk-x">X</span>
-                <Image src="/assets/xrpl-lav.png" alt="XRP Ledger" width={609} height={154} className="lk-xrpl" />
-              </div>
               <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
                 WEATHER DATA ECONOMY
               </div>
@@ -187,6 +181,12 @@ export default function Landing() {
                 {en ? <>Sold out —<br />be the first to hear about Batch 2</> : <>완판되었습니다 —<br />2차 판매 소식을 가장 먼저 받아보세요</>}
               </h1>
               {/* 8/28 서우: 히어로 설명 2줄 삭제 (완판 화면도 동일) */}
+              {/* 8/28 서우: 락업을 제품 정식명 바로 위로 이동 (기존엔 히어로 최상단). 색상은 그대로 라벤더 유지 */}
+              <div className="hero-lockup">
+                <Image src="/assets/wb-lav.png" alt="wellbian" width={593} height={215} className="lk-wb" />
+                <span className="lk-x">X</span>
+                <Image src="/assets/xrpl-lav.png" alt="XRP Ledger" width={609} height={154} className="lk-xrpl" />
+              </div>
               <p style={{ fontSize: 19.5, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
                 <b style={{ color: "#fff" }}>Weather Data Token Generator™</b>
               </p>
@@ -206,12 +206,6 @@ export default function Landing() {
         ) : (
           <div className="hero-grid">
             <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-              {/* wellbian X XRP LEDGER 락업 — 3배 확대 (8/27 서우), 크기는 CSS .hero-lockup */}
-              <div className="hero-lockup">
-                <Image src="/assets/wb-lav.png" alt="wellbian" width={593} height={215} className="lk-wb" />
-                <span className="lk-x">X</span>
-                <Image src="/assets/xrpl-lav.png" alt="XRP Ledger" width={609} height={154} className="lk-xrpl" />
-              </div>
               <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: ".14em", color: "color-mix(in oklab, var(--w-main) 45%, white)" }}>
                 WEATHER DATA ECONOMY
               </div>
@@ -219,6 +213,12 @@ export default function Landing() {
                 {en ? <>Turn your weather data<br />into value</> : <>당신의 날씨 데이터를<br />가치로 바꾸세요</>}
               </h1>
               {/* 8/28 서우: 히어로 설명 2줄 삭제 — 제품 정식명만 유지 */}
+              {/* 8/28 서우: 락업을 제품 정식명 바로 위로 이동 (기존엔 히어로 최상단). 색상은 그대로 라벤더 유지 */}
+              <div className="hero-lockup">
+                <Image src="/assets/wb-lav.png" alt="wellbian" width={593} height={215} className="lk-wb" />
+                <span className="lk-x">X</span>
+                <Image src="/assets/xrpl-lav.png" alt="XRP Ledger" width={609} height={154} className="lk-xrpl" />
+              </div>
               <p style={{ fontSize: 21, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
                 <b style={{ color: "#fff" }}>Weather Data Token Generator™</b>
               </p>
@@ -287,8 +287,8 @@ export default function Landing() {
                 /* 보조 개념 * 주석 — 히어로 맨하단, 작게 (8/28 서우 문구 개정) */
                 <div style={{ fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,.55)", maxWidth: 560 }}>
                   {en
-                    ? <>* Pre-order now and you can buy when sales open on Sept 15.<br />* Genesis Numbers are randomly assigned at purchase.</>
-                    : <>* 사전예약하면 9월 15일 오픈 때 구매 가능합니다.<br />* 제네시스 넘버는 구매 시 랜덤 배정됩니다.</>}
+                    ? <>* Pre-order now and you can buy when sales open on Sept 15.<br />* Genesis Numbers are randomly assigned at purchase.<br />* Buy after sales open and get a free XRP SEOUL 2026 ticket (₩100,000 value)</>
+                    : <>* 사전예약하면 9월 15일 오픈 때 구매 가능합니다.<br />* 제네시스 넘버는 구매 시 랜덤 배정됩니다.<br />* 정식 판매 오픈 후 구매 시 XRP SEOUL 2026 티켓 증정 (10만원 상당)</>}
                 </div>
               )}
             </div>
@@ -393,13 +393,13 @@ export default function Landing() {
             </p>
           </div>
           <div className="how-grid">
-            <HowCard icon={<IconMeasure />} title={en ? "① Measure" : "① 측정"} desc={en ? "Measures indoor air — CO₂, particulates, temperature & humidity" : "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정합니다"} />
+            <HowCard icon={<IconMeasure />} title={en ? "① Measure" : "① 측정"} desc={en ? "Indoor air data — CO₂, particulates, temperature, humidity" : "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<IconVerify />} title={en ? "② Verify" : "② 검증"} desc={en ? "The network verifies the integrity of your data" : "네트워크가 데이터의 무결성을 검증합니다"} />
+            <HowCard icon={<IconVerify />} title={en ? "② Verify" : "② 검증"} desc={en ? "The network verifies data integrity" : "네트워크가 데이터의 무결성을 검증"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<IconReward />} title={en ? "③ Reward" : "③ 보상"} desc={en ? "Verified data earns WLBN under network rules" : "검증된 데이터에 네트워크 원칙에 따라 WLBN이 지급됩니다"} />
+            <HowCard icon={<IconReward />} title={en ? "③ Reward" : "③ 보상"} desc={en ? "Verified data earns WLBN under network rules" : "검증된 데이터에 네트워크 원칙에 따라 WLBN이 지급"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<IconUse />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
+            <HowCard icon={<IconUse />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용"} />
           </div>
           {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
           {/* 8/28 서우 2차: 비전·선순환 카드 테두리 원복 (히어로 스탯 테이블만 보더리스 유지) */}
