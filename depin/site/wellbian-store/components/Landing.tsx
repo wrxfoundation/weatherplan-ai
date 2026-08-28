@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { IconMeasure, IconVerify, IconReward, IconUse, IconData, IconFlow, IconCoins, IconLoop } from "./GlassIcons";
 import {
   SPECS, SPECS_EN, FAQS, FAQS_EN, FAQS_EXTRA, FAQS_EXTRA_EN, LINK_STEPS, LINK_STEPS_EN,
   RL_STEPS, RL_STEPS_EN, LINKS, MOCK_INVENTORY, MOCK_PRENOTIFY, PREORDER_FEED, PRICE, calc, fmt,
@@ -392,13 +393,13 @@ export default function Landing() {
             </p>
           </div>
           <div className="how-grid">
-            <HowCard img="/assets/how-measure.webp" title={en ? "① Measure" : "① 측정"} desc={en ? "Measures indoor air — CO₂, particulates, temperature & humidity" : "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정합니다"} />
+            <HowCard icon={<IconMeasure />} title={en ? "① Measure" : "① 측정"} desc={en ? "Measures indoor air — CO₂, particulates, temperature & humidity" : "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정합니다"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard img="/assets/how-verify.webp" title={en ? "② Verify" : "② 검증"} desc={en ? "The network verifies the integrity of your data" : "네트워크가 데이터의 무결성을 검증합니다"} />
+            <HowCard icon={<IconVerify />} title={en ? "② Verify" : "② 검증"} desc={en ? "The network verifies the integrity of your data" : "네트워크가 데이터의 무결성을 검증합니다"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard img="/assets/how-reward.webp" title={en ? "③ Reward" : "③ 보상"} desc={en ? "Verified data earns WLBN under network rules" : "검증된 데이터에 네트워크 원칙에 따라 WLBN이 지급됩니다"} />
+            <HowCard icon={<IconReward />} title={en ? "③ Reward" : "③ 보상"} desc={en ? "Verified data earns WLBN under network rules" : "검증된 데이터에 네트워크 원칙에 따라 WLBN이 지급됩니다"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard img="/assets/how-use.webp" title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
+            <HowCard icon={<IconUse />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
           </div>
           {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
           {/* 8/28 서우 2차: 비전·선순환 카드 테두리 원복 (히어로 스탯 테이블만 보더리스 유지) */}
@@ -406,17 +407,18 @@ export default function Landing() {
             <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
               {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
             </div>
-            {/* 8/28 서우 4차: 다이어그램 도입으로 날아간 단계 설명 복원 — 순서별 칩, 도트 색 = 다이어그램 노드 실측값 */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, flexWrap: "wrap", fontSize: 15.5, fontWeight: 700 }}>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "8px 12px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}><i style={{ width: 9, height: 9, borderRadius: "50%", background: "#4078D8", flexShrink: 0 }} />{en ? "Verified air data" : "검증된 공기질 데이터"}</span>
-              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "8px 12px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}><i style={{ width: 9, height: 9, borderRadius: "50%", background: "#8860C8", flexShrink: 0 }} />{en ? "Real demand — enterprises · APIs · AI" : "실제 수요처 유통 — 기업 · API · AI"}</span>
-              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "8px 12px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}><i style={{ width: 9, height: 9, borderRadius: "50%", background: "#4E9E46", flexShrink: 0 }} />{en ? "Revenue" : "수익 발생"}</span>
-              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "8px 12px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}><i style={{ width: 9, height: 9, borderRadius: "50%", background: "#68B858", flexShrink: 0 }} />{en ? "The network keeps running" : "네트워크 지속"}</span>
+            {/* 8/28 서우 5차: 생성형 순환도 이미지는 "밤티"라 폐기 — 칩 행 + 마지막→처음 순환 화살표를 코드로 구현.
+                아이콘은 반투명·연한 색·약한 유광 인라인 SVG (GlassIcons). 이미지가 없으므로 자리도 덜 먹고 텍스트가 선명하다 */}
+            <div className="loop-row">
+              <span className="loop-chip"><IconData /><span>{en ? <>Verified<br />air data</> : <>검증된<br />공기질 데이터</>}</span></span>
+              <span className="loop-arrow" aria-hidden>→</span>
+              <span className="loop-chip"><IconFlow /><span>{en ? <>Real demand<br />— enterprises · APIs · AI</> : <>실제 수요처 유통<br />— 기업 · API · AI</>}</span></span>
+              <span className="loop-arrow" aria-hidden>→</span>
+              <span className="loop-chip"><IconCoins /><span>{en ? <>Revenue →<br />the network keeps running</> : <>수익 →<br />네트워크 지속</>}</span></span>
+              <span className="loop-arrow" aria-hidden>→</span>
+              {/* 마지막에서 처음으로 되돌아가는 순환 표시 */}
+              <span className="loop-back" title={en ? "…and back to the start" : "…다시 처음으로"}><IconLoop /></span>
             </div>
-            <img src="/assets/cycle-loop.webp" alt={en ? "The loop: verified data flows to real demand, and revenue keeps the network running" : "선순환 구조: 검증된 데이터가 실제 수요처로 유통되고, 수익이 네트워크를 지속시킵니다"} width={1169} height={458} style={{ width: "min(780px, 100%)", height: "auto", margin: "0 auto", background: "#fff", borderRadius: 16, padding: "12px 16px", border: "1px solid rgba(27,27,72,.07)", boxShadow: "0 10px 26px rgba(27,27,72,.10)" }} />
             <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
               {en
                 ? <>The verified air-quality data our nodes produce flows to real buyers — enterprises, APIs, AI services.<br />The more it is used, the stronger the demand, and that demand is what keeps the network running.</>
@@ -686,13 +688,13 @@ export default function Landing() {
   );
 }
 
-function HowCard({ img, title, desc }: { img: string; title: string; desc: React.ReactNode }) {
+function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: React.ReactNode }) {
   return (
     /* 글래스 카드 (8/28 서우: 비전 배경 위 반투명 — 뒤 도시가 블러로 비침) */
     /* 8/28 서우 3차: SVG 아이콘 타일 → 힉스필드 매트 3D 아이콘 (투명 webp, 카드 상단 대형) */
     <div style={{ border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.25)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "26px 24px 30px", display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
-      {/* 8/28 서우 4차: 받침 복원본은 가로가 길어 정사각 박스에선 작아 보임 → 높이 기준으로 4개 광학 통일 */}
-      <img src={img} alt="" width={384} height={384} style={{ height: 120, width: "auto", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0 10px 18px rgba(27,27,72,.16))" }} />
+      {/* 8/28 서우 5차: 래스터 3D → 인라인 SVG(반투명·연한 색·약한 유광). 4개가 같은 96 뷰박스라 광학 크기가 자동으로 맞는다 */}
+      <div style={{ height: 120, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>{icon}</div>
       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
       <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
     </div>
