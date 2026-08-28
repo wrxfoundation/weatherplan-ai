@@ -9,6 +9,7 @@ import {
   ELDER_VISITORS,
   EVENT_KINDS,
   FAMILY_SEEN,
+  FIT_WEEK,
   INDOOR,
   OUTING,
   TODAY_ME,
@@ -74,12 +75,23 @@ const ASK_TILES = [
   { no: 12, label: "응급 대응", icon: "alert" },
 ];
 
+// GNB — 화이트보드 시안(2026-08-28): 탭 나열 대신 홈 허브(hub-and-spoke).
+// 오늘/건강/해주세요/스토어 진입은 홈의 사분면 타일이 맡고, 하단에는
+// 도와줘요(즉시방문요청 — 옛 '지금 와 주세요' 플로팅 버튼) · 홈 · 가족만 남긴다.
+// 도와줘요는 화면 이동이 아니라 행동(관제 확인 전화 요청)이라 action 으로 가른다.
 const TABS = [
-  { key: "today", label: "오늘", glyph: "home" },
-  { key: "health", label: "건강", glyph: "heart" },
-  { key: "ask", label: "해주세요", glyph: "hand" },
-  { key: "store", label: "스토어", glyph: "bag" },
+  { key: "help", label: "도와줘요", glyph: "door", action: true },
+  { key: "home", label: "홈", glyph: "home" },
   { key: "family", label: "가족", glyph: "users" },
+];
+
+// 홈 사분면 — 상세 화면 진입 타일 (2×2). 아이콘 색은 타일마다 다르게 —
+// 글자를 읽기 전에 색·모양으로 먼저 갈리게 한다 (전부 기존 토큰, 빨강 없음).
+const HOME_TILES = [
+  { key: "today", label: "오늘", sub: "일정 · 약", icon: "calendar", color: "#B08D57" },
+  { key: "health", label: "건강", sub: "몸 상태 · 기록", icon: "heart", color: "#1E7A5A" },
+  { key: "ask", label: "해주세요", sub: "부탁하기", icon: "hand", color: "#3B5C8A" },
+  { key: "store", label: "스토어", sub: "장보기", icon: "bag", color: "#8A5D12" },
 ];
 
 // "김순자" → "순자" — 성 포함 호칭 금지 (06 §1 헤더 카피)
@@ -219,7 +231,7 @@ function CardHead({ title, titleColor = "#0A1F3C", right, rightColor = "#5C5A54"
 
 export default function ElderHome() {
   const { state, dispatch } = useAppState();
-  const [tab, setTabRaw] = useState("today"); // elderTab — 기본 'today'
+  const [tab, setTabRaw] = useState("home"); // elderTab — 기본 '홈' (사분면 허브)
   const scrollRef = useRef(null);
   // 카드는 언마운트하지 않지만, 탭 전환 시 스크롤은 맨 위로 — 카드 상단이 잘려 보이지 않게
   const setTab = (k) => {
@@ -255,6 +267,8 @@ export default function ElderHome() {
   const [storeGroup, setStoreGroup] = useState(0); // 소분류 — 분류를 바꾸면 첫 칸으로 돌아간다
   // askOpen(해주세요 아코디언)은 타일 그리드 + 시트로 바뀌면서 없앴다 (2026-08-24)
   const [vitalsOpen, setVitalsOpen] = useState(false); // 건강 탭 — 몸 상태 세부
+  const [medInfoOpen, setMedInfoOpen] = useState(false); // 건강 탭 — 드시는 약 정보
+  const [plusOpen, setPlusOpen] = useState(null); // 해주세요 — 집 고칠 일 펼친 항목 (제목만 → 탭하면 세부)
   const [calOpen, setCalOpen] = useState(false); // 오늘 탭 — 이번 달 달력
   const [visitorOpen, setVisitorOpen] = useState(false); // 오늘 찾아뵙는 분 세부
   const [outingOpen, setOutingOpen] = useState(false); // 병원 가는 길 세부
@@ -364,6 +378,8 @@ export default function ElderHome() {
   const indoor = INDOOR.hot;
 
   // 스토어 탭 — 보호자 스토어와 같은 카탈로그. 가격 없는 항목은 담기지 않는다.
+  // 상품 사진도 보호자 스토어와 같은 것(콘솔 업로드 state.productImages)을 쓴다.
+  const storeImages = state.productImages || {};
   const storeCatalog = STORE_CATALOG.find((c) => c.id === storeCat) || STORE_CATALOG[0];
   const storeItems = STORE_CATALOG.flatMap((c) => c.groups.flatMap((g) => g.items)).filter(
     (i) => storeSel[i.id] && i.price
@@ -392,6 +408,34 @@ export default function ElderHome() {
     callTimer.current = setTimeout(() => setCalling(false), 2600);
   };
 
+  // 즉시 방문 요청 — GNB '도와줘요' 버튼이 부른다 (옛 '지금 와 주세요' 플로팅 버튼).
+  // 요청이 곧 방문은 아니다 — 관제가 먼저 전화로 확인하고 배차한다 (시트 어르신 전체 2번).
+  const askVisit = () => {
+    if (visitAsked) return;
+    dispatch({ type: "elderPatch", patch: { visitAsked: true } });
+    dispatch({
+      type: "addRequest",
+      payload: {
+        id: `rq-${Date.now()}`,
+        dir: "fromElder",
+        type: "즉시 방문 요청",
+        detail: "지금 와 주셨으면 합니다 (어르신 화면 즉시방문요청) — 관제가 먼저 전화로 확인합니다",
+        amount: null,
+        preferredDate: null,
+        urgency: "urgent",
+        assignee: "박지현",
+        photos: [],
+        status: "requested",
+        history: [{ at: Date.now(), status: "requested", note: "어르신 즉시방문요청" }],
+        proof: null,
+      },
+    });
+    dispatch({
+      type: "pushEvent",
+      payload: { kind: "방문", text: `${ELDER.name}(${ELDER.age}) 즉시 방문 요청 · 관제 확인 전화 발신`, color: "#B08D57" },
+    });
+  };
+
   return (
     <>
       <Head>
@@ -402,22 +446,18 @@ export default function ElderHome() {
         {/* break-keep: 한국어 어절 단위 줄바꿈 — 카피 개행(<br/>)과 병용 (06 §6) */}
         <div className="relative mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-4 min-[380px]:px-[22px]">
           {/* ── 카드 스택 (유일한 스크롤 영역) ──
-              헤더(날짜·인사)도 고정을 풀었다 (2026-08-24 피드백 — "이거 자체도
-              고정 풀어버리고"). 이제 화면에 붙박이는 오른쪽 위 플로팅 버튼과
-              하단 탭바뿐이고, 나머지는 전부 카드와 함께 스크롤되어 올라간다. */}
+              헤더(날짜·인사)도 고정을 풀었다 (2026-08-24 피드백). 이제 화면에
+              붙박이는 하단 GNB(도와줘요 · 홈 · 가족)뿐이고, 나머지는 전부 카드와
+              함께 스크롤되어 올라간다. 오른쪽 위 플로팅 버튼은 GNB '도와줘요'로
+              들어가면서 없앴다 (화이트보드 시안 2026-08-28). */}
           <main
             ref={scrollRef}
             className="elder-scroll -mx-2 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto px-2 pb-6"
           >
             {/* 인사 블록 — 스크롤 첫 요소 (모든 탭 공통, order -10).
-                데모 홈 링크는 오른쪽 위가 플로팅 버튼 자리가 되면서 K-CARE 옆으로
-                옮겼다 — 버튼 아래 깔리면 시연 때 못 누른다. 날짜 위 여백(mt-8)은
-                오른쪽 위 버튼과 날짜 글줄이 겹치지 않기 위한 것 — 탭 전환 시
-                스크롤이 맨 위로 돌아오므로(setTab) 인사도 늘 다시 보인다. */}
+                탭 전환 시 스크롤이 맨 위로 돌아오므로(setTab) 인사도 늘 다시 보인다. */}
             <div className="shrink-0" style={{ order: -10 }}>
-              {/* gap-2.5·구분점 없음 — 375px 화면에서 오른쪽 위 버튼(왼쪽 끝 x≈153)과
-                  겹치지 않으려면 이 줄이 140px 안에 끝나야 한다 (실측). */}
-              <div className="flex items-center gap-2.5 pt-5">
+              <div className="flex items-center justify-between pt-5">
                 <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
                   K-CARE
                 </span>
@@ -425,9 +465,83 @@ export default function ElderHome() {
                   데모 홈
                 </Link>
               </div>
-              <div className="mt-8 text-[19px] font-medium text-muted">{dateLong}</div>
+              <div className="mt-2 text-[19px] font-medium text-muted">{dateLong}</div>
               {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번) */}
               <h1 className="text-[27px] font-black leading-[1.3] text-navy">{name} 님, 안녕하세요</h1>
+              {/* 하루 인사 한 줄 — 홈에서만 (화이트보드 시안: 인사말 옆 "뭐하세요?") */}
+              {tab === "home" && (
+                <p className="mt-1 text-[20px] leading-[1.5] text-muted">
+                  오늘은 무얼 도와드릴까요? 아래에서 골라 주세요.
+                </p>
+              )}
+            </div>
+
+            {/* ══ 홈 탭 — 화이트보드 시안(2026-08-28): 나열식 대신 허브.
+                인사 + 다음 일정 카루셀 + 사분면(오늘/건강/해주세요/스토어) ══ */}
+            {/* order -8 · 다음 일정 카루셀 — 옆으로 밀어 보고, 누르면 오늘 탭 */}
+            <div className="shrink-0" style={{ order: -8, display: tab === "home" ? undefined : "none" }}>
+              <div className="flex items-baseline justify-between">
+                <span className="flex items-center gap-2 text-[19px] font-bold text-navy">
+                  <span aria-hidden className="text-gold">
+                    <Icon name="clock" size={20} strokeWidth={1.9} />
+                  </span>
+                  다음 일정
+                </span>
+                {upcoming.length > 1 && <span className="text-[16px] text-muted">옆으로 밀어 보세요</span>}
+              </div>
+              <div className="relative -mx-1 mt-2">
+                <div className="flex gap-2.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+                  {upcoming.slice(0, 4).map((e) => (
+                    <button
+                      key={e.id}
+                      onClick={() => setTab("today")}
+                      className="btn-press w-[232px] shrink-0 rounded-[18px] p-4 text-left"
+                      style={LIGHT_CARD}
+                    >
+                      <span className="block text-[18px] font-bold text-gold">
+                        {isToday(e.at) ? "오늘" : spokenDay(e.at)} {spokenTime(e.at)}
+                      </span>
+                      <span className="mt-1 block truncate text-[20px] font-bold leading-[1.35] text-navy">
+                        {e.title}
+                      </span>
+                      <span className="mt-0.5 block text-[17px] text-muted">
+                        {EVENT_KINDS[e.kind]?.label || "일정"}
+                      </span>
+                    </button>
+                  ))}
+                  {upcoming.length === 0 && (
+                    <div className="w-full rounded-[18px] p-4 text-[19px] leading-[1.5] text-muted" style={LIGHT_CARD}>
+                      잡힌 일정이 없습니다.
+                    </div>
+                  )}
+                </div>
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-y-0 right-0 w-10"
+                  style={{ background: "linear-gradient(90deg, rgba(253,252,249,0), #FDFCF9)" }}
+                />
+              </div>
+            </div>
+
+            {/* order -7 · 사분면 — 각 상세 화면 진입. 돌아오는 길은 GNB '홈' */}
+            <div
+              className="grid shrink-0 grid-cols-2 gap-3"
+              style={{ order: -7, display: tab === "home" ? undefined : "none" }}
+            >
+              {HOME_TILES.map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => setTab(t.key)}
+                  className="btn-press flex flex-col items-center justify-center gap-1.5 rounded-[22px] px-3 py-7 text-center"
+                  style={LIGHT_CARD}
+                >
+                  <span aria-hidden style={{ color: t.color }}>
+                    <Icon name={t.icon} size={40} strokeWidth={1.6} />
+                  </span>
+                  <span className="mt-1 text-[22px] font-black text-navy">{t.label}</span>
+                  <span className="text-[17px] leading-[1.3] text-muted">{t.sub}</span>
+                </button>
+              ))}
             </div>
             {/* order 0 · 오늘 찾아뵙는 분 — 방문 사기 방어. 유일한 2px 테두리.
                 방문일에만 이름·사진을 보여준다 (2026-08-24 검수에서 발견한 오류를 고쳤다).
@@ -502,7 +616,7 @@ export default function ElderHome() {
             {/* order 2 · 오늘 나는 — 보호자 홈의 "오늘 어머니는"과 같은 내용을
                 1인칭으로. 어제 숫자를 나란히 둔다 (시트 '오늘' 2번).
                 안부 전화 카드는 같은 시트 대표 피드백으로 삭제. */}
-            <ElderCard show={tab === "today"} order={2}>
+            <ElderCard show={tab === "today"} order={3}>
               <CardHead title="오늘 나는" right="어제와 비교" icon="activity" />
               <p className="mt-2 text-[20px] leading-[1.6] text-ink">{TODAY_ME.line}</p>
               <div className="mt-1">
@@ -566,11 +680,13 @@ export default function ElderHome() {
 
             {/* 즉시방문 요청 뒤 — 관제 확인 전화 대기 (2026-08-21 시트 어르신 전체 2번).
                 요청하면 바로 배차가 아니라 관제가 먼저 전화로 상황을 여쭙는다.
-                기다리는 동안 화면이 아무 말도 하지 않으면 다시 누르게 된다. */}
+                기다리는 동안 화면이 아무 말도 하지 않으면 다시 누르게 된다.
+                GNB 도와줘요를 누르면 홈으로 오므로 홈에서도 보여야 한다 —
+                order -9: 홈에서는 카루셀보다 위(제일 급한 상태가 맨 위). CSS order 는 정수만 유효하다. */}
             {visitAsked && (
               <ElderCard
-                show={tab === "today"}
-                order={0.5}
+                show={tab === "today" || tab === "home"}
+                order={-9}
                 style={{
                   background: "#0A1F3C",
                   backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0))",
@@ -821,13 +937,56 @@ export default function ElderHome() {
                       <span className="text-right text-[18px] leading-[1.4] text-muted">{v.status}</span>
                     </div>
                   ))}
+
+                  {/* 지난 7일 — 과거 기록 (화이트보드 시안 "FIT 건강기록, 과거기록 보이게").
+                      막대는 걸음 수, 오늘만 골드. 그림만으로 못 읽는 분을 위해
+                      aria 와 아래 문장에 숫자를 그대로 쓴다. */}
+                  <div className="mt-1 border-t border-navy/[.07] pt-3.5">
+                    <div className="text-[18px] font-bold text-navy">지난 7일 걸음</div>
+                    <div
+                      className="mt-2.5 flex items-end gap-1.5"
+                      role="img"
+                      aria-label={`지난 7일 걸음: ${FIT_WEEK.map((d) => d.steps.toLocaleString()).join(", ")}`}
+                    >
+                      {FIT_WEEK.map((d) => {
+                        const max = Math.max(...FIT_WEEK.map((w) => w.steps));
+                        const date = new Date(Date.now() - d.ago * 86400000);
+                        const label = d.ago === 0 ? "오늘" : ["일", "월", "화", "수", "목", "금", "토"][date.getDay()];
+                        return (
+                          <div key={d.ago} className="flex flex-1 flex-col items-center gap-1">
+                            <span className="font-num text-[13px] font-bold text-muted">
+                              {Math.round(d.steps / 100) / 10}
+                            </span>
+                            <div
+                              className="w-full rounded-t-[6px]"
+                              style={{
+                                height: Math.max(10, Math.round((d.steps / max) * 62)),
+                                background: d.ago === 0 ? "#B08D57" : "rgba(10,31,60,.16)",
+                              }}
+                            />
+                            <span className={`text-[14px] font-bold ${d.ago === 0 ? "text-navy" : "text-muted"}`}>
+                              {label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="mt-2 text-[17px] leading-[1.55] text-muted">
+                      단위는 천 걸음입니다. 잠은 지난 7일 평균{" "}
+                      {Math.round((FIT_WEEK.reduce((s, d) => s + d.sleep, 0) / FIT_WEEK.length) * 10) / 10}
+                      시간 주무셨습니다. 워치가 잰 그대로입니다.
+                    </p>
+                  </div>
                 </div>
               )}
               <p className="mt-3 text-[19px] leading-[1.6] text-muted">{TODAY_ME.foot}</p>
             </ElderCard>
 
+            {/* 오늘 약 — 미션형 체크는 오늘 탭이다 (화이트보드 시안 2026-08-28
+                "①오늘 → 약 복용(미션형)"). 아침에 여는 화면에서 바로 체크해야
+                루틴이 된다. 등록된 약 '정보'는 건강 탭 '드시는 약 정보'가 맡는다. */}
             <ElderCard
-              show={tab === "health"}
+              show={tab === "today"}
               order={2}
               style={{
                 background:
@@ -901,6 +1060,37 @@ export default function ElderHome() {
                 {MED_REGISTRY.registeredAt}에 {MED_REGISTRY.registeredBy}이 약봉투를 보고 등록했습니다.
               </p>
             </ElderCard>
+
+            {/* order 2 · 드시는 약 정보 — 첫 안심방문 때 등록한 장복약 정보와 기록
+                (화이트보드 시안 "②건강 → 약/건기식 정보"). 체크(미션)는 오늘 탭,
+                여기는 무슨 약을 언제 드시는지 '정보'만 본다. */}
+            <ElderExpand
+              show={tab === "health"}
+              order={2}
+              title="드시는 약 정보"
+              icon="pill"
+              right={`하루 ${MED_PLAN.length}번`}
+              summary={`${MED_REGISTRY.registeredAt}에 ${MED_REGISTRY.registeredBy}이 약봉투를 보고 등록한 것입니다. 오늘 체크는 홈 → 오늘에서 하십니다.`}
+              open={medInfoOpen}
+              onToggle={() => setMedInfoOpen((v) => !v)}
+            >
+              <div>
+                {MED_PLAN.map((d) => (
+                  <div key={d.slot} className="flex items-baseline gap-3 border-t border-navy/[.07] py-3 first:border-t-0">
+                    <span className="w-[62px] shrink-0 text-[19px] font-bold text-navy">{d.slot}</span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[19px] leading-[1.45] text-ink">
+                        {d.items.map((i) => i.name).join(" · ")}
+                      </span>
+                      <span className="block font-num text-[17px] text-muted">{d.time}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-2 text-[18px] leading-[1.55] text-muted">
+                약이 바뀌면 다음 방문 때 선생님에게 봉투를 보여 주세요. 다시 등록해 드립니다.
+              </p>
+            </ElderExpand>
 
             {/* order 3 · 건강기능식품 — 남은 양과 유통기한. 떨어질 때쯤 알려 드린다
                 (시트 '건강' 1번 뒷부분: 종류·유통기간 관리 + 재구매 알림) */}
@@ -1042,7 +1232,7 @@ export default function ElderHome() {
             {/* order 4 · 오늘 여쭤볼 것 — 인지 부담 면제. 출처 3종 투명 표기 */}
             <ElderExpand
               show={tab === "today"}
-              order={4}
+              order={5}
               title="오늘 여쭤볼 것"
               icon="chat"
               summary={`${ASK_DOCTOR.length}가지 · 잊으셔도 됩니다, 선생님이 대신 여쭤봅니다`}
@@ -1088,7 +1278,7 @@ export default function ElderHome() {
                 놓치면 안 되는 내용이라, 열어야만 보이게 하지 않는다. */}
             <ElderExpand
               show={tab === "today"}
-              order={3}
+              order={4}
               title="병원 가는 길"
               icon="pin"
               summary={OUTING.adviceElder}
@@ -1138,7 +1328,7 @@ export default function ElderHome() {
             {/* order 5 · 지금 우리 동네 — 실외(청색조). 실내 카드와 색으로 구분 */}
             <ElderCard
               show={tab === "today"}
-              order={5}
+              order={6}
               style={{
                 background: "linear-gradient(180deg, #FAFCFF, #F2F7FD)",
                 border: "1px solid rgba(147,178,214,.24)",
@@ -1260,14 +1450,39 @@ export default function ElderHome() {
                 책임 경계를 어르신 화면에도 그대로 쓴다 (공사 책임은 그 업체에 있다). */}
             <ElderCard show={tab === "ask"} order={7} style={LIGHT_CARD}>
               <CardHead title="집 고칠 일" right="바깥 업체 연결" icon="box" />
+              {/* 제목·가격만 접어 두고 누르면 세부 (화이트보드 시안 "③해주세요 —
+                  핸디맨/공사맨 제목만 보이고 누르면 세부내역"). 가격은 접힌 채로도
+                  남긴다 — 비교하려고 전부 열어 보게 만들지 않는다. */}
               <div className="mt-2 space-y-2">
-                {SERVICE_PLUS.map((p) => (
-                  <div key={p.key} style={SUB_CARD}>
-                    <div className="text-[20px] font-bold text-navy">{p.name}</div>
-                    <div className="mt-0.5 text-[18px] font-bold text-[#7A5C28]">{p.priceLabel}</div>
-                    <p className="mt-1 text-[18px] leading-[1.5] text-muted">{p.scope}</p>
-                  </div>
-                ))}
+                {SERVICE_PLUS.map((p) => {
+                  const open = plusOpen === p.key;
+                  return (
+                    <div key={p.key} style={SUB_CARD}>
+                      <button
+                        onClick={() => setPlusOpen(open ? null : p.key)}
+                        aria-expanded={open}
+                        className="btn-press flex w-full items-center gap-3 text-left"
+                      >
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[20px] font-bold text-navy">{p.name}</span>
+                          <span className="mt-0.5 block text-[18px] font-bold text-[#7A5C28]">{p.priceLabel}</span>
+                        </span>
+                        <span
+                          aria-hidden
+                          className="shrink-0 text-muted transition-transform duration-200"
+                          style={{ transform: open ? "rotate(180deg)" : "none" }}
+                        >
+                          <Icon name="chev" size={22} strokeWidth={2} />
+                        </span>
+                      </button>
+                      {open && (
+                        <p className="mt-2 border-t border-navy/[.08] pt-2.5 text-[18px] leading-[1.55] text-muted">
+                          {p.scope}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
               <p className="mt-3 text-[19px] leading-[1.6] text-muted">
                 알아보고 진행 상황을 알려드립니다. 공사 자체의 책임은 그 업체에 있습니다.
@@ -1370,10 +1585,15 @@ export default function ElderHome() {
             {[storeCatalog.groups[storeGroup] || storeCatalog.groups[0]].filter(Boolean).map((g) => (
               <ElderCard key={`${storeCatalog.id}-${g.name}`} show={tab === "store"} order={1}>
                 <CardHead title={g.name} right={`${g.items.length}가지`} />
-                <div className="mt-2 space-y-2">
+                {/* 사진 카드 2열 — 보호자 스토어와 같은 구성 (화이트보드 시안
+                    "④스토어 → 보호자 스토어 같이, 사진+제품정보+가격").
+                    사진은 콘솔에서 올린 것(state.productImages)을 같이 쓰고,
+                    없으면 '사진 준비 중'. 글자만 어르신 규격으로 키웠다. */}
+                <div className="mt-2 grid grid-cols-2 gap-2.5">
                   {g.items.map((i) => {
                     const on = !!storeSel[i.id];
                     const off = !i.price; // 가격 확정 전 — 담기지 않는다
+                    const img = storeImages[i.id];
                     return (
                       <button
                         key={i.id}
@@ -1382,33 +1602,42 @@ export default function ElderHome() {
                           setStoreSent(null);
                           setStoreSel((s) => ({ ...s, [i.id]: !s[i.id] }));
                         }}
-                        className="btn-press flex w-full items-center gap-3 text-left disabled:opacity-60"
+                        className="btn-press w-full overflow-hidden rounded-[18px] bg-white text-left disabled:opacity-60"
                         style={{
-                          ...SUB_CARD,
-                          outline: on ? "3px solid #B08D57" : "none",
-                          border: off ? "1px dashed rgba(10,31,60,.22)" : undefined,
+                          outline: on ? "3px solid #B08D57" : "1px solid rgba(10,31,60,.1)",
+                          border: off ? "1px dashed rgba(10,31,60,.25)" : undefined,
                         }}
                       >
-                        <span
-                          className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
-                          style={{
-                            background: on ? "#1E7A5A" : "rgba(10,31,60,.08)",
-                            color: on ? "#fff" : "transparent",
-                          }}
-                        >
-                          ✓
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-[19px] font-bold leading-[1.35] text-ink">{i.name}</span>
-                          {i.note && (
-                            <span className="mt-0.5 block text-[17px] leading-[1.4] text-muted">{i.note}</span>
+                        <span className="relative block aspect-square w-full bg-[#EDF1EA]">
+                          {img ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                          ) : (
+                            <span className="absolute inset-0 flex items-center justify-center">
+                              <span className="rounded-full bg-white/75 px-3 py-1.5 text-[14px] font-bold text-navy/40">
+                                사진 준비 중
+                              </span>
+                            </span>
+                          )}
+                          {on && (
+                            <span className="absolute right-2.5 top-2.5 inline-flex h-[30px] w-[30px] items-center justify-center rounded-full bg-green text-[16px] font-bold text-white shadow">
+                              ✓
+                            </span>
                           )}
                         </span>
-                        <span className="shrink-0 text-right">
+                        <span className="block px-3 pb-3.5 pt-2.5">
+                          <span className="block min-h-[50px] text-[18px] font-bold leading-[1.35] text-ink">
+                            {i.name}
+                          </span>
+                          {i.note && (
+                            <span className="mt-0.5 block text-[16px] leading-[1.35] text-muted">{i.note}</span>
+                          )}
                           {i.price ? (
-                            <span className="font-num text-[20px] font-bold text-navy">{fmtWon(i.price)}</span>
+                            <span className="mt-1 block font-num text-[20px] font-bold text-navy">
+                              {fmtWon(i.price)}
+                            </span>
                           ) : (
-                            <span className="text-[17px] font-bold text-muted">{i.pending}</span>
+                            <span className="mt-1 block text-[16px] font-bold text-muted">{i.pending}</span>
                           )}
                         </span>
                       </button>
@@ -1661,13 +1890,43 @@ export default function ElderHome() {
             </ElderCard>
           </main>
 
-          {/* ── 고정 푸터: 탭 (스크롤 밖 — 06 원칙 5) ──
-              '선생님께 전화'는 전체 탭에서 삭제 (2026-08-12 시트 전체 요청 2번).
+          {/* ── 고정 푸터: GNB (스크롤 밖 — 06 원칙 5) ──
+              화이트보드 시안(2026-08-28): 도와줘요 · 홈 · 가족 세 개만.
+              오늘/건강/해주세요/스토어는 홈 사분면 타일로 들어간다.
+              '선생님께 전화'는 전체 탭에서 삭제 (2026-08-12 시트 전체 요청 2번) —
               전화는 오늘 오시는 분에게만, '오늘 찾아뵙는 분' 카드 안에서 연다. */}
           <footer className="shrink-0 pb-3 pt-4">
-            {/* 하단 탭 5개 — 아이콘+라벨 병행 (아이콘 전용 금지) */}
+            {/* 아이콘+라벨 병행 (아이콘 전용 금지). 도와줘요는 탭이 아니라 행동 —
+                누르면 즉시방문요청이 가고 관제가 확인 전화를 건다. 빨강은 SOS
+                전용이라 골드·앰버로 구분한다. */}
             <nav className="flex border-t border-navy/[.12] pt-2">
               {TABS.map((t) => {
+                if (t.action) {
+                  const done = visitAsked;
+                  return (
+                    <button
+                      key={t.key}
+                      onClick={() => {
+                        if (done) {
+                          setTab("home"); // 이미 요청됨 — 상태 카드가 있는 홈으로
+                          return;
+                        }
+                        askVisit();
+                        setTab("home"); // 요청 직후 '관제에서 전화를 드립니다' 카드가 보이게
+                      }}
+                      aria-label={done ? "방문 요청을 보냈습니다 — 관제 전화 대기" : "도와줘요 — 즉시 방문 요청"}
+                      className="flex min-h-[60px] flex-1 flex-col items-center justify-center gap-1"
+                    >
+                      <span aria-hidden style={{ color: done ? "#1E7A5A" : "#B08D57" }}>
+                        <Icon name={done ? "clock" : "door"} size={24} strokeWidth={2} />
+                      </span>
+                      <span className="text-[16px] font-bold" style={{ color: done ? "#1E7A5A" : "#8A5D12" }}>
+                        {done ? "요청됨" : t.label}
+                      </span>
+                      <span className="h-[3px] w-[26px] rounded-full" style={{ background: "transparent" }} />
+                    </button>
+                  );
+                }
                 const active = tab === t.key;
                 const color = active ? "#0A1F3C" : "#5C5A54";
                 return (
@@ -1691,37 +1950,6 @@ export default function ElderHome() {
               })}
             </nav>
           </footer>
-
-          {/* 즉시방문요청 플로팅 버튼 — 탭·스크롤과 무관하게 항상 같은 자리(오른쪽 위).
-              하단은 탭바와 붙어 눌림 실수가 나기 쉬워 위로 올렸다 (2026-08-24 피드백). */}
-          <VisitNowButton
-            done={visitAsked}
-            onAsk={() => {
-              dispatch({ type: "elderPatch", patch: { visitAsked: true } });
-              dispatch({
-                type: "addRequest",
-                payload: {
-                  id: `rq-${Date.now()}`,
-                  dir: "fromElder",
-                  type: "즉시 방문 요청",
-                  detail:
-                    "지금 와 주셨으면 합니다 (어르신 화면 즉시방문요청) — 관제가 먼저 전화로 확인합니다",
-                  amount: null,
-                  preferredDate: null,
-                  urgency: "urgent",
-                  assignee: "박지현",
-                  photos: [],
-                  status: "requested",
-                  history: [{ at: Date.now(), status: "requested", note: "어르신 즉시방문요청" }],
-                  proof: null,
-                },
-              });
-              dispatch({
-                type: "pushEvent",
-                payload: { kind: "방문", text: `${ELDER.name}(${ELDER.age}) 즉시 방문 요청 · 관제 확인 전화 발신`, color: "#B08D57" },
-              });
-            }}
-          />
         </div>
 
         {/* 간단등록 시트 — 큰 활자 · 프리셋만. 자유 입력 없음 (저인지부하) */}
@@ -2125,48 +2353,9 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onClose }) {
   );
 }
 
-// 즉시 방문 요청 — 화면 안 SOS 버튼을 대신한다 (2026-08-12 시트 전체 요청 4번).
-// SOS 는 "지금 위험하다"이고 이것은 "지금 와 주셨으면 한다"다. 둘을 색으로 가른다 —
-// 빨강은 SOS 전용이므로 이 버튼은 네이비다.
-//
-// 헤더 옆 고정칸 → 오른쪽 아래 플로팅 → 오른쪽 위 플로팅 (2026-08-24 피드백 두 번 —
-// "인사말 옆에 고정으로 박힐 필요가 없음", "하단 말고 위에"). 어느 탭에서 스크롤
-// 중이든 같은 자리라서 급할 때 찾아 헤매지 않는다. 카드 위에 뜨는 물건이라 요청
-// 완료 상태도 반투명이 아니라 흰 바탕(불투명)이어야 아래 글자가 비쳐 보이지 않는다.
-// 완료 라벨은 "요청됨" 한 단어 — 위 자리에서는 길면 데모 홈 링크를 덮는다.
-// 전화 대기 설명은 오늘 탭의 '관제에서 전화를 드립니다' 카드가 한다.
-function VisitNowButton({ done, onAsk }) {
-  return (
-    <button
-      onClick={() => !done && onAsk()}
-      aria-label={done ? "즉시 방문을 요청했습니다" : "지금 와 주세요 — 즉시 방문 요청"}
-      className="btn-press absolute right-4 top-3 z-40 flex min-h-[60px] select-none items-center gap-2.5 whitespace-nowrap rounded-full py-3 pl-4 pr-5 text-[20px] font-black tracking-[-.01em]"
-      style={
-        done
-          ? {
-              background: "#FFFFFF",
-              color: "#1E7A5A",
-              border: "2px solid rgba(30,122,90,.4)",
-              boxShadow: "0 14px 26px -14px rgba(10,31,60,.45)",
-            }
-          : {
-              background:
-                "linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.03) 55%), #0A1F3C",
-              color: "#FFFFFF",
-              // 흰 헤어라인 — 네이비 카드(다음 일정) 위를 지날 때 경계가 필요하다
-              border: "1px solid rgba(255,255,255,.35)",
-              boxShadow:
-                "inset 0 1px 0 rgba(255,255,255,.4), inset 0 -3px 0 rgba(0,0,0,.25), 0 18px 32px -14px rgba(10,31,60,.65)",
-            }
-      }
-    >
-      <span aria-hidden style={{ color: done ? "#1E7A5A" : "#C9A46B" }}>
-        <Icon name={done ? "clock" : "door"} size={26} strokeWidth={2} />
-      </span>
-      {done ? "요청됨" : "지금 와 주세요"}
-    </button>
-  );
-}
+// VisitNowButton(지금 와 주세요 플로팅 버튼)은 GNB '도와줘요'로 들어가면서 지웠다
+// (화이트보드 시안 2026-08-28). 헤더 옆 고정칸 → 오른쪽 아래 플로팅 → 오른쪽 위
+// 플로팅 → GNB — 네 번째 자리가 최종이다. 요청 로직은 askVisit()이 그대로 갖고 있다.
 
 // SOS — REQ-06 확정: 5초 취소 카운트다운 → 자동 접수.
 //
