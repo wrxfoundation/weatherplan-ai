@@ -1,71 +1,82 @@
-/* 8/28 서우 5차: 래스터 3D 아이콘(힉스필드 webp) → 인라인 SVG로 교체.
-   요구 재질 = "반투명 · 색상 약한 · 약한 유광".
-   - 본체는 브랜드 바이올렛을 0.28~0.55 알파로만 채워 뒤 배경(글래스 카드·도시 사진)이 비치게 한다
-   - 유광은 상단 하이라이트 그라디언트 + 옅은 스펙큘러 하나로 "약하게"만 준다 (하이글로스 금지)
-   - 흰 받침(스탠드)은 서우 지시로 유지 — 반투명 흰 타원
-   래스터를 쓰지 않으므로 CDN 이송이 필요 없고, 배율·테마에 관계없이 선명하다. */
+/* 8/28 서우 6차: 아이콘 전면 교체 — 참고 시안의 "글래스 3D" 스타일.
+   색상 톤은 기존 브랜드 바이올렛 유지(시안은 블루였으나 지시대로 톤 보존).
+
+   시안에서 읽은 재질 규칙:
+   - 코어는 진하게, 그 위를 감싸는 유리 셸은 옅게 — 두 겹으로 두께를 만든다
+   - 좌상단 스펙큘러(밝은 하이라이트) 하나 + 림 라이트(테두리 밝은 선)
+   - 받침(스탠드) 없이 떠 있고, 아래에 색이 밴 소프트 섀도만 깐다
+   - 모티프: ① 구름 in 유리 원반 · ② 방패+체크 · ③ 스택+체크 배지 · ④ 막대+상승 화살표
+
+   5차의 흰 타원 받침은 시안에 없어 제거했다(되살리려면 Pedestal 복구).
+   래스터가 아니라 CDN 이송이 필요 없고 배율·테마에 관계없이 선명하다. */
 
 import React from "react";
 
-const V = "124,107,240"; /* 브랜드 바이올렛 */
+/* 브랜드 바이올렛 램프 — 톤 유지, 명도만 3단 */
+const C_LIGHT = "#B6ACFF";
+const C_MID = "#8B7BF2";
+const C_DEEP = "#5B49D8";
+const V = "124,107,240";
 
-/* 공용 defs — id 충돌을 막으려 인스턴스마다 접두사를 받는다 */
+type IconProps = { size?: number; className?: string };
+const box = (size: number): React.CSSProperties => ({ width: size, height: size, display: "block", flexShrink: 0, overflow: "visible" });
+
+/* 공용 그라디언트/필터. id 충돌을 막으려 인스턴스마다 접두사를 받는다 */
 function Defs({ p }: { p: string }) {
   return (
     <defs>
-      {/* 본체: 위가 밝고 아래로 옅어지는 반투명 채움 */}
-      <linearGradient id={`${p}-body`} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stopColor={`rgba(${V},.52)`} />
-        <stop offset="1" stopColor={`rgba(${V},.28)`} />
+      {/* 코어 — 좌상단이 밝고 우하단으로 진해지는 입체 채움 */}
+      <linearGradient id={`${p}-core`} x1=".15" y1="0" x2=".85" y2="1">
+        <stop offset="0" stopColor={C_LIGHT} />
+        <stop offset=".5" stopColor={C_MID} />
+        <stop offset="1" stopColor={C_DEEP} />
       </linearGradient>
-      {/* 약한 유광: 상단 45%에만 걸리는 흰 하이라이트 */}
-      <linearGradient id={`${p}-gloss`} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stopColor="rgba(255,255,255,.62)" />
-        <stop offset=".45" stopColor="rgba(255,255,255,.10)" />
+      {/* 유리 셸 — 코어를 감싸는 옅은 겉면(두께감) */}
+      <linearGradient id={`${p}-shell`} x1=".2" y1="0" x2=".8" y2="1">
+        <stop offset="0" stopColor={`rgba(${V},.26)`} />
+        <stop offset="1" stopColor={`rgba(${V},.10)`} />
+      </linearGradient>
+      {/* 림 라이트 — 위/왼쪽만 밝은 테두리 */}
+      <linearGradient id={`${p}-rim`} x1=".1" y1="0" x2=".9" y2="1">
+        <stop offset="0" stopColor="rgba(255,255,255,.95)" />
+        <stop offset=".45" stopColor="rgba(255,255,255,.35)" />
+        <stop offset="1" stopColor="rgba(255,255,255,.08)" />
+      </linearGradient>
+      {/* 스펙큘러 — 좌상단 한 점 */}
+      <radialGradient id={`${p}-spec`} cx=".32" cy=".26" r=".45">
+        <stop offset="0" stopColor="rgba(255,255,255,.85)" />
+        <stop offset=".55" stopColor="rgba(255,255,255,.18)" />
         <stop offset="1" stopColor="rgba(255,255,255,0)" />
-      </linearGradient>
-      {/* 받침: 반투명 흰 타원 */}
-      <linearGradient id={`${p}-base`} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stopColor="rgba(255,255,255,.92)" />
-        <stop offset="1" stopColor="rgba(255,255,255,.55)" />
-      </linearGradient>
-      <radialGradient id={`${p}-shadow`} cx=".5" cy=".5" r=".5">
-        <stop offset="0" stopColor="rgba(27,27,72,.20)" />
-        <stop offset="1" stopColor="rgba(27,27,72,0)" />
       </radialGradient>
+      {/* 색이 밴 소프트 섀도 — 받침 대신 접지감을 만든다 */}
+      <filter id={`${p}-drop`} x="-40%" y="-30%" width="180%" height="180%">
+        <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor={`rgba(${V},.34)`} />
+      </filter>
     </defs>
   );
 }
 
-/* 받침 + 접지 그림자 (4개 아이콘 공통, 광학 정렬 기준) */
-function Pedestal({ p, cy = 82 }: { p: string; cy?: number }) {
-  return (
-    <>
-      <ellipse cx="48" cy={cy + 4} rx="30" ry="9" fill={`url(#${p}-shadow)`} />
-      <ellipse cx="48" cy={cy} rx="26" ry="7.5" fill={`url(#${p}-base)`} stroke="rgba(255,255,255,.85)" strokeWidth="1" />
-    </>
-  );
-}
-
-type IconProps = { size?: number; className?: string };
-const box = (size: number): React.CSSProperties => ({ width: size, height: size, display: "block", flexShrink: 0 });
-
-/* ① 측정 — 공기질 측정기(화면에 지표 셀 3개) */
+/* ① 측정 — 유리 원반 안의 구름 (실내 공기) */
 export function IconMeasure({ size = 120, className }: IconProps) {
-  const p = "im";
+  const p = "gm";
+  /* 원반 안쪽 원(r=26)에 스트로크까지 여유 있게 들어가도록 직접 치수를 잡은 구름 */
+  const cloud =
+    "M35 57 C30 57 26 53 26 48 C26 43.5 29.3 39.8 33.6 39.2 " +
+    "C35.1 33.4 40.4 29.2 46.6 29.2 C52.4 29.2 57.4 32.9 59.2 38 " +
+    "C59.7 37.9 60.2 37.9 60.7 37.9 C65.6 37.9 69.6 41.9 69.6 46.9 " +
+    "C69.6 51.8 65.6 57 60.7 57 Z";
   return (
     <svg viewBox="0 0 96 96" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <Pedestal p={p} />
-      <g>
-        <rect x="22" y="18" width="52" height="52" rx="13" fill={`url(#${p}-body)`} stroke="rgba(255,255,255,.75)" strokeWidth="1.4" />
-        <rect x="30" y="30" width="36" height="21" rx="5" fill="rgba(255,255,255,.55)" stroke="rgba(255,255,255,.8)" strokeWidth="1" />
-        {/* 지표 셀 — 색상은 약하게(알파 .55) */}
-        <rect x="34" y="35" width="8" height="11" rx="2.2" fill="rgba(244,132,95,.62)" />
-        <rect x="44" y="35" width="8" height="11" rx="2.2" fill="rgba(90,200,168,.62)" />
-        <rect x="54" y="35" width="8" height="11" rx="2.2" fill={`rgba(${V},.62)`} />
-        <rect x="34" y="57" width="28" height="4" rx="2" fill="rgba(255,255,255,.5)" />
-        <rect x="22" y="18" width="52" height="52" rx="13" fill={`url(#${p}-gloss)`} />
+      <g filter={`url(#${p}-drop)`}>
+        {/* 유리 원반 */}
+        <circle cx="48" cy="45" r="33" fill={`url(#${p}-shell)`} stroke={`url(#${p}-rim)`} strokeWidth="2" />
+        <circle cx="48" cy="45" r="26" fill="rgba(255,255,255,.30)" />
+        {/* 구름 — 시안처럼 굵은 아웃라인 + 옅은 채움 */}
+        <path d={cloud} fill="rgba(255,255,255,.55)" />
+        <path d={cloud} fill="none" stroke={`url(#${p}-core)`} strokeWidth="6" strokeLinejoin="round" />
+        {/* 스펙큘러 */}
+        <circle cx="48" cy="45" r="33" fill={`url(#${p}-spec)`} />
       </g>
     </svg>
   );
@@ -73,47 +84,51 @@ export function IconMeasure({ size = 120, className }: IconProps) {
 
 /* ② 검증 — 방패 + 체크 */
 export function IconVerify({ size = 120, className }: IconProps) {
-  const p = "iv";
+  const p = "gv";
+  const shell = "M48 11 L77 22 V46 C77 62.5 64.5 73.5 48 79 C31.5 73.5 19 62.5 19 46 V22 Z";
+  const core = "M48 18 L71 26.5 V46 C71 58.8 61.2 67.7 48 72.2 C34.8 67.7 25 58.8 25 46 V26.5 Z";
   return (
     <svg viewBox="0 0 96 96" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <Pedestal p={p} />
-      <g>
-        {/* 면적이 큰 형상이라 같은 알파에서도 더 진해 보임 → 방패만 채움을 한 단계 낮춰 4개를 광학 균일화 */}
-        <path
-          d="M48 14 L72 23 V45 C72 59 61 68.5 48 73 C35 68.5 24 59 24 45 V23 Z"
-          fill={`rgba(${V},.34)`}
-          stroke="rgba(255,255,255,.75)"
-          strokeWidth="1.4"
-        />
-        <path d="M37 44.5 L45 52.5 L60 36.5" fill="none" stroke="rgba(255,255,255,.95)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M48 14 L72 23 V45 C72 59 61 68.5 48 73 C35 68.5 24 59 24 45 V23 Z" fill={`url(#${p}-gloss)`} />
+      <g filter={`url(#${p}-drop)`}>
+        {/* 겉 유리(두께) */}
+        <path d={shell} fill={`url(#${p}-shell)`} stroke={`url(#${p}-rim)`} strokeWidth="2" />
+        {/* 코어 */}
+        <path d={core} fill={`url(#${p}-core)`} />
+        <path d="M37.5 46.5 L45 54 L60 38.5" fill="none" stroke="#fff" strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={core} fill={`url(#${p}-spec)`} />
       </g>
     </svg>
   );
 }
 
-/* ③ 보상 — 코인 스택 (원화·달러 각인 없음: 보상은 현금이 아니며 지급량·가치 비보장) */
+/* ③ 보상 — 토큰 스택 + 체크 배지
+   (통화 기호는 넣지 않는다: 보상은 현금이 아니고 지급량·가치가 보장되지 않는다) */
 export function IconReward({ size = 120, className }: IconProps) {
-  const p = "ir";
-  const disc = (cy: number, o: number) => (
+  const p = "gr";
+  const disc = (cy: number) => (
     <g key={cy}>
-      <ellipse cx="48" cy={cy} rx="22" ry="8" fill={`rgba(${V},${o})`} stroke="rgba(255,255,255,.7)" strokeWidth="1.2" />
-      <ellipse cx="48" cy={cy - 1.6} rx="15" ry="4.6" fill="rgba(255,255,255,.34)" />
+      <ellipse cx="41" cy={cy} rx="27" ry="10" fill={`url(#${p}-core)`} />
+      <ellipse cx="41" cy={cy - 2} rx="18" ry="6" fill="rgba(255,255,255,.30)" />
     </g>
   );
   return (
     <svg viewBox="0 0 96 96" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <Pedestal p={p} />
-      <g>
-        {/* 옆면(스택 두께) */}
-        <path d="M26 30 V60 A22 8 0 0 0 70 60 V30 Z" fill={`rgba(${V},.30)`} />
-        {disc(60, 0.48)}
-        {disc(50, 0.46)}
-        {disc(40, 0.44)}
-        {disc(30, 0.5)}
-        <path d="M26 30 V60 A22 8 0 0 0 70 60 V30 Z" fill={`url(#${p}-gloss)`} />
+      <g filter={`url(#${p}-drop)`}>
+        {/* 스택 옆면 */}
+        <path d="M14 22 V59 A27 10 0 0 0 68 59 V22 Z" fill={`url(#${p}-core)`} opacity=".92" />
+        <path d="M14 22 V59 A27 10 0 0 0 68 59 V22 Z" fill={`url(#${p}-shell)`} />
+        {disc(59)}
+        {disc(40.5)}
+        {/* 최상단 디스크는 유리처럼 더 밝게 */}
+        <ellipse cx="41" cy="22" rx="27" ry="10" fill="rgba(255,255,255,.62)" stroke={`url(#${p}-rim)`} strokeWidth="1.6" />
+        <ellipse cx="41" cy="20.4" rx="18" ry="6" fill="rgba(255,255,255,.5)" />
+        {/* 체크 배지 — 시안처럼 스택 우하단에 겹쳐 앉힌다 */}
+        <circle cx="68" cy="62" r="15" fill={`url(#${p}-shell)`} stroke={`url(#${p}-rim)`} strokeWidth="2" />
+        <circle cx="68" cy="62" r="11.5" fill={`url(#${p}-core)`} opacity=".55" />
+        <path d="M62 62 L66.5 66.5 L74.5 57" fill="none" stroke="#fff" strokeWidth="4.2" strokeLinecap="round" strokeLinejoin="round" />
+        <ellipse cx="41" cy="41" rx="27" ry="32" fill={`url(#${p}-spec)`} />
       </g>
     </svg>
   );
@@ -121,29 +136,32 @@ export function IconReward({ size = 120, className }: IconProps) {
 
 /* ④ 활용 — 성장 막대 + 상승 화살표 */
 export function IconUse({ size = 120, className }: IconProps) {
-  const p = "iu";
-  const bar = (x: number, y: number, o: number) => (
+  const p = "gu";
+  const bar = (x: number, y: number) => (
     <g key={x}>
-      <rect x={x} y={y} width="12" height={72 - y} rx="3.5" fill={`rgba(${V},${o})`} stroke="rgba(255,255,255,.7)" strokeWidth="1.2" />
-      <rect x={x} y={y} width="12" height={(72 - y) * 0.5} rx="3.5" fill="rgba(255,255,255,.28)" />
+      <rect x={x} y={y} width="17" height={76 - y} rx="4.5" fill={`url(#${p}-core)`} />
+      <rect x={x} y={y} width="17" height={76 - y} rx="4.5" fill={`url(#${p}-shell)`} />
+      <rect x={x + 3} y={y + 3.5} width="4.5" height={76 - y - 11} rx="2.2" fill="rgba(255,255,255,.42)" />
+      <rect x={x} y={y} width="17" height={76 - y} rx="4.5" fill="none" stroke={`url(#${p}-rim)`} strokeWidth="1.6" />
     </g>
   );
   return (
     <svg viewBox="0 0 96 96" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <Pedestal p={p} />
-      <g>
-        {bar(24, 54, 0.4)}
-        {bar(40, 44, 0.46)}
-        {bar(56, 32, 0.52)}
-        <path d="M26 40 L44 30 L58 20" fill="none" stroke="rgba(255,255,255,.9)" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M50 18 H61 V29" fill="none" stroke="rgba(255,255,255,.9)" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
+      <g filter={`url(#${p}-drop)`}>
+        {bar(15, 56)}
+        {bar(39, 45)}
+        {bar(63, 32)}
+        {/* 상승 화살표 — 시안처럼 막대 위를 지나는 곡선 */}
+        <path d="M17 41.5 C31 41.5 43 32.5 51 22.5 C57.5 14.5 64 12.5 71 12.5" fill="none" stroke={`url(#${p}-core)`} strokeWidth="4.8" strokeLinecap="round" />
+        <path d="M61 13 L72 12 L71 23" fill="none" stroke={`url(#${p}-core)`} strokeWidth="4.8" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="15" y="10" width="66" height="68" fill={`url(#${p}-spec)`} />
       </g>
     </svg>
   );
 }
 
-/* ───────── 선순환 칩 행 아이콘 (작은 사이즈, 받침 없음) ───────── */
+/* ───────── 선순환 칩 행 아이콘 (작은 사이즈, 같은 재질) ───────── */
 
 /* 데이터 — 실린더 스택 */
 export function IconData({ size = 34, className }: IconProps) {
@@ -151,15 +169,16 @@ export function IconData({ size = 34, className }: IconProps) {
   return (
     <svg viewBox="0 0 48 48" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <path d="M9 14 V34 A15 5.5 0 0 0 39 34 V14 Z" fill={`rgba(${V},.30)`} />
-      {[34, 26, 18].map((cy, i) => (
-        <g key={cy}>
-          <ellipse cx="24" cy={cy} rx="15" ry="5.5" fill={`rgba(${V},${0.42 + i * 0.04})`} stroke="rgba(255,255,255,.72)" strokeWidth="1" />
-          <ellipse cx="24" cy={cy - 1.2} rx="9.5" ry="3" fill="rgba(255,255,255,.32)" />
-        </g>
-      ))}
-      <ellipse cx="24" cy="14" rx="15" ry="5.5" fill={`rgba(${V},.5)`} stroke="rgba(255,255,255,.8)" strokeWidth="1" />
-      <ellipse cx="24" cy="12.6" rx="9.5" ry="3" fill="rgba(255,255,255,.4)" />
+      <g filter={`url(#${p}-drop)`}>
+        <path d="M9 14 V34 A15 5.5 0 0 0 39 34 V14 Z" fill={`url(#${p}-core)`} opacity=".92" />
+        <path d="M9 14 V34 A15 5.5 0 0 0 39 34 V14 Z" fill={`url(#${p}-shell)`} />
+        {[34, 24].map((cy) => (
+          <ellipse key={cy} cx="24" cy={cy} rx="15" ry="5.5" fill={`url(#${p}-core)`} />
+        ))}
+        <ellipse cx="24" cy="14" rx="15" ry="5.5" fill="rgba(255,255,255,.6)" stroke={`url(#${p}-rim)`} strokeWidth="1.2" />
+        <ellipse cx="24" cy="13" rx="9.5" ry="3.2" fill="rgba(255,255,255,.5)" />
+        <ellipse cx="24" cy="24" rx="15" ry="20" fill={`url(#${p}-spec)`} />
+      </g>
     </svg>
   );
 }
@@ -170,52 +189,54 @@ export function IconFlow({ size = 34, className }: IconProps) {
   return (
     <svg viewBox="0 0 48 48" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <rect x="7" y="7" width="34" height="34" rx="10" fill={`url(#${p}-body)`} stroke="rgba(255,255,255,.75)" strokeWidth="1.2" />
-      <path d="M14 30 L21 22 L27 27 L34 17" fill="none" stroke="rgba(255,255,255,.95)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      <rect x="7" y="7" width="34" height="34" rx="10" fill={`url(#${p}-gloss)`} />
+      <g filter={`url(#${p}-drop)`}>
+        <rect x="6" y="6" width="36" height="36" rx="11" fill={`url(#${p}-core)`} />
+        <rect x="6" y="6" width="36" height="36" rx="11" fill={`url(#${p}-shell)`} />
+        <rect x="6" y="6" width="36" height="36" rx="11" fill="none" stroke={`url(#${p}-rim)`} strokeWidth="1.8" />
+        <path d="M13.5 31 L21 22.5 L27 28 L34.5 16.5" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="6" y="6" width="36" height="36" rx="11" fill={`url(#${p}-spec)`} />
+      </g>
     </svg>
   );
 }
 
-/* 수익 — 코인 스택(각인 없음) */
+/* 수익 — 토큰 스택(각인 없음) */
 export function IconCoins({ size = 34, className }: IconProps) {
   const p = "cc";
   return (
     <svg viewBox="0 0 48 48" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <path d="M10 16 V32 A14 5 0 0 0 38 32 V16 Z" fill={`rgba(${V},.30)`} />
-      {[32, 26, 20].map((cy, i) => (
-        <g key={cy}>
-          <ellipse cx="24" cy={cy} rx="14" ry="5" fill={`rgba(${V},${0.42 + i * 0.04})`} stroke="rgba(255,255,255,.72)" strokeWidth="1" />
-          <ellipse cx="24" cy={cy - 1.1} rx="8.5" ry="2.7" fill="rgba(255,255,255,.32)" />
-        </g>
-      ))}
-      <ellipse cx="24" cy="16" rx="14" ry="5" fill={`rgba(${V},.5)`} stroke="rgba(255,255,255,.8)" strokeWidth="1" />
-      <ellipse cx="24" cy="14.9" rx="8.5" ry="2.7" fill="rgba(255,255,255,.4)" />
+      <g filter={`url(#${p}-drop)`}>
+        <path d="M10 16 V32 A14 5 0 0 0 38 32 V16 Z" fill={`url(#${p}-core)`} opacity=".92" />
+        <path d="M10 16 V32 A14 5 0 0 0 38 32 V16 Z" fill={`url(#${p}-shell)`} />
+        <ellipse cx="24" cy="32" rx="14" ry="5" fill={`url(#${p}-core)`} />
+        <ellipse cx="24" cy="24" rx="14" ry="5" fill={`url(#${p}-core)`} />
+        <ellipse cx="24" cy="16" rx="14" ry="5" fill="rgba(255,255,255,.6)" stroke={`url(#${p}-rim)`} strokeWidth="1.2" />
+        <ellipse cx="24" cy="15" rx="8.5" ry="2.9" fill="rgba(255,255,255,.5)" />
+        {/* 기대어 선 코인 한 닢 — 데이터(IconData) 스택과 실루엣이 겹쳐 구분이 안 되던 문제 */}
+        <circle cx="37" cy="30" r="9.5" fill={`url(#${p}-core)`} />
+        <circle cx="37" cy="30" r="9.5" fill="none" stroke={`url(#${p}-rim)`} strokeWidth="1.4" />
+        <ellipse cx="35.6" cy="27.6" rx="5" ry="3.4" transform="rotate(-28 35.6 27.6)" fill="rgba(255,255,255,.42)" />
+        <ellipse cx="24" cy="24" rx="14" ry="18" fill={`url(#${p}-spec)`} />
+      </g>
     </svg>
   );
 }
 
-/* 순환 — 마지막에서 처음으로 돌아가는 두 개의 화살표 */
+/* 순환 — 마지막에서 처음으로 돌아가는 두 화살표 */
 export function IconLoop({ size = 38, className }: IconProps) {
   const p = "cl";
   return (
     <svg viewBox="0 0 48 48" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <g fill="none" stroke={`url(#${p}-loopStroke)`} strokeWidth="6" strokeLinecap="round">
-        <defs>
-          <linearGradient id={`${p}-loopStroke`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor={`rgba(${V},.62)`} />
-            <stop offset="1" stopColor={`rgba(${V},.38)`} />
-          </linearGradient>
-        </defs>
-        <path d="M35 20 A13 13 0 0 0 13 15" />
-        <path d="M13 28 A13 13 0 0 0 35 33" />
+      <g filter={`url(#${p}-drop)`} fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M36 21 A13 13 0 0 0 13.5 14.5" stroke={`url(#${p}-core)`} strokeWidth="6.5" />
+        <path d="M13 8.5 v8 h8" stroke={`url(#${p}-core)`} strokeWidth="6.5" />
+        <path d="M12 27 A13 13 0 0 0 34.5 33.5" stroke={`url(#${p}-core)`} strokeWidth="6.5" opacity=".72" />
+        <path d="M35 39.5 v-8 h-8" stroke={`url(#${p}-core)`} strokeWidth="6.5" opacity=".72" />
+        {/* 림 라이트 — 위쪽 호에만 */}
+        <path d="M36 21 A13 13 0 0 0 13.5 14.5" stroke="rgba(255,255,255,.55)" strokeWidth="2" />
       </g>
-      <path d="M13 8 v8 h8" fill="none" stroke={`rgba(${V},.62)`} strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M35 40 v-8 h-8" fill="none" stroke={`rgba(${V},.42)`} strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-      {/* 약한 유광 — 위쪽 호에만 */}
-      <path d="M35 20 A13 13 0 0 0 13 15" fill="none" stroke="rgba(255,255,255,.45)" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
