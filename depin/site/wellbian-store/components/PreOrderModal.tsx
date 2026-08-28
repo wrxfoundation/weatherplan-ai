@@ -114,9 +114,6 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                   ? "A non-custodial wallet linked to your Google account. It will be used to confirm your purchase and receive rewards."
                   : "구글 계정에 연결된 비수탁 간편지갑입니다. 구매 확인과 보상 수령에 사용됩니다."}
               </p>
-              <div style={capStyle}>
-                {t(D.walletActivation)}
-              </div>
               <button onClick={() => setStep(2)} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>
                 {t(D.nextQuantity)}
               </button>

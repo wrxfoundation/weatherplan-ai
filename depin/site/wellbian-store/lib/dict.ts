@@ -239,13 +239,6 @@ export const D = {
     zh: "你的钱包已创建",
     es: "Tu billetera está lista",
   }),
-  walletActivation: m({
-    ko: "등록 지갑 활성화(1 XRP)는 1회 지원됩니다 (약관 제5조)",
-    en: "One-time wallet activation (1 XRP) is covered (Terms, Art. 5).",
-    ja: "登録ウォレットの有効化（1 XRP）は 1 回サポートされます（規約 第5条）",
-    zh: "钱包激活费用（1 XRP）由我们承担一次（条款第 5 条）",
-    es: "La activación de la billetera (1 XRP) está cubierta una vez (Términos, art. 5).",
-  }),
   nextQuantity: m({
     ko: "다음 — 예약 대수 설정",
     en: "Next — set quantity",

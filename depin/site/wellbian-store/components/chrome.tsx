@@ -19,11 +19,14 @@ export function LangToggle() {
         value={lang}
         onChange={(e) => setLang(e.target.value as Lang)}
         aria-label="Language"
+        /* 글자·패딩은 CSS 로 — 320px 급에서 5개 언어 라벨("Español")이 GNB 를 밀어내
+           페이지가 가로로 스크롤됐다. 인라인에 두면 미디어 쿼리로 줄일 수가 없다. */
+        className="lang-sel"
         style={{
           appearance: "none", WebkitAppearance: "none", MozAppearance: "none",
           border: "1px solid var(--bd-btn)", borderRadius: 8, background: "transparent",
-          color: "var(--ink-2)", fontSize: 15.5, fontWeight: 700, fontFamily: "inherit",
-          padding: "6px 30px 6px 11px", cursor: "pointer", lineHeight: 1.5,
+          color: "var(--ink-2)", fontWeight: 700, fontFamily: "inherit",
+          cursor: "pointer", lineHeight: 1.5,
         }}
       >
         {LANGS.map((l) => (

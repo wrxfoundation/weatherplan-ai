@@ -17,7 +17,13 @@ import { D } from "@/lib/dict";
 import { Gnb, CommunityFooter } from "./chrome";
 import BuyModal from "./BuyModal";
 import PreOrderModal from "./PreOrderModal";
-import { XIcon, TgIcon, ChevD, Shield, Warn, Check, LinkIcon } from "./icons";
+import { XIcon, TgIcon, ChevD, Warn, Check, LinkIcon } from "./icons";
+
+/* 8/28 서우: "999,999 까지 소화할 수 있는 카운팅 자리".
+   숫자가 실제로 자라는 자리(0→N 카운트업, 실시간 증가)는 최종값 글자수만큼 슬롯을 미리 잡는다.
+   3,847(5자)이면 5ch, 999,999(7자)면 7ch — 상한을 코드에 박지 않고 값에서 끌어오므로
+   6자리로 커져도 옆 글자("대 사전예약")가 밀리지 않는다. 폭은 tabular-nums 가 보장한다. */
+const slot = (n: number) => ({ minWidth: `${fmt(n).length}ch` });
 
 export default function Landing() {
   const sp = useSearchParams();
@@ -305,8 +311,8 @@ export default function Landing() {
                 }}>
                   <span style={{ fontSize: 16.5, fontWeight: 700, color: "#fff" }}>
                     {en
-                      ? <><b className="mono" style={{ fontSize: 21 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> units pre-ordered</>
-                      : <>현재 <b className="mono" style={{ fontSize: 21 }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>대 사전예약</>}
+                      ? <><b className="mono count-slot" style={{ fontSize: 21, ...slot(MOCK_PRENOTIFY) }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> units pre-ordered</>
+                      : <>현재 <b className="mono count-slot" style={{ fontSize: 21, ...slot(MOCK_PRENOTIFY) }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>대 사전예약</>}
                   </span>
                   <span aria-hidden className="ps-div" />
                   <span style={{ fontSize: 16.5, fontWeight: 700, color: "#fff" }}>
@@ -363,8 +369,8 @@ export default function Landing() {
             </div>
             <div style={{ fontSize: 14.5, color: "rgba(255,255,255,.45)", textAlign: "center" }}>
               {en
-                ? "Wallet prefixes are masked. Pre-orders gauge demand and hold your room — Genesis Numbers are randomly assigned at purchase."
-                : "지갑 주소는 앞자리만 표시됩니다. 사전예약은 수요 파악과 자리 확보 단계이며, 제네시스 넘버는 정식 구매 시 무작위로 배정됩니다."}
+                ? "Wallet prefixes are masked. Pre-orders gauge demand — Genesis Numbers are randomly assigned at purchase."
+                : "지갑 주소는 앞자리만 표시됩니다. 사전예약은 수요 파악 단계이며, 제네시스 넘버는 정식 구매 시 무작위로 배정됩니다."}
             </div>
           </div>
         </section>
@@ -616,15 +622,9 @@ export default function Landing() {
               </div>
             ))}
           </div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, border: "1px solid color-mix(in oklab, var(--w-main) 30%, white)", background: "var(--w-tint)", borderRadius: 12, padding: "16px 20px", flexWrap: "wrap" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 17.5, color: "var(--ink-2)" }}>
-              <Shield />
-              <span>
-                {en
-                  ? <><b style={{ color: "var(--w-deep)" }}>New to wallets? No problem</b> — one-time wallet activation (1 XRP) is covered <span style={{ color: "var(--cap)" }}>(Terms, Art. 5)</span></>
-                  : <><b style={{ color: "var(--w-deep)" }}>지갑이 처음이어도 됩니다</b> — 등록 지갑 활성화(1 XRP)는 1회 지원됩니다 <span style={{ color: "var(--cap)" }}>(약관 제5조)</span></>}
-              </span>
-            </div>
+          {/* 8/28 서우가 왼쪽 "지갑이 처음이어도 됩니다" 안내를 빼면서 이 줄에 토글 버튼만 남았다.
+              space-between 이면 버튼이 왼쪽에 붙고 오른쪽이 텅 빈다 — 가운데로 모은다. */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, border: "1px solid color-mix(in oklab, var(--w-main) 30%, white)", background: "var(--w-tint)", borderRadius: 12, padding: "16px 20px", flexWrap: "wrap" }}>
             <button onClick={() => setWalletGuideOpen(!walletGuideOpen)} aria-expanded={walletGuideOpen} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 17.5, fontWeight: 700, whiteSpace: "nowrap", color: "var(--w-main)" }}>
               {walletGuideOpen ? (en ? "Collapse the guide" : "가이드 접기") : (en ? "See the full setup guide" : "상세 연동 가이드 보기")}
               <span style={{ display: "inline-flex", transform: walletGuideOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
@@ -699,13 +699,16 @@ export default function Landing() {
               {/* 8/28 서우: "현재 N대 예약 D-n" 한 줄. 3차에서 모바일 2줄 깨짐을 막으려 라벨을
                   데스크톱 전용으로 뺐었는데, 이번엔 문구를 명시해 달라는 요청이라 모바일에도 보인다 —
                   대신 글자를 조금 줄여 한 줄을 유지한다(실측). */}
-              <div className="sb-count" style={{ display: "flex", alignItems: "baseline", gap: 5, whiteSpace: "nowrap" }}>
-                <span style={{ fontSize: 15, color: "var(--cap)" }}>{en ? "Now" : "현재"}</span>
+              {/* 8/28 서우: "999,999 까지 소화할 수 있는 카운팅 자리".
+                  글자 크기를 인라인에 두면 좁은 폭에서 CSS 로 줄일 수가 없다(인라인이 이긴다).
+                  클래스로 내리고, 400px 아래에서만 글자를 줄여 문구는 그대로 둔 채 한 줄을 지킨다. */}
+              <div className="sb-count">
+                <span className="sb-lab">{en ? "Now" : "현재"}</span>
                 <span style={{ whiteSpace: "nowrap" }}>
-                  <span className="mono" style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{fmt(MOCK_PRENOTIFY)}</span>
-                  <span style={{ fontSize: 15, color: "var(--cap)" }}>{en ? " pre-ordered" : "대 예약"}</span>
+                  <span className="mono sb-num">{fmt(MOCK_PRENOTIFY)}</span>
+                  <span className="sb-lab">{en ? " pre-ordered" : "대 예약"}</span>
                 </span>
-                <span className="mono" style={{ fontSize: 16.5, fontWeight: 800, color: "var(--w-main)", marginLeft: 3 }}>{dSaleBadge}</span>
+                <span className="mono sb-dday">{dSaleBadge}</span>
               </div>
               <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px", whiteSpace: "nowrap" }}>{en ? "Pre-order" : "사전예약"}</button>
             </div>
@@ -775,15 +778,11 @@ const SPEC_GALLERY = [
 const WALLET_GUIDE = [
   { t: "지갑이 없어도 시작할 수 있습니다", d: "기기 등록은 아이디·비밀번호나 소셜 계정으로 만드는 간편 지갑으로도 가능합니다. 지갑 키는 내 브라우저에서 만들어지는 비수탁 방식이라 회사도 열어볼 수 없습니다." },
   { t: "구매는 외부 지갑으로", d: "D'CENT(앱에서 자동 감지) · Xaman(QR 연결) · GemWallet(브라우저 확장)을 지원합니다. 구매 단계에서 지갑을 고르면 연결까지 안내합니다." },
-  { t: "활성화 걱정은 하지 않아도 됩니다", d: "XRPL 지갑은 처음 쓸 때 1 XRP가 필요합니다. 기기 등록을 시작한 지갑에 한해 1회 지원됩니다 (약관 제5조)." },
-  { t: "리딤코드 1개 = 지갑 1개", d: "박스 안 리딤코드는 한 지갑에만 등록됩니다. 등록한 뒤에는 환불이 제한되니, 쓸 지갑을 정한 다음 사용하세요." },
   { t: "비밀번호는 꼭 보관하세요", d: "비수탁 지갑은 비밀번호나 시드를 잃으면 누구도 복구해 줄 수 없습니다. 안전한 곳에 따로 적어 두세요." },
 ];
 const WALLET_GUIDE_EN = [
   { t: "You can start without a wallet", d: "Device registration also works with an easy wallet created from an ID/password or social login. Keys are generated in your own browser (non-custodial) — even we can't open it." },
   { t: "Buy with an external wallet", d: "D'CENT (auto-detected in its app), Xaman (QR connect), and GemWallet (browser extension) are supported. Pick one at checkout and we walk you through connecting." },
-  { t: "Don't worry about activation", d: "An XRPL wallet needs 1 XRP to start. It is covered once for the wallet that begins device registration (Terms, Art. 5)." },
-  { t: "One redeem code = one wallet", d: "The code inside the box registers to a single wallet, and refunds are restricted once it is used — pick your wallet first, then redeem." },
   { t: "Keep your password safe", d: "With a non-custodial wallet, no one can recover a lost password or seed. Write it down and store it somewhere safe." },
 ];
 const RL_GUIDE = [
@@ -799,12 +798,10 @@ const RL_GUIDE_EN = [
 const RL_TIPS = [
   "지갑이 RLUSD를 받을 준비(트러스트라인)는 결제 단계에서 자동 점검됩니다",
   "네트워크 수수료는 XRP로 아주 소액이 듭니다 — 지갑에 약간의 XRP를 남겨 두세요",
-  "등록 지갑 활성화(1 XRP)는 1회 지원됩니다 (약관 제5조)",
 ];
 const RL_TIPS_EN = [
   "Your wallet's readiness to receive RLUSD (the trust line) is checked automatically at payment",
   "Network fees cost a tiny amount of XRP — keep a little XRP in your wallet",
-  "One-time wallet activation (1 XRP) is covered (Terms, Art. 5)",
 ];
 
 const h2: React.CSSProperties = { fontSize: "clamp(27px, 3.4vw, 39px)", fontWeight: 800, color: "var(--w-deep)" };

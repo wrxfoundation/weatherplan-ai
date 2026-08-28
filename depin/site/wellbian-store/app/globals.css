@@ -40,7 +40,19 @@ a:hover { color: var(--w-deep); text-decoration: underline; }
 button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; padding: 0; }
 input { font: inherit; }
 h1, h2, h3, p { margin: 0; }
-.mono { font-family: var(--mono); font-weight: 700; letter-spacing: .01em; }
+/* 8/28 서우: "999,999 까지 소화할 수 있는 카운팅 자리".
+   tabular-nums = 모든 숫자 글리프 폭이 같아진다. 카운트업이 3,846 → 3,847 로 넘어갈 때
+   1 과 7 의 폭 차이만큼 옆 글자가 흔들리던 걸 없앤다(Montserrat 는 기본이 tabular 지만,
+   Pretendard 폴백까지 보장하려면 명시해야 한다). */
+.mono { font-family: var(--mono); font-weight: 700; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
+/* 자릿수가 실제로 늘어나는 자리(카운트업·실시간 증가)는 슬롯을 미리 잡아 둔다.
+   폭은 컴포넌트가 현재 값 길이로 넣는다 — 999,999(7자)로 커지면 슬롯도 같이 커진다. */
+.count-slot { display: inline-block; text-align: right; }
+
+/* 언어 드롭다운 — 5개 라벨 중 가장 넓은 "Español" 기준으로 104px 을 쓴다.
+   356px 아래에서는 GNB 우측 묶음이 뷰포트를 밀어내므로 글자와 패딩만 줄인다(라벨은 유지). */
+.lang-sel { font-size: 15.5px; padding: 6px 30px 6px 11px; }
+@media (max-width: 356px) { .lang-sel { font-size: 13px; padding: 5px 23px 5px 8px; } }
 
 /* ── 공통 버튼 ── */
 .btn-main {
@@ -385,6 +397,33 @@ h1, h2, h3, p { margin: 0; }
 @media (min-width: 721px) {
   .stickybar-in { width: auto; justify-content: center; gap: 26px; padding: 14px 40px; }
 }
+/* 8/28 서우: 스티키 카운트가 999,999(7자)까지 커져도 한 줄·CTA 안 눌림.
+   CTA 는 절대 줄어들지 않게 고정하고(줄어들면 "사전예약" 글자가 잘린다),
+   남은 폭은 카운트가 글자 크기를 낮춰 감당한다 — 문구는 서우 지시대로 모바일에도 그대로 둔다. */
+.stickybar-in .btn-main { flex: none; }
+.sb-count { display: flex; align-items: baseline; gap: 5px; white-space: nowrap; min-width: 0; }
+.sb-count .sb-lab { font-size: 15px; color: var(--cap); }
+.sb-count .sb-num { font-size: 22px; font-weight: 800; color: var(--w-deep); }
+.sb-count .sb-dday { font-size: 16.5px; font-weight: 800; color: var(--w-main); margin-left: 3px; }
+@media (max-width: 440px) {
+  .sb-count { gap: 3px; }
+  .sb-count .sb-lab { font-size: 13px; }
+  .sb-count .sb-num { font-size: 18px; }
+  .sb-count .sb-dday { font-size: 14.5px; margin-left: 2px; }
+}
+@media (max-width: 380px) {
+  .sb-count .sb-lab { font-size: 12px; }
+  .sb-count .sb-num { font-size: 16.5px; }
+  .sb-count .sb-dday { font-size: 13.5px; }
+}
+/* 320px 급(구형 SE)까지 내려가면 글자를 더 줄여도 999,999 가 한 줄에 안 들어간다.
+   숫자를 자르느니 두 줄로 내려보낸다 — 잘린 숫자는 오독을 부르지만 두 줄은 읽힌다. */
+@media (max-width: 356px) {
+  .sb-count { flex-wrap: wrap; row-gap: 0; }
+  .sb-count .sb-lab { font-size: 11.5px; }
+  .sb-count .sb-num { font-size: 15.5px; }
+  .sb-count .sb-dday { font-size: 12.5px; }
+}
 
 /* ── 크롬 반응형 (chrome.tsx) ── */
 @media (max-width: 720px) {
@@ -434,12 +473,16 @@ h1, h2, h3, p { margin: 0; }
   max-width: 208px;
   aspect-ratio: 4 / 3;
   min-height: 0;
-  background: rgba(255, 255, 255, .78);
+  /* 8/28 서우: 불투명한 흰 알약 → 4단계 카드(HowCard)와 같은 반투명 글래스.
+     뒤의 옅은 바이올렛 그라디언트가 blur 로 비쳐 한 세트로 읽힌다.
+     -webkit- 프리픽스는 직접 쓰지 않는다 — 같이 쓰면 빌드가 표준 속성 쪽을 지운다. */
+  background: rgba(255, 255, 255, .25);
   color: var(--w-deep);
-  border: 1px solid rgba(255, 255, 255, .9);
+  border: 1px solid rgba(255, 255, 255, .6);
+  backdrop-filter: blur(14px);
   border-radius: 15px;
   padding: 14px 12px;
-  box-shadow: 0 4px 14px rgba(27, 27, 72, .07);
+  box-shadow: 0 8px 32px rgba(27, 27, 72, .08);
   font-size: 15.5px;
   font-weight: 700;
   line-height: 1.42;
@@ -568,12 +611,14 @@ h1, h2, h3, p { margin: 0; }
 .rv {
   opacity: 0;
   transform: translateY(14px);
-  transition: opacity .58s cubic-bezier(.22, .61, .36, 1), transform .58s cubic-bezier(.22, .61, .36, 1);
   will-change: opacity, transform;
 }
+/* 전환은 .in 쪽에만 건다. .rv 에 걸면 JS 가 클래스를 붙이는 순간(첫 페인트 뒤)
+   보이던 카드가 0.58초에 걸쳐 사라지는 게 보인다 — 숨기는 건 즉시, 나타나는 것만 애니메이션. */
 .rv.in {
   opacity: 1;
   transform: none;
+  transition: opacity .58s cubic-bezier(.22, .61, .36, 1), transform .58s cubic-bezier(.22, .61, .36, 1);
 }
 @media (prefers-reduced-motion: reduce) {
   .rv { opacity: 1; transform: none; transition: none; }
