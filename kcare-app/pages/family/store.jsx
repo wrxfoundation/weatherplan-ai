@@ -105,7 +105,9 @@ export default function StorePage() {
               key={k}
               onClick={() => setTab(k)}
               aria-pressed={tab === k}
-              className={`btn-press min-h-[44px] flex-1 rounded-xl border text-[14px] font-bold ${
+              // 높이는 py 로 만든다 — globals.css 의 .btn-press{min-height:44px} 가
+              // @layer 밖이라 min-h 유틸리티를 이긴다 (2026-08-28 "위아래 넓게").
+              className={`btn-press flex-1 rounded-xl border py-[16px] text-[15px] font-bold ${
                 tab === k ? "border-navy bg-navy text-white" : "border-navy/15 bg-white/70 text-muted"
               }`}
             >

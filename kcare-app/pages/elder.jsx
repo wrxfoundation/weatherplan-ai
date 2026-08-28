@@ -1785,7 +1785,7 @@ export default function ElderHome() {
                           key={g.name}
                           onClick={() => setStoreGroup(gi)}
                           aria-pressed={on}
-                          className="btn-press min-h-[52px] shrink-0 whitespace-nowrap rounded-2xl border-2 px-4 text-[19px] font-bold"
+                          className="btn-press shrink-0 whitespace-nowrap rounded-2xl border-2 px-4 py-[13px] text-[19px] font-bold"
                           style={
                             on
                               ? { borderColor: "#0A1F3C", background: "#0A1F3C", color: "#FFFFFF" }

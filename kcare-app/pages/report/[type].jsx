@@ -204,6 +204,30 @@ function CareReport() {
         ))}
         <p className="mt-2 text-[12px] leading-[1.7] text-ink">· {AI_REPORT.draft}</p>
       </div>
+
+      {/* 안심방문 리포트로 건너가는 자리 (2026-08-28 질문: "케어리포트에서
+          컨시어지가 평가한 리포트를 보려면?"). 월간 리포트는 한 달을 모아 놓은
+          것이고, 방문 한 건을 20항목으로 평가한 것은 별도 문서다. 여기서만
+          찾다가 못 찾는 일이 없게 링크를 둔다. 인쇄물에는 URL 로 남긴다. */}
+      <div className="avoid-break">
+        <SectionTitle>방문 한 건을 자세히 — 안심방문 리포트</SectionTitle>
+        <p className="text-[12px] leading-[1.7] text-ink">
+          이 월간 리포트는 한 달치를 모은 것입니다. 컨시어지가 방문 한 건을 몸 · 마음 · 집
+          20항목으로 평가한 결과는 안심방문 리포트에서 봅니다 —{" "}
+          {VISIT_REPORT.head.visitedAt} · {VISIT_REPORT.head.round}회차 · 담당{" "}
+          {VISIT_REPORT.head.by}.
+        </p>
+        <Link
+          href="/report/visit?from=family"
+          className="print-hide btn-press mt-2 inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-[13px] font-bold text-white"
+          style={{ background: NAVY }}
+        >
+          안심방문 리포트 열기 <span aria-hidden>›</span>
+        </Link>
+        <p className="mt-2 hidden text-[10px] text-muted print:block">
+          보호자 앱 · 마이 → 안심방문 리포트 보기
+        </p>
+      </div>
     </DocShell>
   );
 }
@@ -322,12 +346,17 @@ function ResultItem({ it }) {
 function VisitReport() {
   const H = VISIT_REPORT.head;
   const all = countStates(ALL_ITEMS);
+  // 이 문서는 컨시어지와 보호자가 같이 본다. 돌아가는 곳이 늘 컨시어지 콘솔이면
+  // 보호자가 마이 탭에서 열었다가 남의 화면으로 떨어진다 — 온 곳으로 되돌린다
+  // (2026-08-28). ?from=family 로 들어오면 보호자 마이 탭으로.
+  const { query } = useRouter();
+  const fromFamily = query.from === "family";
   return (
     <DocShell
       title="안심방문 리포트"
       period={`${H.visitedAt} · ${H.round}회차`}
-      backHref="/concierge"
-      backLabel="컨시어지로"
+      backHref={fromFamily ? "/family/my" : "/concierge"}
+      backLabel={fromFamily ? "마이로" : "컨시어지로"}
       docType="visit"
     >
       {/* 헤더 — 누구의 · 몇 회차 · 누가 다녀왔는지 + 종합 판정 + 방문확인 스탬프 */}

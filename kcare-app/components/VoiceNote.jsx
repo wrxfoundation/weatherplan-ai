@@ -38,7 +38,7 @@ export default function VoiceNote({ to, tone = "light", compact = false, onSend 
   if (sent)
     return (
       <div
-        className={`rounded-xl px-3.5 py-3 text-[14px] font-bold ${
+        className={`rounded-xl px-4 py-[18px] text-[15px] font-bold ${
           dark ? "bg-white/15 text-white" : "bg-green/10 text-green"
         }`}
       >
@@ -53,11 +53,14 @@ export default function VoiceNote({ to, tone = "light", compact = false, onSend 
           {to}께 목소리를 남깁니다. 글보다 목소리가 먼저 닿습니다.
         </div>
       )}
-      <div className={`flex items-center gap-2 ${compact ? "" : "mt-2.5"}`}>
+      <div className={`flex items-center gap-2 ${compact ? "" : "mt-3"}`}>
         <button
           onClick={() => (rec ? send() : (setTooShort(false), setSecs(0), setRec(true)))}
           aria-label={rec ? "녹음 마치고 보내기" : `${to}께 안부 음성 남기기`}
-          className={`btn-press flex min-h-[52px] flex-1 items-center justify-center gap-2 rounded-xl text-[16px] font-bold ${
+          // 높이는 min-h 가 아니라 py 로 만든다 — globals.css 의
+          // .btn-press{min-height:44px} 가 @layer 밖이라 min-h-[52px] 를 이겨서
+          // 실측 44px 로 눌려 있었다 (2026-08-28 "너무 좁다" 피드백).
+          className={`btn-press flex flex-1 items-center justify-center gap-2 rounded-xl py-[18px] text-[17px] font-bold ${
             rec
               ? "bg-danger text-white"
               : dark
@@ -78,7 +81,7 @@ export default function VoiceNote({ to, tone = "light", compact = false, onSend 
               setRec(false);
               setSecs(0);
             }}
-            className={`btn-press min-h-[52px] rounded-xl border px-4 text-[14px] font-bold ${
+            className={`btn-press rounded-xl border px-4 py-[18px] text-[15px] font-bold ${
               dark ? "border-white/30 text-white/85" : "border-navy/15 text-muted"
             }`}
           >

@@ -67,7 +67,7 @@ export default function MyPage() {
               (2026-08-28 요청 "방문리포트는 모바일에서도 보기 쉬워야 함").
               증빙 요청과 무관하게 항상 열려 있어야 하는 동선이라 밖에 둔다. */}
           <Link
-            href="/report/visit"
+            href="/report/visit?from=family"
             className="btn-press mt-3 flex items-center justify-between rounded-xl px-4 py-3.5 text-white"
             style={{ background: "#0A1F3C" }}
           >
