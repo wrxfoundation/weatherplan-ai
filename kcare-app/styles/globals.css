@@ -825,25 +825,41 @@ a.btn-press {
   }
 }
 
-/* 어르신 홈 — 큰 화면에서 위로 몰리지 않게 (2026-08-28 "갤럭시 S25 기준으로").
-   기본 여백은 375x667 에 맞춰 조여 놨는데, 그대로 두면 S25(360x780)에서 115px,
-   S25 Ultra(412x883)에서 218px 이 아래에 그냥 비었다 — 내용이 화면 위쪽에
-   몰려 보인다. 700px 이상에서는 여백을 조금 넓히고, 남는 세로 공간은 사분면
-   타일이 가져가 버튼이 커지게 한다 (어르신 화면에서 큰 버튼은 그 자체로 이득).
-   max-height 로 상한을 둬서 아주 긴 화면에서 타일만 기괴하게 커지지 않게 한다.
-   홈 탭에서만 적용된다 — 다른 탭은 카드가 많아 어차피 스크롤된다. */
+/* 어르신 홈 사분면 — 기기와 무관하게 남는 세로 공간을 항상 채운다
+   (2026-08-28 "핸드폰 화면에 맞춰 유동적으로, 위아래로 꽉 보여야 한다").
+   화면마다 높이가 다른데 타일 높이를 고정해 두면 어떤 기기에서는 아래가 비고
+   어떤 기기에서는 잘린다. 인사·다음 일정은 내용만큼만 쓰고, 남는 것은 전부
+   타일이 가져간다 — 어르신 화면에서 큰 버튼은 그 자체로 이득이다.
+
+   flex-grow 1 / flex-shrink 0: 남으면 커지고, 모자라도 줄지는 않는다.
+   줄어들게 두면 작은 화면에서 타일 글자가 잘린다 (스크롤이 맞다).
+   grid-auto-rows 1fr: 두 줄이 같은 높이로 늘어난다.
+   max-height: 태블릿·데스크톱처럼 아주 긴 화면에서 타일만 기괴하게 커지지
+   않게 하는 상한. 폰(≤900px 높이)에서는 걸리지 않는다.
+   홈 탭에서만 적용된다(.elder-home) — 다른 탭은 카드가 많아 어차피 스크롤된다. */
+.elder-home .elder-hub {
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: auto;
+  max-height: 480px;
+  grid-auto-rows: 1fr;
+}
+
+/* 높은 화면에서는 카드 사이 간격과 타일 안쪽 여백도 같이 넉넉하게 —
+   타일만 커지고 여백이 그대로면 위쪽이 답답해 보인다. */
 @media screen and (min-height: 700px) {
   .elder-home {
     gap: 14px;
     padding-bottom: 10px;
   }
-  .elder-home .elder-hub {
-    flex: 1 1 auto;
-    max-height: 360px;
-    grid-auto-rows: 1fr;
-  }
   .elder-home .elder-tile {
     padding-top: 12px;
     padding-bottom: 12px;
+  }
+  /* 타일이 커진 만큼 아이콘도 키운다 — 크기만 늘리고 아이콘이 그대로면
+     가운데가 휑해 보인다. SVG 는 width/height 속성으로 그려지므로 CSS 로 덮는다. */
+  .elder-home .elder-tile svg {
+    width: 36px;
+    height: 36px;
   }
 }
