@@ -95,6 +95,9 @@ export const SPECS = [
 ];
 
 export const FAQS = [
+  /* 8/28 서우: 사전예약 기간인데 사전예약 문항이 없어 최상단 2개 신설 (모바일 기본 노출 3개에 포함) */
+  { q: "사전예약은 무엇인가요?", a: "결제가 아니라 수요 파악과 자리 확보 단계입니다. 구글 로그인으로 예약할 대수만 정해두면, 9월 15일 판매 오픈 때 선착순 걱정 없이 구매할 수 있습니다. 1계정 최대 100대까지 설정할 수 있습니다." },
+  { q: "사전예약하면 반드시 구매해야 하나요?", a: "아니요. 확정 주문이 아니며 예약 자체에 비용이 들지 않습니다. 실제 구매 수량은 오픈 때 자유롭게 정하시면 됩니다." },
   { q: "가격이 어떻게 되나요?", a: "대당 650 RLUSD입니다. 결제는 RLUSD로만 진행됩니다." },
   { q: "RLUSD는 어디서 구하나요?", a: "국내·해외 거래소에서 RLUSD를 구매한 뒤 XRPL 네트워크로 개인 지갑에 출금하면 됩니다. 출금 시 반드시 XRPL판 RLUSD를 선택하세요." },
   { q: "환불은 어떻게 되나요?", a: "제품 수령일부터 7일 이내 환불 가능합니다. 단, 리딤코드 사용 또는 노드 연동 시 환불이 제한됩니다(전자상거래법 제17조 제6항)." },
@@ -265,6 +268,8 @@ export const SPECS_EN = [
 ];
 
 export const FAQS_EN = [
+  { q: "What is a pre-order?", a: "It is not a payment — it gauges demand and holds your spot. Sign in with Google, set how many units you want, and you can buy calmly when sales open on Sept 15. Up to 100 units per account." },
+  { q: "Does a pre-order commit me to buying?", a: "No. It is not a confirmed order and costs nothing. You decide the actual quantity when sales open." },
   { q: "How much does it cost?", a: "650 RLUSD per unit. Payment is in RLUSD only." },
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on a domestic or global exchange, then withdraw it to your personal wallet over the XRPL network. Always select the XRPL version of RLUSD when withdrawing." },
   { q: "What is the refund policy?", a: "Refunds are available within 7 days of receiving the product. Refunds are restricted once the redeem code is used or the node is linked (Korean E-Commerce Act, Art. 17-6)." },
@@ -279,9 +284,10 @@ export const FAQS_EN = [
 export const FAQS_EXTRA = [
   { q: "결제는 왜 RLUSD로만 하나요?", a: "RLUSD는 미국 달러와 1:1로 연동되는 스테이블코인이라 가격 변동 걱정 없이 결제할 수 있습니다. 리플(Ripple)이 발행하고 뉴욕 금융감독청(NYDFS)의 규제를 받습니다." },
   { q: "몇 대까지 구매할 수 있나요?", a: "구글 계정 1개당 최대 100대까지 구매할 수 있습니다. 대량 구매 시에도 기기마다 제네시스 넘버가 하나씩 배정됩니다." },
+  { q: "사전예약 대수와 실제 구매 수량이 달라도 되나요?", a: "네. 사전예약은 자리 확보 단계라 오픈 때 더 사거나 덜 사도 됩니다. 계정당 상한(100대)만 지키면 됩니다." },
   { q: "제네시스 넘버가 뭔가요?", a: "구매가 확정될 때 무작위로 배정되는 제네시스 노드 고유 번호입니다. 여러 대를 구매하면 수량만큼 배정되고, 주문 내역에서 정렬된 목록으로 확인·복사할 수 있습니다. 라이선스 NFT에 영구 기록됩니다." },
   { q: "라이선스 NFT는 뭔가요?", a: "기기의 정품과 참여 자격을 증명하는 XRPL 기반 증서입니다. 박스 안 리딤코드로 발급받으며, 이 NFT를 보유한 기기만 보상 대상이 됩니다." },
-  { q: "배송은 언제, 어떻게 받나요?", a: "11월부터 순차 발송됩니다. 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 안내하며, 폼에 제네시스 넘버·내 지갑 주소·배송 정보를 입력하면 순서대로 발송됩니다." },
+  { q: "배송은 언제, 어떻게 받나요?", a: "11월 중 순차 배송 예정입니다. 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 안내하며, 폼에 제네시스 넘버·내 지갑 주소·배송 정보를 입력하면 순서대로 발송됩니다." },
   { q: "배정된 제네시스 넘버는 어디서 확인하나요?", a: "구글 계정으로 로그인하면 주문 내역에서 정렬된 넘버 목록을 언제든 확인하고 복사할 수 있습니다." },
   { q: "사이트가 저장하는 개인정보는 뭔가요?", a: "구글 계정 로그인만 사용하며, 별도의 개인정보는 저장하지 않습니다. 가입하면 내 지갑이 자동으로 만들어지고, 배송 정보는 발송 전 접수 폼에서만 받아 배송이 끝나면 파기합니다." },
   { q: "리딤코드는 어디에 있나요?", a: "박스 안 카드에 인쇄되어 있습니다. 1개 코드는 1개 지갑에만 등록되며, 사용한 뒤에는 환불이 제한되니 등록 전에 결정해 주세요." },
@@ -297,9 +303,10 @@ export const FAQS_EXTRA = [
 export const FAQS_EXTRA_EN = [
   { q: "Why is payment RLUSD-only?", a: "RLUSD is a stablecoin pegged 1:1 to the US dollar, so you can pay without worrying about price swings. It is issued by Ripple and regulated by the NYDFS." },
   { q: "How many units can I buy?", a: "Up to 100 units per Google account. Even on bulk orders, each device gets its own Genesis Number." },
+  { q: "Can the pre-ordered quantity differ from what I actually buy?", a: "Yes. A pre-order holds your room, so you can buy more or fewer units when sales open — the per-account cap of 100 units is the only limit." },
   { q: "What is a Genesis Number?", a: "A unique genesis-node number randomly assigned when your purchase is confirmed. Buy multiple units and you get one per device — viewable as a sorted, copyable list in your order history. Permanently recorded on your license NFT." },
   { q: "What is the license NFT?", a: "An XRPL-based certificate proving your device is genuine and eligible to participate. It is minted with the redeem code inside the box, and only devices holding this NFT earn rewards." },
-  { q: "When and how does shipping work?", a: "Units ship sequentially from November. Starting 2 weeks before dispatch, we announce the shipping form on our official Telegram and X — enter your Genesis Numbers, your wallet address, and shipping details, and units ship in order." },
+  { q: "When and how does shipping work?", a: "Units are expected to ship sequentially through November. Starting 2 weeks before dispatch, we announce the shipping form on our official Telegram and X — enter your Genesis Numbers, your wallet address, and shipping details, and units ship in order." },
   { q: "Where do I find my assigned Genesis Numbers?", a: "Sign in with your Google account — your order history shows the sorted list, ready to copy, anytime." },
   { q: "What personal data does this site store?", a: "Only Google sign-in — nothing else is stored. Signing up creates your wallet automatically, and delivery details are collected only via the pre-shipping form, then deleted after delivery." },
   { q: "Where is the redeem code?", a: "Printed on the card inside the box. One code registers to one wallet only, and refunds are restricted once it is used — decide before you register." },

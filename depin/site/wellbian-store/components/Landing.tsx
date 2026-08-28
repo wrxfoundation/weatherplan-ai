@@ -50,7 +50,9 @@ export default function Landing() {
   const [walletGuideOpen, setWalletGuideOpen] = useState(false);
   const [rlGuideOpen, setRlGuideOpen] = useState(false);
   const [faqAllOpen, setFaqAllOpen] = useState(false);
-  const faqList = faqAllOpen ? [...faqs, ...(en ? FAQS_EXTRA_EN : FAQS_EXTRA)] : faqs;
+  const faqExtra = en ? FAQS_EXTRA_EN : FAQS_EXTRA;
+  const faqList = faqAllOpen ? [...faqs, ...faqExtra] : faqs;
+  const faqTotal = faqs.length + faqExtra.length; /* 8/28: 하드코딩 23 → 배열 길이 기반 */
   const heroCtaRef = useRef<HTMLDivElement>(null);
 
   /* 히어로 배경 롤링 (8/27 후보 4장 비교) — 6초 크로스페이드, reduced-motion 시 고정 */
@@ -622,7 +624,7 @@ export default function Landing() {
           </div>
           <div style={{ textAlign: "center" }}>
             <button onClick={() => { setFaqAllOpen(!faqAllOpen); if (faqAllOpen) setFaqOpen(-1); }} aria-expanded={faqAllOpen} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 18, fontWeight: 700, color: "var(--w-main)" }}>
-              {faqAllOpen ? (en ? "Collapse FAQs" : "FAQ 접기") : (en ? "See all 23 FAQs" : "전체 FAQ 23문항 보기")}
+              {faqAllOpen ? (en ? "Collapse FAQs" : "FAQ 접기") : (en ? `See all ${faqTotal} FAQs` : `전체 FAQ ${faqTotal}문항 보기`)}
               <span style={{ display: "inline-flex", transform: faqAllOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
                 <ChevD size={15} color="var(--w-main)" />
               </span>
