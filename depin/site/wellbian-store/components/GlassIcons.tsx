@@ -1,236 +1,252 @@
-/* 8/28 서우 7차: "지금건 2D 느낌이 강하다" → 아이소메트릭 3D 솔리드로 재제작.
-   6차(글래스)는 그라디언트로 입체를 흉내냈을 뿐 실루엣이 평면이라 2D로 읽혔다.
-   이번엔 진짜 부피를 만든다 — 솔리드마다 **윗면·좌면·우면 3개 면**을 각각 다른 명도로 칠하고
-   모서리를 또렷하게 남긴다(좌상단 광원). 큐브 계열로 통일하되 실루엣으로 4개를 구분한다:
-     ① 측정  = 세워진 패널(측정기) 한 덩어리
-     ② 검증  = 큐브 하나 + 체크
-     ③ 보상  = 큐브 여러 개가 쌓인 더미
-     ④ 활용  = 높이가 커지는 큐브 3개
-   색상 톤은 기존 브랜드 바이올렛 유지. 래스터가 아니라 CDN 이송이 필요 없다. */
+/* 8/28 서우 8차: 첨부 시안(프로스티드 글래스 3D 아이콘 세트) 스타일로 재제작. 색상은 브랜드 바이올렛 유지.
+   7차(아이소메트릭 단색 면)는 부피는 생겼지만 재질이 없어 종이 상자처럼 보였다.
+
+   시안에서 읽은 재질 규칙:
+   - 몸체는 **프로스티드 글래스** — 뿌연 흰빛에 색이 배어 뒤가 어렴풋이 비친다
+   - 채도 높은 코어는 **아래쪽·안쪽에 몰린다**. 위·바깥으로 갈수록 우윳빛으로 빠진다
+   - 두께는 **탑페이스(윗면) + 우측 옆면**으로 낸다. 사선 투영(oblique)이라 시안처럼 부드러운 3/4 뷰
+   - 좌상단에 **림 라이트(밝은 테두리) + 스펙큘러 한 줄**, 아래에 색이 밴 소프트 섀도
+
+   래스터가 아니라 CDN 이송이 필요 없고 배율·테마에 관계없이 선명하다. */
 
 import React from "react";
 
-/* 브랜드 바이올렛 램프 — 면 3개의 명도 단계 */
-const TOP = "#C3BAFF"; /* 윗면 — 가장 밝음 */
-const LEFT = "#8B7BF2"; /* 좌면 — 중간 */
-const RIGHT = "#5B49D8"; /* 우면 — 가장 어두움 */
-const V = "124,107,240";
+const V = "124,107,240"; /* 브랜드 바이올렛 */
+
+/* 두께 방향 — 위·오른쪽으로 밀어 3/4 뷰를 만든다 */
+const DX = 6;
+const DY = 5;
 
 type IconProps = { size?: number; className?: string };
 const box = (size: number): React.CSSProperties => ({ width: size, height: size, display: "block", flexShrink: 0, overflow: "visible" });
 
-/* 아이소메트릭 투영: x는 우하, y는 좌하, z는 위.
-   기울기 0.866/0.5 = 30° — 평행 모서리가 유지돼 큐브가 큐브로 읽힌다. */
-const P = (x: number, y: number, z: number) => `${((x - y) * 0.866).toFixed(2)},${((x + y) * 0.5 - z).toFixed(2)}`;
-const poly = (...pts: string[]) => pts.join(" ");
-
-/* 한 덩어리(직육면체)의 보이는 세 면.
-   윗면에만 얇은 흰 림을 넣어 광택을 약하게 준다 — 하이글로스는 다시 2D처럼 보인다. */
-function Solid({
-  x, y, z, w, d, h, top = TOP, left = LEFT, right = RIGHT, rim = true,
-}: {
-  x: number; y: number; z: number; w: number; d: number; h: number;
-  top?: string; left?: string; right?: string; rim?: boolean;
-}) {
-  const t = poly(P(x, y, z + h), P(x + w, y, z + h), P(x + w, y + d, z + h), P(x, y + d, z + h));
-  const l = poly(P(x, y + d, z), P(x + w, y + d, z), P(x + w, y + d, z + h), P(x, y + d, z + h));
-  const r = poly(P(x + w, y, z), P(x + w, y + d, z), P(x + w, y + d, z + h), P(x + w, y, z + h));
-  return (
-    <>
-      <polygon points={l} fill={left} />
-      <polygon points={r} fill={right} />
-      <polygon points={t} fill={top} />
-      {rim && <polygon points={t} fill="none" stroke="rgba(255,255,255,.55)" strokeWidth="1" strokeLinejoin="round" />}
-    </>
-  );
-}
-
-/* 접지 그림자 — 받침 대신 부피가 놓여 있다는 감각을 준다 */
 function Defs({ p }: { p: string }) {
   return (
     <defs>
-      <filter id={`${p}-drop`} x="-40%" y="-30%" width="180%" height="190%">
-        <feDropShadow dx="0" dy="5" stdDeviation="4.5" floodColor={`rgba(${V},.32)`} />
+      {/* 프로스티드 — 우윳빛에서 아래로 갈수록 색이 밴다 */}
+      <linearGradient id={`${p}-frost`} x1=".25" y1="0" x2=".75" y2="1">
+        <stop offset="0" stopColor="rgba(255,255,255,.92)" />
+        <stop offset=".45" stopColor={`rgba(${V},.20)`} />
+        <stop offset="1" stopColor={`rgba(${V},.42)`} />
+      </linearGradient>
+      {/* 코어 — 채도 높은 바이올렛 */}
+      <linearGradient id={`${p}-core`} x1=".2" y1="0" x2=".8" y2="1">
+        <stop offset="0" stopColor="#A99BFF" />
+        <stop offset="1" stopColor="#5B49D8" />
+      </linearGradient>
+      {/* 탑페이스 — 윗면은 빛을 받아 더 밝다 */}
+      <linearGradient id={`${p}-top`} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="rgba(255,255,255,.88)" />
+        <stop offset="1" stopColor="rgba(255,255,255,.42)" />
+      </linearGradient>
+      {/* 옆면 — 그늘 */}
+      <linearGradient id={`${p}-side`} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor={`rgba(${V},.55)`} />
+        <stop offset="1" stopColor={`rgba(${V},.34)`} />
+      </linearGradient>
+      {/* 림 라이트 — 좌상단만 밝게 */}
+      <linearGradient id={`${p}-rim`} x1=".1" y1="0" x2=".9" y2="1">
+        <stop offset="0" stopColor="rgba(255,255,255,.98)" />
+        <stop offset=".5" stopColor="rgba(255,255,255,.3)" />
+        <stop offset="1" stopColor="rgba(255,255,255,.06)" />
+      </linearGradient>
+      {/* 스펙큘러 */}
+      <radialGradient id={`${p}-spec`} cx=".3" cy=".22" r=".42">
+        <stop offset="0" stopColor="rgba(255,255,255,.8)" />
+        <stop offset="1" stopColor="rgba(255,255,255,0)" />
+      </radialGradient>
+      <filter id={`${p}-drop`} x="-45%" y="-30%" width="190%" height="190%">
+        <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor={`rgba(${V},.30)`} />
       </filter>
       <radialGradient id={`${p}-glow`} cx=".5" cy=".5" r=".5">
-        <stop offset="0" stopColor={`rgba(${V},.20)`} />
+        <stop offset="0" stopColor={`rgba(${V},.18)`} />
         <stop offset="1" stopColor={`rgba(${V},0)`} />
       </radialGradient>
     </defs>
   );
 }
 
-/* ① 측정 — 세워진 측정기 패널 (좌면이 화면) */
+/* 유리 슬래브 한 장 — 앞면(라운드 사각) + 윗면 + 우측 옆면.
+   solid=true 면 채도 높은 코어, false 면 프로스티드(뿌연 유리). */
+function Slab({
+  p, x, y, w, h, r = 5, solid = false,
+}: { p: string; x: number; y: number; w: number; h: number; r?: number; solid?: boolean }) {
+  const top = `${x},${y} ${x + w},${y} ${x + w + DX},${y - DY} ${x + DX},${y - DY}`;
+  const side = `${x + w},${y} ${x + w + DX},${y - DY} ${x + w + DX},${y + h - DY} ${x + w},${y + h}`;
+  return (
+    <>
+      <polygon points={side} fill={`url(#${p}-side)`} />
+      <polygon points={top} fill={`url(#${p}-top)`} />
+      <rect x={x} y={y} width={w} height={h} rx={r} fill={solid ? `url(#${p}-core)` : `url(#${p}-frost)`} />
+      <rect x={x} y={y} width={w} height={h} rx={r} fill="none" stroke={`url(#${p}-rim)`} strokeWidth="1.4" />
+    </>
+  );
+}
+
+/* ① 측정 — 유리 디스플레이(측정기) + 받침 */
 export function IconMeasure({ size = 120, className }: IconProps) {
-  const p = "im";
+  const p = "gm";
   return (
     <svg viewBox="0 0 96 96" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <ellipse cx="48" cy="78" rx="30" ry="8" fill={`url(#${p}-glow)`} />
-      <g transform="translate(46.3 54.5)" filter={`url(#${p}-drop)`}>
-        {/* 받침 슬래브 */}
-        <Solid x={-4} y={-4} z={0} w={30} d={26} h={4} top="#D7D1FF" left="#A79AF7" right="#7C6BE6" />
-        {/* 세워진 패널 */}
-        <Solid x={0} y={2} z={4} w={24} d={7} h={26} />
-        {/* 화면 — 좌면 위에 얹은 밝은 판 */}
-        <polygon
-          points={poly(P(2.5, 9, 8), P(21.5, 9, 8), P(21.5, 9, 27), P(2.5, 9, 27))}
-          fill="rgba(255,255,255,.82)"
-        />
-        {/* 지표 셀 3개 — 색은 약하게 */}
-        <polygon points={poly(P(4.5, 9, 17), P(9, 9, 17), P(9, 9, 24), P(4.5, 9, 24))} fill="rgba(240,130,95,.75)" />
-        <polygon points={poly(P(10, 9, 17), P(14.5, 9, 17), P(14.5, 9, 24), P(10, 9, 24))} fill="rgba(80,195,165,.75)" />
-        <polygon points={poly(P(15.5, 9, 17), P(20, 9, 17), P(20, 9, 24), P(15.5, 9, 24))} fill={`rgba(${V},.8)`} />
-        <polygon points={poly(P(4.5, 9, 11), P(16, 9, 11), P(16, 9, 14), P(4.5, 9, 14))} fill="rgba(124,107,240,.28)" />
+      <ellipse cx="48" cy="83" rx="28" ry="7" fill={`url(#${p}-glow)`} />
+      <g filter={`url(#${p}-drop)`}>
+        {/* 본체 패널 */}
+        <Slab p={p} x={18} y={22} w={54} h={40} r={8} />
+        {/* 화면 — 안쪽은 더 맑게 */}
+        <rect x={25} y={29} width={40} height={26} rx={5} fill="rgba(255,255,255,.72)" />
+        {/* 측정 지표 3칸 */}
+        <rect x={29} y={40} width={9} height={11} rx={2.4} fill="rgba(240,130,95,.8)" />
+        <rect x={40.5} y={36} width={9} height={15} rx={2.4} fill="rgba(80,195,165,.8)" />
+        <rect x={52} y={32} width={9} height={19} rx={2.4} fill={`url(#${p}-core)`} />
+        {/* 목 + 받침 */}
+        <rect x={42} y={62} width={12} height={9} rx={2} fill={`url(#${p}-side)`} />
+        <Slab p={p} x={28} y={71} w={34} h={7} r={3.5} />
+        <ellipse cx="38" cy="32" rx="20" ry="13" fill={`url(#${p}-spec)`} />
       </g>
     </svg>
   );
 }
 
-/* ② 검증 — 큐브 하나 + 체크 */
+/* ② 검증 — 유리 방패 + 체크 */
 export function IconVerify({ size = 120, className }: IconProps) {
-  const p = "iv";
+  const p = "gv";
+  /* 두께(DX)가 오른쪽으로 붙어 시각 중심이 밀리므로 형상을 미리 왼쪽으로 3 당겨 둔다 */
+  const shield = "M45 16 L71 26 V48 C71 63 59 73 45 78 C31 73 19 63 19 48 V26 Z";
   return (
     <svg viewBox="0 0 96 96" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <ellipse cx="48" cy="78" rx="28" ry="7.5" fill={`url(#${p}-glow)`} />
-      <g transform="translate(48 52)" filter={`url(#${p}-drop)`}>
-        <Solid x={0} y={0} z={0} w={26} d={26} h={26} />
-        {/* 체크 — 좌면(가장 넓게 보이는 면) 위에 눕힌다 */}
-        <path
-          d={`M ${P(4, 26, 14)} L ${P(10, 26, 9)} L ${P(22, 26, 22)}`}
-          fill="none"
-          stroke="#fff"
-          strokeWidth="5.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+      <ellipse cx="48" cy="83" rx="26" ry="6.5" fill={`url(#${p}-glow)`} />
+      <g filter={`url(#${p}-drop)`}>
+        {/* 두께 — 본체를 위·오른쪽으로 민 그림자면 */}
+        <path d={shield} transform={`translate(${DX} ${-DY})`} fill={`url(#${p}-side)`} />
+        <path d={shield} fill={`url(#${p}-frost)`} />
+        {/* 코어는 아래쪽에 몰린다 — 시안의 채도 분포 */}
+        <path d="M45 44 L65 36 V48 C65 60 55 68.5 45 72.5 C35 68.5 25 60 25 48 V36 Z" fill={`url(#${p}-core)`} opacity=".92" />
+        <path d="M34.5 48 L42 55.5 L57 40" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={shield} fill="none" stroke={`url(#${p}-rim)`} strokeWidth="1.8" />
+        <ellipse cx="38" cy="32" rx="16" ry="12" fill={`url(#${p}-spec)`} />
       </g>
     </svg>
   );
 }
 
-/* ③ 보상 — 큐브가 쌓인 더미
+/* ③ 보상 — 유리 토큰이 쌓인 스택
    (통화 기호 없음: 보상은 현금이 아니고 지급량·가치가 보장되지 않는다) */
 export function IconReward({ size = 120, className }: IconProps) {
-  const p = "ir";
+  const p = "gr";
   return (
     <svg viewBox="0 0 96 96" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <ellipse cx="48" cy="78" rx="31" ry="8" fill={`url(#${p}-glow)`} />
-      <g transform="translate(48 43)" filter={`url(#${p}-drop)`}>
-        {/* 아래 단 — 뒤에서 앞으로 그려야 가림이 맞는다 */}
-        <Solid x={0} y={0} z={0} w={16} d={16} h={11} />
-        <Solid x={16} y={0} z={0} w={16} d={16} h={11} top="#BAB0FF" left="#8271EE" right="#5442D2" />
-        <Solid x={0} y={16} z={0} w={16} d={16} h={11} top="#BAB0FF" left="#8271EE" right="#5442D2" />
-        <Solid x={16} y={16} z={0} w={16} d={16} h={11} />
-        {/* 위 단 — 살짝 밝게 얹어 더미가 쌓였음을 보인다 */}
-        <Solid x={8} y={8} z={11} w={16} d={16} h={11} top="#D2CBFF" left="#9A8CF6" right="#6957DE" />
+      <ellipse cx="48" cy="84" rx="30" ry="7" fill={`url(#${p}-glow)`} />
+      <g filter={`url(#${p}-drop)`}>
+        {/* 아래로 갈수록 채도가 높다 */}
+        <Slab p={p} x={20} y={58} w={50} h={16} r={7} solid />
+        <Slab p={p} x={20} y={40} w={50} h={16} r={7} solid />
+        <Slab p={p} x={20} y={22} w={50} h={16} r={7} />
+        <ellipse cx="38" cy="30" rx="18" ry="10" fill={`url(#${p}-spec)`} />
       </g>
     </svg>
   );
 }
 
-/* ④ 활용 — 높이가 커지는 큐브 3개 */
+/* ④ 활용 — 유리 막대 차트 (시안 2행 3열과 같은 구성: 왼쪽은 프로스티드, 오른쪽으로 갈수록 채도) */
 export function IconUse({ size = 120, className }: IconProps) {
-  const p = "iu";
+  const p = "gu";
   return (
     <svg viewBox="0 0 96 96" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <ellipse cx="48" cy="78" rx="31" ry="8" fill={`url(#${p}-glow)`} />
-      <g transform="translate(35 48)" filter={`url(#${p}-drop)`}>
-        {/* screen_x = (x - y) * 0.866 이므로 x==y 로 놓으면 세 큐브가 화면상 같은 열에 겹친다.
-            y를 고정하고 x만 늘려 가로로 벌린다. 그리면서 x가 커질수록 앞이므로 이 순서가 곧 페인터 순서. */}
-        <Solid x={0} y={0} z={0} w={13} d={13} h={12} top="#CFC8FF" left="#9587F5" right="#6553DC" />
-        <Solid x={15} y={0} z={0} w={13} d={13} h={22} />
-        <Solid x={30} y={0} z={0} w={13} d={13} h={33} top="#D5CFFF" left="#9E90F7" right="#6E5CE1" />
-        {/* 상승 화살표 — 큐브 윗면들을 잇는다 */}
-        <path
-          d={`M ${P(6.5, 6.5, 18)} L ${P(21.5, 6.5, 28)} L ${P(36.5, 6.5, 40)}`}
-          fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" opacity=".95"
-        />
-        <path
-          d={`M ${P(30, 6.5, 41.5)} L ${P(36.5, 6.5, 40)} L ${P(36.5, 6.5, 33)}`}
-          fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" opacity=".95"
-        />
+      <ellipse cx="48" cy="82" rx="31" ry="7" fill={`url(#${p}-glow)`} />
+      <g filter={`url(#${p}-drop)`}>
+        <Slab p={p} x={18} y={54} w={13} h={22} r={4} />
+        <Slab p={p} x={33} y={44} w={13} h={32} r={4} />
+        <Slab p={p} x={48} y={33} w={13} h={43} r={4} solid />
+        <Slab p={p} x={63} y={22} w={13} h={54} r={4} solid />
+        <ellipse cx="34" cy="52" rx="19" ry="14" fill={`url(#${p}-spec)`} />
       </g>
     </svg>
   );
 }
 
-/* ───────── 선순환 칩 행 아이콘 (같은 아이소메트릭 체계, 작은 사이즈) ───────── */
+/* ───────── 선순환 칩 행 아이콘 (같은 재질, 작은 사이즈) ───────── */
 
-/* 데이터 — 납작한 슬래브 3장 */
+/* 데이터 — 유리 슬래브 3장 */
 export function IconData({ size = 34, className }: IconProps) {
   const p = "cd";
   return (
     <svg viewBox="0 0 48 48" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <g transform="translate(24 31) scale(.62)" filter={`url(#${p}-drop)`}>
-        <Solid x={0} y={0} z={0} w={26} d={26} h={7} top="#BAB0FF" left="#8271EE" right="#5442D2" />
-        <Solid x={0} y={0} z={9} w={26} d={26} h={7} />
-        <Solid x={0} y={0} z={18} w={26} d={26} h={7} top="#D5CFFF" left="#9E90F7" right="#6E5CE1" />
+      <g filter={`url(#${p}-drop)`}>
+        <Slab p={p} x={7} y={30} w={28} h={9} r={4} solid />
+        <Slab p={p} x={7} y={19} w={28} h={9} r={4} solid />
+        <Slab p={p} x={7} y={8} w={28} h={9} r={4} />
       </g>
     </svg>
   );
 }
 
-/* 유통 — 큐브에서 빠져나가는 화살표 */
+/* 유통 — 유리 타일에서 빠져나가는 화살표 */
 export function IconFlow({ size = 34, className }: IconProps) {
   const p = "cf";
   return (
     <svg viewBox="0 0 48 48" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <g transform="translate(20 30) scale(.66)" filter={`url(#${p}-drop)`}>
-        <Solid x={0} y={0} z={0} w={22} d={22} h={22} />
-        <path
-          d={`M ${P(5, 22, 11)} L ${P(18, 22, 11)}`}
-          fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round"
-        />
-        <path
-          d={`M ${P(13, 22, 16)} L ${P(18, 22, 11)} L ${P(13, 22, 6)}`}
-          fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"
-        />
+      <g filter={`url(#${p}-drop)`}>
+        <Slab p={p} x={6} y={12} w={30} h={28} r={7} />
+        <rect x={12} y={22} width={18} height={4} rx={2} fill={`url(#${p}-core)`} />
+        <path d="M25 18 L31 24 L25 30" fill="none" stroke="#5B49D8" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
       </g>
     </svg>
   );
 }
 
-/* 수익 — 큐브 더미(작은 버전) */
+/* 수익 — 원형 유리 토큰 스택.
+   데이터(IconData)가 가로 슬래브라 사각으로 그리면 실루엣이 겹쳐 두 칩이 같은 아이콘으로 보인다.
+   여기는 원형 디스크로 구분한다. */
 export function IconCoins({ size = 34, className }: IconProps) {
   const p = "cc";
+  const coin = (cy: number, solid: boolean) => (
+    <g key={cy}>
+      <ellipse cx={24 + DX * 0.5} cy={cy - DY * 0.4} rx="14" ry="5.4" fill={`url(#${p}-side)`} />
+      <ellipse cx="24" cy={cy} rx="14" ry="5.4" fill={solid ? `url(#${p}-core)` : `url(#${p}-frost)`} />
+      <ellipse cx="24" cy={cy} rx="14" ry="5.4" fill="none" stroke={`url(#${p}-rim)`} strokeWidth="1.2" />
+    </g>
+  );
   return (
     <svg viewBox="0 0 48 48" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <g transform="translate(24 30) scale(.58)" filter={`url(#${p}-drop)`}>
-        <Solid x={0} y={0} z={0} w={15} d={15} h={10} />
-        <Solid x={15} y={0} z={0} w={15} d={15} h={10} top="#BAB0FF" left="#8271EE" right="#5442D2" />
-        <Solid x={0} y={15} z={0} w={15} d={15} h={10} top="#BAB0FF" left="#8271EE" right="#5442D2" />
-        <Solid x={15} y={15} z={0} w={15} d={15} h={10} />
-        <Solid x={7.5} y={7.5} z={10} w={15} d={15} h={10} top="#D5CFFF" left="#9E90F7" right="#6E5CE1" />
+      <g filter={`url(#${p}-drop)`}>
+        {coin(34, true)}
+        {coin(25, true)}
+        {coin(16, false)}
       </g>
     </svg>
   );
 }
 
-/* 측정망 — 큐브 노드 넷이 선으로 연결 */
+/* 측정망 — 유리 노드 넷이 선으로 연결 */
 export function IconNodes({ size = 34, className }: IconProps) {
   const p = "cn";
-  const cube = (x: number, y: number, z: number, s: number) => (
-    <Solid key={`${x}-${y}-${z}`} x={x} y={y} z={z} w={s} d={s} h={s} />
+  const node = (cx: number, cy: number, r: number, solid = false) => (
+    <g key={`${cx}-${cy}`}>
+      <circle cx={cx + DX * 0.5} cy={cy - DY * 0.5} r={r} fill={`url(#${p}-side)`} />
+      <circle cx={cx} cy={cy} r={r} fill={solid ? `url(#${p}-core)` : `url(#${p}-frost)`} />
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={`url(#${p}-rim)`} strokeWidth="1.3" />
+    </g>
   );
   return (
     <svg viewBox="0 0 48 48" style={box(size)} className={className} aria-hidden focusable="false">
       <Defs p={p} />
-      <g transform="translate(24 27) scale(.62)" filter={`url(#${p}-drop)`}>
-        <g stroke={`rgba(${V},.55)`} strokeWidth="2.6" strokeLinecap="round" fill="none">
-          <path d={`M ${P(4, 4, 4)} L ${P(22, 22, 4)}`} />
-          <path d={`M ${P(4, 22, 4)} L ${P(22, 4, 4)}`} />
+      <g filter={`url(#${p}-drop)`}>
+        <g stroke={`rgba(${V},.5)`} strokeWidth="2.4" strokeLinecap="round" fill="none">
+          <path d="M13 14 L24 24 L35 15" />
+          <path d="M13 34 L24 24 L35 33" />
         </g>
-        {cube(-4, -4, 0, 9)}
-        {cube(18, -4, 0, 9)}
-        {cube(-4, 18, 0, 9)}
-        {cube(18, 18, 0, 9)}
+        {node(13, 14, 6)}
+        {node(35, 15, 6)}
+        {node(13, 34, 6)}
+        {node(35, 33, 6)}
+        {node(24, 24, 7.5, true)}
       </g>
     </svg>
   );

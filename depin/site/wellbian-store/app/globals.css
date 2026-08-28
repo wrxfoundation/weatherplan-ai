@@ -456,7 +456,9 @@ h1, h2, h3, p { margin: 0; }
 }
 /* 칩이 3개 → 4개가 되어 한 줄 폭이 빠듯하다. 데스크톱에서만 살짝 조인다 */
 @media (min-width: 761px) {
-  .loop-chip { padding: 12px 15px; font-size: 14.8px; gap: 9px; }
+  /* 8/28 서우 8차: 문구를 한 줄 단문으로 줄였다. 다만 글자를 16.5px까지 키웠더니 네 번째 칩이
+     둘째 줄로 밀려 "한눈에"가 깨졌다 — 카드 내폭 832px에 4칩+3화살표가 들어가는 치수로 되돌린다. */
+  .loop-chip { padding: 12px 16px; font-size: 15.5px; gap: 9px; }
   .loop-row { gap: 8px; }
   .loop-arrow { font-size: 17px; }
 }
