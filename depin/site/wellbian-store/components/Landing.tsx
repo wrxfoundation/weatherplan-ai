@@ -238,9 +238,9 @@ export default function Landing() {
               <div ref={heroCtaRef} className="hero-cta-row" style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
                 {preMode === "pre" ? (
                   /* PRE-ORDER — 사전예약 = 실구매 (8/27 서우: 9/5부터 바로), 구매 모달 연결 */
-                  /* 8/28 서우: 버튼 라벨 "사전예약하기" → "사전구매 응모하기" (D-day는 아래 누적 라인) */
+                  /* 8/28 서우 3차: 히어로 버튼 라벨 "사전예약 신청하기" (D-day는 아래 누적 라인) */
                   <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
-                    {en ? "Apply for pre-purchase" : "사전구매 응모하기"}
+                    {en ? "Pre-order now" : "사전예약 신청하기"}
                   </button>
                 ) : preMode === "dday" ? (
                   /* 사전예약 오픈 카운트다운 (9/5) */
@@ -646,14 +646,17 @@ export default function Landing() {
           {/* PC: 중앙 한 덩어리 — 사전예약 중엔 예약 대수 + CTA만 (게이지·%·얼리버드·가격 없음, 8/27 서우) */}
           {preMode === "pre" ? (
             <div className="stickybar-in">
-              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "Pre-ordered so far" : "사전예약 누적"}</span>
-                <span className="mono" style={{ fontSize: 23.5, fontWeight: 800, color: "var(--w-deep)" }}>{fmt(MOCK_PRENOTIFY)}</span>
-                <span style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "units" : "대"}</span>
+              {/* 8/28 서우 3차: 모바일에서 2줄로 깨지던 누적 라인 → 라벨은 데스크톱만, "N대 · D-n" 한 줄 고정 */}
+              <div style={{ display: "flex", alignItems: "baseline", gap: 7, whiteSpace: "nowrap" }}>
+                <span className="desk-only" style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "Pre-ordered so far" : "사전예약 누적"}</span>
+                <span style={{ whiteSpace: "nowrap" }}>
+                  <span className="mono" style={{ fontSize: 23.5, fontWeight: 800, color: "var(--w-deep)" }}>{fmt(MOCK_PRENOTIFY)}</span>
+                  <span style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? " units" : "대"}</span>
+                </span>
                 <span style={{ fontSize: 15.5, color: "var(--cap)" }}>·</span>
                 <span className="mono" style={{ fontSize: 16.5, fontWeight: 800, color: "var(--w-main)" }}>{dSaleBadge}</span>
               </div>
-              <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px" }}>{en ? "Apply for pre-purchase" : "사전구매 응모하기"}</button>
+              <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px", whiteSpace: "nowrap" }}>{en ? "Pre-order" : "사전예약"}</button>
             </div>
           ) : (
           <div className="stickybar-in">

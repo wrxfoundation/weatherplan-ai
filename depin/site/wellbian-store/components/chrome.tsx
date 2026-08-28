@@ -106,6 +106,8 @@ export function CommunityFooter() {
           {/* 브랜드 행 — 로고 광학 크기 (8/28 서우): wellbian 26 / xrpl 22 (+20%) / kw 11 유지 */}
           <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
             <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} style={{ height: 26, width: "auto", opacity: 0.95 }} />
+            {/* 8/28 서우: 모바일은 wellbian 로고 다음 줄부터 POWERED BY (flex 강제 개행) */}
+            <span className="mob-only" aria-hidden style={{ display: "block", flexBasis: "100%", width: "100%", height: 0 }} />
             <span style={{ fontSize: 14.5, color: "rgba(255,255,255,.4)" }}>POWERED BY</span>
             <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} style={{ height: 22, width: "auto", opacity: 0.9 }} />
             <span style={{ width: 1, height: 18, background: "rgba(255,255,255,.25)" }} />
