@@ -11,7 +11,8 @@ import { honorific } from "../../lib/tracks";
 // 보호자 화면: 내 요청 생성 + 컨시어지 발신 요청의 결제 승인.
 
 // 활성 서비스 분류 순서 — 급한 것부터. lib/requests.js 의 cat 값과 같아야 한다.
-const ACTIVE_CATS = ["의료 지원", "생활 지원", "응급 관리", "주거 관리", "행정 지원", "돌봄 지원"];
+// 5분류 — 2026-08-28 실무진 제안 (lib/requests.js 주석 참고)
+const ACTIVE_CATS = ["건강지원", "생활지원", "가족지원", "전문지원", "긴급지원"];
 const INACTIVE = SERVICE_MENU.filter((s) => !s.active);
 
 const fmtD = (t) =>

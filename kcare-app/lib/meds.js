@@ -70,6 +70,23 @@ export const MED_REGISTRY = {
   registeredAt: "첫 안심방문 · 7월 12일",
 };
 
+// 복약 미션 — 참고 영상(2026-08-26 'senior mission alarm')의 상호작용을 데이터로.
+// 어제까지 며칠 연속 다 드셨는지. 오늘분은 medSlots(상태)에서 세므로 여기 없다.
+// 별은 연속일수를 그대로 세지 않고 최대 4개까지만 — 5개가 넘어가면 어르신
+// 화면에서 별이 줄바꿈되고, "몇 개인지" 세는 일이 목적이 아니다.
+export const MED_STREAK = {
+  days: 3, // 어제까지 3일 연속
+  week: [
+    // 최근 7일 — 오늘 제외 6일 + 오늘(todayIsLast 로 상태에서 채운다)
+    { label: "월", done: true },
+    { label: "화", done: true },
+    { label: "수", done: false },
+    { label: "목", done: true },
+    { label: "금", done: true },
+    { label: "토", done: true },
+  ],
+};
+
 // 며칠 남았는지 — 하루 복용량으로 나눈다
 export function daysLeft(s) {
   return Math.floor(s.remain / Math.max(1, s.perDay));
