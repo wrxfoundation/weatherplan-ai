@@ -7,6 +7,7 @@ import Home from './pages/consumer/Home'
 import Category from './pages/consumer/Category'
 import Calculator from './pages/consumer/Calculator'
 import PhoneCalculator from './pages/consumer/PhoneCalculator'
+import RentalCalculator from './pages/consumer/RentalCalculator'
 import Consult from './pages/consumer/Consult'
 import Diagnosis from './pages/consumer/Diagnosis'
 import Payouts from './pages/consumer/Payouts'
@@ -82,6 +83,7 @@ export default function App() {
           <Route path="/category/:slug" element={<Category />} />
           <Route path="/calculator" element={<Calculator />} />
           <Route path="/calculator/phone" element={<PhoneCalculator />} />
+          <Route path="/calculator/rental" element={<RentalCalculator />} />
           <Route path="/consult" element={<Consult />} />
           <Route path="/diagnosis" element={<Diagnosis />} />
           <Route path="/payouts" element={<Payouts />} />

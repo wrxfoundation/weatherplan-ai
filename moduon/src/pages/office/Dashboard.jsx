@@ -20,6 +20,7 @@ export default function OfficeDashboard() {
   const toast = useToast()
   const [filter, setFilter] = useState('전체')
   const [openLead, setOpenLead] = useState(null)
+  const [rank, setRank] = useState('dday')
 
   const leads = useMemo(() => tenantLeads(db, tenant.id).sort((a, b) => b.createdAt - a.createdAt), [db, tenant.id])
   const today = leads.filter((l) => Date.now() - l.createdAt < 86400000)
@@ -39,7 +40,14 @@ export default function OfficeDashboard() {
     return top.map(([cat, value], i) => ({ label: catBySlug(cat)?.name ?? cat, value, color: CHART_COLORS[i] }))
   }, [leads])
 
-  const expiring = db.contracts.filter((c) => c.tenantId === tenant.id).sort((a, b) => a.expiry - b.expiry).slice(0, 3)
+  // 가망고객 TOP5 — 랭킹 기준을 바꾸면 접근 순서가 바뀐다(만기 임박 vs 갈아타기 부담)
+  const prospects = useMemo(() => {
+    const mine = db.contracts.filter((c) => c.tenantId === tenant.id)
+    const sorted = rank === 'penalty'
+      ? [...mine].sort((a, b) => (a.penalty ?? 0) - (b.penalty ?? 0) || a.expiry - b.expiry)
+      : [...mine].sort((a, b) => a.expiry - b.expiry)
+    return sorted.slice(0, 5)
+  }, [db.contracts, tenant.id, rank])
   const notice = db.notices.find((n) => n.target === 'office')
   const d = new Date()
 
@@ -158,28 +166,45 @@ export default function OfficeDashboard() {
             </Link>
           </Card>
 
-          {/* 만기 D-day */}
+          {/* 가망고객 TOP5 — 만기가 임박하거나 위약금이 낮은 순서가 곧 설득 난이도 순서 */}
           <Card track="b" className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-[15.5px] font-extrabold text-bink">다가오는 만기 D-day</h2>
+              <h2 className="text-[15.5px] font-extrabold text-bink">가망고객 TOP5</h2>
               <Link to="/office/customers" className="text-[12.5px] font-bold text-primary-text">고객 관리 →</Link>
             </div>
+            <div className="mt-2.5 inline-flex rounded-full bg-brow p-0.5">
+              {[{ k: 'dday', l: '잔여개월수 기준' }, { k: 'penalty', l: '위약금 기준' }].map((t) => (
+                <button key={t.k} onClick={() => setRank(t.k)} className={`h-7 rounded-full px-3 text-[11.5px] font-bold transition-colors ${rank === t.k ? 'bg-white text-primary-text shadow-sm' : 'text-bmuted'}`}>
+                  {t.l}
+                </button>
+              ))}
+            </div>
             <div className="mt-3 flex flex-col gap-2.5">
-              {expiring.map((c) => {
+              {prospects.map((c) => {
                 const dd = dday(c.expiry)
+                const months = Math.max(0, Math.round(dd / 30))
                 const tone = dd <= 14 ? 'bg-warn/10 text-warn' : dd <= 30 ? 'bg-tint text-primary-text' : 'bg-brow text-bmuted'
                 return (
                   <div key={c.id} className="flex items-center gap-3">
-                    <span className={`tnum shrink-0 rounded-full px-2.5 py-1 text-[11.5px] font-extrabold ${tone}`}>D-{dd}</span>
+                    <span className={`tnum shrink-0 rounded-full px-2.5 py-1 text-[11.5px] font-extrabold ${tone}`}>
+                      {rank === 'dday' ? `D-${dd}` : c.penalty > 0 ? won(c.penalty) : '위약금 0'}
+                    </span>
                     <div className="min-w-0 flex-1">
                       <div className="pii truncate text-[13px] font-bold text-bink">{c.customer} · {c.product}</div>
-                      <div className="text-[11.5px] text-bfaint">만기 {fmtDate(c.expiry)} — 재상담으로 락인하세요</div>
+                      <div className="text-[11.5px] text-bfaint">
+                        {rank === 'dday'
+                          ? `만기 ${fmtDate(c.expiry)} · 잔여 ${months}개월 — 재상담으로 락인하세요`
+                          : c.penalty > 0 ? `잔여 ${months}개월 · 위약금 부담이 남아 시기 조율이 필요해요` : '위약금 없음 — 지금 바로 제안 가능한 1순위예요'}
+                      </div>
                     </div>
                   </div>
                 )
               })}
-              {expiring.length === 0 && <div className="py-4 text-center text-[12.5px] text-bfaint">90일 내 만기 고객이 없어요</div>}
+              {prospects.length === 0 && <div className="py-4 text-center text-[12.5px] text-bfaint">계약 고객이 아직 없어요</div>}
             </div>
+            <p className="mt-2.5 border-t border-bline pt-2 text-[11px] leading-4 text-bfaint">
+              위약금이 낮을수록 갈아타기 부담이 적어 성사 확률이 높습니다. 만기 임박(D-30 이내)과 위약금 0원이 겹치는 고객이 최우선 대상이에요.
+            </p>
           </Card>
         </div>
       </div>

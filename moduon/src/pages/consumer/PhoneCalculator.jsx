@@ -340,14 +340,18 @@ export default function PhoneCalculator() {
 }
 
 export function CalcTabs({ active }) {
+  const tabs = [
+    { to: '/calculator', key: 'internet', label: '인터넷/TV' },
+    { to: '/calculator/phone', key: 'phone', label: '휴대폰' },
+    { to: '/calculator/rental', key: 'rental', label: '렌탈' },
+  ]
   return (
     <div className="inline-flex rounded-full bg-white p-1 shadow-card">
-      <Link to="/calculator" className={`flex h-9 items-center rounded-full px-4 text-[13px] font-bold transition-colors ${active === 'internet' ? 'bg-primary text-white' : 'text-label hover:text-primary-text'}`}>
-        인터넷/TV
-      </Link>
-      <Link to="/calculator/phone" className={`flex h-9 items-center rounded-full px-4 text-[13px] font-bold transition-colors ${active === 'phone' ? 'bg-primary text-white' : 'text-label hover:text-primary-text'}`}>
-        휴대폰
-      </Link>
+      {tabs.map((t) => (
+        <Link key={t.key} to={t.to} className={`flex h-9 items-center rounded-full px-4 text-[13px] font-bold transition-colors ${active === t.key ? 'bg-primary text-white' : 'text-label hover:text-primary-text'}`}>
+          {t.label}
+        </Link>
+      ))}
     </div>
   )
 }
