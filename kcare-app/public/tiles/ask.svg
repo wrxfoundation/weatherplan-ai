@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="해주세요">
+  <!-- 두 손을 들어 올린 모양 (부탁·도움). 왼손을 그리고 오른손은 좌우 반전. -->
+  <g fill="#B08D57" stroke="#0A1F3C" stroke-width="2.2" stroke-linejoin="round">
+    <g transform="rotate(-12 20 40)">
+      <rect x="11.5" y="24" width="5.2" height="15" rx="2.6"/>
+      <rect x="18.2" y="21" width="5.2" height="18" rx="2.6"/>
+      <rect x="24.9" y="24" width="5.2" height="15" rx="2.6"/>
+      <path d="M10 36h21v7a10.5 10.5 0 0 1-21 0z"/>
+    </g>
+    <g transform="translate(64,0) scale(-1,1)">
+      <g transform="rotate(-12 20 40)">
+        <rect x="11.5" y="24" width="5.2" height="15" rx="2.6"/>
+        <rect x="18.2" y="21" width="5.2" height="18" rx="2.6"/>
+        <rect x="24.9" y="24" width="5.2" height="15" rx="2.6"/>
+        <path d="M10 36h21v7a10.5 10.5 0 0 1-21 0z"/>
+      </g>
+    </g>
+  </g>
+</svg>

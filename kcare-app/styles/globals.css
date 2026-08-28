@@ -851,6 +851,10 @@ a.btn-press {
   .elder-home {
     gap: 14px;
     padding-bottom: 10px;
+    /* 남는 공간은 인사와 타일 '사이'로 보낸다 (2026-08-28 시안).
+       아래에 몰아 두면 "위로 다 몰렸다"는 그 모양이 된다. 인사는 위에,
+       타일은 엄지가 닿는 아래에 — 시안의 배치가 이것이다. */
+    justify-content: space-between;
   }
   .elder-home .elder-tile {
     padding-top: 12px;

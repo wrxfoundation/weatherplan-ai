@@ -105,13 +105,18 @@ function ttlLabel(at, nowMs) {
   return `${m}분 뒤에 지워져요`;
 }
 
-// 홈 사분면 — 상세 화면 진입 타일 (2×2). 아이콘 색은 타일마다 다르게 —
-// 글자를 읽기 전에 색·모양으로 먼저 갈리게 한다 (전부 기존 토큰, 빨강 없음).
+// 홈 사분면 — 상세 화면 진입 타일 (2×2). 2026-08-28 시안 반영:
+// 흰 카드 + 라인 아이콘 → 분류별 옅은 색 바탕 + 그림 아이콘, 글자는 왼쪽 정렬.
+// 색이 먼저 갈리고 그림이 거들어서, 글자를 읽기 전에 어디를 눌러야 할지 안다.
+//
+// img 는 public/tiles/*.svg 를 그대로 읽는다 — 아이콘을 바꾸려면 코드가 아니라
+// 그 파일만 갈아 끼우면 된다 (힉스필드 생성본 교체 경로).
+// bg 는 각 아이콘 파일의 배경색과 같은 값이어야 이음매가 보이지 않는다.
 const HOME_TILES = [
-  { key: "today", label: "오늘", sub: "일정 · 약", icon: "calendar", color: "#B08D57" },
-  { key: "health", label: "건강", sub: "몸 상태 · 기록", icon: "heart", color: "#1E7A5A" },
-  { key: "ask", label: "해주세요", sub: "부탁하기", icon: "hand", color: "#3B5C8A" },
-  { key: "store", label: "스토어", sub: "장보기", icon: "bag", color: "#8A5D12" },
+  { key: "today", label: "오늘", sub: "일정 · 약", bg: "#EAF0F7", fg: "#0A1F3C", subFg: "#41597C" },
+  { key: "health", label: "건강", sub: "몸 상태 · 기록", bg: "#E7F1EC", fg: "#155C43", subFg: "#3C6B58" },
+  { key: "ask", label: "해주세요", sub: "부탁드릴 일", bg: "#F3EEF6", fg: "#5F3F73", subFg: "#6E5480" },
+  { key: "store", label: "스토어", sub: "생활용품", bg: "#F5EEDF", fg: "#7A5210", subFg: "#7C6434" },
 ];
 
 // "김순자" → "순자" — 성 포함 호칭 금지 (06 §1 헤더 카피)
@@ -436,6 +441,15 @@ export default function ElderHome() {
   // 라벨은 '메시지 보내기' 고정이다 (2026-08-28 피드백). 시간대별로 바꿔 봤지만
   // (아침 인사 · 심심함 · 잠이 안 옴) 버튼이 무엇을 하는 것인지가 가려졌다 —
   // 말 걸 거리는 가족 탭의 '세대공감'이 이미 맡고 있다.
+  // 시간대 인사 (2026-08-28 시안) — 하루 중 언제 여시든 그 시간의 말로 맞는다.
+  const greetHour = now.getHours();
+  const greetLine =
+    greetHour < 5 ? "편안한 밤이에요"
+    : greetHour < 11 ? "좋은 아침이에요"
+    : greetHour < 17 ? "좋은 오후예요"
+    : greetHour < 22 ? "좋은 저녁이에요"
+    : "편안한 밤이에요";
+
   const [concMsg, setConcMsg] = useState(null); // null | "rec" | "sent"
   const recStart = useRef(0);
   // 홈에서 보낸 목소리는 '선생님' 탭 메시지함에 그대로 쌓인다 (2026-08-28 요청:
@@ -554,7 +568,7 @@ export default function ElderHome() {
                 <h1 className="min-w-0 flex-1 text-[27px] font-black leading-[1.3] text-navy">
                   {name} 님,
                   <br />
-                  안녕하세요
+                  {greetLine}
                 </h1>
                 <button
                   onClick={concMsgTap}
@@ -584,60 +598,16 @@ export default function ElderHome() {
                   묻는 말과 시키는 말을 줄로 나눈다 (2026-08-28 요청) — 자동 줄바꿈에
                   맡기면 "…아래에서 골라 / 주세요."처럼 끊겨 읽는 흐름이 깨진다. */}
               {tab === "home" && (
-                <p className="mt-1 text-[20px] leading-[1.3] text-muted">
-                  오늘은 무얼 도와드릴까요?
-                  <br />
-                  아래에서 골라 주세요.
-                </p>
+                <p className="mt-1 text-[20px] leading-[1.4] text-muted">오늘도 편안한 하루 되세요</p>
               )}
             </div>
 
             {/* ══ 홈 탭 — 화이트보드 시안(2026-08-28): 나열식 대신 허브.
                 인사 + 다음 일정 카루셀 + 사분면(오늘/건강/해주세요/스토어) ══ */}
-            {/* order -8 · 다음 일정 카루셀 — 옆으로 밀어 보고, 누르면 오늘 탭 */}
-            <div className="shrink-0" style={{ order: -8, display: tab === "home" ? undefined : "none" }}>
-              <div className="flex items-baseline justify-between">
-                <span className="flex items-center gap-2 text-[19px] font-bold text-navy">
-                  <span aria-hidden className="text-gold">
-                    <Icon name="clock" size={20} strokeWidth={1.9} />
-                  </span>
-                  다음 일정
-                </span>
-                {upcoming.length > 1 && <span className="text-[16px] text-muted">옆으로 밀어 보세요</span>}
-              </div>
-              <div className="relative -mx-1 mt-1">
-                <div className="flex gap-2.5 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none]">
-                  {upcoming.slice(0, 4).map((e) => (
-                    <button
-                      key={e.id}
-                      onClick={() => setTab("today")}
-                      className="btn-press w-[232px] shrink-0 rounded-[18px] px-4 py-2.5 text-left"
-                      style={LIGHT_CARD}
-                    >
-                      <span className="block text-[18px] font-bold text-gold">
-                        {isToday(e.at) ? "오늘" : spokenDay(e.at)} {spokenTime(e.at)}
-                      </span>
-                      {/* 일정 종류(복약 알림·병원 동행 …)는 여기서 뺐다 — 오늘 탭
-                          목록에 그대로 있고, 홈은 첫 화면이 스크롤 없이 들어와야 한다
-                          (2026-08-28 요청). 날짜와 제목이면 무엇인지 알아보신다. */}
-                      <span className="mt-0.5 block truncate text-[20px] font-bold leading-[1.3] text-navy">
-                        {e.title}
-                      </span>
-                    </button>
-                  ))}
-                  {upcoming.length === 0 && (
-                    <div className="w-full rounded-[18px] p-4 text-[19px] leading-[1.5] text-muted" style={LIGHT_CARD}>
-                      잡힌 일정이 없습니다.
-                    </div>
-                  )}
-                </div>
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-y-0 right-0 w-10"
-                  style={{ background: "linear-gradient(90deg, rgba(253,252,249,0), #FDFCF9)" }}
-                />
-              </div>
-            </div>
+            {/* 다음 일정 카루셀은 홈에서 뺐다 (2026-08-28 시안 "예시화면처럼 심플하게").
+                첫 화면에 일정까지 얹으니 "아직 복잡하다"는 말이 계속 나왔다 —
+                홈은 어디로 갈지 고르는 자리만 하고, 일정은 '오늘' 타일 안에서 본다.
+                (오늘 탭의 '오늘 일정'·'다음 일정' 카드는 그대로다) */}
 
             {/* order -7 · 사분면 — 각 상세 화면 진입. 돌아오는 길은 GNB '홈' */}
             <div
@@ -648,14 +618,20 @@ export default function ElderHome() {
                 <button
                   key={t.key}
                   onClick={() => setTab(t.key)}
-                  className="elder-tile btn-press flex flex-col items-center justify-center gap-0.5 rounded-[22px] px-3 py-2 text-center"
-                  style={LIGHT_CARD}
+                  className="elder-tile btn-press flex flex-col items-start justify-between rounded-[22px] p-4 text-left"
+                  style={{ background: t.bg, boxShadow: "inset 0 0 0 1px rgba(10,31,60,.07)" }}
                 >
-                  <span aria-hidden style={{ color: t.color }}>
-                    <Icon name={t.icon} size={28} strokeWidth={1.6} />
+                  {/* 아이콘 파일만 갈아 끼우면 그림이 바뀐다 (public/tiles/) */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`/tiles/${t.key}.svg`} alt="" aria-hidden width="56" height="56" className="elder-tile-img" />
+                  <span className="mt-2 block">
+                    <span className="block text-[23px] font-black leading-[1.2]" style={{ color: t.fg }}>
+                      {t.label}
+                    </span>
+                    <span className="mt-0.5 block text-[17px] leading-[1.3]" style={{ color: t.subFg }}>
+                      {t.sub}
+                    </span>
                   </span>
-                  <span className="text-[22px] font-black text-navy">{t.label}</span>
-                  <span className="text-[17px] leading-[1.3] text-muted">{t.sub}</span>
                 </button>
               ))}
             </div>
