@@ -39,11 +39,18 @@ function pmt(principal, months) {
   return { monthly, interest: Math.max(0, monthly * months - principal) }
 }
 
+// ─── 가족결합(프리미엄) — 인터넷 결합 시 기본료 추가 할인 ──────────────
+// 조건: 인터넷 결합 + 월정액 77,000원 이상 요금제 + 모바일 2회선 이상.
+// 선택약정 25%와 별개로 기본료에 추가 적용된다(둘 다 기본료 기준 할인).
+export const BUNDLE = { rate: 0.25, minPlan: 77000, minLines: 2, label: '프리미엄 가족결합' }
+export const bundleEligible = (plan) => (plan?.monthly ?? 0) >= BUNDLE.minPlan
+
 /**
  * method: 'support'(공시지원금) | 'select'(선택약정 25%)
  * extra15: 매장 추가지원금(공시의 15% 법정 한도) 적용 여부
+ * bundle: 가족결합(인터넷+2회선) 적용 여부 — 조건 미충족 요금제면 무시된다
  */
-export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join = 'mnp', method = 'support', months = 24, extra15 = true } = {}) {
+export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join = 'mnp', method = 'support', months = 24, extra15 = true, bundle = false } = {}) {
   const device = PHONE_DEVICES.find((d) => d.id === deviceId) ?? PHONE_DEVICES[0]
   const plan = PHONE_PLANS.find((p) => p.id === planId) ?? PHONE_PLANS[0]
 
@@ -53,14 +60,33 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
 
   const { monthly: deviceMonthly, interest } = pmt(principal, months)
   const planDiscount = method === 'select' ? Math.round(plan.monthly * 0.25) : 0
-  const planMonthly = plan.monthly - planDiscount
+  const bundleOn = bundle && bundleEligible(plan)
+  const bundleDiscount = bundleOn ? Math.round(plan.monthly * BUNDLE.rate) : 0
+  const planMonthly = Math.max(0, plan.monthly - planDiscount - bundleDiscount)
   const upfront = months === 0 ? principal : 0
   const total = deviceMonthly + planMonthly
 
   return {
     device, plan, join, method, months, publicSupport, extraSupport,
-    principal, deviceMonthly, interest, planMonthly, planDiscount, upfront, total,
+    principal, deviceMonthly, interest, planMonthly, planDiscount,
+    bundleOn, bundleDiscount, upfront, total,
   }
+}
+
+// 요금제 전체 비교 — 같은 단말·조건에서 요금제만 바꿔 A+B를 한 줄씩. 최저가에 표식.
+export function planMatrix({ deviceId, join, method, months, extra15, bundle }) {
+  const rows = PHONE_PLANS.map((p) => {
+    const q = calcPhoneQuote({ deviceId, planId: p.id, join, method, months, extra15, bundle })
+    return {
+      id: p.id, name: p.name, base: p.monthly,
+      discount: q.planDiscount + q.bundleDiscount,
+      planMonthly: q.planMonthly, deviceMonthly: q.deviceMonthly,
+      principal: q.principal, support: q.publicSupport + q.extraSupport,
+      total: q.total,
+    }
+  })
+  const min = Math.min(...rows.map((r) => r.total))
+  return rows.map((r) => ({ ...r, cheapest: r.total === min }))
 }
 
 // 단말지원 vs 선택약정 24개월 총액 비교 → 유리한 쪽 안내

@@ -29,6 +29,7 @@ const step = (name, fn) => {
 
   step('스모크: 어드민 4-아레나', () => run('node scripts/qa-arena-smoke.cjs'))
   step('스모크: 프레스룸', () => run('node scripts/qa-press-smoke.cjs'))
+  step('스모크: 휴대폰 계산기', () => run('node scripts/qa-phone-smoke.cjs'))
 
   if (preview) { try { process.kill(-preview.pid) } catch { /* 이미 종료 */ } }
 

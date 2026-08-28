@@ -2,7 +2,7 @@
 // 단말기 할부정보(A) + 요금정보(B) → 월 납부요금(A+B). 단말지원 vs 선택약정 자동 비교.
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { PHONE_DEVICES, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, calcPhoneQuote, compareMethods } from '../../lib/phones'
+import { PHONE_DEVICES, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, calcPhoneQuote, compareMethods, planMatrix, BUNDLE, bundleEligible } from '../../lib/phones'
 import { won, copyText } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { IcShare, IcCheck } from '../../components/icons'
@@ -15,21 +15,23 @@ export default function PhoneCalculator() {
   const [method, setMethod] = useState('support')
   const [months, setMonths] = useState(24)
   const [extra15, setExtra15] = useState(true)
+  const [bundle, setBundle] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  const q = useMemo(() => calcPhoneQuote({ deviceId, planId, join, method, months, extra15 }), [deviceId, planId, join, method, months, extra15])
+  const q = useMemo(() => calcPhoneQuote({ deviceId, planId, join, method, months, extra15, bundle }), [deviceId, planId, join, method, months, extra15, bundle])
   const cmp = useMemo(() => compareMethods({ deviceId, planId, join, months, extra15 }), [deviceId, planId, join, months, extra15])
+  const matrix = useMemo(() => planMatrix({ deviceId, join, method, months, extra15, bundle }), [deviceId, join, method, months, extra15, bundle])
 
   const goConsult = () => nav('/consult?cat=phone', {
     state: { quote: {
       type: 'phone', total: q.total, gift: q.publicSupport + q.extraSupport,
-      label: `${q.device.short} · ${JOIN_TYPES.find((j) => j.key === join)?.label} · ${q.plan.name}${q.months ? ` · ${q.months}개월` : ' · 일시불'} → 월 ${won(q.total)}`,
+      label: `${q.device.short} · ${JOIN_TYPES.find((j) => j.key === join)?.label} · ${q.plan.name}${q.months ? ` · ${q.months}개월` : ' · 일시불'}${q.bundleOn ? ` · ${BUNDLE.label}` : ''} → 월 ${won(q.total)}`,
     } },
   })
 
   // 결과 공유 — 인터넷 계산기와 동일한 카톡용 텍스트 패턴
   const share = async () => {
-    const text = `[모두온 휴대폰 견적]\n${q.device.short} · ${JOIN_TYPES.find((j) => j.key === join)?.label} · ${q.plan.name}${q.months ? ` · ${q.months}개월 할부` : ' · 일시불'}\n월 납부금(A+B) ${won(q.total)}\n직접 계산해 보기 → ${window.location.origin}/calculator/phone\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
+    const text = `[모두온 휴대폰 견적]\n${q.device.short} · ${JOIN_TYPES.find((j) => j.key === join)?.label} · ${q.plan.name}${q.months ? ` · ${q.months}개월 할부` : ' · 일시불'}${q.bundleOn ? `\n${BUNDLE.label} 적용 (월 ${won(q.bundleDiscount)} 절감)` : ''}\n월 납부금(A+B) ${won(q.total)}\n직접 계산해 보기 → ${window.location.origin}/calculator/phone\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
     if (await copyText(text)) {
       setCopied(true)
       setTimeout(() => setCopied(false), 1600)
@@ -146,6 +148,91 @@ export default function PhoneCalculator() {
                 </button>
               ))}
             </div>
+
+            {/* 가족결합 — 인터넷 결합 크로스셀. 조건 미충족 요금제면 사유를 그대로 보여준다 */}
+            <button
+              onClick={() => setBundle(!bundle)}
+              disabled={!bundleEligible(q.plan)}
+              className={`mt-3 flex w-full items-center justify-between gap-3 rounded-field border px-4 py-3 text-left transition-colors disabled:opacity-50 ${q.bundleOn ? 'border-primary bg-tint' : 'border-line bg-white'}`}
+            >
+              <div className="min-w-0">
+                <div className="text-[13.5px] font-bold text-ink">{BUNDLE.label} — 기본료 추가 {Math.round(BUNDLE.rate * 100)}% 할인</div>
+                <div className="text-[11.5px] leading-4 text-faint">
+                  {bundleEligible(q.plan)
+                    ? `인터넷 결합 + 월정액 ${won(BUNDLE.minPlan)} 이상 + 모바일 ${BUNDLE.minLines}회선 이상`
+                    : `이 요금제는 대상이 아니에요 — 월정액 ${won(BUNDLE.minPlan)} 이상부터 적용`}
+                </div>
+              </div>
+              <span className={`flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-md border text-[13px] text-white ${q.bundleOn ? 'border-primary bg-primary' : 'border-line bg-white'}`}>✓</span>
+            </button>
+            {q.bundleOn && (
+              <p className="mt-1.5 text-[11.5px] font-semibold text-ok">
+                결합으로 월 {won(q.bundleDiscount)} 추가 절감 — <Link to="/calculator" className="underline">인터넷 견적도 함께 계산해 보세요</Link>
+              </p>
+            )}
+          </section>
+
+          {/* 전체 요금 안내 — 같은 단말·조건에서 요금제만 바꿔 A+B 비교 */}
+          <section className="rounded-card bg-white p-5 shadow-card sm:p-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 className="text-[16px] font-bold text-ink">전체 요금 안내</h2>
+              <span className="text-[11.5px] text-faint">
+                {q.device.short} · {JOIN_TYPES.find((j) => j.key === join)?.label} · {method === 'support' ? '단말지원' : '선택약정'} · {months ? `${months}개월` : '일시불'}
+              </span>
+            </div>
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full min-w-[560px] text-[12.5px]">
+                <thead>
+                  <tr className="border-b border-line text-[11.5px] text-faint">
+                    <th className="px-2 py-2 text-left font-semibold">구분</th>
+                    {matrix.map((r) => (
+                      <th key={r.id} className={`px-2 py-2 text-right font-bold ${r.cheapest ? 'text-primary-text' : 'text-label'}`}>
+                        {r.name}
+                        {r.cheapest && <span className="ml-1 rounded-full bg-ok px-1.5 py-0.5 text-[9.5px] font-extrabold text-white">최저</span>}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line">
+                  <MatrixRow label="출고가" cells={matrix.map(() => won(q.device.price))} />
+                  <MatrixRow label="지원금 합계" cells={matrix.map((r) => (r.support ? `−${won(r.support)}` : '미적용'))} accent="text-ok" />
+                  <MatrixRow label="할부원금" cells={matrix.map((r) => won(r.principal))} />
+                  <MatrixRow label="월할부금(A)" cells={matrix.map((r) => (months ? won(r.deviceMonthly) : '일시불'))} bold />
+                  <MatrixRow label="기본료" cells={matrix.map((r) => won(r.base))} />
+                  <MatrixRow label="요금 할인" cells={matrix.map((r) => (r.discount ? `−${won(r.discount)}` : '미적용'))} accent="text-ok" />
+                  <MatrixRow label="통신요금(B)" cells={matrix.map((r) => won(r.planMonthly))} bold />
+                  <tr className="bg-cream/60">
+                    <td className="px-2 py-2.5 text-[12.5px] font-extrabold text-ink">월 청구금액(A+B)</td>
+                    {matrix.map((r) => (
+                      <td key={r.id} className={`tnum px-2 py-2.5 text-right text-[13.5px] font-extrabold ${r.cheapest ? 'text-primary-text' : 'text-ink'}`}>{won(r.total)}</td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-2 text-[11px] leading-4 text-faint">
+              부가세 포함 · 할부수수료(연 5.9%) 포함 금액입니다. 요금제를 바꾸면 지원금·약정 조건이 달라질 수 있어요.
+            </p>
+          </section>
+
+          {/* 약정·위약금 — 계약 후에 알게 되는 조건을 계약 전에 먼저 알린다 */}
+          <section className="rounded-card border border-line bg-white p-5 sm:p-6">
+            <h2 className="text-[15px] font-bold text-ink">약정·위약금은 이렇게 걸려요</h2>
+            <p className="mt-1 text-[12.5px] leading-5 text-label">
+              지금 고른 <b className="text-ink">{method === 'support' ? '단말지원(공시지원금)' : '선택약정(요금 25% 할인)'}</b> 기준으로, 중도 해지·요금제 하향 시 발생하는 부담입니다.
+            </p>
+            <ul className="mt-3 flex flex-col gap-2 text-[12.5px] leading-5 text-label">
+              <li className="flex gap-2"><span className="text-primary-text">·</span><span>
+                {method === 'support'
+                  ? <>중도 해지 시 <b className="text-ink">받은 지원금({won(q.publicSupport + q.extraSupport)})의 잔여 기간분</b>을 반환합니다 — 사용 기간이 길수록 반환액이 줄어드는 구조예요.</>
+                  : <>중도 해지 시 <b className="text-ink">그동안 받은 요금 할인액의 잔여 기간분</b>을 반환합니다 — 오래 쓸수록 유리한 구조예요.</>}
+              </span></li>
+              <li className="flex gap-2"><span className="text-primary-text">·</span><span>약정 중 <b className="text-ink">요금제를 낮추면 차액 정산금</b>이 붙을 수 있습니다. 일정 기간(예: 6개월) 유지 후 기준 요금 이상으로 변경하면 면제되는 경우가 많지만, 기준은 통신사·요금제마다 달라요.</span></li>
+              <li className="flex gap-2"><span className="text-primary-text">·</span><span>단말 할부금({months ? `${months}개월` : '일시불'})은 해지와 별개로 <b className="text-ink">남은 회차를 계속 납부</b>하거나 일시 상환해야 합니다.</span></li>
+            </ul>
+            <p className="mt-3 rounded-field bg-cream/70 px-3.5 py-2.5 text-[11.5px] leading-4 text-label">
+              정확한 반환금·면제 기준은 가입 시점 통신사 약관과 개통 조건에 따라 확정됩니다. 상담에서 <b className="text-ink">내 사용 기간 기준 예상 위약금</b>을 계산해 알려드려요.
+            </p>
           </section>
 
           {/* 모바일 전용 — A+B 분해 (데스크톱은 우측 스티키 카드) */}
@@ -171,6 +258,11 @@ export default function PhoneCalculator() {
               <div className="mb-1 text-[11.5px] font-extrabold text-primary-text">B. 월 요금</div>
               <Row l={q.plan.name} v={won(q.plan.monthly)} />
               {q.planDiscount > 0 && <Row l="선택약정 할인(25%)" v={`−${won(q.planDiscount)}`} accent="text-ok" />}
+              {q.bundleDiscount > 0 && <Row l={`${BUNDLE.label}(25%)`} v={`−${won(q.bundleDiscount)}`} accent="text-ok" />}
+              <div className="mt-1.5 flex justify-between border-t border-line pt-1.5">
+                <span className="font-bold text-ink">월 요금</span>
+                <span className="tnum font-extrabold text-ink">{won(q.planMonthly)}</span>
+              </div>
             </div>
             <p className="mt-2.5 text-[11px] leading-4 text-label">{LEGAL.quote} 공시일 기준 지원금은 변동될 수 있습니다.</p>
           </section>
@@ -202,6 +294,7 @@ export default function PhoneCalculator() {
             <div className="mb-1 text-[11.5px] font-extrabold text-primary-text">B. 월 요금</div>
             <Row l={q.plan.name} v={won(q.plan.monthly)} />
             {q.planDiscount > 0 && <Row l="선택약정 할인(25%)" v={`−${won(q.planDiscount)}`} accent="text-ok" />}
+            {q.bundleDiscount > 0 && <Row l={`${BUNDLE.label}(25%)`} v={`−${won(q.bundleDiscount)}`} accent="text-ok" />}
             <div className="mt-1.5 flex justify-between border-t border-line pt-1.5">
               <span className="font-bold text-ink">월 요금</span>
               <span className="tnum font-extrabold text-ink">{won(q.planMonthly)}</span>
@@ -256,6 +349,17 @@ export function CalcTabs({ active }) {
         휴대폰
       </Link>
     </div>
+  )
+}
+
+function MatrixRow({ label, cells, accent = 'text-ink', bold }) {
+  return (
+    <tr>
+      <td className={`px-2 py-2 text-label ${bold ? 'font-bold' : ''}`}>{label}</td>
+      {cells.map((c, i) => (
+        <td key={i} className={`tnum px-2 py-2 text-right ${bold ? 'font-extrabold text-ink' : `font-semibold ${c === '미적용' ? 'text-disabled' : accent}`}`}>{c}</td>
+      ))}
+    </tr>
   )
 }
 
