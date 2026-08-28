@@ -2,7 +2,9 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Icon from "../../components/icons";
 import { GLOSSARY, sha256Hex } from "../../lib/glossary";
+import { ALL_ITEMS, RESULT_TONE, STATE_ORDER, VISIT_REPORT, countStates } from "../../lib/visit-report";
 import {
   AI_REPORT,
   CARE_OUTCOMES,
@@ -206,56 +208,228 @@ function CareReport() {
   );
 }
 
-// ── 컨시어지 방문(동행) 리포트 ──
-function VisitReport() {
+// ── 도넛 — 상태별 비율. SVG stroke-dasharray 로 그린다 (차트 라이브러리 없이).
+//     인쇄에서도 벡터라 깨지지 않는다. 숫자는 옆 범례가 말하므로 도넛은 비율만. */
+function Donut({ counts, size = 92, thick = 13, center }) {
+  const total = STATE_ORDER.reduce((s, k) => s + (counts[k] || 0), 0) || 1;
+  const r = (size - thick) / 2;
+  const c = 2 * Math.PI * r;
+  let acc = 0;
   return (
-    <DocShell title="동행 방문 리포트" period="2026.07.30 (목) · 서울아산병원" backHref="/concierge" backLabel="컨시어지로" docType="visit">
-      <div className="avoid-break">
-        <SectionTitle>방문 개요</SectionTitle>
-        <div className="grid grid-cols-2 gap-x-8">
-          <KV k="고객" v="김순자 님 (78)" />
-          <KV k="일정" v="13:50 – 16:10 순환기내과 외래" />
-          <KV k="주 동행" v="박지현 (간호사 출신 · 14년)" />
-          <KV k="부 동행" v="서다인 (차량 · 접수 · 수납)" />
-          <KV k="이동" v="차량 · 휠체어 동선" />
-          <KV k="체크인" v="GPS 2인 체크인 완료" />
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={
+      STATE_ORDER.filter((k) => counts[k]).map((k) => `${k} ${counts[k]}건`).join(", ")
+    }>
+      <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
+        {STATE_ORDER.map((k) => {
+          const n = counts[k] || 0;
+          if (!n) return null;
+          const len = (n / total) * c;
+          const el = (
+            <circle
+              key={k}
+              cx={size / 2}
+              cy={size / 2}
+              r={r}
+              fill="none"
+              stroke={RESULT_TONE[k].dot}
+              strokeWidth={thick}
+              strokeDasharray={`${len} ${c - len}`}
+              strokeDashoffset={-acc}
+            />
+          );
+          acc += len;
+          return el;
+        })}
+      </g>
+      {center && (
+        <>
+          <text x="50%" y="47%" textAnchor="middle" dominantBaseline="middle" className="font-num" fontSize={size * 0.3} fontWeight="800" fill={NAVY}>
+            {center.n}
+          </text>
+          <text x="50%" y="68%" textAnchor="middle" dominantBaseline="middle" fontSize={size * 0.13} fill="#5C5A54">
+            {center.label}
+          </text>
+        </>
+      )}
+    </svg>
+  );
+}
+
+// 5점 스케일 — 점 다섯 개 중 하나가 굵게. 수치가 아니라 '치우침'을 본다.
+function Scale({ pos, tone }) {
+  return (
+    <span aria-hidden className="flex items-center gap-[7px]">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <span
+          key={i}
+          className="rounded-full"
+          style={
+            i === pos
+              ? { width: 9, height: 9, background: tone.dot }
+              : { width: 5, height: 5, background: "rgba(10,31,60,.14)" }
+          }
+        />
+      ))}
+    </span>
+  );
+}
+
+// 항목 한 줄 — 이름 · 추이/태그 · 상태 배지 / 스케일(또는 수치 막대) / 한 줄 설명
+function ResultItem({ it }) {
+  const tone = RESULT_TONE[it.state];
+  return (
+    <div className="border-b border-navy/[.07] py-[9px] last:border-b-0">
+      <div className="flex items-center gap-1.5">
+        <span className="text-[11.5px] font-black" style={{ color: NAVY }}>{it.k}</span>
+        {it.trend && (
+          <span aria-label={it.trend === "up" ? "증가" : "감소"} className="text-[10px] font-bold" style={{ color: it.trend === "up" ? "#C0392B" : "#4A5C78" }}>
+            {it.trend === "up" ? "▲" : "▼"}
+          </span>
+        )}
+        {it.tag && <span className="text-[9.5px] font-bold text-muted">{it.tag}</span>}
+        <span
+          className="ml-auto rounded-full px-2 py-[2px] text-[9.5px] font-bold"
+          style={{ background: tone.bg, color: tone.fg }}
+        >
+          {it.state}
+        </span>
+      </div>
+      {it.bars ? (
+        <div className="mt-1.5">
+          {it.bars.map((b) => (
+            <div key={b.label} className="flex items-center gap-2">
+              <span className="w-[22px] shrink-0 text-[9px] text-muted">{b.label}</span>
+              <span className="relative h-[4px] flex-1 rounded-full" style={{ background: "rgba(10,31,60,.1)" }}>
+                <span className="absolute top-1/2 h-[8px] w-[8px] -translate-y-1/2 rounded-full" style={{ left: `${b.pos * 100}%`, background: tone.dot }} />
+              </span>
+              <span className="font-num w-[26px] shrink-0 text-right text-[11px] font-black" style={{ color: NAVY }}>{b.value}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-1.5">
+          <Scale pos={it.scale} tone={tone} />
+        </div>
+      )}
+      <p className="mt-1 text-[10px] leading-[1.55] text-ink">{it.note}</p>
+    </div>
+  );
+}
+
+// ── 컨시어지 방문(안심방문) 리포트 — 2026-08-28 실무진 리포트 예시 시안 ──
+// 예전에는 동행 개요·AI 초안·수행 체크·서명이었다. 시안은 "이번에 무엇이
+// 어떻게 보였는지"를 20항목으로 펼치고, 보호자가 할 일을 맨 아래 모은다.
+function VisitReport() {
+  const H = VISIT_REPORT.head;
+  const all = countStates(ALL_ITEMS);
+  return (
+    <DocShell
+      title="안심방문 리포트"
+      period={`${H.visitedAt} · ${H.round}회차`}
+      backHref="/concierge"
+      backLabel="컨시어지로"
+      docType="visit"
+    >
+      {/* 헤더 — 누구의 · 몇 회차 · 누가 다녀왔는지 + 종합 판정 + 방문확인 스탬프 */}
+      <div className="avoid-break mt-3 flex items-start gap-4 rounded-[14px] px-5 py-4" style={{ background: NAVY }}>
+        <div className="min-w-0 flex-1 text-white">
+          <div className="text-[10px] font-bold tracking-[.08em] text-white/60">
+            케이케어 방문 리포트 · {H.round}회차 · 데모 예시
+          </div>
+          <div className="mt-1 flex items-baseline gap-2">
+            <span className="text-[24px] font-black">{H.client}</span>
+            <span className="text-[12px] text-white/75">{H.honorific} · {H.age}세</span>
+          </div>
+          <div className="mt-1 text-[10.5px] leading-[1.7] text-white/70">
+            {H.visitedAt} 방문 · 이전 방문 {H.prevAt} 대비 · 담당 컨시어지 {H.concierge} · {H.tags}
+          </div>
+        </div>
+        <div className="flex shrink-0 items-center gap-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold" style={{ background: "rgba(201,164,107,.22)", color: "#E8D5B0" }}>
+            <span aria-hidden className="h-[6px] w-[6px] rounded-full" style={{ background: "#C9A46B" }} />
+            {H.verdict}
+          </span>
+          <span className="flex h-[54px] w-[54px] flex-col items-center justify-center rounded-full text-center text-[8px] font-bold leading-[1.4] text-white/80" style={{ border: "1.5px solid rgba(255,255,255,.4)" }}>
+            <span>{H.stamp.line1}</span>
+            <span className="font-num text-[10px]">{H.stamp.line2}</span>
+            <span className="text-[7px] tracking-[.08em]">K-CARE</span>
+          </span>
         </div>
       </div>
 
-      <div className="avoid-break">
-        <SectionTitle>방문 기록 (AI 초안 · 검수 확정)</SectionTitle>
-        <p className="rounded-lg border border-navy/15 px-4 py-3 text-[12px] leading-[1.8] text-ink">
-          {AI_REPORT.draft}
-        </p>
-        <p className="mt-1.5 text-[10px] leading-[1.6] text-muted">{AI_REPORT.hitl}</p>
+      {/* 요약 — 전체 도넛 + 범례 + 축별 도넛 3개 */}
+      <div className="avoid-break mt-3 flex items-center gap-6 rounded-[14px] border border-navy/[.1] px-5 py-4">
+        <Donut counts={all} size={96} thick={14} center={{ n: ALL_ITEMS.length, label: "항목" }} />
+        <div className="grid grid-cols-2 gap-x-5 gap-y-1.5">
+          {STATE_ORDER.map((k) => (
+            <div key={k} className="flex items-center gap-2">
+              <span aria-hidden className="h-[9px] w-[9px] shrink-0 rounded-[2px]" style={{ background: RESULT_TONE[k].dot }} />
+              <span className="text-[11px] text-ink">{k}</span>
+              <span className="font-num ml-auto text-[13px] font-black" style={{ color: NAVY }}>{all[k] || 0}</span>
+            </div>
+          ))}
+        </div>
+        <div className="ml-auto flex gap-4">
+          {VISIT_REPORT.axes.map((a) => (
+            <div key={a.axis} className="text-center">
+              <Donut counts={countStates(a.items)} size={54} thick={9} />
+              <div className="mt-1 text-[10px] font-bold" style={{ color: NAVY }}>{a.axis}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="avoid-break">
-        <SectionTitle>수행 체크</SectionTitle>
-        {[
-          "케어박스 점검 — 의약품 · 진료의뢰서 지참",
-          "외출 컨디션 브리핑 확인 (출발 62 보통 · 도착 52 주의)",
-          "진료 내용 가족 공유 캘린더 기록 — 다음 외래 8/23",
-          "복약 안내 · 약국 동행 · 귀가 확인",
-        ].map((c) => (
-          <div key={c} className="flex gap-2 border-b border-navy/[.08] py-[7px] text-[12px] text-ink">
-            <span className="font-bold text-green">✓</span> {c}
+      {/* 총평 — 사람이 쓴 문장 */}
+      <div className="avoid-break mt-3 rounded-[14px] px-5 py-3.5" style={{ background: "rgba(176,141,87,.07)", borderLeft: `3px solid #B08D57` }}>
+        <p className="text-[11.5px] leading-[1.8] text-ink">
+          <span className="font-black" style={{ color: NAVY }}>총평 </span>
+          {VISIT_REPORT.summary}
+        </p>
+      </div>
+
+      {/* 3열 — 몸 · 마음 · 집 */}
+      <div className="mt-3 grid grid-cols-3 gap-3">
+        {VISIT_REPORT.axes.map((a) => (
+          <div key={a.axis} className="avoid-break rounded-[14px] border border-navy/[.1] px-3.5 py-3">
+            <div className="flex items-center gap-2 border-b-2 pb-1.5" style={{ borderColor: NAVY }}>
+              <span className="flex h-[20px] w-[20px] items-center justify-center rounded-full" style={{ background: NAVY, color: "#fff" }}>
+                <Icon name={a.icon} size={12} strokeWidth={2} />
+              </span>
+              <span className="text-[13px] font-black" style={{ color: NAVY }}>{a.axis}</span>
+              <span className="text-[9px] font-bold text-muted">{a.en} · {a.items.length}</span>
+            </div>
+            <div className="mt-1">
+              {a.items.map((it) => (
+                <ResultItem key={it.k} it={it} />
+              ))}
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="avoid-break mt-6">
-        <SectionTitle>서명 (2인 필수)</SectionTitle>
-        <div className="grid grid-cols-2 gap-6">
-          {["주 동행 · 박지현", "부 동행 · 서다인"].map((who) => (
-            <div key={who}>
-              <div className="h-[68px] rounded-lg border border-dashed border-navy/30" />
-              <div className="mt-1.5 text-[11px] font-bold text-ink">{who}</div>
+      {/* 보호자께서 꼭 확인해 주세요 — 리포트에서 유일하게 행동을 요구하는 자리 */}
+      <div className="avoid-break mt-3 rounded-[14px] px-5 py-4" style={{ background: NAVY }}>
+        <div className="flex items-center gap-2 text-[13px] font-black text-white">
+          <span aria-hidden style={{ color: "#C9A46B" }}>
+            <Icon name="alert" size={16} strokeWidth={2} />
+          </span>
+          보호자께서 꼭 확인해 주세요
+        </div>
+        <div className="mt-2.5 grid grid-cols-2 gap-x-6 gap-y-2">
+          {VISIT_REPORT.guardianTodos.map((t) => (
+            <div key={t.tag} className="flex gap-2">
+              <span className="mt-[1px] h-fit shrink-0 rounded-[5px] px-1.5 py-[2px] text-[9.5px] font-bold" style={{ background: "rgba(255,255,255,.13)", color: "#E8D5B0" }}>
+                {t.tag}
+              </span>
+              <span className="text-[10.5px] leading-[1.65] text-white/90">{t.text}</span>
             </div>
           ))}
         </div>
-        <p className="mt-2 text-[10px] leading-[1.6] text-muted">{AI_REPORT.signRule}</p>
       </div>
+
+      <p className="mt-2 text-[9.5px] leading-[1.6] text-muted">
+        컨시어지 방문 기록 기반 자동 생성 리포트 · 데모 예시 · {AI_REPORT.hitl}
+      </p>
     </DocShell>
   );
 }

@@ -253,6 +253,40 @@ export const MY_CLIENTS = [
     proposed: 0, accepted: 0, referredBy: "김순자 (이웃)" },
 ];
 
+// 컨시어지 캘린더 — 어르신·보호자가 함께 보는 캘린더와 별개다 (2026-08-28 전체 요청 3번).
+// 여기엔 컨시어지가 실제로 나가는 업무 4종만 담긴다: 병원동행 · 일상동행 ·
+// 해주세요 일정 · 안심방문. 배송·개인일정·가족이벤트는 고객의 것이라 안 들어온다.
+// 날짜별로 고객 이름이 뜨고, 이름을 누르면 그 건의 디테일이 열린다.
+//
+// day 는 이번 달 며칠인지 (달 경계는 데모라 다루지 않는다).
+export const CONCIERGE_JOB_KINDS = {
+  escort: { label: "병원동행", color: "#C0392B" },
+  daily: { label: "일상동행", color: "#3B5C8A" },
+  request: { label: "해주세요", color: "#7A4C8A" },
+  visit: { label: "안심방문", color: "#B08D57" },
+};
+
+export const CONCIERGE_CAL = [
+  { id: "cc1", day: 3, kind: "visit", client: "오태식", age: 77, time: "오전 10:00", where: "역삼동 자택",
+    detail: "월 1회 안심방문 · 21항목 점검", crew: "박지현 1인", memo: "지난달 냉장고 정리 후속 확인" },
+  { id: "cc2", day: 5, kind: "escort", client: "김순자", age: 78, time: "오후 1:50", where: "서울아산병원",
+    detail: "순환기내과 외래 동행 (프리미엄 · 2인)", crew: "박지현 · 서다인", memo: "픽업 13:10 · 휠체어 동선" },
+  { id: "cc3", day: 9, kind: "visit", client: "김순자", age: 78, time: "오후 2:00", where: "대치동 자택",
+    detail: "월 1회 안심방문 · 21항목 점검", crew: "박지현 1인", memo: "3회차 · 혈압·복약 재확인" },
+  { id: "cc4", day: 12, kind: "request", client: "정말순", age: 84, time: "오전 11:00", where: "청담 요양병원",
+    detail: "해주세요 — 요양병원 안심케어", crew: "박지현 1인", memo: "자녀 영상 메시지 전달" },
+  { id: "cc5", day: 16, kind: "daily", client: "오태식", age: 77, time: "오후 3:00", where: "역삼동 일대",
+    detail: "일상 동행 — 은행 · 장보기", crew: "서다인 1인", memo: "통장 정리 · 반찬 구매" },
+  { id: "cc6", day: 19, kind: "escort", client: "정말순", age: 84, time: "오전 9:30", where: "강남세브란스",
+    detail: "정형외과 외래 동행 (베이직 · 1인)", crew: "박지현 1인", memo: "현장에서 만나 접수부터" },
+  { id: "cc7", day: 22, kind: "visit", client: "박영자", age: 81, time: "오후 2:00", where: "삼성동 자택",
+    detail: "첫 안심방문 — 홈 안전진단 30항목", crew: "박지현 · 서다인 (2인)", memo: "첫 대면이라 2인 배차" },
+  { id: "cc8", day: 22, kind: "request", client: "김순자", age: 78, time: "오후 5:00", where: "대치동 자택",
+    detail: "해주세요 — 약국 심부름 (처방약 수령)", crew: "서다인 1인", memo: "약값은 현장 카드 결제" },
+  { id: "cc9", day: 26, kind: "daily", client: "김순자", age: 78, time: "오전 10:30", where: "대치동 주민센터",
+    detail: "일상 동행 — 관공서 서류 발급", crew: "서다인 1인", memo: "등본 · 인감 발급" },
+];
+
 export const VIDEO_SEGMENTS = ["현관 진입 · 본인 확인", "케어박스 점검", "생활환경 확인", "서비스 종료 확인"];
 
 export const VIDEO_POLICY = {

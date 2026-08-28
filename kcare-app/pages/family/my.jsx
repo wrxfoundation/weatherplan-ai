@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, PendingTag } from "../../components/ui";
-import { ACCESS_LOG, CONSENTS, ELDER, GUARDIANS, INVITE, PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
+import { ACCESS_LOG, CONSENTS, ELDER, GUARDIANS, INVITE, NPS_REASONS, PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 import { honorific } from "../../lib/tracks";
@@ -91,6 +91,19 @@ export default function MyPage() {
             기록됩니다 (의료법 17조).
           </p>
         </Card>
+
+        {/* 동행 후 만족도 — 홈에서 옮겨 왔다 (2026-08-28 시트 홈 2번:
+            "동행리뷰는 마이 탭으로 이동해서 동행리포트 아래에 위치하게 하고,
+            동행리포트 및 방문리포트 생성 시 같이 리뷰를 작성할 수 있게").
+            리포트를 보고 나서 쓰는 자리라 리포트 바로 아래다. */}
+        <NpsCard
+          onEvent={(text, color) => dispatch({ type: "pushEvent", payload: { kind: "CS", text, color } })}
+          onDetractor={(score, reason) =>
+            dispatch({ type: "opsPatch", patch: { npsDetractor: { score, reason } } })
+          }
+          onReview={(score, text) => dispatch({ type: "addReview", payload: { by: "김민수", score, text } })}
+          reviews={state.reviews}
+        />
 
         {/* 제휴 병원 찾기 · 옵션 서비스는 2026-08-12 요청으로 삭제 (홈에서 진입) */}
 
@@ -360,3 +373,166 @@ function PrioritySheet({ current, onClose, onSave, honor }) {
     </div>
   );
 }
+
+// 동행 후 만족도 — NPS 루프: 0–10 선택 → 비추천(≤6)은 사유 + 24h 회복 안내
+function NpsCard({ onEvent, onDetractor, onReview, reviews = [] }) {
+  const [score, setScore] = useState(null);
+  const [reason, setReason] = useState(null);
+  const [done, setDone] = useState(false);
+  const [memo, setMemo] = useState("");
+  const [memoSent, setMemoSent] = useState(false);
+  // 색은 NPS 3구간 그대로 — 비추천 빨강은 여기서만 쓴다 (상거래 숫자가 아니라 경고 신호)
+  const scoreColor = score == null ? "#5C5A54" : score <= 6 ? "#C0392B" : score <= 8 ? "#B08D57" : "#1E7A5A";
+
+  // 동행 점수 아래 코멘트·후기 메모란 (2026-08-12 시트 홈 5번).
+  // 점수만으로는 무엇을 고쳐야 하는지 알 수 없다 — 문장이 남아야 컨시어지에게 전달된다.
+  const memoBox = (
+    <div className="mt-3.5 border-t border-navy/[.08] pt-3.5">
+      <SectionLabel>코멘트 · 후기</SectionLabel>
+      {memoSent ? (
+        <p className="mt-2 rounded-xl bg-green/10 px-3.5 py-3 text-[14px] font-bold text-green">
+          후기를 남겼습니다 — 담당 컨시어지와 관제에 함께 전달됩니다
+        </p>
+      ) : (
+        <>
+          <textarea
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
+            rows={3}
+            placeholder="예: 어머니가 박지현 선생님 오시는 날을 기다리십니다. 다음엔 무릎 이야기도 여쭤봐 주세요."
+            className="mt-2 w-full resize-none rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] leading-[1.7] outline-none focus:border-gold"
+          />
+          <button
+            onClick={() => {
+              setMemoSent(true);
+              onReview?.(score, memo.trim());
+              onEvent(`보호자 후기 등록 — ${memo.trim().slice(0, 24)}…`, "#C9A46B");
+            }}
+            disabled={!memo.trim()}
+            className="btn-press mt-2 w-full rounded-xl border border-navy/20 py-3 text-[15px] font-bold text-navy disabled:opacity-40"
+          >
+            후기 남기기
+          </button>
+        </>
+      )}
+      {reviews.length > 0 && (
+        <div className="mt-3 space-y-2 border-t border-navy/[.07] pt-3">
+          {reviews.slice(0, 3).map((r) => (
+            <div key={r.id}>
+              <div className="text-[12px] font-bold text-muted">
+                {r.by} · {new Date(r.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
+                {r.score != null && ` · ${r.score}점`}
+              </div>
+              <p className="mt-0.5 text-[14px] leading-[1.7] text-ink">{r.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  if (done)
+    return (
+      <Card className="p-4">
+        <div className="text-[15px] font-bold text-navy">
+          {score <= 6
+            ? "접수했습니다 — 24시간 안에 담당 매니저가 연락드립니다"
+            : "감사합니다 — 다음 동행도 잘 준비하겠습니다"}
+        </div>
+        <p className="mt-1 text-[12px] leading-[1.6] text-muted">
+          {score <= 6
+            ? "낮은 점수는 회복이 먼저입니다 — 조치 결과를 다시 알려드립니다."
+            : score >= 9
+            ? "주변에 비슷한 고민을 하는 가족이 있다면 마이 탭의 초대 링크로 소개해 주세요."
+            : "의견은 서비스 개선에 반영됩니다."}
+        </p>
+        {memoBox}
+      </Card>
+    );
+
+  return (
+    <Card className="p-[18px]">
+      <SectionLabel>오늘 동행은 어떠셨나요?</SectionLabel>
+      <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">
+        13:50 서울아산 동행이 끝났습니다. 남겨 주신 점수가 케어 품질 평가 기준이 됩니다.
+      </p>
+      {/* 점수 — 슬라이더 (2026-08-21 시안). step=1 로 정수에만 멈춘다.
+          NPS 는 정수 0~10 이라야 추천(9·10) / 중립(7·8) / 비추천(0~6) 분류가 성립하고,
+          아래 score <= 6 분기도 그 위에 서 있다. 8.5 를 허용하면 이 경계가 무너진다.
+          숫자를 크게 띄우는 것은 손을 떼기 전에 무엇이 선택됐는지 보이게 하려는 것이다. */}
+      <div className="mt-3">
+        <div className="text-center">
+          {/* 고르기 전에도 손잡이가 가리키는 숫자를 보여 준다 — 빈 칸이나 대시를 두면
+              막대를 움직이기 전까지 무엇이 선택될지 알 수 없다. 색으로 구분한다:
+              고르기 전 회색, 고른 뒤 NPS 구간색. */}
+          <span className="font-num text-[38px] font-black leading-none" style={{ color: scoreColor }}>
+            {score ?? 8}
+          </span>
+          <span className="ml-1 text-[17px] font-bold text-muted">/ 10</span>
+        </div>
+        <input
+          type="range"
+          min={0}
+          max={10}
+          step={1}
+          value={score ?? 8}
+          onChange={(e) => setScore(Number(e.target.value))}
+          aria-label="오늘 동행 점수 (0점에서 10점)"
+          aria-valuetext={score == null ? "선택 전" : `${score}점`}
+          className="nps-range mt-2.5 w-full"
+          style={{ "--nps": scoreColor, "--nps-pct": `${((score ?? 8) / 10) * 100}%` }}
+        />
+        <div className="mt-1 flex justify-between font-num text-[12px] font-bold text-muted">
+          <span>0</span>
+          <span>5</span>
+          <span>10</span>
+        </div>
+        {score == null && (
+          <p className="mt-1.5 text-center text-[12px] text-muted">막대를 움직이면 점수가 정해집니다</p>
+        )}
+      </div>
+      {score != null && score <= 6 && (
+        <div className="mt-3 border-t border-navy/[.08] pt-3">
+          <div className="text-[13px] font-bold text-navy">무엇이 가장 아쉬우셨나요?</div>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {NPS_REASONS.map((r) => (
+              <button
+                key={r}
+                onClick={() => setReason(r)}
+                className="btn-press rounded-full border px-3 py-1.5 text-[12px] font-bold"
+                style={
+                  reason === r
+                    ? { background: "#0A1F3C", color: "#FFFFFF", borderColor: "#0A1F3C" }
+                    : { background: "rgba(255,255,255,.7)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
+                }
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      {score != null && (
+        <button
+          onClick={() => {
+            setDone(true);
+            if (score <= 6) onDetractor?.(score, reason);
+            onEvent(
+              score <= 6
+                ? `만족도 ${score}점 접수 — 회복 플로우 시작 (${reason || "사유 미선택"} · 24h 내 연락)`
+                : `만족도 ${score}점 접수 — 감사 인사 발송`,
+              score <= 6 ? "#FF8A80" : "#8FE3C0"
+            );
+          }}
+          disabled={score <= 6 && !reason}
+          className="btn-press btn-dark mt-3 w-full rounded-xl bg-navy py-3 text-[15px] font-bold text-white disabled:opacity-50"
+        >
+          제출
+        </button>
+      )}
+      {memoBox}
+    </Card>
+  );
+}
+
+// 우리 동네 소식 — 대치동 · 강남구. 재난/안전은 정보, 바우처는 신청 대행까지 (해주세요 연계)

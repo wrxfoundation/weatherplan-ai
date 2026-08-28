@@ -2,9 +2,9 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
-import { Card, SectionLabel, Badge, Avatar, PendingTag, Collapse } from "../../components/ui";
+import { Card, SectionLabel, Badge, PendingTag, Collapse } from "../../components/ui";
 import Icon from "../../components/icons";
-import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_KINDS, FEED_TONE, GUARDIANS, NEIGHBORHOOD_FEED, NPS_REASONS, OUTING, VITALS, WEEKLY } from "../../lib/mock";
+import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_GROUPS, EVENT_KINDS, FEED_TONE, NEIGHBORHOOD_FEED, OUTING, VITALS, WEEKLY } from "../../lib/mock";
 import { trackOf, subjectLabel, honorific } from "../../lib/tracks";
 import VoiceNote from "../../components/VoiceNote";
 
@@ -31,6 +31,7 @@ export default function FamilyHome() {
     .filter((e) => e.at > Date.now())
     .slice(0, 3);
   const [askAi, setAskAi] = useState(null); // AI 케어 어시스턴트 — 선택한 질문
+  const [vitalsOpen, setVitalsOpen] = useState(false); // 오늘 어머니는 카드 안 건강요약 펼침
 
   // AI 어시스턴트 — /api/ai (기본 모델: Claude Sonnet, 외부 표기는 'AI').
   // 키 미설정·오류 시 기록 기반 데모 답변으로 폴백해 시연이 끊기지 않는다.
@@ -226,17 +227,110 @@ export default function FamilyHome() {
             <span className="text-[12px] font-bold text-white/70">{track.short}</span>
             <span className="text-[11px] text-white/35">· {track.who}</span>
           </div>
+
+          {/* 실시간 건강 요약 — 별도 카드였으나 여기로 병합했다 (2026-08-28 시트 홈 5번:
+              "실시간 건강요약을 오늘 어머니와 병합하고 하단에 위치하여 클릭하면 펼쳐지게").
+              같은 사람의 오늘을 말하는 두 카드가 떨어져 있을 이유가 없다. */}
+          {has("vitals") && (
+            <div className="mt-3 border-t border-white/10 pt-3">
+              <button
+                onClick={() => setVitalsOpen((v) => !v)}
+                aria-expanded={vitalsOpen}
+                className="btn-press flex w-full items-center gap-2 text-left"
+              >
+                <span className="text-[14px] font-bold text-white">실시간 건강 요약</span>
+                <span className="text-[11px] text-white/45">{VITALS.length}지표</span>
+                <span
+                  aria-hidden
+                  className="ml-auto text-white/55 transition-transform duration-200"
+                  style={{ transform: vitalsOpen ? "rotate(180deg)" : "none" }}
+                >
+                  <Icon name="chev" size={18} strokeWidth={2} />
+                </span>
+              </button>
+              {vitalsOpen && (
+                <>
+                  <div className="mt-2.5 grid grid-cols-2 gap-2">
+                    {VITALS.map((v) => (
+                      <div key={v.name} className="rounded-xl border border-white/10 bg-white/[.05] p-3">
+                        <div className="text-[11px] text-white/55">{v.name}</div>
+                        <div className="mt-0.5 font-num text-[21px] font-bold leading-none">
+                          {v.value} <span className="text-[11px] font-bold text-white/50">{v.unit}</span>
+                        </div>
+                        <div
+                          className="mt-1 text-[11px] font-bold"
+                          style={{ color: { ok: "#8FE3C0", caution: "#E8C88A", danger: "#FF9B8F", neutral: "rgba(255,255,255,.6)" }[v.level] }}
+                        >
+                          {v.status}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-2.5 flex items-center justify-between">
+                    <span className="text-[11px] leading-[1.6] text-white/45">
+                      웨어러블 실연동 대기 — 연동 후 실측값으로 대체 (F2-6)
+                    </span>
+                    <Link href="/family/watch" className="tap shrink-0 text-[12px] font-bold text-gold-soft underline underline-offset-2">
+                      워치 상세 →
+                    </Link>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* 동행 후 만족도 — NPS 수집 루프. 비추천(≤6)은 즉시 회복 플로우 */}
-        <NpsCard
-          onEvent={(text, color) => dispatch({ type: "pushEvent", payload: { kind: "CS", text, color } })}
-          onDetractor={(score, reason) =>
-            dispatch({ type: "opsPatch", patch: { npsDetractor: { score, reason } } })
-          }
-          onReview={(score, text) => dispatch({ type: "addReview", payload: { by: "김민수", score, text } })}
-          reviews={state.reviews}
-        />
+        {/* 담당 컨시어지 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}
+        <div className="card-navy rounded-card bg-navy p-[18px] text-white">
+          <div className="flex items-center justify-between">
+            <span className="text-[12px] font-bold tracking-[.14em] text-gold-soft">
+              담당 컨시어지
+            </span>
+            <span className="font-num text-[12px] text-white/60">{CARE_TEAM.dateLabel}</span>
+          </div>
+          <div className="mt-3 space-y-2.5">
+            {CARE_TEAM.members.map((m) => (
+              <div
+                key={m.name}
+                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[.05] p-3.5"
+              >
+                <span
+                  className="flex h-[48px] w-[48px] shrink-0 items-center justify-center whitespace-nowrap rounded-full text-[15px] font-bold"
+                  style={{ background: m.avBg, color: m.avFg }}
+                >
+                  {m.initials}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[16px] font-bold">
+                    {m.name}{" "}
+                    <span className="text-[11px] font-bold text-gold-soft">{m.role}</span>
+                  </div>
+                  <div className="mt-0.5 text-[12px] text-white/60">{m.career}</div>
+                  <div className="mt-0.5 text-[12px] font-bold text-[#8FE3C0]">{m.relation}</div>
+                </div>
+                <button
+                  aria-label={`${m.name}에게 전화`}
+                  className="btn-press flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/[.06] text-[17px]"
+                >
+                  ☏
+                </button>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-[12px] leading-[1.7] text-white/60">{CARE_TEAM.trust}</p>
+          {/* 제휴병원 예약 및 상담 — AI 예약 버튼과 패스트트랙 문구는 2026-08-12 요청으로 삭제 */}
+          <Link
+            href="/family/hospitals"
+            className="btn-press mt-2 block w-full rounded-xl border border-white/25 bg-white/[.06] py-3 text-center text-[15px] font-bold text-white/85"
+          >
+            제휴병원 예약 및 상담
+          </Link>
+        </div>
+
+
+        {/* 동행 후 만족도(NpsCard)는 마이 탭으로 옮겼다 (2026-08-28 시트 홈 2번 —
+            "동행리뷰는 마이 탭으로 이동해서 동행리포트 아래에 위치"). 리포트를 보고
+            나서 쓰는 것이 자연스럽고, 홈은 오늘 상태를 보는 자리다. */}
 
         {/* 승인 대기 배지 — REQ-03/07 연결 */}
         {pendingApprovals > 0 && (
@@ -254,17 +348,28 @@ export default function FamilyHome() {
           </Link>
         )}
 
-        {/* 다가오는 일정 — 리스트 3건 + 상태 배지 (디자인 콘솔 · REQ-02) */}
+        {/* 일정 캘린더 — 담당 컨시어지 바로 아래 (2026-08-28 시트 홈 4번).
+            7종 구성: 병원동행 · 일상동행 · 해주세요 · 안심방문 · 배송 · 개인일정 ·
+            가족이벤트. 어르신과 같은 캘린더를 본다 (컨시어지는 별개 캘린더). */}
         {upcoming.length > 0 && (
           <Card className="p-[18px]">
             <div className="flex items-center justify-between">
-              <div className="text-[17px] font-black text-navy">다가오는 일정</div>
+              <div className="text-[17px] font-black text-navy">일정 캘린더</div>
               <Link
                 href="/family/calendar"
                 className="btn-press rounded-lg border border-navy/15 px-3 py-1.5 text-[12px] font-bold text-muted"
               >
                 일정 변경
               </Link>
+            </div>
+            {/* 7종 범례 — 무슨 일정이 이 캘린더에 들어오는지 (시트 홈 4번) */}
+            <div className="mt-2.5 flex flex-wrap gap-x-3 gap-y-1.5">
+              {EVENT_GROUPS.map((g) => (
+                <span key={g.id} className="flex items-center gap-1.5">
+                  <span aria-hidden className="h-[7px] w-[7px] rounded-full" style={{ background: g.color }} />
+                  <span className="text-[11px] font-bold text-muted">{g.label}</span>
+                </span>
+              ))}
             </div>
             <div className="mt-2.5 space-y-3">
               {upcoming.map((e) => {
@@ -391,91 +496,6 @@ export default function FamilyHome() {
           </Card>
         )}
 
-        {/* 담당 컨시어지 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}
-        <div className="card-navy rounded-card bg-navy p-[18px] text-white">
-          <div className="flex items-center justify-between">
-            <span className="text-[12px] font-bold tracking-[.14em] text-gold-soft">
-              담당 컨시어지
-            </span>
-            <span className="font-num text-[12px] text-white/60">{CARE_TEAM.dateLabel}</span>
-          </div>
-          <div className="mt-3 space-y-2.5">
-            {CARE_TEAM.members.map((m) => (
-              <div
-                key={m.name}
-                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[.05] p-3.5"
-              >
-                <span
-                  className="flex h-[48px] w-[48px] shrink-0 items-center justify-center whitespace-nowrap rounded-full text-[15px] font-bold"
-                  style={{ background: m.avBg, color: m.avFg }}
-                >
-                  {m.initials}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="text-[16px] font-bold">
-                    {m.name}{" "}
-                    <span className="text-[11px] font-bold text-gold-soft">{m.role}</span>
-                  </div>
-                  <div className="mt-0.5 text-[12px] text-white/60">{m.career}</div>
-                  <div className="mt-0.5 text-[12px] font-bold text-[#8FE3C0]">{m.relation}</div>
-                </div>
-                <button
-                  aria-label={`${m.name}에게 전화`}
-                  className="btn-press flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/[.06] text-[17px]"
-                >
-                  ☏
-                </button>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 text-[12px] leading-[1.7] text-white/60">{CARE_TEAM.trust}</p>
-          {/* 제휴병원 예약 및 상담 — AI 예약 버튼과 패스트트랙 문구는 2026-08-12 요청으로 삭제 */}
-          <Link
-            href="/family/hospitals"
-            className="btn-press mt-2 block w-full rounded-xl border border-white/25 bg-white/[.06] py-3 text-center text-[15px] font-bold text-white/85"
-          >
-            제휴병원 예약 및 상담
-          </Link>
-        </div>
-
-        {/* 실시간 건강 요약 — 5지표 · 지표별 상태 라벨 병행 (디자인 콘솔 · F2-6) */}
-        {has("vitals") && (
-          <Card className="p-[18px]">
-            <div className="flex items-center justify-between">
-              <div className="text-[17px] font-black text-navy">실시간 건강 요약</div>
-              <Link href="/family/watch" className="tap text-[12px] font-bold text-navy underline decoration-navy/25 underline-offset-2">
-                워치 상세 →
-              </Link>
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-2.5">
-              {VITALS.map((v) => (
-                <div
-                  key={v.name}
-                  className="rounded-xl p-3.5"
-                  style={{
-                    background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))",
-                    boxShadow: "inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(10,31,60,.075)",
-                  }}
-                >
-                  <div className="text-[12px] text-muted">{v.name}</div>
-                  <div className="mt-0.5 font-num text-[25px] font-bold leading-none text-navy">
-                    {v.value} <span className="text-[12px] font-bold text-muted">{v.unit}</span>
-                  </div>
-                  <div
-                    className="mt-1.5 text-[12px] font-bold"
-                    style={{ color: { ok: "#1E7A5A", caution: "#8A5D12", danger: "#C0392B", neutral: "#5C5A54" }[v.level] }}
-                  >
-                    {v.status}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
-              웨어러블 실연동 대기 — 표기 지표는 연동 후 실측값으로 대체 (F2-6)
-            </p>
-          </Card>
-        )}
-
         {/* AI 케어 어시스턴트 — 답변은 항상 근거 동반 · 의료 판단 아님 */}
         {has("assistant") && (
           <Card className="p-0">
@@ -524,51 +544,8 @@ export default function FamilyHome() {
           </Card>
         )}
 
-        {/* 형제 공동 관리 — 순위 없음, 사실만 */}
-        {has("siblings") && (
-          <Card className="p-0">
-            <Collapse title="가족 공동 관리" count={`${GUARDIANS.length}명`} note="권한 가족 1명 · 등록 가족 전원">
-            <div className="space-y-3">
-              {GUARDIANS.map((g) => (
-                <div key={g.name} className="flex items-center gap-3">
-                  <Avatar name={g.name} size={30} />
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[15px] font-bold text-ink">
-                      {g.name}
-                      {g.isPrimary && (
-                        <span className="ml-1.5 text-[11px] font-bold text-gold">연락 담당</span>
-                      )}
-                    </div>
-                    <div className="text-[12px] text-muted">
-                      {g.relation} · {g.residence}
-                    </div>
-                  </div>
-                  <div className="font-num text-[13px] font-bold text-muted">분담 {g.share}</div>
-                </div>
-              ))}
-            </div>
-            {/* 권한 가족 1명 · 등록 가족 전원 (2026-08-12 대표 피드백 3번).
-                등록과 권한을 한 줄로 구분해 둔다 — 결제·동의는 한 사람만 누른다. */}
-            <div className="mt-3.5 space-y-1.5 border-t border-navy/10 pt-3">
-              <div className="flex items-baseline gap-2 text-[12px]">
-                <span className="w-[62px] shrink-0 font-bold text-gold">권한 가족</span>
-                <span className="flex-1 leading-[1.7] text-muted">
-                  1명만 지정합니다 — 결제 승인 · 동의 갱신 · 일정 등록 요청
-                </span>
-              </div>
-              <div className="flex items-baseline gap-2 text-[12px]">
-                <span className="w-[62px] shrink-0 font-bold text-navy">등록 가족</span>
-                <span className="flex-1 leading-[1.7] text-muted">
-                  전원 등록합니다 — 리포트 열람 · 음성 남기기. 가입은 필수입니다
-                </span>
-              </div>
-            </div>
-            <p className="mt-2.5 text-[12px] leading-[1.7] text-muted">
-              결과는 등록된 가족 {GUARDIANS.length}분 모두에게 동시에 전달됩니다.
-            </p>
-          </Collapse>
-          </Card>
-        )}
+        {/* 가족 공동 관리는 마이 탭 '가족 구성원'과 합쳤다 (2026-08-28 시트 홈 6번).
+            같은 사람 목록이 두 화면에 있었다 — 관리는 마이에서 한 번만 한다. */}
 
         {/* 안부 음성 남기기 — 첫 화면 아랫부분 (2026-08-12 시트 홈 1번) */}
         <Card className="p-[18px]">
@@ -630,168 +607,8 @@ export default function FamilyHome() {
   );
 }
 
-// 동행 후 만족도 — NPS 루프: 0–10 선택 → 비추천(≤6)은 사유 + 24h 회복 안내
-function NpsCard({ onEvent, onDetractor, onReview, reviews = [] }) {
-  const [score, setScore] = useState(null);
-  const [reason, setReason] = useState(null);
-  const [done, setDone] = useState(false);
-  const [memo, setMemo] = useState("");
-  const [memoSent, setMemoSent] = useState(false);
-  // 색은 NPS 3구간 그대로 — 비추천 빨강은 여기서만 쓴다 (상거래 숫자가 아니라 경고 신호)
-  const scoreColor = score == null ? "#5C5A54" : score <= 6 ? "#C0392B" : score <= 8 ? "#B08D57" : "#1E7A5A";
+/// NpsCard(동행 후 만족도)는 마이 탭으로 옮겼다 (2026-08-28 시트 홈 2번).
 
-  // 동행 점수 아래 코멘트·후기 메모란 (2026-08-12 시트 홈 5번).
-  // 점수만으로는 무엇을 고쳐야 하는지 알 수 없다 — 문장이 남아야 컨시어지에게 전달된다.
-  const memoBox = (
-    <div className="mt-3.5 border-t border-navy/[.08] pt-3.5">
-      <SectionLabel>코멘트 · 후기</SectionLabel>
-      {memoSent ? (
-        <p className="mt-2 rounded-xl bg-green/10 px-3.5 py-3 text-[14px] font-bold text-green">
-          후기를 남겼습니다 — 담당 컨시어지와 관제에 함께 전달됩니다
-        </p>
-      ) : (
-        <>
-          <textarea
-            value={memo}
-            onChange={(e) => setMemo(e.target.value)}
-            rows={3}
-            placeholder="예: 어머니가 박지현 선생님 오시는 날을 기다리십니다. 다음엔 무릎 이야기도 여쭤봐 주세요."
-            className="mt-2 w-full resize-none rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] leading-[1.7] outline-none focus:border-gold"
-          />
-          <button
-            onClick={() => {
-              setMemoSent(true);
-              onReview?.(score, memo.trim());
-              onEvent(`보호자 후기 등록 — ${memo.trim().slice(0, 24)}…`, "#C9A46B");
-            }}
-            disabled={!memo.trim()}
-            className="btn-press mt-2 w-full rounded-xl border border-navy/20 py-3 text-[15px] font-bold text-navy disabled:opacity-40"
-          >
-            후기 남기기
-          </button>
-        </>
-      )}
-      {reviews.length > 0 && (
-        <div className="mt-3 space-y-2 border-t border-navy/[.07] pt-3">
-          {reviews.slice(0, 3).map((r) => (
-            <div key={r.id}>
-              <div className="text-[12px] font-bold text-muted">
-                {r.by} · {new Date(r.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
-                {r.score != null && ` · ${r.score}점`}
-              </div>
-              <p className="mt-0.5 text-[14px] leading-[1.7] text-ink">{r.text}</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-
-  if (done)
-    return (
-      <Card className="p-4">
-        <div className="text-[15px] font-bold text-navy">
-          {score <= 6
-            ? "접수했습니다 — 24시간 안에 담당 매니저가 연락드립니다"
-            : "감사합니다 — 다음 동행도 잘 준비하겠습니다"}
-        </div>
-        <p className="mt-1 text-[12px] leading-[1.6] text-muted">
-          {score <= 6
-            ? "낮은 점수는 회복이 먼저입니다 — 조치 결과를 다시 알려드립니다."
-            : score >= 9
-            ? "주변에 비슷한 고민을 하는 가족이 있다면 마이 탭의 초대 링크로 소개해 주세요."
-            : "의견은 서비스 개선에 반영됩니다."}
-        </p>
-        {memoBox}
-      </Card>
-    );
-
-  return (
-    <Card className="p-[18px]">
-      <SectionLabel>오늘 동행은 어떠셨나요?</SectionLabel>
-      <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">
-        13:50 서울아산 동행이 끝났습니다. 남겨 주신 점수가 케어 품질 평가 기준이 됩니다.
-      </p>
-      {/* 점수 — 슬라이더 (2026-08-21 시안). step=1 로 정수에만 멈춘다.
-          NPS 는 정수 0~10 이라야 추천(9·10) / 중립(7·8) / 비추천(0~6) 분류가 성립하고,
-          아래 score <= 6 분기도 그 위에 서 있다. 8.5 를 허용하면 이 경계가 무너진다.
-          숫자를 크게 띄우는 것은 손을 떼기 전에 무엇이 선택됐는지 보이게 하려는 것이다. */}
-      <div className="mt-3">
-        <div className="text-center">
-          {/* 고르기 전에도 손잡이가 가리키는 숫자를 보여 준다 — 빈 칸이나 대시를 두면
-              막대를 움직이기 전까지 무엇이 선택될지 알 수 없다. 색으로 구분한다:
-              고르기 전 회색, 고른 뒤 NPS 구간색. */}
-          <span className="font-num text-[38px] font-black leading-none" style={{ color: scoreColor }}>
-            {score ?? 8}
-          </span>
-          <span className="ml-1 text-[17px] font-bold text-muted">/ 10</span>
-        </div>
-        <input
-          type="range"
-          min={0}
-          max={10}
-          step={1}
-          value={score ?? 8}
-          onChange={(e) => setScore(Number(e.target.value))}
-          aria-label="오늘 동행 점수 (0점에서 10점)"
-          aria-valuetext={score == null ? "선택 전" : `${score}점`}
-          className="nps-range mt-2.5 w-full"
-          style={{ "--nps": scoreColor, "--nps-pct": `${((score ?? 8) / 10) * 100}%` }}
-        />
-        <div className="mt-1 flex justify-between font-num text-[12px] font-bold text-muted">
-          <span>0</span>
-          <span>5</span>
-          <span>10</span>
-        </div>
-        {score == null && (
-          <p className="mt-1.5 text-center text-[12px] text-muted">막대를 움직이면 점수가 정해집니다</p>
-        )}
-      </div>
-      {score != null && score <= 6 && (
-        <div className="mt-3 border-t border-navy/[.08] pt-3">
-          <div className="text-[13px] font-bold text-navy">무엇이 가장 아쉬우셨나요?</div>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {NPS_REASONS.map((r) => (
-              <button
-                key={r}
-                onClick={() => setReason(r)}
-                className="btn-press rounded-full border px-3 py-1.5 text-[12px] font-bold"
-                style={
-                  reason === r
-                    ? { background: "#0A1F3C", color: "#FFFFFF", borderColor: "#0A1F3C" }
-                    : { background: "rgba(255,255,255,.7)", color: "#5C5A54", borderColor: "rgba(10,31,60,.14)" }
-                }
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-      {score != null && (
-        <button
-          onClick={() => {
-            setDone(true);
-            if (score <= 6) onDetractor?.(score, reason);
-            onEvent(
-              score <= 6
-                ? `만족도 ${score}점 접수 — 회복 플로우 시작 (${reason || "사유 미선택"} · 24h 내 연락)`
-                : `만족도 ${score}점 접수 — 감사 인사 발송`,
-              score <= 6 ? "#FF8A80" : "#8FE3C0"
-            );
-          }}
-          disabled={score <= 6 && !reason}
-          className="btn-press btn-dark mt-3 w-full rounded-xl bg-navy py-3 text-[15px] font-bold text-white disabled:opacity-50"
-        >
-          제출
-        </button>
-      )}
-      {memoBox}
-    </Card>
-  );
-}
-
-// 우리 동네 소식 — 대치동 · 강남구. 재난/안전은 정보, 바우처는 신청 대행까지 (해주세요 연계)
 function NeighborhoodFeed({ onApply }) {
   const [applied, setApplied] = useState({});
   // 제목줄·카드는 바깥 Collapse 가 그린다 — 여기서는 내용만 그린다

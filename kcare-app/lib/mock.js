@@ -28,17 +28,32 @@ export const CONCIERGES = [
   { name: "서다인", role: "부 동행" },
 ];
 
-// 공유 캘린더 일정 9종 kind — REQ-02
+// 공유 캘린더 kind — REQ-02. 어르신·보호자가 같은 캘린더를 본다.
+// 2026-08-28 전체 요청 4번의 7종 구성에 맞춰 라벨을 정리했다:
+//   병원동행 · 일상동행 · 해주세요 · 안심방문 · 배송 · 개인일정 · 가족이벤트
+// group 이 그 7종이고, kind 는 그보다 잘다 (복약·검진·약상자는 개인일정 묶음).
+// 기존 kind 키는 시드·화면이 참조하므로 그대로 두고 라벨·묶음만 손봤다.
+export const EVENT_GROUPS = [
+  { id: "escort", label: "병원동행", color: "#C0392B" },
+  { id: "daily", label: "일상동행", color: "#3B5C8A" },
+  { id: "request", label: "해주세요", color: "#7A4C8A" },
+  { id: "visit", label: "안심방문", color: "#B08D57" },
+  { id: "delivery", label: "배송", color: "#5C5A54" },
+  { id: "personal", label: "개인일정", color: "#1E7A5A" },
+  { id: "family", label: "가족이벤트", color: "#0A1F3C" },
+];
+
 export const EVENT_KINDS = {
-  hospital: { label: "병원 예약", color: "#C0392B" },
-  medication: { label: "복약 알림", color: "#3B5C8A" },
-  visit: { label: "컨시어지 방문", color: "#B08D57" },
-  kit: { label: "약상자 교체", color: "#8A5D12" },
-  checkup: { label: "건강검진", color: "#1E7A5A" },
-  family: { label: "보호자 방문", color: "#0A1F3C" },
-  delivery: { label: "상품 배송", color: "#5C5A54" },
-  request: { label: "추가 요청사항", color: "#7A4C8A" },
-  nextAppt: { label: "다음 진료 예정일", color: "#C0392B" },
+  hospital: { label: "병원동행", color: "#C0392B", group: "escort" },
+  medication: { label: "복약 알림", color: "#1E7A5A", group: "personal" },
+  visit: { label: "안심방문", color: "#B08D57", group: "visit" },
+  kit: { label: "약상자 교체", color: "#1E7A5A", group: "personal" },
+  checkup: { label: "건강검진", color: "#1E7A5A", group: "personal" },
+  family: { label: "가족이벤트", color: "#0A1F3C", group: "family" },
+  delivery: { label: "배송", color: "#5C5A54", group: "delivery" },
+  request: { label: "해주세요", color: "#7A4C8A", group: "request" },
+  nextAppt: { label: "다음 진료 예정일", color: "#1E7A5A", group: "personal" },
+  daily: { label: "일상동행", color: "#3B5C8A", group: "daily" },
 };
 
 // 주간 요약 (프로토타입 목 수치 재사용) — 웨어러블 실연동 대기 표기 필수

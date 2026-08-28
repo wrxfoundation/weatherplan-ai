@@ -27,6 +27,8 @@ import {
   VIDEO_POLICY,
   VIDEO_SEGMENTS,
   CALL_CHECKS,
+  CONCIERGE_CAL,
+  CONCIERGE_JOB_KINDS,
   OPS_MESSAGE_PRESETS,
 } from "../lib/console";
 import { checkupFor, REPORT_HEADLINE } from "../lib/checkup";
@@ -62,6 +64,7 @@ export default function ConciergePage() {
   const [kitOpen, setKitOpen] = useState(false);
   const [calOpen, setCalOpen] = useState(false); // 오늘 탭 일정 달력
   const [calDay, setCalDay] = useState(null); // 달력에서 고른 날 — 시트로 뜬다
+  const [calJob, setCalJob] = useState(null); // 시트에서 펼친 건 (고객 이름 → 디테일)
   const [callDone, setCallDone] = useState({}); // 확인전화 체크 (id-단계)
   const [opsMsgOpen, setOpsMsgOpen] = useState(false); // 관제에 알리기 시트
   // 동행 리포트 — 컨시어지가 직접 쓰는 칸 (시트 레포트 1·2번)
@@ -124,7 +127,10 @@ export default function ConciergePage() {
   const a1 = TODAY_ROUTE[0];
   const a2 = TODAY_ROUTE[1];
 
-  // 일정 달력 (시트 오늘 1번) — 공유 일정(state.events)을 날짜별로 본다.
+  // 컨시어지 일정 달력 — 어르신·보호자 공유 캘린더와 별개다 (2026-08-28 전체 요청 3번).
+  // 내가 나가는 업무 4종(병원동행·일상동행·해주세요·안심방문)만, 고객 이름으로 뜬다.
+  // 고객·보호자가 함께 쓰는 캘린더(배송·개인일정·가족이벤트 포함)는 고객 탭에서
+  // 고객 이름을 눌러 상세로 본다.
   const cNow = new Date();
   const calMonthLabel = `${cNow.getFullYear()}년 ${cNow.getMonth() + 1}월`;
   const calCells = (() => {
@@ -135,10 +141,7 @@ export default function ConciergePage() {
       cells.push({
         day: d,
         today: d === cNow.getDate(),
-        jobs: state.events.filter((e) => {
-          const x = new Date(e.at);
-          return x.getMonth() === cNow.getMonth() && x.getDate() === d;
-        }),
+        jobs: CONCIERGE_CAL.filter((j) => j.day === d),
       });
     }
     return cells;
@@ -231,15 +234,26 @@ export default function ConciergePage() {
                             key={c.day}
                             onClick={() => setCalDay(c.day)}
                             aria-label={`${c.day}일${c.jobs.length ? ` · 일정 ${c.jobs.length}건` : ""}`}
-                            className="btn-press flex min-h-[38px] flex-col items-center justify-center rounded-lg font-num text-[13px] font-bold"
-                            style={{ color: c.today ? "#B08D57" : "#40413F" }}
+                            className="btn-press flex min-h-[46px] flex-col items-center justify-start gap-[2px] rounded-lg px-[2px] py-1"
+                            style={{ background: c.jobs.length ? "rgba(176,141,87,.07)" : "transparent" }}
                           >
-                            {c.day}
-                            <span
-                              aria-hidden
-                              className="mt-0.5 h-[5px] w-[5px] rounded-full"
-                              style={{ background: c.jobs.length ? "#B08D57" : "transparent" }}
-                            />
+                            <span className="font-num text-[13px] font-bold" style={{ color: c.today ? "#B08D57" : "#40413F" }}>
+                              {c.day}
+                            </span>
+                            {/* 고객 이름 — 시트 요청 "고객 이름이 날짜별로 나오고".
+                                두 건 이상이면 첫 건 + 나머지 수 (칸이 좁다) */}
+                            {c.jobs.slice(0, 1).map((j) => (
+                              <span
+                                key={j.id}
+                                className="w-full truncate rounded-[3px] px-[2px] text-[9px] font-bold leading-[1.3] text-white"
+                                style={{ background: CONCIERGE_JOB_KINDS[j.kind].color }}
+                              >
+                                {j.client}
+                              </span>
+                            ))}
+                            {c.jobs.length > 1 && (
+                              <span className="text-[9px] font-bold text-muted">+{c.jobs.length - 1}</span>
+                            )}
                           </button>
                         )
                       )}
@@ -1967,30 +1981,60 @@ export default function ConciergePage() {
             </div>
           </nav>
 
-          {/* 달력에서 고른 날 — 그 날 일정을 시트로 (2026-08-21 시트 오늘 1번) */}
+          {/* 달력에서 고른 날 — 고객 이름을 누르면 그 건의 디테일 (2026-08-28 전체 요청 3번).
+              여기 뜨는 것은 내가 나가는 업무 4종뿐이다. */}
           {calDay != null && (
             <Sheet title={`${calMonthLabel} ${calDay}일`} onClose={() => setCalDay(null)}>
               {calDayJobs.length === 0 ? (
-                <p className="text-[14px] leading-[1.7] text-muted">이 날에는 잡힌 일정이 없습니다.</p>
+                <p className="text-[14px] leading-[1.7] text-muted">이 날에는 나갈 일정이 없습니다.</p>
               ) : (
                 <div className="space-y-2">
-                  {calDayJobs
-                    .slice()
-                    .sort((a, b) => a.at - b.at)
-                    .map((e) => (
-                      <div key={e.id} className="rounded-xl border border-navy/[.07] bg-white/60 p-3">
-                        <div className="flex items-center gap-2">
-                          <span className="font-num text-[14px] font-bold text-navy">{fmtT(e.at)}</span>
-                          <span className="text-[14px] font-bold text-ink">{e.title}</span>
-                        </div>
-                        {e.note && <div className="mt-1 text-[12px] leading-[1.6] text-muted">{e.note}</div>}
-                        {e.source && <div className="mt-1 text-[11px] text-muted">등록 {e.source}</div>}
+                  {calDayJobs.map((j) => {
+                    const k = CONCIERGE_JOB_KINDS[j.kind];
+                    const open = calJob === j.id;
+                    return (
+                      <div key={j.id} className="rounded-xl border border-navy/[.07] bg-white/60">
+                        <button
+                          onClick={() => setCalJob(open ? null : j.id)}
+                          aria-expanded={open}
+                          className="btn-press flex w-full items-center gap-2.5 p-3 text-left"
+                        >
+                          <span
+                            className="shrink-0 rounded-full px-2 py-[3px] text-[11px] font-bold text-white"
+                            style={{ background: k.color }}
+                          >
+                            {k.label}
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block text-[15px] font-bold text-navy">
+                              {j.client} <span className="text-[12px] font-medium text-muted">({j.age})</span>
+                            </span>
+                            <span className="block font-num text-[12px] text-muted">{j.time} · {j.where}</span>
+                          </span>
+                          <span
+                            aria-hidden
+                            className="shrink-0 text-muted transition-transform duration-200"
+                            style={{ transform: open ? "rotate(180deg)" : "none" }}
+                          >
+                            <Icon name="chev" size={18} strokeWidth={2} />
+                          </span>
+                        </button>
+                        {open && (
+                          <div className="border-t border-navy/[.07] px-3 py-2.5 text-[13px] leading-[1.7] text-ink">
+                            <div>{j.detail}</div>
+                            <div className="mt-1 text-[12px] text-muted">배차 {j.crew}</div>
+                            {j.memo && <div className="mt-1 text-[12px] text-muted">메모 · {j.memo}</div>}
+                          </div>
+                        )}
                       </div>
-                    ))}
+                    );
+                  })}
                 </div>
               )}
               <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                어르신·보호자와 같은 달력입니다. 담당 확정 전에는 상세 주소가 보이지 않습니다.
+                내가 나가는 일정만 보입니다 — 병원동행 · 일상동행 · 해주세요 · 안심방문.
+                고객과 보호자가 함께 쓰는 캘린더(배송 · 개인일정 · 가족이벤트 포함)는
+                고객 탭에서 이름을 눌러 보십시오.
               </p>
             </Sheet>
           )}
