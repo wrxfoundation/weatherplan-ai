@@ -148,8 +148,8 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                 <span aria-hidden style={{ fontSize: 19 }}>🎟️</span>
                 <span>
                   {en
-                    ? <>Buy after sales open and get a free <b>XRP SEOUL 2026</b> ticket <span style={{ color: "var(--cap)", fontWeight: 600 }}>(₩100,000 value)</span></>
-                    : <>정식 판매 오픈 후 구매하시면 <b>XRP SEOUL 2026</b> 티켓을 무료로 드립니다 <span style={{ color: "var(--cap)", fontWeight: 600 }}>(10만원 상당)</span></>}
+                    ? <>After sales open, buy and get one free &#39;<b>XRP SEOUL 2026</b>&#39; ticket per device <span style={{ color: "var(--cap)", fontWeight: 600 }}>(₩100,000 value)</span></>
+                    : <>정식 판매 오픈 후, 구매 시 &#39;<b>XRP SEOUL 2026</b>&#39; 티켓 1대당, 1장 무료 증정 <span style={{ color: "var(--cap)", fontWeight: 600 }}>(10만원 상당)</span></>}
                 </span>
               </div>
               <button onClick={() => setStep(3)} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>
@@ -178,8 +178,8 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                   <span aria-hidden style={{ fontSize: 19 }}>🎟️</span>
                   <span>
                     {en
-                      ? <>Buy after sales open and get a free <b>XRP SEOUL 2026</b> ticket <span style={{ color: "var(--cap)", fontWeight: 600 }}>(₩100,000 value)</span></>
-                      : <>정식 판매 오픈 후 구매하시면 <b>XRP SEOUL 2026</b> 티켓을 무료로 드립니다 <span style={{ color: "var(--cap)", fontWeight: 600 }}>(10만원 상당)</span></>}
+                      ? <>After sales open, buy and get one free &#39;<b>XRP SEOUL 2026</b>&#39; ticket per device <span style={{ color: "var(--cap)", fontWeight: 600 }}>(₩100,000 value)</span></>
+                      : <>정식 판매 오픈 후, 구매 시 &#39;<b>XRP SEOUL 2026</b>&#39; 티켓 1대당, 1장 무료 증정 <span style={{ color: "var(--cap)", fontWeight: 600 }}>(10만원 상당)</span></>}
                   </span>
                 </div>
               <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main btn-shine" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontSize: 19.5, borderRadius: 10, padding: 14, color: "#fff", textDecoration: "none" }}>

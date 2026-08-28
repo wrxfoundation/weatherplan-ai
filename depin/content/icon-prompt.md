@@ -67,17 +67,40 @@ high detail. Isolated single object.
 
 ---
 
-## 생성 후 규격
+## 생성 후 처리 (8/28 실제로 쓴 경로)
+
+생성기: **Recraft V4.1** (`model_type: standard`, `1:1`, `resolution: 1k`)
+`background_color` 를 지정해도 거의 순백(255,255,255)으로 나온다. 그게 오히려 편하다 —
+모서리에서 floodfill 로 배경만 걷어내면 된다.
+
+```bash
+# 카드용(192) — 칩은 -resize 88x88 -extent 96x96
+convert in.png -alpha set -bordercolor white -border 2 \
+  -fuzz 5% -fill none -draw "matte 0,0 floodfill" -shave 2x2 \
+  -trim +repage -resize 176x176 -background none -gravity center -extent 192x192 out.png
+convert out.png -quality 76 -define webp:alpha-quality=85 measure.webp
+```
 
 | 항목 | 값 |
 |---|---|
-| 형식 | **PNG (투명 배경)** — 배경을 지우고 저장 |
-| 크기 | 512 × 512 |
-| 용량 | 장당 120KB 이하 |
-| 여백 | 사방 8% 정도 비워 둘 것 (카드 안에서 잘리지 않게) |
+| 형식 | **WebP (투명 배경)** |
+| 크기 | 카드 192×192 / 칩 96×96 — 화면 크기(120px / 34px)의 1.5배 이상 |
+| 용량 | 장당 6KB 이하 (8종 합계 30KB) |
+| 여백 | 사방 4% (92% 리사이즈 후 정사각 중앙 배치) |
 
-투명 배경으로 못 뽑으면 흰 배경 그대로 둬도 된다 — 카드 배경이 밝아서 티가 크게 나지 않는다.
-다만 투명이 확실히 낫다.
+### ⚠ fuzz 를 올리지 말 것
+
+유리의 밝은 하이라이트가 흰 배경과 색이 거의 같다. fuzz 를 키우면 floodfill 이
+배경을 타고 오브젝트 안으로 번져 들어간다. 1차본(fuzz 22%)의 손실률:
+
+| 아이콘 | 손실 | 아이콘 | 손실 |
+|---|---|---|---|
+| verify | **63.7%** (방패 위쪽 모서리가 날아감) | use | 23.6% |
+| data | **56.4%** | nodes | 16.2% |
+| flow | 45.0% | reward | 10.8% |
+| coins | 38.7% | measure | 0.3% |
+
+배경이 완전히 균일한 순백이라 **fuzz 5%** 로도 깨끗이 지워진다. 5%와 10%의 차이는 1% 미만.
 
 ---
 

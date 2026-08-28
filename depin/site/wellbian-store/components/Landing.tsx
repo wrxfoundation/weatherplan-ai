@@ -287,8 +287,8 @@ export default function Landing() {
                 /* 보조 개념 * 주석 — 히어로 맨하단, 작게 (8/28 서우 문구 개정) */
                 <div style={{ fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,.55)", maxWidth: 560 }}>
                   {en
-                    ? <>* Pre-order now and you can buy when sales open on Sept 15.<br />* Genesis Numbers are randomly assigned at purchase.<br />* Buy after sales open and get a free XRP SEOUL 2026 ticket (₩100,000 value)</>
-                    : <>* 사전예약하면 9월 15일 오픈 때 구매 가능합니다.<br />* 제네시스 넘버는 구매 시 랜덤 배정됩니다.<br />* 정식 판매 오픈 후 구매 시 XRP SEOUL 2026 티켓 증정 (10만원 상당)</>}
+                    ? <>* Pre-order now and you can buy when sales open on Sept 15.<br />* Genesis Numbers are randomly assigned at purchase.<br />* After sales open, buy and get one free &#39;XRP SEOUL 2026&#39; ticket per device (₩100,000 value)</>
+                    : <>* 사전예약하면 9월 15일 오픈 때 구매 가능합니다.<br />* 제네시스 넘버는 구매 시 랜덤 배정됩니다.<br />* 정식 판매 오픈 후, 구매 시 &#39;XRP SEOUL 2026&#39; 티켓 1대당, 1장 무료 증정 (10만원 상당)</>}
                 </div>
               )}
             </div>

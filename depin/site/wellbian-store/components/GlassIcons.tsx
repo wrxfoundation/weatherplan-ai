@@ -25,14 +25,17 @@ import React from "react";
 export type IconKey = "measure" | "verify" | "reward" | "use" | "data" | "flow" | "coins" | "nodes";
 
 const ICON_PNG: Partial<Record<IconKey, string>> = {
-  // measure: "/assets/icons/measure.png",
-  // verify:  "/assets/icons/verify.png",
-  // reward:  "/assets/icons/reward.png",
-  // use:     "/assets/icons/use.png",
-  // data:    "/assets/icons/data.png",
-  // flow:    "/assets/icons/flow.png",
-  // coins:   "/assets/icons/coins.png",
-  // nodes:   "/assets/icons/nodes.png",
+  // 8/28 서우: 프로스티드 글래스 렌더로 8종 전면 교체.
+  // 생성 → 흰 배경 floodfill 제거 → 정사각 정규화 → WebP. 카드용 192px / 칩용 128px.
+  // 프롬프트는 depin/content/icon-prompt.md. SVG 는 굴절을 흉내 낼 수 없어 폴백으로만 남긴다.
+  measure: "/assets/icons/measure.webp",
+  verify:  "/assets/icons/verify.webp",
+  reward:  "/assets/icons/reward.webp",
+  use:     "/assets/icons/use.webp",
+  data:    "/assets/icons/data.webp",
+  flow:    "/assets/icons/flow.webp",
+  coins:   "/assets/icons/coins.webp",
+  nodes:   "/assets/icons/nodes.webp",
 };
 
 /* PNG가 지정돼 있으면 그걸, 아니면 인라인 SVG를 그린다. */
