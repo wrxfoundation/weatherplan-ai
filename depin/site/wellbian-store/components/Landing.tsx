@@ -33,11 +33,11 @@ export default function Landing() {
     : "pre";
 
   const inv = MOCK_INVENTORY[phase]; // GET /api/inventory 대응 지점
-  const { remain } = calc(inv);
-  const sold = 5000 - remain; // 내부 계산용 (대외 표기는 판매 대수만, 8/27)
+  /* 8/28 회의로 수량 상한이 없어져 잔여·소진율이 사라졌다 — 누적 판매 대수만 쓴다 */
+  const { sold } = calc(inv);
   const soldOut = phase === "sold_out";
   /* 단일가 (8/27 서우: 얼리버드 폐지 — 대외 가격은 650 하나) */
-  const curPrice = PRICE.gen;
+  const curPrice = PRICE.first;  // 1차 판매가 (8/28 회의: 얼리버드 폐기, 1차 전체가 450)
 
   const specs = en ? SPECS_EN : SPECS;
   const faqs = en ? FAQS_EN : FAQS;
@@ -343,22 +343,22 @@ export default function Landing() {
             <h2 style={h2}>{en ? "Price & Supply" : "가격 · 수량"}</h2>
             <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Payment in RLUSD" : "결제는 RLUSD로 진행됩니다"}</p>
           </div>
-          {/* 단일가 카드 (8/27 서우: 얼리버드 폐지 — 650 RLUSD 하나) */}
+          {/* 1차 판매가 카드 (8/28 회의: 얼리버드 티어 없이 1차 전체 450, 2차부터 650) */}
           <div style={{
             position: "relative", borderRadius: 16, padding: 32, display: "flex", flexDirection: "column", gap: 14,
             border: "2px solid var(--w-main)", background: "var(--w-tint)", width: "100%", maxWidth: 520, margin: "0 auto",
           }}>
-            <div style={{ fontSize: 19.5, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "Price" : "판매가"}</div>
+            <div style={{ fontSize: 19.5, fontWeight: 700, color: "var(--w-deep)", marginTop: 6 }}>{en ? "First batch" : "1차 판매가"}</div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8, justifyContent: "center" }}>
-              <span className="mono" style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)" }}>650</span>
+              {/* 하드코딩 650 이었다 — 8/28 회의로 1차 450 이 되면서 PRICE 를 실제로 참조하게 고쳤다 */}
+              <span className="mono" style={{ fontSize: 49.5, fontWeight: 800, color: "var(--w-deep)" }}>{curPrice}</span>
               <span style={{ fontSize: 21, fontWeight: 700, color: "var(--ink-4)" }}>RLUSD</span>
             </div>
-            {/* 수량 비공개 (8/27 서우: 오픈 임박 시 공개) */}
-            {!soldOut && (
-              <div style={{ fontSize: 16, color: "var(--ink-4)" }}>
-                {en ? "Quantity revealed as open day nears" : "수량은 오픈 임박 시 공개됩니다"}
-              </div>
-            )}
+            {/* 2차 가격 안내 — 사실만, 선점 재촉 문구는 넣지 않는다 */}
+            <div style={{ fontSize: 16, color: "var(--ink-4)" }}>
+              {en ? `From the second batch: ${PRICE.later} RLUSD` : `2차 판매부터는 ${PRICE.later} RLUSD로 적용됩니다`}
+            </div>
+{/* 8/28 회의: 판매 수량을 스스로 정하지 않기로 해서 "오픈 임박 시 공개"할 수량 자체가 없어졌다 */}
             {soldOut
               ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 19.5, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Sold out" : "완판되었습니다"}</span>
               : <button onClick={buy} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}

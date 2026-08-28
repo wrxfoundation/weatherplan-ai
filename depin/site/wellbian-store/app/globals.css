@@ -526,3 +526,21 @@ h1, h2, h3, p { margin: 0; }
   outline: 2px solid rgba(255, 255, 255, .7);
   outline-offset: 2px;
 }
+
+
+/* ── 푸터 주체 로고 (8/28 회의: 누르면 각 홈페이지로) ───────────────────────
+   opacity 를 인라인이 아니라 여기 둬야 hover 가 우선순위에서 이긴다. */
+.foot-logo {
+  display: inline-flex;
+  opacity: .9;
+  transition: opacity .16s ease;
+}
+@media (hover: hover) {
+  .foot-logo:hover { opacity: 1; }
+}
+.foot-logo:focus-visible {
+  opacity: 1;
+  outline: 2px solid rgba(255, 255, 255, .7);
+  outline-offset: 3px;
+  border-radius: 4px;
+}

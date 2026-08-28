@@ -3,18 +3,21 @@
 export type SalePhase = "teaser" | "early_bird" | "general" | "sold_out" | "waitlist_open";
 
 export interface Inventory {
-  ebLeft: number;   // 표기 분모 1,000
-  genLeft: number;  // 표기 분모 4,000
+  /* 누적 판매 대수. 8/28 회의에서 판매 수량 상한을 두지 않기로 해서
+     잔여(ebLeft/genLeft)·소진율 개념이 통째로 사라졌다 — 사전예약 신청분이 곧 판매량이다. */
+  sold: number;
 }
 
 export interface Order {
   id: string;              /* 내부 참조용 주문 ID — 구매자 확인 요소 아님 (8/27 개정) */
-  /* 구매 확정 시 #1~5000 풀에서 수량만큼 무작위 배정, 오름차순 정렬 저장 (8/27 확정).
+  /* 구매 확정 시 수량만큼 무작위 배정, 오름차순 정렬 저장 (8/27 확정).
+     8/28 회의: 풀 상한(#1~5000)을 없앴다 — 1차에 팔린 만큼이 제네시스다.
      1 구글 계정당 최대 100대 — 대량 구매 시에도 기기마다 1개씩 배정 */
   genesisNos: number[];
   qty: number;
   unitPrice: number;
-  tier: "eb" | "gen";
+  /* 8/28 회의: 얼리버드 티어 폐기 — 1차 판매 전체가 first 가격, 2차부터 later */
+  tier: "first" | "later";
   txHash: string;
   status: "paid" | "preparing" | "shipped" | "done";
   paidAt: string;
@@ -55,22 +58,24 @@ export interface WaitlistMe {
 }
 
 /* ── 목 재고 (기본: 판매 중) ── */
+/* 데모 전환용 목값. 상한이 없어졌으므로 숫자는 "지금까지 이만큼 팔렸다"는 뜻일 뿐,
+   분모나 소진율은 없다. 실서버 연동 시 GET /api/inventory 가 sold 를 그대로 준다. */
 export const MOCK_INVENTORY: Record<SalePhase, Inventory> = {
-  teaser: { ebLeft: 1000, genLeft: 4000 },
-  early_bird: { ebLeft: 187, genLeft: 4000 },
-  general: { ebLeft: 0, genLeft: 3412 },
-  sold_out: { ebLeft: 0, genLeft: 0 },
-  waitlist_open: { ebLeft: 0, genLeft: 0 },
+  teaser: { sold: 0 },
+  early_bird: { sold: 813 },
+  general: { sold: 1588 },
+  sold_out: { sold: 5000 },
+  waitlist_open: { sold: 5000 },
 };
 
-export const PRICE = { eb: 450, gen: 650 } as const;
+/* 8/28 회의: 얼리버드 티어를 없애고 1차 판매 전체를 450 으로, 2차부터 650 으로 올린다.
+   키 이름의 eb/gen 은 폐기된 얼리버드 구조의 잔재라 first/later 로 바꿨다. */
+export const PRICE = { first: 450, later: 650 } as const;
 
+/* 상한이 없으니 잔여·소진율은 계산할 게 없다. 대외 표기도 누적 판매 대수 하나뿐이라
+   래퍼만 남긴다 — 실서버로 바꿀 때 이 지점만 갈아끼우면 된다. */
 export function calc(inv: Inventory) {
-  const remain = inv.ebLeft + inv.genLeft;
-  const pct = Math.round(((5000 - remain) / 5000) * 100);
-  const ebPct = Math.round(((1000 - inv.ebLeft) / 1000) * 100);
-  const genPct = Math.round(((4000 - inv.genLeft) / 4000) * 100);
-  return { remain, pct, ebPct, genPct };
+  return { sold: inv.sold };
 }
 
 export const fmt = (n: number) => n.toLocaleString("en-US");
@@ -98,14 +103,10 @@ export const FAQS = [
   /* 8/28 서우: 사전예약 기간인데 사전예약 문항이 없어 최상단 2개 신설 (모바일 기본 노출 3개에 포함) */
   { q: "사전예약은 무엇인가요?", a: "결제가 아니라 수요 파악과 자리 확보 단계입니다. 구글 로그인으로 예약할 대수만 정해두면, 9월 15일 판매 오픈 때 선착순 걱정 없이 구매할 수 있습니다. 1계정 최대 100대까지 설정할 수 있습니다." },
   { q: "사전예약하면 반드시 구매해야 하나요?", a: "아니요. 확정 주문이 아니며 예약 자체에 비용이 들지 않습니다. 실제 구매 수량은 오픈 때 자유롭게 정하시면 됩니다." },
-  { q: "가격이 어떻게 되나요?", a: "대당 650 RLUSD입니다. 결제는 RLUSD로만 진행됩니다." },
+  { q: "가격이 어떻게 되나요?", a: "1차 판매는 대당 450 RLUSD입니다. 2차 판매부터는 650 RLUSD로 적용됩니다. 결제는 RLUSD로만 진행됩니다." },
   { q: "RLUSD는 어디서 구하나요?", a: "국내·해외 거래소에서 RLUSD를 구매한 뒤 XRPL 네트워크로 개인 지갑에 출금하면 됩니다. 출금 시 반드시 XRPL판 RLUSD를 선택하세요." },
-  { q: "환불은 어떻게 되나요?", a: "제품 수령일부터 7일 이내 환불 가능합니다. 단, 리딤코드 사용 또는 노드 연동 시 환불이 제한됩니다(전자상거래법 제17조 제6항)." },
-  { q: "설치가 어렵지 않나요?", a: "전원을 켠 뒤 스마트폰 블루투스로 기기를 연결해 Wi-Fi를 설정하는 것이 첫 순서입니다. 그다음 박스 안 리딤카드 QR로 지갑 연결·코드 입력까지 약 3분이면 완료됩니다. 벽걸이·탁상 모두 지원합니다." },
   { q: "지갑이 처음인데 괜찮나요?", a: "네. 구글 계정으로 가입하면 내 지갑이 자동으로 만들어집니다. 지갑 활성화(1 XRP)는 1회 지원되며(약관 제5조), 연동까지 가이드를 제공합니다." },
   { q: "보상은 어떻게 지급되나요?", a: "측정 데이터가 검증되면 네트워크 원칙에 따라 WLBN이 지급됩니다. 지급량과 가치는 보장되지 않습니다." },
-  { q: "전기료가 많이 나오나요?", a: "상시 가동 기준 월 전기료는 1,000원 미만입니다." },
-  { q: "제품 보증 기간은요?", a: "구매일로부터 1년 무상 보증입니다. 자세한 조건은 이용약관을 참고하세요." },
 ];
 
 /* 기본 순서(8/27 서우 확정): 수령 → 블루투스 페어링 → Wi-Fi 연동이 선행, 그다음 리딤·NFT
@@ -172,7 +173,7 @@ export const MOCK_ORDER: Order = {
   genesisNos: [214, 387, 559, 823, 1041, 1288, 1476, 1690, 1923, 2205, 2531, 2764, 2988, 3217, 3444, 3671, 3856, 4102, 4388, 4677],
   qty: 20,
   unitPrice: 650,
-  tier: "gen",
+  tier: "first",
   txHash: "A3F8…C21E",
   status: "preparing",
   paidAt: "2026-08-26",
@@ -192,7 +193,8 @@ export const MOCK_DEVICE: Device = {
 export const MOCK_PRENOTIFY = 3847;
 
 /* 사전예약 실시간 현황 mock 피드 (8/27) — 내부 지갑 앞자리+마스킹 · 예약 시각 · 대수.
-   사전예약은 수요 파악·룸 확보 단계라 5,000 캡·제네시스 넘버와 무관 (넘버는 정식 구매 시 배정) */
+   사전예약은 수요 파악 단계라 제네시스 넘버와 무관 (넘버는 정식 구매 시 배정).
+   8/28 회의로 수량 캡 자체가 없어졌다 */
 export const PREORDER_FEED: { w: string; t: string; q: number }[] = [
   { w: "r9fK", t: "21:04:32", q: 3 }, { w: "rB2x", t: "21:03:58", q: 10 }, { w: "rQm7", t: "21:03:41", q: 1 },
   { w: "rXw3", t: "21:02:55", q: 5 }, { w: "rL8d", t: "21:02:19", q: 2 }, { w: "rTn6", t: "21:01:47", q: 20 },
@@ -213,6 +215,10 @@ export const LINKS = {
   telegram: "https://t.me/wellbianlabs",
   /* 약관은 플랫폼 메인 사이트 TERMS로 통합 (8/27 서우 결정 — 별도 문서 없이 단일 링크) */
   terms: "https://wlbn.wellbianlabs.io/terms",
+  /* 8/28 회의: "맨 밑 주체를 많이 본다" → 푸터 로고를 각 홈페이지로 연결한다 */
+  wellbian: "https://wlbn.wellbianlabs.io",
+  xrpl: "https://xrpl.org",
+  kweather: "https://kweather.co.kr",
 };
 
 /* 결제 파라미터 — Vercel 환경 변수로 교체 가능 (PRD §11), 미설정 시 목값 */
@@ -270,14 +276,10 @@ export const SPECS_EN = [
 export const FAQS_EN = [
   { q: "What is a pre-order?", a: "It is not a payment — it gauges demand and holds your spot. Sign in with Google, set how many units you want, and you can buy calmly when sales open on Sept 15. Up to 100 units per account." },
   { q: "Does a pre-order commit me to buying?", a: "No. It is not a confirmed order and costs nothing. You decide the actual quantity when sales open." },
-  { q: "How much does it cost?", a: "650 RLUSD per unit. Payment is in RLUSD only." },
+  { q: "How much does it cost?", a: "450 RLUSD per unit in the first batch. From the second batch the price is 650 RLUSD. Payment is in RLUSD only." },
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on a domestic or global exchange, then withdraw it to your personal wallet over the XRPL network. Always select the XRPL version of RLUSD when withdrawing." },
-  { q: "What is the refund policy?", a: "Refunds are available within 7 days of receiving the product. Refunds are restricted once the redeem code is used or the node is linked (Korean E-Commerce Act, Art. 17-6)." },
-  { q: "Is setup difficult?", a: "First, power on and pair the device via Bluetooth to set up Wi-Fi. Then scan the redeem card QR in the box for wallet connection and code entry — about 3 minutes in total. Wall and desktop mounting are both supported." },
   { q: "I've never used a wallet. Is that okay?", a: "Yes. Signing up with your Google account creates your wallet automatically. One-time activation (1 XRP) is covered (Terms, Art. 5), and the guide walks you through node linking." },
   { q: "How are rewards paid?", a: "When your measurements are verified, WLBN is paid under network rules. Amounts and value are not guaranteed." },
-  { q: "How much electricity does it use?", a: "Running around the clock costs under ₩1,000 a month." },
-  { q: "What about warranty?", a: "One year of free warranty from the purchase date. See the Terms of Service for details." },
 ];
 
 /* 전체 FAQ 확장분 15문항 — 기본 8문항과 합쳐 23문항 (8/27, 접기/펴기 인라인 확장) */
@@ -290,14 +292,6 @@ export const FAQS_EXTRA = [
   { q: "배송은 언제, 어떻게 받나요?", a: "11월 중 순차 배송 예정입니다. 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 안내하며, 폼에 제네시스 넘버·내 지갑 주소·배송 정보를 입력하면 순서대로 발송됩니다." },
   { q: "배정된 제네시스 넘버는 어디서 확인하나요?", a: "구글 계정으로 로그인하면 주문 내역에서 정렬된 넘버 목록을 언제든 확인하고 복사할 수 있습니다." },
   { q: "사이트가 저장하는 개인정보는 뭔가요?", a: "구글 계정 로그인만 사용하며, 별도의 개인정보는 저장하지 않습니다. 가입하면 내 지갑이 자동으로 만들어지고, 배송 정보는 발송 전 접수 폼에서만 받아 배송이 끝나면 파기합니다." },
-  { q: "리딤코드는 어디에 있나요?", a: "박스 안 카드에 인쇄되어 있습니다. 1개 코드는 1개 지갑에만 등록되며, 사용한 뒤에는 환불이 제한되니 등록 전에 결정해 주세요." },
-  { q: "보상은 어떻게 계산되나요?", a: "매일 데이터 품질(가동률·이상치·주변 기기와의 일치 등)을 검증해 다음 날 적립되고, 클레임하면 지갑으로 지급됩니다. 지급량과 가치는 보장되지 않습니다." },
-  { q: "기기를 꺼두면 어떻게 되나요?", a: "데이터가 없으면 그 시간만큼 보상 산정에서 빠집니다. 전기료가 월 1,000원 미만이라 상시 가동을 권장합니다." },
-  { q: "인터넷이 잠시 끊기면요?", a: "다시 연결되면 자동으로 재개됩니다. 끊긴 기간만 산정에서 제외될 뿐 불이익이 쌓이지는 않습니다." },
-  { q: "어떤 데이터가 수집되나요?", a: "공기질 측정값(미세먼지·CO₂·온습도 등)입니다. 외부에 제공될 때는 개별 가정을 알아볼 수 없도록 비식별 처리를 거칩니다." },
-  { q: "A/S와 수리는 어디서 받나요?", a: "국내 설치·A/S·고객지원은 기기 파트너인 케이웨더가 담당합니다. 보증은 구매일로부터 1년입니다." },
-  { q: "여러 대를 한 지갑으로 운영할 수 있나요?", a: "가능합니다. 기기마다 각각의 라이선스 NFT가 발급되고 보상도 기기별로 산정됩니다." },
-  { q: "해외 배송이 되나요?", a: "1차 판매는 국내 배송만 지원합니다." },
 ];
 
 export const FAQS_EXTRA_EN = [
@@ -309,14 +303,6 @@ export const FAQS_EXTRA_EN = [
   { q: "When and how does shipping work?", a: "Units are expected to ship sequentially through November. Starting 2 weeks before dispatch, we announce the shipping form on our official Telegram and X — enter your Genesis Numbers, your wallet address, and shipping details, and units ship in order." },
   { q: "Where do I find my assigned Genesis Numbers?", a: "Sign in with your Google account — your order history shows the sorted list, ready to copy, anytime." },
   { q: "What personal data does this site store?", a: "Only Google sign-in — nothing else is stored. Signing up creates your wallet automatically, and delivery details are collected only via the pre-shipping form, then deleted after delivery." },
-  { q: "Where is the redeem code?", a: "Printed on the card inside the box. One code registers to one wallet only, and refunds are restricted once it is used — decide before you register." },
-  { q: "How are rewards calculated?", a: "Data quality (uptime, outliers, agreement with nearby devices) is verified daily, rewards accrue the next day, and are paid on-chain when you claim. Amounts and value are not guaranteed." },
-  { q: "What if I turn the device off?", a: "Time without data is simply excluded from reward calculation. Electricity costs under ₩1,000 a month, so we recommend keeping it running." },
-  { q: "What if my internet drops briefly?", a: "It resumes automatically when reconnected. The offline period is excluded from calculation — no penalties accumulate." },
-  { q: "What data is collected?", a: "Air-quality readings (particulates, CO₂, temperature, humidity, etc.). Before any external use, data is de-identified so individual homes cannot be recognized." },
-  { q: "Where do I get repairs and support?", a: "Domestic installation, A/S, and customer support are handled by KWeather, our device partner. Warranty is one year from purchase." },
-  { q: "Can one wallet run multiple devices?", a: "Yes. Each device gets its own license NFT and rewards are calculated per device." },
-  { q: "Do you ship internationally?", a: "Batch 1 ships within Korea only." },
 ];
 
 export const LINK_STEPS_EN: { n: string; t: string; d: string; d2?: string }[] = [
