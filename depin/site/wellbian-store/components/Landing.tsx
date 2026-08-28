@@ -721,8 +721,16 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
 
 /* 히어로 배경 — 블루+퍼플 확정 (8/27 서우). 나머지 후보(hero-bg.jpg·-3·-4)는 hide, 파일 유지 —
    재비교 시 배열에 다시 넣으면 롤링 복원 */
-/* 8/27 서우: 열화 지적 → 재업로드 원본(webp)로 교체 — 재인코딩 없이 그대로 서빙 (구 jpg는 보관) */
-const HERO_BGS = ["/assets/hero-bg-2.webp"];
+/* 히어로 배경 — 8/28 서우: 이미지는 서우가 직접 교체한다(Vercel 배포 zip을 풀어 파일을 넣고 재압축).
+   교체 지점을 한 곳으로 고정했다: public/assets/hero/hero-bg.webp — 그 파일을 덮어쓰면 끝이고
+   코드는 손댈 필요가 없다. 사용법·규격은 같은 폴더의 README.txt.
+
+   폴백을 CSS 다중 레이어(url(a), url(b))로 만들지 않은 이유: 브라우저는 background-image의
+   모든 레이어를 실제로 내려받는다. 즉 커스텀을 넣어도 폴백 이미지가 매번 같이 다운로드되고
+   (427KB 낭비), 넣기 전에는 404가 콘솔·Vercel 로그에 남는다. 그래서 그 경로에 현재 이미지를
+   미리 넣어 두는 쪽을 택했다 — 파일이 항상 존재하므로 폴백 자체가 필요 없다.
+   구 후보(hero-bg.jpg·-2·-3·-4)는 재비교용으로 보관만 한다. */
+const HERO_BGS = ["/assets/hero/hero-bg.webp"];
 
 /* 제품 갤러리 5컷 (8/27 2차 — 서우 신규 렌더: 받침대·주방·거실·골드·블랙) — 히어로형 풀블리드 배경 */
 const SPEC_GALLERY = [
