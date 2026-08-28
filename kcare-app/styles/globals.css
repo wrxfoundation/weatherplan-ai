@@ -1,4 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Montserrat:wght@500;600;700;800&display=swap");
+/* 웹폰트는 pages/_document.jsx 의 <link> 로 옮겼다 (2026-08-28 모바일 점검).
+   CSS @import 는 이 파일을 다 받은 뒤에야 폰트 요청을 시작해서 렌더를 한 번 더
+   막는다 — 느린 회선에서 첫 글자가 늦게 뜬다. <link> 는 HTML 파싱 중 병렬로
+   시작한다. 폴백 스택(tailwind.config.js fontFamily)은 그대로라 CDN 이 죽어도
+   시스템 한글 폰트로 떨어진다. */
 
 @tailwind base;
 @tailwind components;

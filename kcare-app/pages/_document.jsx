@@ -18,6 +18,12 @@ export default function Document() {
         <link rel="apple-touch-icon" href="/favicon.svg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* 웹폰트 — globals.css 의 @import 에서 옮겨 왔다 (렌더 차단 제거).
+            display=swap 이라 폰트가 늦어도 시스템 폰트로 먼저 그린다. */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Montserrat:wght@500;600;700;800&display=swap"
+        />
       </Head>
       <body>
         <Main />

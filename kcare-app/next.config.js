@@ -38,6 +38,12 @@ const CSP = [
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Next 의 자동 폰트 최적화를 끈다. 켜 두면 _document 의 Google Fonts <link> 를
+  // 빌드 때 받아 와 HTML 안에 <style> 로 박아 넣는데, Noto Sans KR 은 한글 서브셋이
+  // 많아 @font-face 가 524개 · 349KB 다. 그게 21개 화면 HTML 에 전부 복사되어
+  // 페이지당 351KB 가 됐다(측정치). <link> 로 두면 HTML 은 2.5KB, 폰트 CSS 는
+  // 한 번 받아 화면 간에 브라우저 캐시로 재사용된다.
+  optimizeFonts: false,
   images: { unoptimized: true }, // next/image 미사용 — 이미지 최적화 엔드포인트 표면 축소
   env: { NEXT_PUBLIC_BRAND_LOGO: BRAND_LOGO, NEXT_PUBLIC_BRAND_LOGO_DARK: BRAND_LOGO_DARK },
   async headers() {
