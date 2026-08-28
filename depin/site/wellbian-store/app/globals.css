@@ -495,3 +495,34 @@ h1, h2, h3, p { margin: 0; }
   .gnb-root > div:last-child > a,
   .gnb-root > div:last-child > button { font-size: 12.5px !important; padding: 5px 8px !important; }
 }
+
+
+/* ── 히어로 소셜 아이콘 (8/28 서우) ─────────────────────────────────────────
+   평소엔 테두리만. 마우스를 올리면 바로 아래 스탯 테이블(.pre-stat)과 똑같은
+   글래스가 깔린다 — 흰 배경 .15 + blur 14px + 같은 그림자.
+   테두리는 인라인이 아니라 여기 있어야 hover 가 우선순위에서 이긴다.
+   -webkit- 프리픽스는 직접 쓰지 않는다 — 같이 쓰면 빌드의 CSS 최적화기가 표준
+   속성 쪽을 지워서 Firefox 에서 블러가 빠진다. 프리픽스 생성은 빌드에 맡긴다. */
+.hero-ico {
+  border: 1px solid rgba(255, 255, 255, .28);
+  background: transparent;
+  transition: background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+/* 터치 기기에서는 탭 후 hover 가 눌어붙으므로 실제 포인터가 있을 때만 */
+@media (hover: hover) {
+  .hero-ico:hover {
+    background: rgba(255, 255, 255, .15);
+    backdrop-filter: blur(14px);
+    border-color: rgba(255, 255, 255, .45);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .18);
+  }
+}
+/* 키보드 포커스도 같은 표시 — 마우스 없이도 어디에 있는지 보여야 한다 */
+.hero-ico:focus-visible {
+  background: rgba(255, 255, 255, .15);
+  backdrop-filter: blur(14px);
+  border-color: rgba(255, 255, 255, .55);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .18);
+  outline: 2px solid rgba(255, 255, 255, .7);
+  outline-offset: 2px;
+}

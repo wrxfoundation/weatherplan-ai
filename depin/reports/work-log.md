@@ -960,6 +960,26 @@
     문구 갱신 **18/18**. 프로덕션 빌드 TypeScript 0 오류.
   - 남은 것: 히어로 배경 이미지(`public/assets/hero/hero-bg.webp`)는 여전히 서우 교체 대기.
 
+- **v3.53 히어로 소셜 아이콘 hover 글래스 (8/28, 서우)**
+  - 서우: "사전예약 신청하기 옆에 링크·X·텔레그램에 마우스 올려두면 아래 테이블처럼 배경이 변하게"
+  - 히어로 아이콘 3개(`.hero-ico`)에 hover/focus 시 바로 아래 스탯 테이블(`.pre-stat`)과
+    **똑같은 값**을 적용: 흰 배경 .15 + blur 14px + `0 8px 32px rgba(0,0,0,.18)`.
+    테두리는 .28 → .45 로 같이 밝아진다. transition .18s.
+  - `heroIcon` 인라인 스타일에서 `border` 를 빼서 `.hero-ico` 클래스로 옮겼다 —
+    인라인 border 가 있으면 CSS 의 `:hover` 가 우선순위에서 밀려 색이 안 바뀐다.
+    링크 복사 버튼의 인라인 `background: transparent` 도 클래스 기본값으로 대체.
+  - 터치 기기에서 탭 후 hover 가 눌어붙지 않도록 `@media (hover: hover)` 로 감쌌고,
+    키보드 사용자를 위해 `:focus-visible` 에 같은 표시 + outline 을 따로 뒀다.
+  - **CSS 최적화기 함정**: 처음에 `backdrop-filter` 와 `-webkit-backdrop-filter` 를 둘 다
+    직접 썼더니 dev 빌드가 표준 속성 쪽을 지우고 프리픽스만 남겼다(Firefox 는 `-webkit-`
+    별칭을 지원하지 않으므로 블러가 통째로 빠진다). 프리픽스를 직접 쓰지 않고 표준만 남기니
+    프로덕션 빌드가 둘 다 생성했다. 스탯 테이블은 인라인 스타일이라 이 최적화를 안 거쳐서
+    멀쩡했던 것 — 같은 값인데 한쪽만 깨진 이유가 이것이었다.
+  - QA `qa-heroico` 신규 **27/27** — 평상시 투명·테두리 유지, hover 3개 각각이 테이블과
+    같은 배경·블러·그림자, 마우스 떼면 원복, **서빙 CSS 에 표준 속성 생존**까지 본다
+    (computed style 의 `backdropFilter` 는 "none" 이 truthy 라 `||` 로는 못 거른다 — 두 속성을
+    모두 확인하도록 짰다). 프로덕션 빌드 TypeScript 0 오류.
+
 - **polysona 선별 흡수 (8/27, 서우 업로드 2건째)** — 페르소나 추출·콘텐츠 파이프라인 시스템
   (87파일, MIT). 원본 스킬은 자기 저장소 구조에 결박돼 원문 설치 불가 → **각색 2종 + 원문
   참고문헌 3종** 흡수: ① **`/xqa` 신설** — virtual-follower 패턴의 wellbian판: X 초안 게시 전

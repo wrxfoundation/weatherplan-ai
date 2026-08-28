@@ -257,11 +257,11 @@ export default function Landing() {
                 )}
                 <div className="hero-social" style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   {/* 링크 → X → 텔레그램 순 (8/27 서우) */}
-                  <button onClick={copyLink} aria-label={en ? "Copy link" : "링크 복사"} title={en ? "Copy link" : "링크 복사"} style={{ ...heroIcon, background: "transparent", cursor: "pointer" }}>
+                  <button onClick={copyLink} className="hero-ico" aria-label={en ? "Copy link" : "링크 복사"} title={en ? "Copy link" : "링크 복사"} style={{ ...heroIcon, cursor: "pointer" }}>
                     {linkCopied ? <Check size={16} color="#8ef0b6" w={3} /> : <LinkIcon size={17} />}
                   </button>
-                  <a href={LINKS.x} target="_blank" rel="noopener" aria-label="X" style={heroIcon}><XIcon size={18} /></a>
-                  <a href={LINKS.telegram} target="_blank" rel="noopener" aria-label={en ? "Telegram" : "텔레그램"} style={heroIcon}><TgIcon size={18} /></a>
+                  <a href={LINKS.x} target="_blank" rel="noopener" className="hero-ico" aria-label="X" style={heroIcon}><XIcon size={18} /></a>
+                  <a href={LINKS.telegram} target="_blank" rel="noopener" className="hero-ico" aria-label={en ? "Telegram" : "텔레그램"} style={heroIcon}><TgIcon size={18} /></a>
                 </div>
               </div>
               {preMode && (
@@ -779,7 +779,9 @@ const RL_TIPS_EN = [
 ];
 
 const h2: React.CSSProperties = { fontSize: "clamp(27px, 3.4vw, 39px)", fontWeight: 800, color: "var(--w-deep)" };
-const heroIcon: React.CSSProperties = { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, border: "1px solid rgba(255,255,255,.28)", borderRadius: 12, color: "#fff" };
+/* 히어로 소셜 아이콘 — 레이아웃만 인라인. 테두리·배경·hover 는 .hero-ico (globals.css).
+   인라인 border 가 있으면 CSS 의 hover 가 우선순위에서 밀린다. */
+const heroIcon: React.CSSProperties = { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 12, color: "#fff" };
 
 /* GNB 미리보기 칩 — 점선 보더 = 데모 컨트롤 시그널 (실배포 시 상태 머신이 대체) */
 const previewChip: React.CSSProperties = { display: "inline-flex", fontSize: 15, fontWeight: 700, color: "var(--cap)", border: "1px dashed var(--bd-input)", borderRadius: 8, padding: "6px 10px", textDecoration: "none", whiteSpace: "nowrap" };
