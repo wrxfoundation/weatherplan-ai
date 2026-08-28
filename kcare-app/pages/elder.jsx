@@ -515,16 +515,16 @@ export default function ElderHome() {
               들어가면서 없앴다 (화이트보드 시안 2026-08-28). */}
           <main
             ref={scrollRef}
-            className="elder-scroll -mx-2 flex min-h-0 flex-1 flex-col gap-[14px] overflow-y-auto px-2 pb-6"
+            className="elder-scroll -mx-2 flex min-h-0 flex-1 flex-col gap-[10px] overflow-y-auto px-2 pb-2"
           >
             {/* 인사 블록 — 스크롤 첫 요소 (모든 탭 공통, order -10).
                 탭 전환 시 스크롤이 맨 위로 돌아오므로(setTab) 인사도 늘 다시 보인다. */}
             <div className="shrink-0" style={{ order: -10 }}>
-              <div className="flex items-center justify-between pt-5">
+              <div className="flex items-center justify-between pt-2">
                 <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
                   K-CARE
                 </span>
-                <Link href="/" className="tap text-[13px] font-bold text-muted/50">
+                <Link href="/" className="flex min-h-[28px] items-center text-[13px] font-bold text-muted/50">
                   데모 홈
                 </Link>
               </div>
@@ -542,7 +542,7 @@ export default function ElderHome() {
                   홈으로
                 </button>
               )}
-              <div className="mt-2 text-[19px] font-medium text-muted">{dateLong}</div>
+              <div className="mt-0.5 text-[19px] font-medium text-muted">{dateLong}</div>
               {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번).
                   성함 옆 원형 버튼 — 컨시어지에게 음성 메시지 (전체 요청 2번).
                   누르면 녹음, 다시 누르면 보낸다 (가족 목소리 보내기와 같은 토글 —
@@ -560,7 +560,7 @@ export default function ElderHome() {
                       ? "말씀 중 — 다시 누르면 박지현 선생님께 보냅니다"
                       : "박지현 선생님께 목소리 메시지 보내기"
                   }
-                  className="btn-press flex h-[86px] w-[86px] shrink-0 flex-col items-center justify-center gap-1 rounded-full text-center"
+                  className="btn-press flex h-[70px] w-[70px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-full text-center"
                   style={
                     concMsg === "rec"
                       ? { background: "#B08D57", color: "#FFFFFF", boxShadow: "0 10px 22px -12px rgba(176,141,87,.8)" }
@@ -577,10 +577,14 @@ export default function ElderHome() {
                   </span>
                 </button>
               </div>
-              {/* 하루 인사 한 줄 — 홈에서만 (화이트보드 시안: 인사말 옆 "뭐하세요?") */}
+              {/* 하루 인사 — 홈에서만 (화이트보드 시안: 인사말 옆 "뭐하세요?").
+                  묻는 말과 시키는 말을 줄로 나눈다 (2026-08-28 요청) — 자동 줄바꿈에
+                  맡기면 "…아래에서 골라 / 주세요."처럼 끊겨 읽는 흐름이 깨진다. */}
               {tab === "home" && (
-                <p className="mt-1 text-[20px] leading-[1.5] text-muted">
-                  오늘은 무얼 도와드릴까요? 아래에서 골라 주세요.
+                <p className="mt-1 text-[20px] leading-[1.3] text-muted">
+                  오늘은 무얼 도와드릴까요?
+                  <br />
+                  아래에서 골라 주세요.
                 </p>
               )}
             </div>
@@ -598,23 +602,23 @@ export default function ElderHome() {
                 </span>
                 {upcoming.length > 1 && <span className="text-[16px] text-muted">옆으로 밀어 보세요</span>}
               </div>
-              <div className="relative -mx-1 mt-2">
-                <div className="flex gap-2.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+              <div className="relative -mx-1 mt-1">
+                <div className="flex gap-2.5 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none]">
                   {upcoming.slice(0, 4).map((e) => (
                     <button
                       key={e.id}
                       onClick={() => setTab("today")}
-                      className="btn-press w-[232px] shrink-0 rounded-[18px] p-4 text-left"
+                      className="btn-press w-[232px] shrink-0 rounded-[18px] px-4 py-2.5 text-left"
                       style={LIGHT_CARD}
                     >
                       <span className="block text-[18px] font-bold text-gold">
                         {isToday(e.at) ? "오늘" : spokenDay(e.at)} {spokenTime(e.at)}
                       </span>
-                      <span className="mt-1 block truncate text-[20px] font-bold leading-[1.35] text-navy">
+                      {/* 일정 종류(복약 알림·병원 동행 …)는 여기서 뺐다 — 오늘 탭
+                          목록에 그대로 있고, 홈은 첫 화면이 스크롤 없이 들어와야 한다
+                          (2026-08-28 요청). 날짜와 제목이면 무엇인지 알아보신다. */}
+                      <span className="mt-0.5 block truncate text-[20px] font-bold leading-[1.3] text-navy">
                         {e.title}
-                      </span>
-                      <span className="mt-0.5 block text-[17px] text-muted">
-                        {EVENT_KINDS[e.kind]?.label || "일정"}
                       </span>
                     </button>
                   ))}
@@ -634,20 +638,20 @@ export default function ElderHome() {
 
             {/* order -7 · 사분면 — 각 상세 화면 진입. 돌아오는 길은 GNB '홈' */}
             <div
-              className="grid shrink-0 grid-cols-2 gap-3"
+              className="grid shrink-0 grid-cols-2 gap-2"
               style={{ order: -7, display: tab === "home" ? undefined : "none" }}
             >
               {HOME_TILES.map((t) => (
                 <button
                   key={t.key}
                   onClick={() => setTab(t.key)}
-                  className="btn-press flex flex-col items-center justify-center gap-1.5 rounded-[22px] px-3 py-7 text-center"
+                  className="elder-tile btn-press flex flex-col items-center justify-center gap-0.5 rounded-[22px] px-3 py-2 text-center"
                   style={LIGHT_CARD}
                 >
                   <span aria-hidden style={{ color: t.color }}>
-                    <Icon name={t.icon} size={40} strokeWidth={1.6} />
+                    <Icon name={t.icon} size={28} strokeWidth={1.6} />
                   </span>
-                  <span className="mt-1 text-[22px] font-black text-navy">{t.label}</span>
+                  <span className="text-[22px] font-black text-navy">{t.label}</span>
                   <span className="text-[17px] leading-[1.3] text-muted">{t.sub}</span>
                 </button>
               ))}
@@ -2107,7 +2111,7 @@ export default function ElderHome() {
               오늘/건강/해주세요/스토어는 홈 사분면 타일, 홈 복귀는 상단 '홈으로'.
               '선생님께 전화'는 전체 탭에서 삭제 (2026-08-12 시트 전체 요청 2번) —
               전화는 오늘 오시는 분에게만, '오늘 일정' 카드 안에서 연다. */}
-          <footer className="shrink-0 pb-3 pt-4">
+          <footer className="shrink-0 pb-2 pt-2">
             {/* 아이콘+라벨 병행 (아이콘 전용 금지). 도와줘요는 탭이 아니라 행동 —
                 누르면 즉시방문요청이 가고 관제가 확인 전화를 건다. 빨강은 SOS
                 전용이라 골드·앰버로 구분한다. */}
