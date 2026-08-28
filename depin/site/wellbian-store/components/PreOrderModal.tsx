@@ -2,7 +2,8 @@
 /* 사전예약 온보딩 모달 (8/27 서우: 가격·수량 창 없이 "구매 온보딩 과정"만 표현)
    개념: 사전예약 = 수요 파악·자리 확보, 결제 아님. 구글 로그인 → 내 기본 지갑 자동 생성 → 예약 완료.
    완료 화면에서 9/15 오픈 알림 안내 + 커뮤니티(텔레그램)·소식(X) 버튼 유도.
-   실구현 대응 지점: 구글 OAuth(POST /api/auth/google) · 지갑 생성(POST /api/wallet) · 예약 등록(POST /api/preorder) */
+   8/28 서우: 지갑 생성 뒤 "예약 대수 설정" 단계 추가 (1계정 최대 100대 — 현황판 표기와 동일).
+   실구현 대응 지점: 구글 OAuth(POST /api/auth/google) · 지갑 생성(POST /api/wallet) · 예약 등록(POST /api/preorder { qty }) */
 import { useState } from "react";
 import { LINKS, MOCK_ORDER } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
@@ -22,8 +23,10 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
   const { en } = useI18n();
   const [step, setStep] = useState(0);
   const [connecting, setConnecting] = useState(false);
+  const [qty, setQty] = useState(1);
 
-  const stepNames = en ? ["Google sign-in", "Wallet created", "Reserved"] : ["구글 로그인", "내 지갑 생성", "예약 완료"];
+  /* 4단계로 늘며 인디케이터가 2줄로 넘쳐 라벨 축약 (8/28) */
+  const stepNames = en ? ["Sign-in", "Wallet", "Quantity", "Done"] : ["로그인", "지갑 생성", "예약 대수", "완료"];
 
   /* 데모: 구글 OAuth 왕복을 0.9s 목동작으로 표현 */
   const googleSignIn = () => {
@@ -91,13 +94,46 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                   ? "A non-custodial wallet linked to your Google account. It will be used to confirm your purchase and receive rewards."
                   : "구글 계정에 연결된 비수탁 간편지갑입니다. 구매 확인과 보상 수령에 사용됩니다."}
               </p>
+              <div style={capStyle}>
+                {en ? "One-time wallet activation (1 XRP) is covered (Terms, Art. 5)." : "등록 지갑 활성화(1 XRP)는 1회 지원됩니다 (약관 제5조)"}
+              </div>
               <button onClick={() => setStep(2)} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>
-                {en ? "Complete pre-order" : "사전예약 완료하기"}
+                {en ? "Next — set quantity" : "다음 — 예약 대수 설정"}
               </button>
             </>
           )}
 
           {step === 2 && (
+            <>
+              <h3 style={h3}>{en ? "Set your quantity" : "사전예약 대수 설정"}</h3>
+              <p style={pStyle}>
+                {en
+                  ? "A pre-order is not a payment — it gauges demand and holds your room. Up to 100 units per account."
+                  : "사전예약은 결제가 아니라 수요 파악과 자리 확보 단계입니다. 1계정 최대 100대까지 설정할 수 있습니다."}
+              </p>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20 }}>
+                <button onClick={() => setQty(Math.max(1, qty - 1))} disabled={qty <= 1} aria-label={en ? "Decrease" : "1대 빼기"} style={{ ...stepBtn, opacity: qty <= 1 ? 0.35 : 1 }}>−</button>
+                <div style={{ minWidth: 120, textAlign: "center" }}>
+                  <span className="mono" style={{ fontSize: 42, fontWeight: 800, color: "var(--w-deep)" }}>{qty}</span>
+                  <span style={{ fontSize: 19, fontWeight: 700, color: "var(--ink-3)", marginLeft: 5 }}>{en ? ` unit${qty > 1 ? "s" : ""}` : "대"}</span>
+                </div>
+                <button onClick={() => setQty(Math.min(100, qty + 1))} disabled={qty >= 100} aria-label={en ? "Increase" : "1대 더하기"} style={{ ...stepBtn, opacity: qty >= 100 ? 0.35 : 1 }}>+</button>
+              </div>
+              <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
+                {[1, 5, 10, 50, 100].map((n) => (
+                  <button key={n} onClick={() => setQty(n)} style={{ border: `1px solid ${qty === n ? "var(--w-main)" : "var(--bd-input)"}`, color: qty === n ? "var(--w-main)" : "var(--cap)", background: qty === n ? "var(--w-tint)" : "#fff", borderRadius: 8, padding: "7px 14px", fontSize: 15.5, fontWeight: 700 }}>{n}</button>
+                ))}
+              </div>
+              <button onClick={() => setStep(3)} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>
+                {en ? `Reserve ${qty} unit${qty > 1 ? "s" : ""}` : `${qty}대 사전예약 완료하기`}
+              </button>
+              <div style={capStyle}>
+                {en ? "Not a commitment — you decide the actual amount when sales open." : "확정이 아닙니다 — 실제 구매 수량은 오픈 때 자유롭게 정할 수 있습니다."}
+              </div>
+            </>
+          )}
+
+          {step === 3 && (
             <>
               <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                 <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, borderRadius: 99, background: "var(--w-main)", flex: "none" }}>
@@ -107,14 +143,14 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
               </div>
               <p style={pStyle}>
                 {en
-                  ? "We'll send you an opening alert on Sept 15. A pre-order is not a payment — you can buy calmly, with no first-come rush, the moment sales open."
-                  : "9월 15일 오픈 알림을 보내드립니다. 사전예약은 결제가 아니며, 오픈과 동시에 선착순 걱정 없이 구매할 수 있습니다."}
+                  ? `Your spot for ${qty} unit${qty > 1 ? "s" : ""} is held. We'll send you an opening alert on Sept 15. A pre-order is not a payment — you can buy calmly, with no first-come rush, the moment sales open.`
+                  : `${qty}대 자리를 확보했습니다. 9월 15일 오픈 알림을 보내드립니다. 사전예약은 결제가 아니며, 오픈과 동시에 선착순 걱정 없이 구매할 수 있습니다.`}
               </p>
               <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main btn-shine" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontSize: 19.5, borderRadius: 10, padding: 14, color: "#fff", textDecoration: "none" }}>
-                <TgIcon size={16} /> {en ? "Join the community" : "텔레그램 커뮤니티 입장"}
+                <TgIcon size={16} /> {en ? "Community (Telegram)" : "커뮤니티(텔레그램)"}
               </a>
               <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, border: "1px solid var(--bd-input)", borderRadius: 10, padding: 13, fontSize: 18, fontWeight: 700, color: "var(--w-deep)", textDecoration: "none" }}>
-                <XIcon size={14} /> {en ? "Follow updates on X" : "X에서 소식 보기"}
+                <XIcon size={14} /> {en ? "Updates (X)" : "소식보기(X)"}
               </a>
               <button onClick={onClose} style={{ fontSize: 16, color: "var(--cap)", alignSelf: "center" }}>
                 {en ? "Close" : "닫기"}
@@ -123,8 +159,8 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
           )}
         </div>
 
-        {step === 1 && (
-          <button onClick={() => setStep(0)} style={{ fontSize: 16, color: "var(--cap)", alignSelf: "flex-start" }}>
+        {(step === 1 || step === 2) && (
+          <button onClick={() => setStep(step - 1)} style={{ fontSize: 16, color: "var(--cap)", alignSelf: "flex-start" }}>
             {en ? "← Back" : "← 이전 단계"}
           </button>
         )}
@@ -134,5 +170,6 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
 }
 
 const h3: React.CSSProperties = { fontSize: 28.5, fontWeight: 800, color: "var(--w-deep)" };
+const stepBtn: React.CSSProperties = { width: 46, height: 46, borderRadius: 99, border: "1px solid var(--bd-input)", background: "#fff", fontSize: 25, fontWeight: 700, color: "var(--w-deep)", lineHeight: 1, display: "inline-flex", alignItems: "center", justifyContent: "center" };
 const pStyle: React.CSSProperties = { fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-3)" };
 const capStyle: React.CSSProperties = { fontSize: 15.5, lineHeight: 1.6, color: "var(--cap)" };

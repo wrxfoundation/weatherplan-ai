@@ -183,12 +183,9 @@ export default function Landing() {
               <h1 style={{ fontSize: "clamp(35px, 4.4vw, 44px)", lineHeight: 1.3, fontWeight: 800 }}>
                 {en ? <>Sold out —<br />be the first to hear about Batch 2</> : <>완판되었습니다 —<br />2차 판매 소식을 가장 먼저 받아보세요</>}
               </h1>
+              {/* 8/28 서우: 히어로 설명 2줄 삭제 (완판 화면도 동일) */}
               <p style={{ fontSize: 19.5, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
                 <b style={{ color: "#fff" }}>Weather Data Token Generator™</b>
-                <br />
-                {en
-                  ? "Just measure your indoor air — your verified data turns into value that comes back to you."
-                  : <>실내 공기를 측정하는 것만으로,<br />검증된 내 데이터가 가치가 되어 돌아옵니다.</>}
               </p>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                 <a href={LINKS.telegram} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, background: "#fff", color: "var(--w-deep)", fontSize: 19.5, fontWeight: 800, borderRadius: 12, padding: "16px 24px", textDecoration: "none" }}>
@@ -218,12 +215,9 @@ export default function Landing() {
               <h1 className={en ? "hero-h1-en" : "hero-h1-ko"} style={{ fontSize: en ? "clamp(31px, 3.7vw, 48px)" : "clamp(35px, 5.2vw, 60px)", lineHeight: 1.25, fontWeight: 800, letterSpacing: "-.01em" }}>
                 {en ? <>Turn your weather data<br />into value</> : <>당신의 날씨 데이터를<br />가치로 바꾸세요</>}
               </h1>
+              {/* 8/28 서우: 히어로 설명 2줄 삭제 — 제품 정식명만 유지 */}
               <p style={{ fontSize: 21, lineHeight: 1.7, color: "rgba(255,255,255,.72)", maxWidth: 520 }}>
                 <b style={{ color: "#fff" }}>Weather Data Token Generator™</b>
-                <br />
-                {en
-                  ? "Just measure your indoor air — your verified data turns into value that comes back to you."
-                  : <>실내 공기를 측정하는 것만으로,<br />검증된 내 데이터가 가치가 되어 돌아옵니다.</>}
               </p>
               {preMode === "dday" ? (
                 /* 사전예약 오픈 전: 오픈 정보 한 줄 */
@@ -232,10 +226,8 @@ export default function Landing() {
                   <span style={{ fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,.65)" }}>{en ? "Book now, buy calmly on Sept 15" : "예약하면 9월 15일에 여유 있게 구매"}</span>
                 </div>
               ) : preMode === "pre" ? (
-                /* 사전예약 중 (8/28 개정): 짧은 가격만 — 안내문은 보조 개념이라 히어로 맨하단 * 주석으로 이동 */
-                <div style={{ fontSize: 18, fontWeight: 700, maxWidth: 520, marginTop: 6 }}>
-                  {en ? <><b>650 RLUSD</b> per unit</> : <>대당 <b>650 RLUSD</b></>}
-                </div>
+                /* 8/28 서우 2차: 히어로 가격 한 줄("대당 650 RLUSD")도 삭제 — 가격은 제품·FAQ에서만 */
+                null
               ) : (
                 /* 판매 표기 = 판매 대수만 (8/27 서우: 잔여·%·게이지 제거) — flex 금지: 텍스트가 flex item으로 쪼개져 "대"가 벌어짐 */
                 <div style={{ marginTop: 6, fontSize: 18, fontWeight: 700 }}>
@@ -246,9 +238,9 @@ export default function Landing() {
               <div ref={heroCtaRef} className="hero-cta-row" style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
                 {preMode === "pre" ? (
                   /* PRE-ORDER — 사전예약 = 실구매 (8/27 서우: 9/5부터 바로), 구매 모달 연결 */
-                  /* 8/28 서우: 버튼은 "사전예약하기"만 — D-day는 아래 누적 라인으로 이동 */
+                  /* 8/28 서우: 버튼 라벨 "사전예약하기" → "사전구매 응모하기" (D-day는 아래 누적 라인) */
                   <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
-                    {en ? "Pre-order now" : "사전예약하기"}
+                    {en ? "Apply for pre-purchase" : "사전구매 응모하기"}
                   </button>
                 ) : preMode === "dday" ? (
                   /* 사전예약 오픈 카운트다운 (9/5) */
@@ -412,7 +404,17 @@ export default function Landing() {
             <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
               {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
             </div>
-            {/* 8/28 서우 3차: 텍스트 칩 행 → 힉스필드 매트 3D 순환 다이어그램 (투명 webp, 글래스 위 직접) */}
+            {/* 8/28 서우 4차: 다이어그램 도입으로 날아간 단계 설명 복원 — 순서별 칩, 도트 색 = 다이어그램 노드 실측값 */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, flexWrap: "wrap", fontSize: 15.5, fontWeight: 700 }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "8px 12px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}><i style={{ width: 9, height: 9, borderRadius: "50%", background: "#617BD7", flexShrink: 0 }} />{en ? "Verified air data" : "검증된 공기질 데이터"}</span>
+              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "8px 12px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}><i style={{ width: 9, height: 9, borderRadius: "50%", background: "#938AFB", flexShrink: 0 }} />{en ? "Real demand — enterprises · APIs · AI" : "실제 수요처 유통 — 기업 · API · AI"}</span>
+              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "8px 12px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}><i style={{ width: 9, height: 9, borderRadius: "50%", background: "#1EA878", flexShrink: 0 }} />{en ? "Revenue" : "수익 발생"}</span>
+              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "8px 12px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}><i style={{ width: 9, height: 9, borderRadius: "50%", background: "#68DBB4", flexShrink: 0 }} />{en ? "The network keeps running" : "네트워크 지속"}</span>
+              <span style={{ color: "var(--w-main)", fontSize: 21, fontWeight: 800 }}>↻</span>
+            </div>
             <img src="/assets/cycle-loop.webp" alt={en ? "The loop: verified data flows to real demand, and revenue keeps the network running" : "선순환 구조: 검증된 데이터가 실제 수요처로 유통되고, 수익이 네트워크를 지속시킵니다"} width={1000} height={1000} style={{ width: "min(560px, 100%)", height: "auto", margin: "0 auto", filter: "drop-shadow(0 12px 24px rgba(27,27,72,.14))" }} />
             <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
               {en
@@ -547,7 +549,7 @@ export default function Landing() {
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "center", fontSize: 15.5, fontWeight: 700, color: "var(--w-main)", background: "var(--w-tint)", borderRadius: 99, padding: "9px 18px", marginBottom: 6 }}>
               {en
                 ? <>Shipping is announced 2 weeks ahead in the community (Telegram) · updates on X <span style={{ color: "color-mix(in oklab, var(--w-main) 45%, var(--ink-4))" }}>· Est. shipping — sequentially from November</span></>
-                : <>배송 2주 전에 커뮤니티(텔레그램) · 공지(X)로 안내드립니다 <span style={{ color: "color-mix(in oklab, var(--w-main) 45%, var(--ink-4))" }}>· 배송 시작 예상 — 11월 중 순차 배송</span></>}
+                : <>배송 2주 전에 커뮤니티(텔레그램) · 공지(X)로 안내드립니다 <span style={{ color: "color-mix(in oklab, var(--w-main) 45%, var(--ink-4))" }}>· 배송 시작 예상 — 11월 중 순차 배송 예정</span></>}
             </div>
             <h2 style={h2}>{en ? "Your device becomes a node 3 minutes after it arrives" : "디바이스 도착 후 3분이면 노드가 됩니다"}</h2>
             <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Setup is easy — open the box and follow four steps." : "등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝."}</p>
@@ -651,7 +653,7 @@ export default function Landing() {
                 <span style={{ fontSize: 15.5, color: "var(--cap)" }}>·</span>
                 <span className="mono" style={{ fontSize: 16.5, fontWeight: 800, color: "var(--w-main)" }}>{dSaleBadge}</span>
               </div>
-              <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px" }}>{en ? "Pre-order now" : "사전예약하기"}</button>
+              <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px" }}>{en ? "Apply for pre-purchase" : "사전구매 응모하기"}</button>
             </div>
           ) : (
           <div className="stickybar-in">
@@ -685,7 +687,8 @@ function HowCard({ img, title, desc }: { img: string; title: string; desc: React
     /* 글래스 카드 (8/28 서우: 비전 배경 위 반투명 — 뒤 도시가 블러로 비침) */
     /* 8/28 서우 3차: SVG 아이콘 타일 → 힉스필드 매트 3D 아이콘 (투명 webp, 카드 상단 대형) */
     <div style={{ border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.25)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "26px 24px 30px", display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
-      <img src={img} alt="" width={384} height={384} style={{ width: 120, height: 120, objectFit: "contain", filter: "drop-shadow(0 10px 18px rgba(27,27,72,.16))" }} />
+      {/* 8/28 서우 4차: 받침 복원본은 가로가 길어 정사각 박스에선 작아 보임 → 높이 기준으로 4개 광학 통일 */}
+      <img src={img} alt="" width={384} height={384} style={{ height: 120, width: "auto", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0 10px 18px rgba(27,27,72,.16))" }} />
       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
       <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
     </div>

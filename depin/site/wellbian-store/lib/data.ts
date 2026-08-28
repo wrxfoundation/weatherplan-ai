@@ -98,17 +98,18 @@ export const FAQS = [
   { q: "가격이 어떻게 되나요?", a: "대당 650 RLUSD입니다. 결제는 RLUSD로만 진행됩니다." },
   { q: "RLUSD는 어디서 구하나요?", a: "국내·해외 거래소에서 RLUSD를 구매한 뒤 XRPL 네트워크로 개인 지갑에 출금하면 됩니다. 출금 시 반드시 XRPL판 RLUSD를 선택하세요." },
   { q: "환불은 어떻게 되나요?", a: "제품 수령일부터 7일 이내 환불 가능합니다. 단, 리딤코드 사용 또는 노드 연동 시 환불이 제한됩니다(전자상거래법 제17조 제6항)." },
-  { q: "설치가 어렵지 않나요?", a: "전원을 켠 뒤 스마트폰 블루투스로 기기를 연결해 집 Wi-Fi를 설정하는 것이 첫 순서입니다. 그다음 박스 안 리딤카드 QR로 지갑 연결·코드 입력까지 약 3분이면 완료됩니다. 벽걸이·탁상 모두 지원합니다." },
+  { q: "설치가 어렵지 않나요?", a: "전원을 켠 뒤 스마트폰 블루투스로 기기를 연결해 Wi-Fi를 설정하는 것이 첫 순서입니다. 그다음 박스 안 리딤카드 QR로 지갑 연결·코드 입력까지 약 3분이면 완료됩니다. 벽걸이·탁상 모두 지원합니다." },
   { q: "지갑이 처음인데 괜찮나요?", a: "네. 구글 계정으로 가입하면 내 지갑이 자동으로 만들어집니다. 지갑 활성화(1 XRP)는 1회 지원되며(약관 제5조), 연동까지 가이드를 제공합니다." },
   { q: "보상은 어떻게 지급되나요?", a: "측정 데이터가 검증되면 네트워크 원칙에 따라 WLBN이 지급됩니다. 지급량과 가치는 보장되지 않습니다." },
   { q: "전기료가 많이 나오나요?", a: "상시 가동 기준 월 전기료는 1,000원 미만입니다." },
   { q: "제품 보증 기간은요?", a: "구매일로부터 1년 무상 보증입니다. 자세한 조건은 이용약관을 참고하세요." },
 ];
 
-/* 기본 순서(8/27 서우 확정): 수령 → 블루투스 페어링 → 집 Wi-Fi 연동이 선행, 그다음 리딤·NFT */
+/* 기본 순서(8/27 서우 확정): 수령 → 블루투스 페어링 → Wi-Fi 연동이 선행, 그다음 리딤·NFT
+   8/28 서우: "집 Wi-Fi" → "Wi-Fi" (가정 외 설치처도 포함 — 스텝·FAQ 동일 적용) */
 export const LINK_STEPS: { n: string; t: string; d: string; d2?: string }[] = [
   { n: "1", t: "블루투스로 기기 연결", d: "전원을 켜고 스마트폰 블루투스로 기기를 인식합니다" },
-  { n: "2", t: "집 Wi-Fi 연동", d: "연결된 기기에 집 Wi-Fi를 설정합니다 — 측정 시작" },
+  { n: "2", t: "Wi-Fi 연동", d: "연결된 기기에 Wi-Fi를 설정합니다 — 측정 시작" },
   { n: "3", t: "리딤카드 QR & 지갑 연결", d: "박스 안 카드의 QR로 등록 페이지 진입 — 처음이어도 안내합니다" },
   { n: "4", t: "코드 입력 & NFT 발급", d: "리딤코드로 정품 확인 — 노드 가동", d2: "제네시스 넘버가 영구 기록됩니다" },
 ];
@@ -262,7 +263,7 @@ export const FAQS_EN = [
   { q: "How much does it cost?", a: "650 RLUSD per unit. Payment is in RLUSD only." },
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on a domestic or global exchange, then withdraw it to your personal wallet over the XRPL network. Always select the XRPL version of RLUSD when withdrawing." },
   { q: "What is the refund policy?", a: "Refunds are available within 7 days of receiving the product. Refunds are restricted once the redeem code is used or the node is linked (Korean E-Commerce Act, Art. 17-6)." },
-  { q: "Is setup difficult?", a: "First, power on and pair the device via Bluetooth to set up your home Wi-Fi. Then scan the redeem card QR in the box for wallet connection and code entry — about 3 minutes in total. Wall and desktop mounting are both supported." },
+  { q: "Is setup difficult?", a: "First, power on and pair the device via Bluetooth to set up Wi-Fi. Then scan the redeem card QR in the box for wallet connection and code entry — about 3 minutes in total. Wall and desktop mounting are both supported." },
   { q: "I've never used a wallet. Is that okay?", a: "Yes. Signing up with your Google account creates your wallet automatically. One-time activation (1 XRP) is covered (Terms, Art. 5), and the guide walks you through node linking." },
   { q: "How are rewards paid?", a: "When your measurements are verified, WLBN is paid under network rules. Amounts and value are not guaranteed." },
   { q: "How much electricity does it use?", a: "Running around the clock costs under ₩1,000 a month." },
@@ -308,7 +309,7 @@ export const FAQS_EXTRA_EN = [
 
 export const LINK_STEPS_EN: { n: string; t: string; d: string; d2?: string }[] = [
   { n: "1", t: "Pair the device via Bluetooth", d: "Power on and detect the device with your phone's Bluetooth" },
-  { n: "2", t: "Connect it to your home Wi-Fi", d: "Set up home Wi-Fi on the paired device — measurement starts" },
+  { n: "2", t: "Connect it to Wi-Fi", d: "Set up Wi-Fi on the paired device — measurement starts" },
   { n: "3", t: "Scan the redeem card QR & connect a wallet", d: "The card inside the box opens the registration page — guided even for first-timers" },
   { n: "4", t: "Enter the code & mint your NFT", d: "The redeem code verifies authenticity — your node goes live", d2: "Your Genesis Number is recorded permanently" },
 ];
