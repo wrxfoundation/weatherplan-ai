@@ -263,7 +263,7 @@ export default function ElderHome() {
   };
   const [storeSel, setStoreSel] = useState({});
   const [storeSent, setStoreSent] = useState(null); // 'approval' | 'ordered'
-  const [storeCat, setStoreCat] = useState("pharmacy"); // 스토어 탭 분류
+  const [storeCat, setStoreCat] = useState("vitamin"); // 스토어 탭 분류 (약국 분류는 삭제 — lib/store.js)
   const [storeGroup, setStoreGroup] = useState(0); // 소분류 — 분류를 바꾸면 첫 칸으로 돌아간다
   // askOpen(해주세요 아코디언)은 타일 그리드 + 시트로 바뀌면서 없앴다 (2026-08-24)
   const [vitalsOpen, setVitalsOpen] = useState(false); // 건강 탭 — 몸 상태 세부

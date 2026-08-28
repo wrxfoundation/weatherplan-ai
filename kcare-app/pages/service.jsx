@@ -456,12 +456,13 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
           </p>
         </Section>
 
-        {/* ── 스토어 — 약국은 판매가 아니라 구매대행이다. 이 경계를 대외 페이지에도 쓴다 ── */}
+        {/* ── 스토어 — 일반의약품은 다루지 않는다 (2026-08-28 확인: 앱 결제
+            구매대행 불가). 영양제 등 건강기능식품·의약외품과 생활용품만 다룬다. ── */}
         <Section
           collapsible
           eyebrow="필요한 물건"
           title="사다 드리고, 영수증을 남깁니다"
-          desc="장보기와 약 심부름이 가장 자주 오는 부탁입니다. 앱에서 고르시면 방문 때 함께 가져다 드립니다."
+          desc="장보기가 가장 자주 오는 부탁입니다. 앱에서 고르시면 방문 때 함께 가져다 드립니다."
         >
           <div className="grid gap-3 sm:grid-cols-2">
             {STORE_CATALOG.map((c) => (
@@ -484,8 +485,8 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             ))}
           </div>
           <p className="mt-5 rounded-[14px] border border-navy/[.09] bg-white/70 px-5 py-4 text-[14.5px] leading-[1.85] text-muted">
-            약은 저희가 팔지 않습니다 — 약국에서 대신 구매하고 영수증을 남깁니다 (약사법 경계).
-            물건값에 얹는 마진은 없고, 대행 수수료는 부탁 종류에 따라 상담에서 안내드립니다.
+            의약품은 다루지 않습니다 — 영양제 등 건강기능식품과 생활용품만 판매합니다.
+            대행 수수료는 부탁 종류에 따라 상담에서 안내드립니다.
           </p>
         </Section>
 

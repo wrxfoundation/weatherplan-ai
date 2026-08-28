@@ -15,7 +15,8 @@ import { honorific } from "../../lib/tracks";
 //
 // 가격은 navy 로 쓴다 — 샘플은 빨간 가격이지만 이 앱에서 빨강은 위험 신호
 // 전용이다 (SOS · 낙상). 상거래 숫자에 쓰면 그 원칙이 무너진다.
-// 약국은 판매가 아니라 구매대행 — 약사법 경계라 배지로 명시한다.
+// 약국(일반의약품) 분류는 2026-08-28 자로 뺐다 — 앱 결제 구매대행 불가 확인.
+// 의약외품·건강기능식품(영양제)만 남는다. lib/store.js 주석 참고.
 
 export default function StorePage() {
   const { state, dispatch } = useAppState();
@@ -23,7 +24,7 @@ export default function StorePage() {
   // 첫 방문 안전진단(컨시어지)이 담아 둔 생활안전용품 — 자동으로 선택된 채 시작
   const safetyCart = state.demo.safetyCart || [];
   const [sel, setSel] = useState(() => Object.fromEntries(safetyCart.map((id) => [id, true])));
-  const [cat, setCat] = useState(safetyCart.length > 0 ? "safety" : "pharmacy");
+  const [cat, setCat] = useState(safetyCart.length > 0 ? "safety" : "vitamin");
   const [groupIdx, setGroupIdx] = useState(0);
   const [ordered, setOrdered] = useState(false);
   const [tab, setTab] = useState("shop"); // shop | orders — 구매내역 조회 (2026-08-12 시트)
@@ -158,7 +159,7 @@ export default function StorePage() {
           })}
         </div>
 
-        {/* 하위분류 칩 — 약국처럼 그룹이 여럿일 때만. 가로 스크롤. 그냥 두면 오른쪽이 잘린 것처럼 보여서
+        {/* 하위분류 칩 — 영양제처럼 그룹이 여럿일 때만. 가로 스크롤. 그냥 두면 오른쪽이 잘린 것처럼 보여서
             더 있는 줄 모른다. 오른쪽 끝을 흐리게 덮어 "이어진다"를 보여 준다. */}
         {active.groups.length > 1 && (
           <div className="relative -mx-1">
@@ -234,7 +235,7 @@ export default function StorePage() {
                         <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
                       ) : (
                         /* 사진 없음 — 콘솔에서 올리기 전 상태.
-                           분류 아이콘을 쓰면 약국(+)이 업로드 버튼처럼 보여서 글자만 둔다. */
+                           분류 아이콘을 쓰면 업로드 버튼처럼 보여서 글자만 둔다. */
                         <span className="absolute inset-0 flex items-center justify-center">
                           <span className="rounded-full bg-white/70 px-2.5 py-1 text-[10.5px] font-bold text-navy/35">
                             사진 준비 중
@@ -282,7 +283,7 @@ export default function StorePage() {
               <span className="text-[15px] font-bold text-navy">담은 물품 {items.length}건</span>
               <span className="font-num text-[19px] font-bold text-navy">{fmtWon(total)}</span>
             </div>
-            <p className="mt-1 text-[11px] text-muted">배송비 포함 · 약국 물품은 구매대행 후 영수증이 첨부됩니다</p>
+            <p className="mt-1 text-[11px] text-muted">배송비 포함 · 다음 안심방문 또는 택배로 배송됩니다</p>
           </Card>
         )}
 
@@ -304,7 +305,6 @@ export default function StorePage() {
 }
 
 // 구매내역 조회 — 누가 · 어떤 경로로 · 무엇을 · 얼마에 샀는지.
-// 약국 물품은 구매대행이라 영수증 번호를 같이 보여준다 (우리가 판 게 아니다).
 function OrderHistory({ orders, status }) {
   if (orders.length === 0)
     return (
@@ -355,9 +355,6 @@ function OrderHistory({ orders, status }) {
           </Card>
         );
       })}
-      <p className="px-1 text-[11px] leading-[1.7] text-muted">
-        약국 물품은 K-CARE가 판매하지 않습니다 — 약국에서 대신 구매하고 영수증을 남깁니다.
-      </p>
     </>
   );
 }

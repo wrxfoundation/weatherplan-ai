@@ -70,7 +70,7 @@ export default function ConciergePage() {
   const [escortRecorded, setEscortRecorded] = useState(false);
   const [escortSaved, setEscortSaved] = useState(false);
   const [shopSel, setShopSel] = useState({});
-  const [shopCat, setShopCat] = useState("pharmacy"); // 제안 탭 스토어 분류
+  const [shopCat, setShopCat] = useState("vitamin"); // 제안 탭 스토어 분류 (약국 분류는 삭제)
   const [askProposed, setAskProposed] = useState({}); // 제안한 해주세요 항목
   const [shopSent, setShopSent] = useState(false);
   const [apptDone, setApptDone] = useState(false);
@@ -1442,7 +1442,7 @@ export default function ConciergePage() {
                               id: `rq-${Date.now()}`,
                               dir: "fromConcierge",
                               type: "결제가 필요합니다",
-                              detail: `구매대행: ${items.map((i) => i.name).join(", ")} — 약국·마트 구매 후 다음 방문 때 전달합니다.`,
+                              detail: `구매대행: ${items.map((i) => i.name).join(", ")} — 마트 구매 후 다음 방문 때 전달합니다.`,
                               amount: est,
                               preferredDate: null,
                               urgency: "normal",
@@ -2038,7 +2038,7 @@ export default function ConciergePage() {
                       id: `rq-${Date.now()}`,
                       dir: "fromConcierge",
                       type: "약이 부족합니다",
-                      detail: `보충 필요: ${refill.join(", ")}. 고객 요청 시 약국 구매대행으로 진행합니다.`,
+                      detail: `보충 필요: ${refill.join(", ")}. 다음 방문 때 보충해 드립니다.`,
                       amount: estAmount,
                       preferredDate: null,
                       urgency: "normal",

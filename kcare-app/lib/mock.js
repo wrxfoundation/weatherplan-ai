@@ -262,7 +262,7 @@ export const PRIORITY_PRESETS = [
 ];
 
 // STORE_ITEMS(6개 평면 목록)는 여기 있었다 — 스토어 재편 이후 lib/store.js 의
-// STORE_CATALOG(약국·영양제·일상용품·생활안전용품 4분류)이 유일한 카탈로그다.
+// STORE_CATALOG(영양제·일상용품·생활안전용품 3분류)이 유일한 카탈로그다. 약국 분류는 2026-08-28 삭제 (lib/store.js 주석).
 
 // MOU 병원 — 진료 과목마다 한 곳 이상 (회의 8)
 //

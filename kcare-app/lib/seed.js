@@ -70,8 +70,8 @@ export const INITIAL_REQUESTS = [
   {
     id: "rq1",
     dir: "fromConcierge",
-    type: "약이 부족합니다",
-    detail: "해열제와 파스 잔여량이 적습니다. 다음 안심방문 전에 약국 구매대행이 필요합니다.",
+    type: "생활용품이 부족합니다",
+    detail: "미끄럼방지 슬리퍼가 낡았고 물티슈가 떨어져 갑니다. 다음 안심방문 전에 스토어 주문이 필요합니다.",
     amount: 18000,
     preferredDate: null,
     urgency: "normal",
@@ -151,7 +151,7 @@ export const SEED_REPORTS = [
 ];
 
 // 스토어 구매내역 시드 — 보호자 스토어 '구매내역 조회' (2026-08-12 시트).
-// 약국 품목은 우리가 파는 게 아니라 구매대행이므로 영수증 번호를 함께 남긴다.
+// 일반의약품(안티푸라민 등)과 약국 영수증은 뺐다 — 약국 분류 삭제 (lib/store.js).
 export const SEED_ORDERS = [
   {
     id: "od-2026-0731",
@@ -159,12 +159,11 @@ export const SEED_ORDERS = [
     by: "김민수",
     channel: "보호자 스토어",
     items: [
-      { id: "pa1", name: "안티푸라민 쿨파워 10매 ×4", qty: 1, price: 9500 },
-      { id: "dr2", name: "박카스 디 (10병)", qty: 2, price: 5700 },
+      { id: "dl1", name: "소독티슈", qty: 1, price: 3700 },
+      { id: "vt1", name: "영국산 비타민C 3000", qty: 1, price: 26000 },
     ],
     ship: 3000,
     status: "delivered",
-    receipt: "대치온누리약국 · 영수증 #A-7731",
     note: "8/1 안심방문 때 함께 전달",
   },
   {
