@@ -30,24 +30,27 @@ export function LangToggle() {
   );
 }
 
-/* GNB: 로고 + 「제품」 1항목 + KO/EN 토글 (§5.4) + 상태형 우측 슬롯(완판 → 소식 CTA) */
+/* GNB: 로고 + 「LAUNCH」 1항목 + KO/EN 토글 (§5.4) + 상태형 우측 슬롯(완판 → 소식 CTA) */
 export function Gnb({ dday, right }: { dday?: string; right?: React.ReactNode }) {
   const { en } = useI18n();
   return (
     <header
       style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        height: 64, padding: "0 40px", borderBottom: "1px solid var(--line)",
+        /* 8/28 서우: GNB 로고 2배(29→58px) — 64px 헤더에는 안 들어가 88px로 올린다 */
+        height: 88, padding: "0 40px", borderBottom: "1px solid var(--line)",
         background: "#fff", position: "sticky", top: 0, zIndex: 50,
       }}
       className="gnb-root"
     >
       <div style={{ display: "flex", alignItems: "center", gap: 36 }}>
-        <Link href="/" style={{ display: "inline-flex" }}>
-          <Image src="/assets/wb-black.png" alt="wellbian" width={110} height={22} style={{ height: 29, width: "auto" }} priority />
+        <Link href="/" style={{ display: "inline-flex", flexShrink: 0 }}>
+          {/* width/height는 실제 픽셀(593x215)로 — 기존 110x22는 비율이 어긋나 레이아웃 예약 공간이 틀렸다 */}
+          <Image src="/assets/wb-black.png" alt="wellbian" width={593} height={215} className="gnb-logo" priority />
         </Link>
         <nav style={{ display: "flex", gap: 26, fontSize: 18, fontWeight: 600, color: "var(--ink-2)" }} className="desk-only">
-          <Link href="/" style={{ color: "inherit" }}>{en ? "Product" : "제품"}</Link>
+          {/* 8/28 서우: 「제품」 → LAUNCH. KO/EN 공통 표기라 언어 분기를 두지 않는다 */}
+          <Link href="/" style={{ color: "inherit", letterSpacing: ".02em" }}>LAUNCH</Link>
         </nav>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

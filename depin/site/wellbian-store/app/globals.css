@@ -190,6 +190,10 @@ h1, h2, h3, p { margin: 0; }
 /* 락업 색 = WEATHER DATA ECONOMY 아이브로우와 동일 톤 (8/27 서우, 로고 PNG는 wb-lav/xrpl-lav 틴트본) */
 .hero-lockup .lk-x { font-size: 22px; font-weight: 700; color: color-mix(in oklab, var(--w-main) 45%, white); line-height: 1; }
 .hero-lockup .lk-xrpl { height: 27px; width: auto; opacity: .92; }
+/* 8/28 서우: GNB 웰비안 로고 2배 (29 → 58px).
+   flex-shrink: 0 이 없으면 좁은 폭에서 flex가 이미지를 가로로 찌그러뜨린다
+   (모바일 58px 실험 시 160px → 106px로 눌리며 비율이 깨졌다). */
+.gnb-logo { height: 58px; width: auto; flex-shrink: 0; }
 @media (max-width: 720px) {
   .hero-lockup { gap: 9px; }
   .hero-lockup .lk-wb { height: 24px; }
@@ -381,7 +385,12 @@ h1, h2, h3, p { margin: 0; }
 
 /* ── 크롬 반응형 (chrome.tsx) ── */
 @media (max-width: 720px) {
-  .gnb-root { height: 54px !important; padding: 0 16px !important; }
+  /* 8/28 서우: 로고 2배는 데스크톱 기준.
+     모바일은 우측 그룹(상태 칩 + KO/EN)이 253px을 쓰고 가용폭이 358px뿐이라 2배(폭 160)가
+     들어가지 않는다. 억지로 넣으면 flex가 이미지를 가로로 찌그러뜨린다(58px 실험 시 160 → 106).
+     비율이 깨지지 않는 최대치인 36px(폭 99)로 잡는다 — 기존 29px 대비 1.24배. */
+  .gnb-root { height: 60px !important; padding: 0 16px !important; }
+  .gnb-logo { height: 36px !important; }
   .s9-root { padding: 32px 20px 90px !important; }
   .s9-invite { flex-direction: column; align-items: flex-start !important; padding: 22px !important; }
 }
