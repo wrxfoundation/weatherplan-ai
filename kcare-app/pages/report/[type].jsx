@@ -68,7 +68,7 @@ function DocShell({ title, period, backHref, backLabel, docType, glossary = [], 
 
         {/* A4 시트 — 문서 본문이라 <main> 이다.
             div 로 두면 스크린리더에 본문 랜드마크가 없어 처음부터 훑어야 한다. */}
-        <main className="report-sheet mx-auto w-full max-w-[794px] bg-white px-[15mm] py-[13mm] shadow-[0_18px_44px_-24px_rgba(10,31,60,.4)] print:max-w-none print:shadow-none">
+        <main className="report-sheet mx-auto w-full max-w-[794px] bg-white px-4 py-6 shadow-[0_18px_44px_-24px_rgba(10,31,60,.4)] sm:px-[15mm] sm:py-[13mm] print:max-w-none print:shadow-none">
           <header className="flex items-end justify-between border-b-2 pb-3" style={{ borderColor: NAVY }}>
             <div>
               <div className="font-num text-[15px] font-extrabold tracking-[.06em]" style={{ color: NAVY }}>
@@ -331,7 +331,7 @@ function VisitReport() {
       docType="visit"
     >
       {/* 헤더 — 누구의 · 몇 회차 · 누가 다녀왔는지 + 종합 판정 + 방문확인 스탬프 */}
-      <div className="avoid-break mt-3 flex items-start gap-4 rounded-[14px] px-5 py-4" style={{ background: NAVY }}>
+      <div className="avoid-break mt-3 flex flex-col gap-3 rounded-[14px] px-5 py-4 sm:flex-row sm:items-start sm:gap-4" style={{ background: NAVY }}>
         <div className="min-w-0 flex-1 text-white">
           <div className="text-[10px] font-bold tracking-[.08em] text-white/60">
             케이케어 방문 리포트 · {H.round}회차 · 데모 예시
@@ -345,7 +345,7 @@ function VisitReport() {
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold" style={{ background: "rgba(201,164,107,.22)", color: "#E8D5B0" }}>
+          <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-bold sm:text-[11px]" style={{ background: "rgba(201,164,107,.22)", color: "#E8D5B0" }}>
             <span aria-hidden className="h-[6px] w-[6px] rounded-full" style={{ background: "#C9A46B" }} />
             {H.verdict}
           </span>
@@ -358,9 +358,9 @@ function VisitReport() {
       </div>
 
       {/* 요약 — 전체 도넛 + 범례 + 축별 도넛 3개 */}
-      <div className="avoid-break mt-3 flex items-center gap-6 rounded-[14px] border border-navy/[.1] px-5 py-4">
+      <div className="avoid-break mt-3 flex flex-col items-center gap-4 rounded-[14px] border border-navy/[.1] px-5 py-4 sm:flex-row sm:gap-6">
         <Donut counts={all} size={96} thick={14} center={{ n: ALL_ITEMS.length, label: "항목" }} />
-        <div className="grid grid-cols-2 gap-x-5 gap-y-1.5">
+        <div className="grid w-full grid-cols-2 gap-x-5 gap-y-2 sm:w-auto sm:gap-y-1.5">
           {STATE_ORDER.map((k) => (
             <div key={k} className="flex items-center gap-2">
               <span aria-hidden className="h-[9px] w-[9px] shrink-0 rounded-[2px]" style={{ background: RESULT_TONE[k].dot }} />
@@ -369,7 +369,7 @@ function VisitReport() {
             </div>
           ))}
         </div>
-        <div className="ml-auto flex gap-4">
+        <div className="flex gap-5 sm:ml-auto sm:gap-4">
           {VISIT_REPORT.axes.map((a) => (
             <div key={a.axis} className="text-center">
               <Donut counts={countStates(a.items)} size={54} thick={9} />
@@ -388,7 +388,7 @@ function VisitReport() {
       </div>
 
       {/* 3열 — 몸 · 마음 · 집 */}
-      <div className="mt-3 grid grid-cols-3 gap-3">
+      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {VISIT_REPORT.axes.map((a) => (
           <div key={a.axis} className="avoid-break rounded-[14px] border border-navy/[.1] px-3.5 py-3">
             <div className="flex items-center gap-2 border-b-2 pb-1.5" style={{ borderColor: NAVY }}>
@@ -415,7 +415,7 @@ function VisitReport() {
           </span>
           보호자께서 꼭 확인해 주세요
         </div>
-        <div className="mt-2.5 grid grid-cols-2 gap-x-6 gap-y-2">
+        <div className="mt-2.5 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
           {VISIT_REPORT.guardianTodos.map((t) => (
             <div key={t.tag} className="flex gap-2">
               <span className="mt-[1px] h-fit shrink-0 rounded-[5px] px-1.5 py-[2px] text-[9.5px] font-bold" style={{ background: "rgba(255,255,255,.13)", color: "#E8D5B0" }}>

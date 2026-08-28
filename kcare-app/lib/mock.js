@@ -23,6 +23,9 @@ export const GUARDIANS = [
   { name: "김현우", relation: "삼남", residence: "시드니 (AEST)", isPrimary: false, share: "30%" },
 ];
 
+// 컨시어지 2인 — 지금은 화면에서 직접 쓰지 않는다 (관제·컨시어지 화면은
+// lib/rosters.js 의 로스터를, 어르신 화면은 ELDER_VISITORS 를 쓴다).
+// 페르소나의 단일 출처로 남겨 둔다 — 이름이 바뀌면 여기부터 고친다.
 export const CONCIERGES = [
   { name: "박지현", role: "주 동행 · 간호사 출신" },
   { name: "서다인", role: "부 동행" },

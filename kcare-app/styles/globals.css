@@ -290,6 +290,23 @@
   }
 }
 
+/* 방문 리포트 모바일 — 보호자가 폰에서 본다 (2026-08-28 요청).
+   A4 문서라 9~12px 로 짜여 있는데 폰에서는 그대로면 읽히지 않는다.
+   폭 640px 미만에서만 본문 계열을 한 단계씩 올린다. 인쇄(@media print)와
+   태블릿 이상은 원래 크기 그대로 — A4 레이아웃이 무너지면 안 된다. */
+@media screen and (max-width: 639px) {
+  .report-sheet .text-\[9px\] { font-size: 11px; }
+  .report-sheet .text-\[9\.5px\] { font-size: 11.5px; }
+  .report-sheet .text-\[10px\] { font-size: 12.5px; }
+  .report-sheet .text-\[10\.5px\] { font-size: 13px; }
+  .report-sheet .text-\[11px\] { font-size: 13.5px; }
+  .report-sheet .text-\[11\.5px\] { font-size: 14px; }
+  .report-sheet .text-\[12px\] { font-size: 14.5px; }
+  .report-sheet .text-\[13px\] { font-size: 15px; }
+  /* 표는 폰에서 가로로 흐를 수 있게 — 축소해서 읽는 것보다 낫다 */
+  .report-sheet table { display: block; overflow-x: auto; }
+}
+
 /* ─── 터치 타깃 하한 — 화면 폭과 무관 ───────────────────────────────────
    WCAG 2.2 AA(2.5.8)의 24px 최소는 뷰포트가 아니라 사람에게 걸리는 기준이다.
    손이 떨리는 분도, 터치 노트북을 쓰는 관제 직원도 같은 버튼을 누른다.

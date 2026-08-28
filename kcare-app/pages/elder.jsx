@@ -77,13 +77,13 @@ const ASK_TILES = [
   { no: 14, label: "자녀 동행", sub: "손주 등하원", icon: "users" },
 ];
 
-// GNB — 전체 요청(2026-08-28 시트): 하단 아이콘 2개, 바로연락 · 가족.
+// GNB — 전체 요청(2026-08-28 시트): 하단 아이콘 2개, 도와줘요 · 가족.
 // 오늘/건강/해주세요/스토어 진입은 홈의 사분면 타일이 맡고, 홈 복귀는
 // 상세 화면 맨 위의 '홈으로' 버튼이 맡는다 (GNB 홈 버튼은 시트 요청으로 뺐다).
-// 바로연락은 화면 이동이 아니라 행동(즉시방문요청 → 관제 확인 전화)이라
-// action 으로 가른다. 옛 이름: 지금 와 주세요 → 도와줘요 → 바로연락.
+// 도와줘요는 화면 이동이 아니라 행동(즉시방문요청 → 관제 확인 전화)이라
+// action 으로 가른다. 옛 이름: 지금 와 주세요 → (잠시 바로연락) → 도와줘요.
 const TABS = [
-  { key: "help", label: "바로연락", glyph: "door", action: true },
+  { key: "help", label: "도와줘요", glyph: "door", action: true },
   { key: "family", label: "가족", glyph: "users" },
 ];
 
@@ -436,7 +436,7 @@ export default function ElderHome() {
     setConcMsg("rec"); // sent 상태에서 다시 누르면 새로 녹음
   };
 
-  // 즉시 방문 요청 — GNB '바로연락' 버튼이 부른다 (옛 '지금 와 주세요' 플로팅 버튼).
+  // 즉시 방문 요청 — GNB '도와줘요' 버튼이 부른다 (옛 '지금 와 주세요' 플로팅 버튼).
   // 요청이 곧 방문은 아니다 — 관제가 먼저 전화로 확인하고 배차한다 (시트 어르신 전체 2번).
   const askVisit = () => {
     if (visitAsked) return;
@@ -1981,12 +1981,12 @@ export default function ElderHome() {
           </main>
 
           {/* ── 고정 푸터: GNB (스크롤 밖 — 06 원칙 5) ──
-              전체 요청(2026-08-28 시트): 하단 아이콘 2개 — 바로연락 · 가족.
+              전체 요청(2026-08-28 시트): 하단 아이콘 2개 — 도와줘요 · 가족.
               오늘/건강/해주세요/스토어는 홈 사분면 타일, 홈 복귀는 상단 '홈으로'.
               '선생님께 전화'는 전체 탭에서 삭제 (2026-08-12 시트 전체 요청 2번) —
               전화는 오늘 오시는 분에게만, '오늘 일정' 카드 안에서 연다. */}
           <footer className="shrink-0 pb-3 pt-4">
-            {/* 아이콘+라벨 병행 (아이콘 전용 금지). 바로연락은 탭이 아니라 행동 —
+            {/* 아이콘+라벨 병행 (아이콘 전용 금지). 도와줘요는 탭이 아니라 행동 —
                 누르면 즉시방문요청이 가고 관제가 확인 전화를 건다. 빨강은 SOS
                 전용이라 골드·앰버로 구분한다. */}
             <nav className="flex border-t border-navy/[.12] pt-2">
@@ -2004,7 +2004,7 @@ export default function ElderHome() {
                         askVisit();
                         setTab("home"); // 요청 직후 '관제에서 전화를 드립니다' 카드가 보이게
                       }}
-                      aria-label={done ? "방문 요청을 보냈습니다 — 관제 전화 대기" : "바로연락 — 즉시 방문 요청"}
+                      aria-label={done ? "방문 요청을 보냈습니다 — 관제 전화 대기" : "도와줘요 — 즉시 방문 요청"}
                       className="flex min-h-[60px] flex-1 flex-col items-center justify-center gap-1"
                     >
                       <span aria-hidden style={{ color: done ? "#1E7A5A" : "#B08D57" }}>

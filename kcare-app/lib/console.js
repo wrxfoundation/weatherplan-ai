@@ -455,7 +455,7 @@ export const STAFF_QUALITY_DIST = [
 ];
 
 export const STAFF_QUALITY_OPS = [
-  { k: "2인 페어 준수", v: "100%", note: "예외 0건 — 시스템 강제" },
+  { k: "2인 배차 원칙 준수", v: "100%", note: "2인 필요 건 전건 2인 — 시스템 강제" },
   { k: "리포트 정시 전송", v: "96%", note: "동행 후 2시간 내" },
   { k: "브리핑 사전 확인", v: "89%", note: "미확인 시 개별 콜" },
   { k: "GPS 체크인 정시", v: "94%", note: "지연 대부분 교통" },
@@ -1126,7 +1126,7 @@ export const BRANCH_TOTALS = [
   { k: "운영 지점", v: "4", note: "+ 오픈 준비 1 (일산·고양)" },
   { k: "총 가입 가구", v: "128", note: "본점 68 · 지점 60" },
   { k: "총 컨시어지", v: "46", note: "수습 7 포함" },
-  { k: "전 지점 페어 준수", v: "100%", note: "단독 배차 0 · 예외 없음" },
+  { k: "2인 배차 원칙 준수", v: "100%", note: "2인 필요 건(첫 방문·종합평가 등) 전건 2인" },
 ];
 
 export const BRANCHES = [
@@ -1151,7 +1151,7 @@ export const BRANCH_ALERTS = [
   { branch: "송파", level: "주의", text: "화·목 수급 갭 0.8~0.9 지속 — 신규 채용 공고 + 강남 크로스 지원 주 4건", act: "채용 2명 서류 단계 · 8월 해소 목표" },
   { branch: "마포", level: "주의", text: "수습 비중 50% (4/8) — 고난도 배차 불가 구간 발생", act: "시니어 코치 파견 주 2회 · 9월 일반 전환 3명 예정" },
   { branch: "분당", level: "관찰", text: "오픈 45일 · NPS 66으로 양호 — 첫 30일 이탈 구간 통과 가구 6/8", act: "온보딩 플레이북 유지 · 추가 개입 없음" },
-  { branch: "전사", level: "안정", text: "전 지점 페어 준수 100% · SOS 0건 (이번 주) — 원칙 위반 지점 없음", act: "—" },
+  { branch: "전사", level: "안정", text: "2인 배차 원칙 준수 100% · SOS 0건 (이번 주) — 원칙 위반 지점 없음", act: "—" },
 ];
 
 export const BRANCH_OPEN_STEPS = [
@@ -1170,7 +1170,7 @@ export const BRANCH_SUPPORT = [
 ];
 
 // ════ 경영 · 지점장 관리 + 사람 관리 정돈 (AI 사람 신호 · 체계 맵) ════
-// 지점장 평가도 사람 지표만 — 팀 유지율·팀 평점·소리 응답 SLA·페어 준수 (판매액 없음).
+// 지점장 평가도 사람 지표만 — 팀 유지율·팀 평점·소리 응답 SLA·2인 배차 원칙 준수 (판매액 없음).
 export const BRANCH_MANAGERS = [
   { name: "김태영", branch: "강남 본점", career: "재가요양센터 운영 9년", tenure: "17개월", team: 21, homes: 68,
     keep: "91%", rate: "4.8", sla: "21h", focus: "화·목 수급 갭 채용 마감 · 크로스 지원자 피로 관리", state: "안정", tone: "ok" },
@@ -1228,7 +1228,7 @@ export const AI_PEOPLE_SPLIT = {
 export const PEOPLE_MAP = [
   { stage: "채용 · 등록", what: "채용 파이프라인 · 신원 게이트 5종 · 앱 온보딩 서약", menu: "staffmgmt", label: "인원 관리" },
   { stage: "온보딩 · 수습", what: "교육 2일 · 시니어 페어 · 부 동행 12건 전환 게이트", menu: "staff", label: "컨시어지 분석" },
-  { stage: "일상 운영", what: "배차 승인(L4) · 페어 준수는 관제 — 경영은 지점 집계만", menu: "branches", label: "지점 현황" },
+  { stage: "일상 운영", what: "배차 승인(L4) · 인원 규칙 준수는 관제 — 경영은 지점 집계만", menu: "branches", label: "지점 현황" },
   { stage: "성장 · 보상", what: "등급 사다리 · 단골 가구 지분제 · 코칭 로그", menu: "staffmgmt", label: "인원 관리" },
   { stage: "보호 · 유지", what: "현장의 소리 · EAP(무기록) · 이탈 위험 예측 · HR 워치", menu: "staff", label: "컨시어지 분석" },
 ];
@@ -1313,7 +1313,7 @@ export const SEC_STATUS = [
 
 // ════ 경영 · 대시보드 (전체 포괄) — 섹션 요약 점프 카드 ════
 export const EXEC_OVERVIEW = [
-  { menu: "branches", label: "지점 현황", headline: "운영 4 · 오픈 준비 1", sub: "페어 준수 100% · SOS 0 (주)" },
+  { menu: "branches", label: "지점 현황", headline: "운영 4 · 오픈 준비 1", sub: "2인 원칙 준수 100% · SOS 0 (주)" },
   { menu: "staffmgmt", label: "인원 관리", headline: "전체 46명", sub: "채용 정체 23명 — 신원 조회 5건 최대" },
   { menu: "staff", label: "컨시어지 분석", headline: "평점 4.8 · 유지 87%", sub: "코칭 대상 4명 · 이탈 위험 1명" },
   { menu: "crm", label: "CRM · 라이프사이클", headline: "퍼널 정체 26건", sub: "결제 단계 6건 — 최대 이탈 구간" },
@@ -1729,7 +1729,7 @@ export const OKR_QUARTER = "2026 Q3 (7~9월)";
 export const OKRS = [
   { o: "케어 품질을 지키면서 지점을 2배로 연다", progress: 62, krs: [
     { k: "일산 지점 오픈 (인력 12 · 병원 4)", now: "8 / 12명 · 2 / 4곳", pct: 58, tone: "warn" },
-    { k: "전 지점 페어 준수 100% 유지", now: "100%", pct: 100, tone: "ok" },
+    { k: "2인 배차 원칙 준수 100% 유지", now: "100%", pct: 100, tone: "ok" },
     { k: "지점별 NPS 60 이상", now: "마포 58 · 나머지 충족", pct: 75, tone: "warn" },
   ]},
   { o: "가구가 스스로 가구를 데려온다 (바이럴)", progress: 48, krs: [

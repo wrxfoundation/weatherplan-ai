@@ -390,7 +390,7 @@ export default function FamilyHome() {
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-[15px] font-bold text-ink">{e.title}</div>
                       <div className="mt-0.5 truncate text-[12px] text-muted">
-                        {e.note || `${EVENT_KINDS[e.kind].label} · ${e.source}`}
+                        {e.note || `${(EVENT_KINDS[e.kind]?.label || "일정")} · ${e.source}`}
                       </div>
                     </div>
                     <Badge fg={fg} bg={bg}>

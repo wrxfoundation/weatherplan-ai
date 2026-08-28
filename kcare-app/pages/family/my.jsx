@@ -63,6 +63,23 @@ export default function MyPage() {
               </Link>
             </div>
           )}
+          {/* 안심방문 리포트 — 컨시어지가 다녀간 결과를 보호자가 폰에서 바로 본다
+              (2026-08-28 요청 "방문리포트는 모바일에서도 보기 쉬워야 함").
+              증빙 요청과 무관하게 항상 열려 있어야 하는 동선이라 밖에 둔다. */}
+          <Link
+            href="/report/visit"
+            className="btn-press mt-3 flex items-center justify-between rounded-xl px-4 py-3.5 text-white"
+            style={{ background: "#0A1F3C" }}
+          >
+            <span>
+              <span className="block text-[15px] font-bold">안심방문 리포트 보기</span>
+              <span className="mt-0.5 block text-[12px] text-white/65">
+                9월 9일 · 3회차 · 20항목 · 담당 박지현
+              </span>
+            </span>
+            <span aria-hidden className="text-[18px] text-white/70">›</span>
+          </Link>
+
           <div className="mt-4 flex items-center justify-between border-t border-navy/[.08] pt-3">
             <SectionLabel>방문 관찰 리포트</SectionLabel>
             <span className="text-[12px] text-muted">공유분 {sharedReports.length}건</span>

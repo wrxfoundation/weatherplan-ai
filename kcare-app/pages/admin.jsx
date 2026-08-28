@@ -872,7 +872,7 @@ export default function AdminConsole() {
 
               {/* ── 지점장 보드 — 지점을 맡은 사람을 관리한다 ── */}
               <Panel className="min-w-0">
-                <PanelHead title="지점장 보드" right={<span className="text-[12px] text-muted">지점장 평가도 사람 지표만 — 팀 유지율 · 팀 평점 · 소리 응답 SLA · 페어 준수</span>} />
+                <PanelHead title="지점장 보드" right={<span className="text-[12px] text-muted">지점장 평가도 사람 지표만 — 팀 유지율 · 팀 평점 · 소리 응답 SLA · 2인 배차 원칙 준수</span>} />
                 <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))" }}>
                   {BRANCH_MANAGERS.map((m) => (
                     <div key={m.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">

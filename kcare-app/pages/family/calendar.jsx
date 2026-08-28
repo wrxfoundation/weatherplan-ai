@@ -76,7 +76,7 @@ export default function CalendarPage() {
                 <div key={e.id} className="flex items-center gap-2 text-[13px]">
                   <span
                     className="h-[8px] w-[8px] shrink-0 rounded-full"
-                    style={{ background: EVENT_KINDS[e.kind].color }}
+                    style={{ background: (EVENT_KINDS[e.kind]?.color || "#5C5A54") }}
                   />
                   <span className="font-num font-bold text-amber">
                     {new Date(e.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
@@ -186,7 +186,7 @@ export default function CalendarPage() {
                           className="h-[4px] w-[4px] rounded-full"
                           style={{
                             background:
-                              d === selected ? "#C9A46B" : EVENT_KINDS[e.kind].color,
+                              d === selected ? "#C9A46B" : (EVENT_KINDS[e.kind]?.color || "#5C5A54"),
                           }}
                         />
                       ))}
@@ -219,12 +219,12 @@ export default function CalendarPage() {
                   </div>
                   <span
                     className="mt-[5px] h-[10px] w-[10px] shrink-0 rounded-full"
-                    style={{ background: EVENT_KINDS[e.kind].color }}
+                    style={{ background: (EVENT_KINDS[e.kind]?.color || "#5C5A54") }}
                   />
                   <div className="min-w-0 flex-1">
                     <div className="text-[16px] font-bold leading-[1.4] text-ink">{e.title}</div>
                     <div className="mt-0.5 text-[12px] text-muted">
-                      {EVENT_KINDS[e.kind].label} · {e.source}
+                      {(EVENT_KINDS[e.kind]?.label || "일정")} · {e.source}
                     </div>
                     {/* 승인 상태 — 승인 전에는 확정된 일정처럼 보이면 안 된다 */}
                     {e.approval === "pending" && (
