@@ -13,6 +13,7 @@ import {
   NOTICE_REWARD, NOTICE_REWARD_EN, type SalePhase,
 } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
+import { D } from "@/lib/dict";
 import { Gnb, CommunityFooter } from "./chrome";
 import BuyModal from "./BuyModal";
 import PreOrderModal from "./PreOrderModal";
@@ -20,7 +21,7 @@ import { XIcon, TgIcon, ChevD, Shield, Warn, Check, LinkIcon } from "./icons";
 
 export default function Landing() {
   const sp = useSearchParams();
-  const { en } = useI18n();
+  const { en , t } = useI18n();
   const stateParam = sp.get("state");
   const demoMismatch = sp.get("demo") === "mismatch"; // 결제 mismatch 분기 재현용 (내부 데모)
   const phase: SalePhase =
@@ -273,7 +274,7 @@ export default function Landing() {
                   /* PRE-ORDER — 사전예약 = 실구매 (8/27 서우: 9/5부터 바로), 구매 모달 연결 */
                   /* 8/28 서우 3차: 히어로 버튼 라벨 "사전예약 신청하기" (D-day는 아래 누적 라인) */
                   <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
-                    {en ? "Pre-order now" : "사전예약 신청하기"}
+                    {t(D.preorderCta)}
                   </button>
                 ) : preMode === "dday" ? (
                   /* 사전예약 오픈 카운트다운 (9/5) */
@@ -328,7 +329,7 @@ export default function Landing() {
 
       {/* ── S1b 사전예약 실시간 현황판 (teaser 전용, 8/27) — 크레딧 롤: 아래→위 + 상단 페이드아웃 ── */}
       {preMode === "pre" && (
-        <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--w-deep)", color: "#fff", paddingTop: 48, paddingBottom: 48 }} aria-label={en ? "Live pre-order board" : "실시간 사전예약 현황"}>
+        <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--w-deep)", color: "#fff", paddingTop: 48, paddingBottom: 48 }} aria-label={t(D.liveBoard)}>
           {/* 노이즈 그레인 텍스처 — 256px 필름 그레인 타일 반복 (8/28 서우: 물결 → 그레인. wave·marble·contour는 보관) */}
           <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/grain.png)", backgroundRepeat: "repeat", pointerEvents: "none" }} />
           {/* 8/28 서우: 위·아래 끝을 어둡게 깔아 판이 화면에 잠긴 느낌을 준다.
@@ -339,7 +340,7 @@ export default function Landing() {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 19.5, fontWeight: 800 }}>
                 <span className="live-dot" />
-                {en ? "Live pre-order board" : "실시간 사전예약 현황"}
+                {t(D.liveBoard)}
               </div>
               <div style={{ fontSize: 16.5, color: "rgba(255,255,255,.7)" }}>
                 {en
@@ -423,27 +424,25 @@ export default function Landing() {
             <div style={{ fontSize: "clamp(23px, 2.8vw, 31px)", fontWeight: 800, color: "var(--w-main)", letterSpacing: "-.01em" }}>
               Turn Your Weather Data into Value.
             </div>
-            <h2 style={h2}>{en ? "What we're building" : "우리가 만드는 것"}</h2>
+            <h2 style={h2}>{t(D.howTitle)}</h2>
             <p style={{ fontSize: 19.5, lineHeight: 1.72, color: "var(--ink-4)", maxWidth: 780, margin: "0 auto" }}>
-              {en
-                ? "Air differs building by building, street by street — beyond the reach of public weather stations. Data measured where you actually live comes back as rewards after verification, and as it accumulates, it builds an economy of services."
-                : "공기는 건물마다, 골목마다 다릅니다 — 기존 관측망이 닿지 않는 곳이죠. 내가 생활하는 공간에서 측정한 데이터가 검증을 거쳐 보상으로 돌아오고, 쌓인 데이터는 서비스가 되는 경제를 구축해 나갑니다."}
+              {t(D.howLead)}
             </p>
           </div>
           <div className="how-grid" data-reveal>
-            <HowCard icon={<IconMeasure />} title={en ? "① Measure" : "① 측정"} desc={en ? "Indoor air data — CO₂, particulates, temperature, humidity" : "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정"} />
+            <HowCard icon={<IconMeasure />} title={`① ${t(D.step1Title)}`} desc={t(D.step1Desc)} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<IconVerify />} title={en ? "② Verify" : "② 검증"} desc={en ? "The network verifies data integrity" : "네트워크가 데이터의 무결성을 검증"} />
+            <HowCard icon={<IconVerify />} title={`② ${t(D.step2Title)}`} desc={t(D.step2Desc)} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<IconReward />} title={en ? "③ Reward" : "③ 보상"} desc={en ? "Verified data earns WLBN under network rules" : "검증된 데이터에 네트워크 원칙에 따라 WLBN이 지급"} />
+            <HowCard icon={<IconReward />} title={`③ ${t(D.step3Title)}`} desc={t(D.step3Desc)} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<IconUse />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용"} />
+            <HowCard icon={<IconUse />} title={`④ ${t(D.step4Title)}`} desc={t(D.step4Desc)} />
           </div>
           {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
           {/* 8/28 서우 2차: 비전·선순환 카드 테두리 원복 (히어로 스탯 테이블만 보더리스 유지) */}
           <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.25)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderRadius: 16, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 8px 32px rgba(27,27,72,.08)" }}>
             <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
-              {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
+              {t(D.loopTitle)}
             </div>
             {/* 8/28 서우 6차: "네트워크 지속"이 와닿지 않는다 → 백서(intel/wlbn-platform.md)의 실제 구조로 다시 씀.
                 핵심은 보상 재원의 출처다. 에폭 보상 예산이 B2B 데이터 매출에 연동되므로,
@@ -453,13 +452,13 @@ export default function Landing() {
             <div className="loop-row" data-reveal>
               {/* 8/28 서우 8차: 칩 글씨가 길어 한눈에 안 들어온다 → 두 줄 → 한 줄 단문으로 축약.
                   자세한 설명은 바로 아래 본문이 이미 하고 있으므로 칩은 흐름만 보이면 된다. */}
-              <span className="loop-chip"><IconData size={46} /><span>{en ? "Verified data" : "검증된 데이터"}</span></span>
+              <span className="loop-chip"><IconData size={46} /><span>{t(D.loopData)}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconFlow size={46} /><span>{en ? "Enterprises buy" : "기업이 구매"}</span></span>
+              <span className="loop-chip"><IconFlow size={46} /><span>{t(D.loopBuy)}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconCoins size={46} /><span>{en ? "Sales fund rewards" : "대금이 보상 재원"}</span></span>
+              <span className="loop-chip"><IconCoins size={46} /><span>{t(D.loopFund)}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconNodes size={46} /><span>{en ? "Network grows" : "측정망 확대"}</span></span>
+              <span className="loop-chip"><IconNodes size={46} /><span>{t(D.loopGrow)}</span></span>
             </div>
             {/* 마지막에서 처음으로 되돌아가는 고리 — 칩이 4개가 되어 아이콘 하나로는 자리가 모자라
                 행 아래 곡선 화살표로 뺐다(방향도 이쪽이 읽기 쉽다) */}
@@ -468,17 +467,13 @@ export default function Landing() {
                 <path d="M592 2 V18 Q592 30 578 30 H22 Q8 30 8 18 V2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 <path d="M3 9 L8 2 L13 9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span>{en ? "Denser data makes the next round of demand bigger" : "촘촘해진 데이터가 다음 바퀴의 수요를 키웁니다"}</span>
+              <span>{t(D.loopReturn)}</span>
             </div>
             <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
-              {en
-                ? <>The air-quality data our nodes collect passes quality verification and flows to enterprises, APIs, and AI services.<br />What those buyers pay funds the node reward pool, and rewards bring more nodes — making the measurement network denser.</>
-                : <>노드가 모은 공기질 데이터는 품질 검증을 거쳐 기업·API·AI 서비스로 유통됩니다.<br />그 판매 대금이 다시 노드 보상의 재원이 되고, 보상이 노드를 늘리면 측정망이 촘촘해집니다.</>}
+              {t(D.loopBody1)}<br />{t(D.loopBody2)}
             </p>
             <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "var(--cap)" }}>
-              {en
-                ? "The reward pool is tied to data sales — amounts and value are not guaranteed."
-                : "보상 재원은 데이터 매출에 연동됩니다 · 지급량과 가치는 보장되지 않습니다"}
+              {t(D.rewardNotice)}
             </p>
           </div>
         </div>

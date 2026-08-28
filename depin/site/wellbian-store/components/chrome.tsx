@@ -3,29 +3,40 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LINKS } from "@/lib/data";
-import { useI18n, type Lang } from "@/lib/i18n";
+import { useI18n, LANGS, type Lang } from "@/lib/i18n";
 import { TgIcon, XIcon } from "./icons";
 
-/* KO/EN 토글 (§5.4) — 전 페이지 공용, localStorage 유지 */
+/* 언어 선택 (§5.4) — 전 페이지 공용, localStorage 유지.
+   8/28 서우: KO/EN 2단 토글 → 5개 언어 드롭다운.
+   커스텀 팝오버 대신 <select> 를 쓴다 — 모바일에서 OS 기본 피커가 뜨고,
+   키보드·스크린리더 대응이 공짜로 따라온다. 화살표만 직접 그린다. */
 export function LangToggle() {
   const { lang, setLang } = useI18n();
-  const seg = (l: Lang, label: string) => (
-    <button
-      key={l}
-      onClick={() => setLang(l)}
-      aria-pressed={lang === l}
-      style={{
-        padding: "6px 10px", fontSize: 15.5, fontWeight: 700,
-        ...(lang === l ? { background: "var(--w-deep)", color: "#fff" } : { color: "var(--hint)", background: "transparent" }),
-      }}
-    >
-      {label}
-    </button>
-  );
   return (
-    <div style={{ display: "flex", border: "1px solid var(--bd-btn)", borderRadius: 8, overflow: "hidden" }}>
-      {seg("ko", "KO")}
-      {seg("en", "EN")}
+    <div style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
+      <select
+        value={lang}
+        onChange={(e) => setLang(e.target.value as Lang)}
+        aria-label="Language"
+        style={{
+          appearance: "none", WebkitAppearance: "none", MozAppearance: "none",
+          border: "1px solid var(--bd-btn)", borderRadius: 8, background: "transparent",
+          color: "var(--ink-2)", fontSize: 15.5, fontWeight: 700, fontFamily: "inherit",
+          padding: "6px 30px 6px 11px", cursor: "pointer", lineHeight: 1.5,
+        }}
+      >
+        {LANGS.map((l) => (
+          <option key={l.code} value={l.code}>{l.label}</option>
+        ))}
+      </select>
+      {/* 화살표 — select 위에 얹되 클릭은 통과시킨다 */}
+      <svg
+        aria-hidden
+        width="10" height="6" viewBox="0 0 10 6"
+        style={{ position: "absolute", right: 11, pointerEvents: "none" }}
+      >
+        <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" opacity=".55" />
+      </svg>
     </div>
   );
 }
