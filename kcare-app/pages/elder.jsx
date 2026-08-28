@@ -12,6 +12,9 @@ import {
   INDOOR,
   OUTING,
   TODAY_ME,
+  TEACHER,
+  TEACHER_DEMO_FILE,
+  TEACHER_INBOX,
   VITALS,
   VOICE_MSG,
   VOICE_TO,
@@ -84,8 +87,23 @@ const ASK_TILES = [
 // action 으로 가른다. 옛 이름: 지금 와 주세요 → (잠시 바로연락) → 도와줘요.
 const TABS = [
   { key: "help", label: "도와줘요", glyph: "door", action: true },
+  { key: "teacher", label: "선생님", glyph: "chat" },
   { key: "family", label: "가족", glyph: "users" },
 ];
+
+// 선생님 메시지함 보관 기간 — 24시간이 지나면 목록에서 사라진다 (2026-08-28 요청).
+const MSG_TTL_MS = 24 * 60 * 60 * 1000;
+
+// "23시간 뒤에 지워져요" — 남은 시간을 어르신 말로. 분 단위까지 세지 않는다
+// (숫자가 자꾸 바뀌면 '지워진다'는 사실보다 초읽기가 먼저 읽힌다).
+function ttlLabel(at, nowMs) {
+  const left = at + MSG_TTL_MS - nowMs;
+  if (left <= 0) return "곧 지워져요";
+  const h = Math.floor(left / 3600000);
+  if (h >= 1) return `${h}시간 뒤에 지워져요`;
+  const m = Math.max(1, Math.round(left / 60000));
+  return `${m}분 뒤에 지워져요`;
+}
 
 // 홈 사분면 — 상세 화면 진입 타일 (2×2). 아이콘 색은 타일마다 다르게 —
 // 글자를 읽기 전에 색·모양으로 먼저 갈리게 한다 (전부 기존 토큰, 빨강 없음).
@@ -418,17 +436,40 @@ export default function ElderHome() {
   // (아침 인사 · 심심함 · 잠이 안 옴) 버튼이 무엇을 하는 것인지가 가려졌다 —
   // 말 걸 거리는 가족 탭의 '오늘의 세대공감'이 이미 맡고 있다.
   const [concMsg, setConcMsg] = useState(null); // null | "rec" | "sent"
+  const recStart = useRef(0);
+  // 홈에서 보낸 목소리는 '선생님' 탭 메시지함에 그대로 쌓인다 (2026-08-28 요청:
+  // "메인화면 메시지 보내기는 여기와 연동"). 같은 목록을 두 자리에서 보는 것이라
+  // 데이터는 한 벌만 둔다.
+  const [sentMsgs, setSentMsgs] = useState([]);
   const concMsgTap = () => {
     if (concMsg === "rec") {
       setConcMsg("sent");
+      // 실제로 누르고 있던 시간을 길이로 쓴다 (최소 3초 — 눌렀다 뗀 것도 한마디는 된다)
+      const sec = Math.max(3, Math.round((Date.now() - recStart.current) / 1000));
+      setSentMsgs((prev) => [
+        { id: `me-${Date.now()}`, dir: "out", at: Date.now(), durationSec: sec, text: "선생님께 보낸 목소리" },
+        ...prev,
+      ]);
       dispatch({
         type: "pushEvent",
-        payload: { kind: "부탁", text: `${ELDER.name} 음성 메시지 → 컨시어지 박지현`, color: "#B08D57" },
+        payload: { kind: "부탁", text: `${ELDER.name} 음성 메시지 → 컨시어지 ${TEACHER.name}`, color: "#B08D57" },
       });
       return;
     }
+    recStart.current = Date.now();
     setConcMsg("rec"); // sent 상태에서 다시 누르면 새로 녹음
   };
+
+  // 메시지함 목록 — 씨앗(TEACHER_INBOX)과 이번에 보낸 것을 합치고 24시간이 지난
+  // 것은 걸러 낸다. 최신이 위.
+  const nowMs = now.getTime();
+  const teacherMsgs = [
+    ...sentMsgs,
+    ...TEACHER_INBOX.map((m) => ({ ...m, at: nowMs - m.minsAgo * 60000 })),
+  ]
+    .filter((m) => nowMs - m.at < MSG_TTL_MS)
+    .sort((a, b) => b.at - a.at);
+  const [playedMsg, setPlayedMsg] = useState({}); // id → 들었음
 
   // 즉시 방문 요청 — GNB '도와줘요' 버튼이 부른다 (옛 '지금 와 주세요' 플로팅 버튼).
   // 요청이 곧 방문은 아니다 — 관제가 먼저 전화로 확인하고 배차한다 (시트 어르신 전체 2번).
@@ -665,6 +706,132 @@ export default function ElderHome() {
                 요청 뒤 상태는 GNB '도와줘요'가 '요청됨'(시계 아이콘·초록)으로
                 바뀌어 알린다. SOS 사용법은 첫 안심방문 때 선생님이 직접 알려 드리는
                 것이 원래 동선이라 화면에서 매번 설명하지 않는다. */}
+
+            {/* ── 선생님 메시지함 (GNB '선생님') ── 2026-08-28 요청.
+                담당 컨시어지와 주고받은 목소리만 모아 둔 자리. 홈 인사 옆
+                '메시지 보내기'가 보내는 곳이 바로 여기라, 보낸 것도 같은 목록에
+                쌓인다. 글자를 못 읽으셔도 목소리로 오가게 하는 것이 핵심이라
+                타이핑 입력은 두지 않는다. */}
+            <ElderCard
+              show={tab === "teacher"}
+              order={0}
+              style={{
+                background: "#0A1F3C",
+                backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0))",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,.22), 0 24px 48px -30px rgba(10,31,60,.85)",
+              }}
+              className="text-white"
+            >
+              <div className="flex items-center gap-3">
+                <span
+                  aria-hidden
+                  className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
+                  style={{ background: "#E8DFCB", color: "#7A5C28" }}
+                >
+                  {TEACHER.name.slice(1)}
+                </span>
+                <div className="min-w-0">
+                  <div className="text-[22px] font-bold leading-[1.3]">{TEACHER.name} 선생님</div>
+                  <div className="mt-[2px] text-[18px] text-white/[.82]">{TEACHER.role}</div>
+                </div>
+              </div>
+              <button
+                onClick={concMsgTap}
+                className="btn-press mt-4 flex w-full items-center justify-center gap-2 rounded-[18px] py-[19px] text-[20px] font-bold"
+                style={
+                  concMsg === "rec"
+                    ? { background: "#B08D57", color: "#FFFFFF" }
+                    : { background: "rgba(255,255,255,.14)", color: "#FFFFFF" }
+                }
+              >
+                <span aria-hidden>
+                  <Icon name="mic" size={24} strokeWidth={2} />
+                </span>
+                {concMsg === "rec" ? "누르면 보내요" : "목소리 보내기"}
+              </button>
+              {concMsg === "sent" && (
+                <p className="mt-2.5 text-center text-[18px] font-bold text-gold">
+                  보냈습니다 · 아래 목록 맨 위에 있어요
+                </p>
+              )}
+            </ElderCard>
+
+            <ElderCard show={tab === "teacher"} order={1} style={LIGHT_CARD}>
+              <CardHead title="주고받은 목소리" right={`${teacherMsgs.length}개`} icon="mic" />
+              {/* 24시간 보관 원칙을 목록 맨 위에서 한 번 말한다 — 아래 각 줄에도
+                  남은 시간이 붙지만, '왜 사라지는지'는 여기서만 설명한다. */}
+              <div className="mt-2.5 rounded-[14px] px-4 py-3" style={{ background: "rgba(10,31,60,.06)" }}>
+                <p className="text-[18px] leading-[1.55] text-ink">
+                  주고받은 목소리는 <b>24시간이 지나면 저절로 지워집니다.</b> 남겨 두고 싶은 것은
+                  내려받기를 누르시면 휴대폰에 저장됩니다.
+                </p>
+              </div>
+
+              {teacherMsgs.length === 0 ? (
+                <p className="mt-4 text-[19px] leading-[1.6] text-muted">
+                  아직 주고받은 목소리가 없습니다. 위 <b>목소리 보내기</b>를 누르고 말씀하세요.
+                </p>
+              ) : (
+                <div className="mt-3 flex flex-col gap-2.5">
+                  {teacherMsgs.map((m) => {
+                    const mine = m.dir === "out";
+                    return (
+                      <div
+                        key={m.id}
+                        style={
+                          mine
+                            ? { ...SUB_CARD, background: "rgba(176,141,87,.11)" }
+                            : SUB_CARD
+                        }
+                      >
+                        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                          <span className="text-[19px] font-bold" style={{ color: mine ? "#8A5D12" : "#0A1F3C" }}>
+                            {mine ? "내가 보낸 것" : `${TEACHER.name} 선생님`}
+                          </span>
+                          <span className="text-[18px] text-muted">
+                            {isToday(m.at) ? "오늘" : spokenDay(m.at)} {spokenTime(m.at)}
+                          </span>
+                        </div>
+                        <p className="mt-1.5 text-[19px] leading-[1.55] text-ink">{m.text}</p>
+                        <div className="mt-1 text-[18px] text-muted">
+                          {m.durationSec}초 · {ttlLabel(m.at, nowMs)}
+                        </div>
+                        <div className="mt-2.5 flex gap-2">
+                          <button
+                            onClick={() => setPlayedMsg((p) => ({ ...p, [m.id]: true }))}
+                            className="btn-press flex flex-1 items-center justify-center gap-1.5 rounded-[14px] px-3 py-3 text-[18px] font-bold text-navy"
+                            style={QUIET_BG}
+                          >
+                            <span aria-hidden style={{ color: "#B08D57" }}>
+                              <Icon name="speaker" size={20} strokeWidth={2} />
+                            </span>
+                            {playedMsg[m.id] ? "다시 듣기" : "듣기"}
+                          </button>
+                          {/* 내려받기는 받은 메시지에만 — 보낸 것은 어르신이 이미
+                              말씀하신 것이라 되돌려 받을 원본이 없다.
+                              파일명은 ASCII 로 둔다: 한글 download 속성은 크롬이
+                              통째로 버리고 확장자 없는 'download' 로 저장해서
+                              (실측) 어느 앱으로도 열리지 않는 파일이 된다. */}
+                          {!mine && (
+                            <a
+                              href={TEACHER_DEMO_FILE}
+                              download={`kcare-voice-${m.id}-demo.wav`}
+                              className="btn-press flex flex-1 items-center justify-center gap-1.5 rounded-[14px] px-3 py-3 text-[18px] font-bold text-navy"
+                              style={QUIET_BG}
+                            >
+                              <span aria-hidden style={{ color: "#1E7A5A" }}>
+                                <Icon name="box" size={20} strokeWidth={2} />
+                              </span>
+                              내려받기
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </ElderCard>
 
             {/* order 3 · 다음 일정 — 오늘 탭 세 번째 자리 (2026-08-28 시트
                 "다음일정, 누르면 아래로 캘린더가 펼쳐지게"). 접힌 채로도 그 다음
