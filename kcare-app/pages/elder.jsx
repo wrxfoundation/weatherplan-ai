@@ -414,22 +414,16 @@ export default function ElderHome() {
   };
 
   // 컨시어지 음성 메시지 — 성함 옆 원형 버튼 (전체 요청 2번).
-  // 라벨은 시간대별 말 걸 거리: 아침 인사 → 점심 얘기 → 심심함 → 저녁 인사 → 잠이 안 옴.
-  const concLabel = (() => {
-    const h = now.getHours();
-    if (h >= 5 && h < 11) return "아침 인사";
-    if (h < 14) return "점심 얘기";
-    if (h < 18) return "심심함";
-    if (h < 22) return "저녁 인사";
-    return "잠이 안 옴";
-  })();
+  // 라벨은 '메시지 보내기' 고정이다 (2026-08-28 피드백). 시간대별로 바꿔 봤지만
+  // (아침 인사 · 심심함 · 잠이 안 옴) 버튼이 무엇을 하는 것인지가 가려졌다 —
+  // 말 걸 거리는 가족 탭의 '오늘의 세대공감'이 이미 맡고 있다.
   const [concMsg, setConcMsg] = useState(null); // null | "rec" | "sent"
   const concMsgTap = () => {
     if (concMsg === "rec") {
       setConcMsg("sent");
       dispatch({
         type: "pushEvent",
-        payload: { kind: "부탁", text: `${ELDER.name} 음성 메시지(${concLabel}) → 컨시어지 박지현`, color: "#B08D57" },
+        payload: { kind: "부탁", text: `${ELDER.name} 음성 메시지 → 컨시어지 박지현`, color: "#B08D57" },
       });
       return;
     }
@@ -510,9 +504,8 @@ export default function ElderHome() {
               <div className="mt-2 text-[19px] font-medium text-muted">{dateLong}</div>
               {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번).
                   성함 옆 원형 버튼 — 컨시어지에게 음성 메시지 (전체 요청 2번).
-                  라벨이 시간대별로 바뀌어 말 걸 거리를 준다: 아침 인사 · 점심 얘기 ·
-                  심심함 · 저녁 인사. 누르면 녹음, 다시 누르면 보낸다 (가족 목소리
-                  보내기와 같은 토글 — 꾹 누르기는 손 떨림에 끊긴다). */}
+                  누르면 녹음, 다시 누르면 보낸다 (가족 목소리 보내기와 같은 토글 —
+                  꾹 누르기는 손 떨림에 끊긴다). */}
               <div className="flex items-end justify-between gap-3">
                 <h1 className="min-w-0 flex-1 text-[27px] font-black leading-[1.3] text-navy">
                   {name} 님,
@@ -524,7 +517,7 @@ export default function ElderHome() {
                   aria-label={
                     concMsg === "rec"
                       ? "말씀 중 — 다시 누르면 박지현 선생님께 보냅니다"
-                      : `박지현 선생님께 ${concLabel} 목소리 보내기`
+                      : "박지현 선생님께 목소리 메시지 보내기"
                   }
                   className="btn-press flex h-[86px] w-[86px] shrink-0 flex-col items-center justify-center gap-1 rounded-full text-center"
                   style={
@@ -539,7 +532,7 @@ export default function ElderHome() {
                     <Icon name="mic" size={24} strokeWidth={2} />
                   </span>
                   <span className="px-1 text-[14px] font-bold leading-[1.15]">
-                    {concMsg === "rec" ? "누르면 보내요" : concMsg === "sent" ? "보냈어요" : concLabel}
+                    {concMsg === "rec" ? "누르면 보내요" : concMsg === "sent" ? "보냈어요" : "메시지 보내기"}
                   </span>
                 </button>
               </div>
@@ -666,50 +659,12 @@ export default function ElderHome() {
               </button>
             </ElderCard>
 
-            {/* 바탕화면 SOS 안내는 홈으로 옮겼다 (오늘 탭은 4가지만).
-                order 8 — 홈 사분면 아래. 화면 안 SOS 버튼을 뺐으니 어디를
-                눌러야 하는지는 반드시 말해 줘야 한다 (시트 전체 요청 3번). */}
-            <ElderCard show={tab === "home"} order={8}>
-              <CardHead title="급할 때 누르는 곳" right="바탕화면" icon="alert" />
-              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
-                휴대폰 바탕화면에 있는 빨간 <b>SOS</b> 그림을 누르시면 바로 도움을 부릅니다.
-              </p>
-              <p className="mt-3 text-[19px] leading-[1.6] text-muted">
-                첫 안심방문 때 선생님이 바탕화면에 만들어 드립니다. 실수로 눌러도 5초 안에
-                취소됩니다.
-              </p>
-            </ElderCard>
-
-            {/* 즉시방문 요청 뒤 — 관제 확인 전화 대기 (2026-08-21 시트 어르신 전체 2번).
-                요청하면 바로 배차가 아니라 관제가 먼저 전화로 상황을 여쭙는다.
-                기다리는 동안 화면이 아무 말도 하지 않으면 다시 누르게 된다.
-                GNB 도와줘요를 누르면 홈으로 오므로 홈에서도 보여야 한다 —
-                order -9: 홈에서는 카루셀보다 위(제일 급한 상태가 맨 위). CSS order 는 정수만 유효하다. */}
-            {visitAsked && (
-              <ElderCard
-                show={tab === "today" || tab === "home"}
-                order={-9}
-                style={{
-                  background: "#0A1F3C",
-                  backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0))",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,.22), 0 24px 48px -30px rgba(10,31,60,.85)",
-                }}
-                className="text-white"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span aria-hidden className="h-[11px] w-[11px] animate-livePing rounded-full bg-gold-soft" />
-                  <span className="text-[19px] font-bold text-gold">관제에서 전화를 드립니다</span>
-                </div>
-                <p className="mt-2 text-[22px] font-bold leading-[1.45]">
-                  전화를 받으시면
-                  <br />
-                  무엇이 필요하신지 여쭙습니다
-                </p>
-                <p className="mt-2 text-[19px] leading-[1.6] text-white/[.86]">
-                  통화를 마치면 선생님이 출발합니다. 급하시면 바탕화면의 빨간 SOS를 누르세요.
-                </p>
-              </ElderCard>
-            )}
+            {/* 홈에 있던 카드 두 장을 뺐다 (2026-08-28 피드백).
+                - '급할 때 누르는 곳'(바탕화면 SOS 안내)
+                - '관제에서 전화를 드립니다'(즉시방문 요청 뒤 대기 안내)
+                요청 뒤 상태는 GNB '도와줘요'가 '요청됨'(시계 아이콘·초록)으로
+                바뀌어 알린다. SOS 사용법은 첫 안심방문 때 선생님이 직접 알려 드리는
+                것이 원래 동선이라 화면에서 매번 설명하지 않는다. */}
 
             {/* order 3 · 다음 일정 — 오늘 탭 세 번째 자리 (2026-08-28 시트
                 "다음일정, 누르면 아래로 캘린더가 펼쳐지게"). 접힌 채로도 그 다음
@@ -1997,12 +1952,11 @@ export default function ElderHome() {
                     <button
                       key={t.key}
                       onClick={() => {
-                        if (done) {
-                          setTab("home"); // 이미 요청됨 — 상태 카드가 있는 홈으로
-                          return;
-                        }
+                        if (done) return; // 이미 요청됨 — 두 번 가지 않는다
                         askVisit();
-                        setTab("home"); // 요청 직후 '관제에서 전화를 드립니다' 카드가 보이게
+                        // 탭은 그대로 둔다. 요청 뒤 안내 카드를 뺐으므로(2026-08-28)
+                        // 홈으로 튕겨 보낼 곳이 없다 — 보고 있던 화면에 머무르고
+                        // 아래 GNB 가 '요청됨'으로 바뀌어 알린다.
                       }}
                       aria-label={done ? "방문 요청을 보냈습니다 — 관제 전화 대기" : "도와줘요 — 즉시 방문 요청"}
                       className="flex min-h-[60px] flex-1 flex-col items-center justify-center gap-1"
