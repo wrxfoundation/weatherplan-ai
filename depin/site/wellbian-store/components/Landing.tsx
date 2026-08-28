@@ -15,7 +15,7 @@ import { useI18n } from "@/lib/i18n";
 import { Gnb, CommunityFooter } from "./chrome";
 import BuyModal from "./BuyModal";
 import PreOrderModal from "./PreOrderModal";
-import { XIcon, TgIcon, ChevD, Shield, ShieldCheck, Gauge, Coin, Chart, Warn, Check, LinkIcon } from "./icons";
+import { XIcon, TgIcon, ChevD, Shield, Warn, Check, LinkIcon } from "./icons";
 
 export default function Landing() {
   const sp = useSearchParams();
@@ -398,13 +398,13 @@ export default function Landing() {
             </p>
           </div>
           <div className="how-grid">
-            <HowCard icon={<Gauge />} title={en ? "① Measure" : "① 측정"} desc={en ? "Measures indoor air — CO₂, particulates, temperature & humidity" : "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정합니다"} />
+            <HowCard img="/assets/how-measure.webp" title={en ? "① Measure" : "① 측정"} desc={en ? "Measures indoor air — CO₂, particulates, temperature & humidity" : "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정합니다"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<ShieldCheck />} title={en ? "② Verify" : "② 검증"} desc={en ? "The network verifies the integrity of your data" : "네트워크가 데이터의 무결성을 검증합니다"} />
+            <HowCard img="/assets/how-verify.webp" title={en ? "② Verify" : "② 검증"} desc={en ? "The network verifies the integrity of your data" : "네트워크가 데이터의 무결성을 검증합니다"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<Coin />} title={en ? "③ Reward" : "③ 보상"} desc={en ? "Verified data earns WLBN under network rules" : "검증된 데이터에 네트워크 원칙에 따라 WLBN이 지급됩니다"} />
+            <HowCard img="/assets/how-reward.webp" title={en ? "③ Reward" : "③ 보상"} desc={en ? "Verified data earns WLBN under network rules" : "검증된 데이터에 네트워크 원칙에 따라 WLBN이 지급됩니다"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<Chart />} title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
+            <HowCard img="/assets/how-use.webp" title={en ? "④ Utilize" : "④ 활용"} desc={en ? "Accumulated data powers APIs, AI, and weather services" : "축적된 데이터는 API·AI·기상 서비스로 활용됩니다"} />
           </div>
           {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
           {/* 8/28 서우 2차: 비전·선순환 카드 테두리 원복 (히어로 스탯 테이블만 보더리스 유지) */}
@@ -412,14 +412,8 @@ export default function Landing() {
             <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
               {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
             </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, flexWrap: "wrap", fontSize: 16.5, fontWeight: 700 }}>
-              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Verified air data" : "검증된 공기질 데이터"}</span>
-              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
-              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Real demand — enterprises · APIs · AI" : "실제 수요처 유통 — 기업 · API · AI"}</span>
-              <span style={{ color: "var(--arrow)", fontWeight: 800 }}>→</span>
-              <span style={{ background: "var(--w-tint)", color: "var(--w-deep)", borderRadius: 10, padding: "9px 14px", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 1px 5px rgba(27,27,72,.08)" }}>{en ? "Revenue → the network keeps running" : "수익 → 네트워크 지속"}</span>
-              <span style={{ color: "var(--w-main)", fontSize: 21, fontWeight: 800 }}>↻</span>
-            </div>
+            {/* 8/28 서우 3차: 텍스트 칩 행 → 힉스필드 매트 3D 순환 다이어그램 (투명 webp, 글래스 위 직접) */}
+            <img src="/assets/cycle-loop.webp" alt={en ? "The loop: verified data flows to real demand, and revenue keeps the network running" : "선순환 구조: 검증된 데이터가 실제 수요처로 유통되고, 수익이 네트워크를 지속시킵니다"} width={1000} height={1000} style={{ width: "min(560px, 100%)", height: "auto", margin: "0 auto", filter: "drop-shadow(0 12px 24px rgba(27,27,72,.14))" }} />
             <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
               {en
                 ? <>The verified air-quality data our nodes produce flows to real buyers — enterprises, APIs, AI services.<br />The more it is used, the stronger the demand, and that demand is what keeps the network running.</>
@@ -686,12 +680,12 @@ export default function Landing() {
   );
 }
 
-function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: React.ReactNode }) {
+function HowCard({ img, title, desc }: { img: string; title: string; desc: React.ReactNode }) {
   return (
     /* 글래스 카드 (8/28 서우: 비전 배경 위 반투명 — 뒤 도시가 블러로 비침) */
-    /* 8/28 서우 2차: 카드 테두리 원복 + 아이콘 타일 옅은 1px 그림자 테두리 */
-    <div style={{ border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.25)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "32px 24px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
-      <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 14, background: "var(--w-tint)", color: "var(--w-main)", border: "1px solid rgba(27,27,72,.09)", boxShadow: "0 2px 8px rgba(27,27,72,.1)" }}>{icon}</span>
+    /* 8/28 서우 3차: SVG 아이콘 타일 → 힉스필드 매트 3D 아이콘 (투명 webp, 카드 상단 대형) */
+    <div style={{ border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.25)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "26px 24px 30px", display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
+      <img src={img} alt="" width={384} height={384} style={{ width: 120, height: 120, objectFit: "contain", filter: "drop-shadow(0 10px 18px rgba(27,27,72,.16))" }} />
       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
       <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
     </div>
