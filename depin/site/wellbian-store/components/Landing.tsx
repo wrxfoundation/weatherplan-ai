@@ -667,15 +667,16 @@ export default function Landing() {
           {/* PC: 중앙 한 덩어리 — 사전예약 중엔 예약 대수 + CTA만 (게이지·%·얼리버드·가격 없음, 8/27 서우) */}
           {preMode === "pre" ? (
             <div className="stickybar-in">
-              {/* 8/28 서우 3차: 모바일에서 2줄로 깨지던 누적 라인 → 라벨은 데스크톱만, "N대 · D-n" 한 줄 고정 */}
-              <div style={{ display: "flex", alignItems: "baseline", gap: 7, whiteSpace: "nowrap" }}>
-                <span className="desk-only" style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? "Pre-ordered so far" : "사전예약 누적"}</span>
+              {/* 8/28 서우: "현재 N대 예약 D-n" 한 줄. 3차에서 모바일 2줄 깨짐을 막으려 라벨을
+                  데스크톱 전용으로 뺐었는데, 이번엔 문구를 명시해 달라는 요청이라 모바일에도 보인다 —
+                  대신 글자를 조금 줄여 한 줄을 유지한다(실측). */}
+              <div className="sb-count" style={{ display: "flex", alignItems: "baseline", gap: 5, whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: 15, color: "var(--cap)" }}>{en ? "Now" : "현재"}</span>
                 <span style={{ whiteSpace: "nowrap" }}>
-                  <span className="mono" style={{ fontSize: 23.5, fontWeight: 800, color: "var(--w-deep)" }}>{fmt(MOCK_PRENOTIFY)}</span>
-                  <span style={{ fontSize: 15.5, color: "var(--cap)" }}>{en ? " units" : "대"}</span>
+                  <span className="mono" style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{fmt(MOCK_PRENOTIFY)}</span>
+                  <span style={{ fontSize: 15, color: "var(--cap)" }}>{en ? " pre-ordered" : "대 예약"}</span>
                 </span>
-                <span style={{ fontSize: 15.5, color: "var(--cap)" }}>·</span>
-                <span className="mono" style={{ fontSize: 16.5, fontWeight: 800, color: "var(--w-main)" }}>{dSaleBadge}</span>
+                <span className="mono" style={{ fontSize: 16.5, fontWeight: 800, color: "var(--w-main)", marginLeft: 3 }}>{dSaleBadge}</span>
               </div>
               <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px", whiteSpace: "nowrap" }}>{en ? "Pre-order" : "사전예약"}</button>
             </div>

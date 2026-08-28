@@ -125,7 +125,8 @@ export function CommunityFooter() {
           </nav>
         </div>
         <div style={{ fontSize: 15, color: "rgba(255,255,255,.35)" }}>
-          © 2026 WELLBIAN. All rights reserved. · {en ? "Weather Data Token Generator™ (Indoor Air Quality Monitor) · Model ARC-600DA" : "날씨데이터토큰생성기™ (실내공기측정기) · 모델명 ARC-600DA"}
+          © 2026 WELLBIAN. All rights reserved. · {/* 8/28 서우: 푸터에서 (실내공기측정기)·모델명 제거 — 제품 정식명만 남긴다 */}
+          {en ? "Weather Data Token Generator™" : "날씨데이터토큰생성기™"}
         </div>
       </div>
     </div>
