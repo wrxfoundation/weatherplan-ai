@@ -25,6 +25,10 @@ import { XIcon, TgIcon, ChevD, Warn, Check, LinkIcon } from "./icons";
    6자리로 커져도 옆 글자("대 사전예약")가 밀리지 않는다. 폭은 tabular-nums 가 보장한다. */
 const slot = (n: number) => ({ minWidth: `${fmt(n).length}ch` });
 
+/* 8/28 서우: "지금은 나올 단계가 아녀서 비활성화" — 연동 4단계 안내(디바이스 도착 후 3분…)를
+   감춘다. 배송 2주 전 공지 문구만 남긴다. 코드는 지우지 않았다 — 다시 켤 때 이 값만 true 로. */
+const SHOW_SETUP_GUIDE = false;
+
 export default function Landing() {
   const sp = useSearchParams();
   const { en , t } = useI18n();
@@ -174,7 +178,7 @@ export default function Landing() {
               <Link href="/?state=sale" className="desk-only" style={previewChip}>{en ? "Sale view" : "판매 화면 보기"}</Link>
               {preMode === "pre"
                 ? <Link href="/?state=dday" style={previewChip}>{en ? "D-day view" : "오픈 당일 보기"}</Link>
-                : <Link href="/" style={previewChip}>{en ? "Pre-order view" : "사전예약 보기"}</Link>}
+                : <Link href="/" style={previewChip}>{en ? "Entry view" : "응모 화면 보기"}</Link>}
             </>
           ) : soldOut ? (
             <>
@@ -188,7 +192,7 @@ export default function Landing() {
             </>
           ) : (
             <>
-              <Link href="/" style={previewChip}>{en ? "Pre-order view" : "사전예약 보기"}</Link>
+              <Link href="/" style={previewChip}>{en ? "Entry view" : "응모 화면 보기"}</Link>
               <Link href="/?state=sold_out" className="desk-only" style={previewChip}>{en ? "Sold-out view" : "완판 화면 보기"}</Link>
             </>
           )}
@@ -262,7 +266,7 @@ export default function Landing() {
               {preMode === "dday" ? (
                 /* 사전예약 오픈 전: 오픈 정보 한 줄 */
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, maxWidth: 480, marginTop: 6, fontSize: 18, fontWeight: 700, flexWrap: "wrap" }}>
-                  <span>{en ? "Pre-orders open Sept 5" : "9월 5일 사전예약 오픈"}</span>
+                  <span>{en ? "Entries open Sept 5" : "9월 5일 사전구매 응모 오픈"}</span>
                   <span style={{ fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,.65)" }}>{en ? "Book now, buy calmly on Sept 15" : "예약하면 9월 15일에 여유 있게 구매"}</span>
                 </div>
               ) : preMode === "pre" ? (
@@ -285,7 +289,7 @@ export default function Landing() {
                 ) : preMode === "dday" ? (
                   /* 사전예약 오픈 카운트다운 (9/5) */
                   <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)", color: "#fff", textDecoration: "none" }}>
-                    <span className="mono" style={{ fontWeight: 800 }}>{cd}</span>&nbsp;{en ? "until pre-orders open" : "후 사전예약 오픈"}
+                    <span className="mono" style={{ fontWeight: 800 }}>{cd}</span>&nbsp;{en ? "until entries open" : "후 사전구매 응모 오픈"}
                   </a>
                 ) : (
                   <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
@@ -311,8 +315,8 @@ export default function Landing() {
                 }}>
                   <span style={{ fontSize: 16.5, fontWeight: 700, color: "#fff" }}>
                     {en
-                      ? <><b className="mono count-slot" style={{ fontSize: 21, ...slot(MOCK_PRENOTIFY) }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> units pre-ordered</>
-                      : <>현재 <b className="mono count-slot" style={{ fontSize: 21, ...slot(MOCK_PRENOTIFY) }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>대 사전예약</>}
+                      ? <><b className="mono count-slot" style={{ fontSize: 21, ...slot(MOCK_PRENOTIFY) }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b> units entered</>
+                      : <>현재 <b className="mono count-slot" style={{ fontSize: 21, ...slot(MOCK_PRENOTIFY) }}>{fmt(preMode === "pre" ? notifyCount : MOCK_PRENOTIFY)}</b>대 응모</>}
                   </span>
                   <span aria-hidden className="ps-div" />
                   <span style={{ fontSize: 16.5, fontWeight: 700, color: "#fff" }}>
@@ -324,8 +328,8 @@ export default function Landing() {
                 /* 보조 개념 * 주석 — 히어로 맨하단, 작게 (8/28 서우 문구 개정) */
                 <div style={{ fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,.55)", maxWidth: 560 }}>
                   {en
-                    ? <>* Pre-order now and you can buy when sales open on Sept 15.<br />* Genesis Numbers are randomly assigned at purchase.<br />* After sales open, buy and get one free &#39;XRP SEOUL 2026&#39; ticket per device (₩100,000 value)</>
-                    : <>* 사전예약하면 9월 15일 오픈 때 구매 가능합니다.<br />* 제네시스 넘버는 구매 시 랜덤 배정됩니다.<br />* 정식 판매 오픈 후, 구매 시 &#39;XRP SEOUL 2026&#39; 티켓 1대당, 1장 무료 증정 (10만원 상당)</>}
+                    ? <>* A draw grants the right to buy from the limited quantity when sales open on Sept 15.<br />* Genesis Numbers are randomly assigned at purchase.<br />* After sales open, buy and get one free &#39;XRP SEOUL 2026&#39; ticket per device (₩100,000 value)</>
+                    : <>* 추첨을 통해 9월 15일 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다.<br />* 제네시스 넘버는 구매 시 랜덤 배정됩니다.<br />* 정식 판매 오픈 후, 구매 시 &#39;XRP SEOUL 2026&#39; 티켓 1대당, 1장 무료 증정 (10만원 상당)</>}
                 </div>
               )}
             </div>
@@ -361,7 +365,7 @@ export default function Landing() {
                     <span className="mono" style={{ color: "#fff", fontWeight: 700 }}>{f.w}****</span>
                     <span style={{ color: "rgba(255,255,255,.55)" }}>{f.t}</span>
                     <span className="mono" style={{ color: "color-mix(in oklab, var(--w-main) 40%, white)", fontWeight: 800 }}>
-                      {f.q}{en ? ` unit${f.q > 1 ? "s" : ""}` : "대"} {en ? "pre-ordered" : "사전예약"}
+                      {f.q}{en ? ` unit${f.q > 1 ? "s" : ""}` : "대"} {en ? "entered" : "응모"}
                     </span>
                   </div>
                 ))}
@@ -369,8 +373,8 @@ export default function Landing() {
             </div>
             <div style={{ fontSize: 14.5, color: "rgba(255,255,255,.45)", textAlign: "center" }}>
               {en
-                ? "Wallet prefixes are masked. Pre-orders gauge demand — Genesis Numbers are randomly assigned at purchase."
-                : "지갑 주소는 앞자리만 표시됩니다. 사전예약은 수요 파악 단계이며, 제네시스 넘버는 정식 구매 시 무작위로 배정됩니다."}
+                ? "Wallet prefixes are masked. Entries are not purchases — Genesis Numbers are randomly assigned at purchase."
+                : "지갑 주소는 앞자리만 표시됩니다. 사전구매 응모는 구매가 아니며, 제네시스 넘버는 정식 구매 시 무작위로 배정됩니다."}
             </div>
           </div>
         </section>
@@ -428,7 +432,7 @@ export default function Landing() {
             <div style={{ fontSize: 15.5, fontWeight: 800, letterSpacing: ".14em", color: "var(--w-main)" }}>WEATHER DATA ECONOMY</div>
             {/* 8/28 서우: 확정 슬로건을 선순환 아래에서 여기(eyebrow ↔ 제목 사이)로 옮겼다 */}
             <div style={{ fontSize: "clamp(23px, 2.8vw, 31px)", fontWeight: 800, color: "var(--w-main)", letterSpacing: "-.01em" }}>
-              Turn Your Weather Data into Value.
+              Turn Your Weather Data into Value
             </div>
             <h2 style={h2}>{t(D.howTitle)}</h2>
             <p style={{ fontSize: 19.5, lineHeight: 1.72, color: "var(--ink-4)", maxWidth: 780, margin: "0 auto" }}>
@@ -469,17 +473,15 @@ export default function Landing() {
             {/* 마지막에서 처음으로 되돌아가는 고리 — 칩이 4개가 되어 아이콘 하나로는 자리가 모자라
                 행 아래 곡선 화살표로 뺐다(방향도 이쪽이 읽기 쉽다) */}
             <div className="loop-return">
-              <svg viewBox="0 0 600 34" preserveAspectRatio="none" aria-hidden focusable="false">
-                <path d="M592 2 V18 Q592 30 578 30 H22 Q8 30 8 18 V2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                <path d="M3 9 L8 2 L13 9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              {/* 끝점을 칩 중앙에 맞추려면 폭이 칩 치수를 따라야 한다 — CSS 로 그린다(globals.css .lr-u) */}
+              <div className="lr-u" aria-hidden />
               <span>{t(D.loopReturn)}</span>
             </div>
             <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
               {t(D.loopBody1)}<br />{t(D.loopBody2)}
             </p>
             <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "var(--cap)" }}>
-              {t(D.rewardNotice)}
+              {t(D.privacyNotice)}
             </p>
           </div>
         </div>
@@ -598,52 +600,61 @@ export default function Landing() {
       </section>
 
       {/* ── S5 연동 안내 (8/27 후순위 이동 — 비전 다음) ── */}
-      <section className="sec-pad" style={{ background: "#fff" }} id="setup">
+      <section className="sec-pad" style={{ background: "#fff", ...(SHOW_SETUP_GUIDE ? null : { paddingTop: 30, paddingBottom: 30 }) }} id="setup">
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
             {/* 배송 안내 캡션 (8/27 서우) — 2주 전 공지 채널 + 11월 순차 배송 */}
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "center", fontSize: 15.5, fontWeight: 700, color: "var(--w-main)", background: "var(--w-tint)", borderRadius: 99, padding: "9px 18px", marginBottom: 6 }}>
+              {/* 8/28 서우: 배송 시작 예상(11월 중 순차) 절은 뺀다 — 공지 채널 안내만 남긴다 */}
               {en
-                ? <>Shipping is announced 2 weeks ahead in the community (Telegram) · updates on X <span style={{ color: "color-mix(in oklab, var(--w-main) 45%, var(--ink-4))" }}>· Est. shipping — sequentially from November</span></>
-                : <>배송 2주 전에 커뮤니티(텔레그램) · 공지(X)로 안내드립니다 <span style={{ color: "color-mix(in oklab, var(--w-main) 45%, var(--ink-4))" }}>· 배송 시작 예상 — 11월 중 순차 배송 예정</span></>}
+                ? "Shipping is announced 2 weeks ahead in the community (Telegram) · updates on X."
+                : "배송 2주 전에 커뮤니티(텔레그램) · 공지(X)로 안내드립니다."}
             </div>
-            <h2 style={h2}>{en ? "Your device becomes a node 3 minutes after it arrives" : "디바이스 도착 후 3분이면 노드가 됩니다"}</h2>
-            <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Setup is easy — open the box and follow four steps." : "등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝."}</p>
+            {SHOW_SETUP_GUIDE && (
+              <>
+                <h2 style={h2}>{en ? "Your device becomes a node 3 minutes after it arrives" : "디바이스 도착 후 3분이면 노드가 됩니다"}</h2>
+                <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Setup is easy — open the box and follow four steps." : "등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝."}</p>
+              </>
+            )}
           </div>
-          <div className="link-grid">
-            {linkSteps.map((st) => (
-              <div key={st.n} style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "22px 14px", display: "flex", flexDirection: "column", gap: 10 }}>
-                <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 99, background: "var(--w-deep)", color: "#fff", fontSize: 17, fontWeight: 800 }}>{st.n}</span>
-                <div style={{ fontSize: 19, fontWeight: 800, color: "var(--w-deep)" }}>{st.t}</div>
-                <div style={{ fontSize: 15, lineHeight: 1.55, color: "var(--ink-4)" }}>
-                  {st.d}
-                  {st.d2 && <><br />{st.d2}</>}
-                </div>
-              </div>
-            ))}
-          </div>
-          {/* 8/28 서우가 왼쪽 "지갑이 처음이어도 됩니다" 안내를 빼면서 이 줄에 토글 버튼만 남았다.
-              space-between 이면 버튼이 왼쪽에 붙고 오른쪽이 텅 빈다 — 가운데로 모은다. */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, border: "1px solid color-mix(in oklab, var(--w-main) 30%, white)", background: "var(--w-tint)", borderRadius: 12, padding: "16px 20px", flexWrap: "wrap" }}>
-            <button onClick={() => setWalletGuideOpen(!walletGuideOpen)} aria-expanded={walletGuideOpen} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 17.5, fontWeight: 700, whiteSpace: "nowrap", color: "var(--w-main)" }}>
-              {walletGuideOpen ? (en ? "Collapse the guide" : "가이드 접기") : (en ? "See the full setup guide" : "상세 연동 가이드 보기")}
-              <span style={{ display: "inline-flex", transform: walletGuideOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
-                <ChevD size={14} color="var(--w-main)" />
-              </span>
-            </button>
-          </div>
-          {walletGuideOpen && (
-            <div className="step-in" style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "24px 26px", display: "flex", flexDirection: "column", gap: 16 }}>
-              {(en ? WALLET_GUIDE_EN : WALLET_GUIDE).map((g, i) => (
-                <div key={g.t} style={{ display: "flex", gap: 13, alignItems: "flex-start" }}>
-                  <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 99, background: "var(--w-tint)", color: "var(--w-main)", fontSize: 15.5, fontWeight: 800, flex: "none", marginTop: 1 }}>{i + 1}</span>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                    <div style={{ fontSize: 17.5, fontWeight: 800, color: "var(--w-deep)" }}>{g.t}</div>
-                    <div style={{ fontSize: 17, lineHeight: 1.65, color: "var(--ink-4)" }}>{g.d}</div>
+          {SHOW_SETUP_GUIDE && (
+            <>
+            <div className="link-grid">
+              {linkSteps.map((st) => (
+                <div key={st.n} style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "22px 14px", display: "flex", flexDirection: "column", gap: 10 }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 99, background: "var(--w-deep)", color: "#fff", fontSize: 17, fontWeight: 800 }}>{st.n}</span>
+                  <div style={{ fontSize: 19, fontWeight: 800, color: "var(--w-deep)" }}>{st.t}</div>
+                  <div style={{ fontSize: 15, lineHeight: 1.55, color: "var(--ink-4)" }}>
+                    {st.d}
+                    {st.d2 && <><br />{st.d2}</>}
                   </div>
                 </div>
               ))}
             </div>
+            {/* 8/28 서우가 왼쪽 "지갑이 처음이어도 됩니다" 안내를 빼면서 이 줄에 토글 버튼만 남았다.
+                space-between 이면 버튼이 왼쪽에 붙고 오른쪽이 텅 빈다 — 가운데로 모은다. */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, border: "1px solid color-mix(in oklab, var(--w-main) 30%, white)", background: "var(--w-tint)", borderRadius: 12, padding: "16px 20px", flexWrap: "wrap" }}>
+              <button onClick={() => setWalletGuideOpen(!walletGuideOpen)} aria-expanded={walletGuideOpen} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 17.5, fontWeight: 700, whiteSpace: "nowrap", color: "var(--w-main)" }}>
+                {walletGuideOpen ? (en ? "Collapse the guide" : "가이드 접기") : (en ? "See the full setup guide" : "상세 연동 가이드 보기")}
+                <span style={{ display: "inline-flex", transform: walletGuideOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
+                  <ChevD size={14} color="var(--w-main)" />
+                </span>
+              </button>
+            </div>
+            {walletGuideOpen && (
+              <div className="step-in" style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "24px 26px", display: "flex", flexDirection: "column", gap: 16 }}>
+                {(en ? WALLET_GUIDE_EN : WALLET_GUIDE).map((g, i) => (
+                  <div key={g.t} style={{ display: "flex", gap: 13, alignItems: "flex-start" }}>
+                    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 99, background: "var(--w-tint)", color: "var(--w-main)", fontSize: 15.5, fontWeight: 800, flex: "none", marginTop: 1 }}>{i + 1}</span>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                      <div style={{ fontSize: 17.5, fontWeight: 800, color: "var(--w-deep)" }}>{g.t}</div>
+                      <div style={{ fontSize: 17, lineHeight: 1.65, color: "var(--ink-4)" }}>{g.d}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            </>
           )}
         </div>
       </section>
@@ -703,14 +714,14 @@ export default function Landing() {
                   글자 크기를 인라인에 두면 좁은 폭에서 CSS 로 줄일 수가 없다(인라인이 이긴다).
                   클래스로 내리고, 400px 아래에서만 글자를 줄여 문구는 그대로 둔 채 한 줄을 지킨다. */}
               <div className="sb-count">
-                <span className="sb-lab">{en ? "Now" : "현재"}</span>
+                <span className="sb-lab">{t(D.nowLabel)}</span>
                 <span style={{ whiteSpace: "nowrap" }}>
                   <span className="mono sb-num">{fmt(MOCK_PRENOTIFY)}</span>
-                  <span className="sb-lab">{en ? " pre-ordered" : "대 예약"}</span>
+                  <span className="sb-lab">{t(D.unitsPreordered)}</span>
                 </span>
                 <span className="mono sb-dday">{dSaleBadge}</span>
               </div>
-              <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px", whiteSpace: "nowrap" }}>{en ? "Pre-order" : "사전예약"}</button>
+              <button onClick={buy} className="btn-main btn-shine" style={{ fontSize: 19.5, borderRadius: 10, padding: "13px 34px", whiteSpace: "nowrap" }}>{en ? "Enter" : "응모하기"}</button>
             </div>
           ) : (
           <div className="stickybar-in">

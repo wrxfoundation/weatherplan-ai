@@ -35,6 +35,15 @@ export const ChevD = ({ size = 15, color = "#9a9ab5", className }: P) => (
   </svg>
 );
 
+/* 8/28 서우: 티켓 이모지(🎟️)를 라인 아이콘으로. 기기마다 다르게 렌더되는 이모지 대신
+   나머지 아이콘과 같은 stroke 2 라인으로 통일한다. 가운데 절취선 = 티켓의 시각적 단서. */
+export const Ticket = ({ size = 19, color = "var(--w-main)" }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 8.5V6.5a1.5 1.5 0 0 1 1.5-1.5h15A1.5 1.5 0 0 1 21 6.5v2a2.5 2.5 0 0 0 0 5v2a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 15.5v-2a2.5 2.5 0 0 0 0-5z" />
+    <path d="M14 9v1M14 14v1" />
+  </svg>
+);
+
 export const Shield = ({ size = 18, color = "var(--w-main)" }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5l8-3z" />

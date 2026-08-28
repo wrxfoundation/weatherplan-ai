@@ -1,14 +1,15 @@
 "use client";
-/* 사전예약 온보딩 모달 (8/27 서우: 가격·수량 창 없이 "구매 온보딩 과정"만 표현)
-   개념: 사전예약 = 수요 파악·자리 확보, 결제 아님. 구글 로그인 → 내 기본 지갑 자동 생성 → 예약 완료.
-   완료 화면에서 9/15 오픈 알림 안내 + 커뮤니티(텔레그램)·소식(X) 버튼 유도.
-   8/28 서우: 지갑 생성 뒤 "예약 대수 설정" 단계 추가 (1계정 최대 100대 — 현황판 표기와 동일).
+/* 사전구매 응모 온보딩 모달 (8/27 서우: 가격·수량 창 없이 "구매 온보딩 과정"만 표현)
+   개념: 응모 = 추첨 대상 등록, 결제 아님. 구글 로그인 → 내 기본 지갑 자동 생성 → 응모 완료.
+   8/28 서우 2차: 선착순 사전예약 → 추첨제. "자리 확보"가 아니라 추첨으로 구매 권한을 준다.
+   결과 통지 = 9/14 09시(KST) 가입 메일. 완료 화면에 그 문장을 반드시 둔다.
+   8/28 서우: 지갑 생성 뒤 "응모 대수 설정" 단계 추가 (1계정 최대 100대 — 현황판 표기와 동일).
    실구현 대응 지점: 구글 OAuth(POST /api/auth/google) · 지갑 생성(POST /api/wallet) · 예약 등록(POST /api/preorder { qty }) */
 import { useState, useEffect } from "react";
 import { LINKS, MOCK_ORDER } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
 import { D } from "@/lib/dict";
-import { TgIcon, XIcon, Check } from "./icons";
+import { TgIcon, XIcon, Check, Ticket } from "./icons";
 
 /* 구글 사인인 버튼용 G 마크 (브랜드 가이드 표준 4색) */
 const GoogleG = ({ size = 20 }: { size?: number }) => (
@@ -80,8 +81,8 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
               <h3 style={h3}>{t(D.signInTitle)}</h3>
               <p style={pStyle}>
                 {en
-                  ? "Pre-ordering takes only a Google sign-in. It is not a payment — it secures your spot so you can buy calmly when sales open."
-                  : "사전예약은 구글 로그인만으로 진행됩니다. 결제가 아니며, 오픈 때 선착순 걱정 없이 구매할 수 있는 자리를 확보합니다."}
+                  ? "Entering takes only a Google sign-in. It is not a payment — a draw decides who can buy on opening day."
+                  : "사전구매 응모는 구글 로그인만으로 진행됩니다. 결제가 아니며, 추첨으로 오픈 당일 구매 권한이 정해집니다."}
               </p>
               <button
                 onClick={googleSignIn}
@@ -125,8 +126,8 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
               <h3 style={h3}>{t(D.qtyTitle)}</h3>
               <p style={pStyle}>
                 {en
-                  ? "A pre-order is not a payment — it gauges demand and holds your room. Up to 100 units per account."
-                  : "사전예약은 결제가 아니라 수요 파악과 자리 확보 단계입니다. 1계정 최대 100대까지 설정할 수 있습니다."}
+                  ? "An entry is not a payment. A draw grants the right to buy from the limited quantity on opening day. Up to 100 units per account."
+                  : "사전구매 응모는 결제가 아니며, 추첨을 통해 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다. 1계정 최대 100대까지 설정할 수 있습니다."}
               </p>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20 }}>
                 <button onClick={() => setQty(Math.max(1, qty - 1))} disabled={qty <= 1} aria-label={t(D.decrease)} style={{ ...stepBtn, opacity: qty <= 1 ? 0.35 : 1 }}>−</button>
@@ -143,7 +144,7 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
               </div>
               {/* 8/28 서우: 정식 판매 오픈 후 구매 시 XRP SEOUL 2026 티켓 증정 */}
               <div style={perkStyle}>
-                <span aria-hidden style={{ fontSize: 19 }}>🎟️</span>
+                <span aria-hidden style={{ display: "inline-flex", flex: "none" }}><Ticket /></span>
                 <span>
                   {en
                     ? <>After sales open, buy and get one free &#39;<b>XRP SEOUL 2026</b>&#39; ticket per device <span style={{ color: "var(--cap)", fontWeight: 600 }}>(₩100,000 value)</span></>
@@ -169,11 +170,13 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
               </div>
               <p style={pStyle}>
                 {en
-                  ? `Your spot for ${qty} unit${qty > 1 ? "s" : ""} is held. We'll send you an opening alert on Sept 15. A pre-order is not a payment — you can buy calmly, with no first-come rush, the moment sales open.`
-                  : `${qty}대 자리를 확보했습니다. 9월 15일 오픈 알림을 보내드립니다. 사전예약은 결제가 아니며, 오픈과 동시에 선착순 걱정 없이 구매할 수 있습니다.`}
+                  ? `Your entry for ${qty} unit${qty > 1 ? "s" : ""} is in. An entry is not a payment — a draw grants the right to buy from the limited quantity on opening day.`
+                  : `${qty}대 응모가 접수되었습니다. 사전구매 응모는 결제가 아니며, 추첨을 통해 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다.`}
               </p>
+              {/* 8/28 서우 지정 — 추첨 결과 통지 시각·경로를 완료 화면에서 못 박는다 */}
+              <p style={capStyle}>{t(D.drawResult)}</p>
                 <div style={perkStyle}>
-                  <span aria-hidden style={{ fontSize: 19 }}>🎟️</span>
+                  <span aria-hidden style={{ display: "inline-flex", flex: "none" }}><Ticket /></span>
                   <span>
                     {en
                       ? <>After sales open, buy and get one free &#39;<b>XRP SEOUL 2026</b>&#39; ticket per device <span style={{ color: "var(--cap)", fontWeight: 600 }}>(₩100,000 value)</span></>

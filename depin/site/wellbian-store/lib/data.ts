@@ -100,9 +100,10 @@ export const SPECS = [
 ];
 
 export const FAQS = [
-  /* 8/28 서우: 사전예약 기간인데 사전예약 문항이 없어 최상단 2개 신설 (모바일 기본 노출 3개에 포함) */
-  { q: "사전예약은 무엇인가요?", a: "결제가 아니라 수요 파악과 자리 확보 단계입니다. 구글 로그인으로 예약할 대수만 정해두면, 9월 15일 판매 오픈 때 선착순 걱정 없이 구매할 수 있습니다. 1계정 최대 100대까지 설정할 수 있습니다." },
-  { q: "사전예약하면 반드시 구매해야 하나요?", a: "아니요. 확정 주문이 아니며 예약 자체에 비용이 들지 않습니다. 실제 구매 수량은 오픈 때 자유롭게 정하시면 됩니다." },
+  /* 8/28 서우 2차: 선착순 사전예약 → 추첨제 사전구매 응모. "자리 확보"·"선착순 걱정 없이"는
+     추첨제에서 사실이 아니므로 답변을 다시 썼다. 추첨 결과 통지는 9/14 09시(KST) 가입 메일. */
+  { q: "사전구매 응모는 무엇인가요?", a: "결제가 아닙니다. 구글 로그인으로 응모할 대수를 정해두면, 추첨을 통해 9월 15일 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다. 1계정 최대 100대까지 설정할 수 있습니다." },
+  { q: "응모하면 반드시 구매해야 하나요?", a: "아니요. 확정 주문이 아니며 응모 자체에 비용이 들지 않습니다. 추첨에 당첨되어 구매 권한을 받으신 뒤에도 실제 구매 여부와 수량은 자유롭게 정하시면 됩니다." },
   { q: "가격이 어떻게 되나요?", a: "1차 판매는 대당 450 RLUSD입니다. 2차 판매부터는 650 RLUSD로 적용됩니다. 결제는 RLUSD로만 진행됩니다." },
   { q: "RLUSD는 어디서 구하나요?", a: "국내·해외 거래소에서 RLUSD를 구매한 뒤 XRPL 네트워크로 개인 지갑에 출금하면 됩니다. 출금 시 반드시 XRPL판 RLUSD를 선택하세요." },
   { q: "지갑이 처음인데 괜찮나요?", a: "네. 구글 계정으로 가입하면 내 지갑이 자동으로 만들어집니다. 지갑 활성화(1 XRP)는 1회 지원되며(약관 제5조), 연동까지 가이드를 제공합니다." },
@@ -192,8 +193,8 @@ export const MOCK_DEVICE: Device = {
 /* 사전예약 누적 목값 (8/27 — teaser/dday 시뮬레이션용) */
 export const MOCK_PRENOTIFY = 3847;
 
-/* 사전예약 실시간 현황 mock 피드 (8/27) — 내부 지갑 앞자리+마스킹 · 예약 시각 · 대수.
-   사전예약은 수요 파악 단계라 제네시스 넘버와 무관 (넘버는 정식 구매 시 배정).
+/* 사전구매 응모 실시간 현황 mock 피드 (8/27) — 내부 지갑 앞자리+마스킹 · 응모 시각 · 대수.
+   응모는 구매가 아니라 제네시스 넘버와 무관 (넘버는 정식 구매 시 배정).
    8/28 회의로 수량 캡 자체가 없어졌다 */
 export const PREORDER_FEED: { w: string; t: string; q: number }[] = [
   { w: "r9fK", t: "21:04:32", q: 3 }, { w: "rB2x", t: "21:03:58", q: 10 }, { w: "rQm7", t: "21:03:41", q: 1 },
@@ -274,8 +275,8 @@ export const SPECS_EN = [
 ];
 
 export const FAQS_EN = [
-  { q: "What is a pre-order?", a: "It is not a payment — it gauges demand and holds your spot. Sign in with Google, set how many units you want, and you can buy calmly when sales open on Sept 15. Up to 100 units per account." },
-  { q: "Does a pre-order commit me to buying?", a: "No. It is not a confirmed order and costs nothing. You decide the actual quantity when sales open." },
+  { q: "What is a pre-purchase entry?", a: "It is not a payment. Sign in with Google and set how many units you want; a draw then grants the right to buy from the limited quantity when sales open on Sept 15. Up to 100 units per account." },
+  { q: "Does an entry commit me to buying?", a: "No. It is not a confirmed order and costs nothing. Even after the draw grants you the right to buy, the actual quantity is yours to decide." },
   { q: "How much does it cost?", a: "450 RLUSD per unit in the first batch. From the second batch the price is 650 RLUSD. Payment is in RLUSD only." },
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on a domestic or global exchange, then withdraw it to your personal wallet over the XRPL network. Always select the XRPL version of RLUSD when withdrawing." },
   { q: "I've never used a wallet. Is that okay?", a: "Yes. Signing up with your Google account creates your wallet automatically. One-time activation (1 XRP) is covered (Terms, Art. 5), and the guide walks you through node linking." },
@@ -286,7 +287,7 @@ export const FAQS_EN = [
 export const FAQS_EXTRA = [
   { q: "결제는 왜 RLUSD로만 하나요?", a: "RLUSD는 미국 달러와 1:1로 연동되는 스테이블코인이라 가격 변동 걱정 없이 결제할 수 있습니다. 리플(Ripple)이 발행하고 뉴욕 금융감독청(NYDFS)의 규제를 받습니다." },
   { q: "몇 대까지 구매할 수 있나요?", a: "구글 계정 1개당 최대 100대까지 구매할 수 있습니다. 대량 구매 시에도 기기마다 제네시스 넘버가 하나씩 배정됩니다." },
-  { q: "사전예약 대수와 실제 구매 수량이 달라도 되나요?", a: "네. 사전예약은 자리 확보 단계라 오픈 때 더 사거나 덜 사도 됩니다. 계정당 상한(100대)만 지키면 됩니다." },
+  { q: "응모 대수와 실제 구매 수량이 달라도 되나요?", a: "네. 추첨으로 부여되는 구매 권한 범위 안에서 오픈 때 더 적게 사셔도 됩니다. 계정당 상한(100대)만 지키면 됩니다." },
   { q: "제네시스 넘버가 뭔가요?", a: "구매가 확정될 때 무작위로 배정되는 제네시스 노드 고유 번호입니다. 여러 대를 구매하면 수량만큼 배정되고, 주문 내역에서 정렬된 목록으로 확인·복사할 수 있습니다. 라이선스 NFT에 영구 기록됩니다." },
   { q: "라이선스 NFT는 뭔가요?", a: "기기의 정품과 참여 자격을 증명하는 XRPL 기반 증서입니다. 박스 안 리딤코드로 발급받으며, 이 NFT를 보유한 기기만 보상 대상이 됩니다." },
   { q: "배송은 언제, 어떻게 받나요?", a: "11월 중 순차 배송 예정입니다. 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 안내하며, 폼에 제네시스 넘버·내 지갑 주소·배송 정보를 입력하면 순서대로 발송됩니다." },
@@ -297,7 +298,7 @@ export const FAQS_EXTRA = [
 export const FAQS_EXTRA_EN = [
   { q: "Why is payment RLUSD-only?", a: "RLUSD is a stablecoin pegged 1:1 to the US dollar, so you can pay without worrying about price swings. It is issued by Ripple and regulated by the NYDFS." },
   { q: "How many units can I buy?", a: "Up to 100 units per Google account. Even on bulk orders, each device gets its own Genesis Number." },
-  { q: "Can the pre-ordered quantity differ from what I actually buy?", a: "Yes. A pre-order holds your room, so you can buy more or fewer units when sales open — the per-account cap of 100 units is the only limit." },
+  { q: "Can the entered quantity differ from what I actually buy?", a: "Yes. Within the right to buy granted by the draw you can take fewer units when sales open — the per-account cap of 100 units is the only limit." },
   { q: "What is a Genesis Number?", a: "A unique genesis-node number randomly assigned when your purchase is confirmed. Buy multiple units and you get one per device — viewable as a sorted, copyable list in your order history. Permanently recorded on your license NFT." },
   { q: "What is the license NFT?", a: "An XRPL-based certificate proving your device is genuine and eligible to participate. It is minted with the redeem code inside the box, and only devices holding this NFT earn rewards." },
   { q: "When and how does shipping work?", a: "Units are expected to ship sequentially through November. Starting 2 weeks before dispatch, we announce the shipping form on our official Telegram and X — enter your Genesis Numbers, your wallet address, and shipping details, and units ship in order." },

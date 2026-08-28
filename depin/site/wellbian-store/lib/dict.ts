@@ -15,19 +15,22 @@ const m = <T,>(v: Msg<T>) => v;
 
 /* ── 히어로 · 공통 CTA ────────────────────────────────────────────────── */
 export const D = {
+  /* 8/28 서우: 선착순 사전예약 → 추첨제 "사전구매 응모". 예약(자리를 잡는다)이 아니라
+     응모(추첨 대상이 된다)이므로 다섯 언어 모두 예약 어휘를 걷어냈다.
+     en 은 reserve/pre-order 를 쓰지 않는다 — 확보를 약속하는 말로 읽힌다. */
   preorderCta: m({
-    ko: "사전예약 신청하기",
-    en: "Pre-order now",
-    ja: "事前予約を申し込む",
-    zh: "立即预约",
-    es: "Reservar ahora",
+    ko: "사전구매 응모하기",
+    en: "Enter the draw",
+    ja: "事前購入に応募する",
+    zh: "申请预购",
+    es: "Participar en el sorteo",
   }),
   preorderShort: m({
-    ko: "사전예약",
-    en: "Pre-order",
-    ja: "事前予約",
-    zh: "预约",
-    es: "Reservar",
+    ko: "응모하기",
+    en: "Enter",
+    ja: "応募",
+    zh: "申请",
+    es: "Participar",
   }),
 
   /* ── S2 우리가 만드는 것 ────────────────────────────────────────────── */
@@ -82,7 +85,7 @@ export const D = {
 
   /* ── 선순환 ────────────────────────────────────────────────────────── */
   loopTitle: m({
-    ko: "데이터가 돌수록 단단해지는 선순환",
+    ko: "데이터가 흐를수록 단단해지는 선순환",
     en: "A loop that sustains itself",
     ja: "データが巡るほど強くなる好循環",
     zh: "数据流转越多，循环越稳固",
@@ -139,30 +142,32 @@ export const D = {
     zh: "销售所得再次成为节点奖励的来源，奖励带来更多节点，监测网随之更密集。",
     es: "Esos ingresos vuelven a financiar las recompensas de los nodos, y más recompensas traen más nodos, densificando la red.",
   }),
-  /* 필수 고지 — 어느 언어에서도 빠지면 안 된다 */
-  rewardNotice: m({
-    ko: "보상 재원은 데이터 매출에 연동됩니다 · 지급량과 가치는 보장되지 않습니다",
-    en: "The reward pool is tied to data sales — amounts and value are not guaranteed.",
-    ja: "報酬原資はデータ売上に連動します・支給量と価値は保証されません",
-    zh: "奖励来源与数据销售挂钩 · 发放数量与价值不作保证",
-    es: "El fondo de recompensas depende de las ventas de datos · la cantidad y el valor no están garantizados",
+  /* 8/28 서우: 보상 비보장 고지를 이 자리에서 빼고 개인정보 안심 문구로 교체.
+     백서 정합성 리포트(0826) A9 "비식별화 · 구매 플로우 개인정보 제로화" 기준 —
+     측정 대상이 사람이 아니라 공기라는 사실만 짧게 말한다. 없는 약속은 하지 않는다. */
+  privacyNotice: m({
+    ko: "측정값은 공기질 데이터뿐입니다 · 개인을 식별하는 정보는 수집하지 않습니다",
+    en: "We measure air quality only — no personally identifiable information is collected.",
+    ja: "計測するのは空気質データだけ・個人を識別する情報は収集しません",
+    zh: "只测量空气质量数据 · 不收集可识别个人的信息",
+    es: "Solo medimos datos de calidad del aire · no recopilamos información que identifique a personas",
   }),
 
   /* ── 실시간 현황판 · 스티키 ────────────────────────────────────────── */
   liveBoard: m({
-    ko: "실시간 사전예약 현황",
-    en: "Live pre-order board",
-    ja: "リアルタイム事前予約状況",
-    zh: "实时预约动态",
-    es: "Reservas en tiempo real",
+    ko: "실시간 사전구매 응모 현황",
+    en: "Live entry board",
+    ja: "リアルタイム応募状況",
+    zh: "实时申请动态",
+    es: "Inscripciones en tiempo real",
   }),
   nowLabel: m({ ko: "현재", en: "Now", ja: "現在", zh: "当前", es: "Ahora" }),
   unitsPreordered: m({
-    ko: "대 예약",
-    en: " pre-ordered",
-    ja: "台 予約",
-    zh: "台 已预约",
-    es: " reservadas",
+    ko: "대 응모",
+    en: " entered",
+    ja: "台 応募",
+    zh: "台 已申请",
+    es: " inscritas",
   }),
 
   /* ── 푸터 · 커뮤니티 패널 (chrome.tsx) ─────────────────────────────── */
@@ -195,11 +200,11 @@ export const D = {
     es: "Seguir novedades",
   }),
   terms: m({
-    ko: "이용약관 (TERMS)",
-    en: "Terms of Service (TERMS)",
-    ja: "利用規約 (TERMS)",
-    zh: "服务条款 (TERMS)",
-    es: "Términos del servicio (TERMS)",
+    ko: "이용약관",
+    en: "Terms of Service",
+    ja: "利用規約",
+    zh: "服务条款",
+    es: "Términos del servicio",
   }),
   /* 제품 정식명은 상표다 — ja/zh/es 를 비워 영문명으로 폴백시킨다(임의 번역 금지) */
   productName: m({
@@ -207,15 +212,15 @@ export const D = {
     en: "Weather Data Token Generator™",
   }),
 
-  /* ── 사전예약 모달 (PreOrderModal.tsx) ─────────────────────────────── */
+  /* ── 사전구매 응모 모달 (PreOrderModal.tsx) ───────────────────────── */
   stepNames: m<string[]>({
-    ko: ["로그인", "지갑 생성", "예약 대수", "완료"],
+    ko: ["로그인", "지갑 생성", "응모 대수", "완료"],
     en: ["Sign-in", "Wallet", "Quantity", "Done"],
-    ja: ["ログイン", "ウォレット", "予約台数", "完了"],
-    zh: ["登录", "钱包", "预约数量", "完成"],
+    ja: ["ログイン", "ウォレット", "応募台数", "完了"],
+    zh: ["登录", "钱包", "申请数量", "完成"],
     es: ["Acceso", "Billetera", "Cantidad", "Listo"],
   }),
-  preorderLabel: m({ ko: "사전예약", en: "Pre-order", ja: "事前予約", zh: "预约", es: "Reserva" }),
+  preorderLabel: m({ ko: "사전구매 응모", en: "Pre-purchase entry", ja: "事前購入応募", zh: "预购申请", es: "Inscripción de precompra" }),
   close: m({ ko: "닫기", en: "Close", ja: "閉じる", zh: "关闭", es: "Cerrar" }),
   signInTitle: m({
     ko: "구글 로그인으로 시작",
@@ -240,34 +245,43 @@ export const D = {
     es: "Tu billetera está lista",
   }),
   nextQuantity: m({
-    ko: "다음 — 예약 대수 설정",
+    ko: "다음 — 응모 대수 설정",
     en: "Next — set quantity",
-    ja: "次へ — 予約台数を設定",
-    zh: "下一步 — 设置预约数量",
+    ja: "次へ — 応募台数を設定",
+    zh: "下一步 — 设置申请数量",
     es: "Siguiente: elegir cantidad",
   }),
   qtyTitle: m({
-    ko: "사전예약 대수 설정",
+    ko: "응모 대수 설정",
     en: "Set your quantity",
-    ja: "事前予約の台数を設定",
-    zh: "设置预约数量",
+    ja: "応募台数を設定",
+    zh: "设置申请数量",
     es: "Elige la cantidad",
   }),
   decrease: m({ ko: "1대 빼기", en: "Decrease", ja: "1台減らす", zh: "减少 1 台", es: "Quitar una" }),
   increase: m({ ko: "1대 더하기", en: "Increase", ja: "1台増やす", zh: "增加 1 台", es: "Añadir una" }),
+  /* 8/28 서우 지정 문안 — 추첨제. "선착순 걱정 없이"는 더 이상 사실이 아니다 */
   notCommitment: m({
-    ko: "확정이 아닙니다 — 실제 구매 수량은 오픈 때 자유롭게 정할 수 있습니다.",
-    en: "Not a commitment — you decide the actual amount when sales open.",
-    ja: "確定ではありません — 実際の購入台数はオープン時に自由に決められます。",
-    zh: "并非最终确定 —— 实际购买数量可在开售时自由决定。",
-    es: "No es un compromiso: decides la cantidad real cuando abran las ventas.",
+    ko: "사전구매 응모는 결제가 아니며, 추첨을 통해 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다.",
+    en: "An entry is not a payment. A draw grants the right to buy from the limited quantity on opening day.",
+    ja: "事前購入応募は決済ではありません。抽選により、オープン当日の限定数量を購入できる権利をお渡しします。",
+    zh: "预购申请不是付款。通过抽签，向中签者授予在开售当日购买限量数量的权利。",
+    es: "La inscripción no es un pago. Un sorteo otorga el derecho a comprar la cantidad limitada el día de apertura.",
+  }),
+  /* 추첨 결과 통지 — 8/28 서우 지정 (9/14 09:00 KST, 가입 메일) */
+  drawResult: m({
+    ko: "추첨 후 구매 가능 여부(구매 가능 권한 부여) 및 결과는 9월 14일 09시(KST) 가입하신 메일로 보내드립니다.",
+    en: "Draw results — including whether you receive the right to buy — are emailed to your sign-up address at 09:00 KST on Sept 14.",
+    ja: "抽選後の購入可否（購入権の付与）と結果は、9月14日9時（KST）にご登録のメールへお送りします。",
+    zh: "抽签结果（是否获得购买权限）将于 9 月 14 日 09:00（KST）发送至您注册的邮箱。",
+    es: "El resultado del sorteo (si recibes el derecho de compra) se enviará el 14 de septiembre a las 09:00 KST al correo con el que te registraste.",
   }),
   preorderDone: m({
-    ko: "사전예약이 완료되었습니다",
-    en: "Pre-order complete",
-    ja: "事前予約が完了しました",
-    zh: "预约已完成",
-    es: "Reserva completada",
+    ko: "사전구매 응모가 완료되었습니다",
+    en: "Your entry is in",
+    ja: "事前購入応募が完了しました",
+    zh: "预购申请已完成",
+    es: "Tu inscripción está registrada",
   }),
   communityTg: m({
     ko: "커뮤니티(텔레그램)",
@@ -287,10 +301,10 @@ export const D = {
     es: (n) => (n > 1 ? " unidades" : " unidad"),
   }),
   reserveCta: m<(n: number) => string>({
-    ko: (n) => `${n}대 사전예약 완료하기`,
-    en: (n) => `Reserve ${n} unit${n > 1 ? "s" : ""}`,
-    ja: (n) => `${n}台の事前予約を完了する`,
-    zh: (n) => `完成 ${n} 台预约`,
-    es: (n) => `Reservar ${n} ${n > 1 ? "unidades" : "unidad"}`,
+    ko: (n) => `${n}대 응모 완료하기`,
+    en: (n) => `Enter for ${n} unit${n > 1 ? "s" : ""}`,
+    ja: (n) => `${n}台の応募を完了する`,
+    zh: (n) => `完成 ${n} 台申请`,
+    es: (n) => `Participar por ${n} ${n > 1 ? "unidades" : "unidad"}`,
   }),
 } as const;

@@ -216,8 +216,11 @@ h1, h2, h3, p { margin: 0; }
 /* 사전예약 현황판 — 크레딧 롤 (8/27): 아래→위 무한 스크롤 + 상단 페이드아웃 */
 .feed-roll {
   height: 280px; overflow: hidden;
-  mask-image: linear-gradient(180deg, transparent 0%, #000 24%, #000 86%, rgba(0, 0, 0, .35) 100%);
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 24%, #000 86%, rgba(0, 0, 0, .35) 100%);
+  /* 8/28 서우: 아래에서 새 줄이 "잘린 화면에서 튀어나온다" — 아래쪽이 .35 까지만 흐려서
+     글자가 반쯤 보이는 채로 등장했다. 위아래 모두 완전 투명까지 빼서 스르르 나타나게 한다.
+     피드는 아래→위로 흐르므로 등장 쪽(아래) 페이드가 더 중요하다. */
+  mask-image: linear-gradient(180deg, transparent 0%, #000 20%, #000 76%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 20%, #000 76%, transparent 100%);
 }
 /* 8/28 서우 2차: 3열 배치 — 크레딧 롤 애니메이션 동일 (아이템 30개×2=60 → 3열 20행, -50%가 행 경계에 정확히 일치) */
 .feed-track { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 24px; row-gap: 14px; animation: feed-up 32s linear infinite; }
@@ -520,10 +523,32 @@ h1, h2, h3, p { margin: 0; }
   color: var(--arrow);
   margin-top: 2px;
 }
-.loop-return svg {
-  width: min(760px, 100%);
-  height: 30px;
-  display: block;
+/* 8/28 서우: 곡선 끝이 1번·4번 칩 중앙을 가리켜야 하는데 좌우로 49~56px 씩 벗어나 있었다.
+   원인은 SVG 를 preserveAspectRatio="none" 으로 늘려 쓴 것 — 칩 위치와 무관하게 그려졌다.
+   SVG 를 버리고 칩 치수에서 끝점을 계산한다:
+     칩폭 = (행폭 - 화살표 3개(17px) - gap 6개(8px)) / 4 = (100% - 99px) / 4
+     칩 중앙까지 = 그 절반 = (100% - 99px) / 8   ← 이만큼 좌우로 들여쓴다
+   화살표 폭을 CSS 로 못 박아야 이 식이 성립하므로 .loop-arrow 에 width 를 고정했다. */
+.loop-return .lr-u {
+  align-self: stretch;
+  height: 28px;
+  margin: 0 calc((100% - 99px) / 8);
+  border: 2px solid currentColor;
+  border-top: 0;
+  border-radius: 0 0 15px 15px;
+  position: relative;
+}
+/* 왼쪽 끝에서 위로 올라가는 화살촉 (4번 → 1번으로 되돌아가는 방향) */
+.loop-return .lr-u::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: -1px;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+  transform: rotate(45deg);
 }
 .loop-return span {
   font-size: 14.5px;
@@ -537,11 +562,12 @@ h1, h2, h3, p { margin: 0; }
      둘째 줄로 밀려 "한눈에"가 깨졌다 — 카드 내폭 832px에 4칩+3화살표가 들어가는 치수로 되돌린다. */
   .loop-chip { padding: 14px 12px; font-size: 15.5px; gap: 9px; }
   .loop-row { gap: 8px; }
-  .loop-arrow { font-size: 17px; }
+  /* 폭을 못 박는다 — .lr-u 의 인셋 계산이 이 17px 에 의존한다 */
+  .loop-arrow { font-size: 17px; width: 17px; flex: none; text-align: center; }
 }
 @media (max-width: 760px) {
   /* 세로 스택에서는 되돌아가는 곡선이 의미가 없다 — 화살표를 감추고 문구만 남긴다 */
-  .loop-return svg { display: none; }
+  .loop-return .lr-u { display: none; }
   .loop-return { margin-top: 6px; }
 }
 
