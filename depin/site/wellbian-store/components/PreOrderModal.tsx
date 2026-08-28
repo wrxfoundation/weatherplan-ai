@@ -7,6 +7,7 @@
 import { useState, useEffect } from "react";
 import { LINKS, MOCK_ORDER } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
+import { D } from "@/lib/dict";
 import { TgIcon, XIcon, Check } from "./icons";
 
 /* 구글 사인인 버튼용 G 마크 (브랜드 가이드 표준 4색) */
@@ -23,7 +24,7 @@ const GoogleG = ({ size = 20 }: { size?: number }) => (
 const SIGNED_IN_KEY = "wb-signed-in";
 
 export default function PreOrderModal({ onClose }: { onClose: () => void }) {
-  const { en } = useI18n();
+  const { en, t } = useI18n();
   /* 8/28 서우: 메인에서 이미 구글 로그인이 되어 있으면 로그인·지갑 단계를 건너뛰고
      '예약 대수'(step 2)로 바로 진입한다. 지갑은 가입 시 자동 생성되므로 두 단계가 함께 끝나 있다.
      SSR/CSR 하이드레이션이 어긋나지 않도록 초기값은 0으로 두고 마운트 후에 옮긴다. */
@@ -40,7 +41,7 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
   const [qty, setQty] = useState(1);
 
   /* 4단계로 늘며 인디케이터가 2줄로 넘쳐 라벨 축약 (8/28) */
-  const stepNames = en ? ["Sign-in", "Wallet", "Quantity", "Done"] : ["로그인", "지갑 생성", "예약 대수", "완료"];
+  const stepNames = t(D.stepNames);
 
   /* 데모: 구글 OAuth 왕복을 0.9s 목동작으로 표현 */
   const googleSignIn = () => {
@@ -56,7 +57,7 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal-card" role="dialog" aria-modal="true" aria-label={en ? "Pre-order" : "사전예약"}>
+      <div className="modal-card" role="dialog" aria-modal="true" aria-label={t(D.preorderLabel)}>
         <div className="sheet-handle" />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div className="mstep-ind">
@@ -70,13 +71,13 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
               </span>
             ))}
           </div>
-          <button onClick={onClose} aria-label={en ? "Close" : "닫기"} style={{ color: "var(--dis)", fontSize: 23.5, lineHeight: 1 }}>✕</button>
+          <button onClick={onClose} aria-label={t(D.close)} style={{ color: "var(--dis)", fontSize: 23.5, lineHeight: 1 }}>✕</button>
         </div>
 
         <div key={step} className="step-in" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {step === 0 && (
             <>
-              <h3 style={h3}>{en ? "Start with Google" : "구글 로그인으로 시작"}</h3>
+              <h3 style={h3}>{t(D.signInTitle)}</h3>
               <p style={pStyle}>
                 {en
                   ? "Pre-ordering takes only a Google sign-in. It is not a payment — it secures your spot so you can buy calmly when sales open."
@@ -91,7 +92,7 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                 }}
               >
                 <GoogleG size={21} />
-                {connecting ? (en ? "Connecting…" : "연결 중…") : (en ? "Continue with Google" : "구글로 계속하기")}
+                {connecting ? t(D.connecting) : t(D.continueGoogle)}
               </button>
               <div style={capStyle}>
                 {en
@@ -103,7 +104,7 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
 
           {step === 1 && (
             <>
-              <h3 style={h3}>{en ? "Your wallet is ready" : "내 지갑이 만들어졌습니다"}</h3>
+              <h3 style={h3}>{t(D.walletReady)}</h3>
               <div style={{ display: "flex", flexDirection: "column", gap: 6, border: "1px solid var(--bd-card)", borderRadius: 14, padding: "18px 20px", background: "var(--panel)" }}>
                 <span className="mono" style={{ fontSize: 13.5, fontWeight: 700, letterSpacing: ".12em", color: "var(--cap)" }}>MY WALLET</span>
                 <span className="mono" style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>{MOCK_ORDER.wallet}</span>
@@ -114,29 +115,29 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                   : "구글 계정에 연결된 비수탁 간편지갑입니다. 구매 확인과 보상 수령에 사용됩니다."}
               </p>
               <div style={capStyle}>
-                {en ? "One-time wallet activation (1 XRP) is covered (Terms, Art. 5)." : "등록 지갑 활성화(1 XRP)는 1회 지원됩니다 (약관 제5조)"}
+                {t(D.walletActivation)}
               </div>
               <button onClick={() => setStep(2)} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>
-                {en ? "Next — set quantity" : "다음 — 예약 대수 설정"}
+                {t(D.nextQuantity)}
               </button>
             </>
           )}
 
           {step === 2 && (
             <>
-              <h3 style={h3}>{en ? "Set your quantity" : "사전예약 대수 설정"}</h3>
+              <h3 style={h3}>{t(D.qtyTitle)}</h3>
               <p style={pStyle}>
                 {en
                   ? "A pre-order is not a payment — it gauges demand and holds your room. Up to 100 units per account."
                   : "사전예약은 결제가 아니라 수요 파악과 자리 확보 단계입니다. 1계정 최대 100대까지 설정할 수 있습니다."}
               </p>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20 }}>
-                <button onClick={() => setQty(Math.max(1, qty - 1))} disabled={qty <= 1} aria-label={en ? "Decrease" : "1대 빼기"} style={{ ...stepBtn, opacity: qty <= 1 ? 0.35 : 1 }}>−</button>
+                <button onClick={() => setQty(Math.max(1, qty - 1))} disabled={qty <= 1} aria-label={t(D.decrease)} style={{ ...stepBtn, opacity: qty <= 1 ? 0.35 : 1 }}>−</button>
                 <div style={{ minWidth: 120, textAlign: "center" }}>
                   <span className="mono" style={{ fontSize: 42, fontWeight: 800, color: "var(--w-deep)" }}>{qty}</span>
-                  <span style={{ fontSize: 19, fontWeight: 700, color: "var(--ink-3)", marginLeft: 5 }}>{en ? ` unit${qty > 1 ? "s" : ""}` : "대"}</span>
+                  <span style={{ fontSize: 19, fontWeight: 700, color: "var(--ink-3)", marginLeft: 5 }}>{t(D.unitSuffix)(qty)}</span>
                 </div>
-                <button onClick={() => setQty(Math.min(100, qty + 1))} disabled={qty >= 100} aria-label={en ? "Increase" : "1대 더하기"} style={{ ...stepBtn, opacity: qty >= 100 ? 0.35 : 1 }}>+</button>
+                <button onClick={() => setQty(Math.min(100, qty + 1))} disabled={qty >= 100} aria-label={t(D.increase)} style={{ ...stepBtn, opacity: qty >= 100 ? 0.35 : 1 }}>+</button>
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
                 {[1, 5, 10, 50, 100].map((n) => (
@@ -153,10 +154,10 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                 </span>
               </div>
               <button onClick={() => setStep(3)} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>
-                {en ? `Reserve ${qty} unit${qty > 1 ? "s" : ""}` : `${qty}대 사전예약 완료하기`}
+                {t(D.reserveCta)(qty)}
               </button>
               <div style={capStyle}>
-                {en ? "Not a commitment — you decide the actual amount when sales open." : "확정이 아닙니다 — 실제 구매 수량은 오픈 때 자유롭게 정할 수 있습니다."}
+                {t(D.notCommitment)}
               </div>
             </>
           )}
@@ -167,7 +168,7 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                 <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, borderRadius: 99, background: "var(--w-main)", flex: "none" }}>
                   <Check size={20} w={3} />
                 </span>
-                <h3 style={h3}>{en ? "Pre-order complete" : "사전예약이 완료되었습니다"}</h3>
+                <h3 style={h3}>{t(D.preorderDone)}</h3>
               </div>
               <p style={pStyle}>
                 {en
@@ -183,13 +184,13 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                   </span>
                 </div>
               <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main btn-shine" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontSize: 19.5, borderRadius: 10, padding: 14, color: "#fff", textDecoration: "none" }}>
-                <TgIcon size={16} /> {en ? "Community (Telegram)" : "커뮤니티(텔레그램)"}
+                <TgIcon size={16} /> {t(D.communityTg)}
               </a>
               <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, border: "1px solid var(--bd-input)", borderRadius: 10, padding: 13, fontSize: 18, fontWeight: 700, color: "var(--w-deep)", textDecoration: "none" }}>
-                <XIcon size={14} /> {en ? "Updates (X)" : "소식보기(X)"}
+                <XIcon size={14} /> {t(D.updatesX)}
               </a>
               <button onClick={onClose} style={{ fontSize: 16, color: "var(--cap)", alignSelf: "center" }}>
-                {en ? "Close" : "닫기"}
+                {t(D.close)}
               </button>
             </>
           )}
@@ -198,7 +199,7 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
         {/* 이미 로그인된 상태로 대수 단계에 바로 들어온 경우엔 되돌아갈 단계가 없다 */}
         {(step === 1 || (step === 2 && !enteredSignedIn)) && (
           <button onClick={() => setStep(step - 1)} style={{ fontSize: 16, color: "var(--cap)", alignSelf: "flex-start" }}>
-            {en ? "← Back" : "← 이전 단계"}
+            {t(D.back)}
           </button>
         )}
       </div>

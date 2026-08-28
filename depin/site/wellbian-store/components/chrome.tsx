@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { LINKS } from "@/lib/data";
 import { useI18n, LANGS, type Lang } from "@/lib/i18n";
+import { D } from "@/lib/dict";
 import { TgIcon, XIcon } from "./icons";
 
 /* 언어 선택 (§5.4) — 전 페이지 공용, localStorage 유지.
@@ -11,7 +12,7 @@ import { TgIcon, XIcon } from "./icons";
    커스텀 팝오버 대신 <select> 를 쓴다 — 모바일에서 OS 기본 피커가 뜨고,
    키보드·스크린리더 대응이 공짜로 따라온다. 화살표만 직접 그린다. */
 export function LangToggle() {
-  const { lang, setLang } = useI18n();
+  const { lang, setLang, t } = useI18n();
   return (
     <div style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
       <select
@@ -43,7 +44,7 @@ export function LangToggle() {
 
 /* GNB: 로고 + 「LAUNCH」 1항목 + KO/EN 토글 (§5.4) + 상태형 우측 슬롯(완판 → 소식 CTA) */
 export function Gnb({ dday, right }: { dday?: string; right?: React.ReactNode }) {
-  const { en } = useI18n();
+  const { en, t } = useI18n();
   return (
     <header
       style={{
@@ -95,25 +96,25 @@ export function SubHeader({ right }: { right?: React.ReactNode }) {
 
 /* 커뮤니티 패널 + 다크 푸터 (S9) */
 export function CommunityFooter() {
-  const { en } = useI18n();
+  const { en, t } = useI18n();
   return (
     <div style={{ background: "var(--w-deep)", color: "#fff", padding: "72px 64px 40px" }} className="s9-root">
       <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 40 }}>
         <div className="s9-invite" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, border: "1px solid rgba(255,255,255,.14)", borderRadius: 18, padding: "32px 36px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             <div style={{ fontSize: 27.5, fontWeight: 800 }}>
-              {en ? "Get updates in the official community" : "Official 커뮤니티에서 소식을 받아보세요"}
+              {t(D.footCta)}
             </div>
             <div style={{ fontSize: 17.5, color: "rgba(255,255,255,.6)" }}>
-              {en ? "Shipping schedules, setup guides, and network updates — delivered first" : "발송 일정 · 연동 가이드 · 네트워크 업데이트를 가장 먼저 전합니다"}
+              {t(D.footSub)}
             </div>
           </div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main" style={{ fontSize: 18, borderRadius: 10, padding: "13px 20px", color: "#fff", textDecoration: "none" }}>
-              <TgIcon size={15} /> {en ? "Join the community" : "커뮤니티 입장"}
+              <TgIcon size={15} /> {t(D.joinCommunity)}
             </a>
             <a href={LINKS.x} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 9, border: "1px solid rgba(255,255,255,.3)", color: "#fff", fontSize: 18, fontWeight: 800, borderRadius: 10, padding: "13px 20px", textDecoration: "none" }}>
-              <XIcon size={14} /> {en ? "Follow for updates" : "소식 팔로우"}
+              <XIcon size={14} /> {t(D.followUpdates)}
             </a>
           </div>
         </div>
@@ -137,13 +138,13 @@ export function CommunityFooter() {
           </div>
           <nav style={{ display: "flex", gap: 20, fontSize: 16, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
             <a href={LINKS.terms} target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none" }}>
-              {en ? "Terms of Service (TERMS)" : "이용약관 (TERMS)"}
+              {t(D.terms)}
             </a>
           </nav>
         </div>
         <div style={{ fontSize: 15, color: "rgba(255,255,255,.35)" }}>
           © 2026 WELLBIAN. All rights reserved. · {/* 8/28 서우: 푸터에서 (실내공기측정기)·모델명 제거 — 제품 정식명만 남긴다 */}
-          {en ? "Weather Data Token Generator™" : "날씨데이터토큰생성기™"}
+          {t(D.productName)}
         </div>
       </div>
     </div>
