@@ -223,6 +223,38 @@ export function IconCoins({ size = 34, className }: IconProps) {
   );
 }
 
+/* 측정망 — 서로 연결된 노드들 (칩 4번: "노드가 늘어 측정망이 촘촘해짐")
+   회귀 화살표와 의미가 겹치던 IconLoop를 대체한다 */
+export function IconNodes({ size = 34, className }: IconProps) {
+  const p = "cn";
+  const dot = (cx: number, cy: number, r: number) => (
+    <g key={`${cx}-${cy}`}>
+      <circle cx={cx} cy={cy} r={r} fill={`url(#${p}-core)`} />
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={`url(#${p}-rim)`} strokeWidth="1.1" />
+      <circle cx={cx - r * 0.3} cy={cy - r * 0.32} r={r * 0.34} fill="rgba(255,255,255,.45)" />
+    </g>
+  );
+  return (
+    <svg viewBox="0 0 48 48" style={box(size)} className={className} aria-hidden focusable="false">
+      <Defs p={p} />
+      <g filter={`url(#${p}-drop)`}>
+        <g stroke={`url(#${p}-core)`} strokeWidth="2" opacity=".5" strokeLinecap="round">
+          <path d="M24 24 L11 13" />
+          <path d="M24 24 L38 14" />
+          <path d="M24 24 L12 36" />
+          <path d="M24 24 L37 35" />
+        </g>
+        {dot(11, 13, 5)}
+        {dot(38, 14, 5)}
+        {dot(12, 36, 5)}
+        {dot(37, 35, 5)}
+        {dot(24, 24, 7.5)}
+        <circle cx="24" cy="24" r="20" fill={`url(#${p}-spec)`} />
+      </g>
+    </svg>
+  );
+}
+
 /* 순환 — 마지막에서 처음으로 돌아가는 두 화살표 */
 export function IconLoop({ size = 38, className }: IconProps) {
   const p = "cl";

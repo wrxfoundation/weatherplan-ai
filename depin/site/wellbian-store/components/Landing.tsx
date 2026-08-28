@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { IconMeasure, IconVerify, IconReward, IconUse, IconData, IconFlow, IconCoins, IconLoop } from "./GlassIcons";
+import { IconMeasure, IconVerify, IconReward, IconUse, IconData, IconFlow, IconCoins, IconNodes } from "./GlassIcons";
 import {
   SPECS, SPECS_EN, FAQS, FAQS_EN, FAQS_EXTRA, FAQS_EXTRA_EN, LINK_STEPS, LINK_STEPS_EN,
   RL_STEPS, RL_STEPS_EN, LINKS, MOCK_INVENTORY, MOCK_PRENOTIFY, PREORDER_FEED, PRICE, calc, fmt,
@@ -407,22 +407,38 @@ export default function Landing() {
             <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>
               {en ? "A loop that sustains itself" : "데이터가 돌수록 단단해지는 선순환"}
             </div>
-            {/* 8/28 서우 5차: 생성형 순환도 이미지는 "밤티"라 폐기 — 칩 행 + 마지막→처음 순환 화살표를 코드로 구현.
-                아이콘은 반투명·연한 색·약한 유광 인라인 SVG (GlassIcons). 이미지가 없으므로 자리도 덜 먹고 텍스트가 선명하다 */}
+            {/* 8/28 서우 6차: "네트워크 지속"이 와닿지 않는다 → 백서(intel/wlbn-platform.md)의 실제 구조로 다시 씀.
+                핵심은 보상 재원의 출처다. 에폭 보상 예산이 B2B 데이터 매출에 연동되므로,
+                "데이터가 팔린다 → 그 대금이 보상 재원이 된다 → 노드가 늘어 측정망이 촘촘해진다 →
+                데이터가 더 쓸모 있어져 수요가 커진다" 로 고리가 닫힌다. 비율(α)은 백서에서
+                「고정 예산」과 「매입-분배형」 서술이 아직 한 문장으로 통일되지 않아 대외 표기하지 않는다. */}
             <div className="loop-row">
-              <span className="loop-chip"><IconData /><span>{en ? <>Verified<br />air data</> : <>검증된<br />공기질 데이터</>}</span></span>
+              <span className="loop-chip"><IconData /><span>{en ? <>Verified<br />air-quality data</> : <>검증된<br />공기질 데이터</>}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconFlow /><span>{en ? <>Real demand<br />— enterprises · APIs · AI</> : <>실제 수요처 유통<br />— 기업 · API · AI</>}</span></span>
+              <span className="loop-chip"><IconFlow /><span>{en ? <>Enterprises · APIs · AI<br />buy it</> : <>기업 · API · AI가<br />구매</>}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconCoins /><span>{en ? <>Revenue →<br />the network keeps running</> : <>수익 →<br />네트워크 지속</>}</span></span>
+              <span className="loop-chip"><IconCoins /><span>{en ? <>Sales fund<br />the reward pool</> : <>그 대금이<br />보상 재원으로</>}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              {/* 마지막에서 처음으로 되돌아가는 순환 표시 */}
-              <span className="loop-back" title={en ? "…and back to the start" : "…다시 처음으로"}><IconLoop /></span>
+              <span className="loop-chip"><IconNodes /><span>{en ? <>More nodes,<br />denser coverage</> : <>노드가 늘어<br />측정망이 촘촘해짐</>}</span></span>
+            </div>
+            {/* 마지막에서 처음으로 되돌아가는 고리 — 칩이 4개가 되어 아이콘 하나로는 자리가 모자라
+                행 아래 곡선 화살표로 뺐다(방향도 이쪽이 읽기 쉽다) */}
+            <div className="loop-return">
+              <svg viewBox="0 0 600 34" preserveAspectRatio="none" aria-hidden focusable="false">
+                <path d="M592 2 V18 Q592 30 578 30 H22 Q8 30 8 18 V2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path d="M3 9 L8 2 L13 9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span>{en ? "Denser data makes the next round of demand bigger" : "촘촘해진 데이터가 다음 바퀴의 수요를 키웁니다"}</span>
             </div>
             <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
               {en
-                ? <>The verified air-quality data our nodes produce flows to real buyers — enterprises, APIs, AI services.<br />The more it is used, the stronger the demand, and that demand is what keeps the network running.</>
-                : <>노드가 모은 검증된 공기질 데이터는 기업·API·AI 서비스 같은 실제 수요처로 유통됩니다.<br />데이터가 쓰일수록 수요가 커지고, 그 수요가 다시 네트워크를 지속시키는 힘이 됩니다.</>}
+                ? <>The air-quality data our nodes collect passes quality verification and flows to enterprises, APIs, and AI services.<br />What those buyers pay funds the node reward pool, and rewards bring more nodes — making the measurement network denser.</>
+                : <>노드가 모은 공기질 데이터는 품질 검증을 거쳐 기업·API·AI 서비스로 유통됩니다.<br />그 판매 대금이 다시 노드 보상의 재원이 되고, 보상이 노드를 늘리면 측정망이 촘촘해집니다.</>}
+            </p>
+            <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "var(--cap)" }}>
+              {en
+                ? "The reward pool is tied to data sales — amounts and value are not guaranteed."
+                : "보상 재원은 데이터 매출에 연동됩니다 · 지급량과 가치는 보장되지 않습니다"}
             </p>
           </div>
           <div style={{ fontSize: "clamp(23px, 2.8vw, 31px)", fontWeight: 800, color: "var(--w-main)", letterSpacing: "-.01em" }}>
