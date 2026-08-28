@@ -310,3 +310,19 @@ export function IconNodes({ size = 34, className }: IconProps) {
   );
   });
 }
+
+/* RLUSD 준비 3단계 아이콘 (8/28 서우) — 위 카드·칩과 같은 프로스티드 글래스 톤.
+   여기만 SVG 폴백을 두지 않는다: 세 파일은 배포물에 항상 동봉되고,
+   없을 때 어설픈 대체 도형을 그리느니 자리만 비는 편이 낫다. */
+export function IconStep({ n, size = 56, className }: { n: 1 | 2 | 3; size?: number; className?: string }) {
+  return (
+    <img
+      src={`/assets/icons/step${n}.webp`}
+      alt=""
+      width={size}
+      height={size}
+      className={className}
+      style={{ width: size, height: size, display: "block", flexShrink: 0, objectFit: "contain" }}
+    />
+  );
+}

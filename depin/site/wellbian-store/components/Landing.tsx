@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { IconMeasure, IconVerify, IconReward, IconUse, IconData, IconFlow, IconCoins, IconNodes } from "./GlassIcons";
+import { IconMeasure, IconVerify, IconReward, IconUse, IconData, IconFlow, IconCoins, IconNodes, IconStep } from "./GlassIcons";
 import {
   SPECS, SPECS_EN, FAQS, FAQS_EN, FAQS_EXTRA, FAQS_EXTRA_EN, LINK_STEPS, LINK_STEPS_EN,
   RL_STEPS, RL_STEPS_EN, LINKS, MOCK_INVENTORY, MOCK_PRENOTIFY, PREORDER_FEED, PRICE, calc, fmt,
@@ -33,6 +33,36 @@ export default function Landing() {
     : "pre";
 
   const inv = MOCK_INVENTORY[phase]; // GET /api/inventory 대응 지점
+  /* 8/28 서우: 스크롤을 내리면 카드·칩이 순차로 스르르 올라오게.
+     JS 가 클래스를 붙일 때만 숨기므로, 스크립트가 죽어도 콘텐츠는 그대로 보인다.
+     동작 최소화를 켠 사용자에게는 아예 걸지 않는다. */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const groups = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (!groups.length) return;
+    const kidsOf = (g: HTMLElement) =>
+      Array.from(g.children).filter((c): c is HTMLElement => c instanceof HTMLElement);
+    for (const g of groups) {
+      kidsOf(g).forEach((k, i) => {
+        k.classList.add("rv");
+        k.style.transitionDelay = `${Math.min(i, 7) * 85}ms`;
+      });
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          kidsOf(e.target as HTMLElement).forEach((k) => k.classList.add("in"));
+          io.unobserve(e.target);
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
+    );
+    groups.forEach((g) => io.observe(g));
+    return () => io.disconnect();
+  }, []);
+
   /* 8/28 회의로 수량 상한이 없어져 잔여·소진율이 사라졌다 — 누적 판매 대수만 쓴다 */
   const { sold } = calc(inv);
   const soldOut = phase === "sold_out";
@@ -301,6 +331,10 @@ export default function Landing() {
         <section className="sec-pad" style={{ position: "relative", overflow: "hidden", background: "var(--w-deep)", color: "#fff", paddingTop: 48, paddingBottom: 48 }} aria-label={en ? "Live pre-order board" : "실시간 사전예약 현황"}>
           {/* 노이즈 그레인 텍스처 — 256px 필름 그레인 타일 반복 (8/28 서우: 물결 → 그레인. wave·marble·contour는 보관) */}
           <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "url(/assets/grain.png)", backgroundRepeat: "repeat", pointerEvents: "none" }} />
+          {/* 8/28 서우: 위·아래 끝을 어둡게 깔아 판이 화면에 잠긴 느낌을 준다.
+              콘텐츠(zIndex 1) 아래에 두므로 글자는 가려지지 않는다. */}
+          <div aria-hidden style={{ position: "absolute", left: 0, right: 0, top: 0, height: 96, background: "linear-gradient(180deg, rgba(8,8,30,.62) 0%, rgba(8,8,30,0) 100%)", pointerEvents: "none" }} />
+          <div aria-hidden style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 96, background: "linear-gradient(0deg, rgba(8,8,30,.62) 0%, rgba(8,8,30,0) 100%)", pointerEvents: "none" }} />
           <div className="wrap" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 18 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 19.5, fontWeight: 800 }}>
@@ -385,6 +419,10 @@ export default function Landing() {
         <div className="wrap" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 34, textAlign: "center" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ fontSize: 15.5, fontWeight: 800, letterSpacing: ".14em", color: "var(--w-main)" }}>WEATHER DATA ECONOMY</div>
+            {/* 8/28 서우: 확정 슬로건을 선순환 아래에서 여기(eyebrow ↔ 제목 사이)로 옮겼다 */}
+            <div style={{ fontSize: "clamp(23px, 2.8vw, 31px)", fontWeight: 800, color: "var(--w-main)", letterSpacing: "-.01em" }}>
+              Turn Your Weather Data into Value.
+            </div>
             <h2 style={h2}>{en ? "What we're building" : "우리가 만드는 것"}</h2>
             <p style={{ fontSize: 19.5, lineHeight: 1.72, color: "var(--ink-4)", maxWidth: 780, margin: "0 auto" }}>
               {en
@@ -392,7 +430,7 @@ export default function Landing() {
                 : "공기는 건물마다, 골목마다 다릅니다 — 기존 관측망이 닿지 않는 곳이죠. 내가 생활하는 공간에서 측정한 데이터가 검증을 거쳐 보상으로 돌아오고, 쌓인 데이터는 서비스가 되는 경제를 구축해 나갑니다."}
             </p>
           </div>
-          <div className="how-grid">
+          <div className="how-grid" data-reveal>
             <HowCard icon={<IconMeasure />} title={en ? "① Measure" : "① 측정"} desc={en ? "Indoor air data — CO₂, particulates, temperature, humidity" : "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정"} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
             <HowCard icon={<IconVerify />} title={en ? "② Verify" : "② 검증"} desc={en ? "The network verifies data integrity" : "네트워크가 데이터의 무결성을 검증"} />
@@ -412,16 +450,16 @@ export default function Landing() {
                 "데이터가 팔린다 → 그 대금이 보상 재원이 된다 → 노드가 늘어 측정망이 촘촘해진다 →
                 데이터가 더 쓸모 있어져 수요가 커진다" 로 고리가 닫힌다. 비율(α)은 백서에서
                 「고정 예산」과 「매입-분배형」 서술이 아직 한 문장으로 통일되지 않아 대외 표기하지 않는다. */}
-            <div className="loop-row">
+            <div className="loop-row" data-reveal>
               {/* 8/28 서우 8차: 칩 글씨가 길어 한눈에 안 들어온다 → 두 줄 → 한 줄 단문으로 축약.
                   자세한 설명은 바로 아래 본문이 이미 하고 있으므로 칩은 흐름만 보이면 된다. */}
-              <span className="loop-chip"><IconData /><span>{en ? "Verified data" : "검증된 데이터"}</span></span>
+              <span className="loop-chip"><IconData size={46} /><span>{en ? "Verified data" : "검증된 데이터"}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconFlow /><span>{en ? "Enterprises buy" : "기업이 구매"}</span></span>
+              <span className="loop-chip"><IconFlow size={46} /><span>{en ? "Enterprises buy" : "기업이 구매"}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconCoins /><span>{en ? "Sales fund rewards" : "대금이 보상 재원"}</span></span>
+              <span className="loop-chip"><IconCoins size={46} /><span>{en ? "Sales fund rewards" : "대금이 보상 재원"}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconNodes /><span>{en ? "Network grows" : "측정망 확대"}</span></span>
+              <span className="loop-chip"><IconNodes size={46} /><span>{en ? "Network grows" : "측정망 확대"}</span></span>
             </div>
             {/* 마지막에서 처음으로 되돌아가는 고리 — 칩이 4개가 되어 아이콘 하나로는 자리가 모자라
                 행 아래 곡선 화살표로 뺐다(방향도 이쪽이 읽기 쉽다) */}
@@ -442,12 +480,6 @@ export default function Landing() {
                 ? "The reward pool is tied to data sales — amounts and value are not guaranteed."
                 : "보상 재원은 데이터 매출에 연동됩니다 · 지급량과 가치는 보장되지 않습니다"}
             </p>
-          </div>
-          <div style={{ fontSize: "clamp(23px, 2.8vw, 31px)", fontWeight: 800, color: "var(--w-main)", letterSpacing: "-.01em" }}>
-            Turn Your Weather Data into Value.
-          </div>
-          <div style={{ fontSize: 15.5, color: "var(--hint)" }}>
-            {en ? `${NOTICE_REWARD_EN} · See the FAQ for details` : `${NOTICE_REWARD} · 자세한 원칙은 FAQ를 참고하세요`}
           </div>
         </div>
       </section>
@@ -519,6 +551,8 @@ export default function Landing() {
           <div className="rl-grid">
             {rlSteps.map((r) => (
               <div key={r.n} style={{ border: "1px solid var(--bd-card)", borderRadius: 14, padding: 24, display: "flex", flexDirection: "column", gap: 10 }}>
+                {/* 8/28 서우: 카드·칩과 같은 톤의 아이콘으로 각 단계 이해를 돕는다 */}
+                <IconStep n={Number(r.n) as 1 | 2 | 3} />
                 <span style={{ fontSize: 15.5, fontWeight: 800, color: "var(--w-main)" }}>STEP {r.n}</span>
                 <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>{r.t}</div>
                 <div style={{ fontSize: 17, lineHeight: 1.6, color: "var(--ink-4)" }}>{r.d}</div>
