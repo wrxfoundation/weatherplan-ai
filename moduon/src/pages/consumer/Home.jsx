@@ -103,7 +103,7 @@ export default function Home({ tenant }) {
           {cats.map((c) => (
             <Link key={c.slug} to={tenant ? `${consultTo}&cat=${c.slug}` : `/category/${c.slug}`} className="group flex flex-col items-center gap-2.5">
               <span className="flex h-[62px] w-[62px] items-center justify-center overflow-hidden rounded-full bg-warm transition-transform duration-200 group-hover:-translate-y-[3px] sm:h-[84px] sm:w-[84px]">
-                <img src={c.icon} alt="" className="h-full w-full object-cover" loading="lazy" />
+                <img src={c.icon} alt="" className="h-full w-full object-contain" loading="lazy" />
               </span>
               <span className="text-[12px] font-semibold text-body sm:text-[14px]">{c.name}</span>
             </Link>

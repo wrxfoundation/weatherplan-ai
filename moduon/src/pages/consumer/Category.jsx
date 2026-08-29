@@ -36,7 +36,7 @@ export default function Category() {
       {/* 카테고리 히어로 */}
       <section className="flex flex-col items-start gap-6 pt-8 sm:flex-row sm:items-center sm:pt-12">
         <span className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-warm sm:h-24 sm:w-24">
-          <img src={cat.icon} alt="" className="h-full w-full object-cover" />
+          <img src={cat.icon} alt="" className="h-full w-full object-contain" />
         </span>
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2.5">
