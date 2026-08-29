@@ -266,7 +266,7 @@ export default function Landing() {
               {preMode === "dday" ? (
                 /* 사전예약 오픈 전: 오픈 정보 한 줄 */
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, maxWidth: 480, marginTop: 6, fontSize: 18, fontWeight: 700, flexWrap: "wrap" }}>
-                  <span>{en ? "Entries open Sept 5" : "9월 5일 사전구매 응모 오픈"}</span>
+                  <span>{en ? "Entries open Sept 5" : "9월 5일 사전 구매응모 오픈"}</span>
                   <span style={{ fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,.65)" }}>{en ? "Book now, buy calmly on Sept 15" : "예약하면 9월 15일에 여유 있게 구매"}</span>
                 </div>
               ) : preMode === "pre" ? (
@@ -289,7 +289,7 @@ export default function Landing() {
                 ) : preMode === "dday" ? (
                   /* 사전예약 오픈 카운트다운 (9/5) */
                   <a href={LINKS.telegram} target="_blank" rel="noopener" className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)", color: "#fff", textDecoration: "none" }}>
-                    <span className="mono" style={{ fontWeight: 800 }}>{cd}</span>&nbsp;{en ? "until entries open" : "후 사전구매 응모 오픈"}
+                    <span className="mono" style={{ fontWeight: 800 }}>{cd}</span>&nbsp;{en ? "until entries open" : "후 사전 구매응모 오픈"}
                   </a>
                 ) : (
                   <button onClick={buy} className="btn-main btn-shine hero-buy-btn" style={{ fontSize: 21, padding: "16px 28px", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
@@ -374,7 +374,7 @@ export default function Landing() {
             <div style={{ fontSize: 14.5, color: "rgba(255,255,255,.45)", textAlign: "center" }}>
               {en
                 ? "Wallet prefixes are masked. Entries are not purchases — Genesis Numbers are randomly assigned at purchase."
-                : "지갑 주소는 앞자리만 표시됩니다. 사전구매 응모는 구매가 아니며, 제네시스 넘버는 정식 구매 시 무작위로 배정됩니다."}
+                : "지갑 주소는 앞자리만 표시됩니다. 사전 구매응모는 구매가 아니며, 제네시스 넘버는 정식 구매 시 무작위로 배정됩니다."}
             </div>
           </div>
         </section>

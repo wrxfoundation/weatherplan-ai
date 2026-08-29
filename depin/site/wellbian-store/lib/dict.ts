@@ -15,11 +15,11 @@ const m = <T,>(v: Msg<T>) => v;
 
 /* ── 히어로 · 공통 CTA ────────────────────────────────────────────────── */
 export const D = {
-  /* 8/28 서우: 선착순 사전예약 → 추첨제 "사전구매 응모". 예약(자리를 잡는다)이 아니라
+  /* 8/28 서우: 선착순 사전예약 → 추첨제 "사전 구매응모". 예약(자리를 잡는다)이 아니라
      응모(추첨 대상이 된다)이므로 다섯 언어 모두 예약 어휘를 걷어냈다.
      en 은 reserve/pre-order 를 쓰지 않는다 — 확보를 약속하는 말로 읽힌다. */
   preorderCta: m({
-    ko: "사전구매 응모하기",
+    ko: "사전 구매응모하기",
     en: "Enter the draw",
     ja: "事前購入に応募する",
     zh: "申请预购",
@@ -155,7 +155,7 @@ export const D = {
 
   /* ── 실시간 현황판 · 스티키 ────────────────────────────────────────── */
   liveBoard: m({
-    ko: "실시간 사전구매 응모 현황",
+    ko: "실시간 사전 구매응모 현황",
     en: "Live entry board",
     ja: "リアルタイム応募状況",
     zh: "实时申请动态",
@@ -212,7 +212,7 @@ export const D = {
     en: "Weather Data Token Generator™",
   }),
 
-  /* ── 사전구매 응모 모달 (PreOrderModal.tsx) ───────────────────────── */
+  /* ── 사전 구매응모 모달 (PreOrderModal.tsx) ───────────────────────── */
   stepNames: m<string[]>({
     ko: ["로그인", "지갑 생성", "응모 대수", "완료"],
     en: ["Sign-in", "Wallet", "Quantity", "Done"],
@@ -220,7 +220,7 @@ export const D = {
     zh: ["登录", "钱包", "申请数量", "完成"],
     es: ["Acceso", "Billetera", "Cantidad", "Listo"],
   }),
-  preorderLabel: m({ ko: "사전구매 응모", en: "Pre-purchase entry", ja: "事前購入応募", zh: "预购申请", es: "Inscripción de precompra" }),
+  preorderLabel: m({ ko: "사전 구매응모", en: "Pre-purchase entry", ja: "事前購入応募", zh: "预购申请", es: "Inscripción de precompra" }),
   close: m({ ko: "닫기", en: "Close", ja: "閉じる", zh: "关闭", es: "Cerrar" }),
   signInTitle: m({
     ko: "구글 로그인으로 시작",
@@ -262,11 +262,18 @@ export const D = {
   increase: m({ ko: "1대 더하기", en: "Increase", ja: "1台増やす", zh: "增加 1 台", es: "Añadir una" }),
   /* 8/28 서우 지정 문안 — 추첨제. "선착순 걱정 없이"는 더 이상 사실이 아니다 */
   notCommitment: m({
-    ko: "사전구매 응모는 결제가 아니며, 추첨을 통해 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다.",
+    ko: "사전 구매응모는 결제가 아니며, 추첨을 통해 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다.",
     en: "An entry is not a payment. A draw grants the right to buy from the limited quantity on opening day.",
     ja: "事前購入応募は決済ではありません。抽選により、オープン当日の限定数量を購入できる権利をお渡しします。",
     zh: "预购申请不是付款。通过抽签，向中签者授予在开售当日购买限量数量的权利。",
     es: "La inscripción no es un pago. Un sorteo otorga el derecho a comprar la cantidad limitada el día de apertura.",
+  }),
+  perAccountCap: m({
+    ko: "1계정 최대 100대까지 설정할 수 있습니다.",
+    en: "Up to 100 units per account.",
+    ja: "1アカウントにつき最大100台まで設定できます。",
+    zh: "每个账户最多可设置 100 台。",
+    es: "Hasta 100 unidades por cuenta.",
   }),
   /* 추첨 결과 통지 — 8/28 서우 지정 (9/14 09:00 KST, 가입 메일) */
   drawResult: m({
@@ -277,7 +284,7 @@ export const D = {
     es: "El resultado del sorteo (si recibes el derecho de compra) se enviará el 14 de septiembre a las 09:00 KST al correo con el que te registraste.",
   }),
   preorderDone: m({
-    ko: "사전구매 응모가 완료되었습니다",
+    ko: "사전 구매응모가 완료되었습니다",
     en: "Your entry is in",
     ja: "事前購入応募が完了しました",
     zh: "预购申请已完成",

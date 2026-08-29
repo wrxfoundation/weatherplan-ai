@@ -1,5 +1,5 @@
 "use client";
-/* 사전구매 응모 온보딩 모달 (8/27 서우: 가격·수량 창 없이 "구매 온보딩 과정"만 표현)
+/* 사전 구매응모 온보딩 모달 (8/27 서우: 가격·수량 창 없이 "구매 온보딩 과정"만 표현)
    개념: 응모 = 추첨 대상 등록, 결제 아님. 구글 로그인 → 내 기본 지갑 자동 생성 → 응모 완료.
    8/28 서우 2차: 선착순 사전예약 → 추첨제. "자리 확보"가 아니라 추첨으로 구매 권한을 준다.
    결과 통지 = 9/14 09시(KST) 가입 메일. 완료 화면에 그 문장을 반드시 둔다.
@@ -82,7 +82,7 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
               <p style={pStyle}>
                 {en
                   ? "Entering takes only a Google sign-in. It is not a payment — a draw decides who can buy on opening day."
-                  : "사전구매 응모는 구글 로그인만으로 진행됩니다. 결제가 아니며, 추첨으로 오픈 당일 구매 권한이 정해집니다."}
+                  : "사전 구매응모는 구글 로그인만으로 진행됩니다. 결제가 아니며, 추첨으로 오픈 당일 구매 권한이 정해집니다."}
               </p>
               <button
                 onClick={googleSignIn}
@@ -125,9 +125,7 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
             <>
               <h3 style={h3}>{t(D.qtyTitle)}</h3>
               <p style={pStyle}>
-                {en
-                  ? "An entry is not a payment. A draw grants the right to buy from the limited quantity on opening day. Up to 100 units per account."
-                  : "사전구매 응모는 결제가 아니며, 추첨을 통해 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다. 1계정 최대 100대까지 설정할 수 있습니다."}
+                {t(D.notCommitment)} {t(D.perAccountCap)}
               </p>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20 }}>
                 <button onClick={() => setQty(Math.max(1, qty - 1))} disabled={qty <= 1} aria-label={t(D.decrease)} style={{ ...stepBtn, opacity: qty <= 1 ? 0.35 : 1 }}>−</button>
@@ -154,8 +152,10 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
               <button onClick={() => setStep(3)} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>
                 {t(D.reserveCta)(qty)}
               </button>
+              {/* 8/28 서우: 위 리드가 이미 "결제 아님 · 추첨" 을 말한다 — 같은 문장을 두 번 두지 않는다.
+                  응모 직전에 정작 궁금한 건 "결과를 언제 어떻게 받나"이므로 그걸 둔다. */}
               <div style={capStyle}>
-                {t(D.notCommitment)}
+                {t(D.drawResult)}
               </div>
             </>
           )}
@@ -171,7 +171,7 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
               <p style={pStyle}>
                 {en
                   ? `Your entry for ${qty} unit${qty > 1 ? "s" : ""} is in. An entry is not a payment — a draw grants the right to buy from the limited quantity on opening day.`
-                  : `${qty}대 응모가 접수되었습니다. 사전구매 응모는 결제가 아니며, 추첨을 통해 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다.`}
+                  : `${qty}대 응모가 접수되었습니다. 사전 구매응모는 결제가 아니며, 추첨을 통해 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다.`}
               </p>
               {/* 8/28 서우 지정 — 추첨 결과 통지 시각·경로를 완료 화면에서 못 박는다 */}
               <p style={capStyle}>{t(D.drawResult)}</p>
