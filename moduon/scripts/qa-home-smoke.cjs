@@ -39,7 +39,18 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   await page.waitForTimeout(700)
   check(page.url().includes('/consult'), `상담사 연결 → 상담 페이지 (${page.url().split('/').pop()})`)
 
-  // ⑤ 혜택 밴드 — 인터넷 · 핸드폰 · 렌탈 순서와 오브제 에셋
+  // ⑤ 카테고리 스트립 — 취급 중인 3종만 노출
+  await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
+  await page.waitForTimeout(400)
+  const strip = await page.evaluate(() => [...document.querySelectorAll('a[href^="/category/"]')]
+    .filter((a) => a.querySelector('img[src*="/assets/cat-"]'))
+    .map((a) => a.innerText.trim()))
+  check(strip.join(',') === '인터넷/TV,휴대폰,렌탈', `카테고리 스트립 3종만 (${JSON.stringify(strip)})`)
+  for (const gone of ['이사', '정수기', '보험', '가전', '생활/기타']) {
+    check(!strip.includes(gone), `스트립에서 숨김: ${gone}`)
+  }
+
+  // ⑥ 혜택 밴드 — 인터넷 · 핸드폰 · 렌탈 순서와 오브제 에셋
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
   await page.waitForTimeout(400)
   const band = await page.evaluate(() => {

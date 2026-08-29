@@ -1,7 +1,7 @@
 // ─── S-01 소비자 홈 (트랙 A · 목업 #2a/#2b 재현) ─────────────────
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { CATEGORIES } from '../../lib/constants'
+import { CATEGORIES, VISIBLE_CATEGORIES } from '../../lib/constants'
 import { won, calcQuote, CARRIERS } from '../../lib/engine'
 import { useStore } from '../../lib/store'
 import { useCountUp, LiveDot } from '../../components/ui'
@@ -17,7 +17,8 @@ const SYNONYM = {
 
 export default function Home({ tenant }) {
   const nav = useNavigate()
-  const cats = tenant ? CATEGORIES.filter((c) => tenant.cats.includes(c.slug)) : CATEGORIES
+  // 파트너몰도 본사가 취급 중인 상품군 안에서만 노출한다(몰마다 목록이 달라지지 않게)
+  const cats = tenant ? VISIBLE_CATEGORIES.filter((c) => tenant.cats.includes(c.slug)) : VISIBLE_CATEGORIES
   const consultTo = tenant ? `/consult?src=${tenant.slug}` : '/consult'
 
   // 카테고리 바로가기 — 히어로 검색창을 걷어낸 뒤에도 해시태그가 곧바로 목적지로 보낸다.
@@ -67,7 +68,7 @@ export default function Home({ tenant }) {
             </p>
             {/* 카테고리 바로가기 — 검색창을 걷어낸 자리를 채우는 직행 경로 */}
             <div className="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-[13.5px] font-semibold text-label">
-              {['#이사', '#인터넷', '#정수기', '#렌탈', '#보험'].map((t) => (
+              {['#인터넷', '#핸드폰', '#렌탈'].map((t) => (
                 <button key={t} onClick={() => go(t.slice(1))} className="hover:text-primary-text">{t}</button>
               ))}
             </div>
@@ -97,9 +98,10 @@ export default function Home({ tenant }) {
 
       <div className="mx-auto max-w-6xl px-5 sm:px-10">
 
-      {/* ── 카테고리 그리드 8 ── */}
+      {/* ── 카테고리 스트립 — 취급 중인 상품군만 (사업 초기: 인터넷·핸드폰·렌탈) ── */}
       <section className="rounded-section bg-white px-5 py-7 shadow-card sm:px-9 sm:py-9">
-        <div className="grid grid-cols-4 gap-x-2 gap-y-6 sm:gap-x-4 lg:grid-cols-8">
+        {/* 항목 수가 줄어도 흩어지지 않게 가운데 정렬 + 폭 제한 */}
+        <div className="mx-auto flex max-w-2xl flex-wrap items-start justify-center gap-x-8 gap-y-6 sm:gap-x-14">
           {cats.map((c) => (
             <Link key={c.slug} to={tenant ? `${consultTo}&cat=${c.slug}` : `/category/${c.slug}`} className="group flex flex-col items-center gap-2.5">
               <span className="flex h-[62px] w-[62px] items-center justify-center overflow-hidden rounded-full bg-warm transition-transform duration-200 group-hover:-translate-y-[3px] sm:h-[84px] sm:w-[84px]">
