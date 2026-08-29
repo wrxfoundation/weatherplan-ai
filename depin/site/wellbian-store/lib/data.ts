@@ -107,7 +107,7 @@ export const FAQS = [
   { q: "사전 구매응모는 무엇인가요?", a: "결제가 아닙니다. 구글 로그인으로 응모할 대수를 정해두면, 추첨을 통해 9월 15일 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다. 1계정 최대 100대까지 설정할 수 있습니다." },
   { q: "응모하면 반드시 구매해야 하나요?", a: "아니요. 확정 주문이 아니며 응모 자체에 비용이 들지 않습니다. 추첨에 당첨되어 구매 권한을 받으신 뒤에도 실제 구매 여부와 수량은 자유롭게 정하시면 됩니다." },
   /* 8/28 서우 지정 문안 — 추첨 방식의 정의와 미구매 시 처리까지 한 문항에 담는다 */
-  { q: "추첨은 어떤 방식인가요?", a: "제한된 수량을 공정하게 구매하기 위해, 신청자 중 추첨을 통해 당첨된 분에게만 구매 기회를 드리는 방식입니다. 당첨된 분만 정해진 기간 내에 제품을 구매할 수 있으며, 구매하지 않으면 해당 수량은 일반 구매로 넘어갑니다." },
+  { q: "추첨은 어떤 방식인가요?", a: "제한된 수량을 공정하게 구매하기 위해, 신청자 중 추첨을 통해 당첨된 분에게만 구매 기회를 드리는 방식입니다. 당첨된 분만 정해진 기간 내에 제품을 구매할 수 있으며, 구매하지 않으면 해당 수량은 일반 구매로 넘어갑니다. 당첨·미당첨 여부는 9월 15일 00시(KST)부터 커뮤니티 공지와 지갑 연결로 확인하실 수 있습니다." },
   { q: "가격이 어떻게 되나요?", a: "1차 판매는 대당 450 RLUSD입니다. 2차 판매부터는 650 RLUSD로 적용됩니다. 결제는 RLUSD로만 진행됩니다." },
   { q: "RLUSD는 어디서 구하나요?", a: "국내·해외 거래소에서 RLUSD를 구매한 뒤 XRPL 네트워크로 개인 지갑에 출금하면 됩니다. 출금 시 반드시 XRPL판 RLUSD를 선택하세요." },
   { q: "지갑이 처음인데 괜찮나요?", a: "네. 구글 계정으로 가입하면 내 지갑이 자동으로 만들어집니다. 노드 연동까지 단계별 가이드를 제공합니다." },
@@ -281,7 +281,7 @@ export const SPECS_EN = [
 export const FAQS_EN = [
   { q: "What is a pre-purchase entry?", a: "It is not a payment. Sign in with Google and set how many units you want; a draw then grants the right to buy from the limited quantity when sales open on Sept 15. Up to 100 units per account." },
   { q: "Does an entry commit me to buying?", a: "No. It is not a confirmed order and costs nothing. Even after the draw grants you the right to buy, the actual quantity is yours to decide." },
-  { q: "How does the draw work?", a: "To keep a limited quantity fair, a draw among entrants grants the chance to buy to selected participants only. Winners can purchase within a set window; any unbought units are released to general sale." },
+  { q: "How does the draw work?", a: "To keep a limited quantity fair, a draw among entrants grants the chance to buy to selected participants only. Winners can purchase within a set window; any unbought units are released to general sale. Whether you won is shown from 00:00 KST on Sept 15 — in the community announcement, and once you connect your wallet." },
   { q: "How much does it cost?", a: "450 RLUSD per unit in the first batch. From the second batch the price is 650 RLUSD. Payment is in RLUSD only." },
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on a domestic or global exchange, then withdraw it to your personal wallet over the XRPL network. Always select the XRPL version of RLUSD when withdrawing." },
   { q: "I've never used a wallet. Is that okay?", a: "Yes. Signing up with your Google account creates your wallet automatically, and a step-by-step guide walks you through node linking." },

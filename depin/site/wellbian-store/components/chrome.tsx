@@ -109,6 +109,7 @@ export function CommunityFooter({ showNotice = false }: { showNotice?: boolean }
           <div className="s9-notice" style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,.55)", maxWidth: 760 }}>
             <div>* {t(D.noticeDraw)}</div>
             <div>* {t(D.noticeWinners)}</div>
+            <div>* {t(D.noticeResult)}</div>
             <div>* {t(D.noticeGenesis)}</div>
             <div>* {t(D.noticeTicket)}</div>
             <div style={{ marginTop: 7 }}>{t(D.noticeShipping)}</div>

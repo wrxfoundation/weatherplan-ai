@@ -328,6 +328,13 @@ h1, h2, h3, p { margin: 0; }
   opacity: 0; transition: opacity .7s ease; pointer-events: none;
 }
 .hero-bg-vid.on { opacity: 1; }
+/* 스캔 레이어 (8/29) — 정지컷 위에 더하기 합성으로만 올라간다. 텍스처가 준비되면 .on */
+.hero-fx {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; display: block;
+  opacity: 0; transition: opacity .6s ease; pointer-events: none;
+}
+.hero-fx.on { opacity: 1; }
 .hero-scrim {
   /* 우측 제품 영역은 스크림 0 — 텍스트 컬럼(좌측 ~45%)까지만 어둡게 */
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -344,7 +351,7 @@ h1, h2, h3, p { margin: 0; }
   .hero-scrim { background: linear-gradient(180deg, rgba(27, 27, 72, .94) 0%, rgba(27, 27, 72, .82) 52%, rgba(27, 27, 72, .42) 100%); }
   .hero-photo .hero-grid { min-height: 0; }
 }
-@media (prefers-reduced-motion: reduce) { .hero-bg-slide { transition: none; } .hero-bg-vid { display: none; } }
+@media (prefers-reduced-motion: reduce) { .hero-bg-slide { transition: none; } .hero-bg-vid, .hero-fx { display: none; } }
 .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 /* 제품 이미지가 주인공 — 좌측 절반(가운데선)까지 확장 */
 .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }

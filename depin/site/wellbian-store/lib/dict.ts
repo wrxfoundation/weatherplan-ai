@@ -197,6 +197,15 @@ export const D = {
     zh: "仅中签者可在规定期间内购买，未购买的数量将转为普通销售。",
     es: "Solo los ganadores compran dentro del plazo fijado; las unidades no compradas pasan a la venta general.",
   }),
+  /* 8/29 서우: "당첨과 미당첨의 경우 커뮤니티 공지 및 지갑 연결후 알 수 있습니다."
+     별도 통지일 없이 오픈 시각에 알게 되는 구조라 시각을 함께 못 박는다. */
+  noticeResult: m({
+    ko: "당첨·미당첨 여부는 9월 15일 00시(KST)부터 커뮤니티 공지와 지갑 연결로 확인하실 수 있습니다.",
+    en: "Whether you won is shown from 00:00 KST on Sept 15 — in the community announcement, and once you connect your wallet.",
+    ja: "当選・落選は9月15日0時（KST）から、コミュニティのお知らせとウォレット接続でご確認いただけます。",
+    zh: "是否中签可自 9 月 15 日 00 时（KST）起，通过社区公告与连接钱包确认。",
+    es: "Si has resultado ganador se muestra desde las 00:00 KST del 15 de septiembre, en el anuncio de la comunidad y al conectar tu monedero.",
+  }),
   noticeGenesis: m({
     ko: "제네시스 넘버는 구매 시 랜덤 배정됩니다.",
     en: "Genesis Numbers are randomly assigned at purchase.",
@@ -328,11 +337,11 @@ export const D = {
      추첨을 도입했는데 판매 화면이 "지금 구매하기"만 말하면, 응모하지 않은 사람은
      그냥 살 수 있는 줄 알고 들어왔다가 막힌다. 상태를 화면이 먼저 말해야 한다. */
   saleWinnersOnly: m({
-    ko: "추첨 당첨자 구매 기간입니다 · 당첨 안내 메일을 확인해 주세요",
-    en: "Purchase window for draw winners — check your result email",
-    ja: "抽選当選者の購入期間です・当選案内メールをご確認ください",
-    zh: "抽签中签者购买期间 · 请查看中签通知邮件",
-    es: "Periodo de compra para los ganadores del sorteo: revisa tu correo de resultados",
+    ko: "추첨 당첨자 구매 기간입니다 · 커뮤니티 공지와 지갑 연결로 확인해 주세요",
+    en: "Purchase window for draw winners — check the community announcement, or connect your wallet",
+    ja: "抽選当選者の購入期間です・コミュニティのお知らせとウォレット接続でご確認ください",
+    zh: "抽签中签者购买期间 · 请通过社区公告与连接钱包确认",
+    es: "Periodo de compra para los ganadores del sorteo: consulta el anuncio de la comunidad o conecta tu monedero",
   }),
   saleLeftoverNote: m({
     ko: "당첨자가 기간 내에 구매하지 않은 수량은 일반 구매로 전환됩니다",
@@ -341,12 +350,14 @@ export const D = {
     zh: "中签者未在期限内购买的数量将转为一般销售",
     es: "Las unidades no compradas dentro del plazo pasan a venta general",
   }),
+  /* 8/29 서우: 추첨 결과 발표 일정(9/14)을 없앤다 — 당첨 여부는 9월 15일 00시 오픈과
+     동시에 커뮤니티 공지·지갑 연결로 알게 된다. 별도 통지일을 두지 않는다. */
   ddayLead: m({
-    ko: "추첨 결과 9월 14일 · 당첨 시 9월 15일 구매",
-    en: "Draw results Sept 14 · winners buy Sept 15",
-    ja: "抽選結果は9月14日・当選なら9月15日に購入",
-    zh: "9 月 14 日公布抽签结果 · 中签者 9 月 15 日购买",
-    es: "Resultados el 14 de septiembre · los ganadores compran el 15",
+    ko: "9월 15일 00시(KST) 오픈 · 당첨 시 구매 가능",
+    en: "Opens 00:00 KST on Sept 15 · winners can buy",
+    ja: "9月15日0時（KST）オープン・当選なら購入できます",
+    zh: "9 月 15 日 00 时（KST）开售 · 中签者可购买",
+    es: "Apertura a las 00:00 KST del 15 de septiembre · los ganadores pueden comprar",
   }),
   soldOutSub: m({
     ko: "당첨자 구매분과 일반 구매 전환분이 모두 소진되었습니다",

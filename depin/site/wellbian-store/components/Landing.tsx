@@ -15,6 +15,7 @@ import {
 import { useI18n } from "@/lib/i18n";
 import { D } from "@/lib/dict";
 import { Gnb, CommunityFooter } from "./chrome";
+import { HeroFx } from "./HeroFx";
 import BuyModal from "./BuyModal";
 import PreOrderModal from "./PreOrderModal";
 import { XIcon, TgIcon, ChevD, Warn, Check, LinkIcon } from "./icons";
@@ -213,11 +214,12 @@ export default function Landing() {
           {HERO_BGS.map((src, i) => (
             <div key={src} className={`hero-bg-slide${i === heroBg ? " on" : ""}`} style={{ backgroundImage: `url(${src})` }} />
           ))}
-          {!reduceMotion && (
+          {!reduceMotion && HERO_MODE === "scan" && <HeroFx src={HERO_STILL} />}
+          {!reduceMotion && HERO_MODE === "video" && (
             <video
               className={`hero-bg-vid${vidOn ? " on" : ""}`}
               src={HERO_VIDEO}
-              poster={HERO_POSTER}
+              poster={HERO_STILL}
               autoPlay muted loop playsInline preload="auto"
               tabIndex={-1}
               onCanPlay={(e) => { void e.currentTarget.play().catch(() => {}); setVidOn(true); }}
@@ -807,9 +809,10 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
    등고선이 뭉개져 서우가 반려했다 → CRF 16(3.0MB)으로 올렸다. 원본 대비 SSIM 0.990 이라
    1:1 확대에서도 구분이 안 된다. CRF 를 더 낮춰도(14 → 3.7MB) 지표가 0.002 움직일 뿐이다.
 
-   정지컷(hero-loop-poster.webp)은 영상 첫 프레임이다. 영상과 같은 장면이라 로딩·저사양·
-   reduced-motion 어디서도 화면이 바뀌지 않는다. 구 정지컷 hero-bg.webp(패키지 박스 구도)는
-   장면이 달라 더 이상 히어로에 쓰지 않는다 — 파일은 재사용 대비로 남겨 뒀다. */
+   정지컷(hero-still.webp)은 원본 영상의 "첫" 프레임이다. 굳이 0번을 쓰는 이유는 스캔 띠가
+   찍히지 않은 유일한 구간이기 때문이다 — 20번대부터는 띠가 이미 구름 밑단에 걸려 있어,
+   그걸 정지컷으로 쓰면 멈춰 있는 띠 위로 움직이는 띠가 하나 더 지나간다.
+   구 정지컷 hero-bg.webp(패키지 박스 구도)는 장면이 달라 더 이상 쓰지 않는다 — 파일만 남겼다. */
 /* prefers-reduced-motion 구독 — 설정을 바꾸면 즉시 반영된다.
    서버 스냅샷은 true(=모션 줄이기)로 둔다: SSR HTML 에 <video> 가 없어야 안전하다. */
 const RM_QUERY = "(prefers-reduced-motion: reduce)";
@@ -820,9 +823,13 @@ const subscribeReduceMotion = (cb: () => void) => {
 };
 const getReduceMotion = () => matchMedia(RM_QUERY).matches;
 
+/* 8/29 서우: "영상 없이 WebGL 로도 되지 않나" — 된다. 스캔 띠와 반짝임을 셰이더로 그리면
+   3.0MB 영상이 0 바이트가 되고(정지컷은 어차피 받는다) 배터리·데이터도 아낀다.
+   "video" 로 되돌리면 기존 루프 영상이 그대로 돌아온다 — 비교용으로 코드와 파일 모두 남겼다. */
+const HERO_MODE: "scan" | "video" = "scan";
 const HERO_VIDEO = "/assets/hero/hero-loop.mp4";
-const HERO_POSTER = "/assets/hero/hero-loop-poster.webp";
-const HERO_BGS = [HERO_POSTER];
+const HERO_STILL = "/assets/hero/hero-still.webp";
+const HERO_BGS = [HERO_STILL];
 
 /* 제품 갤러리 5컷 (8/27 2차 — 서우 신규 렌더: 받침대·주방·거실·골드·블랙) — 히어로형 풀블리드 배경 */
 const SPEC_GALLERY = [
