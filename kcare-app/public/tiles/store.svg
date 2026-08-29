@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="스토어">
-  <path d="M22 26v-5a10 10 0 0 1 20 0v5" fill="none" stroke="#0A1F3C" stroke-width="3.4" stroke-linecap="round"/>
-  <path d="M13 26h38l-3.1 25.5A5 5 0 0 1 42.9 56H21.1a5 5 0 0 1-5-4.5z" fill="#F0E2C4" stroke="#8A5D12" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M18.6 36h26.8" stroke="#8A5D12" stroke-width="2.6" stroke-linecap="round" opacity=".45"/>
+  <path d="M21 27v-5a11 11 0 0 1 22 0v5" fill="none" stroke="#7A5210" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M12 27h40l-3.3 25.6A5.5 5.5 0 0 1 43.2 57H20.8a5.5 5.5 0 0 1-5.5-4.4z" fill="#FFFFFF" stroke="#7A5210" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="15.6" y="36" width="32.8" height="5.6" rx="2.8" fill="#B08D57" opacity=".55"/>
 </svg>
