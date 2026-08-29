@@ -193,7 +193,7 @@ export default function Landing() {
           ) : (
             <>
               <Link href="/" style={previewChip}>{en ? "Entry view" : "응모 화면 보기"}</Link>
-              <Link href="/?state=sold_out" className="desk-only" style={previewChip}>{en ? "Sold-out view" : "완판 화면 보기"}</Link>
+              <Link href="/?state=sold_out" className="desk-only" style={previewChip}>{en ? "Closed view" : "판매 마감 화면 보기"}</Link>
             </>
           )}
         </>}
@@ -216,7 +216,7 @@ export default function Landing() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                 <span className="pill" style={{ fontSize: 14.5, letterSpacing: ".1em", background: "rgba(255,255,255,.14)", padding: "5px 12px", color: "#fff" }}>SOLD OUT</span>
-                <span style={{ fontSize: 17, color: "rgba(255,255,255,.6)" }}>{en ? "Batch 1 has sold out" : "1차 물량이 모두 판매되었습니다"}</span>
+                <span style={{ fontSize: 17, color: "rgba(255,255,255,.6)" }}>{t(D.soldOutSub)}</span>
               </div>
               <h1 style={{ fontSize: "clamp(35px, 4.4vw, 44px)", lineHeight: 1.3, fontWeight: 800 }}>
                 {en ? <>Sold out —<br />be the first to hear about Batch 2</> : <>완판되었습니다 —<br />2차 판매 소식을 가장 먼저 받아보세요</>}
@@ -267,15 +267,26 @@ export default function Landing() {
                 /* 사전예약 오픈 전: 오픈 정보 한 줄 */
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, maxWidth: 480, marginTop: 6, fontSize: 18, fontWeight: 700, flexWrap: "wrap" }}>
                   <span>{en ? "Entries open Sept 5" : "9월 5일 사전 구매응모 오픈"}</span>
-                  <span style={{ fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,.65)" }}>{en ? "Book now, buy calmly on Sept 15" : "예약하면 9월 15일에 여유 있게 구매"}</span>
+                  <span style={{ fontSize: 16, fontWeight: 400, color: "rgba(255,255,255,.65)" }}>{t(D.ddayLead)}</span>
                 </div>
               ) : preMode === "pre" ? (
                 /* 8/28 서우 2차: 히어로 가격 한 줄("대당 650 RLUSD")도 삭제 — 가격은 제품·FAQ에서만 */
                 null
               ) : (
                 /* 판매 표기 = 판매 대수만 (8/27 서우: 잔여·%·게이지 제거) — flex 금지: 텍스트가 flex item으로 쪼개져 "대"가 벌어짐 */
-                <div style={{ marginTop: 6, fontSize: 18, fontWeight: 700 }}>
-                  {en ? <><b className="mono" style={{ color: "#fff", fontSize: 21 }}>{fmt(sold)}</b> units sold</> : <>판매 <b className="mono" style={{ color: "#fff", fontSize: 21 }}>{fmt(sold)}</b>대</>}
+                <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ fontSize: 18, fontWeight: 700 }}>
+                    {en ? <><b className="mono" style={{ color: "#fff", fontSize: 21 }}>{fmt(sold)}</b> units sold</> : <>판매 <b className="mono" style={{ color: "#fff", fontSize: 21 }}>{fmt(sold)}</b>대</>}
+                  </div>
+                  {/* 8/28 서우: 추첨제로 바꾸고도 판매 화면은 "지금 구매하기"만 말하고 있었다.
+                      응모하지 않은 사람이 그냥 살 수 있는 줄 알고 들어온다 — 상태를 먼저 말한다. */}
+                  <div style={{ display: "inline-flex", alignItems: "center", gap: 9, alignSelf: "flex-start", background: "rgba(255,255,255,.14)", backdropFilter: "blur(14px)", borderRadius: 12, padding: "10px 16px", fontSize: 16, fontWeight: 700, color: "#fff", maxWidth: 520, lineHeight: 1.5 }}>
+                    <span className="live-dot" />
+                    <span>{t(D.saleWinnersOnly)}</span>
+                  </div>
+                  <div style={{ fontSize: 14.5, lineHeight: 1.6, color: "rgba(255,255,255,.55)", maxWidth: 520 }}>
+                    * {t(D.saleLeftoverNote)}
+                  </div>
                 </div>
               )}
               {/* 모바일: 구매 버튼 전폭 → 아랫줄에 X·텔레그램 나란히 (8/27 서우) */}
@@ -406,7 +417,11 @@ export default function Landing() {
 {/* 8/28 회의: 판매 수량을 스스로 정하지 않기로 해서 "오픈 임박 시 공개"할 수량 자체가 없어졌다 */}
             {soldOut
               ? <span style={{ display: "inline-flex", justifyContent: "center", background: "#d8d8e0", color: "var(--cap)", fontSize: 19.5, fontWeight: 800, borderRadius: 10, padding: 14 }}>{en ? "Sold out" : "완판되었습니다"}</span>
-              : <button onClick={buy} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>}
+              : <>
+                  <button onClick={buy} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>{en ? "Buy" : "구매하기"}</button>
+                  {/* 히어로를 지나쳐 여기까지 내려온 사람에게도 "당첨자 기간"이라는 상태를 한 번 더 알린다 */}
+                  <div style={{ fontSize: 14.5, lineHeight: 1.6, color: "var(--cap)", textAlign: "center" }}>{t(D.saleWinnersOnly)}</div>
+                </>}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1px solid var(--bd-card)", borderRadius: 12, padding: "16px 20px", background: "var(--panel)" }}>
             <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: 9, background: "var(--w-tint)", color: "var(--w-main)", fontWeight: 800, fontSize: 17, flex: "none" }}>#</span>
@@ -444,7 +459,7 @@ export default function Landing() {
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
             <HowCard icon={<IconVerify />} title={`② ${t(D.step2Title)}`} desc={t(D.step2Desc)} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<IconReward />} title={`③ ${t(D.step3Title)}`} desc={t(D.step3Desc)} />
+            <HowCard icon={<IconReward />} title={`③ ${t(D.step3Title)}`} desc={<>{t(D.step3Desc)}<br /><span style={{ fontSize: 15, color: "var(--cap)" }}>{t(D.rewardNotGuaranteed)}</span></>} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
             <HowCard icon={<IconUse />} title={`④ ${t(D.step4Title)}`} desc={t(D.step4Desc)} />
           </div>
@@ -462,13 +477,13 @@ export default function Landing() {
             <div className="loop-row" data-reveal>
               {/* 8/28 서우 8차: 칩 글씨가 길어 한눈에 안 들어온다 → 두 줄 → 한 줄 단문으로 축약.
                   자세한 설명은 바로 아래 본문이 이미 하고 있으므로 칩은 흐름만 보이면 된다. */}
-              <span className="loop-chip"><IconData size={46} /><span>{t(D.loopData)}</span></span>
+              <span className="loop-chip"><IconData size={55} /><span>{t(D.loopData)}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconFlow size={46} /><span>{t(D.loopBuy)}</span></span>
+              <span className="loop-chip"><IconFlow size={55} /><span>{t(D.loopBuy)}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconCoins size={46} /><span>{t(D.loopFund)}</span></span>
+              <span className="loop-chip"><IconCoins size={55} /><span>{t(D.loopFund)}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconNodes size={46} /><span>{t(D.loopGrow)}</span></span>
+              <span className="loop-chip"><IconNodes size={55} /><span>{t(D.loopGrow)}</span></span>
             </div>
             {/* 마지막에서 처음으로 되돌아가는 고리 — 칩이 4개가 되어 아이콘 하나로는 자리가 모자라
                 행 아래 곡선 화살표로 뺐다(방향도 이쪽이 읽기 쉽다) */}

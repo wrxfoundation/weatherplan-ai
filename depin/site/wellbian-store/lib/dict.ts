@@ -142,6 +142,15 @@ export const D = {
     zh: "销售所得再次成为节点奖励的来源，奖励带来更多节点，监测网随之更密集。",
     es: "Esos ingresos vuelven a financiar las recompensas de los nodos, y más recompensas traen más nodos, densificando la red.",
   }),
+  /* 8/28 서우 승인: 선순환 하단에서 뺀 비보장 고지를 보상을 실제로 말하는 자리(③ 보상 카드)로 옮긴다.
+     랜딩 본문에 한 번은 노출돼야 한다는 법무 판단. 짧게, 카드 설명 아래 작은 글씨로. */
+  rewardNotGuaranteed: m({
+    ko: "지급량과 가치는 보장되지 않습니다",
+    en: "Amounts and value are not guaranteed",
+    ja: "支給量と価値は保証されません",
+    zh: "发放数量与价值不作保证",
+    es: "La cantidad y el valor no están garantizados",
+  }),
   /* 8/28 서우: 보상 비보장 고지를 이 자리에서 빼고 개인정보 안심 문구로 교체.
      백서 정합성 리포트(0826) A9 "비식별화 · 구매 플로우 개인정보 제로화" 기준 —
      측정 대상이 사람이 아니라 공기라는 사실만 짧게 말한다. 없는 약속은 하지 않는다. */
@@ -274,6 +283,37 @@ export const D = {
     ja: "1アカウントにつき最大100台まで設定できます。",
     zh: "每个账户最多可设置 100 台。",
     es: "Hasta 100 unidades por cuenta.",
+  }),
+  /* ── 판매 계열(추첨 이후) — 8/28 서우: 판매·마감 화면도 추첨제에 맞춘다 ────────
+     추첨을 도입했는데 판매 화면이 "지금 구매하기"만 말하면, 응모하지 않은 사람은
+     그냥 살 수 있는 줄 알고 들어왔다가 막힌다. 상태를 화면이 먼저 말해야 한다. */
+  saleWinnersOnly: m({
+    ko: "추첨 당첨자 구매 기간입니다 · 당첨 안내 메일을 확인해 주세요",
+    en: "Purchase window for draw winners — check your result email",
+    ja: "抽選当選者の購入期間です・当選案内メールをご確認ください",
+    zh: "抽签中签者购买期间 · 请查看中签通知邮件",
+    es: "Periodo de compra para los ganadores del sorteo: revisa tu correo de resultados",
+  }),
+  saleLeftoverNote: m({
+    ko: "당첨자가 기간 내에 구매하지 않은 수량은 일반 구매로 전환됩니다",
+    en: "Units winners do not buy within the window are released to general sale",
+    ja: "当選者が期間内に購入しなかった数量は一般販売に切り替わります",
+    zh: "中签者未在期限内购买的数量将转为一般销售",
+    es: "Las unidades no compradas dentro del plazo pasan a venta general",
+  }),
+  ddayLead: m({
+    ko: "추첨 결과 9월 14일 · 당첨 시 9월 15일 구매",
+    en: "Draw results Sept 14 · winners buy Sept 15",
+    ja: "抽選結果は9月14日・当選なら9月15日に購入",
+    zh: "9 月 14 日公布抽签结果 · 中签者 9 月 15 日购买",
+    es: "Resultados el 14 de septiembre · los ganadores compran el 15",
+  }),
+  soldOutSub: m({
+    ko: "당첨자 구매분과 일반 구매 전환분이 모두 소진되었습니다",
+    en: "Winner purchases and the units released to general sale are all gone",
+    ja: "当選者の購入分と一般販売への切替分がすべて完売しました",
+    zh: "中签者购买份额与转为一般销售的数量均已售罄",
+    es: "Se agotaron las compras de ganadores y las unidades pasadas a venta general",
   }),
   /* 추첨 결과 통지 — 8/28 서우 지정 (9/14 09:00 KST, 가입 메일) */
   drawResult: m({

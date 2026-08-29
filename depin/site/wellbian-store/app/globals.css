@@ -526,7 +526,7 @@ h1, h2, h3, p { margin: 0; }
     text-align: left;
   }
   /* 아이콘 크기는 컴포넌트에 인라인(46px)이라 CSS 로 눌러야 한다 — 가로형에는 조금 작은 게 맞다 */
-  .loop-chip > :first-child { width: 38px; height: 38px; flex: none; }
+  .loop-chip > :first-child { width: 45px; height: 45px; flex: none; }
   /* 화살표를 rotate 로 눕히면 reveal(.rv 의 translateY)과 같은 transform 을 다퉈 한쪽이 진다.
      실제로 2×2 잔재 블록이 .rv 보다 뒤에 있어서 회전이 살아 있었고, 그 블록을 걷어내자
      .rv 가 이겨 화살표가 다시 가로로 누웠다. 글리프를 바꿔 충돌 자체를 없앤다. */
