@@ -4,7 +4,7 @@
    Data 포함으로 재확정 — 상표 출원 문자열과 일치 여부는 변리사 트랙에서 재확인) */
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "next/navigation";
 import { IconMeasure, IconVerify, IconReward, IconUse, IconData, IconFlow, IconCoins, IconNodes, IconStep } from "./GlassIcons";
 import {
@@ -104,6 +104,14 @@ export default function Landing() {
     const t = setInterval(() => setHeroBg((i) => (i + 1) % HERO_BGS.length), 6000);
     return () => clearInterval(t);
   }, []);
+
+  /* 히어로 루프 영상 (8/29) — reduced-motion 이면 <video> 자체를 만들지 않는다.
+     CSS 로 숨기는 방식은 파일을 그대로 받아 버려서(861KB) 안 된다.
+     서버 스냅샷을 "reduce" 로 두면 SSR 은 항상 정지컷만 내보내고, 하이드레이션 후 실제 설정에
+     따라 붙는다 — 불일치도 없고 effect 안에서 setState 하지도 않는다.
+     vidOn 은 canplay 때 켠다(정지컷과 첫 프레임이 같아 실제로는 전환이 보이지 않는다). */
+  const reduceMotion = useSyncExternalStore(subscribeReduceMotion, getReduceMotion, () => true);
+  const [vidOn, setVidOn] = useState(false);
 
   /* 제품 스펙 갤러리 (8/27) — 5초 자동 롤링 + 수동 내비, 스펙 표는 더보기로 감춤 */
   const [specImg, setSpecImg] = useState(0);
@@ -205,6 +213,16 @@ export default function Landing() {
           {HERO_BGS.map((src, i) => (
             <div key={src} className={`hero-bg-slide${i === heroBg ? " on" : ""}`} style={{ backgroundImage: `url(${src})` }} />
           ))}
+          {!reduceMotion && (
+            <video
+              className={`hero-bg-vid${vidOn ? " on" : ""}`}
+              src={HERO_VIDEO}
+              poster={HERO_POSTER}
+              autoPlay muted loop playsInline preload="auto"
+              tabIndex={-1}
+              onCanPlay={(e) => { void e.currentTarget.play().catch(() => {}); setVidOn(true); }}
+            />
+          )}
           <div className="hero-scrim" />
         </div>
         {soldOut ? (
@@ -780,16 +798,39 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
 
 /* 히어로 배경 — 블루+퍼플 확정 (8/27 서우). 나머지 후보(hero-bg.jpg·-3·-4)는 hide, 파일 유지 —
    재비교 시 배열에 다시 넣으면 롤링 복원 */
-/* 히어로 배경 — 8/28 서우: 이미지는 서우가 직접 교체한다(Vercel 배포 zip을 풀어 파일을 넣고 재압축).
-   교체 지점을 한 곳으로 고정했다: public/assets/hero/hero-bg.webp — 그 파일을 덮어쓰면 끝이고
-   코드는 손댈 필요가 없다. 사용법·규격은 같은 폴더의 README.txt.
+/* 히어로 배경 — 8/28 서우: 배경은 서우가 직접 교체한다(Vercel 배포 zip을 풀어 파일을 넣고 재압축).
+   교체 지점을 public/assets/hero/ 한 폴더로 고정했다 — 같은 이름으로 덮어쓰면 코드는 손댈 필요가 없다.
+   사용법·규격은 같은 폴더의 README.txt. (8/29 영상 전환 이후 교체 대상은 아래 세 파일이다.)
 
    폴백을 CSS 다중 레이어(url(a), url(b))로 만들지 않은 이유: 브라우저는 background-image의
    모든 레이어를 실제로 내려받는다. 즉 커스텀을 넣어도 폴백 이미지가 매번 같이 다운로드되고
-   (427KB 낭비), 넣기 전에는 404가 콘솔·Vercel 로그에 남는다. 그래서 그 경로에 현재 이미지를
-   미리 넣어 두는 쪽을 택했다 — 파일이 항상 존재하므로 폴백 자체가 필요 없다.
-   구 후보(hero-bg.jpg·-2·-3·-4)는 재비교용으로 보관만 한다. */
-const HERO_BGS = ["/assets/hero/hero-bg.webp"];
+   넣기 전에는 404가 콘솔·Vercel 로그에 남는다. 그래서 그 경로에 현재 파일을 미리 넣어 두는
+   쪽을 택했다 — 파일이 항상 존재하므로 폴백 자체가 필요 없다.
+   구 후보(hero-bg.webp·-bg.jpg·-2·-3·-4)는 재비교용으로 보관만 한다. */
+/* 8/29 서우: 히어로를 루프 영상으로. 힉스필드 원본은 HEVC(H.265) 1080p/24fps/6.4MB 였는데
+   HEVC 는 크롬·파이어폭스가 대체로 못 연다(하드웨어 디코더가 있어야 한다). H.264 High 로 다시 뜨고
+   오디오 트랙은 버렸다(무음 배경이라 필요 없고, muted autoplay 조건도 확실해진다) → 949KB.
+   VP9 webm 을 같이 두지 않는 이유: 서우가 mp4 를 직접 갈아 끼우는데, 옛 webm 이 남아 있으면
+   브라우저가 그쪽을 먼저 골라 "바꿨는데 그대로"가 된다. H.264 는 어차피 전 브라우저가 연다.
+   원본은 첫/끝 프레임이 달라 5초마다 툭 끊겼다(PSNR 21dB). 끝 20프레임을 첫 20프레임에 알파
+   크로스페이드로 겹쳐 4.21초 이음매 없는 루프로 만들었다(이음매 30.5dB ≒ 일반 연속 프레임 32.6dB).
+
+   정지컷(hero-loop-poster.webp)은 영상 첫 프레임이다. 영상과 같은 장면이라 로딩·저사양·
+   reduced-motion 어디서도 화면이 바뀌지 않는다. 구 정지컷 hero-bg.webp(패키지 박스 구도)는
+   장면이 달라 더 이상 히어로에 쓰지 않는다 — 파일은 재사용 대비로 남겨 뒀다. */
+/* prefers-reduced-motion 구독 — 설정을 바꾸면 즉시 반영된다.
+   서버 스냅샷은 true(=모션 줄이기)로 둔다: SSR HTML 에 <video> 가 없어야 안전하다. */
+const RM_QUERY = "(prefers-reduced-motion: reduce)";
+const subscribeReduceMotion = (cb: () => void) => {
+  const m = matchMedia(RM_QUERY);
+  m.addEventListener("change", cb);
+  return () => m.removeEventListener("change", cb);
+};
+const getReduceMotion = () => matchMedia(RM_QUERY).matches;
+
+const HERO_VIDEO = "/assets/hero/hero-loop.mp4";
+const HERO_POSTER = "/assets/hero/hero-loop-poster.webp";
+const HERO_BGS = [HERO_POSTER];
 
 /* 제품 갤러리 5컷 (8/27 2차 — 서우 신규 렌더: 받침대·주방·거실·골드·블랙) — 히어로형 풀블리드 배경 */
 const SPEC_GALLERY = [

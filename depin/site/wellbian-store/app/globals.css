@@ -319,6 +319,15 @@ h1, h2, h3, p { margin: 0; }
   opacity: 0; transition: opacity 1.4s ease;
 }
 .hero-bg-slide.on { opacity: 1; }
+/* 히어로 루프 영상 (8/29) — 정지컷 위에 같은 크롭으로 얹고 canplay 때 페이드인.
+   포스터가 정지컷과 같은 프레임이라 실제로는 전환이 보이지 않고, 재생만 시작된다.
+   iOS 저전력 모드처럼 autoplay 가 막히면 첫 프레임에서 멈추는데 그게 곧 정지컷이라 화면은 정상이다. */
+.hero-bg-vid {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; object-fit: cover; object-position: right center;
+  opacity: 0; transition: opacity .7s ease; pointer-events: none;
+}
+.hero-bg-vid.on { opacity: 1; }
 .hero-scrim {
   /* 우측 제품 영역은 스크림 0 — 텍스트 컬럼(좌측 ~45%)까지만 어둡게 */
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -329,11 +338,13 @@ h1, h2, h3, p { margin: 0; }
   /* 8/28 서우: 모바일에서 제품이 아예 안 보였다. 히어로 원본은 좌측 패키지 · 우측 기기 구도이고
      기기 중심이 x≈70%인데 cover 크롭이 원본의 32~68%만 보여줘 기기가 잘려 나갔다.
      78%로 옮기면 51~87% 구간이 노출돼 기기가 화면 중앙 뒤편에 들어온다(실측). */
-  .hero-bg-slide { background-position: 78% center; }
+  /* 8/29 영상 구도는 박스가 빠져 피사체 중심이 x≈65% 다(이미지는 78%). 같은 값을 쓰면 기기가 밀린다. */
+  .hero-bg-slide { background-position: 65% center; }
+  .hero-bg-vid { object-position: 65% center; }
   .hero-scrim { background: linear-gradient(180deg, rgba(27, 27, 72, .94) 0%, rgba(27, 27, 72, .82) 52%, rgba(27, 27, 72, .42) 100%); }
   .hero-photo .hero-grid { min-height: 0; }
 }
-@media (prefers-reduced-motion: reduce) { .hero-bg-slide { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .hero-bg-slide { transition: none; } .hero-bg-vid { display: none; } }
 .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 /* 제품 이미지가 주인공 — 좌측 절반(가운데선)까지 확장 */
 .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
