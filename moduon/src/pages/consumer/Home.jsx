@@ -46,17 +46,17 @@ export default function Home({ tenant }) {
           {/* 좌측 텍스트 가독 스크림 */}
           <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/85 to-cream/5 sm:via-cream/70" />
           {/* 영상 하단·좌하단 끝선을 크림으로 용해 — 범위는 낮게(이미지 가림 최소) */}
-          <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-cream via-cream/45 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-[22%] bg-gradient-to-t from-cream/80 via-cream/20 to-transparent" />
           {/* 좌하단 용해 — 너무 짙으면 그 위에 얹은 유리 패널이 뭉갤 그림이 없어져
               그냥 흰 박스로 보인다. 패널 뒤에 씬이 살아 있도록 옅게 유지할 것. */}
           <div className="absolute bottom-0 left-0 h-[38%] w-[42%] bg-gradient-to-tr from-cream/85 via-cream/20 to-transparent" />
         </div>
-        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent to-cream sm:h-24" />
+        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-b from-transparent to-cream sm:h-16" />
 
         <div className="relative mx-auto max-w-6xl px-5 sm:px-10">
           {/* 절약 말풍선 2종 — 씬 위 중앙(우측 텍스트단 밖)에 부유. AI 영상 속 글자는 뭉개지므로 DOM으로 */}
           {!tenant && <SavingsBubbles />}
-          <div className="flex min-h-[480px] max-w-xl flex-col justify-center py-14 sm:min-h-[600px] sm:py-20">
+          <div className="flex min-h-[420px] max-w-xl flex-col justify-center pb-8 pt-14 sm:min-h-[520px] sm:pb-10 sm:pt-20">
             {tenant ? (
               <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12px] font-bold text-primary-text shadow-card">
                 <span className="h-1.5 w-1.5 rounded-full bg-ok animate-live" /> 모두온 공식 파트너 · {tenant.owner} 사장님이 직접 상담해요
@@ -94,25 +94,29 @@ export default function Home({ tenant }) {
                 상담사 연결
               </Link>
             </div>
-            {/* 취급 상품 바로가기 — 히어로 안, CTA 바로 아래.
-                반투명 유리 패널이라 뒤의 영상이 흐리게 비쳐 아이콘만 또렷하게 뜬다.
-                (항목이 4개뿐이라 아래에 별도 섹션으로 두면 허전해서 히어로로 끌어올림) */}
-            <div className="mt-5 w-full max-w-[560px] rounded-2xl border border-white/70 bg-white/45 px-3 py-3.5 shadow-panel backdrop-blur-xl backdrop-saturate-150 sm:px-5">
-              <div className="grid grid-cols-4 gap-1">
-                {tiles.map((t) => (
-                  <Link key={t.slug} to={t.to} className="group flex flex-col items-center gap-1.5">
-                    <span className="flex h-[46px] w-[46px] items-center justify-center overflow-hidden rounded-full bg-warm transition-transform duration-200 group-hover:-translate-y-[3px] sm:h-[54px] sm:w-[54px]">
-                      <img src={t.icon} alt="" className="h-full w-full object-contain" loading="lazy" />
-                    </span>
-                    <span className="text-[11.5px] font-bold text-body sm:text-[12.5px]">{t.name}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
             {/* 모바일 절약 증거 — 데스크톱 말풍선(SavingsBubbles) 대응 한 줄 칩 (점만 살아있게) */}
             <div className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-2 shadow-card lg:hidden">
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-ok animate-live" />
               <span className="tnum whitespace-nowrap text-[12px] font-bold text-ink">인터넷/TV 월 32,900원 · <span className="text-ok">↓11,100원 아끼는 중</span></span>
+            </div>
+          </div>
+
+          {/* 취급 상품 바로가기 — 히어로 하단 전폭 유리 바.
+              텍스트 칼럼(max-w-xl) 안에 두면 넓은 화면에서 일러스트와 겹치지 않아
+              뒤가 평평한 크림뿐이고, backdrop-blur는 뭉갤 그림이 없으면 흰 박스로 보인다.
+              콘텐츠 전폭으로 빼서 어떤 화면폭에서도 오른쪽이 씬 위에 걸치게 한다. */}
+          <div className="relative -mt-2 pb-12 sm:-mt-4 sm:pb-16">
+            <div className="rounded-2xl border border-white/60 bg-white/35 px-3 py-4 shadow-panel backdrop-blur-2xl backdrop-saturate-150 sm:px-6 sm:py-5">
+              <div className="grid grid-cols-4 gap-1 sm:gap-2">
+                {tiles.map((t) => (
+                  <Link key={t.slug} to={t.to} className="group flex flex-col items-center gap-1.5">
+                    <span className="flex h-[46px] w-[46px] items-center justify-center overflow-hidden rounded-full bg-white/70 transition-transform duration-200 group-hover:-translate-y-[3px] sm:h-[58px] sm:w-[58px]">
+                      <img src={t.icon} alt="" className="h-full w-full object-contain" loading="lazy" />
+                    </span>
+                    <span className="text-[11.5px] font-bold text-ink sm:text-[13px]">{t.name}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
