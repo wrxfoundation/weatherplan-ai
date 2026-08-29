@@ -20,6 +20,8 @@ const ASSETS = [
   ['cat-insurance.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260829_133650_6dc7a5d4-09f7-45a3-b122-abc4db599b57.png'], // 보험
   ['cat-appliance.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260829_133652_acdb48e6-d3c8-4d9c-be1f-178b293a76ca.png'], // 가전
   ['cat-etc.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260829_133655_0424735e-a4cf-424d-ad9b-b24da2cbcd20.png'], // 생활/기타
+  // 쇼핑몰 — 위 8종과 동일 규격으로 추가 생성(쇼핑백). 대안 후보 08c8fc05(배경 제거 필요)
+  ['cat-shop.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260829_150107_67ec7e2d-c1b3-43e3-a0e7-8c57ffba8bfa.png'], // 쇼핑몰
   // 오브제 4종 — 배경 제거(투명 webp) 버전. 카드 그라데이션 위에 오브젝트만 얹힌다.
   ['obj-truck.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/90e21cc7-d3e9-4686-9b9d-5b0562ded06a.webp'],
   ['obj-wifi.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/33a9a1ff-4f6d-42b1-a55c-a48e0be83a31.webp'],

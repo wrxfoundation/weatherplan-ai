@@ -1,7 +1,7 @@
 // ─── S-01 소비자 홈 (트랙 A · 목업 #2a/#2b 재현) ─────────────────
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { CATEGORIES, VISIBLE_CATEGORIES } from '../../lib/constants'
+import { CATEGORIES, VISIBLE_CATEGORIES, SHOP_TILE } from '../../lib/constants'
 import { won, calcQuote, CARRIERS } from '../../lib/engine'
 import { useStore } from '../../lib/store'
 import { useCountUp, LiveDot } from '../../components/ui'
@@ -19,6 +19,11 @@ export default function Home({ tenant }) {
   const nav = useNavigate()
   // 파트너몰도 본사가 취급 중인 상품군 안에서만 노출한다(몰마다 목록이 달라지지 않게)
   const cats = tenant ? VISIBLE_CATEGORIES.filter((c) => tenant.cats.includes(c.slug)) : VISIBLE_CATEGORIES
+  // 히어로 타일 = 취급 카테고리 + 쇼핑몰. 파트너몰에서는 카테고리가 상담으로 흐른다.
+  const tiles = [
+    ...cats.map((c) => ({ slug: c.slug, name: c.name, icon: c.icon, to: tenant ? `${consultTo}&cat=${c.slug}` : `/category/${c.slug}` })),
+    SHOP_TILE,
+  ]
   const consultTo = tenant ? `/consult?src=${tenant.slug}` : '/consult'
 
   // 카테고리 바로가기 — 히어로 검색창을 걷어낸 뒤에도 해시태그가 곧바로 목적지로 보낸다.
@@ -87,6 +92,21 @@ export default function Home({ tenant }) {
                 상담사 연결
               </Link>
             </div>
+            {/* 취급 상품 바로가기 — 히어로 안, CTA 바로 아래.
+                반투명 유리 패널이라 뒤의 영상이 흐리게 비쳐 아이콘만 또렷하게 뜬다.
+                (항목이 4개뿐이라 아래에 별도 섹션으로 두면 허전해서 히어로로 끌어올림) */}
+            <div className="mt-5 max-w-md rounded-2xl border border-white/60 bg-white/70 px-3 py-3.5 shadow-card backdrop-blur-md sm:px-4">
+              <div className="grid grid-cols-4 gap-1">
+                {tiles.map((t) => (
+                  <Link key={t.slug} to={t.to} className="group flex flex-col items-center gap-1.5">
+                    <span className="flex h-[46px] w-[46px] items-center justify-center overflow-hidden rounded-full bg-warm transition-transform duration-200 group-hover:-translate-y-[3px] sm:h-[54px] sm:w-[54px]">
+                      <img src={t.icon} alt="" className="h-full w-full object-contain" loading="lazy" />
+                    </span>
+                    <span className="text-[11.5px] font-bold text-body sm:text-[12.5px]">{t.name}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
             {/* 모바일 절약 증거 — 데스크톱 말풍선(SavingsBubbles) 대응 한 줄 칩 (점만 살아있게) */}
             <div className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-2 shadow-card lg:hidden">
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-ok animate-live" />
@@ -98,20 +118,7 @@ export default function Home({ tenant }) {
 
       <div className="mx-auto max-w-6xl px-5 sm:px-10">
 
-      {/* ── 카테고리 스트립 — 취급 중인 상품군만 (사업 초기: 인터넷·핸드폰·렌탈) ── */}
-      <section className="rounded-section bg-white px-5 py-7 shadow-card sm:px-9 sm:py-9">
-        {/* 항목 수가 줄어도 흩어지지 않게 가운데 정렬 + 폭 제한 */}
-        <div className="mx-auto flex max-w-2xl flex-wrap items-start justify-center gap-x-8 gap-y-6 sm:gap-x-14">
-          {cats.map((c) => (
-            <Link key={c.slug} to={tenant ? `${consultTo}&cat=${c.slug}` : `/category/${c.slug}`} className="group flex flex-col items-center gap-2.5">
-              <span className="flex h-[62px] w-[62px] items-center justify-center overflow-hidden rounded-full bg-warm transition-transform duration-200 group-hover:-translate-y-[3px] sm:h-[84px] sm:w-[84px]">
-                <img src={c.icon} alt="" className="h-full w-full object-contain" loading="lazy" />
-              </span>
-              <span className="text-[12px] font-semibold text-body sm:text-[14px]">{c.name}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {/* 카테고리 스트립은 히어로 안(CTA 아래 유리 패널)으로 옮겼다 — 여기서는 중복 노출하지 않는다 */}
 
       <PayoutTicker />
 

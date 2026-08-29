@@ -14,7 +14,7 @@ const NAV = [
   { to: '/category/internet', label: '인터넷' },
   { to: '/category/phone', label: '핸드폰' },
   { to: '/category/rental', label: '렌탈' },
-  { to: '/', label: '쇼핑몰', end: true }, // '/'는 end 없이는 모든 경로에서 활성 표시된다
+  { to: '/shop', label: '쇼핑몰' },
   { to: '/calculator', label: '견적 계산기', hidden: true },
   { to: '/diagnosis', label: 'AI 진단', hidden: true },
   { to: '/payouts', label: '지급 명단', hidden: true },

@@ -18,6 +18,10 @@ export const CATEGORIES = [
 // 소비자 화면 노출용 — GNB(인터넷·핸드폰·렌탈)와 같은 구성을 유지한다.
 export const VISIBLE_CATEGORIES = CATEGORIES.filter((c) => !c.hidden)
 
+// 쇼핑몰 — 상품 카테고리가 아니라 별도 목적지라 CATEGORIES 밖에 둔다.
+// (CATEGORIES에 넣으면 상담 폼·어드민 상품·테넌트 취급목록까지 따라 들어간다)
+export const SHOP_TILE = { slug: 'shop', name: '쇼핑몰', icon: '/assets/cat-shop.png', to: '/shop' }
+
 export const catBySlug = (slug) => CATEGORIES.find((c) => c.slug === slug)
 
 // ─── 리드 상태 6단계 (전 화면 공통 단일 enum — 동의어 금지) ───

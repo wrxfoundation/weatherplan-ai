@@ -39,16 +39,38 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   await page.waitForTimeout(700)
   check(page.url().includes('/consult'), `상담사 연결 → 상담 페이지 (${page.url().split('/').pop()})`)
 
-  // ⑤ 카테고리 스트립 — 취급 중인 3종만 노출
+  // ⑤ 히어로 타일 — 인터넷/TV · 휴대폰 · 렌탈 · 쇼핑몰, 유리 패널 위에
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
   await page.waitForTimeout(400)
-  const strip = await page.evaluate(() => [...document.querySelectorAll('a[href^="/category/"]')]
+  const strip = await page.evaluate(() => [...document.querySelectorAll('a')]
     .filter((a) => a.querySelector('img[src*="/assets/cat-"]'))
     .map((a) => a.innerText.trim()))
-  check(strip.join(',') === '인터넷/TV,휴대폰,렌탈', `카테고리 스트립 3종만 (${JSON.stringify(strip)})`)
+  check(strip.join(',') === '인터넷/TV,휴대폰,렌탈,쇼핑몰', `히어로 타일 4종 (${JSON.stringify(strip)})`)
   for (const gone of ['이사', '정수기', '보험', '가전', '생활/기타']) {
-    check(!strip.includes(gone), `스트립에서 숨김: ${gone}`)
+    check(!strip.includes(gone), `타일에서 숨김: ${gone}`)
   }
+  // 타일이 히어로(=CTA 아래) 안에 있고, 유리 패널(backdrop-filter)을 쓰는지
+  const tileBox = await page.locator('a:has(img[src*="/assets/cat-"])').first().boundingBox()
+  const ctaBox = await page.locator('text=AI와 먼저 상담').first().boundingBox()
+  check(tileBox.y > ctaBox.y, `타일이 AI 상담 버튼 아래 (cta ${Math.round(ctaBox.y)} < tile ${Math.round(tileBox.y)})`)
+  const glass = await page.evaluate(() => {
+    const a = [...document.querySelectorAll('a')].find((x) => x.querySelector('img[src*="/assets/cat-"]'))
+    for (let el = a; el; el = el.parentElement) {
+      const s = getComputedStyle(el)
+      if ((s.backdropFilter && s.backdropFilter !== 'none') || (s.webkitBackdropFilter && s.webkitBackdropFilter !== 'none')) {
+        return { blur: s.backdropFilter, bg: s.backgroundColor }
+      }
+    }
+    return null
+  })
+  check(!!glass, `타일 배경이 반투명 유리 패널 (${glass ? glass.blur + ' / ' + glass.bg : '없음'})`)
+
+  // 쇼핑몰 타일 → 더미 페이지
+  await page.locator('a:has(img[src*="/assets/cat-shop"])').first().click()
+  await page.waitForTimeout(600)
+  check(page.url().includes('/shop'), `쇼핑몰 타일 → /shop (${page.url().split('/').pop()})`)
+  const shopText = await page.evaluate(() => document.body.innerText)
+  check(shopText.includes('준비 중') && shopText.includes('쇼핑몰을 준비하고'), '쇼핑몰 더미 페이지 내용')
 
   // ⑥ 혜택 밴드 — 인터넷 · 핸드폰 · 렌탈 순서와 오브제 에셋
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
