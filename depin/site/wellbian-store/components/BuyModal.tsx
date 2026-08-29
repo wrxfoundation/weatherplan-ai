@@ -169,9 +169,10 @@ export default function BuyModal({
               );
             })}
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 16, flexWrap: "wrap", gap: 6 }}>
+          {/* 8/28 서우: 활성화(1 XRP) 1회 지원 고지 삭제 — 랜딩·응모 모달에서 뺀 것과 같은 이유.
+              남은 건 지갑 안내 링크뿐이라 space-between 을 걷어낸다(오른쪽이 비어 보인다). */}
+          <div style={{ display: "flex", alignItems: "center", fontSize: 16, flexWrap: "wrap", gap: 6 }}>
             <a href="#" onClick={(e) => e.preventDefault()}>{en ? "No wallet yet? See the guide →" : "지갑이 없나요? 지갑 만들기 안내 →"}</a>
-            <span style={{ color: "var(--cap)" }}>{en ? "One-time activation (1 XRP) covered" : "활성화(1 XRP) 1회 지원"}</span>
           </div>
           {address && (
             <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 16, fontWeight: 700, color: "var(--ok-text)" }}>

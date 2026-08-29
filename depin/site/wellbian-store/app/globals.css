@@ -508,8 +508,30 @@ h1, h2, h3, p { margin: 0; }
 @media (max-width: 760px) {
   /* 모바일: 칩을 세로로 쌓고 화살표를 아래 방향으로 돌린다 */
   .loop-row { flex-direction: column; align-items: center; gap: 7px; }
-  .loop-chip { width: 100%; max-width: 320px; justify-content: flex-start; padding: 12px 16px; font-size: 15px; }
-  .loop-arrow { transform: rotate(90deg); font-size: 17px; }
+  /* 8/28 서우 "모바일 최적화 필요": 4:3 은 가로 4칸용 지시였는데 세로 스택에서도 그대로 걸려
+     아이콘 + 한 줄짜리 칩이 292×219 로 부풀고 아래가 텅 비었다(행 전체 962px).
+     세로에서는 비율을 풀고 아이콘 옆에 글자를 두는 가로형으로 되돌린다. */
+  .loop-chip {
+    flex-direction: row;
+    aspect-ratio: auto;
+    /* 기본 .loop-chip 은 flex: 1 1 0 + min-height: 0 (가로 4칸용)이라 column 방향에서는
+       높이가 0 기준으로 눌린다 — 실측 28px. 세로 스택에서는 내용 높이를 그대로 쓴다. */
+    flex: none;
+    width: 100%;
+    max-width: 340px;
+    justify-content: flex-start;
+    gap: 13px;
+    padding: 13px 16px;
+    font-size: 15.5px;
+    text-align: left;
+  }
+  /* 아이콘 크기는 컴포넌트에 인라인(46px)이라 CSS 로 눌러야 한다 — 가로형에는 조금 작은 게 맞다 */
+  .loop-chip > :first-child { width: 38px; height: 38px; flex: none; }
+  /* 화살표를 rotate 로 눕히면 reveal(.rv 의 translateY)과 같은 transform 을 다퉈 한쪽이 진다.
+     실제로 2×2 잔재 블록이 .rv 보다 뒤에 있어서 회전이 살아 있었고, 그 블록을 걷어내자
+     .rv 가 이겨 화살표가 다시 가로로 누웠다. 글리프를 바꿔 충돌 자체를 없앤다. */
+  .loop-arrow { font-size: 0; }
+  .loop-arrow::before { content: "↓"; font-size: 17px; line-height: 1; }
 }
 
 /* 마지막 → 처음으로 돌아가는 고리 (8/28 서우 6차)
@@ -651,12 +673,19 @@ h1, h2, h3, p { margin: 0; }
 }
 
 
-/* ── 선순환 칩: 좁은 화면에서는 2×2 (8/28) ────────────────────────────────
-   한 줄에 4칩+3화살표를 밀어 넣으면 4:3 카드가 종잇장이 된다. */
-@media (max-width: 760px) {
-  .loop-row { flex-wrap: wrap; }
-  .loop-chip { flex: 0 0 calc(50% - 26px); max-width: none; }
-  /* 2×2 에서는 가로 화살표가 흐름을 잘못 가리킨다 — 세로로 눕혀 둔다 */
-  .loop-arrow { transform: rotate(90deg); }
-  .loop-arrow:nth-of-type(2) { display: none; }
+/* ── 선순환 칩 2×2 블록은 걷어냈다 (8/28 서우 "모바일 최적화 필요") ─────────
+   모바일은 위쪽 max-width:760px 블록에서 이미 세로 1열이다. 2×2 시절 규칙이 그 뒤에
+   남아 세로 스택을 덮고 있었다:
+     · flex: 0 0 calc(50% - 26px) — column 방향에서는 폭이 아니라 높이축에 걸려 무의미
+     · max-width: none — 앞 블록의 340px 상한을 무효화
+     · .loop-arrow:nth-of-type(2) { display: none } — 2×2 의 가운데 화살표를 지우려던 건데
+       1열에서는 첫 번째 화살표(칩1 → 칩2)가 통째로 사라졌다. 실측 0×0 / display:none.
+   회전(rotate(90deg))은 위 블록에 이미 있으므로 여기서 다시 선언하지 않는다. */
+
+/* 8/28 서우: 320px(구형 SE)에서 GNB 우측 묶음이 뷰포트를 14px 밀어내 페이지가 가로로 스크롤됐다.
+   로고 88 + gap 14 + 우측 217 + 좌우 패딩 28 = 347 > 320. 구성(로고·CTA·상태 칩)은 그대로 두고
+   헤더 여백과 로고만 조여 27px 을 만든다. 위쪽 720px 블록도 !important 라 반드시 뒤에 둬야 이긴다. */
+@media (max-width: 356px) {
+  .gnb-root { gap: 8px !important; padding-left: 10px !important; padding-right: 10px !important; }
+  .gnb-logo { height: 30px !important; }
 }
