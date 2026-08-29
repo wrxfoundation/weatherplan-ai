@@ -7,11 +7,14 @@ import { LEGAL } from '../../lib/constants'
 import { captureRef } from '../../lib/engine'
 import ChatWidget from '../ChatWidget'
 
-// GNB — 사업 초기에는 쇼핑몰(상품 둘러보기)만 노출한다.
+// GNB — 사업 초기에는 3대 주력(인터넷·핸드폰·렌탈)과 쇼핑몰만 노출한다.
 // hidden: true 는 "삭제"가 아니라 "숨김" — 페이지와 라우트는 그대로 살아 있고
 // 직접 URL·내부 링크로는 계속 동작한다. 준비되는 메뉴부터 hidden 을 지우면 즉시 복귀.
 const NAV = [
-  { to: '/', label: '쇼핑몰' },
+  { to: '/category/internet', label: '인터넷' },
+  { to: '/category/phone', label: '핸드폰' },
+  { to: '/category/rental', label: '렌탈' },
+  { to: '/', label: '쇼핑몰', end: true }, // '/'는 end 없이는 모든 경로에서 활성 표시된다
   { to: '/calculator', label: '견적 계산기', hidden: true },
   { to: '/diagnosis', label: 'AI 진단', hidden: true },
   { to: '/payouts', label: '지급 명단', hidden: true },
@@ -40,7 +43,7 @@ export function ConsumerHeader({ tenant }) {
         {!tenant && (
           <nav className="hidden items-center gap-8 md:flex">
             {VISIBLE_NAV.map((n) => (
-              <NavLink key={n.to} to={n.to} className={({ isActive }) => `text-[15px] font-medium transition-colors hover:text-primary-text ${isActive ? 'text-primary-text' : 'text-body'}`}>
+              <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => `text-[15px] font-medium transition-colors hover:text-primary-text ${isActive ? 'text-primary-text' : 'text-body'}`}>
                 {n.label}
               </NavLink>
             ))}

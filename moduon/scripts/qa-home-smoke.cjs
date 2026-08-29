@@ -65,7 +65,16 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
   await page.waitForTimeout(400)
   const navLabels = await page.evaluate(() => [...document.querySelectorAll('header nav a')].map((a) => a.innerText.trim()))
-  check(navLabels.length === 1 && navLabels[0] === '쇼핑몰', `GNB 쇼핑몰만 노출 (${JSON.stringify(navLabels)})`)
+  check(navLabels.join(',') === '인터넷,핸드폰,렌탈,쇼핑몰', `GNB 인터넷·핸드폰·렌탈·쇼핑몰 순 (${JSON.stringify(navLabels)})`)
+
+  // GNB 각 메뉴가 실제 카테고리로 이동하는지
+  for (const [label, path] of [['인터넷', '/category/internet'], ['핸드폰', '/category/phone'], ['렌탈', '/category/rental']]) {
+    await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
+    await page.waitForTimeout(300)
+    await page.locator('header nav a', { hasText: new RegExp(`^${label}$`) }).click()
+    await page.waitForTimeout(500)
+    check(page.url().includes(path), `GNB ${label} → ${path}`)
+  }
 
   // 숨김 페이지는 살아 있어야 한다(삭제가 아니라 숨김)
   await page.goto('http://localhost:4173/payouts', { waitUntil: 'networkidle' })
