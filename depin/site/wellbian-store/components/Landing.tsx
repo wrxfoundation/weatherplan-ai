@@ -477,13 +477,13 @@ export default function Landing() {
             <div className="loop-row" data-reveal>
               {/* 8/28 서우 8차: 칩 글씨가 길어 한눈에 안 들어온다 → 두 줄 → 한 줄 단문으로 축약.
                   자세한 설명은 바로 아래 본문이 이미 하고 있으므로 칩은 흐름만 보이면 된다. */}
-              <span className="loop-chip"><IconData size={55} /><span>{t(D.loopData)}</span></span>
+              <span className="loop-chip"><IconData size={66} /><span>{t(D.loopData)}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconFlow size={55} /><span>{t(D.loopBuy)}</span></span>
+              <span className="loop-chip"><IconFlow size={66} /><span>{t(D.loopBuy)}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconCoins size={55} /><span>{t(D.loopFund)}</span></span>
+              <span className="loop-chip"><IconCoins size={66} /><span>{t(D.loopFund)}</span></span>
               <span className="loop-arrow" aria-hidden>→</span>
-              <span className="loop-chip"><IconNodes size={55} /><span>{t(D.loopGrow)}</span></span>
+              <span className="loop-chip"><IconNodes size={66} /><span>{t(D.loopGrow)}</span></span>
             </div>
             {/* 마지막에서 처음으로 되돌아가는 고리 — 칩이 4개가 되어 아이콘 하나로는 자리가 모자라
                 행 아래 곡선 화살표로 뺐다(방향도 이쪽이 읽기 쉽다) */}
