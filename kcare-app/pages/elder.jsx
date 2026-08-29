@@ -125,6 +125,19 @@ function givenName(full) {
 }
 
 // 24시간제 금지 — "오후 2시 30분" 구어 표기 (06 §7)
+// 띠배너용 짧은 날짜 — 오늘/내일/모레는 그 말로, 그 뒤는 날짜로.
+// spokenDay("8월 29일 토요일")는 한 줄 배너에 안 들어간다.
+function shortDay(ts, now) {
+  const d = new Date(ts);
+  const a0 = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const b0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const days = Math.round((a0 - b0) / 86400000);
+  if (days <= 0) return "오늘";
+  if (days === 1) return "내일";
+  if (days === 2) return "모레";
+  return `${d.getMonth() + 1}월 ${d.getDate()}일`;
+}
+
 function spokenTime(ts) {
   const d = new Date(ts);
   const h = d.getHours();
@@ -599,6 +612,30 @@ export default function ElderHome() {
                   맡기면 "…아래에서 골라 / 주세요."처럼 끊겨 읽는 흐름이 깨진다. */}
               {tab === "home" && (
                 <p className="mt-1 text-[20px] leading-[1.4] text-muted">오늘도 편안한 하루 되세요</p>
+              )}
+              {/* 다음 일정 — 한 줄 띠배너 (2026-08-28 요청). 카루셀은 첫 화면을
+                  복잡하게 만들어 뺐지만, 다음에 무엇이 있는지는 한 줄로 알려 드린다.
+                  누르면 오늘 탭에서 자세히 본다. 인사 블록 안에 두는 이유: 바깥에
+                  두면 여백 배분(space-between)이 셋으로 나뉘어 배너만 공중에 뜬다. */}
+              {tab === "home" && upcoming[0] && (
+                <button
+                  onClick={() => setTab("today")}
+                  className="btn-press mt-3 flex w-full items-center gap-2.5 rounded-[16px] px-4 py-3 text-left"
+                  style={{ background: "rgba(176,141,87,.13)", boxShadow: "inset 0 0 0 1px rgba(176,141,87,.28)" }}
+                >
+                  <span aria-hidden className="shrink-0" style={{ color: "#8A5D12" }}>
+                    <Icon name="clock" size={22} strokeWidth={2} />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-[19px] font-bold text-navy">
+                    <span style={{ color: "#8A5D12" }}>
+                      {shortDay(upcoming[0].at, now)} {spokenTime(upcoming[0].at)}
+                    </span>{" "}
+                    {upcoming[0].title}
+                  </span>
+                  <span aria-hidden className="-rotate-90 shrink-0" style={{ color: "#8A5D12" }}>
+                    <Icon name="chev" size={20} strokeWidth={2} />
+                  </span>
+                </button>
               )}
             </div>
 
