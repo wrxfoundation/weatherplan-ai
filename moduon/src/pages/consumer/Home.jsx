@@ -47,7 +47,9 @@ export default function Home({ tenant }) {
           <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/85 to-cream/5 sm:via-cream/70" />
           {/* 영상 하단·좌하단 끝선을 크림으로 용해 — 범위는 낮게(이미지 가림 최소) */}
           <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-cream via-cream/45 to-transparent" />
-          <div className="absolute bottom-0 left-0 h-[44%] w-[50%] bg-gradient-to-tr from-cream via-cream/35 to-transparent" />
+          {/* 좌하단 용해 — 너무 짙으면 그 위에 얹은 유리 패널이 뭉갤 그림이 없어져
+              그냥 흰 박스로 보인다. 패널 뒤에 씬이 살아 있도록 옅게 유지할 것. */}
+          <div className="absolute bottom-0 left-0 h-[38%] w-[42%] bg-gradient-to-tr from-cream/85 via-cream/20 to-transparent" />
         </div>
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent to-cream sm:h-24" />
 
@@ -95,7 +97,7 @@ export default function Home({ tenant }) {
             {/* 취급 상품 바로가기 — 히어로 안, CTA 바로 아래.
                 반투명 유리 패널이라 뒤의 영상이 흐리게 비쳐 아이콘만 또렷하게 뜬다.
                 (항목이 4개뿐이라 아래에 별도 섹션으로 두면 허전해서 히어로로 끌어올림) */}
-            <div className="mt-5 max-w-md rounded-2xl border border-white/60 bg-white/70 px-3 py-3.5 shadow-card backdrop-blur-md sm:px-4">
+            <div className="mt-5 w-full max-w-[560px] rounded-2xl border border-white/70 bg-white/45 px-3 py-3.5 shadow-panel backdrop-blur-xl backdrop-saturate-150 sm:px-5">
               <div className="grid grid-cols-4 gap-1">
                 {tiles.map((t) => (
                   <Link key={t.slug} to={t.to} className="group flex flex-col items-center gap-1.5">
@@ -284,7 +286,9 @@ function PayoutTicker() {
   const n = 8 + (d.getDate() % 6)
   const total = n * 341000 + d.getDay() * 47000
   return (
-    <section className="mt-6 flex flex-wrap items-center justify-between gap-2 rounded-card bg-white px-5 py-3.5 shadow-card">
+    // 카테고리 섹션이 히어로로 올라가 생긴 빈 자리를 메운다 — 히어로 하단에
+    // 살짝 걸치게 끌어올려 첫 화면과 본문이 끊기지 않고 이어지게.
+    <section className="relative z-10 -mt-7 flex flex-wrap items-center justify-between gap-2 rounded-card bg-white px-5 py-3.5 shadow-panel sm:-mt-9">
       <span className="flex items-center gap-2.5 text-[13.5px] font-bold text-ink">
         <LiveDot /> 오늘 사은품 지급 <span className="tnum text-orange-text">{n}건 · {won(total)}</span>
         <span className="hidden text-[12px] font-semibold text-muted sm:inline">— 설치 확인 후 영업일 7일 내 계좌 입금</span>
