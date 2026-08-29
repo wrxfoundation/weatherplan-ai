@@ -104,11 +104,12 @@ export const FAQS = [
      추첨제에서 사실이 아니므로 답변을 다시 썼다.
      8/29 서우: 추첨 결과를 메일로 보낸다는 문장은 전부 뺀다(통지 수단 미확정) —
      FAQ · 히어로 아래 * 주석 · 응모 모달 3단계 · 완료 화면 네 곳 모두. */
-  { q: "사전 구매응모는 무엇인가요?", a: "결제가 아닙니다. 구글 로그인으로 응모할 대수를 정해두면, 추첨을 통해 9월 15일 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다. 1계정 최대 100대까지 설정할 수 있습니다." },
-  { q: "응모하면 반드시 구매해야 하나요?", a: "아니요. 확정 주문이 아니며 응모 자체에 비용이 들지 않습니다. 추첨에 당첨되어 구매 권한을 받으신 뒤에도 실제 구매 여부와 수량은 자유롭게 정하시면 됩니다." },
+  { q: "사전예매는 무엇인가요?", a: "결제가 아닙니다. 구글 로그인으로 신청 수량을 정해두면 바우처(예매 확정 인증 NFT)가 발행되고, 지갑에서 수락하면 우선 구매창에서 먼저 구매하실 수 있습니다. 1계정 최대 5개까지 신청할 수 있습니다." },
+  { q: "예매하면 반드시 살 수 있나요?", a: "구매를 보장하지는 않습니다. 우선 구매창은 사전예매자에게 먼저 열리는 순서이며, 그 안에서 신청하신 수량만큼 먼저 구매하실 수 있습니다. 예매 자체에 비용은 들지 않고, 실제 구매 여부와 수량은 자유롭게 정하시면 됩니다." },
   /* 8/28 서우 지정 문안 — 추첨 방식의 정의와 미구매 시 처리까지 한 문항에 담는다 */
-  { q: "추첨은 어떤 방식인가요?", a: "제한된 수량을 공정하게 구매하기 위해, 신청자 중 추첨을 통해 당첨된 분에게만 구매 기회를 드리는 방식입니다. 당첨된 분만 정해진 기간 내에 제품을 구매할 수 있으며, 구매하지 않으면 해당 수량은 일반 구매로 넘어갑니다. 당첨·미당첨 여부는 9월 15일 00시(KST)부터 커뮤니티 공지와 지갑 연결로 확인하실 수 있습니다." },
-  { q: "가격이 어떻게 되나요?", a: "1차 판매는 대당 450 RLUSD입니다. 2차 판매부터는 650 RLUSD로 적용됩니다. 결제는 RLUSD로만 진행됩니다." },
+  { q: "우선 구매창과 일반 구매창은 무엇이 다른가요?", a: "우선 구매창(9월 15일 12:00 KST)은 바우처를 수락한 사전예매자에게 먼저 열립니다. 일반 구매창은 9월 15일 18:00 KST 예정이며, 예매 물량이 먼저 소진되면 그보다 일찍 열립니다. 판매는 9월 16일 12:00 KST에 끝나고 다시 발행되지 않습니다." },
+  { q: "바우처를 수락하지 않으면 어떻게 되나요?", a: "우선 구매 자격이 확정되지 않습니다. 신청만으로는 발행 단계까지이고, 지갑에서 수락해야 확정됩니다. 수락하지 않으신 경우에는 일반 구매창을 이용하셔야 합니다." },
+  { q: "가격은 언제 알 수 있나요?", a: "가격과 총 발행 수량은 판매 오픈 전에 공지됩니다. 결제는 RLUSD로 진행되며, 거래소에서 사서 XRPL 네트워크로 출금하는 데 시간이 걸리니 미리 준비해 두시길 권합니다." },
   { q: "RLUSD는 어디서 구하나요?", a: "국내·해외 거래소에서 RLUSD를 구매한 뒤 XRPL 네트워크로 개인 지갑에 출금하면 됩니다. 출금 시 반드시 XRPL판 RLUSD를 선택하세요." },
   { q: "지갑이 처음인데 괜찮나요?", a: "네. 구글 계정으로 가입하면 내 지갑이 자동으로 만들어집니다. 노드 연동까지 단계별 가이드를 제공합니다." },
   { q: "보상은 어떻게 지급되나요?", a: "측정 데이터가 검증되면 네트워크 원칙에 따라 WLBN이 지급됩니다. 지급량과 가치는 보장되지 않습니다." },
@@ -279,10 +280,11 @@ export const SPECS_EN = [
 ];
 
 export const FAQS_EN = [
-  { q: "What is a pre-purchase entry?", a: "It is not a payment. Sign in with Google and set how many units you want; a draw then grants the right to buy from the limited quantity when sales open on Sept 15. Up to 100 units per account." },
-  { q: "Does an entry commit me to buying?", a: "No. It is not a confirmed order and costs nothing. Even after the draw grants you the right to buy, the actual quantity is yours to decide." },
-  { q: "How does the draw work?", a: "To keep a limited quantity fair, a draw among entrants grants the chance to buy to selected participants only. Winners can purchase within a set window; any unbought units are released to general sale. Whether you won is shown from 00:00 KST on Sept 15 — in the community announcement, and once you connect your wallet." },
-  { q: "How much does it cost?", a: "450 RLUSD per unit in the first batch. From the second batch the price is 650 RLUSD. Payment is in RLUSD only." },
+  { q: "What is a reservation?", a: "It is not a payment. Sign in with Google and set your quantity; a voucher (reservation-confirmation NFT) is issued, and once you accept it in your wallet you can buy first in the priority window. Up to 5 per account." },
+  { q: "Does reserving guarantee I can buy?", a: "It does not guarantee a purchase. The priority window simply opens first for reserved members, and within it you can buy your requested quantity ahead of everyone else. Reserving costs nothing, and the actual quantity is yours to decide." },
+  { q: "How do the priority and general windows differ?", a: "The priority window (12:00 KST, Sept 15) opens first for reserved members who accepted their voucher. The general window is scheduled for 18:00 KST on Sept 15, and opens earlier if reserved units sell out first. The sale ends at 12:00 KST on Sept 16 and is never minted again." },
+  { q: "What if I do not accept the voucher?", a: "Your priority access is not confirmed. Reserving only gets the voucher issued; accepting it in your wallet is what confirms it. Without that, you would need to use the general window." },
+  { q: "When will the price be announced?", a: "Price and total supply are announced before the sale opens. Payment is in RLUSD — buying it on an exchange and withdrawing over XRPL takes time, so it is worth preparing early." },
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on a domestic or global exchange, then withdraw it to your personal wallet over the XRPL network. Always select the XRPL version of RLUSD when withdrawing." },
   { q: "I've never used a wallet. Is that okay?", a: "Yes. Signing up with your Google account creates your wallet automatically, and a step-by-step guide walks you through node linking." },
   { q: "How are rewards paid?", a: "When your measurements are verified, WLBN is paid under network rules. Amounts and value are not guaranteed." },
@@ -291,22 +293,24 @@ export const FAQS_EN = [
 /* 전체 FAQ 확장분 15문항 — 기본 8문항과 합쳐 23문항 (8/27, 접기/펴기 인라인 확장) */
 export const FAQS_EXTRA = [
   { q: "결제는 왜 RLUSD로만 하나요?", a: "RLUSD는 미국 달러와 1:1로 연동되는 스테이블코인이라 가격 변동 걱정 없이 결제할 수 있습니다. 리플(Ripple)이 발행하고 뉴욕 금융감독청(NYDFS)의 규제를 받습니다." },
-  { q: "몇 대까지 구매할 수 있나요?", a: "구글 계정 1개당 최대 100대까지 구매할 수 있습니다. 대량 구매 시에도 기기마다 제네시스 넘버가 하나씩 배정됩니다." },
-  { q: "응모 대수와 실제 구매 수량이 달라도 되나요?", a: "네. 추첨으로 부여되는 구매 권한 범위 안에서 오픈 때 더 적게 사셔도 됩니다. 계정당 상한(100대)만 지키면 됩니다." },
-  { q: "제네시스 넘버가 뭔가요?", a: "구매가 확정될 때 무작위로 배정되는 제네시스 노드 고유 번호입니다. 여러 대를 구매하면 수량만큼 배정되고, 주문 내역에서 정렬된 목록으로 확인·복사할 수 있습니다. 라이선스 NFT에 영구 기록됩니다." },
+  { q: "몇 개까지 신청할 수 있나요?", a: "구글 계정 1개당 최대 5개까지 신청할 수 있습니다." },
+  { q: "예매한 수량보다 적게 사도 되나요?", a: "네. 우선 구매창에서 신청 수량 안에서 원하는 만큼만 구매하시면 됩니다." },
+  { q: "제네시스 넘버가 뭔가요?", a: "제네시스 멤버십 NFT에 부여되는 일련번호입니다. 멤버십은 XRPL XLS-20 표준으로 발행되고 Taxon 은 1001입니다. 기기의 정품을 증명하는 라이선스 NFT와는 별개의 자산입니다." },
+  { q: "보상 부스트는 어떤 조건에서 유지되나요?", a: "최초로 멤버십을 수령한 지갑에서 보유 중일 때만 유효합니다. 다른 지갑으로 옮기거나 되파시면 부스트와 우선권은 따라가지 않습니다." },
   { q: "라이선스 NFT는 뭔가요?", a: "기기의 정품과 참여 자격을 증명하는 XRPL 기반 증서입니다. 박스 안 리딤코드로 발급받으며, 이 NFT를 보유한 기기만 보상 대상이 됩니다." },
-  { q: "배송은 언제, 어떻게 받나요?", a: "11월 중 순차 배송 예정입니다. 발송 2주 전부터 공식 텔레그램·X로 배송 접수 폼을 안내하며, 폼에 제네시스 넘버·내 지갑 주소·배송 정보를 입력하면 순서대로 발송됩니다." },
+  { q: "측정 기기는 어디서 사나요?", a: "측정 기기는 KWeather 몰에서 구매하실 수 있습니다. 이 사이트는 제네시스 멤버십만 판매하며 배송 정보를 받지 않습니다." },
   { q: "배정된 제네시스 넘버는 어디서 확인하나요?", a: "구글 계정으로 로그인하면 주문 내역에서 정렬된 넘버 목록을 언제든 확인하고 복사할 수 있습니다." },
   { q: "사이트가 저장하는 개인정보는 뭔가요?", a: "구글 계정 로그인만 사용하며, 별도의 개인정보는 저장하지 않습니다. 가입하면 내 지갑이 자동으로 만들어지고, 배송 정보는 발송 전 접수 폼에서만 받아 배송이 끝나면 파기합니다." },
 ];
 
 export const FAQS_EXTRA_EN = [
   { q: "Why is payment RLUSD-only?", a: "RLUSD is a stablecoin pegged 1:1 to the US dollar, so you can pay without worrying about price swings. It is issued by Ripple and regulated by the NYDFS." },
-  { q: "How many units can I buy?", a: "Up to 100 units per Google account. Even on bulk orders, each device gets its own Genesis Number." },
-  { q: "Can the entered quantity differ from what I actually buy?", a: "Yes. Within the right to buy granted by the draw you can take fewer units when sales open — the per-account cap of 100 units is the only limit." },
-  { q: "What is a Genesis Number?", a: "A unique genesis-node number randomly assigned when your purchase is confirmed. Buy multiple units and you get one per device — viewable as a sorted, copyable list in your order history. Permanently recorded on your license NFT." },
+  { q: "How many can I reserve?", a: "Up to 5 per Google account." },
+  { q: "Can I buy fewer than I reserved?", a: "Yes. In the priority window you can take as few as you like, up to your reserved quantity." },
+  { q: "What is a Genesis Number?", a: "The serial number carried by a Genesis Membership NFT. The membership is issued on the XRPL XLS-20 standard under Taxon 1001. It is a separate asset from the license NFT that proves a device is genuine." },
+  { q: "What keeps the reward boost valid?", a: "It applies only while the membership is held in the wallet that first received it. Moving it to another wallet, or reselling it, ends the boost and the priority benefits." },
   { q: "What is the license NFT?", a: "An XRPL-based certificate proving your device is genuine and eligible to participate. It is minted with the redeem code inside the box, and only devices holding this NFT earn rewards." },
-  { q: "When and how does shipping work?", a: "Units are expected to ship sequentially through November. Starting 2 weeks before dispatch, we announce the shipping form on our official Telegram and X — enter your Genesis Numbers, your wallet address, and shipping details, and units ship in order." },
+  { q: "Where do I buy the measuring device?", a: "The measuring device is sold at the KWeather store. This site sells the Genesis Membership only and does not collect shipping details." },
   { q: "Where do I find my assigned Genesis Numbers?", a: "Sign in with your Google account — your order history shows the sorted list, ready to copy, anytime." },
   { q: "What personal data does this site store?", a: "Only Google sign-in — nothing else is stored. Signing up creates your wallet automatically, and delivery details are collected only via the pre-shipping form, then deleted after delivery." },
 ];

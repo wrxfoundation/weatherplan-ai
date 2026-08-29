@@ -179,6 +179,130 @@ export const D = {
     es: " inscritas",
   }),
 
+  /* ── 제네시스 런치 (8/29 서우 확정) ────────────────────────────────────
+     판매 대상이 기기에서 제네시스 멤버십 NFT 로 바뀌었다. 추첨은 폐기되고
+     사전예매 → 바우처 수령 → 우선 구매 순서다. 날짜는 lib/schedule.ts 가 정본이고
+     여기에는 라벨만 둔다 — 같은 날짜를 두 곳에 적으면 반드시 어긋난다. */
+  launchName: m({
+    ko: "제네시스 멤버십", en: "Genesis Membership", ja: "ジェネシスメンバーシップ",
+    zh: "创世会员资格", es: "Membresía Genesis",
+  }),
+  launchLead: m({
+    ko: "제네시스는 Weather XRPL DePIN의 첫 번째이자 마지막 초기 멤버십입니다. 단 한 번, 24시간 동안만 판매되고 다시는 발행되지 않으며, 이때 함께한 회원은 네트워크가 성장하는 내내 우선권 혜택을 받습니다.",
+    en: "Genesis is the first and last early membership of Weather XRPL DePIN. It is sold once, for 24 hours only, and never minted again — members who join now keep priority benefits as the network grows.",
+    ja: "ジェネシスは Weather XRPL DePIN の最初で最後の初期メンバーシップです。一度だけ、24時間のみ販売され、二度と発行されません。このとき参加した会員は、ネットワークが成長する間ずっと優先権を受けます。",
+    zh: "创世是 Weather XRPL DePIN 第一个也是最后一个早期会员资格。仅发售一次、仅 24 小时，且不再增发；此时加入的会员将在网络成长过程中持续享有优先权。",
+    es: "Genesis es la primera y última membresía inicial de Weather XRPL DePIN. Se vende una sola vez, durante 24 horas, y no se vuelve a emitir: quienes entren ahora conservan las ventajas de prioridad mientras la red crece.",
+  }),
+  scheduleTitle: m({
+    ko: "판매 일정", en: "Sale schedule", ja: "販売スケジュール", zh: "销售日程", es: "Calendario de venta",
+  }),
+  msReserveOpen: m({
+    ko: "사전예매 시작", en: "Reservations open", ja: "事前予約 開始", zh: "预约开始", es: "Apertura de reservas",
+  }),
+  msReserveClose: m({
+    ko: "사전예매 접수 마감", en: "Reservations close", ja: "事前予約 受付終了", zh: "预约截止", es: "Cierre de reservas",
+  }),
+  msPriorityOpen: m({
+    ko: "우선 구매창 (사전예매자)", en: "Priority window (reserved members)",
+    ja: "優先購入枠（事前予約者）", zh: "优先购买窗口（已预约会员）", es: "Ventana prioritaria (con reserva)",
+  }),
+  msGeneralOpen: m({
+    ko: "일반 구매창", en: "General window", ja: "一般購入枠", zh: "普通购买窗口", es: "Ventana general",
+  }),
+  msGeneralNote: m({
+    ko: "예정 · 예매 물량이 먼저 소진되면 조기 오픈",
+    en: "Scheduled — opens earlier if reserved units sell out first",
+    ja: "予定 · 予約分が先に完売した場合は前倒しでオープン",
+    zh: "预定 · 若预约数量先售罄则提前开放",
+    es: "Previsto: se abre antes si se agotan las unidades reservadas",
+  }),
+  msSaleEnd: m({
+    ko: "판매 종료", en: "Sale ends", ja: "販売終了", zh: "销售结束", es: "Fin de la venta",
+  }),
+  scheduleWhy: m({
+    ko: "우선창과 일반창을 나눈 것은 트래픽과 온체인 트랜잭션 부하를 예측 가능하게 점검하고, 구매를 원하는 분들이 조급함 없이 편안하게 구매하실 수 있게 하기 위함입니다.",
+    en: "The two windows exist so we can check traffic and on-chain transaction load predictably, and so buyers are not rushed.",
+    ja: "枠を分けたのは、トラフィックとオンチェーン取引の負荷を予測可能な形で確認するため、そして購入を希望する方が焦らずに購入できるようにするためです。",
+    zh: "分设两个窗口，是为了以可预测的方式检验流量与链上交易负载，并让希望购买的人不必仓促下单。",
+    es: "Separamos las dos ventanas para comprobar el tráfico y la carga de transacciones on-chain de forma previsible, y para que nadie compre con prisas.",
+  }),
+  nextStepIn: m({
+    ko: "다음 단계까지", en: "Next step in", ja: "次の段階まで", zh: "距下一阶段", es: "Próximo paso en",
+  }),
+  /* 단계 라벨 — lib/schedule.ts 의 LaunchPhase 와 1:1 */
+  phaseBeforeReserve: m({
+    ko: "사전예매 오픈 전", en: "Before reservations open", ja: "事前予約オープン前", zh: "预约开始前", es: "Antes de abrir reservas",
+  }),
+  phaseReserveOpen: m({
+    ko: "사전예매 접수 중", en: "Reservations open now", ja: "事前予約 受付中", zh: "预约受理中", es: "Reservas abiertas",
+  }),
+  phaseReserveClosed: m({
+    ko: "접수 마감 · 우선 구매창 대기", en: "Reservations closed — priority window next",
+    ja: "受付終了・優先購入枠を待機", zh: "预约已截止 · 等待优先购买窗口", es: "Reservas cerradas: siguiente, la ventana prioritaria",
+  }),
+  phasePriorityWindow: m({
+    ko: "우선 구매창 · 사전예매자만 구매할 수 있습니다",
+    en: "Priority window — only reserved members can buy",
+    ja: "優先購入枠 · 事前予約者のみ購入できます",
+    zh: "优先购买窗口 · 仅已预约会员可购买",
+    es: "Ventana prioritaria: solo compran los miembros con reserva",
+  }),
+  phaseGeneralWindow: m({
+    ko: "일반 구매창 · 누구나 구매할 수 있습니다",
+    en: "General window — open to everyone", ja: "一般購入枠 · どなたでも購入できます",
+    zh: "普通购买窗口 · 任何人均可购买", es: "Ventana general: abierta a todos",
+  }),
+  phaseClosed: m({
+    ko: "판매 종료", en: "Sale closed", ja: "販売終了", zh: "销售结束", es: "Venta cerrada",
+  }),
+  /* 8/29 서우: 예매는 순서이지 보장이 아니다. "확보·보장" 어휘를 쓰지 않는다. */
+  reserveNotGuaranteed: m({
+    ko: "사전예매는 결제가 아닙니다. 우선 구매창에서 신청하신 수량만큼 먼저 구매하실 수 있으며, 구매를 보장하지는 않습니다.",
+    en: "A reservation is not a payment. It lets you buy your requested quantity first in the priority window; it does not guarantee purchase.",
+    ja: "事前予約は決済ではありません。優先購入枠で申し込まれた数量を先に購入できますが、購入を保証するものではありません。",
+    zh: "预约不是付款。您可在优先购买窗口按申请数量优先购买，但不保证一定能购得。",
+    es: "Una reserva no es un pago. Te permite comprar antes la cantidad solicitada en la ventana prioritaria; no garantiza la compra.",
+  }),
+  capFive: m({
+    ko: "1계정 최대 5개까지 신청할 수 있습니다.", en: "Up to 5 per account.",
+    ja: "1アカウントにつき最大5個まで申し込めます。", zh: "每个账户最多可申请 5 个。",
+    es: "Hasta 5 por cuenta.",
+  }),
+  priceTbd: m({
+    ko: "가격과 총 발행 수량은 판매 오픈 전에 공지됩니다.",
+    en: "Price and total supply are announced before the sale opens.",
+    ja: "価格と総発行数量は販売オープン前にお知らせします。",
+    zh: "价格与总发行量将在开售前公布。",
+    es: "El precio y el suministro total se anuncian antes de la apertura.",
+  }),
+  /* 바우처 — 새 정책의 핵심 신규 개념. 발행(신청 시)과 수락(지갑에서)은 다른 사건이다. */
+  voucherName: m({
+    ko: "바우처(예매 확정 인증 NFT)", en: "voucher (reservation-confirmation NFT)",
+    ja: "バウチャー（予約確定証明NFT）", zh: "凭证（预约确认 NFT）", es: "vale (NFT de confirmación de reserva)",
+  }),
+  noticeVoucher: m({
+    ko: "사전예매를 신청하시면 바우처(예매 확정 인증 NFT)가 발행됩니다. 지갑에서 수락해야 우선 구매 자격이 확정됩니다.",
+    en: "Reserving issues a voucher (reservation-confirmation NFT). Accept it in your wallet to confirm priority access.",
+    ja: "事前予約を申し込むとバウチャー（予約確定証明NFT）が発行されます。ウォレットで承認すると優先購入資格が確定します。",
+    zh: "申请预约后将发行凭证（预约确认 NFT）。在钱包中接受后，优先购买资格才算确定。",
+    es: "Al reservar se emite un vale (NFT de confirmación de reserva). Acéptalo en tu monedero para confirmar el acceso prioritario.",
+  }),
+  voucherAccept: m({
+    ko: "지갑에서 바우처를 수락해야 우선 구매 자격이 확정됩니다. 발행만으로는 확정되지 않습니다.",
+    en: "You must accept the voucher in your wallet to confirm priority access. Issuance alone does not confirm it.",
+    ja: "ウォレットでバウチャーを承認してはじめて優先購入資格が確定します。発行だけでは確定しません。",
+    zh: "需在钱包中接受凭证，优先购买资格才算确定。仅发行并不代表已确定。",
+    es: "Debes aceptar el vale en tu monedero para confirmar el acceso prioritario. Emitirlo no basta.",
+  }),
+  boostWalletCond: m({
+    ko: "부스트는 최초 수령 지갑에서 보유 중일 때만 유효합니다. 다른 지갑으로 옮기면 유지되지 않습니다.",
+    en: "The boost applies only while held in the wallet that first received it. Moving it to another wallet ends it.",
+    ja: "ブーストは最初に受け取ったウォレットで保有している間のみ有効です。他のウォレットへ移すと維持されません。",
+    zh: "加成仅在最初接收的钱包持有期间有效。转移到其他钱包即失效。",
+    es: "El impulso solo se aplica mientras se conserva en el monedero que lo recibió primero. Si lo mueves, se pierde.",
+  }),
+
   /* ── 판매 조건 * 주석 (8/29 서우: 히어로 하단 → 커뮤니티 패널 위로 이동) ─────
      문구도 이때 개정했다. 바뀐 지점 두 곳:
        · 오픈 시각을 "9월 15일 00시 KST(한국시간) 기준"으로 명시

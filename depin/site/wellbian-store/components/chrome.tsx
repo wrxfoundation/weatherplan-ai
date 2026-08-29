@@ -107,12 +107,14 @@ export function CommunityFooter({ showNotice = false }: { showNotice?: boolean }
       <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 40 }}>
         {showNotice && (
           <div className="s9-notice" style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,.55)", maxWidth: 760 }}>
-            <div>* {t(D.noticeDraw)}</div>
-            <div>* {t(D.noticeWinners)}</div>
-            <div>* {t(D.noticeResult)}</div>
-            <div>* {t(D.noticeGenesis)}</div>
-            <div>* {t(D.noticeTicket)}</div>
-            <div style={{ marginTop: 7 }}>{t(D.noticeShipping)}</div>
+            {/* 8/29 서우: 제네시스 멤버십 NFT 판매로 전환. 추첨·당첨·제네시스 넘버 랜덤 배정·
+                기기 배송·XRP SEOUL 티켓은 이 판매창에서 성립하지 않아 뺐다.
+                티켓은 기기 구매 혜택이었고 기기는 이제 KWeather 몰 소관이다. */}
+            <div>* {t(D.reserveNotGuaranteed)}</div>
+            <div>* {t(D.noticeVoucher)}</div>
+            <div>* {t(D.capFive)}</div>
+            <div>* {t(D.priceTbd)}</div>
+            <div style={{ marginTop: 7 }}>{t(D.boostWalletCond)}</div>
           </div>
         )}
         <div className="s9-invite" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, border: "1px solid rgba(255,255,255,.14)", borderRadius: 18, padding: "32px 36px" }}>

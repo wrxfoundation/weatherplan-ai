@@ -16,6 +16,7 @@ import { useI18n } from "@/lib/i18n";
 import { D } from "@/lib/dict";
 import { Gnb, CommunityFooter } from "./chrome";
 import { HeroFx } from "./HeroFx";
+import { MILESTONES, phaseFromParam, nextMilestone, dDayTo, remain, SALE_WINDOW_HOURS, type LaunchPhase } from "@/lib/schedule";
 import BuyModal from "./BuyModal";
 import PreOrderModal from "./PreOrderModal";
 import { XIcon, TgIcon, ChevD, Warn, Check, LinkIcon } from "./icons";
@@ -157,16 +158,31 @@ export default function Landing() {
   const [preModal, setPreModal] = useState(false);
   const buy = () => (preMode === "pre" ? setPreModal(true) : setModal(true));
 
-  /* D-day 자동 계산 (8/27 서우: "사전예약하기 D-n" 병기) — KST 날짜 기준, 하드코딩 금지 */
-  const dDaysTo = (y: number, m: number, d: number) => {
-    const kst = new Date(Date.now() + 9 * 3600 * 1000);
-    const today = Date.UTC(kst.getUTCFullYear(), kst.getUTCMonth(), kst.getUTCDate());
-    return Math.max(0, Math.round((Date.UTC(y, m - 1, d) - today) / 86400000));
+  /* 8/29: 날짜를 여기서 계산하지 않는다 — lib/schedule.ts 가 정본이다.
+     이전에는 dPre = dDaysTo(2026,9,5) 와 dSaleBadge = "D-17" 이 따로 박혀 서로 다른 날을
+     가리켰고, 배지는 시간이 지나도 변하지 않았다.
+
+     now 를 0 으로 시작하는 이유: 서버에서 Date.now() 를 읽으면 하이드레이션 때 초 단위가
+     어긋난다. 서버는 "사전예매 오픈 전"만 그리고, 마운트 뒤 실제 시각으로 정정한다. */
+  const [now, setNow] = useState(0);
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setNow(Date.now()));
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => { cancelAnimationFrame(raf); clearInterval(t); };
+  }, []);
+  const launchPhase: LaunchPhase = phaseFromParam(sp.get("phase"), now);
+  const nextMs = nextMilestone(now);
+  const nextLabel: Record<string, string> = {
+    reserveOpen: t(D.msReserveOpen), reserveClose: t(D.msReserveClose),
+    priorityOpen: t(D.msPriorityOpen), generalOpen: t(D.msGeneralOpen), saleEnd: t(D.msSaleEnd),
   };
-  const dPre = dDaysTo(2026, 9, 5); // 사전예약 오픈 (dday 시뮬 GNB용)
-  /* 8/28 서우: 사전예약 즉시 오픈 전제 — 자동 계산(현재 D-18) 대신 D-17 고정 표기.
-     실배포 시 `dDaysTo(2026, 9, 15)` 기반 자동 계산으로 복귀 */
-  const dSaleBadge = "D-17";
+  const phaseLabel: Record<LaunchPhase, string> = {
+    before_reserve: t(D.phaseBeforeReserve), reserve_open: t(D.phaseReserveOpen),
+    reserve_closed: t(D.phaseReserveClosed), priority_window: t(D.phasePriorityWindow),
+    general_window: t(D.phaseGeneralWindow), closed: t(D.phaseClosed),
+  };
+  const dPre = nextMs ? dDayTo(nextMs.at, now) : 0;
+  const dSaleBadge = `D-${dPre}`;
 
   /* 링크 복사 버튼 (8/27 서우: CTA 옆 링크 → X → 텔레그램 순) */
   const [linkCopied, setLinkCopied] = useState(false);
@@ -360,6 +376,77 @@ export default function Landing() {
             </div>
           </div>
         )}
+      </section>
+
+      {/* ── S1a 판매 일정 (8/29 서우: 제네시스 런치) ──
+          다섯 마일스톤을 한 자리에 놓는다. 이전에는 "오픈"이라는 사건 하나만 있어서
+          사용자가 지금 어느 단계에 서 있는지 화면이 말해주지 못했다.
+          날짜·시각은 전부 lib/schedule.ts 에서 온다 — 여기에 다시 적지 않는다. */}
+      <section className="sec-pad" style={{ background: "#fff" }} id="schedule">
+        <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
+            <h2 style={h2}>{t(D.scheduleTitle)}</h2>
+            <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: ".08em", color: "var(--cap)" }}>KST</span>
+          </div>
+
+          {/* 지금 어느 단계인가 + 다음 단계까지 얼마나 남았나 */}
+          <div className="sched-now" style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", background: "var(--w-tint)", borderRadius: 14, padding: "14px 18px" }}>
+            <span style={{ fontSize: 16.5, fontWeight: 800, color: "var(--w-deep)" }}>{phaseLabel[launchPhase]}</span>
+            {nextMs && now > 0 && (() => {
+              const r = remain(nextMs.at, now);
+              return (
+                <span style={{ fontSize: 15.5, color: "var(--ink-4)" }}>
+                  {t(D.nextStepIn)}{" "}
+                  <b className="mono" style={{ fontSize: 17, color: "var(--w-main)" }}>
+                    {r.d > 0 ? `${r.d}일 ` : ""}{String(r.h).padStart(2, "0")}:{String(r.m).padStart(2, "0")}:{String(r.s).padStart(2, "0")}
+                  </b>
+                  <span style={{ color: "var(--cap)" }}> · {nextLabel[nextMs.key]}</span>
+                </span>
+              );
+            })()}
+          </div>
+
+          <div className="sched-rows" style={{ display: "flex", flexDirection: "column" }}>
+            {MILESTONES.map((ms) => {
+              const passed = now > 0 && now >= new Date(ms.at).getTime();
+              const isNext = nextMs?.key === ms.key;
+              return (
+                <div
+                  key={ms.key}
+                  style={{
+                    display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, flexWrap: "wrap",
+                    padding: "13px 2px", borderBottom: "1px solid var(--bd-card)",
+                    opacity: passed ? 0.45 : 1,
+                  }}
+                >
+                  <span style={{ fontSize: 16.5, fontWeight: isNext ? 800 : 600, color: isNext ? "var(--w-main)" : "var(--ink-4)" }}>
+                    {nextLabel[ms.key]}
+                    {ms.key === "generalOpen" && (
+                      <span style={{ display: "block", fontSize: 14, fontWeight: 600, color: "var(--cap)", marginTop: 2 }}>
+                        {t(D.msGeneralNote)}
+                      </span>
+                    )}
+                    {ms.key === "saleEnd" && (
+                      <span style={{ display: "block", fontSize: 14, fontWeight: 600, color: "var(--cap)", marginTop: 2 }}>
+                        {en ? `Total ${SALE_WINDOW_HOURS} hours` : `총 ${SALE_WINDOW_HOURS}시간`}
+                      </span>
+                    )}
+                  </span>
+                  <span className="mono" style={{ fontSize: 16, fontWeight: 700, color: isNext ? "var(--w-deep)" : "var(--ink-4)", whiteSpace: "nowrap" }}>
+                    {fmtKst(ms.at, en)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          <p style={{ fontSize: 15.5, lineHeight: 1.7, color: "var(--cap)", maxWidth: 760 }}>
+            {t(D.scheduleWhy)}
+          </p>
+          <p style={{ fontSize: 15.5, lineHeight: 1.7, color: "var(--ink-4)", fontWeight: 700 }}>
+            {t(D.priceTbd)}
+          </p>
+        </div>
       </section>
 
       {/* ── S1b 사전예약 실시간 현황판 (teaser 전용, 8/27) — 크레딧 롤: 아래→위 + 상단 페이드아웃 ── */}
@@ -813,6 +900,17 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
    찍히지 않은 유일한 구간이기 때문이다 — 20번대부터는 띠가 이미 구름 밑단에 걸려 있어,
    그걸 정지컷으로 쓰면 멈춰 있는 띠 위로 움직이는 띠가 하나 더 지나간다.
    구 정지컷 hero-bg.webp(패키지 박스 구도)는 장면이 달라 더 이상 쓰지 않는다 — 파일만 남겼다. */
+/* 마일스톤 시각을 KST 로 찍는다. Date 의 로컬 시간대에 흔들리지 않게 +9h 를 더한 뒤 UTC 로 읽는다. */
+const fmtKst = (iso: string, en: boolean) => {
+  const k = new Date(new Date(iso).getTime() + 9 * 3600000);
+  const mo = k.getUTCMonth() + 1, day = k.getUTCDate();
+  const hh = String(k.getUTCHours()).padStart(2, "0"), mm = String(k.getUTCMinutes()).padStart(2, "0");
+  const wdKo = ["일", "월", "화", "수", "목", "금", "토"][k.getUTCDay()];
+  const wdEn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][k.getUTCDay()];
+  const moEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][k.getUTCMonth()];
+  return en ? `${moEn} ${day} (${wdEn}) ${hh}:${mm}` : `${mo}월 ${day}일 (${wdKo}) ${hh}:${mm}`;
+};
+
 /* prefers-reduced-motion 구독 — 설정을 바꾸면 즉시 반영된다.
    서버 스냅샷은 true(=모션 줄이기)로 둔다: SSR HTML 에 <video> 가 없어야 안전하다. */
 const RM_QUERY = "(prefers-reduced-motion: reduce)";
