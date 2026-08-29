@@ -355,14 +355,9 @@ export const D = {
     zh: "中签者购买份额与转为一般销售的数量均已售罄",
     es: "Se agotaron las compras de ganadores y las unidades pasadas a venta general",
   }),
-  /* 추첨 결과 통지 — 8/28 서우 지정 (9/14 09:00 KST, 가입 메일) */
-  drawResult: m({
-    ko: "추첨 후 구매 가능 여부(구매 가능 권한 부여) 및 결과는 9월 14일 09시(KST) 가입하신 메일로 보내드립니다.",
-    en: "Draw results — including whether you receive the right to buy — are emailed to your sign-up address at 09:00 KST on Sept 14.",
-    ja: "抽選後の購入可否（購入権の付与）と結果は、9月14日9時（KST）にご登録のメールへお送りします。",
-    zh: "抽签结果（是否获得购买权限）将于 9 月 14 日 09:00（KST）发送至您注册的邮箱。",
-    es: "El resultado del sorteo (si recibes el derecho de compra) se enviará el 14 de septiembre a las 09:00 KST al correo con el que te registraste.",
-  }),
+  /* drawResult(추첨 결과를 9/14 09시 KST 가입 메일로 통지) 는 8/29 서우 지시로 삭제했다 —
+     * 주석 · FAQ · 응모 모달 3단계 · 완료 화면 네 곳에서 모두 뺐다. 통지 수단이 정해지면
+     git 이력(211c9aa 이전)에서 5개 언어 그대로 되살릴 수 있다. */
   preorderDone: m({
     ko: "사전 구매응모가 완료되었습니다",
     en: "Your entry is in",

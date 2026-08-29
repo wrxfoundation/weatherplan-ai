@@ -152,11 +152,8 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
               <button onClick={() => setStep(3)} className="btn-main" style={{ fontSize: 19.5, borderRadius: 10, padding: 14 }}>
                 {t(D.reserveCta)(qty)}
               </button>
-              {/* 8/28 서우: 위 리드가 이미 "결제 아님 · 추첨" 을 말한다 — 같은 문장을 두 번 두지 않는다.
-                  응모 직전에 정작 궁금한 건 "결과를 언제 어떻게 받나"이므로 그걸 둔다. */}
-              <div style={capStyle}>
-                {t(D.drawResult)}
-              </div>
+              {/* 8/29 서우: 추첨 결과를 메일로 보낸다는 고지는 뺀다(통지 수단 미확정).
+                  위 리드가 "결제 아님 · 추첨 · 1계정 100대"를 이미 말하므로 이 자리는 비운다. */}
             </>
           )}
 
@@ -173,8 +170,7 @@ export default function PreOrderModal({ onClose }: { onClose: () => void }) {
                   ? `Your entry for ${qty} unit${qty > 1 ? "s" : ""} is in. An entry is not a payment — a draw grants the right to buy from the limited quantity on opening day.`
                   : `${qty}대 응모가 접수되었습니다. 사전 구매응모는 결제가 아니며, 추첨을 통해 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다.`}
               </p>
-              {/* 8/28 서우 지정 — 추첨 결과 통지 시각·경로를 완료 화면에서 못 박는다 */}
-              <p style={capStyle}>{t(D.drawResult)}</p>
+              {/* 8/29 서우: 결과 통지 고지 제거. 결과를 어디서 듣는지는 아래 커뮤니티·X 버튼이 대신한다 */}
                 <div style={perkStyle}>
                   <span aria-hidden style={{ display: "inline-flex", flex: "none" }}><Ticket /></span>
                   <span>
