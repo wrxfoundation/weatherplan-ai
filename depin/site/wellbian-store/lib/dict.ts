@@ -179,6 +179,46 @@ export const D = {
     es: " inscritas",
   }),
 
+  /* ── 판매 조건 * 주석 (8/29 서우: 히어로 하단 → 커뮤니티 패널 위로 이동) ─────
+     문구도 이때 개정했다. 바뀐 지점 두 곳:
+       · 오픈 시각을 "9월 15일 00시 KST(한국시간) 기준"으로 명시
+       · 추첨 결과 통지(9/14 09시)는 이 블록에서 뺐다 — 응모 모달 3단계와 FAQ 에 남아 있다 */
+  noticeDraw: m({
+    ko: "추첨을 통해 9월 15일 00시 KST(한국시간) 기준, 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다.",
+    en: "A draw grants the right to buy from the limited quantity on opening day, from 00:00 KST on Sept 15.",
+    ja: "抽選により、9月15日00時KST（韓国時間）のオープン当日、限定数量を購入できる権利を差し上げます。",
+    zh: "通过抽签，获得在9月15日00时KST（韩国时间）开售当日购买限量数量的权利。",
+    es: "Un sorteo otorga el derecho a comprar la cantidad limitada el día de apertura, desde las 00:00 KST del 15 de septiembre.",
+  }),
+  noticeWinners: m({
+    ko: "당첨된 분만 정해진 기간 내에 구매할 수 있으며, 구매하지 않으면 해당 수량은 일반 구매로 넘어갑니다.",
+    en: "Winners buy within a set window — any unbought units are released to general sale.",
+    ja: "当選された方のみ所定の期間内に購入でき、購入されない場合その数量は一般販売に回ります。",
+    zh: "仅中签者可在规定期间内购买，未购买的数量将转为普通销售。",
+    es: "Solo los ganadores compran dentro del plazo fijado; las unidades no compradas pasan a la venta general.",
+  }),
+  noticeGenesis: m({
+    ko: "제네시스 넘버는 구매 시 랜덤 배정됩니다.",
+    en: "Genesis Numbers are randomly assigned at purchase.",
+    ja: "ジェネシスナンバーは購入時にランダムで割り当てられます。",
+    zh: "创世编号在购买时随机分配。",
+    es: "Los Genesis Numbers se asignan de forma aleatoria en la compra.",
+  }),
+  noticeTicket: m({
+    ko: "판매 오픈 후, 디바이스 구매 시 'XRP SEOUL 2026' 무료 증정 (1대/1장, 10만원 상당)",
+    en: "After sales open, buy a device and get 'XRP SEOUL 2026' free (one per device, \u20a9100,000 value)",
+    ja: "販売オープン後、デバイス購入で「XRP SEOUL 2026」を無料進呈（1台につき1枚、10万ウォン相当）",
+    zh: "开售后，购买设备即免费赠送 'XRP SEOUL 2026'（每台1张，价值10万韩元）",
+    es: "Tras la apertura de ventas, compra un dispositivo y recibe 'XRP SEOUL 2026' gratis (una por dispositivo, valor de 100.000 KRW)",
+  }),
+  noticeShipping: m({
+    ko: "배송 2주 전에 커뮤니티(텔레그램) · 공지(X)로 안내드립니다.",
+    en: "Shipping is announced 2 weeks ahead in the community (Telegram) \u00b7 updates on X.",
+    ja: "配送の2週間前にコミュニティ（テレグラム）・お知らせ（X）でご案内します。",
+    zh: "发货前两周将通过社区（Telegram）与公告（X）通知。",
+    es: "El envío se anuncia con 2 semanas de antelación en la comunidad (Telegram) y en X.",
+  }),
+
   /* ── 푸터 · 커뮤니티 패널 (chrome.tsx) ─────────────────────────────── */
   footCta: m({
     ko: "Official 커뮤니티에서 소식을 받아보세요",

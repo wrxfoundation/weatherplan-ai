@@ -353,14 +353,8 @@ export default function Landing() {
                   </span>
                 </div>
               )}
-              {preMode === "pre" && (
-                /* 보조 개념 * 주석 — 히어로 맨하단, 작게 (8/28 서우 문구 개정) */
-                <div style={{ fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,.55)", maxWidth: 560 }}>
-                  {en
-                    ? <>* A draw grants the right to buy from the limited quantity when sales open on Sept 15. Results are emailed at 09:00 KST on Sept 14.<br />* Winners buy within a set window — any unbought units are released to general sale.<br />* Genesis Numbers are randomly assigned at purchase.<br />* After sales open, buy and get one free &#39;XRP SEOUL 2026&#39; ticket per device (₩100,000 value)</>
-                    : <>* 추첨을 통해 9월 15일 오픈 당일 한정수량을 구매할 수 있는 권한을 드립니다. 결과는 9월 14일 09시(KST) 메일로 안내드립니다.<br />* 당첨된 분만 정해진 기간 내에 구매할 수 있으며, 구매하지 않으면 해당 수량은 일반 구매로 넘어갑니다.<br />* 제네시스 넘버는 구매 시 랜덤 배정됩니다.<br />* 정식 판매 오픈 후, 구매 시 &#39;XRP SEOUL 2026&#39; 티켓 1대당, 1장 무료 증정 (10만원 상당)</>}
-                </div>
-              )}
+              {/* 8/29 서우: 판매 조건 * 주석은 커뮤니티 패널 위로 옮겼다(CommunityFooter showNotice).
+                  히어로는 CTA·현황까지만 두고 조건문은 아래에서 한 번에 읽게 한다. */}
             </div>
           </div>
         )}
@@ -633,23 +627,17 @@ export default function Landing() {
       </section>
 
       {/* ── S5 연동 안내 (8/27 후순위 이동 — 비전 다음) ── */}
-      <section className="sec-pad" style={{ background: "#fff", ...(SHOW_SETUP_GUIDE ? null : { paddingTop: 30, paddingBottom: 30 }) }} id="setup">
+      {/* 8/29 서우: 배송 안내 캡션은 * 주석 블록으로 합쳤다(커뮤니티 패널 위). 가이드가 꺼진 지금
+          이 섹션에 남는 내용이 없어 패딩을 0으로 접고 앵커만 유지한다 —
+          /me 와 /orders 의 "연동 가이드 보기 →" 가 /#setup 을 가리키기 때문이다. */}
+      <section className="sec-pad" style={{ background: "#fff", ...(SHOW_SETUP_GUIDE ? null : { padding: 0 }) }} id="setup">
         <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
-            {/* 배송 안내 캡션 (8/27 서우) — 2주 전 공지 채널 + 11월 순차 배송 */}
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "center", fontSize: 15.5, fontWeight: 700, color: "var(--w-main)", background: "var(--w-tint)", borderRadius: 99, padding: "9px 18px", marginBottom: 6 }}>
-              {/* 8/28 서우: 배송 시작 예상(11월 중 순차) 절은 뺀다 — 공지 채널 안내만 남긴다 */}
-              {en
-                ? "Shipping is announced 2 weeks ahead in the community (Telegram) · updates on X."
-                : "배송 2주 전에 커뮤니티(텔레그램) · 공지(X)로 안내드립니다."}
+          {SHOW_SETUP_GUIDE && (
+            <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
+              <h2 style={h2}>{en ? "Your device becomes a node 3 minutes after it arrives" : "디바이스 도착 후 3분이면 노드가 됩니다"}</h2>
+              <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Setup is easy — open the box and follow four steps." : "등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝."}</p>
             </div>
-            {SHOW_SETUP_GUIDE && (
-              <>
-                <h2 style={h2}>{en ? "Your device becomes a node 3 minutes after it arrives" : "디바이스 도착 후 3분이면 노드가 됩니다"}</h2>
-                <p style={{ fontSize: 19, color: "var(--ink-4)" }}>{en ? "Setup is easy — open the box and follow four steps." : "등록은 어렵지 않습니다 — 박스를 열고 네 단계면 끝."}</p>
-              </>
-            )}
-          </div>
+          )}
           {SHOW_SETUP_GUIDE && (
             <>
             <div className="link-grid">
@@ -726,7 +714,7 @@ export default function Landing() {
       </section>
 
       {/* ── S9 커뮤니티 + 푸터 ── */}
-      <CommunityFooter />
+      <CommunityFooter showNotice={preMode === "pre"} />
 
       {/* ── S0 스티키 구매 바 (오픈 전 카운트다운에서만 숨김 — 사전예약 중엔 구매 가능) ── */}
       {!soldOut && preMode !== "dday" && (

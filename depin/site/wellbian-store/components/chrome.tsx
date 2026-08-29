@@ -98,11 +98,22 @@ export function SubHeader({ right }: { right?: React.ReactNode }) {
 }
 
 /* 커뮤니티 패널 + 다크 푸터 (S9) */
-export function CommunityFooter() {
+/* showNotice — 판매 조건 * 주석을 커뮤니티 패널 위에 붙인다 (8/29 서우: 히어로 하단에서 이동).
+   응모 접수 중(pre)에만 의미가 있는 문구라 표시 여부는 Landing 이 정한다. */
+export function CommunityFooter({ showNotice = false }: { showNotice?: boolean }) {
   const { en, t } = useI18n();
   return (
     <div style={{ background: "var(--w-deep)", color: "#fff", padding: "72px 64px 40px" }} className="s9-root">
       <div className="wrap" style={{ display: "flex", flexDirection: "column", gap: 40 }}>
+        {showNotice && (
+          <div className="s9-notice" style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,.55)", maxWidth: 760 }}>
+            <div>* {t(D.noticeDraw)}</div>
+            <div>* {t(D.noticeWinners)}</div>
+            <div>* {t(D.noticeGenesis)}</div>
+            <div>* {t(D.noticeTicket)}</div>
+            <div style={{ marginTop: 7 }}>{t(D.noticeShipping)}</div>
+          </div>
+        )}
         <div className="s9-invite" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, border: "1px solid rgba(255,255,255,.14)", borderRadius: 18, padding: "32px 36px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             <div style={{ fontSize: 27.5, fontWeight: 800 }}>
@@ -123,20 +134,25 @@ export function CommunityFooter() {
         </div>
         <div className="s9-brands" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, borderTop: "1px solid rgba(255,255,255,.12)", paddingTop: 28, flexWrap: "wrap" }}>
           {/* 브랜드 행 — 로고 광학 크기 (8/28 서우): wellbian 26 / xrpl 22 (+20%) / kw 11 유지 */}
+          {/* sizes 를 주는 이유 (8/29): 없으면 next/image 가 width prop(원본 폭) 기준으로 2x 후보를
+              고른다. xrpl-white 는 609px 라 2x 후보가 w=1920 이 되는데, 이 파일만 그 크기에서
+              옵티마이저가 응답하지 않아(25초 타임아웃 재현) 레티나에서 XRP Ledger 로고가
+              통째로 비었다. 실제 렌더 폭은 셋 다 80~105px 이므로 140px 로 선언해
+              작은 후보(384px 이하)만 받게 한다 — 화질 손해 없이 요청 크기도 줄어든다. */}
           <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
             <a href={LINKS.wellbian} target="_blank" rel="noopener" className="foot-logo" aria-label="wellbian">
-              <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} style={{ height: 31.2, width: "auto", display: "block" }} />
+              <Image src="/assets/wb-white.png" alt="wellbian" width={593} height={215} sizes="140px" style={{ height: 31.2, width: "auto", display: "block" }} />
             </a>
             {/* 8/28 서우: 모바일은 wellbian 로고 다음 줄부터 POWERED BY (flex 강제 개행) */}
             <span className="mob-only" aria-hidden style={{ display: "block", flexBasis: "100%", width: "100%", height: 0 }} />
             <span style={{ fontSize: 14.5, color: "rgba(255,255,255,.4)" }}>POWERED BY</span>
             <a href={LINKS.xrpl} target="_blank" rel="noopener" className="foot-logo" aria-label="XRP Ledger">
-              <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} style={{ height: 26.4, width: "auto", display: "block" }} />
+              <Image src="/assets/xrpl-white.png" alt="XRP Ledger" width={609} height={154} sizes="140px" style={{ height: 26.4, width: "auto", display: "block" }} />
             </a>
             <span style={{ width: 1, height: 18, background: "rgba(255,255,255,.25)" }} />
             {/* 케이웨더 정식 CI(화이트) — 8/27 서우 수급. 헤비 대문자 워드마크라 광학 보정으로 축소 (8/28: 16→11px) */}
             <a href={LINKS.kweather} target="_blank" rel="noopener" className="foot-logo" aria-label="KWEATHER">
-              <Image src="/assets/kw-white.png" alt="KWEATHER" width={283} height={39} style={{ height: 11, width: "auto", display: "block" }} />
+              <Image src="/assets/kw-white.png" alt="KWEATHER" width={283} height={39} sizes="140px" style={{ height: 11, width: "auto", display: "block" }} />
             </a>
           </div>
           <nav style={{ display: "flex", gap: 20, fontSize: 16, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
