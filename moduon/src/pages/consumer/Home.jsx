@@ -143,13 +143,10 @@ export default function Home({ tenant }) {
             </div>
           </div>
 
+          {/* 3대 주력 — 인터넷 · 핸드폰 · 렌탈.
+              카드 바탕색은 오브제가 묻히지 않도록 배정한다: 파란 와이파이는 밝은 카드,
+              흰 단말·정수기는 진한 카드 위에 얹는다. */}
           <div className="grid gap-4 sm:grid-cols-3">
-            <BenefitCard
-              style={{ background: 'linear-gradient(180deg,#5B80D9,#5174CD)' }}
-              edge="rgba(26,50,168,0.66)"
-              light label="이사 서비스" amountNum={40} obj="/assets/obj-truck.webp"
-              onClick={() => nav(tenant ? consultTo + '&cat=move' : '/category/move')}
-            />
             <BenefitCard
               style={{ background: 'linear-gradient(180deg,#EAF0FB,#F1ECE4)' }}
               edge="rgba(83,119,214,0.30)"
@@ -157,10 +154,16 @@ export default function Home({ tenant }) {
               onClick={() => nav(tenant ? consultTo + '&cat=internet' : '/category/internet')}
             />
             <BenefitCard
+              style={{ background: 'linear-gradient(180deg,#5B80D9,#5174CD)' }}
+              edge="rgba(26,50,168,0.66)"
+              light label="핸드폰" amountNum={45} obj="/assets/obj-phone.png"
+              onClick={() => nav(tenant ? consultTo + '&cat=phone' : '/category/phone')}
+            />
+            <BenefitCard
               style={{ background: 'linear-gradient(180deg,#F98974,#F7745F)' }}
               edge="rgba(202,56,30,0.62)"
-              light label="정수기 렌탈" amountNum={30} obj="/assets/obj-purifier.webp"
-              onClick={() => nav(tenant ? consultTo + '&cat=water' : '/category/water')}
+              light label="렌탈" amountNum={30} obj="/assets/obj-purifier.webp"
+              onClick={() => nav(tenant ? consultTo + '&cat=rental' : '/category/rental')}
             />
           </div>
         </div>

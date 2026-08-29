@@ -39,7 +39,29 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   await page.waitForTimeout(700)
   check(page.url().includes('/consult'), `상담사 연결 → 상담 페이지 (${page.url().split('/').pop()})`)
 
-  // ⑤ GNB — 쇼핑몰만 노출
+  // ⑤ 혜택 밴드 — 인터넷 · 핸드폰 · 렌탈 순서와 오브제 에셋
+  await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
+  await page.waitForTimeout(400)
+  const band = await page.evaluate(() => {
+    const imgs = [...document.querySelectorAll('img')].filter((i) => /obj-(wifi|phone|purifier|truck)/.test(i.getAttribute('src') || ''))
+    return imgs.map((i) => {
+      const card = i.closest('button, a, div')
+      return { src: (i.getAttribute('src') || '').split('/').pop(), x: i.getBoundingClientRect().x, label: (card?.innerText || '').split('\n')[0] }
+    }).sort((a, b) => a.x - b.x)
+  })
+  check(band.length === 3, `혜택 카드 3장 (${band.length})`)
+  check(band.map((b) => b.src).join(',') === 'obj-wifi.webp,obj-phone.png,obj-purifier.webp',
+    `오브제 순서 인터넷·핸드폰·렌탈 (${band.map((b) => b.src).join(' / ')})`)
+  const bandText = await page.evaluate(() => document.body.innerText)
+  check(bandText.includes('핸드폰') && !bandText.includes('이사 서비스'), '라벨 교체: 핸드폰 노출 · 이사 서비스 제거')
+  check(bandText.includes('렌탈') && !bandText.includes('정수기 렌탈'), '라벨 교체: 렌탈(정수기 렌탈 아님)')
+
+  // 핸드폰 카드 클릭 → /category/phone
+  await page.locator('text=핸드폰').first().click()
+  await page.waitForTimeout(700)
+  check(page.url().includes('/category/phone'), `핸드폰 카드 → 휴대폰 카테고리 (${page.url().split('/').pop()})`)
+
+  // ⑥ GNB — 쇼핑몰만 노출
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
   await page.waitForTimeout(400)
   const navLabels = await page.evaluate(() => [...document.querySelectorAll('header nav a')].map((a) => a.innerText.trim()))

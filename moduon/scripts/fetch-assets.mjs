@@ -21,6 +21,10 @@ const ASSETS = [
   ['obj-truck.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/90e21cc7-d3e9-4686-9b9d-5b0562ded06a.webp'],
   ['obj-wifi.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/33a9a1ff-4f6d-42b1-a55c-a48e0be83a31.webp'],
   ['obj-purifier.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/8ec01fae-7f2e-4433-86d3-35ae49c4f5a2.webp'],
+  // 핸드폰 오브제 — 홈 혜택 밴드(인터넷·핸드폰·렌탈) 중앙 파란 카드용.
+  // 크림 바디 + 코랄 액센트로 파란 배경에서 뜨게 했고, 배경 제거(투명 PNG)까지 마친 산출물.
+  // (원본 생성 ab99dcea / 대안 후보 d43d782c — 대안 채택 시 배경 제거를 다시 거쳐야 함)
+  ['obj-phone.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260829_102909_51b963f0-0f3e-4d17-a2ac-716d70557ade.png'],
   // 지원금 밴드 돈주머니 — 다홍색 가죽 + ₩ 음각 + 매듭 풀려 금색 동전 노출, 배경 제거(투명 PNG)
   ['obj-moneybag.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260809_145422_bf4edf86-9476-4b1c-929c-6d6d04a6dfba.png'],
   // IR 히어로 타워 — "온라인 건물주" 오브제 (크림 배경 일체형, 대안: 08e8aaf0-ed8f-4a2d-ad7c-966311314168)
