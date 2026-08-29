@@ -165,7 +165,6 @@ export const TODAY_ME = {
     { name: "잠", today: "6.2", yesterday: "6.6", unit: "시간", dir: "down" },
     { name: "약", today: "2", yesterday: "3", unit: "번 드심", dir: "down" },
   ],
-  foot: "잰 것을 그대로 보여드립니다. 좋고 나쁨은 선생님이 보고 말씀드립니다.",
 };
 
 // FIT 최근 7일 — 워치에서 받아온 걸음·수면 기록 (화이트보드 시안 2026-08-28

@@ -82,11 +82,12 @@ const ASK_TILES = [
 
 // GNB — 전체 요청(2026-08-28 시트): 하단 아이콘 2개, 도와줘요 · 가족.
 // 오늘/건강/해주세요/스토어 진입은 홈의 사분면 타일이 맡고, 홈 복귀는
-// 상세 화면 맨 위의 '홈으로' 버튼이 맡는다 (GNB 홈 버튼은 시트 요청으로 뺐다).
+// 홈 복귀는 GNB '첫화면'이 맡는다 (2026-08-29 요청으로 도와줘요 오른쪽에 되살렸다).
 // 도와줘요는 화면 이동이 아니라 행동(즉시방문요청 → 관제 확인 전화)이라
 // action 으로 가른다. 옛 이름: 지금 와 주세요 → (잠시 바로연락) → 도와줘요.
 const TABS = [
   { key: "help", label: "도와줘요", glyph: "door", action: true },
+  { key: "home", label: "첫화면", glyph: "home" },
   { key: "teacher", label: "선생님", glyph: "chat" },
   { key: "family", label: "가족", glyph: "users" },
 ];
@@ -613,14 +614,15 @@ export default function ElderHome() {
               {tab === "home" && (
                 <p className="mt-1 text-[20px] leading-[1.4] text-muted">오늘도 편안한 하루 되세요</p>
               )}
-              {/* 다음 일정 — 한 줄 띠배너 (2026-08-28 요청). 카루셀은 첫 화면을
-                  복잡하게 만들어 뺐지만, 다음에 무엇이 있는지는 한 줄로 알려 드린다.
-                  누르면 오늘 탭에서 자세히 본다. 인사 블록 안에 두는 이유: 바깥에
-                  두면 여백 배분(space-between)이 셋으로 나뉘어 배너만 공중에 뜬다. */}
-              {tab === "home" && upcoming[0] && (
+              {/* 다음 일정 — 한 줄 띠배너 2개 (2026-08-28 신설 → 08-29 "1개는 허전").
+                  카루셀은 첫 화면을 복잡하게 만들어 뺐지만, 다음에 무엇이 있는지는
+                  줄로 알려 드린다. 누르면 오늘 탭에서 자세히 본다. 인사 블록 안에
+                  두는 이유: 바깥에 두면 여백 배분(space-between)이 나뉘어 배너만 뜬다. */}
+              {tab === "home" && upcoming.slice(0, 2).map((e, i) => (
                 <button
+                  key={e.id}
                   onClick={() => setTab("today")}
-                  className="btn-press mt-3 flex w-full items-center gap-2.5 rounded-[16px] px-4 py-3 text-left"
+                  className={`btn-press flex w-full items-center gap-2 rounded-[16px] px-3.5 py-3 text-left ${i === 0 ? "mt-3" : "mt-2"}`}
                   style={{ background: "rgba(176,141,87,.13)", boxShadow: "inset 0 0 0 1px rgba(176,141,87,.28)" }}
                 >
                   <span aria-hidden className="shrink-0" style={{ color: "#8A5D12" }}>
@@ -628,15 +630,20 @@ export default function ElderHome() {
                   </span>
                   <span className="min-w-0 flex-1 truncate text-[19px] font-bold text-navy">
                     <span style={{ color: "#8A5D12" }}>
-                      {shortDay(upcoming[0].at, now)} {spokenTime(upcoming[0].at)}
+                      {shortDay(e.at, now)} {spokenTime(e.at)}
                     </span>{" "}
-                    {upcoming[0].title}
+                    {/* 한 줄에 들어가게 제목을 다듬는다. "K-CARE 안심방문 (월 1회)"를
+                        그대로 쓰면 360px 에서 "K-CA…"로 잘려 무슨 일정인지 알 수 없다.
+                        - 꼬리 괄호 제거: 괄호 안 내용은 오늘 탭 목록에 그대로 있다
+                        - 앞의 앱 이름 제거: 우리 앱 안에서 우리 이름은 알려 주는 게 없다
+                        그래도 긴 제목은 truncate 로 잘리지만, 앞의 날짜·시각은 남는다. */}
+                    {e.title.replace(/\s*\([^)]*\)\s*$/, "").replace(/^K-CARE\s+/, "")}
                   </span>
                   <span aria-hidden className="-rotate-90 shrink-0" style={{ color: "#8A5D12" }}>
                     <Icon name="chev" size={20} strokeWidth={2} />
                   </span>
                 </button>
-              )}
+              ))}
             </div>
 
             {/* ══ 홈 탭 — 화이트보드 시안(2026-08-28): 나열식 대신 허브.
@@ -702,7 +709,6 @@ export default function ElderHome() {
                   </div>
                 ))}
               </div>
-              <p className="mt-3 text-[19px] leading-[1.6] text-muted">{TODAY_ME.foot}</p>
               {/* 과거 기록 확인 → 건강 탭 (시트 "과거기록 확인 누르면 건강탭으로 이동").
                   같은 숫자를 두 탭에 늘어놓지 않고, 더 보고 싶을 때만 넘어가게 한다. */}
               <button
@@ -1164,7 +1170,6 @@ export default function ElderHome() {
                   </div>
                 </div>
               )}
-              <p className="mt-3 text-[19px] leading-[1.6] text-muted">{TODAY_ME.foot}</p>
             </ElderCard>
 
             {/* 오늘 약 — 미션형 체크는 오늘 탭이다 (화이트보드 시안 2026-08-28
@@ -2145,7 +2150,7 @@ export default function ElderHome() {
 
           {/* ── 고정 푸터: GNB (스크롤 밖 — 06 원칙 5) ──
               전체 요청(2026-08-28 시트): 하단 아이콘 2개 — 도와줘요 · 가족.
-              오늘/건강/해주세요/스토어는 홈 사분면 타일, 홈 복귀는 상단 '홈으로'.
+              오늘/건강/해주세요/스토어는 홈 사분면 타일, 홈 복귀는 GNB '첫화면'.
               '선생님께 전화'는 전체 탭에서 삭제 (2026-08-12 시트 전체 요청 2번) —
               전화는 오늘 오시는 분에게만, '오늘 일정' 카드 안에서 연다. */}
           <footer className="shrink-0 pb-2 pt-2">

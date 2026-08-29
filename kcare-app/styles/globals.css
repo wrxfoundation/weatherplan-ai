@@ -839,8 +839,12 @@ a.btn-press {
    홈 탭에서만 적용된다(.elder-home) — 다른 탭은 카드가 많아 어차피 스크롤된다. */
 .elder-home .elder-hub {
   flex-grow: 1;
-  flex-shrink: 0;
+  /* 짧은 화면에서는 줄어들어도 된다 — 띠배너가 둘로 늘면서(2026-08-29) SE 급에서
+     33px 이 모자랐다. 다만 min-height 아래로는 안 줄인다: 아이콘 56 + 이름 28 +
+     설명 22 + 안쪽 여백이 한 칸 120px 이라, 그 밑으로 가면 글자가 잘린다. */
+  flex-shrink: 1;
   flex-basis: auto;
+  min-height: 250px;
   max-height: 480px;
   grid-auto-rows: 1fr;
 }
