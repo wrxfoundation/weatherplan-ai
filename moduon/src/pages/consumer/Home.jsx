@@ -17,11 +17,12 @@ const SYNONYM = {
 
 export default function Home({ tenant }) {
   const nav = useNavigate()
-  const [q, setQ] = useState('')
   const cats = tenant ? CATEGORIES.filter((c) => tenant.cats.includes(c.slug)) : CATEGORIES
   const consultTo = tenant ? `/consult?src=${tenant.slug}` : '/consult'
 
-  const search = (term = q) => {
+  // 카테고리 바로가기 — 히어로 검색창을 걷어낸 뒤에도 해시태그가 곧바로 목적지로 보낸다.
+  // 매칭이 안 되면 상담으로 흘려보내 막다른 길을 만들지 않는다.
+  const go = (term) => {
     const s = String(term).trim().toLowerCase()
     const hit = (SYNONYM[s] && CATEGORIES.find((c) => c.slug === SYNONYM[s]))
       || CATEGORIES.find((c) => s && (c.name.includes(s) || s.includes(c.name)))
@@ -64,29 +65,26 @@ export default function Home({ tenant }) {
             <p className="mt-4 max-w-md text-[15px] leading-[26px] text-body sm:text-[16.5px] sm:leading-[28px]">
               {tenant?.greeting ?? '인터넷·휴대폰·이사·정수기… 흩어진 생활서비스를 한 곳에서 비교하고, 남들 몰라서 못 받은 지원금까지 왕창 돌려받으세요.'}
             </p>
-            {/* 검색 바 */}
-            <div className="mt-7 flex h-14 items-center overflow-hidden rounded-2xl bg-white pl-5 pr-2 shadow-panel">
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && search()}
-                placeholder="찾고 있는 서비스를 검색해보세요"
-                className="h-full flex-1 text-[16px] placeholder:text-disabled sm:text-[15px]"
-              />
-              <button onClick={() => search()} aria-label="검색" className="glass-btn-cta flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white transition-colors hover:bg-primary-hover">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
-              </button>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[13.5px] font-semibold text-label">
-              {/* 해시태그 = 즉시 검색 실행 (입력만 채우고 끝나지 않는다) */}
+            {/* 카테고리 바로가기 — 검색창을 걷어낸 자리를 채우는 직행 경로 */}
+            <div className="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-[13.5px] font-semibold text-label">
               {['#이사', '#인터넷', '#정수기', '#렌탈', '#보험'].map((t) => (
-                <button key={t} onClick={() => { setQ(t.slice(1)); search(t.slice(1)) }} className="hover:text-primary-text">{t}</button>
+                <button key={t} onClick={() => go(t.slice(1))} className="hover:text-primary-text">{t}</button>
               ))}
             </div>
-            {/* 히어로 CTA — 검색을 건너뛰는 방문자용 직행 경로 */}
-            <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2.5">
-              <Link to={consultTo} className="shimmer-cta glass-btn-cta inline-flex h-[50px] items-center rounded-btn bg-primary px-7 text-[15px] font-bold text-white transition-colors hover:bg-primary-hover">무료 상담 신청</Link>
-              <Link to="/payouts" className="text-[13.5px] font-bold text-primary-text hover:underline">실제 지급내역 보기 →</Link>
+            {/* 히어로 CTA — 좌: AI 선상담(즉답), 우: 사람 상담사 연결. 두 갈래를 같은 무게로 제시한다 */}
+            <div className="mt-5 grid max-w-md grid-cols-2 gap-3">
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('moduon:chat-open'))}
+                className="glass-btn-cta inline-flex h-[52px] items-center justify-center rounded-btn bg-primary px-4 text-[15px] font-bold text-white transition-colors hover:bg-primary-hover"
+              >
+                AI와 먼저 상담
+              </button>
+              <Link
+                to={consultTo}
+                className="shimmer-cta glass-btn inline-flex h-[52px] items-center justify-center rounded-btn border border-primary bg-white px-4 text-[15px] font-bold text-primary-text transition-colors hover:bg-tint"
+              >
+                상담사 연결
+              </Link>
             </div>
             {/* 모바일 절약 증거 — 데스크톱 말풍선(SavingsBubbles) 대응 한 줄 칩 (점만 살아있게) */}
             <div className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-2 shadow-card lg:hidden">

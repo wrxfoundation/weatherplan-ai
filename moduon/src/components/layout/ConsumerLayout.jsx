@@ -7,14 +7,18 @@ import { LEGAL } from '../../lib/constants'
 import { captureRef } from '../../lib/engine'
 import ChatWidget from '../ChatWidget'
 
+// GNB — 사업 초기에는 쇼핑몰(상품 둘러보기)만 노출한다.
+// hidden: true 는 "삭제"가 아니라 "숨김" — 페이지와 라우트는 그대로 살아 있고
+// 직접 URL·내부 링크로는 계속 동작한다. 준비되는 메뉴부터 hidden 을 지우면 즉시 복귀.
 const NAV = [
-  { to: '/', label: '서비스' },
-  { to: '/calculator', label: '견적 계산기' },
-  { to: '/diagnosis', label: 'AI 진단' },
-  { to: '/payouts', label: '지급 명단' },
-  { to: '/partner', label: '분양 안내' },
-  { to: '/support', label: '고객센터' },
+  { to: '/', label: '쇼핑몰' },
+  { to: '/calculator', label: '견적 계산기', hidden: true },
+  { to: '/diagnosis', label: 'AI 진단', hidden: true },
+  { to: '/payouts', label: '지급 명단', hidden: true },
+  { to: '/partner', label: '분양 안내', hidden: true },
+  { to: '/support', label: '고객센터', hidden: true },
 ]
+const VISIBLE_NAV = NAV.filter((n) => !n.hidden)
 
 // 즉시통화 — 파트너몰은 매장 직통, 본진은 대표번호
 const telOf = (tenant) => {
@@ -35,7 +39,7 @@ export function ConsumerHeader({ tenant }) {
         </Link>
         {!tenant && (
           <nav className="hidden items-center gap-8 md:flex">
-            {NAV.map((n) => (
+            {VISIBLE_NAV.map((n) => (
               <NavLink key={n.to} to={n.to} className={({ isActive }) => `text-[15px] font-medium transition-colors hover:text-primary-text ${isActive ? 'text-primary-text' : 'text-body'}`}>
                 {n.label}
               </NavLink>
@@ -60,7 +64,7 @@ export function ConsumerHeader({ tenant }) {
       </div>
       {open && (
         <div className="border-t border-line-card bg-white px-5 py-3 md:hidden">
-          {(tenant ? [] : NAV).map((n) => (
+          {(tenant ? [] : VISIBLE_NAV).map((n) => (
             <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="block py-2.5 text-[15px] font-semibold text-body">{n.label}</Link>
           ))}
           <Btn className="mt-2 w-full shimmer-cta" onClick={() => { setOpen(false); nav(tenant ? `/consult?src=${tenant.slug}` : '/consult') }}>무료 상담 신청</Btn>

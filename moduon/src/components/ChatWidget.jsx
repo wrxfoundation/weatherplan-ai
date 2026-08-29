@@ -46,6 +46,14 @@ export default function ChatWidget({ tenant }) {
     return () => document.removeEventListener('keydown', onKey)
   }, [open])
 
+  // 외부에서 챗을 여는 통로 — 히어로의 "AI와 먼저 상담" 같은 CTA가 쓴다.
+  // 위젯은 레이아웃 최상단에 붙어 있어 라우트가 바뀌어도 이 구독은 유지된다.
+  useEffect(() => {
+    const openChat = () => { setNudge(false); setOpen(true) }
+    window.addEventListener('moduon:chat-open', openChat)
+    return () => window.removeEventListener('moduon:chat-open', openChat)
+  }, [])
+
   // 선제 넛지 — 6초 유휴 후 1회 (이미 봤거나 챗을 연 적 있으면 생략)
   // 계산기·상담처럼 이미 전환 동선에 들어온 화면에서는 띄우지 않는다(모바일 겹침 방지 겸)
   const engaged = loc.pathname.startsWith('/calculator') || loc.pathname.startsWith('/consult')
