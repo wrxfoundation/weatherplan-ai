@@ -203,6 +203,7 @@ export default async function Admin({
             <a className={`chip${grouped ? " on" : ""}`} href={link({ group: grouped ? "" : "1" })}>
               묶어 보기
             </a>
+            <a className="chip" href={`/admin/report?k=${k}`}>리포트</a>
             <a className="chip" href={`/admin/people?k=${k}`}>사람</a>
             <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?")}>CSV</a>
             <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?") + "&format=json"}>JSON</a>

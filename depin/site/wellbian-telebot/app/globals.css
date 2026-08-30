@@ -194,3 +194,66 @@ summary { cursor: pointer; }
 .chip.sev-mid.on  { background: var(--attn-icon); border-color: var(--attn-icon); color: #fff; }
 .chip.sev-low.on  { background: var(--chip); border-color: var(--line); color: var(--ink-4); }
 .fix-mark { font-size: 11.5px; color: var(--cap); margin-left: 2px; }
+
+/* ── 분석 리포트 ─────────────────────────────────────────────────────────
+   목록 화면과 같은 토큰·간격을 쓴다. 리포트만 다른 팔레트를 쓰면 두 화면을
+   오가는 사람이 매번 눈을 다시 맞춰야 한다. */
+.rep-h { font-size: 17px; font-weight: 800; color: var(--ink-1); margin: 26px 0 4px; }
+.rep-sub { font-size: 12.5px; line-height: 1.65; color: var(--cap); margin: 0 0 12px; max-width: 760px; }
+.rep-empty { font-size: 13px; color: var(--cap); margin: 0; }
+
+/* 주제 표 — 행 자체가 목록으로 가는 링크다 */
+.rep-table { border: 1px solid var(--line); border-radius: 12px; background: #fff; overflow: hidden; }
+.rep-tr { display: grid; grid-template-columns: 1.4fr repeat(6, 1fr); align-items: center;
+  gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line-2);
+  font-size: 13px; color: var(--ink-3); text-decoration: none; }
+.rep-tr:first-child { border-top: 0; }
+a.rep-tr:hover { background: var(--line-2); }
+.rep-th { font-size: 11.5px; color: var(--cap); font-weight: 700; background: var(--chip); }
+.rep-th span + span, .rep-tr span + span { text-align: right; }
+.rep-topic { font-weight: 700; color: var(--ink-1); }
+
+/* 정본에 채울 질문 */
+.rep-gaps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.rep-gaps li { display: flex; align-items: baseline; gap: 9px; font-size: 13.5px;
+  padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; min-width: 0; }
+.rep-n { color: var(--cap); font-size: 12px; min-width: 14px; }
+.rep-gap-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--ink-1); text-decoration: none; }
+.rep-gap-t:hover { color: var(--w-main); text-decoration: underline; }
+.rep-cnt { font-size: 11.5px; font-weight: 700; color: var(--w-main);
+  background: rgba(124,107,240,.12); border-radius: 7px; padding: 2px 7px; flex: none; }
+.rep-gap-topic { font-size: 11.5px; color: var(--cap); flex: none; }
+
+/* 유입 막대 — 라이브러리 없이 그린다. 값이 0인 칸도 자리를 지켜 추이가 왜곡되지 않게 */
+.rep-bars { display: flex; align-items: flex-end; gap: 3px; padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: 12px; background: #fff; overflow-x: auto; }
+.rep-bar { flex: 1 1 0; min-width: 22px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.rep-bar-v { height: 110px; width: 100%; display: flex; align-items: flex-end; }
+.rep-bar-fill { width: 100%; background: rgba(124,107,240,.28); border-radius: 4px 4px 0 0;
+  display: flex; align-items: flex-end; min-height: 2px; }
+.rep-bar-open { width: 100%; background: var(--w-main); border-radius: 4px 4px 0 0; }
+.rep-bar-n { font-size: 11px; color: var(--ink-4); height: 13px; }
+.rep-bar-k { font-size: 10.5px; color: var(--cap); white-space: nowrap; }
+
+/* 속도·품질 */
+.rep-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.rep-kpi { border: 1px solid var(--line); border-radius: 12px; background: #fff; padding: 14px 16px; }
+.rep-kpi-k { font-size: 12px; color: var(--cap); }
+.rep-kpi-v { font-size: 24px; font-weight: 800; color: var(--ink-1); margin: 3px 0 2px; }
+.rep-kpi-n { font-size: 11.5px; color: var(--cap); line-height: 1.5; }
+
+/* 기한 넘긴 건 — 리포트에서 바로 처리로 넘어가는 자리 */
+.rep-late { display: grid; gap: 5px; }
+.rep-late-row { display: flex; align-items: center; gap: 9px; text-decoration: none;
+  border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 9px 12px;
+  font-size: 13px; color: var(--ink-3); min-width: 0; }
+.rep-late-row:hover { border-color: var(--w-main); }
+.rep-late-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-1); }
+.rep-late-o { font-size: 12px; color: var(--attn-icon); flex: none; }
+.rep-late-s { font-size: 11.5px; color: var(--cap); flex: none; }
+
+@media (max-width: 860px) {
+  .rep-kpis { grid-template-columns: 1fr 1fr; }
+  .rep-tr { grid-template-columns: 1.2fr repeat(6, 1fr); font-size: 12px; padding: 9px 10px; }
+}
