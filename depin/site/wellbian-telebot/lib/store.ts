@@ -120,6 +120,15 @@ export const getItem = async (id: string): Promise<CsItem | null> => {
   try { return JSON.parse(v) as CsItem; } catch { return null; }
 };
 
+/* 지우기. 되돌릴 수 없어서 화면에서 두 번 묻고 부른다.
+   실전 지표에 시험 기록이 섞이면 "어디가 막히는지" 를 볼 수 없게 된다 — 그걸 걷어내는 용도다. */
+export const delItems = async (ids: string[]): Promise<number> => {
+  if (!ids.length) return 0;
+  if (storeKind() === "memory") return ids.filter((id) => mem.delete(id)).length;
+  /* HDEL 은 지운 개수를 돌려준다 */
+  return Number(await cmd("HDEL", HASH, ...ids)) || 0;
+};
+
 /* 상태·종류·메모만 바꾼다. 원문과 분류는 기록이라 덮어쓰지 않는다. */
 export const patchItem = async (id: string, patch: Partial<Pick<CsItem, "status" | "note" | "kind" | "repliedAt">>) => {
   const cur = await getItem(id);

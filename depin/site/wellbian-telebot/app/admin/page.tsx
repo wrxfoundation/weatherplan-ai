@@ -10,7 +10,7 @@
      4 목록
    앞의 셋을 다 크게 만들면 위계가 없어지고, 그러면 몰릴 때 눈이 어디에도 먼저 가지 않는다. */
 
-import { listItems, patchItem, getItem, storeKind, type CsStatus } from "@/lib/store";
+import { listItems, patchItem, getItem, delItems, storeKind, type CsStatus } from "@/lib/store";
 import { getDoc } from "@/lib/faq-client";
 import { tgCall } from "@/lib/tg";
 import { STATUS_LABEL, SEV_LABEL, MOOD_LABEL, overdueMin, type CsMoodTag, type CsSeverity } from "@/lib/cs";
@@ -20,6 +20,15 @@ import { ADMIN_KEY, isAuthed, clearAuthCookie } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
+
+/* 주소 조립은 컴포넌트 밖에 둔다. 서버 액션이 클로저로 함수를 끌어안으면 직렬화할 수 없어
+   ("Functions cannot be passed directly to Client Components") 화면이 통째로 깨진다.
+   액션이 무는 건 문자열뿐이어야 한다. */
+const adminUrl = (o: Record<string, string>) => {
+  const p = new URLSearchParams(o);
+  for (const [key, v] of [...p.entries()]) if (!v) p.delete(key);
+  return `/admin?${p}`;
+};
 
 export default async function Admin({
   searchParams,
@@ -62,13 +71,22 @@ export default async function Admin({
   const hit = shown ? Math.round((solved / shown) * 100) : null;
 
   /* 내보내기는 별도 라우트라 쿠키로도 통과하지만, ?k= 세션에서는 쿠키가 없으므로 그대로 잇는다 */
-  const link = (o: Record<string, string>) => {
-    const p = new URLSearchParams({ k, ...(fStatus && { status: fStatus }), ...(fTopic && { topic: fTopic }),
-      ...(fKind && { kind: fKind }), ...(fSev && { sev: fSev }), ...(q && { q }),
-      ...(grouped && { group: "1" }), ...o });
-    for (const [key, v] of [...p.entries()]) if (!v) p.delete(key);
-    return `/admin?${p}`;
-  };
+  /* 지금 보고 있는 화면. 서버 액션은 이 값(문자열들)만 물고 돌아온다 — 지운 뒤에도
+     걸어 둔 필터가 그대로 남아야 하던 일을 이어서 할 수 있다. */
+  const view = { k, status: fStatus, topic: fTopic, kind: fKind, sev: fSev, q, group: grouped ? "1" : "" };
+  const link = (o: Record<string, string>) => adminUrl({ ...view, ...o });
+
+  /* 지울 대상은 주소로 넘긴다. 두 번 묻기 위해서다 — 한 번의 오조작으로 기록이 사라지는
+     자리를 만들지 않는다. 실전에서는 되돌릴 방법이 없다. */
+  const delIds = (sp.del ?? "").split(".").filter(Boolean);
+  const delTargets = delIds.length ? all.filter((i) => delIds.includes(i.id)) : [];
+
+  async function doDelete(form: FormData) {
+    "use server";
+    if (!(await isAuthed(String(form.get("k") ?? "")))) return;
+    await delItems(String(form.get("ids") ?? "").split(".").filter(Boolean));
+    redirect(adminUrl({ ...view, del: "" }));
+  }
 
   async function logout() {
     "use server";
@@ -81,11 +99,17 @@ export default async function Admin({
     if (!(await isAuthed(String(form.get("k") ?? "")))) return;
     await patchItem(form.get("id") as string, { status: form.get("to") as CsStatus });
   }
+  /* 지우기도 이 폼으로 받는다. 버튼마다 formAction 을 다르게 주면 하이드레이션 전에는
+     눌리지 않는다 — 서버에서 그려 보내는 화면이라 자바스크립트가 늦거나 막혀도 동작해야 한다. */
   async function bulkStatus(form: FormData) {
     "use server";
     if (!(await isAuthed(String(form.get("k") ?? "")))) return;
-    const to = form.get("to") as CsStatus;
-    for (const id of form.getAll("ids").map(String)) await patchItem(id, { status: to });
+    const to = String(form.get("to") ?? "");
+    const ids = form.getAll("ids").map(String).filter(Boolean);
+    if (!ids.length) return;
+    /* 지우기는 여기서 실행하지 않는다. 무엇을 지우는지 보여 주고 한 번 더 묻는다. */
+    if (to === "del") redirect(adminUrl({ ...view, del: ids.join(".") }));
+    for (const id of ids) await patchItem(id, { status: to as CsStatus });
   }
   /* 답장 — 정본 FAQ 를 골라 보내는 길을 기본으로 둔다. 답을 새로 쓰지 않으니 발화 규칙을
      매번 검토할 필요가 없고 사이트·봇과 문장이 갈리지도 않는다. 몰릴 때 제일 빠르다. */
@@ -155,6 +179,34 @@ export default async function Admin({
       </header>
 
       <main className="wrap" style={{ paddingBottom: 72 }}>
+        {/* 두 번째 물음. 무엇을 지우는지 원문으로 보여 준다 — 개수만 보여 주면 확인이 아니라
+            그냥 한 번 더 누르는 절차가 된다. 취소가 기본이 되도록 왼쪽에 둔다. */}
+        {delTargets.length > 0 && (
+          <section className="confirm">
+            <h2 className="confirm-h">{delTargets.length}건을 지웁니다 — 되돌릴 수 없습니다</h2>
+            <ul className="confirm-list">
+              {delTargets.slice(0, 8).map((i) => (
+                <li key={i.id}>
+                  <span className={`tag st-${i.status}`}>
+                    {STATUS_LABEL[i.status as keyof typeof STATUS_LABEL] ?? i.status}
+                  </span>
+                  <span className="confirm-t">{i.text}</span>
+                  <span className="confirm-w">{i.who}</span>
+                </li>
+              ))}
+              {delTargets.length > 8 && <li className="confirm-more">그 밖 {delTargets.length - 8}건</li>}
+            </ul>
+            <div className="confirm-act">
+              <a className="btn" href={link({ del: "" })}>취소</a>
+              <form action={doDelete}>
+                <input type="hidden" name="k" value={k} />
+                <input type="hidden" name="ids" value={delIds.join(".")} />
+                <button className="btn danger solid" type="submit">정말 지웁니다</button>
+              </form>
+            </div>
+          </section>
+        )}
+
         {storeKind() === "memory" && (
           <div className="notice">
             KV 가 연결되지 않았습니다. 지금 기록은 서버가 살아 있는 동안만 남고 배포·재시작에 사라집니다.
@@ -321,6 +373,9 @@ export default async function Admin({
               {(["doing", "done", "faq"] as const).map((st) => (
                 <button key={st} className="btn" type="submit" name="to" value={st}>{STATUS_LABEL[st]}</button>
               ))}
+              {/* 지우기는 되돌릴 수 없으므로 다른 동작들과 떼어 두고, 눌러도 바로 지우지 않는다 */}
+              <button className="btn danger" type="submit" name="to" value="del"
+                      style={{ marginLeft: "auto" }}>삭제</button>
             </form>
 
             {items.map((i) => {

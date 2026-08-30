@@ -162,3 +162,21 @@ summary { cursor: pointer; }
   .flab { width: 100%; }
   .sub-note { display: none; }
 }
+
+/* 지우기 확인 — 되돌릴 수 없는 동작이라 목록 위에서 화면을 한 번 막는다.
+   빨강은 이미 "긴급"에 쓰고 있어 같은 색을 쓴다. 여기서 다른 빨강을 하나 더 만들면
+   몰릴 때 두 빨강의 뜻을 구분하느라 오히려 늦어진다. */
+.confirm { border: 1px solid var(--warn-bd); background: var(--warn-bg); border-radius: 14px;
+  padding: 16px 18px; margin-bottom: 18px; }
+.confirm-h { font-size: 14.5px; font-weight: 700; color: var(--warn-text); margin: 0 0 10px; }
+.confirm-list { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 6px; }
+.confirm-list li { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px;
+  color: var(--ink-3); min-width: 0; }
+.confirm-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.confirm-w { color: var(--cap); font-size: 11.5px; flex: none; }
+.confirm-more { color: var(--cap); }
+.confirm-act { display: flex; gap: 8px; align-items: center; }
+.confirm-act form { margin: 0; }
+.btn.danger { color: var(--warn-text); border-color: var(--warn-bd); }
+.btn.danger:hover { color: #fff; background: var(--warn-icon); border-color: var(--warn-icon); }
+.btn.danger.solid { background: var(--warn-icon); border-color: var(--warn-icon); color: #fff; }
