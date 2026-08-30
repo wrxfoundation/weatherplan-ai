@@ -27,8 +27,8 @@ import {
 } from "@/lib/faq-client";
 import { csCard, csButtons, topicOf, moodOf, whoOf, severityOf, type CsKind } from "@/lib/cs";
 import { putItem, patchItem, newId, type CsItem, type CsStatus } from "@/lib/store";
+import { tgCall } from "@/lib/tg";
 
-const TOKEN = process.env.TG_BOT_TOKEN ?? "";
 const SECRET = process.env.TG_WEBHOOK_SECRET ?? "";
 const GROUP = process.env.TG_GROUP ?? "";
 /* 답하지 못한 질문을 흘려보낼 운영 채널. 미설정이면 아무 데도 보내지 않는다 —
@@ -40,18 +40,8 @@ const L = (m: Loc, lang: FaqLang) => (lang === "ko" ? m.ko : m.en || m.ko);
 
 type Btn = { text: string; callback_data: string };
 
-const call = async (method: string, body: unknown) => {
-  if (!TOKEN) return;
-  try {
-    await fetch(`https://api.telegram.org/bot${TOKEN}/${method}`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-    });
-  } catch {
-    /* 텔레그램이 잠깐 안 닿아도 우리는 200 을 돌려줘야 한다 — 아래 주석 참조 */
-  }
-};
+/* 텔레그램이 잠깐 안 닿아도 우리는 200 을 돌려줘야 한다 — 아래 주석 참조 */
+const call = tgCall;
 
 /* 답을 못 준 질문을 기록하고 운영 채널로 보낸다. 어느 쪽이 실패해도 사용자 응답에는
    영향을 주지 않는다 — CS 기록보다 사용자에게 답이 가는 쪽이 먼저다. */
@@ -61,13 +51,17 @@ const recordCs = async (
   lang: FaqLang,
   chatType: string,
   from?: { username?: string; first_name?: string; id?: number },
+  chatId?: number,
+  phase?: string,
 ): Promise<CsItem> => {
   const mood = moodOf(text);
+  const topic = topicOf(text);
   const item: CsItem = {
     id: newId(), at: Date.now(), text,
-    topic: topicOf(text), mood,
-    sev: severityOf(text, mood, chatType),
+    topic, mood,
+    sev: severityOf(text, mood, chatType, { phase, topic }),
     lang, who: whoOf(from), chatType, kind, status: "new",
+    chatId, phase,
   };
   try { await putItem(item); } catch { /* 저장소가 없거나 흔들려도 흐름은 막지 않는다 */ }
   return item;
@@ -88,9 +82,10 @@ const pushCard = async (item: CsItem) => {
 const reportCs = async (
   kind: CsKind, text: string, lang: FaqLang, chatType: string,
   from?: { username?: string; first_name?: string; id?: number },
+  chatId?: number, phase?: string,
 ) => {
   if (!text) return;
-  await pushCard(await recordCs(kind, text, lang, chatType, from));
+  await pushCard(await recordCs(kind, text, lang, chatType, from, chatId, phase));
 };
 
 /* ── FAQ 목록 화면 ──────────────────────────────────────────────────────
@@ -217,7 +212,7 @@ export async function POST(req: NextRequest) {
         else {
           /* 옛 버전 메시지 등으로 id 가 없으면 첫 줄의 원문으로 새로 만든다 */
           const raw = String(cq.message?.text ?? "").split("\n")[0].replace(/^"|"$/g, "");
-          if (raw) await reportCs("unanswered", raw, l, cq.message?.chat?.type ?? "?", cq.from);
+          if (raw) await reportCs("unanswered", raw, l, cq.message?.chat?.type ?? "?", cq.from, chat);
         }
         return Response.json({ ok: true });
       }
@@ -270,7 +265,7 @@ export async function POST(req: NextRequest) {
     if (!doc) {
       await call("sendMessage", { chat_id: chat.id, text: offlineText(lang), disable_web_page_preview: true });
       /* 정본이 안 읽히는 동안 들어온 질문도 흘리지 않는다 — 복구 후 답해야 할 목록이다 */
-      if (!cmd) await reportCs("offline", text, lang, chat.type ?? "?", msg.from);
+      if (!cmd) await reportCs("offline", text, lang, chat.type ?? "?", msg.from, chat.id);
       return Response.json({ ok: true });
     }
 
@@ -291,7 +286,7 @@ export async function POST(req: NextRequest) {
         /* 후보를 보여준 것도 기록해 둔다. 사용자가 하나를 누르면 done, "찾는 답이 없어요"를
            누르면 unanswered 로 바뀐다 — 그래야 FAQ 가 실제로 맞았는지 알 수 있다.
            id 를 콜백에 실어 보내므로 원문을 다시 파싱할 필요가 없다(총 20바이트, 제한 64). */
-        const rec = await recordCs("matched", text, lang, chat.type ?? "?", msg.from);
+        const rec = await recordCs("matched", text, lang, chat.type ?? "?", msg.from, chat.id, doc.schedule.phase);
         await call("sendMessage", {
           chat_id: chat.id,
           text: `"${text}"\n\n${lang === "ko" ? "이 질문이신가요?" : "Did you mean one of these?"}`,
@@ -304,7 +299,7 @@ export async function POST(req: NextRequest) {
         });
       } else {
         await call("sendMessage", { chat_id: chat.id, text: noAnswerText(lang), disable_web_page_preview: true });
-        await reportCs("unanswered", text, lang, chat.type ?? "?", msg.from);
+        await reportCs("unanswered", text, lang, chat.type ?? "?", msg.from, chat.id, doc.schedule.phase);
       }
     }
   } catch {

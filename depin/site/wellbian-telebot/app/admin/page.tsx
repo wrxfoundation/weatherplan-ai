@@ -7,8 +7,10 @@
    접근은 ADMIN_KEY 하나로 막는다. 로그인 화면을 붙이면 계정·세션·복구가 따라오는데,
    판매 전 여드레에 그만한 표면을 늘릴 이유가 없다. 주소를 아는 사람만 들어온다. */
 
-import { listItems, patchItem, storeKind, type CsStatus } from "@/lib/store";
-import { MOOD_LABEL, STATUS_LABEL, SEV_LABEL, type CsMoodTag, type CsSeverity } from "@/lib/cs";
+import { listItems, patchItem, getItem, storeKind, type CsStatus } from "@/lib/store";
+import { getDoc } from "@/lib/faq-client";
+import { tgCall } from "@/lib/tg";
+import { MOOD_LABEL, STATUS_LABEL, SEV_LABEL, overdueMin, type CsMoodTag, type CsSeverity } from "@/lib/cs";
 import { applyFilters } from "@/lib/filter";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +42,7 @@ export default async function Admin({
   }
 
   const all = await listItems();
+  const doc = await getDoc();
   const fStatus = sp.status ?? "";
   const fTopic = sp.topic ?? "";
   const fKind = sp.kind ?? "";
@@ -63,6 +66,33 @@ export default async function Admin({
     "use server";
     if ((form.get("k") as string) !== KEY) return;
     await patchItem(form.get("id") as string, { status: form.get("to") as CsStatus });
+  }
+
+  /* 답장 — 분류만 하고 답을 못 보내면 CS 처리가 완결되지 않는다.
+     정본 FAQ 를 골라 보내는 길을 기본으로 둔 이유: 답을 새로 쓰지 않으니 발화 규칙을
+     매번 다시 검토할 필요가 없고, 사이트·봇과 문장이 갈리지도 않는다. 몰릴 때 제일 빠르다. */
+  async function sendReply(form: FormData) {
+    "use server";
+    if ((form.get("k") as string) !== KEY) return;
+    const id = form.get("id") as string;
+    const item = await getItem(id);
+    if (!item?.chatId) return;
+
+    let body = String(form.get("text") ?? "").trim();
+    const faqId = String(form.get("faqId") ?? "");
+    if (faqId) {
+      const doc = await getDoc();
+      const lang = item.lang === "ko" ? "ko" : "en";
+      const hit = doc?.faq[lang]?.find((f) => f.id === faqId);
+      if (hit) body = `${hit.q}\n\n${hit.a}`;
+    }
+    if (!body) return;
+
+    const ok = await tgCall("sendMessage", {
+      chat_id: item.chatId, text: body, disable_web_page_preview: true,
+    });
+    /* 보내지 못했으면 완료로 바꾸지 않는다 — 안 간 답을 완료로 적으면 그 사람은 잊힌다 */
+    if (ok) await patchItem(id, { status: "done", note: body, repliedAt: Date.now() });
   }
 
   const S = {
@@ -243,12 +273,32 @@ export default async function Admin({
                 {i.kind === "matched" && (
                   <span style={{ fontSize: 11.5, color: C.mute }}>· 후보 제시</span>
                 )}
+                {(() => {
+                  if (i.status === "done" || i.status === "faq") return null;
+                  const over = overdueMin(i.at, (i.sev ?? "low") as CsSeverity);
+                  if (over <= 0) return null;
+                  /* 방치 시간을 숫자로 보여 준다 — 몰릴 때 사람은 최신순으로 처리하게 되고,
+                     그러면 오래된 급한 건이 아래로 밀린다 */
+                  return (
+                    <span style={{ fontSize: 11, fontWeight: 700, color: C.high }}>
+                      · 기한 {over >= 60 ? `${Math.floor(over / 60)}시간` : `${over}분`} 초과
+                    </span>
+                  );
+                })()}
                 <span style={{ marginLeft: "auto", fontSize: 11.5, color: C.mute }}>{when} · {i.who}</span>
               </div>
 
               <p style={{ fontSize: 16, lineHeight: 1.6, margin: "0 0 12px" }}>{i.text}</p>
 
-              <form action={setStatus} style={{ display: "flex", flexWrap: "wrap" }}>
+              {i.note && (
+                <div style={{ fontSize: 13, color: C.mute, background: "#12121A", borderRadius: 8,
+                              padding: "10px 12px", marginBottom: 10, lineHeight: 1.6,
+                              whiteSpace: "pre-wrap" }}>
+                  {i.repliedAt ? "보낸 답장" : "메모"} · {i.note}
+                </div>
+              )}
+
+              <form action={setStatus} style={{ display: "flex", flexWrap: "wrap", marginBottom: 8 }}>
                 <input type="hidden" name="k" value={k} />
                 <input type="hidden" name="id" value={i.id} />
                 {(["new", "doing", "done", "faq"] as const).filter((s) => s !== i.status).map((s) => (
@@ -258,6 +308,38 @@ export default async function Admin({
                   </button>
                 ))}
               </form>
+
+              {/* 답장 — 정본을 고르는 쪽이 먼저다. 몰릴 때 한 번 클릭으로 끝난다 */}
+              {i.chatId ? (
+                <details>
+                  <summary style={{ fontSize: 12.5, color: C.mute, cursor: "pointer" }}>
+                    답장 보내기
+                  </summary>
+                  <form action={sendReply} style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+                    <input type="hidden" name="k" value={k} />
+                    <input type="hidden" name="id" value={i.id} />
+                    <select name="faqId" defaultValue=""
+                            style={{ background: C.bg, color: C.ink, border: `1px solid ${C.line}`,
+                                     borderRadius: 8, padding: "8px 10px", fontSize: 13, maxWidth: 420 }}>
+                      <option value="">정본 FAQ 고르기…</option>
+                      {(doc?.faq[i.lang === "ko" ? "ko" : "en"] ?? []).map((f) => (
+                        <option key={f.id} value={f.id}>{f.q}</option>
+                      ))}
+                    </select>
+                    <button type="submit" style={{ ...S.btn, color: C.done }}>정본으로 답장</button>
+                  </form>
+                  <form action={sendReply} style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                    <input type="hidden" name="k" value={k} />
+                    <input type="hidden" name="id" value={i.id} />
+                    <textarea name="text" rows={2} placeholder="직접 쓰기 — 정본에 없는 값(가격·수량·일정)은 확정 전까지 쓰지 않습니다"
+                              style={{ flex: 1, background: C.bg, color: C.ink, border: `1px solid ${C.line}`,
+                                       borderRadius: 8, padding: "8px 10px", fontSize: 13, resize: "vertical" }} />
+                    <button type="submit" style={{ ...S.btn, alignSelf: "flex-start" }}>답장</button>
+                  </form>
+                </details>
+              ) : (
+                <div style={{ fontSize: 12, color: C.mute }}>답장 대상 정보가 없는 옛 기록입니다</div>
+              )}
             </article>
           );
         })}

@@ -33,7 +33,12 @@ export type CsItem = {
   kind: "unanswered" | "offline" | "matched";
   status: CsStatus;
   sev?: "high" | "mid" | "low";   // 긴급도 — 옛 기록에는 없을 수 있어 선택
+  /* 답장을 보내려면 어디로 보낼지 알아야 한다. 텔레그램 내부 식별자라 저장소에만 두고
+     CSV·JSON 내보내기에는 싣지 않는다 — 표에 있어 봐야 쓸 데가 없고 새어 나갈 자리만 는다. */
+  chatId?: number;
+  phase?: string;        // 문의가 들어온 시점의 판매 단계
   note?: string;         // 처리 메모 / 확정한 답변
+  repliedAt?: number;    // 답장을 보낸 시각
 };
 
 /* ── Upstash REST ─────────────────────────────────────────────────────────
@@ -81,7 +86,7 @@ export const getItem = async (id: string): Promise<CsItem | null> => {
 };
 
 /* 상태·종류·메모만 바꾼다. 원문과 분류는 기록이라 덮어쓰지 않는다. */
-export const patchItem = async (id: string, patch: Partial<Pick<CsItem, "status" | "note" | "kind">>) => {
+export const patchItem = async (id: string, patch: Partial<Pick<CsItem, "status" | "note" | "kind" | "repliedAt">>) => {
   const cur = await getItem(id);
   if (!cur) return null;
   const next = { ...cur, ...patch };

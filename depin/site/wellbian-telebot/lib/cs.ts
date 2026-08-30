@@ -92,7 +92,12 @@ export const csButtons = (id: string, status: string) => {
    기본값을 "의문"으로 둔 것은 이 자리의 성격 때문이다. 여기 쌓이는 것은 전부
    "봇이 답하지 못한 질문"이라 대다수가 물음이고, 애매한 것을 부정으로 몰면
    실제 불만이 묻힌다. 부정은 확실할 때만 부정이라고 부른다. */
-const NEG = /안 ?되|안돼|안됨|오류|에러|먹통|막혔|실패|늦|느리|불편|짜증|화나|사기|환불|불만|why not|broken|error|fail|scam|refund|angry|stuck/i;
+const NEG = new RegExp([
+  "안\\s?되|안돼|안됨|오류|에러|먹통|막혔|실패|늦|느리|불편|짜증|화나|사기|환불|불만",
+  /* 장애가 아니라 평가로 오는 불만 — 그룹에서 이 형태가 나오면 다른 사람이 먼저 본다 */
+  "엉망|실망|최악|형편없|답답|어이없|황당|믿을\\s?수\\s?없|한심|기대\\s?이하",
+  "why not|broken|error|fail|scam|refund|angry|stuck|terrible|awful|worst|disappoint",
+].join("|"), "i");
 const POS = /감사|고마|좋|최고|굿|기대|화이팅|응원|멋지|훌륭|축하|thank|great|awesome|nice|love|excited|good job/i;
 
 export type CsMoodTag = "question" | "positive" | "negative";
@@ -126,19 +131,52 @@ const URGENT = new RegExp([
   "환불\\s*(요청|해\\s?주|해줘|바랍|원합|처리)|refund\\s+(now|request|please)",
 ].join("|"), "i");
 const TROUBLE = new RegExp([
-  "안\\s?되|안돼|안됨|오류|에러|실패|먹통|막혔|잠겼|error|fail|stuck|locked|broken",
+  "안돼|안됨|오류|에러|실패|먹통|막혔|잠겼|error|fail|stuck|locked|broken",
+  /* "안 되"만 잡으면 "안 눌려요"·"안 열려요"·"안 뜨네요"를 놓친다.
+     실제 문의는 대부분 이 형태로 온다 */
+  "안\\s?(되|돼|눌|열|보|뜨|들어|올라|먹|받|나와|넘어)",
   /* 응답이 없다는 불만은 그 자체가 급하다 — 방치될수록 공개적으로 커진다 */
   "답이?\\s?없|답변이?\\s?없|응답이?\\s?없|아무도\\s?(안|답)|무시|왜\\s?안",
 ].join("|"), "i");
 
 export type CsSeverity = "high" | "mid" | "low";
 
-export const severityOf = (text: string, mood: CsMoodTag, chatType: string): CsSeverity => {
+/* 같은 문의라도 판매 단계에 따라 급한 정도가 다르다. 이게 이 사업의 모양이다 —
+   구매창은 24시간뿐이고 재발행이 없다. 그 안에 "결제가 안 된다"를 놓치면 그 사람은
+   영영 못 산다. 같은 문의가 9월 1일에 오면 하루 안에 답해도 되는 일이다.
+
+   접수 기간의 예매 장애도 마찬가지다 — 마감이 지나면 우선 구매창 자체를 못 쓴다. */
+const CRITICAL_TOPIC = /결제|지갑|예매/;
+
+export const severityOf = (
+  text: string, mood: CsMoodTag, chatType: string,
+  opts?: { phase?: string; topic?: string },
+): CsSeverity => {
+  const phase = opts?.phase ?? "";
+  const buying = phase === "priority_window" || phase === "general_window";
+  const reserving = phase === "reserve_open";
+
+  /* 구매창이 열려 있는 동안 결제·지갑이 막힌 사람은 시간이 곧 손해다 */
+  if (buying && (TROUBLE.test(text) || mood === "negative") &&
+      CRITICAL_TOPIC.test(opts?.topic ?? "")) return "high";
+  /* 접수 중 예매가 막힌 것도 마감이 지나면 되돌릴 수 없다 */
+  if (reserving && TROUBLE.test(text) && /예매/.test(opts?.topic ?? "")) return "high";
+
   if (URGENT.test(text)) return "high";
-  if (mood === "negative" && (TROUBLE.test(text) || chatType !== "private")) return "high";
+  /* 공개된 불만은 다른 사람이 본다 — 1:1 과 다르게 취급한다 */
+  if (mood === "negative" && chatType !== "private") return "high";
+  /* 평시의 장애 불만은 주의까지다. 여기까지 긴급으로 올리면 구매창의 진짜 급한 건과
+     구분이 사라져서, 몰릴 때 순서를 정하는 데 아무 도움이 안 된다. */
   if (mood === "negative" || TROUBLE.test(text)) return "mid";
   return "low";
 };
+
+/* 언제까지 답해야 하는가. 몰려올 때 사람은 최신순으로 처리하게 되므로,
+   "얼마나 방치됐는지"를 숫자로 보여 줘야 순서가 바뀐다. */
+export const SLA_MIN: Record<CsSeverity, number> = { high: 30, mid: 240, low: 1440 };
+
+export const overdueMin = (at: number, sev: CsSeverity, now = Date.now()) =>
+  Math.round((now - at) / 60000) - SLA_MIN[sev];
 
 export const SEV_LABEL: Record<CsSeverity, string> = { high: "긴급", mid: "주의", low: "일반" };
 
