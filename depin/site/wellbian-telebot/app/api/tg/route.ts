@@ -227,7 +227,9 @@ export async function POST(req: NextRequest) {
         } else if (kind === "f") {
           const hit = findFaq(doc, lang, key);
           /* 후보를 눌렀다는 건 그 답으로 갈음됐다는 뜻이다 — FAQ 적중으로 기록한다 */
-          if (csId && hit) await patchItem(csId, { status: "done", note: `사용자가 선택: ${hit.q}` }).catch(() => null);
+          /* 사용자가 후보를 눌러 스스로 해결한 순간이다. 닫힌 시각을 같이 남긴다 —
+             리포트에서 "봇이 즉시 해결한 건"과 "사람이 답한 건"을 가르는 근거가 된다. */
+          if (csId && hit) await patchItem(csId, { status: "done", note: `사용자가 선택: ${hit.q}`, closedAt: Date.now() }).catch(() => null);
           /* 새 메시지를 쌓지 않고 같은 자리를 고쳐 쓴다 — 그룹에서 대화창이 밀리지 않게 */
           await call("editMessageText", {
             chat_id: chat, message_id: mid,

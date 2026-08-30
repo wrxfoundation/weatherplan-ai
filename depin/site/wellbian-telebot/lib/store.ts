@@ -52,6 +52,12 @@ export type CsItem = {
   phase?: string;        // 문의가 들어온 시점의 판매 단계
   note?: string;         // 처리 메모 / 확정한 답변
   repliedAt?: number;    // 답장을 보낸 시각
+  /* 닫힌 시각. 처리 시간을 재려면 있어야 한다 — 답장 없이 상태만 바꿔 닫는 경우가 많고,
+     그때는 repliedAt 이 비어서 얼마나 걸렸는지 알 길이 없었다. 다시 열면 지운다. */
+  closedAt?: number;
+  /* 자동 분류를 손으로 고쳤는지. 고친 건 다시 자동값으로 덮지 않고, 리포트에서
+     "분류가 얼마나 맞았나"를 볼 때도 이 표시로 가른다. */
+  fixed?: boolean;
 };
 
 /* ── Upstash REST ─────────────────────────────────────────────────────────
@@ -130,7 +136,10 @@ export const delItems = async (ids: string[]): Promise<number> => {
 };
 
 /* 상태·종류·메모만 바꾼다. 원문과 분류는 기록이라 덮어쓰지 않는다. */
-export const patchItem = async (id: string, patch: Partial<Pick<CsItem, "status" | "note" | "kind" | "repliedAt">>) => {
+export const patchItem = async (
+  id: string,
+  patch: Partial<Pick<CsItem, "status" | "note" | "kind" | "repliedAt" | "closedAt" | "topic" | "sev" | "fixed">>,
+) => {
   const cur = await getItem(id);
   if (!cur) return null;
   const next = { ...cur, ...patch };

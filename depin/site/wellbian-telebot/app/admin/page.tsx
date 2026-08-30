@@ -13,17 +13,29 @@
 import { listItems, patchItem, getItem, delItems, storeKind, type CsStatus } from "@/lib/store";
 import { getDoc } from "@/lib/faq-client";
 import { tgCall } from "@/lib/tg";
-import { STATUS_LABEL, SEV_LABEL, MOOD_LABEL, overdueMin, type CsMoodTag, type CsSeverity } from "@/lib/cs";
+import { STATUS_LABEL, SEV_LABEL, MOOD_LABEL, TOPICS, overdueMin, type CsMoodTag, type CsSeverity } from "@/lib/cs";
 import { applyFilters } from "@/lib/filter";
 import { clusterItems } from "@/lib/cluster";
 import { ADMIN_KEY, isAuthed, clearAuthCookie } from "@/lib/auth";
 import { redirect } from "next/navigation";
+/* 서버 액션이 저장을 마쳐도 라우터가 들고 있던 화면을 그대로 다시 그린다 — 값은 바뀌었는데
+   버튼과 정렬은 그대로여서, 눌러도 아무 일이 없는 것처럼 보인다. 몰릴 때 같은 건을 두 번
+   누르게 되는 자리다. 고친 뒤 이 경로를 무효화해서 다시 읽게 한다. */
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
 /* 주소 조립은 컴포넌트 밖에 둔다. 서버 액션이 클로저로 함수를 끌어안으면 직렬화할 수 없어
    ("Functions cannot be passed directly to Client Components") 화면이 통째로 깨진다.
    액션이 무는 건 문자열뿐이어야 한다. */
+/* 닫으면 시각을 남기고, 다시 열면 지운다. 처리 시간을 재는 근거가 이 값 하나다.
+
+   adminUrl 과 같은 이유로 컴포넌트 밖에 둔다 — 서버 액션이 컴포넌트 안의 함수를 클로저로
+   물면 직렬화가 깨지고(React #441), 저장은 되는데 화면이 안 바뀌거나 아예 아무 일도
+   일어나지 않는다. 액션이 무는 건 문자열과 값뿐이어야 한다. */
+const closeStamp = (to: string) =>
+  to === "done" || to === "faq" ? { closedAt: Date.now() } : { closedAt: undefined };
+
 const adminUrl = (o: Record<string, string>) => {
   const p = new URLSearchParams(o);
   for (const [key, v] of [...p.entries()]) if (!v) p.delete(key);
@@ -85,6 +97,7 @@ export default async function Admin({
     "use server";
     if (!(await isAuthed(String(form.get("k") ?? "")))) return;
     await delItems(String(form.get("ids") ?? "").split(".").filter(Boolean));
+    revalidatePath("/admin");
     redirect(adminUrl({ ...view, del: "" }));
   }
 
@@ -94,10 +107,27 @@ export default async function Admin({
     redirect("/");
   }
 
+  /* 자동 분류를 손으로 고친다. 오분류를 못 고치면 정렬·필터·리포트가 같이 틀어진다 —
+     한 건이 "일반"으로 잘못 잡히면 목록 아래로 가라앉아 아무도 다시 보지 않는다. */
+  async function reclassify(form: FormData) {
+    "use server";
+    if (!(await isAuthed(String(form.get("k") ?? "")))) return;
+    const id = String(form.get("id") ?? "");
+    const cur = await getItem(id);
+    if (!cur) return;
+    const topic = String(form.get("topic") ?? "") || cur.topic;
+    const sev = (String(form.get("sev") ?? "") || cur.sev || "low") as CsSeverity;
+    const changed = topic !== cur.topic || sev !== (cur.sev ?? "low");
+    await patchItem(id, changed ? { topic, sev, fixed: true } : { topic, sev });
+    revalidatePath("/admin");
+  }
+
   async function setStatus(form: FormData) {
     "use server";
     if (!(await isAuthed(String(form.get("k") ?? "")))) return;
-    await patchItem(form.get("id") as string, { status: form.get("to") as CsStatus });
+    const to = form.get("to") as CsStatus;
+    await patchItem(form.get("id") as string, { status: to, ...closeStamp(to) });
+    revalidatePath("/admin");
   }
   /* 지우기도 이 폼으로 받는다. 버튼마다 formAction 을 다르게 주면 하이드레이션 전에는
      눌리지 않는다 — 서버에서 그려 보내는 화면이라 자바스크립트가 늦거나 막혀도 동작해야 한다. */
@@ -109,7 +139,8 @@ export default async function Admin({
     if (!ids.length) return;
     /* 지우기는 여기서 실행하지 않는다. 무엇을 지우는지 보여 주고 한 번 더 묻는다. */
     if (to === "del") redirect(adminUrl({ ...view, del: ids.join(".") }));
-    for (const id of ids) await patchItem(id, { status: to as CsStatus });
+    for (const id of ids) await patchItem(id, { status: to as CsStatus, ...closeStamp(to) });
+    revalidatePath("/admin");
   }
   /* 답장 — 정본 FAQ 를 골라 보내는 길을 기본으로 둔다. 답을 새로 쓰지 않으니 발화 규칙을
      매번 검토할 필요가 없고 사이트·봇과 문장이 갈리지도 않는다. 몰릴 때 제일 빠르다. */
@@ -129,7 +160,8 @@ export default async function Admin({
     if (!body) return;
     const ok = await tgCall("sendMessage", { chat_id: item.chatId, text: body, disable_web_page_preview: true });
     /* 보내지 못했으면 완료로 바꾸지 않는다 — 안 간 답을 완료로 적으면 그 사람은 잊힌다 */
-    if (ok) await patchItem(id, { status: "done", note: body, repliedAt: Date.now() });
+    if (ok) await patchItem(id, { status: "done", note: body, repliedAt: Date.now(), closedAt: Date.now() });
+    revalidatePath("/admin");
   }
   /* 한 번에 30건까지 — 서버리스에 시간 제한이 있고 텔레그램도 초당 처리량이 정해져 있다.
      넘치면 도중에 잘려 "보낸 줄 알았는데 안 간" 건이 생긴다. */
@@ -146,8 +178,9 @@ export default async function Admin({
       if (!hitF) continue;
       const body = `${hitF.q}\n\n${hitF.a}`;
       if (await tgCall("sendMessage", { chat_id: item.chatId, text: body, disable_web_page_preview: true }))
-        await patchItem(id, { status: "done", note: body, repliedAt: Date.now() });
+        await patchItem(id, { status: "done", note: body, repliedAt: Date.now(), closedAt: Date.now() });
     }
+    revalidatePath("/admin");
   }
 
   const when = (ms: number) => {
@@ -423,6 +456,29 @@ export default async function Admin({
                       {(["new", "doing", "done", "faq"] as const).filter((s) => s !== i.status).map((s) => (
                         <button key={s} className="btn" type="submit" name="to" value={s}>{STATUS_LABEL[s]}</button>
                       ))}
+                    </form>
+                  </div>
+
+                  {/* 분류 고치기 — 긴급도는 한 번에 눌러 바꾼다(정렬에 바로 걸리므로 제일 급하다).
+                      주제는 고를 것이 여덟 개라 select 로 두되 같은 줄에 둔다. */}
+                  <div className="fixrow">
+                    <form action={reclassify} className="fixrow-in">
+                      <input type="hidden" name="k" value={k} />
+                      <input type="hidden" name="id" value={i.id} />
+                      <span className="fix-k">긴급도</span>
+                      {(["high", "mid", "low"] as const).map((v) => (
+                        <button key={v} type="submit" name="sev" value={v}
+                                className={`chip sev-${v}${(i.sev ?? "low") === v ? " on" : ""}`}
+                                disabled={(i.sev ?? "low") === v}>
+                          {SEV_LABEL[v]}
+                        </button>
+                      ))}
+                      <span className="fix-k" style={{ marginLeft: 6 }}>주제</span>
+                      <select name="topic" defaultValue={i.topic} aria-label="주제">
+                        {TOPICS.map((tp) => <option key={tp} value={tp}>{tp}</option>)}
+                      </select>
+                      <button className="btn" type="submit">바꿈</button>
+                      {i.fixed && <span className="fix-mark">고친 분류</span>}
                     </form>
                   </div>
 
