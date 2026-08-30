@@ -16,6 +16,7 @@ import {
   beatHours, beatTopics, moodSpike, SPAN_LABEL, type Span,
 } from "@/lib/report";
 import { redirect } from "next/navigation";
+import ScrollEnd from "../ScrollEnd";
 
 export const dynamic = "force-dynamic";
 
@@ -54,8 +55,9 @@ export default async function Report({
 
   /* 그룹 분위기 — 개수만 담긴 별도 저장소를 읽는다. 원문은 여기 없다. */
   const beats = await listBeats();
-  const moodRows = beatHours(beats, span === "7d" || span === "all" ? 48 : 24);
-  const moodTop = beatTopics(beats, span === "7d" || span === "all" ? 48 : 24);
+  /* 칸을 늘리면 가로로 넘쳐 정작 최근이 잘린다. 분위기는 지금을 보는 화면이라 24시간으로 고정한다. */
+  const moodRows = beatHours(beats, 24);
+  const moodTop = beatTopics(beats, 24);
   const spike = moodSpike(moodRows);
   const talkPeak = Math.max(1, ...moodRows.map((r) => r.n));
   const talkTotal = moodRows.reduce((a, r) => a + r.n, 0);
@@ -198,7 +200,7 @@ export default async function Report({
                   </div>
                 )}
 
-                <div className="rep-bars">
+                <ScrollEnd className="rep-bars">
                   {moodRows.map((r) => (
                     <div key={r.at} className="rep-bar"
                          title={`${r.label} · ${r.n}건${r.negRate !== null ? ` · 부정 ${r.negRate}%` : ""}`}>
@@ -212,7 +214,7 @@ export default async function Report({
                       <div className="rep-bar-k">{r.label}</div>
                     </div>
                   ))}
-                </div>
+                </ScrollEnd>
 
                 {moodTop.length > 0 && (
                   <div className="rep-table" style={{ marginTop: 10 }}>
@@ -237,7 +239,7 @@ export default async function Report({
               막대 하나가 {span === "24h" ? "한 시간" : "하루"}입니다. 짙은 부분이 아직 닫히지 않은 건입니다 —
               들어온 양보다 이쪽이 쌓이는 구간이 사람을 더 넣어야 하는 때입니다.
             </p>
-            <div className="rep-bars">
+            <ScrollEnd className="rep-bars">
               {bars.map((b) => (
                 <div key={b.from} className="rep-bar" title={`${b.label} · ${b.n}건 (미처리 ${b.open})`}>
                   <div className="rep-bar-v">
@@ -249,7 +251,7 @@ export default async function Report({
                   <div className="rep-bar-k">{b.label}</div>
                 </div>
               ))}
-            </div>
+            </ScrollEnd>
 
             {/* 5차 — 속도와 품질 */}
             <h2 className="rep-h">속도와 품질</h2>
