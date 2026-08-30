@@ -12,8 +12,13 @@ export async function GET() {
     secret: Boolean(process.env.TG_WEBHOOK_SECRET),
     group: process.env.TG_GROUP || null,
     faqSource: info.configured,
+    faqBypass: info.bypass,
     faqCached: info.cached,
     faqAgeSec: info.ageSec,
     faqEntries: info.entries,
+    /* 마지막 정본 읽기 시도 — note 가 원인을 바로 말해준다:
+       not_found_deploy_the_site / blocked_check_deployment_protection /
+       network_or_bad_response / unexpected_shape / no_source_url / ok */
+    faqLast: info.last,
   }, { headers: { "cache-control": "no-store" } });
 }

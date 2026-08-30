@@ -34,24 +34,47 @@ export type FaqDoc = {
 
 /** 판매 사이트의 정본 엔드포인트. 예: https://wellbianstorenextjs.vercel.app/api/faq */
 const SOURCE = process.env.FAQ_SOURCE_URL ?? "";
+/* Vercel Deployment Protection(Vercel Authentication)이 켜진 사이트를 읽기 위한 우회 토큰.
+   보호가 켜져 있으면 *.vercel.app 주소는 브라우저에서만 열리고(로그인 쿠키가 있으니까)
+   서버 간 호출은 401 을 받는다 — "나는 되는데 봇만 안 되는" 상황이 정확히 이것이다.
+   사이트를 공개로 돌리면 이 값은 비워도 된다. */
+const BYPASS = process.env.FAQ_BYPASS_TOKEN ?? "";
 const TTL_MS = 60_000;
 /** 이 계약 번호가 올라가면 응답 모양이 바뀐 것이다 — 맞지 않으면 옛 캐시를 계속 쓴다 */
 const CONTRACT = 1;
 
 let cache: { at: number; doc: FaqDoc } | null = null;
 let inflight: Promise<FaqDoc | null> | null = null;
+/* 마지막 시도의 결과. 왜 못 읽었는지가 안 보이면 원인이 배포 누락인지 접근 차단인지
+   주소 오타인지 가릴 수가 없다 — /api/health 가 이 값을 그대로 보여준다.
+   상태 코드와 짧은 라벨만 남긴다(주소·토큰은 남기지 않는다). */
+let last: { at: number; status: number | null; note: string } | null = null;
+
+const mark = (status: number | null, note: string) => { last = { at: Date.now(), status, note }; };
 
 const fetchDoc = async (): Promise<FaqDoc | null> => {
-  if (!SOURCE) return null;
+  if (!SOURCE) { mark(null, "no_source_url"); return null; }
   try {
     /* Next 의 fetch 캐시에 맡기지 않는다 — 만료·실패 처리를 여기서 직접 하고 있다 */
-    const res = await fetch(SOURCE, { cache: "no-store" });
-    if (!res.ok) return null;
+    const res = await fetch(SOURCE, {
+      cache: "no-store",
+      headers: BYPASS ? { "x-vercel-protection-bypass": BYPASS } : undefined,
+    });
+    if (!res.ok) {
+      mark(res.status,
+        res.status === 401 || res.status === 403 ? "blocked_check_deployment_protection"
+        : res.status === 404 ? "not_found_deploy_the_site"
+        : "http_error");
+      return null;
+    }
     const doc = (await res.json()) as FaqDoc;
-    if (doc?.contract !== CONTRACT || !doc.faq?.ko?.length) return null;
+    if (doc?.contract !== CONTRACT || !doc.faq?.ko?.length) { mark(res.status, "unexpected_shape"); return null; }
     cache = { at: Date.now(), doc };
+    mark(res.status, "ok");
     return doc;
   } catch {
+    /* 주소 오타·DNS·타임아웃. json() 파싱 실패도 여기로 온다(보호 페이지가 HTML 을 돌려줄 때) */
+    mark(null, "network_or_bad_response");
     return null;
   }
 };
@@ -68,9 +91,13 @@ export const getDoc = async (): Promise<FaqDoc | null> => {
 /** 캐시 상태만 알려준다(문장은 내보내지 않는다) — /api/health 에서 쓴다 */
 export const cacheInfo = () => ({
   configured: Boolean(SOURCE),
+  bypass: Boolean(BYPASS),
   cached: Boolean(cache),
   ageSec: cache ? Math.round((Date.now() - cache.at) / 1000) : null,
   entries: cache ? cache.doc.faq.ko.length : 0,
+  last: last
+    ? { status: last.status, note: last.note, agoSec: Math.round((Date.now() - last.at) / 1000) }
+    : null,
 });
 
 /* 텔레그램의 language_code 는 "ko", "en-US", "ja" 등으로 온다.
