@@ -100,19 +100,23 @@ export const SPECS = [
 ];
 
 export const FAQS = [
-  /* 8/28 서우 2차: 선착순 사전예약 → 추첨제 사전 구매응모. "자리 확보"·"선착순 걱정 없이"는
-     추첨제에서 사실이 아니므로 답변을 다시 썼다.
-     8/29 서우: 추첨 결과를 메일로 보낸다는 문장은 전부 뺀다(통지 수단 미확정) —
-     FAQ · 히어로 아래 * 주석 · 응모 모달 3단계 · 완료 화면 네 곳 모두. */
-  { q: "사전예매는 무엇인가요?", a: "결제가 아닙니다. 구글 로그인으로 신청 수량을 정해두면 바우처(예매 확정 인증 NFT)가 발행되고, 지갑에서 수락하면 우선 구매창에서 먼저 구매하실 수 있습니다. 1계정 최대 5개까지 신청할 수 있습니다." },
-  { q: "예매하면 반드시 살 수 있나요?", a: "구매를 보장하지는 않습니다. 우선 구매창은 사전예매자에게 먼저 열리는 순서이며, 그 안에서 신청하신 수량만큼 먼저 구매하실 수 있습니다. 예매 자체에 비용은 들지 않고, 실제 구매 여부와 수량은 자유롭게 정하시면 됩니다." },
-  /* 8/28 서우 지정 문안 — 추첨 방식의 정의와 미구매 시 처리까지 한 문항에 담는다 */
-  { q: "우선 구매창과 일반 구매창은 무엇이 다른가요?", a: "우선 구매창(9월 15일 12:00 KST)은 바우처를 수락한 사전예매자에게 먼저 열립니다. 일반 구매창은 9월 15일 18:00 KST 예정이며, 예매 물량이 먼저 소진되면 그보다 일찍 열립니다. 판매는 9월 16일 12:00 KST에 끝나고 다시 발행되지 않습니다." },
-  { q: "바우처를 수락하지 않으면 어떻게 되나요?", a: "우선 구매 자격이 확정되지 않습니다. 신청만으로는 발행 단계까지이고, 지갑에서 수락해야 확정됩니다. 수락하지 않으신 경우에는 일반 구매창을 이용하셔야 합니다." },
-  { q: "가격은 언제 알 수 있나요?", a: "가격과 총 발행 수량은 판매 오픈 전에 공지됩니다. 결제는 RLUSD로 진행되며, 거래소에서 사서 XRPL 네트워크로 출금하는 데 시간이 걸리니 미리 준비해 두시길 권합니다." },
-  { q: "RLUSD는 어디서 구하나요?", a: "국내·해외 거래소에서 RLUSD를 구매한 뒤 XRPL 네트워크로 개인 지갑에 출금하면 됩니다. 출금 시 반드시 XRPL판 RLUSD를 선택하세요." },
-  { q: "지갑이 처음인데 괜찮나요?", a: "네. 구글 계정으로 가입하면 내 지갑이 자동으로 만들어집니다. 노드 연동까지 단계별 가이드를 제공합니다." },
-  { q: "보상은 어떻게 지급되나요?", a: "측정 데이터가 검증되면 네트워크 원칙에 따라 WLBN이 지급됩니다. 지급량과 가치는 보장되지 않습니다." },
+  /* 8/30 정본 개정 — 8/30 회의 결정과 라이브 사이트(wlbn.wellbianlabs.io)를 근거로 다시 썼다.
+     바뀐 사실: 1계정 5개 → 10대 · 구글 로그인 → 지갑 주소+계정 아이디 · 바우처 → 예매권 NFT ·
+     물량 초과 시 추첨. 대시보드가 모아 준 "정본에 답 없음" 상위(환불·배송비·멤버십 정의·
+     지갑 주소·트러스트라인)도 여기서 받는다.
+
+     넣지 않은 것: 판매가, 보상 금액·수익률, 발행가·시세 전망, 총 물량. 확정되지 않았거나
+     대외 표기가 금지된 값이다. 광고 규제에 걸리는 자리이기도 하다. */
+  { q: "사전예약은 무엇인가요?", a: "9월 7일 정오에 열리는 구매 예약입니다. 결제가 아니고 비용도 들지 않습니다. 신청하시면 지갑으로 예매권 NFT가 발급되고, 이 NFT를 가진 분에게 9월 15일 정오 우선 구매창이 먼저 열립니다." },
+  { q: "사전예약은 어떻게 하나요?", a: "지갑 주소와 계정 아이디만 입력하시면 됩니다. 그 밖의 정보는 받지 않습니다. 신청 후 지갑으로 오는 예매권 NFT를 수락하시면 예약이 확정됩니다." },
+  { q: "예약하면 반드시 살 수 있나요?", a: "구매를 보장하지는 않습니다. 예매권을 가진 분에게 구매창이 먼저 열리는 것이고, 신청이 준비된 물량을 넘으면 선착순이 아니라 추첨으로 정합니다. 예약 자체에는 비용이 들지 않습니다." },
+  { q: "몇 대까지 신청할 수 있나요?", a: "1계정당 최대 10대까지 신청하실 수 있습니다. 기업이나 대량 구매는 별도 문의로 안내드립니다." },
+  { q: "언제 구매할 수 있나요?", a: "사전예약은 9월 7일 정오부터 9월 14일 정오까지입니다. 우선 구매창은 9월 15일 정오, 일반 구매창은 같은 날 오후 6시에 열리며, 예매 물량이 먼저 소진되면 그보다 일찍 열립니다. 판매는 9월 16일 정오에 끝납니다." },
+  { q: "가격은 언제 알 수 있나요?", a: "가격은 판매 오픈 전에 공지됩니다. 결제는 RLUSD로 진행되니, 거래소에서 사서 지갑으로 옮기는 데 시간이 걸리는 점을 감안해 미리 준비해 두시길 권합니다." },
+  { q: "RLUSD는 어디서 구하나요?", a: "RLUSD를 지원하는 국내·해외 거래소에서 구매한 뒤 개인 지갑으로 출금하시면 됩니다. 출금 화면에서 네트워크를 반드시 XRPL로 선택하세요. 다른 네트워크를 고르면 자산을 잃을 수 있습니다. 처음이시라면 소액으로 먼저 시험 전송을 해보시는 편이 안전합니다." },
+  { q: "국내 거래소에서 지갑으로 바로 보낼 수 있나요?", a: "국내 거래소는 트래블룰 때문에 확인되지 않은 지갑으로 바로 보내지 못하는 경우가 있습니다. 이때는 거래소가 지원하는 외부 지갑을 거쳐 보내시면 됩니다. 해외 거래소는 대개 바로 보낼 수 있습니다. 거래소마다 다르니 출금 화면의 안내를 먼저 확인해 주세요." },
+  { q: "지갑이 처음인데 괜찮나요?", a: "괜찮습니다. 계정을 만들면 기본 지갑이 자동으로 생성되고, 이미 쓰시는 지갑이 있으면 연결해서 쓰셔도 됩니다. XRP는 일부 지갑과 호환되지 않으니 XRPL을 지원하는 지갑을 쓰셔야 합니다. 단계별로 안내해 드립니다." },
+  { q: "보상은 어떻게 지급되나요?", a: "기기가 보낸 측정값이 검증을 통과하면 네트워크 원칙에 따라 WLBN이 쌓입니다. 받으시려면 기기의 라이선스 NFT가 발급되어 있어야 합니다. 지급량과 가치는 보장되지 않습니다." },
 ];
 
 /* 기본 순서(8/27 서우 확정): 수령 → 블루투스 페어링 → Wi-Fi 연동이 선행, 그다음 리딤·NFT
@@ -287,39 +291,47 @@ export const SPECS_EN = [
 ];
 
 export const FAQS_EN = [
-  { q: "What is a reservation?", a: "It is not a payment. Sign in with Google and set your quantity; a voucher (reservation-confirmation NFT) is issued, and once you accept it in your wallet you can buy first in the priority window. Up to 5 per account." },
-  { q: "Does reserving guarantee I can buy?", a: "It does not guarantee a purchase. The priority window simply opens first for reserved members, and within it you can buy your requested quantity ahead of everyone else. Reserving costs nothing, and the actual quantity is yours to decide." },
-  { q: "How do the priority and general windows differ?", a: "The priority window (12:00 KST, Sept 15) opens first for reserved members who accepted their voucher. The general window is scheduled for 18:00 KST on Sept 15, and opens earlier if reserved units sell out first. The sale ends at 12:00 KST on Sept 16 and is never minted again." },
-  { q: "What if I do not accept the voucher?", a: "Your priority access is not confirmed. Reserving only gets the voucher issued; accepting it in your wallet is what confirms it. Without that, you would need to use the general window." },
-  { q: "When will the price be announced?", a: "Price and total supply are announced before the sale opens. Payment is in RLUSD — buying it on an exchange and withdrawing over XRPL takes time, so it is worth preparing early." },
-  { q: "Where do I get RLUSD?", a: "Buy RLUSD on a domestic or global exchange, then withdraw it to your personal wallet over the XRPL network. Always select the XRPL version of RLUSD when withdrawing." },
-  { q: "I've never used a wallet. Is that okay?", a: "Yes. Signing up with your Google account creates your wallet automatically, and a step-by-step guide walks you through node linking." },
-  { q: "How are rewards paid?", a: "When your measurements are verified, WLBN is paid under network rules. Amounts and value are not guaranteed." },
+  { q: "What is the pre-reservation?", a: "A reservation that opens at noon on September 7. It is not a payment and costs nothing. When you apply, a reservation NFT is issued to your wallet, and holders of that NFT get the priority purchase window first, at noon on September 15." },
+  { q: "How do I pre-reserve?", a: "Enter your wallet address and account ID — nothing else is collected. Accept the reservation NFT that arrives in your wallet and your reservation is confirmed." },
+  { q: "Does reserving guarantee I can buy?", a: "It does not guarantee a purchase. Reservation holders simply get the window first, and if applications exceed the prepared quantity, allocation is by draw rather than first-come. Reserving itself costs nothing." },
+  { q: "How many can I reserve?", a: "Up to 10 per account. For business or bulk purchases, please contact us separately." },
+  { q: "When can I buy?", a: "Pre-reservation runs from noon on September 7 to noon on September 14. The priority window opens at noon on September 15 and the general window at 6 p.m. the same day — earlier if reserved stock sells out first. The sale ends at noon on September 16." },
+  { q: "When will the price be announced?", a: "The price is announced before the sale opens. Payment is in RLUSD, and buying it and moving it to your wallet takes time, so we suggest preparing in advance." },
+  { q: "Where do I get RLUSD?", a: "Buy RLUSD on an exchange that supports it, then withdraw to your own wallet. On the withdrawal screen you must select the XRPL network — choosing another network can lose the funds. If this is your first time, send a small test amount first." },
+  { q: "Can I send straight from a Korean exchange to my wallet?", a: "Korean exchanges may block transfers to unverified wallets under travel-rule requirements. In that case, route through an external wallet the exchange supports. Overseas exchanges usually allow it directly. Rules differ by exchange, so check the withdrawal screen first." },
+  { q: "I have never used a wallet — is that a problem?", a: "Not at all. Creating an account generates a wallet for you, and you can connect one you already use instead. XRP is not compatible with every wallet, so use one that supports XRPL. We guide you step by step." },
+  { q: "How are rewards paid?", a: "When measurements from your device pass verification, WLBN accrues under network rules. To receive it, the device's license NFT must be issued. Amounts and value are not guaranteed." },
 ];
 
-/* 전체 FAQ 확장분 15문항 — 기본 8문항과 합쳐 23문항 (8/27, 접기/펴기 인라인 확장) */
 export const FAQS_EXTRA = [
-  { q: "결제는 왜 RLUSD로만 하나요?", a: "RLUSD는 미국 달러와 1:1로 연동되는 스테이블코인이라 가격 변동 걱정 없이 결제할 수 있습니다. 리플(Ripple)이 발행하고 뉴욕 금융감독청(NYDFS)의 규제를 받습니다." },
-  { q: "몇 개까지 신청할 수 있나요?", a: "구글 계정 1개당 최대 5개까지 신청할 수 있습니다." },
-  { q: "예매한 수량보다 적게 사도 되나요?", a: "네. 우선 구매창에서 신청 수량 안에서 원하는 만큼만 구매하시면 됩니다." },
-  { q: "제네시스 넘버가 뭔가요?", a: "제네시스 멤버십 NFT에 부여되는 일련번호입니다. 멤버십은 XRPL XLS-20 표준으로 발행되고 Taxon 은 1001입니다. 기기의 정품을 증명하는 라이선스 NFT와는 별개의 자산입니다." },
-  { q: "보상 부스트는 어떤 조건에서 유지되나요?", a: "최초로 멤버십을 수령한 지갑에서 보유 중일 때만 유효합니다. 다른 지갑으로 옮기거나 되파시면 부스트와 우선권은 따라가지 않습니다." },
-  { q: "라이선스 NFT는 뭔가요?", a: "기기의 정품과 참여 자격을 증명하는 XRPL 기반 증서입니다. 박스 안 리딤코드로 발급받으며, 이 NFT를 보유한 기기만 보상 대상이 됩니다." },
-  { q: "측정 기기는 어디서 사나요?", a: "측정 기기는 KWeather 몰에서 구매하실 수 있습니다. 이 사이트는 제네시스 멤버십만 판매하며 배송 정보를 받지 않습니다." },
-  { q: "배정된 제네시스 넘버는 어디서 확인하나요?", a: "구글 계정으로 로그인하면 주문 내역에서 정렬된 넘버 목록을 언제든 확인하고 복사할 수 있습니다." },
-  { q: "사이트가 저장하는 개인정보는 뭔가요?", a: "구글 계정 로그인만 사용하며, 별도의 개인정보는 저장하지 않습니다. 가입하면 내 지갑이 자동으로 만들어지고, 배송 정보는 발송 전 접수 폼에서만 받아 배송이 끝나면 파기합니다." },
+  /* 확장 문항 — 목록에서 "더 보기"로만 나온다. 구조·정책처럼 한 번 읽으면 되는 것을 둔다. */
+  { q: "배송은 언제 되나요? 배송비는 따로 드나요?", a: "배송 시기와 배송비는 판매 오픈 때 구매 화면에서 함께 안내해 드립니다. 사전예약 단계에서는 배송 정보를 받지 않습니다." },
+  { q: "환불되나요?", a: "사전예약에는 비용이 들지 않으므로 환불할 금액이 없습니다. 언제든 예약을 하지 않으셔도 됩니다. 구매 후의 환불은 판매 약관에 따르며, 약관은 판매 오픈 전에 공지됩니다." },
+  { q: "제네시스 멤버십이 뭔가요?", a: "가장 먼저 합류한 분에게 한 번만 발급되는 관측소 자격입니다. XRPL NFT(TAXON 1001)로 증명되고 계정당 1개이며, 이후 다시 발행되지 않습니다. 보상 부스트와 바운티 우선 배정이 따릅니다." },
+  { q: "라이선스 NFT는 뭔가요?", a: "자격을 증명하는 XRPL NFT입니다. 두 종류가 있습니다. 관측소는 계정당 1개로 합류 시기를 구분하고, 스테이션은 기기당 1개로 박스 안 리딤 코드로 발급합니다. 스테이션 NFT가 있어야 그 기기가 보상 대상이 됩니다." },
+  { q: "트러스트라인이 뭔가요?", a: "XRPL에서 내 지갑이 특정 토큰을 받겠다고 여는 통로입니다. RLUSD를 받으려면 필요하고, 결제 단계에서 자동으로 점검해 드리니 따로 하실 일은 없습니다." },
+  { q: "내 지갑 주소는 어디서 확인하나요?", a: "로그인하시면 화면 오른쪽 위에 지갑 주소가 줄여서 표시됩니다. 눌러서 전체 주소를 복사하실 수 있습니다." },
+  { q: "WLBN은 어떤 토큰인가요?", a: "네트워크의 보상·결제에 쓰이는 XRPL 발행 자산(IOU)입니다. 총 발행량은 1,000,000으로 고정되어 있습니다. 데이터가 팔릴 때마다 결제된 WLBN의 절반이 영구 소각되며, 소각 내역은 온체인 트랜잭션으로 확인하실 수 있습니다." },
+  { q: "보상 예산은 어떻게 정해지나요?", a: "하루 단위(에폭)로 예산을 먼저 고정한 뒤, 각 기기의 품질 점수 기여도에 따라 나눕니다. 기기 수가 늘어도 총 발행량이 늘지 않는 구조입니다." },
+  { q: "한 사람이 보상을 독식할 수 있나요?", a: "그렇게 되지 않도록 기기 하나가 하루 예산의 0.5%를 넘게 가져갈 수 없게 상한을 두고 있습니다." },
+  { q: "내 데이터가 팔리면 개인정보가 새나요?", a: "측정하는 값은 공기질 데이터뿐이고 개인을 식별하는 정보는 수집하지 않습니다. 판매·조회되는 데이터는 위치·시간을 뭉개고 식별자를 돌리는 비식별화 과정을 거치며, 응답에는 개별 기기가 아니라 묶음 통계만 담깁니다." },
+  { q: "기기만 쓰고 보상은 안 받아도 되나요?", a: "됩니다. 보상을 빼고 보셔도 CO₂·미세먼지·온습도를 실시간으로 보는 실내 공기질 측정기입니다. 보상은 원하실 때 라이선스 NFT를 발급받으시면 됩니다." },
+  { q: "측정 기기는 어떤 제품인가요?", a: "실내 공기질 측정기 ARC-600DA입니다. CO₂·미세먼지·온습도를 측정하고 KC 인증과 성능 인증을 받았습니다. 자세한 사양은 사이트의 제품 스펙에서 보실 수 있습니다." },
 ];
 
 export const FAQS_EXTRA_EN = [
-  { q: "Why is payment RLUSD-only?", a: "RLUSD is a stablecoin pegged 1:1 to the US dollar, so you can pay without worrying about price swings. It is issued by Ripple and regulated by the NYDFS." },
-  { q: "How many can I reserve?", a: "Up to 5 per Google account." },
-  { q: "Can I buy fewer than I reserved?", a: "Yes. In the priority window you can take as few as you like, up to your reserved quantity." },
-  { q: "What is a Genesis Number?", a: "The serial number carried by a Genesis Membership NFT. The membership is issued on the XRPL XLS-20 standard under Taxon 1001. It is a separate asset from the license NFT that proves a device is genuine." },
-  { q: "What keeps the reward boost valid?", a: "It applies only while the membership is held in the wallet that first received it. Moving it to another wallet, or reselling it, ends the boost and the priority benefits." },
-  { q: "What is the license NFT?", a: "An XRPL-based certificate proving your device is genuine and eligible to participate. It is minted with the redeem code inside the box, and only devices holding this NFT earn rewards." },
-  { q: "Where do I buy the measuring device?", a: "The measuring device is sold at the KWeather store. This site sells the Genesis Membership only and does not collect shipping details." },
-  { q: "Where do I find my assigned Genesis Numbers?", a: "Sign in with your Google account — your order history shows the sorted list, ready to copy, anytime." },
-  { q: "What personal data does this site store?", a: "Only Google sign-in — nothing else is stored. Signing up creates your wallet automatically, and delivery details are collected only via the pre-shipping form, then deleted after delivery." },
+  { q: "When does it ship, and is shipping charged separately?", a: "Shipping timing and cost are shown on the purchase screen when the sale opens. No delivery details are collected at the reservation stage." },
+  { q: "Can I get a refund?", a: "Pre-reservation costs nothing, so there is nothing to refund — you are free to walk away at any point. Refunds after purchase follow the sale terms, which are published before the sale opens." },
+  { q: "What is the Genesis membership?", a: "An observatory credential issued once, to those who join earliest. It is proven by an XRPL NFT (TAXON 1001), limited to one per account, and never reissued. It carries a reward boost and priority on bounties." },
+  { q: "What is the license NFT?", a: "An XRPL NFT that proves eligibility. There are two kinds: an observatory NFT, one per account, marking when you joined; and a station NFT, one per device, minted with the redeem code in the box. A device earns rewards only with its station NFT." },
+  { q: "What is a trustline?", a: "On the XRPL it is the channel your wallet opens to accept a given token. You need one to receive RLUSD, and we check it automatically during payment — nothing for you to do." },
+  { q: "Where do I find my wallet address?", a: "Once signed in, your wallet address appears abbreviated at the top right. Click it to copy the full address." },
+  { q: "What kind of token is WLBN?", a: "An XRPL-issued asset (IOU) used for rewards and payments on the network. Total supply is fixed at 1,000,000. Each time data is sold, half of the WLBN paid is burned permanently, and every burn is verifiable as an on-chain transaction." },
+  { q: "How is the reward budget decided?", a: "The budget is fixed first for each daily epoch, then divided by each device's contribution to quality score. Adding devices does not increase total issuance." },
+  { q: "Can one person take all the rewards?", a: "No. A single device is capped at 0.5% of the daily budget." },
+  { q: "If my data is sold, does my personal information leak?", a: "We measure air quality only and collect nothing that identifies a person. Data that is sold or queried goes through de-identification — location and time are generalized and identifiers rotated — and responses carry cohort statistics rather than individual devices." },
+  { q: "Can I use the device without taking rewards?", a: "Yes. Set the rewards aside and it is an indoor air quality monitor showing CO₂, particulates, temperature and humidity in real time. You can mint the license NFT whenever you want to start earning." },
+  { q: "What device is it?", a: "The ARC-600DA indoor air quality monitor. It measures CO₂, particulates, temperature and humidity, and carries KC certification and performance certification. Full specifications are on the site." },
 ];
 
 export const LINK_STEPS_EN: { n: string; t: string; d: string; d2?: string }[] = [
