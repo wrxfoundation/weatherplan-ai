@@ -470,23 +470,26 @@ export default function ElderHome() {
   // "메인화면 메시지 보내기는 여기와 연동"). 같은 목록을 두 자리에서 보는 것이라
   // 데이터는 한 벌만 둔다.
   const [sentMsgs, setSentMsgs] = useState([]);
-  const concMsgTap = () => {
-    if (concMsg === "rec") {
-      setConcMsg("sent");
-      // 실제로 누르고 있던 시간을 길이로 쓴다 (최소 3초 — 눌렀다 뗀 것도 한마디는 된다)
-      const sec = Math.max(3, Math.round((Date.now() - recStart.current) / 1000));
-      setSentMsgs((prev) => [
-        { id: `me-${Date.now()}`, dir: "out", at: Date.now(), durationSec: sec, text: "선생님께 보낸 목소리" },
-        ...prev,
-      ]);
-      dispatch({
-        type: "pushEvent",
-        payload: { kind: "부탁", text: `${ELDER.name} 음성 메시지 → 컨시어지 ${TEACHER.name}`, color: "#B08D57" },
-      });
-      return;
-    }
+  // 메시지 버튼을 누르면 가운데 녹음 창이 열린다 (2026-08-30 요청).
+  // 전에는 같은 버튼을 두 번 눌러 녹음·전송했는데, 지금 녹음 중인지가 작은
+  // 원 안 글씨로만 보여서 알기 어려웠다. 창을 띄우면 '지금 말할 차례'가 화면
+  // 전체로 분명해지고, 보내기 전에 그만둘 길(취소)도 생긴다.
+  const openConcMsg = () => {
     recStart.current = Date.now();
-    setConcMsg("rec"); // sent 상태에서 다시 누르면 새로 녹음
+    setConcMsg("rec");
+  };
+  const sendConcMsg = () => {
+    // 실제로 창을 열어 둔 시간을 길이로 쓴다 (최소 3초 — 짧게 한마디도 한마디다)
+    const sec = Math.max(3, Math.round((Date.now() - recStart.current) / 1000));
+    setSentMsgs((prev) => [
+      { id: `me-${Date.now()}`, dir: "out", at: Date.now(), durationSec: sec, text: "선생님께 보낸 목소리" },
+      ...prev,
+    ]);
+    dispatch({
+      type: "pushEvent",
+      payload: { kind: "부탁", text: `${ELDER.name} 음성 메시지 → 컨시어지 ${TEACHER.name}`, color: "#B08D57" },
+    });
+    setConcMsg("sent");
   };
 
   // 메시지함 목록 — 씨앗(TEACHER_INBOX)과 이번에 보낸 것을 합치고 24시간이 지난
@@ -534,6 +537,85 @@ export default function ElderHome() {
         <title>K-CARE</title>
       </Head>
       <Splash service="elder" />
+
+      {/* ── 목소리 메시지 녹음 창 (2026-08-30 요청) ──
+          화면 가운데에 띄운다. 어르신 화면에서 '지금 말할 차례'는 화면 전체로
+          말해야 알아채신다 — 작은 원 안 글씨로는 녹음 중인지 알기 어려웠다.
+          받는 사람(선생님)을 작은 글씨로 붙여 어디로 가는지 분명히 하고,
+          보내기는 맨 아래 — 엄지가 닿는 자리다. */}
+      {concMsg === "rec" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(8,23,45,.72)] px-6">
+          <div
+            className="w-full max-w-[360px] rounded-[26px] bg-white px-6 pb-6 pt-8 text-center"
+            style={{ boxShadow: "0 30px 60px -20px rgba(8,23,45,.6)" }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="목소리 메시지 녹음"
+          >
+            <span
+              aria-hidden
+              className="mx-auto flex h-[92px] w-[92px] items-center justify-center rounded-full"
+              style={{ background: "rgba(30,122,90,.12)", color: "#1E7A5A" }}
+            >
+              <span className="flex h-[68px] w-[68px] animate-livePing items-center justify-center rounded-full" style={{ background: "#1E7A5A", color: "#FFFFFF" }}>
+                <Icon name="mic" size={32} strokeWidth={2} />
+              </span>
+            </span>
+            <p className="mt-5 text-[30px] font-black leading-[1.25] text-navy">말씀하세요</p>
+            <p className="mt-1.5 text-[17px] leading-[1.5] text-muted">
+              {TEACHER.name} 선생님에게 전송됩니다
+            </p>
+            <button
+              onClick={sendConcMsg}
+              className="btn-press mt-6 w-full rounded-[18px] py-[19px] text-[21px] font-bold text-white"
+              style={{ background: "#1E7A5A" }}
+            >
+              보내기
+            </button>
+            <button
+              onClick={() => setConcMsg(null)}
+              className="btn-press mt-2 w-full rounded-[18px] py-[15px] text-[19px] font-bold text-muted"
+            >
+              그만두기
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 보낸 직후 — 어디로 갔는지 한 번 확인해 드리고 닫는다 */}
+      {concMsg === "sent" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(8,23,45,.72)] px-6">
+          <div
+            className="w-full max-w-[360px] rounded-[26px] bg-white px-6 pb-6 pt-8 text-center"
+            style={{ boxShadow: "0 30px 60px -20px rgba(8,23,45,.6)" }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="목소리 메시지 전송 완료"
+          >
+            <span
+              aria-hidden
+              className="mx-auto flex h-[92px] w-[92px] items-center justify-center rounded-full"
+              style={{ background: "rgba(30,122,90,.12)", color: "#1E7A5A" }}
+            >
+              <Icon name="speaker" size={38} strokeWidth={2} />
+            </span>
+            <p className="mt-5 text-[28px] font-black leading-[1.25] text-navy">보냈습니다</p>
+            <p className="mt-1.5 text-[18px] leading-[1.55] text-muted">
+              {TEACHER.name} 선생님이 들으시면 답을 주십니다.
+              <br />
+              보내신 것은 <b>선생님</b> 화면에 남아 있습니다.
+            </p>
+            <button
+              onClick={() => setConcMsg(null)}
+              className="btn-press mt-6 w-full rounded-[18px] py-[19px] text-[21px] font-bold text-navy"
+              style={QUIET_BG}
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="min-h-screen bg-nav">
         {/* break-keep: 한국어 어절 단위 줄바꿈 — 카피 개행(<br/>)과 병용 (06 §6) */}
         <div className="relative mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-4 min-[380px]:px-[22px]">
@@ -585,27 +667,15 @@ export default function ElderHome() {
                   {greetLine}
                 </h1>
                 <button
-                  onClick={concMsgTap}
-                  aria-label={
-                    concMsg === "rec"
-                      ? "말씀 중 — 다시 누르면 박지현 선생님께 보냅니다"
-                      : "박지현 선생님께 목소리 메시지 보내기"
-                  }
-                  className="btn-press flex h-[70px] w-[70px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-full text-center"
-                  style={
-                    concMsg === "rec"
-                      ? { background: "#B08D57", color: "#FFFFFF", boxShadow: "0 10px 22px -12px rgba(176,141,87,.8)" }
-                      : concMsg === "sent"
-                      ? { background: "rgba(30,122,90,.1)", color: "#1E7A5A", border: "2px solid rgba(30,122,90,.35)" }
-                      : { ...LIGHT_CARD, color: "#0A1F3C" }
-                  }
+                  onClick={openConcMsg}
+                  aria-label={`${TEACHER.name} 선생님께 목소리 메시지 보내기`}
+                  className="btn-press flex h-[70px] w-[70px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-full text-center text-white"
+                  style={{ background: "#1E7A5A", boxShadow: "0 10px 22px -12px rgba(30,122,90,.85)" }}
                 >
-                  <span aria-hidden style={{ color: concMsg === "rec" ? "#FFFFFF" : concMsg === "sent" ? "#1E7A5A" : "#B08D57" }}>
+                  <span aria-hidden>
                     <Icon name="mic" size={24} strokeWidth={2} />
                   </span>
-                  <span className="px-1 text-[14px] font-bold leading-[1.15]">
-                    {concMsg === "rec" ? "누르면 보내요" : concMsg === "sent" ? "보냈어요" : "메시지 보내기"}
-                  </span>
+                  <span className="text-[15px] font-bold leading-[1.15]">메시지</span>
                 </button>
               </div>
               {/* 하루 인사 — 홈에서만 (화이트보드 시안: 인사말 옆 "뭐하세요?").
@@ -761,25 +831,17 @@ export default function ElderHome() {
                   <div className="mt-[2px] text-[18px] text-white/[.82]">{TEACHER.role}</div>
                 </div>
               </div>
+              {/* 홈 인사 옆 '메시지' 버튼과 같은 창을 연다 — 보내는 길은 하나뿐이다 */}
               <button
-                onClick={concMsgTap}
-                className="btn-press mt-4 flex w-full items-center justify-center gap-2 rounded-[18px] py-[19px] text-[20px] font-bold"
-                style={
-                  concMsg === "rec"
-                    ? { background: "#B08D57", color: "#FFFFFF" }
-                    : { background: "rgba(255,255,255,.14)", color: "#FFFFFF" }
-                }
+                onClick={openConcMsg}
+                className="btn-press mt-4 flex w-full items-center justify-center gap-2 rounded-[18px] py-[19px] text-[20px] font-bold text-white"
+                style={{ background: "#1E7A5A" }}
               >
                 <span aria-hidden>
                   <Icon name="mic" size={24} strokeWidth={2} />
                 </span>
-                {concMsg === "rec" ? "누르면 보내요" : "목소리 보내기"}
+                메시지 보내기
               </button>
-              {concMsg === "sent" && (
-                <p className="mt-2.5 text-center text-[18px] font-bold text-gold">
-                  보냈습니다 · 아래 목록 맨 위에 있어요
-                </p>
-              )}
             </ElderCard>
 
             <ElderCard show={tab === "teacher"} order={1} style={LIGHT_CARD}>
