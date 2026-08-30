@@ -89,3 +89,16 @@ English
 > Conversations in this group are aggregated to improve support. Questions and
 > safety reports are kept in full so the team can act on them; everything else is
 > counted only as time, topic and tone statistics, with no message text stored.
+
+## 유입 경로 (8/30 확정)
+
+공지 채널 `wellbian :: official` 에 토론 그룹으로 `wellbian :: talk` 이 연결돼 있다.
+게시물마다 "댓글 남기기" 가 뜨고, 누르면 talk 으로 들어가 댓글을 단다 — 채널 구독자가
+그룹 참여자로 넘어오는 주 통로다.
+
+부작용 둘.
+- 채널 게시물이 talk 으로 자동 전달된다. 그것까지 대화로 세면 공지를 올릴 때마다
+  말수가 부풀고 주제 분포가 흔들려서, `is_automatic_forward` 를 세는 대상에서 뺐다.
+- 댓글을 달려면 그룹 참여가 필요하다. Rose 캡챠가 켜져 있으면 새로 들어온 사람은
+  캡챠를 풀기 전까지 말을 못 한다 — **9/7 전에 다른 계정으로 실제 댓글을 달아 확인할 것.**
+  막히면 방어(봇 차단)와 유입 사이에서 골라야 한다.
