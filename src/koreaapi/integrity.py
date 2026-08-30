@@ -53,15 +53,67 @@ def _core(rec: dict) -> dict:
     }
 
 
-def _sha_obj(obj) -> str:
-    return hashlib.sha256(
-        json.dumps(obj, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    ).hexdigest()
+def canonical_bytes(obj) -> bytes:
+    """THE canonical serialization — the one definition every hash in this project is taken over.
+
+    Published as an executable spec (`CANONICALIZATION` + `test_vector`) because "canonicalize, hash,
+    compare" is not a verifiable instruction: a re-implementer who reaches for a default JSON encoder
+    gets ASCII escapes and `", "` separators, hashes to something else, and concludes our data is
+    tampered. Both traps are live — every published record also CARRIES its own content_hash, so a
+    naive pass hashes a field that was never part of the input.
+    """
+    return json.dumps(obj, sort_keys=True, ensure_ascii=False,
+                      separators=(",", ":")).encode("utf-8")
+
+
+# The re-implementer's contract. Kept beside the code it describes so the published text cannot drift
+# from the behaviour (a doc-drift guard asserts the site serves exactly these rules).
+CANONICALIZATION = [
+    "Take ONLY the verified core, in this exact shape: entity_id, kind, "
+    "name{ko,en_official,romanized}, summary_en, summary_ko, data, skill_score, agreeing_sources, "
+    "sources.",
+    "Drop every other field. In particular drop content_hash itself — the published record carries "
+    "it, but it was never part of the hashed input.",
+    "skill_score: round to 4 decimal places. A missing or null score becomes 0.",
+    "sources: strip the trailing ' YYYY-MM-DD HH:MM UTC' fetch timestamp from each entry, then sort "
+    "them. The stable citation is hashed; the fetch time is not, so re-collecting the same fact does "
+    "not change the hash.",
+    "Serialize as JSON with keys sorted by Unicode code point, no whitespace (separators ',' and "
+    "':'), and non-ASCII characters emitted RAW — never \\uXXXX escapes.",
+    "Encode that string as UTF-8 and take the lowercase hex SHA-256. That is content_hash.",
+    "dataset_hash: sort every record's content_hash, concatenate them with no separator, SHA-256 the "
+    "UTF-8 bytes of the result. Order-independent by construction.",
+]
+
+# A known-good (input, output) pair: check your implementation against this BEFORE trusting it
+# against real data. Chosen to exercise the three things that actually break re-implementations —
+# a non-ASCII string, a float, and a timestamped source that must be stripped.
+TEST_VECTOR_RECORD = {
+    "entity_id": "test:vector",
+    "kind": "facts",
+    "name": {"ko": "테스트", "en_official": "Test", "romanized": "Teseuteu"},
+    "summary_en": "A canonicalization test vector.",
+    "summary_ko": "정규화 테스트 벡터.",
+    "data": {"geo": {"lat": 37.5, "lon": 127.0}, "aliases": ["A", "B"]},
+    "provenance": {"skill_score": 1.0, "agreeing_sources": 2,
+                   "sources": ["Wikidata Q1 2026-01-02 03:04 UTC", "Wikipedia Test 2026-01-02 03:04 UTC"]},
+    "content_hash": "not-part-of-the-input",   # present on purpose: it must be dropped
+}
 
 
 def record_fingerprint(rec: dict) -> str:
     """Stable SHA-256 of a record's verified content (ignores any existing `content_hash`)."""
-    return _sha_obj(_core(rec))
+    return hashlib.sha256(canonical_bytes(_core(rec))).hexdigest()
+
+
+def test_vector() -> dict:
+    """The published (input, canonical string, expected hash) triple — a re-implementer's self-test."""
+    core = _core(TEST_VECTOR_RECORD)
+    return {
+        "record": TEST_VECTOR_RECORD,
+        "canonical_json": canonical_bytes(core).decode("utf-8"),
+        "content_hash": record_fingerprint(TEST_VECTOR_RECORD),
+    }
 
 
 def dataset_hash(records: list[dict]) -> str:

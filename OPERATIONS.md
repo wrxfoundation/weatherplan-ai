@@ -80,6 +80,12 @@ rails. A missing key is a graceful skip, never an error.
   (+/ko/), `/guides.html` index (+/ko/), `/whats-new.html` (+/ko/), `/search.html` (+/ko/, ?q= deep
   links) over `search-index.json` (entities + people + labels), `/verify.html` (+/ko/, the trustless
   re-verification walkthrough: re-download → re-hash → compare), custom `/404.html`.
+- **Verifiability**: `content_hash` is defined by a published, executable canonicalization
+  spec (`integrity.CANONICALIZATION`) plus a known-good **test vector** — both served in
+  `/integrity.json` and rendered on `/verify.html` (+/ko/). A re-implementer checks the vector
+  first, then runs their code over `/latest.json`. The frozen vector hash in
+  `tests/test_canonicalization.py` makes any change to the algorithm a loud CI failure:
+  changing it would invalidate every hash ever published, including the Bitcoin-anchored chain.
 - **Machine**: `/latest.json` · per-vertical slices `/latest-<vertical>.json` · per-entity record
   twins `/artist/<slug>.json` (the entity's exact latest.json slice, same content_hash — fetch ONE
   record, not the corpus; gated by verifysite) · pre-computed Answer Products `/answers/*.json`

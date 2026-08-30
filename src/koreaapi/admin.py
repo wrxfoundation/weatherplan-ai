@@ -692,11 +692,15 @@ async def export(db_path: str | None = None, *, out_dir: str = "data") -> dict:
                    "MusicBrainz, OpenStreetMap, TMDB, KTO), identity- and hallucination-guarded, and "
                    "Skill-scored. The history (snapshots.jsonl) is append-only and hash-chained; the "
                    "chain_head is committed each build, so altered history is detectable."),
-        "verify": ("Per record: content_hash = SHA-256 of the canonical-JSON verified core (entity_id, "
-                   "kind, name{ko,en_official,romanized}, summary_en, summary_ko, data, skill_score@4dp, "
-                   "agreeing_sources, sources with the trailing ' YYYY-MM-DD HH:MM UTC' removed; JSON "
-                   "sort_keys, separators (',',':')). dataset_hash = SHA-256 of the sorted content_hashes "
-                   "joined. Recompute from latest.json to verify."),
+        "verify": ("Recompute from latest.json. The exact, language-independent rules are in "
+                   "`canonicalization`, and `test_vector` is a known-good (record, canonical string, "
+                   "hash) triple — check your implementation against it BEFORE trusting it on real data."),
+        # An executable spec beats prose: "canonicalize, hash, compare" is not a verifiable
+        # instruction. A re-implementer reaching for a default JSON encoder gets ASCII escapes and
+        # ", " separators and hashes to something else — and every published record carries its own
+        # content_hash, which was never part of the hashed input. Both traps are named here.
+        "canonicalization": integrity.CANONICALIZATION,
+        "test_vector": integrity.test_vector(),
         "note": ("Tamper-evidence via a published, git-committed head; the head is ALSO anchorable to "
                  "Bitcoin (external, keyless timestamp — see onchain_anchor)."),
     }
@@ -3980,9 +3984,22 @@ def _write_verify(out_dir: str) -> None:
         f"curl -s {_SITE_BASE}/integrity.json   # compare with dataset_hash</code></pre>"
         "<p class=rom>Same bytes, same hash — a tampered or stale mirror cannot reproduce it.</p>"
         "<h2>2 · Verify one record</h2>"
-        "<p>Every API response and entity page carries a <code>content_hash</code> — the SHA-256 "
-        "fingerprint of that record's canonical JSON. Fetch the record from "
-        f"<a href=\"{_SITE_BASE}/latest.json\">/latest.json</a>, canonicalize, hash, compare.</p>"
+        "<p>Every API response and entity page carries a <code>content_hash</code> — the SHA-256 of "
+        "that record's canonical JSON. &ldquo;Canonicalize&rdquo; is not a verifiable instruction on "
+        "its own, so here are the exact rules; the machine-readable copy lives in "
+        f"<a href=\"{_SITE_BASE}/integrity.json\">/integrity.json</a> under <code>canonicalization</code>.</p>"
+        "<ol>" + "".join(f"<li>{html.escape(rule)}</li>" for rule in integrity.CANONICALIZATION) + "</ol>"
+        "<p class=rom>The two traps that make a correct implementation disagree: a default JSON "
+        "encoder emits <code>\\uXXXX</code> escapes and <code>&quot;, &quot;</code> separators, and "
+        "the published record carries its own <code>content_hash</code> — which was never part of the "
+        "hashed input.</p>"
+        "<h3>Test vector — check your implementation before trusting it</h3>"
+        f"<pre><code>{html.escape(json.dumps(integrity.TEST_VECTOR_RECORD, ensure_ascii=False, indent=1))}</code></pre>"
+        "<p>canonicalizes to exactly:</p>"
+        f"<pre><code>{html.escape(integrity.test_vector()['canonical_json'])}</code></pre>"
+        f"<p>whose SHA-256 is <code>{integrity.test_vector()['content_hash']}</code>. Reproduce that "
+        "pair and your implementation is correct; then run it over "
+        f"<a href=\"{_SITE_BASE}/latest.json\">/latest.json</a>.</p>"
         "<h2>3 · Verify the history chain</h2>"
         f"<p>The append-only attestation log at <a href=\"{_SITE_BASE}/integrity-log.jsonl\">"
         "/integrity-log.jsonl</a> chains every build's dataset hash; <code>integrity.json</code> "
@@ -4005,7 +4022,17 @@ def _write_verify(out_dir: str) -> None:
         f"<pre><code>curl -s {_SITE_BASE}/latest.json | sha256sum\n"
         f"curl -s {_SITE_BASE}/integrity.json   # dataset_hash와 대조</code></pre>"
         "<h2>2 · 개별 레코드 검증</h2>"
-        "<p>모든 응답·페이지의 <code>content_hash</code>는 해당 레코드 정규 JSON의 SHA-256입니다.</p>"
+        "<p>모든 응답·페이지의 <code>content_hash</code>는 해당 레코드 정규 JSON의 SHA-256입니다. "
+        "&ldquo;정규화하라&rdquo;만으로는 재검증이 불가능하므로 규칙 전문을 공개합니다 — 기계가독 사본은 "
+        f"<a href='../integrity.json'>/integrity.json</a>의 <code>canonicalization</code>.</p>"
+        "<ol>" + "".join(f"<li>{html.escape(rule)}</li>" for rule in integrity.CANONICALIZATION) + "</ol>"
+        "<p class=rom>구현이 어긋나는 두 함정: 기본 JSON 인코더는 <code>\\uXXXX</code> 이스케이프와 "
+        "<code>&quot;, &quot;</code> 구분자를 쓰고, 발행 레코드는 자기 <code>content_hash</code>를 "
+        "품고 있는데 그건 해시 입력에 포함된 적이 없습니다.</p>"
+        "<h3>테스트 벡터 — 실데이터 전에 구현부터 검증</h3>"
+        f"<pre><code>{html.escape(integrity.test_vector()['canonical_json'])}</code></pre>"
+        f"<p>의 SHA-256 = <code>{integrity.test_vector()['content_hash']}</code>. 이 쌍을 재현하면 "
+        f"구현이 맞는 것이고, 그 다음 <a href='../latest.json'>/latest.json</a> 전체에 돌리면 됩니다.</p>"
         "<h2>3 · 히스토리 체인 검증</h2>"
         f"<p><a href=\"../integrity-log.jsonl\">/integrity-log.jsonl</a>이 빌드마다의 해시를 체인으로 "
         "잇습니다. 과거를 고쳐 쓰면 체인이 끊깁니다.</p>"
