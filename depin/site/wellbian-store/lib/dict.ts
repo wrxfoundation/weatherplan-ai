@@ -44,11 +44,11 @@ export const D = {
   /* 8/30 회의: "백서 안 봐도 이해되게" — 관측망·경제 구조 설명을 덜어내고
      개념 한 줄만 남긴다. 자세한 구조는 바로 아래 선순환 카드가 맡는다. */
   howLead: m({
-    ko: "공기는 건물마다, 골목마다 다릅니다. 내가 사는 공간에서 측정한 데이터가 토큰이 되고, 보상으로 돌아옵니다.",
-    en: "Air differs building by building, street by street. Data you measure where you live becomes tokens, and comes back as rewards.",
-    ja: "空気は建物ごと、路地ごとに違います。自分が暮らす空間で計測したデータがトークンになり、報酬として戻ります。",
-    zh: "空气因楼栋而异、因街巷而异。你在生活空间里测得的数据会生成代币，并作为奖励回到你手中。",
-    es: "El aire cambia de edificio en edificio y de calle en calle. Los datos que mides donde vives se convierten en tokens y vuelven como recompensa.",
+    ko: "공기는 건물마다, 골목마다 다릅니다.\n내가 사는 공간에서 측정한 데이터가 토큰이 되고, 보상으로 돌아옵니다.",
+    en: "Air differs building by building, street by street.\nData you measure where you live becomes tokens, and comes back as rewards.",
+    ja: "空気は建物ごと、路地ごとに違います。\n自分が暮らす空間で計測したデータがトークンになり、報酬として戻ります。",
+    zh: "空气因楼栋而异、因街巷而异。\n你在生活空间里测得的数据会生成代币，并作为奖励回到你手中。",
+    es: "El aire cambia de edificio en edificio y de calle en calle.\nLos datos que mides donde vives se convierten en tokens y vuelven como recompensa.",
   }),
   /* 4단계 카드 — 제목은 번호(①~④)를 코드에서 붙인다.
      8/30 회의(대표 지시): 장표대로 세 단계만 남긴다 — 측정 · 채굴 · 보상.
@@ -57,19 +57,19 @@ export const D = {
      지갑 전환은 넣지 않는다. 네 칸이 되면 장표와 어긋나고, 금액·수익 쪽으로 읽히기도 쉽다. */
   step1Title: m({ ko: "측정", en: "Measure", ja: "計測", zh: "测量", es: "Medir" }),
   step1Desc: m({
-    ko: "우리 집 공기를 측정합니다. CO₂·미세먼지·온습도를 실시간으로",
-    en: "Measure the air in your home — CO₂, particulates, temperature and humidity, in real time",
-    ja: "自宅の空気を計測します。CO₂・微小粒子・温湿度をリアルタイムで",
-    zh: "测量家中的空气：CO₂、颗粒物、温湿度，实时呈现",
-    es: "Mide el aire de tu casa: CO₂, partículas, temperatura y humedad, en tiempo real",
+    ko: "우리 집 공기를 측정합니다.\nCO₂·미세먼지·온습도를 실시간으로",
+    en: "Measure your home's air in real time.\nCO₂, particulates, temperature, humidity",
+    ja: "自宅の空気を計測します。\nCO₂・微小粒子・温湿度をリアルタイムで",
+    zh: "测量家中的空气。\nCO₂、颗粒物、温湿度，实时呈现",
+    es: "Mide el aire de tu casa.\nCO₂, partículas, temperatura y humedad, en tiempo real",
   }),
-  step2Title: m({ ko: "채굴", en: "Mine", ja: "マイニング", zh: "挖矿", es: "Minar" }),
+  step2Title: m({ ko: "검증", en: "Verify", ja: "検証", zh: "验证", es: "Verificar" }),
   step2Desc: m({
-    ko: "측정한 데이터가 검증을 거쳐 토큰이 됩니다. 연산으로 캐는 대신, 데이터로 캡니다",
-    en: "Verified measurements become tokens. Instead of computation, you mine with data",
-    ja: "計測データは検証を経てトークンになります。演算ではなく、データで掘ります",
-    zh: "测得的数据经验证后生成代币。不靠算力，而是用数据挖矿",
-    es: "Los datos verificados se convierten en tokens. En lugar de cómputo, minas con datos",
+    ko: "네트워크가 측정값을 확인합니다.\n검증을 통과해야 토큰이 됩니다",
+    en: "The network checks each reading.\nOnly data that passes becomes tokens",
+    ja: "ネットワークが計測値を確認します。\n検証を通ったデータだけがトークンになります",
+    zh: "网络会核实每一条测量值。\n只有通过验证的数据才会生成代币",
+    es: "La red comprueba cada medición.\nSolo los datos que la superan se convierten en tokens",
   }),
   step3Title: m({ ko: "보상", en: "Reward", ja: "報酬", zh: "奖励", es: "Recompensa" }),
   step3Desc: m({
@@ -97,19 +97,11 @@ export const D = {
     es: "Ves tu aire",
   }),
   benefit1Desc: m({
-    ko: "CO₂가 오르면 알려 줍니다. 언제 환기해야 하는지, 아이 방 공기가 지금 어떤지 숫자로 봅니다.",
-    en: "It tells you when CO₂ climbs. See when to open a window, and what the air in your child's room is like right now — in numbers.",
-    ja: "CO₂ が上がれば知らせます。いつ換気すべきか、子ども部屋の空気が今どうなのかを数字で見ます。",
-    zh: "CO₂ 升高时会提醒你。何时该开窗、孩子房间此刻的空气如何，都以数字呈现。",
-    es: "Te avisa cuando sube el CO₂. Ves cuándo ventilar y cómo está ahora el aire del cuarto de tu hijo, en números.",
-  }),
-  /* 이 한 줄이 회의에서 강하게 요구된 문장이다 — 보상이 0이어도 남는 것이 있다 */
-  benefit1Tag: m({
-    ko: "보상을 빼고 봐도, 매일 쓰는 공기질 측정기입니다",
-    en: "Set the rewards aside and it's still an air quality monitor you use every day",
-    ja: "報酬を抜きにしても、毎日使う空気質測定器です",
-    zh: "即使不算奖励，它也是一台每天都用得上的空气质量测定仪",
-    es: "Aun sin las recompensas, sigue siendo un medidor de calidad del aire de uso diario",
+    ko: "CO₂가 오르면 알려 줍니다. 언제 환기해야 하는지, 내 방 공기가 지금 어떤지 숫자로 봅니다.",
+    en: "It tells you when CO₂ climbs. See when to open a window, and what the air in your own room is like right now — in numbers.",
+    ja: "CO₂ が上がれば知らせます。いつ換気すべきか、自分の部屋の空気が今どうなのかを数字で見ます。",
+    zh: "CO₂ 升高时会提醒你。何时该开窗、自己房间此刻的空气如何，都以数字呈现。",
+    es: "Te avisa cuando sube el CO₂. Ves cuándo ventilar y cómo está ahora el aire de tu propia habitación, en números.",
   }),
   benefit2Title: m({
     ko: "데이터가 보상이 됩니다",
@@ -119,11 +111,11 @@ export const D = {
     es: "Tus datos generan recompensa",
   }),
   benefit2Desc: m({
-    ko: "측정이 쌓이는 동안 네트워크 원칙에 따라 WLBN이 지급됩니다. 기기를 켜 두는 것 말고 따로 할 일은 없습니다.",
-    en: "As measurements accumulate, WLBN is paid out under network rules. Beyond keeping the device on, there is nothing to do.",
-    ja: "計測が積み上がる間、ネットワークの規則に従って WLBN が支給されます。機器を動かしておくほかにすることはありません。",
-    zh: "在数据不断累积的同时，按网络规则发放 WLBN。除了让设备保持运行，无需其他操作。",
-    es: "Mientras se acumulan las mediciones, se entrega WLBN según las reglas de la red. Más allá de mantener el equipo encendido, no hay nada que hacer.",
+    ko: "측정이 쌓이는 동안 네트워크 원칙에 따라 WLBN이 지급됩니다. 기기를 켜 두고 Wi-Fi를 제대로 연결하기만 하면 됩니다.",
+    en: "As measurements accumulate, WLBN is paid out under network rules. All you do is keep the device on and its Wi-Fi properly connected.",
+    ja: "計測が積み上がる間、ネットワークの規則に従って WLBN が支給されます。機器を動かし、Wi-Fi をきちんと接続しておくだけです。",
+    zh: "在数据不断累积的同时，按网络规则发放 WLBN。你只需让设备保持开启，并接好 Wi-Fi。",
+    es: "Mientras se acumulan las mediciones, se entrega WLBN según las reglas de la red. Basta con mantener el equipo encendido y su Wi-Fi bien conectado.",
   }),
 
   /* ── 선순환 ────────────────────────────────────────────────────────── */

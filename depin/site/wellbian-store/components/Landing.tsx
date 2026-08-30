@@ -551,7 +551,9 @@ export default function Landing() {
               Turn Your Weather Data into Value
             </div>
             <h2 style={h2}>{t(D.howTitle)}</h2>
-            <p style={{ fontSize: 19.5, lineHeight: 1.72, color: "var(--ink-4)", maxWidth: 780, margin: "0 auto" }}>
+            {/* 8/30 서우: 줄바꿈 위치를 문구가 정한다(pre-line) — 화면 폭에 따라 끊기면
+                "공기는 건물마다, 골목마다 다릅니다" 가 다음 줄과 붙어 한 문장처럼 읽힌다 */}
+            <p style={{ fontSize: 19.5, lineHeight: 1.72, color: "var(--ink-4)", maxWidth: 780, margin: "0 auto", whiteSpace: "pre-line" }}>
               {t(D.howLead)}
             </p>
           </div>
@@ -561,7 +563,7 @@ export default function Landing() {
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
             <HowCard icon={<IconVerify />} title={`② ${t(D.step2Title)}`} desc={t(D.step2Desc)} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<IconReward />} title={`③ ${t(D.step3Title)}`} desc={<>{t(D.step3Desc)}<br /><span style={{ fontSize: 15, color: "var(--cap)" }}>{t(D.rewardNotGuaranteed)}</span></>} />
+            <HowCard icon={<IconReward />} title={`③ ${t(D.step3Title)}`} desc={<>{t(D.step3Desc)}<sup style={{ color: "var(--cap)" }}>*</sup></>} />
           </div>
 
           {/* 혜택 두 가지 (8/30 회의: 이미지·개념·혜택 3요소).
@@ -571,8 +573,8 @@ export default function Landing() {
               {t(D.benefitTitle)}
             </div>
             <div className="ben-grid">
-              <BenefitCard n="①" title={t(D.benefit1Title)} desc={t(D.benefit1Desc)} tag={t(D.benefit1Tag)} />
-              <BenefitCard n="②" title={t(D.benefit2Title)} desc={t(D.benefit2Desc)} note={t(D.rewardNotGuaranteed)} />
+              <BenefitCard n="①" title={t(D.benefit1Title)} desc={t(D.benefit1Desc)} />
+              <BenefitCard n="②" title={t(D.benefit2Title)} desc={t(D.benefit2Desc)} star />
             </div>
           </div>
           {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
@@ -605,10 +607,19 @@ export default function Landing() {
               <span>{t(D.loopReturn)}</span>
             </div>
             <p style={{ fontSize: 17.5, lineHeight: 1.7, color: "var(--ink-4)" }}>
-              {t(D.loopBody1)}<br />{t(D.loopBody2)}
+              {t(D.loopBody1)}<br />{t(D.loopBody2)}<sup style={{ color: "var(--cap)" }}>**</sup>
             </p>
-            <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "var(--cap)" }}>
-              {t(D.privacyNotice)}
+          </div>
+
+          {/* 8/30 서우: 고지 두 줄을 카드 안에서 빼 섹션 맨 아래 각주로 모았다.
+              카드마다 회색 단서가 붙어 있으면 정작 읽어야 할 문장과 무게가 비슷해진다.
+              자리를 옮겼을 뿐 문구는 그대로다 — 참조는 * / ** 로 남긴다. */}
+          <div style={{ maxWidth: 880, margin: "0 auto", width: "100%", textAlign: "left", display: "flex", flexDirection: "column", gap: 5 }}>
+            <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "var(--cap)", margin: 0 }}>
+              <span style={{ marginRight: 5 }}>*</span>{t(D.rewardNotGuaranteed)}
+            </p>
+            <p style={{ fontSize: 14.5, lineHeight: 1.6, color: "var(--cap)", margin: 0 }}>
+              <span style={{ marginRight: 5 }}>**</span>{t(D.privacyNotice)}
             </p>
           </div>
         </div>
@@ -889,27 +900,22 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
       {/* 8/28 서우 5차: 래스터 3D → 인라인 SVG(반투명·연한 색·약한 유광). 4개가 같은 96 뷰박스라 광학 크기가 자동으로 맞는다 */}
       <div style={{ height: 120, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>{icon}</div>
       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
-      <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
+      <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)", whiteSpace: "pre-line" }}>{desc}</div>
     </div>
   );
 }
 
-/* 혜택 카드 (8/30 회의). 강조 줄(tag)은 ①에만 있다 — "측정기만으로도 쓸모 있다" 가
-   이 섹션에서 제일 세게 나가야 하는 문장이라 배지로 띄운다.
-   ②의 note 는 비보장 고지다. 자리를 지키되 크기로 앞서지 않게 둔다. */
-function BenefitCard({ n, title, desc, tag, note }: {
-  n: string; title: string; desc: string; tag?: string; note?: string;
+/* 혜택 카드 (8/30 회의). 고지는 카드 안에 두지 않는다 — 섹션 맨 아래 각주로 모으고
+   여기서는 * 참조만 남긴다(8/30 서우). */
+function BenefitCard({ n, title, desc, star }: {
+  n: string; title: string; desc: string; star?: boolean;
 }) {
   return (
     <div style={{ border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.25)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "24px 24px 26px", display: "flex", flexDirection: "column", gap: 10, textAlign: "left" }}>
       <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>{n} {title}</div>
-      <div style={{ fontSize: 17, lineHeight: 1.65, color: "var(--ink-4)" }}>{desc}</div>
-      {tag && (
-        <div style={{ marginTop: 2, alignSelf: "flex-start", background: "rgba(124,107,240,.12)", color: "var(--w-main)", fontSize: 15, fontWeight: 700, lineHeight: 1.5, borderRadius: 10, padding: "8px 12px" }}>
-          {tag}
-        </div>
-      )}
-      {note && <div style={{ marginTop: 2, fontSize: 14.5, color: "var(--cap)" }}>{note}</div>}
+      <div style={{ fontSize: 17, lineHeight: 1.65, color: "var(--ink-4)" }}>
+        {desc}{star && <sup style={{ color: "var(--cap)" }}>*</sup>}
+      </div>
     </div>
   );
 }
