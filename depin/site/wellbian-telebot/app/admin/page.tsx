@@ -1,41 +1,35 @@
-/* CS 대시보드 (8/30 서우 — "텔레그램 현황 대시보드 · cs 분류 및 처리")
+/* CS 대시보드 (8/30 서우 — "브랜드 가이드에 맞게, 위계질서와 UX")
 
-   봇이 답하지 못한 질문이 여기 쌓인다. 텔레그램 운영 채널의 카드와 같은 데이터를 보지만,
-   채널은 하나씩 흘러가는 피드이고 이 화면은 전체를 한 번에 본다 — 어느 주제가 몰리는지,
-   무엇이 아직 처리되지 않았는지는 목록을 세로로 늘어놓아야 보인다.
+   판매 사이트와 같은 토큰·서체를 쓴다(app/globals.css). 관리 도구라고 다른 팔레트를 쓰면
+   같은 제품처럼 보이지 않고, 두 화면을 오가는 사람이 한 사람이라 더 그렇다.
 
-   접근은 ADMIN_KEY 하나로 막는다. 로그인 화면을 붙이면 계정·세션·복구가 따라오는데,
-   판매 전 여드레에 그만한 표면을 늘릴 이유가 없다. 주소를 아는 사람만 들어온다. */
+   위계는 "지금 손이 필요한가"를 기준으로 넷으로 나눴다.
+     1 지금 처리해야 할 것(긴급·미처리) — 가장 크게, 색으로
+     2 흐름을 보는 숫자(전체·적중률) — 한 줄로 조용히
+     3 검색과 필터 — 도구이지 정보가 아니므로 무게를 낮춘다
+     4 목록
+   앞의 셋을 다 크게 만들면 위계가 없어지고, 그러면 몰릴 때 눈이 어디에도 먼저 가지 않는다. */
 
 import { listItems, patchItem, getItem, storeKind, type CsStatus } from "@/lib/store";
 import { getDoc } from "@/lib/faq-client";
 import { tgCall } from "@/lib/tg";
-import { MOOD_LABEL, STATUS_LABEL, SEV_LABEL, overdueMin, type CsMoodTag, type CsSeverity } from "@/lib/cs";
+import { STATUS_LABEL, SEV_LABEL, MOOD_LABEL, overdueMin, type CsMoodTag, type CsSeverity } from "@/lib/cs";
 import { applyFilters } from "@/lib/filter";
 import { clusterItems } from "@/lib/cluster";
 
 export const dynamic = "force-dynamic";
-
 const KEY = process.env.ADMIN_KEY ?? "";
-
-const C = {
-  bg: "#0E0E14", card: "#181822", line: "#2A2A38", ink: "#E8E8F0", mute: "#8A8AA0",
-  new: "#5B8DEF", doing: "#D9A441", done: "#4FA96A", faq: "#9B6BD6", neg: "#D9534F",
-  high: "#E05A4F", mid: "#D9A441", low: "#6A6A80",
-};
-const STATUS_COLOR: Record<string, string> = { new: C.new, doing: C.doing, done: C.done, faq: C.faq };
 
 export default async function Admin({
   searchParams,
 }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
   const k = sp.k ?? "";
-
   if (!KEY || k !== KEY) {
     return (
-      <main style={{ background: C.bg, color: C.ink, minHeight: "100vh", padding: 48, fontFamily: "system-ui, sans-serif" }}>
-        <h1 style={{ fontSize: 18, margin: 0 }}>접근 키가 필요합니다</h1>
-        <p style={{ color: C.mute, fontSize: 14 }}>
+      <main className="wrap" style={{ paddingTop: 56 }}>
+        <h1 style={{ fontSize: 19, fontWeight: 800 }}>접근 키가 필요합니다</h1>
+        <p style={{ marginTop: 8, color: "var(--ink-3)", fontSize: 14 }}>
           {KEY ? "주소 끝에 ?k=… 를 붙여 주세요." : "ADMIN_KEY 환경변수가 설정되지 않았습니다."}
         </p>
       </main>
@@ -44,437 +38,367 @@ export default async function Admin({
 
   const all = await listItems();
   const doc = await getDoc();
-  const fStatus = sp.status ?? "";
-  const fTopic = sp.topic ?? "";
-  const fKind = sp.kind ?? "";
-  const fSev = sp.sev ?? "";
-  const q = sp.q ?? "";
-  const items = applyFilters(all, { status: fStatus, topic: fTopic, kind: fKind, sev: fSev, q });
+  const fStatus = sp.status ?? "", fTopic = sp.topic ?? "", fKind = sp.kind ?? "";
+  const fSev = sp.sev ?? "", q = sp.q ?? "";
   const grouped = sp.group === "1";
+  const isOpen = (i: { status: string }) => i.status !== "done" && i.status !== "faq";
+  const filtered = applyFilters(all, { status: fStatus, topic: fTopic, kind: fKind, sev: fSev, q });
+
+  /* 순서가 곧 위계다. 시간순으로 두면 긴급 건이 목록 맨 아래로 밀려서, 화면 위쪽에
+     "긴급 2건"이라고 크게 띄워 놓고 정작 그 두 건은 스크롤을 한참 내려야 나온다.
+     그래서 미처리 → 긴급도 → 오래 기다린 순으로 세운다. 같은 급이면 먼저 물은 사람이
+     먼저다. 닫힌 건만 최신순으로 뒤에 붙인다 — 그건 훑어보는 기록이지 처리 대상이 아니다. */
+  const rank = (i: typeof all[number]) =>
+    !isOpen(i) ? 9 : i.sev === "high" ? 0 : i.sev === "mid" ? 1 : 2;
+  const items = [...filtered].sort((a, b) => {
+    const ra = rank(a), rb = rank(b);
+    return ra !== rb ? ra - rb : ra === 9 ? b.at - a.at : a.at - b.at;
+  });
   const clusters = grouped ? clusterItems(items) : [];
 
   const count = (f: (i: typeof all[number]) => boolean) => all.filter(f).length;
   const topics = [...new Set(all.map((i) => i.topic))].sort();
 
-  /* FAQ 적중률 — 후보를 보여준 것 중 사용자가 실제로 하나를 눌러 갈음된 비율.
-     "후보를 보여줬다"와 "답이 됐다"는 다르고, 이 숫자가 그 차이를 드러낸다.
-     낮으면 정본이 얇거나 매칭이 틀린 것이다 — 어느 쪽인지는 목록을 보면 안다. */
+  const urgentOpen = count((i) => i.sev === "high" && isOpen(i));
+  const openCount = count((i) => i.kind !== "matched" && isOpen(i));
+  const overdue = count((i) => isOpen(i) && overdueMin(i.at, (i.sev ?? "low") as CsSeverity) > 0);
   const shown = count((i) => i.kind === "matched");
   const solved = count((i) => i.kind === "matched" && i.status === "done");
-  const hitRate = shown ? Math.round((solved / shown) * 100) : null;
-  const openCount = count((i) => i.kind !== "matched" && i.status !== "done" && i.status !== "faq");
+  const hit = shown ? Math.round((solved / shown) * 100) : null;
 
-  /* 상태 변경 — 같은 데이터를 텔레그램 카드 버튼도 바꾼다. 두 곳에서 같은 함수를 부른다 */
+  const link = (o: Record<string, string>) => {
+    const p = new URLSearchParams({ k, ...(fStatus && { status: fStatus }), ...(fTopic && { topic: fTopic }),
+      ...(fKind && { kind: fKind }), ...(fSev && { sev: fSev }), ...(q && { q }),
+      ...(grouped && { group: "1" }), ...o });
+    for (const [key, v] of [...p.entries()]) if (!v) p.delete(key);
+    return `/admin?${p}`;
+  };
+
   async function setStatus(form: FormData) {
     "use server";
     if ((form.get("k") as string) !== KEY) return;
     await patchItem(form.get("id") as string, { status: form.get("to") as CsStatus });
   }
-
-  /* 여러 건 한 번에 — 몰릴 때 하나씩 누르면 못 따라간다 */
   async function bulkStatus(form: FormData) {
     "use server";
     if ((form.get("k") as string) !== KEY) return;
     const to = form.get("to") as CsStatus;
-    const ids = form.getAll("ids").map(String);
-    for (const id of ids) await patchItem(id, { status: to });
+    for (const id of form.getAll("ids").map(String)) await patchItem(id, { status: to });
   }
-
-  /* 묶음 답장 — 같은 질문 스무 건에 같은 정본을 한 번에 보낸다.
-     한 번에 30건까지만 보내는 이유: 서버리스 함수에는 시간 제한이 있고, 텔레그램도
-     초당 처리량이 정해져 있다. 넘치면 도중에 잘려 "보낸 줄 알았는데 안 간" 건이 생긴다. */
-  async function bulkReply(form: FormData) {
-    "use server";
-    if ((form.get("k") as string) !== KEY) return;
-    const faqId = String(form.get("faqId") ?? "");
-    if (!faqId) return;
-    const ids = form.getAll("ids").map(String).slice(0, 30);
-    const doc = await getDoc();
-    for (const id of ids) {
-      const item = await getItem(id);
-      if (!item?.chatId || item.status === "done") continue;
-      const lang = item.lang === "ko" ? "ko" : "en";
-      const hit = doc?.faq[lang]?.find((f) => f.id === faqId);
-      if (!hit) continue;
-      const body = `${hit.q}\n\n${hit.a}`;
-      const ok = await tgCall("sendMessage", {
-        chat_id: item.chatId, text: body, disable_web_page_preview: true,
-      });
-      if (ok) await patchItem(id, { status: "done", note: body, repliedAt: Date.now() });
-    }
-  }
-
-  /* 답장 — 분류만 하고 답을 못 보내면 CS 처리가 완결되지 않는다.
-     정본 FAQ 를 골라 보내는 길을 기본으로 둔 이유: 답을 새로 쓰지 않으니 발화 규칙을
-     매번 다시 검토할 필요가 없고, 사이트·봇과 문장이 갈리지도 않는다. 몰릴 때 제일 빠르다. */
+  /* 답장 — 정본 FAQ 를 골라 보내는 길을 기본으로 둔다. 답을 새로 쓰지 않으니 발화 규칙을
+     매번 검토할 필요가 없고 사이트·봇과 문장이 갈리지도 않는다. 몰릴 때 제일 빠르다. */
   async function sendReply(form: FormData) {
     "use server";
     if ((form.get("k") as string) !== KEY) return;
     const id = form.get("id") as string;
     const item = await getItem(id);
     if (!item?.chatId) return;
-
     let body = String(form.get("text") ?? "").trim();
     const faqId = String(form.get("faqId") ?? "");
     if (faqId) {
-      const doc = await getDoc();
-      const lang = item.lang === "ko" ? "ko" : "en";
-      const hit = doc?.faq[lang]?.find((f) => f.id === faqId);
-      if (hit) body = `${hit.q}\n\n${hit.a}`;
+      const d = await getDoc();
+      const hitF = d?.faq[item.lang === "ko" ? "ko" : "en"]?.find((f) => f.id === faqId);
+      if (hitF) body = `${hitF.q}\n\n${hitF.a}`;
     }
     if (!body) return;
-
-    const ok = await tgCall("sendMessage", {
-      chat_id: item.chatId, text: body, disable_web_page_preview: true,
-    });
+    const ok = await tgCall("sendMessage", { chat_id: item.chatId, text: body, disable_web_page_preview: true });
     /* 보내지 못했으면 완료로 바꾸지 않는다 — 안 간 답을 완료로 적으면 그 사람은 잊힌다 */
     if (ok) await patchItem(id, { status: "done", note: body, repliedAt: Date.now() });
   }
+  /* 한 번에 30건까지 — 서버리스에 시간 제한이 있고 텔레그램도 초당 처리량이 정해져 있다.
+     넘치면 도중에 잘려 "보낸 줄 알았는데 안 간" 건이 생긴다. */
+  async function bulkReply(form: FormData) {
+    "use server";
+    if ((form.get("k") as string) !== KEY) return;
+    const faqId = String(form.get("faqId") ?? "");
+    if (!faqId) return;
+    const d = await getDoc();
+    for (const id of form.getAll("ids").map(String).slice(0, 30)) {
+      const item = await getItem(id);
+      if (!item?.chatId || item.status === "done") continue;
+      const hitF = d?.faq[item.lang === "ko" ? "ko" : "en"]?.find((f) => f.id === faqId);
+      if (!hitF) continue;
+      const body = `${hitF.q}\n\n${hitF.a}`;
+      if (await tgCall("sendMessage", { chat_id: item.chatId, text: body, disable_web_page_preview: true }))
+        await patchItem(id, { status: "done", note: body, repliedAt: Date.now() });
+    }
+  }
 
-  const S = {
-    chip: { display: "inline-block", padding: "6px 12px", borderRadius: 999, border: `1px solid ${C.line}`,
-            fontSize: 13, textDecoration: "none", color: C.ink, marginRight: 8, marginBottom: 8 } as const,
-    btn: { background: "transparent", border: `1px solid ${C.line}`, color: C.mute, borderRadius: 8,
-           padding: "6px 10px", fontSize: 12.5, cursor: "pointer", marginRight: 6 } as const,
+  const when = (ms: number) => {
+    const t = new Date(ms + 9 * 3600000);
+    const p = (n: number) => String(n).padStart(2, "0");
+    return `${t.getUTCMonth() + 1}/${t.getUTCDate()} ${p(t.getUTCHours())}:${p(t.getUTCMinutes())}`;
   };
 
-  const link = (o: Record<string, string>) => {
-    const p = new URLSearchParams({ k, ...(fStatus && { status: fStatus }),
-      ...(fTopic && { topic: fTopic }), ...(fKind && { kind: fKind }),
-      ...(fSev && { sev: fSev }), ...(q && { q }), ...(grouped && { group: "1" }), ...o });
-    for (const [key, v] of [...p.entries()]) if (!v) p.delete(key);
-    return `/admin?${p}`;
-  };
+  const faqOptions = (lang: string) => (doc?.faq[lang === "ko" ? "ko" : "en"] ?? []);
 
   return (
-    <main style={{ background: C.bg, color: C.ink, minHeight: "100vh", padding: "32px 28px 80px",
-                   fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <div style={{ maxWidth: 980, margin: "0 auto" }}>
-
-        <header style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 24 }}>
-          <h1 style={{ fontSize: 20, margin: 0, fontWeight: 800 }}>CS 인박스</h1>
-          <span style={{ fontSize: 12.5, color: C.mute }}>
+    <>
+      <header className="top">
+        <div className="wrap top-in">
+          <span className="brand">CS 인박스</span>
+          <span className="brand-sub">
             @wellbiantalk · 저장소 {storeKind() === "kv" ? "KV" : "메모리(임시)"}
           </span>
-          <nav style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
-            <a href={link({ group: grouped ? "" : "1" })}
-               style={{ ...S.chip, marginBottom: 0, borderColor: grouped ? C.ink : C.line }}>
-              {grouped ? "묶어 보기 ✓" : "묶어 보기"}
+          <nav className="top-nav">
+            <a className={`chip${grouped ? " on" : ""}`} href={link({ group: grouped ? "" : "1" })}>
+              묶어 보기
             </a>
-            <a href={`/admin/people?k=${k}`} style={{ ...S.chip, marginBottom: 0 }}>사람 보기 →</a>
-            <a href={link({}).replace("/admin?", "/api/admin/export?")}
-               style={{ ...S.chip, marginBottom: 0, marginRight: 0 }}>CSV</a>
-            <a href={link({}).replace("/admin?", "/api/admin/export?") + "&format=json"}
-               style={{ ...S.chip, marginBottom: 0, marginRight: 0, color: C.mute }}>JSON</a>
+            <a className="chip" href={`/admin/people?k=${k}`}>사람</a>
+            <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?")}>CSV</a>
+            <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?") + "&format=json"}>JSON</a>
           </nav>
-        </header>
+        </div>
+      </header>
 
-        {/* 검색 — 원문·메모·사용자를 함께 훑는다 */}
-        <form method="get" action="/admin" style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-          <input type="hidden" name="k" value={k} />
-          {fStatus && <input type="hidden" name="status" value={fStatus} />}
-          {fTopic && <input type="hidden" name="topic" value={fTopic} />}
-          {fKind && <input type="hidden" name="kind" value={fKind} />}
-          {fSev && <input type="hidden" name="sev" value={fSev} />}
-          <input name="q" defaultValue={q} placeholder="원문 · 메모 · 사용자 검색"
-                 style={{ flex: 1, background: C.card, border: `1px solid ${C.line}`, color: C.ink,
-                          borderRadius: 10, padding: "10px 14px", fontSize: 14 }} />
-          <button type="submit" style={{ ...S.btn, padding: "10px 18px", color: C.ink }}>검색</button>
-          {q && <a href={link({ q: "" })} style={{ ...S.chip, marginBottom: 0, alignSelf: "center" }}>지우기</a>}
-        </form>
-
+      <main className="wrap" style={{ paddingBottom: 72 }}>
         {storeKind() === "memory" && (
-          <div style={{ background: "#3A2A18", border: `1px solid ${C.doing}`, borderRadius: 10,
-                        padding: "12px 14px", fontSize: 13, marginBottom: 20, lineHeight: 1.6 }}>
-            KV 가 연결되지 않았습니다. 지금 기록은 서버가 살아 있는 동안만 남고, 배포·재시작이나
-            다른 인스턴스로 넘어가면 사라집니다. Vercel 프로젝트 → Storage 에서 KV 를 만들어
-            이 프로젝트에 연결하면 환경변수가 자동으로 붙고 그때부터 영구히 쌓입니다.
+          <div className="notice">
+            KV 가 연결되지 않았습니다. 지금 기록은 서버가 살아 있는 동안만 남고 배포·재시작에 사라집니다.
+            Vercel 프로젝트 → Storage 에서 KV 를 만들어 이 프로젝트에 연결하면 환경변수가 자동으로 붙습니다.
           </div>
         )}
 
-        {/* 한 줄 요약 — 지금 손이 필요한 건 몇 건이고, FAQ 가 얼마나 맞고 있는가 */}
-        <div style={{ display: "flex", gap: 24, flexWrap: "wrap", marginBottom: 18,
-                      padding: "14px 18px", background: C.card, border: `1px solid ${C.line}`, borderRadius: 12 }}>
-          <div>
-            <div style={{ fontSize: 11.5, color: C.mute }}>들어온 문의</div>
-            <div style={{ fontSize: 20, fontWeight: 800 }}>{all.length}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11.5, color: C.mute }}>처리 필요</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: openCount ? C.new : C.mute }}>{openCount}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11.5, color: C.mute }}>긴급</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: count((i) => i.sev === "high" && i.status === "new") ? C.high : C.mute }}>
-              {count((i) => i.sev === "high" && i.status === "new")}
+        {/* 1차 — 지금 손이 필요한 것 */}
+        <section className="now">
+          <a className={`now-card lead${urgentOpen ? " alert" : ""}`} href={link({ sev: "high", status: "" })}>
+            <div className="now-k">긴급 · 미처리</div>
+            <div className="now-v mono" style={{ color: urgentOpen ? "var(--warn-icon)" : "var(--dis)" }}>
+              {urgentOpen}
             </div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11.5, color: C.mute }}>FAQ 적중률</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: hitRate === null ? C.mute : hitRate >= 60 ? C.done : C.doing }}>
-              {hitRate === null ? "—" : `${hitRate}%`}
-              <span style={{ fontSize: 12, fontWeight: 500, color: C.mute }}> ({solved}/{shown})</span>
+            <div className="now-note">{urgentOpen ? "30분 안에 답해야 합니다" : "지금은 없습니다"}</div>
+          </a>
+          <a className="now-card lead" href={link({ kind: "open", status: "new", sev: "" })}>
+            <div className="now-k">처리 필요</div>
+            <div className="now-v mono" style={{ color: openCount ? "var(--w-main)" : "var(--dis)" }}>
+              {openCount}
             </div>
-          </div>
-          <div style={{ marginLeft: "auto", alignSelf: "center", fontSize: 12, color: C.mute, maxWidth: 300, lineHeight: 1.5 }}>
+            <div className="now-note">답변 없음 · 아직 닫히지 않음</div>
+          </a>
+          <a className="now-card" href={link({ status: "", sev: "", kind: "" })}>
+            <div className="now-k">기한 초과</div>
+            <div className="now-v mono" style={{ color: overdue ? "var(--attn-icon)" : "var(--dis)" }}>
+              {overdue}
+            </div>
+            <div className="now-note">긴급 30분 · 주의 4시간 · 일반 24시간</div>
+          </a>
+        </section>
+
+        {/* 2차 — 흐름을 보는 숫자 */}
+        <section className="sub">
+          <span><span className="sub-k">들어온 문의</span><b className="sub-v mono">{all.length}</b></span>
+          <span>
+            <span className="sub-k">FAQ 적중률</span>
+            <b className="sub-v mono" style={{ color: hit === null ? "var(--dis)" : hit >= 60 ? "var(--ok-text)" : "var(--attn-icon)" }}>
+              {hit === null ? "—" : `${hit}%`}
+            </b>
+            <span className="sub-k" style={{ marginLeft: 4 }}>({solved}/{shown})</span>
+          </span>
+          <span className="sub-note">
             적중률은 후보를 보여준 질문 중 사용자가 실제로 하나를 눌러 해결된 비율입니다.
-          </div>
-        </div>
+          </span>
+        </section>
 
-        {/* 종류 — 미해결만 볼지, 후보를 보여준 것까지 볼지 */}
-        <div style={{ marginBottom: 14 }}>
-          {([["", "전체"], ["open", "답변 없음"], ["matched", "후보 제시"]] as const).map(([v, label]) => (
-            <a key={v || "all"} href={link({ kind: v })}
-               style={{ ...S.chip, borderColor: fKind === v ? C.ink : C.line }}>
-              {label} <span style={{ color: C.mute }}>
-                {v === "" ? all.length : v === "open" ? count((i) => i.kind !== "matched") : shown}
-              </span>
-            </a>
-          ))}
-        </div>
+        {/* 3차 — 검색과 필터 */}
+        <section className="tools">
+          <form className="search" method="get" action="/admin">
+            <input type="hidden" name="k" value={k} />
+            {fStatus && <input type="hidden" name="status" value={fStatus} />}
+            {fTopic && <input type="hidden" name="topic" value={fTopic} />}
+            {fKind && <input type="hidden" name="kind" value={fKind} />}
+            {fSev && <input type="hidden" name="sev" value={fSev} />}
+            {grouped && <input type="hidden" name="group" value="1" />}
+            <input name="q" defaultValue={q} placeholder="원문 · 답장 · 사용자 검색" />
+            <button className="btn primary" type="submit">검색</button>
+            {q && <a className="btn ghost" href={link({ q: "" })}>지우기</a>}
+          </form>
 
-        {/* 긴급도 — 돈·사칭·법적 언급이나 공개된 불만이 높음으로 올라온다 */}
-        <div style={{ marginBottom: 14 }}>
-          {([["", "긴급도 전체", C.mute], ["high", "긴급", C.high], ["mid", "주의", C.mid], ["low", "일반", C.low]] as const)
-            .map(([v, label, color]) => (
-            <a key={v || "all"} href={link({ sev: v })}
-               style={{ ...S.chip, borderColor: fSev === v ? color : C.line, color: v ? color : C.ink }}>
-              {label} <span style={{ color: C.mute }}>
-                {v ? count((i) => (i.sev ?? "low") === v) : all.length}
-              </span>
-            </a>
-          ))}
-        </div>
-
-        {/* 상태별 — 클릭하면 그 상태만 본다 */}
-        <div style={{ display: "flex", gap: 10, marginBottom: 18, flexWrap: "wrap" }}>
-          {([["", "전체", C.mute], ["new", STATUS_LABEL.new, C.new], ["doing", STATUS_LABEL.doing, C.doing],
-             ["done", STATUS_LABEL.done, C.done], ["faq", STATUS_LABEL.faq, C.faq]] as const).map(([s, label, color]) => (
-            <a key={s || "all"} href={link({ status: s })}
-               style={{ background: C.card, border: `1px solid ${fStatus === s ? color : C.line}`,
-                        borderRadius: 12, padding: "12px 16px", minWidth: 92, textDecoration: "none", color: C.ink }}>
-              <div style={{ fontSize: 12, color: C.mute }}>{label}</div>
-              <div style={{ fontSize: 22, fontWeight: 800, color }}>
-                {s ? count((i) => i.status === s) : all.length}
-              </div>
-            </a>
-          ))}
-        </div>
-
-        {/* 주제별 */}
-        {topics.length > 0 && (
-          <div style={{ marginBottom: 22 }}>
-            <a href={link({ topic: "" })} style={{ ...S.chip, borderColor: fTopic ? C.line : C.ink }}>주제 전체</a>
-            {topics.map((t) => (
-              <a key={t} href={link({ topic: t })}
-                 style={{ ...S.chip, borderColor: fTopic === t ? C.ink : C.line }}>
-                {t} <span style={{ color: C.mute }}>{count((i) => i.topic === t)}</span>
+          <div className="frow">
+            <span className="flab">긴급도</span>
+            {([["", "전체", ""], ["high", SEV_LABEL.high, "danger"], ["mid", SEV_LABEL.mid, "attn"], ["low", SEV_LABEL.low, ""]] as const)
+              .map(([v, label, cls]) => (
+              <a key={v || "a"} className={`chip ${cls}${fSev === v ? " on" : ""}`} href={link({ sev: v })}>
+                {label}<span className="n">{v ? count((i) => (i.sev ?? "low") === v) : all.length}</span>
               </a>
             ))}
           </div>
-        )}
+          <div className="frow">
+            <span className="flab">상태</span>
+            {([["", "전체"], ["new", STATUS_LABEL.new], ["doing", STATUS_LABEL.doing],
+               ["done", STATUS_LABEL.done], ["faq", STATUS_LABEL.faq]] as const).map(([v, label]) => (
+              <a key={v || "a"} className={`chip${fStatus === v ? " on" : ""}`} href={link({ status: v })}>
+                {label}<span className="n">{v ? count((i) => i.status === v) : all.length}</span>
+              </a>
+            ))}
+            <span style={{ width: 10 }} />
+            {([["", "종류 전체"], ["open", "답변 없음"], ["matched", "후보 제시"]] as const).map(([v, label]) => (
+              <a key={v || "a"} className={`chip${fKind === v ? " on" : ""}`} href={link({ kind: v })}>
+                {label}<span className="n">
+                  {v === "" ? all.length : v === "open" ? count((i) => i.kind !== "matched") : shown}
+                </span>
+              </a>
+            ))}
+          </div>
+          {topics.length > 0 && (
+            <div className="frow">
+              <span className="flab">주제</span>
+              <a className={`chip${fTopic ? "" : " on"}`} href={link({ topic: "" })}>전체</a>
+              {topics.map((t) => (
+                <a key={t} className={`chip${fTopic === t ? " on" : ""}`} href={link({ topic: t })}>
+                  {t}<span className="n">{count((i) => i.topic === t)}</span>
+                </a>
+              ))}
+            </div>
+          )}
+        </section>
 
-        {items.length === 0 && (
-          <p style={{ color: C.mute, fontSize: 14 }}>
+        {/* 4차 — 목록 */}
+        {items.length === 0 ? (
+          <p className="empty">
             {all.length === 0
               ? "아직 기록이 없습니다. 봇이 답하지 못한 질문이 여기 쌓입니다."
               : "이 조건에 해당하는 항목이 없습니다."}
           </p>
-        )}
-
-        {renderList()}
-      </div>
-    </main>
-  );
-
-  function renderCard(i: typeof items[number]) {
-    {
-          const t = new Date(i.at + 9 * 3600000);
-          const when = `${t.getUTCMonth() + 1}/${t.getUTCDate()} ${String(t.getUTCHours()).padStart(2, "0")}:${String(t.getUTCMinutes()).padStart(2, "0")}`;
-          return (
-            <article key={i.id} style={{ background: C.card, border: `1px solid ${C.line}`,
-                                         borderLeft: `3px solid ${i.sev === "high" ? C.high : STATUS_COLOR[i.status] ?? C.line}`,
-                                         borderRadius: 12, padding: "16px 18px", marginBottom: 12 }}>
-              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 8 }}>
-                <input type="checkbox" name="ids" value={i.id} form="bulk"
-                       aria-label="선택" style={{ accentColor: C.new, marginRight: 2 }} />
-                {i.sev === "high" && (
-                  <span style={{ fontSize: 11, fontWeight: 800, color: "#fff", background: C.high,
-                                 borderRadius: 5, padding: "2px 7px" }}>
-                    {SEV_LABEL.high}
-                  </span>
-                )}
-                <span style={{ fontSize: 11.5, fontWeight: 700, color: STATUS_COLOR[i.status] ?? C.mute }}>
-                  {STATUS_LABEL[i.status as keyof typeof STATUS_LABEL] ?? i.status}
-                </span>
-                <span style={{ fontSize: 11.5, color: C.mute }}>· {i.topic}</span>
-                <span style={{ fontSize: 11.5, color: i.mood === "negative" ? C.neg : C.mute }}>
-                  · {MOOD_LABEL[i.mood as CsMoodTag] ?? i.mood}
-                </span>
-                <span style={{ fontSize: 11.5, color: C.mute }}>· {i.lang}</span>
-                <span style={{ fontSize: 11.5, color: C.mute }}>
-                  · {i.chatType === "private" ? "1:1" : "그룹"}
-                </span>
-                {i.kind === "offline" && (
-                  <span style={{ fontSize: 11.5, color: C.doing }}>· 정본 미로딩 중 수신</span>
-                )}
-                {i.kind === "matched" && (
-                  <span style={{ fontSize: 11.5, color: C.mute }}>· 후보 제시</span>
-                )}
-                {(() => {
-                  if (i.status === "done" || i.status === "faq") return null;
-                  const over = overdueMin(i.at, (i.sev ?? "low") as CsSeverity);
-                  if (over <= 0) return null;
-                  /* 방치 시간을 숫자로 보여 준다 — 몰릴 때 사람은 최신순으로 처리하게 되고,
-                     그러면 오래된 급한 건이 아래로 밀린다 */
-                  return (
-                    <span style={{ fontSize: 11, fontWeight: 700, color: C.high }}>
-                      · 기한 {over >= 60 ? `${Math.floor(over / 60)}시간` : `${over}분`} 초과
-                    </span>
-                  );
-                })()}
-                <span style={{ marginLeft: "auto", fontSize: 11.5, color: C.mute }}>{when} · {i.who}</span>
-              </div>
-
-              <p style={{ fontSize: 16, lineHeight: 1.6, margin: "0 0 12px" }}>{i.text}</p>
-
-              {i.note && (
-                <div style={{ fontSize: 13, color: C.mute, background: "#12121A", borderRadius: 8,
-                              padding: "10px 12px", marginBottom: 10, lineHeight: 1.6,
-                              whiteSpace: "pre-wrap" }}>
-                  {i.repliedAt ? "보낸 답장" : "메모"} · {i.note}
+        ) : grouped ? (
+          clusters.map((c) => {
+            const open = c.members.filter(isOpen);
+            return (
+              <article key={c.head.id} className={`item sev-${c.head.sev ?? "low"}`}>
+                <div className="meta">
+                  <span className="tag st-new">{c.members.length}건</span>
+                  {c.head.sev === "high" && <span className="tag high">{SEV_LABEL.high}</span>}
+                  <span>{c.head.topic}</span>
+                  <span className="sep">·</span>
+                  <span>미처리 {open.length}건</span>
                 </div>
-              )}
-
-              <form action={setStatus} style={{ display: "flex", flexWrap: "wrap", marginBottom: 8 }}>
-                <input type="hidden" name="k" value={k} />
-                <input type="hidden" name="id" value={i.id} />
-                {(["new", "doing", "done", "faq"] as const).filter((s) => s !== i.status).map((s) => (
-                  <button key={s} type="submit" name="to" value={s}
-                          style={{ ...S.btn, color: STATUS_COLOR[s] }}>
-                    {STATUS_LABEL[s]}
-                  </button>
-                ))}
-              </form>
-
-              {/* 답장 — 정본을 고르는 쪽이 먼저다. 몰릴 때 한 번 클릭으로 끝난다 */}
-              {i.chatId ? (
-                <details>
-                  <summary style={{ fontSize: 12.5, color: C.mute, cursor: "pointer" }}>
-                    답장 보내기
-                  </summary>
-                  <form action={sendReply} style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
-                    <input type="hidden" name="k" value={k} />
-                    <input type="hidden" name="id" value={i.id} />
-                    <select name="faqId" defaultValue=""
-                            style={{ background: C.bg, color: C.ink, border: `1px solid ${C.line}`,
-                                     borderRadius: 8, padding: "8px 10px", fontSize: 13, maxWidth: 420 }}>
-                      <option value="">정본 FAQ 고르기…</option>
-                      {(doc?.faq[i.lang === "ko" ? "ko" : "en"] ?? []).map((f) => (
-                        <option key={f.id} value={f.id}>{f.q}</option>
+                <p className="q">{c.head.text}</p>
+                {c.members.length > 1 && (
+                  <details style={{ marginBottom: 10 }}>
+                    <summary style={{ fontSize: 12.5, color: "var(--cap)" }}>
+                      묶인 원문 {c.members.length}건
+                    </summary>
+                    <ul style={{ margin: "8px 0 0", paddingLeft: 18, fontSize: 13,
+                                 color: "var(--ink-3)", lineHeight: 1.75 }}>
+                      {c.members.map((m) => (
+                        <li key={m.id}>{m.text} <span style={{ color: "var(--hint)" }}>— {m.who}</span></li>
                       ))}
-                    </select>
-                    <button type="submit" style={{ ...S.btn, color: C.done }}>정본으로 답장</button>
-                  </form>
-                  <form action={sendReply} style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                    <input type="hidden" name="k" value={k} />
-                    <input type="hidden" name="id" value={i.id} />
-                    <textarea name="text" rows={2} placeholder="직접 쓰기 — 정본에 없는 값(가격·수량·일정)은 확정 전까지 쓰지 않습니다"
-                              style={{ flex: 1, background: C.bg, color: C.ink, border: `1px solid ${C.line}`,
-                                       borderRadius: 8, padding: "8px 10px", fontSize: 13, resize: "vertical" }} />
-                    <button type="submit" style={{ ...S.btn, alignSelf: "flex-start" }}>답장</button>
-                  </form>
-                </details>
-              ) : (
-                <div style={{ fontSize: 12, color: C.mute }}>답장 대상 정보가 없는 옛 기록입니다</div>
-              )}
-            </article>
-          );
-        }
-  }
-
-  /* 묶음 모드 — 같은 질문 여러 건을 한 카드로 접고, 한 번에 정본 답장을 보낸다.
-     일반 모드 — 체크박스로 골라 상태만 한 번에 바꾼다(답장은 상대가 달라 개별로 간다). */
-  function renderList() {
-    if (grouped) {
-      return clusters.map((c) => {
-        const open = c.members.filter((m) => m.status !== "done" && m.status !== "faq");
-        return (
-          <article key={c.head.id} style={{ background: C.card, border: `1px solid ${C.line}`,
-                     borderLeft: `3px solid ${c.head.sev === "high" ? C.high : C.line}`,
-                     borderRadius: 12, padding: "16px 18px", marginBottom: 12 }}>
-            <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8, flexWrap: "wrap" }}>
-              <span style={{ fontSize: 11.5, fontWeight: 800, color: C.new }}>{c.members.length}건</span>
-              <span style={{ fontSize: 11.5, color: C.mute }}>· {c.head.topic}</span>
-              {c.head.sev === "high" && (
-                <span style={{ fontSize: 11, fontWeight: 800, color: "#fff", background: C.high,
-                               borderRadius: 5, padding: "2px 7px" }}>{SEV_LABEL.high}</span>
-              )}
-              <span style={{ fontSize: 11.5, color: C.mute }}>· 미처리 {open.length}건</span>
-            </div>
-            <p style={{ fontSize: 16, lineHeight: 1.6, margin: "0 0 10px" }}>{c.head.text}</p>
-
-            {c.members.length > 1 && (
-              <details style={{ marginBottom: 10 }}>
-                <summary style={{ fontSize: 12.5, color: C.mute, cursor: "pointer" }}>
-                  묶인 원문 {c.members.length}건 보기
-                </summary>
-                <ul style={{ margin: "8px 0 0", paddingLeft: 18, fontSize: 13, color: C.mute, lineHeight: 1.7 }}>
-                  {c.members.map((m) => (
-                    <li key={m.id}>{m.text} <span style={{ opacity: 0.7 }}>— {m.who}</span></li>
-                  ))}
-                </ul>
-              </details>
-            )}
-
-            {open.length > 0 ? (
-              <form action={bulkReply} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                <input type="hidden" name="k" value={k} />
-                {open.slice(0, 30).map((m) => (
-                  <input key={m.id} type="hidden" name="ids" value={m.id} />
-                ))}
-                <select name="faqId" defaultValue=""
-                        style={{ background: C.bg, color: C.ink, border: `1px solid ${C.line}`,
-                                 borderRadius: 8, padding: "8px 10px", fontSize: 13, maxWidth: 420 }}>
-                  <option value="">정본 FAQ 고르기…</option>
-                  {(doc?.faq[c.head.lang === "ko" ? "ko" : "en"] ?? []).map((f) => (
-                    <option key={f.id} value={f.id}>{f.q}</option>
-                  ))}
-                </select>
-                <button type="submit" style={{ ...S.btn, color: C.done }}>
-                  이 묶음 {Math.min(open.length, 30)}건에 정본 답장
-                </button>
-                {open.length > 30 && (
-                  <span style={{ fontSize: 11.5, color: C.mute, alignSelf: "center" }}>
-                    한 번에 30건까지 — 남은 {open.length - 30}건은 다시 누르세요
-                  </span>
+                    </ul>
+                  </details>
                 )}
-              </form>
-            ) : (
-              <div style={{ fontSize: 12.5, color: C.done }}>모두 처리됨</div>
-            )}
-          </article>
-        );
-      });
-    }
+                {open.length > 0 ? (
+                  <form action={bulkReply} className="reply-row">
+                    <input type="hidden" name="k" value={k} />
+                    {open.slice(0, 30).map((m) => <input key={m.id} type="hidden" name="ids" value={m.id} />)}
+                    <select name="faqId" defaultValue="">
+                      <option value="">정본 FAQ 고르기…</option>
+                      {faqOptions(c.head.lang).map((f) => <option key={f.id} value={f.id}>{f.q}</option>)}
+                    </select>
+                    <button className="btn primary" type="submit">
+                      {Math.min(open.length, 30)}건에 한 번에 답장
+                    </button>
+                    {open.length > 30 && (
+                      <span style={{ fontSize: 11.5, color: "var(--hint)", alignSelf: "center" }}>
+                        한 번에 30건까지 — 남은 {open.length - 30}건은 다시 누르세요
+                      </span>
+                    )}
+                  </form>
+                ) : (
+                  <div style={{ fontSize: 12.5, color: "var(--ok-text)" }}>모두 처리됨</div>
+                )}
+              </article>
+            );
+          })
+        ) : (
+          <>
+            {/* 체크박스는 카드 안에 있고 폼은 밖에 있다 — 카드에 이미 폼이 있어 중첩할 수 없다.
+                HTML 의 form 속성으로 이어 붙인다. */}
+            <form id="bulk" action={bulkStatus} className="bulk">
+              <input type="hidden" name="k" value={k} />
+              <span className="bulk-k">선택한 건을 한 번에</span>
+              {(["doing", "done", "faq"] as const).map((st) => (
+                <button key={st} className="btn" type="submit" name="to" value={st}>{STATUS_LABEL[st]}</button>
+              ))}
+            </form>
 
-    return (
-      <>
-        {/* 폼 밖의 체크박스를 form 속성으로 이어 붙인다 — 카드 안에 이미 폼이 있어
-            중첩할 수 없기 때문이다 */}
-        <form id="bulk" action={bulkStatus}
-              style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12,
-                       padding: "10px 14px", background: C.card, border: `1px solid ${C.line}`,
-                       borderRadius: 10, flexWrap: "wrap" }}>
-          <input type="hidden" name="k" value={k} />
-          <span style={{ fontSize: 12.5, color: C.mute }}>선택한 건을 한 번에:</span>
-          {(["doing", "done", "faq"] as const).map((st) => (
-            <button key={st} type="submit" name="to" value={st}
-                    style={{ ...S.btn, color: STATUS_COLOR[st] }}>{STATUS_LABEL[st]}</button>
-          ))}
-        </form>
-        {items.map((i) => renderCard(i))}
-      </>
-    );
-  }
+            {items.map((i) => {
+              const over = isOpen(i) ? overdueMin(i.at, (i.sev ?? "low") as CsSeverity) : 0;
+              /* 긴급하고 아직 안 닫힌 건은 답장창을 처음부터 펴 둔다 — 한 번 더 누르게 하면
+                 몰릴 때 그 한 번이 쌓인다 */
+              const openReply = i.sev === "high" && isOpen(i);
+              return (
+                <article key={i.id} className={`item sev-${i.sev ?? "low"}${i.status === "done" ? " done" : ""}`}>
+                  <div className="meta">
+                    <input type="checkbox" name="ids" value={i.id} form="bulk" aria-label="선택"
+                           style={{ accentColor: "var(--w-main)" }} />
+                    <span className={`tag st-${i.status}`}>
+                      {STATUS_LABEL[i.status as keyof typeof STATUS_LABEL] ?? i.status}
+                    </span>
+                    {i.sev === "high" && <span className="tag high">{SEV_LABEL.high}</span>}
+                    {over > 0 && (
+                      <span className="tag over">
+                        {over >= 60 ? `${Math.floor(over / 60)}시간` : `${over}분`} 초과
+                      </span>
+                    )}
+                    <span>{i.topic}</span>
+                    {i.mood === "negative" && <span className="tag mood-neg">{MOOD_LABEL.negative}</span>}
+                    {i.mood !== "negative" && <><span className="sep">·</span><span>{MOOD_LABEL[i.mood as CsMoodTag]}</span></>}
+                    <span className="sep">·</span><span>{i.lang}</span>
+                    <span className="sep">·</span><span>{i.chatType === "private" ? "1:1" : "그룹"}</span>
+                    {i.kind === "matched" && <><span className="sep">·</span><span>후보 제시</span></>}
+                    {i.kind === "offline" && <><span className="sep">·</span><span>정본 미로딩</span></>}
+                    <span className="right">{when(i.at)} · {i.who}</span>
+                  </div>
+
+                  <p className="q">{i.text}</p>
+
+                  {i.note && (
+                    <div className="said">
+                      <b style={{ color: "var(--ink-2)" }}>{i.repliedAt ? "보낸 답장" : "메모"}</b>
+                      {"\n"}{i.note}
+                    </div>
+                  )}
+
+                  <div className="acts">
+                    <form action={setStatus} style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      <input type="hidden" name="k" value={k} />
+                      <input type="hidden" name="id" value={i.id} />
+                      {(["new", "doing", "done", "faq"] as const).filter((s) => s !== i.status).map((s) => (
+                        <button key={s} className="btn" type="submit" name="to" value={s}>{STATUS_LABEL[s]}</button>
+                      ))}
+                    </form>
+                  </div>
+
+                  {i.chatId ? (
+                    <details className="reply" open={openReply}>
+                      <summary>답장 보내기</summary>
+                      <form action={sendReply} className="reply-row">
+                        <input type="hidden" name="k" value={k} />
+                        <input type="hidden" name="id" value={i.id} />
+                        <select name="faqId" defaultValue="">
+                          <option value="">정본 FAQ 고르기…</option>
+                          {faqOptions(i.lang).map((f) => <option key={f.id} value={f.id}>{f.q}</option>)}
+                        </select>
+                        <button className="btn primary" type="submit">정본으로 답장</button>
+                      </form>
+                      <form action={sendReply} className="reply-row">
+                        <input type="hidden" name="k" value={k} />
+                        <input type="hidden" name="id" value={i.id} />
+                        <textarea name="text" rows={2}
+                          placeholder="직접 쓰기 — 정본에 없는 값(가격·수량·일정)은 확정 전까지 쓰지 않습니다" />
+                        <button className="btn" type="submit" style={{ alignSelf: "flex-start" }}>답장</button>
+                      </form>
+                    </details>
+                  ) : (
+                    <div style={{ fontSize: 12, color: "var(--hint)", marginTop: 8 }}>
+                      답장 대상 정보가 없는 옛 기록입니다
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </>
+        )}
+      </main>
+    </>
+  );
 }

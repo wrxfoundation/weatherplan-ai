@@ -1,0 +1,164 @@
+/* 브랜드 토큰 — wellbian-store/app/globals.css 와 같은 값이다 (8/30 서우).
+   관리 도구라고 다른 팔레트를 쓰면 같은 제품처럼 보이지 않는다. 판매 사이트와 CS 화면을
+   오가는 사람이 한 사람이라 더 그렇다. 사이트가 토큰을 바꾸면 여기도 같이 바꾼다. */
+
+:root {
+  --w-main: #4d4dce;
+  --w-deep: #1b1b48;
+  --w-tint: #eeeefb;
+
+  --ink-1: #22223a; --ink-2: #44445e; --ink-3: #5b5b74; --ink-4: #6b6b85;
+  --cap: #8a8aa3; --hint: #9a9ab5; --dis: #b5b5c9;
+  --bd-input: #d8d8e6; --bd-btn: #e2e2ee; --bd-card: #e5e5ef;
+  --line: #ececf3; --line-2: #f2f2f7; --chip: #f0f0f6;
+  --sec-alt: #f6f6fa; --panel: #fafafd;
+
+  --ok-text: #1e8e5a; --ok-bg: #e9f7f0;
+  --warn-text: #8a3535; --warn-icon: #c0392b; --warn-bg: #fdf3f2; --warn-bd: #f2c9c9;
+
+  /* 사이트 팔레트에 중간 경보색이 없어 관리 도구용으로 하나만 더한다 —
+     "긴급(빨강)"과 "일반(회색)" 사이가 비면 주의 단계가 둘 중 하나로 끌려간다 */
+  --attn-text: #8a5a12; --attn-icon: #b06a12; --attn-bg: #fdf6e9; --attn-bd: #f0dfc0;
+
+  --mono: "Montserrat", "Pretendard Variable", Pretendard, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  color: var(--ink-1);
+  background: var(--sec-alt);
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+}
+a { color: var(--w-main); text-decoration: none; }
+button, select, textarea, input { font: inherit; }
+button { cursor: pointer; border: 0; background: none; color: inherit; }
+h1, h2, h3, p, ul { margin: 0; }
+summary { cursor: pointer; }
+
+.mono { font-family: var(--mono); font-weight: 700; font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+/* ── 헤더 ─────────────────────────────────────────────────────────────── */
+.top {
+  background: #fff; border-bottom: 1px solid var(--line);
+  padding: 18px 0 16px; margin-bottom: 20px;
+}
+.top-in { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand { font-size: 19px; font-weight: 800; letter-spacing: -.01em; }
+.brand-sub { font-size: 12.5px; color: var(--cap); }
+.top-nav { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+
+/* ── 지금 손이 필요한 것 (1차) ─────────────────────────────────────────── */
+.now { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.now-card {
+  flex: 1 1 190px; background: #fff; border: 1px solid var(--bd-card);
+  border-radius: 14px; padding: 16px 18px; text-decoration: none; color: inherit;
+  display: block; transition: border-color .12s, transform .12s;
+}
+.now-card:hover { border-color: var(--w-main); }
+.now-card.lead { border-width: 1.5px; }
+.now-card.alert { border-color: var(--warn-bd); background: var(--warn-bg); }
+.now-k { font-size: 12px; color: var(--cap); font-weight: 600; }
+.now-v { font-size: 30px; line-height: 1.15; margin-top: 4px; }
+.now-note { font-size: 11.5px; color: var(--hint); margin-top: 3px; }
+
+/* ── 보조 지표 (2차) ──────────────────────────────────────────────────── */
+.sub { display: flex; gap: 22px; flex-wrap: wrap; align-items: baseline;
+       padding: 12px 18px; background: #fff; border: 1px solid var(--bd-card);
+       border-radius: 12px; margin-bottom: 18px; }
+.sub-k { font-size: 12px; color: var(--cap); }
+.sub-v { font-size: 16px; margin-left: 6px; }
+.sub-note { font-size: 11.5px; color: var(--hint); margin-left: auto; max-width: 340px; line-height: 1.5; }
+
+/* ── 검색 · 필터 (3차) ────────────────────────────────────────────────── */
+.tools { background: #fff; border: 1px solid var(--bd-card); border-radius: 12px;
+         padding: 14px 16px; margin-bottom: 18px; }
+.search { display: flex; gap: 8px; margin-bottom: 12px; }
+.search input {
+  flex: 1; border: 1px solid var(--bd-input); border-radius: 9px;
+  padding: 10px 13px; font-size: 14px; color: var(--ink-1); background: #fff;
+}
+.search input:focus { outline: 2px solid var(--w-tint); border-color: var(--w-main); }
+.frow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 5px 0; }
+.flab { font-size: 11.5px; color: var(--cap); font-weight: 700; width: 44px; flex: none; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 1px solid var(--bd-btn); background: #fff; color: var(--ink-2);
+  border-radius: 999px; padding: 5px 11px; font-size: 12.5px; text-decoration: none;
+}
+.chip:hover { border-color: var(--w-main); color: var(--w-main); }
+.chip.on { background: var(--w-deep); border-color: var(--w-deep); color: #fff; }
+.chip.on .n { color: rgba(255,255,255,.65); }
+.chip .n { color: var(--hint); font-size: 11.5px; }
+.chip.danger.on { background: var(--warn-icon); border-color: var(--warn-icon); }
+.chip.attn.on { background: var(--attn-icon); border-color: var(--attn-icon); }
+
+.btn { border: 1px solid var(--bd-btn); background: #fff; border-radius: 9px;
+       padding: 7px 13px; font-size: 12.5px; color: var(--ink-2); }
+.btn:hover { border-color: var(--w-main); color: var(--w-main); }
+.btn.primary { background: var(--w-main); border-color: var(--w-main); color: #fff; }
+.btn.primary:hover { background: var(--w-deep); border-color: var(--w-deep); color: #fff; }
+.btn.ghost { border-color: transparent; color: var(--cap); }
+
+/* ── 목록 (4차) ───────────────────────────────────────────────────────── */
+.bulk { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        background: var(--panel); border: 1px solid var(--line);
+        border-radius: 10px; padding: 9px 14px; margin-bottom: 12px; }
+.bulk-k { font-size: 12px; color: var(--cap); }
+
+.item { background: #fff; border: 1px solid var(--bd-card); border-radius: 12px;
+        padding: 15px 18px; margin-bottom: 10px; border-left: 3px solid var(--line); }
+.item.sev-high { border-left-color: var(--warn-icon); }
+.item.sev-mid  { border-left-color: var(--attn-icon); }
+.item.done     { border-left-color: var(--ok-text); background: var(--panel); }
+
+.meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 7px;
+        font-size: 11.5px; color: var(--cap); }
+.meta .sep { color: var(--dis); }
+.meta .right { margin-left: auto; }
+
+.tag { font-size: 10.5px; font-weight: 800; border-radius: 5px; padding: 2px 7px; letter-spacing: .01em; }
+.tag.high { background: var(--warn-icon); color: #fff; }
+.tag.over { background: var(--warn-bg); color: var(--warn-text); border: 1px solid var(--warn-bd); }
+.tag.st-new  { background: var(--w-tint); color: var(--w-main); }
+.tag.st-doing{ background: var(--attn-bg); color: var(--attn-text); }
+.tag.st-done { background: var(--ok-bg); color: var(--ok-text); }
+.tag.st-faq  { background: var(--chip); color: var(--ink-3); }
+.tag.mood-neg { background: var(--warn-bg); color: var(--warn-text); }
+
+.q { font-size: 15.5px; line-height: 1.6; color: var(--ink-1); margin-bottom: 10px; }
+.said { font-size: 13px; line-height: 1.6; color: var(--ink-3); background: var(--panel);
+        border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px;
+        margin-bottom: 10px; white-space: pre-wrap; }
+.acts { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+/* 상태 버튼은 모든 카드에 늘 붙어 있어 목록 전체의 소음이 된다 — 한 단계 조용하게 */
+.acts .btn { padding: 5px 10px; font-size: 12px; color: var(--ink-4); border-color: var(--line); }
+.acts .btn:hover { color: var(--w-main); border-color: var(--w-main); }
+
+.reply { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.reply summary { font-size: 12.5px; color: var(--w-main); font-weight: 600; }
+.reply-row { display: flex; gap: 7px; margin-top: 9px; flex-wrap: wrap; }
+.reply select, .reply textarea {
+  border: 1px solid var(--bd-input); border-radius: 9px; padding: 8px 10px;
+  font-size: 13px; color: var(--ink-1); background: #fff; max-width: 100%;
+}
+.reply select { max-width: 440px; }
+.reply textarea { flex: 1; min-width: 240px; resize: vertical; }
+
+.empty { text-align: center; color: var(--cap); font-size: 14px; padding: 44px 0; }
+.notice { background: var(--attn-bg); border: 1px solid var(--attn-bd); color: var(--attn-text);
+          border-radius: 11px; padding: 13px 16px; font-size: 13px; line-height: 1.65;
+          margin-bottom: 18px; }
+
+/* 좁은 화면 — 서우가 폰으로 열어 볼 자리다 */
+@media (max-width: 720px) {
+  .wrap { padding: 0 14px; }
+  .now-card { flex-basis: 44%; padding: 13px 14px; }
+  .now-v { font-size: 24px; }
+  .flab { width: 100%; }
+  .sub-note { display: none; }
+}
