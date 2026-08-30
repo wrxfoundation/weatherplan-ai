@@ -41,46 +41,89 @@ export const D = {
     zh: "我们在构建什么",
     es: "Lo que estamos construyendo",
   }),
+  /* 8/30 회의: "백서 안 봐도 이해되게" — 관측망·경제 구조 설명을 덜어내고
+     개념 한 줄만 남긴다. 자세한 구조는 바로 아래 선순환 카드가 맡는다. */
   howLead: m({
-    ko: "공기는 건물마다, 골목마다 다릅니다 — 기존 관측망이 닿지 않는 곳이죠. 내가 생활하는 공간에서 측정한 데이터가 검증을 거쳐 보상으로 돌아오고, 쌓인 데이터는 서비스가 되는 경제를 구축해 나갑니다.",
-    en: "Air differs building by building, street by street — beyond the reach of public weather stations. Data measured where you actually live comes back as rewards after verification, and as it accumulates, it builds an economy of services.",
-    ja: "空気は建物ごと、路地ごとに違います — 既存の観測網が届かない場所です。自分が暮らす空間で計測したデータが検証を経て報酬として戻り、蓄積されたデータがサービスになる経済を築いていきます。",
-    zh: "空气因楼栋而异、因街巷而异 —— 那是既有观测网触及不到的地方。在你生活的空间里测得的数据，经验证后化为奖励；累积的数据则构建起服务化的经济。",
-    es: "El aire cambia de edificio en edificio y de calle en calle, más allá del alcance de las estaciones meteorológicas. Los datos medidos donde vives vuelven como recompensa tras verificarse y, al acumularse, construyen una economía de servicios.",
+    ko: "공기는 건물마다, 골목마다 다릅니다. 내가 사는 공간에서 측정한 데이터가 토큰이 되고, 보상으로 돌아옵니다.",
+    en: "Air differs building by building, street by street. Data you measure where you live becomes tokens, and comes back as rewards.",
+    ja: "空気は建物ごと、路地ごとに違います。自分が暮らす空間で計測したデータがトークンになり、報酬として戻ります。",
+    zh: "空气因楼栋而异、因街巷而异。你在生活空间里测得的数据会生成代币，并作为奖励回到你手中。",
+    es: "El aire cambia de edificio en edificio y de calle en calle. Los datos que mides donde vives se convierten en tokens y vuelven como recompensa.",
   }),
-
-  /* 4단계 카드 — 제목은 번호(①~④)를 코드에서 붙인다 */
+  /* 4단계 카드 — 제목은 번호(①~④)를 코드에서 붙인다.
+     8/30 회의(대표 지시): 장표대로 세 단계만 남긴다 — 측정 · 채굴 · 보상.
+     검증은 단계에서 빼되 사실은 ② 설명에 남긴다 — 검증이 있어야 데이터가 값을 갖는다.
+     활용(데이터가 팔려 보상 재원이 되는 부분)은 바로 아래 선순환 카드가 이어받는다.
+     지갑 전환은 넣지 않는다. 네 칸이 되면 장표와 어긋나고, 금액·수익 쪽으로 읽히기도 쉽다. */
   step1Title: m({ ko: "측정", en: "Measure", ja: "計測", zh: "测量", es: "Medir" }),
   step1Desc: m({
-    ko: "CO₂·미세먼지·온습도 등 실내 공기 데이터를 측정",
-    en: "Indoor air data — CO₂, particulates, temperature, humidity",
-    ja: "CO₂・微小粒子・温湿度など室内空気データを計測",
-    zh: "测量 CO₂、颗粒物、温湿度等室内空气数据",
-    es: "Datos del aire interior: CO₂, partículas, temperatura y humedad",
+    ko: "우리 집 공기를 측정합니다. CO₂·미세먼지·온습도를 실시간으로",
+    en: "Measure the air in your home — CO₂, particulates, temperature and humidity, in real time",
+    ja: "自宅の空気を計測します。CO₂・微小粒子・温湿度をリアルタイムで",
+    zh: "测量家中的空气：CO₂、颗粒物、温湿度，实时呈现",
+    es: "Mide el aire de tu casa: CO₂, partículas, temperatura y humedad, en tiempo real",
   }),
-  step2Title: m({ ko: "검증", en: "Verify", ja: "検証", zh: "验证", es: "Verificar" }),
+  step2Title: m({ ko: "채굴", en: "Mine", ja: "マイニング", zh: "挖矿", es: "Minar" }),
   step2Desc: m({
-    ko: "네트워크가 데이터의 무결성을 검증",
-    en: "The network verifies data integrity",
-    ja: "ネットワークがデータの整合性を検証",
-    zh: "网络验证数据完整性",
-    es: "La red verifica la integridad de los datos",
+    ko: "측정한 데이터가 검증을 거쳐 토큰이 됩니다. 연산으로 캐는 대신, 데이터로 캡니다",
+    en: "Verified measurements become tokens. Instead of computation, you mine with data",
+    ja: "計測データは検証を経てトークンになります。演算ではなく、データで掘ります",
+    zh: "测得的数据经验证后生成代币。不靠算力，而是用数据挖矿",
+    es: "Los datos verificados se convierten en tokens. En lugar de cómputo, minas con datos",
   }),
-  step3Title: m({ ko: "보상", en: "Reward", ja: "報酬", zh: "奖励", es: "Recompensar" }),
+  step3Title: m({ ko: "보상", en: "Reward", ja: "報酬", zh: "奖励", es: "Recompensa" }),
   step3Desc: m({
-    ko: "검증된 데이터에 네트워크 원칙에 따라 WLBN이 지급",
-    en: "Verified data earns WLBN under network rules",
-    ja: "検証済みデータにネットワークの規則に従い WLBN を付与",
-    zh: "按网络规则向已验证数据发放 WLBN",
-    es: "Los datos verificados reciben WLBN según las reglas de la red",
+    ko: "생성된 WLBN이 네트워크 원칙에 따라 내 몫으로 쌓입니다",
+    en: "The WLBN generated accrues to you under network rules",
+    ja: "生成された WLBN がネットワークの規則に従って自分の分として積み上がります",
+    zh: "生成的 WLBN 按网络规则计入你的份额",
+    es: "El WLBN generado se acumula a tu favor según las reglas de la red",
   }),
-  step4Title: m({ ko: "활용", en: "Utilize", ja: "活用", zh: "应用", es: "Utilizar" }),
-  step4Desc: m({
-    ko: "축적된 데이터는 API·AI·기상 서비스로 활용",
-    en: "Accumulated data powers APIs, AI, weather services",
-    ja: "蓄積データを API・AI・気象サービスに活用",
-    zh: "累积数据用于 API、AI 与气象服务",
-    es: "Los datos acumulados alimentan API, IA y servicios meteorológicos",
+  /* ── 혜택 두 가지 (8/30 회의 대표 지시: 이미지·개념·혜택 3요소) ──────────
+     "측정기만으로도 쓸모 있다" 를 앞에 세운다. 보상이 먼저 오면 토큰을 사러 온
+     사람만 남고, 기기를 사러 온 사람이 설 자리가 없어진다. 보상은 두 번째다. */
+  benefitTitle: m({
+    ko: "측정기 하나로 두 가지",
+    en: "One device, two returns",
+    ja: "計測器ひとつで二つ",
+    zh: "一台设备，两重收获",
+    es: "Un solo dispositivo, dos beneficios",
+  }),
+  benefit1Title: m({
+    ko: "공기가 보입니다",
+    en: "You can see your air",
+    ja: "空気が見えます",
+    zh: "让空气可见",
+    es: "Ves tu aire",
+  }),
+  benefit1Desc: m({
+    ko: "CO₂가 오르면 알려 줍니다. 언제 환기해야 하는지, 아이 방 공기가 지금 어떤지 숫자로 봅니다.",
+    en: "It tells you when CO₂ climbs. See when to open a window, and what the air in your child's room is like right now — in numbers.",
+    ja: "CO₂ が上がれば知らせます。いつ換気すべきか、子ども部屋の空気が今どうなのかを数字で見ます。",
+    zh: "CO₂ 升高时会提醒你。何时该开窗、孩子房间此刻的空气如何，都以数字呈现。",
+    es: "Te avisa cuando sube el CO₂. Ves cuándo ventilar y cómo está ahora el aire del cuarto de tu hijo, en números.",
+  }),
+  /* 이 한 줄이 회의에서 강하게 요구된 문장이다 — 보상이 0이어도 남는 것이 있다 */
+  benefit1Tag: m({
+    ko: "보상을 빼고 봐도, 매일 쓰는 공기질 측정기입니다",
+    en: "Set the rewards aside and it's still an air quality monitor you use every day",
+    ja: "報酬を抜きにしても、毎日使う空気質測定器です",
+    zh: "即使不算奖励，它也是一台每天都用得上的空气质量测定仪",
+    es: "Aun sin las recompensas, sigue siendo un medidor de calidad del aire de uso diario",
+  }),
+  benefit2Title: m({
+    ko: "데이터가 보상이 됩니다",
+    en: "Your data earns",
+    ja: "データが報酬になります",
+    zh: "数据带来奖励",
+    es: "Tus datos generan recompensa",
+  }),
+  benefit2Desc: m({
+    ko: "측정이 쌓이는 동안 네트워크 원칙에 따라 WLBN이 지급됩니다. 기기를 켜 두는 것 말고 따로 할 일은 없습니다.",
+    en: "As measurements accumulate, WLBN is paid out under network rules. Beyond keeping the device on, there is nothing to do.",
+    ja: "計測が積み上がる間、ネットワークの規則に従って WLBN が支給されます。機器を動かしておくほかにすることはありません。",
+    zh: "在数据不断累积的同时，按网络规则发放 WLBN。除了让设备保持运行，无需其他操作。",
+    es: "Mientras se acumulan las mediciones, se entrega WLBN según las reglas de la red. Más allá de mantener el equipo encendido, no hay nada que hacer.",
   }),
 
   /* ── 선순환 ────────────────────────────────────────────────────────── */

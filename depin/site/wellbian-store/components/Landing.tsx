@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "next/navigation";
-import { IconMeasure, IconVerify, IconReward, IconUse, IconData, IconFlow, IconCoins, IconNodes, IconStep } from "./GlassIcons";
+import { IconMeasure, IconVerify, IconReward, IconData, IconFlow, IconCoins, IconNodes, IconStep } from "./GlassIcons";
 import {
   SPECS, SPECS_EN, FAQS, FAQS_EN, FAQS_EXTRA, FAQS_EXTRA_EN, LINK_STEPS, LINK_STEPS_EN,
   RL_STEPS, RL_STEPS_EN, LINKS, MOCK_INVENTORY, MOCK_PRENOTIFY, PREORDER_FEED, PRICE, calc, fmt,
@@ -555,14 +555,25 @@ export default function Landing() {
               {t(D.howLead)}
             </p>
           </div>
+          {/* 8/30 회의 장표: 세 단계만 — 측정 → 채굴 → 보상 */}
           <div className="how-grid" data-reveal>
             <HowCard icon={<IconMeasure />} title={`① ${t(D.step1Title)}`} desc={t(D.step1Desc)} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
             <HowCard icon={<IconVerify />} title={`② ${t(D.step2Title)}`} desc={t(D.step2Desc)} />
             <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
             <HowCard icon={<IconReward />} title={`③ ${t(D.step3Title)}`} desc={<>{t(D.step3Desc)}<br /><span style={{ fontSize: 15, color: "var(--cap)" }}>{t(D.rewardNotGuaranteed)}</span></>} />
-            <div className="how-arrow" style={{ color: "var(--arrow)", fontSize: 26, fontWeight: 800 }}>→</div>
-            <HowCard icon={<IconUse />} title={`④ ${t(D.step4Title)}`} desc={t(D.step4Desc)} />
+          </div>
+
+          {/* 혜택 두 가지 (8/30 회의: 이미지·개념·혜택 3요소).
+              공기부터 말하고 보상을 뒤에 둔다 — 순서를 뒤집으면 기기를 사러 온 사람이 설 자리가 없다. */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16, width: "100%" }} data-reveal>
+            <div style={{ fontSize: "clamp(21px, 2.3vw, 26px)", fontWeight: 800, color: "var(--w-deep)" }}>
+              {t(D.benefitTitle)}
+            </div>
+            <div className="ben-grid">
+              <BenefitCard n="①" title={t(D.benefit1Title)} desc={t(D.benefit1Desc)} tag={t(D.benefit1Tag)} />
+              <BenefitCard n="②" title={t(D.benefit2Title)} desc={t(D.benefit2Desc)} note={t(D.rewardNotGuaranteed)} />
+            </div>
           </div>
           {/* 선순환 — 데이터가 실수요처로 유통되어 지속되는 구조 (8/27 서우: 로드맵·역할 줄 대체) */}
           {/* 8/28 서우 2차: 비전·선순환 카드 테두리 원복 (히어로 스탯 테이블만 보더리스 유지) */}
@@ -879,6 +890,26 @@ function HowCard({ icon, title, desc }: { icon: React.ReactNode; title: string; 
       <div style={{ height: 120, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>{icon}</div>
       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--w-deep)" }}>{title}</div>
       <div style={{ fontSize: 17.5, lineHeight: 1.6, color: "var(--ink-4)" }}>{desc}</div>
+    </div>
+  );
+}
+
+/* 혜택 카드 (8/30 회의). 강조 줄(tag)은 ①에만 있다 — "측정기만으로도 쓸모 있다" 가
+   이 섹션에서 제일 세게 나가야 하는 문장이라 배지로 띄운다.
+   ②의 note 는 비보장 고지다. 자리를 지키되 크기로 앞서지 않게 둔다. */
+function BenefitCard({ n, title, desc, tag, note }: {
+  n: string; title: string; desc: string; tag?: string; note?: string;
+}) {
+  return (
+    <div style={{ border: "1px solid rgba(255,255,255,.6)", background: "rgba(255,255,255,.25)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", boxShadow: "0 8px 32px rgba(27,27,72,.08)", borderRadius: 16, padding: "24px 24px 26px", display: "flex", flexDirection: "column", gap: 10, textAlign: "left" }}>
+      <div style={{ fontSize: 21, fontWeight: 800, color: "var(--w-deep)" }}>{n} {title}</div>
+      <div style={{ fontSize: 17, lineHeight: 1.65, color: "var(--ink-4)" }}>{desc}</div>
+      {tag && (
+        <div style={{ marginTop: 2, alignSelf: "flex-start", background: "rgba(124,107,240,.12)", color: "var(--w-main)", fontSize: 15, fontWeight: 700, lineHeight: 1.5, borderRadius: 10, padding: "8px 12px" }}>
+          {tag}
+        </div>
+      )}
+      {note && <div style={{ marginTop: 2, fontSize: 14.5, color: "var(--cap)" }}>{note}</div>}
     </div>
   );
 }

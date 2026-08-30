@@ -355,9 +355,12 @@ h1, h2, h3, p { margin: 0; }
 .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 /* 제품 이미지가 주인공 — 좌측 절반(가운데선)까지 확장 */
 .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-/* 4스텝(측정→검증→보상→활용, 8/27) — 카드 4 + 화살표 3 = 7열.
+/* 3스텝(측정→채굴→보상, 8/30 회의 장표) — 카드 3 + 화살표 2 = 5열.
    카드 stretch + 내용 상단 정렬 = 타이틀 라인 통일(들쑥날쑥 방지), 화살표만 세로 중앙 */
-.how-grid { display: grid; grid-template-columns: 1fr 34px 1fr 34px 1fr 34px 1fr; gap: 0; align-items: stretch; }
+.how-grid { display: grid; grid-template-columns: 1fr 34px 1fr 34px 1fr; gap: 0; align-items: stretch; }
+
+/* 혜택 두 장 — 개념 아래에 나란히. 좁아지면 세로로 쌓는다 */
+.ben-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 880px; margin: 0 auto; width: 100%; }
 .how-grid .how-arrow { align-self: center; }
 .link-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .rl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -370,6 +373,7 @@ h1, h2, h3, p { margin: 0; }
   .hero-grid, .spec-grid, .wl-hero-grid, .dash-top, .dash-main { grid-template-columns: 1fr; }
   .how-grid { grid-template-columns: 1fr; gap: 10px; }
   .how-arrow { display: none; }
+  .ben-grid { grid-template-columns: 1fr; }
   .link-grid { grid-template-columns: 1fr; }
   .tier-grid { grid-template-columns: 1fr 1fr; }
 }
