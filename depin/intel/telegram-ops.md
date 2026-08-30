@@ -63,3 +63,29 @@ Rose 와 1:1 에서 `/connect @wellbiantalk` → `telegram-rose-export-0830.json
   뒤 내용 전체를 인자로 받는 명령은 예외다.
 - 캡챠는 **Rose 와 신규 입장자의 1:1 창**에서 진행된다. 그룹 버튼을 눌러 넘어가는 구조라,
   안내 문구가 영어면 여기서 이탈이 난다(그래서 언어를 ko 로 바꿨다).
+
+## 그룹 대화 관찰 (8/30)
+
+BotFather `/setprivacy` → Disable 로 봇이 그룹의 일반 메시지를 받는다.
+적용하려면 봇을 그룹에서 뺐다가 다시 넣어야 한다(텔레그램 제약).
+
+**남기는 것**
+- 질문으로 보이는 말 · 사고를 알리는 말(사기·해킹·도난 등) → 원문 보관, `kind: "group"`
+- 그 밖의 말 → 시간·주제·어조 개수만(`cs:beat`). 원문을 남기지 않아 되돌려 누가
+  무슨 말을 했는지 알 수 없다.
+- 봇이 보낸 말과 명령(`/...`)은 세지 않는다 — Rose 안내까지 대화로 잡히면 주제
+  분포가 통째로 틀어진다.
+
+**답장하지 않는다.** 그룹 대화에 끼어들면 그룹이 망가지고, 그건 여기서 얻는 것보다 크다.
+
+### 그룹 규칙에 넣을 고지 (Rose `/setrules`)
+
+한국어
+> 이 그룹의 대화는 운영 개선을 위해 집계됩니다. 질문과 안전 관련 신고는 담당자가
+> 확인할 수 있도록 원문이 보관되며, 그 밖의 대화는 시간·주제·분위기 통계로만
+> 집계되고 원문은 저장하지 않습니다.
+
+English
+> Conversations in this group are aggregated to improve support. Questions and
+> safety reports are kept in full so the team can act on them; everything else is
+> counted only as time, topic and tone statistics, with no message text stored.

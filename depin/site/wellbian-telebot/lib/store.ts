@@ -29,6 +29,9 @@ export const storeVars = () => (URL_ && TOKEN ? `${U.n} · ${T.n}` : "");
 const HASH = "cs:items";
 /* 왕복 확인 전용 키. 기록(cs:items)과 섞이지 않게 따로 둔다. */
 const PROBE = "cs:probe";
+/* 그룹 대화의 집계만 담는 자리. 원문은 들어가지 않는다 — 필드가 곧
+   "시간|주제|어조" 이고 값은 개수뿐이다. 되돌려 누가 무슨 말을 했는지 알 수 없다. */
+const BEAT = "cs:beat";
 
 export type CsStatus = "new" | "doing" | "done" | "faq";
 export type CsMood = "question" | "positive" | "negative";
@@ -43,7 +46,7 @@ export type CsItem = {
   who: string;
   chatType: string;
   /* matched = 후보를 보여준 것. 답한 것은 아니다 — 사용자가 하나를 누르면 done 이 된다 */
-  kind: "unanswered" | "offline" | "matched";
+  kind: "unanswered" | "offline" | "matched" | "group";
   status: CsStatus;
   sev?: "high" | "mid" | "low";   // 긴급도 — 옛 기록에는 없을 수 있어 선택
   /* 답장을 보내려면 어디로 보낼지 알아야 한다. 텔레그램 내부 식별자라 저장소에만 두고
@@ -101,6 +104,8 @@ export const storeProbe = async (): Promise<{ ok: boolean; note: string; ms: num
    그래도 인스턴스가 재활용되는 동안만 남는 임시 저장이다. KV 를 붙이기 전 확인용이다. */
 const mem: Map<string, CsItem> =
   ((globalThis as { __csMem?: Map<string, CsItem> }).__csMem ??= new Map());
+const beatMem: Map<string, number> =
+  ((globalThis as { __beatMem?: Map<string, number> }).__beatMem ??= new Map());
 
 export const putItem = async (item: CsItem) => {
   if (storeKind() === "memory") { mem.set(item.id, item); return; }
@@ -124,6 +129,37 @@ export const getItem = async (id: string): Promise<CsItem | null> => {
   const v = (await cmd("HGET", HASH, id)) as string | null;
   if (!v) return null;
   try { return JSON.parse(v) as CsItem; } catch { return null; }
+};
+
+/* 그룹 대화 한 건을 세기만 한다(8/30 서우 합의: 원문 전체 저장 금지).
+   HINCRBY 로 카운터만 올리므로 저장량이 대화량에 비례해 늘지 않는다.
+   필드 모양: "2026-08-30T14|결제|negative" */
+export const bumpBeat = async (at: number, topic: string, mood: string) => {
+  const h = new Date(at).toISOString().slice(0, 13);   // 2026-08-30T14 (UTC)
+  const field = `${h}|${topic}|${mood}`;
+  if (storeKind() === "memory") {
+    beatMem.set(field, (beatMem.get(field) ?? 0) + 1);
+    return;
+  }
+  await cmd("HINCRBY", BEAT, field, 1);
+};
+
+export type Beat = { hour: string; topic: string; mood: string; n: number };
+
+export const listBeats = async (): Promise<Beat[]> => {
+  const out: Beat[] = [];
+  const push = (field: string, n: number) => {
+    const [hour, topic, mood] = field.split("|");
+    if (hour && topic && mood) out.push({ hour, topic, mood, n });
+  };
+  if (storeKind() === "memory") {
+    for (const [f, n] of beatMem) push(f, n);
+    return out;
+  }
+  const flat = (await cmd("HGETALL", BEAT)) as string[] | null;
+  if (!Array.isArray(flat)) return [];
+  for (let i = 0; i < flat.length - 1; i += 2) push(flat[i], Number(flat[i + 1]) || 0);
+  return out;
 };
 
 /* 지우기. 되돌릴 수 없어서 화면에서 두 번 묻고 부른다.

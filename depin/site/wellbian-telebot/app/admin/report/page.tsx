@@ -7,13 +7,13 @@
    집계는 lib/report.ts 가 맡는다. 여기서는 그리기만 한다 — 계산이 화면에 섞이면
    값이 틀려도 눈으로는 알 수 없다. */
 
-import { listItems } from "@/lib/store";
+import { listItems, listBeats } from "@/lib/store";
 import { isAuthed } from "@/lib/auth";
 import { SEV_LABEL, STATUS_LABEL, type CsSeverity } from "@/lib/cs";
 import { clusterItems } from "@/lib/cluster";
 import {
   inSpan, buckets, timeStats, topicRows, quality, waiting, answerGaps,
-  SPAN_LABEL, type Span,
+  beatHours, beatTopics, moodSpike, SPAN_LABEL, type Span,
 } from "@/lib/report";
 import { redirect } from "next/navigation";
 
@@ -51,6 +51,14 @@ export default async function Report({
   const bars = buckets(rows, span);
   const late = waiting(rows);
   const gaps = clusterItems(answerGaps(rows)).slice(0, 8);
+
+  /* 그룹 분위기 — 개수만 담긴 별도 저장소를 읽는다. 원문은 여기 없다. */
+  const beats = await listBeats();
+  const moodRows = beatHours(beats, span === "7d" || span === "all" ? 48 : 24);
+  const moodTop = beatTopics(beats, span === "7d" || span === "all" ? 48 : 24);
+  const spike = moodSpike(moodRows);
+  const talkPeak = Math.max(1, ...moodRows.map((r) => r.n));
+  const talkTotal = moodRows.reduce((a, r) => a + r.n, 0);
 
   const peak = Math.max(1, ...bars.map((b) => b.n));
   const adminLink = (o: Record<string, string> = {}) => `/admin?${qs({ k, ...o })}`;
@@ -155,6 +163,56 @@ export default async function Report({
               </ol>
             ) : (
               <p className="rep-empty">정본이 다 받아내고 있습니다 — 사람에게 넘어온 질문이 없습니다.</p>
+            )}
+
+            {/* 3.5차 — 그룹은 지금 어떤 분위기인가 */}
+            {talkTotal > 0 && (
+              <>
+                <h2 className="rep-h">그룹은 지금 어떤 분위기인가</h2>
+                <p className="rep-sub">
+                  봇에게 말을 걸지 않고 그룹에서 그냥 오간 말입니다. 원문은 남기지 않고 개수만 셉니다 —
+                  질문과 사고를 알리는 말만 위 목록에 원문으로 올라옵니다.
+                </p>
+
+                {spike && (
+                  <div className={spike.jumped ? "notice warn" : "notice"} style={{ marginBottom: 12 }}>
+                    {spike.jumped
+                      ? `부정 어조가 ${spike.base}% → ${spike.now}% 로 뛰었습니다. 그룹을 직접 열어 보세요.`
+                      : `부정 어조 ${spike.now}% (앞선 시간 평균 ${spike.base}%) — 평소 범위입니다.`}
+                  </div>
+                )}
+
+                <div className="rep-bars">
+                  {moodRows.map((r) => (
+                    <div key={r.at} className="rep-bar"
+                         title={`${r.label} · ${r.n}건${r.negRate !== null ? ` · 부정 ${r.negRate}%` : ""}`}>
+                      <div className="rep-bar-v">
+                        <div className="rep-bar-fill" style={{ height: `${(r.n / talkPeak) * 100}%` }}>
+                          {/* 짙은 부분이 부정이다 — 높이가 아니라 색이 먼저 보여야 한다 */}
+                          <div className="rep-bar-neg" style={{ height: r.n ? `${(r.neg / r.n) * 100}%` : "0%" }} />
+                        </div>
+                      </div>
+                      <div className="rep-bar-n mono">{r.n || ""}</div>
+                      <div className="rep-bar-k">{r.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {moodTop.length > 0 && (
+                  <div className="rep-table" style={{ marginTop: 10 }}>
+                    <div className="rep-tr rep-th" style={{ gridTemplateColumns: "1.4fr 1fr 1fr" }}>
+                      <span>무슨 얘기를 하는가</span><span>말수</span><span>그중 부정</span>
+                    </div>
+                    {moodTop.map((t) => (
+                      <div key={t.topic} className="rep-tr" style={{ gridTemplateColumns: "1.4fr 1fr 1fr" }}>
+                        <span className="rep-topic">{t.topic}</span>
+                        <span className="mono">{t.n}</span>
+                        <span className="mono" style={{ color: t.neg ? "var(--warn-text)" : "var(--dis)" }}>{t.neg}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
 
             {/* 4차 — 언제 몰리는가 */}

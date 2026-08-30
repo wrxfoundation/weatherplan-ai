@@ -25,8 +25,8 @@ import {
   getDoc, findFaq, langOf, searchFaq,
   type FaqDoc, type FaqLang, type Loc,
 } from "@/lib/faq-client";
-import { csCard, csButtons, topicOf, moodOf, whoOf, severityOf, type CsKind } from "@/lib/cs";
-import { putItem, patchItem, newId, type CsItem, type CsStatus } from "@/lib/store";
+import { csCard, csButtons, topicOf, moodOf, whoOf, severityOf, isQuestion, isAlarming, type CsKind } from "@/lib/cs";
+import { putItem, patchItem, newId, bumpBeat, type CsItem, type CsStatus } from "@/lib/store";
 import { tgCall } from "@/lib/tg";
 
 const SECRET = process.env.TG_WEBHOOK_SECRET ?? "";
@@ -59,12 +59,37 @@ const recordCs = async (
   const item: CsItem = {
     id: newId(), at: Date.now(), text,
     topic, mood,
-    sev: severityOf(text, mood, chatType, { phase, topic }),
+    sev: severityOf(text, mood, chatType, { phase, topic, kind }),
     lang, who: whoOf(from), chatType, kind, status: "new",
     chatId, phase,
   };
   try { await putItem(item); } catch { /* 저장소가 없거나 흔들려도 흐름은 막지 않는다 */ }
   return item;
+};
+
+/* 그룹에서 그냥 오간 말을 지켜본다 (8/30 서우 — privacy mode 를 끄고 열었다).
+
+   답장하지 않는다. 대화에 끼어들면 그룹이 망가지고, 그건 여기서 얻는 것보다 크다.
+
+   남기는 것은 두 가지뿐이다.
+     · 질문으로 보이는 말은 원문을 남긴다 — 그룹에서 물었는데 아무도 답하지 않은
+       질문이 지금은 통째로 새고 있다. 1:1 로 봇에 물어야만 잡혔다.
+     · 그 밖의 말은 시간·주제·어조만 세고 원문은 버린다. 되돌려 누가 무슨 말을
+       했는지 알 수 없는 형태다. 공개 그룹이라도 전 대화를 쌓는 것은 다른 문제다.
+
+   운영 채널로 카드를 보내지 않는다(recordCs 만 부른다) — 잡담이 채널을 덮으면
+   정작 급한 카드를 못 본다. */
+const observeGroup = async (
+  text: string, lang: FaqLang, chatType: string,
+  from?: { username?: string; first_name?: string; id?: number },
+  chatId?: number,
+) => {
+  const mood = moodOf(text);
+  const topic = topicOf(text);
+  await bumpBeat(Date.now(), topic, mood).catch(() => null);
+  /* 질문이거나, 질문이 아니어도 사고를 알리는 말이면 원문을 남긴다 */
+  if (!isQuestion(text) && !isAlarming(text)) return;
+  await recordCs("group", text, lang, chatType, from, chatId).catch(() => null);
 };
 
 /* 운영 채널로 카드를 보낸다. 후보를 보여준 건(matched) 보내지 않는다 —
@@ -261,7 +286,14 @@ export async function POST(req: NextRequest) {
     const cmd = text.startsWith("/") ? text.slice(1).split(/[\s@]/)[0].toLowerCase() : "";
     const wants = cmd === "faq" || cmd === "start" || cmd === "schedule" || cmd === "help"
       || (!cmd && Boolean(text) && isPrivate);
-    if (!wants) return Response.json({ ok: true });
+    if (!wants) {
+      /* 봇끼리 주고받는 말과 명령은 세지 않는다 — Rose 의 안내까지 대화로 잡히면
+         주제 분포가 통째로 틀어진다 */
+      if (!isPrivate && text && !cmd && !msg.from?.is_bot) {
+        await observeGroup(text, lang, chat.type ?? "?", msg.from, chat.id);
+      }
+      return Response.json({ ok: true });
+    }
 
     const doc = await getDoc();
     if (!doc) {

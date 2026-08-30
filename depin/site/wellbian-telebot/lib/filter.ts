@@ -14,7 +14,12 @@ export const applyFilters = (items: CsItem[], f: Filters): CsItem[] => {
     (!f.status || i.status === f.status) &&
     (!f.topic || i.topic === f.topic) &&
     (!f.sev || (i.sev ?? "low") === f.sev) &&
-    (!f.kind || (f.kind === "open" ? i.kind !== "matched" : i.kind === "matched")) &&
+    /* 종류 — "open" 은 후보를 보여준 것 말고 전부, "direct" 는 봇에게 직접 말을 건 것,
+       "group" 은 그룹에서 그냥 오간 말 중 남긴 것이다. 나머지는 값 그대로 본다. */
+    (!f.kind
+      || (f.kind === "open" ? i.kind !== "matched"
+        : f.kind === "direct" ? i.kind !== "group"
+        : i.kind === f.kind)) &&
     /* 검색은 원문과 처리 메모, 그리고 사람까지 훑는다 — "그 사람이 뭐라고 했더라"가
        실제로 가장 자주 찾는 형태다 */
     (!q || `${i.text} ${i.note ?? ""} ${i.who}`.toLowerCase().includes(q)));
@@ -27,7 +32,7 @@ const KST = (ms: number) => {
 };
 
 const KIND_LABEL: Record<string, string> = {
-  unanswered: "답변 없음", matched: "후보 제시", offline: "정본 미로딩",
+  unanswered: "답변 없음", matched: "후보 제시", offline: "정본 미로딩", group: "그룹 대화",
 };
 const SEV: Record<string, string> = { high: "긴급", mid: "주의", low: "일반" };
 const MOOD: Record<string, string> = { negative: "부정", positive: "긍정", question: "의문" };

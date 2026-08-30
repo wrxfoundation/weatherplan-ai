@@ -392,3 +392,8 @@ kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-
 /* 검색에 걸린 항목 — 전체 목록에서 자리만 알려 준다 */
 .faq-item.hit { border-color: var(--w-main); background: var(--w-tint); }
 .faq-item.hit .faq-q { color: var(--w-deep); }
+/* 그룹에서 지켜본 말 — 봇에게 직접 물은 것과 구분한다 */
+.tag.watch { background: var(--chip); color: var(--ink-4); border: 1px solid var(--line); }
+/* 그룹 분위기 막대에서 부정이 차지하는 부분 */
+.rep-bar-neg { width: 100%; background: var(--warn-icon); border-radius: 4px 4px 0 0; }
+.notice.warn { background: var(--warn-bg); border-color: var(--warn-bd); color: var(--warn-text); }

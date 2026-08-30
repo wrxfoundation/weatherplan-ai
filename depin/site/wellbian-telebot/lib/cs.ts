@@ -50,7 +50,29 @@ const kst = () => {
    자른 표시를 남겨야 "이게 전부인가" 하고 헷갈리지 않는다. */
 const clip = (s: string, n = 900) => (s.length > n ? s.slice(0, n) + " …(생략)" : s);
 
-export type CsKind = "unanswered" | "offline" | "matched";
+export type CsKind = "unanswered" | "offline" | "matched" | "group";
+
+/* 그룹에서 오간 말 중 "질문" 만 원문을 남긴다(8/30 서우 합의).
+   전 대화를 원문째로 쌓지 않기 위한 문턱이다 — 공개 그룹이라도 그건 다른 문제다.
+
+   물음표가 제일 확실한 신호지만, 한국어 대화에서는 빼먹는 일이 잦아
+   물음을 만드는 어미와 의문사도 함께 본다. 넓게 잡되(놓치면 영영 모른다)
+   인사·감탄은 걸러야 하므로 두 글자 이상일 때만 센다. */
+/* 단어 조각이 우연히 걸리지 않게 조인다 — 넓게 잡으면 왜곡 이 왜 로, 
+   어디까지나 가 어디 로 걸린다. 놓치는 질문보다 잡담이 섞이는 쪽이 더 나쁘다 —
+   목록이 잡담으로 차면 정작 답해야 할 질문을 못 본다. */
+const ASK = /[?？]\s*$|(?:나요|까요|은가요|인가요|ㄴ가요|는지요|을까요|ㄹ까요)\s*[?？]?\s*$|어떻게|어떤|언제|어디서|어디에|얼마|왜\s|무엇|뭐가|뭔가요|뭐예요|가능한가|되나\s|되는지|아시는|아시나|알려\s?주|궁금|\b(what|when|where|how|why|who|which|can i|do i|is it|are there|anyone know)\b/i;
+
+/* 질문이 아니어도 이것만은 흘리지 않는다 — 사기·해킹·도난처럼 사고를 알리는 말이다.
+   "이거 스캠이다" 는 물음표가 없지만, 그룹에서 이 말이 돌기 시작하면 개수만 세어
+   놓고 나중에 보는 것으로는 늦는다. 저장 범위를 여기까지만 넓힌다. */
+export const isAlarming = (text: string) => URGENT.test(text);
+
+export const isQuestion = (text: string) => {
+  const t = text.trim();
+  if (t.length < 2) return false;
+  return ASK.test(t);
+};
 
 const MOOD_MARK: Record<string, string> = { question: "❓", positive: "🙂", negative: "⚠️" };
 const STATUS_MARK: Record<string, string> = { new: "🆕", doing: "🔧", done: "✅", faq: "📘" };
@@ -152,7 +174,7 @@ const CRITICAL_TOPIC = /결제|지갑|예매/;
 
 export const severityOf = (
   text: string, mood: CsMoodTag, chatType: string,
-  opts?: { phase?: string; topic?: string },
+  opts?: { phase?: string; topic?: string; kind?: CsKind },
 ): CsSeverity => {
   const phase = opts?.phase ?? "";
   const buying = phase === "priority_window" || phase === "general_window";
@@ -165,8 +187,11 @@ export const severityOf = (
   if (reserving && TROUBLE.test(text) && /예매/.test(opts?.topic ?? "")) return "high";
 
   if (URGENT.test(text)) return "high";
-  /* 공개된 불만은 다른 사람이 본다 — 1:1 과 다르게 취급한다 */
-  if (mood === "negative" && chatType !== "private") return "high";
+  /* 공개된 불만은 다른 사람이 본다 — 1:1 과 다르게 취급한다.
+     다만 봇에게 말을 건 것이 아니라 그냥 오간 대화(kind "group")는 여기서 뺀다.
+     그룹은 원래 불평이 섞이는 곳이라 부정 하나하나를 긴급으로 올리면
+     긴급이 흔해져서 진짜 급한 건을 못 찾게 된다. 위의 URGENT 는 그대로 걸린다. */
+  if (mood === "negative" && chatType !== "private" && opts?.kind !== "group") return "high";
   /* 평시의 장애 불만은 주의까지다. 여기까지 긴급으로 올리면 구매창의 진짜 급한 건과
      구분이 사라져서, 몰릴 때 순서를 정하는 데 아무 도움이 안 된다. */
   if (mood === "negative" || TROUBLE.test(text)) return "mid";

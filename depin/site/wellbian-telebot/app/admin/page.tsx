@@ -347,10 +347,17 @@ export default async function Admin({
               </a>
             ))}
             <span style={{ width: 10 }} />
-            {([["", "종류 전체"], ["open", "답변 없음"], ["matched", "후보 제시"]] as const).map(([v, label]) => (
+            {/* 8/30: 그룹에서 그냥 오간 말도 들어오기 시작했다. 봇에게 직접 물은 것과
+                갈라 볼 수 있어야 처리 대상이 흐려지지 않는다. */}
+            {([["", "종류 전체"], ["open", "답변 없음"], ["matched", "후보 제시"],
+               ["direct", "봇에 직접"], ["group", "그룹 대화"]] as const).map(([v, label]) => (
               <a key={v || "a"} className={`chip${fKind === v ? " on" : ""}`} href={link({ kind: v })}>
                 {label}<span className="n">
-                  {v === "" ? all.length : v === "open" ? count((i) => i.kind !== "matched") : shown}
+                  {v === "" ? all.length
+                    : v === "open" ? count((i) => i.kind !== "matched")
+                    : v === "matched" ? shown
+                    : v === "direct" ? count((i) => i.kind !== "group")
+                    : count((i) => i.kind === "group")}
                 </span>
               </a>
             ))}
@@ -464,6 +471,9 @@ export default async function Admin({
                     <span className="sep">·</span><span>{i.lang}</span>
                     <span className="sep">·</span><span>{i.chatType === "private" ? "1:1" : "그룹"}</span>
                     {i.kind === "matched" && <><span className="sep">·</span><span>후보 제시</span></>}
+                    {/* 봇에게 물은 것이 아니라 그룹에서 오간 말을 지켜본 것이다 —
+                        답장 대상이 아닐 수 있으므로 눈에 띄게 구분한다 */}
+                    {i.kind === "group" && <span className="tag watch">지켜봄</span>}
                     {i.kind === "offline" && <><span className="sep">·</span><span>정본 미로딩</span></>}
                   </div>
 

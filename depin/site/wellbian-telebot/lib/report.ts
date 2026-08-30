@@ -7,6 +7,16 @@
    집계는 "무엇을 고쳐야 하는가"에 답하는 것만 담았다. 예쁜 숫자는 넣지 않았다. */
 
 import { SLA_MIN, type CsSeverity } from "./cs";
+import type { Beat } from "./store";
+
+/* 서버는 UTC 로 돌아간다. 라벨을 그대로 뽑으면 한국에서 보는 화면이 9시간 어긋나
+   "언제 몰리는가" 가 통째로 틀린 그림이 된다. 표시는 전부 KST 로 맞춘다. */
+const KST_OFF = 9 * 3600_000;
+const kstHour = (ms: number) => new Date(ms + KST_OFF).getUTCHours();
+const kstDay = (ms: number) => {
+  const d = new Date(ms + KST_OFF);
+  return `${d.getUTCMonth() + 1}/${d.getUTCDate()}`;
+};
 
 export type Row = {
   at: number;
@@ -55,10 +65,9 @@ export const buckets = (rows: Row[], span: Span, now = Date.now()): Bucket[] => 
   const out: Bucket[] = [];
   for (let i = count - 1; i >= 0; i--) {
     const from = end - i * step;
-    const d = new Date(from);
     out.push({
       from,
-      label: hourly ? `${d.getHours()}시` : `${d.getMonth() + 1}/${d.getDate()}`,
+      label: hourly ? `${kstHour(from)}시` : kstDay(from),
       n: 0,
       open: 0,
     });
@@ -83,7 +92,7 @@ export const pulse = (rows: Row[], hours = 12, now = Date.now()): Pulse => {
   const bars: Bucket[] = [];
   for (let i = hours - 1; i >= 0; i--) {
     const from = end - i * step;
-    bars.push({ from, label: `${new Date(from).getHours()}시`, n: 0, open: 0 });
+    bars.push({ from, label: `${kstHour(from)}시`, n: 0, open: 0 });
   }
   for (const r of rows) {
     const idx = bars.findIndex((b) => r.at >= b.from && r.at < b.from + step);
@@ -204,6 +213,62 @@ export const quality = (rows: Row[]): Quality => {
     shown, solved,
     hitRate: shown ? Math.round((solved / shown) * 100) : null,
   };
+};
+
+/* ── 그룹 분위기 (8/30 서우 — privacy off 로 그룹 대화를 지켜본다) ──────────
+   원문이 없는 개수만으로 본다. 그래도 답할 수 있는 것이 있다 —
+   "지금 말이 늘고 있는가", "부정이 갑자기 뛰었는가", "무슨 주제로 떠드는가".
+
+   9/7 당일에 필요한 건 그 셋뿐이다. 부정 비율이 뛰면 그룹을 직접 열어 봐야 한다는
+   신호이고, 이 화면은 그 신호를 놓치지 않는 것까지가 역할이다. */
+export type MoodHour = { at: number; label: string; n: number; neg: number; negRate: number | null };
+
+export const beatHours = (beats: Beat[], hours = 24, now = Date.now()): MoodHour[] => {
+  const step = 3600_000;
+  const end = Math.floor(now / step) * step;
+  const rows: MoodHour[] = [];
+  const index = new Map<string, number>();
+  for (let i = hours - 1; i >= 0; i--) {
+    const at = end - i * step;
+    index.set(new Date(at).toISOString().slice(0, 13), rows.length);
+    rows.push({ at, label: `${kstHour(at)}시`, n: 0, neg: 0, negRate: null });
+  }
+  for (const b of beats) {
+    const i = index.get(b.hour);
+    if (i === undefined) continue;
+    rows[i].n += b.n;
+    if (b.mood === "negative") rows[i].neg += b.n;
+  }
+  for (const r of rows) r.negRate = r.n ? Math.round((r.neg / r.n) * 100) : null;
+  return rows;
+};
+
+export type BeatTopic = { topic: string; n: number; neg: number };
+
+export const beatTopics = (beats: Beat[], hours = 24, now = Date.now()): BeatTopic[] => {
+  const from = new Date(Math.floor(now / 3600_000) * 3600_000 - (hours - 1) * 3600_000)
+    .toISOString().slice(0, 13);
+  const m = new Map<string, BeatTopic>();
+  for (const b of beats) {
+    if (b.hour < from) continue;
+    const cur = m.get(b.topic) ?? { topic: b.topic, n: 0, neg: 0 };
+    cur.n += b.n;
+    if (b.mood === "negative") cur.neg += b.n;
+    m.set(b.topic, cur);
+  }
+  return [...m.values()].sort((a, b) => b.n - a.n);
+};
+
+/* 직전 시간과 견주어 부정이 튀었는지. 뛴 순간을 놓치지 않는 것이 이 화면의 목적이다. */
+export const moodSpike = (rows: MoodHour[]) => {
+  const live = rows.filter((r) => r.n >= 3);
+  if (live.length < 2) return null;
+  const last = live[live.length - 1];
+  const before = live.slice(0, -1);
+  const baseN = before.reduce((a, r) => a + r.n, 0);
+  const baseNeg = before.reduce((a, r) => a + r.neg, 0);
+  const base = baseN ? Math.round((baseNeg / baseN) * 100) : 0;
+  return { now: last.negRate ?? 0, base, jumped: (last.negRate ?? 0) - base >= 20 };
 };
 
 /* ── 누가 오래 기다리고 있는가 ─────────────────────────────────────────
