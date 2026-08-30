@@ -20,6 +20,11 @@ import Copy from "./Copy";
 
 export const dynamic = "force-dynamic";
 
+/* 표시는 KST 로 고정한다. 서버는 UTC 로 돌고 보는 사람은 한국에 있다. */
+const kst = (iso: string) =>
+  new Date(iso).toLocaleString("ko-KR", { timeZone: "Asia/Seoul", month: "numeric",
+    day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
+
 const qs = (o: Record<string, string>) => {
   const p = new URLSearchParams(o);
   for (const [k, v] of [...p.entries()]) if (!v) p.delete(k);
@@ -45,6 +50,8 @@ export default async function FaqPage({
   const link = (o: Record<string, string>) => `/admin/faq?${qs({ k, lang, q, ...o })}`;
   const base = list.filter((f) => !f.extra);
   const extra = list.filter((f) => f.extra);
+  /* 아직 지나지 않은 첫 단계 — 접었을 때 요약에 남길 값이다 */
+  const nextM = doc?.schedule?.milestones?.find((m) => new Date(m.at).getTime() > Date.now()) ?? null;
 
   return (
     <>
@@ -76,6 +83,36 @@ export default async function FaqPage({
           </div>
         ) : (
           <>
+            {/* 일정 (8/30 서우: "맨 위로, 펴기 상태이나 접을 수 있게")
+                응대 중 제일 자주 확인하는 값이라 맨 앞에 둔다. 다만 늘 펴 두면 문항 목록이
+                그만큼 밀리므로 접을 수 있게 하고, 접었을 때도 다음 단계는 요약에 남긴다 —
+                접어 놓고 다시 펴야 알 수 있으면 접는 의미가 없다. */}
+            {doc.schedule?.milestones?.length > 0 && (
+              <details className="sched-box" open>
+                <summary>
+                  <span className="sched-h">일정</span>
+                  {nextM && (
+                    <span className="sched-next">
+                      다음 — {nextM.label[lang]} <b className="mono">{kst(nextM.at)}</b>
+                    </span>
+                  )}
+                </summary>
+                <div className="faq-sched">
+                  {doc.schedule.milestones.map((m) => {
+                    const done = new Date(m.at).getTime() < Date.now();
+                    return (
+                      <div key={m.key} className={`faq-sched-row${done ? " done" : ""}${m === nextM ? " next" : ""}`}>
+                        <span className="faq-sched-k">{m.label[lang]}</span>
+                        <span className="faq-sched-v mono">{kst(m.at)} KST</span>
+                        {done ? <span className="faq-sched-done">지남</span>
+                              : m === nextM ? <span className="faq-sched-mark">다음</span> : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </details>
+            )}
+
             {/* 검색 — 봇과 같은 함수를 쓴다. 여기서 후보가 0이면 봇에서도 0이다. */}
             <section className="tools" style={{ marginTop: 14 }}>
               <form className="search" method="get" action="/admin/faq">
@@ -119,29 +156,6 @@ export default async function FaqPage({
             <div className="faq-list">
               {extra.map((f) => <Card key={f.id} f={f} hit={hitIds.has(f.id)} />)}
             </div>
-
-            {/* 일정은 응대 중에 제일 자주 확인하는 값이라 같은 화면에 둔다 */}
-            {doc.schedule?.milestones?.length > 0 && (
-              <>
-                <h2 className="rep-h">일정</h2>
-                <div className="faq-sched">
-                  {doc.schedule.milestones.map((m) => {
-                    const at = new Date(m.at);
-                    const done = at.getTime() < Date.now();
-                    return (
-                      <div key={m.key} className={`faq-sched-row${done ? " done" : ""}`}>
-                        <span className="faq-sched-k">{m.label[lang]}</span>
-                        <span className="faq-sched-v mono">
-                          {at.toLocaleString("ko-KR", { timeZone: "Asia/Seoul", month: "numeric",
-                            day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })} KST
-                        </span>
-                        {done && <span className="faq-sched-done">지남</span>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            )}
 
             <p className="rep-sub" style={{ marginTop: 20 }}>
               이 화면은 판매 사이트의 <code>/api/faq</code> 를 그대로 읽습니다(60초마다 다시 읽음).
