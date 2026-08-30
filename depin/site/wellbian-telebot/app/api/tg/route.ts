@@ -25,7 +25,8 @@ import {
   getDoc, findFaq, langOf, searchFaq,
   type FaqDoc, type FaqLang, type Loc,
 } from "@/lib/faq-client";
-import { csReport, type CsKind } from "@/lib/cs";
+import { csCard, csButtons, topicOf, moodOf, whoOf, type CsKind } from "@/lib/cs";
+import { putItem, patchItem, newId, type CsItem, type CsStatus } from "@/lib/store";
 
 const TOKEN = process.env.TG_BOT_TOKEN ?? "";
 const SECRET = process.env.TG_WEBHOOK_SECRET ?? "";
@@ -52,15 +53,42 @@ const call = async (method: string, body: unknown) => {
   }
 };
 
-/* 답을 못 준 질문을 운영 채널로. 실패해도 사용자 응답에는 영향을 주지 않는다 —
-   CS 기록보다 사용자에게 답이 가는 쪽이 먼저다. */
-const reportCs = async (kind: CsKind, msg: { text?: string; chat?: { type?: string }; from?: { username?: string; first_name?: string; id?: number } }, lang: FaqLang) => {
-  if (!CS_CHAT || !msg.text) return;
+/* 답을 못 준 질문을 기록하고 운영 채널로 보낸다. 어느 쪽이 실패해도 사용자 응답에는
+   영향을 주지 않는다 — CS 기록보다 사용자에게 답이 가는 쪽이 먼저다. */
+const recordCs = async (
+  kind: CsKind,
+  text: string,
+  lang: FaqLang,
+  chatType: string,
+  from?: { username?: string; first_name?: string; id?: number },
+): Promise<CsItem> => {
+  const item: CsItem = {
+    id: newId(), at: Date.now(), text,
+    topic: topicOf(text), mood: moodOf(text),
+    lang, who: whoOf(from), chatType, kind, status: "new",
+  };
+  try { await putItem(item); } catch { /* 저장소가 없거나 흔들려도 흐름은 막지 않는다 */ }
+  return item;
+};
+
+/* 운영 채널로 카드를 보낸다. 후보를 보여준 건(matched) 보내지 않는다 —
+   그건 아직 미해결이라 부를 수 없고, 전부 보내면 채널이 노이즈로 덮인다.
+   대시보드에서는 필터로 볼 수 있다. */
+const pushCard = async (item: CsItem) => {
+  if (!CS_CHAT) return;
   await call("sendMessage", {
-    chat_id: CS_CHAT,
-    text: csReport({ kind, text: msg.text, lang, chatType: msg.chat?.type ?? "?", from: msg.from }),
+    chat_id: CS_CHAT, text: csCard(item),
+    reply_markup: csButtons(item.id, item.status),
     disable_web_page_preview: true,
   });
+};
+
+const reportCs = async (
+  kind: CsKind, text: string, lang: FaqLang, chatType: string,
+  from?: { username?: string; first_name?: string; id?: number },
+) => {
+  if (!text) return;
+  await pushCard(await recordCs(kind, text, lang, chatType, from));
 };
 
 /* ── FAQ 목록 화면 ──────────────────────────────────────────────────────
@@ -162,20 +190,32 @@ export async function POST(req: NextRequest) {
       await call("answerCallbackQuery", { callback_query_id: cq.id });
       const chat = cq.message?.chat?.id;
       const mid = cq.message?.message_id;
-      const [kind, langRaw, key] = String(cq.data ?? "").split(":");
+      const [kind, langRaw, key, csId] = String(cq.data ?? "").split(":");
       const lang: FaqLang = langRaw === "ko" ? "ko" : "en";
-      if (kind === "none" && chat && mid) {
-        /* 첫 줄의 따옴표 안이 사용자가 실제로 물은 문장이다 */
-        const raw = String(cq.message?.text ?? "").split("\n")[0].replace(/^"|"$/g, "");
-        const l: FaqLang = langRaw === "ko" ? "ko" : "en";
-        await call("editMessageText", { chat_id: chat, message_id: mid, text: noAnswerText(l) });
-        if (CS_CHAT && raw) {
-          await call("sendMessage", {
-            chat_id: CS_CHAT,
-            text: csReport({ kind: "unanswered", text: raw, lang: l,
-              chatType: cq.message?.chat?.type ?? "?", from: cq.from }),
+      /* 운영 채널 카드의 상태 버튼. 같은 자리를 고쳐 써서 처리 흐름이 메시지에 남는다. */
+      if (kind === "cs" && chat && mid) {
+        const next = key as CsStatus;
+        const updated = await patchItem(langRaw, { status: next }).catch(() => null);
+        if (updated) {
+          await call("editMessageText", {
+            chat_id: chat, message_id: mid, text: csCard(updated),
+            reply_markup: csButtons(updated.id, updated.status),
             disable_web_page_preview: true,
           });
+        }
+        return Response.json({ ok: true });
+      }
+
+      if (kind === "none" && chat && mid) {
+        const l: FaqLang = langRaw === "ko" ? "ko" : "en";
+        await call("editMessageText", { chat_id: chat, message_id: mid, text: noAnswerText(l) });
+        /* 후보를 보여줄 때 만들어 둔 기록을 미해결로 올린다 */
+        const up = key ? await patchItem(key, { kind: "unanswered", status: "new" }).catch(() => null) : null;
+        if (up) await pushCard(up);
+        else {
+          /* 옛 버전 메시지 등으로 id 가 없으면 첫 줄의 원문으로 새로 만든다 */
+          const raw = String(cq.message?.text ?? "").split("\n")[0].replace(/^"|"$/g, "");
+          if (raw) await reportCs("unanswered", raw, l, cq.message?.chat?.type ?? "?", cq.from);
         }
         return Response.json({ ok: true });
       }
@@ -189,6 +229,8 @@ export async function POST(req: NextRequest) {
           });
         } else if (kind === "f") {
           const hit = findFaq(doc, lang, key);
+          /* 후보를 눌렀다는 건 그 답으로 갈음됐다는 뜻이다 — FAQ 적중으로 기록한다 */
+          if (csId && hit) await patchItem(csId, { status: "done", note: `사용자가 선택: ${hit.q}` }).catch(() => null);
           /* 새 메시지를 쌓지 않고 같은 자리를 고쳐 쓴다 — 그룹에서 대화창이 밀리지 않게 */
           await call("editMessageText", {
             chat_id: chat, message_id: mid,
@@ -226,7 +268,7 @@ export async function POST(req: NextRequest) {
     if (!doc) {
       await call("sendMessage", { chat_id: chat.id, text: offlineText(lang), disable_web_page_preview: true });
       /* 정본이 안 읽히는 동안 들어온 질문도 흘리지 않는다 — 복구 후 답해야 할 목록이다 */
-      if (!cmd) await reportCs("offline", msg, lang);
+      if (!cmd) await reportCs("offline", text, lang, chat.type ?? "?", msg.from);
       return Response.json({ ok: true });
     }
 
@@ -244,19 +286,23 @@ export async function POST(req: NextRequest) {
         /* 원문을 첫 줄에 담는 이유: 아래 "찾는 답이 없어요" 를 눌렀을 때 무엇을 물었는지
            되찾아야 하는데, 서버리스라 저장할 데가 없고 콜백 데이터는 64바이트다.
            메시지 자체가 저장소 역할을 한다 — 텔레그램이 콜백에 원본 메시지를 실어 준다. */
+        /* 후보를 보여준 것도 기록해 둔다. 사용자가 하나를 누르면 done, "찾는 답이 없어요"를
+           누르면 unanswered 로 바뀐다 — 그래야 FAQ 가 실제로 맞았는지 알 수 있다.
+           id 를 콜백에 실어 보내므로 원문을 다시 파싱할 필요가 없다(총 20바이트, 제한 64). */
+        const rec = await recordCs("matched", text, lang, chat.type ?? "?", msg.from);
         await call("sendMessage", {
           chat_id: chat.id,
           text: `"${text}"\n\n${lang === "ko" ? "이 질문이신가요?" : "Did you mean one of these?"}`,
           reply_markup: { inline_keyboard: [
-            ...hits.map((f) => [{ text: f.q, callback_data: `f:${lang}:${f.id}` }]),
+            ...hits.map((f) => [{ text: f.q, callback_data: `f:${lang}:${f.id}:${rec.id}` }]),
             /* 키워드가 겹쳐 후보가 떴다고 답이 된 것은 아니다. 이 버튼이 없으면
                "정본에 없는 질문"이 후보 뒤에 숨어 CS 인박스에 영영 안 잡힌다. */
-            [{ text: lang === "ko" ? "❓ 찾는 답이 없어요" : "❓ None of these", callback_data: `none:${lang}` }],
+            [{ text: lang === "ko" ? "❓ 찾는 답이 없어요" : "❓ None of these", callback_data: `none:${lang}:${rec.id}` }],
           ]},
         });
       } else {
         await call("sendMessage", { chat_id: chat.id, text: noAnswerText(lang), disable_web_page_preview: true });
-        await reportCs("unanswered", msg, lang);
+        await reportCs("unanswered", text, lang, chat.type ?? "?", msg.from);
       }
     }
   } catch {

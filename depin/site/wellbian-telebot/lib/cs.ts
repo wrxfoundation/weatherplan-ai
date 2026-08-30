@@ -48,22 +48,63 @@ const kst = () => {
    자른 표시를 남겨야 "이게 전부인가" 하고 헷갈리지 않는다. */
 const clip = (s: string, n = 900) => (s.length > n ? s.slice(0, n) + " …(생략)" : s);
 
-export type CsKind = "unanswered" | "offline";
+export type CsKind = "unanswered" | "offline" | "matched";
 
-export const csReport = (opts: {
-  kind: CsKind;
-  text: string;
-  lang: string;
-  chatType: string;
-  from?: { username?: string; first_name?: string; id?: number };
+const MOOD_MARK: Record<string, string> = { question: "❓", positive: "🙂", negative: "⚠️" };
+const STATUS_MARK: Record<string, string> = { new: "🆕", doing: "🔧", done: "✅", faq: "📘" };
+
+/* 운영 채널에 뜨는 카드. 이 메시지 자체가 처리 화면이라 상태를 첫 줄에 둔다 —
+   버튼을 누르면 같은 자리를 고쳐 써서 진행 상황이 한눈에 남는다. */
+export const csCard = (i: {
+  at: number; text: string; topic: string; mood: string; lang: string;
+  who: string; chatType: string; kind: CsKind; status: string; note?: string;
 }) => {
-  const head = opts.kind === "offline"
-    ? "⚠️ 정본을 불러오지 못한 상태에서 들어온 질문"
-    : `❓ 답변 없음 · ${topicOf(opts.text)}`;
-  const where = opts.chatType === "private" ? "1:1" : "그룹";
+  const head = i.kind === "offline"
+    ? "⚠️ 정본을 못 읽는 동안 들어온 질문"
+    : `${MOOD_MARK[i.mood] ?? "❓"} 답변 없음 · ${i.topic}`;
+  const where = i.chatType === "private" ? "1:1" : "그룹";
+  const t = new Date(i.at + 9 * 3600000);
+  const time = `${String(t.getUTCHours()).padStart(2, "0")}:${String(t.getUTCMinutes()).padStart(2, "0")}`;
   return [
-    head,
-    `"${clip(opts.text)}"`,
-    `— ${whoOf(opts.from)} · ${opts.lang} · ${where} · ${kst()} KST`,
+    `${STATUS_MARK[i.status] ?? "🆕"} ${head}`,
+    `"${clip(i.text)}"`,
+    `— ${i.who} · ${i.lang} · ${where} · ${time} KST`,
+    ...(i.note ? ["", `📝 ${clip(i.note, 400)}`] : []),
   ].join("\n");
 };
+
+/* 상태 버튼. 지금 상태는 빼고 옮겨 갈 곳만 보여준다 — 누를 것이 적을수록 빨리 처리된다. */
+export const csButtons = (id: string, status: string) => {
+  const all: [string, string][] = [
+    ["doing", "🔧 처리중"], ["done", "✅ 완료"], ["faq", "📘 FAQ 반영"], ["new", "↩︎ 신규로"],
+  ];
+  const row = all.filter(([s]) => s !== status)
+    .map(([s, label]) => ({ text: label, callback_data: `cs:${id}:${s}` }));
+  return { inline_keyboard: [row.slice(0, 2), row.slice(2)].filter((r) => r.length) };
+};
+
+/* ── 어조 분류 (8/30 서우 — "긍정 부정 의문") ──────────────────────────────
+   규칙으로 한다. LLM 을 부르지 않는 이유는 주제 분류와 같다 — 문의가 몰리는 순간에
+   지연도 비용도 늘지 않고, 무엇보다 분류가 틀려도 답을 지어내지 않는다.
+
+   기본값을 "의문"으로 둔 것은 이 자리의 성격 때문이다. 여기 쌓이는 것은 전부
+   "봇이 답하지 못한 질문"이라 대다수가 물음이고, 애매한 것을 부정으로 몰면
+   실제 불만이 묻힌다. 부정은 확실할 때만 부정이라고 부른다. */
+const NEG = /안 ?되|안돼|안됨|오류|에러|먹통|막혔|실패|늦|느리|불편|짜증|화나|사기|환불|불만|why not|broken|error|fail|scam|refund|angry|stuck/i;
+const POS = /감사|고마|좋|최고|굿|기대|화이팅|응원|멋지|훌륭|축하|thank|great|awesome|nice|love|excited|good job/i;
+
+export type CsMoodTag = "question" | "positive" | "negative";
+
+export const moodOf = (text: string): CsMoodTag => {
+  if (NEG.test(text)) return "negative";
+  if (POS.test(text) && !/\?|나요|까요|가요|은가|는가/.test(text)) return "positive";
+  return "question";
+};
+
+export const MOOD_LABEL: Record<CsMoodTag, string> = {
+  question: "의문", positive: "긍정", negative: "부정",
+};
+
+export const STATUS_LABEL = {
+  new: "신규", doing: "처리중", done: "완료", faq: "FAQ 반영",
+} as const;
