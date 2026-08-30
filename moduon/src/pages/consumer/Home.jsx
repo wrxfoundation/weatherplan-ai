@@ -106,7 +106,14 @@ export default function Home({ tenant }) {
               뒤가 평평한 크림뿐이고, backdrop-blur는 뭉갤 그림이 없으면 흰 박스로 보인다.
               콘텐츠 전폭으로 빼서 어떤 화면폭에서도 오른쪽이 씬 위에 걸치게 한다. */}
           <div className="relative -mt-2 pb-12 sm:-mt-4 sm:pb-16">
-            <div className="rounded-2xl border border-white/60 bg-white/35 px-3 py-4 shadow-panel backdrop-blur-2xl backdrop-saturate-150 sm:px-6 sm:py-5">
+            {/* 유리 바 뒤 장식 — 데스크톱은 씬이 우측에만 놓여 바 왼쪽이 평평한 크림이 된다.
+                옅은 색 덩어리를 깔아 backdrop-blur가 어느 폭에서도 뭉갤 대상을 갖게 한다. */}
+            <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 w-full max-w-[620px] overflow-hidden">
+              <span className="absolute -left-10 top-2 h-28 w-56 rounded-full bg-primary/25 blur-2xl" />
+              <span className="absolute left-40 top-8 h-24 w-48 rounded-full bg-orange/20 blur-2xl" />
+              <span className="absolute left-80 top-0 h-28 w-52 rounded-full bg-bindigo/20 blur-2xl" />
+            </div>
+            <div className="relative max-w-[620px] rounded-2xl border border-white/60 bg-white/35 px-3 py-4 shadow-panel backdrop-blur-2xl backdrop-saturate-150 sm:px-6 sm:py-5">
               <div className="grid grid-cols-4 gap-1 sm:gap-2">
                 {tiles.map((t) => (
                   <Link key={t.slug} to={t.to} className="group flex flex-col items-center gap-1.5">
