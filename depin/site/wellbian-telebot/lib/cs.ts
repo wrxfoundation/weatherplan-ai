@@ -33,6 +33,34 @@ export const topicOf = (text: string): CsTopic => {
   return "기타";
 };
 
+/* 그룹 잡담용 갈래 (8/30 서우 — "기타 말고 좀 세분화해서 쌓이게")
+
+   위의 topicOf 는 CS 문의를 가르는 축이라("환불" · "지갑" 같은 문의 단어) 잡담에는
+   걸릴 것이 없어 전부 기타로 떨어진다. 그래서 기타로 떨어질 때만 한 번 더 본다 —
+   CS 분류에는 손대지 않고 그룹 쪽만 세분화된다.
+
+   시세를 따로 세는 이유가 있다. 커뮤니티가 제품이 아니라 값 얘기만 하고 있으면
+   그 자체가 신호다. 우리가 시세를 말하지 않는 것과, 사람들이 얼마나 말하는지 세는
+   것은 다른 일이다. */
+const CHAT_RULES: [string, RegExp][] = [
+  ["시세", /시세|가격|얼마|오르|올라|내리|떨어|폭등|폭락|펌핑|덤핑|존버|물렸|익절|손절|상장|떡상|떡락|price|pump|dump|moon|ath|listing/i],
+  ["인사", /^(gm|ga|gn|hi|hello|안녕|하이|좋은\s?아침|굿모닝|반갑)|굿모닝|좋은\s?아침|반갑습니다|안녕하세/i],
+  ["응원", /화이팅|파이팅|기대|축하|감사|고마|최고|좋네|좋다|대박|잘\s?되|응원|믿는다|lfg|congrats|thank|awesome|nice|good\s?luck/i],
+  ["커뮤니티", /공지|트위터|엑스|리트윗|채널|그룹|텔레|디스코드|커뮤니티|announcement|twitter|discord|\brt\b/i],
+];
+
+export const CHAT_TOPICS = ["사고", "시세", "인사", "응원", "커뮤니티", "잡담"] as const;
+
+export const chatTopicOf = (text: string): string => {
+  const t = topicOf(text);
+  if (t !== "기타") return t;
+  /* "이거 사기 아님?" 처럼 문의 주제에 안 걸리는 사고 신호가 잡담으로 묻히면
+     표에서 보이지 않는다. 함수 안에서 부르는 이유는 URGENT 가 아래에 선언돼 있어서다. */
+  if (isAlarming(text)) return "사고";
+  for (const [name, re] of CHAT_RULES) if (re.test(text)) return name;
+  return "잡담";
+};
+
 /* 누가 물었는지는 남겨야 답을 줄 수 있다. 다만 최소한만 — 유저네임이 있으면 그것,
    없으면 이름과 숫자 ID. 이 값은 운영 채널에만 머물고 저장소나 repo 로 가지 않는다. */
 export const whoOf = (from?: { username?: string; first_name?: string; id?: number }) => {

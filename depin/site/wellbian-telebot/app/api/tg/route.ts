@@ -25,7 +25,7 @@ import {
   getDoc, findFaq, langOf, searchFaq,
   type FaqDoc, type FaqLang, type Loc,
 } from "@/lib/faq-client";
-import { csCard, csButtons, topicOf, moodOf, whoOf, severityOf, isQuestion, isAlarming, type CsKind } from "@/lib/cs";
+import { csCard, csButtons, topicOf, moodOf, whoOf, severityOf, isQuestion, isAlarming, chatTopicOf, type CsKind } from "@/lib/cs";
 import { putItem, patchItem, newId, bumpBeat, type CsItem, type CsStatus } from "@/lib/store";
 import { tgCall } from "@/lib/tg";
 
@@ -85,8 +85,9 @@ const observeGroup = async (
   chatId?: number,
 ) => {
   const mood = moodOf(text);
-  const topic = topicOf(text);
-  await bumpBeat(Date.now(), topic, mood).catch(() => null);
+  /* 세는 쪽은 잡담까지 갈라 본다. 원문을 남기는 쪽(recordCs)은 CS 주제를 그대로 써서
+     인박스의 주제 필터와 어긋나지 않게 한다. */
+  await bumpBeat(Date.now(), chatTopicOf(text), mood).catch(() => null);
   /* 질문이거나, 질문이 아니어도 사고를 알리는 말이면 원문을 남긴다 */
   if (!isQuestion(text) && !isAlarming(text)) return;
   await recordCs("group", text, lang, chatType, from, chatId).catch(() => null);

@@ -243,7 +243,7 @@ export const beatHours = (beats: Beat[], hours = 24, now = Date.now()): MoodHour
   return rows;
 };
 
-export type BeatTopic = { topic: string; n: number; neg: number };
+export type BeatTopic = { topic: string; n: number; pos: number; neg: number; q: number };
 
 export const beatTopics = (beats: Beat[], hours = 24, now = Date.now()): BeatTopic[] => {
   const from = new Date(Math.floor(now / 3600_000) * 3600_000 - (hours - 1) * 3600_000)
@@ -251,9 +251,11 @@ export const beatTopics = (beats: Beat[], hours = 24, now = Date.now()): BeatTop
   const m = new Map<string, BeatTopic>();
   for (const b of beats) {
     if (b.hour < from) continue;
-    const cur = m.get(b.topic) ?? { topic: b.topic, n: 0, neg: 0 };
+    const cur = m.get(b.topic) ?? { topic: b.topic, n: 0, pos: 0, neg: 0, q: 0 };
     cur.n += b.n;
     if (b.mood === "negative") cur.neg += b.n;
+    else if (b.mood === "positive") cur.pos += b.n;
+    else cur.q += b.n;
     m.set(b.topic, cur);
   }
   return [...m.values()].sort((a, b) => b.n - a.n);

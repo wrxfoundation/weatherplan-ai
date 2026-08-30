@@ -189,7 +189,8 @@ export default async function Report({
               <>
                 <p className="rep-sub">
                   봇에게 말을 걸지 않고 그룹에서 그냥 오간 말입니다. 원문은 남기지 않고 개수만 셉니다 —
-                  질문과 사고를 알리는 말만 위 목록에 원문으로 올라옵니다.
+                  질문과 사고를 알리는 말만 위 목록에 원문으로 올라옵니다. 문의 주제(결제·지갑·기기 등)에
+                  걸리지 않는 말은 사고·시세·인사·응원·커뮤니티·잡담으로 다시 나눕니다.
                 </p>
 
                 {spike && (
@@ -218,14 +219,16 @@ export default async function Report({
 
                 {moodTop.length > 0 && (
                   <div className="rep-table" style={{ marginTop: 10 }}>
-                    <div className="rep-tr rep-th" style={{ gridTemplateColumns: "1.4fr 1fr 1fr" }}>
-                      <span>무슨 얘기를 하는가</span><span>말수</span><span>그중 부정</span>
+                    <div className="rep-tr rep-th" style={{ gridTemplateColumns: "1.4fr 1fr 1fr 1fr 1fr" }}>
+                      <span>무슨 얘기를 하는가</span><span>말수</span><span>긍정</span><span>부정</span><span>질문·중립</span>
                     </div>
                     {moodTop.map((t) => (
-                      <div key={t.topic} className="rep-tr" style={{ gridTemplateColumns: "1.4fr 1fr 1fr" }}>
+                      <div key={t.topic} className="rep-tr" style={{ gridTemplateColumns: "1.4fr 1fr 1fr 1fr 1fr" }}>
                         <span className="rep-topic">{t.topic}</span>
                         <span className="mono">{t.n}</span>
+                        <span className="mono" style={{ color: t.pos ? "var(--ok-text)" : "var(--dis)" }}>{t.pos}</span>
                         <span className="mono" style={{ color: t.neg ? "var(--warn-text)" : "var(--dis)" }}>{t.neg}</span>
+                        <span className="mono" style={{ color: t.q ? "var(--ink-3)" : "var(--dis)" }}>{t.q}</span>
                       </div>
                     ))}
                   </div>
