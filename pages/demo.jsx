@@ -1,0 +1,1869 @@
+/* ============================================================
+ * 시니어케어매니저 · /demo
+ *
+ * "챗봇 → 콘솔" 연결 시연 (30초 임팩트 데모).
+ *  좌: 보호자용 AI 예약 챗봇 (실서비스 /api/care-chat · Claude tool use)
+ *  우: 돌봄업체 관리자 콘솔 (배차 그리드 · GMV · 매니저 · 실시간 접수)
+ *
+ * 디자인: Liquid Glass · Ambient Gradient Orbs · Glass Buttons ·
+ *         Pulse Dot · SVG 라인 아이콘 · Pretendard. (HAI 헤리티지 흡수)
+ *
+ * 안정성: API 키가 없거나 네트워크가 끊겨도 동일한 이벤트를 내는
+ * 데모 스크립트로 자동 폴백 → 시연은 언제나 완주됩니다.
+ * ============================================================ */
+
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import Head from "next/head";
+import { executeCareTool, SEED_CONSOLE, SEED_MANAGERS, mergeCareProfile } from "../lib/careTools";
+
+/* ─── SVG 라인 아이콘 세트 ─── */
+const ICON_PATHS = {
+  heart: "M20.8 5.6a5.2 5.2 0 0 0-7.4 0L12 7l-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4L12 21.8l8.8-8.8a5.2 5.2 0 0 0 0-7.4z",
+  sparkle: "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zM19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7 .7-2z",
+  message: "M21 11.5a8.4 8.4 0 0 1-9 8.4 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z",
+  receipt: "M5 3.5v17l2-1.2 2 1.2 2-1.2 2 1.2 2-1.2 2 1.2v-17l-2 1.2-2-1.2-2 1.2-2-1.2-2 1.2-2-1.2zM8.5 8.5h7M8.5 12h7M8.5 15.5h4",
+  star: "M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.3l6.5-.9L12 2.5z",
+  check: "M22 11v1a10 10 0 1 1-5.9-9.1M22 4L12 14l-3-3",
+  calendar: "M8 2.5v4M16 2.5v4M3.5 9.5h17M5 4.5h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2z",
+  users: "M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 20v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8",
+  activity: "M22 12h-4l-3 8L9 4l-3 8H2",
+  send: "M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z",
+  play: "M6 3.5l14 8.5-14 8.5v-17z",
+  refresh: "M21 3v6h-6M3 21v-6h6M20.5 9a8.5 8.5 0 0 0-14.1-3.2L3 9M3.5 15a8.5 8.5 0 0 0 14.1 3.2L21 15",
+  clock: "M12 21.5a9.5 9.5 0 1 0 0-19 9.5 9.5 0 0 0 0 19zM12 6.5V12l3.5 2",
+  pin: "M20 10.5c0 6-8 11.5-8 11.5s-8-5.5-8-11.5a8 8 0 0 1 16 0zM12 13a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4z",
+  shield: "M12 22s7.5-3.8 7.5-9.5V5.2L12 2.5 4.5 5.2v7.3C4.5 18.2 12 22 12 22z",
+  wallet: "M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v2M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3M3 7h15M21 12h-4a2 2 0 0 0 0 4h4v-4z",
+  cross: "M12 6.5v11M6.5 12h11",
+  sun: "M12 17.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM12 1.7v2.1M12 20.2v2.1M4.2 4.2l1.5 1.5M18.3 18.3l1.5 1.5M1.7 12h2.1M20.2 12h2.1M4.2 19.8l1.5-1.5M18.3 5.7l1.5-1.5",
+  cloud: "M6.5 19a4 4 0 0 1-.8-7.92 6 6 0 0 1 11.6-1.6A4.5 4.5 0 0 1 17.5 19h-11z",
+  droplet: "M12 2.7c3 3.6 6 6.9 6 10.3a6 6 0 1 1-12 0c0-3.4 3-6.7 6-10.3z",
+  wind: "M3 12h11a3 3 0 1 0-3-3M3 16h15a3 3 0 1 1-3 3",
+  thermometer: "M14 14.76V5a2 2 0 1 0-4 0v9.76a4 4 0 1 0 4 0z",
+};
+function Icon({ name, size = 20, sw = 1.7, color }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color || "currentColor"}
+      strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" style={{ display: "block", flexShrink: 0 }}>
+      {ICON_PATHS[name].split("M").filter(Boolean).map((d, i) => <path key={i} d={"M" + d} />)}
+    </svg>
+  );
+}
+function Star({ size = 13, color = "#C0863A" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke="none" style={{ display: "inline-block", verticalAlign: "-1px" }}>
+      <path d={ICON_PATHS.star} />
+    </svg>
+  );
+}
+function Dot({ color, live }) {
+  return <span className={live ? "pulse-dot" : ""} style={{ width: live ? 8 : 7, height: live ? 8 : 7, borderRadius: "50%", background: color, display: "inline-block", flexShrink: 0 }} />;
+}
+
+/* ─── 디자인 토큰 — weatherplan-ai 헤리티지 (웜 오프화이트 + 딥잉크 #050038) ─── */
+const C = {
+  cream: "#F7F5EE", cream2: "#FAFAF6",             // 페이지 배경 (warm off-white)
+  ink: "#0F0A2E", ink2: "#2D2A4A", sub: "#6B6781", faint: "#8E8AA3",
+  line: "#E5E1D6", lineSoft: "#EFEBE0",            // hairline
+  teal: "#4EB3A8", tealDk: "#14443B",              // brandTeal / mossDark
+  green: "#1FAB6A", blue: "#4262FF", amber: "#BC8236", red: "#FF6850",
+  evergreen: "#050038",                            // inkDeep — 브랜드 시그니처
+};
+
+const GRID_START = 8, GRID_END = 18, GRID_SPAN = GRID_END - GRID_START;
+
+/* ─── 포맷 헬퍼 ─── */
+const won = (n) => `${Math.round(n).toLocaleString("ko-KR")}원`;
+const manwon = (n) => Math.round(n / 10000);
+const hourLabel = (h) => `${String(Math.floor(h)).padStart(2, "0")}:${h % 1 ? "30" : "00"}`;
+
+function parseHour(t = "") {
+  if (typeof t === "number") return t;
+  const hm = String(t).match(/(\d{1,2})\s*[:시]\s*(\d{1,2})?/);
+  let h = hm ? parseInt(hm[1], 10) : 9;
+  const min = hm && hm[2] ? parseInt(hm[2], 10) : 0;
+  if (/오후|저녁|밤|pm/i.test(t) && h < 12) h += 12;
+  if (/오전|아침|am/i.test(t) && h === 12) h = 0;
+  return Math.min(Math.max(h + (min >= 30 ? 0.5 : 0), GRID_START), GRID_END - 1);
+}
+
+const STATUS = {
+  confirmed:  { label: "예약확정", fg: C.tealDk, tint: "rgba(78,179,168,0.14)", dot: C.teal },
+  pending:    { label: "배차대기", fg: "#8A6216", tint: "rgba(188,130,54,0.16)", dot: C.amber },
+  dispatched: { label: "배차완료", fg: "#2D47D8", tint: "rgba(66,98,255,0.13)", dot: C.blue },
+  in_service: { label: "수행중",   fg: "#1E7A44", tint: "rgba(46,158,99,0.15)", dot: C.green },
+  done:       { label: "완료",     fg: "#5C6B66", tint: "rgba(22,33,28,0.08)",  dot: "#94a3b8" },
+};
+
+/* ─── **볼드** 지원 초경량 렌더러 ─── */
+function Rich({ text }) {
+  return (
+    <>
+      {String(text).split("\n").map((line, li) => (
+        <span key={li} style={{ display: "block" }}>
+          {line.split(/(\*\*[^*]+\*\*)/g).map((seg, si) =>
+            seg.startsWith("**") && seg.endsWith("**")
+              ? <strong key={si} style={{ fontWeight: 700 }}>{seg.slice(2, -2)}</strong>
+              : <span key={si}>{seg}</span>
+          )}
+        </span>
+      ))}
+    </>
+  );
+}
+
+/* ─── 카운트업 애니메이션 숫자 ─── */
+function CountUp({ value, suffix = "" }) {
+  const [disp, setDisp] = useState(value);
+  const prev = useRef(value);
+  const dispRef = useRef(value);
+  useEffect(() => {
+    const from = prev.current, to = value;
+    if (from === to) return;
+    const dur = 900, t0 = performance.now();
+    let raf;
+    const tick = (now) => {
+      const p = Math.min((now - t0) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const v = Math.round(from + (to - from) * eased);
+      dispRef.current = v;
+      setDisp(v);
+      if (p < 1) raf = requestAnimationFrame(tick);
+      else prev.current = to;
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); prev.current = dispRef.current; }; // 중도 갱신 시 역주행 방지
+  }, [value]);
+  return <>{disp.toLocaleString("ko-KR")}{suffix}</>;
+}
+
+/* ─── 배경 — 헤리티지: 웜 오프화이트 플랫 (장식 오브 제거) ─── */
+function Orbs() { return null; }
+
+/* 공용: 아이콘 칩 */
+function Chip({ name, bg, fg, size = 18, box = 34, sw }) {
+  return (
+    <div style={{ width: box, height: box, borderRadius: box * 0.32, background: bg, color: fg, display: "grid", placeItems: "center", flexShrink: 0 }}>
+      <Icon name={name} size={size} sw={sw} />
+    </div>
+  );
+}
+
+/* ─── 챗봇: 견적 카드 ─── */
+function QuoteCard({ q }) {
+  return (
+    <div className="glass-card" style={{ marginTop: 8, borderRadius: 16, overflow: "hidden" }}>
+      <div style={{ padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${C.lineSoft}` }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 7, fontWeight: 700, color: C.tealDk, fontSize: 13 }}>
+          <Icon name="receipt" size={15} color={C.teal} /> 투명 견적
+        </span>
+        <span style={{ fontSize: 12, color: C.sub }}>{q.service_label}</span>
+      </div>
+      <div style={{ padding: "12px 14px", fontSize: 13, color: C.ink }}>
+        <Row k={q.breakdown} v={won(q.base)} />
+        {q.surcharge_lines.map((s, i) => <Row key={i} k={s.label} v={`+${won(s.amount)}`} muted />)}
+        <div style={{ height: 1, background: C.line, margin: "8px 0" }} />
+        <Row k={<b>총 예상 금액</b>} v={<b style={{ color: C.tealDk, fontSize: 16 }}>{won(q.total)}</b>} />
+        <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.faint, marginTop: 7 }}>
+          <Icon name="shield" size={12} color={C.faint} /> {q.note}
+        </div>
+      </div>
+    </div>
+  );
+}
+const Row = ({ k, v, muted }) => (
+  <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0", color: muted ? C.sub : C.ink }}>
+    <span>{k}</span><span style={{ fontVariantNumeric: "tabular-nums" }}>{v}</span>
+  </div>
+);
+
+/* ─── 챗봇: 매니저 슬롯 카드 ─── */
+function SlotsCard({ slots }) {
+  return (
+    <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
+      {slots.map((s, i) => (
+        <div key={s.manager_id} className="glass-card" style={{ borderRadius: 16, padding: "10px 12px", display: "flex", gap: 11, alignItems: "center", border: i === 0 ? `1.5px solid rgba(78,179,168,0.5)` : undefined }}>
+          <div style={{ width: 40, height: 40, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, color: "#fff", display: "grid", placeItems: "center", fontWeight: 700, flexShrink: 0, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }}>{s.name[0]}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <b style={{ fontSize: 14 }}>{s.name} 매니저</b>
+              {i === 0 && <span style={{ fontSize: 11, fontWeight: 700, color: "#fff", background: C.teal, borderRadius: 6, padding: "2px 7px" }}>추천</span>}
+            </div>
+            <div style={{ fontSize: 12, color: C.sub, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+              <Star /> {s.rating} <span style={{ color: C.faint }}>({s.reviews})</span> · {s.specialty}
+            </div>
+            <div style={{ fontSize: 11, color: C.faint, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+              <Icon name="pin" size={11} color={C.faint} /> {s.distance_km}km{s.nearby ? " · 근거리" : ""} · {s.cert.join("·")}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ─── 챗봇: 예약 확정 카드 ─── */
+function BookingCard({ b }) {
+  return (
+    <div style={{ marginTop: 8, borderRadius: 16, overflow: "hidden", background: "#FFFFFF", border: `1.5px solid ${C.teal}`, boxShadow: "0 10px 24px -16px rgba(20,68,59,0.35)" }}>
+      <div style={{ padding: "11px 14px", background: `linear-gradient(180deg,${C.tealDk},#2D47D8)`, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 7, fontWeight: 700, fontSize: 13 }}>
+          <Icon name="check" size={16} /> 예약 접수 완료
+        </span>
+        <span style={{ fontSize: 12, opacity: 0.9, fontVariantNumeric: "tabular-nums" }}>{b.id}</span>
+      </div>
+      <div style={{ padding: "12px 14px", fontSize: 13 }}>
+        <Row k="대상 · 병원" v={`${b.recipient} · ${b.hospital}`} />
+        <Row k="일시" v={`${b.date} ${b.time} · ${b.hours}시간`} />
+        <Row k="서비스" v={b.service_label} />
+        <Row k="담당 매니저" v={<span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>{b.manager_name} <Star /> {b.manager_rating}</span>} />
+        <div style={{ height: 1, background: C.line, margin: "8px 0" }} />
+        <Row k={<b>결제 금액</b>} v={<b style={{ color: C.tealDk, fontSize: 16 }}>{won(b.price)}</b>} />
+        {b.outing && (
+          <div style={{ marginTop: 9, padding: "7px 10px", background: "rgba(188,130,54,0.09)", border: "1px solid rgba(188,130,54,0.22)", borderRadius: 10, display: "flex", alignItems: "center", gap: 7, fontSize: 12, color: C.ink2 }}>
+            <Icon name="sun" size={14} color={C.amber} />
+            <span>그날 동행 컨디션 <b style={{ color: scoreStyle(b.outing.score ?? 60).fg }}>{typeof b.outing.score === "number" ? `${b.outing.score}점 · ${b.outing.verdict}` : b.outing.grade}</b> · <b>{b.outing.items.join("·")}</b> 준비해 동행합니다</span>
+          </div>
+        )}
+        {b.checklist?.length > 0 && (
+          <div style={{ marginTop: 8 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: C.faint, marginBottom: 5 }}>보호자 준비 체크리스트</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+              {b.checklist.map((it, i) => (
+                <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 600, color: C.ink2, background: "rgba(22,33,28,0.045)", border: `1px solid ${C.lineSoft}`, borderRadius: 8, padding: "3px 8px" }}>
+                  <Icon name="check" size={10} color={C.teal} /> {it}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+        <button className="btn-primary" style={{ width: "100%", marginTop: 11, borderRadius: 12, padding: "11px 0", fontSize: 13, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
+          <Icon name="wallet" size={16} /> 토스로 선결제 (에스크로 보관)
+        </button>
+        <div style={{ marginTop: 8, fontSize: 11, color: C.faint, textAlign: "center" }}>
+          본 서비스는 의료행위가 아닌 동행·생활지원 서비스입니다
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── 외출 컨디션 등급 색상 ─── */
+const WX_GRADE = {
+  "좋음": { fg: C.green, bg: "rgba(46,158,99,0.14)" },
+  "보통": { fg: C.tealDk, bg: "rgba(78,179,168,0.13)" },
+  "주의": { fg: "#8A6216", bg: "rgba(188,130,54,0.16)" },
+  "나쁨": { fg: "#B23A28", bg: "rgba(229,83,60,0.14)" },
+};
+const skyIcon = (sky = "") => /비|소나기/.test(sky) ? "droplet" : /눈/.test(sky) ? "cloud" : /구름|흐림/.test(sky) ? "cloud" : "sun";
+
+function WxMetric({ icon, label, value, tone }) {
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3, alignItems: "flex-start" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: C.faint }}>
+        <Icon name={icon} size={12} color={C.faint} /> {label}
+      </div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: tone || C.ink, whiteSpace: "nowrap" }}>{value}</div>
+    </div>
+  );
+}
+function ItemChips({ items }) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+      {items.map((it, i) => (
+        <span key={i} style={{ fontSize: 11, fontWeight: 600, color: C.tealDk, background: "rgba(78,179,168,0.10)", border: "1px solid rgba(78,179,168,0.24)", borderRadius: 8, padding: "3px 8px" }}>{it}</span>
+      ))}
+    </div>
+  );
+}
+
+/* ─── 챗봇: 외출 컨디션 카드 (케이웨더 · wellbian NN점 판정 계승) ─── */
+function WeatherCard({ w }) {
+  const hasScore = typeof w.score === "number";
+  const s = hasScore ? scoreStyle(w.score) : (WX_GRADE[w.grade] || WX_GRADE["보통"]);
+  return (
+    <div className="glass-card" style={{ marginTop: 8, borderRadius: 16, overflow: "hidden" }}>
+      <div style={{ padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${C.lineSoft}` }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 7, fontWeight: 700, fontSize: 13, color: C.ink }}>
+          <Icon name={skyIcon(w.sky)} size={15} color={C.amber} /> 동행 컨디션
+          <span style={{ fontSize: 11, fontWeight: 400, color: C.faint }}>· {w.date}</span>
+        </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: s.fg, background: s.bg, borderRadius: 7, padding: "2px 8px", fontVariantNumeric: "tabular-nums" }}>
+            {hasScore ? `${w.score}점 · ${w.verdict || w.grade}` : w.grade}
+          </span>
+          <span style={{ fontSize: 11, color: C.faint }}>케이웨더</span>
+        </span>
+      </div>
+      <div style={{ padding: "11px 14px" }}>
+        {/* 출발지·도착지 2지점 — 왕복 전 구간 리스크 */}
+        {w.legs && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 10 }}>
+            {w.legs.map((l) => (
+              <div key={l.role} style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12, background: "rgba(255,255,255,0.55)", border: `1px solid ${C.lineSoft}`, borderRadius: 9, padding: "6px 9px" }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: l.role === "출발지" ? "#2D47D8" : C.tealDk, background: l.role === "출발지" ? "rgba(66,98,255,0.10)" : "rgba(78,179,168,0.10)", borderRadius: 6, padding: "1px 6px", flexShrink: 0 }}>{l.role}</span>
+                <b style={{ flexShrink: 0 }}>{l.location}</b>
+                <Icon name={skyIcon(l.sky)} size={13} color={/비|눈/.test(l.sky) ? C.blue : C.amber} />
+                <span style={{ color: C.sub, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{l.temp}℃ {l.sky}</span>
+                <span style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: scoreStyle(l.score).fg, background: scoreStyle(l.score).bg, borderRadius: 6, padding: "1px 7px", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{l.score}점 {l.verdict}</span>
+              </div>
+            ))}
+            <div style={{ fontSize: 11, color: C.faint }}>지표·판정은 컨디션이 더 나쁜 <b>{w.worst_leg}</b> 기준입니다</div>
+          </div>
+        )}
+        <div className="wx-metrics" style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+          <WxMetric icon="thermometer" label="기온" value={`${w.temp}℃ ${w.sky}`} />
+          <WxMetric icon="wind" label="미세먼지" value={w.pm_grade} tone={/나쁨/.test(w.pm_grade) ? "#B23A28" : C.ink} />
+          <WxMetric icon="sun" label="자외선" value={w.uv_grade} tone={/높음|위험/.test(w.uv_grade) ? "#8A6216" : C.ink} />
+          <WxMetric icon="droplet" label="강수확률" value={`${w.pop}%`} />
+        </div>
+        {/* 감점 사유 칩 — wellbian deductions[] 투명 공개 */}
+        {w.deductions?.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>
+            {w.deductions.map((d, i) => (
+              <span key={i} style={{ fontSize: 11, fontWeight: 600, color: s.fg, background: s.bg, border: `1px solid ${s.fg}33`, borderRadius: 7, padding: "2px 7px", fontVariantNumeric: "tabular-nums" }}>
+                {d.reason} −{d.points}
+              </span>
+            ))}
+          </div>
+        )}
+        {w.hard_stop && (
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: "#B23A28", background: "rgba(229,83,60,0.10)", border: "1px solid rgba(229,83,60,0.3)", borderRadius: 9, padding: "6px 9px", marginBottom: 8 }}>
+            <Icon name="shield" size={13} color="#B23A28" /> 안전 기준 초과 — 일정 변경 권장
+          </div>
+        )}
+        <ItemChips items={w.items} />
+        {w.comment && (
+          <div style={{ marginTop: 8, fontSize: 12, color: C.ink2, background: "rgba(22,33,28,0.045)", border: `1px solid ${C.lineSoft}`, borderRadius: 9, padding: "7px 10px" }}>
+            💡 {w.comment}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─── 날씨지수 톤/게이지 계산 ─── */
+const pmTone = (g = "") => /나쁨/.test(g) ? "#B23A28" : /보통/.test(g) ? C.tealDk : C.green;
+const uvTone = (g = "") => /위험/.test(g) ? "#B23A28" : /높음/.test(g) ? "#8A6216" : /보통/.test(g) ? C.tealDk : C.green;
+const gradeTone = (g) => (WX_GRADE[g] || WX_GRADE["보통"]).fg;
+const clamp = (v) => Math.max(4, Math.min(100, v));
+
+/* wellbian RecommendCard scoreStyle — 85/70/55/40 5단 판정 팔레트 */
+function scoreStyle(score) {
+  if (score >= 85) return { fg: C.green, bg: "rgba(46,158,99,0.14)" };
+  if (score >= 70) return { fg: C.tealDk, bg: "rgba(78,179,168,0.13)" };
+  if (score >= 55) return { fg: "#8A6216", bg: "rgba(188,130,54,0.16)" };
+  if (score >= 40) return { fg: "#B4551F", bg: "rgba(217,110,43,0.15)" };
+  return { fg: "#B23A28", bg: "rgba(229,83,60,0.14)" };
+}
+
+function wxIndices(o) {
+  // 외출지수는 wellbian 100점 감점제 엔진의 실제 score (등급→가짜점수 매핑 아님)
+  const outScore = o.score ?? ({ "좋음": 88, "보통": 70, "주의": 46, "나쁨": 24 }[o.grade] ?? 60);
+  const pmBar = { "좋음": 22, "보통": 50, "나쁨": 80, "매우나쁨": 96 }[o.pm_grade] ?? 50;
+  const uvBar = { "낮음": 18, "보통": 42, "높음": 66, "매우높음": 86, "위험": 98 }[o.uv_grade] ?? 40;
+  return [
+    { key: "외출지수", val: `${outScore}점`, tone: scoreStyle(outScore).fg, bar: outScore },
+    { key: "미세먼지", val: o.pm_grade, tone: pmTone(o.pm_grade), bar: pmBar },
+    { key: "자외선", val: o.uv_grade, tone: uvTone(o.uv_grade), bar: uvBar },
+    { key: "체감기온", val: `${o.temp}℃`, tone: o.temp >= 31 ? "#8A6216" : o.temp <= 4 ? C.blue : C.ink, bar: clamp(((o.temp + 8) / 48) * 100) },
+  ];
+}
+
+/* ─── wellbian TypingText 이식 — 22ms/글자, 탭 스킵, typed 플래그로 재타이핑 방지 ─── */
+function TypingText({ text, onComplete, done }) {
+  const [i, setI] = useState(done ? text.length : 0);
+  const doneRef = useRef(done);
+  useEffect(() => {
+    if (doneRef.current) return;
+    const iv = setInterval(() => setI((cur) => Math.min(cur + 2, text.length)), 22); // updater는 순수하게
+    return () => clearInterval(iv);
+  }, [text]); // eslint-disable-line
+  // 완료 감지는 effect에서 — setState updater 내 부수효과(StrictMode 경고) 방지
+  useEffect(() => {
+    if (!doneRef.current && i >= text.length) {
+      doneRef.current = true;
+      onComplete && onComplete();
+    }
+  }, [i, text, onComplete]);
+  const finished = done || i >= text.length;
+  const skip = () => {
+    if (doneRef.current) return;
+    doneRef.current = true;
+    setI(text.length);
+    onComplete && onComplete();
+  };
+  return (
+    <span onClick={skip} style={{ cursor: finished ? "inherit" : "pointer" }}>
+      <Rich text={finished ? text : text.slice(0, i)} />
+      {!finished && <span style={{ display: "inline-block", width: 3, height: 13, background: "currentColor", opacity: 0.5, marginLeft: 2, animation: "dots 1.2s infinite" }} />}
+    </span>
+  );
+}
+function MiniMeter({ m }) {
+  return (
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: 11, color: C.faint, marginBottom: 2, whiteSpace: "nowrap" }}>{m.key}</div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: m.tone, whiteSpace: "nowrap", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis" }}>{m.val}</div>
+      <div style={{ height: 4, borderRadius: 3, background: "rgba(22,33,28,0.09)", overflow: "hidden" }}>
+        <div style={{ width: `${m.bar}%`, height: "100%", background: m.tone, borderRadius: 3 }} />
+      </div>
+    </div>
+  );
+}
+
+/* ─── 챗봇 상단: 컨디션·날씨지수 미니 대시보드 ─── */
+function WxDashboard({ o }) {
+  const g = WX_GRADE[o.grade] || WX_GRADE["보통"];
+  return (
+    <div style={{ flexShrink: 0, padding: "10px 14px", borderBottom: `1px solid ${C.line}`, background: "rgba(255,255,255,0.5)" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: C.ink2 }}>
+          <Icon name={skyIcon(o.sky)} size={13} color={C.amber} /> 케이웨더 대시보드 <span style={{ fontWeight: 400, color: C.faint }}>· {o.location} · {o.date || "오늘"}</span>
+        </span>
+        <span style={{ fontSize: 11, fontWeight: 700, color: typeof o.score === "number" ? scoreStyle(o.score).fg : g.fg, background: typeof o.score === "number" ? scoreStyle(o.score).bg : g.bg, borderRadius: 7, padding: "2px 8px", fontVariantNumeric: "tabular-nums" }}>
+          {typeof o.score === "number" ? `${o.score}점 · ${o.verdict || o.grade}` : `외출 ${o.grade}`}
+        </span>
+      </div>
+      <div className="wx-metrics" style={{ display: "flex", gap: 12 }}>
+        {wxIndices(o).map((m, i) => <MiniMeter key={i} m={m} />)}
+      </div>
+    </div>
+  );
+}
+
+/* ─── 콘솔: 주간 일자별 외출 컨디션 캘린더 ─── */
+function WeekOuting({ week }) {
+  return (
+    <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+      <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+        <Icon name="calendar" size={14} color={C.teal} /> 주간 외출 컨디션 <span style={{ fontWeight: 400, color: C.faint }}>· 케이웨더</span>
+      </div>
+      <div style={{ display: "flex", padding: "10px 8px", gap: 6, overflowX: "auto" }}>
+        {week.map((d) => {
+          const g = WX_GRADE[d.grade] || WX_GRADE["보통"];
+          const wknd = d.label === "토" || d.label === "일";
+          return (
+            <div key={d.date} title={`${d.sky} ${d.temp}℃ · 미세먼지 ${d.pm_grade} · 자외선 ${d.uv_grade}`}
+              style={{ flex: 1, minWidth: 58, borderRadius: 12, padding: "8px 6px 7px", textAlign: "center", background: d.today ? "rgba(78,179,168,0.10)" : "rgba(255,255,255,0.5)", border: `1px solid ${d.today ? "rgba(78,179,168,0.42)" : C.lineSoft}` }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: wknd ? (d.label === "일" ? C.red : C.blue) : C.ink2 }}>
+                {d.label}{d.today && <span style={{ fontSize: 10, color: C.teal }}> 오늘</span>}
+              </div>
+              <div style={{ fontSize: 10, color: C.faint, marginBottom: 4, fontVariantNumeric: "tabular-nums" }}>{d.date}</div>
+              <div style={{ display: "grid", placeItems: "center", margin: "1px 0 2px" }}><Icon name={skyIcon(d.sky)} size={17} color={/비|눈/.test(d.sky) ? C.blue : C.amber} /></div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: C.ink, fontVariantNumeric: "tabular-nums" }}>{d.temp}°</div>
+              <div style={{ marginTop: 5, fontSize: 10, fontWeight: 700, color: g.fg, background: g.bg, borderRadius: 6, padding: "2px 0" }}>{d.grade}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─── 콘솔: 실시간 관제 맵 — dcmap(명당 AI) HUD 헤리티지 이식 ───
+ * 딥네이비+시안 HUD, 아이소메트릭 빌딩 마커, 상태색(수행 green/이동 orange/대기 slate),
+ * 접힘 범례, 근사좌표 점선 링(데이터 정직성 — GPS 연동 전 위치는 근사임을 표시).
+ * 타일·외부 의존성 없는 자립형 SVG — 오프라인에서도 시연 완주. */
+const HUD = { bg: "#081527", line: "#1b3050", accent: "#4EB3A8", green: "#3DBF7A", orange: "#F59A3C", slate: "#64748b", text: "#c9d6e8", dim: "#6b7f99" };
+const MAP_HOSPITALS = {
+  "서울대병원": [95, 38], "세브란스": [70, 42], "신촌세브란스": [70, 42], "강남세브란스": [120, 78],
+  "경희대병원": [135, 25], "고대안암병원": [120, 30], "서울아산병원": [150, 75],
+  "삼성서울병원": [128, 82], "서울성모병원": [105, 80], "보라매병원": [78, 82],
+};
+const MAP_HOMES = { mgr_01: [63, 100], mgr_02: [86, 22], mgr_03: [132, 92], mgr_04: [48, 55], mgr_05: [140, 12] };
+const HAN_RIVER = "M0,62 C30,56 50,60 80,66 C110,72 130,58 160,52 C175,49 190,54 200,58";
+/* dcmap ISO_SVG 원형 이식 — 아이소메트릭 빌딩 (색은 상태별 fill로) */
+function IsoBuilding({ x, y, color, size = 11, dim }) {
+  const s = size / 24;
+  return (
+    <g transform={`translate(${x - size / 2},${y - size * 0.58}) scale(${s})`} opacity={dim ? 0.45 : 1}>
+      <polygon points="12,2 22,8 12,14 2,8" fill={color} />
+      <polygon points="2,8 12,14 12,24 2,18" fill={color} opacity="0.55" />
+      <polygon points="12,14 22,8 22,18 12,24" fill={color} opacity="0.75" />
+    </g>
+  );
+}
+function LiveOpsMap({ today, highlightId }) {
+  const [tick, setTick] = useState(0);
+  const [filter, setFilter] = useState("all"); // all|active|moving|idle
+  const [legendOpen, setLegendOpen] = useState(false);
+  const [sel, setSel] = useState(null);
+  const reduced = useRef(false);
+  useEffect(() => {
+    try { reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (_) {}
+    const iv = setInterval(() => setTick((t) => t + 1), 140);
+    return () => clearInterval(iv);
+  }, []);
+
+  // 매니저별 현재 임무 → 위치·상태 계산 (결정론적)
+  const phase = reduced.current ? 0.5 : (Math.sin(tick / 22) + 1) / 2; // 0..1 왕복
+  const managers = SEED_MANAGERS.map((m) => {
+    const jobs = today.filter((b) => b.managerId === m.id);
+    const active = jobs.find((b) => b.status === "in_service");
+    const moving = jobs.find((b) => b.status === "dispatched" || b.status === "confirmed");
+    const home = MAP_HOMES[m.id] || [100, 60];
+    let pos = home, status = "idle", job = null, route = null;
+    if (active && MAP_HOSPITALS[active.hospital]) {
+      pos = MAP_HOSPITALS[active.hospital]; status = "active"; job = active;
+    } else if (moving && MAP_HOSPITALS[moving.hospital]) {
+      const dest = MAP_HOSPITALS[moving.hospital];
+      const t01 = 0.3 + phase * 0.4; // 이동 중 왕복 근사 (GPS 연동 전 데모 연출)
+      pos = [home[0] + (dest[0] - home[0]) * t01, home[1] + (dest[1] - home[1]) * t01];
+      status = "moving"; job = moving; route = { from: home, to: dest, isNew: moving.id === highlightId };
+    }
+    return { m, pos, status, job, route };
+  });
+  const shown = managers.filter((x) => filter === "all" || x.status === (filter === "active" ? "active" : filter === "moving" ? "moving" : "idle"));
+  const hospitalsActive = new Set(today.filter((b) => b.status === "in_service").map((b) => b.hospital));
+  const hospitalsQueued = new Set(today.map((b) => b.hospital));
+  const stColor = (s) => s === "active" ? HUD.green : s === "moving" ? HUD.orange : HUD.slate;
+  const stLabel = (s) => s === "active" ? "수행중" : s === "moving" ? "이동중" : "대기";
+
+  return (
+    <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+      <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+          <Icon name="pin" size={14} color={C.teal} /> 실시간 관제 맵 <span style={{ fontWeight: 400, color: C.faint }}>· 서울 · GPS 연동 대기(근사 위치)</span>
+        </span>
+        <span className="map-chips" style={{ display: "flex", gap: 5 }}>
+          {[["all", "전체"], ["active", "수행중"], ["moving", "이동중"], ["idle", "대기"]].map(([k, l]) => (
+            <button key={k} onClick={() => setFilter(k)} style={{ fontSize: 11, fontWeight: 600, borderRadius: 999, padding: "3px 9px", border: `1px solid ${filter === k ? "rgba(78,179,168,0.5)" : C.line}`, background: filter === k ? "rgba(78,179,168,0.12)" : "rgba(255,255,255,0.5)", color: filter === k ? C.tealDk : C.sub }}>{l}</button>
+          ))}
+        </span>
+      </div>
+      <div style={{ position: "relative", background: HUD.bg }}>
+        <svg viewBox="0 0 200 118" style={{ display: "block", width: "100%", height: "auto" }}>
+          {/* 엔지니어링 그리드 (dcmap body::before 문법) */}
+          {Array.from({ length: 9 }, (_, i) => <line key={`v${i}`} x1={(i + 1) * 20} y1="0" x2={(i + 1) * 20} y2="118" stroke={HUD.line} strokeWidth="0.3" opacity="0.5" />)}
+          {Array.from({ length: 5 }, (_, i) => <line key={`h${i}`} x1="0" y1={(i + 1) * 20} x2="200" y2={(i + 1) * 20} stroke={HUD.line} strokeWidth="0.3" opacity="0.5" />)}
+          {/* 한강 */}
+          <path d={HAN_RIVER} fill="none" stroke="#123a5c" strokeWidth="4.5" strokeLinecap="round" opacity="0.9" />
+          <path d={HAN_RIVER} fill="none" stroke="#1d5d8f" strokeWidth="1.2" strokeLinecap="round" opacity="0.8" />
+          {/* 이동 경로 */}
+          {shown.filter((x) => x.route).map((x) => (
+            <g key={`r${x.m.id}`}>
+              <line x1={x.route.from[0]} y1={x.route.from[1]} x2={x.route.to[0]} y2={x.route.to[1]}
+                stroke={x.route.isNew ? HUD.accent : HUD.orange} strokeWidth={x.route.isNew ? 1.1 : 0.7}
+                strokeDasharray="3 2.2" opacity={x.route.isNew ? 0.95 : 0.55} />
+            </g>
+          ))}
+          {/* 병원 — 아이소메트릭 빌딩 (dcmap ISO 마커 이식) */}
+          {Object.entries(MAP_HOSPITALS).filter(([n]) => !["신촌세브란스", "강남세브란스", "서울성모병원"].includes(n)).map(([name, [hx, hy]]) => {
+            const col = hospitalsActive.has(name) ? HUD.green : hospitalsQueued.has(name) ? HUD.orange : HUD.slate;
+            return (
+              <g key={name} style={{ cursor: "pointer" }} onClick={() => setSel({ type: "hospital", name })}>
+                <IsoBuilding x={hx} y={hy} color={col} size={hospitalsQueued.has(name) ? 12 : 9} dim={!hospitalsQueued.has(name)} />
+                <text x={hx} y={hy + 9.5} textAnchor="middle" fontSize="4.6" fill={hospitalsQueued.has(name) ? HUD.text : HUD.dim} fontWeight="600">{name.replace("병원", "")}</text>
+              </g>
+            );
+          })}
+          {/* 매니저 — 근사 위치 점선 링 (데이터 정직성) */}
+          {shown.map((x) => (
+            <g key={x.m.id} style={{ cursor: "pointer" }} onClick={() => setSel({ type: "manager", id: x.m.id })}>
+              {x.route?.isNew && <circle cx={x.pos[0]} cy={x.pos[1]} r={7 + phase * 3} fill="none" stroke={HUD.accent} strokeWidth="0.6" opacity={0.8 - phase * 0.5} />}
+              <circle cx={x.pos[0]} cy={x.pos[1]} r="4.6" fill="none" stroke={stColor(x.status)} strokeWidth="0.7" strokeDasharray="1.6 1.2" opacity="0.85" />
+              <circle cx={x.pos[0]} cy={x.pos[1]} r="3.2" fill={HUD.bg} stroke={stColor(x.status)} strokeWidth="1" />
+              <text x={x.pos[0]} y={x.pos[1] + 1.7} textAnchor="middle" fontSize="4.4" fill={stColor(x.status)} fontWeight="700">{x.m.name[0]}</text>
+            </g>
+          ))}
+        </svg>
+        {/* 접힘 범례 알약 (dcmap Legend 문법) */}
+        <div style={{ position: "absolute", left: 10, bottom: 10 }}>
+          {legendOpen ? (
+            <div onClick={() => setLegendOpen(false)} style={{ background: "rgba(8,21,39,0.88)", border: `1px solid ${HUD.line}`, borderRadius: 10, padding: "8px 11px", fontSize: 11, color: HUD.text, cursor: "pointer", backdropFilter: "blur(8px)" }}>
+              {[[HUD.green, "수행중"], [HUD.orange, "이동중·예약"], [HUD.slate, "대기"], [HUD.accent, "신규 배차 경로"]].map(([c, l]) => (
+                <div key={l} style={{ display: "flex", alignItems: "center", gap: 6, padding: "1.5px 0" }}>
+                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: c }} /> {l}
+                </div>
+              ))}
+              <div style={{ marginTop: 4, color: HUD.dim, fontSize: 10 }}>점선 링 = 근사 위치 (GPS 연동 전)</div>
+            </div>
+          ) : (
+            <button className="pill-btn" onClick={() => setLegendOpen(true)} style={{ background: "rgba(8,21,39,0.85)", border: `1px solid ${HUD.line}`, borderRadius: 999, padding: "4px 11px", fontSize: 11, color: HUD.text, cursor: "pointer" }}>범례</button>
+          )}
+        </div>
+        {/* 선택 상세 스트립 (dcmap SitePanel 축소판) — id로 라이브 상태 참조 (스냅샷 고착 방지) */}
+        {sel && (() => {
+          const live = sel.type === "manager" ? managers.find((x) => x.m.id === sel.id) : null;
+          if (sel.type === "manager" && !live) return null;
+          return (
+          <div style={{ position: "absolute", right: 10, bottom: 10, maxWidth: "60%", background: "rgba(8,21,39,0.9)", border: `1px solid ${HUD.accent}44`, borderRadius: 10, padding: "8px 12px", fontSize: 11, color: HUD.text, backdropFilter: "blur(8px)" }}>
+            {sel.type === "manager" ? (
+              <>
+                <b style={{ color: HUD.accent }}>{live.m.name} 매니저</b> · {stLabel(live.status)}
+                {live.job && <div style={{ color: HUD.dim, marginTop: 2 }}>{hourLabel(live.job.start)} {live.job.hospital} · {live.job.recipient}</div>}
+                {!live.job && <div style={{ color: HUD.dim, marginTop: 2 }}>{live.m.areas[0]} 대기 · 오늘 {today.filter((b) => b.managerId === live.m.id).length}건</div>}
+              </>
+            ) : (
+              <>
+                <b style={{ color: HUD.accent }}>{sel.name}</b>
+                <div style={{ color: HUD.dim, marginTop: 2 }}>오늘 예약 {today.filter((b) => b.hospital === sel.name).length}건</div>
+              </>
+            )}
+            <button onClick={() => setSel(null)} style={{ position: "absolute", top: 3, right: 6, background: "none", border: "none", color: HUD.dim, fontSize: 12, cursor: "pointer" }}>×</button>
+          </div>
+          );
+        })()}
+      </div>
+    </div>
+  );
+}
+
+/* ─── 매니저 앱 (P5 목업) — GPS 체크인·완료 리포트 = '가정 내 센서' ───
+ * 실GPS·PWA 연동은 후속. 여기서의 액션이 콘솔 그리드·관제맵·티커에
+ * 실시간 반영 — 수요(챗봇)→운영(콘솔)→공급(매니저앱) 삼면 연결 시연. */
+function ConciergeBody({ today, onCheckin, onComplete, onClose }) {
+  const [mgrId, setMgrId] = useState(null);
+  const [reportFor, setReportFor] = useState(null);
+  const [report, setReport] = useState({ fall: "none", med: "ok", mood: "good" });
+  const withJobs = SEED_MANAGERS.filter((m) => today.some((b) => b.managerId === m.id));
+  const cur = SEED_MANAGERS.find((m) => m.id === (mgrId || withJobs[0]?.id)) || SEED_MANAGERS[1];
+  const jobs = today.filter((b) => b.managerId === cur.id).sort((a, b) => a.start - b.start);
+  const seg = (opts, val, set) => (
+    <div style={{ display: "flex", gap: 4 }}>
+      {opts.map(([k, l]) => (
+        <button key={k} onClick={() => set(k)} style={{ flex: 1, fontSize: 11, fontWeight: 600, borderRadius: 8, padding: "5px 0", border: `1px solid ${val === k ? "rgba(53,213,238,0.6)" : "rgba(255,255,255,0.14)"}`, background: val === k ? "rgba(53,213,238,0.16)" : "rgba(255,255,255,0.05)", color: val === k ? "#4EB3A8" : "#c9d6e8" }}>{l}</button>
+      ))}
+    </div>
+  );
+  return (
+      <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#0A0532,#050038)", display: "flex", flexDirection: "column", color: "#DCE6F5" }}>
+        <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 9 }}>
+          <div style={{ width: 34, height: 34, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, display: "grid", placeItems: "center", fontWeight: 700, color: "#fff" }}>{cur.name[0]}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>컨시어지 앱 <span style={{ fontSize: 11, color: "#4EB3A8", fontWeight: 600 }}>PWA · GPS 연동 대기(더미)</span></div>
+            <div style={{ fontSize: 11, color: "#7E92B4" }}>{cur.name} 컨시어지 · ⭐{cur.rating} · 오늘 {jobs.length}건</div>
+          </div>
+          {onClose && <button onClick={onClose} style={{ background: "none", border: "none", color: "#7E92B4", fontSize: 18, cursor: "pointer" }}>×</button>}
+        </div>
+        {/* 매니저 선택 탭 */}
+        <div style={{ display: "flex", gap: 5, padding: "9px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)", overflowX: "auto" }}>
+          {SEED_MANAGERS.map((m) => (
+            <button key={m.id} onClick={() => setMgrId(m.id)} style={{ flexShrink: 0, fontSize: 11, fontWeight: 600, borderRadius: 999, padding: "4px 10px", border: `1px solid ${cur.id === m.id ? "rgba(53,213,238,0.55)" : "rgba(255,255,255,0.12)"}`, background: cur.id === m.id ? "rgba(53,213,238,0.14)" : "transparent", color: cur.id === m.id ? "#4EB3A8" : "#93A6C6" }}>
+              {m.name}{today.some((b) => b.managerId === m.id) ? ` ·${today.filter((b) => b.managerId === m.id).length}` : ""}
+            </button>
+          ))}
+        </div>
+        <div style={{ flex: 1, overflowY: "auto", padding: 14, display: "flex", flexDirection: "column", gap: 10 }}>
+          {jobs.length === 0 && <div style={{ fontSize: 12, color: "#7E92B4", textAlign: "center", padding: "30px 0" }}>오늘 배정된 일정이 없습니다</div>}
+          {jobs.map((b) => {
+            const st = STATUS[b.status] || STATUS.confirmed;
+            return (
+              <div key={b.id} style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, background: "rgba(255,255,255,0.04)", padding: "11px 13px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                  <b style={{ fontSize: 14 }}>{hourLabel(b.start)} {b.hospital}</b>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: st.fg === "#5C6B66" ? "#93A6C6" : "#050038", background: st.dot, borderRadius: 6, padding: "2px 7px" }}>{st.label}</span>
+                </div>
+                <div style={{ fontSize: 12, color: "#93A6C6", marginBottom: 9 }}>{b.recipient} · {b.service} · {b.hours}시간</div>
+                {(b.status === "dispatched" || b.status === "confirmed") && (
+                  <button onClick={() => onCheckin(b.id, cur.name)} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 13, fontWeight: 700, border: "none", background: "linear-gradient(180deg,#4EB3A8,#1F6157)", color: "#04182B", cursor: "pointer" }}>
+                    GPS 출근 체크인
+                  </button>
+                )}
+                {b.status === "pending" && (
+                  <div style={{ fontSize: 11, color: "#93A6C6", textAlign: "center", padding: "6px 0" }}>업체 배차 확정 대기 중 — 배정되면 체크인이 열립니다</div>
+                )}
+                {b.status === "in_service" && reportFor !== b.id && (
+                  <button onClick={() => { setReport({ fall: "none", med: "ok", mood: "good" }); setReportFor(b.id); }} style={{ width: "100%", borderRadius: 10, padding: "9px 0", fontSize: 13, fontWeight: 700, border: "1px solid rgba(61,191,122,0.5)", background: "rgba(61,191,122,0.12)", color: "#3DBF7A", cursor: "pointer" }}>
+                    서비스 완료 · 리포트 작성
+                  </button>
+                )}
+                {b.status === "in_service" && reportFor === b.id && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 4 }}>
+                    <div style={{ fontSize: 11, color: "#7E92B4" }}>완료 리포트 — 30초 체크 (가정 내 센서)</div>
+                    <div style={{ fontSize: 11, color: "#93A6C6" }}>낙상 위험</div>
+                    {seg([["none", "없음"], ["low", "낮음"], ["high", "높음"]], report.fall, (v) => setReport((r) => ({ ...r, fall: v })))}
+                    <div style={{ fontSize: 11, color: "#93A6C6" }}>복약 확인</div>
+                    {seg([["ok", "확인"], ["missed", "누락"], ["unknown", "모름"]], report.med, (v) => setReport((r) => ({ ...r, med: v })))}
+                    <div style={{ fontSize: 11, color: "#93A6C6" }}>어르신 기분</div>
+                    {seg([["good", "좋음"], ["flat", "보통"], ["low", "저조"]], report.mood, (v) => setReport((r) => ({ ...r, mood: v })))}
+                    <button onClick={() => { onComplete(b.id, cur.name, report); setReportFor(null); }} style={{ borderRadius: 10, padding: "9px 0", fontSize: 13, fontWeight: 700, border: "none", background: "#3DBF7A", color: "#06182E", cursor: "pointer", marginTop: 3 }}>
+                      리포트 제출 · 완료 처리
+                    </button>
+                  </div>
+                )}
+                {b.status === "done" && <div style={{ fontSize: 11, color: "#3DBF7A" }}>✓ 완료 — 리포트 제출됨 · 제공기록지 자동 생성</div>}
+              </div>
+            );
+          })}
+          <div style={{ fontSize: 11, color: "#5D7194", textAlign: "center", marginTop: 4 }}>체크인·완료가 배치관제·관리자·가족 화면에 실시간 반영됩니다</div>
+        </div>
+      </div>
+  );
+}
+
+/* ─── 가족 앱 (K-CARE Family Membership p10) — 실시간 건강·일정·컨시어지·리포트 ─── */
+function FamilyPanel({ profile, today, sos, onClearSos, pushTicker, kakaoMode }) {
+  const [tick, setTick] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setTick((t) => t + 1), 1400); return () => clearInterval(iv); }, []);
+  const hr = 71 + Math.round(Math.sin(tick / 2) * 3);           // 워치 더미 (연동 대기)
+  const bp = tick % 9 < 5 ? "128/78" : "126/79";
+  const mgrName = profile?.preferred_manager || "박영희";
+  const mgr = SEED_MANAGERS.find((m) => m.name === mgrName) || SEED_MANAGERS[1];
+  const nextJob = [...today].filter((b) => b.status !== "done").sort((a, b) => a.start - b.start)[0];
+  const metric = (icon, label, val, sub, tone) => (
+    <div className="glass-panel" style={{ flex: "1 1 44%", borderRadius: 14, padding: "11px 13px", minWidth: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.faint, marginBottom: 4 }}><Icon name={icon} size={12} color={C.faint} /> {label}</div>
+      <div style={{ fontSize: 20, fontWeight: 800, color: tone || C.ink, fontVariantNumeric: "tabular-nums" }}>{val}</div>
+      {sub && <div style={{ fontSize: 11, color: C.faint, marginTop: 2 }}>{sub}</div>}
+    </div>
+  );
+  return (
+    <section className="glass-panel pane-console" style={{ flex: "1.15 1 460px", minWidth: 340, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
+      <div className="console-hdr" style={{ flexShrink: 0, padding: "12px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
+          <Chip name="users" bg="rgba(78,179,168,0.13)" fg={C.tealDk} box={30} size={16} />
+          <div style={{ minWidth: 0 }}>
+            <b style={{ fontSize: 14, whiteSpace: "nowrap" }}>가족 앱 — 우리 아빠·엄마</b>
+            <div style={{ fontSize: 11, color: C.faint, whiteSpace: "nowrap" }}>Family Membership · 워치 연동 대기(더미)</div>
+          </div>
+        </div>
+        <span style={{ fontSize: 11, color: C.green, display: "flex", alignItems: "center", gap: 5 }}><Dot color={C.green} live /> 실시간 공유 중</span>
+      </div>
+      <div className="console-scroll" style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 13 }}>
+        {/* 응급 알림 — SOS 유기 연동 (어르신 화면 → 가족·배치관제 동시) */}
+        {sos && (
+          <div className="fadein" style={{ display: "flex", alignItems: "center", gap: 9, padding: "12px 14px", borderRadius: 14, background: "rgba(220,75,63,0.12)", border: `1.5px solid ${C.red}` }}>
+            <Dot color={C.red} live />
+            <div style={{ flex: 1 }}>
+              <b style={{ fontSize: 13, color: C.red }}>긴급 호출 (SOS) — {sos.time}</b>
+              <div style={{ fontSize: 12, color: C.ink2 }}>컨시어지·관제센터에 동시 전파됨 · 필요 시 119 연계</div>
+            </div>
+            <button className="pill-btn" onClick={onClearSos} style={{ fontSize: 11, fontWeight: 700, borderRadius: 9, padding: "6px 11px", border: `1px solid ${C.red}`, background: "#fff", color: C.red, cursor: "pointer" }}>확인 완료</button>
+          </div>
+        )}
+        {/* 실시간 건강 (워치 더미) */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+          {metric("heart", "심박수", `${hr} bpm`, "정상 범위", hr > 76 ? "#B4551F" : C.ink)}
+          {metric("activity", "걸음 수", "6,345", "목표 70%")}
+          {metric("cloud", "수면", "7시간 20분", "어젯밤")}
+          {metric("droplet", "혈압", bp, "오늘 08:10", C.ink)}
+        </div>
+        {/* 오늘 일정 */}
+        <div className="glass-panel" style={{ borderRadius: 16, overflow: "hidden" }}>
+          <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+            <Icon name="calendar" size={14} color={C.teal} /> 다가오는 일정
+          </div>
+          <div style={{ padding: "10px 15px", fontSize: 13 }}>
+            {nextJob ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <b style={{ fontVariantNumeric: "tabular-nums" }}>{hourLabel(nextJob.start)}</b>
+                <span>{nextJob.hospital} · {nextJob.service}</span>
+                <span style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: (STATUS[nextJob.status] || STATUS.confirmed).fg, background: (STATUS[nextJob.status] || STATUS.confirmed).tint, borderRadius: 6, padding: "2px 7px" }}>{(STATUS[nextJob.status] || STATUS.confirmed).label}</span>
+              </div>
+            ) : <span style={{ color: C.faint }}>예정된 일정이 없어요 — AI 컨시어지로 예약해 보세요</span>}
+            {profile?.topics?.appointments && <div style={{ marginTop: 6, fontSize: 11, color: C.sub }}>메모: {profile.topics.appointments}</div>}
+          </div>
+        </div>
+        {/* 전담 컨시어지 */}
+        <div className="glass-panel" style={{ borderRadius: 16, padding: "12px 15px", display: "flex", alignItems: "center", gap: 11 }}>
+          <div style={{ width: 42, height: 42, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, color: "#fff", display: "grid", placeItems: "center", fontWeight: 700, fontSize: 16 }}>{mgr.name[0]}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 700 }}>전담 컨시어지 · {mgr.name}</div>
+            <div style={{ fontSize: 11, color: C.sub }}>⭐{mgr.rating} · {mgr.specialty} · 1:1 배정</div>
+          </div>
+          <button className="pill-btn btn-primary" onClick={() => pushTicker(`가족 앱 → ${mgr.name} 컨시어지 1:1 상담 연결`, "blue")} style={{ borderRadius: 10, padding: "8px 13px", fontSize: 12, fontWeight: 700 }}>상담 연결</button>
+        </div>
+        {/* 케어 리포트 */}
+        <div className="glass-panel" style={{ borderRadius: 16, overflow: "hidden" }}>
+          <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+            <Icon name="receipt" size={14} color={C.teal} /> 케어 리포트 <span style={{ fontWeight: 400, color: C.faint }}>· 동행·방문 후 자동 전달</span>
+          </div>
+          <div style={{ padding: "10px 15px", fontSize: 12, color: C.ink2, display: "flex", flexDirection: "column", gap: 5 }}>
+            {profile?.topics?.mood ? <div>· {profile.topics.mood} <span style={{ color: C.faint }}>(컨시어지 완료 리포트)</span></div> : <div style={{ color: C.faint }}>아직 리포트가 없어요 — 첫 동행 후 이곳에 도착합니다</div>}
+            <div>· 다음 정기 안부콜: 금요일 오전 <span style={{ color: C.faint }}>(AI 안부콜 · 예정)</span></div>
+          </div>
+        </div>
+        <div style={{ fontSize: 11, color: C.faint, textAlign: "center" }}>{kakaoMode ? "카카오 채널과 동일 데이터로 동작합니다" : "좌측 AI 컨시어지의 예약·리포트가 이 화면에 실시간 반영됩니다"}</div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 사용자(어르신) 홈 — 큰 글씨·단순 동선·SOS ─── */
+function SeniorHome({ today, profile, onSos, sos }) {
+  const nextJob = [...today].filter((b) => b.status !== "done").sort((a, b) => a.start - b.start)[0];
+  const mgrName = profile?.preferred_manager || "박영희";
+  const o = SEED_CONSOLE.outing;
+  return (
+    <section className="glass-panel pane-chat" style={{ flex: "1 1 420px", maxWidth: 560, margin: "0 auto", display: "flex", flexDirection: "column", borderRadius: 22, overflow: "hidden", minHeight: 0 }}>
+      <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.line}` }}>
+        <div style={{ fontSize: 22, fontWeight: 800 }}>안녕하세요, 어르신</div>
+        <div style={{ fontSize: 14, color: C.sub, marginTop: 2 }}>오늘도 K-CARE가 곁에 있어요</div>
+      </div>
+      <div className="console-scroll" style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 14 }}>
+        <div className="glass-panel" style={{ borderRadius: 18, padding: "16px 18px" }}>
+          <div style={{ fontSize: 13, color: C.faint, marginBottom: 6 }}>오늘 일정</div>
+          {nextJob ? (
+            <>
+              <div style={{ fontSize: 24, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>{hourLabel(nextJob.start)} <span style={{ fontSize: 20 }}>{nextJob.hospital}</span></div>
+              <div style={{ fontSize: 15, color: C.ink2, marginTop: 4 }}>{nextJob.manager} 컨시어지가 모시러 갑니다</div>
+            </>
+          ) : <div style={{ fontSize: 18, fontWeight: 700 }}>오늘은 편히 쉬는 날이에요</div>}
+        </div>
+        <div className="glass-panel" style={{ borderRadius: 18, padding: "14px 18px", display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ width: 52, height: 52, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, color: "#fff", display: "grid", placeItems: "center", fontWeight: 800, fontSize: 22 }}>{mgrName[0]}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 18, fontWeight: 800 }}>{mgrName} 컨시어지</div>
+            <div style={{ fontSize: 13, color: C.sub }}>내 전담 담당자</div>
+          </div>
+          <button className="btn-primary" style={{ borderRadius: 14, padding: "13px 18px", fontSize: 15, fontWeight: 800 }}>전화하기</button>
+        </div>
+        <div className="glass-panel" style={{ borderRadius: 18, padding: "13px 18px", display: "flex", alignItems: "center", gap: 10 }}>
+          <Icon name={skyIcon(o.sky)} size={26} color={C.amber} />
+          <div style={{ fontSize: 15, color: C.ink2 }}>오늘 {o.temp}℃ {o.sky} · 나들이 {o.verdict}<div style={{ fontSize: 13, color: C.faint }}>{o.comment}</div></div>
+        </div>
+        <button onClick={onSos} disabled={!!sos}
+          style={{ borderRadius: 20, padding: "22px 0", fontSize: 22, fontWeight: 900, border: "none", cursor: "pointer", color: "#fff", background: sos ? "#B98A84" : `linear-gradient(180deg,#E4574A,#C23A2E)`, boxShadow: "0 12px 30px -10px rgba(220,75,63,0.55)" }}>
+          {sos ? "도움 요청됨 — 연결 중…" : "🆘 도움 요청 (SOS)"}
+        </button>
+        <div style={{ fontSize: 12, color: C.faint, textAlign: "center" }}>버튼을 누르면 가족·컨시어지·관제센터에 즉시 알립니다</div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 관리자: 수익 6종 현황 (K-CARE BM p7) ─── */
+function RevenueSix({ kpi }) {
+  const items = [
+    { name: "병원동행 (건별)", val: `${manwon(kpi.gmv)}만원`, sub: "오늘 GMV · 수수료 연동", tone: C.tealDk },
+    { name: "가입비", val: "3건 · 45만원", sub: "온보딩·컨시어지 배정", tone: C.ink },
+    { name: "월 구독 (MRR)", val: "1,240만원", sub: "멤버십 96가구", tone: C.green },
+    { name: "건강검진 패키지", val: "실버12 · 골드5 · 다이아2", sub: "제휴 검진센터 연계", tone: C.ink },
+    { name: "병원연계 수수료", val: "320만원", sub: "협력병원 20+", tone: C.ink },
+    { name: "헬스케어 커머스", val: "180만원", sub: "상비약·용품·기기", tone: C.ink },
+  ];
+  return (
+    <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+      <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+        <Icon name="wallet" size={14} color={C.teal} /> 수익 6종 현황 <span style={{ fontWeight: 400, color: C.faint }}>· K-CARE BM · 이번 달(데모)</span>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+        {items.map((r) => (
+          <div key={r.name} style={{ width: "50%", boxSizing: "border-box", padding: "10px 15px", borderBottom: `1px solid ${C.lineSoft}` }}>
+            <div style={{ fontSize: 11, color: C.faint }}>{r.name}</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: r.tone, marginTop: 2 }}>{r.val}</div>
+            <div style={{ fontSize: 11, color: C.faint, marginTop: 1 }}>{r.sub}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── 콘솔: 배차 그리드 (매니저 × 시간) ─── */
+function DispatchGrid({ today, highlightId }) {
+  const hours = Array.from({ length: GRID_SPAN + 1 }, (_, i) => GRID_START + i);
+  const byMgr = useMemo(() => {
+    const map = {};
+    SEED_MANAGERS.forEach((m) => (map[m.id] = []));
+    today.forEach((b) => { (map[b.managerId] = map[b.managerId] || []).push(b); });
+    return map;
+  }, [today]);
+
+  return (
+    <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 15px", borderBottom: `1px solid ${C.line}` }}>
+        <b style={{ fontSize: 13, color: C.ink, display: "flex", alignItems: "center", gap: 7 }}><Icon name="calendar" size={15} color={C.teal} /> 오늘의 배차 현황</b>
+        <span style={{ fontSize: 11, color: C.faint }}>매니저 {SEED_MANAGERS.length}명 · 08–18시</span>
+      </div>
+      {/* 테이블 자체 스크롤 — 행이 늘거나 화면이 낮아도 표 안에서 세로 스크롤 */}
+      <div style={{ overflowX: "auto", overflowY: "auto", maxHeight: 340 }}>
+        <div style={{ minWidth: 560 }}>
+          <div style={{ display: "flex", paddingLeft: 78, borderBottom: `1px solid ${C.lineSoft}` }}>
+            {hours.slice(0, -1).map((h) => (
+              <div key={h} style={{ flex: 1, fontSize: 11, color: C.faint, padding: "5px 0 4px 3px", fontVariantNumeric: "tabular-nums" }}>{h}시</div>
+            ))}
+          </div>
+          {SEED_MANAGERS.map((m) => (
+            <div key={m.id} style={{ display: "flex", alignItems: "stretch", borderBottom: `1px solid ${C.lineSoft}`, height: 48 }}>
+              <div style={{ width: 78, flexShrink: 0, padding: "6px 9px", borderRight: `1px solid ${C.lineSoft}`, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: C.ink }}>{m.name}</span>
+                <span style={{ fontSize: 11, color: C.faint, display: "flex", alignItems: "center", gap: 2 }}><Star size={10} />{m.rating}</span>
+              </div>
+              <div style={{ position: "relative", flex: 1 }}>
+                {hours.slice(1, -1).map((h) => (
+                  <div key={h} style={{ position: "absolute", left: `${((h - GRID_START) / GRID_SPAN) * 100}%`, top: 0, bottom: 0, width: 1, background: C.lineSoft }} />
+                ))}
+                {(byMgr[m.id] || []).map((b) => {
+                  const left = ((b.start - GRID_START) / GRID_SPAN) * 100;
+                  const width = (Math.min(b.hours, GRID_END - b.start) / GRID_SPAN) * 100; // 18시 경계 클램프
+                  const st = STATUS[b.status] || STATUS.confirmed;
+                  const isNew = b.id === highlightId;
+                  return (
+                    <div key={b.id} title={`${b.recipient} · ${b.hospital}`} className={isNew ? "bk-pulse" : ""}
+                      style={{
+                        position: "absolute", left: `${left}%`, width: `calc(${width}% - 5px)`, top: 6, bottom: 6,
+                        background: st.tint, border: `1px solid ${isNew ? C.teal : st.dot}`, borderLeft: `3px solid ${st.dot}`,
+                        borderRadius: 8, padding: "3px 7px", overflow: "hidden", fontSize: 11, lineHeight: 1.18,
+                        backdropFilter: "blur(4px)", boxShadow: isNew ? "0 0 0 3px rgba(78,179,168,0.25)" : "none", zIndex: isNew ? 3 : 1,
+                      }}>
+                      <div style={{ fontWeight: 700, color: st.fg, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.hospital}</div>
+                      <div style={{ color: C.sub, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.service}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── 콘솔: KPI 타일 ─── */
+function Kpi({ label, value, suffix, sub, accent }) {
+  return (
+    <div className="glass-panel" style={{ flex: 1, borderRadius: 15, padding: "13px 15px", minWidth: 0 }}>
+      <div style={{ fontSize: 11, color: C.faint, marginBottom: 5, whiteSpace: "nowrap" }}>{label}</div>
+      <div style={{ fontSize: 24, fontWeight: 800, color: accent || C.ink, fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}>
+        {typeof value === "number" ? <CountUp value={value} suffix={suffix} /> : value}
+      </div>
+      {sub && <div style={{ fontSize: 11, color: C.green, marginTop: 3, display: "flex", alignItems: "center", gap: 3 }}><Icon name="activity" size={11} color={C.green} /> {sub}</div>}
+    </div>
+  );
+}
+
+/* ─── 대화 유형 케이스 버튼 (wellbian QuickCard → sendMessage 패턴) ───
+ * 클릭 시 프리셋 문장을 그대로 전송 — 라이브 모드는 Claude+CARE_RULES가,
+ * 데모 모드는 아래 키워드 라우터가 각각 대응. */
+const CASE_PRESETS = [
+  { label: "외래 동행",   text: "어머니가 다음주 화요일 서울대병원 외래 진료가 있어요. 동행 예약할 수 있을까요?" },
+  { label: "휠체어·차량", text: "아버지가 휠체어를 타세요. 다음주 금요일 삼성서울병원까지 차량으로 모셔야 해요." },
+  { label: "정기 투석",   text: "어머니가 매주 화·목 투석을 받으세요. 정기 동행은 어떻게 하나요?" },
+  { label: "치매 케어",   text: "아버지가 치매 초기세요. 낯선 사람을 불안해하시는데 병원 동행 가능할까요?" },
+  { label: "재택돌봄",    text: "퇴원한 어머니 재택돌봄이 필요해요. 하루 4시간 정도요." },
+  { label: "요금 문의",   text: "병원동행 요금이 어떻게 되나요?" },
+  { label: "심리·말벗",   text: "어머니가 요즘 통 기운이 없고 외로워하세요. 병원 갈 일은 아닌데 챙겨드릴 방법이 있을까요?" },
+  { label: "의료 상담?",  text: "어머니가 요즘 어지럽다는데 무슨 약을 드려야 할까요?" },
+];
+
+/* ============================================================
+ * 데모 스크립트 (API 폴백) — 실 API 실패 시 동일 이벤트로 완주
+ * 케이스 버튼 대응: 키워드 라우터 우선, 미매칭 시 턴 기반 기본 시나리오
+ * ============================================================ */
+function mockCaseReply(text = "") {
+  // 의료질문 — 4단 공식 가드레일 시연 (진단·약물 금지)
+  if (/어지럽|무슨 약|약을 드|약 추천/.test(text)) {
+    return {
+      content: "걱정 많으시겠어요. 다만 **약 선택은 진단 영역**이라 제가 안내드릴 수는 없어요.\n어지럼증이 반복되면 가까운 **신경과나 이비인후과** 진료를 먼저 받아보시는 게 좋아요. 동행 예약을 하시면 **매니저가 진료 때 여쭤볼 수 있게 증상 메모**를 남겨둘게요.\n만약 한쪽 팔다리에 힘이 빠지거나 발음이 어눌해지는 증상이 함께 있다면 지체 없이 **119**에 연락하셔야 해요.\n진료 동행 예약을 도와드릴까요?",
+      events: [],
+    };
+  }
+  // 심리·정서 케어 — 비의료 말벗·산책 동행 (wellbian mental 도메인 계승, 의료법 경계 준수)
+  if (/기운이 없|외로|우울|말벗|적적|쓸쓸|무기력/.test(text)) {
+    const q = executeCareTool("estimate_quote", { service_type: "home_care", hours: 3 });
+    const wx = executeCareTool("outing_condition", { date: "이번주 일요일", location: "서울" });
+    const walkable = wx.score >= 70;
+    return {
+      content: `많이 외로우셨나 봐요. 잘 연락 주셨어요. 병원 갈 일이 아니어도 **말벗·정서지원 동행**으로 챙겨드릴 수 있어요 — 매니저가 함께 식사하고, 어머님이 좋아하시는 화제로 말동무가 되어드립니다.\n${walkable ? `이번 주 일요일은 외출 컨디션 **${wx.score}점 · ${wx.verdict}**이라 **가벼운 산책 동행**을 함께 잡기 좋아요.` : `이번 주말은 날씨가 아쉬워서 실내에서 **말벗·취미 활동** 위주로 준비할게요.`} 다녀간 뒤에는 어머님 기분과 나눈 이야기를 **리포트로 전해드려요**.\n다만 제가 마음 상태를 진단할 수는 없어요. 기운 없음이 **2주 이상** 이어지거나 식사·수면이 크게 달라지셨다면, 정신건강의학과 진료나 **정신건강복지센터(1577-0199)** 상담을 함께 권해드립니다.\n우선 주 1~2회, 3시간 정도로 시작해 볼까요?`,
+      events: [q._event, wx._event],
+    };
+  }
+  // 휠체어 + 차량
+  if (/휠체어/.test(text) && /차량|모셔|이동/.test(text)) {
+    const q = executeCareTool("estimate_quote", { service_type: "hospital_vehicle", hours: 4 });
+    const wx = executeCareTool("outing_condition", { date: "다음주 금요일", location: "삼성서울병원", mobility: "wheelchair" });
+    const s = executeCareTool("check_slots", { date: "다음주 금요일", hospital: "삼성서울병원", service_type: "hospital_vehicle" });
+    const top = s.available[0];
+    return {
+      content: `휠체어 이동이시면 **병원동행+차량**으로 잡는 게 좋아요. 휠체어 승하차까지 매니저가 함께합니다. 왕복 이동·대기 포함 **4시간** 기준 견적이에요.\n그날 동행 컨디션은 **${wx.score}점 · ${wx.verdict}**이에요. ${wx.comment}.\n차량 보유 매니저 중 **${top.name} 매니저**(⭐${top.rating} · ${top.specialty})가 배정 가능해요. 엘리베이터 없는 층 이동이 있을까요?`,
+      events: [q._event, wx._event, s._event],
+    };
+  }
+  // 정기 투석·항암
+  if (/투석|항암/.test(text)) {
+    const q = executeCareTool("estimate_quote", { service_type: "dialysis", hours: 3 });
+    return {
+      content: `주 2~3회 반복이시면 **정기 예약**으로 잡는 게 좋아요. **같은 매니저가 고정 배정**되어 어머님이 익숙해지시고, 반복 예약 할인도 적용됩니다.\n투석 후에는 어지럼이 흔해서 **귀가 시 부축까지** 기본 포함이에요. 대기 포함 **3시간** 기준 견적입니다.\n투석·항암 정기동행 전문 **이경숙 매니저**(⭐5.0)가 대표적이에요. 어느 병원에서 받으세요?`,
+      events: [q._event],
+    };
+  }
+  // 치매·인지
+  if (/치매|인지/.test(text)) {
+    return {
+      content: `치매 어르신은 **낯선 환경이 불안을 키우기 때문에**, 저희는 **같은 매니저 지정 예약**을 권해드려요. 매번 같은 분이 오시니 아버님도 금방 익숙해지세요.\n치매·인지 케어 전문 **박영희 매니저**(⭐4.8 · 187건)가 대표적이에요. 예약 시 아버님이 좋아하시는 **호칭이나 화제 1가지**를 알려주시면 매니저에게 미리 전달해 드립니다.\n어느 병원, 언제 진료인가요?`,
+      events: [],
+    };
+  }
+  // 재택돌봄
+  if (/재택|퇴원.*돌봄|집에서/.test(text)) {
+    const q = executeCareTool("estimate_quote", { service_type: "home_care", hours: 4 });
+    return {
+      content: `퇴원 직후엔 **재택돌봄**으로 식사·복약·거동을 챙겨드릴 수 있어요. 재택은 **최소 3시간**부터고, 요청하신 **4시간** 기준 견적입니다.\n식사 준비·복약 확인·가벼운 거동 보조·말벗까지 포함돼요. 어느 지역이고, 언제부터 시작할까요?`,
+      events: [q._event],
+    };
+  }
+  // 요금 문의 (일반)
+  if (/요금|얼마|비용|가격/.test(text) && !/병원.*예약|예약할/.test(text)) {
+    const q = executeCareTool("estimate_quote", { service_type: "hospital", hours: 2 });
+    return {
+      content: `투명하게 안내드릴게요.\n· **병원동행** 시간당 40,000원 (기본 2시간)\n· **병원동행+차량** 시간당 50,000원 — 휠체어·거동불편\n· **재택돌봄** 시간당 35,000원 (최소 3시간)\n· **정기 투석·항암 동행** 시간당 42,000원 (대기 포함 3시간~)\n주말·공휴일 15%, 야간(20시~) 20% 할증이 있고, 아래는 기본 2시간 예시 견적이에요. 제공기록지와 배상책임보험은 모두 포함입니다.\n어떤 서비스가 필요하세요?`,
+      events: [q._event],
+    };
+  }
+  return null;
+}
+
+const KNOWN_HOSPITALS = ["분당서울대병원", "강남세브란스", "신촌세브란스", "서울대병원", "세브란스", "삼성서울병원", "서울아산병원", "보라매병원", "경희대병원", "고대안암병원", "서울성모병원"];
+
+function mockReply(userTurn, text = "", profile = null) {
+  // 케이스 인텐트(요금·투석·치매·휠체어·재택·의료)가 항상 우선 — 재방문 분기의 하이재킹 방지
+  const byCase = mockCaseReply(text);
+  if (byCase) return byCase;
+
+  // ── 재방문 문진제로 (진화 루프의 실체) — 프로필이 있으면 되묻지 않는다 ──
+  if (profile?.last_booking && /예약|동행|부탁|잡아|또|다시/.test(text)) {
+    // 텍스트에 병원이 명시되면 프로필 병원보다 우선 (조용한 오예약 방지)
+    const saidHospital = KNOWN_HOSPITALS.find((h) => text.includes(h));
+    const hospital = saidHospital || profile.hospital || "서울대병원";
+    const dateText = (text.match(/((다음주|이번주)\s*[월화수목금토일]요일|\d+월\s*\d+일|내일|모레)/) || [])[0];
+    if (!dateText) {
+      return {
+        content: `네! 지난번 조건 그대로 준비해 둘게요 — ${profile.recipient || "어르신"} · **${hospital}** · ${profile.origin_area || "자택"} 출발${profile.preferred_manager ? ` · **${profile.preferred_manager} 매니저** 고정` : ""}. 날짜와 시간만 알려주세요.`,
+        events: [],
+      };
+    }
+    const timeMatch = (text.match(/(오전|오후)?\s*\d{1,2}\s*시(\s*(반|\d{1,2}\s*분))?/) || [])[0];
+    const timeText = timeMatch ? timeMatch.trim() : "오전 10시";
+    const timeNote = timeMatch ? "" : " 시간은 우선 **오전 10시**로 잡아뒀어요 — 진료 시간이 다르면 말씀해 주세요.";
+    const hours = profile.last_booking.hours || 3;
+    const q = executeCareTool("estimate_quote", { service_type: profile.service_type || "hospital", hours });
+    const wx = executeCareTool("outing_condition", { date: dateText, location: hospital, origin: profile.origin_area });
+    const b = executeCareTool("create_booking", {
+      recipient_name: profile.recipient || "어르신", hospital,
+      origin: profile.origin_area, date: dateText, time: timeText, hours,
+      service_type: profile.service_type || "hospital", manager_id: profile.preferred_manager_key || "mgr_02",
+    });
+    return {
+      content: `**문진 없이** 지난번 조건 그대로 접수했어요 — ${profile.recipient || "어르신"} · **${hospital}** · ${profile.origin_area || "자택"} 출발, **${b.booking.manager_name} 매니저** 고정 배정.${timeNote}\n${profile.topics?.mobility_note ? `${profile.topics.mobility_note} 참고해서 준비할게요. ` : ""}그날 동행 컨디션은 **${wx.score}점 · ${wx.verdict}**이에요. ${wx.comment}. 아래 결제 링크로 확정해 주세요.`,
+      events: [q._event, wx._event, b._event],
+    };
+  }
+  if (userTurn <= 1) {
+    return { content: "네, 어머니 병원동행 도와드릴게요. 두 가지만 여쭤볼게요.\n혼자 걸으실 수 있나요, 아니면 **휠체어**가 필요하실까요? 그리고 **진료 시작 시간**이 언제쯤인가요?", events: [] };
+  }
+  if (userTurn === 2) {
+    const q = executeCareTool("estimate_quote", { service_type: "hospital", hours: 3 });
+    const wx = executeCareTool("outing_condition", { date: "다음주 화요일", location: "서울대병원", origin: "관악구 신림동" });
+    const s = executeCareTool("check_slots", { date: "다음주 화요일", hospital: "서울대병원", service_type: "hospital" });
+    const top = s.available[0];
+    return {
+      content: `오래 서 계시기 힘드시면 곁에서 부축·대기해 드리는 **외래 동행**으로 잡을게요. 이동·대기 포함 **3시간** 기준 견적입니다.\n출발지(신림동)와 병원 쪽 날씨를 모두 확인했어요. 출발지는 괜찮은데 **병원 쪽에 비 소식**이 있어 동행 컨디션은 **${wx.score}점 · ${wx.verdict}**${wx.worst_leg ? ` (${wx.worst_leg} 기준)` : ""}이에요. ${wx.comment}. 평점 ${top.rating} **${top.name} 매니저**(${top.specialty})를 추천드려요. 이분으로 예약할까요?`,
+      events: [q._event, wx._event, s._event],
+    };
+  }
+  if (userTurn === 3) {
+    const s = executeCareTool("check_slots", { date: "다음주 화요일", hospital: "서울대병원", service_type: "hospital" });
+    const b = executeCareTool("create_booking", {
+      recipient_name: "어머니", hospital: "서울대병원", origin: "관악구 신림동", date: "다음주 화요일", time: "오전 9시",
+      hours: 3, service_type: "hospital", manager_id: s.available[0].manager_id,
+    });
+    return {
+      content: `확정되었습니다. 아래 내용으로 접수했어요.\n**${b.booking.manager_name} 매니저**가 배정됐고, 결제 링크로 선결제(에스크로)하면 확정됩니다. 출발·도착·완료 시 **알림톡**으로 안내드려요.`,
+      events: [b._event],
+    };
+  }
+  return { content: "더 도와드릴 것이 있을까요? 정기 투석·항암 동행은 반복 예약으로 할인도 가능합니다.", events: [] };
+}
+
+const AUTOPLAY = [
+  "어머니가 다음주 화요일 서울대병원 외래 진료가 있어요. 동행 예약할 수 있을까요?",
+  "혼자 걷긴 하시는데 오래 서 계시는 걸 힘들어하세요. 집은 관악구 신림동이고, 오전 9시 진료예요.",
+  "네, 그분으로 예약할게요.",
+];
+
+/* 인사말 — 프로필이 있으면 '기억하는 재방문 인사' (진화 루프의 첫 장면) */
+function makeGreeting(profile) {
+  if (profile?.last_booking) {
+    const mgr = profile.preferred_manager ? ` 이번에도 **${profile.preferred_manager} 매니저**로 잡아드릴 수 있어요.` : "";
+    return {
+      id: "g0", role: "assistant", events: [],
+      content: `다시 만나 반가워요! 지난번 ${profile.recipient || "어르신"} **${profile.hospital || "병원"}** 동행은 잘 다녀오셨어요?${mgr} 다음 일정 날짜만 말씀해 주시면 지난번 조건 그대로, 문진 없이 바로 접수합니다.`,
+    };
+  }
+  return { id: "g0", role: "assistant", content: "안녕하세요, K-CARE **AI 컨시어지**예요. 어떤 병원동행이나 돌봄이 필요하신가요? 편하게 말씀해 주세요.", events: [] };
+}
+const GREETING = makeGreeting(null);
+
+const PROFILE_LS_KEY = "cm_family_profile";
+const loadProfileLS = () => { try { return JSON.parse(localStorage.getItem(PROFILE_LS_KEY) || "null"); } catch (_) { return null; } };
+const saveProfileLS = (p) => { try { p ? localStorage.setItem(PROFILE_LS_KEY, JSON.stringify(p)) : localStorage.removeItem(PROFILE_LS_KEY); } catch (_) {} };
+
+/* 주간 예보 중 나쁜 조건만 운영 알림으로 — wellbian daily-condition 게이팅 (좋은 날씨는 null) */
+const WEEK_TICKER_SEED = (() => {
+  const idx = SEED_CONSOLE.week.findIndex((d) => d.today);
+  const alerts = [];
+  SEED_CONSOLE.week.forEach((d, i) => {
+    if (i <= idx) return; // 지난 날짜·오늘 제외, 다가올 리스크만
+    if (/비|눈/.test(d.sky)) alerts.push({ id: `wk-${d.date}`, stamp: "예보", label: `${d.label} ${d.date} 비 예보 — 우천 취소 리스크 · 보호자 사전 알림톡 권장`, tone: "amber" });
+    else if (/매우높음|위험/.test(d.uv_grade)) alerts.push({ id: `wk-${d.date}`, stamp: "예보", label: `${d.label} ${d.date} 자외선 ${d.uv_grade} — 오전 슬롯 우선 배치 권장`, tone: "amber" });
+    else if (/나쁨/.test(d.pm_grade)) alerts.push({ id: `wk-${d.date}`, stamp: "예보", label: `${d.label} ${d.date} 미세먼지 ${d.pm_grade} — KF94 지참 안내`, tone: "amber" });
+  });
+  return alerts.slice(0, 3);
+})();
+
+const SENDING_STAGES = ["문의 파악 중…", "견적 계산 중…", "매니저 일정 확인 중…", "케이웨더 조회 중…"];
+
+const genUuid = () => {
+  try { return crypto.randomUUID(); } catch (_) {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0; return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+    });
+  }
+};
+
+/* DB 예약 행 → 콘솔 그리드 행 (영속화된 예약 복원) */
+function dbRowToToday(r) {
+  return {
+    id: r.id, start: parseHour(r.date_text || ""), hours: Number(r.hours) || 2,
+    recipient: "온라인 예약", hospital: r.hospital || "-",
+    managerId: r.manager_key, manager: r.manager_name || "-",
+    service: r.service_type === "hospital_vehicle" ? "병원동행+차량" : r.service_type === "home_care" ? "재택돌봄" : r.service_type === "dialysis" ? "정기 동행" : "병원동행",
+    price: r.price || 0, status: r.status || "confirmed",
+  };
+}
+
+/* ============================================================
+ * 메인
+ * ============================================================ */
+export default function DemoPage() {
+  const [messages, setMessages] = useState([GREETING]);
+  const [input, setInput] = useState("");
+  const [sending, setSending] = useState(false);
+  const [mode, setMode] = useState("live");   // 'live' | 'demo'
+  const [autoOn, setAutoOn] = useState(false);
+  const [ticker, setTicker] = useState(WEEK_TICKER_SEED);
+  const [kpi, setKpi] = useState(SEED_CONSOLE.kpi);
+  const [today, setToday] = useState(SEED_CONSOLE.today);
+  const [highlightId, setHighlightId] = useState(null);
+  const [latestOuting, setLatestOuting] = useState(null); // 챗봇이 조회한 최신 컨디션 → 대시보드 동기화
+  const [stageIdx, setStageIdx] = useState(0);            // tool 단계 로딩 라벨
+  const [briefingOpen, setBriefingOpen] = useState(false);
+  const [debugOn, setDebugOn] = useState(false);
+  const [lastMeta, setLastMeta] = useState(null);         // ?debug=1 아키텍처 패널용
+  const [dbState, setDbState] = useState("waiting");      // waiting | connected — dcmap '연동 대기' 정직 표기
+  const [familyProfile, setFamilyProfile] = useState(null); // 진화 루프 — 프론트(localStorage) 프로필
+  const [kakaoMode, setKakaoMode] = useState(false);        // 카카오 상담톡 스킨 (실채널 연동은 후속 — 프론트 더미)
+  const [role, setRole] = useState("family");               // K-CARE 5역할: family|senior|concierge|dispatch|admin
+  const [sos, setSos] = useState(null);                     // 어르신 SOS — 가족·배치관제 유기 전파
+  const familyProfileRef = useRef(null);
+  const sessionIdRef = useRef(null);
+  if (!sessionIdRef.current) sessionIdRef.current = genUuid();
+  useEffect(() => { familyProfileRef.current = familyProfile; }, [familyProfile]);
+
+  // 프로필 로드 — 재방문이면 인사말부터 '기억하는' 톤으로 (대화 시작 전에만 교체)
+  useEffect(() => {
+    const p = loadProfileLS();
+    if (!p) return;
+    setFamilyProfile(p);
+    familyProfileRef.current = p;
+    if (userTurnRef.current === 0) {
+      const g = makeGreeting(p);
+      messagesRef.current = [g];
+      setMessages([g]);
+    }
+  }, []);
+
+  const scrollRef = useRef(null);
+  const userTurnRef = useRef(0);
+  const messagesRef = useRef([GREETING]);
+  const modeRef = useRef("live");
+  const epochRef = useRef(0);          // reset·기억삭제 시 증가 — 진행 중이던 응답 폐기 (유령 응답 방지)
+  const autoplayRef = useRef(false);   // 자동 시연 중엔 프로필 무시 — 대본 서사 보호
+  const bookedIdsRef = useRef(new Set()); // booking 이벤트 멱등 처리 (중복 KPI·visits 방지)
+  const tickerSeqRef = useRef(0);
+  const dbRowsRef = useRef([]);        // DB 복원 예약 — reset에도 유지
+
+  useEffect(() => { messagesRef.current = messages; }, [messages]);
+  useEffect(() => { modeRef.current = mode; }, [mode]);
+  // 사용자가 위로 스크롤해 읽는 중이면 잡아당기지 않음 (바닥 근처일 때만 자동 고정)
+  const nearBottom = () => {
+    const el = scrollRef.current;
+    return el ? el.scrollHeight - el.scrollTop - el.clientHeight < 140 : true;
+  };
+  useEffect(() => {
+    if (scrollRef.current && nearBottom()) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, sending]);
+
+  // 타이핑 진행 중엔 주기적으로 바닥 고정 (텍스트가 자라며 뷰 밖으로 나가는 것 방지)
+  useEffect(() => {
+    const last = messages[messages.length - 1];
+    if (!last || last.role !== "assistant" || last.typed) return;
+    const iv = setInterval(() => {
+      if (scrollRef.current && nearBottom()) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }, 250);
+    return () => clearInterval(iv);
+  }, [messages]);
+
+  // tool 단계 로딩 라벨 시퀀스 (1.2s 간격, events 도착 시 종료)
+  useEffect(() => {
+    if (!sending) { setStageIdx(0); return; }
+    const iv = setInterval(() => setStageIdx((i) => Math.min(i + 1, SENDING_STAGES.length - 1)), 1200);
+    return () => clearInterval(iv);
+  }, [sending]);
+
+  // ?debug=1 또는 localStorage cm_debug — wellbian 디버그 모드 3중 진입 축소판
+  useEffect(() => {
+    try {
+      const q = new URLSearchParams(window.location.search);
+      if (q.get("debug") === "1" || localStorage.getItem("cm_debug") === "1") setDebugOn(true);
+    } catch (_) {}
+  }, []);
+
+  // DB 부트스트랩 — Supabase 연동 시 오늘 예약 복원, 미연동 시 '연동 대기' (시드로 시연 완주)
+  useEffect(() => {
+    let dead = false;
+    fetch("/api/care-data").then((r) => r.json()).then((d) => {
+      if (dead) return;
+      if (d.available && d.ok !== false) {
+        setDbState("connected");
+        if (d.bookings?.length) {
+          const rows = d.bookings.map(dbRowToToday);
+          dbRowsRef.current = rows; // reset에도 유지되도록 보관
+          rows.forEach((r) => bookedIdsRef.current.add(r.id));
+          setToday((prev) => [...rows.filter((r) => !prev.some((x) => x.id === r.id)), ...prev]);
+        }
+      } else setDbState("waiting");
+    }).catch(() => { if (!dead) setDbState("waiting"); });
+    return () => { dead = true; };
+  }, []);
+
+  const markTyped = useCallback((id) => {
+    setMessages((ms) => ms.map((x) => (x.id === id ? { ...x, typed: true } : x)));
+  }, []);
+
+  const pushTicker = useCallback((label, tone) => {
+    const stamp = new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(new Date());
+    setTicker((t) => [{ id: `t${++tickerSeqRef.current}`, stamp, label, tone }, ...t].slice(0, 6));
+  }, []);
+
+  const applyEvents = useCallback((events = []) => {
+    events.forEach((ev) => {
+      if (ev.type === "quote") pushTicker(`견적 산출 · ${won(ev.total)}`, "teal");
+      else if (ev.type === "weather") {
+        setLatestOuting(ev); // 챗봇 대시보드 게이지 실시간 동기화
+        pushTicker(`동행 컨디션 ${typeof ev.score === "number" ? `${ev.score}점 · ${ev.verdict}` : ev.grade} · ${ev.summary}`, "amber");
+      }
+      else if (ev.type === "slots") pushTicker(`매니저 ${ev.available.length}명 매칭`, "blue");
+      else if (ev.type === "booking") {
+        const b = ev.booking;
+        if (bookedIdsRef.current.has(b.id)) return; // 동일 예약 재수신 — KPI·visits·그리드 모두 스킵 (멱등)
+        bookedIdsRef.current.add(b.id);
+        const row = {
+          id: b.id, start: parseHour(b.time), hours: b.hours, recipient: b.recipient,
+          hospital: b.hospital, managerId: b.manager_id, manager: b.manager_name,
+          service: b.service_label, price: b.price, status: "confirmed",
+        };
+        setToday((prev) => (prev.some((x) => x.id === row.id) ? prev : [row, ...prev]));
+        setKpi((k) => ({ ...k, gmv: k.gmv + b.price, bookings: k.bookings + 1 }));
+        setHighlightId(b.id);
+        // 진화 루프 — 예약 사실을 가족 프로필에 병합 (프론트 더미: localStorage)
+        setFamilyProfile((prev) => {
+          const merged = mergeCareProfile(prev, {
+            booking: b, origin: b.origin_area,
+            topics: { appointments: `${b.date} ${b.hospital} ${b.time || ""}`.trim() },
+            now: new Date().toISOString(),
+          });
+          saveProfileLS(merged);
+          familyProfileRef.current = merged;
+          return merged;
+        });
+        pushTicker(`신규 예약 ${b.id} 접수 · ${won(b.price)}`, "green");
+        setTimeout(() => setHighlightId((cur) => (cur === b.id ? null : cur)), 4200);
+      }
+    });
+  }, [pushTicker]);
+
+  const runTurn = useCallback(async (text) => {
+    const clean = text.trim();
+    if (!clean) return;
+    const epoch = epochRef.current; // 시작 시점 세대 캡처 — 도중 초기화되면 결과 폐기
+    userTurnRef.current += 1;
+    const turn = userTurnRef.current;
+    setMessages((m) => [...m, { id: `u${turn}`, role: "user", content: clean, events: [] }]);
+    setSending(true);
+
+    const history = messagesRef.current
+      .filter((m) => m.role === "user" || m.role === "assistant")
+      .map((m) => ({ role: m.role, content: m.content }))
+      .concat({ role: "user", content: clean });
+    while (history.length && history[0].role === "assistant") history.shift();
+
+    let reply = null;
+    if (modeRef.current === "live") {
+      try {
+        const res = await fetch("/api/care-chat", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: history, session_id: sessionIdRef.current }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.content || (data.events && data.events.length)) {
+            reply = { content: data.content || "", events: data.events || [] };
+            setLastMeta({
+              mode: "live", model_used: data.model_used, complexity: data.complexity,
+              rounds: data.rounds, rules_injected: data.rules_injected, store: data.store,
+              usage: data.usage, elapsed_ms: data.elapsed_ms, events: (data.events || []).length,
+            });
+            if (data.store === "db") setDbState("connected");
+          }
+        }
+        if (!reply) setMode("demo");
+      } catch (_) { setMode("demo"); }
+    }
+    if (!reply) {
+      // 자동 시연 중엔 프로필 무시 — 대본(첫 방문 문진 서사)이 재방문 분기에 하이재킹되지 않게
+      reply = mockReply(turn, clean, autoplayRef.current ? null : familyProfileRef.current);
+      setLastMeta({ mode: "demo(폴백)", model_used: "—", rounds: 0, usage: null, elapsed_ms: 0, events: (reply.events || []).length });
+    }
+
+    await new Promise((r) => setTimeout(r, 480));
+    if (epoch !== epochRef.current) { setSending(false); return null; } // 도중 초기화 — 유령 응답 폐기
+    setMessages((m) => [...m, { id: `a${turn}`, role: "assistant", content: reply.content, events: reply.events || [] }]);
+    applyEvents(reply.events);
+    setSending(false);
+    return reply;
+  }, [applyEvents]);
+
+  const onSend = useCallback(async () => {
+    if (sending || autoOn) return;
+    const text = input;
+    setInput("");
+    await runTurn(text);
+  }, [input, sending, autoOn, runTurn]);
+
+  const autoplay = useCallback(async () => {
+    if (autoOn) return;
+    setRole("family"); // 자동 시연은 가족 챗 화면에서 진행
+    reset(true);
+    setAutoOn(true);
+    autoplayRef.current = true; // 대본 모드 — 재방문 프로필 분기 비활성
+    try {
+      await new Promise((r) => setTimeout(r, 500));
+      for (const line of AUTOPLAY) {
+        for (let i = 1; i <= line.length; i += 2) { setInput(line.slice(0, i)); await new Promise((r) => setTimeout(r, 16)); }
+        setInput(line);
+        await new Promise((r) => setTimeout(r, 350));
+        setInput("");
+        await runTurn(line);
+        await new Promise((r) => setTimeout(r, 900));
+      }
+    } finally {
+      autoplayRef.current = false;
+      setAutoOn(false);
+    }
+  }, [autoOn, runTurn]); // eslint-disable-line
+
+  function reset(silent) {
+    epochRef.current += 1; // 진행 중이던 응답은 폐기 (유령 응답·중복 key 방지)
+    userTurnRef.current = 0;
+    sessionIdRef.current = genUuid(); // 새 상담 세션
+    bookedIdsRef.current = new Set(dbRowsRef.current.map((r) => r.id));
+    const g = makeGreeting(familyProfileRef.current); // 프로필 유지 — 초기화해도 '기억'은 남는다
+    messagesRef.current = [g];
+    if (!silent) modeRef.current = "live";
+    setMessages([g]);
+    setInput("");
+    setTicker(WEEK_TICKER_SEED);
+    setKpi(SEED_CONSOLE.kpi);
+    setToday([...dbRowsRef.current, ...SEED_CONSOLE.today]); // DB 복원 예약은 초기화에도 유지
+    setHighlightId(null);
+    setLatestOuting(null);
+    setBriefingOpen(false);
+    setSos(null); // SOS 상태도 초기화 — 데모 재시연 대비
+    if (!silent) setMode("live");
+  }
+
+  // SOS — 어르신 화면에서 발신 → 가족 배너·배치관제 티커 동시 전파
+  const handleSos = useCallback(() => {
+    const time = new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
+    setSos({ time });
+    pushTicker("SOS 긴급 호출 수신 — 어르신 단말 · 컨시어지 급파", "red");
+  }, [pushTicker]);
+
+  // 매니저 앱 액션 → 콘솔·맵·티커 실시간 반영 (삼면 연결)
+  const handleCheckin = useCallback((id, mgrName) => {
+    setToday((prev) => prev.map((b) => (b.id === id ? { ...b, status: "in_service" } : b)));
+    pushTicker(`GPS 출근 체크인 — ${mgrName} 매니저 (${id})`, "teal");
+  }, [pushTicker]);
+  const handleComplete = useCallback((id, mgrName, report) => {
+    setToday((prev) => prev.map((b) => (b.id === id ? { ...b, status: "done" } : b)));
+    pushTicker(`완료 리포트 제출 — ${mgrName} 매니저 · 제공기록지 자동 생성 (${id})`, "green");
+    if (report.fall === "high") pushTicker(`낙상 위험 신호 감지 — 보호자·업체 알림 (${id})`, "amber");
+    // 가족 리포트 씨앗 — 우리 예약이면 기분 기록이 프로필 5토픽(mood)에 병합
+    const MOOD_LABEL = { good: "좋음", flat: "보통", low: "저조" };
+    setFamilyProfile((prev) => {
+      if (!prev?.last_booking || prev.last_booking.id !== id) return prev;
+      const merged = mergeCareProfile(prev, { topics: { mood: `최근 동행 시 기분 ${MOOD_LABEL[report.mood] || "보통"}` }, now: new Date().toISOString() });
+      saveProfileLS(merged); familyProfileRef.current = merged; return merged;
+    });
+  }, [pushTicker]);
+
+  // 오늘 배차 브리핑 — 예약별 동행 컨디션·준비물 (전부 룰 엔진, LLM 0회)
+  const briefing = useMemo(() =>
+    today.map((b) => ({ b, o: executeCareTool("outing_condition", { date: "오늘", location: b.hospital }) })),
+  [today]);
+
+  const managerLoad = useMemo(() => {
+    const map = {};
+    today.forEach((b) => (map[b.managerId] = (map[b.managerId] || 0) + 1));
+    return map;
+  }, [today]);
+
+  const liveMode = mode === "live";
+
+  return (
+    <>
+      <Head>
+        <title>K-CARE · Healthcare & Life Concierge 데모</title>
+        <meta name="theme-color" content="#F7F5EE" />
+        <meta name="robots" content="noindex" />
+        {/* 브랜드 타이포그래피 — 한글: Noto Sans KR / 숫자·영문: Montserrat (스택 폴스루) */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
+        <style>{`
+          /* ── 타입 위계 ──
+             24/22/20/18 숫자·디스플레이(Montserrat 700-800) · 16/15 패널 타이틀(700)
+             14 본문 강조·카드 타이틀(700) · 13 본문(400-500) · 12 섹션 라벨(700) · 11 캡션(400-500) */
+
+          .glass-panel{
+            background:#FFFFFF;
+            border:1px solid #E5E1D6;
+            box-shadow:0 1px 2px rgba(5,0,56,0.04), 0 10px 28px -22px rgba(5,0,56,0.14);
+          }
+          .glass-card{
+            background:#FAFAF6;
+            border:1px solid #EFEBE0;
+            box-shadow:0 1px 2px rgba(5,0,56,0.03);
+          }
+          .btn-primary{
+            background:#050038; color:#fff; border:1px solid #050038;
+            box-shadow:0 1px 2px rgba(5,0,56,0.18);
+            transition:transform .12s ease, background .12s ease;
+          }
+          .btn-primary:hover:not(:disabled){ transform:translateY(-1px); background:#1F1A48 }
+          .btn-primary:disabled{ opacity:.55 }
+          .btn-glass{
+            background:#FFFFFF; color:#0F0A2E; border:1px solid #C9C5B7;
+            box-shadow:0 1px 2px rgba(5,0,56,0.06);
+            transition:transform .12s ease;
+          }
+          .btn-glass:hover:not(:disabled){ transform:translateY(-1px) }
+          .btn-ghost{ background:#FFFFFF; color:#0F0A2E; border:1px solid #C9C5B7 }
+
+          .pulse-dot{ box-shadow:0 0 0 0 rgba(239,68,68,0.5); animation:pulsedot 2.4s ease-in-out infinite }
+          @keyframes pulsedot{ 0%,100%{opacity:1; box-shadow:0 0 9px 1px rgba(239,68,68,0.65)} 50%{opacity:.4; box-shadow:0 0 2px 0 rgba(239,68,68,0.15)} }
+
+          @keyframes bkpulse{ 0%{box-shadow:0 0 0 0 rgba(78,179,168,0.55)} 70%{box-shadow:0 0 0 11px rgba(78,179,168,0)} 100%{box-shadow:0 0 0 0 rgba(78,179,168,0)} }
+          .bk-pulse{ animation:bkpulse 1.5s ease-out 2 }
+          @keyframes fadein{ from{opacity:0; transform:translateY(7px)} to{opacity:1; transform:none} }
+          .fadein{ animation:fadein .38s ease both }
+          @keyframes dots{ 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+          .typing span{ animation:dots 1.2s infinite } .typing span:nth-child(2){animation-delay:.2s} .typing span:nth-child(3){animation-delay:.4s}
+          @media (prefers-reduced-motion: reduce){ .orb,.bk-pulse,.fadein,.typing span,.pulse-dot{animation:none !important} }
+
+          /* 콘솔·챗 스크롤 영역의 자식은 절대 압축 금지 — flex column에서
+             overflow:hidden 위젯이 min-height 0으로 짓눌려 내용이 잘리는 것 방지.
+             위젯은 항상 원래 높이 유지, 넘치면 컨테이너가 스크롤. */
+          .console-scroll > *{ flex-shrink:0 }
+          .chat-msgs > *{ flex-shrink:0 }
+
+          /* 좁은 화면(모바일·세로): 패널이 세로로 쌓이고 페이지 전체가 스크롤됨.
+             챗봇은 고정 높이 + 내부 스크롤, 콘솔은 자연 흐름 — 잘림 없이 끝까지 볼 수 있음 */
+          @media (max-width: 920px){
+            .demo-root{ height:auto !important; min-height:100dvh; overflow:visible !important }
+            .demo-body{ flex-direction:column; gap:12px; padding:10px }
+            .pane-chat{ flex:none !important; width:100%; height:84dvh; min-height:460px }
+            .pane-console{ flex:none !important; width:100%; height:auto }
+            .console-scroll{ flex:none !important; overflow:visible !important }
+            .hdr-sub{ display:none }                        /* 헤더 부제 숨김 */
+            .kpi-row > *{ flex:1 1 44% !important }         /* KPI 2×2 */
+            .wx-metrics{ flex-wrap:wrap; row-gap:10px }     /* 날씨지표 2×2 */
+            .wx-metrics > *{ flex:1 1 44% !important }
+            .chat-input{ font-size:16px !important }        /* iOS 포커스 줌 방지 */
+            .brief-row{ flex-wrap:wrap; row-gap:2px }
+              /* 콘솔 헤더: 제목 한 줄 유지, 액션은 아래 줄로 깔끔하게 */
+            .console-hdr{ flex-wrap:wrap; row-gap:7px }
+            .console-hdr .hdr-actions{ width:100%; justify-content:flex-start }
+            .console-hdr .hdr-actions button{ white-space:nowrap }
+            /* 터치 타깃 32px+ (맵 필터·범례·CRM·케이스 칩) */
+            .map-chips button, .pill-btn, .case-chips button{ padding:7px 13px !important; font-size:12px !important; min-height:32px }
+          }
+        `}</style>
+      </Head>
+
+      <div className="demo-root" style={{ position: "relative", height: "100vh", display: "flex", flexDirection: "column", background: C.cream, color: C.ink, overflow: "hidden", fontFamily: '"Montserrat","Noto Sans KR","Apple SD Gothic Neo",sans-serif' }}>
+        <Orbs />
+
+        {/* 헤더 */}
+        <header style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 18px", background: "#FFFFFF", color: C.ink, flexWrap: "wrap", borderBottom: "1px solid #E5E1D6" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 11, minWidth: 0 }}>
+            <div style={{ width: 34, height: 34, borderRadius: 11, background: `#050038`, display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 12px -4px rgba(66,98,255,0.6)" }}>
+              <Icon name="heart" size={18} color="#fff" sw={1.9} />
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 800, fontSize: 15, whiteSpace: "nowrap", letterSpacing: "-0.01em" }}>
+                K-CARE <span style={{ fontWeight: 500, fontSize: 12, opacity: 0.85 }}>케어 플랫폼</span> <Dot color="#EF4444" live />
+              </div>
+              <div className="hdr-sub" style={{ fontSize: 11, opacity: 0.72, whiteSpace: "nowrap" }}>Healthcare & Life Concierge · 5역할 유기 연동 데모</div>
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, padding: "6px 11px", borderRadius: 999, background: liveMode ? "rgba(31,171,106,0.10)" : "rgba(188,130,54,0.12)", border: `1px solid ${liveMode ? "rgba(31,171,106,0.4)" : "rgba(188,130,54,0.4)"}`, color: liveMode ? "#14443B" : "#8A6216" }}>
+              <Dot color={liveMode ? "#1FAB6A" : "#C77817"} /> {liveMode ? "AI 연결됨" : "데모 스크립트"}
+            </span>
+            <button className="btn-ghost" onClick={() => setKakaoMode((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 700, borderRadius: 11, padding: "8px 12px", background: kakaoMode ? "#FEE500" : undefined, color: kakaoMode ? "#191919" : undefined, border: kakaoMode ? "1px solid #FEE500" : undefined }}>
+              {kakaoMode ? "웹 스킨" : "카카오 스킨"}
+            </button>
+            <button className="btn-glass" onClick={autoplay} disabled={autoOn || sending} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 13, fontWeight: 700, borderRadius: 11, padding: "8px 14px" }}>
+              <Icon name="play" size={15} color={C.tealDk} /> {autoOn ? "시연 중…" : "30초 자동 시연"}
+            </button>
+            <button className="btn-ghost" onClick={() => reset(false)} disabled={autoOn} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, borderRadius: 11, padding: "8px 12px" }}>
+              <Icon name="refresh" size={14} /> 초기화
+            </button>
+          </div>
+        </header>
+
+        {/* 역할 스위처 — K-CARE 5역할 유기 연동 (한 역할의 액션이 다른 역할 화면에 반영) */}
+        <nav style={{ position: "relative", zIndex: 2, flexShrink: 0, display: "flex", gap: 6, padding: "8px 16px", background: "#FFFFFF", borderBottom: "1px solid #E5E1D6", overflowX: "auto" }}>
+          {[["family", "가족 (보호자)"], ["senior", "사용자 (어르신)"], ["concierge", "컨시어지 (동행자)"], ["dispatch", "배치관리자"], ["admin", "관리자"]].map(([k, l]) => (
+            <button key={k} onClick={() => setRole(k)} style={{
+              flexShrink: 0, fontSize: 12, fontWeight: 700, borderRadius: 999, padding: "7px 14px", cursor: "pointer",
+              border: `1px solid ${role === k ? "#050038" : "#E5E1D6"}`,
+              background: role === k ? "#050038" : "#FFFFFF",
+              color: role === k ? "#FFFFFF" : "#6B6781",
+            }}>
+              {l}{k === "family" && sos ? " ●" : ""}{k === "dispatch" && sos ? " ●" : ""}
+            </button>
+          ))}
+        </nav>
+
+        {/* 본문 — 역할별 뷰 (상태는 전 역할 공유) */}
+        <div className="demo-body" style={{ position: "relative", zIndex: 1, flex: 1, minHeight: 0, display: "flex", gap: 14, padding: 14 }}>
+          {/* ── 사용자(어르신) ── */}
+          {role === "senior" && <SeniorHome today={today} profile={familyProfile} onSos={handleSos} sos={sos} />}
+
+          {/* ── 컨시어지(동행자) ── */}
+          {role === "concierge" && (
+            <section className="pane-chat" style={{ flex: "1 1 400px", maxWidth: 440, margin: "0 auto", borderRadius: 20, overflow: "hidden", minHeight: 0, border: "1px solid #E5E1D6", boxShadow: "0 10px 28px -20px rgba(5,0,56,0.2)" }}>
+              <ConciergeBody today={today} onCheckin={handleCheckin} onComplete={handleComplete} />
+            </section>
+          )}
+
+          {/* ── 가족: AI 컨시어지 챗 ── */}
+          {role === "family" && (
+          <section className="glass-panel pane-chat" style={{ flex: "1 1 380px", minWidth: 320, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0, ...(kakaoMode ? { background: "#A9C2D8", border: "1px solid #8FB0CC" } : {}) }}>
+            <div style={{ flexShrink: 0, padding: "12px 16px", borderBottom: kakaoMode ? "1px solid #E8D200" : `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 10, ...(kakaoMode ? { background: "#FEE500" } : {}) }}>
+              <div style={{ width: 36, height: 36, borderRadius: kakaoMode ? "50%" : 12, background: kakaoMode ? "#FFFFFF" : C.evergreen, color: "#fff", display: "grid", placeItems: "center", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)" }}>
+                <Icon name={kakaoMode ? "heart" : "sparkle"} size={18} color={kakaoMode ? "#191919" : "#4EB3A8"} sw={1.6} />
+              </div>
+              <div style={{ flexShrink: 0 }}>
+                <div style={{ fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 6, color: kakaoMode ? "#191919" : undefined }}>
+                  {kakaoMode ? "K-CARE" : "K-CARE AI 컨시어지"}
+                  {kakaoMode && <span style={{ fontSize: 10, fontWeight: 800, color: "#FEE500", background: "#191919", borderRadius: 5, padding: "1.5px 5px" }}>상담톡</span>}
+                </div>
+                <div style={{ fontSize: 11, color: kakaoMode ? "rgba(25,25,25,0.65)" : C.green, display: "flex", alignItems: "center", gap: 5 }}>
+                  {kakaoMode ? <>채널 연동 대기 · 데모 미리보기</> : <><Dot color={C.green} live /> 카카오 상담톡 · 24시간 실시간 응대</>}
+                </div>
+              </div>
+              {/* 단골 가족 배지 — 진화 루프 상태 표시 + 기록 삭제 */}
+              {familyProfile?.last_booking && (
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 5, flexShrink: 0, fontSize: 11, fontWeight: 700, color: C.tealDk, background: "rgba(78,179,168,0.10)", border: "1px solid rgba(78,179,168,0.3)", borderRadius: 999, padding: "4px 9px" }}>
+                  단골 가족 · {familyProfile.visits}회
+                  <button title="기억 삭제 (처음 방문 상태로)" disabled={sending || autoOn} onClick={() => {
+                    epochRef.current += 1; // 진행 중 응답 폐기
+                    saveProfileLS(null); familyProfileRef.current = null; setFamilyProfile(null);
+                    const g = makeGreeting(null); messagesRef.current = [g]; setMessages([g]); userTurnRef.current = 0;
+                  }} style={{ background: "none", border: "none", color: C.faint, fontSize: 12, lineHeight: 1, padding: 0, cursor: "pointer", opacity: (sending || autoOn) ? 0.4 : 1 }}>×</button>
+                </span>
+              )}
+              {/* 대화 유형 케이스 버튼 — 가로 스크롤 칩 (wellbian QuickCard 계승) */}
+              <div className="case-chips" style={{ flex: 1, minWidth: 0, display: "flex", gap: 6, overflowX: "auto", padding: "2px 0", scrollbarWidth: "thin" }}>
+                {(familyProfile?.last_booking
+                  ? [{ label: "재방문 예약", text: "어머니 다음주 금요일 오전 10시에 또 외래 있어요. 지난번처럼 부탁해요." }, ...CASE_PRESETS]
+                  : CASE_PRESETS).map((c) => (
+                  <button key={c.label} disabled={sending || autoOn}
+                    onClick={() => { if (!sending && !autoOn) runTurn(c.text); }}
+                    style={{
+                      flexShrink: 0, fontSize: 11, fontWeight: 600, color: C.ink2,
+                      background: "rgba(255,255,255,0.65)", border: `1px solid ${C.line}`,
+                      borderRadius: 999, padding: "5px 11px", whiteSpace: "nowrap",
+                      opacity: (sending || autoOn) ? 0.5 : 1,
+                    }}>
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 컨디션·날씨지수 미니 대시보드 — 챗봇이 컨디션 조회하면 그 날짜 기준으로 실시간 전환 */}
+            <WxDashboard o={latestOuting || SEED_CONSOLE.outing} />
+
+            <div ref={scrollRef} className="chat-msgs" style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: 12 }}>
+              {messages.map((m) => (
+                <div key={m.id} className="fadein" style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start" }}>
+                  <div style={{
+                    maxWidth: "88%", padding: "10px 13px", borderRadius: 16, fontSize: 14, lineHeight: 1.55, whiteSpace: "pre-wrap",
+                    background: kakaoMode
+                      ? (m.role === "user" ? "#FEE500" : "#FFFFFF")
+                      : (m.role === "user" ? `#050038` : "rgba(255,255,255,0.92)"),
+                    color: kakaoMode ? "#191919" : (m.role === "user" ? "#fff" : C.ink),
+                    border: kakaoMode ? "none" : (m.role === "user" ? "1px solid rgba(255,255,255,0.12)" : `1px solid ${C.line}`),
+                    boxShadow: kakaoMode ? "0 1px 2px rgba(0,0,0,0.12)" : (m.role === "user" ? "inset 0 1px 0 rgba(255,255,255,0.18), 0 6px 16px -10px rgba(7,23,50,0.6)" : "0 6px 16px -12px rgba(10,24,50,0.4)"),
+                    borderBottomRightRadius: m.role === "user" ? 5 : 16,
+                    borderBottomLeftRadius: m.role === "user" ? 16 : 5,
+                  }}>
+                    {m.role === "assistant"
+                      ? <TypingText text={m.content} done={!!m.typed} onComplete={() => markTyped(m.id)} />
+                      : <Rich text={m.content} />}
+                  </div>
+                  {/* 인라인 카드는 타이핑 완료 후 노출 — '말한 뒤 카드가 뜨는' 연출 */}
+                  {(m.role !== "assistant" || m.typed) && m.events?.map((ev, i) => (
+                    <div key={i} className="fadein" style={{ width: "88%", maxWidth: "88%" }}>
+                      {ev.type === "quote" && <QuoteCard q={ev} />}
+                      {ev.type === "weather" && <WeatherCard w={ev} />}
+                      {ev.type === "slots" && <SlotsCard slots={ev.available} />}
+                      {ev.type === "booking" && <BookingCard b={ev.booking} />}
+                    </div>
+                  ))}
+                </div>
+              ))}
+              {sending && (
+                <div className="fadein" style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 9, padding: "11px 15px", background: "rgba(255,255,255,0.92)", border: `1px solid ${C.line}`, borderRadius: 16, borderBottomLeftRadius: 5 }}>
+                  <span className="typing" style={{ fontSize: 18, letterSpacing: 2, color: C.faint }}><span>·</span><span>·</span><span>·</span></span>
+                  <span style={{ fontSize: 12, color: C.sub }}>{SENDING_STAGES[stageIdx]}</span>
+                </div>
+              )}
+            </div>
+
+            <div style={{ flexShrink: 0, padding: "11px 12px", borderTop: kakaoMode ? "1px solid #8FB0CC" : `1px solid ${C.line}`, display: "flex", gap: 8, ...(kakaoMode ? { background: "#FFFFFF" } : {}) }}>
+              <input
+                value={input} disabled={autoOn}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing) onSend(); }}
+                className="chat-input" placeholder={autoOn ? "자동 시연 진행 중…" : "예: 아버지 다음주 항암 동행 예약하고 싶어요"}
+                style={{ flex: 1, border: `1px solid ${C.line}`, borderRadius: 13, padding: "12px 14px", fontSize: 14, outline: "none", background: autoOn ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.95)", color: C.ink }}
+              />
+              <button className="btn-primary" onClick={onSend} disabled={sending || autoOn || !input.trim()} style={{ borderRadius: 13, padding: "0 16px", display: "grid", placeItems: "center" }} aria-label="전송">
+                <Icon name="send" size={18} />
+              </button>
+            </div>
+            <div style={{ flexShrink: 0, padding: "0 14px 9px", fontSize: 11, color: kakaoMode ? "rgba(25,25,25,0.55)" : C.faint, textAlign: "center", ...(kakaoMode ? { background: "#FFFFFF" } : {}) }}>
+              예약·동행·요금 상담만 답변해요 · 의료 상담은 제공하지 않아요
+            </div>
+          </section>
+          )}
+
+          {/* 가족 앱 패널 — 멤버십·워치·SOS·리포트 (family 우측 페인) */}
+          {role === "family" && (
+            <FamilyPanel profile={familyProfile} today={today} sos={sos} onClearSos={() => setSos(null)} pushTicker={pushTicker} kakaoMode={kakaoMode} />
+          )}
+
+          {/* ── 우: 콘솔 (배치관리자 = 관제 / 관리자 = 경영) ── */}
+          {(role === "dispatch" || role === "admin") && (
+          <section className="glass-panel pane-console" style={{ flex: "1.15 1 460px", minWidth: 340, display: "flex", flexDirection: "column", borderRadius: 20, overflow: "hidden", minHeight: 0 }}>
+            <div className="console-hdr" style={{ flexShrink: 0, padding: "12px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
+                <Chip name={role === "dispatch" ? "pin" : "calendar"} bg="rgba(66,98,255,0.14)" fg={C.tealDk} box={30} size={16} />
+                <div style={{ minWidth: 0 }}>
+                  <b style={{ fontSize: 14, whiteSpace: "nowrap" }}>{role === "dispatch" ? "배치 관제 센터" : "경영 대시보드"}</b>
+                  <div style={{ fontSize: 11, color: C.faint, whiteSpace: "nowrap" }}>K-CARE 강남지점</div>
+                </div>
+              </div>
+              <div className="hdr-actions" style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                {role === "dispatch" && (
+                <button className="btn-glass" onClick={() => setBriefingOpen((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, borderRadius: 9, padding: "6px 10px", color: C.ink }}>
+                  <Icon name="clock" size={13} color={C.tealDk} /> 오늘 배차 브리핑
+                </button>
+                )}
+                <span title={dbState === "connected" ? "Supabase 저장 활성" : "SUPABASE_URL 미설정 — 시드 데이터로 시연"}
+                  style={{ fontSize: 11, color: dbState === "connected" ? C.green : C.amber, display: "flex", alignItems: "center", gap: 4 }}>
+                  <Dot color={dbState === "connected" ? C.green : C.amber} /> {dbState === "connected" ? "DB 저장 중" : "DB 연동 대기"}
+                </span>
+                <span style={{ fontSize: 11, color: C.green, display: "flex", alignItems: "center", gap: 5 }}><Dot color={C.green} live /> 실시간 동기화</span>
+              </div>
+            </div>
+
+            <div className="console-scroll" style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 13 }}>
+              {/* KPI + 수익 6종 — 경영(관리자) 뷰 */}
+              {role === "admin" && (
+                <div className="kpi-row" style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                  <Kpi label="오늘 GMV" value={manwon(kpi.gmv)} suffix="만원" accent={C.tealDk} sub="실시간" />
+                  <Kpi label="예약 건수" value={kpi.bookings} suffix="건" />
+                  <Kpi label="컨시어지 가동률" value={kpi.utilization} suffix="%" />
+                  <Kpi label="노쇼율" value={`${kpi.noShow}%`} accent={C.green} />
+                </div>
+              )}
+              {role === "admin" && <RevenueSix kpi={kpi} />}
+
+              {/* 실시간 관제 맵 — dcmap 헤리티지 (배치관리자 뷰) */}
+              {role === "dispatch" && <LiveOpsMap today={today} highlightId={highlightId} />}
+
+              {/* 오늘 외출 컨디션 (케이웨더) — 경영 뷰 */}
+              {role === "admin" && (() => {
+                const o = SEED_CONSOLE.outing;
+                const g = WX_GRADE[o.grade] || WX_GRADE["보통"];
+                return (
+                  <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+                    <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+                        <Icon name={skyIcon(o.sky)} size={14} color={C.amber} /> 오늘 외출 컨디션
+                        <span style={{ fontWeight: 400, color: C.faint }}>· {o.location} · 케이웨더</span>
+                      </span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: g.fg, background: g.bg, borderRadius: 7, padding: "3px 9px" }}>{o.grade}</span>
+                    </div>
+                    <div style={{ padding: "11px 15px" }}>
+                      <div className="wx-metrics" style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+                        <WxMetric icon="thermometer" label="기온" value={`${o.temp}℃ ${o.sky}`} />
+                        <WxMetric icon="wind" label="미세먼지" value={o.pm_grade} />
+                        <WxMetric icon="sun" label="자외선" value={o.uv_grade} tone="#8A6216" />
+                        <WxMetric icon="droplet" label="습도" value={`${o.humidity}%`} />
+                      </div>
+                      <ItemChips items={o.items} />
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* 오늘 배차 브리핑 — 예약별 동행 컨디션·준비물 (룰 엔진, LLM 0회) */}
+              {role === "dispatch" && briefingOpen && (
+                <div className="glass-panel fadein" style={{ borderRadius: 18, overflow: "hidden", border: `1.5px solid rgba(78,179,168,0.4)` }}>
+                  <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+                      <Icon name="clock" size={14} color={C.teal} /> 오늘 배차 브리핑 <span style={{ fontWeight: 400, color: C.faint }}>· 예약 {briefing.length}건 · 케이웨더 기준</span>
+                    </span>
+                    <button onClick={() => setBriefingOpen(false)} style={{ background: "none", border: "none", color: C.faint, fontSize: 15, lineHeight: 1 }} aria-label="닫기">×</button>
+                  </div>
+                  <div style={{ padding: "6px 15px 10px" }}>
+                    {briefing.map(({ b, o }) => (
+                      <div key={b.id} className="brief-row" style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderBottom: `1px solid ${C.lineSoft}`, fontSize: 12 }}>
+                        <span style={{ fontVariantNumeric: "tabular-nums", color: C.faint, flexShrink: 0, width: 38 }}>{hourLabel(b.start)}</span>
+                        <span style={{ fontWeight: 600, color: C.ink, flexShrink: 0 }}>{b.hospital}</span>
+                        <span style={{ color: C.sub, flexShrink: 0 }}>{b.recipient}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: scoreStyle(o.score).fg, background: scoreStyle(o.score).bg, borderRadius: 6, padding: "1px 7px", flexShrink: 0, fontVariantNumeric: "tabular-nums" }}>{o.score}점 {o.verdict}</span>
+                        <span style={{ color: C.faint, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", flex: 1 }}>{o.items.slice(0, 2).join("·")}</span>
+                        <span style={{ color: C.sub, flexShrink: 0 }}>{b.manager} 매니저</span>
+                      </div>
+                    ))}
+                    <button className="btn-primary" onClick={() => { pushTicker(`브리핑 알림톡 ${briefing.length}건 발송 완료 (매니저 전원)`, "green"); setBriefingOpen(false); }}
+                      style={{ width: "100%", marginTop: 10, borderRadius: 10, padding: "9px 0", fontSize: 13, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                      <Icon name="send" size={14} /> 매니저 알림톡 일괄 발송
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* 주간 일자별 외출 컨디션 캘린더 — 배치관리자 뷰 */}
+              {role === "dispatch" && <WeekOuting week={SEED_CONSOLE.week} />}
+
+              {/* 실시간 접수 티커 — 배치관리자 뷰 (SOS 포함) */}
+              {role === "dispatch" && (
+              <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+                <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+                  <Icon name="activity" size={14} color={C.teal} /> 실시간 접수
+                </div>
+                <div style={{ padding: "6px 15px", minHeight: 44 }}>
+                  {ticker.length === 0 && <div style={{ fontSize: 12, color: C.faint, padding: "9px 0" }}>챗봇에서 예약이 들어오면 여기에 실시간으로 표시됩니다.</div>}
+                  {ticker.map((t) => (
+                    <div key={t.id} className="fadein" style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", fontSize: 13 }}>
+                      <Dot color={t.tone === "green" ? C.green : t.tone === "blue" ? C.blue : t.tone === "amber" ? C.amber : t.tone === "red" ? C.red : C.teal} live={t.tone === "red"} />
+                      <span style={{ color: C.faint, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{t.stamp}</span>
+                      <span style={{ color: t.tone === "red" ? C.red : C.ink, fontWeight: t.tone === "green" || t.tone === "red" ? 700 : 400 }}>{t.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              )}
+
+              {/* 배차 그리드 — 배치관리자 뷰 */}
+              {role === "dispatch" && <DispatchGrid today={today} highlightId={highlightId} />}
+
+              {/* 컨시어지 현황 — 배치관리자 뷰 */}
+              {role === "dispatch" && (
+              <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+                <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+                  <Icon name="users" size={14} color={C.teal} /> 전담 컨시어지 현황
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap" }}>
+                  {SEED_MANAGERS.map((m) => (
+                    <div key={m.id} style={{ display: "flex", alignItems: "center", gap: 9, padding: "10px 15px", width: "50%", boxSizing: "border-box" }}>
+                      <div style={{ width: 32, height: 32, borderRadius: "50%", background: `linear-gradient(160deg,${C.teal},${C.tealDk})`, color: "#fff", display: "grid", placeItems: "center", fontSize: 13, fontWeight: 700, flexShrink: 0, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)" }}>{m.name[0]}</div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "flex", alignItems: "center", gap: 4 }}>{m.name} <Star size={11} /> <span style={{ color: C.faint, fontWeight: 400 }}>{m.rating}</span></div>
+                        <div style={{ fontSize: 11, color: C.faint }}>오늘 {managerLoad[m.id] || 0}건 · {m.areas[0]}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              )}
+
+              {/* 고객 CRM — 상담로그·프로필 기반 재예약 세그먼트 (경영 뷰 · CRM=자산) */}
+              {role === "admin" && (
+              <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
+                <div style={{ padding: "9px 15px", borderBottom: `1px solid ${C.line}`, fontSize: 12, fontWeight: 700, color: C.ink2, display: "flex", alignItems: "center", gap: 7 }}>
+                  <Icon name="message" size={14} color={C.teal} /> 고객 CRM <span style={{ fontWeight: 400, color: C.faint }}>· 상담로그 기반 재예약 세그먼트</span>
+                </div>
+                <div style={{ padding: "4px 15px 10px" }}>
+                  {[
+                    ...(familyProfile?.last_booking ? [{
+                      name: `우리집(데모) — ${familyProfile.recipient || "어르신"}`,
+                      note: `${familyProfile.hospital} · ${familyProfile.visits}회 이용 · 단골 ${familyProfile.preferred_manager || "-"} 매니저${familyProfile.topics?.mood ? ` · ${familyProfile.topics.mood}` : ""}`,
+                      hot: true,
+                    }] : []),
+                    { name: "이O순 님 가족", note: "정기 투석 주 2회 · 이경숙 매니저 고정 · 다음 주기 예약 미생성", hot: true },
+                    { name: "정O남 님 가족", note: "항암 정기 · 2주 내 진료 예정 · 재예약률 견인 세그먼트", hot: false },
+                  ].map((r) => (
+                    <div key={r.name} className="brief-row" style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: `1px solid ${C.lineSoft}`, fontSize: 12 }}>
+                      <Dot color={r.hot ? C.amber : C.faint} />
+                      <b style={{ flexShrink: 0 }}>{r.name}</b>
+                      <span style={{ color: C.sub, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.note}</span>
+                      <button className="pill-btn" onClick={() => pushTicker(`재예약 제안 알림톡 발송 — ${r.name}`, "green")}
+                        style={{ flexShrink: 0, fontSize: 11, fontWeight: 700, borderRadius: 8, padding: "4px 9px", border: "1px solid rgba(78,179,168,0.4)", background: "rgba(78,179,168,0.08)", color: C.tealDk, cursor: "pointer" }}>
+                        재예약 제안
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              )}
+
+              {/* ?debug=1 — 아키텍처 상태 패널 (wellbian 디버그 모드 계승) */}
+              {role === "admin" && debugOn && (
+                <div className="glass-panel" style={{ borderRadius: 14, padding: "10px 14px", fontSize: 11, fontFamily: "ui-monospace, monospace" }}>
+                  <div style={{ fontWeight: 700, marginBottom: 6, color: C.ink2, display: "flex", alignItems: "center", gap: 6 }}>
+                    <Icon name="activity" size={12} color={C.teal} /> DEBUG · 엔진 상태
+                  </div>
+                  {lastMeta ? (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 14px", color: C.sub }}>
+                      <span>mode: <b>{lastMeta.mode}</b></span>
+                      <span>model: <b>{lastMeta.model_used}</b>{lastMeta.complexity ? ` (${lastMeta.complexity})` : ""}</span>
+                      <span>tool rounds: <b>{lastMeta.rounds}</b></span>
+                      <span>rules: <b>{lastMeta.rules_injected ?? 0}</b></span>
+                      <span>store: <b>{lastMeta.store || "none"}</b></span>
+                      <span>events: <b>{lastMeta.events}</b></span>
+                      <span>elapsed: <b>{lastMeta.elapsed_ms}ms</b></span>
+                      {lastMeta.usage && (
+                        <span>tokens in/out: <b>{lastMeta.usage.input_tokens}/{lastMeta.usage.output_tokens}</b>
+                          {lastMeta.usage.cache_read_input_tokens > 0
+                            ? <b style={{ color: C.green }}> · 캐시 적중 {lastMeta.usage.cache_read_input_tokens}</b>
+                            : <b style={{ color: C.amber }}> · 캐시 미적중</b>}
+                        </span>
+                      )}
+                    </div>
+                  ) : <span style={{ color: C.faint }}>아직 요청 없음 — 메시지를 보내면 라우팅·캐시·토큰이 표시됩니다</span>}
+                </div>
+              )}
+            </div>
+          </section>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
