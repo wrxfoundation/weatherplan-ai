@@ -1,0 +1,539 @@
+{
+  "category": "gataek",
+  "note": "가택신. 실존 민간신앙 영역이므로 전 항목 sensitivity=living_faith 표기 원칙.",
+  "entries": [
+    {
+      "id": "kr-seongju",
+      "canonical": "성주신",
+      "aliases": [
+        "성조신",
+        "상량신",
+        "城主神"
+      ],
+      "names": {
+        "en": "Seongju",
+        "roman": "seongju"
+      },
+      "category": "gataek",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "집의 대들보와 마루를 맡은 가택신의 우두머리. 집안의 안녕과 가장의 운을 관장한다.",
+      "body": "새로 집을 지으면 성주받이·성주굿으로 성주를 모셔 들이고, 한지에 쌀을 싸 대들보나 마루 기둥에 붙여 신체(神體)로 삼았다. 성주풀이는 전국 무가로 전하며 지역에 따라 사설이 크게 다르다. 가택신 가운데 가장 위계가 높아, 다른 신들과의 관계를 설명하는 축이 된다.",
+      "traits": [
+        "대들보",
+        "성주풀이",
+        "가장"
+      ],
+      "art_hint": "a dignified house deity seated on the crossbeam of a hanok main hall, a white paper packet of rice tied to the beam as his body, open lattice doors",
+      "art_anchors": [
+        "costume_male",
+        "architecture",
+        "objects"
+      ],
+      "habitat": [
+        "마루",
+        "대들보"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": [
+          "autumn"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "성주신·성주굿"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "성주풀이 무가"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 행해지는 가정신앙. 엔터테인먼트 서술과 신앙 서술을 분리해 표기한다."
+      },
+      "related": [
+        "kr-jowang",
+        "kr-teoju",
+        "kr-eop",
+        "kr-samsin"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-jowang",
+      "canonical": "조왕신",
+      "aliases": [
+        "조왕할매",
+        "부뚜막신",
+        "竈王"
+      ],
+      "names": {
+        "en": "Jowang",
+        "roman": "jowang"
+      },
+      "category": "gataek",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "부엌과 불을 맡은 여신. 부뚜막의 정화수 한 그릇이 신체다.",
+      "body": "주부가 매일 새벽 정화수를 갈아 올리며 집안의 무사를 빌었고, 부엌에서 함부로 말하거나 불을 더럽히는 것을 금기로 삼았다. 조왕은 집안의 일을 하늘에 고한다는 관념이 있어 말조심 금기와 짝을 이룬다. 불·음식과 직결되어 화재·질병 예방 관념까지 포괄한다.",
+      "traits": [
+        "정화수",
+        "불",
+        "금기"
+      ],
+      "art_hint": "an elderly kitchen goddess in hanbok beside a clay stove, a single brass bowl of clear water on the ledge, firewood glow, hanging iron pots",
+      "habitat": [
+        "부엌",
+        "부뚜막"
+      ],
+      "omens": {
+        "time": [
+          "dawn"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "조왕"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 행해지는 가정신앙"
+      },
+      "related": [
+        "kr-seongju",
+        "kr-munjeon"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-teoju",
+      "canonical": "터주신",
+      "aliases": [
+        "터줏대감",
+        "지신",
+        "土主"
+      ],
+      "category": "gataek",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "집터를 맡은 신. 뒤뜰의 터주가리(짚주저리를 씌운 항아리)가 신체다.",
+      "body": "가을 추수 뒤 햅쌀을 갈아 넣고 짚주저리를 새로 씌우는 것이 터주 모시기의 기본이다. 터를 건드리는 일—집을 고치고 땅을 파는 일—에 앞서 터주에게 고하지 않으면 동티가 난다는 관념이 강했다. 오늘날 '터줏대감'이라는 일상어의 어원이다.",
+      "traits": [
+        "터",
+        "동티",
+        "짚주저리"
+      ],
+      "art_hint": "an earthen jar wrapped in a straw cone standing in a back yard, new grain inside, low stone wall and a bare persimmon tree, a presence suggested in the straw",
+      "art_anchors": [
+        "architecture",
+        "objects"
+      ],
+      "habitat": [
+        "뒤뜰",
+        "장독대"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": [
+          "autumn"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "터주"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 행해지는 가정신앙"
+      },
+      "related": [
+        "kr-seongju",
+        "kr-jisin",
+        "kr-dokkaebi-teo"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-eop",
+      "canonical": "업신",
+      "aliases": [
+        "업",
+        "업구렁이",
+        "업두꺼비",
+        "업족제비"
+      ],
+      "names": {
+        "en": "Eop",
+        "roman": "eop"
+      },
+      "category": "gataek",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "집안의 재물을 지키는 신. 구렁이·족제비·두꺼비의 몸으로 나타난다.",
+      "body": "업이 집을 떠나면 그 집이 망한다고 하여, 집 안에서 구렁이를 보아도 죽이거나 쫓지 않는 것이 강한 금기였다. 곳간이나 뒤뜰에 업단지를 두고 곡식을 담아 모시는 형태가 널리 보고된다. 동물 신체를 가진 가택신이라 동물변화 계열과 경계를 이룬다.",
+      "traits": [
+        "재물",
+        "구렁이",
+        "금기"
+      ],
+      "art_hint": "a large pale rat snake coiled calmly on a grain storehouse beam, sacks of grain and an earthen jar below, warm ochre light",
+      "art_anchors": [
+        "architecture",
+        "objects"
+      ],
+      "habitat": [
+        "곳간",
+        "뒤뜰",
+        "지붕"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "업"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 행해지는 가정신앙"
+      },
+      "related": [
+        "kr-baeksa",
+        "kr-teoju"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-cheuksin",
+      "canonical": "측신",
+      "aliases": [
+        "뒷간귀신",
+        "칙간신",
+        "정낭각시",
+        "厠神"
+      ],
+      "category": "gataek",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "뒷간을 맡은 여신. 가택신 가운데 가장 성질이 사나워 함부로 마주치면 탈이 난다고 했다.",
+      "body": "머리카락을 길게 늘어뜨리고 세고 있다가 인기척 없이 들어온 사람을 덮친다는 서술이 반복되며, 그래서 뒷간에 들 때 기침을 세 번 하는 관습이 생겼다. 제주 문전본풀이에서는 남선비의 첩 노일제대귀일의 딸이 측신이 되는 것으로 신들의 좌정이 설명된다. 무섭지만 반드시 모셔야 하는 신이라는 점에서 가택신 체계의 성격을 잘 보여 준다.",
+      "traits": [
+        "머리카락",
+        "기침 세 번",
+        "동티"
+      ],
+      "art_hint": "a fierce woman spirit with very long loose hair seated in a thatched outhouse counting her hair strands, a narrow wooden door ajar, cold blue tone",
+      "habitat": [
+        "뒷간"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "측신"
+        },
+        {
+          "type": "field",
+          "title": "문전본풀이",
+          "ref": "제주 무가"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 행해지는 가정신앙"
+      },
+      "related": [
+        "kr-munjeon",
+        "kr-jowang"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-munjeon",
+      "canonical": "문전신",
+      "aliases": [
+        "문신",
+        "문전본풀이 녹디생인",
+        "門神"
+      ],
+      "category": "gataek",
+      "rarity": "uncommon",
+      "distribution": "regional",
+      "summary": "집의 문을 지키는 신. 밖에서 들어오는 잡귀와 액을 문턱에서 막는다.",
+      "body": "제주에서 특히 위계가 높아, 문전본풀이는 막내아들 녹디생인이 문전신이 되고 형제와 부모가 각각 집안 곳곳의 신으로 좌정하는 과정을 서사로 설명한다. 육지에서는 정월에 문에 부적을 붙이거나 엄나무를 걸어 같은 기능을 대신했다. 가택신 체계를 신화 서사로 갖춘 드문 사례다.",
+      "traits": [
+        "문",
+        "액막이",
+        "본풀이"
+      ],
+      "art_hint": "a young guardian deity standing squarely in a hanok gateway with both arms out, straw rope across the lintel, dark shapes held back outside",
+      "art_anchors": [
+        "costume_male",
+        "architecture"
+      ],
+      "habitat": [
+        "대문",
+        "문턱"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": [
+          "winter"
+        ]
+      },
+      "sites": [
+        {
+          "name": "제주 문전본풀이 전승권",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.4996,
+          "lng": 126.5312,
+          "precision": "sido",
+          "note": "제주 무속 본풀이 전승권"
+        }
+      ],
+      "sources": [
+        {
+          "type": "field",
+          "title": "문전본풀이",
+          "ref": "제주 무가"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "문신"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "제주 무속 의례에서 현재도 구연되는 본풀이"
+      },
+      "related": [
+        "kr-cheuksin",
+        "kr-jowang",
+        "kr-seongju"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-samsin",
+      "canonical": "삼신할머니",
+      "aliases": [
+        "삼신",
+        "삼신할미",
+        "산신(産神)",
+        "제석"
+      ],
+      "names": {
+        "en": "Samsin",
+        "roman": "samsin"
+      },
+      "category": "gataek",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "아이를 점지하고 산모와 아기를 지키는 신. 안방 윗목의 삼신단지가 신체다.",
+      "body": "아이를 낳으면 미역국과 흰밥을 삼신상에 먼저 올리고, 삼칠일 동안 금줄을 쳐 부정을 막았다. 아기 엉덩이의 몽고반점을 '삼신할머니가 얼른 나가라고 때린 자국'으로 설명하는 구전이 전국에 있다. 출산과 육아의 전 과정을 관장해 가정신앙에서 가장 실감 있게 남은 신격이다.",
+      "traits": [
+        "출산",
+        "금줄",
+        "삼신상"
+      ],
+      "art_hint": "a kindly grandmother deity in hanbok kneeling in an ondol room beside a newborn, an earthen samsin jar of rice and a brass bowl of seaweed soup before her, straw geumjul rope across the hanji lattice door",
+      "habitat": [
+        "안방"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "삼신"
+        },
+        {
+          "type": "field",
+          "title": "제석본풀이",
+          "ref": "전국 무가"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 행해지는 가정신앙"
+      },
+      "related": [
+        "kr-samseung-halmang",
+        "kr-seongju"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-cheollyung",
+      "canonical": "철륭신",
+      "aliases": [
+        "철륭",
+        "철용",
+        "장독대신"
+      ],
+      "category": "gataek",
+      "rarity": "uncommon",
+      "distribution": "regional",
+      "summary": "장독대와 집 뒤란을 맡은 신. 주로 호남에서 모신다.",
+      "body": "집 뒤란 장독대에 정화수를 올리거나 짚을 깔아 모시며, 지역에 따라 터주와 같은 자리로 통합되기도 한다. 장맛이 변하거나 독이 깨지는 일을 철륭의 노여움으로 해석한 사례가 채록에 나타난다. 가택신의 배치가 지역마다 다르게 짜인다는 점을 보여 주는 항목이다.",
+      "traits": [
+        "장독대",
+        "정화수"
+      ],
+      "art_hint": "a back-yard deity presence above a jangdokdae terrace of earthen jars, a bowl of clear water on the tallest jar, low stone wall and bamboo behind",
+      "art_anchors": [
+        "architecture",
+        "objects"
+      ],
+      "habitat": [
+        "뒤란",
+        "장독대"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "호남 철륭 신앙권",
+          "sido": "전남",
+          "sigungu": "순천시",
+          "lat": 34.9506,
+          "lng": 127.4872,
+          "precision": "sigungu",
+          "note": "호남 가정신앙 분포 예시"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "철륭"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 행해지는 가정신앙"
+      },
+      "related": [
+        "kr-teoju"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-jisin",
+      "canonical": "지신",
+      "aliases": [
+        "지신밟기의 지신",
+        "地神"
+      ],
+      "category": "gataek",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "땅을 맡은 신. 정월 지신밟기로 집집의 땅을 눌러 액을 막는다.",
+      "body": "풍물패가 마당·부엌·장독대·우물을 돌며 축원 사설을 하는 지신밟기는 지금도 정월 대보름 행사로 남아 있다. '지신아 지신아 눌러라'라는 사설처럼 땅을 밟아 누르는 행위 자체가 액막이였다. 가택신과 마을신을 잇는 중간 항목이다.",
+      "traits": [
+        "지신밟기",
+        "풍물",
+        "정월"
+      ],
+      "art_hint": "a broad earth deity pressed beneath a house yard with flattening hands, a pungmul band with small gong and drum stamping above, dust rising",
+      "art_anchors": [
+        "architecture",
+        "objects"
+      ],
+      "habitat": [
+        "마당",
+        "집터"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": [
+          "winter"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "지신밟기"
+        },
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "지신밟기 관련 지정 종목"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 행해지는 마을·가정 의례"
+      },
+      "related": [
+        "kr-teoju",
+        "kr-seonang"
+      ],
+      "updated_at": "2026-08-16"
+    }
+  ]
+}

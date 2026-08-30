@@ -1,0 +1,684 @@
+{
+  "category": "animal",
+  "note": "동물변화 계열. 일본 動物変化에 대응하며 한국은 여우·뱀·호랑이 축이 특히 두껍다.",
+  "entries": [
+    {
+      "id": "kr-gumiho",
+      "canonical": "구미호",
+      "aliases": [
+        "불여우",
+        "여우각시",
+        "九尾狐"
+      ],
+      "names": {
+        "en": "Gumiho",
+        "ja": "クミホ",
+        "zh": "九尾狐",
+        "roman": "gumiho"
+      },
+      "category": "animal",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "천 년을 산 여우가 아홉 꼬리를 얻어 사람으로 둔갑한 존재. 한국에서 가장 널리 알려진 요괴다.",
+      "body": "여우가 사람의 간을 먹거나 여우구슬을 주고받아 힘을 얻는다는 구조가 반복되며, 대개 아름다운 여인으로 둔갑해 사람 곁에 머문다. 정체가 드러나면 본모습으로 돌아가 사라지는 결말이 많고, 사람이 되려면 며칠을 견뎌야 한다는 금기형 서사도 널리 채록됐다. 구미호 관념 자체는 중국 『산해경』 계통에서 들어왔으나, 여우누이·여우구슬 같은 한국 고유의 하위 서사가 두껍게 붙어 별개 계열로 자랐다.",
+      "traits": [
+        "둔갑",
+        "여우구슬",
+        "간",
+        "아홉 꼬리"
+      ],
+      "art_hint": "a woman in white hanbok jeogori and chima caught mid-transformation into a fox, nine tails fanning behind her, a luminous pearl at her lips, half the face already vulpine",
+      "habitat": [
+        "묘지",
+        "고갯길",
+        "폐가"
+      ],
+      "omens": {
+        "time": [
+          "night",
+          "midnight"
+        ],
+        "weather": [
+          "fog",
+          "clear"
+        ],
+        "season": [
+          "autumn"
+        ]
+      },
+      "sites": [
+        {
+          "name": "전국 여우 설화 분포",
+          "sido": "충북",
+          "sigungu": "청주시",
+          "lat": 36.6424,
+          "lng": 127.489,
+          "precision": "sigungu",
+          "note": "광포설화 — 대표 채록 권역 예시"
+        }
+      ],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "여우 설화군"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "구미호"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-yeou-nui",
+        "kr-nogu-hwaho",
+        "kr-dokkaebi-bul"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-yeou-nui",
+      "canonical": "여우누이",
+      "aliases": [
+        "여우누이동생",
+        "여우누님"
+      ],
+      "category": "animal",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "딸로 태어난 여우가 밤마다 집안의 가축과 가족의 간을 빼먹는다는 설화의 주인공.",
+      "body": "아들만 있던 집에서 빌어 얻은 딸이 실은 여우였고, 이를 알아챈 오빠만 쫓겨났다가 세 개의 병(빨강·파랑·하양)을 얻어 돌아와 퇴치하는 구조가 표준형이다. 세 병이 각각 불·물·가시밭을 일으키는 도주 모티프는 한국 구비문학의 대표 장면 중 하나다. 채록량이 매우 많아 지역별 변이 비교에 좋은 항목이다.",
+      "traits": [
+        "간",
+        "세 개의 병",
+        "가축"
+      ],
+      "art_hint": "a young girl in hanbok standing serene in a night byre, a fox shadow cast on the wall behind her, three small bottles red blue and white tucked at her waist",
+      "habitat": [
+        "외양간",
+        "집"
+      ],
+      "omens": {
+        "time": [
+          "midnight"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "여우누이 설화 채록 권역",
+          "sido": "경북",
+          "sigungu": "안동시",
+          "lat": 36.5684,
+          "lng": 128.7294,
+          "precision": "sigungu",
+          "note": "광포설화 — 대표 채록 권역 예시"
+        }
+      ],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "여우누이 설화"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-gumiho"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-changgwi",
+      "canonical": "창귀",
+      "aliases": [
+        "호창귀",
+        "倀鬼"
+      ],
+      "names": {
+        "en": "Changgwi",
+        "roman": "changgwi"
+      },
+      "category": "animal",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "호랑이에게 잡아먹힌 사람의 넋. 호랑이 앞잡이가 되어 다음 사람을 불러낸다.",
+      "body": "창귀는 호랑이에게서 벗어나려면 대신할 사람을 데려와야 한다고 하여, 아는 사람의 목소리로 이름을 부른다. 호환이 잦던 산간에서는 호랑이에게 죽은 이를 화장해 돌무덤(호식총)을 쓰고 시루와 쇠꼬챙이를 꽂아 창귀가 나오지 못하게 눌렀다. 호식총은 강원·경북 산간에 실물이 남아 있어 실좌표 확보가 가능한 드문 항목이다.",
+      "traits": [
+        "호환",
+        "이름 부르기",
+        "호식총"
+      ],
+      "art_hint": "a pale spirit walking ahead of a great tiger on a snowy mountain path, calling with an open mouth, a stone cairn grave with an iron skewer at the edge",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "산길",
+        "고개"
+      ],
+      "omens": {
+        "time": [
+          "dusk",
+          "night"
+        ],
+        "weather": [
+          "fog",
+          "snow"
+        ],
+        "season": [
+          "winter"
+        ]
+      },
+      "sites": [
+        {
+          "name": "태백·삼척 호식총 분포권",
+          "sido": "강원",
+          "sigungu": "태백시",
+          "lat": 37.1641,
+          "lng": 128.9856,
+          "precision": "sigungu",
+          "note": "호식총 실물이 보고된 산간 권역. 개별 호식총 좌표는 학술조사 자료로 대체 예정"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "창귀·호식총"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "호환 설화"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-sangun",
+        "kr-sansillyeong"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-jinegaksi",
+      "canonical": "지네각시",
+      "aliases": [
+        "지네여인",
+        "오공각시"
+      ],
+      "category": "animal",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "천 년 묵은 지네가 여인으로 둔갑해 남자를 데려가 함께 사는 설화의 주인공.",
+      "body": "가난한 남자가 여인을 따라가 부자가 되지만, 어느 날 나타난 노인(대개 구렁이의 화신)이 여인에게 침을 뱉으라 시키는 시험이 붙는다. 남자가 은혜를 저버리지 않고 침을 뱉지 않으면 지네는 승천하고 남자는 복을 받는다. 지네와 구렁이가 승천을 두고 다투는 구도라 수괴 계열과도 이어진다.",
+      "traits": [
+        "둔갑",
+        "승천",
+        "은혜"
+      ],
+      "art_hint": "a woman in hanbok in a lamplit mountain house, a hundred-legged centipede form faintly overlaid on her, an old man watching from the doorway",
+      "habitat": [
+        "산속 집",
+        "폐가"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [
+          "rain"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
+      "sites": [
+        {
+          "name": "지네각시 설화 채록 권역",
+          "sido": "충남",
+          "sigungu": "공주시",
+          "lat": 36.4465,
+          "lng": 127.119,
+          "precision": "sigungu",
+          "note": "광포설화 — 대표 채록 권역 예시"
+        }
+      ],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "지네각시 설화"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-imugi",
+        "kr-baeksa"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-myogwi",
+      "canonical": "묘귀",
+      "aliases": [
+        "고양이귀신",
+        "괴귀",
+        "猫鬼"
+      ],
+      "category": "animal",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "죽은 고양이의 원한이 붙은 존재. 시신을 넘으면 시신이 일어난다는 금기의 주범이다.",
+      "body": "상가에서 고양이를 들이지 않는 금기는 고양이가 시신 위를 넘으면 시신이 일어난다는 관념에서 나왔다. 조선 후기 야담에도 고양이가 사람에게 앙갚음하는 이야기가 실려 있어, 개와 달리 고양이를 경계 대상으로 본 시선이 확인된다. 현대 괴담에도 그대로 이어져 변형이 많은 항목이다.",
+      "traits": [
+        "원한",
+        "시신",
+        "금기"
+      ],
+      "art_hint": "a cat with fixed staring eyes on a mourning house rafter at night, white funeral cloth below, a bowl of rice with an upright spoon",
+      "art_anchors": [
+        "architecture"
+      ],
+      "habitat": [
+        "상가",
+        "빈집"
+      ],
+      "omens": {
+        "time": [
+          "night",
+          "midnight"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "조선 후기 야담류",
+          "ref": "고양이 보복담"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "고양이 관련 금기"
+        }
+      ],
+      "verification": "secondary_compilation",
+      "confidence": "medium",
+      "related": [
+        "kr-sangmun"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-jwi-dungap",
+      "canonical": "쥐둔갑",
+      "aliases": [
+        "둔갑한 쥐",
+        "가짜 주인",
+        "옹고집형 쥐"
+      ],
+      "category": "animal",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "사람의 손톱을 주워 먹은 쥐가 그 사람으로 변해 집을 차지하는 설화.",
+      "body": "진짜와 가짜가 나란히 서서 집안일을 대답해 가리는 진가쟁주(眞假爭主) 장면이 핵심이며, 대개 고양이를 데려와 정체를 밝힌다. 손톱·머리카락을 함부로 버리지 말라는 금기의 근거로 지금도 인용된다. 『옹고집전』 계열과 서사 구조를 공유한다.",
+      "traits": [
+        "둔갑",
+        "손톱",
+        "진가쟁주"
+      ],
+      "art_hint": "two identical men in the same hanbok facing each other in a hanok courtyard, one subtly rat-featured, a cat held in a woman's arms at the side",
+      "art_anchors": [
+        "costume_male",
+        "architecture"
+      ],
+      "habitat": [
+        "집",
+        "곳간"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "쥐둔갑 설화 채록 권역",
+          "sido": "경기",
+          "sigungu": "여주시",
+          "lat": 37.2983,
+          "lng": 127.6372,
+          "precision": "sigungu",
+          "note": "광포설화 — 대표 채록 권역 예시"
+        }
+      ],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "쥐둔갑 설화"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-myogwi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-nogu-hwaho",
+      "canonical": "노구화호",
+      "aliases": [
+        "늙은 여우",
+        "여우 중",
+        "老狐"
+      ],
+      "category": "animal",
+      "rarity": "rare",
+      "distribution": "regional",
+      "summary": "『삼국유사』 거타지 조에 나오는, 승려로 둔갑해 서해 용의 일족을 잡아먹던 늙은 여우.",
+      "body": "진성여왕 대 거타지가 서해의 섬에 남겨졌다가, 노인으로 나타난 용의 부탁을 받아 새벽에 나타난 늙은 중을 활로 쏘자 늙은 여우가 되어 죽었다는 기록이다. 고전 원전에 명확한 좌표(서해 항로)와 사건이 붙어 있어 검증등급이 가장 높은 동물변화 항목이다. 후대 『고려사』 작제건 설화와도 계보가 이어진다.",
+      "traits": [
+        "둔갑",
+        "승려 형상",
+        "활"
+      ],
+      "art_hint": "an old fox unmasked on a rocky sea island at dawn, a discarded monk's robe beside it, an archer lowering his bow, waves and wind-bent pine",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "서해 섬",
+        "바다"
+      ],
+      "omens": {
+        "time": [
+          "dawn"
+        ],
+        "weather": [
+          "wind"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "서해 항로 전승권(백령·대청 일대)",
+          "sido": "인천",
+          "sigungu": "옹진군",
+          "lat": 37.967,
+          "lng": 124.68,
+          "precision": "sigungu",
+          "note": "거타지 설화의 '서해 섬' 비정 권역 — 특정 섬 확정 아님"
+        }
+      ],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "삼국유사",
+          "ref": "기이편 진성여대왕 거타지"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-gumiho",
+        "kr-yongwang"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-baeksa",
+      "canonical": "백사",
+      "aliases": [
+        "흰 구렁이",
+        "白蛇",
+        "산신 뱀"
+      ],
+      "category": "animal",
+      "rarity": "rare",
+      "distribution": "nationwide",
+      "summary": "흰 뱀. 죽이면 반드시 화를 입고, 잘 모시면 집안을 일으킨다는 양가적 존재.",
+      "body": "흰 빛깔의 뱀은 예사 짐승이 아니라 신의 몸이라는 관념이 강해, 보면 절하고 물러나는 것이 옳다고 했다. 업구렁이 신앙과 이어져 재물신으로 모셔지기도 하고, 죽인 사람이 집안 재앙을 겪는 보복담으로도 채록된다. 뱀을 함부로 해치지 않는 금기의 핵심 근거다.",
+      "traits": [
+        "금기",
+        "보복",
+        "재물"
+      ],
+      "art_hint": "a white snake coiled on a mossy granite boulder beside a country shrine, a bowl of water and rice set before it, villagers bowing at a distance",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "집 주변",
+        "바위",
+        "산"
+      ],
+      "omens": {
+        "time": [
+          "day"
+        ],
+        "weather": [
+          "humid",
+          "rain"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "뱀 관련 신앙·금기"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "구렁이 보복담"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-eop",
+        "kr-imugi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-sapsalgae",
+      "canonical": "삽살개",
+      "aliases": [
+        "삽사리",
+        "귀신 쫓는 개"
+      ],
+      "names": {
+        "en": "Sapsaree",
+        "roman": "sapsalgae"
+      },
+      "category": "animal",
+      "rarity": "uncommon",
+      "distribution": "regional",
+      "summary": "귀신과 액을 쫓는다고 믿어진 토종개. 이름 자체가 '액을 삽삽 쓸어낸다'는 뜻으로 풀이된다.",
+      "body": "요괴를 물리치는 쪽에 선 드문 동물 항목으로, 그림이나 부적으로 대문에 붙여 액막이로 쓰기도 했다. 경북 경산 일대의 삽살개는 천연기념물로 지정돼 있어 실좌표와 공공 지정정보가 붙는다. 도감에서 '퇴치 수단' 축을 만들 때 기준이 되는 항목이다.",
+      "traits": [
+        "액막이",
+        "퇴치",
+        "수호"
+      ],
+      "art_hint": "a shaggy Korean sapsaree dog planted at a village gate at night barking at a dark shape, straw rope and a paper charm on the post behind",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "집",
+        "마을"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "경산 삽살개 서식지",
+          "sido": "경북",
+          "sigungu": "경산시",
+          "lat": 35.8251,
+          "lng": 128.7415,
+          "precision": "sigungu",
+          "note": "천연기념물 지정 — 정확 좌표는 국가유산포털 지정정보로 대체 예정"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "경산의 삽살개(천연기념물)"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "삽살개"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-jangseung",
+        "kr-jeung"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-cheonggaeguri",
+      "canonical": "청개구리",
+      "aliases": [
+        "말 안 듣는 청개구리"
+      ],
+      "category": "animal",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "어미 말을 늘 거꾸로 듣던 청개구리가, 어미가 죽은 뒤 물가 무덤이 떠내려갈까 비만 오면 운다는 설화.",
+      "body": "요괴라기보다 자연현상의 유래를 설명하는 설화지만, '비가 오면 왜 우는가'라는 날씨 질문에 답하는 구조라 날씨×전승 엔진의 핵심 자산이다. 전국에서 거의 동일한 형태로 채록되며 어린이 교육 콘텐츠로도 정착했다. 강수 조건에서 노출되는 대표 항목으로 설계한다.",
+      "traits": [
+        "비",
+        "울음",
+        "후회"
+      ],
+      "art_hint": "a small green tree frog crying on a reed at the edge of a rain-swollen stream, a low grave mound at the water's edge, heavy rain lines",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "개울",
+        "물가"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "rain",
+          "heavy_rain"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "청개구리 설화"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "청개구리설화"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-yeoubi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-yongma",
+      "canonical": "용마",
+      "aliases": [
+        "룡마",
+        "龍馬",
+        "장수말"
+      ],
+      "category": "animal",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "아기장수가 태어나면 나타나는 날개 달린 말. 주인이 죽으면 울부짖다 못에 빠져 죽는다.",
+      "body": "아기장수 설화의 짝으로, 장수가 죽은 뒤 용마가 나와 사흘을 울다 물에 빠졌다는 결말이 전국에서 반복된다. 그래서 '용마못', '말무덤', '용마산' 같은 지명이 전국에 남아 있어, 지명 기반 좌표 확보가 가장 쉬운 항목 중 하나다. 지명 데이터와 설화를 잇는 파일럿 대상으로 적합하다.",
+      "traits": [
+        "날개",
+        "울음",
+        "지명"
+      ],
+      "art_hint": "a winged horse bursting from a mountain pool crying to the sky, an empty saddle, granite ridge and pines, a small burial mound at the pool's edge",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "못",
+        "산"
+      ],
+      "omens": {
+        "time": [
+          "dawn"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "용마 관련 지명 분포권",
+          "sido": "경남",
+          "sigungu": "밀양시",
+          "lat": 35.5038,
+          "lng": 128.7469,
+          "precision": "sigungu",
+          "note": "용마·말무덤 지명 분포 예시. 전국 지명 데이터와 조인 예정"
+        }
+      ],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "아기장수·용마 설화"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "아기장수설화"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-agijangsu"
+      ],
+      "updated_at": "2026-08-16"
+    }
+  ]
+}

@@ -1,0 +1,478 @@
+{
+  "category": "village",
+  "note": "마을신. 국가유산 지정 당집·장승·솟대가 남아 있어 W2 실좌표 교체 1순위 계열.",
+  "entries": [
+    {
+      "id": "kr-seonang",
+      "canonical": "서낭신",
+      "aliases": [
+        "성황신",
+        "서낭당 신령",
+        "城隍"
+      ],
+      "names": {
+        "en": "Seonang",
+        "roman": "seonang"
+      },
+      "category": "village",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "마을 경계와 고갯마루를 지키는 신. 돌무더기와 신목이 그 자리를 표시한다.",
+      "body": "고개를 넘는 사람은 돌 하나를 얹고 침을 뱉거나 절을 해 무사를 빌었고, 마을에서는 해마다 서낭제를 지냈다. 강릉 대관령 국사성황사처럼 국가무형유산 의례와 결합해 남은 사례는 실좌표와 공식 기록이 모두 확보된다. 마을 안팎을 가르는 경계 신앙의 핵심이다.",
+      "traits": [
+        "돌무더기",
+        "신목",
+        "경계"
+      ],
+      "art_hint": "a guardian presence over a mountain pass shrine, a heap of prayer stones and an old tree hung with five-colour cloth, a traveler adding a stone",
+      "habitat": [
+        "고갯마루",
+        "마을 입구"
+      ],
+      "omens": {
+        "time": [
+          "dusk"
+        ],
+        "weather": [
+          "fog",
+          "snow"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "대관령 국사성황사",
+          "sido": "강원",
+          "sigungu": "강릉시",
+          "lat": 37.6903,
+          "lng": 128.7589,
+          "precision": "dong",
+          "note": "강릉단오제 국사성황 봉안처"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "강릉단오제(국가무형유산)"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "서낭신·서낭당"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 제의가 이어지는 신당"
+      },
+      "related": [
+        "kr-jangseung",
+        "kr-sotdae",
+        "kr-golmaegi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-jangseung",
+      "canonical": "장승",
+      "aliases": [
+        "벅수",
+        "장생",
+        "천하대장군"
+      ],
+      "names": {
+        "en": "Jangseung",
+        "roman": "jangseung"
+      },
+      "category": "village",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "마을 입구에 세운 사람 얼굴의 기둥. 밖에서 오는 역병과 잡귀를 막는 수문장이다.",
+      "body": "천하대장군·지하여장군을 한 쌍으로 세우고 이정표 역할까지 겸했으며, 남부에서는 '벅수'라 불렀다. 남원 실상사 석장승처럼 국가민속문화유산으로 지정된 실물이 여럿 남아 좌표가 확정된다. 요괴를 막는 쪽의 대표 항목으로, 도감의 방어 축을 이룬다.",
+      "traits": [
+        "수문장",
+        "역병 차단",
+        "쌍"
+      ],
+      "art_hint": "a pair of carved wooden Korean village guardian posts, a crowned male and a plain female, bulging round eyes and bared teeth, at a village entrance path beside a sotdae bird pole",
+      "habitat": [
+        "마을 입구",
+        "절 입구"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "남원 실상사 석장승",
+          "sido": "전북",
+          "sigungu": "남원시",
+          "lat": 35.4306,
+          "lng": 127.5464,
+          "precision": "dong",
+          "note": "국가민속문화유산 지정 석장승"
+        },
+        {
+          "name": "세종 마을 장승 분포권",
+          "sido": "세종",
+          "sigungu": "세종시",
+          "lat": 36.4801,
+          "lng": 127.289,
+          "precision": "sido",
+          "note": "장승 분포 예시 — 실측 좌표는 국가유산포털 지정정보로 대체 예정"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "남원 실상사 석장승 등 지정 종목"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "장승"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-sotdae",
+        "kr-seonang",
+        "kr-sonnim"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-sotdae",
+      "canonical": "솟대",
+      "aliases": [
+        "짐대",
+        "새대",
+        "화줏대"
+      ],
+      "names": {
+        "en": "Sotdae",
+        "roman": "sotdae"
+      },
+      "category": "village",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "긴 장대 끝에 새를 올린 마을 표지. 새가 하늘과 마을 사이를 오간다고 여겼다.",
+      "body": "오리나 기러기 모양을 올려 물과 비를 부르고 화재를 막는다는 관념이 붙었으며, 과거 급제자를 기려 세우기도 했다. 장승과 함께 마을 어귀에 서서 경계 표지 세트를 이룬다. 삼한 시대 소도(蘇塗)의 흔적으로 보는 견해가 널리 소개돼 있다.",
+      "traits": [
+        "새",
+        "장대",
+        "경계"
+      ],
+      "art_hint": "tall wooden poles topped with carved wooden ducks at a village entrance, rice paddies behind, a low granite ridge and a magpie",
+      "habitat": [
+        "마을 입구",
+        "논둑"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "rain"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "충남 마을 솟대 분포권",
+          "sido": "충남",
+          "sigungu": "부여군",
+          "lat": 36.2756,
+          "lng": 126.9098,
+          "precision": "sigungu",
+          "note": "솟대 분포 예시"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "솟대"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-jangseung",
+        "kr-seonang"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-golmaegi",
+      "canonical": "골매기신",
+      "aliases": [
+        "골맥이",
+        "골매기할배",
+        "동신"
+      ],
+      "category": "village",
+      "rarity": "uncommon",
+      "distribution": "regional",
+      "summary": "마을을 처음 연 조상을 신으로 모신 동해안·영남의 마을신.",
+      "body": "'골(마을)을 막는다'는 이름 그대로 마을 경계를 지키며, 대개 입향조(入鄕祖)의 성씨를 붙여 '김씨 골매기'처럼 부른다. 동해안별신굿에서 마을신으로 청배되는 대표 신격이다. 조상 숭배와 마을신앙이 겹치는 지점을 보여 준다.",
+      "traits": [
+        "입향조",
+        "동신",
+        "별신굿"
+      ],
+      "art_hint": "a village founding ancestor deity in Korean robes seated in a small shrine above a fishing village, boats and drying nets below, cloth strips at the door",
+      "habitat": [
+        "마을 당",
+        "동해안 어촌"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "동해안 골매기 신앙권",
+          "sido": "울산",
+          "sigungu": "동구",
+          "lat": 35.5045,
+          "lng": 129.4167,
+          "precision": "sigungu",
+          "note": "동해안별신굿 전승 어촌 권역"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "동해안별신굿(국가무형유산)"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "골매기"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 제의가 이어지는 마을신앙"
+      },
+      "related": [
+        "kr-seonang",
+        "kr-dangsan-halmeoni"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-dangsan-halmeoni",
+      "canonical": "당산할머니",
+      "aliases": [
+        "당산신",
+        "당할매",
+        "당산나무 신"
+      ],
+      "category": "village",
+      "rarity": "common",
+      "distribution": "regional",
+      "summary": "마을 어귀 큰 나무에 깃든 여신. 호남에서 특히 위계가 높다.",
+      "body": "정월에 당산제를 지내고 나무에 금줄을 둘러 신역을 표시하며, 당산나무를 함부로 베면 마을에 재앙이 온다는 금기가 강하다. 부안 서문안 당산, 정읍 원백암 당산처럼 지정 유산으로 남은 사례가 다수 있다. 오래된 마을 노거수를 실좌표로 삼을 수 있어 지도화에 유리하다.",
+      "traits": [
+        "당산나무",
+        "금줄",
+        "당산제"
+      ],
+      "art_hint": "an old goddess presence within a huge village tree at the hamlet entrance, straw rope with paper strips around the trunk, an offering table at the roots",
+      "habitat": [
+        "마을 어귀",
+        "노거수"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": [
+          "winter"
+        ]
+      },
+      "sites": [
+        {
+          "name": "부안 당산 분포권",
+          "sido": "전북",
+          "sigungu": "부안군",
+          "lat": 35.7318,
+          "lng": 126.733,
+          "precision": "sigungu",
+          "note": "국가민속문화유산 당산 다수 분포"
+        },
+        {
+          "name": "광주 마을 당산 분포권",
+          "sido": "광주",
+          "sigungu": "남구",
+          "lat": 35.1595,
+          "lng": 126.8526,
+          "precision": "sido",
+          "note": "호남 당산 신앙권 예시"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "당산 관련 지정 종목"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "당산제"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 제의가 이어지는 마을신앙"
+      },
+      "related": [
+        "kr-seonang",
+        "kr-golmaegi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-imgyeongeop",
+      "canonical": "임경업 장군신",
+      "aliases": [
+        "임장군",
+        "연평도 조기신"
+      ],
+      "category": "village",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "실존 무장이 서해 어민의 신이 된 사례. 연평도에서 조기잡이를 열어 준 신으로 모신다.",
+      "body": "가시나무로 조기를 잡는 법을 알려 주었다는 유래가 전하며, 연평도 충민사에서 풍어를 비는 대상이 되었다. 역사 인물이 죽은 뒤 마을신으로 좌정하는 인물신 계열의 대표 사례다. 서해 조기 어업의 흥망과 신앙이 함께 움직인 기록으로도 가치가 있다.",
+      "traits": [
+        "인물신",
+        "조기",
+        "풍어"
+      ],
+      "art_hint": "a general deity in Korean armour enshrined in an island shrine, croaker fish hung as offerings, fishing boats crowding the harbour behind",
+      "habitat": [
+        "연평도",
+        "당집"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "wind"
+        ],
+        "season": [
+          "spring"
+        ]
+      },
+      "sites": [
+        {
+          "name": "연평도 충민사",
+          "sido": "인천",
+          "sigungu": "옹진군",
+          "lat": 37.6626,
+          "lng": 125.6981,
+          "precision": "dong",
+          "note": "연평도 임경업 장군 사당"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "임경업 신앙"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국향토문화전자대전",
+          "ref": "연평도 충민사"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 제의가 이어지는 사당"
+      },
+      "related": [
+        "kr-yongwang",
+        "kr-golmaegi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-mireuk",
+      "canonical": "마을 미륵",
+      "aliases": [
+        "돌미륵",
+        "미륵님",
+        "미륵불"
+      ],
+      "category": "village",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "마을 어귀에 선 돌부처. 불교 미륵이 마을신으로 내려앉은 형태다.",
+      "body": "아들을 비는 기자(祈子) 신앙의 대상이 되거나 마을의 액을 막는 수호신으로 모셔지며, 절과 무관하게 논둑·길가에 서 있는 경우가 많다. 논산 관촉사 석조미륵보살입상처럼 국보급 실물부터 이름 없는 동네 미륵까지 층이 두껍다. 불교와 민간신앙이 습합한 대표 항목이다.",
+      "traits": [
+        "기자",
+        "돌부처",
+        "수호"
+      ],
+      "art_hint": "a rough stone Maitreya figure standing at a field edge, a woman placing rice and water at its base, rice paddies and a low ridge behind",
+      "habitat": [
+        "마을 어귀",
+        "논둑"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "논산 관촉사 석조미륵보살입상",
+          "sido": "충남",
+          "sigungu": "논산시",
+          "lat": 36.2494,
+          "lng": 127.0906,
+          "precision": "dong",
+          "note": "국보 지정 — 은진미륵"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "논산 관촉사 석조미륵보살입상"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "미륵신앙"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 기도가 이어지는 신앙 대상"
+      },
+      "related": [
+        "kr-jangseung",
+        "kr-sacheonwang"
+      ],
+      "updated_at": "2026-08-16"
+    }
+  ]
+}

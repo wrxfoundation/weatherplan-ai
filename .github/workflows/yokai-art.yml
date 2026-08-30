@@ -1,0 +1,91 @@
+# 한국요괴지도 도상 반입.
+#
+# 이미지 생성은 힉스필드 MCP로 하고 결과 URL만 yokaimap-web/data/art/jobs.json에 적어 둔다.
+# 생성 세션의 egress 정책이 CDN 호스트(d8j0ntlcm91z4.cloudfront.net)를 403으로 막기 때문에
+# 거기서는 파일을 받을 수 없다. GitHub 러너는 열린 네트워크라 여기서 받아 커밋한다.
+# (koreaapi collect 워크플로와 같은 이유·같은 패턴이다.)
+#
+# 받는 즉시 표시 크기로 줄이고 WebP로 바꾼다 — 원본 2k PNG 121장은 300MB가 넘는다.
+# 수동 실행: Actions 탭 → "yokai-art" → Run workflow.
+name: yokai-art
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "이미 있는 파일도 다시 받는다"
+        type: boolean
+        default: false
+  push:
+    paths:
+      - "yokaimap-web/data/art/jobs.json"
+      - ".github/workflows/yokai-art.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yokai-art-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    # 매달리면 러너 시간을 6시간까지 태운다. 정상 실행은 3분이면 끝난다.
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: yokaimap-web
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          # rebase로 커밋을 얹으려면 얕은 클론으로는 안 된다(아래 커밋 단계 참고).
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - run: npm ci
+
+      # sharp는 변환에만 쓴다. package.json에 넣으면 Vercel 빌드가 쓰지도 않을
+      # 네이티브 바이너리를 매번 설치하게 된다. npm ci가 node_modules를 갈아엎으므로
+      # 반드시 ci 뒤에 설치한다.
+      - run: npm i --no-save sharp
+
+      - name: 도상 내려받기
+        run: node scripts/fetch-art.mjs ${{ inputs.force && '--force' || '' }}
+
+      # 빌드가 art.file 존재 여부를 검사하므로, 파일이 제대로 들어왔는지 여기서 드러난다.
+      - name: 빌드 검증
+        run: npm run build
+
+      - name: 커밋
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          if [ -z "$(git status --porcelain yokaimap-web/public/img)" ]; then
+            echo "변경 없음 — 커밋 생략"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # 이미지와 함께, 빌드가 재생성한 배포 데이터도 넣는다. yokai.json은 추적 대상이라
+          # 빼놓으면 작업트리가 더러운 채 남아 rebase가 거부된다(2차 실행이 여기서 죽었다).
+          git add yokaimap-web/public/img yokaimap-web/public/data/yokai.json
+          git commit -m "chore(yokaimap): 도상 반입 (WebP 변환)"
+          # 121장을 받아 변환하는 데 몇 분 걸리는 동안 브랜치에 다른 커밋이 올라오면
+          # push가 거부된다(1차 실행이 여기서 죽었다). 이미지 커밋은 다른 변경과
+          # 겹치지 않으므로 rebase로 얹고 재시도한다. 남은 잡다한 변경은 autoStash로 치운다.
+          for i in 1 2 3; do
+            if git -c rebase.autoStash=true pull --rebase origin "$BRANCH" && git push origin "HEAD:$BRANCH"; then
+              echo "푸시 성공"
+              exit 0
+            fi
+            echo "푸시 재시도 $i"
+            sleep $((i * 5))
+          done
+          echo "::error::3회 재시도 후에도 푸시 실패"
+          exit 1

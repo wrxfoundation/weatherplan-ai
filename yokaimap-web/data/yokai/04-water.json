@@ -1,0 +1,647 @@
+{
+  "category": "water",
+  "note": "수신·수괴. 어촌 당신앙과 이어져 실좌표(당집·수성당·해신당) 확보율이 높은 계열.",
+  "entries": [
+    {
+      "id": "kr-imugi",
+      "canonical": "이무기",
+      "aliases": [
+        "이시미",
+        "영노",
+        "미르치",
+        "強蛇"
+      ],
+      "names": {
+        "en": "Imugi",
+        "roman": "imugi"
+      },
+      "category": "water",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "천 년을 물속에서 기다린 큰 뱀. 여의주를 얻어 용이 되려다 실패하면 그대로 남는다.",
+      "body": "승천하려는 순간 누군가 '용이다' 또는 '뱀이다'라고 소리치면 떨어진다는 금기형 결말이 가장 널리 채록된다. 승천에 실패한 이무기가 못에 남아 가뭄이나 홍수를 일으킨다는 서술이 붙어 기상 재해 설명과 직결된다. 전국의 용소(龍沼)·용늪 지명 대부분이 이 계열과 이어진다.",
+      "traits": [
+        "승천",
+        "여의주",
+        "금기"
+      ],
+      "art_hint": "an enormous hornless four-clawed serpent not yet ascended, coiled in a deep mountain pool below red pines, straining upward toward storm clouds, a pearl just beyond its jaws",
+      "habitat": [
+        "용소",
+        "깊은 못",
+        "강"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "heavy_rain",
+          "storm",
+          "dry"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
+      "sites": [
+        {
+          "name": "용소 지명 분포권",
+          "sido": "강원",
+          "sigungu": "평창군",
+          "lat": 37.3705,
+          "lng": 128.3901,
+          "precision": "sigungu",
+          "note": "용소·용늪 지명 분포 예시"
+        },
+        {
+          "name": "금강 중류 전승권",
+          "sido": "세종",
+          "sigungu": "세종시",
+          "lat": 36.4801,
+          "lng": 127.289,
+          "precision": "sido",
+          "note": "금강 수계 이무기 전승 — 향토자료 대조 예정"
+        }
+      ],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "이무기·용소 설화"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "이무기"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-yongwang",
+        "kr-gangcheori",
+        "kr-baeksa"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-yongwang",
+      "canonical": "용왕",
+      "aliases": [
+        "사해용왕",
+        "용왕님",
+        "龍王"
+      ],
+      "names": {
+        "en": "Yongwang",
+        "roman": "yongwang"
+      },
+      "category": "water",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "바다와 물을 다스리는 신. 어촌의 용왕제와 가정의 용왕먹이기로 지금도 모셔진다.",
+      "body": "정월이나 첫 출어 전에 바닷가에서 밥과 시루떡을 물에 띄워 용왕에게 무사와 풍어를 빌었다. 『삼국유사』의 수로부인 조, 거타지 조처럼 고전 원전에도 용과 용왕이 인간사에 개입하는 기록이 남아 있다. 불교·도교와 습합해 사찰의 용왕각으로도 정착했다.",
+      "traits": [
+        "풍어",
+        "용왕제",
+        "바다"
+      ],
+      "art_hint": "a sea king enthroned beneath the waves, long beard and a Korean-style crown, four-clawed dragon attendants, offerings of rice cake drifting above",
+      "habitat": [
+        "바다",
+        "포구",
+        "우물"
+      ],
+      "omens": {
+        "time": [
+          "dawn"
+        ],
+        "weather": [
+          "storm",
+          "wind"
+        ],
+        "season": [
+          "winter",
+          "spring"
+        ]
+      },
+      "sites": [
+        {
+          "name": "동해안 용왕제 전승권",
+          "sido": "경북",
+          "sigungu": "영덕군",
+          "lat": 36.415,
+          "lng": 129.3656,
+          "precision": "sigungu",
+          "note": "동해안 별신굿·용왕제 권역 예시"
+        }
+      ],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "삼국유사",
+          "ref": "기이편 수로부인·거타지"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "용왕제"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "어촌에서 현재도 지내는 의례"
+      },
+      "related": [
+        "kr-haeryong",
+        "kr-nogu-hwaho",
+        "kr-subu"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-mulgwisin",
+      "canonical": "물귀신",
+      "aliases": [
+        "수귀",
+        "물참봉",
+        "水鬼"
+      ],
+      "names": {
+        "en": "Mulgwisin",
+        "roman": "mulgwisin"
+      },
+      "category": "water",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "물에 빠져 죽은 사람의 넋. 저승에 가려면 대신할 사람을 물속으로 끌어들여야 한다고 전한다.",
+      "body": "'물귀신 작전'이라는 관용어가 나올 만큼 대신자를 구한다는 관념이 강하게 남아 있다. 여름철 물놀이 사고를 설명하고 경계하는 기능을 했으며, 마을에서는 익사자가 난 못을 한동안 금기 구역으로 삼았다. 강수·수온이 오르는 계절과 직결돼 날씨 조건 노출 대상으로 적합하다.",
+      "traits": [
+        "대신자",
+        "익사",
+        "발목"
+      ],
+      "art_hint": "a pale figure just beneath the surface of a dark pool reaching up for an ankle, reeds and a flat washing stone at the bank, summer green",
+      "habitat": [
+        "못",
+        "강",
+        "저수지",
+        "바다"
+      ],
+      "omens": {
+        "time": [
+          "dusk",
+          "night"
+        ],
+        "weather": [
+          "heat",
+          "humid",
+          "heavy_rain"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "물귀신"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "익사 관련 설화"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-mujugohon",
+        "kr-imugi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-sinjikki",
+      "canonical": "신지끼",
+      "aliases": [
+        "인어",
+        "신지께",
+        "거문도 인어"
+      ],
+      "category": "water",
+      "rarity": "epic",
+      "distribution": "local",
+      "summary": "전남 거문도 바다에 나타난다는 인어. 나타나면 곧 풍랑이 인다고 하여 어부들이 배를 돌렸다.",
+      "body": "상반신은 사람, 하반신은 물고기 형상으로 묘사되며 돌을 던져 위험을 알린다는 이야기가 함께 전한다. 해코지하는 존재가 아니라 기상 악화를 미리 알려 주는 존재라는 점이 특징으로, 실제 날씨 예보 기능이 붙은 희귀한 항목이다. 지역 한정 전승이라 희귀도가 높고 관광 연계 가치가 크다.",
+      "traits": [
+        "풍랑 예고",
+        "인어",
+        "경고"
+      ],
+      "art_hint": "a mermaid-like sea being surfacing beside a rocky island at dusk, half fish, tossing a pebble toward a small wooden fishing boat as warning, storm building",
+      "habitat": [
+        "거문도 앞바다",
+        "갯바위"
+      ],
+      "omens": {
+        "time": [
+          "dusk",
+          "night"
+        ],
+        "weather": [
+          "storm",
+          "wind",
+          "heavy_rain"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "거문도 일대",
+          "sido": "전남",
+          "sigungu": "여수시",
+          "lat": 34.0281,
+          "lng": 127.3122,
+          "precision": "dong",
+          "note": "거문도(여수시 삼산면) 해역"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국향토문화전자대전",
+          "ref": "거문도 신지끼 전설"
+        },
+        {
+          "type": "field",
+          "title": "지역 구전",
+          "ref": "거문도 어민 구전"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-yongwang"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-gaeyang-halmi",
+      "canonical": "개양할미",
+      "aliases": [
+        "수성할미",
+        "개양할머니"
+      ],
+      "category": "water",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "서해를 걸어 다니며 수심을 재고 어부를 지켰다는 거인 여신. 부안 수성당에 모셔져 있다.",
+      "body": "키가 어찌나 큰지 서해 바다도 무릎에 찼다고 하며, 여덟 딸을 각 지역에 시집보내 서해 곳곳을 지키게 했다는 이야기가 전한다. 부안 격포의 수성당은 실제 건물과 좌표가 있는 신당으로 국가유산 지정 정보가 붙는다. 거인 여신 계열(제주 설문대할망)과 짝을 이루는 서해판 사례다.",
+      "traits": [
+        "거인",
+        "수심",
+        "여덟 딸"
+      ],
+      "art_hint": "a giant grandmother goddess wading the west sea with water only to her knees, measuring depth with a long pole, a small cliff shrine behind her",
+      "habitat": [
+        "서해",
+        "수성당"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "storm",
+          "fog"
+        ],
+        "season": [
+          "winter"
+        ]
+      },
+      "sites": [
+        {
+          "name": "부안 수성당",
+          "sido": "전북",
+          "sigungu": "부안군",
+          "lat": 35.6417,
+          "lng": 126.4569,
+          "precision": "dong",
+          "note": "격포 죽막동 수성당 — 국가유산 지정 신당"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "부안 죽막동 유적·수성당"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국향토문화전자대전",
+          "ref": "개양할미"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 제의가 이어지는 신당"
+      },
+      "related": [
+        "kr-seolmundae",
+        "kr-magohalmi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-haerang",
+      "canonical": "해랑신",
+      "aliases": [
+        "애랑",
+        "해신당 처녀신"
+      ],
+      "category": "water",
+      "rarity": "epic",
+      "distribution": "local",
+      "summary": "삼척 바다에서 죽은 처녀의 넋. 원한을 풀어 주자 고기가 다시 잡혔다는 어촌 신격이다.",
+      "body": "혼인 전에 바위에 갇혀 죽은 처녀 때문에 흉어가 이어지자, 마을에서 남근을 깎아 바치고 신당을 세워 모시자 어획이 회복되었다는 유래가 전한다. 삼척 신남마을 해신당은 실물 신당과 공원이 남아 있어 좌표·관광 연계가 확실하다. 원귀가 마을신으로 승격되는 과정을 보여 주는 대표 사례다.",
+      "traits": [
+        "원한 해소",
+        "풍어",
+        "신당"
+      ],
+      "art_hint": "a young woman deity enshrined on a coastal cliff, carved wooden effigies and rice cake set as offerings, fishing boats returning full below",
+      "habitat": [
+        "해신당",
+        "갯바위"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "wind",
+          "storm"
+        ],
+        "season": [
+          "winter"
+        ]
+      },
+      "sites": [
+        {
+          "name": "삼척 신남마을 해신당",
+          "sido": "강원",
+          "sigungu": "삼척시",
+          "lat": 37.2447,
+          "lng": 129.2739,
+          "precision": "dong",
+          "note": "해신당공원 일대"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국향토문화전자대전",
+          "ref": "삼척 해신당 유래"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "어촌 당신앙"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현재도 제의가 이어지는 마을 신당"
+      },
+      "related": [
+        "kr-songaksi",
+        "kr-seonang"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-haeryong",
+      "canonical": "해룡",
+      "aliases": [
+        "바다 용",
+        "수로부인의 용"
+      ],
+      "category": "water",
+      "rarity": "rare",
+      "distribution": "regional",
+      "summary": "『삼국유사』 수로부인 조에서 바닷가의 수로부인을 끌고 바다로 들어간 용.",
+      "body": "사람들이 막대로 언덕을 치며 「해가(海歌)」를 부르자 용이 부인을 모시고 나왔다는 기록으로, 노래로 신을 움직이는 고대의 관념이 남아 있다. 같은 조에 꽃을 꺾어 바친 「헌화가」가 함께 실려 있어 동해안 임해 지역 전승과 연결된다. 원전 기록이 명확해 검증등급이 높다.",
+      "traits": [
+        "납치",
+        "해가",
+        "동해"
+      ],
+      "art_hint": "a great four-clawed sea dragon carrying a noblewoman in hanbok down into the waves, villagers on the shore striking the ground with sticks and singing",
+      "habitat": [
+        "동해안",
+        "임해 절벽"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "storm"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "동해안 임해정 비정 권역",
+          "sido": "강원",
+          "sigungu": "삼척시",
+          "lat": 37.4499,
+          "lng": 129.1654,
+          "precision": "sigungu",
+          "note": "임해정 위치는 비정 단계 — 삼척·강릉 설이 병존"
+        }
+      ],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "삼국유사",
+          "ref": "기이편 수로부인"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-yongwang"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-gyeryong",
+      "canonical": "계룡",
+      "aliases": [
+        "닭용",
+        "알영정의 용",
+        "鷄龍"
+      ],
+      "category": "water",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "신라 알영정에 나타나 옆구리로 알영을 낳았다는 닭 머리의 용.",
+      "body": "『삼국유사』·『삼국사기』에 알영정(閼英井) 우물가에 계룡이 나타나 왼쪽 옆구리에서 여자아이를 낳았고 그가 혁거세의 왕비 알영이 되었다고 기록돼 있다. 우물이라는 좌표가 명확한 신화라 경주 지역 답사 콘텐츠와 바로 연결된다. 용 계열 가운데 탄생 신화에 붙은 드문 사례다.",
+      "traits": [
+        "우물",
+        "탄생",
+        "왕비"
+      ],
+      "art_hint": "a dragon with a rooster's head rising from a stone well, a newborn girl at its side, an old woman reaching in, low stone wall and pines",
+      "habitat": [
+        "우물"
+      ],
+      "omens": {
+        "time": [
+          "dawn"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "경주 알영정(오릉 일원)",
+          "sido": "경북",
+          "sigungu": "경주시",
+          "lat": 35.8302,
+          "lng": 129.2126,
+          "precision": "dong",
+          "note": "경주 오릉 내 알영정 전승지"
+        }
+      ],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "삼국유사",
+          "ref": "기이편 신라시조 혁거세왕"
+        },
+        {
+          "type": "classic",
+          "title": "삼국사기",
+          "ref": "신라본기 시조 혁거세거서간"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-yongwang",
+        "kr-jeongsin"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-jeongsin",
+      "canonical": "정신",
+      "aliases": [
+        "우물신",
+        "용왕각시",
+        "井神"
+      ],
+      "category": "water",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "마을 우물을 맡은 신. 정월 우물고사와 우물치기로 물을 지켰다.",
+      "body": "정월에 우물을 퍼내 청소하고 금줄을 친 뒤 고사를 지내는 우물치기는 상수도 이전 마을 공동체의 핵심 의례였다. 우물에 부정한 것을 넣거나 침을 뱉는 일은 강한 금기였고, 어기면 물이 마르거나 병이 돈다고 했다. 마을 공동 자원 관리 규범이 신앙 형태로 남은 사례다.",
+      "traits": [
+        "우물치기",
+        "금줄",
+        "금기"
+      ],
+      "art_hint": "a well deity presence over a village stone well at dawn, straw rope around the rim, a bowl of first-drawn water, women waiting with jars",
+      "habitat": [
+        "마을 우물"
+      ],
+      "omens": {
+        "time": [
+          "dawn"
+        ],
+        "weather": [
+          "dry"
+        ],
+        "season": [
+          "winter"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "우물고사·용왕먹이기"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "일부 마을에서 현재도 지내는 의례"
+      },
+      "related": [
+        "kr-gyeryong",
+        "kr-seonang"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-subu",
+      "canonical": "수부",
+      "aliases": [
+        "수부신",
+        "수부잡신",
+        "水夫"
+      ],
+      "category": "water",
+      "rarity": "rare",
+      "distribution": "regional",
+      "summary": "굿과 뱃고사 끝에 남은 음식을 받아 가는 잡귀들의 총칭. 대접해서 돌려보내는 대상이다.",
+      "body": "큰 신을 모신 뒤 마지막에 문밖이나 갯가에 상을 차려 수부를 풀어 먹이는 절차를 수부풀이라 한다. 물에서 죽은 넋, 떠도는 잡귀를 몰아내지 않고 몫을 나눠 보낸다는 점에서 한국 의례의 태도가 잘 드러난다. 물귀신 개별 항목과 달리 집합 개념이라 도감에서 '무리' 유형으로 다룬다.",
+      "traits": [
+        "수부풀이",
+        "잡귀",
+        "대접"
+      ],
+      "art_hint": "a crowd of small ragged wandering spirits gathering at a shore for the last share of an offering, a low table of rice and greens set on the sand, dusk",
+      "habitat": [
+        "갯가",
+        "굿청 밖"
+      ],
+      "omens": {
+        "time": [
+          "dusk"
+        ],
+        "weather": [
+          "fog"
+        ],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "수부·뒷전"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 무속 의례 절차"
+      },
+      "related": [
+        "kr-mulgwisin",
+        "kr-gaekgwi",
+        "kr-mul-dokkaebi"
+      ],
+      "updated_at": "2026-08-16"
+    }
+  ]
+}

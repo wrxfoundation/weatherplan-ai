@@ -1,0 +1,615 @@
+{
+  "category": "dokkaebi",
+  "note": "도깨비 계열. 한국 요괴의 최대 계열이자 표기 흔들림이 가장 심한 계열 — canonical 1개 + aliases[]로 흡수한다.",
+  "entries": [
+    {
+      "id": "kr-dokkaebi",
+      "canonical": "도깨비",
+      "aliases": [
+        "돗가비",
+        "독갑이",
+        "도채비",
+        "도까비",
+        "김서방",
+        "허주",
+        "獨脚鬼"
+      ],
+      "names": {
+        "en": "Dokkaebi",
+        "ja": "トッケビ",
+        "zh": "獨腳鬼",
+        "roman": "dokkaebi"
+      },
+      "category": "dokkaebi",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "오래된 기물이나 자연물이 변해 사람 앞에 나타나는 한국 대표 요괴. 해코지보다 장난과 거래에 가까운 존재다.",
+      "body": "밤길에 나타나 씨름을 걸고, 진 사람에게 벌을 주거나 이긴 사람에게 재물을 준다. 15세기 문헌 『석보상절』에 '돗가비'로 표기된 것이 이른 기록이며, 조선 후기 야담과 20세기 구비 채록에 전국적으로 나타난다. 메밀묵·팥죽을 좋아하고 말피와 백마 피를 꺼린다는 금기가 반복되며, 부르는 이름이 지역마다 달라 '김서방'처럼 사람 이름으로 부르는 채록이 많다. 도깨비를 도상으로 그린 전통 도감은 한국에 없으며, 흔히 도깨비 얼굴로 알려진 뿔 달린 형상은 일본 오니 도상의 영향을 받은 근대 학습물의 산물이라는 지적이 있다.",
+      "traits": [
+        "씨름",
+        "방망이",
+        "메밀묵",
+        "재물",
+        "장난"
+      ],
+      "art_hint": "a rough hornless countryman spirit in a coarse hemp jeogori and baji with an unkempt topknot, gripping a knotted wooden club, wide grin, on a dark country road with one small blue flame beside him",
+      "habitat": [
+        "밤길",
+        "폐가",
+        "다리",
+        "빈 들",
+        "물가"
+      ],
+      "omens": {
+        "time": [
+          "night",
+          "midnight"
+        ],
+        "weather": [
+          "rain",
+          "fog",
+          "humid"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
+      "sites": [
+        {
+          "name": "진도 도깨비굿 전승권",
+          "sido": "전남",
+          "sigungu": "진도군",
+          "lat": 34.4867,
+          "lng": 126.2634,
+          "precision": "sigungu",
+          "note": "여성들이 밤에 도깨비를 몰아내는 마을 의례가 전한다"
+        },
+        {
+          "name": "제주 영감놀이 전승권",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.4996,
+          "lng": 126.5312,
+          "precision": "sido",
+          "note": "제주에서는 도깨비를 '영감'으로 부르며 굿놀이로 대접해 보낸다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "석보상절",
+          "ref": "'돗가비' 표기"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "도깨비"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "도깨비 설화군(전국)"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-dokkaebi-bul",
+        "kr-mul-dokkaebi",
+        "kr-dokkaebi-bangmangi",
+        "kr-dokkaebi-gamtu"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-dokkaebi-bul",
+      "canonical": "도깨비불",
+      "aliases": [
+        "귀화",
+        "귀신불",
+        "여우불",
+        "鬼火"
+      ],
+      "names": {
+        "en": "Dokkaebi-bul",
+        "roman": "dokkaebibul"
+      },
+      "category": "dokkaebi",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "밤에 들·묘지·물가에서 떠다니는 푸른 불빛. 도깨비의 등불로 여겨 따라가면 길을 잃는다고 전한다.",
+      "body": "여러 개가 갈라졌다 합쳐지며 움직이고, 다가가면 멀어지고 물러서면 따라온다는 묘사가 채록마다 반복된다. 습한 여름밤과 비 온 뒤에 잦다는 진술이 많아, 오늘날에는 묘지·습지에서 발생하는 인화성 가스 연소로 설명되기도 한다. 지역에 따라 여우가 켠 불(여우불)로 부르며, 이 경우 구미호 계열 설화와 붙는다.",
+      "traits": [
+        "푸른 불빛",
+        "무리",
+        "유인"
+      ],
+      "art_hint": "clusters of small pale blue flames drifting over a night field and a low burial mound, no figure, reeds and a stone wall beneath, faint reflection on wet ground",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "묘지",
+        "습지",
+        "강가",
+        "들판"
+      ],
+      "omens": {
+        "time": [
+          "night",
+          "midnight"
+        ],
+        "weather": [
+          "humid",
+          "rain",
+          "fog"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
+      "sites": [
+        {
+          "name": "충남 내포 들녘 전승권",
+          "sido": "충남",
+          "sigungu": "홍성군",
+          "lat": 36.6013,
+          "lng": 126.6608,
+          "precision": "sigungu",
+          "note": "들·묘지 주변 목격담이 채록된 권역 예시"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "도깨비불"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "도깨비불 목격담"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-dokkaebi",
+        "kr-gumiho"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-mul-dokkaebi",
+      "canonical": "물도깨비",
+      "aliases": [
+        "수도깨비",
+        "참봉",
+        "도깨비참봉"
+      ],
+      "category": "dokkaebi",
+      "rarity": "uncommon",
+      "distribution": "regional",
+      "summary": "바다와 강에 사는 도깨비. 서·남해 어촌에서는 고기를 몰아준다고 믿어 도깨비고사로 모셨다.",
+      "body": "해코지하는 존재가 아니라 풍어를 주는 존재로 대접받는 것이 물도깨비의 특징이다. 어촌에서는 정월이나 첫 출어 전에 메밀묵·죽을 차려 갯가에서 고사를 지냈고, 도깨비가 좋아한다는 음식과 싫어한다는 말피 금기가 육지 도깨비와 동일하게 나타난다. 서해안 어로 신앙과 결합해 지역 당제의 부속 의례로 남은 사례가 있다.",
+      "traits": [
+        "풍어",
+        "고사",
+        "메밀묵"
+      ],
+      "art_hint": "a water spirit rising from a tidal flat at dusk beside a moored wooden fishing boat, seaweed-tangled hair, a bowl of buckwheat jelly set on a flat stone as offering",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "갯벌",
+        "포구",
+        "강 하구"
+      ],
+      "omens": {
+        "time": [
+          "night",
+          "dawn"
+        ],
+        "weather": [
+          "fog",
+          "wind"
+        ],
+        "season": [
+          "winter",
+          "spring"
+        ]
+      },
+      "sites": [
+        {
+          "name": "서해안 어촌 도깨비고사 전승권",
+          "sido": "전북",
+          "sigungu": "부안군",
+          "lat": 35.7318,
+          "lng": 126.733,
+          "precision": "sigungu",
+          "note": "서해 어로 신앙권 예시. 실제 고사터 좌표는 지자체 민속조사 자료로 대체 예정"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "도깨비고사"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "어촌 도깨비 설화"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-dokkaebi",
+        "kr-subu"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-eoduksini",
+      "canonical": "어둑시니",
+      "aliases": [
+        "어둑서니",
+        "어둠서니"
+      ],
+      "names": {
+        "en": "Eoduksini",
+        "roman": "eoduksini"
+      },
+      "category": "dokkaebi",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "어둠 속에서 올려다보면 한없이 커지고 내려다보면 작아진다는 그림자 형상의 존재.",
+      "body": "밤에 마주치면 시선을 아래로 내려야 사라진다는 대처법이 함께 전한다. 국어사전에 '어둑시니'가 어두운 밤에 보이는 헛것으로 올라 있어 어휘로서의 정착은 분명하지만, 서사 자료는 근현대 정리물을 통해 확산된 부분이 커서 원전 대조가 남아 있다. 어둠 자체를 존재로 다루는 몇 안 되는 항목이라 도상화 가치가 높다.",
+      "traits": [
+        "어둠",
+        "커짐",
+        "시선"
+      ],
+      "art_hint": "a towering formless shadow in a dark alley between earthen walls, growing taller the higher one looks, only a suggestion of eyes, a small figure below looking up",
+      "art_anchors": [
+        "architecture"
+      ],
+      "habitat": [
+        "골목",
+        "빈방",
+        "밤길"
+      ],
+      "omens": {
+        "time": [
+          "night",
+          "midnight"
+        ],
+        "weather": [
+          "fog"
+        ],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "표준국어대사전",
+          "ref": "어둑시니"
+        },
+        {
+          "type": "modern",
+          "title": "근현대 요괴 정리물",
+          "ref": "어둑시니 항목"
+        }
+      ],
+      "verification": "secondary_compilation",
+      "confidence": "medium",
+      "related": [
+        "kr-dokkaebi",
+        "kr-geuseundae"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-geuseundae",
+      "canonical": "그슨대",
+      "aliases": [
+        "그신대",
+        "그슨새"
+      ],
+      "category": "dokkaebi",
+      "rarity": "rare",
+      "distribution": "regional",
+      "summary": "밤길에 작은 아이 모습으로 나타났다가 쳐다보면 거대해져 덮친다는 남부 지역 전승의 어둠 요괴.",
+      "body": "어둑시니와 유사하나 결말이 훨씬 잔혹해, 웃으며 사람을 잡아먹는다는 서술이 붙는다. 불을 밝히면 물러난다는 대처법이 함께 전한다. 다만 현재 유통되는 서술은 근현대 요괴 정리물에서 정착한 형태이며 채록 원자료와의 대조가 끝나지 않았으므로, 이 데이터셋에서는 검증등급을 낮춰 표시한다.",
+      "traits": [
+        "어둠",
+        "거대화",
+        "불"
+      ],
+      "art_hint": "a small child-shaped shadow on a night mountain path swelling enormous when looked at, a laughing mouth, a lone traveler's lantern light at the lower edge",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "밤길",
+        "산길"
+      ],
+      "omens": {
+        "time": [
+          "night",
+          "midnight"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "modern",
+          "title": "근현대 요괴 정리물",
+          "ref": "그슨대 항목"
+        }
+      ],
+      "verification": "secondary_compilation",
+      "confidence": "low",
+      "related": [
+        "kr-eoduksini"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-dueoksini",
+      "canonical": "두억시니",
+      "aliases": [
+        "두옥시니",
+        "야차(夜叉)"
+      ],
+      "category": "dokkaebi",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "모질고 사나운 귀신을 이르는 우리말. 사람의 머리를 눌러 억누른다는 어원 해석이 붙는다.",
+      "body": "표준국어대사전에 '모질고 사나운 귀신의 하나'로 올라 있고, 불교 야차(夜叉)의 우리말 대응어로도 쓰였다. 도깨비가 장난과 거래의 존재라면 두억시니는 폭력성이 전면에 나오는 쪽이어서, 도감에서 도깨비 계열의 반대극에 배치하기 좋은 항목이다.",
+      "traits": [
+        "폭력",
+        "억누름"
+      ],
+      "art_hint": "a squat fierce spirit with a heavy brow pressing down on a sleeper's head in a dark ondol room, coarse hemp clothing, clenched fists",
+      "art_anchors": [
+        "costume_male",
+        "architecture"
+      ],
+      "habitat": [
+        "밤길",
+        "폐가"
+      ],
+      "omens": {
+        "time": [
+          "night",
+          "midnight"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "표준국어대사전",
+          "ref": "두억시니"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "야차"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-yacha",
+        "kr-dokkaebi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-dokgakgwi",
+      "canonical": "독각귀",
+      "aliases": [
+        "독각기",
+        "獨脚鬼",
+        "외다리귀신"
+      ],
+      "category": "dokkaebi",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "다리가 하나인 귀신. 한자 문헌에서 도깨비를 옮길 때 가장 널리 쓰인 표기다.",
+      "body": "중국 문헌의 독각귀 관념이 들어와 조선의 한자 기록에서 도깨비를 지칭하는 말로 정착했다. 씨름을 걸 때 왼쪽 다리를 걸어 넘어뜨리면 이긴다는 대처법이 도깨비 설화와 공유되는데, 이는 다리가 하나라는 관념과 짝을 이룬다. 같은 존재를 한글로는 도깨비, 한자로는 독각귀로 적은 사례가 많아 aliases 통합의 대표 사례다.",
+      "traits": [
+        "외다리",
+        "씨름"
+      ],
+      "art_hint": "a one-legged spirit hopping on a night country road, coarse hemp jeogori, leaning on a knotted stick, taking a wrestling stance",
+      "habitat": [
+        "밤길",
+        "다리"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [
+          "rain"
+        ],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "독각귀·도깨비"
+        },
+        {
+          "type": "classic",
+          "title": "조선 후기 한문 필기·야담류",
+          "ref": "獨脚鬼 표기 용례"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-dokkaebi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-gaksi-dokkaebi",
+      "canonical": "각시도깨비",
+      "aliases": [
+        "여도깨비",
+        "각시귀"
+      ],
+      "category": "dokkaebi",
+      "rarity": "rare",
+      "distribution": "regional",
+      "summary": "여자 모습으로 나타나는 도깨비. 남성형이 주류인 도깨비 계열에서 드문 변형이다.",
+      "body": "젊은 여인의 모습으로 밤길의 남자를 홀려 따라오게 한다는 서술이 지역 채록에 나타난다. 처녀귀신(손각시)과 서사가 겹쳐 구분이 흐려지는 경우가 많아, 이 데이터셋에서는 '재물·거래'가 나오면 도깨비 계열로, '원한·해원'이 나오면 귀신 계열로 분류한다. 채록 밀도가 낮아 검증등급을 낮춰 둔다.",
+      "traits": [
+        "홀림",
+        "여인 형상"
+      ],
+      "art_hint": "a young woman spirit in hanbok standing at a night crossroads smiling, a small wooden club half hidden in her chima, a blue flame at her feet",
+      "art_anchors": [
+        "costume_female",
+        "landscape"
+      ],
+      "habitat": [
+        "밤길",
+        "주막"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "여도깨비 관련 채록"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "low",
+      "related": [
+        "kr-dokkaebi",
+        "kr-songaksi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-dokkaebi-teo",
+      "canonical": "도깨비터",
+      "aliases": [
+        "도깨비집",
+        "도깨비땅"
+      ],
+      "category": "dokkaebi",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "도깨비가 든 집터. 들어간 사람이 갑자기 부자가 되었다가 한순간에 망한다고 전한다.",
+      "body": "재물이 밤새 쌓이지만 도깨비를 노하게 하면 그만큼 빠르게 거두어 간다는 구조로, 급작스러운 흥망을 설명하는 민간의 해석 틀이었다. 터를 옮기거나 고사를 지내 도깨비를 보내는 처방이 함께 전한다. 가택신 신앙과 도깨비 신앙이 만나는 지점이라 카테고리 경계 사례로 유용하다.",
+      "traits": [
+        "재물",
+        "흥망",
+        "터"
+      ],
+      "art_hint": "an old thatched house at night with coins and grain heaped in the yard while the roof beam sags, a blue flame on the ridge, magpie on a bare tree",
+      "art_anchors": [
+        "architecture",
+        "landscape"
+      ],
+      "habitat": [
+        "집터",
+        "폐가"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "도깨비터"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "도깨비 부자 설화"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-dokkaebi",
+        "kr-teoju",
+        "kr-eop"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-gae-dokkaebi",
+      "canonical": "개도깨비",
+      "aliases": [
+        "잡도깨비",
+        "몹쓸도깨비"
+      ],
+      "category": "dokkaebi",
+      "rarity": "rare",
+      "distribution": "regional",
+      "summary": "재물을 주는 '참도깨비'와 대비되는, 해코지만 하는 도깨비.",
+      "body": "같은 마을 안에서도 도깨비를 좋은 쪽과 나쁜 쪽으로 나눠 부른 채록이 있으며, 개도깨비는 길을 홀리고 가축을 상하게 하는 쪽으로 이야기된다. 도깨비 계열이 단일 존재가 아니라 성격에 따라 갈라지는 집합이라는 점을 보여 주는 항목이다. 지역 한정 어휘라 검증등급을 낮춰 둔다.",
+      "traits": [
+        "해코지",
+        "홀림"
+      ],
+      "art_hint": "a scruffy mean spirit in torn hemp clothing tipping over an ox trough in a night byre, cattle startled, straw scattered",
+      "habitat": [
+        "밤길",
+        "외양간"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "참도깨비·개도깨비 구분 채록"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "low",
+      "related": [
+        "kr-dokkaebi"
+      ],
+      "updated_at": "2026-08-16"
+    }
+  ]
+}
