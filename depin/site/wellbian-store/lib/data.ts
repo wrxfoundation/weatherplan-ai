@@ -304,7 +304,6 @@ export const FAQS_EN = [
 ];
 
 export const FAQS_EXTRA = [
-  /* 확장 문항 — 목록에서 "더 보기"로만 나온다. 구조·정책처럼 한 번 읽으면 되는 것을 둔다. */
   { q: "배송은 언제 되나요? 배송비는 따로 드나요?", a: "배송 시기와 배송비는 판매 오픈 때 구매 화면에서 함께 안내해 드립니다. 사전예약 단계에서는 배송 정보를 받지 않습니다." },
   { q: "환불되나요?", a: "사전예약에는 비용이 들지 않으므로 환불할 금액이 없습니다. 언제든 예약을 하지 않으셔도 됩니다. 구매 후의 환불은 판매 약관에 따르며, 약관은 판매 오픈 전에 공지됩니다." },
   { q: "제네시스 멤버십이 뭔가요?", a: "가장 먼저 합류한 분에게 한 번만 발급되는 관측소 자격입니다. XRPL NFT(TAXON 1001)로 증명되고 계정당 1개이며, 이후 다시 발행되지 않습니다. 보상 부스트와 바운티 우선 배정이 따릅니다." },
@@ -317,6 +316,8 @@ export const FAQS_EXTRA = [
   { q: "내 데이터가 팔리면 개인정보가 새나요?", a: "측정하는 값은 공기질 데이터뿐이고 개인을 식별하는 정보는 수집하지 않습니다. 판매·조회되는 데이터는 위치·시간을 뭉개고 식별자를 돌리는 비식별화 과정을 거치며, 응답에는 개별 기기가 아니라 묶음 통계만 담깁니다." },
   { q: "기기만 쓰고 보상은 안 받아도 되나요?", a: "됩니다. 보상을 빼고 보셔도 CO₂·미세먼지·온습도를 실시간으로 보는 실내 공기질 측정기입니다. 보상은 원하실 때 라이선스 NFT를 발급받으시면 됩니다." },
   { q: "측정 기기는 어떤 제품인가요?", a: "실내 공기질 측정기 ARC-600DA입니다. CO₂·미세먼지·온습도를 측정하고 KC 인증과 성능 인증을 받았습니다. 자세한 사양은 사이트의 제품 스펙에서 보실 수 있습니다." },
+  { q: "왜 한 번만, 그것도 짧게 파나요?", a: "제네시스는 메인넷 초기에 단 한 번 열리는 한정 판매이고 재발행하지 않습니다. 가장 먼저 합류하신 분을 구분하기 위한 것이라 나중에 같은 자격을 다시 열지 않습니다." },
+  { q: "신청한 수량보다 적게 사도 되나요?", a: "됩니다. 우선 구매창에서 신청하신 수량 안에서 원하는 만큼만 구매하시면 됩니다. 신청 수량을 다 사셔야 하는 것은 아닙니다." },
 ];
 
 export const FAQS_EXTRA_EN = [
@@ -332,6 +333,8 @@ export const FAQS_EXTRA_EN = [
   { q: "If my data is sold, does my personal information leak?", a: "We measure air quality only and collect nothing that identifies a person. Data that is sold or queried goes through de-identification — location and time are generalized and identifiers rotated — and responses carry cohort statistics rather than individual devices." },
   { q: "Can I use the device without taking rewards?", a: "Yes. Set the rewards aside and it is an indoor air quality monitor showing CO₂, particulates, temperature and humidity in real time. You can mint the license NFT whenever you want to start earning." },
   { q: "What device is it?", a: "The ARC-600DA indoor air quality monitor. It measures CO₂, particulates, temperature and humidity, and carries KC certification and performance certification. Full specifications are on the site." },
+  { q: "Why only once, and only briefly?", a: "Genesis is a one-time sale in the early days of the mainnet, and it is never reissued. It exists to mark those who joined first, so the same credential will not be opened again later." },
+  { q: "Can I buy fewer than I reserved?", a: "Yes. In the priority window you can take as few as you like, up to the quantity you reserved. There is no obligation to buy the full amount." },
 ];
 
 export const LINK_STEPS_EN: { n: string; t: string; d: string; d2?: string }[] = [
