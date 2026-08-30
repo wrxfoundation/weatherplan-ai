@@ -60,6 +60,12 @@ const menu = (doc: FaqDoc, lang: FaqLang, extra: boolean) => {
       ? { text: lang === "ko" ? "← 기본 질문" : "← Main questions", callback_data: `p:${lang}:b` }
       : { text: lang === "ko" ? "더 보기 →" : "More →", callback_data: `p:${lang}:x` },
   ]);
+  /* 언어를 직접 고를 수 있게 둔다. 텔레그램이 language_code 를 주지 않을 때가 있어
+     자동 판별만으로는 반대 언어에 갇히는 사람이 생긴다 — 같은 목록을 반대 언어로 다시 그린다. */
+  rows.push([{
+    text: lang === "ko" ? "🌐 English" : "🌐 한국어",
+    callback_data: `p:${lang === "ko" ? "en" : "ko"}:${extra ? "x" : "b"}`,
+  }]);
   return { inline_keyboard: rows };
 };
 

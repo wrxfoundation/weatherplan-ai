@@ -34,6 +34,7 @@ FAQ 문장과 판매 일정은 이 프로젝트에 한 줄도 없다. 판매 사
 | `FAQ_SOURCE_URL` | `https://<판매사이트도메인>/api/faq` | |
 | `TG_GROUP` | `wellbiantalk` | 선택. 이 공개 그룹 밖에서는 반응하지 않는다 |
 | `FAQ_BYPASS_TOKEN` | Vercel Protection Bypass 토큰 | 판매 사이트에 Deployment Protection 이 켜져 있을 때만 |
+| `TG_DEFAULT_LANG` | `ko` (기본) 또는 `en` | 텔레그램이 사용자 언어를 알려주지 않을 때 쓸 언어 |
 
 - `NEXT_PUBLIC_` 접두사를 **절대** 붙이지 않는다. 붙는 순간 토큰이 브라우저 번들에 실린다.
 - 환경변수는 저장만으로 반영되지 않는다. **Deployments → 최신 → Redeploy** 를 해야 한다.
@@ -100,3 +101,9 @@ npm run dev          # 로컬은 웹훅을 못 받는다 — 배포된 Preview �
 
 봇 하나당 웹훅은 1개만 걸린다. 그래서 운영봇(`@wellbian_faq_bot`)과
 개발봇(`@wellbian_faq_dev_bot`)을 따로 둔다.
+
+## 언어
+
+텔레그램의 `language_code` 는 선택 항목이라 오지 않을 때가 있다(그룹에서 실제로 빠져서 왔고,
+그 바람에 한국어 그룹에 영어 답이 나갔다). 값이 없으면 `TG_DEFAULT_LANG` 을 쓰고, 목록 화면
+맨 아래에 언어 전환 버튼을 둬서 자동 판별이 틀려도 사용자가 직접 바꿀 수 있게 했다.

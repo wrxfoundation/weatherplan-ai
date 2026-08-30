@@ -100,10 +100,15 @@ export const cacheInfo = () => ({
     : null,
 });
 
-/* 텔레그램의 language_code 는 "ko", "en-US", "ja" 등으로 온다.
-   정본이 KO·EN 뿐이라 한국어만 ko, 나머지는 전부 en 이다. */
+/* 언어 정보가 없을 때 쓸 기본값. @wellbiantalk 은 한국어 커뮤니티라 ko 다. */
+const DEFAULT_LANG: FaqLang = process.env.TG_DEFAULT_LANG === "en" ? "en" : "ko";
+
+/* 텔레그램의 language_code 는 "ko", "en-US", "ja" 등으로 오고, 아예 안 오기도 한다
+   (Bot API 의 선택 항목이다 — 그룹에서 실제로 빠져서 왔고, 그래서 영어 답이 나갔다).
+   값이 없을 때 영어로 떨어뜨리면 한국어 그룹이 영어를 받으므로 기본값으로 보낸다.
+   정본이 KO·EN 뿐이라 그 밖의 언어는 en 으로 모은다. */
 export const langOf = (code?: string): FaqLang =>
-  code?.toLowerCase().startsWith("ko") ? "ko" : "en";
+  !code ? DEFAULT_LANG : code.toLowerCase().startsWith("ko") ? "ko" : "en";
 
 export const findFaq = (doc: FaqDoc, lang: FaqLang, id: string) =>
   doc.faq[lang]?.find((f) => f.id === id) ?? null;
