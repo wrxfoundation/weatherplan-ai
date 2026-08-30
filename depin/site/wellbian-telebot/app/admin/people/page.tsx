@@ -10,22 +10,19 @@
 
 import { listItems, storeKind } from "@/lib/store";
 import { rollupPeople } from "@/lib/cs";
+import { isAuthed } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
-const KEY = process.env.ADMIN_KEY ?? "";
 
 export default async function People({
   searchParams,
 }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
-  const k = sp.k ?? "";
-  if (!KEY || k !== KEY) {
-    return (
-      <main className="wrap" style={{ paddingTop: 56 }}>
-        <h1 style={{ fontSize: 19, fontWeight: 800 }}>접근 키가 필요합니다</h1>
-      </main>
-    );
-  }
+  if (!(await isAuthed(sp.k))) redirect("/");
+  const k = (await isAuthed()) ? "" : (sp.k ?? "");
+  const kq = k ? `?k=${k}` : "";
+  const kamp = k ? `&k=${k}` : "";
 
   const rows = rollupPeople(await listItems());
   const fFlag = sp.flag ?? "";
@@ -45,7 +42,7 @@ export default async function People({
             {rows.length}명 · 저장소 {storeKind() === "kv" ? "KV" : "메모리(임시)"}
           </span>
           <nav className="top-nav">
-            <a className="chip" href={`/admin?k=${k}`}>← 문의 목록</a>
+            <a className="chip" href={`/admin${kq}`}>← 문의 목록</a>
           </nav>
         </div>
       </header>
@@ -53,21 +50,21 @@ export default async function People({
       <main className="wrap" style={{ paddingBottom: 72 }}>
         {/* 1차 — 손이 필요한 쪽부터 */}
         <section className="now">
-          <a className={`now-card lead${nOf("risk") ? " alert" : ""}`} href={`/admin/people?k=${k}&flag=risk`}>
+          <a className={`now-card lead${nOf("risk") ? " alert" : ""}`} href={`/admin/people?flag=risk${kamp}`}>
             <div className="now-k">주의</div>
             <div className="now-v mono" style={{ color: nOf("risk") ? "var(--warn-icon)" : "var(--dis)" }}>
               {nOf("risk")}
             </div>
             <div className="now-note">긴급이 겹치거나 불만이 몰린 사람</div>
           </a>
-          <a className="now-card lead" href={`/admin/people?k=${k}&flag=champion`}>
+          <a className="now-card lead" href={`/admin/people?flag=champion${kamp}`}>
             <div className="now-k">열성</div>
             <div className="now-v mono" style={{ color: nOf("champion") ? "var(--ok-text)" : "var(--dis)" }}>
               {nOf("champion")}
             </div>
             <div className="now-note">여러 번 묻되 불만이 없는 사람</div>
           </a>
-          <a className="now-card" href={`/admin/people?k=${k}`}>
+          <a className="now-card" href={`/admin/people${kq}`}>
             <div className="now-k">전체</div>
             <div className="now-v mono" style={{ color: "var(--ink-2)" }}>{rows.length}</div>
             <div className="now-note">문의를 남긴 사람</div>
@@ -116,7 +113,7 @@ export default async function People({
               {r.topics.join(" · ")}
             </div>
 
-            <a className="btn" href={`/admin?k=${k}&q=${encodeURIComponent(r.who)}`}>문의 보기</a>
+            <a className="btn" href={`/admin?q=${encodeURIComponent(r.who)}${kamp}`}>문의 보기</a>
           </article>
         ))}
       </main>

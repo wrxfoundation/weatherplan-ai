@@ -16,25 +16,20 @@ import { tgCall } from "@/lib/tg";
 import { STATUS_LABEL, SEV_LABEL, MOOD_LABEL, overdueMin, type CsMoodTag, type CsSeverity } from "@/lib/cs";
 import { applyFilters } from "@/lib/filter";
 import { clusterItems } from "@/lib/cluster";
+import { ADMIN_KEY, isAuthed, clearAuthCookie } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
-const KEY = process.env.ADMIN_KEY ?? "";
 
 export default async function Admin({
   searchParams,
 }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
-  const k = sp.k ?? "";
-  if (!KEY || k !== KEY) {
-    return (
-      <main className="wrap" style={{ paddingTop: 56 }}>
-        <h1 style={{ fontSize: 19, fontWeight: 800 }}>접근 키가 필요합니다</h1>
-        <p style={{ marginTop: 8, color: "var(--ink-3)", fontSize: 14 }}>
-          {KEY ? "주소 끝에 ?k=… 를 붙여 주세요." : "ADMIN_KEY 환경변수가 설정되지 않았습니다."}
-        </p>
-      </main>
-    );
-  }
+  /* 첫 화면에서 한 번 열면 쿠키로 기억한다. 주소로 들어온 ?k= 도 계속 받는다 —
+     이미 저장해 둔 링크가 있고, 쿠키를 못 쓰는 상황에서 들어올 길을 막을 이유가 없다. */
+  if (!(await isAuthed(sp.k))) redirect("/");
+  /* 쿠키로 통과했으면 링크에 키를 붙이지 않는다 — 주소창에 남기지 않으려는 것이다 */
+  const k = (await isAuthed()) ? "" : (sp.k ?? "");
 
   const all = await listItems();
   const doc = await getDoc();
@@ -66,6 +61,7 @@ export default async function Admin({
   const solved = count((i) => i.kind === "matched" && i.status === "done");
   const hit = shown ? Math.round((solved / shown) * 100) : null;
 
+  /* 내보내기는 별도 라우트라 쿠키로도 통과하지만, ?k= 세션에서는 쿠키가 없으므로 그대로 잇는다 */
   const link = (o: Record<string, string>) => {
     const p = new URLSearchParams({ k, ...(fStatus && { status: fStatus }), ...(fTopic && { topic: fTopic }),
       ...(fKind && { kind: fKind }), ...(fSev && { sev: fSev }), ...(q && { q }),
@@ -74,14 +70,20 @@ export default async function Admin({
     return `/admin?${p}`;
   };
 
+  async function logout() {
+    "use server";
+    await clearAuthCookie();
+    redirect("/");
+  }
+
   async function setStatus(form: FormData) {
     "use server";
-    if ((form.get("k") as string) !== KEY) return;
+    if (!(await isAuthed(String(form.get("k") ?? "")))) return;
     await patchItem(form.get("id") as string, { status: form.get("to") as CsStatus });
   }
   async function bulkStatus(form: FormData) {
     "use server";
-    if ((form.get("k") as string) !== KEY) return;
+    if (!(await isAuthed(String(form.get("k") ?? "")))) return;
     const to = form.get("to") as CsStatus;
     for (const id of form.getAll("ids").map(String)) await patchItem(id, { status: to });
   }
@@ -89,7 +91,7 @@ export default async function Admin({
      매번 검토할 필요가 없고 사이트·봇과 문장이 갈리지도 않는다. 몰릴 때 제일 빠르다. */
   async function sendReply(form: FormData) {
     "use server";
-    if ((form.get("k") as string) !== KEY) return;
+    if (!(await isAuthed(String(form.get("k") ?? "")))) return;
     const id = form.get("id") as string;
     const item = await getItem(id);
     if (!item?.chatId) return;
@@ -109,7 +111,7 @@ export default async function Admin({
      넘치면 도중에 잘려 "보낸 줄 알았는데 안 간" 건이 생긴다. */
   async function bulkReply(form: FormData) {
     "use server";
-    if ((form.get("k") as string) !== KEY) return;
+    if (!(await isAuthed(String(form.get("k") ?? "")))) return;
     const faqId = String(form.get("faqId") ?? "");
     if (!faqId) return;
     const d = await getDoc();
@@ -147,6 +149,7 @@ export default async function Admin({
             <a className="chip" href={`/admin/people?k=${k}`}>사람</a>
             <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?")}>CSV</a>
             <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?") + "&format=json"}>JSON</a>
+            <form action={logout}><button className="chip" type="submit">닫기</button></form>
           </nav>
         </div>
       </header>
