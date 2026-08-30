@@ -15,6 +15,9 @@ export async function GET() {
     secret: Boolean(process.env.TG_WEBHOOK_SECRET),
     group: process.env.TG_GROUP || null,
     csInbox: Boolean(process.env.TG_CS_CHAT),
+    /* 이 줄이 응답에 있으면 그룹 대화를 지켜보는 코드가 올라간 것이다.
+       "설정은 맞는데 안 잡힌다" 가 배포 문제인지 텔레그램 쪽 문제인지 여기서 갈린다. */
+    watchGroup: true,
     store: storeKind(),
     /* ok:true 여야 저장이 실제로 되는 것이다.
        note — ok / memory / readback_mismatch / "kv 401"(토큰) / "kv 404"(URL) */

@@ -84,12 +84,20 @@ export default async function Report({
       </header>
 
       <main className="wrap" style={{ paddingBottom: 72 }}>
-        {rows.length === 0 ? (
+        {/* 문의가 없어도 그룹 대화는 있을 수 있다. 둘 다 없을 때만 빈 화면으로 둔다 —
+            예전에는 문의 0건이면 그룹 분위기까지 통째로 가려져서, 그룹이 안 잡히는 건지
+            문의가 없는 건지 화면만 봐서는 알 수 없었다. */}
+        {rows.length === 0 && talkTotal === 0 ? (
           <div className="notice" style={{ marginTop: 18 }}>
-            이 기간에 들어온 문의가 없습니다. 기간을 넓혀 보세요.
+            이 기간에 들어온 문의도, 그룹에서 받은 말도 없습니다. 기간을 넓혀 보세요.
           </div>
         ) : (
           <>
+            {rows.length === 0 && (
+              <div className="notice" style={{ marginTop: 14 }}>
+                이 기간에 봇으로 들어온 문의는 없습니다. 아래는 그룹에서 오간 말입니다.
+              </div>
+            )}
             {/* 1차 — 지금 무엇이 잘못 돌아가는가 */}
             <section className="now">
               <a className={`now-card lead${t.slaRate !== null && t.slaRate < 70 ? " alert" : ""}`}
@@ -166,9 +174,17 @@ export default async function Report({
             )}
 
             {/* 3.5차 — 그룹은 지금 어떤 분위기인가 */}
-            {talkTotal > 0 && (
+            {/* 말수가 0이어도 섹션을 그린다. 없으면 "코드가 없는 것" 과 "말이 없는 것" 이
+                구분되지 않아, 안 잡힐 때 어디를 봐야 할지 알 수 없다. */}
+            <h2 className="rep-h">그룹은 지금 어떤 분위기인가</h2>
+            {talkTotal === 0 ? (
+              <div className="notice">
+                아직 그룹에서 받은 말이 없습니다. BotFather 에서 <code>/setprivacy</code> 를 Disable 로 바꾼 뒤
+                <b> 봇을 그룹에서 뺐다가 다시 넣어야</b> 적용됩니다(텔레그램 제약). 명령(<code>/faq</code>)에
+                답하는 것만으로는 일반 대화가 오는지 알 수 없습니다.
+              </div>
+            ) : (
               <>
-                <h2 className="rep-h">그룹은 지금 어떤 분위기인가</h2>
                 <p className="rep-sub">
                   봇에게 말을 걸지 않고 그룹에서 그냥 오간 말입니다. 원문은 남기지 않고 개수만 셉니다 —
                   질문과 사고를 알리는 말만 위 목록에 원문으로 올라옵니다.
