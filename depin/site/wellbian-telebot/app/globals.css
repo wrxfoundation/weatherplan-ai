@@ -346,3 +346,49 @@ a.rep-tr:hover { background: var(--line-2); }
 kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-3);
   background: var(--chip); border: 1px solid var(--line); border-bottom-width: 2px;
   border-radius: 5px; padding: 2px 5px; }
+
+/* ── 정본 보기 (8/30 서우 — 듀얼 모니터) ────────────────────────────────
+   접어 두는 것이 기본이다. 스물넷이 한 화면에 들어와야 눈으로 훑고 고를 수 있고,
+   답까지 다 펼쳐 두면 스크롤이 길어져 오히려 못 찾는다. */
+.faq-list { display: grid; gap: 5px; margin-bottom: 4px; }
+.faq-item { border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.faq-item[open] { border-color: var(--w-main); }
+.faq-item summary { display: flex; align-items: baseline; gap: 8px; padding: 10px 13px;
+  cursor: pointer; list-style: none; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::before { content: "▸"; color: var(--dis); font-size: 11px; flex: none; }
+.faq-item[open] summary::before { content: "▾"; color: var(--w-main); }
+.faq-item summary:hover .faq-q { color: var(--w-main); }
+.faq-q { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; color: var(--ink-1); }
+.faq-id { font-size: 11px; color: var(--dis); flex: none; }
+.faq-rank { font-size: 11px; font-weight: 800; color: #fff; background: var(--w-main);
+  border-radius: 5px; padding: 1px 6px; flex: none; }
+.faq-a { padding: 0 13px 12px 30px; }
+.faq-a p { margin: 0 0 9px; font-size: 13.5px; line-height: 1.7; color: var(--ink-3);
+  white-space: pre-wrap; }
+.faq-act { display: flex; gap: 6px; }
+.copy { border: 1px solid var(--line); background: #fff; color: var(--ink-4);
+  border-radius: 8px; padding: 5px 11px; font-size: 12px; cursor: pointer; }
+.copy:hover { border-color: var(--w-main); color: var(--w-main); }
+.copy.done { background: var(--ok-bg); border-color: var(--ok-bg); color: var(--ok-text); }
+.copy.fail { background: var(--warn-bg); border-color: var(--warn-bd); color: var(--warn-text); }
+
+/* 일정 — 응대 중 제일 자주 보는 값이라 같은 화면에 둔다 */
+.faq-sched { border: 1px solid var(--line); border-radius: 10px; background: #fff; overflow: hidden; }
+.faq-sched-row { display: flex; align-items: center; gap: 10px; padding: 9px 13px;
+  border-top: 1px solid var(--line-2); font-size: 13px; color: var(--ink-2); }
+.faq-sched-row:first-child { border-top: 0; }
+.faq-sched-row.done { color: var(--cap); }
+.faq-sched-k { flex: 1; min-width: 0; }
+.faq-sched-v { font-size: 12.5px; color: var(--ink-3); }
+.faq-sched-row.done .faq-sched-v { color: var(--cap); }
+.faq-sched-done { font-size: 11px; color: var(--dis); }
+
+/* 카드에서 정본으로 건너가는 링크 */
+.fix-faq { font-size: 12px; color: var(--w-main); text-decoration: none; margin-left: auto;
+  flex: none; white-space: nowrap; }
+.fix-faq:hover { text-decoration: underline; }
+.fixrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+/* 검색에 걸린 항목 — 전체 목록에서 자리만 알려 준다 */
+.faq-item.hit { border-color: var(--w-main); background: var(--w-tint); }
+.faq-item.hit .faq-q { color: var(--w-deep); }

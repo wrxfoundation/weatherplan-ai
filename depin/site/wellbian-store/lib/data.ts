@@ -318,6 +318,8 @@ export const FAQS_EXTRA = [
   { q: "측정 기기는 어떤 제품인가요?", a: "실내 공기질 측정기 ARC-600DA입니다. CO₂·미세먼지·온습도를 측정하고 대한민국 KC 인증과 성능 인증을 받았습니다. 자세한 사양은 사이트의 제품 스펙에서 보실 수 있습니다." },
   { q: "왜 한 번만, 그것도 짧게 파나요?", a: "제네시스는 메인넷 초기에 단 한 번 열리는 한정 판매이고 재발행하지 않습니다. 가장 먼저 합류하신 분을 구분하기 위한 것이라 나중에 같은 자격을 다시 열지 않습니다." },
   { q: "신청한 수량보다 적게 사도 되나요?", a: "됩니다. 우선 구매창에서 신청하신 수량 안에서 원하는 만큼만 구매하시면 됩니다. 신청 수량을 다 사셔야 하는 것은 아닙니다." },
+  { q: "신청한 뒤에 수량을 바꾸거나 취소할 수 있나요?", a: "신청 후에는 수량을 바꾸거나 취소하실 수 없습니다. 신청은 수요를 가늠하기 위한 것이라 구매 의무가 아니고, 실제 구매는 우선 구매창에서 원하시는 만큼만 하시면 되므로 굳이 바꾸실 필요도 없습니다." },
+  { q: "구글로 만든 지갑을 다른 지갑으로 옮길 수 있나요?", a: "구글 계정으로 만든 지갑은 니모닉이나 개인키를 내보내 다른 지갑으로 옮기실 수 없습니다. 그 지갑에 있는 NFT를 다른 곳으로 두시려면 외부 개인 지갑을 연결하신 뒤 그 지갑으로 전송하시면 됩니다." },
 ];
 
 export const FAQS_EXTRA_EN = [
@@ -335,6 +337,8 @@ export const FAQS_EXTRA_EN = [
   { q: "What device is it?", a: "The ARC-600DA indoor air quality monitor. It measures CO₂, particulates, temperature and humidity, and carries Korean KC certification and performance certification. Full specifications are on the site." },
   { q: "Why only once, and only briefly?", a: "Genesis is a one-time sale in the early days of the mainnet, and it is never reissued. It exists to mark those who joined first, so the same credential will not be opened again later." },
   { q: "Can I buy fewer than I reserved?", a: "Yes. In the priority window you can take as few as you like, up to the quantity you reserved. There is no obligation to buy the full amount." },
+  { q: "Can I change or cancel my reservation after applying?", a: "Reservations cannot be changed or cancelled once submitted. Applying is how we gauge demand, not a commitment to buy — and since you can take as few as you like in the purchase window, there is no need to change it." },
+  { q: "Can I move the wallet created with Google to another wallet?", a: "A wallet created with a Google account cannot be exported — there is no mnemonic or private key to move elsewhere. To hold its NFT somewhere else, connect an external personal wallet and transfer the NFT to it." },
 ];
 
 export const LINK_STEPS_EN: { n: string; t: string; d: string; d2?: string }[] = [

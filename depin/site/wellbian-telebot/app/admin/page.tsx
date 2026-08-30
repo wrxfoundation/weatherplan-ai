@@ -208,6 +208,7 @@ export default async function Admin({
             <a className={`chip${grouped ? " on" : ""}`} href={link({ group: grouped ? "" : "1" })}>
               묶어 보기
             </a>
+            <a className="chip" href={`/admin/faq?k=${k}`}>정본</a>
             <a className="chip" href={`/admin/report?k=${k}`}>리포트</a>
             <a className="chip" href={`/admin/people?k=${k}`}>사람</a>
             <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?")}>CSV</a>
@@ -511,6 +512,12 @@ export default async function Admin({
                       <button className="btn" type="submit">바꿈</button>
                       {i.fixed && <span className="fix-mark">고친 분류</span>}
                     </form>
+                    {/* 응대하는 자리에서 정본으로 바로 건너간다 — 원문을 그대로 검색어로 넘기면
+                        봇이 이 질문에 무엇을 고르는지까지 같이 보인다 */}
+                    <a className="fix-faq" target="_blank" rel="noreferrer"
+                       href={`/admin/faq?${new URLSearchParams({ ...(k && { k }), q: i.text.slice(0, 60) })}`}>
+                      정본에서 찾기 ↗
+                    </a>
                   </div>
 
                   {i.chatId ? (
