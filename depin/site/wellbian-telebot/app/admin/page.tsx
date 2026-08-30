@@ -12,6 +12,7 @@ import { getDoc } from "@/lib/faq-client";
 import { tgCall } from "@/lib/tg";
 import { MOOD_LABEL, STATUS_LABEL, SEV_LABEL, overdueMin, type CsMoodTag, type CsSeverity } from "@/lib/cs";
 import { applyFilters } from "@/lib/filter";
+import { clusterItems } from "@/lib/cluster";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,8 @@ export default async function Admin({
   const fSev = sp.sev ?? "";
   const q = sp.q ?? "";
   const items = applyFilters(all, { status: fStatus, topic: fTopic, kind: fKind, sev: fSev, q });
+  const grouped = sp.group === "1";
+  const clusters = grouped ? clusterItems(items) : [];
 
   const count = (f: (i: typeof all[number]) => boolean) => all.filter(f).length;
   const topics = [...new Set(all.map((i) => i.topic))].sort();
@@ -66,6 +69,39 @@ export default async function Admin({
     "use server";
     if ((form.get("k") as string) !== KEY) return;
     await patchItem(form.get("id") as string, { status: form.get("to") as CsStatus });
+  }
+
+  /* 여러 건 한 번에 — 몰릴 때 하나씩 누르면 못 따라간다 */
+  async function bulkStatus(form: FormData) {
+    "use server";
+    if ((form.get("k") as string) !== KEY) return;
+    const to = form.get("to") as CsStatus;
+    const ids = form.getAll("ids").map(String);
+    for (const id of ids) await patchItem(id, { status: to });
+  }
+
+  /* 묶음 답장 — 같은 질문 스무 건에 같은 정본을 한 번에 보낸다.
+     한 번에 30건까지만 보내는 이유: 서버리스 함수에는 시간 제한이 있고, 텔레그램도
+     초당 처리량이 정해져 있다. 넘치면 도중에 잘려 "보낸 줄 알았는데 안 간" 건이 생긴다. */
+  async function bulkReply(form: FormData) {
+    "use server";
+    if ((form.get("k") as string) !== KEY) return;
+    const faqId = String(form.get("faqId") ?? "");
+    if (!faqId) return;
+    const ids = form.getAll("ids").map(String).slice(0, 30);
+    const doc = await getDoc();
+    for (const id of ids) {
+      const item = await getItem(id);
+      if (!item?.chatId || item.status === "done") continue;
+      const lang = item.lang === "ko" ? "ko" : "en";
+      const hit = doc?.faq[lang]?.find((f) => f.id === faqId);
+      if (!hit) continue;
+      const body = `${hit.q}\n\n${hit.a}`;
+      const ok = await tgCall("sendMessage", {
+        chat_id: item.chatId, text: body, disable_web_page_preview: true,
+      });
+      if (ok) await patchItem(id, { status: "done", note: body, repliedAt: Date.now() });
+    }
   }
 
   /* 답장 — 분류만 하고 답을 못 보내면 CS 처리가 완결되지 않는다.
@@ -105,7 +141,7 @@ export default async function Admin({
   const link = (o: Record<string, string>) => {
     const p = new URLSearchParams({ k, ...(fStatus && { status: fStatus }),
       ...(fTopic && { topic: fTopic }), ...(fKind && { kind: fKind }),
-      ...(fSev && { sev: fSev }), ...(q && { q }), ...o });
+      ...(fSev && { sev: fSev }), ...(q && { q }), ...(grouped && { group: "1" }), ...o });
     for (const [key, v] of [...p.entries()]) if (!v) p.delete(key);
     return `/admin?${p}`;
   };
@@ -121,6 +157,10 @@ export default async function Admin({
             @wellbiantalk · 저장소 {storeKind() === "kv" ? "KV" : "메모리(임시)"}
           </span>
           <nav style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
+            <a href={link({ group: grouped ? "" : "1" })}
+               style={{ ...S.chip, marginBottom: 0, borderColor: grouped ? C.ink : C.line }}>
+              {grouped ? "묶어 보기 ✓" : "묶어 보기"}
+            </a>
             <a href={`/admin/people?k=${k}`} style={{ ...S.chip, marginBottom: 0 }}>사람 보기 →</a>
             <a href={link({}).replace("/admin?", "/api/admin/export?")}
                style={{ ...S.chip, marginBottom: 0, marginRight: 0 }}>CSV</a>
@@ -242,7 +282,13 @@ export default async function Admin({
           </p>
         )}
 
-        {items.map((i) => {
+        {renderList()}
+      </div>
+    </main>
+  );
+
+  function renderCard(i: typeof items[number]) {
+    {
           const t = new Date(i.at + 9 * 3600000);
           const when = `${t.getUTCMonth() + 1}/${t.getUTCDate()} ${String(t.getUTCHours()).padStart(2, "0")}:${String(t.getUTCMinutes()).padStart(2, "0")}`;
           return (
@@ -250,6 +296,8 @@ export default async function Admin({
                                          borderLeft: `3px solid ${i.sev === "high" ? C.high : STATUS_COLOR[i.status] ?? C.line}`,
                                          borderRadius: 12, padding: "16px 18px", marginBottom: 12 }}>
               <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 8 }}>
+                <input type="checkbox" name="ids" value={i.id} form="bulk"
+                       aria-label="선택" style={{ accentColor: C.new, marginRight: 2 }} />
                 {i.sev === "high" && (
                   <span style={{ fontSize: 11, fontWeight: 800, color: "#fff", background: C.high,
                                  borderRadius: 5, padding: "2px 7px" }}>
@@ -342,8 +390,91 @@ export default async function Admin({
               )}
             </article>
           );
-        })}
-      </div>
-    </main>
-  );
+        }
+  }
+
+  /* 묶음 모드 — 같은 질문 여러 건을 한 카드로 접고, 한 번에 정본 답장을 보낸다.
+     일반 모드 — 체크박스로 골라 상태만 한 번에 바꾼다(답장은 상대가 달라 개별로 간다). */
+  function renderList() {
+    if (grouped) {
+      return clusters.map((c) => {
+        const open = c.members.filter((m) => m.status !== "done" && m.status !== "faq");
+        return (
+          <article key={c.head.id} style={{ background: C.card, border: `1px solid ${C.line}`,
+                     borderLeft: `3px solid ${c.head.sev === "high" ? C.high : C.line}`,
+                     borderRadius: 12, padding: "16px 18px", marginBottom: 12 }}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 11.5, fontWeight: 800, color: C.new }}>{c.members.length}건</span>
+              <span style={{ fontSize: 11.5, color: C.mute }}>· {c.head.topic}</span>
+              {c.head.sev === "high" && (
+                <span style={{ fontSize: 11, fontWeight: 800, color: "#fff", background: C.high,
+                               borderRadius: 5, padding: "2px 7px" }}>{SEV_LABEL.high}</span>
+              )}
+              <span style={{ fontSize: 11.5, color: C.mute }}>· 미처리 {open.length}건</span>
+            </div>
+            <p style={{ fontSize: 16, lineHeight: 1.6, margin: "0 0 10px" }}>{c.head.text}</p>
+
+            {c.members.length > 1 && (
+              <details style={{ marginBottom: 10 }}>
+                <summary style={{ fontSize: 12.5, color: C.mute, cursor: "pointer" }}>
+                  묶인 원문 {c.members.length}건 보기
+                </summary>
+                <ul style={{ margin: "8px 0 0", paddingLeft: 18, fontSize: 13, color: C.mute, lineHeight: 1.7 }}>
+                  {c.members.map((m) => (
+                    <li key={m.id}>{m.text} <span style={{ opacity: 0.7 }}>— {m.who}</span></li>
+                  ))}
+                </ul>
+              </details>
+            )}
+
+            {open.length > 0 ? (
+              <form action={bulkReply} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <input type="hidden" name="k" value={k} />
+                {open.slice(0, 30).map((m) => (
+                  <input key={m.id} type="hidden" name="ids" value={m.id} />
+                ))}
+                <select name="faqId" defaultValue=""
+                        style={{ background: C.bg, color: C.ink, border: `1px solid ${C.line}`,
+                                 borderRadius: 8, padding: "8px 10px", fontSize: 13, maxWidth: 420 }}>
+                  <option value="">정본 FAQ 고르기…</option>
+                  {(doc?.faq[c.head.lang === "ko" ? "ko" : "en"] ?? []).map((f) => (
+                    <option key={f.id} value={f.id}>{f.q}</option>
+                  ))}
+                </select>
+                <button type="submit" style={{ ...S.btn, color: C.done }}>
+                  이 묶음 {Math.min(open.length, 30)}건에 정본 답장
+                </button>
+                {open.length > 30 && (
+                  <span style={{ fontSize: 11.5, color: C.mute, alignSelf: "center" }}>
+                    한 번에 30건까지 — 남은 {open.length - 30}건은 다시 누르세요
+                  </span>
+                )}
+              </form>
+            ) : (
+              <div style={{ fontSize: 12.5, color: C.done }}>모두 처리됨</div>
+            )}
+          </article>
+        );
+      });
+    }
+
+    return (
+      <>
+        {/* 폼 밖의 체크박스를 form 속성으로 이어 붙인다 — 카드 안에 이미 폼이 있어
+            중첩할 수 없기 때문이다 */}
+        <form id="bulk" action={bulkStatus}
+              style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12,
+                       padding: "10px 14px", background: C.card, border: `1px solid ${C.line}`,
+                       borderRadius: 10, flexWrap: "wrap" }}>
+          <input type="hidden" name="k" value={k} />
+          <span style={{ fontSize: 12.5, color: C.mute }}>선택한 건을 한 번에:</span>
+          {(["doing", "done", "faq"] as const).map((st) => (
+            <button key={st} type="submit" name="to" value={st}
+                    style={{ ...S.btn, color: STATUS_COLOR[st] }}>{STATUS_LABEL[st]}</button>
+          ))}
+        </form>
+        {items.map((i) => renderCard(i))}
+      </>
+    );
+  }
 }
