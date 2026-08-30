@@ -27,6 +27,8 @@ export const storeKind = () => (URL_ && TOKEN ? "kv" : "memory");
 export const storeVars = () => (URL_ && TOKEN ? `${U.n} · ${T.n}` : "");
 
 const HASH = "cs:items";
+/* 왕복 확인 전용 키. 기록(cs:items)과 섞이지 않게 따로 둔다. */
+const PROBE = "cs:probe";
 
 export type CsStatus = "new" | "doing" | "done" | "faq";
 export type CsMood = "question" | "positive" | "negative";
@@ -64,6 +66,28 @@ const cmd = async (...args: (string | number)[]): Promise<unknown> => {
   if (!res.ok) throw new Error(`kv ${res.status}`);
   const j = (await res.json()) as { result?: unknown };
   return j.result;
+};
+
+/* 실제로 되는지 확인한다. 환경변수가 있다고 저장이 되는 건 아니다 — 토큰이 read-only
+   이거나(연결 화면에 READ_ONLY_TOKEN 도 같이 뜬다) URL 이 다른 DB 를 가리켜도 화면에는
+   "연결됨" 으로 보이고, 쓰기 실패는 웹훅이 200 을 돌려주는 사이에 조용히 묻힌다.
+   그래서 전용 키에 한 번 쓰고, 읽어서 같은 값인지 보고, 지운다. 60초 만료를 걸어 두어
+   지우기가 실패해도 쓰레기가 남지 않는다. */
+export const storeProbe = async (): Promise<{ ok: boolean; note: string; ms: number }> => {
+  const t0 = Date.now();
+  if (storeKind() === "memory") return { ok: false, note: "memory", ms: 0 };
+  const mark = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  try {
+    await cmd("SET", PROBE, mark, "EX", 60);
+    const back = (await cmd("GET", PROBE)) as string | null;
+    await cmd("DEL", PROBE);
+    /* 쓰기는 200 인데 값이 안 돌아오면 URL 이 다른 DB 를 보고 있다는 뜻이다 */
+    if (back !== mark) return { ok: false, note: "readback_mismatch", ms: Date.now() - t0 };
+    return { ok: true, note: "ok", ms: Date.now() - t0 };
+  } catch (e) {
+    /* cmd 가 던지는 "kv 401"·"kv 403" 은 토큰, "kv 404" 는 URL 이 원인이다 */
+    return { ok: false, note: (e as Error).message || "network", ms: Date.now() - t0 };
+  }
 };
 
 /* 인메모리 폴백. globalThis 에 붙이는 이유가 있다 — 모듈 스코프에 두면 라우트마다
