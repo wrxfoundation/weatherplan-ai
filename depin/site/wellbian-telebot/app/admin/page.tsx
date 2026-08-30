@@ -15,9 +15,11 @@ import { getDoc } from "@/lib/faq-client";
 import { tgCall } from "@/lib/tg";
 import { STATUS_LABEL, SEV_LABEL, MOOD_LABEL, TOPICS, overdueMin, type CsMoodTag, type CsSeverity } from "@/lib/cs";
 import { applyFilters } from "@/lib/filter";
+import { pulse } from "@/lib/report";
 import { clusterItems } from "@/lib/cluster";
 import { ADMIN_KEY, isAuthed, clearAuthCookie } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import Keys from "./Keys";
 /* 서버 액션이 저장을 마쳐도 라우터가 들고 있던 화면을 그대로 다시 그린다 — 값은 바뀌었는데
    버튼과 정렬은 그대로여서, 눌러도 아무 일이 없는 것처럼 보인다. 몰릴 때 같은 건을 두 번
    누르게 되는 자리다. 고친 뒤 이 경로를 무효화해서 다시 읽게 한다. */
@@ -59,6 +61,9 @@ export default async function Admin({
   const grouped = sp.group === "1";
   const isOpen = (i: { status: string }) => i.status !== "done" && i.status !== "faq";
   const filtered = applyFilters(all, { status: fStatus, topic: fTopic, kind: fKind, sev: fSev, q });
+  /* 추이는 걸어 둔 필터와 무관하게 전체로 본다 — 필터를 좁힌 채로 "줄었다" 고 읽으면 위험하다 */
+  const pl = pulse(all);
+  const pulsePeak = Math.max(1, ...pl.bars.map((b) => b.n));
 
   /* 순서가 곧 위계다. 시간순으로 두면 긴급 건이 목록 맨 아래로 밀려서, 화면 위쪽에
      "긴급 2건"이라고 크게 띄워 놓고 정작 그 두 건은 스크롤을 한참 내려야 나온다.
@@ -271,6 +276,27 @@ export default async function Admin({
             </div>
             <div className="now-note">긴급 30분 · 주의 4시간 · 일반 24시간</div>
           </a>
+        </section>
+
+        {/* 1.5차 — 늘고 있는가 (8/30 서우: "빠르게 현황 파악")
+            카드 셋은 지금 이 순간의 스냅샷이라, 몰리는 중인지 잦아드는 중인지를 말해 주지 못한다. */}
+        <section className="pulse">
+          <span className="pulse-k">최근 12시간</span>
+          <span className="pulse-bars" aria-hidden>
+            {pl.bars.map((b) => (
+              <span key={b.from} className="pulse-bar" title={`${b.label} · ${b.n}건`}>
+                <span className="pulse-fill" style={{ height: `${Math.max(b.n ? 8 : 2, (b.n / pulsePeak) * 100)}%` }} />
+              </span>
+            ))}
+          </span>
+          <span className="pulse-now">
+            <b className="mono">{pl.lastHour}</b>건
+            <span className="pulse-k"> / 시간</span>
+          </span>
+          <span className={`pulse-d${pl.delta > 0 ? " up" : pl.delta < 0 ? " down" : ""}`}>
+            {pl.delta === 0 ? "직전 시간과 같음" : `직전 시간보다 ${pl.delta > 0 ? "+" : ""}${pl.delta}`}
+          </span>
+          <a className="chip" href={`/admin/report?k=${k}&span=24h`}>리포트에서 보기 →</a>
         </section>
 
         {/* 2차 — 흐름을 보는 숫자 */}
@@ -513,6 +539,7 @@ export default async function Admin({
             })}
           </>
         )}
+        <Keys />
       </main>
     </>
   );

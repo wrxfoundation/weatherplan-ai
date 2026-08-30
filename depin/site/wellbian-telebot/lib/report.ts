@@ -72,6 +72,30 @@ export const buckets = (rows: Row[], span: Span, now = Date.now()): Bucket[] => 
   return out;
 };
 
+/* 몰리는 중인가 — 목록 화면 한 줄에 쓴다.
+   "지금 몇 건" 만 보면 늘고 있는지 줄고 있는지 알 수 없다. 최근 몇 시간을 나란히
+   놓고, 직전 시간과의 차이를 같이 준다. 사람을 더 넣을지 판단하는 근거다. */
+export type Pulse = { bars: Bucket[]; lastHour: number; delta: number; openNow: number };
+
+export const pulse = (rows: Row[], hours = 12, now = Date.now()): Pulse => {
+  const step = 3600_000;
+  const end = Math.floor(now / step) * step;
+  const bars: Bucket[] = [];
+  for (let i = hours - 1; i >= 0; i--) {
+    const from = end - i * step;
+    bars.push({ from, label: `${new Date(from).getHours()}시`, n: 0, open: 0 });
+  }
+  for (const r of rows) {
+    const idx = bars.findIndex((b) => r.at >= b.from && r.at < b.from + step);
+    if (idx < 0) continue;
+    bars[idx].n++;
+    if (isOpen(r)) bars[idx].open++;
+  }
+  const last = bars[bars.length - 1]?.n ?? 0;
+  const prev = bars[bars.length - 2]?.n ?? 0;
+  return { bars, lastHour: last, delta: last - prev, openNow: bars.reduce((a, b) => a + b.open, 0) };
+};
+
 /* ── 얼마나 빨리 답했는가 ──────────────────────────────────────────────
    두 가지를 따로 센다. 첫 응답은 사람이 답장을 보낸 순간(repliedAt),
    처리 완료는 닫힌 순간(closedAt)이다. 답장 없이 상태만 바꿔 닫는 건이 많아
