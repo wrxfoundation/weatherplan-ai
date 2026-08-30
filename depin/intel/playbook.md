@@ -81,6 +81,12 @@
 - "Account economics is onboarding economics." — 리저브·수수료·온보딩 글 대응용 (Sponsor 복선 페어)
 - "Ads don't work on agents. Attestations do." — 에이전트 결제·x402·AI 커머스 글 대응용 (기계 고객 페어,
   검증=제품 포지션과 직결. 5c 원글에서 초연 예정)
+- (후보, 8/30 신설) "Counting is easy. Agreeing on what was counted is the hard part."
+  — 온체인 데이터 분석·트래커 불일치 글 대응용. `Verification is the value.` 의 변주이되 더 구체적.
+- (후보, 8/30 신설) "Ownership becomes participation the moment the object has something to report."
+  — 토큰화·"자산이 노드가 된다" 담론 대응용. 물리 기기가 실제 노드인 우리만 땅에 내려놓을 수 있다.
+- ⚠️ (미사용, 원글 예정) "An air-quality network shouldn't cost the air." — 에너지 원글(5f)에서
+  초연 예정. 답글에서 먼저 소진하지 말 것.
 
 ## 어휘 규칙 (대외 채널)
 
@@ -156,6 +162,28 @@
   (종이·입자 기류, 모션블러, 로우앵글 대각 스윕)에 전부 몰아주고 **글라스 포인트는 정지·선명
   유지** — "원장은 흔들리지 않는다" 모티프가 스타일 규칙을 겸함. 기류는 단일 커브 곡선(두 갈래
   이상 = 산만, 리롤).
+- **에디토리얼 스타일 v2.2 — 실사 레인 신설 (2026-08-30, 서우)**: v2.1 클레이를 폐기하지 않고
+  **레인을 둘로 나눈다.** 서우 지시 — "이제 너무 클레이 말고 실사로도, 포인트는 보라 아이템이 맞지만
+  모던한 실사 채도 낮은 공간이면 잘 보인다."
+  - **v2.2 실사** = 생활·실내·에너지 계열(사람이 사는 공간 얘기). 저채도 실사 인테리어 —
+    거푸집 자국 남은 콘크리트·표백 오크·본 리넨, **화면 전체에서 채도를 뺀다**. 포인트는 그대로
+    프로스티드 반투명 Wellbian Violet(#4d4dce) 글라스. 카메라 어휘 필수(50mm f/2.8 · 자연광만 ·
+    `photographic, not a render`).
+  - **v2.1 클레이** = 구조·개념 다이어그램 계열(검증 루프, 주소는 약속이다). 실사로 가면 무슨
+    사진인지 모호해지는 주제는 계속 클레이로.
+  - **형태에서 의미를 빼지 말 것 (8/30 실패에서 확정)**: 첫 실사 시도가 포인트를 `abstract
+    sculptural form`으로 지시해 **재질만 남고 뜻이 없는 덩어리(비누처럼)** 가 나왔다. 서우가 좋다고
+    한 아이콘 프롬프트는 `three flat rounded slabs stacked vertically`(데이터베이스 스택)라
+    **모양 자체가 말을 했다.** 포인트 오브젝트는 항상 의미를 지닌 실루엣으로 지정한다.
+  - **바이올렛은 안쪽이 아니라 틈·모서리에**: 아이콘 크기에서 깨끗하던 내부 그라데이션이 실사
+    스케일에서는 **멍처럼 번진다.** 슬랩 사이 틈과 베벨 모서리에만 빛이 고이게 지시하고,
+    캐스틱은 1곳까지만 허용(같은 광원의 결과라 단일 포인트로 친다).
+  - **실사 전용 네거티브**: `clay, claymation, plasticine, 3D render look, CGI, illustration` +
+    `featureless blob, pebble, egg shape, soap bar` + `violet stain inside the glass, bruise,
+    smudge` + `saturated colours, teal and orange grading`. 기기 금지·no text·단일 커브 기류·
+    후처리 오버레이·wellbian 단독 워터마크는 v2.1과 동일.
+  - **실사 고유 함정**: 선반 위 물건이 **스피커·기기로 수렴**한다. 버튼·통풍구·화면·이음선이
+    보이면 즉시 리롤.
 
 ## 성과 로그 (게시 후 기입)
 
