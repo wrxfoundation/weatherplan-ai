@@ -11,9 +11,20 @@
    신뢰할 수 없지만, KV 를 붙이기 전에도 화면이 뜨고 흐름을 확인할 수 있다.
    /api/health 의 store 값이 "kv" 인지 "memory" 인지로 어느 쪽인지 알 수 있다. */
 
-const URL_ = process.env.KV_REST_API_URL ?? "";
-const TOKEN = process.env.KV_REST_API_TOKEN ?? "";
+/* Vercel 이 KV 를 연결하면 환경변수가 자동으로 붙는데, 통합 경로에 따라 이름이 갈린다 —
+   Vercel KV 로 붙으면 KV_REST_API_*, Upstash 마켓플레이스로 붙으면 UPSTASH_REDIS_REST_* 다.
+   어느 쪽이 오든 받는다. 이름 하나를 못 맞춰 저장이 안 되는 건 알아채기도 어렵다. */
+const pick = (...names: string[]) => {
+  for (const n of names) { const v = process.env[n]; if (v) return { v, n }; }
+  return { v: "", n: "" };
+};
+const U = pick("KV_REST_API_URL", "UPSTASH_REDIS_REST_URL");
+const T = pick("KV_REST_API_TOKEN", "UPSTASH_REDIS_REST_TOKEN");
+const URL_ = U.v, TOKEN = T.v;
+
 export const storeKind = () => (URL_ && TOKEN ? "kv" : "memory");
+/* 어떤 이름으로 붙었는지 첫 화면에 보여 준다 — 붙었는데 안 된다면 이름부터 의심한다 */
+export const storeVars = () => (URL_ && TOKEN ? `${U.n} · ${T.n}` : "");
 
 const HASH = "cs:items";
 

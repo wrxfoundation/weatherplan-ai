@@ -8,7 +8,7 @@
 
 import { redirect } from "next/navigation";
 import { ADMIN_KEY, isAuthed, setAuthCookie } from "@/lib/auth";
-import { storeKind, listItems } from "@/lib/store";
+import { storeKind, storeVars, listItems } from "@/lib/store";
 import { cacheInfo } from "@/lib/faq-client";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +26,10 @@ export default async function Home({
     ["정본 주소", info.configured, "FAQ_SOURCE_URL — 판매 사이트의 /api/faq"],
     ["CS 채널", Boolean(process.env.TG_CS_CHAT), "TG_CS_CHAT — 답 못 한 질문을 보낼 채널 (선택)"],
     ["관리 키", Boolean(ADMIN_KEY), "ADMIN_KEY — 대시보드 접근 키"],
-    ["저장소", storeKind() === "kv", "Vercel → Storage → KV 연결 (없으면 배포 때마다 기록이 사라집니다)"],
+    ["저장소", storeKind() === "kv",
+      storeKind() === "kv"
+        ? `연결됨 — ${storeVars()}`
+        : "Vercel → Storage 에서 KV 를 이 프로젝트에 연결 (없으면 배포 때마다 기록이 사라집니다)"],
   ];
 
   /* 정본을 실제로 읽어 왔는지까지 봐야 "설정은 됐는데 안 닿는" 상태를 구분할 수 있다 */
