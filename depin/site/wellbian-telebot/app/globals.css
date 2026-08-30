@@ -111,15 +111,19 @@ summary { cursor: pointer; }
 .bulk-k { font-size: 12px; color: var(--cap); }
 
 .item { background: #fff; border: 1px solid var(--bd-card); border-radius: 12px;
-        padding: 15px 18px; margin-bottom: 10px; border-left: 3px solid var(--line); }
+        padding: 13px 16px; margin-bottom: 9px; border-left: 3px solid var(--line); }
 .item.sev-high { border-left-color: var(--warn-icon); }
 .item.sev-mid  { border-left-color: var(--attn-icon); }
 .item.done     { border-left-color: var(--ok-text); background: var(--panel); }
 
-.meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 7px;
+.meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 5px;
         font-size: 11.5px; color: var(--cap); }
 .meta .sep { color: var(--dis); }
-.meta .right { margin-left: auto; }
+
+/* 문의 내용과 "언제·누가" 를 한 줄에 둔다. 떨어뜨려 놓으면 한 건을 읽을 때마다
+   눈이 왼쪽 끝과 오른쪽 끝을 오간다 — 목록이 길어질수록 그 왕복이 쌓인다. */
+.qline { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 9px; }
+.qwho { font-size: 11.5px; color: var(--cap); white-space: nowrap; }
 
 .tag { font-size: 10.5px; font-weight: 800; border-radius: 5px; padding: 2px 7px; letter-spacing: .01em; }
 .tag.high { background: var(--warn-icon); color: #fff; }
@@ -130,16 +134,16 @@ summary { cursor: pointer; }
 .tag.st-faq  { background: var(--chip); color: var(--ink-3); }
 .tag.mood-neg { background: var(--warn-bg); color: var(--warn-text); }
 
-.q { font-size: 15.5px; line-height: 1.6; color: var(--ink-1); margin-bottom: 10px; }
-.said { font-size: 13px; line-height: 1.6; color: var(--ink-3); background: var(--panel);
-        border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px;
-        margin-bottom: 10px; white-space: pre-wrap; }
+.q { font-size: 15.5px; line-height: 1.55; color: var(--ink-1); margin: 0; }
+.said { font-size: 13px; line-height: 1.55; color: var(--ink-3); background: var(--panel);
+        border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px;
+        margin-bottom: 9px; white-space: pre-wrap; }
 .acts { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 /* 상태 버튼은 모든 카드에 늘 붙어 있어 목록 전체의 소음이 된다 — 한 단계 조용하게 */
 .acts .btn { padding: 5px 10px; font-size: 12px; color: var(--ink-4); border-color: var(--line); }
 .acts .btn:hover { color: var(--w-main); border-color: var(--w-main); }
 
-.reply { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.reply { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
 .reply summary { font-size: 12.5px; color: var(--w-main); font-weight: 600; }
 .reply-row { display: flex; gap: 7px; margin-top: 9px; flex-wrap: wrap; }
 .reply select, .reply textarea {
@@ -155,12 +159,63 @@ summary { cursor: pointer; }
           margin-bottom: 18px; }
 
 /* 좁은 화면 — 서우가 폰으로 열어 볼 자리다 */
+/* ── 모바일 (8/30 서우) ────────────────────────────────────────────────
+   좁은 화면에서 이 도구를 쓰는 상황은 대개 "밖에 있는데 급한 게 떴다" 다.
+   그래서 두 가지를 노린다 — 목록이 빨리 나올 것, 손가락으로 정확히 눌릴 것.
+
+   칩이 많은 줄은 세로로 쌓지 않고 옆으로 밀어 본다. 세 줄짜리 필터가 한 줄이
+   되면서 목록이 한 화면 위로 올라온다. */
 @media (max-width: 720px) {
-  .wrap { padding: 0 14px; }
-  .now-card { flex-basis: 44%; padding: 13px 14px; }
-  .now-v { font-size: 24px; }
-  .flab { width: 100%; }
+  .wrap { padding: 0 13px; }
+
+  /* 지금 손이 필요한 것 셋은 한 줄에 나란히 — 2+1 로 갈라지면 셋째만 튀어 보인다 */
+  .now { gap: 7px; margin-bottom: 10px; }
+  .now-card { flex: 1 1 0; min-width: 0; padding: 11px 11px; }
+  .now-k { font-size: 11px; }
+  .now-v { font-size: 22px; }
+  .now-note { font-size: 10.5px; }
+
+  .sub { gap: 14px; padding: 9px 12px; }
   .sub-note { display: none; }
+
+  .pulse { gap: 8px; padding: 8px 12px; }
+  .pulse .chip { margin-left: 0; }
+  .pulse-bars { height: 20px; }
+
+  /* 상단 메뉴와 필터 줄은 옆으로 민다 */
+  .top-in { gap: 8px; }
+  .top-nav, .frow {
+    flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .top-nav::-webkit-scrollbar, .frow::-webkit-scrollbar { display: none; }
+  .top-nav .chip, .frow .chip { flex: none; white-space: nowrap; }
+  .brand-sub { display: none; }
+  .flab { width: auto; min-width: 34px; }
+
+  /* 손가락이 닿는 것은 전부 키운다. 특히 체크박스가 13px 이라 일괄 선택이 거의 불가능했다. */
+  .chip, .btn { min-height: 34px; display: inline-flex; align-items: center; }
+  .acts .btn, .fixrow-in .btn, .fixrow-in .chip { padding: 7px 12px; font-size: 13px; }
+  .fixrow-in select, .reply select, .reply textarea { min-height: 36px; font-size: 13.5px; }
+  .meta input[type=checkbox] { width: 24px; height: 24px; }
+
+  /* 답장은 한 줄에 욱여넣지 않는다 — 좁은 화면에서 select 가 눌리지 않을 만큼 작아진다 */
+  .reply-row { flex-direction: column; align-items: stretch; }
+  .reply-row select, .reply-row .btn { width: 100%; }
+
+  .item { padding: 12px 13px; }
+  .q { font-size: 15px; }
+  .fixrow-in { gap: 5px; }
+
+  /* 자판이 없는 화면에서 단축키 안내는 자리만 차지한다 */
+  .kb-hint, .kb-help { display: none; }
+
+  /* 리포트 */
+  .rep-kpis { grid-template-columns: 1fr; }
+  .rep-bars { padding: 10px 8px; }
+  .rep-h { font-size: 15.5px; margin-top: 20px; }
+  .rep-table { overflow-x: auto; }
+  .rep-tr { grid-template-columns: 1.1fr repeat(6, minmax(38px, 1fr)); min-width: 460px; }
 }
 
 /* 지우기 확인 — 되돌릴 수 없는 동작이라 목록 위에서 화면을 한 번 막는다.
@@ -182,7 +237,7 @@ summary { cursor: pointer; }
 .btn.danger.solid { background: var(--warn-icon); border-color: var(--warn-icon); color: #fff; }
 
 /* 분류 고치기 줄 — 상태 버튼 아래, 답장 위. 늘 보이되 무게는 낮춘다(교정은 예외 작업이다) */
-.fixrow { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.fixrow { margin-top: 7px; padding-top: 7px; border-top: 1px dashed var(--line); }
 .fixrow-in { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0; }
 .fix-k { font-size: 12px; color: var(--cap); }
 .fixrow-in select { font-size: 12.5px; padding: 4px 6px; border: 1px solid var(--line);

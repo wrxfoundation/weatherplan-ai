@@ -464,10 +464,14 @@ export default async function Admin({
                     <span className="sep">·</span><span>{i.chatType === "private" ? "1:1" : "그룹"}</span>
                     {i.kind === "matched" && <><span className="sep">·</span><span>후보 제시</span></>}
                     {i.kind === "offline" && <><span className="sep">·</span><span>정본 미로딩</span></>}
-                    <span className="right">{when(i.at)} · {i.who}</span>
                   </div>
 
-                  <p className="q">{i.text}</p>
+                  {/* 8/30 서우: 언제·누가를 오른쪽 끝으로 밀어 두니 넓은 화면에서 문의 내용과
+                      멀찍이 떨어져, 한 건을 읽는 데 눈이 두 번 움직였다. 원문 옆에 붙인다. */}
+                  <div className="qline">
+                    <p className="q">{i.text}</p>
+                    <span className="qwho">{when(i.at)} · {i.who}</span>
+                  </div>
 
                   {i.note && (
                     <div className="said">
