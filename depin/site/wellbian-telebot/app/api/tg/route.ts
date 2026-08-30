@@ -25,10 +25,14 @@ import {
   getDoc, findFaq, langOf, searchFaq,
   type FaqDoc, type FaqLang, type Loc,
 } from "@/lib/faq-client";
+import { csReport, type CsKind } from "@/lib/cs";
 
 const TOKEN = process.env.TG_BOT_TOKEN ?? "";
 const SECRET = process.env.TG_WEBHOOK_SECRET ?? "";
 const GROUP = process.env.TG_GROUP ?? "";
+/* 답하지 못한 질문을 흘려보낼 운영 채널. 미설정이면 아무 데도 보내지 않는다 —
+   설정 전에 배포돼도 엉뚱한 곳으로 문의가 새지 않게 하는 기본값이다. */
+const CS_CHAT = process.env.TG_CS_CHAT ?? "";
 const COMMUNITY = "https://t.me/wellbiantalk";
 
 const L = (m: Loc, lang: FaqLang) => (lang === "ko" ? m.ko : m.en || m.ko);
@@ -46,6 +50,17 @@ const call = async (method: string, body: unknown) => {
   } catch {
     /* 텔레그램이 잠깐 안 닿아도 우리는 200 을 돌려줘야 한다 — 아래 주석 참조 */
   }
+};
+
+/* 답을 못 준 질문을 운영 채널로. 실패해도 사용자 응답에는 영향을 주지 않는다 —
+   CS 기록보다 사용자에게 답이 가는 쪽이 먼저다. */
+const reportCs = async (kind: CsKind, msg: { text?: string; chat?: { type?: string }; from?: { username?: string; first_name?: string; id?: number } }, lang: FaqLang) => {
+  if (!CS_CHAT || !msg.text) return;
+  await call("sendMessage", {
+    chat_id: CS_CHAT,
+    text: csReport({ kind, text: msg.text, lang, chatType: msg.chat?.type ?? "?", from: msg.from }),
+    disable_web_page_preview: true,
+  });
 };
 
 /* ── FAQ 목록 화면 ──────────────────────────────────────────────────────
@@ -149,6 +164,22 @@ export async function POST(req: NextRequest) {
       const mid = cq.message?.message_id;
       const [kind, langRaw, key] = String(cq.data ?? "").split(":");
       const lang: FaqLang = langRaw === "ko" ? "ko" : "en";
+      if (kind === "none" && chat && mid) {
+        /* 첫 줄의 따옴표 안이 사용자가 실제로 물은 문장이다 */
+        const raw = String(cq.message?.text ?? "").split("\n")[0].replace(/^"|"$/g, "");
+        const l: FaqLang = langRaw === "ko" ? "ko" : "en";
+        await call("editMessageText", { chat_id: chat, message_id: mid, text: noAnswerText(l) });
+        if (CS_CHAT && raw) {
+          await call("sendMessage", {
+            chat_id: CS_CHAT,
+            text: csReport({ kind: "unanswered", text: raw, lang: l,
+              chatType: cq.message?.chat?.type ?? "?", from: cq.from }),
+            disable_web_page_preview: true,
+          });
+        }
+        return Response.json({ ok: true });
+      }
+
       const doc = await getDoc();
       if (chat && mid && doc) {
         if (kind === "p") {
@@ -194,6 +225,8 @@ export async function POST(req: NextRequest) {
     const doc = await getDoc();
     if (!doc) {
       await call("sendMessage", { chat_id: chat.id, text: offlineText(lang), disable_web_page_preview: true });
+      /* 정본이 안 읽히는 동안 들어온 질문도 흘리지 않는다 — 복구 후 답해야 할 목록이다 */
+      if (!cmd) await reportCs("offline", msg, lang);
       return Response.json({ ok: true });
     }
 
@@ -208,13 +241,22 @@ export async function POST(req: NextRequest) {
          (privacy mode 가 켜져 있어 애초에 대부분 오지도 않는다). */
       const hits = searchFaq(doc, lang, text);
       if (hits.length) {
+        /* 원문을 첫 줄에 담는 이유: 아래 "찾는 답이 없어요" 를 눌렀을 때 무엇을 물었는지
+           되찾아야 하는데, 서버리스라 저장할 데가 없고 콜백 데이터는 64바이트다.
+           메시지 자체가 저장소 역할을 한다 — 텔레그램이 콜백에 원본 메시지를 실어 준다. */
         await call("sendMessage", {
           chat_id: chat.id,
-          text: lang === "ko" ? "이 질문이신가요?" : "Did you mean one of these?",
-          reply_markup: { inline_keyboard: hits.map((f) => [{ text: f.q, callback_data: `f:${lang}:${f.id}` }]) },
+          text: `"${text}"\n\n${lang === "ko" ? "이 질문이신가요?" : "Did you mean one of these?"}`,
+          reply_markup: { inline_keyboard: [
+            ...hits.map((f) => [{ text: f.q, callback_data: `f:${lang}:${f.id}` }]),
+            /* 키워드가 겹쳐 후보가 떴다고 답이 된 것은 아니다. 이 버튼이 없으면
+               "정본에 없는 질문"이 후보 뒤에 숨어 CS 인박스에 영영 안 잡힌다. */
+            [{ text: lang === "ko" ? "❓ 찾는 답이 없어요" : "❓ None of these", callback_data: `none:${lang}` }],
+          ]},
         });
       } else {
         await call("sendMessage", { chat_id: chat.id, text: noAnswerText(lang), disable_web_page_preview: true });
+        await reportCs("unanswered", msg, lang);
       }
     }
   } catch {

@@ -11,6 +11,7 @@ export async function GET() {
     token: Boolean(process.env.TG_BOT_TOKEN),
     secret: Boolean(process.env.TG_WEBHOOK_SECRET),
     group: process.env.TG_GROUP || null,
+    csInbox: Boolean(process.env.TG_CS_CHAT),
     faqSource: info.configured,
     faqBypass: info.bypass,
     faqCached: info.cached,
