@@ -799,6 +799,16 @@ export default function Landing() {
               </span>
             </button>
           </div>
+          {/* 8/30 서우 — 같은 FAQ 를 텔레그램 봇이 1:1 로도 답한다. 봇은 lib/data.ts 의
+              FAQS·FAQS_EXTRA 를 그대로 읽으므로 이 화면과 답이 갈릴 일이 없다. */}
+          <a href={LINKS.faqBot} target="_blank" rel="noopener"
+            style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 14, padding: "18px 24px", textDecoration: "none", color: "var(--w-deep)" }}>
+            <TgIcon size={17} color="var(--w-main)" />
+            <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <span style={{ fontSize: 18.5, fontWeight: 800 }}>{t(D.askBot)}</span>
+              <span style={{ fontSize: 15.5, color: "var(--ink-3)" }}>{t(D.askBotSub)}</span>
+            </span>
+          </a>
         </div>
       </section>
 

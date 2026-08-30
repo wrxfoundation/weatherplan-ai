@@ -218,7 +218,14 @@ export const PREORDER_FEED: { w: string; t: string; q: number }[] = [
 
 export const LINKS = {
   x: "https://x.com/wellbianlabs",
-  telegram: "https://t.me/wellbianlabs",
+  /* 8/30 서우: 텔레그램이 두 개다 — 채널(@wellbianlabs)은 공지 전용이라 구독자가 글을 못 쓴다.
+     사이트의 "커뮤니티" 버튼 6곳이 전부 채널을 가리키고 있어서, 누른 사람이 질문도 못 하고
+     FAQ 봇도 만나지 못했다. 대화가 되는 공개 그룹(@wellbiantalk)으로 옮기고 채널은 푸터에만 둔다. */
+  telegram: "https://t.me/wellbiantalk",
+  telegramNews: "https://t.me/wellbianlabs",
+  /* FAQ 봇 1:1 딥링크. 그룹에서 /faq 를 치면 답이 전원에게 뿌려져 대화창이 지저분해지므로
+     사이트에서는 1:1 창이 열리는 이 링크로 보낸다(그룹의 봇은 거들기용). */
+  faqBot: "https://t.me/wellbian_faq_bot",
   /* 약관은 플랫폼 메인 사이트 TERMS로 통합 (8/27 서우 결정 — 별도 문서 없이 단일 링크) */
   terms: "https://wlbn.wellbianlabs.io/terms",
   /* 8/28 회의: "맨 밑 주체를 많이 본다" → 푸터 로고를 각 홈페이지로 연결한다 */

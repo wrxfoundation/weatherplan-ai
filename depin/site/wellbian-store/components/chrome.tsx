@@ -159,6 +159,11 @@ export function CommunityFooter({ showNotice = false }: { showNotice?: boolean }
             </a>
           </div>
           <nav style={{ display: "flex", gap: 20, fontSize: 16, color: "rgba(255,255,255,.65)", flexWrap: "wrap" }}>
+            {/* 8/30 — 위 "커뮤니티 입장" 은 대화 그룹(@wellbiantalk), 여기는 공지 전용 채널(@wellbianlabs).
+                둘을 같은 자리에 나란히 두면 글을 쓰러 온 사람이 채널로 새므로 층을 나눈다. */}
+            <a href={LINKS.telegramNews} target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none" }}>
+              {t(D.newsChannel)}
+            </a>
             <a href={LINKS.terms} target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none" }}>
               {t(D.terms)}
             </a>

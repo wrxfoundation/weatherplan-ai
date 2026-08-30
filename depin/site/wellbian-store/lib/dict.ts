@@ -381,6 +381,28 @@ export const D = {
     zh: "关注动态",
     es: "Seguir novedades",
   }),
+  /* 8/30 — FAQ 섹션 아래 봇 안내. "바로 답" 을 약속하지 않는다(정본에 없는 질문은 사람이 받는다) */
+  askBot: m({
+    ko: "텔레그램 봇에게 물어보기",
+    en: "Ask our Telegram bot",
+    ja: "Telegram ボットに質問する",
+    zh: "向 Telegram 机器人提问",
+    es: "Pregunta a nuestro bot de Telegram",
+  }),
+  askBotSub: m({
+    ko: "같은 답을 1:1 대화창에서 언제든 찾아볼 수 있습니다",
+    en: "The same answers, any time, in a one-to-one chat",
+    ja: "同じ回答を 1:1 のチャットでいつでも確認できます",
+    zh: "同样的答案，随时在一对一对话中查看",
+    es: "Las mismas respuestas, cuando quieras, en un chat privado",
+  }),
+  newsChannel: m({
+    ko: "공지 채널",
+    en: "Announcements",
+    ja: "お知らせチャンネル",
+    zh: "公告频道",
+    es: "Canal de anuncios",
+  }),
   terms: m({
     ko: "이용약관",
     en: "Terms of Service",
