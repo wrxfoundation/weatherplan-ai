@@ -8,7 +8,8 @@
    판매 전 여드레에 그만한 표면을 늘릴 이유가 없다. 주소를 아는 사람만 들어온다. */
 
 import { listItems, patchItem, storeKind, type CsStatus } from "@/lib/store";
-import { MOOD_LABEL, STATUS_LABEL, type CsMoodTag } from "@/lib/cs";
+import { MOOD_LABEL, STATUS_LABEL, SEV_LABEL, type CsMoodTag, type CsSeverity } from "@/lib/cs";
+import { applyFilters } from "@/lib/filter";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,7 @@ const KEY = process.env.ADMIN_KEY ?? "";
 const C = {
   bg: "#0E0E14", card: "#181822", line: "#2A2A38", ink: "#E8E8F0", mute: "#8A8AA0",
   new: "#5B8DEF", doing: "#D9A441", done: "#4FA96A", faq: "#9B6BD6", neg: "#D9534F",
+  high: "#E05A4F", mid: "#D9A441", low: "#6A6A80",
 };
 const STATUS_COLOR: Record<string, string> = { new: C.new, doing: C.doing, done: C.done, faq: C.faq };
 
@@ -41,10 +43,9 @@ export default async function Admin({
   const fStatus = sp.status ?? "";
   const fTopic = sp.topic ?? "";
   const fKind = sp.kind ?? "";
-  const items = all.filter((i) =>
-    (!fStatus || i.status === fStatus) &&
-    (!fTopic || i.topic === fTopic) &&
-    (!fKind || (fKind === "open" ? i.kind !== "matched" : i.kind === "matched")));
+  const fSev = sp.sev ?? "";
+  const q = sp.q ?? "";
+  const items = applyFilters(all, { status: fStatus, topic: fTopic, kind: fKind, sev: fSev, q });
 
   const count = (f: (i: typeof all[number]) => boolean) => all.filter(f).length;
   const topics = [...new Set(all.map((i) => i.topic))].sort();
@@ -72,10 +73,11 @@ export default async function Admin({
   };
 
   const link = (o: Record<string, string>) => {
-    const q = new URLSearchParams({ k, ...(fStatus && { status: fStatus }),
-      ...(fTopic && { topic: fTopic }), ...(fKind && { kind: fKind }), ...o });
-    for (const [key, v] of [...q.entries()]) if (!v) q.delete(key);
-    return `/admin?${q}`;
+    const p = new URLSearchParams({ k, ...(fStatus && { status: fStatus }),
+      ...(fTopic && { topic: fTopic }), ...(fKind && { kind: fKind }),
+      ...(fSev && { sev: fSev }), ...(q && { q }), ...o });
+    for (const [key, v] of [...p.entries()]) if (!v) p.delete(key);
+    return `/admin?${p}`;
   };
 
   return (
@@ -88,7 +90,28 @@ export default async function Admin({
           <span style={{ fontSize: 12.5, color: C.mute }}>
             @wellbiantalk · 저장소 {storeKind() === "kv" ? "KV" : "메모리(임시)"}
           </span>
+          <nav style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
+            <a href={`/admin/people?k=${k}`} style={{ ...S.chip, marginBottom: 0 }}>사람 보기 →</a>
+            <a href={link({}).replace("/admin?", "/api/admin/export?")}
+               style={{ ...S.chip, marginBottom: 0, marginRight: 0 }}>CSV</a>
+            <a href={link({}).replace("/admin?", "/api/admin/export?") + "&format=json"}
+               style={{ ...S.chip, marginBottom: 0, marginRight: 0, color: C.mute }}>JSON</a>
+          </nav>
         </header>
+
+        {/* 검색 — 원문·메모·사용자를 함께 훑는다 */}
+        <form method="get" action="/admin" style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+          <input type="hidden" name="k" value={k} />
+          {fStatus && <input type="hidden" name="status" value={fStatus} />}
+          {fTopic && <input type="hidden" name="topic" value={fTopic} />}
+          {fKind && <input type="hidden" name="kind" value={fKind} />}
+          {fSev && <input type="hidden" name="sev" value={fSev} />}
+          <input name="q" defaultValue={q} placeholder="원문 · 메모 · 사용자 검색"
+                 style={{ flex: 1, background: C.card, border: `1px solid ${C.line}`, color: C.ink,
+                          borderRadius: 10, padding: "10px 14px", fontSize: 14 }} />
+          <button type="submit" style={{ ...S.btn, padding: "10px 18px", color: C.ink }}>검색</button>
+          {q && <a href={link({ q: "" })} style={{ ...S.chip, marginBottom: 0, alignSelf: "center" }}>지우기</a>}
+        </form>
 
         {storeKind() === "memory" && (
           <div style={{ background: "#3A2A18", border: `1px solid ${C.doing}`, borderRadius: 10,
@@ -111,6 +134,12 @@ export default async function Admin({
             <div style={{ fontSize: 20, fontWeight: 800, color: openCount ? C.new : C.mute }}>{openCount}</div>
           </div>
           <div>
+            <div style={{ fontSize: 11.5, color: C.mute }}>긴급</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: count((i) => i.sev === "high" && i.status === "new") ? C.high : C.mute }}>
+              {count((i) => i.sev === "high" && i.status === "new")}
+            </div>
+          </div>
+          <div>
             <div style={{ fontSize: 11.5, color: C.mute }}>FAQ 적중률</div>
             <div style={{ fontSize: 20, fontWeight: 800, color: hitRate === null ? C.mute : hitRate >= 60 ? C.done : C.doing }}>
               {hitRate === null ? "—" : `${hitRate}%`}
@@ -129,6 +158,19 @@ export default async function Admin({
                style={{ ...S.chip, borderColor: fKind === v ? C.ink : C.line }}>
               {label} <span style={{ color: C.mute }}>
                 {v === "" ? all.length : v === "open" ? count((i) => i.kind !== "matched") : shown}
+              </span>
+            </a>
+          ))}
+        </div>
+
+        {/* 긴급도 — 돈·사칭·법적 언급이나 공개된 불만이 높음으로 올라온다 */}
+        <div style={{ marginBottom: 14 }}>
+          {([["", "긴급도 전체", C.mute], ["high", "긴급", C.high], ["mid", "주의", C.mid], ["low", "일반", C.low]] as const)
+            .map(([v, label, color]) => (
+            <a key={v || "all"} href={link({ sev: v })}
+               style={{ ...S.chip, borderColor: fSev === v ? color : C.line, color: v ? color : C.ink }}>
+              {label} <span style={{ color: C.mute }}>
+                {v ? count((i) => (i.sev ?? "low") === v) : all.length}
               </span>
             </a>
           ))}
@@ -175,9 +217,15 @@ export default async function Admin({
           const when = `${t.getUTCMonth() + 1}/${t.getUTCDate()} ${String(t.getUTCHours()).padStart(2, "0")}:${String(t.getUTCMinutes()).padStart(2, "0")}`;
           return (
             <article key={i.id} style={{ background: C.card, border: `1px solid ${C.line}`,
-                                         borderLeft: `3px solid ${STATUS_COLOR[i.status] ?? C.line}`,
+                                         borderLeft: `3px solid ${i.sev === "high" ? C.high : STATUS_COLOR[i.status] ?? C.line}`,
                                          borderRadius: 12, padding: "16px 18px", marginBottom: 12 }}>
               <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 8 }}>
+                {i.sev === "high" && (
+                  <span style={{ fontSize: 11, fontWeight: 800, color: "#fff", background: C.high,
+                                 borderRadius: 5, padding: "2px 7px" }}>
+                    {SEV_LABEL.high}
+                  </span>
+                )}
                 <span style={{ fontSize: 11.5, fontWeight: 700, color: STATUS_COLOR[i.status] ?? C.mute }}>
                   {STATUS_LABEL[i.status as keyof typeof STATUS_LABEL] ?? i.status}
                 </span>

@@ -57,11 +57,13 @@ const STATUS_MARK: Record<string, string> = { new: "🆕", doing: "🔧", done: 
    버튼을 누르면 같은 자리를 고쳐 써서 진행 상황이 한눈에 남는다. */
 export const csCard = (i: {
   at: number; text: string; topic: string; mood: string; lang: string;
-  who: string; chatType: string; kind: CsKind; status: string; note?: string;
+  who: string; chatType: string; kind: CsKind; status: string; sev?: string; note?: string;
 }) => {
+  /* 긴급은 첫 줄에 못 박는다 — 카드가 줄지어 흐르는 채널에서 눈에 먼저 걸려야 한다 */
+  const urgent = i.sev === "high" ? "🚨 긴급 · " : "";
   const head = i.kind === "offline"
     ? "⚠️ 정본을 못 읽는 동안 들어온 질문"
-    : `${MOOD_MARK[i.mood] ?? "❓"} 답변 없음 · ${i.topic}`;
+    : `${urgent}${MOOD_MARK[i.mood] ?? "❓"} 답변 없음 · ${i.topic}`;
   const where = i.chatType === "private" ? "1:1" : "그룹";
   const t = new Date(i.at + 9 * 3600000);
   const time = `${String(t.getUTCHours()).padStart(2, "0")}:${String(t.getUTCMinutes()).padStart(2, "0")}`;
@@ -108,3 +110,84 @@ export const MOOD_LABEL: Record<CsMoodTag, string> = {
 export const STATUS_LABEL = {
   new: "신규", doing: "처리중", done: "완료", faq: "FAQ 반영",
 } as const;
+
+/* ── 긴급도 (8/30 서우 — "긴급/심각도에 답변에 대해 신속하게") ────────────────
+   판매 기간에는 문의가 몰리고, 그때 가장 비싼 실수는 "돈이 걸린 한 건"을 뒤로 미루는 것이다.
+   순서를 사람이 눈으로 고르게 두면 최신순으로 처리하게 되고, 그러면 급한 것이 아래로 밀린다.
+
+   높음의 기준은 되돌릴 수 없거나 공개된 것이다 —
+   자금·사칭·법적 언급은 시간이 지나면 손해가 커지고, 그룹에서 나온 불만은 다른 사람이 본다. */
+const URGENT = new RegExp([
+  "사기|스캠|scam|해킹|hack|피싱|phishing|털렸|도난|stolen|탈취",
+  "입금했|보냈는데|안\\s?왔|못\\s?받|사라졌|없어졌",
+  "고소|법적|legal|신고|사칭|impersonat",
+  /* 환불은 문의일 수도 요구일 수도 있다 — 요구형일 때만 긴급으로 본다.
+     "환불 정책이 어떻게 되나요"까지 긴급으로 올리면 진짜 급한 건이 묻힌다 */
+  "환불\\s*(요청|해\\s?주|해줘|바랍|원합|처리)|refund\\s+(now|request|please)",
+].join("|"), "i");
+const TROUBLE = new RegExp([
+  "안\\s?되|안돼|안됨|오류|에러|실패|먹통|막혔|잠겼|error|fail|stuck|locked|broken",
+  /* 응답이 없다는 불만은 그 자체가 급하다 — 방치될수록 공개적으로 커진다 */
+  "답이?\\s?없|답변이?\\s?없|응답이?\\s?없|아무도\\s?(안|답)|무시|왜\\s?안",
+].join("|"), "i");
+
+export type CsSeverity = "high" | "mid" | "low";
+
+export const severityOf = (text: string, mood: CsMoodTag, chatType: string): CsSeverity => {
+  if (URGENT.test(text)) return "high";
+  if (mood === "negative" && (TROUBLE.test(text) || chatType !== "private")) return "high";
+  if (mood === "negative" || TROUBLE.test(text)) return "mid";
+  return "low";
+};
+
+export const SEV_LABEL: Record<CsSeverity, string> = { high: "긴급", mid: "주의", low: "일반" };
+
+/* ── 사람 단위 (8/30 서우 — "이상한 사람 · 열성적인 사람") ────────────────────
+   문의는 건별로 쌓이지만 사람은 건별로 판단할 수 없다. 같은 사람이 한 시간에 다섯 번
+   불만을 쏟는 것과, 사흘에 걸쳐 다섯 번 묻는 것은 전혀 다른 신호다.
+
+   판정은 라벨이지 처분이 아니다 — 여기서 무엇도 자동으로 차단하지 않는다.
+   사람을 규칙으로 거르는 일은 틀릴 수 있고, 틀렸을 때 값이 가장 비싼 종류의 실수다. */
+export type PersonRow = {
+  who: string; n: number; neg: number; pos: number; high: number;
+  first: number; last: number; topics: string[]; langs: string[];
+  burst: number;                      // 한 시간 안에 몰린 최대 건수
+  flag: "risk" | "champion" | null;
+};
+
+export const rollupPeople = (items: {
+  who: string; at: number; mood: string; sev?: string; topic: string; lang: string;
+}[]): PersonRow[] => {
+  const by = new Map<string, typeof items>();
+  for (const i of items) by.set(i.who, [...(by.get(i.who) ?? []), i]);
+
+  const rows: PersonRow[] = [...by.entries()].map(([who, list]) => {
+    const at = list.map((x) => x.at).sort((a, b) => a - b);
+    /* 한 시간 창을 훑어 가장 많이 몰린 구간을 센다 — 도배는 총량이 아니라 밀도로 드러난다 */
+    let burst = 1;
+    for (let i = 0; i < at.length; i++) {
+      let j = i;
+      while (j < at.length && at[j] - at[i] <= 3600000) j++;
+      burst = Math.max(burst, j - i);
+    }
+    const neg = list.filter((x) => x.mood === "negative").length;
+    const pos = list.filter((x) => x.mood === "positive").length;
+    const high = list.filter((x) => x.sev === "high").length;
+    const n = list.length;
+
+    /* 주의: 긴급이 겹치거나, 불만이 절반을 넘거나, 한 시간에 다섯 건 넘게 쏟은 사람 */
+    const risk = high >= 2 || (n >= 3 && neg / n >= 0.5) || burst >= 5;
+    /* 열성: 여러 번 묻되 불만이 없고, 고마움을 표했거나 꾸준히 참여한 사람 */
+    const champion = !risk && n >= 3 && neg === 0 && (pos >= 1 || n >= 5);
+
+    return {
+      who, n, neg, pos, high, first: at[0], last: at[at.length - 1], burst,
+      topics: [...new Set(list.map((x) => x.topic))],
+      langs: [...new Set(list.map((x) => x.lang))],
+      flag: risk ? "risk" : champion ? "champion" : null,
+    };
+  });
+
+  /* 손이 필요한 순서 — 긴급, 그다음 불만, 그다음 많이 물은 사람 */
+  return rows.sort((a, b) => b.high - a.high || b.neg - a.neg || b.n - a.n);
+};

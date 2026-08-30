@@ -25,7 +25,7 @@ import {
   getDoc, findFaq, langOf, searchFaq,
   type FaqDoc, type FaqLang, type Loc,
 } from "@/lib/faq-client";
-import { csCard, csButtons, topicOf, moodOf, whoOf, type CsKind } from "@/lib/cs";
+import { csCard, csButtons, topicOf, moodOf, whoOf, severityOf, type CsKind } from "@/lib/cs";
 import { putItem, patchItem, newId, type CsItem, type CsStatus } from "@/lib/store";
 
 const TOKEN = process.env.TG_BOT_TOKEN ?? "";
@@ -62,9 +62,11 @@ const recordCs = async (
   chatType: string,
   from?: { username?: string; first_name?: string; id?: number },
 ): Promise<CsItem> => {
+  const mood = moodOf(text);
   const item: CsItem = {
     id: newId(), at: Date.now(), text,
-    topic: topicOf(text), mood: moodOf(text),
+    topic: topicOf(text), mood,
+    sev: severityOf(text, mood, chatType),
     lang, who: whoOf(from), chatType, kind, status: "new",
   };
   try { await putItem(item); } catch { /* 저장소가 없거나 흔들려도 흐름은 막지 않는다 */ }

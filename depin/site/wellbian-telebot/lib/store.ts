@@ -32,6 +32,7 @@ export type CsItem = {
   /* matched = 후보를 보여준 것. 답한 것은 아니다 — 사용자가 하나를 누르면 done 이 된다 */
   kind: "unanswered" | "offline" | "matched";
   status: CsStatus;
+  sev?: "high" | "mid" | "low";   // 긴급도 — 옛 기록에는 없을 수 있어 선택
   note?: string;         // 처리 메모 / 확정한 답변
 };
 
