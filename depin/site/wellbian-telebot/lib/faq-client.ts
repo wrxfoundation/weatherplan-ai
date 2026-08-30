@@ -113,18 +113,34 @@ export const langOf = (code?: string): FaqLang =>
 export const findFaq = (doc: FaqDoc, lang: FaqLang, id: string) =>
   doc.faq[lang]?.find((f) => f.id === id) ?? null;
 
+/* 질문 어미와 의문사는 어느 FAQ 에나 들어 있어 매칭을 망친다.
+   "환불 되나요?" 가 "바우처를 수락하지 않으면 어떻게 되나요?" 에 붙는 식이다 —
+   정본에 없는 단어(환불)는 무시되고 어미(되나요)만 걸린 결과다. 실제로 그렇게 나왔다.
+   의미를 지는 건 명사이므로, 명사가 하나도 안 걸리면 후보를 만들지 않는다. */
+const STOP = new Set([
+  "되나요", "되나", "됩니까", "됩니다", "하나요", "합니까", "합니다", "인가요", "입니까", "입니다",
+  "있나요", "있습니까", "있어요", "없나요", "없어요", "하면", "되면", "해야", "하는", "되는",
+  "어떻게", "어떤", "어느", "무엇", "뭔가요", "뭐예요", "뭐가", "언제", "어디", "어디서",
+  "얼마", "얼마나", "주세요", "알려", "궁금", "그리고", "그럼", "저는", "제가", "이거", "그거",
+  "what", "when", "where", "how", "why", "which", "can", "could", "should", "does", "did",
+  "the", "this", "that", "and", "for", "with", "from", "get", "use", "you", "your", "are", "was",
+]);
+
 /* 자유 질문 매칭 — 정본에 없는 답을 지어내지 않기 위한 최소 검색이다.
-   두 글자 이상 토큰이 몇 개나 겹치는지만 센다. 질문에 걸린 토큰은 두 배로 친다
-   (답변 본문에 스치는 것보다 질문이 맞는 편이 정확하다). 못 찾으면 빈 배열이다. */
+   질문(q)에 명사가 하나도 안 걸리면 아예 후보에서 뺀다. 답변 본문에만 스친 것은
+   보조 점수로만 쓴다 — 본문은 길어서 아무 단어나 우연히 걸린다. */
 export const searchFaq = (doc: FaqDoc, lang: FaqLang, query: string): FaqEntry[] => {
-  const tokens = query.toLowerCase().split(/[^0-9a-z가-힣]+/).filter((w) => w.length >= 2);
+  const tokens = query.toLowerCase()
+    .split(/[^0-9a-z가-힣]+/)
+    .filter((w) => w.length >= 2 && !STOP.has(w));
   if (!tokens.length) return [];
   return (doc.faq[lang] ?? [])
     .map((f) => {
       const q = f.q.toLowerCase();
-      const hay = `${f.q} ${f.a}`.toLowerCase();
-      const score = tokens.reduce((n, w) => n + (q.includes(w) ? 2 : hay.includes(w) ? 1 : 0), 0);
-      return { f, score };
+      const a = f.a.toLowerCase();
+      const inQ = tokens.filter((w) => q.includes(w)).length;
+      const inA = tokens.filter((w) => !q.includes(w) && a.includes(w)).length;
+      return { f, score: inQ ? inQ * 2 + inA : 0 };
     })
     .filter((x) => x.score > 0)
     .sort((a, b) => b.score - a.score)
