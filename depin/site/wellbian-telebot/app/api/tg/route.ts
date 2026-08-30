@@ -288,9 +288,14 @@ export async function POST(req: NextRequest) {
     const wants = cmd === "faq" || cmd === "start" || cmd === "schedule" || cmd === "help"
       || (!cmd && Boolean(text) && isPrivate);
     if (!wants) {
-      /* 봇끼리 주고받는 말과 명령은 세지 않는다 — Rose 의 안내까지 대화로 잡히면
-         주제 분포가 통째로 틀어진다 */
-      if (!isPrivate && text && !cmd && !msg.from?.is_bot) {
+      /* 세지 않는 것 셋.
+         - 봇끼리 주고받는 말: Rose 의 안내까지 대화로 잡히면 주제 분포가 틀어진다
+         - 명령(/...): 사람의 말이 아니다
+         - 채널에서 자동으로 넘어온 공지(is_automatic_forward): 공지 채널에 토론 그룹을
+           연결하면 게시물이 그룹으로 그대로 전달된다. 그걸 대화로 세면 공지를 올릴
+           때마다 말수가 부풀고, 공지 본문이 주제 분포를 통째로 흔든다.
+           사람이 그 아래 다는 댓글은 보통 메시지로 오므로 그대로 센다. */
+      if (!isPrivate && text && !cmd && !msg.from?.is_bot && !msg.is_automatic_forward) {
         await observeGroup(text, lang, chat.type ?? "?", msg.from, chat.id);
       }
       return Response.json({ ok: true });
