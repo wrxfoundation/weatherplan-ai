@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Check, ChevR } from "@/components/icons";
 import { LangToggle } from "@/components/chrome";
+import AirMonitor from "@/components/AirMonitor";
 import { MOCK_DEVICE, MOCK_ORDER, fmt } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
 
@@ -68,6 +69,11 @@ export default function MePage() {
           <Link href="/#setup" style={{ fontSize: 12.5, fontWeight: 700, color: "var(--w-main)" }}>{en ? "Setup guide →" : "연동 가이드 보기 →"}</Link>
         </div>
 
+        {/* 내 공기 — 등록한 기기가 있으면 이게 맨 위다 (8/30 회의: "등록화면 대신
+            데이터 모니터링과 보상이 상시 보이게"). 주문 상태는 한 번 보면 끝나지만
+            여기는 매일 열어 보는 자리라 순서를 바꿨다. */}
+        <AirMonitor />
+
         {/* 주문 카드 #1234 (배송 접수 대기) */}
         <div style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 16, overflow: "hidden" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "18px 24px", borderBottom: "1px solid var(--line)", flexWrap: "wrap" }}>
@@ -77,7 +83,8 @@ export default function MePage() {
             </div>
             <div className="desk-only" style={{ display: "flex", gap: 16, fontSize: 12.5, color: "var(--cap)" }}>
               <span>{order.id}</span>
-              <span>{order.unitPrice} RLUSD</span>
+              {/* 가격은 확정 전까지 화면에 두지 않는다(8/30 회의: 650/450 미확정).
+                  실제 결제 금액이 붙으면 그때 되살린다 — order.unitPrice 는 그대로 있다. */}
               <span>{en ? "Paid 8/26" : "결제 8/26"}</span>
               <Link href={`/orders/${order.id}`} className="mono" style={{ fontSize: 12 }}>{order.txHash} ↗</Link>
             </div>
@@ -137,7 +144,6 @@ export default function MePage() {
             </div>
             <div className="desk-only" style={{ display: "flex", gap: 16, fontSize: 12.5, color: "var(--cap)" }}>
               <span>WB-3F8D-K21P</span>
-              <span>650 RLUSD</span>
               <span>{en ? "Registered 8/24" : "등록 8/24"}</span>
               <a href="#nft" className="mono" style={{ fontSize: 12 }}>{en ? "License NFT ↗" : "라이선스 NFT ↗"}</a>
             </div>

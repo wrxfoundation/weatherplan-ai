@@ -199,6 +199,54 @@ export const MOCK_DEVICE: Device = {
   wifi: true,
 };
 
+/* 내 공기 — 24시간 목값 (8/30 회의: "모니터링 화면을 에어사인 수준으로 크게")
+   기기 데이터 API 가 붙기 전까지 화면을 판단하기 위한 값이다. 매번 흔들리면 화면을
+   볼 수 없으므로 고정해 둔다. 하루 흐름을 실제처럼 넣었다 — 자는 동안 CO₂ 가 오르고,
+   아침에 환기하면 떨어지고, 저녁에 다시 오른다. 이 모양이 안 보이면 그래프를 넣은
+   의미가 없다. */
+export type AirPoint = { h: number; co2: number; pm25: number; temp: number; hum: number };
+
+export const MOCK_AIR: AirPoint[] = [
+  { h: 0,  co2: 980,  pm25: 11, temp: 23.4, hum: 48 },
+  { h: 1,  co2: 1080, pm25: 10, temp: 23.1, hum: 49 },
+  { h: 2,  co2: 1160, pm25: 10, temp: 22.9, hum: 50 },
+  { h: 3,  co2: 1240, pm25: 9,  temp: 22.7, hum: 51 },
+  { h: 4,  co2: 1310, pm25: 9,  temp: 22.6, hum: 52 },
+  { h: 5,  co2: 1370, pm25: 10, temp: 22.5, hum: 52 },
+  { h: 6,  co2: 1420, pm25: 12, temp: 22.6, hum: 51 },
+  { h: 7,  co2: 1180, pm25: 16, temp: 23.0, hum: 49 },   // 환기
+  { h: 8,  co2: 720,  pm25: 21, temp: 23.6, hum: 46 },
+  { h: 9,  co2: 640,  pm25: 19, temp: 24.1, hum: 45 },
+  { h: 10, co2: 610,  pm25: 16, temp: 24.6, hum: 44 },
+  { h: 11, co2: 630,  pm25: 14, temp: 25.0, hum: 43 },
+  { h: 12, co2: 700,  pm25: 13, temp: 25.3, hum: 43 },
+  { h: 13, co2: 760,  pm25: 12, temp: 25.6, hum: 42 },
+  { h: 14, co2: 790,  pm25: 12, temp: 25.8, hum: 42 },
+  { h: 15, co2: 820,  pm25: 13, temp: 25.7, hum: 43 },
+  { h: 16, co2: 860,  pm25: 15, temp: 25.4, hum: 44 },
+  { h: 17, co2: 910,  pm25: 18, temp: 25.0, hum: 45 },
+  { h: 18, co2: 1020, pm25: 22, temp: 24.6, hum: 46 },   // 저녁 · 조리
+  { h: 19, co2: 1140, pm25: 31, temp: 24.4, hum: 48 },
+  { h: 20, co2: 1060, pm25: 24, temp: 24.2, hum: 48 },
+  { h: 21, co2: 950,  pm25: 18, temp: 24.0, hum: 47 },
+  { h: 22, co2: 880,  pm25: 15, temp: 23.8, hum: 47 },
+  { h: 23, co2: 840,  pm25: 13, temp: 23.6, hum: 48 },
+];
+
+/* 등급은 세 단계다. 처음에 네 단계로 잡았다가 색을 검증기에 넣어 보니 주황 계열
+   셋이 서로 갈리지 않았다(정상 시야에서도 ΔE 8.8) — 색만 늘려 놓고 구분이 안 되면
+   단계가 있으나 마나다. 세 단계로 줄이고 등급 이름을 늘 함께 띄운다. */
+export type AirGrade = "good" | "fair" | "bad";
+
+export const co2Grade = (v: number): AirGrade => (v <= 800 ? "good" : v <= 1200 ? "fair" : "bad");
+export const pmGrade  = (v: number): AirGrade => (v <= 15 ? "good" : v <= 35 ? "fair" : "bad");
+
+export const GRADE_LABEL: Record<AirGrade, { ko: string; en: string }> = {
+  good: { ko: "좋음", en: "Good" },
+  fair: { ko: "보통", en: "Fair" },
+  bad:  { ko: "나쁨", en: "Poor" },
+};
+
 /* 사전예약 누적 목값 (8/27 — teaser/dday 시뮬레이션용) */
 export const MOCK_PRENOTIFY = 3847;
 
