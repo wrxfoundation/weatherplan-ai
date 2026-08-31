@@ -1,39 +1,61 @@
 // ─── S-01 소비자 홈 (트랙 A · 목업 #2a/#2b 재현) ─────────────────
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { CATEGORIES, VISIBLE_CATEGORIES, SHOP_TILE } from '../../lib/constants'
+import { VISIBLE_CATEGORIES, SHOP_TILE } from '../../lib/constants'
 import { won, calcQuote, CARRIERS } from '../../lib/engine'
 import { useStore } from '../../lib/store'
 import { useCountUp, LiveDot } from '../../components/ui'
 import Reviews from '../../components/Reviews'
 
-// 검색 동의어 — 흔히 치는 말을 카테고리 슬러그로 정규화 (이름 스캔보다 먼저 본다)
-const SYNONYM = {
-  tv: 'internet', 티비: 'internet', 와이파이: 'internet', 인터넷: 'internet',
-  핸드폰: 'phone', 휴대전화: 'phone', 폰: 'phone', 요금제: 'phone',
-  청소: 'etc', 에어컨: 'appliance', 냉장고: 'appliance', 세탁기: 'appliance',
-  안마의자: 'rental', 매트리스: 'rental', 비데: 'rental',
-}
+
+// 히어로 상담 진입 — 지금 쓰는 통신사와 관심 기종만 물어본다.
+// 기종에는 "없어요 / 나중에" 퇴로를 같은 무게로 둔다. 고를 게 없으면
+// 고객은 그냥 떠나기 때문에, 퇴로가 곧 상담 진입로가 된다.
+const CUR_CARRIERS = ['SK', 'KT', 'LG U+', '알뜰폰']
+const DEVICE_CHOICES = [
+  { key: 'fold8', label: '갤럭시 Z 폴드8' },
+  { key: 's26u', label: '갤럭시 S26 울트라' },
+  { key: 'ip17', label: '아이폰 17 프로' },
+  { key: 'a56', label: '갤럭시 A56' },
+  { key: 'none', label: '원하는 기종이 없어요', escape: true },
+  { key: 'later', label: '상담 후 결정할게요', escape: true },
+]
+const deviceLabel = (k) => DEVICE_CHOICES.find((d) => d.key === k)?.label ?? ''
 
 export default function Home({ tenant }) {
   const nav = useNavigate()
   // 파트너몰도 본사가 취급 중인 상품군 안에서만 노출한다(몰마다 목록이 달라지지 않게)
   const cats = tenant ? VISIBLE_CATEGORIES.filter((c) => tenant.cats.includes(c.slug)) : VISIBLE_CATEGORIES
+  const consultTo = tenant ? `/consult?src=${tenant.slug}` : '/consult'
+  const [carrier, setCarrier] = useState('')
+  const [device, setDevice] = useState('')
+
+  // 선택값은 두 갈래 모두에 실어 보낸다 — 상담사는 쿼리로, AI는 첫 질문으로.
+  // 아무것도 안 골라도 진행된다(선택은 상담을 짧게 할 뿐, 조건이 아니다).
+  const consultQuery = (() => {
+    const p = new URLSearchParams()
+    if (carrier) p.set('cur', carrier)
+    if (device && device !== 'none' && device !== 'later') p.set('device', device)
+    if (device === 'none') p.set('note', '원하는 기종 없음')
+    if (device === 'later') p.set('note', '상담 후 기종 결정')
+    const q = p.toString()
+    return q ? (consultTo.includes('?') ? '&' : '?') + q : ''
+  })()
+
+  const aiSeed = (() => {
+    if (!carrier && !device) return ''
+    const cur = carrier ? `지금 ${carrier} 쓰고 있어요.` : ''
+    if (device === 'none') return `${cur} 원하는 기종이 목록에 없는데 어떻게 알아보면 되나요?`.trim()
+    if (device === 'later') return `${cur} 기종은 아직 못 정했는데 요금부터 계산해 주세요.`.trim()
+    if (device) return `${cur} ${deviceLabel(device)}로 바꾸면 월 얼마인가요?`.trim()
+    return `${cur} 지금 요금이 적정한지 계산해 주세요.`.trim()
+  })()
+
   // 히어로 타일 = 취급 카테고리 + 쇼핑몰. 파트너몰에서는 카테고리가 상담으로 흐른다.
   const tiles = [
     ...cats.map((c) => ({ slug: c.slug, name: c.name, icon: c.icon, to: tenant ? `${consultTo}&cat=${c.slug}` : `/category/${c.slug}` })),
     SHOP_TILE,
   ]
-  const consultTo = tenant ? `/consult?src=${tenant.slug}` : '/consult'
-
-  // 카테고리 바로가기 — 히어로 검색창을 걷어낸 뒤에도 해시태그가 곧바로 목적지로 보낸다.
-  // 매칭이 안 되면 상담으로 흘려보내 막다른 길을 만들지 않는다.
-  const go = (term) => {
-    const s = String(term).trim().toLowerCase()
-    const hit = (SYNONYM[s] && CATEGORIES.find((c) => c.slug === SYNONYM[s]))
-      || CATEGORIES.find((c) => s && (c.name.includes(s) || s.includes(c.name)))
-    nav(hit ? `/category/${hit.slug}` : consultTo)
-  }
 
   return (
     <main>
@@ -73,26 +95,65 @@ export default function Home({ tenant }) {
             <p className="mt-4 max-w-md text-[15px] leading-[26px] text-body sm:text-[16.5px] sm:leading-[28px]">
               {tenant?.greeting ?? '인터넷·휴대폰·이사·정수기… 흩어진 생활서비스를 한 곳에서 비교하고, 남들 몰라서 못 받은 지원금까지 왕창 돌려받으세요.'}
             </p>
-            {/* 카테고리 바로가기 — 검색창을 걷어낸 자리를 채우는 직행 경로 */}
-            <div className="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-[13.5px] font-semibold text-label">
-              {['#인터넷', '#핸드폰', '#렌탈'].map((t) => (
-                <button key={t} onClick={() => go(t.slice(1))} className="hover:text-primary-text">{t}</button>
-              ))}
+            {/* 상담 진입 — 두 갈래를 크게 세우고, AI 쪽에는 "안 바꿔도 된다"는 안심 문구를 붙인다.
+                아래 통신사·기종은 답할수록 상담이 짧아지는 선택 사항(둘 다 건너뛸 수 있다). */}
+            <div className="mt-6 grid max-w-lg grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('moduon:chat-open', { detail: { seed: aiSeed } }))}
+                  className="glass-btn-cta inline-flex h-[62px] w-full items-center justify-center rounded-btn bg-primary px-4 text-[16.5px] font-extrabold text-white transition-colors hover:bg-primary-hover sm:text-[17px]"
+                >
+                  AI와 상담할게요
+                </button>
+                <p className="mt-2 text-[12.5px] font-semibold leading-[18px] text-label">
+                  바꾸라고 하지 않아요.<br className="hidden sm:block" /> <span className="text-primary-text">먼저 계산부터 해드려요.</span>
+                </p>
+              </div>
+              <div>
+                <Link
+                  to={`${consultTo}${consultQuery}`}
+                  className="shimmer-cta glass-btn inline-flex h-[62px] w-full items-center justify-center rounded-btn border-[1.5px] border-primary bg-white px-4 text-[16.5px] font-extrabold text-primary-text transition-colors hover:bg-tint sm:text-[17px]"
+                >
+                  전문 상담사랑 상담할게요
+                </Link>
+                <p className="mt-2 text-[12.5px] font-semibold leading-[18px] text-label">
+                  평균 10분 내 콜백,<br className="hidden sm:block" /> 통화는 무료예요.
+                </p>
+              </div>
             </div>
-            {/* 히어로 CTA — 좌: AI 선상담(즉답), 우: 사람 상담사 연결. 두 갈래를 같은 무게로 제시한다 */}
-            <div className="mt-5 grid max-w-md grid-cols-2 gap-3">
-              <button
-                onClick={() => window.dispatchEvent(new CustomEvent('moduon:chat-open'))}
-                className="glass-btn-cta inline-flex h-[52px] items-center justify-center rounded-btn bg-primary px-4 text-[15px] font-bold text-white transition-colors hover:bg-primary-hover"
-              >
-                AI와 먼저 상담
-              </button>
-              <Link
-                to={consultTo}
-                className="shimmer-cta glass-btn inline-flex h-[52px] items-center justify-center rounded-btn border border-primary bg-white px-4 text-[15px] font-bold text-primary-text transition-colors hover:bg-tint"
-              >
-                상담사 연결
-              </Link>
+
+            {/* 지금 쓰는 통신사 */}
+            <div className="mt-5 max-w-lg">
+              <div className="text-[12.5px] font-bold text-label">지금 쓰시는 통신사</div>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {CUR_CARRIERS.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCarrier(carrier === c ? '' : c)}
+                    aria-pressed={carrier === c}
+                    className={`h-9 rounded-full border px-3.5 text-[12.5px] font-bold transition-colors ${carrier === c ? 'border-primary bg-primary text-white' : 'border-line bg-white/80 text-label hover:border-primary/60'}`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 관심 기종 — "없어요 / 나중에" 퇴로를 같은 무게로 둬서 이탈 대신 상담으로 흐르게 */}
+            <div className="mt-3.5 max-w-lg">
+              <div className="text-[12.5px] font-bold text-label">관심 있는 기종</div>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {DEVICE_CHOICES.map((d) => (
+                  <button
+                    key={d.key}
+                    onClick={() => setDevice(device === d.key ? '' : d.key)}
+                    aria-pressed={device === d.key}
+                    className={`h-9 rounded-full border px-3.5 text-[12.5px] font-bold transition-colors ${device === d.key ? 'border-primary bg-primary text-white' : d.escape ? 'border-dashed border-line bg-white/60 text-muted hover:border-primary/60' : 'border-line bg-white/80 text-label hover:border-primary/60'}`}
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
             </div>
             {/* 모바일 절약 증거 — 데스크톱 말풍선(SavingsBubbles) 대응 한 줄 칩 (점만 살아있게) */}
             <div className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3.5 py-2 shadow-card lg:hidden">

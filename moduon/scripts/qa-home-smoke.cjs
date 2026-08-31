@@ -18,10 +18,10 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   check((await page.locator('button[aria-label="검색"]').count()) === 0, '히어로 검색 버튼 제거')
 
   // ② CTA 2열 — 같은 행(동일 y)에 좌우로 배치
-  const ai = page.locator('text=AI와 먼저 상담').first()
-  const human = page.locator('text=상담사 연결').first()
-  check(await ai.isVisible(), 'CTA: AI와 먼저 상담')
-  check(await human.isVisible(), 'CTA: 상담사 연결')
+  const ai = page.locator('text=AI와 상담할게요').first()
+  const human = page.locator('text=전문 상담사랑 상담할게요').first()
+  check(await ai.isVisible(), 'CTA: AI와 상담할게요')
+  check(await human.isVisible(), 'CTA: 전문 상담사랑 상담할게요')
   const [a, h] = [await ai.boundingBox(), await human.boundingBox()]
   check(Math.abs(a.y - h.y) < 6, `2열 동일 행 배치 (y ${Math.round(a.y)} / ${Math.round(h.y)})`)
   check(a.x < h.x, `좌=AI · 우=상담사 (x ${Math.round(a.x)} < ${Math.round(h.x)})`)
@@ -35,9 +35,29 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   // ④ 상담사 연결 → /consult
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
   await page.waitForTimeout(400)
-  await page.locator('text=상담사 연결').first().click()
+  await page.locator('text=전문 상담사랑 상담할게요').first().click()
   await page.waitForTimeout(700)
   check(page.url().includes('/consult'), `상담사 연결 → 상담 페이지 (${page.url().split('/').pop()})`)
+
+  // ④-b 안심 문구 · 통신사/기종 선택 → 상담 쿼리 전달
+  await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
+  await page.waitForTimeout(400)
+  text = await page.evaluate(() => document.body.innerText)
+  check(text.includes('바꾸라고 하지 않아요'), '안심 문구: 바꾸라고 하지 않아요')
+  check(text.includes('먼저 계산부터 해드려요'), '안심 문구: 먼저 계산부터')
+  check(text.includes('지금 쓰시는 통신사'), '현 통신사 선택란')
+  for (const c of ['SK', 'KT', 'LG U+', '알뜰폰']) check(text.includes(c), `통신사 보기: ${c}`)
+  check(text.includes('관심 있는 기종'), '기종 선택란')
+  check(text.includes('원하는 기종이 없어요') && text.includes('상담 후 결정할게요'), '기종 퇴로 2종')
+
+  await page.locator('button:has-text("KT")').first().click()
+  await page.waitForTimeout(150)
+  await page.locator('button:has-text("갤럭시 Z 폴드8")').first().click()
+  await page.waitForTimeout(150)
+  await page.locator('text=전문 상담사랑 상담할게요').first().click()
+  await page.waitForTimeout(700)
+  check(page.url().includes('cur=KT') && page.url().includes('device=fold8'),
+    `선택값이 상담 쿼리로 전달 (${decodeURIComponent(page.url().split('?')[1] || '')})`)
 
   // ⑤ 히어로 타일 — 인터넷/TV · 휴대폰 · 렌탈 · 쇼핑몰, 유리 패널 위에
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
@@ -51,7 +71,7 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   }
   // 타일이 히어로(=CTA 아래) 안에 있고, 유리 패널(backdrop-filter)을 쓰는지
   const tileBox = await page.locator('a:has(img[src*="/assets/cat-"])').first().boundingBox()
-  const ctaBox = await page.locator('text=AI와 먼저 상담').first().boundingBox()
+  const ctaBox = await page.locator('text=AI와 상담할게요').first().boundingBox()
   check(tileBox.y > ctaBox.y, `타일이 AI 상담 버튼 아래 (cta ${Math.round(ctaBox.y)} < tile ${Math.round(tileBox.y)})`)
   const glass = await page.evaluate(() => {
     const a = [...document.querySelectorAll('a')].find((x) => x.querySelector('img[src*="/assets/cat-"]'))

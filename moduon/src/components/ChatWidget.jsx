@@ -24,6 +24,7 @@ export default function ChatWidget({ tenant }) {
   // 세션 내 대화 유지 — sessionStorage 미러 (파싱 실패 시 인사말로 초기화)
   const [msgs, setMsgs] = useState(() => { try { return JSON.parse(sessionStorage.getItem(CHAT_KEY)) ?? [HELLO] } catch { return [HELLO] } })
   const [input, setInput] = useState('')
+  const sendRef = useRef(null)
   const [busy, setBusy] = useState(false)
   const bodyRef = useRef(null)
   const nav = useNavigate()
@@ -46,10 +47,16 @@ export default function ChatWidget({ tenant }) {
     return () => document.removeEventListener('keydown', onKey)
   }, [open])
 
-  // 외부에서 챗을 여는 통로 — 히어로의 "AI와 먼저 상담" 같은 CTA가 쓴다.
+  // 외부에서 챗을 여는 통로 — 히어로의 "AI와 상담할게요" 같은 CTA가 쓴다.
+  // detail.seed 가 오면 그 질문으로 대화를 시작한다(고객이 다시 타이핑하지 않게).
   // 위젯은 레이아웃 최상단에 붙어 있어 라우트가 바뀌어도 이 구독은 유지된다.
   useEffect(() => {
-    const openChat = () => { setNudge(false); setOpen(true) }
+    const openChat = (e) => {
+      setNudge(false)
+      setOpen(true)
+      const seed = e?.detail?.seed
+      if (seed) setTimeout(() => sendRef.current?.(seed), 150)
+    }
     window.addEventListener('moduon:chat-open', openChat)
     return () => window.removeEventListener('moduon:chat-open', openChat)
   }, [])
@@ -110,6 +117,9 @@ export default function ChatWidget({ tenant }) {
     setMsgs((m) => [...m, { role: 'assistant', text: reply.text, action: reply.action, source: reply.source }])
     setBusy(false)
   }
+  // 이벤트 리스너는 마운트 시 한 번만 등록되므로, 그 안에서 부르는 send는
+  // 최신 클로저를 가리키도록 ref로 넘겨준다(옛 msgs로 대화가 시작되는 것 방지).
+  sendRef.current = send
 
   // 계산기 화면은 모바일 하단 고정 합계 바가 있어 FAB를 그 위로 올린다
   const hasBottomBar = loc.pathname.startsWith('/calculator')
