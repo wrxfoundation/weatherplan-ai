@@ -2,7 +2,7 @@
 /* GNB · 푸터 · 커뮤니티 패널 · ImageSlot — 공통 크롬 (PRD §5.4 / §5.7 / §6.1 S9) */
 import Image from "next/image";
 import Link from "next/link";
-import { LINKS } from "@/lib/data";
+import { LINKS, fillPrice } from "@/lib/data";
 import { useI18n, LANGS, type Lang } from "@/lib/i18n";
 import { D } from "@/lib/dict";
 import { TgIcon, XIcon } from "./icons";
@@ -113,7 +113,7 @@ export function CommunityFooter({ showNotice = false }: { showNotice?: boolean }
             <div>* {t(D.reserveNotGuaranteed)}</div>
             <div>* {t(D.noticeVoucher)}</div>
             <div>* {t(D.capFive)}</div>
-            <div>* {t(D.priceTbd)}</div>
+            <div>* {fillPrice(t(D.priceSet))}</div>
             <div style={{ marginTop: 7 }}>{t(D.boostWalletCond)}</div>
           </div>
         )}

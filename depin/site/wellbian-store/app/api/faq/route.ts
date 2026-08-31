@@ -14,6 +14,7 @@
    9/7·9/15 같은 정오·18시 경계에서도 문제가 되지 않는다(봇도 자체 캐시 60초를 둔다). */
 
 import { FAQ } from "@/lib/faq-source";
+import { fillPrice } from "@/lib/data";
 import { MILESTONES, phaseAt, nextMilestone } from "@/lib/schedule";
 import { D } from "@/lib/dict";
 
@@ -22,6 +23,13 @@ export const dynamic = "force-dynamic";
 
 /** 봇은 KO·EN 만 쓴다. 5개 언어 전부 보내면 응답이 불필요하게 커진다. */
 const loc = (m: { ko: string; en?: string }) => ({ ko: m.ko, en: m.en ?? m.ko });
+
+/* 가격 고지는 자리표시자를 채워서 내보낸다 — 봇이 받은 문자열에 {first} 가 그대로 남으면
+   그 상태로 사용자에게 간다. 채우는 책임은 정본을 배급하는 이쪽에 있다. */
+const locPrice = (m: { ko: string; en?: string }) => {
+  const v = loc(m);
+  return { ko: fillPrice(v.ko), en: fillPrice(v.en) };
+};
 
 const MS_LABEL = {
   reserveOpen: D.msReserveOpen,
@@ -64,7 +72,7 @@ export function GET() {
       phaseLabel: loc(PHASE_LABEL[phase]),
       next: nx ? { key: nx.key, at: nx.at } : null,
       /* 일정만 떼어 말하면 "가격도 정해졌다"로 읽힌다 — 고지를 정본에서 같이 내보낸다 */
-      notices: [loc(D.priceTbd), loc(D.reserveNotGuaranteed)],
+      notices: [locPrice(D.priceSet), loc(D.reserveNotGuaranteed)],
     },
   };
 

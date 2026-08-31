@@ -304,12 +304,17 @@ export const D = {
     ja: "1アカウントにつき最大5個まで申し込めます。", zh: "每个账户最多可申请 5 个。",
     es: "Hasta 5 por cuenta.",
   }),
-  priceTbd: m({
-    ko: "가격과 총 발행 수량은 판매 오픈 전에 공지됩니다.",
-    en: "Price and total supply are announced before the sale opens.",
-    ja: "価格と総発行数量は販売オープン前にお知らせします。",
-    zh: "价格与总发行量将在开售前公布。",
-    es: "El precio y el suministro total se anuncian antes de la apertura.",
+  /* 8/31 서우 — 9/15 판매분 450 RLUSD 확정. "공지 예정"은 이제 사실이 아니라서 버렸다.
+     수량 문구도 같이 뺐다: 8/28 회의로 판매 수량을 스스로 정하지 않기로 해서 공지할 수량
+     자체가 없어졌는데 문구만 남아 있었다.
+     숫자는 자리표시자로 둔다 — 다섯 언어에 450·650 을 직접 적으면 정본 사본이 열 개가 된다.
+     채우는 곳은 lib/data.ts 의 fillPrice() 한 곳뿐이다. */
+  priceSet: m({
+    ko: "9월 15일 판매분은 {first} RLUSD입니다. 2차 판매부터는 {later} RLUSD가 적용됩니다.",
+    en: "The September 15 batch is {first} RLUSD. From the second batch it is {later} RLUSD.",
+    ja: "9月15日の販売分は {first} RLUSD です。第2次販売からは {later} RLUSD が適用されます。",
+    zh: "9 月 15 日发售批次为 {first} RLUSD。自第二批次起适用 {later} RLUSD。",
+    es: "El lote del 15 de septiembre es de {first} RLUSD. Desde el segundo lote, {later} RLUSD.",
   }),
   /* 바우처 — 새 정책의 핵심 신규 개념. 발행(신청 시)과 수락(지갑에서)은 다른 사건이다. */
   voucherName: m({

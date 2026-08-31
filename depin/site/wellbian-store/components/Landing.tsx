@@ -10,8 +10,7 @@ import { IconMeasure, IconVerify, IconReward, IconData, IconFlow, IconCoins, Ico
 import {
   SPECS, SPECS_EN, FAQS, FAQS_EN, FAQS_EXTRA, FAQS_EXTRA_EN, LINK_STEPS, LINK_STEPS_EN,
   RL_STEPS, RL_STEPS_EN, LINKS, MOCK_INVENTORY, MOCK_PRENOTIFY, PREORDER_FEED, PRICE, calc, fmt,
-  NOTICE_REWARD, NOTICE_REWARD_EN, type SalePhase,
-} from "@/lib/data";
+  NOTICE_REWARD, NOTICE_REWARD_EN, type SalePhase, fillPrice } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
 import { D } from "@/lib/dict";
 import { Gnb, CommunityFooter } from "./chrome";
@@ -79,8 +78,8 @@ export default function Landing() {
   /* 8/28 회의로 수량 상한이 없어져 잔여·소진율이 사라졌다 — 누적 판매 대수만 쓴다 */
   const { sold } = calc(inv);
   const soldOut = phase === "sold_out";
-  /* 단일가 (8/27 서우: 얼리버드 폐지 — 대외 가격은 650 하나) */
-  const curPrice = PRICE.first;  // 1차 판매가 (8/28 회의: 얼리버드 폐기, 1차 전체가 450)
+  /* 9/15 판매분 가격 (8/31 서우 확정). 값은 lib/data.ts 의 PRICE 하나만 본다 */
+  const curPrice = PRICE.first;
 
   const specs = en ? SPECS_EN : SPECS;
   const faqs = en ? FAQS_EN : FAQS;
@@ -444,7 +443,7 @@ export default function Landing() {
             {t(D.scheduleWhy)}
           </p>
           <p style={{ fontSize: 15.5, lineHeight: 1.7, color: "var(--ink-4)", fontWeight: 700 }}>
-            {t(D.priceTbd)}
+            {fillPrice(t(D.priceSet))}
           </p>
         </div>
       </section>

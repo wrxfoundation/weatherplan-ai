@@ -68,9 +68,18 @@ export const MOCK_INVENTORY: Record<SalePhase, Inventory> = {
   waitlist_open: { sold: 5000 },
 };
 
-/* 8/28 회의: 얼리버드 티어를 없애고 1차 판매 전체를 450 으로, 2차부터 650 으로 올린다.
+/* 8/31 서우: **9/15 판매분 450 RLUSD 확정.** 8/28 에 얼리버드 티어를 없애고 1차 전체를 450,
+   2차부터 650 으로 정했던 값이 그대로 확정됐다.
+
+   여기가 가격의 정본이다. 화면·고지·FAQ·봇이 전부 이 상수를 본다 — 문구에 숫자를 직접
+   적으면 사본이 생기고, 5개 언어면 사본이 열 개가 된다. 8/29 사고가 정확히 그 모양이었다.
    키 이름의 eb/gen 은 폐기된 얼리버드 구조의 잔재라 first/later 로 바꿨다. */
 export const PRICE = { first: 450, later: 650 } as const;
+
+/** 고지 문구의 자리표시자를 정본 값으로 채운다. 어순이 언어마다 달라서 숫자를 문장 밖에서
+    이어 붙일 수 없다 — 자리표시자를 문장 안에 두고 여기서만 값을 넣는다. */
+export const fillPrice = (s: string) =>
+  s.replace("{first}", String(PRICE.first)).replace("{later}", String(PRICE.later));
 
 /* 상한이 없으니 잔여·소진율은 계산할 게 없다. 대외 표기도 누적 판매 대수 하나뿐이라
    래퍼만 남긴다 — 실서버로 바꿀 때 이 지점만 갈아끼우면 된다. */
@@ -112,7 +121,7 @@ export const FAQS = [
   { q: "예약하면 반드시 살 수 있나요?", a: "구매를 보장하지는 않습니다. 예매권을 가진 분에게 구매창이 먼저 열리는 것이고, 신청이 준비된 물량을 넘으면 선착순이 아니라 추첨으로 정합니다. 예약으로 저희에게 내시는 금액은 없습니다." },
   { q: "몇 대까지 신청할 수 있나요?", a: "1계정당 최대 10대까지 신청하실 수 있습니다. 기업이나 대량 구매는 admin@wellbian.io 로 문의해 주세요." },
   { q: "언제 구매할 수 있나요?", a: "사전예약은 9월 7일 정오부터 9월 14일 정오까지입니다. 우선 구매창은 9월 15일 정오, 일반 구매창은 같은 날 오후 6시에 열리며, 예매 물량이 먼저 소진되면 그보다 일찍 열립니다. 판매는 9월 16일 정오에 끝납니다." },
-  { q: "가격은 언제 알 수 있나요?", a: "가격은 판매 오픈 전에 공지됩니다. 결제는 RLUSD로 진행되니, 거래소에서 사서 지갑으로 옮기는 데 시간이 걸리는 점을 감안해 미리 준비해 두시길 권합니다." },
+  { q: "가격은 얼마인가요?", a: `9월 15일 판매분은 ${PRICE.first} RLUSD입니다. 2차 판매부터는 ${PRICE.later} RLUSD가 적용됩니다. 결제는 RLUSD로 진행되니, 거래소에서 사서 지갑으로 옮기는 데 시간이 걸리는 점을 감안해 미리 준비해 두시길 권합니다.` },
   { q: "RLUSD는 어디서 구하나요?", a: "RLUSD를 지원하는 국내·해외 거래소에서 구매한 뒤 개인 지갑으로 출금하시면 됩니다. 출금 화면에서 네트워크를 반드시 XRPL로 선택하세요. 다른 네트워크를 고르면 자산을 잃을 수 있습니다. 처음이시라면 소액으로 먼저 시험 전송을 해보시는 편이 안전합니다." },
   { q: "국내 거래소에서 지갑으로 바로 보낼 수 있나요?", a: "국내 거래소는 트래블룰 때문에 확인되지 않은 지갑으로 바로 보내지 못하는 경우가 있습니다. 이때는 거래소가 지원하는 외부 지갑을 거쳐 보내시면 됩니다. 해외 거래소는 대개 바로 보낼 수 있습니다. 거래소마다 다르니 출금 화면의 안내를 먼저 확인해 주세요." },
   { q: "지갑이 처음인데 괜찮나요?", a: "괜찮습니다. 계정을 만들면 기본 지갑이 자동으로 생성되고, 이미 쓰시는 지갑이 있으면 연결해서 쓰셔도 됩니다. XRP는 일부 지갑과 호환되지 않으니 XRPL을 지원하는 지갑을 쓰셔야 합니다. 단계별로 안내해 드립니다. 지갑에 최소 1.5 XRP 이상이 있어야 예매권 NFT를 받으실 수 있습니다 — XRPL 지갑을 만들고 트러스트라인을 여는 데 드는 네트워크 준비금입니다." },
@@ -182,7 +191,7 @@ export const MOCK_ORDER: Order = {
   id: "WB-9X4K-Q72M",
   genesisNos: [214, 387, 559, 823, 1041, 1288, 1476, 1690, 1923, 2205, 2531, 2764, 2988, 3217, 3444, 3671, 3856, 4102, 4388, 4677],
   qty: 20,
-  unitPrice: 650,
+  unitPrice: PRICE.first,
   tier: "first",
   txHash: "A3F8…C21E",
   status: "preparing",
@@ -344,7 +353,7 @@ export const FAQS_EN = [
   { q: "Does reserving guarantee I can buy?", a: "It does not guarantee a purchase. Reservation holders simply get the window first, and if applications exceed the prepared quantity, allocation is by draw rather than first-come. Reserving itself costs you nothing on our side." },
   { q: "How many can I reserve?", a: "Up to 10 per account. For business or bulk purchases, email admin@wellbian.io — we handle those separately." },
   { q: "When can I buy?", a: "Pre-reservation runs from noon on September 7 to noon on September 14. The priority window opens at noon on September 15 and the general window at 6 p.m. the same day — earlier if reserved stock sells out first. The sale ends at noon on September 16." },
-  { q: "When will the price be announced?", a: "The price is announced before the sale opens. Payment is in RLUSD, and buying it and moving it to your wallet takes time, so we suggest preparing in advance." },
+  { q: "How much does it cost?", a: `The price for the September 15 batch is ${PRICE.first} RLUSD. From the second batch it is ${PRICE.later} RLUSD. Payment is in RLUSD, and buying it and moving it to your wallet takes time, so we suggest preparing in advance.` },
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on an exchange that supports it, then withdraw to your own wallet. On the withdrawal screen you must select the XRPL network — choosing another network can lose the funds. If this is your first time, send a small test amount first." },
   { q: "Can I send straight from a Korean exchange to my wallet?", a: "Korean exchanges may block transfers to unverified wallets under travel-rule requirements. In that case, route through an external wallet the exchange supports. Overseas exchanges usually allow it directly. Rules differ by exchange, so check the withdrawal screen first." },
   { q: "I have never used a wallet — is that a problem?", a: "Not at all. Creating an account generates a wallet for you, and you can connect one you already use instead. XRP is not compatible with every wallet, so use one that supports XRPL. We guide you step by step. Your wallet needs at least 1.5 XRP to receive the reservation NFT — the network reserve required to create an XRPL wallet and open a trustline." },

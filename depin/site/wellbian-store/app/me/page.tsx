@@ -83,8 +83,13 @@ export default function MePage() {
             </div>
             <div className="desk-only" style={{ display: "flex", gap: 16, fontSize: 12.5, color: "var(--cap)" }}>
               <span>{order.id}</span>
-              {/* 가격은 확정 전까지 화면에 두지 않는다(8/30 회의: 650/450 미확정).
-                  실제 결제 금액이 붙으면 그때 되살린다 — order.unitPrice 는 그대로 있다. */}
+              {/* 8/31 서우 — 9/15 판매분 450 RLUSD 확정. 8/30 에 걷어냈던 자리를 되살린다.
+                  여러 대면 총액이 먼저다 — 결제한 사람이 대조하는 값은 단가가 아니라 총액이다. */}
+              <span>
+                {order.qty > 1
+                  ? <>{fmt(order.unitPrice * order.qty)} RLUSD <span style={{ color: "var(--hint)" }}>({order.unitPrice} × {order.qty})</span></>
+                  : <>{order.unitPrice} RLUSD</>}
+              </span>
               <span>{en ? "Paid 8/26" : "결제 8/26"}</span>
               <Link href={`/orders/${order.id}`} className="mono" style={{ fontSize: 12 }}>{order.txHash} ↗</Link>
             </div>

@@ -121,7 +121,11 @@ const STOP = new Set([
   "되나요", "되나", "됩니까", "됩니다", "하나요", "합니까", "합니다", "인가요", "입니까", "입니다",
   "있나요", "있습니까", "있어요", "없나요", "없어요", "하면", "되면", "해야", "하는", "되는",
   "어떻게", "어떤", "어느", "무엇", "뭔가요", "뭐예요", "뭐가", "언제", "어디", "어디서",
-  "얼마", "얼마나", "주세요", "알려", "궁금", "그리고", "그럼", "저는", "제가", "이거", "그거",
+  "주세요", "알려", "궁금", "그리고", "그럼", "저는", "제가", "이거", "그거",
+  /* 8/31 — "얼마"·"얼마나" 를 여기서 뺐다. 가격 문항이 확정되면서 정본 질문이
+     "가격은 얼마인가요?" 가 됐고, 그 순간 이 낱말은 잡음이 아니라 신호가 됐다.
+     대신 확인 어미를 넣는다 — "450 맞나요" 의 뜻은 450 이 지고 맞나요는 지지 않는다. */
+  "맞나요", "맞나", "맞습니까", "맞는지", "인지", "일까요",
   "what", "when", "where", "how", "why", "which", "can", "could", "should", "does", "did",
   "the", "this", "that", "and", "for", "with", "from", "get", "use", "you", "your", "are", "was",
 ]);
@@ -129,6 +133,14 @@ const STOP = new Set([
 /* 자유 질문 매칭 — 정본에 없는 답을 지어내지 않기 위한 최소 검색이다.
    질문(q)에 명사가 하나도 안 걸리면 아예 후보에서 뺀다. 답변 본문에만 스친 것은
    보조 점수로만 쓴다 — 본문은 길어서 아무 단어나 우연히 걸린다. */
+/* 한국어는 같은 낱말이 조사에 따라 모양이 달라진다 — 질문에 "가격이" 라고 써도 정본에는
+   "가격은" 이라 적혀 있어 글자 그대로는 안 걸린다. 형태소 분석기를 들이는 대신 끝 한 글자를
+   떼고 한 번 더 본다. 세 글자 이상일 때만 — 두 글자를 한 글자로 만들면 아무 데나 걸린다. */
+const hits = (hay: string, w: string) => {
+  if (hay.includes(w)) return true;
+  return w.length >= 3 && /[가-힣]/.test(w) && hay.includes(w.slice(0, -1));
+};
+
 export const searchFaq = (doc: FaqDoc, lang: FaqLang, query: string): FaqEntry[] => {
   const tokens = query.toLowerCase()
     .split(/[^0-9a-z가-힣]+/)
@@ -138,9 +150,13 @@ export const searchFaq = (doc: FaqDoc, lang: FaqLang, query: string): FaqEntry[]
     .map((f) => {
       const q = f.q.toLowerCase();
       const a = f.a.toLowerCase();
-      const inQ = tokens.filter((w) => q.includes(w)).length;
-      const inA = tokens.filter((w) => !q.includes(w) && a.includes(w)).length;
-      return { f, score: inQ ? inQ * 2 + inA : 0 };
+      const inQ = tokens.filter((w) => hits(q, w)).length;
+      const inA = tokens.filter((w) => !hits(q, w) && hits(a, w)).length;
+      /* 질문에 하나도 안 걸리면 버리는 게 원칙이다 — 답변 본문은 길어서 아무 단어나 우연히
+         걸린다. 다만 짧은 물음이 답변에 통째로 들어 있으면 우연이 아니다("450 맞나요",
+         "price?"). 토큰이 둘 이하이고 전부 답변에 있을 때만 최소 점수를 준다. */
+      const onlyA = !inQ && tokens.length <= 2 && inA === tokens.length;
+      return { f, score: inQ ? inQ * 2 + inA : onlyA ? 1 : 0 };
     })
     .filter((x) => x.score > 0)
     .sort((a, b) => b.score - a.score)
