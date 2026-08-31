@@ -32,10 +32,14 @@ export const MED_PLAN = [
 
 // 건강기능식품 — 남은 용량(remain/total)과 유통기한. 재구매 알림 판단은 아래 함수.
 // storeId 는 스토어 상품 id — 재구매 버튼이 장바구니로 바로 이어진다.
+// slot — 알람 팝업에서 같은 시간대 약과 한 카드로 합쳐 보여주기 위한 값
+// (2026-08-31). 지금 값은 데모 가정이다: 실제 복용 시간대는 첫 안심방문 때
+// 약봉투와 보호자 확인으로 정하고, 그때 이 값을 바꿔야 한다.
 export const SUPPLEMENTS = [
   {
     id: "sp1",
     name: "비타민D 2000IU",
+    slot: "아침",
     perDay: 1,
     remain: 12,
     total: 90,
@@ -46,6 +50,7 @@ export const SUPPLEMENTS = [
   {
     id: "sp2",
     name: "오메가3",
+    slot: "저녁",
     perDay: 2,
     remain: 44,
     total: 120,
@@ -56,6 +61,7 @@ export const SUPPLEMENTS = [
   {
     id: "sp3",
     name: "칼슘 · 마그네슘",
+    slot: "저녁",
     perDay: 1,
     remain: 61,
     total: 90,

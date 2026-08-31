@@ -139,6 +139,21 @@ function shortDay(ts, now) {
   return `${d.getMonth() + 1}월 ${d.getDate()}일`;
 }
 
+// "08:00" → "8시", "12:30" → "12시 30분" — 어르신 화면은 숫자보다 말로 읽는다
+function spokenClock(hhmm) {
+  const [h, m] = hhmm.split(":").map(Number);
+  return m === 0 ? `${h}시` : `${h}시 ${m}분`;
+}
+
+// 같은 시간대의 처방약과 영양제를 한 줄로 합친다 (참고 시안: "아산병원약 · 비타민 · 유산균").
+// 어르신에게는 '지금 삼킬 것'이 하나의 묶음이지 처방/영양제로 갈리지 않는다.
+function medDoseNames(slot) {
+  const plan = MED_PLAN.find((d) => d.slot === slot);
+  const rx = (plan?.items || []).map((i) => i.name.replace(/\s*\([^)]*\)\s*$/, ""));
+  const sup = SUPPLEMENTS.filter((x) => x.slot === slot).map((x) => x.name.split(" ")[0]);
+  return [...rx, ...sup].join(" · ");
+}
+
 function spokenTime(ts) {
   const d = new Date(ts);
   const h = d.getHours();
@@ -412,6 +427,11 @@ export default function ElderHome() {
   const med = medProgress(medSlots);
   // 연속 성공일 — 오늘까지 다 드셨으면 어제까지의 연속에 하루를 더한다
   const medStreak = MED_STREAK.days + (med.done === med.total ? 1 : 0);
+  // 아직 안 드신 것 중 첫 번째 = 지금 드실 약. 그 다음 것은 한 줄로만 예고한다.
+  const medPending = MED_PLAN.filter((d) => !medSlots[d.slot]);
+  const medNext = medPending[0] || null;
+  const medAfter = medPending[1] || null;
+  const [medPop, setMedPop] = useState(null); // 알람 팝업이 띄운 시간대 (null이면 닫힘)
   // 건기식 — 용량이 부족하거나 유통기한이 다가온 것만 위로 올린다
   const supplements = SUPPLEMENTS.map((s) => ({ ...s, alert: needsReorder(s) }));
   const supAlerts = supplements.filter((s) => s.alert);
@@ -577,6 +597,75 @@ export default function ElderHome() {
               className="btn-press mt-2 w-full rounded-[18px] py-[15px] text-[19px] font-bold text-muted"
             >
               그만두기
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── 약 알람 팝업 (2026-08-31, 참고 시안) ──
+          카드에서 '지금 드실 약'을 누르면 실제 알람처럼 큰 화면이 뜬다.
+          카드에 아침·점심·저녁을 다 늘어놓는 대신, 지금 할 일 하나만 크게 보여
+          주고 여기서 끝낸다. '조금 이따'는 닫기만 한다 — 체크는 되돌리지 않는
+          원칙(06 §5)이라, 미룬 것을 기록으로 남기지 않는다. */}
+      {medPop && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(8,23,45,.72)] px-6">
+          <div
+            className="w-full max-w-[360px] rounded-[26px] bg-elder px-6 pb-6 pt-7 text-center"
+            style={{ boxShadow: "0 30px 60px -20px rgba(8,23,45,.6)" }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${medPop} 약 알림`}
+          >
+            <span
+              className="inline-block rounded-full px-4 py-1.5 text-[16px] font-bold text-white"
+              style={{ background: "#0A1F3C" }}
+            >
+              지금 할 일이에요
+            </span>
+            <span
+              aria-hidden
+              className="mx-auto mt-5 flex h-[96px] w-[96px] items-center justify-center rounded-full"
+              style={{ background: "rgba(176,141,87,.16)", color: "#B08D57" }}
+            >
+              <Icon name={medPop === "저녁" ? "moon" : "sun"} size={48} strokeWidth={1.8} />
+            </span>
+            <p className="mt-4 text-[28px] font-black leading-[1.3] text-navy">
+              {medPop} 약,
+              <br />
+              드실 시간이에요!
+            </p>
+            <p
+              className="mt-4 flex items-center justify-center gap-2 rounded-[16px] px-4 py-3.5 text-[19px] font-bold leading-[1.45]"
+              style={{ background: "rgba(176,141,87,.15)", color: "#7A5210" }}
+            >
+              <span aria-hidden className="shrink-0">
+                <Icon name="pill" size={22} strokeWidth={2} />
+              </span>
+              {medDoseNames(medPop)}
+            </p>
+            <button
+              onClick={() => {
+                dispatch({ type: "elderMark", key: "medSlots", id: medPop });
+                dispatch({
+                  type: "pushEvent",
+                  payload: {
+                    kind: "복약",
+                    text: `${ELDER.name} ${medPop} 복약 완료 · 가족 앱 준수율 갱신`,
+                    color: "#4ADE80",
+                  },
+                });
+                setMedPop(null);
+              }}
+              className="btn-press mt-5 w-full rounded-[18px] py-[21px] text-[22px] font-bold text-white"
+              style={{ background: "#0A1F3C" }}
+            >
+              다 먹었어요
+            </button>
+            <button
+              onClick={() => setMedPop(null)}
+              className="btn-press mt-2 w-full rounded-[18px] py-[15px] text-[19px] font-bold text-muted underline"
+            >
+              조금 이따 먹을게요
             </button>
           </div>
         </div>
@@ -1249,17 +1338,14 @@ export default function ElderHome() {
                 boxShadow: LIGHT_CARD.boxShadow,
               }}
             >
-              <CardHead title="오늘 약 미션" right={`${med.total}번 중 ${med.done}번 드셨습니다`} icon="pill" />
-              {/* 연속 성공 — 참고 영상(2026-08-26)의 별 모으기. 별은 최대 4개까지만
-                  채운다 (5개가 넘으면 어르신 화면에서 줄바꿈되고, 세는 것이 목적도
-                  아니다). 오늘까지 다 드시면 하루가 더해진 수를 보여준다. */}
+              <CardHead title="오늘 약 미션" right={`${med.total}번 중 ${med.done}번`} icon="pill" />
+              {/* 연속 성공 — 참고 영상(2026-08-26)의 별 모으기. 별은 최대 4개까지만.
+                  2026-08-31 정리: 진행바를 뺐다. 별·주간 스트립·머리말 숫자까지
+                  같은 것을 네 번 말하고 있었다. */}
               <div className="mt-2.5 flex items-center gap-3 rounded-[16px] px-4 py-3" style={SUB_CARD}>
                 <span aria-hidden className="flex shrink-0 gap-0.5">
                   {[0, 1, 2, 3].map((i) => (
-                    <span
-                      key={i}
-                      style={{ color: i < Math.min(4, medStreak) ? "#B08D57" : "rgba(10,31,60,.14)" }}
-                    >
+                    <span key={i} style={{ color: i < Math.min(4, medStreak) ? "#B08D57" : "rgba(10,31,60,.14)" }}>
                       <Icon name="star" size={24} strokeWidth={1.9} />
                     </span>
                   ))}
@@ -1268,70 +1354,56 @@ export default function ElderHome() {
                   {medStreak > 0 ? `${medStreak}일 연속 다 드셨어요` : "오늘부터 다시 시작해요"}
                 </span>
               </div>
-              {/* 진행바 — 숫자만으로는 얼마나 남았는지 한눈에 안 들어온다 */}
-              <div
-                className="mt-2.5 h-[18px] w-full overflow-hidden rounded-full"
-                role="progressbar"
-                aria-valuenow={med.done}
-                aria-valuemin={0}
-                aria-valuemax={med.total}
-                aria-label={`오늘 복약 ${med.total}번 중 ${med.done}번 완료`}
-                style={{ background: "rgba(10,31,60,.09)" }}
-              >
-                <div
-                  className="h-full rounded-full transition-[width] duration-500"
-                  style={{ width: `${med.pct}%`, background: med.pct === 100 ? "#1E7A5A" : "#B08D57" }}
-                />
-              </div>
-              <div className="mt-2">
-                {MED_PLAN.map((d) => {
-                  const on = !!medSlots[d.slot];
-                  return (
-                    <div
-                      key={d.slot}
-                      className="flex items-center gap-3 border-t border-navy/[.07] py-[14px] first:border-t-0"
+
+              {/* 지금 드실 약 — 하나만 크게. 아침·점심·저녁을 한꺼번에 늘어놓으니
+                  "지금 뭘 해야 하는지"가 묻혔다 (2026-08-31 "텍스트 많고 복잡").
+                  누르면 알람 팝업이 뜨고, 거기서 '다 먹었어요'로 끝낸다. */}
+              {medNext ? (
+                <>
+                  <div className="mt-3.5 text-[18px] font-bold text-muted">지금 드실 약</div>
+                  <button
+                    onClick={() => setMedPop(medNext.slot)}
+                    className="btn-press mt-1.5 flex w-full items-center gap-3.5 rounded-[18px] p-4 text-left"
+                    style={{ background: "#FFFFFF", boxShadow: "inset 0 0 0 2px rgba(138,93,18,.28)" }}
+                  >
+                    <span
+                      aria-hidden
+                      className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full"
+                      style={{ background: "rgba(176,141,87,.16)", color: "#8A5D12" }}
                     >
-                      <span className="w-[62px] shrink-0 text-[19px] font-bold text-navy">{d.slot}</span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-[19px] leading-[1.4] text-ink">
-                          {d.items.map((i) => i.name).join(" · ")}
-                        </span>
-                        <span className="block font-num text-[17px] text-muted">{d.time}</span>
+                      <Icon name={medNext.slot === "저녁" ? "moon" : "sun"} size={28} strokeWidth={1.9} />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[18px] font-bold" style={{ color: "#8A5D12" }}>
+                        {medNext.slot} {spokenClock(medNext.time)}
                       </span>
-                      <button
-                        onClick={() => {
-                          if (on) return; // 체크는 되돌리지 않는다 (06 §5)
-                          dispatch({ type: "elderMark", key: "medSlots", id: d.slot });
-                          dispatch({
-                            type: "pushEvent",
-                            payload: {
-                              kind: "복약",
-                              text: `${ELDER.name} ${d.slot} 복약 완료 · 가족 앱 준수율 갱신`,
-                              color: "#4ADE80",
-                            },
-                          });
-                        }}
-                        aria-label={`${d.slot} 약 먹었어요`}
-                        aria-pressed={on}
-                        className="btn-press shrink-0 rounded-2xl px-4 py-3 text-[18px] font-bold"
-                        style={
-                          on
-                            ? { background: "rgba(30,122,90,.12)", color: "#1E7A5A" }
-                            : { background: "#1E7A5A", color: "#FFFFFF" }
-                        }
-                      >
-                        {on ? "먹었어요 ✓" : "먹었어요"}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-              {/* 이번 주 — 요일별 성공 여부 (참고 영상). 오늘 칸은 상태에서 채운다.
-                  못 드신 날은 빨강이 아니라 회색 — 빨강은 SOS 전용이고, 지난 일을
+                      <span className="mt-0.5 block text-[21px] font-bold leading-[1.35] text-navy">
+                        {medDoseNames(medNext.slot)}
+                      </span>
+                    </span>
+                    <span aria-hidden className="-rotate-90 shrink-0" style={{ color: "#8A5D12" }}>
+                      <Icon name="chev" size={22} strokeWidth={2} />
+                    </span>
+                  </button>
+                  {medAfter && (
+                    <p className="mt-2 text-[18px] text-muted">
+                      다음 약 · {medAfter.slot} {spokenClock(medAfter.time)}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p
+                  className="mt-3 rounded-[16px] px-4 py-3.5 text-[20px] font-bold leading-[1.45]"
+                  style={{ background: "rgba(30,122,90,.1)", color: "#1E7A5A" }}
+                >
+                  오늘 약을 다 드셨습니다. 참 잘하셨어요.
+                </p>
+              )}
+
+              {/* 이번 주 — 못 드신 날은 회색. 빨강은 SOS 전용이고, 지난 일을
                   꾸짖는 화면이 아니다. */}
-              <div className="mt-3 border-t border-navy/[.07] pt-3">
-                <div className="text-[18px] font-bold text-navy">이번 주</div>
-                <div className="mt-2 flex gap-1.5">
+              <div className="mt-3.5 border-t border-navy/[.07] pt-3">
+                <div className="flex gap-1.5">
                   {[...MED_STREAK.week, { label: "오늘", done: med.done === med.total, today: true }].map((d) => (
                     <div key={d.label} className="flex flex-1 flex-col items-center gap-1">
                       <span
@@ -1352,19 +1424,6 @@ export default function ElderHome() {
                   ))}
                 </div>
               </div>
-              {/* 다 드신 날의 축하 — 참고 영상의 '미션 성공' 화면을 카드 안 한 줄로.
-                  별도 팝업으로 띄우면 확인 버튼을 한 번 더 눌러야 한다. */}
-              {med.done === med.total && (
-                <p
-                  className="mt-3 rounded-[16px] px-4 py-3.5 text-[20px] font-bold leading-[1.45]"
-                  style={{ background: "rgba(30,122,90,.1)", color: "#1E7A5A" }}
-                >
-                  오늘 약을 다 드셨습니다. 참 잘하셨어요.
-                </p>
-              )}
-              <p className="mt-3 text-[19px] leading-[1.6] text-muted">
-                {MED_REGISTRY.registeredAt}에 {MED_REGISTRY.registeredBy}이 약봉투를 보고 등록했습니다.
-              </p>
             </ElderCard>
 
             {/* order 2 · 드시는 약 정보 — 첫 안심방문 때 등록한 장복약 정보와 기록
