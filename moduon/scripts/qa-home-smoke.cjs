@@ -39,25 +39,33 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   await page.waitForTimeout(700)
   check(page.url().includes('/consult'), `상담사 연결 → 상담 페이지 (${page.url().split('/').pop()})`)
 
-  // ④-b 안심 문구 · 통신사/기종 선택 → 상담 쿼리 전달
+  // ④-b 히어로에는 안심 문구만 — 통신사/기종은 휴대폰 파트로 내렸다
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
   await page.waitForTimeout(400)
   text = await page.evaluate(() => document.body.innerText)
   check(text.includes('바꾸라고 하지 않아요'), '안심 문구: 바꾸라고 하지 않아요')
   check(text.includes('먼저 계산부터 해드려요'), '안심 문구: 먼저 계산부터')
-  check(text.includes('지금 쓰시는 통신사'), '현 통신사 선택란')
-  for (const c of ['SK', 'KT', 'LG U+', '알뜰폰']) check(text.includes(c), `통신사 보기: ${c}`)
-  check(text.includes('관심 있는 기종'), '기종 선택란')
-  check(text.includes('원하는 기종이 없어요') && text.includes('상담 후 결정할게요'), '기종 퇴로 2종')
+  check(!text.includes('지금 쓰시는 통신사') && !text.includes('관심 있는 기종'),
+    '히어로에서 휴대폰 전용 선택란 제거')
+
+  // ④-c 휴대폰 카테고리로 이동했는지 + 선택값이 상담 쿼리로 전달되는지
+  await page.goto('http://localhost:4173/category/phone', { waitUntil: 'networkidle' })
+  await page.waitForTimeout(500)
+  text = await page.evaluate(() => document.body.innerText)
+  check(text.includes('지금 쓰시는 통신사'), '휴대폰: 현 통신사 선택란')
+  for (const c of ['SK', 'KT', 'LG U+', '알뜰폰']) check(text.includes(c), `휴대폰 통신사 보기: ${c}`)
+  check(text.includes('관심 있는 기종'), '휴대폰: 기종 선택란')
+  check(text.includes('원하는 기종이 없어요') && text.includes('상담 후 결정할게요'), '휴대폰: 기종 퇴로 2종')
+  check(!text.includes('통신사별 요금제 추천'), '휴대폰: 중복 통신사 그리드 제거')
 
   await page.locator('button:has-text("KT")').first().click()
   await page.waitForTimeout(150)
   await page.locator('button:has-text("갤럭시 Z 폴드8")').first().click()
   await page.waitForTimeout(150)
-  await page.locator('text=전문 상담사랑 상담할게요').first().click()
+  await page.locator('a:has-text("전문 상담사랑 상담할게요")').first().click()
   await page.waitForTimeout(700)
   check(page.url().includes('cur=KT') && page.url().includes('device=fold8'),
-    `선택값이 상담 쿼리로 전달 (${decodeURIComponent(page.url().split('?')[1] || '')})`)
+    `휴대폰 선택값이 상담 쿼리로 전달 (${decodeURIComponent(page.url().split('?')[1] || '')})`)
 
   // ⑤ 히어로 타일 — 인터넷/TV · 휴대폰 · 렌탈 · 쇼핑몰, 유리 패널 위에
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })

@@ -1,6 +1,7 @@
 // ─── S-02 카테고리 상세 — 상품 0개여도 상담 CTA 노출(AC) ─────────
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { NET_CARRIERS, PHONE_CARRIERS } from '../../lib/onboard'
+import PhoneQuickStart from '../../components/PhoneQuickStart'
 import { catBySlug, LEGAL } from '../../lib/constants'
 import { useStore } from '../../lib/store'
 import { won } from '../../lib/engine'
@@ -53,7 +54,7 @@ export default function Category() {
 
       {/* 통신사별 요금제 추천 + 맞춤 찾기 — 인터넷·휴대폰은 고를 게 많아
           "무엇부터 보면 되는지"를 먼저 깔아준다(아정당식 진입 동선) */}
-      {ONBOARD_CATS[slug] && (
+      {slug === 'internet' && (
         <>
           <section className="mt-8">
             <h2 className="text-[17px] font-extrabold text-ink">통신사별 요금제 추천!</h2>
@@ -72,6 +73,10 @@ export default function Category() {
             </div>
           </section>
 
+        </>
+      )}
+
+      {ONBOARD_CATS[slug] && (
           <Link
             to={`/onboard/${slug}`}
             className="mt-6 flex items-center gap-4 rounded-section bg-warm px-5 py-5 transition-colors hover:bg-tint sm:px-7"
@@ -85,8 +90,9 @@ export default function Category() {
             </span>
             <span className="shrink-0 text-[18px] text-faint">›</span>
           </Link>
-        </>
       )}
+
+      {slug === 'phone' && <PhoneQuickStart consultTo={`/consult?cat=phone`} />}
 
       {slug === 'internet' && (
         <div className="mt-6">
