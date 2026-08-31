@@ -800,3 +800,80 @@ h1, h2, h3, p { margin: 0; }
   .air-tile { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 12px 14px; }
   .air-tile-v { font-size: 22px; }
 }
+
+/* 보상 클레임 카드 (8/30) — 큰 숫자 하나와 단추 하나. 그 둘 사이에 "아직 지갑에
+   있지 않다" 가 끼어 있어야 한다. 이 줄을 각주로 내리면 안 읽히고, 안 읽히면
+   지갑을 열어 본 사람이 문의를 넣는다. */
+.claim-card {
+  background: #fff; border: 1px solid var(--bd-card); border-radius: 16px; overflow: hidden;
+}
+.claim-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 18px 24px; border-bottom: 1px solid var(--line);
+}
+.claim-h { font-size: 14.5px; font-weight: 800; color: var(--w-deep); }
+.claim-epoch { font-size: 12.5px; color: var(--cap); }
+
+.claim-main {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  padding: 22px 24px;
+}
+.claim-amt-box { display: flex; flex-direction: column; gap: 6px; min-width: 260px; flex: 1; }
+.claim-k { font-size: 11.5px; font-weight: 700; color: var(--hint); }
+.claim-amt {
+  font-size: 38px; font-weight: 800; color: var(--w-deep); line-height: 1.05; letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
+}
+.claim-amt i { font-size: 15px; font-weight: 700; color: var(--w-main); font-style: normal; margin-left: 8px; letter-spacing: 0; }
+.claim-note { font-size: 12.5px; line-height: 1.55; color: var(--ink-4); font-weight: 700; }
+
+.claim-act { display: flex; flex-direction: column; gap: 10px; min-width: 240px; }
+.claim-go {
+  font-size: 14px; font-weight: 800; color: #fff; background: var(--w-main);
+  border-radius: 10px; padding: 13px 22px; white-space: nowrap;
+}
+.claim-go.wide { width: 100%; }
+.claim-go:hover:not(:disabled) { background: var(--w-deep); }
+.claim-go:disabled { background: var(--line); color: var(--dis); cursor: not-allowed; }
+.claim-cancel {
+  font-size: 13px; font-weight: 700; color: var(--cap);
+  border: 1px solid var(--bd-btn); border-radius: 10px; padding: 12px 18px; background: #fff;
+}
+.claim-cancel:hover { color: var(--w-deep); border-color: var(--bd-input); }
+
+/* 확인 단계 — 되돌릴 수 없는 일이므로 무슨 일이 일어나는지 여기서 다 적는다 */
+.claim-confirm {
+  display: flex; flex-direction: column; gap: 12px;
+  background: var(--panel); border: 1px solid var(--bd-card); border-radius: 12px; padding: 16px;
+  max-width: 380px;
+}
+.claim-confirm p { font-size: 13px; line-height: 1.65; color: var(--ink-2); }
+.claim-confirm b { color: var(--w-deep); }
+.claim-btns { display: flex; gap: 8px; }
+
+.claim-done {
+  display: flex; flex-direction: column; gap: 4px;
+  background: var(--ok-bg); border-radius: 12px; padding: 16px 18px; max-width: 380px;
+}
+.claim-done-h { font-size: 14px; font-weight: 800; color: var(--ok-text); }
+.claim-done-s { font-size: 12.5px; line-height: 1.55; color: var(--ink-3); }
+
+.claim-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 14px 24px; background: var(--panel); border-top: 1px solid var(--line);
+}
+.claim-sub { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12.5px; color: var(--cap); }
+.claim-sub b { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.claim-last { color: var(--hint); }
+.claim-guard { font-size: 11.5px; color: var(--hint); }
+
+@media (max-width: 720px) {
+  .claim-head, .claim-main, .claim-foot { padding-left: 16px; padding-right: 16px; }
+  .claim-main { gap: 16px; }
+  .claim-amt-box, .claim-act { min-width: 0; width: 100%; }
+  .claim-amt { font-size: 32px; }
+  .claim-confirm, .claim-done { max-width: none; }
+}
+/* 다 옮긴 뒤의 0 — 강조를 뺀다. 0 이 굵고 진하면 눈이 먼저 가서 없는 걸 찾게 된다 */
+.claim-amt.zero { color: var(--dis); }
+.claim-amt.zero i { color: var(--dis); }

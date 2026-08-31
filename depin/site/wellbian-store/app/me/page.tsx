@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Check, ChevR } from "@/components/icons";
 import { LangToggle } from "@/components/chrome";
 import AirMonitor from "@/components/AirMonitor";
-import { MOCK_DEVICE, MOCK_ORDER, fmt } from "@/lib/data";
+import ClaimCard from "@/components/ClaimCard";
+import { MOCK_DEVICE, MOCK_ORDER, fmt, rewardTotal } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
 
 function StepDot({ i, size = 22 }: { i: number; size?: number }) {
@@ -73,6 +74,10 @@ export default function MePage() {
             데이터 모니터링과 보상이 상시 보이게"). 주문 상태는 한 번 보면 끝나지만
             여기는 매일 열어 보는 자리라 순서를 바꿨다. */}
         <AirMonitor />
+
+        {/* 보상 — 모니터링 바로 아래. 회의록 순서(모니터링 → 보상)이고, 매일 여는
+            화면에서 "지금 얼마나 쌓였나" 는 두 번째로 자주 보는 값이다. */}
+        <ClaimCard />
 
         {/* 주문 카드 #1234 (배송 접수 대기) */}
         <div style={{ background: "#fff", border: "1px solid var(--bd-card)", borderRadius: 16, overflow: "hidden" }}>
@@ -165,7 +170,7 @@ export default function MePage() {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 3, padding: "14px 24px" }}>
               <span style={{ fontSize: 11, fontWeight: 700, color: "var(--hint)" }}>{en ? "Total rewards" : "누적 보상"}</span>
-              <span style={{ fontSize: 16, fontWeight: 800, color: "var(--w-main)" }}>{device.rewardWlbn} WLBN</span>
+              <span style={{ fontSize: 16, fontWeight: 800, color: "var(--w-main)" }}>{rewardTotal().toFixed(4).replace(/\.?0+$/, "")} WLBN</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 3, padding: "14px 24px" }}>
               <span style={{ fontSize: 11, fontWeight: 700, color: "var(--hint)" }}>{en ? "Wi-Fi" : "Wi-Fi 상태"}</span>
