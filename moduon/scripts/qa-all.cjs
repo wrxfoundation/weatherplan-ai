@@ -28,6 +28,7 @@ const step = (name, fn) => {
   await boot()
 
   step('스모크: 소비자 홈·GNB', () => run('node scripts/qa-home-smoke.cjs'))
+  step('스모크: 온보딩 위저드', () => run('node scripts/qa-onboard-smoke.cjs'))
   step('스모크: 어드민 4-아레나', () => run('node scripts/qa-arena-smoke.cjs'))
   step('스모크: 프레스룸', () => run('node scripts/qa-press-smoke.cjs'))
   step('스모크: 휴대폰 계산기', () => run('node scripts/qa-phone-smoke.cjs'))

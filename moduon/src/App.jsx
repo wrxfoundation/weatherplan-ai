@@ -13,6 +13,7 @@ import Diagnosis from './pages/consumer/Diagnosis'
 import Payouts from './pages/consumer/Payouts'
 import Support from './pages/consumer/Support'
 import Shop from './pages/consumer/Shop'
+import Onboard from './pages/consumer/Onboard'
 import TenantMall from './pages/consumer/TenantMall'
 import PartnerLanding from './pages/partner/Landing'
 import PartnerApply from './pages/partner/Apply'
@@ -91,6 +92,7 @@ export default function App() {
           <Route path="/payouts" element={<Payouts />} />
           <Route path="/support" element={<Support />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/onboard/:slug" element={<Onboard />} />
         </Route>
 
         {/* 멀티테넌시 — 파트너 분양몰 (moduon.com/m/{slug}) */}

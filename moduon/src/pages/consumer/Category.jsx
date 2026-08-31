@@ -1,5 +1,6 @@
 // ─── S-02 카테고리 상세 — 상품 0개여도 상담 CTA 노출(AC) ─────────
 import { Link, useParams, useNavigate } from 'react-router-dom'
+import { NET_CARRIERS, PHONE_CARRIERS } from '../../lib/onboard'
 import { catBySlug, LEGAL } from '../../lib/constants'
 import { useStore } from '../../lib/store'
 import { won } from '../../lib/engine'
@@ -8,6 +9,8 @@ import { IcSearch, IcBell } from '../../components/icons'
 import TelcoCompare from '../../components/TelcoCompare'
 import InstallCheck from '../../components/InstallCheck'
 import Reviews from '../../components/Reviews'
+
+const ONBOARD_CATS = { internet: NET_CARRIERS, phone: PHONE_CARRIERS }
 
 export default function Category() {
   const { slug } = useParams()
@@ -47,6 +50,43 @@ export default function Category() {
         </div>
         <Btn onClick={() => nav(`/consult?cat=${slug}`)} className="shrink-0 shimmer-cta">무료 상담 신청</Btn>
       </section>
+
+      {/* 통신사별 요금제 추천 + 맞춤 찾기 — 인터넷·휴대폰은 고를 게 많아
+          "무엇부터 보면 되는지"를 먼저 깔아준다(아정당식 진입 동선) */}
+      {ONBOARD_CATS[slug] && (
+        <>
+          <section className="mt-8">
+            <h2 className="text-[17px] font-extrabold text-ink">통신사별 요금제 추천!</h2>
+            <div className="mt-3 grid grid-cols-3 gap-2.5 sm:grid-cols-6">
+              {ONBOARD_CATS[slug].map((c) => (
+                <Link
+                  key={c.key}
+                  to={`/onboard/${slug}`}
+                  className="flex h-[86px] flex-col items-center justify-center gap-1.5 rounded-card border border-line bg-white transition-colors hover:border-primary"
+                >
+                  <span className="text-[15px] font-extrabold" style={{ color: c.color }}>{c.mark}</span>
+                  <span className="text-[12px] font-semibold text-label">{c.sub}</span>
+                  {c.budget && <span className="rounded bg-ok/10 px-1.5 text-[10px] font-bold text-ok">알뜰</span>}
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <Link
+            to={`/onboard/${slug}`}
+            className="mt-6 flex items-center gap-4 rounded-section bg-warm px-5 py-5 transition-colors hover:bg-tint sm:px-7"
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-primary-text shadow-card">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15.5px] font-extrabold text-ink">나에게 맞는 상품 찾기</span>
+              <span className="block text-[13px] text-muted">3개 질문에 답하면 조건에 맞는 요금제를 추천해 드려요</span>
+            </span>
+            <span className="shrink-0 text-[18px] text-faint">›</span>
+          </Link>
+        </>
+      )}
 
       {slug === 'internet' && (
         <div className="mt-6">
