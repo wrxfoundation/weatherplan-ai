@@ -16,6 +16,8 @@ import {
   AI_ASSIGN,
   BRIEFINGS,
   FATIGUE,
+  CONCIERGE_POS,
+  ELDER_HOMES,
   MAP_DISTRICTS,
   MAP_HOSPITALS,
   RISK_WATCH,
@@ -72,6 +74,7 @@ import { useAppState } from "../lib/state";
 import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
 import Icon from "../components/icons";
+import MapDialog, { distanceM, prettyDistance } from "../components/MapDialog";
 import RosterTable from "../components/RosterTable";
 import VisitFlow from "../components/VisitFlow";
 import MobileSectionNav from "../components/MobileSectionNav";
@@ -3255,6 +3258,12 @@ function FloatProfile({ item, pos, onClose, onAction }) {
   const tl = CRM_TIMELINE[item.name];
   const tag = ELDER_TAGS[item.name]; // 성별 · 장애 정도 · 보훈 · 장기요양 (어르신만)
   const [acted, setActed] = useState(false);
+  const [mapOpen, setMapOpen] = useState(false);
+  const home = ELDER_HOMES[item.name]; // 어르신 레코드에만 있다
+  // 담당 주 동행이 이동 중이면 같이 찍는다 — rows 의 "담당" 행에서 이름을 뽑는다
+  const leadName = (item.rows || []).find((r) => r[0] === "담당")?.[1]?.split(" (")[0];
+  const lead = CONCIERGE_POS[leadName];
+  const gap = home && lead ? distanceM(lead, home) : null;
   return (
     <div className="fixed inset-0 z-[1100]" onClick={onClose}>
       {/* 스크림 없음 — 카드 자체(card-frost)가 자기 영역 뒤만 블러 처리한다 */}
@@ -3379,12 +3388,43 @@ function FloatProfile({ item, pos, onClose, onAction }) {
             </button>
           </div>
         )}
+        {/* 위치 지도 — 어르신 레코드에만. 프로필을 띄운 채 눌러 바로 본다
+            (2026-08-31 요청). 담당이 이동 중이면 그 사람도 같이 찍는다. */}
+        {home && (
+          <button
+            onClick={() => setMapOpen(true)}
+            className="btn-press mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-lg border border-navy/15 py-2.5 text-[12px] font-bold text-navy"
+            style={{ background: "rgba(10,31,60,.05)" }}
+          >
+            <span aria-hidden style={{ color: "#B08D57" }}>
+              <Icon name="pin" size={15} strokeWidth={2} />
+            </span>
+            위치 지도 — {home.dong}
+          </button>
+        )}
         {crm && (
           <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[10px] leading-[1.5] text-muted">
             이 열람은 접근 기록에 남고 보호자에게 공개됩니다 — 신뢰 거버넌스
           </p>
         )}
       </div>
+      {home && (
+        <MapDialog
+          open={mapOpen}
+          onClose={() => setMapOpen(false)}
+          title={`${item.name} 님 위치`}
+          sub={item.summary} /* summary 가 이미 동(洞)으로 시작한다 — 앞에 또 붙이면 중복이다 */
+          points={[
+            { ...home, label: `${item.name} 님 댁`, color: "#B08D57" },
+            ...(lead ? [{ ...lead, label: `${leadName} · ${lead.state}`, color: "#1E7A5A", pulse: true }] : []),
+          ]}
+          foot={
+            gap != null
+              ? `담당까지 직선거리 ${prettyDistance(gap)}. 실제 이동 시간은 길·신호에 따라 다릅니다. 좌표는 동(洞) 단위이며 상세 주소는 담당 확정 후에만 열립니다.`
+              : "좌표는 동(洞) 단위입니다 — 상세 주소는 담당 확정 후에만 열립니다."
+          }
+        />
+      )}
     </div>
   );
 }

@@ -7,6 +7,8 @@ import Icon from "../../components/icons";
 import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_GROUPS, EVENT_KINDS, FEED_TONE, NEIGHBORHOOD_FEED, OUTING, VITALS, WEEKLY } from "../../lib/mock";
 import { trackOf, subjectLabel, honorific } from "../../lib/tracks";
 import VoiceNote from "../../components/VoiceNote";
+import MapDialog, { distanceM, prettyDistance } from "../../components/MapDialog";
+import { CONCIERGE_POS, ELDER_HOMES } from "../../lib/console";
 
 import { useAppState } from "../../lib/state";
 
@@ -19,6 +21,13 @@ import { useAppState } from "../../lib/state";
 export default function FamilyHome() {
   const { state, dispatch } = useAppState();
   const [demoOpen, setDemoOpen] = useState(false);
+  // '지금 어디쯤' 지도 (2026-08-31 요청) — 오늘 오시는 주 동행이 어디까지 왔는지.
+  // 좌표는 lib/console.js 한 곳에서 온다 (관제 지도와 같은 값).
+  const [liveMap, setLiveMap] = useState(false);
+  const liveTeam = CARE_TEAM.members[0];
+  const livePos = CONCIERGE_POS[liveTeam?.name];
+  const liveHome = ELDER_HOMES[ELDER.name];
+  const liveGap = livePos && liveHome ? distanceM(livePos, liveHome) : null;
   const ob = state.onboarding;
   const track = trackOf(ob?.track);
   const has = (b) => track.home.blocks.includes(b);
@@ -318,13 +327,25 @@ export default function FamilyHome() {
             ))}
           </div>
           <p className="mt-3 text-[12px] leading-[1.7] text-white/60">{CARE_TEAM.trust}</p>
-          {/* 제휴병원 예약 및 상담 — AI 예약 버튼과 패스트트랙 문구는 2026-08-12 요청으로 삭제 */}
-          <Link
-            href="/family/hospitals"
-            className="btn-press mt-2 block w-full rounded-xl border border-white/25 bg-white/[.06] py-3 text-center text-[15px] font-bold text-white/85"
-          >
-            제휴병원 예약 및 상담
-          </Link>
+          {/* 제휴병원 예약 및 상담 — AI 예약 버튼과 패스트트랙 문구는 2026-08-12 요청으로 삭제.
+              그 옆에 '지금 어디쯤' 추가 (2026-08-31 요청) — 오늘 오시는 컨시어지가
+              어디까지 왔는지 지도로 본다. 보호자가 가장 자주 묻는 것이 이것이다. */}
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <Link
+              href="/family/hospitals"
+              className="btn-press block rounded-xl border border-white/25 bg-white/[.06] py-3 text-center text-[15px] font-bold text-white/85"
+            >
+              제휴병원 예약
+            </Link>
+            <button
+              onClick={() => setLiveMap(true)}
+              className="btn-press flex items-center justify-center gap-1.5 rounded-xl border py-3 text-center text-[15px] font-bold"
+              style={{ borderColor: "rgba(74,222,128,.45)", background: "rgba(74,222,128,.12)", color: "#8FEBB4" }}
+            >
+              <span aria-hidden className="h-[8px] w-[8px] animate-livePing rounded-full" style={{ background: "#4ADE80" }} />
+              지금 어디쯤
+            </button>
+          </div>
         </div>
 
 
@@ -602,6 +623,27 @@ export default function FamilyHome() {
             </div>
           )}
         </div>
+
+        {/* 오늘 오시는 컨시어지 위치 — '지금 어디쯤' 버튼이 연다 (2026-08-31 요청) */}
+        <MapDialog
+          open={liveMap}
+          onClose={() => setLiveMap(false)}
+          title={`${liveTeam?.name} 선생님, 지금 어디쯤`}
+          sub={`${CARE_TEAM.dateLabel} · ${livePos?.state === "이동중" ? "댁으로 오는 중입니다" : livePos?.state}`}
+          points={
+            livePos && liveHome
+              ? [
+                  { ...livePos, label: `${liveTeam?.name} 선생님`, color: "#1E7A5A", pulse: true },
+                  { ...liveHome, label: `${honor} 댁`, color: "#B08D57" },
+                ]
+              : []
+          }
+          foot={
+            liveGap != null
+              ? `두 지점 사이 직선거리 ${prettyDistance(liveGap)}. 실제 도착 시각은 길·신호에 따라 달라집니다. 위치는 방문 당일에만, 동행이 끝나면 표시가 멈춥니다.`
+              : "위치를 받아오는 중입니다."
+          }
+        />
       </FamilyLayout>
     </>
   );
