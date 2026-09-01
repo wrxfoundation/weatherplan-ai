@@ -50,18 +50,19 @@ data belonging to whoever lives in it.
 **발화 범위 = 보도자료 문구**: MOU 체결(9/2) · 협력 검토 분야 "장비 등록·관측 데이터 수집·보상 모델·
 지갑 활용 등 사용자 흐름 설계" · 자체수탁형 하드웨어 월렛 · 구체 일정은 향후 실무 협의. 그 밖은 없음.
 
-### T1 (274자) + 로고 카드
+### T1 (277자) + **보도자료 제품 사진**
 ```
 KWeather, the sensor network behind wellbian, has signed an MOU with @DCENTWALLETS.
 
 In scope: device registration, data collection, the reward model, and where a self-custody wallet sits in that flow.
 
-The devices already ship. This is about what happens after you buy one.
+The hardware already exists. This is about what happens after you buy one.
 ```
 - `the sensor network behind wellbian` = 7/15 플레어 글의 "Wellbian의 네트워크인 KWeather" 와 같은 구조.
   토큰·발행 주체 함의 없음.
-- 범위 문장은 보도자료 그대로. 마지막 줄 `The devices already ship` 이 MOU 를 로드맵 자랑으로
-  안 읽히게 잡는 **닻**.
+- 범위 문장은 보도자료 그대로. 마지막 줄 `The hardware already exists` 가 MOU 를 로드맵 자랑으로
+  안 읽히게 잡는 **닻**. (9/2 정정: `already ship` → `already exists` — 사진이 DePIN 박스인데 "ship"
+  이면 이 박스가 지금 배송된다로 읽힘. 11월 발송이라 불일치.)
 
 ### T2 (277자) + 계단 컷(있으면)
 ```
@@ -83,19 +84,19 @@ Account economics is onboarding economics.
 - `owning what it reports` = 디센트의 `digital ownership` 에 대응. `earns` 는 수익 프레임이라 쓰지 않음.
 - 마지막 줄 = 미사용 시그니처 초연.
 
-### 이미지 배정 (9/2 확정 — 락업 판단 정정)
-- **T1 = 로고 카드**: 16:9, Deep Navy `#1b1b48` 단색, 좌하단 Wellbian Violet `#4d4dce` 글로우 아주 옅게.
-  중앙 **`D'CENT × KWEATHER`** 화이트(디센트 로고는 디센트 공지 화이트 버전 그대로, 가는 `×`). 그 외 텍스트 없음.
-  - **락업을 wellbian → KWEATHER 로 정정한 이유**: 보도자료가 MOU 주체를 케이웨더로 못박았고 디센트
-    공지도 KWEATHER. 우리만 wellbian 이면 하나의 MOU 에 이름이 셋 — 공개 기록과 일치시킨다.
-    플레어(7/15)와 같은 구조: 그림은 KWEATHER, 본문의 we 는 wellbian.
-- **T2 = v2.4 계단 컷** (아래 프롬프트). **락업 안 얹음** — 에디토리얼로 돌아가므로 우하단 wellbian 단독
-  워터마크만. 09:00까지 안 나오면 T2 는 텍스트만.
+### 이미지 배정 (9/2 08:40 최종 — 보도자료 공개로 재배정)
+- **T1 = 보도자료 제품 사진**(박스 `Weather Data Token Generator™` + 기기, 검정 배경). 로고 카드 폐기.
+  - 이유: 디센트가 D'CENT × KWEATHER 카드를 이미 올렸고 우리가 RT → 우리 타임라인에 그 카드는 이미
+    있다. **우리 T1 은 디센트가 못 보여주는 것(실물)을 보여줘야 값한다.** 박스의 `wellbian × XRP LEDGER`
+    락업이 브랜드 표기를 겸하므로 wellbian/KWEATHER 락업 논쟁도 소멸. 제품명은 그림이 소개, 텍스트 미기재.
+  - 로고 카드를 이미 만들었다면: 그것을 T1, 제품 사진을 T3.
+- **T2 = v2.4 계단 컷**(나오면). 락업 없이 우하단 wellbian 단독 워터마크. 안 나오면 텍스트만.
+- **T3 = 텍스트만**(로고 카드 예외 시 제품 사진).
 
 ### 보도자료로 새로 공개된 것 (9/2)
 - **박스·기기 사진** — `Weather Data Token Generator™` 박스, 기기 표면 `wellbian × XRP LEDGER` 락업.
-  사진설명 "케이웨더가 추진 중인 날씨데이터 DePIN 프로젝트 장비의 예시". → **제품명·박스 비공개 방침이
-  케이웨더 보도자료로 풀림.** 우리 채널 사용 여부는 서우 결정 대기. 이 스레드에서는 미사용.
+  사진설명 "케이웨더가 추진 중인 날씨데이터 DePIN 프로젝트 장비의 예시". → **제품명·박스 비공개 방침
+  해제 (9/2 서우: "보도자료 나와서 이제 쓸 수 있어").** T1 이미지로 즉시 사용.
 - 대표 인용문의 "자산화" 는 케이웨더 국문 PR 어휘. 우리 X 채널의 "asset" 회피 규칙은 그대로 유지.
 
 ### (흡수됨) 구 원글 4 원안 — T1 훅은 9/1 문맥용이라 폐기, T2·T3 는 공지 스레드로 이관
