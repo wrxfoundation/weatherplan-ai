@@ -75,6 +75,40 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 **원칙 확립 (9/1, 이틀 연속 동일 기준으로 갈림)** — **글 유형은 본문이 아니라 클로징이 정한다.** 사실 정리가 아무리 정확해도 IYKYK·시세 암시·홀더 호명으로 닫히면 그 글은 시세 글이다. 판정 시 본문을 읽기 전에 **마지막 두 줄을 먼저 본다.** (9/1 Versan `Price discovery is still lagging` · 9/1 Xfinancebull `안다면, 알겠죠...`)
 | @VersanAljarrah(Black Swan Capitalist) — BlackRock 국채 토큰화 → RLUSD → XRPL → XRP 네이티브 (좋아요 714·조회 1.5만) | **전면 무반응, 좋아요도 생략** | ① **시세 발화가 클로징이자 본론** — `Price discovery is still lagging. That's the bigger picture.` 작성자가 직접 이게 요지라고 못박음. 금지선 최상위(Crypt0Senseii 가격전망·Xfinancebull ETF 인플로우와 동형) ② **"XRP 대신 RLUSD" 논쟁의 한쪽 편** — 우리는 RLUSD 정산 회사라 어느 방향이든 자기 폭로(ecosystem-log 9/1 가드 신설) ③ **사실 층 위에 추론 층** — 앞 3문장(BUIDL×RLUSD 환매)은 리플 공식 발표로 검증됨 ★, 뒤 2문장(`XRPL is where the move can finish`)은 작성자 확장(BUIDL 은 ETH·SOL·AVAX·MATIC 위). 답글 = 확장 배서 ④ 구멍 테스트 실패(측정·데이터·센싱 0). **수확은 판정이 아니라 사실 — BUIDL·VBILL ↔ RLUSD 즉시 환매를 ★★ 축적, 9/8 원글 6 최상급 배경** |
 
+## 🚨 9/2 디센트 파트너십 공지 — 대응 계획 (9/1 수립)
+
+**디센트가 9/2 08:01 X 예약 게시.** 초안 확인 요청이 텔레그램으로 옴(9/1 17:57).
+**케이웨더 공시 비대상**(서우 확인) — 공정공시 리스크는 없으나 발화 범위는 보도 문구까지.
+
+### 초안 2버전 불일치 (확인 필요)
+| 위치 | 마지막 문단 |
+|---|---|
+| 예약 편집 화면(8:01 발송) | `the ripple:native ecosystem` ✅ **우리 선호** |
+| 텔레그램 확인 요청본 | `opportunities across the $XRP ecosystem` ❌ |
+
+### 수정 요청 2건
+1. **`$XRP` 캐시태그 제거 → `ripple:native` 유지**. 캐시태그 = 시세 담론 문법.
+   8/30 XRPL 분석가 판정에서 인용 RT 를 금지한 사유와 동일(캐시태그를 우리 타임라인에 옮겨옴).
+   9/7 사전예약 D-6 에 시세 태그 인접 = 비발화 포지션 상쇄.
+2. **주체 분리 — 최우선.** `We're partnering with KWeather (@wellbianlabs)` +
+   `Together, we'll explore … digital asset rewards` 구조는 **케이웨더가 보상 주체로 읽힌다.**
+   8/27 확정선("기기 파트너·국내 수탁까지만, 토큰 발행·보상 주체로 읽힐 표현 금지") 위반.
+   **케이웨더 = 센서 네트워크·기기 파트너 / 프로젝트 주체 = 웰비안랩스** 로 분리 요청.
+   → 제안: `We're partnering with @wellbianlabs, the weather DePIN project built on KWeather's
+   sensor network — Korea's leading weather data company.` + `Together with @wellbianlabs, …`
+   - 이미지 락업(D'CENT × KWEATHER)은 **수정 요청하지 않음** — 텍스트에서 주체가 분리되면
+     "기기 파트너와의 파트너십"으로 정확히 읽힌다. 디센트의 브랜드 니즈도 있음.
+   - `Beyond storage. Into the real world.` 는 디센트 카피, 건드리지 않음.
+
+### 우리 게시 동선 — **인용 RT 금지**
+| 시각 | 행동 | 사유 |
+|---|---|---|
+| 08:00~08:30 | **디센트 원글에 답글 1건**(축하 톤·우리 쪽 사실 1개·상품 얘기 배제) | 인용 RT 는 이미지·태그가 통째로 우리 타임라인에 박힘. 답글은 디센트 오디언스(더 큰 계정)에 도달하면서 우리 타임라인은 깨끗 |
+| 저녁 | **원글 4(증언 각도)** → **이것을 고정** | 인용 RT 를 고정하면 남의 글이 우리 프로필 최상단. 고정 자산은 우리 문장이어야 함 |
+
+예열(답글) → 완결(원글) 세트 = 8/26 마스터카드 패턴.
+**게시 조건 유지**: MOU 를 주어로 쓰지 않는다 / 목록을 한 줄도 읊지 않는다.
+
 ## 대기열 (다음 게시 후보)
 
 | 우선순위 | 항목 | 권장 시점 |
