@@ -64,6 +64,12 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 
 **⚠️ 확인 필요 — KBW 시점**: 공식 10은 KBW 를 "9월 말~10월 초"로 적고 10/3 리플 서울 행사 예열 계획을 그 위에 세웠는데, 8/29 Animoca 글이 **KBW 를 과거형으로** 말한다. 이미 열렸다면 그 축 콘텐츠 계획의 타이밍이 통째로 밀린다. 외부 확인 불가(프록시 차단) — **서우 확인 대기.**
 
+## 판정 기록 (9/1)
+
+| 대상 | 판정 | 근거 |
+|---|---|---|
+| @VersanAljarrah(Black Swan Capitalist) — BlackRock 국채 토큰화 → RLUSD → XRPL → XRP 네이티브 (좋아요 714·조회 1.5만) | **전면 무반응, 좋아요도 생략** | ① **시세 발화가 클로징이자 본론** — `Price discovery is still lagging. That's the bigger picture.` 작성자가 직접 이게 요지라고 못박음. 금지선 최상위(Crypt0Senseii 가격전망·Xfinancebull ETF 인플로우와 동형) ② **"XRP 대신 RLUSD" 논쟁의 한쪽 편** — 우리는 RLUSD 정산 회사라 어느 방향이든 자기 폭로(ecosystem-log 9/1 가드 신설) ③ **사실 층 위에 추론 층** — 앞 3문장(BUIDL×RLUSD 환매)은 리플 공식 발표로 검증됨 ★, 뒤 2문장(`XRPL is where the move can finish`)은 작성자 확장(BUIDL 은 ETH·SOL·AVAX·MATIC 위). 답글 = 확장 배서 ④ 구멍 테스트 실패(측정·데이터·센싱 0). **수확은 판정이 아니라 사실 — BUIDL·VBILL ↔ RLUSD 즉시 환매를 ★★ 축적, 9/8 원글 6 최상급 배경** |
+
 ## 대기열 (다음 게시 후보)
 
 | 우선순위 | 항목 | 권장 시점 |
