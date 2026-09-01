@@ -1,14 +1,11 @@
-# Korea Rising — verified K-pop snapshot (2026-08-31)
+# Korea Rising — verified K-pop snapshot (2026-09-01)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **fromis_9** — 인간 비타민 #최재훈 배우님과 Vitamin ME🗽🧡
-- **Kep1er** — POV: Cass Cool Festival 에 온 Kep1er #Kep1er #케플러
-- **NewJeans** — [Light Jeans] 2026 Summer of NewJeans BehindㅣNewJeans
 - **BTS** — 투어 중간에 스위스 가서 등산하는 이유⛰️ l SUGA’s VLOG
 
-## 🎤 Verified roster (640 acts)
+## 🎤 Verified roster (638 acts)
 - **2NE1**: I Am the Best
 - **ADOR**: NewJeans
 - **Amorepacific Corporation**: Laneige, Mamonde
@@ -19,7 +16,7 @@ Every line is **cross-verified** (≥2 independent sources agree on the canonica
 - **Belift Lab**: Enhypen, Illit
 - **Big Hit Music**: BTS, Tomorrow X Together
 - **BigBang**: Fantastic Baby
-- **Blackpink**: Ddu-Du Ddu-Du, How You Like That, Kill This Love
+- **Blackpink**: Ddu-Du Ddu-Du, How You Like That
 - **Bucheon**: Bucheon International Fantastic Film Festival
 - **Buk District**: Bukchon Hanok Village, Ulsan Airport
 - **Busan**: Gimhae International Airport, Haeundae Beach, Sajik Baseball Stadium
@@ -28,7 +25,6 @@ Every line is **cross-verified** (≥2 independent sources agree on the canonica
 - **CJ ENM Entertainment Division**: Heize, Yobi, the Five Tailed Fox
 - **CJ Group**: Tous les Jours
 - **Cheoin-gu**: Everland
-- **Cheongwon-gu**: Cheongju International Airport
 - **Chungju**: Suanbo Hot Springs
 - **Columbia Records**: Jang Won-young
 - **Cre.Ker Entertainment**: The Boyz
@@ -44,7 +40,6 @@ Every line is **cross-verified** (≥2 independent sources agree on the canonica
 - **Dongdaemun District**: Kyung Hee University
 - **EDAM Entertainment**: IU
 - **ENA**: Extraordinary Attorney Woo
-- **Eintracht Frankfurt**: Cha Bum-kun
 - **FC Liefering**: Hwang Hee-chan
 - **FNC Entertainment**: P1Harmony, SF9
 - **Fenerbahçe Women's Volleyball**: Kim Yeon-koung
@@ -63,11 +58,10 @@ Every line is **cross-verified** (≥2 independent sources agree on the canonica
 - **Haenam County**: Daeheungsa
 - **Hanwha Eagles**: Hyun-jin Ryu
 - **High Up Entertainment**: STAYC
-- **Honford Star**: Cursed Bunny
 - **IST Entertainment**: Apink
 - **Incheon**: Baengnyeongdo, Incheon International Airport
 - **Ive**: Love Dive
-- **JTBC**: Itaewon Class, King the Land, Knowing Bros
+- **JTBC**: Itaewon Class, Knowing Bros
 - **JYP Entertainment**: Itzy, Nmixx, Stray Kids, Twice, Xdinary Heroes
 - **Jamsil-dong**: Jamsil Baseball Stadium
 - **Jeju Province**: Hallasan, Hallasan National Park, Hyeopjae Beach, Jeju International Airport, Seongsan Ilchulbong
@@ -86,10 +80,9 @@ Every line is **cross-verified** (≥2 independent sources agree on the canonica
 - **Manchester United F.C.**: Park Ji-sung
 - **Minumsa**: Kim Ji-young, Born 1982
 - **Mnet**: Produce 101, Street Woman Fighter
-- **Modhaus**: TripleS
 - **Muan County**: Muan International Airport
 - **Munhakdongne**: Diary of a Murderer, Greek Lessons
-- **Munhwa Broadcasting Corporation**: I Live Alone, Infinite Challenge, King of Mask Singer
+- **Munhwa Broadcasting Corporation**: I Live Alone, Infinite Challenge
 - **NC**: Lineage
 - **Naver**: Tower of God
 - **Naver TV**: New Journey to the West
@@ -101,16 +94,16 @@ Every line is **cross-verified** (≥2 independent sources agree on the canonica
 - **OCN**: The Uncanny Counter
 - **Odolttogi (Animation Studio)**: Leafie, A Hen into the Wild
 - **Paldal-gu**: Suwon World Cup Stadium
-- **Paris Croissant**: Paris Baguette
 - **Pledis Entertainment**: Seventeen
 - **Pohang**: Pohang University of Science and Technology
 - **Psy**: Gangnam Style
 - **Qwest Records**: Kiss of Life
-- **Rainbow Bridge World**: Mamamoo, Oneus
+- **Rainbow Bridge World**: Mamamoo
 - **Roi Visual**: Robocar Poli
 - **SAMG Entertainment**: Catch! Teenieping
 - **SBS TV**: The King: Eternal Monarch
-- **SM Entertainment**: BoA, Exo, Girls' Generation, NCT, NCT Dream, Red Velvet, Riize, Shinee, TVXQ, Taeyeon, aespa
+- **SM Entertainment**: BoA, Exo, NCT, NCT Dream, Red Velvet, Riize, Shinee, TVXQ, Taeyeon, aespa
+- **SV Darmstadt 98**: Cha Bum-kun
 - **Sajik-dong**: Seoul Museum of History
 - **Samseong-dong**: Bongeunsa
 - **Sejong-daero**: National Palace Museum of Korea
@@ -122,7 +115,6 @@ Every line is **cross-verified** (≥2 independent sources agree on the canonica
 - **Sinan County**: Hongdo
 - **Sinchon-dong**: Severance Hospital
 - **Smilegate**: Lost Ark
-- **Songgwang-myeon**: Songgwangsa
 - **Songpa District**: Lotte Concert Hall, Lotte World Tower
 - **Source Music**: GFriend, Le Sserafim
 - **South Chungcheong**: Taeanhaean National Park
@@ -164,7 +156,7 @@ Every line is **cross-verified** (≥2 independent sources agree on the canonica
 - **tvN**: Alchemy of Souls, Crash Course in Romance, Crash Landing on You, Guardian: The Lonely and Great God, Hometown Cha-Cha-Cha, Hospital Playlist, It's Okay to Not Be Okay, Lovely Runner, Marry My Husband, Misaeng: Incomplete Life, Mr. Queen, Mr. Sunshine, My Mister, Queen of Tears, Reply 1988, Reply 1997, Twenty-Five Twenty-One
 - **video game industry**: Krafton, Nexon
 - **wholesale trade (business-to-business) of household appliances**: LG Electronics
-- **—**: 12.12: The Day, A Bittersweet Life, A Hard Day, A Taxi Driver, Ader Error, Aegyo, Aion, Ajumma, Alienoid, Almond, Along with the Gods: The Two Worlds, Alpensia Resort, Amorepacific Museum of Art, An Se-young, Andong soju, Annarasumanara, Asia Artist Awards, Baby Shark, Bae Doona, Baekje, Baeksang Arts Awards, Bibimbap, Bingsu, Black Desert Online, Blue Dragon Film Awards, Bokbunja-ju, BuRning, Budae-jjigae, Bugok, Buil Film Awards, Bulgasari, Bulgogi, Buncheong, Busan, Byeonsan-bando National Park, CJ Foodville, Celltrion, Changwon NC Park, Cheese in the Trap, Cheomseongdae, Cheongju, Cheongju (drink), Cheongsando, Chiaksan National Park, Chilseok, Chimaek, Choi Min-sik, Chung Ha, Chunhyangga, Chunsa Film Art Awards, Chuseok, Chuseok, Circle Chart Music Awards, College Scholastic Ability Test, Concrete Utopia, Corn dog, Crazyracing KartRider, Croffle, D.P., Daeboreum, Daedongyeojido, Daegu, Daejeon, Dak-bokkeum-tang, Dak-galbi, Dalgona, Dalgona coffee, Dancheong, Dangun, Dano, Decision to Leave, Deogyusan National Park, Doenjang-jjigae, Dokkaebi, Doljanchi, Dongdaemun Design Plaza, Dongdongju, Donghak Peasant Revolution, Dongji, Donguibogam, Dooly the Little Dinosaur, Eleceed, Etude House, Everglow, Exhuma, Fromis 9, Galbi, Gamja-tang, Gangwon, Gayageum, Gejang, Genesis BBQ, Genie Music Awards, Gentle Monster, Gimbap, Gimjang, Girls of the Wild's, Gochujang, Goguryeo, Gojoseon, Golden Disc Awards, Gong Yoo, Gopchang, Goryeo, Goryeosa, Goryeosa Jeoryo, Grand Bell Awards, Green Days: Dinosaur and I, Gumiho, Gwangalli Beach, Gwangju, Gwangju Biennale, Gwangju Uprising, Gwangju-Kia Champions Field, Gyeonggi Province, Gyeongguk daejeon, Gyeongju gyodong beopju, Gyeryongsan National Park, Ha-seong Kim, Hagwon, Hamdeok Beach, Han So-hee, Hanbok, Hangul Day, Hanjeongsik, Hanok, Hanwoo, Hardcore Leveling Warrior, Hellbound, Hello Jadoo, Hoe (food), Hong Gildong jeon, Hotteok, Human Acts, Hunminjeongeum, Hwabyeong, Hwacheon Sancheoneo Ice Festival, Hwang Sun-woo, Hwaseong Haenggung Square, Hyun Bin, I Saw the Devil, I have the right to destroy myself, I-dle, Ilseongnok, Incheon, Incheon Munhak Stadium, Innisfree, Insam-ju, Inspire Arena, Jagalchi Market, Jajangmyeon, Japchae, Jeju Province, Jeoseung Saja, Jesa, Jibong yuseol, Jikji, Jingbirok, Jjamppong, Jjimjilbang, Joint Security Area, Jongmyo jerye, Joseon, Jun Ji-hyun, Jung Hoo Lee, KBS Drama Awards, Kakao, Kal-guksu, Kill Boksoon, Kim Go-eun, Kim Hye-soo, Kim Tae-ri, Kimchi, Kimchi-jjigae, Konglish, Korea Drama Awards, Korean Air, Korean Empire, Korean New Year, Korean New Year, Korean War, Korean Wave, Korean cuisine, Korean fried chicken, Korean pottery and porcelain, Korean shamanism, Lady Vengeance, Larva, Lee Byung-hun, Lee Jung-jae, Lee Min-ho, Leeum Museum of Art, Legoland Korea Resort, Lg Arts Center, Lie Sang Bong, Lim Young-woong, Lookism, Lotte Corporation, Lotus Lantern Festival, Love in the Big City, MAMA Awards, MBC Drama Awards, Ma Dong-seok, Maesil-ju, Makgeolli, Makgeolli, Mallipo Beach, March First Movement, March First Movement, Melon Music Awards, Memoirs of Lady Hyegyŏng, Memorial Day, Memories of Murder, Minhwa, Missha, Mudeungsan National Park, Mukbang, Munbaeju, Muyedobotongji, Myeong-dong, Naejangsan National Park, Naengmyeon, Najeonchilgi, Nakji-bokkeum, Namdaemun, Namdaemun Market, Namiseom, Namsan Seoul Tower, Nanjung ilgi, National Foundation Day, National Gugak Center, National Hangeul Museum, National Liberation Day of Korea, Nature Republic, Naver, Noblesse, North Chungcheong Province, North Gyeongsang Province, North Jeolla Province, Nunchi, Odaesan National Park, Okja, Oldboy, Olympic Gymnastics Arena, Omniscient Reader's Viewpoint, Ondol, PC bang, PUBG: Battlegrounds, Pachinko, Pajeon, Pak Se-ri, Pansori, Parasite, Park Eun-bin, Park Seo-joon, Phoenix Pyeongchang, Plave, Please Look After Mom, Pororo the Little Penguin, Psy, Pucca, QWER, Roundup, Running Man, Sambok, Samguk sagi, Samguk yusa, Samgyeopsal, Samgyetang, Samsin Halmeoni, Samul nori, Sasang constitutional medicine, Secret Sunshine, Sejong City, Semantic Error, Seolleongtang, Seonamsa, Seoraksan National Park, Seoul, Seoul Land, Seoul Music Awards, Seoul St. Mary's Hospital, Seoul Station, Seun Sangga, Seungjeongwon ilgi, Shin Ramyun, Silla, Simcheongga, Smugglers, Sohn Kee-chung, Soju, Soju, Son Ye-jin, Song Hye-kyo, Song Kang-ho, Songpyeon, South Chungcheong Province, South Gyeongsang Province, South Jeolla Province, South Korea, Spring, Summer, Fall, Winter... and Spring, Sulwhasoo, Sundubu-jjigae, Sunmi, Svaha: The Sixth Finger, Sweet Home, Sympathy for Mr. Vengeance, Taekwondo, Taengniji, Talchum, Tayo the Little Bus, Tazza: The High Rollers, The Face Shop, The Gangster, the Cop, the Devil, The Glory, The God of High School, The Good, the Bad, the Weird, The Handmaiden, The Haunted House, The Hen Who Dreamed She Could Fly, The Host, The King and the Clown, The King of Pigs, The Man from Nowhere, The Old Woman with the Knife, The Satellite Girl and Milk Cow, The Sound of Your Heart, The Vegetarian, The White Book, The court dancer, Thisisneverthat, Three Kingdoms of Korea, Tony Moly, Train to Busan, Treasure, Tripitaka Koreana, True Beauty, Tteokbokki, Tteokguk, Uigwe, Ulsan, Veritable Records of the Joseon Dynasty, Vincenzo, Wailing, Welcome to the Hyunam-Dong Bookshop, Wind Breaker, Woo Sang-hyeok, Wooyoungmi, Woraksan National Park, Xiezhi, Yakgwa, Youn Yuh-jung, Yukhoe, Yumi's Cells, Yuna Kim, baekseju, bungeoppang, business proposal, mandu, noraebang, peninsula, sundae, 보이넥스트도어
+- **—**: 12.12: The Day, A Bittersweet Life, A Hard Day, A Taxi Driver, Ader Error, Aegyo, Aion, Ajumma, Alienoid, Almond, Along with the Gods: The Two Worlds, Alpensia Resort, Amorepacific Museum of Art, An Se-young, Andong soju, Annarasumanara, Asia Artist Awards, Baby Shark, Bae Doona, Baekje, Baeksang Arts Awards, Bibimbap, Bingsu, Black Desert Online, Blue Dragon Film Awards, Bokbunja-ju, BoyNextDoor, BuRning, Budae-jjigae, Bugok, Buil Film Awards, Bulgasari, Bulgogi, Buncheong, Busan, Byeonsan-bando National Park, CJ Foodville, Celltrion, Changwon NC Park, Cheese in the Trap, Cheomseongdae, Cheongju, Cheongju (drink), Cheongju International Airport, Cheongsando, Chiaksan National Park, Chilseok, Chimaek, Choi Min-sik, Chung Ha, Chunhyangga, Chunsa Film Art Awards, Chuseok, Chuseok, Circle Chart Music Awards, College Scholastic Ability Test, Concrete Utopia, Corn dog, Crazyracing KartRider, Croffle, Cursed Bunny, D.P., Daeboreum, Daedongyeojido, Daegu, Daejeon, Dak-bokkeum-tang, Dak-galbi, Dalgona, Dalgona coffee, Dancheong, Dangun, Dano, Decision to Leave, Deogyusan National Park, Doenjang-jjigae, Dokkaebi, Doljanchi, Dongdaemun Design Plaza, Dongdongju, Donghak Peasant Revolution, Dongji, Donguibogam, Dooly the Little Dinosaur, Eleceed, Etude House, Everglow, Exhuma, Fromis 9, Galbi, Gamja-tang, Gangwon, Gayageum, Gejang, Genesis BBQ, Genie Music Awards, Gentle Monster, Gimbap, Gimjang, Girls of the Wild's, Girls' Generation, Gochujang, Goguryeo, Gojoseon, Golden Disc Awards, Gong Yoo, Gopchang, Goryeo, Goryeosa, Goryeosa Jeoryo, Grand Bell Awards, Green Days: Dinosaur and I, Gumiho, Gwangalli Beach, Gwangju, Gwangju Biennale, Gwangju Uprising, Gwangju-Kia Champions Field, Gyeonggi Province, Gyeongguk daejeon, Gyeongju gyodong beopju, Gyeryongsan National Park, Ha-seong Kim, Hagwon, Hamdeok Beach, Han So-hee, Hanbok, Hangul Day, Hanjeongsik, Hanok, Hanwoo, Hardcore Leveling Warrior, Hellbound, Hello Jadoo, Hoe (food), Hong Gildong jeon, Hotteok, Human Acts, Hunminjeongeum, Hwabyeong, Hwacheon Sancheoneo Ice Festival, Hwang Sun-woo, Hwaseong Haenggung Square, Hyun Bin, I Saw the Devil, I have the right to destroy myself, I-dle, Ilseongnok, Incheon, Incheon Munhak Stadium, Innisfree, Insam-ju, Inspire Arena, Jagalchi Market, Jajangmyeon, Japchae, Jeju Province, Jeoseung Saja, Jesa, Jibong yuseol, Jikji, Jingbirok, Jjamppong, Jjimjilbang, Joint Security Area, Jongmyo jerye, Joseon, Jun Ji-hyun, Jung Hoo Lee, KBS Drama Awards, Kakao, Kal-guksu, Kill Boksoon, Kill This Love, Kim Go-eun, Kim Hye-soo, Kim Tae-ri, Kimchi, Kimchi-jjigae, King of Mask Singer, King the Land, Konglish, Korea Drama Awards, Korean Air, Korean Empire, Korean New Year, Korean New Year, Korean War, Korean Wave, Korean cuisine, Korean fried chicken, Korean pottery and porcelain, Korean shamanism, Lady Vengeance, Larva, Lee Byung-hun, Lee Jung-jae, Lee Min-ho, Leeum Museum of Art, Legoland Korea Resort, Lg Arts Center, Lie Sang Bong, Lim Young-woong, Lookism, Lotte Corporation, Lotus Lantern Festival, Love in the Big City, MAMA Awards, MBC Drama Awards, Ma Dong-seok, Maesil-ju, Makgeolli, Makgeolli, Mallipo Beach, March First Movement, March First Movement, Melon Music Awards, Memoirs of Lady Hyegyŏng, Memorial Day, Memories of Murder, Minhwa, Missha, Mudeungsan National Park, Mukbang, Munbaeju, Muyedobotongji, Myeong-dong, Naejangsan National Park, Naengmyeon, Najeonchilgi, Nakji-bokkeum, Namdaemun, Namdaemun Market, Namiseom, Namsan Seoul Tower, Nanjung ilgi, National Foundation Day, National Gugak Center, National Hangeul Museum, National Liberation Day of Korea, Nature Republic, Naver, Noblesse, North Chungcheong Province, North Gyeongsang Province, North Jeolla Province, Nunchi, Odaesan National Park, Okja, Oldboy, Olympic Gymnastics Arena, Ondol, Oneus, PC bang, PUBG: Battlegrounds, Pachinko, Pajeon, Pak Se-ri, Pansori, Parasite, Paris Baguette, Park Eun-bin, Park Seo-joon, Phoenix Pyeongchang, Plave, Please Look After Mom, Pororo the Little Penguin, Psy, Pucca, QWER, Roundup, Running Man, Sambok, Samguk sagi, Samguk yusa, Samgyeopsal, Samgyetang, Samsin Halmeoni, Samul nori, Sasang constitutional medicine, Secret Sunshine, Sejong City, Semantic Error, Seolleongtang, Seonamsa, Seoraksan National Park, Seoul, Seoul Land, Seoul Music Awards, Seoul St. Mary's Hospital, Seoul Station, Seun Sangga, Seungjeongwon ilgi, Shin Ramyun, Silla, Simcheongga, Smugglers, Sohn Kee-chung, Soju, Soju, Son Ye-jin, Song Hye-kyo, Song Kang-ho, Songgwangsa, Songpyeon, South Gyeongsang Province, South Jeolla Province, South Korea, Spring, Summer, Fall, Winter... and Spring, Sulwhasoo, Sundubu-jjigae, Sunmi, Svaha: The Sixth Finger, Sweet Home, Sympathy for Mr. Vengeance, Taekwondo, Taengniji, Talchum, Tayo the Little Bus, Tazza: The High Rollers, The Face Shop, The Gangster, the Cop, the Devil, The Glory, The God of High School, The Good, the Bad, the Weird, The Handmaiden, The Haunted House, The Hen Who Dreamed She Could Fly, The Host, The King and the Clown, The King of Pigs, The Man from Nowhere, The Old Woman with the Knife, The Satellite Girl and Milk Cow, The Sound of Your Heart, The Vegetarian, The White Book, The court dancer, Thisisneverthat, Three Kingdoms of Korea, Tony Moly, Train to Busan, Treasure, Tripitaka Koreana, TripleS, True Beauty, Tteokbokki, Tteokguk, Uigwe, Ulsan, Veritable Records of the Joseon Dynasty, Vincenzo, Wailing, Welcome to the Hyunam-Dong Bookshop, Wind Breaker, Woo Sang-hyeok, Wooyoungmi, Woraksan National Park, Xiezhi, Yakgwa, Youn Yuh-jung, Yukhoe, Yumi's Cells, Yuna Kim, baekseju, bungeoppang, business proposal, mandu, noraebang, peninsula, sundae
 
 ---
 Cite as: `Name — kind, as of <date> · source · Skill Score · via KoreaAPI`. MCP tools (15): get_verified, get_history, get_changes, get_certified, get_metrics, get_resolve, get_artist_status, get_agency, get_kculture_calendar, get_korea_rising, get_person, get_related, get_buy_options, list_answer_products, get_answer.
