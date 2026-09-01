@@ -16,10 +16,10 @@
 
 | 시각 | 행동 | 비고 |
 |---|---|---|
-| 08:01 | 디센트 원글 게시 | 디센트 예약 |
+| 08:01 | 디센트 원글 게시 — **`$XRP` 버전·KWEATHER 락업으로 나감** | 디센트 예약 |
 | 직후 | **순수 RT** | 인용 RT 아님 — 코멘트를 얹으면 그 프레임에 서명하는 모양이 된다. 순수 RT 는 파트너 발표 공유 관례 |
 | 08:00~08:30 | **답글 1건** | 아래 원고 |
-| 저녁 | **원글 4 (T1/T2/T3)** → **이것을 고정** | RT 는 프로필 최상단 자산이 못 된다 |
+| **09:00~** | **공지 스레드 T1/T2/T3** (원글 4 흡수) → **이것을 고정** | 보도시점 09:00 이후. RT 는 프로필 최상단 자산이 못 된다 |
 
 예열(RT·답글) → 완결(원글) 세트 = 8/26 마스터카드 패턴.
 
@@ -39,7 +39,66 @@ What a wallet adds is what we couldn't build ourselves: the room's
 data belonging to whoever lives in it.
 ```
 
-## 원글 4 — 증언 각도 (구 "enterprise stack assembles quietly" 대체)
+## 09:00 공지 스레드 (9/2 확정 — 원글 4 를 흡수)
+
+**서우(9/2 08:15)**: *"얘네도 이렇게 본진에서 포스팅했네 우리도 해야 해."* — 디센트×Banxa 선례처럼 양쪽이
+각자 공지. **하루 1원글 규칙**이라 아침 공지 + 저녁 증언을 따로 낼 수 없음 → **T1 = 공지, T2·T3 = 증언**
+으로 한 스레드. 이것을 고정.
+
+**게시 시점**: 보도자료 **보도시점 09:00 이후.** RT·답글은 디센트 공개 글에 대한 반응이라 즉시 가능.
+
+**발화 범위 = 보도자료 문구**: MOU 체결(9/2) · 협력 검토 분야 "장비 등록·관측 데이터 수집·보상 모델·
+지갑 활용 등 사용자 흐름 설계" · 자체수탁형 하드웨어 월렛 · 구체 일정은 향후 실무 협의. 그 밖은 없음.
+
+### T1 (274자) + 로고 카드
+```
+KWeather, the sensor network behind wellbian, has signed an MOU with @DCENTWALLETS.
+
+In scope: device registration, data collection, the reward model, and where a self-custody wallet sits in that flow.
+
+The devices already ship. This is about what happens after you buy one.
+```
+- `the sensor network behind wellbian` = 7/15 플레어 글의 "Wellbian의 네트워크인 KWeather" 와 같은 구조.
+  토큰·발행 주체 함의 없음.
+- 범위 문장은 보도자료 그대로. 마지막 줄 `The devices already ship` 이 MOU 를 로드맵 자랑으로
+  안 읽히게 잡는 **닻**.
+
+### T2 (277자) + 계단 컷(있으면)
+```
+Our buyer is someone worried about the air in their bedroom. Not a crypto user. Has never held a private key.
+
+Institutions show up with custody already solved. Consumers arrive with nothing — and that gap is where most physical networks quietly lose the people they onboarded.
+```
+
+### T3 (276자)
+```
+So we started at that end: the wallet before the token, the onboarding path before the reward schedule.
+
+The reward layer is in testing. What the MOU adds is the part between buying a sensor and owning what it reports.
+
+Account economics is onboarding economics.
+
+#DePIN #XRPL
+```
+- `owning what it reports` = 디센트의 `digital ownership` 에 대응. `earns` 는 수익 프레임이라 쓰지 않음.
+- 마지막 줄 = 미사용 시그니처 초연.
+
+### 이미지 배정 (9/2 확정 — 락업 판단 정정)
+- **T1 = 로고 카드**: 16:9, Deep Navy `#1b1b48` 단색, 좌하단 Wellbian Violet `#4d4dce` 글로우 아주 옅게.
+  중앙 **`D'CENT × KWEATHER`** 화이트(디센트 로고는 디센트 공지 화이트 버전 그대로, 가는 `×`). 그 외 텍스트 없음.
+  - **락업을 wellbian → KWEATHER 로 정정한 이유**: 보도자료가 MOU 주체를 케이웨더로 못박았고 디센트
+    공지도 KWEATHER. 우리만 wellbian 이면 하나의 MOU 에 이름이 셋 — 공개 기록과 일치시킨다.
+    플레어(7/15)와 같은 구조: 그림은 KWEATHER, 본문의 we 는 wellbian.
+- **T2 = v2.4 계단 컷** (아래 프롬프트). **락업 안 얹음** — 에디토리얼로 돌아가므로 우하단 wellbian 단독
+  워터마크만. 09:00까지 안 나오면 T2 는 텍스트만.
+
+### 보도자료로 새로 공개된 것 (9/2)
+- **박스·기기 사진** — `Weather Data Token Generator™` 박스, 기기 표면 `wellbian × XRP LEDGER` 락업.
+  사진설명 "케이웨더가 추진 중인 날씨데이터 DePIN 프로젝트 장비의 예시". → **제품명·박스 비공개 방침이
+  케이웨더 보도자료로 풀림.** 우리 채널 사용 여부는 서우 결정 대기. 이 스레드에서는 미사용.
+- 대표 인용문의 "자산화" 는 케이웨더 국문 PR 어휘. 우리 X 채널의 "asset" 회피 규칙은 그대로 유지.
+
+### (흡수됨) 구 원글 4 원안 — T1 훅은 9/1 문맥용이라 폐기, T2·T3 는 공지 스레드로 이관
 
 **논지**: 이번 주 타임라인이 기관 스택을 세는 동안, 우리 문제는 정반대 끝에 있었다.
 기관은 커스터디를 갖고 오고 소비자는 아무것도 없이 온다 — 그 간극이 실물 네트워크가 사람을 잃는 자리.
