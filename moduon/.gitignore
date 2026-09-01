@@ -7,3 +7,5 @@ public/assets/*.webp
 .env.local
 .vercel
 .DS_Store
+# QA 합격 도장(로컬 전용) — .claude/hooks/guard.cjs 가 읽는다
+.qa-pass

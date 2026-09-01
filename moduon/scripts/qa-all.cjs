@@ -5,6 +5,7 @@
 // 종료 코드 0 = 전부 통과. 실패 시 어떤 하네스가 죽었는지 요약한다.
 const { execSync, spawn } = require('node:child_process')
 const { join } = require('node:path')
+const stamp = require('./lib/qa-stamp.cjs')
 
 const root = join(__dirname, '..')
 const full = process.argv.includes('--full')
@@ -46,6 +47,8 @@ const step = (name, fn) => {
   const fail = results.filter(([, ok]) => !ok)
   process.stdout.write('\n━━ QA 요약 ━━\n')
   for (const [name, ok] of results) process.stdout.write(`${ok ? 'PASS' : 'FAIL'}  ${name}\n`)
+  // 통과했을 때만 합격 도장을 찍는다. 커밋 훅이 이 도장과 현재 소스를 대조한다.
+  if (fail.length === 0) { try { stamp.write() } catch (e) { process.stdout.write(`(도장 실패: ${e.message})\n`) } }
   process.stdout.write(fail.length === 0 ? '✔ 전부 통과 — 커밋해도 됩니다\n' : `✘ ${fail.length}개 실패 — 커밋 전에 고치세요\n`)
   process.exit(fail.length === 0 ? 0 : 1)
 })()

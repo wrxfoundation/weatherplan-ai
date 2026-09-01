@@ -19,7 +19,10 @@ paperthin 스킬 팩(레포 루트 `.claude/skills/`, MIT — LilMGenius/paperth
 
 ## 이 프로젝트의 상시 규칙 (sip 대상)
 
-- 커밋 전: `cd moduon && npm run qa` — 실패면 커밋 금지
+> 아래 중 4가지는 이제 `.claude/hooks/guard.cjs`가 강제한다 — 문서가 아니라 차단이다.
+> 무엇을 왜 막는지는 `docs/BASH_GUARD.md`. 항상 로드되는 짧은 규칙 팩은 `moduon/CLAUDE.md`.
+
+- 커밋 전: `cd moduon && npm run qa` — 실패면 커밋 금지 **(훅이 강제)**
 - zip 전달 전: 시크릿 스캔(배포 토큰·Anthropic API 키 패턴, docx·바이너리 제외) CLEAN 확인 — 패턴 리터럴을 문서에 적으면 스캔이 자기 자신을 오탐하므로 여기 안 적는다
 - 금지어: 구 수익모델 "870만원"(현행 747만), 케이웨더 외 기상 출처(루트 앱), 시크릿 echo
 
@@ -31,10 +34,22 @@ paperthin 스킬 팩(레포 루트 `.claude/skills/`, MIT — LilMGenius/paperth
 - **모달 하단 붙음 버그** — `.safe-b`(env inset=0)가 p-6를 덮었다. 공통 컴포넌트의 패딩은 `pb-[max(1.5rem,env(safe-area-inset-bottom))]` 패턴으로.
 - **Playwright는 글로벌 설치본 우선** — 로컬 node_modules 브라우저 빌드 불일치 → `/opt/node22/lib/node_modules/playwright` 먼저 require.
 - **`text=문구` 로케이터는 substring 함정** — "신청 완료!"가 헤더 "30초면 신청 완료!"에 매칭. `:text-is()` 또는 innerText 추출 후 JS 비교.
-- **스테일 vite preview는 빈 페이지·무오류** — 스모크 전 pkill(단독 실행, exit 144는 정상) 후 재기동.
+- **스테일 vite preview는 빈 페이지·무오류** — 스모크 전 pkill 후 재기동.
+- **`pkill -f "vite preview"`는 자기 자신을 죽인다** — 패턴이 이 명령줄 자체에 매칭돼
+  셸이 먼저 죽는다(exit 144). 이 세션에서 두 번 당했다. 대괄호로 자기매칭을 끊을 것:
+  `pkill -f "vite prev[i]ew"`. **(훅이 강제)**
 - **이 컨테이너의 LibreOffice docx 변환은 전면 고장** — 정상 파일도 실패. 문서 검증은 python-docx 전수 검사로 대체.
 - **이미지 붙여넣기는 파일로 도달하지 않는다(vision-only)** — 로고·에셋 파일이 필요하면 docx/zip 첨부 또는 지정 경로 저장을 요청.
 - **compound 명령은 classifier가 끊을 수 있다** — add/commit/push/zip/scan은 분리 실행이 안전.
-- **루트에서 npm run build 금지** — 반드시 `moduon/`에서. (루트는 Next, moduon은 Vite)
+- **커밋 메시지의 괄호가 커밋을 조용히 죽인다** — 셸 파싱이 깨지는데 에러가 안 보인다.
+  메시지는 파일에 쓰고 `git commit -F`로 넘긴다. **(훅이 강제)**
+- **훅 설정 파일은 에이전트가 못 쓴다** — `.claude/settings.json`은 자동 명령 실행을 켜는
+  파일이라 Bash·Write 양쪽 다 분류기가 막는다. 정당한 안전장치이므로 우회하지 말고,
+  스니펫을 문서에 두고 사람이 붙이게 한다.
+- **외부 스택을 흡수할 땐 인벤토리가 아니라 구조를 본다** — ECC(68 에이전트·286 스킬)에서
+  실제로 취한 건 두 칸뿐이다: 자동 로드되는 규칙 팩과 강제 훅. 나머지는 우리에게 없는
+  스택(Django·Laravel·Quarkus·Rust·Swift…)의 팩이거나, `npm run qa`로 이미 구현된
+  검증 루프의 추상화였다. 저자 본인도 "286개를 한 번에 설치하지 말라"고 적어 뒀다.
+- **루트에서 npm run build 금지** — 반드시 `moduon/`에서. (루트는 Next, moduon은 Vite) **(훅이 강제)**
 - **아이콘 세트는 낱개로 고치면 절대 안 맞는다** — 정수기·생활/기타를 두 번 개별 재생성했지만 톤이 계속 어긋났다. 세트의 일관성은 "같은 프롬프트로 동시에 뽑았는가"에서 나온다. 손볼 일이 생기면 전량을 한 배치로 다시 뽑고, 프레이밍(오브젝트가 프레임의 몇 %를 차지하는지)까지 프롬프트에 못박을 것. 배경도 제거해 원형 배경색은 CSS 한 곳에서만 정한다.
 - **이미지 생성 배치는 일부가 조용히 실패한다** — 8건 중 3건이 에러 메시지 없이 failed. `jobs_wait`의 summary를 확인하고 실패분만 재제출하는 절차를 항상 넣을 것.
