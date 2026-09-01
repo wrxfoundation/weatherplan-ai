@@ -60,7 +60,67 @@ The incentive that installs the sensor decides what the data is worth.
 - **신규 시그니처(초연)**: `The incentive that installs the sensor decides what the data is worth.`
 - 소스 답글 없음 — 외부 인용이 없는 자체 논지 글.
 
-## 이미지 프롬프트 (v2.2 실사 레인)
+## 이미지 프롬프트
+
+**9/1 서우 판정: 실내 컷이 정적이고 계열 반복(5d·리브드 글라스·5g 전부 실내).**
+이 글은 실내 공기 글이 아니라 **네트워크 글**(T1 첫 단어가 `coverage`)이라 장소 자유도가 크다.
+→ **A안(도시 스케일)을 메인으로 승격**, 기존 실내안은 보조로 보존.
+
+### 메인안 A — 아파트 파사드 야간 (v2.3 도시 스케일 레인)
+
+논지가 그림에 그대로 보인다: 설치는 격자처럼 균일한데, **살아 있는 것은 흩어진 소수**다.
+
+#### Positive
+```
+Editorial architectural photograph at night. A high-rise residential tower facade fills
+the frame, shot from a low three-quarter angle so the grid of windows rises diagonally
+across the composition and converges toward the top.
+
+Hundreds of identical windows in a strict grid. Almost all of them are dark or dimly
+neutral — cool grey, unlit, anonymous. Scattered across the grid, a minority of windows
+glow with the same frosted violet light: Wellbian Violet #4d4dce, soft and diffuse
+behind the glass, never a lamp, never a visible interior. The lit windows form no
+pattern — irregular, sparse, unevenly distributed across floors.
+
+Long exposure: thin cloud streaks drag across the night sky behind the tower. Faint
+atmospheric haze between the camera and the upper floors gives depth. Wet concrete
+plaza below catches one soft violet reflection.
+
+Desaturated throughout — board-formed concrete, cold grey glass, black window frames,
+graphite sky. The only colour in the image is the violet.
+35mm f/4, long exposure, natural night light and window light only. Photographic,
+not a render. 16:9.
+```
+
+#### Negative
+```
+clay, claymation, plasticine, 3D render look, CGI, illustration, saturated colours,
+teal and orange grading, warm orange window light, mixed colour windows, blue windows,
+green windows, people, silhouettes in windows, visible interiors, furniture, devices,
+gadgets, sensors, antennas, satellite dishes, text, letters, numbers, signage, logos,
+watermark, lens flare, light rays, city skyline clutter, cars, neon
+```
+
+#### 리롤 조건
+- **다른 색 창이 섞임** — 따뜻한 주황 창이 제일 잘 끼어든다. 색이 둘이면 즉시 리롤
+- **창 안에 사람 실루엣·가구가 보임** — 감시 이미지가 된다
+- **점등이 규칙적 패턴을 이룸** — 불규칙해야 논지가 산다
+
+#### 그래픽 레이어 (후처리, 선택)
+켜진 창 3~4개에만 **얇은 원형 마커 + 1px 연결선**(페이퍼로지·화이트). 그 이상 얹으면
+인포그래픽이 되고 실사의 힘이 죽는다. 오버레이 문구는 `Coverage is a map of reasons.` 까지만 —
+⚠️ **우리 설치 현황처럼 읽히는 문구 금지**(판매 전, 과대 표현 리스크).
+
+### 실내를 계속 쓸 때 — 정적 탈출 레버 4개 (9/1 확립)
+
+실내 자체가 문제가 아니라 **아이레벨 정면 구도**가 문제다. 최근 3건이 전부 눈높이 정면.
+- **시간대**: 아침 자연광 → **새벽 3시**. 광원 하나만 남기면 대비가 산다
+- **앵글**: 바닥에 붙은 극단 로우앵글, 또는 천장 올려다보기
+- **거리**: 방 전체 → **손 닿는 거리 클로즈업**, 얕은 심도로 배경 소거
+- **움직임**: 커튼이 바람에 부푸는 순간·장노출 흔적. **포인트는 정지·선명 유지**
+  (「원장은 흔들리지 않는다」 모티프 = 스타일 규칙 겸용, v2.1에서 계승)
+
+### 보조안 B — 실내 (9/1 생성 완료, 정적 판정)
 
 논지의 그림: **빛이 닿는 자리에 있어야 값한다.** 닫힌 붙박이장(아무도 안 보는 자리) 대
 창가(사람이 사는 자리). 포인트 오브젝트는 창가 쪽에만.
