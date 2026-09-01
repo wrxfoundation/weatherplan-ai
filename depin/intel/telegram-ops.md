@@ -50,6 +50,52 @@
 Rose 와 1:1 에서 `/connect @wellbiantalk` → `telegram-rose-export-0830.json` 을 첨부해 `/import`.
 설정을 바꿀 때마다 `/export` 로 이 파일을 갱신할 것 — 갱신하지 않으면 복원본이 옛 상태로 되돌린다.
 
+## 톡방 인사말 · 응대 문구 (9/2 신설)
+
+### `GA (= Good Air)` — 커뮤니티 인사말 확정
+
+크립토 씬의 `GM (Good Morning)` 을 우리 주제로 비튼 것. 9/2 첫 사용에서 상대가 즉시
+`GA my bro` 로 받았다 — **작동 확인.** 앞으로 톡방 인사는 이것으로 통일한다.
+커뮤니티 고유 인사말은 초기 커뮤니티의 몇 안 되는 자산이므로, 변형하지 말고 반복해서 굳힌다.
+
+### 신규 입장자 응대 (기본형)
+
+```
+GA 🌤 You're the first to use it — guess it's official now.
+
+This room's for people who want to actually see their air, not just
+read about it. Sensors first, the rest after.
+
+Where are you based? Curious what your air is doing today.
+```
+
+- `Sensors first, the rest after` = 순서를 부드럽게 심고 기대치를 미리 정리하는 문장.
+- 마지막 질문이 대화를 **측정 축**으로 끌어온다 — 인사만 주고받다 끝나는 것을 막는다.
+- 첫 사용자라는 사실은 그때만 쓴다. 이후에는 첫 줄만 `GA 🌤` 로.
+
+### 즉답 문구 — 수익 질문
+
+톡방은 실시간이라 문구를 미리 굳혀둔다. **수익·금액 발화 금지선을 지키면서 회피처럼 보이지 않는
+유일한 방법은 정직하게 이유를 말하는 것.**
+
+```
+Honest answer — we don't talk numbers on rewards. That layer is
+still in testing, and neither the amount nor the value is guaranteed.
+
+What we can be concrete about is the device itself: a certified
+air-quality monitor that does its job whether or not any of that lands.
+```
+
+### 즉답 문구 — 가격·구매 시점 질문
+
+```
+Pre-registration opens Sept 7. Pricing goes public with it —
+not being coy, it's just not announced yet.
+```
+
+- **9/7 이전 절대 금지**: 가격 숫자 · 수량 · 증정분 · 얼리버드 명칭.
+- 답을 미루는 것이 아니라 **아직 공개 전이라는 사실**을 말한다(회피 인상 방지).
+
 ## FAQ 봇의 CS 인박스
 
 정본에 없어 답하지 못한 질문은 `wellbian :: cs` 채널로 넘어간다(`TG_CS_CHAT`).
