@@ -110,10 +110,26 @@ dawn light, and lay one soft violet reflection on the damp concrete below.
 Everything else is strictly photographic: grey concrete, grey fog, grey
 water, pale overcast dawn. No other colour in the frame.
 
+The upper-left third of the frame is clean, even fog with no detail —
+reserved as negative space.
+
 Wide lens, 28mm, f/8, tripod, natural light only, slight low angle so the
 steps read as rising. The surrealism comes entirely from the object; the
 photograph itself is ordinary. 16:9.
 ```
+
+### 로고 락업 배치 (9/2 서우 — 플레어 공지 방식 채택)
+플레어 이미지는 초점 없는 일러스트라 락업이 **정중앙**이었다. 계단 컷은 **문이 초점**이므로 락업이
+문과 싸우면 안 된다.
+- **위치**: 좌상단 1/3, 안개 영역. 계단 밑동(좌하단)·문(중앙~우측)과 대각 균형. 헤더처럼 읽힌다.
+  예비: 안개가 지저분하면 우하단 콘크리트 바닥.
+- **크기**: 가로 폭의 30~35%
+- **색**: 화이트. 안개가 밝게 나오면 Deep Navy `#1b1b48`
+- **락업**: **D'CENT × wellbian** — 디센트 로고는 디센트 공지 이미지 자산 그대로, 구분자 `×`.
+  KWEATHER 가 아닌 이유: 플레어 LOI 는 날씨 데이터 딜이라 주어가 케이웨더였고, 이번은 지갑·소유권·
+  보상 축이라 주어가 웰비안이다. 원글 4 본문의 "we" 와 그림의 주어가 갈리면 안 된다. 케이웨더 연결은
+  디센트 쪽 공지 이미지가 이미 KWEATHER 락업으로 하고 있다.
+- **타이틀 텍스트 없음** — 락업이 곧 텍스트. **우하단 워터마크 생략** — 락업에 wellbian 이 있어 중복.
 
 ### Negative
 ```
@@ -133,7 +149,7 @@ multiple doors, ladder, ramp
 - 하늘이 파래짐 — 안개 낀 회색 새벽 유지
 
 ### 후처리
-오버레이 = 페이퍼로지 · Deep Navy `#1b1b48` / 우하단 **wellbian 단독** 워터마크(락업 금지).
+락업 오버레이만(위 스펙). 타이틀·워터마크 없음.
 
 ### 보조안 — v2.1 클레이 (9/2 생성 완료, 모형 느낌 판정)
 
