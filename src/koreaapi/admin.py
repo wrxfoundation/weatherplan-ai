@@ -54,7 +54,7 @@ from datetime import datetime, timezone
 
 from . import answers, certify, integrity, sanitize
 from .badge import badge_svg, tier_of
-from .license import LICENSE
+from .license import LICENSE, SOURCE_LICENSES
 from .models import Record
 from .payments.stripe import PLANS as _PRICING_PLANS
 from .pipeline import store
@@ -3198,6 +3198,17 @@ def _agents_manifest() -> dict:
         "repository": "https://github.com/kwangdol-star/koreaapi",
         "languages": ["en", "ko"],
         "license": LICENSE,  # machine-readable reuse terms — free to use & cite WITH attribution
+        # The compilation licence above covers OUR work; the facts underneath keep their providers'
+        # terms, and those differ in ways a reuser must act on (CC0 vs share-alike vs 공공누리, whose
+        # per-dataset type can forbid commercial use). Published per source so a consumer — including
+        # one training a model on this corpus — can resolve any citation to its actual terms.
+        "licensing": {
+            "compilation": LICENSE["id"],
+            "sources": SOURCE_LICENSES,
+            "how": ("each record's provenance.sources names its providers; look the provider up in "
+                    "`sources` here. An entry with verified:false means the terms vary per dataset "
+                    "or per provider policy — confirm with the provider before commercial reuse."),
+        },
         "trust_model": {
             "basis": "verification, not brand",
             "how": ("every response carries how many INDEPENDENT sources agreed (Wikidata · Wikipedia · "

@@ -123,6 +123,21 @@ increasingly hold trading/payment tool scopes, so:
 - Stated machine-readably in `agents.json → autonomous_use.content_safety`, including the honest
   limit: open sources mean a hardened supply chain, not a guarantee — callers keep their own scopes.
 
+## Licensing (what a reuser is actually allowed to do)
+
+Our compilation — the verification, provenance and Skill Score — is CC-BY-4.0. The facts underneath
+keep their providers' terms, and those differ in ways a reuser must act on: CC0 asks nothing,
+CC BY-SA and ODbL carry share-alike, and the Korean public APIs run on **공공누리 (KOGL)** whose
+per-dataset type can forbid commercial use or derivatives (the **AI유형**, created 2026-01, is the
+one that explicitly permits AI training — relevant as the government front-loads its TOP100 opening
+to 2027). `license.SOURCE_LICENSES` holds the table; `agents.json → licensing` publishes it; a
+citation resolves to its terms via `license.license_for()`.
+
+Two rules hold it honest: a source adapter shipping without declared terms **fails CI**, and where
+terms vary per dataset the entry is marked `verified: false` rather than asserting a type nobody
+read. Licensing is derived metadata and stays OUT of the record — `data` is inside the hashed core,
+so putting it there would move every `content_hash` ever published.
+
 ## Verification layers (what protects a deploy)
 
 0. `tests/test_doc_drift.py` — every countable claim these docs make (endpoint lists, CLI commands,
