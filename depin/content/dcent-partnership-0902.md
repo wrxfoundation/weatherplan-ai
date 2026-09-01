@@ -78,7 +78,64 @@ Account economics is onboarding economics.
 발표가 아니라 근황이 되고, "우리는 상장 뉴스를 내는 프로젝트가 아니다"가 따라붙는다.
 마지막 줄 = 미사용 시그니처 **초연**(Sponsor 복선 페어).
 
-## 이미지 프롬프트 — v2.1 클레이 레인
+## 이미지 프롬프트 — v2.4 초현실 실사 (메인안)
+
+**클레이안 생성 결과(9/2): 프롬프트대로 나왔으나 서우 판정 "실사와 초현실 중간 지대로".**
+모형은 설명도처럼 읽힌다. → **장면은 100% 실사, 오브젝트 하나만 불가능.** 초현실이 오브젝트에서만
+오고 사진 자체는 평범해야 믿어진다. 컨셉(문 + 계단)은 유지, 존재감만 교체:
+모형 → 사람 스케일 실물 / 스튜디오 백드롭 → 새벽 안개 강변 콘크리트.
+**안개가 핵심 도구** — 배경을 자연스럽게 지워 클레이의 "빈 배경"이 실사에서도 성립.
+
+### Positive
+```
+Surreal architectural photograph, hyperreal, shot as if the object
+physically exists.
+
+Location: a wide, empty concrete riverside embankment at dawn, low fog
+hanging over the water behind, no landmarks, no people. Real weathered
+concrete underfoot — hairline cracks, damp patches, a faint tide line.
+
+Standing alone on the concrete, at human scale: a freestanding wall of
+raw cast concrete with a single plain rectangular doorway cut through it,
+sitting on a solid concrete plinth too high to reach from the ground.
+Through the doorway, only fog.
+
+One flight of steps rises from the ground to the doorway. The steps are
+the only impossible thing in the frame — thick slabs of frosted translucent
+violet glass, Wellbian Violet #4d4dce, milky and semi-opaque, the colour
+gathering in the bevelled edges and in the thin gaps between treads, the
+body of each tread pale and desaturated. They cast real shadows, catch real
+dawn light, and lay one soft violet reflection on the damp concrete below.
+
+Everything else is strictly photographic: grey concrete, grey fog, grey
+water, pale overcast dawn. No other colour in the frame.
+
+Wide lens, 28mm, f/8, tripod, natural light only, slight low angle so the
+steps read as rising. The surrealism comes entirely from the object; the
+photograph itself is ordinary. 16:9.
+```
+
+### Negative
+```
+clay, claymation, plasticine, scale model, miniature, tilt-shift, 3D render
+look, CGI, illustration, studio backdrop, seamless background, people, hands,
+furniture, devices, gadgets, sensors, text, letters, numbers, logos,
+watermark, saturated colours, teal and orange grading, blue sky, sunlight
+rays, lens flare, violet stain inside the glass, bruise, smudge, glowing
+doorway, violet on the wall, neon, city skyline, landmarks, bridge, boats,
+multiple doors, ladder, ramp
+```
+
+### 리롤 조건
+- **모형처럼 보임**(틸트시프트 느낌·얕은 심도) — f/8 + 사람 스케일 단서(콘크리트 균열·조수선)가 방지 장치
+- 문·벽에 바이올렛 번짐 — 계단만
+- **배경에 다리·타워·스카이라인** — 강변이라 가장 잘 끼어든다
+- 하늘이 파래짐 — 안개 낀 회색 새벽 유지
+
+### 후처리
+오버레이 = 페이퍼로지 · Deep Navy `#1b1b48` / 우하단 **wellbian 단독** 워터마크(락업 금지).
+
+### 보조안 — v2.1 클레이 (9/2 생성 완료, 모형 느낌 판정)
 
 구조 얘기라 실사로 가면 무슨 사진인지 모호해진다(레인 선택 기준). 9/1 도시 컷(A-3, 5g용)과도 안 겹침.
 **형태가 논지를 말한다: 문은 원래 거기 있었고, 거기 닿는 계단이 우리가 놓는 것.**
