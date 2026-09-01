@@ -135,7 +135,11 @@ increasingly hold trading/payment tool scopes, so:
    badge SVG, placeholder/None leak.
 3. Adversarial-data QA (session scratch scripts) — naive datetimes, junk aliases, string coords,
    quote-heavy names must build clean.
-4. `verifysite` — the pre-deploy gate on the assembled `_site` (above).
+4. `tests/test_deploy_assembly.py` — replays every `cp` line in `pages.yml` over a REAL build,
+   then puts the assembled `_site` through `verifysite`. Unit tests prove a generator ran; only
+   this proves the deploy ships what it made (the class that produced the `search-index.json`
+   and `.well-known/` 404s — both green offline, both missing in production).
+5. `verifysite` — the pre-deploy gate on the assembled `_site` (above).
 
 ## Deploying (the standalone → live flow)
 

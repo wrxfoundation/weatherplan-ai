@@ -472,6 +472,29 @@ hooks and slash commands (host-level configuration, not repo content).
 
 ---
 
+## Standing policy — generic agent-skill catalogs, from 2026-08-27
+
+Four have now been reviewed (k-skill, paperthin, ECC, and a 25-skill productivity roundup). The
+pattern is settled, so future ones get this test instead of a fresh evaluation:
+
+**Take a catalog's component only when it closes a gap this repo actually has, and take one.**
+k-skill gave the SKILL distribution lane (we had no agent-install path); paperthin gave the
+doc-claim pin (we were fixing drift without pinning it); ECC gave the standing-instruction pack (we
+had no AGENTS.md). Each was one component, and each replaced a measured hole.
+
+**Decline the rest by default.** A catalog's language reviewers, TDD/testing skills, commit-message
+and code-documentation helpers, dashboards, hooks and slash commands are a coding-harness product;
+this repo's reviewer is ruff plus a ~450-test offline suite that CI actually runs, and its
+conventions are already enforced by guards. Generic productivity templates (notes, CV, decks,
+research synthesis) are a different product class entirely. Adding any of them would be the slop
+every one of these catalogs warns about: an agent adds, and nothing makes it go back and delete.
+
+*Worth noting rather than shipping:* "validate this source / is it credible" recurs as a wanted
+skill across catalogs. That is our product for the Korean-culture domain, and `skills/koreaapi` is
+already that lane — a demand signal for the lane, not new work.
+
+---
+
 ## Reviewed and DECLINED — LilMGenius/polysona, 2026-08-26
 
 polysona is a multi-persona **content** engine: a 10-framework psychology interview builds
