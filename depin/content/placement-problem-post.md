@@ -66,58 +66,59 @@ The incentive that installs the sensor decides what the data is worth.
 이 글은 실내 공기 글이 아니라 **네트워크 글**(T1 첫 단어가 `coverage`)이라 장소 자유도가 크다.
 → **A안(도시 스케일)을 메인으로 승격**, 기존 실내안은 보조로 보존.
 
-### 메인안 A-2 — 아파트 한 동의 일부, 해질녘 (v2.3 도시 스케일)
+### 메인안 A-3 — 밤, 불 켜진 아파트 (v2.3 도시 스케일 · 확정안)
 
-**A안(파사드 전면·심야) 폐기 — 서우 판정 "너무 삭막하다"(9/1).** 원인은 미학이 아니라
-**논지 배반**이었다: T2가 *sits where they actually breathe* 라고 말하는데 그림에 사람의 흔적이
-0이었다. 익명 격자 + 심야 + 젖은 콘크리트 광장으로 차가움을 세 겹 쌓았다.
-→ 레버 4개로 교정: **거리를 좁히고**(건물 전체 → 4~5개 층 크롭) **생활 흔적을 넣고**(발코니
-빨래·화분) **시간대를 올리고**(심야 → 해질녘) **렌즈를 길게**(35mm 광각 → 85mm 압축 + 전경 보케).
+**A안(파사드 전면·심야)·A-2안(해질녘·회색 하늘) 연속 폐기 — 서우 "아직 삭막한데 그냥 밤에
+불빛으로 하면 안되나"(9/1).** 서우 직관이 옳았고, 이것은 미학 교정이 아니라 **논지 교정**이다.
+
+> **어두운 창들 사이에 보라가 켜진 그림 = 빈 집에 기기만 켜져 있는 그림.**
+> 그건 이 글이 *비판하는 쪽*(옷장 속 센서)의 그림이다. T2 는 정반대를 말한다 —
+> `sits where they actually breathe`. 따라서 올바른 구조는 **불 켜진 집들 중 일부**다.
+
+부수 효과로 삭막함도 해소된다. 회색은 대비를 만들지 못한다. **따뜻한 앰버 바다에 차가운
+바이올렛 몇 점**이 훨씬 강한 대비이고, 창불빛 자체가 "사람이 산다"의 가장 직접적인 신호다.
 
 #### Positive
 ```
-Editorial architectural photograph at dusk, shortly after sunset. Not a whole building —
-a tight crop of four or five floors of a residential tower, filling the frame, shot from
-across the street with a long lens so the facade compresses flat.
+Editorial night photograph of a residential apartment building, shot from the street
+below looking slightly up. A tight crop — five or six floors filling the frame, not the
+whole tower.
 
-The grid is regular but lived in: recessed balconies with pale linen laundry hung to dry,
-a few clay pots of plants in silhouette, a folded blanket over one railing, sheer curtains
-caught half-open where a window is cracked for air. Ordinary, unstaged, slightly untidy.
+Most windows are lit from within with soft warm amber household light — muted and low
+in saturation, never neon, never harsh. Curtains glow, some drawn, some half-open.
+Recessed balconies with pale laundry hung to dry, clay pots, a folded blanket on a
+railing. The building is unmistakably lived in.
 
-Most windows are dark or dimly neutral. Three or four windows, scattered irregularly
-across different floors, glow with the same frosted violet light: Wellbian Violet #4d4dce,
-soft and diffuse behind the glass. No lamps, no visible interiors, no people.
+Scattered irregularly across different floors, three or four windows glow a different
+colour: cool frosted Wellbian Violet #4d4dce, crisp and slightly more saturated than the
+amber around them. They read instantly as the odd ones out.
 
-Bare tree branches cross the lower foreground, thrown far out of focus into soft shapes.
-Dusk sky graded to desaturated slate grey, not blue. Everything desaturated — warm grey
-concrete, bone linen, graphite frames. The violet is the only saturated colour in the frame.
+Bare tree branches and a soft streetlamp glow cross the lower foreground, thrown far out
+of focus. Night sky deep graphite, no stars, no city skyline.
 
-85mm f/2, available light only, shallow depth of field, foreground branches blurred.
+Overall grade restrained and filmic — warm amber kept desaturated so the violet stays the
+sharpest colour in the frame. 85mm f/2, available light only, shallow depth of field.
 Photographic, not a render. 16:9.
 ```
 
 #### Negative
 ```
-clay, claymation, plasticine, 3D render look, CGI, illustration, saturated colours, teal
-and orange grading, blue hour blue sky, warm orange window light, mixed colour windows,
-green windows, people, faces, silhouettes of people in windows, visible interiors,
-furniture, devices, gadgets, sensors, air conditioners, antennas, satellite dishes, text,
-letters, numbers, signage, logos, watermark, lens flare, neon, wide establishing shot,
-whole building in frame, empty plaza, wet pavement
+clay, claymation, plasticine, 3D render look, CGI, illustration, neon, saturated orange,
+teal and orange grading, oversaturated, HDR, people, faces, silhouettes of people in
+windows, furniture, devices, gadgets, sensors, air conditioners, antennas, satellite
+dishes, text, letters, numbers, signage, logos, watermark, lens flare, light rays, city
+skyline, cars, wide establishing shot, whole building in frame, empty plaza, wet pavement
 ```
 
 #### 리롤 조건
-- 창에 사람 얼굴·실루엣 → **감시 이미지**가 된다
-- 주황 창이 섞임(가장 흔한 실패) / 하늘이 파래짐 → 바이올렛이 죽는다, 하늘은 회색
-- **건물 전체가 프레임에 들어옴** → A안의 삭막함으로 회귀. 크롭 유지가 생명
-
-#### 왜 빨래인가
-흰색·리넨 톤이라 무채색 규칙을 깨지 않으면서 *"여기 사람이 산다"* 를 한 컷에 말한다.
-T2 문장(`sits where they actually breathe`)의 시각적 대응물이다.
+- **앰버가 쨍해져 바이올렛이 묻힘** — 앰버는 억눌러야 포인트가 산다(가장 흔한 실패)
+- 바이올렛 창이 너무 많아 **패턴이 됨** — 서너 개, 불규칙
+- 창에 사람 얼굴·실루엣 → 감시 이미지
+- 건물 전체가 프레임에 들어옴 → 삭막함으로 회귀
 
 #### 그래픽 레이어 (후처리, 선택)
-켜진 창 3~4개에만 **얇은 원형 마커 + 1px 연결선**(페이퍼로지·화이트). 그 이상 얹으면
-인포그래픽이 되고 실사의 힘이 죽는다. 오버레이 문구는 `Coverage is a map of reasons.` 까지만 —
+바이올렛 창 3~4개에만 **얇은 원형 마커 + 1px 연결선**(페이퍼로지·화이트). 그 이상은 인포그래픽이
+되고 실사가 죽는다. 오버레이 문구는 `Coverage is a map of reasons.` 까지만 —
 ⚠️ **우리 설치 현황처럼 읽히는 문구 금지**(판매 전, 과대 표현 리스크).
 
 ### 실내를 계속 쓸 때 — 정적 탈출 레버 4개 (9/1 확립)
