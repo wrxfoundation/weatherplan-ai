@@ -103,6 +103,8 @@
   — 토큰화·"자산이 노드가 된다" 담론 대응용. 물리 기기가 실제 노드인 우리만 땅에 내려놓을 수 있다.
 - ⚠️ (미사용, 원글 예정) "An air-quality network shouldn't cost the air." — 에너지 원글(5f)에서
   초연 예정. 답글에서 먼저 소진하지 말 것.
+- (후보, 9/1 신설) "The incentive that installs the sensor decides what the data is worth."
+  — DePIN 설치 동기·노드 품질 담론 대응용. 5g 원글에서 초연 예정, 답글 선소진 금지.
 
 ## 어휘 규칙 (대외 채널)
 
