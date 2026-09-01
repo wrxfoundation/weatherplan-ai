@@ -90,6 +90,37 @@ def test_admin_commands_all_reachable_from_the_dispatcher():
         assert f'cmd == "{cmd}"' in src, f"help documents `{cmd}` but no dispatcher branch handles it"
 
 
+def test_the_agent_rule_pack_stays_true():
+    # A session-start rule pack is the doc most likely to rot: it is read constantly and edited
+    # never. Pin its checkable parts — every file it points at exists, every module it maps is real,
+    # every command it gives is a real command, and the invariant numbers it cites exist.
+    import os
+    import re
+    agents = _read("AGENTS.md")
+    links = set(re.findall(r"\]\(\./([A-Za-z0-9_./-]+)\)", agents))
+    for target in links:
+        assert os.path.exists(f"{_REPO}/{target}"), f"AGENTS.md points at a missing file: {target}"
+    modules = [m[0] or m[1] for m in re.findall(r"^├── (\w+)\.py|^└── (\w+)\.py", agents, re.M)]
+    for name in modules:
+        assert os.path.exists(f"{_REPO}/src/koreaapi/{name}.py"), f"AGENTS.md maps a missing module: {name}"
+    src = _read("src/koreaapi/admin.py")
+    commands = set(re.findall(r"`admin (\w+)`", agents))
+    for cmd in commands:
+        assert f'cmd == "{cmd}"' in src, f"AGENTS.md names a nonexistent command: {cmd}"
+    principles = _read("PRINCIPLES.md")
+    invariants = set(re.findall(r"invariant #(\d)", agents))
+    for n in invariants:
+        assert re.search(rf"^{n}\. \*\*", principles, re.M), f"AGENTS.md cites missing invariant #{n}"
+    # A pin that matches nothing passes vacuously and looks like coverage — the worst kind of guard.
+    # (The command pin did exactly that on its first draft, keyed to a phrasing the file never uses.)
+    assert links and modules and commands and invariants, \
+        f"a rule-pack pin matched nothing: links={len(links)} modules={len(modules)} " \
+        f"commands={len(commands)} invariants={len(invariants)}"
+    # CLAUDE.md must stay a pointer, never a second copy of the standing instructions
+    claude = _read("CLAUDE.md")
+    assert "AGENTS.md" in claude and len(claude.splitlines()) < 10
+
+
 def test_surfaces_inventory_names_only_files_the_build_writes(tmp_path):
     # OPERATIONS' surfaces inventory is the operator's map; a surface listed but never written is
     # a phantom. Build a real site and check every top-level page the inventory names exists.

@@ -441,6 +441,37 @@ are agent-install artifacts, not a library this repo depends on).
 
 ---
 
+## Absorbed from affaan-m/ECC — Claude Code engineering-team plugin, 2026-08-27
+
+ECC ships 68 subagents, 286 skills, 94 commands and a rule pack (MIT) that turn Claude Code into a
+staffed engineering team: plan-before-build, per-language reviewers in a clean context, per-stack
+error resolvers, OWASP + agent-config injection scanning, TDD/eval/verification-loop skills.
+
+**Absorbed: exactly one piece — the rule pack**, on the author's own advice ("do not install 286
+skills; start with one plan and a single rule pack"), which is also paperthin's restraint lesson.
+This repo had no `AGENTS.md`/`CLAUDE.md`: every cold session re-derived orientation from ~1,380
+lines across eight root docs, and this session lost its container twice. → ✅ **SHIPPED**:
+[`AGENTS.md`](./AGENTS.md) as the single standing-instruction home (CLAUDE.md is a two-line pointer,
+so the Claude Code and Codex lanes cannot drift), carrying ONLY what lived nowhere else — the dev
+sandbox has no egress so every local check is offline and nothing may be called "verified live",
+never guess a Wikidata Q-id (search terms are safe, the identity guard degrades them to a miss),
+never let a key reach a published citation, certifications are human-merged, work lands on
+`koreaapi-standalone` and `main` is never force-pushed, and fix drift and its pin together. The
+rest is links: PRINCIPLES, OPERATIONS, ROADMAP, SCOPE, API, API_KEYS, DESIGN_HERITAGE.
+
+The pack is itself pinned (invariant #8 applied to itself): a doc-drift guard resolves every file
+it links, every module it maps, every command it names, and every invariant it cites — and asserts
+none of those pins matched zero targets. That last assertion earned its place immediately: the
+command pin was keyed to a phrasing the file never uses and was passing vacuously, which is worse
+than no guard because it reads as coverage.
+
+**Not absorbed:** the 68 agents and 286 skills (a harness catalog for a coding team, not a data
+product's dependency) · per-language reviewers and build-error resolvers (one language here, and
+the suite plus ruff is the reviewer CI actually runs) · the Tkinter dashboard, MCP server configs,
+hooks and slash commands (host-level configuration, not repo content).
+
+---
+
 ## Reviewed and DECLINED — LilMGenius/polysona, 2026-08-26
 
 polysona is a multi-persona **content** engine: a 10-framework psychology interview builds
