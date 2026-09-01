@@ -66,45 +66,54 @@ The incentive that installs the sensor decides what the data is worth.
 이 글은 실내 공기 글이 아니라 **네트워크 글**(T1 첫 단어가 `coverage`)이라 장소 자유도가 크다.
 → **A안(도시 스케일)을 메인으로 승격**, 기존 실내안은 보조로 보존.
 
-### 메인안 A — 아파트 파사드 야간 (v2.3 도시 스케일 레인)
+### 메인안 A-2 — 아파트 한 동의 일부, 해질녘 (v2.3 도시 스케일)
 
-논지가 그림에 그대로 보인다: 설치는 격자처럼 균일한데, **살아 있는 것은 흩어진 소수**다.
+**A안(파사드 전면·심야) 폐기 — 서우 판정 "너무 삭막하다"(9/1).** 원인은 미학이 아니라
+**논지 배반**이었다: T2가 *sits where they actually breathe* 라고 말하는데 그림에 사람의 흔적이
+0이었다. 익명 격자 + 심야 + 젖은 콘크리트 광장으로 차가움을 세 겹 쌓았다.
+→ 레버 4개로 교정: **거리를 좁히고**(건물 전체 → 4~5개 층 크롭) **생활 흔적을 넣고**(발코니
+빨래·화분) **시간대를 올리고**(심야 → 해질녘) **렌즈를 길게**(35mm 광각 → 85mm 압축 + 전경 보케).
 
 #### Positive
 ```
-Editorial architectural photograph at night. A high-rise residential tower facade fills
-the frame, shot from a low three-quarter angle so the grid of windows rises diagonally
-across the composition and converges toward the top.
+Editorial architectural photograph at dusk, shortly after sunset. Not a whole building —
+a tight crop of four or five floors of a residential tower, filling the frame, shot from
+across the street with a long lens so the facade compresses flat.
 
-Hundreds of identical windows in a strict grid. Almost all of them are dark or dimly
-neutral — cool grey, unlit, anonymous. Scattered across the grid, a minority of windows
-glow with the same frosted violet light: Wellbian Violet #4d4dce, soft and diffuse
-behind the glass, never a lamp, never a visible interior. The lit windows form no
-pattern — irregular, sparse, unevenly distributed across floors.
+The grid is regular but lived in: recessed balconies with pale linen laundry hung to dry,
+a few clay pots of plants in silhouette, a folded blanket over one railing, sheer curtains
+caught half-open where a window is cracked for air. Ordinary, unstaged, slightly untidy.
 
-Long exposure: thin cloud streaks drag across the night sky behind the tower. Faint
-atmospheric haze between the camera and the upper floors gives depth. Wet concrete
-plaza below catches one soft violet reflection.
+Most windows are dark or dimly neutral. Three or four windows, scattered irregularly
+across different floors, glow with the same frosted violet light: Wellbian Violet #4d4dce,
+soft and diffuse behind the glass. No lamps, no visible interiors, no people.
 
-Desaturated throughout — board-formed concrete, cold grey glass, black window frames,
-graphite sky. The only colour in the image is the violet.
-35mm f/4, long exposure, natural night light and window light only. Photographic,
-not a render. 16:9.
+Bare tree branches cross the lower foreground, thrown far out of focus into soft shapes.
+Dusk sky graded to desaturated slate grey, not blue. Everything desaturated — warm grey
+concrete, bone linen, graphite frames. The violet is the only saturated colour in the frame.
+
+85mm f/2, available light only, shallow depth of field, foreground branches blurred.
+Photographic, not a render. 16:9.
 ```
 
 #### Negative
 ```
-clay, claymation, plasticine, 3D render look, CGI, illustration, saturated colours,
-teal and orange grading, warm orange window light, mixed colour windows, blue windows,
-green windows, people, silhouettes in windows, visible interiors, furniture, devices,
-gadgets, sensors, antennas, satellite dishes, text, letters, numbers, signage, logos,
-watermark, lens flare, light rays, city skyline clutter, cars, neon
+clay, claymation, plasticine, 3D render look, CGI, illustration, saturated colours, teal
+and orange grading, blue hour blue sky, warm orange window light, mixed colour windows,
+green windows, people, faces, silhouettes of people in windows, visible interiors,
+furniture, devices, gadgets, sensors, air conditioners, antennas, satellite dishes, text,
+letters, numbers, signage, logos, watermark, lens flare, neon, wide establishing shot,
+whole building in frame, empty plaza, wet pavement
 ```
 
 #### 리롤 조건
-- **다른 색 창이 섞임** — 따뜻한 주황 창이 제일 잘 끼어든다. 색이 둘이면 즉시 리롤
-- **창 안에 사람 실루엣·가구가 보임** — 감시 이미지가 된다
-- **점등이 규칙적 패턴을 이룸** — 불규칙해야 논지가 산다
+- 창에 사람 얼굴·실루엣 → **감시 이미지**가 된다
+- 주황 창이 섞임(가장 흔한 실패) / 하늘이 파래짐 → 바이올렛이 죽는다, 하늘은 회색
+- **건물 전체가 프레임에 들어옴** → A안의 삭막함으로 회귀. 크롭 유지가 생명
+
+#### 왜 빨래인가
+흰색·리넨 톤이라 무채색 규칙을 깨지 않으면서 *"여기 사람이 산다"* 를 한 컷에 말한다.
+T2 문장(`sits where they actually breathe`)의 시각적 대응물이다.
 
 #### 그래픽 레이어 (후처리, 선택)
 켜진 창 3~4개에만 **얇은 원형 마커 + 1px 연결선**(페이퍼로지·화이트). 그 이상 얹으면
