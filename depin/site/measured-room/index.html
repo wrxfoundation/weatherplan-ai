@@ -197,7 +197,7 @@
       en2: "Close the window and breath raises CO₂. Open it and outside air brings it down.",
       states: { dusk: "living-dusk", window: "living-window", night: "living-night" },
       pick: (s, g) => g.night ? "night" : s.window ? "window" : "dusk",
-      device: { u: 0.36, v: 0.585, w: 0.046 }, window: { u: 0.78, v: 0.30 }, focus: [0.42, 0.5],
+      device: { u: 0.36, v: 0.605, w: 0.05 }, window: { u: 0.78, v: 0.30 }, focus: [0.42, 0.5],
       people: (h) => (h >= 18 && h < 23) ? 2.8 : (h >= 23 || h < 7) ? 0.3 : 1.2,
       init: { pm: 12, co2: 620 }
     },
@@ -217,7 +217,7 @@
       en2: "Ten minutes at the stove. Steam and oil smoke push PM2.5 up; an open window lets it out.",
       states: { idle: "kitchen-idle", cook: "kitchen-cook", vent: "kitchen-vent", night: "kitchen-night" },
       pick: (s, g) => s.cook > 0 ? "cook" : s.window ? "vent" : g.night ? "night" : "idle",
-      device: { u: 0.835, v: 0.62, w: 0.045 }, pan: { u: 0.615, v: 0.60 }, window: { u: 0.26, v: 0.43 }, focus: [0.66, 0.5],
+      device: { u: 0.835, v: 0.625, w: 0.045 }, pan: { u: 0.615, v: 0.60 }, window: { u: 0.26, v: 0.43 }, focus: [0.66, 0.5],
       people: (h) => (h >= 18 && h < 21) ? 1.5 : (h >= 23 || h < 7) ? 0.2 : 0.8,
       init: { pm: 14, co2: 560 }
     }
@@ -412,7 +412,7 @@
       return { n, pos, alpha, size, geo, mat, pts, life: new Float32Array(n), vel: new Float32Array(n * 3), maxLife: new Float32Array(n) };
     }
     // 먼지: 방 안 공기 부피에 떠 있고, PM 이 높을수록 진해진다. 창이 열리면 창에서 방 안쪽으로 밀린다.
-    dust = particles(dustN, "#c9c9dc", 0.0); dust.mat.uniforms.uScale.value = 16;
+    dust = particles(dustN, "#c9c9dc", 0.0); dust.mat.uniforms.uScale.value = 11;
     for (let i = 0; i < dustN; i++) { spawnDust(i); dust.alpha[i] = 0.35 + Math.random() * 0.65; dust.size[i] = 0.9 + Math.random() * 1.6; }
     // 김: 부엌 팬에서 올라와 퍼지다 사라진다.
     steam = particles(steamN, "#f4f2ee", 0.0); steam.mat.uniforms.uScale.value = 700;
@@ -502,7 +502,9 @@
     if (n > 0) { showPhoto(); hud(); redraw(); }
 
     // 사진 위 막: CO₂ 는 뿌연 막, 밤은 가장자리가 어두워진다
-    haze.style.opacity = Math.max(0, Math.min(0.55, (s.co2 - 700) / 2200)).toFixed(3);
+    // 뿌연 막: CO₂ 가 쌓이면 회청색으로, 연기(PM)가 차면 따뜻한 회색으로 — 둘 중 진한 쪽
+    const hz = Math.max(Math.min(0.55, (s.co2 - 700) / 2200), Math.min(0.38, (s.pm - 40) / 320), 0);
+    haze.style.opacity = hz.toFixed(3);
     vig.style.opacity = G.night ? "0.5" : "0";
 
     px += (tx - px) * 0.06; py += (ty - py) * 0.06;
@@ -512,9 +514,9 @@
       camera.position.set(px * 0.05, -py * 0.03, 0); camera.lookAt(px * 0.05, -py * 0.03, -1);
       const drift = reduced ? 0 : dt;
       // 먼지
-      const dOp = Math.max(0.04, Math.min(0.8, (s.pm - 4) / 120));
+      const dOp = Math.max(0.04, Math.min(0.55, (s.pm - 4) / 160));
       dust.mat.uniforms.uOpacity.value += (dOp - dust.mat.uniforms.uOpacity.value) * 0.05;
-      dust.mat.uniforms.uColor.value.lerp(new THREE.Color(G.night ? "#e8e8ff" : "#c4c4d8"), 0.05);
+      dust.mat.uniforms.uColor.value.lerp(new THREE.Color(G.night ? "#e8e8ff" : "#b4b4c8"), 0.05);
       let windDir = null, windFrom = null;
       if (s.window) { windFrom = toWorld(SPACES[cur].window.u, SPACES[cur].window.v, 4.4); windDir = new THREE.Vector3(0, -0.3, -2.4).sub(windFrom).normalize(); }
       for (let i = 0; i < dustN; i++) {
@@ -527,10 +529,10 @@
       dust.geo.attributes.position.needsUpdate = true;
       // 김 — 부엌에서 조리 중일 때만
       const cooking = cur === "kitchen" && s.cook > 0;
-      steam.mat.uniforms.uOpacity.value += ((cooking ? 0.2 : 0) - steam.mat.uniforms.uOpacity.value) * (cooking ? 0.08 : 0.03);
+      steam.mat.uniforms.uOpacity.value += ((cooking ? 0.3 : 0) - steam.mat.uniforms.uOpacity.value) * (cooking ? 0.08 : 0.03);
       if (steam.mat.uniforms.uOpacity.value > 0.005) {
         const origin = toWorld(SPACES.kitchen.pan.u, SPACES.kitchen.pan.v, 3.3);
-        let budget = cooking && !reduced ? Math.ceil(dt * 24) : 0;
+        let budget = cooking && !reduced ? Math.ceil(dt * 32) : 0;
         for (let i = 0; i < steamN; i++) {
           if (steam.life[i] < 0) { if (budget > 0) { spawnSteam(i, origin); budget--; } else { steam.alpha[i] = 0; continue; } }
           steam.life[i] += drift; const t = steam.life[i] / steam.maxLife[i];
