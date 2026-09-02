@@ -84,6 +84,37 @@ Account economics is onboarding economics.
 - `owning what it reports` = 디센트의 `digital ownership` 에 대응. `earns` 는 수익 프레임이라 쓰지 않음.
 - 마지막 줄 = 미사용 시그니처 초연.
 
+### 쉬운 언어 개정안 (9/2 외부 피드백 → 교정 반영, **차기 스타일 기준**)
+게시본은 그대로(고정·편집 창 경과). 이후 글은 이 결로 — 플레이북 어휘 규칙 9/2 참조.
+교정 1건: 개정안의 `earning rewards` → `how rewards are handled`(보도자료 "보상 모델" 범위 + in testing 시제).
+
+**1/** (290자)
+```
+KWeather — the sensor network behind wellbian — signed an MOU with @DCENTWALLETS.
+
+It covers four things: registering your device, collecting its data, how rewards are handled, and keeping them in a wallet only you control.
+
+The hardware is done. This is about what comes after you buy one.
+```
+**2/** (256자)
+```
+Our buyer isn't a crypto person.
+
+They bought a sensor because they were worried about the air in their bedroom. Never used a wallet. Never seen a private key.
+
+Most projects lose exactly these people at the wallet step. That's the step we're fixing first.
+```
+**3/** (241자)
+```
+So the order is: wallet first, rewards later.
+
+The reward system is in testing. This MOU fills the gap in between — from buying a sensor to actually owning the data it records.
+
+If getting started is hard, nothing else matters.
+
+#DePIN #XRPL
+```
+
 ### 이미지 배정 (9/2 09:10 최종 — 서우 레퍼런스: 라이트 글라스)
 - **T1 = 라이트 글라스 락업 이미지** (아래 v2.5 프롬프트 + 중앙 `D'CENT × KWEATHER` 후처리).
   서우: *"계단컷 말고 그냥 이런 이미지처럼 형상화 — 가운데 양사 로고 들어갈 거 예상해서."*
