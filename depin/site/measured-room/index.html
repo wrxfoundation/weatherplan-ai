@@ -12,9 +12,10 @@
 <title>Measured Room</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://d2ol7oe51mr4n9.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
-  /* 단일 세계 — 사진이 곧 조명이라 뷰어 테마와 무관하게 색을 전부 칠한다. 기본 = 세로(모바일) 쌓기, 가로 넓은 화면 = 사진 위 오버레이. */
+  /* 단일 세계 — 장면(사진·영상)이 곧 조명이라 뷰어 테마와 무관하게 색을 전부 칠한다. 기본 = 세로(모바일) 쌓기, 가로 넓은 화면 = 장면 위 오버레이. */
   :root {
     --violet: #4d4dce; --navy: #1b1b48; --ground: #101028; --paper: #ffffff;
     --ink: #1b1b48; --ink-2: #4a4a6a; --cap: #7c7c9a; --line: #d9d9ee;
@@ -37,19 +38,23 @@
   .spaces button[aria-selected="true"] { background: #fff; color: var(--navy); }
   .spaces button:focus-visible { outline: 3px solid rgba(255,255,255,.5); outline-offset: 2px; }
 
+  /* 장면: 정지 사진 위에 같은 구도의 5초 영상 루프. 둘 다 cover 로 잘리고, 기기 화면·효과 좌표는 같은 수학으로 따라간다. */
   #stage { position: relative; height: clamp(280px, 50dvh, 540px); overflow: hidden; background: #0e0e22; isolation: isolate; }
-  .photos { position: absolute; inset: 0; transform: translate(var(--px, 0px), var(--py, 0px)) scale(1.035); will-change: transform; }
-  .photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--fx, 50%) var(--fy, 50%); opacity: 0; transition: opacity 1.1s ease; }
-  .photo.on { opacity: 1; }
-  .haze { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 1.6s ease;
-          background: radial-gradient(ellipse at 50% 62%, rgba(168,168,196,.55) 0%, rgba(128,128,168,.78) 100%); }
-  .vig { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 1.6s ease;
-         background: radial-gradient(ellipse at 52% 42%, rgba(4,4,20,0) 28%, rgba(4,4,20,.72) 100%); }
-  #fx { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+  .media { position: absolute; inset: 0; transform: translate(var(--px, 0px), var(--py, 0px)) scale(1.035); will-change: transform; }
+  .still, .clip { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--fx, 50%) var(--fy, 50%); opacity: 0; transition: opacity 1.1s ease; }
+  .still.on { opacity: 1; }
+  .clip { transition: opacity 1.4s ease; }
+  .clip.on.ready { opacity: 1; }
+  .screen-wrap { position: absolute; left: 0; top: 0; width: 320px; height: 240px; transform-origin: 0 0; pointer-events: none; opacity: 0; transition: opacity .8s ease; }
+  .screen-wrap.on { opacity: 1; }
+  #screen { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border-radius: 2.5% / 3.3%; }
+  .screen-glow { position: absolute; inset: -20% -14%; border-radius: 45%; background: radial-gradient(ellipse at 50% 55%, rgba(150,158,255,.6), rgba(150,158,255,0) 68%); opacity: var(--glow, .28); filter: blur(6px); z-index: -1; }
+  #fx { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+  .vig { position: absolute; inset: 0; pointer-events: none; opacity: .22; transition: opacity 1.6s ease;
+         background: radial-gradient(ellipse at 52% 42%, rgba(4,4,20,0) 30%, rgba(4,4,20,.75) 100%); }
   .cap { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); white-space: nowrap; font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.6); pointer-events: none; }
   .assets { position: absolute; right: 10px; top: 8px; font-size: 10.5px; color: rgba(255,255,255,.75); background: rgba(0,0,0,.35); border-radius: 8px; padding: 3px 8px; pointer-events: none; }
   .assets:empty { display: none; }
-  .fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; padding: 24px; text-align: center; color: rgba(255,255,255,.85); font-size: 14px; }
 
   .readout { margin: 10px 16px 0; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
   .readout .k { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--cap); font-weight: 700; font-family: var(--display); }
@@ -84,7 +89,7 @@
   @keyframes pop { from { transform: scaleY(.2); opacity: 0; } to { transform: scaleY(1); opacity: .9; } }
   .ledger .note { font-size: 11px; color: rgba(255,255,255,.55); flex: none; display: none; }
 
-  /* 가로 넓은 화면(부스·데스크톱): 사진이 화면 전체, 나머지는 그 위에 얹는다 */
+  /* 가로 넓은 화면(부스·데스크톱): 장면이 화면 전체, 나머지는 그 위에 얹는다 */
   @media (orientation: landscape) and (min-width: 760px) and (min-height: 440px) {
     body { overflow: hidden; }
     #app { display: block; height: 100dvh; min-height: 0; padding: 0; }
@@ -105,7 +110,7 @@
     .cap { bottom: 58px; }
     .assets { top: auto; bottom: 58px; right: 18px; }
   }
-  @media (prefers-reduced-motion: reduce) { .tick.new { animation: none; } .photo { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .tick.new { animation: none; } .still, .clip, .screen-wrap { transition: none; } }
 </style>
 </head>
 <body>
@@ -122,12 +127,12 @@
     <button role="tab" aria-selected="false" data-space="kitchen">부엌</button>
   </nav>
 
-  <section id="stage" aria-label="고른 공간의 사진과 공기 시뮬레이션">
-    <div class="photos" id="photos"></div>
-    <div class="haze" id="haze"></div>
-    <div class="vig" id="vig"></div>
+  <section id="stage" aria-label="고른 공간의 장면과 공기 시뮬레이션">
+    <div class="media" id="media">
+      <div class="screen-wrap" id="screen-wrap" aria-hidden="true"><div class="screen-glow"></div><canvas id="screen" width="640" height="480"></canvas></div>
+    </div>
     <canvas id="fx" aria-hidden="true"></canvas>
-    <div class="fallback" id="fallback">3D 효과 레이어를 불러오지 못했습니다. 사진과 수치는 그대로 동작합니다.</div>
+    <div class="vig" id="vig"></div>
     <div class="assets" id="assets"></div>
     <div class="cap">concept render · 개념 시뮬레이션</div>
   </section>
@@ -161,35 +166,36 @@
   </footer>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 (function () {
   const $ = (id) => document.getElementById(id);
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
   const small = () => innerWidth < 760 || innerHeight < 480;
+  const saveData = !!(navigator.connection && navigator.connection.saveData);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
   /* ── 자산: 힉스필드 생성물. assets/ 에 같은 이름의 파일이 있으면 그것을 쓰고, 없으면 CDN 에서 바로 불러온다. ──
-     장면 사진: 1600px JPEG, 공간마다 상태별 한 장. 기기: 제품 렌더에서 뽑은 GLB. */
+     장면마다 정지 사진(1600px JPEG, 기기가 사진 속에 렌더링돼 있다)과 같은 구도의 5초 영상 루프(Kling 3.0 pro, 1756×1176, 첫 프레임 = 사진).
+     light: 그 장면에서 먼지가 빛나는 광원 — 창(beam: at → to 방향의 빛살) 또는 램프(lamp: at 둘레 r) */
   const CDN_IMG = "https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/";
   const CDN_GEN = "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/";
-  const PHOTOS = {
-    "living-dusk":     "fd732637-3131-482a-9a1c-9331bb473167.jpg",
-    "living-window":   "e0d1dbe2-bdc0-4096-86f1-5b2b5d7c2034.jpg",
-    "living-night":    "d0c5e4e1-c28d-4ded-ae2f-6a1a6aa5702a.jpg",
-    "bedroom-evening": "29bacff3-b7bd-44df-9b42-aa41b58e2fdf.jpg",
-    "bedroom-night":   "87f4c37b-d8e2-4d5c-a4f1-70e89ba4691e.jpg",
-    "bedroom-morning": "c6d6d5ec-b793-455d-9977-e9adf1c51b2e.jpg",
-    "kitchen-idle":    "86dc96a7-afa3-40b3-8ce9-61c14de6a1bf.jpg",
-    "kitchen-cook":    "4a7aab4a-e21a-4307-8dc2-5fac2bca5deb.jpg",
-    "kitchen-vent":    "a5412bc8-3256-41a8-8b66-fb97c935da36.jpg",
-    "kitchen-night":   "0abbbc92-1c64-477a-b05d-72ac79acfab2.jpg"
+  const RATIO = 1756 / 1176;
+  const SCENES = {
+    "living-dusk":     { still: "032f828c-1006-4f89-b467-20ed1c006e98.jpg", clip: "hf_20260902_222608_76465f7d-3a68-4a83-8f9b-f41ca00c05e7.mp4", light: { kind: "beam", at: [0.78, 0.30], to: [0.40, 0.88], on: 0.55, col: [1, 0.86, 0.68] } },
+    "living-window":   { still: "bce7d982-4050-415d-916e-a3343f788ecb.jpg", clip: "hf_20260902_222608_37db8bf1-1fd4-4009-9107-390d814bb4db.mp4", light: { kind: "beam", at: [0.78, 0.30], to: [0.40, 0.88], on: 1.0, col: [0.94, 0.96, 1] } },
+    "living-night":    { still: "18cf66b4-e226-470b-831a-d9bf78769c65.jpg", clip: "hf_20260902_222433_070d13d8-119b-482f-b581-9a39e4daaec1.mp4", light: { kind: "lamp", at: [0.81, 0.47], r: 0.26, on: 0.9, col: [1, 0.78, 0.55] } },
+    "bedroom-evening": { still: "380c00c0-b5eb-48e9-b4ce-174cc25d3249.jpg", clip: "hf_20260902_222608_f418f545-6d35-4ef6-96d7-9a0c2513a102.mp4", light: { kind: "lamp", at: [0.12, 0.52], r: 0.28, on: 0.9, col: [1, 0.8, 0.58] } },
+    "bedroom-night":   { still: "c768b884-34e5-4012-b9e6-982d2f0aa628.jpg", clip: "hf_20260902_222433_e97ce6ac-614b-4582-a133-aadeb4048471.mp4", light: { kind: "lamp", at: [0.12, 0.52], r: 0.24, on: 0.5, col: [0.72, 0.78, 1] } },
+    "bedroom-morning": { still: "bb70c4b6-7c5f-47af-bbfb-a81f358e18a4.jpg", clip: "hf_20260902_222608_bff369da-36cd-4c1e-adb1-38d3b591ec19.mp4", light: { kind: "beam", at: [0.89, 0.25], to: [0.30, 0.85], on: 1.0, col: [1, 0.95, 0.85] } },
+    "kitchen-idle":    { still: "5ec34b89-9bdc-4101-a713-e9e3f4af00a1.jpg", clip: "hf_20260902_222608_3e28c3fc-8d8c-4622-af19-15eaf034767c.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.30, on: 0.7, col: [1, 0.9, 0.75] } },
+    "kitchen-cook":    { still: "4ba59408-9f1c-48d5-bd8b-47dfc14bbb95.jpg", clip: "hf_20260902_222432_3f9e041d-3992-4e78-b8f0-1b830caf5335.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.30, on: 0.8, col: [1, 0.9, 0.75] } },
+    "kitchen-vent":    { still: "3e57eb4e-4242-4b46-a76c-3e98225808b2.jpg", clip: "hf_20260902_222608_5b8f1c9e-8195-401b-bc5f-ad872ed33c41.mp4", light: { kind: "beam", at: [0.26, 0.43], to: [0.72, 0.92], on: 0.8, col: [0.94, 0.96, 1] } },
+    "kitchen-night":   { still: "ebfdc902-50ff-4f25-a3e7-f93738029ab1.jpg", clip: "hf_20260902_222433_a055ae83-958a-4f94-8539-824decb02b0e.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.26, on: 0.7, col: [1, 0.82, 0.6] } }
   };
-  const DEVICE = { local: "assets/device.glb", cdn: CDN_IMG + "a2e16b89-d7e2-438e-848a-a375b1918599.glb", yaw: 0 };   // 경량화본 1.6MB(원본 7.8MB: CDN_GEN + "hf_20260902_152637_efb00451-21c3-42a8-b35d-69f81bdb4895.glb")
-  const photoSrc = (key) => ({ local: `assets/${key}.jpg`, cdn: PHOTOS[key] ? CDN_IMG + PHOTOS[key] : null });
+  const srcOf = (key) => ({ still: [`assets/${key}.jpg`, CDN_IMG + SCENES[key].still], clip: [`assets/${key}.mp4`, CDN_GEN + SCENES[key].clip] });
 
-  /* ── 공간: 사진 위 어디에 기기가 놓이고(u,v = 사진 안 비율, w = 사진 너비 대비 기기 너비), 창과 팬이 어디인지 ── */
+  /* ── 공간: 상태별 장면 키, 기기 화면의 네 모서리(사진 안 비율, 왼쪽 위부터 시계 방향), 창·팬·후드 위치, 모바일 초점 ── */
   const SPACES = {
     living: {
       name: "거실", en: "Living room",
@@ -197,7 +203,8 @@
       en2: "Close the window and breath raises CO₂. Open it and outside air brings it down.",
       states: { dusk: "living-dusk", window: "living-window", night: "living-night" },
       pick: (s, g) => g.night ? "night" : s.window ? "window" : "dusk",
-      device: { u: 0.36, v: 0.605, w: 0.05 }, window: { u: 0.78, v: 0.30 }, focus: [0.42, 0.5],
+      screen: [[0.3738, 0.5230], [0.4209, 0.5224], [0.4205, 0.5654], [0.3722, 0.5654]],
+      window: [0.78, 0.30], focus: [0.42, 0.5],
       people: (h) => (h >= 18 && h < 23) ? 2.8 : (h >= 23 || h < 7) ? 0.3 : 1.2,
       init: { pm: 12, co2: 620 }
     },
@@ -207,7 +214,8 @@
       en2: "Eight hours of sleep behind a closed door. CO₂ peaks before dawn and falls when the window opens.",
       states: { evening: "bedroom-evening", night: "bedroom-night", morning: "bedroom-morning" },
       pick: (s, g) => g.night ? "night" : s.window ? "morning" : "evening",
-      device: { u: 0.19, v: 0.56, w: 0.066 }, window: { u: 0.80, v: 0.25 }, focus: [0.22, 0.5],
+      screen: [[0.1729, 0.4876], [0.2144, 0.4882], [0.2093, 0.5401], [0.1677, 0.5383]],
+      window: [0.89, 0.25], focus: [0.22, 0.5],
       people: (h) => (h >= 23 || h < 7) ? 5.5 : 0.8,
       init: { pm: 9, co2: 700 }
     },
@@ -217,7 +225,8 @@
       en2: "Fifteen minutes at the stove. Steam and oil smoke push PM2.5 up; an open window lets it out.",
       states: { idle: "kitchen-idle", cook: "kitchen-cook", vent: "kitchen-vent", night: "kitchen-night" },
       pick: (s, g) => s.cook > 0 ? "cook" : s.window ? "vent" : g.night ? "night" : "idle",
-      device: { u: 0.835, v: 0.625, w: 0.045 }, pan: { u: 0.615, v: 0.60 }, window: { u: 0.26, v: 0.43 }, focus: [0.66, 0.5],
+      screen: [[0.7013, 0.4965], [0.7706, 0.5035], [0.7634, 0.5831], [0.6946, 0.5702]],
+      pan: [0.615, 0.60], hood: [0.70, 0.13], window: [0.26, 0.43], focus: [0.66, 0.5],
       people: (h) => (h >= 18 && h < 21) ? 1.5 : (h >= 23 || h < 7) ? 0.2 : 0.8,
       init: { pm: 14, co2: 560 }
     }
@@ -277,6 +286,7 @@
   const pmv = $("pmv"), co2v = $("co2v"), clock = $("clock"), rk = $("rk");
   const pWin = $("p-window"), pCook = $("p-cook"), pNight = $("p-night");
   function clockText() { const day = Math.floor(G.t / 1440) + 1, m = G.t % 1440; return `Day ${day} · ${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; }
+  function timeText() { const m = G.t % 1440; return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; }
   function hud() {
     const s = ST[cur];
     pmv.textContent = s.pm.toFixed(0); co2v.textContent = s.co2.toFixed(0); clock.textContent = clockText();
@@ -290,176 +300,314 @@
   }
 
   /* ── 곡선 (기기 화면과 오른쪽 카드가 같은 그림) ── */
-  function drawCurve(ctx, W, H, dark) {
-    ctx.clearRect(0, 0, W, H); ctx.fillStyle = dark ? "#14142e" : "#f6f6fc"; ctx.fillRect(0, 0, W, H);
+  function drawCurve(ctx, W, H, dark, lw) {
+    ctx.clearRect(0, 0, W, H); ctx.fillStyle = dark ? "#12143a" : "#f6f6fc"; ctx.fillRect(0, 0, W, H);
     const pad = 10, span = 120, h = ST[cur].hist.slice(-span);
     if (h.length < 2) return;
     const x = (i) => pad + (i / (span - 1)) * (W - 2 * pad);
     const line = (key, max, color) => {
-      ctx.beginPath(); ctx.lineWidth = 2.2; ctx.strokeStyle = color; ctx.lineJoin = "round";
+      ctx.beginPath(); ctx.lineWidth = lw || 2.2; ctx.strokeStyle = color; ctx.lineJoin = "round";
       h.forEach((p, i) => { const y = H - pad - Math.min(1, p[key] / max) * (H - 2 * pad), xi = x(i + span - h.length); i ? ctx.lineTo(xi, y) : ctx.moveTo(xi, y); });
       ctx.stroke();
       const last = h[h.length - 1], ly = H - pad - Math.min(1, last[key] / max) * (H - 2 * pad);
-      ctx.beginPath(); ctx.arc(x(span - 1), ly, 3.2, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
+      ctx.beginPath(); ctx.arc(x(span - 1), ly, (lw || 2.2) * 1.5, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
     };
     line("co2", 2400, dark ? "#e4e4ff" : "#1b1b48"); line("pm", 240, dark ? "#8f8fff" : "#4d4dce");
-    ctx.font = "700 11px Montserrat, sans-serif"; ctx.fillStyle = dark ? "#8a8ab0" : "#7c7c9a"; ctx.textAlign = "left";
-    ctx.fillText("PM2.5", pad, 14); ctx.textAlign = "right"; ctx.fillText("CO₂", W - pad, 14); ctx.textAlign = "left";
+    if (!dark) { ctx.font = "700 11px Montserrat, sans-serif"; ctx.fillStyle = "#7c7c9a"; ctx.textAlign = "left"; ctx.fillText("PM2.5", pad, 14); ctx.textAlign = "right"; ctx.fillText("CO₂", W - pad, 14); ctx.textAlign = "left"; }
   }
   const mini = $("mini"), mctx = mini.getContext("2d");
 
-  /* ── 사진 레이어: 상태마다 한 장, 겹쳐 두고 크로스페이드 ── */
-  const stage = $("stage"), photos = $("photos"), haze = $("haze"), vig = $("vig"), assetsNote = $("assets");
-  const imgs = {}; const assetState = {};
-  function noteAssets() {
-    const keys = Object.keys(PHOTOS), done = keys.filter((k) => assetState[k] === "ok").length, bad = keys.filter((k) => assetState[k] === "bad").length;
-    assetsNote.textContent = bad ? `장면 ${bad}장을 불러오지 못했습니다` : (done < keys.length ? `장면 불러오는 중 ${done}/${keys.length}` : "");
+  /* ── 기기 화면: 2D 캔버스에 그려서 사진 속 화면 네 모서리에 원근(matrix3d)으로 얹는다 ── */
+  const screenWrap = $("screen-wrap"), screenCv = $("screen"), sctx = screenCv.getContext("2d");
+  const SW = 320, SH = 240;
+  function drawScreen() {
+    const c = sctx, W = 640, H = 480, s = ST[cur];
+    c.clearRect(0, 0, W, H);
+    const bg = c.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, "#0b0c20"); bg.addColorStop(1, "#181a40"); c.fillStyle = bg; c.fillRect(0, 0, W, H);
+    c.textBaseline = "alphabetic";
+    c.fillStyle = "#8587bd"; c.font = "700 22px Montserrat, sans-serif"; c.textAlign = "left"; c.fillText("wellbian", 36, 54);
+    c.fillStyle = "#9a9cc8"; c.font = "600 22px ui-monospace, Menlo, monospace"; c.textAlign = "right"; c.fillText(timeText(), W - 36, 54);
+    c.textAlign = "left"; c.fillStyle = "#a9a9ff"; c.font = "700 100px Montserrat, sans-serif"; c.fillText(s.pm.toFixed(0), 34, 182);
+    c.fillStyle = "#8a8ab8"; c.font = "600 21px Montserrat, sans-serif"; c.fillText("PM2.5  µg/m³", 38, 212);
+    c.textAlign = "right"; c.fillStyle = "#eef0ff"; c.font = "700 100px Montserrat, sans-serif"; c.fillText(s.co2.toFixed(0), W - 34, 182);
+    c.fillStyle = "#8a8ab8"; c.font = "600 21px Montserrat, sans-serif"; c.fillText("CO₂  ppm", W - 38, 212);
+    c.save(); c.translate(36, 240); drawCurve(c, W - 72, 184, true, 4); c.restore();
+    c.textAlign = "left"; c.font = "600 19px Montserrat, sans-serif";
+    const dots = [[s.window ? "창문 열림" : "창문 닫힘", s.window], [cur === "kitchen" ? (s.cook > 0 ? `조리 ${s.cook}분` : "조리 안 함") : (G.night ? "밤" : "저녁"), cur === "kitchen" ? s.cook > 0 : G.night]];
+    let dx = 40; for (const [t, on] of dots) { c.fillStyle = on ? "#a9a9ff" : "#4b4d7a"; c.beginPath(); c.arc(dx, H - 26, 5, 0, Math.PI * 2); c.fill(); c.fillStyle = on ? "#cfcfff" : "#7b7da8"; c.fillText(t, dx + 14, H - 19); dx += 14 + c.measureText(t).width + 30; }
+    const gl2 = c.createLinearGradient(0, 0, W * 0.75, H); gl2.addColorStop(0, "rgba(255,255,255,.11)"); gl2.addColorStop(0.42, "rgba(255,255,255,.025)"); gl2.addColorStop(0.5, "rgba(255,255,255,0)"); c.fillStyle = gl2; c.fillRect(0, 0, W, H);
   }
-  function photoEl(key) {
-    if (imgs[key]) return imgs[key];
-    const img = document.createElement("img"); img.className = "photo"; img.alt = ""; img.decoding = "async"; img.dataset.key = key;
-    const src = photoSrc(key);
+  // 단위 정사각형 → 임의 사변형 사영 변환(Heckbert). p = [왼위, 오위, 오아래, 왼아래]
+  function squareToQuad(p) {
+    const [x0, y0] = p[0], [x1, y1] = p[1], [x2, y2] = p[2], [x3, y3] = p[3];
+    const dx1 = x1 - x2, dx2 = x3 - x2, sx = x0 - x1 + x2 - x3, dy1 = y1 - y2, dy2 = y3 - y2, sy = y0 - y1 + y2 - y3;
+    const det = dx1 * dy2 - dx2 * dy1 || 1e-9;
+    const g = (sx * dy2 - dx2 * sy) / det, h = (dx1 * sy - sx * dy1) / det;
+    return [x1 - x0 + g * x1, x3 - x0 + h * x3, x0, y1 - y0 + g * y1, y3 - y0 + h * y3, y0, g, h];
+  }
+  function placeScreen() {
+    const q = SPACES[cur].screen.map(([u, v]) => toStage(u, v)).map((p) => [p.x, p.y]);
+    const [a, b, c, d, e, f, g, h] = squareToQuad(q);
+    const m = [a / SW, d / SW, 0, g / SW, b / SH, e / SH, 0, h / SH, 0, 0, 1, 0, c, f, 0, 1];
+    screenWrap.style.transform = `matrix3d(${m.map((n) => +n.toFixed(6)).join(",")})`;
+    screenWrap.classList.add("on");
+  }
+
+  /* ── 장면 레이어: 상태마다 사진 한 장 + 영상 한 편, 겹쳐 두고 크로스페이드. 영상은 필요한 것만 만들고 최대 4편만 살려 둔다. ── */
+  const stage = $("stage"), media = $("media"), vig = $("vig"), assetsNote = $("assets");
+  const stills = {}, clips = {}, assetState = {}; let clipBad = 0, fxNote = "";
+  const noVideo = reduced || saveData;
+  function noteAssets() {
+    const keys = Object.keys(SCENES), done = keys.filter((k) => assetState[k] === "ok").length, bad = keys.filter((k) => assetState[k] === "bad").length;
+    const parts = [];
+    if (bad) parts.push(`장면 ${bad}장을 불러오지 못했습니다`); else if (done < keys.length) parts.push(`장면 불러오는 중 ${done}/${keys.length}`);
+    if (clipBad) parts.push("영상 루프 없이 사진으로 표시");
+    if (fxNote) parts.push(fxNote);
+    assetsNote.textContent = parts.join(" · ");
+  }
+  function stillEl(key) {
+    if (stills[key]) return stills[key];
+    const img = document.createElement("img"); img.className = "still"; img.alt = ""; img.decoding = "async"; img.dataset.key = key;
+    const list = srcOf(key).still; let i = 0;
     img.addEventListener("load", () => { assetState[key] = "ok"; noteAssets(); });
-    img.addEventListener("error", () => { if (src.cdn && img.getAttribute("src") !== src.cdn) img.src = src.cdn; else { assetState[key] = "bad"; noteAssets(); } });
-    img.src = src.local;
-    imgs[key] = img; return img;
+    img.addEventListener("error", () => { i += 1; if (i < list.length) img.src = list[i]; else { assetState[key] = "bad"; noteAssets(); } });
+    img.src = list[0]; stills[key] = img; media.insertBefore(img, screenWrap); return img;
+  }
+  const clipOrder = [];
+  function clipEl(key) {
+    if (noVideo) return null;
+    if (clips[key]) { clipOrder.splice(clipOrder.indexOf(key), 1); clipOrder.push(key); return clips[key]; }
+    while (clipOrder.length >= 4) { const old = clipOrder.shift(); const v = clips[old]; delete clips[old]; v.pause(); v.removeAttribute("src"); v.querySelectorAll("source").forEach((s) => s.remove()); v.load(); v.remove(); }
+    const v = document.createElement("video"); v.className = "clip"; v.dataset.key = key;
+    v.muted = true; v.loop = true; v.playsInline = true; v.preload = "auto"; v.disablePictureInPicture = true;
+    v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.setAttribute("loop", "");
+    const list = srcOf(key).clip;
+    list.forEach((u, i) => { const s = document.createElement("source"); s.src = u; s.type = "video/mp4"; if (i === list.length - 1) s.addEventListener("error", () => { clipBad += 1; v.classList.remove("ready"); noteAssets(); }); v.appendChild(s); });
+    v.addEventListener("canplay", () => { v.classList.add("ready"); if (v.classList.contains("on")) v.play().catch(() => {}); });
+    clips[key] = v; clipOrder.push(key); media.insertBefore(v, screenWrap); return v;
   }
   let shownKey = null;
-  function showPhoto() {
+  function showScene() {
     const sp = SPACES[cur], key = sp.states[sp.pick(ST[cur], G)] || sp.states[Object.keys(sp.states)[0]];
-    if (key === shownKey) return; shownKey = key;
-    photos.style.setProperty("--fx", (sp.focus[0] * 100) + "%"); photos.style.setProperty("--fy", (sp.focus[1] * 100) + "%");
-    for (const k of Object.values(sp.states)) { const el = photoEl(k); if (el.parentNode !== photos) photos.appendChild(el); el.style.setProperty("--fx", (sp.focus[0] * 100) + "%"); el.style.setProperty("--fy", (sp.focus[1] * 100) + "%"); }
-    for (const el of photos.children) el.classList.toggle("on", el.dataset.key === key);
+    if (key === shownKey) return;
+    const prev = shownKey; shownKey = key;
+    media.style.setProperty("--fx", (sp.focus[0] * 100) + "%"); media.style.setProperty("--fy", (sp.focus[1] * 100) + "%");
+    for (const k of Object.values(sp.states)) stillEl(k);
+    const clip = clipEl(key);
+    for (const el of media.querySelectorAll(".still, .clip")) el.classList.toggle("on", el.dataset.key === key);
+    if (clip) clip.play().catch(() => {});
+    if (prev && clips[prev]) { const pv = clips[prev]; setTimeout(() => { if (shownKey !== prev) pv.pause(); }, 1600); }
+    placeScreen();
   }
-  function preloadAll() { for (const k of Object.keys(PHOTOS)) photoEl(k); }
+  function preloadRest() { for (const k of Object.keys(SCENES)) stillEl(k); }
+  function prefetchClips() { if (noVideo) return; for (const k of Object.values(SPACES[cur].states)) if (k !== shownKey && !clips[k] && clipOrder.length < 4) { const v = clipEl(k); v.preload = "auto"; } }
 
-  /* ── 3D 효과 레이어: 투명 캔버스 위에 기기(GLB)·그림자·먼지·김·바람만 그린다. 방 자체는 사진이 맡는다. ── */
-  const canvas = $("fx");
-  let renderer = null;
-  try { if (typeof THREE !== "undefined") renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true }); } catch (e) { renderer = null; }
-  if (!renderer) $("fallback").style.display = "flex";
-  const scene = renderer && new THREE.Scene();
-  const camera = renderer && new THREE.PerspectiveCamera(42, 1, 0.05, 60);
-  const DEV_DEPTH = 3.0, DEV_W = 0.26;                    // 기기까지 거리(임의 단위), 기기 모형의 가로
+  /* ── 배치: 장면이 cover 로 잘리는 방식을 그대로 계산해서, 사진 속 좌표(u,v)를 화면 좌표로 옮긴다 ── */
   let sw = 1, sh = 1, fit = { s: 1, ox: 0, oy: 0, dw: 3, dh: 2 };
-  const tanF = () => Math.tan(camera.fov * Math.PI / 360);
-  function toStage(u, v) { return { x: fit.ox + u * fit.dw, y: fit.oy + v * fit.dh }; }
-  function toWorld(u, v, depth) {
-    const p = toStage(u, v), nx = p.x / sw * 2 - 1, ny = 1 - p.y / sh * 2, t = tanF();
-    return new THREE.Vector3(nx * t * camera.aspect * depth, ny * t * depth, -depth);
-  }
-
-  let dev, proc, screen, screenTex, sctx, keyLight, hemi, dust, steam, wind, glow;
-  const dustN = small() ? 320 : 560, steamN = small() ? 110 : 180, windN = small() ? 40 : 64;
-  if (renderer) {
-    renderer.setClearColor(0x000000, 0); renderer.setPixelRatio(Math.min(devicePixelRatio, small() ? 1.5 : 2));
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    camera.position.set(0, 0, 0); camera.lookAt(0, 0, -1);
-
-    // 기기 — 절차적 모형을 먼저 세우고, GLB 가 오면 바꿔 끼운다. 화면 곡선은 어느 쪽에도 얹힌다.
-    dev = new THREE.Group(); scene.add(dev);
-    proc = new THREE.Group(); dev.add(proc);
-    const M = (c, o) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.6, metalness: 0 }, o || {}));
-    const body = new THREE.Mesh(new THREE.BoxGeometry(DEV_W, 0.2, 0.034), M("#fbfbfd")); body.position.y = 0.1; body.castShadow = true; proc.add(body);
-    for (let i = 0; i < 6; i++) { const v = new THREE.Mesh(new THREE.BoxGeometry(0.004, 0.018, 0.02), M("#9a9ab0")); v.position.set(0.125, 0.04 + i * 0.016, 0); proc.add(v); }
-    const stand = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.16, 0.008), M("#d9d9e6")); stand.position.set(0, 0.07, -0.06); stand.rotation.x = -0.55; proc.add(stand);
-    const screenCanvas = document.createElement("canvas"); screenCanvas.width = 320; screenCanvas.height = 240;
-    sctx = screenCanvas.getContext("2d"); screenTex = new THREE.CanvasTexture(screenCanvas); screenTex.encoding = THREE.sRGBEncoding;
-    screen = new THREE.Mesh(new THREE.PlaneGeometry(0.215, 0.15), new THREE.MeshBasicMaterial({ map: screenTex })); screen.position.set(0, 0.112, 0.0175); dev.add(screen);
-    glow = new THREE.PointLight(0x9a9aff, 0.25, 0.9); glow.position.set(0.1, 0.15, 0.2); dev.add(glow);
-    // 접지 그림자 — 사진 속 가구 위에 놓인 것처럼 보이게 하는 부드러운 타원
-    const shadowTex = (() => { const c = document.createElement("canvas"); c.width = c.height = 128; const g = c.getContext("2d"); const r = g.createRadialGradient(64, 64, 2, 64, 64, 62); r.addColorStop(0, "rgba(0,0,0,.6)"); r.addColorStop(0.45, "rgba(0,0,0,.28)"); r.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = r; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
-    const shadow = new THREE.Sprite(new THREE.SpriteMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: 0.85 }));
-    shadow.scale.set(DEV_W * 1.5, DEV_W * 0.42, 1); shadow.position.set(0.01, 0.004, 0.03); dev.add(shadow);
-    dev.rotation.y = 0.22;
-
-    // 조명은 장면 사진의 시간대를 따라간다(저녁 따뜻하고 어둡게 · 밤 푸르고 희미하게 · 창 열린 낮 밝게)
-    keyLight = new THREE.DirectionalLight(0xffd2a4, 0.75); scene.add(keyLight); scene.add(keyLight.target);
-    hemi = new THREE.HemisphereLight(0xfff1e0, 0x6a5a4a, 0.45); scene.add(hemi);
-
-    if (THREE.GLTFLoader) {
-      const loader = new THREE.GLTFLoader();
-      const mount = (gltf) => {
-        const model = gltf.scene;
-        model.traverse((o) => { if (o.isMesh && o.material && o.material.map) o.material.map.encoding = THREE.sRGBEncoding; });
-        model.rotation.y = DEVICE.yaw;
-        const b1 = new THREE.Box3().setFromObject(model), sz = new THREE.Vector3(); b1.getSize(sz);
-        model.scale.setScalar(DEV_W / Math.max(sz.x, 1e-6));
-        const b2 = new THREE.Box3().setFromObject(model), c = new THREE.Vector3(); b2.getCenter(c);
-        model.position.set(-c.x, -b2.min.y, -c.z);
-        const b3 = new THREE.Box3().setFromObject(model), s3 = new THREE.Vector3(); b3.getSize(s3);
-        proc.visible = false; dev.add(model);
-        screen.geometry.dispose(); screen.geometry = new THREE.PlaneGeometry(s3.x * 0.72, s3.x * 0.72 * 0.7);
-        screen.position.set(0, s3.y * 0.56, b3.max.z - s3.y * 0.56 * 0.2 + 0.004); screen.rotation.x = -0.2;   // 정면이 살짝 뒤로 기운 형태
-      };
-      loader.load(DEVICE.local, mount, undefined, () => loader.load(DEVICE.cdn, mount, undefined, () => {}));
-    }
-
-    // 파티클 공통: 점마다 알파를 가진 소프트 스프라이트
-    const blob = (() => { const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d"); const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, "rgba(255,255,255,1)"); r.addColorStop(0.45, "rgba(255,255,255,.55)"); r.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = r; g.fillRect(0, 0, 64, 64); const t = new THREE.CanvasTexture(c); return t; })();
-    const VERT = `attribute float aAlpha; attribute float aSize; varying float vA; uniform float uScale;
-      void main(){ vA = aAlpha; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = aSize * uScale / -mv.z; gl_Position = projectionMatrix * mv; }`;
-    const FRAG = `uniform sampler2D uTex; uniform vec3 uColor; uniform float uOpacity; varying float vA;
-      void main(){ float a = texture2D(uTex, gl_PointCoord).a * vA * uOpacity; if (a < 0.003) discard; gl_FragColor = vec4(uColor, a); }`;
-    function particles(n, color, opacity) {
-      const geo = new THREE.BufferGeometry();
-      const pos = new Float32Array(n * 3), alpha = new Float32Array(n), size = new Float32Array(n);
-      geo.setAttribute("position", new THREE.BufferAttribute(pos, 3)); geo.setAttribute("aAlpha", new THREE.BufferAttribute(alpha, 1)); geo.setAttribute("aSize", new THREE.BufferAttribute(size, 1));
-      const mat = new THREE.ShaderMaterial({ uniforms: { uTex: { value: blob }, uColor: { value: new THREE.Color(color) }, uOpacity: { value: opacity }, uScale: { value: 300 } },
-        vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false, depthTest: false });
-      const pts = new THREE.Points(geo, mat); pts.frustumCulled = false; scene.add(pts);
-      return { n, pos, alpha, size, geo, mat, pts, life: new Float32Array(n), vel: new Float32Array(n * 3), maxLife: new Float32Array(n) };
-    }
-    // 먼지: 방 안 공기 부피에 떠 있고, PM 이 높을수록 진해진다. 창이 열리면 창에서 방 안쪽으로 밀린다.
-    dust = particles(dustN, "#c9c9dc", 0.0); dust.mat.uniforms.uScale.value = 11;
-    for (let i = 0; i < dustN; i++) { spawnDust(i); dust.alpha[i] = 0.35 + Math.random() * 0.65; dust.size[i] = 0.9 + Math.random() * 1.6; }
-    // 김: 부엌 팬에서 올라와 퍼지다 사라진다.
-    steam = particles(steamN, "#f4f2ee", 0.0); steam.mat.uniforms.uScale.value = 700;
-    for (let i = 0; i < steamN; i++) { steam.life[i] = -1; steam.alpha[i] = 0; }
-    // 바람: 열린 창에서 방 안쪽으로 흐르는 옅은 결
-    wind = particles(windN, "#dfe8ff", 0.0); wind.mat.uniforms.uScale.value = 120;
-    for (let i = 0; i < windN; i++) { wind.life[i] = -1; wind.alpha[i] = 0; }
-  }
-  function spawnDust(i) {
-    const p = dust.pos; p[i * 3] = (Math.random() - 0.5) * 5.2; p[i * 3 + 1] = (Math.random() - 0.5) * 3.2; p[i * 3 + 2] = -1.2 - Math.random() * 4.2;
-    const v = dust.vel; v[i * 3] = (Math.random() - 0.5) * 0.05; v[i * 3 + 1] = (Math.random() - 0.5) * 0.04; v[i * 3 + 2] = (Math.random() - 0.5) * 0.05;
-  }
-  function spawnSteam(i, origin) {
-    const p = steam.pos; p[i * 3] = origin.x + (Math.random() - 0.5) * 0.18; p[i * 3 + 1] = origin.y + (Math.random() - 0.5) * 0.05; p[i * 3 + 2] = origin.z + (Math.random() - 0.5) * 0.1;
-    const v = steam.vel; v[i * 3] = (Math.random() - 0.5) * 0.12; v[i * 3 + 1] = 0.3 + Math.random() * 0.2; v[i * 3 + 2] = (Math.random() - 0.5) * 0.08;
-    steam.life[i] = 0; steam.maxLife[i] = 1.4 + Math.random() * 1.0; steam.size[i] = 0.18 + Math.random() * 0.22;
-  }
-  function spawnWind(i, origin, dir) {
-    const p = wind.pos; p[i * 3] = origin.x + (Math.random() - 0.5) * 0.5; p[i * 3 + 1] = origin.y + (Math.random() - 0.5) * 0.6; p[i * 3 + 2] = origin.z + (Math.random() - 0.5) * 0.3;
-    const sp = 0.9 + Math.random() * 0.7; wind.vel[i * 3] = dir.x * sp; wind.vel[i * 3 + 1] = dir.y * sp - 0.05; wind.vel[i * 3 + 2] = dir.z * sp;
-    wind.life[i] = 0; wind.maxLife[i] = 1.4 + Math.random() * 1.2; wind.size[i] = 0.5 + Math.random() * 0.6;
-  }
-
-  /* ── 배치: 사진이 cover 로 잘리는 방식을 그대로 계산해서, 사진 속 좌표(u,v)를 화면·3D 좌표로 옮긴다 ── */
+  function toStage(u, v) { return { x: fit.ox + u * fit.dw, y: fit.oy + v * fit.dh }; }          // .media 안 좌표(시차·확대 전)
+  function toScreen(u, v) { const p = toStage(u, v); return { x: (p.x - sw / 2) * 1.035 + sw / 2 + mediaX, y: (p.y - sh / 2) * 1.035 + sh / 2 + mediaY }; }   // 실제 화면 좌표(시차·확대 후)
   function layout() {
     sw = Math.max(1, stage.clientWidth); sh = Math.max(1, stage.clientHeight);
-    const s = Math.max(sw / 3, sh / 2), dw = 3 * s, dh = 2 * s, f = SPACES[cur].focus;
+    const s = Math.max(sw / RATIO, sh), dw = RATIO * s, dh = s, f = SPACES[cur].focus;
     fit = { s, ox: (sw - dw) * f[0], oy: (sh - dh) * f[1], dw, dh };
-    if (!renderer) return;
-    renderer.setSize(sw, sh, false); camera.aspect = sw / sh; camera.updateProjectionMatrix();
-    placeDevice();
-  }
-  function placeDevice() {
-    const sp = SPACES[cur], p = toWorld(sp.device.u, sp.device.v, DEV_DEPTH);
-    dev.position.copy(p);
-    const worldW = sp.device.w * fit.dw * 2 * DEV_DEPTH * tanF() / sh;   // 화면에서 사진 너비의 w 배가 되도록
-    dev.scale.setScalar(worldW / DEV_W);
-    keyLight.position.copy(p).add(new THREE.Vector3(-0.7, 1.5, 1.2)); keyLight.target.position.copy(p);
+    placeScreen();
+    if (gl) { const d = dpr(); canvas.width = Math.round(sw * d); canvas.height = Math.round(sh * d); gl.viewport(0, 0, canvas.width, canvas.height); for (let i = 0; i < dustN; i++) spawnDust(i); }
   }
   addEventListener("resize", () => { layout(); });
   if ("ResizeObserver" in window) new ResizeObserver(() => layout()).observe(stage);
 
-  /* ── 시차: 마우스가 움직이면 사진은 조금, 기기는 반대로 조금 더 — 깊이가 생긴다 ── */
-  let tx = 0, ty = 0, px = 0, py = 0;
-  if (finePointer && !reduced) {
-    stage.addEventListener("pointermove", (e) => { const r = stage.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - 0.5) * 2; ty = ((e.clientY - r.top) / r.height - 0.5) * 2; });
-    stage.addEventListener("pointerleave", () => { tx = 0; ty = 0; });
+  /* ── 시차: 마우스(또는 기울기)가 움직이면 장면은 조금, 가까운 먼지는 더 많이 — 깊이가 생긴다 ── */
+  let tx = 0, ty = 0, px = 0, py = 0, mediaX = 0, mediaY = 0;
+  if (!reduced) {
+    if (finePointer) {
+      stage.addEventListener("pointermove", (e) => { const r = stage.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - 0.5) * 2; ty = ((e.clientY - r.top) / r.height - 0.5) * 2; });
+      stage.addEventListener("pointerleave", () => { tx = 0; ty = 0; });
+    } else if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission !== "function") {
+      addEventListener("deviceorientation", (e) => { if (e.gamma == null || e.beta == null) return; tx = clamp(e.gamma / 24, -1, 1); ty = clamp((e.beta - 45) / 24, -1, 1); });
+    }
+  }
+
+  /* ── 효과 레이어(WebGL, 라이브러리 없음): 먼지(PM) · 김(조리) · 뿌연 막과 광원 산란(CO₂·연기) · 필름 그레인 ── */
+  const canvas = $("fx");
+  let gl = null;
+  try { gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, powerPreference: "low-power" }); } catch (e) { gl = null; }
+  const dpr = () => Math.min(devicePixelRatio || 1, small() ? 1.5 : 2);
+  const dustN = small() ? 360 : 720, steamN = small() ? 80 : 150;
+  let progFog, progDust, progSteam, quadBuf, dustBuf, steamBuf, maxPt = 64;
+  const D = new Float32Array(dustN * 4);                       // x, y, 깊이(0 가까움~1 멂), 씨앗
+  const S = new Float32Array(steamN * 5), SL = new Float32Array(steamN), SM = new Float32Array(steamN), SV = new Float32Array(steamN * 2);   // x, y, 크기, 씨앗, 알파
+  const NOISE = `
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f);
+      return mix(mix(hash(i), hash(i+vec2(1.0,0.0)), f.x), mix(hash(i+vec2(0.0,1.0)), hash(i+vec2(1.0,1.0)), f.x), f.y); }
+    float fbm(vec2 p){ float v = 0.0, a = 0.5; for (int i = 0; i < 4; i++) { v += a * noise(p); p = p * 2.03 + vec2(17.0, 9.0); a *= 0.5; } return v; }`;
+  const FOG_V = `attribute vec2 aPos; void main(){ gl_Position = vec4(aPos, 0.0, 1.0); }`;
+  const FOG_F = `precision mediump float; uniform vec2 uRes; uniform float uTime, uHaze, uGlow, uGrain; uniform vec3 uHazeCol, uGlowCol; uniform vec2 uLight; uniform float uLightR;
+    ${NOISE}
+    void main(){
+      vec2 uv = gl_FragCoord.xy / uRes; vec2 q = uv * vec2(uRes.x / uRes.y, 1.0);
+      float n = fbm(q * 2.1 + vec2(uTime * 0.021, -uTime * 0.012)) * 0.62 + fbm(q * 4.7 - vec2(uTime * 0.028, uTime * 0.017)) * 0.38;
+      float top = mix(0.6, 1.0, uv.y);
+      float fog = uHaze * top * (0.42 + 0.8 * n);
+      vec2 d = (gl_FragCoord.xy - uLight) / (uRes.y * uLightR);
+      float glow = uGlow * exp(-dot(d, d) * 2.2) * (0.75 + 0.25 * n);
+      float ga = uGrain * 0.5, gn = hash(floor(gl_FragCoord.xy * 0.5) + fract(uTime * 7.0) * vec2(31.7, 71.3));
+      vec3 col = uHazeCol * fog + uGlowCol * glow + vec3(gn * ga);
+      float a = clamp(fog + glow + ga, 0.0, 1.0);
+      gl_FragColor = vec4(min(col, vec3(a)), a);
+    }`;
+  const DUST_V = `attribute vec3 aPos; attribute float aSeed; uniform vec2 uRes, uPar, uLight, uLDir; uniform float uDpr, uTime, uLKind, uLOn, uLRad, uSize;
+    varying float vA, vBlur, vBright;
+    void main(){
+      float z = aPos.z, near = 1.0 - z;
+      vec2 p = aPos.xy + uPar * (0.5 + 2.2 * near * near);
+      gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
+      gl_PointSize = mix(1.7, 14.0, near * near * near) * uDpr * uSize;
+      vBlur = near * near;
+      vec2 d = p - uLight; float bright;
+      if (uLKind < 0.5) {
+        float along = dot(d, uLDir); float perp = abs(d.x * uLDir.y - d.y * uLDir.x);
+        float cone = (1.0 - smoothstep(along * 0.16, along * 0.5 + 40.0, perp)) * smoothstep(0.0, 140.0, along) * (1.0 - smoothstep(500.0, 1700.0, along));
+        bright = mix(0.16, 1.0, cone * uLOn);
+      } else { bright = mix(0.13, 1.0, exp(-length(d) / uLRad) * uLOn); }
+      vBright = bright;
+      vA = (0.62 + 0.38 * sin(uTime * (1.2 + 2.2 * fract(aSeed * 7.31)) + aSeed * 40.0)) * mix(0.95, 0.32, vBlur);
+    }`;
+  const DUST_F = `precision mediump float; uniform vec3 uCol; uniform float uOp; varying float vA, vBlur, vBright;
+    void main(){
+      vec2 c = gl_PointCoord - 0.5; float r = length(c);
+      float sharp = 1.0 - smoothstep(0.12, 0.5, r);
+      float bokeh = (1.0 - smoothstep(0.4, 0.5, r)) * (0.5 + 0.5 * smoothstep(0.22, 0.44, r));
+      float a = mix(sharp, bokeh, vBlur) * vA * uOp * vBright;
+      gl_FragColor = vec4(uCol * a, a);
+    }`;
+  const STEAM_V = `attribute vec2 aPos; attribute float aSize, aSeed, aAlpha; uniform vec2 uRes, uPar; uniform float uDpr, uMaxPt; varying float vA, vSeed;
+    void main(){ vec2 p = aPos + uPar * 1.3; gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
+      gl_PointSize = min(aSize * uDpr, uMaxPt); vA = aAlpha; vSeed = aSeed; }`;
+  const STEAM_F = `precision mediump float; uniform float uTime, uOp; varying float vA, vSeed;
+    ${NOISE}
+    void main(){
+      vec2 c = gl_PointCoord - 0.5; float r = length(c);
+      float n = fbm(gl_PointCoord * 2.6 + vSeed * 13.0 + vec2(0.0, -uTime * 0.22));
+      float a = (1.0 - smoothstep(0.08, 0.5, r)) * smoothstep(0.28, 0.72, n) * vA * uOp;
+      gl_FragColor = vec4(vec3(0.97, 0.955, 0.93) * a, a);
+    }`;
+  function prog(vs, fs) {
+    const p = gl.createProgram();
+    for (const [t, s] of [[gl.VERTEX_SHADER, vs], [gl.FRAGMENT_SHADER, fs]]) { const sh = gl.createShader(t); gl.shaderSource(sh, s); gl.compileShader(sh); if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh)); gl.attachShader(p, sh); }
+    gl.linkProgram(p); if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    const u = {}, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+    for (let i = 0; i < n; i++) { const nm = gl.getActiveUniform(p, i).name; u[nm] = gl.getUniformLocation(p, nm); }
+    const a = {}, an = gl.getProgramParameter(p, gl.ACTIVE_ATTRIBUTES);
+    for (let i = 0; i < an; i++) { const nm = gl.getActiveAttrib(p, i).name; a[nm] = gl.getAttribLocation(p, nm); }
+    return { p, u, a };
+  }
+  function spawnDust(i) { const o = i * 4; D[o] = Math.random() * sw; D[o + 1] = Math.random() * sh; D[o + 2] = Math.pow(Math.random(), 0.6); D[o + 3] = Math.random(); }
+  if (gl) {
+    try {
+      progFog = prog(FOG_V, FOG_F); progDust = prog(DUST_V, DUST_F); progSteam = prog(STEAM_V, STEAM_F);
+      quadBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+      dustBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, dustBuf); gl.bufferData(gl.ARRAY_BUFFER, D, gl.DYNAMIC_DRAW);
+      steamBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, steamBuf); gl.bufferData(gl.ARRAY_BUFFER, S, gl.DYNAMIC_DRAW);
+      maxPt = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1] || 64;
+      gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.clearColor(0, 0, 0, 0);
+      for (let i = 0; i < steamN; i++) SL[i] = -1;
+    } catch (e) { gl = null; }
+  }
+  if (!gl) { canvas.style.display = "none"; fxNote = "효과 레이어 없음(이 브라우저는 WebGL 미지원)"; }
+
+  /* ── 효과의 물리: 화면 픽셀 단위, 1200px 폭 기준으로 스케일 ── */
+  const hazeCur = { v: 0, col: [0.62, 0.65, 0.74] }, lightCur = { x: 0, y: 0, dx: 0, dy: -1, kind: 1, on: 0, r: 200, col: [1, 0.9, 0.8] };
+  function stepDust(dt, t) {
+    const s = ST[cur], sp = SPACES[cur], k = sw / 1200, slow = G.night ? 0.55 : 1;
+    let wx = 0, wy = 0;
+    if (s.window) { const w = toScreen(sp.window[0], sp.window[1]); const dx = sw * 0.5 - w.x, dy = sh * 0.8 - w.y, L = Math.hypot(dx, dy) || 1; wx = dx / L * 48 * k; wy = dy / L * 48 * k; }
+    const pan = (cur === "kitchen" && s.cook > 0) ? toScreen(sp.pan[0], sp.pan[1]) : null, sig = 170 * k;
+    for (let i = 0; i < dustN; i++) {
+      const o = i * 4, z = D[o + 2], sd = D[o + 3], m = (0.35 + 0.65 * (1 - z)) * slow;
+      let vx = (Math.sin(t * 0.35 + sd * 9.1) * 7 + Math.cos(t * 0.11 + sd * 3.7) * 4) * k;
+      let vy = (Math.cos(t * 0.29 + sd * 7.3) * 5 + 2.5 + Math.sin(t * 0.07 + sd * 5.1) * 3) * k;
+      const g = 0.5 + 0.5 * Math.sin(sd * 12.3 + t * 0.5); vx += wx * g; vy += wy * g;
+      if (pan) { const dx = D[o] - pan.x, dy = D[o + 1] - pan.y; if (dy < 30 * k) { const f = Math.exp(-(dx * dx) / (2 * sig * sig)) * Math.exp(-Math.max(0, -dy) / (620 * k)); vy -= 60 * k * f; vx += 12 * k * f * Math.sin(t * 1.3 + sd * 20); } }
+      let x = D[o] + vx * m * dt, y = D[o + 1] + vy * m * dt;
+      if (x < -24) x = sw + 22; else if (x > sw + 24) x = -22;
+      if (y < -24) y = sh + 22; else if (y > sh + 24) y = -22;
+      D[o] = x; D[o + 1] = y;
+    }
+  }
+  function spawnSteam(i, o, k) {
+    S[i * 5] = o.x + (Math.random() - 0.5) * 70 * k; S[i * 5 + 1] = o.y + (Math.random() - 0.5) * 14 * k; S[i * 5 + 2] = (26 + Math.random() * 22) * k; S[i * 5 + 3] = Math.random(); S[i * 5 + 4] = 0;
+    SV[i * 2] = (Math.random() - 0.5) * 22 * k; SV[i * 2 + 1] = -(58 + Math.random() * 30) * k;
+    SL[i] = 0; SM[i] = 2.2 + Math.random() * 1.3;
+  }
+  function stepSteam(dt, t) {
+    const s = ST[cur], sp = SPACES[cur], k = sw / 1200, cooking = cur === "kitchen" && s.cook > 0;
+    const origin = cur === "kitchen" ? toScreen(sp.pan[0], sp.pan[1]) : null, hood = cur === "kitchen" ? toScreen(sp.hood[0], sp.hood[1]) : null;
+    let budget = cooking && !reduced ? dt * 26 : 0;
+    for (let i = 0; i < steamN; i++) {
+      if (SL[i] < 0) { if (budget >= 1) { spawnSteam(i, origin, k); budget -= 1; } else if (budget > 0 && Math.random() < budget) { spawnSteam(i, origin, k); budget = 0; } else { S[i * 5 + 4] = 0; continue; } }
+      SL[i] += dt; const u = SL[i] / SM[i];
+      if (u >= 1) { SL[i] = -1; S[i * 5 + 4] = 0; continue; }
+      let vx = SV[i * 2], vy = SV[i * 2 + 1];
+      vx += Math.sin(t * 1.7 + S[i * 5 + 3] * 30) * 26 * k * dt; vy *= 1 - 0.28 * dt;
+      if (s.window && hood) { vx += (hood.x - S[i * 5]) * 0.55 * dt; vy += (hood.y - S[i * 5 + 1]) * 0.45 * dt; }
+      SV[i * 2] = vx; SV[i * 2 + 1] = vy;
+      S[i * 5] += vx * dt; S[i * 5 + 1] += vy * dt; S[i * 5 + 2] += 46 * k * dt;
+      S[i * 5 + 4] = Math.min(1, u * 7) * Math.pow(1 - u, 1.6);
+    }
+  }
+  function lerp(a, b, f) { return a + (b - a) * f; }
+  function stepLight() {
+    const sc = SCENES[shownKey]; if (!sc) return;
+    const L = sc.light, at = toScreen(L.at[0], L.at[1]);
+    let dx = 0, dy = -1; if (L.kind === "beam") { const to = toScreen(L.to[0], L.to[1]); dx = to.x - at.x; dy = to.y - at.y; const n = Math.hypot(dx, dy) || 1; dx /= n; dy /= n; }
+    const kind = L.kind === "beam" ? 0 : 1, f = 0.05;
+    lightCur.x = lerp(lightCur.x, at.x, f); lightCur.y = lerp(lightCur.y, at.y, f); lightCur.dx = lerp(lightCur.dx, dx, f); lightCur.dy = lerp(lightCur.dy, dy, f);
+    lightCur.kind = lerp(lightCur.kind, kind, f); lightCur.on = lerp(lightCur.on, L.on, f); lightCur.r = lerp(lightCur.r, (L.r || 0.25) * sh, f);
+    for (let i = 0; i < 3; i++) lightCur.col[i] = lerp(lightCur.col[i], L.col[i], f);
+  }
+  function drawFx(dt, t) {
+    const s = ST[cur], d = dpr();
+    const co2h = clamp((s.co2 - 700) / 2200, 0, 0.55), pmh = clamp((s.pm - 40) / 320, 0, 0.42);
+    hazeCur.v = lerp(hazeCur.v, Math.max(co2h, pmh), 0.03);
+    const wPm = pmh / (co2h + pmh + 1e-6), tcol = [lerp(0.62, 0.74, wPm), lerp(0.65, 0.68, wPm), lerp(0.74, 0.60, wPm)];
+    for (let i = 0; i < 3; i++) hazeCur.col[i] = lerp(hazeCur.col[i], tcol[i], 0.03);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    // 먼지 — PM 이 높을수록 많고 진하다. 빛살·램프 둘레에서만 반짝인다.
+    const active = Math.floor(dustN * clamp(0.32 + (s.pm - 4) / 140, 0.32, 1)), dOp = clamp((s.pm - 2) / 100, 0.22, 0.95);
+    const lc = lightCur.col, dustCol = G.night ? [0.78, 0.8, 0.98] : [lerp(lc[0], 1, 0.45), lerp(lc[1], 1, 0.45), lerp(lc[2], 1, 0.45)];
+    gl.useProgram(progDust.p); gl.bindBuffer(gl.ARRAY_BUFFER, dustBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, D);
+    gl.enableVertexAttribArray(progDust.a.aPos); gl.vertexAttribPointer(progDust.a.aPos, 3, gl.FLOAT, false, 16, 0);
+    gl.enableVertexAttribArray(progDust.a.aSeed); gl.vertexAttribPointer(progDust.a.aSeed, 1, gl.FLOAT, false, 16, 12);
+    gl.uniform2f(progDust.u.uRes, sw, sh); gl.uniform2f(progDust.u.uPar, mediaX, mediaY); gl.uniform1f(progDust.u.uDpr, d); gl.uniform1f(progDust.u.uTime, t);
+    gl.uniform1f(progDust.u.uSize, Math.sqrt(clamp(sw / 1200, 0.7, 2.2)));
+    gl.uniform2f(progDust.u.uLight, lightCur.x, lightCur.y); gl.uniform2f(progDust.u.uLDir, lightCur.dx, lightCur.dy);
+    gl.uniform1f(progDust.u.uLKind, lightCur.kind); gl.uniform1f(progDust.u.uLOn, lightCur.on); gl.uniform1f(progDust.u.uLRad, lightCur.r);
+    gl.uniform3f(progDust.u.uCol, dustCol[0], dustCol[1], dustCol[2]); gl.uniform1f(progDust.u.uOp, dOp);
+    gl.drawArrays(gl.POINTS, 0, active);
+    gl.disableVertexAttribArray(progDust.a.aSeed);
+    // 김 — 부엌 조리 중에만
+    if (cur === "kitchen") {
+      gl.useProgram(progSteam.p); gl.bindBuffer(gl.ARRAY_BUFFER, steamBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, S);
+      gl.enableVertexAttribArray(progSteam.a.aPos); gl.vertexAttribPointer(progSteam.a.aPos, 2, gl.FLOAT, false, 20, 0);
+      gl.enableVertexAttribArray(progSteam.a.aSize); gl.vertexAttribPointer(progSteam.a.aSize, 1, gl.FLOAT, false, 20, 8);
+      gl.enableVertexAttribArray(progSteam.a.aSeed); gl.vertexAttribPointer(progSteam.a.aSeed, 1, gl.FLOAT, false, 20, 12);
+      gl.enableVertexAttribArray(progSteam.a.aAlpha); gl.vertexAttribPointer(progSteam.a.aAlpha, 1, gl.FLOAT, false, 20, 16);
+      gl.uniform2f(progSteam.u.uRes, sw, sh); gl.uniform2f(progSteam.u.uPar, mediaX, mediaY); gl.uniform1f(progSteam.u.uDpr, d); gl.uniform1f(progSteam.u.uMaxPt, maxPt);
+      gl.uniform1f(progSteam.u.uTime, t); gl.uniform1f(progSteam.u.uOp, 0.2);
+      gl.drawArrays(gl.POINTS, 0, steamN);
+      gl.disableVertexAttribArray(progSteam.a.aSize); gl.disableVertexAttribArray(progSteam.a.aSeed); gl.disableVertexAttribArray(progSteam.a.aAlpha);
+    }
+    // 뿌연 막(CO₂ 는 푸른 회색, 연기는 따뜻한 회색) + 그 속에서 커지는 광원 산란 + 필름 그레인
+    gl.useProgram(progFog.p); gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+    gl.enableVertexAttribArray(progFog.a.aPos); gl.vertexAttribPointer(progFog.a.aPos, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform2f(progFog.u.uRes, canvas.width, canvas.height); gl.uniform1f(progFog.u.uTime, t);
+    gl.uniform1f(progFog.u.uHaze, hazeCur.v); gl.uniform3f(progFog.u.uHazeCol, hazeCur.col[0], hazeCur.col[1], hazeCur.col[2]);
+    const glow = lightCur.on * (0.06 + 1.1 * hazeCur.v) * (G.night ? 1.4 : 1);
+    gl.uniform1f(progFog.u.uGlow, clamp(glow, 0, 0.7)); gl.uniform3f(progFog.u.uGlowCol, lc[0], lc[1], lc[2]);
+    gl.uniform2f(progFog.u.uLight, lightCur.x * d, (sh - lightCur.y) * d); gl.uniform1f(progFog.u.uLightR, lightCur.kind > 0.5 ? 0.42 : 0.55);
+    gl.uniform1f(progFog.u.uGrain, reduced ? 0 : 0.05);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
 
   /* ── 공간 바꾸기 ── */
@@ -470,96 +618,35 @@
     tabs.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.space === k)));
     $("lead").textContent = sp.lead; $("lead-en").textContent = sp.en2; rk.textContent = `On the console · ${sp.name}`;
     bCook.hidden = k !== "kitchen"; pCook.hidden = k !== "kitchen";
-    shownKey = null; showPhoto(); layout(); rebuildTicks(); hud(); redraw();
+    shownKey = null; layout(); showScene(); rebuildTicks(); hud(); redraw();
+    for (let i = 0; i < steamN; i++) SL[i] = -1;
+    clearTimeout(prefetchT); prefetchT = setTimeout(prefetchClips, 5000);
   }
+  let prefetchT = 0;
   tabs.forEach((b) => b.addEventListener("click", () => setSpace(b.dataset.space)));
-  bCook.addEventListener("click", () => { if (ST.kitchen.cook <= 0) ST.kitchen.cook = 15; showPhoto(); hud(); });
-  bWin.addEventListener("click", () => { ST[cur].window = !ST[cur].window; showPhoto(); hud(); });
-  bNight.addEventListener("click", () => { startNight(); showPhoto(); hud(); });
+  bCook.addEventListener("click", () => { if (ST.kitchen.cook <= 0) ST.kitchen.cook = 15; showScene(); hud(); redraw(); });
+  bWin.addEventListener("click", () => { ST[cur].window = !ST[cur].window; showScene(); hud(); redraw(); });
+  bNight.addEventListener("click", () => { startNight(); showScene(); hud(); redraw(); });
   bReset.addEventListener("click", () => {
     G.t = 18 * 60; G.night = false; G.nightUntil = 0;
     ORDER.forEach((k) => { ST[k] = fresh(k); });
-    if (dust) for (let i = 0; i < dustN; i++) spawnDust(i);
-    if (steam) for (let i = 0; i < steamN; i++) steam.life[i] = -1;
-    showPhoto(); rebuildTicks(); hud(); redraw();
+    if (gl) { for (let i = 0; i < dustN; i++) spawnDust(i); for (let i = 0; i < steamN; i++) SL[i] = -1; }
+    showScene(); rebuildTicks(); hud(); redraw();
   });
 
-  /* ── 기기 조명 프리셋: 사진의 시간대에 맞춘다 ── */
-  const LIGHT = renderer ? { dusk: { c: new THREE.Color(0xffd2a4), k: 0.75, h: 0.45 }, night: { c: new THREE.Color(0x9aa4ff), k: 0.3, h: 0.22 }, day: { c: new THREE.Color(0xffffff), k: 1.0, h: 0.7 } } : null;
-  function lightPreset() { const st = SPACES[cur].pick(ST[cur], G); return (G.night || st === "night") ? LIGHT.night : (st === "window" || st === "morning" || st === "vent") ? LIGHT.day : LIGHT.dusk; }
-
   /* ── 루프: 1초 = 1분, 밤에는 1초 = 12분 ── */
-  function redraw() {
-    drawCurve(mctx, 400, 128);
-    if (sctx) { drawCurve(sctx, 320, 240, true); screenTex.needsUpdate = true; }
-  }
-  let acc = 0, last = performance.now();
+  function redraw() { drawCurve(mctx, 400, 128); drawScreen(); }
+  let acc = 0, last = performance.now(), t0 = last;
   function frame(now) {
-    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    const dt = Math.min(0.1, (now - last) / 1000), t = (now - t0) / 1000; last = now;
     acc += dt * (G.night ? 12 : 1);
     let n = 0; while (acc >= 1 && n < 20) { stepMinute(); acc -= 1; n++; }
-    const s = ST[cur];
-    if (n > 0) { showPhoto(); hud(); redraw(); }
-
-    // 사진 위 막: CO₂ 는 뿌연 막, 밤은 가장자리가 어두워진다
-    // 뿌연 막: CO₂ 가 쌓이면 회청색으로, 연기(PM)가 차면 따뜻한 회색으로 — 둘 중 진한 쪽
-    const hz = Math.max(Math.min(0.55, (s.co2 - 700) / 2200), Math.min(0.38, (s.pm - 40) / 320), 0);
-    haze.style.opacity = hz.toFixed(3);
-    vig.style.opacity = G.night ? "0.5" : "0";
-
-    px += (tx - px) * 0.06; py += (ty - py) * 0.06;
-    photos.style.setProperty("--px", (-px * 7).toFixed(2) + "px"); photos.style.setProperty("--py", (-py * 4).toFixed(2) + "px");
-
-    if (renderer) {
-      camera.position.set(px * 0.05, -py * 0.03, 0); camera.lookAt(px * 0.05, -py * 0.03, -1);
-      const drift = reduced ? 0 : dt;
-      // 먼지
-      const dOp = Math.max(0.04, Math.min(0.55, (s.pm - 4) / 160));
-      dust.mat.uniforms.uOpacity.value += (dOp - dust.mat.uniforms.uOpacity.value) * 0.05;
-      dust.mat.uniforms.uColor.value.lerp(new THREE.Color(G.night ? "#e8e8ff" : "#b4b4c8"), 0.05);
-      let windDir = null, windFrom = null;
-      if (s.window) { windFrom = toWorld(SPACES[cur].window.u, SPACES[cur].window.v, 4.4); windDir = new THREE.Vector3(0, -0.3, -2.4).sub(windFrom).normalize(); }
-      for (let i = 0; i < dustN; i++) {
-        const p = dust.pos, v = dust.vel;
-        p[i * 3] += v[i * 3] * drift + (windDir ? windDir.x * 0.25 * drift : 0);
-        p[i * 3 + 1] += v[i * 3 + 1] * drift + (windDir ? windDir.y * 0.1 * drift : 0);
-        p[i * 3 + 2] += v[i * 3 + 2] * drift + (windDir ? windDir.z * 0.25 * drift : 0);
-        if (Math.abs(p[i * 3]) > 2.8 || Math.abs(p[i * 3 + 1]) > 1.8 || p[i * 3 + 2] > -1.0 || p[i * 3 + 2] < -5.6) spawnDust(i);
-      }
-      dust.geo.attributes.position.needsUpdate = true;
-      // 김 — 부엌에서 조리 중일 때만
-      const cooking = cur === "kitchen" && s.cook > 0;
-      steam.mat.uniforms.uOpacity.value += ((cooking ? 0.3 : 0) - steam.mat.uniforms.uOpacity.value) * (cooking ? 0.08 : 0.03);
-      if (steam.mat.uniforms.uOpacity.value > 0.005) {
-        const origin = toWorld(SPACES.kitchen.pan.u, SPACES.kitchen.pan.v, 3.3);
-        let budget = cooking && !reduced ? Math.ceil(dt * 32) : 0;
-        for (let i = 0; i < steamN; i++) {
-          if (steam.life[i] < 0) { if (budget > 0) { spawnSteam(i, origin); budget--; } else { steam.alpha[i] = 0; continue; } }
-          steam.life[i] += drift; const t = steam.life[i] / steam.maxLife[i];
-          if (t >= 1) { steam.life[i] = -1; steam.alpha[i] = 0; continue; }
-          const p = steam.pos, v = steam.vel;
-          p[i * 3] += (v[i * 3] + Math.sin(now * 0.002 + i) * 0.05) * drift; p[i * 3 + 1] += v[i * 3 + 1] * drift; p[i * 3 + 2] += v[i * 3 + 2] * drift;
-          steam.alpha[i] = Math.min(1, t * 6) * (1 - t) * (1 - t); steam.size[i] += 0.1 * drift;
-        }
-        steam.geo.attributes.position.needsUpdate = true; steam.geo.attributes.aAlpha.needsUpdate = true; steam.geo.attributes.aSize.needsUpdate = true;
-      }
-      // 바람 — 창이 열려 있을 때만
-      wind.mat.uniforms.uOpacity.value += ((s.window ? 0.18 : 0) - wind.mat.uniforms.uOpacity.value) * 0.05;
-      if (wind.mat.uniforms.uOpacity.value > 0.005) {
-        let budget = s.window && !reduced ? Math.ceil(dt * 18) : 0;
-        for (let i = 0; i < windN; i++) {
-          if (wind.life[i] < 0) { if (budget > 0 && windFrom) { spawnWind(i, windFrom, windDir); budget--; } else { wind.alpha[i] = 0; continue; } }
-          wind.life[i] += drift; const t = wind.life[i] / wind.maxLife[i];
-          if (t >= 1) { wind.life[i] = -1; wind.alpha[i] = 0; continue; }
-          const p = wind.pos, v = wind.vel; p[i * 3] += v[i * 3] * drift; p[i * 3 + 1] += v[i * 3 + 1] * drift; p[i * 3 + 2] += v[i * 3 + 2] * drift;
-          wind.alpha[i] = Math.sin(t * Math.PI);
-        }
-        wind.geo.attributes.position.needsUpdate = true; wind.geo.attributes.aAlpha.needsUpdate = true; wind.geo.attributes.aSize.needsUpdate = true;
-      }
-      glow.intensity = G.night ? 0.6 : 0.2;
-      const lp = lightPreset(); keyLight.color.lerp(lp.c, 0.05); keyLight.intensity += (lp.k - keyLight.intensity) * 0.05; hemi.intensity += (lp.h - hemi.intensity) * 0.05;
-      renderer.render(scene, camera);
-    }
+    if (n > 0) { showScene(); hud(); redraw(); }
+    vig.style.opacity = G.night ? "0.58" : "0.22";
+    screenWrap.style.setProperty("--glow", G.night ? "0.6" : "0.28");
+    px += (tx - px) * 0.06; py += (ty - py) * 0.06; mediaX = -px * 7; mediaY = -py * 4;
+    media.style.setProperty("--px", mediaX.toFixed(2) + "px"); media.style.setProperty("--py", mediaY.toFixed(2) + "px");
+    if (gl) { const drift = reduced ? 0 : dt; stepLight(); stepDust(drift, t); stepSteam(drift, t); drawFx(dt, t); }
     requestAnimationFrame(frame);
   }
 
@@ -569,7 +656,8 @@
   if (q.get("cook") === "1") ST.kitchen.cook = 15;
   if (q.get("window") === "1") ST[startSpace].window = true;
   if (q.get("night") === "1") startNight();
-  setSpace(startSpace); preloadAll(); noteAssets(); redraw();
+  setSpace(startSpace); noteAssets(); redraw();
+  setTimeout(preloadRest, 3500);
   requestAnimationFrame(frame);
 })();
 </script>
