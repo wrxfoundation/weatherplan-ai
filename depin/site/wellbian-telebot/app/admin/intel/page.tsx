@@ -22,6 +22,7 @@ const qs = (o: Record<string, string>) => {
 };
 
 const GRADE_CLS: Record<IntelGrade, string> = { 공식: "official", 검증: "verified", 미검증: "unverified" };
+const GRADES: IntelGrade[] = ["공식", "검증", "미검증"];
 
 export default async function IntelPage({
   searchParams,
@@ -31,13 +32,23 @@ export default async function IntelPage({
   const k = (await isAuthed()) ? "" : (sp.k ?? "");
 
   const topic = TOPICS.some((t) => t.key === sp.topic) ? (sp.topic as IntelTopic) : "";
-  const link = (o: Record<string, string>) => `/admin/intel?${qs({ k, topic, ...o })}`;
+  const grade = GRADES.includes(sp.grade as IntelGrade) ? (sp.grade as IntelGrade) : "";
+  const sayOnly = sp.say === "1";
+  const link = (o: Record<string, string>) =>
+    `/admin/intel?${qs({ k, topic, grade, say: sayOnly ? "1" : "", ...o })}`;
 
-  /* 최신이 위. 날짜만 있는 달 단위 항목은 그 달의 끝으로 밀리지 않게 문자열 그대로 비교한다. */
-  const list = [...INTEL]
-    .filter((i) => !topic || i.topic === topic)
+  /* 세 축을 겹쳐 건다 — 주제(헤더 칩) · 등급 · 고객용 문장 유무.
+     최신이 위. 달 단위 항목(YYYY-MM)은 문자열 비교라 그 달의 일자 항목 뒤로 간다. */
+  const byTopic = INTEL.filter((i) => !topic || i.topic === topic);
+  const list = byTopic
+    .filter((i) => !grade || i.grade === grade)
+    .filter((i) => !sayOnly || !!i.say)
     .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
   const count = (t: IntelTopic) => INTEL.filter((i) => i.topic === t).length;
+  /* 등급·고객용 칩의 숫자는 현재 주제 안에서 센다 — 칩을 눌렀을 때 나올 개수를 미리 보여 준다 */
+  const gradeCount = (g: IntelGrade) => byTopic.filter((i) => i.grade === g && (!sayOnly || !!i.say)).length;
+  const sayCount = byTopic.filter((i) => !!i.say && (!grade || i.grade === grade)).length;
+  const heading = [topic || "전체", grade, sayOnly ? "고객용" : ""].filter(Boolean).join(" · ");
 
   return (
     <>
@@ -73,9 +84,36 @@ export default async function IntelPage({
           옮긴 것만 있습니다. 등급: <b>공식</b> {GRADE_HELP.공식} <b>검증</b> {GRADE_HELP.검증} <b>미검증</b> {GRADE_HELP.미검증}
         </div>
 
-        <h2 className="rep-h" style={{ marginTop: 6 }}>{topic ? `${topic} ${list.length}건` : `최근 ${list.length}건`}</h2>
+        {/* 등급·고객용 필터 — 주제는 헤더 칩, 여기는 두 번째·세 번째 축 */}
+        <section className="tools" style={{ marginTop: 0 }}>
+          <div className="frow">
+            <span className="flab">등급</span>
+            <a className={`chip${grade ? "" : " on"}`} href={link({ grade: "" })}>전체</a>
+            {GRADES.map((g) => (
+              <a key={g}
+                 className={`chip${g === "미검증" ? " attn" : ""}${grade === g ? " on" : ""}`}
+                 href={link({ grade: grade === g ? "" : g })}>
+                {g} <span className="n">{gradeCount(g)}</span>
+              </a>
+            ))}
+          </div>
+          <div className="frow">
+            <span className="flab">표시</span>
+            <a className={`chip${sayOnly ? " on" : ""}`} href={link({ say: sayOnly ? "" : "1" })}>
+              고객용 문장 있는 것만 <span className="n">{sayCount}</span>
+            </a>
+            {(topic || grade || sayOnly) && (
+              <a className="chip" href={`/admin/intel?${qs({ k })}`}>필터 지우기</a>
+            )}
+          </div>
+        </section>
+
+        <h2 className="rep-h" style={{ marginTop: 6 }}>{heading} {list.length}건</h2>
         <p className="rep-sub">제목을 누르면 우리에게 무슨 뜻인지와 출처가 펼쳐집니다. 고객용 문장이 있는 항목은 복사 단추가 있습니다.</p>
 
+        {list.length === 0 && (
+          <p className="rep-empty">이 조건에 맞는 항목이 없습니다 — 필터를 하나 풀어 보세요.</p>
+        )}
         <div className="faq-list">
           {list.map((i) => (
             <details key={`${i.date}-${i.title}`} className="faq-item">
