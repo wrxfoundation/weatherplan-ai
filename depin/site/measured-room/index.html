@@ -147,7 +147,7 @@
   </aside>
 
   <div class="controls" role="group" aria-label="이 공간에서 일어나는 일">
-    <button class="btn primary" id="b-cook" hidden>요리 시작</button>
+    <button class="btn primary" id="b-cook" hidden>요리 15분</button>
     <button class="btn" id="b-window">창문 열기</button>
     <button class="btn" id="b-night">밤 지나기</button>
     <button class="btn" id="b-reset">처음부터</button>
@@ -213,8 +213,8 @@
     },
     kitchen: {
       name: "부엌", en: "Kitchen",
-      lead: "요리 10분. 팬 위의 김과 기름 연기가 PM2.5를 올리고, 창을 열면 빠져나갑니다.",
-      en2: "Ten minutes at the stove. Steam and oil smoke push PM2.5 up; an open window lets it out.",
+      lead: "요리 15분. 팬 위의 김과 기름 연기가 PM2.5를 올리고, 창을 열면 빠져나갑니다.",
+      en2: "Fifteen minutes at the stove. Steam and oil smoke push PM2.5 up; an open window lets it out.",
       states: { idle: "kitchen-idle", cook: "kitchen-cook", vent: "kitchen-vent", night: "kitchen-night" },
       pick: (s, g) => s.cook > 0 ? "cook" : s.window ? "vent" : g.night ? "night" : "idle",
       device: { u: 0.835, v: 0.625, w: 0.045 }, pan: { u: 0.615, v: 0.60 }, window: { u: 0.26, v: 0.43 }, focus: [0.66, 0.5],
@@ -236,7 +236,7 @@
     for (const k of ORDER) {
       const s = ST[k], sp = SPACES[k];
       const vent = s.window ? 0.14 : 0.018;
-      s.pm += (s.cook > 0 ? 30 : 0) - vent * (s.pm - PM_OUT) - 0.012 * s.pm;
+      s.pm += (s.cook > 0 ? 22 : 0) - vent * (s.pm - PM_OUT) - 0.012 * s.pm;
       s.co2 += sp.people(h) - (s.window ? 0.12 : 0.006) * (s.co2 - CO2_OUT);
       if (s.cook > 0) s.cook -= 1;
     }
@@ -473,7 +473,7 @@
     shownKey = null; showPhoto(); layout(); rebuildTicks(); hud(); redraw();
   }
   tabs.forEach((b) => b.addEventListener("click", () => setSpace(b.dataset.space)));
-  bCook.addEventListener("click", () => { if (ST.kitchen.cook <= 0) ST.kitchen.cook = 10; showPhoto(); hud(); });
+  bCook.addEventListener("click", () => { if (ST.kitchen.cook <= 0) ST.kitchen.cook = 15; showPhoto(); hud(); });
   bWin.addEventListener("click", () => { ST[cur].window = !ST[cur].window; showPhoto(); hud(); });
   bNight.addEventListener("click", () => { startNight(); showPhoto(); hud(); });
   bReset.addEventListener("click", () => {
@@ -566,7 +566,7 @@
   /* ── 주소 해시로 장면을 바로 열 수 있다: #space=kitchen&cook=1  #space=bedroom&night=1  #space=living&window=1 (부스·링크용) ── */
   const q = new URLSearchParams(location.hash.replace(/^#/, ""));
   const startSpace = ORDER.includes(q.get("space")) ? q.get("space") : "living";
-  if (q.get("cook") === "1") ST.kitchen.cook = 10;
+  if (q.get("cook") === "1") ST.kitchen.cook = 15;
   if (q.get("window") === "1") ST[startSpace].window = true;
   if (q.get("night") === "1") startNight();
   setSpace(startSpace); preloadAll(); noteAssets(); redraw();
