@@ -1,3 +1,14 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="방 하나의 공기가 요리·환기·밤에 따라 어떻게 변하고, 선반 위 기기가 그것을 어떻게 기록하는지 보여주는 3D 개념 시뮬레이션.">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Measured Room">
+<meta property="og:description" content="A room, measured. 요리·환기·밤에 따라 달라지는 실내 공기와 그것을 기록하는 기기 — 개념 시뮬레이션.">
+<meta name="theme-color" content="#ededfa">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234d4dce'/%3E%3Crect x='14' y='18' width='36' height='26' rx='5' fill='%23ffffff'/%3E%3Cpath d='M18 38 L26 30 L32 34 L40 24 L46 28' fill='none' stroke='%234d4dce' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <title>Measured Room</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
@@ -73,7 +84,8 @@
   }
   @media (prefers-reduced-motion: reduce) { .tick.new { animation: none; } }
 </style>
-
+</head>
+<body>
 <div id="app">
   <canvas id="c" aria-label="방 하나의 3D 시뮬레이션. 드래그해서 돌려 보고 휠로 당겨 볼 수 있습니다." role="img"></canvas>
   <div class="fallback" id="fallback">3D 라이브러리를 불러오지 못했습니다. 네트워크가 열린 곳에서 다시 열어 주세요.</div>
@@ -338,3 +350,5 @@
   requestAnimationFrame(frame);
 })();
 </script>
+</body>
+</html>
