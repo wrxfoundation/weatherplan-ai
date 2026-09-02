@@ -24,6 +24,6 @@ vercel --prod
 이 환경은 힉스필드 결과 CDN 이 차단돼 있어 파일을 직접 못 받는다. **서우가 세 파일을 받아 `assets/` 에 넣고 배포**하면 된다.
 1. 배경(21:9): https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260902_152416_8906d871-0e69-4069-ae4b-52e265833a3c.png → `assets/backdrop.png`
 2. 바닥 텍스처(1:1): https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260902_152424_d3042914-bcb0-4660-a63a-3de7bc0d006a.png → `assets/floor.png`
-3. 기기 3D(GLB): 힉스필드 생성 목록의 3D 항목(job efb00451) 에서 GLB 다운로드 → `assets/device.glb`
+3. 기기 3D(GLB, 텍스처·PBR): https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260902_152637_efb00451-21c3-42a8-b35d-69f81bdb4895.glb → `assets/device.glb`
 - 파일이 없으면 그 자리만 절차적 모형으로 남고 나머지는 그대로 동작한다.
 - 자산이 크면(GLB 10MB↑) Vercel 정적 배포엔 문제없지만 첫 로딩이 길어진다 — 필요하면 gltf-transform 으로 draco 압축.
