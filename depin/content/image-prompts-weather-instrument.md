@@ -168,3 +168,14 @@ frosted matte, opaque, ceramic, gummy, jelly, full-spectrum rainbow beams, overs
 - 리롤 체크: ① 무지개가 선 밖으로 번지거나 선이 풀 레인보우가 되면 리롤(또는 후처리로 선 채도 −40) ② 선이 한 중심에서 방사되면
   리롤 — **기기와 기기 사이**를 잇는 불규칙 네트워크여야 한다, 전체 격자를 다 채우는 메시도 리롤 ③ 기기가 프로스티드·불투명이면
   리롤 — C의 투명 유리 ④ 화면 숫자·아이콘 리롤 ⑤ 빈 칸엔 선 없음.
+
+## H2 풀 프롬프트 — 구름 바닥 (16:9, C 렌더와 같은 세계관)
+
+```
+Isometric render of many identical tabletop indoor air monitors, each resting on its own small white cumulus cloud, the clouds arranged in a loose, slightly irregular grid floating over a soft sky-blue gradient that extends past every edge of the frame, a few larger clouds drifting far below for depth. Every device is the same object: a hand-sized rounded-square slab of clear translucent Wellbian Violet glass (#4d4dce), the same material as a violet glass weather instrument — light passes through it, edges and thick parts read deeper violet, a slim clear-glass kickstand at the back gives a slight backward tilt, a row of small vertical vent slots on the right side edge, a large blank front screen inside a slim bezel that glows faintly from within; no buttons, no numbers, no icons, no interface, all units facing the same way. Thin clear-glass lines bridge cloud to cloud, running from device to device and forming an irregular network across the sky; inside each line runs a faint prismatic thread, a soft iridescent shimmer rather than a full rainbow, low saturation, so the lines read as light-carrying threads and the violet devices stay the strongest colour. Where a line meets a device, a small soft glow. A few clouds carry no device and no line. Soft daylight from the upper left, gentle depth of field toward the far clouds, physically-based 3D render, octane look, clean and minimal, no text, no logos, no UI, no numbers, no people, 16:9
+```
+
+네거티브: H와 동일 + `solid cloud floor, cloud carpet, fog`.
+
+- 리롤 체크(H2 고유): ① 구름이 한 덩어리 바닥으로 뭉치면 리롤 — **기기마다 구름 하나**, 사이에 하늘이 보여야 한다 ② 선이 구름과
+  구름을 잇지 않고 허공에 떠 있으면 리롤 ③ 나머지는 H와 동일(무지개 절제·불규칙 망·투명 재질·빈 화면).
