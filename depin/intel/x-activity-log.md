@@ -131,6 +131,19 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 예열(답글) → 완결(원글) 세트 = 8/26 마스터카드 패턴.
 **게시 조건 유지**: MOU 를 주어로 쓰지 않는다 / 목록을 한 줄도 읊지 않는다.
 
+## 주간 게시 순서 (9/2 확정 — 서우 "원글 따로 또 올릴 게 있나")
+
+하루 1원글. 9/2 는 디센트 스레드(고정)가 원글 몫 — **추가 원글 없음.** 대신 고정 스레드에 **T4(보도자료 제품 사진)** 부착 권장:
+`For the record, the hardware. / A certified indoor-air monitor, built by KWeather — 30 years of weather observation and sensor-making in Korea. The on-chain layer is in testing.` (176자)
+
+| 날 | 원글 | 비고 |
+|---|---|---|
+| 9/3 수 | **7 「주소는 약속이다」** | "지갑 먼저"의 다음 장 — 라이선스 NFT·발행자 고정·Regular Key. 9/7 랜딩 신뢰 블록. `depin/content/identity-continuity-post.md` |
+| 9/4 목 | **5c 「기계 고객」** | 9/2 에버노스 답글 `when the payer is a device` 의 완결판. `depin/content/machine-customers.md` |
+| 9/5 금 | **8 플레어 워크숍(사후)** | `depin/content/flare-workshop-0905.md`, 현장 사진 |
+| 9/6 토 | **5f 「네트워크가 태우는 것」** | 미사용 시그니처 초연 |
+| 9/7 일 | **사전예약** → 고정 교체 | **원고 없음 — 가격·수량 공개 범위 + 해외 배송 결정 선행** |
+
 ## 대기열 (다음 게시 후보)
 
 | 우선순위 | 항목 | 권장 시점 |
