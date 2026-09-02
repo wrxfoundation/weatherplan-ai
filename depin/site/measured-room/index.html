@@ -197,7 +197,7 @@
       en2: "Close the window and breath raises CO₂. Open it and outside air brings it down.",
       states: { dusk: "living-dusk", window: "living-window", night: "living-night" },
       pick: (s, g) => g.night ? "night" : s.window ? "window" : "dusk",
-      device: { u: 0.36, v: 0.596, w: 0.056 }, window: { u: 0.78, v: 0.30 }, focus: [0.42, 0.5],
+      device: { u: 0.36, v: 0.585, w: 0.046 }, window: { u: 0.78, v: 0.30 }, focus: [0.42, 0.5],
       people: (h) => (h >= 18 && h < 23) ? 2.8 : (h >= 23 || h < 7) ? 0.3 : 1.2,
       init: { pm: 12, co2: 620 }
     },
@@ -207,7 +207,7 @@
       en2: "Eight hours of sleep behind a closed door. CO₂ peaks before dawn and falls when the window opens.",
       states: { evening: "bedroom-evening", night: "bedroom-night", morning: "bedroom-morning" },
       pick: (s, g) => g.night ? "night" : s.window ? "morning" : "evening",
-      device: { u: 0.19, v: 0.565, w: 0.06 }, window: { u: 0.80, v: 0.25 }, focus: [0.22, 0.5],
+      device: { u: 0.19, v: 0.56, w: 0.066 }, window: { u: 0.80, v: 0.25 }, focus: [0.22, 0.5],
       people: (h) => (h >= 23 || h < 7) ? 5.5 : 0.8,
       init: { pm: 9, co2: 700 }
     },
@@ -217,7 +217,7 @@
       en2: "Ten minutes at the stove. Steam and oil smoke push PM2.5 up; an open window lets it out.",
       states: { idle: "kitchen-idle", cook: "kitchen-cook", vent: "kitchen-vent", night: "kitchen-night" },
       pick: (s, g) => s.cook > 0 ? "cook" : s.window ? "vent" : g.night ? "night" : "idle",
-      device: { u: 0.835, v: 0.628, w: 0.052 }, pan: { u: 0.615, v: 0.60 }, window: { u: 0.26, v: 0.43 }, focus: [0.66, 0.5],
+      device: { u: 0.835, v: 0.62, w: 0.045 }, pan: { u: 0.615, v: 0.60 }, window: { u: 0.26, v: 0.43 }, focus: [0.66, 0.5],
       people: (h) => (h >= 18 && h < 21) ? 1.5 : (h >= 23 || h < 7) ? 0.2 : 0.8,
       init: { pm: 14, co2: 560 }
     }
@@ -290,8 +290,8 @@
   }
 
   /* ── 곡선 (기기 화면과 오른쪽 카드가 같은 그림) ── */
-  function drawCurve(ctx, W, H) {
-    ctx.clearRect(0, 0, W, H); ctx.fillStyle = "#f6f6fc"; ctx.fillRect(0, 0, W, H);
+  function drawCurve(ctx, W, H, dark) {
+    ctx.clearRect(0, 0, W, H); ctx.fillStyle = dark ? "#14142e" : "#f6f6fc"; ctx.fillRect(0, 0, W, H);
     const pad = 10, span = 120, h = ST[cur].hist.slice(-span);
     if (h.length < 2) return;
     const x = (i) => pad + (i / (span - 1)) * (W - 2 * pad);
@@ -302,8 +302,8 @@
       const last = h[h.length - 1], ly = H - pad - Math.min(1, last[key] / max) * (H - 2 * pad);
       ctx.beginPath(); ctx.arc(x(span - 1), ly, 3.2, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
     };
-    line("co2", 2400, "#1b1b48"); line("pm", 240, "#4d4dce");
-    ctx.font = "700 11px Montserrat, sans-serif"; ctx.fillStyle = "#7c7c9a"; ctx.textAlign = "left";
+    line("co2", 2400, dark ? "#e4e4ff" : "#1b1b48"); line("pm", 240, dark ? "#8f8fff" : "#4d4dce");
+    ctx.font = "700 11px Montserrat, sans-serif"; ctx.fillStyle = dark ? "#8a8ab0" : "#7c7c9a"; ctx.textAlign = "left";
     ctx.fillText("PM2.5", pad, 14); ctx.textAlign = "right"; ctx.fillText("CO₂", W - pad, 14); ctx.textAlign = "left";
   }
   const mini = $("mini"), mctx = mini.getContext("2d");
@@ -350,11 +350,11 @@
     return new THREE.Vector3(nx * t * camera.aspect * depth, ny * t * depth, -depth);
   }
 
-  let dev, proc, screen, screenTex, sctx, keyLight, shadowPlane, dust, steam, wind, glow;
+  let dev, proc, screen, screenTex, sctx, keyLight, hemi, dust, steam, wind, glow;
   const dustN = small() ? 320 : 560, steamN = small() ? 110 : 180, windN = small() ? 40 : 64;
   if (renderer) {
     renderer.setClearColor(0x000000, 0); renderer.setPixelRatio(Math.min(devicePixelRatio, small() ? 1.5 : 2));
-    renderer.outputEncoding = THREE.sRGBEncoding; renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
     camera.position.set(0, 0, 0); camera.lookAt(0, 0, -1);
 
     // 기기 — 절차적 모형을 먼저 세우고, GLB 가 오면 바꿔 끼운다. 화면 곡선은 어느 쪽에도 얹힌다.
@@ -368,19 +368,21 @@
     sctx = screenCanvas.getContext("2d"); screenTex = new THREE.CanvasTexture(screenCanvas); screenTex.encoding = THREE.sRGBEncoding;
     screen = new THREE.Mesh(new THREE.PlaneGeometry(0.215, 0.15), new THREE.MeshBasicMaterial({ map: screenTex })); screen.position.set(0, 0.112, 0.0175); dev.add(screen);
     glow = new THREE.PointLight(0x9a9aff, 0.25, 0.9); glow.position.set(0.1, 0.15, 0.2); dev.add(glow);
-    shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.6), new THREE.ShadowMaterial({ opacity: 0.32 })); shadowPlane.rotation.x = -Math.PI / 2; shadowPlane.position.y = 0.001; shadowPlane.receiveShadow = true; dev.add(shadowPlane);
+    // 접지 그림자 — 사진 속 가구 위에 놓인 것처럼 보이게 하는 부드러운 타원
+    const shadowTex = (() => { const c = document.createElement("canvas"); c.width = c.height = 128; const g = c.getContext("2d"); const r = g.createRadialGradient(64, 64, 2, 64, 64, 62); r.addColorStop(0, "rgba(0,0,0,.6)"); r.addColorStop(0.45, "rgba(0,0,0,.28)"); r.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = r; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
+    const shadow = new THREE.Sprite(new THREE.SpriteMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: 0.85 }));
+    shadow.scale.set(DEV_W * 1.5, DEV_W * 0.42, 1); shadow.position.set(0.01, 0.004, 0.03); dev.add(shadow);
     dev.rotation.y = 0.22;
 
-    keyLight = new THREE.DirectionalLight(0xfff3e4, 1.05); keyLight.castShadow = true; keyLight.shadow.mapSize.set(1024, 1024);
-    const sc = keyLight.shadow.camera; sc.left = -0.6; sc.right = 0.6; sc.top = 0.6; sc.bottom = -0.6; sc.near = 0.1; sc.far = 6; keyLight.shadow.bias = -0.0005;
-    scene.add(keyLight); scene.add(keyLight.target);
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x8a7a6a, 0.75));
+    // 조명은 장면 사진의 시간대를 따라간다(저녁 따뜻하고 어둡게 · 밤 푸르고 희미하게 · 창 열린 낮 밝게)
+    keyLight = new THREE.DirectionalLight(0xffd2a4, 0.75); scene.add(keyLight); scene.add(keyLight.target);
+    hemi = new THREE.HemisphereLight(0xfff1e0, 0x6a5a4a, 0.45); scene.add(hemi);
 
     if (THREE.GLTFLoader) {
       const loader = new THREE.GLTFLoader();
       const mount = (gltf) => {
         const model = gltf.scene;
-        model.traverse((o) => { if (o.isMesh) { o.castShadow = true; if (o.material && o.material.map) o.material.map.encoding = THREE.sRGBEncoding; } });
+        model.traverse((o) => { if (o.isMesh && o.material && o.material.map) o.material.map.encoding = THREE.sRGBEncoding; });
         model.rotation.y = DEVICE.yaw;
         const b1 = new THREE.Box3().setFromObject(model), sz = new THREE.Vector3(); b1.getSize(sz);
         model.scale.setScalar(DEV_W / Math.max(sz.x, 1e-6));
@@ -410,13 +412,13 @@
       return { n, pos, alpha, size, geo, mat, pts, life: new Float32Array(n), vel: new Float32Array(n * 3), maxLife: new Float32Array(n) };
     }
     // 먼지: 방 안 공기 부피에 떠 있고, PM 이 높을수록 진해진다. 창이 열리면 창에서 방 안쪽으로 밀린다.
-    dust = particles(dustN, "#c9c9dc", 0.0);
+    dust = particles(dustN, "#c9c9dc", 0.0); dust.mat.uniforms.uScale.value = 16;
     for (let i = 0; i < dustN; i++) { spawnDust(i); dust.alpha[i] = 0.35 + Math.random() * 0.65; dust.size[i] = 0.9 + Math.random() * 1.6; }
     // 김: 부엌 팬에서 올라와 퍼지다 사라진다.
-    steam = particles(steamN, "#f4f2ee", 0.0); steam.mat.uniforms.uScale.value = 900;
+    steam = particles(steamN, "#f4f2ee", 0.0); steam.mat.uniforms.uScale.value = 700;
     for (let i = 0; i < steamN; i++) { steam.life[i] = -1; steam.alpha[i] = 0; }
     // 바람: 열린 창에서 방 안쪽으로 흐르는 옅은 결
-    wind = particles(windN, "#dfe8ff", 0.0); wind.mat.uniforms.uScale.value = 420;
+    wind = particles(windN, "#dfe8ff", 0.0); wind.mat.uniforms.uScale.value = 120;
     for (let i = 0; i < windN; i++) { wind.life[i] = -1; wind.alpha[i] = 0; }
   }
   function spawnDust(i) {
@@ -425,8 +427,8 @@
   }
   function spawnSteam(i, origin) {
     const p = steam.pos; p[i * 3] = origin.x + (Math.random() - 0.5) * 0.18; p[i * 3 + 1] = origin.y + (Math.random() - 0.5) * 0.05; p[i * 3 + 2] = origin.z + (Math.random() - 0.5) * 0.1;
-    const v = steam.vel; v[i * 3] = (Math.random() - 0.5) * 0.12; v[i * 3 + 1] = 0.28 + Math.random() * 0.22; v[i * 3 + 2] = (Math.random() - 0.5) * 0.08;
-    steam.life[i] = 0; steam.maxLife[i] = 1.8 + Math.random() * 1.6; steam.size[i] = 0.35 + Math.random() * 0.5;
+    const v = steam.vel; v[i * 3] = (Math.random() - 0.5) * 0.12; v[i * 3 + 1] = 0.3 + Math.random() * 0.2; v[i * 3 + 2] = (Math.random() - 0.5) * 0.08;
+    steam.life[i] = 0; steam.maxLife[i] = 1.4 + Math.random() * 1.0; steam.size[i] = 0.18 + Math.random() * 0.22;
   }
   function spawnWind(i, origin, dir) {
     const p = wind.pos; p[i * 3] = origin.x + (Math.random() - 0.5) * 0.5; p[i * 3 + 1] = origin.y + (Math.random() - 0.5) * 0.6; p[i * 3 + 2] = origin.z + (Math.random() - 0.5) * 0.3;
@@ -482,10 +484,14 @@
     showPhoto(); rebuildTicks(); hud(); redraw();
   });
 
+  /* ── 기기 조명 프리셋: 사진의 시간대에 맞춘다 ── */
+  const LIGHT = renderer ? { dusk: { c: new THREE.Color(0xffd2a4), k: 0.75, h: 0.45 }, night: { c: new THREE.Color(0x9aa4ff), k: 0.3, h: 0.22 }, day: { c: new THREE.Color(0xffffff), k: 1.0, h: 0.7 } } : null;
+  function lightPreset() { const st = SPACES[cur].pick(ST[cur], G); return (G.night || st === "night") ? LIGHT.night : (st === "window" || st === "morning" || st === "vent") ? LIGHT.day : LIGHT.dusk; }
+
   /* ── 루프: 1초 = 1분, 밤에는 1초 = 12분 ── */
   function redraw() {
     drawCurve(mctx, 400, 128);
-    if (sctx) { drawCurve(sctx, 320, 240); screenTex.needsUpdate = true; }
+    if (sctx) { drawCurve(sctx, 320, 240, true); screenTex.needsUpdate = true; }
   }
   let acc = 0, last = performance.now();
   function frame(now) {
@@ -521,22 +527,22 @@
       dust.geo.attributes.position.needsUpdate = true;
       // 김 — 부엌에서 조리 중일 때만
       const cooking = cur === "kitchen" && s.cook > 0;
-      steam.mat.uniforms.uOpacity.value += ((cooking ? 0.42 : 0) - steam.mat.uniforms.uOpacity.value) * (cooking ? 0.08 : 0.03);
+      steam.mat.uniforms.uOpacity.value += ((cooking ? 0.2 : 0) - steam.mat.uniforms.uOpacity.value) * (cooking ? 0.08 : 0.03);
       if (steam.mat.uniforms.uOpacity.value > 0.005) {
         const origin = toWorld(SPACES.kitchen.pan.u, SPACES.kitchen.pan.v, 3.3);
-        let budget = cooking && !reduced ? Math.ceil(dt * 60) : 0;
+        let budget = cooking && !reduced ? Math.ceil(dt * 24) : 0;
         for (let i = 0; i < steamN; i++) {
           if (steam.life[i] < 0) { if (budget > 0) { spawnSteam(i, origin); budget--; } else { steam.alpha[i] = 0; continue; } }
           steam.life[i] += drift; const t = steam.life[i] / steam.maxLife[i];
           if (t >= 1) { steam.life[i] = -1; steam.alpha[i] = 0; continue; }
           const p = steam.pos, v = steam.vel;
           p[i * 3] += (v[i * 3] + Math.sin(now * 0.002 + i) * 0.05) * drift; p[i * 3 + 1] += v[i * 3 + 1] * drift; p[i * 3 + 2] += v[i * 3 + 2] * drift;
-          steam.alpha[i] = Math.min(1, t * 6) * (1 - t) * (1 - t); steam.size[i] += 0.32 * drift;
+          steam.alpha[i] = Math.min(1, t * 6) * (1 - t) * (1 - t); steam.size[i] += 0.1 * drift;
         }
         steam.geo.attributes.position.needsUpdate = true; steam.geo.attributes.aAlpha.needsUpdate = true; steam.geo.attributes.aSize.needsUpdate = true;
       }
       // 바람 — 창이 열려 있을 때만
-      wind.mat.uniforms.uOpacity.value += ((s.window ? 0.22 : 0) - wind.mat.uniforms.uOpacity.value) * 0.05;
+      wind.mat.uniforms.uOpacity.value += ((s.window ? 0.18 : 0) - wind.mat.uniforms.uOpacity.value) * 0.05;
       if (wind.mat.uniforms.uOpacity.value > 0.005) {
         let budget = s.window && !reduced ? Math.ceil(dt * 18) : 0;
         for (let i = 0; i < windN; i++) {
@@ -549,7 +555,7 @@
         wind.geo.attributes.position.needsUpdate = true; wind.geo.attributes.aAlpha.needsUpdate = true; wind.geo.attributes.aSize.needsUpdate = true;
       }
       glow.intensity = G.night ? 0.6 : 0.2;
-      keyLight.intensity += ((G.night ? 0.45 : 1.05) - keyLight.intensity) * 0.05;
+      const lp = lightPreset(); keyLight.color.lerp(lp.c, 0.05); keyLight.intensity += (lp.k - keyLight.intensity) * 0.05; hemi.intensity += (lp.h - hemi.intensity) * 0.05;
       renderer.render(scene, camera);
     }
     requestAnimationFrame(frame);
