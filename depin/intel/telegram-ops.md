@@ -86,6 +86,47 @@ What we can be concrete about is the device itself: a certified
 air-quality monitor that does its job whether or not any of that lands.
 ```
 
+### 즉답 문구 — "What's the narrative?" (9/2, 첫 사례: 나이지리아 KACHI)
+
+크립토 문법에서 `narrative` 는 **가격 서사**를 묻는 말. 서사는 그대로 주되 **숫자는 안 붙인다는 것을
+이 답에서 미리 못박는다.** 두 메시지로 나눠 보내는 것이 채팅에서 자연스럽다.
+
+```
+The narrative, in plain words: almost nobody measures indoor air, and
+most of what exists is self-reported. We make a certified sensor people
+buy for their own room — CO₂ first — and the readings get verified
+before they go anywhere.
+
+The on-chain part, rewards on XRPL for verified data, is in testing.
+We don't put numbers on it.
+
+If you want it in one word: measured. The internet argues about air all
+day. Almost none of it is measured indoors.
+```
+
+### 즉답 문구 — 해외 이용자 "내 공기는?" (9/2)
+
+**먼저 정직하게 못 한다고 말한다.** 센서는 실내용이고 지금 한국에만 있다. 얼버무리면 뒤의 질문이 전부 꼬인다.
+
+```
+Honest answer on your air: can't tell you yet. Our sensors are indoor
+units, and right now they live in Korean homes and offices — that's
+where they're certified and sold. Nothing on our side measures [country]
+today.
+```
+
+### ⚠️ 답 미확정 — "해외 배송 되냐" (9/2, 서우 결정 필요)
+
+해외 이용자가 서사를 물었으면 다음 질문은 배송이다. **9/7 전에 답이 있어야 톡방이 안 흔들린다.**
+확정 전 임시 답:
+
+```
+Korea first — that's where the sensors are certified. International
+isn't announced, and I'd rather not guess at it here.
+```
+
+- 톡방 첫 해외 구성원 = 나이지리아(9/2). 방 언어는 이미 영어. 해외 유입은 계속 온다고 전제.
+
 ### 즉답 문구 — 가격·구매 시점 질문
 
 ```
