@@ -43,6 +43,7 @@
 | 8/25(화) | 답글 | @xrpl_commons — Regular Key 빌더 팁 | 2r 셀프 증언안 (Issuer 고정 검증 + "Identity outlives the incident.") | **게시됨 (8/25 서우 "지금 댓글 담")** | (기입 대기) | (기입 대기) |
 | 9/2(화) | 답글 | @ashgoblue(Evernorth CEO) — XRPL 2분기 배관 글 | 초안 그대로 + 서우 편집: 첫머리 `Asheesh,` 호명(구면), 말미 `#KWEATHER #wellbian` 브랜드 태그 2개 | **게시됨 (9/2 스크린샷 확인)** | (기입 대기) | (기입 대기) |
 | 9/2(화) | 답글(멘션) | 우리·디센트 태그 응원 글("rewards you can earn") | 감사 + 보상 in testing 재정렬 + "Wallet first, rewards later." (273자) | **게시됨 (서우 "남김")** | (기입 대기) | (기입 대기) |
+| 9/2(화) | 답글 | @heyibinance(Yi He) — whole-industry story (1,452만 뷰) | 크립토 씬 확장 트랙 첫 적용 · `doesn't have a ticker. It has a reading.` (272자) | **게시됨 (서우 "올렸고")** | (기입 대기) | **반응 관찰 — 첫 방 밖 답글란** |
 | **9/2(화) 09:35** | 원글 스레드 **+ 고정** | **디센트 파트너십 공지** — T1 MOU 공지 / T2·T3 증언(구 원글 4 흡수). 시그니처 초연 "Account economics is onboarding economics." | T1 277·T2 277·T3 276 확정안. 이미지 = **v2.5 라이트 글라스 + KWEATHER × D'CENT 락업**(도형 바이올렛 틴트, 배경에 디센트 그린 옅게, 중앙 무채색). **T3 제품 사진은 미부착(텍스트만)** | **게시됨 (9/2 스크린샷 확인)** — 7/15 플레어 LOI 핀 교체 | (기입 대기) | 09:36 조회 7 |
 | 9/1(월) 밤 | 원글 스레드 | **5g 설치의 동기** — "The hard problem in DePIN isn't coverage." (신규 시그니처 초연: The incentive that installs the sensor decides what the data is worth.) | T1/T2/T3 확정안, 이미지 A-3(밤 아파트) 추정 — **사용 이미지 확인 대기** | **게시됨 (9/2 프로필 스크린샷으로 확인)** | (기입 대기) | (기입 대기) |
 | 8/30(일) | 답글 | (서우 "댓글남겼어" — **대상·사용안 확인 대기**) | 후보 2건 중 택1로 추정: ⓐ XRPL 온체인 데이터 분석가 글(`Counting is easy…`) ⓑ @animocabrands / @ysiu KBW(`Ownership becomes participation…`) | **게시됨 (내용 미확인)** | (기입 대기) | (기입 대기) |

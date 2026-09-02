@@ -85,6 +85,19 @@
    달린 글 · 패러디 계정.
 - 첫 적용: 9/2 @heyibinance "whole-industry story" — 테제 반쪽 수용, 바이낸스 상품·주식·투자 0.
 
+**상비 앵글 — "옮기는 것 vs 만드는 것" (9/2 서우: "기존 실물자산을 옮기는 것보다 앞으로 나아간 개념, 크립토 씬에
+신선하다. 유명인 트윗마다 어필해야 한다")**: RWA 는 어제도 있던 것을 옮기고, 우리는 측정해야 생기는 것을 만든다.
+- **주장 한 줄은 셀럽 답글마다 써도 된다** — 10/3 전에 눈에 익으면 키노트가 더 세게 꽂힌다.
+- **증명은 키노트 전용** — 세 시점 사전 측정 실험 · $4B 대비 숫자 · 「어제도 있던 것 / 오늘 생긴 것」의 전개.
+  답글에서 풀지 않는다.
+- 상비 문장 3 (앞에 그 글의 논지를 받는 문장 하나 + 이 중 하나 + in testing 한 줄 = 답글):
+  - `Everyone's tokenizing what's already priced. We're measuring what isn't.` (서우 링크드인 `arrive just
+    before the price does` 와 같은 뿌리)
+  - `Most of crypto moves value that already exists. We make the record that didn't exist until someone measured it.`
+  - `You can only move what exists. The air in a room doesn't — until it's measured.` (가장 쉬움)
+- **"반 발짝 앞" 이라는 말 자체는 쓰지 않는다** — 자기가 앞서 있다고 말하는 순간 뒤처져 보인다. 문장이 앞서 있으면 된다.
+  `first`·`only` 류 최상급도 금지(미검증).
+
 ## 수면 위 이후 답글 규정 (2026-09-02 신설 — 서우: "제품과 우리가 하고자 하는 게 올라왔으니")
 
 9/2 케이웨더 보도자료(제품명·박스·MOU)와 디센트 파트너십 공지·고정 스레드로 **제품과 의도가 공개**됐다.
