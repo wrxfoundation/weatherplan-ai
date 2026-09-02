@@ -145,3 +145,26 @@ translucent jelly, frosted matte, gummy, cyan glow, teal, gold, ingots, bars, co
 4. 켜진 칸의 패턴이 규칙적(체스판·전부 점등)이면 리롤 — 불규칙해야 "잰 곳만 켜진다"가 산다.
 5. G2의 유리 블록이 금괴·코인·막대로 바뀌면 리롤.
 6. 후처리: 우하단 wellbian 단독 워터마크. 기기 베젤 락업은 이 스케일에선 생략(글자가 뭉개진다).
+
+---
+
+# H. 격자 위 여러 대 — 투명 바이올렛 + 무지개 연결선 (2026-09-02 추가, C 렌더 성공 후)
+
+**배운 것(C 렌더)**: 오브젝트가 **진한 투명 바이올렛 + 투명 유리 부품**이면 하늘을 파랗게 써도 바이올렛이 산다. "하늘 시안 금지"는
+프로스티드·저채도 오브젝트일 때의 규칙. 이 판은 C의 재질을 격자 기기 판(G)에 옮긴 것 — 프로스티드·유광이 아니라 **투명 유리**.
+서우 지시: 무지개빛은 **기기끼리 잇는 연결선** 안에만, **과하지 않게**(가는 실 같은 프리즘 결, 풀 레인보우 금지).
+
+```
+Isometric render of many identical tabletop indoor air monitors, one per tile, on a floor of square white frosted-glass tiles that extends past every edge of the frame, against a soft sky-blue gradient background with a few small white clouds drifting low across the far rows. Every device is the same object: a hand-sized rounded-square slab of clear translucent Wellbian Violet glass (#4d4dce), the same material as a violet glass weather instrument — light passes through it, edges and thick parts read deeper violet, a slim clear-glass kickstand at the back gives a slight backward tilt, a row of small vertical vent slots on the right side edge, a large blank front screen inside a slim bezel that glows faintly from within; no buttons, no numbers, no icons, no interface, all units facing the same way. The devices are linked to one another by thin clear-glass lines running along the tile seams from device to device, forming an irregular network; inside each line runs a faint prismatic thread, a soft iridescent shimmer rather than a full rainbow, low saturation, so the lines read as light-carrying threads and the violet devices stay the strongest colour. Where a line meets a device, a small soft glow. Empty tiles carry no lines and stay dim. Soft daylight from the upper left, gentle depth of field toward the far rows, physically-based 3D render, octane look, clean and minimal, no text, no logos, no UI, no numbers, no people, 16:9
+```
+
+네거티브:
+```
+frosted matte, opaque, ceramic, gummy, jelly, full-spectrum rainbow beams, oversaturated rainbow, neon, HDR, cyan glow, gold, coins, circuit board, PCB traces, text, numbers, readings, icons, UI, logos, buttons, speaker grille, smart speaker, phones, tablets, people, hands, blurry
+```
+
+- **H2 (구름 바닥 변주)**: 타일 문장을 `each device resting on its own small white cloud, the clouds arranged in a loose grid over
+  the sky, the glass lines bridging cloud to cloud` 로 교체 — C 렌더와 가장 가까운 세계관.
+- 리롤 체크: ① 무지개가 선 밖으로 번지거나 선이 풀 레인보우가 되면 리롤(또는 후처리로 선 채도 −40) ② 선이 한 중심에서 방사되면
+  리롤 — **기기와 기기 사이**를 잇는 불규칙 네트워크여야 한다, 전체 격자를 다 채우는 메시도 리롤 ③ 기기가 프로스티드·불투명이면
+  리롤 — C의 투명 유리 ④ 화면 숫자·아이콘 리롤 ⑤ 빈 칸엔 선 없음.
