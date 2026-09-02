@@ -107,3 +107,41 @@ numbers, readings, dashboard, icons, UI, text, labels, logos, screen content, bu
 3. 아래 베젤에 모델이 글자를 만들어 넣으면 리롤 — 락업은 후처리.
 4. 무지개 한 줄기, 하늘 시안 금지, 바이올렛이 가장 진하게 — 기상 장비 판과 동일.
 5. 후처리: 실제 `wellbian × XRP LEDGER` 락업을 아래 베젤에(실물 위치), 또는 우하단 wellbian 단독 워터마크.
+
+---
+
+# 격자 위 여러 대 — 네트워크 판 (2026-09-02 추가, 서우: "반투명이 심해서 약간 유광으로, 바둑판처럼 여러 대")
+
+레퍼런스: 발광 격자 바닥 위 글라스 오브젝트, 아이소메트릭, 이음새 글로우. 레퍼런스의 **금괴·시안 글로우는 안 가져온다**
+(코인·자산 연상 금지, 시안은 바이올렛을 죽임). 질감은 **반투명 → 반불투명 유광**: 광택 세라믹에 얇은 유리 코팅을 입힌 느낌,
+모서리에서만 살짝 비침. 격자 = 방 하나하나, 기기가 놓인 칸만 켜진다 → 포인트 위치가 곧 주장("잰 곳만 지도에 생긴다").
+
+## G. 격자 네트워크 — 아이소메트릭 (16:9, X 원글·랜딩)
+
+```
+Isometric render of many identical tabletop indoor air monitors arranged like stones on a go board, one per tile, on a floor of square white tiles that extends past every edge of the frame. Each device keeps the real silhouette: a hand-sized rounded-square slab with a large flat front screen inside a slim bezel, a row of small vertical vent slots on the right side edge, a slim clear kickstand at the back giving a slight backward tilt, no buttons. All devices face the same direction. Finish: semi-opaque glossy Wellbian Violet (#4d4dce), like polished ceramic under a thin clear glass coat, crisp specular highlights and soft reflections of the grid on the body, only the thin edges showing a hint of translucency. Screens are blank, softly luminous panels: no numbers, no icons, no interface; lower bezels left empty. The seams between tiles glow a soft violet light; the tiles carrying a device glow brighter, the empty tiles stay dim, so the lit pattern is irregular. Pale grey-white studio void above the floor, soft shadowless lighting, gentle depth of field toward the far rows, one single prismatic dispersion streak where light crosses a kickstand, otherwise violet is the only saturated colour. Physically-based 3D render, octane look, clean and minimal, no text, no logos, no UI, no numbers, no people, 16:9
+```
+
+## G2. 격자 + 데이터 흐름 — 이음새를 타고 한 곳으로 (16:9)
+
+G에 한 요소 추가: 켜진 칸들에서 나온 빛이 격자 이음새를 따라 흐르다 프레임 가장자리의 **투명 유리 블록 하나**로 모인다
+(원장 = 한 곳에 쌓이는 기록). 금괴·코인·막대 형태 금지, 블록은 아무 무늬 없는 정육면체 하나.
+
+```
+Isometric render of many identical tabletop indoor air monitors, one per tile, on a floor of square white tiles extending past every edge of the frame. Exact silhouette on every unit: rounded-square slab, large blank luminous screen inside a slim bezel, vent slots on the right edge, slim clear kickstand at the back, no buttons, all facing the same way. Semi-opaque glossy Wellbian Violet (#4d4dce) finish like polished ceramic under a thin clear coat, crisp highlights, only the edges faintly translucent. From the tiles that carry a device, a thin stream of violet light runs along the seams between tiles, joining other streams and flowing toward one plain clear-glass cube resting at the far edge of the grid; empty tiles stay dim. A single prismatic dispersion streak inside the glass cube, otherwise violet is the only saturated colour. Pale grey-white studio void, soft shadowless lighting, gentle depth of field, physically-based 3D render, octane look, clean and minimal, no text, no logos, no UI, no numbers, no people, 16:9
+```
+
+## 네거티브 (G·G2)
+
+```
+translucent jelly, frosted matte, gummy, cyan glow, teal, gold, ingots, bars, coins, tokens, circuit board, PCB traces, text, numbers, readings, icons, UI, logos, buttons, speaker grille, smart speaker, phones, tablets, people, hands, neon, HDR, multiple rainbows, blurry
+```
+
+## 리롤 체크
+
+1. 모든 기기가 **같은 실루엣·같은 방향**인가. 한 대라도 스피커·태블릿으로 바뀌면 리롤.
+2. 화면은 전부 빈 발광 패널. 숫자·아이콘 하나라도 뜨면 리롤.
+3. 이음새 글로우가 시안·하늘색이면 리롤 — 바이올렛이어야 한다. 격자가 회로기판처럼 배선으로 읽혀도 리롤.
+4. 켜진 칸의 패턴이 규칙적(체스판·전부 점등)이면 리롤 — 불규칙해야 "잰 곳만 켜진다"가 산다.
+5. G2의 유리 블록이 금괴·코인·막대로 바뀌면 리롤.
+6. 후처리: 우하단 wellbian 단독 워터마크. 기기 베젤 락업은 이 스케일에선 생략(글자가 뭉개진다).
