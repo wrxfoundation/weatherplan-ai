@@ -50,6 +50,49 @@
 Rose 와 1:1 에서 `/connect @wellbiantalk` → `telegram-rose-export-0830.json` 을 첨부해 `/import`.
 설정을 바꿀 때마다 `/export` 로 이 파일을 갱신할 것 — 갱신하지 않으면 복원본이 옛 상태로 되돌린다.
 
+## 파트너십 공지 템플릿 (9/2 디센트 — 첫 사용)
+
+**역할 분리**: 공지는 **채널**, 톡방엔 **링크 한 줄**. X 스레드가 정본이고 텔레그램은 그 링크를 나른다.
+**채널에는 "보상 레이어는 테스트 중" 한 줄을 반드시** — X 는 T3 에서 말하지만 채널만 보는 사람은 범위 문장의
+"보상 모델"만 보게 된다.
+
+### 채널 (국문·영문 병기)
+```
+📌 케이웨더 × 디센트 MOU 체결
+
+wellbian의 센서 네트워크인 케이웨더가 하드웨어 월렛 디센트(아이오트러스트)와
+기술 협력 MOU를 체결했습니다.
+
+협력 검토 범위: 장비 등록 · 관측 데이터 수집 · 보상 모델 · 지갑 활용 등
+사용자 흐름 설계. 보상 레이어는 테스트 중입니다.
+
+기기는 이미 있습니다. 이번 협약은 기기를 산 다음에 일어나는 일에 관한 것입니다.
+
+전체 내용 → [X 링크]
+
+—
+
+📌 KWeather × D'CENT MOU
+
+KWeather, the sensor network behind wellbian, has signed an MOU with
+D'CENT (IoTrust), the self-custody hardware wallet.
+
+In scope: device registration, data collection, the reward model, and
+where a wallet sits in that flow. The reward layer is in testing.
+
+The hardware already exists. This is about what happens after you buy one.
+
+Full thread → [X link]
+```
+
+### 톡방
+```
+Partnership news is up — KWeather × D'CENT. Thread here: [X link]
+
+Short version: the wallet before the token. Questions welcome.
+```
+`Questions welcome` 은 의도적 — 수익·배송 즉답 문구가 준비돼 있으므로 질문을 받아도 된다.
+
 ## 톡방 인사말 · 응대 문구 (9/2 신설)
 
 ### `GA (= Good Air)` — 커뮤니티 인사말 확정
