@@ -93,6 +93,35 @@ Short version: the wallet before the token. Questions welcome.
 ```
 `Questions welcome` 은 의도적 — 수익·배송 즉답 문구가 준비돼 있으므로 질문을 받아도 된다.
 
+## 소개 문구·핀 운용 원칙 (9/2 확정 — 디센트 공지 계기)
+
+### 설명(description)에 파트너십을 넣지 않는다
+설명은 **정체성**, 파트너십은 **뉴스**. MOU 는 검토 단계인데 설명에 박히면 시간이 지나도 남아 검토를
+정체성으로 승격시킨다 — 로드맵 함정. 설명에는 **무엇을 하는지 + 길찾기**만.
+
+### 채널 설명 (255자 제한) — 9/1 미완 항목(talk·X 링크) 처리
+```
+wellbian 공식 공지 · Official announcements
+실내 공기를 측정하고, 검증된 데이터가 XRPL 보상이 됩니다 (테스트 중).
+대화 @wellbiantalk · FAQ @wellbian_faq_bot · X x.com/wellbianlabs
+```
+
+### 톡방 설명
+```
+wellbian 커뮤니티 대화 · Community chat
+공지 @wellbianlabs · FAQ @wellbian_faq_bot · X x.com/wellbianlabs
+운영진은 먼저 DM하지 않습니다 · Staff never DM first
+GA = Good Air 🌤
+```
+
+### 핀은 길찾기 전용 — 파트너십 공지는 핀하지 않는다
+채널은 공지 전용이라 **최신 글이 곧 공지**. 핀은 "어디로 가야 하나"용이고(9/1 캡챠 혼란의 산물)
+묻히면 안 된다. **핀할 차례 = 9/7 사전예약 공지**(행동 유도 글). 그때 길찾기 핀은 유지하고 두 번째
+핀으로 얹는다.
+
+### 공지 포스트 형식
+락업 이미지(X 와 동일) + 캡션(국·영 병기, 캡션 제한 1024자 — 약 600자로 여유).
+
 ## 톡방 인사말 · 응대 문구 (9/2 신설)
 
 ### `GA (= Good Air)` — 커뮤니티 인사말 확정
