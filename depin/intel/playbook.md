@@ -204,6 +204,7 @@
   초연 예정. 답글에서 먼저 소진하지 말 것.
 - (후보, 9/1 신설) "The incentive that installs the sensor decides what the data is worth."
   — DePIN 설치 동기·노드 품질 담론 대응용. 5g 원글에서 초연 예정, 답글 선소진 금지.
+- (9/2 신설, 쉬운 언어 규칙 첫 실증) "Wallet first, rewards later. That's the order." — 9/2 KOL 인용 정정 답글에서 초연, 6시간 내 타 계정이 그대로 되받음(팟 계정이라 가중치 낮음). 온보딩·지갑·보상 순서 담론 대응용. `Account economics is onboarding economics.` 의 비크립토 독자용 대체.
 
 ## 어휘 규칙 (대외 채널)
 
