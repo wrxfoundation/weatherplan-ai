@@ -17,5 +17,6 @@ get kitchen-idle.jpg    $IMG/86dc96a7-afa3-40b3-8ce9-61c14de6a1bf.jpg
 get kitchen-cook.jpg    $IMG/4a7aab4a-e21a-4307-8dc2-5fac2bca5deb.jpg
 get kitchen-vent.jpg    $IMG/a5412bc8-3256-41a8-8b66-fb97c935da36.jpg
 get kitchen-night.jpg   $IMG/0abbbc92-1c64-477a-b05d-72ac79acfab2.jpg
-get device.glb          $GEN/hf_20260902_152637_efb00451-21c3-42a8-b35d-69f81bdb4895.glb
+get device.glb          $IMG/a2e16b89-d7e2-438e-848a-a375b1918599.glb
+# 원본(7.8MB, 텍스처 2048): $GEN/hf_20260902_152637_efb00451-21c3-42a8-b35d-69f81bdb4895.glb
 ls -l

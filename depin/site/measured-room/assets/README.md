@@ -8,6 +8,6 @@
 | `living-dusk.jpg` `living-window.jpg` `living-night.jpg` | 거실 저녁 / 창 열림 / 밤 | Soul Location(기본) → Nano Banana Pro 편집(상태), 1600px JPEG |
 | `bedroom-evening.jpg` `bedroom-night.jpg` `bedroom-morning.jpg` | 침실 저녁 / 밤 / 아침 창 열림 | 〃 |
 | `kitchen-idle.jpg` `kitchen-cook.jpg` `kitchen-vent.jpg` `kitchen-night.jpg` | 부엌 대기 / 조리 중 / 환기 / 밤 | 〃 |
-| `device.glb` | 제품 렌더(ARC-600DA 데이터시트, 화면 비움) → Meshy image-to-3D, 텍스처·PBR, 7.8MB | 힉스필드 generate_3d |
+| `device.glb` | 제품 렌더(ARC-600DA 데이터시트, 화면 비움) → Meshy image-to-3D, 텍스처·PBR. gltf-transform 으로 경량화(7.8MB → 1.6MB, 텍스처 1024, 메시 단순화) | 힉스필드 generate_3d |
 
 원본 PNG(2K) 는 힉스필드 라이브러리에 남아 있다(생성 작업 ID 는 `fetch-assets.sh` 주석 참고).

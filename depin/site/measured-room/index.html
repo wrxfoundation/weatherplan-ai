@@ -186,7 +186,7 @@
     "kitchen-vent":    "a5412bc8-3256-41a8-8b66-fb97c935da36.jpg",
     "kitchen-night":   "0abbbc92-1c64-477a-b05d-72ac79acfab2.jpg"
   };
-  const DEVICE = { local: "assets/device.glb", cdn: CDN_GEN + "hf_20260902_152637_efb00451-21c3-42a8-b35d-69f81bdb4895.glb", yaw: 0 };
+  const DEVICE = { local: "assets/device.glb", cdn: CDN_IMG + "a2e16b89-d7e2-438e-848a-a375b1918599.glb", yaw: 0 };   // 경량화본 1.6MB(원본 7.8MB: CDN_GEN + "hf_20260902_152637_efb00451-21c3-42a8-b35d-69f81bdb4895.glb")
   const photoSrc = (key) => ({ local: `assets/${key}.jpg`, cdn: PHOTOS[key] ? CDN_IMG + PHOTOS[key] : null });
 
   /* ── 공간: 사진 위 어디에 기기가 놓이고(u,v = 사진 안 비율, w = 사진 너비 대비 기기 너비), 창과 팬이 어디인지 ── */
