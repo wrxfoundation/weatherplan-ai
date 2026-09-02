@@ -41,6 +41,7 @@
 | 8/24(월) | 답글 | @alina_creates — Virtuals 타임라인 분석 스레드 | "machines paying machines still needs someone measuring the room" | **게시됨** | (기입 대기) | (기입 대기) |
 | 8/25(화) | 원글 스레드 | 래퍼 vs 원장 — 두바이 등기 토큰화 (이미지: "Wrappers vs the Ledger" 타이틀 오버레이) | 5b 확정안 T1/T2+소스 답글 | **게시됨** | (기입 대기) | (기입 대기) |
 | 8/25(화) | 답글 | @xrpl_commons — Regular Key 빌더 팁 | 2r 셀프 증언안 (Issuer 고정 검증 + "Identity outlives the incident.") | **게시됨 (8/25 서우 "지금 댓글 담")** | (기입 대기) | (기입 대기) |
+| 9/2(화) | 답글 | @ashgoblue(Evernorth CEO) — XRPL 2분기 배관 글 | 초안 그대로 + 서우 편집: 첫머리 `Asheesh,` 호명(구면), 말미 `#KWEATHER #wellbian` 브랜드 태그 2개 | **게시됨 (9/2 스크린샷 확인)** | (기입 대기) | (기입 대기) |
 | **9/2(화) 09:35** | 원글 스레드 **+ 고정** | **디센트 파트너십 공지** — T1 MOU 공지 / T2·T3 증언(구 원글 4 흡수). 시그니처 초연 "Account economics is onboarding economics." | T1 277·T2 277·T3 276 확정안. 이미지 = **v2.5 라이트 글라스 + KWEATHER × D'CENT 락업**(도형 바이올렛 틴트, 배경에 디센트 그린 옅게, 중앙 무채색). **T3 제품 사진은 미부착(텍스트만)** | **게시됨 (9/2 스크린샷 확인)** — 7/15 플레어 LOI 핀 교체 | (기입 대기) | 09:36 조회 7 |
 | 9/1(월) 밤 | 원글 스레드 | **5g 설치의 동기** — "The hard problem in DePIN isn't coverage." (신규 시그니처 초연: The incentive that installs the sensor decides what the data is worth.) | T1/T2/T3 확정안, 이미지 A-3(밤 아파트) 추정 — **사용 이미지 확인 대기** | **게시됨 (9/2 프로필 스크린샷으로 확인)** | (기입 대기) | (기입 대기) |
 | 8/30(일) | 답글 | (서우 "댓글남겼어" — **대상·사용안 확인 대기**) | 후보 2건 중 택1로 추정: ⓐ XRPL 온체인 데이터 분석가 글(`Counting is easy…`) ⓑ @animocabrands / @ysiu KBW(`Ownership becomes participation…`) | **게시됨 (내용 미확인)** | (기입 대기) | (기입 대기) |
