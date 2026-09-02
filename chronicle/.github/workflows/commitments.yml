@@ -1,0 +1,65 @@
+# Chronicle #17 기업 약속 diff (commitments-watch) — standalone 리포용.
+#
+# 주 1회 AI 기업의 공개 약속 문서(사용정책·AI 원칙·안전 프레임워크)를 박제한다.
+# 기업이 조용히 문구를 고치면 그 diff를, 문서가 내려가면 그 소멸을 소유한다.
+# 무인증(공개 문서 열람), Secret 불필요. 첫 실행 로그가 살아있는 URL을 자백한다.
+# Manual: Actions tab -> "commitments" -> Run workflow.
+name: commitments
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "37 19 * * 1" # 매주 월요일 ~04:37 KST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chronicle-cron # 전 수집 크론 직렬화 — docs 동시 재생성 경합 방지
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Collect + seal (변경 없으면 아무것도 쓰지 않음)
+        run: npm run collect -- commitments-watch
+
+      - name: Verify hash chain
+        run: npm run verify -- commitments-watch
+
+      - name: Anchor chain head to RFC 3161 TSA (best-effort)
+        run: npm run anchor -- commitments-watch
+
+      - name: Publish site (docs/)
+        run: |
+          npm run site
+          test -f docs/index.html && test -f docs/.nojekyll  # 산출물 없으면 여기서 실패
+
+      - name: Commit accumulated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data docs
+          if git diff --cached --quiet; then
+            echo "no data change"
+          else
+            git commit -m "data(commitments-watch): weekly corporate commitment diff [skip ci]"
+            n=0
+            until git push; do
+              n=$((n+1))
+              if [ "$n" -ge 3 ]; then echo "push failed after $n attempts" >&2; exit 1; fi
+              git pull --rebase origin "$GITHUB_REF_NAME"
+            done
+          fi

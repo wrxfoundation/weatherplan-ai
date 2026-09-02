@@ -1,0 +1,32 @@
+# AI 랩 채용 원장 — 스펙 v4 #18 (ai-jobs-ledger), API 레코드형(공개 잡보드). 글로벌.
+#
+# AI 기업의 채용공고를 일간 박제 — 직무·팀·지역. 공고는 마감 즉시 소멸하니
+# 지금 찍은 자만 "어느 랩이 어떤 팀을 어디에 꾸렸나"를 소유한다(제품 발표
+# 6~12개월 전의 전략 신호). Greenhouse(boards-api.greenhouse.io)·Lever
+# (api.lever.co/v0/postings)·Ashby의 공개 잡보드 API는 공식 무인증 엔드포인트
+# (스크레이핑 아님, ToS 클린). LinkUp·Revelio가 채용데이터를 기관에 파는 실존
+# 비즈니스가 검증 아날로그. #13 워크넷과 잡보드 계열 공유.
+#
+# ★ board 토큰은 최선 추정 — 개별 실패는 그 랩만 건너뛴다(첫 실행 로그가 유효
+#   토큰을 자백). 틀린 토큰은 config에서 교정, 랩은 자유 확장. Secret 불필요.
+id: ai-jobs-ledger
+family: api-records
+title: AI 랩 채용 원장 — 직무·팀·지역 (글로벌)
+
+user_agent: "chronicle-ai-jobs-ledger/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
+rate_limit_ms: 300
+
+# provider: greenhouse | lever | ashby, board = 잡보드 토큰
+labs:
+  - { lab: anthropic, provider: greenhouse, board: anthropic }
+  - { lab: openai, provider: ashby, board: openai }
+  - { lab: cohere, provider: ashby, board: cohere }
+  - { lab: mistral, provider: ashby, board: mistralai }
+  - { lab: perplexity, provider: greenhouse, board: perplexityai }
+  - { lab: scale-ai, provider: greenhouse, board: scaleai }
+  - { lab: databricks, provider: greenhouse, board: databricks }
+  - { lab: elevenlabs, provider: ashby, board: elevenlabs }
+  - { lab: runway, provider: ashby, board: runwayml }
+  - { lab: huggingface, provider: greenhouse, board: huggingface }
+  - { lab: together-ai, provider: greenhouse, board: togetherai }
+  - { lab: character-ai, provider: greenhouse, board: characterai }

@@ -1,0 +1,41 @@
+# 컴퓨트 가격 지수 — 스펙 v4 #15 (compute-price-index), API 레코드형. Month 2에서 당겨옴.
+#
+# 코어 소스: AWS Spot Advisor 공개 JSON (무인증·공식).
+#   GPU 인스턴스의 스팟 절감률(s, %)과 중단위험 밴드(r, 0~4)를 AWS는 "현재값"만
+#   제공하고 이력을 남기지 않는다 — 스팟 가격 이력 API도 90일 절벽. 그 너머의
+#   곡선은 오늘부터 찍는 자의 소유다 (SemiAnalysis가 유료로 증명한 인텔의 공개판).
+#
+# 스냅샷 정책: 전체 JSON(~3MB, 전 리전·전 타입)이 아니라 "우리 관측 범위
+# (GPU 계열 × 설정 리전) + 범례"만 보존한다 — 원장 성장 관리 (deal과 동일 결정).
+#
+# Phase 2(로드맵): GPU 렌탈 벤더 가격 페이지(Lambda·RunPod·CoreWeave) page-text
+# 박제 — JS 렌더링·봇차단 검증 후 별도 착수.
+id: compute-price-index
+family: api-records
+title: 컴퓨트 가격 지수 — AWS 스팟 GPU 절감률·중단위험
+
+endpoint: https://spot-bid-advisor.s3.amazonaws.com/spot-advisor-data.json
+rate_limit_ms: 0 # 단일 요청
+
+# 관측 리전 (서울 포함) — 추가는 여기에
+regions:
+  - us-east-1
+  - us-west-2
+  - eu-west-1
+  - ap-northeast-2
+
+os: Linux
+
+# GPU/가속기 인스턴스 패밀리 접두 (타입명 '.' 앞부분 기준 전방일치)
+gpu_prefixes:
+  - p2
+  - p3
+  - p4
+  - p5
+  - g4
+  - g5
+  - g6
+  - gr6
+  - inf
+  - trn
+  - dl1
