@@ -109,23 +109,42 @@ stacked with thin gaps between them; upper right, a thick glass ring standing
 upright; lower right, a clear glass sphere resting near the floor.
 
 Thin hairline lines connect the objects and run inward toward the centre of the
-frame, but stop short of it — each line ends in a tiny soft glow, faintly tinted
-Wellbian Violet #4d4dce, very low intensity, almost neutral.
+frame, but stop short of it.
 
-The centre of the frame is empty: only soft fog and floor reflection, reserved as
-clean negative space.
+The glass objects are frosted and translucent, tinted Wellbian Violet #4d4dce —
+the tint pooling in the bevelled edges, in the thin gaps between the stacked
+slabs, and along the inner rim of the ring, while the bodies of the objects stay
+milky and pale. The stacked slabs carry the strongest tint; the cube, ring and
+sphere are lighter.
 
-Near-monochrome palette — white, pale grey, the faintest cool tint. No saturated
-colour anywhere. Clean, premium, product-visual quality. 16:9.
+Each connecting line ends in a small, clearly visible soft violet glow. Faint
+violet caustics on the floor directly beneath the slabs and the sphere.
+
+The centre of the frame stays neutral: white fog and pale floor, no violet,
+reserved for the logos.
+
+Background white and pale grey. Clean, premium, product-visual quality. 16:9.
 ```
+**(9/2 09:20 개정)** 1차 생성이 `almost neutral` 지시로 완전 무채색 → 서우: *"각 도형들이 우리 시그니처
+색상이 들어가야 할 듯."* 색 지시를 위로 교체. 조건 2: **중앙은 무채색 유지**(원색 로고 자리, KWEATHER
+블루와 인접색 충돌 방지) · **바이올렛은 몸통이 아니라 틈·모서리**(v2.2 규칙).
 
 #### Negative
 ```
 text, letters, numbers, logos, watermark, dark background, black background,
-saturated colours, strong blue glow, teal and orange, clay, claymation,
-plasticine, people, hands, devices, gadgets, sensors, objects in the centre of
-the frame, cluttered, neon, lens flare streaks, rainbow refraction
+strong blue glow, teal and orange, clay, claymation, plasticine, people, hands,
+devices, gadgets, sensors, objects in the centre of the frame, cluttered, neon,
+lens flare streaks, rainbow refraction, violet stain inside the glass, bruise,
+smudge, violet in the centre of the frame, all-over purple wash
 ```
+
+#### 1안(권장) — 1차 생성본 후처리 틴트 (구도 보존, 09:00 대응)
+1차 생성본은 구도가 정확(중앙 비움·배치 깔끔)하므로 리롤 대신 후처리:
+- 도형 4개 각각 Color Overlay `#4d4dce`, 블렌드 **Soft Light**, **슬랩 스택 40% / 큐브·링·구 25%**
+- 베벨·슬랩 틈·링 안쪽 림에만 같은 색 **Color** 블렌드 15% 한 겹 더 — 색이 모서리에 고이는 느낌
+- 연결점 4개 Outer Glow `#4d4dce` 12~16px, 60%
+- 스택·구 아래 바닥 반사에 옅은 바이올렛 캐스틱
+- **중앙 영역은 손대지 않음**
 
 #### 후처리
 - 중앙 **`D'CENT × KWEATHER`**, 가로 폭 약 40%. 밝은 배경이라 **각사 원색 로고**(디센트 다크 버전,
