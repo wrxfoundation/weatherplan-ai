@@ -5,8 +5,10 @@
 원고는 그림을 **"이미 있던 것을 옮기는 일"의 초상**으로 읽고, 우리는 그 옆의 다른 일로 세운다 — 상비 앵글 「옮기는 것 vs 만드는 것」의
 원글판. 주장 한 줄만 쓰고 **증명(세 시점 실험·$4B 대비)은 키노트 전용**으로 남긴다.
 
-⚠️ 레퍼런스 이미지는 출처·라이선스 미상 — **그대로 게시 금지.** 아래 프롬프트 I 로 우리 판을 만들어 붙인다(바는 유리, 금색 아님, 격자 옆에
-우리 기기 한 대가 새 흐름을 시작하는 장면 추가 = "두 번째 일"이 그림에 들어간다).
+**이미지 = 우리 제작(서우 확인) → 사용 가능.** 서우 지시: "보라색 반투명 느낌이 포인트로". **포인트 위치가 곧 주장**이라 바이올렛을
+어디에 두느냐가 원고와 맞물린다 — 원고에서 **바 = 이미 있던 것(남의 일)**, **격자 = 방들의 세계(우리 무대)** 이므로 바이올렛은
+**격자 이음새 + 게이트 프레임 + 금고 림**에 두고, **바는 투명 그대로**(바를 보라로 칠하면 "원래 있던 것"이 우리 색이 되어 T1이 꼬인다).
+흐름(무지개)은 파스텔로 낮추되 남긴다. 방법은 아래 후처리 레시피(빠름) 또는 img2img 프롬프트 J(같은 구도 재생성). 프롬프트 I(기기 추가판)는 대안으로 보존.
 
 ## T1 (본문, 이미지 첨부 — 245자)
 
@@ -59,3 +61,25 @@ gold, golden bars, ingots coloured gold, coins, currency symbols, tokens, text, 
 - 리롤 체크: ① 바가 금색이면 리롤(유리여야 "이미 있던 것"이지 "돈"이 아니다) ② 우리 기기가 금고 안에 들어가면 리롤 — **금고 밖, 자기 타일 위**
   ③ 기기의 새 흐름이 금고의 큰 흐름과 합쳐지면 리롤 — 별개의 가는 줄기 ④ 화면 숫자 리롤 ⑤ 무지개는 금고 흐름 하나 + 기기 줄기(바이올렛)뿐.
 - 오버레이: 우하단 wellbian 단독 워터마크. 타이틀 없음(원글 첫 문장이 타이틀 역할).
+
+## 바이올렛 포인트 — 후처리 레시피 (기존 이미지 그대로, 10분)
+
+1. **격자 이음새**: Hue/Saturation → Cyans·Blues 선택 → Hue +65 (시안 → 바이올렛 `#4d4dce` 근처), Saturation −10. 게이트 가까운 이음새만
+   Curves 로 살짝 밝게 → 빛이 게이트에서 퍼지는 위계.
+2. **게이트 프레임**(흐름이 지나는 사각 유리 틀): 선택 후 Color Overlay `#4d4dce` Soft Light 40% + Inner Glow `#7c7cf0` 20% —
+   장면에서 **유일하게 또렷한 바이올렛 오브젝트**. 반투명 느낌은 Overlay 불투명도로 조절(60% 넘기면 불투명해 보임).
+3. **금고 림**: 유리 박스 모서리 얇게 선택 → 바이올렛 Screen 30%. 몸통엔 색 넣지 않는다(v2.2 "틈·모서리에만" 규칙).
+4. **흐름**: Selective Color → Yellows 채도 −20(금색이 금괴로 읽히는 걸 막음), Shadows 에 바이올렛 틴트 10%.
+5. **바**: 손대지 않는다. 노란 하이라이트가 금처럼 보이면 Yellows −15 까지만.
+6. 우하단 wellbian 단독 워터마크.
+
+## 이미지 프롬프트 J — 같은 구도 재생성 (img2img, 원본 참조 강도 0.35~0.5, 16:9)
+
+```
+Same composition as the reference image, kept exactly: a clear glass vault box on an isometric floor of white square tiles, a neat stack of clear glass bars inside, a broad iridescent stream flowing out through a rectangular glass gate frame and across the tiles. Change only the colour of light. The seams between the tiles glow Wellbian Violet (#4d4dce) instead of blue, brightest near the gate and fading toward the frame edges. The gate frame becomes frosted translucent violet glass glowing softly from within — the one clearly violet object in the scene. The vault's glass edges catch a thin violet rim light; its body stays clear. The bars stay clear with subtle prismatic edges, never gold. The stream stays iridescent but pastel, less gold, a hint of violet in its shadows. Pale grey-white studio void, soft shadowless lighting, physically-based 3D render, octane look, no text, no logos, no UI, no numbers, no coins, no gold, no people, 16:9
+```
+
+네거티브: `gold, golden, ingots coloured gold, coins, currency symbols, cyan glow, blue glow, violet bars, purple bars, neon, HDR, text, numbers, UI, logos, people, blurry`
+
+- 리롤 체크: ① 바가 보라로 물들면 리롤(원고와 충돌) ② 이음새가 시안으로 남으면 리롤 ③ 게이트 외에 바이올렛 덩어리가 하나 더 생기면 리롤
+  (경쟁 포인트) ④ 구도가 바뀌면 참조 강도를 낮춰 재시도.
