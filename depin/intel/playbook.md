@@ -121,6 +121,12 @@
     쉬운 단어로 바꾼 뒤 **금지선 재검수는 별도로** 한 번 더.
   - 9/2 디센트 스레드의 쉬운 언어 개정안(교정 반영)은 `depin/content/dcent-partnership-0902.md` 에
     차기 스타일 기준으로 보존. 게시본은 그대로 둔다(편집 창 경과·고정 글).
+  - **케이웨더 표현 (9/2, 서우 — "센서 네트워크"가 추상적)**: 분류어가 아니라 그림으로.
+    영문 **`KWeather, the weather company that builds our sensors`** / 국문 **`웰비안 센서를 만드는
+    날씨 회사 케이웨더`**. 신뢰 보강 시 보도자료 문구 그대로 `Korea's largest private weather company`.
+    8/27 선(기기 파트너·국내 수탁)을 정확히 지키는 표현 — 하드웨어 쪽에만 선다.
+    **금지**: `sensor network behind`(추상) · `the company that runs wellbian`(보상 주체로 읽힘) ·
+    관측소 수치(보도자료에 없음 — 근거 없는 숫자).
 
 ## 태그 세트 규칙 (2개 상한 유지, 세트 교체)
 
