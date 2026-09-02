@@ -83,6 +83,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | @ashgoblue(Evernorth CEO) — XRPL 2분기 배관 정리 + Q2 Liquidity Report 예고 (6초 전) | ~~전면 무반응~~ → **✅ 붙는다 (서우 지시로 번복 — 구면 + 출시 어필, XRPL 기반)** — 초안 `Good to see the plumbing list written down.` + 인증 실내 공기 센서·하드웨어 월렛 파트너·RLUSD 판매 on XRPL·rewards in testing + `Volume showing up isn't only trades. Some of it will be rooms.` (279자). **가드**: 리포트·에버노스·투자 어휘 0, 제품명·링크·파트너 태그 없음, 사적 만남 언급 없음. 면책 문구 규칙의 **예외 1건**으로 기록 — 일반화하지 않음 | ① **투자 면책 문구 + 에버노스 보도자료(S-4·나스닥) 링크** = 8/29 규칙 정중앙("구멍이 있어도 면책 문구가 달린 글이면 무반응"). 본문은 인프라라 깨끗하지만 형식이 투자자 커뮤니케이션 ② 9/7 D-5 — 증권 발행사 투자자 스레드 인접 금지 ③ 계정 패턴: 인프라 단상 ✅(9/1) / 면책·보도자료 딸린 글 ❌(8/29·9/2). **소재 ★**: 5/6 토큰화 국채 환매 · 5/20 EVM 사이드체인 · 5/27 PD·MPT 강화 · 6/4 RLUSD 멀티체인 — 이해당사자 발화라 미검증, 내일 리포트가 원출처 후보. `RLUSD multichain` 은 9/30 전 우리가 증폭하지 않음 |
 | @Magne_Ai — 우리 디센트 스레드에 단 회의 답글("센서가 현장에 있었는지·스푸핑 아닌지 증명하는 검증 레이어에서 파트너십이 멈춘다") | **✅ 답한다 (우리 스레드 내 답글, 슬롯 무관)** | 정확히 우리 테제(검증이 가치)의 질문 — 피하면 회피로 읽힘. 답: 동의 + 우리가 다른 이유 2개(센서를 직접 만든다=인증 하드웨어·BYO 아님 / 30년 실외 관측망을 대조 기준으로) + `Still in testing`. **관측소 수치·라이선스 NFT(원글 7 온존)·시그니처 미사용.** 273자 |
 | @RippleXDev — 「Onchain Economy」 유튜브(Uphold 미국 사장, 24/7 결제·국경 간 비용·XRP/XRPL) | ~~답글 무반응, 좋아요 O~~ → **✅ 재판정 붙는다 (9/2 오후, 수면 위 규정 적용)** — 초안: `The onchain economy has a quieter half: things that aren't money.` + 서울 침실의 인증 센서(hardware exists / on-chain layer in testing) + `Pennies-not-percentages matters even more when the payer is a device.` (272자). **D'CENT 언급 금지, 링크·제품명 없음.** 사유: ① 확대된 구멍 — 온체인 경제의 실물 절반 ② 디센트 스레드 고정 후라 프로필 유입이 이득 ③ Uphold 는 커스터디얼 플랫폼, D'CENT 는 셀프커스터디 하드웨어 — 카테고리 다름 ④ 7h 경과·답글 5개뿐이라 묻히지 않음 ⑤ 글 유형 깨끗(유튜브 CTA). 계정당 1일 1답글 충족 | ① 구멍 없음 — 결제·송금 = 측정·데이터와 접점 0. "우리도 XRPL 정산"은 8/25 RLUSD $2B 답글에서 소진 ② **디센트 파트너십 당일** — 오늘 계정 활동은 전부 공지를 향해야 함, 초점 분산 금지 ③ **Uphold = 지갑·온램프 카테고리** — 디센트 공지 당일 타 지갑 콘텐츠 관여는 파트너 예의 위반 ④ 글 자체는 깨끗(클로징 = 유튜브 CTA, 시세·홀더 호명 없음) — 무대만 안 맞음 ⑤ 진영 최상위 원출처라 좋아요는 관계 신호 유지(8/29 Ripple Prime 판정 동형). 소재: "퍼센트가 아닌 페니 단위" = 원글 6 배경 텍스처이나 우리는 국내 우선 판매라 국경 간 비용이 우리 사례 아님 — 얇게만 |
+| @FlareNetworks — XRP SEOUL 2026 골드 스폰서 스포트라이트 인용("On the ground. On stage. On XRP at work." + Hugo Philion 이 XRP capital utility 발표 예고, 20분 전) | **패스, 좋아요만** | ① 글 형태 = 후원사 스포트라이트 홍보 + "XRP capital utility"(유휴 XRP 활용 결) — 테제 아님, 우리 구멍 없음(실물 데이터 축과 무관, 홀더 자본 담론 인접) ② **우리 후원계약 미서명·미발표** — XRP Seoul 참석·후원 암시 금지(8/31 규칙), `See you there` 류 응답도 참석 신호라 보류 ③ **Flare 파트너십 9/5 공개 전** — 공개 친밀 신호 보류, 첫 공개 접점은 9/5 워크숍 사후 원글(8번)에서 태그 ④ 파트너 글이라 부정 반응 0 → 좋아요로 예열. **후속**: @XRPSEOUL 이 우리 Platinum 스포트라이트를 올리면 그때가 인용 차례 — 원고는 계약 서명 후, 별첨 A 공식 X 발표와 같은 날 |
 
 ## 판정 기록 (9/1)
 
@@ -149,6 +150,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 
 | 우선순위 | 항목 | 권장 시점 |
 |---|---|---|
+| **0** | **XRP Seoul Platinum 스포트라이트 인용 원고** — @XRPSEOUL 공식 발표(별첨 A) 인용. 프레임 "실물 기기 파트너·생태계 파트너와 한 무대", Ripple 관계 암시 0(5.13/5.19), 가격·수량 0, Flare·디센트 태그는 각 파트너십 공개 후에만 | **계약 서명 후 작성, 공식 발표 당일 게시** |
 | 1 | @TheCryptoSquire 답글 — 에너지 효율 A안 ("shouldn't cost the air") | 일(8/23) 오전 |
 | ~~2~~ | ~~@WKahneman Fordefi 글 답글~~ → **게시 완료 (8/25 서우 일괄 확인 — "WKahneman 댓글 완료", 신용딜과 함께 소급 기입. URL 기입 대기)** | — |
 | 3 | ~~침실 CO₂ 스레드~~ → **게시 완료 (8/23)** | — |
