@@ -69,6 +69,15 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 
 **⚠️ 확인 필요 — KBW 시점**: 공식 10은 KBW 를 "9월 말~10월 초"로 적고 10/3 리플 서울 행사 예열 계획을 그 위에 세웠는데, 8/29 Animoca 글이 **KBW 를 과거형으로** 말한다. 이미 열렸다면 그 축 콘텐츠 계획의 타이밍이 통째로 밀린다. 외부 확인 불가(프록시 차단) — **서우 확인 대기.**
 
+## 판정 기록 (9/3)
+
+| 대상 | 판정 | 근거 |
+|---|---|---|
+| @Trensik_com — 「BIS Put the Truth on the XRP Ledger」 인포그래픽(9/3 04:04, 조회 5.1만·RT 131) | **좋아요·북마크만, 답글 없음** | ① 집계·인포그래픽 계정 = 원출처 아님(같은 뉴스엔 원출처 1곳) ② 논문 번호 오기(1274)·앵커 비용·"다음 단계 채권" 미검증 — 답하면 그 오류에 서명 ③ 글 유형은 깨끗(시세·홀더 호명 없음, #XRPL 해시태그뿐). **소재 ★★** — ecosystem-log 9/3 |
+| BIS 원출처(@BIS_org 또는 저자·d-fine) X 게시 여부 **미확인 — 서우 확인 요청** | **조건부 ✅ 붙는다** (원출처 글이 있고 형식이 연구 공개면) | 원출처 ✚ 글 유형 깨끗 ✚ 확대된 구멍 정중앙(데이터 검증). 정책 담론 아님(8/23 IMF 원칙 비해당 — 통계·기술 논문). 초안 B(252자): `The shape is the point: hash the dataset, anchor the root, verify from the file plus one ledger lookup. / Same shape one layer down: readings from a certified indoor-air sensor in a Seoul bedroom, fingerprinted before they go anywhere. Still in testing.` **가드**: 논문 번호·앵커 비용·초 단위 수치 미인용, 제품명·링크·태그 0, `Still in testing` 유지 |
+| 원글 후보 — BIS 지문 앵커링 ↔ 우리 판독값 | **게시 권고: 9/4 원글 슬롯** (9/3 은 원글 7 예정 — 2/일 예외로 오늘 저녁 6h+ 간격 게시도 가능, 서우 결정) | 초안 A(277자): `BIS anchored official statistics on XRPL: hash the file, anchor the root, verify in seconds. Proof of concept, devnet. / Same shape one layer down: readings from a certified indoor-air sensor in a Seoul bedroom. In testing. / Statistics get timestamps. So do rooms. / #DePIN #XRPL` — 앵글: 형태 대조(파일은 오프체인·지문만 온체인·검증 한 번) + 시제 규칙(측정 현재형 · 온체인 in testing) + 쉬운 말 클로징. xqa 결과는 9/3 보고 참조 |
+| @BankXRP — 「리플 연구가 또 다른 나스닥 핀테크에 인용」 Advasa Holdings 8-K(9/3 01:59, 조회 1.9만) | **전면 무반응, 좋아요도 생략** | ① 🚨 오프닝 + 집계 계정(9/2 「8800조 달러의 내기」 무반응과 동형) ② 원출처 아님(Advasa 8-K·Ripple×BCG) ③ 티커·SEC 8-K 이미지·$18.9T 시장 전망 = 투자·증권 담론, 9/7 D-4 ④ 구멍 없음(RWA 시장 진출, 측정·데이터 0) |
+
 ## 판정 기록 (9/2)
 
 | 대상 | 판정 | 근거 |
