@@ -84,14 +84,62 @@ Account economics is onboarding economics.
 - `owning what it reports` = 디센트의 `digital ownership` 에 대응. `earns` 는 수익 프레임이라 쓰지 않음.
 - 마지막 줄 = 미사용 시그니처 초연.
 
-### 이미지 배정 (9/2 08:40 최종 — 보도자료 공개로 재배정)
-- **T1 = 보도자료 제품 사진**(박스 `Weather Data Token Generator™` + 기기, 검정 배경). 로고 카드 폐기.
-  - 이유: 디센트가 D'CENT × KWEATHER 카드를 이미 올렸고 우리가 RT → 우리 타임라인에 그 카드는 이미
-    있다. **우리 T1 은 디센트가 못 보여주는 것(실물)을 보여줘야 값한다.** 박스의 `wellbian × XRP LEDGER`
-    락업이 브랜드 표기를 겸하므로 wellbian/KWEATHER 락업 논쟁도 소멸. 제품명은 그림이 소개, 텍스트 미기재.
-  - 로고 카드를 이미 만들었다면: 그것을 T1, 제품 사진을 T3.
-- **T2 = v2.4 계단 컷**(나오면). 락업 없이 우하단 wellbian 단독 워터마크. 안 나오면 텍스트만.
-- **T3 = 텍스트만**(로고 카드 예외 시 제품 사진).
+### 이미지 배정 (9/2 09:10 최종 — 서우 레퍼런스: 라이트 글라스)
+- **T1 = 라이트 글라스 락업 이미지** (아래 v2.5 프롬프트 + 중앙 `D'CENT × KWEATHER` 후처리).
+  서우: *"계단컷 말고 그냥 이런 이미지처럼 형상화 — 가운데 양사 로고 들어갈 거 예상해서."*
+- **T2 = 텍스트만.**
+- **T3 = 보도자료 제품 사진** — `buying a sensor and owning what it reports` 옆에 실물이 서면 클로저가 산다.
+- 계단 컷(v2.4)은 이 스레드에서 폐기. 프롬프트는 온보딩 주제 재사용용으로 아래 보존.
+
+### v2.5 라이트 글라스 — T1 프롬프트
+레퍼런스(서우 제공, wellbian 워터마크 글라스 오브젝트 컷)는 중앙에 큐브 클러스터 → **중앙을 비우고
+오브젝트를 가장자리로.** 연결선이 중앙을 향해 들어오다 로고 자리 앞에서 끝나면 **락업이 연결의 중심**이 된다.
+**레퍼런스 이미지를 스타일 참조로 첨부하고 생성** — 프롬프트만으로는 이 톤이 잘 안 잡힌다.
+
+#### Positive
+```
+Glassmorphism 3D still life, bright and airy. Soft white-to-pale-grey fog fills
+the scene; diffuse god rays fall from the upper left. A mirror-like pale floor
+catches soft reflections of everything above it.
+
+Several clear and lightly frosted glass geometric objects float at different
+depths, arranged around the edges of the frame and leaving the centre empty:
+upper left, a small clear cube; lower left, three flat rounded glass slabs
+stacked with thin gaps between them; upper right, a thick glass ring standing
+upright; lower right, a clear glass sphere resting near the floor.
+
+Thin hairline lines connect the objects and run inward toward the centre of the
+frame, but stop short of it — each line ends in a tiny soft glow, faintly tinted
+Wellbian Violet #4d4dce, very low intensity, almost neutral.
+
+The centre of the frame is empty: only soft fog and floor reflection, reserved as
+clean negative space.
+
+Near-monochrome palette — white, pale grey, the faintest cool tint. No saturated
+colour anywhere. Clean, premium, product-visual quality. 16:9.
+```
+
+#### Negative
+```
+text, letters, numbers, logos, watermark, dark background, black background,
+saturated colours, strong blue glow, teal and orange, clay, claymation,
+plasticine, people, hands, devices, gadgets, sensors, objects in the centre of
+the frame, cluttered, neon, lens flare streaks, rainbow refraction
+```
+
+#### 후처리
+- 중앙 **`D'CENT × KWEATHER`**, 가로 폭 약 40%. 밝은 배경이라 **각사 원색 로고**(디센트 다크 버전,
+  KWEATHER 블루). 구분자 `×` = Deep Navy `#1b1b48`.
+- 우하단 wellbian 워터마크 소형 유지(레퍼런스대로 — 파트너 공지의 "워터마크 생략" 규칙보다 서우 레퍼런스 우선).
+
+#### 리롤
+- **중앙에 오브젝트가 생김** — 가장 흔한 실패, 모델은 중앙을 채우려 한다
+- 글로우가 파랗거나 채도가 올라옴(레퍼런스는 블루지만 8/25 규칙상 바이올렛 틴트) / 배경이 어두워짐
+- 유리 안에 문자·기호
+
+#### 형태의 의미
+좌하단 슬랩 3장 = 데이터 스택(서우가 좋아한 아이콘 형태, 측정 쪽). 우측 링·구는 중립 — 로고 옆에
+로고 모양(디센트 육각)이 또 서는 것을 피한다.
 
 ### 보도자료로 새로 공개된 것 (9/2)
 - **박스·기기 사진** — `Weather Data Token Generator™` 박스, 기기 표면 `wellbian × XRP LEDGER` 락업.
@@ -138,7 +186,7 @@ Account economics is onboarding economics.
 발표가 아니라 근황이 되고, "우리는 상장 뉴스를 내는 프로젝트가 아니다"가 따라붙는다.
 마지막 줄 = 미사용 시그니처 **초연**(Sponsor 복선 페어).
 
-## 이미지 프롬프트 — v2.4 초현실 실사 (메인안)
+## (보존) 계단 컷 — v2.4 초현실 실사 (9/2 스레드에서 폐기, 온보딩 주제 재사용용)
 
 **클레이안 생성 결과(9/2): 프롬프트대로 나왔으나 서우 판정 "실사와 초현실 중간 지대로".**
 모형은 설명도처럼 읽힌다. → **장면은 100% 실사, 오브젝트 하나만 불가능.** 초현실이 오브젝트에서만
