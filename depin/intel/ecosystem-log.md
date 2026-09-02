@@ -5,6 +5,21 @@
 ④ 이해관계자(디센트·플레어·타임레버리지·업비트·갤럭시디지털·비댁스·케이웨더) ⑤ 셀럽·인플루언서.
 ★ = 대표 주간보고 「3. 주요 동향」 게재 후보.
 
+## 2026-09-02 추가 관찰
+
+- **리플 2026 상반기 기관 마일스톤 집계표 (서우 제공, 출처 미상 — 인용 금지·검증 대기)**. 9/1 포화 판정한
+  "스택이 조립된다" 축의 정리본. **우리 채널 게시·인용 RT 금지**(남의 자료·목록형·9/1 대형 계정 3곳 선점).
+  - 기축적 항목: 4월 교보생명·케이뱅크 · 5월 JPM Kinexys 국채 결제 실증(Ripple·Ondo·Mastercard) ·
+    1월 Permissioned Domains/DEX + v3.1.0(Single Asset Vaults·Lending) · Ripple Prime.
+  - **신규 (원출처 확인 전 인용 금지)**: ① 1월 LMAX × Ripple $150M 파이낸싱 + RLUSD 담보 통합 ② 2월 EU/UK
+    EMI 라이선스 ③ 3월 Ripple Treasury Digital Asset Accounts(XRP/RLUSD 계정 관리) ④ 4월 두바이 DIFC
+    지역 본부 ⑤ 5월 Ripple Prime $200M 부채 시설(Neuberger Specialty Finance) — **8월 $275M 채권과
+    별건, 혼동 주의** ⑥ 6월 MiCA CASP 라이선스 · SBI RLUSD 일본 · Bitso MXNB → XRPL ⑦ 7월 FCA EMI +
+    크립토자산 등록.
+  - **활용처 한정**: 9/8 원글 6「왜 RLUSD인가」배경 텍스처만 — LMAX RLUSD 담보 · SBI 일본 · Treasury
+    RLUSD 계정 = "그 체인에서 실제로 쓰이는 정산 수단" 논지의 사례. 원출처(리플·LMAX 공식) 확인 후.
+    **키노트 미투입**(측정 논지에 기관 목록은 이물질). **규제 라이선스 3종은 규제 담론 인접 — 발화 금지, 축적만.**
+
 ## 2026-09-01 추가 관찰
 
 - **★★ XRPL 토큰 시장 실측 스냅샷 (9/1, 서우 제공 트래커 표 — 출처 미표기, 인용 금지·내부 전용)**.
