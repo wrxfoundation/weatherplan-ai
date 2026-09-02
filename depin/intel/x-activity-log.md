@@ -42,6 +42,7 @@
 | 8/25(화) | 원글 스레드 | 래퍼 vs 원장 — 두바이 등기 토큰화 (이미지: "Wrappers vs the Ledger" 타이틀 오버레이) | 5b 확정안 T1/T2+소스 답글 | **게시됨** | (기입 대기) | (기입 대기) |
 | 8/25(화) | 답글 | @xrpl_commons — Regular Key 빌더 팁 | 2r 셀프 증언안 (Issuer 고정 검증 + "Identity outlives the incident.") | **게시됨 (8/25 서우 "지금 댓글 담")** | (기입 대기) | (기입 대기) |
 | 9/2(화) | 답글 | @ashgoblue(Evernorth CEO) — XRPL 2분기 배관 글 | 초안 그대로 + 서우 편집: 첫머리 `Asheesh,` 호명(구면), 말미 `#KWEATHER #wellbian` 브랜드 태그 2개 | **게시됨 (9/2 스크린샷 확인)** | (기입 대기) | (기입 대기) |
+| 9/2(화) | 답글(멘션) | 우리·디센트 태그 응원 글("rewards you can earn") | 감사 + 보상 in testing 재정렬 + "Wallet first, rewards later." (273자) | **게시됨 (서우 "남김")** | (기입 대기) | (기입 대기) |
 | **9/2(화) 09:35** | 원글 스레드 **+ 고정** | **디센트 파트너십 공지** — T1 MOU 공지 / T2·T3 증언(구 원글 4 흡수). 시그니처 초연 "Account economics is onboarding economics." | T1 277·T2 277·T3 276 확정안. 이미지 = **v2.5 라이트 글라스 + KWEATHER × D'CENT 락업**(도형 바이올렛 틴트, 배경에 디센트 그린 옅게, 중앙 무채색). **T3 제품 사진은 미부착(텍스트만)** | **게시됨 (9/2 스크린샷 확인)** — 7/15 플레어 LOI 핀 교체 | (기입 대기) | 09:36 조회 7 |
 | 9/1(월) 밤 | 원글 스레드 | **5g 설치의 동기** — "The hard problem in DePIN isn't coverage." (신규 시그니처 초연: The incentive that installs the sensor decides what the data is worth.) | T1/T2/T3 확정안, 이미지 A-3(밤 아파트) 추정 — **사용 이미지 확인 대기** | **게시됨 (9/2 프로필 스크린샷으로 확인)** | (기입 대기) | (기입 대기) |
 | 8/30(일) | 답글 | (서우 "댓글남겼어" — **대상·사용안 확인 대기**) | 후보 2건 중 택1로 추정: ⓐ XRPL 온체인 데이터 분석가 글(`Counting is easy…`) ⓑ @animocabrands / @ysiu KBW(`Ownership becomes participation…`) | **게시됨 (내용 미확인)** | (기입 대기) | (기입 대기) |
@@ -71,6 +72,7 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 
 | 대상 | 판정 | 근거 |
 |---|---|---|
+| @MRKingXRP — 🚨 갈링하우스·IMF 결제 마찰 인용 + "$38.5조 시장 XRPL 구동 · 공급 충격 · 준비하세요" | **전면 무반응, 좋아요도 생략** | ① `공급 충격… 준비하세요` = 시세 펌핑 프레임(최상위 금지) ② 🚨 하이프 대역 계정 ③ IMF = 정책 무대(8/23 IMF 무반응 원칙) ④ `$38.5조 XRPL 완전 구동` 미검증·과장 ⑤ 갈링하우스 결제 마찰 인용은 상용구 재탕(8/24 skxvvx 판정 동형). 소재 가치 0, 축적 불요 |
 | (핸들 미기입) — 우리·디센트 태그 응원 글 "Data you can trust, rewards you can earn… weather DePIN to the $XRP ecosystem" | **✅ 답한다 (멘션 답글 — 슬롯 비산입)** | 태그된 응원 글은 답하는 게 예의. 단 `rewards you can earn` 은 수익 프레임이라 감사만 하면 우리가 승인한 게 됨 → 감사 + "하드웨어는 실물, 보상은 in testing" + `Wallet first, rewards later.` 로 부드럽게 재정렬. 캐시태그는 그쪽 글, 우리 답글엔 없음. 273자. **신규 원칙: 우리를 태그한 글의 과장은 그 자리에서 정정한다 — 침묵 = 승인** |
 | @mrcauliman — MONOLITH 타일·XRPL 좌표·"use the ledger for something real" | **✅ 붙는다 — 오늘 잔여 슬롯 중 최우선** | ① 커뮤니티 빌더·시그니처 크레딧 인용 계정 = 관계 자산 ② 클로징 `use the ledger for something real` = 넓힌 구멍 정중앙, 우리가 그 물리 버전 ③ 캐시태그는 그의 글, 우리 답글엔 없음 ④ 지갑 카테고리 아님(디센트 당일 예외 비해당) ⑤ 타일 판매 배서 안 함 — 'something real' 과 빌더 연대만. 초안: `"Use the ledger for something real" is the whole test.` + 다른 좌표(침실의 인증 센서, readings headed for XRPL) + `Physical storefronts, if you like.` + in testing + `Good to see builds going up next door.` (274자). 리플X 와 택1이면 이쪽 |
 | @BankXRP — XRPL 대출 해커톤 (DeVinci Blockchain·리플 후원, 파리 9/12~13, XLS-65/66) | **패스, 좋아요만** | ① 원출처 아님(주최 DeVinci — 8/26 마스터카드 해커톤 때도 Commons 주최 글에만 붙임) ② 구멍 없음 — 대출·볼트 DeFi 레인, 넓힌 구멍(실물·소비자·온보딩)에도 미해당. "빌더 응원" 앵글은 8/26 소진 ③ 오늘 슬롯 없음(디센트·에버노스 사용, 리플X 대기) ④ 계정은 8/23 확인 신뢰 계정이라 좋아요 유지. 원출처 글 등장 시 재판정하되 좋아요 상한 예상. 소재: XLS-65/66 위 프로토타입 = 최소 테스트넷 활성 → 8/10 기록(40%/37%) 활성화 상태 재확인 |
