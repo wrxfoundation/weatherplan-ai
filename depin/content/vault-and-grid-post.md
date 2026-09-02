@@ -60,7 +60,10 @@ gold, golden bars, ingots coloured gold, coins, currency symbols, tokens, text, 
 
 - 리롤 체크: ① 바가 금색이면 리롤(유리여야 "이미 있던 것"이지 "돈"이 아니다) ② 우리 기기가 금고 안에 들어가면 리롤 — **금고 밖, 자기 타일 위**
   ③ 기기의 새 흐름이 금고의 큰 흐름과 합쳐지면 리롤 — 별개의 가는 줄기 ④ 화면 숫자 리롤 ⑤ 무지개는 금고 흐름 하나 + 기기 줄기(바이올렛)뿐.
-- 오버레이: 우하단 wellbian 단독 워터마크. 타이틀 없음(원글 첫 문장이 타이틀 역할).
+- 오버레이 한 문장(9/2 확정): **`You can only move what exists.`** — 상비 3줄 중 셋째의 앞 절반. 그림(금고→흐름 = 옮기는 일)에 정확히 붙고,
+  뒷절반(`The air in a room doesn't — until it's measured.`)은 T1 이 이어받는다. 위치 좌상단 빈 여백, 페이퍼로지, Deep Navy `#1b1b48`,
+  가로폭의 4% 크기, 한 줄. 국문 카드(텔레그램)는 `옮길 수 있는 건 이미 있는 것뿐이다.` 우하단 wellbian 단독 워터마크.
+  대안: `Moving what exists is one job.` (두 번째 일을 T2 가 말함).
 
 ## 바이올렛 포인트 — 후처리 레시피 (기존 이미지 그대로, 10분)
 
