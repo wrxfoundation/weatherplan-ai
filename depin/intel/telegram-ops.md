@@ -74,7 +74,7 @@ Rose 와 1:1 에서 `/connect @wellbiantalk` → `telegram-rose-export-0830.json
 
 📌 KWeather × D'CENT MOU
 
-KWeather, the sensor network behind wellbian, has signed an MOU with
+KWeather, the weather company that builds our sensors, has signed an MOU with
 D'CENT (IoTrust), the self-custody hardware wallet.
 
 In scope: device registration, data collection, the reward model, and
