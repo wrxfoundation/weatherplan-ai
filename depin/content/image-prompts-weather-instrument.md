@@ -179,3 +179,22 @@ Isometric render of many identical tabletop indoor air monitors, each resting on
 
 - 리롤 체크(H2 고유): ① 구름이 한 덩어리 바닥으로 뭉치면 리롤 — **기기마다 구름 하나**, 사이에 하늘이 보여야 한다 ② 선이 구름과
   구름을 잇지 않고 허공에 떠 있으면 리롤 ③ 나머지는 H와 동일(무지개 절제·불규칙 망·투명 재질·빈 화면).
+
+## H3 — 큰 구름 3~4개에 4~5대씩, 무지개가 보이는 연결선 (2026-09-02, H2 렌더 피드백)
+
+H2 렌더 판정(서우): ① 구름마다 기기 하나 = 너무 흩어져 징그럽다 → **큰 구름 3~4개, 구름당 4~5대** 군집 ② 연결선이 흰 실로 나와
+무지개 느낌 없음 → 선을 **유리 관 + 안에 흐르는 파스텔 무지개 띠**로, "faint" 어휘 제거. 렌더가 앞쪽 문장을 더 세게 반영하니
+연결선 묘사를 앞으로 당김.
+
+```
+Isometric render, 16:9. Three or four large white cumulus clouds float over a soft sky-blue gradient, each cloud a broad flat-topped platform carrying a loose cluster of four or five identical tabletop indoor air monitors, like a small neighbourhood on each cloud. The devices are linked by slender clear-glass tubes running device to device within each cloud and bridging cloud to cloud, and inside every tube flows a clearly visible band of soft prismatic light, pastel rainbow hues shifting from violet to blue to pink to gold along its length, like sunlight through a glass fibre, glowing gently, medium saturation, never neon; the network is irregular, most devices with two or three links, none isolated, a small soft glow where a tube meets a device. Every device is the same object: a hand-sized rounded-square slab of clear translucent Wellbian Violet glass (#4d4dce), light passing through it, edges and thick parts reading deeper violet, a slim clear-glass kickstand at the back giving a slight backward tilt, a row of small vertical vent slots on the right side edge, a large blank front screen inside a slim bezel glowing faintly from within; no buttons, no numbers, no icons, no interface, all units facing the same way. A few smaller empty clouds drift in the distance for depth. Soft daylight from the upper left, gentle depth of field toward the far cloud, physically-based 3D render, octane look, clean and minimal, no text, no logos, no UI, no numbers, no people
+```
+
+네거티브:
+```
+one device per cloud, scattered tiny clouds, dozens of clouds, plain white lines, thin white threads, colourless lines, full-spectrum neon rainbow, oversaturated, HDR, frosted matte, opaque, ceramic, gummy, text, numbers, readings, icons, UI, logos, buttons, speaker grille, smart speaker, phones, tablets, people, hands, blurry
+```
+
+- 리롤 체크: ① 구름이 6개 넘거나 기기 한 대짜리 구름이 나오면 리롤 ② 선이 흰색이면 리롤 — 두 번 연속 흰색이면 리롤 대신 **후처리**:
+  선만 마스크해서 무지개 그라디언트 오버레이(Color Dodge 30~50%) ③ 무지개가 네온·풀 채도로 튀면 채도 −30 ④ 고립 기기 있으면 리롤
+  ⑤ 재질·빈 화면 규칙 동일.
