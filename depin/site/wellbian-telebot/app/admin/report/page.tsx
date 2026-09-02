@@ -9,6 +9,7 @@
 
 import { listItems, listBeats } from "@/lib/store";
 import { isAuthed } from "@/lib/auth";
+import Nav from "../Nav";
 import { SEV_LABEL, STATUS_LABEL, type CsSeverity } from "@/lib/cs";
 import { clusterItems } from "@/lib/cluster";
 import {
@@ -72,18 +73,12 @@ export default async function Report({
 
   return (
     <>
-      <header className="top">
-        <div className="wrap top-in">
-          <span className="brand">분석 리포트</span>
-          <span className="brand-sub">{SPAN_LABEL[span]} · {rows.length}건</span>
-          <nav className="top-nav">
-            {(["24h", "7d", "all"] as const).map((s) => (
-              <a key={s} className={`chip${span === s ? " on" : ""}`} href={spanLink(s)}>{SPAN_LABEL[s]}</a>
-            ))}
-            <a className="chip" href={adminLink()}>← CS 인박스</a>
-          </nav>
-        </div>
-      </header>
+      <Nav k={k} current="report" title="분석 리포트" sub={<>{SPAN_LABEL[span]} · {rows.length}건</>}>
+        <span className="flab">기간</span>
+        {(["24h", "7d", "all"] as const).map((s) => (
+          <a key={s} className={`chip${span === s ? " on" : ""}`} href={spanLink(s)}>{SPAN_LABEL[s]}</a>
+        ))}
+      </Nav>
 
       <main className="wrap" style={{ paddingBottom: 72 }}>
         {/* 문의가 없어도 그룹 대화는 있을 수 있다. 둘 다 없을 때만 빈 화면으로 둔다 —

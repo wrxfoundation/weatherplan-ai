@@ -11,6 +11,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { listRungs, setRung, storeKind, type RungState } from "@/lib/store";
 import { CELEBS, TIERS, RUNGS, CELEB_UPDATED, type CelebTier } from "@/lib/celeb";
+import Nav from "../Nav";
 
 export const dynamic = "force-dynamic";
 
@@ -59,23 +60,16 @@ export default async function CelebPage({
 
   return (
     <>
-      <header className="top">
-        <div className="wrap top-in">
-          <span className="brand">셀럽 사다리</span>
-          <span className="brand-sub">
-            로스터 {CELEB_UPDATED} · 칸 저장소 {storeKind() === "kv" ? "KV" : "메모리(임시)"}
-          </span>
-          <nav className="top-nav">
-            <a className={`chip${tier ? "" : " on"}`} href={link({ tier: "" })}>전체 <span className="n">{CELEBS.length}</span></a>
-            {TIERS.map((t) => (
-              <a key={t.key} className={`chip${tier === t.key ? " on" : ""}`} href={link({ tier: t.key })}>
-                {t.label} <span className="n">{count(t.key)}</span>
-              </a>
-            ))}
-            <a className="chip" href={`/admin?${qs({ k })}`}>← CS 인박스</a>
-          </nav>
-        </div>
-      </header>
+      <Nav k={k} current="celeb" title="셀럽 사다리"
+        sub={<>로스터 {CELEB_UPDATED} · 칸 저장소 {storeKind() === "kv" ? "KV" : "메모리(임시)"}</>}>
+        <span className="flab">층</span>
+        <a className={`chip${tier ? "" : " on"}`} href={link({ tier: "" })}>전체 <span className="n">{CELEBS.length}</span></a>
+        {TIERS.map((t) => (
+          <a key={t.key} className={`chip${tier === t.key ? " on" : ""}`} href={link({ tier: t.key })}>
+            {t.label} <span className="n">{count(t.key)}</span>
+          </a>
+        ))}
+      </Nav>
 
       <main className="wrap" style={{ paddingBottom: 72 }}>
         {/* 지표 — 팔로워가 아니라 받아줌 */}

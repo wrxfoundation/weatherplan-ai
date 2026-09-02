@@ -1,3 +1,5 @@
+import type { Reaction } from "./reactions";
+
 /* CS 저장소 (8/30 서우 — "cs 분류 및 처리 saas급으로")
 
    Vercel 프로젝트에 KV(Upstash Redis)를 연결하면 KV_REST_API_URL·KV_REST_API_TOKEN 이
@@ -216,4 +218,32 @@ export const setRung = async (handle: string, rung: number, note?: string): Prom
   if (storeKind() === "memory") { ladderMem.set(handle, next); return next; }
   await cmd("HSET", LADDER, handle, JSON.stringify(next));
   return next;
+};
+
+/* ── 반응 축적 (9/2 서우 — "반응들을 축적해 놓으란 거지") ───────────────────────────
+   남의 말을 원문 그대로 남긴다. 시작값(SEED)은 lib/reactions.ts 에 있고, 화면에서 붙인 것만 여기 쌓인다.
+   되돌려 보는 용도라 고치기는 없고 지우기만 있다 — 잘못 붙였으면 지우고 다시 붙인다. */
+const RX = "rx:items";
+const rxMem: Map<string, Reaction> =
+  ((globalThis as { __rxMem?: Map<string, Reaction> }).__rxMem ??= new Map());
+
+export const listReactions = async (): Promise<Reaction[]> => {
+  if (storeKind() === "memory") return [...rxMem.values()];
+  const flat = (await cmd("HGETALL", RX)) as string[] | null;
+  if (!Array.isArray(flat)) return [];
+  const out: Reaction[] = [];
+  for (let i = 1; i < flat.length; i += 2) {
+    try { out.push(JSON.parse(flat[i]) as Reaction); } catch { /* 깨진 항목은 건너뛴다 */ }
+  }
+  return out;
+};
+
+export const putReaction = async (r: Reaction) => {
+  if (storeKind() === "memory") { rxMem.set(r.id, r); return; }
+  await cmd("HSET", RX, r.id, JSON.stringify(r));
+};
+
+export const delReaction = async (id: string) => {
+  if (storeKind() === "memory") { rxMem.delete(id); return; }
+  await cmd("HDEL", RX, id);
 };

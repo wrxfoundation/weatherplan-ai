@@ -49,7 +49,21 @@ summary { cursor: pointer; }
 .top-in { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .brand { font-size: 19px; font-weight: 800; letter-spacing: -.01em; }
 .brand-sub { font-size: 12.5px; color: var(--cap); }
-.top-nav { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+/* 상단 메뉴 (9/2 개편) — 화면 이동만. 묶음 이름(운영·분석·인텔)은 작게, 지금 있는 곳은 채워서.
+   칩과 모양을 달리한다 — 칩은 이 화면 안의 보기·필터, 메뉴는 다른 화면으로 가는 것. */
+.gnb { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+.gnb-g { display: flex; align-items: center; gap: 2px; }
+.gnb-l { font-size: 10.5px; font-weight: 800; color: var(--hint); letter-spacing: .04em; margin-right: 4px; }
+.gnb a { text-decoration: none; color: var(--ink-3); font-size: 13px; font-weight: 600;
+         padding: 5px 9px; border-radius: 8px; }
+.gnb a:hover { color: var(--w-main); background: var(--w-tint); }
+.gnb a.on { color: #fff; background: var(--w-deep); }
+.gnb-util { display: flex; align-items: center; margin-left: 4px; padding-left: 10px; border-left: 1px solid var(--line); }
+.gnb-util button { font-size: 12.5px; color: var(--cap); padding: 5px 8px; border-radius: 8px; }
+.gnb-util button:hover { color: var(--warn-text); background: var(--warn-bg); }
+/* 메뉴 아래 줄 — 그 화면의 보기·필터 */
+.sub-nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.sub-nav .flab { width: auto; }
 
 /* ── 지금 손이 필요한 것 (1차) ─────────────────────────────────────────── */
 .now { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -184,12 +198,22 @@ summary { cursor: pointer; }
 
   /* 상단 메뉴와 필터 줄은 옆으로 민다 */
   .top-in { gap: 8px; }
-  .top-nav, .frow {
+  .gnb, .sub-nav, .frow {
     flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
-  .top-nav::-webkit-scrollbar, .frow::-webkit-scrollbar { display: none; }
-  .top-nav .chip, .frow .chip { flex: none; white-space: nowrap; }
+  .gnb::-webkit-scrollbar, .sub-nav::-webkit-scrollbar, .frow::-webkit-scrollbar { display: none; }
+  .sub-nav .chip, .frow .chip { flex: none; white-space: nowrap; }
+  /* 메뉴는 한 줄로 밀어 본다. 묶음 이름은 남긴다 — 어디쯤인지 잡아 주는 건 이름이다. */
+  .gnb { margin-left: 0; width: 100%; gap: 10px; }
+  .gnb-g { flex: none; }
+  .gnb a { white-space: nowrap; min-height: 34px; display: inline-flex; align-items: center; }
+  .gnb-util { flex: none; }
+  .sub-nav { margin-top: 10px; }
+  /* 오른쪽이 더 있다는 표시 — 흰 안개. 마지막 항목(닫기)이 살짝 덮이지만 밀면 나온다. */
+  .top-in { position: relative; }
+  .top-in::after { content: ""; position: absolute; right: -13px; top: 0; bottom: 0; width: 34px; pointer-events: none;
+    background: linear-gradient(to right, rgba(255,255,255,0), #fff 70%); }
   .brand-sub { display: none; }
   .flab { width: auto; min-width: 34px; }
 
@@ -460,3 +484,39 @@ kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-
 .celeb-hist { padding-left: 18px; margin: 0; }
 .celeb-hist li { font-size: 12.5px; line-height: 1.65; color: var(--ink-3); }
 .celeb-hist li b { color: var(--ink-2); }
+
+/* ── 반응 축적 (9/2) ─────────────────────────────────────────────────────
+   남의 말은 인용 블록으로 — 우리 글과 남의 글이 같은 서체·같은 상자면 누가 한 말인지 한 박자 늦게 읽힌다. */
+.rx-acct, .rx-kind { font-size: 11px; font-weight: 700; border-radius: 5px; padding: 1px 6px; flex: none;
+                     border: 1px solid transparent; }
+.rx-acct.pod       { color: var(--ink-4); background: var(--chip); border-color: var(--line); }
+.rx-acct.community { color: var(--ink-3); background: var(--chip); }
+.rx-acct.builder   { color: var(--w-deep); background: var(--w-tint); }
+.rx-acct.kol       { color: var(--w-deep); background: var(--w-tint); border-color: var(--w-main); }
+.rx-acct.partner   { color: var(--ok-text); background: var(--ok-bg); }
+.rx-acct.official  { color: var(--ok-text); background: var(--ok-bg); border-color: var(--ok-text); }
+.rx-acct.rival     { color: var(--warn-text); background: var(--warn-bg); border-color: var(--warn-bd); }
+.rx-kind.echo      { color: #fff; background: var(--w-deep); }
+.rx-kind.agree     { color: var(--ink-3); background: var(--chip); }
+.rx-kind.question, .rx-kind.critic { color: var(--attn-text); background: var(--attn-bg); border-color: var(--attn-bd); }
+.rx-kind.misread, .rx-kind.price   { color: var(--warn-text); background: var(--warn-bg); border-color: var(--warn-bd); }
+.rx-kind.accept    { color: var(--ok-text); background: var(--ok-bg); }
+.rx-text { margin: 4px 0 8px; padding: 9px 11px; background: var(--panel); border-left: 3px solid var(--w-main);
+           border-radius: 6px; font-size: 13.5px; line-height: 1.6; color: var(--ink-2); white-space: pre-wrap; }
+.rx-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; padding: 12px 14px;
+           border-top: 1px solid var(--line-2); }
+.rx-form label { display: flex; flex-direction: column; gap: 3px; font-size: 11.5px; color: var(--cap); font-weight: 700; }
+.rx-form input, .rx-form select, .rx-form textarea { border: 1px solid var(--bd-btn); border-radius: 8px; padding: 7px 9px;
+           font-size: 13px; color: var(--ink-1); background: #fff; font-weight: 400; }
+.rx-form input[type=checkbox] { width: 18px; height: 18px; padding: 0; }
+.rx-form textarea { min-height: 72px; resize: vertical; }
+.rx-form .wide, .rx-form .act { grid-column: 1 / -1; }
+.rx-form .act { display: flex; gap: 8px; align-items: center; }
+.rx-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.rx-table th, .rx-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+.rx-table th { font-size: 11.5px; color: var(--cap); font-weight: 700; }
+.rx-table td.num { font-family: var(--mono); font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 720px) {
+  .rx-form { grid-template-columns: 1fr; }
+  .rx-table th, .rx-table td { padding: 6px 6px; font-size: 12px; }
+}

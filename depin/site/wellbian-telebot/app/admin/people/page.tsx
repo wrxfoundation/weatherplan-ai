@@ -11,6 +11,7 @@
 import { listItems, storeKind } from "@/lib/store";
 import { rollupPeople } from "@/lib/cs";
 import { isAuthed } from "@/lib/auth";
+import Nav from "../Nav";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -35,17 +36,8 @@ export default async function People({
 
   return (
     <>
-      <header className="top">
-        <div className="wrap top-in">
-          <span className="brand">사람 보기</span>
-          <span className="brand-sub">
-            {rows.length}명 · 저장소 {storeKind() === "kv" ? "KV" : "메모리(임시)"}
-          </span>
-          <nav className="top-nav">
-            <a className="chip" href={`/admin${kq}`}>← 문의 목록</a>
-          </nav>
-        </div>
-      </header>
+      <Nav k={k} current="people" title="사람 보기"
+        sub={<>{rows.length}명 · 저장소 {storeKind() === "kv" ? "KV" : "메모리(임시)"}</>} />
 
       <main className="wrap" style={{ paddingBottom: 72 }}>
         {/* 1차 — 손이 필요한 쪽부터 */}

@@ -17,6 +17,7 @@ import { getDoc, cacheInfo, searchFaq, type FaqLang } from "@/lib/faq-client";
 import { isAuthed } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Copy from "./Copy";
+import Nav from "../Nav";
 
 export const dynamic = "force-dynamic";
 
@@ -55,25 +56,17 @@ export default async function FaqPage({
 
   return (
     <>
-      <header className="top">
-        <div className="wrap top-in">
-          <span className="brand">정본 보기</span>
-          <span className="brand-sub">
-            {list.length}문항
-            {info.ageSec !== null && ` · ${info.ageSec}초 전에 읽음`}
-          </span>
-          <nav className="top-nav">
-            {(["ko", "en"] as const).map((l) => (
-              /* 언어를 바꾸면 검색어를 비운다 — 한국어로 찾던 말을 영어 목록에 대면
-                 "정본에 답이 없다" 는 안내가 뜨는데, 그건 사실이 아니다 */
-              <a key={l} className={`chip${lang === l ? " on" : ""}`} href={link({ lang: l, q: "" })}>
-                {l === "ko" ? "한국어" : "English"}
-              </a>
-            ))}
-            <a className="chip" href={`/admin?${qs({ k })}`}>← CS 인박스</a>
-          </nav>
-        </div>
-      </header>
+      <Nav k={k} current="faq" title="정본 보기"
+        sub={<>{list.length}문항{info.ageSec !== null && ` · ${info.ageSec}초 전에 읽음`}</>}>
+        <span className="flab">언어</span>
+        {(["ko", "en"] as const).map((l) => (
+          /* 언어를 바꾸면 검색어를 비운다 — 한국어로 찾던 말을 영어 목록에 대면
+             "정본에 답이 없다" 는 안내가 뜨는데, 그건 사실이 아니다 */
+          <a key={l} className={`chip${lang === l ? " on" : ""}`} href={link({ lang: l, q: "" })}>
+            {l === "ko" ? "한국어" : "English"}
+          </a>
+        ))}
+      </Nav>
 
       <main className="wrap" style={{ paddingBottom: 72 }}>
         {!doc ? (

@@ -17,9 +17,10 @@ import { STATUS_LABEL, SEV_LABEL, MOOD_LABEL, TOPICS, overdueMin, type CsMoodTag
 import { applyFilters } from "@/lib/filter";
 import { pulse } from "@/lib/report";
 import { clusterItems } from "@/lib/cluster";
-import { ADMIN_KEY, isAuthed, clearAuthCookie } from "@/lib/auth";
+import { ADMIN_KEY, isAuthed } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Keys from "./Keys";
+import Nav from "./Nav";
 /* 서버 액션이 저장을 마쳐도 라우터가 들고 있던 화면을 그대로 다시 그린다 — 값은 바뀌었는데
    버튼과 정렬은 그대로여서, 눌러도 아무 일이 없는 것처럼 보인다. 몰릴 때 같은 건을 두 번
    누르게 되는 자리다. 고친 뒤 이 경로를 무효화해서 다시 읽게 한다. */
@@ -104,12 +105,6 @@ export default async function Admin({
     await delItems(String(form.get("ids") ?? "").split(".").filter(Boolean));
     revalidatePath("/admin");
     redirect(adminUrl({ ...view, del: "" }));
-  }
-
-  async function logout() {
-    "use server";
-    await clearAuthCookie();
-    redirect("/");
   }
 
   /* 자동 분류를 손으로 고친다. 오분류를 못 고치면 정렬·필터·리포트가 같이 틀어진다 —
@@ -198,27 +193,8 @@ export default async function Admin({
 
   return (
     <>
-      <header className="top">
-        <div className="wrap top-in">
-          <span className="brand">CS 인박스</span>
-          <span className="brand-sub">
-            @wellbiantalk · 저장소 {storeKind() === "kv" ? "KV" : "메모리(임시)"}
-          </span>
-          <nav className="top-nav">
-            <a className={`chip${grouped ? " on" : ""}`} href={link({ group: grouped ? "" : "1" })}>
-              묶어 보기
-            </a>
-            <a className="chip" href={`/admin/faq?k=${k}`}>정본</a>
-            <a className="chip" href={`/admin/report?k=${k}`}>리포트</a>
-            <a className="chip" href={`/admin/people?k=${k}`}>사람</a>
-            <a className="chip" href={`/admin/intel?k=${k}`}>동향</a>
-            <a className="chip" href={`/admin/celeb?k=${k}`}>셀럽</a>
-            <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?")}>CSV</a>
-            <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?") + "&format=json"}>JSON</a>
-            <form action={logout}><button className="chip" type="submit">닫기</button></form>
-          </nav>
-        </div>
-      </header>
+      <Nav k={k} current="inbox" title="CS 인박스"
+        sub={<>@wellbiantalk · 저장소 {storeKind() === "kv" ? "KV" : "메모리(임시)"}</>} />
 
       <main className="wrap" style={{ paddingBottom: 72 }}>
         {/* 두 번째 물음. 무엇을 지우는지 원문으로 보여 준다 — 개수만 보여 주면 확인이 아니라
@@ -375,6 +351,14 @@ export default async function Admin({
               ))}
             </div>
           )}
+          {/* 보기 방식과 내보내기 — 메뉴에서 내려왔다(9/2). 화면 이동이 아니라 이 화면의 도구다. */}
+          <div className="frow">
+            <span className="flab">보기</span>
+            <a className={`chip${grouped ? " on" : ""}`} href={link({ group: grouped ? "" : "1" })}>묶어 보기</a>
+            <span style={{ flex: 1 }} />
+            <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?")}>CSV</a>
+            <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?") + "&format=json"}>JSON</a>
+          </div>
         </section>
 
         {/* 4차 — 목록 */}

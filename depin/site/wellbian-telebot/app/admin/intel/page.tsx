@@ -12,6 +12,7 @@ import { isAuthed } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { INTEL, INTEL_UPDATED, TOPICS, GRADE_HELP, CS_RULES, type IntelTopic, type IntelGrade } from "@/lib/intel";
 import Copy from "../faq/Copy";
+import Nav from "../Nav";
 
 export const dynamic = "force-dynamic";
 
@@ -52,21 +53,15 @@ export default async function IntelPage({
 
   return (
     <>
-      <header className="top">
-        <div className="wrap top-in">
-          <span className="brand">생태계 동향</span>
-          <span className="brand-sub">RLUSD · XRPL · XRP · Ripple · 한국 · 갱신 {INTEL_UPDATED}</span>
-          <nav className="top-nav">
-            <a className={`chip${topic ? "" : " on"}`} href={link({ topic: "" })}>전체 <span className="n">{INTEL.length}</span></a>
-            {TOPICS.map((t) => (
-              <a key={t.key} className={`chip${topic === t.key ? " on" : ""}`} href={link({ topic: t.key })}>
-                {t.label} <span className="n">{count(t.key)}</span>
-              </a>
-            ))}
-            <a className="chip" href={`/admin?${qs({ k })}`}>← CS 인박스</a>
-          </nav>
-        </div>
-      </header>
+      <Nav k={k} current="intel" title="생태계 동향" sub={<>RLUSD · XRPL · XRP · Ripple · 한국 · 갱신 {INTEL_UPDATED}</>}>
+        <span className="flab">주제</span>
+        <a className={`chip${topic ? "" : " on"}`} href={link({ topic: "" })}>전체 <span className="n">{INTEL.length}</span></a>
+        {TOPICS.map((t) => (
+          <a key={t.key} className={`chip${topic === t.key ? " on" : ""}`} href={link({ topic: t.key })}>
+            {t.label} <span className="n">{count(t.key)}</span>
+          </a>
+        ))}
+      </Nav>
 
       <main className="wrap" style={{ paddingBottom: 72 }}>
         {/* 응대 기준 — 동향보다 먼저. 동향을 읽고 이걸 잊으면 안 된다. */}
