@@ -18,3 +18,12 @@ vercel --prod
 - 또는 Vercel 대시보드 → Add New → Project → 이 폴더를 드래그.
 - `noindex` 메타가 걸려 있어 검색엔진에 안 잡힌다. 공식 공개 시점에 그 줄만 지운다.
 - 외부 의존: three.js(cdnjs) · Google Fonts. 부스 현장 와이파이가 막히면 three.min.js 를 폴더에 넣고 `<script src>` 를 `./three.min.js` 로 바꾼다.
+
+## v0.2 — 실감 자산 (2026-09-02, 힉스필드)
+
+이 환경은 힉스필드 결과 CDN 이 차단돼 있어 파일을 직접 못 받는다. **서우가 세 파일을 받아 `assets/` 에 넣고 배포**하면 된다.
+1. 배경(21:9): https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260902_152416_8906d871-0e69-4069-ae4b-52e265833a3c.png → `assets/backdrop.png`
+2. 바닥 텍스처(1:1): https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260902_152424_d3042914-bcb0-4660-a63a-3de7bc0d006a.png → `assets/floor.png`
+3. 기기 3D(GLB): 힉스필드 생성 목록의 3D 항목(job efb00451) 에서 GLB 다운로드 → `assets/device.glb`
+- 파일이 없으면 그 자리만 절차적 모형으로 남고 나머지는 그대로 동작한다.
+- 자산이 크면(GLB 10MB↑) Vercel 정적 배포엔 문제없지만 첫 로딩이 길어진다 — 필요하면 gltf-transform 으로 draco 압축.
