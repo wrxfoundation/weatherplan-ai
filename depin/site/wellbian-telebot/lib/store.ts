@@ -186,3 +186,34 @@ export const patchItem = async (
 /* 짧은 정렬 가능 id — 시각이 앞에 오므로 문자열 정렬이 곧 시간순이다 */
 export const newId = () =>
   `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+
+/* ── 셀럽 사다리 (9/2 서우 — "셀럽 접근 내용이나 진화 과정도 대시보드에") ──────────
+   계정별 현재 칸과 칸이 바뀐 이력만 담는다. 로스터 자체(누구를 왜 노리는지, 우리가 어떻게
+   접근했는지)는 lib/celeb.ts 에 있고, 여기는 서우가 금요일마다 화면에서 올리고 내리는 값이다.
+   이력을 같이 두는 이유: "진화 과정"이 곧 성과다 — 칸 하나가 언제 올라갔는지가 남아야 한다. */
+const LADDER = "celeb:ladder";
+export type RungStep = { at: number; rung: number; note?: string };
+export type RungState = { rung: number; at: number; hist: RungStep[] };
+const ladderMem: Map<string, RungState> =
+  ((globalThis as { __ladderMem?: Map<string, RungState> }).__ladderMem ??= new Map());
+
+export const listRungs = async (): Promise<Record<string, RungState>> => {
+  if (storeKind() === "memory") return Object.fromEntries(ladderMem);
+  const flat = (await cmd("HGETALL", LADDER)) as string[] | null;
+  const out: Record<string, RungState> = {};
+  if (!Array.isArray(flat)) return out;
+  for (let i = 0; i + 1 < flat.length; i += 2) {
+    try { out[flat[i]] = JSON.parse(flat[i + 1]) as RungState; } catch { /* 깨진 항목은 건너뛴다 */ }
+  }
+  return out;
+};
+
+export const setRung = async (handle: string, rung: number, note?: string): Promise<RungState> => {
+  const cur = (await listRungs())[handle];
+  const step: RungStep = { at: Date.now(), rung, ...(note ? { note } : {}) };
+  /* 이력은 최근 20개만 — 한 계정이 스무 번 넘게 오르내릴 일은 없고, 있어도 최근이 중요하다 */
+  const next: RungState = { rung, at: step.at, hist: [...(cur?.hist ?? []), step].slice(-20) };
+  if (storeKind() === "memory") { ladderMem.set(handle, next); return next; }
+  await cmd("HSET", LADDER, handle, JSON.stringify(next));
+  return next;
+};

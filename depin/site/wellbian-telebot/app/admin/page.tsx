@@ -212,6 +212,7 @@ export default async function Admin({
             <a className="chip" href={`/admin/report?k=${k}`}>리포트</a>
             <a className="chip" href={`/admin/people?k=${k}`}>사람</a>
             <a className="chip" href={`/admin/intel?k=${k}`}>동향</a>
+            <a className="chip" href={`/admin/celeb?k=${k}`}>셀럽</a>
             <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?")}>CSV</a>
             <a className="chip" href={link({}).replace("/admin?", "/api/admin/export?") + "&format=json"}>JSON</a>
             <form action={logout}><button className="chip" type="submit">닫기</button></form>
