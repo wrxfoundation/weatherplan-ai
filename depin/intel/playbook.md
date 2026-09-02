@@ -121,11 +121,13 @@
     쉬운 단어로 바꾼 뒤 **금지선 재검수는 별도로** 한 번 더.
   - 9/2 디센트 스레드의 쉬운 언어 개정안(교정 반영)은 `depin/content/dcent-partnership-0902.md` 에
     차기 스타일 기준으로 보존. 게시본은 그대로 둔다(편집 창 경과·고정 글).
-  - **케이웨더 표현 (9/2 확정, 서우 3회 정정)**: **정체성 문장으로 말한다** — 관계어(협력사)나 분류어(센서
-    네트워크)가 아니라 **30년 관측 사업 + 센서 제조**. 이 문장이 신뢰를 실어주므로 관계어가 없어도 케이웨더와
-    프로젝트의 관계가 읽힌다.
-    - 영문: `KWeather — 30 years of weather observation and sensor-making in Korea`
-    - 국문: `30년간 대한민국 기상 관측 사업 및 센서를 만들어온 케이웨더`
+  - **케이웨더 표현 (9/2 확정, 서우 4회 정정)**: **관계 → 정체성 순서**. 회사 소개 앞에 웰비안과의 관계
+    (기술 협력사)를 먼저 쓰고, 정체성은 **30년 관측 사업 + 센서 제조**로. 분류어(센서 네트워크)는 쓰지 않는다.
+    - 국문: `웰비안의 기술 협력사이자 30년간 대한민국 기상 관측 사업 및 센서를 만들어온 케이웨더`
+    - 영문(긴 글): `KWeather — wellbian's technology partner, with 30 years of weather observation and
+      sensor-making in Korea`
+    - 영문(X 짧은 판): `KWeather — our tech partner, 30 years of weather observation and sensor-making in Korea`
+      (9/2 개정안 1/ 278자 — `registering a device` · `It's about…` 으로 줄여 수용)
     - 신뢰 보강: 보도자료 문구 `Korea's largest private weather company` 추가.
     - ⚠️ 1997년 설립 = 2026년 현재 29년째. 회사 관행이 30년이면 그대로, 아니면 `since 1997`.
     **금지**: `sensor network behind`(추상) · `the company that runs wellbian` / `company behind wellbian`

@@ -88,13 +88,13 @@ Account economics is onboarding economics.
 게시본은 그대로(고정·편집 창 경과). 이후 글은 이 결로 — 플레이북 어휘 규칙 9/2 참조.
 교정 1건: 개정안의 `earning rewards` → `how rewards are handled`(보도자료 "보상 모델" 범위 + in testing 시제).
 
-**1/** (266자)
+**1/** (278자)
 ```
-KWeather — 30 years of weather observation and sensor-making in Korea — signed an MOU with @DCENTWALLETS.
+KWeather — our tech partner, 30 years of weather observation and sensor-making in Korea — signed an MOU with @DCENTWALLETS.
 
-Four things: registering your device, collecting its data, how rewards are handled, and a wallet only you control.
+Four things: registering a device, collecting its data, how rewards are handled, and a wallet only you control.
 
-This is about what comes after you buy one.
+It's about what comes after you buy one.
 ```
 **2/** (256자)
 ```
