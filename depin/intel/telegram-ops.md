@@ -60,7 +60,7 @@ Rose 와 1:1 에서 `/connect @wellbiantalk` → `telegram-rose-export-0830.json
 ```
 📌 케이웨더 × 디센트 MOU 체결
 
-웰비안의 기술 협력사이자 센서를 만드는 날씨 회사 케이웨더가 하드웨어 월렛 디센트(아이오트러스트)와
+30년간 대한민국 기상 관측 사업 및 센서를 만들어온 케이웨더가 하드웨어 월렛 디센트(아이오트러스트)와
 기술 협력 MOU를 체결했습니다.
 
 협력 검토 범위: 장비 등록 · 관측 데이터 수집 · 보상 모델 · 지갑 활용 등
@@ -74,7 +74,7 @@ Rose 와 1:1 에서 `/connect @wellbiantalk` → `telegram-rose-export-0830.json
 
 📌 KWeather × D'CENT MOU
 
-KWeather — our technology partner, the weather company that makes our sensors —
+KWeather — 30 years of weather observation and sensor-making in Korea —
 has signed an MOU with D'CENT (IoTrust), the self-custody hardware wallet.
 
 In scope: device registration, data collection, the reward model, and
