@@ -96,14 +96,15 @@
   [data-lv="good"] { --lvc: #1878F2; } [data-lv="ok"] { --lvc: #37B76A; } [data-lv="warn"] { --lvc: #E0741E; } [data-lv="alert"] { --lvc: #D93A2B; }
   .bar i[data-lv] { background: var(--lvc); }
   .bar b[data-lv="warn"], .bar b[data-lv="alert"] { color: var(--lvc); }
-  #mini { width: 100%; height: 40px; margin-top: 6px; border-radius: 8px; background: #f6f6fc; display: block; }
+  #mini { width: 100%; height: 56px; margin-top: 6px; border-radius: 8px; background: #f6f6fc; display: block; }
   .status { margin-top: 6px; font-size: 11px; color: var(--ink-2); display: flex; gap: 5px; flex-wrap: wrap; }
   .pill { border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; background: #fff; }
   .pill.on { border-color: var(--violet); color: var(--violet); }
-  .legend { margin-top: 5px; display: flex; gap: 8px; flex-wrap: wrap; font-size: 10.5px; color: var(--ink-2); align-items: center; }
-  .legend .k2 { color: var(--cap); }
-  .legend span[data-sp] { display: inline-flex; align-items: center; gap: 5px; }
-  .legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; box-shadow: 0 0 6px currentColor; opacity: .3; transition: opacity .6s ease; }
+  /* 입자 범례: 공간 탭 아래 가로 표 — 색 점이 그 종류의 값에 따라 밝아진다 */
+  .legend { display: flex; align-items: stretch; margin: 0 16px 8px; padding: 0; border-radius: 999px; background: rgba(10,10,32,.5); border: 1px solid rgba(255,255,255,.14); width: max-content; max-width: calc(100% - 32px); font-size: 11px; color: rgba(255,255,255,.88); backdrop-filter: blur(6px); overflow: hidden; }
+  .legend .k2 { display: inline-flex; align-items: center; padding: 4px 8px 4px 11px; color: rgba(255,255,255,.6); font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+  .legend span[data-sp] { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-left: 1px solid rgba(255,255,255,.14); font-family: var(--display); font-weight: 600; }
+  .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px currentColor; opacity: .35; transition: opacity .6s ease; }
   /* 기기 화면 그대로: 카드 너비에 맞춘 4:3 화면 두 장 — 2번째(Indoor Index · 시계 · 보상 · 네트워크), 3번째(여섯 타일). 실시간으로 같은 값을 그린다 */
   .screens { display: grid; gap: 6px; margin-top: 7px; }
   .screens .k3 { font-size: 10px; color: var(--cap); font-family: var(--display); letter-spacing: .06em; text-transform: uppercase; font-weight: 700; }
@@ -168,8 +169,9 @@
     .hud-title .flow { font-size: 13px; }
     .hud-title p { font-size: 13px; line-height: 1.55; background: rgba(10,10,32,.42); border-radius: 8px; padding: 6px 9px; backdrop-filter: blur(6px); }
     .spaces { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); margin: 0; z-index: 2; background: rgba(10,10,32,.5); backdrop-filter: blur(6px); }
+    .legend { position: absolute; left: 50%; top: 62px; transform: translateX(-50%); margin: 0; z-index: 2; }
     /* 카드는 스크롤하지 않는다: 폭을 화면 높이에서 역산해(제목·막대·곡선·상태·범례·여백 ≈ 380px + 화면 3장 = 2.25×폭) 세 화면까지 한 번에 보이게. 768px 높이에선 176px 까지 좁아진다 */
-    .readout { position: absolute; right: 18px; top: 18px; width: clamp(176px, calc((100dvh - 380px) / 2.25), 250px); margin: 0; z-index: 2; overflow: visible; }
+    .readout { position: absolute; right: 18px; top: 18px; width: clamp(176px, calc((100dvh - 360px) / 2.25), 250px); margin: 0; z-index: 2; overflow: visible; }
     .controls { position: absolute; left: 22px; bottom: 74px; margin: 0; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 44px); z-index: 2; }
     .btn { background: rgba(10,10,32,.5); backdrop-filter: blur(6px); border-color: rgba(255,255,255,.35); min-height: 38px; padding: 9px 15px; }
     .btn:hover { background: #fff; color: var(--navy); }
@@ -200,6 +202,9 @@
     <button role="tab" aria-selected="false" data-space="kitchen">부엌</button>
     <button class="lang" id="b-lang" type="button" role="none" aria-label="Switch language / 언어 바꾸기">EN</button>
   </nav>
+  <div class="legend" id="legend" role="table" aria-label="장면 속 입자의 색과 종류">
+    <span class="k2" data-i18n="particles">입자</span><span data-sp="co2"><i></i>CO₂</span><span data-sp="pm25"><i></i>PM2.5</span><span data-sp="pm10"><i></i>PM10</span><span data-sp="voc"><i></i>VOCs</span>
+  </div>
 
   <section id="stage" aria-label="고른 공간의 장면과 공기 시뮬레이션">
     <div class="media" id="media">
@@ -240,10 +245,6 @@
       <span class="pill" id="p-window">창문 닫힘</span>
       <span class="pill" id="p-cook" hidden>조리 안 함</span>
       <span class="pill" id="p-night">저녁</span>
-    </div>
-    <div class="legend" id="legend" aria-label="장면 속 입자의 색과 종류">
-      <span class="k2" data-i18n="particles">입자</span>
-      <span data-sp="co2"><i></i>CO₂</span><span data-sp="pm25"><i></i>PM2.5</span><span data-sp="pm10"><i></i>PM10</span><span data-sp="voc"><i></i>VOCs</span>
     </div>
     <div class="screens" aria-label="기기 화면 그대로">
       <div class="k3" data-i18n="screens">Device screens · 기기 화면 1 · 2 · 3</div>
@@ -389,7 +390,8 @@
       lead: "요리 15분. 팬 위의 김과 기름 연기가 PM2.5를 올리고, 창을 열면 빠져나갑니다.",
       en2: "Fifteen minutes at the stove. Steam and oil smoke push PM2.5 up; an open window lets it out.",
       states: { idle: "kitchen-idle", cook: "kitchen-cook", vent: "kitchen-vent", night: "kitchen-night", nightWindow: "kitchen-night-window" },
-      pick: (s, g) => s.cook > 0 ? "cook" : g.night ? (s.window ? "nightWindow" : "night") : s.window ? "vent" : "idle",
+      // 조리 중에 창을 열면 창 열린 사진(vent)으로 — 조리 사진엔 창이 닫혀 있어 "창문 열기"가 안 먹는 것처럼 보였다. 팬 김·연기는 효과 레이어가 그린다. 밤 조리는 밤 사진.
+      pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : s.cook > 0 ? (s.window ? "vent" : "cook") : s.window ? "vent" : "idle",
       device: { u: 0.53, v: 0.658, cmFrac: 0.00333 }, pan: [0.615, 0.60], hood: [0.70, 0.13], window: [0.26, 0.43], focus: [0.66, 0.5],
       people: (h, night) => night ? 0.2 : (h >= 18 && h < 21) ? 3 : (h >= 23 || h < 7) ? 0.2 : 1.5,
       temp: (h, night) => (night || h >= 23 || h < 7) ? 22.4 : 23.4, init: { pm: 14, co2: 560 }
@@ -548,20 +550,28 @@
   }
 
   /* ── 곡선 (오른쪽 카드) ── */
+  /* 최근 2시간(시뮬레이션 시간) PM2.5·CO₂ 곡선. 종류 색은 입자와 같고, 값 범위는 창 안에서 자동(최소 폭 보장)이라 오르내림이 보인다. 주의·경고 문턱은 점선. */
+  const CHART = { pm: { col: "#FF6B0A", warn: 35, alert: 75, minSpan: 30, floor: 0 }, co2: { col: "#2EA3FF", warn: 800, alert: 1000, minSpan: 300, floor: 400 } };
+  function fitCanvas(cv) { const r = cv.getBoundingClientRect(), d = dpr(), bw = Math.max(16, Math.round(r.width * d)), bh = Math.max(12, Math.round(r.height * d)); if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; } }
   function drawCurve(ctx, W, H) {
+    const d = dpr(), s = ST[cur];
     ctx.clearRect(0, 0, W, H); ctx.fillStyle = "#f6f6fc"; ctx.fillRect(0, 0, W, H);
-    const pad = 10, span = 120, h = ST[cur].hist.slice(-span);
-    if (h.length < 2) return;
-    const x = (i) => pad + (i / (span - 1)) * (W - 2 * pad);
-    const line = (key, max, color) => {
-      ctx.beginPath(); ctx.lineWidth = 2.2; ctx.strokeStyle = color; ctx.lineJoin = "round";
-      h.forEach((p, i) => { const y = H - pad - Math.min(1, p[key] / max) * (H - 2 * pad), xi = x(i + span - h.length); i ? ctx.lineTo(xi, y) : ctx.moveTo(xi, y); });
-      ctx.stroke();
-      const last = h[h.length - 1], ly = H - pad - Math.min(1, last[key] / max) * (H - 2 * pad);
-      ctx.beginPath(); ctx.arc(x(span - 1), ly, 3.2, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
+    const span = 120, h = s.hist.slice(-span); if (h.length < 2) return;
+    const padX = 8 * d, top = 16 * d, bot = 6 * d, x = (i) => padX + (i / (span - 1)) * (W - 2 * padX);
+    const series = (key, c) => {
+      let lo = Infinity, hi = -Infinity; for (const p of h) { lo = Math.min(lo, p[key]); hi = Math.max(hi, p[key]); }
+      lo = Math.max(c.floor, Math.min(lo, c.warn * 0.6)); if (hi - lo < c.minSpan) hi = lo + c.minSpan; hi = lo + (hi - lo) * 1.06;
+      const y = (v) => H - bot - clamp((v - lo) / (hi - lo), 0, 1) * (H - top - bot);
+      for (const [th, dash] of [[c.warn, [3 * d, 3 * d]], [c.alert, [1.5 * d, 2.5 * d]]]) if (th > lo && th < hi) { ctx.save(); ctx.setLineDash(dash); ctx.strokeStyle = c.col; ctx.globalAlpha = 0.4; ctx.lineWidth = d; ctx.beginPath(); ctx.moveTo(padX, y(th)); ctx.lineTo(W - padX, y(th)); ctx.stroke(); ctx.restore(); }
+      ctx.beginPath(); ctx.lineWidth = 2 * d; ctx.strokeStyle = c.col; ctx.lineJoin = "round"; ctx.lineCap = "round";
+      h.forEach((p, i) => { const xi = x(i + span - h.length), yi = y(p[key]); i ? ctx.lineTo(xi, yi) : ctx.moveTo(xi, yi); }); ctx.stroke();
+      const last = h[h.length - 1]; ctx.beginPath(); ctx.arc(x(span - 1), y(last[key]), 3 * d, 0, Math.PI * 2); ctx.fillStyle = c.col; ctx.fill();
     };
-    line("co2", 2400, "#1b1b48"); line("pm", 240, "#4d4dce");
-    ctx.font = "700 11px Montserrat, sans-serif"; ctx.fillStyle = "#7c7c9a"; ctx.textAlign = "left"; ctx.fillText("PM2.5", pad, 14); ctx.textAlign = "right"; ctx.fillText("CO₂", W - pad, 14); ctx.textAlign = "left";
+    series("co2", CHART.co2); series("pm", CHART.pm);
+    ctx.textBaseline = "alphabetic"; ctx.font = `700 ${10 * d}px Montserrat, sans-serif`;
+    ctx.fillStyle = CHART.pm.col; ctx.textAlign = "left"; ctx.fillText(`PM2.5 ${s.pm.toFixed(0)}`, padX, 11 * d);
+    ctx.fillStyle = CHART.co2.col; ctx.textAlign = "right"; ctx.fillText(`CO₂ ${s.co2.toFixed(0)}`, W - padX, 11 * d);
+    ctx.fillStyle = "#9a9ab4"; ctx.textAlign = "center"; ctx.font = `600 ${8.5 * d}px Montserrat, sans-serif`; ctx.fillText("2h", W / 2, 11 * d);
   }
   const mini = $("mini"), mctx = mini.getContext("2d");
 
@@ -880,7 +890,7 @@
     sw = Math.max(1, stage.clientWidth); sh = Math.max(1, stage.clientHeight);
     const s = Math.max(sw / RATIO, sh), dw = RATIO * s, dh = s, f = SPACES[cur].focus;
     fit = { s, ox: (sw - dw) * f[0], oy: (sh - dh) * f[1], dw, dh };
-    placeDevice(); fitMini(miniIndex); fitMini(miniTiles); fitMini(miniIO); if (!floatEl.hidden) fitMini(floatCv);
+    placeDevice(); fitMini(miniIndex); fitMini(miniTiles); fitMini(miniIO); if (!floatEl.hidden) fitMini(floatCv); redraw();
     if (gl) { const d = dpr(); canvas.width = Math.round(sw * d); canvas.height = Math.round(sh * d); gl.viewport(0, 0, canvas.width, canvas.height); resetParticles(); }
     if (!panel.hidden) placePanelScreen();
   }
@@ -1195,7 +1205,7 @@
   /* ── 루프(타임랩스): 1초 = 5분, 조리 중·창 열림엔 1초 = 1.5분(연기·환기가 보이게), 밤엔 1초 = 20분(8시간 반이 25초) — 어느 방이든 10초 안에 주의 단계가 나온다 ── */
   const SPEEDS = [1, 5, 10, 20];
   const speed = () => { const b = G.speed; return (ST[cur].window || ST.kitchen.cook > 0) ? Math.max(1, +(b * 0.3).toFixed(1)) : G.night ? b * 4 : b; };   // 조리·창 열림은 0.3배(연기·환기가 보이게), 밤은 4배
-  function redraw() { drawCurve(mctx, 400, 128); }
+  function redraw() { fitCanvas(mini); drawCurve(mctx, mini.width, mini.height); }
   let acc = 0, last = performance.now(), t0 = last, lastMini = 0;
   function frame(now) {
     const dt = Math.min(0.1, (now - last) / 1000), t = (now - t0) / 1000; last = now;
