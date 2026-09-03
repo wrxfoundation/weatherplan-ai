@@ -76,15 +76,16 @@
   .hit { position: absolute; left: 0; top: 0; background: transparent; border: 0; padding: 0; margin: 0; cursor: pointer; z-index: 3; border-radius: 8px; }
   .hit:hover { box-shadow: 0 0 0 2px rgba(255,255,255,.55); }
   .hit:focus-visible { outline: 3px solid rgba(255,255,255,.6); outline-offset: 2px; }
-  /* 환기 플로팅 메시지: 기기 알림과 같은 주황, 포인트 아래. 누르면 창문이 열린다 */
-  .vent { position: absolute; left: 0; top: 0; z-index: 4; display: inline-flex; align-items: center; gap: 9px; padding: 7px 14px 7px 11px; border-radius: 999px; background: #E8742A; color: #fff; border: 2px solid rgba(255,255,255,.9); font-family: var(--body); cursor: pointer; white-space: nowrap; box-shadow: 0 6px 24px rgba(232,116,42,.45); animation: ventPulse 1.6s ease-in-out infinite; text-align: left; }
-  .vent span { display: flex; flex-direction: column; line-height: 1.15; }
-  .vent b { font-weight: 800; font-size: 13px; }
-  .vent small { font-weight: 600; font-size: 10.5px; opacity: .92; }
-  .vent .ic { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .vent[hidden] { display: none; }
-  .vent:hover { background: #f08340; } .vent:focus-visible { outline: 3px solid rgba(255,255,255,.7); outline-offset: 2px; }
-  @keyframes ventPulse { 0%, 100% { box-shadow: 0 6px 24px rgba(232,116,42,.45); } 50% { box-shadow: 0 6px 36px rgba(232,116,42,.9); } }
+  /* 장면 안 플로팅 버튼(.fcta): 환기(주황, 포인트 위 — 누르면 창문 열기) · 요리(보라, 프라이팬 위 — 누르면 요리 15분) */
+  .fcta { position: absolute; left: 0; top: 0; z-index: 4; display: inline-flex; align-items: center; gap: 9px; padding: 7px 14px 7px 11px; border-radius: 999px; color: #fff; border: 2px solid rgba(255,255,255,.9); font-family: var(--body); cursor: pointer; white-space: nowrap; text-align: left; --c: 232,116,42; background: rgb(var(--c)); box-shadow: 0 6px 24px rgba(var(--c),.45); animation: ctaPulse 1.6s ease-in-out infinite; }
+  .fcta span { display: flex; flex-direction: column; line-height: 1.15; }
+  .fcta b { font-weight: 800; font-size: 13px; }
+  .fcta small { font-weight: 600; font-size: 10.5px; opacity: .92; }
+  .fcta .ic { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .fcta[hidden] { display: none; }
+  .fcta:hover { filter: brightness(1.08); } .fcta:focus-visible { outline: 3px solid rgba(255,255,255,.7); outline-offset: 2px; }
+  .fcta.cookf { --c: 77,77,206; }
+  @keyframes ctaPulse { 0%, 100% { box-shadow: 0 6px 24px rgba(var(--c),.45); } 50% { box-shadow: 0 6px 36px rgba(var(--c),.9); } }
   .ring-tip { position: absolute; left: 0; top: 0; white-space: nowrap; font-size: 11px; font-weight: 700; color: #fff; background: rgba(10,10,32,.6); border-radius: 999px; padding: 3px 9px; pointer-events: none; z-index: 3; backdrop-filter: blur(4px); }
   #fx { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
   .vig { position: absolute; inset: 0; pointer-events: none; opacity: .22; transition: opacity 1.6s ease;
@@ -209,7 +210,7 @@
     .screens .sc { grid-row: 2; scroll-snap-align: start; }
     #b-cook:not([hidden]) ~ #b-speed { grid-column: 1 / -1; }
   }
-  @media (prefers-reduced-motion: reduce) { .tick.new { animation: none; } .vent { animation: none; } .still, .clip, .screen-wrap, .dev img { transition: none; } .ring { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .tick.new { animation: none; } .fcta { animation: none; } .still, .clip, .screen-wrap, .dev img { transition: none; } .ring { animation: none; } }
 </style>
 </head>
 <body>
@@ -247,7 +248,8 @@
     <button class="hit" id="hit" type="button" aria-label="기기 화면 크게 보기"></button>
     <button class="ring" id="ring" type="button" aria-label="기기 화면 크게 보기"></button>
     <div class="ring-tip" id="ring-tip" data-i18n="tip">기기 · 탭하면 화면 확대</div>
-    <button class="vent" id="vent" type="button" hidden aria-live="polite"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16M3 12h18"/></svg><span><b data-i18n="ventCta">환기해야 합니다</b><small data-i18n="ventSub">탭하면 창문 열기</small></span></button>
+    <button class="fcta vent" id="vent" type="button" hidden aria-live="polite"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16M3 12h18"/></svg><span><b data-i18n="ventCta">환기해야 합니다</b><small data-i18n="ventSub">탭하면 창문 열기</small></span></button>
+    <button class="fcta cookf" id="cookf" type="button" hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3 4 4.5 4 8.5a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-7.5z"/></svg><span><b data-i18n="cook">요리 15분</b><small data-i18n="cookSub">탭하면 팬에 불이 켜집니다</small></span></button>
     <div class="assets" id="assets"></div>
     <div class="cap" data-i18n="cap">concept render · 개념 시뮬레이션 · 입자는 예시</div>
   </section>
@@ -342,7 +344,7 @@
     ko: { tip: "기기 · 탭하면 화면 확대", cap: "concept render · 개념 시뮬레이션 · 입자는 예시", note: "검증된 판독값 하나 = 기록 하나 · 보상은 테스트 중 · 개념 시뮬레이션", hint: "막대를 끌어 값을 바꿔 보세요 · 아래 기기 화면을 누르면 크게",
       screens: "Device screens · 기기 화면 1 · 2 · 3", particles: "입자 · 예시", pnote: "보이지 않는 CO₂·VOCs·먼지를 빛으로 나타낸 예시입니다. 개수는 측정값을 따라 늘고 줄어듭니다.", temp: "온도", rh: "습도", cook: "요리 15분", reset: "처음부터", close: "닫기", timelapse: "타임랩스",
       winOpen: "창문 열림", winClosed: "창문 닫힘", cooking: (n) => `조리 중 ${n}분`, notCooking: "조리 안 함", nightP: "밤", dawn: "새벽", morning: "아침", day: "낮", evening: "저녁",
-      bWinOpen: "창문 열기", bWinClose: "창문 닫기", bNight: "야간 모드", bNightOn: "주간 모드", ventCta: "환기해야 합니다", ventSub: "탭하면 창문 열기", whole: (n) => `· 집 전체 ${n}`,
+      bWinOpen: "창문 열기", bWinClose: "창문 닫기", bNight: "야간 모드", bNightOn: "주간 모드", ventCta: "환기해야 합니다", ventSub: "탭하면 창문 열기", cookSub: "탭하면 팬에 불이 켜집니다", whole: (n) => `· 집 전체 ${n}`,
       flow: "측정 <span>→</span> 데이터 생성 <span>→</span> 검증 <span>→</span> 가치화 <span>→</span> 보상",
       psub: "실측 크기로 놓은 기기의 화면을 그대로 확대한 것입니다. 수치는 이 방의 시뮬레이션 값.", ptip: "보상은 테스트 중 · 개념 시뮬레이션 · concept render", pdevAlt: "wellbian 실내 공기 측정기",
       dt0: "측정 항목", dd0: "PM2.5 · PM10 · CO₂ · TVOC · 온도 · 습도 · 체감온도", dt1: "모델명", dd1: "ARC-600DA", dt2: "디스플레이", dd2: "5인치 풀터치 컬러 LCD", dt3: "전원", dd3: "12VDC · 300mA (월 전기료 1,000원 미만)",
@@ -353,7 +355,7 @@
     en: { tip: "Device · tap to enlarge", cap: "concept render · concept simulation · particles are illustrative", note: "One verified reading = one record · Rewards in testing · Concept simulation", hint: "Drag a bar to change its value · Tap a device screen below to enlarge",
       screens: "Device screens 1 · 2 · 3", particles: "Particles · illustrative", pnote: "Invisible CO₂, VOCs and dust drawn as light. Their number rises and falls with the measured values.", temp: "Temp", rh: "Humidity", cook: "Cook 15 min", reset: "Reset", close: "Close", timelapse: "Timelapse",
       winOpen: "Window open", winClosed: "Window closed", cooking: (n) => `Cooking · ${n} min`, notCooking: "Not cooking", nightP: "Night", dawn: "Dawn", morning: "Morning", day: "Daytime", evening: "Evening",
-      bWinOpen: "Open window", bWinClose: "Close window", bNight: "Night mode", bNightOn: "Day mode", ventCta: "Ventilation needed", ventSub: "Tap to open the window", whole: (n) => `· whole home ${n}`,
+      bWinOpen: "Open window", bWinClose: "Close window", bNight: "Night mode", bNightOn: "Day mode", ventCta: "Ventilation needed", ventSub: "Tap to open the window", cookSub: "Tap to start cooking", whole: (n) => `· whole home ${n}`,
       flow: "Measure <span>→</span> Generate data <span>→</span> Verify <span>→</span> Value <span>→</span> Reward",
       psub: "The screen of the device placed at real scale, enlarged as is. Values are this room's simulation.", ptip: "Rewards in testing · concept simulation · concept render", pdevAlt: "wellbian indoor air monitor",
       dt0: "Measures", dd0: "PM2.5 · PM10 · CO₂ · TVOC · temperature · humidity · feels-like", dt1: "Model", dd1: "ARC-600DA", dt2: "Display", dd2: "5-inch full-touch color LCD", dt3: "Power", dd3: "12VDC · 300mA (under ₩1,000 a month)",
@@ -425,7 +427,7 @@
       states: { day: "kitchen-idle", dayWindow: "kitchen-vent", cook: "kitchen-cook", cookWindow: "kitchen-cook-window", night: "kitchen-night", nightWindow: "kitchen-night-window" },
       // 밤 조리 사진은 없다: 밤엔 밤 사진 위에 팬 김·연기 효과만. 낮 조리 중 창을 열면 조리+창 사진.
       pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : s.cook > 0 ? (s.window ? "cookWindow" : "cook") : (s.window ? "dayWindow" : "day"),
-      device: { u: 0.53, v: 0.658, cmFrac: 0.00333 }, pan: [0.615, 0.60], hood: [0.70, 0.13], window: [0.26, 0.43], focus: [0.66, 0.5],
+      device: { u: 0.53, v: 0.625, cmFrac: 0.00333 }, pan: [0.615, 0.60], hood: [0.70, 0.13], window: [0.26, 0.43], focus: [0.66, 0.5],   // 기기는 조리대 앞턱에 걸치지 않게 조금 위(0.658 → 0.625)
       people: () => 6,      // 부엌엔 한 사람이 오가고, 거실과 트여 있어 거실 CO₂를 따라간다
       temp: (h, night) => (night || h >= 23 || h < 7) ? 22.4 : 23.4, init: { pm: 14, co2: 560 }
     }
@@ -584,6 +586,7 @@
     pNight.classList.toggle("on", G.night);
     lbl(bWin, s.window ? t("bWinClose") : t("bWinOpen")); bWin.classList.toggle("on", s.window);
     ventBtn.hidden = !(s.alertAt >= 0 && !s.window);   // 기기 알림이 켜져 있고 창이 닫혀 있는 동안만 "환기해야 합니다"
+    cookBtn.hidden = !(cur === "kitchen" && ST.kitchen.cook <= 0);   // 부엌에서 조리 중이 아닐 때만 프라이팬 위 "요리 15분"
     bNight.classList.toggle("on", G.night); lbl(bNight, G.night ? t("bNightOn") : t("bNight"));
     for (const sp of SPECIES) { const el = legendEls[sp.key]; if (el) el.style.opacity = (0.3 + 0.7 * sp.frac(s)).toFixed(2); }
   }
@@ -828,7 +831,7 @@
 
   /* ── 기기 배치: 사진 속 자리(u,v)에 실측 척도로 컷아웃을 놓고, 그 화면 자리에 캔버스를 원근으로 얹는다 ── */
   const dev = $("dev"), devImg = $("dev-img"), screenWrap = $("screen-wrap"), ring = $("ring"), ringTip = $("ring-tip");
-  const ventBtn = $("vent");
+  const ventBtn = $("vent"), cookBtn = $("cookf");
   let devBox = { x: 0, y: 0, w: 0, h: 0 };
   function placeDevice() {
     const sp = SPACES[cur], d = sp.device, foot = toStage(d.u, d.v);
@@ -854,7 +857,7 @@
   let ringAt = { x: 0, y: 0 }, ringPx = 0, ringPy = 0;
   function placeRing() {
     const bx = (devBox.x - sw / 2) * 1.035 + sw / 2 + mediaX, by = (devBox.y - sh / 2) * 1.035 + sh / 2 + mediaY, bw = devBox.w * 1.035, bh = devBox.h * 1.035;
-    const side = (bx + bw / 2 > sw * 0.66) ? -1 : 1;
+    const side = cur === "kitchen" ? -1 : (bx + bw / 2 > sw * 0.66) ? -1 : 1;   // 부엌은 오른쪽에 프라이팬 버튼이 있어 포인트를 왼쪽으로
     const ax = side > 0 ? bx + bw * 0.8 : bx + bw * 0.16, ay = by + bh * 0.1;
     const gap = clamp(bw * 0.5, 30, 64);
     const rx = clamp(ax + side * gap * 1.25, 30, sw - 30), ry = clamp(ay - gap * 0.85, 26, sh - 26);
@@ -869,6 +872,13 @@
     // 환기 메시지는 포인트 위(기기를 가리지 않게 — 위에 자리가 없으면 아래), 장면 밖으로 나가지 않게
     const vw = ventBtn.offsetWidth || 190, vh = ventBtn.offsetHeight || 40, vx = clamp(rx, vw / 2 + 6, sw - vw / 2 - 6), vy = ry - 30 - vh < 6 ? ry + 30 : ry - 30 - vh;
     ventBtn.style.transform = `translate(${vx.toFixed(1)}px, ${vy.toFixed(1)}px) translate(-50%, 0)`;
+    // 요리 버튼은 프라이팬 위에(장면 밖으로 안 나가게)
+    if (cur === "kitchen") {
+      const p = toScreen(SPACES.kitchen.pan[0], SPACES.kitchen.pan[1]), cw = cookBtn.offsetWidth || 190, chh = cookBtn.offsetHeight || 40, cx = clamp(p.x, cw / 2 + 6, sw - cw / 2 - 6); let cy = Math.max(6, p.y - 26 - chh);
+      const tipH = ringTip.offsetHeight || 21, tx0 = ts > 0 ? rx + 24 : rx - 24 - tipW, tx1 = tx0 + tipW, ty0 = ry - tipH / 2, ty1 = ry + tipH / 2;   // 포인트 말풍선과 겹치면(좁은 화면) 말풍선 위로 올린다
+      if (cx - cw / 2 < tx1 && cx + cw / 2 > tx0 && cy < ty1 && cy + chh > ty0) cy = Math.max(6, ty0 - chh - 8);
+      cookBtn.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) translate(-50%, 0)`;
+    }
     ringAt = { x: rx, y: ry };
   }
   const pdev = $("pdev"), pscreenWrap = $("pscreen-wrap");
@@ -1245,7 +1255,8 @@
   }
   let prefetchT = 0;
   tabs.forEach((b) => b.addEventListener("click", () => setSpace(b.dataset.space)));
-  bCook.addEventListener("click", () => { if (ST.kitchen.cook <= 0) ST.kitchen.cook = 15; showScene(); hud(); redraw(); });
+  const startCook = () => { if (ST.kitchen.cook <= 0) ST.kitchen.cook = 15; showScene(); hud(); redraw(); };
+  bCook.addEventListener("click", startCook); cookBtn.addEventListener("click", startCook);   // 프라이팬 위 버튼 = 요리 버튼과 같은 동작
   bWin.addEventListener("click", () => { ST[cur].window = !ST[cur].window; alertDismissed = false; showScene(); hud(); redraw(); });
   ventBtn.addEventListener("click", () => { if (ST[cur].window) return; ST[cur].window = true; alertDismissed = false; showScene(); hud(); redraw(); placeRing(); });   // 환기 메시지 = 창문 열기와 같은 동작   // 밤이 지나는 중에도 창문은 언제든 열고 닫는다
   bNight.addEventListener("click", () => { toggleNight(); showScene(); hud(); redraw(); });
