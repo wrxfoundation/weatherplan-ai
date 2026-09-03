@@ -96,7 +96,7 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   await glide(page.locator('header nav a', { hasText: /^렌탈$/ }), 10); await page.waitForTimeout(200)
   await glide(page.locator('[data-t="mega-modes"] a', { hasText: '리스' })); await page.mouse.down(); await page.mouse.up(); await page.waitForTimeout(600)
   check(page.url().includes('mode=lease'), `패널의 리스 → ${page.url().split('?')[1]}`)
-  check((await page.locator('[data-t="rental-mode"] button[aria-selected="true"]').innerText()) === '리스', '브라우저가 리스 모드로 열림')
+  check(await page.locator('[data-t="rental-browser"]').getAttribute('data-mode') === 'lease', '브라우저가 리스 모드로 열림')
 
   if (errors.length) { console.log('PAGEERROR:', errors.join(' | ')); fail++ }
   await browser.close()

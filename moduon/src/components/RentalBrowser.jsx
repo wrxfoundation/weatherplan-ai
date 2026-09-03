@@ -28,14 +28,14 @@ export default function RentalBrowser() {
   const priced = useMemo(() => items.map((it) => ({ it, q: calcRental({ itemId: it.id, care: 'self', term: 60, card: false, mode }) })), [items, mode])
 
   return (
-    <section className="mt-8" data-t="rental-browser">
+    <section className="mt-8" data-t="rental-browser" data-mode={mode}>
       {/* 상단: 제목 + 렌트/리스 */}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-[19px] font-extrabold text-ink">브랜드로 찾기</h2>
           <p className="mt-1 text-[13px] text-muted">브랜드에 커서를 올리면 품목이 펼쳐져요. 정수기는 냉온·얼음으로 한 번 더 거를 수 있어요.</p>
         </div>
-        <div className="inline-flex rounded-full bg-white p-1 shadow-card" data-t="rental-mode" role="tablist">
+        <div className="inline-flex rounded-full bg-white p-1 shadow-card md:hidden" data-t="rental-mode" role="tablist">
           {MODES.map((m) => (
             <button key={m.key} role="tab" aria-selected={mode === m.key} onClick={() => setMode(m.key)} title={m.desc}
               className={`flex h-9 items-center rounded-full px-4 text-[13px] font-bold transition-colors ${mode === m.key ? 'bg-primary text-white' : 'text-label hover:text-primary-text'}`}>
@@ -44,7 +44,11 @@ export default function RentalBrowser() {
           ))}
         </div>
       </div>
-      <p className="mt-1.5 text-[11.5px] text-faint">{MODES.find((m) => m.key === mode)?.desc}</p>
+      <p className="mt-1.5 text-[11.5px] text-faint" data-t="rental-mode-label">
+        <span className="hidden font-bold text-label md:inline">{MODES.find((m) => m.key === mode)?.label} 기준 · </span>
+        {MODES.find((m) => m.key === mode)?.desc}
+        <span className="hidden md:inline"> · 바꾸려면 상단 메뉴 렌탈 → 렌탈 방식</span>
+      </p>
 
       {/* 브랜드 탭 (호버 → 카테고리 드롭다운) */}
       <div className="relative mt-4 rounded-card bg-white shadow-card" onMouseLeave={() => setHover(null)}>
