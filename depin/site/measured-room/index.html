@@ -21,7 +21,7 @@
     --ink: #1b1b48; --ink-2: #4a4a6a; --cap: #7c7c9a; --line: #d9d9ee;
     --display: "Montserrat", "Noto Sans KR", system-ui, sans-serif;
     --body: "Noto Sans KR", "Pretendard", system-ui, sans-serif;
-    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --mono: "Montserrat", "Noto Sans KR", system-ui, sans-serif;   /* 영문·숫자는 Montserrat 로 통일 */
   }
   * { box-sizing: border-box; }
   html { background: var(--ground); }
@@ -47,8 +47,10 @@
   .clip.on.ready { opacity: 1; }
   .dev { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; }
   .dev .shadow { position: absolute; left: 4%; right: 10%; bottom: -3%; height: 12%; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,.55), rgba(0,0,0,0) 70%); filter: blur(2px); }
-  .dev img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; filter: var(--tint, none); transition: filter 1.2s ease; }
-  .screen-wrap { position: absolute; left: 0; top: 0; width: 400px; height: 300px; transform-origin: 0 0; pointer-events: none; opacity: 0; transition: opacity .8s ease; }
+  .dev img { display: none; }
+  .dev canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; filter: var(--tint, none); transition: filter 1.2s ease; }
+  /* 화면 캔버스: 요소 크기 = 실제 화면 크기(스케일≈1)이고 흰 화면은 캔버스 안쪽에 여백을 두고 그린다 — 보이는 모서리가 층의 모서리가 아니라 텍스처의 모서리라 3D 변환에도 계단이 없다 */
+  .screen-wrap { position: absolute; left: 0; top: 0; width: 400px; height: 300px; transform-origin: 0 0; pointer-events: none; opacity: 0; transition: opacity .8s ease; backface-visibility: hidden; }
   .screen-wrap.on { opacity: 1; }
   .screen-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
   .screen-glow { position: absolute; inset: -14% -10%; border-radius: 40%; background: radial-gradient(ellipse at 50% 55%, rgba(120,170,255,.5), rgba(120,170,255,0) 68%); opacity: var(--glow, .25); filter: blur(5px); z-index: -1; }
@@ -74,14 +76,17 @@
 
   .readout { margin: 10px 16px 0; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
   .readout .k { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--cap); font-weight: 700; font-family: var(--display); }
-  .vals { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin-top: 6px; }
-  .val { display: flex; flex-direction: column; }
-  .val b { font-family: var(--mono); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
-  .val.pm b { color: var(--violet); }
-  .val.co2 b { color: var(--navy); }
-  .val span { font-size: 11px; color: var(--cap); }
-  .more { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; font-size: 11px; color: var(--cap); }
-  .more b { display: block; font-family: var(--mono); font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  /* 여섯 측정 요소를 같은 크기의 막대로. 트랙에는 등급 구간(좋음·보통·주의·경고)이 옅게 깔리고, 막대와 숫자 색은 지금 등급을 따른다 */
+  .bars { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .bar { display: grid; grid-template-columns: 50px 1fr 46px; align-items: center; gap: 8px; }
+  .bar .bl { font-family: var(--display), var(--body); font-size: 11px; font-weight: 700; color: var(--ink-2); line-height: 1.05; white-space: nowrap; }
+  .bar .bl small { display: block; font-size: 9.5px; font-weight: 500; color: var(--cap); }
+  .bar .bt { position: relative; height: 9px; border-radius: 5px; background: #ecebf5; overflow: hidden; }
+  .bar .bt i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 5px; background: #1878F2; transition: width .5s ease, background .5s ease; }
+  .bar b { font-family: var(--display); font-size: 15px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); letter-spacing: -.01em; }
+  [data-lv="good"] { --lvc: #1878F2; } [data-lv="ok"] { --lvc: #37B76A; } [data-lv="warn"] { --lvc: #E0741E; } [data-lv="alert"] { --lvc: #D93A2B; }
+  .bar i[data-lv] { background: var(--lvc); }
+  .bar b[data-lv="warn"], .bar b[data-lv="alert"] { color: var(--lvc); }
   #mini { width: 100%; height: 64px; margin-top: 8px; border-radius: 8px; background: #f6f6fc; display: block; }
   .status { margin-top: 8px; font-size: 11.5px; color: var(--ink-2); display: flex; gap: 6px; flex-wrap: wrap; }
   .pill { border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; background: #fff; }
@@ -168,7 +173,7 @@
 
   <section id="stage" aria-label="고른 공간의 장면과 공기 시뮬레이션">
     <div class="media" id="media">
-      <div class="dev" id="dev"><div class="shadow"></div><img id="dev-img" alt=""></div>
+      <div class="dev" id="dev"><div class="shadow"></div><img id="dev-img" alt=""><canvas id="dev-cv" aria-hidden="true"></canvas></div>
       <div class="screen-wrap" id="screen-wrap" aria-hidden="true"><div class="screen-glow"></div><canvas id="screen" width="800" height="600"></canvas></div>
     </div>
     <canvas id="fx" aria-hidden="true"></canvas>
@@ -183,12 +188,13 @@
 
   <aside class="readout" aria-live="polite">
     <div class="k" id="rk">On the console · 거실</div>
-    <div class="vals">
-      <div class="val pm"><b id="pmv">12</b><span>PM2.5 µg/m³</span></div>
-      <div class="val co2"><b id="co2v">620</b><span>CO₂ ppm</span></div>
-    </div>
-    <div class="more">
-      <div>PM10<b id="pm10v">21</b></div><div>VOCs ppb<b id="vocv">15</b></div><div>온도 °C<b id="tv">23.0</b></div><div>습도 %<b id="rhv">55</b></div>
+    <div class="bars" id="bars" aria-label="여섯 측정 요소의 값과 등급">
+      <div class="bar"><span class="bl">PM2.5<small>µg/m³</small></span><span class="bt" data-bar="pm"><i id="pmb"></i></span><b id="pmv">12</b></div>
+      <div class="bar"><span class="bl">PM10<small>µg/m³</small></span><span class="bt" data-bar="pm10"><i id="pm10b"></i></span><b id="pm10v">21</b></div>
+      <div class="bar"><span class="bl">CO₂<small>ppm</small></span><span class="bt" data-bar="co2"><i id="co2b"></i></span><b id="co2v">620</b></div>
+      <div class="bar"><span class="bl">VOCs<small>ppb</small></span><span class="bt" data-bar="voc"><i id="vocb"></i></span><b id="vocv">15</b></div>
+      <div class="bar"><span class="bl">온도<small>°C</small></span><span class="bt" data-bar="temp"><i id="tb"></i></span><b id="tv">23.0</b></div>
+      <div class="bar"><span class="bl">습도<small>%</small></span><span class="bt" data-bar="rh"><i id="rhb"></i></span><b id="rhv">55</b></div>
     </div>
     <canvas id="mini" width="400" height="128" aria-label="최근 두 시간의 PM2.5와 CO₂ 곡선"></canvas>
     <div class="status">
@@ -277,7 +283,7 @@
   };
   const srcOf = (key) => ({ still: [`assets/${key}.jpg`, CDN_IMG + SCENES[key].still], clip: [`assets/${key}.mp4`, CDN_GEN + SCENES[key].clip] });
   // 기기 컷아웃(배경 제거, 1024×938). 화면 네 모서리는 컷아웃 안 비율. 컷아웃 가로 = 기기 전면 120mm + 뒤 받침대 ≈ 143mm.
-  const SPRITE = { src: ["assets/device.png", CDN_IMG + "db613454-58bc-4c78-ac49-18179f8c5088.png"], w: 1024, h: 938, mm: 143, anchor: [0.42, 0.965],
+  const SPRITE = { src: ["assets/device.png", CDN_IMG + "f6aa6c49-ba85-4c10-91a5-1f8cedd11563.png"], w: 1024, h: 938, mm: 143, anchor: [0.42, 0.965],
                    screen: [[0.167, 0.0789], [0.7822, 0.1429], [0.7119, 0.6397], [0.1006, 0.5405]] };
 
   /* ── 공간: 상태별 장면 키, 기기 자리(u,v = 사진 안 비율, 기기 발 중심) 와 그 자리의 실측 척도(cmFrac = 1cm 가 사진 너비의 몇 배인가), 창·팬·후드 ── */
@@ -391,6 +397,20 @@
 
   /* ── 화면 텍스트 ── */
   const pmv = $("pmv"), co2v = $("co2v"), clock = $("clock"), rk = $("rk"), pm10v = $("pm10v"), vocv = $("vocv"), tv = $("tv"), rhv = $("rhv");
+  // 막대: 요소별 눈금 범위와 등급 구간(트랙 바탕색). 값 막대는 범위 안 비율만큼.
+  const BARS = {
+    pm:   { lo: 0, hi: 150, num: pmv, fill: $("pmb"), zones: [[15, "good"], [35, "ok"], [75, "warn"], [150, "alert"]] },
+    pm10: { lo: 0, hi: 250, num: pm10v, fill: $("pm10b"), zones: [[30, "good"], [80, "ok"], [150, "warn"], [250, "alert"]] },
+    co2:  { lo: 400, hi: 2000, num: co2v, fill: $("co2b"), zones: [[800, "ok"], [1000, "warn"], [2000, "alert"]] },
+    voc:  { lo: 0, hi: 1200, num: vocv, fill: $("vocb"), zones: [[100, "good"], [300, "ok"], [1000, "warn"], [1200, "alert"]] },
+    temp: { lo: 10, hi: 35, num: tv, fill: $("tb"), zones: [[18, "warn"], [26, "good"], [35, "warn"]] },
+    rh:   { lo: 0, hi: 100, num: rhv, fill: $("rhb"), zones: [[30, "warn"], [60, "good"], [70, "ok"], [100, "warn"]] }
+  };
+  const ZONE_BG = { good: "#e4effd", ok: "#e3f4ea", warn: "#fbe9d9", alert: "#f9dfdb" };
+  for (const k in BARS) { const b = BARS[k], stops = []; let prev = b.lo;
+    for (const [to, z] of b.zones) { const a = ((prev - b.lo) / (b.hi - b.lo) * 100).toFixed(1), c = ((to - b.lo) / (b.hi - b.lo) * 100).toFixed(1); stops.push(`${ZONE_BG[z]} ${a}% ${c}%`); prev = to; }
+    b.fill.parentElement.style.background = `linear-gradient(90deg, ${stops.join(", ")})`; }
+  function setBar(k, v, lv) { const b = BARS[k]; b.fill.style.width = (clamp((v - b.lo) / (b.hi - b.lo), 0, 1) * 100).toFixed(1) + "%"; b.fill.dataset.lv = lv; if (lv === "warn" || lv === "alert") b.num.dataset.lv = lv; else delete b.num.dataset.lv; }
   const pWin = $("p-window"), pCook = $("p-cook"), pNight = $("p-night");
   function clockText() { const day = Math.floor(G.t / 1440) + 1, m = G.t % 1440; return `Day ${day} · ${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; }
   const DAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], MONS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -401,6 +421,14 @@
     const s = ST[cur];
     pmv.textContent = s.pm.toFixed(0); co2v.textContent = s.co2.toFixed(0); clock.textContent = clockText();
     pm10v.textContent = pm10Of(s).toFixed(0); vocv.textContent = s.voc.toFixed(0); tv.textContent = s.temp.toFixed(1); rhv.textContent = s.rh.toFixed(0);
+    // 막대와 숫자 색: 좋음(파랑) → 보통(초록) → 주의(주황) → 경고(빨강). PM·VOCs 는 기기 등급, CO₂ 는 800 주의·1000 경고, 온·습도는 편안 범위 밖이면 주의
+    const p10 = pm10Of(s);
+    setBar("pm", s.pm, s.pm > 75 ? "alert" : s.pm > 35 ? "warn" : s.pm > 15 ? "ok" : "good");
+    setBar("pm10", p10, p10 > 150 ? "alert" : p10 > 80 ? "warn" : p10 > 30 ? "ok" : "good");
+    setBar("co2", s.co2, s.co2 >= 1000 ? "alert" : s.co2 >= 800 ? "warn" : "ok");
+    setBar("voc", s.voc, s.voc > 1000 ? "alert" : s.voc > 300 ? "warn" : s.voc > 100 ? "ok" : "good");
+    setBar("temp", s.temp, (s.temp > 26 || s.temp < 18) ? "warn" : "good");
+    setBar("rh", s.rh, (s.rh > 70 || s.rh < 30) ? "warn" : s.rh > 60 ? "ok" : "good");
     pWin.textContent = s.window ? "창문 열림" : "창문 닫힘"; pWin.classList.toggle("on", s.window);
     pCook.textContent = s.cook > 0 ? `조리 중 ${s.cook}분` : "조리 안 함"; pCook.classList.toggle("on", s.cook > 0);
     const h = Math.floor(hourNow());
@@ -486,7 +514,10 @@
     }
   }
   let alertDismissed = false;
-  const sctx = $("screen").getContext("2d"), pctx = $("pscreen").getContext("2d");
+  // 화면은 오프스크린 800×600 에 한 번 그리고, 보이는 캔버스(장면·확대 패널)에는 각자의 실제 크기로 고품질 축소해 옮긴다
+  const scr = document.createElement("canvas"); scr.width = 800; scr.height = 600; const sctx0 = scr.getContext("2d");
+  const screenCv = $("screen"), pscreenCv = $("pscreen");
+  function blit(cv) { const r = cv._inner; if (!r) return; const c = cv.getContext("2d"); c.clearRect(0, 0, cv.width, cv.height); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = "high"; c.drawImage(scr, r[0], r[1], r[2], r[3]); }
 
   // 단위 정사각형 → 임의 사변형 사영 변환(Heckbert). p = [왼위, 오위, 오아래, 왼아래]
   function squareToQuad(p) {
@@ -501,6 +532,18 @@
     const mm = [a / W, d / W, 0, g / W, b / H, e / H, 0, h / H, 0, 0, 1, 0, c, f, 0, 1];
     el.style.transform = `matrix3d(${mm.map((n) => +n.toFixed(6)).join(",")})`;
   }
+  function applyH(Hm, u, v) { const [a, b, c, d, e, f, g, h] = Hm, w = g * u + h * v + 1; return [(a * u + b * v + c) / w, (d * u + e * v + f) / w]; }
+  const PAD = 0.07;   // 화면 캔버스 가장자리 여백 비율(텍스처 안쪽 모서리)
+  function fitScreen(wrap, cv, q) {   // q = 화면 네 모서리(px). 요소 크기를 실제 화면 크기에 맞추고, 여백을 포함한 사변형으로 사영 변환
+    const ws = Math.max(8, Math.hypot(q[1][0] - q[0][0], q[1][1] - q[0][1])), hs = Math.max(6, Math.hypot(q[3][0] - q[0][0], q[3][1] - q[0][1]));
+    const Hm = squareToQuad(q), pq = [[-PAD, -PAD], [1 + PAD, -PAD], [1 + PAD, 1 + PAD], [-PAD, 1 + PAD]].map(([u, v]) => applyH(Hm, u, v));
+    const We = ws * (1 + 2 * PAD), He = hs * (1 + 2 * PAD);
+    wrap.style.width = We.toFixed(2) + "px"; wrap.style.height = He.toFixed(2) + "px";
+    quadTransform(wrap, pq, We, He);
+    const d = dpr(), bw = Math.max(16, Math.round(We * d)), bh = Math.max(12, Math.round(He * d));
+    if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; }
+    cv._inner = [Math.round(PAD * ws * d), Math.round(PAD * hs * d), Math.round(ws * d), Math.round(hs * d)];
+  }
 
   /* ── 기기 배치: 사진 속 자리(u,v)에 실측 척도로 컷아웃을 놓고, 그 화면 자리에 캔버스를 원근으로 얹는다 ── */
   const dev = $("dev"), devImg = $("dev-img"), screenWrap = $("screen-wrap"), ring = $("ring"), ringTip = $("ring-tip");
@@ -511,9 +554,18 @@
     const x = foot.x - SPRITE.anchor[0] * w, y = foot.y - SPRITE.anchor[1] * h;
     devBox = { x, y, w, h };
     dev.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`; dev.style.width = w.toFixed(2) + "px"; dev.style.height = h.toFixed(2) + "px";
-    quadTransform(screenWrap, SPRITE.screen.map(([qx, qy]) => [x + qx * w, y + qy * h]), 400, 300);
+    fitScreen(screenWrap, screenCv, SPRITE.screen.map(([qx, qy]) => [x + qx * w, y + qy * h]));
     screenWrap.classList.add("on");
+    drawSprite(w, h);
     placeRing();
+  }
+  // 기기 컷아웃: <img> 를 그대로 축소하면 큰 배율에서 계단이 생기므로, 캔버스에 고품질 리샘플링으로 한 번 그린다(크기가 바뀔 때만)
+  const devCv = $("dev-cv"); let devDrawn = "";
+  function drawSprite(w, h) {
+    if (!devImg.complete || !devImg.naturalWidth) return;
+    const d = dpr(), bw = Math.max(4, Math.round(w * d)), bh = Math.max(4, Math.round(h * d)), key = bw + "x" + bh;
+    if (devDrawn === key) return; devDrawn = key;
+    devCv.width = bw; devCv.height = bh; const c = devCv.getContext("2d"); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = "high"; c.drawImage(devImg, 0, 0, bw, bh);
   }
   // 포인트는 기기 밖: 기기 위쪽 모서리에서 가는 선을 내어 비스듬히 위·옆에 원을 둔다(오른쪽 끝에 놓인 기기는 왼쪽으로). 기기 자체도 탭 영역.
   const leader = $("leader"), hit = $("hit");
@@ -535,10 +587,11 @@
   const pdev = $("pdev"), pscreenWrap = $("pscreen-wrap");
   function placePanelScreen() {
     const r = pdev.getBoundingClientRect(), w = r.width, h = r.height;
-    quadTransform(pscreenWrap, SPRITE.screen.map(([qx, qy]) => [qx * w, qy * h]), 400, 300);
+    fitScreen(pscreenWrap, pscreenCv, SPRITE.screen.map(([qx, qy]) => [qx * w, qy * h]));
+    blit(pscreenCv);
   }
   // 컷아웃 로드: 로컬 먼저, 없으면 CDN
-  (function loadSprite() { let i = 0; const go = () => { devImg.src = SPRITE.src[i]; $("pdev-img").src = SPRITE.src[i]; }; devImg.addEventListener("error", () => { i += 1; if (i < SPRITE.src.length) go(); }); go(); })();
+  (function loadSprite() { let i = 0; const go = () => { devImg.src = SPRITE.src[i]; $("pdev-img").src = SPRITE.src[i]; }; devImg.addEventListener("error", () => { i += 1; if (i < SPRITE.src.length) go(); }); devImg.addEventListener("load", () => { devDrawn = ""; placeDevice(); }); go(); })();
 
   /* ── 장면 레이어: 상태마다 사진 + 영상, 겹쳐 두고 크로스페이드. 영상은 필요한 것만 만들고 최대 4편만 살려 둔다. ── */
   const stage = $("stage"), media = $("media"), vig = $("vig"), assetsNote = $("assets");
@@ -625,10 +678,10 @@
   /* 입자 종류 — 색이 곧 종류. 개수는 그 값에 비례해 하나씩 늘고(쌓임), 창이 열리면 창으로 빨려 나가 사라진다(환기).
      CO₂ 하늘색(공기보다 무거워 아래에 깔림) · PM2.5 주황(조리 연기, 팬에서 피어오름) · PM10 모래색(굵고 천천히 가라앉음) · VOCs 보라(가구·조리에서 나와 위로 떠오름) */
   const SPECIES = [
-    { key: "co2",  n: small() ? 420 : 820, col: [0.45, 0.80, 1.00], size: 1.30, tw: 0.5,  amb: 0.95, vy: 0.9,  low: 0.55, frac: (s) => clamp((s.co2 - 470) / 1300, 0, 1) },
-    { key: "pm25", n: small() ? 240 : 460, col: [1.00, 0.50, 0.12], size: 0.95, tw: 0.5,  amb: 0.88, vy: 0.3,  low: 0,    frac: (s) => clamp((s.pm - 8) / 130, 0, 1) },
-    { key: "pm10", n: small() ? 150 : 300, col: [0.80, 0.60, 0.38], size: 1.60, tw: 0.25, amb: 0.78, vy: 2.6,  low: 0.2,  frac: (s) => clamp((pm10Of(s) - 12) / 210, 0, 1) },
-    { key: "voc",  n: small() ? 170 : 330, col: [0.72, 0.36, 1.00], size: 1.25, tw: 0.7,  amb: 0.84, vy: -1.6, low: -0.3, frac: (s) => clamp((s.voc - 12) / 480, 0, 1) }
+    { key: "co2",  n: small() ? 560 : 1100, col: [0.22, 0.68, 1.00], size: 1.35, tw: 0.5,  amb: 0.96, vy: 0.9,  low: 0.55, frac: (s) => clamp((s.co2 - 470) / 1300, 0, 1) },
+    { key: "pm25", n: small() ? 320 : 620,  col: [1.00, 0.42, 0.04], size: 1.00, tw: 0.5,  amb: 0.94, vy: 0.3,  low: 0,    frac: (s) => clamp((s.pm - 8) / 130, 0, 1) },
+    { key: "pm10", n: small() ? 200 : 400,  col: [0.86, 0.56, 0.24], size: 1.65, tw: 0.25, amb: 0.88, vy: 2.6,  low: 0.2,  frac: (s) => clamp((pm10Of(s) - 12) / 210, 0, 1) },
+    { key: "voc",  n: small() ? 230 : 450,  col: [0.66, 0.24, 1.00], size: 1.30, tw: 0.7,  amb: 0.92, vy: -1.6, low: -0.3, frac: (s) => clamp((s.voc - 12) / 480, 0, 1) }
   ];
   for (const sp of SPECIES) { sp.B = new Float32Array(sp.n * 5); sp.M = new Int8Array(sp.n); sp.acc = 0; sp.alive = 0; sp.buf = null; }   // B: x, y, 깊이(0 가까움~1 멂), 씨앗, 알파 / M: 0 없음 · 1 살아 있음 · 2 사라지는 중
   const legendEls = {}; $("legend").querySelectorAll("[data-sp]").forEach((el) => { legendEls[el.dataset.sp] = el.querySelector("i"); });
@@ -824,8 +877,8 @@
     const lc = lightCur.col, sizeK = Math.sqrt(clamp(sw / 1200, 0.7, 2.2));
     // 종류별 입자 — 색이 곧 종류. 개수는 stepSpecies 가 값에 맞춰 늘리고 줄인다. 진하기는 값에 비례하되 바닥값을 둬서 몇 개 안 남아도 보인다.
     const nk = 1;
-    const pGlow = G.night ? 0.3 : 0;   // 입자 글로우는 밤에만(밝은 장면은 어두운 테두리가 이미 점을 또렷하게 한다), 채움 부담도 줄인다
-    for (const sp of SPECIES) { if (!sp.alive) continue; drawPoints(progDust, sp.buf, sp.B, sp.n, { t, size: sp.size * sizeK, amb: sp.amb, tw: sp.tw, col: [sp.col[0] * nk, sp.col[1] * nk, sp.col[2] * nk], op: clamp(0.6 + 0.4 * sp.frac(s), 0, 1), glow: pGlow }); }
+    const pGlow = G.night ? 0.34 : 0.1;   // 입자 글로우: 밤에 강하게, 낮에도 조금(밝은 장면은 어두운 테두리가 이미 점을 또렷하게 한다), 채움 부담도 줄인다
+    for (const sp of SPECIES) { if (!sp.alive) continue; drawPoints(progDust, sp.buf, sp.B, sp.n, { t, size: sp.size * sizeK, amb: sp.amb, tw: sp.tw, col: [sp.col[0] * nk, sp.col[1] * nk, sp.col[2] * nk], op: clamp(0.72 + 0.28 * sp.frac(s), 0, 1), glow: pGlow }); }
     // 김 — 부엌 조리 중에만
     if (cur === "kitchen") {
       gl.useProgram(progSteam.p); gl.bindBuffer(gl.ARRAY_BUFFER, steamBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, S);
@@ -893,7 +946,7 @@
     acc += dt * (G.night ? 12 : 1);
     let n = 0; while (acc >= 1 && n < 20) { stepMinute(); acc -= 1; n++; }
     if (n > 0) { showScene(); hud(); redraw(); }
-    tweenShown(); drawScreen(sctx); if (!panel.hidden) drawScreen(pctx);
+    tweenShown(); drawScreen(sctx0); blit(screenCv); if (!panel.hidden) blit(pscreenCv);
     vig.style.opacity = G.night ? "0.58" : "0.22";
     screenWrap.style.setProperty("--glow", G.night ? "0.55" : "0.22");
     px += (tx - px) * 0.06; py += (ty - py) * 0.06; mediaX = -px * 7; mediaY = -py * 4;
