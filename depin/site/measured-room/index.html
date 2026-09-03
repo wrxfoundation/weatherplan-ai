@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="거실·침실·부엌의 공기가 요리·환기·밤에 따라 어떻게 변하고, 각 방의 기기가 그것을 어떻게 기록하는지 보여주는 개념 시뮬레이션.">
+<meta name="description" content="거실·침실·주방의 공기가 요리·환기·밤에 따라 어떻게 변하고, 각 방의 기기가 그것을 어떻게 기록하는지 보여주는 개념 시뮬레이션.">
 <meta name="robots" content="noindex">
 <meta property="og:title" content="Measured Room — Weather Data Token Generator™">
 <meta property="og:description" content="A home, measured. 요리·환기·밤에 따라 달라지는 실내 공기와 그것을 기록하는 기기 — 개념 시뮬레이션.">
@@ -32,6 +32,9 @@
   .hud-title .brand { font-family: var(--display); font-weight: 700; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.82); text-shadow: 0 1px 6px rgba(0,0,0,.5); cursor: pointer; pointer-events: auto; width: max-content; border-radius: 6px; }   /* 누르면 처음 화면으로 */
   .hud-title .brand:hover { color: #fff; } .hud-title .brand:focus-visible { outline: 3px solid rgba(255,255,255,.5); outline-offset: 3px; }
   .hud-title .brand .tm { font-size: 9px; vertical-align: super; letter-spacing: 0; margin-left: 1px; }
+  .hud-title .logo { display: block; width: 118px; margin: 0 0 9px; color: #fff; cursor: pointer; pointer-events: auto; border-radius: 4px; filter: drop-shadow(0 1px 5px rgba(0,0,0,.45)); }   /* wellbian 로고(SVG 트레이스): 좌측 상단 맨 위, 누르면 처음 화면 */
+  .hud-title .logo svg { display: block; width: 100%; height: auto; }
+  .hud-title .logo:hover { opacity: .9; } .hud-title .logo:focus-visible { outline: 3px solid rgba(255,255,255,.5); outline-offset: 4px; }
   .hud-title h1 { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -.01em; margin: 2px 0 0; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.45); }
   .hud-title .flow { font-family: var(--body); font-weight: 700; font-size: 12.5px; color: #fff; margin-top: 5px; letter-spacing: .01em; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
   .hud-title .flow span { color: rgba(255,255,255,.55); margin: 0 3px; font-weight: 500; }
@@ -186,6 +189,7 @@
     .hud-title { position: absolute; left: 22px; top: 18px; max-width: 480px; padding: 0; z-index: 2; pointer-events: none; }
     .hud-title h1 { font-size: 26px; }
     .hud-title .brand { font-size: 12px; }
+    .hud-title .logo { width: 146px; margin-bottom: 11px; }
     .hud-title .flow { font-size: 13px; }
     .hud-title p { font-size: 16px; line-height: 1.5; background: rgba(10,10,32,.46); border-radius: 10px; padding: 9px 12px; backdrop-filter: blur(6px); }   /* 방 설명은 큰 화면에서 16px(서우: 글씨 키우기) */
     .hud-title .en { font-size: 13.5px; margin-top: 4px; }
@@ -205,6 +209,12 @@
     .cap { bottom: 58px; }
     .assets { top: auto; bottom: 58px; right: 18px; }
   }
+  @media (orientation: landscape) and (min-width: 760px) and (max-width: 1399px) and (max-height: 620px) {   /* 낮은 가로 화면: 로고·제목을 한 단 줄여 장면을 덜 가린다 */
+    .hud-title .logo { width: 112px; margin-bottom: 6px; }
+    .hud-title h1 { font-size: 22px; }
+    .hud-title p { font-size: 14px; padding: 7px 10px; }
+    .hud-title .en { font-size: 12px; }
+  }
   @media (max-width: 599px) {
     .hud-title .en { display: none; }
     .screens { grid-template-rows: auto auto; grid-auto-flow: column; grid-auto-columns: 84%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 4px; scrollbar-width: none; }
@@ -219,10 +229,11 @@
 <body>
 <div id="app">
   <header class="hud-title">
+    <div class="logo" id="logo" role="button" tabindex="0" title="처음 화면으로 / Back to start" aria-label="wellbian · 처음 화면으로 / Back to start"><svg viewBox="0 0 1045 385" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M192.8 380.6C190.8 380.2 187.1 376.8 185.7 374.3L184.2 371.8L184.1 337.5C184 313.7 184.1 302.5 184.5 300.7C185.2 297.4 187.9 294.3 191.2 292.7C198.6 289.3 207.4 293.4 209 301.1C209.4 303 209.5 314.3 209.4 337.3L209.2 370.8L208.1 373.4C206.7 376.5 202.8 380.2 200.5 380.7C198.7 381 194.3 381 192.8 380.6ZM67.3 331.3C63.4 329.9 60 326.2 59 322.4C58.2 319.6 58.7 314.9 59.8 313C60.3 312.2 77.7 294.4 98.5 273.5C119.3 252.5 136.4 235.1 136.6 234.8C137.4 233.6 136.9 231.7 134.3 226.8C131.2 221 129.5 216.7 127.8 210C126.9 206.6 126.2 205 125.4 204.4C124.3 203.6 121.5 203.5 89 203.4C54 203.3 53.7 203.2 51.8 202.2C47.3 199.7 45 196 45 191C45 186 47.3 182.3 51.8 179.8C53.7 178.8 54 178.7 89.6 178.5C130.4 178.2 126.8 178.7 128.3 173.6C131.4 162.5 136.6 153 143.8 145C154.4 133.2 165.5 126.7 182.2 122.5C186.1 121.5 188.1 121.3 196.2 121.3C206.1 121.2 208.3 121.5 216.5 123.8C236 129.3 252.5 143.5 261.3 162.4C264.2 168.7 265.7 173.5 267 181.2C267.9 186.7 268.1 188.9 267.8 195.2C267.4 206.8 265.3 214.9 260.2 225.1C253.4 238.6 240.3 251.5 227.3 257.5C221.6 260.1 216.7 261.8 212.5 262.7C195 266.4 179.3 264.1 163 255.7C160.1 254.2 157.2 253 156.3 253C154.9 253 153.4 254.3 143.8 264.2C110.4 298.2 78.8 329.6 76.9 330.6C74.2 331.9 69.9 332.2 67.3 331.3ZM317.5 329.7C313.7 328.4 311.3 326.2 289.1 303.7C263.8 278.1 263 277.1 263 272.2C263 265.2 268.6 259.5 275.5 259.5C281.4 259.5 281.4 259.5 307.5 285.8C324.2 302.8 331.3 310.3 332.1 311.9C333.8 315.3 333.7 320 331.9 323.1C329.1 327.8 325.6 330 321 329.9C319.5 329.9 317.9 329.8 317.5 329.7ZM777.9 248.9C773.2 248.5 767.9 246.7 763.9 244.2C760.6 242.2 759.5 242.3 759.5 244.4C759.5 247.6 759.8 247.5 749 247.5C743.5 247.5 738.9 247.3 738.8 247.1C738.6 246.8 738.5 220.8 738.5 189.2L738.5 131.8L749 131.6L759.5 131.5L759.5 153.2C759.5 165.2 759.6 175 759.7 175C759.7 175 762.2 173.8 765 172.4C771.5 169.1 775.1 168.2 782.2 168.3C791.9 168.3 800 171.6 806.9 178.5C820.9 192.2 822.8 216.7 811.3 233.5C806.8 240.1 799.2 245.6 791.5 248C788.6 248.8 782.1 249.3 777.9 248.9ZM596.5 248.1C582 244.6 570.6 233.7 566.5 219.2C565 214.2 564.8 204.2 566.2 198.8C569.4 185.8 579.7 174.4 592 170.3C602.6 166.8 615.1 167.5 624 172C627.4 173.8 629.5 175.3 632.9 178.6C640.8 186.3 644.4 196 643.9 208.2C643.7 211.5 643.5 214.6 643.3 215.1C642.9 215.9 640.9 216 615.2 216.1C600 216.2 587.4 216.4 587.2 216.6C586.7 217.1 589.2 222.1 590.9 224.1C595.3 229.1 601.2 231.3 609.3 230.9C613.6 230.7 614.8 230.4 617.7 229C619.5 228.2 621.9 226.7 623.1 225.8C624.3 224.9 625.6 224 625.9 223.8C626.4 223.5 628.3 225.1 632.6 229.3C635.8 232.6 638.5 235.5 638.5 235.8C638.5 237.1 630.8 243.1 626.5 245.1C620.5 247.9 617.3 248.5 608.2 248.8C601.7 248.9 599.6 248.8 596.5 248.1ZM897.8 248.2C883.4 245.1 872.6 232.9 869.7 216.6C866.2 196.1 876.5 176.3 894 170.2C905.1 166.4 917.4 168 925.9 174.4C926.7 175 927.7 175.5 927.9 175.3C928.1 175.2 928.4 174 928.4 172.7C928.5 171.4 928.7 170.1 928.9 169.9C929.1 169.7 933.8 169.5 939.3 169.6L949.2 169.8L949.2 208.5L949.2 247.2L939 247.2L928.8 247.2L928.3 244.5C928.1 243 927.8 241.7 927.7 241.6C927.6 241.5 926.7 242.1 925.6 242.9C922.8 245.1 918.1 247.4 914.5 248.2C910.4 249.2 902.4 249.2 897.8 248.2ZM470.1 247.1C469.8 246.9 468.3 243.2 466.7 239C465.2 234.7 462.5 227.5 460.7 222.9C458.9 218.2 457.5 214.3 457.5 214.2C457.5 214.1 456.1 210.2 454.3 205.6C446 183.8 441.4 170.9 441.7 170.3C441.9 169.6 443.5 169.5 451.9 169.5C459.4 169.5 462 169.7 462.4 170.1C462.9 170.7 467.7 184.5 474.3 204.4C477.2 213.3 477.9 214.8 478.5 214.2C478.7 213.9 480.1 210 481.6 205.5C488.5 184.9 493.2 171.7 493.8 170.6C494.5 169.5 494.8 169.5 501.7 169.5C506.8 169.5 509 169.7 509.4 170.1C509.6 170.5 510.9 173.8 512.1 177.5C514.8 185.3 523.6 210.6 524.4 212.6C524.7 213.4 525.2 214 525.4 214C525.7 214 526.9 210.9 528.2 207.1C533.8 189.8 540.1 171.6 540.8 170.6C541.5 169.5 541.7 169.5 551.8 169.5C559.8 169.5 562 169.6 562 170.1C562 170.5 560 176.3 557.5 183C555 189.7 551.6 198.8 550 203.2C548.4 207.7 545 216.8 542.5 223.5C540 230.2 537 238.2 535.9 241.2C534.8 244.3 533.7 246.9 533.4 247.1C532.3 247.8 518.7 247.6 518.1 246.9C517.9 246.5 517.2 244.9 516.5 243.2C514.8 238.8 507.8 219.7 504.9 211.8C503.5 207.9 502.2 204.5 501.9 204.3C501.5 203.8 500.1 206.7 497.7 213.8C496.7 216.5 494.4 222.9 492.5 228C490.6 233.1 488.4 239.3 487.5 241.8C486.6 244.2 485.6 246.5 485.4 246.9C484.8 247.6 471.2 247.8 470.1 247.1ZM658.3 247.2C658.1 247 658 220.9 658 189.2L658 131.5L668.5 131.6L679 131.8L679 189.2C679 220.8 678.9 246.8 678.7 247.1C678.4 247.6 658.8 247.7 658.3 247.2ZM697.7 246.9C697.6 246.5 697.6 220.5 697.6 189L697.8 131.8L708.2 131.8L718.8 131.8L718.9 188.9C719 230.8 718.9 246.3 718.4 246.8C717.7 247.8 698.1 247.8 697.7 246.9ZM833.6 246.9C832.7 246 832.7 170.8 833.7 170.1C834.2 169.7 837.4 169.5 844.3 169.6L854.2 169.8L854.2 208.5L854.2 247.2L844.2 247.4C836.9 247.5 834.1 247.4 833.6 246.9ZM968.2 246.9C968.1 246.5 968 229 968.1 208L968.2 169.8L978.5 169.8L988.8 169.8L988.9 172.2C989 173.6 989.3 174.9 989.5 175.2C989.7 175.4 990.9 174.9 992.1 174.1C995.1 172 997.8 170.8 1001.8 169.4C1004.7 168.5 1006.2 168.3 1011 168.3C1019.7 168.4 1025.3 170.6 1031.6 176.4C1035.5 180 1038 183.9 1039.5 188.6L1040.8 192.2L1040.8 219.8L1040.8 247.2L1030.2 247.2L1019.8 247.2L1019.5 222.5L1019.2 197.8L1017.8 195.1C1015.1 190.3 1010.5 187.8 1004.2 187.8C997.6 187.8 993 190.6 990.4 196.2C989.3 198.7 989.2 199 989 223L988.8 247.2L978.6 247.4C970.8 247.5 968.4 247.4 968.2 246.9ZM204.8 237.8C221.9 234.4 235 222.7 240.2 206C246.6 185.7 237.5 163.2 218.4 152.3C215.8 150.9 210.7 149 206.5 147.9C202 146.8 190.1 147.1 185.4 148.4C174.4 151.5 165.2 158.2 158.9 167.7C155.8 172.5 155.2 173.8 155.7 175.7C156.4 178.4 157.2 178.5 178.9 178.5C191 178.5 199.5 178.7 200.6 179C203.5 179.8 206.5 182.4 208.2 185.7C210.2 189.5 210.3 194.5 208.5 198C207.8 199.5 202.3 205.4 192.7 215C179.8 228 177.9 230 177.9 231.4C177.8 233.9 179.5 235.4 184 236.6C191.1 238.6 198.6 239 204.8 237.8ZM782.6 228.8C788.1 227.1 792 224 794.2 219.5C800.6 207 795.3 192.2 783.3 188.7C779.1 187.5 773.2 187.9 769.5 189.6C761.8 193.3 756.9 203.2 758.5 212C759.6 218.4 762.9 223.8 767.4 226.4C772.5 229.3 777.9 230.2 782.6 228.8ZM914.8 228.8C920.7 227.2 924.9 223.8 927.6 218.1C929.2 214.9 929.2 214.5 929.2 208.5L929.2 202.2L927.3 198.6C925.1 194.5 921.9 191.3 918.1 189.5C916.1 188.4 915 188.3 910.2 188.3C903.7 188.3 901.4 189.1 897.3 193C890 199.9 888.9 212.2 894.7 221.4C898.5 227.4 907.5 230.8 914.8 228.8ZM160 210.8C163.3 209 162.4 204.4 158.7 203.7C154.6 202.9 152.8 209.5 156.7 211C158.2 211.6 158.4 211.6 160 210.8ZM302.8 204.3C300.2 203.4 296.4 199.3 295.6 196.6C293.4 189.2 297.5 181.5 304.7 180C306.5 179.6 317.4 179.5 341 179.6C374.7 179.7 374.8 179.8 376.8 180.9C380.8 183 383.5 187.4 383.5 192.1C383.5 197.5 381.2 201.6 376.9 203.7L374.3 205L339.5 205C311 205 304.4 204.8 302.8 204.3ZM12.9 202.8C9.1 201.4 5.3 197.4 4.5 193.9C3.9 191.1 4.7 186.8 6.2 184.6C10.9 177.4 20.5 176.6 26 182.8C28.2 185.4 29.1 187.6 29.1 191.1C29.1 199.5 20.7 205.6 12.9 202.8ZM623 199C623 197.2 620.7 192.8 618.5 190.6C615.7 187.6 612.7 186.4 607.7 186.1C599 185.6 592 189.1 588.8 195.6C586.4 200.4 585.1 200 605.2 200C622.6 200 623 200 623 199ZM838.7 156.3C832.7 153.5 830.2 146.1 833.2 139.7C836 133.6 844.3 131.2 850.2 134.7C858.3 139.4 857.7 152.4 849.3 156.3C845.9 157.9 842.1 157.9 838.7 156.3ZM114.6 125.5C113.8 125.3 112.5 124.8 111.9 124.4C109.6 122.9 62.2 74.9 61.3 73.1C59.9 70.5 59.9 65.5 61.3 62.5C64.2 56.3 72 53.2 78 55.9C79.7 56.6 85.9 62.6 104.5 81.4C119.3 96.5 129.1 106.8 129.6 107.9C131.5 111.9 130.3 118.3 127.1 121.7C124.2 124.7 118.5 126.5 114.6 125.5ZM270.2 124.3C265.7 122.2 263 117.9 263 112.5C263 109.9 263.3 108.8 264.4 106.9C266.1 104 312.2 57.5 314.5 56.2C316.7 55.1 321.7 54.7 324.5 55.5C327.8 56.4 331.7 60.5 332.8 64.3C333.7 67.5 333.5 70.6 332.2 73.1C331.7 74 320.7 85.6 307.6 98.9C289.4 117.3 283.2 123.3 281.3 124.3C277.9 125.9 273.7 125.9 270.2 124.3ZM193.8 93.6C191.4 92.9 189.4 91.7 187.4 89.7C183.9 86.1 184 87.2 184 49.5C184 11.6 183.9 12.4 187.5 8.4C190.2 5.3 193 4 196.8 4C201.9 4 205.7 6.6 208.1 11.8L209.2 14.2L209.4 48.2C209.5 85.7 209.6 85.7 206.4 89.3C203.3 92.8 197.9 94.7 193.8 93.6Z"/></svg></div>
     <div class="brand" id="brand" role="button" tabindex="0" title="처음 화면으로 / Back to start">Weather Data Token Generator <span class="tm">™</span></div>
     <h1>Measured Room</h1>
     <div class="flow" aria-label="측정에서 보상까지의 흐름" data-i18n-html="flow">측정 <span>→</span> 데이터 생성 <span>→</span> 검증 <span>→</span> 가치화 <span>→</span> 보상</div>
-    <p><span id="lead">저녁의 거실. 창을 닫아 두면 사람 숨이 CO₂를 올리고, 열면 바깥 공기가 그것을 내립니다.</span>
+    <p><span id="lead">거실. 저녁엔 네 식구의 숨이 CO₂를 올리다 정체됩니다. 모두 잠자리에 들면 내려가고, 창을 열면 더 빨리 내려갑니다.</span>
       <span class="en" id="lead-en">A concept simulation. Each room is measured by its own device.</span></p>
   </header>
 
@@ -230,7 +241,7 @@
     <nav class="spaces" role="tablist" aria-label="공간 고르기" id="spaces">
       <button role="tab" aria-selected="true" data-space="living">거실</button>
       <button role="tab" aria-selected="false" data-space="bedroom">침실</button>
-      <button role="tab" aria-selected="false" data-space="kitchen">부엌</button>
+      <button role="tab" aria-selected="false" data-space="kitchen">주방</button>
     </nav>
     <div class="lang" id="lang" role="group" aria-label="Language / 언어">
       <button type="button" data-lang="ko" aria-pressed="true">KR</button><button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -281,6 +292,7 @@
       <span class="pill" id="p-window">창문 닫힘</span>
       <span class="pill" id="p-cook" hidden>조리 안 함</span>
       <span class="pill" id="p-night">저녁</span>
+      <span class="pill" id="p-who">세 사람 · 저녁(한 사람은 주방)</span>
     </div>
     <div class="screens" aria-label="기기 화면 그대로">
       <div class="k3" data-i18n="screens">Device screens · 기기 화면 1 · 2 · 3</div>
@@ -349,6 +361,7 @@
     ko: { tip: "기기 · 탭하면 화면 확대", cap: "concept render · 개념 시뮬레이션 · 입자는 예시", note: "검증된 판독값 하나 = 기록 하나 · 보상은 테스트 중 · 개념 시뮬레이션", hint: "막대를 끌어 값을 바꿔 보세요 · 아래 기기 화면을 누르면 크게",
       screens: "Device screens · 기기 화면 1 · 2 · 3", particles: "입자 · 예시", pnote: "보이지 않는 CO₂·VOCs·먼지를 빛으로 나타낸 예시입니다. 개수는 측정값을 따라 늘고 줄어듭니다.", temp: "온도", rh: "습도", cook: "요리 15분", reset: "처음부터", close: "닫기", timelapse: "타임랩스",
       winOpen: "창문 열림", winClosed: "창문 닫힘", cooking: (n) => `조리 중 ${n}분`, notCooking: "조리 안 함", nightP: "밤", dawn: "새벽", morning: "아침", day: "낮", evening: "저녁",
+      wL3e: "세 사람 · 저녁(한 사람은 주방)", wL4: "네 식구 · 저녁", wL2: "두 사람 · 밤", wL2l: "두 사람 · 점심", wL3: "세 사람 · 아침", wL1: "한 사람 · 낮", wL0: "비어 있음 · 모두 잠듦", wB2: "두 사람 잠듦", wB1: "한 사람 · 일어나는 중", wB1r: "한 사람 · 쉬는 중", wB0: "비어 있음", wK1m: "한 사람 · 아침 준비", wK1l: "한 사람 · 점심", wK1d: "한 사람 · 저녁 준비", wK0: "오가는 정도", wKcook: "한 사람 · 조리대 앞",
       bWinOpen: "창문 열기", bWinClose: "창문 닫기", bNight: "야간 모드", bNightOn: "주간 모드", ventCta: "환기해야 합니다", ventSub: "탭하면 창문 열기", cookSub: "탭하면 팬에 불이 켜집니다", whole: (n) => `· 집 전체 ${n}`,
       flow: "측정 <span>→</span> 데이터 생성 <span>→</span> 검증 <span>→</span> 가치화 <span>→</span> 보상",
       psub: "실측 크기로 놓은 기기의 화면을 그대로 확대한 것입니다. 수치는 이 방의 시뮬레이션 값.", ptip: "보상은 테스트 중 · 개념 시뮬레이션 · concept render", pdevAlt: "wellbian 실내 공기 측정기",
@@ -360,6 +373,7 @@
     en: { tip: "Device · tap to enlarge", cap: "concept render · concept simulation · particles are illustrative", note: "One verified reading = one record · Rewards in testing · Concept simulation", hint: "Drag a bar to change its value · Tap a device screen below to enlarge",
       screens: "Device screens 1 · 2 · 3", particles: "Particles · illustrative", pnote: "Invisible CO₂, VOCs and dust drawn as light. Their number rises and falls with the measured values.", temp: "Temp", rh: "Humidity", cook: "Cook 15 min", reset: "Reset", close: "Close", timelapse: "Timelapse",
       winOpen: "Window open", winClosed: "Window closed", cooking: (n) => `Cooking · ${n} min`, notCooking: "Not cooking", nightP: "Night", dawn: "Dawn", morning: "Morning", day: "Daytime", evening: "Evening",
+      wL3e: "Three · evening (one in the kitchen)", wL4: "Family of four · evening", wL2: "Two · night", wL2l: "Two · lunch", wL3: "Three · morning", wL1: "One · daytime", wL0: "Empty · everyone asleep", wB2: "Two asleep", wB1: "One · getting up", wB1r: "One · resting", wB0: "Empty", wK1m: "One · breakfast", wK1l: "One · lunch", wK1d: "One · dinner prep", wK0: "Passing through", wKcook: "One · at the counter",
       bWinOpen: "Open window", bWinClose: "Close window", bNight: "Night mode", bNightOn: "Day mode", ventCta: "Ventilation needed", ventSub: "Tap to open the window", cookSub: "Tap to start cooking", whole: (n) => `· whole home ${n}`,
       flow: "Measure <span>→</span> Generate data <span>→</span> Verify <span>→</span> Value <span>→</span> Reward",
       psub: "The screen of the device placed at real scale, enlarged as is. Values are this room's simulation.", ptip: "Rewards in testing · concept simulation · concept render", pdevAlt: "wellbian indoor air monitor",
@@ -391,7 +405,7 @@
     "bedroom-morning":      { still: "c6d6d5ec-b793-455d-9977-e9adf1c51b2e.jpg", clip: "hf_20260902_235658_4498923c-58dc-4c60-8973-77803b240424.mp4", light: { kind: "beam", at: [0.89, 0.25], to: [0.30, 0.85], on: 1.0, col: [1, 0.95, 0.85] }, hi: CDN_IMG + "0723a044-a883-445e-aa89-817bc494868c.jpg", tint: "brightness(1.02)" },
     "kitchen-idle":         { still: "86dc96a7-afa3-40b3-8ce9-61c14de6a1bf.jpg", clip: "hf_20260902_235658_09134379-3cf2-4d05-9ae9-d476d46a9bd7.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.30, on: 0.7, col: [1, 0.9, 0.75] }, hi: CDN_IMG + "1280b2b8-dd2d-4953-a9ea-27621f4f8811.jpg", tint: "brightness(.96) sepia(.12)" },
     "kitchen-cook":         { still: "4a7aab4a-e21a-4307-8dc2-5fac2bca5deb.jpg", clip: "hf_20260902_235658_917da3a6-76a3-4b72-85ac-08ce51c47cb0.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.30, on: 0.8, col: [1, 0.9, 0.75] }, hi: CDN_IMG + "c7a226ef-39e2-4ec3-b8e9-6ec90dc60a13.jpg", tint: "brightness(.96) sepia(.12)" },
-    "kitchen-cook-window":  { still: "80454a43-828a-4abd-816d-c687ef5a0128.jpg", clip: null, light: { kind: "lamp", at: [0.44, 0.38], r: 0.30, on: 0.8, col: [1, 0.9, 0.75] }, hi: CDN_IMG + "aa7ef9d5-902b-4a37-8bfb-0e513163344c.jpg", tint: "brightness(.98) sepia(.08)" },   // 조리 중에 창을 연 부엌(사진만, 영상 루프 없음)
+    "kitchen-cook-window":  { still: "80454a43-828a-4abd-816d-c687ef5a0128.jpg", clip: null, light: { kind: "lamp", at: [0.44, 0.38], r: 0.30, on: 0.8, col: [1, 0.9, 0.75] }, hi: CDN_IMG + "aa7ef9d5-902b-4a37-8bfb-0e513163344c.jpg", tint: "brightness(.98) sepia(.08)" },   // 조리 중에 창을 연 주방(사진만, 영상 루프 없음)
     "kitchen-vent":         { still: "a5412bc8-3256-41a8-8b66-fb97c935da36.jpg", clip: "hf_20260902_235658_61831fe4-4d12-4126-a260-e935db6e53c1.mp4", light: { kind: "beam", at: [0.26, 0.43], to: [0.72, 0.92], on: 0.8, col: [0.94, 0.96, 1] }, hi: CDN_IMG + "98846d02-43b4-43a7-afa8-b07ae5e7a75b.jpg", tint: "brightness(1)" },
     "kitchen-night":        { still: "0abbbc92-1c64-477a-b05d-72ac79acfab2.jpg", clip: "hf_20260902_235658_f849d640-3d43-4887-b0b0-f1615aeb7a17.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.26, on: 0.7, col: [1, 0.82, 0.6] }, hi: CDN_IMG + "e9acf282-243f-4520-83cf-89d05cffe0c0.jpg", tint: "brightness(.55) sepia(.3)" },
     "kitchen-night-window": { still: "4e44e4c1-56ae-49a6-8d7a-5c3a55cf0b56.jpg", clip: "hf_20260903_000341_8af427ad-501d-4448-b8be-c567fe45b50b.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.26, on: 0.7, col: [1, 0.82, 0.6] }, hi: CDN_IMG + "ab870bec-c555-4ee8-8a06-fe4dc377dc1f.jpg", tint: "brightness(.55) sepia(.3)" }
@@ -403,38 +417,48 @@
   const SPRITE = { src: ["assets/device.png", CDN_IMG + "ee65a0c4-ee89-4f7c-aac3-7389ee32aab8.png"], w: 1024, h: 938, mm: 143, anchor: [0.42, 0.965],
                    screen: [[0.167, 0.0789], [0.7822, 0.1429], [0.7119, 0.6397], [0.1006, 0.5405]] };
 
+  /* ── 시간대별 사람 수(현장감): 각 방에 누가 몇 명 있는지의 하루 시간표 [시작시, 끝시, 사람 수, 필 문구 키] — 첫 일치 항목이 이긴다. 없으면 비어 있음. ── */
+  const WHO = {
+    living:  [[18, 20, 3, "wL3e"], [20, 22.5, 4, "wL4"], [22.5, 23.5, 2, "wL2"], [23.5, 7, 0, "wL0"], [7, 8.5, 3, "wL3"], [12, 13, 2, "wL2l"], [8.5, 18, 1, "wL1"]],   // 네 식구: 저녁 준비 중엔 한 사람이 주방에
+    bedroom: [[22.5, 7, 2, "wB2"], [7, 7.5, 1, "wB1"], [21, 22.5, 1, "wB1r"], [7.5, 21, 0, "wB0"]],
+    kitchen: [[7, 8, 1, "wK1m"], [12, 13, 1, "wK1l"], [18, 20, 1, "wK1d"]]
+  };
+  const between = (h, a, b) => a <= b ? (h >= a && h < b) : (h >= a || h < b);
+  function whoOf(k, h) { for (const w of WHO[k]) if (between(h, w[0], w[1])) return { n: w[2], key: w[3] }; return { n: 0, key: k === "kitchen" ? "wK0" : k === "bedroom" ? "wB0" : "wL0" }; }
+  const COOK_CO2 = 7 + 15;   // 조리 중 추가 CO₂(ppm/분): 서서 움직이는 사람의 숨 +7, 조리대 위 기기(1m 안)에 잡히는 숨 플룸 +15. 인덕션이라 연소 CO₂는 0
+
   /* ── 공간: 상태별 장면 키, 기기 자리(u,v = 사진 안 비율, 기기 발 중심) 와 그 자리의 실측 척도(cmFrac = 1cm 가 사진 너비의 몇 배인가), 창·팬·후드 ── */
   const SPACES = {
     living: {
       name: "거실", en: "Living room", where: "On the console",
-      lead: "거실. 창을 닫아 두면 사람 숨이 CO₂를 올리고 어느 순간 정체됩니다. 창을 열면 내려갑니다.",
-      en2: "Living room. With the window shut, breath raises CO₂ until it plateaus. Open the window and it comes down.",
+      lead: "거실. 저녁엔 네 식구의 숨이 CO₂를 올리다 정체됩니다. 모두 잠자리에 들면 내려가고, 창을 열면 더 빨리 내려갑니다.",
+      en2: "Living room. In the evening a family of four raises CO₂ until it plateaus. It falls once everyone goes to bed, faster with the window open.",
       states: { day: "living-dusk", dayWindow: "living-window", night: "living-night", nightWindow: "living-night-window" },
       pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : (s.window ? "dayWindow" : "day"),
       device: { u: 0.455, v: 0.598, cmFrac: 0.00156 }, window: [0.78, 0.30], focus: [0.45, 0.5],
-      people: () => 26,     // 네 식구가 있는 40㎥ 거실: 한 사람 숨 ≈ 7.5ppm/분
-      temp: (h, night) => (night || h >= 23 || h < 7) ? 22.2 : 23.0, init: { pm: 12, co2: 620 }
+      people: (h) => whoOf("living", h).n * 8.5,     // 40㎥ 거실: 한 사람 숨(저녁 활동 ≈1.15MET) ≈ 8.5ppm/분 × 시간대별 사람 수(저녁 네 식구 → 밤 0)
+      temp: (h, night) => (night || h >= 23 || h < 7) ? 22.2 : 23.0, init: { pm: 12, co2: 620, coarse: 8 }
     },
     bedroom: {
       name: "침실", en: "Bedroom", where: "On the nightstand",
-      lead: "침실. 닫힌 방의 CO₂와 VOCs는 시간이 갈수록 쌓이다가 정체합니다. 창을 열면 내려갑니다.",
-      en2: "Bedroom. Behind a closed door, CO₂ and VOCs build up over time, then plateau. Open the window and they fall.",
+      lead: "침실. 두 사람이 자는 밤에 CO₂와 VOCs가 쌓이다 정체하고, 아침에 방을 비우면 내려갑니다. 창을 열면 바로 내려갑니다.",
+      en2: "Bedroom. With two people asleep, CO₂ and VOCs build up and plateau; they fall once the room empties in the morning, or right away with the window open.",
       states: { day: "bedroom-evening", dayWindow: "bedroom-evening-window", night: "bedroom-night", nightWindow: "bedroom-night-window" },   // 저녁+창은 아침 사진이 아니라 저녁 조명 그대로의 창 열린 사진
       pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : (s.window ? "dayWindow" : "day"),
       device: { u: 0.205, v: 0.566, cmFrac: 0.00333 }, window: [0.89, 0.25], focus: [0.22, 0.5],
-      people: () => 23,     // 두 사람이 자는 25㎥ 침실
-      temp: (h, night) => (night || h >= 23 || h < 7) ? 21.8 : 22.6, init: { pm: 9, co2: 700 }
+      people: (h) => whoOf("bedroom", h).n * 11.5,   // 25㎥ 침실: 한 사람 ≈ 11.5ppm/분 × 사람 수(밤 두 사람 잠듦 → 낮 0)
+      temp: (h, night) => (night || h >= 23 || h < 7) ? 21.8 : 22.6, init: { pm: 9, co2: 700, coarse: 4 }
     },
     kitchen: {
-      name: "부엌", en: "Kitchen", where: "On the counter",
-      lead: "부엌. 요리가 PM2.5·VOCs를 올리고, 창을 열면 빠져나갑니다. 시간이 가면 CO₂도 쌓입니다.",
-      en2: "Kitchen. Cooking pushes PM2.5 and VOCs up; an open window lets them out. CO₂ builds over time too.",
+      name: "주방", en: "Kitchen", where: "On the counter",
+      lead: "주방. 조리하면 PM2.5·VOCs가 튀고, 조리대 앞 사람의 숨이 CO₂를 올립니다. 창을 열면 빠져나갑니다.",
+      en2: "Kitchen. Cooking sends PM2.5 and VOCs up, and the cook's breath at the counter lifts CO₂. An open window lets it all out.",
       states: { day: "kitchen-idle", dayWindow: "kitchen-vent", cook: "kitchen-cook", cookWindow: "kitchen-cook-window", night: "kitchen-night", nightWindow: "kitchen-night-window" },
       // 밤 조리 사진은 없다: 밤엔 밤 사진 위에 팬 김·연기 효과만. 낮 조리 중 창을 열면 조리+창 사진.
       pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : s.cook > 0 ? (s.window ? "cookWindow" : "cook") : (s.window ? "dayWindow" : "day"),
       device: { u: 0.53, v: 0.625, cmFrac: 0.00333 }, pan: [0.615, 0.60], hood: [0.70, 0.13], window: [0.26, 0.43], focus: [0.66, 0.5],   // 기기는 조리대 앞턱에 걸치지 않게 조금 위(0.658 → 0.625)
-      people: () => 6,      // 부엌엔 한 사람이 오가고, 거실과 트여 있어 거실 CO₂를 따라간다
-      temp: (h, night) => (night || h >= 23 || h < 7) ? 22.4 : 23.4, init: { pm: 14, co2: 560 }
+      people: (h, s) => (s.cook > 0 ? Math.max(whoOf("kitchen", h).n, 1) * 12 + COOK_CO2 : whoOf("kitchen", h).n * 12),   // 25㎥ 주방: 식사 시간에 한 사람 ≈ 12ppm/분. 조리 중엔 조리대 앞 사람의 숨 + 기기에 잡히는 숨 플룸(COOK_CO2). 그 외엔 거실과 트여 있어 거실 CO₂를 따라간다
+      temp: (h, night) => (night || h >= 23 || h < 7) ? 22.4 : 23.4, init: { pm: 14, co2: 560, coarse: 9 }
     }
   };
   const ORDER = ["living", "bedroom", "kitchen"];
@@ -446,7 +470,7 @@
   const USED_SCENES = [...new Set(Object.values(SPACES).flatMap((sp) => Object.values(sp.states)))];
   const G = { t: 18 * 60, night: false, speed: 5 };   // speed = 낮 기준 배속(1초 = speed 분)
   const PM_OUT = 18, CO2_OUT = 420;
-  const LEAK = 0.028;   // 닫힌 방 공기 누설(분당 비율). 실제 아파트(0.5~1%/분)보다 크게 잡아 ×5 배속에서 30초 안에 정체가 보이게 한다
+  const LEAK = 0.024;   // 닫힌 방 공기 누설(분당 비율). 실제 아파트(0.5~1%/분)보다 크게 잡아 ×5 배속에서 30~40초 안에 정체가 보이게 한다
   // 바깥 날씨(서울 9월 초): 기온은 05:30 20.5°C → 14:30 28°C 의 하루 곡선, 습도는 반대(새벽 84% → 오후 52%). 구름·바람 몫으로 느린 흔들림을 얹고, 바깥 미세먼지도 12~24 사이를 천천히 오간다
   const diurnal = (h, hLo, hHi, lo, hi) => { const rise = (hHi - hLo + 24) % 24, d = (h - hLo + 24) % 24; const x = d < rise ? 0.5 - 0.5 * Math.cos(Math.PI * d / rise) : 0.5 + 0.5 * Math.cos(Math.PI * (d - rise) / (24 - rise)); return lo + (hi - lo) * x; };
   function outdoorOf() {
@@ -456,7 +480,7 @@
     const pm = Math.max(4, PM_OUT + 4 * Math.sin(m / 151) + 2 * Math.sin(m / 37 + 2));
     return { pm, pm10: pm * 1.7 + 1, temp, rh };
   }
-  const fresh = (k) => ({ pm: SPACES[k].init.pm, co2: SPACES[k].init.co2, voc: 15, temp: SPACES[k].temp(18, false), rh: 55, window: false, cook: 0, hist: [], records: 0, lastRecord: G.t, ticks: [], alertAt: -1, alertReal: 0 });
+  const fresh = (k) => ({ pm: SPACES[k].init.pm, coarse: SPACES[k].init.coarse, co2: SPACES[k].init.co2, voc: 15, temp: SPACES[k].temp(18, false), rh: 55, window: false, cook: 0, hist: [], records: 0, lastRecord: G.t, ticks: [], alertAt: -1, alertReal: 0 });
   const ST = {}; ORDER.forEach((k) => { ST[k] = fresh(k); });
   const hourNow = () => (G.t % 1440) / 60;
   function stepMinute() {
@@ -467,9 +491,11 @@
       const keep = {}; for (const q in (s.pin || {})) if (s.pin[q] > nowMs) keep[q] = s[q];   // 막대로 정한 값은 잠시 고정
       s._keep = keep;
       const vent = s.window ? 0.14 : 0.018;
+      const n = Math.max(whoOf(k, h).n, cooking ? 1 : 0), asleep = k === "bedroom";
       s.pm += (cooking ? 22 : 0) - vent * (s.pm - pmOut) - 0.012 * s.pm;
-      s.co2 += sp.people() - (s.window ? 0.12 : LEAK) * (s.co2 - CO2_OUT);                      // 닫힌 방: 숨 = 누설이 되는 값에서 정체(거실 ≈1,170 · 침실 ≈1,230 · 부엌 ≈900)
-      s.voc += (cooking ? 45 : 0) + (!s.window ? 3.2 : 0) - (s.window ? 0.14 : LEAK) * (s.voc - 15);   // 가구·마감재 VOCs 는 닫힌 방에서 ≈130 까지 쌓이다 정체
+      s.coarse += (s.window ? 0.12 : 0.012) * (o.pm10 - pmOut - s.coarse) + n * (asleep ? 0.03 : 0.22) + (cooking ? 1.5 : 0) - 0.045 * s.coarse;   // 굵은 먼지(PM10−PM2.5): 사람이 걸어 다니며 되날리고(자는 사람은 거의 없음), 조리 튐이 조금, 미세먼지보다 빨리 가라앉는다(4.5%/분)
+      s.co2 += sp.people(h, s) - (s.window ? 0.12 : LEAK) * (s.co2 - CO2_OUT);                // 닫힌 방: 숨 = 누설이 되는 값에서 정체(저녁 거실 ≈1,150~1,190 · 밤 침실 ≈1,270), 방이 비면 내려간다
+      s.voc += (cooking ? 55 : 0) + (!s.window ? 3.2 : 0) + n * (k === "living" ? 0.8 : 1.6) - (s.window ? 0.14 : LEAK) * (s.voc - 15);   // 가구·마감재 VOCs ≈150 + 사람 몸에서 나오는 VOCs(거실 0.8 · 침실·주방 1.6 ppb/분/명 → 저녁 거실·밤 침실 ≈280) + 조리(기름 튀김 급상승)
       const tBase = sp.temp(h, G.night) + (cooking ? 3 : 0);
       s.temp += s.window ? (tOut - s.temp) * 0.02 : (tBase - s.temp) * 0.03;
       s.rh += (cooking ? 0.8 : 0) + (s.window ? (rhOut - s.rh) * 0.03 : (55 - s.rh) * 0.012);
@@ -477,7 +503,7 @@
     }
     const kx = ST.kitchen.pm - ST.living.pm; if (kx > 0) { ST.living.pm += kx * 0.03; ST.kitchen.pm -= kx * 0.01; }
     const lx = ST.living.pm - ST.bedroom.pm; if (lx > 0) ST.bedroom.pm += lx * 0.006;
-    // 닫힌 집은 한 상자: 잠든 침실의 CO₂가 문틈으로 거실에 새고(1.2%/분), 거실과 부엌은 트여 있어 빨리 섞인다(3%/분). 조리 VOC 도 거실로.
+    // 닫힌 집은 한 상자: 잠든 침실의 CO₂가 문틈으로 거실에 새고(1.2%/분), 거실과 주방은 트여 있어 빨리 섞인다(3%/분). 조리 VOC 도 거실로.
     const bc = ST.bedroom.co2 - ST.living.co2; ST.living.co2 += bc * 0.012; ST.bedroom.co2 -= bc * 0.004;
     const kc = ST.kitchen.co2 - ST.living.co2; ST.living.co2 += kc * 0.03; ST.kitchen.co2 -= kc * 0.03;
     const kv = ST.kitchen.voc - ST.living.voc; if (kv > 0) { ST.living.voc += kv * 0.02; ST.kitchen.voc -= kv * 0.01; }
@@ -485,7 +511,7 @@
     G.t += 1;
     for (const k of ORDER) {
       const s = ST[k];
-      if (s.pm < 3) s.pm = 3; if (s.co2 < CO2_OUT) s.co2 = CO2_OUT; if (s.voc < 8) s.voc = 8; s.voc = Math.min(s.voc, 900); s.rh = clamp(s.rh, 25, 85);
+      if (s.pm < 3) s.pm = 3; if (s.coarse < 1) s.coarse = 1; if (s.co2 < CO2_OUT) s.co2 = CO2_OUT; if (s.voc < 8) s.voc = 8; s.voc = Math.min(s.voc, 900); s.rh = clamp(s.rh, 25, 85);
       s.hist.push({ t: G.t, pm: s.pm, co2: s.co2 }); if (s.hist.length > 720) s.hist.shift();
       if (G.t - s.lastRecord >= 5) { s.lastRecord = G.t; record(k); }
       if ((s.co2 >= 1000 || s.pm > 75) && s.alertAt < 0) { s.alertAt = G.t; s.alertReal = performance.now(); }   // 기기 알림: CO₂ 1000ppm 을 넘거나 PM2.5 가 Very Bad 에 드는 순간
@@ -494,7 +520,7 @@
   }
   // 야간 모드 = 조명만 바뀐다(밤 사진·글로우·비네트). 시계·물리는 그대로 흐른다.
   function toggleNight() { G.night = !G.night; }
-  const pm10Of = (s) => s.pm * 1.6 + 2 + (s.cook > 0 ? 4 : 0);
+  const pm10Of = (s) => s.pm + s.coarse;   // PM10 = 미세(PM2.5) + 굵은 먼지
   const feelsOf = (s) => s.temp + 0.03 * (s.rh - 50);
 
   /* ── 기기 등급: 실제 화면 양식(상태어 + 타일 색) ── */
@@ -538,15 +564,15 @@
     for (const [to, z] of b.zones) { const a = ((prev - b.lo) / (b.hi - b.lo) * 100).toFixed(1), c = ((to - b.lo) / (b.hi - b.lo) * 100).toFixed(1); stops.push(`${ZONE_BG[z]} ${a}% ${c}%`); prev = to; }
     b.fill.parentElement.style.background = `linear-gradient(90deg, ${stops.join(", ")})`; }
   function setBar(k, v, lv) { const b = BARS[k]; b.fill.style.width = (clamp((v - b.lo) / (b.hi - b.lo), 0, 1) * 100).toFixed(1) + "%"; b.fill.dataset.lv = lv; if (lv === "warn" || lv === "alert") b.num.dataset.lv = lv; else delete b.num.dataset.lv; b.fill.parentElement.setAttribute("aria-valuenow", v.toFixed(k === "temp" ? 1 : 0)); }
-  // 막대 = 슬라이더(위지윅): 끌거나 화살표로 값을 정하면 그 방의 물리 상태를 그 값으로 바꾼다 — 입자·기기 화면·알림이 바로 따라온다. PM10 은 PM2.5 로 환산.
+  // 막대 = 슬라이더(위지윅): 끌거나 화살표로 값을 정하면 그 방의 물리 상태를 그 값으로 바꾼다 — 입자·기기 화면·알림이 바로 따라온다. PM10 막대는 굵은 먼지 몫을 바꾼다.
   const APPLY = {
-    pm: (s, v) => { s.pm = v; }, pm10: (s, v) => { s.pm = Math.max(3, (v - 2 - (s.cook > 0 ? 4 : 0)) / 1.6); }, co2: (s, v) => { s.co2 = v; },
+    pm: (s, v) => { s.pm = v; }, pm10: (s, v) => { s.coarse = Math.max(1, v - s.pm); }, co2: (s, v) => { s.co2 = v; },
     voc: (s, v) => { s.voc = v; }, temp: (s, v) => { s.temp = v; }, rh: (s, v) => { s.rh = v; }
   };
   const LABEL = { pm: "PM2.5", pm10: "PM10", co2: "CO₂", voc: "VOCs", temp: "온도", rh: "습도" };
   function applyBar(k, frac) {
     const b = BARS[k], v = b.lo + clamp(frac, 0, 1) * (b.hi - b.lo), s = ST[cur];
-    APPLY[k](s, v); s.pin = s.pin || {}; s.pin[k === "pm10" ? "pm" : k] = performance.now() + 4000;
+    APPLY[k](s, v); s.pin = s.pin || {}; s.pin[k === "pm10" ? "coarse" : k] = performance.now() + 4000;
     if (s.co2 < 950 && s.pm < 70) s.alertAt = -1; if ((s.co2 >= 1000 || s.pm > 75) && s.alertAt < 0) { s.alertAt = G.t; s.alertReal = performance.now(); alertDismissed = false; }
     s.hist.push({ t: G.t, pm: s.pm, co2: s.co2 }); if (s.hist.length > 720) s.hist.shift();
     showScene(); hud(); redraw();
@@ -566,7 +592,7 @@
       else if (e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "PageDown") { applyBar(k, cur_ - step); e.preventDefault(); }
     });
   }
-  const pWin = $("p-window"), pCook = $("p-cook"), pNight = $("p-night");
+  const pWin = $("p-window"), pCook = $("p-cook"), pNight = $("p-night"), pWho = $("p-who");
   function clockText() { const day = Math.floor(G.t / 1440) + 1, m = G.t % 1440; return `Day ${day} · ${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; }
   const DAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], MONS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
   const START = new Date(); START.setHours(0, 0, 0, 0);
@@ -589,9 +615,10 @@
     const h = Math.floor(hourNow());
     pNight.textContent = G.night ? t("nightP") : (h < 6 ? t("dawn") : h < 12 ? t("morning") : h < 18 ? t("day") : t("evening"));
     pNight.classList.toggle("on", G.night);
+    pWho.textContent = t(cur === "kitchen" && s.cook > 0 ? "wKcook" : whoOf(cur, hourNow()).key);   // 이 방에 지금 누가 있나(시간표)
     lbl(bWin, s.window ? t("bWinClose") : t("bWinOpen")); bWin.classList.toggle("on", s.window);
     ventBtn.hidden = !(s.alertAt >= 0 && !s.window);   // 기기 알림이 켜져 있고 창이 닫혀 있는 동안만 "환기해야 합니다"
-    cookBtn.hidden = !(cur === "kitchen" && ST.kitchen.cook <= 0);   // 부엌에서 조리 중이 아닐 때만 프라이팬 위 "요리 15분"
+    cookBtn.hidden = !(cur === "kitchen" && ST.kitchen.cook <= 0);   // 주방에서 조리 중이 아닐 때만 프라이팬 위 "요리 15분"
     bNight.classList.toggle("on", G.night); lbl(bNight, G.night ? t("bNightOn") : t("bNight"));
     for (const sp of SPECIES) { const el = legendEls[sp.key]; if (el) el.style.opacity = (0.3 + 0.7 * sp.frac(s)).toFixed(2); }
   }
@@ -862,7 +889,7 @@
   let ringAt = { x: 0, y: 0 }, ringPx = 0, ringPy = 0;
   function placeRing() {
     const bx = (devBox.x - sw / 2) * 1.035 + sw / 2 + mediaX, by = (devBox.y - sh / 2) * 1.035 + sh / 2 + mediaY, bw = devBox.w * 1.035, bh = devBox.h * 1.035;
-    const side = cur === "kitchen" ? -1 : (bx + bw / 2 > sw * 0.66) ? -1 : 1;   // 부엌은 오른쪽에 프라이팬 버튼이 있어 포인트를 왼쪽으로
+    const side = cur === "kitchen" ? -1 : (bx + bw / 2 > sw * 0.66) ? -1 : 1;   // 주방은 오른쪽에 프라이팬 버튼이 있어 포인트를 왼쪽으로
     const ax = side > 0 ? bx + bw * 0.8 : bx + bw * 0.16, ay = by + bh * 0.1;
     const gap = clamp(bw * 0.5, 30, 64);
     const rx = clamp(ax + side * gap * 1.25, 30, sw - 30), ry = clamp(ay - gap * 0.85, 26, sh - 26);
@@ -963,8 +990,11 @@
   const legendEl = $("legend"), titleEl = document.querySelector(".hud-title");
   function placeLegend() {
     const narrow = matchMedia("(orientation: landscape) and (min-width: 760px) and (max-width: 1399px) and (min-height: 440px)").matches;
-    if (narrow) { const r = titleEl.getBoundingClientRect(); legendEl.style.left = "22px"; legendEl.style.top = (r.bottom + 10).toFixed(0) + "px"; legendEl.style.transform = "none"; }
-    else { legendEl.style.left = ""; legendEl.style.top = ""; legendEl.style.transform = ""; }
+    if (narrow) {   // 좁은 가로 화면: 탭이 가운데라 범례는 제목 아래로. 화면이 낮아 제목 더미가 절반을 넘으면 조작 버튼 바로 위(왼쪽 아래)로
+      const r = titleEl.getBoundingClientRect(), under = r.bottom + 10, low = under + 34 > innerHeight * 0.58;
+      legendEl.style.left = "22px"; legendEl.style.transform = "none";
+      legendEl.style.top = low ? "auto" : under.toFixed(0) + "px"; legendEl.style.bottom = low ? "124px" : "";
+    } else { legendEl.style.left = ""; legendEl.style.top = ""; legendEl.style.bottom = ""; legendEl.style.transform = ""; }
   }
   addEventListener("resize", () => { layout(); });
   if ("ResizeObserver" in window) new ResizeObserver(() => layout()).observe(stage);
@@ -1124,19 +1154,20 @@
       let vy = (Math.cos(t * 0.26 + sd * 7.3) * 4.5 + sp.vy + Math.sin(t * 0.07 + sd * 5.1) * 2.5) * k;
       let x = B[o], y = B[o + 1];
       if (src) { const dx = x - src.x, dy = y - src.y; if (dy < 30 * k) { const f = Math.exp(-(dx * dx) / (2 * sig * sig)) * Math.exp(-Math.max(0, -dy) / (560 * k)); vy -= 70 * k * f; vx += 14 * k * f * Math.sin(t * 1.3 + sd * 20); } }
-      let wx = 0, wy = 0;
+      let wx = 0, wy = 0, cap = 1;
       if (win) {   // 환기: 창으로 빨려 나간다 — 가까울수록 빠르고 조금 휘돌며, 창에 닿으면 사라진다. 바람은 깊이와 거의 무관하게 다 받는다
-        const dx = win.wx - x, dy = win.wy - y, L = Math.hypot(dx, dy) || 1, v = pull * (0.8 + 0.2 * Math.sin(sd * 9 + t)) * (1 + 320 * k / (L + 60 * k)), sw2 = 0.22 * Math.sin(sd * 6.3);
+        const dx = win.wx - x, dy = win.wy - y, L = Math.hypot(dx, dy) || 1, v = pull * (0.8 + 0.2 * Math.sin(sd * 9 + t)) * (1 + 420 * k / (L + 60 * k)), sw2 = 0.22 * Math.sin(sd * 6.3);
         wx = dx / L * v - dy / L * v * sw2; wy = dy / L * v + dx / L * v * sw2;
         if (L < 46 * k) { if (excess > 0) { M[i] = 0; B[o + 4] = 0; excess--; } else spawnP(sp, i, null); continue; }   // 초과가 없으면 방 안 다른 곳에서 다시 떠오른다(개수 = 숫자)
-        if (L < 170 * k && excess > 0) M[i] = 2; else if (M[i] === 2 && excess <= 0) M[i] = 1;
+        cap = clamp((L - 40 * k) / (240 * k), 0, 1);   // 창에 가까울수록 옅어진다: 그대로 빠져나가는 게 아니라 빨려 들어가며 사라지는 것처럼(창 280px 안에서 페이드아웃)
+        if (M[i] === 2 && excess <= 0) M[i] = 1;
       } else if (kill > 0 && M[i] === 1) { M[i] = 2; kill--; }
       const wm = 0.75 + 0.25 * (1 - z);
       x += (vx * m + wx * wm) * drift; y += (vy * m + wy * wm) * drift;
       if (x < -24) x = sw + 22; else if (x > sw + 24) x = -22;
       if (y < -24) y = sh + 22; else if (y > sh + 24) y = -22;
       B[o] = x; B[o + 1] = y;
-      if (M[i] === 1) B[o + 4] = Math.min(1, B[o + 4] + dt * 0.9);
+      if (M[i] === 1) B[o + 4] = Math.min(cap, B[o + 4] + dt * 0.9);
       else { B[o + 4] -= dt * (win ? 1.6 : 0.5); if (B[o + 4] <= 0) { B[o + 4] = 0; M[i] = 0; } }
     }
     sp.alive = alive;
@@ -1200,7 +1231,7 @@
     const nk = 1;
     const pGlow = G.night ? 0.95 : 0.55;   // 빛 패스 세기: 밤에 강하게(가산이라 밝은 벽에선 저절로 묻힌다)(밝은 장면은 어두운 테두리가 이미 점을 또렷하게 한다), 채움 부담도 줄인다
     for (const sp of SPECIES) { if (!sp.alive) continue; drawPoints(progDust, sp.buf, sp.B, sp.n, { t, size: sp.size * sizeK, amb: sp.amb, tw: sp.tw, col: [sp.col[0] * nk, sp.col[1] * nk, sp.col[2] * nk], op: clamp(0.85 + 0.15 * sp.frac(s), 0, 1), glow: pGlow }); }
-    // 김 — 부엌 조리 중에만
+    // 김 — 주방 조리 중에만
     if (cur === "kitchen") {
       gl.useProgram(progSteam.p); gl.bindBuffer(gl.ARRAY_BUFFER, steamBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, S);
       gl.enableVertexAttribArray(progSteam.a.aPos); gl.vertexAttribPointer(progSteam.a.aPos, 2, gl.FLOAT, false, 20, 0);
@@ -1289,6 +1320,8 @@
   }
   $("brand").addEventListener("click", goHome);
   $("brand").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goHome(); } });
+  $("logo").addEventListener("click", goHome);
+  $("logo").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goHome(); } });
 
   /* ── 루프(타임랩스): 기본 1초 = 5분(배속 버튼 ×1·5·10·20), 조리·창 열림 중엔 0.3배(연기·환기가 보이게). 야간 모드는 조명만 바꾼다 — 시계·물리는 그대로 흐른다. ── */
   const SPEEDS = [1, 5, 10, 20];
@@ -1318,7 +1351,7 @@
   if (q.get("window") === "1") ST[startSpace].window = true;
   if (q.get("night") === "1") G.night = true;
   if (q.get("speed")) setSpeed(+q.get("speed"));
-  window.__mr = { species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * Math.pow(clamp(sp.frac(ST[cur]), 0, 1), 1.3)) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur], outdoor: outdoorOf };   // 검증용(읽기 전용)
+  window.__mr = { all: () => ST, bufs: () => SPECIES.map((sp) => ({ key: sp.key, B: Array.from(sp.B), M: Array.from(sp.M) })), win: () => windVec(1), step: (n) => { for (let i = 0; i < (n || 1); i++) stepMinute(); hud(); redraw(); }, who: whoOf, species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * Math.pow(clamp(sp.frac(ST[cur]), 0, 1), 1.3)) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur], outdoor: outdoorOf };   // 검증용(읽기 전용)
   setSpace(startSpace); applyLang(); noteAssets(); redraw();
   if (q.get("panel") === "1") openPanel();
   setTimeout(preloadRest, 3500);
