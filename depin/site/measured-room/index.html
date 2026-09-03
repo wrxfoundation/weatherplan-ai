@@ -34,8 +34,8 @@
   .hud-title h1 { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -.01em; margin: 2px 0 0; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.45); }
   .hud-title .flow { font-family: var(--body); font-weight: 700; font-size: 12.5px; color: #fff; margin-top: 5px; letter-spacing: .01em; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
   .hud-title .flow span { color: rgba(255,255,255,.55); margin: 0 3px; font-weight: 500; }
-  .hud-title p { margin: 4px 0 0; font-size: 12.5px; line-height: 1.5; color: rgba(255,255,255,.86); text-wrap: balance; }
-  .hud-title .en { display: block; font-size: 11px; color: rgba(255,255,255,.6); margin-top: 2px; }
+  .hud-title p { margin: 4px 0 0; font-size: 14px; line-height: 1.5; font-weight: 600; color: rgba(255,255,255,.9); text-wrap: balance; }
+  .hud-title .en { display: block; font-size: 12px; font-weight: 500; color: rgba(255,255,255,.66); margin-top: 3px; }
 
   .topnav { display: flex; align-items: center; gap: 10px; margin: 6px 16px 8px; flex-wrap: wrap; }
   .spaces { display: flex; gap: 4px; margin: 0; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.14); width: max-content; max-width: calc(100% - 32px); }
@@ -181,11 +181,12 @@
     body { overflow: hidden; }
     #app { display: block; height: 100dvh; min-height: 0; padding: 0; }
     #stage { position: absolute; inset: 0; height: auto; }
-    .hud-title { position: absolute; left: 22px; top: 18px; max-width: 460px; padding: 0; z-index: 2; pointer-events: none; }
+    .hud-title { position: absolute; left: 22px; top: 18px; max-width: 480px; padding: 0; z-index: 2; pointer-events: none; }
     .hud-title h1 { font-size: 26px; }
     .hud-title .brand { font-size: 12px; }
     .hud-title .flow { font-size: 13px; }
-    .hud-title p { font-size: 13px; line-height: 1.55; background: rgba(10,10,32,.42); border-radius: 8px; padding: 6px 9px; backdrop-filter: blur(6px); }
+    .hud-title p { font-size: 16px; line-height: 1.5; background: rgba(10,10,32,.46); border-radius: 10px; padding: 9px 12px; backdrop-filter: blur(6px); }   /* 방 설명은 큰 화면에서 16px(서우: 글씨 키우기) */
+    .hud-title .en { font-size: 13.5px; margin-top: 4px; }
     .topnav { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); margin: 0; z-index: 2; flex-wrap: nowrap; }
     .spaces, .lang { background: rgba(10,10,32,.5); backdrop-filter: blur(6px); }
     .legend { position: absolute; left: 50%; top: 78px; transform: translateX(-50%); margin: 0; z-index: 2; }   /* 방 탭 아래 16px 띄운다 */
@@ -952,6 +953,14 @@
     placeDevice(); fitMini(miniIndex); fitMini(miniTiles); fitMini(miniIO); if (!floatEl.hidden) fitMini(floatCv); redraw();
     if (gl) { const d = dpr(); canvas.width = Math.round(sw * d); canvas.height = Math.round(sh * d); gl.viewport(0, 0, canvas.width, canvas.height); resetParticles(); }
     if (!panel.hidden) placePanelScreen();
+    placeLegend();
+  }
+  // 좁은 가로 화면(760~1399px)에선 가운데 범례가 제목 블록과 겹치거나 붙는다 → 제목 블록 아래 왼쪽에 둔다
+  const legendEl = $("legend"), titleEl = document.querySelector(".hud-title");
+  function placeLegend() {
+    const narrow = matchMedia("(orientation: landscape) and (min-width: 760px) and (max-width: 1399px) and (min-height: 440px)").matches;
+    if (narrow) { const r = titleEl.getBoundingClientRect(); legendEl.style.left = "22px"; legendEl.style.top = (r.bottom + 10).toFixed(0) + "px"; legendEl.style.transform = "none"; }
+    else { legendEl.style.left = ""; legendEl.style.top = ""; legendEl.style.transform = ""; }
   }
   addEventListener("resize", () => { layout(); });
   if ("ResizeObserver" in window) new ResizeObserver(() => layout()).observe(stage);
@@ -1235,7 +1244,7 @@
     if (!panel.hidden) $("pspec-title").textContent = `${sp.where} · ${roomName(sp)}`;
     if (!floatEl.hidden && floatIdx >= 0) fcap.textContent = `${t("fnames")[floatIdx]} ${t("fhint")}`;
     if (typeof bSpeed !== "undefined") lbl(bSpeed, `${t("timelapse")} ×${G.speed}`);
-    noteAssets(); hud(); counts();
+    noteAssets(); hud(); counts(); placeLegend();   // 언어가 바뀌면 제목 높이도 바뀐다
   }
   const langBtns = Array.from(document.querySelectorAll("#lang button"));
   langBtns.forEach((b) => b.addEventListener("click", () => { if (LANG === b.dataset.lang) return; LANG = b.dataset.lang; try { localStorage.setItem("mr-lang", LANG); } catch (e) {} applyLang(); }));
