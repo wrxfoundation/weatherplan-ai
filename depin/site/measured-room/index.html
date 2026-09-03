@@ -41,6 +41,7 @@
   .spaces button { font-family: var(--body); font-weight: 700; font-size: 13px; color: rgba(255,255,255,.8); background: transparent; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; min-height: 34px; }
   .spaces button[aria-selected="true"] { background: #fff; color: var(--navy); }
   .spaces button:focus-visible { outline: 3px solid rgba(255,255,255,.5); outline-offset: 2px; }
+  .spaces .lang { font-family: var(--display); font-size: 11.5px; letter-spacing: .06em; color: rgba(255,255,255,.85); border-left: 1px solid rgba(255,255,255,.22); border-radius: 0 999px 999px 0; margin-left: 2px; padding: 7px 12px 7px 13px; }
 
   /* 장면: 정지 사진 위에 같은 구도의 5초 영상 루프. 기기는 실측 비율의 제품 컷아웃을 사진 속 자리에 놓고, 화면은 그 위에 원근으로 얹는다. */
   #stage { position: relative; height: clamp(280px, 50dvh, 540px); overflow: hidden; background: #0e0e22; isolation: isolate; }
@@ -78,11 +79,12 @@
   .assets { position: absolute; right: 10px; top: 8px; font-size: 10.5px; color: rgba(255,255,255,.75); background: rgba(0,0,0,.35); border-radius: 8px; padding: 3px 8px; pointer-events: none; }
   .assets:empty { display: none; }
 
-  .readout { margin: 10px 16px 0; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+  .readout { margin: 10px 16px 0; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px 9px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
   .readout .k { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--cap); font-weight: 700; font-family: var(--display); }
   /* 여섯 측정 요소를 같은 크기의 막대로. 트랙에는 등급 구간(좋음·보통·주의·경고)이 옅게 깔리고, 막대와 숫자 색은 지금 등급을 따른다 */
-  .bars { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
-  .bar { display: grid; grid-template-columns: 50px 1fr 46px; align-items: center; gap: 8px; }
+  .bars { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+  .bar { display: grid; grid-template-columns: 46px 1fr 42px; align-items: center; gap: 6px; }
+  .hint { margin-top: 5px; font-size: 10px; color: var(--cap); font-family: var(--body); }
   .bar .bl { font-family: var(--display), var(--body); font-size: 11px; font-weight: 700; color: var(--ink-2); line-height: 1.05; white-space: nowrap; }
   .bar .bl small { display: block; font-size: 9.5px; font-weight: 500; color: var(--cap); }
   .bar .bt { position: relative; height: 12px; border-radius: 6px; background: #ecebf5; cursor: ew-resize; touch-action: none; }
@@ -94,16 +96,16 @@
   [data-lv="good"] { --lvc: #1878F2; } [data-lv="ok"] { --lvc: #37B76A; } [data-lv="warn"] { --lvc: #E0741E; } [data-lv="alert"] { --lvc: #D93A2B; }
   .bar i[data-lv] { background: var(--lvc); }
   .bar b[data-lv="warn"], .bar b[data-lv="alert"] { color: var(--lvc); }
-  #mini { width: 100%; height: 64px; margin-top: 8px; border-radius: 8px; background: #f6f6fc; display: block; }
-  .status { margin-top: 8px; font-size: 11.5px; color: var(--ink-2); display: flex; gap: 6px; flex-wrap: wrap; }
+  #mini { width: 100%; height: 40px; margin-top: 6px; border-radius: 8px; background: #f6f6fc; display: block; }
+  .status { margin-top: 6px; font-size: 11px; color: var(--ink-2); display: flex; gap: 5px; flex-wrap: wrap; }
   .pill { border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; background: #fff; }
   .pill.on { border-color: var(--violet); color: var(--violet); }
-  .legend { margin-top: 8px; display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--ink-2); align-items: center; }
+  .legend { margin-top: 5px; display: flex; gap: 8px; flex-wrap: wrap; font-size: 10.5px; color: var(--ink-2); align-items: center; }
   .legend .k2 { color: var(--cap); }
   .legend span[data-sp] { display: inline-flex; align-items: center; gap: 5px; }
   .legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; box-shadow: 0 0 6px currentColor; opacity: .3; transition: opacity .6s ease; }
   /* 기기 화면 그대로: 카드 너비에 맞춘 4:3 화면 두 장 — 2번째(Indoor Index · 시계 · 보상 · 네트워크), 3번째(여섯 타일). 실시간으로 같은 값을 그린다 */
-  .screens { display: grid; gap: 8px; margin-top: 10px; }
+  .screens { display: grid; gap: 6px; margin-top: 7px; }
   .screens .k3 { font-size: 10px; color: var(--cap); font-family: var(--display); letter-spacing: .06em; text-transform: uppercase; font-weight: 700; }
   .screens .sc { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: #f4f4f7; border: 1px solid var(--line); box-shadow: inset 0 0 0 1px rgba(255,255,255,.6); cursor: zoom-in; }
   .screens .sc:hover { border-color: var(--violet); }
@@ -166,7 +168,8 @@
     .hud-title .flow { font-size: 13px; }
     .hud-title p { font-size: 13px; line-height: 1.55; background: rgba(10,10,32,.42); border-radius: 8px; padding: 6px 9px; backdrop-filter: blur(6px); }
     .spaces { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); margin: 0; z-index: 2; background: rgba(10,10,32,.5); backdrop-filter: blur(6px); }
-    .readout { position: absolute; right: 18px; top: 18px; width: 250px; margin: 0; z-index: 2; max-height: calc(100dvh - 36px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+    /* 카드는 스크롤하지 않는다: 폭을 화면 높이에서 역산해(제목·막대·곡선·상태·범례·여백 ≈ 380px + 화면 3장 = 2.25×폭) 세 화면까지 한 번에 보이게. 768px 높이에선 176px 까지 좁아진다 */
+    .readout { position: absolute; right: 18px; top: 18px; width: clamp(176px, calc((100dvh - 380px) / 2.25), 250px); margin: 0; z-index: 2; overflow: visible; }
     .controls { position: absolute; left: 22px; bottom: 74px; margin: 0; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 44px); z-index: 2; }
     .btn { background: rgba(10,10,32,.5); backdrop-filter: blur(6px); border-color: rgba(255,255,255,.35); min-height: 38px; padding: 9px 15px; }
     .btn:hover { background: #fff; color: var(--navy); }
@@ -186,7 +189,7 @@
   <header class="hud-title">
     <div class="brand">Weather Data Token Generator <span class="tm">™</span></div>
     <h1>Measured Room</h1>
-    <div class="flow" aria-label="측정에서 보상까지의 흐름">측정 <span>→</span> 데이터 생성 <span>→</span> 검증 <span>→</span> 가치화 <span>→</span> 보상</div>
+    <div class="flow" aria-label="측정에서 보상까지의 흐름" data-i18n-html="flow">측정 <span>→</span> 데이터 생성 <span>→</span> 검증 <span>→</span> 가치화 <span>→</span> 보상</div>
     <p><span id="lead">저녁의 거실. 창을 닫아 두면 사람 숨이 CO₂를 올리고, 열면 바깥 공기가 그것을 내립니다.</span>
       <span class="en" id="lead-en">A concept simulation. Each room is measured by its own device.</span></p>
   </header>
@@ -195,6 +198,7 @@
     <button role="tab" aria-selected="true" data-space="living">거실</button>
     <button role="tab" aria-selected="false" data-space="bedroom">침실</button>
     <button role="tab" aria-selected="false" data-space="kitchen">부엌</button>
+    <button class="lang" id="b-lang" type="button" role="none" aria-label="Switch language / 언어 바꾸기">EN</button>
   </nav>
 
   <section id="stage" aria-label="고른 공간의 장면과 공기 시뮬레이션">
@@ -207,11 +211,19 @@
     <div class="leader" id="leader" aria-hidden="true"></div>
     <button class="hit" id="hit" type="button" aria-label="기기 화면 크게 보기"></button>
     <button class="ring" id="ring" type="button" aria-label="기기 화면 크게 보기"></button>
-    <div class="ring-tip" id="ring-tip">기기 · 탭하면 화면 확대</div>
+    <div class="ring-tip" id="ring-tip" data-i18n="tip">기기 · 탭하면 화면 확대</div>
     <div class="assets" id="assets"></div>
-    <div class="cap">concept render · 개념 시뮬레이션</div>
+    <div class="cap" data-i18n="cap">concept render · 개념 시뮬레이션</div>
   </section>
 
+  <div class="controls" role="group" aria-label="이 공간에서 일어나는 일">
+    <button class="btn primary" id="b-cook" hidden data-i18n="cook">요리 15분</button>
+    <button class="btn" id="b-window">창문 열기</button>
+    <button class="btn" id="b-night">밤 지나기</button>
+    <button class="btn" id="b-reset" data-i18n="reset">처음부터</button>
+    <button class="btn" id="b-speed" title="타임랩스 배속 바꾸기 (×1 → ×5 → ×10 → ×20)">타임랩스 ×5</button>
+    <span class="clock" id="clock">Day 1 · 18:00</span>
+  </div>
   <aside class="readout" aria-live="polite">
     <div class="k" id="rk">On the console · 거실</div>
     <div class="bars" id="bars" aria-label="여섯 측정 요소의 값과 등급 — 막대를 끌면 값을 직접 바꿀 수 있다">
@@ -219,9 +231,10 @@
       <div class="bar"><span class="bl">PM10<small>µg/m³</small></span><span class="bt" data-bar="pm10"><i id="pm10b"></i></span><b id="pm10v">21</b></div>
       <div class="bar"><span class="bl">CO₂<small>ppm</small></span><span class="bt" data-bar="co2"><i id="co2b"></i></span><b id="co2v">620</b></div>
       <div class="bar"><span class="bl">VOCs<small>ppb</small></span><span class="bt" data-bar="voc"><i id="vocb"></i></span><b id="vocv">15</b></div>
-      <div class="bar"><span class="bl">온도<small>°C</small></span><span class="bt" data-bar="temp"><i id="tb"></i></span><b id="tv">23.0</b></div>
-      <div class="bar"><span class="bl">습도<small>%</small></span><span class="bt" data-bar="rh"><i id="rhb"></i></span><b id="rhv">55</b></div>
+      <div class="bar"><span class="bl"><span data-i18n="temp">온도</span><small>°C</small></span><span class="bt" data-bar="temp"><i id="tb"></i></span><b id="tv">23.0</b></div>
+      <div class="bar"><span class="bl"><span data-i18n="rh">습도</span><small>%</small></span><span class="bt" data-bar="rh"><i id="rhb"></i></span><b id="rhv">55</b></div>
     </div>
+    <div class="hint" data-i18n="hint">막대를 끌어 값을 바꿔 보세요 · 아래 기기 화면을 누르면 크게</div>
     <canvas id="mini" width="400" height="128" aria-label="최근 두 시간의 PM2.5와 CO₂ 곡선"></canvas>
     <div class="status">
       <span class="pill" id="p-window">창문 닫힘</span>
@@ -229,42 +242,34 @@
       <span class="pill" id="p-night">저녁</span>
     </div>
     <div class="legend" id="legend" aria-label="장면 속 입자의 색과 종류">
-      <span class="k2">입자</span>
+      <span class="k2" data-i18n="particles">입자</span>
       <span data-sp="co2"><i></i>CO₂</span><span data-sp="pm25"><i></i>PM2.5</span><span data-sp="pm10"><i></i>PM10</span><span data-sp="voc"><i></i>VOCs</span>
     </div>
     <div class="screens" aria-label="기기 화면 그대로">
-      <div class="k3">Device screens · 기기 화면 1 · 2 · 3</div>
+      <div class="k3" data-i18n="screens">Device screens · 기기 화면 1 · 2 · 3</div>
       <div class="sc" data-screen="0" role="button" tabindex="0" aria-label="기기 화면 1 크게 보기"><canvas id="mini-tiles" aria-label="기기 화면 1: 여섯 타일"></canvas></div>
       <div class="sc" data-screen="1" role="button" tabindex="0" aria-label="기기 화면 2 크게 보기"><canvas id="mini-index" aria-label="기기 화면 2: Indoor Index, 시계, 보상, 네트워크"></canvas></div>
       <div class="sc" data-screen="2" role="button" tabindex="0" aria-label="기기 화면 3 크게 보기"><canvas id="mini-io" aria-label="기기 화면 3: 실내와 실외 비교, 환기 장치"></canvas></div>
     </div>
   </aside>
 
-  <div class="controls" role="group" aria-label="이 공간에서 일어나는 일">
-    <button class="btn primary" id="b-cook" hidden>요리 15분</button>
-    <button class="btn" id="b-window">창문 열기</button>
-    <button class="btn" id="b-night">밤 지나기</button>
-    <button class="btn" id="b-reset">처음부터</button>
-    <button class="btn" id="b-speed" title="타임랩스 배속 바꾸기 (×1 → ×5 → ×10 → ×20)">타임랩스 ×5</button>
-    <span class="clock" id="clock">Day 1 · 18:00</span>
-  </div>
 
   <footer class="ledger">
     <span class="k">Records <span class="n" id="rec-n">0</span> <span class="n2" id="rec-all">· 집 전체 0</span></span>
     <div class="ticks" id="ticks" aria-label="5분마다 하나씩 쌓이는 기록"></div>
-    <span class="note">검증된 판독값 하나 = 기록 하나 · 보상은 테스트 중 · 개념 시뮬레이션</span>
+    <span class="note" data-i18n="note">검증된 판독값 하나 = 기록 하나 · 보상은 테스트 중 · 개념 시뮬레이션</span>
   </footer>
 </div>
 
 <div id="float" hidden role="dialog" aria-modal="true" aria-label="기기 화면 크게 보기">
   <div class="fbox">
-    <button class="btn fclose" id="f-close" type="button">닫기</button>
+    <button class="btn fclose" id="f-close" type="button" data-i18n="close">닫기</button>
     <div class="fsc" id="fsc"><canvas id="float-cv"></canvas></div>
     <div class="fcap" id="fcap">기기 화면 1 · 여섯 타일 — 바깥을 탭하면 닫힘 · ← → 다음 화면</div>
   </div>
 </div>
 <div id="panel" hidden role="dialog" aria-modal="true" aria-label="기기 화면 확대">
-  <button class="btn pclose" id="p-close" type="button">닫기</button>
+  <button class="btn pclose" id="p-close" type="button" data-i18n="close">닫기</button>
   <div class="panel-in">
     <div class="pdev" id="pdev" title="탭하면 알림을 닫습니다">
       <img id="pdev-img" alt="wellbian 실내 공기 측정기">
@@ -272,21 +277,21 @@
     </div>
     <div class="pspec">
       <h2 id="pspec-title">On the console · 거실</h2>
-      <div class="sub">실측 크기로 놓은 기기의 화면을 그대로 확대한 것입니다. 수치는 이 방의 시뮬레이션 값.</div>
+      <div class="sub" data-i18n="psub">실측 크기로 놓은 기기의 화면을 그대로 확대한 것입니다. 수치는 이 방의 시뮬레이션 값.</div>
       <dl>
-        <dt>측정 항목</dt><dd>PM2.5 · PM10 · CO₂ · TVOC · 온도 · 습도 · 체감온도</dd>
-        <dt>모델명</dt><dd>ARC-600DA</dd>
-        <dt>디스플레이</dt><dd>5인치 풀터치 컬러 LCD</dd>
-        <dt>전원</dt><dd>12VDC · 300mA (월 전기료 1,000원 미만)</dd>
-        <dt>통신</dt><dd>Wi-Fi · 블루투스 (802.11a/b/g/n)</dd>
-        <dt>성능인증</dt><dd>CO₂ 1등급 · PM2.5 1등급</dd>
-        <dt>측정 범위 / 분해능</dt><dd>0~1,000㎍/m³ (PM2.5) / 1㎍/m³</dd>
-        <dt>측정 원리</dt><dd>Light scattering laser photometer · 유량 0.1L/min · 팬 수명 32,000시간</dd>
-        <dt>운영 온도</dt><dd>−10 ~ 60°C</dd>
-        <dt>제원 / 중량</dt><dd>120(W) × 118(H) × 36(D) mm / 260g 이하 · ABS</dd>
-        <dt>설치 / 인증</dt><dd>벽걸이 · 탁상 겸용 / KC · 성능인증</dd>
+        <dt data-i18n="dt0">측정 항목</dt><dd data-i18n="dd0">PM2.5 · PM10 · CO₂ · TVOC · 온도 · 습도 · 체감온도</dd>
+        <dt data-i18n="dt1">모델명</dt><dd data-i18n="dd1">ARC-600DA</dd>
+        <dt data-i18n="dt2">디스플레이</dt><dd data-i18n="dd2">5인치 풀터치 컬러 LCD</dd>
+        <dt data-i18n="dt3">전원</dt><dd data-i18n="dd3">12VDC · 300mA (월 전기료 1,000원 미만)</dd>
+        <dt data-i18n="dt4">통신</dt><dd data-i18n="dd4">Wi-Fi · 블루투스 (802.11a/b/g/n)</dd>
+        <dt data-i18n="dt5">성능인증</dt><dd data-i18n="dd5">CO₂ 1등급 · PM2.5 1등급</dd>
+        <dt data-i18n="dt6">측정 범위 / 분해능</dt><dd data-i18n="dd6">0~1,000㎍/m³ (PM2.5) / 1㎍/m³</dd>
+        <dt data-i18n="dt7">측정 원리</dt><dd data-i18n="dd7">Light scattering laser photometer · 유량 0.1L/min · 팬 수명 32,000시간</dd>
+        <dt data-i18n="dt8">운영 온도</dt><dd data-i18n="dd8">−10 ~ 60°C</dd>
+        <dt data-i18n="dt9">제원 / 중량</dt><dd data-i18n="dd9">120(W) × 118(H) × 36(D) mm / 260g 이하 · ABS</dd>
+        <dt data-i18n="dt10">설치 / 인증</dt><dd data-i18n="dd10">벽걸이 · 탁상 겸용 / KC · 성능인증</dd>
       </dl>
-      <div class="tip">보상은 테스트 중 · 개념 시뮬레이션 · concept render</div>
+      <div class="tip" data-i18n="ptip">보상은 테스트 중 · 개념 시뮬레이션 · concept render</div>
     </div>
   </div>
 </div>
@@ -299,6 +304,35 @@
   const small = () => innerWidth < 760 || innerHeight < 480;
   const saveData = !!(navigator.connection && navigator.connection.saveData);
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  /* ── 두 언어: 한국어(기본) · English. 정적 문구는 data-i18n, 움직이는 문구는 t(). 선택은 저장되고 주소 해시 lang= 으로도 정한다. ── */
+  const T = {
+    ko: { tip: "기기 · 탭하면 화면 확대", cap: "concept render · 개념 시뮬레이션", note: "검증된 판독값 하나 = 기록 하나 · 보상은 테스트 중 · 개념 시뮬레이션", hint: "막대를 끌어 값을 바꿔 보세요 · 아래 기기 화면을 누르면 크게",
+      screens: "Device screens · 기기 화면 1 · 2 · 3", particles: "입자", temp: "온도", rh: "습도", cook: "요리 15분", reset: "처음부터", close: "닫기", timelapse: "타임랩스",
+      winOpen: "창문 열림", winClosed: "창문 닫힘", cooking: (n) => `조리 중 ${n}분`, notCooking: "조리 안 함", nightP: "밤", dawn: "새벽", morning: "아침", day: "낮", evening: "저녁",
+      bWinOpen: "창문 열기", bWinClose: "창문 닫기", bNight: "밤 지나기", bNightOn: "밤이 지나는 중", whole: (n) => `· 집 전체 ${n}`,
+      flow: "측정 <span>→</span> 데이터 생성 <span>→</span> 검증 <span>→</span> 가치화 <span>→</span> 보상",
+      psub: "실측 크기로 놓은 기기의 화면을 그대로 확대한 것입니다. 수치는 이 방의 시뮬레이션 값.", ptip: "보상은 테스트 중 · 개념 시뮬레이션 · concept render", pdevAlt: "wellbian 실내 공기 측정기",
+      dt0: "측정 항목", dd0: "PM2.5 · PM10 · CO₂ · TVOC · 온도 · 습도 · 체감온도", dt1: "모델명", dd1: "ARC-600DA", dt2: "디스플레이", dd2: "5인치 풀터치 컬러 LCD", dt3: "전원", dd3: "12VDC · 300mA (월 전기료 1,000원 미만)",
+      dt4: "통신", dd4: "Wi-Fi · 블루투스 (802.11a/b/g/n)", dt5: "성능인증", dd5: "CO₂ 1등급 · PM2.5 1등급", dt6: "측정 범위 / 분해능", dd6: "0~1,000㎍/m³ (PM2.5) / 1㎍/m³",
+      dt7: "측정 원리", dd7: "Light scattering laser photometer · 유량 0.1L/min · 팬 수명 32,000시간", dt8: "운영 온도", dd8: "−10 ~ 60°C", dt9: "제원 / 중량", dd9: "120(W) × 118(H) × 36(D) mm / 260g 이하 · ABS", dt10: "설치 / 인증", dd10: "벽걸이 · 탁상 겸용 / KC · 성능인증",
+      fnames: ["기기 화면 1 · 여섯 타일", "기기 화면 2 · Indoor Index · 시계", "기기 화면 3 · Indoor / Outdoor"], fhint: "— 바깥을 탭하면 닫힘 · ← → 다음 화면",
+      badN: (n) => `장면 ${n}장을 불러오지 못했습니다`, loading: (d, n) => `장면 불러오는 중 ${d}/${n}`, noclip: "영상 루프 없이 사진으로 표시", nofx: "효과 레이어 없음(이 브라우저는 WebGL 미지원)", langBtn: "EN" },
+    en: { tip: "Device · tap to enlarge", cap: "concept render · concept simulation", note: "One verified reading = one record · Rewards in testing · Concept simulation", hint: "Drag a bar to change its value · Tap a device screen below to enlarge",
+      screens: "Device screens 1 · 2 · 3", particles: "Particles", temp: "Temp", rh: "Humidity", cook: "Cook 15 min", reset: "Reset", close: "Close", timelapse: "Timelapse",
+      winOpen: "Window open", winClosed: "Window closed", cooking: (n) => `Cooking · ${n} min`, notCooking: "Not cooking", nightP: "Night", dawn: "Dawn", morning: "Morning", day: "Daytime", evening: "Evening",
+      bWinOpen: "Open window", bWinClose: "Close window", bNight: "Skip to night", bNightOn: "Night passing", whole: (n) => `· whole home ${n}`,
+      flow: "Measure <span>→</span> Generate data <span>→</span> Verify <span>→</span> Value <span>→</span> Reward",
+      psub: "The screen of the device placed at real scale, enlarged as is. Values are this room's simulation.", ptip: "Rewards in testing · concept simulation · concept render", pdevAlt: "wellbian indoor air monitor",
+      dt0: "Measures", dd0: "PM2.5 · PM10 · CO₂ · TVOC · temperature · humidity · feels-like", dt1: "Model", dd1: "ARC-600DA", dt2: "Display", dd2: "5-inch full-touch color LCD", dt3: "Power", dd3: "12VDC · 300mA (under ₩1,000 a month)",
+      dt4: "Connectivity", dd4: "Wi-Fi · Bluetooth (802.11a/b/g/n)", dt5: "Certification", dd5: "CO₂ grade 1 · PM2.5 grade 1", dt6: "Range / resolution", dd6: "0–1,000 µg/m³ (PM2.5) / 1 µg/m³",
+      dt7: "Principle", dd7: "Light scattering laser photometer · 0.1 L/min flow · 32,000 h fan life", dt8: "Operating temp.", dd8: "−10 to 60°C", dt9: "Size / weight", dd9: "120(W) × 118(H) × 36(D) mm / under 260 g · ABS", dt10: "Mounting / approvals", dd10: "Wall or desk / KC · performance certified",
+      fnames: ["Device screen 1 · six tiles", "Device screen 2 · Indoor Index · clock", "Device screen 3 · Indoor / Outdoor"], fhint: "— tap outside to close · ← → next screen",
+      badN: (n) => `${n} scene(s) failed to load`, loading: (d, n) => `Loading scenes ${d}/${n}`, noclip: "Showing photos without video loops", nofx: "No effects layer (WebGL unsupported)", langBtn: "한국어" }
+  };
+  let LANG = "ko";
+  try { const q0 = new URLSearchParams(location.hash.replace(/^#/, "")).get("lang"); LANG = (q0 || localStorage.getItem("mr-lang") || "ko") === "en" ? "en" : "ko"; } catch (e) { LANG = "ko"; }
+  const t = (k, ...a) => { const v = (T[LANG] && T[LANG][k] !== undefined) ? T[LANG][k] : T.ko[k]; return typeof v === "function" ? v(...a) : v; };
   const lerp = (a, b, f) => a + (b - a) * f;
 
   /* ── 자산: 힉스필드 생성물. assets/ 에 같은 이름의 파일이 있으면 그것을 쓰고, 없으면 CDN 에서 바로 불러온다. ──
@@ -439,7 +473,7 @@
   }
   function tickEl(t) { const d = document.createElement("div"); d.className = "tick"; d.style.height = t.h + "px"; d.title = t.title; return d; }
   function rebuildTicks() { ticks.innerHTML = ""; ST[cur].ticks.forEach((t) => ticks.appendChild(tickEl(t))); ticks.scrollLeft = ticks.scrollWidth; counts(); }
-  function counts() { recN.textContent = ST[cur].records; recAll.textContent = `· 집 전체 ${ORDER.reduce((a, k) => a + ST[k].records, 0)}`; }
+  function counts() { recN.textContent = ST[cur].records; recAll.textContent = t("whole", ORDER.reduce((a, k) => a + ST[k].records, 0)); }
 
   /* ── 화면 텍스트 ── */
   const pmv = $("pmv"), co2v = $("co2v"), clock = $("clock"), rk = $("rk"), pm10v = $("pm10v"), vocv = $("vocv"), tv = $("tv"), rhv = $("rhv");
@@ -493,7 +527,7 @@
   function deviceTime() { const m = G.t % 1440, h = Math.floor(m / 60); return `${h < 12 ? "AM" : "PM"} ${((h + 11) % 12) + 1}:${String(m % 60).padStart(2, "0")}`; }
   function hud() {
     const s = ST[cur];
-    pmv.textContent = s.pm.toFixed(0); co2v.textContent = s.co2.toFixed(0); clock.textContent = `${clockText()} · 타임랩스 ×${speed()}`;
+    pmv.textContent = s.pm.toFixed(0); co2v.textContent = s.co2.toFixed(0); clock.textContent = `${clockText()} · ${t("timelapse")} ×${speed()}`;
     pm10v.textContent = pm10Of(s).toFixed(0); vocv.textContent = s.voc.toFixed(0); tv.textContent = s.temp.toFixed(1); rhv.textContent = s.rh.toFixed(0);
     // 막대와 숫자 색: 좋음(파랑) → 보통(초록) → 주의(주황) → 경고(빨강). PM·VOCs 는 기기 등급, CO₂ 는 800 주의·1000 경고, 온·습도는 편안 범위 밖이면 주의
     const p10 = pm10Of(s);
@@ -503,13 +537,13 @@
     setBar("voc", s.voc, s.voc > 1000 ? "alert" : s.voc > 300 ? "warn" : s.voc > 100 ? "ok" : "good");
     setBar("temp", s.temp, (s.temp > 26 || s.temp < 18) ? "warn" : "good");
     setBar("rh", s.rh, (s.rh > 70 || s.rh < 30) ? "warn" : s.rh > 60 ? "ok" : "good");
-    pWin.textContent = s.window ? "창문 열림" : "창문 닫힘"; pWin.classList.toggle("on", s.window);
-    pCook.textContent = s.cook > 0 ? `조리 중 ${s.cook}분` : "조리 안 함"; pCook.classList.toggle("on", s.cook > 0);
+    pWin.textContent = s.window ? t("winOpen") : t("winClosed"); pWin.classList.toggle("on", s.window);
+    pCook.textContent = s.cook > 0 ? t("cooking", s.cook) : t("notCooking"); pCook.classList.toggle("on", s.cook > 0);
     const h = Math.floor(hourNow());
-    pNight.textContent = G.night ? "밤" : (h < 6 ? "새벽" : h < 12 ? "아침" : h < 18 ? "낮" : "저녁");
+    pNight.textContent = G.night ? t("nightP") : (h < 6 ? t("dawn") : h < 12 ? t("morning") : h < 18 ? t("day") : t("evening"));
     pNight.classList.toggle("on", G.night);
-    bWin.textContent = s.window ? "창문 닫기" : "창문 열기"; bWin.classList.toggle("on", s.window);
-    bNight.disabled = G.night; bNight.textContent = G.night ? "밤이 지나는 중" : "밤 지나기";
+    bWin.textContent = s.window ? t("bWinClose") : t("bWinOpen"); bWin.classList.toggle("on", s.window);
+    bNight.disabled = G.night; bNight.textContent = G.night ? t("bNightOn") : t("bNight");
     for (const sp of SPECIES) { const el = legendEls[sp.key]; if (el) el.style.opacity = (0.3 + 0.7 * sp.frac(s)).toFixed(2); }
   }
 
@@ -695,12 +729,11 @@
   const miniIndex = $("mini-index"), miniTiles = $("mini-tiles"), miniIO = $("mini-io");
   // 플로팅: 카드의 기기 화면을 누르면 가운데에 300% 로. 같은 오프스크린을 매 프레임 옮겨 그리므로 값이 실시간으로 움직인다.
   const floatEl = $("float"), floatCv = $("float-cv"), fcap = $("fcap"), FSRC = [() => scr, () => scr2, () => scr3];
-  const FNAME = ["기기 화면 1 · 여섯 타일", "기기 화면 2 · Indoor Index · 시계", "기기 화면 3 · Indoor / Outdoor"];
   let floatIdx = -1;
   function openFloat(i) {
     floatIdx = ((i % 3) + 3) % 3;
     const mini = [miniTiles, miniIndex, miniIO][floatIdx], w = Math.max(320, mini.getBoundingClientRect().width * 3);   // 카드 화면의 3배(서우: 200% 에서 50% 더)
-    floatEl.style.setProperty("--fw", w.toFixed(0) + "px"); fcap.textContent = `${FNAME[floatIdx]} — 바깥을 탭하면 닫힘 · ← → 다음 화면`;
+    floatEl.style.setProperty("--fw", w.toFixed(0) + "px"); fcap.textContent = `${t("fnames")[floatIdx]} ${t("fhint")}`;
     floatEl.hidden = false; requestAnimationFrame(() => { fitMini(floatCv); blit(floatCv, FSRC[floatIdx]()); }); $("f-close").focus();
   }
   function closeFloat() { floatEl.hidden = true; floatIdx = -1; }
@@ -796,9 +829,9 @@
   function noteAssets() {
     const keys = Object.keys(SCENES), done = keys.filter((k) => assetState[k] === "ok").length, bad = keys.filter((k) => assetState[k] === "bad").length;
     const parts = [];
-    if (bad) parts.push(`장면 ${bad}장을 불러오지 못했습니다`); else if (done < keys.length) parts.push(`장면 불러오는 중 ${done}/${keys.length}`);
-    if (clipBad) parts.push("영상 루프 없이 사진으로 표시");
-    if (fxNote) parts.push(fxNote);
+    if (bad) parts.push(t("badN", bad)); else if (done < keys.length) parts.push(t("loading", done, keys.length));
+    if (clipBad) parts.push(t("noclip"));
+    if (fxNote) parts.push(t(fxNote));
     assetsNote.textContent = parts.join(" · ");
   }
   function stillEl(key) {
@@ -980,7 +1013,7 @@
       for (let i = 0; i < steamN; i++) SL[i] = -1;
     } catch (e) { gl = null; console.warn("fx layer disabled:", e && e.message); }
   }
-  if (!gl) { canvas.style.display = "none"; fxNote = "효과 레이어 없음(이 브라우저는 WebGL 미지원)"; }
+  if (!gl) { canvas.style.display = "none"; fxNote = "nofx"; }
 
   /* ── 효과의 물리: 화면 픽셀 단위, 1200px 폭 기준으로 스케일 ── */
   const hazeCur = { v: 0, col: [0.62, 0.65, 0.74] }, lightCur = { x: 0, y: 0, dx: 0, dy: -1, kind: 1, on: 0, r: 200, col: [1, 0.9, 0.8] };
@@ -1110,7 +1143,7 @@
 
   /* ── 기기 확대 패널 ── */
   const panel = $("panel");
-  function openPanel() { panel.hidden = false; $("pspec-title").textContent = `${SPACES[cur].where} · ${SPACES[cur].name}`; requestAnimationFrame(placePanelScreen); $("p-close").focus(); }
+  function openPanel() { panel.hidden = false; $("pspec-title").textContent = `${SPACES[cur].where} · ${roomName(SPACES[cur])}`; requestAnimationFrame(placePanelScreen); $("p-close").focus(); }
   function closePanel() { panel.hidden = true; ring.focus(); }
   ring.addEventListener("click", openPanel); hit.addEventListener("click", openPanel);
   $("p-close").addEventListener("click", closePanel);
@@ -1120,13 +1153,27 @@
 
   /* ── 공간 바꾸기 ── */
   const tabs = Array.from($("spaces").querySelectorAll("[role=tab]"));
+  const roomName = (sp) => LANG === "en" ? sp.en : sp.name;
+  function applyLang() {
+    document.documentElement.lang = LANG;
+    document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
+    tabs.forEach((b) => { b.textContent = roomName(SPACES[b.dataset.space]); });
+    $("b-lang").textContent = t("langBtn"); $("pdev-img").alt = t("pdevAlt");
+    const sp = SPACES[cur]; $("lead").textContent = LANG === "en" ? sp.en2 : sp.lead; $("lead-en").textContent = LANG === "en" ? sp.lead : sp.en2; rk.textContent = `${sp.where} · ${roomName(sp)}`;
+    if (!panel.hidden) $("pspec-title").textContent = `${sp.where} · ${roomName(sp)}`;
+    if (!floatEl.hidden && floatIdx >= 0) fcap.textContent = `${t("fnames")[floatIdx]} ${t("fhint")}`;
+    if (typeof bSpeed !== "undefined") bSpeed.textContent = `${t("timelapse")} ×${G.speed}`;
+    noteAssets(); hud(); counts();
+  }
+  $("b-lang").addEventListener("click", () => { LANG = LANG === "ko" ? "en" : "ko"; try { localStorage.setItem("mr-lang", LANG); } catch (e) {} applyLang(); });
   const bCook = $("b-cook"), bWin = $("b-window"), bNight = $("b-night"), bReset = $("b-reset"), bSpeed = $("b-speed");
-  function setSpeed(v) { G.speed = SPEEDS.includes(v) ? v : 5; bSpeed.textContent = `타임랩스 ×${G.speed}`; hud(); }
+  function setSpeed(v) { G.speed = SPEEDS.includes(v) ? v : 5; bSpeed.textContent = `${t("timelapse")} ×${G.speed}`; hud(); }
   bSpeed.addEventListener("click", () => setSpeed(SPEEDS[(SPEEDS.indexOf(G.speed) + 1) % SPEEDS.length]));
   function setSpace(k) {
     cur = k; const sp = SPACES[k];
     tabs.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.space === k)));
-    $("lead").textContent = sp.lead; $("lead-en").textContent = sp.en2; rk.textContent = `${sp.where} · ${sp.name}`;
+    $("lead").textContent = LANG === "en" ? sp.en2 : sp.lead; $("lead-en").textContent = LANG === "en" ? sp.lead : sp.en2; rk.textContent = `${sp.where} · ${roomName(sp)}`;
     bCook.hidden = k !== "kitchen"; pCook.hidden = k !== "kitchen";
     shownKey = null; layout(); showScene(); rebuildTicks(); hud(); redraw();
     for (let i = 0; i < steamN; i++) SL[i] = -1;
@@ -1149,15 +1196,14 @@
   const SPEEDS = [1, 5, 10, 20];
   const speed = () => { const b = G.speed; return (ST[cur].window || ST.kitchen.cook > 0) ? Math.max(1, +(b * 0.3).toFixed(1)) : G.night ? b * 4 : b; };   // 조리·창 열림은 0.3배(연기·환기가 보이게), 밤은 4배
   function redraw() { drawCurve(mctx, 400, 128); }
-  let acc = 0, last = performance.now(), t0 = last;
+  let acc = 0, last = performance.now(), t0 = last, lastMini = 0;
   function frame(now) {
     const dt = Math.min(0.1, (now - last) / 1000), t = (now - t0) / 1000; last = now;
     acc += dt * speed();
     let n = 0; while (acc >= 1 && n < 20) { stepMinute(); acc -= 1; n++; }
     if (n > 0) { showScene(); hud(); redraw(); }
     tweenShown(); drawScreen(sctx0); blit(screenCv); if (!panel.hidden) blit(pscreenCv);
-    drawIndex(sctx2); blit(miniIndex, scr2); drawIO(sctx3); blit(miniIO, scr3); blit(miniTiles, scr);
-    if (!floatEl.hidden && floatIdx >= 0) blit(floatCv, FSRC[floatIdx]());
+    if (now - lastMini > 50) { lastMini = now; drawIndex(sctx2); blit(miniIndex, scr2); drawIO(sctx3); blit(miniIO, scr3); blit(miniTiles, scr); if (!floatEl.hidden && floatIdx >= 0) blit(floatCv, FSRC[floatIdx]()); }   // 카드·플로팅 화면은 20fps
     vig.style.opacity = G.night ? "0.58" : "0.22";
     screenWrap.style.setProperty("--glow", G.night ? "0.55" : "0.22");
     px += (tx - px) * 0.06; py += (ty - py) * 0.06; mediaX = -px * 7; mediaY = -py * 4;
@@ -1175,7 +1221,7 @@
   if (q.get("night") === "1") startNight();
   if (q.get("speed")) setSpeed(+q.get("speed"));
   window.__mr = { species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * sp.frac(ST[cur])) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur] };   // 검증용(읽기 전용)
-  setSpace(startSpace); noteAssets(); redraw();
+  setSpace(startSpace); applyLang(); noteAssets(); redraw();
   if (q.get("panel") === "1") openPanel();
   setTimeout(preloadRest, 3500);
   requestAnimationFrame(frame);
