@@ -217,8 +217,8 @@
     <div class="screens" aria-label="기기 화면 그대로">
       <div class="k3">Device screens · 기기 화면 1 · 2 · 3</div>
       <div class="sc"><canvas id="mini-tiles" aria-label="기기 화면 1: 여섯 타일"></canvas></div>
-      <div class="sc"><canvas id="mini-io" aria-label="기기 화면 2: 실내와 실외 비교, 환기 장치"></canvas></div>
-      <div class="sc"><canvas id="mini-index" aria-label="기기 화면 3: Indoor Index, 시계, 보상, 네트워크"></canvas></div>
+      <div class="sc"><canvas id="mini-index" aria-label="기기 화면 2: Indoor Index, 시계, 보상, 네트워크"></canvas></div>
+      <div class="sc"><canvas id="mini-io" aria-label="기기 화면 3: 실내와 실외 비교, 환기 장치"></canvas></div>
     </div>
   </aside>
 
@@ -615,9 +615,9 @@
     c.fillStyle = "#d4d4da"; c.fillRect(586, 368, 2, 84);
     c.fillStyle = "#101014"; c.font = "500 32px Montserrat, sans-serif"; c.fillText("Network", 610, 392);
     c.fillStyle = C.blue; c.font = "500 34px Montserrat, sans-serif"; c.fillText("Connect", 610, 440);
-    [0, 1, 2].forEach((i) => { c.beginPath(); c.arc(W / 2 - 24 + i * 24, H - 30, 6, 0, Math.PI * 2); c.fillStyle = i === 2 ? C.blue : "#c9c9d2"; c.fill(); });
+    [0, 1, 2].forEach((i) => { c.beginPath(); c.arc(W / 2 - 24 + i * 24, H - 30, 6, 0, Math.PI * 2); c.fillStyle = i === 1 ? C.blue : "#c9c9d2"; c.fill(); });
   }
-  /* ── 기기 화면 2(800×600): 지붕 안 Indoor 6칸 · Outdoor 4칸(바깥 공기 = 물리의 바깥값) · 환기 장치 없음 패널 ── */
+  /* ── 기기 화면 3(800×600): 지붕 안 Indoor 6칸 · Outdoor 4칸(바깥 공기 = 물리의 바깥값) · 환기 장치 없음 패널 ── */
   const outdoorOf = () => { const h = hourNow(), n = G.night || (h >= 20 || h < 7); return { pm: PM_OUT, pm10: PM_OUT * 1.7 + 1, temp: n ? 18 : 21.5, rh: n ? 66 : 58 }; };
   function ioCard(c, x, y, w, h, label, gradeArr, val, unit) {
     c.fillStyle = "#fff"; c.strokeStyle = "#d9d9de"; c.lineWidth = 2; roundRect(c, x, y, w, h, 10); c.fill(); c.stroke();
@@ -662,7 +662,7 @@
     c.fillStyle = "#8a8a94"; for (let i = 0; i < 3; i++) { const a = i * Math.PI * 2 / 3; c.beginPath(); c.ellipse(582 + Math.cos(a) * 12, 482 + Math.sin(a) * 12, 10, 6, a, 0, Math.PI * 2); c.fill(); }
     c.font = "500 30px Montserrat, sans-serif"; c.textAlign = "left"; c.fillText("0", 606, 494);
     for (let i = 0; i < 7; i++) { const bh = 12 + i * 6; c.fillRect(646 + i * 18, 508 - bh, 14, bh); }
-    [0, 1, 2].forEach((i) => { c.beginPath(); c.arc(W / 2 - 24 + i * 24, H - 30, 6, 0, Math.PI * 2); c.fillStyle = i === 1 ? C.blue : "#c9c9d2"; c.fill(); });
+    [0, 1, 2].forEach((i) => { c.beginPath(); c.arc(W / 2 - 24 + i * 24, H - 30, 6, 0, Math.PI * 2); c.fillStyle = i === 2 ? C.blue : "#c9c9d2"; c.fill(); });
   }
   const scr2 = document.createElement("canvas"); scr2.width = 800; scr2.height = 600; const sctx2 = scr2.getContext("2d");
   const scr3 = document.createElement("canvas"); scr3.width = 800; scr3.height = 600; const sctx3 = scr3.getContext("2d");
