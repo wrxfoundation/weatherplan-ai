@@ -37,11 +37,16 @@
   .hud-title p { margin: 4px 0 0; font-size: 12.5px; line-height: 1.5; color: rgba(255,255,255,.86); text-wrap: balance; }
   .hud-title .en { display: block; font-size: 11px; color: rgba(255,255,255,.6); margin-top: 2px; }
 
-  .spaces { display: flex; gap: 4px; margin: 6px 16px 8px; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.14); width: max-content; max-width: calc(100% - 32px); }
+  .topnav { display: flex; align-items: center; gap: 10px; margin: 6px 16px 8px; flex-wrap: wrap; }
+  .spaces { display: flex; gap: 4px; margin: 0; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.14); width: max-content; max-width: calc(100% - 32px); }
   .spaces button { font-family: var(--body); font-weight: 700; font-size: 13px; color: rgba(255,255,255,.8); background: transparent; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; min-height: 34px; }
   .spaces button[aria-selected="true"] { background: #fff; color: var(--navy); }
   .spaces button:focus-visible { outline: 3px solid rgba(255,255,255,.5); outline-offset: 2px; }
-  .spaces .lang { font-family: var(--display); font-size: 11.5px; letter-spacing: .06em; color: rgba(255,255,255,.85); border-left: 1px solid rgba(255,255,255,.22); border-radius: 0 999px 999px 0; margin-left: 2px; padding: 7px 12px 7px 13px; }
+  /* 언어 토글: 방 탭과 떨어진 별도 알약. KR·EN 둘 다 보이고 고른 쪽이 흰색 */
+  .lang { display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.14); }
+  .lang button { font-family: var(--display); font-weight: 700; font-size: 11.5px; letter-spacing: .08em; color: rgba(255,255,255,.72); background: transparent; border: 0; border-radius: 999px; padding: 0 12px; min-height: 30px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: #fff; color: var(--navy); }
+  .lang button:focus-visible { outline: 3px solid rgba(255,255,255,.5); outline-offset: 2px; }
 
   /* 장면: 정지 사진 위에 같은 구도의 5초 영상 루프. 기기는 실측 비율의 제품 컷아웃을 사진 속 자리에 놓고, 화면은 그 위에 원근으로 얹는다. */
   #stage { position: relative; height: clamp(280px, 50dvh, 540px); overflow: hidden; background: #0e0e22; isolation: isolate; }
@@ -101,7 +106,7 @@
   .pill { border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; background: #fff; }
   .pill.on { border-color: var(--violet); color: var(--violet); }
   /* 입자 범례: 공간 탭 아래 가로 표 — 색 점이 그 종류의 값에 따라 밝아진다 */
-  .legend { display: flex; align-items: stretch; margin: 0 16px 8px; padding: 0; border-radius: 999px; background: rgba(10,10,32,.5); border: 1px solid rgba(255,255,255,.14); width: max-content; max-width: calc(100% - 32px); font-size: 11px; color: rgba(255,255,255,.88); backdrop-filter: blur(6px); overflow: hidden; }
+  .legend { display: flex; align-items: stretch; margin: 14px 16px 8px; padding: 0; border-radius: 999px; background: rgba(10,10,32,.5); border: 1px solid rgba(255,255,255,.14); width: max-content; max-width: calc(100% - 32px); font-size: 11px; color: rgba(255,255,255,.88); backdrop-filter: blur(6px); overflow: hidden; }
   .legend .k2 { display: inline-flex; align-items: center; padding: 4px 8px 4px 11px; color: rgba(255,255,255,.6); font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
   .legend span[data-sp] { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-left: 1px solid rgba(255,255,255,.14); font-family: var(--display); font-weight: 600; }
   .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px currentColor; opacity: .35; transition: opacity .6s ease; }
@@ -168,8 +173,9 @@
     .hud-title .brand { font-size: 12px; }
     .hud-title .flow { font-size: 13px; }
     .hud-title p { font-size: 13px; line-height: 1.55; background: rgba(10,10,32,.42); border-radius: 8px; padding: 6px 9px; backdrop-filter: blur(6px); }
-    .spaces { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); margin: 0; z-index: 2; background: rgba(10,10,32,.5); backdrop-filter: blur(6px); }
-    .legend { position: absolute; left: 50%; top: 62px; transform: translateX(-50%); margin: 0; z-index: 2; }
+    .topnav { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); margin: 0; z-index: 2; flex-wrap: nowrap; }
+    .spaces, .lang { background: rgba(10,10,32,.5); backdrop-filter: blur(6px); }
+    .legend { position: absolute; left: 50%; top: 78px; transform: translateX(-50%); margin: 0; z-index: 2; }   /* 방 탭 아래 16px 띄운다 */
     /* 카드는 스크롤하지 않는다: 폭을 화면 높이에서 역산해(제목·막대·곡선·상태·범례·여백 ≈ 380px + 화면 3장 = 2.25×폭) 세 화면까지 한 번에 보이게. 768px 높이에선 176px 까지 좁아진다 */
     .readout { position: absolute; right: 18px; top: 18px; width: clamp(176px, calc((100dvh - 360px) / 2.25), 250px); margin: 0; z-index: 2; overflow: visible; }
     .controls { position: absolute; left: 22px; bottom: 74px; margin: 0; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 44px); z-index: 2; }
@@ -196,12 +202,16 @@
       <span class="en" id="lead-en">A concept simulation. Each room is measured by its own device.</span></p>
   </header>
 
-  <nav class="spaces" role="tablist" aria-label="공간 고르기" id="spaces">
-    <button role="tab" aria-selected="true" data-space="living">거실</button>
-    <button role="tab" aria-selected="false" data-space="bedroom">침실</button>
-    <button role="tab" aria-selected="false" data-space="kitchen">부엌</button>
-    <button class="lang" id="b-lang" type="button" role="none" aria-label="Switch language / 언어 바꾸기">EN</button>
-  </nav>
+  <div class="topnav">
+    <nav class="spaces" role="tablist" aria-label="공간 고르기" id="spaces">
+      <button role="tab" aria-selected="true" data-space="living">거실</button>
+      <button role="tab" aria-selected="false" data-space="bedroom">침실</button>
+      <button role="tab" aria-selected="false" data-space="kitchen">부엌</button>
+    </nav>
+    <div class="lang" id="lang" role="group" aria-label="Language / 언어">
+      <button type="button" data-lang="ko" aria-pressed="true">KR</button><button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
   <div class="legend" id="legend" role="table" aria-label="장면 속 입자의 색과 종류">
     <span class="k2" data-i18n="particles">입자</span><span data-sp="co2"><i></i>CO₂</span><span data-sp="pm25"><i></i>PM2.5</span><span data-sp="pm10"><i></i>PM10</span><span data-sp="voc"><i></i>VOCs</span>
   </div>
@@ -224,7 +234,7 @@
   <div class="controls" role="group" aria-label="이 공간에서 일어나는 일">
     <button class="btn primary" id="b-cook" hidden data-i18n="cook">요리 15분</button>
     <button class="btn" id="b-window">창문 열기</button>
-    <button class="btn" id="b-night">밤 지나기</button>
+    <button class="btn" id="b-night">야간 모드</button>
     <button class="btn" id="b-reset" data-i18n="reset">처음부터</button>
     <button class="btn" id="b-speed" title="타임랩스 배속 바꾸기 (×1 → ×5 → ×10 → ×20)">타임랩스 ×5</button>
     <span class="clock" id="clock">Day 1 · 18:00</span>
@@ -311,25 +321,25 @@
     ko: { tip: "기기 · 탭하면 화면 확대", cap: "concept render · 개념 시뮬레이션", note: "검증된 판독값 하나 = 기록 하나 · 보상은 테스트 중 · 개념 시뮬레이션", hint: "막대를 끌어 값을 바꿔 보세요 · 아래 기기 화면을 누르면 크게",
       screens: "Device screens · 기기 화면 1 · 2 · 3", particles: "입자", temp: "온도", rh: "습도", cook: "요리 15분", reset: "처음부터", close: "닫기", timelapse: "타임랩스",
       winOpen: "창문 열림", winClosed: "창문 닫힘", cooking: (n) => `조리 중 ${n}분`, notCooking: "조리 안 함", nightP: "밤", dawn: "새벽", morning: "아침", day: "낮", evening: "저녁",
-      bWinOpen: "창문 열기", bWinClose: "창문 닫기", bNight: "밤 지나기", bNightOn: "밤이 지나는 중", whole: (n) => `· 집 전체 ${n}`,
+      bWinOpen: "창문 열기", bWinClose: "창문 닫기", bNight: "야간 모드", bNightOn: "주간 모드", whole: (n) => `· 집 전체 ${n}`,
       flow: "측정 <span>→</span> 데이터 생성 <span>→</span> 검증 <span>→</span> 가치화 <span>→</span> 보상",
       psub: "실측 크기로 놓은 기기의 화면을 그대로 확대한 것입니다. 수치는 이 방의 시뮬레이션 값.", ptip: "보상은 테스트 중 · 개념 시뮬레이션 · concept render", pdevAlt: "wellbian 실내 공기 측정기",
       dt0: "측정 항목", dd0: "PM2.5 · PM10 · CO₂ · TVOC · 온도 · 습도 · 체감온도", dt1: "모델명", dd1: "ARC-600DA", dt2: "디스플레이", dd2: "5인치 풀터치 컬러 LCD", dt3: "전원", dd3: "12VDC · 300mA (월 전기료 1,000원 미만)",
       dt4: "통신", dd4: "Wi-Fi · 블루투스 (802.11a/b/g/n)", dt5: "성능인증", dd5: "CO₂ 1등급 · PM2.5 1등급", dt6: "측정 범위 / 분해능", dd6: "0~1,000㎍/m³ (PM2.5) / 1㎍/m³",
       dt7: "측정 원리", dd7: "Light scattering laser photometer · 유량 0.1L/min · 팬 수명 32,000시간", dt8: "운영 온도", dd8: "−10 ~ 60°C", dt9: "제원 / 중량", dd9: "120(W) × 118(H) × 36(D) mm / 260g 이하 · ABS", dt10: "설치 / 인증", dd10: "벽걸이 · 탁상 겸용 / KC · 성능인증",
       fnames: ["기기 화면 1 · 여섯 타일", "기기 화면 2 · Indoor Index · 시계", "기기 화면 3 · Indoor / Outdoor"], fhint: "— 바깥을 탭하면 닫힘 · ← → 다음 화면",
-      badN: (n) => `장면 ${n}장을 불러오지 못했습니다`, loading: (d, n) => `장면 불러오는 중 ${d}/${n}`, noclip: "영상 루프 없이 사진으로 표시", nofx: "효과 레이어 없음(이 브라우저는 WebGL 미지원)", langBtn: "EN" },
+      badN: (n) => `장면 ${n}장을 불러오지 못했습니다`, loading: (d, n) => `장면 불러오는 중 ${d}/${n}`, noclip: "영상 루프 없이 사진으로 표시", nofx: "효과 레이어 없음(이 브라우저는 WebGL 미지원)" },
     en: { tip: "Device · tap to enlarge", cap: "concept render · concept simulation", note: "One verified reading = one record · Rewards in testing · Concept simulation", hint: "Drag a bar to change its value · Tap a device screen below to enlarge",
       screens: "Device screens 1 · 2 · 3", particles: "Particles", temp: "Temp", rh: "Humidity", cook: "Cook 15 min", reset: "Reset", close: "Close", timelapse: "Timelapse",
       winOpen: "Window open", winClosed: "Window closed", cooking: (n) => `Cooking · ${n} min`, notCooking: "Not cooking", nightP: "Night", dawn: "Dawn", morning: "Morning", day: "Daytime", evening: "Evening",
-      bWinOpen: "Open window", bWinClose: "Close window", bNight: "Skip to night", bNightOn: "Night passing", whole: (n) => `· whole home ${n}`,
+      bWinOpen: "Open window", bWinClose: "Close window", bNight: "Night mode", bNightOn: "Day mode", whole: (n) => `· whole home ${n}`,
       flow: "Measure <span>→</span> Generate data <span>→</span> Verify <span>→</span> Value <span>→</span> Reward",
       psub: "The screen of the device placed at real scale, enlarged as is. Values are this room's simulation.", ptip: "Rewards in testing · concept simulation · concept render", pdevAlt: "wellbian indoor air monitor",
       dt0: "Measures", dd0: "PM2.5 · PM10 · CO₂ · TVOC · temperature · humidity · feels-like", dt1: "Model", dd1: "ARC-600DA", dt2: "Display", dd2: "5-inch full-touch color LCD", dt3: "Power", dd3: "12VDC · 300mA (under ₩1,000 a month)",
       dt4: "Connectivity", dd4: "Wi-Fi · Bluetooth (802.11a/b/g/n)", dt5: "Certification", dd5: "CO₂ grade 1 · PM2.5 grade 1", dt6: "Range / resolution", dd6: "0–1,000 µg/m³ (PM2.5) / 1 µg/m³",
       dt7: "Principle", dd7: "Light scattering laser photometer · 0.1 L/min flow · 32,000 h fan life", dt8: "Operating temp.", dd8: "−10 to 60°C", dt9: "Size / weight", dd9: "120(W) × 118(H) × 36(D) mm / under 260 g · ABS", dt10: "Mounting / approvals", dd10: "Wall or desk / KC · performance certified",
       fnames: ["Device screen 1 · six tiles", "Device screen 2 · Indoor Index · clock", "Device screen 3 · Indoor / Outdoor"], fhint: "— tap outside to close · ← → next screen",
-      badN: (n) => `${n} scene(s) failed to load`, loading: (d, n) => `Loading scenes ${d}/${n}`, noclip: "Showing photos without video loops", nofx: "No effects layer (WebGL unsupported)", langBtn: "한국어" }
+      badN: (n) => `${n} scene(s) failed to load`, loading: (d, n) => `Loading scenes ${d}/${n}`, noclip: "Showing photos without video loops", nofx: "No effects layer (WebGL unsupported)" }
   };
   let LANG = "ko";
   try { const q0 = new URLSearchParams(location.hash.replace(/^#/, "")).get("lang"); LANG = (q0 || localStorage.getItem("mr-lang") || "ko") === "en" ? "en" : "ko"; } catch (e) { LANG = "ko"; }
@@ -367,33 +377,32 @@
   const SPACES = {
     living: {
       name: "거실", en: "Living room", where: "On the console",
-      lead: "저녁의 거실. 창을 닫아 두면 사람 숨이 CO₂를 올리고, 열면 바깥 공기가 그것을 내립니다.",
-      en2: "Close the window and breath raises CO₂. Open it and outside air brings it down.",
-      states: { dusk: "living-dusk", window: "living-window", night: "living-night", nightWindow: "living-night-window" },
-      pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : s.window ? "window" : "dusk",
+      lead: "거실. 창을 닫아 두면 사람 숨이 CO₂를 올리고 어느 순간 정체됩니다. 창을 열면 내려갑니다.",
+      en2: "Living room. With the window shut, breath raises CO₂ until it plateaus. Open the window and it comes down.",
+      states: { day: "living-dusk", night: "living-night" },
+      pick: (s, g) => g.night ? "night" : "day",
       device: { u: 0.455, v: 0.598, cmFrac: 0.00156 }, window: [0.78, 0.30], focus: [0.45, 0.5],
-      people: (h, night) => night ? 0.3 : (h >= 18 && h < 23) ? 10.5 : (h >= 23 || h < 7) ? 0.3 : 3,
+      people: () => 26,     // 네 식구가 있는 40㎥ 거실: 한 사람 숨 ≈ 7.5ppm/분
       temp: (h, night) => (night || h >= 23 || h < 7) ? 22.2 : 23.0, init: { pm: 12, co2: 620 }
     },
     bedroom: {
       name: "침실", en: "Bedroom", where: "On the nightstand",
-      lead: "잠든 여덟 시간. 닫힌 방의 CO₂는 새벽에 가장 높고, 아침에 창을 열면 내려갑니다.",
-      en2: "Eight hours of sleep behind a closed door. CO₂ peaks before dawn and falls when the window opens.",
-      states: { evening: "bedroom-evening", night: "bedroom-night", nightWindow: "bedroom-night-window", morning: "bedroom-morning" },
-      pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : s.window ? "morning" : "evening",
+      lead: "침실. 닫힌 방의 CO₂와 VOCs는 시간이 갈수록 쌓이다가 정체합니다. 창을 열면 내려갑니다.",
+      en2: "Bedroom. Behind a closed door, CO₂ and VOCs build up over time, then plateau. Open the window and they fall.",
+      states: { day: "bedroom-evening", night: "bedroom-night" },
+      pick: (s, g) => g.night ? "night" : "day",
       device: { u: 0.205, v: 0.566, cmFrac: 0.00333 }, window: [0.89, 0.25], focus: [0.22, 0.5],
-      people: (h, night) => (night || h >= 23 || h < 7) ? 7.5 : 0.8,
+      people: () => 23,     // 두 사람이 자는 25㎥ 침실
       temp: (h, night) => (night || h >= 23 || h < 7) ? 21.8 : 22.6, init: { pm: 9, co2: 700 }
     },
     kitchen: {
       name: "부엌", en: "Kitchen", where: "On the counter",
-      lead: "요리 15분. 팬 위의 김과 기름 연기가 PM2.5를 올리고, 창을 열면 빠져나갑니다.",
-      en2: "Fifteen minutes at the stove. Steam and oil smoke push PM2.5 up; an open window lets it out.",
-      states: { idle: "kitchen-idle", cook: "kitchen-cook", vent: "kitchen-vent", night: "kitchen-night", nightWindow: "kitchen-night-window" },
-      // 조리 중에 창을 열면 창 열린 사진(vent)으로 — 조리 사진엔 창이 닫혀 있어 "창문 열기"가 안 먹는 것처럼 보였다. 팬 김·연기는 효과 레이어가 그린다. 밤 조리는 밤 사진.
-      pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : s.cook > 0 ? (s.window ? "vent" : "cook") : s.window ? "vent" : "idle",
+      lead: "부엌. 요리가 PM2.5·VOCs를 올리고, 창을 열면 빠져나갑니다. 시간이 가면 CO₂도 쌓입니다.",
+      en2: "Kitchen. Cooking pushes PM2.5 and VOCs up; an open window lets them out. CO₂ builds over time too.",
+      states: { day: "kitchen-idle", night: "kitchen-night" },
+      pick: (s, g) => g.night ? "night" : "day",
       device: { u: 0.53, v: 0.658, cmFrac: 0.00333 }, pan: [0.615, 0.60], hood: [0.70, 0.13], window: [0.26, 0.43], focus: [0.66, 0.5],
-      people: (h, night) => night ? 0.2 : (h >= 18 && h < 21) ? 3 : (h >= 23 || h < 7) ? 0.2 : 1.5,
+      people: () => 6,      // 부엌엔 한 사람이 오가고, 거실과 트여 있어 거실 CO₂를 따라간다
       temp: (h, night) => (night || h >= 23 || h < 7) ? 22.4 : 23.4, init: { pm: 14, co2: 560 }
     }
   };
@@ -402,22 +411,34 @@
 
   /* ── 집의 물리 (단순 박스 모델, 단위: 분). 세 공간이 같은 시계를 쓴다. 숫자는 설명용 근사값. ──
      PM2.5: 조리가 넣고, 환기와 침착이 뺀다. CO₂: 사람이 넣고, 환기가 뺀다. TVOC: 조리·닫힌 밤이 올리고 환기가 뺀다. 온·습도: 조리·창문에 따라 바깥값으로 끌린다. */
-  const G = { t: 18 * 60, night: false, nightUntil: 0, speed: 5 };   // speed = 낮 기준 배속(1초 = speed 분)
+  // 실제로 쓰는 장면 = 방마다 낮·밤 두 장(6장). 나머지 SCENES 항목(창 열림·조리·환기 사진)은 v0.10 부터 쓰지 않는다 — 창문·조리는 입자·김·환기 흐름으로만 보인다
+  const USED_SCENES = [...new Set(Object.values(SPACES).flatMap((sp) => Object.values(sp.states)))];
+  const G = { t: 18 * 60, night: false, speed: 5 };   // speed = 낮 기준 배속(1초 = speed 분)
   const PM_OUT = 18, CO2_OUT = 420;
+  const LEAK = 0.028;   // 닫힌 방 공기 누설(분당 비율). 실제 아파트(0.5~1%/분)보다 크게 잡아 ×5 배속에서 30초 안에 정체가 보이게 한다
+  // 바깥 날씨(서울 9월 초): 기온은 05:30 20.5°C → 14:30 28°C 의 하루 곡선, 습도는 반대(새벽 84% → 오후 52%). 구름·바람 몫으로 느린 흔들림을 얹고, 바깥 미세먼지도 12~24 사이를 천천히 오간다
+  const diurnal = (h, hLo, hHi, lo, hi) => { const rise = (hHi - hLo + 24) % 24, d = (h - hLo + 24) % 24; const x = d < rise ? 0.5 - 0.5 * Math.cos(Math.PI * d / rise) : 0.5 + 0.5 * Math.cos(Math.PI * (d - rise) / (24 - rise)); return lo + (hi - lo) * x; };
+  function outdoorOf() {
+    const h = hourNow(), m = G.t, w1 = Math.sin(m / 41), w2 = Math.sin(m / 13 + 1);
+    const temp = diurnal(h, 5.5, 14.5, 20.5, 28) + 0.35 * w1 + 0.15 * w2;
+    const rh = clamp(diurnal(h, 14.5, 5.5, 52, 84) - 1.6 * w1 - 0.6 * w2, 30, 95);
+    const pm = Math.max(4, PM_OUT + 4 * Math.sin(m / 151) + 2 * Math.sin(m / 37 + 2));
+    return { pm, pm10: pm * 1.7 + 1, temp, rh };
+  }
   const fresh = (k) => ({ pm: SPACES[k].init.pm, co2: SPACES[k].init.co2, voc: 15, temp: SPACES[k].temp(18, false), rh: 55, window: false, cook: 0, hist: [], records: 0, lastRecord: G.t, ticks: [], alertAt: -1, alertReal: 0 });
   const ST = {}; ORDER.forEach((k) => { ST[k] = fresh(k); });
   const hourNow = () => (G.t % 1440) / 60;
   function stepMinute() {
-    const h = hourNow(), nightish = G.night || (h >= 20 || h < 7), tOut = nightish ? 18 : 21.5, rhOut = nightish ? 66 : 58;
+    const h = hourNow(), o = outdoorOf(), tOut = o.temp, rhOut = o.rh, pmOut = o.pm;
     const nowMs = performance.now();
     for (const k of ORDER) {
       const s = ST[k], sp = SPACES[k], cooking = s.cook > 0;
       const keep = {}; for (const q in (s.pin || {})) if (s.pin[q] > nowMs) keep[q] = s[q];   // 막대로 정한 값은 잠시 고정
       s._keep = keep;
       const vent = s.window ? 0.14 : 0.018;
-      s.pm += (cooking ? 22 : 0) - vent * (s.pm - PM_OUT) - 0.012 * s.pm;
-      s.co2 += sp.people(h, G.night) - (s.window ? 0.12 : 0.006) * (s.co2 - CO2_OUT);
-      s.voc += (cooking ? 45 : 0) + (!s.window && nightish ? 0.7 : 0) - (s.window ? 0.14 : 0.012) * (s.voc - 15);
+      s.pm += (cooking ? 22 : 0) - vent * (s.pm - pmOut) - 0.012 * s.pm;
+      s.co2 += sp.people() - (s.window ? 0.12 : LEAK) * (s.co2 - CO2_OUT);                      // 닫힌 방: 숨 = 누설이 되는 값에서 정체(거실 ≈1,170 · 침실 ≈1,230 · 부엌 ≈900)
+      s.voc += (cooking ? 45 : 0) + (!s.window ? 3.2 : 0) - (s.window ? 0.14 : LEAK) * (s.voc - 15);   // 가구·마감재 VOCs 는 닫힌 방에서 ≈130 까지 쌓이다 정체
       const tBase = sp.temp(h, G.night) + (cooking ? 3 : 0);
       s.temp += s.window ? (tOut - s.temp) * 0.02 : (tBase - s.temp) * 0.03;
       s.rh += (cooking ? 0.8 : 0) + (s.window ? (rhOut - s.rh) * 0.03 : (55 - s.rh) * 0.012);
@@ -439,16 +460,9 @@
       if ((s.co2 >= 1000 || s.pm > 75) && s.alertAt < 0) { s.alertAt = G.t; s.alertReal = performance.now(); }   // 기기 알림: CO₂ 1000ppm 을 넘거나 PM2.5 가 Very Bad 에 드는 순간
       if (s.co2 < 950 && s.pm < 70) s.alertAt = -1;
     }
-    if (G.night && G.t >= G.nightUntil) G.night = false;
   }
-  function startNight() {
-    if (G.night) return;
-    let m = G.t % 1440; const wake = 6 * 60 + 30;
-    if (m >= 7 * 60 && m < 22 * 60) { G.t += 22 * 60 - m; m = 22 * 60; }   // 낮·저녁이면 취침 시각(22:00)으로 건너뛰고 밤을 돌린다
-    let until = G.t - m + (m < wake ? wake : 1440 + wake);
-    if (until - G.t < 6 * 60) until += 1440;
-    G.night = true; G.nightUntil = until;
-  }
+  // 야간 모드 = 조명만 바뀐다(밤 사진·글로우·비네트). 시계·물리는 그대로 흐른다.
+  function toggleNight() { G.night = !G.night; }
   const pm10Of = (s) => s.pm * 1.6 + 2 + (s.cook > 0 ? 4 : 0);
   const feelsOf = (s) => s.temp + 0.03 * (s.rh - 50);
 
@@ -545,7 +559,7 @@
     pNight.textContent = G.night ? t("nightP") : (h < 6 ? t("dawn") : h < 12 ? t("morning") : h < 18 ? t("day") : t("evening"));
     pNight.classList.toggle("on", G.night);
     bWin.textContent = s.window ? t("bWinClose") : t("bWinOpen"); bWin.classList.toggle("on", s.window);
-    bNight.disabled = G.night; bNight.textContent = G.night ? t("bNightOn") : t("bNight");
+    bNight.classList.toggle("on", G.night); bNight.textContent = G.night ? t("bNightOn") : t("bNight");
     for (const sp of SPECIES) { const el = legendEls[sp.key]; if (el) el.style.opacity = (0.3 + 0.7 * sp.frac(s)).toFixed(2); }
   }
 
@@ -614,7 +628,8 @@
       c.font = "700 84px Montserrat, sans-serif"; c.textAlign = "center"; c.fillText(t.text(t.v), x + tw / 2, y + th * 0.62);
       c.textAlign = "left"; c.font = "600 27px Montserrat, sans-serif";
       if (t.sub) { c.font = "500 19px Montserrat, sans-serif"; c.textAlign = "center"; c.fillText(t.sub, x + tw / 2 + 20, y + th - 44); c.textAlign = "left"; c.font = "600 27px Montserrat, sans-serif"; }
-      c.fillText(t.g[0], x + 16, y + th - 14);
+      c.font = "500 20px Montserrat, sans-serif"; const unitW = c.measureText(t.unit).width;
+      fitFont(c, t.g[0], tw - 30 - unitW - 10, 27, 600, 16); c.textAlign = "left"; c.fillText(t.g[0], x + 16, y + th - 14);   // "Slightly Humid" 같은 긴 상태어는 단위와 겹치지 않게 줄인다
       c.textAlign = "right"; c.font = "500 20px Montserrat, sans-serif"; c.fillText(t.unit, x + tw - 14, y + th - 14);
     });
     // 페이지 점
@@ -688,12 +703,15 @@
     [0, 1, 2].forEach((i) => { c.beginPath(); c.arc(W / 2 - 24 + i * 24, H - 30, 6, 0, Math.PI * 2); c.fillStyle = i === 1 ? C.blue : "#c9c9d2"; c.fill(); });
   }
   /* ── 기기 화면 3(800×600): 지붕 안 Indoor 6칸 · Outdoor 4칸(바깥 공기 = 물리의 바깥값) · 환기 장치 없음 패널 ── */
-  const outdoorOf = () => { const h = hourNow(), n = G.night || (h >= 20 || h < 7); return { pm: PM_OUT, pm10: PM_OUT * 1.7 + 1, temp: n ? 18 : 21.5, rh: n ? 66 : 58 }; };
+  // 글자가 칸을 넘지 않게: 주어진 폭에 들어갈 때까지 글자 크기를 1px 씩 줄인다(최소 크기까지)
+  function fitFont(c, text, maxW, size, weight, min) { let sz = size; for (;;) { c.font = `${weight} ${sz}px Montserrat, sans-serif`; if (c.measureText(text).width <= maxW || sz <= min) return sz; sz -= 1; } }
   function ioCard(c, x, y, w, h, label, gradeArr, val, unit) {
     c.fillStyle = "#fff"; c.strokeStyle = "#d9d9de"; c.lineWidth = 2; roundRect(c, x, y, w, h, 10); c.fill(); c.stroke();
     c.fillStyle = "#101014"; c.font = "500 21px Montserrat, sans-serif"; c.textAlign = "left"; c.fillText(label, x + 14, y + 30);
-    c.fillStyle = gradeArr[1]; c.font = "500 17px Montserrat, sans-serif"; c.textAlign = "right"; c.fillText(gradeArr[0], x + w - 12, y + 29);
-    c.font = "500 46px Montserrat, sans-serif"; c.textAlign = "center"; c.fillText(val, x + w * 0.46, y + h - 22);
+    const labelW = c.measureText(label).width;
+    c.fillStyle = gradeArr[1]; fitFont(c, gradeArr[0], w - 26 - labelW - 8, 17, 500, 11); c.textAlign = "right"; c.fillText(gradeArr[0], x + w - 12, y + 29);   // 상태어("Comfortable"·"Slightly Humid")는 이름표 오른쪽에 남은 폭에 맞춘다
+    c.font = "500 15px Montserrat, sans-serif"; const unitW = c.measureText(unit).width, valW = w - 26 - unitW - 8;
+    fitFont(c, val, valW, 46, 500, 30); c.textAlign = "center"; c.fillText(val, x + 14 + valW / 2, y + h - 22);   // 값은 단위 왼쪽 영역의 가운데
     c.fillStyle = "#6e6e78"; c.font = "500 15px Montserrat, sans-serif"; c.textAlign = "right"; c.fillText(unit, x + w - 12, y + h - 18);
   }
   function drawIO(c) {
@@ -837,7 +855,7 @@
   const noVideo = reduced || saveData;
   let RATIO = 1600 / 1074;
   function noteAssets() {
-    const keys = Object.keys(SCENES), done = keys.filter((k) => assetState[k] === "ok").length, bad = keys.filter((k) => assetState[k] === "bad").length;
+    const keys = USED_SCENES, done = keys.filter((k) => assetState[k] === "ok").length, bad = keys.filter((k) => assetState[k] === "bad").length;   // 쓰는 장면(방마다 낮·밤 6장)만 센다
     const parts = [];
     if (bad) parts.push(t("badN", bad)); else if (done < keys.length) parts.push(t("loading", done, keys.length));
     if (clipBad) parts.push(t("noclip"));
@@ -879,7 +897,7 @@
     dev.style.setProperty("--tint", SCENES[key].tint || "none");
     placeDevice();
   }
-  function preloadRest() { for (const k of Object.keys(SCENES)) stillEl(k); }
+  function preloadRest() { for (const k of USED_SCENES) stillEl(k); }   // 쓰는 장면(방마다 낮·밤)만 미리 받는다
   function prefetchClips() { if (noVideo) return; for (const k of Object.values(SPACES[cur].states)) if (k !== shownKey && !clips[k] && clipOrder.length < 4) clipEl(k); }
 
   /* ── 배치: 장면이 cover 로 잘리는 방식을 그대로 계산해서, 사진 속 좌표(u,v)를 화면 좌표로 옮긴다 ── */
@@ -1169,14 +1187,15 @@
     document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
     document.querySelectorAll("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
     tabs.forEach((b) => { b.textContent = roomName(SPACES[b.dataset.space]); });
-    $("b-lang").textContent = t("langBtn"); $("pdev-img").alt = t("pdevAlt");
+    langBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === LANG))); $("pdev-img").alt = t("pdevAlt");
     const sp = SPACES[cur]; $("lead").textContent = LANG === "en" ? sp.en2 : sp.lead; $("lead-en").textContent = LANG === "en" ? sp.lead : sp.en2; rk.textContent = `${sp.where} · ${roomName(sp)}`;
     if (!panel.hidden) $("pspec-title").textContent = `${sp.where} · ${roomName(sp)}`;
     if (!floatEl.hidden && floatIdx >= 0) fcap.textContent = `${t("fnames")[floatIdx]} ${t("fhint")}`;
     if (typeof bSpeed !== "undefined") bSpeed.textContent = `${t("timelapse")} ×${G.speed}`;
     noteAssets(); hud(); counts();
   }
-  $("b-lang").addEventListener("click", () => { LANG = LANG === "ko" ? "en" : "ko"; try { localStorage.setItem("mr-lang", LANG); } catch (e) {} applyLang(); });
+  const langBtns = Array.from(document.querySelectorAll("#lang button"));
+  langBtns.forEach((b) => b.addEventListener("click", () => { if (LANG === b.dataset.lang) return; LANG = b.dataset.lang; try { localStorage.setItem("mr-lang", LANG); } catch (e) {} applyLang(); }));
   const bCook = $("b-cook"), bWin = $("b-window"), bNight = $("b-night"), bReset = $("b-reset"), bSpeed = $("b-speed");
   function setSpeed(v) { G.speed = SPEEDS.includes(v) ? v : 5; bSpeed.textContent = `${t("timelapse")} ×${G.speed}`; hud(); }
   bSpeed.addEventListener("click", () => setSpeed(SPEEDS[(SPEEDS.indexOf(G.speed) + 1) % SPEEDS.length]));
@@ -1194,17 +1213,17 @@
   tabs.forEach((b) => b.addEventListener("click", () => setSpace(b.dataset.space)));
   bCook.addEventListener("click", () => { if (ST.kitchen.cook <= 0) ST.kitchen.cook = 15; showScene(); hud(); redraw(); });
   bWin.addEventListener("click", () => { ST[cur].window = !ST[cur].window; alertDismissed = false; showScene(); hud(); redraw(); });   // 밤이 지나는 중에도 창문은 언제든 열고 닫는다
-  bNight.addEventListener("click", () => { startNight(); showScene(); hud(); redraw(); });
+  bNight.addEventListener("click", () => { toggleNight(); showScene(); hud(); redraw(); });
   bReset.addEventListener("click", () => {
-    G.t = 18 * 60; G.night = false; G.nightUntil = 0;
+    G.t = 18 * 60; G.night = false;
     ORDER.forEach((k) => { ST[k] = fresh(k); });
     if (gl) { resetParticles(); for (let i = 0; i < steamN; i++) SL[i] = -1; }
     alertDismissed = false; showScene(); rebuildTicks(); hud(); redraw();
   });
 
-  /* ── 루프(타임랩스): 1초 = 5분, 조리 중·창 열림엔 1초 = 1.5분(연기·환기가 보이게), 밤엔 1초 = 20분(8시간 반이 25초) — 어느 방이든 10초 안에 주의 단계가 나온다 ── */
+  /* ── 루프(타임랩스): 기본 1초 = 5분(배속 버튼 ×1·5·10·20), 조리·창 열림 중엔 0.3배(연기·환기가 보이게). 야간 모드는 조명만 바꾼다 — 시계·물리는 그대로 흐른다. ── */
   const SPEEDS = [1, 5, 10, 20];
-  const speed = () => { const b = G.speed; return (ST[cur].window || ST.kitchen.cook > 0) ? Math.max(1, +(b * 0.3).toFixed(1)) : G.night ? b * 4 : b; };   // 조리·창 열림은 0.3배(연기·환기가 보이게), 밤은 4배
+  const speed = () => { const b = G.speed; return (ST[cur].window || ST.kitchen.cook > 0) ? Math.max(1, +(b * 0.3).toFixed(1)) : b; };   // 조리·창 열림은 0.3배(연기·환기가 보이게)
   function redraw() { fitCanvas(mini); drawCurve(mctx, mini.width, mini.height); }
   let acc = 0, last = performance.now(), t0 = last, lastMini = 0;
   function frame(now) {
@@ -1228,9 +1247,9 @@
   const startSpace = ORDER.includes(q.get("space")) ? q.get("space") : "living";
   if (q.get("cook") === "1") ST.kitchen.cook = 15;
   if (q.get("window") === "1") ST[startSpace].window = true;
-  if (q.get("night") === "1") startNight();
+  if (q.get("night") === "1") G.night = true;
   if (q.get("speed")) setSpeed(+q.get("speed"));
-  window.__mr = { species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * sp.frac(ST[cur])) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur] };   // 검증용(읽기 전용)
+  window.__mr = { species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * sp.frac(ST[cur])) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur], outdoor: outdoorOf };   // 검증용(읽기 전용)
   setSpace(startSpace); applyLang(); noteAssets(); redraw();
   if (q.get("panel") === "1") openPanel();
   setTimeout(preloadRest, 3500);
