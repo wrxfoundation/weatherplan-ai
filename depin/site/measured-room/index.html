@@ -81,8 +81,11 @@
   .bar { display: grid; grid-template-columns: 50px 1fr 46px; align-items: center; gap: 8px; }
   .bar .bl { font-family: var(--display), var(--body); font-size: 11px; font-weight: 700; color: var(--ink-2); line-height: 1.05; white-space: nowrap; }
   .bar .bl small { display: block; font-size: 9.5px; font-weight: 500; color: var(--cap); }
-  .bar .bt { position: relative; height: 9px; border-radius: 5px; background: #ecebf5; overflow: hidden; }
-  .bar .bt i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 5px; background: #1878F2; transition: width .5s ease, background .5s ease; }
+  .bar .bt { position: relative; height: 12px; border-radius: 6px; background: #ecebf5; cursor: ew-resize; touch-action: none; }
+  .bar .bt:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }
+  .bar .bt i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 6px; background: #1878F2; transition: width .35s ease, background .35s ease; }
+  .bar .bt i::after { content: ""; position: absolute; right: -7px; top: 50%; width: 16px; height: 16px; margin-top: -8px; border-radius: 50%; background: #fff; border: 2.5px solid var(--lvc, #1878F2); box-shadow: 0 1px 4px rgba(0,0,0,.28); }
+  .bar .bt.drag i { transition: none; }
   .bar b { font-family: var(--display); font-size: 15px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); letter-spacing: -.01em; }
   [data-lv="good"] { --lvc: #1878F2; } [data-lv="ok"] { --lvc: #37B76A; } [data-lv="warn"] { --lvc: #E0741E; } [data-lv="alert"] { --lvc: #D93A2B; }
   .bar i[data-lv] { background: var(--lvc); }
@@ -188,7 +191,7 @@
 
   <aside class="readout" aria-live="polite">
     <div class="k" id="rk">On the console · 거실</div>
-    <div class="bars" id="bars" aria-label="여섯 측정 요소의 값과 등급">
+    <div class="bars" id="bars" aria-label="여섯 측정 요소의 값과 등급 — 막대를 끌면 값을 직접 바꿀 수 있다">
       <div class="bar"><span class="bl">PM2.5<small>µg/m³</small></span><span class="bt" data-bar="pm"><i id="pmb"></i></span><b id="pmv">12</b></div>
       <div class="bar"><span class="bl">PM10<small>µg/m³</small></span><span class="bt" data-bar="pm10"><i id="pm10b"></i></span><b id="pm10v">21</b></div>
       <div class="bar"><span class="bl">CO₂<small>ppm</small></span><span class="bt" data-bar="co2"><i id="co2b"></i></span><b id="co2v">620</b></div>
@@ -295,7 +298,7 @@
       states: { dusk: "living-dusk", window: "living-window", night: "living-night", nightWindow: "living-night-window" },
       pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : s.window ? "window" : "dusk",
       device: { u: 0.455, v: 0.598, cmFrac: 0.00156 }, window: [0.78, 0.30], focus: [0.45, 0.5],
-      people: (h, night) => night ? 0.3 : (h >= 18 && h < 23) ? 2.8 : (h >= 23 || h < 7) ? 0.3 : 1.2,
+      people: (h, night) => night ? 0.3 : (h >= 18 && h < 23) ? 10.5 : (h >= 23 || h < 7) ? 0.3 : 3,
       temp: (h, night) => (night || h >= 23 || h < 7) ? 22.2 : 23.0, init: { pm: 12, co2: 620 }
     },
     bedroom: {
@@ -315,7 +318,7 @@
       states: { idle: "kitchen-idle", cook: "kitchen-cook", vent: "kitchen-vent", night: "kitchen-night", nightWindow: "kitchen-night-window" },
       pick: (s, g) => s.cook > 0 ? "cook" : g.night ? (s.window ? "nightWindow" : "night") : s.window ? "vent" : "idle",
       device: { u: 0.83, v: 0.625, cmFrac: 0.00333 }, pan: [0.615, 0.60], hood: [0.70, 0.13], window: [0.26, 0.43], focus: [0.66, 0.5],
-      people: (h, night) => night ? 0.2 : (h >= 18 && h < 21) ? 1.5 : (h >= 23 || h < 7) ? 0.2 : 0.8,
+      people: (h, night) => night ? 0.2 : (h >= 18 && h < 21) ? 3 : (h >= 23 || h < 7) ? 0.2 : 1.5,
       temp: (h, night) => (night || h >= 23 || h < 7) ? 22.4 : 23.4, init: { pm: 14, co2: 560 }
     }
   };
@@ -331,8 +334,11 @@
   const hourNow = () => (G.t % 1440) / 60;
   function stepMinute() {
     const h = hourNow(), nightish = G.night || (h >= 20 || h < 7), tOut = nightish ? 18 : 21.5, rhOut = nightish ? 66 : 58;
+    const nowMs = performance.now();
     for (const k of ORDER) {
       const s = ST[k], sp = SPACES[k], cooking = s.cook > 0;
+      const keep = {}; for (const q in (s.pin || {})) if (s.pin[q] > nowMs) keep[q] = s[q];   // 막대로 정한 값은 잠시 고정
+      s._keep = keep;
       const vent = s.window ? 0.14 : 0.018;
       s.pm += (cooking ? 22 : 0) - vent * (s.pm - PM_OUT) - 0.012 * s.pm;
       s.co2 += sp.people(h, G.night) - (s.window ? 0.12 : 0.006) * (s.co2 - CO2_OUT);
@@ -348,6 +354,7 @@
     const bc = ST.bedroom.co2 - ST.living.co2; ST.living.co2 += bc * 0.012; ST.bedroom.co2 -= bc * 0.004;
     const kc = ST.kitchen.co2 - ST.living.co2; ST.living.co2 += kc * 0.03; ST.kitchen.co2 -= kc * 0.03;
     const kv = ST.kitchen.voc - ST.living.voc; if (kv > 0) { ST.living.voc += kv * 0.02; ST.kitchen.voc -= kv * 0.01; }
+    for (const k of ORDER) { const s = ST[k]; for (const q in s._keep) s[q] = s._keep[q]; }   // 막대로 정한 값 고정(방 사이 섞임 뒤에)
     G.t += 1;
     for (const k of ORDER) {
       const s = ST[k];
@@ -410,7 +417,35 @@
   for (const k in BARS) { const b = BARS[k], stops = []; let prev = b.lo;
     for (const [to, z] of b.zones) { const a = ((prev - b.lo) / (b.hi - b.lo) * 100).toFixed(1), c = ((to - b.lo) / (b.hi - b.lo) * 100).toFixed(1); stops.push(`${ZONE_BG[z]} ${a}% ${c}%`); prev = to; }
     b.fill.parentElement.style.background = `linear-gradient(90deg, ${stops.join(", ")})`; }
-  function setBar(k, v, lv) { const b = BARS[k]; b.fill.style.width = (clamp((v - b.lo) / (b.hi - b.lo), 0, 1) * 100).toFixed(1) + "%"; b.fill.dataset.lv = lv; if (lv === "warn" || lv === "alert") b.num.dataset.lv = lv; else delete b.num.dataset.lv; }
+  function setBar(k, v, lv) { const b = BARS[k]; b.fill.style.width = (clamp((v - b.lo) / (b.hi - b.lo), 0, 1) * 100).toFixed(1) + "%"; b.fill.dataset.lv = lv; if (lv === "warn" || lv === "alert") b.num.dataset.lv = lv; else delete b.num.dataset.lv; b.fill.parentElement.setAttribute("aria-valuenow", v.toFixed(k === "temp" ? 1 : 0)); }
+  // 막대 = 슬라이더(위지윅): 끌거나 화살표로 값을 정하면 그 방의 물리 상태를 그 값으로 바꾼다 — 입자·기기 화면·알림이 바로 따라온다. PM10 은 PM2.5 로 환산.
+  const APPLY = {
+    pm: (s, v) => { s.pm = v; }, pm10: (s, v) => { s.pm = Math.max(3, (v - 2 - (s.cook > 0 ? 4 : 0)) / 1.6); }, co2: (s, v) => { s.co2 = v; },
+    voc: (s, v) => { s.voc = v; }, temp: (s, v) => { s.temp = v; }, rh: (s, v) => { s.rh = v; }
+  };
+  const LABEL = { pm: "PM2.5", pm10: "PM10", co2: "CO₂", voc: "VOCs", temp: "온도", rh: "습도" };
+  function applyBar(k, frac) {
+    const b = BARS[k], v = b.lo + clamp(frac, 0, 1) * (b.hi - b.lo), s = ST[cur];
+    APPLY[k](s, v); s.pin = s.pin || {}; s.pin[k === "pm10" ? "pm" : k] = performance.now() + 4000;
+    if (s.co2 < 950 && s.pm < 70) s.alertAt = -1; if ((s.co2 >= 1000 || s.pm > 75) && s.alertAt < 0) { s.alertAt = G.t; s.alertReal = performance.now(); alertDismissed = false; }
+    s.hist.push({ t: G.t, pm: s.pm, co2: s.co2 }); if (s.hist.length > 720) s.hist.shift();
+    showScene(); hud(); redraw();
+  }
+  for (const k in BARS) {
+    const b = BARS[k], el = b.fill.parentElement;
+    el.setAttribute("role", "slider"); el.setAttribute("tabindex", "0"); el.setAttribute("aria-label", `${LABEL[k]} 값 정하기`); el.setAttribute("aria-valuemin", b.lo); el.setAttribute("aria-valuemax", b.hi);
+    const at = (e) => { const r = el.getBoundingClientRect(); return (e.clientX - r.left) / Math.max(1, r.width); };
+    let down = false;
+    el.addEventListener("pointerdown", (e) => { down = true; el.classList.add("drag"); el.setPointerCapture(e.pointerId); applyBar(k, at(e)); e.preventDefault(); });
+    el.addEventListener("pointermove", (e) => { if (down) applyBar(k, at(e)); });
+    const up = () => { down = false; el.classList.remove("drag"); };
+    el.addEventListener("pointerup", up); el.addEventListener("pointercancel", up);
+    el.addEventListener("keydown", (e) => {
+      const cur_ = parseFloat(b.fill.style.width) / 100 || 0, step = (e.key === "PageUp" || e.key === "PageDown") ? 0.1 : 0.02;
+      if (e.key === "ArrowRight" || e.key === "ArrowUp" || e.key === "PageUp") { applyBar(k, cur_ + step); e.preventDefault(); }
+      else if (e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "PageDown") { applyBar(k, cur_ - step); e.preventDefault(); }
+    });
+  }
   const pWin = $("p-window"), pCook = $("p-cook"), pNight = $("p-night");
   function clockText() { const day = Math.floor(G.t / 1440) + 1, m = G.t % 1440; return `Day ${day} · ${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; }
   const DAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], MONS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -419,7 +454,7 @@
   function deviceTime() { const m = G.t % 1440, h = Math.floor(m / 60); return `${h < 12 ? "AM" : "PM"} ${((h + 11) % 12) + 1}:${String(m % 60).padStart(2, "0")}`; }
   function hud() {
     const s = ST[cur];
-    pmv.textContent = s.pm.toFixed(0); co2v.textContent = s.co2.toFixed(0); clock.textContent = clockText();
+    pmv.textContent = s.pm.toFixed(0); co2v.textContent = s.co2.toFixed(0); clock.textContent = `${clockText()} · 타임랩스 ×${speed()}`;
     pm10v.textContent = pm10Of(s).toFixed(0); vocv.textContent = s.voc.toFixed(0); tv.textContent = s.temp.toFixed(1); rhv.textContent = s.rh.toFixed(0);
     // 막대와 숫자 색: 좋음(파랑) → 보통(초록) → 주의(주황) → 경고(빨강). PM·VOCs 는 기기 등급, CO₂ 는 800 주의·1000 경고, 온·습도는 편안 범위 밖이면 주의
     const p10 = pm10Of(s);
@@ -678,10 +713,10 @@
   /* 입자 종류 — 색이 곧 종류. 개수는 그 값에 비례해 하나씩 늘고(쌓임), 창이 열리면 창으로 빨려 나가 사라진다(환기).
      CO₂ 하늘색(공기보다 무거워 아래에 깔림) · PM2.5 주황(조리 연기, 팬에서 피어오름) · PM10 모래색(굵고 천천히 가라앉음) · VOCs 보라(가구·조리에서 나와 위로 떠오름) */
   const SPECIES = [
-    { key: "co2",  n: small() ? 560 : 1100, col: [0.22, 0.68, 1.00], size: 1.35, tw: 0.5,  amb: 0.96, vy: 0.9,  low: 0.55, frac: (s) => clamp((s.co2 - 470) / 1300, 0, 1) },
-    { key: "pm25", n: small() ? 320 : 620,  col: [1.00, 0.42, 0.04], size: 1.00, tw: 0.5,  amb: 0.94, vy: 0.3,  low: 0,    frac: (s) => clamp((s.pm - 8) / 130, 0, 1) },
-    { key: "pm10", n: small() ? 200 : 400,  col: [0.86, 0.56, 0.24], size: 1.65, tw: 0.25, amb: 0.88, vy: 2.6,  low: 0.2,  frac: (s) => clamp((pm10Of(s) - 12) / 210, 0, 1) },
-    { key: "voc",  n: small() ? 230 : 450,  col: [0.66, 0.24, 1.00], size: 1.30, tw: 0.7,  amb: 0.92, vy: -1.6, low: -0.3, frac: (s) => clamp((s.voc - 12) / 480, 0, 1) }
+    { key: "co2",  n: small() ? 560 : 1100, col: [0.22, 0.68, 1.00], size: 1.05, tw: 0.8,  amb: 0.96, vy: 0.9,  low: 0.55, frac: (s) => clamp((s.co2 - 470) / 1300, 0, 1) },
+    { key: "pm25", n: small() ? 320 : 620,  col: [1.00, 0.42, 0.04], size: 0.85, tw: 0.6,  amb: 0.94, vy: 0.3,  low: 0,    frac: (s) => clamp((s.pm - 8) / 130, 0, 1) },
+    { key: "pm10", n: small() ? 200 : 400,  col: [0.86, 0.56, 0.24], size: 1.25, tw: 0.45, amb: 0.9,  vy: 2.6,  low: 0.2,  frac: (s) => clamp((pm10Of(s) - 12) / 210, 0, 1) },
+    { key: "voc",  n: small() ? 230 : 450,  col: [0.66, 0.24, 1.00], size: 1.0,  tw: 0.7,  amb: 0.92, vy: -1.6, low: -0.3, frac: (s) => clamp((s.voc - 12) / 480, 0, 1) }
   ];
   for (const sp of SPECIES) { sp.B = new Float32Array(sp.n * 5); sp.M = new Int8Array(sp.n); sp.acc = 0; sp.alive = 0; sp.buf = null; }   // B: x, y, 깊이(0 가까움~1 멂), 씨앗, 알파 / M: 0 없음 · 1 살아 있음 · 2 사라지는 중
   const legendEls = {}; $("legend").querySelectorAll("[data-sp]").forEach((el) => { legendEls[el.dataset.sp] = el.querySelector("i"); });
@@ -709,14 +744,14 @@
       float a = clamp(fog + glow + ga, 0.0, 1.0);
       gl_FragColor = vec4(min(col, vec3(a)), a);
     }`;
-  const DUST_V = `attribute vec3 aPos; attribute float aSeed, aAlpha; uniform vec2 uRes, uPar, uLight, uLDir; uniform float uDpr, uTime, uLKind, uLOn, uLRad, uSize, uAmb, uTw;
-    varying float vA, vBlur, vBright;
+  const DUST_V = `attribute vec3 aPos; attribute float aSeed, aAlpha; uniform vec2 uRes, uPar, uLight, uLDir; uniform float uDpr, uTime, uLKind, uLOn, uLRad, uSize, uAmb, uTw; uniform mediump float uPass;
+    varying float vA, vBright, vGlint;
     void main(){
       float z = aPos.z, near = 1.0 - z;
       vec2 p = aPos.xy + uPar * (0.5 + 2.2 * near * near);
       gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
-      gl_PointSize = min(mix(3.5, 20.0, near * near * near) * uDpr * uSize, 40.0) * step(0.001, aAlpha);
-      vBlur = near * near;
+      float base = mix(2.6, 8.0, near * near) * uDpr * uSize;                       // 알갱이: 2.6~8px — 도형이 아니라 가루
+      gl_PointSize = min(base * (uPass > 0.5 ? 3.4 : 1.0), 56.0) * step(0.001, aAlpha);
       vec2 d = p - uLight; float lit;
       if (uLKind < 0.5) {
         float along = dot(d, uLDir); float perp = abs(d.x * uLDir.y - d.y * uLDir.x);
@@ -724,17 +759,27 @@
         lit = cone * uLOn;
       } else { lit = exp(-length(d) / uLRad) * uLOn; }
       vBright = mix(uAmb, 1.0, lit);
-      vA = (1.0 - uTw + uTw * (0.5 + 0.5 * sin(uTime * (1.2 + 2.2 * fract(aSeed * 7.31)) + aSeed * 40.0))) * mix(0.95, 0.6, vBlur) * aAlpha;
+      float tw = 0.5 + 0.5 * sin(uTime * (1.6 + 3.0 * fract(aSeed * 7.31)) + aSeed * 40.0);
+      tw = tw * tw * tw;                                                              // 반짝임을 뾰족하게(빛가루)
+      vA = mix(1.0, tw, uTw) * aAlpha;
+      vGlint = step(0.74, fract(aSeed * 3.17)) * tw;                                  // 넷 중 하나는 십자 플레어
     }`;
-  const DUST_F = `precision mediump float; uniform vec3 uCol; uniform float uOp; varying float vA, vBlur, vBright;
+  const DUST_F = `precision mediump float; uniform vec3 uCol; uniform float uOp, uPass; varying float vA, vBright, vGlint;
     void main(){
       vec2 c = gl_PointCoord - 0.5; float r = length(c);
-      float sharp = 1.0 - smoothstep(0.10, 0.40, r);
-      float bokeh = (1.0 - smoothstep(0.4, 0.5, r)) * (0.5 + 0.5 * smoothstep(0.22, 0.44, r));
-      float core = mix(sharp, bokeh, vBlur) * vA * uOp * vBright;
-      float halo = (1.0 - smoothstep(0.28, 0.5, r)) * (1.0 - 0.7 * vBlur) * vA * uOp * 0.42;
-      vec3 rgb = uCol * core + vec3(0.02, 0.02, 0.06) * halo * (1.0 - core);
-      gl_FragColor = vec4(rgb, core + halo * (1.0 - core));
+      if (uPass < 0.5) {
+        float core = 1.0 - smoothstep(0.05, 0.22, r);                                  // 작고 또렷한 알갱이
+        float ring = (1.0 - smoothstep(0.22, 0.5, r)) * 0.13;                          // 흰 벽에서 알갱이를 받치는 옅은 그늘
+        vec3 col = mix(uCol, vec3(1.0), 0.32 + 0.3 * vGlint);
+        float a = core * vA * uOp * vBright, h = ring * vA * uOp * (1.0 - a);
+        gl_FragColor = vec4(col * a + vec3(0.02, 0.02, 0.06) * h, a + h);
+      } else {                                                                          // 가산 패스: 색 글로우 + 십자 플레어 = 빛
+        float glow = exp(-r * r * 16.0);
+        float hs = max(0.0, 1.0 - abs(c.y) * 9.0) * (1.0 - smoothstep(0.04, 0.5, abs(c.x)));
+        float vs = max(0.0, 1.0 - abs(c.x) * 9.0) * (1.0 - smoothstep(0.04, 0.5, abs(c.y)));
+        float a = (glow * 0.6 + (hs + vs) * vGlint * 0.9) * vA * uOp;
+        gl_FragColor = vec4(uCol * a, a);
+      }
     }`;
   const STEAM_V = `attribute vec2 aPos; attribute float aSize, aSeed, aAlpha; uniform vec2 uRes, uPar; uniform float uDpr, uMaxPt; varying float vA, vSeed;
     void main(){ vec2 p = aPos + uPar * 1.3; gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
@@ -773,7 +818,7 @@
       maxPt = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1] || 64;
       gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.clearColor(0, 0, 0, 0);
       for (let i = 0; i < steamN; i++) SL[i] = -1;
-    } catch (e) { gl = null; }
+    } catch (e) { gl = null; console.warn("fx layer disabled:", e && e.message); }
   }
   if (!gl) { canvas.style.display = "none"; fxNote = "효과 레이어 없음(이 브라우저는 WebGL 미지원)"; }
 
@@ -859,10 +904,10 @@
     gl.uniform1f(P.u.uSize, opts.size); gl.uniform1f(P.u.uAmb, opts.amb); gl.uniform1f(P.u.uTw, opts.tw);
     gl.uniform2f(P.u.uLight, lightCur.x, lightCur.y); gl.uniform2f(P.u.uLDir, lightCur.dx, lightCur.dy);
     gl.uniform1f(P.u.uLKind, lightCur.kind); gl.uniform1f(P.u.uLOn, lightCur.on); gl.uniform1f(P.u.uLRad, lightCur.r);
-    gl.uniform3f(P.u.uCol, opts.col[0], opts.col[1], opts.col[2]); gl.uniform1f(P.u.uOp, opts.op);
+    gl.uniform3f(P.u.uCol, opts.col[0], opts.col[1], opts.col[2]); gl.uniform1f(P.u.uOp, opts.op); gl.uniform1f(P.u.uPass, 0);
     gl.drawArrays(gl.POINTS, 0, n);
-    if (opts.glow > 0) {   // 글로우: 같은 점을 1.8배 크게, 옅게, 가산 합성 — 어두운 장면에서 입자가 빛나 보인다
-      gl.blendFunc(gl.ONE, gl.ONE); gl.uniform1f(P.u.uSize, opts.size * 1.8); gl.uniform1f(P.u.uOp, opts.op * opts.glow); gl.uniform1f(P.u.uTw, 0.0);
+    if (opts.glow > 0) {   // 빛 패스: 같은 점을 크게, 가산 합성으로 색 글로우·플레어만 더한다 — 빛가루
+      gl.blendFunc(gl.ONE, gl.ONE); gl.uniform1f(P.u.uPass, 1); gl.uniform1f(P.u.uOp, opts.op * opts.glow);
       gl.drawArrays(gl.POINTS, 0, n); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     }
     gl.disableVertexAttribArray(P.a.aSeed); gl.disableVertexAttribArray(P.a.aAlpha);
@@ -877,8 +922,8 @@
     const lc = lightCur.col, sizeK = Math.sqrt(clamp(sw / 1200, 0.7, 2.2));
     // 종류별 입자 — 색이 곧 종류. 개수는 stepSpecies 가 값에 맞춰 늘리고 줄인다. 진하기는 값에 비례하되 바닥값을 둬서 몇 개 안 남아도 보인다.
     const nk = 1;
-    const pGlow = G.night ? 0.34 : 0.1;   // 입자 글로우: 밤에 강하게, 낮에도 조금(밝은 장면은 어두운 테두리가 이미 점을 또렷하게 한다), 채움 부담도 줄인다
-    for (const sp of SPECIES) { if (!sp.alive) continue; drawPoints(progDust, sp.buf, sp.B, sp.n, { t, size: sp.size * sizeK, amb: sp.amb, tw: sp.tw, col: [sp.col[0] * nk, sp.col[1] * nk, sp.col[2] * nk], op: clamp(0.72 + 0.28 * sp.frac(s), 0, 1), glow: pGlow }); }
+    const pGlow = G.night ? 0.95 : 0.55;   // 빛 패스 세기: 밤에 강하게(가산이라 밝은 벽에선 저절로 묻힌다)(밝은 장면은 어두운 테두리가 이미 점을 또렷하게 한다), 채움 부담도 줄인다
+    for (const sp of SPECIES) { if (!sp.alive) continue; drawPoints(progDust, sp.buf, sp.B, sp.n, { t, size: sp.size * sizeK, amb: sp.amb, tw: sp.tw, col: [sp.col[0] * nk, sp.col[1] * nk, sp.col[2] * nk], op: clamp(0.85 + 0.15 * sp.frac(s), 0, 1), glow: pGlow }); }
     // 김 — 부엌 조리 중에만
     if (cur === "kitchen") {
       gl.useProgram(progSteam.p); gl.bindBuffer(gl.ARRAY_BUFFER, steamBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, S);
@@ -938,12 +983,13 @@
     alertDismissed = false; showScene(); rebuildTicks(); hud(); redraw();
   });
 
-  /* ── 루프: 1초 = 1분, 밤에는 1초 = 12분 ── */
+  /* ── 루프(타임랩스): 1초 = 5분, 조리 중·창 열림엔 1초 = 1.5분(연기·환기가 보이게), 밤엔 1초 = 20분(8시간 반이 25초) — 어느 방이든 10초 안에 주의 단계가 나온다 ── */
+  const speed = () => ST[cur].window ? 1.5 : G.night ? 20 : ST.kitchen.cook > 0 ? 1.5 : 5;   // 창을 열면 환기가 보이게 천천히
   function redraw() { drawCurve(mctx, 400, 128); }
   let acc = 0, last = performance.now(), t0 = last;
   function frame(now) {
     const dt = Math.min(0.1, (now - last) / 1000), t = (now - t0) / 1000; last = now;
-    acc += dt * (G.night ? 12 : 1);
+    acc += dt * speed();
     let n = 0; while (acc >= 1 && n < 20) { stepMinute(); acc -= 1; n++; }
     if (n > 0) { showScene(); hud(); redraw(); }
     tweenShown(); drawScreen(sctx0); blit(screenCv); if (!panel.hidden) blit(pscreenCv);
