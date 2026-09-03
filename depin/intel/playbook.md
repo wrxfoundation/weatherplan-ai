@@ -192,7 +192,7 @@
 - "Credit follows evidence." — 기관 신용·RWA 글 대응용 (검증 가능한 매출 = 신용의 근거)
 - "Multi-source attestation is how reality gets on-chain." — 오라클·검증 인프라 글 대응용
 - "An air-quality network shouldn't cost the air." — 에너지 효율·ESG 글 대응용 (우리만 쓸 수 있는 라인)
-- "Tokenization moves exactly as fast as verification does." — RWA·토큰화 전망 글 대응용
+- "Tokenization moves exactly as fast as verification does." — RWA·토큰화 전망 글 대응용 (초연 9/3 @tokenterminal 답글 — 재사용 시 변주)
 - "Account economics is onboarding economics." — 리저브·수수료·온보딩 글 대응용 (Sponsor 복선 페어)
 - "Ads don't work on agents. Attestations do." — 에이전트 결제·x402·AI 커머스 글 대응용 (기계 고객 페어,
   검증=제품 포지션과 직결. 5c 원글에서 초연 예정)
