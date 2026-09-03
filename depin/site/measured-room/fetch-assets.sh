@@ -7,7 +7,7 @@ cd "$(dirname "$0")/assets"
 IMG=https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC
 GEN=https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC
 get() { echo "$1"; curl -fsSL -o "$1" "$2"; }
-get device.png              $IMG/f6aa6c49-ba85-4c10-91a5-1f8cedd11563.png
+get device.png              $IMG/ee65a0c4-ee89-4f7c-aac3-7389ee32aab8.png
 get living-dusk.jpg         $IMG/fd732637-3131-482a-9a1c-9331bb473167.jpg
 get living-window.jpg       $IMG/e0d1dbe2-bdc0-4096-86f1-5b2b5d7c2034.jpg
 get living-night.jpg        $IMG/d0c5e4e1-c28d-4ded-ae2f-6a1a6aa5702a.jpg
