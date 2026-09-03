@@ -866,8 +866,8 @@
     ringTip.style.transform = `translate(${(rx + ts * 24).toFixed(1)}px, ${ry.toFixed(1)}px) translate(${ts > 0 ? "0" : "-100%"}, -50%)`;
     const hw = Math.max(bw, 44), hh = Math.max(bh, 44);
     hit.style.transform = `translate(${(bx + bw / 2 - hw / 2).toFixed(1)}px, ${(by + bh / 2 - hh / 2).toFixed(1)}px)`; hit.style.width = hw.toFixed(1) + "px"; hit.style.height = hh.toFixed(1) + "px";
-    // 환기 메시지는 포인트 아래(자리가 없으면 위), 장면 밖으로 나가지 않게
-    const vw = ventBtn.offsetWidth || 190, vh = ventBtn.offsetHeight || 40, vx = clamp(rx, vw / 2 + 6, sw - vw / 2 - 6), vy = ry + 30 + vh > sh - 6 ? ry - 30 - vh : ry + 30;
+    // 환기 메시지는 포인트 위(기기를 가리지 않게 — 위에 자리가 없으면 아래), 장면 밖으로 나가지 않게
+    const vw = ventBtn.offsetWidth || 190, vh = ventBtn.offsetHeight || 40, vx = clamp(rx, vw / 2 + 6, sw - vw / 2 - 6), vy = ry - 30 - vh < 6 ? ry + 30 : ry - 30 - vh;
     ventBtn.style.transform = `translate(${vx.toFixed(1)}px, ${vy.toFixed(1)}px) translate(-50%, 0)`;
     ringAt = { x: rx, y: ry };
   }
