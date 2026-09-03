@@ -52,13 +52,19 @@
   .screen-wrap.on { opacity: 1; }
   .screen-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
   .screen-glow { position: absolute; inset: -14% -10%; border-radius: 40%; background: radial-gradient(ellipse at 50% 55%, rgba(120,170,255,.5), rgba(120,170,255,0) 68%); opacity: var(--glow, .25); filter: blur(5px); z-index: -1; }
-  .ring { position: absolute; left: 0; top: 0; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; border: 2px solid rgba(255,255,255,.92); background: rgba(77,77,206,.18); cursor: pointer; padding: 0; z-index: 3;
+  /* 원형 포인트는 기기 밖(위·옆)에 두고 가는 선으로 기기를 가리킨다 — 기기가 가려지지 않는다. 기기 자체도 탭 영역(.hit). */
+  .ring { position: absolute; left: 0; top: 0; width: 36px; height: 36px; margin: -18px 0 0 -18px; border-radius: 50%; border: 2px solid rgba(255,255,255,.95); background: rgba(77,77,206,.22); cursor: pointer; padding: 0; z-index: 3;
           box-shadow: 0 0 0 0 rgba(255,255,255,.55), 0 2px 10px rgba(0,0,0,.35); animation: pulse 2.2s ease-out infinite; }
   .ring::after { content: ""; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: #fff; }
   .ring:hover { background: rgba(77,77,206,.4); }
   .ring:focus-visible { outline: 3px solid rgba(255,255,255,.6); outline-offset: 3px; }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,.55), 0 2px 10px rgba(0,0,0,.35); } 70% { box-shadow: 0 0 0 16px rgba(255,255,255,0), 0 2px 10px rgba(0,0,0,.35); } 100% { box-shadow: 0 0 0 16px rgba(255,255,255,0), 0 2px 10px rgba(0,0,0,.35); } }
-  .ring-tip { position: absolute; left: 0; top: 0; transform: translate(-50%, 30px); white-space: nowrap; font-size: 11px; font-weight: 700; color: #fff; background: rgba(10,10,32,.6); border-radius: 999px; padding: 3px 9px; pointer-events: none; z-index: 3; backdrop-filter: blur(4px); }
+  .leader { position: absolute; left: 0; top: 0; height: 2px; transform-origin: 0 50%; background: linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,.5)); box-shadow: 0 1px 4px rgba(0,0,0,.45); pointer-events: none; z-index: 3; }
+  .leader::before { content: ""; position: absolute; left: -3px; top: -2px; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px rgba(77,77,206,.55); }
+  .hit { position: absolute; left: 0; top: 0; background: transparent; border: 0; padding: 0; margin: 0; cursor: pointer; z-index: 3; border-radius: 8px; }
+  .hit:hover { box-shadow: 0 0 0 2px rgba(255,255,255,.55); }
+  .hit:focus-visible { outline: 3px solid rgba(255,255,255,.6); outline-offset: 2px; }
+  .ring-tip { position: absolute; left: 0; top: 0; white-space: nowrap; font-size: 11px; font-weight: 700; color: #fff; background: rgba(10,10,32,.6); border-radius: 999px; padding: 3px 9px; pointer-events: none; z-index: 3; backdrop-filter: blur(4px); }
   #fx { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
   .vig { position: absolute; inset: 0; pointer-events: none; opacity: .22; transition: opacity 1.6s ease;
          background: radial-gradient(ellipse at 52% 42%, rgba(4,4,20,0) 30%, rgba(4,4,20,.75) 100%); }
@@ -80,6 +86,10 @@
   .status { margin-top: 8px; font-size: 11.5px; color: var(--ink-2); display: flex; gap: 6px; flex-wrap: wrap; }
   .pill { border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; background: #fff; }
   .pill.on { border-color: var(--violet); color: var(--violet); }
+  .legend { margin-top: 8px; display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--ink-2); align-items: center; }
+  .legend .k2 { color: var(--cap); }
+  .legend span[data-sp] { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; box-shadow: 0 0 6px currentColor; opacity: .3; transition: opacity .6s ease; }
 
   .controls { margin: 10px 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; }
   .btn { font-family: var(--body); font-weight: 700; font-size: 13.5px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.12); color: #fff;
@@ -163,6 +173,8 @@
     </div>
     <canvas id="fx" aria-hidden="true"></canvas>
     <div class="vig" id="vig"></div>
+    <div class="leader" id="leader" aria-hidden="true"></div>
+    <button class="hit" id="hit" type="button" aria-label="기기 화면 크게 보기"></button>
     <button class="ring" id="ring" type="button" aria-label="기기 화면 크게 보기"></button>
     <div class="ring-tip" id="ring-tip">기기 · 탭하면 화면 확대</div>
     <div class="assets" id="assets"></div>
@@ -183,6 +195,10 @@
       <span class="pill" id="p-window">창문 닫힘</span>
       <span class="pill" id="p-cook" hidden>조리 안 함</span>
       <span class="pill" id="p-night">저녁</span>
+    </div>
+    <div class="legend" id="legend" aria-label="장면 속 입자의 색과 종류">
+      <span class="k2">입자</span>
+      <span data-sp="co2"><i></i>CO₂</span><span data-sp="pm25"><i></i>PM2.5</span><span data-sp="pm10"><i></i>PM10</span><span data-sp="voc"><i></i>VOCs</span>
     </div>
   </aside>
 
@@ -273,8 +289,8 @@
       states: { dusk: "living-dusk", window: "living-window", night: "living-night", nightWindow: "living-night-window" },
       pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : s.window ? "window" : "dusk",
       device: { u: 0.455, v: 0.598, cmFrac: 0.00156 }, window: [0.78, 0.30], focus: [0.45, 0.5],
-      people: (h) => (h >= 18 && h < 23) ? 2.8 : (h >= 23 || h < 7) ? 0.3 : 1.2,
-      temp: (h) => (h >= 23 || h < 7) ? 22.2 : 23.0, init: { pm: 12, co2: 620 }
+      people: (h, night) => night ? 0.3 : (h >= 18 && h < 23) ? 2.8 : (h >= 23 || h < 7) ? 0.3 : 1.2,
+      temp: (h, night) => (night || h >= 23 || h < 7) ? 22.2 : 23.0, init: { pm: 12, co2: 620 }
     },
     bedroom: {
       name: "침실", en: "Bedroom", where: "On the nightstand",
@@ -283,8 +299,8 @@
       states: { evening: "bedroom-evening", night: "bedroom-night", nightWindow: "bedroom-night-window", morning: "bedroom-morning" },
       pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : s.window ? "morning" : "evening",
       device: { u: 0.205, v: 0.566, cmFrac: 0.00333 }, window: [0.89, 0.25], focus: [0.22, 0.5],
-      people: (h) => (h >= 23 || h < 7) ? 5.5 : 0.8,
-      temp: (h) => (h >= 23 || h < 7) ? 21.8 : 22.6, init: { pm: 9, co2: 700 }
+      people: (h, night) => (night || h >= 23 || h < 7) ? 7.5 : 0.8,
+      temp: (h, night) => (night || h >= 23 || h < 7) ? 21.8 : 22.6, init: { pm: 9, co2: 700 }
     },
     kitchen: {
       name: "부엌", en: "Kitchen", where: "On the counter",
@@ -293,8 +309,8 @@
       states: { idle: "kitchen-idle", cook: "kitchen-cook", vent: "kitchen-vent", night: "kitchen-night", nightWindow: "kitchen-night-window" },
       pick: (s, g) => s.cook > 0 ? "cook" : g.night ? (s.window ? "nightWindow" : "night") : s.window ? "vent" : "idle",
       device: { u: 0.83, v: 0.625, cmFrac: 0.00333 }, pan: [0.615, 0.60], hood: [0.70, 0.13], window: [0.26, 0.43], focus: [0.66, 0.5],
-      people: (h) => (h >= 18 && h < 21) ? 1.5 : (h >= 23 || h < 7) ? 0.2 : 0.8,
-      temp: (h) => (h >= 23 || h < 7) ? 22.4 : 23.4, init: { pm: 14, co2: 560 }
+      people: (h, night) => night ? 0.2 : (h >= 18 && h < 21) ? 1.5 : (h >= 23 || h < 7) ? 0.2 : 0.8,
+      temp: (h, night) => (night || h >= 23 || h < 7) ? 22.4 : 23.4, init: { pm: 14, co2: 560 }
     }
   };
   const ORDER = ["living", "bedroom", "kitchen"];
@@ -304,38 +320,43 @@
      PM2.5: 조리가 넣고, 환기와 침착이 뺀다. CO₂: 사람이 넣고, 환기가 뺀다. TVOC: 조리·닫힌 밤이 올리고 환기가 뺀다. 온·습도: 조리·창문에 따라 바깥값으로 끌린다. */
   const G = { t: 18 * 60, night: false, nightUntil: 0 };
   const PM_OUT = 18, CO2_OUT = 420;
-  const fresh = (k) => ({ pm: SPACES[k].init.pm, co2: SPACES[k].init.co2, voc: 15, temp: SPACES[k].temp(18), rh: 55, window: false, cook: 0, hist: [], records: 0, lastRecord: G.t, ticks: [], alertAt: -1 });
+  const fresh = (k) => ({ pm: SPACES[k].init.pm, co2: SPACES[k].init.co2, voc: 15, temp: SPACES[k].temp(18, false), rh: 55, window: false, cook: 0, hist: [], records: 0, lastRecord: G.t, ticks: [], alertAt: -1, alertReal: 0 });
   const ST = {}; ORDER.forEach((k) => { ST[k] = fresh(k); });
   const hourNow = () => (G.t % 1440) / 60;
   function stepMinute() {
-    const h = hourNow(), nightish = (h >= 20 || h < 7), tOut = nightish ? 18 : 21.5, rhOut = nightish ? 66 : 58;
+    const h = hourNow(), nightish = G.night || (h >= 20 || h < 7), tOut = nightish ? 18 : 21.5, rhOut = nightish ? 66 : 58;
     for (const k of ORDER) {
       const s = ST[k], sp = SPACES[k], cooking = s.cook > 0;
       const vent = s.window ? 0.14 : 0.018;
       s.pm += (cooking ? 22 : 0) - vent * (s.pm - PM_OUT) - 0.012 * s.pm;
-      s.co2 += sp.people(h) - (s.window ? 0.12 : 0.006) * (s.co2 - CO2_OUT);
-      s.voc += (cooking ? 45 : 0) + (!s.window && nightish ? 0.35 : 0) - (s.window ? 0.14 : 0.012) * (s.voc - 15);
-      const tBase = sp.temp(h) + (cooking ? 3 : 0);
+      s.co2 += sp.people(h, G.night) - (s.window ? 0.12 : 0.006) * (s.co2 - CO2_OUT);
+      s.voc += (cooking ? 45 : 0) + (!s.window && nightish ? 0.7 : 0) - (s.window ? 0.14 : 0.012) * (s.voc - 15);
+      const tBase = sp.temp(h, G.night) + (cooking ? 3 : 0);
       s.temp += s.window ? (tOut - s.temp) * 0.02 : (tBase - s.temp) * 0.03;
       s.rh += (cooking ? 0.8 : 0) + (s.window ? (rhOut - s.rh) * 0.03 : (55 - s.rh) * 0.012);
       if (s.cook > 0) s.cook -= 1;
     }
     const kx = ST.kitchen.pm - ST.living.pm; if (kx > 0) { ST.living.pm += kx * 0.03; ST.kitchen.pm -= kx * 0.01; }
     const lx = ST.living.pm - ST.bedroom.pm; if (lx > 0) ST.bedroom.pm += lx * 0.006;
+    // 닫힌 집은 한 상자: 잠든 침실의 CO₂가 문틈으로 거실에 새고(1.2%/분), 거실과 부엌은 트여 있어 빨리 섞인다(3%/분). 조리 VOC 도 거실로.
+    const bc = ST.bedroom.co2 - ST.living.co2; ST.living.co2 += bc * 0.012; ST.bedroom.co2 -= bc * 0.004;
+    const kc = ST.kitchen.co2 - ST.living.co2; ST.living.co2 += kc * 0.03; ST.kitchen.co2 -= kc * 0.03;
+    const kv = ST.kitchen.voc - ST.living.voc; if (kv > 0) { ST.living.voc += kv * 0.02; ST.kitchen.voc -= kv * 0.01; }
     G.t += 1;
     for (const k of ORDER) {
       const s = ST[k];
       if (s.pm < 3) s.pm = 3; if (s.co2 < CO2_OUT) s.co2 = CO2_OUT; if (s.voc < 8) s.voc = 8; s.voc = Math.min(s.voc, 900); s.rh = clamp(s.rh, 25, 85);
       s.hist.push({ t: G.t, pm: s.pm, co2: s.co2 }); if (s.hist.length > 720) s.hist.shift();
       if (G.t - s.lastRecord >= 5) { s.lastRecord = G.t; record(k); }
-      if (s.co2 >= 1000 && s.alertAt < 0) s.alertAt = G.t;                 // 기기 알림: CO₂ 1000ppm 넘는 순간
-      if (s.co2 < 950) s.alertAt = -1;
+      if ((s.co2 >= 1000 || s.pm > 75) && s.alertAt < 0) { s.alertAt = G.t; s.alertReal = performance.now(); }   // 기기 알림: CO₂ 1000ppm 을 넘거나 PM2.5 가 Very Bad 에 드는 순간
+      if (s.co2 < 950 && s.pm < 70) s.alertAt = -1;
     }
     if (G.night && G.t >= G.nightUntil) G.night = false;
   }
   function startNight() {
     if (G.night) return;
-    const m = G.t % 1440, wake = 6 * 60 + 30;
+    let m = G.t % 1440; const wake = 6 * 60 + 30;
+    if (m >= 7 * 60 && m < 22 * 60) { G.t += 22 * 60 - m; m = 22 * 60; }   // 낮·저녁이면 취침 시각(22:00)으로 건너뛰고 밤을 돌린다
     let until = G.t - m + (m < wake ? wake : 1440 + wake);
     if (until - G.t < 6 * 60) until += 1440;
     G.night = true; G.nightUntil = until;
@@ -387,6 +408,7 @@
     pNight.classList.toggle("on", G.night);
     bWin.textContent = s.window ? "창문 닫기" : "창문 열기"; bWin.classList.toggle("on", s.window);
     bNight.disabled = G.night; bNight.textContent = G.night ? "밤이 지나는 중" : "밤 지나기";
+    for (const sp of SPECIES) { const el = legendEls[sp.key]; if (el) el.style.opacity = (0.3 + 0.7 * sp.frac(s)).toFixed(2); }
   }
 
   /* ── 곡선 (오른쪽 카드) ── */
@@ -452,7 +474,7 @@
     // 페이지 점
     [0, 1, 2].forEach((i) => { c.beginPath(); c.arc(W / 2 - 24 + i * 24, H - 14, 5, 0, Math.PI * 2); c.fillStyle = i === 0 ? C.blue : "#c9c9d2"; c.fill(); });
     // 환기 알림 — CO₂ 가 1000 을 넘은 뒤 8분(화면 시간) 동안, 또는 확대 화면을 탭할 때까지
-    if (s.alertAt >= 0 && G.t - s.alertAt < 8 && !alertDismissed) {
+    if (s.alertAt >= 0 && !alertDismissed && (G.t - s.alertAt < 8 || performance.now() - (s.alertReal || 0) < 8000)) {
       c.fillStyle = "rgba(20,20,30,.18)"; c.fillRect(0, 0, W, H);
       c.fillStyle = "#E8742A"; roundRect(c, 96, 130, W - 192, 300, 14); c.fill();
       c.strokeStyle = "rgba(255,255,255,.9)"; c.lineWidth = 3; roundRect(c, 96, 130, W - 192, 300, 14); c.stroke();
@@ -491,8 +513,24 @@
     dev.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`; dev.style.width = w.toFixed(2) + "px"; dev.style.height = h.toFixed(2) + "px";
     quadTransform(screenWrap, SPRITE.screen.map(([qx, qy]) => [x + qx * w, y + qy * h]), 400, 300);
     screenWrap.classList.add("on");
-    const c = toScreen(d.u, d.v); const cx = c.x - (foot.x - (x + w * 0.42)) , cy = c.y - h * 0.55 * 1.035;
-    ring.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px)`; ringTip.style.transform = `translate(${(cx - 0).toFixed(1)}px, ${(cy + 30).toFixed(1)}px) translateX(-50%)`;
+    placeRing();
+  }
+  // 포인트는 기기 밖: 기기 위쪽 모서리에서 가는 선을 내어 비스듬히 위·옆에 원을 둔다(오른쪽 끝에 놓인 기기는 왼쪽으로). 기기 자체도 탭 영역.
+  const leader = $("leader"), hit = $("hit");
+  let ringAt = { x: 0, y: 0 }, ringPx = 0, ringPy = 0;
+  function placeRing() {
+    const bx = (devBox.x - sw / 2) * 1.035 + sw / 2 + mediaX, by = (devBox.y - sh / 2) * 1.035 + sh / 2 + mediaY, bw = devBox.w * 1.035, bh = devBox.h * 1.035;
+    const side = (bx + bw / 2 > sw * 0.66) ? -1 : 1;
+    const ax = side > 0 ? bx + bw * 0.8 : bx + bw * 0.16, ay = by + bh * 0.1;
+    const gap = clamp(bw * 0.5, 30, 64);
+    const rx = clamp(ax + side * gap * 1.25, 30, sw - 30), ry = clamp(ay - gap * 0.85, 26, sh - 26);
+    const dx = rx - ax, dy = ry - ay, L = Math.hypot(dx, dy), ang = Math.atan2(dy, dx);
+    ring.style.transform = `translate(${rx.toFixed(1)}px, ${ry.toFixed(1)}px)`;
+    leader.style.transform = `translate(${ax.toFixed(1)}px, ${ay.toFixed(1)}px) rotate(${ang.toFixed(4)}rad)`; leader.style.width = Math.max(0, L - 19).toFixed(1) + "px";
+    ringTip.style.transform = `translate(${(rx + side * 24).toFixed(1)}px, ${ry.toFixed(1)}px) translate(${side > 0 ? "0" : "-100%"}, -50%)`;
+    const hw = Math.max(bw, 44), hh = Math.max(bh, 44);
+    hit.style.transform = `translate(${(bx + bw / 2 - hw / 2).toFixed(1)}px, ${(by + bh / 2 - hh / 2).toFixed(1)}px)`; hit.style.width = hw.toFixed(1) + "px"; hit.style.height = hh.toFixed(1) + "px";
+    ringAt = { x: rx, y: ry };
   }
   const pdev = $("pdev"), pscreenWrap = $("pscreen-wrap");
   function placePanelScreen() {
@@ -562,7 +600,7 @@
     const s = Math.max(sw / RATIO, sh), dw = RATIO * s, dh = s, f = SPACES[cur].focus;
     fit = { s, ox: (sw - dw) * f[0], oy: (sh - dh) * f[1], dw, dh };
     placeDevice();
-    if (gl) { const d = dpr(); canvas.width = Math.round(sw * d); canvas.height = Math.round(sh * d); gl.viewport(0, 0, canvas.width, canvas.height); for (let i = 0; i < dustN; i++) spawnDust(D, i); for (let i = 0; i < co2N; i++) spawnDust(D2, i); }
+    if (gl) { const d = dpr(); canvas.width = Math.round(sw * d); canvas.height = Math.round(sh * d); gl.viewport(0, 0, canvas.width, canvas.height); resetParticles(); }
     if (!panel.hidden) placePanelScreen();
   }
   addEventListener("resize", () => { layout(); });
@@ -579,14 +617,24 @@
     }
   }
 
-  /* ── 효과 레이어(WebGL, 라이브러리 없음): CO₂ 입자(닫힌 방·밤에 쌓이고 창을 열면 창으로 빠져나감) · PM 먼지(빛 속에서만 반짝임) · 김(조리) · 안개+광원 산란 · 필름 그레인 ── */
+  /* ── 효과 레이어(WebGL, 라이브러리 없음): 종류별 입자(색 = 종류, 값에 비례해 하나씩 쌓이고 창을 열면 창으로 빨려 나가 사라짐) · 김(조리) · 안개+광원 산란 · 필름 그레인 ── */
   const canvas = $("fx");
   let gl = null;
   try { gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, powerPreference: "low-power" }); } catch (e) { gl = null; }
   const dpr = () => Math.min(devicePixelRatio || 1, small() ? 1.5 : 2);
-  const dustN = small() ? 240 : 480, co2N = small() ? 520 : 1000, steamN = small() ? 80 : 150;
-  let progFog, progDust, progSteam, quadBuf, dustBuf, co2Buf, steamBuf, maxPt = 64;
-  const D = new Float32Array(dustN * 4), D2 = new Float32Array(co2N * 4);      // x, y, 깊이(0 가까움~1 멂), 씨앗
+  /* 입자 종류 — 색이 곧 종류. 개수는 그 값에 비례해 하나씩 늘고(쌓임), 창이 열리면 창으로 빨려 나가 사라진다(환기).
+     CO₂ 하늘색(공기보다 무거워 아래에 깔림) · PM2.5 주황(조리 연기, 팬에서 피어오름) · PM10 모래색(굵고 천천히 가라앉음) · VOCs 보라(가구·조리에서 나와 위로 떠오름) */
+  const SPECIES = [
+    { key: "co2",  n: small() ? 420 : 820, col: [0.45, 0.80, 1.00], size: 1.30, tw: 0.5,  amb: 0.95, vy: 0.9,  low: 0.55, frac: (s) => clamp((s.co2 - 470) / 1300, 0, 1) },
+    { key: "pm25", n: small() ? 240 : 460, col: [1.00, 0.50, 0.12], size: 0.95, tw: 0.5,  amb: 0.88, vy: 0.3,  low: 0,    frac: (s) => clamp((s.pm - 8) / 130, 0, 1) },
+    { key: "pm10", n: small() ? 150 : 300, col: [0.80, 0.60, 0.38], size: 1.60, tw: 0.25, amb: 0.78, vy: 2.6,  low: 0.2,  frac: (s) => clamp((pm10Of(s) - 12) / 210, 0, 1) },
+    { key: "voc",  n: small() ? 170 : 330, col: [0.72, 0.36, 1.00], size: 1.25, tw: 0.7,  amb: 0.84, vy: -1.6, low: -0.3, frac: (s) => clamp((s.voc - 12) / 480, 0, 1) }
+  ];
+  for (const sp of SPECIES) { sp.B = new Float32Array(sp.n * 5); sp.M = new Int8Array(sp.n); sp.acc = 0; sp.alive = 0; sp.buf = null; }   // B: x, y, 깊이(0 가까움~1 멂), 씨앗, 알파 / M: 0 없음 · 1 살아 있음 · 2 사라지는 중
+  const legendEls = {}; $("legend").querySelectorAll("[data-sp]").forEach((el) => { legendEls[el.dataset.sp] = el.querySelector("i"); });
+  for (const sp of SPECIES) { const el = legendEls[sp.key]; if (el) { const c = `rgb(${sp.col.map((v) => Math.round(v * 255)).join(",")})`; el.style.background = c; el.style.color = c; } }
+  const steamN = small() ? 80 : 150;
+  let progFog, progDust, progSteam, quadBuf, steamBuf, maxPt = 64;
   const S = new Float32Array(steamN * 5), SL = new Float32Array(steamN), SM = new Float32Array(steamN), SV = new Float32Array(steamN * 2);
   const NOISE = `
     float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -608,13 +656,13 @@
       float a = clamp(fog + glow + ga, 0.0, 1.0);
       gl_FragColor = vec4(min(col, vec3(a)), a);
     }`;
-  const DUST_V = `attribute vec3 aPos; attribute float aSeed; uniform vec2 uRes, uPar, uLight, uLDir; uniform float uDpr, uTime, uLKind, uLOn, uLRad, uSize, uAmb, uTw;
+  const DUST_V = `attribute vec3 aPos; attribute float aSeed, aAlpha; uniform vec2 uRes, uPar, uLight, uLDir; uniform float uDpr, uTime, uLKind, uLOn, uLRad, uSize, uAmb, uTw;
     varying float vA, vBlur, vBright;
     void main(){
       float z = aPos.z, near = 1.0 - z;
       vec2 p = aPos.xy + uPar * (0.5 + 2.2 * near * near);
       gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
-      gl_PointSize = mix(1.7, 14.0, near * near * near) * uDpr * uSize;
+      gl_PointSize = min(mix(3.5, 20.0, near * near * near) * uDpr * uSize, 40.0) * step(0.001, aAlpha);
       vBlur = near * near;
       vec2 d = p - uLight; float lit;
       if (uLKind < 0.5) {
@@ -623,15 +671,17 @@
         lit = cone * uLOn;
       } else { lit = exp(-length(d) / uLRad) * uLOn; }
       vBright = mix(uAmb, 1.0, lit);
-      vA = (1.0 - uTw + uTw * (0.5 + 0.5 * sin(uTime * (1.2 + 2.2 * fract(aSeed * 7.31)) + aSeed * 40.0))) * mix(0.95, 0.32, vBlur);
+      vA = (1.0 - uTw + uTw * (0.5 + 0.5 * sin(uTime * (1.2 + 2.2 * fract(aSeed * 7.31)) + aSeed * 40.0))) * mix(0.95, 0.6, vBlur) * aAlpha;
     }`;
   const DUST_F = `precision mediump float; uniform vec3 uCol; uniform float uOp; varying float vA, vBlur, vBright;
     void main(){
       vec2 c = gl_PointCoord - 0.5; float r = length(c);
-      float sharp = 1.0 - smoothstep(0.12, 0.5, r);
+      float sharp = 1.0 - smoothstep(0.10, 0.40, r);
       float bokeh = (1.0 - smoothstep(0.4, 0.5, r)) * (0.5 + 0.5 * smoothstep(0.22, 0.44, r));
-      float a = mix(sharp, bokeh, vBlur) * vA * uOp * vBright;
-      gl_FragColor = vec4(uCol * a, a);
+      float core = mix(sharp, bokeh, vBlur) * vA * uOp * vBright;
+      float halo = (1.0 - smoothstep(0.28, 0.5, r)) * (1.0 - 0.7 * vBlur) * vA * uOp * 0.42;
+      vec3 rgb = uCol * core + vec3(0.02, 0.02, 0.06) * halo * (1.0 - core);
+      gl_FragColor = vec4(rgb, core + halo * (1.0 - core));
     }`;
   const STEAM_V = `attribute vec2 aPos; attribute float aSize, aSeed, aAlpha; uniform vec2 uRes, uPar; uniform float uDpr, uMaxPt; varying float vA, vSeed;
     void main(){ vec2 p = aPos + uPar * 1.3; gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
@@ -654,13 +704,18 @@
     for (let i = 0; i < an; i++) { const nm = gl.getActiveAttrib(p, i).name; a[nm] = gl.getAttribLocation(p, nm); }
     return { p, u, a };
   }
-  function spawnDust(B, i) { const o = i * 4; B[o] = Math.random() * sw; B[o + 1] = Math.random() * sh; B[o + 2] = Math.pow(Math.random(), 0.6); B[o + 3] = Math.random(); }
+  function spawnP(sp, i, src) {   // src 가 있으면 그 자리(조리 중 팬)에서, 없으면 종류의 층(low: +아래 −위)에 맞춰 방 안 어딘가에서
+    const o = i * 5, k = sw / 1200, B = sp.B;
+    if (src) { B[o] = src.x + (Math.random() - 0.5) * 90 * k; B[o + 1] = src.y - Math.random() * 36 * k; }
+    else { const r = Math.random(); B[o] = Math.random() * sw; B[o + 1] = sh * (sp.low > 0 ? 1 - Math.pow(r, 1 + sp.low * 2.2) : sp.low < 0 ? Math.pow(r, 1 - sp.low * 1.8) : r); }
+    B[o + 2] = Math.random(); B[o + 3] = Math.random(); B[o + 4] = 0.02; sp.M[i] = 1;
+  }
+  function resetParticles() { for (const sp of SPECIES) { sp.M.fill(0); sp.acc = 0; sp.alive = 0; for (let i = 0; i < sp.n; i++) sp.B[i * 5 + 4] = 0; } }
   if (gl) {
     try {
       progFog = prog(FOG_V, FOG_F); progDust = prog(DUST_V, DUST_F); progSteam = prog(STEAM_V, STEAM_F);
       quadBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
-      dustBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, dustBuf); gl.bufferData(gl.ARRAY_BUFFER, D, gl.DYNAMIC_DRAW);
-      co2Buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, co2Buf); gl.bufferData(gl.ARRAY_BUFFER, D2, gl.DYNAMIC_DRAW);
+      for (const sp of SPECIES) { sp.buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, sp.buf); gl.bufferData(gl.ARRAY_BUFFER, sp.B, gl.DYNAMIC_DRAW); }
       steamBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, steamBuf); gl.bufferData(gl.ARRAY_BUFFER, S, gl.DYNAMIC_DRAW);
       maxPt = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1] || 64;
       gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.clearColor(0, 0, 0, 0);
@@ -675,37 +730,42 @@
     const sp = SPACES[cur], w = toScreen(sp.window[0], sp.window[1]); const dx = sw * 0.5 - w.x, dy = sh * 0.8 - w.y, L = Math.hypot(dx, dy) || 1;
     return { x: dx / L * k, y: dy / L * k, wx: w.x, wy: w.y };
   }
-  function stepDust(dt, t) {
-    const s = ST[cur], sp = SPACES[cur], k = sw / 1200, slow = G.night ? 0.55 : 1;
-    let wx = 0, wy = 0; if (s.window) { const w = windVec(48 * k); wx = w.x; wy = w.y; }
-    const pan = (cur === "kitchen" && s.cook > 0) ? toScreen(sp.pan[0], sp.pan[1]) : null, sig = 170 * k;
-    for (let i = 0; i < dustN; i++) {
-      const o = i * 4, z = D[o + 2], sd = D[o + 3], m = (0.35 + 0.65 * (1 - z)) * slow;
-      let vx = (Math.sin(t * 0.35 + sd * 9.1) * 7 + Math.cos(t * 0.11 + sd * 3.7) * 4) * k;
-      let vy = (Math.cos(t * 0.29 + sd * 7.3) * 5 + 2.5 + Math.sin(t * 0.07 + sd * 5.1) * 3) * k;
-      const g = 0.5 + 0.5 * Math.sin(sd * 12.3 + t * 0.5); vx += wx * g; vy += wy * g;
-      if (pan) { const dx = D[o] - pan.x, dy = D[o + 1] - pan.y; if (dy < 30 * k) { const f = Math.exp(-(dx * dx) / (2 * sig * sig)) * Math.exp(-Math.max(0, -dy) / (620 * k)); vy -= 60 * k * f; vx += 12 * k * f * Math.sin(t * 1.3 + sd * 20); } }
-      let x = D[o] + vx * m * dt, y = D[o + 1] + vy * m * dt;
+  // 종류별 입자의 한 걸음: 값에 맞춰 개수를 늘리고(하나씩 나타남) 줄이며(서서히 옅어짐), 떠돌고, 창이 열리면 창으로 빨려 나가 사라진다. 조리 중엔 팬에서 피어오른다.
+  function stepSpecies(sp, dt, drift, t) {
+    const s = ST[cur], k = sw / 1200, B = sp.B, M = sp.M, n = sp.n;
+    const target = Math.round(n * sp.frac(s));
+    const win = s.window ? windVec(1) : null, pull = 250 * k;
+    const cooking = cur === "kitchen" && s.cook > 0 && sp.key !== "co2";
+    const src = cooking ? toScreen(SPACES.kitchen.pan[0], SPACES.kitchen.pan[1]) : null, sig = 150 * k;
+    let alive = 0; for (let i = 0; i < n; i++) if (M[i]) alive++;
+    if (alive < target) {   // 부족분에 비례해 초당 몇 개씩(최소 3개) — 하나씩 늘어나는 게 보인다
+      sp.acc += dt * Math.max(3, (target - alive) * 0.9); let add = Math.floor(sp.acc); sp.acc -= add;
+      for (let i = 0; i < n && add > 0; i++) if (!M[i]) { spawnP(sp, i, src); add--; alive++; }
+    } else sp.acc = 0;
+    let kill = (!win && alive > target) ? Math.min(alive - target, Math.ceil((alive - target) * dt * 0.6)) : 0;   // 창 닫힘: 초과분은 침착·희석으로 서서히
+    for (let i = 0; i < n; i++) {
+      if (!M[i]) continue;
+      const o = i * 5, z = B[o + 2], sd = B[o + 3], m = 0.35 + 0.65 * (1 - z);
+      let vx = (Math.sin(t * 0.3 + sd * 9.1) * 6 + Math.cos(t * 0.1 + sd * 3.7) * 3.5) * k;
+      let vy = (Math.cos(t * 0.26 + sd * 7.3) * 4.5 + sp.vy + Math.sin(t * 0.07 + sd * 5.1) * 2.5) * k;
+      let x = B[o], y = B[o + 1];
+      if (src) { const dx = x - src.x, dy = y - src.y; if (dy < 30 * k) { const f = Math.exp(-(dx * dx) / (2 * sig * sig)) * Math.exp(-Math.max(0, -dy) / (560 * k)); vy -= 70 * k * f; vx += 14 * k * f * Math.sin(t * 1.3 + sd * 20); } }
+      let wx = 0, wy = 0;
+      if (win) {   // 환기: 창으로 빨려 나간다 — 가까울수록 빠르고 조금 휘돌며, 창에 닿으면 사라진다. 바람은 깊이와 거의 무관하게 다 받는다
+        const dx = win.wx - x, dy = win.wy - y, L = Math.hypot(dx, dy) || 1, v = pull * (0.8 + 0.2 * Math.sin(sd * 9 + t)) * (1 + 320 * k / (L + 60 * k)), sw2 = 0.22 * Math.sin(sd * 6.3);
+        wx = dx / L * v - dy / L * v * sw2; wy = dy / L * v + dx / L * v * sw2;
+        if (L < 46 * k) { M[i] = 0; B[o + 4] = 0; continue; }
+        if (L < 170 * k) M[i] = 2;
+      } else if (kill > 0 && M[i] === 1) { M[i] = 2; kill--; }
+      const wm = 0.75 + 0.25 * (1 - z);
+      x += (vx * m + wx * wm) * drift; y += (vy * m + wy * wm) * drift;
       if (x < -24) x = sw + 22; else if (x > sw + 24) x = -22;
       if (y < -24) y = sh + 22; else if (y > sh + 24) y = -22;
-      D[o] = x; D[o + 1] = y;
+      B[o] = x; B[o + 1] = y;
+      if (M[i] === 1) B[o + 4] = Math.min(1, B[o + 4] + dt * 0.9);
+      else { B[o + 4] -= dt * (win ? 1.6 : 0.5); if (B[o + 4] <= 0) { B[o + 4] = 0; M[i] = 0; } }
     }
-  }
-  // CO₂ 입자: 천천히 떠돌며 반짝이고, 창이 열리면 창 쪽으로 빨려 나가며 흩어진다. 개수·진하기는 CO₂ 농도에 비례(물리가 밤에 올리고 환기가 내린다).
-  function stepCo2(dt, t) {
-    const s = ST[cur], k = sw / 1200;
-    const w = s.window ? windVec(1) : null, pull = s.window ? 90 * k : 0;
-    for (let i = 0; i < co2N; i++) {
-      const o = i * 4, z = D2[o + 2], sd = D2[o + 3], m = 0.3 + 0.7 * (1 - z);
-      let vx = (Math.sin(t * 0.22 + sd * 11.3) * 5 + Math.cos(t * 0.09 + sd * 2.1) * 3) * k;
-      let vy = (Math.cos(t * 0.19 + sd * 6.7) * 4 - 1.5) * k;
-      if (w) { const dx = w.wx - D2[o], dy = w.wy - D2[o + 1], L = Math.hypot(dx, dy) || 1; vx += dx / L * pull * (0.6 + 0.4 * Math.sin(sd * 9 + t)); vy += dy / L * pull * 0.8; }
-      let x = D2[o] + vx * m * dt, y = D2[o + 1] + vy * m * dt;
-      if (w && Math.hypot(w.wx - x, w.wy - y) < 40 * k) { spawnDust(D2, i); continue; }     // 창에 닿으면 밖으로 나간 것 — 방 안 어딘가에서 다시 시작(농도가 내려가면 그리는 개수가 준다)
-      if (x < -24) x = sw + 22; else if (x > sw + 24) x = -22;
-      if (y < -24) y = sh + 22; else if (y > sh + 24) y = -22;
-      D2[o] = x; D2[o + 1] = y;
-    }
+    sp.alive = alive;
   }
   function spawnSteam(i, o, k) {
     S[i * 5] = o.x + (Math.random() - 0.5) * 70 * k; S[i * 5 + 1] = o.y + (Math.random() - 0.5) * 14 * k; S[i * 5 + 2] = (26 + Math.random() * 22) * k; S[i * 5 + 3] = Math.random(); S[i * 5 + 4] = 0;
@@ -739,15 +799,20 @@
   }
   function drawPoints(P, buf, B, n, opts) {
     gl.useProgram(P.p); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, B);
-    gl.enableVertexAttribArray(P.a.aPos); gl.vertexAttribPointer(P.a.aPos, 3, gl.FLOAT, false, 16, 0);
-    gl.enableVertexAttribArray(P.a.aSeed); gl.vertexAttribPointer(P.a.aSeed, 1, gl.FLOAT, false, 16, 12);
+    gl.enableVertexAttribArray(P.a.aPos); gl.vertexAttribPointer(P.a.aPos, 3, gl.FLOAT, false, 20, 0);
+    gl.enableVertexAttribArray(P.a.aSeed); gl.vertexAttribPointer(P.a.aSeed, 1, gl.FLOAT, false, 20, 12);
+    gl.enableVertexAttribArray(P.a.aAlpha); gl.vertexAttribPointer(P.a.aAlpha, 1, gl.FLOAT, false, 20, 16);
     gl.uniform2f(P.u.uRes, sw, sh); gl.uniform2f(P.u.uPar, mediaX, mediaY); gl.uniform1f(P.u.uDpr, dpr()); gl.uniform1f(P.u.uTime, opts.t);
     gl.uniform1f(P.u.uSize, opts.size); gl.uniform1f(P.u.uAmb, opts.amb); gl.uniform1f(P.u.uTw, opts.tw);
     gl.uniform2f(P.u.uLight, lightCur.x, lightCur.y); gl.uniform2f(P.u.uLDir, lightCur.dx, lightCur.dy);
     gl.uniform1f(P.u.uLKind, lightCur.kind); gl.uniform1f(P.u.uLOn, lightCur.on); gl.uniform1f(P.u.uLRad, lightCur.r);
     gl.uniform3f(P.u.uCol, opts.col[0], opts.col[1], opts.col[2]); gl.uniform1f(P.u.uOp, opts.op);
     gl.drawArrays(gl.POINTS, 0, n);
-    gl.disableVertexAttribArray(P.a.aSeed);
+    if (opts.glow > 0) {   // 글로우: 같은 점을 1.8배 크게, 옅게, 가산 합성 — 어두운 장면에서 입자가 빛나 보인다
+      gl.blendFunc(gl.ONE, gl.ONE); gl.uniform1f(P.u.uSize, opts.size * 1.8); gl.uniform1f(P.u.uOp, opts.op * opts.glow); gl.uniform1f(P.u.uTw, 0.0);
+      gl.drawArrays(gl.POINTS, 0, n); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    }
+    gl.disableVertexAttribArray(P.a.aSeed); gl.disableVertexAttribArray(P.a.aAlpha);
   }
   function drawFx(dt, t) {
     const s = ST[cur], d = dpr();
@@ -757,12 +822,10 @@
     for (let i = 0; i < 3; i++) hazeCur.col[i] = lerp(hazeCur.col[i], tcol[i], 0.03);
     gl.clear(gl.COLOR_BUFFER_BIT);
     const lc = lightCur.col, sizeK = Math.sqrt(clamp(sw / 1200, 0.7, 2.2));
-    // CO₂ 입자 — 농도에 비례해 개수·진하기(450ppm 근처에선 거의 없음, 1500 넘으면 방을 가득)
-    const c2 = clamp((s.co2 - 470) / 1300, 0, 1);
-    if (c2 > 0.01) drawPoints(progDust, co2Buf, D2, Math.max(1, Math.floor(co2N * (0.08 + 0.92 * c2))), { t, size: 0.8 * sizeK, amb: 0.8, tw: 1, col: G.night ? [0.78, 0.86, 1] : [0.86, 0.92, 1], op: clamp(0.18 + 0.7 * c2, 0, 0.85) });
-    // PM 먼지 — 빛살·램프 안에서만 반짝임, 양은 PM 에 비례
-    const active = Math.floor(dustN * clamp(0.3 + (s.pm - 4) / 140, 0.3, 1)), dOp = clamp((s.pm - 2) / 100, 0.2, 0.95);
-    drawPoints(progDust, dustBuf, D, active, { t, size: sizeK, amb: 0.14, tw: 0.4, col: G.night ? [0.8, 0.82, 0.98] : [lerp(lc[0], 1, 0.45), lerp(lc[1], 1, 0.45), lerp(lc[2], 1, 0.45)], op: dOp });
+    // 종류별 입자 — 색이 곧 종류. 개수는 stepSpecies 가 값에 맞춰 늘리고 줄인다. 진하기는 값에 비례하되 바닥값을 둬서 몇 개 안 남아도 보인다.
+    const nk = 1;
+    const pGlow = G.night ? 0.3 : 0;   // 입자 글로우는 밤에만(밝은 장면은 어두운 테두리가 이미 점을 또렷하게 한다), 채움 부담도 줄인다
+    for (const sp of SPECIES) { if (!sp.alive) continue; drawPoints(progDust, sp.buf, sp.B, sp.n, { t, size: sp.size * sizeK, amb: sp.amb, tw: sp.tw, col: [sp.col[0] * nk, sp.col[1] * nk, sp.col[2] * nk], op: clamp(0.6 + 0.4 * sp.frac(s), 0, 1), glow: pGlow }); }
     // 김 — 부엌 조리 중에만
     if (cur === "kitchen") {
       gl.useProgram(progSteam.p); gl.bindBuffer(gl.ARRAY_BUFFER, steamBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, S);
@@ -791,7 +854,7 @@
   const panel = $("panel");
   function openPanel() { panel.hidden = false; $("pspec-title").textContent = `${SPACES[cur].where} · ${SPACES[cur].name}`; requestAnimationFrame(placePanelScreen); $("p-close").focus(); }
   function closePanel() { panel.hidden = true; ring.focus(); }
-  ring.addEventListener("click", openPanel);
+  ring.addEventListener("click", openPanel); hit.addEventListener("click", openPanel);
   $("p-close").addEventListener("click", closePanel);
   panel.addEventListener("click", (e) => { if (e.target === panel) closePanel(); });
   pdev.addEventListener("click", () => { alertDismissed = true; });
@@ -818,7 +881,7 @@
   bReset.addEventListener("click", () => {
     G.t = 18 * 60; G.night = false; G.nightUntil = 0;
     ORDER.forEach((k) => { ST[k] = fresh(k); });
-    if (gl) { for (let i = 0; i < dustN; i++) spawnDust(D, i); for (let i = 0; i < co2N; i++) spawnDust(D2, i); for (let i = 0; i < steamN; i++) SL[i] = -1; }
+    if (gl) { resetParticles(); for (let i = 0; i < steamN; i++) SL[i] = -1; }
     alertDismissed = false; showScene(); rebuildTicks(); hud(); redraw();
   });
 
@@ -835,7 +898,8 @@
     screenWrap.style.setProperty("--glow", G.night ? "0.55" : "0.22");
     px += (tx - px) * 0.06; py += (ty - py) * 0.06; mediaX = -px * 7; mediaY = -py * 4;
     media.style.setProperty("--px", mediaX.toFixed(2) + "px"); media.style.setProperty("--py", mediaY.toFixed(2) + "px");
-    if (gl) { const drift = reduced ? 0 : dt; stepLight(); stepDust(drift, t); stepCo2(drift, t); stepSteam(drift, t); drawFx(dt, t); }
+    if (Math.abs(mediaX - ringPx) > 0.2 || Math.abs(mediaY - ringPy) > 0.2) { ringPx = mediaX; ringPy = mediaY; placeRing(); }   // 포인트·선은 시차를 따라간다
+    if (gl) { const drift = reduced ? 0 : dt; stepLight(); for (const sp of SPECIES) stepSpecies(sp, dt, drift, t); stepSteam(drift, t); drawFx(dt, t); }
     requestAnimationFrame(frame);
   }
 
@@ -845,6 +909,7 @@
   if (q.get("cook") === "1") ST.kitchen.cook = 15;
   if (q.get("window") === "1") ST[startSpace].window = true;
   if (q.get("night") === "1") startNight();
+  window.__mr = { species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * sp.frac(ST[cur])) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur] };   // 검증용(읽기 전용)
   setSpace(startSpace); noteAssets(); redraw();
   if (q.get("panel") === "1") openPanel();
   setTimeout(preloadRest, 3500);
