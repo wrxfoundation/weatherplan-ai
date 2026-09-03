@@ -66,6 +66,13 @@ paperthin 스킬 팩(레포 루트 `.claude/skills/`, MIT — LilMGenius/paperth
   죽는다. 빌드 도구(vite·plugin-react·tailwind·postcss·autoprefixer·prebuild 의존성)는 **dependencies** 에 두고,
   `vercel.json` 에 `buildCommand: npm run build` 를 명시한다. 실패 조건은 `NODE_ENV=production npm ci --omit=dev`
   로 로컬에서 재현·검증할 수 있다.
+- **Vercel 로그에서 "Installing dependencies..." 가 없으면 설치가 아예 안 된 것이다** — package.json 이 루트에
+  있어도 대시보드 Install Command 오버라이드(빈 값)나 예전 폴더 재배포로 생긴다. 정상 로그는 반드시
+  `Installing dependencies...` → `Running "npm run build"` 순서다. `Command "vite build"` 가 보이면 업로드된
+  vercel.json 이 옛것이다. vercel.json 에 installCommand·buildCommand 를 둘 다 명시하면 대시보드를 이긴다.
+  깨진 node_modules 가 빌드 캐시에 남으면 고쳐도 계속 죽으니 `vercel --prod --force` 로 캐시를 버린다.
+- **배포 zip 의 최상위는 moduon/ 하나** — .claude 같은 두 번째 최상위 항목을 넣으면 압축 해제 폴더 구조가
+  바뀌어 사용자의 배포 루틴이 어긋난다. 개발 훅은 git 에만 있으면 된다.
 - **셸 cwd 는 호출 사이에 남았다가 예고 없이 루트로 리셋된다** — `npm run qa` 가 루트에서 돌면 "Missing script"
   인데 grep 필터에 삼켜져 출력이 그냥 비어 보였다. 이 컨테이너 셸 호출은 항상 `cd /home/user/weatherplan-ai/moduon &&`
   로 시작하고, 빈 출력은 통과가 아니라 의심 신호로 본다.
