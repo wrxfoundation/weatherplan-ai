@@ -1068,8 +1068,8 @@
   // 종류별 입자의 한 걸음: 값에 맞춰 개수를 늘리고(하나씩 나타남) 줄이며(서서히 옅어짐), 떠돌고, 창이 열리면 창으로 빨려 나가 사라진다. 조리 중엔 팬에서 피어오른다.
   function stepSpecies(sp, dt, drift, t) {
     const s = ST[cur], k = sw / 1200, B = sp.B, M = sp.M, n = sp.n;
-    const target = Math.round(n * sp.frac(s));
-    const win = s.window ? windVec(1) : null, pull = 250 * k;
+    const target = Math.round(n * Math.pow(clamp(sp.frac(s), 0, 1), 1.3));   // 값이 낮을수록 입자를 더 적게(1.3제곱) — 숫자가 내려가는 만큼 눈에 띄게 준다
+    const win = s.window ? windVec(1) : null, pull = 150 * k;   // 창으로 빠져나가는 흐름은 숫자가 내려가는 속도(6~8초)에 맞춰 느긋하게
     const cooking = cur === "kitchen" && s.cook > 0 && sp.key !== "co2";
     const src = cooking ? toScreen(SPACES.kitchen.pan[0], SPACES.kitchen.pan[1]) : null, sig = 150 * k;
     let alive = 0; for (let i = 0; i < n; i++) if (M[i]) alive++;
@@ -1078,6 +1078,7 @@
       for (let i = 0; i < n && add > 0; i++) if (!M[i]) { spawnP(sp, i, src); add--; alive++; }
     } else sp.acc = 0;
     let kill = (!win && alive > target) ? Math.min(alive - target, Math.ceil((alive - target) * dt * 0.6)) : 0;   // 창 닫힘: 초과분은 침착·희석으로 서서히
+    let excess = alive - target;   // 창 열림: 숫자보다 많은 만큼(초과분)만 창으로 사라진다 — 빠져나간 자리를 새로 채우지 않으니 밀도가 숫자를 그대로 따라간다
     for (let i = 0; i < n; i++) {
       if (!M[i]) continue;
       const o = i * 5, z = B[o + 2], sd = B[o + 3], m = 0.35 + 0.65 * (1 - z);
@@ -1089,8 +1090,8 @@
       if (win) {   // 환기: 창으로 빨려 나간다 — 가까울수록 빠르고 조금 휘돌며, 창에 닿으면 사라진다. 바람은 깊이와 거의 무관하게 다 받는다
         const dx = win.wx - x, dy = win.wy - y, L = Math.hypot(dx, dy) || 1, v = pull * (0.8 + 0.2 * Math.sin(sd * 9 + t)) * (1 + 320 * k / (L + 60 * k)), sw2 = 0.22 * Math.sin(sd * 6.3);
         wx = dx / L * v - dy / L * v * sw2; wy = dy / L * v + dx / L * v * sw2;
-        if (L < 46 * k) { M[i] = 0; B[o + 4] = 0; continue; }
-        if (L < 170 * k) M[i] = 2;
+        if (L < 46 * k) { if (excess > 0) { M[i] = 0; B[o + 4] = 0; excess--; } else spawnP(sp, i, null); continue; }   // 초과가 없으면 방 안 다른 곳에서 다시 떠오른다(개수 = 숫자)
+        if (L < 170 * k && excess > 0) M[i] = 2; else if (M[i] === 2 && excess <= 0) M[i] = 1;
       } else if (kill > 0 && M[i] === 1) { M[i] = 2; kill--; }
       const wm = 0.75 + 0.25 * (1 - z);
       x += (vx * m + wx * wm) * drift; y += (vy * m + wy * wm) * drift;
@@ -1267,7 +1268,7 @@
   if (q.get("window") === "1") ST[startSpace].window = true;
   if (q.get("night") === "1") G.night = true;
   if (q.get("speed")) setSpeed(+q.get("speed"));
-  window.__mr = { species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * sp.frac(ST[cur])) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur], outdoor: outdoorOf };   // 검증용(읽기 전용)
+  window.__mr = { species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * Math.pow(clamp(sp.frac(ST[cur]), 0, 1), 1.3)) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur], outdoor: outdoorOf };   // 검증용(읽기 전용)
   setSpace(startSpace); applyLang(); noteAssets(); redraw();
   if (q.get("panel") === "1") openPanel();
   setTimeout(preloadRest, 3500);
