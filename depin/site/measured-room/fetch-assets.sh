@@ -35,3 +35,17 @@ get kitchen-vent.mp4        $GEN/hf_20260902_235658_61831fe4-4d12-4126-a260-e935
 get kitchen-night.mp4       $GEN/hf_20260902_235658_f849d640-3d43-4887-b0b0-f1615aeb7a17.mp4
 get kitchen-night-window.mp4 $GEN/hf_20260903_000341_8af427ad-501d-4448-b8be-c567fe45b50b.mp4
 ls -l
+# 4K 업스케일 스틸(큰 화면용, 4096×2731 JPEG)
+get living-dusk-4k.jpg      $IMG/bc5c8038-6093-4c47-b455-ab66caba809b.jpg
+get living-window-4k.jpg    $IMG/dea87f0a-999c-4c0d-8286-a7142a904a70.jpg
+get living-night-4k.jpg     $IMG/f31641a6-000b-43ee-a300-1508f4a0be38.jpg
+get living-night-window-4k.jpg$IMG/71cdebbd-467a-44ad-b12f-91d0473d1218.jpg
+get bedroom-evening-4k.jpg  $IMG/299d7582-f543-4e97-8d83-8bb354dff668.jpg
+get bedroom-night-4k.jpg    $IMG/15cc0d06-d561-45dc-b18e-9120a52d717b.jpg
+get bedroom-night-window-4k.jpg$IMG/621b904e-07ba-4769-bd6f-8f0acd5382f5.jpg
+get bedroom-morning-4k.jpg  $IMG/0723a044-a883-445e-aa89-817bc494868c.jpg
+get kitchen-idle-4k.jpg     $IMG/1280b2b8-dd2d-4953-a9ea-27621f4f8811.jpg
+get kitchen-cook-4k.jpg     $IMG/c7a226ef-39e2-4ec3-b8e9-6ec90dc60a13.jpg
+get kitchen-vent-4k.jpg     $IMG/98846d02-43b4-43a7-afa8-b07ae5e7a75b.jpg
+get kitchen-night-4k.jpg    $IMG/e9acf282-243f-4520-83cf-89d05cffe0c0.jpg
+get kitchen-night-window-4k.jpg$IMG/ab870bec-c555-4ee8-8a06-fe4dc377dc1f.jpg

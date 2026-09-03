@@ -98,6 +98,11 @@
   .legend .k2 { color: var(--cap); }
   .legend span[data-sp] { display: inline-flex; align-items: center; gap: 5px; }
   .legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; box-shadow: 0 0 6px currentColor; opacity: .3; transition: opacity .6s ease; }
+  /* 기기 화면 그대로: 카드 너비에 맞춘 4:3 화면 두 장 — 2번째(Indoor Index · 시계 · 보상 · 네트워크), 3번째(여섯 타일). 실시간으로 같은 값을 그린다 */
+  .screens { display: grid; gap: 8px; margin-top: 10px; }
+  .screens .k3 { font-size: 10px; color: var(--cap); font-family: var(--display); letter-spacing: .06em; text-transform: uppercase; font-weight: 700; }
+  .screens .sc { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: #f4f4f7; border: 1px solid var(--line); box-shadow: inset 0 0 0 1px rgba(255,255,255,.6); }
+  .screens .sc canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
   .controls { margin: 10px 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; }
   .btn { font-family: var(--body); font-weight: 700; font-size: 13.5px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.12); color: #fff;
@@ -145,7 +150,7 @@
     .hud-title h1 { font-size: 26px; }
     .hud-title p { font-size: 13px; line-height: 1.55; background: rgba(10,10,32,.42); border-radius: 8px; padding: 6px 9px; backdrop-filter: blur(6px); }
     .spaces { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); margin: 0; z-index: 2; background: rgba(10,10,32,.5); backdrop-filter: blur(6px); }
-    .readout { position: absolute; right: 18px; top: 18px; width: 250px; margin: 0; z-index: 2; }
+    .readout { position: absolute; right: 18px; top: 18px; width: 250px; margin: 0; z-index: 2; max-height: calc(100dvh - 36px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
     .controls { position: absolute; left: 22px; bottom: 74px; margin: 0; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 44px); z-index: 2; }
     .btn { background: rgba(10,10,32,.5); backdrop-filter: blur(6px); border-color: rgba(255,255,255,.35); min-height: 38px; padding: 9px 15px; }
     .btn:hover { background: #fff; color: var(--navy); }
@@ -209,6 +214,12 @@
       <span class="k2">입자</span>
       <span data-sp="co2"><i></i>CO₂</span><span data-sp="pm25"><i></i>PM2.5</span><span data-sp="pm10"><i></i>PM10</span><span data-sp="voc"><i></i>VOCs</span>
     </div>
+    <div class="screens" aria-label="기기 화면 그대로">
+      <div class="k3">Device screens · 기기 화면 1 · 2 · 3</div>
+      <div class="sc"><canvas id="mini-tiles" aria-label="기기 화면 1: 여섯 타일"></canvas></div>
+      <div class="sc"><canvas id="mini-io" aria-label="기기 화면 2: 실내와 실외 비교, 환기 장치"></canvas></div>
+      <div class="sc"><canvas id="mini-index" aria-label="기기 화면 3: Indoor Index, 시계, 보상, 네트워크"></canvas></div>
+    </div>
   </aside>
 
   <div class="controls" role="group" aria-label="이 공간에서 일어나는 일">
@@ -270,21 +281,23 @@
   const CDN_IMG = "https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/";
   const CDN_GEN = "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/";
   const SCENES = {
-    "living-dusk":          { still: "fd732637-3131-482a-9a1c-9331bb473167.jpg", clip: "hf_20260902_235658_8df91bac-67f6-494c-94b4-c58bf40d60da.mp4", light: { kind: "beam", at: [0.78, 0.30], to: [0.40, 0.88], on: 0.55, col: [1, 0.86, 0.68] }, tint: "brightness(.9) sepia(.22)" },
-    "living-window":        { still: "e0d1dbe2-bdc0-4096-86f1-5b2b5d7c2034.jpg", clip: "hf_20260902_235658_6a11398d-e15a-4db4-a844-59b774d17b2a.mp4", light: { kind: "beam", at: [0.78, 0.30], to: [0.40, 0.88], on: 1.0, col: [0.94, 0.96, 1] }, tint: "brightness(1)" },
-    "living-night":         { still: "d0c5e4e1-c28d-4ded-ae2f-6a1a6aa5702a.jpg", clip: "hf_20260902_235658_c2900432-0742-49f5-9e63-878f29fa0dbf.mp4", light: { kind: "lamp", at: [0.81, 0.47], r: 0.26, on: 0.9, col: [1, 0.78, 0.55] }, tint: "brightness(.5) sepia(.35) saturate(.8)" },
-    "living-night-window":  { still: "a6137c4a-91c7-44c9-8742-815e945cdad4.jpg", clip: "hf_20260903_000340_e82ec00e-4fba-4aa8-b918-bdf1daa0290c.mp4", light: { kind: "lamp", at: [0.81, 0.47], r: 0.26, on: 0.85, col: [1, 0.8, 0.6] }, tint: "brightness(.5) sepia(.3) saturate(.8)" },
-    "bedroom-evening":      { still: "29bacff3-b7bd-44df-9b42-aa41b58e2fdf.jpg", clip: "hf_20260902_235659_d8b95d7f-102c-45ee-a913-6580526cec59.mp4", light: { kind: "lamp", at: [0.12, 0.52], r: 0.28, on: 0.9, col: [1, 0.8, 0.58] }, tint: "brightness(.72) sepia(.3)" },
-    "bedroom-night":        { still: "87f4c37b-d8e2-4d5c-a4f1-70e89ba4691e.jpg", clip: "hf_20260902_235658_6bd51df1-c585-4e9c-9b50-6197349be352.mp4", light: { kind: "lamp", at: [0.12, 0.52], r: 0.24, on: 0.5, col: [0.72, 0.78, 1] }, tint: "brightness(.42) sepia(.2) hue-rotate(180deg) saturate(.6)" },
-    "bedroom-night-window": { still: "87b26b91-eaf7-43b0-ac30-f6d320c461ba.jpg", clip: "hf_20260903_000341_59218a4f-c007-4a48-8246-dfdc9183dbd9.mp4", light: { kind: "lamp", at: [0.12, 0.52], r: 0.24, on: 0.5, col: [0.72, 0.78, 1] }, tint: "brightness(.45) sepia(.2) hue-rotate(180deg) saturate(.6)" },
-    "bedroom-morning":      { still: "c6d6d5ec-b793-455d-9977-e9adf1c51b2e.jpg", clip: "hf_20260902_235658_4498923c-58dc-4c60-8973-77803b240424.mp4", light: { kind: "beam", at: [0.89, 0.25], to: [0.30, 0.85], on: 1.0, col: [1, 0.95, 0.85] }, tint: "brightness(1.02)" },
-    "kitchen-idle":         { still: "86dc96a7-afa3-40b3-8ce9-61c14de6a1bf.jpg", clip: "hf_20260902_235658_09134379-3cf2-4d05-9ae9-d476d46a9bd7.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.30, on: 0.7, col: [1, 0.9, 0.75] }, tint: "brightness(.96) sepia(.12)" },
-    "kitchen-cook":         { still: "4a7aab4a-e21a-4307-8dc2-5fac2bca5deb.jpg", clip: "hf_20260902_235658_917da3a6-76a3-4b72-85ac-08ce51c47cb0.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.30, on: 0.8, col: [1, 0.9, 0.75] }, tint: "brightness(.96) sepia(.12)" },
-    "kitchen-vent":         { still: "a5412bc8-3256-41a8-8b66-fb97c935da36.jpg", clip: "hf_20260902_235658_61831fe4-4d12-4126-a260-e935db6e53c1.mp4", light: { kind: "beam", at: [0.26, 0.43], to: [0.72, 0.92], on: 0.8, col: [0.94, 0.96, 1] }, tint: "brightness(1)" },
-    "kitchen-night":        { still: "0abbbc92-1c64-477a-b05d-72ac79acfab2.jpg", clip: "hf_20260902_235658_f849d640-3d43-4887-b0b0-f1615aeb7a17.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.26, on: 0.7, col: [1, 0.82, 0.6] }, tint: "brightness(.55) sepia(.3)" },
-    "kitchen-night-window": { still: "4e44e4c1-56ae-49a6-8d7a-5c3a55cf0b56.jpg", clip: "hf_20260903_000341_8af427ad-501d-4448-b8be-c567fe45b50b.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.26, on: 0.7, col: [1, 0.82, 0.6] }, tint: "brightness(.55) sepia(.3)" }
+    "living-dusk":          { still: "fd732637-3131-482a-9a1c-9331bb473167.jpg", clip: "hf_20260902_235658_8df91bac-67f6-494c-94b4-c58bf40d60da.mp4", light: { kind: "beam", at: [0.78, 0.30], to: [0.40, 0.88], on: 0.55, col: [1, 0.86, 0.68] }, hi: CDN_IMG + "bc5c8038-6093-4c47-b455-ab66caba809b.jpg", tint: "brightness(.9) sepia(.22)" },
+    "living-window":        { still: "e0d1dbe2-bdc0-4096-86f1-5b2b5d7c2034.jpg", clip: "hf_20260902_235658_6a11398d-e15a-4db4-a844-59b774d17b2a.mp4", light: { kind: "beam", at: [0.78, 0.30], to: [0.40, 0.88], on: 1.0, col: [0.94, 0.96, 1] }, hi: CDN_IMG + "dea87f0a-999c-4c0d-8286-a7142a904a70.jpg", tint: "brightness(1)" },
+    "living-night":         { still: "d0c5e4e1-c28d-4ded-ae2f-6a1a6aa5702a.jpg", clip: "hf_20260902_235658_c2900432-0742-49f5-9e63-878f29fa0dbf.mp4", light: { kind: "lamp", at: [0.81, 0.47], r: 0.26, on: 0.9, col: [1, 0.78, 0.55] }, hi: CDN_IMG + "f31641a6-000b-43ee-a300-1508f4a0be38.jpg", tint: "brightness(.5) sepia(.35) saturate(.8)" },
+    "living-night-window":  { still: "a6137c4a-91c7-44c9-8742-815e945cdad4.jpg", clip: "hf_20260903_000340_e82ec00e-4fba-4aa8-b918-bdf1daa0290c.mp4", light: { kind: "lamp", at: [0.81, 0.47], r: 0.26, on: 0.85, col: [1, 0.8, 0.6] }, hi: CDN_IMG + "71cdebbd-467a-44ad-b12f-91d0473d1218.jpg", tint: "brightness(.5) sepia(.3) saturate(.8)" },
+    "bedroom-evening":      { still: "29bacff3-b7bd-44df-9b42-aa41b58e2fdf.jpg", clip: "hf_20260902_235659_d8b95d7f-102c-45ee-a913-6580526cec59.mp4", light: { kind: "lamp", at: [0.12, 0.52], r: 0.28, on: 0.9, col: [1, 0.8, 0.58] }, hi: CDN_IMG + "299d7582-f543-4e97-8d83-8bb354dff668.jpg", tint: "brightness(.72) sepia(.3)" },
+    "bedroom-night":        { still: "87f4c37b-d8e2-4d5c-a4f1-70e89ba4691e.jpg", clip: "hf_20260902_235658_6bd51df1-c585-4e9c-9b50-6197349be352.mp4", light: { kind: "lamp", at: [0.12, 0.52], r: 0.24, on: 0.5, col: [0.72, 0.78, 1] }, hi: CDN_IMG + "15cc0d06-d561-45dc-b18e-9120a52d717b.jpg", tint: "brightness(.42) sepia(.2) hue-rotate(180deg) saturate(.6)" },
+    "bedroom-night-window": { still: "87b26b91-eaf7-43b0-ac30-f6d320c461ba.jpg", clip: "hf_20260903_000341_59218a4f-c007-4a48-8246-dfdc9183dbd9.mp4", light: { kind: "lamp", at: [0.12, 0.52], r: 0.24, on: 0.5, col: [0.72, 0.78, 1] }, hi: CDN_IMG + "621b904e-07ba-4769-bd6f-8f0acd5382f5.jpg", tint: "brightness(.45) sepia(.2) hue-rotate(180deg) saturate(.6)" },
+    "bedroom-morning":      { still: "c6d6d5ec-b793-455d-9977-e9adf1c51b2e.jpg", clip: "hf_20260902_235658_4498923c-58dc-4c60-8973-77803b240424.mp4", light: { kind: "beam", at: [0.89, 0.25], to: [0.30, 0.85], on: 1.0, col: [1, 0.95, 0.85] }, hi: CDN_IMG + "0723a044-a883-445e-aa89-817bc494868c.jpg", tint: "brightness(1.02)" },
+    "kitchen-idle":         { still: "86dc96a7-afa3-40b3-8ce9-61c14de6a1bf.jpg", clip: "hf_20260902_235658_09134379-3cf2-4d05-9ae9-d476d46a9bd7.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.30, on: 0.7, col: [1, 0.9, 0.75] }, hi: CDN_IMG + "1280b2b8-dd2d-4953-a9ea-27621f4f8811.jpg", tint: "brightness(.96) sepia(.12)" },
+    "kitchen-cook":         { still: "4a7aab4a-e21a-4307-8dc2-5fac2bca5deb.jpg", clip: "hf_20260902_235658_917da3a6-76a3-4b72-85ac-08ce51c47cb0.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.30, on: 0.8, col: [1, 0.9, 0.75] }, hi: CDN_IMG + "c7a226ef-39e2-4ec3-b8e9-6ec90dc60a13.jpg", tint: "brightness(.96) sepia(.12)" },
+    "kitchen-vent":         { still: "a5412bc8-3256-41a8-8b66-fb97c935da36.jpg", clip: "hf_20260902_235658_61831fe4-4d12-4126-a260-e935db6e53c1.mp4", light: { kind: "beam", at: [0.26, 0.43], to: [0.72, 0.92], on: 0.8, col: [0.94, 0.96, 1] }, hi: CDN_IMG + "98846d02-43b4-43a7-afa8-b07ae5e7a75b.jpg", tint: "brightness(1)" },
+    "kitchen-night":        { still: "0abbbc92-1c64-477a-b05d-72ac79acfab2.jpg", clip: "hf_20260902_235658_f849d640-3d43-4887-b0b0-f1615aeb7a17.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.26, on: 0.7, col: [1, 0.82, 0.6] }, hi: CDN_IMG + "e9acf282-243f-4520-83cf-89d05cffe0c0.jpg", tint: "brightness(.55) sepia(.3)" },
+    "kitchen-night-window": { still: "4e44e4c1-56ae-49a6-8d7a-5c3a55cf0b56.jpg", clip: "hf_20260903_000341_8af427ad-501d-4448-b8be-c567fe45b50b.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.26, on: 0.7, col: [1, 0.82, 0.6] }, hi: CDN_IMG + "ab870bec-c555-4ee8-8a06-fe4dc377dc1f.jpg", tint: "brightness(.55) sepia(.3)" }
   };
-  const srcOf = (key) => ({ still: [`assets/${key}.jpg`, CDN_IMG + SCENES[key].still], clip: [`assets/${key}.mp4`, CDN_GEN + SCENES[key].clip] });
+  // 큰 화면(가로 1200px 이상, 기기 픽셀 2000 이상, 데이터 절약 아님)에서는 4K 업스케일 스틸(hi)을 쓴다. 폰·태블릿은 1600px 그대로(장당 3MB 를 열세 번 받지 않게).
+  const HI = !(navigator.connection && navigator.connection.saveData) && innerWidth >= 1200 && innerWidth * (devicePixelRatio || 1) >= 2000;
+  const srcOf = (key) => ({ still: HI && SCENES[key].hi ? [`assets/${key}-4k.jpg`, SCENES[key].hi] : [`assets/${key}.jpg`, CDN_IMG + SCENES[key].still], clip: [`assets/${key}.mp4`, CDN_GEN + SCENES[key].clip] });
   // 기기 컷아웃(배경 제거, 1024×938). 화면 네 모서리는 컷아웃 안 비율. 컷아웃 가로 = 기기 전면 120mm + 뒤 받침대 ≈ 143mm.
   const SPRITE = { src: ["assets/device.png", CDN_IMG + "f6aa6c49-ba85-4c10-91a5-1f8cedd11563.png"], w: 1024, h: 938, mm: 143, anchor: [0.42, 0.965],
                    screen: [[0.167, 0.0789], [0.7822, 0.1429], [0.7119, 0.6397], [0.1006, 0.5405]] };
@@ -548,11 +561,118 @@
       c.fillStyle = "#E8742A"; c.font = "700 32px Montserrat, sans-serif"; c.fillText("O K", W / 2, 370);
     }
   }
+  /* ── 기기 화면 2(800×600): Indoor Index 게이지 · 7세그먼트 시계 · CLAIMABLE · Network. 실기기 화면 양식을 따른다.
+     Indoor Index 는 PM2.5·CO₂·VOCs 로 깎는 100점 만점 지수(설명용 근사). CLAIMABLE 은 이 방의 기록 10건당 1 — 자리 채움용 표시이지 보상 설계가 아니다(비보장). */
+  const idxOf = (s) => clamp(Math.round(100 - clamp((s.pm - 10) / 1.5, 0, 45) - clamp((s.co2 - 600) / 25, 0, 35) - clamp((s.voc - 80) / 12, 0, 20)), 0, 100);
+  const idxGrade = (v) => v >= 80 ? ["Clear", C.blue] : v >= 60 ? ["Fair", C.green] : v >= 40 ? ["Poor", C.orange] : ["Bad", C.red];
+  const SEG = { "0": "abcdef", "1": "bc", "2": "abged", "3": "abgcd", "4": "fgbc", "5": "afgcd", "6": "afgedc", "7": "abc", "8": "abcdefg", "9": "abfgcd" };
+  function seg7(c, x, y, h, ch, col) {   // 한 자리: 높이 h, 폭 h*0.55, 굵기 h*0.13, 양끝을 깎은 막대
+    const w = h * 0.55, t = h * 0.13, on = SEG[ch] || "";
+    const bar = (x0, y0, len, horiz) => { c.beginPath(); if (horiz) { c.moveTo(x0, y0); c.lineTo(x0 + t * 0.6, y0 - t / 2); c.lineTo(x0 + len - t * 0.6, y0 - t / 2); c.lineTo(x0 + len, y0); c.lineTo(x0 + len - t * 0.6, y0 + t / 2); c.lineTo(x0 + t * 0.6, y0 + t / 2); }
+      else { c.moveTo(x0, y0); c.lineTo(x0 + t / 2, y0 + t * 0.6); c.lineTo(x0 + t / 2, y0 + len - t * 0.6); c.lineTo(x0, y0 + len); c.lineTo(x0 - t / 2, y0 + len - t * 0.6); c.lineTo(x0 - t / 2, y0 + t * 0.6); } c.closePath(); c.fill(); };
+    c.fillStyle = col; const g = t * 0.35;
+    if (on.includes("a")) bar(x + g, y, w - 2 * g, true);
+    if (on.includes("g")) bar(x + g, y + h / 2, w - 2 * g, true);
+    if (on.includes("d")) bar(x + g, y + h, w - 2 * g, true);
+    if (on.includes("f")) bar(x, y + g, h / 2 - 2 * g, false);
+    if (on.includes("b")) bar(x + w, y + g, h / 2 - 2 * g, false);
+    if (on.includes("e")) bar(x, y + h / 2 + g, h / 2 - 2 * g, false);
+    if (on.includes("c")) bar(x + w, y + h / 2 + g, h / 2 - 2 * g, false);
+    return w;
+  }
+  function drawIndex(c) {
+    const W = 800, H = 600, s = ST[cur];
+    c.clearRect(0, 0, W, H); c.fillStyle = "#f7f7f9"; c.fillRect(0, 0, W, H);
+    c.fillStyle = "#ececf0"; c.fillRect(0, 0, W, 66); c.fillStyle = "#e2e2e8"; c.fillRect(0, 66, W, 2);
+    c.textBaseline = "alphabetic"; c.fillStyle = "#101014"; c.font = "500 32px Montserrat, 'Noto Sans KR', sans-serif"; c.textAlign = "left"; c.fillText(deviceDate(), 26, 45);
+    c.strokeStyle = "#2a2a30"; c.lineWidth = 5; c.lineCap = "round";
+    c.beginPath(); c.arc(668, 40, 10, 0, Math.PI * 2); c.stroke();
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; c.beginPath(); c.moveTo(668 + Math.cos(a) * 14, 40 + Math.sin(a) * 14); c.lineTo(668 + Math.cos(a) * 19, 40 + Math.sin(a) * 19); c.stroke(); }
+    for (let i = 1; i <= 3; i++) { c.beginPath(); c.arc(730, 50, i * 8, Math.PI * 1.25, Math.PI * 1.75); c.stroke(); }
+    c.fillStyle = "#2a2a30"; c.beginPath(); c.arc(730, 50, 3, 0, Math.PI * 2); c.fill();
+    // 왼쪽: Indoor Index 게이지(270°)
+    const idx = idxOf(s), g = idxGrade(idx), cx = 148, cy = 300, r = 108, a0 = Math.PI * 0.75, a1 = Math.PI * 2.25;
+    c.fillStyle = "#101014"; c.font = "500 30px Montserrat, sans-serif"; c.textAlign = "center"; c.fillText("Indoor Index", cx, 132);
+    c.lineWidth = 24; c.lineCap = "butt"; c.strokeStyle = "#c9c9d2"; c.beginPath(); c.arc(cx, cy, r, a0, a1); c.stroke();
+    const ae = a0 + (a1 - a0) * idx / 100; c.strokeStyle = g[1]; c.beginPath(); c.arc(cx, cy, r, a0, ae); c.stroke();
+    const mx = cx + Math.cos(ae) * (r - 26), my = cy + Math.sin(ae) * (r - 26);   // 현재 위치 삼각 표식
+    c.fillStyle = g[1]; c.beginPath(); c.moveTo(mx, my); c.lineTo(mx + Math.cos(ae + 2.6) * 16, my + Math.sin(ae + 2.6) * 16); c.lineTo(mx + Math.cos(ae - 2.6) * 16, my + Math.sin(ae - 2.6) * 16); c.closePath(); c.fill();
+    c.fillStyle = g[1]; c.font = "500 96px Montserrat, sans-serif"; c.fillText(String(idx), cx, cy + 34);
+    c.font = "500 20px Montserrat, sans-serif"; c.textAlign = "center"; c.fillText("0", cx + Math.cos(a0) * (r + 2) + 6, cy + Math.sin(a0) * r + 44); c.fillText("100", cx + Math.cos(a1) * (r + 2) - 6, cy + Math.sin(a1) * r + 44);
+    c.font = "500 34px Montserrat, sans-serif"; c.fillText(g[0], cx, 478);
+    c.fillStyle = "#d4d4da"; c.fillRect(292, 96, 2, 380);
+    // 오른쪽: 7세그먼트 시계
+    const tm = deviceTime(), ap = tm.slice(0, 2), digits = tm.slice(3);
+    c.fillStyle = C.blue; c.font = "500 44px Montserrat, sans-serif"; c.textAlign = "left"; c.fillText(ap, 322, 168);
+    let x = 428, hh = 132, y0 = 176; if (digits.length === 5) x = 372;
+    for (const ch of digits) { if (ch === ":") { c.fillStyle = C.blue; c.fillRect(x + 8, y0 + hh * 0.3, 18, 18); c.fillRect(x + 8, y0 + hh * 0.62, 18, 18); x += 40; } else { x += seg7(c, x, y0, hh, ch, C.blue) + 26; } }
+    // CLAIMABLE · Network
+    c.fillStyle = "#1a3fb8"; c.beginPath(); const sx = 346, sy = 402; for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4, rr = i % 2 ? 9 : 30; c.lineTo(sx + Math.cos(a) * rr, sy + Math.sin(a) * rr); } c.closePath(); c.fill();
+    c.beginPath(); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4 + 0.3, rr = i % 2 ? 3 : 10; c.lineTo(sx + 30 + Math.cos(a) * rr, sy - 22 + Math.sin(a) * rr); } c.closePath(); c.fill();
+    c.fillStyle = "#101014"; c.font = "500 34px Montserrat, sans-serif"; c.textAlign = "left"; c.fillText("CLAIMABLE", 392, 392);
+    const claim = Math.floor(s.records / 10);
+    c.font = "500 40px Montserrat, sans-serif"; c.textAlign = "right"; c.fillText(String(claim), 520, 442); c.font = "500 22px Montserrat, sans-serif"; c.textAlign = "left"; c.fillText("WLBN", 530, 442);
+    c.fillStyle = "#d4d4da"; c.fillRect(586, 368, 2, 84);
+    c.fillStyle = "#101014"; c.font = "500 32px Montserrat, sans-serif"; c.fillText("Network", 610, 392);
+    c.fillStyle = C.blue; c.font = "500 34px Montserrat, sans-serif"; c.fillText("Connect", 610, 440);
+    [0, 1, 2].forEach((i) => { c.beginPath(); c.arc(W / 2 - 24 + i * 24, H - 30, 6, 0, Math.PI * 2); c.fillStyle = i === 2 ? C.blue : "#c9c9d2"; c.fill(); });
+  }
+  /* ── 기기 화면 2(800×600): 지붕 안 Indoor 6칸 · Outdoor 4칸(바깥 공기 = 물리의 바깥값) · 환기 장치 없음 패널 ── */
+  const outdoorOf = () => { const h = hourNow(), n = G.night || (h >= 20 || h < 7); return { pm: PM_OUT, pm10: PM_OUT * 1.7 + 1, temp: n ? 18 : 21.5, rh: n ? 66 : 58 }; };
+  function ioCard(c, x, y, w, h, label, gradeArr, val, unit) {
+    c.fillStyle = "#fff"; c.strokeStyle = "#d9d9de"; c.lineWidth = 2; roundRect(c, x, y, w, h, 10); c.fill(); c.stroke();
+    c.fillStyle = "#101014"; c.font = "500 21px Montserrat, sans-serif"; c.textAlign = "left"; c.fillText(label, x + 14, y + 30);
+    c.fillStyle = gradeArr[1]; c.font = "500 17px Montserrat, sans-serif"; c.textAlign = "right"; c.fillText(gradeArr[0], x + w - 12, y + 29);
+    c.font = "500 46px Montserrat, sans-serif"; c.textAlign = "center"; c.fillText(val, x + w * 0.46, y + h - 22);
+    c.fillStyle = "#6e6e78"; c.font = "500 15px Montserrat, sans-serif"; c.textAlign = "right"; c.fillText(unit, x + w - 12, y + h - 18);
+  }
+  function drawIO(c) {
+    const W = 800, H = 600, s = ST[cur], o = outdoorOf();
+    c.clearRect(0, 0, W, H); c.fillStyle = "#f7f7f9"; c.fillRect(0, 0, W, H); c.textBaseline = "alphabetic";
+    c.fillStyle = "#101014"; c.font = "500 30px Montserrat, 'Noto Sans KR', sans-serif"; c.textAlign = "left"; c.fillText(`${deviceDate()}   ${deviceTime()}`, 26, 50);
+    c.strokeStyle = "#2a2a30"; c.lineWidth = 5; c.lineCap = "round";
+    c.beginPath(); c.arc(700, 42, 10, 0, Math.PI * 2); c.stroke();
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; c.beginPath(); c.moveTo(700 + Math.cos(a) * 14, 42 + Math.sin(a) * 14); c.lineTo(700 + Math.cos(a) * 19, 42 + Math.sin(a) * 19); c.stroke(); }
+    for (let i = 1; i <= 3; i++) { c.beginPath(); c.arc(752, 52, i * 8, Math.PI * 1.25, Math.PI * 1.75); c.stroke(); }
+    c.fillStyle = "#2a2a30"; c.beginPath(); c.arc(752, 52, 3, 0, Math.PI * 2); c.fill();
+    // Indoor: 지붕 + 상자
+    c.strokeStyle = "#d9d9de"; c.lineWidth = 2; c.fillStyle = "#fbfbfd"; roundRect(c, 26, 150, 384, 392, 12); c.fill(); c.stroke();
+    c.strokeStyle = C.blue; c.lineWidth = 6; c.lineJoin = "round"; c.beginPath(); c.moveTo(18, 156); c.lineTo(218, 100); c.lineTo(418, 156); c.stroke();
+    c.fillStyle = "#101014"; c.font = "500 26px Montserrat, sans-serif"; c.textAlign = "center"; c.fillText("Indoor", 218, 178);
+    const p10 = pm10Of(s), cw = 176, ch = 100;
+    ioCard(c, 36, 196, cw, ch, "PM2.5", grade.pm25(s.pm), shown.pm.toFixed(0), "µg/m³");
+    ioCard(c, 224, 196, cw, ch, "PM10.0", grade.pm10(p10), shown.pm10.toFixed(0), "µg/m³");
+    ioCard(c, 36, 308, cw, ch, "Temp.", grade.temp(s.temp), shown.temp.toFixed(1), "°C");
+    ioCard(c, 224, 308, cw, ch, "Humi.", grade.rh(s.rh), shown.rh.toFixed(0), "%");
+    ioCard(c, 36, 420, cw, ch, "CO₂", grade.co2(s.co2), shown.co2.toFixed(0), "PPM");
+    ioCard(c, 224, 420, cw, ch, "VOCs", grade.voc(s.voc), shown.voc.toFixed(0), "PPB");
+    // Outdoor
+    c.strokeStyle = "#6e6e78"; c.lineWidth = 3; c.beginPath(); c.arc(548, 120, 13, 0, Math.PI * 2); c.stroke(); c.fillStyle = "#6e6e78"; c.fillRect(546, 116, 4, 12); c.fillRect(546, 110, 4, 4);
+    c.fillStyle = "#101014"; c.font = "500 26px Montserrat, sans-serif"; c.textAlign = "left"; c.fillText("Outdoor", 572, 129);
+    ioCard(c, 430, 146, cw, ch, "PM2.5", grade.pm25(o.pm), o.pm.toFixed(0), "µg/m³");
+    ioCard(c, 618, 146, cw, ch, "PM10.0", grade.pm10(o.pm10), o.pm10.toFixed(0), "µg/m³");
+    ioCard(c, 430, 258, cw, ch, "Temp.", grade.temp(o.temp), o.temp.toFixed(1), "°C");
+    ioCard(c, 618, 258, cw, ch, "Humi.", grade.rh(o.rh), o.rh.toFixed(0), "%");
+    // 환기 장치 패널
+    c.fillStyle = "#e9eefb"; roundRect(c, 430, 372, 364, 168, 12); c.fill();
+    c.fillStyle = "#3a3a44"; c.font = "500 22px Montserrat, sans-serif"; c.textAlign = "center"; c.fillText("No Ventilation Unit Found", 612, 412);
+    c.save(); c.translate(492, 486); c.rotate(Math.PI / 4); c.strokeStyle = "#8a8a94"; c.lineWidth = 4; c.strokeRect(-26, -26, 52, 52); c.beginPath(); c.moveTo(-26, -26); c.lineTo(26, 26); c.moveTo(26, -26); c.lineTo(-26, 26); c.stroke(); c.restore();
+    c.strokeStyle = "#8a8a94"; c.lineWidth = 3; c.beginPath(); c.moveTo(452, 458); c.quadraticCurveTo(470, 440, 492, 448); c.moveTo(532, 524); c.quadraticCurveTo(514, 532, 492, 524); c.stroke();
+    c.fillStyle = "#fff"; roundRect(c, 556, 436, 226, 92, 10); c.fill();
+    c.fillStyle = "#8a8a94"; for (let i = 0; i < 3; i++) { const a = i * Math.PI * 2 / 3; c.beginPath(); c.ellipse(582 + Math.cos(a) * 12, 482 + Math.sin(a) * 12, 10, 6, a, 0, Math.PI * 2); c.fill(); }
+    c.font = "500 30px Montserrat, sans-serif"; c.textAlign = "left"; c.fillText("0", 606, 494);
+    for (let i = 0; i < 7; i++) { const bh = 12 + i * 6; c.fillRect(646 + i * 18, 508 - bh, 14, bh); }
+    [0, 1, 2].forEach((i) => { c.beginPath(); c.arc(W / 2 - 24 + i * 24, H - 30, 6, 0, Math.PI * 2); c.fillStyle = i === 1 ? C.blue : "#c9c9d2"; c.fill(); });
+  }
+  const scr2 = document.createElement("canvas"); scr2.width = 800; scr2.height = 600; const sctx2 = scr2.getContext("2d");
+  const scr3 = document.createElement("canvas"); scr3.width = 800; scr3.height = 600; const sctx3 = scr3.getContext("2d");
+  const miniIndex = $("mini-index"), miniTiles = $("mini-tiles"), miniIO = $("mini-io");
+  function fitMini(cv) { const r = cv.getBoundingClientRect(), d = dpr(), bw = Math.max(16, Math.round(r.width * d)), bh = Math.max(12, Math.round(r.height * d)); if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; } cv._inner = [0, 0, bw, bh]; }
   let alertDismissed = false;
   // 화면은 오프스크린 800×600 에 한 번 그리고, 보이는 캔버스(장면·확대 패널)에는 각자의 실제 크기로 고품질 축소해 옮긴다
   const scr = document.createElement("canvas"); scr.width = 800; scr.height = 600; const sctx0 = scr.getContext("2d");
   const screenCv = $("screen"), pscreenCv = $("pscreen");
-  function blit(cv) { const r = cv._inner; if (!r) return; const c = cv.getContext("2d"); c.clearRect(0, 0, cv.width, cv.height); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = "high"; c.drawImage(scr, r[0], r[1], r[2], r[3]); }
+  function blit(cv, src) { const r = cv._inner; if (!r) return; const c = cv.getContext("2d"); c.clearRect(0, 0, cv.width, cv.height); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = "high"; c.drawImage(src || scr, r[0], r[1], r[2], r[3]); }
 
   // 단위 정사각형 → 임의 사변형 사영 변환(Heckbert). p = [왼위, 오위, 오아래, 왼아래]
   function squareToQuad(p) {
@@ -687,7 +807,7 @@
     sw = Math.max(1, stage.clientWidth); sh = Math.max(1, stage.clientHeight);
     const s = Math.max(sw / RATIO, sh), dw = RATIO * s, dh = s, f = SPACES[cur].focus;
     fit = { s, ox: (sw - dw) * f[0], oy: (sh - dh) * f[1], dw, dh };
-    placeDevice();
+    placeDevice(); fitMini(miniIndex); fitMini(miniTiles); fitMini(miniIO);
     if (gl) { const d = dpr(); canvas.width = Math.round(sw * d); canvas.height = Math.round(sh * d); gl.viewport(0, 0, canvas.width, canvas.height); resetParticles(); }
     if (!panel.hidden) placePanelScreen();
   }
@@ -993,6 +1113,7 @@
     let n = 0; while (acc >= 1 && n < 20) { stepMinute(); acc -= 1; n++; }
     if (n > 0) { showScene(); hud(); redraw(); }
     tweenShown(); drawScreen(sctx0); blit(screenCv); if (!panel.hidden) blit(pscreenCv);
+    drawIndex(sctx2); blit(miniIndex, scr2); drawIO(sctx3); blit(miniIO, scr3); blit(miniTiles, scr);
     vig.style.opacity = G.night ? "0.58" : "0.22";
     screenWrap.style.setProperty("--glow", G.night ? "0.55" : "0.22");
     px += (tx - px) * 0.06; py += (ty - py) * 0.06; mediaX = -px * 7; mediaY = -py * 4;
