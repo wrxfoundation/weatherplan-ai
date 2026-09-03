@@ -61,4 +61,12 @@ paperthin 스킬 팩(레포 루트 `.claude/skills/`, MIT — LilMGenius/paperth
 - **`return (` 과 요소 사이에 `{/* */}` 주석은 문법 오류** — JSX 표현식이 형제 요소로 해석돼 esbuild 가 깨진다. 주석은 `return` 위에 `//` 로. 빌드가 깨지면 스모크는 *이전 dist* 로 돌아 같은 실패를 반복하므로, QA 요약의 "빌드" 줄을 먼저 본다.
 - **extensionless import 라이브러리는 esbuild 로 번들해서 단위 검증** — `'./engine'` 은 Vite 규약이라 Node 가 못 푼다. `node_modules/.bin/esbuild test.mjs --bundle --format=esm --platform=node` 한 줄이면 lib 계층을 브라우저 없이 35항목 검증할 수 있다(하위호환 숫자 고정에 특히 유용).
 - **옵션 상태는 숨겨도 남는다** — 유심 "보유"로 바꿔 유심종류 섹션을 숨겼는데 이전에 고른 eSIM 값이 남아 계속 차단됐다. 판정 로직이 "보이는 옵션만" 보게 하거나(`simOwn === 'none' &&`), 섹션을 숨길 때 값을 리셋할 것. 스모크가 잡았다.
+- **Vercel의 `framework: vite` 프리셋은 `vite build`를 직접 실행한다** — npm 의 `prebuild`(에셋 다운로드)를
+  건너뛰고, 프로젝트에 `NODE_ENV=production`이 있으면 devDeps 도 설치하지 않아 `vite: command not found`(127)로
+  죽는다. 빌드 도구(vite·plugin-react·tailwind·postcss·autoprefixer·prebuild 의존성)는 **dependencies** 에 두고,
+  `vercel.json` 에 `buildCommand: npm run build` 를 명시한다. 실패 조건은 `NODE_ENV=production npm ci --omit=dev`
+  로 로컬에서 재현·검증할 수 있다.
+- **셸 cwd 는 호출 사이에 남았다가 예고 없이 루트로 리셋된다** — `npm run qa` 가 루트에서 돌면 "Missing script"
+  인데 grep 필터에 삼켜져 출력이 그냥 비어 보였다. 이 컨테이너 셸 호출은 항상 `cd /home/user/weatherplan-ai/moduon &&`
+  로 시작하고, 빈 출력은 통과가 아니라 의심 신호로 본다.
 - **이미지 생성 배치는 일부가 조용히 실패한다** — 8건 중 3건이 에러 메시지 없이 failed. `jobs_wait`의 summary를 확인하고 실패분만 재제출하는 절차를 항상 넣을 것.
