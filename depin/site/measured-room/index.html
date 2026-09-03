@@ -101,7 +101,17 @@
   /* 기기 화면 그대로: 카드 너비에 맞춘 4:3 화면 두 장 — 2번째(Indoor Index · 시계 · 보상 · 네트워크), 3번째(여섯 타일). 실시간으로 같은 값을 그린다 */
   .screens { display: grid; gap: 8px; margin-top: 10px; }
   .screens .k3 { font-size: 10px; color: var(--cap); font-family: var(--display); letter-spacing: .06em; text-transform: uppercase; font-weight: 700; }
-  .screens .sc { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: #f4f4f7; border: 1px solid var(--line); box-shadow: inset 0 0 0 1px rgba(255,255,255,.6); }
+  .screens .sc { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: #f4f4f7; border: 1px solid var(--line); box-shadow: inset 0 0 0 1px rgba(255,255,255,.6); cursor: zoom-in; }
+  .screens .sc:hover { border-color: var(--violet); }
+  .screens .sc:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+  /* 플로팅 화면: 누른 기기 화면을 가운데에 200% 로 */
+  #float { position: fixed; inset: 0; z-index: 24; background: rgba(6,6,22,.66); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 18px; }
+  #float[hidden] { display: none; }
+  .fbox { position: relative; width: var(--fw, 500px); max-width: calc(100vw - 36px); }
+  .fsc { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; background: #f4f4f7; box-shadow: 0 30px 60px rgba(0,0,0,.55), 0 0 0 6px rgba(255,255,255,.08); cursor: zoom-out; }
+  .fsc canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .fcap { margin-top: 10px; text-align: center; font-size: 12px; color: rgba(255,255,255,.8); font-family: var(--display), var(--body); }
+  .fclose { position: absolute; right: -6px; top: -46px; }
   .screens .sc canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
   .controls { margin: 10px 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; }
@@ -216,9 +226,9 @@
     </div>
     <div class="screens" aria-label="기기 화면 그대로">
       <div class="k3">Device screens · 기기 화면 1 · 2 · 3</div>
-      <div class="sc"><canvas id="mini-tiles" aria-label="기기 화면 1: 여섯 타일"></canvas></div>
-      <div class="sc"><canvas id="mini-index" aria-label="기기 화면 2: Indoor Index, 시계, 보상, 네트워크"></canvas></div>
-      <div class="sc"><canvas id="mini-io" aria-label="기기 화면 3: 실내와 실외 비교, 환기 장치"></canvas></div>
+      <div class="sc" data-screen="0" role="button" tabindex="0" aria-label="기기 화면 1 크게 보기"><canvas id="mini-tiles" aria-label="기기 화면 1: 여섯 타일"></canvas></div>
+      <div class="sc" data-screen="1" role="button" tabindex="0" aria-label="기기 화면 2 크게 보기"><canvas id="mini-index" aria-label="기기 화면 2: Indoor Index, 시계, 보상, 네트워크"></canvas></div>
+      <div class="sc" data-screen="2" role="button" tabindex="0" aria-label="기기 화면 3 크게 보기"><canvas id="mini-io" aria-label="기기 화면 3: 실내와 실외 비교, 환기 장치"></canvas></div>
     </div>
   </aside>
 
@@ -237,6 +247,13 @@
   </footer>
 </div>
 
+<div id="float" hidden role="dialog" aria-modal="true" aria-label="기기 화면 크게 보기">
+  <div class="fbox">
+    <button class="btn fclose" id="f-close" type="button">닫기</button>
+    <div class="fsc" id="fsc"><canvas id="float-cv"></canvas></div>
+    <div class="fcap" id="fcap">기기 화면 1 · 여섯 타일 — 바깥을 탭하면 닫힘 · ← → 다음 화면</div>
+  </div>
+</div>
 <div id="panel" hidden role="dialog" aria-modal="true" aria-label="기기 화면 확대">
   <button class="btn pclose" id="p-close" type="button">닫기</button>
   <div class="panel-in">
@@ -330,7 +347,7 @@
       en2: "Fifteen minutes at the stove. Steam and oil smoke push PM2.5 up; an open window lets it out.",
       states: { idle: "kitchen-idle", cook: "kitchen-cook", vent: "kitchen-vent", night: "kitchen-night", nightWindow: "kitchen-night-window" },
       pick: (s, g) => s.cook > 0 ? "cook" : g.night ? (s.window ? "nightWindow" : "night") : s.window ? "vent" : "idle",
-      device: { u: 0.83, v: 0.625, cmFrac: 0.00333 }, pan: [0.615, 0.60], hood: [0.70, 0.13], window: [0.26, 0.43], focus: [0.66, 0.5],
+      device: { u: 0.53, v: 0.658, cmFrac: 0.00333 }, pan: [0.615, 0.60], hood: [0.70, 0.13], window: [0.26, 0.43], focus: [0.66, 0.5],
       people: (h, night) => night ? 0.2 : (h >= 18 && h < 21) ? 3 : (h >= 23 || h < 7) ? 0.2 : 1.5,
       temp: (h, night) => (night || h >= 23 || h < 7) ? 22.4 : 23.4, init: { pm: 14, co2: 560 }
     }
@@ -667,6 +684,20 @@
   const scr2 = document.createElement("canvas"); scr2.width = 800; scr2.height = 600; const sctx2 = scr2.getContext("2d");
   const scr3 = document.createElement("canvas"); scr3.width = 800; scr3.height = 600; const sctx3 = scr3.getContext("2d");
   const miniIndex = $("mini-index"), miniTiles = $("mini-tiles"), miniIO = $("mini-io");
+  // 플로팅: 카드의 기기 화면을 누르면 가운데에 200% 로. 같은 오프스크린을 매 프레임 옮겨 그리므로 값이 실시간으로 움직인다.
+  const floatEl = $("float"), floatCv = $("float-cv"), fcap = $("fcap"), FSRC = [() => scr, () => scr2, () => scr3];
+  const FNAME = ["기기 화면 1 · 여섯 타일", "기기 화면 2 · Indoor Index · 시계", "기기 화면 3 · Indoor / Outdoor"];
+  let floatIdx = -1;
+  function openFloat(i) {
+    floatIdx = ((i % 3) + 3) % 3;
+    const mini = [miniTiles, miniIndex, miniIO][floatIdx], w = Math.max(320, mini.getBoundingClientRect().width * 2);
+    floatEl.style.setProperty("--fw", w.toFixed(0) + "px"); fcap.textContent = `${FNAME[floatIdx]} — 바깥을 탭하면 닫힘 · ← → 다음 화면`;
+    floatEl.hidden = false; requestAnimationFrame(() => { fitMini(floatCv); blit(floatCv, FSRC[floatIdx]()); }); $("f-close").focus();
+  }
+  function closeFloat() { floatEl.hidden = true; floatIdx = -1; }
+  document.querySelectorAll(".screens .sc").forEach((el) => { el.addEventListener("click", () => openFloat(+el.dataset.screen)); el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openFloat(+el.dataset.screen); } }); });
+  $("f-close").addEventListener("click", closeFloat); floatEl.addEventListener("click", (e) => { if (e.target === floatEl || e.target.closest(".fsc")) closeFloat(); });
+  addEventListener("keydown", (e) => { if (floatEl.hidden) return; if (e.key === "Escape") closeFloat(); else if (e.key === "ArrowRight") openFloat(floatIdx + 1); else if (e.key === "ArrowLeft") openFloat(floatIdx - 1); });
   function fitMini(cv) { const r = cv.getBoundingClientRect(), d = dpr(), bw = Math.max(16, Math.round(r.width * d)), bh = Math.max(12, Math.round(r.height * d)); if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; } cv._inner = [0, 0, bw, bh]; }
   let alertDismissed = false;
   // 화면은 오프스크린 800×600 에 한 번 그리고, 보이는 캔버스(장면·확대 패널)에는 각자의 실제 크기로 고품질 축소해 옮긴다
@@ -807,7 +838,7 @@
     sw = Math.max(1, stage.clientWidth); sh = Math.max(1, stage.clientHeight);
     const s = Math.max(sw / RATIO, sh), dw = RATIO * s, dh = s, f = SPACES[cur].focus;
     fit = { s, ox: (sw - dw) * f[0], oy: (sh - dh) * f[1], dw, dh };
-    placeDevice(); fitMini(miniIndex); fitMini(miniTiles); fitMini(miniIO);
+    placeDevice(); fitMini(miniIndex); fitMini(miniTiles); fitMini(miniIO); if (!floatEl.hidden) fitMini(floatCv);
     if (gl) { const d = dpr(); canvas.width = Math.round(sw * d); canvas.height = Math.round(sh * d); gl.viewport(0, 0, canvas.width, canvas.height); resetParticles(); }
     if (!panel.hidden) placePanelScreen();
   }
@@ -1114,6 +1145,7 @@
     if (n > 0) { showScene(); hud(); redraw(); }
     tweenShown(); drawScreen(sctx0); blit(screenCv); if (!panel.hidden) blit(pscreenCv);
     drawIndex(sctx2); blit(miniIndex, scr2); drawIO(sctx3); blit(miniIO, scr3); blit(miniTiles, scr);
+    if (!floatEl.hidden && floatIdx >= 0) blit(floatCv, FSRC[floatIdx]());
     vig.style.opacity = G.night ? "0.58" : "0.22";
     screenWrap.style.setProperty("--glow", G.night ? "0.55" : "0.22");
     px += (tx - px) * 0.06; py += (ty - py) * 0.06; mediaX = -px * 7; mediaY = -py * 4;
