@@ -55,7 +55,8 @@ export default function RentalBrowser() {
             <div key={x.key} className="relative shrink-0" onMouseEnter={() => setHover(x.key)}>
               <Tab active={brand === x.key} onClick={() => { setBrand(x.key); setHover(null) }}>{x.name}</Tab>
               {hover === x.key && (
-                <div className="absolute left-0 top-full z-30 mt-1 hidden min-w-[200px] rounded-btn border border-line bg-white p-2 shadow-panel md:block" data-t="rental-hover" role="menu">
+                <div className="absolute left-0 top-full z-30 hidden pt-1 md:block" data-t="rental-hover" role="menu">{/* 바깥 래퍼가 탭과 박스 사이 4px 을 투명하게 메운다 — 틈이 있으면 커서가 지나는 동안 mouseleave 로 닫힌다 */}
+                <div className="min-w-[200px] rounded-btn border border-line bg-white p-2 shadow-panel">
                   <div className="px-2 py-1 text-[11px] font-bold text-faint">{x.name}</div>
                   {x.cats.map((c) => (
                     <button key={c} role="menuitem" onClick={() => { setBrand(x.key); setCategory(c); setHover(null) }}
@@ -63,7 +64,7 @@ export default function RentalBrowser() {
                       {c}
                     </button>
                   ))}
-                </div>
+                </div></div>
               )}
             </div>
           ))}

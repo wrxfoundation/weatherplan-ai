@@ -11,6 +11,8 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   let fail = 0
   const check = (ok, label) => { if (!ok) fail++; console.log(`${ok ? 'PASS' : 'FAIL'}  ${label}`) }
   const total = async () => num(await page.locator('[data-t="net-total"]').innerText())
+  // 실제 사용자처럼 마우스를 단계적으로 옮긴다 — hover()/click() 은 순간이동이라 호버 메뉴의 틈 버그를 못 잡는다
+  const glide = async (loc, steps = 25) => { const bb = await loc.boundingBox(); await page.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2, { steps }); await page.waitForTimeout(150) }
 
   await page.goto('http://localhost:4173/category/internet', { waitUntil: 'networkidle' })
   await page.waitForTimeout(500)
@@ -77,13 +79,24 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   await page.locator('header nav a', { hasText: /^핸드폰$/ }).hover(); await page.waitForTimeout(250)
   const ph = await page.locator('[data-t="mega-items"]').innerText()
   check(ph.includes('온라인 구매') && ph.includes('알뜰폰 요금제'), '핸드폰 호버 → 온라인 구매 · 알뜰폰 요금제')
-  await page.locator('header nav a', { hasText: /^렌탈$/ }).hover(); await page.waitForTimeout(250)
+  await page.mouse.move(640, 640)
+  await glide(page.locator('header nav a', { hasText: /^렌탈$/ }), 10); await page.waitForTimeout(200)
   check(await page.locator('[data-t="mega-brands"] a').count() === 9, '렌탈 호버 → 좌측 브랜드 9')
+  const modes = await page.locator('[data-t="mega-modes"]').innerText()
+  check(modes.includes('렌트') && modes.includes('리스'), '렌탈 패널 상단에 렌트 · 리스')
   const grid = await page.locator('[data-t="mega-grid"]').innerText()
   check(grid.includes('LG퓨리케어') && grid.includes('안마의자') && grid.includes('청호나이스') && grid.includes('정수기/제빙기'), '렌탈 그리드: 브랜드별 카테고리')
-  await page.locator('[data-t="mega-grid"] a', { hasText: /^스타일러$/ }).click(); await page.waitForTimeout(600)
+  // 커서를 천천히 패널까지 내려도 패널이 살아 있어야 한다(그노 리포트: 내려가는 동안 사라져 클릭 불가)
+  await glide(page.locator('[data-t="mega-grid"] a', { hasText: /^스타일러$/ }))
+  check(await page.locator('[data-t="mega"]').count() === 1, '천천히 내려가도 패널 유지 (nav↔패널 여백 통과)')
+  await page.mouse.down(); await page.mouse.up(); await page.waitForTimeout(600)
   check(page.url().includes('brand=lg') && decodeURIComponent(page.url()).includes('type=스타일러'), `카테고리 클릭 → ${decodeURIComponent(page.url()).split('?')[1]}`)
   check(await page.locator('header nav a').count() === 4, 'GNB 링크 수는 여전히 4 (패널이 nav 바깥)')
+  await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' }); await page.mouse.move(640, 640); await page.waitForTimeout(300)
+  await glide(page.locator('header nav a', { hasText: /^렌탈$/ }), 10); await page.waitForTimeout(200)
+  await glide(page.locator('[data-t="mega-modes"] a', { hasText: '리스' })); await page.mouse.down(); await page.mouse.up(); await page.waitForTimeout(600)
+  check(page.url().includes('mode=lease'), `패널의 리스 → ${page.url().split('?')[1]}`)
+  check((await page.locator('[data-t="rental-mode"] button[aria-selected="true"]').innerText()) === '리스', '브라우저가 리스 모드로 열림')
 
   if (errors.length) { console.log('PAGEERROR:', errors.join(' | ')); fail++ }
   await browser.close()

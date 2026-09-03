@@ -66,6 +66,11 @@ paperthin 스킬 팩(레포 루트 `.claude/skills/`, MIT — LilMGenius/paperth
   죽는다. 빌드 도구(vite·plugin-react·tailwind·postcss·autoprefixer·prebuild 의존성)는 **dependencies** 에 두고,
   `vercel.json` 에 `buildCommand: npm run build` 를 명시한다. 실패 조건은 `NODE_ENV=production npm ci --omit=dev`
   로 로컬에서 재현·검증할 수 있다.
+- **Playwright 의 hover()·click() 은 마우스를 순간이동시킨다** — 호버로 열리는 메뉴가 "커서가 내려가는 동안"
+  닫히는 버그(nav 글자와 패널 사이 47px 여백에서 mouseleave)를 절대 못 잡는다. 사용자 리포트로 알았다.
+  호버 UI 는 `page.mouse.move(x, y, { steps: 25 })` 로 단계 이동한 뒤 요소가 살아있는지 단언할 것.
+  구조적 처방: mouseleave 는 트리거와 패널을 **둘 다 DOM 자식으로 가진 조상**에 걸고, 트리거와 패널 사이
+  틈은 투명 래퍼(pt-1)로 메운다.
 - **Vercel 로그에서 "Installing dependencies..." 가 없으면 설치가 아예 안 된 것이다** — package.json 이 루트에
   있어도 대시보드 Install Command 오버라이드(빈 값)나 예전 폴더 재배포로 생긴다. 정상 로그는 반드시
   `Installing dependencies...` → `Running "npm run build"` 순서다. `Command "vite build"` 가 보이면 업로드된

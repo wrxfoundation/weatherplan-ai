@@ -11,6 +11,8 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   let fail = 0
   const check = (ok, label) => { if (!ok) fail++; console.log(`${ok ? 'PASS' : 'FAIL'}  ${label}`) }
   const items = () => page.locator('[data-t="rental-items"] > div').count()
+  // 실제 사용자처럼 마우스를 단계적으로 옮긴다 — hover()/click() 은 순간이동이라 호버 메뉴의 틈 버그를 못 잡는다
+  const glide = async (loc, steps = 25) => { const bb = await loc.boundingBox(); await page.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2, { steps }); await page.waitForTimeout(150) }
 
   await page.goto('http://localhost:4173/category/rental', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   check(await page.locator('[data-t="rental-browser"]').count() === 1, '렌더: 브랜드 브라우저')
@@ -19,11 +21,14 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(await items() === 20, `전체 품목 ${await items()}`)
 
   // 호버 → 카테고리 드롭다운
-  await page.locator('[data-t="rental-brands"] button', { hasText: 'LG퓨리케어' }).hover(); await page.waitForTimeout(200)
+  await page.mouse.move(640, 700)
+  await glide(page.locator('[data-t="rental-brands"] button', { hasText: 'LG퓨리케어' }), 10); await page.waitForTimeout(200)
   check(await page.locator('[data-t="rental-hover"] [role="menuitem"]').count() === 8, 'LG퓨리케어 호버 → 카테고리 8')
   const hv = await page.locator('[data-t="rental-hover"]').innerText()
   check(hv.includes('냉장고/김치냉장고') && hv.includes('스타일러') && hv.includes('안마의자'), '호버 카테고리 원문 일치')
-  await page.locator('[data-t="rental-hover"] [role="menuitem"]', { hasText: /^정수기$/ }).click(); await page.waitForTimeout(200)
+  await glide(page.locator('[data-t="rental-hover"] [role="menuitem"]', { hasText: /^정수기$/ }))
+  check(await page.locator('[data-t="rental-hover"]').count() === 1, '천천히 내려가도 드롭다운 유지')
+  await page.mouse.down(); await page.mouse.up(); await page.waitForTimeout(200)
   check(await page.locator('[data-t="rental-water"]').count() === 1, '정수기 선택 → 우상단 냉온만/얼음냉온 필터')
   const wt = await page.locator('[data-t="rental-water"]').innerText()
   check(wt.includes('냉온만') && wt.includes('얼음냉온'), '필터 라벨')

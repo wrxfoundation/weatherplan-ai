@@ -7,7 +7,7 @@ import { LEGAL } from '../../lib/constants'
 import { captureRef } from '../../lib/engine'
 import ChatWidget from '../ChatWidget'
 import { INTERNET_CARRIERS } from '../../lib/internet'
-import { RENTAL_BRANDS } from '../../lib/rentals'
+import { RENTAL_BRANDS, MODES } from '../../lib/rentals'
 
 // GNB — 사업 초기에는 3대 주력(인터넷·핸드폰·렌탈)과 쇼핑몰만 노출한다.
 // hidden: true 는 "삭제"가 아니라 "숨김" — 페이지와 라우트는 그대로 살아 있고
@@ -42,7 +42,7 @@ const MEGA = {
       { key: 'calc', label: '휴대폰 견적 계산기', sub: '단말 할부(A) + 요금(B)', to: '/calculator/phone' },
     ],
   },
-  '/category/rental': { title: '렌탈 제품전체', brands: RENTAL_BRANDS },
+  '/category/rental': { title: '렌탈 제품전체', brands: RENTAL_BRANDS, modes: MODES },
 }
 
 // 즉시통화 — 파트너몰은 매장 직통, 본진은 대표번호
@@ -55,20 +55,21 @@ export function ConsumerHeader({ tenant }) {
   const nav = useNavigate()
   const [open, setOpen] = useState(false)
   const [mega, setMega] = useState(null) // 호버 중인 GNB 항목(to)
+  // 패널을 닫는 mouseleave 는 <header> 에 건다. <nav> 에 두면 글자와 패널 사이 여백(47px)을 지나는 동안 닫혀 클릭이 불가능하다.
   const tel = telOf(tenant)
   useEffect(() => { const k = (e) => e.key === 'Escape' && setMega(null); window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k) }, [])
   // 라우트가 바뀌면 패널·모바일 메뉴를 닫는다 — 마우스가 GNB 위에 머문 채 이동하면 패널이 새 페이지를 덮는다
   const { pathname } = useLocation()
   useEffect(() => { setMega(null); setOpen(false) }, [pathname])
   return (
-    <header className="sticky top-0 z-40 border-b border-line-card/50 bg-cream/60 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-line-card/50 bg-cream/60 backdrop-blur-md" onMouseLeave={() => setMega(null)}>
       <div className="mx-auto flex h-[64px] max-w-6xl items-center justify-between px-5 sm:h-[76px] sm:px-10">
         <Link to={tenant ? `/m/${tenant.slug}` : '/'} className="flex items-center gap-2">
           <Logo name={tenant ? tenant.name : '모두온'} />
           {tenant && <span className="rounded-full bg-tint px-2 py-0.5 text-[11px] font-bold text-primary-text">파트너몰</span>}
         </Link>
         {!tenant && (
-          <nav className="hidden items-center gap-8 md:flex" onMouseLeave={() => setMega(null)}>
+          <nav className="hidden items-center gap-8 md:flex">
             {VISIBLE_NAV.map((n) => (
               <NavLink key={n.to} to={n.to} end={n.end} onMouseEnter={() => setMega(MEGA[n.to] ? n.to : null)} onFocus={() => setMega(MEGA[n.to] ? n.to : null)} onClick={() => setMega(null)}
                 aria-haspopup={MEGA[n.to] ? 'true' : undefined} aria-expanded={MEGA[n.to] ? mega === n.to : undefined}
@@ -95,10 +96,20 @@ export function ConsumerHeader({ tenant }) {
         <button className="md:hidden" onClick={() => setOpen(!open)} aria-label="메뉴"><IcMenu size={22} /></button>
       </div>
       {mega && MEGA[mega] && !tenant && (
-        <div className="absolute inset-x-0 top-full hidden border-b border-line-card bg-white shadow-panel md:block" data-t="mega" data-mega={mega}
-          onMouseEnter={() => setMega(mega)} onMouseLeave={() => setMega(null)}>
+        <div className="absolute inset-x-0 top-full hidden border-b border-line-card bg-white shadow-panel md:block" data-t="mega" data-mega={mega}>
           <div className="mx-auto max-w-6xl px-10 py-5">
             {MEGA[mega].brands ? (
+              <div>
+                {/* 렌탈 방식이 먼저 — 인터넷·휴대폰이 놓인 GNB 구역에서 바로 고른다 */}
+                <div className="mb-4 flex flex-wrap items-center gap-2" data-t="mega-modes">
+                  <span className="mr-1 text-[12px] font-bold text-faint">렌탈 방식</span>
+                  {MEGA[mega].modes.map((m) => (
+                    <Link key={m.key} to={`/category/rental?mode=${m.key}`} onClick={() => setMega(null)} className="flex items-baseline gap-1.5 rounded-full border border-line bg-white px-3.5 py-1.5 transition-colors hover:border-primary hover:bg-tint">
+                      <span className="text-[13.5px] font-extrabold text-ink">{m.label}</span>
+                      <span className="text-[11px] text-faint">{m.desc}</span>
+                    </Link>
+                  ))}
+                </div>
               <div className="grid grid-cols-[200px_1fr] gap-6">
                 <ul className="flex flex-col border-r border-line pr-4" data-t="mega-brands">
                   <li className="px-2 py-1.5 text-[12px] font-bold text-faint">{MEGA[mega].title}</li>
@@ -118,6 +129,7 @@ export function ConsumerHeader({ tenant }) {
                     </div>
                   ))}
                 </div>
+              </div>
               </div>
             ) : (
               <div>
