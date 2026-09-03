@@ -1,30 +1,37 @@
 #!/bin/sh
 # Measured Room 자산을 assets/ 에 받아 둔다. 비워 둬도 페이지는 CDN 에서 바로 불러오므로 선택 사항(오프라인 부스·장기 배포용).
-# 장면 사진(기기 렌더 포함, 1600px JPEG) = 힉스필드 Nano Banana Pro 편집본 · 영상 루프 = Kling 3.0 pro image-to-video(1756×1176, 5초, 첫 프레임 = 사진)
-# 생성 작업 ID: 거실 aef113ff / 859f3145(창) / 092adf57(밤) · 침실 d5a7c1a0 / 1a3624ef(밤) / 4de77566(아침) · 부엌 64c5f4a6 / 00d738ec(조리) / 3ab71fb1(환기) / 0cee8b14(밤)
+# 장면 사진(기기 없음, 1600px JPEG) 13장 · 같은 구도 영상 루프 13편(Kling 3.0 pro, 5초, 첫 프레임 = 사진) · 기기 컷아웃 PNG(배경 제거, 1024×938)
+# 생성 작업 ID: 밤·창 열림 3장 60f1f46a(거실) / 3829f756(침실) / 091e81c6(부엌) · 기기 484fc2a2 → 배경 제거 22ef5055
 set -e
 cd "$(dirname "$0")/assets"
 IMG=https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC
 GEN=https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC
 get() { echo "$1"; curl -fsSL -o "$1" "$2"; }
-get living-dusk.jpg     $IMG/032f828c-1006-4f89-b467-20ed1c006e98.jpg
-get living-window.jpg   $IMG/bce7d982-4050-415d-916e-a3343f788ecb.jpg
-get living-night.jpg    $IMG/18cf66b4-e226-470b-831a-d9bf78769c65.jpg
-get bedroom-evening.jpg $IMG/380c00c0-b5eb-48e9-b4ce-174cc25d3249.jpg
-get bedroom-night.jpg   $IMG/c768b884-34e5-4012-b9e6-982d2f0aa628.jpg
-get bedroom-morning.jpg $IMG/bb70c4b6-7c5f-47af-bbfb-a81f358e18a4.jpg
-get kitchen-idle.jpg    $IMG/5ec34b89-9bdc-4101-a713-e9e3f4af00a1.jpg
-get kitchen-cook.jpg    $IMG/4ba59408-9f1c-48d5-bd8b-47dfc14bbb95.jpg
-get kitchen-vent.jpg    $IMG/3e57eb4e-4242-4b46-a76c-3e98225808b2.jpg
-get kitchen-night.jpg   $IMG/ebfdc902-50ff-4f25-a3e7-f93738029ab1.jpg
-get living-dusk.mp4     $GEN/hf_20260902_222608_76465f7d-3a68-4a83-8f9b-f41ca00c05e7.mp4
-get living-window.mp4   $GEN/hf_20260902_222608_37db8bf1-1fd4-4009-9107-390d814bb4db.mp4
-get living-night.mp4    $GEN/hf_20260902_222433_070d13d8-119b-482f-b581-9a39e4daaec1.mp4
-get bedroom-evening.mp4 $GEN/hf_20260902_222608_f418f545-6d35-4ef6-96d7-9a0c2513a102.mp4
-get bedroom-night.mp4   $GEN/hf_20260902_222433_e97ce6ac-614b-4582-a133-aadeb4048471.mp4
-get bedroom-morning.mp4 $GEN/hf_20260902_222608_bff369da-36cd-4c1e-adb1-38d3b591ec19.mp4
-get kitchen-idle.mp4    $GEN/hf_20260902_222608_3e28c3fc-8d8c-4622-af19-15eaf034767c.mp4
-get kitchen-cook.mp4    $GEN/hf_20260902_222432_3f9e041d-3992-4e78-b8f0-1b830caf5335.mp4
-get kitchen-vent.mp4    $GEN/hf_20260902_222608_5b8f1c9e-8195-401b-bc5f-ad872ed33c41.mp4
-get kitchen-night.mp4   $GEN/hf_20260902_222433_a055ae83-958a-4f94-8539-824decb02b0e.mp4
+get device.png              $IMG/db613454-58bc-4c78-ac49-18179f8c5088.png
+get living-dusk.jpg         $IMG/fd732637-3131-482a-9a1c-9331bb473167.jpg
+get living-window.jpg       $IMG/e0d1dbe2-bdc0-4096-86f1-5b2b5d7c2034.jpg
+get living-night.jpg        $IMG/d0c5e4e1-c28d-4ded-ae2f-6a1a6aa5702a.jpg
+get living-night-window.jpg $IMG/a6137c4a-91c7-44c9-8742-815e945cdad4.jpg
+get bedroom-evening.jpg     $IMG/29bacff3-b7bd-44df-9b42-aa41b58e2fdf.jpg
+get bedroom-night.jpg       $IMG/87f4c37b-d8e2-4d5c-a4f1-70e89ba4691e.jpg
+get bedroom-night-window.jpg $IMG/87b26b91-eaf7-43b0-ac30-f6d320c461ba.jpg
+get bedroom-morning.jpg     $IMG/c6d6d5ec-b793-455d-9977-e9adf1c51b2e.jpg
+get kitchen-idle.jpg        $IMG/86dc96a7-afa3-40b3-8ce9-61c14de6a1bf.jpg
+get kitchen-cook.jpg        $IMG/4a7aab4a-e21a-4307-8dc2-5fac2bca5deb.jpg
+get kitchen-vent.jpg        $IMG/a5412bc8-3256-41a8-8b66-fb97c935da36.jpg
+get kitchen-night.jpg       $IMG/0abbbc92-1c64-477a-b05d-72ac79acfab2.jpg
+get kitchen-night-window.jpg $IMG/4e44e4c1-56ae-49a6-8d7a-5c3a55cf0b56.jpg
+get living-dusk.mp4         $GEN/hf_20260902_235658_8df91bac-67f6-494c-94b4-c58bf40d60da.mp4
+get living-window.mp4       $GEN/hf_20260902_235658_6a11398d-e15a-4db4-a844-59b774d17b2a.mp4
+get living-night.mp4        $GEN/hf_20260902_235658_c2900432-0742-49f5-9e63-878f29fa0dbf.mp4
+get living-night-window.mp4 $GEN/hf_20260903_000340_e82ec00e-4fba-4aa8-b918-bdf1daa0290c.mp4
+get bedroom-evening.mp4     $GEN/hf_20260902_235659_d8b95d7f-102c-45ee-a913-6580526cec59.mp4
+get bedroom-night.mp4       $GEN/hf_20260902_235658_6bd51df1-c585-4e9c-9b50-6197349be352.mp4
+get bedroom-night-window.mp4 $GEN/hf_20260903_000341_59218a4f-c007-4a48-8246-dfdc9183dbd9.mp4
+get bedroom-morning.mp4     $GEN/hf_20260902_235658_4498923c-58dc-4c60-8973-77803b240424.mp4
+get kitchen-idle.mp4        $GEN/hf_20260902_235658_09134379-3cf2-4d05-9ae9-d476d46a9bd7.mp4
+get kitchen-cook.mp4        $GEN/hf_20260902_235658_917da3a6-76a3-4b72-85ac-08ce51c47cb0.mp4
+get kitchen-vent.mp4        $GEN/hf_20260902_235658_61831fe4-4d12-4126-a260-e935db6e53c1.mp4
+get kitchen-night.mp4       $GEN/hf_20260902_235658_f849d640-3d43-4887-b0b0-f1615aeb7a17.mp4
+get kitchen-night-window.mp4 $GEN/hf_20260903_000341_8af427ad-501d-4448-b8be-c567fe45b50b.mp4
 ls -l
