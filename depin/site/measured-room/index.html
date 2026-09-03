@@ -124,6 +124,27 @@
   .legend .k2 { display: inline-flex; align-items: center; padding: 4px 8px 4px 11px; color: rgba(255,255,255,.6); font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
   .legend span[data-sp] { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-left: 1px solid rgba(255,255,255,.14); font-family: var(--display); font-weight: 600; }
   .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px currentColor; opacity: .35; transition: opacity .6s ease; }
+  /* 측정 요소 정의 카드: 범례 칩·막대 이름을 누르면 그 아래(자리가 없으면 위)에 플로팅으로 뜬다 */
+  .legend span[data-sp] { cursor: pointer; border-radius: 999px; }
+  .legend span[data-sp]:hover, .legend span[data-sp][aria-expanded="true"] { background: rgba(255,255,255,.16); }
+  .legend span[data-sp]:focus-visible { outline: 2px solid rgba(255,255,255,.65); outline-offset: -2px; }
+  .bar .bl { cursor: pointer; border-radius: 4px; } .bar .bl:hover, .bar .bl[aria-expanded="true"] { color: var(--violet); } .bar .bl:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+  .def { position: fixed; z-index: 7; width: min(380px, calc(100vw - 24px)); background: rgba(12,12,34,.93); color: #fff; border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 12px 14px 12px; box-shadow: 0 12px 34px rgba(0,0,0,.5); backdrop-filter: blur(10px); font-size: 13px; line-height: 1.5; word-break: keep-all; overflow-wrap: anywhere; }
+  .def::before { content: ""; position: absolute; top: -7px; left: var(--ax, 24px); width: 12px; height: 12px; background: rgba(12,12,34,.93); border-left: 1px solid rgba(255,255,255,.2); border-top: 1px solid rgba(255,255,255,.2); transform: rotate(45deg); }
+  .def.up::before { top: auto; bottom: -7px; transform: rotate(225deg); }
+  .def h4 { margin: 0 24px 7px 0; font-family: var(--display); font-size: 14.5px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: -.01em; }
+  .def h4 i { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 9px var(--c); }
+  .def h4 small { font-weight: 600; color: rgba(255,255,255,.58); font-size: 11.5px; letter-spacing: 0; }
+  .def dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 5px 10px; }
+  .def dt { color: rgba(255,255,255,.6); font-family: var(--display); font-size: 11px; font-weight: 700; letter-spacing: .04em; padding-top: 2px; white-space: nowrap; }
+  .def dd { margin: 0; color: rgba(255,255,255,.92); }
+  .def .band { margin-top: 9px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .def .band span { display: inline-flex; align-items: center; gap: 5px; font-family: var(--display); font-size: 11px; font-weight: 600; padding: 2px 8px 2px 6px; border-radius: 999px; background: rgba(255,255,255,.1); font-variant-numeric: tabular-nums; }
+  .def .band span i { width: 7px; height: 7px; border-radius: 50%; background: var(--lvc, #fff); }
+  .def .hintx { margin-top: 8px; font-size: 11.5px; color: rgba(255,255,255,.55); line-height: 1.45; }
+  .def .x { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border: 0; border-radius: 50%; background: rgba(255,255,255,.1); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; }
+  .def .x:hover { background: rgba(255,255,255,.22); } .def .x:focus-visible { outline: 2px solid rgba(255,255,255,.6); }
+  @media (max-width: 599px) { .def { font-size: 12.5px; } .def dl { grid-template-columns: 1fr; gap: 2px; } .def dt { padding-top: 4px; } }
   /* 기기 화면 그대로: 카드 너비에 맞춘 4:3 화면 두 장 — 2번째(Indoor Index · 시계 · 보상 · 네트워크), 3번째(여섯 타일). 실시간으로 같은 값을 그린다 */
   .screens { display: grid; gap: 6px; margin-top: 7px; }
   .screens .k3 { font-size: 10px; color: var(--cap); font-family: var(--display); letter-spacing: .06em; text-transform: uppercase; font-weight: 700; }
@@ -247,9 +268,11 @@
       <button type="button" data-lang="ko" aria-pressed="true">KR</button><button type="button" data-lang="en" aria-pressed="false">EN</button>
     </div>
   </div>
-  <div class="legend" id="legend" role="table" data-i18n-title="pnote" aria-label="장면 속 입자의 색과 종류 — 보이지 않는 것을 빛으로 나타낸 예시">
+  <div class="legend" id="legend" role="group" data-i18n-title="pnote" aria-label="장면 속 입자의 색과 종류 — 보이지 않는 것을 빛으로 나타낸 예시">
     <span class="k2" data-i18n="particles">입자</span><span data-sp="co2"><i></i>CO₂</span><span data-sp="pm25"><i></i>PM2.5</span><span data-sp="pm10"><i></i>PM10</span><span data-sp="voc"><i></i>VOCs</span>
   </div>
+
+  <div class="def" id="def" hidden role="dialog" aria-labelledby="def-title"></div>
 
   <section id="stage" aria-label="고른 공간의 장면과 공기 시뮬레이션">
     <div class="media" id="media">
@@ -1282,7 +1305,7 @@
     noteAssets(); hud(); counts(); placeLegend();   // 언어가 바뀌면 제목 높이도 바뀐다
   }
   const langBtns = Array.from(document.querySelectorAll("#lang button"));
-  langBtns.forEach((b) => b.addEventListener("click", () => { if (LANG === b.dataset.lang) return; LANG = b.dataset.lang; try { localStorage.setItem("mr-lang", LANG); } catch (e) {} applyLang(); }));
+  langBtns.forEach((b) => b.addEventListener("click", () => { if (LANG === b.dataset.lang) return; LANG = b.dataset.lang; try { localStorage.setItem("mr-lang", LANG); } catch (e) {} applyLang(); defRefresh(); }));
   const bCook = $("b-cook"), bWin = $("b-window"), bNight = $("b-night"), bReset = $("b-reset"), bSpeed = $("b-speed");
   function lbl(b, txt) { const el = b.querySelector(".lb"); if (el) el.textContent = txt; else b.textContent = txt; }   // 아이콘은 두고 글자만 바꾼다
   function setSpeed(v) { G.speed = SPEEDS.includes(v) ? v : 5; lbl(bSpeed, `${t("timelapse")} ×${G.speed}`); hud(); }
@@ -1351,6 +1374,125 @@
   if (q.get("window") === "1") ST[startSpace].window = true;
   if (q.get("night") === "1") G.night = true;
   if (q.get("speed")) setSpeed(+q.get("speed"));
+  /* ── 측정 요소 정의 카드: 범례 칩(CO₂·PM2.5·PM10·VOCs)과 오른쪽 막대 이름(온도·습도까지)을 누르면 아래에 플로팅으로 뜬다. 무엇인지 · 어디서 생기는지 · 이 집에서 올리는 것 · 내리는 것 · 기기 기준. ── */
+  const DEFS = {
+    ko: {
+      co2:  { name: "CO₂ · 이산화탄소", unit: "ppm", what: "사람과 동물이 숨 쉴 때 내놓는 기체. 바깥 공기는 약 420 ppm.",
+              why: "실내 CO₂는 거의 전부 사람의 날숨입니다. 한 사람이 분당 약 0.3 L를 내놓고, 닫힌 방에선 빠져나가는 양보다 많아 쌓입니다.",
+              up: "방에 있는 사람 수와 머무는 시간(저녁 거실의 네 식구, 밤 침실의 두 사람) · 서서 움직이는 활동 · 조리대 앞에 선 사람의 숨이 기기 가까이 잡히는 것. 이 집의 인덕션은 연소가 없어 CO₂를 내지 않습니다(가스레인지는 냅니다).",
+              down: "창문 환기 · 방을 비우는 것 · 문틈 누설(느림).",
+              bands: [["ok", "보통 <800"], ["warn", "주의 800~1,000"], ["alert", "환기 1,000+"]],
+              note: "1,000 ppm을 넘으면 답답함·집중력 저하가 시작되고, 밤새 2,000을 넘는 침실은 아침 컨디션에 영향을 줍니다. 기기 화면: Normal <1,000 · High 1,000~2,000 · Very High" },
+      pm25: { name: "PM2.5 · 초미세먼지", unit: "µg/m³", what: "지름 2.5 µm 이하(머리카락 굵기의 1/30)의 아주 작은 입자. 폐 깊숙이, 혈관까지 들어갑니다.",
+              why: "실내에선 조리(기름 가열·굽기·튀김)가 가장 큰 원천이고 촛불·담배도 냅니다. 바깥 먼지가 창과 틈으로 들어옵니다.",
+              up: "요리 15분(팬에서 튀는 기름 연기) · 바깥 미세먼지가 높은 날의 창 열기 · 주방에서 거실로 넘어오는 연기.",
+              down: "후드·창문 환기 · 시간이 지나며 가라앉음 · 공기청정기.",
+              bands: [["good", "Good ≤15"], ["ok", "Normal ≤35"], ["warn", "Bad ≤75"], ["alert", "Very Bad 75+"]],
+              note: "기기 등급은 국내 예보 등급(일평균)과 같습니다." },
+      pm10: { name: "PM10 · 미세먼지", unit: "µg/m³", what: "지름 10 µm 이하 입자. PM2.5를 포함하고, 그보다 굵은 먼지(2.5~10 µm)가 더해진 값입니다.",
+              why: "굵은 먼지는 바닥·침구·옷에 가라앉아 있다가 사람이 걸어 다니고 움직일 때 되날립니다. 바깥의 흙먼지·꽃가루도 들어옵니다.",
+              up: "사람이 많이 오가는 저녁 거실 · 조리 중 튐 · 이불 털기·청소. 자는 사람은 거의 올리지 않습니다.",
+              down: "굵은 입자는 수십 분 안에 가라앉음 · 환기 · 물걸레 청소.",
+              bands: [["good", "Good ≤30"], ["ok", "Normal ≤80"], ["warn", "Bad ≤150"], ["alert", "Very Bad 150+"]],
+              note: "기기 등급은 국내 예보 등급과 같습니다." },
+      voc:  { name: "VOCs · 휘발성 유기화합물", unit: "ppb · TVOC", what: "상온에서 기체로 날아가는 탄소 화합물의 총량(TVOC). 실내 냄새의 상당 부분이 여기에 듭니다.",
+              why: "가구·마감재·페인트·접착제에서 천천히 배어 나오고(새집·새 가구일수록 많음), 조리·세제·방향제·화장품에서 급증하며, 사람 몸(피부·숨)도 조금 냅니다.",
+              up: "닫힌 방에서 가구·마감재 배출이 쌓임 · 요리(기름 가열) · 방에 오래 머무는 사람 · 온도·습도가 높을수록 배출이 늘어남.",
+              down: "창문 환기(가장 효과적) · 조리 뒤 후드 · 새 가구는 며칠 환기.",
+              bands: [["good", "Good ≤100"], ["ok", "Normal ≤300"], ["warn", "Bad ≤1,000"], ["alert", "Very Bad 1,000+"]],
+              note: "센서마다 단위와 감도가 달라, 절대값보다 오르내림을 봅니다." },
+      temp: { name: "온도", unit: "°C", what: "실내 공기 온도. 몸이 느끼는 온도(체감)는 습도에 따라 조금 다릅니다.",
+              why: "바깥 날씨가 벽과 창을 통해 들어오고, 사람·조리·가전이 열을 보탭니다.",
+              up: "조리 열(팬·오븐) · 사람이 많을 때 · 오후 햇빛 · 여름에 창 열기.",
+              down: "바깥이 서늘할 때 환기 · 냉방 · 밤.",
+              bands: [["warn", "추움 <18"], ["good", "쾌적 18~26"], ["warn", "더움 26+"]],
+              note: "잠자기 좋은 온도는 대개 18~20°C 언저리입니다." },
+      rh:   { name: "습도", unit: "%", what: "공기가 머금을 수 있는 수증기 양 대비 지금 들어 있는 비율(상대습도).",
+              why: "조리(끓이기·김)·샤워·빨래·사람의 숨이 수증기를 보태고, 바깥 공기의 습도가 창과 틈으로 들어옵니다.",
+              up: "요리(김) · 샤워·빨래 건조 · 사람이 많을 때 · 비 오는 날 창 열기.",
+              down: "바깥이 건조할 때 환기 · 제습·난방 · 오후.",
+              bands: [["warn", "건조 <30"], ["good", "쾌적 30~60"], ["ok", "약간 습함 60~70"], ["warn", "습함 70+"]],
+              note: "60%를 넘는 상태가 오래가면 곰팡이·집먼지진드기가 늘고, 30% 아래면 코·목이 마릅니다." }
+    },
+    en: {
+      co2:  { name: "CO₂ · Carbon dioxide", unit: "ppm", what: "The gas people and animals breathe out. Outdoor air is about 420 ppm.",
+              why: "Indoor CO₂ is almost entirely exhaled breath: about 0.3 L a minute per person, and in a closed room more comes in than leaks out, so it builds up.",
+              up: "How many people are in the room and for how long (four in the evening living room, two asleep in the bedroom) · standing, active work · a cook's breath caught by the device on the counter. This kitchen's induction hob burns nothing, so it adds no CO₂ (a gas stove would).",
+              down: "Opening a window · leaving the room · slow leakage through gaps.",
+              bands: [["ok", "Normal <800"], ["warn", "Caution 800–1,000"], ["alert", "Ventilate 1,000+"]],
+              note: "Above 1,000 ppm rooms feel stuffy and focus drops; a bedroom above 2,000 all night affects how you feel in the morning. Device screen: Normal <1,000 · High 1,000–2,000 · Very High" },
+      pm25: { name: "PM2.5 · Fine particles", unit: "µg/m³", what: "Particles under 2.5 µm across (a thirtieth of a hair) that reach deep into the lungs and the bloodstream.",
+              why: "Indoors, cooking (heating oil, grilling, frying) is the biggest source, plus candles and smoking. Outdoor particles come in through windows and gaps.",
+              up: "15 minutes of cooking (oil smoke off the pan) · opening a window on a high-pollution day · smoke drifting from the kitchen into the living room.",
+              down: "Range hood or window ventilation · settling over time · an air purifier.",
+              bands: [["good", "Good ≤15"], ["ok", "Normal ≤35"], ["warn", "Bad ≤75"], ["alert", "Very Bad 75+"]],
+              note: "Device grades follow Korea's forecast bands (daily mean)." },
+      pm10: { name: "PM10 · Coarse particles", unit: "µg/m³", what: "Particles under 10 µm: PM2.5 plus the coarser dust between 2.5 and 10 µm.",
+              why: "Coarse dust settles on floors, bedding and clothes and is kicked back up when people walk and move. Outdoor soil dust and pollen come in too.",
+              up: "A busy evening living room · splatter while cooking · shaking bedding, cleaning. Sleeping people barely raise it.",
+              down: "Coarse particles settle within tens of minutes · ventilation · damp mopping.",
+              bands: [["good", "Good ≤30"], ["ok", "Normal ≤80"], ["warn", "Bad ≤150"], ["alert", "Very Bad 150+"]],
+              note: "Device grades follow Korea's forecast bands." },
+      voc:  { name: "VOCs · Volatile organic compounds", unit: "ppb · TVOC", what: "The total of carbon compounds that evaporate at room temperature (TVOC). Much of what you smell indoors is in here.",
+              why: "They seep slowly out of furniture, finishes, paint and glue (more when new), spike with cooking, detergents, air fresheners and cosmetics, and people's skin and breath add a little.",
+              up: "Emissions building up in a closed room · cooking (heated oil) · people staying long in a room · warmer, more humid air releases more.",
+              down: "Opening a window (most effective) · the hood after cooking · airing out new furniture for a few days.",
+              bands: [["good", "Good ≤100"], ["ok", "Normal ≤300"], ["warn", "Bad ≤1,000"], ["alert", "Very Bad 1,000+"]],
+              note: "Units and sensitivity differ between sensors, so watch the trend rather than the absolute value." },
+      temp: { name: "Temperature", unit: "°C", what: "Indoor air temperature. What the body feels shifts a little with humidity.",
+              why: "Outdoor weather comes through walls and windows; people, cooking and appliances add heat.",
+              up: "Cooking heat (pan, oven) · a full room · afternoon sun · opening a window in summer.",
+              down: "Ventilating when it is cooler outside · cooling · night.",
+              bands: [["warn", "Cold <18"], ["good", "Comfortable 18–26"], ["warn", "Warm 26+"]],
+              note: "Around 18–20°C is good for sleep." },
+      rh:   { name: "Humidity", unit: "%", what: "How much water vapour the air holds, relative to the most it could hold (relative humidity).",
+              why: "Cooking (boiling, steam), showers, drying laundry and breathing add vapour; outdoor humidity comes in through windows and gaps.",
+              up: "Cooking steam · showers, drying laundry · a full room · opening a window on a rainy day.",
+              down: "Ventilating when it is drier outside · a dehumidifier or heating · afternoon.",
+              bands: [["warn", "Dry <30"], ["good", "Comfortable 30–60"], ["ok", "Slightly humid 60–70"], ["warn", "Humid 70+"]],
+              note: "Long spells above 60% favour mould and dust mites; below 30% dries the nose and throat." }
+    }
+  };
+  const DEFL = { ko: { what: "무엇", why: "어디서", up: "올리는 것", down: "내리는 것", close: "닫기" }, en: { what: "WHAT", why: "FROM", up: "RAISES IT", down: "LOWERS IT", close: "Close" } };
+  const DEF_COL = Object.assign(Object.fromEntries(SPECIES.map((sp) => [sp.key, `rgb(${sp.col.map((c) => Math.round(c * 255)).join(",")})`])), { temp: "#ffb257", rh: "#6fd0ff" });
+  var defAnchor = null;   // var: 초기화 순서와 무관하게 접근 가능
+  function renderDef() {
+    const el = $("def"), k = el.dataset.key, d = (DEFS[LANG] || DEFS.ko)[k], L = DEFL[LANG] || DEFL.ko;
+    el.style.setProperty("--c", DEF_COL[k] || "#fff");
+    el.innerHTML = `<button class="x" type="button" aria-label="${L.close}">×</button><h4 id="def-title"><i></i>${d.name} <small>${d.unit}</small></h4>`
+      + `<dl><dt>${L.what}</dt><dd>${d.what}</dd><dt>${L.why}</dt><dd>${d.why}</dd><dt>${L.up}</dt><dd>${d.up}</dd><dt>${L.down}</dt><dd>${d.down}</dd></dl>`
+      + `<div class="band">${d.bands.map((b) => `<span data-lv="${b[0]}"><i></i>${b[1]}</span>`).join("")}</div>${d.note ? `<div class="hintx">${d.note}</div>` : ""}`;
+    el.querySelector(".x").addEventListener("click", closeDef);
+  }
+  function placeDef() {
+    const el = $("def"); if (el.hidden || !defAnchor) return;
+    const r = defAnchor.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight;
+    const x = clamp(r.left + r.width / 2 - w / 2, 12, Math.max(12, innerWidth - w - 12));
+    let y = r.bottom + 10, up = false;
+    if (y + h > innerHeight - 8 && r.top - 10 - h > 8) { y = r.top - 10 - h; up = true; }   // 아래에 자리가 없으면 위로
+    el.style.left = x.toFixed(0) + "px"; el.style.top = y.toFixed(0) + "px"; el.classList.toggle("up", up);
+    el.style.setProperty("--ax", clamp(r.left + r.width / 2 - x - 6, 12, w - 24).toFixed(0) + "px");
+  }
+  function openDef(key, anchor) {
+    const el = $("def");
+    if (!el.hidden && el.dataset.key === key && defAnchor === anchor) return closeDef();   // 같은 칩을 다시 누르면 닫힘
+    closeDef(); el.dataset.key = key; defAnchor = anchor; renderDef(); el.hidden = false; anchor.setAttribute("aria-expanded", "true"); placeDef();
+  }
+  function closeDef() { const el = $("def"); if (el.hidden) return; el.hidden = true; if (defAnchor) defAnchor.setAttribute("aria-expanded", "false"); defAnchor = null; }
+  function defRefresh() { const el = $("def"); if (el && !el.hidden) { renderDef(); placeDef(); } }
+  const BAR2DEF = { pm: "pm25", pm10: "pm10", co2: "co2", voc: "voc", temp: "temp", rh: "rh" };
+  function bindDef(el, key) {
+    el.setAttribute("role", "button"); el.tabIndex = 0; el.setAttribute("aria-expanded", "false"); el.setAttribute("aria-haspopup", "dialog");
+    el.addEventListener("click", (e) => { e.stopPropagation(); openDef(key, el); });
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openDef(key, el); } });
+  }
+  document.querySelectorAll("#legend span[data-sp]").forEach((el) => bindDef(el, el.dataset.sp));
+  document.querySelectorAll(".bars .bar").forEach((row) => bindDef(row.querySelector(".bl"), BAR2DEF[row.querySelector(".bt").dataset.bar]));
+  document.addEventListener("click", (e) => { const el = $("def"); if (!el.hidden && !el.contains(e.target)) closeDef(); });
+  addEventListener("keydown", (e) => { if (e.key === "Escape") closeDef(); });
+  addEventListener("resize", placeDef);
+  addEventListener("scroll", (e) => { if (e.target === document || (e.target.closest && e.target.closest(".readout"))) closeDef(); }, { passive: true, capture: true });   // 화면이 움직이면 닫는다(기록 띠의 자동 스크롤은 무시)
+
   window.__mr = { all: () => ST, bufs: () => SPECIES.map((sp) => ({ key: sp.key, B: Array.from(sp.B), M: Array.from(sp.M) })), win: () => windVec(1), step: (n) => { for (let i = 0; i < (n || 1); i++) stepMinute(); hud(); redraw(); }, who: whoOf, species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * Math.pow(clamp(sp.frac(ST[cur]), 0, 1), 1.3)) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur], outdoor: outdoorOf };   // 검증용(읽기 전용)
   setSpace(startSpace); applyLang(); noteAssets(); redraw();
   if (q.get("panel") === "1") openPanel();
