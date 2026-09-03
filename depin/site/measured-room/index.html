@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="거실·침실·부엌의 공기가 요리·환기·밤에 따라 어떻게 변하고, 각 방의 기기가 그것을 어떻게 기록하는지 보여주는 개념 시뮬레이션.">
 <meta name="robots" content="noindex">
-<meta property="og:title" content="Measured Room">
+<meta property="og:title" content="Measured Room — Weather Data Token Generator™">
 <meta property="og:description" content="A home, measured. 요리·환기·밤에 따라 달라지는 실내 공기와 그것을 기록하는 기기 — 개념 시뮬레이션.">
 <meta name="theme-color" content="#1b1b48">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234d4dce'/%3E%3Crect x='14' y='18' width='36' height='26' rx='5' fill='%23ffffff'/%3E%3Cpath d='M18 38 L26 30 L32 34 L40 24 L46 28' fill='none' stroke='%234d4dce' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<title>Measured Room</title>
+<title>Measured Room — Weather Data Token Generator™</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://d2ol7oe51mr4n9.cloudfront.net" crossorigin>
 <link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin>
@@ -29,7 +29,11 @@
   #app { min-height: 100dvh; display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom); }
 
   .hud-title { padding: 14px 16px 6px; }
-  .hud-title h1 { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -.01em; margin: 0; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.45); }
+  .hud-title .brand { font-family: var(--display); font-weight: 700; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.82); text-shadow: 0 1px 6px rgba(0,0,0,.5); }
+  .hud-title .brand .tm { font-size: 9px; vertical-align: super; letter-spacing: 0; margin-left: 1px; }
+  .hud-title h1 { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -.01em; margin: 2px 0 0; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.45); }
+  .hud-title .flow { font-family: var(--body); font-weight: 700; font-size: 12.5px; color: #fff; margin-top: 5px; letter-spacing: .01em; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
+  .hud-title .flow span { color: rgba(255,255,255,.55); margin: 0 3px; font-weight: 500; }
   .hud-title p { margin: 4px 0 0; font-size: 12.5px; line-height: 1.5; color: rgba(255,255,255,.86); text-wrap: balance; }
   .hud-title .en { display: block; font-size: 11px; color: rgba(255,255,255,.6); margin-top: 2px; }
 
@@ -158,6 +162,8 @@
     #stage { position: absolute; inset: 0; height: auto; }
     .hud-title { position: absolute; left: 22px; top: 18px; max-width: 380px; padding: 0; z-index: 2; pointer-events: none; }
     .hud-title h1 { font-size: 26px; }
+    .hud-title .brand { font-size: 12px; }
+    .hud-title .flow { font-size: 13px; }
     .hud-title p { font-size: 13px; line-height: 1.55; background: rgba(10,10,32,.42); border-radius: 8px; padding: 6px 9px; backdrop-filter: blur(6px); }
     .spaces { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); margin: 0; z-index: 2; background: rgba(10,10,32,.5); backdrop-filter: blur(6px); }
     .readout { position: absolute; right: 18px; top: 18px; width: 250px; margin: 0; z-index: 2; max-height: calc(100dvh - 36px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
@@ -178,7 +184,9 @@
 <body>
 <div id="app">
   <header class="hud-title">
+    <div class="brand">Weather Data Token Generator <span class="tm">™</span></div>
     <h1>Measured Room</h1>
+    <div class="flow" aria-label="측정에서 보상까지의 흐름">측정 <span>→</span> 데이터 생성 <span>→</span> 검증 <span>→</span> 가치화 <span>→</span> 보상</div>
     <p><span id="lead">저녁의 거실. 창을 닫아 두면 사람 숨이 CO₂를 올리고, 열면 바깥 공기가 그것을 내립니다.</span>
       <span class="en" id="lead-en">A concept simulation. Each room is measured by its own device.</span></p>
   </header>
@@ -237,6 +245,7 @@
     <button class="btn" id="b-window">창문 열기</button>
     <button class="btn" id="b-night">밤 지나기</button>
     <button class="btn" id="b-reset">처음부터</button>
+    <button class="btn" id="b-speed" title="타임랩스 배속 바꾸기 (×1 → ×5 → ×10 → ×20)">타임랩스 ×5</button>
     <span class="clock" id="clock">Day 1 · 18:00</span>
   </div>
 
@@ -357,7 +366,7 @@
 
   /* ── 집의 물리 (단순 박스 모델, 단위: 분). 세 공간이 같은 시계를 쓴다. 숫자는 설명용 근사값. ──
      PM2.5: 조리가 넣고, 환기와 침착이 뺀다. CO₂: 사람이 넣고, 환기가 뺀다. TVOC: 조리·닫힌 밤이 올리고 환기가 뺀다. 온·습도: 조리·창문에 따라 바깥값으로 끌린다. */
-  const G = { t: 18 * 60, night: false, nightUntil: 0 };
+  const G = { t: 18 * 60, night: false, nightUntil: 0, speed: 5 };   // speed = 낮 기준 배속(1초 = speed 분)
   const PM_OUT = 18, CO2_OUT = 420;
   const fresh = (k) => ({ pm: SPACES[k].init.pm, co2: SPACES[k].init.co2, voc: 15, temp: SPACES[k].temp(18, false), rh: 55, window: false, cook: 0, hist: [], records: 0, lastRecord: G.t, ticks: [], alertAt: -1, alertReal: 0 });
   const ST = {}; ORDER.forEach((k) => { ST[k] = fresh(k); });
@@ -1111,7 +1120,9 @@
 
   /* ── 공간 바꾸기 ── */
   const tabs = Array.from($("spaces").querySelectorAll("[role=tab]"));
-  const bCook = $("b-cook"), bWin = $("b-window"), bNight = $("b-night"), bReset = $("b-reset");
+  const bCook = $("b-cook"), bWin = $("b-window"), bNight = $("b-night"), bReset = $("b-reset"), bSpeed = $("b-speed");
+  function setSpeed(v) { G.speed = SPEEDS.includes(v) ? v : 5; bSpeed.textContent = `타임랩스 ×${G.speed}`; hud(); }
+  bSpeed.addEventListener("click", () => setSpeed(SPEEDS[(SPEEDS.indexOf(G.speed) + 1) % SPEEDS.length]));
   function setSpace(k) {
     cur = k; const sp = SPACES[k];
     tabs.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.space === k)));
@@ -1135,7 +1146,8 @@
   });
 
   /* ── 루프(타임랩스): 1초 = 5분, 조리 중·창 열림엔 1초 = 1.5분(연기·환기가 보이게), 밤엔 1초 = 20분(8시간 반이 25초) — 어느 방이든 10초 안에 주의 단계가 나온다 ── */
-  const speed = () => ST[cur].window ? 1.5 : G.night ? 20 : ST.kitchen.cook > 0 ? 1.5 : 5;   // 창을 열면 환기가 보이게 천천히
+  const SPEEDS = [1, 5, 10, 20];
+  const speed = () => { const b = G.speed; return (ST[cur].window || ST.kitchen.cook > 0) ? Math.max(1, +(b * 0.3).toFixed(1)) : G.night ? b * 4 : b; };   // 조리·창 열림은 0.3배(연기·환기가 보이게), 밤은 4배
   function redraw() { drawCurve(mctx, 400, 128); }
   let acc = 0, last = performance.now(), t0 = last;
   function frame(now) {
@@ -1155,12 +1167,13 @@
     requestAnimationFrame(frame);
   }
 
-  /* ── 주소 해시로 장면을 바로 열 수 있다: #space=kitchen&cook=1  #space=bedroom&night=1  #space=living&window=1  &panel=1 (부스·링크용) ── */
+  /* ── 주소 해시로 장면을 바로 열 수 있다: #space=kitchen&cook=1  #space=bedroom&night=1  #space=living&window=1  &panel=1  &speed=10 (부스·링크용) ── */
   const q = new URLSearchParams(location.hash.replace(/^#/, ""));
   const startSpace = ORDER.includes(q.get("space")) ? q.get("space") : "living";
   if (q.get("cook") === "1") ST.kitchen.cook = 15;
   if (q.get("window") === "1") ST[startSpace].window = true;
   if (q.get("night") === "1") startNight();
+  if (q.get("speed")) setSpeed(+q.get("speed"));
   window.__mr = { species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * sp.frac(ST[cur])) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur] };   // 검증용(읽기 전용)
   setSpace(startSpace); noteAssets(); redraw();
   if (q.get("panel") === "1") openPanel();
