@@ -128,7 +128,10 @@
 
   .controls { margin: 10px 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; }
   .btn { font-family: var(--body); font-weight: 700; font-size: 13.5px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.12); color: #fff;
-         border-radius: 999px; padding: 10px 14px; cursor: pointer; min-height: 42px; }
+         border-radius: 999px; padding: 10px 15px 10px 13px; cursor: pointer; min-height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+  /* 버튼 왼쪽 라인 아이콘: 글자색을 따라간다(흰 배경이면 남색) */
+  .btn .ic { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .btn .ic-sun { display: none; } .btn.on .ic-sun { display: block; } .btn.on .ic-moon { display: none; }   /* 야간 모드가 켜지면 달 → 해 */
   .btn.primary { background: var(--violet); border-color: var(--violet); }
   .btn.on { background: #fff; color: var(--navy); border-color: #fff; }
   .btn[hidden] { display: none; }
@@ -240,11 +243,11 @@
   </section>
 
   <div class="controls" role="group" aria-label="이 공간에서 일어나는 일">
-    <button class="btn primary" id="b-cook" hidden data-i18n="cook">요리 15분</button>
-    <button class="btn" id="b-window">창문 열기</button>
-    <button class="btn" id="b-night">야간 모드</button>
-    <button class="btn" id="b-reset" data-i18n="reset">처음부터</button>
-    <button class="btn" id="b-speed" title="타임랩스 배속 바꾸기 (×1 → ×5 → ×10 → ×20)">타임랩스 ×5</button>
+    <button class="btn primary" id="b-cook" hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3 4 4.5 4 8.5a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-7.5z"/></svg><span class="lb" data-i18n="cook">요리 15분</span></button>
+    <button class="btn" id="b-window"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16M3 12h18"/></svg><span class="lb">창문 열기</span></button>
+    <button class="btn" id="b-night"><svg class="ic ic-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ic ic-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span class="lb">야간 모드</span></button>
+    <button class="btn" id="b-reset"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg><span class="lb" data-i18n="reset">처음부터</span></button>
+    <button class="btn" id="b-speed" title="타임랩스 배속 바꾸기 (×1 → ×5 → ×10 → ×20)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5l8 7-8 7zM12 5l8 7-8 7z"/></svg><span class="lb">타임랩스 ×5</span></button>
     <span class="clock" id="clock">Day 1 · 18:00</span>
   </div>
   <aside class="readout" aria-live="polite">
@@ -569,8 +572,8 @@
     const h = Math.floor(hourNow());
     pNight.textContent = G.night ? t("nightP") : (h < 6 ? t("dawn") : h < 12 ? t("morning") : h < 18 ? t("day") : t("evening"));
     pNight.classList.toggle("on", G.night);
-    bWin.textContent = s.window ? t("bWinClose") : t("bWinOpen"); bWin.classList.toggle("on", s.window);
-    bNight.classList.toggle("on", G.night); bNight.textContent = G.night ? t("bNightOn") : t("bNight");
+    lbl(bWin, s.window ? t("bWinClose") : t("bWinOpen")); bWin.classList.toggle("on", s.window);
+    bNight.classList.toggle("on", G.night); lbl(bNight, G.night ? t("bNightOn") : t("bNight"));
     for (const sp of SPECIES) { const el = legendEls[sp.key]; if (el) el.style.opacity = (0.3 + 0.7 * sp.frac(s)).toFixed(2); }
   }
 
@@ -708,9 +711,9 @@
     c.fillStyle = "#101014"; c.font = "500 34px Montserrat, sans-serif"; c.textAlign = "left"; c.fillText("CLAIMABLE", 392, 392);
     const claim = Math.floor(s.records / 10);
     c.font = "500 40px Montserrat, sans-serif"; c.textAlign = "right"; c.fillText(String(claim), 520, 442); c.font = "500 22px Montserrat, sans-serif"; c.textAlign = "left"; c.fillText("WLBN", 530, 442);
-    c.fillStyle = "#d4d4da"; c.fillRect(586, 368, 2, 84);
-    c.fillStyle = "#101014"; c.font = "500 32px Montserrat, sans-serif"; c.fillText("Network", 610, 392);
-    c.fillStyle = C.blue; c.font = "500 34px Montserrat, sans-serif"; c.fillText("Connect", 610, 440);
+    // Network 블록은 오른쪽 정렬 — CLAIMABLE 글자와 겹치던 회색 구분선은 뺐다(서우 9/3)
+    c.fillStyle = "#101014"; c.font = "500 32px Montserrat, sans-serif"; c.textAlign = "right"; c.fillText("Network", 768, 392);
+    c.fillStyle = C.blue; c.font = "500 34px Montserrat, sans-serif"; c.fillText("Connect", 768, 440); c.textAlign = "left";
     [0, 1, 2].forEach((i) => { c.beginPath(); c.arc(W / 2 - 24 + i * 24, H - 30, 6, 0, Math.PI * 2); c.fillStyle = i === 1 ? C.blue : "#c9c9d2"; c.fill(); });
   }
   /* ── 기기 화면 3(800×600): 지붕 안 Indoor 6칸 · Outdoor 4칸(바깥 공기 = 물리의 바깥값) · 환기 장치 없음 패널 ── */
@@ -1205,13 +1208,14 @@
     const sp = SPACES[cur]; $("lead").textContent = LANG === "en" ? sp.en2 : sp.lead; $("lead-en").textContent = LANG === "en" ? sp.lead : sp.en2; rk.textContent = `${sp.where} · ${roomName(sp)}`;
     if (!panel.hidden) $("pspec-title").textContent = `${sp.where} · ${roomName(sp)}`;
     if (!floatEl.hidden && floatIdx >= 0) fcap.textContent = `${t("fnames")[floatIdx]} ${t("fhint")}`;
-    if (typeof bSpeed !== "undefined") bSpeed.textContent = `${t("timelapse")} ×${G.speed}`;
+    if (typeof bSpeed !== "undefined") lbl(bSpeed, `${t("timelapse")} ×${G.speed}`);
     noteAssets(); hud(); counts();
   }
   const langBtns = Array.from(document.querySelectorAll("#lang button"));
   langBtns.forEach((b) => b.addEventListener("click", () => { if (LANG === b.dataset.lang) return; LANG = b.dataset.lang; try { localStorage.setItem("mr-lang", LANG); } catch (e) {} applyLang(); }));
   const bCook = $("b-cook"), bWin = $("b-window"), bNight = $("b-night"), bReset = $("b-reset"), bSpeed = $("b-speed");
-  function setSpeed(v) { G.speed = SPEEDS.includes(v) ? v : 5; bSpeed.textContent = `${t("timelapse")} ×${G.speed}`; hud(); }
+  function lbl(b, txt) { const el = b.querySelector(".lb"); if (el) el.textContent = txt; else b.textContent = txt; }   // 아이콘은 두고 글자만 바꾼다
+  function setSpeed(v) { G.speed = SPEEDS.includes(v) ? v : 5; lbl(bSpeed, `${t("timelapse")} ×${G.speed}`); hud(); }
   bSpeed.addEventListener("click", () => setSpeed(SPEEDS[(SPEEDS.indexOf(G.speed) + 1) % SPEEDS.length]));
   function setSpace(k) {
     cur = k; const sp = SPACES[k];
