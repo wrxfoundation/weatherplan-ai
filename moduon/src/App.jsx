@@ -14,6 +14,10 @@ import Payouts from './pages/consumer/Payouts'
 import Support from './pages/consumer/Support'
 import Shop from './pages/consumer/Shop'
 import Onboard from './pages/consumer/Onboard'
+import PhoneShop from './pages/consumer/PhoneShop'
+import PhoneDetail from './pages/consumer/PhoneDetail'
+import MvnoPlans from './pages/consumer/MvnoPlans'
+import MvnoDetail from './pages/consumer/MvnoDetail'
 import TenantMall from './pages/consumer/TenantMall'
 import PartnerLanding from './pages/partner/Landing'
 import PartnerApply from './pages/partner/Apply'
@@ -93,6 +97,11 @@ export default function App() {
           <Route path="/support" element={<Support />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/onboard/:slug" element={<Onboard />} />
+          {/* 휴대폰 — 온라인 구매(셀프가입) · 알뜰폰 요금제 */}
+          <Route path="/phone/shop" element={<PhoneShop />} />
+          <Route path="/phone/shop/:model" element={<PhoneDetail />} />
+          <Route path="/phone/mvno" element={<MvnoPlans />} />
+          <Route path="/phone/mvno/:id" element={<MvnoDetail />} />
         </Route>
 
         {/* 멀티테넌시 — 파트너 분양몰 (moduon.com/m/{slug}) */}

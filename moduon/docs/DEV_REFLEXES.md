@@ -38,6 +38,9 @@ paperthin 스킬 팩(레포 루트 `.claude/skills/`, MIT — LilMGenius/paperth
 - **`pkill -f "vite preview"`는 자기 자신을 죽인다** — 패턴이 이 명령줄 자체에 매칭돼
   셸이 먼저 죽는다(exit 144). 이 세션에서 두 번 당했다. 대괄호로 자기매칭을 끊을 것:
   `pkill -f "vite prev[i]ew"`. **(훅이 강제)**
+  **변종:** 대괄호는 패턴 자신만 지킨다. 같은 명령 안의 *다른 줄*에 평문 `vite preview`(서버 기동)가 있으면
+  그 평문에 매칭돼 역시 셸이 죽는다. pkill 과 서버 기동은 같은 명령에 두지 말거나,
+  기동 문자열을 `printf 'npx vite %s' preview` 처럼 조립해 평문이 명령줄에 안 나타나게 할 것.
 - **이 컨테이너의 LibreOffice docx 변환은 전면 고장** — 정상 파일도 실패. 문서 검증은 python-docx 전수 검사로 대체.
 - **이미지 붙여넣기는 파일로 도달하지 않는다(vision-only)** — 로고·에셋 파일이 필요하면 docx/zip 첨부 또는 지정 경로 저장을 요청.
 - **compound 명령은 classifier가 끊을 수 있다** — add/commit/push/zip/scan은 분리 실행이 안전.
@@ -52,4 +55,10 @@ paperthin 스킬 팩(레포 루트 `.claude/skills/`, MIT — LilMGenius/paperth
   검증 루프의 추상화였다. 저자 본인도 "286개를 한 번에 설치하지 말라"고 적어 뒀다.
 - **루트에서 npm run build 금지** — 반드시 `moduon/`에서. (루트는 Next, moduon은 Vite) **(훅이 강제)**
 - **아이콘 세트는 낱개로 고치면 절대 안 맞는다** — 정수기·생활/기타를 두 번 개별 재생성했지만 톤이 계속 어긋났다. 세트의 일관성은 "같은 프롬프트로 동시에 뽑았는가"에서 나온다. 손볼 일이 생기면 전량을 한 배치로 다시 뽑고, 프레이밍(오브젝트가 프레임의 몇 %를 차지하는지)까지 프롬프트에 못박을 것. 배경도 제거해 원형 배경색은 CSS 한 곳에서만 정한다.
+- **한 컴포넌트를 데스크톱·모바일에 두 번 그리면 셀렉터가 두 개다** — 가격 카드를 sticky aside 와 lg:hidden 섹션에 같이 그렸더니 `data-t="card-total"`이 2개가 돼 Playwright strict mode 가 innerText 를 거부했다. 스모크는 부모(`[data-t="detail-card"] …`)로 스코프하고, 같은 data-t 를 두 곳에 두면 안 된다는 걸 기억할 것.
+- **`aria-disabled="true"`는 Playwright 에게 "못 누른다"다** — 스펙이 "누르면 팝업"인 옵션에 시각적 비활성 + aria-disabled 를 같이 붙였더니 클릭이 30초 타임아웃. 눌려야 하는 것은 disabled 로 표시하지 않는다(접근성 의미도 그게 정직하다). 점선·title·팝업으로 충분.
+- **`hasText: '문자열'`은 부분일치** — 'KT망'이 'SKT망'에도 걸려 strict mode 위반. 정확 일치는 `hasText: /^KT망$/`. (`text=문구` substring 함정과 같은 과다.)
+- **`return (` 과 요소 사이에 `{/* */}` 주석은 문법 오류** — JSX 표현식이 형제 요소로 해석돼 esbuild 가 깨진다. 주석은 `return` 위에 `//` 로. 빌드가 깨지면 스모크는 *이전 dist* 로 돌아 같은 실패를 반복하므로, QA 요약의 "빌드" 줄을 먼저 본다.
+- **extensionless import 라이브러리는 esbuild 로 번들해서 단위 검증** — `'./engine'` 은 Vite 규약이라 Node 가 못 푼다. `node_modules/.bin/esbuild test.mjs --bundle --format=esm --platform=node` 한 줄이면 lib 계층을 브라우저 없이 35항목 검증할 수 있다(하위호환 숫자 고정에 특히 유용).
+- **옵션 상태는 숨겨도 남는다** — 유심 "보유"로 바꿔 유심종류 섹션을 숨겼는데 이전에 고른 eSIM 값이 남아 계속 차단됐다. 판정 로직이 "보이는 옵션만" 보게 하거나(`simOwn === 'none' &&`), 섹션을 숨길 때 값을 리셋할 것. 스모크가 잡았다.
 - **이미지 생성 배치는 일부가 조용히 실패한다** — 8건 중 3건이 에러 메시지 없이 failed. `jobs_wait`의 summary를 확인하고 실패분만 재제출하는 절차를 항상 넣을 것.

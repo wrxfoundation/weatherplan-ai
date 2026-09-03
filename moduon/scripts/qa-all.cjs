@@ -35,6 +35,9 @@ const step = (name, fn) => {
   step('스모크: 휴대폰 계산기', () => run('node scripts/qa-phone-smoke.cjs'))
   step('스모크: 렌탈 계산기·가망고객', () => run('node scripts/qa-rental-smoke.cjs'))
   step('스모크: 수당 설계기', () => run('node scripts/qa-design-smoke.cjs'))
+  step('스모크: 인터넷 셀프견적·메가메뉴', () => run('node scripts/qa-internet-smoke.cjs'))
+  step('스모크: 휴대폰 온라인구매·알뜰폰', () => run('node scripts/qa-phoneshop-smoke.cjs'))
+  step('스모크: 렌탈 브랜드 브라우저', () => run('node scripts/qa-rentalbrowse-smoke.cjs'))
 
   if (preview) { try { process.kill(-preview.pid) } catch { /* 이미 종료 */ } }
 

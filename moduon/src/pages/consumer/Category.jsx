@@ -2,6 +2,8 @@
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { NET_CARRIERS, PHONE_CARRIERS } from '../../lib/onboard'
 import PhoneQuickStart from '../../components/PhoneQuickStart'
+import InternetBuilder from '../../components/InternetBuilder'
+import RentalBrowser from '../../components/RentalBrowser'
 import { catBySlug, LEGAL } from '../../lib/constants'
 import { useStore } from '../../lib/store'
 import { won } from '../../lib/engine'
@@ -54,27 +56,33 @@ export default function Category() {
 
       {/* 통신사별 요금제 추천 + 맞춤 찾기 — 인터넷·휴대폰은 고를 게 많아
           "무엇부터 보면 되는지"를 먼저 깔아준다(아정당식 진입 동선) */}
-      {slug === 'internet' && (
-        <>
-          <section className="mt-8">
-            <h2 className="text-[17px] font-extrabold text-ink">통신사별 요금제 추천!</h2>
-            <div className="mt-3 grid grid-cols-3 gap-2.5 sm:grid-cols-6">
-              {ONBOARD_CATS[slug].map((c) => (
-                <Link
-                  key={c.key}
-                  to={`/onboard/${slug}`}
-                  className="flex h-[86px] flex-col items-center justify-center gap-1.5 rounded-card border border-line bg-white transition-colors hover:border-primary"
-                >
-                  <span className="text-[15px] font-extrabold" style={{ color: c.color }}>{c.mark}</span>
-                  <span className="text-[12px] font-semibold text-label">{c.sub}</span>
-                  {c.budget && <span className="rounded bg-ok/10 px-1.5 text-[10px] font-bold text-ok">알뜰</span>}
-                </Link>
-              ))}
-            </div>
-          </section>
+      {/* 인터넷: 아정당식 4필터 셀프견적 — 통신사 → 조합 → 속도 → TV, 우측에 월요금·사은품 */}
+      {slug === 'internet' && <InternetBuilder />}
 
-        </>
+      {/* 휴대폰: 온라인 구매 / 알뜰폰 요금제 두 갈래가 카테고리 1 */}
+      {slug === 'phone' && (
+        <section className="mt-8 grid gap-3 sm:grid-cols-2" data-t="phone-entries">
+          <Link to="/phone/shop" className="group flex items-center gap-4 rounded-card bg-white p-5 shadow-card transition-all hover:-translate-y-[2px] hover:shadow-panel">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-tint text-primary-text"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" /></svg></span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[16px] font-extrabold text-ink">온라인 구매</span>
+              <span className="block text-[12.5px] leading-5 text-muted">셀프가입 · 지금 통신사 기준으로 번호이동/기기변경 중 싼 쪽부터</span>
+            </span>
+            <span className="text-[18px] text-faint transition-transform group-hover:translate-x-0.5">›</span>
+          </Link>
+          <Link to="/phone/mvno" className="group flex items-center gap-4 rounded-card bg-white p-5 shadow-card transition-all hover:-translate-y-[2px] hover:shadow-panel">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ok/10 text-ok"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="4" y="5" width="16" height="14" rx="2" /><path d="M8 10h8M8 14h5" /></svg></span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[16px] font-extrabold text-ink">알뜰폰 요금제</span>
+              <span className="block text-[12.5px] leading-5 text-muted">대표 요금제 2종 · 브랜드별 혜택 · 전체 요금제 보기</span>
+            </span>
+            <span className="text-[18px] text-faint transition-transform group-hover:translate-x-0.5">›</span>
+          </Link>
+        </section>
       )}
+
+      {/* 렌탈: 9브랜드 × 카테고리 브라우저 + 정수기 냉온/얼음 + 렌트/리스 */}
+      {slug === 'rental' && <RentalBrowser />}
 
       {ONBOARD_CATS[slug] && (
           <Link

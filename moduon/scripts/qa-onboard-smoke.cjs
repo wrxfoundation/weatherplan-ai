@@ -72,7 +72,9 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   await page.goto('http://localhost:4173/category/internet', { waitUntil: 'networkidle' })
   await page.waitForTimeout(500)
   text = await page.evaluate(() => document.body.innerText)
-  check(text.includes('통신사별 요금제 추천'), '카테고리 통신사 그리드')
+  // 통신사 그리드는 아정당식 4필터 빌더로 대체됐다 — 빌더와 그 안의 통신사 5종을 단언
+  check(text.includes('조건만 고르면 월요금이 바로 나와요'), '카테고리 셀프견적 빌더')
+  check(await page.locator('[data-t="net-carriers"] button').count() === 5, '빌더 통신사 5종')
   check(text.includes('나에게 맞는 상품 찾기'), '맞춤 찾기 배너')
   await page.locator('text=나에게 맞는 상품 찾기').first().click()
   await page.waitForTimeout(600)

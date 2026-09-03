@@ -1,11 +1,13 @@
 // ─── 트랙 A 소비자몰 레이아웃: 헤더 76px + 푸터 + AI 상담봇 ─────
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Logo, Btn } from '../ui'
 import { IcMenu, IcPhone } from '../icons'
 import { LEGAL } from '../../lib/constants'
 import { captureRef } from '../../lib/engine'
 import ChatWidget from '../ChatWidget'
+import { INTERNET_CARRIERS } from '../../lib/internet'
+import { RENTAL_BRANDS } from '../../lib/rentals'
 
 // GNB — 사업 초기에는 3대 주력(인터넷·핸드폰·렌탈)과 쇼핑몰만 노출한다.
 // hidden: true 는 "삭제"가 아니라 "숨김" — 페이지와 라우트는 그대로 살아 있고
@@ -23,6 +25,26 @@ const NAV = [
 ]
 const VISIBLE_NAV = NAV.filter((n) => !n.hidden)
 
+// ─── 메가메뉴 (아정당식) — GNB에 커서를 올리면 하위 카테고리가 펼쳐진다 ────────
+// 인터넷: 통신사별 → 빌더에 통신사 프리필. 핸드폰: 온라인 구매 / 알뜰폰 요금제.
+// 렌탈: 좌측 브랜드 목록 + 우측 브랜드별 카테고리 그리드(첨부 스크린샷 구조).
+// 패널은 <nav> 바깥에 호버 시에만 렌더한다 — GNB 링크 수를 세는 스모크·접근성 트리를 더럽히지 않게.
+const MEGA = {
+  '/category/internet': {
+    title: '통신사별 인터넷', foot: { label: '조건 직접 골라 견적 내기 →', to: '/category/internet' },
+    items: INTERNET_CARRIERS.map((c) => ({ key: c.key, label: c.sub, mark: c.mark, color: c.color, sub: c.tags.slice(0, 2).join(' '), to: `/category/internet?carrier=${encodeURIComponent(c.key)}`, badge: c.budget ? '알뜰' : null })),
+  },
+  '/category/phone': {
+    title: '휴대폰',
+    items: [
+      { key: 'shop', label: '온라인 구매', sub: '셀프가입 · 기종별 월 납부금 계산', to: '/phone/shop' },
+      { key: 'mvno', label: '알뜰폰 요금제', sub: '대표 요금제 · 브랜드별 혜택 · 전체 목록', to: '/phone/mvno' },
+      { key: 'calc', label: '휴대폰 견적 계산기', sub: '단말 할부(A) + 요금(B)', to: '/calculator/phone' },
+    ],
+  },
+  '/category/rental': { title: '렌탈 제품전체', brands: RENTAL_BRANDS },
+}
+
 // 즉시통화 — 파트너몰은 매장 직통, 본진은 대표번호
 const telOf = (tenant) => {
   const num = tenant?.phone ?? '1660-0000'
@@ -32,7 +54,12 @@ const telOf = (tenant) => {
 export function ConsumerHeader({ tenant }) {
   const nav = useNavigate()
   const [open, setOpen] = useState(false)
+  const [mega, setMega] = useState(null) // 호버 중인 GNB 항목(to)
   const tel = telOf(tenant)
+  useEffect(() => { const k = (e) => e.key === 'Escape' && setMega(null); window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k) }, [])
+  // 라우트가 바뀌면 패널·모바일 메뉴를 닫는다 — 마우스가 GNB 위에 머문 채 이동하면 패널이 새 페이지를 덮는다
+  const { pathname } = useLocation()
+  useEffect(() => { setMega(null); setOpen(false) }, [pathname])
   return (
     <header className="sticky top-0 z-40 border-b border-line-card/50 bg-cream/60 backdrop-blur-md">
       <div className="mx-auto flex h-[64px] max-w-6xl items-center justify-between px-5 sm:h-[76px] sm:px-10">
@@ -41,9 +68,11 @@ export function ConsumerHeader({ tenant }) {
           {tenant && <span className="rounded-full bg-tint px-2 py-0.5 text-[11px] font-bold text-primary-text">파트너몰</span>}
         </Link>
         {!tenant && (
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="hidden items-center gap-8 md:flex" onMouseLeave={() => setMega(null)}>
             {VISIBLE_NAV.map((n) => (
-              <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => `text-[15px] font-medium transition-colors hover:text-primary-text ${isActive ? 'text-primary-text' : 'text-body'}`}>
+              <NavLink key={n.to} to={n.to} end={n.end} onMouseEnter={() => setMega(MEGA[n.to] ? n.to : null)} onFocus={() => setMega(MEGA[n.to] ? n.to : null)} onClick={() => setMega(null)}
+                aria-haspopup={MEGA[n.to] ? 'true' : undefined} aria-expanded={MEGA[n.to] ? mega === n.to : undefined}
+                className={({ isActive }) => `text-[15px] font-medium transition-colors hover:text-primary-text ${isActive || mega === n.to ? 'text-primary-text' : 'text-body'}`}>
                 {n.label}
               </NavLink>
             ))}
@@ -65,10 +94,62 @@ export function ConsumerHeader({ tenant }) {
         </div>
         <button className="md:hidden" onClick={() => setOpen(!open)} aria-label="메뉴"><IcMenu size={22} /></button>
       </div>
+      {mega && MEGA[mega] && !tenant && (
+        <div className="absolute inset-x-0 top-full hidden border-b border-line-card bg-white shadow-panel md:block" data-t="mega" data-mega={mega}
+          onMouseEnter={() => setMega(mega)} onMouseLeave={() => setMega(null)}>
+          <div className="mx-auto max-w-6xl px-10 py-5">
+            {MEGA[mega].brands ? (
+              <div className="grid grid-cols-[200px_1fr] gap-6">
+                <ul className="flex flex-col border-r border-line pr-4" data-t="mega-brands">
+                  <li className="px-2 py-1.5 text-[12px] font-bold text-faint">{MEGA[mega].title}</li>
+                  {MEGA[mega].brands.map((b) => (
+                    <li key={b.key}><Link to={`/category/rental?brand=${b.key}`} onClick={() => setMega(null)} className="block rounded-field px-2 py-1.5 text-[13.5px] font-semibold text-body hover:bg-tint hover:text-primary-text">{b.name}</Link></li>
+                  ))}
+                </ul>
+                <div className="grid grid-cols-4 gap-x-6 gap-y-5" data-t="mega-grid">
+                  {MEGA[mega].brands.map((b) => (
+                    <div key={b.key}>
+                      <Link to={`/category/rental?brand=${b.key}`} onClick={() => setMega(null)} className="block border-b border-line pb-1.5 text-[13.5px] font-extrabold text-ink hover:text-primary-text">{b.name}</Link>
+                      <ul className="mt-1.5 flex flex-col gap-1">
+                        {b.cats.map((c) => (
+                          <li key={c}><Link to={`/category/rental?brand=${b.key}&type=${encodeURIComponent(c)}`} onClick={() => setMega(null)} className="text-[12.5px] text-label hover:text-primary-text">{c}</Link></li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="text-[12px] font-bold text-faint">{MEGA[mega].title}</div>
+                <div className={`mt-2 grid gap-2 ${MEGA[mega].items.length > 3 ? 'grid-cols-5' : 'grid-cols-3'}`} data-t="mega-items">
+                  {MEGA[mega].items.map((it) => (
+                    <Link key={it.key} to={it.to} onClick={() => setMega(null)} className="flex flex-col rounded-btn border border-line bg-white p-3.5 transition-colors hover:border-primary hover:bg-tint">
+                      {it.mark && <span className="text-[15px] font-black" style={{ color: it.color }}>{it.mark}</span>}
+                      <span className="text-[14px] font-bold text-ink">{it.label} {it.badge && <span className="rounded bg-ok/10 px-1.5 text-[9.5px] font-bold text-ok">{it.badge}</span>}</span>
+                      <span className="mt-0.5 text-[11px] leading-4 text-faint">{it.sub}</span>
+                    </Link>
+                  ))}
+                </div>
+                {MEGA[mega].foot && <Link to={MEGA[mega].foot.to} onClick={() => setMega(null)} className="mt-3 inline-block text-[12.5px] font-bold text-primary-text hover:underline">{MEGA[mega].foot.label}</Link>}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       {open && (
         <div className="border-t border-line-card bg-white px-5 py-3 md:hidden">
           {(tenant ? [] : VISIBLE_NAV).map((n) => (
-            <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="block py-2.5 text-[15px] font-semibold text-body">{n.label}</Link>
+            <div key={n.to}>
+              <Link to={n.to} onClick={() => setOpen(false)} className="block py-2.5 text-[15px] font-semibold text-body">{n.label}</Link>
+              {MEGA[n.to] && (
+                <div className="mb-1.5 flex flex-wrap gap-1.5 pl-3">
+                  {(MEGA[n.to].items ?? MEGA[n.to].brands.map((b) => ({ key: b.key, label: b.name, to: `/category/rental?brand=${b.key}` }))).map((it) => (
+                    <Link key={it.key} to={it.to} onClick={() => setOpen(false)} className="rounded-full border border-line bg-white px-2.5 py-1 text-[12px] font-semibold text-label">{it.label}</Link>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
           <Btn className="mt-2 w-full shimmer-cta" onClick={() => { setOpen(false); nav(tenant ? `/consult?src=${tenant.slug}` : '/consult') }}>무료 상담 신청</Btn>
           <a href={tel.href} onClick={() => setOpen(false)} className="glass-btn mt-2 flex h-12 w-full items-center justify-center gap-1.5 rounded-btn border border-line-soft bg-white text-[15px] font-bold text-body">

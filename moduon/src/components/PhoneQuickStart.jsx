@@ -9,7 +9,7 @@ export const CUR_CARRIERS = ['SK', 'KT', 'LG U+', '알뜰폰']
 export const DEVICE_CHOICES = [
   { key: 'fold8', label: '갤럭시 Z 폴드8' },
   { key: 's26u', label: '갤럭시 S26 울트라' },
-  { key: 'ip17', label: '아이폰 17 프로' },
+  { key: 'ip17p', label: '아이폰 17 프로' },
   { key: 'a56', label: '갤럭시 A56' },
   { key: 'none', label: '원하는 기종이 없어요', escape: true },
   { key: 'later', label: '상담 후 결정할게요', escape: true },
@@ -79,6 +79,13 @@ export default function PhoneQuickStart({ consultTo = '/consult?cat=phone' }) {
           ))}
         </div>
       </div>
+
+      {device && !DEVICE_CHOICES.find((d) => d.key === device)?.escape && (
+        <Link to={`/phone/shop/${device}${carrier ? `?cur=${encodeURIComponent(carrier === 'LG U+' ? 'LG U+' : carrier === 'SK' ? 'SKT' : carrier === '알뜰폰' ? 'mvno' : carrier)}` : ''}`}
+          className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-bold text-primary-text underline underline-offset-4" data-t="quick-detail">
+          {deviceLabel(device)} 색상·할부·월 납부금 직접 보기 →
+        </Link>
+      )}
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         <div>
