@@ -145,6 +145,14 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(await page.locator('[data-t="car-grid"] svg').count() > 0, 'SVG 실루엣 렌더')
   check(!(await page.content()).includes('acrentcar.com'), '목록에 제휴사 도메인 핫링크 없음')
 
+  // MANUAL_IMAGES 로만 붙인 매핑이 화면까지 도달하는지 — 조용히 무시되면 여기서 걸린다
+  await page.goto('http://localhost:4173/cars?brand=genesis', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
+  const manual = await page.evaluate(() => ['g80', 'gv80'].map((id) => {
+    const card = document.querySelector(`[data-t="car-card"][href$="/cars/${id}"]`)
+    return { id, src: card?.querySelector('[data-t="car-photo"]')?.dataset.src }
+  }))
+  for (const m of manual) check(m.src === `/assets/cars/${m.id}.jpg`, `수동 매핑 ${m.id} → ${m.src}`)
+
   await page.goto('http://localhost:4173/cars/palisade', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   const photo = await page.evaluate(() => { const e = document.querySelector('[data-t="car-card"] [data-t="car-photo"]'); return e && { kind: e.dataset.kind, src: e.dataset.src } })
   check(photo?.kind === 'main', `상세는 큰 이미지 변형 (${photo?.kind})`)

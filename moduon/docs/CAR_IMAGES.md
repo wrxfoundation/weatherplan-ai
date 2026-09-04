@@ -19,7 +19,7 @@
 
 ### 0. 매핑을 자동 생성한다 (권장)
 
-54개를 손으로 적을 필요 없다. 제휴사 목록 페이지에서 뽑아낸다.
+58개를 손으로 적을 필요 없다. 제휴사 목록 페이지에서 뽑아낸다.
 
 ```bash
 node scripts/map-car-images.mjs https://acrentcar.com/…차량목록페이지
@@ -43,14 +43,29 @@ node scripts/map-car-images.mjs ./list.csv
 
 ```js
 export const PARTNER_IMAGES = {
-  palisade: '00000000461_detail_1',   // 우리 차종 id : 제휴사 이미지 경로
-  grandeur: '00000000462_detail_1',
+  'palisade': '00000000461',   // 우리 차종 id : 제휴사 기본 ID
+  'grandeur': '00000000498',
   // ...
 }
 ```
 
 우리 차종 id 는 같은 파일 `CAR_MODELS` 의 `id` 다 (`palisade`, `grandeur`, `ioniq5` …).
-제휴사 경로는 이미지 URL에서 `https://acrentcar.com/data/car/` 뒤의 부분이다.
+
+제휴사 값은 **변형 접미사를 뗀 기본 ID** 다. 제휴사는 한 차량에 이미지 3종을 두는데
+(`_list` 썸네일 · `_main` 상세 대표컷 · `_detail_1~3` 갤러리), 접미사는 코드가 붙인다.
+`00000000461_list` 처럼 접미사째 넣어도 `baseId()` 가 걷어내지만, 기본형으로 적는 게 맞다.
+
+목록 페이지에 없고 상세만 아는 차종은 `MANUAL_IMAGES` 에 같은 형식으로 넣는다.
+`imagePathOf` 는 `MANUAL_IMAGES` 를 먼저 보므로 자동 매칭보다 우선하고,
+`map-car-images.mjs` 는 이 블록을 건드리지 않는다. 자동 매칭이 다른 경로를 잡으면
+스크립트가 "MANUAL_IMAGES 가 덮어쓰는 차종" 으로 알려준다 — 그때 수동 항목을 지우면 된다.
+
+```js
+export const MANUAL_IMAGES = {
+  'g80': '00000000612',
+  'gv80': '00000000611',
+}
+```
 
 ### 2. 받는다
 

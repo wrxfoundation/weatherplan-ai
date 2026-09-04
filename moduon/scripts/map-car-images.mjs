@@ -14,7 +14,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { dirname, join, extname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { CAR_MODELS, PARTNER_IMAGES, baseId } from '../src/lib/cars.js'
+import { CAR_MODELS, PARTNER_IMAGES, MANUAL_IMAGES, baseId } from '../src/lib/cars.js'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const target = join(root, 'src', 'lib', 'cars.js')
@@ -117,13 +117,20 @@ for (const p of pairs) {
 }
 
 const matched = Object.keys(found)
-const missing = CAR_MODELS.filter((m) => !found[m.id])
+const missing = CAR_MODELS.filter((m) => !found[m.id] && !MANUAL_IMAGES[m.id])
 const newly = matched.length - before
 console.log(`\n[map] 매칭 ${matched.length} / ${CAR_MODELS.length}${replace ? '' : ` (이번에 새로 ${newly}건)`}`)
 for (const id of matched.sort()) console.log(`  ✓ ${CAR_MODELS.find((m) => m.id === id).name.padEnd(18)} → ${found[id]}`)
 if (missing.length) {
   console.log(`\n[map] 못 찾은 차종 ${missing.length}건 — SVG 실루엣으로 표시됩니다. 필요하면 cars.js 의 MANUAL_IMAGES 에 직접 넣으세요.`)
   console.log('  ' + missing.map((m) => m.name).join(', '))
+}
+// MANUAL_IMAGES 가 이긴다(imagePathOf 의 우선순위). 자동으로 다른 경로를 잡았다면 조용히 묻히므로 알린다.
+const shadowed = matched.filter((id) => MANUAL_IMAGES[id] && baseId(MANUAL_IMAGES[id]) !== baseId(found[id]))
+if (shadowed.length) {
+  console.log(`\n[map] MANUAL_IMAGES 가 덮어쓰는 차종 ${shadowed.length}건 — 자동 매칭 결과는 쓰이지 않습니다.`)
+  for (const id of shadowed) console.log(`  ! ${CAR_MODELS.find((m) => m.id === id).name} : 수동 ${MANUAL_IMAGES[id]} (자동 ${found[id]})`)
+  console.log('  수동 항목이 더 이상 필요 없으면 cars.js 의 MANUAL_IMAGES 에서 지우세요.')
 }
 if (matched.length === 0) { console.error('\n[map] 하나도 매칭되지 않아 파일을 쓰지 않았습니다.'); process.exit(1) }
 if (!replace && newly === 0) console.log('[map] 새로 잡힌 차종이 없습니다 — 기존 매핑을 그대로 유지합니다.')

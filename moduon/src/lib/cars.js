@@ -288,7 +288,10 @@ export const PARTNER_IMAGES = {
 }
 /* PARTNER_IMAGES:END */
 // 자동 매칭이 틀렸거나 못 잡은 차종만 여기서 바로잡는다 — 스크립트가 건드리지 않는다.
-export const MANUAL_IMAGES = {}
+export const MANUAL_IMAGES = {
+  'g80': '00000000612',
+  'gv80': '00000000611',
+}
 // 자체 호스팅 경로 — 변형별로 파일을 따로 둔다
 export const carImagePath = (id, kind = 'list') => `/assets/cars/${id}${kind === 'list' ? '' : `-${kind}`}.jpg`
 export const galleryPath = (id, n) => `/assets/cars/${id}-g${n}.jpg`
