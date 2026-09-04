@@ -75,6 +75,8 @@ Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily
 | 대상 | 판정 | 근거 |
 |---|---|---|
 | @jiaojiaojio — CZ 인터뷰 요약 스레드(중국어 원문, 번역 공유): 결과 중심 · 주도성 · 복기 → 제도 · 재창업 순서(팀 → 규정 준수 → 현지화 → 안전·UX → 기술) | **패스** | ① 원출처 아님(인터뷰 영상의 2차 요약, 집계형) ② 주제가 경영·리더십·규제 담론이라 우리 레인(측정 데이터의 검증) 밖 — 규제 담론 무반응 규칙 ③ 거래소 창업자 콘텐츠에 XRPL 네이티브 계정이 붙으면 상장·거래소 구애로 읽힐 여지 ④ 좋아요·북마크도 불필요. **내부용 교훈만**: "복기 → 제도"는 우리 플레이북 운영 방식과 같고, "주도적 보고" 원칙은 카탈라이즈·영상팀 협업에 그대로 적용 |
+| @beyond_broke(Jake Claver, QFOP) — 「KYC가 XRPL 자체의 일부가 됐다」: 주문 매칭 전 프로토콜이 자격 증명(credential)을 확인, 없으면 거래 실패. 세 수정안(Credentials · Permissioned Domains · Permissioned DEX)이 메인넷 라이브(9/4, 11h 전, 조회 5.25만·좋아요 1.4천·RT 160, **$XRP 시세 카드 부착**) | **패스 — 답글·좋아요 없음** | ① 캐시태그·시세 카드 글 = 무반응 규칙(플레이북 158행). 답글란이 시세 담론 옆자리 ② 원출처 아님(RippleX·수정안 문서가 원출처인 2차 해설) ③ 11h 경과·작은 무대. **소재 ★★**: "원장이 주문 전에 자격을 확인한다 ↔ 우리는 기록 전에 판독값을 확인한다" — 2막 실물 데이터 원글 텍스처. 후보 문장 `XRPL now checks the credential before the order matches. We check the reading before it becomes a record.` 수정안 3종은 xrpl.org 원문으로 재확인 뒤 인용 |
+| @mattshumer_(Matt Shumer) — 「GPT-6 Astra가 한 주 만에 언리얼 엔진으로 맨해튼을 만들었다」 영상(9/4, 7h 전, 조회 120만·좋아요 9.9천, **일론 머스크 재게시**) | **패스** | ① AI 생성 세계 쇼케이스 = 우리 레인·크립토 씬 밖(확장 트랙은 씬 사상가·테제 글에만) ② 무대는 크지만 붙을 문장이 없음 ③ "GPT-6 Astra" 주장은 미검증 — 인용 금지. **소재 ★**: "렌더된 세계 vs 측정된 방" 원글 앵글 — 우리 시뮬레이터가 'concept render' 캡션을 다는 이유와 맞물림. 후보 문장 `A model can render Manhattan in a week. It still can't tell you the CO₂ in your bedroom last night.` |
 
 ## 판정 기록 (9/3)
 
