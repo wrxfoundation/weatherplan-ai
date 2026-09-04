@@ -17,9 +17,7 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   await page.goto('http://localhost:4173/category/rental', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   check(await page.locator('[data-t="rental-browser"]').count() === 1, '렌더: 브랜드 브라우저')
   check(await page.locator('[data-t="rental-brands"] button').count() === 10, '탭: 전체 + 9브랜드')
-  check(await page.locator('[data-t="rental-browser"]').getAttribute('data-mode') === 'rent', '기본 모드 렌트')
-  check(!(await page.locator('[data-t="rental-mode"]').isVisible()), 'PC: 렌트/리스 토글 숨김 (GNB 에서 고른다)')
-  check((await page.locator('[data-t="rental-mode-label"]').innerText()).includes('렌트 기준'), 'PC: 현재 모드 라벨 표시')
+  check(await page.locator('[data-t="rental-mode"]').count() === 0, '렌트/리스 토글 제거 (자동차 카테고리로 이관)')
   check(await items() === 20, `전체 품목 ${await items()}`)
 
   // 호버 → 카테고리 드롭다운
@@ -46,16 +44,6 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   await page.locator('[data-t="rental-cats"] button', { hasText: '정수기/제빙기' }).click(); await page.waitForTimeout(150)
   check(await items() === 2 && await page.locator('[data-t="rental-water"]').count() === 1, '정수기/제빙기도 정수기 필터 대상 (2종)')
 
-  // 렌트 → 리스(?mode=): 월 요금 상향 + 소유권 이전 배지. PC 토글이 없으므로 URL 로 전환한다
-  const firstPrice = async () => num((await page.locator('[data-t="rental-items"] > div').first().innerText()).match(/월\s*([\d,]+)원/)?.[1])
-  await page.goto('http://localhost:4173/category/rental?brand=cuckoo&type=' + encodeURIComponent('정수기'), { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
-  const rent = await firstPrice()
-  await page.goto('http://localhost:4173/category/rental?brand=cuckoo&type=' + encodeURIComponent('정수기') + '&mode=lease', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
-  check(await page.locator('[data-t="rental-browser"]').getAttribute('data-mode') === 'lease', '?mode=lease → 리스 모드')
-  const lease = await firstPrice()
-  check(lease === Math.round((rent * 1.12) / 100) * 100, `리스 → 월 ${rent} → ${lease} (×1.12)`)
-  check((await page.locator('[data-t="rental-items"] > div').first().innerText()).includes('소유권 이전'), '리스는 소유권 이전 배지')
-
   // GNB 딥링크 프리필
   await page.goto('http://localhost:4173/category/rental?brand=coway&type=' + encodeURIComponent('매트리스/프레임'), { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
   check((await page.locator('[data-t="rental-brands"] button[aria-pressed="true"]').innerText()) === '코웨이', '?brand= 프리필')
@@ -67,14 +55,6 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(page.url().includes('/calculator/rental') && page.url().includes('item=coway-mattress'), `자세히 계산 → ${page.url().split('?')[1]}`)
   const body = await page.evaluate(() => document.body.innerText)
   check(body.includes('코웨이 매트리스'), '계산기가 그 품목으로 열림 (코웨이 매트리스)')
-  check(await page.locator('[data-t="calc-mode"]').count() === 1, '계산기에도 렌트/리스 토글')
-
-  // 모바일: 토글 유지(메가메뉴가 없어 유일한 전환 수단) — 누르면 실제로 모드가 바뀐다
-  await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto('http://localhost:4173/category/rental', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
-  check(await page.locator('[data-t="rental-mode"]').isVisible(), '모바일: 렌트/리스 토글 노출')
-  await page.locator('[data-t="rental-mode"] button', { hasText: '리스' }).click(); await page.waitForTimeout(200)
-  check(await page.locator('[data-t="rental-browser"]').getAttribute('data-mode') === 'lease', '모바일: 토글로 리스 전환')
 
   if (errors.length) { console.log('PAGEERROR:', errors.join(' | ')); fail++ }
   await browser.close()

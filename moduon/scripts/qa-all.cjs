@@ -38,6 +38,7 @@ const step = (name, fn) => {
   step('스모크: 인터넷 셀프견적·메가메뉴', () => run('node scripts/qa-internet-smoke.cjs'))
   step('스모크: 휴대폰 온라인구매·알뜰폰', () => run('node scripts/qa-phoneshop-smoke.cjs'))
   step('스모크: 렌탈 브랜드 브라우저', () => run('node scripts/qa-rentalbrowse-smoke.cjs'))
+  step('스모크: 렌트/리스(자동차)', () => run('node scripts/qa-cars-smoke.cjs'))
 
   if (preview) { try { process.kill(-preview.pid) } catch { /* 이미 종료 */ } }
 

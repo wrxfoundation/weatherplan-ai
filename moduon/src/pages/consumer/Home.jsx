@@ -1,7 +1,7 @@
 // ─── S-01 소비자 홈 (트랙 A · 목업 #2a/#2b 재현) ─────────────────
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { VISIBLE_CATEGORIES, SHOP_TILE } from '../../lib/constants'
+import { VISIBLE_CATEGORIES, SHOP_TILE, catTo } from '../../lib/constants'
 import { won, calcQuote, CARRIERS } from '../../lib/engine'
 import { useStore } from '../../lib/store'
 import { useCountUp, LiveDot } from '../../components/ui'
@@ -15,7 +15,7 @@ export default function Home({ tenant }) {
   const consultTo = tenant ? `/consult?src=${tenant.slug}` : '/consult'
   // 히어로 타일 = 취급 카테고리 + 쇼핑몰. 파트너몰에서는 카테고리가 상담으로 흐른다.
   const tiles = [
-    ...cats.map((c) => ({ slug: c.slug, name: c.name, icon: c.icon, to: tenant ? `${consultTo}&cat=${c.slug}` : `/category/${c.slug}` })),
+    ...cats.map((c) => ({ slug: c.slug, name: c.name, icon: c.icon, to: tenant ? `${consultTo}&cat=${c.slug}` : catTo(c) })),
     SHOP_TILE,
   ]
 
@@ -108,7 +108,7 @@ export default function Home({ tenant }) {
                 <span className="absolute left-80 -top-4 h-32 w-52 rounded-full bg-bindigo/15 blur-2xl" />
               </div>
               <div className="relative rounded-2xl border border-white/60 bg-white/35 px-3 py-4 shadow-panel backdrop-blur-2xl backdrop-saturate-150 sm:px-6 sm:py-5">
-                <div className="grid grid-cols-4 gap-1 sm:gap-2">
+                <div className="grid grid-cols-5 gap-1 sm:gap-2">
                   {tiles.map((t) => (
                     <Link key={t.slug} to={t.to} className="group flex flex-col items-center gap-1.5">
                       <span className="flex h-[46px] w-[46px] items-center justify-center overflow-hidden rounded-full bg-white/70 transition-transform duration-200 group-hover:-translate-y-[3px] sm:h-[58px] sm:w-[58px]">

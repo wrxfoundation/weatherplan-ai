@@ -3,7 +3,7 @@
 // 모두 반영한 "카드할인 후 실부담"과 "약정 총 부담"을 함께 보여준다.
 import { useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { RENTAL_ITEMS, CARE_TYPES, TERMS, MODES, COMBO_DC, OWNERSHIP_TERM, MIN_REAL, calcRental, rentalMatrix } from '../../lib/rentals'
+import { RENTAL_ITEMS, CARE_TYPES, TERMS, COMBO_DC, OWNERSHIP_TERM, MIN_REAL, calcRental, rentalMatrix } from '../../lib/rentals'
 import { won, copyText } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { IcShare, IcCheck } from '../../components/icons'
@@ -11,19 +11,18 @@ import { CalcTabs } from './PhoneCalculator'
 
 export default function RentalCalculator() {
   const nav = useNavigate()
-  const [sp] = useSearchParams() // 브랜드 브라우저 → ?item=&mode= 로 같은 품목·방식으로 연다
+  const [sp] = useSearchParams() // 브랜드 브라우저 → ?item= 으로 같은 품목을 연다
   const [itemId, setItemId] = useState(RENTAL_ITEMS.some((r) => r.id === sp.get('item')) ? sp.get('item') : 'water-inspure')
-  const [mode, setMode] = useState(MODES.some((m) => m.key === sp.get('mode')) ? sp.get('mode') : 'rent')
   const [care, setCare] = useState('visit')
   const [term, setTerm] = useState(60)
   const [card, setCard] = useState(true)
   const [combo, setCombo] = useState(1)
   const [copied, setCopied] = useState(false)
 
-  const q = useMemo(() => calcRental({ itemId, care, term, card, combo, mode }), [itemId, care, term, card, combo, mode])
-  const matrix = useMemo(() => rentalMatrix({ itemId, card, combo, mode }), [itemId, card, combo, mode])
+  const q = useMemo(() => calcRental({ itemId, care, term, card, combo }), [itemId, care, term, card, combo])
+  const matrix = useMemo(() => rentalMatrix({ itemId, card, combo }), [itemId, card, combo])
 
-  const label = `${q.item.brand} ${q.item.short} · ${mode === 'lease' ? '리스 · ' : ''}${CARE_TYPES.find((c) => c.key === care)?.label} ${term}개월${combo > 1 ? ` · ${combo}대 동시` : ''}`
+  const label = `${q.item.brand} ${q.item.short} · ${CARE_TYPES.find((c) => c.key === care)?.label} ${term}개월${combo > 1 ? ` · ${combo}대 동시` : ''}`
 
   const goConsult = () => nav('/consult?cat=' + q.item.cat, {
     state: { quote: { type: 'rental', total: q.real, gift: q.saved, label: `${label} → 월 ${won(q.real)}` } },
@@ -70,15 +69,7 @@ export default function RentalCalculator() {
 
           {/* 관리 방식 · 기간 */}
           <section className="rounded-card bg-white p-5 shadow-card sm:p-6 animate-rise">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-[16px] font-bold text-ink">관리 방식과 약정 기간</h2>
-              <div className="inline-flex rounded-full bg-cream p-1" data-t="calc-mode">
-                {MODES.map((m) => (
-                  <button key={m.key} onClick={() => setMode(m.key)} aria-pressed={mode === m.key} title={m.desc} className={`h-8 rounded-full px-3.5 text-[12.5px] font-bold transition-colors ${mode === m.key ? 'bg-primary text-white' : 'text-label hover:text-primary-text'}`}>{m.label}</button>
-                ))}
-              </div>
-            </div>
-            {mode === 'lease' && <p className="mt-1.5 text-[11.5px] text-faint">{MODES[1].desc}</p>}
+            <h2 className="text-[16px] font-bold text-ink">관리 방식과 약정 기간</h2>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               {CARE_TYPES.map((c) => (
                 <button key={c.key} onClick={() => setCare(c.key)} className={`rounded-field border p-3.5 text-left transition-colors ${care === c.key ? 'border-primary bg-tint' : 'border-line bg-white hover:border-primary/50'}`}>

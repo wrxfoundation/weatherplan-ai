@@ -18,6 +18,8 @@ import PhoneShop from './pages/consumer/PhoneShop'
 import PhoneDetail from './pages/consumer/PhoneDetail'
 import MvnoPlans from './pages/consumer/MvnoPlans'
 import MvnoDetail from './pages/consumer/MvnoDetail'
+import Cars from './pages/consumer/Cars'
+import CarDetail from './pages/consumer/CarDetail'
 import TenantMall from './pages/consumer/TenantMall'
 import PartnerLanding from './pages/partner/Landing'
 import PartnerApply from './pages/partner/Apply'
@@ -102,6 +104,9 @@ export default function App() {
           <Route path="/phone/shop/:model" element={<PhoneDetail />} />
           <Route path="/phone/mvno" element={<MvnoPlans />} />
           <Route path="/phone/mvno/:id" element={<MvnoDetail />} />
+          {/* 렌트/리스 — 자동차 장기렌터카·오토리스 */}
+          <Route path="/cars" element={<Cars />} />
+          <Route path="/cars/:model" element={<CarDetail />} />
         </Route>
 
         {/* 멀티테넌시 — 파트너 분양몰 (moduon.com/m/{slug}) */}

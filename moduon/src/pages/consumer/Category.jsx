@@ -1,5 +1,5 @@
 // ─── S-02 카테고리 상세 — 상품 0개여도 상담 CTA 노출(AC) ─────────
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useParams, useNavigate } from 'react-router-dom'
 import { NET_CARRIERS, PHONE_CARRIERS } from '../../lib/onboard'
 import PhoneQuickStart from '../../components/PhoneQuickStart'
 import InternetBuilder from '../../components/InternetBuilder'
@@ -20,6 +20,8 @@ export default function Category() {
   const nav = useNavigate()
   const { db } = useStore()
   const cat = catBySlug(slug)
+  // 렌트/리스는 전용 브라우저를 쓴다 — 카테고리 자체는 상담 폼·어드민을 위해 남겨 둔다
+  if (slug === 'car') return <Navigate to="/cars" replace />
   // 잘못된 슬러그 — 빈 화면 대신 갈 곳을 준다
   if (!cat) {
     return (

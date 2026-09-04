@@ -7,7 +7,8 @@ import { LEGAL } from '../../lib/constants'
 import { captureRef } from '../../lib/engine'
 import ChatWidget from '../ChatWidget'
 import { INTERNET_CARRIERS } from '../../lib/internet'
-import { RENTAL_BRANDS, MODES } from '../../lib/rentals'
+import { RENTAL_BRANDS } from '../../lib/rentals'
+import { CAR_BRANDS, ORIGINS } from '../../lib/cars'
 
 // GNB — 사업 초기에는 3대 주력(인터넷·핸드폰·렌탈)과 쇼핑몰만 노출한다.
 // hidden: true 는 "삭제"가 아니라 "숨김" — 페이지와 라우트는 그대로 살아 있고
@@ -16,6 +17,7 @@ const NAV = [
   { to: '/category/internet', label: '인터넷' },
   { to: '/category/phone', label: '핸드폰' },
   { to: '/category/rental', label: '렌탈' },
+  { to: '/cars', label: '렌트/리스' },
   { to: '/shop', label: '쇼핑몰' },
   { to: '/calculator', label: '견적 계산기', hidden: true },
   { to: '/diagnosis', label: 'AI 진단', hidden: true },
@@ -42,7 +44,11 @@ const MEGA = {
       { key: 'calc', label: '휴대폰 견적 계산기', sub: '단말 할부(A) + 요금(B)', to: '/calculator/phone' },
     ],
   },
-  '/category/rental': { title: '렌탈 제품전체', brands: RENTAL_BRANDS, modes: MODES },
+  '/category/rental': { title: '렌탈 제품전체', brands: RENTAL_BRANDS },
+  '/cars': {
+    title: '렌트 · 리스', foot: { label: '전체 차종 보기 →', to: '/cars' },
+    groups: ORIGINS.map((o) => ({ label: o.label, items: CAR_BRANDS.filter((b) => b.origin === o.key).map((b) => ({ key: b.key, label: b.name, to: `/cars?brand=${b.key}` })) })),
+  },
 }
 
 // 즉시통화 — 파트너몰은 매장 직통, 본진은 대표번호
@@ -99,17 +105,6 @@ export function ConsumerHeader({ tenant }) {
         <div className="absolute inset-x-0 top-full hidden border-b border-line-card bg-white shadow-panel md:block" data-t="mega" data-mega={mega}>
           <div className="mx-auto max-w-6xl px-10 py-5">
             {MEGA[mega].brands ? (
-              <div>
-                {/* 렌탈 방식이 먼저 — 인터넷·휴대폰이 놓인 GNB 구역에서 바로 고른다 */}
-                <div className="mb-4 flex flex-wrap items-center gap-2" data-t="mega-modes">
-                  <span className="mr-1 text-[12px] font-bold text-faint">렌탈 방식</span>
-                  {MEGA[mega].modes.map((m) => (
-                    <Link key={m.key} to={`/category/rental?mode=${m.key}`} onClick={() => setMega(null)} className="flex items-baseline gap-1.5 rounded-full border border-line bg-white px-3.5 py-1.5 transition-colors hover:border-primary hover:bg-tint">
-                      <span className="text-[13.5px] font-extrabold text-ink">{m.label}</span>
-                      <span className="text-[11px] text-faint">{m.desc}</span>
-                    </Link>
-                  ))}
-                </div>
               <div className="grid grid-cols-[200px_1fr] gap-6">
                 <ul className="flex flex-col border-r border-line pr-4" data-t="mega-brands">
                   <li>
@@ -139,6 +134,21 @@ export function ConsumerHeader({ tenant }) {
                   ))}
                 </div>
               </div>
+            ) : MEGA[mega].groups ? (
+              <div data-t="mega-groups">
+                <div className="text-[12px] font-bold text-faint">{MEGA[mega].title}</div>
+                {MEGA[mega].groups.map((g) => (
+                  <div key={g.label} className="mt-2.5">
+                    <div className="text-[12px] font-extrabold text-label">{g.label}</div>
+                    <div className="mt-1.5 grid grid-cols-6 gap-1.5">
+                      {g.items.map((it) => (
+                        <Link key={it.key} to={it.to} onClick={() => setMega(null)}
+                          className="flex h-10 items-center justify-center rounded-btn border border-line bg-white text-[12.5px] font-bold text-label transition-colors hover:border-primary hover:bg-tint hover:text-primary-text">{it.label}</Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                {MEGA[mega].foot && <Link to={MEGA[mega].foot.to} onClick={() => setMega(null)} className="mt-3 inline-block text-[12.5px] font-bold text-primary-text hover:underline">{MEGA[mega].foot.label}</Link>}
               </div>
             ) : (
               <div>
@@ -165,7 +175,7 @@ export function ConsumerHeader({ tenant }) {
               <Link to={n.to} onClick={() => setOpen(false)} className="block py-2.5 text-[15px] font-semibold text-body">{n.label}</Link>
               {MEGA[n.to] && (
                 <div className="mb-1.5 flex flex-wrap gap-1.5 pl-3">
-                  {(MEGA[n.to].items ?? MEGA[n.to].brands.map((b) => ({ key: b.key, label: b.name, to: `/category/rental?brand=${b.key}` }))).map((it) => (
+                  {(MEGA[n.to].items ?? MEGA[n.to].groups?.flatMap((g) => g.items) ?? MEGA[n.to].brands.map((b) => ({ key: b.key, label: b.name, to: `/category/rental?brand=${b.key}` }))).map((it) => (
                     <Link key={it.key} to={it.to} onClick={() => setOpen(false)} className="rounded-full border border-line bg-white px-2.5 py-1 text-[12px] font-semibold text-label">{it.label}</Link>
                   ))}
                 </div>

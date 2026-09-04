@@ -4,7 +4,7 @@
 // 품목·단가는 lib/rentals.js 한 곳. 리스 보정도 거기서 계산한다(화면은 숫자를 만들지 않는다).
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { RENTAL_BRANDS, WATER_TYPES, MODES, isWaterCat, browseRentals, calcRental } from '../lib/rentals'
+import { RENTAL_BRANDS, WATER_TYPES, isWaterCat, browseRentals, calcRental } from '../lib/rentals'
 import { won } from '../lib/engine'
 import { LEGAL } from '../lib/constants'
 import { EmptyState } from './ui'
@@ -16,7 +16,6 @@ export default function RentalBrowser() {
   const [brand, setBrand] = useState(RENTAL_BRANDS.some((b) => b.key === sp.get('brand')) ? sp.get('brand') : '')
   const [category, setCategory] = useState(sp.get('type') ?? '')
   const [waterType, setWaterType] = useState('')
-  const [mode, setMode] = useState(MODES.some((m) => m.key === sp.get('mode')) ? sp.get('mode') : 'rent')
   const [hover, setHover] = useState(null) // 호버 중인 브랜드 키(데스크톱 드롭다운)
 
   const b = RENTAL_BRANDS.find((x) => x.key === brand)
@@ -25,31 +24,17 @@ export default function RentalBrowser() {
   useEffect(() => { if (!isWaterCat(category)) setWaterType('') }, [category])
 
   const items = useMemo(() => browseRentals({ brand: brand || undefined, category: category || undefined, waterType: waterType || undefined }), [brand, category, waterType])
-  const priced = useMemo(() => items.map((it) => ({ it, q: calcRental({ itemId: it.id, care: 'self', term: 60, card: false, mode }) })), [items, mode])
+  const priced = useMemo(() => items.map((it) => ({ it, q: calcRental({ itemId: it.id, care: 'self', term: 60, card: false }) })), [items])
 
   return (
-    <section className="mt-8" data-t="rental-browser" data-mode={mode}>
+    <section className="mt-8" data-t="rental-browser">
       {/* 상단: 제목 + 렌트/리스 */}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-[19px] font-extrabold text-ink">브랜드로 찾기</h2>
           <p className="mt-1 text-[13px] text-muted">브랜드에 커서를 올리면 품목이 펼쳐져요. 정수기는 냉온·얼음으로 한 번 더 거를 수 있어요.</p>
         </div>
-        <div className="inline-flex rounded-full bg-white p-1 shadow-card md:hidden" data-t="rental-mode" role="tablist">
-          {MODES.map((m) => (
-            <button key={m.key} role="tab" aria-selected={mode === m.key} onClick={() => setMode(m.key)} title={m.desc}
-              className={`flex h-9 items-center rounded-full px-4 text-[13px] font-bold transition-colors ${mode === m.key ? 'bg-primary text-white' : 'text-label hover:text-primary-text'}`}>
-              {m.label}
-            </button>
-          ))}
-        </div>
       </div>
-      <p className="mt-1.5 text-[11.5px] text-faint" data-t="rental-mode-label">
-        <span className="hidden font-bold text-label md:inline">{MODES.find((m) => m.key === mode)?.label} 기준 · </span>
-        {MODES.find((m) => m.key === mode)?.desc}
-        <span className="hidden md:inline"> · 바꾸려면 상단 메뉴 렌탈 → 렌탈 방식</span>
-      </p>
-
       {/* 브랜드 탭 (호버 → 카테고리 드롭다운) */}
       <div className="relative mt-4 rounded-card bg-white shadow-card" onMouseLeave={() => setHover(null)}>
         {/* 모바일만 가로 스크롤 — 데스크톱에서 overflow 를 두면 호버 드롭다운이 세로로 잘려 안 보인다 */}
@@ -116,14 +101,14 @@ export default function RentalBrowser() {
               </div>
               <div className="mt-3 flex items-end justify-between">
                 <div>
-                  <span className="text-[11px] text-faint">{MODES.find((m) => m.key === mode)?.label} · 셀프형 60개월</span>
+                  <span className="text-[11px] text-faint">셀프형 60개월 기준</span>
                   <div><span className="text-[11px] text-faint">월 </span><span className="tnum text-[20px] font-extrabold tracking-tight text-ink">{won(q.base)}</span></div>
                 </div>
                 {q.ownership && <span className="rounded-full bg-ok/10 px-2 py-0.5 text-[10.5px] font-bold text-ok">소유권 이전</span>}
               </div>
               <div className="mt-3 grid grid-cols-2 gap-1.5">
-                <Link to={`/calculator/rental?item=${it.id}&mode=${mode}`} className="flex h-10 items-center justify-center rounded-field bg-tint text-[13px] font-bold text-primary-text transition-colors hover:bg-primary hover:text-white">자세히 계산</Link>
-                <button onClick={() => nav(`/consult?cat=${it.cat}`, { state: { quote: { type: 'rental', label: `${it.brand} ${it.name} · ${MODES.find((m) => m.key === mode)?.label}`, total: q.base, gift: 0 } } })}
+                <Link to={`/calculator/rental?item=${it.id}`} className="flex h-10 items-center justify-center rounded-field bg-tint text-[13px] font-bold text-primary-text transition-colors hover:bg-primary hover:text-white">자세히 계산</Link>
+                <button onClick={() => nav(`/consult?cat=${it.cat}`, { state: { quote: { type: 'rental', label: `${it.brand} ${it.name}`, total: q.base, gift: 0 } } })}
                   className="h-10 rounded-field border border-line bg-white text-[13px] font-bold text-label transition-colors hover:border-primary hover:text-primary-text">상담</button>
               </div>
             </div>

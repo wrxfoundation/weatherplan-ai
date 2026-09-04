@@ -30,12 +30,6 @@ export const WATER_TYPES = [
   { key: 'cold-hot', label: '냉온만', desc: '냉수·온수·정수' },
   { key: 'ice', label: '얼음냉온', desc: '얼음까지 · 제빙' },
 ]
-// 렌트/리스 — 리스는 약정 만료 시 소유권 이전이 기본이고 월 요금이 조금 높다(대표 보정 12%).
-export const MODES = [
-  { key: 'rent', label: '렌트', desc: '관리 서비스 포함 · 60개월 이상 소유권 이전' },
-  { key: 'lease', label: '리스', desc: '만료 시 소유권 이전 · 월 요금 소폭 높음' },
-]
-export const LEASE_ADJ = 1.12
 
 export const RENTAL_ITEMS = [
   {
@@ -118,11 +112,9 @@ export function browseRentals({ brand, category, waterType } = {}) {
  * care: 'visit' | 'self' · term: 36 | 60
  * card: 제휴카드 청구할인 적용 여부 · combo: 동시 렌탈 대수(1~3)
  */
-export function calcRental({ itemId = 'water-inspure', care = 'visit', term = 60, card = false, combo = 1, mode = 'rent' } = {}) {
+export function calcRental({ itemId = 'water-inspure', care = 'visit', term = 60, card = false, combo = 1 } = {}) {
   const item = rentalItem(itemId)
-  const listed = item.monthly[care]?.[term] ?? 0
-  // 리스: 월 요금 소폭 상향(100원 단위), 약정 만료 시 소유권 이전
-  const base = mode === 'lease' ? Math.round((listed * LEASE_ADJ) / 100) * 100 : listed
+  const base = item.monthly[care]?.[term] ?? 0
   const rawCombo = COMBO_DC[Math.min(3, Math.max(1, combo))] ?? 0
   const rawCard = card ? item.cardDc : 0
   // 하한에 걸리면 실제로 적용된 할인만 표기한다 — 표시 할인과 청구액이 어긋나지 않게.
@@ -140,17 +132,16 @@ export function calcRental({ itemId = 'water-inspure', care = 'visit', term = 60
     totalBase: base * term,    // 약정 총액(정가 기준)
     totalReal: real * term,    // 약정 총액(실부담 기준)
     saved: (base - real) * term,
-    ownership: mode === 'lease' || term >= OWNERSHIP_TERM,
-    mode,
+    ownership: term >= OWNERSHIP_TERM,
   }
 }
 
 // 관리방식 × 기간 4조합 비교 — 어떤 조합이 총 부담 최저인지 한 번에 보여준다
-export function rentalMatrix({ itemId, card, combo, mode = 'rent' }) {
+export function rentalMatrix({ itemId, card, combo }) {
   const rows = []
   for (const c of CARE_TYPES) {
     for (const t of TERMS) {
-      const q = calcRental({ itemId, care: c.key, term: t, card, combo, mode })
+      const q = calcRental({ itemId, care: c.key, term: t, card, combo })
       rows.push({ key: `${c.key}-${t}`, care: c.key, careLabel: c.label, term: t, base: q.base, real: q.real, totalReal: q.totalReal, ownership: q.ownership })
     }
   }

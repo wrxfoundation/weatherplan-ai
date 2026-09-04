@@ -73,7 +73,7 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   const strip = await page.evaluate(() => [...document.querySelectorAll('a')]
     .filter((a) => a.querySelector('img[src*="/assets/cat-"]'))
     .map((a) => a.innerText.trim()))
-  check(strip.join(',') === '인터넷/TV,휴대폰,렌탈,쇼핑몰', `히어로 타일 4종 (${JSON.stringify(strip)})`)
+  check(strip.join(',') === '인터넷/TV,휴대폰,렌탈,렌트/리스,쇼핑몰', `히어로 타일 5종 (${JSON.stringify(strip)})`)
   for (const gone of ['이사', '정수기', '보험', '가전', '생활/기타']) {
     check(!strip.includes(gone), `타일에서 숨김: ${gone}`)
   }
@@ -126,7 +126,7 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' })
   await page.waitForTimeout(400)
   const navLabels = await page.evaluate(() => [...document.querySelectorAll('header nav a')].map((a) => a.innerText.trim()))
-  check(navLabels.join(',') === '인터넷,핸드폰,렌탈,쇼핑몰', `GNB 인터넷·핸드폰·렌탈·쇼핑몰 순 (${JSON.stringify(navLabels)})`)
+  check(navLabels.join(',') === '인터넷,핸드폰,렌탈,렌트/리스,쇼핑몰', `GNB 5종 순서 (${JSON.stringify(navLabels)})`)
 
   // GNB 각 메뉴가 실제 카테고리로 이동하는지
   for (const [label, path] of [['인터넷', '/category/internet'], ['핸드폰', '/category/phone'], ['렌탈', '/category/rental']]) {

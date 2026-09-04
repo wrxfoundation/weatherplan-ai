@@ -10,6 +10,7 @@ export const CATEGORIES = [
   { slug: 'move',      name: '이사',       icon: '/assets/cat-move.png',      benefit: '최대 40만원 혜택', desc: '포장이사·반포장·원룸이사 견적을 무료로 비교하고 입주 청소까지 연결해 드려요.', hidden: true },
   { slug: 'water',     name: '정수기',     icon: '/assets/cat-water.png',     benefit: '최대 30만원 혜택', desc: '브랜드별 렌탈료·의무약정·제휴 혜택을 비교해 우리 집에 맞는 정수기를 찾아 드려요.', hidden: true },
   { slug: 'rental',    name: '렌탈',       icon: '/assets/cat-rental.png',    benefit: '최대 30만원 혜택', desc: '안마의자·매트리스·비데·공기청정기 등 생활가전 렌탈을 최저 조건으로 비교해요.' },
+  { slug: 'car',       name: '렌트/리스',  icon: '/assets/cat-car.png',       benefit: '캐피탈사 대비 3~5%', desc: '국내 모든 리스·렌트사 견적을 비교해 최저가로, 취등록세·보험료까지 넣은 진짜 월 납입금으로 안내해요.', to: '/cars' },
   { slug: 'insurance', name: '보험',       icon: '/assets/cat-insurance.png', benefit: '무료 보장 분석',   desc: '실손·암·운전자·화재보험까지, 갖고 있는 보험 전체를 무료로 진단해 드려요.', hidden: true },
   { slug: 'appliance', name: '가전',       icon: '/assets/cat-appliance.png', benefit: '제휴가 구매 지원', desc: 'TV·세탁기·냉장고 등 대형가전을 제휴 특가로, 설치 일정까지 맞춰 드려요.', hidden: true },
   { slug: 'etc',       name: '생활/기타',  icon: '/assets/cat-etc.png',       benefit: '맞춤 상담 지원',   desc: '입주청소·중고폰 매입·상조·인력 서비스 등 생활에 필요한 모든 서비스를 연결해요.', hidden: true },
@@ -21,6 +22,9 @@ export const VISIBLE_CATEGORIES = CATEGORIES.filter((c) => !c.hidden)
 // 쇼핑몰 — 상품 카테고리가 아니라 별도 목적지라 CATEGORIES 밖에 둔다.
 // (CATEGORIES에 넣으면 상담 폼·어드민 상품·테넌트 취급목록까지 따라 들어간다)
 export const SHOP_TILE = { slug: 'shop', name: '쇼핑몰', icon: '/assets/cat-shop.png', to: '/shop' }
+
+// 렌트/리스는 상담 카테고리(cat=car)이자 전용 브라우저(/cars)를 갖는다 — 타일·GNB는 to 를 따른다.
+export const catTo = (c) => c.to ?? `/category/${c.slug}`
 
 export const catBySlug = (slug) => CATEGORIES.find((c) => c.slug === slug)
 

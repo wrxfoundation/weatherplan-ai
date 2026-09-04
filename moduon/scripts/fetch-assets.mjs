@@ -22,6 +22,9 @@ const ASSETS = [
   ['cat-etc.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260829_133655_0424735e-a4cf-424d-ad9b-b24da2cbcd20.png'], // 생활/기타
   // 쇼핑몰 — 위 8종과 동일 규격으로 추가 생성(쇼핑백). 대안 후보 08c8fc05(배경 제거 필요)
   ['cat-shop.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260829_150107_67ec7e2d-c1b3-43e3-a0e7-8c57ffba8bfa.png'], // 쇼핑몰
+  // 렌트/리스 — 위와 동일 규격으로 추가 생성(클레이 3D 자동차). 배경 제거 완료.
+  // (원본 생성 8259cb30 / 대안 후보 63223e89 — 대안 채택 시 배경 제거를 다시 거쳐야 함)
+  ['cat-car.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260904_055336_e6ea3c0f-4947-421c-b99d-081712ce5ce7.png'], // 렌트/리스
   // 오브제 4종 — 배경 제거(투명 webp) 버전. 카드 그라데이션 위에 오브젝트만 얹힌다.
   ['obj-truck.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/90e21cc7-d3e9-4686-9b9d-5b0562ded06a.webp'],
   ['obj-wifi.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/33a9a1ff-4f6d-42b1-a55c-a48e0be83a31.webp'],
