@@ -17,7 +17,29 @@
 
 ## 붙이는 법
 
-### 1. 매핑표를 채운다 — `src/lib/cars.js`
+### 0. 매핑을 자동 생성한다 (권장)
+
+54개를 손으로 적을 필요 없다. 제휴사 목록 페이지에서 뽑아낸다.
+
+```bash
+node scripts/map-car-images.mjs https://acrentcar.com/…차량목록페이지
+```
+
+네트워크가 막혔거나 이미지가 스크립트로 그려지면, 브라우저에서 목록을 다 띄운 뒤
+**저장(Ctrl+S)** 한 HTML 을 넘긴다. CSV(모델명,이미지경로) 도 받는다.
+
+```bash
+node scripts/map-car-images.mjs ./saved.html
+node scripts/map-car-images.mjs ./list.csv
+```
+
+무엇을 찾았고 무엇을 못 찾았는지 전부 출력한 뒤 `cars.js` 의 마커 사이만 다시 쓴다.
+`더뉴`·`올뉴`·`신형` 같은 수식어와 공백은 걷어내고 매칭하며, 긴 이름을 먼저 잡아
+"그랜저 하이브리드"가 "그랜저"로 잘못 붙지 않는다.
+
+자동 매칭이 틀렸거나 못 잡은 차종은 `MANUAL_IMAGES` 에 넣는다 — 스크립트가 덮어쓰지 않는다.
+
+### 1. (수동) 매핑표를 직접 채운다 — `src/lib/cars.js`
 
 ```js
 export const PARTNER_IMAGES = {
@@ -53,6 +75,22 @@ node scripts/fetch-car-images.mjs
 
 크롤링으로 이 표를 역산하는 것보다 정확하고, 제휴사가 차를 추가할 때마다
 다시 훑을 필요도 없다.
+
+## 현재 매핑 상태
+
+현대 20종은 매핑 완료(저장해 주신 목록 페이지에서 자동 생성). 나머지 34종은 아직 없다.
+
+**나머지를 채우려면** 제조사별 목록 페이지를 같은 방식으로 저장해서 한 번씩 돌리면 된다.
+스크립트는 마커 사이를 통째로 다시 쓰므로, 여러 브랜드를 한 번에 넣으려면
+저장한 HTML 들을 하나로 합쳐서(`cat a.htm b.htm > all.htm`) 넘기는 편이 편하다.
+
+```bash
+cat 현대.htm 기아.htm 제네시스.htm 수입차.htm > all.htm
+node scripts/map-car-images.mjs ./all.htm
+node scripts/fetch-car-images.mjs
+```
+
+매핑이 없는 차종은 그대로 SVG 실루엣이라 화면은 정상이다 — 채운 만큼만 사진이 된다.
 
 ## 주의
 

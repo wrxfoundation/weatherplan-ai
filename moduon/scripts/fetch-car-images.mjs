@@ -12,15 +12,15 @@
 import { mkdirSync, existsSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { PARTNER_IMAGES, PARTNER_BASE } from '../src/lib/cars.js'
+import { PARTNER_IMAGES, MANUAL_IMAGES, PARTNER_BASE } from '../src/lib/cars.js'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const dir = join(root, 'public', 'assets', 'cars')
-const entries = Object.entries(PARTNER_IMAGES)
+const entries = Object.entries({ ...PARTNER_IMAGES, ...MANUAL_IMAGES })
 
 if (entries.length === 0) {
   console.log('[cars] 제휴사 이미지 매핑이 비어 있습니다 — 차량 카드는 SVG 실루엣으로 표시됩니다.')
-  console.log('[cars] src/lib/cars.js 의 PARTNER_IMAGES 에 "차종id: 제휴사경로" 를 채우면 사진으로 바뀝니다.')
+  console.log('[cars] node scripts/map-car-images.mjs <목록페이지URL 또는 저장한 HTML> 로 매핑을 자동 생성하세요.')
   process.exit(0)
 }
 

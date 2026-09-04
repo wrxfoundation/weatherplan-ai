@@ -230,11 +230,35 @@ export const EXTRA_DC = '3~5%'
 // PARTNER_IMAGES 는 "우리 차종 id → 제휴사 이미지 경로" 매핑이다. 비어 있으면
 // 전부 SVG 폴백이라 화면은 정상 동작한다 — 매핑을 채운 만큼만 사진으로 바뀐다.
 export const PARTNER_BASE = 'https://acrentcar.com/data/car'
+// scripts/map-car-images.mjs 가 아래 두 마커 사이를 통째로 다시 쓴다.
+/* PARTNER_IMAGES:START */
 export const PARTNER_IMAGES = {
-  // 예시 형식 — 실제 매핑표를 받으면 여기에 채운다.
-  // palisade: '00000000461_detail_1',
+  'avante': '00000000582_detail_1',
+  'avante-hev': '00000000583_detail_1',
+  'grandeur': '00000000498_detail_1',
+  'grandeur-hev': '00000000503_detail_1',
+  'ioniq5': '00000000558_detail_1',
+  'ioniq6': '00000000618_detail_1',
+  'ioniq9': '00000000667_detail_1',
+  'kona': '00000000429_detail_1',
+  'kona-ev': '00000000637_detail_1',
+  'kona-hev': '00000000485_detail_1',
+  'palisade': '00000000461_detail_1',
+  'palisade-hev': '00000000665_detail_1',
+  'santafe': '00000000447_detail_1',
+  'santafe-hev': '00000000562_detail_1',
+  'sonata': '00000000474_detail_1',
+  'sonata-hev': '00000000223_detail_1',
+  'staria': '00000000554_detail_1',
+  'staria-hev': '00000000653_detail_1',
+  'tucson': '00000000537_detail_1',
+  'tucson-hev': '00000000539_detail_1',
 }
+/* PARTNER_IMAGES:END */
+// 자동 매칭이 틀렸거나 못 잡은 차종만 여기서 바로잡는다 — 스크립트가 건드리지 않는다.
+export const MANUAL_IMAGES = {}
 export const carImagePath = (id) => `/assets/cars/${id}.jpg`
-export const partnerImageUrl = (id) => (PARTNER_IMAGES[id] ? `${PARTNER_BASE}/${PARTNER_IMAGES[id]}` : null)
+export const imagePathOf = (id) => MANUAL_IMAGES[id] ?? PARTNER_IMAGES[id] ?? null
+export const partnerImageUrl = (id) => (imagePathOf(id) ? `${PARTNER_BASE}/${imagePathOf(id)}` : null)
 // 자체 호스팅본이 받아졌는지는 빌드 산출물에만 있으므로, 화면은 <img onError> 로 SVG 폴백한다.
-export const hasPartnerImage = (id) => Boolean(PARTNER_IMAGES[id])
+export const hasPartnerImage = (id) => Boolean(imagePathOf(id))

@@ -9,3 +9,5 @@ public/assets/*.webp
 .DS_Store
 # QA 합격 도장(로컬 전용) — .claude/hooks/guard.cjs 가 읽는다
 .qa-pass
+# 제휴사 차량 이미지 — 빌드 시 scripts/fetch-car-images.mjs 가 내려받는다(커밋 대상 아님)
+public/assets/cars/
