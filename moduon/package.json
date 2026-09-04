@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "fetch-assets": "node scripts/fetch-assets.mjs",
-    "predev": "node scripts/fetch-assets.mjs && node scripts/logo-transparent.mjs",
-    "prebuild": "node scripts/fetch-assets.mjs && node scripts/logo-transparent.mjs",
+    "predev": "node scripts/fetch-assets.mjs && node scripts/logo-transparent.mjs && node scripts/fetch-car-images.mjs",
+    "prebuild": "node scripts/fetch-assets.mjs && node scripts/logo-transparent.mjs && node scripts/fetch-car-images.mjs",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",

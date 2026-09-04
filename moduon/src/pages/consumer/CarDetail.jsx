@@ -8,7 +8,7 @@ import { carModel, carBrand, calcCar, trimsOf, optionsOf, DOWN_RATES, TERMS, BAS
 import { won } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import ApplyChoiceModal from '../../components/ApplyChoiceModal'
-import { CarArt } from './Cars'
+import { CarImage } from './Cars'
 
 export default function CarDetail() {
   const { model: id } = useParams()
@@ -176,7 +176,7 @@ function CarDetailInner() {
 function Summary({ q, model, onApply, compact }) {
   return (
     <>
-      {!compact && <CarArt fuel={model.fuel} seg={model.seg} size={150} />}
+      {!compact && <CarImage model={model} size={150} />}
       <div className="text-[15px] font-bold leading-5 text-ink">{q.trim.name}</div>
       <div className="mt-3 rounded-field bg-cream/70 p-3.5 text-[13px]">
         <Row l="총차량가격" v={won(q.total)} bold />

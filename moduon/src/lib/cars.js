@@ -221,3 +221,20 @@ export const SPECIALS = CAR_MODELS.filter((m) => m.special).map((m) => ({ model:
 // 비교 대상 캐피탈사 — "모든 리스·렌트사 견적을 비교 후 최저가 선정"의 근거 표시
 export const CAPITALS = ['현대캐피탈', '롯데캐피탈', '메리츠캐피탈', '아주캐피탈', 'JB우리캐피탈', 'KB캐피탈', '하나캐피탈', 'BNK캐피탈', 'NH농협캐피탈', 'ORIX', '효성캐피탈']
 export const EXTRA_DC = '3~5%'
+
+// ─── 차량 이미지 ──────────────────────────────────────────────────────────
+// 우선순위: ① 자체 호스팅(public/assets/cars/{id}.jpg) ② 없으면 SVG 실루엣.
+// 제휴사(에이씨렌트카) 이미지는 핫링크하지 않는다 — 상대 서버 대역폭을 쓰고,
+// 그쪽이 경로를 바꾸거나 잠깐 죽으면 우리 상품 목록이 통째로 빈다.
+// 대신 scripts/fetch-car-images.mjs 로 빌드 시점에 내려받아 자체 호스팅한다.
+// PARTNER_IMAGES 는 "우리 차종 id → 제휴사 이미지 경로" 매핑이다. 비어 있으면
+// 전부 SVG 폴백이라 화면은 정상 동작한다 — 매핑을 채운 만큼만 사진으로 바뀐다.
+export const PARTNER_BASE = 'https://acrentcar.com/data/car'
+export const PARTNER_IMAGES = {
+  // 예시 형식 — 실제 매핑표를 받으면 여기에 채운다.
+  // palisade: '00000000461_detail_1',
+}
+export const carImagePath = (id) => `/assets/cars/${id}.jpg`
+export const partnerImageUrl = (id) => (PARTNER_IMAGES[id] ? `${PARTNER_BASE}/${PARTNER_IMAGES[id]}` : null)
+// 자체 호스팅본이 받아졌는지는 빌드 산출물에만 있으므로, 화면은 <img onError> 로 SVG 폴백한다.
+export const hasPartnerImage = (id) => Boolean(PARTNER_IMAGES[id])

@@ -124,6 +124,13 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   await page.goto('http://localhost:4173/category/car', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   check(page.url().endsWith('/cars'), '/category/car → /cars 리다이렉트')
 
+  // 이미지: 제휴사 URL 을 화면에 직접 걸지 않는다(핫링크 금지) — 자체 호스팅 경로이거나 SVG
+  await page.goto('http://localhost:4173/cars', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  const imgSrcs = await page.evaluate(() => [...document.querySelectorAll('[data-t="car-grid"] img')].map((i) => i.getAttribute('src') || ''))
+  check(imgSrcs.every((s) => s.startsWith('/assets/cars/')), `차량 이미지는 자체 호스팅 경로만 (${imgSrcs.length}건)`)
+  check(!(await page.content()).includes('acrentcar.com'), '제휴사 도메인 핫링크 없음')
+  check(await page.locator('[data-t="car-grid"] svg').count() > 0, '매핑 없는 차종은 SVG 실루엣으로 표시')
+
   if (errors.length) { console.log('PAGEERROR:', errors.join(' | ')); fail++ }
   await browser.close()
   console.log(fail === 0 ? 'SMOKE: ALL PASS' : `SMOKE: ${fail} FAIL`)

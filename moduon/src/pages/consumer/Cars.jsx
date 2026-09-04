@@ -3,7 +3,7 @@
 // → 금주의 특가차량 → "모든 리스·렌트사 견적 비교" 근거. 계산은 lib/cars.js 한 곳.
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { CAR_BRANDS, ORIGINS, CAR_MODELS, SPECIALS, CAPITALS, EXTRA_DC, carBrand, carFrom, manwon } from '../../lib/cars'
+import { CAR_BRANDS, ORIGINS, CAR_MODELS, SPECIALS, CAPITALS, EXTRA_DC, carBrand, carFrom, manwon, carImagePath, hasPartnerImage } from '../../lib/cars'
 import { won } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 
@@ -58,7 +58,7 @@ export default function Cars() {
           {models.map(({ m, q }) => (
             <Link key={m.id} to={`/cars/${m.id}`} data-t="car-card"
               className="flex flex-col rounded-card bg-white p-3 shadow-card transition-all hover:-translate-y-[2px] hover:shadow-panel">
-              <CarArt fuel={m.fuel} seg={m.seg} />
+              <CarImage model={m} />
               <div className="mt-1 text-center text-[13.5px] font-bold leading-5 text-ink">{m.name}</div>
               <div className="mt-1.5 text-center">
                 {kind !== 'rent' && <div className="tnum text-[12.5px] font-bold text-primary-text">리스 월 {manwon(q.lease)} 만원 ~</div>}
@@ -83,7 +83,7 @@ export default function Cars() {
                 <span className="rounded bg-orange px-2 py-0.5 text-[11px] font-bold text-white">{model.special.badge}</span>
                 {model.id === 'gv80' && <span className="rounded bg-primary px-2 py-0.5 text-[11px] font-bold text-white">한정수량</span>}
               </div>
-              <CarArt fuel={model.fuel} seg={model.seg} size={110} />
+              <CarImage model={model} size={110} />
               <div className="text-[17px] font-extrabold text-ink">{model.name}</div>
               <div className="text-[12.5px] text-muted">{model.special.trim}</div>
               <div className="mt-3 flex items-baseline justify-between">
@@ -109,6 +109,21 @@ export default function Cars() {
       </section>
     </main>
   )
+}
+
+// 차량 이미지 — 자체 호스팅 사진이 있으면 사진, 없으면(또는 로드 실패) SVG 실루엣.
+// 제휴사 URL 을 직접 걸지 않는다: 그쪽 서버가 죽거나 경로가 바뀌면 목록이 통째로 빈다.
+export function CarImage({ model, size = 96 }) {
+  const [err, setErr] = useState(false)
+  if (hasPartnerImage(model.id) && !err) {
+    return (
+      <div className="flex justify-center py-1" style={{ height: size * 0.56 }}>
+        <img src={carImagePath(model.id)} alt={model.name} loading="lazy" onError={() => setErr(true)}
+          className="h-full w-auto object-contain" />
+      </div>
+    )
+  }
+  return <CarArt fuel={model.fuel} seg={model.seg} size={size} />
 }
 
 // 차량 일러스트 — CDN 없이 SVG 한 장. 세그먼트로 실루엣, 연료로 액센트만 바꾼다.
