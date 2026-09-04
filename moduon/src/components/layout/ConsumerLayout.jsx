@@ -112,9 +112,14 @@ export function ConsumerHeader({ tenant }) {
                 </div>
               <div className="grid grid-cols-[200px_1fr] gap-6">
                 <ul className="flex flex-col border-r border-line pr-4" data-t="mega-brands">
-                  <li className="px-2 py-1.5 text-[12px] font-bold text-faint">{MEGA[mega].title}</li>
+                  <li>
+                    <Link to="/category/rental" onClick={() => setMega(null)}
+                      className="flex items-center justify-between rounded-field px-2 py-1.5 text-[13.5px] font-extrabold text-ink transition-colors hover:bg-tint hover:text-primary-text">
+                      {MEGA[mega].title}<span className="text-[15px] text-faint">›</span>
+                    </Link>
+                  </li>
                   {MEGA[mega].brands.map((b) => (
-                    <li key={b.key}><Link to={`/category/rental?brand=${b.key}`} onClick={() => setMega(null)} className="block rounded-field px-2 py-1.5 text-[13.5px] font-semibold text-body hover:bg-tint hover:text-primary-text">{b.name}</Link></li>
+                    <li key={b.key}><Link to={`/category/rental?brand=${b.key}`} onClick={() => setMega(null)} className="flex items-center justify-between rounded-field px-2 py-1.5 text-[13.5px] font-semibold text-body transition-colors hover:bg-tint hover:text-primary-text">{b.name}<span className="text-[15px] text-faint">›</span></Link></li>
                   ))}
                 </ul>
                 <div className="grid grid-cols-4 gap-x-6 gap-y-5" data-t="mega-grid">
