@@ -86,6 +86,20 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(modes.includes('렌트') && modes.includes('리스'), '렌탈 패널 상단에 렌트 · 리스')
   const grid = await page.locator('[data-t="mega-grid"]').innerText()
   check(grid.includes('LG퓨리케어') && grid.includes('안마의자') && grid.includes('청호나이스') && grid.includes('정수기/제빙기'), '렌탈 그리드: 브랜드별 카테고리')
+  // 히트 영역 — 글자 밖(행 오른쪽 빈 공간)에서도 반응해야 한다. 인라인이면 글자 획 위에서만 반응해
+  // "클릭이 안 된다"고 느낀다(팀 리포트). 블록 여부·치수·호버 시 색/배경 변화를 함께 단언.
+  {
+    const link = page.locator('[data-t="mega-grid"] a', { hasText: /^정수기$/ }).first()
+    const bb = await link.boundingBox()
+    const st = (el) => el.evaluate((n) => { const c = getComputedStyle(n); return { color: c.color, bg: c.backgroundColor, display: c.display, cursor: c.cursor } })
+    const before = await st(link)
+    check(before.display === 'block' && bb.width > 100 && bb.height >= 20, `카테고리 히트 영역 ${Math.round(bb.width)}×${Math.round(bb.height)}px (${before.display})`)
+    check(before.cursor === 'pointer', '커서 pointer')
+    await page.mouse.move(bb.x + bb.width - 4, bb.y + bb.height / 2, { steps: 20 }); await page.waitForTimeout(200)
+    const after = await st(link)
+    check(before.color !== after.color, `글자 밖 호버 → 글자색 변함 (${after.color})`)
+    check(before.bg !== after.bg, `글자 밖 호버 → 배경 하이라이트 (${after.bg})`)
+  }
   // 커서를 천천히 패널까지 내려도 패널이 살아 있어야 한다(그노 리포트: 내려가는 동안 사라져 클릭 불가)
   await glide(page.locator('[data-t="mega-grid"] a', { hasText: /^스타일러$/ }))
   check(await page.locator('[data-t="mega"]').count() === 1, '천천히 내려가도 패널 유지 (nav↔패널 여백 통과)')

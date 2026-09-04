@@ -120,10 +120,14 @@ export function ConsumerHeader({ tenant }) {
                 <div className="grid grid-cols-4 gap-x-6 gap-y-5" data-t="mega-grid">
                   {MEGA[mega].brands.map((b) => (
                     <div key={b.key}>
-                      <Link to={`/category/rental?brand=${b.key}`} onClick={() => setMega(null)} className="block border-b border-line pb-1.5 text-[13.5px] font-extrabold text-ink hover:text-primary-text">{b.name}</Link>
+                      <Link to={`/category/rental?brand=${b.key}`} onClick={() => setMega(null)} className="-mx-2 block rounded-field border-b border-line px-2 pb-1.5 pt-1 text-[13.5px] font-extrabold text-ink transition-colors hover:bg-tint hover:text-primary-text">{b.name}</Link>
                       <ul className="mt-1.5 flex flex-col gap-1">
                         {b.cats.map((c) => (
-                          <li key={c}><Link to={`/category/rental?brand=${b.key}&type=${encodeURIComponent(c)}`} onClick={() => setMega(null)} className="text-[12.5px] text-label hover:text-primary-text">{c}</Link></li>
+                          <li key={c}>
+                            {/* 블록 + 패딩으로 행 전체가 히트 영역이 된다 — 인라인이면 글자 획 위에서만 반응해 "클릭이 안 된다"고 느낀다 */}
+                            <Link to={`/category/rental?brand=${b.key}&type=${encodeURIComponent(c)}`} onClick={() => setMega(null)}
+                              className="-mx-2 block rounded-field px-2 py-[3px] text-[12.5px] text-label transition-colors hover:bg-tint hover:font-semibold hover:text-primary-text">{c}</Link>
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -136,7 +140,7 @@ export function ConsumerHeader({ tenant }) {
                 <div className="text-[12px] font-bold text-faint">{MEGA[mega].title}</div>
                 <div className={`mt-2 grid gap-2 ${MEGA[mega].items.length > 3 ? 'grid-cols-5' : 'grid-cols-3'}`} data-t="mega-items">
                   {MEGA[mega].items.map((it) => (
-                    <Link key={it.key} to={it.to} onClick={() => setMega(null)} className="flex flex-col rounded-btn border border-line bg-white p-3.5 transition-colors hover:border-primary hover:bg-tint">
+                    <Link key={it.key} to={it.to} onClick={() => setMega(null)} className="flex flex-col rounded-btn border border-line bg-white p-3.5 transition-colors hover:border-primary hover:bg-tint hover:text-primary-text">
                       {it.mark && <span className="text-[15px] font-black" style={{ color: it.color }}>{it.mark}</span>}
                       <span className="text-[14px] font-bold text-ink">{it.label} {it.badge && <span className="rounded bg-ok/10 px-1.5 text-[9.5px] font-bold text-ok">{it.badge}</span>}</span>
                       <span className="mt-0.5 text-[11px] leading-4 text-faint">{it.sub}</span>
