@@ -4,5 +4,9 @@ Allow: /
 # API 엔드포인트는 크롤링 제외
 Disallow: /api/
 
+# 내부 검토용 정적 리포트 — 색인 제외
+# (문서 자체의 <meta name="robots">, vercel.json 의 X-Robots-Tag 와 3중 차단)
+Disallow: /reports/
+
 # Sitemap
 Sitemap: https://weatherplan-ai.vercel.app/sitemap.xml

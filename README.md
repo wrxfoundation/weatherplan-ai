@@ -23,7 +23,10 @@ weatherplan-ai/
 │       └── claude.js           # Anthropic Claude API proxy
 ├── styles/
 │   └── globals.css             # Tailwind + Pretendard
-├── public/                     # favicon 등
+├── public/                     # favicon · og-image 등 정적 자산
+│   └── reports/                # 정적 리포트 (Next 번들 밖 · 검색 색인 제외)
+│       ├── geodnet.html        # GEODNET 해부 · DePIN 케이스 스터디
+│       └── geodnet/            # └ report.css · report.js · vendor/chart.umd-4.4.1.min.js
 ├── package.json
 ├── next.config.js
 ├── tailwind.config.js
@@ -117,7 +120,45 @@ vercel --prod      # 프로덕션 배포
 | `/studio` | `studio.jsx` | 자유 챗봇 (Claude Opus 4.7 실연동) |
 | `/dashboard` | `dashboard.jsx` | 등록 완료 후 환영 카드 + 로드맵 |
 | `/agency-board` | `agency-board.jsx` | 광고대행사 AE 다중 광고주 콘솔 |
+| `/reports/geodnet` | `public/reports/geodnet.html` | GEODNET 해부 · DePIN 케이스 스터디 (정적 · noindex) |
 | `/api/claude` | `api/claude.js` | Claude API serverless proxy |
+
+---
+
+## 📊 정적 리포트 (`public/reports/`)
+
+React 없이 그 자체로 완결된 분석 문서를 두는 자리입니다. Next 번들과 완전히 분리돼
+있어서 앱 빌드 시간·First Load JS에 영향을 주지 않습니다.
+
+| 리포트 | URL | 내용 |
+|---|---|---|
+| GEODNET 해부 | `/reports/geodnet` | DePIN 토크노믹스 케이스 스터디 — 회수 코호트 · 언락 대비 소각 · 배분 비교 (웰비안 결정용) |
+
+**구조 규약** — 리포트 하나당 HTML 1개 + 같은 이름의 자산 폴더 1개.
+
+```
+public/reports/
+├── geodnet.html          # 마크업 + <head> 메타
+└── geodnet/
+    ├── report.css        # 스타일 (라이트/다크 토큰)
+    ├── report.js         # 데이터 + 차트 렌더러 (외부 fetch 없음)
+    └── vendor/
+        └── chart.umd-4.4.1.min.js   # Chart.js 4.4.1 (MIT)
+```
+
+자산은 `geodnet/report.css` 처럼 **상대 경로**로 참조합니다. HTML이 `public/reports/`
+바로 아래 있으므로 `/reports/geodnet`(리라이트) · `/reports/geodnet.html` · 로컬
+`file://` 어느 쪽으로 열어도 같은 경로로 풀립니다.
+
+**색인 차단은 3중** — 문서의 `<meta name="robots">`, `public/robots.txt`의
+`Disallow: /reports/`, `vercel.json`의 `X-Robots-Tag`. 내부 검토용 문서라 검색에
+잡히면 안 되지만, **URL을 아는 사람은 누구나 볼 수 있습니다.** 접근 자체를 막아야 하면
+Vercel Project → Settings → Deployment Protection 을 켜세요.
+
+**리포트 추가 방법**
+1. `public/reports/<이름>.html` 과 `public/reports/<이름>/` 을 위 구조대로 만든다
+2. `next.config.js` 의 `rewrites()` 에 `{ source: "/reports/<이름>", destination: "/reports/<이름>.html" }` 추가
+3. 벤더 라이브러리는 파일명에 버전을 박는다 (`vercel.json` 이 `vendor/` 를 1년 immutable 캐싱하므로 버전이 바뀌면 URL도 바뀌어야 함)
 
 ---
 
