@@ -38,7 +38,8 @@ export const ORIGINS = [{ key: 'dom', label: '국산차 제조사' }, { key: 'im
 export const carBrand = (key) => CAR_BRANDS.find((b) => b.key === key)
 
 // fuel: gas | hev | ev  ·  price: 최저 트림 기준 차량가격(원)
-// rent: false 면 렌트는 상담으로만 안내한다(전기차 등 렌터카 물량 미확보 케이스)
+// rent: 생략=가능 · 'consult'=렌트상담(물량 확인 필요) · false=렌트불가(장기렌터카 취급 안 함)
+//   제휴사도 이 셋을 구분해 표기한다 — 뭉뚱그리면 "된다는 건지 만다는 건지" 문의가 늘어난다.
 export const CAR_MODELS = [
   // ── 현대
   { id: 'palisade', brand: 'hyundai', name: '팰리세이드', seg: 'SUV', fuel: 'gas', price: 43830000 },
@@ -47,20 +48,25 @@ export const CAR_MODELS = [
   { id: 'grandeur-hev', brand: 'hyundai', name: '그랜저 하이브리드', seg: '세단', fuel: 'hev', price: 43100000 },
   { id: 'santafe', brand: 'hyundai', name: '싼타페', seg: 'SUV', fuel: 'gas', price: 36500000 },
   { id: 'santafe-hev', brand: 'hyundai', name: '싼타페 하이브리드', seg: 'SUV', fuel: 'hev', price: 39800000 },
-  { id: 'ioniq5', brand: 'hyundai', name: '아이오닉5', seg: 'SUV', fuel: 'ev', price: 47150000, rent: false },
-  { id: 'ioniq6', brand: 'hyundai', name: '아이오닉6', seg: '세단', fuel: 'ev', price: 49700000, rent: false },
-  { id: 'ioniq9', brand: 'hyundai', name: '아이오닉9', seg: 'SUV', fuel: 'ev', price: 67000000, rent: false },
+  { id: 'ioniq5', brand: 'hyundai', name: '아이오닉5', seg: 'SUV', fuel: 'ev', price: 47150000, rent: 'consult' },
+  { id: 'ioniq6', brand: 'hyundai', name: '아이오닉6', seg: '세단', fuel: 'ev', price: 49700000, rent: 'consult' },
+  { id: 'ioniq9', brand: 'hyundai', name: '아이오닉9', seg: 'SUV', fuel: 'ev', price: 67000000, rent: 'consult' },
   { id: 'tucson', brand: 'hyundai', name: '투싼', seg: 'SUV', fuel: 'gas', price: 29500000 },
   { id: 'tucson-hev', brand: 'hyundai', name: '투싼 하이브리드', seg: 'SUV', fuel: 'hev', price: 33400000 },
   { id: 'sonata', brand: 'hyundai', name: '쏘나타', seg: '세단', fuel: 'gas', price: 29300000 },
   { id: 'sonata-hev', brand: 'hyundai', name: '쏘나타 하이브리드', seg: '세단', fuel: 'hev', price: 33200000 },
   { id: 'kona', brand: 'hyundai', name: '코나', seg: 'SUV', fuel: 'gas', price: 25200000 },
   { id: 'kona-hev', brand: 'hyundai', name: '코나 하이브리드', seg: 'SUV', fuel: 'hev', price: 29100000 },
-  { id: 'kona-ev', brand: 'hyundai', name: '코나 일렉트릭', seg: 'SUV', fuel: 'ev', price: 41900000, rent: false },
+  { id: 'kona-ev', brand: 'hyundai', name: '코나 일렉트릭', seg: 'SUV', fuel: 'ev', price: 41900000, rent: 'consult' },
   { id: 'avante', brand: 'hyundai', name: '아반떼', seg: '세단', fuel: 'gas', price: 21400000 },
   { id: 'avante-hev', brand: 'hyundai', name: '아반떼 하이브리드', seg: '세단', fuel: 'hev', price: 25500000 },
   { id: 'staria', brand: 'hyundai', name: '스타리아', seg: 'MPV', fuel: 'gas', price: 28600000 },
   { id: 'staria-hev', brand: 'hyundai', name: '스타리아 하이브리드', seg: 'MPV', fuel: 'hev', price: 33900000 },
+  // ── 현대 상용차 — 잔가율이 승용과 달라 RESIDUAL_COMMERCIAL 을 쓴다(트럭·버스는 감가가 빠르다)
+  { id: 'mighty', brand: 'hyundai', name: '마이티 3.5톤', seg: '상용', fuel: 'gas', price: 55000000, rent: false },
+  { id: 'mighty-sp', brand: 'hyundai', name: '마이티 특장', seg: '상용', fuel: 'gas', price: 71000000, rent: false },
+  { id: 'county', brand: 'hyundai', name: '카운티', seg: '상용', fuel: 'gas', price: 75000000, rent: 'consult' },
+  { id: 'st1', brand: 'hyundai', name: 'ST1', seg: '상용', fuel: 'ev', price: 59800000, rent: false },
   // ── 제네시스
   { id: 'g80', brand: 'genesis', name: 'G80', seg: '세단', fuel: 'gas', price: 58500000, special: { badge: '특가판매', trim: '가솔린 2.5T' } },
   { id: 'gv80', brand: 'genesis', name: 'GV80', seg: 'SUV', fuel: 'gas', price: 71000000, special: { badge: '특가판매', trim: '2.5 가솔린 터보' } },
@@ -71,7 +77,7 @@ export const CAR_MODELS = [
   { id: 'carnival', brand: 'kia', name: '카니발', seg: 'MPV', fuel: 'gas', price: 36800000 },
   { id: 'k8', brand: 'kia', name: 'K8', seg: '세단', fuel: 'gas', price: 34600000 },
   { id: 'sportage', brand: 'kia', name: '스포티지', seg: 'SUV', fuel: 'gas', price: 28700000 },
-  { id: 'ev6', brand: 'kia', name: 'EV6', seg: 'SUV', fuel: 'ev', price: 48600000, rent: false },
+  { id: 'ev6', brand: 'kia', name: 'EV6', seg: 'SUV', fuel: 'ev', price: 48600000, rent: 'consult' },
   // ── 쉐보레 · KGM · 르노
   { id: 'trailblazer', brand: 'chevrolet', name: '트레일블레이저', seg: 'SUV', fuel: 'gas', price: 25400000 },
   { id: 'trax', brand: 'chevrolet', name: '트랙스 크로스오버', seg: 'SUV', fuel: 'gas', price: 21500000 },
@@ -84,15 +90,15 @@ export const CAR_MODELS = [
   { id: 'gle', brand: 'benz', name: 'GLE', seg: 'SUV', fuel: 'gas', price: 112000000 },
   { id: '5-series', brand: 'bmw', name: '5시리즈', seg: '세단', fuel: 'gas', price: 72500000 },
   { id: 'x5', brand: 'bmw', name: 'X5', seg: 'SUV', fuel: 'gas', price: 118000000 },
-  { id: 'model-y', brand: 'tesla', name: 'Model Y', seg: 'SUV', fuel: 'ev', price: 52990000, rent: false },
-  { id: 'model-3', brand: 'tesla', name: 'Model 3', seg: '세단', fuel: 'ev', price: 46990000, rent: false },
+  { id: 'model-y', brand: 'tesla', name: 'Model Y', seg: 'SUV', fuel: 'ev', price: 52990000, rent: 'consult' },
+  { id: 'model-3', brand: 'tesla', name: 'Model 3', seg: '세단', fuel: 'ev', price: 46990000, rent: 'consult' },
   { id: 'xc60', brand: 'volvo', name: 'XC60', seg: 'SUV', fuel: 'hev', price: 74600000 },
   { id: 'es300h', brand: 'lexus', name: 'ES 300h', seg: '세단', fuel: 'hev', price: 68900000 },
   { id: 'q5', brand: 'audi', name: 'Q5', seg: 'SUV', fuel: 'gas', price: 73800000 },
   { id: 'camry', brand: 'toyota', name: '캠리', seg: '세단', fuel: 'hev', price: 45600000 },
   { id: 'defender', brand: 'landrover', name: '디펜더', seg: 'SUV', fuel: 'gas', price: 98000000 },
   { id: 'cooper', brand: 'mini', name: '쿠퍼', seg: '해치백', fuel: 'gas', price: 41200000 },
-  { id: 'polestar4', brand: 'polestar', name: '폴스타 4', seg: 'SUV', fuel: 'ev', price: 59000000, rent: false },
+  { id: 'polestar4', brand: 'polestar', name: '폴스타 4', seg: 'SUV', fuel: 'ev', price: 59000000, rent: 'consult' },
   { id: 'tiguan', brand: 'vw', name: '티구안', seg: 'SUV', fuel: 'gas', price: 47900000 },
   { id: 'macan', brand: 'porsche', name: '마칸', seg: 'SUV', fuel: 'gas', price: 94800000 },
   { id: 'wrangler', brand: 'jeep', name: '랭글러', seg: 'SUV', fuel: 'gas', price: 69900000 },
@@ -160,6 +166,10 @@ export const BASIS = [
 
 // 잔존가치(기간별) · 리스 금리 · 렌트 월 유지비율 · 보증금의 월 인하 효율
 export const RESIDUAL = { 36: 0.55, 48: 0.46, 60: 0.36 }
+// 상용차(트럭·버스)는 감가가 빨라 잔존가치가 낮다. 제휴사 공개 견적 2건으로 맞췄다:
+// 마이티 3.5톤 55,000,000 → 리스 41만 · 카운티 75,000,000 → 리스 55만 (둘 다 잔가 ≈46%)
+export const RESIDUAL_COMMERCIAL = { 36: 0.46, 48: 0.36, 60: 0.26 }
+export const residualRate = (seg, term) => (seg === '상용' ? RESIDUAL_COMMERCIAL : RESIDUAL)[term] ?? 0.46
 export const LEASE_APR = 0.039
 export const MAINT_RATE = 0.00193 // 렌트에만 포함: 보험료 + 자동차세 등 월 환산
 export const DEPOSIT_EFF = 0.55   // 보증금은 반환되므로 선납금 대비 이만큼만 월 납입금을 낮춘다
@@ -185,7 +195,7 @@ export function calcCar({ modelId = 'palisade', trimName = null, options = [], d
   const carPrice = trim.price                 // 실제차량가격
   const total = carPrice + optionPrice        // 총차량가격
   const upfront = Math.round(total * down)    // 초기부담금(선납금 또는 보증금)
-  const residual = total * (RESIDUAL[term] ?? RESIDUAL[36])
+  const residual = total * residualRate(model.seg, term)
   const rawEff = basis === 'deposit' ? upfront * DEPOSIT_EFF : upfront
   // 상한: 초기부담이 이보다 크면 초과분은 월 납입금을 더 낮추지 못하고 계약 종료 정산에 반영된다
   const maxEff = Math.max(0, total - residual - total * MIN_AMORT)
@@ -196,26 +206,43 @@ export function calcCar({ modelId = 'palisade', trimName = null, options = [], d
   const lease = round100((financed * (1 + LEASE_APR * (term / 12))) / term)
   // 렌트는 취등록세·자동차세·보험료가 월 요금에 포함된다
   const maint = round100(total * MAINT_RATE)
-  const rent = model.rent === false ? null : lease + maint
+  // 'consult'/false 는 금액을 내지 않는다 — 화면이 상태 문구를 그대로 보여준다
+  const rent = model.rent === false || model.rent === 'consult' ? null : lease + maint
+  const rentState = model.rent === false ? 'none' : model.rent === 'consult' ? 'consult' : 'ok'
 
   return {
     model, trim, trims, pool, picked,
     carPrice, optionPrice, total, down, term, basis,
     upfront, upfrontCapped, deposit: basis === 'deposit' ? upfront : 0, prepay: basis === 'prepay' ? upfront : 0,
     residual: Math.round(residual), financed: Math.round(financed),
-    lease, rent, maint,
+    lease, rent, rentState, maint,
     acquisition: Math.round(total * ACQ_RATE),
   }
 }
 
+// ─── 차량별 실요금 (선택) ─────────────────────────────────────────────────
+// 제휴사 카드 금액은 산식만으로 재현되지 않는 경우가 있다 — 특히 전기차와 특가 차종은
+// 보조금·프로모션이 얹혀 있다(예: 아이오닉5 산식 21만 vs 제휴사 13만).
+// 실요금표를 받으면 여기에 채운다. 있으면 산식보다 우선한다.
+// { 차종id: { lease: 130000, rent: 0 } }  ← rent 0/미기재는 산식 또는 상태 문구를 따른다
+export const RATE_OVERRIDE = {}
+
 // 목록 카드용 — 최저 트림·옵션 없음·30%·36개월 기준 "월 X만원 ~"
 export function carFrom(modelId) {
   const q = calcCar({ modelId, down: 0.3, term: 36, basis: 'prepay' })
-  return { lease: q.lease, rent: q.rent, total: q.total, trim: q.trim }
+  const o = RATE_OVERRIDE[modelId]
+  return {
+    lease: o?.lease || q.lease,
+    rent: o?.rent || q.rent,
+    rentState: q.rentState,
+    overridden: Boolean(o?.lease),
+    total: q.total, trim: q.trim,
+  }
 }
 export const manwon = (n) => Math.floor(n / 10000) // 만원 단위 절사 — "월 20만원 ~"
 
 // 금주의 특가차량 — special 이 달린 모델
+export const RENT_LABEL = { none: '렌트불가', consult: '렌트상담' }
 export const SPECIALS = CAR_MODELS.filter((m) => m.special).map((m) => ({ model: m, ...carFrom(m.id) }))
 
 // 비교 대상 캐피탈사 — "모든 리스·렌트사 견적을 비교 후 최저가 선정"의 근거 표시
@@ -230,35 +257,45 @@ export const EXTRA_DC = '3~5%'
 // PARTNER_IMAGES 는 "우리 차종 id → 제휴사 이미지 경로" 매핑이다. 비어 있으면
 // 전부 SVG 폴백이라 화면은 정상 동작한다 — 매핑을 채운 만큼만 사진으로 바뀐다.
 export const PARTNER_BASE = 'https://acrentcar.com/data/car'
+// 제휴사는 한 차량에 변형 3종을 둔다: _list(썸네일) · _main(상세 큰 이미지) · _detail_N(갤러리).
+// 매핑에는 변형 접미사를 뗀 기본 ID(예: '00000000461')만 담고, 쓰는 곳에서 필요한 변형을 만든다.
+export const IMG_VARIANTS = { list: '_list', main: '_main', detail: '_detail_1' }
+export const baseId = (v = '') => String(v).replace(/_(list|main|detail_\d+)$/, '')
+export const GALLERY_N = 3 // 상세 갤러리로 받을 _detail_1..N 장수
 // scripts/map-car-images.mjs 가 아래 두 마커 사이를 통째로 다시 쓴다.
 /* PARTNER_IMAGES:START */
 export const PARTNER_IMAGES = {
-  'avante': '00000000582_detail_1',
-  'avante-hev': '00000000583_detail_1',
-  'grandeur': '00000000498_detail_1',
-  'grandeur-hev': '00000000503_detail_1',
-  'ioniq5': '00000000558_detail_1',
-  'ioniq6': '00000000618_detail_1',
-  'ioniq9': '00000000667_detail_1',
-  'kona': '00000000429_detail_1',
-  'kona-ev': '00000000637_detail_1',
-  'kona-hev': '00000000485_detail_1',
-  'palisade': '00000000461_detail_1',
-  'palisade-hev': '00000000665_detail_1',
-  'santafe': '00000000447_detail_1',
-  'santafe-hev': '00000000562_detail_1',
-  'sonata': '00000000474_detail_1',
-  'sonata-hev': '00000000223_detail_1',
-  'staria': '00000000554_detail_1',
-  'staria-hev': '00000000653_detail_1',
-  'tucson': '00000000537_detail_1',
-  'tucson-hev': '00000000539_detail_1',
+  'avante': '00000000582',
+  'avante-hev': '00000000583',
+  'grandeur': '00000000498',
+  'grandeur-hev': '00000000503',
+  'ioniq5': '00000000558',
+  'ioniq6': '00000000618',
+  'ioniq9': '00000000667',
+  'kona': '00000000429',
+  'kona-ev': '00000000637',
+  'kona-hev': '00000000485',
+  'palisade': '00000000461',
+  'palisade-hev': '00000000665',
+  'santafe': '00000000447',
+  'santafe-hev': '00000000562',
+  'sonata': '00000000474',
+  'sonata-hev': '00000000223',
+  'staria': '00000000554',
+  'staria-hev': '00000000653',
+  'tucson': '00000000537',
+  'tucson-hev': '00000000539',
 }
 /* PARTNER_IMAGES:END */
 // 자동 매칭이 틀렸거나 못 잡은 차종만 여기서 바로잡는다 — 스크립트가 건드리지 않는다.
 export const MANUAL_IMAGES = {}
-export const carImagePath = (id) => `/assets/cars/${id}.jpg`
+// 자체 호스팅 경로 — 변형별로 파일을 따로 둔다
+export const carImagePath = (id, kind = 'list') => `/assets/cars/${id}${kind === 'list' ? '' : `-${kind}`}.jpg`
+export const galleryPath = (id, n) => `/assets/cars/${id}-g${n}.jpg`
 export const imagePathOf = (id) => MANUAL_IMAGES[id] ?? PARTNER_IMAGES[id] ?? null
-export const partnerImageUrl = (id) => (imagePathOf(id) ? `${PARTNER_BASE}/${imagePathOf(id)}` : null)
-// 자체 호스팅본이 받아졌는지는 빌드 산출물에만 있으므로, 화면은 <img onError> 로 SVG 폴백한다.
+// 제휴사 원본 URL — 다운로드 스크립트만 쓴다(화면은 절대 이 URL을 걸지 않는다)
+export const partnerUrl = (id, suffix) => {
+  const b = baseId(imagePathOf(id))
+  return b ? `${PARTNER_BASE}/${b}${suffix}` : null
+}
 export const hasPartnerImage = (id) => Boolean(imagePathOf(id))

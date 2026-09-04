@@ -3,7 +3,7 @@
 // → 금주의 특가차량 → "모든 리스·렌트사 견적 비교" 근거. 계산은 lib/cars.js 한 곳.
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { CAR_BRANDS, ORIGINS, CAR_MODELS, SPECIALS, CAPITALS, EXTRA_DC, carBrand, carFrom, manwon, carImagePath, hasPartnerImage } from '../../lib/cars'
+import { CAR_BRANDS, ORIGINS, CAR_MODELS, SPECIALS, CAPITALS, EXTRA_DC, carBrand, carFrom, manwon, carImagePath, galleryPath, hasPartnerImage, GALLERY_N, RENT_LABEL } from '../../lib/cars'
 import { won } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 
@@ -64,7 +64,7 @@ export default function Cars() {
                 {kind !== 'rent' && <div className="tnum text-[12.5px] font-bold text-primary-text">리스 월 {manwon(q.lease)} 만원 ~</div>}
                 {kind !== 'lease' && (q.rent !== null
                   ? <div className="tnum text-[12.5px] font-bold text-orange-text">렌트 월 {manwon(q.rent)} 만원 ~</div>
-                  : <div className="text-[12.5px] font-bold text-faint">렌트상담</div>)}
+                  : <div className={`text-[12.5px] font-bold ${q.rentState === 'none' ? 'text-disabled' : 'text-faint'}`}>{RENT_LABEL[q.rentState]}</div>)}
               </div>
             </Link>
           ))}
@@ -113,17 +113,36 @@ export default function Cars() {
 
 // 차량 이미지 — 자체 호스팅 사진이 있으면 사진, 없으면(또는 로드 실패) SVG 실루엣.
 // 제휴사 URL 을 직접 걸지 않는다: 그쪽 서버가 죽거나 경로가 바뀌면 목록이 통째로 빈다.
-export function CarImage({ model, size = 96 }) {
+export function CarImage({ model, size = 96, kind = 'list' }) {
   const [err, setErr] = useState(false)
-  if (hasPartnerImage(model.id) && !err) {
-    return (
-      <div className="flex justify-center py-1" style={{ height: size * 0.56 }}>
-        <img src={carImagePath(model.id)} alt={model.name} loading="lazy" onError={() => setErr(true)}
-          className="h-full w-auto object-contain" />
-      </div>
-    )
-  }
-  return <CarArt fuel={model.fuel} seg={model.seg} size={size} />
+  // 파일이 아직 없으면(다운로드 전·실패) onError 로 SVG 실루엣으로 내려앉는다.
+  // 껍데기는 항상 남겨 어떤 변형을 쓰기로 했는지 드러낸다 — 파일 유무와 무관하게 검증 가능하다.
+  const src = hasPartnerImage(model.id) ? carImagePath(model.id, kind) : ''
+  return (
+    <div className="flex justify-center py-1" data-t="car-photo" data-kind={kind} data-src={src}
+      style={{ height: size * 0.56 }}>
+      {src && !err
+        ? <img src={src} alt={model.name} loading="lazy" onError={() => setErr(true)} className="h-full w-auto object-contain" />
+        : <CarArt fuel={model.fuel} seg={model.seg} size={size} />}
+    </div>
+  )
+}
+
+// 상세 갤러리 — 장수는 차량마다 달라서, 없는 장은 로드 실패 시 스스로 빠진다.
+export function CarGallery({ model }) {
+  const [dead, setDead] = useState([])
+  if (!hasPartnerImage(model.id)) return null
+  const all = Array.from({ length: GALLERY_N }, (_, i) => i + 1)
+  const shots = all.filter((n) => !dead.includes(n))
+  return (
+    <div className="mt-3 grid grid-cols-3 gap-1.5" data-t="car-gallery" data-shots={all.length} data-alive={shots.length}>
+      {shots.map((n) => (
+        <img key={n} src={galleryPath(model.id, n)} alt={`${model.name} ${n}`} loading="lazy"
+          onError={() => setDead((d) => [...d, n])}
+          className="h-[62px] w-full rounded-field bg-cream object-cover" />
+      ))}
+    </div>
+  )
 }
 
 // 차량 일러스트 — CDN 없이 SVG 한 장. 세그먼트로 실루엣, 연료로 액센트만 바꾼다.

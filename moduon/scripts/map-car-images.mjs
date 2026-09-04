@@ -14,7 +14,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { dirname, join, extname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { CAR_MODELS, PARTNER_IMAGES } from '../src/lib/cars.js'
+import { CAR_MODELS, PARTNER_IMAGES, baseId } from '../src/lib/cars.js'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const target = join(root, 'src', 'lib', 'cars.js')
@@ -63,7 +63,7 @@ const pairs = []
 if (isCsv) {
   for (const line of text.split(/\r?\n/)) {
     const [name, path] = line.split(',').map((x) => (x ?? '').trim().replace(/^"|"$/g, ''))
-    if (name && path && !/모델|이미지/.test(name)) pairs.push({ name, path: path.replace(/^.*\/data\/car\//, '') })
+    if (name && path && !/모델|이미지/.test(name)) pairs.push({ name, path: baseId(path.replace(/^.*\/data\/car\//, '')) })
   }
 } else {
   // ① 정확 추출 — <img> 태그에서 src(/data/car/…)와 alt 를 함께 읽는다.
@@ -72,7 +72,8 @@ if (isCsv) {
   for (const tag of text.match(/<img\b[^>]*>/gi) ?? []) {
     const src = tag.match(/\bsrc\s*=\s*["']([^"']*\/data\/car\/[A-Za-z0-9_.-]+)["']/i)
     if (!src) continue
-    const path = src[1].replace(/^.*\/data\/car\//, '')
+    // 변형 접미사(_list/_main/_detail_N)를 떼고 기본 ID 만 저장한다 — 쓰는 쪽에서 변형을 만든다
+    const path = baseId(src[1].replace(/^.*\/data\/car\//, ''))
     const alt = tag.match(/\balt\s*=\s*["']([^"']*)["']/i)?.[1] ?? ''
     const fields = alt.split(',').map((x) => x.trim()).filter(Boolean)
     // 마지막이 가격(…원)이면 그 앞이 모델명. 아니면 가장 그럴듯한 한글 필드를 쓴다.
@@ -87,7 +88,7 @@ if (isCsv) {
       const around = text.slice(Math.max(0, m.index - 600), m.index + 600)
       const names = [...around.matchAll(/[가-힣A-Za-z0-9][가-힣A-Za-z0-9 ]{1,24}/g)]
         .map((x) => x[0].trim()).filter((x) => /[가-힣]/.test(x) || /^[A-Z0-9-]{2,}$/.test(x))
-      pairs.push({ path: m[1], names })
+      pairs.push({ path: baseId(m[1]), names })
     }
     console.log('[map] alt 속성을 못 찾아 주변 텍스트 추정으로 진행합니다 — 결과를 꼭 확인하세요.')
   }

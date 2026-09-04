@@ -4,11 +4,11 @@
 // → 리스 월 / 렌트 월. 잔존가치는 숨기지 않고 함께 보여준다(계약 종료 시 부담).
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { carModel, carBrand, calcCar, trimsOf, optionsOf, DOWN_RATES, TERMS, BASIS, RESIDUAL } from '../../lib/cars'
+import { carModel, carBrand, calcCar, trimsOf, optionsOf, DOWN_RATES, TERMS, BASIS, residualRate, RENT_LABEL } from '../../lib/cars'
 import { won } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import ApplyChoiceModal from '../../components/ApplyChoiceModal'
-import { CarImage } from './Cars'
+import { CarImage, CarGallery } from './Cars'
 
 export default function CarDetail() {
   const { model: id } = useParams()
@@ -45,7 +45,7 @@ function CarDetailInner() {
       <div className="pt-8 sm:pt-12">
         <nav className="text-[12px] text-faint"><Link to="/cars" className="hover:text-primary-text">렌트·리스</Link> › <Link to={`/cars?brand=${model.brand}`} className="hover:text-primary-text">{brand.name}</Link> › {model.name}</nav>
         <h1 className="mt-1 text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">{brand.name} {model.name}</h1>
-        <p className="mt-1 text-[13px] text-muted">{model.seg} · {model.fuel === 'ev' ? '전기' : model.fuel === 'hev' ? '하이브리드' : '가솔린'}{model.rent === false && ' · 렌트는 상담으로 안내드려요'}</p>
+        <p className="mt-1 text-[13px] text-muted">{model.seg} · {model.fuel === 'ev' ? '전기' : model.fuel === 'hev' ? '하이브리드' : '가솔린'}{q.rentState === 'none' ? ' · 이 차종은 장기렌터카를 취급하지 않아요' : q.rentState === 'consult' ? ' · 렌트는 물량 확인 후 안내드려요' : ''}</p>
         <div className="mt-3 rounded-field bg-tint px-4 py-2.5 text-[12.5px] font-semibold leading-5 text-primary-text">
           아래 견적은 일반적인 조건·일반 신용·할인 미포함 기준으로, 실제 견적은 더 낮아질 수 있습니다.
         </div>
@@ -140,7 +140,7 @@ function CarDetailInner() {
           <section className="rounded-card border border-line bg-white p-5 sm:p-6">
             <h2 className="text-[15px] font-bold text-ink">계약 전에 꼭 확인하세요</h2>
             <ul className="mt-3 flex flex-col gap-2 text-[12.5px] leading-5 text-label">
-              <li className="flex gap-2"><span className="text-primary-text">·</span><span><b className="text-ink">잔존가치 {won(q.residual)}</b>는 계약 종료 시점에 인수하거나 반납으로 정산하는 금액입니다. 기간이 짧을수록 월 납입금은 낮지만 잔존가치가 커요 — {term}개월은 총차량가격의 {Math.round((RESIDUAL[term] ?? 0) * 100)}%.</span></li>
+              <li className="flex gap-2"><span className="text-primary-text">·</span><span><b className="text-ink">잔존가치 {won(q.residual)}</b>는 계약 종료 시점에 인수하거나 반납으로 정산하는 금액입니다. 기간이 짧을수록 월 납입금은 낮지만 잔존가치가 커요 — {term}개월은 총차량가격의 {Math.round(residualRate(model.seg, term) * 100)}%.</span></li>
               <li className="flex gap-2"><span className="text-primary-text">·</span><span><b className="text-ink">리스</b>는 취등록세·공채·탁송료가 별도이거나 원금에 포함되고(약 {won(q.acquisition)} 상당), <b className="text-ink">렌트</b>는 취등록세·자동차세·보험료·탁송료가 월 요금에 포함됩니다(VAT 포함).</span></li>
               <li className="flex gap-2"><span className="text-primary-text">·</span><span>중도 해지 시 잔여 기간 리스료의 일부와 위약금이 발생합니다. 승계·반납 조건은 캐피탈사마다 달라 상담에서 확인해 드려요.</span></li>
               <li className="flex gap-2"><span className="text-primary-text">·</span><span>주행거리 약정(보통 연 2만km)을 넘기면 추가 정산금이 붙습니다.</span></li>
@@ -162,7 +162,7 @@ function CarDetailInner() {
           <div><div className="text-[11px] font-semibold text-faint">리스 월</div><div className="tnum text-[22px] font-extrabold tracking-tight text-primary-text">{won(q.lease)}</div></div>
           <div className="flex gap-2">
             <button onClick={() => setAsk('lease')} className="h-12 rounded-btn bg-primary px-5 text-[14px] font-extrabold text-white">리스 상담신청</button>
-            {q.rent !== null && <button onClick={() => setAsk('rent')} className="h-12 rounded-btn bg-orange px-5 text-[14px] font-extrabold text-white">렌트 상담신청</button>}
+            {q.rentState !== 'none' && <button onClick={() => setAsk('rent')} className="h-12 rounded-btn bg-orange px-5 text-[14px] font-extrabold text-white">렌트 상담신청</button>}
           </div>
         </div>
       </div>
@@ -176,7 +176,7 @@ function CarDetailInner() {
 function Summary({ q, model, onApply, compact }) {
   return (
     <>
-      {!compact && <CarImage model={model} size={150} />}
+      {!compact && <><CarImage model={model} size={220} kind="main" /><CarGallery model={model} /></>}
       <div className="text-[15px] font-bold leading-5 text-ink">{q.trim.name}</div>
       <div className="mt-3 rounded-field bg-cream/70 p-3.5 text-[13px]">
         <Row l="총차량가격" v={won(q.total)} bold />
@@ -196,10 +196,12 @@ function Summary({ q, model, onApply, compact }) {
         <span className="text-[14px] font-bold text-ink">렌트 월</span>
         {q.rent !== null
           ? <span><span className="tnum text-[28px] font-extrabold tracking-[-1px] text-orange-text" data-t="car-rent">{won(q.rent)}</span><span className="text-[12px] text-faint"> ~</span></span>
-          : <span className="text-[15px] font-bold text-faint" data-t="car-rent">렌트상담</span>}
+          : <span className={`text-[15px] font-bold ${q.rentState === 'none' ? 'text-disabled' : 'text-faint'}`} data-t="car-rent">{RENT_LABEL[q.rentState]}</span>}
       </div>
       <div className="text-right text-[11px] text-faint">취등록세·공채·자동차세·보험료·탁송료 포함, VAT 포함</div>
-      <button onClick={() => onApply('rent')} data-t="car-apply-rent" className="mt-2 h-12 w-full rounded-btn bg-orange text-[15px] font-extrabold text-white transition-colors hover:brightness-95">렌트 상담신청</button>
+      {q.rentState !== 'none' && (
+        <button onClick={() => onApply('rent')} data-t="car-apply-rent" className="mt-2 h-12 w-full rounded-btn bg-orange text-[15px] font-extrabold text-white transition-colors hover:brightness-95">렌트 상담신청</button>
+      )}
 
       <p className="mt-3 text-center text-[11px] leading-4 text-label">{LEGAL.quote} 고객의 신용·조건에 따라 실제 요금은 더 낮아질 수 있습니다.</p>
     </>

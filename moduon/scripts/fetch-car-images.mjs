@@ -15,7 +15,7 @@
 import { mkdirSync, existsSync, writeFileSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { PARTNER_IMAGES, MANUAL_IMAGES, PARTNER_BASE } from '../src/lib/cars.js'
+import { PARTNER_IMAGES, MANUAL_IMAGES, PARTNER_BASE, baseId, GALLERY_N } from '../src/lib/cars.js'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const dir = join(root, 'public', 'assets', 'cars')
@@ -33,40 +33,53 @@ mkdirSync(dir, { recursive: true })
 let manifest = {}
 try { manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) } catch { /* 첫 실행 */ }
 
-let fresh = 0, same = 0, added = 0, fail = 0
+let fresh = 0, same = 0, added = 0, fail = 0, missing = 0
 const next = {}
 
-await Promise.all(entries.map(async ([id, path]) => {
-  const dest = join(dir, `${id}.jpg`)
-  const prev = manifest[id]
+// 한 차량당 받는 파일: 목록 썸네일(_list) · 상세 큰 이미지(_main) · 갤러리(_detail_1..N)
+const variantsOf = (id) => [
+  { key: id, suffix: '_list', required: true },
+  { key: `${id}-main`, suffix: '_main', required: true },
+  ...Array.from({ length: GALLERY_N }, (_, i) => ({ key: `${id}-g${i + 1}`, suffix: `_detail_${i + 1}`, required: false })),
+]
+
+async function grab({ key, suffix, required }, base) {
+  const dest = join(dir, `${key}.jpg`)
+  const prev = manifest[key]
   const onDisk = existsSync(dest)
-  // 매핑 경로가 바뀌었으면(차종 교체) 검증자를 버리고 새로 받는다
-  const reusable = !force && onDisk && prev && prev.path === path
+  const reusable = !force && onDisk && prev && prev.base === base
   const headers = { 'User-Agent': 'moduon-asset-fetch' }
   if (reusable && prev.etag) headers['If-None-Match'] = prev.etag
   if (reusable && prev.lastModified) headers['If-Modified-Since'] = prev.lastModified
 
   try {
-    const res = await fetch(`${PARTNER_BASE}/${path}`, { headers })
-    if (res.status === 304) { same++; next[id] = prev; return }
+    const res = await fetch(`${PARTNER_BASE}/${base}${suffix}`, { headers })
+    if (res.status === 304) { same++; next[key] = prev; return }
+    // 갤러리 장수는 차량마다 다르다 — 없는 장은 정상이며 조용히 넘어간다
+    if (res.status === 404 && !required) { missing++; return }
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const buf = Buffer.from(await res.arrayBuffer())
-    if (buf.length < 1024) throw new Error(`too small (${buf.length}B) — 이미지가 아닐 수 있음`)
-    // 검증자가 없는 서버도 있다 — 내용이 같으면 파일을 건드리지 않는다(불필요한 재배포 방지)
+    if (buf.length < 1024) { if (!required) { missing++; return } throw new Error(`too small (${buf.length}B)`) }
     const unchanged = onDisk && statSync(dest).size === buf.length && Buffer.compare(readFileSync(dest), buf) === 0
     if (!unchanged) writeFileSync(dest, buf)
     if (!onDisk) added++
     else if (unchanged) same++
     else fresh++
-    next[id] = { path, etag: res.headers.get('etag') ?? null, lastModified: res.headers.get('last-modified') ?? null, size: buf.length, fetchedAt: new Date().toISOString() }
+    next[key] = { base, etag: res.headers.get('etag') ?? null, lastModified: res.headers.get('last-modified') ?? null, size: buf.length, fetchedAt: new Date().toISOString() }
   } catch (e) {
+    if (!required) { missing++; return }
     fail++
-    if (prev && onDisk) { next[id] = prev; console.warn(`[cars] ${id} 갱신 실패 (${e.message}) — 이전 이미지를 유지합니다`) }
-    else console.warn(`[cars] ${id} 다운로드 실패 (${e.message}) — 이 차종은 SVG 실루엣으로 표시됩니다`)
+    if (prev && onDisk) { next[key] = prev; console.warn(`[cars] ${key} 갱신 실패 (${e.message}) — 이전 이미지를 유지합니다`) }
+    else console.warn(`[cars] ${key} 다운로드 실패 (${e.message}) — SVG 실루엣으로 표시됩니다`)
   }
+}
+
+await Promise.all(entries.flatMap(([id, path]) => {
+  const base = baseId(path)
+  return variantsOf(id).map((v) => grab(v, base))
 }))
 
 try { writeFileSync(manifestPath, JSON.stringify(next, null, 2) + '\n') } catch { /* 무시 */ }
 const changed = added + fresh
-console.log(`[cars] 차량 이미지 — 신규 ${added} · 갱신 ${fresh} · 변경없음 ${same} · 실패 ${fail}`)
+console.log(`[cars] 차량 이미지 — 신규 ${added} · 갱신 ${fresh} · 변경없음 ${same} · 없는 갤러리 ${missing} · 실패 ${fail}`)
 if (changed > 0) console.log(`[cars] ${changed}건이 바뀌었습니다 — 배포하면 사이트에 반영됩니다.`)
