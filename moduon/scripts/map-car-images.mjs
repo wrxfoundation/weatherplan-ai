@@ -1,9 +1,10 @@
 // ─── 제휴사 차량 이미지 매핑 자동 생성 ────────────────────────────────────
 // 제휴사 목록 페이지에서 "차종명 ↔ 이미지 경로"를 뽑아 cars.js 의 PARTNER_IMAGES 를
-// 다시 쓴다. 손으로 54줄을 적지 않기 위한 도구다.
+// 다시 쓴다. 손으로 58줄을 적지 않기 위한 도구다.
 //
 //   node scripts/map-car-images.mjs ./현대.htm ./기아.htm https://…   # 여러 개 한 번에
 //   node scripts/map-car-images.mjs ./saved.html        # 브라우저로 저장한 페이지
+//   node scripts/map-car-images.mjs ./saved.mhtml       # 크롬 '웹페이지, 단일 파일'
 //   node scripts/map-car-images.mjs ./list.csv          # 모델명,이미지경로 (헤더 무시)
 //   node scripts/map-car-images.mjs --replace ./all.htm # 기존 매핑을 버리고 새로 시작
 //
@@ -37,6 +38,25 @@ if (sources.length === 0) {
   process.exit(1)
 }
 
+// 크롬의 "웹페이지, 단일 파일(.mhtml)" 은 quoted-printable 로 감싼 MIME 묶음이다.
+// 이미지까지 통째로 들어 있어 그냥 읽으면 <img> 태그가 =3D 같은 이스케이프로 깨진다.
+// text/html 파트만 골라 디코딩해서 평범한 HTML 로 되돌린다.
+const looksMhtml = (s) => /content-type:\s*multipart\/related/i.test(s.slice(0, 4096))
+const unQp = (s) => s
+  .replace(/=\r?\n/g, '')                                                   // 소프트 줄바꿈
+  .replace(/=([0-9A-Fa-f]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16)))
+function decodeMhtml(raw) {
+  const boundary = raw.match(/boundary="?([^"\r\n;]+)"?/i)?.[1]
+  if (!boundary) return raw
+  const html = raw.split(`--${boundary}`).filter((p) => /content-type:\s*text\/html/i.test(p))
+  if (html.length === 0) return raw
+  return html.map((part) => {
+    const body = part.match(/\r?\n\r?\n([\s\S]*)$/)?.[1] ?? ''
+    const decoded = /content-transfer-encoding:\s*quoted-printable/i.test(part) ? unQp(body) : body
+    return Buffer.from(decoded, 'latin1').toString('utf8')   // 각 =XX 는 UTF-8 바이트 하나
+  }).join('\n')
+}
+
 // ── 1. 원본 확보 (여러 개를 이어 붙여 한 번에 훑는다)
 const chunks = []
 for (const src of sources) {
@@ -49,8 +69,15 @@ for (const src of sources) {
     } catch (e) { console.error(`[map] 실패: ${e.message} — ${src}`); continue }
   } else {
     if (!existsSync(src)) { console.error(`[map] 파일이 없습니다: ${src}`); continue }
-    console.log(`[map] 읽는 중: ${src}`)
-    chunks.push(readFileSync(src, 'utf8'))
+    // base64 이미지 파트가 섞여 있으므로 먼저 latin1 로 읽고, 형식을 보고 해석한다
+    const raw = readFileSync(src).toString('latin1')
+    if (looksMhtml(raw)) {
+      console.log(`[map] 읽는 중(mhtml): ${src}`)
+      chunks.push(decodeMhtml(raw))
+    } else {
+      console.log(`[map] 읽는 중: ${src}`)
+      chunks.push(readFileSync(src, 'utf8'))
+    }
   }
 }
 if (chunks.length === 0) { console.error('[map] 읽을 수 있는 원본이 없습니다.'); process.exit(1) }
@@ -80,18 +107,28 @@ if (isCsv) {
     const name = /원$/.test(fields.at(-1) ?? '') ? fields.at(-2) : fields.filter((f) => /[가-힣]/.test(f)).at(-1)
     if (name) pairs.push({ path, name })
   }
-  // ② 폴백 — alt 가 없는 사이트 구조면 경로 주변 한글 덩어리로 추정한다
+  // ② alt 가 비어 있는 저장본(크롬 mhtml 등) — 카드 구조로 정확히 뽑는다.
+  //    목록 카드는 <img> 바로 뒤에 모델명이 오고, 그 다음이 값(리스 월 N 만원 / 렌트불가 …)이다.
+  //    "주변 한글 덩어리" 추정은 쓰지 않는다 — 스포티지가 스포티지 하이브리드 사진을 집어간 적이 있다.
   if (pairs.length === 0) {
-    const re = /(?:https?:\/\/[^"'\s]*)?\/data\/car\/([A-Za-z0-9_.-]+)/g
+    const re = /<img\b[^>]*\bsrc\s*=\s*["'][^"']*\/data\/car\/([A-Za-z0-9_.-]+)["'][^>]*>/gi
     let m
     while ((m = re.exec(text))) {
-      const around = text.slice(Math.max(0, m.index - 600), m.index + 600)
-      const names = [...around.matchAll(/[가-힣A-Za-z0-9][가-힣A-Za-z0-9 ]{1,24}/g)]
-        .map((x) => x[0].trim()).filter((x) => /[가-힣]/.test(x) || /^[A-Z0-9-]{2,}$/.test(x))
-      pairs.push({ path: baseId(m[1]), names })
+      const after = text.slice(m.index + m[0].length, m.index + m[0].length + 300)
+        .replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim()
+      // 값 표기가 시작되는 지점에서 자르면 남는 앞부분이 모델명이다
+      const name = after.split(/리스\s*월|리스상담|렌트\s*월|렌트불가|렌트상담|월\s*\d/)[0].trim()
+      if (name) pairs.push({ path: baseId(m[1]), name })
     }
-    console.log('[map] alt 속성을 못 찾아 주변 텍스트 추정으로 진행합니다 — 결과를 꼭 확인하세요.')
+    if (pairs.length) console.log('[map] alt 가 비어 있어 카드 구조(<img> 다음 텍스트)로 읽었습니다.')
   }
+}
+// 같은 카드가 목록·상세 이미지를 둘 다 걸어두므로 경로 기준으로 한 번만 남긴다
+{
+  const byPath = new Map()
+  for (const p of pairs) if (!byPath.has(p.path)) byPath.set(p.path, p)
+  pairs.length = 0
+  pairs.push(...byPath.values())
 }
 console.log(`[map] 이미지 경로 후보 ${pairs.length}건`)
 if (pairs.length === 0) {
@@ -109,11 +146,24 @@ const models = [...CAR_MODELS].sort((a, b) => norm(b.name).length - norm(a.name)
 const found = replace ? {} : { ...PARTNER_IMAGES }
 const usedPaths = new Set(Object.values(found))
 const before = Object.keys(found).length
+const loose = []   // 부분일치로 주운 것 — 눈으로 확인하라고 따로 알린다
 
+// 1차: 이름표가 차종명과 **정확히** 같을 때만 짝짓는다.
+// "스포티지"가 "스포티지 하이브리드" 카드를 먼저 집어가는 사고를 여기서 막는다.
+const exactNames = new Set(pairs.map((p) => norm(p.name)))
 for (const p of pairs) {
-  const hay = norm((p.name ? [p.name] : p.names ?? []).join(' '))
-  const hit = models.find((mo) => !found[mo.id] && hay.includes(norm(mo.name)))
-  if (hit && !usedPaths.has(p.path)) { found[hit.id] = p.path; usedPaths.add(p.path) }
+  if (usedPaths.has(p.path)) continue
+  const hit = models.find((mo) => !found[mo.id] && norm(mo.name) === norm(p.name))
+  if (hit) { found[hit.id] = p.path; usedPaths.add(p.path) }
+}
+// 2차: 남은 차종만 부분일치로 줍는다. 단 다른 차종과 정확히 일치하는 이름표는 건드리지 않는다
+// (그 이름표는 그 차종의 것이지, 이름이 짧은 이 차종의 것이 아니다).
+for (const p of pairs) {
+  if (usedPaths.has(p.path)) continue
+  if (models.some((mo) => norm(mo.name) === norm(p.name))) continue
+  const hay = norm(p.name)
+  const hit = models.find((mo) => !found[mo.id] && !exactNames.has(norm(mo.name)) && hay.includes(norm(mo.name)))
+  if (hit) { found[hit.id] = p.path; usedPaths.add(p.path); loose.push([hit.name, p.name]) }
 }
 
 const matched = Object.keys(found)
@@ -121,6 +171,10 @@ const missing = CAR_MODELS.filter((m) => !found[m.id] && !MANUAL_IMAGES[m.id])
 const newly = matched.length - before
 console.log(`\n[map] 매칭 ${matched.length} / ${CAR_MODELS.length}${replace ? '' : ` (이번에 새로 ${newly}건)`}`)
 for (const id of matched.sort()) console.log(`  ✓ ${CAR_MODELS.find((m) => m.id === id).name.padEnd(18)} → ${found[id]}`)
+if (loose.length) {
+  console.log(`\n[map] 부분일치로 주운 ${loose.length}건 — 이름이 정확히 같지 않습니다. 확인하세요.`)
+  for (const [ours, theirs] of loose) console.log(`  ? ${ours}  ←  "${theirs}"`)
+}
 if (missing.length) {
   console.log(`\n[map] 못 찾은 차종 ${missing.length}건 — SVG 실루엣으로 표시됩니다. 필요하면 cars.js 의 MANUAL_IMAGES 에 직접 넣으세요.`)
   console.log('  ' + missing.map((m) => m.name).join(', '))

@@ -265,13 +265,21 @@ export const GALLERY_N = 3 // 상세 갤러리로 받을 _detail_1..N 장수
 // scripts/map-car-images.mjs 가 아래 두 마커 사이를 통째로 다시 쓴다.
 /* PARTNER_IMAGES:START */
 export const PARTNER_IMAGES = {
+  'actyon': '00000000663',
   'avante': '00000000582',
   'avante-hev': '00000000583',
+  'carnival': '00000000527',
+  'ev6': '00000000560',
+  'g80': '00000000612',
+  'g90': '00000000609',
   'grandeur': '00000000498',
   'grandeur-hev': '00000000503',
+  'gv70': '00000000610',
+  'gv80': '00000000611',
   'ioniq5': '00000000558',
   'ioniq6': '00000000618',
   'ioniq9': '00000000667',
+  'k8': '00000000553',
   'kona': '00000000429',
   'kona-ev': '00000000637',
   'kona-hev': '00000000485',
@@ -281,17 +289,17 @@ export const PARTNER_IMAGES = {
   'santafe-hev': '00000000562',
   'sonata': '00000000474',
   'sonata-hev': '00000000223',
+  'sorento': '00000000513',
+  'sportage': '00000000564',
   'staria': '00000000554',
   'staria-hev': '00000000653',
+  'torres': '00000000593',
   'tucson': '00000000537',
   'tucson-hev': '00000000539',
 }
 /* PARTNER_IMAGES:END */
 // 자동 매칭이 틀렸거나 못 잡은 차종만 여기서 바로잡는다 — 스크립트가 건드리지 않는다.
-export const MANUAL_IMAGES = {
-  'g80': '00000000612',
-  'gv80': '00000000611',
-}
+export const MANUAL_IMAGES = {}
 // 자체 호스팅 경로 — 변형별로 파일을 따로 둔다
 export const carImagePath = (id, kind = 'list') => `/assets/cars/${id}${kind === 'list' ? '' : `-${kind}`}.jpg`
 export const galleryPath = (id, n) => `/assets/cars/${id}-g${n}.jpg`

@@ -83,7 +83,7 @@ export default function Cars() {
                 <span className="rounded bg-orange px-2 py-0.5 text-[11px] font-bold text-white">{model.special.badge}</span>
                 {model.id === 'gv80' && <span className="rounded bg-primary px-2 py-0.5 text-[11px] font-bold text-white">한정수량</span>}
               </div>
-              <CarImage model={model} size={110} />
+              <CarImage model={model} size={132} />
               <div className="text-[17px] font-extrabold text-ink">{model.name}</div>
               <div className="text-[12.5px] text-muted">{model.special.trim}</div>
               <div className="mt-3 flex items-baseline justify-between">
@@ -113,7 +113,7 @@ export default function Cars() {
 
 // 차량 이미지 — 자체 호스팅 사진이 있으면 사진, 없으면(또는 로드 실패) SVG 실루엣.
 // 제휴사 URL 을 직접 걸지 않는다: 그쪽 서버가 죽거나 경로가 바뀌면 목록이 통째로 빈다.
-export function CarImage({ model, size = 96, kind = 'list' }) {
+export function CarImage({ model, size = 116, kind = 'list' }) {
   const [err, setErr] = useState(false)
   // 파일이 아직 없으면(다운로드 전·실패) onError 로 SVG 실루엣으로 내려앉는다.
   // 껍데기는 항상 남겨 어떤 변형을 쓰기로 했는지 드러낸다 — 파일 유무와 무관하게 검증 가능하다.
@@ -139,14 +139,14 @@ export function CarGallery({ model }) {
       {shots.map((n) => (
         <img key={n} src={galleryPath(model.id, n)} alt={`${model.name} ${n}`} loading="lazy"
           onError={() => setDead((d) => [...d, n])}
-          className="h-[62px] w-full rounded-field bg-cream object-cover" />
+          className="h-[74px] w-full rounded-field bg-cream object-cover" />
       ))}
     </div>
   )
 }
 
 // 차량 일러스트 — CDN 없이 SVG 한 장. 세그먼트로 실루엣, 연료로 액센트만 바꾼다.
-export function CarArt({ fuel = 'gas', seg = 'SUV', size = 96 }) {
+export function CarArt({ fuel = 'gas', seg = 'SUV', size = 116 }) {
   const accent = fuel === 'ev' ? '#17B26A' : fuel === 'hev' ? '#5377D6' : '#F97B4C'
   const tall = seg === 'SUV' || seg === 'MPV'
   return (
