@@ -128,7 +128,13 @@ export function bestOffer({ deviceId, cur = '', planId = 'choice90', months = 24
   const offers = MNO.map((carrier) => {
     const join = cur === carrier ? 'chg' : 'mnp'
     const q = calcPhoneQuote({ deviceId, planId, join, method: 'support', months, storage, carrier })
-    return { carrier, join, total: q.total, support: q.publicSupport + q.extraSupport, q }
+    const support = q.publicSupport + q.extraSupport
+    return {
+      carrier, join, total: q.total, support, q,
+      price: q.price,                  // 출고가(정가) — 카드에 취소선으로 표기
+      principal: q.principal,          // 지원금 뺀 실구매가
+      discountPct: q.price > 0 ? Math.round((support / q.price) * 100) : 0,
+    }
   }).sort((a, b) => a.total - b.total)
   const best = offers[0]
   const stay = offers.find((o) => o.join === 'chg') ?? null

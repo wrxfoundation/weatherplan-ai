@@ -28,8 +28,11 @@ function PhoneDetailInner() {
 
   // 기본값은 AI 추천(현 통신사 기준 최저) — 사용자가 통신사를 바꾸면 가입유형이 따라 바뀐다
   const rec = useMemo(() => bestOffer({ deviceId: device.id, cur: curMno, storage: sp.get('storage') }), [device.id, curMno]) // eslint-disable-line react-hooks/exhaustive-deps
-  const [carrier, setCarrier] = useState(rec.best.carrier)
-  const [join, setJoin] = useState(rec.best.join)
+  // 카드에서 특정 통신사 줄을 눌러 들어오면 그 조건으로 연다. 없으면 AI 추천(최저)이 기본.
+  const qCarrier = MNO.includes(sp.get('carrier')) ? sp.get('carrier') : null
+  const qJoin = JOIN_TYPES.some((j) => j.key === sp.get('join')) ? sp.get('join') : null
+  const [carrier, setCarrier] = useState(qCarrier ?? rec.best.carrier)
+  const [join, setJoin] = useState(qJoin ?? rec.best.join)
   const [storage, setStorage] = useState(device.storages.some((s) => s.key === sp.get('storage')) ? sp.get('storage') : device.storages[0].key)
   const [color, setColor] = useState(device.colors[0].name)
   const [method, setMethod] = useState('support')
