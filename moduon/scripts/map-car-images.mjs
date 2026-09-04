@@ -2,41 +2,65 @@
 // 제휴사 목록 페이지에서 "차종명 ↔ 이미지 경로"를 뽑아 cars.js 의 PARTNER_IMAGES 를
 // 다시 쓴다. 손으로 54줄을 적지 않기 위한 도구다.
 //
-//   node scripts/map-car-images.mjs https://acrentcar.com/…목록페이지
+//   node scripts/map-car-images.mjs ./현대.htm ./기아.htm https://…   # 여러 개 한 번에
 //   node scripts/map-car-images.mjs ./saved.html        # 브라우저로 저장한 페이지
 //   node scripts/map-car-images.mjs ./list.csv          # 모델명,이미지경로 (헤더 무시)
+//   node scripts/map-car-images.mjs --replace ./all.htm # 기존 매핑을 버리고 새로 시작
+//
+// 기본은 **병합**이다 — 기아 페이지만 넣어도 이미 잡힌 현대 매핑이 날아가지 않는다.
 //
 // 네트워크가 막힌 곳에서는 브라우저로 목록 페이지를 저장(Ctrl+S)해서 그 파일을 넘기면 된다.
 // 무엇을 찾았고 무엇을 못 찾았는지 전부 출력하므로, 쓰기 전에 눈으로 확인할 수 있다.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { dirname, join, extname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { CAR_MODELS } from '../src/lib/cars.js'
+import { CAR_MODELS, PARTNER_IMAGES } from '../src/lib/cars.js'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const target = join(root, 'src', 'lib', 'cars.js')
-const src = process.argv[2]
-if (!src) {
-  console.error('사용법: node scripts/map-car-images.mjs <목록페이지URL | 저장한 HTML | CSV>')
+const args = process.argv.slice(2)
+const replace = args.includes('--replace')
+const sources = args.filter((a) => !a.startsWith('--'))
+// 인자가 없으면 scripts/car-sources.txt 의 URL 목록을 쓴다(자동 갱신 경로)
+if (sources.length === 0) {
+  const listFile = join(root, 'scripts', 'car-sources.txt')
+  if (existsSync(listFile)) {
+    for (const line of readFileSync(listFile, 'utf8').split(/\r?\n/)) {
+      const t = line.trim()
+      if (t && !t.startsWith('#')) sources.push(t)
+    }
+  }
+}
+if (sources.length === 0) {
+  console.error('사용법: node scripts/map-car-images.mjs [--replace] <목록페이지URL | 저장한 HTML | CSV> ...')
+  console.error('또는 scripts/car-sources.txt 에 목록 페이지 URL 을 채우고 인자 없이 실행하세요.')
   process.exit(1)
 }
 
-// ── 1. 원본 확보
-let text
-if (/^https?:\/\//.test(src)) {
-  console.log(`[map] 가져오는 중: ${src}`)
-  const res = await fetch(src, { headers: { 'User-Agent': 'Mozilla/5.0 moduon-mapper' } })
-  if (!res.ok) { console.error(`[map] 실패: HTTP ${res.status}`); process.exit(1) }
-  text = await res.text()
-} else {
-  if (!existsSync(src)) { console.error(`[map] 파일이 없습니다: ${src}`); process.exit(1) }
-  text = readFileSync(src, 'utf8')
+// ── 1. 원본 확보 (여러 개를 이어 붙여 한 번에 훑는다)
+const chunks = []
+for (const src of sources) {
+  if (/^https?:\/\//.test(src)) {
+    console.log(`[map] 가져오는 중: ${src}`)
+    try {
+      const res = await fetch(src, { headers: { 'User-Agent': 'Mozilla/5.0 moduon-mapper' } })
+      if (!res.ok) { console.error(`[map] 실패: HTTP ${res.status} — ${src}`); continue }
+      chunks.push(await res.text())
+    } catch (e) { console.error(`[map] 실패: ${e.message} — ${src}`); continue }
+  } else {
+    if (!existsSync(src)) { console.error(`[map] 파일이 없습니다: ${src}`); continue }
+    console.log(`[map] 읽는 중: ${src}`)
+    chunks.push(readFileSync(src, 'utf8'))
+  }
 }
+if (chunks.length === 0) { console.error('[map] 읽을 수 있는 원본이 없습니다.'); process.exit(1) }
+const text = chunks.join('\n')
+const isCsv = sources.some((s) => extname(s).toLowerCase() === '.csv')
 
 // ── 2. "이미지 경로 + 근처 텍스트" 쌍 추출
 // CSV 는 모델명,경로 두 열로 본다. HTML 은 /data/car/… 경로와 같은 태그 블록의 한글을 짝짓는다.
 const pairs = []
-if (extname(src).toLowerCase() === '.csv') {
+if (isCsv) {
   for (const line of text.split(/\r?\n/)) {
     const [name, path] = line.split(',').map((x) => (x ?? '').trim().replace(/^"|"$/g, ''))
     if (name && path && !/모델|이미지/.test(name)) pairs.push({ name, path: path.replace(/^.*\/data\/car\//, '') })
@@ -80,8 +104,10 @@ if (pairs.length === 0) {
 // (팰리세이드 하이브리드가 팰리세이드보다 먼저 매칭돼야 한다).
 const norm = (s) => s.replace(/\s+/g, '').replace(/(더뉴|올뉴|신형|디올뉴|the ?new|all ?new)/gi, '').toLowerCase()
 const models = [...CAR_MODELS].sort((a, b) => norm(b.name).length - norm(a.name).length)
-const found = {}
-const usedPaths = new Set()
+// 기본은 병합 — 이번에 못 찾은 차종의 기존 매핑을 지우지 않는다
+const found = replace ? {} : { ...PARTNER_IMAGES }
+const usedPaths = new Set(Object.values(found))
+const before = Object.keys(found).length
 
 for (const p of pairs) {
   const hay = norm((p.name ? [p.name] : p.names ?? []).join(' '))
@@ -91,13 +117,15 @@ for (const p of pairs) {
 
 const matched = Object.keys(found)
 const missing = CAR_MODELS.filter((m) => !found[m.id])
-console.log(`\n[map] 매칭 ${matched.length} / ${CAR_MODELS.length}`)
-for (const id of matched) console.log(`  ✓ ${CAR_MODELS.find((m) => m.id === id).name.padEnd(18)} → ${found[id]}`)
+const newly = matched.length - before
+console.log(`\n[map] 매칭 ${matched.length} / ${CAR_MODELS.length}${replace ? '' : ` (이번에 새로 ${newly}건)`}`)
+for (const id of matched.sort()) console.log(`  ✓ ${CAR_MODELS.find((m) => m.id === id).name.padEnd(18)} → ${found[id]}`)
 if (missing.length) {
   console.log(`\n[map] 못 찾은 차종 ${missing.length}건 — SVG 실루엣으로 표시됩니다. 필요하면 cars.js 의 MANUAL_IMAGES 에 직접 넣으세요.`)
   console.log('  ' + missing.map((m) => m.name).join(', '))
 }
 if (matched.length === 0) { console.error('\n[map] 하나도 매칭되지 않아 파일을 쓰지 않았습니다.'); process.exit(1) }
+if (!replace && newly === 0) console.log('[map] 새로 잡힌 차종이 없습니다 — 기존 매핑을 그대로 유지합니다.')
 
 // ── 4. cars.js 의 마커 사이를 다시 쓴다
 const block = ['/* PARTNER_IMAGES:START */', 'export const PARTNER_IMAGES = {',
