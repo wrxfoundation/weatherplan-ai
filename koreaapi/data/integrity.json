@@ -1,10 +1,10 @@
 {
-  "generated": "2026-09-04T05:15:45.565260+00:00",
+  "generated": "2026-09-05T04:55:59.519280+00:00",
   "algorithm": "sha256",
-  "entities": 639,
-  "snapshots": 34122,
-  "dataset_hash": "8e9f93ced0fecde2df02381a0adcd288a8a55d052490daedaf2e4e3da3835c59",
-  "chain_head": "287aabd8c9dbd8556e4296f0d2f92e1f87cd3459ddc6bec8833e2676373ae2f5",
+  "entities": 641,
+  "snapshots": 34763,
+  "dataset_hash": "926f235682bc5212f70ef36711eff9039ed380d7e10f392c05884fc73d77ce5a",
+  "chain_head": "e96b80c0c2c31609dae42a46314f9fb33359ff85219805ed6c33c5e6bdf7af74",
   "onchain_anchor": {
     "method": "opentimestamps",
     "chain": "bitcoin",
