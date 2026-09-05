@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply font-sans text-body antialiased;
+    letter-spacing: -0.01em;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button, a, select, input[type='checkbox'] { touch-action: manipulation; }
+  button { @apply cursor-pointer; }
+  input, select, textarea { @apply outline-none; }
+}
+
+@layer utilities {
+  .tnum { font-variant-numeric: tabular-nums; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+  /* iOS 홈 인디케이터 안전영역 — 하단 고정 바·탭바 공용 */
+  .safe-b { padding-bottom: max(env(safe-area-inset-bottom), 0px); }
+  /* 홀로 선 소형 링크의 터치 타깃 확보 — WCAG 2.2 권장 44px, 줄 흐름을 밀지 않게 inline-flex */
+  .tap { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
+}
+
+/* iOS 사파리: 입력 폰트가 16px 미만이면 포커스 시 화면이 자동 확대된다 */
+@supports (-webkit-touch-callout: none) {
+  input, select, textarea { font-size: max(16px, 1em); }
+}
+
+/* 히어로 절약 칩 부유 애니메이션 */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+.animate-floaty { animation: floaty 4.2s ease-in-out infinite; }
+/* 돈주머니 — 경쾌하게 둥둥(상하 부유) */
+.animate-bagfloat { animation: floaty 3s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .animate-floaty, .animate-bagfloat { animation: none; }
+}
+
+/* 높이를 모르는 영역의 아코디언 — max-height 어림값 없이 grid-rows 전환.
+   클래스명을 'collapse'로 쓰면 Tailwind 내장 유틸과 충돌하므로 금지. */
+.smooth-open { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.24s ease, opacity 0.24s ease; }
+.smooth-open > * { min-height: 0; overflow: hidden; }
+.smooth-open.is-open { grid-template-rows: 1fr; opacity: 1; }
+
+/* ─── 유리 두께감 글라스모피즘 — 버튼 역할 카드/타일 공용 ─────────────
+   반투명 배경 + 배경 블러 + 다층 인셋 그림자로 '유리판 두께'를 연출.
+   상단 인셋 하이라이트=유리 윗면, 하단 인셋 그림자=단면 두께, 외부 그림자=부유감. */
+.glass-tile {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 1px rgba(36, 39, 46, 0.05),
+    0 6px 20px rgba(36, 39, 46, 0.07);
+  /* Material 표준 이징(0.4,0,0.2,1) — MDL 벤치마크 */
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1), background 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-tile:hover {
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px rgba(36, 39, 46, 0.06),
+    0 12px 30px rgba(83, 119, 214, 0.16);
+}
+/* 색이 있는 버튼(그라디언트) 위 유리 두께감 — 상단 하이라이트 림 + 하단 인셋 + 외부 그림자.
+   오버레이가 아닌 box-shadow라 버튼 안 텍스트를 가리지 않는다. */
+.glass-sheen {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.06),
+    0 8px 22px rgba(36, 39, 46, 0.10);
+}
+/* backdrop-filter 미지원 브라우저 폴백 — 불투명에 가깝게 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-tile { background: rgba(255, 255, 255, 0.92); }
+}
+/* 투명도 축소 선호 사용자 — 유리효과 대신 불투명 카드로 */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-tile { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* ─── 무료상담 CTA 주기적 반짝임 — 대각 하이라이트가 주기적으로 스쳐 지나감 ───
+   기본은 흰색 스윕(파란 버튼용). 밝은/흰 버튼에는 .shimmer-ink 를 더해 파란톤 스윕으로. */
+.shimmer-cta { position: relative; overflow: hidden; isolation: isolate; --shimmer: rgba(255, 255, 255, 0.55); }
+.shimmer-ink { --shimmer: rgba(83, 119, 214, 0.22); }
+.shimmer-green { --shimmer: rgba(23, 178, 106, 0.42); }
+.shimmer-cta::after {
+  content: '';
+  position: absolute; top: 0; left: -75%; height: 100%; width: 50%;
+  background: linear-gradient(100deg, transparent 0%, var(--shimmer) 50%, transparent 100%);
+  transform: skewX(-18deg);
+  pointer-events: none;
+  animation: shimmerSweep 5.5s ease-in-out infinite;
+}
+@keyframes shimmerSweep {
+  0%, 68%   { left: -75%; }
+  85%, 100% { left: 150%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-cta::after { display: none; animation: none; }
+  .glass-tile { transition: none; }
+}
+/* Tailwind 애니메이션 유틸(rise/live/rowflash/spin/bounce) — 모션 축소 선호 시 전면 정지 */
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise, .animate-live, .animate-rowflash, .animate-spin, .animate-bounce { animation: none !important; }
+}
+
+/* ─── 히어로 가격 절약 말풍선 — 꼬리 달린 speech bubble (부유 애니메이션은 .animate-floaty) ─── */
+.price-bubble {
+  position: relative;
+  background: #fff;
+  filter: drop-shadow(0 14px 30px rgba(83, 119, 214, 0.20));
+}
+.price-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  width: 15px;
+  height: 15px;
+  background: inherit;               /* 카드와 동일한 흰색 — drop-shadow가 꼬리까지 감싼다 */
+  transform: rotate(45deg);
+  border-bottom-right-radius: 3px;
+}
+.price-bubble.tail-left::after { left: 26px; }
+.price-bubble.tail-right::after { right: 26px; }
+
+/* ─── 버튼 유리 두께감 — 모든 버튼요소 공용 (약간의 glassmorphism) ───
+   상단 하이라이트 림(유리 윗면) + 하단 인셋(단면 두께) + 은은한 외부 그림자.
+   단일 box-shadow라 적용 시 기존 shadow-* 유틸을 대체한다(중복 지정 금지). */
+.glass-btn {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 2px rgba(36, 39, 46, 0.05),
+    0 1px 2.5px rgba(36, 39, 46, 0.07);
+}
+.glass-btn-cta {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.10),
+    0 2.5px 6px rgba(83, 119, 214, 0.30);
+}
+
+/* AI FAB — 볼륨감 있는 글라스(유리 구슬): 상단 광택림 + 하단 깊은 인셋 + 외부 글로우 */
+.glass-fab {
+  background: linear-gradient(158deg, #6E90E0 0%, #5377D6 46%, #4460C8 100%);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  box-shadow:
+    inset 0 3px 4px rgba(255, 255, 255, 0.6),
+    inset 0 -5px 9px rgba(28, 46, 110, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+    0 3px 7px rgba(83, 119, 214, 0.5),
+    0 1px 2.5px rgba(48, 72, 158, 0.4);
+}
+
+
+/* ─── 개인정보 가림 모드 (Ctrl+Shift+H 전역 토글 — 시연·화면공유용) ─── */
+html.pmask .pii { filter: blur(5px); user-select: none; pointer-events: none; }

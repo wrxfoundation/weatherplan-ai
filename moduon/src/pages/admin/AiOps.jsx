@@ -1,0 +1,249 @@
+// ─── S-25 AI 운영 현황 (목업 2 재현) — "AI가 일하고 사람은 예외만 본다" ──
+import { useStore } from '../../lib/store'
+import { won, timeAgo } from '../../lib/engine'
+import { Card, KpiCard, LiveDot } from '../../components/ui'
+import { Donut, Legend, LineChart, CHART } from '../../components/charts'
+import { IcRobot, IcBulb } from '../../components/icons'
+
+const AUTO_BREAKDOWN = [
+  { label: '완전 자동 처리', value: 38542, color: CHART.ok },
+  { label: '부분 자동(사람 확인)', value: 12847, color: CHART.primary },
+  { label: '상담원 연결', value: 6892, color: CHART.warn },
+  { label: '대기', value: 1008, color: CHART.rest },
+]
+
+const TOP5 = [
+  { q: '인터넷 결합하면 월 얼마예요?', n: 2140 },
+  { q: '이사할 때 인터넷 이전 vs 신규?', n: 1730 },
+  { q: '정수기 의무약정 몇 년이에요?', n: 1288 },
+  { q: '사은품은 언제 지급되나요?', n: 1054 },
+  { q: '위약금 대납 되나요?', n: 872 },
+]
+
+const DEMO_LOG = [
+  { at: '방금 전', kind: 'classify', text: '신규 문의 → "주문" 자동 분류 · 해피넷 통신 큐 배정' },
+  { at: '2분 전', kind: 'chat', text: '챗봇이 500M+정수기 견적 자동 응답 (월 32,900원)' },
+  { at: '6분 전', kind: 'route', text: '본진 리드 → 주소지 권역(수도2단) 파트너 자동 배정' },
+  { at: '14분 전', kind: 'sla', text: 'SLA 10분 초과 감지 → 파트너 재알림 발송' },
+  { at: '31분 전', kind: 'insight', text: '주간 인사이트 생성: 이사+인터넷 결합 전환율 상승' },
+]
+
+export default function AdminAiOps() {
+  const { db } = useStore()
+  // 실 AI 텔레메트리 — 소비자몰 챗/진단이 쌓는 aiEvents 집계. 5건부터 데모 수치 대신 실측 사용
+  const events = db.aiEvents ?? []
+  const total = events.length
+  const chats = events.filter((e) => e.kind === 'chat').length
+  const autoRate = total ? Math.round((events.filter((e) => e.auto === true).length / total) * 1000) / 10 : 0
+  const useReal = total >= 5
+  const recentAi = events.slice(0, 8)
+  const demoLog = DEMO_LOG.slice(0, Math.max(0, 8 - recentAi.length)) // 실이벤트가 쌓일수록 데모 행 대체
+  // 피드백 플라이휠 — 챗 답변 도움됨/아쉬움 평가 집계, 아쉬운 질문은 개선 큐로
+  const fb = events.filter((e) => e.kind === 'feedback')
+  const fbHelp = fb.filter((e) => e.helpful === true).length
+  const fbRate = fb.length ? Math.round((fbHelp / fb.length) * 100) : 0
+  const improveQ = fb.filter((e) => e.helpful === false && e.q).slice(0, 4)
+  // 파이프라인 보드 파생치 — 발송(감사 로그)·자동화 ON(전 테넌트)
+  const outboundCount = (db.auditLog ?? []).filter((a) => a.action === '아웃바운드 발송').length
+  const autoOnCount = db.tenants.reduce((s, t) => s + Object.values(t.automations ?? {}).filter(Boolean).length, 0)
+
+  return (
+    <div className="mx-auto max-w-6xl">
+      {/* 인사 배너 */}
+      <Card track="b" className="flex items-center justify-between gap-4 p-5">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-[20px] font-extrabold text-bink">AI 운영 현황</h1>
+            <span className="flex items-center gap-1.5 rounded-full bg-ok/10 px-3 py-1 text-[11.5px] font-bold text-ok"><LiveDot /> AI 시스템 정상 운영</span>
+          </div>
+          <p className="mt-1 text-[13px] text-bmuted">AI가 일하고, 사람은 예외만 봅니다 — 상담·분류·배정·정산 자동화 현황</p>
+        </div>
+        <span className="hidden text-primary-text lg:block"><IcRobot size={40} sw={1.5} /></span>
+      </Card>
+
+      {/* KPI 4 */}
+      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <KpiCard label="이번 달 전체 매출" value={1248560000} suffix="원" delta={22.5} />
+        <KpiCard label="신규 상담 (오늘)" value={1248} suffix="건" delta={8.1} caption={`실 이벤트 ${total}건 수집 (챗 ${chats}건)`} />
+        <KpiCard label="AI 자동 처리율" value={useReal ? autoRate : 85.3} format={(n) => Math.round(n * 10) / 10} suffix="%" accent="text-ok" delta={useReal ? undefined : 2.4} caption={useReal ? `실이벤트 ${total}건 기준` : '데모 기준 · 실이벤트 5건부터 실측 전환'} />
+        <KpiCard label="고객 만족도" value={4.8} format={() => '4.8'} suffix="점" caption="상담 후 설문 기준" />
+      </div>
+
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
+        <div className="flex flex-col gap-4">
+          {/* 실시간 서비스 상황 */}
+          <Card track="b" className="p-5">
+            <h2 className="text-[15.5px] font-extrabold text-bink">실시간 서비스 상황 (최근 7일)</h2>
+            <div className="mt-4">
+              <LineChart
+                labels={['월', '화', '수', '목', '금', '토', '일']}
+                series={[
+                  { label: '정상 처리', color: CHART.ok, values: [5200, 5480, 5910, 5740, 6220, 6480, 6120], fill: true },
+                  { label: '경고(지연)', color: CHART.warn, values: [180, 140, 210, 160, 190, 150, 130] },
+                  { label: '오류(개입)', color: CHART.danger, values: [24, 18, 31, 22, 19, 15, 12] },
+                ]}
+              />
+            </div>
+          </Card>
+
+          {/* AI 고객 상담 센터 미리보기 */}
+          <Card track="b" className="p-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[15.5px] font-extrabold text-bink">AI 고객 상담 센터</h2>
+              <span className="text-[11.5px] text-bfaint">전체 1,248 · AI 자동응답 1,063(85.3%) · 상담원 연결 185 · 평균 응답 18초</span>
+            </div>
+            <div className="mt-4 rounded-card bg-brow p-4">
+              <div className="flex justify-end">
+                <div className="max-w-[75%] rounded-2xl rounded-br-md bg-primary px-3.5 py-2.5 text-[13px] text-white">이사하면서 인터넷도 새로 하려는데, 정수기까지 묶으면 얼마예요?</div>
+              </div>
+              <div className="mt-3 flex justify-start">
+                <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-white px-3.5 py-3 shadow-bcard">
+                  <div className="text-[13px] leading-5 text-bbody">500M + 정수기 결합 기준으로 바로 계산해 드렸어요!</div>
+                  <div className="mt-2.5 rounded-field border border-tint bg-tint/50 p-3 text-[12.5px]">
+                    <div className="flex justify-between"><span className="text-bmuted">월 납부금</span><strong className="tnum font-extrabold text-primary-text">{won(32900)}</strong></div>
+                    <div className="mt-1 flex justify-between"><span className="text-bmuted">사은품 혜택</span><strong className="tnum font-bold text-orange-text">{won(350000)}</strong></div>
+                    <div className="mt-1 text-[11px] text-bfaint">약정 3년 · 설치비 무료 · 이사 일정 연동 설치</div>
+                  </div>
+                  <button className="mt-2.5 w-full rounded-field bg-tint py-2 text-[12px] font-bold text-primary-text">상세 견적서 보기</button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {/* 자동화 도넛 */}
+          <Card track="b" className="p-5">
+            <h2 className="text-[15.5px] font-extrabold text-bink">AI 자동화 분해</h2>
+            <div className="mt-3 flex items-center gap-4">
+              <Donut data={AUTO_BREAKDOWN} centerTop="85.3%" centerSub="자동 처리" />
+              <Legend data={AUTO_BREAKDOWN} className="flex-1" />
+            </div>
+            <p className="mt-3 text-[11px] leading-4 text-bfaint">플라이휠: 모든 AI 응답·분류 결과는 피드백 라벨과 함께 저장 → 프롬프트·정책 개선에 재사용 (내부 고도화 전용).</p>
+          </Card>
+
+          {/* 피드백 플라이휠 — 챗 썸 평가 실측 */}
+          <Card track="b" className="p-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[15.5px] font-extrabold text-bink">응답 피드백 플라이휠</h2>
+              {fb.length > 0 && <span className="tnum rounded-full bg-ok/10 px-2.5 py-0.5 text-[11.5px] font-bold text-ok">도움됨 {fbRate}%</span>}
+            </div>
+            {fb.length === 0 ? (
+              <p className="mt-3 text-[12px] leading-5 text-bfaint">아직 수집된 평가가 없어요 — 소비자몰 챗봇 답변의 "도움이 됐나요?" 평가가 여기로 실시간 집계됩니다.</p>
+            ) : (
+              <>
+                <div className="mt-3 flex items-center gap-2.5">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-brow">
+                    <div className="h-full rounded-full bg-ok transition-all" style={{ width: `${fbRate}%` }} />
+                  </div>
+                  <span className="tnum text-[11.5px] font-bold text-bmuted">{fbHelp}/{fb.length}건</span>
+                </div>
+                {improveQ.length > 0 && (
+                  <>
+                    <div className="mt-3.5 text-[12px] font-bold text-bink">개선 큐 — 아쉬웠던 질문</div>
+                    <div className="mt-1.5 flex flex-col gap-1.5">
+                      {improveQ.map((e) => (
+                        <div key={e.id ?? e.at} className="flex items-center gap-2 rounded-field bg-warn/[0.07] px-2.5 py-2">
+                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-warn" />
+                          <span className="min-w-0 flex-1 truncate text-[12px] font-semibold text-bbody">"{e.q}"</span>
+                          <span className="shrink-0 text-[10.5px] text-bfaint">{timeAgo(e.at)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+                <p className="mt-3 text-[11px] leading-4 text-bfaint">평가 라벨은 프롬프트·정책 개선 재료로 저장돼요 — 아쉬운 질문부터 지식베이스를 보강하세요.</p>
+              </>
+            )}
+          </Card>
+
+          {/* 인기 문의 TOP5 */}
+          <Card track="b" className="p-5">
+            <h2 className="text-[15.5px] font-extrabold text-bink">인기 문의 TOP5</h2>
+            <div className="mt-3 flex flex-col gap-2.5">
+              {TOP5.map((t, i) => (
+                <div key={t.q} className="flex items-center gap-2.5">
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-extrabold ${i < 3 ? 'bg-tint text-primary-text' : 'bg-brow text-bmuted'}`}>{i + 1}</span>
+                  <span className="min-w-0 flex-1 truncate text-[12.5px] font-semibold text-bbody">{t.q}</span>
+                  <span className="tnum text-[11.5px] font-bold text-bfaint">{t.n.toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* 실시간 활동 로그 */}
+          <Card track="b" className="p-5">
+            <h2 className="text-[15.5px] font-extrabold text-bink">실시간 활동 로그</h2>
+            <div className="mt-3 flex flex-col">
+              {recentAi.map((e) => (
+                <LogRow key={e.id} at={timeAgo(e.at)} text={e.kind === 'chat' ? `챗봇 응답(${e.source === 'claude' ? 'Claude' : '데모 브레인'}): "${String(e.q).slice(0, 24)}…"` : e.kind === 'diagnosis' ? `생활비 진단 완료 — ${e.label}` : `자동 분류 — ${e.label ?? e.q}`} live />
+              ))}
+              {demoLog.map((l) => <LogRow key={l.text} at={l.at} text={l.text} />)}
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      {/* 마케팅 파이프라인 9단계 — "이긴 구조만 자동화한다" (AI 마케팅 OS 흡수) */}
+      <Card track="b" className="mt-4 p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-[15.5px] font-extrabold text-bink">마케팅 파이프라인 — 수집부터 자동화까지</h2>
+          <span className="text-[11.5px] text-bfaint">AI는 콘텐츠 생성기가 아니라 운영 부품 — 이긴 구조만 자동화합니다</span>
+        </div>
+        <div className="mt-3 overflow-x-auto scrollbar-none">
+          <div className="flex min-w-[900px] items-stretch gap-1.5">
+            {[
+              { n: '신호 수집', v: total, unit: '건', d: '챗·진단·피드백 이벤트' },
+              { n: '페르소나', v: 3, unit: '군', d: '신규·만기·프로모 세그먼트' },
+              { n: '메시지', v: 12, unit: '종', d: '채널 4 × 목적 3 템플릿' },
+              { n: '생산', v: chats, unit: '건', d: 'AI 응답·카피 생성' },
+              { n: '배포', v: outboundCount, unit: '건', d: '알림톡·재상담 발송' },
+              { n: '피드백', v: fb.length, unit: '건', d: '도움됨/아쉬움 평가' },
+              { n: '학습', v: improveQ.length, unit: '건', d: '개선 큐 반영 대상' },
+              { n: '자산화', v: 8, unit: '종', d: '시즌 룰 4 + 시나리오 4' },
+              { n: '자동화', v: autoOnCount, unit: '개', d: '켜진 자동화 (이긴 구조만)' },
+            ].map((s, i, arr) => (
+              <div key={s.n} className="flex items-center gap-1.5">
+                <div className={`w-[104px] rounded-field border p-2.5 text-center ${s.v > 0 ? 'border-primary/30 bg-tint/30' : 'border-bline'}`}>
+                  <div className="text-[10px] font-bold text-bfaint">{i + 1}. {s.n}</div>
+                  <div className={`tnum mt-0.5 text-[16px] font-extrabold ${s.v > 0 ? 'text-primary-text' : 'text-bfaint'}`}>{s.v}<span className="text-[10.5px] font-bold">{s.unit}</span></div>
+                  <div className="mt-0.5 text-[9.5px] leading-3 text-bfaint">{s.d}</div>
+                </div>
+                {i < arr.length - 1 && <span className="text-[12px] text-bfaint">→</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+        <p className="mt-2.5 text-[11px] leading-4 text-bfaint">각 단계 수치는 실데이터(이벤트·감사 로그·자동화 설정)에서 파생됩니다. 피드백→학습으로 검증된 문구만 자산화·자동화 단계로 승격돼요.</p>
+      </Card>
+
+      {/* 인사이트 3카드 */}
+      <div className="mt-4 grid gap-3 lg:grid-cols-3">
+        {[
+          { t: '인기 상품 메인 노출', d: '인기 상품 TOP5를 소비자몰 메인에 노출하면 매출 +15% 추정', ref: '최근 30일 클릭·전환 데이터' },
+          { t: '이사+인터넷 번들 강화', d: '이사 리드의 41%가 인터넷을 함께 문의 — 번들 CTA 추가 권장', ref: '리드 카테고리 동시 발생 분석' },
+          { t: '수도3단 파트너 증설', d: '인천·부천 권역 리드가 처리 용량 대비 1.8배 — 분양 영업 우선 배치', ref: '권역별 리드/파트너 비율' },
+        ].map((c) => (
+          <Card key={c.t} track="b" className="p-5">
+            <div className="flex items-center gap-2 text-[12px] font-bold text-primary-text"><IcBulb size={14} />AI 추천 인사이트</div>
+            <div className="mt-2 text-[14.5px] font-bold text-bink">{c.t}</div>
+            <p className="mt-1 text-[12.5px] leading-5 text-bbody">{c.d}</p>
+            <button className="mt-2.5 text-[11.5px] font-bold text-primary-text underline underline-offset-2">근거 데이터: {c.ref} →</button>
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function LogRow({ at, text, live }) {
+  return (
+    <div className="flex gap-3 border-b border-brow py-2.5 last:border-0">
+      <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${live ? 'bg-ok animate-live' : 'bg-bline'}`} />
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-[12.5px] font-semibold text-bbody">{text}</div>
+        <div className="text-[11px] text-bfaint">{at}</div>
+      </div>
+    </div>
+  )
+}

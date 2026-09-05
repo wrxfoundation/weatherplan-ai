@@ -1,0 +1,197 @@
+// ─── S-02 카테고리 상세 — 상품 0개여도 상담 CTA 노출(AC) ─────────
+import { Link, Navigate, useParams, useNavigate } from 'react-router-dom'
+import { NET_CARRIERS, PHONE_CARRIERS } from '../../lib/onboard'
+import PhoneQuickStart from '../../components/PhoneQuickStart'
+import InternetBuilder from '../../components/InternetBuilder'
+import RentalBrowser from '../../components/RentalBrowser'
+import { catBySlug, LEGAL } from '../../lib/constants'
+import { useStore } from '../../lib/store'
+import { won } from '../../lib/engine'
+import { Btn, Card, EmptyState } from '../../components/ui'
+import { IcSearch, IcBell } from '../../components/icons'
+import TelcoCompare from '../../components/TelcoCompare'
+import InstallCheck from '../../components/InstallCheck'
+import Reviews from '../../components/Reviews'
+
+const ONBOARD_CATS = { internet: NET_CARRIERS, phone: PHONE_CARRIERS }
+
+export default function Category() {
+  const { slug } = useParams()
+  const nav = useNavigate()
+  const { db } = useStore()
+  const cat = catBySlug(slug)
+  // 렌트/리스는 전용 브라우저를 쓴다 — 카테고리 자체는 상담 폼·어드민을 위해 남겨 둔다
+  if (slug === 'car') return <Navigate to="/cars" replace />
+  // 잘못된 슬러그 — 빈 화면 대신 갈 곳을 준다
+  if (!cat) {
+    return (
+      <main className="mx-auto max-w-6xl px-5 sm:px-10">
+        <Card className="mt-8 p-8 sm:mt-12">
+          <EmptyState icon={IcSearch} text="찾으시는 서비스가 없어요" sub="주소가 잘못되었거나 준비 중인 카테고리예요" />
+          <div className="flex flex-wrap justify-center gap-2.5">
+            <Btn variant="outline" onClick={() => nav('/')}>전체 서비스 보기</Btn>
+            <Btn onClick={() => nav('/consult')}>무료 상담</Btn>
+          </div>
+        </Card>
+      </main>
+    )
+  }
+  const products = db.products.filter((p) => p.cat === slug)
+  const maxSupport = Math.max(0, ...products.map((p) => p.support))
+
+  return (
+    <main className="mx-auto max-w-6xl px-5 sm:px-10">
+      {/* 카테고리 히어로 */}
+      <section className="flex flex-col items-start gap-6 pt-8 sm:flex-row sm:items-center sm:pt-12">
+        <span className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-warm sm:h-24 sm:w-24">
+          <img src={cat.icon} alt="" className="h-full w-full object-contain" />
+        </span>
+        <div className="flex-1">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-[26px] font-extrabold tracking-tight text-ink">{cat.name}</h1>
+            <span className="rounded-full bg-orange-tint px-3 py-1 text-[12.5px] font-bold text-orange-text">{cat.benefit}</span>
+          </div>
+          <p className="mt-2 max-w-xl text-[14.5px] leading-6 text-muted">{cat.desc}</p>
+        </div>
+        <Btn onClick={() => nav(`/consult?cat=${slug}`)} className="shrink-0 shimmer-cta">무료 상담 신청</Btn>
+      </section>
+
+      {/* 통신사별 요금제 추천 + 맞춤 찾기 — 인터넷·휴대폰은 고를 게 많아
+          "무엇부터 보면 되는지"를 먼저 깔아준다(아정당식 진입 동선) */}
+      {/* 인터넷: 아정당식 4필터 셀프견적 — 통신사 → 조합 → 속도 → TV, 우측에 월요금·사은품 */}
+      {slug === 'internet' && <InternetBuilder />}
+
+      {/* 휴대폰: 온라인 구매 / 알뜰폰 요금제 두 갈래가 카테고리 1 */}
+      {slug === 'phone' && (
+        <section className="mt-8 grid gap-3 sm:grid-cols-2" data-t="phone-entries">
+          <Link to="/phone/shop" className="group flex items-center gap-4 rounded-card bg-white p-5 shadow-card transition-all hover:-translate-y-[2px] hover:shadow-panel">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-tint text-primary-text"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" /></svg></span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[16px] font-extrabold text-ink">온라인 구매</span>
+              <span className="block text-[12.5px] leading-5 text-muted">셀프가입 · 지금 통신사 기준으로 번호이동/기기변경 중 싼 쪽부터</span>
+            </span>
+            <span className="text-[18px] text-faint transition-transform group-hover:translate-x-0.5">›</span>
+          </Link>
+          <Link to="/phone/mvno" className="group flex items-center gap-4 rounded-card bg-white p-5 shadow-card transition-all hover:-translate-y-[2px] hover:shadow-panel">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ok/10 text-ok"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="4" y="5" width="16" height="14" rx="2" /><path d="M8 10h8M8 14h5" /></svg></span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[16px] font-extrabold text-ink">알뜰폰 요금제</span>
+              <span className="block text-[12.5px] leading-5 text-muted">대표 요금제 2종 · 브랜드별 혜택 · 전체 요금제 보기</span>
+            </span>
+            <span className="text-[18px] text-faint transition-transform group-hover:translate-x-0.5">›</span>
+          </Link>
+        </section>
+      )}
+
+      {/* 렌탈: 9브랜드 × 카테고리 브라우저 + 정수기 냉온/얼음 + 렌트/리스 */}
+      {slug === 'rental' && <RentalBrowser />}
+
+      {ONBOARD_CATS[slug] && (
+          <Link
+            to={`/onboard/${slug}`}
+            className="mt-6 flex items-center gap-4 rounded-section bg-warm px-5 py-5 transition-colors hover:bg-tint sm:px-7"
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-primary-text shadow-card">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15.5px] font-extrabold text-ink">나에게 맞는 상품 찾기</span>
+              <span className="block text-[13px] text-muted">3개 질문에 답하면 조건에 맞는 요금제를 추천해 드려요</span>
+            </span>
+            <span className="shrink-0 text-[18px] text-faint">›</span>
+          </Link>
+      )}
+
+      {slug === 'phone' && <PhoneQuickStart consultTo={`/consult?cat=phone`} />}
+
+      {slug === 'internet' && (
+        <div className="mt-6">
+          <InstallCheck />
+        </div>
+      )}
+
+      {/* 비교 포인트 */}
+      <section className="mt-8 grid gap-3 sm:grid-cols-3">
+        {[
+          { t: '조건 비교', d: '통신사·브랜드별 조건을 한 번에 비교해요' },
+          { t: '숨은 혜택', d: '결합·프로모션·카드 할인까지 전부 반영해요' },
+          { t: '이중 검수', d: 'AI 1차 설계 + 본사 상담원이 최종 검수해요' },
+        ].map((p, i) => (
+          <Card key={p.t} className="flex items-start gap-3 p-4">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-tint text-[13px] font-extrabold text-primary-text">{i + 1}</span>
+            <div>
+              <div className="text-[14px] font-bold text-ink">{p.t}</div>
+              <div className="mt-0.5 text-[12.5px] leading-5 text-muted">{p.d}</div>
+            </div>
+          </Card>
+        ))}
+      </section>
+
+      {/* 상품 리스트 */}
+      <section className="mt-8">
+        <div className="mb-4 flex items-baseline justify-between">
+          <h2 className="text-[19px] font-extrabold text-ink">추천 상품 {products.length > 0 && <span className="tnum text-primary-text">{products.length}</span>}</h2>
+          {maxSupport > 0 && <span className="text-[13px] font-semibold text-orange-text">지원금 최대 {won(maxSupport)}</span>}
+        </div>
+
+        {products.length === 0 ? (
+          <Card className="p-8">
+            <EmptyState icon={IcBell} text="상담사가 조건에 맞는 상품을 직접 찾아드려요" sub="이 카테고리는 맞춤 견적으로만 안내되고 있어요" />
+            <Btn className="mx-auto flex" onClick={() => nav(`/consult?cat=${slug}`)}>무료 상담으로 견적 받기</Btn>
+          </Card>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {products.map((p) => (
+              <Card key={p.id} hover className="flex flex-col p-5">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="text-[12px] font-semibold text-faint">{p.brand}</div>
+                    <div className="mt-0.5 text-[16px] font-bold leading-6 text-ink">{p.name}</div>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-tint px-2.5 py-1 text-[11px] font-bold text-primary-text">{p.tag}</span>
+                </div>
+                <div className="mt-4 flex items-end justify-between">
+                  <div>
+                    {p.monthly > 0 ? (
+                      <>
+                        <span className="text-[12px] text-faint">월</span>{' '}
+                        <span className="tnum text-[22px] font-extrabold tracking-tight text-ink">{won(p.monthly)}</span>
+                      </>
+                    ) : (
+                      <span className="text-[14px] font-bold text-label">무료 견적</span>
+                    )}
+                  </div>
+                  {p.support > 0 && (
+                    <span className="rounded-full bg-orange-tint px-2.5 py-1 text-[12px] font-bold text-orange-text">최대 {won(p.support)} 지원</span>
+                  )}
+                </div>
+                <button
+                  onClick={() => nav(`/consult?cat=${slug}`)}
+                  className="mt-4 h-11 w-full rounded-field bg-tint text-[14px] font-bold text-primary-text transition-colors hover:bg-primary hover:text-white"
+                >
+                  이 조건으로 상담받기
+                </button>
+              </Card>
+            ))}
+          </div>
+        )}
+        {slug === 'internet' && (
+          <div className="mt-4 text-center">
+            <Link to="/calculator" className="text-[13.5px] font-bold text-primary-text underline underline-offset-4">직접 조건을 바꿔가며 계산해 보고 싶다면 → 견적 계산기</Link>
+          </div>
+        )}
+        {slug === 'phone' && (
+          <div className="mt-4 text-center">
+            <Link to="/calculator/phone" className="text-[13.5px] font-bold text-primary-text underline underline-offset-4">단말 할부금 + 요금까지 직접 계산해 보려면 → 휴대폰 견적 계산기</Link>
+          </div>
+        )}
+        <p className="mt-6 text-[11.5px] text-disabled">{LEGAL.policy}</p>
+      </section>
+
+      <Reviews cat={cat.name} />
+
+      {/* 인터넷/TV — 요금표·절차·FAQ (탐라몰 벤치마크) */}
+      {slug === 'internet' && <TelcoCompare />}
+    </main>
+  )
+}

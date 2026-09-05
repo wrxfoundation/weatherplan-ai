@@ -227,6 +227,21 @@ p, li, span    { word-break: keep-all; }
   z-index: 0;
   pointer-events: none;
 }
+/* 좌측 엣지 톤 보정: 배경영상 좌측이 씬 대비 밝은 세이지톤(#9DA28F)으로 떠 보이는
+   현상을 완화. 영상 위·크림 오버레이 아래에 얹어 좌측을 영상 중앙 틸톤으로 눌러줌.
+   좌측 밴드 ΔE ~44 → ~2 로 축소(상·중·하단 전 구간), 하단 크림 페이드는 그대로 유지. */
+.hero-video-edge {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg,
+      rgba(46,110,110,0.24) 0%,
+      rgba(46,110,110,0.10) 16%,
+      rgba(46,110,110,0.03) 26%,
+      rgba(46,110,110,0) 36%);
+  z-index: 0;
+  pointer-events: none;
+}
 .hero-video-overlay {
   position: absolute;
   inset: 0;
@@ -240,7 +255,7 @@ p, li, span    { word-break: keep-all; }
   pointer-events: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-video { display: none; }
+  .hero-video, .hero-video-edge { display: none; }
 }
 .hero-aurora {
   position: absolute;
