@@ -26,6 +26,11 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(grid.includes('렌트상담'), '물량 확인 필요 차종은 "렌트상담"')
   check(grid.includes('렌트불가'), '장기렌터카 미취급 차종은 "렌트불가"')
   for (const c of ['마이티 3.5톤', '마이티 특장', '카운티', 'ST1']) check(grid.includes(c), `상용차: ${c}`)
+  // 제휴사 공개가와 한 자리도 어긋나면 안 된다 — 특히 ST1 은 보조금이 얹혀 산식으로 재현되지 않는다
+  for (const [name, man] of [['마이티 3.5톤', 41], ['마이티 특장', 53], ['카운티', 55], ['ST1', 12]]) {
+    const card = await page.locator('[data-t="car-card"]', { hasText: name }).first().innerText()
+    check(card.includes(`리스 월 ${man} 만원`), `${name} 리스 월 ${man}만 (제휴사 공개가)`)
+  }
 
   // 리스/렌트 필터
   await page.locator('[data-t="car-kind"] button', { hasText: '렌트' }).click(); await page.waitForTimeout(200)
@@ -107,6 +112,12 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check((await t('[data-t="car-card"] [data-t="car-rent"]')).includes('렌트불가'), '마이티 → 렌트불가')
   check(await page.locator('[data-t="car-card"] [data-t="car-apply-rent"]').count() === 0, '렌트불가 차종은 렌트 상담 버튼 없음')
   check((await page.evaluate(() => document.body.innerText)).includes('장기렌터카를 취급하지 않아요'), '렌트불가 사유 안내')
+  // 특가·보조금 차종은 기준 조건 밖 금액이 예상치임을 밝힌다 — 화면 숫자와 상담 금액이 갈리는 걸 막는다
+  await page.goto('http://localhost:4173/cars/st1', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  check(await page.locator('[data-t="car-special-rate"]').count() === 1, 'ST1 특가 안내 노출')
+  check((await t('[data-t="car-card"]')).includes('12'), 'ST1 상세도 12만원대 (목록과 같은 숫자)')
+  await page.goto('http://localhost:4173/cars/palisade', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  check(await page.locator('[data-t="car-special-rate"]').count() === 0, '보정 없는 차종엔 특가 안내 없음')
 
   // ── GNB 진입
   await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' }); await page.mouse.move(640, 700); await page.waitForTimeout(300)

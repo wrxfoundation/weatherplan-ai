@@ -184,7 +184,7 @@ const round100 = (n) => Math.round(n / 100) * 100
  * modelId · trimName(미지정 시 최저 트림) · options(id 배열)
  * down: DOWN_RATES · term: TERMS · basis: 'prepay' | 'deposit'
  */
-export function calcCar({ modelId = 'palisade', trimName = null, options = [], down = 0.3, term = 36, basis = 'prepay' } = {}) {
+export function calcCar({ modelId = 'palisade', trimName = null, options = [], down = 0.3, term = 36, basis = 'prepay', raw = false } = {}) {
   const model = carModel(modelId) ?? CAR_MODELS[0]
   const trims = trimsOf(model.id)
   const trim = trims.find((t) => t.name === trimName) ?? trims[0]
@@ -203,7 +203,9 @@ export function calcCar({ modelId = 'palisade', trimName = null, options = [], d
   const upfrontCapped = rawEff > maxEff
   // 감가분(총차량가격 − 초기부담 − 잔존가치)에 약정기간 이자를 얹어 월로 나눈다
   const financed = Math.max(0, total - effUpfront - residual)
-  const lease = round100((financed * (1 + LEASE_APR * (term / 12))) / term)
+  const rawLease = round100((financed * (1 + LEASE_APR * (term / 12))) / term)
+  // 실요금표가 있는 차종은 기준 조건에서 잰 비율만큼 전 구간을 함께 내린다(아래 leaseFactor 주석 참고)
+  const lease = raw ? rawLease : round100(rawLease * leaseFactor(model.id))
   // 렌트는 취등록세·자동차세·보험료가 월 요금에 포함된다
   const maint = round100(total * MAINT_RATE)
   // 'consult'/false 는 금액을 내지 않는다 — 화면이 상태 문구를 그대로 보여준다
@@ -215,7 +217,7 @@ export function calcCar({ modelId = 'palisade', trimName = null, options = [], d
     carPrice, optionPrice, total, down, term, basis,
     upfront, upfrontCapped, deposit: basis === 'deposit' ? upfront : 0, prepay: basis === 'prepay' ? upfront : 0,
     residual: Math.round(residual), financed: Math.round(financed),
-    lease, rent, rentState, maint,
+    lease, rawLease, rent, rentState, maint, overridden: Boolean(RATE_OVERRIDE[model.id]?.lease),
     acquisition: Math.round(total * ACQ_RATE),
   }
 }
@@ -225,17 +227,39 @@ export function calcCar({ modelId = 'palisade', trimName = null, options = [], d
 // 보조금·프로모션이 얹혀 있다(예: 아이오닉5 산식 21만 vs 제휴사 13만).
 // 실요금표를 받으면 여기에 채운다. 있으면 산식보다 우선한다.
 // { 차종id: { lease: 130000, rent: 0 } }  ← rent 0/미기재는 산식 또는 상태 문구를 따른다
-export const RATE_OVERRIDE = {}
+// 기준 조건(초기부담금 30% · 36개월 · 선납)에서의 월 리스료를 적는다.
+export const RATE_OVERRIDE = {
+  // 현대 상용차 — 제휴사 목록 공개가 기준. ST1 은 전기 상용차 보조금이 얹혀 있어
+  // 산식(44만)으로는 재현되지 않는다. 트럭·버스 3종은 산식과 1만원 안쪽이지만
+  // 고객에게 보이는 숫자는 제휴사와 한 자리도 어긋나면 안 되므로 같이 고정한다.
+  mighty: { lease: 410000 },
+  'mighty-sp': { lease: 530000 },
+  county: { lease: 550000 },
+  st1: { lease: 120000 },
+}
+
+// 실요금은 "기준 조건 한 점"만 주어진다. 그 한 점에서 산식 대비 비율을 재고
+// 모든 조건(초기부담금·기간·선납/보증금)에 같은 비율을 곱한다. 이렇게 해야
+// 목록 카드(기준 조건)와 상세 견적기(사용자가 바꾼 조건)의 숫자가 갈라지지 않는다.
+const factorCache = new Map()
+function leaseFactor(modelId) {
+  const target = RATE_OVERRIDE[modelId]?.lease
+  if (!target) return 1
+  if (!factorCache.has(modelId)) {
+    const base = calcCar({ modelId, down: 0.3, term: 36, basis: 'prepay', raw: true })
+    factorCache.set(modelId, base.lease > 0 ? target / base.lease : 1)
+  }
+  return factorCache.get(modelId)
+}
 
 // 목록 카드용 — 최저 트림·옵션 없음·30%·36개월 기준 "월 X만원 ~"
 export function carFrom(modelId) {
   const q = calcCar({ modelId, down: 0.3, term: 36, basis: 'prepay' })
-  const o = RATE_OVERRIDE[modelId]
   return {
-    lease: o?.lease || q.lease,
-    rent: o?.rent || q.rent,
+    lease: q.lease,
+    rent: RATE_OVERRIDE[modelId]?.rent || q.rent,
     rentState: q.rentState,
-    overridden: Boolean(o?.lease),
+    overridden: q.overridden,
     total: q.total, trim: q.trim,
   }
 }
@@ -269,11 +293,14 @@ export const PARTNER_IMAGES = {
   'avante': '00000000582',
   'avante-hev': '00000000583',
   'carnival': '00000000527',
+  'e-class': '00000000033',
   'ev6': '00000000560',
   'g80': '00000000612',
   'g90': '00000000609',
+  'gle': '00000000392',
   'grandeur': '00000000498',
   'grandeur-hev': '00000000503',
+  'grandkoleos': '00000000659',
   'gv70': '00000000610',
   'gv80': '00000000611',
   'ioniq5': '00000000558',
@@ -285,6 +312,7 @@ export const PARTNER_IMAGES = {
   'kona-hev': '00000000485',
   'palisade': '00000000461',
   'palisade-hev': '00000000665',
+  's-class': '00000000071',
   'santafe': '00000000447',
   'santafe-hev': '00000000562',
   'sonata': '00000000474',

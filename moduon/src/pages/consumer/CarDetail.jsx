@@ -134,6 +134,11 @@ function CarDetailInner() {
                 초기부담금이 커서 일부는 월 납입금을 더 낮추지 못하고 계약 종료 시 정산에 반영됩니다 — 이 구간부터는 넣는 만큼 월이 내려가지 않아요.
               </p>
             )}
+            {q.overridden && (
+              <p className="mt-2 rounded-field bg-primary-tint px-3.5 py-2.5 text-[11.5px] leading-4 text-primary-text" data-t="car-special-rate">
+                보조금·특가가 적용된 차량이에요. 초기부담금 30% · 36개월 금액은 확정가이고, 조건을 바꾼 금액은 예상치예요 — 상담에서 확정해 드립니다.
+              </p>
+            )}
           </Sec>
 
           {/* 계약 전 확인 */}
