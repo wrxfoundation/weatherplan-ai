@@ -1,0 +1,522 @@
+/* 브랜드 토큰 — wellbian-store/app/globals.css 와 같은 값이다 (8/30 서우).
+   관리 도구라고 다른 팔레트를 쓰면 같은 제품처럼 보이지 않는다. 판매 사이트와 CS 화면을
+   오가는 사람이 한 사람이라 더 그렇다. 사이트가 토큰을 바꾸면 여기도 같이 바꾼다. */
+
+:root {
+  --w-main: #4d4dce;
+  --w-deep: #1b1b48;
+  --w-tint: #eeeefb;
+
+  --ink-1: #22223a; --ink-2: #44445e; --ink-3: #5b5b74; --ink-4: #6b6b85;
+  --cap: #8a8aa3; --hint: #9a9ab5; --dis: #b5b5c9;
+  --bd-input: #d8d8e6; --bd-btn: #e2e2ee; --bd-card: #e5e5ef;
+  --line: #ececf3; --line-2: #f2f2f7; --chip: #f0f0f6;
+  --sec-alt: #f6f6fa; --panel: #fafafd;
+
+  --ok-text: #1e8e5a; --ok-bg: #e9f7f0;
+  --warn-text: #8a3535; --warn-icon: #c0392b; --warn-bg: #fdf3f2; --warn-bd: #f2c9c9;
+
+  /* 사이트 팔레트에 중간 경보색이 없어 관리 도구용으로 하나만 더한다 —
+     "긴급(빨강)"과 "일반(회색)" 사이가 비면 주의 단계가 둘 중 하나로 끌려간다 */
+  --attn-text: #8a5a12; --attn-icon: #b06a12; --attn-bg: #fdf6e9; --attn-bd: #f0dfc0;
+
+  --mono: "Montserrat", "Pretendard Variable", Pretendard, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  color: var(--ink-1);
+  background: var(--sec-alt);
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+}
+a { color: var(--w-main); text-decoration: none; }
+button, select, textarea, input { font: inherit; }
+button { cursor: pointer; border: 0; background: none; color: inherit; }
+h1, h2, h3, p, ul { margin: 0; }
+summary { cursor: pointer; }
+
+.mono { font-family: var(--mono); font-weight: 700; font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+/* ── 헤더 ─────────────────────────────────────────────────────────────── */
+.top {
+  background: #fff; border-bottom: 1px solid var(--line);
+  padding: 18px 0 16px; margin-bottom: 20px;
+}
+.top-in { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand { font-size: 19px; font-weight: 800; letter-spacing: -.01em; }
+.brand-sub { font-size: 12.5px; color: var(--cap); }
+/* 상단 메뉴 (9/2 개편) — 화면 이동만. 묶음 이름(운영·분석·인텔)은 작게, 지금 있는 곳은 채워서.
+   칩과 모양을 달리한다 — 칩은 이 화면 안의 보기·필터, 메뉴는 다른 화면으로 가는 것. */
+.gnb { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+.gnb-g { display: flex; align-items: center; gap: 2px; }
+.gnb-l { font-size: 10.5px; font-weight: 800; color: var(--hint); letter-spacing: .04em; margin-right: 4px; }
+.gnb a { text-decoration: none; color: var(--ink-3); font-size: 13px; font-weight: 600;
+         padding: 5px 9px; border-radius: 8px; }
+.gnb a:hover { color: var(--w-main); background: var(--w-tint); }
+.gnb a.on { color: #fff; background: var(--w-deep); }
+.gnb-util { display: flex; align-items: center; margin-left: 4px; padding-left: 10px; border-left: 1px solid var(--line); }
+.gnb-util button { font-size: 12.5px; color: var(--cap); padding: 5px 8px; border-radius: 8px; }
+.gnb-util button:hover { color: var(--warn-text); background: var(--warn-bg); }
+/* 메뉴 아래 줄 — 그 화면의 보기·필터 */
+.sub-nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.sub-nav .flab { width: auto; }
+
+/* ── 지금 손이 필요한 것 (1차) ─────────────────────────────────────────── */
+.now { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.now-card {
+  flex: 1 1 190px; background: #fff; border: 1px solid var(--bd-card);
+  border-radius: 14px; padding: 16px 18px; text-decoration: none; color: inherit;
+  display: block; transition: border-color .12s, transform .12s;
+}
+.now-card:hover { border-color: var(--w-main); }
+.now-card.lead { border-width: 1.5px; }
+.now-card.alert { border-color: var(--warn-bd); background: var(--warn-bg); }
+.now-k { font-size: 12px; color: var(--cap); font-weight: 600; }
+.now-v { font-size: 30px; line-height: 1.15; margin-top: 4px; }
+.now-note { font-size: 11.5px; color: var(--hint); margin-top: 3px; }
+
+/* ── 보조 지표 (2차) ──────────────────────────────────────────────────── */
+.sub { display: flex; gap: 22px; flex-wrap: wrap; align-items: baseline;
+       padding: 12px 18px; background: #fff; border: 1px solid var(--bd-card);
+       border-radius: 12px; margin-bottom: 18px; }
+.sub-k { font-size: 12px; color: var(--cap); }
+.sub-v { font-size: 16px; margin-left: 6px; }
+.sub-note { font-size: 11.5px; color: var(--hint); margin-left: auto; max-width: 340px; line-height: 1.5; }
+
+/* ── 검색 · 필터 (3차) ────────────────────────────────────────────────── */
+.tools { background: #fff; border: 1px solid var(--bd-card); border-radius: 12px;
+         padding: 14px 16px; margin-bottom: 18px; }
+.search { display: flex; gap: 8px; margin-bottom: 12px; }
+.search input {
+  flex: 1; border: 1px solid var(--bd-input); border-radius: 9px;
+  padding: 10px 13px; font-size: 14px; color: var(--ink-1); background: #fff;
+}
+.search input:focus { outline: 2px solid var(--w-tint); border-color: var(--w-main); }
+.frow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 5px 0; }
+.flab { font-size: 11.5px; color: var(--cap); font-weight: 700; width: 44px; flex: none; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 1px solid var(--bd-btn); background: #fff; color: var(--ink-2);
+  border-radius: 999px; padding: 5px 11px; font-size: 12.5px; text-decoration: none;
+}
+.chip:hover { border-color: var(--w-main); color: var(--w-main); }
+.chip.on { background: var(--w-deep); border-color: var(--w-deep); color: #fff; }
+.chip.on .n { color: rgba(255,255,255,.65); }
+.chip .n { color: var(--hint); font-size: 11.5px; }
+.chip.danger.on { background: var(--warn-icon); border-color: var(--warn-icon); }
+.chip.attn.on { background: var(--attn-icon); border-color: var(--attn-icon); }
+
+.btn { border: 1px solid var(--bd-btn); background: #fff; border-radius: 9px;
+       padding: 7px 13px; font-size: 12.5px; color: var(--ink-2); }
+.btn:hover { border-color: var(--w-main); color: var(--w-main); }
+.btn.primary { background: var(--w-main); border-color: var(--w-main); color: #fff; }
+.btn.primary:hover { background: var(--w-deep); border-color: var(--w-deep); color: #fff; }
+.btn.ghost { border-color: transparent; color: var(--cap); }
+
+/* ── 목록 (4차) ───────────────────────────────────────────────────────── */
+.bulk { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        background: var(--panel); border: 1px solid var(--line);
+        border-radius: 10px; padding: 9px 14px; margin-bottom: 12px; }
+.bulk-k { font-size: 12px; color: var(--cap); }
+
+.item { background: #fff; border: 1px solid var(--bd-card); border-radius: 12px;
+        padding: 13px 16px; margin-bottom: 9px; border-left: 3px solid var(--line); }
+.item.sev-high { border-left-color: var(--warn-icon); }
+.item.sev-mid  { border-left-color: var(--attn-icon); }
+.item.done     { border-left-color: var(--ok-text); background: var(--panel); }
+
+.meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 5px;
+        font-size: 11.5px; color: var(--cap); }
+.meta .sep { color: var(--dis); }
+
+/* 문의 내용과 "언제·누가" 를 한 줄에 둔다. 떨어뜨려 놓으면 한 건을 읽을 때마다
+   눈이 왼쪽 끝과 오른쪽 끝을 오간다 — 목록이 길어질수록 그 왕복이 쌓인다. */
+.qline { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 9px; }
+.qwho { font-size: 11.5px; color: var(--cap); white-space: nowrap; }
+
+.tag { font-size: 10.5px; font-weight: 800; border-radius: 5px; padding: 2px 7px; letter-spacing: .01em; }
+.tag.high { background: var(--warn-icon); color: #fff; }
+.tag.over { background: var(--warn-bg); color: var(--warn-text); border: 1px solid var(--warn-bd); }
+.tag.st-new  { background: var(--w-tint); color: var(--w-main); }
+.tag.st-doing{ background: var(--attn-bg); color: var(--attn-text); }
+.tag.st-done { background: var(--ok-bg); color: var(--ok-text); }
+.tag.st-faq  { background: var(--chip); color: var(--ink-3); }
+.tag.mood-neg { background: var(--warn-bg); color: var(--warn-text); }
+
+.q { font-size: 15.5px; line-height: 1.55; color: var(--ink-1); margin: 0; }
+.said { font-size: 13px; line-height: 1.55; color: var(--ink-3); background: var(--panel);
+        border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px;
+        margin-bottom: 9px; white-space: pre-wrap; }
+.acts { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+/* 상태 버튼은 모든 카드에 늘 붙어 있어 목록 전체의 소음이 된다 — 한 단계 조용하게 */
+.acts .btn { padding: 5px 10px; font-size: 12px; color: var(--ink-4); border-color: var(--line); }
+.acts .btn:hover { color: var(--w-main); border-color: var(--w-main); }
+
+.reply { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.reply summary { font-size: 12.5px; color: var(--w-main); font-weight: 600; }
+.reply-row { display: flex; gap: 7px; margin-top: 9px; flex-wrap: wrap; }
+.reply select, .reply textarea {
+  border: 1px solid var(--bd-input); border-radius: 9px; padding: 8px 10px;
+  font-size: 13px; color: var(--ink-1); background: #fff; max-width: 100%;
+}
+.reply select { max-width: 440px; }
+.reply textarea { flex: 1; min-width: 240px; resize: vertical; }
+
+.empty { text-align: center; color: var(--cap); font-size: 14px; padding: 44px 0; }
+.notice { background: var(--attn-bg); border: 1px solid var(--attn-bd); color: var(--attn-text);
+          border-radius: 11px; padding: 13px 16px; font-size: 13px; line-height: 1.65;
+          margin-bottom: 18px; }
+
+/* 좁은 화면 — 서우가 폰으로 열어 볼 자리다 */
+/* ── 모바일 (8/30 서우) ────────────────────────────────────────────────
+   좁은 화면에서 이 도구를 쓰는 상황은 대개 "밖에 있는데 급한 게 떴다" 다.
+   그래서 두 가지를 노린다 — 목록이 빨리 나올 것, 손가락으로 정확히 눌릴 것.
+
+   칩이 많은 줄은 세로로 쌓지 않고 옆으로 밀어 본다. 세 줄짜리 필터가 한 줄이
+   되면서 목록이 한 화면 위로 올라온다. */
+@media (max-width: 720px) {
+  .wrap { padding: 0 13px; }
+
+  /* 지금 손이 필요한 것 셋은 한 줄에 나란히 — 2+1 로 갈라지면 셋째만 튀어 보인다 */
+  .now { gap: 7px; margin-bottom: 10px; }
+  .now-card { flex: 1 1 0; min-width: 0; padding: 11px 11px; }
+  .now-k { font-size: 11px; }
+  .now-v { font-size: 22px; }
+  .now-note { font-size: 10.5px; }
+
+  .sub { gap: 14px; padding: 9px 12px; }
+  .sub-note { display: none; }
+
+  .pulse { gap: 8px; padding: 8px 12px; }
+  .pulse .chip { margin-left: 0; }
+  .pulse-bars { height: 20px; }
+
+  /* 상단 메뉴와 필터 줄은 옆으로 민다 */
+  .top-in { gap: 8px; }
+  .gnb, .sub-nav, .frow {
+    flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .gnb::-webkit-scrollbar, .sub-nav::-webkit-scrollbar, .frow::-webkit-scrollbar { display: none; }
+  .sub-nav .chip, .frow .chip { flex: none; white-space: nowrap; }
+  /* 메뉴는 한 줄로 밀어 본다. 묶음 이름은 남긴다 — 어디쯤인지 잡아 주는 건 이름이다. */
+  .gnb { margin-left: 0; width: 100%; gap: 10px; }
+  .gnb-g { flex: none; }
+  .gnb a { white-space: nowrap; min-height: 34px; display: inline-flex; align-items: center; }
+  .gnb-util { flex: none; }
+  .sub-nav { margin-top: 10px; }
+  /* 오른쪽이 더 있다는 표시 — 흰 안개. 마지막 항목(닫기)이 살짝 덮이지만 밀면 나온다. */
+  .top-in { position: relative; }
+  .top-in::after { content: ""; position: absolute; right: -13px; top: 0; bottom: 0; width: 34px; pointer-events: none;
+    background: linear-gradient(to right, rgba(255,255,255,0), #fff 70%); }
+  .brand-sub { display: none; }
+  .flab { width: auto; min-width: 34px; }
+
+  /* 손가락이 닿는 것은 전부 키운다. 특히 체크박스가 13px 이라 일괄 선택이 거의 불가능했다. */
+  .chip, .btn { min-height: 34px; display: inline-flex; align-items: center; }
+  .acts .btn, .fixrow-in .btn, .fixrow-in .chip { padding: 7px 12px; font-size: 13px; }
+  .fixrow-in select, .reply select, .reply textarea { min-height: 36px; font-size: 13.5px; }
+  .meta input[type=checkbox] { width: 24px; height: 24px; }
+
+  /* 답장은 한 줄에 욱여넣지 않는다 — 좁은 화면에서 select 가 눌리지 않을 만큼 작아진다 */
+  .reply-row { flex-direction: column; align-items: stretch; }
+  .reply-row select, .reply-row .btn { width: 100%; }
+
+  .item { padding: 12px 13px; }
+  .q { font-size: 15px; }
+  .fixrow-in { gap: 5px; }
+
+  /* 자판이 없는 화면에서 단축키 안내는 자리만 차지한다 */
+  .kb-hint, .kb-help { display: none; }
+
+  /* 리포트 */
+  .rep-kpis { grid-template-columns: 1fr; }
+  .rep-bars { padding: 10px 8px; }
+  .rep-h { font-size: 15.5px; margin-top: 20px; }
+  .rep-table { overflow-x: auto; }
+  .rep-tr { grid-template-columns: 1.1fr repeat(6, minmax(38px, 1fr)); min-width: 460px; }
+}
+
+/* 지우기 확인 — 되돌릴 수 없는 동작이라 목록 위에서 화면을 한 번 막는다.
+   빨강은 이미 "긴급"에 쓰고 있어 같은 색을 쓴다. 여기서 다른 빨강을 하나 더 만들면
+   몰릴 때 두 빨강의 뜻을 구분하느라 오히려 늦어진다. */
+.confirm { border: 1px solid var(--warn-bd); background: var(--warn-bg); border-radius: 14px;
+  padding: 16px 18px; margin-bottom: 18px; }
+.confirm-h { font-size: 14.5px; font-weight: 700; color: var(--warn-text); margin: 0 0 10px; }
+.confirm-list { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 6px; }
+.confirm-list li { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px;
+  color: var(--ink-3); min-width: 0; }
+.confirm-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.confirm-w { color: var(--cap); font-size: 11.5px; flex: none; }
+.confirm-more { color: var(--cap); }
+.confirm-act { display: flex; gap: 8px; align-items: center; }
+.confirm-act form { margin: 0; }
+.btn.danger { color: var(--warn-text); border-color: var(--warn-bd); }
+.btn.danger:hover { color: #fff; background: var(--warn-icon); border-color: var(--warn-icon); }
+.btn.danger.solid { background: var(--warn-icon); border-color: var(--warn-icon); color: #fff; }
+
+/* 분류 고치기 줄 — 상태 버튼 아래, 답장 위. 늘 보이되 무게는 낮춘다(교정은 예외 작업이다) */
+.fixrow { margin-top: 7px; padding-top: 7px; border-top: 1px dashed var(--line); }
+.fixrow-in { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0; }
+.fix-k { font-size: 12px; color: var(--cap); }
+.fixrow-in select { font-size: 12.5px; padding: 4px 6px; border: 1px solid var(--line);
+  border-radius: 8px; background: #fff; color: var(--ink-3); }
+.fixrow-in .btn { padding: 4px 10px; font-size: 12px; }
+.fixrow-in .chip { padding: 3px 9px; font-size: 12px; cursor: pointer; }
+.fixrow-in .chip:disabled { cursor: default; opacity: 1; }
+.chip.sev-high.on { background: var(--warn-icon); border-color: var(--warn-icon); color: #fff; }
+.chip.sev-mid.on  { background: var(--attn-icon); border-color: var(--attn-icon); color: #fff; }
+.chip.sev-low.on  { background: var(--chip); border-color: var(--line); color: var(--ink-4); }
+.fix-mark { font-size: 11.5px; color: var(--cap); margin-left: 2px; }
+
+/* ── 분석 리포트 ─────────────────────────────────────────────────────────
+   목록 화면과 같은 토큰·간격을 쓴다. 리포트만 다른 팔레트를 쓰면 두 화면을
+   오가는 사람이 매번 눈을 다시 맞춰야 한다. */
+.rep-h { font-size: 17px; font-weight: 800; color: var(--ink-1); margin: 26px 0 4px; }
+.rep-sub { font-size: 12.5px; line-height: 1.65; color: var(--cap); margin: 0 0 12px; max-width: 760px; }
+.rep-empty { font-size: 13px; color: var(--cap); margin: 0; }
+
+/* 주제 표 — 행 자체가 목록으로 가는 링크다 */
+.rep-table { border: 1px solid var(--line); border-radius: 12px; background: #fff; overflow: hidden; }
+.rep-tr { display: grid; grid-template-columns: 1.4fr repeat(6, 1fr); align-items: center;
+  gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line-2);
+  font-size: 13px; color: var(--ink-3); text-decoration: none; }
+.rep-tr:first-child { border-top: 0; }
+a.rep-tr:hover { background: var(--line-2); }
+.rep-th { font-size: 11.5px; color: var(--cap); font-weight: 700; background: var(--chip); }
+.rep-th span + span, .rep-tr span + span { text-align: right; }
+.rep-topic { font-weight: 700; color: var(--ink-1); }
+
+/* 정본에 채울 질문 */
+.rep-gaps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.rep-gaps li { display: flex; align-items: baseline; gap: 9px; font-size: 13.5px;
+  padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; min-width: 0; }
+.rep-n { color: var(--cap); font-size: 12px; min-width: 14px; }
+.rep-gap-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--ink-1); text-decoration: none; }
+.rep-gap-t:hover { color: var(--w-main); text-decoration: underline; }
+.rep-cnt { font-size: 11.5px; font-weight: 700; color: var(--w-main);
+  background: rgba(124,107,240,.12); border-radius: 7px; padding: 2px 7px; flex: none; }
+.rep-gap-topic { font-size: 11.5px; color: var(--cap); flex: none; }
+
+/* 유입 막대 — 라이브러리 없이 그린다. 값이 0인 칸도 자리를 지켜 추이가 왜곡되지 않게 */
+.rep-bars { display: flex; align-items: flex-end; gap: 3px; padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: 12px; background: #fff; overflow-x: auto; }
+.rep-bar { flex: 1 1 0; min-width: 22px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.rep-bar-v { height: 110px; width: 100%; display: flex; align-items: flex-end; }
+.rep-bar-fill { width: 100%; background: rgba(124,107,240,.28); border-radius: 4px 4px 0 0;
+  display: flex; align-items: flex-end; min-height: 2px; }
+.rep-bar-open { width: 100%; background: var(--w-main); border-radius: 4px 4px 0 0; }
+.rep-bar-n { font-size: 11px; color: var(--ink-4); height: 13px; }
+.rep-bar-k { font-size: 10.5px; color: var(--cap); white-space: nowrap; }
+
+/* 속도·품질 */
+.rep-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.rep-kpi { border: 1px solid var(--line); border-radius: 12px; background: #fff; padding: 14px 16px; }
+.rep-kpi-k { font-size: 12px; color: var(--cap); }
+.rep-kpi-v { font-size: 24px; font-weight: 800; color: var(--ink-1); margin: 3px 0 2px; }
+.rep-kpi-n { font-size: 11.5px; color: var(--cap); line-height: 1.5; }
+
+/* 기한 넘긴 건 — 리포트에서 바로 처리로 넘어가는 자리 */
+.rep-late { display: grid; gap: 5px; }
+.rep-late-row { display: flex; align-items: center; gap: 9px; text-decoration: none;
+  border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 9px 12px;
+  font-size: 13px; color: var(--ink-3); min-width: 0; }
+.rep-late-row:hover { border-color: var(--w-main); }
+.rep-late-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-1); }
+.rep-late-o { font-size: 12px; color: var(--attn-icon); flex: none; }
+.rep-late-s { font-size: 11.5px; color: var(--cap); flex: none; }
+
+@media (max-width: 860px) {
+  .rep-kpis { grid-template-columns: 1fr 1fr; }
+  .rep-tr { grid-template-columns: 1.2fr repeat(6, 1fr); font-size: 12px; padding: 9px 10px; }
+}
+
+/* 늘고 있는가 — 목록 위 한 줄. 카드보다 가볍게 두되 숫자는 읽히게 */
+.pulse { display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  border: 1px solid var(--line); border-radius: 12px; background: #fff;
+  padding: 9px 14px; margin-top: 10px; }
+.pulse-k { font-size: 11.5px; color: var(--cap); }
+.pulse-bars { display: flex; align-items: flex-end; gap: 2px; height: 26px; }
+.pulse-bar { width: 7px; height: 100%; display: flex; align-items: flex-end; }
+.pulse-fill { width: 100%; background: rgba(124,107,240,.45); border-radius: 2px; }
+.pulse-now { font-size: 12.5px; color: var(--ink-3); }
+.pulse-now b { font-size: 17px; color: var(--ink-1); margin-right: 1px; }
+.pulse-d { font-size: 12px; color: var(--cap); }
+.pulse-d.up { color: var(--attn-icon); font-weight: 700; }
+.pulse-d.down { color: var(--ok-text); }
+.pulse .chip { margin-left: auto; }
+
+/* 키보드로 고른 건 — 어디에 손이 가 있는지 한눈에 보여야 한다 */
+.item.kb { box-shadow: 0 0 0 2px var(--w-main), 0 8px 24px rgba(27,27,72,.10); }
+.kb-hint { position: fixed; right: 16px; bottom: 16px; z-index: 40;
+  border: 1px solid var(--line); background: #fff; color: var(--ink-4);
+  border-radius: 999px; padding: 7px 13px; font-size: 12px; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(27,27,72,.10); }
+.kb-hint:hover { border-color: var(--w-main); color: var(--w-main); }
+.kb-help { position: fixed; right: 16px; bottom: 58px; z-index: 41; width: min(340px, calc(100vw - 32px));
+  border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 16px 18px;
+  box-shadow: 0 12px 40px rgba(27,27,72,.16); }
+.kb-help-h { font-size: 14px; font-weight: 800; color: var(--ink-1); margin-bottom: 10px; }
+.kb-help dl { margin: 0 0 12px; display: grid; gap: 7px; }
+.kb-help dl > div { display: flex; align-items: baseline; gap: 10px; }
+.kb-help dt { flex: none; display: flex; gap: 3px; }
+.kb-help dd { margin: 0; font-size: 12.5px; color: var(--ink-4); }
+kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-3);
+  background: var(--chip); border: 1px solid var(--line); border-bottom-width: 2px;
+  border-radius: 5px; padding: 2px 5px; }
+
+/* ── 정본 보기 (8/30 서우 — 듀얼 모니터) ────────────────────────────────
+   접어 두는 것이 기본이다. 스물넷이 한 화면에 들어와야 눈으로 훑고 고를 수 있고,
+   답까지 다 펼쳐 두면 스크롤이 길어져 오히려 못 찾는다. */
+.faq-list { display: grid; gap: 5px; margin-bottom: 4px; }
+.faq-item { border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.faq-item[open] { border-color: var(--w-main); }
+.faq-item summary { display: flex; align-items: baseline; gap: 8px; padding: 10px 13px;
+  cursor: pointer; list-style: none; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::before { content: "▸"; color: var(--dis); font-size: 11px; flex: none; }
+.faq-item[open] summary::before { content: "▾"; color: var(--w-main); }
+.faq-item summary:hover .faq-q { color: var(--w-main); }
+.faq-q { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; color: var(--ink-1); }
+.faq-id { font-size: 11px; color: var(--dis); flex: none; }
+.faq-rank { font-size: 11px; font-weight: 800; color: #fff; background: var(--w-main);
+  border-radius: 5px; padding: 1px 6px; flex: none; }
+.faq-a { padding: 0 13px 12px 30px; }
+.faq-a p { margin: 0 0 9px; font-size: 13.5px; line-height: 1.7; color: var(--ink-3);
+  white-space: pre-wrap; }
+.faq-act { display: flex; gap: 6px; }
+.copy { border: 1px solid var(--line); background: #fff; color: var(--ink-4);
+  border-radius: 8px; padding: 5px 11px; font-size: 12px; cursor: pointer; }
+.copy:hover { border-color: var(--w-main); color: var(--w-main); }
+.copy.done { background: var(--ok-bg); border-color: var(--ok-bg); color: var(--ok-text); }
+.copy.fail { background: var(--warn-bg); border-color: var(--warn-bd); color: var(--warn-text); }
+
+/* 일정 — 응대 중 제일 자주 보는 값이라 같은 화면에 둔다 */
+.faq-sched { border: 1px solid var(--line); border-radius: 10px; background: #fff; overflow: hidden; }
+.faq-sched-row { display: flex; align-items: center; gap: 10px; padding: 9px 13px;
+  border-top: 1px solid var(--line-2); font-size: 13px; color: var(--ink-2); }
+.faq-sched-row:first-child { border-top: 0; }
+.faq-sched-row.done { color: var(--cap); }
+.faq-sched-k { flex: 1; min-width: 0; }
+.faq-sched-v { font-size: 12.5px; color: var(--ink-3); }
+.faq-sched-row.done .faq-sched-v { color: var(--cap); }
+.faq-sched-done { font-size: 11px; color: var(--dis); }
+
+/* 카드에서 정본으로 건너가는 링크 */
+.fix-faq { font-size: 12px; color: var(--w-main); text-decoration: none; margin-left: auto;
+  flex: none; white-space: nowrap; }
+.fix-faq:hover { text-decoration: underline; }
+.fixrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+/* 검색에 걸린 항목 — 전체 목록에서 자리만 알려 준다 */
+.faq-item.hit { border-color: var(--w-main); background: var(--w-tint); }
+.faq-item.hit .faq-q { color: var(--w-deep); }
+/* 그룹에서 지켜본 말 — 봇에게 직접 물은 것과 구분한다 */
+.tag.watch { background: var(--chip); color: var(--ink-4); border: 1px solid var(--line); }
+/* 그룹 분위기 막대에서 부정이 차지하는 부분 */
+.rep-bar-neg { width: 100%; background: var(--warn-icon); border-radius: 4px 4px 0 0; }
+.notice.warn { background: var(--warn-bg); border-color: var(--warn-bd); color: var(--warn-text); }
+
+/* 일정 — 맨 위, 펴 둔 채 시작하되 접힌다 (8/30 서우) */
+.sched-box { border: 1px solid var(--line); border-radius: 12px; background: #fff;
+  margin-top: 14px; overflow: hidden; }
+.sched-box > summary { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  padding: 11px 14px; cursor: pointer; list-style: none; }
+.sched-box > summary::-webkit-details-marker { display: none; }
+.sched-box > summary::before { content: "▾"; color: var(--w-main); font-size: 11px; }
+.sched-box:not([open]) > summary::before { content: "▸"; color: var(--dis); }
+.sched-h { font-size: 14px; font-weight: 800; color: var(--ink-1); }
+.sched-next { font-size: 12.5px; color: var(--cap); }
+.sched-next b { color: var(--w-main); margin-left: 2px; }
+.sched-box .faq-sched { border: 0; border-radius: 0; border-top: 1px solid var(--line-2); }
+.faq-sched-row.next { background: var(--w-tint); }
+.faq-sched-row.next .faq-sched-k { font-weight: 700; color: var(--ink-1); }
+.faq-sched-mark { font-size: 11px; font-weight: 800; color: #fff; background: var(--w-main);
+  border-radius: 5px; padding: 1px 6px; }
+
+/* ── 생태계 동향 (9/2) ─────────────────────────────────────────────────
+   정본 보기와 같은 카드(.faq-item)를 쓴다. 더한 것은 날짜·주제·등급 표시와 "고객에게 이렇게" 상자뿐. */
+.rules { background: #fff; border: 1px solid var(--bd-card); border-radius: 12px;
+         padding: 12px 16px 10px; margin-bottom: 14px; }
+.rules-h { font-size: 13px; font-weight: 800; color: var(--ink-1); margin-bottom: 6px; }
+.rules ul { padding-left: 18px; }
+.rules li { font-size: 13px; line-height: 1.75; color: var(--ink-2); }
+.rules li b { color: var(--ink-1); }
+.intel-date { font-size: 11.5px; color: var(--cap); flex: none; font-weight: 600; }
+.intel-topic { font-size: 11px; font-weight: 700; color: var(--w-deep); background: var(--w-tint);
+               border-radius: 5px; padding: 1px 6px; flex: none; }
+.grade { font-size: 11px; font-weight: 700; border-radius: 5px; padding: 1px 6px; flex: none;
+         border: 1px solid transparent; }
+.grade.official   { color: var(--ok-text); background: var(--ok-bg); }
+.grade.verified   { color: var(--ink-3); background: var(--chip); border-color: var(--line); }
+.grade.unverified { color: var(--attn-text); background: var(--attn-bg); border-color: var(--attn-bd); }
+.intel-src { font-size: 11.5px; color: var(--hint); margin-top: 2px; }
+.intel-say { margin-top: 9px; padding: 9px 11px; background: var(--panel); border: 1px solid var(--line-2);
+             border-radius: 8px; font-size: 13px; line-height: 1.6; color: var(--ink-2); }
+.intel-say-k { font-size: 11px; color: var(--cap); font-weight: 700; display: block; margin-bottom: 3px; }
+
+/* ── 셀럽 사다리 (9/2) ─────────────────────────────────────────────────
+   칸(0~6)은 채워진 셀 개수로 읽힌다 — 숫자를 안 읽어도 어디까지 왔는지 보인다. 목표 칸은 점선. */
+.tier { font-size: 11px; font-weight: 800; border-radius: 5px; padding: 1px 7px; flex: none; }
+.tier.A  { color: var(--ok-text); background: var(--ok-bg); }
+.tier.B  { color: var(--w-deep); background: var(--w-tint); }
+.tier.C  { color: var(--ink-3); background: var(--chip); border: 1px solid var(--line); }
+.tier.KR { color: var(--attn-text); background: var(--attn-bg); border: 1px solid var(--attn-bd); }
+.celeb-name { font-weight: 500; color: var(--ink-4); font-size: 13px; }
+.rung { display: inline-flex; gap: 3px; align-items: center; flex: none; }
+.rung-c { width: 14px; height: 10px; border-radius: 3px; background: var(--chip); border: 1px solid var(--line); }
+.rung-c.on { background: var(--w-main); border-color: var(--w-main); }
+.rung-c.goal { border-color: var(--w-deep); border-style: dashed; }
+.rung-c.on.goal { border-style: solid; }
+.rung-n { font-size: 11.5px; color: var(--ink-3); margin-left: 5px; }
+.rung-set { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-top: 6px; }
+.rung-set form { display: inline; }
+.rung-btn { border: 1px solid var(--line); background: #fff; border-radius: 7px; padding: 3px 9px;
+            font-size: 11.5px; color: var(--ink-3); cursor: pointer; }
+.rung-btn:hover { border-color: var(--w-main); color: var(--w-main); }
+.rung-btn.on { background: var(--w-deep); color: #fff; border-color: var(--w-deep); }
+.celeb-k { font-size: 11px; color: var(--cap); font-weight: 700; margin-top: 9px; margin-bottom: 2px; }
+.celeb-hist { padding-left: 18px; margin: 0; }
+.celeb-hist li { font-size: 12.5px; line-height: 1.65; color: var(--ink-3); }
+.celeb-hist li b { color: var(--ink-2); }
+
+/* ── 반응 축적 (9/2) ─────────────────────────────────────────────────────
+   남의 말은 인용 블록으로 — 우리 글과 남의 글이 같은 서체·같은 상자면 누가 한 말인지 한 박자 늦게 읽힌다. */
+.rx-acct, .rx-kind { font-size: 11px; font-weight: 700; border-radius: 5px; padding: 1px 6px; flex: none;
+                     border: 1px solid transparent; }
+.rx-acct.pod       { color: var(--ink-4); background: var(--chip); border-color: var(--line); }
+.rx-acct.community { color: var(--ink-3); background: var(--chip); }
+.rx-acct.builder   { color: var(--w-deep); background: var(--w-tint); }
+.rx-acct.kol       { color: var(--w-deep); background: var(--w-tint); border-color: var(--w-main); }
+.rx-acct.partner   { color: var(--ok-text); background: var(--ok-bg); }
+.rx-acct.official  { color: var(--ok-text); background: var(--ok-bg); border-color: var(--ok-text); }
+.rx-acct.rival     { color: var(--warn-text); background: var(--warn-bg); border-color: var(--warn-bd); }
+.rx-kind.echo      { color: #fff; background: var(--w-deep); }
+.rx-kind.agree     { color: var(--ink-3); background: var(--chip); }
+.rx-kind.question, .rx-kind.critic { color: var(--attn-text); background: var(--attn-bg); border-color: var(--attn-bd); }
+.rx-kind.misread, .rx-kind.price   { color: var(--warn-text); background: var(--warn-bg); border-color: var(--warn-bd); }
+.rx-kind.accept    { color: var(--ok-text); background: var(--ok-bg); }
+.rx-text { margin: 4px 0 8px; padding: 9px 11px; background: var(--panel); border-left: 3px solid var(--w-main);
+           border-radius: 6px; font-size: 13.5px; line-height: 1.6; color: var(--ink-2); white-space: pre-wrap; }
+.rx-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; padding: 12px 14px;
+           border-top: 1px solid var(--line-2); }
+.rx-form label { display: flex; flex-direction: column; gap: 3px; font-size: 11.5px; color: var(--cap); font-weight: 700; }
+.rx-form input, .rx-form select, .rx-form textarea { border: 1px solid var(--bd-btn); border-radius: 8px; padding: 7px 9px;
+           font-size: 13px; color: var(--ink-1); background: #fff; font-weight: 400; }
+.rx-form input[type=checkbox] { width: 18px; height: 18px; padding: 0; }
+.rx-form textarea { min-height: 72px; resize: vertical; }
+.rx-form .wide, .rx-form .act { grid-column: 1 / -1; }
+.rx-form .act { display: flex; gap: 8px; align-items: center; }
+.rx-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.rx-table th, .rx-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+.rx-table th { font-size: 11.5px; color: var(--cap); font-weight: 700; }
+.rx-table td.num { font-family: var(--mono); font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 720px) {
+  .rx-form { grid-template-columns: 1fr; }
+  .rx-table th, .rx-table td { padding: 6px 6px; font-size: 12px; }
+}

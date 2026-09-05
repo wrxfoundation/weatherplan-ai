@@ -1,0 +1,635 @@
+# @wellbianlabs 게시 활동 대장
+
+## 계정 기준 상태 (2026-08-23 사용자 제공 스냅샷)
+
+- 팔로워 **30** · 팔로잉 82 · 가입 2026-06 · 위치 Seoul ·
+  링크 **linktr.ee/wellbian_official** (8/24 갱신 — 이전 wellbianlabs.io + t.me/wellbianlabs.
+  Claude egress 차단으로 Linktree 내부 구성은 미확인, 값만 반영)
+- 바이오 확정안(8/23): "The weather-data generator. Measure your space — indoors & out — manage a
+  healthier environment, and verified data becomes rewards on XRPL. We Air You." — 적용 대기
+  (coin 단어 제거 확정 — 어휘 규칙 참조)
+- **6월 게시 6건 = 날씨 DePIN 정체성** (예보 정확도·에너지 트레이더·"Weather isn't data. It's alpha.")
+  → 운영 프레임: "실외 날씨(기존 관측망) → 실내 공기(우리가 만드는 지도)" 브릿지로 연결, 소급 수정 없음
+- ✅ **케이웨더 실명 금지 해제 (8/27 서우 확정)** — 플랫폼 TERMS v1.0이 관계를 이미 대외
+  명문화(제3·4조: 케이웨더 = 국내 수탁 실명, 토큰 권한 = 웰비안 전속). 신규 글에서 실명 언급
+  가능하되 프레임은 "기기 파트너·국내 수탁"까지만 — 토큰 발행·보상 주체로 읽힐 표현 금지.
+  6/22 글("KWeather's 30,000 stations") 건도 자연 해소.
+- 성장 지표 기준선: 팔로워 30 (8/23)
+
+**목적**: Claude가 계정을 직접 읽을 수 없으므로(x.com 이그레스 차단·API 미사용) 이 파일이 공유 상태판.
+**운영 규칙**:
+- 게시하면 한 줄만 알려주기: 「올림 + URL」 → Claude가 기입. 반응 수치는 나중에 숫자만 불러줘도 됨.
+- Claude는 매 판단 전 이 파일 기준으로 슬롯(하루 1원글·계정당 1답글·일 답글 3~4)을 계산.
+- 주간 루틴(월 09:00) 시 이 파일을 대조하고, 상태 미기입 건은 사용자에게 확인 요청.
+
+## 게시 이력
+
+| 날짜 | 유형 | 주제/대상 | 사용 안 | 상태 | 링크 | 반응 |
+|---|---|---|---|---|---|---|
+| 8/22(토) | 원글 스레드 | 파리 CDG 센서 조작 — 검증이 가치 | T1/T2+소스답글 | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/22(토) | 원글 스레드 | 지도는 현관에서 끊긴다 | T1/T2+체인답글 | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/22(토) | 답글 | @WrathofKahneman — 신용 딜 스레드 | A안 (Credit follows evidence) | **게시됨 (8/25 서우 일괄 확인)** | (기입 대기) | (기입 대기) |
+| 8/22(토) | 답글 | @0xQuantic — 플레어 아키텍처 | A안 (reality on-chain) | 제안 → 게시 여부 미기입 | | |
+| 8/22(토) | 답글 | @Xfinancebull — 일본 SBI 인프라 | A안 (Japan–Korea corridor) | 제안 → 게시 여부 미기입 | | |
+| 8/22(토) | 답글 | @bgarlinghouse — CFTC 자문위 | A안 (Watching from Asia) | 제안 → 게시 여부 미기입 | | |
+| 8/23(일) | 원글 스레드 | 침실 CO₂와 아침 컨디션 | T1/T2 + 연구 링크 답글, #AirQuality #DePIN | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/23(일) | 답글 | @Ripple — x402 프리미어 멤버 발표 | 기계 고객 안 ("We're building for them on XRPL from the physical-data side") | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/23(일) | 답글 | @rootveg444 — Permission Delegation 스레드 | 질문형 (delegation × signer lists) | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/24(월) | 답글 | @ankr — XRPL 기관 RPC 공식 발표 | "verifiable" 지목형 + "Verification is the value." 시그니처 재사용 | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/24(월) | 답글 | @DCENTWALLETS — 신형 S+R3covery 카드 키트 | 파트너 축하 톤 (상품 언급 배제) | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/24(월) | 답글 | @0xHanMoon — KBW 서울 방문 가이드 스레드 | 지역 정보 곁들이기 (공기질 팁, 제품 언급 없음) | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/24(월) | 답글 | @alina_creates — Virtuals 타임라인 분석 스레드 | "machines paying machines still needs someone measuring the room" | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/25(화) | 원글 스레드 | 래퍼 vs 원장 — 두바이 등기 토큰화 (이미지: "Wrappers vs the Ledger" 타이틀 오버레이) | 5b 확정안 T1/T2+소스 답글 | **게시됨** | (기입 대기) | (기입 대기) |
+| 8/25(화) | 답글 | @xrpl_commons — Regular Key 빌더 팁 | 2r 셀프 증언안 (Issuer 고정 검증 + "Identity outlives the incident.") | **게시됨 (8/25 서우 "지금 댓글 담")** | (기입 대기) | (기입 대기) |
+| 9/2(화) | 답글 | @ashgoblue(Evernorth CEO) — XRPL 2분기 배관 글 | 초안 그대로 + 서우 편집: 첫머리 `Asheesh,` 호명(구면), 말미 `#KWEATHER #wellbian` 브랜드 태그 2개 | **게시됨 (9/2 스크린샷 확인)** | (기입 대기) | (기입 대기) |
+| 9/2(화) | 답글(멘션) | 우리·디센트 태그 응원 글("rewards you can earn") | 감사 + 보상 in testing 재정렬 + "Wallet first, rewards later." (273자) | **게시됨 (서우 "남김")** | (기입 대기) | (기입 대기) |
+| 9/2(화) | 답글 | @heyibinance(Yi He) — whole-industry story (1,452만 뷰) | 크립토 씬 확장 트랙 첫 적용 · `doesn't have a ticker. It has a reading.` (272자) | **게시됨 (서우 "올렸고")** | (기입 대기) | **반응 관찰 — 첫 방 밖 답글란** |
+| **9/2(화) 09:35** | 원글 스레드 **+ 고정** | **디센트 파트너십 공지** — T1 MOU 공지 / T2·T3 증언(구 원글 4 흡수). 시그니처 초연 "Account economics is onboarding economics." | T1 277·T2 277·T3 276 확정안. 이미지 = **v2.5 라이트 글라스 + KWEATHER × D'CENT 락업**(도형 바이올렛 틴트, 배경에 디센트 그린 옅게, 중앙 무채색). **T3 제품 사진은 미부착(텍스트만)** | **게시됨 (9/2 스크린샷 확인)** — 7/15 플레어 LOI 핀 교체 | (기입 대기) | 09:36 조회 7 |
+| 9/1(월) 밤 | 원글 스레드 | **5g 설치의 동기** — "The hard problem in DePIN isn't coverage." (신규 시그니처 초연: The incentive that installs the sensor decides what the data is worth.) | T1/T2/T3 확정안, 이미지 A-3(밤 아파트) 추정 — **사용 이미지 확인 대기** | **게시됨 (9/2 프로필 스크린샷으로 확인)** | (기입 대기) | (기입 대기) |
+| 8/30(일) | 답글 | (서우 "댓글남겼어" — **대상·사용안 확인 대기**) | 후보 2건 중 택1로 추정: ⓐ XRPL 온체인 데이터 분석가 글(`Counting is easy…`) ⓑ @animocabrands / @ysiu KBW(`Ownership becomes participation…`) | **게시됨 (내용 미확인)** | (기입 대기) | (기입 대기) |
+| 9/3(목) 저녁 | 답글 | @tokenterminal — RWA 성장세 차트(스테이블 제외 총액·3년 배수·자산군별) | R2 추천안 기준 — `Energy (MWh) is the interesting line…` + 시그니처 초연 "Tokenization moves exactly as fast as verification does." (233자; R1 242자 사용 가능성 — **사용 초안 확인 대기**) | **게시됨 (서우 "남김")** | (기입 대기) | (기입 대기) — 작은 무대(조회 4.6천)라 반응 기대 낮음, 관계 자산 목적 |
+
+## 패스 기록 (8/22)
+
+Moonchaser(시세 레이스) · Cointelegraph(원출처 중복) · Altcoin Daily(정치 프레임) · mrcauliman 시간당 점검(계정 슬롯)
+
+## 판정 기록 (8/29~8/30 스캔 — 9건 중 붙는다 2건)
+
+| 대상 | 판정 | 근거 |
+|---|---|---|
+| @CoinDesk 리플 양자내성 4단계 인포그래픽 | **패스** | ① 미디어 원글 답글 = 관계 자산 0(8/27 Ripple Prime 보도 건 계승) ② 같은 뉴스엔 원출처 1곳만 — 원출처는 리플 쪽 ③ 구멍 테스트 실패(양자 암호 ≠ 데이터 검증, 8/27 Sherlock 과 같은 실패 모드). 주제("수정안")는 ✅ 레인이므로 **리플/RippleX 원출처가 올리거나 분석가가 뜯으면 재판정**. ⚠️ 어멘드먼트 임계값(80%·2주)은 **외부 확인 불가라 인용 금지**(미검증 수치) |
+| @ashgoblue(Evernorth CEO) SEC 등록성명서 효력 발생 | **전면 무반응, 좋아요도 생략** | ① 계정 패턴 3연속 확정 ② **증권 무대** — 공모 절차 이벤트 + 투자 면책 문구. 렌딩보다 안쪽 ③ 9/7 사전예매 아흐레 앞, 멤버십 NFT 판매 계정이 증권 공모 스레드에 인접하면 우리 수익 비발화 포지션이 상쇄 ④ 8/27자라 신선도 소진. **✅ 조건 한 단계 좁힘: 데이터·측정 구멍에 들어와도 투자 면책 문구가 달린 글이면 무반응** |
+| Etherealize (웹사이트) | **전면 무반응** | 타 체인 진영(이더리움 기관 영업·인프라 조직). 판단표 "타 체인 내전" ❌ 정중앙. 반박은 특히 금지 — 붙는 순간 "XRPL vs ETH" 프레임에 우리를 넣어준다. 비교표는 `ecosystem-log` 참조, **내부용** |
+| @Ripple — Ripple Prime 프라임 브로커리지 60초 설명(마이크 히긴스) | **답글 무반응, 좋아요는 O** | ① 동일 뉴스 사이클 계승(8/27 Ripple Prime 무반응 확정) ② **"계정 등급 < 글 유형"** — @Ripple 은 8/25 최우선 붙는다 판정 계정이지만 이 글은 기관 거래·대차 = 레인 밖 ③ 수익·레버리지 인접. **진영 내부 최상위라 좋아요는 관계 신호로 유지**(Evernorth·IMF·Galaxy 와 구분되는 지점) |
+| @KGeorgieva(IMF) 잭슨홀 연설 | **전면 무반응, 좋아요도 생략** | ① 통화·재정 정책 = 발화 권위 없는 자리 ② 연설이 스테이블코인을 **리스크로** 다룸 — 붙으면 업계 변호 또는 관심 구걸로 읽힘 ③ 답글란이 크립토 계정 집결지라 계정 격이 깎임 ④ 거시정책 = 판단표 "정치 ❌" 인접 |
+| @galaxyhq Helios 데이터센터 응급의료 파트너십 | **전면 무반응, 좋아요도 생략** | ① 레인 밖(진영 밖·동종 아님) ② `severe weather` 는 지원 대상 사례 1회 언급 — 여기 붙어 측정 얘기하면 억지 브릿지 ③ **인명 안전·응급의료 소재** — 브랜드가 얹히면 가장 나쁘게 읽힌다. 판단표 "재난 ❌" 정신 |
+| @ai_explorer25 Karpathy 스탠퍼드 AI 강의 요약 | **답글 무반응, 좋아요·북마크 선택** | ① 레인 밖 ② **원출처 아님**(큐레이션 계정) ③ 접점이 함정 — 우리 축은 "에이전트가 무엇을 사는가"(5c)인데 이 글은 "에이전트를 어떻게 짜는가". 개념 카테고리만 겹침 ④ 8/24 요주의 처리한 AI 인용·요약 어그리게이터 계열 — **로스터 등록 금지** |
+| `#principleoftheday` 학습·진화 원칙 글(달리오 계열 추정) | **전면 무반응, 좋아요 선택** | ① 레인 밖 ② **철학 글 = 답글 무대 최악** — 보탤 발화가 일반론 동의뿐("MBA 코멘트 계열") ③ "실험이 기억보다 빠르다"가 우리 시제 규칙과 결이 같지만, 붙으면 **남의 철학 글을 우리 얘기로 돌리는 것**. ⚠️ 인용 후보로도 적지 않음 — 우리 시그니처가 이미 우리 언어로 같은 말을 한다 |
+| XRPL 온체인 데이터 분석가(핸들 미기입, 8/30 00:42, 조회 5,565) | **✅ 붙는다 — 최우선** | ① 판단표 최상급 칸(고품질 데이터 분석가 = 관계 자산) ② 글 전체가 **"숫자가 무엇을 재는가"** — 트랜잭션 수 ≠ 채택 / 트래커마다 정의가 다름 / ETF 유입 ≠ 원장 활동. 우리 검증 테제와 동일 축 ③ 캐시태그·ETF 수치가 있으나 **주제가 가격이 아니라 측정 규율**이고 ETF 문단조차 잘라내는 용도 ④ 중소 계정이라 답글이 묻히지 않음(공식 7). 안: `Counting is easy. Agreeing on what was counted is the hard part.` **그의 수치는 하나도 반복하지 않음(미검증). 인용 RT 금지 — 캐시태그를 우리 타임라인에 옮겨오게 됨** |
+| @animocabrands / @ysiu KBW 토큰화 담론 | **✅ 붙는다** | ① 구멍 정통 통과 — *"자산은 살아 있는 네트워크의 노드가 된다"* 를 우리는 실물로 한다. 공식 9(실체 대조) 자리 ② 타 체인 규칙 미저촉(로스터 특정 계정 규칙이지 전면 금지 아님, 이 글은 내전 아님) ③ KBW 축은 공식 10에서 "레인 밖 아님" 명시 ④ 도달 목적(대형 계정). **수집품 프레임은 받지 않고 측정 기기로 간다** — 9/7 판매 아흐레 앞이라 "수집품 파는 프로젝트" 오독 차단 |
+
+**⚠️ 확인 필요 — KBW 시점**: 공식 10은 KBW 를 "9월 말~10월 초"로 적고 10/3 리플 서울 행사 예열 계획을 그 위에 세웠는데, 8/29 Animoca 글이 **KBW 를 과거형으로** 말한다. 이미 열렸다면 그 축 콘텐츠 계획의 타이밍이 통째로 밀린다. 외부 확인 불가(프록시 차단) — **서우 확인 대기.**
+
+## 판정 기록 (9/4)
+
+| 대상 | 판정 | 근거 |
+|---|---|---|
+| @jiaojiaojio — CZ 인터뷰 요약 스레드(중국어 원문, 번역 공유): 결과 중심 · 주도성 · 복기 → 제도 · 재창업 순서(팀 → 규정 준수 → 현지화 → 안전·UX → 기술) | **패스** | ① 원출처 아님(인터뷰 영상의 2차 요약, 집계형) ② 주제가 경영·리더십·규제 담론이라 우리 레인(측정 데이터의 검증) 밖 — 규제 담론 무반응 규칙 ③ 거래소 창업자 콘텐츠에 XRPL 네이티브 계정이 붙으면 상장·거래소 구애로 읽힐 여지 ④ 좋아요·북마크도 불필요. **내부용 교훈만**: "복기 → 제도"는 우리 플레이북 운영 방식과 같고, "주도적 보고" 원칙은 카탈라이즈·영상팀 협업에 그대로 적용 |
+| @beyond_broke(Jake Claver, QFOP) — 「KYC가 XRPL 자체의 일부가 됐다」: 주문 매칭 전 프로토콜이 자격 증명(credential)을 확인, 없으면 거래 실패. 세 수정안(Credentials · Permissioned Domains · Permissioned DEX)이 메인넷 라이브(9/4, 11h 전, 조회 5.25만·좋아요 1.4천·RT 160, **$XRP 시세 카드 부착**) | **패스 — 답글·좋아요 없음** | ① 캐시태그·시세 카드 글 = 무반응 규칙(플레이북 158행). 답글란이 시세 담론 옆자리 ② 원출처 아님(RippleX·수정안 문서가 원출처인 2차 해설) ③ 11h 경과·작은 무대. **소재 ★★**: "원장이 주문 전에 자격을 확인한다 ↔ 우리는 기록 전에 판독값을 확인한다" — 2막 실물 데이터 원글 텍스처. 후보 문장 `XRPL now checks the credential before the order matches. We check the reading before it becomes a record.` 수정안 3종은 xrpl.org 원문으로 재확인 뒤 인용 |
+| @mattshumer_(Matt Shumer) — 「GPT-6 Astra가 한 주 만에 언리얼 엔진으로 맨해튼을 만들었다」 영상(9/4, 7h 전, 조회 120만·좋아요 9.9천, **일론 머스크 재게시**) | **패스** | ① AI 생성 세계 쇼케이스 = 우리 레인·크립토 씬 밖(확장 트랙은 씬 사상가·테제 글에만) ② 무대는 크지만 붙을 문장이 없음 ③ "GPT-6 Astra" 주장은 미검증 — 인용 금지. **소재 ★**: "렌더된 세계 vs 측정된 방" 원글 앵글 — 우리 시뮬레이터가 'concept render' 캡션을 다는 이유와 맞물림. 후보 문장 `A model can render Manhattan in a week. It still can't tell you the CO₂ in your bedroom last night.` |
+| @yzilabs(YZi Labs, 조직 인증 — 구 바이낸스랩스) — Nina Rong(BNB Chain 성장 담당) 강연 요약: 분산된 스테이블코인 생태계의 네 기반(규제 명확성 · 유동성 · 결제 오케스트레이션 · **지역 접근과 지급**) + 부탄 편의점 결제 일화, "가장 강한 생태계는 글로벌 인프라를 보이지 않게 하고 지역 유용성을 실감 나게 만든다"(9/4, 21h 전, 조회 2.36만·좋아요 97, Nina Rong 재게시) | **✅ 붙는다 — 오늘 답글 1순위**(확장 트랙. 무대는 작지만 계정 등급이 높고 논지가 우리 테제 정통) | ① 확장 트랙 판정: **형태가 테제 글**(산업·구조) → 진영 무관 적용. 반은 자사 결제 홍보 → **테제 반쪽만**(Binance Pay·BNB Chain 한 글자도 안 건드림) ② 구멍 = "인프라는 보이지 않고 지역 유용성만 실감 난다" ↔ 우리는 원장이 보이지 않고 방 안 판독값만 실감 난다. 마지막 한 뼘(last mile) 논지가 그대로 겹침 ③ **가드**: 체인 이름·비교·우열 0(9/30까지 멀티체인 비언급), 수치 재인용 0, 링크·태그·CTA 0, 제품명 0 ④ 초안 R1(266자, 추천) / R2(230자). 신규 시그니처 후보 `Infrastructure earns its keep by disappearing.` ⑤ **부수 효과 인지**: YZi Labs = 9/4 회의에서 전략적 백커 후보로 거론된 곳. 깨끗한 테제 답글은 구애가 아니라 관계 자산 — 다만 링크·소개 요청은 절대 붙이지 않는다 |
+| @SoftBank(일본 공식) — 「재해 시 복구 요원」 제도: 기술 부서 외 전사 공모 요원이 가반형 기지국 설치·피난소 통신 확보 실지 훈련, 연간 140회 초과. 2019 태풍 15호·2016 구마모토 지진 사례 언급, #防災週間 #SoftBank (9/4, 3h 전, 일본어) | **패스 — 무반응, 좋아요도 생략** | ① **선례 동일**(같은 계정·같은 #방재주간 HAPS 건과 동형 판정) ② 형태가 테제 글이 아니라 **CSR·방재 캠페인 글** — 확장 트랙 대상 아님 ③ **재난·인명 프레임**: 실제 재해 사례가 본문에 있어 상업 계정이 자사 얘기로 잇는 순간 재난 마케팅이 된다(@galaxyhq `severe weather` 건·NHK 열사병 속보 건과 동일 취급) ④ 일본어·일본 일반 대중 무대라 우리 영어 답글은 소음 ⑤ **소재**: "평시 훈련이 유사시를 만든다"는 결은 우리 `검증은 사고가 난 뒤에 만들 수 없다` 계열과 통하나, **재난 사례·경보를 인용하는 형태로는 쓰지 않는다** — 추상형("평소에 쌓인 기록만 나중에 근거가 된다")으로만 보관 |
+| @cz_binance(CZ) — 카자흐스탄 부총리 겸 AI·디지털개발부 장관과 사진, "Crypto is advancing fast here"(9/5 00:46, 조회 2.5천·좋아요 237·**답글 126**) | **패스 — 무반응, 좋아요도 생략** | ① **계정은 맞고 글이 아니다.** CZ 는 확장 트랙 1순위 대상이지만 판정 기준은 진영이 아니라 글의 형태 — 이건 정부 인사 접견 사진 글, 즉 **정치·외교·규제 프레임**이라 진영 무관 무반응(플레이북 확장 트랙 1항) ② 붙일 테제가 아예 없다. "여기 크립토가 빠르다" 한 줄에 우리 실물을 보태면 문맥 없는 자기 홍보가 된다 ③ **답글란 126개 = 구애·셰릴 늪.** 조회 대비 답글 비율이 극단적이라 우리 문장도 같은 더미로 읽힌다(관계 자산 마이너스) ④ **구애 오해 리스크(신규)**: 9/4 회의에서 같은 진영이 전략적 백커 후보로 거론됨. 테제 글에 붙는 답글은 관계 자산이지만, 테제가 없는 접견 사진에 붙는 답글은 접근 신호로만 읽힌다 ⑤ 소재 없음. **대기**: CZ 본인의 테제 글(산업·구조·철학)이 올라오면 그때가 ✅ — 상비 3줄로 즉시 대응 |
+| **자체 원글 — Flare XRPFi 커뮤니티 행사(9/5 14:00~17:00, 서울 한국컨퍼런스센터, 무료·승인제, 103명 참석)**. 주최 Flare, 아젠다에 **KWeather × Flare 파트너십 소개(케이웨더 블록체인본부장)** · Flare APAC Lead 시연 · D'CENT · 문작가 특별 강연 | **✅ 오늘 원글로 게시 권고** | ① **Flare 언급 잠금 해제**: 규칙은 "9/5 전 언급 금지" — 오늘이 9/5이고 **주최사가 아젠다를 공개**했으므로 공개 정보 ② **주체 정확히**: 아젠다상 파트너십은 **KWeather × Flare**다. 웰비안 계정은 "우리 기기 파트너 케이웨더가 무대에 선다"로 쓰고, **wellbian × Flare 파트너십으로 쓰지 않는다** ③ **FDC 등 기술 통합 클레임 0**(규칙 유지) ④ 가격·수량·증정·9/7 판매 언급 0(9/7까지 잠김) ⑤ 초안 A(266자, 추천) / B(237자) / 국문 커뮤니티용(160자) ⑥ 이미지: **Flare·XRP 로고를 생성 이미지에 넣지 않는다**(타사 브랜드 위조). 1순위는 Measured Room v0.11 실캡처, 2순위는 자체 기기 사진 프롬프트 |
+| @bgarlinghouse(브래드 갈링하우스, 리플 CEO) **두 글 동시** — ⓐ 「BIS가 XRPL로 테스트하는 게 놀랍나요.. 낮은 수수료·빠른 결제·입증된 실적」 + cryptoslate BIS 프로토타입 링크(4h 전, 좋아요 5.6천·RT 1.4천·답글 258) ⓑ 「네덜란드 중앙은행 금 $110억 이송, 70%는 실제로 안 움직였다 — 중앙은행은 아직 1940년대 방식」(9/5 07:41, 조회 24.1만·좋아요 5.1천·RT 1.2천·답글 186) | **✅ 붙는다 — ⓐ 1순위 · ⓑ 는 예비**(계정당 1일 1답글이라 **둘 중 하나만**) | ① **ⓐ 를 고르는 이유**: 우리 레인 정중앙(공식 통계의 검증 가능성), 소재·초안이 이미 있음(BIS 원글 A 준비분), 무대 크기도 ⓑ 이상(RT·좋아요·답글 모두 더 높음) ② 형태: 반은 테제(기관이 레일을 고르는 기준) 반은 체인 홍보 → **테제 반쪽만**, "XRP가 해결합니다" 류 답글과 구별되게 **한계를 하나 더하는 문장**으로 간다 ③ 초안 R1(201자, 추천) / R2(226자) — 네 번째 체크는 레일이 아니라 **데이터 생산자 쪽**에 있다 ④ ⓑ 초안 G1(233자): `Netting works on top of attestation.` **신규 시그니처 후보** — 금 70%가 안 움직여도 정산된 이유는 이미 감정(assay)이 있었기 때문 ⑤ **가드**: 시세·캐시태그·코인 0, 리플과의 관계 암시 0, BIS 수치 재인용 0, 링크·태그 0 ⑥ **원글 A(BIS 지문 앵커링)는 9/6 으로**: 오늘 원글 슬롯은 Flare 행사 건이 쓰고, 주제가 오늘 살아났으니 내일 꼬리를 탄다 |
+| @Xfinancebull(X Finance Bull, 유료 인증·리플 모자 프로필) — "시장은 인내심을 잃을 이유를 줬지만 리플은 구축했다": RLUSD 지역 확장 · Ripple Prime·Treasury·Custody · XRPL 허가 도메인·허가 DEX·자격 증명·대출·AI 에이전트 결제 · 장부상 토큰화 자산 급증 → **"그게 제 확신을 높게 유지하는 이유"**, "차트는 조용해질 수 있지만 XRPL은 아니었다" | **패스 — 무반응, 좋아요도 생략** | ① **형태가 홀더 정서·가격 위로 글**이다. 본문에 인프라 사실이 나열돼도 프레임이 "확신"과 "차트"라 진영 무관 무반응(시세·홀더 정서 규칙) ② 좋아요도 생략하는 이유: 확신 글에 반응하면 우리 계정이 가격 정서에 참여하는 신호가 된다 ③ 계정 자산 없음 — 원출처 아님, 씬 사상가 아님, 관계 가치 없음 ④ 오늘 답글 슬롯은 @bgarlinghouse(BIS) 가 훨씬 값이 크다 ⑤ **소재 중복**: 나열된 XRPL 자격 증명·허가 DEX 는 9/4 @beyond_broke 건에서 이미 ★★ 로 축적. 새 소재 없음. **관찰**: 이틀 새 세 번째 "XRPL 자격 증명" 주제 — 흐름이 살아 있으므로 9/6 BIS 원글 A 의 근거가 더 강해졌다 |
+| @0xPaulius(Paulius) — AI 모델로 "아늑한 일본 2.0"을 생성했다는 쇼케이스(9/4, 14h 전) | **패스** | ① AI 생성 세계 쇼케이스 = 레인 밖(9/4 맨해튼 건과 동형) ② 붙을 문장 없음, 소재도 중복 |
+
+## 판정 기록 (9/3)
+
+| 대상 | 판정 | 근거 |
+|---|---|---|
+| @Trensik_com — 「BIS Put the Truth on the XRP Ledger」 인포그래픽(9/3 04:04, 조회 5.1만·RT 131) | **좋아요·북마크만, 답글 없음** | ① 집계·인포그래픽 계정 = 원출처 아님(같은 뉴스엔 원출처 1곳) ② 논문 번호 오기(1274)·앵커 비용·"다음 단계 채권" 미검증 — 답하면 그 오류에 서명 ③ 글 유형은 깨끗(시세·홀더 호명 없음, #XRPL 해시태그뿐). **소재 ★★** — ecosystem-log 9/3 |
+| BIS 원출처(@BIS_org 또는 저자·d-fine) X 게시 여부 **미확인 — 서우 확인 요청** | **조건부 ✅ 붙는다** (원출처 글이 있고 형식이 연구 공개면) | 원출처 ✚ 글 유형 깨끗 ✚ 확대된 구멍 정중앙(데이터 검증). 정책 담론 아님(8/23 IMF 원칙 비해당 — 통계·기술 논문). 초안 B(252자): `The shape is the point: hash the dataset, anchor the root, verify from the file plus one ledger lookup. / Same shape one layer down: readings from a certified indoor-air sensor in a Seoul bedroom, fingerprinted before they go anywhere. Still in testing.` **가드**: 논문 번호·앵커 비용·초 단위 수치 미인용, 제품명·링크·태그 0, `Still in testing` 유지 |
+| 원글 후보 — BIS 지문 앵커링 ↔ 우리 판독값 | **게시 권고: 9/4 원글 슬롯** (9/3 은 원글 7 예정 — 2/일 예외로 오늘 저녁 6h+ 간격 게시도 가능, 서우 결정) | 초안 A(277자): `BIS anchored official statistics on XRPL: hash the file, anchor the root, verify in seconds. Proof of concept, devnet. / Same shape one layer down: readings from a certified indoor-air sensor in a Seoul bedroom. In testing. / Statistics get timestamps. So do rooms. / #DePIN #XRPL` — 앵글: 형태 대조(파일은 오프체인·지문만 온체인·검증 한 번) + 시제 규칙(측정 현재형 · 온체인 in testing) + 쉬운 말 클로징. xqa 결과는 9/3 보고 참조 |
+| @BankXRP — 「리플 연구가 또 다른 나스닥 핀테크에 인용」 Advasa Holdings 8-K(9/3 01:59, 조회 1.9만) | **전면 무반응, 좋아요도 생략** | ① 🚨 오프닝 + 집계 계정(9/2 「8800조 달러의 내기」 무반응과 동형) ② 원출처 아님(Advasa 8-K·Ripple×BCG) ③ 티커·SEC 8-K 이미지·$18.9T 시장 전망 = 투자·증권 담론, 9/7 D-4 ④ 구멍 없음(RWA 시장 진출, 측정·데이터 0) |
+| @WKahneman(WrathofKahneman) — 리플 웹사이트의 "Tech Credit"(연간 SaaS 가치까지 XRP/RLUSD 크레딧, Ripple Treasury·GTreasury 사용자 대상) 관찰 (9/3, 10h 전, 조회 1.2만·좋아요 107) | **✅ 붙는다 — 오늘 잔여 슬롯 1순위** | ① 관계 계정(8/22 `Credit follows evidence` 답글 게시) ② 구조·채택 관찰 글, 시세·홀더 호명 없음, 원출처(리플 페이지)를 본인이 캡처한 분석가형 원글 ③ 넓힌 구멍: 온보딩 인센티브 담론에 우리 실물 사례(기기 = 정산할 게 이미 있는 온램프). 초안(234자): `Credits to try the rails is the enterprise version of an old problem: the first transaction is the hard one. / One layer down, households: the on-ramp is a device that already has something to settle. Sold in RLUSD, rewards in testing.` **가드**: XRP/RLUSD 비교 0(우리 선택만), 크레딧 수치·프로그램 조건 미인용, 제품명·링크·태그 0, `rewards in testing`. 시그니처 후보 `The first transaction is the hard one.`(쉬운 말 통과) |
+| @t54ai(t54.ai, 조직 인증) — 「에이전트 결제가 XRPL 개발자 스택의 일부가 되는 중」 자사 x402 촉진자·신뢰 레이어(XRP·RLUSD 에이전트 결제, 결제 검증·사전 결제 위험 검사) + 자체 대시보드(정산 300만 건+, 가맹점 148) + Jake Claver 「리플이 x402 중심 XRPL AI Starter Kit 발표」 인용(9/3, 2h 전, 조회 1.8천·좋아요 85·RT 19·답글 3) | **✅ 붙는다 — 오늘 답글 2순위**(WKahneman 과 계정이 다르므로 슬롯 충돌 없음, 일 답글 3~4 안) | ① 판단표 C 빌더·인프라 계정 — 본인 제품 발화 = 원출처(집계 아님), 답글 3건뿐이라 묻히지 않음 ② 글 유형 깨끗(시세·홀더 호명·캐시태그 0, 수치는 본인 대시보드) ③ 구멍 = 5c 축(에이전트가 무엇을 사는가)의 **결제 쪽 절반** — 우리는 입력 쪽 절반. 8/24 @alina_creates 답글(machines paying machines…)과 같은 축, 시그니처 `Machine customers are still customers.` 변주(receipt) ④ 그들의 「결제 검증·사전 위험 검사」를 데이터 쪽으로 미러링(9/2 @Magne_Ai 답글의 센서 현장 증명 축) ⑤ **가드**: `Ads don't work on agents. Attestations do.` 는 5c 원글 초연용 — 답글 선소진 금지 · 300만 건·148·Starter Kit 발표 **미인용**(ripple.com·xrpl.org·t54.ai egress 차단으로 원출처 미확인) · x402 통합 클레임 0 · XRP/RLUSD 비교 0 · 제품명·링크·태그·CTA 0 · 온체인 in testing. 초안 T1(275자): `Pre-payment checks on the money side, yes. The data side needs one too: was the sensor really in the room, is the reading still the one it took? / Machine customers are still customers. They just read the receipt more carefully. / Ours: a fingerprinted air reading. In testing.` / 대안 T1b(237자, 우리 언급 없이 미러링만): `Pre-payment checks on the money side make sense. The data side needs one too: was the sensor really in the room, and is the reading still the one it took? / Machine customers are still customers. They just read the receipt more carefully.` |
+| @SternDrewCrypto(Stern Drew) — 「BIS가 올해 가장 중요한 블록체인 실험을 퍼블릭 레저에서 수행」 + "리플이 국제결제은행의 조용한 인프라로 선택" + WP 1374 커버·Kinexys(JPM) 이미지, @RippleXity 「BIS x $XRP Ledger 문서 분석」 인용(9/3, 6h 전) | **전면 무반응, 좋아요도 생략** | ① 🚨 오프닝 + 집계 계정(9/3 BankXRP 와 동형) ② **과장 프레임** — "리플이 BIS 인프라로 선택" 은 원출처(BIS Open Tech PoC, XRPL DevNet, 프로덕션 아님, 리플이 아니라 원장)와 어긋남. 붙으면 그 과장에 서명 ③ 인용 원글이 캐시태그 집계 ④ **소재 ★**: 트윗 이미지의 WP 커버로 **논문 번호 1374·저자·JEL·키워드 확인** → ecosystem-log 갱신, Trensik 의 1274 는 오기 확정 ⑤ 원글 A 가드 재확인 — `Proof of concept, devnet.` 한 줄이 이 과장 사이클과 우리를 가른다 |
+| @RippleXity — 「속보: BIS x $XRP Ledger — 문서 분석」 스레드(9/3, 9h 전) | **답글 없음, 북마크만** | ① 집계 + 캐시태그 ② 문서 분석 스레드는 원문 접근 차단 중인 우리에게 대조용 참고 자료 ③ 인용 RT 금지(캐시태그가 우리 타임라인으로 이동) |
+| 원글 A 게시 시점 재판정 | **오늘 저녁 2/일 예외 권고**(원글 7 과 6h+ 간격, 서우 결정) — 9/4 는 차선 | 집계 3파(Trensik 04:04 → RippleXity → Stern Drew 6h 전)로 이 사이클이 오늘 안에 소진되는 중. 우리 각도(형태 대조·한 층 아래)는 뉴스가 아니라 구조라 하루 늦어도 죽지 않지만, "BIS 가 리플을 택했다" 류 과장이 깔린 타임라인에 **정확한 한 줄(PoC·devnet)** 이 같은 날 있는 게 관계 자산에 유리 |
+| @tokenterminal(Token Terminal, 조직 인증) — 「RWA 성장세는 광범위」 스테이블 제외 온체인 RWA 시총 $44.6B·3년 17.8배, 자산군별 차트(미국채 $15.1B·수익 전략·신용 펀드·금·에너지 MWh $2.2B·주식·부동산…) + 자사 대시보드 CTA(9/3 03:22, 조회 4.6천·좋아요 18·답글 3) | **✅ 붙는다 — 오늘 답글 3순위**(1·2순위 뒤 여유 있을 때만. 18h 경과·작은 무대라 노출 기대 낮음, 관계 자산·소재 목적. 9/4 로 넘기면 패스) → **게시됨 (서우 "남김", 9/3 저녁)** — 사용 초안 확인 대기(R2 추천안 기준). 시그니처 "Tokenization moves exactly as fast as verification does." **초연 소진** | ① 판단표 B 기관·분석 데이터 계정, 수치 원출처 = 본인 대시보드(집계 아님) ② 글 유형: 테제 반 + 자사 차트 홍보 반 → 테제 반쪽만 받는다(CTA "Explore RWAs" 무시) ③ 구멍 = 넓힌 구멍 정중앙(RWA = 검증 가능한 청구권의 온체인화, 1막 금융 → 2막 실물 데이터). 차트의 **Energy (MWh)** 가 금융 청구권이 아닌 측정 물리량의 첫 행 = 우리 서사의 선례 ④ 초안 R1(≈250자): `Every row on that list is something an auditor can check: a T-bill, a bond, a megawatt-hour. Sensor readings are the next row, and they'll show up only as fast as they can be verified. / Tokenization moves exactly as fast as verification does.` — 시그니처 초연(대응용 지정, 원글 예약 아님). 초안 R2(233자, **추천안** — 차트의 한 줄을 집어 그 글을 완성하는 형태): `Energy (MWh) is the interesting line: the first row that is a measured physical quantity, not a financial claim. That is the door the rest of the physical world walks through. / Tokenization moves exactly as fast as verification does.` **가드**: 수치 재인용 0 · 제품명·링크·태그 0 · 시세 0. **소재 ★★**: "$44.6B ex-stablecoins · 17.8x/3y · Energy MWh $2.2B" — 2막 실물 데이터 원글 텍스처, 출처 표기 Token Terminal(원출처) |
+
+## 판정 기록 (9/2)
+
+| 대상 | 판정 | 근거 |
+|---|---|---|
+| @era_wallet (ERA Wallet) — 우리 디센트 스레드에 "Build the wallet properly first, then layer rewards… keeps the product promise clear" | **답글 안 함, 좋아요로 끝(이미 누름)** | ① **파트너 경쟁사** — 디센트의 경쟁 지갑사. 파트너 경쟁사 무반응은 9/2 확장 트랙에서도 풀지 않은 규칙 ② 디센트 MOU 공지 스레드라 디센트가 보는 자리 ③ 디센트 당일 지갑 카테고리 = 좋아요 상한. **소재**: 발표 당일 타 지갑사가 먼저 접근 = "지갑 먼저" 포지션이 지갑 업계에 통한다는 신호. 디센트 MOU 독점 여부 확인 후 DM 영역에서만 판단 |
+| @RippleXity — "RWA 를 발행량으로 재는 건 틀린 지표, 회전 속도가 사업" ($37.7M·21 laps 영상, @RetaVest 인용) | **패스, 좋아요도 생략** | ① 강등 계정(8/24 🚨 허위 시의성 패턴 2/2 → 소재 검증용만), 이번도 `🚨 속보` — 확장 트랙은 최상위 계정용, 하이프 계정은 테제 글이라도 불가 ② 원출처 아님(RetaVest 인용), 수치 미검증 ③ 오늘 슬롯 없음. **소재 ★**: "발행=대차대조표 / 회전=사업" = 10/3 키노트 테제의 예상 반론 — 키노트에 선제 문장 필요(*회전은 있는 것을 몇 번 돌리느냐, 측정은 없던 것을 처음 생기게 하느냐*). `Counting is easy…` 계열 원글 소재. RetaVest 원글이 분석가급이면 재판정 |
+| @heyibinance(Yi He, 바이낸스 공동창업자) — "crypto is a whole-industry story" + Binance Research 크립토 주식 인포그래픽 인용 (1,452만 뷰) | **✅ 붙는다 — 크립토 씬 확장 트랙 첫 적용** (서우: XRP에만 매몰되면 파문을 못 던진다 → 규칙 정정, 플레이북 참조) | 규칙 위반 3겹: ① **바이낸스 진영 무반응**(서우 제정) ② 거래소 상품 홍보(주식·퍼프 거래 가능 = Bitrue·OKX·Bitget 자동 패스 패턴) ③ `Investing in crypto` 투자 프레임, 9/7 D-5. 붙는다면 바이낸스·주식·투자 0, 논지 한 줄만 받아 우리 행 추가: `doesn't have a ticker. It has a reading.` (272자). 게시 시 규칙 예외 2건째로 기록 |
+| @MRKingXRP — 🚨 갈링하우스·IMF 결제 마찰 인용 + "$38.5조 시장 XRPL 구동 · 공급 충격 · 준비하세요" | **전면 무반응, 좋아요도 생략** | ① `공급 충격… 준비하세요` = 시세 펌핑 프레임(최상위 금지) ② 🚨 하이프 대역 계정 ③ IMF = 정책 무대(8/23 IMF 무반응 원칙) ④ `$38.5조 XRPL 완전 구동` 미검증·과장 ⑤ 갈링하우스 결제 마찰 인용은 상용구 재탕(8/24 skxvvx 판정 동형). 소재 가치 0, 축적 불요 |
+| @ifureJack (T1 KOL, 프로필에 디센트 고객사 표기 — 9/2 저녁 확인) — 우리·디센트 태그 응원 글 "Data you can trust, rewards you can earn… weather DePIN to the $XRP ecosystem" | **✅ 답한다 (멘션 답글 — 슬롯 비산입)** | 태그된 응원 글은 답하는 게 예의. 단 `rewards you can earn` 은 수익 프레임이라 감사만 하면 우리가 승인한 게 됨 → 감사 + "하드웨어는 실물, 보상은 in testing" + `Wallet first, rewards later.` 로 부드럽게 재정렬. 캐시태그는 그쪽 글, 우리 답글엔 없음. 273자. **신규 원칙: 우리를 태그한 글의 과장은 그 자리에서 정정한다 — 침묵 = 승인** |
+| @mrcauliman — MONOLITH 타일·XRPL 좌표·"use the ledger for something real" | **✅ 붙는다 — 오늘 잔여 슬롯 중 최우선** | ① 커뮤니티 빌더·시그니처 크레딧 인용 계정 = 관계 자산 ② 클로징 `use the ledger for something real` = 넓힌 구멍 정중앙, 우리가 그 물리 버전 ③ 캐시태그는 그의 글, 우리 답글엔 없음 ④ 지갑 카테고리 아님(디센트 당일 예외 비해당) ⑤ 타일 판매 배서 안 함 — 'something real' 과 빌더 연대만. 초안: `"Use the ledger for something real" is the whole test.` + 다른 좌표(침실의 인증 센서, readings headed for XRPL) + `Physical storefronts, if you like.` + in testing + `Good to see builds going up next door.` (274자). 리플X 와 택1이면 이쪽 |
+| @BankXRP — XRPL 대출 해커톤 (DeVinci Blockchain·리플 후원, 파리 9/12~13, XLS-65/66) | **패스, 좋아요만** | ① 원출처 아님(주최 DeVinci — 8/26 마스터카드 해커톤 때도 Commons 주최 글에만 붙임) ② 구멍 없음 — 대출·볼트 DeFi 레인, 넓힌 구멍(실물·소비자·온보딩)에도 미해당. "빌더 응원" 앵글은 8/26 소진 ③ 오늘 슬롯 없음(디센트·에버노스 사용, 리플X 대기) ④ 계정은 8/23 확인 신뢰 계정이라 좋아요 유지. 원출처 글 등장 시 재판정하되 좋아요 상한 예상. 소재: XLS-65/66 위 프로토타입 = 최소 테스트넷 활성 → 8/10 기록(40%/37%) 활성화 상태 재확인 |
+| @ashgoblue(Evernorth CEO) — XRPL 2분기 배관 정리 + Q2 Liquidity Report 예고 (6초 전) | ~~전면 무반응~~ → **✅ 붙는다 (서우 지시로 번복 — 구면 + 출시 어필, XRPL 기반)** — 초안 `Good to see the plumbing list written down.` + 인증 실내 공기 센서·하드웨어 월렛 파트너·RLUSD 판매 on XRPL·rewards in testing + `Volume showing up isn't only trades. Some of it will be rooms.` (279자). **가드**: 리포트·에버노스·투자 어휘 0, 제품명·링크·파트너 태그 없음, 사적 만남 언급 없음. 면책 문구 규칙의 **예외 1건**으로 기록 — 일반화하지 않음 | ① **투자 면책 문구 + 에버노스 보도자료(S-4·나스닥) 링크** = 8/29 규칙 정중앙("구멍이 있어도 면책 문구가 달린 글이면 무반응"). 본문은 인프라라 깨끗하지만 형식이 투자자 커뮤니케이션 ② 9/7 D-5 — 증권 발행사 투자자 스레드 인접 금지 ③ 계정 패턴: 인프라 단상 ✅(9/1) / 면책·보도자료 딸린 글 ❌(8/29·9/2). **소재 ★**: 5/6 토큰화 국채 환매 · 5/20 EVM 사이드체인 · 5/27 PD·MPT 강화 · 6/4 RLUSD 멀티체인 — 이해당사자 발화라 미검증, 내일 리포트가 원출처 후보. `RLUSD multichain` 은 9/30 전 우리가 증폭하지 않음 |
+| @Magne_Ai — 우리 디센트 스레드에 단 회의 답글("센서가 현장에 있었는지·스푸핑 아닌지 증명하는 검증 레이어에서 파트너십이 멈춘다") | **✅ 답한다 (우리 스레드 내 답글, 슬롯 무관)** | 정확히 우리 테제(검증이 가치)의 질문 — 피하면 회피로 읽힘. 답: 동의 + 우리가 다른 이유 2개(센서를 직접 만든다=인증 하드웨어·BYO 아님 / 30년 실외 관측망을 대조 기준으로) + `Still in testing`. **관측소 수치·라이선스 NFT(원글 7 온존)·시그니처 미사용.** 273자 |
+| @RippleXDev — 「Onchain Economy」 유튜브(Uphold 미국 사장, 24/7 결제·국경 간 비용·XRP/XRPL) | ~~답글 무반응, 좋아요 O~~ → **✅ 재판정 붙는다 (9/2 오후, 수면 위 규정 적용)** — 초안: `The onchain economy has a quieter half: things that aren't money.` + 서울 침실의 인증 센서(hardware exists / on-chain layer in testing) + `Pennies-not-percentages matters even more when the payer is a device.` (272자). **D'CENT 언급 금지, 링크·제품명 없음.** 사유: ① 확대된 구멍 — 온체인 경제의 실물 절반 ② 디센트 스레드 고정 후라 프로필 유입이 이득 ③ Uphold 는 커스터디얼 플랫폼, D'CENT 는 셀프커스터디 하드웨어 — 카테고리 다름 ④ 7h 경과·답글 5개뿐이라 묻히지 않음 ⑤ 글 유형 깨끗(유튜브 CTA). 계정당 1일 1답글 충족 | ① 구멍 없음 — 결제·송금 = 측정·데이터와 접점 0. "우리도 XRPL 정산"은 8/25 RLUSD $2B 답글에서 소진 ② **디센트 파트너십 당일** — 오늘 계정 활동은 전부 공지를 향해야 함, 초점 분산 금지 ③ **Uphold = 지갑·온램프 카테고리** — 디센트 공지 당일 타 지갑 콘텐츠 관여는 파트너 예의 위반 ④ 글 자체는 깨끗(클로징 = 유튜브 CTA, 시세·홀더 호명 없음) — 무대만 안 맞음 ⑤ 진영 최상위 원출처라 좋아요는 관계 신호 유지(8/29 Ripple Prime 판정 동형). 소재: "퍼센트가 아닌 페니 단위" = 원글 6 배경 텍스처이나 우리는 국내 우선 판매라 국경 간 비용이 우리 사례 아님 — 얇게만 |
+| @FlareNetworks — XRP SEOUL 2026 골드 스폰서 스포트라이트 인용("On the ground. On stage. On XRP at work." + Hugo Philion 이 XRP capital utility 발표 예고, 20분 전) | **패스, 좋아요만** | ① 글 형태 = 후원사 스포트라이트 홍보 + "XRP capital utility"(유휴 XRP 활용 결) — 테제 아님, 우리 구멍 없음(실물 데이터 축과 무관, 홀더 자본 담론 인접) ② **우리 후원계약 미서명·미발표** — XRP Seoul 참석·후원 암시 금지(8/31 규칙), `See you there` 류 응답도 참석 신호라 보류 ③ **Flare 파트너십 9/5 공개 전** — 공개 친밀 신호 보류, 첫 공개 접점은 9/5 워크숍 사후 원글(8번)에서 태그 ④ 파트너 글이라 부정 반응 0 → 좋아요로 예열. **후속**: @XRPSEOUL 이 우리 Platinum 스포트라이트를 올리면 그때가 인용 차례 — 원고는 계약 서명 후, 별첨 A 공식 X 발표와 같은 날 |
+| @Steve_4P (Four Pillars CEO) — 「Why Do Korean Crypto Exchanges List So Many Shitcoins?」 장문(두나무 수수료 의존 98% vs 코인베이스 구독 48%, 규제가 상장 의존을 만들었다는 역인과, 국회·박현주 인용, 18:31, 조회 1,100) | **전면 무반응 — 좋아요도 생략, 북마크·소재만** | ① **정치·규제 담론** = 수면 위 규정에서도 안 바뀌는 금지(8/23 IMF 원칙 · 정치 프레임 무반응). 국회 제출 자료·의원·정부 비판이 뼈대 — 테제 글이지만 확장 트랙의 "정치" 제외 조건에 정확히 걸림 ② **상장사 계정 리스크** — 케이웨더가 국내 거래소·규제를 평가하는 모양이 되면 "WLBN 국내 상장?" 질문을 부른다(상장·유동성은 내부 전용) ③ 우리 구멍은 발행 구조(싱가포르)인데 **대외 언급 금지** ④ 좋아요조차 "거래소 상장 = 사기" 인용 글에 스탠스로 읽힘 → 생략. **소재**: 두나무 98%·코인베이스 48%·상장 1,236/폐지 430·Digital X 편입 — 유동성 설계·국내 거래소 판단의 배경 자료(미검증, 저자 요약). **관계**: Four Pillars = 국내 최상위 리서치 — 국내 트랙 로스터에 후보 등록, 정책 글 말고 DePIN·RWA·데이터 글에서 접점 |
+| @tiger_research_ (Ryan Yoon) — 「Korea Crypto Market: A Guide to the Rest of 2026」 장문(CBDC 한강 2단계·원화 스테이블 입법 지연·STO 하위규정·특금법 개정·과세 2027·거래소 지분 투자·KBW, 11:00, 조회 1,017, 구독 CTA 포함) | **전면 무반응 — 북마크·소재만** | ① 규제·정책 개관 + 리서치사 구독 홍보 = 정치·규제 담론 + 미디어 원글(답글 자리 아님) ② 상장사 계정이 원화 스테이블·과세 입법을 논평하는 모양 금지 ③ 소재 가치는 높음(아래 ecosystem-log): **"단순 MOU는 더 이상 시장을 움직이지 못한다, 실체 있는 레퍼런스"** = 우리 실물 포지션·10/3 데이터 한 장 전략의 외부 검증 · 국내 금융기관 계약 주체 = 한국 법인 필수(케이웨더가 국내 계약 주체인 이유) · **예산 주기 10~12월 초 마감 → B2B 제안 창** · 특금법 개인지갑 동일인 규정(2027.2)·과세(2027.1) = CS 등재 후보(원문 확인 후, 미검증) ④ 관계: Tiger Research = 국내 리서치 상위 — 국내 트랙 후보, 정책 글엔 무반응 |
+| @ifureJack 인용 글 후속 — 우리 정정 답글(6시간 전)에 KOL `Noted` · 이후 답글 14건("Trusted data makes DePIN far more useful" · "$XRP is my attention token" · "Wallet first, rewards later. That's the order."(@Fahim_510, 우리 문장 그대로) · "Data you can trust, rewards you can earn."(@remonnyy, KOL 문장 반복) 등, 조회 385) | **팟 답글 전체 무반응 · @Fahim_510 좋아요 1개만** | ① 답글 계정군 = 한 줄 상투구·.eth/.inj 핸들·티커 언급 → **인게이지먼트 팟**으로 판정. 대화가 아니라 부스팅이라 답하면 우리 계정이 저품질 클러스터에 묶인다 ② KOL 프로필이 @DCENTWALLETS 를 고객사로 표기 = 이 인용은 **디센트 측 KOL 캠페인**. 우리 정정(하드웨어 실물·보상 in testing)은 원글 작성자에게 1회로 완료, `Noted` 확인 — **되풀이 문장(`rewards you can earn`)은 재정정하지 않는다**(원글 1회 원칙, 에코마다 정정하면 방어적으로 읽힘) ③ **시그니처 되받기 1회**: `Wallet first, rewards later. That's the order.` 가 6시간 안에 그대로 인용됨 — 팟 계정이라 가중치 낮지만 쉬운 언어 규칙의 첫 실증 → 플레이북 등재 ④ 후속 액션: 디센트 마케팅팀에 **KOL 표현 가이드 한 장**(보상 in testing · earn/수익 표현 금지 · 가격·수량 없음 · 케이웨더 표현 · 캐시태그 없음) 전달 — 다음 KOL 글부터 정정 불필요하게 |
+| @SoftBank (일본 공식) — HAPS 「날아다니는 기지국」 일본 최초 시험 서비스 성공, 2027년 이후 상용 목표, #방재주간 (일본어 원문) | **패스 — 무반응, 좋아요도 생략** | ① 일본 국내 방재 캠페인 글(일본어·#방재주간) — 오디언스가 일본 일반 대중, 우리 영어 답글은 소음 ② 크립토·데이터 담론 아님, 구멍 없음 — "기상 조건 하 비행 성능"은 케이웨더 본업(성층권 기상) 영업 소재일 수는 있으나 wellbian 채널 대상 아님 ③ "재난 시에도 통신" 테마는 원글 7(사고 뒤에도 남는 정체성)과 결이 비슷하지만 셀프 증언을 붙일 자리가 없다. **소재 기록 없음** |
+| Evernorth Q2 2026 XRP Liquidity Report (보도자료 9/2 — @ashgoblue 인용 예상) — DEX 4.42M XRP/일(+20% YoY) · 네트워크 가치 평균 $4.26B · 오더북 계정당 거래 3배 · RLUSD XRPL 잔액 평균 $539M(점유 20%→34%) · **거래 계정 16,587/일·신규 지갑 2,783/일, 각 −25%(시리즈 최저)** | **✅ 붙는다 — 지목형 답글 (셀럽 사다리 9/1 계획대로, A층 구면)** | 지목 사실 = **신규 지갑 6,617→2,783/일**(리포트가 "가장 리테일 민감한 지표"라 자인). 우리 실물 한 줄 = 트레이더가 아닌 구매자(침실 공기·인증 모니터·지갑) + in testing + `Wallet first, rewards later.` **275자**. **가드**: 리포트·에버노스·투자·ETF·규제(OCC·CLARITY) 어휘 0 · 제품명·링크·태그 0 · 시세 0 · `RLUSD multichain` 미언급(9/30 전 증폭 금지). **면책 문구 예외 2건째(같은 계정)** — 서우 결정 사항: A층 구면 계정의 **온체인 데이터 리포트**는 형식이 투자자 커뮤니케이션이어도 붙는 유형으로 확정할지. 확정 전까지 일반화 안 함. 게시 대상 = 애쉬시가 올린 글(없으면 @evernorth 공식 글), 게시 15~30분 내 |
+| @BankXRP — 「8800조 달러의 내기: 리플 커스터디-토큰화 파이프라인」 🧵 (리플×세틀민트 9/1 발표 요약, Fiona Murray 인용, 좋아요 189·조회 1.5만) | **전면 무반응, 좋아요도 생략** | ① 같은 뉴스 **5건째**(9/1 소재 포화 경보 유지) ② 원출처 아님(집계 계정) ③ 하이프 제목("○○조 달러의 내기") — 오프닝이 유형을 정함 ④ "기관은 커스터디 해결, 소비자는 빈손" 카드는 최상위 계정 테제 글용, 집계 요약엔 안 씀 |
+| @TheBlockCo — G20 재무장관·중앙은행 총재 "디지털 자산이 성장·혁신 지원" 인정, 책임 있는 프레임워크 추진 | **전면 무반응** | 미디어 원글 + 정치·규제 담론(8/23 IMF 원칙) — 북마크 불요 |
+
+## 판정 기록 (9/1)
+
+| 대상 | 판정 | 근거 |
+|---|---|---|
+| @CoinDesk — Ripple × SettleMint 보도 (22:31, 조회 1.2만 / 좋아요 29, **같은 뉴스 4건째**) | **답글 무반응, 북마크만**(좋아요도 굳이 안 함) | ① **미디어 원글 답글 = 관계 자산 0** — 8/29 CoinDesk 양자내성 건에서 확립된 규칙 ② 같은 뉴스엔 원출처 1곳만, 원출처는 리플·SettleMint ③ 구멍 없음(커스터디·토큰화) — 원출처가 올려도 자리 없다고 이미 판정 ④ **참여율 0.2%대** (조회 1.2만·좋아요 29·답글 6) — 미디어 스트레이트 뉴스 특성, 답글 도달 기대 불가 ⑤ 오늘 같은 축 4번째라 타임라인 흔적을 더 남길 값 없음. **⚡ 대신 신호로 읽을 것: 미디어까지 왔다 = 뉴스 사이클 정점 → 원글 4(증언 각도) 게시 창이 오늘 밤** |
+| @Xfinancebull — Ripple Custody × SettleMint APAC 통합 (**같은 날 2건째**) | **전면 무반응, 좋아요도 생략** | ① **오프닝·클로징 양쪽 실격** — `와, 세상에! 🚨` 로 열고 본문 2번째 줄이 `ripple:native 보유자들은 이 설정이 얼마나 커질 수 있는지 이해해야 해`(홀더 호명이 앞으로 나옴), 클로징 `정말로 심각한 일이 되는 지점`. 아침 글보다 노골적 ② **글의 목적 문장**: `갑자기 XRP는 … 시장 옆에 앉아 있게 될 거야. 이 모든 게 유동성을 필요로 하지` = XRP 수요 논증, 인프라 설명은 그 사다리 ③ 조건법 과다(`될 수 있어`·`선택한다면`·`확장될 예정이라고 해`) — 사실 층 얇고 추론 층 두꺼움 ④ **같은 축 3연속**(9/1 Versan → Xfinancebull#1 → #2). 타임라인에 이 축 반응이 쌓이면 안 됨 ⑤ 구멍 테스트 실패. **사실 층은 진짜 — 9/1 리플 공식 발표(PR Newswire) ★ 축적**, 단 보도자료는 커스터디+라이프사이클 번들이고 `기관→SettleMint→Ripple Custody→XRPL→…` 흐름도는 작성자 작도 |
+| @Xfinancebull — 리플 기관 스택 조립 정리 (Ripple Prime·Custody·Delta One·RLUSD·XRPL 인프라, 10시간 전) | **답글 무반응, 좋아요도 생략** | ① **클로징이 유형을 정한다** — 본문 90%가 정직한 인프라 정리인데 `안다면, 알겠죠...`(IYKYK)로 닫는다. 내부자 암시 문법이고 "안다"의 목적어는 가격. 명시적 시세 문장 0이지만 글 전체가 그 한 줄을 향해 조립됨 ② `몇 년 전 사람들이 사던 XRP와는 매우 다른 구조` = 홀더 대상 발화(이 계정 3연속 확정 패턴의 ❌ 쪽) ③ 에드워드 다우드 인용 — "XRP의 성공이 설득력 있게 된다" = 투자 논제 + 인물 자체가 매크로 논쟁 지형 ④ **어제 Versan과 동일 축·동일 뉴스 사이클**(블랙록→리플 스택→XRP). 하루 만에 붙으면 어제 판정이 무의미해지고 9/1 「XRP 대신 RLUSD」 가드와 인접 — 이 글은 그 논쟁의 반대편 변론 ⑤ 원출처 아님(공식 발표 재구성) ⑥ 구멍 테스트 실패(측정·데이터·센싱 0). ⚠️ **수치**: `300개 기관 고객`은 미확인 → 인용 금지 / 연 $3T·RLUSD $2B·XRPL 위 ~$1B 은 자체 검증 축적분과 정합 |
+
+**원칙 확립 (9/1, 이틀 연속 동일 기준으로 갈림)** — **글 유형은 본문이 아니라 클로징이 정한다.** 사실 정리가 아무리 정확해도 IYKYK·시세 암시·홀더 호명으로 닫히면 그 글은 시세 글이다. 판정 시 본문을 읽기 전에 **마지막 두 줄을 먼저 본다.** (9/1 Versan `Price discovery is still lagging` · 9/1 Xfinancebull `안다면, 알겠죠...`)
+| @VersanAljarrah(Black Swan Capitalist) — BlackRock 국채 토큰화 → RLUSD → XRPL → XRP 네이티브 (좋아요 714·조회 1.5만) | **전면 무반응, 좋아요도 생략** | ① **시세 발화가 클로징이자 본론** — `Price discovery is still lagging. That's the bigger picture.` 작성자가 직접 이게 요지라고 못박음. 금지선 최상위(Crypt0Senseii 가격전망·Xfinancebull ETF 인플로우와 동형) ② **"XRP 대신 RLUSD" 논쟁의 한쪽 편** — 우리는 RLUSD 정산 회사라 어느 방향이든 자기 폭로(ecosystem-log 9/1 가드 신설) ③ **사실 층 위에 추론 층** — 앞 3문장(BUIDL×RLUSD 환매)은 리플 공식 발표로 검증됨 ★, 뒤 2문장(`XRPL is where the move can finish`)은 작성자 확장(BUIDL 은 ETH·SOL·AVAX·MATIC 위). 답글 = 확장 배서 ④ 구멍 테스트 실패(측정·데이터·센싱 0). **수확은 판정이 아니라 사실 — BUIDL·VBILL ↔ RLUSD 즉시 환매를 ★★ 축적, 9/8 원글 6 최상급 배경** |
+
+## 🚨 9/2 디센트 파트너십 공지 — 대응 계획 (9/1 수립)
+
+**디센트가 9/2 08:01 X 예약 게시.** 초안 확인 요청이 텔레그램으로 옴(9/1 17:57).
+**케이웨더 공시 비대상**(서우 확인) — 공정공시 리스크는 없으나 발화 범위는 보도 문구까지.
+
+### 초안 2버전 불일치 (확인 필요)
+| 위치 | 마지막 문단 |
+|---|---|
+| 예약 편집 화면(8:01 발송) | `the ripple:native ecosystem` ✅ **우리 선호** |
+| **실제 게시(9/2 08:01)** | **`$XRP` 버전으로 나감** — 대표 승인, 수정 요청 없이 진행 |
+| 텔레그램 확인 요청본 | `opportunities across the $XRP ecosystem` ❌ |
+
+### 수정 요청 2건
+1. **`$XRP` 캐시태그 제거 → `ripple:native` 유지**. 캐시태그 = 시세 담론 문법.
+   8/30 XRPL 분석가 판정에서 인용 RT 를 금지한 사유와 동일(캐시태그를 우리 타임라인에 옮겨옴).
+   9/7 사전예약 D-6 에 시세 태그 인접 = 비발화 포지션 상쇄.
+2. **주체 분리 — 최우선.** `We're partnering with KWeather (@wellbianlabs)` +
+   `Together, we'll explore … digital asset rewards` 구조는 **케이웨더가 보상 주체로 읽힌다.**
+   8/27 확정선("기기 파트너·국내 수탁까지만, 토큰 발행·보상 주체로 읽힐 표현 금지") 위반.
+   **케이웨더 = 센서 네트워크·기기 파트너 / 프로젝트 주체 = 웰비안랩스** 로 분리 요청.
+   → 제안: `We're partnering with @wellbianlabs, the weather DePIN project built on KWeather's
+   sensor network — Korea's leading weather data company.` + `Together with @wellbianlabs, …`
+   - 이미지 락업(D'CENT × KWEATHER)은 **수정 요청하지 않음** — 텍스트에서 주체가 분리되면
+     "기기 파트너와의 파트너십"으로 정확히 읽힌다. 디센트의 브랜드 니즈도 있음.
+   - `Beyond storage. Into the real world.` 는 디센트 카피, 건드리지 않음.
+
+### 우리 게시 동선 — **인용 RT 금지**
+| 시각 | 행동 | 사유 |
+|---|---|---|
+| 08:00~08:30 | **디센트 원글에 답글 1건**(축하 톤·우리 쪽 사실 1개·상품 얘기 배제) | 인용 RT 는 이미지·태그가 통째로 우리 타임라인에 박힘. 답글은 디센트 오디언스(더 큰 계정)에 도달하면서 우리 타임라인은 깨끗 |
+| ~~09:00~~ **09:35 게시 완료·고정 완료** | **공지 스레드**(T1 공지 + T2·T3 증언 = 원글 4 흡수, 하루 1원글) → **고정됨** | 보도자료 보도시점 09:00 이후. **T1 = 라이트 글라스 락업 이미지(v2.5) · T2 텍스트 · T3 = 보도자료 제품 사진** (9/2 09:10 최종, 계단 컷 폐기). 원고·이미지 배정은 content 파일 |
+
+**고정 일정 (9/2 확정)**: 9/2 저녁 원글 4 고정(7/15 플레어 LOI 핀 교체) → **9/7 사전예약 글이 고정 승계.** 9/5 플레어 워크숍 글은 고정하지 않음 — 이틀 뒤 사전예약이라 사흘에 두 번 바뀌면 불안정해 보임. 이미지 = v2.4 계단 컷 + **D'CENT × wellbian 락업 좌상단**(스펙은 content 파일).
+
+예열(답글) → 완결(원글) 세트 = 8/26 마스터카드 패턴.
+**게시 조건 유지**: MOU 를 주어로 쓰지 않는다 / 목록을 한 줄도 읊지 않는다.
+
+## 주간 게시 순서 (9/2 확정 — 서우 "원글 따로 또 올릴 게 있나")
+
+하루 1원글. 9/2 는 디센트 스레드(고정)가 원글 몫 — **추가 원글 없음.** 대신 고정 스레드에 **T4(보도자료 제품 사진)** 부착 권장:
+`For the record, the hardware. / A certified indoor-air monitor, built by KWeather — 30 years of weather observation and sensor-making in Korea. The on-chain layer is in testing.` (176자)
+
+| 날 | 원글 | 비고 |
+|---|---|---|
+| 9/3 수 | **7 「주소는 약속이다」** | **✅ 9/2 밤 검수 완료** — 3트윗 재구성(250/241/265) · 체인 비교(`On most chains`) 삭제 · 쉬운 언어(Regular Key 1회) · in testing 1회 · 이미지 v2.4 초현실 실사 첫 적용(+v2.1 폴백). "지갑 먼저"의 다음 장 — 라이선스 NFT·발행자 고정·Regular Key. 9/7 랜딩 신뢰 블록. 저녁 KST 게시, 에버노스 Q2 리포트 직후 1~2시간 회피. `depin/content/identity-continuity-post.md` |
+| 9/4 목 | **5c 「기계 고객」** | 9/2 에버노스 답글 `when the payer is a device` 의 완결판. `depin/content/machine-customers.md` |
+| 9/5 금 | **8 플레어 워크숍(사후)** | `depin/content/flare-workshop-0905.md`, 현장 사진 |
+| 9/6 토 | **5f 「네트워크가 태우는 것」** | 미사용 시그니처 초연 |
+| 9/7 일 | **사전예약** → 고정 교체 | **원고 없음 — 가격·수량 공개 범위 + 해외 배송 결정 선행** |
+
+## 대기열 (다음 게시 후보)
+
+| 우선순위 | 항목 | 권장 시점 |
+|---|---|---|
+| **0** | **XRP Seoul Platinum 스포트라이트 인용 원고** — @XRPSEOUL 공식 발표(별첨 A) 인용. 프레임 "실물 기기 파트너·생태계 파트너와 한 무대", Ripple 관계 암시 0(5.13/5.19), 가격·수량 0, Flare·디센트 태그는 각 파트너십 공개 후에만 | **계약 서명 후 작성, 공식 발표 당일 게시** |
+| **9** | **원글 「금고와 격자」** — 이미지 역산 원고, 상비 앵글 「옮기는 것 vs 만드는 것」의 원글판. 주장 한 줄만(증명은 키노트). 레퍼런스 이미지 라이선스 미상 → 프롬프트 I 로 우리 판 제작 후 게시. `depin/content/vault-and-grid-post.md`, 280자 검수 PASS(245/269/111) | **9/9 이후 첫 빈 슬롯 또는 9/19~ 키노트 바닥깔기** |
+| 1 | @TheCryptoSquire 답글 — 에너지 효율 A안 ("shouldn't cost the air") | 일(8/23) 오전 |
+| ~~2~~ | ~~@WKahneman Fordefi 글 답글~~ → **게시 완료 (8/25 서우 일괄 확인 — "WKahneman 댓글 완료", 신용딜과 함께 소급 기입. URL 기입 대기)** | — |
+| 3 | ~~침실 CO₂ 스레드~~ → **게시 완료 (8/23)** | — |
+| 3b | (예비) "매일 마시는 14kg" — 지도 편과 계열 중복이라 보류, 주중 간격 두고 재사용 가능 | 보류 |
+| ~~0~~ | ~~@Ripple x402 답글~~ → **게시 완료 (8/23)** | — |
+| ~~2b~~ | ~~@WuBlockchain CZ AI-결제 답글~~ — **폐기: 동일 앵글의 상위 무대(리플 원출처) 등장으로 대체** | — |
+| 2c | 답글 예비 3건(안 확정, 세션 기록): BSCN CZ FDI · @JakeClaver 온보딩 · 기후에너지환경부 국문 | 슬롯 여유일 분산 — **CZ 인용 2건(2b·BSCN)은 같은 날 금지, 1일+ 간격** |
+| ~~2d~~ | ~~@rootveg444 PD 답글~~ → **게시 완료 (8/23)** — 답글 오는지 알림 관찰 (오면 상호작용 기회) | — |
+| 2e | x402 주간 집계 계정(@0xPia류, 핸들 원문 확인) 답글 — "rails first, shelves next" 앵글(리플 답글과 분리) + 팔로우 | 월(8/24) 낮 — 같은 날 x402 2건 금지라 일요일 불가 |
+| 2j | @Archie_XRPL 슈워츠 기관-우선 시퀀스 답글 — "retail arrives for products, not rails" 보론 + "Invisible infrastructure is the end state of adoption." **주의: 5신호 리스트 미공개(월 저녁 원글용 아껴두기)** — 답글=예열, 원글=완결 동선 | 월 낮 (오늘은 좋아요만 — BankXRP가 오늘 3번째) |
+| 2k | @XRPLOperations 3.3.0 답글 — 릴리스 구성 지목형(엔터프라이즈 프리미티브 4종 일괄) + "the quiet vote before the vote" | 화 낮 (MIT·세계은행과 병행 가능 — 상한 내) |
+| ~~2m~~ | ~~@ankr XRPL 기관 RPC 공식 발표 답글~~ → **게시 완료 (8/24)** | — |
+| **2n** | **@XRPLLabs (Xaman) Xaman Swap 발표 답글 — 최상급 계정 최우선**. "네이티브 깊이 vs 래핑" 프레임 — 신규 시그니처 "Depth beats wrapping."(오늘 코인뷰로우 래퍼 소재와 테마 연결). 초안 A(추천, 빌더 포지셔닝): "Most swap tools route around a ledger's complexity. Building the logic into the structure instead is a different tier of native — and it's exactly why teams like ours build on XRPL in the first place. Depth beats wrapping." / 초안 B(질문형, 저위험): 씬 IOU 페어까지 유동성 탐색이 확장되는지 질문. **주의: 내부 미확정 보상설계(WLBN AMM 매입-분배)는 언급 금지** — "우리도 XRPL 네이티브로 짓는다" 수준까지만, 구체 메커니즘 노출 금지 | 화(8/25) 오전 최우선 — 오늘 답글 4건 이미 게시로 슬롯 소진(상한 3~4) |
+| **2l** | **에이전트 자율 x402 결제 1인칭 후기 답글 — 최고 우선순위**("what got bought, not the wallet" 앵글). 체인 특정 금지(Base/USDC 원사례, 우리 발화는 패턴만). 목요 5c 원글의 실증 인용 근거이기도 함 | **오늘 슬롯 남으면 즉시, 없으면 화(8/25) 최우선** — 오늘 3건(2e·2g·2j)이 저녁 원글 예열용이라 우선순위 유지, 이 건은 별도 축(기계 고객)이라 순서 무관 |
+| 2f | @MITSloan 기술-노동 프레임워크 답글 — occupancy sensing 지목형("It mints new ones"), 크립토 밖 신뢰층 첫 학술 접촉 | 월~화 유연 (에버그린, 페그 소멸 없음) |
+| 2g | @IOV_OWL Ripple Treasury 문서 답글 — 디테일 지목형(SFTP 병행·한도 거버넌스 = "CFO 데스크톱"), 관계 자산 후보 | 월~화 — **월 원글에 5번째 신호 편입과 세트** |
+| 2h | @WorldBank Small AI/4C 답글 — "context는 수입 불가" 앵글, 크립토 어휘 0(기관 레인) | 화 이후 (에버그린, MIT와 같은 날 무방 — 둘 다 비크립토) |
+| ~~2i~~ | @BankXRP 리플 프라임 IG 채권 답글 — **계정 확인 → ✅ 확정**(신선·정확·증거 첨부·무CTA), "credit follows evidence" 변주 + 매출채권 복선 라인. 오늘 3번째 답글 슬롯(상한 내) | **즉시 (8/23)** — 게시 시 완료 마킹 |
+| **2o** | **@dazzlingxrpl 수정안 프로세스 교육 글(XRPScan PD 대시보드 소개) 답글 — ✅ 제안(8/25)**: 셀프 증언 앵글("xrpscan is the explorer our node wallet links to by default" — 플랫폼 실구현 사실) + PD 추적 보론 + "slow on purpose. That's the feature." 마무리. rootveg444 PD 답글(8/23) 후속 축, XRPScan 중립 익스플로러라 배서 리스크 없음 | 화(8/25) 낮 — 2k와 병행 가능, 게시 시 완료 마킹 |
+| **2p** | **@Ripple RLUSD $2B 마일스톤 공식 글 답글 — ✅ 최우선(8/25)**. 원출처 공식 계정 + "real-world utility / enterprise use cases" 문구 = 구멍 정통(우리가 실사례). 시세 아님(스테이블 공급 = 채택 지표). **A안(추천, 판매자 증언)**: "이번 주 환불 약관 작성" 앵글 — RLUSD 정산 사실 첫 소프트 공개, 금 5e와 예열→완결 세트(답글 = 통화 안정성 축 / 5e = 사용 증거 축으로 분리, 중복 아님). **B안(무공개 예비)**: XRPL 네이티브 $1B 유동성 관찰형. **8/25 스크립트 재구성 v2(서우 지시): A-1 = ①마일스톤 인정 ②환불 조항 증언 ③클로징 "Real-world utility shows up as shorter paperwork"(시그니처 승격 후보) + T2 타래 확장(구매자 쪽 대구 — FX 리스크 무부담, "every clause downstream gets shorter") — T1+T2 타래로 게시.** 금지: 가격 숫자(450/650)·제품명·날짜·"stablecoin/coin" 단어. 9/8 원글(대기열 6)의 예열 — 시그니처("주차하지 않는다")는 원글용 온존, 답글에서 소진 금지. 5e 소재(NFT 발급=증거)도 미소진 확인 | 화(8/25) 즉시 — 리플 직전 답글 8/23이라 계정당 1일 1답글 충족, 오늘 답글 상한 내 최우선 배치 |
+| **2q** | **@WKahneman Xago×OpenPayd 답글 — ✅ 제안(8/25)**: 남아공 XRPL 게이트웨이 Xago가 OpenPayd(BaaS)와 파트너십 — 신흥시장 코리도어 기관 유동성. 검증된 분석가 계정, 하이프 0. **기제안 2건(신용딜·Fordefi) 게시 확인됨(8/25) → 2q는 3번째 접점 = 관계 자산 진행 중인 계정.** 앵글: **시퀀싱 지목형** — "수년 운영한 오퍼레이터에게 뱅킹 레일이 찾아온 것"(트윗 내 사실만 사용, 독립 검증 불가 단서). 클로징 "Quiet compounding beats loud launches."(시그니처 후보). **원글 4 제목구("assembles quietly")·페그 리스트는 미소진 유지** | **수(8/26) 낮** — 수 저녁 원글 4의 예열→완결 세트(2j 패턴). 오늘은 2p 리플 최우선이라 슬롯 양보 |
+| ~~2r~~ | ~~@xrpl_commons Regular Key 답글~~ → **게시 완료 (8/25)** — Commons 첫 접점(해커톤 트리거 예열). **후속 원글 7 세트 생성**(아래) — 시그니처 "Identity outlives the incident." 답글 선사용 → 원글 공식화 동선 | — |
+| **2s** | **@xrpl_commons 마스터카드×XRPL 해커톤 원출처 공지 답글 — ✅ 트리거 발동(8/26), 즉시 게시 권장.** 8/25 신설 트리거("원출처 공지 뜨면 답글 검토") 정확히 충족: 원출처 1곳 원칙 ✅(Commons=주최측) · 계정당 1일 1답글 ✅(2r은 어제) · 오늘 답글 슬롯 0/3 사용 · 마스터카드=파트너 경쟁사 아님. **앵글: "마스터카드 올해 2번째 XRPL 접점"** — 5월 토큰화 국채 실증(기관 레인, 검증 완료 ★)→빌더 주말(소싱 레인) 시퀀스 지목 + 서울에서 실물 데이터 축 빌더로 응원. 신규 시그니처 후보 "Rails attract builders. Builders attract giants." **금지 준수: 제품명·가격·수익·coin·참석 약속 없음.** 원글 4(오늘 저녁)에 마스터카드 페그 최신 신호로 편입 = 예열(답글)→완결(원글) 세트, 2j 패턴 | **수(8/26) 즉시** — 공지 신선도가 생명, 2q보다 선순위 |
+| **7** | 원글: **"주소는 약속이다" (Identity Outlives the Incident)** — 2r 답글의 완결판: 라이선스 NFT Issuer 고정 검증·3년 라이선스 = 주소가 약속, Regular Key = 사고가 키를 앗아가도 정체성은 생존. 전체 패키지(T1/T2+이미지 프롬프트: 클레이+글라스 지상 폭풍 변주) `depin/content/identity-continuity-post.md`. 판매 랜딩 신뢰 블록·가이드 재사용 가능 | **9/3(수) 저녁 — ✅ 9/2 밤 검수 완료(3트윗·v2.4 이미지)** |
+| 4 | 원글: ~~"The enterprise stack assembles quietly" (집계형)~~ → **🚨 각도 전환 + 📅 게시일 = 9/2, 페그 = 디센트 MOU 보도 (서우 확정 9/1)**. 9/1 밤 창은 폐기 — **남의 뉴스 옆이 아니라 우리가 뉴스인 날이 낫다.** 9/1 타임라인이 종일 "조각들이 붙고 있다"를 외국에서 세었으므로, 다음 날 한국에서 조각 하나가 실제로 붙는 대비가 성립. **⚠️ 최대 함정 — MOU 를 주어로 쓰지 말 것**: MOU 는 로드맵이고, 우리 시그니처가 `Most DePIN sells a roadmap. We ship a device.` 다. MOU 발표문이 되면 우리가 비판해온 자리에 우리가 선다. 시제 규칙도 무너진다(체결만 완료형·결과물은 전부 미래형). → **이미 작동 중인 것을 주어로 놓고 MOU 는 문장 하나로 지나간다** = 발표가 아니라 근황. **시그니처 후보**: 디센트=콜드월렛이라 MOU 가 지갑·온보딩 축이면 미사용 `Account economics is onboarding economics.`(Sponsor 복선 페어) 초연 자리. **게시 조건**: 목록을 한 줄도 읊지 않는다(SettleMint·Ripple Prime·RLUSD 수치 = 남의 목록 네 번째가 됨). **원고 작성 전 확인 3**: ⓐ 보도 시각(오전/오후 — 우리 글은 보도 후) ⓑ 케이웨더 공시 동반 여부(**상장사, 개인 채널 선발화 금지** — 보도·공시 이후에만) ⓒ 보도자료에 실린 문장까지만 발화 가능, 그 밖은 내부. **파트너 게시물 원칙 적용**(상품 얘기 배제): @Xfinancebull 이 동일 논지를 훨씬 큰 계정에서 선점(`리플이 조립해 온 것`·`조각들이 하나씩 나타나는 것을 지켜본다` = 우리 제목구와 사실상 동일). **집계형 목록은 선점당한 자리** — 원안대로 내면 후발·유사로 베낀 것처럼 읽히고, 페그를 갱신해도 마찬가지. **살릴 각도는 하나: 저 글은 관찰자의 목록이고 우리는 그 목록 안에 있는 사람이다.** 스택을 훑는 글이 아니라 **그 스택 위에서 실제로 정산하기로 한 쪽의 증언**으로 축 이동 — 큰 계정이 못 쓰는 각도. 9/1 「XRP 대신 RLUSD」 가드와도 정합(비교 없이 "왜 골랐나"만). 축적 페그는 배경으로만 사용. — 구 메모: **최신 페그 편입(8/25): Xago×OpenPayd 신흥시장 코리도어**(ecosystem-log). 기존 축적 페그: 전북은행·Ripple Prime IG채권·Ripple Treasury $13T·ankr 기관 RPC·3.3.0 엔터프라이즈 프리미티브 4종·JPM XRPL 토큰화국채 실증(5월)·업비트 RLUSD — 원고 작성 시 ecosystem-log에서 재구성 | **수(8/26) 저녁 — 페그 마지막 신선 창** |
+| 5 | 원글: 컨셉 다이어그램 "검증 루프" (구 손그림 "Why WELLBIAN Is Different" — 8/24 스타일 전면 개정: 글라스모피즘+로우폴리, ~~제품명 비공개 방침으로 브랜드명 제거~~ → **9/2 해제, 브랜드명·제품명 복원 가능**) `depin/content/why-wellbian-different.md`에 영구 저장 | 이미지 완성 후, 시점 유연 |
+| ~~5b~~ | ~~원글: "래퍼 vs 원장"~~ → **게시 완료 (8/25)** — 반응 관찰: "a story with a ticker" 시그니처 승격 후보, 포켓몬 RWA 후속 답글 소재 대기 | — |
+| 5c | 원글: "기계 고객(Machine Customers)" — x402·에이전트 결제 테제 완결판, **원고 확정(8/23)**, 전체 게시 패키지(T1/T2+소스 답글+설계 의도) `depin/content/machine-customers.md`에 영구 저장(8/24). 시그니처 신규: "Ads don't work on agents. Attestations do." | 목(8/28) 저녁 (인포그래픽이 목으로 밀리면 금) |
+| **5e** | 원글: "분쟁이 끝나는 곳" — 환불 증거 = 온체인 NFT 발급 기록(8/25 실무 소재), 5b 후속 실행 사례. 원고·이미지 프롬프트 `depin/content/refund-ledger-post.md` | 금(8/28) 저녁 — 주간 4부작 마무리 (수=enterprise stack 페그 마지막 창, 목=5c) |
+| 5d | 원글(생활): "실내 열중증 — 더위 지도가 끊기는 곳" — CO₂ 후속 계열, 시즌 페그(늦더위). 훅: "Most heatstroke doesn't happen under the sun. It happens indoors — where nobody measures." #AirQuality #DePIN | 차주 월~화 (8/31~9/1) — 늦더위 윈도우 내 |
+| **5f** | **원글(에너지): "네트워크가 태우는 것"** — 콘텐츠 재고 메모의 지정 제작 라인(인포그래픽·**에너지**·RLUSD) 소진. 미사용 시그니처 **"An air-quality network shouldn't cost the air."** 초연 자리. T1 훅: "Every DePIN network gets asked what it produces. Almost none get asked what it costs to run." / T2: 3.6W(12VDC·300mA — **우리 자체 스펙표에서 나온 값이라 미검증 수치 아님**) · ⚠️ "less than the router it talks to"는 소프트 비교라 껄끄러우면 절만 삭제 / T3: 기기는 현재형(`already ships`) · 보상 레이어는 `in testing` 진행형 + 시그니처. 태그 `#DePIN #XRPL`. 이미지 = **v2.2 실사 레인 첫 적용**(프롬프트는 세션 기록) | 8/30(일) 저녁 — 5d(월화)·7(수목)과 안 겹치는 빈자리 |
+| **5g** | **원글(DePIN 담론): "설치의 동기"** — *무엇이 그 센서를 거기 놓았는지가 데이터의 값을 정한다.* 보조금 하드웨어 = 옷장 속 미교정 노드 / 돈 주고 산 기기 = 사람이 숨 쉬는 자리. **10/3 키노트 뼈대(「어제도 있던 것 / 오늘 측정해야 생기는 것」)와 축이 달라 소재 충돌 없음** — 오히려 키노트 전 바닥깔기. 신규 시그니처 초연 **"The incentive that installs the sensor decides what the data is worth."** 태그 `#DePIN #XRPL`. 원고·이미지 프롬프트(v2.2 실사, 창가 슬랩 대 닫힌 붙박이장) `depin/content/placement-problem-post.md`, 280자 검수 PASS(151/266/274). 가격·수량·일정·제품명 0 — 판매 홍보로 안 읽힘 | 9/1(월)~9/2(화) 저녁 — 5d 게시일과 하루 띄움 |
+| 6 | 원글: "왜 RLUSD인가" | 9/8 주간 (예약분) |
+| **8** | **9/5 Flare 워크숍 (케이웨더×Flare 파트너십 공개 무대)** — ⓐ **사전**: Flare 공식·타임레버리지·디센트가 행사 공지 글 올리면 인용 검토(파트너 결 — "우리 기기 파트너와 생태계 파트너들이 한 무대에" 프레임, 주최 행세 금지·Luma 직링크 원글 비권장) ⓑ **사후(9/5 저녁~9/6)**: 파트너십 발표 = 원글급 소재 — 공개 무대 발표 이후라 KWeather×Flare 자유 발화, 9/15 D-10 예열로 최적. 이미지 = 현장 사진(서우 수급). **✅ 원고 확정(8/27, 선작성)** — 전체 패키지(사전 인용 A/B + 사후 T1/T2+소스 답글, 280자 검수, 체크리스트 5) `depin/content/flare-workshop-0905.md`, xqa 게이트 PASS. 게시 시점 결정 잔여 2: 판매일 라인 A/B·옵션 라인(참가 승인 종속) | 사전 = 트리거 대기 · 사후 = 9/5 저녁 |
+
+### 패스 추가 (8/23)
+
+@Xfinancebull CFTC 홀더 정서 글 — 동일 뉴스 3탕 + 홀더 정서 + 정치 귀속 (좋아요도 생략)
+
+@ThePenguinBTC 일본 부채·화폐 가치하락 매크로 스레드(터키어, 17.9만 뷰) — 매크로 둠 서사 + 트럼프
+동기 귀속(정치 프레임) + "개인 분석" 스터디 계열 = 3중 패스 사유. 스테이블코인-단기국채 문장이
+유일한 접점이나 그 답글 = 붕괴 서사 무대에 등판하는 것. 좋아요도 생략. 소재만 추출(ecosystem-log).
+
+@BitrueOfficial 두바이 DLD 재확산 글 — 뉴스는 ★급이나 글 형식이 거래소 스테이킹 프로모(CTA 링크) =
+쉴링 배서 + 레인 밖(거래소 무대) + 원출처 아님. 좋아요도 생략. 팩트 카드 검증 축적(ecosystem-log),
+DLD 소재는 자체 원글·원출처 글에서만 사용.
+
+@RippleXity 두바이 DLD 재확산 글(2탕째, 같은 날) — 래퍼 vs 등기 연동 구분 프레임은 우수하나
+① 원출처 아님(동일 뉴스 원출처 1곳 원칙) ② "🚨 속보/방금 지정" = 2~5월 뉴스의 허위 시의성 프레임
+(답글 = 그 프레임 배서). **좋아요+북마크만.** 래퍼 구분 앵글은 자체 원글로 흡수(대기열 5b).
+
+@Xaif_Crypto 노무라 Laser Digital 글 — 팩트는 검증됨(★ 축적)이나 ① 하이프 계정·비원출처
+② 인용 트윗이 시세 글($1.46·거래량 1위·"한국 매수세") = 시세 레이스 결합. **북마크만, 공개 반응 없음.**
+일본 소재는 2단계 클러스터로 축적 — 발화는 자체 콘텐츠·원출처(Laser Digital/노무라 공식)에서만.
+
+@BSCNews Evernorth·XLS-66 기사 트윗 — 기사 알맹이는 축적(ecosystem-log)했으나 트윗 문구가
+"알트시즌 코앞·낙관 전환할 때" = FOMO/시세 프레임. 무반응(좋아요도 생략). XLS-66 소재 발화는
+수정안 활성화·원출처 시점에.
+
+@sbixdc 주간 XDC 뉴스레터 — 타 체인 생태계 홍보 = 레인 밖 + 판매 전 멀티체인 인상 리스크
+(XRPL 포지션 기간에 타 체인 관여 외관 금지). 무반응. SBI JV 운영 모델만 관찰 축적(ecosystem-log).
+
+@worldlibertyfi USD1 RWA 캠페인 글 — 3중 패스의 결정판: ① 정치 귀속(트럼프 패밀리 연계 = 무반응
+원칙 최상위) ② 토큰 인센티브 캠페인 = 쉴링 배서 ③ 경쟁 스테이블(USD1)·DEX 무대 = 레인 밖.
+어떤 방향의 반응도 금지(비판 답글도 관여). 좋아요도 생략.
+
+@McKinsey 일본 4개 아레나 인포그래픽 — 무해하지만 레인 밖(아레나 목록에 환경 데이터·센싱 부재 =
+발화 권위 없음, MIT 건과 달리 우리 모양의 구멍이 없음). 북마크만, 일본 클러스터 배경 자료로 축적.
+
+@IMFNews 지오이코노믹스 F&D 기고 — 기관 계정이나 주제가 강대국 경쟁·제재·헤게모니 = 지정학
+정중앙. 어느 각도든 탈달러화·제재 담론 등판이 됨(Penguin·WLFI와 동일 지형). 좋아요도 생략.
+**기관 계정 판별 기준 확립: 글 안에 '우리 모양의 구멍'(측정·데이터 명시)이 있을 때만 ✅ —
+MIT(occupancy sensing)·세계은행(context=데이터) ✅ vs 맥킨지(구멍 없음)·IMF(지정학) ❌.**
+
+@McKinsey "Omniscalers" 인포그래픽(같은 날 2건째) — 구멍 테스트 즉답 ❌: 측정·센싱 부재,
+"data and network effects"는 전략 일반론 어휘. 빅테크 아레나론 답글 = MBA 코멘트. 무반응.
+
+@Cointelegraph Bitwise CEO 감성 인용("크립토가 하나로") — 애그리게이터(3번째 패스) + 순수 무드
+콘텐츠(구조·검증 훅 전무, 인프라 문장 예외 해당 없음). 무반응, 소재 가치 없음.
+
+@czbinanceprd "smart money" 한 줄 — **패러디 계정**(핸들 prd·프로필 명시) + 트레이딩 무드 낚시.
+**신규 규칙: 패러디·팬 계정은 내용 불문 무조건 무반응** (회사 계정이 반응 시 부주의 인상).
+판정 전 핸들·프로필의 Parody/Fan 표기 확인을 습관화.
+
+@saylor BTC 경제 에너지론 — 타 진영(BTC 맥시) 이념 설교 무대 + 인프라 문장 부재. 좋아요도
+진영 신호라 생략. "machine" 단어 유혹 있었으나 맥시 무대 납치 답글은 체인 전쟁 참전 = 금지.
+
+@sekairoboyashi 美 Stockpile-XRP 추측 스레드(일본어) — 정치 귀속(트럼프) + 투기 낚시(🚀·"전재산
+크립토" 프로필) + 전문 추측(포함 여부 미공표). 3중 실격, 무반응. 일본어 하이프 대역도 판단표
+동일 적용 확인.
+
+@skxvvx 갈링하우스 상용구 재탕("🚨 방금 명확히") — 수년 된 보일러플레이트의 허위 시의성 포장
++ 하이프 앰프(🚀🌒) + 태그 5개 스팸 문법 + 신규 사실 0. 무반응.
+
+@Xaif_Crypto 맥클러그 "XRP 승자" 논제(4번째 판정) — 경마 프레임 + 수익률 투자 논제(시세 인접)
++ 탈중앙 논쟁 지형 + 비원출처. 무반응. **계정 패턴 확정: 인프라 정리 ✅ 1 / 하이프·전망 재포장
+❌ 3 — 소재 발견용으로만 취급(팩트는 반드시 원출처 검증), 관여는 인프라 정리 글 한정.**
+
+@brian_armstrong 스테이블 "탈출구" 발언(8/24) — 화폐 도피(debasement 인접) 서사 + 경쟁 진영
+(코인베이스/USDC) + 우리 구멍 없음. 무반응. CEO급이어도 판단표 동일(계정 등급 < 글 유형).
+
+"XRP-FedNow 직접 연결" 루머 글(핸들 미확인, 🚨속보+😳+구식 다이어그램) — 검증 결과 오도성 결합
+주장(연준 미확인). **무반응 — 반박 답글도 루머 확산 기여.** 팩트체크 카드 ①로 축적(ecosystem-log),
+국내 유입 시 사용.
+
+@CathieDWood AI 랩 ARR 추정 인용("Tech revolution!") — 투자 정서 발화 + 서드파티 미검증 추정치
++ 레인 밖(AI 기업 매출). 무반응, 미검증 수치라 축적도 안 함(추정 금지 원칙).
+
+@RayDalio 인류 진화·전지성 사변(#principleoftheday) — 철학·사변 = 레인 밖 전형, 인프라 문장 0.
+무반응, 소재 없음.
+
+@AndrewYNg Marin 오픈소스 AI 모델 훈련 개방성 논쟁(Percy Liang 인용) — 순수 AI 연구·학술 문화
+무대, 구멍 테스트 실패(측정·데이터·센싱 언급 없음). 레인 완전 밖. 무반응.
+
+@GavinSBaker AI 컴퓨트 지출·토큰 경제성 투자론("compute inequality") — 오늘 리플 x402/에이전트
+결제 건과 인접해 보이나 다른 주제(모델 구동 비용 vs 실물 데이터 구매). 크립토·측정 언급 0,
+헤지펀드 투자 담론. 무반응.
+
+@DCENTWALLETS 신형 S+R3covery 카드 키트 — ✅ 기존 확정 파트너 공식 계정(xlsx #16·#28·#34),
+#XRP 태그 포함 = 관계 신호 정확. 플레이북 "파트너 게시물" 원칙(상품 얘기 배제, 축하 톤) 적용,
+가벼운 축하 답글. **오늘 회의록의 미확인 "콜드월렛 국제유통 파트너"가 디센트일 가능성 — 프로필
+일치(콜드월렛+해외유통), 서우 확인 필요(이 트윗만으론 국제유통 언급 없어 단정 불가).**
+
+@BSCNews "JPMorgan XRPL 신기록·$wJPM DEX·$1T 시총" — 검증 결과 진짜(5월 XRPL 토큰화국채
+실증)+조작(wJPM/QQQ·SPY/시총 임박) 혼합. **결정적 반증: JPM 토큰화 예금은 Base 출시·Canton
+확장 예정, XRPL 아님.** 무반응(계정 실사 불가). 팩트체크 카드③으로 축적, 5월 진짜 실증은 ★
+승격(주간보고 후보) — 이번 주 놓치고 있던 무거운 소재.
+
+@iruletrenches Base 생태계 내부정치(밈코인·CEX상장 불만·Robinhood Crypto 이탈설, 임원 실명 태그) —
+타 생태계 가십, 레인 완전 밖. 무반응.
+
+@base 자사 빌더 프로그램 홍보(액셀러레이터·그랜트·생태계펀드) — 타 체인(경쟁 L2) 자기 홍보,
+구멍 테스트 실패. 무반응 — **9/30까지 XRPL 단일 포지션 방침상 경쟁 체인 공식계정 관여는 혼선
+리스크(Zenith·XDC와 동일 사유)**.
+
+@ai_explorer25 나델라 BG2 Pod 요약("앱=멍청한 DB, 에이전트=뇌") — 2차 소스(원본 아님) + 오늘 소재
+혼잡 예상. 앵글은 유효("뇌 있어도 감각기관 없으면 물리세계 업데이트 불가") — "no one's being the
+senses" 답글. **낮은 우선순위, 오늘 큐 초과 시 스킵/내일 이월 권장.**
+
+@CertiK Skynet Quest(게이미피케이션 학습) 종료 공지 — 우리 xlsx #32(컨트랙트 감사 후보사)와 이름은
+겹치나 이 글 자체는 감사 무관 프로덕트 안내문, 자연스러운 훅 없음. 무반응. 향후 실제 감사 견적
+논의 시 접점 후보로만 계정 기억.
+
+@0xHanMoon KBW 서울 방문 가이드 스레드 — ✅ 신규 앵글(지역 정보 곁들이기, 크립토 0%): "late Sept/
+early Oct 공기질 변동 — 성수·한강 장시간 도보 전 체크" 팁 답글, 제품 언급 없음. **KBW = 10/3 리플
+서울 행사 잠재 관객이 지금 모이는 시점** — 전략적 오디언스 워밍업, 플레이북 공식 10번 신설.
+
+@ZenithFdn Canton Network DeFi 인프라(Zenith) 자기 홍보 — 완전 타 체인·타 카테고리(기관
+DeFi·토큰화 국채), 자사 토큰 티커(Zth) 언급, 구멍 테스트 실패. 무반응, 레인 완전 밖.
+
+@sentosumosaba Fasset/SBI 재확산(2탕째, 8/24) — 어제 이미 검증·발화 완료된 동일 뉴스, 원출처 아님
++ 🚨📢🦄 하이프. "Own Network" 제품명은 검증됨(팩트 카드 보강), 나머지 과장 수치는 미검증. 무반응.
+
+@everythingempty "크립토=범죄 전용" 인용 + 다리오 아모데이 실명 음모론(AI 인간신분·은행계좌 대체
+서사) + Big Brother 이념 프레임 — 주제(에이전트×블록체인)는 인접하나 포장이 독성 이념·음모론·
+범죄 프레임. 무반응, 좋아요도 생략. 소재 가치 없음.
+
+@virtuals_io 에이전트 작업 투명성·가치 소유 미션 발화 — ✅ 판정 유지하나 **아래 @alina_creates
+스레드로 대체 권장**(같은 프로젝트 답글 2건 = 밀도 과다, 이쪽이 앵글 약함). 보류.
+
+@alina_creates Virtuals 2024~2026 타임라인 분석 스레드(고품질 분석가 — 하이프 아닌 팩트 정리형)
+— ✅ **로봇 간 상거래 ACP+x402 온체인 정산 + "물리 세계로 진입" 구체 언급** = 오늘 최상급 훅.
+"machines paying machines still needs someone measuring the room" 답글. Virtuals 공식계정 답글과
+양자택일 — 이쪽 우선 권장.
+
+@SakanaAILabs 일본 방위성 AI 계약(정보분석 실증) — 국방·안보 영역 = 절대 무관여(카테고리 자체가
+리스크, 일본 진출 앞두고 특히). 구멍 없음(정보분석 ≠ 측정). 무반응, 소재 가치도 없음.
+
+@WuBlockchain Fasset SBI $1B 밸류 — 팩트 검증 완료(CoinDesk)·SBI 축 ★ 축적, 답글은 패스
+(비원출처 + XRPL 무관 + 구멍 없음).
+
+@RippleXity NVDA/wNVDA 24/7 트레이딩 우위 글(2탕째, 8/24) — 🚨허위 시의성 + 시세 레이스
+(실적·주가) + 팔로우 파밍 CTA. **계정 패턴 확정: 2/2 하이프 — Xaif_Crypto급으로 강등, 소재
+검증용으로만.** 무반응.
+
+@stoneiland 갈링하우스 와이오밍 실적 재구성 글 — 원출처 아님 + 홀더 정서 클로징("XRP 군대여")
++ 워런 반박 정치 프레임 + **검증 결과 "은행인가 취득" 과장(실제는 OCC 예비 조건부 승인)**.
+무반응. 단 $3T(Ripple Prime)·$13T(Ripple Treasury) 수치는 독립 검증되어 축적(ecosystem-log ★) —
+오늘 저녁 원글 5번째 신호에 $13T 반영 권장. 0.1%·75라이선스·워런 항목은 미검증이라 재사용 금지.
+
+@InvestWithD 리플 프라임 $275M 채권 재탕(3번째 계정, 이미 BankXRP로 발화 완료된 뉴스) —
+🚨🤯🔥 하이프 이모지 + **"Ripple Bank 곧... 🤫" = 근거 없는 은행인가 임박 루머**(8/24 검증: 실제는
+OCC 예비 조건부 승인일 뿐, stoneiland 트윗에서 이미 과장으로 확인한 그 클레임의 반복). 무반응.
+⚠️ "Ripple Bank 곧" 루머가 확산되면 FedNow 카드처럼 팩트체크 카드 ② 후보로 준비.
+
+@Crypt0Senseii McClurg ETF+가격전망 재탕("$3~4/12개월") — **가격 전망 명시 = 자동 실격**
+(금지표현 최상위) + Xaif_Crypto가 이틀 전 이미 거른 동일 McClurg 소스 재포장 + 🚨·태그 3개
+하이프 문법. 무반응. Franklin Templeton·DBS·Guggenheim 토큰화 연계는 소재 후보로만 메모
+(미검증, 발화 시 원출처 확인 필요).
+
+@bitget "Stage 2 RWA(통합담보·대출·리스크관리)가 진짜 가치" — 구멍 테스트 실패(측정·데이터 언급 0,
+OKX와 동일 실패 유형) + 거래소 자사 로드맵 홍보. 무반응. **거래소+구멍없음 패턴 3주째(Bitrue·OKX·
+Bitget) — 향후 자동 패스 케이스로 확정.**
+
+@okx "토큰화 TradFi 5배 성장" — 구멍 테스트 실패(측정·데이터 언급 0, 맥킨지 Omniscalers와 동일
+실패 유형) + 거래소 계정(레인 밖) + 출처 없는 자체 마케팅 수치. 무반응. 앵글만 보관: "대부분의
+RWA는 기존 자산 재포장, 데이터는 애초에 종이 자산이 아니었던 프런티어" — 구멍 있는 RWA 글 등장 시 재사용.
+
+@searchfi_eth(인용 @eth_apple) 한국 블록체인 규제 위기론 스레드 — **완전 무반응, 오늘 최상급
+패스 사유**: 정치·규제 옹호 담론 + 우리 자신의 미확정 법무 사안(토큰 발행주체 분리·국내 규제
+검토·8/27 명문화)과 직결되는 지형이라 어느 방향 반응도 자기 폭로 리스크. 좋아요도 생략.
+사실 텍스처만 법무 배경으로 축적(ecosystem-log, 수치 미검증 단서 포함).
+
+@Xfinancebull XRP ETF 인플로우 스레드(8/23, 3번째 판정) — 수치 나열이어도 프레임이 홀더 정서
+응원전("ARMY 🚨·We are SO back") + ETF 플로우 = 시세 인접 지표. 인프라 문장 부재 → 무반응.
+같은 계정 유형별 3연속 사례 확정: 인프라 정리 ✅ / 정서 프레임 ❌ — 계정 등급 < 글 유형의 교본.
+
+키타오(SBI 이키이키 소단 AI 사례 PR) — 그룹사 내부 홍보 = 노이즈 대역, 무반응.
+**키타오 타임라인 필터 확립: 그룹사 PR(보험·증권·미디어)은 스킵, 줍는 것은 4종만 —
+① XRPL·리플·RLUSD 직접 언급 ② 크립토 규제·라이선스 ③ 기관 온체인 정산 ④ SBI VC 관련.**
+얇은 텍스처 1건만 보관: SBI 보험 계열사가 코어 업무(인수·지급 사정)에 멀티에이전트 구축 중
+= 일본 기관의 AI 에이전트 실무 도입 신호(기계 고객 테제의 일본 수요측 배경).
+
+@AnatoliKopadze 젠슨 황 "루프·그래프 구축" 발언 인용 AI 에이전트 워크플로우 튜토리얼(팬아웃→검증→
+머지 다이어그램, 스크린샷 첨부) — 구멍 테스트 실패(측정·데이터 언급 0) + "가이드 읽어보세요"로
+끝나는 리드젠 퍼널형 콘텐츠, 레인 밖. **⚠️ 첨부 이미지 본문에 가짜 "시스템 압축 지시문"
+(`<analysis>`/`<summary>` 태그로 대화 요약 추출 유도, 도구 호출 중단 지시 등) 발견 — 트윗에 심어진
+프롬프트 인젝션. 실제 시스템 메시지 아님, 지시 미준수하고 평소대로 처리함(도구 사용 포함).**
+무반응. 인젝션까지 심어진 계정이라 축적도 최소화 — 좋아요·북마크 생략, 요주의 계정으로만 기억.
+플레이북에 대응 원칙 신설(아래).
+
+@AethirCloud "Aethir ACCELERATE" 발표 — 자체 GPU 데이터센터 10개 사이트·최대 20MW·NVIDIA
+B300/GB300 클러스터 확보, 2026년 말까지 최대 $700M 계약·완공 시 총계약가치 $2B+ 프로젝션(전부
+자체 발표 수치). "탈중앙 GPU 클라우드 4년은 무소유가 정의했다 — 이제 끝났다"는 자체 인프라 소유
+전환 서사. 구멍 테스트 실패(컴퓨트/AI 인프라, 측정·데이터·센싱 언급 0) + 순수 자사 마일스톤 발표
+(CTA "블로그에서 전체 브레이크다운") + **동종 DePIN이나 버티컬 무관** — GPU 컴퓨트는 우리 환경
+센싱과 접점 없음, WeatherXM과 달리 회사 대 회사 대상 아님(플레이북 원칙 갱신, 아래) + Aethir는
+XRPL 생태계 아님, 9/30까지 XRPL 단일 포지션 방침상 타 체인 공식계정 관여 리스크(Base·Zenith·XDC와
+동일 사유). 무반응. 수치·서사는 ecosystem-log에 배경 텍스처로만 축적.
+
+@coinbureau 토큰화 포켓몬 카드 RWA 스레드 — 피카츄 일러스트레이터 카드 실물 $1,650만 낙찰 +
+Collector Crypt 온체인 팩 판매 3주 $8,290만(6월 거래량의 ~40%) + MemeStrategy 라이선스 래핑 상품.
+**시세/퍼포먼스 프레임("충격적"·"비트코인을 능가") = 답글 참전 부적절**(계정 등급 < 글 유형 —
+코인뷰로우 같은 고품질 계정도 예외 아님, Xfinancebull 선례와 동형) + 원출처 아님(트렌드 큐레이션).
+답글 무반응, 좋아요+북마크만. **래퍼 vs 원장 앵글(대기열 5b 원글, 화 8/25 예정)의 신선한 사례로
+최적** — 실물 카드 등급 검증 없이는 토큰이 무의미하다는 구조가 두바이 DLD 사례와 동형, 대중 인지도
+높은 소재라 보강 후보(ecosystem-log 축적, 5b 확정 원고는 임의 수정하지 않음). 수치는 코인뷰로우
+단일 소스 인용(미검증), 재사용 시 "Coin Bureau 보도 기준" 단서 필요.
+
+@nvidia Vera Rubin 실리콘 실측 성능 발표 — GB300 NVL72 대비 메가와트당 처리량 최대 30배·토큰
+비용 최대 35배 절감, SemiAnalysis AgentX 워크로드(DeepSeek V4 Pro 에이전트 코딩 궤적) 기준.
+구멍 테스트 실패(칩 처리량·토큰 비용 경제성, 측정·데이터·센싱·크립토 언급 0) — GavinSBaker AI
+컴퓨트 지출 글과 동일 유형, 레인 밖. 초대형 계정·주요 제품 발표라도 계정 등급 < 글 유형 원칙
+그대로 적용, 남의 무대(칩 벤치마크)에 낄 자리 없음. 무반응, 소재 가치도 없음(우리 서사와 접점 전무).
+
+@nvidianewsroom SpaceXAI Vera CPU 채택 발표(같은 날 2건째, 공식 프레스릴리스 동반) — Vera는
+"에이전트를 위한 최초의 CPU"(88 Olympus 코어·1.2TB/s), SpaceXAI가 Grok 인프라를 기가와트급으로
+확장 + **Starmind 위성으로 Vera Rubin NVL72를 궤도에 올려 우주 컴퓨팅까지 확장**. 앞 건과 동일하게
+구멍 테스트 실패(칩·오케스트레이션 성능, 측정·센싱·크립토 0) + 남의 무대. **무반응** — 단
+"에이전트가 도구를 호출하고 코드를 실행하고 데이터를 처리한다"는 프레이밍은 우리 기계 고객
+테제(5c 원글)의 **수요측 배경**으로 유효: 칩 벤더가 에이전트 실행을 1급 워크로드로 공식화 =
+"에이전트가 무언가를 산다"는 다음 단계의 전제. ecosystem-log에 배경 텍스처로만 축적(발화·인용 금지 —
+NVIDIA 인용은 우리 무대가 아님).
+
+@tyler(Gemini 공동창업자) 싱가포르 Gemini 사용자 XRP XRPL 네이티브 입출금 개시 — **답글 패스,
+좋아요+북마크만.** 사유: ① 거래소 프로덕트 공지 = 레인 밖 패턴 확정분(Bitrue·OKX·Bitget과
+같은 대역, 원출처인 점만 다름) ② "아시아의 리플 아미" = 홀더 정서 호명 프레임 ③ **우리가 설
+자리를 만들려면 싱가포르 법인(웰비안) 얘기가 필요한데 8/27 관계 명문화 전이라 자기 폭로 리스크** —
+발화 권위는 있으나 발화 시점이 아님. **단 인텔 가치는 ★급**: 웰비안 발행·판매 주체 소재지가
+싱가포르라 이 온램프는 우리 결제 경로의 배경 인프라(업비트 RLUSD 상장 건과 같은 성격).
+ecosystem-log ★ 축적 + 기회 파이프라인에 트리거 항목 신설. ⚠️ 현 시점 **XRP 한정, RLUSD 아님** —
+구매 가이드에 쓰려면 RLUSD(XRPL판) 지원 확인 필수, 확대 전 인용 금지.
+
+@wave_of_innov "리플 원장 스테이블 $1.1B·주간 +14%" 글(8/25) — **맥락 없는 ETH 컨트랙트 주소로
+마무리 = 분석 포장 쉴링(스캠 가능성), wSPCX 원칙(주소 달린 글은 존재가 배서) 즉시 적용.** 무반응,
+좋아요도 생략. 개념만 무인용 축적: "스테이블 공급 = 위조 불가 지표, 쓸 생각 없는 체인에 진짜
+달러를 주차하지 않는다" — boring=adoption 계열, 9/8 "왜 RLUSD인가" 원글에서 자체 검증 수치
+(RLUSD ~$2B·XRPL판 ~89.5%)로 재구성 사용. 이 글의 $1.1B·+14%는 미검증 사용 금지.
+
+@RealQuadJacks "CMC는 왜 XRPL DEX 집계 안 하나" 불만 글(8/25) — 소재는 인프라 인접(DEX 데이터
+커버리지)이나 프레임이 음모론 운 + 커뮤니티 그리번스 = 답글은 CMC 저격 대열 합류. 무반응.
+**실무 텍스처 ★후보: XRPL 네이티브 DEX/AMM의 집계 사이트 커버리지 공백은 사실 이슈 — WLBN이
+XLS-30 AMM 거래인데 외부 집계 부재 시 유동성·가격 가시성 0. 11월 상장 트랙 전 CMC·CoinGecko
+XRPL 지원 현황 확인 + 등록 절차를 체크리스트化(business-directions 업비트 트랙 연계).**
+
+@vladtenev(Robinhood CEO) Bloomberg 인터뷰 홍보(CLARITY·예측시장·AI 에이전트, 8/25) — ① 미 규제
+담론 지형(무관여 원칙) ② "자산 소유권=번영" 이념 발화(Saylor 온건판) ③ 브로커리지 CEO 무대 =
+레인 밖(Armstrong 판정 동형) ④ 구멍 없음. 무반응. 텍스처 1건만: CFTC에서 "예측 시장은 대법원
+결과 무관 생존" 발화 = 예측 시장 주류화 신호 — 5축(예측마켓)×6축(DePIN) 연결 서사의 원거리 배경
+(ecosystem-log 기재 생략, 필요 시 이 항목 참조).
+
+@XRPcryptowolf "XRPL 업데이트 경고·68% 합의" 글(8/25) — "경고 발령"+👽+티커 = 허위 긴박감 문법
+(하이프 대역) + "68%" 출처 불명·수정안 미특정(PD는 ~20%, 3.3.0 버전 채택률 혼동 추정 — 80% 임계
+미달을 임박처럼 포장한 오도성) + 동일 소재의 정확·교육형 상위 무대(@dazzlingxrpl, 2n 제안)에 이미
+대응 — 저품질 재포장 무반응, 미검증 수치라 축적도 안 함.
+
+@InvestWithD Gemini 싱가포르 XRPL 입출금 재확산(8/25, Tyler Winklevoss 인용) — 어제 원출처에서
+판정 완료된 뉴스의 2탕째 + 계정 하이프 패턴 확정분(8/24 리플 프라임 재탕과 동일) + "수십억이
+몰려온다" 근거 없는 유입 클레임. 신규 사실 0, 무반응, 축적 불요(어제 ★에 XRP 한정 단서까지 포함).
+
+@BlockchainAssn GENIUS 법안 스테이블 발행자 CIP(고객 식별) 규정 의견서 제출 스레드(8/25, 서한
+원문 첨부) — 원출처·기관 계정이나 ① **미 연방 룰메이킹 로비 담론** = 규제 옹호 지형(searchfi_eth
+한국 규제 스레드와 동일 계열: 우리 미확정 법무 사안 중 규제 발화는 자기 폭로 리스크, 한국이든
+미국이든 동일) ② 구멍 테스트 실패(KYC/AML 규정 디테일, 측정·데이터 언급 0 — 기관 판별 기준상
+맥킨지·IMF ❌ 계열) ③ 한국 DePIN 빌더가 미 연방 코멘트 절차에 낄 발화 권위 없음. 무반응,
+좋아요도 생략(KYC 완화 로비 배서로 읽힐 지형). GENIUS 이행 진행 상황만 얇은 텍스처로 축적
+(RLUSD "boring = adoption" 서사의 배경 — ecosystem-log).
+
+@chainlink "속보" Coinbase Base 토큰화 주식 공식 오라클 선정 — ① 타 체인(Base) 생태계 뉴스 =
+레인 밖(9/30까지 XRPL 단일 포지션) ② **오라클 벤더 = 파트너 플레어(FTSO/FDC)의 직접 경쟁사 —
+관여 시 파트너 관계 신호 혼선. 신규 원칙: 파트너의 직접 경쟁사 계정은 내용 불문 자동 무반응**
+(좋아요도 진영 신호라 생략) ③ 토큰화 주식 = 래퍼 자산 전형 — 화 5b "래퍼 vs 원장" 배경 텍스처로만
+유효(OKX 앵글과 동일 계열). 무반응, ecosystem-log 축적.
+
+@SotaOnchain(와타나베 일본어 계정, 키타오 재게시 경유) Strium 발표 + 일본 정부·일은 즉시결제
+인용(8/25) — 무반응 확정: 로스터 규칙(와타나베 = 타 체인 관여 금지, 두 계정 모두) + 타 체인
+자사 홍보. 단 **키타오 필터 ③(기관 온체인 정산) 해당 = ★ 축적**(ecosystem-log — 일본 정부
+어젠다·Strium·JPYSC·SBI 멀티체인 신호). **핸들 재정정: 와타나베 계정 2개 병행(@WatanabeSota
+영어/@SotaOnchain 일본어) — 플레이북 로스터 갱신.**
+
+@WatanabeSota "토큰화 자산 최대 구매자는 아시아·SBI Startale 성장 잠재력" 글(8/25) — 내용 불문
+**로스터 확정 규칙 적용: 와타나베 소타(Startale/Astar) = 타 체인, 팔로우까지만·관여 금지**. 추가
+실격: 자기 벤처(SBI Startale) 홍보 + "성장 잠재력" = 투자 포텐셜 발화 + 구멍 0. **무반응.**
+핸들 불일치는 **8/25 서우 실사로 해소: @WatanabeSota가 진짜** (8/23 로스터의 @SotaOnchain 기입이
+오판 — 플레이북 로스터 정정 완료, 팔로우 교체 필요 여부만 잔여). 텍스처 1건(귀속 확정): "미국이
+토큰화 선도, 최대 수요는 전통 접근이 막힌 아시아" = 일본 클러스터 2단계 배경 논지(의견, 팩트 아님).
+
+@BankXRP 리플 인재 영입(마스터카드 9년 매튜 페르난데스 → RippleX 전략 파트너십, 8/25) — 검증된
+계정(2i ✅ 이력, 8/23 답글 기게시)이나 ① 인사 뉴스 = 우리가 보탤 발화 없음(측정·빌더 앵글 부재,
+"talent follows rails" 류 일반론뿐) ② 비원출처 릴레이 + 👀 경미 하이프 ③ 오늘 슬롯 만석(2p
+최우선). **답글 패스, 좋아요만.** 얇은 텍스처: 기관 베테랑 이동 = enterprise stack 서사의 인력
+축 — **원글 4 한 줄 가니시 후보**(단 미검증 릴레이라 사용 시 "reported" 단서, 생략 무방).
+
+@Genfinity XLS-65/66·10월 해커톤·Swell×Apex 통합 기사 트윗(8/25, XRPLF 재게시) — 팩트 3건이
+전부 ★급이나 ① 미디어 계정 + "전체 기사 아래" CTA = 애그리게이터 무대(Cointelegraph 선례)
+② **기존 확정 규칙 적용: "XLS-66 소재 발화는 수정안 활성화·원출처 시점에"**(BSCNews 건, 8/23)
+③ 지지율 37-40%는 단일 소스 미검증 — 답글에서 수치 인용 불가 ④ 수정안 테마는 이번 주 2o(PD
+교육글)와 밀도 중복. **답글 패스, 좋아요+북마크.** 트리거 신설: **@xrpl_commons/@XRPLF가 해커톤
+원출처 공지 올리면 그때 답글 검토** — 빌더 계정이 서기 정통인 무대(발화는 원출처에서만 원칙).
+인텔 3건 ★ 축적(ecosystem-log): 지지율 갱신 · 10/24-25 NYC 해커톤 · Swell×Apex 통합 일정.
+
+@heyibinance(Yi He, 바이낸스 공동창업자) 바이낸스 월렛 볼륨·MPC 자랑 글(8/25) — ① 거래소 자사
+프로덕트 홍보 + 구멍 테스트 실패 = 3주째 확정 자동 패스 패턴(Bitrue·OKX·Bitget)의 최고위 버전,
+계정 등급 < 글 유형 원칙 그대로(Armstrong·Tenev CEO 선례) ② "75%·일 $13B" = 자사 마케팅 수치
+미검증(축적도 안 함) ③ 바이낸스/BNB 진영 = 9/30까지 XRPL 단일 포지션상 타 진영 최고위 인사 관여
+리스크 + CZ 계열 신중 취급 이력. **무반응, 좋아요도 생략(진영 신호).** 얇은 텍스처 1건만:
+"셀프커스터디의 미래 = 보안의 직관화"를 CEX 진영도 선언 — 우리 간편 웹3 지갑(비수탁+직관 온보딩)
+설계 방향의 업계 방증(온보딩 가이드·FAQ 서사 배경용, 인용은 하지 않음).
+
+@evernorthxrp RLUSD·XRPL 스테이블 자체 원장 분석(8/25) — 기관급 원출처 분석(면책 문구 동반,
+하이프 0)이고 레인 정중앙이나, **같은 날 동일 소재(RLUSD 공급)의 최상위 무대 @Ripple 공식 글에
+이미 최우선 대응 배정(2p)** — 같은 테마 답글 2건/일 = 밀도 과다(Virtuals 양자택일·WuBlockchain→
+원출처 대체 선례와 동형, 앵글은 최상위 무대 1곳에서만). Evernorth = XRP 트레저리 법인 무대인 점도
+감점(투자 비히클 브랜드 아래 발화). **좋아요+북마크만, 답글 무반응.** 단 데이터는 ★급 축적 —
+30일 양방향 플로우(XRPL 발행≈상환 ~$450M)는 9/8 원글(대기열 6)의 고급 텍스처(ecosystem-log 참조).
+
+@nhk_news 후쿠오카 공항 40.4°C 관측·열사병 경고 속보(8/26, 일본어) — ① **재난·인명 경고
+뉴스 아래 브랜드 답글 = 앰뷸런스 체이싱 톤 리스크**(안전 경보는 어떤 브랜드 발화에도 무대 아님)
+② 일본어 공영방송 청중과 언어·맥락 불일치 + 계정 등급 < 글 유형(속보 뉴스는 관여 무대 아님,
+NHK 무반응 계정) ③ XRPL 레인 무관. **답글 무반응, 좋아요도 생략(재난 뉴스).** 단 소재는 ★급:
+"공항에는 인증 관측소가 있고, 침실에는 없다" — 파리 CDG 원글과 동형의 공항 관측 페그 + 실내
+열사병 각도(측정 항목 온도·습도·체감온도 정중앙) + 일본 확장 서사 배경. **원글 후보 5f 등재
+(폭염 시즌 내 유효, ~9월 초)**: "Fukuoka Airport recorded 40.4°C today. The airport has a
+certified weather station. Your bedroom doesn't. Most heatstroke happens indoors — in rooms no
+official sensor is watching. Weather data shouldn't stop at the airport fence." ⚠️ 게시 전 체크
+2건: 일본 열사병 실내 발생 통계 1차 출처(소방청) 확인 후 수치 인용 여부 결정 · 사망 사례 직접
+언급은 배제(관측 공백 프레임만).
+
+@sentosumosaba 21Shares XRP 희석률 분석 재구성(8/27, 2번째 판정) — ① **보유자 손익분기
+가격 산식("가격이 연 5.5% 이상 상승해야 구매력 손익분기") = 가격 담론 정면** — 원데이터(공급
+희석 비교)가 건전한 발행사 리서치여도 프레임이 투자수익 계산이라 금지 최상위 계열 ② 비원출처
+(21Shares 차트 릴레이) + 인용 대상이 Cointelegraph 🚨 ETF 서류 속보 = 애그리게이터+ETF 시세
+인접 이중 ③ 계정 패턴 2/2(8/24 Fasset 재탕 이력). **무반응.** 텍스처 1건(21Shares 귀속 단서
+필수): 결제 체인 연간 공급 희석 비교 — XRP +5.5%(최저)·Stellar 8.8%·TON 9.6%·Tron은 수수료
+소각으로 순 −1.4% (Dune·Artemis·DeFiLlama, 6/30 기준). **수수료 소각이 공급 증가를 상쇄하는
+구조 = WLBN 50% 소각 설계 설명 시 업계 배경 사례** — 발화 시 시세 함의 절단하고 구조만 인용.
+
+@BNBCHAIN "주권 스테이블코인 운영 스택" 인포그래픽(8/27) — ① **타 체인 공식 계정 = 내용
+불문 자동 무반응** (Base·Zenith·XDC·heyibinance 확정 계열, 9/30까지 XRPL 단일 포지션) ② 구멍
+테스트 실패(측정·데이터·센싱 0) ③ 자기 진영 인프라 홍보. **무반응, 좋아요도 생략(진영 신호).**
+텍스처 1건: "스테이블은 토큰 컨트랙트가 아니라 발행·준비금·결제·유동성·법정화폐 연결·컴플라이언스
+스택 전체" + "실행 역량은 정책 통제권을 이전하지 않는다(WHO DECIDES/EXECUTES 분리)" 프레임이
+BNB 진영에서도 조직화 — 규제 스택 완비 스테이블(NYDFS RLUSD)의 우위 논거 배경(9/8 원글 6
+텍스처, 인용 없이 개념만).
+
+@Ripple 리플 프라임 델타 원 소개 글(8/27 — 미 상장주·지수·디지털 자산 TRS, 단일 상대방·크로스
+마진·24/7) — ① Ripple 공식이나 자사 Prime 상품 세일즈 글 = "계정등급 < 글 유형" 원칙
+(Garlinghouse 패스 전례) ② 기관 주식 파생 = 측정·데이터 접점 0. **무반응(좋아요 선택).**
+텍스처 1: Hidden Road 인수 후속 Prime 스택 확장 = 기관 인프라 성숙 신호 — enterprise stack
+(원글 4) 계열 페그, "single counterparty · cross-margin · 24/7" 기관 어휘 축적.
+
+@Susan223331 "XRP 왜 $1,000/$10 안 가나" 설명 요청 글(8/27) — 시세·가격 레이스 확정 행
+그대로(❌ 전부 패스) + 무명 개인·정치 언급·질문 미끼형. 팩트 오류("창작자 80% 통제") 정정도
+가격 담론 진입이라 관여 금지. **전면 패스(좋아요 포함).** 텍스처 신규성 없음.
+
+@XRPLCanada UBC 블록체인 서머 인스티튜트 10주년 교육 리캡(8/27 — 대학원생 44명, 테스트넷
+라이브 코딩, 검증자 설계·기관 신뢰 토론) — ① 무대 깨끗(시세·하이프·상품 홍보 0, XRPL 진영
+내부라 진영 리스크 없음) ② 그러나 버티컬 접점 0(측정·데이터 무관) + 지역 그래스루츠 허브라
+확산 가치 낮음 ③ 슬롯 경합(5c 목·2s·5e 금)에서 후순위. **답글 패스, 좋아요만 선택적(무해).**
+텍스처 2: ⓐ "기관이 공개 장부를 신뢰하기 전에 필요한 것" 토론의 대학원 커리큘럼 진입 = 검증
+테제의 교육 담론 침투 신호(그랜트·9월 플레어 미팅 배경) ⓑ 수강생 44명 중 한국 출신 포함 =
+해외 기관 교육의 한국 XRPL 인재 파이프라인 경신호(10/3 XRP KOREA 결).
+
+@_RichardTeng(바이낸스 CEO) bStocks 한 달 성과 자랑 글(8/27, Delphi Digital 인용) — ① 바이낸스
+진영 최고위 = heyibinance(8/25)·@BNBCHAIN(8/27) 확정 계열, 9/30까지 XRPL 단일 포지션상 관여
+금지 ② 거래소 자사 프로덕트 마일스톤($147억·30만 = 자사 발표 미검증 수치) = 3주째 자동 패스
+패턴(Bitrue·OKX·Bitget·heyibinance) ③ 구멍 테스트 실패(측정·데이터 0) + 토큰화 주식 = 래퍼
+무대. **무반응, 좋아요도 생략(진영 신호).** 텍스처 1건(Delphi 귀속 단서 필수): "동일 주식
+다중 발행 가능 → 래퍼보다 유통이 승부처" = **래퍼 코모디티화의 업계 자인** — 5b(래퍼 vs 원장)
+후속 반 발짝("차별화는 원장 연동·검증뿐") 재료. 메모: Teng "깊이(depth)" 어휘가 2n 시그니처
+후보 "Depth beats wrapping."과 표면 겹침 — 문맥 상이(유동성 깊이 vs 네이티브 통합 깊이)라
+사용 지장 없음.
+
+@evernorthxrp "Built In Nº 04" 노스트로/보스트로 교육 카드(8/26, 면책 문구 동반 시리즈물) —
+① 구멍 테스트 실패: 코레스 뱅킹 유동성 주제라 측정·데이터 접점 0 — 보탤 발화가 일반론 칭찬
+(MBA 코멘트 계열)뿐 ② 투자 비히클 무대 감점 유지(8/25 판정 계승) ③ 시리즈 카드 = 뉴스 페그
+아님(긴급성 0), 오늘 답글 축은 2s(마스터카드 트리거)·2q(Xago 예열)로 이미 최상급 2건 배정.
+**답글 무반응, 좋아요+북마크만.** **계정 패턴 확정(2연속 동일 결론): Evernorth = 소재 광산,
+무대 아님** — 향후 ✅ 조건: 카드가 우리 구멍(데이터·측정·검증 RWA)에 들어오고 같은 날 상위
+무대 경합이 없을 때만. 소재는 9/8 원글(대기열 6) 텍스처로 축적 — "은행 주차는 의무, 스테이블
+주차는 자발 = 사용 의도 신호" 대구(ecosystem-log 8/26). ⚠️ "spare charger" 은유는 Evernorth
+저작 — 인용·변주 금지, 개념(대기 자본)만 사용.
+
+@sherlockdefi Sherlock Audit Engine × Ripple — XRPL Lending Protocol V1.1 "AI 전용 보안 검토"
+개시 발표(8/27, RippleX 재게시) — ① 무대 자체는 깨끗(시세·하이프 0, 기술·보안 주제 + RippleX
+재게시 = 준공식 신호) ② 그러나 구멍 테스트 실패: 렌딩 프로토콜 코드 감사 = DeFi 보안 레인,
+측정·데이터·DePIN 접점 0 — 보탤 발화가 일반론 응원뿐. 렌딩(수익 인접) 무대는 우리 수익 비발화
+원칙상 접근 감점 ③ "AI 감사"가 검증(verification) 테제와 표면 인접하나 코드 감사 ≠ 데이터
+검증 — 연결하면 억지 브릿지. **답글 무반응, 좋아요만 선택적(진영 내부 무해).** 텍스처: ⓐ AI
+전용 감사가 XRPL 코어 금융 인프라에 진입 = 원장 신뢰성 성숙 신호 — enterprise stack(원글 4)
+계열 기관 어휘 축적 ⓑ "완료 후 전체 공개" 예고 → **감사 결과 발표 시 재판정**(결과물이 "검증
+문화" 페그로 더 나을 수 있으나 그때도 구멍 테스트 통과 조건) ⓒ Sherlock = 감사 업체(파트너
+아님·경쟁 아님) — 중립 계정.
+
+@CoinDesk Ripple Prime "Delta One" 출시 보도(8/27 — 기관 대상 미 주식·지수·디지털 자산 TRS,
+단일 거래상대방 $1B+ 규제 자본·24/7) — ① **동일 뉴스 사이클 판정 계승**: Ripple Prime 자체
+발표 건 이미 무반응 확정(8/27, "single counterparty·cross-margin·24/7" 텍스처 축적 완료) —
+미디어 2차 보도는 자동 계승 ② 구멍 테스트 실패: 기관 파생(TRS) = 측정·데이터 접점 0, 소비자
+DePIN 브랜드의 기관 파생 답글 = 헤드라인 추종 인상 ③ 미디어 원글 답글은 관계 자산 0(계정
+운용 원칙). **전면 무반응(미디어 글이라 좋아요도 불요).** 텍스처 추가 1줄: 기관 인프라 서사의
+**미디어 픽업 확인(CoinDesk)** = 원글 4(enterprise stack) 페그 뉴스 가치 유효 재확인 + "$1B+
+규제 자본" 수치 축적.
+
+## 팔로우 실행 기록
+
+- 8/23: **일본 축 로스터 팔로우 실행 완료** (서우 보고 "다 대응함" — 기관·미디어·웨더·빌더 축 일괄).
+  표기 확인 대상이던 핸들(@sbivc_official·@emy_wng·@NewEconomyJp)도 처리된 것으로 간주,
+  상이했으면 정정 대기. @sbixdc 제외 규칙 유지.
+
+## 메모
+
+- 8/22 원글 2건은 예외적 밀도 — 이후 하루 1원글 원칙 복귀. 일(8/23)은 답글 1건만, 원글 휴식.
+- 콘텐츠 재고: 준비된 3주제 중 2개(파리·지도) 소진 → 신규 제작 라인은 인포그래픽·에너지·RLUSD.
