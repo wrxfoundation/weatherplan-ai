@@ -1,0 +1,268 @@
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
+// mock.js 가 아니라 seed.js 에서 가져온다 — state 는 _app 에서 import 되므로
+// 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
+import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
+import { PRICING } from "./config";
+import { transition } from "./requests";
+import { SEED_VISIT, advance } from "./workflow";
+
+// 앱 전역 상태 — 데모 단계에서는 클라이언트 보관(localStorage).
+// 실제 구현에서 이 상태는 전부 서버 소유가 된다 (핸드오프 04 §4).
+// 역할 간 연동 데모: 어르신 SOS → 가족 배너 / 컨시어지 보충 요청 → 가족 결제 승인.
+
+const KEY = "kcare-demo-state-v2";
+
+const DEFAULT = {
+  onboarding: null, // { rel, res, elderName, district, tier, paymentMode, limitAmount, joinedAt }
+  events: INITIAL_EVENTS,
+  requests: INITIAL_REQUESTS,
+  // cart: 가족 앱(REQ-07 장바구니)에서 변경 — 어르신 화면은 읽기만 (핸드오프 06 §3.9)
+  // guardianRole: 주(primary)/부(secondary) 보호자 — 권한 분기 시연용. 초대 정책 문서 참조
+  // nightOption: 야간 출동(외주) 옵션 가입 여부 — REQ-04. 기본 상품의 보증 범위는
+  //   접수 + 119 연계까지라, 이 플래그가 관제의 조치 버튼 구성을 바꾼다.
+  demo: {
+    sos: false,
+    anomaly: "open",
+    offline: false,
+    cart: false,
+    guardianRole: "primary",
+    nightOption: false,
+  },
+  // REQ-01 — 병력 기반 우선 표시는 자동 추론이 아니라 사람이 설정한다 (설정 주체 기록)
+  priority: { factors: ["기온"], source: "보호자 설정", setAt: null },
+  // 관찰 리포트 누적 — 본인 작성 전체 열람 · 타인 작성은 공유분만 (회의 7)
+  reports: SEED_REPORTS.map((r) => ({ ...r, at: Date.now() - r.daysAgo * 86400000 })),
+  // 어르신 1회성 잠금 상태 (undo 없음이 의도 — 핸드오프 06 §5). voicePlayed만 재클릭 가능.
+  //
+  // medSlots·reordered·visitAsked·askSpoken 도 여기 있어야 한다. 화면 로컬 state 로
+  // 두면 새로고침 한 번에 "오늘 약 먹었어요" 체크가 사라지고, 이미 보낸 즉시방문요청·
+  // 재구매 부탁을 다시 보낼 수 있게 된다 (중복 접수). 시연 중에 실제로 그렇게 된다.
+  elder: {
+    voicePlayed: false,
+    askAdded: false,
+    medSlots: {}, // { 아침: true, 점심: true, ... } — 오늘 복약 체크
+    reordered: {}, // { sp1: true } — 건기식 재구매 부탁
+    visitAsked: false, // 즉시 방문 요청
+    askSpoken: false, // 선생님께 말로 요청하기
+  },
+  // 관제 콘솔 상태 — sos 해제는 관제(ackSos)만 가능 (핸드오프 06 §5 · 09 §10)
+  ops: { sosDispatched: false, sos119: false, assign: "pending", unmatchFixed: false },
+  // 실시간 접수 티커 = 감사 로그의 실시간 뷰 (09 §7.2). 전 화면 액션이 여기로 push
+  ticker: SEED_EVENTS.map((e, i) => ({
+    id: `seed${i}`,
+    at: Date.now() - e.minAgo * 60000,
+    kind: e.kind,
+    text: e.text,
+    color: e.color,
+  })),
+  // 컨시어지 방문 수행 상태 + 감사 타임라인 (REQ-12 골격)
+  visit: { checkedIn: false, kitDone: false, reportSent: false, audit: [] },
+  kit: INITIAL_KIT,
+  // 스토어 상품 이미지 — 경영 콘솔에서 올리면 스토어 썸네일이 바뀐다 (실무자 요청).
+  // { [상품id]: dataURL }. 업로드 시 320px 로 줄여 저장한다 — localStorage 5MB 한도.
+  productImages: {},
+  // 방문 업무흐름 8단계 (lib/workflow.js) — 관제·컨시어지·보호자가 같은 건을 본다.
+  // 승인(approved) 전에는 어느 캘린더에도 뜨지 않는다는 것이 이 상태의 요점.
+  visitPlan: SEED_VISIT,
+  // 안부 음성 — 보호자 ↔ 어르신 양방향 (2026-08-12 시트).
+  // 데모에서는 오디오를 저장하지 않고 길이·발신자만 기록한다. 실제 구현은 서버 업로드.
+  voices: [],
+  // 동행 후기 — 동행 점수 아래 보호자가 남기는 코멘트 (2026-08-12 시트 홈 5번)
+  reviews: [],
+  // 스토어 구매내역 — 보호자 스토어 '구매내역 조회' (2026-08-12 시트 스토어 2번)
+  orders: SEED_ORDERS.map((o) => ({ ...o, at: Date.now() - o.daysAgo * 86400000 })),
+  // 기존에 다니시던 병원 — 제휴 병원이 아니어도 등록해 둔다 (2026-08-12 시트 예약 3번)
+  myHospitals: [],
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "hydrate": {
+      // 구버전 저장값(슬라이스에 새 키가 없는 형태)과 깊은 병합 — 새 키 기본값 유지.
+      // localStorage는 신뢰할 수 없는 입력: 객체·배열 형태를 검증하고 아니면 기본값을 지킨다.
+      const p = action.payload && typeof action.payload === "object" ? action.payload : {};
+      const arr = (v, fallback) => (Array.isArray(v) ? v : fallback);
+      const obj = (v, fallback) => (v && typeof v === "object" && !Array.isArray(v) ? v : fallback);
+      return {
+        ...state,
+        ...p,
+        demo: { ...state.demo, ...(p.demo || {}) },
+        elder: {
+          ...state.elder,
+          ...(p.elder || {}),
+          // 저장값이 객체가 아니면(구버전·손상) 기본값을 지킨다
+          medSlots: obj(p.elder && p.elder.medSlots, state.elder.medSlots),
+          reordered: obj(p.elder && p.elder.reordered, state.elder.reordered),
+        },
+        ops: { ...state.ops, ...(p.ops || {}) },
+        // 우선 날씨는 어르신 홈 정렬과 마이 탭 칩이 factors 를 배열로 전제한다.
+        // 저장값이 구버전이거나 손상되면 두 화면이 같이 죽으므로 형태를 지킨다.
+        priority: {
+          ...state.priority,
+          ...obj(p.priority, {}),
+          factors: arr(p.priority && p.priority.factors, state.priority.factors),
+        },
+        visit: {
+          ...state.visit,
+          ...(p.visit || {}),
+          audit: arr(p.visit && p.visit.audit, state.visit.audit),
+        },
+        ticker: arr(p.ticker, state.ticker),
+        events: arr(p.events, state.events),
+        reports: arr(p.reports, state.reports),
+        requests: arr(p.requests, state.requests),
+        productImages: obj(p.productImages, state.productImages),
+        visitPlan: { ...state.visitPlan, ...(p.visitPlan || {}) },
+        voices: arr(p.voices, state.voices),
+        reviews: arr(p.reviews, state.reviews),
+        orders: arr(p.orders, state.orders),
+        myHospitals: arr(p.myHospitals, state.myHospitals),
+      };
+    }
+    case "completeOnboarding":
+      return { ...state, onboarding: action.payload };
+    case "addEvent":
+      return { ...state, events: [...state.events, action.payload] };
+    case "updateEvent":
+      // 보호자 권한: 조회·등록·수정 (REQ-02 권한표)
+      return {
+        ...state,
+        events: state.events.map((e) =>
+          e.id === action.id ? { ...e, ...action.patch } : e
+        ),
+      };
+    case "setPriority":
+      return { ...state, priority: { ...action.payload, setAt: Date.now() } };
+    case "addReport":
+      return { ...state, reports: [{ ...action.payload, at: Date.now() }, ...state.reports] };
+    case "addRequest":
+      return { ...state, requests: [action.payload, ...state.requests] };
+    case "transitionRequest":
+      return {
+        ...state,
+        requests: state.requests.map((r) =>
+          r.id === action.id ? transition(r, action.to, action.note) : r
+        ),
+      };
+    case "demo":
+      return { ...state, demo: { ...state.demo, ...action.payload } };
+    case "elderPatch":
+      return { ...state, elder: { ...state.elder, ...action.patch } };
+    // 오늘 복약 체크 · 건기식 재구매 — 되돌리지 않는다 (06 §5). 키만 켜 준다.
+    case "elderMark":
+      return {
+        ...state,
+        elder: { ...state.elder, [action.key]: { ...state.elder[action.key], [action.id]: true } },
+      };
+    case "opsPatch":
+      return { ...state, ops: { ...state.ops, ...action.patch } };
+    case "pushEvent":
+      // 하나의 이벤트 스트림 — 규제 대응·분쟁 조사·품질 관리가 같은 데이터를 쓴다 (09 §7.2)
+      return {
+        ...state,
+        ticker: [
+          { id: `ev${Date.now()}`, at: Date.now(), ...action.payload },
+          ...state.ticker,
+        ].slice(0, 40),
+      };
+    case "ackSos":
+      // SOS 해제 — 관제 전용. 급파·연계 플래그도 함께 초기화
+      return {
+        ...state,
+        demo: { ...state.demo, sos: false },
+        ops: { ...state.ops, sosDispatched: false, sos119: false },
+      };
+    case "audit":
+      return {
+        ...state,
+        visit: {
+          ...state.visit,
+          ...(action.patch || {}),
+          audit: [...state.visit.audit, { at: Date.now(), ...action.event }],
+        },
+      };
+    case "kitUpdate":
+      return { ...state, kit: action.items };
+    case "advanceVisit":
+      // 8단계 전이 — 단계를 건너뛰면 workflow.advance 가 그대로 돌려보낸다
+      return { ...state, visitPlan: advance(state.visitPlan, action.to, action.note, action.actor) };
+    case "patchVisit":
+      return { ...state, visitPlan: { ...state.visitPlan, ...action.patch } };
+    // 보호자 일정등록 '요청' 승인 — 관제만 할 수 있다 (2026-08-12 시트 예약 1번).
+    // approval 이 "pending" 인 동안에는 어르신·컨시어지 캘린더에 뜨지 않는다.
+    case "decideEvent":
+      return {
+        ...state,
+        events: state.events.map((e) =>
+          e.id === action.id
+            ? { ...e, approval: action.approval, source: action.approval === "approved" ? "관제 승인" : "관제 반려", note: action.note ?? e.note }
+            : e
+        ),
+      };
+    case "addVoice":
+      return { ...state, voices: [{ id: `vo${Date.now()}`, at: Date.now(), ...action.payload }, ...state.voices].slice(0, 30) };
+    case "addReview":
+      return { ...state, reviews: [{ id: `rv${Date.now()}`, at: Date.now(), ...action.payload }, ...state.reviews] };
+    case "addOrder":
+      return { ...state, orders: [{ id: `od${Date.now()}`, at: Date.now(), ...action.payload }, ...state.orders] };
+    case "addMyHospital":
+      return { ...state, myHospitals: [...state.myHospitals, action.payload] };
+    case "setProductImage": {
+      // null 이면 삭제 — 기본 아이콘 썸네일로 돌아간다
+      const next = { ...state.productImages };
+      if (action.dataUrl) next[action.id] = action.dataUrl;
+      else delete next[action.id];
+      return { ...state, productImages: next };
+    }
+    case "reset":
+      return DEFAULT;
+    default:
+      return state;
+  }
+}
+
+const Ctx = createContext(null);
+
+export function AppStateProvider({ children }) {
+  const [state, dispatch] = useReducer(reducer, DEFAULT);
+  // 목 데이터가 현재 시각 기준이라 서버 프리렌더와 클라이언트가 어긋난다.
+  // 데모 단계에서는 마운트 후 렌더로 하이드레이션 불일치를 차단한다.
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) dispatch({ type: "hydrate", payload: JSON.parse(raw) });
+    } catch (_) {
+      /* 손상된 저장값은 무시 */
+    }
+    setReady(true);
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+    } catch (_) {
+      /* 저장 실패는 데모 동작에 영향 없음 */
+    }
+  }, [state]);
+
+  return (
+    <Ctx.Provider value={{ state, dispatch }}>
+      {ready ? children : <div className="min-h-screen bg-nav" />}
+    </Ctx.Provider>
+  );
+}
+
+export function useAppState() {
+  return useContext(Ctx);
+}
+
+// 결제권한 판정 — REQ-07. 금액이 보호자 승인을 필요로 하는지.
+export function needsGuardianApproval(onboarding, amount) {
+  const mode = onboarding?.paymentMode || "limit";
+  const limit = onboarding?.limitAmount ?? PRICING.paymentLimitDefault;
+  if (mode === "guardianOnly") return true;
+  if (mode === "elderOnly" || mode === "both") return false;
+  return amount == null ? false : amount > limit;
+}
