@@ -11,6 +11,8 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   let fail = 0
   const check = (ok, label) => { if (!ok) fail++; console.log(`${ok ? 'PASS' : 'FAIL'}  ${label}`) }
   const items = () => page.locator('[data-t="rental-items"] > div').count()
+  // 요소가 없을 때 innerText 는 30초 뒤 throw 라 남은 단언이 통째로 날아간다 — 빈 문자열로 떨어뜨린다
+  const textOf = async (sel) => { try { return await page.locator(sel).innerText({ timeout: 2000 }) } catch { return '' } }
   // 실제 사용자처럼 마우스를 단계적으로 옮긴다 — hover()/click() 은 순간이동이라 호버 메뉴의 틈 버그를 못 잡는다
   const glide = async (loc, steps = 25) => { const bb = await loc.boundingBox(); await page.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2, { steps }); await page.waitForTimeout(150) }
 
@@ -55,6 +57,26 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(page.url().includes('/calculator/rental') && page.url().includes('item=coway-mattress'), `자세히 계산 → ${page.url().split('?')[1]}`)
   const body = await page.evaluate(() => document.body.innerText)
   check(body.includes('코웨이 매트리스'), '계산기가 그 품목으로 열림 (코웨이 매트리스)')
+
+  await page.goto('http://localhost:4173/category/rental', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
+  // 같은 페이지에 있는 채로 GNB 메가메뉴를 눌렀을 때 — 쿼리만 바뀌고 리마운트가 없는 경로.
+  // 상태를 useState 초기값으로만 읽으면 여기서 화면이 그대로다(사용자 리포트: "반응을 안함").
+  // goto 로 여는 위 프리필 테스트는 매번 리마운트라 이 버그를 절대 잡지 못한다.
+  await glide(page.locator('header nav a', { hasText: '렌탈' }), 10)
+  check(await page.locator('[data-t="mega-brands"]').count() === 1, '렌탈 GNB 호버 → 메가메뉴')
+  const lgWater = page.locator('[data-t="mega"] a[href*="brand=lg"][href*="type="]', { hasText: /^정수기$/ }).first()
+  await glide(lgWater)
+  await lgWater.click(); await page.waitForTimeout(400)
+  check(page.url().includes('brand=lg'), `메가메뉴 클릭 → URL ${page.url().split('?')[1] ?? '(쿼리 없음)'}`)
+  check(await textOf('[data-t="rental-brands"] button[aria-pressed="true"]') === 'LG퓨리케어', '리마운트 없이 브랜드 탭이 바뀐다')
+  check(await textOf('[data-t="rental-cats"] button[aria-pressed="true"]') === '정수기', '리마운트 없이 카테고리 칩이 바뀐다')
+  const lgItems = await textOf('[data-t="rental-items"]')
+  check(lgItems.includes('LG퓨리케어') && !lgItems.includes('코웨이'), '품목 목록이 LG퓨리케어로 교체')
+
+  // 브라우저 안에서 탭을 눌러도 URL 이 따라온다 — 단일 소스라 공유·새로고침이 어긋나지 않는다
+  await page.locator('[data-t="rental-brands"] button', { hasText: '쿠쿠' }).click(); await page.waitForTimeout(250)
+  check(page.url().includes('brand=cuckoo') && !page.url().includes('type='), '탭 클릭 → URL 갱신 + 카테고리 초기화')
+
 
   if (errors.length) { console.log('PAGEERROR:', errors.join(' | ')); fail++ }
   await browser.close()

@@ -11,10 +11,13 @@ import { IcGift, IcBulb } from './icons'
 
 export default function InternetBuilder() {
   const nav = useNavigate()
-  const [sp] = useSearchParams()
+  const [sp, setSp] = useSearchParams()
   // GNB(통신사별) · 공유 링크에서 같은 조건으로 연다
   const init = (k, d) => sp.get(k) ?? d
-  const [carrier, setCarrier] = useState(INTERNET_CARRIERS.some((c) => c.key === init('carrier')) ? init('carrier') : 'KT')
+  // 통신사는 URL 이 단일 소스다. useState 초기값으로만 읽으면 이미 이 페이지에 있을 때
+  // GNB 메가메뉴로 다른 통신사를 눌러도 리마운트가 없어 화면이 그대로다.
+  const carrier = INTERNET_CARRIERS.some((c) => c.key === sp.get('carrier')) ? sp.get('carrier') : 'KT'
+  const setCarrier = (k) => { const n = new URLSearchParams(sp); n.set('carrier', k); setSp(n, { replace: true }) }
   const [combo, setCombo] = useState(COMBOS.some((c) => c.key === init('combo')) ? init('combo') : 'net')
   const [speed, setSpeed] = useState(init('speed', '500M'))
   const [tv, setTv] = useState(init('tv', null))
