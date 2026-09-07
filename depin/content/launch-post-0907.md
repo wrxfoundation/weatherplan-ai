@@ -129,6 +129,40 @@ KC 인증 · 성능인증 (CO₂ 1등급 · PM2.5 1등급)
 보상은 테스트 중이며 지급량과 가치는 보장되지 않습니다.
 ```
 
+### 영문 — 타래에 붙이지 않고 **저녁 단독 2편**으로 (서우 문의 답)
+
+**"어차피 번역되니까" 는 이해 문제만 맞고 도달 문제는 틀리다.**
+- X 는 언어권별로 노출을 나눈다. **국문 타래는 영어권 타임라인에 아예 뜨지 않는다** — 번역 버튼이
+  있어도 볼 사람이 그 글을 만나지 못한다. 번역은 도달을 만들지 못한다.
+- 번역은 자동이 아니라 **클릭**이고 타래는 편마다 눌러야 한다. 대부분 안 누른다.
+- `예매 인증서` · `관측소 라이선스 제네시스` · `위조 불가 검증 코드` 는 기계번역이 뭉갠다.
+  영어권 첫인상이 어색한 번역문으로 남는다.
+→ **마지막 편에 영어를 덧붙이는 것은 효과가 거의 없다.** 그 문장을 읽을 사람이 그 타래에 도달하지
+   못하기 때문. 대신 **22~23시 KST(미 동부 오전) 영문 단독 2편**. 런치 당일이라 하루 2원글 예외 적용,
+   국문 타래와 10시간 간격으로 6시간+ 요건도 충족.
+
+**EN-1 (235자)**
+```
+Reservations open — Weather Data Token Generator™, an indoor air monitor.
+CO₂, PM2.5, PM10, TVOC, temperature, humidity, logged every minute.
+
+Your space measures. The reading gets verified. The value comes back.
+
+https://wellbian.io
+```
+
+**EN-2 (240자)**
+```
+Sept 7–14 KST: reserve. Free — no payment, no wallet, no signature.
+Sept 15, 12:00 KST: sale opens, 24 hours. Card or RLUSD.
+
+Genesis tier goes to first-sale buyers only. Never reissued.
+
+Rewards are in testing. No amount or value is promised.
+```
+
+가드: 원화가·XRP SEOUL 티켓·Flare 미포함(국내 문맥 필요 / 후원 관계 표시 여지 / 기술 통합 클레임).
+
 ### 배치 근거 (다음에 또 쓸 때 참고)
 
 - **보상 토큰 20% 가산은 T5.** T1 에 올리면 첫 화면이 수익 약속으로 읽힌다. `(예정)` 표기는 사이트와
