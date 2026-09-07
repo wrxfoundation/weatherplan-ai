@@ -141,25 +141,44 @@ KC 인증 · 성능인증 (CO₂ 1등급 · PM2.5 1등급)
    못하기 때문. 대신 **22~23시 KST(미 동부 오전) 영문 단독 2편**. 런치 당일이라 하루 2원글 예외 적용,
    국문 타래와 10시간 간격으로 6시간+ 요건도 충족.
 
-**EN-1 (235자)**
+**EN-1 (≈277자)**
 ```
-Reservations open — Weather Data Token Generator™, an indoor air monitor.
-CO₂, PM2.5, PM10, TVOC, temperature, humidity, logged every minute.
+Reservations open. Weather Data Token Generator™, an indoor air monitor.
+CO₂, PM2.5, PM10, TVOC, temperature, humidity — logged every minute, KC
+certified, top accuracy grade (CO₂, PM2.5).
 
-Your space measures. The reading gets verified. The value comes back.
+Your space measures. The reading is verified. The value comes back.
 
 https://wellbian.io
 ```
 
-**EN-2 (240자)**
+**EN-2 (≈277자)**
 ```
-Sept 7–14 KST: reserve. Free — no payment, no wallet, no signature.
-Sept 15, 12:00 KST: sale opens, 24 hours. Card or RLUSD.
+What you reserve: a device NFT — one per unit, up to ten, transferable — with
+the monitor included. 450 RLUSD.
 
-Genesis tier goes to first-sale buyers only. Never reissued.
+Sept 7–14 KST: reserve. Free, nothing to sign.
+Sept 15, 12:00 KST: sale opens for 24 hours. Card or RLUSD.
+
+Device partner: KWeather — 30 years of weather observation in Korea.
+```
+
+**EN-3 (≈252자)**
+```
+Genesis tier goes to first-sale buyers only — one per account, non-transferable,
+never reissued.
+
+Reserving issues a signed voucher instantly — a code anyone can verify.
+Taking it on-chain is optional.
 
 Rewards are in testing. No amount or value is promised.
 ```
+
+**국문판과 의도적으로 다르게 간 곳 2개**
+- **KC 인증·정확도 등급을 EN-1 로 끌어올림** — 영어권은 한국 브랜드를 모르므로 인증이 첫 문단에
+  있어야 신뢰가 선다(국문에서는 T2).
+- **"지갑 없이 이메일로 30초" 는 제외** — XRPL 청중은 이미 지갑이 있어 마찰 제거가 셀링 포인트가
+  아니다. 그 자리에 케이웨더를 넣었다(국문에서는 T3 의 핵심 문구).
 
 가드: 원화가·XRP SEOUL 티켓·Flare 미포함(국내 문맥 필요 / 후원 관계 표시 여지 / 기술 통합 클레임).
 
