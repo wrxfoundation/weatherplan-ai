@@ -16,7 +16,14 @@
 | 수령 전 보상 | 기기 NFT당 일별 보상 토큰 제공 예정, **발송 전까지 포인트 형식** → 수령 후 정산 정책에 따라 전환 |
 | 티켓 | 측정기 구매자 중 **추첨 200명**에게 XRP SEOUL 2026 입장권(1인 1장 · 10만원 상당 · 카드형 지갑 단독 구매 제외) |
 | 별매 | D'CENT 카드형 지갑 70,000원(정가 80,000) · **카드 결제 전용** · NFT·예매권과 무관 · 티켓 추첨 제외 |
-| 출고 | **별도 안내** (날짜 미확정 — 공지에 11월을 쓰지 않는다) |
+| 기기 | **날씨데이터토큰생성기™ · 모델 ARC-600DA** — PM2.5 · PM10 · CO₂ · TVOC · 온도 · 습도 · 체감온도, 1분 단위. 5인치 풀터치 컬러 LCD · Wi-Fi/블루투스 · 12VDC 300mA(**월 전기료 1,000원 미만**) · 120×118×36mm / 260g 이하 · 벽걸이·탁상 겸용 |
+| 인증 | **KC 인증 · 성능인증**. 성능인증 정확도 **CO₂ 1등급 · PM2.5 1등급**. 측정 범위 0~1,000μg/m³(PM2.5)/분해능 1μg/m³ · Light scattering laser photometer · 팬 수명 32,000시간 |
+| 예약 절차 | 이메일 또는 구글 로그인(30초) → 수량 선택. **준비금·지갑·서명 없음.** 신청 즉시 **예매 인증서**(위조 불가 검증 코드) 계정 기록 — 이 인증서만으로 우선구매 자격 인정. **온체인 NFT 수령은 선택**(마이페이지에서 XRPL 또는 Flare 지갑) |
+| 결제 절차 | 카드 = 토스페이먼츠 / RLUSD = XRPL 지갑. 외부 지갑 로그인 지원(D'CENT · Girin · Xaman) |
+| 일반 구매 | 예매권 없는 일반 구매는 **우선구매 시작 후 일정 시간 뒤 순차 오픈**(트랜잭션 몰림 방지) |
+| 케이웨더 표기 | **`기기 파트너 KWEATHER`** — 사이트 푸터·ABOUT 기준. 영문 `Device partner: KWeather` |
+| 출고 | **별도 안내** (날짜 미확정 — 공지에 11월을 쓰지 않는다). **배송 2주 전 텔레그램·X 로 안내** |
+| 로드맵 | Phase 1 = 9/7 사전예약 · 9/15 제네시스 1차 판매 / Phase 2 = 기기 출고·노드 가동·보상 적립 / Phase 3 = 데이터 마켓·바운티·DeFi |
 | 고지 | WLBN 지급량·가치 비보장 · 측정값은 날씨 데이터뿐, 개인 식별 정보 미수집 |
 
 ⚠️ **초판에서 틀렸던 것 (재발 방지)**: ① "오늘부터 RLUSD 구매 가능" → **오늘은 무료 예약만** ②
@@ -28,8 +35,7 @@
 
 ## X — 4편 타래 (@wellbianlabs)
 
-T1 에 테제·오픈 사실, T4 에 날짜·결제 수단을 몰아 둔다(원글만 1시간 수정 가능 → 틀리기 쉬운 정보를
-뒤로). 링크는 T4.
+T1 에 테제·오픈, T4 에 날짜·결제 수단(틀리기 쉬운 정보). 링크는 T4.
 
 ### T1 (219자)
 ```
@@ -43,38 +49,45 @@ Not a promise. A product.
 #DePIN #XRPL
 ```
 
-### T2 (≈215자)
+### T2 (≈219자) — 기기·인증
+```
+ARC-600DA. PM2.5, PM10, CO₂, TVOC, temperature and humidity, logged every
+minute in the space you live in.
+
+KC certified, top accuracy grade for CO₂ and PM2.5. Runs on under 1,000 KRW
+of electricity a month.
+```
+
+### T3 (≈234자) — 무엇을 예약하는가 + 케이웨더
 ```
 What you reserve: a device NFT — one per unit, up to ten, transferable —
-with a Weather Data Token Generator™ air monitor included.
+with the monitor included.
 
-CO₂, PM2.5, PM10, VOCs, temperature, humidity. Measured where you live,
-minute by minute.
+Free today. No payment, no wallet, no signature.
+
+Device partner: KWeather, 30 years of weather observation and sensor-making
+in Korea.
 ```
 
-### T3 (≈200자)
+### T4 (≈263자) — 일정·예매권·고지
 ```
-Built with KWeather — our tech partner, 30 years of weather observation and
-sensor-making, and Korea's largest private weather company.
+Sept 7–14, 12:00 KST — reserve. A signed voucher hits your account instantly;
+on-chain is optional.
 
-The reading is the product. The ledger's job starts after it.
-```
+Sept 15, 12:00 KST — those who reserved buy first, card or RLUSD.
 
-### T4 (≈250자)
-```
-Sept 7–14, 12:00 KST: reserve. Free — no payment today.
-Sept 15, 12:00 KST: those who reserved buy first, by card or RLUSD.
-Delivery dates announced separately.
-
-Rewards for the data are in testing. No amount or value is promised.
+Rewards are in testing. No amount or value is promised.
 
 [사전예약 링크]
 ```
 
-**XRP SEOUL 티켓 추첨은 영문 타래에서 제외.** 사이트 공표 사실이지만 영문 채널에서 행사명을 꺼내면
-후원 관계 표시로 읽힐 여지가 있다(후원계약 5.13조 인접). 국내 채널 한정으로 쓴다.
+**신규 시그니처 후보**: **`The voucher verifies. The chain is optional.`** — 예매 인증서가 위조 불가
+검증 코드로 즉시 발급되고 NFT 수령은 선택이라는 제품 구조가 우리 테제(검증이 가치)를 그대로 보여준다.
+T4 가 이 역할.
 
----
+**제외 항목과 이유**: XRP SEOUL 티켓 추첨(영문에서 행사명 = 후원 관계 표시 여지, 후원계약 5.13조 인접)
+· Flare(사이트는 예매권 NFT 수령 경로로 노출하나 영문 채널에서 먼저 꺼내면 기술 통합 클레임으로 읽힘)
+· 가격(스토어가 단일 출처).
 
 ## 텔레그램 공지 (국문 · 크립토 커뮤니티)
 
@@ -88,24 +101,45 @@ Rewards for the data are in testing. No amount or value is promised.
 예보는 건물 앞에서 멈추고, 공기질 지도는 거리에서 멈춥니다.
 정작 우리가 숨 쉬는 자리는 아무도 재지 않습니다.
 
-wellbian은 그 자리를 재는 실내 공기 측정기입니다.
-CO₂ · 초미세먼지 · 미세먼지 · 휘발성유기화합물 · 온도 · 습도를
-분 단위로 측정합니다.
+━━━━━━━━━━━━━━━
 
-30년간 대한민국 기상 관측 사업과 센서를 만들어 온
-케이웨더가 웰비안의 기술 협력사입니다.
+📟 기기 — 날씨데이터토큰생성기™ (ARC-600DA)
+
+PM2.5 · PM10 · CO₂ · TVOC · 온도 · 습도 · 체감온도를
+1분 단위로 기록합니다. 5인치 풀터치 컬러 LCD.
+
+· KC 인증 · 성능인증
+· 정확도 CO₂ 1등급 · PM2.5 1등급
+· 월 전기료 1,000원 미만
+· Wi-Fi · 블루투스 · 벽걸이/탁상 겸용
+
+기상 데이터 기업 케이웨더가 기기 파트너로 함께합니다.
 
 ━━━━━━━━━━━━━━━
 
 🗓 오늘은 결제가 아니라 '줄서기'입니다
 
-· 9/7(월) 12시 ~ 9/14(월) 12시 — 사전예약 신청
-  무료입니다. 오늘은 결제하지 않습니다.
+· 9/7(월) 12시 ~ 9/14(월) 12시 — 사전예약
+  무료입니다. 결제도, 지갑도, 서명도 없습니다.
+  이메일 또는 구글 로그인으로 30초면 됩니다.
 
-· 9/15(월) 12시 — 사전예약하신 분들만 먼저 구매
-  카드 또는 RLUSD로 결제합니다.
+· 9/15(월) 12시 — 사전예약자 우선구매
+  카드(토스페이먼츠) 또는 RLUSD로 결제합니다.
+  예매권 없는 일반 구매는 그 뒤 순차적으로 열립니다.
 
-· 출고 일정은 별도 안내드립니다.
+· 배송은 2주 전에 텔레그램·X로 안내드립니다.
+
+━━━━━━━━━━━━━━━
+
+🎫 신청하면 바로 받는 것
+
+예매 인증서가 계정에 즉시 기록됩니다.
+위조 불가 검증 코드가 붙어 있어 누구나 확인할 수 있습니다.
+이 인증서만으로 9월 15일 우선구매 자격이 인정됩니다.
+
+온체인 NFT로 받는 것은 선택입니다.
+원하시면 마이페이지에서 XRPL 또는 Flare 지갑으로
+받을 수 있습니다.
 
 ━━━━━━━━━━━━━━━
 
@@ -113,23 +147,24 @@ CO₂ · 초미세먼지 · 미세먼지 · 휘발성유기화합물 · 온도 �
 
 기기 NFT입니다.
 기기 1대당 NFT 1개 · 한 분당 최대 10개 · 양도 가능.
-Weather Data Token Generator™ 측정기 1대가 포함됩니다.
+날씨데이터토큰생성기™ 측정기 1대가 포함됩니다.
 
-가격은 750,000원 또는 450 RLUSD입니다.
+가격 750,000원 또는 450 RLUSD
 (정상가 1,083,000원 · 650 RLUSD)
 
 1차 판매 구매자에게는 관측소 라이선스 '제네시스' 등급이
 함께 부여됩니다. 계정당 1개 · 양도 불가 · 재발행 없음.
 
 🎟 측정기 구매자 중 추첨 200명께 'XRP SEOUL 2026'
-입장권을 드립니다. 1인 1장.
+입장권을 무료로 드립니다. 1인 1장.
 
 ━━━━━━━━━━━━━━━
 
 ⚠️ 보상 이야기를 먼저 하겠습니다
 
-측정 데이터에 대한 보상은 네트워크 원칙에 따라 WLBN으로
-지급되며, 지급량과 가치는 보장되지 않습니다.
+보상은 측정의 성실성과 품질로 정해지고, 규칙은 공개됩니다.
+검증된 데이터에 WLBN이 적립되며,
+지급량과 가치는 보장되지 않습니다.
 
 기기를 받으시기 전까지는 포인트 형식으로 적립되고,
 수령하신 뒤 정산 정책에 따라 전환됩니다.
