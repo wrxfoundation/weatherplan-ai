@@ -33,61 +33,100 @@
 
 ---
 
-## X — 4편 타래 (@wellbianlabs)
+## X — 5편 국문 타래 (@wellbianlabs) — 확정본
 
-T1 에 테제·오픈, T4 에 날짜·결제 수단(틀리기 쉬운 정보). 링크는 T4.
+**스타일 판정(서우 9/7)**: 영문 테제형 초안은 **"너무 현학적"** — 폐기. 텔레그램 공지와 같은
+**담백·정보 우선** 톤으로 통일한다. 꾸미는 형용사 대신 **인증·수치**를 앞세운다(크립토 타임라인에서
+`KC 인증 · 성능인증 1등급` 이 어떤 수식어보다 세다).
 
-### T1 (219자)
+**구성 원칙**: T1 = 이게 무슨 기기인지 + 오늘 무엇이 열렸는지 + 링크. 일정·가격·혜택은 T2 이후로.
+(초안은 T1 에 일정만 있어 "무슨 기기인지 모르고 지나간다" 는 문제가 있었다.)
+
+### T1 (244자)
 ```
-Weather forecasts stop at your building. Air quality maps stop at the street.
-The place you actually breathe — nobody measures it.
+Wellbian
+Weather Data Token Generator™
+사전예약 신청 오픈 ⚡️
 
-Reservations open today for a device that does.
+내가 생활하는 공간의 공기를 1분마다 재는 실내 측정기입니다.
+CO₂ · 초미세먼지 · 미세먼지 · TVOC · 온도 · 습도
+KC 인증 · 성능인증 CO₂ 1등급 · PM2.5 1등급
 
-Not a promise. A product.
-
-#DePIN #XRPL
+🔗 https://wellbian.io
 ```
+기기 설명은 사이트 ABOUT(`내가 생활하는 공간에서 측정한 날씨`)과 같은 말로 맞춤. 이미지 = 박스샷.
 
-### T2 (≈219자) — 기기·인증
+### T2 (263자)
 ```
-ARC-600DA. PM2.5, PM10, CO₂, TVOC, temperature and humidity, logged every
-minute in the space you live in.
+📅 일정
 
-KC certified, top accuracy grade for CO₂ and PM2.5. Runs on under 1,000 KRW
-of electricity a month.
-```
+· 사전예약 9/7(월) 12시 ~ 9/14(월) 12시, 7일간
+  무료입니다. 결제도 서명도 없습니다.
+  이메일 또는 구글 로그인 30초면 됩니다.
 
-### T3 (≈234자) — 무엇을 예약하는가 + 케이웨더
-```
-What you reserve: a device NFT — one per unit, up to ten, transferable —
-with the monitor included.
-
-Free today. No payment, no wallet, no signature.
-
-Device partner: KWeather, 30 years of weather observation and sensor-making
-in Korea.
-```
-
-### T4 (≈263자) — 일정·예매권·고지
-```
-Sept 7–14, 12:00 KST — reserve. A signed voucher hits your account instantly;
-on-chain is optional.
-
-Sept 15, 12:00 KST — those who reserved buy first, card or RLUSD.
-
-Rewards are in testing. No amount or value is promised.
-
-[사전예약 링크]
+· 정식판매 9/15(화) 12시 ~ 9/16(수) 12시, 단 24시간
+  (1) 사전예약자 우선 9/15 12:00~17:59:59
+  (2) 일반구매 9/15 18:00 ~ 9/16 12:00
 ```
 
-**신규 시그니처 후보**: **`The voucher verifies. The chain is optional.`** — 예매 인증서가 위조 불가
-검증 코드로 즉시 발급되고 NFT 수령은 선택이라는 제품 구조가 우리 테제(검증이 가치)를 그대로 보여준다.
-T4 가 이 역할.
+### T3
+```
+🔥 기기 NFT 라이선스
 
-**제외 항목과 이유**: XRP SEOUL 티켓 추첨(영문에서 행사명 = 후원 관계 표시 여지, 후원계약 5.13조 인접)
-· Flare(사이트는 예매권 NFT 수령 경로로 노출하나 영문 채널에서 먼저 꺼내면 기술 통합 클레임으로 읽힘)
-· 가격(스토어가 단일 출처).
+750,000원 또는 450 RLUSD
+(정상가 1,083,000원 · 650 RLUSD)
+
+· 기기 1대당 NFT 1개 · 한 분당 최대 10개 · 양도 가능
+· Weather Data Token Generator™ 1대 포함
+· 페이·체크·신용카드(국내) 또는 RLUSD(해외·Web3 지갑)
+```
+
+### T4
+```
+🏅 1차 구매자에게 관측소 라이선스 '제네시스'
+
+· 계정당 1개 · 양도 불가 · 재발행 없음
+· 보상 토큰 20% 가산(예정) · 데이터 바운티 우선 배정
+· 제네시스 넘버 영구 기록
+
+🎟 측정기 구매자 중 추첨 200명께
+XRP SEOUL 2026 입장권 (1인 1장)
+```
+
+### T5
+```
+🎫 신청하면 바로 받는 것
+
+예매 인증서가 계정에 즉시 기록됩니다.
+위조 불가 검증 코드가 붙어 누구나 확인할 수 있고,
+이 인증서만으로 9/15 우선구매 자격이 인정됩니다.
+
+보상은 테스트 중이며 지급량과 가치는 보장되지 않습니다.
+```
+
+**언어 판단 보류**: @wellbianlabs 는 그동안 영문 계정. 이번 국문 타래는 국내 축(텔레그램·보도자료)과
+같은 날 나가는 launch 공지라 국문으로 간다. 영문은 짧은 단문 1편을 별도로 낼지 서우 결정.
+
+**보관(폐기 아님)** — 영문 테제형 초안의 시그니처만 살린다:
+`The voucher verifies. The chain is optional.` — 예매 인증서 즉시 발급 + NFT 선택 구조. 향후 영문
+원글·답글용.
+
+---
+
+## 유입 추적 (GA/GTM)
+
+- **GTM 컨테이너 `GTM-NMS5G7FG`**(계정 wellbianlabs · 관리 admin@wellbianlabs.io). 저장소 스토어에는
+  설치 완료(`app/layout.tsx`, next/script). **라이브 wellbian.io 는 이 저장소 밖 코드베이스** — 그쪽
+  `index.html` 의 `<head>` 최상단 + `<body>` 직후에 별도로 붙여야 한다.
+- ⚠️ **GTM 컨테이너만 붙이면 GA4 에는 아무 데이터도 안 간다.** GTM 안에서 **GA4 구성 태그**(측정 ID
+  `G-…`, 트리거 All Pages)를 만들고 **제출 → 게시**까지 해야 한다. 대안: GTM 없이 GA4 `gtag.js` 직접 삽입.
+- 🔴 **UTM 은 링크에 직접 붙인다 — 태그가 만들어 주지 않는다.**
+  `?utm_source=telegram|x|tg_<KOL핸들>&utm_medium=owned|kol&utm_campaign=prereg0907`
+  공지가 UTM 없이 나가면 그 트래픽의 채널 귀속은 영구히 복구 불가.
+- 🔴 **KOL 정산 근거를 GA 리포트로 삼지 않는다.** 예약 시점에 `utm_source` 를 **예약 레코드에 서버
+  저장**할 것. GA4 어트리뷰션은 쿠키 기반이라 기기 변경·쿠키 삭제에 끊기고, 9/7 예약 → 9/15 결제 연결에
+  취약하다. GA = 마케팅 관찰용, 정산 = 우리 DB.
+- 쿠키 동의(국내 개인정보보호법 + 해외 방문자 GDPR) · Consent Mode v2 — 이번 주 내 처리.
 
 ## 텔레그램 공지 (국문 · 크립토 커뮤니티)
 
