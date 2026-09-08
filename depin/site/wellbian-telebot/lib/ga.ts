@@ -122,8 +122,16 @@ const call = async (method: "runReport" | "runRealtimeReport", body: unknown): P
   });
   const j = (await r.json()) as Api;
   if (!r.ok) {
-    /* 403 은 거의 항상 "서비스 계정을 GA4 속성에 뷰어로 안 넣음"이다. 그대로 말해 준다. */
-    const hint = r.status === 403 ? " — 서비스 계정을 GA4 속성 액세스 관리에 뷰어로 추가했는지 확인"
+    /* 403 은 두 가지다. "insufficient authentication scopes" 는 토큰에 analytics.readonly 범위가
+       없는 것 — OAuth 라면 Playground 에서 다른 스코프를 골라 발급한 토큰이다(9/8 실제로 그랬다).
+       그 밖의 403 은 동의한 계정(또는 서비스 계정)이 그 속성에 권한이 없는 것. */
+    const msg = j.error?.message ?? "";
+    const hint = r.status === 403
+      ? (/scope/i.test(msg)
+          ? ` — 토큰에 GA 읽기 범위가 없음. ${gaMode() === "oauth"
+              ? "Playground 에서 스코프를 https://www.googleapis.com/auth/analytics.readonly 로 다시 골라 리프레시 토큰을 새로 받아 넣을 것"
+              : "서비스 계정 JWT 의 scope 확인"}`
+          : ` — ${gaMode() === "oauth" ? "동의한 계정이" : "서비스 계정이"} GA4 속성 액세스 관리에 뷰어 이상으로 있는지 확인`)
       : r.status === 400 ? " — 속성 ID 가 숫자인지 확인" : "";
     throw new Error(`${method} ${r.status} ${j.error?.message ?? ""}${hint}`.trim());
   }
