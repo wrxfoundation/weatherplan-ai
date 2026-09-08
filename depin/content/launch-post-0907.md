@@ -182,6 +182,123 @@ Rewards are in testing. No amount or value is promised.
 
 가드: 원화가·XRP SEOUL 티켓·Flare 미포함(국내 문맥 필요 / 후원 관계 표시 여지 / 기술 통합 클레임).
 
+### EN — 영문 타래 2편 (국문과 동일 구조 · 별도 게시 · 하이라이트용)
+
+국문 타래와 **같은 골격**. 아래 4곳만 영어권 독자 기준으로 바꿨다.
+
+| 바꾼 곳 | 국문 | 영문 | 이유 |
+|---|---|---|---|
+| 가격 제시 순서 | 750,000원 먼저 | **450 RLUSD 먼저** | 원화는 영어권에서 크기 감각이 없다 |
+| 결제 수단 | 카드 먼저 | **RLUSD 먼저 · 카드는 (Korea only)** | 해외 독자는 국내 카드를 못 쓴다 |
+| 인증 | KC 인증 | **KC (Korea's national safety certification)** | KC 를 아는 영어권 독자는 없다 |
+| 기사 링크 | 매체명만 | **(articles in Korean)** 명시 + 제목 영역 | 눌렀다 한국어가 나오면 이탈한다 |
+
+시각은 **KST 를 정본으로 두고 UTC 를 괄호 병기**한다(예약 마감·판매 개시 2개만).
+`utm_content` 는 국문과 갈라 **`sale_en` · `press_en`** — 언어별 유입을 따로 본다.
+
+**EN-1 — 판매 (국문 1번 대응)**
+```
+Wellbian
+Weather Data Token Generator™
+Reservations open ⚡️ (Sept 7-14 KST)
+🏅 Genesis — first sale only
+
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=prereg0907&utm_content=sale_en
+
+■ This is a reservation, not a purchase
+
+· Reserve: Sept 7 (Mon) 12:00 - Sept 14 (Mon) 12:00 KST (03:00 UTC)
+  Free. No payment, no wallet, no signature.
+  Email or Google login, about 30 seconds.
+
+· Sale: Sept 15 (Tue) 12:00 KST (03:00 UTC) - Sept 16 (Wed) 12:00 KST
+  24 hours only. RLUSD, or Korean domestic card.
+
+ (1) Reservation holders first: Sept 15, 12:00-17:59:59 KST
+ (2) Open to everyone: Sept 15, 18:00 - Sept 16, 12:00 KST
+
+━━━━━━━━━━━━━━━
+■ Device NFT / price
+
+450 RLUSD, or KRW 750,000
+(list price 650 RLUSD · KRW 1,083,000)
+RLUSD via XRPL wallet (worldwide) · card (Korea only)
+
+<What you are buying>
+ 1) One NFT per device · up to 10 per person · transferable
+ 2) Includes one Weather Data Token Generator™ (delivery date announced separately)
+ 3) Reward tokens are planned to accrue daily per device NFT even before delivery
+    (held as points until dispatch)
+
+<First-sale benefits>
+ 1) Observatory license 'Genesis' — a reward tier
+ 2) One per account · non-transferable · never reissued (not offered in later sales)
+ 3) +20% reward token bonus (planned) · priority on data bounties
+ 4) Genesis number recorded permanently · priority in later sales and new services
+
+200 buyers drawn at random receive
+a free 'XRP SEOUL 2026' ticket. One per person. KRW 100,000 value.
+#XRPSEOUL
+━━━━━━━━━━━━━━━
+
+■ What you get the moment you reserve
+
+A voucher recorded to your account instantly.
+That voucher alone secures your priority on Sept 15.
+
+Device partner: KWeather — 30 years of weather observation in Korea.
+KC certified (Korea's national safety certification), top accuracy grade for CO₂ and PM2.5.
+
+※ Reward token amounts and value are not guaranteed.
+
+#XRPL #DePIN
+```
+
+**EN-2 — 보도 (국문 2번 대응)**
+```
+🔥 @wellbianlabs — wellbian was covered across Korea's major daily and business press this week.
+(articles in Korean)
+
+(1) Measure → generate → verify → value → reward.
+(2) A weather data economy built as DePIN — starting indoors, extending to outdoor, radar and satellite.
+(3) Covered in depth: the XRP Ledger (XRPL) foundation underneath it.
+
+- Chosun Ilbo
+"The temperature and fine dust I measure become money" — the age of the weather data economy
+https://www.chosun.com/national/transport-environment/2026/09/08/6CDIKUK24REDFFFAJPYQNXXOZI/
+
+- Newsis
+KWeather launches weather data token generator 'wellbian'
+https://n.news.naver.com/mnews/article/003/0014175368?sid=101
+
+- Electronic Times
+"The weather I measure becomes an asset" — KWeather opens weather data production to everyone
+https://n.news.naver.com/mnews/article/030/0003464553?sid=101
+
+- Edaily
+KWeather launches 'wellbian' — digital asset rewards according to value
+https://n.news.naver.com/mnews/article/018/0006365362?sid=101
+
+- MoneyToday theBell
+KWeather unveils weather data token generator 'wellbian'
+https://www.mt.co.kr/stock/2026/09/08/2026090809209637167
+
+ㅡ
+Weather Data Token Generator™
+Reservations open ⚡️ First sale (Genesis)
+Until Sept 14 (Mon) 12:00 KST
+
+🔗 Reserve https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=prereg0907&utm_content=press_en
+```
+
+**게시 운영 — 국문/영문 분리**
+
+- 두 언어를 **한 타래에 섞지 않는다.** 각각 독립 원글로 올려 하이라이트에 나란히 얹는다.
+- **고정 트윗(pin)은 계정당 1개**뿐이다. 국문·영문 둘 다 올리려면 **Highlights 탭**(Premium)을 쓴다 —
+  여기는 여러 편을 얹을 수 있다. 국내 유입이 크므로 **pin 은 국문, Highlights 에 국문+영문 둘 다.**
+- 영문은 **22:00~23:00 KST(미 동부 오전)** 슬롯. 국문 타래와 10시간 간격이라 6시간+ 요건 충족.
+- 기존 EN-1~EN-3(단독 3편)은 이 타래본으로 **대체**한다. 같은 날 둘 다 올리지 않는다.
+
 ### 배치 근거 (다음에 또 쓸 때 참고)
 
 - **보상 토큰 20% 가산은 T5.** T1 에 올리면 첫 화면이 수익 약속으로 읽힌다. `(예정)` 표기는 사이트와
