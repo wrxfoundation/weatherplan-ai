@@ -1531,3 +1531,4 @@
 - **GA4 유입 탭** — `lib/ga.ts`(서비스 계정 JWT → Data API, SDK 없음, 5분 캐시) + `/admin/traffic`(실시간·소스/매체·utm_content·일별·캠페인·페이지). Nav 분석 그룹에 "유입", `/api/health` 에 `ga`, 첫 화면에 연결 상태 행. 환경변수 `GA_PROPERTY_ID`·`GA_SA_EMAIL`·`GA_SA_PRIVATE_KEY`(+선택 `GA_SINCE`). 연결 절차 README.
 - **원격에서 확인 못 한 것(서우가 볼 것)** — 봇 도메인·`getWebhookInfo`(pending_update_count·last_error)·KV 연결(`storeProbe`)·`TG_CS_CHAT`·telegram-ops 의 9/7 전 과제(AntiRaid·Blocklist·Approval) 이행 여부.
 - (추가) 서우가 GCP 에서 서비스 계정 키를 만들려다 조직 정책 `iam.disableServiceAccountKeyCreation` 에 막힘(Workspace 조직 기본). `lib/ga.ts` 에 **OAuth 리프레시 토큰 인증(B)** 추가 — `GA_OAUTH_CLIENT_ID/SECRET/REFRESH_TOKEN`, 둘 다 있으면 OAuth 우선. `tools/ga-oauth.mts` 가 로컬에서 콜백을 받아 리프레시 토큰을 출력한다(동의 화면 **내부** 유형이어야 7일 만료가 없음). `/api/health` 에 `gaMode`. README 절차 B.
+- (정정) GCP `wellbian` 프로젝트의 동의 화면은 **판매 사이트 구글 로그인과 공유** — 내부로 바꾸면 사용자 로그인이 막힌다(서우 확인). GA 인증은 **별도 프로젝트**에서 내부 동의 화면 + 웹 클라이언트로 진행하도록 README 수정. 사이트 프로젝트는 외부로 되돌린다.
