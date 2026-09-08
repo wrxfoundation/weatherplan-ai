@@ -666,3 +666,31 @@ DePIN 브랜드의 기관 파생 답글 = 헤드라인 추종 인상 ③ 미디�
 **규칙 재확인** — 홍보 목적의 답글은 계정 신뢰를 소모하는 거래다. 우리 원글·하이라이트·링크트리로
 간다. 답글은 기여할 말이 있을 때만.
 
+### 서우 개인 계정 — @wellbianlabs 판매 공지 인용 (2026-09-08) → **게시**
+
+```
+Weather has always been measured by states and institutions. We're working on measuring it
+where people actually are — and having those readings count as data.
+
+Measure → generate → verify → value → reward.
+
+Built on XRPL, which keeps growing beyond payments. Good time to be building on top.
+```
+
+**설계 근거 — 다음에 또 쓸 때**
+
+- **인용의 값은 공지가 말할 수 없는 것에 있다.** 회사 계정이 사실·조건·가격을 말했으므로 개인
+  계정은 **관점**을 말한다. 공지를 요약하면 값이 0이다.
+- **CTA·링크를 넣지 않는다.** 인용된 원글에 이미 링크가 있다. 두 번 넣으면 클릭이 갈리고
+  개인 계정이 홍보 채널로 읽힌다.
+- **XRPL 기대감은 방향에만 건다.** 9/11 활성화는 검증자 지원이 전제라 날짜·개수를 받지 않았다
+  (`keeps growing beyond payments`). 일정이 밀려도 회수할 문장이 없다.
+- **체인은 중간, 사람 목소리가 끝.** `Measure → … → reward` 를 마지막에 두면 회사 공지 톤으로
+  닫힌다. 3단 구조 — 무엇을 / 어떻게 / 어디 위에.
+- **발행 주체 오인 방지** — `We're working on measuring`, `building on top` 까지만. 만드는 구조와
+  재는 일에 머물고 토큰 발행 주체를 암시하지 않는다.
+
+**부수 효과** — 같은 날 @RealAllinCrypto(9/11 amendment)에 답글을 달자는 안은 패스했는데,
+그 각도(레저가 두꺼워지는 것)를 **우리 글 인용에 실어** 같은 말을 무대만 바꿔 했다.
+남의 글에 얹히지 않고 우리 타임라인에서 말하는 쪽이 항상 낫다 — 재사용 가능한 패턴.
+
