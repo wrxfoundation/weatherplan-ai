@@ -326,12 +326,23 @@ JWT 를 서명해 토큰을 받고, `runReport`·`runRealtimeReport` 를 fetch �
 | `GA_OAUTH_CLIENT_SECRET` | 그 보안 비밀 |
 | `GA_OAUTH_REFRESH_TOKEN` | `tools/ga-oauth.mts` 가 출력한 값 |
 
-① API 및 서비스 → **OAuth 동의 화면** → 사용자 유형 **내부**(외부+테스트로 두면 토큰이 7일마다 죽는다)
-② 사용자 인증 정보 → OAuth 클라이언트 ID → **데스크톱 앱** → ID·보안 비밀 확보
-③ 로컬 PC 에서 `GA_OAUTH_CLIENT_ID=… GA_OAUTH_CLIENT_SECRET=… node tools/ga-oauth.mts` → 찍힌 주소를
-브라우저에서 열어 **GA 속성 소유자 계정**(admin@)으로 동의 → 터미널에 리프레시 토큰이 찍힌다
-④ 위 3개를 Vercel 에 넣고 Redeploy. 서비스 계정 변수와 둘 다 있으면 OAuth 를 먼저 쓴다.
+콘솔은 2025년부터 "Google 인증 플랫폼"(왼쪽 메뉴: 개요·브랜딩·대상·클라이언트·데이터 액세스)이다.
+옛 "OAuth 동의 화면" 이름으로 찾으면 안 나온다.
+
+① **대상** → 사용자 유형 **내부**(Workspace 조직이라 고를 수 있다. 외부+테스트로 두면 토큰이 7일마다 죽는다)
+② **데이터 액세스** → 범위 추가 → `…/auth/analytics.readonly` (내부 앱은 없어도 동작하지만 적어 둔다)
+③ **클라이언트** → 클라이언트 만들기 → **데스크톱 앱** → ID·보안 비밀 확보
+④ 로컬 PC 에서 `GA_OAUTH_CLIENT_ID=… GA_OAUTH_CLIENT_SECRET=… node tools/ga-oauth.mts` → 찍힌 주소를
+브라우저에서 열어 **GA 속성 소유자 계정**(admin@)으로 동의 → 터미널에 리프레시 토큰이 찍힌다.
+**Cloud Shell 에서 돌리면 안 된다** — 콜백이 localhost 라 사용자 PC 의 브라우저에서만 돌아온다.
+⑤ 위 3개를 Vercel 에 넣고 Redeploy. 서비스 계정 변수와 둘 다 있으면 OAuth 를 먼저 쓴다.
 `/api/health` 의 `gaMode` 가 `oauth` 인지로 확인한다.
+
+**로컬에 Node 가 없으면** — ③에서 유형을 **웹 애플리케이션**으로 만들고 승인된 리디렉션 URI 에
+`https://developers.google.com/oauthplayground` 를 넣는다. OAuth 2.0 Playground 에서 톱니 → *Use your own
+OAuth credentials* 에 ID·보안 비밀 → Step 1 에 `https://www.googleapis.com/auth/analytics.readonly` 입력 →
+Authorize APIs(admin@ 로 동의) → Step 2 *Exchange authorization code for tokens* → Refresh token 을 복사한다.
+스크립트와 결과는 같다.
 
 이 길은 admin 계정에 묶인다 — 그 계정 비밀번호를 바꾸거나 앱 접근을 철회하면 `invalid_grant` 로
 끊기고, ③을 다시 하면 된다. Data API 는 읽기 전용 스코프만 쓴다.
