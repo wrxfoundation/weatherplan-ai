@@ -49,20 +49,53 @@ X 와 같은 규칙: 수익 약속·시세·"돈 된다"를 우리 문장으로 
 사전예약  https://wellbian.io/?utm_source=linkedin&utm_medium=owned&utm_campaign=prereg0907&utm_content=press
 ```
 
-## 영문 짧은 판 (해외 인맥 비중이 크면 이걸로, 또는 국문 아래 이어 붙임)
+## 영문판 (서우 확정 요청 — 국문과 같은 구조)
 
 ```
-The project we've been building went to press today — seven Korean outlets, including an English piece in Chosun Ilbo.
+The project we've been building went to press today.
 
-Weather data has always been produced by states and institutions and only consumed by individuals. wellbian lets people measure it in their own space and have those readings count as data.
+Weather data has always been produced by states and institutions, and only consumed by individuals.
+wellbian lets people measure it in their own space — and have those readings count as data.
 
 Measure → generate → verify → value → reward.
-The device is made by KWeather, 30 years in weather observation in Korea. The reward layer is in testing on the XRP Ledger — amounts and value not guaranteed, as Chosun correctly notes.
+The device is made by KWeather, 30 years in weather observation and sensor-making in Korea.
+The reward layer is in testing on the XRP Ledger — amounts and value are not guaranteed, as Chosun Ilbo correctly notes.
 
-Links in the first comment. Reservations open until Sept 14, 12:00 KST.
+Covered today by:
+Chosun Ilbo · Newsis · Electronic Times · Edaily · MoneyToday theBell · MBN · Hansbiz
+(links in the first comment — Chosun Ilbo has an English edition)
 
-#wellbian #DePIN #XRPL #WeatherData
+Reservations are open until Sept 14, 12:00 KST. Sale opens Sept 15.
+
+#wellbian #DePIN #XRPL #WeatherData #KWeather
 ```
+
+**첫 댓글 (영문)**
+
+```
+Links, in order of publication. Articles are in Korean unless noted.
+
+· Newsis — KWeather launches weather data token generator 'wellbian'
+  https://n.news.naver.com/mnews/article/003/0014175368?sid=101
+· Electronic Times — "The weather I measure becomes an asset": KWeather opens weather data production to everyone
+  https://n.news.naver.com/mnews/article/030/0003464553?sid=101
+· Edaily — KWeather launches 'wellbian': digital asset rewards according to value
+  https://n.news.naver.com/mnews/article/018/0006365362?sid=101
+· MoneyToday theBell — KWeather unveils weather data token generator 'wellbian'
+  https://www.mt.co.kr/stock/2026/09/08/2026090809209637167
+· Hansbiz — KWeather to launch weather data token generator 'wellbian' on Sept 15
+  https://www.hansbiz.co.kr/news/articleView.html?idxno=863019
+· Chosun Ilbo — "The temperature and fine dust I measure become money": the age of the weather data economy
+  https://www.chosun.com/national/transport-environment/2026/09/08/6CDIKUK24REDFFFAJPYQNXXOZI/
+  ▸ English edition: https://www.chosun.com/english/national-en/2026/09/08/BBHTLDU2XZBUNMR5MT2VA3VIXE/
+· MBN — "The weather I measure becomes an asset": KWeather launches weather data token generator
+  https://www.mbn.co.kr/news/corp/5217767
+
+Reserve: https://wellbian.io/?utm_source=linkedin&utm_medium=owned&utm_campaign=prereg0907&utm_content=press_en
+```
+
+댓글의 기사 제목은 국문 헤드라인의 번역(설명용). "become money" 는 조선 헤드라인이라 댓글 제목엔 두고
+본문의 우리 문장에는 넣지 않았다. `utm_content=press_en` 으로 국문 게시와 갈라 본다.
 
 ## 회사 페이지(wellbian) 개설 판단 — **만든다. 단, 유지할 수 있을 때만.**
 
