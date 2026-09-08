@@ -401,6 +401,80 @@ PM2.5 · PM10 · CO₂ · TVOC · 온도 · 습도 · 체감온도를
 
 ---
 
+## 텔레그램 — 프로젝트 소개영상 게시 (9/8)
+
+**⚠️ 링크 설계가 먼저다.** 텔레그램에서 **링크트리를 거치면 GA4 에서 출처가 `linktree` 로 덮인다** —
+링크트리는 UTM 을 목적지로 자동 전달하지 않기 때문. 즉 링크트리만 걸면 **"텔레그램에서 몇 명이
+왔는가"가 통째로 사라진다.** 그래서 두 링크를 **역할을 갈라** 함께 건다.
+
+| 링크 | 역할 | 출처 기록 |
+|---|---|---|
+| `wellbian.io` 직링크 + `utm_source=telegram` | **전환 경로** — 사전예약으로 바로 | 텔레그램으로 정확히 잡힘 |
+| 링크트리 | **탐색 경로** — 기사·백서·모아보기 | `linktree` 로 잡힘(의도된 것) |
+
+영상 캡션은 **1024자 제한**이다. 아래 본문은 그 안에 들어간다 — 넘기면 캡션이 잘리므로
+상세는 별도 메시지로 나눈다.
+
+**영상 캡션 (국문)**
+```
+📹 wellbian 프로젝트 소개영상
+
+내 생활공간의 날씨가 어떻게 데이터가 되고,
+그 데이터가 어떻게 가치를 인정받는지 —
+프로젝트 전체 그림을 한 편에 담았습니다.
+
+━━━━━━━━━━━━━━━
+
+⚡️ 사전예약 접수 중 — 9/14(월) 12시 마감
+
+· 무료입니다. 결제도, 지갑도, 서명도 없습니다.
+· 이메일 또는 구글 로그인으로 30초.
+· 신청하면 예매 인증서가 계정에 즉시 기록됩니다.
+  이 인증서만으로 9/15 우선구매 자격이 인정됩니다.
+
+🏅 '제네시스' 등급은 1차 판매에만 부여됩니다. 이후엔 발급되지 않습니다.
+
+🔗 사전예약
+https://wellbian.io/?utm_source=telegram&utm_medium=owned&utm_campaign=prereg0907&utm_content=video
+
+🔗 모아보기 — 기사 · 백서 · 사전예약
+https://linktr.ee/wellbian
+```
+
+**영상 캡션 (영문 — 그룹이 혼용이면 이어서 1건)**
+```
+📹 wellbian project introduction
+
+How the weather in your own space becomes data,
+and how that data comes to be valued.
+
+━━━━━━━━━━━━━━━
+
+⚡️ Reservations open — until Sept 14 (Mon) 12:00 KST
+
+· Free. No payment, no wallet, no signature.
+· Email or Google login, about 30 seconds.
+· A voucher is recorded to your account instantly.
+  That voucher alone secures your priority on Sept 15.
+
+🏅 'Genesis' is granted in the first sale only. It is never issued again.
+
+🔗 Reserve
+https://wellbian.io/?utm_source=telegram&utm_medium=owned&utm_campaign=prereg0907&utm_content=video_en
+
+🔗 All links — press, whitepaper, reservation
+https://linktr.ee/wellbian
+```
+
+**운영 메모**
+
+- 링크트리 주소는 **실제 주소로 교체 확인**(위는 표기 예시).
+- 영상은 **파일로 직접 업로드**한다. 유튜브 링크를 걸면 텔레그램 안에서 재생이 끊기고 이탈한다.
+- 캡션에 보상 얘기를 넣지 않는다 — 크립토 텔레그램의 첫 댓글은 항상 "보상 얼마 줌?" 이다.
+  **묻거든 그때 고지와 함께 답한다**(지급량·가치 비보장). 캡션에서 먼저 꺼내면 영상이 안 읽힌다.
+- 게시 후 **고정(pin)** 은 사전예약 마감 안내로 유지하고, 영상은 고정하지 않는다 — 마감이
+  9/14 이므로 남은 기간에는 마감 시계가 더 중요하다.
+
 ## ⚠️ 공지 전 확인 — 결제 수단 간 가격 차
 
 **450 RLUSD ≈ 62만원(환율 1,380 기준)인데 카드는 75만원.** 부가세 10% 를 감안해도 6~7만원,
