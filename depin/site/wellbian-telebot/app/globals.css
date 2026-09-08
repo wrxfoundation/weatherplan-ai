@@ -572,6 +572,9 @@ kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-
 .tf-dl-k { color: var(--cap); font-weight: 700; margin-right: 3px; }
 .tf-dl a { padding: 3px 9px; border: 1px solid var(--bd-btn); border-radius: 8px; background: #fff; color: var(--ink-3); font-weight: 600; }
 .tf-dl a:hover { border-color: var(--w-main); color: var(--w-main); }
+.tf-dl a.xl { background: var(--w-deep); border-color: var(--w-deep); color: #fff; }
+.tf-dl a.xl:hover { background: var(--w-main); border-color: var(--w-main); color: #fff; }
+.tf-dl-n a { padding: 0; border: 0; background: none; color: var(--w-main); font-weight: 600; text-decoration: underline; }
 .tf-dl-n { color: var(--hint); font-size: 11.5px; margin-left: 4px; }
 @media (max-width: 720px) { .tf-dl a { min-height: 30px; display: inline-flex; align-items: center; } .tf-dl-n { width: 100%; margin-left: 0; } }
 /* 출처 미확인 설명 — 표 바로 아래. "미측정" 으로 읽히면 파트너가 유입이 샌 줄 안다(9/8). */

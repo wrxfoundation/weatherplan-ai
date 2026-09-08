@@ -7,6 +7,7 @@
 
 import { CHANNELS, CHANNEL, channelOf, dayLong, type Bucket } from "./traffic";
 import type { TrafficSnapshot } from "./ga";
+import { xlsx, type Sheet } from "./xlsx";
 
 export type CsvTable = "daily" | "weekly" | "monthly" | "channels" | "sources" | "content" | "campaigns" | "pages" | "all";
 export const CSV_TABLES: { key: CsvTable; label: string }[] = [
@@ -63,4 +64,34 @@ export const trafficCsv = (s: TrafficSnapshot, t: CsvTable): { name: string; csv
     parts.push(csvLines([[`## ${label}`], ...all[key]]));
   }
   return { name, csv: "﻿" + parts.join("\r\n\r\n") };
+};
+
+/* ── 깨짐 대책 (9/8 서우 — "csv 깨져서 나와서") ──────────────────────
+   UTF-8 BOM 을 붙여도 여는 프로그램이 BOM 을 무시하면 한글이 깨진다(구형 엑셀 · 일부 뷰어 · 한셀).
+   두 가지를 더 낸다.
+     · xlsx — 파일 안에 인코딩이 못 박혀 있어 어디서 열어도 같다. 표 하나가 시트 하나. 기본 추천.
+     · UTF-16LE + 탭 — 엑셀이 "유니코드 텍스트" 로 확실히 읽는 형식. 확장자는 .csv 그대로 둔다. */
+export type ExportFormat = "csv" | "csv16" | "xlsx";
+export const isExportFormat = (v: string | null): v is ExportFormat => v === "csv" || v === "csv16" || v === "xlsx";
+
+const tsvLines = (rows: Row[]) => rows.map((r) => r.map((v) => String(v ?? "").replace(/[\t\r\n]/g, " ")).join("\t")).join("\r\n");
+
+export const trafficCsv16 = (s: TrafficSnapshot, t: CsvTable): { name: string; data: Buffer } => {
+  const all = csvTables(s);
+  const text = t !== "all"
+    ? tsvLines(all[t])
+    : [tsvLines([["wellbian.io 유입 · GA4"], ["집계 시작", s.since], ["기준일", ymd(s.data.today)], ["지난 30분 활성 사용자", s.realtime]]),
+       ...CSV_TABLES.filter((x) => x.key !== "all").map(({ key, label }) => tsvLines([[`## ${label}`], ...all[key as Exclude<CsvTable, "all">]]))].join("\r\n\r\n");
+  return { name: `wellbian-traffic-${t}-${s.data.today}-unicode.csv`, data: Buffer.concat([Buffer.from([0xff, 0xfe]), Buffer.from(text, "utf16le")]) };
+};
+
+export const trafficXlsx = (s: TrafficSnapshot): { name: string; data: Buffer } => {
+  const all = csvTables(s);
+  const sheets: Sheet[] = [
+    { name: "요약", rows: [["항목", "값"], ["집계 시작", s.since], ["기준일", ymd(s.data.today)], ["지난 30분 활성 사용자", s.realtime],
+      ["오늘 세션", s.data.kpi.today], ["이번 주 세션", s.data.kpi.week], ["런치 이후 세션", s.data.kpi.total],
+      ["사용자", s.data.kpi.users], ["신규 사용자", s.data.kpi.newUsers], ["참여 세션", s.data.kpi.engaged]] },
+    ...CSV_TABLES.filter((x) => x.key !== "all").map(({ key, label }) => ({ name: label, rows: all[key as Exclude<CsvTable, "all">] })),
+  ];
+  return { name: `wellbian-traffic-${s.data.today}.xlsx`, data: xlsx(sheets) };
 };

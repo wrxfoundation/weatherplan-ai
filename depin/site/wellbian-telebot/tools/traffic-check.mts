@@ -9,7 +9,7 @@
 import {
   channelOf, weekStart, monthKey, build, niceMax, kstToday, dayLong, weekLong, monthLong,
 } from "../lib/traffic.ts";
-import { trafficCsv, csvLines } from "../lib/traffic-csv.ts";
+import { trafficCsv, trafficCsv16, trafficXlsx, csvLines } from "../lib/traffic-csv.ts";
 
 let fail = 0;
 const eq = (name: string, got: unknown, want: unknown) => {
@@ -114,6 +114,16 @@ eq("csv utm_content 빈 값", trafficCsv(snap, "content").csv.slice(1).split("\r
 const all = trafficCsv(snap, "all").csv;
 eq("csv 전체 구역 수", (all.match(/^## /gm) ?? []).length, 8);
 eq("csv 전체 첫 줄", all.slice(1).split("\r\n")[0], "wellbian.io 유입 · GA4");
+
+const u16 = trafficCsv16(snap, "daily");
+eq("utf16 파일명", u16.name, "wellbian-traffic-daily-20260915-unicode.csv");
+eq("utf16 BOM", [u16.data[0], u16.data[1]], [0xff, 0xfe]);
+eq("utf16 첫 줄(탭)", u16.data.subarray(2).toString("utf16le").split("\r\n")[0].split("\t").slice(0, 3), ["날짜", "요일", "세션"]);
+const xl = trafficXlsx(snap);
+eq("xlsx 파일명", xl.name, "wellbian-traffic-20260915.xlsx");
+eq("xlsx ZIP 서명", [xl.data[0], xl.data[1]], [0x50, 0x4b]);
+eq("xlsx 끝 서명(중앙 디렉터리 끝)", xl.data.readUInt32LE(xl.data.length - 22), 0x06054b50);
+eq("xlsx 항목 수(시트 9 + 부속 5)", xl.data.readUInt16LE(xl.data.length - 12), 14);
 
 console.log(fail ? `\n${fail} 개 실패` : "\n모두 통과");
 process.exit(fail ? 1 : 0);

@@ -97,10 +97,12 @@ export default async function TrafficView({ snap, variant }: { snap: TrafficSnap
       ) : null}
 
       {/* CSV (9/8 서우 — "csv로도 export할 수 있게") — 아래 표들을 그대로 파일로. 엑셀에서 바로 열린다(BOM). */}
-      <div className="tf-dl" aria-label="CSV 내려받기">
-        <span className="tf-dl-k">CSV 내려받기</span>
+      <div className="tf-dl" aria-label="내려받기">
+        <span className="tf-dl-k">내려받기</span>
+        <a className="xl" href="/traffic/export?f=xlsx" download>엑셀 파일(.xlsx) — 표 전부</a>
+        <span className="tf-dl-k" style={{ marginLeft: 6 }}>CSV</span>
         {CSV_TABLES.map((t) => <a key={t.key} href={`/traffic/export?t=${t.key}`} download>{t.label}</a>)}
-        <span className="tf-dl-n">엑셀에서 바로 열립니다 · 화면과 같은 5분 캐시 데이터</span>
+        <span className="tf-dl-n">한글이 깨져 보이면 엑셀 파일을 쓰세요. CSV 는 UTF-8(BOM)이고, 그래도 깨지는 프로그램에는 <a href="/traffic/export?t=all&f=csv16" download>유니코드 CSV</a>가 있습니다 · 화면과 같은 5분 캐시 데이터</span>
       </div>
 
       {/* ② 언제 */}
