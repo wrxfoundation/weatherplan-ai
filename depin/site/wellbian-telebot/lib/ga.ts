@@ -72,7 +72,12 @@ const token = async (): Promise<string> => {
     if (!r.ok || !j.access_token) {
       /* invalid_grant = 리프레시 토큰이 취소됐거나(비밀번호 변경·앱 접근 철회) 외부 앱 테스트 모드의
          7일 만료. 동의 화면을 "내부"로 두면 만료가 없다 — tools/ga-oauth.mts 로 다시 받는다. */
-      throw new Error(`oauth ${r.status} ${j.error ?? ""} ${j.error_description ?? ""}`.trim());
+      const why = j.error === "unauthorized_client"
+        ? " — 리프레시 토큰을 발급한 클라이언트와 GA_OAUTH_CLIENT_ID/SECRET 이 다름. Playground ⚙ 에 웹 클라이언트를 다시 넣고(새로고침하면 지워진다) 재발급한 뒤, Vercel 세 값을 같은 클라이언트로 맞출 것"
+        : j.error === "invalid_grant"
+          ? " — 토큰이 취소됐거나 만료됨(외부+테스트 앱은 7일). 동의 화면을 내부로 두고 재발급"
+          : "";
+      throw new Error(`oauth ${r.status} ${j.error ?? ""} ${j.error_description ?? ""}${why}`.trim());
     }
     tok = { v: j.access_token, exp: now + (j.expires_in ?? 3600) };
     return tok.v;
