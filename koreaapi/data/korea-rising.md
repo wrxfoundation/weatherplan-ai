@@ -1,9 +1,11 @@
-# Korea Rising — verified K-pop snapshot (2026-09-07)
+# Korea Rising — verified K-pop snapshot (2026-09-08)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **BTS** — 투어 중간에 스위스 가서 등산하는 이유⛰️ l SUGA’s VLOG
+- **2NE1** — 2025 2NE1 CONCERT [WELCOME BACK] ENCORE IN SEOUL - MESSAGE VIDEO
+- **Tomorrow X Together** — mbcweeklyidol TXT weekly idol
+- **NewJeans** — [Light Jeans] 2026 Summer of NewJeans BehindㅣNewJeans
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
