@@ -16,6 +16,7 @@ import Charts from "./Charts";
 import { CHANNEL, channelOf, dayLong, weekLong, type Channel } from "@/lib/traffic";
 import type { TrafficSnapshot } from "@/lib/ga";
 import { aiComment, aiReady } from "@/lib/ai-comment";
+import { CSV_TABLES } from "@/lib/traffic-csv";
 
 const n = (v: string | undefined) => Number(v ?? 0) || 0;
 const fmt = (x: number) => x.toLocaleString("ko-KR");
@@ -94,6 +95,13 @@ export default async function TrafficView({ snap, variant }: { snap: TrafficSnap
       ) : variant === "admin" && !aiReady() ? (
         <p className="tf-foot" style={{ marginTop: 6 }}>Vercel 에 <span className="mono">ANTHROPIC_API_KEY</span> 를 넣으면 이 자리에 AI 종합 코멘트가 붙습니다(README · AI 코멘트).</p>
       ) : null}
+
+      {/* CSV (9/8 서우 — "csv로도 export할 수 있게") — 아래 표들을 그대로 파일로. 엑셀에서 바로 열린다(BOM). */}
+      <div className="tf-dl" aria-label="CSV 내려받기">
+        <span className="tf-dl-k">CSV 내려받기</span>
+        {CSV_TABLES.map((t) => <a key={t.key} href={`/traffic/export?t=${t.key}`} download>{t.label}</a>)}
+        <span className="tf-dl-n">엑셀에서 바로 열립니다 · 화면과 같은 5분 캐시 데이터</span>
+      </div>
 
       {/* ② 언제 */}
       <h2 className="rep-h">언제 들어왔나 — 일 · 주 · 월</h2>

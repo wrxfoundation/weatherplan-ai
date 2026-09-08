@@ -9,6 +9,7 @@
 import {
   channelOf, weekStart, monthKey, build, niceMax, kstToday, dayLong, weekLong, monthLong,
 } from "../lib/traffic.ts";
+import { trafficCsv, csvLines } from "../lib/traffic-csv.ts";
 
 let fail = 0;
 const eq = (name: string, got: unknown, want: unknown) => {
@@ -94,6 +95,25 @@ const e = build([], "2026-09-07", "20260907");
 eq("빈 입력", [e.daily.length, e.weekly.length, e.channels.length, e.kpi.total], [1, 1, 0, 0]);
 const f = build([], "2026-12-01", "20260907");
 eq("since 가 미래면 오늘로", f.daily.length, 1);
+
+/* CSV */
+const snap = {
+  since: "2026-09-07", today: "20260915", fetchedAt: 0, realtime: 3, data: t,
+  byContent: [{ sessionSource: "x", sessionMedium: "owned", sessionManualAdContent: "thread_ko", sessions: "14", activeUsers: "9" },
+              { sessionSource: "(direct)", sessionMedium: "(none)", sessionManualAdContent: "(not set)", sessions: "100", activeUsers: "70" }],
+  byCampaign: [{ sessionCampaignName: "prereg0907", sessions: "17", activeUsers: "10" }],
+  byPage: [{ pagePath: "/", screenPageViews: "228", activeUsers: "112" }],
+};
+const daily = trafficCsv(snap, "daily");
+eq("csv 파일명", daily.name, "wellbian-traffic-daily-20260915.csv");
+eq("csv BOM", daily.csv.charCodeAt(0), 0xfeff);
+eq("csv 일별 머리", daily.csv.slice(1).split("\r\n")[0], "날짜,요일,세션,X,텔레그램,링크트리,KOL,다른 SNS,언론,검색,직접,기타 리퍼럴,출처 미확인");
+eq("csv 일별 9/7 행", daily.csv.slice(1).split("\r\n")[1], "2026-09-07,월,163,13,0,0,0,0,0,0,100,0,50");
+eq("csv 따옴표 이스케이프", csvLines([["a,b", 'say "hi"', 3]]), '"a,b","say ""hi""",3');
+eq("csv utm_content 빈 값", trafficCsv(snap, "content").csv.slice(1).split("\r\n")[2], "직접,(direct),(none),,100,70");
+const all = trafficCsv(snap, "all").csv;
+eq("csv 전체 구역 수", (all.match(/^## /gm) ?? []).length, 8);
+eq("csv 전체 첫 줄", all.slice(1).split("\r\n")[0], "wellbian.io 유입 · GA4");
 
 console.log(fail ? `\n${fail} 개 실패` : "\n모두 통과");
 process.exit(fail ? 1 : 0);

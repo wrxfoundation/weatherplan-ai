@@ -405,6 +405,12 @@ X·텔레그램 공지에 올리는 주소가 아니다. 닫아야 하면 `TRAFF
 5분 캐시라 하루 종일 새로고침해도 API 한도에 닿지 않는다. `/api/health` 의 `ga` 는 변수가 다 있는지만
 말한다. 화면을 GA 없이 만지려면 `GA_FIXTURE=1 npm run dev`.
 
+### CSV 내려받기 — `/traffic/export?t=…`
+
+(9/8 서우 — "csv로도 export할 수 있게") 화면 표를 그대로 파일로 낸다. `t` 는 `daily` · `weekly` · `monthly`(채널을 열로
+펼친 것) · `channels` · `sources` · `content` · `campaigns` · `pages` · `all`(구역으로 나눈 한 파일). 맨 앞에 BOM 이 있어
+엑셀에서 바로 열린다. 공개 화면과 같은 문 — `TRAFFIC_PUBLIC=off` 면 관리 키가 있어야 한다. 데이터는 화면과 같은 5분 캐시.
+
 ### AI 종합 코멘트 — 숫자 넷 아래 한 문단
 
 (9/8 서우 — "종합적 분석 코멘트도 AI 가 상단에, 숫자 넷 하단에 달아주고") `lib/ai-comment.ts` 가 유입 스냅샷(일별 ·
