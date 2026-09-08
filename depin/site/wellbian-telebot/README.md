@@ -350,6 +350,20 @@ OAuth credentials* 에 ID·보안 비밀 → Step 1 에 `https://www.googleapis.
 Authorize APIs(admin@ 로 동의) → Step 2 *Exchange authorization code for tokens* → Refresh token 을 복사한다.
 스크립트와 결과는 같다.
 
+**Playground 함정(9/8 실제로 걸림)** — 톱니의 *Use your own OAuth credentials* 체크는 **페이지를
+새로고침하면 풀린다**. 풀린 채 발급하면 토큰이 구글 기본 Playground 클라이언트(`407408718192…`)에
+묶여 우리 클라이언트로는 `unauthorized_client` 가 난다. 복사하기 전에 Step 2 요청 본문의
+`client_id=` 가 **내 클라이언트 번호로 시작하는지** 본다. 응답에 `refresh_token_expires_in` 이
+있으면 동의 화면이 아직 내부가 아니다(7일 만료). 보안 비밀은 만든 직후 한 번만 보이므로 놓쳤으면
+클라이언트 화면의 **+ Add secret** 으로 새로 받는다 — 리프레시 토큰은 클라이언트 ID 에만 묶이고
+비밀과는 무관해서 재발급이 필요 없다. Redeploy 전에 PC 에서 갱신이 되는지 먼저 본다:
+
+```
+curl -s -X POST https://oauth2.googleapis.com/token -d "client_id=…" -d "client_secret=…" -d "refresh_token=…" -d "grant_type=refresh_token"
+```
+
+`access_token` 이 오면 세 값이 맞는 것이고, `invalid_client` 는 비밀, `unauthorized_client` 는 ID 불일치다.
+
 이 길은 admin 계정에 묶인다 — 그 계정 비밀번호를 바꾸거나 앱 접근을 철회하면 `invalid_grant` 로
 끊기고, ③을 다시 하면 된다. Data API 는 읽기 전용 스코프만 쓴다.
 
