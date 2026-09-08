@@ -737,3 +737,15 @@ B: Thanks for spotting it at Flare Korea. Small fix: the device measures the air
 ```
 DM: Hey — thanks for the post. Two quick facts so it holds up: the device is built with our device partner KWeather and measures the air where it sits; on our side it runs on XRPL (device NFT + rewards). The Flare work at the workshop is KWeather's, not a wellbian×Flare integration. If you can edit "connecting XRPL and Flare" → "on XRPL, seen at Flare Korea", that'd keep it accurate. Appreciate it.
 ```
+
+**서우 결정(9/8): 브랜드 계정 답글 대신 개인 계정으로 감사 인사.** 되는 선택 — 단, "감사만" 은 안 된다. 그가 @wellbianlabs 를
+호명한 글에 우리 쪽 사람이 고맙다고만 하면 그의 설명("XRPL and Flare 연결")에 서명한 것이 된다. 개인 계정이라도
+소속 한 마디 + 사실 한 줄(만드는 쪽 · 재는 것 · XRPL)은 넣는다. Flare 는 말하지 않는다. 브랜드 계정은 좋아요만, RT 없음.
+DM(수정 부탁)은 그대로 보낸다 — 게시 1시간 안이 유일한 수정 창.
+
+```
+P1 (224자, 추천): Thanks for spotting it at Flare Korea — I work on the wellbian side. One small thing: the box is our indoor air monitor, made with device partner KWeather, and it runs on XRPL (device NFT + rewards). Glad it caught your eye.
+```
+```
+P2 (171자, 더 가볍게): Thanks for noticing it at Flare Korea — I'm on the wellbian side, glad it caught your eye. It's our indoor air monitor, made with device partner KWeather, running on XRPL.
+```
