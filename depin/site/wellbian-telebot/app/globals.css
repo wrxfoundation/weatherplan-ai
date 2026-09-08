@@ -557,6 +557,21 @@ kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-
 .tf-bar i.hatch { background: repeating-linear-gradient(45deg, #b5b5c9 0 3px, #ececf3 3px 7px); }
 .tf-ch { display: flex; align-items: center; gap: 7px; font-weight: 700; color: var(--ink-1); min-width: 0; }
 .tf-ch .tf-hint { display: block; font-size: 11px; color: var(--hint); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* AI 종합 코멘트 — 숫자 넷 바로 아래 한 문단. 카드보다 한 톤 눌러서 "사람이 쓴 공지" 로 안 읽히게 */
+.tf-ai { margin: 8px 0 0; padding: 13px 16px; border-radius: 12px; background: var(--w-tint); border: 1px solid #dcdcf4; }
+.tf-ai-k { font-size: 12px; font-weight: 800; color: var(--w-deep); letter-spacing: .01em; }
+.tf-ai-k span { font-weight: 500; color: var(--cap); margin-left: 8px; }
+.tf-ai-t { margin: 6px 0 0; font-size: 14px; line-height: 1.75; color: var(--ink-1); max-width: 860px; }
+@media (max-width: 720px) {
+  .tf-ai { padding: 11px 12px; }
+  .tf-ai-k span { display: block; margin: 2px 0 0; }
+  .tf-ai-t { font-size: 13.5px; }
+}
+/* 출처 미확인 설명 — 표 바로 아래. "미측정" 으로 읽히면 파트너가 유입이 샌 줄 안다(9/8). */
+.tf-why { margin: 10px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--panel); border: 1px dashed var(--line);
+  font-size: 12.5px; line-height: 1.7; color: var(--ink-3); }
+.tf-why .tf-sw { margin-right: 6px; vertical-align: -1px; }
+.tf-why b { color: var(--ink-1); }
 .tf-details { margin-top: 10px; }
 .tf-details summary { font-size: 12.5px; color: var(--w-main); font-weight: 600; padding: 4px 0; }
 .tf-details .rep-table { margin-top: 8px; }

@@ -3,6 +3,7 @@
 import { cacheInfo } from "@/lib/faq-client";
 import { storeKind, storeProbe } from "@/lib/store";
 import { gaConfigured, gaMode, trafficPublic } from "@/lib/ga";
+import { aiReady } from "@/lib/ai-comment";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,8 @@ export async function GET() {
     gaMode: gaMode(),
     /* 키 없이 열리는 유입 화면(/traffic). TRAFFIC_PUBLIC=off 면 false. */
     trafficPublic: trafficPublic(),
+    /* 유입 화면 AI 종합 코멘트 — ANTHROPIC_API_KEY 유무 */
+    ai: aiReady(),
     faqSource: info.configured,
     faqBypass: info.bypass,
     faqCached: info.cached,

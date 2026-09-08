@@ -4,7 +4,8 @@
    "x_out 이 뭐지, kol2 는 누구지"를 머릿속에서 채널로 다시 묶어야 했다. 여기서 한 번 묶는다.
 
    채널은 열 개 — 우리가 링크를 뿌리는 곳(X·텔레그램·링크트리·KOL·다른 SNS·언론)과 우리가
-   뿌리지 않은 곳(검색·직접·기타 리퍼럴), 그리고 GA 가 출처를 못 잡은 것(미측정). 색은 앞의
+   뿌리지 않은 곳(검색·직접·기타 리퍼럴), 그리고 방문은 잡혔지만 출처가 비어 있는 것(출처 미확인 —
+   9/8 서우: "미측정이 미측정이 아니니까 오해하지 않게" — 측정이 안 된 게 아니라 경로만 모르는 것). 색은 앞의
    일곱만 갖고, 나머지 셋은 회색 계열 — 색이 있는 것만 "우리가 움직일 수 있는 채널"이다.
    일곱 색은 색약(적록·청황) 시뮬레이션으로 이웃 색끼리 갈리는 순서로 골랐다. 순서를 바꾸면
    막대 안에서 이웃이 바뀌므로 다시 검증해야 한다.
@@ -30,7 +31,7 @@ export const CHANNELS: ChannelMeta[] = [
   { key: "search",   label: "검색",        color: "#a8792a", hint: "구글 · 네이버 · 빙" },
   { key: "direct",   label: "직접",        color: "#8a8aa3", hint: "(direct) · 구글 로그인 복귀" },
   { key: "other",    label: "기타 리퍼럴", color: "#c3c3d2", hint: "목록에 없는 사이트" },
-  { key: "unset",    label: "미측정",      color: "#e4e4ee", hatch: true, hint: "(not set) — 출처를 못 잡은 세션" },
+  { key: "unset",    label: "출처 미확인",  color: "#e4e4ee", hatch: true, hint: "(not set) — 방문은 잡혔고 출처만 비어 있음" },
 ];
 export const CHANNEL = Object.fromEntries(CHANNELS.map((c) => [c.key, c])) as Record<Channel, ChannelMeta>;
 const ORDER = Object.fromEntries(CHANNELS.map((c, i) => [c.key, i])) as Record<Channel, number>;
@@ -142,7 +143,7 @@ export const build = (
     c.sessions += r.sessions; c.users += r.users; c.newUsers += r.newUsers; c.engaged += r.engaged;
     chSum.set(ch, c);
 
-    const sk = `${r.source} ${r.medium}`;
+    const sk = `${r.source}${r.medium}`;
     const s = srcSum.get(sk) ?? { channel: ch, source: r.source, medium: r.medium, sessions: 0, users: 0, engaged: 0 };
     s.sessions += r.sessions; s.users += r.users; s.engaged += r.engaged;
     srcSum.set(sk, s);

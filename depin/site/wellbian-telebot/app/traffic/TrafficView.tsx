@@ -6,7 +6,7 @@
      ② 언제 들어왔나 — 일·주·월 추이(채널 색으로 쌓은 막대)
      ③ 어디서 들어왔나 — 채널 비중. 그 아래 소스/매체 원문은 접어 둔다
      ④ 상세 — 어느 링크(utm_content) · 캠페인 · 많이 본 페이지
-     ⑤ 읽는 법 — (direct)·미측정·구글 로그인 복귀가 무엇인지
+     ⑤ 읽는 법 — (direct)·출처 미확인·구글 로그인 복귀가 무엇인지
 
    읽기만 한다. 집계는 lib/traffic.ts, 호출·캐시는 lib/ga.ts, 이 파일은 그리기만 한다.
    PII 는 없다 — GA 가 주는 것은 집계 숫자뿐이다. */
@@ -15,6 +15,7 @@ import type { ReactNode } from "react";
 import Charts from "./Charts";
 import { CHANNEL, channelOf, dayLong, weekLong, type Channel } from "@/lib/traffic";
 import type { TrafficSnapshot } from "@/lib/ga";
+import { aiComment, aiReady } from "@/lib/ai-comment";
 
 const n = (v: string | undefined) => Number(v ?? 0) || 0;
 const fmt = (x: number) => x.toLocaleString("ko-KR");
@@ -48,8 +49,10 @@ const Table = ({ head, rows, cols }: { head: string[]; rows: (ReactNode | number
   </div>
 );
 
-export default function TrafficView({ snap, variant }: { snap: TrafficSnapshot; variant: "public" | "admin" }) {
+export default async function TrafficView({ snap, variant }: { snap: TrafficSnapshot; variant: "public" | "admin" }) {
   const d = snap.data;
+  /* 숫자 넷 아래 한 문단 — 데이터가 바뀔 때만 새로 만든다(lib/ai-comment.ts). 키가 없으면 칸이 없다. */
+  const ai = await aiComment(snap);
   const k = d.kpi;
   const ago = Math.max(0, Math.round((Date.now() - snap.fetchedAt) / 60000));
   const unset = d.channels.find((c) => c.key === "unset");
@@ -82,6 +85,16 @@ export default function TrafficView({ snap, variant }: { snap: TrafficSnapshot; 
         </div>
       </section>
 
+      {/* ①-2 종합 코멘트 (9/8 서우 — "종합적 분석 코멘트도 AI 가, 숫자 넷 하단에") */}
+      {ai ? (
+        <section className="tf-ai" aria-label="AI 종합 코멘트">
+          <div className="tf-ai-k">AI 종합 코멘트 <span>자동 생성 · 위 숫자와 아래 표만 근거로 씁니다 · {Math.max(0, Math.round((Date.now() - ai.at) / 60000)) === 0 ? "방금" : `${Math.round((Date.now() - ai.at) / 60000)}분 전`} 작성</span></div>
+          <p className="tf-ai-t">{ai.text}</p>
+        </section>
+      ) : variant === "admin" && !aiReady() ? (
+        <p className="tf-foot" style={{ marginTop: 6 }}>Vercel 에 <span className="mono">ANTHROPIC_API_KEY</span> 를 넣으면 이 자리에 AI 종합 코멘트가 붙습니다(README · AI 코멘트).</p>
+      ) : null}
+
       {/* ② 언제 */}
       <h2 className="rep-h">언제 들어왔나 — 일 · 주 · 월</h2>
       <p className="rep-sub">
@@ -93,8 +106,8 @@ export default function TrafficView({ snap, variant }: { snap: TrafficSnapshot; 
       {/* ③ 어디서 */}
       <h2 className="rep-h">어디서 들어왔나 — 채널</h2>
       <p className="rep-sub">
-        색이 있는 채널이 우리가 링크를 뿌린 곳입니다. 회색은 우리가 뿌리지 않은 곳(검색 · 직접)이거나
-        GA 가 출처를 못 잡은 것(미측정)입니다. 비중은 런치 이후 세션 기준입니다.
+        색이 있는 채널이 우리가 링크를 뿌린 곳입니다. 회색은 우리가 뿌리지 않은 곳(검색 · 직접)이거나,
+        방문은 잡혔지만 어느 경로로 왔는지 비어 있는 것(출처 미확인)입니다. 비중은 런치 이후 세션 기준입니다.
       </p>
       <div className="tf-card">
         <div className="tf-share h">
@@ -117,6 +130,16 @@ export default function TrafficView({ snap, variant }: { snap: TrafficSnapshot; 
             </div>
           );
         })}
+
+        {unset && (
+          <p className="tf-why">
+            <Sw c="unset" /><b>출처 미확인 {fmt(unset.sessions)}세션({unset.share}%)은 측정이 안 된 것이 아닙니다.</b> 방문 자체는
+            위 「런치 이후 세션」에 들어 있고, 어느 경로로 왔는지만 GA 가 세션에 붙이지 못한 것입니다. 이렇게 되는 경우는 넷입니다.
+            ① 오늘 들어온 세션의 처리가 아직 안 끝남(표준 보고서는 24~48시간 뒤 대부분 채워집니다) ② 어제 시작해 자정을 넘긴
+            세션의 오늘 몫 ③ 첫 페이지뷰보다 다른 이벤트가 먼저 잡힌 세션(사이트 안 로그인 · 화면 전환 뒤 이어진 방문)
+            ④ 쿠키 동의를 거부한 방문의 일부. 며칠이 지나도 이 비중이 크면 사이트 태그 순서를 개발자에게 확인합니다.
+          </p>
+        )}
 
         <details className="tf-details" open={variant === "admin"}>
           <summary>소스 / 매체 원문 그대로 보기 — UTM 값이 어느 채널로 묶였는지</summary>
@@ -171,7 +194,7 @@ export default function TrafficView({ snap, variant }: { snap: TrafficSnapshot; 
             <li><b>구글 로그인 복귀</b>(accounts.google.com {fmt(googleBack.sessions)} 세션)는 사이트에서 구글 로그인을 하고 돌아온 것이라 직접에 넣었습니다. GA 관리 › 데이터 스트림 › 태그 설정 › <b>원치 않는 리퍼럴</b>에 accounts.google.com 을 넣으면 원래 세션에 이어집니다.</li>
           )}
           {unset && (
-            <li><b>미측정</b>({unset.share}%)은 GA 가 출처를 못 잡은 세션입니다. 오늘 것은 처리가 덜 끝나서 그렇고 하루 지나면 대개 줄어듭니다. 며칠이 지나도 이 비중이 크면 사이트 GA 태그 문제입니다 — 개발자에게 "페이지뷰(config) 태그가 커스텀 이벤트보다 먼저 실행되는지, 로그인 리다이렉트 뒤 세션이 끊기지 않는지" 확인을 요청합니다.</li>
+            <li><b>출처 미확인</b>({unset.share}%)은 방문은 집계됐는데 경로만 비어 있는 세션입니다. 위 채널 표 아래에 원인 넷을 적어 두었습니다. 오늘 것은 처리가 덜 끝나서 그렇고 하루 지나면 대개 줄어듭니다. 며칠이 지나도 크면 개발자에게 "페이지뷰(config) 태그가 커스텀 이벤트보다 먼저 실행되는지, 로그인 리다이렉트 뒤 세션이 끊기지 않는지" 확인을 요청합니다.</li>
           )}
           <li>표준 보고서는 GA4 처리 지연으로 몇 시간 늦습니다. 오늘 숫자는 저녁에 다시 보면 늘어 있습니다. 실시간 칸만 지금 값입니다.</li>
         </ul>

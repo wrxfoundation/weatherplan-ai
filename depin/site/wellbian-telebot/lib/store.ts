@@ -247,3 +247,26 @@ export const delReaction = async (id: string) => {
   if (storeKind() === "memory") { rxMem.delete(id); return; }
   await cmd("HDEL", RX, id);
 };
+
+/* ── 범용 캐시 (9/8) ─────────────────────────────────────────────────
+   AI 코멘트처럼 "한 번 만들면 한동안 그대로 쓰는" 값을 두는 자리. 서버리스라 인스턴스마다 메모리가
+   따로 놀아서, KV 가 있으면 KV(EX 초)에 두고 없으면 globalThis 메모리로 떨어진다. 값은 JSON 한 덩어리. */
+const cacheMem: Map<string, { v: unknown; exp: number }> =
+  ((globalThis as { __cacheMem?: Map<string, { v: unknown; exp: number }> }).__cacheMem ??= new Map());
+
+export const cacheGet = async <T,>(key: string): Promise<T | null> => {
+  if (storeKind() === "memory") {
+    const m = cacheMem.get(key);
+    if (!m || m.exp < Date.now()) { cacheMem.delete(key); return null; }
+    return m.v as T;
+  }
+  try {
+    const v = (await cmd("GET", `cache:${key}`)) as string | null;
+    return v ? (JSON.parse(v) as T) : null;
+  } catch { return null; }
+};
+
+export const cacheSet = async (key: string, value: unknown, ttlSec: number) => {
+  if (storeKind() === "memory") { cacheMem.set(key, { v: value, exp: Date.now() + ttlSec * 1000 }); return; }
+  try { await cmd("SET", `cache:${key}`, JSON.stringify(value), "EX", Math.max(1, Math.round(ttlSec))); } catch { /* 캐시 실패는 치명적이지 않다 */ }
+};
