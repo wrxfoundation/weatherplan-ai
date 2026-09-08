@@ -772,6 +772,9 @@ partnership opportunity")으로 재촉했다. 메일 → 호명 트윗 → DM �
 **서우 방향(9/8 밤, 최종): "Flare 종속 구조가 아닌 것" 은 넣고, 유료 여부는 묻지도 말하지도 않는다 — 뭘 원하는지 듣는 톤.**
 유료 불가·단가표 문장은 메일에서 뺀다(내부 방침은 그대로: 아직 유료 없음). 그가 포맷·시점·우리 쪽 필요 사항을 먼저 말하게
 하고, 우리는 일정만 맥락으로 준다.
+(추가) 서우: "Flare FDC 기능은 해당 기기에 간접적인 적용이라 해두자, 너무 자르면 매몰차니" → "no Flare integration" 을
+"FDC 는 케이웨더 쪽을 통해 기기에 간접 적용, 직접 통합은 아님" 으로 완화. 정정 부탁도 "nuance 를 덧붙여 주면" 으로 낮춤.
+웰비안×Flare 직접 통합 클레임은 여전히 하지 않는다 — 간접 적용의 주체는 케이웨더 쪽.
 
 ```
 메일 최종본(support@ · Logan 명의):
@@ -779,11 +782,11 @@ Hi Karan,
 
 Thanks for your email, and for posting about the device you saw at Flare Korea. Glad it caught your eye in person.
 
-One thing to set straight first: the device doesn't depend on Flare. It's our indoor air monitor, built with our device
-partner KWeather, and it measures the air where it sits (CO₂, PM2.5/PM10, TVOC, temperature, humidity). On our side it
-runs on XRPL — device NFT and rewards — with no Flare integration; the Flare work at the workshop was KWeather's.
-Rewards are still in testing, with no guaranteed amount or value. A short follow-up reply on your post with that line
-would be appreciated.
+One small precision, since the post put it a bit more directly than it is: the device is our indoor air monitor, built
+with our device partner KWeather, and it measures the air where it sits (CO₂, PM2.5/PM10, TVOC, temperature, humidity).
+On our side it runs on XRPL — device NFT and rewards. Flare's FDC applies to the device indirectly, through KWeather's
+side, rather than as a direct integration. Rewards are still in testing, with no guaranteed amount or value. If you get
+a chance to add that nuance in a follow-up, it would help.
 
 On the partnership, we'd like to hear more about what you have in mind: what formats and timing you're thinking of,
 what you'd need from our side, and what a good outcome looks like for you. For context, pre-registration for the
