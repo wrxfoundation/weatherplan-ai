@@ -311,9 +311,30 @@ JWT 를 서명해 토큰을 받고, `runReport`·`runRealtimeReport` 를 fetch �
 | `GA_SA_PRIVATE_KEY` | 서비스 계정 JSON 의 `private_key`. `\n` 이스케이프 상태로 넣어도 된다 |
 | `GA_SINCE` | (선택) "런치 이후" 시작일. 기본 `2026-09-07` |
 
-**연결 절차** — ① Google Cloud 프로젝트에서 *Google Analytics Data API* 사용 설정 ② 서비스 계정
-만들고 JSON 키 발급 ③ GA4 → 관리 → 속성 액세스 관리에 그 이메일을 **뷰어**로 추가 ④ Vercel 환경변수
-3개 넣고 Redeploy. 403 이 나면 거의 항상 ③을 안 한 것이다.
+**연결 절차 A (서비스 계정 키)** — ① Google Cloud 프로젝트에서 *Google Analytics Data API* 사용 설정
+② 서비스 계정 만들고 JSON 키 발급 ③ GA4 → 관리 → 속성 액세스 관리에 그 이메일을 **뷰어**로 추가
+④ Vercel 환경변수 3개 넣고 Redeploy. 403 이 나면 거의 항상 ③을 안 한 것이다.
+
+**연결 절차 B (OAuth 리프레시 토큰) — 키 생성이 조직 정책으로 막힐 때.** Workspace 조직은
+`iam.disableServiceAccountKeyCreation` 이 기본으로 걸려 ②에서 "서비스 계정 키 생성 사용 중지됨"이
+뜬다(9/8 실제로 그랬다). 조직 정책 관리자가 이 프로젝트만 예외로 풀 수도 있지만, 키 파일 자체를
+안 만드는 쪽이 낫다:
+
+| Key | 값 |
+|---|---|
+| `GA_OAUTH_CLIENT_ID` | OAuth 클라이언트 ID (데스크톱 앱 유형) |
+| `GA_OAUTH_CLIENT_SECRET` | 그 보안 비밀 |
+| `GA_OAUTH_REFRESH_TOKEN` | `tools/ga-oauth.mts` 가 출력한 값 |
+
+① API 및 서비스 → **OAuth 동의 화면** → 사용자 유형 **내부**(외부+테스트로 두면 토큰이 7일마다 죽는다)
+② 사용자 인증 정보 → OAuth 클라이언트 ID → **데스크톱 앱** → ID·보안 비밀 확보
+③ 로컬 PC 에서 `GA_OAUTH_CLIENT_ID=… GA_OAUTH_CLIENT_SECRET=… node tools/ga-oauth.mts` → 찍힌 주소를
+브라우저에서 열어 **GA 속성 소유자 계정**(admin@)으로 동의 → 터미널에 리프레시 토큰이 찍힌다
+④ 위 3개를 Vercel 에 넣고 Redeploy. 서비스 계정 변수와 둘 다 있으면 OAuth 를 먼저 쓴다.
+`/api/health` 의 `gaMode` 가 `oauth` 인지로 확인한다.
+
+이 길은 admin 계정에 묶인다 — 그 계정 비밀번호를 바꾸거나 앱 접근을 철회하면 `invalid_grant` 로
+끊기고, ③을 다시 하면 된다. Data API 는 읽기 전용 스코프만 쓴다.
 
 화면은 소스/매체와 `utm_content` 를 바로 편다 — 우리 UTM(`owned`·`kol`)은 GA 기본 채널 그룹에서
 전부 Unassigned 로 뭉개져서, GA 에서 보려면 매번 차원을 바꿔야 했다. 5분 캐시라 하루 종일

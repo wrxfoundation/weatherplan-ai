@@ -84,6 +84,11 @@ export default async function Traffic({
               <li>GA4 → 관리 → <b>속성 액세스 관리</b> → 서비스 계정 이메일을 <b>뷰어</b>로 추가</li>
               <li>Vercel 환경변수에 <span className="mono">GA_PROPERTY_ID</span>(속성 ID 숫자) · <span className="mono">GA_SA_EMAIL</span> · <span className="mono">GA_SA_PRIVATE_KEY</span>(JSON 의 private_key) → <b>Redeploy</b></li>
             </ol>
+            <p style={{ margin: "12px 0 0", color: "var(--ink-3)" }}>
+              2번에서 <b>"서비스 계정 키 생성 사용 중지됨"</b>이 뜨면(Workspace 조직 기본 정책) 키 대신 OAuth 로 갑니다 —
+              OAuth 동의 화면을 <b>내부</b>로, 데스크톱 앱 클라이언트를 만든 뒤 로컬에서 <span className="mono">node tools/ga-oauth.mts</span> 로
+              리프레시 토큰을 받아 <span className="mono">GA_OAUTH_CLIENT_ID · GA_OAUTH_CLIENT_SECRET · GA_OAUTH_REFRESH_TOKEN</span> 에 넣습니다. README 참조.
+            </p>
           </div>
         ) : snap.error ? (
           <div className="notice" style={{ marginTop: 18 }}>

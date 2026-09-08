@@ -7,11 +7,15 @@
    SDK 를 쓰지 않는다. 이 프로젝트는 텔레그램·정본·KV 를 전부 fetch 하나로 다루고 있고,
    구글 SDK 는 의존성이 수십 개다. 서명은 node:crypto 로 충분하다.
 
-   환경변수 (Vercel · wellbian-telebot 프로젝트):
+   인증은 두 길 중 하나. 둘 다 있으면 OAuth 를 먼저 쓴다.
+     A. 서비스 계정 키 — GA_SA_EMAIL + GA_SA_PRIVATE_KEY
+     B. OAuth 리프레시 토큰 — GA_OAUTH_CLIENT_ID + GA_OAUTH_CLIENT_SECRET + GA_OAUTH_REFRESH_TOKEN
+        (9/8) Workspace 조직은 iam.disableServiceAccountKeyCreation 정책이 기본으로 걸려
+        서비스 계정 키를 못 만든다. 그때는 B — 관리자 계정(GA 속성 소유자)의 리프레시 토큰으로
+        같은 API 를 부른다. 키 파일이 없으니 정책과 부딪히지 않는다. 토큰은 tools/ga-oauth.mts 로 받는다.
+
+   공통:
      GA_PROPERTY_ID     GA4 속성 ID (숫자). 측정 ID(G-…)도 컨테이너 ID(GTM-…)도 아니다.
-     GA_SA_EMAIL        서비스 계정 이메일 (…@….iam.gserviceaccount.com)
-     GA_SA_PRIVATE_KEY  서비스 계정 JSON 의 private_key 값. 줄바꿈이 \n 으로 이스케이프돼
-                        들어와도 받는다.
      GA_SINCE           (선택) "런치 이후" 기간의 시작일. 기본 2026-09-07 — 사전예약 오픈일.
                         이 파일이 가진 유일한 날짜다.
    ※ NEXT_PUBLIC_ 접두사를 절대 붙이지 않는다.
@@ -24,12 +28,25 @@ import { createSign } from "node:crypto";
 const PROP = process.env.GA_PROPERTY_ID ?? "";
 const EMAIL = process.env.GA_SA_EMAIL ?? "";
 const KEY = (process.env.GA_SA_PRIVATE_KEY ?? "").replace(/\\n/g, "\n");
+const OA = {
+  id: process.env.GA_OAUTH_CLIENT_ID ?? "",
+  secret: process.env.GA_OAUTH_CLIENT_SECRET ?? "",
+  refresh: process.env.GA_OAUTH_REFRESH_TOKEN ?? "",
+};
 const SINCE = process.env.GA_SINCE || "2026-09-07";
 
-export const gaConfigured = () => Boolean(PROP && EMAIL && KEY);
+const saReady = () => Boolean(EMAIL && KEY);
+const oauthReady = () => Boolean(OA.id && OA.secret && OA.refresh);
+export type GaMode = "oauth" | "sa" | "";
+export const gaMode = (): GaMode => (oauthReady() ? "oauth" : saReady() ? "sa" : "");
+export const gaConfigured = () => Boolean(PROP) && gaMode() !== "";
 /* 첫 화면에서 "무엇이 비었는지"를 말해 주기 위한 것. 값은 내보내지 않는다. */
-export const gaMissing = () =>
-  [!PROP && "GA_PROPERTY_ID", !EMAIL && "GA_SA_EMAIL", !KEY && "GA_SA_PRIVATE_KEY"].filter(Boolean).join(" · ");
+export const gaMissing = () => {
+  const m: string[] = [];
+  if (!PROP) m.push("GA_PROPERTY_ID");
+  if (!gaMode()) m.push("인증 — GA_SA_EMAIL+GA_SA_PRIVATE_KEY 또는 GA_OAUTH_CLIENT_ID+CLIENT_SECRET+REFRESH_TOKEN");
+  return m.join(" · ");
+};
 
 /* ── 토큰 ──────────────────────────────────────────────────────────────
    서비스 계정 JWT(RS256) → 액세스 토큰. 1시간짜리라 인스턴스 안에서 재사용한다. */
@@ -39,6 +56,29 @@ let tok: { v: string; exp: number } | null = null;
 const token = async (): Promise<string> => {
   const now = Math.floor(Date.now() / 1000);
   if (tok && tok.exp - 60 > now) return tok.v;
+
+  /* B. OAuth 리프레시 토큰 → 액세스 토큰. 서비스 계정 키가 조직 정책으로 막힐 때의 길. */
+  if (oauthReady()) {
+    const r = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        client_id: OA.id, client_secret: OA.secret, refresh_token: OA.refresh,
+      }),
+      cache: "no-store",
+    });
+    const j = (await r.json()) as { access_token?: string; expires_in?: number; error?: string; error_description?: string };
+    if (!r.ok || !j.access_token) {
+      /* invalid_grant = 리프레시 토큰이 취소됐거나(비밀번호 변경·앱 접근 철회) 외부 앱 테스트 모드의
+         7일 만료. 동의 화면을 "내부"로 두면 만료가 없다 — tools/ga-oauth.mts 로 다시 받는다. */
+      throw new Error(`oauth ${r.status} ${j.error ?? ""} ${j.error_description ?? ""}`.trim());
+    }
+    tok = { v: j.access_token, exp: now + (j.expires_in ?? 3600) };
+    return tok.v;
+  }
+
+  /* A. 서비스 계정 JWT */
   const header = b64u(JSON.stringify({ alg: "RS256", typ: "JWT" }));
   const claims = b64u(JSON.stringify({
     iss: EMAIL,
