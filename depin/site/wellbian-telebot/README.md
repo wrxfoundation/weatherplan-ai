@@ -46,6 +46,7 @@ FAQ 문장과 판매 일정은 이 프로젝트에 한 줄도 없다. 판매 사
 | `ADMIN_KEY` | 아무 긴 문자열 | `/admin` 대시보드 접근 키. 미설정이면 대시보드가 열리지 않는다 |
 | `KV_REST_API_URL` | (자동) | Vercel Storage 에서 KV 를 연결하면 자동으로 붙는다 |
 | `KV_REST_API_TOKEN` | (자동) | 〃 |
+| `TRAFFIC_PUBLIC` | `off` | 선택. 키 없이 보는 유입 화면(`/traffic`)을 닫는다. 기본은 열림 |
 
 - `NEXT_PUBLIC_` 접두사를 **절대** 붙이지 않는다. 붙는 순간 토큰이 브라우저 번들에 실린다.
 - 환경변수는 저장만으로 반영되지 않는다. **Deployments → 최신 → Redeploy** 를 해야 한다.
@@ -309,7 +310,8 @@ JWT 를 서명해 토큰을 받고, `runReport`·`runRealtimeReport` 를 fetch �
 | `GA_PROPERTY_ID` | GA4 **속성 ID**(숫자). 측정 ID(`G-…`)도 컨테이너 ID(`GTM-…`)도 아니다 |
 | `GA_SA_EMAIL` | 서비스 계정 이메일 |
 | `GA_SA_PRIVATE_KEY` | 서비스 계정 JSON 의 `private_key`. `\n` 이스케이프 상태로 넣어도 된다 |
-| `GA_SINCE` | (선택) "런치 이후" 시작일. 기본 `2026-09-07` |
+| `GA_SINCE` | (선택) 집계 시작일. 기본 `2026-09-07`(태그를 붙인 날) |
+| `GA_FIXTURE` | (로컬 전용) `1` 이면 GA 를 부르지 않고 가짜 자료로 화면을 그린다. 운영에 넣지 않는다 |
 
 **연결 절차 A (서비스 계정 키)** — ① Google Cloud 프로젝트에서 *Google Analytics Data API* 사용 설정
 ② 서비스 계정 만들고 JSON 키 발급 ③ GA4 → 관리 → 속성 액세스 관리에 그 이메일을 **뷰어**로 추가
@@ -370,9 +372,37 @@ curl -s -X POST https://oauth2.googleapis.com/token -d "client_id=…" -d "clien
 이 길은 admin 계정에 묶인다 — 그 계정 비밀번호를 바꾸거나 앱 접근을 철회하면 `invalid_grant` 로
 끊기고, ③을 다시 하면 된다. Data API 는 읽기 전용 스코프만 쓴다.
 
-화면은 소스/매체와 `utm_content` 를 바로 편다 — 우리 UTM(`owned`·`kol`)은 GA 기본 채널 그룹에서
-전부 Unassigned 로 뭉개져서, GA 에서 보려면 매번 차원을 바꿔야 했다. 5분 캐시라 하루 종일
-새로고침해도 API 한도에 닿지 않는다. `/api/health` 의 `ga` 는 변수 3개가 다 있는지만 말한다.
+### 유입 화면이 보여주는 것 — 그리고 키 없이 보는 주소 `/traffic`
+
+(9/8 2차) 위에서부터 ① 지난 30분 · 오늘 · 이번 주 · 런치 이후 ② 일·주·월 탭의 누적 막대(채널 색)
+③ 채널 비중 — 소스/매체 원문은 접어 둔다 ④ utm_content · 캠페인 · 페이지 ⑤ 읽는 법.
+우리 UTM(`owned`·`kol`)은 GA 기본 채널 그룹에서 전부 Unassigned 로 뭉개지므로 채널은 여기서 직접 매긴다
+(`lib/traffic.ts`, 값은 `tools/traffic-check.mts` 가 고정):
+
+| 채널 | 무엇이 들어가나 |
+|---|---|
+| X | 소스 `x` · `x_out` · `xpurchase`(옛 값) · `t.co` · `twitter.com` |
+| 텔레그램 | `telegram` · `t.me` · `web.telegram.org` |
+| 링크트리 | `linktree` · `linktr.ee` |
+| KOL | 매체가 `kol` 인 것 전부(소스는 채널명 — `xrpkorea` 등) |
+| 다른 SNS | 링크드인 · 인스타그램 · 페이스북 · 유튜브 · 스레드 · 디스코드 · 카카오 |
+| 언론 | 언론사 도메인 목록 + 네이버/다음 뉴스 (매체 `press` 도) |
+| 검색 | 매체 `organic`, 또는 구글·네이버·빙·다음 |
+| 직접 | `(direct)` · `accounts.google.com`(구글 로그인 복귀) · `tagassistant.google.com` |
+| 기타 리퍼럴 | 목록에 없는 사이트 — 자주 보이면 위 목록에 넣는다 |
+| 미측정 | `(not set)` — GA 가 출처를 못 잡은 세션. 빗금으로 그린다 |
+
+색 일곱(X~검색)은 색약 시뮬레이션에서 이웃끼리 갈리는 순서로 골랐다 — 순서를 바꾸면 다시 검증한다.
+회색 셋(직접·기타·미측정)은 "우리가 움직일 수 없는 것"이라는 뜻이다.
+
+**`/traffic`** 은 같은 본문을 관리 메뉴 없이, 키 없이 보여준다(서우 — "별도 키값 없이 접속 가능하게").
+보이는 것은 GA 집계 숫자뿐이라 개인정보도 예약자 수도 매출도 없다. 그래도 검색엔진 색인은 막아 두었고
+(`noindex`), 오류는 원문 대신 "잠시 뒤 다시" 한 줄만 낸다. 파트너·투자자에게 직접 건네는 주소이지
+X·텔레그램 공지에 올리는 주소가 아니다. 닫아야 하면 `TRAFFIC_PUBLIC=off` — Redeploy 없이 다음 요청부터
+404 다. 관리 화면 맨 위에 이 주소가 찍혀 있다. `/api/health` 의 `trafficPublic` 이 열림 여부다.
+
+5분 캐시라 하루 종일 새로고침해도 API 한도에 닿지 않는다. `/api/health` 의 `ga` 는 변수가 다 있는지만
+말한다. 화면을 GA 없이 만지려면 `GA_FIXTURE=1 npm run dev`.
 
 ## 언어
 

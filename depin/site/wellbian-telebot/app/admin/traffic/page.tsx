@@ -1,54 +1,20 @@
-/* GA4 유입 (9/8 서우 — "GA 분석 대시보드도 같이 연동 못 붙이나")
+/* GA4 유입 — 관리자 화면 (9/8 서우 — "GA 분석 대시보드도 같이 연동 못 붙이나" → 같은 날 2차
+   "이해하기 쉽게 일목요연하게, 그래프도 넣어서 일자별 주차별 월간별 채널별, 별도 키값 없이")
 
-   GA 화면은 소스/매체를 보려면 차원을 바꿔야 하고, 우리 UTM(owned·kol)은 기본 채널 그룹에서
-   전부 Unassigned 로 뭉개진다. 여기서는 처음부터 소스/매체·utm_content 로 편다 — 운영자가
-   매번 GA 에서 차원을 바꾸는 손을 없앤다.
+   본문은 app/traffic/TrafficView.tsx — 공개 화면(/traffic)과 같은 것을 본다. 이 파일이 더 갖는 것은
+   관리 메뉴, 오류 원문(어느 변수·어느 단계가 틀렸는지), 공개 주소 안내뿐이다.
 
-   읽기만 한다. 집계·캐시는 lib/ga.ts 가 맡고, 이 파일은 그리기만 한다(리포트 화면과 같은 원칙).
-
-   순서가 위계다 — ① 지금(실시간·기간 합계) ② 어디서 왔는가(소스/매체) ③ 어느 링크인가(utm_content)
-   ④ 일별 추이 ⑤ 캠페인·페이지. KOL 정산과 채널 판단에 쓰는 것은 ②③ 이라 앞에 둔다. */
+   1차의 기간 칩(오늘·7일·런치 이후)은 없앴다 — 일·주·월 탭이 그 자리를 대신하고, 오늘·이번 주는
+   숫자 칸으로 늘 보인다. */
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { isAuthed } from "@/lib/auth";
 import Nav from "../Nav";
-import { gaSnapshot, gaConfigured, gaMissing, GA_SPAN_LABEL, gaDay, type GaSpan, type GaRow } from "@/lib/ga";
+import { gaTraffic, gaReady, gaMissing, trafficPublic } from "@/lib/ga";
+import TrafficView from "../../traffic/TrafficView";
 
 export const dynamic = "force-dynamic";
-
-const qs = (o: Record<string, string>) => {
-  const p = new URLSearchParams(o);
-  for (const [k, v] of [...p.entries()]) if (!v) p.delete(k);
-  return `${p}`;
-};
-const n = (v: string | undefined) => Number(v ?? 0) || 0;
-const fmt = (x: number) => x.toLocaleString("ko-KR");
-
-/* rep-tr 은 7열 고정(리포트용)이라 열 수가 다른 표는 폭을 직접 준다 */
-const grid = (cols: string) => ({ gridTemplateColumns: cols } as const);
-
-const Table = ({ head, rows, cols, cells }: {
-  head: string[]; rows: GaRow[]; cols: string; cells: (r: GaRow) => (string | number)[];
-}) => (
-  <div className="rep-table">
-    <div className="rep-tr rep-th" style={grid(cols)}>
-      {head.map((h) => <span key={h}>{h}</span>)}
-    </div>
-    {rows.length === 0 && <div className="rep-tr" style={grid(cols)}><span style={{ color: "var(--dis)" }}>이 기간에는 없습니다</span></div>}
-    {rows.map((r, i) => {
-      const c = cells(r);
-      return (
-        <div key={i} className="rep-tr" style={grid(cols)}>
-          {c.map((v, j) => (
-            <span key={j} className={j === 0 ? "rep-topic" : "mono"} style={j === 0 ? undefined : { color: n(String(v)) ? "var(--ink-2)" : "var(--dis)" }}>
-              {typeof v === "number" ? fmt(v) : v}
-            </span>
-          ))}
-        </div>
-      );
-    })}
-  </div>
-);
 
 export default async function Traffic({
   searchParams,
@@ -57,38 +23,25 @@ export default async function Traffic({
   if (!(await isAuthed(sp.k))) redirect("/");
   const k = (await isAuthed()) ? "" : (sp.k ?? "");
 
-  const span: GaSpan = sp.span === "today" || sp.span === "7d" ? sp.span : "launch";
-  const spanLink = (s: GaSpan) => `/admin/traffic?${qs({ k, span: s === "launch" ? "" : s })}`;
-
-  const snap = await gaSnapshot(span);
-  const peak = Math.max(1, ...snap.byDay.map((r) => n(r.sessions)));
-  const ago = Math.max(0, Math.round((Date.now() - snap.fetchedAt) / 60000));
-  const engRate = snap.total.sessions ? Math.round((snap.total.engaged / snap.total.sessions) * 100) : null;
+  const snap = await gaTraffic();
+  const host = (await headers()).get("host") ?? "";
+  const pub = host ? `${host.startsWith("localhost") ? "http" : "https"}://${host}/traffic` : "/traffic";
 
   return (
     <>
-      <Nav k={k} current="traffic" title="유입" sub={<>{GA_SPAN_LABEL[span]}{span === "launch" ? ` (${snap.since}~)` : ""} · GA4</>}>
-        <span className="flab">기간</span>
-        {(["today", "7d", "launch"] as const).map((s) => (
-          <a key={s} className={`chip${span === s ? " on" : ""}`} href={spanLink(s)}>{GA_SPAN_LABEL[s]}</a>
-        ))}
-      </Nav>
+      <Nav k={k} current="traffic" title="유입" sub={<>wellbian.io · GA4 · {snap.since} 부터</>} />
 
       <main className="wrap" style={{ paddingBottom: 72 }}>
-        {!gaConfigured() ? (
+        {!gaReady() ? (
           <div className="notice" style={{ marginTop: 18, lineHeight: 1.7 }}>
             <b>GA4 가 아직 연결되지 않았습니다</b>{gaMissing() ? <> — 비어 있는 변수: <span className="mono">{gaMissing()}</span></> : null}
             <ol style={{ margin: "10px 0 0 18px", padding: 0 }}>
-              <li>Google Cloud 콘솔 → 프로젝트 하나 → API 라이브러리에서 <b>Google Analytics Data API</b> 사용 설정</li>
-              <li>IAM → <b>서비스 계정</b> 만들기 → 키 탭에서 JSON 키 발급</li>
-              <li>GA4 → 관리 → <b>속성 액세스 관리</b> → 서비스 계정 이메일을 <b>뷰어</b>로 추가</li>
-              <li>Vercel 환경변수에 <span className="mono">GA_PROPERTY_ID</span>(속성 ID 숫자) · <span className="mono">GA_SA_EMAIL</span> · <span className="mono">GA_SA_PRIVATE_KEY</span>(JSON 의 private_key) → <b>Redeploy</b></li>
+              <li>GA 전용 Google Cloud 프로젝트(판매 사이트 로그인이 쓰는 프로젝트가 아닌 것)에서 <b>Google Analytics Data API</b> 사용 설정</li>
+              <li>Google 인증 플랫폼 → 대상 <b>내부</b> · 클라이언트 <b>웹 애플리케이션</b>(리디렉션 URI 에 OAuth Playground)</li>
+              <li>OAuth Playground 톱니에 그 클라이언트 ID·보안 비밀 → 스코프 <span className="mono">analytics.readonly</span> → GA 속성 소유자 계정으로 동의 → 리프레시 토큰</li>
+              <li>Vercel 환경변수 <span className="mono">GA_PROPERTY_ID · GA_OAUTH_CLIENT_ID · GA_OAUTH_CLIENT_SECRET · GA_OAUTH_REFRESH_TOKEN</span> → <b>Redeploy</b></li>
             </ol>
-            <p style={{ margin: "12px 0 0", color: "var(--ink-3)" }}>
-              2번에서 <b>"서비스 계정 키 생성 사용 중지됨"</b>이 뜨면(Workspace 조직 기본 정책) 키 대신 OAuth 로 갑니다 —
-              OAuth 동의 화면을 <b>내부</b>로, 데스크톱 앱 클라이언트를 만든 뒤 로컬에서 <span className="mono">node tools/ga-oauth.mts</span> 로
-              리프레시 토큰을 받아 <span className="mono">GA_OAUTH_CLIENT_ID · GA_OAUTH_CLIENT_SECRET · GA_OAUTH_REFRESH_TOKEN</span> 에 넣습니다. README 참조.
-            </p>
+            <p style={{ margin: "12px 0 0", color: "var(--ink-3)" }}>서비스 계정 키를 만들 수 있는 조직이면 그 길도 됩니다. 둘 다 README 의 GA 절차에 있습니다.</p>
           </div>
         ) : snap.error ? (
           <div className="notice" style={{ marginTop: 18 }}>
@@ -96,73 +49,15 @@ export default async function Traffic({
           </div>
         ) : (
           <>
-            {/* 1차 — 지금 */}
-            <section className="now">
-              <div className="now-card lead">
-                <div className="now-k">지난 30분 활성 사용자</div>
-                <div className="now-v mono" style={{ color: snap.realtime ? "var(--ok-text)" : "var(--dis)" }}>{fmt(snap.realtime)}</div>
-                <div className="now-note">실시간 · 기간과 무관</div>
+            {trafficPublic() ? (
+              <div className="tf-pub">
+                키 없이 보는 주소 — <span className="mono">{pub}</span> · 이 화면과 같은 내용을 관리 메뉴 없이 보여줍니다.
+                파트너·투자자에게 직접 건네는 용도이고, 공개 채널에는 올리지 않습니다. 닫으려면 Vercel 에 <span className="mono">TRAFFIC_PUBLIC=off</span>.
               </div>
-              <div className="now-card lead">
-                <div className="now-k">세션</div>
-                <div className="now-v mono" style={{ color: "var(--ink-2)" }}>{fmt(snap.total.sessions)}</div>
-                <div className="now-note">{engRate === null ? "—" : `참여 세션 ${fmt(snap.total.engaged)} · ${engRate}%`}</div>
-              </div>
-              <div className="now-card">
-                <div className="now-k">활성 사용자</div>
-                <div className="now-v mono" style={{ color: "var(--ink-2)" }}>{fmt(snap.total.users)}</div>
-                <div className="now-note">신규 {fmt(snap.total.newUsers)}</div>
-              </div>
-            </section>
-
-            {/* 2차 — 어디서 왔는가 */}
-            <h2 className="rep-h">어디서 왔는가 — 소스 / 매체</h2>
-            <p className="rep-sub">
-              우리 UTM 그대로 보입니다 — <span className="mono">x · telegram · linktree</span> 는 <span className="mono">owned</span>,
-              KOL 은 <span className="mono">kol</span>. <span className="mono">(direct)</span> 은 리퍼러가 안 넘어온 유입(앱 안 브라우저)이라 정상입니다.
-            </p>
-            <Table head={["소스 / 매체", "세션", "사용자", "참여 세션"]} rows={snap.bySource} cols="1.8fr 1fr 1fr 1fr"
-              cells={(r) => [`${r.sessionSource} / ${r.sessionMedium}`, n(r.sessions), n(r.activeUsers), n(r.engagedSessions)]} />
-
-            {/* 3차 — 어느 링크인가 */}
-            <h2 className="rep-h">어느 링크인가 — utm_content</h2>
-            <p className="rep-sub">
-              같은 소스 안의 링크를 가릅니다(판매 타래·기사·영상·KOL 매체별). <span className="mono">(not set)</span> 은 utm_content 없이 온 것입니다.
-            </p>
-            <Table head={["소스 · 콘텐츠", "세션", "사용자"]} rows={snap.byContent} cols="2.4fr 1fr 1fr"
-              cells={(r) => [`${r.sessionSource} · ${r.sessionManualAdContent}`, n(r.sessions), n(r.activeUsers)]} />
-
-            {/* 4차 — 일별 */}
-            <h2 className="rep-h">일별 세션</h2>
-            <p className="rep-sub">태그를 붙인 날부터입니다. 그 전이 0 인 것은 유입이 없어서가 아니라 측정이 없어서입니다.</p>
-            {snap.byDay.length === 0 ? (
-              <div className="notice">이 기간에는 없습니다</div>
             ) : (
-              <div className="rep-bars">
-                {snap.byDay.map((r) => (
-                  <div key={r.date} className="rep-bar" title={`${gaDay(r.date)} · 세션 ${r.sessions} · 사용자 ${r.activeUsers}`}>
-                    <div className="rep-bar-v">
-                      <div className="rep-bar-fill" style={{ height: `${Math.round((n(r.sessions) / peak) * 100)}%` }} />
-                    </div>
-                    <span className="rep-bar-k">{gaDay(r.date)}</span>
-                    <span className="rep-bar-n mono">{n(r.sessions)}</span>
-                  </div>
-                ))}
-              </div>
+              <div className="tf-pub">공개 주소(/traffic)는 <span className="mono">TRAFFIC_PUBLIC=off</span> 로 닫혀 있습니다.</div>
             )}
-
-            {/* 5차 — 캠페인 · 페이지 */}
-            <h2 className="rep-h">캠페인</h2>
-            <Table head={["캠페인", "세션", "사용자"]} rows={snap.byCampaign} cols="2.4fr 1fr 1fr"
-              cells={(r) => [r.sessionCampaignName, n(r.sessions), n(r.activeUsers)]} />
-
-            <h2 className="rep-h">많이 본 페이지</h2>
-            <Table head={["경로", "조회", "사용자"]} rows={snap.byPage} cols="2.4fr 1fr 1fr"
-              cells={(r) => [r.pagePath, n(r.screenPageViews), n(r.activeUsers)]} />
-
-            <p className="rep-sub" style={{ marginTop: 18 }}>
-              {ago === 0 ? "방금" : `${ago}분 전에`} 읽음 · 5분마다 새로 읽습니다 · 표준 보고서는 GA4 처리 지연으로 몇 시간 늦을 수 있습니다
-            </p>
+            <TrafficView snap={snap} variant="admin" />
           </>
         )}
       </main>

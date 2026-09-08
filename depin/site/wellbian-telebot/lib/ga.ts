@@ -16,7 +16,7 @@
 
    공통:
      GA_PROPERTY_ID     GA4 속성 ID (숫자). 측정 ID(G-…)도 컨테이너 ID(GTM-…)도 아니다.
-     GA_SINCE           (선택) "런치 이후" 기간의 시작일. 기본 2026-09-07 — 사전예약 오픈일.
+     GA_SINCE           (선택) 집계 시작일. 기본 2026-09-07 — 사전예약 오픈일(태그를 붙인 날).
                         이 파일이 가진 유일한 날짜다.
    ※ NEXT_PUBLIC_ 접두사를 절대 붙이지 않는다.
 
@@ -24,6 +24,8 @@
    속성 일일 토큰 한도(수만 단위)에 닿지 않는다. */
 
 import { createSign } from "node:crypto";
+import { build, kstToday, type Raw, type TrafficData } from "./traffic";
+import { fixture } from "./ga-fixture";
 
 const PROP = process.env.GA_PROPERTY_ID ?? "";
 const EMAIL = process.env.GA_SA_EMAIL ?? "";
@@ -40,6 +42,8 @@ const oauthReady = () => Boolean(OA.id && OA.secret && OA.refresh);
 export type GaMode = "oauth" | "sa" | "";
 export const gaMode = (): GaMode => (oauthReady() ? "oauth" : saReady() ? "sa" : "");
 export const gaConfigured = () => Boolean(PROP) && gaMode() !== "";
+/* 화면이 "미연결 안내"를 낼지 정하는 기준. 가짜 자료(GA_FIXTURE)로 볼 때는 연결된 셈 친다 — health 의 ga 는 그대로 진짜 값이다. */
+export const gaReady = () => Boolean(process.env.GA_FIXTURE) || gaConfigured();
 /* 첫 화면에서 "무엇이 비었는지"를 말해 주기 위한 것. 값은 내보내지 않는다. */
 export const gaMissing = () => {
   const m: string[] = [];
@@ -152,76 +156,81 @@ const call = async (method: "runReport" | "runRealtimeReport", body: unknown): P
   }));
 };
 
-export type GaSpan = "today" | "7d" | "launch";
-export const GA_SPAN_LABEL: Record<GaSpan, string> = { today: "오늘", "7d": "최근 7일", launch: "런치 이후" };
-const range = (s: GaSpan) => [{
-  startDate: s === "today" ? "today" : s === "7d" ? "7daysAgo" : SINCE,
-  endDate: "today",
-}];
+/* ── 유입 스냅샷 ─────────────────────────────────────────────────────
+   (9/8 2차 — 서우 "일자별 주차별 월간별 채널별") 기간 칩(오늘·7일·런치 이후)을 없애고 런치 이후
+   전체를 한 번에 받는다. 일·주·월은 날짜 × 소스/매체 행 하나를 lib/traffic.ts 가 세 번 묶어 만든다 —
+   GA 에 세 번 물을 이유가 없다. 화면 하나가 보고서 6개를 부르는 것은 전과 같다. 5분 캐시. */
 
-const report = (s: GaSpan, dims: string[], mets: string[], orderBy: string, limit = 25) =>
+const RANGE = [{ startDate: SINCE, endDate: "today" }];
+
+const report = (dims: string[], mets: string[], orderBy: string, limit = 25) =>
   call("runReport", {
-    dateRanges: range(s),
+    dateRanges: RANGE,
     dimensions: dims.map((name) => ({ name })),
     metrics: mets.map((name) => ({ name })),
     orderBys: [{ metric: { metricName: orderBy }, desc: true }],
     limit,
   });
 
-export type GaSnapshot = {
-  span: GaSpan;
-  since: string;
+export type TrafficSnapshot = {
+  since: string;                    // GA_SINCE 원문 (YYYY-MM-DD)
+  today: string;                    // 한국 기준 오늘 (YYYYMMDD)
   fetchedAt: number;
   realtime: number;                 // 지난 30분 활성 사용자
-  total: { sessions: number; users: number; engaged: number; newUsers: number };
-  bySource: GaRow[];                // sessionSource · sessionMedium
-  byContent: GaRow[];               // sessionSource · sessionManualAdContent  (utm_content)
+  data: TrafficData;                // 일·주·월·채널·소스 (lib/traffic.ts)
+  byContent: GaRow[];               // sessionSource · sessionMedium · sessionManualAdContent  (utm_content)
   byCampaign: GaRow[];              // sessionCampaignName
-  byDay: GaRow[];                   // date (오름차순으로 정렬해 돌려준다)
   byPage: GaRow[];                  // pagePath
   error?: string;
 };
 
-const cache = new Map<GaSpan, { at: number; v: GaSnapshot }>();
+/* 공개 화면(/traffic)은 기본으로 열려 있다. 닫아야 할 일이 생기면 TRAFFIC_PUBLIC=off — Redeploy 없이 다음 요청부터. */
+export const trafficPublic = () => process.env.TRAFFIC_PUBLIC !== "off";
+
+let cached: { at: number; v: TrafficSnapshot } | null = null;
 const TTL = 5 * 60_000;
 
 const num = (v: string | undefined) => Number(v ?? 0) || 0;
 
-export const gaSnapshot = async (span: GaSpan): Promise<GaSnapshot> => {
-  const hit = cache.get(span);
-  if (hit && Date.now() - hit.at < TTL) return hit.v;
+export const gaTraffic = async (): Promise<TrafficSnapshot> => {
+  if (cached && Date.now() - cached.at < TTL) return cached.v;
 
-  const base: GaSnapshot = {
-    span, since: SINCE, fetchedAt: Date.now(), realtime: 0,
-    total: { sessions: 0, users: 0, engaged: 0, newUsers: 0 },
-    bySource: [], byContent: [], byCampaign: [], byDay: [], byPage: [],
+  const today = kstToday();
+  const base: TrafficSnapshot = {
+    since: SINCE, today, fetchedAt: Date.now(), realtime: 0,
+    data: build([], SINCE, today), byContent: [], byCampaign: [], byPage: [],
   };
+  /* GA 없이 화면만 볼 때(로컬·스크린샷). 운영에는 넣지 않는다 — lib/ga-fixture.ts */
+  if (process.env.GA_FIXTURE) {
+    const f = fixture(SINCE, today);
+    return { ...base, realtime: f.realtime, data: build(f.raw, SINCE, today, f.totals), byContent: f.byContent, byCampaign: f.byCampaign, byPage: f.byPage };
+  }
   if (!gaConfigured()) return { ...base, error: `미연결 — ${gaMissing()}` };
 
   try {
-    const [rt, total, bySource, byContent, byCampaign, byDay, byPage] = await Promise.all([
+    const [rt, total, rows, byContent, byCampaign, byPage] = await Promise.all([
       call("runRealtimeReport", { metrics: [{ name: "activeUsers" }] }),
-      call("runReport", { dateRanges: range(span), metrics: ["sessions", "activeUsers", "engagedSessions", "newUsers"].map((name) => ({ name })) }),
-      report(span, ["sessionSource", "sessionMedium"], ["sessions", "activeUsers", "engagedSessions"], "sessions"),
-      report(span, ["sessionSource", "sessionManualAdContent"], ["sessions", "activeUsers"], "sessions", 30),
-      report(span, ["sessionCampaignName"], ["sessions", "activeUsers"], "sessions", 10),
-      report(span, ["date"], ["sessions", "activeUsers"], "sessions", 60),
-      report(span, ["pagePath"], ["screenPageViews", "activeUsers"], "screenPageViews", 12),
+      call("runReport", { dateRanges: RANGE, metrics: ["sessions", "activeUsers", "engagedSessions", "newUsers"].map((name) => ({ name })) }),
+      /* 날짜 × 소스/매체 — 이 한 표에서 일·주·월·채널이 다 나온다. 하루 소스 수십 개 × 몇 달이라도 수천 행이다. */
+      report(["date", "sessionSource", "sessionMedium"], ["sessions", "activeUsers", "newUsers", "engagedSessions"], "sessions", 5000),
+      report(["sessionSource", "sessionMedium", "sessionManualAdContent"], ["sessions", "activeUsers"], "sessions", 30),
+      report(["sessionCampaignName"], ["sessions", "activeUsers"], "sessions", 10),
+      report(["pagePath"], ["screenPageViews", "activeUsers"], "screenPageViews", 12),
     ]);
     const t = total[0] ?? {};
-    const v: GaSnapshot = {
+    const raw: Raw[] = rows.map((r) => ({
+      date: r.date, source: r.sessionSource, medium: r.sessionMedium,
+      sessions: num(r.sessions), users: num(r.activeUsers), newUsers: num(r.newUsers), engaged: num(r.engagedSessions),
+    }));
+    const v: TrafficSnapshot = {
       ...base,
       realtime: num(rt[0]?.activeUsers),
-      total: { sessions: num(t.sessions), users: num(t.activeUsers), engaged: num(t.engagedSessions), newUsers: num(t.newUsers) },
-      bySource, byContent, byCampaign, byPage,
-      byDay: [...byDay].sort((a, b) => (a.date < b.date ? -1 : 1)),
+      data: build(raw, SINCE, today, { users: num(t.activeUsers), newUsers: num(t.newUsers), engaged: num(t.engagedSessions) }),
+      byContent, byCampaign, byPage,
     };
-    cache.set(span, { at: Date.now(), v });
+    cached = { at: Date.now(), v };
     return v;
   } catch (e) {
     return { ...base, error: e instanceof Error ? e.message : String(e) };
   }
 };
-
-/* "20260908" → "9/8" */
-export const gaDay = (d: string) => `${Number(d.slice(4, 6))}/${Number(d.slice(6, 8))}`;
