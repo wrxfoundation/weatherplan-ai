@@ -765,19 +765,24 @@ partnership opportunity")으로 재촉했다. 메일 → 호명 트윗 → DM �
   없으면 대량 발송 정황이라 우선순위를 낮춘다(정중 회신은 한다). 디센트 협업 이력 주장은 디센트 쪽에 가볍게 확인 가능.
 - 금지 확인: 판매 목표·예산·보상 수량·가격 전망 언급 없음, Flare 통합 부정만, "XRP SEOUL 2026" 표기, 리플 관계 암시 없음.
 
+**서우 결정(9/8 밤): "Logan" 은 서우 본인(브랜드 계정·현장 명의). 유료는 아직 받지 않는다.** → 메일은 Logan 명의로
+확정, 유료 대안 문단은 버린다. 단가표는 보관만. 시딩 트랙은 30명 프로그램이 미확정이라 "목록에 올린다" 까지만 — 그 한 문장은
+빼도 문맥이 흐르게 써 둔다.
+
 ```
-메일(support@ 회신, 영문 · 추천):
+메일 확정본(support@ · Logan 명의):
 Hi Karan,
 
-Thanks for the email, and for posting the device from Flare Korea — good to see it caught your eye in person.
+Logan here — thanks for the email, and for posting the device from Flare Korea.
 
 Where we are: pre-registration for the Genesis unit closes Sep 14, 12:00 KST, and the first sale opens Sep 15, 12:00 KST.
-For this launch we are not running paid placements, so we can't take up a paid package right now.
+For this launch we are not running paid placements, so we can't take up a paid package right now. If you'd like to send
+your rate card for after the Genesis sale, we'll keep it on file — no commitment from our side at this stage.
 
-[서우 확인 — 시딩 트랙 확정 뒤에만] What we do run is a small creator program, and you'd fit it: a review unit once Genesis
-devices ship, an attributed link (utm_source=kingkaran) so your referrals are visible on both sides, and content clearly
-marked #ad. No fee and no commission. Creator work around XRP SEOUL 2026 is coordinated with our marketing partner — if
-you're okay with us passing your details to them, say so and we'll do that.
+What we can do: creator work around XRP SEOUL 2026 runs through our marketing partner, and on our side the format is
+non-paid — [빼도 되는 문장 →] a review unit from a small seeding list once devices ship, [← 여기까지] an attributed link
+(utm_source=kingkaran) so referrals are visible on both sides, content marked #ad, no fee and no commission. If that works
+for you, say so and we'll pass your details to them.
 
 Two facts to carry in any mention, since the first post had them slightly off:
 - The device is our indoor air monitor, built with device partner KWeather. It measures CO₂, PM2.5/PM10, TVOC,
@@ -787,19 +792,10 @@ Two facts to carry in any mention, since the first post had them slightly off:
 Rewards are still in testing, with no guaranteed amount or value, so please don't frame it as income. If you're up for a
 short follow-up reply on your post with the accurate line, that would help.
 
-If you'd still like to send your rate card for after the Genesis sale, we'll keep it on file — no commitment from our
-side at this stage.
-
 Best,
-[이름]
+Logan
 wellbian · Partnerships & Operations
 ```
 ```
-메일 대안 문단(유료를 열어 두고 싶을 때, 둘째 문단 대체):
-If you have a package in mind for the pre-registration window (before Sep 14), send formats, timing and rates and we'll
-review it with our marketing partner this week — no commitment yet.
-```
-```
-DM 1 (Logan 없음, 121자): Hey Karan — got your email, thanks. No Logan on our side, but it reached the right team; we'll reply from support@ shortly.
-DM 2 (Logan 있음, 67자): Hey Karan — got it, thanks. We'll reply from support@ shortly.
+DM 확정(57자, 오늘 밤): Hey Karan — got your email, thanks. Replying from support@ shortly.
 ```
