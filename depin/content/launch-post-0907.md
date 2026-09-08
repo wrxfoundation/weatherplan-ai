@@ -501,6 +501,30 @@ https://wellbian.io/?utm_source=telegram&utm_medium=owned&utm_campaign=prereg090
 https://linktr.ee/wellbian
 ```
 
+**영상 캡션 — 국문·영문 병기 (서우 요청, 실제 게시본)**
+
+한 게시물에 두 언어. 링크는 하나만 — 두 개면 어수선하고 클릭이 갈린다. `utm_content=video`.
+
+```
+📹 wellbian 프로젝트 소개영상
+
+내 공간의 날씨가 데이터가 되고,
+그 데이터가 가치를 인정받아 보상으로 돌아오는 구조를 한 편에 담았습니다.
+
+⚡️ 사전예약 접수 중 — 9/14(월) 12시까지
+
+ㅡ
+
+📹 wellbian project introduction
+
+How the weather in your own space becomes data,
+and how that data is valued and returned as rewards — in one video.
+
+⚡️ Reservations open — until Sept 14 (Mon) 12:00 KST
+
+🔗 https://wellbian.io/?utm_source=telegram&utm_medium=owned&utm_campaign=prereg0907&utm_content=video
+```
+
 **운영 메모**
 
 - 링크트리 주소는 **실제 주소로 교체 확인**(위는 표기 예시).
