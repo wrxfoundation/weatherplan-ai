@@ -800,3 +800,32 @@ wellbian.io
 ```
 DM 확정(57자, 오늘 밤): Hey Karan — got your email, thanks. Replying from support@ shortly.
 ```
+
+### @BankXRP — DBS·프랭클린템플턴·리플 「Tokenized Liquidity Orchestration」 케이스 스터디 (2026-09-08, 4시간 · 집계 계정) → **답글 패스, 좋아요·북마크만 — 소재는 원글 6 선두 텍스처**
+
+- **집계 계정** — BSCN·Trensik 과 같은 규칙(9/8 BSCNews 판정 그대로). 원출처가 아니다.
+- **뉴스 페그가 아니다** — 바탕 사실은 **2025-09-18 MOU**(1년 전). 이미지는 리플 케이스 스터디 「Executive Summary」로 보이나
+  발행일 미확인, 원문 3곳(ripple.com·dbs.com·ledgerinsights) 전부 egress 차단 — 2차 자료 기준(ecosystem-log 9/8).
+  "가동 중" 단정 금지, "구축" 까지만. 이미지의 "T+2 → 거의 실시간" 은 문서 표현이라 우리 인용은 DBS 원문의 "24/7 · within minutes" 로.
+- **오늘 슬롯 찼음**(국문 판매 타래 + 영문 2편). 판정표로는 "구조·채택 뉴스 ✅" 지만 무대가 집계 계정이라 답글 자리가 아니다.
+- **조건부 답글 C** — @Ripple·@DBSbank·@FTI_DA 가 오늘 이 케이스 스터디를 X 에 직접 올린 경우에만(8/25 RLUSD $2B 2p 선례).
+  링크·태그·CTA 0, 리플 관계 암시 0.
+- **원글 6 「왜 RLUSD인가」(9/8 주간 예약분) 초안 A/B** — 이 사례를 선두에. 슬롯 **9/11 22:00 KST**, 9/11 수정안 활성화가
+  확정돼 그날 소재를 먹으면 9/12. 게시 전 재확인 1건: "most of its supply sits on the ledger we record on" 은 8/31 자체 검증
+  수치(XRPL판 ~89.5%) — 게시일에 재확인. 은행·리플 이름은 쓰지 않는다("싱가포르 은행의 디지털 거래소").
+- **xqa 요약(A)**: 규칙 게이트 통과(재확인 1) · 기관/분석가 4 · 생태계 4 · 빌더 3 · 국내 3 · 회의적 2~3. 최악 해석: "공기 측정기
+  파는 회사가 은행 헤드라인에 올라타 기관처럼 보이려 한다" → 기관·리플 미호명 + 클로징을 제품으로 되돌려 방어.
+  시그니처: 1막→2막 공식의 **영문 초연**(기존 영문 사용 0건), "the space you live in" 표현 규칙 적용.
+
+```
+A (추천, 283자): We price an air monitor in RLUSD. Why that dollar? NYDFS-regulated, and a Singapore bank's digital exchange pairs it with a tokenized money-market fund — 24/7, minutes, not T+2. Most of its supply sits on the ledger we record on. Finance is act one. The space you live in is act two.
+```
+```
+B (질문형 변주 없이 대구형, 257자): A Singapore bank set up its digital exchange to swap RLUSD for a tokenized money-market fund 24/7, in minutes. One layer down, the same dollar pays for a certified air monitor. Institutions get settlement. A household gets a reading it can trust. Same rail.
+```
+```
+C (조건부 답글 — 원출처가 오늘 올렸을 때만, 233자): Seller-side note: we settle a physical air monitor in RLUSD, on the same ledger. Institutions get minutes instead of T+2; a household gets a dollar that doesn't need explaining. Both ends of one rail — that's the part worth watching.
+```
+```
+KR 커뮤니티 한 줄("RLUSD 가 뭐냐" 답변용, 텔레봇·카톡, 167자): RLUSD는 리플(Ripple)이 발행하는 뉴욕주 금융감독청(NYDFS) 규제 달러 스테이블코인입니다. 싱가포르 DBS은행의 디지털 거래소가 토큰화 MMF 거래의 기준 통화로 쓰기로 한(2025-09) 등 기관 쪽에서도 쓰이고, 웰비안 제네시스 측정기 결제는 원화 또는 450 RLUSD로 받습니다.
+```
