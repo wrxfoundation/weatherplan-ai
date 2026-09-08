@@ -749,3 +749,57 @@ P1 (224자, 추천): Thanks for spotting it at Flare Korea — I work on the wel
 ```
 P2 (171자, 더 가볍게): Thanks for noticing it at Flare Korea — I'm on the wellbian side, glad it caught your eye. It's our indoor air monitor, made with device partner KWeather, running on XRPL.
 ```
+
+**9/8 22:31 추가 — 판정 수정: 자발적 게시가 아니라 영업 순서의 한 단계.** 그는 9/7 오후 support@ 로 유료 KOL 제휴 제안 메일
+(X·유튜브 채널 패키지, 타 프로젝트 협업 이력 제시)을 보냈고, 9/8 트윗 뒤 22:31 브랜드 계정 DM("Hey Logan! … sent an email …
+partnership opportunity")으로 재촉했다. 메일 → 호명 트윗 → DM 은 KOL 영업의 표준 순서다. 메일 원문·연락처·상대 실명·채널
+수치는 저장소에 기록하지 않는다(PII 규칙).
+
+- **유료 여부 — 9/3 방침 "집행형 유료 없음" 유지 권고.** 줄 수 있는 것은 9/3 밤 인플루언서 30명 프로그램 트랙(리뷰 기기 ·
+  채널명 utm 링크 · #ad · 커미션 없음)뿐 — 단 그 프로그램은 결정 요청 상태라 메일의 해당 문단은 서우 확인 뒤 넣는다.
+  해외 크리에이터는 카탈라이즈 레인(벤 "인플루언서 소개는 적극", 9/8 풀 가동) → 본인 동의를 받고 넘긴다.
+- **정정은 이메일 한 곳에서** — 기기 파트너 케이웨더 · 재는 것 · XRPL · 웰비안×Flare 통합 아님 · 보상 비보장. 원글 1시간
+  수정 창은 지났을 가능성이 커서 "앞으로의 언급" + "정정 답글 한 줄" 부탁으로 바꾼다. 별도 정정 DM 은 보내지 않는다
+  (부탁 채널은 하나). 개인 계정 P1 은 유효(미발송 시), 브랜드 계정은 좋아요만.
+- **"Logan"** — 우리 기록에 없는 이름. 9/5 워크숍 현장에서 인사한 사람의 영어 이름이거나 템플릿 오발송 → 서우 확인.
+  없으면 대량 발송 정황이라 우선순위를 낮춘다(정중 회신은 한다). 디센트 협업 이력 주장은 디센트 쪽에 가볍게 확인 가능.
+- 금지 확인: 판매 목표·예산·보상 수량·가격 전망 언급 없음, Flare 통합 부정만, "XRP SEOUL 2026" 표기, 리플 관계 암시 없음.
+
+```
+메일(support@ 회신, 영문 · 추천):
+Hi Karan,
+
+Thanks for the email, and for posting the device from Flare Korea — good to see it caught your eye in person.
+
+Where we are: pre-registration for the Genesis unit closes Sep 14, 12:00 KST, and the first sale opens Sep 15, 12:00 KST.
+For this launch we are not running paid placements, so we can't take up a paid package right now.
+
+[서우 확인 — 시딩 트랙 확정 뒤에만] What we do run is a small creator program, and you'd fit it: a review unit once Genesis
+devices ship, an attributed link (utm_source=kingkaran) so your referrals are visible on both sides, and content clearly
+marked #ad. No fee and no commission. Creator work around XRP SEOUL 2026 is coordinated with our marketing partner — if
+you're okay with us passing your details to them, say so and we'll do that.
+
+Two facts to carry in any mention, since the first post had them slightly off:
+- The device is our indoor air monitor, built with device partner KWeather. It measures CO₂, PM2.5/PM10, TVOC,
+  temperature and humidity where it sits.
+- On our side it runs on XRPL (device NFT and rewards). It is not a wellbian × Flare integration — the Flare work shown
+  at the workshop was KWeather's.
+Rewards are still in testing, with no guaranteed amount or value, so please don't frame it as income. If you're up for a
+short follow-up reply on your post with the accurate line, that would help.
+
+If you'd still like to send your rate card for after the Genesis sale, we'll keep it on file — no commitment from our
+side at this stage.
+
+Best,
+[이름]
+wellbian · Partnerships & Operations
+```
+```
+메일 대안 문단(유료를 열어 두고 싶을 때, 둘째 문단 대체):
+If you have a package in mind for the pre-registration window (before Sep 14), send formats, timing and rates and we'll
+review it with our marketing partner this week — no commitment yet.
+```
+```
+DM 1 (Logan 없음, 121자): Hey Karan — got your email, thanks. No Logan on our side, but it reached the right team; we'll reply from support@ shortly.
+DM 2 (Logan 있음, 67자): Hey Karan — got it, thanks. We'll reply from support@ shortly.
+```
