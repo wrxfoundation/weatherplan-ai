@@ -710,3 +710,30 @@ Built on XRPL, which keeps growing beyond payments. Good time to be building on 
 **소재로만 보관 (낮은 우선순위)** — "실물은 제자리, 검증된 값만 이동"은 DePIN 일반 테제로 언젠가 원글에
 쓸 수 있다. 다만 금·준비금 같은 금융 실물과 나란히 두지 않고, 관측소·센서 맥락 안에서만.
 
+### @KingKaran — "device connecting XRPL and Flare" + 워크숍 현장 박스 사진 (2026-09-08, 게시 2분 · 217뷰 · 답글 1 · RT 1 · ♥1, @wellbianlabs · @FlareNetworks 태그, 답글로 @FlareNetworksKR 9/5 워크숍 글 인용) → **붙는다 — 브랜드 계정 답글 + DM 정정 요청**
+
+- **원출처·자발적 게시·우리를 직접 호명** — 집계 계정이 아니고, 9/5 워크숍 현장에서 박스를 찍어 올린 참석자 글이다.
+  호명된 글에 답하지 않으면 그의 설명이 우리 설명이 된다. 오늘 브랜드 계정 답글 슬롯은 비어 있다.
+- **틀린 곳 셋**: ① "device connecting XRPL and Flare" — **웰비안×Flare 통합 클레임**(규칙상 우리가 확인해 주면 안 되는
+  문장) ② "collects data from Kweather" — 기기가 자기 자리의 공기를 재는 것이고 케이웨더는 **기기 파트너(만드는 쪽)**
+  ③ "@FlareNetworks helps make that data …"(더 보기 뒤 미확인) — FDC/검증 통합 서술이면 ①과 같은 문제.
+  맞는 곳: "XRPL for device identity and rewards".
+- **답글 원칙**: 고맙다 → 정확한 사실 두 줄(만드는 쪽·재는 것·XRPL 역할) → 경계선 한 문장. Flare 를 부정하지도
+  확인하지도 않는다. 링크·CTA·가격·판매 언급 0. 그를 공개적으로 틀렸다고 하지 않는다("One precision").
+- **A(추천, 250자)** — Flare 를 아예 안 다루고 "지금 살아 있는 것"으로 경계를 긋는다. 더 보기 뒤 문장을 모르는 상태에서 안전.
+- **B(270자)** — Flare 를 케이웨더 쪽으로 돌린다("the Flare work shown there is theirs"). 9/5 아젠다(KWeather × Flare)가
+  공개돼 있어 사실이지만, Flare 스레드를 우리 손으로 여는 셈이라 2순위. 더 보기 뒤가 FDC 통합 서술로 확인되면 B.
+- **DM(397자)** — 그는 유료 인증이라 원글 게시 1시간 안 수정 가능. 답글과 별도로 DM 으로 "connecting XRPL and Flare" →
+  "on XRPL, seen at Flare Korea" 로 고쳐 달라고 부탁. 공개 정정이 아니라 부탁이라 관계가 남는다.
+- **하지 않는 것**: 브랜드 계정 인용 RT(틀린 프레임을 우리 팔로워에게 확산) · "Flare 지갑" 언급(사이트 문구, 서우 확인 전) ·
+  네트워크명 · 케이웨더×Flare 파트너십 세부 · 판매 링크. 서우 개인 계정은 좋아요까지.
+
+```
+A: Thanks for spotting it at Flare Korea. One precision: it's our indoor air monitor, built with device partner KWeather — it measures CO₂, PM2.5/PM10, TVOC, temp/humidity where it sits. XRPL records the device NFT and rewards. That's what's live today.
+```
+```
+B: Thanks for spotting it at Flare Korea. Small fix: the device measures the air where it sits (CO₂, PM2.5/PM10, TVOC, temp/humidity) and is built with our device partner KWeather — the Flare work shown there is theirs. On our side, XRPL records the device NFT and rewards.
+```
+```
+DM: Hey — thanks for the post. Two quick facts so it holds up: the device is built with our device partner KWeather and measures the air where it sits; on our side it runs on XRPL (device NFT + rewards). The Flare work at the workshop is KWeather's, not a wellbian×Flare integration. If you can edit "connecting XRPL and Flare" → "on XRPL, seen at Flare Korea", that'd keep it accurate. Appreciate it.
+```
