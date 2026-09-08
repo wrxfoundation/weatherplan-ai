@@ -769,32 +769,30 @@ partnership opportunity")으로 재촉했다. 메일 → 호명 트윗 → DM �
 확정, 유료 대안 문단은 버린다. 단가표는 보관만. 시딩 트랙은 30명 프로그램이 미확정이라 "목록에 올린다" 까지만 — 그 한 문장은
 빼도 문맥이 흐르게 써 둔다.
 
+**서우 방향(9/8 밤, 최종): "Flare 종속 구조가 아닌 것" 은 넣고, 유료 여부는 묻지도 말하지도 않는다 — 뭘 원하는지 듣는 톤.**
+유료 불가·단가표 문장은 메일에서 뺀다(내부 방침은 그대로: 아직 유료 없음). 그가 포맷·시점·우리 쪽 필요 사항을 먼저 말하게
+하고, 우리는 일정만 맥락으로 준다.
+
 ```
-메일 확정본(support@ · Logan 명의):
+메일 최종본(support@ · Logan 명의):
 Hi Karan,
 
-Logan here — thanks for the email, and for posting the device from Flare Korea.
+Thanks for your email, and for posting about the device you saw at Flare Korea. Glad it caught your eye in person.
 
-Where we are: pre-registration for the Genesis unit closes Sep 14, 12:00 KST, and the first sale opens Sep 15, 12:00 KST.
-For this launch we are not running paid placements, so we can't take up a paid package right now. If you'd like to send
-your rate card for after the Genesis sale, we'll keep it on file — no commitment from our side at this stage.
+One thing to set straight first: the device doesn't depend on Flare. It's our indoor air monitor, built with our device
+partner KWeather, and it measures the air where it sits (CO₂, PM2.5/PM10, TVOC, temperature, humidity). On our side it
+runs on XRPL — device NFT and rewards — with no Flare integration; the Flare work at the workshop was KWeather's.
+Rewards are still in testing, with no guaranteed amount or value. A short follow-up reply on your post with that line
+would be appreciated.
 
-What we can do: creator work around XRP SEOUL 2026 runs through our marketing partner, and on our side the format is
-non-paid — [빼도 되는 문장 →] a review unit from a small seeding list once devices ship, [← 여기까지] an attributed link
-(utm_source=kingkaran) so referrals are visible on both sides, content marked #ad, no fee and no commission. If that works
-for you, say so and we'll pass your details to them.
+On the partnership, we'd like to hear more about what you have in mind: what formats and timing you're thinking of,
+what you'd need from our side, and what a good outcome looks like for you. For context, pre-registration for the
+Genesis unit closes Sep 14, 12:00 KST, and the first sale opens Sep 15, 12:00 KST.
 
-Two facts to carry in any mention, since the first post had them slightly off:
-- The device is our indoor air monitor, built with device partner KWeather. It measures CO₂, PM2.5/PM10, TVOC,
-  temperature and humidity where it sits.
-- On our side it runs on XRPL (device NFT and rewards). It is not a wellbian × Flare integration — the Flare work shown
-  at the workshop was KWeather's.
-Rewards are still in testing, with no guaranteed amount or value, so please don't frame it as income. If you're up for a
-short follow-up reply on your post with the accurate line, that would help.
-
-Best,
-Logan
-wellbian · Partnerships & Operations
+Thanks again,
+Seowoo Park (Logan)
+wellbian · Head of Partnerships & Operations
+wellbian.io
 ```
 ```
 DM 확정(57자, 오늘 밤): Hey Karan — got your email, thanks. Replying from support@ shortly.
