@@ -299,6 +299,55 @@ Until Sept 14 (Mon) 12:00 KST
 - 영문은 **22:00~23:00 KST(미 동부 오전)** 슬롯. 국문 타래와 10시간 간격이라 6시간+ 요건 충족.
 - 기존 EN-1~EN-3(단독 3편)은 이 타래본으로 **대체**한다. 같은 날 둘 다 올리지 않는다.
 
+### EN-3 — 조선일보 영문 기사 인용 원글 (서우 요청 9/8)
+
+기사: https://www.chosun.com/english/national-en/2026/09/08/BBHTLDU2XZBUNMR5MT2VA3VIXE/
+**이 환경에서 chosun.com 이 차단이라 영문 원문을 못 읽었다.** 아래 인용 문장은 국문판 문장의 내 번역 —
+**게시 전에 기사에서 실제 영문 문장으로 교체**한다(표시 ⟵). 원문과 다른 인용은 그 자체로 신뢰를 깎는다.
+
+**단일 원글 (권장)**
+```
+Chosun Ilbo, a major Korean daily, on weather data becoming something people produce — not only consume — and why AI forecasting needs it.
+
+"A small weather station in every home." ⟵ 영문 원문 문장으로 교체
+
+The piece also notes reward amounts aren't finalized. That's accurate.
+
+Built on the XRP Ledger.
+
+https://www.chosun.com/english/national-en/2026/09/08/BBHTLDU2XZBUNMR5MT2VA3VIXE/
+```
+
+**3편 타래 (대안)**
+```
+1/ Chosun Ilbo, a major Korean daily, ran a full piece on what we're building — in English.
+   Worth reading for how a mainstream paper explains it.
+   https://www.chosun.com/english/national-en/2026/09/08/BBHTLDU2XZBUNMR5MT2VA3VIXE/
+
+2/ Three things it gets right:
+   · People become suppliers of weather data, not only consumers.
+   · AI forecasting needs hyperlocal readings — the same city block differs from the next.
+   · Indoor first, then outdoor, radar and satellite.
+
+3/ It also says reward amounts and the token's issuance method aren't finalized. Correct.
+   Reservations are open until Sept 14, 12:00 KST.
+   https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=prereg0907&utm_content=press_chosun_en
+```
+
+**규칙 점검**
+- "돈 된다"(국문 헤드라인)는 **우리 문장으로 옮기지 않는다** — 링크 카드가 헤드라인을 보여주므로 우리는 구조를 말한다.
+- 비보장 문장을 우리가 먼저 짚는다 — 회의적 관찰자에게 가장 잘 먹히는 한 줄이고, 고지 규칙과도 맞는다.
+- "Korea's largest daily" 같은 순위 표현 금지(외부 집계 미확인). "a major Korean daily" 까지만.
+- 케이웨더 언급 없음 — 기사 프레임(케이웨더 출시)과 우리 프레임(기기 파트너)이 갈리므로 우리 글에서는
+  기사에 맡긴다.
+- XRPL 은 한 줄. Ripple 언급 없음.
+
+**무대·슬롯**
+- 조선 영문판 X 계정이 이 기사를 올렸으면 **그 트윗을 인용(QT)** 한다 — 원출처 계정에 반응이 가고
+  관계 자산이 쌓인다. 안 올렸으면 위 원글.
+- **9/9 22:00 KST**(미 동부 오전). 9/8 은 원글 2편으로 한도 소진. 9/9 오전 영상 원글을 쓰면 2/일이
+  되므로 **영상은 9/10 오전**으로 — 기사는 영상보다 빨리 식는다.
+
 ### 배치 근거 (다음에 또 쓸 때 참고)
 
 - **보상 토큰 20% 가산은 T5.** T1 에 올리면 첫 화면이 수익 약속으로 읽힌다. `(예정)` 표기는 사이트와
