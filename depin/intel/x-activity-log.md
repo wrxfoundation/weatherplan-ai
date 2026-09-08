@@ -818,7 +818,7 @@ DM 확정(57자, 오늘 밤): Hey Karan — got your email, thanks. Replying fro
   시그니처: 1막→2막 공식의 **영문 초연**(기존 영문 사용 0건), "the space you live in" 표현 규칙 적용.
 
 ```
-A (추천, 283자): We price an air monitor in RLUSD. Why that dollar? NYDFS-regulated, and a Singapore bank's digital exchange pairs it with a tokenized money-market fund — 24/7, minutes, not T+2. Most of its supply sits on the ledger we record on. Finance is act one. The space you live in is act two.
+A (추천, 280자): We price air monitors in RLUSD. Why that dollar? NYDFS-regulated, and a Singapore bank's digital exchange pairs it with a tokenized money-market fund: 24/7, minutes, not T+2. Most of its supply sits on the ledger we record on. Finance is act one. The space you live in is act two.
 ```
 ```
 B (질문형 변주 없이 대구형, 257자): A Singapore bank set up its digital exchange to swap RLUSD for a tokenized money-market fund 24/7, in minutes. One layer down, the same dollar pays for a certified air monitor. Institutions get settlement. A household gets a reading it can trust. Same rail.
