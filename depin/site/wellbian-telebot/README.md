@@ -335,6 +335,9 @@ JWT 를 서명해 토큰을 받고, `runReport`·`runRealtimeReport` 를 fetch �
 민감 범위(analytics.readonly)가 사이트 동의 화면에 얹혀 미인증 100명 한도까지 끌고 들어온다.
 새 프로젝트(예: `wellbian-ga`)는 admin@ 한 사람만 쓰므로 내부로 두어도 아무 영향이 없다.
 
+⓪ 새 프로젝트에서 **API 및 서비스 → 라이브러리 → Google Analytics Data API → 사용**. 새로 판 프로젝트는
+API 가 하나도 켜져 있지 않아서, 이걸 빼먹으면 토큰은 멀쩡한데 호출이 `403 … has not been used in
+project … or it is disabled` 로 막힌다(9/8 실제로 그랬다). 켜고 2~3분 뒤에 다시 연다.
 ① **대상** → 사용자 유형 **내부**(Workspace 조직이라 고를 수 있다. 외부+테스트로 두면 토큰이 7일마다 죽는다)
 ② **데이터 액세스** → 범위 추가 → `…/auth/analytics.readonly` (내부 앱은 없어도 동작하지만 적어 둔다)
 ③ **클라이언트** → 클라이언트 만들기 → **데스크톱 앱** → ID·보안 비밀 확보

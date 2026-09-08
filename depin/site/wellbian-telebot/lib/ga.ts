@@ -127,12 +127,16 @@ const call = async (method: "runReport" | "runRealtimeReport", body: unknown): P
   });
   const j = (await r.json()) as Api;
   if (!r.ok) {
-    /* 403 은 두 가지다. "insufficient authentication scopes" 는 토큰에 analytics.readonly 범위가
-       없는 것 — OAuth 라면 Playground 에서 다른 스코프를 골라 발급한 토큰이다(9/8 실제로 그랬다).
-       그 밖의 403 은 동의한 계정(또는 서비스 계정)이 그 속성에 권한이 없는 것. */
+    /* 403 은 세 가지다. "has not been used in project … or it is disabled" 는 토큰을 발급한 GCP
+       프로젝트에 Analytics Data API 가 사용 설정되지 않은 것 — 새로 판 프로젝트는 API 가 하나도
+       켜져 있지 않다(9/8 wellbian-ga 에서 실제로 그랬다). "insufficient authentication scopes" 는
+       토큰에 analytics.readonly 범위가 없는 것 — OAuth 라면 Playground 에서 다른 스코프를 골라
+       발급한 토큰이다. 그 밖의 403 은 동의한 계정(또는 서비스 계정)이 그 속성에 권한이 없는 것. */
     const msg = j.error?.message ?? "";
     const hint = r.status === 403
-      ? (/scope/i.test(msg)
+      ? (/has not been used|is disabled/i.test(msg)
+          ? " — 토큰을 발급한 GCP 프로젝트에 Google Analytics Data API 가 사용 설정되지 않음. 메시지의 링크(또는 API 및 서비스 › 라이브러리)에서 '사용'을 누르고 2~3분 뒤 새로고침"
+          : /scope/i.test(msg)
           ? ` — 토큰에 GA 읽기 범위가 없음. ${gaMode() === "oauth"
               ? "Playground 에서 스코프를 https://www.googleapis.com/auth/analytics.readonly 로 다시 골라 리프레시 토큰을 새로 받아 넣을 것"
               : "서비스 계정 JWT 의 scope 확인"}`
