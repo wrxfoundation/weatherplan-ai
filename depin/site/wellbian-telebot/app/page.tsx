@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 import { ADMIN_KEY, isAuthed, setAuthCookie } from "@/lib/auth";
 import { storeVars, storeProbe, listItems } from "@/lib/store";
 import { cacheInfo } from "@/lib/faq-client";
+import { gaConfigured, gaMissing } from "@/lib/ga";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,8 @@ export default async function Home({
     ["정본 주소", info.configured, "FAQ_SOURCE_URL — 판매 사이트의 /api/faq"],
     ["CS 채널", Boolean(process.env.TG_CS_CHAT), "TG_CS_CHAT — 답 못 한 질문을 보낼 채널 (선택)"],
     ["관리 키", Boolean(ADMIN_KEY), "ADMIN_KEY — 대시보드 접근 키"],
+    ["GA 유입", gaConfigured(),
+      gaConfigured() ? "GA4 Data API — 서비스 계정 연결됨 · 분석 › 유입" : `GA_PROPERTY_ID · GA_SA_EMAIL · GA_SA_PRIVATE_KEY (선택)${gaMissing() ? ` — 비어 있음: ${gaMissing()}` : ""}`],
     /* "연결됨" 이 아니라 "쓰고 읽어 봤다" 까지 말한다 — 붙었는데 안 되는 상태가 제일 늦게 들킨다 */
     ["저장소", probe.ok,
       probe.ok

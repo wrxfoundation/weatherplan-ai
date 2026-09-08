@@ -2,6 +2,7 @@
    웹훅이 안 될 때 원인이 대개 셋 중 하나다 — 환경변수 미설정, Redeploy 안 함, 정본 주소 오타. */
 import { cacheInfo } from "@/lib/faq-client";
 import { storeKind, storeProbe } from "@/lib/store";
+import { gaConfigured } from "@/lib/ga";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,8 @@ export async function GET() {
        note — ok / memory / readback_mismatch / "kv 401"(토큰) / "kv 404"(URL) */
     storeProbe: probe,
     admin: Boolean(process.env.ADMIN_KEY),
+    /* GA4 Data API 연결 — 서비스 계정 3개 변수가 다 있으면 true. 실제 호출 성공 여부는 /admin/traffic 에서 본다. */
+    ga: gaConfigured(),
     faqSource: info.configured,
     faqBypass: info.bypass,
     faqCached: info.cached,

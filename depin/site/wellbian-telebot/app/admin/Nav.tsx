@@ -16,7 +16,7 @@
 import { logout } from "./actions";
 import NavScroll from "./NavScroll";
 
-export type NavKey = "inbox" | "faq" | "people" | "report" | "intel" | "celeb" | "reactions";
+export type NavKey = "inbox" | "faq" | "people" | "report" | "traffic" | "intel" | "celeb" | "reactions";
 
 const GROUPS: { label: string; items: { key: NavKey; label: string; href: string }[] }[] = [
   { label: "운영", items: [
@@ -24,7 +24,10 @@ const GROUPS: { label: string; items: { key: NavKey; label: string; href: string
     { key: "faq", label: "정본", href: "/admin/faq" },
     { key: "people", label: "사람", href: "/admin/people" },
   ] },
-  { label: "분석", items: [{ key: "report", label: "리포트", href: "/admin/report" }] },
+  { label: "분석", items: [
+    { key: "report", label: "리포트", href: "/admin/report" },
+    { key: "traffic", label: "유입", href: "/admin/traffic" },
+  ] },
   { label: "인텔", items: [
     { key: "intel", label: "동향", href: "/admin/intel" },
     { key: "celeb", label: "셀럽", href: "/admin/celeb" },

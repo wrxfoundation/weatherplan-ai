@@ -1521,3 +1521,12 @@
 - 연도 미확인 4건(서초구·삼성물산·BGF·하이트진로)은 기사 도메인이 egress 차단이라 본문 열람 불가 → docx에 "추정·확인 필요"로 표시, 케이웨더 내부 기록으로 채우도록 함.
 - 수치 규칙 추가: 납품분과 계약 체결분을 합산해 "7만 대"로 만들지 않는다. "정부 공식 파트너"류 격상 금지.
 - `kweather-b2b-cases-0908.docx` 2차본으로 덮어씀(A 폭염 6건 · B 실내공기질 3건 · C 이전 3건 · D 규모 수치 · 인용 ○/× · 출처 15건).
+
+## 2026-09-08 telebot 점검·고도화 + GA4 유입 탭 (`depin/site/wellbian-telebot` · `wellbian-store/lib/data.ts`)
+- 서우: "telebot 배포했던거 기억나지? 지금 기준으로 고도화 및 점검 / GA 분석 대시보드도 같이 연동 못붙이나".
+- **점검 결과** — `next build`·`tsc` 통과(Next 16.3.3). 검사 스크립트 3종 중 report-check 만 실패 → 코드가 아니라 실행 방식: node 22 에서 `--import ./tools/ts-resolve.mjs` 는 훅을 등록하지 않는다. `tools/ts-hooks.mjs`(register) 신설 + `npm run check` 로 3/3 통과. 판매 단계 → 긴급도 분기(`reserve_open`·`priority_window`)는 store `schedule.ts` 와 문자열 일치, 오늘 단계 `reserve_open` 정상.
+- **P0 — FAQ 정본이 라이브 판매 사이트와 어긋남.** `lib/data.ts` FAQ 는 8/30 에 당시 라이브(wlbn.wellbianlabs.io) 기준으로 썼고, 9/7 에 연 wellbian.io 는 흐름이 다르다(이메일 로그인·예매 인증서 즉시 기록·지갑/서명/준비금 없음·750,000원 또는 450 RLUSD·카드 결제). 저장소 store 에는 "예매 인증서·750,000·토스·할인코드" 가 0건 → **wellbian.io 는 이 저장소 배포본이 아니다.** 봇은 접수 기간 내내 "지갑에 1.5 XRP 넣어야 예매권 NFT 를 받는다"고 답했을 가능성이 크다.
+  - 조치: FAQ 정본 11문항 개정(KO·EN) + 3문항 신설(카드 결제·XRP SEOUL 티켓·D'CENT 지갑) + `PRICE_KRW` 상수. 병렬 길이 KO/EN 10+19 유지, 옛 문구 0건 확인.
+  - **서우 확인 필요** ① 개정 문안 검토(특히 Flare 지갑 언급·18:00 일반 오픈·리딤코드 삭제·수령 전 포인트 적립) ② store Redeploy ③ 봇의 `FAQ_SOURCE_URL` 이 개정본을 포함한 배포를 가리키는지 `/api/health` 의 `faqEntries` 로 확인(19+10 이면 새 정본) ④ 장기적으로는 wellbian.io 개발자가 같은 계약의 `/api/faq` 를 내주는 것이 맞다 — 지금은 저장소 store 가 "사이트를 거울처럼 옮긴 정본" 역할.
+- **GA4 유입 탭** — `lib/ga.ts`(서비스 계정 JWT → Data API, SDK 없음, 5분 캐시) + `/admin/traffic`(실시간·소스/매체·utm_content·일별·캠페인·페이지). Nav 분석 그룹에 "유입", `/api/health` 에 `ga`, 첫 화면에 연결 상태 행. 환경변수 `GA_PROPERTY_ID`·`GA_SA_EMAIL`·`GA_SA_PRIVATE_KEY`(+선택 `GA_SINCE`). 연결 절차 README.
+- **원격에서 확인 못 한 것(서우가 볼 것)** — 봇 도메인·`getWebhookInfo`(pending_update_count·last_error)·KV 연결(`storeProbe`)·`TG_CS_CHAT`·telegram-ops 의 9/7 전 과제(AntiRaid·Blocklist·Approval) 이행 여부.

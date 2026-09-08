@@ -75,6 +75,9 @@ export const MOCK_INVENTORY: Record<SalePhase, Inventory> = {
    적으면 사본이 생기고, 5개 언어면 사본이 열 개가 된다. 8/29 사고가 정확히 그 모양이었다.
    키 이름의 eb/gen 은 폐기된 얼리버드 구조의 잔재라 first/later 로 바꿨다. */
 export const PRICE = { first: 450, later: 650 } as const;
+/* 9/8 서우: 원화 병기. 9/7 사이트 기준 1차 750,000원(정상가 1,083,000원). RLUSD 는 PRICE 그대로 —
+   later(650) 는 이제 "2차 판매가"가 아니라 정상가다. 이름은 다른 참조가 있어 그대로 둔다. */
+export const PRICE_KRW = { first: "750,000", list: "1,083,000" } as const;
 
 /** 고지 문구의 자리표시자를 정본 값으로 채운다. 어순이 언어마다 달라서 숫자를 문장 밖에서
     이어 붙일 수 없다 — 자리표시자를 문장 안에 두고 여기서만 값을 넣는다. */
@@ -115,17 +118,23 @@ export const FAQS = [
      지갑 주소·트러스트라인)도 여기서 받는다.
 
      넣지 않은 것: 판매가, 보상 금액·수익률, 발행가·시세 전망, 총 물량. 확정되지 않았거나
-     대외 표기가 금지된 값이다. 광고 규제에 걸리는 자리이기도 하다. */
-  { q: "사전예약은 무엇인가요?", a: "9월 7일 정오에 열리는 구매 예약입니다. 결제가 아니며 저희에게 내시는 금액은 없습니다. 신청하시면 지갑으로 예매권 NFT가 발급되고, 이 NFT를 가진 분에게 9월 15일 정오 우선 구매창이 먼저 열립니다." },
-  { q: "사전예약은 어떻게 하나요?", a: "지갑 주소로 로그인하시거나 구글 계정으로 로그인하시면 됩니다. 그 밖의 정보는 받지 않습니다. 지갑에 최소 1.5 XRP 이상이 있어야 예매권 NFT를 받으실 수 있습니다 — XRPL 지갑을 만들고 트러스트라인을 여는 데 드는 네트워크 준비금입니다. 신청 후 지갑으로 오는 예매권 NFT를 수락하시면 예약이 확정됩니다." },
-  { q: "예약하면 반드시 살 수 있나요?", a: "구매를 보장하지는 않습니다. 예매권을 가진 분에게 구매창이 먼저 열리는 것이고, 신청이 준비된 물량을 넘으면 선착순이 아니라 추첨으로 정합니다. 예약으로 저희에게 내시는 금액은 없습니다." },
+     대외 표기가 금지된 값이다. 광고 규제에 걸리는 자리이기도 하다.
+
+     9/8 재개정 — 9/7 에 연 실제 판매 사이트(wellbian.io) 화면 기준으로 다시 썼다. 8/30 판은
+     이전 플랫폼(wlbn.wellbianlabs.io) 흐름이라 "지갑 + 1.5 XRP + 예매권 NFT" 를 전제했는데,
+     실제 사이트는 이메일/구글 로그인 → 예매 인증서 즉시 기록, 지갑·서명·준비금 없음, 온체인
+     NFT 는 선택이다. 가격도 원화 병기(카드 결제)로 바뀌었다. 봇이 이 답을 고객에게 직접 하는
+     자리라, 정본이 사이트를 따라가지 못하면 8/29 사고가 고객 앞에서 다시 난다. */
+  { q: "사전예약은 무엇인가요?", a: "9월 7일 정오부터 9월 14일 정오까지 받는 구매 예약입니다. 결제가 아니며 저희에게 내시는 금액은 없습니다. 신청하시면 예매 인증서가 계정에 즉시 기록되고, 이 인증서만으로 9월 15일 정오 우선 구매창의 자격이 인정됩니다. 온체인 NFT로 받는 것은 선택입니다." },
+  { q: "사전예약은 어떻게 하나요?", a: "이메일 또는 구글 계정으로 로그인한 뒤 수량을 고르시면 됩니다. 약 30초 걸립니다. 지갑·서명·네트워크 준비금은 필요 없습니다. 신청 즉시 예매 인증서(위조할 수 없는 검증 코드)가 계정에 기록됩니다. 원하시면 마이페이지에서 XRPL 또는 Flare 지갑으로 NFT로도 받으실 수 있습니다." },
+  { q: "예약하면 반드시 살 수 있나요?", a: "구매를 보장하지는 않습니다. 예매 인증서를 가진 분에게 9월 15일 정오부터 오후 5시 59분까지 우선 구매창이 먼저 열리고, 오후 6시부터는 예약 없이도 구매하실 수 있습니다. 예약으로 저희에게 내시는 금액은 없습니다." },
   { q: "몇 대까지 신청할 수 있나요?", a: "1계정당 최대 10대까지 신청하실 수 있습니다. 기업이나 대량 구매는 admin@wellbian.io 로 문의해 주세요." },
-  { q: "언제 구매할 수 있나요?", a: "사전예약은 9월 7일 정오부터 9월 14일 정오까지입니다. 우선 구매창은 9월 15일 정오, 일반 구매창은 같은 날 오후 6시에 열리며, 예매 물량이 먼저 소진되면 그보다 일찍 열립니다. 판매는 9월 16일 정오에 끝납니다." },
-  { q: "가격은 얼마인가요?", a: `9월 15일 판매분은 ${PRICE.first} RLUSD입니다. 2차 판매부터는 ${PRICE.later} RLUSD가 적용됩니다. 결제는 RLUSD로 진행되니, 거래소에서 사서 지갑으로 옮기는 데 시간이 걸리는 점을 감안해 미리 준비해 두시길 권합니다.` },
+  { q: "언제 구매할 수 있나요?", a: "사전예약은 9월 7일 정오부터 9월 14일 정오까지입니다. 우선 구매창은 9월 15일 정오부터 오후 5시 59분까지 예약자에게 먼저 열리고, 일반 구매는 같은 날 오후 6시부터입니다. 판매는 9월 16일 정오에 끝나는 24시간 한정입니다." },
+  { q: "가격은 얼마인가요?", a: `1차(9월 15일) 판매가는 ${PRICE_KRW.first}원 또는 ${PRICE.first} RLUSD입니다(정상가 ${PRICE_KRW.list}원 · ${PRICE.later} RLUSD). 국내는 페이·체크·신용카드로, 해외나 Web3 지갑을 쓰시는 분은 RLUSD로 결제하실 수 있습니다. RLUSD로 내시려면 거래소에서 사서 지갑으로 옮기는 데 시간이 걸리니 미리 준비해 두시길 권합니다.` },
   { q: "RLUSD는 어디서 구하나요?", a: "RLUSD를 지원하는 국내·해외 거래소에서 구매한 뒤 개인 지갑으로 출금하시면 됩니다. 출금 화면에서 네트워크를 반드시 XRPL로 선택하세요. 다른 네트워크를 고르면 자산을 잃을 수 있습니다. 처음이시라면 소액으로 먼저 시험 전송을 해보시는 편이 안전합니다." },
   { q: "국내 거래소에서 지갑으로 바로 보낼 수 있나요?", a: "국내 거래소는 트래블룰 때문에 확인되지 않은 지갑으로 바로 보내지 못하는 경우가 있습니다. 이때는 거래소가 지원하는 외부 지갑을 거쳐 보내시면 됩니다. 해외 거래소는 대개 바로 보낼 수 있습니다. 거래소마다 다르니 출금 화면의 안내를 먼저 확인해 주세요." },
-  { q: "지갑이 처음인데 괜찮나요?", a: "괜찮습니다. 계정을 만들면 기본 지갑이 자동으로 생성되고, 이미 쓰시는 지갑이 있으면 연결해서 쓰셔도 됩니다. XRP는 일부 지갑과 호환되지 않으니 XRPL을 지원하는 지갑을 쓰셔야 합니다. 단계별로 안내해 드립니다. 지갑에 최소 1.5 XRP 이상이 있어야 예매권 NFT를 받으실 수 있습니다 — XRPL 지갑을 만들고 트러스트라인을 여는 데 드는 네트워크 준비금입니다." },
-  { q: "보상은 어떻게 지급되나요?", a: "기기가 보낸 측정값이 검증을 통과하면 네트워크 원칙에 따라 WLBN이 쌓입니다. 받으시려면 기기의 라이선스 NFT가 발급되어 있어야 합니다. 지급량과 가치는 보장되지 않습니다." },
+  { q: "지갑이 처음인데 괜찮나요?", a: "예약에는 지갑이 필요 없습니다. 구매도 국내 카드로 하시면 지갑 없이 됩니다. RLUSD로 결제하시거나 인증서를 NFT로 받고 싶으실 때만 XRPL 지갑이 필요하고, D'CENT·Girin·Xaman 같은 외부 지갑으로 로그인하실 수 있습니다." },
+  { q: "보상은 어떻게 지급되나요?", a: "기기가 보낸 측정값이 검증을 통과하면 네트워크 원칙에 따라 WLBN이 쌓입니다. 기기를 받기 전에도 기기 NFT당 일별 보상 토큰이 포인트 형식으로 적립될 예정이며, 수령 후 정산 정책에 따라 전환됩니다. 지급량과 가치는 보장되지 않습니다." },
 ];
 
 /* 기본 순서(8/27 서우 확정): 수령 → 블루투스 페어링 → Wi-Fi 연동이 선행, 그다음 리딤·NFT
@@ -367,23 +376,23 @@ export const SPECS_EN = [
 ];
 
 export const FAQS_EN = [
-  { q: "What is the pre-reservation?", a: "A reservation that opens at noon on September 7. It is not a payment, and you pay us nothing. When you apply, a reservation NFT is issued to your wallet, and holders of that NFT get the priority purchase window first, at noon on September 15." },
-  { q: "How do I pre-reserve?", a: "Sign in with your wallet address or with a Google account — nothing else is collected. Your wallet needs at least 1.5 XRP to receive the reservation NFT — the network reserve required to create an XRPL wallet and open a trustline. Accept the reservation NFT that arrives in your wallet and your reservation is confirmed." },
-  { q: "Does reserving guarantee I can buy?", a: "It does not guarantee a purchase. Reservation holders simply get the window first, and if applications exceed the prepared quantity, allocation is by draw rather than first-come. Reserving itself costs you nothing on our side." },
+  { q: "What is the pre-reservation?", a: "A purchase reservation, open from noon on September 7 to noon on September 14. It is not a payment, and you pay us nothing. When you apply, a reservation voucher is recorded to your account instantly, and that voucher alone qualifies you for the priority purchase window at noon on September 15. Receiving it as an on-chain NFT is optional." },
+  { q: "How do I pre-reserve?", a: "Sign in with your email or a Google account and choose a quantity — about 30 seconds. No wallet, no signature and no network reserve are needed. A reservation voucher (a verification code that cannot be forged) is recorded to your account instantly. If you wish, you can also receive it as an NFT to an XRPL or Flare wallet from My Page." },
+  { q: "Does reserving guarantee I can buy?", a: "It does not guarantee a purchase. Voucher holders get the priority window first — from noon to 5:59 p.m. on September 15 — and from 6 p.m. anyone can buy without a reservation. Reserving costs you nothing." },
   { q: "How many can I reserve?", a: "Up to 10 per account. For business or bulk purchases, email admin@wellbian.io — we handle those separately." },
-  { q: "When can I buy?", a: "Pre-reservation runs from noon on September 7 to noon on September 14. The priority window opens at noon on September 15 and the general window at 6 p.m. the same day — earlier if reserved stock sells out first. The sale ends at noon on September 16." },
-  { q: "How much does it cost?", a: `The price for the September 15 batch is ${PRICE.first} RLUSD. From the second batch it is ${PRICE.later} RLUSD. Payment is in RLUSD, and buying it and moving it to your wallet takes time, so we suggest preparing in advance.` },
+  { q: "When can I buy?", a: "Pre-reservation runs from noon on September 7 to noon on September 14. The priority window for reservation holders runs from noon to 5:59 p.m. on September 15, and general purchase opens at 6 p.m. the same day. The sale ends at noon on September 16 — a 24-hour window." },
+  { q: "How much does it cost?", a: `The first-sale (September 15) price is ${PRICE.first} RLUSD or KRW ${PRICE_KRW.first} (list price ${PRICE.later} RLUSD · KRW ${PRICE_KRW.list}). Pay in RLUSD from an XRPL wallet worldwide, or by Korean domestic card. If paying in RLUSD, buying it and moving it to your wallet takes time, so prepare in advance.` },
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on an exchange that supports it, then withdraw to your own wallet. On the withdrawal screen you must select the XRPL network — choosing another network can lose the funds. If this is your first time, send a small test amount first." },
   { q: "Can I send straight from a Korean exchange to my wallet?", a: "Korean exchanges may block transfers to unverified wallets under travel-rule requirements. In that case, route through an external wallet the exchange supports. Overseas exchanges usually allow it directly. Rules differ by exchange, so check the withdrawal screen first." },
-  { q: "I have never used a wallet — is that a problem?", a: "Not at all. Creating an account generates a wallet for you, and you can connect one you already use instead. XRP is not compatible with every wallet, so use one that supports XRPL. We guide you step by step. Your wallet needs at least 1.5 XRP to receive the reservation NFT — the network reserve required to create an XRPL wallet and open a trustline." },
-  { q: "How are rewards paid?", a: "When measurements from your device pass verification, WLBN accrues under network rules. To receive it, the device's license NFT must be issued. Amounts and value are not guaranteed." },
+  { q: "I have never used a wallet — is that a problem?", a: "You do not need a wallet to reserve. You can also buy without one, by Korean domestic card. An XRPL wallet is only needed if you pay in RLUSD or want your voucher as an NFT — external wallets such as D'CENT, Girin and Xaman are supported." },
+  { q: "How are rewards paid?", a: "When measurements from your device pass verification, WLBN accrues under network rules. Even before delivery, reward tokens are planned to accrue daily per device NFT as points, converted under the settlement policy once you receive the device. Amounts and value are not guaranteed." },
 ];
 
 export const FAQS_EXTRA = [
-  { q: "배송은 언제 되나요? 배송비는 따로 드나요?", a: "배송 시기와 배송비는 판매 오픈 때 구매 화면에서 함께 안내해 드립니다. 사전예약 단계에서는 배송 정보를 받지 않습니다." },
-  { q: "환불되나요?", a: "사전예약으로 저희에게 내신 금액이 없으므로 환불해 드릴 것도 없습니다. 언제든 예약을 하지 않으셔도 됩니다. 지갑에 넣어 두신 XRP는 저희에게 오는 돈이 아니라 계정에 남는 네트워크 준비금입니다. 구매 후의 환불은 판매 약관에 따르며, 약관은 판매 오픈 전에 공지됩니다." },
-  { q: "제네시스 멤버십이 뭔가요?", a: "가장 먼저 합류한 분에게 한 번만 발급되는 관측소 자격입니다. XRPL NFT(TAXON 1001)로 증명되고 계정당 1개이며, 이후 다시 발행되지 않습니다. 보상 부스트와 바운티 우선 배정이 따릅니다." },
-  { q: "라이선스 NFT는 뭔가요?", a: "자격을 증명하는 XRPL NFT입니다. 두 종류가 있습니다. 관측소는 계정당 1개로 합류 시기를 구분하고, 스테이션은 기기당 1개로 박스 안 리딤 코드로 발급합니다. 스테이션 NFT가 있어야 그 기기가 보상 대상이 됩니다." },
+  { q: "배송은 언제 되나요? 배송비는 따로 드나요?", a: "출고 일정은 별도로 안내드립니다. 배송 2주 전에 텔레그램과 X 공지로 알려드리고, 배송 정보는 그때 받습니다. 사전예약 단계에서는 배송 정보를 받지 않습니다." },
+  { q: "환불되나요?", a: "사전예약으로 저희에게 내신 금액이 없으므로 환불해 드릴 것도 없습니다. 언제든 예약을 하지 않으셔도 됩니다. 구매 후의 환불은 판매 약관에 따르며, 약관은 판매 오픈 전에 공지됩니다." },
+  { q: "제네시스 멤버십이 뭔가요?", a: "1차 판매 구매자에게만 부여되는 관측소 라이선스 등급입니다. 계정당 1개이고 양도할 수 없으며, 이후 판매분에는 발급되지 않습니다. 보상 토큰 20% 가산(예정)과 데이터 바운티 우선 배정이 따르고, 제네시스 넘버가 영구 기록되어 이후 판매·신규 서비스에서 우선권을 갖습니다." },
+  { q: "라이선스 NFT는 뭔가요?", a: "두 종류가 있습니다. 기기 NFT는 구매하시는 기기 1대당 1개로 양도할 수 있고, 관측소 라이선스는 계정당 1개로 합류 시기를 구분합니다(1차 구매자는 제네시스). 기기 NFT가 있어야 그 기기가 보상 대상이 됩니다." },
   { q: "트러스트라인이 뭔가요?", a: "XRPL에서 내 지갑이 특정 토큰을 받겠다고 여는 통로입니다. RLUSD를 받으려면 필요하고, 결제 단계에서 자동으로 점검해 드립니다. 트러스트라인을 열 때 XRP 준비금이 계정에 잡히는데, 이는 저희에게 오는 돈이 아니라 지갑에 남는 금액입니다." },
   { q: "내 지갑 주소는 어디서 확인하나요?", a: "로그인하시면 화면 오른쪽 위에 지갑 주소가 줄여서 표시됩니다. 눌러서 전체 주소를 복사하실 수 있습니다." },
   { q: "WLBN은 어떤 토큰인가요?", a: "네트워크의 보상·결제에 쓰이는 XRPL 발행 자산(IOU)입니다. 총 발행량은 1,000,000으로 고정되어 있습니다. 데이터가 팔릴 때마다 결제된 WLBN의 절반이 영구 소각되며, 소각 내역은 온체인 트랜잭션으로 확인하실 수 있습니다." },
@@ -396,13 +405,16 @@ export const FAQS_EXTRA = [
   { q: "신청한 수량보다 적게 사도 되나요?", a: "됩니다. 우선 구매창에서 신청하신 수량 안에서 원하는 만큼만 구매하시면 됩니다. 신청 수량을 다 사셔야 하는 것은 아닙니다." },
   { q: "신청한 뒤에 수량을 바꾸거나 취소할 수 있나요?", a: "신청 후에는 수량을 바꾸거나 취소하실 수 없습니다. 신청은 수요를 가늠하기 위한 것이라 구매 의무가 아니고, 실제 구매는 우선 구매창에서 원하시는 만큼만 하시면 되므로 굳이 바꾸실 필요도 없습니다." },
   { q: "구글로 만든 지갑을 다른 지갑으로 옮길 수 있나요?", a: "구글 계정으로 만든 지갑은 니모닉이나 개인키를 내보내 다른 지갑으로 옮기실 수 없습니다. 그 지갑에 있는 NFT를 다른 곳으로 두시려면 외부 개인 지갑을 연결하신 뒤 그 지갑으로 전송하시면 됩니다." },
+  { q: "카드로 결제할 수 있나요?", a: "네. 9월 15일 판매에서 국내 페이·체크·신용카드와 RLUSD(XRPL 지갑) 결제를 함께 받습니다. 사전예약 단계에서는 결제가 없습니다." },
+  { q: "XRP SEOUL 2026 입장권은 어떻게 받나요?", a: "측정기 구매자 중 추첨으로 200명에게 XRP SEOUL 2026 입장권을 드립니다. 1인 1장이며, 카드형 지갑만 단독 구매하신 경우는 추첨 대상이 아닙니다." },
+  { q: "D'CENT 카드형 지갑은 무엇인가요?", a: "선택 구매 품목입니다. 70,000원(정가 80,000원)에 카드 결제로만 구매하실 수 있고, 기기 NFT나 예매 인증서와는 무관하며 입장권 추첨 대상도 아닙니다." },
 ];
 
 export const FAQS_EXTRA_EN = [
-  { q: "When does it ship, and is shipping charged separately?", a: "Shipping timing and cost are shown on the purchase screen when the sale opens. No delivery details are collected at the reservation stage." },
-  { q: "Can I get a refund?", a: "You pay us nothing to pre-reserve, so there is nothing for us to refund — you are free to walk away at any point. The XRP you keep in your wallet is not paid to us; it stays in your account as a network reserve. Refunds after purchase follow the sale terms, which are published before the sale opens." },
-  { q: "What is the Genesis membership?", a: "An observatory credential issued once, to those who join earliest. It is proven by an XRPL NFT (TAXON 1001), limited to one per account, and never reissued. It carries a reward boost and priority on bounties." },
-  { q: "What is the license NFT?", a: "An XRPL NFT that proves eligibility. There are two kinds: an observatory NFT, one per account, marking when you joined; and a station NFT, one per device, minted with the redeem code in the box. A device earns rewards only with its station NFT." },
+  { q: "When does it ship, and is shipping charged separately?", a: "The dispatch schedule will be announced separately. We will notify you on Telegram and X two weeks before delivery and collect shipping details then. No delivery details are collected at the reservation stage." },
+  { q: "Can I get a refund?", a: "You pay us nothing to pre-reserve, so there is nothing for us to refund — you are free to walk away at any point. Refunds after purchase follow the sale terms, which are published before the sale opens." },
+  { q: "What is the Genesis membership?", a: "An observatory license tier granted only to first-sale buyers. One per account, non-transferable, and never issued in later sales. It carries a planned +20% reward bonus and priority on data bounties, and your Genesis number is recorded permanently, with priority in later sales and new services." },
+  { q: "What is the license NFT?", a: "There are two kinds. The device NFT comes one per device you buy and is transferable; the observatory license is one per account and marks when you joined (first-sale buyers get Genesis). A device earns rewards only with its device NFT." },
   { q: "What is a trustline?", a: "On the XRPL it is the channel your wallet opens to accept a given token. You need one to receive RLUSD, and we check it automatically during payment. Opening a trustline locks a small XRP reserve in your account — that is not paid to us; it stays in your wallet." },
   { q: "Where do I find my wallet address?", a: "Once signed in, your wallet address appears abbreviated at the top right. Click it to copy the full address." },
   { q: "What kind of token is WLBN?", a: "An XRPL-issued asset (IOU) used for rewards and payments on the network. Total supply is fixed at 1,000,000. Each time data is sold, half of the WLBN paid is burned permanently, and every burn is verifiable as an on-chain transaction." },
@@ -415,6 +427,9 @@ export const FAQS_EXTRA_EN = [
   { q: "Can I buy fewer than I reserved?", a: "Yes. In the priority window you can take as few as you like, up to the quantity you reserved. There is no obligation to buy the full amount." },
   { q: "Can I change or cancel my reservation after applying?", a: "Reservations cannot be changed or cancelled once submitted. Applying is how we gauge demand, not a commitment to buy — and since you can take as few as you like in the purchase window, there is no need to change it." },
   { q: "Can I move the wallet created with Google to another wallet?", a: "A wallet created with a Google account cannot be exported — there is no mnemonic or private key to move elsewhere. To hold its NFT somewhere else, connect an external personal wallet and transfer the NFT to it." },
+  { q: "Can I pay by card?", a: "Yes. The September 15 sale accepts Korean domestic cards (pay, debit and credit) as well as RLUSD from an XRPL wallet. There is no payment at the reservation stage." },
+  { q: "How do I get an XRP SEOUL 2026 ticket?", a: "200 device buyers will be drawn to receive an XRP SEOUL 2026 ticket, one per person. Buying only the card-type wallet does not qualify." },
+  { q: "What is the D'CENT card-type wallet?", a: "An optional add-on. It costs KRW 70,000 (list KRW 80,000), card payment only. It is unrelated to the device NFT or the reservation voucher and does not qualify for the ticket draw." },
 ];
 
 export const LINK_STEPS_EN: { n: string; t: string; d: string; d2?: string }[] = [

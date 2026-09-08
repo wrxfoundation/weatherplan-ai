@@ -25,6 +25,13 @@ FAQ 문장과 판매 일정은 이 프로젝트에 한 줄도 없다. 판매 사
 `lib/faq-client.ts` 의 60초 캐시는 사본이 아니다 — 정본이 바뀌면 따라 바뀌고, 한 번도 읽지
 못했으면 답하지 않고 사람에게 넘긴다.
 
+**⚠ 9/8 점검 — 정본과 라이브 판매 사이트가 어긋나 있었다.** `lib/data.ts` 의 FAQ 는 8/30 에
+당시 라이브(wlbn.wellbianlabs.io) 기준으로 썼는데, 9/7 에 연 실제 판매 사이트(wellbian.io)는
+흐름이 다르다 — 이메일 로그인·예매 인증서·지갑 불필요·카드 결제·원화 가격. 봇은 그동안
+"지갑에 1.5 XRP 를 넣어야 예약된다"고 답하고 있었다. 9/8 에 정본을 사이트 기준으로 고쳤다.
+**`FAQ_SOURCE_URL` 이 가리키는 배포본이 이 개정을 포함하는지 확인할 것** — `/api/health` 의
+`faqEntries` 가 19+10 이면 새 정본이다.
+
 ## 환경변수 (Vercel → Settings → Environment Variables)
 
 | Key | 값 | 비고 |
@@ -57,6 +64,10 @@ curl -sS "https://api.telegram.org/bot<TOKEN>/setWebhook" \
 `chat_member` 는 넣지 않는다 — 입장 감지는 캡챠용이고, 캡챠는 Rose 담당이다.
 
 ## 점검
+
+코드 쪽은 `npm run check` — 질문 판별·잡담 갈래·리포트 집계 셋을 원본 그대로 돌린다.
+(`node --import ./tools/ts-hooks.mjs tools/<이름>-check.mts` 로 하나씩도 된다. `--import ./tools/ts-resolve.mjs`
+로는 훅이 등록되지 않아 리포트 검사만 깨진다 — 9/8 에 `ts-hooks.mjs` 로 정리했다.)
 
 `GET /api/health` 하나로 대부분 가려진다. 값은 보여주지 않고 있다/없다와 마지막 시도 결과만 낸다.
 
@@ -286,6 +297,27 @@ SDK 대신 REST 로 직접 부른다(`lib/store.ts`) — 의존성이 늘지 않
 들어올 길을 막을 이유가 없다. 상단 **닫기** 로 쿠키를 지운다.
 
 **키가 곧 접근 권한이므로 주소와 키를 공개 채널에 올리지 말 것.**
+
+## GA4 유입 — `/admin/traffic`
+
+GA 화면을 iframe 으로 끼우지 않는다 — 구글 로그인이 있어야 보이고, 공유를 열면 속성 전체가
+새어 나간다. 대신 서버에서 **GA4 Data API** 를 부른다(`lib/ga.ts`). SDK 없이 서비스 계정 키로
+JWT 를 서명해 토큰을 받고, `runReport`·`runRealtimeReport` 를 fetch 로 부른다.
+
+| Key | 값 |
+|---|---|
+| `GA_PROPERTY_ID` | GA4 **속성 ID**(숫자). 측정 ID(`G-…`)도 컨테이너 ID(`GTM-…`)도 아니다 |
+| `GA_SA_EMAIL` | 서비스 계정 이메일 |
+| `GA_SA_PRIVATE_KEY` | 서비스 계정 JSON 의 `private_key`. `\n` 이스케이프 상태로 넣어도 된다 |
+| `GA_SINCE` | (선택) "런치 이후" 시작일. 기본 `2026-09-07` |
+
+**연결 절차** — ① Google Cloud 프로젝트에서 *Google Analytics Data API* 사용 설정 ② 서비스 계정
+만들고 JSON 키 발급 ③ GA4 → 관리 → 속성 액세스 관리에 그 이메일을 **뷰어**로 추가 ④ Vercel 환경변수
+3개 넣고 Redeploy. 403 이 나면 거의 항상 ③을 안 한 것이다.
+
+화면은 소스/매체와 `utm_content` 를 바로 편다 — 우리 UTM(`owned`·`kol`)은 GA 기본 채널 그룹에서
+전부 Unassigned 로 뭉개져서, GA 에서 보려면 매번 차원을 바꿔야 했다. 5분 캐시라 하루 종일
+새로고침해도 API 한도에 닿지 않는다. `/api/health` 의 `ga` 는 변수 3개가 다 있는지만 말한다.
 
 ## 언어
 
