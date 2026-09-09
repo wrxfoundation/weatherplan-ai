@@ -1005,3 +1005,8 @@ X: https://wellbian.io/?utm_source=kingkaran&utm_medium=kol&utm_campaign=prereg0
 YouTube: https://wellbian.io/?utm_source=kingkaran&utm_medium=kol&utm_campaign=prereg0907&utm_content=yt
 Two asks: mark posts #ad, and keep to the facts from my email — rewards are planned, not guaranteed. Sound fair?
 ```
+(9/9 16:11 발송 확인 — DM 1·2 에서 "#ad · 사실 브리프" 두 줄은 서우가 뺌.) 서우 첨언 요청: "한국인은 먼저 알아봐 주는 사람에게 혜택을 주려는 경향이 있다, 이해했지?"
+```
+C1 (162자, 첨언만): One last thing, a bit of Korean culture: we tend to look after the people who recognize us first — the ones who show up before it's obvious. You get what I mean 😉
+C2 (267자, 첨언 + 빠진 두 줄 복구): And a cultural note to close: in Korea, the people who see you early are the ones you remember and take care of later. I think you get what I mean. Only two asks from my side — mark posts #ad, and stick to the facts from my email: rewards are planned, not guaranteed.
+```
