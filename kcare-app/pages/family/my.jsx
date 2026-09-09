@@ -3,126 +3,102 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, PendingTag } from "../../components/ui";
-import { ACCESS_LOG, CONSENTS, ELDER, GUARDIANS, INVITE, NPS_REASONS, PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
-import { fmtWon } from "../../lib/config";
+import Icon from "../../components/icons";
+import {
+  ACCESS_LOG,
+  AI_REPORT,
+  CARE_TEAM,
+  CONSENTS,
+  ELDER,
+  GUARDIANS,
+  INVITE,
+  NPS_REASONS,
+  PRIORITY_PRESETS,
+  VIDEO_RETENTION_DAYS,
+  VISIT_VIDEOS,
+  WEATHER_FACTORS,
+} from "../../lib/mock";
+import { VIDEO_POLICY, VIDEO_SEGMENTS } from "../../lib/console";
+import { PAYMENT_MODES, PRICING, fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 import { honorific } from "../../lib/tracks";
 
-// 마이 — 멤버십 · 우선 날씨 설정(REQ-01) · 케어 리포트
-// 옵션 서비스와 협력병원 찾기는 2026-08-12 요청으로 뺐다 (홈에서 진입).
-// 우선 날씨는 자동 추론이 아니라 사람이 설정한다 — 설정 주체·시각을 기록한다.
+// 마이 — 2026-09-04 시트 보호자 마이 1·2번 (첨부 영상 시안대로 재구성).
+//   머리: "OO님, 안녕하세요" + 오른쪽 위 '관리' → 내 정보 수정
+//   타일 3: 동행 리포트 발급 · 안심방문 리포트 발급 · 결제 관리
+//   안심방문 바디캠 영상 (리포트와 평가 사이 · 30일 보관 후 자동 삭제)
+//   동행 후 만족도(평가) → 우선 확인 날씨 → 가족 구성원 → 멤버십 → 데이터 · 동의
+// 옛 '케어 리포트' 글 카드(증빙 보고서 요청 · 방문 관찰 리포트 목록)는 타일로 접었다 —
+// 영상 시안에 없다. 우선 날씨는 자동 추론이 아니라 사람이 설정한다 — 설정 주체·시각을 기록한다.
 
 export default function MyPage() {
   const { state, dispatch } = useAppState();
   const ob = state.onboarding;
   const [settingOpen, setSettingOpen] = useState(false);
   const [consentRenewed, setConsentRenewed] = useState(false); // 동의 갱신 원탭
-  const [pdfRequested, setPdfRequested] = useState(false);
   const [invited, setInvited] = useState(false);
+  const [editOpen, setEditOpen] = useState(false); // 내 정보 수정
+  const [payOpen, setPayOpen] = useState(false); // 결제 관리
+  const [escortOpen, setEscortOpen] = useState(false); // 동행 리포트
+  const [video, setVideo] = useState(null); // 바디캠 영상 재생 창
   const isPrimary = (state.demo.guardianRole || "primary") === "primary";
   const honor = honorific(ob); // 고객 호칭 — 전부 "~~님" (2026-08-12 시트)
-
-  const sharedReports = state.reports.filter((r) => r.shared);
+  // 화면 주인 — 주 보호자(김민수). 온보딩에서 관계만 받고 이름은 받지 않으므로 페르소나를 쓴다.
+  const me = GUARDIANS.find((g) => g.isPrimary) || GUARDIANS[0];
+  const videoConsent = ob ? !!ob.videoConsent : true; // 온보딩 전 데모는 동의로 본다 (컨시어지 화면과 같은 기본값)
 
   return (
     <>
       <Head>
         <title>마이 — K-CARE</title>
       </Head>
-      <FamilyLayout title="마이">
-        {/* 케어 리포트 — 마이에 통합 (GNB 리포트 탭 제거) */}
-        <Card className="p-[18px]">
-          <div className="text-[17px] font-black text-navy">케어 리포트</div>
-          <p className="mt-1.5 text-[13px] leading-[1.7] text-muted">
-            동행이 끝나면 컨시어지가 검수한 리포트가 옵니다. 월간 리포트는 방문 관찰과 워치
-            데이터를 함께 정리해 매월 첫 주에 전달됩니다.
-          </p>
+      <FamilyLayout
+        title={`${me.name}님, 안녕하세요`}
+        action={
           <button
-            onClick={() => {
-              if (pdfRequested) return;
-              setPdfRequested(true);
-              dispatch({
-                type: "pushEvent",
-                payload: { kind: "리포트", text: "보호자 증빙 보고서 PDF 요청", color: "#8FA9CC" },
-              });
-            }}
-            className={`btn-press mt-3 w-full rounded-xl border py-3 text-[15px] font-bold ${
-              pdfRequested ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
-            }`}
+            onClick={() => setEditOpen(true)}
+            className="btn-press shrink-0 rounded-full border border-navy/25 bg-white/70 px-4 py-2 text-[13px] font-bold text-navy"
           >
-            {pdfRequested ? "✓ 요청됨 — 생성되면 알림으로 전달" : "증빙 보고서 요청"}
+            관리
           </button>
-          {pdfRequested && (
-            <div className="mt-2 text-center">
-              <PendingTag>PDF 생성 연동 대기</PendingTag>
-              <Link
-                href="/report/care"
-                className="btn-press mt-2 block w-full rounded-xl border border-navy/20 py-3 text-center text-[14px] font-bold text-navy"
-              >
-                월간 케어 리포트 보기 · PDF 저장 (A4)
-              </Link>
-            </div>
-          )}
-          {/* 안심방문 리포트 — 컨시어지가 다녀간 결과를 보호자가 폰에서 바로 본다
-              (2026-08-28 요청 "방문리포트는 모바일에서도 보기 쉬워야 함").
-              증빙 요청과 무관하게 항상 열려 있어야 하는 동선이라 밖에 둔다. */}
-          <Link
-            href="/report/visit?from=family"
-            className="btn-press mt-3 flex items-center justify-between rounded-xl px-4 py-3.5 text-white"
-            style={{ background: "#0A1F3C" }}
-          >
-            <span>
-              <span className="block text-[15px] font-bold">안심방문 리포트 보기</span>
-              <span className="mt-0.5 block text-[12px] text-white/65">
-                9월 9일 · 3회차 · 20항목 · 담당 박지현
+        }
+      >
+        {/* 타일 3 — 영상 시안. 아이콘 위, 글자 아래, 세로줄로 나눈다 */}
+        <Card className="p-2">
+          <div className="grid grid-cols-3 divide-x divide-navy/[.08]">
+            <button onClick={() => setEscortOpen(true)} className="btn-press flex flex-col items-center gap-2 px-1 py-3.5">
+              <span className="flex h-[44px] w-[44px] items-center justify-center rounded-[12px] bg-navy/[.06] text-navy">
+                <Icon name="doc" size={22} />
               </span>
-            </span>
-            <span aria-hidden className="text-[18px] text-white/70">›</span>
-          </Link>
-
-          <div className="mt-4 flex items-center justify-between border-t border-navy/[.08] pt-3">
-            <SectionLabel>방문 관찰 리포트</SectionLabel>
-            <span className="text-[12px] text-muted">공유분 {sharedReports.length}건</span>
+              <span className="text-[12px] font-bold leading-[1.3] text-navy">동행 리포트 발급</span>
+            </button>
+            <Link href="/report/visit?from=family" className="btn-press flex flex-col items-center gap-2 px-1 py-3.5">
+              <span className="flex h-[44px] w-[44px] items-center justify-center rounded-[12px] bg-navy/[.06] text-navy">
+                <Icon name="list" size={22} />
+              </span>
+              <span className="text-[12px] font-bold leading-[1.3] text-navy">안심방문 리포트 발급</span>
+            </Link>
+            <button onClick={() => setPayOpen(true)} className="btn-press flex flex-col items-center gap-2 px-1 py-3.5">
+              <span className="flex h-[44px] w-[44px] items-center justify-center rounded-[12px] bg-navy/[.06] text-navy">
+                <Icon name="card" size={22} />
+              </span>
+              <span className="text-[12px] font-bold leading-[1.3] text-navy">결제 관리</span>
+            </button>
           </div>
-          {sharedReports.length === 0 ? (
-            <p className="mt-3 text-[15px] text-muted">아직 공유된 리포트가 없습니다.</p>
-          ) : (
-            <div className="mt-3 space-y-3">
-              {sharedReports.map((r) => (
-                <div key={r.id} className="border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-[13px] font-bold text-navy">{r.by} 선생님</span>
-                    <span className="font-num text-[11px] text-muted">
-                      {new Date(r.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
-                      {" · 특이 "}
-                      {r.flagged}건
-                    </span>
-                  </div>
-                  <p className="mt-1 text-[13px] leading-[1.7] text-ink">{r.note}</p>
-                </div>
-              ))}
-            </div>
-          )}
-          <p className="mt-3 border-t border-navy/[.07] pt-2.5 text-[11px] leading-[1.6] text-muted">
-            공유로 설정한 리포트만 표시됩니다. 판단·진단이 아니라 관찰 사실과 직접 발언만
-            기록됩니다 (의료법 17조).
-          </p>
         </Card>
 
-        {/* 동행 후 만족도 — 홈에서 옮겨 왔다 (2026-08-28 시트 홈 2번:
-            "동행리뷰는 마이 탭으로 이동해서 동행리포트 아래에 위치하게 하고,
-            동행리포트 및 방문리포트 생성 시 같이 리뷰를 작성할 수 있게").
-            리포트를 보고 나서 쓰는 자리라 리포트 바로 아래다. */}
+        {/* 안심방문 바디캠 영상 — 리포트와 평가 사이 (시트 마이 2번) */}
+        <BodycamCard consent={videoConsent} onOpen={setVideo} />
+
+        {/* 동행 후 만족도 — 리포트 바로 아래 (2026-08-28 시트 홈 2번) */}
         <NpsCard
           onEvent={(text, color) => dispatch({ type: "pushEvent", payload: { kind: "CS", text, color } })}
           onDetractor={(score, reason) =>
             dispatch({ type: "opsPatch", patch: { npsDetractor: { score, reason } } })
           }
-          onReview={(score, text) => dispatch({ type: "addReview", payload: { by: "김민수", score, text } })}
+          onReview={(score, text) => dispatch({ type: "addReview", payload: { by: me.name, score, text } })}
           reviews={state.reviews}
         />
-
-        {/* 제휴 병원 찾기 · 옵션 서비스는 2026-08-12 요청으로 삭제 (홈에서 진입) */}
 
         {/* 우선 확인 날씨 — REQ-01 (사람이 설정 · 주체 기록) */}
         <Card className="p-[18px]">
@@ -209,16 +185,9 @@ export default function MyPage() {
           <SectionLabel>멤버십</SectionLabel>
           <div className="mt-3 space-y-2 text-[15px]">
             <Row k="서비스 지역" v={ob ? `${ob.district} · ${ob.tier === 2 ? "2급지" : "1급지"}` : `${ELDER.district} · 1급지 (데모)`} />
-            <Row k="월 구독료" v={ob?.tier === 2 ? "별도 산정" : fmtWon(57000)} />
-            <Row
-              k="결제권한"
-              v={
-                !ob || ob.paymentMode === "limit"
-                  ? `${fmtWon(ob?.limitAmount ?? 50000)} 이하 ${honor} 직접 결제`
-                  : { both: "양쪽 모두 결제", guardianOnly: "보호자만 결제", elderOnly: `${honor}만 결제` }[ob.paymentMode]
-              }
-            />
-            <Row k="방문기록 영상 동의" v={ob?.videoConsent ? "동의함" : "미동의 (가입 시 선택)"} />
+            <Row k="월 구독료" v={ob?.tier === 2 ? "별도 산정" : fmtWon(PRICING.subscription.monthly)} />
+            <Row k="결제권한" v={payLabel(ob, honor)} />
+            <Row k="방문기록 영상 동의" v={ob?.videoConsent ? "동의함" : ob ? "미동의 (가입 시 선택)" : "동의함 (데모)"} />
           </div>
         </Card>
 
@@ -305,9 +274,44 @@ export default function MyPage() {
             }}
           />
         )}
+        {editOpen && (
+          <EditProfileSheet
+            me={me}
+            guardian={state.guardian || {}}
+            onClose={() => setEditOpen(false)}
+            onSave={(patch) => {
+              dispatch({ type: "guardianPatch", patch });
+              dispatch({ type: "pushEvent", payload: { kind: "설정", text: `보호자 ${me.name} 내 정보 수정 (이메일·성별)`, color: "#8FA9CC" } });
+              setEditOpen(false);
+            }}
+          />
+        )}
+        {payOpen && (
+          <PaySheet
+            ob={ob}
+            honor={honor}
+            isPrimary={isPrimary}
+            onClose={() => setPayOpen(false)}
+            onSave={(patch) => {
+              dispatch({ type: "onboardingPatch", patch });
+              dispatch({
+                type: "pushEvent",
+                payload: { kind: "설정", text: `결제권한 변경 — ${PAYMENT_MODES.find((m) => m.key === patch.paymentMode)?.label}${patch.paymentMode === "limit" ? ` · ${fmtWon(patch.limitAmount)}` : ""}`, color: "#8FA9CC" },
+              });
+              setPayOpen(false);
+            }}
+          />
+        )}
+        {escortOpen && <EscortReportSheet onClose={() => setEscortOpen(false)} />}
+        {video && <VideoSheet video={video} onClose={() => setVideo(null)} />}
       </FamilyLayout>
     </>
   );
+}
+
+function payLabel(ob, honor) {
+  if (!ob || ob.paymentMode === "limit") return `${fmtWon(ob?.limitAmount ?? PRICING.paymentLimitDefault)} 이하 ${honor} 직접 결제`;
+  return { both: "양쪽 모두 결제", guardianOnly: "보호자만 결제", elderOnly: `${honor}만 결제` }[ob.paymentMode];
 }
 
 function Row({ k, v }) {
@@ -316,6 +320,314 @@ function Row({ k, v }) {
       <span className="shrink-0 text-muted">{k}</span>
       <span className="text-right font-bold text-ink">{v}</span>
     </div>
+  );
+}
+
+// 바텀시트 껍데기 — 이 화면의 시트 넷이 같은 모양이다
+function Sheet({ label, children, onClose }) {
+  return (
+    <div className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(8,23,45,.45)]" onClick={onClose}>
+      <div
+        className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-3xl bg-white p-6 pb-8"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label={label}
+      >
+        <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ── 안심방문 바디캠 영상 (시트 마이 2번) ──
+// 30일이 지난 것은 목록에서 빠진다 — 관리자가 보관을 지정한 건만 남는다.
+function BodycamCard({ consent, onOpen }) {
+  const list = VISIT_VIDEOS.map((v) => ({ ...v, left: VIDEO_RETENTION_DAYS - v.daysAgo })).filter((v) => v.left > 0 || v.hold);
+  const dateOf = (daysAgo) =>
+    new Date(Date.now() - daysAgo * 86400000).toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
+  return (
+    <Card className="p-[18px]">
+      <div className="flex items-center justify-between">
+        <div className="text-[17px] font-black text-navy">안심방문 바디캠 영상</div>
+        <Badge fg="#5C5A54" bg="rgba(92,90,84,.1)">{VIDEO_RETENTION_DAYS}일 보관</Badge>
+      </div>
+      {!consent ? (
+        <p className="mt-2.5 rounded-xl bg-navy/[.05] px-3.5 py-3 text-[13px] leading-[1.7] text-muted">
+          가입 때 방문기록 영상 촬영에 동의하지 않으셨습니다. 동의는 데이터 · 동의에서 언제든 바꿀 수
+          있고, 바꾼 뒤 방문부터 영상이 남습니다.
+        </p>
+      ) : (
+        <>
+          <div className="mt-3 space-y-2">
+            {list.map((v) => (
+              <button
+                key={v.id}
+                onClick={() => onOpen(v)}
+                className="btn-press flex w-full items-center gap-3 rounded-xl border border-navy/[.08] bg-white/70 p-3 text-left"
+              >
+                <span
+                  aria-hidden
+                  className="flex h-[46px] w-[66px] shrink-0 items-center justify-center rounded-[8px] text-white"
+                  style={{ background: "linear-gradient(135deg,#1C2E4A,#0A1F3C)" }}
+                >
+                  <Icon name="play" size={20} strokeWidth={2} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[14px] font-bold text-navy">{v.title}</span>
+                  <span className="block text-[12px] text-muted">
+                    {dateOf(v.daysAgo)} · {v.by} · {v.len}
+                  </span>
+                </span>
+                {v.hold ? (
+                  <Badge fg="#8A5D12" bg="rgba(138,93,18,.12)">보관 연장</Badge>
+                ) : (
+                  <Badge fg={v.left <= 3 ? "#8A5D12" : "#5C5A54"} bg={v.left <= 3 ? "rgba(138,93,18,.12)" : "rgba(92,90,84,.1)"}>
+                    D-{v.left} 삭제
+                  </Badge>
+                )}
+              </button>
+            ))}
+          </div>
+          <p className="mt-2.5 text-[11px] leading-[1.7] text-muted">
+            {VIDEO_RETENTION_DAYS}일 보관 후 자동 삭제됩니다. 분쟁이 생기면 관리자가 보관 기간을 따로 정합니다. 촬영하지
+            않는 곳 — {VIDEO_POLICY.banned.join(" · ")}.
+          </p>
+        </>
+      )}
+    </Card>
+  );
+}
+
+// 영상 재생 창 — 실제 영상은 서버 연동 뒤에 붙는다. 구간(챕터)과 보관 상태만 보여 준다.
+function VideoSheet({ video, onClose }) {
+  const [seg, setSeg] = useState(0);
+  return (
+    <Sheet label={`${video.title} 영상`} onClose={onClose}>
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-[19px] font-black text-navy">{video.title}</div>
+        {video.hold ? (
+          <Badge fg="#8A5D12" bg="rgba(138,93,18,.12)">보관 {video.hold.until}</Badge>
+        ) : (
+          <Badge fg="#5C5A54" bg="rgba(92,90,84,.1)">D-{video.left} 자동 삭제</Badge>
+        )}
+      </div>
+      <div className="mt-1 text-[12px] text-muted">{video.by} · {video.len}</div>
+      <div
+        className="mt-3 flex aspect-video w-full flex-col items-center justify-center rounded-xl text-white"
+        style={{ background: "linear-gradient(135deg,#1C2E4A,#0A1F3C)" }}
+      >
+        <Icon name="play" size={40} strokeWidth={1.8} />
+        <div className="mt-2 text-[13px] font-bold">{VIDEO_SEGMENTS[seg]}</div>
+        <div className="mt-1"><PendingTag>영상 서버 연동 대기 · 데모</PendingTag></div>
+      </div>
+      <div className="mt-3">
+        <SectionLabel>구간</SectionLabel>
+        <div className="mt-2 grid grid-cols-2 gap-1.5">
+          {VIDEO_SEGMENTS.map((s, i) => (
+            <button
+              key={s}
+              onClick={() => setSeg(i)}
+              aria-pressed={seg === i}
+              className={`btn-press rounded-lg border px-2.5 py-2 text-left text-[12px] font-bold ${
+                seg === i ? "border-navy bg-navy text-white" : "border-navy/15 text-muted"
+              }`}
+            >
+              {i + 1}. {s}
+            </button>
+          ))}
+        </div>
+      </div>
+      {video.hold && (
+        <p className="mt-3 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3 py-2.5 text-[12px] leading-[1.6] text-[#5A4A22]">
+          보관 연장 — {video.hold.why}. 지정한 날짜가 지나면 삭제됩니다.
+        </p>
+      )}
+      <p className="mt-3 text-[11px] leading-[1.7] text-muted">
+        열람은 접근 기록에 남습니다. {VIDEO_POLICY.retention}
+      </p>
+      <GhostButton className="mt-4" onClick={onClose}>
+        닫기
+      </GhostButton>
+    </Sheet>
+  );
+}
+
+// ── 동행 리포트 발급 — 타일 1 ──
+// 동행 완료 리포트는 AI 초안 → 컨시어지 확정 → 2인 서명 뒤에만 나간다 (lib/mock.js AI_REPORT).
+function EscortReportSheet({ onClose }) {
+  const [issued, setIssued] = useState(false);
+  return (
+    <Sheet label="동행 리포트" onClose={onClose}>
+      <div className="text-[19px] font-black text-navy">동행 리포트</div>
+      <div className="mt-1 text-[12px] text-muted">{CARE_TEAM.dateLabel} · 서울아산 순환기내과 · {CARE_TEAM.members.map((m) => m.name).join(" · ")}</div>
+      <p className="mt-3 rounded-xl bg-navy/[.04] px-3.5 py-3 text-[14px] leading-[1.75] text-ink">{AI_REPORT.draft}</p>
+      <div className="mt-2.5 flex flex-wrap gap-1.5">
+        {CARE_TEAM.members.map((m) => (
+          <span key={m.name} className="rounded-full bg-green/10 px-2.5 py-1 text-[11px] font-bold text-green">
+            ✓ {m.name} 서명
+          </span>
+        ))}
+      </div>
+      <p className="mt-2.5 text-[11px] leading-[1.7] text-muted">{AI_REPORT.hitl}</p>
+      <button
+        onClick={() => setIssued(true)}
+        disabled={issued}
+        className={`btn-press mt-4 w-full rounded-xl border py-3.5 text-[16px] font-bold ${
+          issued ? "border-green/30 bg-green/10 text-green" : "border-navy bg-navy text-white"
+        }`}
+      >
+        {issued ? "✓ 발급 요청됨 — PDF 생성 연동 대기" : "PDF로 발급"}
+      </button>
+      <Link
+        href="/report/care"
+        className="btn-press mt-2 block w-full rounded-xl border border-navy/20 py-3 text-center text-[14px] font-bold text-navy"
+      >
+        월간 케어 리포트 보기 (A4)
+      </Link>
+      <GhostButton className="mt-2" onClick={onClose}>
+        닫기
+      </GhostButton>
+    </Sheet>
+  );
+}
+
+// ── 결제 관리 — 타일 3 ──
+// 결제권한은 가입 때 정하고 뒤에 보호자가 바꾼다 (온보딩 문구). 결제수단 등록은 PG 연동 전.
+function PaySheet({ ob, honor, isPrimary, onClose, onSave }) {
+  const [mode, setMode] = useState(ob?.paymentMode || "limit");
+  const [limit, setLimit] = useState(ob?.limitAmount ?? PRICING.paymentLimitDefault);
+  const nextBill = ob?.joinedAt
+    ? new Date(new Date(ob.joinedAt).setMonth(new Date(ob.joinedAt).getMonth() + 1)).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })
+    : "가입일 기준 매월";
+  return (
+    <Sheet label="결제 관리" onClose={onClose}>
+      <div className="text-[19px] font-black text-navy">결제 관리</div>
+      <div className="mt-3 space-y-2 text-[14px]">
+        <Row k="월 구독료" v={ob?.tier === 2 ? "별도 산정" : fmtWon(PRICING.subscription.monthly)} />
+        <Row k="다음 결제" v={nextBill} />
+        <Row k="결제수단" v={<PendingTag>등록 연동 대기</PendingTag>} />
+        <Row k="지금 결제권한" v={payLabel(ob, honor)} />
+      </div>
+      <div className="mt-4">
+        <SectionLabel>결제권한 변경</SectionLabel>
+        <div className="mt-2 space-y-2">
+          {PAYMENT_MODES.map((m) => {
+            const on = mode === m.key;
+            return (
+              <button
+                key={m.key}
+                onClick={() => setMode(m.key)}
+                disabled={!isPrimary}
+                className={`btn-press w-full rounded-xl border p-3 text-left disabled:opacity-60 ${on ? "border-gold bg-gold/10" : "border-navy/15"}`}
+              >
+                <div className="text-[14px] font-bold text-navy">{m.label}</div>
+                <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{m.desc}</div>
+                {m.key === "limit" && on && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="text-[12px] text-muted">한도</span>
+                    {[30000, 50000, 100000].map((v) => (
+                      <button
+                        key={v}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setLimit(v);
+                        }}
+                        className={`btn-press rounded-lg border px-2.5 py-1.5 font-num text-[12px] font-bold ${
+                          limit === v ? "border-gold bg-gold/10 text-navy" : "border-navy/15 text-muted"
+                        }`}
+                      >
+                        {fmtWon(v)}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        {!isPrimary && (
+          <p className="mt-2 rounded-xl bg-navy/[.05] px-3 py-2.5 text-[12px] font-bold text-muted/70">결제권한 변경은 주 보호자만 할 수 있습니다</p>
+        )}
+      </div>
+      <div className="mt-5 flex gap-2">
+        <GhostButton onClick={onClose} className="flex-1">
+          닫기
+        </GhostButton>
+        <PrimaryButton className="flex-[2]" disabled={!isPrimary} onClick={() => onSave({ paymentMode: mode, limitAmount: limit })}>
+          변경 내용 저장
+        </PrimaryButton>
+      </div>
+    </Sheet>
+  );
+}
+
+// ── 내 정보 수정 — '관리' 버튼 (영상 시안) ──
+// 이름·생년월일·휴대전화는 본인 확인이 걸린 값이라 고객센터 경유 — 여기서는 읽기만.
+// 생년월일은 가입 때 받지 않아 아직 없다 — 없는 값을 지어 넣지 않는다.
+function EditProfileSheet({ me, guardian, onClose, onSave }) {
+  const [email, setEmail] = useState(guardian.email || "");
+  const [sex, setSex] = useState(guardian.sex || "");
+  const ro = "mt-2 w-full rounded-xl border border-navy/10 bg-navy/[.04] px-3.5 py-3 text-[15px] text-muted";
+  return (
+    <Sheet label="내 정보 수정" onClose={onClose}>
+      <div className="flex items-center gap-2">
+        <button onClick={onClose} aria-label="뒤로" className="btn-press flex h-[32px] w-[32px] items-center justify-center rounded-lg text-navy">
+          <span aria-hidden className="rotate-90 inline-block"><Icon name="chev" size={18} strokeWidth={2} /></span>
+        </button>
+        <div className="text-[19px] font-black text-navy">내 정보 수정</div>
+      </div>
+      <div className="mt-4 space-y-4">
+        <div>
+          <SectionLabel>이름</SectionLabel>
+          <div className={ro}>{me.name}</div>
+        </div>
+        <div>
+          <SectionLabel>생년월일</SectionLabel>
+          <div className={ro}>가입 상담에서 등록 — 아직 없음</div>
+        </div>
+        <div>
+          <SectionLabel>휴대전화 번호</SectionLabel>
+          <div className={`${ro} font-num`}>010-****-1234</div>
+        </div>
+        <p className="rounded-xl bg-navy/[.05] px-3.5 py-3 text-[12px] leading-[1.7] text-muted">
+          <b className="text-navy">이름, 생년월일, 휴대전화 번호 수정</b>이 필요하시면 K-CARE 고객센터로 문의해 주세요.
+        </p>
+        <div>
+          <label htmlFor="g-email" className="text-[12px] font-bold tracking-[.14em] text-muted/90">
+            이메일 <span className="font-medium tracking-normal text-muted/60">선택</span>
+          </label>
+          <input
+            id="g-email"
+            type="email"
+            inputMode="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="리포트 사본을 받을 주소"
+            className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 text-[15px] outline-none focus:border-gold"
+          />
+        </div>
+        <div>
+          <label htmlFor="g-sex" className="text-[12px] font-bold tracking-[.14em] text-muted/90">
+            성별 <span className="font-medium tracking-normal text-muted/60">선택</span>
+          </label>
+          <select
+            id="g-sex"
+            value={sex}
+            onChange={(e) => setSex(e.target.value)}
+            className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 text-[15px] outline-none focus:border-gold"
+          >
+            <option value="">선택 안 함</option>
+            <option value="남성">남성</option>
+            <option value="여성">여성</option>
+          </select>
+        </div>
+      </div>
+      <PrimaryButton className="mt-6" onClick={() => onSave({ email: email.trim(), sex })}>
+        변경 내용 저장
+      </PrimaryButton>
+    </Sheet>
   );
 }
 
@@ -416,6 +728,7 @@ function NpsCard({ onEvent, onDetractor, onReview, reviews = [] }) {
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
             rows={3}
+            aria-label="코멘트 · 후기"
             placeholder="예: 어머니가 박지현 선생님 오시는 날을 기다리십니다. 다음엔 무릎 이야기도 여쭤봐 주세요."
             className="mt-2 w-full resize-none rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] leading-[1.7] outline-none focus:border-gold"
           />
@@ -544,12 +857,10 @@ function NpsCard({ onEvent, onDetractor, onReview, reviews = [] }) {
           disabled={score <= 6 && !reason}
           className="btn-press btn-dark mt-3 w-full rounded-xl bg-navy py-3 text-[15px] font-bold text-white disabled:opacity-50"
         >
-          제출
+          점수 제출
         </button>
       )}
       {memoBox}
     </Card>
   );
 }
-
-// 우리 동네 소식 — 대치동 · 강남구. 재난/안전은 정보, 바우처는 신청 대행까지 (해주세요 연계)

@@ -44,7 +44,24 @@ const DEFAULT = {
     reordered: {}, // { sp1: true } — 건기식 재구매 부탁
     visitAsked: false, // 즉시 방문 요청
     askSpoken: false, // 선생님께 말로 요청하기
+    // 2026-09-04 시트 —
+    // todaySeen: 오늘 탭을 마지막으로 열었을 때의 일정 수. 그보다 늘면 홈 '오늘' 타일에
+    //   점이 붙는다 (전체 9번 "새 일정이 생겼음을 표시").
+    // msgPlayed: 마음사서함에서 들은 메시지 { t1: true }. 안 들은 것이 있으면 홈에
+    //   "선생님이 마음을 보냈어요" 배너가 뜬다 (전체 5번).
+    // medPopShown: 복용 시간에 자동으로 띄운 약 알람 { date: "2026-09-04", slots: {아침: true} }
+    //   — 하루에 때마다 한 번만 (전체 2번 "복용 시간에 맞추어 팝업").
+    todaySeen: 0,
+    msgPlayed: {},
+    medPopShown: { date: "", slots: {} },
   },
+  // 복지혜택 (lib/welfare.js · 2026-09-04 시트 앱 전체 3번)
+  //   status: { "POL-0012": { status: "신청예정", at, by } } — 관제·보호자가 같은 값을 본다
+  //   answers: { pension: "Y", housing: "자가" } — 보호자가 답한 미확인 항목 (판정이 바뀐다)
+  welfare: { status: {}, answers: {} },
+  // 보호자 내 정보 (마이 탭 '관리' → 내 정보 수정 · 2026-09-04 영상 시안). 이름·생년월일·
+  // 전화는 고객센터 경유라 여기 없다 — 본인이 바꿀 수 있는 것만.
+  guardian: { email: "", sex: "" },
   // 관제 콘솔 상태 — sos 해제는 관제(ackSos)만 가능 (핸드오프 06 §5 · 09 §10)
   ops: { sosDispatched: false, sos119: false, assign: "pending", unmatchFixed: false },
   // 실시간 접수 티커 = 감사 로그의 실시간 뷰 (09 §7.2). 전 화면 액션이 여기로 push
@@ -75,6 +92,20 @@ const DEFAULT = {
   myHospitals: [],
 };
 
+// 저장된 일정 중 씨앗(INITIAL_EVENTS)에서 온 것을 손본다 —
+//  · 없어진 씨앗(ev4 아침 혈압약)은 지운다. 시드에서 빼도 localStorage 에 남아 있으면
+//    화면에 계속 뜬다 (2026-09-04 시트 어르신 전체 2번).
+//  · 시각이 지난 씨앗은 오늘 기준으로 다시 잡는다. 씨앗의 at 은 첫 실행일 기준으로
+//    계산돼 저장되므로, 며칠 뒤 열면 "9월 3일 안심방문"처럼 지난 일정이 남는다
+//    (같은 시트 3번이 그 화면이었다). 어르신·보호자가 직접 옮긴 미래 일정은 건드리지 않는다.
+const SEED_BY_ID = Object.fromEntries(INITIAL_EVENTS.map((e) => [e.id, e]));
+const REMOVED_SEED_IDS = new Set(["ev4"]);
+function rebaseSeedEvents(events) {
+  return events
+    .filter((e) => !REMOVED_SEED_IDS.has(e.id))
+    .map((e) => (SEED_BY_ID[e.id] && e.at < Date.now() ? { ...e, at: SEED_BY_ID[e.id].at } : e));
+}
+
 function reducer(state, action) {
   switch (action.type) {
     case "hydrate": {
@@ -93,7 +124,14 @@ function reducer(state, action) {
           // 저장값이 객체가 아니면(구버전·손상) 기본값을 지킨다
           medSlots: obj(p.elder && p.elder.medSlots, state.elder.medSlots),
           reordered: obj(p.elder && p.elder.reordered, state.elder.reordered),
+          msgPlayed: obj(p.elder && p.elder.msgPlayed, state.elder.msgPlayed),
+          medPopShown: obj(p.elder && p.elder.medPopShown, state.elder.medPopShown),
         },
+        welfare: {
+          status: obj(p.welfare && p.welfare.status, state.welfare.status),
+          answers: obj(p.welfare && p.welfare.answers, state.welfare.answers),
+        },
+        guardian: { ...state.guardian, ...obj(p.guardian, {}) },
         ops: { ...state.ops, ...(p.ops || {}) },
         // 우선 날씨는 어르신 홈 정렬과 마이 탭 칩이 factors 를 배열로 전제한다.
         // 저장값이 구버전이거나 손상되면 두 화면이 같이 죽으므로 형태를 지킨다.
@@ -108,7 +146,7 @@ function reducer(state, action) {
           audit: arr(p.visit && p.visit.audit, state.visit.audit),
         },
         ticker: arr(p.ticker, state.ticker),
-        events: arr(p.events, state.events),
+        events: rebaseSeedEvents(arr(p.events, state.events)),
         reports: arr(p.reports, state.reports),
         requests: arr(p.requests, state.requests),
         productImages: obj(p.productImages, state.productImages),
@@ -121,6 +159,10 @@ function reducer(state, action) {
     }
     case "completeOnboarding":
       return { ...state, onboarding: action.payload };
+    // 가입 뒤 보호자가 바꾸는 것 — 결제권한·한도 (마이 탭 '결제 관리' · 온보딩 문구
+    // "가입 후에도 보호자가 변경할 수 있습니다"). 온보딩을 안 거친 데모는 기본값 위에 얹는다.
+    case "onboardingPatch":
+      return { ...state, onboarding: { ...(state.onboarding || {}), ...action.patch } };
     case "addEvent":
       return { ...state, events: [...state.events, action.payload] };
     case "updateEvent":
@@ -207,6 +249,20 @@ function reducer(state, action) {
       return { ...state, orders: [{ id: `od${Date.now()}`, at: Date.now(), ...action.payload }, ...state.orders] };
     case "addMyHospital":
       return { ...state, myHospitals: [...state.myHospitals, action.payload] };
+    // 복지혜택 진행상태 — 관제·보호자·컨시어지 누가 바꿔도 같은 값 (lib/welfare.js WELFARE_STATUS)
+    case "welfareStatus":
+      return {
+        ...state,
+        welfare: {
+          ...state.welfare,
+          status: { ...state.welfare.status, [action.id]: { status: action.status, at: Date.now(), by: action.by || "" } },
+        },
+      };
+    // 보호자가 미확인 항목에 답한다 — 답이 바뀌면 자동판정이 바뀐다
+    case "welfareAnswer":
+      return { ...state, welfare: { ...state.welfare, answers: { ...state.welfare.answers, [action.key]: action.value } } };
+    case "guardianPatch":
+      return { ...state, guardian: { ...state.guardian, ...action.patch } };
     case "setProductImage": {
       // null 이면 삭제 — 기본 아이콘 썸네일로 돌아간다
       const next = { ...state.productImages };

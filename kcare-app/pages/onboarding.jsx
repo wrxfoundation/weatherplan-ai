@@ -23,6 +23,7 @@ export default function Onboarding() {
   const { dispatch } = useAppState();
   const [stepKey, setStepKey] = useState("track");
   const [form, setForm] = useState({
+    auth: null, // 간편가입 — "kakao" | "naver" | null (2026-09-04 시트 앱 전체 4번)
     track: null, // lib/tracks.js 의 id
     forSelf: null, // 정기 케어 외 트랙 — 본인 이용인지 대신 신청인지
     careLocation: null, // 정기 케어 — 자택(home) / 요양병원(hospital) · 실무자 피드백 2026-08-09
@@ -68,6 +69,7 @@ export default function Onboarding() {
     dispatch({
       type: "completeOnboarding",
       payload: {
+        auth: form.auth,
         track: form.track,
         forSelf: form.forSelf,
         careLocation: track?.needsRelation ? form.careLocation : null, // DB: care_location_type
@@ -128,6 +130,51 @@ export default function Onboarding() {
               <p className="text-[13px] leading-[1.7] text-muted">
                 고르신 것에 따라 이후 화면과 요금이 달라집니다. 나중에 바꾸실 수 있습니다.
               </p>
+
+              {/* 간편가입 — 카카오 · 네이버 (2026-09-04 시트 앱 전체 4번).
+                  데모는 '연결됨'까지만 — 실제 로그인은 카카오 디벨로퍼스·네이버 개발자센터에
+                  앱 키를 등록하고 콜백 주소를 넣어야 돈다. 이름·연락처를 그쪽에서 받아 오면
+                  아래 연락처 칸이 채워진다. 브랜드 색은 각 사 가이드의 기본색이다. */}
+              <Card className="p-4">
+                <SectionLabel>간편하게 시작</SectionLabel>
+                {form.auth ? (
+                  <div className="mt-2.5 flex items-center gap-2 rounded-xl bg-green/10 px-3.5 py-3">
+                    <span className="text-[14px] font-bold text-green">
+                      ✓ {form.auth === "kakao" ? "카카오" : "네이버"} 계정 연결됨
+                    </span>
+                    <span className="ml-auto text-[11px] text-muted">실제 로그인은 앱 키 등록 후</span>
+                    <button
+                      onClick={() => set({ auth: null })}
+                      className="btn-press btn-inline text-[12px] font-bold text-muted underline underline-offset-2"
+                    >
+                      해제
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-2.5 grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => set({ auth: "kakao" })}
+                      className="btn-press flex items-center justify-center gap-2 rounded-xl py-3 text-[14px] font-bold"
+                      style={{ background: "#FEE500", color: "#191919" }}
+                    >
+                      <span aria-hidden className="flex h-[20px] w-[20px] items-center justify-center rounded-full bg-[#191919] font-num text-[11px] font-bold text-[#FEE500]">K</span>
+                      카카오로 시작
+                    </button>
+                    <button
+                      onClick={() => set({ auth: "naver" })}
+                      className="btn-press flex items-center justify-center gap-2 rounded-xl py-3 text-[14px] font-bold text-white"
+                      style={{ background: "#03C75A" }}
+                    >
+                      <span aria-hidden className="flex h-[20px] w-[20px] items-center justify-center rounded-[4px] bg-white font-num text-[11px] font-bold text-[#03C75A]">N</span>
+                      네이버로 시작
+                    </button>
+                  </div>
+                )}
+                <p className="mt-2 text-[11px] leading-[1.6] text-muted">
+                  연결하면 이름·연락처를 다시 적지 않아도 됩니다. 연결 없이도 아래에서 이어서 진행할 수 있습니다.
+                </p>
+              </Card>
+
               <div className="space-y-2.5">
                 {TRACKS.map((t) => {
                   const on = form.track === t.id;
@@ -716,6 +763,7 @@ export default function Onboarding() {
                 <div className="mt-3 space-y-2 text-[14px]">
                   {[
                     ["신청 서비스", track.short],
+                    ...(form.auth ? [["가입 방식", `${form.auth === "kakao" ? "카카오" : "네이버"} 간편가입 (데모)`]] : []),
                     ...(track.needsRelation
                       ? [["거주 형태", hospital ? "요양병원" : "자택"]]
                       : []),

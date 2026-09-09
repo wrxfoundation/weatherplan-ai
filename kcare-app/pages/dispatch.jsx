@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  ELDER,
   JOBS,
   MOU_HOSPITALS,
   CRM_TIMELINE,
@@ -12,6 +13,8 @@ import {
   ELDER_TAGS,
   TAG_TONE,
 } from "../lib/mock";
+import WelfareList from "../components/WelfareList";
+import { PROFILE_FIELDS, WELFARE_PROFILES, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
 import {
   AI_ASSIGN,
   BRIEFINGS,
@@ -561,6 +564,23 @@ export default function DispatchConsole() {
       id: "brief", level: "med", title: "외출 브리핑 3건 발송",
       meta: "최정자 34점 — 일정 조정 권고 포함", jumpTab: "plan",
     });
+  // 어르신 화면에서 온 부탁 — 도와줘요(즉시 방문) · 해주세요 · 복지혜택 (2026-09-04 시트
+  // 어르신 해주세요 3번: "관제가 먼저 전화로 확인한다고 되어 있으나 관제 대시보드에 없음").
+  // 어르신 화면은 '관제센터에서 확인 전화를 드립니다'라고 약속하므로, 확인 전화를 여기서
+  // 끝내면 그 건이 '확인됨'으로 넘어가 어르신·컨시어지 화면 문구가 같이 바뀐다.
+  (state.requests || [])
+    .filter((r) => r.dir === "fromElder" && r.status === "requested")
+    .forEach((r) =>
+      actions.push({
+        id: `elder-${r.id}`,
+        level: r.urgency === "urgent" ? "high" : "med",
+        title: `${r.type} — ${ELDER.name} (${ELDER.age})`,
+        meta: `어르신 화면 · ${r.detail}`,
+        act: "확인 전화 완료",
+        ticker: ["대응", `${ELDER.name} ${r.type} 확인 전화 완료 — 컨시어지 ${r.assignee} 진행`, "#8FA9CC"],
+        onAct: () => dispatch({ type: "transitionRequest", id: r.id, to: "confirmed", note: "관제 확인 전화 완료 · 컨시어지 진행" }),
+      })
+    );
   const LEVEL_ORDER = { critical: 0, high: 1, med: 2 };
   actions.sort((a, b) => LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level]);
 
@@ -924,6 +944,10 @@ export default function DispatchConsole() {
               보호자가 K-CARE 일정을 '요청'하면 여기서만 캘린더로 올라간다. */}
           <EventApprovals />
 
+          {/* ── 복지혜택 자동 매칭 — 가구별 (2026-09-04 시트 앱 전체 3번) ──
+              관제가 자동으로 찾고, 상세는 이름을 눌러 프로필에서 본다. */}
+          <WelfareBoard onOpen={openProfile} answers={state.welfare?.answers} statuses={state.welfare?.status} />
+
           {/* ── 액션 큐 — 지금 처리할 일. 우선순위순, 클릭 즉시 해당 화면 (고도화) ── */}
           <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
             <div className="flex items-baseline justify-between">
@@ -956,6 +980,7 @@ export default function DispatchConsole() {
                         onClick={() => {
                           setHandled((h) => ({ ...h, [a.id]: true }));
                           if (a.clear) dispatch({ type: "opsPatch", patch: a.clear });
+                          if (a.onAct) a.onAct();
                           push(...a.ticker);
                         }}
                         className="btn-press shrink-0 rounded-[10px] border border-green/40 px-3.5 py-2 text-[13px] font-bold text-green"
@@ -3229,6 +3254,74 @@ function EventApprovals() {
   );
 }
 
+// 복지혜택 자동 매칭 — 가구별 한 줄 (2026-09-04 시트 앱 전체 3번).
+// 판정은 lib/welfare.js (실무진 DB 3 · 06 시트 공식). 소득·수급·주거는 관제가 모르는 값이라
+// 대부분 '추가확인'이다 — 보호자가 앱에서 답하면(state.welfare.answers) 그 자리에서 바뀐다.
+// 데모 가구는 김순자 댁 하나라 답은 그 댁에만 얹는다.
+function WelfareBoard({ onOpen, answers = {}, statuses = {} }) {
+  const rows = Object.keys(WELFARE_PROFILES).map((name) => {
+    const prof = profileFor(name, name === ELDER.name ? answers : {});
+    const m = matchWelfare(prof);
+    const c = welfareCounts(m);
+    const active = m.filter((x) => statuses[x.policy.id] && statuses[x.policy.id].status !== "추천").length;
+    const unknown =
+      PROFILE_FIELDS.filter(([k]) => prof[k] === "미확인").length + (prof.housing === "미확인" ? 1 : 0) + (prof.incomePct == null ? 1 : 0);
+    return { name, age: prof.age, where: prof.sigungu, c, active, unknown };
+  });
+  const totalHigh = rows.reduce((s, r) => s + r.c.high, 0);
+  return (
+    <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="text-[15px] font-bold tracking-[.02em] text-navy">복지혜택 자동 매칭</h2>
+        <span className="font-num text-[12px] text-muted">
+          정책 79건 · 검증 2026-09-04 · 이용 가능성 높음 {totalHigh}건 · 무료 회원 포함
+        </span>
+      </div>
+      <p className="mt-1 text-[12px] leading-[1.7] text-muted">
+        고객 정보로 자동 판정합니다. 보호자가 답하지 않은 항목(소득·수급·주거)은 &lsquo;추가확인&rsquo;으로
+        남습니다 — 이름을 누르면 프로필에서 상세와 진행상태를 봅니다.
+      </p>
+      <div className="mt-3 overflow-x-auto">
+        <table className="w-full min-w-[520px] text-[12px]">
+          <thead>
+            <tr className="text-left text-[11px] text-muted">
+              <th className="py-1.5 font-bold">가구</th>
+              <th className="py-1.5 text-right font-bold">높음</th>
+              <th className="py-1.5 text-right font-bold">추가확인</th>
+              <th className="py-1.5 text-right font-bold">낮음</th>
+              <th className="py-1.5 text-right font-bold">진행 중</th>
+              <th className="py-1.5 text-right font-bold">미확인 항목</th>
+              <th className="py-1.5" />
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.name} className="border-t border-navy/[.06]">
+                <td className="py-2 font-bold text-navy">
+                  {r.name} <span className="font-num text-[11px] font-medium text-muted">{r.age} · {r.where}</span>
+                </td>
+                <td className="py-2 text-right font-num font-bold" style={{ color: "#1E7A5A" }}>{r.c.high}</td>
+                <td className="py-2 text-right font-num font-bold" style={{ color: "#8A5D12" }}>{r.c.check}</td>
+                <td className="py-2 text-right font-num text-muted">{r.c.low}</td>
+                <td className="py-2 text-right font-num font-bold text-navy">{r.active}</td>
+                <td className="py-2 text-right font-num text-muted">{r.unknown}</td>
+                <td className="py-2 text-right">
+                  <button
+                    onClick={() => onOpen(r.name)}
+                    className="btn-press rounded-[8px] border border-navy/15 px-2.5 py-1.5 text-[11px] font-bold text-navy"
+                  >
+                    프로필
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 // 가구 타임라인 칩 — 폭 고정(2~3자 혼재 시 원형처럼 보이지 않게) + 종류별 톤
 const TL_TONE = {
   SOS: { fg: "#C0392B", bg: "rgba(192,57,43,.1)" },
@@ -3260,6 +3353,35 @@ function FloatProfile({ item, pos, onClose, onAction }) {
   const [acted, setActed] = useState(false);
   const [mapOpen, setMapOpen] = useState(false);
   const home = ELDER_HOMES[item.name]; // 어르신 레코드에만 있다
+  // 복지혜택 — 어르신 레코드에만 (2026-09-04 시트 앱 전체 3번). 판정·상태는 lib/welfare.js
+  // 와 state.welfare 에서 오고, 보호자 앱·컨시어지 앱이 같은 값을 본다.
+  const { state, dispatch } = useAppState();
+  const [welfareSent, setWelfareSent] = useState({});
+  const wProfile = item.type === "elder" ? profileFor(item.name, item.name === ELDER.name ? state.welfare?.answers : {}) : null;
+  const wMatches = wProfile ? matchWelfare(wProfile) : null;
+  const wCounts = wMatches ? welfareCounts(wMatches) : null;
+  const sendWelfare = (m) => {
+    setWelfareSent((s) => ({ ...s, [m.policy.id]: true }));
+    dispatch({
+      type: "addRequest",
+      payload: {
+        id: `rq-${Date.now()}`,
+        dir: "fromOps",
+        type: `복지혜택 안내 · ${m.policy.name}`,
+        detail: `${m.policy.summary} — ${m.policy.value}. ${m.verdict} (점수 ${m.score}) · 확인할 것: ${m.checks}. 신청: ${m.policy.apply}`,
+        amount: 0,
+        preferredDate: null,
+        urgency: "normal",
+        assignee: "박지현",
+        photos: [],
+        status: "requested",
+        history: [{ at: Date.now(), status: "requested", note: "관제 자동 매칭 → 보호자 안내" }],
+        proof: null,
+      },
+    });
+    dispatch({ type: "welfareStatus", id: m.policy.id, status: "자격확인", by: "관제" });
+    dispatch({ type: "pushEvent", payload: { kind: "복지", text: `${item.name} 복지혜택 안내 — ${m.policy.name} (${m.verdict})`, color: "#F0D9A8" } });
+  };
   // 담당 주 동행이 이동 중이면 같이 찍는다 — rows 의 "담당" 행에서 이름을 뽑는다
   const leadName = (item.rows || []).find((r) => r[0] === "담당")?.[1]?.split(" (")[0];
   const lead = CONCIERGE_POS[leadName];
@@ -3401,6 +3523,33 @@ function FloatProfile({ item, pos, onClose, onAction }) {
             </span>
             위치 지도 — {home.dong}
           </button>
+        )}
+        {wMatches && (
+          <div className="mt-2.5 border-t border-navy/[.08] pt-2.5">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold tracking-[.1em] text-muted">복지혜택 자동 매칭</span>
+              <span className="ml-auto font-num text-[11px] font-bold">
+                <span style={{ color: "#1E7A5A" }}>높음 {wCounts.high}</span> ·{" "}
+                <span style={{ color: "#8A5D12" }}>확인 {wCounts.check}</span> ·{" "}
+                <span className="text-muted">낮음 {wCounts.low}</span>
+              </span>
+            </div>
+            {WELFARE_PROFILES[item.name]?.basisNote && (
+              <p className="mt-1 text-[11px] leading-[1.5] text-muted">근거 — {WELFARE_PROFILES[item.name].basisNote}</p>
+            )}
+            <div className="mt-2">
+              <WelfareList
+                matches={wMatches}
+                statuses={state.welfare?.status}
+                hideLow
+                pageSize={4}
+                onStatus={(id, s) => dispatch({ type: "welfareStatus", id, status: s, by: "관제" })}
+                onSend={sendWelfare}
+                sendLabel="보호자에게 안내"
+                sent={welfareSent}
+              />
+            </div>
+          </div>
         )}
         {crm && (
           <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[10px] leading-[1.5] text-muted">

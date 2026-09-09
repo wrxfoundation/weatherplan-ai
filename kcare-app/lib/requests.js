@@ -114,7 +114,20 @@ export const SERVICE_MENU = [
   },
   { no: 7, name: "청소 서비스", cat: "생활지원", scope: "매트리스 · 냉장고 정리 · 에어컨 청소", active: false },
   { no: 8, name: "주거 관리 서비스", cat: "생활지원", scope: "전등 · 문고리 교체 등 간단 집수리", active: false },
-  { no: 9, name: "복지 혜택 확인", cat: "생활지원", scope: "정부 지원금 · 혜택 알림", active: false },
+  {
+    // 복지혜택 — 베타부터 연다 (2026-09-04 시트 앱 전체 3번). 고객 정보에 맞는
+    // 나라·지자체 지원을 관제가 자동으로 찾고(lib/welfare.js), 보호자가 신청하거나
+    // 컨시어지가 제안한다. 무료 회원도 같이 쓴다 — 그래서 amount 0.
+    no: 9,
+    name: "복지 혜택 확인",
+    priceLabel: "무료 · 무료 회원도 이용",
+    amount: 0,
+    cat: "생활지원",
+    scope: "나라·지자체 지원 중 받으실 수 있는 것을 찾아 알려드리고 신청을 돕습니다",
+    point: "정책 79건 · 2026-09-04 검증 · 분기마다 재확인",
+    active: true,
+    welfare: true, // 화면이 일반 요청 시트 대신 복지혜택 목록을 연다
+  },
   { no: 10, name: "요양보호사 연결", cat: "전문지원", scope: "주변 재가센터 연결", active: false },
   { no: 11, name: "방문 간호 연결", cat: "건강지원", scope: "주변 재가센터 연결", active: false },
   {

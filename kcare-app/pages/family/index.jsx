@@ -224,10 +224,9 @@ export default function FamilyHome() {
               ))}
             </div>
           )}
-          <p className="mt-3.5 text-[12px] leading-[1.7] text-white/55">{track.home.foot}</p>
-          <p className="mt-1.5 text-[11px] text-white/40">
-            AI가 기록을 요약하고 사람이 검수합니다 (8.4)
-          </p>
+          {/* "숫자를 읽고 판단하는 일은 저희가 합니다…"(track.home.foot)와 "AI가 기록을
+              요약하고 사람이 검수합니다 (8.4)"는 뺐다 (2026-09-04 시트 보호자 홈 1번).
+              데이터(lib/tracks.js foot)는 온보딩·서비스 소개가 계속 쓴다. */}
           {/* 지금 어떤 서비스로 쓰고 있는지 — 트랙이 바뀌면 화면이 바뀌므로 명시한다 */}
           <div className="mt-3.5 flex items-center gap-2 border-t border-white/10 pt-3">
             <span className="text-gold-soft">
@@ -289,6 +288,38 @@ export default function FamilyHome() {
           )}
         </div>
 
+        {/* 안부 음성 남기기 — 오늘 어머니 바로 아래 (2026-09-04 시트 보호자 홈 4번 ·
+            처음엔 첫 화면 아랫부분이었다 2026-08-12 시트 홈 1번). 오늘 상태를 보고 바로
+            한마디 남기는 흐름이라 위로 올렸다. */}
+        <Card className="p-[18px]">
+          <div className="text-[17px] font-black text-navy">안부 음성 남기기</div>
+          <VoiceNote
+            to={honor}
+            onSend={(secs) => {
+              dispatch({ type: "addVoice", payload: { from: "보호자", to: honor, secs, context: "안부" } });
+              dispatch({
+                type: "pushEvent",
+                payload: { kind: "음성", text: `보호자 안부 음성 ${secs}초 — 어르신 화면 가족 탭으로 전달`, color: "#8FE3C0" },
+              });
+            }}
+          />
+          {state.voices.length > 0 && (
+            <div className="mt-3 space-y-1.5 border-t border-navy/[.08] pt-3">
+              {state.voices.slice(0, 3).map((v) => (
+                <div key={v.id} className="flex items-center gap-2 text-[12px]">
+                  <span className="font-num font-bold text-navy">
+                    {new Date(v.at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })}
+                  </span>
+                  <span className="flex-1 text-muted">
+                    {v.from} → {v.to} · {v.secs}초{v.context === "긴급" ? " · 긴급" : ""}
+                  </span>
+                  <span className="font-bold text-green">전달됨</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+
         {/* 담당 컨시어지 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}
         <div className="card-navy rounded-card bg-navy p-[18px] text-white">
           <div className="flex items-center justify-between">
@@ -326,26 +357,17 @@ export default function FamilyHome() {
               </div>
             ))}
           </div>
-          <p className="mt-3 text-[12px] leading-[1.7] text-white/60">{CARE_TEAM.trust}</p>
-          {/* 제휴병원 예약 및 상담 — AI 예약 버튼과 패스트트랙 문구는 2026-08-12 요청으로 삭제.
-              그 옆에 '지금 어디쯤' 추가 (2026-08-31 요청) — 오늘 오시는 컨시어지가
-              어디까지 왔는지 지도로 본다. 보호자가 가장 자주 묻는 것이 이것이다. */}
-          <div className="mt-2 grid grid-cols-2 gap-2">
-            <Link
-              href="/family/hospitals"
-              className="btn-press block rounded-xl border border-white/25 bg-white/[.06] py-3 text-center text-[15px] font-bold text-white/85"
-            >
-              제휴병원 예약
-            </Link>
-            <button
-              onClick={() => setLiveMap(true)}
-              className="btn-press flex items-center justify-center gap-1.5 rounded-xl border py-3 text-center text-[15px] font-bold"
-              style={{ borderColor: "rgba(74,222,128,.45)", background: "rgba(74,222,128,.12)", color: "#8FEBB4" }}
-            >
-              <span aria-hidden className="h-[8px] w-[8px] animate-livePing rounded-full" style={{ background: "#4ADE80" }} />
-              지금 어디쯤
-            </button>
-          </div>
+          {/* "두 분 다 신원조회와 배상책임보험을 마쳤습니다…"(CARE_TEAM.trust)는 뺐다
+              (2026-09-04 시트 보호자 홈 2번). 제휴병원 예약 버튼도 뺐다 (홈 3번 — 예약
+              탭과 중복). '지금 어디쯤'(2026-08-31 요청)만 남아 한 줄을 다 쓴다. */}
+          <button
+            onClick={() => setLiveMap(true)}
+            className="btn-press mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl border py-3 text-center text-[15px] font-bold"
+            style={{ borderColor: "rgba(74,222,128,.45)", background: "rgba(74,222,128,.12)", color: "#8FEBB4" }}
+          >
+            <span aria-hidden className="h-[8px] w-[8px] animate-livePing rounded-full" style={{ background: "#4ADE80" }} />
+            지금 어디쯤 — {liveTeam?.name} 선생님 위치
+          </button>
         </div>
 
 
@@ -568,35 +590,7 @@ export default function FamilyHome() {
         {/* 가족 공동 관리는 마이 탭 '가족 구성원'과 합쳤다 (2026-08-28 시트 홈 6번).
             같은 사람 목록이 두 화면에 있었다 — 관리는 마이에서 한 번만 한다. */}
 
-        {/* 안부 음성 남기기 — 첫 화면 아랫부분 (2026-08-12 시트 홈 1번) */}
-        <Card className="p-[18px]">
-          <div className="text-[17px] font-black text-navy">안부 음성 남기기</div>
-          <VoiceNote
-            to={honor}
-            onSend={(secs) => {
-              dispatch({ type: "addVoice", payload: { from: "보호자", to: honor, secs, context: "안부" } });
-              dispatch({
-                type: "pushEvent",
-                payload: { kind: "음성", text: `보호자 안부 음성 ${secs}초 — 어르신 화면 가족 탭으로 전달`, color: "#8FE3C0" },
-              });
-            }}
-          />
-          {state.voices.length > 0 && (
-            <div className="mt-3 space-y-1.5 border-t border-navy/[.08] pt-3">
-              {state.voices.slice(0, 3).map((v) => (
-                <div key={v.id} className="flex items-center gap-2 text-[12px]">
-                  <span className="font-num font-bold text-navy">
-                    {new Date(v.at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })}
-                  </span>
-                  <span className="flex-1 text-muted">
-                    {v.from} → {v.to} · {v.secs}초{v.context === "긴급" ? " · 긴급" : ""}
-                  </span>
-                  <span className="font-bold text-green">전달됨</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
+        {/* 안부 음성 남기기는 '오늘 어머니' 카드 바로 아래로 옮겼다 (2026-09-04 시트 홈 4번) */}
 
         {/* 시연 컨트롤 — 데모 전용 */}
         <div className="pt-1 text-center">

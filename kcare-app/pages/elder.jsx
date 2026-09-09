@@ -2,15 +2,11 @@ import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
-  AMBIENT_TIPS,
   ASK_DOCTOR,
   ELDER,
   ELDER_NOW,
   ELDER_VISITORS,
   EVENT_KINDS,
-  FIT_WEEK,
-  INDOOR,
-  OUTING,
   TODAY_ME,
   TEACHER,
   TEACHER_DEMO_FILE,
@@ -23,10 +19,12 @@ import {
 import { PRICING, fmtWon } from "../lib/config";
 import { STORE_CATALOG } from "../lib/store";
 import { SERVICE_MENU, SERVICE_PLUS } from "../lib/requests";
-import { MED_PLAN, MED_REGISTRY, MED_STREAK, SUPPLEMENTS, daysLeft, medProgress, needsReorder } from "../lib/meds";
+import { MED_PLAN, MED_STREAK, SUPPLEMENTS, daysLeft, medProgress, needsReorder, slotHour } from "../lib/meds";
+import { VERDICT, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
 import { needsGuardianApproval, useAppState } from "../lib/state";
 import Icon from "../components/icons";
 import Splash from "../components/Splash";
+import ElderHealthReport from "../components/ElderHealthReport";
 
 // 사용자(어르신) 홈 — 핸드오프 06 elder 상세 명세 + REQ-01(우선 날씨) + REQ-06(SOS 오작동 방지)
 // 구조: 헤더(날짜·인사)·푸터(SOS·전화·탭) 고정, 카드 스택만 스크롤 (06 §1).
@@ -80,31 +78,22 @@ const ASK_TILES = [
   { no: 14, label: "자녀 동행", sub: "손주 등하원", icon: "users" },
 ];
 
-// GNB — 전체 요청(2026-08-28 시트): 하단 아이콘 2개, 도와줘요 · 가족.
-// 오늘/건강/해주세요/스토어 진입은 홈의 사분면 타일이 맡고, 홈 복귀는
-// 홈 복귀는 GNB '첫화면'이 맡는다 (2026-08-29 요청으로 도와줘요 오른쪽에 되살렸다).
-// 도와줘요는 화면 이동이 아니라 행동(즉시방문요청 → 관제 확인 전화)이라
-// action 으로 가른다. 옛 이름: 지금 와 주세요 → (잠시 바로연락) → 도와줘요.
+// GNB — 2026-09-04 시트 어르신 전체 7·8번: 하단은 마음사서함 · 홈 · 가족 셋뿐이다.
+// 도와줘요는 GNB 에서 빠져 홈 인사 옆(옛 '메시지' 버튼 자리)으로 갔다 — 화면 이동이
+// 아니라 행동(즉시방문요청 → 관제 확인 전화)이라 탭 사이에 있으면 눌러도 화면이 안
+// 바뀌어 헷갈렸다. '선생님'은 '마음사서함'으로 이름을 바꿨다 (8번).
+// 오늘/건강/해주세요/스토어 진입은 홈의 사분면 타일이 맡는다.
 const TABS = [
-  { key: "help", label: "도와줘요", glyph: "door", action: true },
-  { key: "home", label: "첫화면", glyph: "home" },
-  { key: "teacher", label: "선생님", glyph: "chat" },
+  { key: "teacher", label: "마음사서함", glyph: "chat" },
+  { key: "home", label: "홈", glyph: "home" },
   { key: "family", label: "가족", glyph: "users" },
 ];
 
 // 선생님 메시지함 보관 기간 — 24시간이 지나면 목록에서 사라진다 (2026-08-28 요청).
 const MSG_TTL_MS = 24 * 60 * 60 * 1000;
 
-// "23시간 뒤에 지워져요" — 남은 시간을 어르신 말로. 분 단위까지 세지 않는다
-// (숫자가 자꾸 바뀌면 '지워진다'는 사실보다 초읽기가 먼저 읽힌다).
-function ttlLabel(at, nowMs) {
-  const left = at + MSG_TTL_MS - nowMs;
-  if (left <= 0) return "곧 지워져요";
-  const h = Math.floor(left / 3600000);
-  if (h >= 1) return `${h}시간 뒤에 지워져요`;
-  const m = Math.max(1, Math.round(left / 60000));
-  return `${m}분 뒤에 지워져요`;
-}
+// "23시간 뒤에 지워져요" 남은 시간 표기(ttlLabel)는 뺐다 — 기능 설명 삭제
+// (2026-09-04 시트 마음사서함 4번). 24시간이 지나면 목록에서 사라지는 것은 그대로다.
 
 // 홈 사분면 — 상세 화면 진입 타일 (2×2). 2026-08-28 시안 반영:
 // 흰 카드 + 라인 아이콘 → 분류별 옅은 색 바탕 + 그림 아이콘, 글자는 왼쪽 정렬.
@@ -147,12 +136,17 @@ function spokenClock(hhmm) {
 
 // 같은 시간대의 처방약과 영양제를 한 줄로 합친다 (참고 시안: "아산병원약 · 비타민 · 유산균").
 // 어르신에게는 '지금 삼킬 것'이 하나의 묶음이지 처방/영양제로 갈리지 않는다.
+// 처방약은 성분명이 아니라 어르신용 이름(elderLabel · "아산병원약")으로 부른다
+// (2026-09-04 시트 오늘 3번 "약 성분 삭제").
 function medDoseNames(slot) {
   const plan = MED_PLAN.find((d) => d.slot === slot);
-  const rx = (plan?.items || []).map((i) => i.name.replace(/\s*\([^)]*\)\s*$/, ""));
+  const rx = plan?.elderLabel ? [plan.elderLabel] : (plan?.items || []).map((i) => stripIngredient(i.name));
   const sup = SUPPLEMENTS.filter((x) => x.slot === slot).map((x) => x.name.split(" ")[0]);
   return [...rx, ...sup].join(" · ");
 }
+
+// "혈압약 (아모잘탄)" → "혈압약" — 괄호 안 성분명은 어르신 화면에서 뺀다 (건강 2번)
+const stripIngredient = (name) => name.replace(/\s*\([^)]*\)\s*$/, "");
 
 function spokenTime(ts) {
   const d = new Date(ts);
@@ -291,10 +285,14 @@ export default function ElderHome() {
   const setTab = (k) => {
     setTabRaw(k);
     scrollRef.current?.scrollTo({ top: 0 });
+    // 오늘 탭을 열면 "새 일정" 점이 꺼진다 — 그때까지의 일정 수를 기억한다 (시트 전체 9번)
+    if (k === "today") dispatch({ type: "elderPatch", patch: { todaySeen: state.events.length } });
   };
+  const [helpPop, setHelpPop] = useState(false); // 도와줘요 안내 팝업 (시트 전체 6번)
+  const [famOpen, setFamOpen] = useState(null); // 가족 탭 — 펼친 가족 (시트 가족 2번)
+  const [welfareOpen, setWelfareOpen] = useState(false); // 해주세요 — 복지혜택 시트 (앱 전체 3번)
   const [sosPhase, setSosPhase] = useState("idle"); // idle | confirm | sent
   const [calling, setCalling] = useState(false);
-  const [voiceReplied, setVoiceReplied] = useState(false);
   const [eventSheet, setEventSheet] = useState(false); // 간단등록 (REQ-02 권한표)
   const [speaking, setSpeaking] = useState(false); // 일정 음성 안내 (접근성)
 
@@ -325,14 +323,10 @@ export default function ElderHome() {
   const [plusOpen, setPlusOpen] = useState(null); // 해주세요 — 집 고칠 일 펼친 항목 (제목만 → 탭하면 세부)
   const [calOpen, setCalOpen] = useState(false); // 오늘 탭 — 이번 달 달력
   // visitorOpen(오늘 찾아뵙는 분 펼침)은 그 카드를 오늘 일정 안으로 넣으면서 없앴다 (2026-08-28)
-  const [outingOpen, setOutingOpen] = useState(false); // 병원 가는 길 세부
+  // 병원 가는 길 · 지금 집 안 카드는 건강 탭에서 뺐다 (2026-09-04 시트 건강 3번) — 상태도 함께 뺐다.
   const [askDoctorOpen, setAskDoctorOpen] = useState(false); // 오늘 여쭤볼 것 세부
   const [supOpen, setSupOpen] = useState(false); // 드시는 건강식품 세부
-  // 지금 집 안 — 경고가 있는 날은 펼친 채로 시작한다 (중요한 건 접지 않는다)
-  const [indoorOpen, setIndoorOpen] = useState(() => INDOOR.hot.level !== "ok");
   const [calSel, setCalSel] = useState(new Date().getDate()); // 고른 날짜 (이번 달 기준)
-  const [voiceTo, setVoiceTo] = useState(null); // 음성 메시지 수신자 (null이면 미선택)
-  const [voiceSent, setVoiceSent] = useState([]); // 보낸 목소리 목록 (최근 순)
   const [askSel, setAskSel] = useState(null); // '해주세요' 선택 항목
   const [askSent, setAskSent] = useState(null); // { name, mode, amount }
   const callTimer = useRef(null);
@@ -341,6 +335,10 @@ export default function ElderHome() {
   // 로컬 useState 로 두면 시연 중 새로고침 한 번에 복약 체크가 사라지고,
   // 이미 보낸 요청을 다시 보낼 수 있게 된다.
   const { voicePlayed, askAdded, medSlots, reordered, visitAsked, askSpoken } = state.elder;
+  const msgPlayed = state.elder.msgPlayed || {};
+  const todaySeen = state.elder.todaySeen || 0;
+  // 홈 '오늘' 타일의 점 — 마지막으로 오늘 탭을 본 뒤 일정이 늘었으면 켜진다 (시트 전체 9번)
+  const newSchedule = state.events.length > todaySeen;
 
   // ── 해주세요: 결제권한(REQ-07)을 어르신 말로 옮긴다 ──
   // 결제 모드는 온보딩에서 정해진 값을 그대로 따른다. 여기서 바꾸지 않는다.
@@ -435,8 +433,6 @@ export default function ElderHome() {
   // 건기식 — 용량이 부족하거나 유통기한이 다가온 것만 위로 올린다
   const supplements = SUPPLEMENTS.map((s) => ({ ...s, alert: needsReorder(s) }));
   const supAlerts = supplements.filter((s) => s.alert);
-
-  const indoor = INDOOR.hot;
   // 세대공감 — 옆으로 밀어 보는 5장 (2026-08-28 요청 "하루 1개 말고 롤링 5개").
   // 첫 장이 오늘 것이고 날짜가 바뀌면 목록 전체가 한 칸 돈다.
   const genTopics = rollingTopics(5, now);
@@ -513,17 +509,88 @@ export default function ElderHome() {
   };
 
   // 메시지함 목록 — 씨앗(TEACHER_INBOX)과 이번에 보낸 것을 합치고 24시간이 지난
-  // 것은 걸러 낸다. 최신이 위.
+  // 것은 걸러 낸다. 오래된 것이 위, 최신이 아래 — 카톡처럼 (2026-09-04 시트 마음사서함 2번).
   const nowMs = now.getTime();
   const teacherMsgs = [
     ...sentMsgs,
     ...TEACHER_INBOX.map((m) => ({ ...m, at: nowMs - m.minsAgo * 60000 })),
   ]
     .filter((m) => nowMs - m.at < MSG_TTL_MS)
-    .sort((a, b) => b.at - a.at);
-  const [playedMsg, setPlayedMsg] = useState({}); // id → 들었음
+    .sort((a, b) => a.at - b.at);
+  // 안 들은 받은 메시지 — 홈 배너와 GNB 점이 이걸 본다 (시트 전체 5번)
+  const unreadMsgs = teacherMsgs.filter((m) => m.dir === "in" && !msgPlayed[m.id]);
+  const markPlayed = (id) => dispatch({ type: "elderMark", key: "msgPlayed", id });
 
-  // 즉시 방문 요청 — GNB '도와줘요' 버튼이 부른다 (옛 '지금 와 주세요' 플로팅 버튼).
+  // 복용 시간이 지나면 알람 팝업이 저절로 뜬다 (2026-09-04 시트 전체 2번 "약 복용은 일정
+  // 알람에서 빼고 약 미션 팝업으로 복용 시간에 맞추어"). 하루에 때마다 한 번만 —
+  // 닫았는데 1분마다 다시 뜨면 알람이 아니라 괴롭힘이다. 앱을 오후에 처음 열면
+  // 지난 때(아침·점심) 중 첫 것 하나만 띄우고 나머지는 띄운 것으로 친다.
+  // 다른 창(녹음·도와줘요·부탁 시트)이 떠 있으면 그 창을 닫을 때까지 기다린다.
+  const medPopShown = state.elder.medPopShown || { date: "", slots: {} };
+  const otherModal = !!medPop || concMsg != null || helpPop || !!askSel || eventSheet || welfareOpen;
+  useEffect(() => {
+    const check = () => {
+      if (otherModal) return;
+      const d = new Date();
+      const today = d.toDateString();
+      const shown = medPopShown.date === today ? medPopShown.slots || {} : {};
+      const h = d.getHours() + d.getMinutes() / 60;
+      const passed = MED_PLAN.filter((s) => h >= slotHour(s.time));
+      const due = passed.find((s) => !medSlots[s.slot] && !shown[s.slot]);
+      if (!due) return;
+      setMedPop(due.slot);
+      const slots = { ...shown };
+      passed.forEach((s) => {
+        slots[s.slot] = true;
+      });
+      dispatch({ type: "elderPatch", patch: { medPopShown: { date: today, slots } } });
+    };
+    check();
+    const t = setInterval(check, 60000);
+    return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [otherModal, medSlots, medPopShown.date, medPopShown.slots]);
+
+  // 가족 탭 스레드 — 이름을 누르면 그 사람과 주고받은 목소리가 시간순으로 펼쳐진다
+  // (2026-09-04 시트 가족 2번). 보낸 것은 state.voices(새로고침을 견딘다), 받은 것은
+  // 보호자 앱에서 남긴 안부 음성(from "보호자" → 주 보호자 아들 민수에게 붙인다)과
+  // 씨앗 한 통(VOICE_MSG). '가족 모두'에게 보낸 것은 각 사람 스레드에도 보인다.
+  const elderVoices = state.voices || [];
+  const threadFor = (v) => {
+    const out = elderVoices
+      .filter((x) => x.from === `${ELDER.name} 님` && (x.to === v.name || (v.id !== "all" && x.to === "가족 모두")))
+      .map((x) => ({ id: x.id, dir: "out", at: x.at, text: x.to === "가족 모두" ? `가족 모두에게 · 목소리 ${x.secs}초` : `목소리 ${x.secs}초`, sec: x.secs }));
+    const incoming = [];
+    if (v.id === "v1") {
+      const t8 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 10).getTime();
+      incoming.push({
+        id: "seed-minsu",
+        dir: "in",
+        at: Math.min(t8, nowMs),
+        text: voicePlayed ? `"${VOICE_MSG.transcript}"` : `목소리 메시지 ${VOICE_MSG.durationSec}초`,
+        sec: VOICE_MSG.durationSec,
+        played: voicePlayed,
+        seed: true,
+      });
+      elderVoices
+        .filter((x) => x.from === "보호자")
+        .forEach((x) =>
+          incoming.push({ id: x.id, dir: "in", at: x.at, text: `목소리 ${x.secs}초${x.context === "긴급" ? " · 급한 안부" : ""}`, sec: x.secs, played: !!msgPlayed[x.id] })
+        );
+    }
+    return [...out, ...incoming].sort((a, b) => a.at - b.at);
+  };
+  const playFamily = (m) => {
+    if (m.seed) {
+      if (voicePlayed) return;
+      dispatch({ type: "elderPatch", patch: { voicePlayed: true } });
+      dispatch({ type: "pushEvent", payload: { kind: "메시지", text: "어르신이 아들 음성 메시지 청취 완료", color: "#8FA9CC" } });
+      return;
+    }
+    markPlayed(m.id);
+  };
+
+  // 즉시 방문 요청 — 홈 인사 옆 '도와줘요' 버튼이 부른다 (옛 '지금 와 주세요' 플로팅 버튼).
   // 요청이 곧 방문은 아니다 — 관제가 먼저 전화로 확인하고 배차한다 (시트 어르신 전체 2번).
   const askVisit = () => {
     if (visitAsked) return;
@@ -550,6 +617,18 @@ export default function ElderHome() {
       payload: { kind: "방문", text: `${ELDER.name}(${ELDER.age}) 즉시 방문 요청 · 관제 확인 전화 발신`, color: "#B08D57" },
     });
   };
+  // 도와줘요 — 누르면 요청이 가고, 팝업으로 "관제센터에서 고객님에게 연락이 갑니다"를
+  // 보여 준다 (시트 전체 6번). 두 번 눌러도 요청은 한 번만 간다 (visitAsked).
+  const askHelp = () => {
+    askVisit();
+    setHelpPop(true);
+  };
+
+  // 복지혜택 — 이 댁에 맞는 것 (앱 전체 3번). 보호자가 답한 것(state.welfare.answers)이
+  // 얹혀서, 보호자가 확인할수록 '받으실 수 있어요'가 늘어난다.
+  const welfareMatches = matchWelfare(profileFor(state.onboarding?.elderName || ELDER.name, state.welfare?.answers));
+  const welfareN = welfareCounts(welfareMatches);
+  const welfareAsked = (state.requests || []).some((r) => r.dir === "fromElder" && r.type === "복지혜택 안내 부탁");
 
   return (
     <>
@@ -671,6 +750,41 @@ export default function ElderHome() {
         </div>
       )}
 
+      {/* ── 도와줘요 안내 팝업 (2026-09-04 시트 전체 6번) ──
+          문구는 시트 그대로 한 줄. 요청은 이미 갔고(askHelp), 여기서는 알려 드리기만 한다. */}
+      {helpPop && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(8,23,45,.72)] px-6">
+          <div
+            className="w-full max-w-[360px] rounded-[26px] bg-white px-6 pb-6 pt-8 text-center"
+            style={{ boxShadow: "0 30px 60px -20px rgba(8,23,45,.6)" }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="도와줘요"
+          >
+            <span
+              aria-hidden
+              className="mx-auto flex h-[92px] w-[92px] items-center justify-center rounded-full"
+              style={{ background: "rgba(192,57,43,.1)", color: "#C0392B" }}
+            >
+              <Icon name="bell" size={40} strokeWidth={2} />
+            </span>
+            <p className="mt-5 text-[26px] font-black leading-[1.35] text-navy">
+              관제센터에서
+              <br />
+              고객님에게 연락이 갑니다.
+            </p>
+            <p className="mt-2 text-[18px] leading-[1.5] text-muted">전화를 받으실 수 있게 곁에 두세요.</p>
+            <button
+              onClick={() => setHelpPop(false)}
+              className="btn-press mt-6 w-full rounded-[18px] py-[19px] text-[21px] font-bold text-white"
+              style={{ background: "#0A1F3C" }}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 보낸 직후 — 어디로 갔는지 한 번 확인해 드리고 닫는다 */}
       {concMsg === "sent" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(8,23,45,.72)] px-6">
@@ -691,8 +805,6 @@ export default function ElderHome() {
             <p className="mt-5 text-[28px] font-black leading-[1.25] text-navy">보냈습니다</p>
             <p className="mt-1.5 text-[18px] leading-[1.55] text-muted">
               {TEACHER.name} 선생님이 들으시면 답을 주십니다.
-              <br />
-              보내신 것은 <b>선생님</b> 화면에 남아 있습니다.
             </p>
             <button
               onClick={() => setConcMsg(null)}
@@ -720,7 +832,11 @@ export default function ElderHome() {
             }`}
           >
             {/* 인사 블록 — 스크롤 첫 요소 (모든 탭 공통, order -10).
-                탭 전환 시 스크롤이 맨 위로 돌아오므로(setTab) 인사도 늘 다시 보인다. */}
+                탭 전환 시 스크롤이 맨 위로 돌아오므로(setTab) 인사도 늘 다시 보인다.
+                2026-09-04 시트·시안대로 다시 짰다: 날짜 옆 오른쪽 위에 '도와줘요',
+                그 아래 인사, 홈에서는 인사 밑에 선생님 메시지 배너. 인사 옆 초록
+                '메시지' 버튼(전체 1번)과 상세 탭의 '홈으로' 버튼(4번)은 뺐다 — 보내는
+                길은 마음사서함 탭, 돌아오는 길은 GNB '홈'이 맡는다. */}
             <div className="shrink-0" style={{ order: -10 }}>
               <div className="flex items-center justify-between pt-2">
                 <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
@@ -730,79 +846,90 @@ export default function ElderHome() {
                   데모 홈
                 </Link>
               </div>
-              {/* 상세 화면에서 돌아오는 길 — GNB 에 홈 버튼이 없으므로(시트: 하단
-                  아이콘 2개) 여기가 유일한 복귀 동선이다. 모든 상세 탭 공통. */}
-              {tab !== "home" && (
+              <div className="mt-0.5 flex items-start justify-between gap-3">
+                <div className="min-w-0 pt-1">
+                  <div className="text-[19px] font-medium text-muted">{dateLong}</div>
+                  {tab === "home" && (
+                    <p className="mt-0.5 text-[18px] leading-[1.4] text-muted">오늘도 편안한 하루 되세요</p>
+                  )}
+                </div>
+                {/* 도와줘요 — 오른쪽 위 (시트 전체 7번 · 시안). 빨강은 위험 신호 전용인데
+                    도와줘요가 바로 그것이라 옅은 빨강 바탕을 쓴다. 요청 뒤에는 초록 '요청됨'. */}
                 <button
-                  onClick={() => setTab("home")}
-                  className="btn-press mt-3 inline-flex items-center gap-1.5 rounded-[14px] px-4 py-2.5 text-[18px] font-bold text-navy"
-                  style={QUIET_BG}
-                >
-                  <span aria-hidden className="rotate-90" style={{ color: "#B08D57" }}>
-                    <Icon name="chev" size={20} strokeWidth={2} />
-                  </span>
-                  홈으로
-                </button>
-              )}
-              <div className="mt-0.5 text-[19px] font-medium text-muted">{dateLong}</div>
-              {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번).
-                  성함 옆 원형 버튼 — 컨시어지에게 음성 메시지 (전체 요청 2번).
-                  누르면 녹음, 다시 누르면 보낸다 (가족 목소리 보내기와 같은 토글 —
-                  꾹 누르기는 손 떨림에 끊긴다). */}
-              <div className="flex items-end justify-between gap-3">
-                <h1 className="min-w-0 flex-1 text-[27px] font-black leading-[1.3] text-navy">
-                  {name} 님,
-                  <br />
-                  {greetLine}
-                </h1>
-                <button
-                  onClick={openConcMsg}
-                  aria-label={`${TEACHER.name} 선생님께 목소리 메시지 보내기`}
-                  className="btn-press flex h-[70px] w-[70px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-full text-center text-white"
-                  style={{ background: "#1E7A5A", boxShadow: "0 10px 22px -12px rgba(30,122,90,.85)" }}
+                  onClick={askHelp}
+                  aria-label={visitAsked ? "방문 요청을 보냈습니다 — 관제 전화 대기" : "도와줘요 — 즉시 방문 요청"}
+                  className="btn-press flex h-[66px] w-[66px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-[18px]"
+                  style={
+                    visitAsked
+                      ? { background: "rgba(30,122,90,.12)", color: "#1E7A5A" }
+                      : { background: "rgba(192,57,43,.11)", color: "#C0392B", boxShadow: "inset 0 0 0 1px rgba(192,57,43,.22)" }
+                  }
                 >
                   <span aria-hidden>
-                    <Icon name="mic" size={24} strokeWidth={2} />
+                    <Icon name={visitAsked ? "clock" : "bell"} size={24} strokeWidth={2} />
                   </span>
-                  <span className="text-[15px] font-bold leading-[1.15]">메시지</span>
+                  <span className="text-[14px] font-bold leading-[1.15]">{visitAsked ? "요청됨" : "도와줘요"}</span>
                 </button>
               </div>
-              {/* 하루 인사 — 홈에서만 (화이트보드 시안: 인사말 옆 "뭐하세요?").
-                  묻는 말과 시키는 말을 줄로 나눈다 (2026-08-28 요청) — 자동 줄바꿈에
-                  맡기면 "…아래에서 골라 / 주세요."처럼 끊겨 읽는 흐름이 깨진다. */}
-              {tab === "home" && (
-                <p className="mt-1 text-[20px] leading-[1.4] text-muted">오늘도 편안한 하루 되세요</p>
-              )}
-              {/* 다음 일정 — 한 줄 띠배너 2개 (2026-08-28 신설 → 08-29 "1개는 허전").
-                  카루셀은 첫 화면을 복잡하게 만들어 뺐지만, 다음에 무엇이 있는지는
-                  줄로 알려 드린다. 누르면 오늘 탭에서 자세히 본다. 인사 블록 안에
-                  두는 이유: 바깥에 두면 여백 배분(space-between)이 나뉘어 배너만 뜬다. */}
-              {tab === "home" && upcoming.slice(0, 2).map((e, i) => (
-                <button
-                  key={e.id}
-                  onClick={() => setTab("today")}
-                  className={`btn-press flex w-full items-center gap-2 rounded-[16px] px-3.5 py-3 text-left ${i === 0 ? "mt-3" : "mt-2"}`}
-                  style={{ background: "rgba(176,141,87,.13)", boxShadow: "inset 0 0 0 1px rgba(176,141,87,.28)" }}
-                >
-                  <span aria-hidden className="shrink-0" style={{ color: "#8A5D12" }}>
-                    <Icon name="clock" size={22} strokeWidth={2} />
-                  </span>
-                  <span className="min-w-0 flex-1 truncate text-[19px] font-bold text-navy">
-                    <span style={{ color: "#8A5D12" }}>
-                      {shortDay(e.at, now)} {spokenTime(e.at)}
-                    </span>{" "}
-                    {/* 한 줄에 들어가게 제목을 다듬는다. "K-CARE 안심방문 (월 1회)"를
-                        그대로 쓰면 360px 에서 "K-CA…"로 잘려 무슨 일정인지 알 수 없다.
-                        - 꼬리 괄호 제거: 괄호 안 내용은 오늘 탭 목록에 그대로 있다
-                        - 앞의 앱 이름 제거: 우리 앱 안에서 우리 이름은 알려 주는 게 없다
-                        그래도 긴 제목은 truncate 로 잘리지만, 앞의 날짜·시각은 남는다. */}
-                    {e.title.replace(/\s*\([^)]*\)\s*$/, "").replace(/^K-CARE\s+/, "")}
-                  </span>
-                  <span aria-hidden className="-rotate-90 shrink-0" style={{ color: "#8A5D12" }}>
-                    <Icon name="chev" size={20} strokeWidth={2} />
-                  </span>
-                </button>
-              ))}
+              {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번). */}
+              <h1 className="mt-1.5 text-[27px] font-black leading-[1.3] text-navy">
+                {name} 님,
+                <br />
+                {greetLine}
+              </h1>
+              {/* 선생님 메시지 배너 — 홈에서만, 안 들은 메시지가 있을 때 (시트 전체 5번
+                  "메시지가 오면 알 수 있게 표시" · 시안의 남색 띠). 누르면 마음사서함.
+                  안 들은 것이 없으면 그 자리에 다음 일정 한 줄을 둔다 — 첫 화면에 배너
+                  자리가 비지 않게. 일정이 새로 생긴 것은 '오늘' 타일의 점이 따로 알린다. */}
+              {tab === "home" &&
+                (unreadMsgs.length > 0 ? (
+                  <button
+                    onClick={() => setTab("teacher")}
+                    className="btn-press mt-3 flex w-full items-center gap-3 rounded-[18px] px-4 py-3.5 text-left text-white"
+                    style={{ background: "#0A1F3C", boxShadow: "0 16px 30px -22px rgba(10,31,60,.9)" }}
+                  >
+                    <span
+                      aria-hidden
+                      className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full text-[16px] font-bold"
+                      style={{ background: "#E8DFCB", color: "#7A5C28" }}
+                    >
+                      {TEACHER.name.slice(1)}
+                    </span>
+                    <span className="min-w-0 flex-1 text-[19px] font-bold leading-[1.35]">
+                      {TEACHER.name} 선생님이
+                      <br />
+                      마음을 보냈어요
+                    </span>
+                    <span
+                      aria-hidden
+                      className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full"
+                      style={{ background: "#B08D57", color: "#0A1F3C" }}
+                    >
+                      <Icon name="play" size={20} strokeWidth={2} />
+                    </span>
+                  </button>
+                ) : (
+                  next && (
+                    <button
+                      onClick={() => setTab("today")}
+                      className="btn-press mt-3 flex w-full items-center gap-2 rounded-[16px] px-3.5 py-3 text-left"
+                      style={{ background: "rgba(176,141,87,.13)", boxShadow: "inset 0 0 0 1px rgba(176,141,87,.28)" }}
+                    >
+                      <span aria-hidden className="shrink-0" style={{ color: "#8A5D12" }}>
+                        <Icon name="clock" size={22} strokeWidth={2} />
+                      </span>
+                      <span className="min-w-0 flex-1 truncate text-[19px] font-bold text-navy">
+                        <span style={{ color: "#8A5D12" }}>
+                          {shortDay(next.at, now)} {spokenTime(next.at)}
+                        </span>{" "}
+                        {next.title.replace(/\s*\([^)]*\)\s*$/, "").replace(/^K-CARE\s+/, "")}
+                      </span>
+                      <span aria-hidden className="-rotate-90 shrink-0" style={{ color: "#8A5D12" }}>
+                        <Icon name="chev" size={20} strokeWidth={2} />
+                      </span>
+                    </button>
+                  )
+                ))}
             </div>
 
             {/* ══ 홈 탭 — 화이트보드 시안(2026-08-28): 나열식 대신 허브.
@@ -821,9 +948,19 @@ export default function ElderHome() {
                 <button
                   key={t.key}
                   onClick={() => setTab(t.key)}
-                  className="elder-tile btn-press flex flex-col items-start justify-between rounded-[22px] p-4 text-left"
+                  aria-label={t.key === "today" && newSchedule ? "오늘 — 새 일정이 있습니다" : undefined}
+                  className="elder-tile btn-press relative flex flex-col items-start justify-between rounded-[22px] p-4 text-left"
                   style={{ background: t.bg, boxShadow: "inset 0 0 0 1px rgba(10,31,60,.07)" }}
                 >
+                  {/* 새 일정 점 — 오늘 타일 오른쪽 위 (시트 전체 9번 · 시안의 파란 점).
+                      빨강은 SOS 전용이라 청색이다. 오늘 탭을 열면 꺼진다. */}
+                  {t.key === "today" && newSchedule && (
+                    <span
+                      aria-hidden
+                      className="absolute right-4 top-4 h-[14px] w-[14px] rounded-full"
+                      style={{ background: "#3B5C8A", boxShadow: "0 0 0 3px #EAF0F7" }}
+                    />
+                  )}
                   {/* 아이콘 파일만 갈아 끼우면 그림이 바뀐다 (public/tiles/) */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={`/tiles/${t.key}.svg`} alt="" aria-hidden width="56" height="56" className="elder-tile-img" />
@@ -920,10 +1057,13 @@ export default function ElderHome() {
                   <div className="mt-[2px] text-[18px] text-white/[.82]">{TEACHER.role}</div>
                 </div>
               </div>
-              {/* 홈 인사 옆 '메시지' 버튼과 같은 창을 연다 — 보내는 길은 하나뿐이다 */}
+              {/* 시트 마음사서함 1번 — 보내기 버튼 위 한 줄 */}
+              <p className="mt-4 text-[19px] font-bold leading-[1.45] text-white/[.92]">
+                선생님과 하루의 일상을 나눠보아요
+              </p>
               <button
                 onClick={openConcMsg}
-                className="btn-press mt-4 flex w-full items-center justify-center gap-2 rounded-[18px] py-[19px] text-[20px] font-bold text-white"
+                className="btn-press mt-2.5 flex w-full items-center justify-center gap-2 rounded-[18px] py-[19px] text-[20px] font-bold text-white"
                 style={{ background: "#1E7A5A" }}
               >
                 <span aria-hidden>
@@ -933,76 +1073,63 @@ export default function ElderHome() {
               </button>
             </ElderCard>
 
+            {/* 주고받은 목소리 — 카톡처럼 (2026-09-04 시트 마음사서함 2~4번).
+                받은 것은 왼쪽 옅은 말풍선, 보낸 것은 오른쪽 남색. 말풍선 옆 스피커를
+                누르면 듣고, 받은 것에는 내려받기가 하나 더 붙는다. 기능 설명 문단은
+                뺐다 — '24시간 보관'은 제목 옆 두 마디로만 남긴다. */}
             <ElderCard show={tab === "teacher"} order={1} style={LIGHT_CARD}>
-              <CardHead title="주고받은 목소리" right={`${teacherMsgs.length}개`} icon="mic" />
-              {/* 24시간 보관 원칙을 목록 맨 위에서 한 번 말한다 — 아래 각 줄에도
-                  남은 시간이 붙지만, '왜 사라지는지'는 여기서만 설명한다. */}
-              <div className="mt-2.5 rounded-[14px] px-4 py-3" style={{ background: "rgba(10,31,60,.06)" }}>
-                <p className="text-[18px] leading-[1.55] text-ink">
-                  주고받은 목소리는 <b>24시간이 지나면 저절로 지워집니다.</b> 남겨 두고 싶은 것은
-                  내려받기를 누르시면 휴대폰에 저장됩니다.
-                </p>
-              </div>
-
+              <CardHead title="주고받은 목소리" right="24시간 보관" icon="mic" />
               {teacherMsgs.length === 0 ? (
-                <p className="mt-4 text-[19px] leading-[1.6] text-muted">
-                  아직 주고받은 목소리가 없습니다. 위 <b>목소리 보내기</b>를 누르고 말씀하세요.
-                </p>
+                <p className="mt-3 text-[19px] leading-[1.6] text-muted">아직 주고받은 목소리가 없습니다.</p>
               ) : (
-                <div className="mt-3 flex flex-col gap-2.5">
+                <div className="mt-3 flex flex-col gap-3">
                   {teacherMsgs.map((m) => {
                     const mine = m.dir === "out";
-                    return (
-                      <div
-                        key={m.id}
-                        style={
-                          mine
-                            ? { ...SUB_CARD, background: "rgba(176,141,87,.11)" }
-                            : SUB_CARD
-                        }
+                    const heard = !!msgPlayed[m.id];
+                    const speaker = (
+                      <button
+                        onClick={() => markPlayed(m.id)}
+                        aria-label={heard ? "다시 듣기" : "듣기"}
+                        className="btn-press flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full"
+                        style={heard ? { background: "rgba(10,31,60,.06)", color: "#5C5A54" } : { background: "rgba(176,141,87,.18)", color: "#8A5D12" }}
                       >
-                        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                          <span className="text-[19px] font-bold" style={{ color: mine ? "#8A5D12" : "#0A1F3C" }}>
-                            {mine ? "내가 보낸 것" : `${TEACHER.name} 선생님`}
-                          </span>
-                          <span className="text-[18px] text-muted">
-                            {isToday(m.at) ? "오늘" : spokenDay(m.at)} {spokenTime(m.at)}
-                          </span>
+                        <Icon name="speaker" size={24} strokeWidth={2} />
+                      </button>
+                    );
+                    return (
+                      <div key={m.id} className={`flex items-end gap-2 ${mine ? "justify-end" : "justify-start"}`}>
+                        {mine && speaker}
+                        <div
+                          className="max-w-[76%] rounded-[20px] px-4 py-3"
+                          style={
+                            mine
+                              ? { background: "#0A1F3C", color: "#FFFFFF", borderBottomRightRadius: 6 }
+                              : { background: "#F3EEE2", color: "#40413F", borderBottomLeftRadius: 6 }
+                          }
+                        >
+                          <p className="text-[19px] leading-[1.5]">{m.text}</p>
+                          <div className="mt-1 font-num text-[15px]" style={{ color: mine ? "rgba(255,255,255,.7)" : "#5C5A54" }}>
+                            {isToday(m.at) ? "" : `${spokenDay(m.at)} `}
+                            {spokenTime(m.at)} · {m.durationSec}초
+                          </div>
                         </div>
-                        <p className="mt-1.5 text-[19px] leading-[1.55] text-ink">{m.text}</p>
-                        <div className="mt-1 text-[18px] text-muted">
-                          {m.durationSec}초 · {ttlLabel(m.at, nowMs)}
-                        </div>
-                        <div className="mt-2.5 flex gap-2">
-                          <button
-                            onClick={() => setPlayedMsg((p) => ({ ...p, [m.id]: true }))}
-                            className="btn-press flex flex-1 items-center justify-center gap-1.5 rounded-[14px] px-3 py-3 text-[18px] font-bold text-navy"
-                            style={QUIET_BG}
-                          >
-                            <span aria-hidden style={{ color: "#B08D57" }}>
-                              <Icon name="speaker" size={20} strokeWidth={2} />
-                            </span>
-                            {playedMsg[m.id] ? "다시 듣기" : "듣기"}
-                          </button>
-                          {/* 내려받기는 받은 메시지에만 — 보낸 것은 어르신이 이미
-                              말씀하신 것이라 되돌려 받을 원본이 없다.
-                              파일명은 ASCII 로 둔다: 한글 download 속성은 크롬이
-                              통째로 버리고 확장자 없는 'download' 로 저장해서
-                              (실측) 어느 앱으로도 열리지 않는 파일이 된다. */}
-                          {!mine && (
+                        {!mine && (
+                          <div className="flex shrink-0 flex-col gap-1.5">
+                            {speaker}
+                            {/* 내려받기는 받은 메시지에만 — 보낸 것은 어르신이 이미 말씀하신
+                                것이라 되돌려 받을 원본이 없다. 파일명은 ASCII (한글 download
+                                속성은 크롬이 버리고 확장자 없는 파일로 저장한다 · 실측). */}
                             <a
                               href={TEACHER_DEMO_FILE}
                               download={`kcare-voice-${m.id}-demo.wav`}
-                              className="btn-press flex flex-1 items-center justify-center gap-1.5 rounded-[14px] px-3 py-3 text-[18px] font-bold text-navy"
-                              style={QUIET_BG}
+                              aria-label="내려받기"
+                              className="btn-press flex h-[46px] w-[46px] items-center justify-center rounded-full"
+                              style={{ background: "rgba(30,122,90,.12)", color: "#1E7A5A" }}
                             >
-                              <span aria-hidden style={{ color: "#1E7A5A" }}>
-                                <Icon name="box" size={20} strokeWidth={2} />
-                              </span>
-                              내려받기
+                              <Icon name="box" size={22} strokeWidth={2} />
                             </a>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -1107,9 +1234,6 @@ export default function ElderHome() {
                         ))}
                       </div>
                     )}
-                    <p className="mt-2.5 text-[18px] leading-[1.55] text-muted">
-                      가족과 선생님이 같은 달력을 봅니다.
-                    </p>
                   </div>
                 </>
               )}
@@ -1205,9 +1329,9 @@ export default function ElderHome() {
                     >
                       {calling ? "박지현 선생님께 연결 중입니다" : "박지현 선생님께 전화"}
                     </button>
-                    <p className="mt-2.5 text-[18px] leading-[1.55] text-white/[.86]">
-                      두 분 다 K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지 마시고
-                      바탕화면의 빨간 SOS를 누르세요.
+                    {/* 방문 사기 방어 — 설명을 줄이는 중에도 이 한 줄은 남긴다 (안전) */}
+                    <p className="mt-2.5 text-[17px] leading-[1.5] text-white/[.8]">
+                      K-CARE 이름표를 걸고 옵니다. 이름이 다르면 문을 열지 마세요.
                     </p>
                   </div>
                 )}
@@ -1264,161 +1388,113 @@ export default function ElderHome() {
                   <Icon name="chev" size={22} strokeWidth={2} />
                 </span>
               </button>
-              {vitalsOpen && (
-                <div className="mt-2.5">
-                  {VITALS.map((v) => (
-                    <div
-                      key={v.name}
-                      className="flex items-baseline gap-3 border-t border-navy/[.07] py-3.5 first:border-t-0"
-                    >
-                      <span className="w-[104px] shrink-0 text-[19px] font-bold text-navy">{v.name}</span>
-                      <span className="flex-1">
-                        <span className="font-num text-[24px] font-bold text-navy">{v.value}</span>
-                        <span className="ml-1 text-[19px] text-muted">{v.unit}</span>
-                      </span>
-                      <span className="text-right text-[18px] leading-[1.4] text-muted">{v.status}</span>
-                    </div>
-                  ))}
-
-                  {/* 지난 7일 — 과거 기록 (화이트보드 시안 "FIT 건강기록, 과거기록 보이게").
-                      막대는 걸음 수, 오늘만 골드. 그림만으로 못 읽는 분을 위해
-                      aria 와 아래 문장에 숫자를 그대로 쓴다. */}
-                  <div className="mt-1 border-t border-navy/[.07] pt-3.5">
-                    <div className="text-[18px] font-bold text-navy">지난 7일 걸음</div>
-                    <div
-                      className="mt-2.5 flex items-end gap-1.5"
-                      role="img"
-                      aria-label={`지난 7일 걸음: ${FIT_WEEK.map((d) => d.steps.toLocaleString()).join(", ")}`}
-                    >
-                      {FIT_WEEK.map((d) => {
-                        const max = Math.max(...FIT_WEEK.map((w) => w.steps));
-                        const date = new Date(Date.now() - d.ago * 86400000);
-                        const label = d.ago === 0 ? "오늘" : ["일", "월", "화", "수", "목", "금", "토"][date.getDay()];
-                        return (
-                          <div key={d.ago} className="flex flex-1 flex-col items-center gap-1">
-                            <span className="font-num text-[13px] font-bold text-muted">
-                              {Math.round(d.steps / 100) / 10}
-                            </span>
-                            <div
-                              className="w-full rounded-t-[6px]"
-                              style={{
-                                height: Math.max(10, Math.round((d.steps / max) * 62)),
-                                background: d.ago === 0 ? "#B08D57" : "rgba(10,31,60,.16)",
-                              }}
-                            />
-                            <span className={`text-[14px] font-bold ${d.ago === 0 ? "text-navy" : "text-muted"}`}>
-                              {label}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <p className="mt-2 text-[17px] leading-[1.55] text-muted">
-                      단위는 천 걸음입니다. 잠은 지난 7일 평균{" "}
-                      {Math.round((FIT_WEEK.reduce((s, d) => s + d.sleep, 0) / FIT_WEEK.length) * 10) / 10}
-                      시간 주무셨습니다. 워치가 잰 그대로입니다.
-                    </p>
-                  </div>
-                </div>
-              )}
+              {/* 펼치면 간단 리포트 — 살펴볼 것 · 평소 범위를 그림으로 (2026-09-04 시트
+                  건강 1번 · 첨부 시안 '건강 신호'). components/ElderHealthReport.jsx */}
+              {vitalsOpen && <ElderHealthReport />}
             </ElderCard>
 
             {/* 오늘 약 — 미션형 체크는 오늘 탭이다 (화이트보드 시안 2026-08-28
                 "①오늘 → 약 복용(미션형)"). 아침에 여는 화면에서 바로 체크해야
-                루틴이 된다. 등록된 약 '정보'는 건강 탭 '드시는 약 정보'가 맡는다. */}
-            <ElderCard
-              show={tab === "today"}
-              order={2}
-              style={{
-                background:
-                  med.done === med.total
-                    ? LIGHT_CARD.background
-                    : "linear-gradient(180deg,#FFF7E8,#FBEFD8)",
-                border: med.done === med.total ? LIGHT_CARD.border : "1px solid rgba(138,93,18,.3)",
-                boxShadow: LIGHT_CARD.boxShadow,
-              }}
-            >
-              <CardHead title="오늘 약 미션" right={`${med.total}번 중 ${med.done}번`} icon="pill" />
-              {/* 연속 성공 — 참고 영상(2026-08-26)의 별 모으기. 별은 최대 4개까지만.
-                  2026-08-31 정리: 진행바를 뺐다. 별·주간 스트립·머리말 숫자까지
-                  같은 것을 네 번 말하고 있었다. */}
-              <div className="mt-2.5 flex items-center gap-3 rounded-[16px] px-4 py-3" style={SUB_CARD}>
-                <span aria-hidden className="flex shrink-0 gap-0.5">
-                  {[0, 1, 2, 3].map((i) => (
-                    <span key={i} style={{ color: i < Math.min(4, medStreak) ? "#B08D57" : "rgba(10,31,60,.14)" }}>
-                      <Icon name="star" size={24} strokeWidth={1.9} />
-                    </span>
+                루틴이 된다. 등록된 약 '정보'는 건강 탭 '드시는 약 정보'가 맡는다.
+                2026-09-04 시트 오늘 3번 — "지난번 데모의 게임형 팝업 스타일" 첨부 시안대로
+                다시 그렸다: 머리(복약 알림 · 오늘의 약 미션 · 별을 모아요) → 남색 별 띠 →
+                지금 드실 약 한 장(▶) → 다음 약 한 줄 → 어제 칭찬 → 주간 동그라미. 성분명 없음. */}
+            <ElderCard show={tab === "today"} order={2} style={LIGHT_CARD}>
+              <div className="text-center">
+                <span className="inline-block rounded-full px-3.5 py-1 text-[15px] font-bold text-white" style={{ background: "#0A1F3C" }}>
+                  복약 알림
+                </span>
+                <h2 className="mt-2 text-[26px] font-black leading-[1.25] text-navy">오늘의 약 미션</h2>
+                <p className="mt-1 text-[17px] text-muted">약을 다 드시면 별을 모아요</p>
+              </div>
+              {/* 별 띠 — 연속 성공. 별은 최대 4개까지만 (5개부터 줄바꿈된다) */}
+              <div className="mt-3 flex items-center justify-center gap-2.5 rounded-[16px] px-4 py-3" style={{ background: "#0A1F3C" }}>
+                <span aria-hidden className="flex shrink-0 gap-0.5" style={{ color: "#C9A46B" }}>
+                  {Array.from({ length: Math.max(1, Math.min(4, medStreak)) }, (_, i) => (
+                    <Icon key={i} name="star" size={22} strokeWidth={1.9} />
                   ))}
                 </span>
-                <span className="text-[19px] font-bold leading-[1.4] text-navy">
-                  {medStreak > 0 ? `${medStreak}일 연속 다 드셨어요` : "오늘부터 다시 시작해요"}
+                <span className="text-[19px] font-bold leading-[1.3] text-white">
+                  {medStreak > 0 ? `이번 주 ${medStreak}일 연속 성공!` : "오늘부터 다시 시작해요"}
                 </span>
               </div>
 
-              {/* 지금 드실 약 — 하나만 크게. 아침·점심·저녁을 한꺼번에 늘어놓으니
-                  "지금 뭘 해야 하는지"가 묻혔다 (2026-08-31 "텍스트 많고 복잡").
-                  누르면 알람 팝업이 뜨고, 거기서 '다 먹었어요'로 끝낸다. */}
+              {/* 지금 드실 약 — 하나만 크게. 누르면 알람 팝업, 거기서 '다 먹었어요'. */}
               {medNext ? (
                 <>
-                  <div className="mt-3.5 text-[18px] font-bold text-muted">지금 드실 약</div>
+                  <div className="mt-4 text-[18px] font-bold text-navy">지금 드실 약</div>
                   <button
                     onClick={() => setMedPop(medNext.slot)}
-                    className="btn-press mt-1.5 flex w-full items-center gap-3.5 rounded-[18px] p-4 text-left"
-                    style={{ background: "#FFFFFF", boxShadow: "inset 0 0 0 2px rgba(138,93,18,.28)" }}
+                    className="btn-press mt-1.5 flex w-full items-center gap-3.5 rounded-[18px] bg-white p-4 text-left"
+                    style={{ boxShadow: "inset 0 0 0 2px rgba(10,31,60,.12), 0 12px 24px -20px rgba(10,31,60,.5)" }}
                   >
                     <span
                       aria-hidden
                       className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full"
-                      style={{ background: "rgba(176,141,87,.16)", color: "#8A5D12" }}
+                      style={{ background: "rgba(176,141,87,.2)", color: "#8A5D12" }}
                     >
                       <Icon name={medNext.slot === "저녁" ? "moon" : "sun"} size={28} strokeWidth={1.9} />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[18px] font-bold" style={{ color: "#8A5D12" }}>
+                      <span className="block text-[17px] font-bold" style={{ color: "#8A5D12" }}>
                         {medNext.slot} {spokenClock(medNext.time)}
                       </span>
-                      <span className="mt-0.5 block text-[21px] font-bold leading-[1.35] text-navy">
-                        {medDoseNames(medNext.slot)}
+                      <span className="mt-0.5 block text-[22px] font-bold leading-[1.3] text-navy">
+                        {medDoseNames(medNext.slot)} 먹기
                       </span>
                     </span>
-                    <span aria-hidden className="-rotate-90 shrink-0" style={{ color: "#8A5D12" }}>
-                      <Icon name="chev" size={22} strokeWidth={2} />
+                    <span
+                      aria-hidden
+                      className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full text-white"
+                      style={{ background: "#0A1F3C" }}
+                    >
+                      <Icon name="play" size={22} strokeWidth={2} />
                     </span>
                   </button>
                   {medAfter && (
-                    <p className="mt-2 text-[18px] text-muted">
-                      다음 약 · {medAfter.slot} {spokenClock(medAfter.time)}
-                    </p>
+                    <div className="mt-2 flex items-center gap-3 rounded-[14px] px-4 py-3" style={SUB_CARD}>
+                      <span className="shrink-0 text-[16px] font-bold text-muted">다음 약</span>
+                      <span className="min-w-0 flex-1 truncate text-right text-[18px] font-bold text-navy">
+                        {medAfter.slot} {spokenClock(medAfter.time)} · {medDoseNames(medAfter.slot)}
+                      </span>
+                    </div>
                   )}
                 </>
               ) : (
                 <p
-                  className="mt-3 rounded-[16px] px-4 py-3.5 text-[20px] font-bold leading-[1.45]"
+                  className="mt-3 rounded-[16px] px-4 py-3.5 text-center text-[20px] font-bold leading-[1.45]"
                   style={{ background: "rgba(30,122,90,.1)", color: "#1E7A5A" }}
                 >
                   오늘 약을 다 드셨습니다. 참 잘하셨어요.
                 </p>
               )}
+              {MED_STREAK.days > 0 && (
+                <p className="mt-3 text-center text-[18px] font-bold" style={{ color: "#1E7A5A" }}>
+                  어제도 다 챙겨 드셨어요 ✓
+                </p>
+              )}
 
-              {/* 이번 주 — 못 드신 날은 회색. 빨강은 SOS 전용이고, 지난 일을
-                  꾸짖는 화면이 아니다. */}
-              <div className="mt-3.5 border-t border-navy/[.07] pt-3">
-                <div className="flex gap-1.5">
+              {/* 이번 주 — 시안의 동그라미 줄. 못 드신 날은 회색 (빨강은 SOS 전용) */}
+              <div className="mt-3 rounded-[16px] px-4 py-3.5" style={SUB_CARD}>
+                <p className="text-center text-[17px] font-bold text-navy">
+                  {MED_PLAN[0].elderLabel}, 요즘 참 꾸준히 드시고 계세요
+                </p>
+                <div className="mt-2.5 flex gap-1">
                   {[...MED_STREAK.week, { label: "오늘", done: med.done === med.total, today: true }].map((d) => (
                     <div key={d.label} className="flex flex-1 flex-col items-center gap-1">
+                      <span className={`text-[15px] font-bold ${d.today ? "text-navy" : "text-muted"}`}>{d.label}</span>
                       <span
-                        aria-hidden
-                        className="flex h-[30px] w-full items-center justify-center rounded-[9px] text-[15px] font-bold"
+                        aria-label={`${d.label} ${d.done ? "복용" : d.today ? "대기" : "안 드심"}`}
+                        className="flex h-[34px] w-[34px] items-center justify-center rounded-full"
                         style={
                           d.done
-                            ? { background: "rgba(30,122,90,.14)", color: "#1E7A5A" }
-                            : { background: "rgba(10,31,60,.06)", color: "rgba(10,31,60,.28)" }
+                            ? { background: "#1E7A5A", color: "#FFFFFF" }
+                            : d.today
+                            ? { background: "rgba(176,141,87,.22)", boxShadow: "inset 0 0 0 2px #B08D57" }
+                            : { background: "rgba(10,31,60,.08)", color: "rgba(10,31,60,.3)" }
                         }
                       >
-                        {d.done ? "✓" : "·"}
-                      </span>
-                      <span className={`text-[15px] font-bold ${d.today ? "text-navy" : "text-muted"}`}>
-                        {d.label}
+                        {d.done && <Icon name="check" size={18} strokeWidth={2.4} />}
                       </span>
                     </div>
                   ))}
@@ -1429,13 +1505,14 @@ export default function ElderHome() {
             {/* order 2 · 드시는 약 정보 — 첫 안심방문 때 등록한 장복약 정보와 기록
                 (화이트보드 시안 "②건강 → 약/건기식 정보"). 체크(미션)는 오늘 탭,
                 여기는 무슨 약을 언제 드시는지 '정보'만 본다. */}
+            {/* 2026-09-04 시트 오늘 2번 · 건강 2번 — 등록 경위 문장과 성분명을 뺐다.
+                아침 8시 · 아산병원약 (혈압약 · 아스피린) 처럼 병원 이름 + 약 종류만. */}
             <ElderExpand
               show={tab === "health"}
               order={2}
               title="드시는 약 정보"
               icon="pill"
               right={`하루 ${MED_PLAN.length}번`}
-              summary={`${MED_REGISTRY.registeredAt}에 ${MED_REGISTRY.registeredBy}이 약봉투를 보고 등록한 것입니다. 오늘 체크는 홈 → 오늘에서 하십니다.`}
               open={medInfoOpen}
               onToggle={() => setMedInfoOpen((v) => !v)}
             >
@@ -1444,17 +1521,16 @@ export default function ElderHome() {
                   <div key={d.slot} className="flex items-baseline gap-3 border-t border-navy/[.07] py-3 first:border-t-0">
                     <span className="w-[62px] shrink-0 text-[19px] font-bold text-navy">{d.slot}</span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[19px] leading-[1.45] text-ink">
-                        {d.items.map((i) => i.name).join(" · ")}
+                      <span className="block text-[19px] font-bold leading-[1.45] text-navy">
+                        {spokenClock(d.time)} · {d.elderLabel}
                       </span>
-                      <span className="block font-num text-[17px] text-muted">{d.time}</span>
+                      <span className="block text-[17px] leading-[1.45] text-muted">
+                        {d.items.map((i) => stripIngredient(i.name)).join(" · ")}
+                      </span>
                     </span>
                   </div>
                 ))}
               </div>
-              <p className="mt-2 text-[18px] leading-[1.55] text-muted">
-                약이 바뀌면 다음 방문 때 선생님에게 봉투를 보여 주세요. 다시 등록해 드립니다.
-              </p>
             </ElderExpand>
 
             {/* order 3 · 건강기능식품 — 남은 양과 유통기한. 떨어질 때쯤 알려 드린다
@@ -1539,68 +1615,18 @@ export default function ElderHome() {
               </div>
             </ElderExpand>
 
-            {/* order 4 · 지금 집 안 — 상태를 보여주고, 무엇을 하면 좋은지 한 문장으로 권한다.
-                "에어컨 켜고 가족에게 알리기" 버튼은 삭제 (시트 '건강' 대표 피드백).
-                기기를 대신 켜 주지 못하면서 켜 준 것처럼 보이는 버튼이었다.
-                경고가 있는 날은 펼친 채로 시작한다 — 온열질환 경고를 접어 두면
-                안 된다. 경고가 없는 날은 접혀 시작하되 온도는 요약 줄에 남는다. */}
-            <ElderExpand
-              show={tab === "health"}
-              order={4}
-              title="지금 집 안"
-              icon="home"
-              right="실내 · 거실 센서"
-              summary={`${indoor.tempLabel} · ${indoor.sub}`}
-              open={indoorOpen}
-              onToggle={() => setIndoorOpen((v) => !v)}
-            >
-              <div className="flex items-end gap-3">
-                <span
-                  className="font-num text-[44px] font-bold leading-none"
-                  style={{ color: LEVEL_COLOR[indoor.level] }}
-                >
-                  {indoor.tempLabel}
-                </span>
-                <span className="pb-1 text-[19px] text-muted">{indoor.sub}</span>
-              </div>
-              <div
-                className="mt-4 rounded-[14px] px-[17px] py-4"
-                style={{
-                  background: "rgba(192,57,43,.07)",
-                  border: "1px solid rgba(192,57,43,.25)",
-                }}
-              >
-                <div className="text-[19px] font-bold" style={{ color: LEVEL_COLOR[indoor.level] }}>
-                  {indoor.alertTitle}
-                </div>
-                <p className="mt-1 text-[19px] leading-[1.6] text-ink">{indoor.alertBody}</p>
-              </div>
-              {/* 안심환경 메시지 — 시트 '건강' 2번. 때마다 한 문장씩 알려 드린다 */}
-              <div className="mt-3 space-y-2">
-                {AMBIENT_TIPS.map((t) => (
-                  <div key={t.id} style={SUB_CARD}>
-                    <div className="flex flex-wrap items-baseline gap-x-2.5">
-                      <span className="text-[20px] font-bold" style={{ color: LEVEL_COLOR[t.tone] }}>
-                        {t.title}
-                      </span>
-                      <span className="text-[18px] text-muted">{t.when}</span>
-                    </div>
-                    <p className="mt-1 text-[19px] leading-[1.6] text-ink">{t.body}</p>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-3 text-[19px] leading-[1.6] text-muted">
-                이 메시지는 알림으로도 갑니다. 창문·에어컨은 직접 여닫으셔야 합니다.
-              </p>
-            </ElderExpand>
+            {/* '지금 집 안'(실내 센서·안심환경 메시지)과 '병원 가는 길' 카드는 뺐다
+                (2026-09-04 시트 건강 3번). 데이터(lib/mock.js INDOOR·AMBIENT_TIPS·OUTING)는
+                보호자·컨시어지 화면이 계속 쓴다. */}
 
-            {/* order 4 · 오늘 여쭤볼 것 — 인지 부담 면제. 출처 3종 투명 표기 */}
+            {/* order 6 · 오늘 여쭤볼 것 — 인지 부담 면제. 출처 3종 투명 표기.
+                "잊으셔도 됩니다, 선생님이 대신 여쭤봅니다"는 뺐다 (시트 건강 4번). */}
             <ElderExpand
               show={tab === "health"}
               order={6}
               title="오늘 여쭤볼 것"
               icon="chat"
-              summary={`${ASK_DOCTOR.length}가지 · 잊으셔도 됩니다, 선생님이 대신 여쭤봅니다`}
+              summary={`${ASK_DOCTOR.length}가지`}
               open={askDoctorOpen}
               onToggle={() => setAskDoctorOpen((v) => !v)}
             >
@@ -1638,59 +1664,7 @@ export default function ElderHome() {
               </ElderBtn>
             </ElderExpand>
 
-            {/* order 4 · 병원 가는 길 — F8 2구간. 점수를 문장으로 번역하는 유일한 화면.
-                요약 줄에 오늘의 조언을 그대로 둔다 — 준비물·주의사항은 접혀 있어도
-                놓치면 안 되는 내용이라, 열어야만 보이게 하지 않는다. */}
-            <ElderExpand
-              show={tab === "health"}
-              order={5}
-              title="병원 가는 길"
-              icon="pin"
-              summary={OUTING.adviceElder}
-              open={outingOpen}
-              onToggle={() => setOutingOpen((v) => !v)}
-            >
-              <div className="space-y-2.5">
-                {OUTING.legs.map((l) => (
-                  <div key={l.tag} style={SUB_CARD}>
-                    <div className="flex items-baseline gap-2.5">
-                      <span className="text-[19px] font-bold tracking-[.04em] text-muted">
-                        {l.tag}
-                      </span>
-                      <span className="flex-1 text-[19px] font-bold text-navy">{l.place}</span>
-                      <span className="font-num text-[22px] font-bold text-navy">{l.score}</span>
-                      <span
-                        className="text-[19px] font-bold"
-                        style={{ color: LEVEL_COLOR[l.level] }}
-                      >
-                        {l.grade}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-[19px] leading-[1.6] text-ink">{l.detail}</p>
-                  </div>
-                ))}
-              </div>
-              {/* "오늘은 이렇게 하세요" 문구는 위 요약 줄에 이미 있다(접혀도 보인다) —
-                  펼친 화면에서 같은 문장을 두 번 두지 않는다. */}
-              <div className="mt-3 flex flex-wrap gap-2">
-                {OUTING.kit.map((k) => (
-                  <span
-                    key={k}
-                    className="rounded-[20px] px-3.5 py-[9px] text-[19px] font-bold text-navy"
-                    style={{
-                      border: "1px solid rgba(10,31,60,.14)",
-                      background:
-                        "linear-gradient(180deg,rgba(253,252,249,.98),rgba(249,247,242,.96))",
-                    }}
-                  >
-                    {k}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-3 text-[19px] text-muted">{OUTING.source}</div>
-            </ElderExpand>
-
-            {/* 지금 우리 동네 — 실외(청색조). 실내 카드와 색으로 구분.
+            {/* 지금 우리 동네 — 실외(청색조). 유지 (2026-09-04 시트 건강 5번).
                 오늘 탭이 4가지로 줄면서 건강 탭으로 옮겼다 (2026-08-28 시트). */}
             <ElderCard
               show={tab === "health"}
@@ -1732,7 +1706,10 @@ export default function ElderHome() {
                 결제 한도 설명은 카드 하나를 통째로 쓰던 것을 헤딩 밑 한 줄로 줄였다. */}
             <div className="shrink-0" style={{ order: 0, display: tab === "ask" ? undefined : "none" }}>
               <h2 className="text-[24px] font-black leading-[1.3] text-navy">무엇을 해드릴까요?</h2>
-              <p className="mt-1.5 text-[18px] leading-[1.55] text-muted">{payRule.headline}</p>
+              {/* 결제 한도 설명 — 보조 글씨는 한 단계 작게 (2026-09-04 시트 앱 전체 1·2번:
+                  "글씨 크기에 차이를 두어 도드라지게"). 어르신 본문 하한(19px)의 예외 —
+                  매일 보는 설명이라 익숙해지면 안 읽는 줄이다. */}
+              <p className="mt-1.5 text-[17px] leading-[1.5] text-muted">{payRule.headline}</p>
               {/* 말로 부탁하기 — 목록에 없어도 말로 남기면 선생님이 듣고 정리한다 */}
               <button
                 onClick={() => {
@@ -1793,6 +1770,11 @@ export default function ElderHome() {
                   <button
                     key={t.no}
                     onClick={() => {
+                      // 복지 혜택 타일은 일반 부탁 시트가 아니라 혜택 목록을 연다 (앱 전체 3번)
+                      if (item.welfare) {
+                        setWelfareOpen(true);
+                        return;
+                      }
                       setAskSent(null);
                       setAskSel(item);
                     }}
@@ -1806,6 +1788,11 @@ export default function ElderHome() {
                     {t.sub && (
                       <span className="text-[15px] font-medium leading-[1.3] text-muted">{t.sub}</span>
                     )}
+                    {item.welfare && (
+                      <span className="text-[15px] font-bold" style={{ color: "#1E7A5A" }}>
+                        {welfareN.high > 0 ? `${welfareN.high}가지 가능` : `${welfareN.check}가지 확인`}
+                      </span>
+                    )}
                     {!item.active && <span className="text-[15px] font-bold text-amber">곧 시작</span>}
                   </button>
                 );
@@ -1816,9 +1803,9 @@ export default function ElderHome() {
                 책임 경계를 어르신 화면에도 그대로 쓴다 (공사 책임은 그 업체에 있다). */}
             <ElderCard show={tab === "ask"} order={7} style={LIGHT_CARD}>
               <CardHead title="집 고칠 일" right="바깥 업체 연결" icon="box" />
-              {/* 제목·가격만 접어 두고 누르면 세부 (화이트보드 시안 "③해주세요 —
-                  핸디맨/공사맨 제목만 보이고 누르면 세부내역"). 가격은 접힌 채로도
-                  남긴다 — 비교하려고 전부 열어 보게 만들지 않는다. */}
+              {/* 서비스 이름만 보이고, 누르면 요금·범위가 펼쳐진다 (2026-09-04 시트 해주세요
+                  1번 "1회 출장비 · 견적서 제출 후 · 품목별 상이 같은 설명은 펼치면 보이도록").
+                  전에는 요금이 접힌 채로도 보였는데, 그 줄이 어르신에게는 설명으로 읽혔다. */}
               <div className="mt-2 space-y-2">
                 {SERVICE_PLUS.map((p) => {
                   const open = plusOpen === p.key;
@@ -1829,10 +1816,7 @@ export default function ElderHome() {
                         aria-expanded={open}
                         className="btn-press flex w-full items-center gap-3 text-left"
                       >
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-[20px] font-bold text-navy">{p.name}</span>
-                          <span className="mt-0.5 block text-[18px] font-bold text-[#7A5C28]">{p.priceLabel}</span>
-                        </span>
+                        <span className="min-w-0 flex-1 text-[20px] font-bold text-navy">{p.name}</span>
                         <span
                           aria-hidden
                           className="shrink-0 text-muted transition-transform duration-200"
@@ -1842,16 +1826,18 @@ export default function ElderHome() {
                         </span>
                       </button>
                       {open && (
-                        <p className="mt-2 border-t border-navy/[.08] pt-2.5 text-[18px] leading-[1.55] text-muted">
-                          {p.scope}
-                        </p>
+                        <div className="mt-2 border-t border-navy/[.08] pt-2.5">
+                          <p className="text-[18px] font-bold text-[#7A5C28]">{p.priceLabel}</p>
+                          <p className="mt-1 text-[17px] leading-[1.55] text-muted">{p.scope}</p>
+                        </div>
                       )}
                     </div>
                   );
                 })}
               </div>
-              <p className="mt-3 text-[19px] leading-[1.6] text-muted">
-                알아보고 진행 상황을 알려드립니다. 공사 자체의 책임은 그 업체에 있습니다.
+              {/* 보조 설명은 작게 (시트 해주세요 2번 "글씨를 더 작게") */}
+              <p className="mt-3 text-[16px] leading-[1.55] text-muted">
+                알아보고 진행 상황을 알려드립니다. 공사의 책임은 그 업체에 있습니다.
               </p>
             </ElderCard>
 
@@ -1865,14 +1851,22 @@ export default function ElderHome() {
                 <p className="mt-2 text-[20px] leading-[1.6] text-muted">아직 부탁하신 것이 없습니다.</p>
               ) : (
                 <div className="mt-2 space-y-2">
-                  {myRequests.slice(0, 4).map((r) => (
-                    <div key={r.id} style={SUB_CARD}>
-                      <div className="text-[19px] font-bold leading-[1.35] text-navy">{r.detail}</div>
-                      <div className="mt-1 text-[18px] font-bold" style={{ color: r.status === "awaitingPayment" ? "#8A5D12" : "#1E7A5A" }}>
-                        {r.status === "awaitingPayment" ? `${payRule.approver} 님 승인 기다리는 중` : "선생님이 진행 중입니다"}
+                  {myRequests.slice(0, 4).map((r) => {
+                    // 상태를 어르신 말로 — 관제·컨시어지가 단계를 넘기면 여기 글이 바뀐다
+                    // (2026-09-04 시트 해주세요 3번: 관제·컨시어지 화면과 이어졌다).
+                    const line =
+                      r.status === "awaitingPayment" ? [`${payRule.approver} 님 승인 기다리는 중`, "#8A5D12"]
+                      : r.status === "requested" ? ["관제센터에서 확인 전화를 드립니다", "#8A5D12"]
+                      : r.status === "done" ? ["끝났습니다", "#5C5A54"]
+                      : r.status === "cancelled" || r.status === "rejected" ? ["취소되었습니다", "#5C5A54"]
+                      : ["선생님이 진행 중입니다", "#1E7A5A"];
+                    return (
+                      <div key={r.id} style={SUB_CARD}>
+                        <div className="text-[19px] font-bold leading-[1.35] text-navy">{r.type}</div>
+                        <div className="mt-1 text-[18px] font-bold" style={{ color: line[1] }}>{line[0]}</div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </ElderCard>
@@ -2167,14 +2161,13 @@ export default function ElderHome() {
                   </div>
                 ))}
               </div>
-              <p className="mt-2 text-[18px] leading-[1.55] text-muted">
-                날마다 새 이야기가 앞에 하나씩 올라옵니다.
-              </p>
             </ElderCard>
 
-            {/* order 5 · 목소리 보내기 — 이름을 누르면 바로 녹음이 시작된다.
-                '꾹 누르고 말하기' 버튼은 삭제 (시트 '가족' 1번). 누르고 있는 동안만
-                녹음되는 방식은 손 떨림이 있으면 중간에 끊긴다 — 눌렀다 떼는 방식으로 바꿨다. */}
+            {/* order 5 · 가족 — 이름을 누르면 그 사람과 주고받은 목소리가 아래로 펼쳐지고,
+                거기서 바로 목소리를 남긴다 (2026-09-04 시트 가족 2번). 전에는 '목소리
+                보내기' 카드와 '아들 민수 (음성)' 카드가 따로 있었다 — 한 사람과의 대화가
+                두 카드로 갈려 있으면 어디서 듣고 어디서 보내는지 헷갈린다. 오른쪽 위
+                '메시지 보내기' 버튼(가족 1번)은 인사 블록에서 같이 뺐다. */}
             <ElderCard
               show={tab === "family"}
               order={5}
@@ -2184,18 +2177,13 @@ export default function ElderHome() {
                 boxShadow: LIGHT_CARD.boxShadow,
               }}
             >
-              <CardHead title="목소리 보내기" right="글자 안 써도 됩니다" />
-              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
-                보낼 사람 이름을 누르면
-                <br />
-                바로 말씀하실 수 있습니다.
-              </p>
-              <VoiceRecorder
-                to={voiceTo}
-                onPick={setVoiceTo}
-                sent={voiceSent}
+              <CardHead title="가족" right="목소리로 주고받아요" />
+              <FamilyThreads
+                open={famOpen}
+                onToggle={(id) => setFamOpen((cur) => (cur === id ? null : id))}
+                threadFor={threadFor}
+                onPlay={playFamily}
                 onSend={(sec, target) => {
-                  setVoiceSent((v) => [{ to: target.name, sec }, ...v]);
                   dispatch({
                     type: "addVoice",
                     payload: { from: `${ELDER.name} 님`, to: target.name, secs: sec, context: "안부" },
@@ -2212,54 +2200,6 @@ export default function ElderHome() {
               />
             </ElderCard>
 
-            {/* order 6 · 아들 민수 (음성) — 텍스트 아닌 음성. 재생 버튼이 답장 버튼으로 변신 */}
-            <ElderCard
-              show={tab === "family"}
-              order={6}
-              style={
-                voicePlayed
-                  ? LIGHT_CARD
-                  : {
-                      background: "linear-gradient(180deg,#FBF6EC,#F4EEE1)",
-                      border: "1px solid rgba(176,141,87,.45)",
-                      boxShadow: LIGHT_CARD.boxShadow,
-                    }
-              }
-            >
-              <CardHead title={VOICE_MSG.fromLabel} right={voicePlayed ? "방금 들음" : "오늘 아침"} />
-              <p className="mt-2 text-[20px] leading-[1.6] text-ink">
-                {voicePlayed
-                  ? `"${VOICE_MSG.transcript}"`
-                  : "아들이 보낸 목소리 메시지가 있습니다"}
-              </p>
-              <ElderBtn
-                onClick={() => {
-                  if (!voicePlayed) {
-                    dispatch({ type: "elderPatch", patch: { voicePlayed: true } });
-                    dispatch({
-                      type: "pushEvent",
-                      payload: { kind: "메시지", text: "어르신이 아들 음성 메시지 청취 완료", color: "#8FA9CC" },
-                    });
-                  } else {
-                    setVoiceReplied(true); // 재클릭 가능 — 듣기 → 답장
-                    dispatch({
-                      type: "pushEvent",
-                      payload: { kind: "메시지", text: "김순자 → 아들 민수 음성 답장 전송", color: "#8FA9CC" },
-                    });
-                  }
-                }}
-                variant={voicePlayed ? "done" : "primary"}
-                className="mt-4"
-              >
-                {voicePlayed ? "답장 보내기" : `메시지 듣기 (${VOICE_MSG.durationSec}초)`}
-              </ElderBtn>
-              {voiceReplied && (
-                <p className="mt-3 text-[19px] font-bold text-green">
-                  목소리 답장을 보냈습니다
-                </p>
-              )}
-            </ElderCard>
-
             {/* 필요한 물건 · 토요일 배송 카드는 삭제 (2026-08-12 어르신화면 시트 가족 2번).
                 물건은 새로 만든 스토어 탭에서 본다 — 가족 탭에 상거래를 섞지 않는다. */}
 
@@ -2270,59 +2210,40 @@ export default function ElderHome() {
           </main>
 
           {/* ── 고정 푸터: GNB (스크롤 밖 — 06 원칙 5) ──
-              전체 요청(2026-08-28 시트): 하단 아이콘 2개 — 도와줘요 · 가족.
-              오늘/건강/해주세요/스토어는 홈 사분면 타일, 홈 복귀는 GNB '첫화면'.
+              2026-09-04 시트 전체 7번: 마음사서함 · 홈 · 가족 셋. 시안대로 셋이 나란한
+              둥근 칸이고 지금 있는 탭은 남색으로 채운다. 도와줘요는 위(인사 옆)로 갔다.
               '선생님께 전화'는 전체 탭에서 삭제 (2026-08-12 시트 전체 요청 2번) —
               전화는 오늘 오시는 분에게만, '오늘 일정' 카드 안에서 연다. */}
           <footer className="shrink-0 pb-2 pt-2">
-            {/* 아이콘+라벨 병행 (아이콘 전용 금지). 도와줘요는 탭이 아니라 행동 —
-                누르면 즉시방문요청이 가고 관제가 확인 전화를 건다. 빨강은 SOS
-                전용이라 골드·앰버로 구분한다. */}
-            <nav className="flex border-t border-navy/[.12] pt-2">
+            {/* 아이콘+라벨 병행 (아이콘 전용 금지). 마음사서함에 안 들은 것이 있으면
+                아이콘 옆에 금색 점 — 시안의 점이 이것이다. */}
+            <nav className="grid grid-cols-3 gap-2 border-t border-navy/[.12] pt-2.5">
               {TABS.map((t) => {
-                if (t.action) {
-                  const done = visitAsked;
-                  return (
-                    <button
-                      key={t.key}
-                      onClick={() => {
-                        if (done) return; // 이미 요청됨 — 두 번 가지 않는다
-                        askVisit();
-                        // 탭은 그대로 둔다. 요청 뒤 안내 카드를 뺐으므로(2026-08-28)
-                        // 홈으로 튕겨 보낼 곳이 없다 — 보고 있던 화면에 머무르고
-                        // 아래 GNB 가 '요청됨'으로 바뀌어 알린다.
-                      }}
-                      aria-label={done ? "방문 요청을 보냈습니다 — 관제 전화 대기" : "도와줘요 — 즉시 방문 요청"}
-                      className="flex min-h-[60px] flex-1 flex-col items-center justify-center gap-1"
-                    >
-                      <span aria-hidden style={{ color: done ? "#1E7A5A" : "#B08D57" }}>
-                        <Icon name={done ? "clock" : "door"} size={24} strokeWidth={2} />
-                      </span>
-                      <span className="text-[16px] font-bold" style={{ color: done ? "#1E7A5A" : "#8A5D12" }}>
-                        {done ? "요청됨" : t.label}
-                      </span>
-                      <span className="h-[3px] w-[26px] rounded-full" style={{ background: "transparent" }} />
-                    </button>
-                  );
-                }
                 const active = tab === t.key;
-                const color = active ? "#0A1F3C" : "#5C5A54";
+                const dot = t.key === "teacher" && unreadMsgs.length > 0;
                 return (
                   <button
                     key={t.key}
                     onClick={() => setTab(t.key)}
-                    className="flex min-h-[60px] flex-1 flex-col items-center justify-center gap-1"
+                    aria-current={active ? "page" : undefined}
+                    aria-label={dot ? `${t.label} — 안 들은 메시지 ${unreadMsgs.length}개` : undefined}
+                    className="btn-press flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-[18px]"
+                    style={
+                      active
+                        ? { background: "#0A1F3C", color: "#FFFFFF" }
+                        : { background: "rgba(10,31,60,.05)", color: "#0A1F3C" }
+                    }
                   >
-                    <span aria-hidden style={{ color }}>
+                    <span aria-hidden className="relative">
                       <Icon name={t.glyph} size={24} strokeWidth={2} />
+                      {dot && (
+                        <span
+                          className="absolute -right-[7px] -top-[3px] h-[11px] w-[11px] rounded-full"
+                          style={{ background: "#B08D57", boxShadow: `0 0 0 2px ${active ? "#0A1F3C" : "#FDFCF9"}` }}
+                        />
+                      )}
                     </span>
-                    <span className="text-[16px] font-bold" style={{ color }}>
-                      {t.label}
-                    </span>
-                    <span
-                      className="h-[3px] w-[26px] rounded-full"
-                      style={{ background: active ? "#0A1F3C" : "transparent" }}
-                    />
+                    <span className="text-[16px] font-bold">{t.label}</span>
                   </button>
                 );
               })}
@@ -2404,6 +2325,42 @@ export default function ElderHome() {
                       }`,
                   color: "#B08D57",
                 },
+              });
+            }}
+          />
+        )}
+
+        {/* 복지혜택 시트 — 해주세요 '복지 혜택' 타일 (2026-09-04 시트 앱 전체 3번).
+            어르신에게는 판정 등급·점수 대신 "받으실 수 있어요 / 확인이 필요해요" 두 말로
+            보여 주고, 신청은 선생님(컨시어지)·가족이 한다. */}
+        {welfareOpen && (
+          <ElderWelfareSheet
+            matches={welfareMatches}
+            counts={welfareN}
+            asked={welfareAsked}
+            onClose={() => setWelfareOpen(false)}
+            onAsk={() => {
+              if (welfareAsked) return;
+              dispatch({
+                type: "addRequest",
+                payload: {
+                  id: `rq-${Date.now()}`,
+                  dir: "fromElder",
+                  type: "복지혜택 안내 부탁",
+                  detail: `받을 수 있는 나라 혜택 확인 부탁 — 가능 ${welfareN.high}건 · 확인 필요 ${welfareN.check}건 (어르신 해주세요)`,
+                  amount: 0,
+                  preferredDate: null,
+                  urgency: "normal",
+                  assignee: "박지현",
+                  photos: [],
+                  status: "requested",
+                  history: [{ at: Date.now(), status: "requested", note: "어르신 해주세요 · 복지 혜택" }],
+                  proof: null,
+                },
+              });
+              dispatch({
+                type: "pushEvent",
+                payload: { kind: "복지", text: `${ELDER.name} 복지혜택 안내 부탁 — 자동 매칭 ${welfareN.high + welfareN.check}건`, color: "#B08D57" },
               });
             }}
           />
@@ -2543,119 +2500,200 @@ function ElderEventSheet({ onClose, onCreate }) {
   );
 }
 
-// 목소리 보내기 — 이름을 누르면 그 자리에서 녹음이 시작되고, 다시 누르면 보낸다.
-// 2026-08-12 어르신화면 시트 가족 1번: "꾹 누르고 말하기 버튼 삭제하고 가족 이름을
-// 바로 눌러서 메시지를 보낼 수 있게". 누르고 있는 동안만 녹음되는 방식은 손 떨림이
-// 있으면 중간에 끊긴다 — 눌렀다 떼는 토글로 바꿨다.
+// 가족 스레드 — 이름을 누르면 그 사람과 주고받은 목소리가 아래로 펼쳐지고, 그 안에서
+// 목소리를 남긴다 (2026-09-04 시트 가족 2번). 받은 것은 왼쪽 옅은 말풍선(옆에 스피커),
+// 보낸 것은 오른쪽 남색 — 마음사서함과 같은 문법이다.
+// 녹음은 눌렀다 떼는 토글이다 (2026-08-12 시트 가족 1번) — 꾹 누르기는 손 떨림에 끊긴다.
 // 빨강은 SOS 전용이므로 녹음 중 색은 금색 계열을 쓴다 (06 §4.2).
-function VoiceRecorder({ to, onPick, onSend, sent }) {
-  const [sec, setSec] = useState(0);
-  const [tooShort, setTooShort] = useState(false);
+function FamilyThreads({ open, onToggle, threadFor, onPlay, onSend }) {
+  const [rec, setRec] = useState(null); // { id, sec } — 녹음 중인 사람
+  const [tooShort, setTooShort] = useState(null); // 스치듯 눌린 사람 id
   const timer = useRef(null);
+  useEffect(() => () => clearInterval(timer.current), []);
 
   const start = (v) => {
-    setTooShort(false);
-    setSec(0);
-    onPick(v);
+    setTooShort(null);
     clearInterval(timer.current);
-    timer.current = setInterval(() => setSec((n) => Math.min(60, n + 1)), 1000);
+    setRec({ id: v.id, sec: 0 });
+    timer.current = setInterval(() => setRec((r) => (r ? { ...r, sec: Math.min(60, r.sec + 1) } : r)), 1000);
   };
   const finish = (v) => {
     clearInterval(timer.current);
-    onPick(null);
+    const sec = rec?.sec || 0;
+    setRec(null);
     if (sec < 1) {
-      setTooShort(true); // 스치듯 눌린 것은 보내지 않는다
-      setSec(0);
+      setTooShort(v.id); // 스치듯 눌린 것은 보내지 않는다
       return;
     }
     onSend(sec, v);
-    setSec(0);
   };
-  useEffect(() => () => clearInterval(timer.current), []);
 
   return (
-    <>
-      <div className="mt-3 space-y-2.5">
-        {VOICE_TO.map((v) => {
-          const on = to?.id === v.id;
-          return (
+    <div className="mt-3 space-y-2.5">
+      {VOICE_TO.map((v) => {
+        const isOpen = open === v.id;
+        const thread = threadFor(v);
+        const unread = thread.filter((m) => m.dir === "in" && !m.played).length;
+        const on = rec?.id === v.id;
+        return (
+          <div key={v.id} style={{ ...SUB_CARD, padding: "14px 15px" }}>
             <button
-              key={v.id}
-              onClick={() => (on ? finish(v) : start(v))}
-              aria-label={on ? `${v.name}에게 보내기` : `${v.name}에게 목소리 남기기`}
-              className="btn-press flex w-full items-center gap-3.5 rounded-[14px] p-4 text-left"
-              style={
-                on
-                  ? {
-                      borderRadius: 14,
-                      padding: "16px 15px",
-                      background:
-                        "linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.04) 55%), rgba(176,141,87,.92)",
-                      boxShadow: "inset 0 1px 0 rgba(255,255,255,.45), 0 12px 24px -10px rgba(176,141,87,.6)",
-                    }
-                  : { ...SUB_CARD, padding: "16px 15px" }
-              }
+              onClick={() => onToggle(v.id)}
+              aria-expanded={isOpen}
+              className="btn-press flex w-full items-center gap-3.5 text-left"
             >
               <span
                 className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full text-[16px] font-bold"
-                style={on ? { background: "rgba(255,255,255,.9)", color: "#7A5C28" } : { background: v.avBg, color: v.avFg }}
+                style={{ background: v.avBg, color: v.avFg }}
               >
                 {v.initials}
               </span>
               <span className="min-w-0 flex-1">
-                <span
-                  className="block text-[21px] font-bold leading-[1.3]"
-                  style={{ color: on ? "#FFFFFF" : "#0A1F3C" }}
-                >
-                  {v.name}
-                </span>
-                <span
-                  className="block text-[18px] leading-[1.35]"
-                  style={{ color: on ? "rgba(255,255,255,.88)" : "#5C5A54" }}
-                >
-                  {on ? `말씀하세요  ${sec}초 · 다시 누르면 보냅니다` : v.sub}
+                <span className="block text-[21px] font-bold leading-[1.3] text-navy">{v.name}</span>
+                <span className="block text-[17px] leading-[1.35]" style={{ color: unread > 0 ? "#8A5D12" : "#5C5A54" }}>
+                  {unread > 0 ? `새 목소리 ${unread}개` : thread.length ? `주고받은 목소리 ${thread.length}개` : v.sub}
                 </span>
               </span>
-              <span className="shrink-0" style={{ color: on ? "#FFFFFF" : "#0A1F3C" }}>
-                <Icon name="mic" size={28} strokeWidth={2} />
+              {unread > 0 && <span aria-hidden className="h-[12px] w-[12px] shrink-0 rounded-full" style={{ background: "#B08D57" }} />}
+              <span
+                aria-hidden
+                className="shrink-0 text-muted transition-transform duration-200"
+                style={{ transform: isOpen ? "rotate(180deg)" : "none" }}
+              >
+                <Icon name="chev" size={22} strokeWidth={2} />
               </span>
             </button>
-          );
-        })}
-      </div>
 
-      {/* 녹음 중 파형 — 소리가 들어가고 있다는 것을 눈으로 확인 */}
-      {to && (
-        <span className="mt-3 flex items-end justify-center gap-[3px]" aria-hidden>
-          {[10, 20, 14, 26, 16, 30, 12, 22, 18, 28, 13, 24].map((h, i) => (
-            <span
-              key={i}
-              className="w-[5px] rounded-full bg-gold/80"
-              style={{ height: h, animation: `sosPulse 1s ease-in-out ${i * 0.08}s infinite` }}
-            />
-          ))}
-        </span>
-      )}
+            {isOpen && (
+              <div className="mt-3 border-t border-navy/[.08] pt-3">
+                {thread.length === 0 ? (
+                  <p className="text-[18px] leading-[1.5] text-muted">아직 주고받은 목소리가 없습니다.</p>
+                ) : (
+                  <div className="flex flex-col gap-2.5">
+                    {thread.map((m) => {
+                      const mine = m.dir === "out";
+                      return (
+                        <div key={m.id} className={`flex items-end gap-2 ${mine ? "justify-end" : "justify-start"}`}>
+                          <div
+                            className="max-w-[76%] rounded-[18px] px-4 py-2.5"
+                            style={
+                              mine
+                                ? { background: "#0A1F3C", color: "#FFFFFF", borderBottomRightRadius: 6 }
+                                : { background: "#FFFFFF", color: "#40413F", borderBottomLeftRadius: 6, boxShadow: "inset 0 0 0 1px rgba(10,31,60,.08)" }
+                            }
+                          >
+                            <p className="text-[18px] leading-[1.5]">{m.text}</p>
+                            <div className="mt-0.5 font-num text-[14px]" style={{ color: mine ? "rgba(255,255,255,.7)" : "#5C5A54" }}>
+                              {isToday(m.at) ? "" : `${spokenDay(m.at)} `}
+                              {spokenTime(m.at)} · {m.sec}초
+                            </div>
+                          </div>
+                          {!mine && (
+                            <button
+                              onClick={() => onPlay(m)}
+                              aria-label={m.played ? "다시 듣기" : "듣기"}
+                              className="btn-press flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full"
+                              style={m.played ? { background: "rgba(10,31,60,.06)", color: "#5C5A54" } : { background: "rgba(176,141,87,.2)", color: "#8A5D12" }}
+                            >
+                              <Icon name="speaker" size={22} strokeWidth={2} />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
 
-      {tooShort && (
-        <p className="mt-3 text-[19px] font-bold leading-[1.5] text-amber">
-          너무 짧습니다. 조금 더 길게 말씀해 주세요.
+                <button
+                  onClick={() => (on ? finish(v) : start(v))}
+                  aria-label={on ? `${v.name}에게 보내기` : `${v.name}에게 목소리 남기기`}
+                  className="btn-press mt-3 flex w-full items-center justify-center gap-2 rounded-[16px] py-[17px] text-[19px] font-bold text-white"
+                  style={
+                    on
+                      ? { background: "rgba(176,141,87,.95)", boxShadow: "inset 0 1px 0 rgba(255,255,255,.45)" }
+                      : { background: "#0A1F3C" }
+                  }
+                >
+                  <Icon name="mic" size={24} strokeWidth={2} />
+                  {on ? `말씀하세요 ${rec.sec}초 · 다시 누르면 보냅니다` : `${v.name}에게 목소리 남기기`}
+                </button>
+                {/* 녹음 중 파형 — 소리가 들어가고 있다는 것을 눈으로 확인 */}
+                {on && (
+                  <span className="mt-2.5 flex items-end justify-center gap-[3px]" aria-hidden>
+                    {[10, 20, 14, 26, 16, 30, 12, 22, 18, 28, 13, 24].map((h, i) => (
+                      <span
+                        key={i}
+                        className="w-[5px] rounded-full bg-gold/80"
+                        style={{ height: h, animation: `sosPulse 1s ease-in-out ${i * 0.08}s infinite` }}
+                      />
+                    ))}
+                  </span>
+                )}
+                {tooShort === v.id && (
+                  <p className="mt-2.5 text-[18px] font-bold leading-[1.5] text-amber">
+                    너무 짧습니다. 조금 더 길게 말씀해 주세요.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// 복지혜택 시트 — 해주세요 '복지 혜택' 타일 (2026-09-04 시트 앱 전체 3번).
+// 어르신에게는 등급·점수·정책 ID 대신 두 마디만: "받으실 수 있어요" · "확인이 필요해요".
+// 목록은 여섯 개까지만 — 나머지는 선생님이 방문 때 설명한다. 신청은 어르신이 직접 하지
+// 않는다 (보호자 신청 · 컨시어지 제안 — 시트 원문).
+function ElderWelfareSheet({ matches, counts, asked, onAsk, onClose }) {
+  const high = matches.filter((m) => m.verdict === VERDICT.high);
+  const check = matches.filter((m) => m.verdict === VERDICT.check);
+  const show = [...high, ...check].slice(0, 6);
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-[rgba(8,23,45,.6)]" onClick={onClose}>
+      <div
+        className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-[28px] bg-elder p-6 pb-8 break-keep"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="복지 혜택"
+      >
+        <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
+        <p className="text-[24px] font-black leading-[1.3] text-navy">나라에서 받으실 수 있는 것</p>
+        <p className="mt-1.5 text-[18px] leading-[1.5] text-muted">
+          {counts.high > 0 ? `받으실 수 있는 것 ${counts.high}가지 · ` : ""}확인이 필요한 것 {counts.check}가지
         </p>
-      )}
-      {sent.length > 0 && (
-        <div className="mt-3 space-y-2">
-          {sent.slice(0, 3).map((m, i) => (
-            <div key={i} className="flex items-center gap-3 rounded-[14px]" style={{ ...SUB_CARD, padding: "12px 14px" }}>
-              <span className="text-green">
-                <Icon name="mic" size={22} strokeWidth={2} />
-              </span>
-              <span className="flex-1 text-[18px] font-bold text-navy">{m.to}에게 보냈습니다</span>
-              <span className="font-num text-[17px] font-bold text-muted">{m.sec}초</span>
-            </div>
-          ))}
+        <div className="mt-4 space-y-2">
+          {show.map((m) => {
+            const ok = m.verdict === VERDICT.high;
+            return (
+              <div key={m.policy.id} style={SUB_CARD}>
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-[20px] font-bold leading-[1.35] text-navy">{m.policy.name}</span>
+                  <span
+                    className="shrink-0 rounded-full px-2.5 py-1 text-[15px] font-bold"
+                    style={ok ? { background: "rgba(30,122,90,.12)", color: "#1E7A5A" } : { background: "rgba(138,93,18,.12)", color: "#8A5D12" }}
+                  >
+                    {ok ? "받으실 수 있어요" : "확인이 필요해요"}
+                  </span>
+                </div>
+                <p className="mt-1 text-[18px] leading-[1.5] text-ink">{m.policy.summary}</p>
+                <p className="mt-0.5 text-[17px] leading-[1.45] text-muted">{m.policy.value}</p>
+              </div>
+            );
+          })}
         </div>
-      )}
-    </>
+        <p className="mt-3 text-[17px] leading-[1.5] text-muted">신청은 선생님과 가족이 도와드립니다. 무료 회원도 같습니다.</p>
+        <ElderBtn onClick={onAsk} disabled={asked} variant={asked ? "done" : "primary"} className="mt-4">
+          {asked ? "선생님에게 부탁했습니다" : "선생님이 알려드려요 · 부탁하기"}
+        </ElderBtn>
+        <ElderBtn onClick={onClose} variant="done" className="mt-2">
+          닫기
+        </ElderBtn>
+      </div>
+    </div>
   );
 }
 

@@ -15,7 +15,9 @@ const TABS = [
   { href: "/family/my", label: "마이", icon: "user" },
 ];
 
-export default function FamilyLayout({ children, title }) {
+// action — 오른쪽 위 자리에 아바타 대신 넣을 버튼 (마이 탭 '관리' · 2026-09-04 영상 시안).
+// eyebrow — 'FAMILY MEMBERSHIP' 대신 쓸 작은 글씨 (없으면 그대로).
+export default function FamilyLayout({ children, title, action }) {
   const router = useRouter();
   const { state, dispatch } = useAppState();
   const elderName = state.onboarding?.elderName || ELDER.name;
@@ -63,8 +65,8 @@ export default function FamilyLayout({ children, title }) {
                 </button>
               </div>
             </div>
-            {/* 성 제외 이름 — 디자인 콘솔 헤더 아바타 */}
-            <Avatar name={elderName} text={elderName.length >= 3 ? elderName.slice(1) : elderName} size={38} />
+            {/* 성 제외 이름 — 디자인 콘솔 헤더 아바타. 화면이 오른쪽 위 버튼을 주면 그것이 대신 선다. */}
+            {action || <Avatar name={elderName} text={elderName.length >= 3 ? elderName.slice(1) : elderName} size={38} />}
           </div>
         </header>
 

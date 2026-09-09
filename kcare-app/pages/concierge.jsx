@@ -6,8 +6,11 @@ import Icon from "../components/icons";
 import VisitFlow from "../components/VisitFlow";
 import {
   AI_REPORT,
+  ELDER,
   OUTING,
 } from "../lib/mock";
+import WelfareList from "../components/WelfareList";
+import { matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
 import {
   AI_BRIEFING,
   CARE_SUGGESTIONS,
@@ -33,7 +36,7 @@ import {
 } from "../lib/console";
 import { checkupFor, REPORT_HEADLINE } from "../lib/checkup";
 import { STORE_CATALOG } from "../lib/store";
-import { SERVICE_MENU } from "../lib/requests";
+import { SERVICE_MENU, STATUS } from "../lib/requests";
 import { fmtWon } from "../lib/config";
 import { useAppState } from "../lib/state";
 import Splash from "../components/Splash";
@@ -114,6 +117,15 @@ export default function ConciergePage() {
   const purchasing = state.requests.filter(
     (r) => r.dir === "fromConcierge" && r.status === "inProgress"
   );
+  // 어르신 화면에서 온 부탁 — 도와줘요(즉시 방문) · 해주세요 · 복지혜택 (2026-09-04 시트
+  // 어르신 해주세요 3번 "컨시어지 화면에도 처리 가능한 내용이 없음"). 종결된 것은 뺀다.
+  const elderAsks = state.requests.filter(
+    (r) => r.dir === "fromElder" && !["done", "cancelled", "rejected"].includes(r.status)
+  );
+  // 복지혜택 제안 — 담당 가구(김순자)에 맞는 것 (앱 전체 3번). 판정은 관제·보호자와 같은 값.
+  const [welfareSent, setWelfareSent] = useState({});
+  const welfareMatches = matchWelfare(profileFor(ELDER.name, state.welfare?.answers));
+  const welfareN = welfareCounts(welfareMatches);
 
   const fmtT = (t) =>
     new Date(t).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
@@ -263,6 +275,55 @@ export default function ConciergePage() {
 
                 {/* 방문 업무흐름 — 관제와 같은 건을 본다 (2026-08-13 미팅 8단계) */}
                 <VisitFlow role="concierge" />
+
+                {/* 어르신이 부탁한 것 — 도와줘요 · 해주세요 · 복지혜택 (2026-09-04 시트).
+                    관제가 확인 전화를 마치면 '확인됨'으로 넘어오고, 여기서 진행·완료를 누른다.
+                    어르신 화면 '부탁해 둔 것'의 문구가 이 단계를 그대로 따라간다. */}
+                {elderAsks.length > 0 && (
+                  <Card className="p-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[15px] font-black text-navy">{ELDER.name} 님이 부탁한 것</span>
+                      <span className="ml-auto font-num text-[12px] font-bold text-amber">{elderAsks.length}건</span>
+                    </div>
+                    <div className="mt-3 space-y-2">
+                      {elderAsks.map((r) => {
+                        const st = STATUS[r.status];
+                        const next =
+                          r.status === "requested" ? ["확인함", "confirmed", "컨시어지 확인"]
+                          : r.status === "confirmed" ? ["진행 시작", "inProgress", "컨시어지 진행 시작"]
+                          : r.status === "inProgress" ? ["완료", "done", "컨시어지 완료 처리"]
+                          : null;
+                        return (
+                          <div key={r.id} className="rounded-xl border border-navy/[.07] bg-white/60 p-3">
+                            <div className="flex items-center gap-2">
+                              <Badge fg={st.fg} bg={st.bg}>{st.label}</Badge>
+                              {r.urgency === "urgent" && <Badge fg="#C0392B" bg="rgba(192,57,43,.1)">긴급</Badge>}
+                              <span className="ml-auto font-num text-[11px] text-muted">{fmtT(r.history[0]?.at || Date.now())}</span>
+                            </div>
+                            <div className="mt-1.5 text-[14px] font-bold text-navy">{r.type}</div>
+                            <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{r.detail}</div>
+                            {r.status === "requested" && (
+                              <p className="mt-1.5 text-[11.5px] font-bold text-amber">관제 확인 전화 대기 — 관제 대시보드 &lsquo;지금 처리할 일&rsquo;</p>
+                            )}
+                            {next && (
+                              <button
+                                onClick={() => {
+                                  dispatch({ type: "transitionRequest", id: r.id, to: next[1], note: next[2] });
+                                  push("어르신", `${ELDER.name} ${r.type} — ${next[2]}`, "#8FE3C0");
+                                }}
+                                className={`btn-press mt-2.5 w-full rounded-xl border py-2.5 text-[13px] font-bold ${
+                                  next[1] === "done" ? "border-green/40 text-green" : "border-navy/20 text-navy"
+                                }`}
+                              >
+                                {next[0]}
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </Card>
+                )}
 
 
                 {/* 관제 급파 → 컨시어지 긴급 배너 — 역할 간 실시간 연동 (SOS + 급파 지시 시) */}
@@ -1364,6 +1425,55 @@ export default function ConciergePage() {
                   근거 없는 제안은 보낼 수 없습니다. 제안·판매 실적은 평가와 보상에 반영되지
                   않습니다 (원칙 1).
                 </p>
+
+                {/* 복지혜택 제안 — 나라·지자체 지원 (2026-09-04 시트 앱 전체 3번).
+                    관제가 자동 매칭한 것을 현장에서 확인해 보호자에게 제안한다. 판매가
+                    아니라 공공지원 우선 연결이라 실적과 무관하다 (04_정책분류 우선연결 원칙). */}
+                <SectionLabel>복지혜택 제안 — {ELDER.name} 님 댁</SectionLabel>
+                <Card className="p-4">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <span className="text-[14px] font-bold text-navy">자동 매칭 {welfareN.high + welfareN.check}건</span>
+                    <span className="font-num text-[12px] text-muted">
+                      높음 {welfareN.high} · 추가확인 {welfareN.check} · 낮음 {welfareN.low}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[12px] leading-[1.6] text-muted">
+                    소득·수급·주거는 보호자가 답해야 확정됩니다 — 방문 때 여쭤보고 보호자 앱에서 답하시게 안내하세요.
+                    공공지원을 먼저 잇고, 없을 때 해주세요 PLUS · 민간 순서입니다.
+                  </p>
+                  <div className="mt-3">
+                    <WelfareList
+                      matches={welfareMatches}
+                      statuses={state.welfare?.status}
+                      hideLow
+                      pageSize={4}
+                      onSend={(m) => {
+                        setWelfareSent((s) => ({ ...s, [m.policy.id]: true }));
+                        dispatch({
+                          type: "addRequest",
+                          payload: {
+                            id: `rq-${Date.now()}`,
+                            dir: "fromConcierge",
+                            type: `복지혜택 제안 · ${m.policy.name}`,
+                            detail: `${m.policy.summary} — ${m.policy.value}. ${m.verdict} · 확인할 것: ${m.checks}. 신청: ${m.policy.apply}`,
+                            amount: 0,
+                            preferredDate: null,
+                            urgency: "normal",
+                            assignee: "박지현",
+                            photos: [],
+                            status: "requested",
+                            history: [{ at: Date.now(), status: "requested", note: "컨시어지 현장 제안 · 공공지원 우선" }],
+                            proof: null,
+                          },
+                        });
+                        dispatch({ type: "welfareStatus", id: m.policy.id, status: "자격확인", by: "컨시어지" });
+                        push("복지", `복지혜택 제안 — ${m.policy.name} (${m.verdict})`, "#F0D9A8");
+                      }}
+                      sendLabel="보호자에게 제안"
+                      sent={welfareSent}
+                    />
+                  </div>
+                </Card>
 
                 {/* 구매대행 쇼핑 — 스토어 전 품목 (2026-08-21 시트 컨시어지 제안 1번).
                     전에는 여섯 개만 하드코딩돼 있어서 "이건 없네"가 나왔다.

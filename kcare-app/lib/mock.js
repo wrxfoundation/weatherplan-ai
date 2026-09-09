@@ -557,6 +557,25 @@ export const AI_ASSISTANT_QA = [
 // 가족 초대 — 주 보호자만 발급. 링크 참여 시 주 보호자 알림 + 제거 권한은 주 보호자 전용
 export const INVITE = { link: "kcare.app/i/7F2K9Q", rule: "7일 유효 · 1회용 · 참여 시 주 보호자에게 알림" };
 
+// 안심방문 바디캠 영상 — 보호자 마이, 리포트와 평가 사이 (2026-09-04 시트 보호자 마이 2번).
+// 규칙: 30일 보관 후 자동 삭제. 분쟁이 생기면 관리자가 보관 기간을 따로 정한다.
+// 실제 영상은 촬영 동의 후 서버 연동이라 데모는 목록·구간·보관 상태만 보여 준다.
+// daysAgo 로 두는 이유: 날짜를 박아 두면 며칠 뒤 열었을 때 "D-2 삭제"가 이미 지난 날짜가 된다.
+export const VIDEO_RETENTION_DAYS = 30;
+export const VISIT_VIDEOS = [
+  { id: "vv3", title: "3회차 안심방문", by: "박지현", daysAgo: 0, len: "8분 12초", hold: null },
+  { id: "vv2", title: "2회차 안심방문", by: "박지현 · 서다인", daysAgo: 28, len: "7분 40초", hold: null },
+  {
+    id: "vv1",
+    title: "첫 안심방문 · 안전진단",
+    by: "박지현 · 서다인",
+    daysAgo: 59,
+    len: "11분 05초",
+    // 30일이 지났지만 남아 있는 것 — 관리자가 보관 기간을 지정한 예 (데모)
+    hold: { until: "10월 31일까지", why: "안전용품 설치 확인 요청 건 · 관리자 지정" },
+  },
+];
+
 export const PEOPLE_KPIS = [
   { k: "가입 가구", v: "128", sub: "+12 이번 달", color: "#0A1F3C" },
   { k: "활성 어르신", v: "132", sub: "멤버십 유지 97%", color: "#0A1F3C" },

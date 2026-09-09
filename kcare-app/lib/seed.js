@@ -39,14 +39,9 @@ export const INITIAL_EVENTS = [
     source: "관제 배정",
     note: "안심방문과 동시 진행",
   },
-  {
-    id: "ev4",
-    kind: "medication",
-    title: "아침 혈압약",
-    at: daysFromNow(1, 8, 0),
-    source: "보호자 등록",
-    note: "매일 반복",
-  },
+  // ev4 "아침 혈압약"(복약 알림)은 뺐다 (2026-09-04 시트 어르신 전체 2번) —
+  // 약 복용은 일정 알람이 아니라 복용 시간에 뜨는 약 미션 팝업이 맡는다 (elder.jsx).
+  // 저장된 옛 상태에 남아 있는 것은 lib/state.js hydrate 가 걸러 낸다.
   {
     id: "ev5",
     kind: "delivery",

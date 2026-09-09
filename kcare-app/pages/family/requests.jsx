@@ -6,6 +6,9 @@ import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY } from ".
 import { fmtWon, PRICING } from "../../lib/config";
 import { useAppState, needsGuardianApproval } from "../../lib/state";
 import { honorific } from "../../lib/tracks";
+import { ELDER } from "../../lib/mock";
+import WelfareList from "../../components/WelfareList";
+import { ASK_GUARDIAN, matchWelfare, profileFor, welfareCounts } from "../../lib/welfare";
 
 // 양방향 "해주세요" — REQ-03 (상태 8종 · 첨부 6종) + REQ-07 (결제 한도 승인)
 // 보호자 화면: 내 요청 생성 + 컨시어지 발신 요청의 결제 승인.
@@ -25,6 +28,7 @@ export default function RequestsPage() {
   const [openId, setOpenId] = useState(null);
   const [wanted, setWanted] = useState({}); // 미개시 서비스 수요 신호 — no 별 1회
   const ob = state.onboarding;
+  const honor = honorific(ob); // 고객 호칭 — "~~님" (2026-08-12 시트)
 
   const active = state.requests.filter(
     (r) => !["done", "cancelled", "rejected"].includes(r.status)
@@ -38,6 +42,36 @@ export default function RequestsPage() {
       ? `${fmtWon(ob?.limitAmount ?? PRICING.paymentLimitDefault)} 초과 시 보호자 승인`
       : null;
 
+  // 복지혜택 (2026-09-04 시트 앱 전체 3번) — 관제가 자동 매칭한 것을 보호자가 확인·신청한다.
+  // 답(answers)은 관제·컨시어지·어르신 화면이 같이 본다.
+  const honorName = ob?.elderName || ELDER.name;
+  const answers = state.welfare?.answers || {};
+  const welfareMatches = matchWelfare(profileFor(honorName, answers));
+  const welfareN = welfareCounts(welfareMatches);
+  const [welfareSent, setWelfareSent] = useState({});
+  const askWelfare = (m) => {
+    setWelfareSent((s) => ({ ...s, [m.policy.id]: true }));
+    dispatch({
+      type: "addRequest",
+      payload: {
+        id: `rq-${Date.now()}`,
+        dir: "fromGuardian",
+        type: `복지혜택 신청 도움 · ${m.policy.name}`,
+        detail: `${m.policy.summary} — ${m.policy.value}. 신청 경로: ${m.policy.apply} (${m.policy.org} · ${m.policy.contact}). 확인할 것: ${m.checks}`,
+        amount: 0,
+        preferredDate: null,
+        urgency: "normal",
+        assignee: "박지현",
+        photos: [],
+        status: "requested",
+        history: [{ at: Date.now(), status: "requested", note: "보호자 앱 · 복지혜택 신청 도움 요청" }],
+        proof: null,
+      },
+    });
+    dispatch({ type: "welfareStatus", id: m.policy.id, status: "신청예정", by: "보호자" });
+    dispatch({ type: "pushEvent", payload: { kind: "복지", text: `보호자 복지혜택 신청 도움 요청 — ${m.policy.name}`, color: "#F0D9A8" } });
+  };
+
   return (
     <>
       <Head>
@@ -48,6 +82,63 @@ export default function RequestsPage() {
           채팅이 아니라 처리 상태가 남는 업무형 요청입니다. 사진·금액·완료증빙이 함께
           기록됩니다.{limitLabel && ` 결제권한: ${limitLabel}.`}
         </p>
+
+        {/* 복지혜택 — 베타부터 연다 (2026-09-04 시트 앱 전체 3번). 무료 회원도 같다. */}
+        <Card className="p-0">
+          <Collapse
+            title="복지혜택 — 나라에서 받을 수 있는 것"
+            count={`높음 ${welfareN.high} · 확인 ${welfareN.check}`}
+            note={`${honor} 정보로 정책 79건을 자동 판정했습니다 · 무료 회원도 이용 · 2026-09-04 검증`}
+            defaultOpen
+            tone="gold"
+          >
+            {/* 미확인 항목 — 보호자가 답하면 '추가확인'이 '높음'으로 바뀐다 (시트의 노란 입력칸) */}
+            <div className="rounded-xl bg-navy/[.04] p-3">
+              <div className="text-[12px] font-bold text-navy">몇 가지만 확인해 주세요 — 답할수록 판정이 정확해집니다</div>
+              <div className="mt-2 space-y-2">
+                {ASK_GUARDIAN.map((q) => {
+                  const cur = answers[q.key];
+                  const opts = q.options || ["Y", "N"];
+                  const label = (o) => (o === "Y" ? "예" : o === "N" ? "아니요" : o);
+                  return (
+                    <div key={q.key} className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span className="min-w-[150px] flex-1 text-[12.5px] text-ink">{q.q}</span>
+                      <span className="flex gap-1">
+                        {opts.map((o) => (
+                          <button
+                            key={o}
+                            onClick={() => dispatch({ type: "welfareAnswer", key: q.key, value: o })}
+                            aria-pressed={cur === o}
+                            className={`btn-press rounded-lg border px-2.5 py-1.5 text-[12px] font-bold ${
+                              cur === o ? "border-navy bg-navy text-white" : "border-navy/15 text-muted"
+                            }`}
+                          >
+                            {label(o)}
+                          </button>
+                        ))}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-2 text-[11px] leading-[1.6] text-muted">
+                답은 관제·담당 컨시어지에게만 보이고, 자동판정에만 씁니다. 모르시면 비워 두세요 — 방문 때 확인합니다.
+              </p>
+            </div>
+            <div className="mt-3">
+              <WelfareList
+                matches={welfareMatches}
+                statuses={state.welfare?.status}
+                hideLow
+                pageSize={5}
+                onStatus={(id, s) => dispatch({ type: "welfareStatus", id, status: s, by: "보호자" })}
+                onSend={askWelfare}
+                sendLabel="신청 도움 요청"
+                sent={welfareSent}
+              />
+            </div>
+          </Collapse>
+        </Card>
 
         {/* 서비스 메뉴 — 실무자 피드백 (2026-08-09): no1~6 활성 · no7~11 예고 · no12 응급
             메뉴가 15개까지 늘어 한 장에 다 펼치면 3.8화면 분량이 된다. 분류로 묶고
@@ -230,6 +321,7 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
                 fromConcierge: "컨시어지 → 보호자",
                 fromElder: `${honor} → 보호자`,
                 fromGuardian: "보호자 → 컨시어지",
+                fromOps: "관제 → 보호자", // 복지혜택 안내 (2026-09-04)
               }[req.dir]
             }
           </span>
