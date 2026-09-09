@@ -964,3 +964,19 @@ A (추천, 127자 — "rewards" 를 사이트 헤드라인과 맞춰 "an asset" 
 ```
 B (현행 문구 유지 + 행사 한 줄, 149자): Weather Data Token Generator™. indoors & out — manage a healthier environment, verified data becomes rewards. On stage at XRP SEOUL 2026, Oct 3 #XRPL
 ```
+
+**링크드인 개인 리포스트 확정본(9/9 재작성 — 비전 + 실물 프레임, 3문단)**
+```
+On Oct 3, wellbian takes the stage at XRP SEOUL 2026 (Grand Hyatt Seoul). KWeather, our device partner, joins as Platinum Sponsor.
+
+We'll share the vision — a Weather Data Economy, where the weather measured in the space you live in becomes data, and verified data becomes weather services — and show the Weather Data Token Generator™ in person: measuring in real time, recording on the XRP Ledger.
+
+I work on the wellbian side. If you're in Seoul that day, come say hello.
+```
+```
+10월 3일, wellbian이 XRP SEOUL 2026(그랜드 하얏트 서울) 무대에 오릅니다. 기기 파트너 케이웨더가 플래티넘 스폰서로 함께합니다.
+
+내가 생활하는 공간에서 측정한 날씨가 데이터가 되고, 검증된 데이터가 날씨 서비스가 되는 '날씨 데이터 경제'의 비전을 발표하고, Weather Data Token Generator™ 실물을 보여드립니다. 실시간으로 측정하고 XRPL에 기록하는 모습을 그 자리에서 보실 수 있습니다.
+
+저는 wellbian 쪽에서 파트너십을 맡고 있습니다. 그날 서울에 계시면 들러서 인사 나눠요.
+```
