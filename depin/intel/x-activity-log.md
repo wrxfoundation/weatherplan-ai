@@ -947,3 +947,8 @@ F3 (추천, 279자): Our device partner KWeather, Platinum Sponsor of XRP SEOUL 
 ```
 F4 (278자): KWeather, our device partner, is Platinum Sponsor of XRP SEOUL 2026. 30 years of weather business in Korea. Weather Data Becomes an Asset: weather measured where you live becomes data, and verified data becomes weather services. See it measure and record on XRPL, live on Oct 3.
 ```
+**서우 결정(9/9): "device partner" 안 넣어도 됨** — 인용되는 @XRPSEOUL 원글이 이미 "Device Partner" 로 호명하고 있어 인용 화면 안에서 관계가
+보인다. 최종본은 서우 합본에서 길이·문장 연결·날짜만 고친 것:
+```
+G1 (최종, 277자): KWeather, Platinum Sponsor of XRP SEOUL 2026. Thirty years of weather business in Korea. Weather Data Becomes an Asset: the weather measured in the space you live in becomes data; verified data becomes weather services. See the device measure and record on XRPL, live on Oct 3.
+```
