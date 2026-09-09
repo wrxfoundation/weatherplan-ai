@@ -893,3 +893,47 @@ Two things are being prepared. The talk: why the next unit of weather data is th
 
 Weather has always been measured by states and institutions. We're working on measuring it where people are, and having those readings count as data. Seoul gets the first look. See you there.
 ```
+
+**서우 재수정(9/9): "너무 어렵다 — 사이트 「Weather Data Economy」 문구로 기대감만, 보상 언급은 뺀다."** → H 판 폐기, 사이트 문장
+그대로 쓰는 S 판. 3단계의 "토큰 보상" 은 "데이터 유통(기업·기관 서비스)" 으로 바꿔 보상·WLBN 0. "Weather Data Becomes an Asset"
+은 현행 사이트 헤드라인(탈락 슬로건 "Your Weather Data Becomes Your Asset." 과 다름). 개인정보 미수집 문장은 신뢰 신호로 유지.
+
+```
+S1 (추천, 275자): Weather Data Becomes an Asset. The weather measured in the space you live in becomes data. Verified data becomes weather services for companies and institutions. The more it flows, the stronger it gets. See the device measure and record on XRPL, live — XRP SEOUL 2026, Oct 3.
+```
+```
+S2 (화살표 변주, 239자): We're building a Weather Data Economy: measure the weather where you live → verify the data → turn it into weather services. Watch the device measure in real time and record on XRPL, live on stage. XRP SEOUL 2026, Oct 3, Grand Hyatt Seoul.
+```
+```
+S3 (국문, 176자): 우리가 만드는 것은 날씨 데이터 경제입니다. 내가 생활하는 공간에서 측정한 날씨가 데이터가 되고, 검증된 데이터는 기업과 기관의 날씨 서비스가 됩니다. 데이터가 흐를수록 측정망은 촘촘해집니다. 10월 3일 XRP SEOUL 2026에서 이 장치가 실시간으로 측정하고 XRPL에 기록하는 과정을 직접 확인해 보십시오.
+```
+```
+링크드인 개인(국문, 447자):
+10월 3일 XRP SEOUL 2026에서 wellbian이 만드는 '날씨 데이터 경제'를 보여드립니다. 케이웨더가 플래티넘 스폰서이자 기기 파트너로 함께합니다.
+
+Weather Data Becomes an Asset.
+내가 생활하는 공간에서 측정한 날씨가 데이터가 되고, 검증된 데이터는 기업·API·AI 서비스로 유통되고, 촘촘해진 측정망이 다음 수요를 키우는 선순환. 저희는 이 구조를 만들고 있습니다.
+
+1단계 날씨 측정 — CO₂·미세먼지·온습도 등 실내 날씨 데이터
+2단계 데이터 검증 — 품질과 성실성 기준
+3단계 데이터 유통 — 기업과 기관의 날씨 서비스로
+
+현장에서는 이 장치가 실시간으로 환경을 측정하고 그 결과를 XRPL(XRP Ledger)에 기록하는 과정을 직접 보실 수 있습니다. 측정값은 날씨 데이터뿐이고, 개인을 식별하는 정보는 수집하지 않습니다.
+
+현장에서 뵙겠습니다.
+```
+```
+링크드인 개인(영문, 796자):
+On Oct 3 at XRP SEOUL 2026, we're showing what wellbian is building: a Weather Data Economy. KWeather joins as Platinum Sponsor and our device partner.
+
+Weather Data Becomes an Asset.
+The weather measured in the space you live in becomes data. Verified data flows into services for companies, APIs and AI. A denser network grows the next round of demand. That's the loop we're building.
+
+Step 1 — Measure: CO₂, fine dust, temperature and humidity indoors
+Step 2 — Verify: quality and consistency standards
+Step 3 — Distribute: weather services for companies and institutions
+
+On stage, the device measures the environment in real time and records the result on the XRP Ledger. Come see a reading turn into data. Only weather data is measured — nothing that identifies a person.
+
+See you in Seoul.
+```
