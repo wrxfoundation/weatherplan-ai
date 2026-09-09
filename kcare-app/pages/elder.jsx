@@ -1279,7 +1279,9 @@ export default function ElderHome() {
                   )}
                   {spokenTime(next.at)}
                   <br />
-                  {next.title}
+                  {/* 앞의 앱 이름은 뺀다 — 360px 에서 "K-CARE 안심방문 (월 / 1회)"로 괄호가
+                      줄바꿈됐다(QA 실측). 우리 앱 안에서 우리 이름은 알려 주는 게 없다. */}
+                  {next.title.replace(/^K-CARE\s+/, "")}
                 </div>
                 {next.note && (
                   <p className="mt-2 text-[19px] leading-[1.6] text-white/[.86]">{next.note}</p>
@@ -2670,15 +2672,15 @@ function ElderWelfareSheet({ matches, counts, asked, onAsk, onClose }) {
             const ok = m.verdict === VERDICT.high;
             return (
               <div key={m.policy.id} style={SUB_CARD}>
-                <div className="flex items-start justify-between gap-2">
-                  <span className="text-[20px] font-bold leading-[1.35] text-navy">{m.policy.name}</span>
-                  <span
-                    className="shrink-0 rounded-full px-2.5 py-1 text-[15px] font-bold"
-                    style={ok ? { background: "rgba(30,122,90,.12)", color: "#1E7A5A" } : { background: "rgba(138,93,18,.12)", color: "#8A5D12" }}
-                  >
-                    {ok ? "받으실 수 있어요" : "확인이 필요해요"}
-                  </span>
-                </div>
+                {/* 제목은 한 줄을 다 쓰고 배지는 그 아래 — 옆에 붙이면 360px 에서 제목이
+                    세 줄로 꺾였다 (QA 실측 · "서울시 / 건강동행 / (병원동행)") */}
+                <span className="block text-[20px] font-bold leading-[1.35] text-navy">{m.policy.name}</span>
+                <span
+                  className="mt-1.5 inline-block rounded-full px-2.5 py-1 text-[15px] font-bold"
+                  style={ok ? { background: "rgba(30,122,90,.12)", color: "#1E7A5A" } : { background: "rgba(138,93,18,.12)", color: "#8A5D12" }}
+                >
+                  {ok ? "받으실 수 있어요" : "확인이 필요해요"}
+                </span>
                 <p className="mt-1 text-[18px] leading-[1.5] text-ink">{m.policy.summary}</p>
                 <p className="mt-0.5 text-[17px] leading-[1.45] text-muted">{m.policy.value}</p>
               </div>
