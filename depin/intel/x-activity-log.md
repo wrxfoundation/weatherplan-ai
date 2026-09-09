@@ -1010,3 +1010,10 @@ Two asks: mark posts #ad, and keep to the facts from my email — rewards are pl
 C1 (162자, 첨언만): One last thing, a bit of Korean culture: we tend to look after the people who recognize us first — the ones who show up before it's obvious. You get what I mean 😉
 C2 (267자, 첨언 + 빠진 두 줄 복구): And a cultural note to close: in Korea, the people who see you early are the ones you remember and take care of later. I think you get what I mean. Only two asks from my side — mark posts #ad, and stick to the facts from my email: rewards are planned, not guaranteed.
 ```
+(9/9 17:00 카란: 평소 계약·월정액이지만 초기 회사 이해, 어필리에이트 링크로 돕겠다 → **"판매당 퍼센트가 있나"** 질문 + 디센트와도 판매 증대 작업 중 언급 + 네덜란드 출신·방한 희망.) 서우: "검토해 보고 말해 주겠다."
+내부 기준선: 9/3 인플루언서 프로그램 = **커미션 없음**(추적 링크만) · 9/8 카탈라이즈 회신 = 결제단 할인 없음·비가격 혜택 · 9/9 기조 = 중대 결정 유보. 퍼센트 여부는 서우·내부 결정(카탈라이즈 KOL 구조와 충돌 여부 확인) — 답은 며칠 내.
+```
+DM (259자): Good question on the percentage — let me check that internally and come back to you rather than guess. I'll be in touch within a few days.
+
+Nice to hear D'CENT has been good to work with. And if you ever make the trip, Oct 3 in Seoul would be a good excuse 🇰🇷
+```
