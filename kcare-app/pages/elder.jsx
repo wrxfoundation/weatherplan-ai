@@ -868,7 +868,7 @@ export default function ElderHome() {
                   <span aria-hidden>
                     <Icon name={visitAsked ? "clock" : "bell"} size={24} strokeWidth={2} />
                   </span>
-                  <span className="text-[14px] font-bold leading-[1.15]">{visitAsked ? "요청됨" : "도와줘요"}</span>
+                  <span className="text-[15px] font-bold leading-[1.15]">{visitAsked ? "요청됨" : "도와줘요"}</span>
                 </button>
               </div>
               {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번). */}
@@ -2583,7 +2583,7 @@ function FamilyThreads({ open, onToggle, threadFor, onPlay, onSend }) {
                             }
                           >
                             <p className="text-[18px] leading-[1.5]">{m.text}</p>
-                            <div className="mt-0.5 font-num text-[14px]" style={{ color: mine ? "rgba(255,255,255,.7)" : "#5C5A54" }}>
+                            <div className="mt-0.5 font-num text-[15px]" style={{ color: mine ? "rgba(255,255,255,.7)" : "#5C5A54" }}>
                               {isToday(m.at) ? "" : `${spokenDay(m.at)} `}
                               {spokenTime(m.at)} · {m.sec}초
                             </div>
