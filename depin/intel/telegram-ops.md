@@ -125,6 +125,28 @@ Pre-registration closes Sep 14, 12:00 KST; first sale opens Sep 15, 12:00 KST �
 GA 🌤 XRP SEOUL 2026 소식 — 케이웨더가 플래티넘 스폰서로 함께합니다. 10월 3일 무대에서 기기를 켭니다. 글 보기: [X 링크]
 GA 🌤 XRP SEOUL 2026 news — KWeather is Platinum Sponsor, and on Oct 3 the device goes live on stage. Post: [X link]. Questions welcome.
 ```
+채널 확정본(9/9 재작성 — 톡방과 같은 "비전 + 실물" 프레임, 실제 링크, 합계 858자):
+```
+📌 케이웨더, XRP SEOUL 2026 플래티넘 스폰서
+
+wellbian의 기기 파트너 케이웨더가 10월 3일 XRP SEOUL 2026(그랜드 하얏트 서울)에 플래티넘 스폰서로 함께합니다.
+
+현장에서는 wellbian의 비전 발표와 함께 Weather Data Token Generator™ 실물을 만나 보실 수 있습니다. 내가 생활하는 공간의 날씨를 실시간으로 측정하고 XRPL에 기록하는 모습을 직접 확인해 보세요.
+
+자세히 보기 → https://x.com/wellbianlabs/status/2097498079058702617
+사전예약 9월 14일 12:00 마감 · 1차 판매 9월 15일 12:00 시작 → wellbian.io
+
+—
+
+📌 KWeather, Platinum Sponsor of XRP SEOUL 2026
+
+KWeather, wellbian's device partner, joins XRP SEOUL 2026 on Oct 3 (Grand Hyatt Seoul) as Platinum Sponsor.
+
+On site: wellbian's vision on stage, and the Weather Data Token Generator™ in person. Watch it measure the weather in the space you live in, in real time, and record it on XRPL.
+
+Full post → https://x.com/wellbianlabs/status/2097498079058702617
+Pre-registration closes Sep 14, 12:00 KST · First sale opens Sep 15, 12:00 KST → wellbian.io
+```
 톡방 확정본(서우 9/9 — 비전 + 실물 프레임, 실제 링크):
 ```
 GA 🌤 XRP SEOUL 2026 소식 — 케이웨더가 플래티넘 스폰서로 함께합니다. 10월 3일 wellbian의 비전과 Weather Data Token Generator™ 실물을 만나 보실 수 있습니다. 보기: https://x.com/wellbianlabs/status/2097498079058702617
