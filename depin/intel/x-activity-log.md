@@ -829,3 +829,37 @@ C (조건부 답글 — 원출처가 오늘 올렸을 때만, 233자): Seller-si
 ```
 KR 커뮤니티 한 줄("RLUSD 가 뭐냐" 답변용, 텔레봇·카톡, 167자): RLUSD는 리플(Ripple)이 발행하는 뉴욕주 금융감독청(NYDFS) 규제 달러 스테이블코인입니다. 싱가포르 DBS은행의 디지털 거래소가 토큰화 MMF 거래의 기준 통화로 쓰기로 한(2025-09) 등 기관 쪽에서도 쓰이고, 웰비안 제네시스 측정기 결제는 원화 또는 450 RLUSD로 받습니다.
 ```
+
+### @XRPSEOUL — "Spotlight on Kweather: @wellbianlabs' Weather Measurement Technology & Device Partner" + Platinum Sponsor KWEATHER 이미지 (2026-09-09 오전, X KR 계정 + 링크드인 동시) → **인용 리포스트 게시 (대기열 0 항목 실행) + 서우 개인 링크드인 리포스트**
+
+- 대기열 0 「XRP Seoul Platinum 스포트라이트 인용 원고」의 조건 충족 — 공식 발표가 먼저 나왔고, 스폰서 주체는 **케이웨더**(우리는 기기 파트너 관계로 호명됨).
+  프레임 "실물 기기 파트너와 한 무대" 그대로. Ripple 관계 암시 0, 가격·수량 0, Flare·디센트 태그 없음(Flare 는 9/8 KingKaran 건으로 통합 오독 위험이 확인돼 이 글에서 열지 않는다).
+- **슬롯**: 오전 인용 = 오늘 1건, EN-3 22:00 = 2건 → 파트너 발표일 2/일 예외(6시간+ 간격) 충족. 순수 RT 가 아니라 인용인 이유: 공식 발표가 관계를 먼저 말했으므로 우리가 "무엇을 들고 가는지" 한 줄을 얹어도 프레임 서명 위험이 없다(디센트 9/2 순수 RT 와 다른 점).
+- **표현 규칙**: 케이웨더 = device partner · "built by them"(현재형) · 30년은 instruments · 제품은 monitor · 참석은 이제 공표 뒤라 말할 수 있음 · 클로징 "Rewards still in testing".
+- 링크드인 개인 리포스트는 9/8 개인 X 인용의 관점 문장을 변주(측정 → 기록 → 검증), 회사 계정이 말한 사실은 반복하지 않는다.
+
+```
+Q1 (추천, 244자): Our device partner KWeather, Platinum Sponsor of XRP SEOUL 2026. Thirty years of weather instruments in Korea; the indoor air monitor we sell is built by them. On Oct 3 the box itself will be on the table — not a deck. Rewards still in testing.
+```
+```
+Q2 (변주, 239자): Thanks @XRPSEOUL. KWeather is our device partner: 30 years of weather instruments, and the maker of the indoor air monitor on our site. Oct 3, Grand Hyatt — the device on the table, the ledger doing the recording. Rewards still in testing.
+```
+```
+Q3 (국문판, 124자): 기기 파트너 케이웨더가 XRP SEOUL 2026 플래티넘 스폰서로 함께합니다. 30년 기상 관측 장비 회사가 만든 실내 공기 측정기를 10월 3일 현장에 들고 갑니다. 슬라이드 대신 기기로. 보상은 아직 테스트 중입니다.
+```
+```
+링크드인 개인(국문, 295자):
+케이웨더가 XRP SEOUL 2026(10월 3일, 그랜드 하얏트 서울)의 플래티넘 스폰서로 참여합니다. 30년 동안 기상 관측 장비를 만들어 온 회사가 이번에는 wellbian의 기기 파트너로, 실내 공기 측정기를 들고 무대에 섭니다.
+
+저는 wellbian 쪽에서 파트너십을 맡고 있습니다. 날씨는 지금까지 국가와 기관이 측정해 왔습니다. 저희는 사람이 실제로 머무는 공간에서 재고, 그 값이 데이터로 인정받게 하는 일을 합니다. 측정 → 기록 → 검증. 보상 층은 아직 테스트 중입니다.
+
+10월 3일 현장에서 뵙겠습니다.
+```
+```
+링크드인 개인(영문, 497자):
+KWeather joins XRP SEOUL 2026 (Oct 3, Grand Hyatt Seoul) as Platinum Sponsor — and as wellbian's device partner, the company that has built weather instruments in Korea for 30 years brings an indoor air monitor to the stage.
+
+I work on the wellbian side. Weather has always been measured by states and institutions; we're working on measuring it where people actually are, and having those readings count as data. Measure → record → verify. The reward layer is still in testing.
+
+See you on Oct 3.
+```
