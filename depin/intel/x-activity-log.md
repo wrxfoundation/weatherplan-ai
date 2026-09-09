@@ -863,3 +863,33 @@ I work on the wellbian side. Weather has always been measured by states and inst
 
 See you on Oct 3.
 ```
+
+**서우 수정(9/9): "슬라이드도 하고 기기 시연도 할 거라, 그냥 기대감 조성 — 우리 매력 어필."** → Q1~Q3·링크드인 초판 폐기("not a deck" 프레임 삭제).
+기대감판 원칙: 훅은 「지도의 빈칸」(실외는 매시간, 사는 공간은 기록 없음) · 매력 = 인증 측정기 + 30년 계측 회사 + XRPL 기록 · 발표와 시연을 둘 다
+예고 · 보상·가격·수량·리플 언급 0 · "recording on XRPL" 은 기기 NFT 기록이 라이브라 가능, 보상은 언급하지 않으므로 "in testing" 문장 불필요.
+
+```
+H1 (추천, 278자): Oct 3, XRP SEOUL 2026. Weather maps stop at the front door: outdoors is measured every hour, the space you live in almost never. With our device partner KWeather we'll show the certified monitor built to fill that gap — live, recording on XRPL. Come watch a reading become data.
+```
+```
+H2 (질문 훅 변주, 273자): What does a weather company with 30 years of instruments bring to XRP SEOUL 2026? A monitor for the space you live in — CO₂, fine dust, TVOC, temperature, humidity — with its readings recorded on XRPL. Slides, yes. But mostly the box, switched on. Oct 3, Grand Hyatt Seoul.
+```
+```
+H3 (국문, 163자): 10월 3일 XRP SEOUL 2026. 날씨 지도는 현관 앞에서 끊깁니다. 바깥은 매시간 재는데, 사람이 사는 공간은 거의 기록이 없죠. 기기 파트너 케이웨더와 함께 그 빈칸을 채우는 인증 측정기를 무대에 올립니다. 발표도 하고, 기기도 켭니다. 측정값이 데이터가 되는 순간을 보러 오세요.
+```
+```
+링크드인 개인 기대감판(국문, 346자):
+10월 3일, XRP SEOUL 2026 무대에 오릅니다. 케이웨더가 플래티넘 스폰서로, wellbian의 기기 파트너로 함께합니다.
+
+준비하는 것은 두 가지입니다. 발표에서는 '왜 날씨 데이터의 다음 단위가 사람이 사는 공간인가'를 이야기하고, 무대 위에서는 30년 기상 관측 장비의 회사가 만든 실내 공기 측정기를 실제로 켭니다. CO₂·미세먼지·TVOC·온습도가 그 자리에서 측정되고, 그 값이 XRPL에 기록되는 과정을 보여드립니다.
+
+날씨는 늘 국가와 기관이 재 왔습니다. 사람이 실제로 머무는 공간에서 재고, 그 값이 데이터로 인정받게 하는 일. 그 첫 장면을 서울에서 보여드리겠습니다. 현장에서 뵙겠습니다.
+```
+```
+링크드인 개인 기대감판(영문, 625자):
+Oct 3 — we're on stage at XRP SEOUL 2026, with KWeather as Platinum Sponsor and wellbian's device partner.
+
+Two things are being prepared. The talk: why the next unit of weather data is the space people actually live in. The demo: an indoor air monitor built by a company with 30 years of weather instruments, switched on live — CO₂, fine dust, TVOC, temperature and humidity measured on the spot, and the readings recorded on XRPL.
+
+Weather has always been measured by states and institutions. We're working on measuring it where people are, and having those readings count as data. Seoul gets the first look. See you there.
+```
