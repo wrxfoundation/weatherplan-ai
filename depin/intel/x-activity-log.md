@@ -952,3 +952,13 @@ F4 (278자): KWeather, our device partner, is Platinum Sponsor of XRP SEOUL 2026
 ```
 G1 (최종, 277자): KWeather, Platinum Sponsor of XRP SEOUL 2026. Thirty years of weather business in Korea. Weather Data Becomes an Asset: the weather measured in the space you live in becomes data; verified data becomes weather services. See the device measure and record on XRPL, live on Oct 3.
 ```
+
+### @wellbianlabs 프로필 바이오 — XRP SEOUL 2026 한 줄 추가 (2026-09-09, 서우 제안) → **추가 권장, 10/3 뒤 원복**
+현행 118자: "Weather Data Token Generator™. indoors & out — manage a healthier environment, and verified data becomes rewards #XRPL". 바이오 160자 제한. 인용 리포스트로 프로필 유입이 늘 때 첫 화면에 행사 한 줄이 있으면 방문이 남는다.
+"Platinum Sponsor" 는 케이웨더의 지위라 우리 바이오엔 쓰지 않고 "On stage at XRP SEOUL 2026" 으로. 핀은 9/14 까지 사전예약 공지 유지(핀 규칙).
+```
+A (추천, 127자 — "rewards" 를 사이트 헤드라인과 맞춰 "an asset" 으로): Weather Data Token Generator™ · indoors & out. Verified data becomes an asset. On stage at XRP SEOUL 2026 — Oct 3, Seoul. #XRPL
+```
+```
+B (현행 문구 유지 + 행사 한 줄, 149자): Weather Data Token Generator™. indoors & out — manage a healthier environment, verified data becomes rewards. On stage at XRP SEOUL 2026, Oct 3 #XRPL
+```
