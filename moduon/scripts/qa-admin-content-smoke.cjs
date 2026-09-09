@@ -97,27 +97,28 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   const sb = await page.evaluate(() => {
     const aside = document.querySelector('aside')
     const badge = [...aside?.querySelectorAll('span') ?? []].find((e) => e.textContent.trim() === 'HQ 관제')
-    const word = [...aside?.querySelectorAll('span') ?? []].find((e) => e.textContent.trim() === '모두온' && e.childElementCount === 0)
+    // 로고가 정식 이미지(logo-moduon.png)로 바뀌었다 — 워드마크 텍스트 대신 로고 <img> 의 높이를 본다
+    const word = aside?.querySelector('img[alt*="MODUON"]')
     if (!badge || !word) return null
     const wr = word.getBoundingClientRect(), br = badge.getBoundingClientRect()
-    return { wordH: wr.height, lh: parseFloat(getComputedStyle(word).lineHeight), badgeH: br.height, badgeRight: br.right, asideW: aside.getBoundingClientRect().width }
+    return { wordH: wr.height, lh: 44, badgeH: br.height, badgeRight: br.right, asideW: aside.getBoundingClientRect().width }
   }).catch(() => null)
-  check(!!sb && sb.wordH < sb.lh * 1.5, `① 사이드바 워드마크 한 줄 (h ${Math.round(sb?.wordH ?? -1)} < lh ${Math.round(sb?.lh ?? 0)}×1.5)`)
+  check(!!sb && sb.wordH > 0 && sb.wordH <= sb.lh, `① 사이드바 로고 이미지 한 줄 (h ${Math.round(sb?.wordH ?? -1)} ≤ ${sb?.lh ?? 0})`)
   check(!!sb && sb.badgeH < 24 && sb.badgeRight <= sb.asideW, `① 'HQ 관제' 배지 한 줄·사이드바 안 (h ${Math.round(sb?.badgeH ?? -1)} · right ${Math.round(sb?.badgeRight ?? -1)} ≤ ${Math.round(sb?.asideW ?? 0)})`)
   let ids = await attrs('[data-t="banner-row"]', 'data-id')
-  check(ids.join() === 'B1,B2,B3,B4', `① banner-row 4개 order 순 (${ids.join()})`)
+  check(ids.join() === 'B1,B2,B3,B4,B5,B6,B7', `① banner-row 7개 order 순 (${ids.join()})`)
   const seedDb = await db()
   const seedOrders = (seedDb?.banners ?? []).map((b) => `${b.id}:${b.order}`).join(',')
-  check(seedOrders === 'B1:0,B2:1,B3:2,B4:3', `① 시드 order 0..3 (${seedOrders})`)
-  check((await attr('[data-t="banner-row"][data-id="B4"] [data-t="banner-toggle"]', 'aria-checked')) === 'false', '① B4 토글 off')
+  check(seedOrders === 'B1:0,B2:1,B3:2,B4:3,B5:4,B6:5,B7:6', `① 시드 order 0..6 (${seedOrders})`)
+  check((await attr('[data-t="banner-row"][data-id="B5"] [data-t="banner-toggle"]', 'aria-checked')) === 'false', '① B5(예비) 토글 off')
   check((await attr('[data-t="banner-row"][data-id="B1"] [data-t="banner-toggle"]', 'aria-checked')) === 'true', '① B1 토글 on')
-  check((await kpi('노출 중 배너', 3)) === 3, '① KPI 노출 중 배너 3')
+  check((await kpi('노출 중 배너', 4)) === 4, '① KPI 노출 중 배너 4')
 
   // B1 ↓ → B2,B1
   await page.locator('[data-t="banner-row"][data-id="B1"] [data-t="banner-down"]').click()
   await wait(300)
   ids = await attrs('[data-t="banner-row"]', 'data-id')
-  check(ids.join() === 'B2,B1,B3,B4', `① B1 아래로 → 표 순서 B2,B1 (${ids.join()})`)
+  check(ids.join() === 'B2,B1,B3,B4,B5,B6,B7', `① B1 아래로 → 표 순서 B2,B1 (${ids.join()})`)
   const afterMove = await db()
   const o = (id) => afterMove?.banners?.find((b) => b.id === id)?.order
   check(o('B2') === 0 && o('B1') === 1, `① 스토어 order B2=0 · B1=1 (${o('B2')}/${o('B1')})`)
@@ -125,21 +126,21 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   await waitFor('[data-t="hero-banner"]')
   let slides = await attrs('[data-t="hero-slide"]', 'data-id')
   check(slides[0] === 'B2', `① 홈 hero-slide 첫 data-id B2 (${slides.join()})`)
-  check((await attr('[data-t="hero-banner"]', 'data-total')) === '3', `① 홈 hero-banner data-total 3 (${await attr('[data-t="hero-banner"]', 'data-total')})`)
+  check((await attr('[data-t="hero-banner"]', 'data-total')) === '4', `① 홈 hero-banner data-total 4 (${await attr('[data-t="hero-banner"]', 'data-total')})`)
 
   // B4 노출 on → 홈 4장
   await go('/admin/banners')
   await waitFor('[data-t="admin-banners"]')
-  await page.locator('[data-t="banner-row"][data-id="B4"] [data-t="banner-toggle"]').click()
+  await page.locator('[data-t="banner-row"][data-id="B5"] [data-t="banner-toggle"]').click()
   let toast = await waitToast(/노출을 켰어요/)
-  check(toast.includes('노출을 켰어요') && toast.includes('반영'), `① B4 토글 토스트 (${toast || '없음'})`)
-  check((await attr('[data-t="banner-row"][data-id="B4"] [data-t="banner-toggle"]', 'aria-checked')) === 'true', '① B4 토글 on 으로')
+  check(toast.includes('노출을 켰어요') && toast.includes('반영'), `① B5 토글 토스트 (${toast || '없음'})`)
+  check((await attr('[data-t="banner-row"][data-id="B5"] [data-t="banner-toggle"]', 'aria-checked')) === 'true', '① B5 토글 on 으로')
   await go('/')
   await waitFor('[data-t="hero-banner"]')
   const total4 = await attr('[data-t="hero-banner"]', 'data-total')
   slides = await attrs('[data-t="hero-slide"]', 'data-id')
-  check(total4 === '4' && slides.join() === 'B2,B1,B3,B4', `① 홈 hero-banner data-total 4 · 슬라이드 B2,B1,B3,B4 (${total4} · ${slides.join()})`)
-  check(/^1\/4/.test((await text('[data-t="hero-counter"]')).trim()), `① hero-counter 1/4 (${(await text('[data-t="hero-counter"]')).trim()})`)
+  check(total4 === '5' && slides.join() === 'B2,B1,B3,B4,B5', `① 홈 hero-banner data-total 5 · 슬라이드 B2,B1,B3,B4,B5 (${total4} · ${slides.join()})`)
+  check(/^1\/5/.test((await text('[data-t="hero-counter"]')).trim()), `① hero-counter 1/5 (${(await text('[data-t="hero-counter"]')).trim()})`)
 
   // B2 제목 편집 → 홈 슬라이드 문구
   await go('/admin/banners')
@@ -427,7 +428,7 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   const nums = Object.fromEntries(tiles.filter(([, t]) => /\d+\s*건/.test(t)).map(([h, t]) => [h, Number((t.match(/(\d+)\s*건/) || [])[1])]))
   check(NEED.every((h) => Number.isInteger(nums[h])), `⑤ dash-comms 4개 숫자 (${NEED.map((h) => nums[h]).join('/')})`)
   check(NEED.every((h) => nums[h] === exp[h]), `⑤ 숫자 = 스토어 집계 (미답변 ${exp['/admin/boards/qna']} · 미처리 ${exp['/admin/complaints']} · 진행중 ${exp['/admin/boards/event']} · 활성 배너 ${exp['/admin/banners']})`)
-  check(nums['/admin/boards/qna'] === 1 && nums['/admin/complaints'] === 0 && nums['/admin/banners'] === 4, '⑤ 앞 단계 반영: 미답변 1 · 미처리 0 · 활성 배너 4')
+  check(nums['/admin/boards/qna'] === 1 && nums['/admin/complaints'] === 0 && nums['/admin/banners'] === 5, '⑤ 앞 단계 반영: 미답변 1 · 미처리 0 · 활성 배너 5')
   const badge = (await text('aside a[href="/admin/boards"] span[title="미답변 질문"]')).trim()
   check(badge === String(exp['/admin/boards/qna']), `⑤ 사이드바 '게시판 관리' 배지 = 미답변 수 (${badge || '없음'})`)
   check((await count('aside a[href="/admin/complaints"] span[title="미처리 불편접수"]')) === 0, '⑤ 불편접수 미처리 0 → 배지 없음')

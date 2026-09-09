@@ -11,11 +11,11 @@ const TEL_HREF = `tel:${HQ_TEL.replace(/-/g, '')}`
 
 const FAQS = [
   { q: '현금 사은품은 언제 지급되나요?', a: '설치·개통 확인 후 영업일 7일 이내에 신청인 명의 계좌로 입금돼요. 3년 약정 기준이며, 12개월 내 해지 시 일부 반환 조건이 있을 수 있어요. 일자별 지급 내역은 "지급 명단"에서 공개하고 있어요.' },
-  { q: '우리 동네도 설치가 되나요?', a: '인터넷/TV 카테고리의 "설치 가능 지역 조회"에서 시·군·구로 바로 확인할 수 있어요. 조회에 없는 지역도 상담을 남겨주시면 상담사가 설치 가능 여부를 직접 확인해 드려요.' },
+  { q: '우리 동네도 설치가 되나요?', a: '인터넷/TV 카테고리의 "설치 가능 지역 조회"에서 시·군·구로 바로 확인할 수 있어요. 조회에 없는 지역도 상담을 남겨주시면 컨설턴트가 설치 가능 여부를 직접 확인해 드려요.' },
   { q: '기존 통신사 위약금이 남아 있어요.', a: '위약금 잔여 금액과 약정 만기를 알려주시면, 지원금과 상계해 실부담이 얼마인지 계산해 드려요. 조건에 따라 위약금 부담을 줄이는 구성이 가능한 경우가 많아요.' },
   { q: '상담 신청하면 언제 연락이 오나요?', a: '신청 즉시 지역 전담 파트너에게 실시간 배정되고, 평균 10분 안에 전화드려요. 원하시는 상담 시간을 선택하시면 그 시간대에 맞춰 연락드립니다.' },
   { q: '개인정보는 어떻게 관리되나요?', a: '이름·연락처·지역(시·군·구까지만)을 상담 목적에 한해 수집하고, 배정된 상담 파트너에게만 제공돼요. 보유 기간은 상담 완료 후 1년 또는 동의 철회 시까지이며, 모든 열람·처리 내역이 기록됩니다.' },
-  { q: '신청을 취소하거나 변경하고 싶어요.', a: '배정된 상담사에게 말씀해 주시거나 대표번호로 연락 주시면 즉시 처리해 드려요. 개통 전 취소는 위약 없이 가능해요.' },
+  { q: '신청을 취소하거나 변경하고 싶어요.', a: '배정된 컨설턴트에게 말씀해 주시거나 대표번호로 연락 주시면 즉시 처리해 드려요. 개통 전 취소는 위약 없이 가능해요.' },
   { q: '견적은 사이트 금액 그대로인가요?', a: 'AI 견적과 계산기 금액은 참고용 기준가예요. 통신사·요금제·약정·재고·지역·심사 결과에 따라 달라질 수 있어 최종 조건은 상담에서 확정돼요. 다만 확정 조건은 계약 전 문자로 한 번 더 안내드립니다.' },
   { q: '분양몰(파트너) 창업은 어디서 문의하나요?', a: '"분양 안내" 메뉴에서 권역·비용 구조를 확인하고 온라인으로 바로 신청할 수 있어요. 대리점 가입비와 월 이용료, 권역별 사업권 조건이 정리돼 있습니다.' },
 ]
@@ -40,7 +40,7 @@ export default function Support() {
         <Link to="/consult" className="glass-btn rounded-card border border-line-soft bg-white p-4 transition-colors hover:border-primary">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-orange-tint text-orange-text"><IcChat size={16} /></span>
           <div className="mt-2.5 text-[14.5px] font-extrabold text-ink">상담 신청</div>
-          <div className="mt-0.5 text-[12px] leading-4 text-muted">30초 신청 · 평균 10분 내 전문 상담사 콜백</div>
+          <div className="mt-0.5 text-[12px] leading-4 text-muted">30초 신청 · 평균 10분 내 전문 컨설턴트 콜백</div>
         </Link>
         <Link to="/diagnosis" className="glass-btn rounded-card border border-line-soft bg-white p-4 transition-colors hover:border-primary">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ok/10 text-ok"><IcSearch size={16} /></span>

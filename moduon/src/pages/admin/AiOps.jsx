@@ -8,7 +8,7 @@ import { IcRobot, IcBulb } from '../../components/icons'
 const AUTO_BREAKDOWN = [
   { label: '완전 자동 처리', value: 38542, color: CHART.ok },
   { label: '부분 자동(사람 확인)', value: 12847, color: CHART.primary },
-  { label: '상담원 연결', value: 6892, color: CHART.warn },
+  { label: '컨설턴트 연결', value: 6892, color: CHART.warn },
   { label: '대기', value: 1008, color: CHART.rest },
 ]
 
@@ -90,7 +90,7 @@ export default function AdminAiOps() {
           <Card track="b" className="p-5">
             <div className="flex items-center justify-between">
               <h2 className="text-[15.5px] font-extrabold text-bink">AI 고객 상담 센터</h2>
-              <span className="text-[11.5px] text-bfaint">전체 1,248 · AI 자동응답 1,063(85.3%) · 상담원 연결 185 · 평균 응답 18초</span>
+              <span className="text-[11.5px] text-bfaint">전체 1,248 · AI 자동응답 1,063(85.3%) · 컨설턴트 연결 185 · 평균 응답 18초</span>
             </div>
             <div className="mt-4 rounded-card bg-brow p-4">
               <div className="flex justify-end">

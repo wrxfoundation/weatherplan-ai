@@ -262,12 +262,24 @@ export const useToast = () => useContext(ToastCtx)
 
 // 모두온 로고 — 오렌지 ₩ 원형 뱃지 + 워드마크
 export function Logo({ size = 'md', dark = false, name = '모두온' }) {
-  // 확대(+30% → +15% → +10% → +10%)
+  // 정식 로고(public/assets/brand/logo-moduon-src.png → 빌드가 투명화·트림해 logo-moduon.png / logo-mark.png 생성).
+  // 본진(name 기본값)은 워드마크가 든 정식 로고 한 장, 파트너몰은 마크 + 몰 이름. 이미지가 없으면 마크+텍스트 → 텍스트만 순으로 폴백.
+  const [full, setFull] = useState(true)
+  const [markOk, setMarkOk] = useState(true)
+  const isMain = name === '모두온'
   const s = size === 'lg' ? 'text-[40px]' : size === 'sm' ? 'text-[31px]' : 'text-[35px]'
-  const mark = size === 'lg' ? 'h-[55px] w-[55px]' : size === 'sm' ? 'h-[44px] w-[44px]' : 'h-[48px] w-[48px]'
+  const markH = size === 'lg' ? 'h-[55px] w-[55px]' : size === 'sm' ? 'h-[44px] w-[44px]' : 'h-[48px] w-[48px]'
+  const logoH = size === 'lg' ? 'h-[56px]' : size === 'sm' ? 'h-[38px]' : 'h-[44px]'
+  if (isMain && full) {
+    return (
+      <span className="inline-flex items-center select-none">
+        <img src="/assets/brand/logo-moduon.png" alt="MODUON 모두온" className={`${logoH} w-auto object-contain ${dark ? 'brightness-0 invert' : ''}`} onError={() => setFull(false)} />
+      </span>
+    )
+  }
   return (
     <span className="inline-flex items-center gap-2 select-none">
-      <img src="/assets/logo-mark.png" alt="" aria-hidden className={`${mark} shrink-0 object-contain`} />
+      {markOk && <img src="/assets/brand/logo-mark.png" alt="" aria-hidden className={`${markH} shrink-0 object-contain`} onError={() => setMarkOk(false)} />}
       <span className={`font-extrabold tracking-tight ${dark ? 'text-white' : 'text-ink'} ${s}`}>{name}</span>
     </span>
   )

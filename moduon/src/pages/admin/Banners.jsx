@@ -1,5 +1,6 @@
 // ─── 배너 관리 — 홈 롤링 배너(db.banners) 순서·노출·문구를 관제. 저장 즉시 홈 히어로에 반영 ──
-// kind 'mobi' 는 그라디언트 위 인물 컷아웃 + 텍스트, 'scene' 은 21:9 장면 이미지 위 텍스트(HeroBanner 와 같은 규약).
+// kind 'mobi' 는 bg 위 컷아웃(인물·오브제, side 로 좌우) + 텍스트, 'scene' 은 21:9 장면 이미지 위 텍스트,
+// 'news' 는 신문 1면 카드(왼쪽) + 텍스트 — 전부 HeroBanner 와 같은 규약. tone 'dark' 는 밝은 배경용 잉크 글씨.
 // 이미지는 자체 호스팅 경로만 — 못 받아오면 썸네일·미리보기 모두 kind 라벨 박스로 대체한다(외부 URL 금지).
 import { useEffect, useMemo, useState } from 'react'
 import { useStore } from '../../lib/store'
@@ -7,24 +8,34 @@ import { SITE_NAV } from '../../lib/constants'
 import { Card, Btn, Modal, Drawer, Field, binputCls, useToast, EmptyState, KpiCard } from '../../components/ui'
 import { IcMegaphone } from '../../components/icons'
 
-const KIND = { mobi: { label: '모비형', tone: 'bg-tint text-primary-text' }, scene: { label: '장면형', tone: 'bg-brow text-bbody' } }
+const KIND = { mobi: { label: '컷아웃형', tone: 'bg-tint text-primary-text' }, scene: { label: '장면형', tone: 'bg-brow text-bbody' }, news: { label: '뉴스형', tone: 'bg-orange-tint text-orange-text' } }
 const DEFAULT_BG = 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)'
+// 배경 프리셋 — 목업 랜딩페이지 1~4 의 네 색. 밝은 배경을 고르면 글씨 톤을 잉크로 같이 바꾼다
+const BG_PRESETS = [
+  ['파랑', DEFAULT_BG, 'light'],
+  ['노랑', 'linear-gradient(135deg,#FFC107 0%,#FFB300 100%)', 'dark'],
+  ['연두', 'linear-gradient(135deg,#9CCC65 0%,#8BC34A 100%)', 'dark'],
+  ['라벤더', 'linear-gradient(135deg,#C5CAE9 0%,#D6DCFF 100%)', 'dark'],
+]
 // 배너에 쓸 수 있는 자체 호스팅 에셋 — fetch-assets.mjs 가 내려받는 경로와 일치
-const ASSETS = ['/assets/mobi-agent.png', '/assets/banner-support.png', '/assets/banner-car.png', '/assets/banner-home.png']
-const LINKS = [...SITE_NAV.map((n) => n.to), '/consult', '/diagnosis', '/cars', '/benefits', '/benefits/signup', '/benefits/referral']
+const ASSETS = ['/assets/mobi-agent.png', '/assets/banner-piggy.png', '/assets/banner-target.png', '/assets/banner-support.png', '/assets/banner-car.png', '/assets/banner-home.png']
+const LINKS = [...new Set([...SITE_NAV.map((n) => n.to), '/consult', '/diagnosis', '/benefits/signup', '/benefits/invite', '/benefits/ads', '/board/event'])]
 
 const firstLine = (s = '') => s.split('\n')[0]
 
 // 배너 → 폼(평탄화) · 폼 → BANNER_UPSERT payload
 const toForm = (b) => ({
-  id: b.id ?? null, kind: b.kind ?? 'scene', eyebrow: b.eyebrow ?? '', title: b.title ?? '', desc: b.desc ?? '', note: b.note ?? '',
+  id: b.id ?? null, kind: b.kind ?? 'scene', side: b.side ?? 'right', tone: b.tone ?? 'light',
+  eyebrow: b.eyebrow ?? '', title: b.title ?? '', desc: b.desc ?? '', note: b.note ?? '',
   image: b.image ?? '', bg: b.bg ?? DEFAULT_BG, active: b.active !== false,
+  newsKicker: b.news?.kicker ?? 'SPECIAL NEWS', newsVol: b.news?.vol ?? 'VOL 01', newsDate: b.news?.date ?? '', newsHeadline: b.news?.headline ?? '', newsBig: b.news?.big ?? '',
   ctaLabel: b.cta?.label ?? '', ctaKind: b.cta?.action === 'chat' ? 'chat' : 'link', ctaTo: b.cta?.to ?? '',
 })
 const fromForm = (f) => ({
   ...(f.id ? { id: f.id } : {}),
-  kind: f.kind, eyebrow: f.eyebrow.trim(), title: f.title.trim(), desc: f.desc.trim(), note: f.note.trim(),
+  kind: f.kind, side: f.side, tone: f.tone, eyebrow: f.eyebrow.trim(), title: f.title.trim(), desc: f.desc.trim(), note: f.note.trim(),
   image: f.image.trim(), bg: f.bg.trim() || DEFAULT_BG, active: f.active,
+  news: f.kind === 'news' ? { kicker: f.newsKicker.trim(), vol: f.newsVol.trim(), date: f.newsDate.trim(), headline: f.newsHeadline.trim(), big: f.newsBig.trim() } : null,
   cta: f.ctaLabel.trim() ? (f.ctaKind === 'chat' ? { label: f.ctaLabel.trim(), action: 'chat' } : { label: f.ctaLabel.trim(), to: f.ctaTo.trim() || '/consult' }) : null,
 })
 const NEW_BANNER = { kind: 'scene', image: '/assets/banner-home.png', bg: DEFAULT_BG, active: true, cta: { label: '상담 신청하기', to: '/consult' } }
@@ -39,19 +50,32 @@ function BannerImg({ src, kind, className }) {
 
 // 21:9 라이브 미리보기 — HeroBanner 의 레이아웃 비율을 축소 재현
 function BannerPreview({ b, small = false }) {
+  const left = b.side === 'left' || b.kind === 'news'
+  const dark = b.tone === 'dark'
   const imgCls = b.kind === 'scene'
     ? 'absolute inset-0 h-full w-full object-cover object-right'
-    : 'absolute bottom-0 right-0 h-full w-[42%] object-contain object-right-bottom'
+    : left ? 'absolute bottom-0 left-0 h-[88%] w-[42%] object-contain object-left-bottom' : 'absolute bottom-0 right-0 h-full w-[42%] object-contain object-right-bottom'
   return (
     <div className={`relative aspect-[21/9] w-full overflow-hidden ${small ? 'rounded-md' : 'rounded-field'}`} style={{ background: b.bg || DEFAULT_BG }}>
-      <BannerImg src={b.image} kind={b.kind} className={imgCls} />
+      {b.kind === 'news' ? (
+        // 신문 카드 축소판 — HeroBanner.NewsCard 와 같은 구성(kicker·vol·date / headline / big)
+        <div className={`absolute inset-y-0 left-0 flex w-[46%] items-center justify-center ${small ? 'px-1' : 'px-3'}`} aria-hidden>
+          <div className="w-full rounded-sm bg-[#F7F4EC] px-2 py-1 text-ink ring-1 ring-black/10" style={{ fontFamily: 'Georgia, serif' }}>
+            {!small && <div className="flex justify-between text-[5px] font-bold uppercase tracking-wider text-ink/70"><span>{b.news?.kicker}</span><span>{b.news?.vol}</span><span>{b.news?.date}</span></div>}
+            <div className={`border-y border-ink text-center font-extrabold ${small ? 'text-[5px]' : 'mt-0.5 text-[7px]'}`}>{b.news?.headline || '헤드라인'}</div>
+            <div className={`mt-0.5 text-center font-black leading-tight ${small ? 'text-[6px]' : 'text-[11px]'}`}>{b.news?.big || '큰 제목'}</div>
+          </div>
+        </div>
+      ) : (
+        <BannerImg src={b.image} kind={b.kind} className={imgCls} />
+      )}
       {!small && (
-        <div className="relative z-10 flex h-full w-[62%] flex-col justify-center px-4 text-white">
-          {b.eyebrow && <div className="truncate text-[8.5px] font-semibold text-white/85">{b.eyebrow}</div>}
+        <div className={`relative z-10 flex h-full flex-col justify-center px-4 ${dark ? 'text-ink' : 'text-white'} ${left ? 'ml-[46%] w-[54%]' : 'w-[62%]'}`}>
+          {b.eyebrow && <div className={`truncate text-[8.5px] font-semibold ${dark ? 'text-ink/70' : 'text-white/85'}`}>{b.eyebrow}</div>}
           <div className="mt-1 whitespace-pre-line text-[13px] font-extrabold leading-[1.3] tracking-[-0.3px]">{b.title || '제목을 입력하세요'}</div>
-          {b.desc && <p className="mt-1 line-clamp-2 whitespace-pre-line text-[8px] leading-[12px] text-white/85">{b.desc}</p>}
+          {b.desc && <p className={`mt-1 line-clamp-2 whitespace-pre-line text-[8px] leading-[12px] ${dark ? 'text-ink/75' : 'text-white/85'}`}>{b.desc}</p>}
           {b.note && <p className="mt-1 text-[8.5px] font-bold">{b.note}</p>}
-          {b.cta?.label && <span className="mt-1.5 inline-flex h-6 w-fit items-center rounded-md bg-white px-2 text-[8.5px] font-bold text-primary-text">{b.cta.label}</span>}
+          {b.cta?.label && <span className={`mt-1.5 inline-flex h-6 w-fit items-center rounded-md px-2 text-[8.5px] font-bold ${dark ? 'bg-ink text-white' : 'bg-white text-primary-text'}`}>{b.cta.label}</span>}
         </div>
       )}
     </div>
@@ -112,7 +136,7 @@ export default function AdminBanners() {
           ) : (
             <div className="mt-2 text-[13px] font-bold leading-6 text-bink">{rolling}</div>
           )}
-          <div className="mt-1.5 text-[11px] text-bfaint sm:text-[12px]">모비형 {banners.filter((b) => b.kind === 'mobi').length} · 장면형 {banners.filter((b) => b.kind === 'scene').length}</div>
+          <div className="mt-1.5 text-[11px] text-bfaint sm:text-[12px]">컷아웃형 {banners.filter((b) => b.kind === 'mobi').length} · 장면형 {banners.filter((b) => b.kind === 'scene').length} · 뉴스형 {banners.filter((b) => b.kind === 'news').length}</div>
         </Card>
       </div>
 
@@ -180,8 +204,9 @@ export default function AdminBanners() {
             <div className="grid grid-cols-2 gap-3">
               <Field label="종류">
                 <select className={binputCls} value={form.kind} onChange={set('kind')}>
-                  <option value="mobi">모비형 (인물 컷아웃)</option>
+                  <option value="mobi">컷아웃형 (인물·오브제)</option>
                   <option value="scene">장면형 (21:9 이미지)</option>
+                  <option value="news">뉴스형 (신문 1면 카드)</option>
                 </select>
               </Field>
               <div>
@@ -192,19 +217,62 @@ export default function AdminBanners() {
                 </label>
               </div>
             </div>
+            <div className="grid grid-cols-2 gap-3">
+              {form.kind === 'mobi' && (
+                <Field label="이미지 위치">
+                  <div className="flex h-11 items-center gap-1.5 sm:h-10">
+                    {[['right', '오른쪽'], ['left', '왼쪽']].map(([k, l]) => (
+                      <button key={k} type="button" onClick={() => setForm((f) => ({ ...f, side: k }))} className={`h-8 rounded-full px-3 text-[12px] font-bold ${form.side === k ? 'bg-bink text-white' : 'bg-brow text-bbody'}`}>{l}</button>
+                    ))}
+                  </div>
+                </Field>
+              )}
+              <Field label="글씨 톤" hint="밝은 배경엔 잉크">
+                <div className="flex h-11 items-center gap-1.5 sm:h-10">
+                  {[['light', '흰 글씨'], ['dark', '잉크 글씨']].map(([k, l]) => (
+                    <button key={k} type="button" onClick={() => setForm((f) => ({ ...f, tone: k }))} className={`h-8 rounded-full px-3 text-[12px] font-bold ${form.tone === k ? 'bg-bink text-white' : 'bg-brow text-bbody'}`}>{l}</button>
+                  ))}
+                </div>
+              </Field>
+            </div>
+            {form.kind === 'news' && (
+              <div className="rounded-field border border-bline p-3.5">
+                <div className="text-[12.5px] font-extrabold text-bink">신문 1면 카드</div>
+                <div className="mt-2.5 grid grid-cols-3 gap-2">
+                  <Field label="키커"><input className={binputCls} value={form.newsKicker} onChange={set('newsKicker')} placeholder="SPECIAL NEWS" /></Field>
+                  <Field label="호수"><input className={binputCls} value={form.newsVol} onChange={set('newsVol')} placeholder="VOL 01" /></Field>
+                  <Field label="날짜"><input className={binputCls} value={form.newsDate} onChange={set('newsDate')} placeholder="20 APRIL 2025" /></Field>
+                </div>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <Field label="헤드라인"><input className={binputCls} value={form.newsHeadline} onChange={set('newsHeadline')} placeholder="구독경제 시대" /></Field>
+                  <Field label="큰 제목"><input className={binputCls} value={form.newsBig} onChange={set('newsBig')} placeholder="100조원 시장 개막!" /></Field>
+                </div>
+              </div>
+            )}
             <Field label="상단 작은 문장 (eyebrow)"><input className={binputCls} value={form.eyebrow} onChange={set('eyebrow')} placeholder="예) 모두온 플랫폼의 AI비서 모비를 소개합니다" /></Field>
             <Field label="제목" required hint="줄바꿈이 배너 줄바꿈으로 그대로 들어가요">
               <textarea className="min-h-[72px] w-full rounded-field border border-bline p-3 text-[14px] text-bink focus:border-primary" value={form.title} onChange={set('title')} placeholder={'“상담원 기다리지 말고,\n모비에게 바로 물어보세요.”'} />
             </Field>
-            <Field label="설명 (데스크톱에서만 노출)">
-              <textarea className="min-h-[64px] w-full rounded-field border border-bline p-3 text-[13px] text-bink focus:border-primary" value={form.desc} onChange={set('desc')} placeholder="두 줄 이내로 짧게" />
+            <Field label="설명 (데스크톱에서만 노출)" hint='줄 앞에 "- " 를 붙이면 불릿 목록'>
+              <textarea className="min-h-[64px] w-full rounded-field border border-bline p-3 text-[13px] text-bink focus:border-primary" value={form.desc} onChange={set('desc')} placeholder={'두 줄 이내로 짧게\n- 불릿 항목도 돼요'} />
             </Field>
             <Field label="강조 문장 (note)"><input className={binputCls} value={form.note} onChange={set('note')} placeholder="예) 24시간 언제든, 모비와 상담하세요." /></Field>
+            {form.kind !== 'news' && (
             <Field label="이미지 경로" hint="자체 호스팅 경로(/assets/…)만 — 못 받아오면 그라디언트만 보여요">
               <input className={binputCls} list="banner-assets" value={form.image} onChange={set('image')} placeholder="/assets/banner-home.png" />
               <datalist id="banner-assets">{ASSETS.map((a) => <option key={a} value={a} />)}</datalist>
             </Field>
-            <Field label="배경 (CSS gradient)"><input className={`${binputCls} font-mono text-[12px]`} value={form.bg} onChange={set('bg')} placeholder={DEFAULT_BG} /></Field>
+            )}
+            <Field label="배경" hint="프리셋을 누르면 글씨 톤도 맞춰요 · 직접 CSS 도 가능">
+              <div className="mb-1.5 flex flex-wrap gap-1.5">
+                {BG_PRESETS.map(([l, bg, tone]) => (
+                  <button key={l} type="button" onClick={() => setForm((f) => ({ ...f, bg, tone }))} className={`inline-flex h-8 items-center gap-1.5 rounded-full border px-2.5 text-[12px] font-bold ${form.bg === bg ? 'border-bink text-bink' : 'border-bline text-bbody'}`}>
+                    <span className="h-4 w-4 rounded-full ring-1 ring-black/10" style={{ background: bg }} />{l}
+                  </button>
+                ))}
+              </div>
+              <input className={`${binputCls} font-mono text-[12px]`} value={form.bg} onChange={set('bg')} placeholder={DEFAULT_BG} />
+            </Field>
             <div className="rounded-field border border-bline p-3.5">
               <div className="text-[12.5px] font-extrabold text-bink">CTA 버튼</div>
               <div className="mt-2.5 flex flex-col gap-3">

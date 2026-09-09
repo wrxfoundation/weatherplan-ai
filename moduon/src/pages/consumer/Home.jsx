@@ -50,7 +50,7 @@ export default function Home({ tenant }) {
         <span aria-hidden className="pointer-events-none absolute inset-0 z-0 rounded-section" style={{ background: 'linear-gradient(135deg, rgba(17,138,80,0.62) 0%, rgba(17,138,80,0.18) 26%, transparent 50%)', boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.38)' }} />
         <div className="relative z-10 flex flex-col items-center gap-5 px-6 py-9 text-center sm:flex-row sm:justify-between sm:px-10 sm:text-left">
           <div className="flex flex-col items-center gap-4 sm:flex-row">
-            <img src="/assets/cta-chat.webp" alt="" className="h-[88px] w-[88px] object-contain sm:h-[112px] sm:w-[112px]" loading="lazy" />
+            <SafeImg src="/assets/cta-chat.webp" className="h-[88px] w-[88px] object-contain sm:h-[112px] sm:w-[112px]" />
             <div>
               <div className="break-keep text-[19px] font-extrabold leading-7 text-[#15613D] sm:text-[21px]">
                 지금 신청하면, 이번 달부터 아낍니다

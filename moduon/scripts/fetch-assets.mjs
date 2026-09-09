@@ -38,7 +38,7 @@ const ASSETS = [
   // IR 히어로 타워 — "온라인 건물주" 오브제 (크림 배경 일체형, 대안: 08e8aaf0-ed8f-4a2d-ad7c-966311314168)
   ['obj-tower.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260813_044545_d477c7cd-3093-49e5-ae49-4701e28ef682_min.webp'],
   // 브랜드 로고 마크 — 후보 B(오렌지·블루 듀오톤 루프), 배경 제거(투명 PNG). GNB·푸터·파비콘 공용
-  ['logo-mark.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260809_150901_0e2cd36d-5984-4e56-a494-1b7a8c1590af.png'],
+  // logo-mark.png 는 더 이상 받지 않는다 — public/assets/brand/logo-moduon-src.png 에서 logo-transparent.mjs 가 잘라낸다
   ['cta-chat.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/790310b0-d472-469b-b6d5-38eedd45e68e.webp'],
   // 히어로 영상(hero-video.mp4)·포스터(hero-scene.jpg)는 레포에 커밋된 자체 호스팅 에셋 — 여기서 받지 않음
   // (아정당식 개편 이후 Home 에서 참조하지 않음 — 현재 미참조(보관), 파일은 유지)
@@ -58,6 +58,9 @@ const ASSETS = [
   ['tile-car.png',      'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204859_4b9f9a99-5633-4bb5-8888-6df3c6d75349.png'], // 렌트/리스 — 키 + 세단
   ['tile-package.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204900_cb03ca73-f833-411b-8d04-86dae644756f.png'], // 매장패키지 — 어닝 달린 상점
   ['tile-benefit.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204903_9c52e903-65c4-412b-b431-96ad0e7a56d0.png'], // 모두온혜택 — 선물상자 + 코인 + % 배지
+  // 목업 랜딩페이지 2·4 오브제(배경 제거) — 저금통(노랑 배너), 과녁(라벤더 배너). 3(뉴스)은 DOM 카드라 이미지 없음
+  ['banner-piggy.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_233952_83a97fd6-941a-416d-a171-25ff9b9e9a0e.png'],
+  ['banner-target.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_233953_51f9e63c-9be0-40c9-b893-e679713f0a34.png'],
   // 지원금 섹션 일러스트 2종(배경 제거) — 카드② 보라 AI 말풍선, 카드③ 고민하는 여성. 카드① 은 기존 obj-moneybag.png
   ['ill-ai.png',       'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_205354_e5a4c6fe-cf4b-4901-901a-b9bd97c2fb56.png'],
   ['ill-thinking.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_205356_bcb8ab1d-0642-4f5f-a32d-5f659404b524.png'],

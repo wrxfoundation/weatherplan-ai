@@ -102,7 +102,7 @@ export default function PhoneQuickStart({ consultTo = '/consult?cat=phone' }) {
             to={consultHref}
             className="shimmer-cta glass-btn inline-flex h-[56px] w-full items-center justify-center rounded-btn border-[1.5px] border-primary bg-white px-4 text-[15.5px] font-extrabold text-primary-text transition-colors hover:bg-tint"
           >
-            전문 상담사랑 상담할게요
+            전문 컨설턴트와 상담할게요
           </Link>
           <p className="mt-1.5 text-[12px] font-semibold text-label">평균 10분 내 콜백, 통화는 무료예요.</p>
         </div>

@@ -63,7 +63,7 @@ export function payout(gift, method = 'cash') {
 export function installCheck(sigungu) {
   const unit = unitBySigungu(sigungu)
   if (!sigungu) return null
-  if (!unit) return { ok: false, unit: null, carriers: [], note: '입력하신 지역을 찾지 못했어요 — 상담사가 직접 확인해 드릴게요.' }
+  if (!unit) return { ok: false, unit: null, carriers: [], note: '입력하신 지역을 찾지 못했어요 — 컨설턴트가 직접 확인해 드릴게요.' }
   // 권역 코드로 결정적 가용성(데모): 도서·산간 일부만 특정 통신사 제한
   const limited = ['JJ', 'GW'].includes(unit) // 제주·강원 일부는 광랜 제한 예시
   const carriers = CARRIERS.map((c, i) => ({

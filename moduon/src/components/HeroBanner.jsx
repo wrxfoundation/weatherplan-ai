@@ -1,8 +1,11 @@
 // ─── 홈 롤링 배너 (아정당식 초기화면 · 목업 [홈 · 랜딩페이지1 배너]) ──────────
 // db.banners 중 active 를 order 순으로 돌린다. 문구·이미지·순서는 어드민 배너 관리에서 바꾼다.
-// kind 'mobi'  : 파란 그라디언트(bg) 위에 인물 컷아웃(우하단) + DOM 텍스트
+// kind 'mobi'  : bg 위에 컷아웃 이미지(기본 우하단, side 'left' 면 좌측) + DOM 텍스트 — 인물·오브제 공용
 // kind 'scene' : 21:9 장면 이미지를 배경으로 깔고(왼쪽 55%는 비어 있음) 그 위에 텍스트
-// 이미지는 자체 호스팅 경로 — 못 받아오면 이미지만 숨기고 bg 그라디언트가 받친다.
+// kind 'news'  : 이미지 대신 신문 1면 카드(news: kicker·vol·date·headline·big)를 왼쪽에 — 글자가 흐려지지 않게 DOM 으로
+// tone 'dark'  : 노랑·연두·라벤더처럼 밝은 배경엔 잉크색 글씨(기본 'light' 는 흰 글씨)
+// desc 의 "- " 로 시작하는 줄은 불릿 목록으로 그린다(목업 랜딩페이지2).
+// 이미지는 자체 호스팅 경로 — 못 받아오면 이미지만 숨기고 bg 가 받친다.
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { SafeImg } from './ui'
@@ -14,6 +17,31 @@ const SWIPE_PX = 60   // 이 이상 가로로 끌면 스와이프로 본다
 const nl2br = (s = '') => s.split('\n').map((line, i, arr) => (
   <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
 ))
+
+// desc — "- " 줄이 하나라도 있으면 불릿 목록, 아니면 줄바꿈 문단
+const descBlock = (desc = '', cls = '') => {
+  const lines = desc.split('\n').filter((l) => l.trim())
+  if (!lines.some((l) => l.trim().startsWith('- '))) return <p className={cls}>{nl2br(desc)}</p>
+  return (
+    <ul className={`${cls} list-disc pl-5 marker:text-current`}>
+      {lines.map((l, i) => <li key={i} className="break-keep">{l.replace(/^\s*-\s*/, '')}</li>)}
+    </ul>
+  )
+}
+
+// 신문 1면 카드 — 목업 랜딩페이지3 ("SPECIAL NEWS · VOL 01 · 20 APRIL 2025 / 구독경제 시대 / 100조원 시장 개막!")
+function NewsCard({ news = {} }) {
+  return (
+    <div className="w-full max-w-[360px] rounded-md bg-[#F7F4EC] px-5 pb-4 pt-3 text-ink shadow-panel ring-1 ring-black/10" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }} aria-hidden>
+      <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-[0.12em] text-ink/70">
+        <span>{news.kicker ?? 'SPECIAL NEWS'}</span><span>{news.vol ?? 'VOL 01'}</span><span>{news.date ?? ''}</span>
+      </div>
+      <div className="mt-1.5 border-y-[3px] border-double border-ink py-1 text-center text-[13px] font-extrabold tracking-[-0.2px]">{news.headline}</div>
+      <div className="mt-2 break-keep text-center text-[26px] font-black leading-[1.15] tracking-[-1px] sm:text-[30px]">{news.big}</div>
+      <div className="mt-2 h-px bg-ink/40" /><div className="mt-1 h-px bg-ink/20" />
+    </div>
+  )
+}
 
 // 배너 CTA 가 가리키는 카테고리(/cars → car, /category/:slug → slug). 상담·혜택 링크는 undefined
 const ctaCat = (to = '') => (to.startsWith('/cars') ? 'car' : to.match(/^\/category\/([\w-]+)/)?.[1])
@@ -55,6 +83,11 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
     const extra = [cat && `cat=${cat}`, q].filter(Boolean).join('&')
     return extra ? `${consultTo}&${extra}` : consultTo
   }
+
+  // 현재 슬라이드 톤에 맞춘 인디케이터 색 — 밝은 배경에서 흰 점은 안 보인다
+  const curDark = items[index]?.tone === 'dark'
+  const dot = curDark ? 'bg-ink' : 'bg-white'
+  const dotDim = curDark ? 'bg-ink/35 hover:bg-ink/60' : 'bg-white/50 hover:bg-white/80'
 
   const onPointerDown = (e) => { drag.current = { x: e.clientX, id: e.pointerId } }
   const onPointerUp = (e) => {
@@ -100,6 +133,8 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
             const active = i === index
             const cta = b.cta
             const chat = cta?.action === 'chat'
+            const left = b.side === 'left' || b.kind === 'news'
+            const dark = b.tone === 'dark'
             return (
               <div
                 key={b.id}
@@ -112,30 +147,36 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
               >
                 {b.kind === 'scene' ? (
                   <SafeImg src={b.image} aria-hidden className="absolute inset-0 h-full w-full object-cover object-right" loading={i === 0 ? 'eager' : 'lazy'} />
+                ) : b.kind === 'news' ? (
+                  // 신문 카드는 왼쪽 컬럼(모바일은 텍스트 아래로 숨김) — 목업 랜딩페이지3
+                  <div className="absolute inset-y-0 left-0 hidden w-[46%] items-center justify-center px-6 sm:flex lg:px-10"><NewsCard news={b.news} /></div>
+                ) : left ? (
+                  <SafeImg src={b.image} aria-hidden className="absolute bottom-0 left-0 hidden h-[84%] w-[42%] object-contain object-left-bottom sm:block lg:h-[88%]" loading={i === 0 ? 'eager' : 'lazy'} />
                 ) : (
                   <SafeImg src={b.image} aria-hidden className="absolute bottom-0 right-0 h-[92%] w-[46%] object-contain object-right-bottom sm:h-full sm:w-[42%]" loading={i === 0 ? 'eager' : 'lazy'} />
                 )}
 
-                {/* 텍스트 컬럼 — 장면 왼쪽(55%)이 비어 있어 스크림 없이 흰 글씨로 얹는다.
-                    고정 높이(300/340px) 안에 들어와야 하므로 제목 크기·컬럼 폭·desc 노출을 sm → lg 로 단계별로 켠다 */}
-                <div className="relative z-10 flex h-full w-[78%] flex-col justify-center px-6 py-6 text-white sm:w-[62%] sm:px-8 lg:w-[58%] lg:px-12">
-                  {b.eyebrow && <div className="break-keep text-[12.5px] font-semibold text-white/85 sm:text-[14px]">{b.eyebrow}</div>}
+                {/* 텍스트 컬럼 — 장면 왼쪽(55%)이 비어 있어 스크림 없이 글씨를 얹는다(tone 에 따라 흰/잉크).
+                    이미지·뉴스 카드가 왼쪽이면 컬럼을 오른쪽으로 민다. 고정 높이(300/340px) 안에 들어와야 하므로
+                    제목 크기·컬럼 폭·desc 노출을 sm → lg 로 단계별로 켠다 */}
+                <div className={`relative z-10 flex h-full flex-col justify-center px-6 py-6 ${dark ? 'text-ink' : 'text-white'} ${left ? 'w-full sm:ml-[46%] sm:w-[54%] sm:px-6 lg:px-10' : 'w-[78%] sm:w-[62%] sm:px-8 lg:w-[58%] lg:px-12'}`}>
+                  {b.eyebrow && <div className={`break-keep text-[12.5px] font-semibold sm:text-[14px] ${dark ? 'text-ink/70' : 'text-white/85'}`}>{b.eyebrow}</div>}
                   <h2 className="mt-2 break-keep text-[20px] font-extrabold leading-[1.25] tracking-[-0.6px] sm:text-[28px] sm:leading-[1.3] sm:tracking-[-0.8px] lg:text-[34px] lg:tracking-[-1px]">{nl2br(b.title)}</h2>
-                  {b.desc && <p className="mt-3 hidden break-keep text-[14.5px] leading-[24px] text-white/85 lg:block">{nl2br(b.desc)}</p>}
+                  {b.desc && descBlock(b.desc, `mt-3 hidden break-keep text-[14.5px] leading-[24px] lg:block ${dark ? 'text-ink/75' : 'text-white/85'}`)}
                   {b.note && <p className="mt-2 break-keep text-[12.5px] font-bold sm:mt-3 sm:text-[15px]">{b.note}</p>}
                   {cta?.label && (
                     chat && !tenant ? (
                       <button
                         type="button"
                         onClick={() => window.dispatchEvent(new CustomEvent('moduon:chat-open'))}
-                        className="glass-btn mt-4 inline-flex h-11 w-fit shrink-0 items-center rounded-btn bg-white px-5 text-[14px] font-bold text-primary-text transition-colors hover:bg-tint sm:mt-5"
+                        className={`glass-btn mt-4 inline-flex h-11 w-fit shrink-0 items-center rounded-btn px-5 text-[14px] font-bold transition-colors sm:mt-5 ${dark ? 'bg-ink text-white hover:bg-body' : 'bg-white text-primary-text hover:bg-tint'}`}
                       >
                         {cta.label}
                       </button>
                     ) : (
                       <Link
                         to={chat ? consultTo : ctaTo(cta)}
-                        className="glass-btn mt-4 inline-flex h-11 w-fit shrink-0 items-center rounded-btn bg-white px-5 text-[14px] font-bold text-primary-text transition-colors hover:bg-tint sm:mt-5"
+                        className={`glass-btn mt-4 inline-flex h-11 w-fit shrink-0 items-center rounded-btn px-5 text-[14px] font-bold transition-colors sm:mt-5 ${dark ? 'bg-ink text-white hover:bg-body' : 'bg-white text-primary-text hover:bg-tint'}`}
                       >
                         {cta.label}
                       </Link>
@@ -179,7 +220,7 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
                 onClick={() => go(i)}
                 aria-label={`${i + 1}번째 배너`}
                 aria-current={i === index ? 'true' : undefined}
-                className={`h-1.5 rounded-full transition-all ${i === index ? 'w-5 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'}`}
+                className={`h-1.5 rounded-full transition-all ${i === index ? `w-5 ${dot}` : `w-1.5 ${dotDim}`}`}
               />
             ))}
           </div>

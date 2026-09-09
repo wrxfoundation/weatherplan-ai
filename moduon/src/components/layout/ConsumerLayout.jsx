@@ -271,6 +271,8 @@ export function ConsumerHeader({ tenant }) {
               </NavLink>
             ))}
           </nav>
+          {/* 모바일은 6종이 한 화면에 안 들어간다 — 오른쪽 끝을 크림으로 녹여 스크롤 힌트를 준다 */}
+          <span aria-hidden className="pointer-events-none absolute right-[56px] top-0 h-full w-10 bg-gradient-to-l from-cream via-cream/80 to-transparent md:hidden" />
           <button ref={btnRef} data-t="hamburger" onClick={() => { setOpen(!open); setMega(null) }} aria-label="전체 메뉴" aria-expanded={open} aria-controls="hamburger-panel"
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-white ${open ? 'bg-white text-primary-text' : 'text-ink'}`}>
             <IcMenu size={24} />

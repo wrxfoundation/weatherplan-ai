@@ -1,4 +1,4 @@
-// ─── 신청 분기 모달 — "AI와 진행 / 전문 상담사와 진행" ─────────────────────
+// ─── 신청 분기 모달 — "AI와 진행 / 전문 컨설턴트와 진행" ─────────────────────
 // 인터넷 빌더·휴대폰 상세·알뜰폰 상세가 같은 갈림길을 쓴다. 상담사 쪽에는 운영 시간을
 // 반드시 적는다(스펙: 평일 18시까지) — 시간 밖에 눌러도 접수는 되고 다음 영업일 콜백.
 import { useNavigate } from 'react-router-dom'
@@ -33,7 +33,7 @@ export default function ApplyChoiceModal({ open, onClose, title = '어떻게 진
           data-t="apply-human"
           className="glass-btn flex h-[64px] w-full flex-col items-center justify-center rounded-btn border-[1.5px] border-primary bg-white text-primary-text transition-colors hover:bg-tint"
         >
-          <span className="text-[15.5px] font-extrabold">전문 상담사와 진행할게요</span>
+          <span className="text-[15.5px] font-extrabold">전문 컨설턴트와 진행할게요</span>
           <span className="text-[11.5px] font-semibold text-label">{HUMAN_HOURS} · 이후 접수분은 다음 영업일 오전 콜백</span>
         </button>
       </div>

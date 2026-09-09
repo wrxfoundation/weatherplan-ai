@@ -1,6 +1,6 @@
 // ─── 인터넷 셀프견적 빌더 (아정당식 4필터 + 우측 요금 요약) ─────────────────
 // 좌 2/3: ① 통신사 ② 조합(단독/인터넷+TV, +전화) ③ 속도(+공유기) ④ TV채널
-// 우 1/3: 예상 월요금 · 기본요금 · 카드할인가 · 사은품 ~원 → 셀프가입 / AI 연결 / 전문상담원 연결
+// 우 1/3: 예상 월요금 · 기본요금 · 카드할인가 · 사은품 ~원 → 셀프가입 / AI 연결 / 전문 컨설턴트 연결
 // 고를 때마다 우측이 즉시 다시 선다. 단가는 lib/internet.js 한 곳(제로노트 단가표 교체 지점).
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -153,7 +153,7 @@ export default function InternetBuilder() {
             <button onClick={goSelf} data-t="net-self" className="shimmer-cta glass-btn-cta h-[52px] w-full rounded-btn bg-primary text-[15px] font-extrabold text-white transition-colors hover:bg-primary-hover">셀프가입</button>
             <div className="grid grid-cols-2 gap-2">
               <button onClick={goAI} data-t="net-ai" className="glass-btn h-12 rounded-btn border-[1.5px] border-primary bg-white text-[14px] font-bold text-primary-text transition-colors hover:bg-tint">AI 연결</button>
-              <button onClick={goHuman} data-t="net-human" className="glass-btn h-12 rounded-btn border border-line bg-white text-[14px] font-bold text-label transition-colors hover:border-primary hover:text-primary-text">전문상담원 연결</button>
+              <button onClick={goHuman} data-t="net-human" className="glass-btn h-12 rounded-btn border border-line bg-white text-[14px] font-bold text-label transition-colors hover:border-primary hover:text-primary-text">전문 컨설턴트 연결</button>
             </div>
           </div>
           <p className="mt-3 text-center text-[11.5px] leading-4 text-label">{LEGAL.quote}</p>

@@ -90,7 +90,7 @@ export default function InstallCheck({ onPrefill }) {
               onClick={() => nav('/consult?cat=internet')}
               className="glass-btn h-10 flex-1 rounded-field border border-line bg-white text-[13.5px] font-bold text-label transition-colors hover:border-primary hover:text-primary-text"
             >
-              상담사에게 확인
+              컨설턴트에게 확인
             </button>
           </div>
         </div>

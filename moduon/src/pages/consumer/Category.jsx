@@ -7,7 +7,7 @@ import RentalBrowser from '../../components/RentalBrowser'
 import { catBySlug, LEGAL } from '../../lib/constants'
 import { useStore } from '../../lib/store'
 import { won } from '../../lib/engine'
-import { Btn, Card, EmptyState } from '../../components/ui'
+import { Btn, Card, EmptyState, SafeImg } from '../../components/ui'
 import { IcSearch, IcBell } from '../../components/icons'
 import TelcoCompare from '../../components/TelcoCompare'
 import InstallCheck from '../../components/InstallCheck'
@@ -44,7 +44,7 @@ export default function Category() {
       {/* 카테고리 히어로 */}
       <section className="flex flex-col items-start gap-6 pt-8 sm:flex-row sm:items-center sm:pt-12">
         <span className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-warm sm:h-24 sm:w-24">
-          <img src={cat.icon} alt="" className="h-full w-full object-contain" />
+          <SafeImg src={cat.icon} className="h-full w-full object-contain" />
         </span>
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2.5">
@@ -115,7 +115,7 @@ export default function Category() {
         {[
           { t: '조건 비교', d: '통신사·브랜드별 조건을 한 번에 비교해요' },
           { t: '숨은 혜택', d: '결합·프로모션·카드 할인까지 전부 반영해요' },
-          { t: '이중 검수', d: 'AI 1차 설계 + 본사 상담원이 최종 검수해요' },
+          { t: '이중 검수', d: 'AI 1차 설계 + 본사 컨설턴트가 최종 검수해요' },
         ].map((p, i) => (
           <Card key={p.t} className="flex items-start gap-3 p-4">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-tint text-[13px] font-extrabold text-primary-text">{i + 1}</span>
@@ -136,7 +136,7 @@ export default function Category() {
 
         {products.length === 0 ? (
           <Card className="p-8">
-            <EmptyState icon={IcBell} text="상담사가 조건에 맞는 상품을 직접 찾아드려요" sub="이 카테고리는 맞춤 견적으로만 안내되고 있어요" />
+            <EmptyState icon={IcBell} text="컨설턴트가 조건에 맞는 상품을 직접 찾아드려요" sub="이 카테고리는 맞춤 견적으로만 안내되고 있어요" />
             <Btn className="mx-auto flex" onClick={() => nav(`/consult?cat=${slug}`)}>무료 상담으로 견적 받기</Btn>
           </Card>
         ) : (

@@ -49,7 +49,7 @@ const WEATHER_RULES = [
 
 // 라이프사이클 자동 발송 — 미라클 톤: 구체 수치가 말하게 한다
 const LIFECYCLE = [
-  { key: 'welcome', name: '신규 접수 환영', when: '리드 접수 즉시', tmpl: '{고객명}님, 접수 확인! 평균 10분 내 전문 상담사가 전화드려요.', def: true },
+  { key: 'welcome', name: '신규 접수 환영', when: '리드 접수 즉시', tmpl: '{고객명}님, 접수 확인! 평균 10분 내 전문 컨설턴트가 전화드려요.', def: true },
   { key: 'remind', name: '미응대 리마인드', when: 'SLA 10분 초과 시', tmpl: '놓친 상담 1건 — {고객명}님이 기다리고 있어요. 지금 연락하세요.', def: true },
   { key: 'expiry', name: '만기 재상담 (D-90)', when: '약정 만기 90일 전', tmpl: '{고객명}님 만기까지 D-{일수} · 위약금이 가장 낮아지는 구간입니다.', def: true },
   { key: 'review', name: '설치 완료 후기 요청', when: '개통 완료 +3일', tmpl: '{고객명}님, 설치는 만족스러우셨나요? 후기 남기면 다음 혜택 우선 안내.', def: false },

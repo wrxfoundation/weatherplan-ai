@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import { useStore } from '../../lib/store'
 import { CATEGORIES, CONSULT_TIMES, REGIONS, LEGAL, HQ_TEL } from '../../lib/constants'
 import { maskPhone, phoneValid, won, captureRef } from '../../lib/engine'
-import { Btn, Field, inputCls, Modal, useToast } from '../../components/ui'
+import { Btn, Field, inputCls, Modal, useToast, SafeImg } from '../../components/ui'
 import { IcStore, IcRobot, IcDoc } from '../../components/icons'
 import StatusTracker from '../../components/StatusTracker'
 
@@ -55,7 +55,7 @@ export default function Consult() {
     const dup = db.leads.find((l) => l.phone === phone.trim() && l.cat === cats[0] && Date.now() - l.createdAt < 10 * 60000 && l.status !== '취소')
     if (dup) {
       setDone({ name: name.trim(), phone: phone.trim(), sigungu, cats: [...cats], time })
-      toast('이미 접수된 신청이 있어요 — 담당 상담사가 곧 연락드려요!')
+      toast('이미 접수된 신청이 있어요 — 담당 컨설턴트가 곧 연락드려요!')
       return
     }
     dispatch({
@@ -87,7 +87,7 @@ export default function Consult() {
           </div>
           <h1 className="mt-5 text-[24px] font-extrabold tracking-tight text-ink">신청 완료!</h1>
           <p className="mt-2 text-[14.5px] leading-6 text-muted">
-            <strong className="font-bold text-primary-text">평균 10분 내</strong>에 {tenant ? `${tenant.name} ` : ''}전문 상담사가 연락드려요.
+            <strong className="font-bold text-primary-text">평균 10분 내</strong>에 {tenant ? `${tenant.name} ` : ''}전문 컨설턴트가 연락드려요.
           </p>
         </div>
 
@@ -110,12 +110,12 @@ export default function Consult() {
           <button onClick={() => nav('/calculator')} className="relative overflow-hidden rounded-card p-4 text-left text-white transition-transform hover:-translate-y-[3px]" style={{ background: 'linear-gradient(180deg,#5B80D9,#5174CD)' }}>
             <div className="text-[12px] font-bold text-white/80">인터넷/TV</div>
             <div className="mt-0.5 text-[14px] font-extrabold leading-5">결합하면 월 11,100원 절약</div>
-            <img src="/assets/obj-wifi.webp" alt="" className="absolute -bottom-2 -right-2 h-16 w-16 object-contain" />
+            <SafeImg src="/assets/obj-wifi.webp" className="absolute -bottom-2 -right-2 h-16 w-16 object-contain" />
           </button>
           <button onClick={() => nav('/diagnosis')} className="relative overflow-hidden rounded-card p-4 text-left text-white transition-transform hover:-translate-y-[3px]" style={{ background: 'linear-gradient(180deg,#F98974,#F7745F)' }}>
             <div className="text-[12px] font-bold text-white/80">AI 진단</div>
             <div className="mt-0.5 text-[14px] font-extrabold leading-5">1분 만에 생활비 새는 곳 찾기</div>
-            <img src="/assets/obj-purifier.webp" alt="" className="absolute -bottom-2 -right-2 h-16 w-16 object-contain" />
+            <SafeImg src="/assets/obj-purifier.webp" className="absolute -bottom-2 -right-2 h-16 w-16 object-contain" />
           </button>
         </div>
 
@@ -141,7 +141,7 @@ export default function Consult() {
         )}
         <h1 className="text-[24px] font-extrabold tracking-tight text-ink">30초면 신청 완료!</h1>
         <p className="mt-1.5 text-[14px] text-muted">
-          남겨주시면 <strong className="font-bold text-primary-text">평균 10분 내</strong> 전문 상담사가 연락드려요.
+          남겨주시면 <strong className="font-bold text-primary-text">평균 10분 내</strong> 전문 컨설턴트가 연락드려요.
         </p>
       </div>
 

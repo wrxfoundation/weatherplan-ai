@@ -115,24 +115,30 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
 
   // ───────────────────────────── ⑤ 롤링 배너 ─────────────────────────────
   await goto('/')
-  check((await attrOf('[data-t="hero-banner"]', 'data-total')) === '3', `배너 data-total=3 (${await attrOf('[data-t="hero-banner"]', 'data-total')})`)
+  check((await attrOf('[data-t="hero-banner"]', 'data-total')) === '4', `배너 data-total=4 (${await attrOf('[data-t="hero-banner"]', 'data-total')})`)
   const slideIds = await page.locator('[data-t="hero-slide"]').evaluateAll((els) => els.map((e) => e.dataset.id))
-  check(slideIds.join(',') === 'B1,B2,B3', `슬라이드 3장 B1,B2,B3 · 비활성 B4 없음 (${slideIds.join(',')})`)
-  check(/^1\s*\/\s*3/.test(await textOf('[data-t="hero-counter"]')), `카운터 1/3 (${JSON.stringify(await textOf('[data-t="hero-counter"]'))})`)
+  check(slideIds.join(',') === 'B1,B2,B3,B4', `슬라이드 4장 B1~B4 · 예비 B5~B7 없음 (${slideIds.join(',')})`)
+  check(/^1\s*\/\s*4/.test(await textOf('[data-t="hero-counter"]')), `카운터 1/4 (${JSON.stringify(await textOf('[data-t="hero-counter"]'))})`)
   const s1 = await textOf('[data-t="hero-slide"][data-id="B1"]')
   check(s1.includes('모비에게 바로 물어보세요') && s1.includes('24시간 언제든'), '1번 배너 문구: 모비에게 바로 물어보세요 · 24시간 언제든')
   check((await count('[data-t="hero-slide"][data-id="B1"] button:has-text("모비와 상담하기")')) === 1, '1번 배너 CTA 모비와 상담하기(chat)')
   await page.locator('[aria-label="다음 배너"]').click(); await page.waitForTimeout(700)
   check((await attrOf('[data-t="hero-banner"]', 'data-index')) === '1', `다음 배너 클릭 → data-index=1 (${await attrOf('[data-t="hero-banner"]', 'data-index')})`)
-  check(/^2\s*\/\s*3/.test(await textOf('[data-t="hero-counter"]')), `카운터 2/3 (${JSON.stringify(await textOf('[data-t="hero-counter"]'))})`)
-  check((await textOf('[data-t="hero-slide"][data-id="B2"]')).includes('152만원+'), '2번 배너 문구: 152만원+')
-  check((await textOf('[data-t="hero-slide"][data-id="B3"]')).includes('렌트/리스'), '3번 배너 문구: 렌트/리스')
+  check(/^2\s*\/\s*4/.test(await textOf('[data-t="hero-counter"]')), `카운터 2/4 (${JSON.stringify(await textOf('[data-t="hero-counter"]'))})`)
+  check((await textOf('[data-t="hero-slide"][data-id="B2"]')).includes('초대하고'), '2번 배너(저금통·혜택) 문구: 보고, 초대하고, 쌓고, 쓰세요')
+  check((await count('[data-t="hero-slide"][data-id="B2"] li')) === 2, '2번 배너 desc "- " 줄 → 불릿 2개')
+  check((await textOf('[data-t="hero-slide"][data-id="B3"]')).includes('100조원 시장 개막') && (await textOf('[data-t="hero-slide"][data-id="B3"]')).includes('구독경제'), '3번 배너(뉴스형) 신문 카드 + 구독경제 문구')
+  check((await textOf('[data-t="hero-slide"][data-id="B4"]')).includes('몰라서 놓친 혜택'), '4번 배너(과녁·왼쪽) 문구')
+  // 밝은 배경(잉크 톤)에서는 글씨·CTA 가 흰색이면 안 보인다
+  const b2Color = await page.locator('[data-t="hero-slide"][data-id="B2"] h2').evaluate((e) => getComputedStyle(e).color)
+  check(!/255,\s*255,\s*255/.test(b2Color), `잉크 톤 배너 제목은 흰색이 아님 (${b2Color})`)
   check((await attrOf('[aria-label="이전 배너"]', 'aria-label')) === '이전 배너', '이전 배너 버튼 존재')
   // 이미지 — 자체 호스팅(/assets/)만. 이 컨테이너엔 파일이 없어 SafeImg 가 <img> 를 떼어내므로 DOM + 스토어 두 겹으로 본다
   const slideImgs = await page.locator('[data-t="hero-slide"] img').evaluateAll((imgs) => imgs.map((i) => i.getAttribute('src')))
   check(slideImgs.every((s) => s.startsWith('/assets/')), `배너 <img> src 전부 /assets/ (${slideImgs.length}개: ${slideImgs.join(' ')})`)
   const dbBanners = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('moduon_db_v1')).banners.map((b) => ({ id: b.id, active: b.active, image: b.image })) } catch { return [] } })
-  check(dbBanners.filter((b) => b.active).length === 3 && dbBanners.every((b) => /^\/assets\/[\w.-]+$/.test(b.image)), `스토어 배너 이미지 전부 /assets/ 경로 (${dbBanners.map((b) => b.image).join(' ')})`)
+  // 뉴스형(B3)은 DOM 카드라 이미지가 없다 — 이미지가 있는 배너만 경로를 본다
+  check(dbBanners.filter((b) => b.active).length === 4 && dbBanners.filter((b) => b.image).every((b) => /^\/assets\/[\w.-]+$/.test(b.image)), `스토어 배너 이미지 전부 /assets/ 경로 (${dbBanners.map((b) => b.image || '(뉴스형)').join(' ')})`)
   const html = await page.content()
   check(!html.includes('cloudfront'), '페이지에 cloudfront 없음')
   // 자동 롤링 — 호버·포커스가 멈추게 하므로 마우스를 여백으로 빼고 새로 연다
@@ -245,9 +251,9 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   const scroll = await page.locator('[data-t="main-nav"]').evaluate((el) => ({ sw: el.scrollWidth, cw: el.clientWidth, ox: getComputedStyle(el).overflowX }))
   check(scroll.sw > scroll.cw && /auto|scroll/.test(scroll.ox), `390: 본 GNB 가로 스크롤 (${scroll.sw} > ${scroll.cw}, ${scroll.ox})`)
   check((await count('[data-t="hero-banner"]')) === 1, '390: 배너 존재')
-  // 배너 CTA 가 31px 로 찌그러지던 회귀 — 슬라이드 3장의 CTA(button/a) 높이 전부 ≥ 40
+  // 배너 CTA 가 31px 로 찌그러지던 회귀 — 슬라이드 4장의 CTA(button/a) 높이 전부 ≥ 40
   const ctaH = await page.locator('[data-t="hero-slide"] :is(button, a)').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().height)))
-  check(ctaH.length === 3 && ctaH.every((h) => h >= 40), `390: 배너 CTA 3개 높이 ≥ 40 (${ctaH.join('/')})`)
+  check(ctaH.length === 4 && ctaH.every((h) => h >= 40), `390: 배너 CTA 4개 높이 ≥ 40 (${ctaH.join('/')})`)
   // 🔔 패널 — 종 버튼 기준 right-0 이면 왼쪽이 뷰포트 밖으로 잘리던 회귀: 좌우 16px 여백 안에
   await page.locator('[data-t="cnotif"]').click(); await page.waitForTimeout(300)
   const npb = await page.locator('[data-t="cnotif-panel"]').boundingBox().catch(() => null)
@@ -263,9 +269,9 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   await openPage({ width: 1440, height: 900 }, '/m/happynet')
   check((await attrOf('header [data-t="tenant-tel"]', 'href')) === 'tel:01023114821', `파트너몰 헤더 매장 직통 tel: (${await attrOf('header [data-t="tenant-tel"]', 'href')})`)
   check((await count('header [data-t="cnotif"]')) === 0 && !/로그인\/회원가입/.test(await textOf('header')), '파트너몰 헤더에 🔔·로그인 없음(본진 전용)')
-  check((await attrOf('[data-t="hero-banner"]', 'data-total')) === '2', `파트너몰 배너 data-total=2 (tenant.cats 밖 B3 제외) (${await attrOf('[data-t="hero-banner"]', 'data-total')})`)
+  check((await attrOf('[data-t="hero-banner"]', 'data-total')) === '4', `파트너몰 배너 data-total=4 (B1~B4 는 카테고리 CTA 가 없어 전부 노출) (${await attrOf('[data-t="hero-banner"]', 'data-total')})`)
   const tCta = await page.locator('[data-t="hero-slide"] :is(button, a)').evaluateAll((els) => els.map((e) => e.getAttribute('href') ?? `<${e.tagName.toLowerCase()}>`))
-  check(tCta.length === 2 && tCta.every((h) => h.startsWith('/consult?src=happynet')), `파트너몰 배너 CTA 전부 /consult?src=happynet (${tCta.join(' ')})`)
+  check(tCta.length === 4 && tCta.every((h) => h.startsWith('/consult?src=happynet')), `파트너몰 배너 CTA 전부 /consult?src=happynet (${tCta.join(' ')})`)
   check((await count('main a[href^="/board/review"]')) === 0, `파트너몰 main 안 /board/review 링크 0 (${await count('main a[href^="/board/review"]')})`)
   await page.locator('header [data-t="tenant-consult"]').click(); await page.waitForTimeout(500)
   check(pathOf() === '/consult' && new URL(page.url()).searchParams.get('src') === 'happynet', `파트너몰 무료 상담 → /consult?src=happynet (${page.url().replace(BASE, '')})`)

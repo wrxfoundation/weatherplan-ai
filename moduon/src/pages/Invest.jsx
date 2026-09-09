@@ -4,7 +4,7 @@
 import { Link } from 'react-router-dom'
 import { useStore, adminStats } from '../lib/store'
 import { won } from '../lib/engine'
-import { Logo, LiveDot } from '../components/ui'
+import { Logo, LiveDot, SafeImg } from '../components/ui'
 import { IcRobot, IcMegaphone, IcUsers, IcRadar } from '../components/icons'
 
 const KPI = [
@@ -72,7 +72,7 @@ export default function Invest() {
             </div>
           </div>
           <div className="relative mx-auto hidden w-full max-w-[380px] lg:block">
-            <img src="/assets/obj-tower.png" alt="" className="animate-bagfloat w-full object-contain" style={{ filter: 'drop-shadow(0 18px 30px rgba(83,119,214,0.22))' }} />
+            <SafeImg src="/assets/obj-tower.png" className="animate-bagfloat w-full object-contain" style={{ filter: 'drop-shadow(0 18px 30px rgba(83,119,214,0.22))' }} />
           </div>
         </section>
 
@@ -110,7 +110,7 @@ export default function Invest() {
         <section className="mt-6 rounded-section bg-white p-6 shadow-card sm:p-9">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <h2 className="text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">한 번 팔고, 매달 쌓이고,<br className="sm:hidden" /> 같이 커지는 수익</h2>
-            <img src="/assets/obj-moneybag.png" alt="" className="h-[72px] w-[72px] object-contain" />
+            <SafeImg src="/assets/obj-moneybag.png" className="h-[72px] w-[72px] object-contain" />
           </div>
           <div className="mt-6 grid gap-4 lg:grid-cols-3">
             {REVENUE.map((r) => (

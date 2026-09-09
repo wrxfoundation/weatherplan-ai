@@ -62,10 +62,10 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   await page.locator('[data-t="net-ai"]').click(); await page.waitForTimeout(700)
   check(await page.evaluate(() => document.body.innerText.includes('모비')), 'AI 연결 → 챗 위젯 열림')
 
-  // 전문상담원 → /consult
+  // 전문 컨설턴트 → /consult
   await page.goto(BASE + '/category/internet', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
   await page.locator('[data-t="net-human"]').click(); await page.waitForTimeout(600)
-  check(page.url().includes('/consult') && page.url().includes('cat=internet'), `전문상담원 연결 → ${page.url().split('/').pop().slice(0, 40)}`)
+  check(page.url().includes('/consult') && page.url().includes('cat=internet'), `전문 컨설턴트 연결 → ${page.url().split('/').pop().slice(0, 40)}`)
 
   // GNB 통신사 프리필
   await page.goto(BASE + '/category/internet?carrier=hellovision', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)

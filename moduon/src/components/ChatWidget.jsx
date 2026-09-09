@@ -160,7 +160,7 @@ export default function ChatWidget({ tenant }) {
               </div>
             </div>
             <button onClick={() => nav(tenant ? `/consult?src=${tenant.slug}` : '/consult')} className="rounded-full bg-white/18 px-3 py-1.5 text-[11px] font-bold text-white ring-1 ring-white/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-sm hover:bg-white/28">
-              상담원 연결
+              컨설턴트 연결
             </button>
           </div>
 
