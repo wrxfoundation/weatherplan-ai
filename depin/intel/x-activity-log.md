@@ -990,3 +990,18 @@ I work on the wellbian side. If you're attending, let's say hello on the day.
 - **파트너라도 규칙 동일** — 타임레버리지는 파트너 클러스터·국내 앵커 KOL·증정 5대 배정 대상이지만, 관계는 무대 밖(현장·DM·증정)에서 쌓는다. 그가 기기·XRP SEOUL·측정 얘기를 올릴 때가 우리 차례.
 - 개인 계정도 답글·인용 없음. 좋아요는 재량이나 가격 글이라 권하지 않는다.
 - 소재 없음 — 브리지 자산 담론은 우리 레인 밖.
+
+**@KingKaran DM 진행(9/9)** — 서우(Logan) 08:32 회신(메일 회신 안내 + "Platinum Partner for XRP Seoul 2026" 언급). 카란 15:51/15:52: 해외에서 집에 설치 가능한지 질문 + "제네시스 단계와 9/14 이후 1차 판매 프로모션을 돕겠다" + 8년 XRP/Flare 커뮤니티·XRPL 마케팅 경력 소개.
+서우 방향: ① 예약구매 형태 · 구매증명 NFT 발급(1차 제네시스 등급 혜택) · 배송 미정이나 길지 않음 ② 초기 프로젝트라 비용·개런티를 지금 공식 약속 못 함, 담당자로서 어필할 퍼포먼스를 보이면 내부에서 적정 보상이 되도록 노력.
+→ 성과 측정을 위해 **utm_source=kingkaran 링크 2개(x · yt)** 발급(채널명 규칙 · 매체별 content). 유료 계약 아님 — 9/3 방침 유지, 내부 어필 근거는 utm 유입·예약 수. #ad · 사실 브리프(보상 planned/not guaranteed) 재확인.
+⚠️ 08:32 회신의 "early-stage benefits are beyond imagination" 은 기대 조장 표현 — KOL 이 그대로 인용할 수 있으니 향후 지양(발송 완료라 회수 불가).
+```
+DM 1 (462자): Thanks Karan, good question. Yes — it's open internationally. Right now it's reservation-based: reserve for free until Sep 14, 12:00 KST, then buy at the Sep 15, 12:00 KST priority window (RLUSD via Web3 wallet for international buyers; card in Korea). What you get is a device NFT as proof of purchase, and first-sale buyers also receive the Genesis grade with its benefits. Shipping isn't fixed yet, but it won't be long — the schedule is announced separately.
+```
+```
+DM 2 (694자):
+On working together, I'll be straight with you: we're early, so I can't officially commit to fees or any guarantee right now. What I can do is this — if you promote through the Genesis window and the numbers show it, I'll make the case internally so it's rewarded fairly. To make that measurable, please use these links (they're how your referrals become visible on both sides):
+X: https://wellbian.io/?utm_source=kingkaran&utm_medium=kol&utm_campaign=prereg0907&utm_content=x
+YouTube: https://wellbian.io/?utm_source=kingkaran&utm_medium=kol&utm_campaign=prereg0907&utm_content=yt
+Two asks: mark posts #ad, and keep to the facts from my email — rewards are planned, not guaranteed. Sound fair?
+```
