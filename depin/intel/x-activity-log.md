@@ -981,3 +981,12 @@ I work on the wellbian side. If you're attending, let's say hello on the day.
 저는 wellbian 쪽에서 파트너십을 맡고 있습니다. 행사에 참석하시는 분들은 그날 인사 나눠요.
 ```
 (9/9 서우: 유료 행사라 "서울에 계시면" 은 무료 입장처럼 읽힘 → 마지막 문장을 "참석하시는 분들과 그날 인사" 로 교정)
+
+### @Mr_MOON_XRP(문창훈·타임레버리지) — "Why does XRP's price need to rise?" 브리지 자산 테제 + 은행 로고·"XRP the bridge" 이미지 (2026-09-09) → **패스 — 무반응, 좋아요도 생략 (9/6 같은 계정 판정과 동형, 2연속)**
+
+- **가격 담론 정면** — 제목 자체가 "가격이 올라야 하는 이유". 시세·가격 레이스는 답글·RT·인용 전부 패스.
+- **홀더 정서 클로징** — "The direction of this evolution is worth watching closely." = 기대 클로징. 앞부분의 "tokenized economy / value must move efficiently" 는 인프라 어휘지만 클로징으로 판별한다는 원칙 그대로.
+- **신뢰 세탁 구조와 같은 모양** — 기관 로고 무더기 이미지 + "financial elites" 프레임 + 브리지 통화 기대. 답글은 우리 계정을 그 구조 안에 넣는 행위.
+- **파트너라도 규칙 동일** — 타임레버리지는 파트너 클러스터·국내 앵커 KOL·증정 5대 배정 대상이지만, 관계는 무대 밖(현장·DM·증정)에서 쌓는다. 그가 기기·XRP SEOUL·측정 얘기를 올릴 때가 우리 차례.
+- 개인 계정도 답글·인용 없음. 좋아요는 재량이나 가격 글이라 권하지 않는다.
+- 소재 없음 — 브리지 자산 담론은 우리 레인 밖.
