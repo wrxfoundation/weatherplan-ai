@@ -29,16 +29,17 @@ async function fillConsult(page, name, phone) {
 
 const WALKS = [
   {
-    name: '검색형 · 강민서 (홈 검색 → 카테고리 → 상담)',
+    // 홈 검색창·헤더 무료상담 버튼은 아정당식 초기화면 대공사(2행 헤더 + 아이콘 행 6종)로 사라졌다.
+    // 같은 의도(홈 → 카테고리 → 상담)를 아이콘 행 '인터넷' 타일 → 셀프견적 빌더의 전문상담원 버튼으로 걷는다.
+    name: '탐색형 · 강민서 (홈 아이콘 행 → 카테고리 → 상담)',
     lead: { name: '강민서', phone: '010-9001-0001' },
     steps: async (page) => {
       await page.goto(BASE + '/')
       await page.waitForTimeout(600)
-      await page.locator('input[placeholder*="검색"]').first().fill('인터넷')
-      await page.keyboard.press('Enter')
+      await page.locator('[data-t="site-tiles"] a[href="/category/internet"]').click()
       await page.waitForTimeout(800)
-      if (!page.url().includes('/category/internet')) throw new Error('검색→카테고리 이동 실패: ' + page.url())
-      await page.locator('a:has-text("무료 상담"), button:has-text("상담")').first().click()
+      if (!page.url().includes('/category/internet')) throw new Error('아이콘 행→카테고리 이동 실패: ' + page.url())
+      await page.locator('[data-t="net-human"]').click()
       await page.waitForTimeout(800)
       if (!page.url().includes('/consult')) throw new Error('카테고리→상담 이동 실패: ' + page.url())
     },
@@ -109,7 +110,7 @@ const WALKS = [
   const md = [
     '# 퍼널 워크스루 리포트',
     '',
-    `- 실행: ${now} UTC · 경로 ${rows.length}개 (검색형/비교형/스캔형)`,
+    `- 실행: ${now} UTC · 경로 ${rows.length}개 (탐색형/비교형/스캔형)`,
     `- 결과: **${pass}/${rows.length} PASS**`,
     '- 기준: 각 단계 도달 · "신청 완료!" 화면 · 리드 실제 생성 · 페이지 무오류',
     '',

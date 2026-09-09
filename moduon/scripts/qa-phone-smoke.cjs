@@ -2,6 +2,8 @@
 // 렌더뿐 아니라 "표의 최저가 열이 실제 최소값인지", "결합 토글이 금액을 낮추는지"까지 검증한다.
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
+// 여러 스모크를 병렬로 돌릴 때 각자 다른 프리뷰 포트를 쓸 수 있게 — 기본은 qa-all 이 띄우는 4173
+const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
 
 const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
 
@@ -10,7 +12,7 @@ const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
   const page = await browser.newPage({ viewport: { width: 1280, height: 1000 } })
   const errors = []
   page.on('pageerror', (e) => errors.push(String(e)))
-  await page.goto('http://localhost:4173/calculator/phone', { waitUntil: 'networkidle' })
+  await page.goto(BASE + '/calculator/phone', { waitUntil: 'networkidle' })
   await page.waitForTimeout(500)
 
   let fail = 0

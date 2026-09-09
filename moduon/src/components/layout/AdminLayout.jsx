@@ -5,7 +5,7 @@ import { useStore, getSession } from '../../lib/store'
 import { maskName } from '../../lib/engine'
 import { unitName } from '../../lib/constants'
 import { Logo, useToast } from '../ui'
-import { IcGrid, IcCompass, IcStore, IcBox, IcClipboard, IcBolt, IcRobot, IcCoins, IcLock, IcBell, IcClock, IcAlert, IcSearch, IcUsers, IcMegaphone } from '../icons'
+import { IcGrid, IcCompass, IcStore, IcBox, IcClipboard, IcBolt, IcRobot, IcCoins, IcLock, IcBell, IcClock, IcAlert, IcSearch, IcUsers, IcMegaphone, IcInbox, IcGift, IcChat } from '../icons'
 
 // 파생 알림 — 알림을 저장하지 않고 현재 상태에서 매번 계산한다 (axion 패턴).
 // 읽음 처리는 내용 시그니처를 localStorage에 비교 저장 — 알림 테이블 없이 배지가 동작.
@@ -18,8 +18,16 @@ function buildNotifs(db) {
   if (unassigned) n.push({ icon: IcAlert, cls: 'text-warn', text: `미배정 리드 ${unassigned}건 — 재배정 필요`, to: '/admin/leads' })
   const apps = db.applications.filter((a) => a.status === '대기').length
   if (apps) n.push({ icon: IcStore, cls: 'text-primary-text', text: `분양 신청 승인 대기 ${apps}건`, to: '/admin/tenants' })
+  // 고객소통 — 답변 없는 질문과 처리 안 된 불편접수는 리드처럼 시간이 곧 신뢰다
+  const qna = pendingQna(db)
+  if (qna) n.push({ icon: IcChat, cls: 'text-primary-text', text: `미답변 질문 ${qna}건`, to: '/admin/boards/qna' })
+  const cpl = pendingComplaints(db)
+  if (cpl) n.push({ icon: IcInbox, cls: 'text-warn', text: `불편접수 미처리 ${cpl}건`, to: '/admin/complaints' })
   return n
 }
+// 사이드바 배지·알림이 같은 수를 읽는다 (posts 는 시드 v11 이후에만 존재 — 없으면 0)
+const pendingQna = (db) => (db.posts ?? []).filter((p) => p.board === 'qna' && p.status === '접수').length
+const pendingComplaints = (db) => (db.posts ?? []).filter((p) => p.board === 'complaint' && p.status === '접수').length
 
 function NotifBell({ db }) {
   const [open, setOpen] = useState(false)
@@ -159,6 +167,12 @@ const GROUPS = [
     { to: '/admin/ai', label: 'AI 운영 현황', icon: IcRobot },
     { to: '/admin/persona-lab', label: '페르소나 랩', icon: IcUsers },
   ]},
+  { label: '콘텐츠·고객소통', items: [
+    { to: '/admin/banners', label: '배너 관리', icon: IcMegaphone },
+    { to: '/admin/boards', label: '게시판 관리', icon: IcInbox },
+    { to: '/admin/complaints', label: '불편접수', icon: IcAlert },
+    { to: '/admin/benefits', label: '혜택·이벤트 설정', icon: IcGift },
+  ]},
   { label: '정산·수익', items: [{ to: '/admin/settlements', label: '정산·지급', icon: IcCoins }] },
   { label: '시스템', items: [{ to: '/admin/audit', label: '권한·감사 로그', icon: IcLock }] },
 ]
@@ -193,13 +207,16 @@ export default function AdminLayout() {
 
   if (!session || session.role !== 'admin') return null
   const pendingApps = db.applications.filter((a) => a.status === '대기').length
+  const qnaOpen = pendingQna(db)
+  const cplOpen = pendingComplaints(db)
 
   return (
     <div className="min-h-screen bg-bbg">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[224px] flex-col overflow-y-auto border-r border-bline bg-white lg:flex">
-        <div className="flex items-center justify-between px-5 py-5">
+        {/* 224px 안에 로고(≈145px)+배지가 한 줄로 안 들어간다 — wrap 으로 배지를 로고 아래 줄에 두고, 워드마크·배지 모두 두 줄로 꺾이지 않게 */}
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 px-5 py-5">
           <Logo size="sm" />
-          <span className="rounded-full bg-bink px-2 py-0.5 text-[10px] font-bold text-white">HQ 관제</span>
+          <span className="shrink-0 whitespace-nowrap rounded-full bg-bink px-2 py-0.5 text-[10px] font-bold text-white">HQ 관제</span>
         </div>
         <nav className="flex-1 px-3 pb-4">
           {GROUPS.map((g, gi) => (
@@ -217,6 +234,12 @@ export default function AdminLayout() {
                   {m.to === '/admin/tenants' && pendingApps > 0 && (
                     <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-warn px-1.5 text-[11px] font-bold text-white">{pendingApps}</span>
                   )}
+                  {m.to === '/admin/boards' && qnaOpen > 0 && (
+                    <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-bold text-white" title="미답변 질문">{qnaOpen}</span>
+                  )}
+                  {m.to === '/admin/complaints' && cplOpen > 0 && (
+                    <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-warn px-1.5 text-[11px] font-bold text-white" title="미처리 불편접수">{cplOpen}</span>
+                  )}
                 </NavLink>
               ))}
             </div>
@@ -233,7 +256,8 @@ export default function AdminLayout() {
       </aside>
 
       <main className="px-4 pb-24 pt-5 sm:px-6 lg:ml-[224px] lg:pb-10">
-        <div className="relative z-30 mb-2 flex items-center justify-end gap-2 lg:-mb-8">
+        {/* 툴바 행(검색·알림) — 페이지 h1 우측 액션(새 배너·CSV·저장 등)과 겹치지 않게 콘텐츠 위 별도 행으로 둔다(음수 마진 금지) */}
+        <div className="relative z-30 mb-2 flex items-center justify-end gap-2 lg:mb-3">
           <button
             onClick={() => setPaletteOpen(true)}
             className="flex h-10 items-center gap-2 rounded-full bg-white px-3.5 text-[12px] font-bold text-bmuted shadow-card transition-colors hover:bg-brow hover:text-bink"
@@ -255,6 +279,7 @@ export default function AdminLayout() {
           { to: '/admin/leads', label: '관제', icon: IcBolt },
           { to: '/admin/tenants', label: '분양', icon: IcStore },
           { to: '/admin/settlements', label: '정산', icon: IcCoins },
+          { to: '/admin/complaints', label: '소통', icon: IcInbox },
           { to: '/admin/ai', label: 'AI', icon: IcRobot },
         ].map((m) => (
           <NavLink key={m.to} to={m.to} end={m.end} className={({ isActive }) => `flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-semibold ${isActive ? 'text-primary-text' : 'text-bfaint'}`}>

@@ -6,6 +6,8 @@
 //  ④ 인터넷은 지원금 고정(재량 슬라이더 없음)
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
+// 여러 스모크를 병렬로 돌릴 때 각자 다른 프리뷰 포트를 쓸 수 있게 — 기본은 qa-all 이 띄우는 4173
+const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
 
 const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
 
@@ -15,7 +17,7 @@ const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
   const errors = []
   page.on('pageerror', (e) => errors.push(String(e)))
   await page.addInitScript(() => localStorage.setItem('moduon_session_v1', JSON.stringify({ role: 'partner', tenantId: 'T1' })))
-  await page.goto('http://localhost:4173/office/design', { waitUntil: 'networkidle' })
+  await page.goto(BASE + '/office/design', { waitUntil: 'networkidle' })
   await page.waitForTimeout(600)
 
   let fail = 0

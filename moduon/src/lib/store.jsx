@@ -15,7 +15,7 @@ function load() {
     if (raw) {
       const db = JSON.parse(raw)
       // localStorage는 신뢰할 수 없는 입력 — 핵심 컬렉션이 배열이 아니면 재시드 (흰 화면 사고 방지)
-      const sane = ['leads', 'tenants', 'applications', 'products', 'auditLog'].every((k) => Array.isArray(db?.[k]))
+      const sane = ['leads', 'tenants', 'applications', 'products', 'auditLog', 'banners', 'posts'].every((k) => Array.isArray(db?.[k]))
       if (db.seedVersion === SEED_VERSION && sane) return db
     }
   } catch { /* 손상 시 재시드 */ }
@@ -245,6 +245,80 @@ function reducer(db, action) {
           history: [...db.policies.history, { version, joinFee, monthlyFee, feeRate, appliedAt: Date.now(), by: '본사 관리자', note }],
         },
         auditLog: log({ actor: '본사 관리자', action: '정책 변경', target: `분양 정책 v${version}`, detail: `분양비 ${joinFee.toLocaleString()} / 이용료 ${monthlyFee.toLocaleString()} / 수수료 ${(feeRate * 100).toFixed(0)}%` }),
+      }
+    }
+
+    // ── 콘텐츠·게시판·혜택 (아정당식 초기화면 개편) ─────────────────
+    // 롤링 배너 — 홈 히어로가 order 순·active 만 읽는다. 어드민이 순서·노출·문구를 관리.
+    case 'BANNER_UPSERT': {
+      const b = action.payload
+      const exists = db.banners.some((x) => x.id === b.id)
+      const banners = exists
+        ? db.banners.map((x) => (x.id === b.id ? { ...x, ...b } : x))
+        : [...db.banners, { id: uid('B'), order: db.banners.length, active: true, ...b }]
+      return { ...db, banners, auditLog: log({ actor: '본사 관리자', action: exists ? '배너 수정' : '배너 등록', target: b.title?.split('\n')[0] ?? b.id, detail: exists ? Object.keys(b).filter((k) => k !== 'id').join(', ') : '신규' }) }
+    }
+    case 'BANNER_DELETE': {
+      const t = db.banners.find((x) => x.id === action.id)
+      return { ...db, banners: db.banners.filter((x) => x.id !== action.id).map((x, i) => ({ ...x, order: i })), auditLog: log({ actor: '본사 관리자', action: '배너 삭제', target: t?.title?.split('\n')[0] ?? action.id, detail: '' }) }
+    }
+    case 'BANNER_TOGGLE':
+      return { ...db, banners: db.banners.map((x) => (x.id === action.id ? { ...x, active: !x.active } : x)) }
+    case 'BANNER_MOVE': {
+      // dir: -1 위로 · +1 아래로. order 를 정규화한 뒤 이웃과 교환한다.
+      const sorted = [...db.banners].sort((a, b) => a.order - b.order)
+      const i = sorted.findIndex((x) => x.id === action.id)
+      const j = i + action.dir
+      if (i < 0 || j < 0 || j >= sorted.length) return db
+      ;[sorted[i], sorted[j]] = [sorted[j], sorted[i]]
+      return { ...db, banners: sorted.map((x, k) => ({ ...x, order: k })) }
+    }
+
+    // 게시판 6종은 posts 한 컬렉션에 board 로 구분한다 — 목록·상세·어드민이 같은 행을 본다.
+    // 소비자 작성은 감사로그에 남기지 않는다(운영 행위만 기록). by === 'admin' 일 때만 기록.
+    case 'POST_CREATE': {
+      const { by, ...p } = action.payload
+      const post = {
+        id: uid('P'), createdAt: Date.now(), views: 0, pinned: false, tags: [],
+        // 질문/답변·불편접수는 '접수' 로 시작 — 시드(PQ4·PQ5)와 어드민 미답변 집계(status==='접수')가 이 어휘를 본다. 나머지 게시판은 '공개'
+        status: ['complaint', 'qna'].includes(p.board) ? '접수' : '공개',
+        ...p,
+      }
+      const next = { ...db, posts: [post, ...db.posts] }
+      return by === 'admin' ? { ...next, auditLog: log({ actor: '본사 관리자', action: '게시글 등록', target: `${post.board}/${post.title}`, detail: '' }) } : next
+    }
+    case 'POST_UPDATE': {
+      const { id, patch } = action.payload
+      const t = db.posts.find((x) => x.id === id)
+      return { ...db, posts: db.posts.map((x) => (x.id === id ? { ...x, ...patch } : x)), auditLog: log({ actor: '본사 관리자', action: '게시글 수정', target: `${t?.board}/${t?.title ?? id}`, detail: Object.keys(patch).join(', ') }) }
+    }
+    case 'POST_DELETE': {
+      const t = db.posts.find((x) => x.id === action.id)
+      return { ...db, posts: db.posts.filter((x) => x.id !== action.id), auditLog: log({ actor: '본사 관리자', action: '게시글 삭제', target: `${t?.board}/${t?.title ?? action.id}`, detail: '' }) }
+    }
+    case 'POST_VIEW':
+      return { ...db, posts: db.posts.map((x) => (x.id === action.id ? { ...x, views: (x.views ?? 0) + 1 } : x)) }
+    // 답변 — 질문/답변은 '답변완료', 불편접수는 '완료' 로 상태가 함께 넘어간다
+    case 'POST_ANSWER': {
+      const { id, body } = action.payload
+      const t = db.posts.find((x) => x.id === id)
+      const status = t?.board === 'complaint' ? '완료' : t?.board === 'qna' ? '답변완료' : t?.status
+      return { ...db, posts: db.posts.map((x) => (x.id === id ? { ...x, answer: { body, at: Date.now(), by: '본사 담당자' }, status } : x)), auditLog: log({ actor: '본사 관리자', action: t?.board === 'complaint' ? '불편접수 처리' : '답변 등록', target: `${t?.board}/${t?.title ?? id}`, detail: body.slice(0, 40) }) }
+    }
+    case 'POST_STATUS': {
+      const { id, status } = action.payload
+      const t = db.posts.find((x) => x.id === id)
+      return { ...db, posts: db.posts.map((x) => (x.id === id ? { ...x, status } : x)), auditLog: log({ actor: '본사 관리자', action: '불편접수 상태 변경', target: t?.title ?? id, detail: `${t?.status} → ${status}` }) }
+    }
+
+    // 혜택·플로팅 패널 설정 — 회원가입·친구초대·광고보기 포인트와 패널 문구. 홈·혜택 허브가 실시간 참조.
+    case 'BENEFITS_UPDATE': {
+      const { patch, note } = action.payload
+      const version = (db.benefits?.version ?? 1) + 1
+      return {
+        ...db,
+        benefits: { ...db.benefits, ...patch, version, history: [...(db.benefits?.history ?? []), { version, at: Date.now(), by: '본사 관리자', note: note || '혜택 설정 변경', patch }] },
+        auditLog: log({ actor: '본사 관리자', action: '혜택 설정 변경', target: `혜택 설정 v${version}`, detail: Object.entries(patch).map(([k, v]) => `${k}=${typeof v === 'object' ? JSON.stringify(v) : v}`).join(', ').slice(0, 120) }),
       }
     }
 

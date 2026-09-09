@@ -1,6 +1,8 @@
 // 스모크 — 인터넷 셀프견적 빌더(4필터 + 우측 요약 + 3진입) + GNB 메가메뉴
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
+// 여러 스모크를 병렬로 돌릴 때 각자 다른 프리뷰 포트를 쓸 수 있게 — 기본은 qa-all 이 띄우는 4173
+const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
 const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
 
 ;(async () => {
@@ -14,7 +16,7 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   // 실제 사용자처럼 마우스를 단계적으로 옮긴다 — hover()/click() 은 순간이동이라 호버 메뉴의 틈 버그를 못 잡는다
   const glide = async (loc, steps = 25) => { const bb = await loc.boundingBox(); await page.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2, { steps }); await page.waitForTimeout(150) }
 
-  await page.goto('http://localhost:4173/category/internet', { waitUntil: 'networkidle' })
+  await page.goto(BASE + '/category/internet', { waitUntil: 'networkidle' })
   await page.waitForTimeout(500)
   check(await page.locator('[data-t="net-builder"]').count() === 1, '렌더: 셀프견적 빌더')
   check(await page.locator('[data-t="net-carriers"] button').count() === 5, '필터1 통신사 5종')
@@ -61,27 +63,28 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(await page.evaluate(() => document.body.innerText.includes('모비')), 'AI 연결 → 챗 위젯 열림')
 
   // 전문상담원 → /consult
-  await page.goto('http://localhost:4173/category/internet', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
+  await page.goto(BASE + '/category/internet', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
   await page.locator('[data-t="net-human"]').click(); await page.waitForTimeout(600)
   check(page.url().includes('/consult') && page.url().includes('cat=internet'), `전문상담원 연결 → ${page.url().split('/').pop().slice(0, 40)}`)
 
   // GNB 통신사 프리필
-  await page.goto('http://localhost:4173/category/internet?carrier=hellovision', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
+  await page.goto(BASE + '/category/internet?carrier=hellovision', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
   const pressed = await page.locator('[data-t="net-carriers"] button[aria-pressed="true"]').innerText()
   check(pressed.includes('헬로비전'), `?carrier= 프리필 → ${pressed.replace(/\n/g, ' ')}`)
 
   // GNB 메가메뉴 — 호버 전엔 DOM 에 없고(링크 수 오염 없음), 호버 시 펼쳐진다
-  await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
+  // 헤더가 2행(util-nav 게시판 5 / main-nav SITE_NAV 6)이라 'header nav a' 는 11개가 잡힌다 — 본 GNB 만 본다
+  await page.goto(BASE + '/', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
   check(await page.locator('[data-t="mega"]').count() === 0, '메가메뉴: 호버 전 미렌더')
-  await page.locator('header nav a', { hasText: /^인터넷$/ }).hover(); await page.waitForTimeout(250)
+  await page.locator('nav[data-t="main-nav"] a', { hasText: /^인터넷$/ }).hover(); await page.waitForTimeout(250)
   check(await page.locator('[data-t="mega"][data-mega="/category/internet"]').count() === 1, '인터넷 호버 → 통신사 패널')
   check(await page.locator('[data-t="mega-items"] a').count() === 5, '통신사 5종 링크')
-  await page.locator('header nav a', { hasText: /^핸드폰$/ }).hover(); await page.waitForTimeout(250)
+  await page.locator('nav[data-t="main-nav"] a', { hasText: /^휴대폰$/ }).hover(); await page.waitForTimeout(250)
   const ph = await page.locator('[data-t="mega-items"]').innerText()
-  check(ph.includes('온라인 구매') && ph.includes('알뜰폰 요금제'), '핸드폰 호버 → 온라인 구매 · 알뜰폰 요금제')
+  check(ph.includes('온라인 구매') && ph.includes('알뜰폰 요금제'), '휴대폰 호버 → 온라인 구매 · 알뜰폰 요금제')
   await page.mouse.move(640, 640)
-  await glide(page.locator('header nav a', { hasText: /^렌탈$/ }), 10); await page.waitForTimeout(200)
-  check(await page.locator('[data-t="mega-brands"] a').count() === 10, '렌탈 호버 → 좌측 "렌탈 제품전체" + 브랜드 9')
+  await glide(page.locator('nav[data-t="main-nav"] a', { hasText: /^가전렌탈$/ }), 10); await page.waitForTimeout(200)
+  check(await page.locator('[data-t="mega-brands"] a').count() === 10, '가전렌탈 호버 → 좌측 "렌탈 제품전체" + 브랜드 9')
   const first = page.locator('[data-t="mega-brands"] a').first()
   check((await first.innerText()).includes('렌탈 제품전체'), '첫 행이 "렌탈 제품전체"')
   check(await first.getAttribute('href') === '/category/rental', '렌탈 제품전체 → 브랜드 필터 없는 전체 목록')
@@ -107,7 +110,8 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(await page.locator('[data-t="mega"]').count() === 1, '천천히 내려가도 패널 유지 (nav↔패널 여백 통과)')
   await page.mouse.down(); await page.mouse.up(); await page.waitForTimeout(600)
   check(page.url().includes('brand=lg') && decodeURIComponent(page.url()).includes('type=스타일러'), `카테고리 클릭 → ${decodeURIComponent(page.url()).split('?')[1]}`)
-  check(await page.locator('header nav a').count() === 5, 'GNB 링크 수는 5 (패널이 nav 바깥)')
+  check(await page.locator('nav[data-t="main-nav"] a').count() === 6, '본 GNB 링크 수는 6 (패널이 nav 바깥)')
+  check(await page.locator('nav[data-t="util-nav"] a').count() === 5, '유틸 GNB(게시판) 링크 수는 5')
   if (errors.length) { console.log('PAGEERROR:', errors.join(' | ')); fail++ }
   await browser.close()
   console.log(fail === 0 ? 'SMOKE: ALL PASS' : `SMOKE: ${fail} FAIL`)

@@ -3,7 +3,11 @@
 // 즉시통화·상담·FAQ를 한 화면에 — 답을 못 찾으면 상담 신청으로 수렴.
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { IcPhone, IcChat, IcClock, IcSearch, IcDoc, IcStore } from '../../components/icons'
+import { HQ_TEL, HQ_HOURS_SHORT } from '../../lib/constants'
+import { IcPhone, IcChat, IcClock, IcSearch, IcDoc, IcStore, IcAlert } from '../../components/icons'
+
+// 대표번호 — 헤더·푸터·플로팅 패널과 같은 단일 소스(HQ_TEL)
+const TEL_HREF = `tel:${HQ_TEL.replace(/-/g, '')}`
 
 const FAQS = [
   { q: '현금 사은품은 언제 지급되나요?', a: '설치·개통 확인 후 영업일 7일 이내에 신청인 명의 계좌로 입금돼요. 3년 약정 기준이며, 12개월 내 해지 시 일부 반환 조건이 있을 수 있어요. 일자별 지급 내역은 "지급 명단"에서 공개하고 있어요.' },
@@ -27,11 +31,11 @@ export default function Support() {
 
       {/* 연락 채널 3 */}
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        <a href="tel:16600000" className="glass-btn rounded-card border border-line-soft bg-white p-4 transition-colors hover:border-primary">
+        <a href={TEL_HREF} className="glass-btn rounded-card border border-line-soft bg-white p-4 transition-colors hover:border-primary">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-tint text-primary-text"><IcPhone size={16} /></span>
           <div className="mt-2.5 text-[14.5px] font-extrabold text-ink">전화 상담</div>
-          <div className="tnum mt-0.5 text-[13px] font-bold text-primary-text">1660-0000</div>
-          <div className="mt-1 flex items-center gap-1 text-[11.5px] text-faint"><IcClock size={11} /> 평일 09:00–18:00</div>
+          <div className="tnum mt-0.5 text-[13px] font-bold text-primary-text">{HQ_TEL}</div>
+          <div className="mt-1 flex items-center gap-1 text-[11.5px] text-faint"><IcClock size={11} /> {HQ_HOURS_SHORT}</div>
         </a>
         <Link to="/consult" className="glass-btn rounded-card border border-line-soft bg-white p-4 transition-colors hover:border-primary">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-orange-tint text-orange-text"><IcChat size={16} /></span>
@@ -62,6 +66,19 @@ export default function Support() {
               {openIdx === i && <p className="pb-4 text-[13.5px] leading-[22px] text-muted animate-rise">{f.a}</p>}
             </div>
           ))}
+        </div>
+
+        {/* FAQ 에 없는 질문은 게시판으로 — 질문/답변은 공개 답변, 불편접수는 비공개 처리 */}
+        <div data-t="support-boards" className="mt-4 flex flex-col gap-2 rounded-card bg-cream/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[13px] font-semibold text-body">답을 못 찾으셨나요?</p>
+          <div className="flex flex-wrap gap-2">
+            <Link to="/board/qna" className="glass-btn inline-flex h-9 items-center gap-1.5 rounded-btn border border-line-soft bg-white px-3 text-[12.5px] font-bold text-body transition-colors hover:border-primary hover:text-primary-text">
+              <IcChat size={13} className="shrink-0 text-primary-text" /> 질문/답변 게시판에서 물어보기
+            </Link>
+            <Link to="/board/complaint" className="glass-btn inline-flex h-9 items-center gap-1.5 rounded-btn border border-line-soft bg-white px-3 text-[12.5px] font-bold text-body transition-colors hover:border-primary hover:text-primary-text">
+              <IcAlert size={13} className="shrink-0 text-orange-text" /> 불편접수
+            </Link>
+          </div>
         </div>
       </section>
 

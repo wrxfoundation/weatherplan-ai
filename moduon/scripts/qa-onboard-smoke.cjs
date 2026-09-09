@@ -2,6 +2,8 @@
 // 렌더뿐 아니라 실제로 3문항을 끝까지 답해 계산기로 프리필이 넘어가는지 완주 검증.
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
+// 여러 스모크를 병렬로 돌릴 때 각자 다른 프리뷰 포트를 쓸 수 있게 — 기본은 qa-all 이 띄우는 4173
+const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
 
 ;(async () => {
   const browser = await pw.chromium.launch()
@@ -18,7 +20,7 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   })
 
   // ── 인터넷 완주 ──
-  await page.goto('http://localhost:4173/onboard/internet', { waitUntil: 'networkidle' })
+  await page.goto(BASE + '/onboard/internet', { waitUntil: 'networkidle' })
   await page.waitForTimeout(500)
   let text = await page.evaluate(() => document.body.innerText)
   check(text.includes('가입하려는 통신사가 있으신가요?'), 'Q1 질문 렌더')
@@ -62,14 +64,14 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   check(url.includes('speed=') && url.includes('carrier=') && url.includes('from=onboard'), '답변이 프리필 쿼리로 전달')
 
   // ── 휴대폰 1문항만 확인(스키마 분리 확인) ──
-  await page.goto('http://localhost:4173/onboard/phone', { waitUntil: 'networkidle' })
+  await page.goto(BASE + '/onboard/phone', { waitUntil: 'networkidle' })
   await page.waitForTimeout(500)
   text = await page.evaluate(() => document.body.innerText)
   check(text.includes('어느 통신사를 쓰실 건가요?'), '휴대폰 Q1 별도 스키마')
   check(text.includes('알뜰폰은 통화 품질'), '휴대폰 전용 팁')
 
   // ── 카테고리 진입 동선 ──
-  await page.goto('http://localhost:4173/category/internet', { waitUntil: 'networkidle' })
+  await page.goto(BASE + '/category/internet', { waitUntil: 'networkidle' })
   await page.waitForTimeout(500)
   text = await page.evaluate(() => document.body.innerText)
   // 통신사 그리드는 아정당식 4필터 빌더로 대체됐다 — 빌더와 그 안의 통신사 5종을 단언

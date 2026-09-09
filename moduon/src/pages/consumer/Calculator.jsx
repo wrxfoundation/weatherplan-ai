@@ -221,8 +221,8 @@ export default function Calculator() {
           </section>
         </div>
 
-        {/* ── 우: 스티키 합계 카드 (데스크톱) ── */}
-        <aside className="sticky top-24 hidden rounded-section bg-white p-6 shadow-panel lg:block">
+        {/* ── 우: 스티키 합계 카드 (데스크톱) — 헤더가 2행(56+54+1=111px)이라 top-24(96px)면 상단이 헤더 밑에 묻힌다. --gnb-h 는 레이아웃이 내려주면 그 값을, 없으면 111px 를 쓴다 ── */}
+        <aside className="sticky top-[calc(var(--gnb-h,111px)+16px)] hidden rounded-section bg-white p-6 shadow-panel lg:block">
           <div className="text-[12.5px] font-semibold text-faint">나의 구성</div>
           <div className="mt-1 text-[15px] font-bold text-ink">{carrier} 인터넷 {speed}{bundle !== 'none' ? ` + ${BUNDLE_LABEL[bundle]}` : ''}</div>
 

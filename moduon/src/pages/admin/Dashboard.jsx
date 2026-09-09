@@ -177,6 +177,27 @@ export default function AdminDashboard() {
             </div>
             <p className="mt-2 text-[11px] text-bfaint">실데이터 기준 · 데모 규모 아님</p>
           </Card>
+
+          {/* 고객소통 — 게시판·불편접수·이벤트·배너 (콘텐츠·고객소통 그룹 바로가기) */}
+          <Card track="b" className="p-5" data-t="dash-comms">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[15.5px] font-extrabold text-bink">고객소통</h2>
+              <Link to="/admin/boards" className="text-[12px] font-bold text-primary-text">게시판 관리 →</Link>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {[
+                { l: '미답변 Q&A', v: (db.posts ?? []).filter((p) => p.board === 'qna' && p.status === '접수').length, to: '/admin/boards/qna', warn: true },
+                { l: '미처리 불편접수', v: (db.posts ?? []).filter((p) => p.board === 'complaint' && p.status === '접수').length, to: '/admin/complaints', warn: true },
+                { l: '진행중 이벤트', v: (db.posts ?? []).filter((p) => p.board === 'event' && p.status === '진행중').length, to: '/admin/boards/event' },
+                { l: '활성 배너', v: (db.banners ?? []).filter((b) => b.active).length, to: '/admin/banners' },
+              ].map((k) => (
+                <Link key={k.l} to={k.to} className="rounded-field bg-brow px-3 py-2.5 transition-colors hover:bg-tint">
+                  <div className="text-[11px] font-medium text-bmuted">{k.l}</div>
+                  <div className={`tnum mt-0.5 text-[15.5px] font-extrabold ${k.warn && k.v > 0 ? 'text-warn' : 'text-bink'}`}>{k.v}<span className="text-[11px] font-bold">건</span></div>
+                </Link>
+              ))}
+            </div>
+          </Card>
         </div>
       </div>
 

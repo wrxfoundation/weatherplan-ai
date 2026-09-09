@@ -78,3 +78,5 @@ export const IcThumbUp = (p) => <I {...p}><path d="M7 10.5v9.5H4a1 1 0 0 1-1-1v-
 export const IcThumbDown = (p) => <I {...p}><path d="M17 13.5V4H20a1 1 0 0 1 1 1v7.5a1 1 0 0 1-1 1h-3Z" /><path d="M17 13.5 13 20.5a2 2 0 0 1-2-2V15H5.8a2 2 0 0 1-2-2.4l1.2-6a2 2 0 0 1 2-1.6H17" /></I>
 // 트럭/이사 (🚚)
 export const IcTruck = (p) => <I {...p}><path d="M3 6.5h11v10H3v-10Z" /><path d="M14 10h4l3 3.5v3H14" /><circle cx="7" cy="18.5" r="1.8" /><circle cx="17.5" cy="18.5" r="1.8" /></I>
+// 헤드셋/전문 상담사 (🎧) — 플로팅 패널·상담 분기 CTA
+export const IcHeadset = (p) => <I {...p}><path d="M4 14v-2a8 8 0 0 1 16 0v2" /><rect x="3" y="13" width="4" height="6" rx="1.5" /><rect x="17" y="13" width="4" height="6" rx="1.5" /><path d="M19 19v.5a2.5 2.5 0 0 1-2.5 2.5H13" /></I>

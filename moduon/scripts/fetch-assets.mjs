@@ -41,6 +41,26 @@ const ASSETS = [
   ['logo-mark.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260809_150901_0e2cd36d-5984-4e56-a494-1b7a8c1590af.png'],
   ['cta-chat.webp', 'https://d2ol7oe51mr4n9.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/790310b0-d472-469b-b6d5-38eedd45e68e.webp'],
   // 히어로 영상(hero-video.mp4)·포스터(hero-scene.jpg)는 레포에 커밋된 자체 호스팅 에셋 — 여기서 받지 않음
+  // (아정당식 개편 이후 Home 에서 참조하지 않음 — 현재 미참조(보관), 파일은 유지)
+
+  // ── 아정당식 초기화면 개편(2026-09-09) — GPT Image 2 로 한 세트 생성 ──
+  // 롤링 배너 장면 21:9 · 2k. 왼쪽 55% 는 텍스트용 빈 파란 그라디언트라 DOM 글자가 그 위에 얹힌다.
+  ['banner-support.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204855_32697576-178b-4d20-9099-c652d0c586c8.png'], // 지원금 — 돈주머니·코인·선물상자
+  ['banner-car.png',     'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204245_90b0cc96-63da-4e4f-a873-e06e4a47151b.png'], // 렌트/리스 — 흰 SUV·키
+  ['banner-home.png',    'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204245_b4e33f45-61ba-498b-8346-9f817da7dfde.png'], // 가전렌탈·인터넷 — 정수기·공기청정기·공유기·폰
+  // 모비 AI 비서 인물(배경 제거) — 배너 1 과 우측 플로팅 패널이 같이 쓴다
+  ['mobi-agent.png',     'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204904_5b38d67a-6f7b-4733-973d-b7b29d7656e0.png'],
+  // 1차 동선 아이콘 6종(배경 제거) — 유리질 3D · 콘플라워 블루 + 코랄. 아정당의 파스텔 3D 와 소재·구도가 다른 별도 세트.
+  // 개별 재생성은 톤이 어긋나므로 손볼 땐 6개를 한 세트로 다시 뽑을 것.
+  ['tile-phone.png',    'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204856_56868b41-b599-496e-ba19-7370fd0b2940.png'], // 휴대폰 — 스마트폰 + 말풍선
+  ['tile-rental.png',   'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204857_483da1c4-d4e7-417e-b2a5-e826eea6679c.png'], // 가전렌탈 — 정수기 + 공기청정기
+  ['tile-internet.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204858_d24c929b-65f8-4c72-8351-ae73ddf6f3c2.png'], // 인터넷 — 공유기 + 신호 + TV
+  ['tile-car.png',      'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204859_4b9f9a99-5633-4bb5-8888-6df3c6d75349.png'], // 렌트/리스 — 키 + 세단
+  ['tile-package.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204900_cb03ca73-f833-411b-8d04-86dae644756f.png'], // 매장패키지 — 어닝 달린 상점
+  ['tile-benefit.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204903_9c52e903-65c4-412b-b431-96ad0e7a56d0.png'], // 모두온혜택 — 선물상자 + 코인 + % 배지
+  // 지원금 섹션 일러스트 2종(배경 제거) — 카드② 보라 AI 말풍선, 카드③ 고민하는 여성. 카드① 은 기존 obj-moneybag.png
+  ['ill-ai.png',       'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_205354_e5a4c6fe-cf4b-4901-901a-b9bd97c2fb56.png'],
+  ['ill-thinking.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_205356_bcb8ab1d-0642-4f5f-a32d-5f659404b524.png'],
 ]
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))

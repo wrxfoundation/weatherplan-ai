@@ -154,7 +154,7 @@ function CarDetailInner() {
         </div>
 
         {/* 우: 월 납입금 */}
-        <aside className="sticky top-24 hidden rounded-section bg-white p-6 shadow-panel lg:block" data-t="car-card">
+        <aside className="sticky top-[calc(var(--gnb-h,111px)+16px)] hidden rounded-section bg-white p-6 shadow-panel lg:block" data-t="car-card">
           <Summary q={q} model={model} onApply={setAsk} />
         </aside>
       </div>

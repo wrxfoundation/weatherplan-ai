@@ -179,7 +179,7 @@ function PhoneDetailInner() {
         </div>
 
         {/* 우: 아정당식 월 납부 카드 */}
-        <aside className="sticky top-24 hidden rounded-section bg-white p-6 shadow-panel lg:block" data-t="detail-card">
+        <aside className="sticky top-[calc(var(--gnb-h,111px)+16px)] hidden rounded-section bg-white p-6 shadow-panel lg:block" data-t="detail-card">
           <PriceCard device={device} storage={storage} setStorage={setStorage} q={q} months={months} onApply={() => setAsk(true)} />
         </aside>
       </div>

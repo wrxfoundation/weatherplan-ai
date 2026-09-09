@@ -26,6 +26,48 @@ export const SHOP_TILE = { slug: 'shop', name: '쇼핑몰', icon: '/assets/cat-s
 // 렌트/리스는 상담 카테고리(cat=car)이자 전용 브라우저(/cars)를 갖는다 — 타일·GNB는 to 를 따른다.
 export const catTo = (c) => c.to ?? `/category/${c.slug}`
 
+// ─── 사이트 1차 동선 (아정당식 개편) ─────────────────────────────────
+// GNB 본행 · 홈 아이콘 행 · 햄버거 아이콘 그리드가 모두 이 한 배열을 읽는다.
+// 상품 카테고리(CATEGORIES)와는 다른 축이다 — 매장패키지·모두온혜택은 상담 카테고리가 아니다.
+// icon 은 fetch-assets.mjs 가 내려받는 자체 호스팅 경로(tile-*.png). 아정당과 겹치지 않는 별도 세트.
+export const SITE_NAV = [
+  { key: 'phone',    label: '휴대폰',     to: '/category/phone',    icon: '/assets/tile-phone.png',    cat: 'phone' },
+  { key: 'rental',   label: '가전렌탈',   to: '/category/rental',   icon: '/assets/tile-rental.png',   cat: 'rental' },
+  { key: 'internet', label: '인터넷',     to: '/category/internet', icon: '/assets/tile-internet.png', cat: 'internet' },
+  { key: 'car',      label: '렌트/리스',  to: '/cars',              icon: '/assets/tile-car.png',      cat: 'car' },
+  { key: 'package',  label: '매장패키지', to: '/partner',           icon: '/assets/tile-package.png',  badge: '사업자' },
+  { key: 'benefit',  label: '모두온혜택', to: '/benefits',          icon: '/assets/tile-benefit.png' },
+]
+
+// GNB 상단 유틸행 — 게시판 6종 중 공지사항은 햄버거·푸터에서만 연다(아정당 구조).
+export const BOARDS = [
+  { key: 'review',    name: '후기',      desc: '실제 개통·설치 고객의 후기',           write: true },
+  { key: 'qna',       name: '질문/답변', desc: '궁금한 것을 물어보면 담당자가 답해요', write: true },
+  { key: 'tip',       name: '꿀팁게시판', desc: '통신비·렌탈료 아끼는 노하우',         write: true },
+  { key: 'event',     name: '이벤트',    desc: '진행 중인 이벤트와 당첨 안내',         write: false },
+  { key: 'complaint', name: '불편접수',  desc: '불편·개선 요청을 남기면 담당자가 처리해요', write: true, private: true },
+  { key: 'notice',    name: '공지사항',  desc: '서비스 안내와 정책 변경 공지',         write: false },
+]
+export const boardByKey = (key) => BOARDS.find((b) => b.key === key)
+export const UTIL_NAV = ['qna', 'tip', 'review', 'event', 'complaint'].map((k) => boardByKey(k))
+// 불편접수 처리 상태 — 리드 상태처럼 단일 enum
+export const COMPLAINT_STATUS = ['접수', '처리중', '완료']
+
+// 대표번호 — 헤더·푸터·플로팅 패널·고객센터가 전부 이 값을 읽는다
+export const HQ_TEL = '1522-0000'
+export const HQ_HOURS = '365일 24시간 · 모비 AI 상담 / 전문 컨설턴트 09:00~18:00'
+export const HQ_HOURS_SHORT = '평일 09:00–18:00' // 전문 컨설턴트 운영시간 — 카드처럼 좁은 자리용 짧은 형태
+
+// ─── 지원금 최대치 — 홈 "최대 152만원+" 의 유일한 근거 ─────────────────
+// 4개 항목 합이 총액과 같아야 한다(홈 스모크가 검증). CATEGORIES.benefit 문구도 여기서 만든다.
+export const BENEFIT_MAX = [
+  { key: 'phone',    label: '휴대폰',     manwon: 45 },
+  { key: 'internet', label: '인터넷/TV',  manwon: 47 },
+  { key: 'water',    label: '정수기',     manwon: 30 },
+  { key: 'rental',   label: '가전렌탈',   manwon: 30 },
+]
+export const BENEFIT_TOTAL = BENEFIT_MAX.reduce((s, b) => s + b.manwon, 0) // 152
+
 export const catBySlug = (slug) => CATEGORIES.find((c) => c.slug === slug)
 
 // ─── 리드 상태 6단계 (전 화면 공통 단일 enum — 동의어 금지) ───

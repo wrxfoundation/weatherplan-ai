@@ -114,6 +114,13 @@ export function KpiCard({ label, value, format = (n) => n.toLocaleString('ko-KR'
   )
 }
 
+// 자체 호스팅 에셋을 못 받아오면 그 자리만 비운다 — 깨진 이미지 아이콘 노출 금지 (기본 lazy, rest 로 덮어쓰기 가능)
+export function SafeImg({ src, alt = '', className = '', ...rest }) {
+  const [err, setErr] = useState(false)
+  if (err) return null
+  return <img src={src} alt={alt} className={className} onError={() => setErr(true)} loading="lazy" {...rest} />
+}
+
 export function LiveDot({ className = '' }) {
   return <span className={`inline-block h-2 w-2 rounded-full bg-ok animate-live ${className}`} />
 }

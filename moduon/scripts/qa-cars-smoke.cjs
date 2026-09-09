@@ -1,6 +1,8 @@
 // 스모크 — 렌트/리스(자동차): 제조사·차종 브라우저 · 상세 견적 · 특가 · GNB 진입
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
+// 여러 스모크를 병렬로 돌릴 때 각자 다른 프리뷰 포트를 쓸 수 있게 — 기본은 qa-all 이 띄우는 4173
+const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
 const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
 
 ;(async () => {
@@ -14,7 +16,7 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   const glide = async (loc, steps = 25) => { const bb = await loc.boundingBox(); await page.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2, { steps }); await page.waitForTimeout(150) }
 
   // ── 브라우저
-  await page.goto('http://localhost:4173/cars', { waitUntil: 'networkidle' }); await page.waitForTimeout(500)
+  await page.goto(BASE + '/cars', { waitUntil: 'networkidle' }); await page.waitForTimeout(500)
   const brands = await t('[data-t="car-brands"]')
   check(brands.includes('국산차 제조사') && brands.includes('수입차 제조사'), '제조사 2그룹')
   check(await page.locator('[data-t="car-brand"]').count() === 22, `제조사 ${await page.locator('[data-t="car-brand"]').count()}개`)
@@ -55,7 +57,7 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(body.includes('현대캐피탈') && body.includes('KB캐피탈'), '비교 캐피탈사 목록')
 
   // ── 상세 — 공개 견적과 같은 조건에서 같은 금액이 나오는지
-  await page.goto('http://localhost:4173/cars/palisade', { waitUntil: 'networkidle' }); await page.waitForTimeout(500)
+  await page.goto(BASE + '/cars/palisade', { waitUntil: 'networkidle' }); await page.waitForTimeout(500)
   check(await page.locator('[data-t="car-trim"]').count() === 6, '팰리세이드 트림 6종')
   check(await page.locator('[data-t="car-option"]').count() === 10, '선택옵션 10종')
   check(await page.locator('[data-t="car-down"] button').count() === 6, '초기부담금 0~50% 6구간')
@@ -104,26 +106,28 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(page.url().includes('/consult') && page.url().includes('cat=car'), `상담 페이지로 (${page.url().split('/').pop()})`)
 
   // 전기차는 렌트상담
-  await page.goto('http://localhost:4173/cars/ioniq5', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  await page.goto(BASE + '/cars/ioniq5', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   check((await t('[data-t="car-card"] [data-t="car-rent"]')).includes('렌트상담'), '아이오닉5 → 렌트상담')
   check(await page.locator('[data-t="car-card"] [data-t="car-apply-rent"]').count() === 1, '렌트상담 차종은 상담 버튼 유지')
   // 렌트불가 차종은 렌트 상담 버튼 자체가 없다 — 되는 줄 알고 신청하는 헛걸음을 막는다
-  await page.goto('http://localhost:4173/cars/mighty', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  await page.goto(BASE + '/cars/mighty', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   check((await t('[data-t="car-card"] [data-t="car-rent"]')).includes('렌트불가'), '마이티 → 렌트불가')
   check(await page.locator('[data-t="car-card"] [data-t="car-apply-rent"]').count() === 0, '렌트불가 차종은 렌트 상담 버튼 없음')
   check((await page.evaluate(() => document.body.innerText)).includes('장기렌터카를 취급하지 않아요'), '렌트불가 사유 안내')
   // 특가·보조금 차종은 기준 조건 밖 금액이 예상치임을 밝힌다 — 화면 숫자와 상담 금액이 갈리는 걸 막는다
-  await page.goto('http://localhost:4173/cars/st1', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  await page.goto(BASE + '/cars/st1', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   check(await page.locator('[data-t="car-special-rate"]').count() === 1, 'ST1 특가 안내 노출')
   check((await t('[data-t="car-card"]')).includes('12'), 'ST1 상세도 12만원대 (목록과 같은 숫자)')
-  await page.goto('http://localhost:4173/cars/palisade', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  await page.goto(BASE + '/cars/palisade', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   check(await page.locator('[data-t="car-special-rate"]').count() === 0, '보정 없는 차종엔 특가 안내 없음')
 
   // ── GNB 진입
-  await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' }); await page.mouse.move(640, 700); await page.waitForTimeout(300)
-  const nav = await page.evaluate(() => [...document.querySelectorAll('header nav a')].map((a) => a.innerText.trim()))
-  check(nav.join(',') === '인터넷,핸드폰,렌탈,렌트/리스,쇼핑몰', `GNB 5종 (${JSON.stringify(nav)})`)
-  await glide(page.locator('header nav a', { hasText: '렌트/리스' }), 10); await page.waitForTimeout(250)
+  await page.goto(BASE + '/', { waitUntil: 'networkidle' }); await page.mouse.move(640, 700); await page.waitForTimeout(300)
+  // 2행 헤더 — 본 GNB(main-nav) 6종만 본다. 매장패키지는 '사업자' 배지가 innerText 앞줄에 붙어 마지막 줄이 라벨
+  const nav = await page.evaluate(() => [...document.querySelectorAll('nav[data-t="main-nav"] a')].map((a) => a.innerText.trim().split('\n').pop()))
+  check(nav.join(',') === '휴대폰,가전렌탈,인터넷,렌트/리스,매장패키지,모두온혜택', `GNB 6종 (${JSON.stringify(nav)})`)
+  check((await t('nav[data-t="main-nav"] a[href="/partner"]')).startsWith('사업자'), '매장패키지에 사업자 배지')
+  await glide(page.locator('nav[data-t="main-nav"] a', { hasText: /^렌트\/리스$/ }), 10); await page.waitForTimeout(250)
   check(await page.locator('[data-t="mega-groups"]').count() === 1, '렌트/리스 호버 → 제조사 패널')
   const mg = await t('[data-t="mega-groups"]')
   check(mg.includes('국산차 제조사') && mg.includes('수입차 제조사'), '패널에 국산/수입 그룹')
@@ -132,19 +136,20 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   await page.mouse.down(); await page.mouse.up(); await page.waitForTimeout(600)
   check(page.url().includes('brand=tesla'), `제조사 클릭 → ${page.url().split('?')[1]}`)
 
-  // 히어로 타일 5종
-  await page.goto('http://localhost:4173/', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
-  const strip = await page.evaluate(() => [...document.querySelectorAll('a')].filter((a) => a.querySelector('img[src*="/assets/cat-"]')).map((a) => a.innerText.trim()))
-  check(strip.join(',') === '인터넷/TV,휴대폰,렌탈,렌트/리스,쇼핑몰', `히어로 타일 5종 (${JSON.stringify(strip)})`)
-  await page.locator('a:has(img[src*="/assets/cat-car"])').first().click(); await page.waitForTimeout(600)
+  // 아이콘 행 6종 — 구 히어로 타일(cat-*.png 5종)은 아정당식 홈에서 site-tiles(tile-*.png, SITE_NAV 6종)로 바뀌었다.
+  // 이미지는 이 컨테이너에서 로드되지 않으므로 href 순서로 단언
+  await page.goto(BASE + '/', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  const strip = await page.evaluate(() => [...document.querySelectorAll('[data-t="site-tiles"] a[href]')].map((a) => a.getAttribute('href')))
+  check(strip.join(',') === '/category/phone,/category/rental,/category/internet,/cars,/partner,/benefits', `아이콘 행 6종 (${JSON.stringify(strip)})`)
+  await page.locator('[data-t="site-tiles"] a[href="/cars"]').click(); await page.waitForTimeout(600)
   check(page.url().endsWith('/cars'), `렌트/리스 타일 → /cars (${page.url().split('/').pop()})`)
 
   // 카테고리 슬러그는 상담용으로 살아 있고, 직접 접근하면 전용 브라우저로 보낸다
-  await page.goto('http://localhost:4173/category/car', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  await page.goto(BASE + '/category/car', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   check(page.url().endsWith('/cars'), '/category/car → /cars 리다이렉트')
 
   // 이미지: 제휴사 URL 을 화면에 직접 걸지 않는다(핫링크 금지) — 자체 호스팅 경로이거나 SVG
-  await page.goto('http://localhost:4173/cars', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  await page.goto(BASE + '/cars', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   const imgSrcs = await page.evaluate(() => [...document.querySelectorAll('[data-t="car-grid"] img')].map((i) => i.getAttribute('src') || ''))
   check(imgSrcs.every((s) => s.startsWith('/assets/cars/')), `차량 이미지는 자체 호스팅 경로만 (${imgSrcs.length}건)`)
   // 파일이 아직 없으면 SVG 로 내려앉으므로 <img> 대신 "쓰기로 한 경로"를 본다 — 파일 유무와 무관한 검증
@@ -157,14 +162,14 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(!(await page.content()).includes('acrentcar.com'), '목록에 제휴사 도메인 핫링크 없음')
 
   // 현대 외 브랜드도 사진이 붙는지 — 매핑이 화면까지 도달하지 못하면 여기서 걸린다
-  await page.goto('http://localhost:4173/cars?brand=genesis', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
+  await page.goto(BASE + '/cars?brand=genesis', { waitUntil: 'networkidle' }); await page.waitForTimeout(300)
   const manual = await page.evaluate(() => ['g80', 'gv80'].map((id) => {
     const card = document.querySelector(`[data-t="car-card"][href$="/cars/${id}"]`)
     return { id, src: card?.querySelector('[data-t="car-photo"]')?.dataset.src }
   }))
   for (const m of manual) check(m.src === `/assets/cars/${m.id}.jpg`, `제네시스 사진 ${m.id} → ${m.src}`)
 
-  await page.goto('http://localhost:4173/cars/palisade', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  await page.goto(BASE + '/cars/palisade', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   const photo = await page.evaluate(() => { const e = document.querySelector('[data-t="car-card"] [data-t="car-photo"]'); return e && { kind: e.dataset.kind, src: e.dataset.src } })
   check(photo?.kind === 'main', `상세는 큰 이미지 변형 (${photo?.kind})`)
   check(photo?.src === '/assets/cars/palisade-main.jpg', `상세 경로 ${photo?.src}`)

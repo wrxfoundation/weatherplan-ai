@@ -20,6 +20,9 @@ import MvnoPlans from './pages/consumer/MvnoPlans'
 import MvnoDetail from './pages/consumer/MvnoDetail'
 import Cars from './pages/consumer/Cars'
 import CarDetail from './pages/consumer/CarDetail'
+import Board from './pages/consumer/Board'
+import BoardPost from './pages/consumer/BoardPost'
+import Benefits from './pages/consumer/Benefits'
 import TenantMall from './pages/consumer/TenantMall'
 import PartnerLanding from './pages/partner/Landing'
 import PartnerApply from './pages/partner/Apply'
@@ -46,6 +49,10 @@ import AdminAiOps from './pages/admin/AiOps'
 import AdminPersonaLab from './pages/admin/PersonaLab'
 import AdminPress from './pages/admin/Press'
 import AdminAudit from './pages/admin/Audit'
+import AdminBanners from './pages/admin/Banners'
+import AdminBoards from './pages/admin/Boards'
+import AdminComplaints from './pages/admin/Complaints'
+import AdminBenefits from './pages/admin/Benefits'
 
 function ScrollTop() {
   const { pathname } = useLocation()
@@ -107,6 +114,12 @@ export default function App() {
           {/* 렌트/리스 — 자동차 장기렌터카·오토리스 */}
           <Route path="/cars" element={<Cars />} />
           <Route path="/cars/:model" element={<CarDetail />} />
+          {/* 아정당식 개편 — 모두온혜택 허브 · 게시판 6종(후기·질문/답변·꿀팁·이벤트·불편접수·공지사항) */}
+          <Route path="/benefits" element={<Benefits />} />
+          <Route path="/benefits/:section" element={<Benefits />} />
+          <Route path="/board/:board" element={<Board />} />
+          <Route path="/board/:board/new" element={<BoardPost />} />
+          <Route path="/board/:board/:id" element={<BoardPost />} />
         </Route>
 
         {/* 멀티테넌시 — 파트너 분양몰 (moduon.com/m/{slug}) */}
@@ -151,6 +164,12 @@ export default function App() {
           <Route path="persona-lab" element={<AdminPersonaLab />} />
           <Route path="press" element={<AdminPress />} />
           <Route path="audit" element={<AdminAudit />} />
+          {/* 콘텐츠·고객소통 — 소비자 초기화면 개편에 맞춘 관리 화면 */}
+          <Route path="banners" element={<AdminBanners />} />
+          <Route path="boards" element={<AdminBoards />} />
+          <Route path="boards/:board" element={<AdminBoards />} />
+          <Route path="complaints" element={<AdminComplaints />} />
+          <Route path="benefits" element={<AdminBenefits />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

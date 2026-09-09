@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useStore } from '../../lib/store'
-import { CATEGORIES, CONSULT_TIMES, REGIONS, LEGAL } from '../../lib/constants'
+import { CATEGORIES, CONSULT_TIMES, REGIONS, LEGAL, HQ_TEL } from '../../lib/constants'
 import { maskPhone, phoneValid, won, captureRef } from '../../lib/engine'
 import { Btn, Field, inputCls, Modal, useToast } from '../../components/ui'
 import { IcStore, IcRobot, IcDoc } from '../../components/icons'
@@ -122,9 +122,9 @@ export default function Consult() {
         <button onClick={() => nav(tenant ? `/m/${tenant.slug}` : '/')} className="mt-8 h-[52px] w-full rounded-btn bg-primary text-[15px] font-bold text-white shadow-cta hover:bg-primary-hover">
           확인
         </button>
-        {/* 기다리기 싫은 고객용 즉시통화 — 콜백 대기 이탈 방지 */}
-        <a href="tel:16600000" className="glass-btn mt-2.5 flex h-12 w-full items-center justify-center rounded-btn border border-line-soft bg-white text-[14px] font-bold text-body transition-colors hover:border-primary hover:text-primary-text">
-          지금 바로 전화하기 (대표번호 1660-0000)
+        {/* 기다리기 싫은 고객용 즉시통화 — 콜백 대기 이탈 방지. 번호는 헤더·푸터와 같은 HQ_TEL 단일 소스 */}
+        <a href={`tel:${HQ_TEL.replace(/-/g, '')}`} className="glass-btn mt-2.5 flex h-12 w-full items-center justify-center rounded-btn border border-line-soft bg-white text-[14px] font-bold text-body transition-colors hover:border-primary hover:text-primary-text">
+          지금 바로 전화하기 (대표번호 {HQ_TEL})
         </a>
       </main>
     )

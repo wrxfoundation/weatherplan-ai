@@ -1,6 +1,8 @@
 // 일회성 스모크 — /admin/press 프레스룸: 렌더 + 초안 생성(로컬 폴백) + 배포 예약 기록
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
+// 여러 스모크를 병렬로 돌릴 때 각자 다른 프리뷰 포트를 쓸 수 있게 — 기본은 qa-all 이 띄우는 4173
+const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
 
 ;(async () => {
   const browser = await pw.chromium.launch()
@@ -8,7 +10,7 @@ try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = req
   const errors = []
   page.on('pageerror', (e) => errors.push(String(e)))
   await page.addInitScript(() => localStorage.setItem('moduon_session_v1', JSON.stringify({ role: 'admin' })))
-  await page.goto('http://localhost:4173/admin/press', { waitUntil: 'networkidle' })
+  await page.goto(BASE + '/admin/press', { waitUntil: 'networkidle' })
   await page.waitForTimeout(500)
 
   let fail = 0

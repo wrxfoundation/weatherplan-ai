@@ -112,25 +112,6 @@
   .animate-rise, .animate-live, .animate-rowflash, .animate-spin, .animate-bounce { animation: none !important; }
 }
 
-/* ─── 히어로 가격 절약 말풍선 — 꼬리 달린 speech bubble (부유 애니메이션은 .animate-floaty) ─── */
-.price-bubble {
-  position: relative;
-  background: #fff;
-  filter: drop-shadow(0 14px 30px rgba(83, 119, 214, 0.20));
-}
-.price-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -7px;
-  width: 15px;
-  height: 15px;
-  background: inherit;               /* 카드와 동일한 흰색 — drop-shadow가 꼬리까지 감싼다 */
-  transform: rotate(45deg);
-  border-bottom-right-radius: 3px;
-}
-.price-bubble.tail-left::after { left: 26px; }
-.price-bubble.tail-right::after { right: 26px; }
-
 /* ─── 버튼 유리 두께감 — 모든 버튼요소 공용 (약간의 glassmorphism) ───
    상단 하이라이트 림(유리 윗면) + 하단 인셋(단면 두께) + 은은한 외부 그림자.
    단일 box-shadow라 적용 시 기존 shadow-* 유틸을 대체한다(중복 지정 금지). */

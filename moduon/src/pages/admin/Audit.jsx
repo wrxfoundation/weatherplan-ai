@@ -18,6 +18,11 @@ const ACTION_TONE = {
   '정책 변경': 'bg-tint text-primary-text', '정산 실행': 'bg-warn/10 text-warn',
   '지급 확정': 'bg-warn/10 text-warn', '리드 재배정': 'bg-brow text-bbody',
   '상품 정책 변경': 'bg-tint text-primary-text', '몰 정지': 'bg-danger/10 text-danger', '몰 재개': 'bg-ok/10 text-ok',
+  // 콘텐츠·고객소통(배너·게시판·불편접수·혜택 설정) — 리듀서 액션명과 1:1
+  '배너 등록': 'bg-ok/10 text-ok', '배너 수정': 'bg-tint text-primary-text', '배너 삭제': 'bg-danger/10 text-danger',
+  '게시글 등록': 'bg-ok/10 text-ok', '게시글 수정': 'bg-tint text-primary-text', '게시글 삭제': 'bg-danger/10 text-danger',
+  '답변 등록': 'bg-ok/10 text-ok', '불편접수 처리': 'bg-ok/10 text-ok', '불편접수 상태 변경': 'bg-warn/10 text-warn',
+  '혜택 설정 변경': 'bg-tint text-primary-text',
 }
 
 export default function AdminAudit() {

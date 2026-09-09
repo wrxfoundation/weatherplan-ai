@@ -5,8 +5,9 @@ const now = () => Date.now()
 const minAgo = (m) => now() - m * 60000
 const dayAgo = (d) => now() - d * 86400000
 const dayAfter = (d) => now() + d * 86400000
+import { BENEFIT_TOTAL, REVIEWS } from './constants'
 
-export const SEED_VERSION = 10
+export const SEED_VERSION = 11 // 11: 아정당식 개편 — banners · posts(게시판 6종) · benefits
 
 export function buildSeed() {
   const tenants = [
@@ -82,8 +83,56 @@ export function buildSeed() {
     { id: 'P16', cat: 'etc',       name: '중고폰 매입',             brand: '모두온 다이렉트', monthly: 0,  support: 0,      commission: 30000,  tag: '최고가 매입' },
   ]
 
+  // ── 아정당식 초기화면 — 롤링 배너 (order 순 · active 만 노출) ──
+  // kind 'mobi' 는 파란 그라디언트 위에 인물 컷아웃 + DOM 텍스트, 'scene' 은 21:9 장면 이미지 위에 텍스트.
+  // 이미지는 fetch-assets.mjs 가 내려받는 자체 호스팅 경로. 문구·순서·노출은 어드민 배너 관리에서 바꾼다.
+  const banners = [
+    { id: 'B1', kind: 'mobi', order: 0, active: true, eyebrow: '모두온 플랫폼의 AI비서 모비를 소개합니다', title: '“상담원 기다리지 말고,\n모비에게 바로 물어보세요.”', desc: '인터넷·휴대폰·정수기… 흩어진 생활 구독서비스를 한곳에서 비교하고\n남들은 몰라서 못 받은 지원금까지 왕창 돌려받으세요.', note: '24시간 언제든, 모비와 상담하세요.', image: '/assets/mobi-agent.png', bg: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)', cta: { label: '모비와 상담하기', action: 'chat' } },
+    { id: 'B2', kind: 'scene', order: 1, active: true, eyebrow: '남들 받는 그 이상, 모두온이 돌려드려요', title: `몰라서 못 받은 지원금,\n최대 ${BENEFIT_TOTAL}만원+ 왕창 돌려드려요`, desc: '유통 단계를 줄인 직접 판매 구조 — 조건이 맞으면\n다른 곳에선 처음 보는 혜택까지 그대로 돌려드립니다.', image: '/assets/banner-support.png', bg: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)', cta: { label: '내 지원금 확인하기', to: '/consult' } },
+    { id: 'B3', kind: 'scene', order: 2, active: true, eyebrow: '렌트/리스 신규 오픈', title: '국내 모든 리스·렌트사 견적 비교,\n캐피탈사보다 3~5% 더 저렴하게', desc: '취등록세·보험료까지 넣은 진짜 월 납입금으로 안내해요.\n국산 6개 · 수입 16개 제조사, 58차종.', image: '/assets/banner-car.png', bg: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)', cta: { label: '차종 보러가기', to: '/cars' } },
+    { id: 'B4', kind: 'scene', order: 3, active: false, eyebrow: '가전렌탈 · 인터넷', title: '정수기·공기청정기·인터넷,\n한 번에 비교하고 한 번에 설치', desc: '9개 렌탈 브랜드와 통신 3사를 한 화면에서 골라요.', image: '/assets/banner-home.png', bg: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)', cta: { label: '브랜드로 찾기', to: '/category/rental' } },
+  ]
+
+  // ── 게시판 6종 — posts 한 컬렉션, board 로 구분 ──
+  // 후기는 constants.REVIEWS 에서 파생(소셜프루프 컴포넌트와 같은 원천). phone 은 마스킹 대상(pii).
+  const posts = [
+    ...REVIEWS.map((r, i) => ({ id: `PR${i + 1}`, board: 'review', title: `${r.cat} — ${r.tag}`, body: r.text, author: r.name, region: r.region, cat: r.cat, rating: r.rating, tags: [r.tag], createdAt: dayAgo(r.days), views: 120 + i * 37, pinned: i === 0, status: '공개' })),
+    { id: 'PQ1', board: 'qna', title: '현금 사은품은 언제 입금되나요?', body: '지난주에 인터넷 설치했는데 사은품이 아직 안 들어왔어요. 보통 얼마나 걸리나요?', author: '박선영', phone: '010-2233-4455', createdAt: dayAgo(1), views: 88, status: '답변완료', answer: { body: '설치·개통 확인 후 영업일 7일 이내에 신청인 명의 계좌로 입금돼요. 지급 명단에서 일자별로 확인하실 수 있고, 7일이 지났다면 대표번호로 연락 주시면 바로 확인해 드릴게요.', at: dayAgo(1) + 3600000 * 2, by: '본사 담당자' }, tags: ['사은품'], pinned: false },
+    { id: 'PQ2', board: 'qna', title: '기존 통신사 위약금이 남았는데 옮길 수 있나요?', body: 'SK 약정이 8개월 남았는데 KT로 바꾸면 위약금 때문에 손해일까요?', author: '김재현', phone: '010-9988-1122', createdAt: dayAgo(2), views: 143, status: '답변완료', answer: { body: '잔여 위약금과 지원금을 상계해 실부담을 계산해 드려요. 8개월 잔여면 대부분 지원금으로 위약금을 덮고도 남는 구성이 가능합니다. 상담에서 정확한 금액을 확인해 드릴게요.', at: dayAgo(2) + 3600000 * 5, by: '본사 담당자' }, tags: ['위약금'], pinned: true },
+    { id: 'PQ3', board: 'qna', title: '알뜰폰도 여기서 개통되나요?', body: '알뜰폰 요금제로 바꾸고 싶은데 어디서 신청하나요?', author: '이수민', phone: '010-3311-2244', createdAt: dayAgo(3), views: 61, status: '답변완료', answer: { body: '휴대폰 > 알뜰폰 요금제에서 대표 요금제와 브랜드별 혜택을 보시고 바로 셀프가입하실 수 있어요. 유심 보유 여부에 따라 가입 경로가 달라지니 화면 안내를 따라 주세요.', at: dayAgo(3) + 3600000, by: '본사 담당자' }, tags: ['알뜰폰'], pinned: false },
+    { id: 'PQ4', board: 'qna', title: '렌트/리스 견적은 실제 금액인가요?', body: '카드에 나오는 월 리스료가 실제 계약 금액인지 궁금해요.', author: '정우성', phone: '010-5566-7788', createdAt: minAgo(190), views: 34, status: '접수', tags: ['렌트/리스'], pinned: false },
+    { id: 'PQ5', board: 'qna', title: '정수기 렌탈 의무약정이 몇 년인가요?', body: '브랜드마다 다른 것 같은데 정리된 표가 있을까요?', author: '한지원', phone: '010-1122-3344', createdAt: minAgo(45), views: 12, status: '접수', tags: ['정수기'], pinned: false },
+    { id: 'PT1', board: 'tip', title: '인터넷 약정 만기 3개월 전에 꼭 할 일', body: '만기 3개월 전부터 재약정 지원금이 열립니다. 이 시기를 놓치면 자동 연장돼 지원금 없이 같은 요금을 내요. 만기일을 캘린더에 적어두고, 만기 90일 전에 상담을 받으세요.', author: '모두온 에디터', createdAt: dayAgo(2), views: 412, tags: ['인터넷', '약정'], pinned: true, status: '공개' },
+    { id: 'PT2', board: 'tip', title: '휴대폰 선택약정 25% vs 공시지원금, 뭐가 유리할까', body: '요금제가 월 7만원 이상이면 대부분 선택약정이 유리하고, 5만원대 이하면 공시지원금이 유리한 경우가 많아요. 견적 계산기에서 두 경우를 나란히 비교해 보세요.', author: '모두온 에디터', createdAt: dayAgo(4), views: 388, tags: ['휴대폰'], pinned: false, status: '공개' },
+    { id: 'PT3', board: 'tip', title: '정수기 렌탈료 아끼는 방법 3가지', body: '① 방문형 대신 셀프형 ② 60개월 약정 ③ 카드 자동이체 할인. 세 가지를 다 적용하면 같은 모델도 월 1만원 이상 차이가 납니다.', author: '모두온 에디터', createdAt: dayAgo(6), views: 276, tags: ['정수기', '렌탈'], pinned: false, status: '공개' },
+    { id: 'PT4', board: 'tip', title: '장기렌트 초기부담금, 무조건 많이 내는 게 좋을까', body: '초기부담금이 커지면 어느 구간부터는 월 납입금이 더 내려가지 않아요. 상세 견적기에서 상한 안내가 뜨는 지점이 그 경계입니다.', author: '모두온 에디터', createdAt: dayAgo(8), views: 154, tags: ['렌트/리스'], pinned: false, status: '공개' },
+    { id: 'PT5', board: 'tip', title: '이사할 때 인터넷 이전 vs 신규 가입', body: '이전 설치비가 3만원 안팎인데, 신규 가입 지원금은 수십만원이에요. 잔여 약정이 짧다면 신규가 유리한 경우가 훨씬 많습니다.', author: '모두온 에디터', createdAt: dayAgo(11), views: 201, tags: ['인터넷', '이사'], pinned: false, status: '공개' },
+    { id: 'PE1', board: 'event', title: '9월 가입 이벤트 — 인터넷+TV 신규 가입 시 사은품 +5만원', body: '9월 30일까지 인터넷+TV 결합 신규 가입 고객 전원에게 기본 사은품에 5만원을 더 드려요. 설치 완료 기준이며, 지급 명단에서 확인하실 수 있어요.', author: '모두온', period: { from: dayAgo(8), to: dayAfter(21) }, createdAt: dayAgo(8), views: 1240, tags: ['인터넷'], pinned: true, status: '진행중' },
+    { id: 'PE2', board: 'event', title: '친구 초대하면 둘 다 포인트 — 초대 이벤트', body: '내 초대 링크로 친구가 가입하면 나에게 1만 포인트, 친구에게 5천 포인트. 모두온혜택 > 친구초대하기에서 링크를 복사하세요.', author: '모두온', period: { from: dayAgo(20), to: dayAfter(40) }, createdAt: dayAgo(20), views: 860, tags: ['혜택'], pinned: false, status: '진행중' },
+    { id: 'PE3', board: 'event', title: '[종료] 8월 렌탈 브랜드 위크 — 정수기 첫 달 무료', body: '8월 한 달간 진행한 렌탈 브랜드 위크가 종료되었습니다. 참여해 주신 분들께 감사드려요.', author: '모두온', period: { from: dayAgo(40), to: dayAgo(10) }, createdAt: dayAgo(40), views: 2210, tags: ['렌탈'], pinned: false, status: '종료' },
+    { id: 'PN1', board: 'notice', title: '렌트/리스 카테고리를 열었습니다', body: '국산 6개·수입 16개 제조사, 58차종의 장기렌트·오토리스 견적을 비교하실 수 있어요. 제휴사 실요금이 확인된 차종은 카드 금액이 확정가입니다.', author: '모두온', createdAt: dayAgo(3), views: 530, tags: [], pinned: true, status: '공개' },
+    { id: 'PN2', board: 'notice', title: '추석 연휴 상담 안내', body: '연휴 기간에도 모비 AI 상담은 24시간 열려 있어요. 전문 컨설턴트 전화 상담은 연휴 다음 영업일부터 순차 회신드립니다.', author: '모두온', createdAt: dayAgo(5), views: 410, tags: [], pinned: false, status: '공개' },
+    { id: 'PN3', board: 'notice', title: '개인정보 처리방침 개정 안내 (9/1 시행)', body: '상담 배정을 위한 지역 정보 수집 범위를 시·군·구까지로 명확히 했습니다. 전문은 고객센터에서 확인하실 수 있어요.', author: '모두온', createdAt: dayAgo(9), views: 305, tags: [], pinned: false, status: '공개' },
+    { id: 'PN4', board: 'notice', title: '사은품 지급 명단 공개를 시작합니다', body: '설치 확인 후 영업일 7일 내 입금 원칙을 지키고 있는지 누구나 확인하실 수 있도록, 일자별 지급 내역(마스킹)을 공개합니다.', author: '모두온', createdAt: dayAgo(15), views: 720, tags: [], pinned: false, status: '공개' },
+    { id: 'PC1', board: 'complaint', title: '설치 기사님이 약속 시간에 안 오셨어요', body: '수요일 오후 2시 약속이었는데 연락 없이 4시에 오셨습니다. 미리 알려주시면 좋았을 것 같아요.', author: '오민석', phone: '010-7788-9900', createdAt: dayAgo(1), views: 0, status: '처리중', tags: ['설치'], pinned: false },
+    { id: 'PC2', board: 'complaint', title: '상담 전화가 너무 늦게 왔어요', body: '10분 내 콜백이라고 했는데 40분 걸렸습니다.', author: '서예진', phone: '010-2211-3300', createdAt: dayAgo(3), views: 0, status: '완료', tags: ['상담'], pinned: false, answer: { body: '불편을 드려 죄송합니다. 해당 시간대 담당 파트너의 SLA 초과 건으로 확인돼 재교육 조치했고, 사은품에 소정의 포인트를 추가해 드렸습니다.', at: dayAgo(2), by: '본사 담당자' } },
+    { id: 'PC3', board: 'complaint', title: '견적 금액과 실제 청구가 달라요', body: '계산기에서는 32,900원이었는데 첫 달 청구서가 35,200원이에요.', author: '류하늘', phone: '010-4455-6677', createdAt: minAgo(120), views: 0, status: '접수', tags: ['요금'], pinned: false },
+  ]
+
   return {
     seedVersion: SEED_VERSION,
+    banners,
+    posts,
+    // 혜택·플로팅 패널 설정 — 회원가입·친구초대·광고보기 포인트와 우측 패널 문구. 어드민 혜택 설정이 갱신.
+    benefits: {
+      signupPoints: 5000,          // 무료회원가입 혜택
+      referralPoints: 10000,       // 친구초대 — 초대한 사람
+      referralFriendPoints: 5000,  // 초대받은 사람
+      adViewPoints: 100, adDailyLimit: 10, // 광고보기 1회 포인트 · 일 한도
+      membershipMallOn: false,     // 멤버십몰(쇼핑몰) 오픈 여부 — false 면 "준비 중"
+      floating: { title: 'MODUON 알아보기', hours: '모두온은\n365일 24시간\n영업전화 부담 없는\n모비와 무료상담', showSignup: true, showMobi: true, showConsultant: true, showFinder: true },
+      version: 1, history: [],
+    },
     products,
     policies: {
       joinFee: 2000000,        // 대리점 분양몰 가입비(초기 세팅비) — 사업기획서 v4 축③(30개=초기 6,000만)

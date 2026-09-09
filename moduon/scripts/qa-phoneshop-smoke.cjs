@@ -1,6 +1,8 @@
 // 스모크 — 휴대폰 온라인구매(브라우저·상세·신청 분기) + 알뜰폰(목록·상세·신규불가 팝업)
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
+// 여러 스모크를 병렬로 돌릴 때 각자 다른 프리뷰 포트를 쓸 수 있게 — 기본은 qa-all 이 띄우는 4173
+const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
 const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
 
 ;(async () => {
@@ -13,13 +15,13 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   const t = (sel) => page.locator(sel).innerText()
 
   // ── 카테고리 진입 2종
-  await page.goto('http://localhost:4173/category/phone', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  await page.goto(BASE + '/category/phone', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   const entries = await t('[data-t="phone-entries"]')
   check(entries.includes('온라인 구매') && entries.includes('알뜰폰 요금제'), '휴대폰 카테고리 1: 온라인 구매 / 알뜰폰 요금제')
   check((await page.evaluate(() => document.body.innerText)).includes('지금 쓰시는 통신사'), '빠른 상담(통신사·기종)은 그대로 유지')
 
   // ── 온라인 구매: 브라우저
-  await page.goto('http://localhost:4173/phone/shop', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  await page.goto(BASE + '/phone/shop', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   const cards = () => page.locator('[data-t="shop-card"]').count()
   check(await cards() === 8, '기종 8종')
   check(await page.locator('[data-t="shop-cur"]').count() === 1, '우상단 현재 통신사 선택')
@@ -66,7 +68,7 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   await page.goBack(); await page.waitForTimeout(400)
 
   // ── 상세: 옵션 4종 + 우측 카드 합산
-  await page.goto('http://localhost:4173/phone/shop/s26u?cur=KT&storage=512GB', { waitUntil: 'networkidle' }); await page.waitForTimeout(500)
+  await page.goto(BASE + '/phone/shop/s26u?cur=KT&storage=512GB', { waitUntil: 'networkidle' }); await page.waitForTimeout(500)
   check(await page.locator('[data-t="detail-carriers"] button').count() === 3, '이용할 통신사 3사')
   check((await t('[data-t="detail-carriers"]')).includes('AI 추천'), 'AI 추천 배지')
   check(await page.locator('[data-t="detail-colors"] button').count() === 3, '색상 3종')
@@ -99,7 +101,7 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(page.url().includes('/consult') && page.url().includes('cat=phone'), `전문 상담사 → ${page.url().split('/').pop()}`)
 
   // ── 알뜰폰: 목록
-  await page.goto('http://localhost:4173/phone/mvno', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  await page.goto(BASE + '/phone/mvno', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   check(await page.locator('[data-t="mvno-featured"] [data-t="mvno-card"]').count() === 2, '대표 요금제 2')
   check(await page.locator('[data-t="mvno-brands"] [data-t="mvno-card"]').count() === 6, '브랜드별 혜택 6')
   check(await page.locator('[data-t="mvno-all"] table').count() === 0, '전체 목록은 접힘')
@@ -109,7 +111,7 @@ const num = (s) => Number(String(s).replace(/[^\d]/g, ''))
   check(await page.locator('[data-t="mvno-all"] tbody tr').count() === 5, 'KT망 필터 → 5')
 
   // ── 알뜰폰: 상세 + 신규불가 팝업 + eSIM 차단 + 유심비
-  await page.goto('http://localhost:4173/phone/mvno/hello-7g', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
+  await page.goto(BASE + '/phone/mvno/hello-7g', { waitUntil: 'networkidle' }); await page.waitForTimeout(400)
   for (const s of ['mvno-join', 'mvno-act', 'mvno-simown', 'mvno-simtype', 'mvno-cust']) check(await page.locator(`[data-t="${s}"]`).count() === 1, `옵션 섹션: ${s}`)
   check((await t('[data-t="mvno-join"]')).includes('신규가입') && (await t('[data-t="mvno-join"]')).includes('번호이동'), '가입유형: 신규가입 / 번호이동')
   check((await t('[data-t="mvno-simtype"]')).includes('일반유심') && (await t('[data-t="mvno-simtype"]')).includes('NFC유심') && (await t('[data-t="mvno-simtype"]')).includes('eSIM'), '유심종류: 일반 / NFC / eSIM')

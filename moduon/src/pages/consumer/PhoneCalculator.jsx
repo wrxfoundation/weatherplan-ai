@@ -269,7 +269,7 @@ export default function PhoneCalculator() {
         </div>
 
         {/* 우: 스티키 A+B 합계 */}
-        <aside className="sticky top-24 hidden rounded-section bg-white p-6 shadow-panel lg:block">
+        <aside className="sticky top-[calc(var(--gnb-h,111px)+16px)] hidden rounded-section bg-white p-6 shadow-panel lg:block">
           <div className="flex items-center justify-between">
             <span className="text-[12.5px] font-semibold text-faint">월 납부요금정보 (A+B)</span>
             <span className="rounded-full bg-brow px-2 py-0.5 text-[10.5px] font-bold text-bmuted">VAT 포함</span>

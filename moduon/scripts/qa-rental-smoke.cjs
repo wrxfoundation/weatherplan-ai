@@ -2,6 +2,8 @@
 // 계산 정합성까지: 카드할인 토글이 실부담을 정확히 낮추는지, 총액 최저 배지가 실제 최소인지.
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
+// 여러 스모크를 병렬로 돌릴 때 각자 다른 프리뷰 포트를 쓸 수 있게 — 기본은 qa-all 이 띄우는 4173
+const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
 
 const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
 
@@ -15,7 +17,7 @@ const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
   const check = (ok, label) => { if (!ok) fail++; console.log(`${ok ? 'PASS' : 'FAIL'}  ${label}`) }
 
   // ── 렌탈 계산기 ──
-  await page.goto('http://localhost:4173/calculator/rental', { waitUntil: 'networkidle' })
+  await page.goto(BASE + '/calculator/rental', { waitUntil: 'networkidle' })
   await page.waitForTimeout(500)
   let text = await page.evaluate(() => document.body.innerText)
   for (const m of ['렌탈 견적 계산기', '방문형', '셀프형', '제휴카드 청구할인', '동시 렌탈 대수', '관리 방식 × 기간 비교', '소유권 이전', '계약 전에 꼭 확인하세요', '의무사용']) {
@@ -56,7 +58,7 @@ const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
 
   // ── 오피스 가망고객 TOP5 ──
   await page.addInitScript(() => localStorage.setItem('moduon_session_v1', JSON.stringify({ role: 'partner', tenantId: 'T1' })))
-  await page.goto('http://localhost:4173/office', { waitUntil: 'networkidle' })
+  await page.goto(BASE + '/office', { waitUntil: 'networkidle' })
   await page.waitForTimeout(700)
   text = await page.evaluate(() => document.body.innerText)
   check(text.includes('가망고객 TOP5'), '렌더: 가망고객 TOP5')

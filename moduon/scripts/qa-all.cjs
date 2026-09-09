@@ -39,6 +39,8 @@ const step = (name, fn) => {
   step('스모크: 휴대폰 온라인구매·알뜰폰', () => run('node scripts/qa-phoneshop-smoke.cjs'))
   step('스모크: 렌탈 브랜드 브라우저', () => run('node scripts/qa-rentalbrowse-smoke.cjs'))
   step('스모크: 렌트/리스(자동차)', () => run('node scripts/qa-cars-smoke.cjs'))
+  step('스모크: 게시판·모두온혜택', () => run('node scripts/qa-boards-smoke.cjs'))
+  step('스모크: 어드민 콘텐츠·고객소통', () => run('node scripts/qa-admin-content-smoke.cjs'))
 
   if (preview) { try { process.kill(-preview.pid) } catch { /* 이미 종료 */ } }
 

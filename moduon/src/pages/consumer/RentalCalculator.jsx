@@ -164,7 +164,7 @@ export default function RentalCalculator() {
         </div>
 
         {/* 우: 스티키 요약 */}
-        <aside className="sticky top-24 hidden rounded-section bg-white p-6 shadow-panel lg:block">
+        <aside className="sticky top-[calc(var(--gnb-h,111px)+16px)] hidden rounded-section bg-white p-6 shadow-panel lg:block">
           <div className="text-[12.5px] font-semibold text-faint">월 실부담</div>
           <div className="mt-0.5 text-[15px] font-bold text-ink">{label}</div>
 
