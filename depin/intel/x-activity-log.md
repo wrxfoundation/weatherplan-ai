@@ -937,3 +937,12 @@ On stage, the device measures the environment in real time and records the resul
 
 See you in Seoul.
 ```
+
+**서우 합본(9/9)**: Q1 도입("KWeather, Platinum Sponsor… Thirty years of weather business in Korea") + S1 본문. 검수: 원문 339자로 280 초과,
+"device partner" 누락(TERMS 프레임 — 없으면 케이웨더가 발행·운영 주체로 읽힘), 세미콜론 연결 어색, 끝 "live" 뒤 날짜 없음. 정리본:
+```
+F1 (추천, 301자): Our device partner KWeather, Platinum Sponsor of XRP SEOUL 2026 — thirty years of weather business in Korea. Weather Data Becomes an Asset: the weather measured in the space you live in becomes data, and verified data becomes weather services. See the device measure and record on XRPL, live on Oct 3.
+```
+```
+F2 (323자): KWeather, our device partner, is Platinum Sponsor of XRP SEOUL 2026. Thirty years of weather business in Korea. Weather Data Becomes an Asset: the weather measured where you live becomes data; verified data becomes weather services. The more it flows, the stronger it gets. See it measure and record on XRPL, live on Oct 3.
+```
