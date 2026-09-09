@@ -92,6 +92,45 @@ Partnership news is up — KWeather × D'CENT. Thread here: [X link]
 
 Short version: the wallet before the token. Questions welcome.
 ```
+
+### 2차 사용 — XRP SEOUL 2026 플래티넘 스폰서 공지 (9/9)
+X 인용 리포스트(G1)가 정본. 보상은 언급하지 않으므로 "보상 레이어는 테스트 중" 문장도 넣지 않는다(언급할 때만 붙인다).
+사전예약 리마인드 한 줄은 우리 채널이라 허용. 이미지는 @XRPSEOUL 원글의 Platinum Sponsor 이미지. 캡션 합계 908자(1024 이내).
+케이웨더 X 공식 계정 `@Kweather_Co` 확인(9/9 XRP SEOUL 원글 수정판) — 앞으로 태그 가능. 원글 수정판의 "KOSDAQ-listed" 는 우리가 되풀이하지 않는다.
+
+채널 (국문·영문 병기):
+```
+📌 케이웨더, XRP SEOUL 2026 플래티넘 스폰서
+
+wellbian의 기기 파트너이자 30년 기상 사업 회사인 케이웨더가 10월 3일 XRP SEOUL 2026(그랜드 하얏트 서울)에 플래티넘 스폰서로 참여합니다.
+
+무대에서는 wellbian이 만드는 날씨 데이터 경제를 발표하고, 기기를 직접 켭니다. 내가 생활하는 공간에서 측정한 날씨가 데이터가 되고, 검증된 데이터가 날씨 서비스가 되는 과정 — 이 장치가 실시간으로 측정하고 XRPL에 기록하는 모습을 현장에서 보실 수 있습니다.
+
+전체 내용 → [X 링크]
+사전예약은 9월 14일 12:00 마감, 1차 판매는 9월 15일 12:00 시작 → wellbian.io
+
+—
+
+📌 KWeather, Platinum Sponsor of XRP SEOUL 2026
+
+KWeather — wellbian's device partner, 30 years in the weather business in Korea — joins XRP SEOUL 2026 on Oct 3 (Grand Hyatt Seoul) as Platinum Sponsor.
+
+On stage: the Weather Data Economy wellbian is building, and the device switched on live. Weather measured in the space you live in becomes data; verified data becomes weather services. Watch it measure in real time and record on XRPL.
+
+Full post → [X link]
+Pre-registration closes Sep 14, 12:00 KST; first sale opens Sep 15, 12:00 KST → wellbian.io
+```
+톡방 (우리 그룹):
+```
+GA 🌤 XRP SEOUL 2026 소식 — 케이웨더가 플래티넘 스폰서로 함께합니다. 10월 3일 무대에서 기기를 켭니다. 글 보기: [X 링크]
+GA 🌤 XRP SEOUL 2026 news — KWeather is Platinum Sponsor, and on Oct 3 the device goes live on stage. Post: [X link]. Questions welcome.
+```
+서우 개인 계정 — 외부 커뮤니티 방(관계자 표시 필수, 링크는 X 글만 · 판매 링크는 방 규칙이 허용할 때만):
+```
+안녕하세요, 웰비안(wellbian) 쪽에서 파트너십을 맡고 있는 박서우입니다. 관계자라 미리 밝힙니다.
+
+10월 3일 XRP SEOUL 2026(그랜드 하얏트 서울)에 케이웨더가 플래티넘 스폰서로 참여하고, 저희는 무대에서 발표와 기기 시연을 합니다. 내가 사는 공간에서 잰 날씨가 데이터가 되고 XRPL에 기록되는 과정을 실시간으로 보여드릴 예정입니다. 관심 있으시면 글 한번 봐주세요 → [X 링크]
+```
 `Questions welcome` 은 의도적 — 수익·배송 즉답 문구가 준비돼 있으므로 질문을 받아도 된다.
 
 ## 소개 문구·핀 운용 원칙 (9/2 확정 — 디센트 공지 계기)
