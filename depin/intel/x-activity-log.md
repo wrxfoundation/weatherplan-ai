@@ -1017,3 +1017,7 @@ DM (259자): Good question on the percentage — let me check that internally an
 
 Nice to hear D'CENT has been good to work with. And if you ever make the trip, Oct 3 in Seoul would be a good excuse 🇰🇷
 ```
+서우 첨언(9/9): "훌륭한 퍼포먼스를 보여주면 유럽은 네가 맡아도 좋다" → 확약 아닌 방향 제시로("No promises yet", 서우 개인이 밀겠다는 표현). 독점·계약·지역권은 중대 결정이라 문서화 전까지 이 이상 구체화하지 않는다.
+```
+E (225자): And one more thing, since you're based in the Netherlands: if the performance is strong, taking the lead on Europe for us is something I'd genuinely want to talk about. No promises yet — but that's the direction I'd push for.
+```
