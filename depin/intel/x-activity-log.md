@@ -969,7 +969,7 @@ B (현행 문구 유지 + 행사 한 줄, 149자): Weather Data Token Generator�
 ```
 On Oct 3, wellbian takes the stage at XRP SEOUL 2026 (Grand Hyatt Seoul). KWeather, our device partner, joins as Platinum Sponsor.
 
-We'll share the vision — a Weather Data Economy, where the weather measured in the space you live in becomes data, and verified data becomes weather services — and show the Weather Data Token Generator™ in person: measuring in real time, recording on the XRP Ledger.
+We'll share the vision: a Weather Data Economy, where the weather measured in the space you live in becomes data, and verified data becomes weather services. And we'll show the Weather Data Token Generator™ in person, measuring in real time and recording on the XRP Ledger.
 
 I work on the wellbian side. If you're attending, let's say hello on the day.
 ```
