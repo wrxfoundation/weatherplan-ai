@@ -1,11 +1,13 @@
-# Korea Rising — verified K-pop snapshot (2026-09-08)
+# Korea Rising — verified K-pop snapshot (2026-09-09)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **2NE1** — 2025 2NE1 CONCERT [WELCOME BACK] ENCORE IN SEOUL - MESSAGE VIDEO
-- **Tomorrow X Together** — mbcweeklyidol TXT weekly idol
+- **The Boyz** — THE BOYZ(더보이즈) Documentary [THE BOYZ WORLD TOUR: ZENERATION Ⅱ]
+- **Mamamoo** — 마마무(MAMAMOO) 2026 WORLD TOUR [4WARD] - SEOUL Behind
+- **ITZY** — [ITZY?ITZY!] EP 266 | YUNA Quadthera Commercial Shoot
 - **NewJeans** — [Light Jeans] 2026 Summer of NewJeans BehindㅣNewJeans
+- **BTS** — 투어 중간에 스위스 가서 등산하는 이유⛰️ l SUGA’s VLOG
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
