@@ -1,7 +1,8 @@
 // ─── 홈 롤링 배너 (아정당식 초기화면 · 목업 [홈 · 랜딩페이지1 배너]) ──────────
 // db.banners 중 active 를 order 순으로 돌린다. 문구·이미지·순서는 어드민 배너 관리에서 바꾼다.
 // kind 'mobi'  : bg 위에 컷아웃 이미지(기본 우하단, side 'left' 면 좌측) + DOM 텍스트 — 인물·오브제 공용
-// kind 'scene' : 21:9 장면 이미지를 배경으로 깔고(왼쪽 55%는 비어 있음) 그 위에 텍스트
+// kind 'scene' : 21:9 장면 이미지를 배경으로 깔고(한쪽 55%는 비어 있음) 그 위에 텍스트 — side 'left' 면 피사체가 왼쪽, 텍스트 오른쪽
+//                텍스트 컬럼 뒤에는 배경색과 같은 계열의 옅은 스크림을 깔아 장면이 조금 침범해도 글이 읽힌다
 // kind 'news'  : 이미지 대신 신문 1면 카드(news: kicker·vol·date·headline·big)를 왼쪽에 — 글자가 흐려지지 않게 DOM 으로
 // tone 'dark'  : 노랑·연두·라벤더처럼 밝은 배경엔 잉크색 글씨(기본 'light' 는 흰 글씨)
 // desc 의 "- " 로 시작하는 줄은 불릿 목록으로 그린다(목업 랜딩페이지2).
@@ -135,6 +136,7 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
             const chat = cta?.action === 'chat'
             const left = b.side === 'left' || b.kind === 'news'
             const dark = b.tone === 'dark'
+            const scrim = b.scrim ?? (dark ? '#F7F2EE' : '#3F63C7')
             return (
               <div
                 key={b.id}
@@ -146,7 +148,11 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
                 style={{ background: b.bg }}
               >
                 {b.kind === 'scene' ? (
-                  <SafeImg src={b.image} aria-hidden className="absolute inset-0 h-full w-full object-cover object-right" loading={i === 0 ? 'eager' : 'lazy'} />
+                  <>
+                    <SafeImg src={b.image} aria-hidden className={`absolute inset-0 h-full w-full object-cover ${left ? 'object-left' : 'object-right'}`} loading={i === 0 ? 'eager' : 'lazy'} />
+                    {/* 텍스트 쪽 스크림 — 톤에 맞춰 잉크 글씨엔 크림, 흰 글씨엔 진파랑을 옅게 */}
+                    <span aria-hidden className="absolute inset-0" style={{ background: `linear-gradient(${left ? 270 : 90}deg, ${scrim} 0%, ${scrim}B3 32%, ${scrim}00 58%)` }} />
+                  </>
                 ) : b.kind === 'news' ? (
                   // 신문 카드는 왼쪽 컬럼(모바일은 텍스트 아래로 숨김) — 목업 랜딩페이지3
                   <div className="absolute inset-y-0 left-0 hidden w-[46%] items-center justify-center px-6 sm:flex lg:px-10"><NewsCard news={b.news} /></div>

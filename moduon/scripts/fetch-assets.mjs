@@ -58,6 +58,12 @@ const ASSETS = [
   ['tile-car.png',      'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204859_4b9f9a99-5633-4bb5-8888-6df3c6d75349.png'], // 렌트/리스 — 키 + 세단
   ['tile-package.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204900_cb03ca73-f833-411b-8d04-86dae644756f.png'], // 매장패키지 — 어닝 달린 상점
   ['tile-benefit.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204903_9c52e903-65c4-412b-b431-96ad0e7a56d0.png'], // 모두온혜택 — 선물상자 + 코인 + % 배지
+  // 히어로 롤링 배너 4장 — 2026-09-10 브랜드 톤(콘플라워 블루·크림·코랄, 소프트 3D)으로 한 세트 생성. 21:9 · 2k.
+  // 피사체는 한쪽 40% 안에만 두고 반대쪽 60% 는 빈 그라디언트(텍스트는 DOM). 손볼 땐 4장을 한 세트로 다시 뽑을 것.
+  ['banner-mobi.png',      'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260910_001039_debdaaa6-5a3b-41e7-87e2-3ee5a3a7b1f7.png'], // 1 모비 — 파랑, 인물+홀로그램 오른쪽
+  ['banner-benefit.png',   'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260910_001039_5b400768-9407-4a0f-bb09-a64bbc572064.png'], // 2 혜택 — 크림, 코랄 저금통 오른쪽
+  ['banner-subscribe.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260910_001039_e98dab13-257e-48e6-b131-0d8d791e1c75.png'], // 3 구독경제 — 연파랑, 신문·달력·박스 왼쪽
+  ['banner-finder.png',    'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260910_001038_0595ab4b-f01c-45f1-b152-72fa93dbac1a.png'], // 4 혜택 찾기 — 파랑, 과녁·돋보기 왼쪽
   // 목업 랜딩페이지 2·4 오브제(배경 제거) — 저금통(노랑 배너), 과녁(라벤더 배너). 3(뉴스)은 DOM 카드라 이미지 없음
   ['banner-piggy.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_233952_83a97fd6-941a-416d-a171-25ff9b9e9a0e.png'],
   ['banner-target.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_233953_51f9e63c-9be0-40c9-b893-e679713f0a34.png'],

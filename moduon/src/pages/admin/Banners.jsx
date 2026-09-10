@@ -18,7 +18,7 @@ const BG_PRESETS = [
   ['라벤더', 'linear-gradient(135deg,#C5CAE9 0%,#D6DCFF 100%)', 'dark'],
 ]
 // 배너에 쓸 수 있는 자체 호스팅 에셋 — fetch-assets.mjs 가 내려받는 경로와 일치
-const ASSETS = ['/assets/mobi-agent.png', '/assets/banner-piggy.png', '/assets/banner-target.png', '/assets/banner-support.png', '/assets/banner-car.png', '/assets/banner-home.png']
+const ASSETS = ['/assets/banner-mobi.png', '/assets/banner-benefit.png', '/assets/banner-subscribe.png', '/assets/banner-finder.png', '/assets/mobi-agent.png', '/assets/banner-piggy.png', '/assets/banner-target.png', '/assets/banner-support.png', '/assets/banner-car.png', '/assets/banner-home.png']
 const LINKS = [...new Set([...SITE_NAV.map((n) => n.to), '/consult', '/diagnosis', '/benefits/signup', '/benefits/invite', '/benefits/ads', '/board/event'])]
 
 const firstLine = (s = '') => s.split('\n')[0]
@@ -53,7 +53,7 @@ function BannerPreview({ b, small = false }) {
   const left = b.side === 'left' || b.kind === 'news'
   const dark = b.tone === 'dark'
   const imgCls = b.kind === 'scene'
-    ? 'absolute inset-0 h-full w-full object-cover object-right'
+    ? `absolute inset-0 h-full w-full object-cover ${left ? 'object-left' : 'object-right'}`
     : left ? 'absolute bottom-0 left-0 h-[88%] w-[42%] object-contain object-left-bottom' : 'absolute bottom-0 right-0 h-full w-[42%] object-contain object-right-bottom'
   return (
     <div className={`relative aspect-[21/9] w-full overflow-hidden ${small ? 'rounded-md' : 'rounded-field'}`} style={{ background: b.bg || DEFAULT_BG }}>
@@ -218,7 +218,7 @@ export default function AdminBanners() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {form.kind === 'mobi' && (
+              {form.kind !== 'news' && (
                 <Field label="이미지 위치">
                   <div className="flex h-11 items-center gap-1.5 sm:h-10">
                     {[['right', '오른쪽'], ['left', '왼쪽']].map(([k, l]) => (
