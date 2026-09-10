@@ -1619,3 +1619,4 @@ Mai Furukawa (Director, XRPL Japan / XRPL Labs) (289자): Hi Mai — Seowoo Park
 ```
 Hugo Philion (CEO, Flare) — 플레어 코리아 경유·케이웨더 명의 (231자): Hi Hugo — Seowoo Park, KWeather Digital Business. Thank you for the Flare Korea workshop on Sep 5; the KWeather session was a highlight for us. We'll be at XRP SEOUL on Oct 3 with the device and hope to catch you there or at Swell.
 ```
+- 서우(9/10): "XRPL도 지금 파트너십 등록 중이니 보류" → Commons(David·Thomas)·XRPLF(Brett)·XRPL Japan(Mai) 노트 발송 보류, 등록 결과 후 그 경로로 재개. 진행 유지: Hugo(플레어 코리아 경유 웜 노트)·Gary White(대기 중, 스웰 대면 목표).
