@@ -1720,3 +1720,13 @@ Head of Partnerships & Operations, wellbian · KWeather Digital Business
 ```
 - **Odelia 통화 준비 문서 신설(9/10 밤, 서우 "예상 관심사와 우리와의 접점")** — `depin/content/xrpl-commons-call-prep.md`. ① 그의 평가 기준 = 프로필이 직접 말한 mandate("institutional blockchain adoption / real-world solutions / implementable infrastructure") + 이력별 렌즈(Commons 기업 온보딩 2년 → 디지털 자산, IFC 개발금융, 딜로이트 5년 = 하이프 즉시 거름) ② **가짜 접점 셋**(XRPL 쓴다 = 입장권이지 접점 아님 · 한국 시장 그 자체 · 보상 토큰 = 기관 프레임에서 리스크) vs **진짜 접점 여섯**(XRPL 기관 사례에 비어 있는 칸 = 비금융 실물 / 그의 전 직함이 곧 우리 유형인 Corporate Adoption + 전환 구조가 약관으로 문서화 / 검증 아키텍처가 BIS WP 1374 과 같은 모양 / 스테이블코인이 트레이딩 아닌 물건값 / IFC 축은 그가 열면만 / 파리·유럽은 나중) ③ 예상 질문 8개 → 답변 선·금지선 표 ④ 주고받을 것 — 얻을 것 4개(파이프라인 실질 · 기관 귀 피드백이 가장 값짐 · 노출은 요청하지 않음 · 유럽 소개는 나중), **줄 것 = 10/3 무대 실물 장면**(대화를 "받으러 왔다"가 아니라 "사례를 만들어 왔다"로 열기) ⑤ 오프닝 한 문장(보상·토큰 미포함).
 - **KOL 커미션·할인 방침 결정 + Karan 회신 초안(9/10 밤)** — 서우: 내부 의견은 리퍼럴 URL + 고객 5% 할인코드인데, "고객 할인 5%는 작지만 Karan 이 5% 커미션 가져가는 건 크다"는 생각. **동기 비대칭 지적이 맞다**(450 RLUSD 기준 5% = 22.5 RLUSD/대 — 고객은 이미 −31% 중이라 묻히고 KOL 에겐 실질 수입). **다만 1차 판매에서는 둘 다 불가**: A 는 **쿠폰코드 기능 자체가 없고**(9/8 당일 확인, 그때 "판매 7일 전 결제단 개발 위험"으로 이미 접은 건 — 지금은 5일 전) 게다가 **공표가로 예약한 사람이 코드 보유자보다 비싸게 사는 구조**라 우선구매창 신뢰를 깬다. B 는 utm 이 **유입만** 보고 판매 귀속(결제 매칭·환불 회수·지급·세무)이 없어 **셀 수 없는 퍼센트**가 된다. **결론: 1차는 비가격, 커미션은 2차에서 프로그램으로.** 커미션을 열 때 부수 조건 넷: 광고 표시 의무 발생(그의 게시물이 #ad 가 되고 자발적 첫 게시물의 진정성 프레임도 흐려짐 — **미리** 고지) · 선례 관리(한 명 예외 = 9/3 커미션 없음 원칙 소멸) · 상한·기간 · 환불 회수. 미확인: 카탈라이즈 KOL 단가 구조와의 정합(저장소에 기록 없음). Karan 회신 D(1056자) — 숫자 미언급, 확약 0, 광고 표시 사전 고지, "round one 실적이 내가 만들 수 있는 가장 강한 근거"로 동기 유지. 방침 한 줄은 `depin/content/launch-post-0907.md` utm 발급 목록에도 기입.
+- **Odelia 링크드인 회신 확정 + 발신 주소(9/10 밤)** — 서우 안("Thanks Odelia — I'll write to you at that address. thanks.")에서 thanks 중복을 정리하고 우리 주소를 먼저 알려 그가 답장을 열 수 있게 함. 발신은 `support@wellbianlabs.io`(Karan 메일과 동일 — 우리 쪽 공용 업무 주소이므로 상대 PII 규칙 대상 아님). 공용함이라 **서명이 사람을 특정해야** 하고, 상대가 "이 사람이 담당인가"를 의심하지 않도록 메일 L 서명을 이름·직함·`wellbian.io` 세 줄로 확정. 파트너십 전용 주소 전환은 별건 — 지금 바꾸면 Karan 건과 주소가 갈려 더 나쁘다.
+```
+J2 (링크드인 최종, 116자): Thanks Odelia — writing to you at that address today. Mine is support@wellbianlabs.io if it's easier from your side.
+```
+```
+메일 L 서명(확정):
+Seowoo Park (Logan)
+Head of Partnerships & Operations, wellbian · KWeather Digital Business
+wellbian.io
+```
