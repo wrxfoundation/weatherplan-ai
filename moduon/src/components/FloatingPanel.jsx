@@ -34,9 +34,14 @@ const writePref = (v) => { try { localStorage.setItem(FP_KEY, v ? '1' : '0') } c
 
 // 모비 인물 컷아웃 — 에셋은 배포 시 내려받으므로 실패하면 숨긴다(외부 URL 폴백 금지)
 function AgentImg() {
+  // 인물 컷아웃을 글 뒤에 크게 깔면 번호·칩이 얼굴을 가린다 — 우하단 원형 아바타(아이콘)로 줄여 겹치지 않게
   const [err, setErr] = useState(false)
   if (err) return null
-  return <img src="/assets/mobi-agent.png" alt="" onError={() => setErr(true)} className="pointer-events-none absolute -right-1 bottom-0 h-[118px] w-auto object-contain object-bottom" loading="lazy" />
+  return (
+    <span aria-hidden className="pointer-events-none absolute bottom-3 right-3 h-14 w-14 overflow-hidden rounded-full bg-white shadow-card ring-2 ring-white">
+      <img src="/assets/mobi-agent.png" alt="" onError={() => setErr(true)} className="h-full w-full object-cover object-[50%_10%]" loading="lazy" />
+    </span>
+  )
 }
 
 export default function FloatingPanel() {
@@ -70,7 +75,7 @@ export default function FloatingPanel() {
   const chat = () => window.dispatchEvent(new CustomEvent('moduon:chat-open'))
   const tel = `tel:${HQ_TEL.replace(/-/g, '')}`
   const btn = 'flex h-11 w-full items-center gap-2.5 rounded-btn px-3.5 text-left text-[13.5px] font-bold transition-colors'
-  const chip = 'inline-flex rounded-full bg-white px-2.5 py-1 text-[11px] font-bold text-primary-text shadow-card'
+  const chip = 'inline-flex break-keep rounded-full bg-white px-2.5 py-1 text-[11px] font-bold leading-snug text-primary-text shadow-card'
 
   if (!open) {
     return (
@@ -114,12 +119,12 @@ export default function FloatingPanel() {
             </button>
           )}
         </div>
-        {/* 하단 안내 카드 — 상담 시간 문구 + 대표번호 + 채널별 운영시간 칩 + 모비 인물 컷아웃 */}
+        {/* 하단 안내 카드 — 상담 시간 문구 + 대표번호 + 채널별 운영시간 칩 + 우하단 모비 아바타(원형) */}
         <div className="relative mt-3 overflow-hidden rounded-btn bg-tint p-3.5">
-          <p className="relative z-[1] whitespace-pre-line pr-14 text-[12.5px] font-bold leading-[1.45] text-ink">{fp.hours || HQ_HOURS}</p>
+          <p className="relative z-[1] whitespace-pre-line text-[12.5px] font-bold leading-[1.45] text-ink">{fp.hours || HQ_HOURS}</p>
           <a href={tel} className="tnum relative z-[1] mt-1.5 block text-[21px] font-extrabold tracking-tight text-primary-text">{HQ_TEL}</a>
           {/* 번호 바로 아래 '24시간' 만 두면 대표번호가 24시간으로 읽힌다 — 칩마다 채널을 붙이고 전화는 고객센터와 같은 HQ_HOURS_SHORT */}
-          <div className="relative z-[1] mt-2 flex flex-wrap gap-1.5">
+          <div className="relative z-[1] mt-2 flex flex-wrap gap-1.5 pr-16">
             <span className={chip}>모비 24시간 무료상담</span>
             <span className={chip}>전화 {HQ_HOURS_SHORT}</span>
           </div>

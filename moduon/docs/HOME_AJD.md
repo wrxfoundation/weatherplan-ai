@@ -15,7 +15,7 @@
 | 아이콘 행 | 6종 | `SITE_NAV` | `pages/consumer/Home.jsx` |
 | 지원금 섹션 | "최대 152만원+" · 3카드 · 칩 4개 | `BENEFIT_MAX` / `BENEFIT_TOTAL`(constants) | 〃 |
 | 바로 상담하기 | 노란 버튼 → 모비 / 전문컨설턴트 | — | 〃 |
-| 우측 플로팅 패널 | MODUON 알아보기 · 버튼 4 · 대표번호 | **어드민 > 혜택·이벤트 설정** (`db.benefits.floating`) · `HQ_TEL` | `components/FloatingPanel.jsx` |
+| 우측 플로팅 패널 | MODUON 알아보기 · 버튼 4 · 대표번호 · 모비 아바타(우하단 원형) | **어드민 > 혜택·이벤트 설정** (`db.benefits.floating`) · `HQ_TEL` | `components/FloatingPanel.jsx` |
 | 게시판 6종 | /board/:board | `db.posts` (board 로 구분) | `pages/consumer/Board.jsx` · `BoardPost.jsx` |
 | 모두온혜택 | /benefits — 회원가입·친구초대·광고보기·멤버십몰 | `db.benefits` · 포인트는 브라우저 localStorage(데모) | `pages/consumer/Benefits.jsx` |
 
@@ -70,7 +70,7 @@
 | 파일 | 용도 | 생성 |
 |---|---|---|
 | `tile-{phone,rental,internet,car,package,benefit}.png` | 아이콘 행·햄버거 그리드 | GPT Image 2 · 유리질 3D · 배경 제거. 아정당과 다른 세트 |
-| `mobi-agent.png` | 배너 1 인물 · 플로팅 패널 | 〃 · 3:2 · 배경 제거 |
+| `mobi-agent.png` | 배너 1 인물 · 플로팅 패널 우하단 원형 아바타(얼굴 크롭) | 〃 · 3:2 · 배경 제거 |
 | `banner-{support,car,home}.png` | 롤링 배너 2·3·(4) 장면 | 〃 · 21:9 · 2k. 왼쪽 55% 는 텍스트용 빈 그라디언트 |
 | `ill-ai.png` · `ill-thinking.png` | 지원금 카드 ②·③ | 〃 · 배경 제거 |
 | `banner-{mobi,benefit,subscribe,finder}.png` | 히어로 롤링 배너 1~4 장면(현재 노출) | 〃 · 21:9 · 2k · 한 세트 |
