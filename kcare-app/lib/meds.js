@@ -48,13 +48,22 @@ export function slotHour(hhmm) {
 // 건강기능식품 — 남은 용량(remain/total)과 유통기한. 재구매 알림 판단은 아래 함수.
 // storeId 는 스토어 상품 id — 재구매 버튼이 장바구니로 바로 이어진다.
 // slot — 알람 팝업에서 같은 시간대 약과 한 카드로 합쳐 보여주기 위한 값
-// (2026-08-31). 지금 값은 데모 가정이다: 실제 복용 시간대는 첫 안심방문 때
-// 약봉투와 보호자 확인으로 정하고, 그때 이 값을 바꿔야 한다.
+// (2026-08-31). 실무진 자료에 영양제 복용 시간대가 없어서 임의로 정하지 않았다.
+//
+// 2026-09-10 정리 — 케어 프로필의 "확정 / 미확인 구분" 원칙을 그대로 따른다:
+//   · slotConfirmed:false 인 동안은 데모 가정값이다. 어르신 화면은 지금처럼 같은
+//     시간대 약과 합쳐 보여준다 (어르신에게 "확인 전"을 보이지 않는다 — 무부담).
+//   · 컨시어지 고객 탭의 AI 동행 브리핑 '미확정' 칸에 자동으로 올라간다 —
+//     첫 안심방문 때 약봉투를 보고 보호자와 확인하는 사람이 컨시어지다.
+//   · 확인되면 slot 을 실제 값으로 바꾸고 slotConfirmed:true 로 — 브리핑에서 빠진다.
+export const SUPPLEMENT_SLOT_RULE = "첫 안심방문 때 약봉투를 보고 보호자와 확인";
+
 export const SUPPLEMENTS = [
   {
     id: "sp1",
     name: "비타민D 2000IU",
     slot: "아침",
+    slotConfirmed: false,
     perDay: 1,
     remain: 12,
     total: 90,
@@ -66,6 +75,7 @@ export const SUPPLEMENTS = [
     id: "sp2",
     name: "오메가3",
     slot: "저녁",
+    slotConfirmed: false,
     perDay: 2,
     remain: 44,
     total: 120,
@@ -77,6 +87,7 @@ export const SUPPLEMENTS = [
     id: "sp3",
     name: "칼슘 · 마그네슘",
     slot: "저녁",
+    slotConfirmed: false,
     perDay: 1,
     remain: 61,
     total: 90,
@@ -85,6 +96,15 @@ export const SUPPLEMENTS = [
     storeId: null,
   },
 ];
+
+// 시간대가 아직 가정값인 영양제 — 컨시어지 브리핑 '미확정' 칸 한 줄로 만든다.
+// 전부 확인되면 null 을 돌려주고 브리핑에서 사라진다.
+export function supplementSlotNote() {
+  const open = SUPPLEMENTS.filter((s) => !s.slotConfirmed);
+  if (!open.length) return null;
+  const list = open.map((s) => `${s.name.split(" ")[0]} ${s.slot}`).join(" · ");
+  return `영양제 복용 시간대 (${list}) — 자료에 없어 가정값 · ${SUPPLEMENT_SLOT_RULE}`;
+}
 
 export const MED_REGISTRY = {
   registeredBy: "박지현 컨시어지",

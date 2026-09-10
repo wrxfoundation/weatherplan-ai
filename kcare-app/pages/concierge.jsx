@@ -39,6 +39,7 @@ import { STORE_CATALOG } from "../lib/store";
 import { SERVICE_MENU, STATUS } from "../lib/requests";
 import { fmtWon } from "../lib/config";
 import { useAppState } from "../lib/state";
+import { supplementSlotNote } from "../lib/meds";
 import Splash from "../components/Splash";
 
 // 컨시어지 앱 — REQ-09(동선·주소 게이팅) · REQ-10(케어박스) · REQ-11(관찰 리포트)
@@ -738,7 +739,10 @@ export default function ConciergePage() {
                     <div className="text-[11px] font-bold tracking-[.08em] text-amber">
                       미확정 — 확인된 정보가 아닙니다
                     </div>
-                    {AI_BRIEFING.unconfirmed.map((u) => (
+                    {/* 영양제 복용 시간대는 자료에 없어 가정값이다 — 케어 프로필의 미확정
+                        항목과 같은 자리에 올려, 첫 안심방문 때 약봉투를 보고 확인하게 한다
+                        (2026-09-10 · lib/meds.js). 확인되면 자동으로 빠진다. */}
+                    {[...AI_BRIEFING.unconfirmed, supplementSlotNote()].filter(Boolean).map((u) => (
                       <p key={u} className="mt-1 text-[13px] leading-[1.6] text-[#5A4A22]">
                         {u}
                       </p>
