@@ -1602,3 +1602,4 @@ KWeather · Digital Business Division / wellbian · Partnerships
 ```
 7일 후속 — Gary (242자): Hi Gary — following up in case this got buried. The short version: KWeather as Get Blue's weather-data partner for Korea/Asia, and household climate data on the same RLUSD/XRPL rail you already use. Happy to send a one-pager if that's easier.
 ```
+- **Water.org 경로 갱신 (9/10)** — 서우 캡처: Sara Xi(Water.org 이사 · Rubicon Carbon CPO · 크립토/핀테크/AI 자문 · 2촌, 공통 1촌 Katie) + 화면에 **Benjamin Albert = Head of Corporate Partnerships, Water.org/Get Blue** 확인. 순서: 게리 대기 유지 → 사라(제품 질문형, Katie 소개 우선) + 벤저민(파트너 기준 질문형) 즉시 → Vedika 는 최후. 노트 2종(262자 · 267자, 300자 안) + 수락 후 메시지 2종 전달. 제목 "Get Blue in Korea — KWeather as a weather-data partner"(사라는 "(a product question)" 부기).
