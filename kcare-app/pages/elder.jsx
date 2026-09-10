@@ -842,7 +842,8 @@ export default function ElderHome() {
                 <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
                   K-CARE
                 </span>
-                <Link href="/" className="flex min-h-[28px] items-center text-[13px] font-bold text-muted/50">
+                {/* .tap — 글자는 작게 두고 누르는 영역만 44px (QA: 44×28 이었다) */}
+                <Link href="/" className="tap text-[13px] font-bold text-muted/50">
                   데모 홈
                 </Link>
               </div>
@@ -1700,7 +1701,7 @@ export default function ElderHome() {
                 ))}
               </div>
               {/* REQ-01 — 우선 표시는 보호자 설정 (자동 추론 아님) */}
-              <div className="mt-3 text-[13px] text-muted/60">우선 항목 · {priority.source}</div>
+              <div className="mt-3 text-[15px] text-muted/70">우선 항목 · {priority.source}</div>
             </ElderCard>
 
             {/* ══ 해주세요 탭 — 대행 · 구매 요청. 결제권한(REQ-07)에 따라 본인 결제 / 보호자 승인 ══ */}
@@ -1976,7 +1977,7 @@ export default function ElderHome() {
                             <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
                           ) : (
                             <span className="absolute inset-0 flex items-center justify-center">
-                              <span className="rounded-full bg-white/75 px-3 py-1.5 text-[14px] font-bold text-navy/40">
+                              <span className="rounded-full bg-white/75 px-3 py-1.5 text-[15px] font-bold text-navy/40">
                                 사진 준비 중
                               </span>
                             </span>

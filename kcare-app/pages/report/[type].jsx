@@ -50,10 +50,10 @@ function DocShell({ title, period, backHref, backLabel, docType, glossary = [], 
           aria-label="문서 도구"
           className="print-hide mx-auto mb-4 flex w-full max-w-[794px] items-center gap-2 px-4"
         >
-          {/* 터치 타깃 24px 하한 (WCAG 2.2 AA 2.5.8) — 글자만 있으면 20px 밖에 안 된다 */}
+          {/* 터치 타깃 — 글자만 있으면 20px 밖에 안 된다. 인쇄 도구줄이라 44px 로 넉넉히 (WCAG 2.5.8 권장값) */}
           <Link
             href={backHref}
-            className="inline-flex min-h-[24px] items-center py-1 text-[13px] font-bold text-muted underline underline-offset-2"
+            className="inline-flex min-h-[44px] items-center py-1 text-[13px] font-bold text-muted underline underline-offset-2"
           >
             ← {backLabel}
           </Link>

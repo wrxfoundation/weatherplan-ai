@@ -258,7 +258,7 @@ export default function ElderHealthReport() {
             className="absolute left-0 right-0 border-t-2 border-dashed"
             style={{ top: `${Math.round((1 - GOAL / maxSteps) * 72)}px`, borderColor: "rgba(10,31,60,.3)" }}
           >
-            <span className="absolute right-0 -top-[19px] text-[14px] font-bold text-muted">목표 {GOAL / 1000}.0</span>
+            <span className="absolute right-0 -top-[20px] text-[15px] font-bold text-muted">목표 {GOAL / 1000}.0</span>
           </div>
           <div className="flex items-end gap-1.5" style={{ height: 72 }} role="img" aria-label={`지난 7일 걸음: ${FIT_WEEK.map((d) => d.steps.toLocaleString()).join(", ")}`}>
             {FIT_WEEK.map((d) => (

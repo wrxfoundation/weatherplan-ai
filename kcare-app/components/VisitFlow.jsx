@@ -98,7 +98,7 @@ export default function VisitFlow({ role = "ops" }) {
                     patch: { crew: [...new Set([...(v.crew || []), n])] },
                   })
                 }
-                className={`btn-press btn-inline rounded-lg border px-2.5 py-1.5 text-[12px] font-bold ${
+                className={`btn-press btn-inline btn-chip rounded-lg border px-2.5 py-1.5 text-[12px] font-bold ${
                   (v.crew || []).includes(n)
                     ? "border-green/40 bg-green/10 text-green"
                     : "border-navy/20 text-navy"
@@ -110,7 +110,7 @@ export default function VisitFlow({ role = "ops" }) {
             ))}
             <button
               onClick={() => dispatch({ type: "patchVisit", patch: { vehicle: "12가 3456" } })}
-              className={`btn-press btn-inline rounded-lg border px-2.5 py-1.5 text-[12px] font-bold ${
+              className={`btn-press btn-inline btn-chip rounded-lg border px-2.5 py-1.5 text-[12px] font-bold ${
                 v.vehicle ? "border-green/40 bg-green/10 text-green" : "border-navy/20 text-navy"
               }`}
             >
@@ -129,7 +129,7 @@ export default function VisitFlow({ role = "ops" }) {
             </button>
             <button
               onClick={() => go("rejected", "일정 부적절 — 재수립 요청")}
-              className="btn-press btn-inline rounded-xl border border-danger/30 px-3 py-2.5 text-[13px] font-bold text-danger"
+              className="btn-press btn-inline btn-chip rounded-xl border border-danger/30 px-3 py-2.5 text-[13px] font-bold text-danger"
             >
               반려
             </button>

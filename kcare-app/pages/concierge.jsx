@@ -1013,7 +1013,7 @@ export default function ConciergePage() {
                           key={k}
                           onClick={() => setCareLoc(k)}
                           aria-pressed={careLoc === k}
-                          className={`btn-press btn-inline rounded-full px-3 py-1.5 text-[12.5px] font-bold ${
+                          className={`btn-press btn-inline btn-chip rounded-full px-3 py-1.5 text-[12.5px] font-bold ${
                             careLoc === k ? "bg-navy text-white" : "text-muted"
                           }`}
                         >
@@ -1055,7 +1055,7 @@ export default function ConciergePage() {
                                   <div className="flex items-center gap-1.5">
                                     <button
                                       onClick={() => setCheckDone((s) => ({ ...s, [key]: !s[key] }))}
-                                      className={`btn-press btn-inline shrink-0 rounded-full border px-2.5 py-1.5 text-[12px] font-bold ${
+                                      className={`btn-press btn-inline btn-chip shrink-0 rounded-full border px-2.5 py-1.5 text-[12px] font-bold ${
                                         on ? "border-green/40 bg-green/10 text-green" : "border-navy/15 text-muted"
                                       }`}
                                     >
@@ -1065,7 +1065,7 @@ export default function ConciergePage() {
                                     <button
                                       onClick={() => setOpenItem(open ? null : key)}
                                       aria-expanded={open}
-                                      className={`btn-press btn-inline flex-1 rounded-lg border border-navy/10 px-2.5 py-1.5 text-left text-[11.5px] ${
+                                      className={`btn-press btn-inline btn-chip flex-1 rounded-lg border border-navy/10 px-2.5 py-1.5 text-left text-[11.5px] ${
                                         itemNote[key] ? "text-ink" : "text-muted/70"
                                       }`}
                                     >
@@ -1110,7 +1110,7 @@ export default function ConciergePage() {
                       ))}
                       <button
                         onClick={() => setPhotos((v) => [...v, `현장사진_${v.length + 1}.jpg`])}
-                        className="btn-press btn-inline rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11.5px] font-bold text-navy"
+                        className="btn-press btn-inline btn-chip rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11.5px] font-bold text-navy"
                       >
                         + 사진 첨부 (데모)
                       </button>
@@ -1157,7 +1157,7 @@ export default function ConciergePage() {
                       <SectionLabel>동행 기록 — 직접 작성</SectionLabel>
                       <button
                         onClick={() => setEscortNote(AI_REPORT.draft)}
-                        className="btn-press btn-inline ml-auto rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11.5px] font-bold text-navy"
+                        className="btn-press btn-inline btn-chip ml-auto rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11.5px] font-bold text-navy"
                       >
                         AI 초안 불러오기
                       </button>
@@ -1181,7 +1181,7 @@ export default function ConciergePage() {
                       ))}
                       <button
                         onClick={() => setEscortPhotos((v) => [...v, `동행사진_${v.length + 1}.jpg`])}
-                        className="btn-press btn-inline rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11.5px] font-bold text-navy"
+                        className="btn-press btn-inline btn-chip rounded-lg border border-navy/20 px-2.5 py-1.5 text-[11.5px] font-bold text-navy"
                       >
                         + 사진 첨부 (데모)
                       </button>
@@ -1246,7 +1246,7 @@ export default function ConciergePage() {
                       <button
                         onClick={() => setPreview((v) => !v)}
                         aria-expanded={preview}
-                        className="btn-press btn-inline rounded-lg border border-navy/20 px-2.5 py-1.5 text-[12px] font-bold text-navy"
+                        className="btn-press btn-inline btn-chip rounded-lg border border-navy/20 px-2.5 py-1.5 text-[12px] font-bold text-navy"
                       >
                         {preview ? "닫기" : "보호자에게 갈 화면 보기"}
                       </button>
