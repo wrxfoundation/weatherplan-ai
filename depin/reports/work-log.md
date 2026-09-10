@@ -1718,3 +1718,4 @@ Best,
 Seowoo Park (Logan)
 Head of Partnerships & Operations, wellbian · KWeather Digital Business
 ```
+- **Odelia 통화 준비 문서 신설(9/10 밤, 서우 "예상 관심사와 우리와의 접점")** — `depin/content/xrpl-commons-call-prep.md`. ① 그의 평가 기준 = 프로필이 직접 말한 mandate("institutional blockchain adoption / real-world solutions / implementable infrastructure") + 이력별 렌즈(Commons 기업 온보딩 2년 → 디지털 자산, IFC 개발금융, 딜로이트 5년 = 하이프 즉시 거름) ② **가짜 접점 셋**(XRPL 쓴다 = 입장권이지 접점 아님 · 한국 시장 그 자체 · 보상 토큰 = 기관 프레임에서 리스크) vs **진짜 접점 여섯**(XRPL 기관 사례에 비어 있는 칸 = 비금융 실물 / 그의 전 직함이 곧 우리 유형인 Corporate Adoption + 전환 구조가 약관으로 문서화 / 검증 아키텍처가 BIS WP 1374 과 같은 모양 / 스테이블코인이 트레이딩 아닌 물건값 / IFC 축은 그가 열면만 / 파리·유럽은 나중) ③ 예상 질문 8개 → 답변 선·금지선 표 ④ 주고받을 것 — 얻을 것 4개(파이프라인 실질 · 기관 귀 피드백이 가장 값짐 · 노출은 요청하지 않음 · 유럽 소개는 나중), **줄 것 = 10/3 무대 실물 장면**(대화를 "받으러 왔다"가 아니라 "사례를 만들어 왔다"로 열기) ⑤ 오프닝 한 문장(보상·토큰 미포함).
