@@ -1640,3 +1640,21 @@ B: Hi Katie, Seowoo here, partnerships at KWeather in Seoul, a 30-year weather-d
 ```
 C (Katie 가 Sara 에게 그대로 붙이는 문단): Seowoo Park leads partnerships at KWeather, a 30-year weather and air-data company in Seoul, and its hardware project wellbian (household air monitors that record on the XRP Ledger). Seowoo has a short product question about how Get Blue works with weather-data partners in Asia, in light of the AccuWeather partnership, and is happy to keep it to one email or a 15-minute call.
 ```
+- **Katie Harries — APAC·미국 정책 담당자 소개 요청 추가(9/10 밤, 서우 지시)** — Katie 보임이 유럽·미주(미국 제외)라 APAC·미국은 담당 밖 → 사내 카운터파트를 **역할로** 묻는다(담당자 이름 추측·기재 0). 원칙 접점 기록: 거래소 사내 소개 요청은 사업 메시지 쪽이라 9/30 규칙과 스치고 Crypto.com 콜(9/11)과 같은 주 → 허용 조건 셋(정책 대 정책 · 요청 0 · listing/RLUSD/리플/XRPL/토큰/보상/판매목표 어휘 전면 배제, 스테이블코인은 "a dollar stablecoin", 원장은 "a public ledger")으로 좁혀 진행. 9/30 전 우리가 먼저 후속 미팅을 잡지 않음. 초안 3종(913자 · 607자 · 398자), A/B/C(9/10 낮)는 Sara 부탁 단독안으로 남긴다:
+```
+E (권고 — 인사 + APAC/미국 + Sara, 쉬운 질문을 앞에): Hi Katie, Seowoo here, partnerships at KWeather in Seoul, a 30-year weather-data company, and its Web3 project wellbian. Read your FT letter on bank blocks, clearly argued, and congratulations on the wider Europe & Americas remit.
+
+Two small things, both easy to say no to. First: we sell a household air-quality device that records to a public ledger and settles in a dollar stablecoin, so what we run into are policy questions rather than trading ones, Korea first and the US after that. If you could point me to whoever covers policy for APAC and for the US on your side, I'd be glad to listen. Nothing to ask them for.
+
+Second: I noticed you're connected with Sara Xi at Water.org. Get Blue lists AccuWeather as a partner and I have a short product question about weather-data partners in Asia. If a two-line intro is easy I'd be grateful, and if not I'll reach out directly.
+
+Good to be connected either way.
+```
+```
+F (APAC/미국만 — Sara 부탁을 나중으로 미룰 때): Hi Katie, Seowoo here, partnerships at KWeather in Seoul, a 30-year weather-data company, and its Web3 project wellbian. Read your FT letter on bank blocks, clearly argued, and congratulations on the wider Europe & Americas remit.
+
+One small ask, easy to say no to. We sell a household air-quality device that records to a public ledger and settles in a dollar stablecoin, so what we run into are policy questions rather than trading ones, Korea first and the US after that. If you could point me to whoever covers policy for APAC and for the US on your side, I'd be glad to listen. Nothing to ask them for.
+```
+```
+G (Katie 가 사내에 그대로 붙이는 소개 문단): Seowoo Park leads partnerships at KWeather, a 30-year weather and air-data company in Seoul, and its hardware project wellbian, which sells household air-quality monitors that record to a public ledger and settle in a dollar stablecoin. The question is about the policy landscape for hardware like this in Korea and the US, not about listings or anything commercial, and 15 minutes would be plenty.
+```
