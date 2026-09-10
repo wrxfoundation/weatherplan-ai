@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="스토어">
+  <!-- 장바구니 — 노랑 그라디언트 가방에 흰 하트 (2026-09-10 시안) -->
+  <defs>
+    <linearGradient id="stBag" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFD66B"/>
+      <stop offset="1" stop-color="#F2A33A"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="32" cy="57" rx="20" ry="3.5" fill="#B26E00" opacity=".14"/>
+  <path d="M22 25v-4.5a10 10 0 0 1 20 0V25" fill="none" stroke="#B26E00" stroke-width="3.6" stroke-linecap="round"/>
+  <path d="M12 24h40l-3.2 28.5A4.5 4.5 0 0 1 44.3 56H19.7a4.5 4.5 0 0 1-4.5-3.5z" fill="url(#stBag)"/>
+  <path d="M32 36.5c-2.2-2.8-7-2.2-7 2 0 3.4 4.9 6.3 7 7.8 2.1-1.5 7-4.4 7-7.8 0-4.2-4.8-4.8-7-2z" fill="#FFFFFF"/>
+  <ellipse cx="20" cy="31" rx="4.5" ry="2" fill="#FFFFFF" opacity=".5" transform="rotate(-28 20 31)"/>
+</svg>

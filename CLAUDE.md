@@ -45,3 +45,15 @@ pages/
 
 ## 배포 작업 시
 `CLAUDE_CODE_DEPLOY.md` 파일의 단계를 따르세요.
+
+## kcare-app 품질 게이트
+```
+cd kcare-app
+npm run verify   # 린트(경고 0) + 빌드
+npm start &      # 그 다음
+npm run smoke    # 17개 화면 실제로 열어 검사
+```
+`next build`는 렌더 시점 오류·Tailwind 클래스 충돌·접근성 회귀를 못 잡습니다.
+스모크가 그 그물입니다 — 화면이 비었는지, 콘솔 오류가 났는지, 랜드마크·버튼
+이름·터치 타깃이 무너졌는지 확인합니다. CI(`.github/workflows/kcare-app.yml`)가
+kcare-app 변경 시 같은 것을 돌립니다.

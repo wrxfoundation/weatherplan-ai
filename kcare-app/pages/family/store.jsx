@@ -1,0 +1,362 @@
+import Head from "next/head";
+import { useState } from "react";
+import FamilyLayout from "../../components/FamilyLayout";
+import { Card, SectionLabel, PrimaryButton, Badge } from "../../components/ui";
+import Icon from "../../components/icons";
+import { STORE_CATALOG, STORE_INDEX } from "../../lib/store";
+import { fmtWon } from "../../lib/config";
+import { useAppState } from "../../lib/state";
+import { honorific } from "../../lib/tracks";
+
+// 보호자 스토어 — 실무자 피드백 (2026-08-09) '쇼핑몰 제안' 시트 구조 그대로.
+// 썸네일 2열 그리드 (실무자 UI 샘플 반영): 카테고리 큰 버튼 → 하위분류 칩 →
+// 상품 카드(썸네일 · 이름 · 가격). 썸네일은 경영 콘솔에서 올린 이미지가 있으면
+// 그 이미지, 없으면 카테고리 아이콘이다 (state.productImages — 콘솔 연동).
+//
+// 가격은 navy 로 쓴다 — 샘플은 빨간 가격이지만 이 앱에서 빨강은 위험 신호
+// 전용이다 (SOS · 낙상). 상거래 숫자에 쓰면 그 원칙이 무너진다.
+// 약국(일반의약품) 분류는 2026-08-28 자로 뺐다 — 앱 결제 구매대행 불가 확인.
+// 의약외품·건강기능식품(영양제)만 남는다. lib/store.js 주석 참고.
+
+export default function StorePage() {
+  const { state, dispatch } = useAppState();
+  const images = state.productImages || {};
+  // 첫 방문 안전진단(컨시어지)이 담아 둔 생활안전용품 — 자동으로 선택된 채 시작
+  const safetyCart = state.demo.safetyCart || [];
+  const [sel, setSel] = useState(() => Object.fromEntries(safetyCart.map((id) => [id, true])));
+  const [cat, setCat] = useState(safetyCart.length > 0 ? "safety" : "vitamin");
+  const [groupIdx, setGroupIdx] = useState(0);
+  const [ordered, setOrdered] = useState(false);
+  const [tab, setTab] = useState("shop"); // shop | orders — 구매내역 조회 (2026-08-12 시트)
+  const honor = honorific(state.onboarding); // 온보딩에서 받은 성함을 쓴다 — 인자 없이 부르면 기본값(김순자)으로 굳는다
+  const orders = state.orders || [];
+
+  const items = Object.keys(sel)
+    .filter((id) => sel[id])
+    .map((id) => STORE_INDEX[id])
+    .filter(Boolean);
+  const total = items.reduce((s, i) => s + (i.price || 0) + (i.ship || 0), 0);
+  const active = STORE_CATALOG.find((c) => c.id === cat);
+  const group = active.groups[Math.min(groupIdx, active.groups.length - 1)];
+
+  const order = () => {
+    if (items.length === 0 || ordered) return;
+    setOrdered(true);
+    dispatch({ type: "demo", payload: { cart: true, safetyCart: [] } }); // 어르신 배송 카드 갱신 · 진단 장바구니 소진
+    dispatch({
+      type: "addRequest",
+      payload: {
+        id: `rq-${Date.now()}`,
+        dir: "fromGuardian",
+        type: "물품 전달해 주세요",
+        detail: `보호자 주문: ${items.map((i) => i.name).join(", ")} — 다음 배송일에 전달해 주세요.`,
+        amount: total,
+        preferredDate: null,
+        urgency: "normal",
+        assignee: "박지현",
+        photos: [],
+        status: "inProgress",
+        history: [
+          { at: Date.now(), status: "requested", note: "스토어 주문" },
+          { at: Date.now(), status: "confirmed", note: "" },
+          { at: Date.now(), status: "inProgress", note: `보호자 결제 ${fmtWon(total)} (결제 연동 대기 · 데모)` },
+        ],
+        proof: null,
+      },
+    });
+    dispatch({
+      type: "pushEvent",
+      payload: { kind: "스토어", text: `보호자 주문 ${items.length}건 · ${fmtWon(total)}`, color: "#B08D57" },
+    });
+    // 구매내역에도 같은 주문이 남는다 — 조회 탭이 별도 데이터를 보면 안 된다
+    dispatch({
+      type: "addOrder",
+      payload: {
+        by: "김민수",
+        channel: safetyCart.length > 0 ? "안전진단 자동 담기" : "보호자 스토어",
+        items: items.map((i) => ({ id: i.id, name: i.name, qty: 1, price: i.price })),
+        ship: items.reduce((s, i) => s + (i.ship || 0), 0),
+        status: "preparing",
+        receipt: null,
+        note: "",
+      },
+    });
+  };
+
+  const ORDER_STATUS = {
+    preparing: { label: "준비 중", fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
+    shipping: { label: "배송 중", fg: "#3B5C8A", bg: "rgba(59,92,138,.12)" },
+    delivered: { label: "전달 완료", fg: "#1E7A5A", bg: "rgba(30,122,90,.12)" },
+  };
+
+  return (
+    <>
+      <Head>
+        <title>스토어 — K-CARE</title>
+      </Head>
+      <FamilyLayout title="스토어">
+        {/* 담기 / 구매내역 조회 (2026-08-12 시트 스토어 2번) */}
+        <div className="flex gap-1.5">
+          {[
+            ["shop", "물품 담기"],
+            ["orders", `구매내역 조회${orders.length ? ` (${orders.length})` : ""}`],
+          ].map(([k, label]) => (
+            <button
+              key={k}
+              onClick={() => setTab(k)}
+              aria-pressed={tab === k}
+              // 높이는 py 로 만든다 — globals.css 의 .btn-press{min-height:44px} 가
+              // @layer 밖이라 min-h 유틸리티를 이긴다 (2026-08-28 "위아래 넓게").
+              className={`btn-press flex-1 rounded-xl border py-[16px] text-[15px] font-bold ${
+                tab === k ? "border-navy bg-navy text-white" : "border-navy/15 bg-white/70 text-muted"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "orders" ? (
+          <OrderHistory orders={orders} status={ORDER_STATUS} />
+        ) : (
+          <>
+        <p className="px-1 text-[13px] leading-[1.7] text-muted">
+          {honor} 화면과 같은 카탈로그입니다. 담으신 물품은 결제권한에 따라 승인 요청으로
+          오고, 보호자 주문은 바로 결제됩니다.
+        </p>
+
+        {/* 안전진단 자동 담기 — 컨시어지 첫 방문 진단과 연동 (실무자 요청) */}
+        {safetyCart.length > 0 && !ordered && (
+          <Card className="border-gold/40 p-4" style={{ background: "linear-gradient(180deg,#FBF6EC,#F6EFDE)" }}>
+            <div className="text-[12px] font-bold text-gold">첫 방문 홈 안전진단 결과</div>
+            <p className="mt-1 text-[14px] leading-[1.65] text-ink">
+              진단에서 <b>&lsquo;아니오&rsquo;</b>가 나온 항목에 맞는 생활안전용품{" "}
+              <b>{safetyCart.length}개</b>가 장바구니에 담겨 있습니다. 빼셔도 됩니다 — 필요한
+              것만 결제하세요.
+            </p>
+          </Card>
+        )}
+
+        {/* 카테고리 — 큰 버튼 (실무자 UI 샘플: 활성은 채움, 비활성은 옅게) */}
+        <div className="grid grid-cols-4 gap-2">
+          {STORE_CATALOG.map((c) => {
+            const on = cat === c.id;
+            return (
+              <button
+                key={c.id}
+                onClick={() => {
+                  setCat(c.id);
+                  setGroupIdx(0);
+                }}
+                className={`btn-press flex flex-col items-center gap-1.5 rounded-2xl border px-1 py-3 ${
+                  on ? "border-navy bg-navy text-white" : "border-navy/12 bg-white/70 text-muted"
+                }`}
+              >
+                <Icon name={c.icon} size={24} />
+                <span className={`text-[12px] font-bold leading-tight ${on ? "text-white" : "text-muted"}`}>
+                  {c.name}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 하위분류 칩 — 영양제처럼 그룹이 여럿일 때만. 가로 스크롤. 그냥 두면 오른쪽이 잘린 것처럼 보여서
+            더 있는 줄 모른다. 오른쪽 끝을 흐리게 덮어 "이어진다"를 보여 준다. */}
+        {active.groups.length > 1 && (
+          <div className="relative -mx-1">
+            <div className="flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+            {active.groups.map((g, i) => {
+              const on = i === Math.min(groupIdx, active.groups.length - 1);
+              return (
+                <button
+                  key={g.name}
+                  onClick={() => setGroupIdx(i)}
+                  className={`btn-press shrink-0 whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-bold ${
+                    on ? "border-navy bg-navy text-white" : "border-navy/15 bg-white/70 text-muted"
+                  }`}
+                >
+                  {g.name}
+                </button>
+              );
+            })}
+            </div>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 w-10"
+              style={{ background: "linear-gradient(90deg, rgba(241,239,232,0), rgba(241,239,232,.95))" }}
+            />
+          </div>
+        )}
+
+        {/* 분류 배지(구매대행 · 안전진단 연동)는 버튼 안이 아니라 여기 둔다 —
+            9px 배지를 좁은 버튼에 욱여넣으면 읽히지도 않고 버튼만 옹졸해진다. */}
+        {(active.note || active.badge) && (
+          <div className="rounded-xl bg-navy/[.045] px-3.5 py-2.5">
+            {active.badge && (
+              <Badge fg="#8A5D12" bg="rgba(176,141,87,.16)">
+                {active.badge}
+              </Badge>
+            )}
+            {active.note && (
+              <p className={`text-[12.5px] leading-[1.7] text-muted ${active.badge ? "mt-1.5" : ""}`}>
+                {active.note}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* 상품 썸네일 그리드 — 2열 */}
+        <div>
+          <div className="flex items-center gap-2 px-1">
+            <span className="h-[7px] w-[7px] rounded-full bg-navy" />
+            <SectionLabel>{group.name}</SectionLabel>
+          </div>
+          <ul className="mt-2.5 grid grid-cols-2 gap-2.5">
+            {group.items.map((i) => {
+              const on = !!sel[i.id];
+              const disabled = !i.price; // 가격 확정 전 — 담기지 않는다
+              const img = images[i.id];
+              return (
+                <li key={i.id}>
+                  <button
+                    disabled={disabled}
+                    onClick={() => !ordered && setSel((s) => ({ ...s, [i.id]: !s[i.id] }))}
+                    className={`btn-press w-full overflow-hidden rounded-2xl border text-left ${
+                      disabled
+                        ? "cursor-not-allowed border-dashed border-navy/15 opacity-70"
+                        : on
+                        ? "border-gold ring-2 ring-gold/50"
+                        : "border-navy/12"
+                    } bg-white`}
+                  >
+                    {/* 썸네일 — 콘솔 업로드 이미지가 있으면 그 이미지, 없으면 아이콘 */}
+                    <span className="relative block aspect-square w-full bg-[#EDF1EA]">
+                      {img ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                      ) : (
+                        /* 사진 없음 — 콘솔에서 올리기 전 상태.
+                           분류 아이콘을 쓰면 업로드 버튼처럼 보여서 글자만 둔다. */
+                        <span className="absolute inset-0 flex items-center justify-center">
+                          <span className="rounded-full bg-white/70 px-2.5 py-1 text-[10.5px] font-bold text-navy/35">
+                            사진 준비 중
+                          </span>
+                        </span>
+                      )}
+                      {on && (
+                        <span className="absolute right-2 top-2 inline-flex h-[24px] w-[24px] items-center justify-center rounded-full bg-gold text-[13px] font-bold text-white shadow">
+                          ✓
+                        </span>
+                      )}
+                    </span>
+                    <span className="block px-3 pb-3 pt-2.5">
+                      <span className="block min-h-[38px] text-[14px] font-bold leading-[1.4] text-ink">
+                        {i.name}
+                      </span>
+                      {i.price ? (
+                        <>
+                          <span className="mt-1 block font-num text-[17px] font-bold text-navy">
+                            {fmtWon(i.price)}
+                          </span>
+                          {i.ship ? (
+                            <span className="block font-num text-[10.5px] text-muted">
+                              배송 {fmtWon(i.ship)}
+                            </span>
+                          ) : null}
+                        </>
+                      ) : (
+                        <span className="mt-1 block text-[12px] font-bold text-muted">{i.pending}</span>
+                      )}
+                      {i.note && (
+                        <span className="mt-1 block text-[11px] leading-[1.5] text-muted">{i.note}</span>
+                      )}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        {items.length > 0 && !ordered && (
+          <Card className="p-4">
+            <div className="flex items-baseline justify-between">
+              <span className="text-[15px] font-bold text-navy">담은 물품 {items.length}건</span>
+              <span className="font-num text-[19px] font-bold text-navy">{fmtWon(total)}</span>
+            </div>
+            <p className="mt-1 text-[11px] text-muted">배송비 포함 · 다음 안심방문 또는 택배로 배송됩니다</p>
+          </Card>
+        )}
+
+        {ordered ? (
+          <Card className="border-green/30 bg-[#F1FAF6] p-4 text-[15px] font-bold text-green">
+            주문이 접수되었습니다 — 다음 배송일에 전달됩니다. 구매내역 조회에서 진행 상태를 볼 수
+            있습니다.
+          </Card>
+        ) : (
+          <PrimaryButton disabled={items.length === 0} onClick={order}>
+            {items.length === 0 ? "물품을 선택해 주세요" : `바로 결제 (보호자) · ${fmtWon(total)}`}
+          </PrimaryButton>
+        )}
+          </>
+        )}
+      </FamilyLayout>
+    </>
+  );
+}
+
+// 구매내역 조회 — 누가 · 어떤 경로로 · 무엇을 · 얼마에 샀는지.
+function OrderHistory({ orders, status }) {
+  if (orders.length === 0)
+    return (
+      <Card className="p-[18px]">
+        <p className="text-[15px] leading-[1.7] text-muted">아직 구매내역이 없습니다.</p>
+      </Card>
+    );
+
+  return (
+    <>
+      {orders.map((o) => {
+        const goods = o.items.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
+        const st = status[o.status] || status.preparing;
+        return (
+          <Card key={o.id} className="p-[18px]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="font-num text-[13px] font-bold text-navy">
+                  {new Date(o.at).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}
+                </div>
+                <div className="mt-0.5 truncate text-[12px] text-muted">
+                  {o.by} · {o.channel}
+                </div>
+              </div>
+              <Badge fg={st.fg} bg={st.bg}>
+                {st.label}
+              </Badge>
+            </div>
+            <ul className="mt-3 space-y-1.5 border-t border-navy/[.08] pt-3">
+              {o.items.map((i) => (
+                <li key={i.id} className="flex items-baseline gap-2 text-[14px]">
+                  <span className="min-w-0 flex-1 truncate text-ink">{i.name}</span>
+                  <span className="font-num text-[12px] text-muted">×{i.qty || 1}</span>
+                  <span className="font-num font-bold text-navy">{fmtWon((i.price || 0) * (i.qty || 1))}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-2.5 flex items-baseline justify-between border-t border-navy/[.08] pt-2.5">
+              <span className="text-[12px] text-muted">물품 {fmtWon(goods)} + 배송 {fmtWon(o.ship || 0)}</span>
+              <span className="font-num text-[17px] font-bold text-navy">{fmtWon(goods + (o.ship || 0))}</span>
+            </div>
+            {o.receipt && (
+              <p className="mt-2 rounded-xl bg-navy/[.045] px-3 py-2 text-[12px] leading-[1.6] text-muted">
+                구매대행 영수증 — {o.receipt}
+              </p>
+            )}
+            {o.note && <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">{o.note}</p>}
+          </Card>
+        );
+      })}
+    </>
+  );
+}
