@@ -1,0 +1,319 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+/* Montserrat — 한글 글리프가 없어 영문·숫자에만 적용되고 한글은 Pretendard로 폴백 */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  padding: 0;
+  margin: 0;
+  font-family: "Montserrat", "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background: #F7F5EE;
+  color: #050038;
+}
+
+* { box-sizing: border-box; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+input, textarea, select { font-family: inherit; }
+svg { display: block; }
+
+html { scroll-behavior: smooth; }
+::selection { background: #4EB3A8; color: #050038; }
+h1, h2, h3, h4 { word-break: keep-all; }
+p, li, span    { word-break: keep-all; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(5, 0, 56, 0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(5, 0, 56, 0.28); }
+
+/* ─── 등장 애니메이션 ─── */
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(30px, -20px) scale(1.08); }
+  66%      { transform: translate(-20px, 25px) scale(0.95); }
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.2, 0.6, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.6, 0.2, 1);
+  will-change: opacity, transform;
+}
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; }
+}
+
+/* ─── 글라스 카드 ─── */
+.glass-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(229, 225, 214, 0.85);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(5, 0, 56, 0.03),
+    0 1px 2px rgba(5, 0, 56, 0.03),
+    0 8px 24px rgba(5, 0, 56, 0.05);
+  transition: background 0.35s ease, border 0.35s ease, box-shadow 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.glass-card-hover:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(201, 197, 183, 0.9);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(5, 0, 56, 0.05),
+    0 2px 4px rgba(5, 0, 56, 0.05),
+    0 16px 36px rgba(5, 0, 56, 0.08);
+}
+
+/* ─── 히어로 오로라 · 오브 ─── */
+@keyframes heroAuroraDescend {
+  0%, 100% { background-position: 0% 0%, 100% 0%, 50% 0%, 0% 0%; opacity: 0.88; }
+  50%      { background-position: 0% 8%, 100% 8%, 50% 8%, 0% 8%; opacity: 1; }
+}
+.hero-aurora {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 70%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hero-aurora::before {
+  content: '';
+  position: absolute;
+  top: -10%; left: -5%; right: -5%;
+  height: 100%;
+  background:
+    linear-gradient(180deg, rgba(78,179,168,0.22) 0%, rgba(78,179,168,0) 60%),
+    linear-gradient(180deg, rgba(180,210,255,0.20) 0%, rgba(180,210,255,0) 55%),
+    linear-gradient(180deg, rgba(231,227,255,0.22) 0%, rgba(231,227,255,0) 50%),
+    linear-gradient(180deg, rgba(255,180,230,0.18) 0%, rgba(255,180,230,0) 50%),
+    linear-gradient(180deg, rgba(255,200,160,0.16) 0%, rgba(255,200,160,0) 55%);
+  background-repeat: no-repeat;
+  filter: blur(30px);
+  animation: heroAuroraDescend 14s ease-in-out infinite;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+}
+.orb-teal     { background: radial-gradient(circle, rgba(78, 179, 168, 0.40), transparent 70%); }
+.orb-lavender { background: radial-gradient(circle, rgba(231, 227, 255, 0.95), transparent 70%); }
+.orb-float       { animation: orbFloat 18s ease-in-out infinite; }
+.orb-float-slow  { animation: orbFloat 26s ease-in-out infinite reverse; }
+.over-orb        { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-aurora::before, .orb-float, .orb-float-slow { animation: none; }
+}
+
+/* ─── 입력창 보더 샤인 ─── */
+@keyframes nlBorderShine {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.nl-shine { position: relative; isolation: isolate; }
+.nl-shine::before {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(
+    90deg,
+    rgba(20, 68, 59, 0.78)   0%,
+    rgba(31, 97, 87, 0.85)  15%,
+    rgba(45,126,112, 0.88) 30%,
+    rgba(78,179,168, 0.92) 50%,
+    rgba(141,219,208,0.88) 70%,
+    rgba(78,179,168, 0.92) 85%,
+    rgba(20, 68, 59, 0.78) 100%
+  );
+  background-size: 280% 100%;
+  animation: nlBorderShine 7s linear infinite;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  z-index: -1;
+  opacity: 0.9;
+  filter: blur(0.4px);
+  pointer-events: none;
+}
+.nl-shine.nl-shine-active::before {
+  opacity: 1;
+  inset: -2px;
+  padding: 2px;
+  animation-duration: 3s;
+  filter: blur(0.6px);
+}
+.nl-shine::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    rgba(20, 68, 59, 0.16)   0%,
+    rgba(78,179,168, 0.26)  30%,
+    rgba(141,219,208,0.22) 60%,
+    rgba(78,179,168, 0.26)  90%,
+    rgba(20, 68, 59, 0.16) 100%
+  );
+  background-size: 280% 100%;
+  animation: nlBorderShine 7s linear infinite;
+  filter: blur(10px);
+  z-index: -2;
+  opacity: 0.55;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nl-shine::before, .nl-shine::after { animation: none; opacity: 0.4; }
+}
+
+/* ─── 버튼 샤인 스윕 ─── */
+@keyframes btnShineSweep {
+  0%   { transform: translateX(-120%) skewX(-20deg); }
+  60%  { transform: translateX(220%)  skewX(-20deg); }
+  100% { transform: translateX(220%)  skewX(-20deg); }
+}
+.btn-shine { position: relative; overflow: hidden; isolation: isolate; }
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%; height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%);
+  animation: btnShineSweep 4.5s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-shine::after { animation: none; opacity: 0; }
+}
+
+/* ─── 마커 언더라인 ─── */
+@keyframes markerDraw {
+  0%   { background-size: 0%   100%; }
+  100% { background-size: 100% 100%; }
+}
+.marker-underline {
+  background-image: linear-gradient(120deg, rgba(78,179,168,0.6) 0%, rgba(78,179,168,0.75) 50%, rgba(78,179,168,0.6) 100%);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 16%;
+  padding-bottom: 0.02em;
+  animation: markerDraw 1.4s 0.6s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+/* ─── 히어로 배경 영상 ───
+   public/ 에 영상 파일이 있을 때만 페이드인. 파일이 없으면 오로라 배경만 남는다. */
+.hero-video-wrap { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+/* 히어로 영상 노출도 — 이 값 하나로 조절한다. 0 = 안 보임, 1 = 원본 그대로.
+   0.62 = 처음(거의 안 보임)과 완전 노출의 중간. */
+:root { --hero-video-strength: 0.62; }
+
+.hero-video {
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity 1.4s ease;
+  filter: saturate(1.08) contrast(1.04);
+}
+.hero-video.is-ready { opacity: var(--hero-video-strength); }
+/* 크림 스크림 — 헤드라인 뒤(중앙 상단)에 집중적으로 깔고 가장자리는 옅게.
+   본문 대비 확보가 목적이므로 텍스트 영역 밖까지 진하게 덮을 이유가 없다. */
+.hero-video-scrim {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 48% at 50% 32%,
+      rgba(247,245,238,0.62) 0%, rgba(247,245,238,0.34) 54%, rgba(247,245,238,0.10) 100%),
+    linear-gradient(180deg,
+      rgba(247,245,238,0.20) 0%, rgba(247,245,238,0.00) 30%,
+      rgba(247,245,238,0.00) 62%, rgba(247,245,238,0.72) 100%);
+}
+/* 영상이 재생 중이면 오로라·오브는 뒤로 물린다 — 둘이 겹치면 화면이 뿌예진다 */
+section:has(.hero-video.is-ready) .hero-aurora { opacity: 0.7; }
+section:has(.hero-video.is-ready) .orb { opacity: 0.38; }
+
+/* 히어로 하단 캡션 — 영상 위에 놓이므로 옅은 회색으로는 읽히지 않는다.
+   박스를 두르는 대신 크림색 헤일로로 배경과 분리한다. */
+.hero-caption { text-shadow: 0 1px 2px rgba(247,245,238,0.95), 0 0 10px rgba(247,245,238,0.85); }
+
+/* ─── 푸터 배경 영상 ───
+   푸터는 어두운 배경이므로 크림이 아니라 네이비 스크림을 덮는다. */
+.footer-video-wrap { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+/* 푸터 영상 단색화 —
+   원본이 어떤 색이든(예: 황금색) 명암만 남기고 브랜드 틸 계열 단색으로 물들인다.
+   grayscale로 색을 지우고 → sepia로 단색 기준색을 넣고 → hue-rotate로 틸까지 돌린다.
+   --footer-video-hue 를 바꾸면 색이 바뀐다 (0deg 갈색 · 150deg 틸 · 200deg 파랑).
+   원본 색을 그대로 쓰려면 --footer-video-filter: none. */
+:root {
+  --footer-video-hue: 140deg;
+  --footer-video-sat: 1.45;
+  --footer-video-filter: grayscale(1) sepia(1)
+    hue-rotate(var(--footer-video-hue)) saturate(var(--footer-video-sat)) brightness(0.92);
+}
+.footer-video {
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity 1.4s ease;
+  filter: var(--footer-video-filter);
+}
+.footer-video.is-ready { opacity: var(--footer-video-strength, 0.6); }
+/* CTA(위)와 푸터(아래)를 한 블록으로 덮는다. 헤드라인 뒤와 푸터 글씨 쪽은 진하게,
+   그 사이 구간은 옅게 두어 영상이 읽히게 한다. */
+.footer-video-scrim {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 46% at 50% 30%,
+      rgba(5,0,56,0.72) 0%, rgba(5,0,56,0.54) 58%, rgba(5,0,56,0.40) 100%),
+    linear-gradient(180deg,
+      rgba(5,0,56,0.56) 0%, rgba(5,0,56,0.30) 30%,
+      rgba(5,0,56,0.58) 66%, rgba(5,0,56,0.86) 100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-video, .footer-video { display: none; }
+}
+
+/* ─── 최근 진단 칩의 삭제(×) 버튼 ─── */
+.chip-x { transition: color 0.15s ease, background 0.15s ease; }
+.chip-x:hover { color: #FF6850; background: rgba(255, 104, 80, 0.10); }
+.chip-x:focus-visible { outline: 2px solid #4EB3A8; outline-offset: -2px; }
+
+/* ─── 터미널 로더 (해커 스타일 스캔 연출) ─── */
+@keyframes termBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.term-cursor { display: inline-block; width: 8px; height: 14px; background: #4EB3A8; vertical-align: -2px; animation: termBlink 1s steps(1) infinite; }
+@keyframes termLineIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+.term-line { animation: termLineIn 0.18s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .term-cursor { animation: none; }
+  .term-line { animation: none; }
+}
+
+/* ─── 인쇄(PDF 저장) 모드 ─── */
+@media print {
+  .print-hide { display: none !important; }
+  .glass-card {
+    background: #fff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: 1px solid #E5E1D6 !important;
+  }
+  .orb, .hero-aurora, .nl-shine::before, .nl-shine::after { display: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  body { background: #fff !important; }
+}
