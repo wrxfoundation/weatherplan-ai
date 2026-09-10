@@ -1113,3 +1113,21 @@ My own thinking is different: I'd rather you take a 5% commission on each sale. 
 
 Think it over and let me know which you'd prefer.
 ```
+
+### @KingKaran — 후속 재료 안내 초안 G (2026-09-10 밤, F 이후에 붙이거나 별도 발송)
+
+서우 의도: *"보도자료 한 차례 더 배포 + Swell 참석 준비 중이니 hype 퍼포먼스는 우리가 좋을 듯"* — 즉 **9/15 하루로 끝나는 건이 아니라는 것**을 보여 주는 것. 그 실질은 그대로 살리되 셋을 뺐다.
+
+- **거래소 상장 언급 0** — 백서 게이트(G1~G3 금지 · G9 검토)와 충돌하고, KOL 에게 말하면 **그가 게시물에 쓴다**. 우리 규칙 위반이 아니라 **우리가 통제 못 하는 위반**을 만드는 일이다(보도자료 자체 점검은 business-directions 「2차 보도자료 문안 점검 요청」).
+- **「1년 내」 시점 0** — 거버넌스는 방향만.
+- **hype 요청 0** — 지금 이 상대는 커미션과 **광고 표시 의무**가 걸린 자리다. 여기에 "하이프 잘 나올 것" 을 붙이면 과장 게시물을 만들 유인이 생기고, 그 책임은 우리에게 돌아온다. 대신 *"pace your coverage"* 로 **분산 취재**를 권한다 — 그에게도 실익이고 우리에게도 안전하다.
+- Swell 은 **준비 중**이므로 `working on being at` (확약 아님). XRP SEOUL 10/3 만 확정형.
+
+```
+G (508자)
+One more thing, since you're weighing how much to put into this.
+
+Sep 15 isn't the end of it. Another press release is coming, and the direction in it is participant-led governance — the network being run by the people who actually run the devices. Oct 3 in Seoul is already fixed: KWeather is a platinum sponsor at XRP SEOUL and the device goes on stage. We're also working on being at Swell in New York in late October.
+
+So there's more here than one sale day, if you'd rather pace your coverage across it.
+```
