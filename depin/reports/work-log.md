@@ -1671,3 +1671,27 @@ What I'd like to learn sits in your lane rather than mine. Selling a physical pr
 
 There's no proposal attached and nothing I want from Mastercard. If a 20-minute call later in September suits you I'd be glad to listen. If not, even a pointer to what you'd read on this would help.
 ```
+- **★ XRPL Commons Odelia Torteman — 인바운드 전환, 회신 초안(9/10 밤)** — 서우가 9/9 20:26 보낸 링크드인 DM 에 9/10 05:22 회신: 미팅을 먼저 청하고 업무 메일 주소를 줌(주소는 저장소 미기재). 공개 경력: Commons Head of Digital Assets(2026-06~) · 전 Director of Corporate Adoption(2024-07~2026-06) · IFC/World Bank Global Digital Finance Specialist(2020-10~) · 딜로이트 5년 · 프랑스 · Katie Harries 와 공통 1촌. **판정: 진행** — 9/10 'XRPL 인사 보류'는 새로 여는 아웃바운드에 건 것이고 이 건은 상대가 시간을 청한 인바운드다. 통화에서 빌더 파이프라인 등록을 같이 물어 보류 사유를 해소한다. 금지선: 리플 NDA·논의 사실 0 · 투자·펀딩 우리가 먼저 열지 않음(IFC 모자) · 보상·토큰·상장·판매 목표 0 · 플레어 0. ⚠ 발송분 점검 — 서우 DM 의 "(KOSDAQ-listed)" 는 9/9 규칙 위반(원글의 KOSDAQ 표기는 되풀이하지 않는다), 회수 불가·이후 반복 금지. "working closely with XRPL Korea" 는 회신에서 "in the middle of registering" 으로 수위 조정. 초안 2종:
+```
+J (링크드인 짧은 회신, 116자): Thanks Odelia — I'll write to you at that address today with a short summary and a few times. Looking forward to it.
+```
+```
+K (메일) 제목: KWeather / wellbian — XRPL device data, and a few times to talk
+
+Hi Odelia,
+
+Thanks for the quick reply, and for the address.
+
+A short version of what we do, so the call can start further along. KWeather has measured Korea's weather for 30 years — instruments, forecasting, and B2B data for 4,000+ enterprise clients. wellbian is the Web3 side, run by Wellbian Labs in Singapore: a certified indoor air monitor that households run in their own space, with each device registered as an NFT and its readings anchored on the XRP Ledger. Raw data stays off-chain; only batch fingerprints go on it. Devices are priced and settled in RLUSD. Our first sale opens on September 15, and on October 3 the device is on stage at XRP SEOUL 2026, where KWeather is a platinum sponsor.
+
+What I'd mostly like from the call is to listen: how Commons works with corporates and builders, what you look for, and where a hardware project like ours is useful to the institutional adoption story rather than a curiosity. We're in the middle of registering through the XRPL builder pipeline, so your read on that would help too.
+
+On timing, any of these work for us: Thursday September 17, Friday September 18, or the week of September 21. Paris 09:00–11:00 is Seoul 16:00–18:00, which is an easy window here, and I'm happy to work around whatever suits you. If you'd rather not wait that long, say so and I'll find something sooner.
+
+And if we make it to New York for the hackathon week in late October, I'd rather do this in person.
+
+Best,
+Seowoo Park (Logan)
+Head of Partnerships & Operations, wellbian · KWeather Digital Business
+```
+- **@rvereecke(Ripple Treasury SVP) GSmart 「Treasury-Native AI」 확장 게시물 — 패스(9/10)** — 사실 검증(WebSearch): 리플이 GTreasury 를 10억 달러에 인수(Hg 공시 2025-10-16), 전 CEO Renaat Ver Eecke 가 현 Ripple Treasury SVP, GSmart 는 결정론적 계산 + AI 해석 + 사람 승인 구조. 패스 사유 4: 레인 밖(CFO 오피스 AI 거버넌스) · 제품 발표 글 · 리플 임원(논의 사실 비공개라 공개 접촉이 오해를 만듦) · 우리가 보탤 검증 사실 없음. 소재로만 축적 — 「계산·해석·승인 3층 분리」 ↔ 「원시 데이터 오프체인·지문 온체인·검증 한 번」 형태 대조, BIS WP 1374 과 묶어 원글에 쓰되 리플·GSmart 호명 0. ecosystem-log 9/10 ① 에 기록, 텔레봇 콘솔은 다음 갱신 때 반영.

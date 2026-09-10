@@ -1040,3 +1040,11 @@ D1 (추천, 335자): Hey Victoria — following the AI-native finance stuff you 
 ```
 D2 (260자): Hey Victoria, I'm Logan — partnerships at wellbian. Came across your profile and liked the range (fintech, AI, crypto, creator). We're an early-stage team putting real hardware on XRPL — no ask here, just introducing myself. What's caught your interest lately?
 ```
+
+### @rvereecke — Ripple Treasury 「Treasury-Native AI」 GSmart 확장 발표 (2026-09-10 캡처) → **패스(무반응, 좋아요 재량)**
+
+사실(9/10 WebSearch 검증, 원문 미열람): 리플이 **GTreasury 를 10억 달러에 인수**(매도자 Hg 2025-10-16 공시), 당시 CEO **Renaat Ver Eecke** 는 현재 **Ripple Treasury SVP**. GSmart AI 는 **결정론적 엔진이 계산을 하고, AI 는 정책 해석·패턴 설명만 하며, 승인 권한은 재무팀이 갖는** 구조. 게시물은 그 확장 발표.
+
+**패스 사유 4**: ① **레인 밖** — 기업 재무·CFO 오피스의 AI 거버넌스. 우리에게 발화 권위가 없다(「남의 무대」 규칙) ② **제품 발표 글** — Asheesh 건의 「보도자료·면책 딸린 글은 원칙상 무반응」과 동형 ③ **리플 임원** — 리플과의 논의 사실 자체가 비공개 대상이라 공개 접촉은 오해를 만든다 ④ 우리가 보탤 **검증 가능한 사실이 없다**.
+
+**소재 축적(원글용, 답글 아님)**: 「계산은 결정론적으로, 해석은 그 위에, 승인은 사람이」 3층 분리 = 우리 「원시 데이터는 오프체인, 지문만 온체인, 검증은 원장 조회 한 번」과 **같은 모양**. BIS WP 1374 소재와 한 묶음으로 「검증이 가치」 절에 쓴다. ⚠ 원글에서 **리플·GSmart·GTreasury 를 호명하지 않는다** — 호명하면 리플 관계 암시가 된다.
