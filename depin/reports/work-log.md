@@ -1603,3 +1603,19 @@ KWeather · Digital Business Division / wellbian · Partnerships
 7일 후속 — Gary (242자): Hi Gary — following up in case this got buried. The short version: KWeather as Get Blue's weather-data partner for Korea/Asia, and household climate data on the same RLUSD/XRPL rail you already use. Happy to send a one-pager if that's easier.
 ```
 - **Water.org 경로 갱신 (9/10)** — 서우 캡처: Sara Xi(Water.org 이사 · Rubicon Carbon CPO · 크립토/핀테크/AI 자문 · 2촌, 공통 1촌 Katie) + 화면에 **Benjamin Albert = Head of Corporate Partnerships, Water.org/Get Blue** 확인. 순서: 게리 대기 유지 → 사라(제품 질문형, Katie 소개 우선) + 벤저민(파트너 기준 질문형) 즉시 → Vedika 는 최후. 노트 2종(262자 · 267자, 300자 안) + 수락 후 메시지 2종 전달. 제목 "Get Blue in Korea — KWeather as a weather-data partner"(사라는 "(a product question)" 부기).
+- **Swell 2026 연사 사전 컨택 선별 (9/10, 리플 제외)** — 우선순위 6명(Commons 2·XRPLF·XRPL Japan·Flare 웜·Gary 진행 중) + 보류 사유별 분류를 business-directions 에 기록. Swell 10/27~29 NYC, Apex 통합 확인. 1촌 노트 5종(300자 안):
+```
+David Bchiri (President, XRPL Commons) (286자): Hi David — Seowoo Park, partnerships at wellbian (Seoul). We put certified indoor climate monitors on XRPL: device NFTs, RLUSD settlement, first sale Sep 15, on stage at XRP SEOUL Oct 3. We've followed Commons since the Regular Key thread; I'd love to show you the hardware before Apex.
+```
+```
+Thomas Hussenet (Technical Partner, XRPL Commons) (260자): Hi Thomas — Seowoo Park, wellbian (Seoul). We're putting certified indoor climate monitors on XRPL (device NFT + RLUSD settlement). I'd value a technical read from Commons on our device-identity design, and to see whether it fits an Apex or hackathon showcase.
+```
+```
+Brett Mollin (Executive Director, XRP Ledger Foundation) (297자): Hi Brett — Seowoo Park, partnerships at wellbian (Seoul), device partner KWeather (30 yrs of weather instruments). Real hardware on XRPL: certified indoor climate monitors, device NFTs, RLUSD settlement. First sale Sep 15, XRP SEOUL Oct 3. Would value 20 min on how XRPLF sees DePIN on the ledger.
+```
+```
+Mai Furukawa (Director, XRPL Japan / XRPL Labs) (289자): Hi Mai — Seowoo Park, partnerships at wellbian (Seoul). Certified indoor climate monitors recording on XRPL, built with KWeather (30 yrs of weather instruments). Korea first; Japan is the obvious next market. I'd love to hear how XRPL Japan works with builders, and to show you the device.
+```
+```
+Hugo Philion (CEO, Flare) — 플레어 코리아 경유·케이웨더 명의 (231자): Hi Hugo — Seowoo Park, KWeather Digital Business. Thank you for the Flare Korea workshop on Sep 5; the KWeather session was a highlight for us. We'll be at XRP SEOUL on Oct 3 with the device and hope to catch you there or at Swell.
+```
